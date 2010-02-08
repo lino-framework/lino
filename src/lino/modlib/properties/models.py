@@ -64,7 +64,14 @@ class Property(models.Model):
         
     def choices_list(self):
         cl = self.value_type.model_class()
-        return cl.objects.filter(owner_id__exact=None,prop__exact=self)
+        return cl.objects.filter(owner_id__isnull=True,prop__exact=self)
+        
+    def propvalues_set(self,*order_by):
+        cl = self.value_type.model_class()
+        if len(order_by) == 0:
+            order_by = ['value']
+        return cl.objects.filter(owner_id__isnull=False,prop__exact=self).order_by(*order_by)
+        
         
     def get_child(self,instance):
         """
@@ -168,7 +175,6 @@ class PropValuesByOwner(reports.Report):
     #master = ContentType
     fk_name = 'owner'
     columnNames = "prop value_text"
-    #can_delete = True
     order_by = "prop__name"
 
 

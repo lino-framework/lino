@@ -51,7 +51,7 @@ answered together to each question. First we asked them "What's
 your weight?", and they answered:
   
   >>> weight.set_value_for(chris,70)
-  >>> weight.set_value_for(fred,80)
+  >>> weight.set_value_for(fred,110)
   >>> weight.set_value_for(vera,60)
   
 When asked whether they were married, they answered:
@@ -71,28 +71,29 @@ in one line of code:
   
   >>> properties.set_value_for(mary,married=True,favdish='Meat')
   
-Note that she didn't know her weight.
+Note that Mary didn't know her weight.
 
-To see the property values of a person, we can use the 
-`PropValuesByOwner` report:
+To see the property values of a person, we can use
+
+  >>> qs = properties.PropValue.objects.filter(owner_id=fred.pk).order_by('prop__name')
+  >>> [v.by_owner() for v in qs]
+  [u'favdish: Fish', u'married: False', u'weight: 110']
+  
+Or use the `PropValuesByOwner` report:
 
   >>> qs = properties.PropValuesByOwner().get_queryset(fred)
   >>> [v.by_owner() for v in qs]
-  [u'favdish: Fish', u'married: False', u'weight: 80']
-  
-The following wouldn't work because owner is a GenericForeignKey:
-
-  >>> # qs = properties.PropValue.objects.filter(owner=fred)
+  [u'favdish: Fish', u'married: False', u'weight: 110']
   
 Query by property:
 
   >>> qs = properties.PropValue.objects.filter(prop=weight) 
   >>> [v.by_property() for v in qs]
-  [u'Person object: 70', u'Person object: 80', u'Person object: 60']
+  [u'Chris: 70', u'Fred: 110', u'Vera: 60']
   
-  >>> qs = properties.PropValue.objects.filter(prop=weight).order_by('value_text')
+  >>> qs = weight.propvalues_set()
   >>> [v.by_property() for v in qs]
-  [u'Person object: 60', u'Person object: 70', u'Person object: 80']
+  [u'Vera: 60', u'Chris: 70', u'Fred: 110']
   
   
 `Report.as_text()`, is currently broken:
@@ -109,5 +110,9 @@ from django.contrib.contenttypes import generic
 from lino.modlib.properties import models as properties 
     
 class Person(models.Model):
-    name = models.CharField(max_length=20,blank=True,null=True)
+    name = models.CharField(max_length=20)
     properties = generic.GenericRelation(properties.Property)
+    
+    def __unicode__(self):
+        return self.name
+        
