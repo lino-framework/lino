@@ -1,1 +1,1 @@
-lino runtests %*
+tt runtests %*

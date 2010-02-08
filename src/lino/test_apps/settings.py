@@ -117,6 +117,7 @@ TEMPLATE_DIRS = (
 
 INSTALLED_APPS = (
   'lino.modlib.journals', 'lino.test_apps.journals',
+  'lino.modlib.properties',
   'lino.test_apps.20090714',
   'lino.test_apps.20090717', # Diamond inheritance (needs ticket #10808 to be fixed)
   'lino.test_apps.20091014', # assign floats to DecimalField

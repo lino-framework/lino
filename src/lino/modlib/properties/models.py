@@ -11,6 +11,22 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+Why is this doctest not executed during lino.test_apps?
+
+  >>> print "Hello"
+  This should fail!
+  
+  >>> CHAR = ContentType.objects.get_for_model(CharPropValue)
+  >>> INT = ContentType.objects.get_for_model(IntegerPropValue)
+  >>> BOOL = ContentType.objects.get_for_model(BooleanPropValue)
+  
+  >>> weight = Property(name='weight',value_type=INT)
+  >>> favdish = Property(name='favorite dish',value_type=CHAR)
+  >>> favdish.create_values('Cookies\nFish\nMeat\nVegetables')
+  >>> favdish.choices_list()
+  
+"""
 
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
@@ -19,11 +35,12 @@ from django.contrib.contenttypes import generic
 from lino import reports
 from lino import layouts
 from lino.utils import perms
+from lino.utils.ticket7623 import child_from_parent
 
 
 class Property(models.Model):
-    short = models.CharField(max_length=40)
     name = models.CharField(max_length=200)
+    short = models.CharField(max_length=40,blank=True)
     only_for = models.ForeignKey(ContentType,blank=True,null=True,related_name='only_for_properties')
     value_type = models.ForeignKey(ContentType,related_name='value_for_properties')
     
@@ -44,6 +61,11 @@ class Property(models.Model):
                 else:
                     i = cl(value=n,prop=self,owner=owner)
                 i.save()
+                
+    def choices_list(self):
+        cl = self.value_type.model_class()
+        return cl.objects.filter(owner__exact=None,prop__exact=self)
+        
                 
 class Properties(reports.Report):
     model = Property
@@ -70,10 +92,11 @@ class PropValue(models.Model):
     owner = generic.GenericForeignKey('owner_type', 'owner_id')
     prop = models.ForeignKey(Property)
     
-    #~ class Meta:
-        #~ abstract = True
+    class Meta:
+        abstract = True
         
     def __unicode__(self):
+        self = child_from_parent(self)
         if self.pk is None:
             return ''
         #~ if not self.owner:
