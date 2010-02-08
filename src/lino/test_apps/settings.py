@@ -39,7 +39,7 @@ MANAGERS = ADMINS
 
 DATABASE_ENGINE = 'sqlite3'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
 
-DATABASE_NAME = os.path.join(gettempdir(),'test_lino.db') 
+#DATABASE_NAME = os.path.join(gettempdir(),'test_lino.db') 
 DATABASE_NAME = ':memory:'
 
 DATABASE_USER = ''             # Not used with sqlite3.
@@ -116,8 +116,17 @@ TEMPLATE_DIRS = (
 #print "baz", __file__
 
 INSTALLED_APPS = (
-  'lino.modlib.journals', 'lino.test_apps.journals',
+
+  # modlib apps required by other
+  'lino.modlib.journals', 
   'lino.modlib.properties',
+  'django.contrib.contenttypes',
+  
+  # apps that test and document modlib apps
+  'lino.test_apps.journals',  
+  'lino.test_apps.properties',
+  
+  # apps that test some specific problem encountered
   'lino.test_apps.20090714',
   'lino.test_apps.20090717', # Diamond inheritance (needs ticket #10808 to be fixed)
   'lino.test_apps.20091014', # assign floats to DecimalField
