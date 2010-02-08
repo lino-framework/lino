@@ -116,9 +116,7 @@ TEMPLATE_DIRS = (
 #print "baz", __file__
 
 INSTALLED_APPS = (
-  # 'lino.test_apps.example',
-  'lino.modlib.journals',
-  'lino.test_apps.ledger',
+  'lino.modlib.journals', 'lino.test_apps.journals',
   'lino.test_apps.20090714',
   'lino.test_apps.20090717', # Diamond inheritance (needs ticket #10808 to be fixed)
   'lino.test_apps.20091014', # assign floats to DecimalField
