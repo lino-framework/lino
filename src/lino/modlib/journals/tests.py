@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-## Copyright 2009 Luc Saffre.
+## Copyright 2009-2010 Luc Saffre.
 ## This file is part of the Lino project. 
 
 ## Lino is free software; you can redistribute it and/or modify it
@@ -16,23 +16,18 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+
 from django.test import TestCase
 from django.core.management import call_command
 from django.db.models import loading
 
 from lino.utils.validatingmodel import TomModel, ModelValidationError
-from lino.utils.reports import Report
-from lino.utils.render import ViewReportRenderer
 from django.db import models
 from django.forms.models import modelform_factory, formset_factory
 from django.conf import settings
 
 journals = models.get_app('journals')
 ledger = models.get_app('ledger')
-
-
-#~ from lino.modlib.journals import models as journals
-#~ from lino.apps.ledger import models as ledger
 
 
 class JournalsTest(TestCase):

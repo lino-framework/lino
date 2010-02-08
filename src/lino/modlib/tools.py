@@ -11,6 +11,20 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+Note that the following won't work because the contacs.Person is abstract:
+
+  >>> get_app('contacts')
+  >>> p = contacts.Person(name="Foo")
+
+The real contacts.Person is defined in your application (lino-dsbe and lino-igen). 
+To get it, use resolve_model:
+
+  >>> resolve_model('contacts.Person')
+  >>> p = Person(name="Foo")
+    
+
+"""
 from django.conf import settings
 from django.db import models
 from django.utils.importlib import import_module
@@ -21,6 +35,7 @@ def get_app(app_label):
     It is probably quicker than loading.get_app().
     It doesn't work during loading.appcache._populate().
     Didn't test how they compare in multi-threading cases.
+    
     """
     for app_name in settings.INSTALLED_APPS:
         if app_name.endswith('.'+app_label):

@@ -19,6 +19,8 @@ A journal is a sequence of numbered documents.
 A Journal instance knows the model used for documents in this journal.
 An AbstractDocument instance can look at its journal to find out which subclass it is.
 
+See lino.testapps.journals for more documentation.
+
 """
 
 import os
@@ -38,7 +40,7 @@ class DocumentError(Exception):
 DOCTYPES = []
 DOCTYPE_CHOICES = []
 
-def register_doctype(docclass,rptclass):
+def register_doctype(docclass,rptclass=None):
     #assert not docclass in DOCTYPE_CLASSES
     #~ i = 0
     #~ for cl in DOCTYPE_CLASSES:

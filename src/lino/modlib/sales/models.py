@@ -13,15 +13,16 @@
 
 
 """
->>> luc = contacts.Contact(firstName="Luc",lastName="Saffre")
+>>> from lino.modlib.tools import resolve_model
+>>> Person = resolve_model('contacts.Person')
+>>> luc = Person(first_name="Luc",last_name="Saffre")
 >>> luc.save()
 >>> luc
-<Contact: Luc Saffre>
-
->>> c = Customer.from_parent(luc)
+<Person: Saffre Luc>
+>>> c = Customer(person=luc)
 >>> c.save()
 >>> c
-<Customer: Luc Saffre>
+<Customer: Saffre Luc>
 
 """
 
@@ -29,16 +30,12 @@ import datetime
 from dateutil.relativedelta import relativedelta
 ONE_DAY = relativedelta(days=1)
 
-# __app_label__ = "sales"
-
-
 from django.db import models
 from django.contrib.auth import models as auth
 
-from lino.utils.ticket7623 import child_from_parent
+#from lino.utils.ticket7623 import child_from_parent
 
 from lino.modlib import fields
-
         
 from django import forms
 
@@ -47,16 +44,9 @@ from lino import layouts
 from lino import actions
 from lino.utils import perms
 
-#~ from lino.modlib.contacts import models as contacts
-#~ from lino.modlib.journals import models as journals
-#~ from lino.modlib.ledger import models as ledger
-#~ from lino.modlib.products import models as products
-
-contacts = reports.get_app('contacts')
-journals = reports.get_app('journals')
-ledger = reports.get_app('ledger')
-products = reports.get_app('products')
-
+journals = models.get_app('journals')
+ledger = models.get_app('ledger')
+products = models.get_app('products')
 
 
 class PaymentTerm(models.Model):
@@ -180,9 +170,9 @@ class Customer(models.Model):
         return super(Customer,self).save(*args,**kw)
         
     def before_save(self):
-        if self.company:
+        if self.company_id is not None:
             self.name = self.company.name
-        elif self.person:
+        elif self.person_id is not None:
             l = filter(lambda x:x,[self.person.last_name,self.person.first_name,self.person.title])
             self.name = " ".join(l)
         

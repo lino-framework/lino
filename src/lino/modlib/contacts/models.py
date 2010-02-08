@@ -143,7 +143,7 @@ class Person(Contact):
     
     def save(self,*args,**kw):
         self.before_save()
-        r = super(Contact,self).save(*args,**kw)
+        r = super(Person,self).save(*args,**kw)
         return r
         
     def before_save(self):

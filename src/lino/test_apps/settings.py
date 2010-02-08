@@ -117,6 +117,7 @@ TEMPLATE_DIRS = (
 
 INSTALLED_APPS = (
   # 'lino.test_apps.example',
+  'lino.modlib.journals',
   'lino.test_apps.ledger',
   'lino.test_apps.20090714',
   'lino.test_apps.20090717', # Diamond inheritance (needs ticket #10808 to be fixed)

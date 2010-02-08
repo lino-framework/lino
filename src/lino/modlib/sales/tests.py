@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-## Copyright 2008-2009 Luc Saffre
+## Copyright 2008-2010 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -12,6 +12,9 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+This is mostly obsolete and not active.
+"""
 
 from django.test import TestCase
 from django.forms.models import modelform_factory, formset_factory
@@ -22,7 +25,7 @@ from lino.utils.instantiator import i2d
 from lino.modlib.sales import models as sales
 
 
-class SalesTest(TestCase):
+class SalesTest: #(TestCase):
     urls = 'igen.demo.urls'
     def test01(self):
         luc = sales.Customer(firstName="Luc",lastName="Saffre")
@@ -32,7 +35,7 @@ class SalesTest(TestCase):
         #~ i.save()
         #~ print i
 
-class SalesTestOnDemo(TestCase):
+class SalesTestOnDemo: #(TestCase):
     urls = 'mysites.demo.urls'
     fixtures = [ 'demo' ]
         
