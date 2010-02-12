@@ -112,6 +112,7 @@ class GridActionContext(ActionContext):
             self.selected_rows = []
         
     def get_report_request(self):
+        raise "what's about kw and ReportRequest.setup() here?"
         rh = self.actor.get_handle(self.ui)
         return ViewReportRequest(self.request,rh)
         
@@ -206,9 +207,9 @@ class Variable(object):
         elif self.declare_type == DECLARE_THIS:
             yield "this.%s = %s;" % (self.ext_name,value)
             
-    def js_run(self,rr):
+    def js_run(self):
         for v in self.subvars():
-            for ln in v.js_run(rr):
+            for ln in v.js_run():
                 yield ln
                 
     def subvars(self):
@@ -397,8 +398,8 @@ class ForeignKeyStoreField(StoreField):
 
 
 class Store(Component):
-    declare_type = DECLARE_THIS
-    #declare_type = DECLARE_VAR
+    #declare_type = DECLARE_THIS
+    declare_type = DECLARE_VAR
     #declare_type = DECLARE_INLINE
     ext_suffix = "_store"
     value_template = "new Ext.data.JsonStore(%s)"
@@ -1256,6 +1257,8 @@ class GridElement(Container): #,DataElementMixin):
         self.report = rh.report
         lh.needs_store(rh)
         self.column_model = ColumnModel(self)
+        self.mt = ContentType.objects.get_for_model(self.report.model).pk
+
         
           
     def subvars(self):
@@ -1291,11 +1294,24 @@ class GridElement(Container): #,DataElementMixin):
         d.update(autoHeight=True)
         #d.update(layout='fit')
         d.update(enableColLock=False)
-        # TODO: How to test this?
         if self.__class__ is not GridMainPanel: 
-            js="Lino.show_slave(this,%r,%s)" % (self.rh.row_layout.get_absolute_url(run=True),py2js(self.rh.report.label))
+            js="Lino.show_slave(this,%r,%s,%s)" % (
+                self.rh.row_layout.get_absolute_url(run=True),
+                py2js(self.rh.report.label),self.mt)
             d.update(listeners=dict(click=js_code(js)))
         return d
+        
+    def js_declare(self):
+        for ln in Container.js_declare(self):
+            yield ln
+        if self.rh.report.master is not None:
+            yield "this.main_grid.add_row_listener(function(sm,rowIndex,record) {"
+            yield "  var p = { %s: record.id }" % URL_PARAM_MASTER_PK
+            yield "  p[%r] = %r;" % (URL_PARAM_MASTER_TYPE,self.mt)
+            yield "  %s.load({params:p});" % self.rh.store.as_ext()
+            yield "});"
+            
+      
             
       
         
@@ -1357,35 +1373,37 @@ class MainPanel:
                 keys.append(dict(
                   handler=h,
                   key=a.key.keycode,ctrl=a.key.ctrl,alt=a.key.alt,shift=a.key.shift))
-                  
-        details = dl.get_details()
-        if len(details):
-            # the first detail window can be opend with Ctrl+ENTER 
-            key = actions.RETURN(ctrl=True)
-            lh = details[0]
-            keys.append(dict(
-              handler=js_code("Lino.show_slave(this,%r,%s)" % (lh.get_absolute_url(run=True),py2js(lh.label))),
-              key=key.keycode,ctrl=key.ctrl,alt=key.alt,shift=key.shift))
+        if self.__class__ is GridMainPanel:
+            details = dl.get_details()
+            if len(details):
+                # the first detail window can be opend with Ctrl+ENTER 
+                key = actions.RETURN(ctrl=True)
+                lh = details[0]
+                keys.append(dict(
+                  handler=js_code("Lino.show_slave(this,%r,%s,%s)" % (lh.get_absolute_url(run=True),py2js(lh.label),self.mt)),
+                  key=key.keycode,ctrl=key.ctrl,alt=key.alt,shift=key.shift))
 
-            for lh in details[1:]: # self.rh.layouts[2:]:
+                for lh in details[1:]: # self.rh.layouts[2:]:
+                    buttons.append(dict(
+                  handler=js_code("Lino.show_slave(this,%r,%s,%s)" % (lh.get_absolute_url(run=True),py2js(lh.label),self.mt)),
+                      text=lh.layout.label))
+                  
+            slaves = dl.get_slaves()
+            for rh in slaves:
+                #rh = sl.get_handle(self.lh.ui)
                 buttons.append(dict(
-              handler=js_code("Lino.show_slave(this,%r,%s)" % (lh.get_absolute_url(run=True),py2js(lh.label))),
-                  text=lh.layout.label))
-              
-        slaves = dl.get_slaves()
-        for rh in slaves:
-            #rh = sl.get_handle(self.lh.ui)
-            buttons.append(dict(
-              handler=js_code("Lino.show_slave(this,%r,%s)" % (rh.row_layout.get_absolute_url(run=True),py2js(rh.report.label))),
-              #handler=js_code("Lino.show_slave(this,%r)" % id2js(rh.row_layout.name)),
-              text = rh.report.label,
-            ))
+                  handler=js_code("Lino.show_slave(this,%r,%s,%s)" % (
+                    rh.row_layout.get_absolute_url(run=True),
+                    py2js(rh.report.label),self.mt)),
+                  #handler=js_code("Lino.show_slave(this,%r)" % id2js(rh.row_layout.name)),
+                  text = rh.report.label,
+                ))
             
         self.keys = Variable(self.ext_name+'_keys',keys)
         self.buttons = Variable(self.ext_name+'_buttons',buttons)
         self.cmenu = Variable('cmenu',js_code("new Ext.menu.Menu(%s)" % py2js(self.buttons)))
         
-    def js_job_constructor(self,rr,**kw):
+    def js_job_constructor(self,**kw):
     
         yield "function(caller) {"
         yield "  var client_job = this;" 
@@ -1407,7 +1425,7 @@ class MainPanel:
         yield "  }"
         
             
-        for ln in self.js_run(rr):
+        for ln in self.js_run():
             yield "  " + ln
             
         for e in self.lh.walk():
@@ -1431,7 +1449,9 @@ class MainPanel:
     #~ xtype = "container"
   
 class WrappingMainPanel(MainPanel):
-    "Inherited by DetailMainPanel and FormMainPanel (not GridPanel)"
+    """Inherited by DetailMainPanel and FormMainPanel (not GridPanel)
+    Wraps each FieldElement into a Panel with FormLayout.
+    """
     
     @classmethod
     def field2elem(cls,lh,field,**kw):
@@ -1475,6 +1495,7 @@ class GridMainPanel(GridElement,MainPanel):
         #kw.update(title=self.layout.label)
         #kw.update(title=self.report.get_title(None)) 
         #kw.update(region='center',split=True)
+        del kw['autoHeight']
         del kw['title']
         kw.update(selModel=js_code("new Ext.grid.RowSelectionModel({singleSelect:false})"))
         kw.update(tbar=self.pager)
@@ -1496,16 +1517,17 @@ class GridMainPanel(GridElement,MainPanel):
           self.rh.store.pk.name)
         yield "%s.on('cellcontextmenu', Lino.cell_context_menu(this));" % self.as_ext()
         # recalculate page size when size changes
-        yield "%s.on('resize', function() {" % self.as_ext()
-        yield "    this.pager.pageSize = %s.calculatePageSize() || 10;" % self.as_ext()
+        yield "%s.on('resize', function(cmp,aw,ah,rw,rh) {" % self.as_ext()
+        yield "    this.pager.pageSize = cmp.calculatePageSize(this,aw,ah,rw,rh) || 10;" # % self.as_ext()
         yield "    this.refresh();"
         yield "  }, this, {delay:500});"
+        # yield "  }, this);"
         # first load with "offset" and "limit" params
-        yield "%s.on('render', function() {" % self.as_ext()
-        yield "  this.pager.pageSize = %s.calculatePageSize() || 10;" % self.as_ext()
-        yield "  this.refresh();"
-        #yield "  %s.load({params:{limit:this.pager.pageSize,start:this.pager.cursor}});" % self.rh.store.as_ext()
-        yield "}, this, {delay:100});"
+        #~ yield "%s.on('render', function() {" % self.as_ext()
+        #~ yield "  this.pager.pageSize = %s.calculatePageSize('render') || 10;" % self.as_ext()
+        #~ yield "  // this.refresh();"
+        #~ #yield "  %s.load({params:{limit:this.pager.pageSize,start:this.pager.cursor}});" % self.rh.store.as_ext()
+        #~ yield "}, this, {delay:100});"
         
     def setup(self):
         if self.pager:
@@ -1546,7 +1568,7 @@ class GridMainPanel(GridElement,MainPanel):
         )
         self.pager = Variable('pager',js_code("new Ext.PagingToolbar(%s)" % py2js(tbar)))
         
-    def js_run(self,rr):
+    def js_run(self):
         #yield "this.refresh = function() { this.%s.getStore().load()}" % self.ext_name
         yield "this.refresh = function() { "
         #yield "  this.pager.pageSize = %s.calculatePageSize() || 10;" % self.as_ext()
@@ -1563,24 +1585,31 @@ class GridMainPanel(GridElement,MainPanel):
         yield "var grid = this.main_grid;"
         yield "var store = grid.getStore();"
         if self.lh.link.report.master is None:
-            yield "  store.load();" 
+            yield "store.load();" 
         else:
-            master_type = ContentType.objects.get_for_model(self.lh.link.report.model).pk
-            yield "  if (caller) {"
-            yield "    caller.main_grid.add_row_listener("
-            yield "      function(sm,rowIndex,record) { "
-            yield "        var p = { %s:record.id, %s:%r };" % (
-              URL_PARAM_MASTER_PK,URL_PARAM_MASTER_TYPE,master_type)
-            yield "        store.load({params:p});" 
-            yield "    })"
-            yield "  } else {"
-            if rr.master_instance is None:
-                mpk = None
-            else:
-                mpk = rr.master_instance.pk
-            yield "    store.load({params:{ %s:%s, %s:%r }});" % (
-              URL_PARAM_MASTER_PK,py2js(mpk),URL_PARAM_MASTER_TYPE,master_type)
-            yield "  }"
+            master_type = ContentType.objects.get_for_model(self.lh.link.report.master).pk
+            #~ master_type = ContentType.objects.get_for_model(self.lh.link.report.model).pk
+            yield "this.load_master = function(record) {"
+            #~ yield "  var p = { %s:record.id, %s:%r };" % (
+              #~ URL_PARAM_MASTER_PK,URL_PARAM_MASTER_TYPE,master_type)
+            #~ yield "  console.log('load_master()',p);"
+            yield "  store.setBaseParam(%r,%s);" % (URL_PARAM_MASTER_TYPE,master_type)
+            yield "  store.setBaseParam(%r,record.id);" % URL_PARAM_MASTER_PK
+            yield "  store.load();" 
+            #~ yield "  store.load({params:p});" 
+            yield "}"
+            #~ yield "if (caller) {"
+            yield "caller.main_grid.add_row_listener("
+            yield "  function(sm,rowIndex,record) { client_job.load_master(record)})"
+            yield "this.load_master(caller.get_current_record());"
+            #~ yield "}"
+            #~ if rr.master_instance is None:
+                #~ mpk = None
+            #~ else:
+                #~ mpk = rr.master_instance.pk
+            #~ yield "store.load({params:{ %s:%s, %s:%r }});" % (
+              #~ URL_PARAM_MASTER_PK,py2js(mpk),URL_PARAM_MASTER_TYPE,master_type)
+            #~ yield "}"
           
             # der folgende fall ist noch nicht uebernommen:
             #~ yield "    if(master) {"
@@ -1678,13 +1707,15 @@ class DetailMainPanel(Panel,WrappingMainPanel):
         #yield "  this.current_pk = record.data.id;" 
         yield "  this.current_record = record;" 
         yield "  %s.form.loadRecord(record);" % self.as_ext()
-        yield "  var p = { %s: record.id }" % URL_PARAM_MASTER_PK
-        #yield "  var p = { %s: record.data.%s }" % (URL_PARAM_MASTER_PK,self.rh.store.pk.name)
-        mt = ContentType.objects.get_for_model(self.report.model).pk
-        yield "  p[%r] = %r;" % (URL_PARAM_MASTER_TYPE,mt)
-        for slave in self.lh.slave_grids:
-            yield "  %s.load({params:p});" % slave.rh.store.as_ext()
-        #yield "  for(i=0;i++;i<slaves.length) { console.log('load slave',slaves[i],p); slaves[i].load({params:p}) };"
+        
+        #~ yield "  var p = { %s: record.id }" % URL_PARAM_MASTER_PK
+        #~ #yield "  var p = { %s: record.data.%s }" % (URL_PARAM_MASTER_PK,self.rh.store.pk.name)
+        #~ mt = ContentType.objects.get_for_model(self.report.model).pk
+        #~ yield "  p[%r] = %r;" % (URL_PARAM_MASTER_TYPE,mt)
+        #~ for slave in self.lh.slave_grids:
+            #~ yield "  %s.load({params:p});" % slave.rh.store.as_ext()
+        #~ #yield "  for(i=0;i++;i<slaves.length) { console.log('load slave',slaves[i],p); slaves[i].load({params:p}) };"
+        
         yield "};"
         yield "if(this.main_grid) {"
         yield "  this.main_grid.add_row_listener("
@@ -1741,7 +1772,7 @@ class DetailMainPanel(Panel,WrappingMainPanel):
         for btn in buttons:
             yield "%s.addButton(%s);" % (self.as_ext(),py2js(btn))
     
-    def js_run(self,rr):
+    def js_run(self):
         yield "if(this.main_grid) {"
         yield "  var sels = this.main_grid.getSelectionModel().getSelections()"
         yield "  if(sels.length > 0) this.load_record(sels[0]);"
@@ -1776,7 +1807,7 @@ class FormMainPanel(Panel,WrappingMainPanel):
             yield e
             
 
-    def js_run(self,rr):
+    def js_run(self):
         yield "  this.get_values = function() {"
         yield "    var v = {};"
         for e in self.lh.link.inputs:
@@ -1934,9 +1965,9 @@ Lino.grid_afteredit = function (caller,url,pk) {
 // Lino.active_job = undefined;
 
 Lino.do_action = function(caller,url,name,params) {
-  // console.log('Lino.do_action()',name,params,reload);
   var doit = function(confirmed) {
     params['confirmed'] = confirmed;
+    console.log('Lino.do_action()',name,params);
     Ext.Ajax.request({
       waitMsg: 'Running action "' + name + '". Please wait...',
       url: url,
@@ -1991,13 +2022,14 @@ Lino.grid_action = function(caller,name,url) {
     Lino.do_action(caller,url,name,{selected:caller.get_selected()});
   };
 };
-Lino.show_slave = function (caller,url,name) { 
-  // console.log('show_slave()',caller,url,name)
+Lino.show_slave = function (caller,url,name,mt) { 
   return function(btn,evt) {
+    console.log('show_slave()',caller,url,name,mt)
     // p = caller.main_grid.getStore().baseParams;
     // console.log('show_detail',name,url,p)
     // Lino.do_action(caller,url,name,p);
-    Lino.do_action(caller,url,name,{});
+    var record = caller.get_current_record();
+    Lino.do_action(caller,url,name,{mt:mt,mk:record.id});
   }
 };
 """ 
@@ -2068,25 +2100,25 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
   },
   // pageSize depends on grid height (Trying to remove scrollbar)
   // Thanks to Christophe Badoit on http://www.extjs.net/forum/showthread.php?t=82647
-  calculatePageSize : function() {
+  calculatePageSize : function(caller,aw,ah,rw,rh) {
     if (!this.rendered) { return false; }
+    var rowHeight = 41;
     var row = this.view.getRow(0);
-    var rowHeight;
-    if (!row) { 
-        rowHeight = 41;
-    } else {
-        rowHeight = Ext.get(row).getHeight();
-    }
+    if (row) rowHeight = Ext.get(row).getHeight();
+    // console.log('rowHeight',rowHeight,this,caller);
     // var height = this.getView().scroller.getHeight();
-    // console.log('scroller',this.getView().scroller.getHeight());
+    // console.log('scroller.getHeight() is',this.getView().scroller.getHeight());
     // console.log('scroller',this.getView().scroller.getHeight());
     // console.log('mainBody',this.getView().mainBody.getHeight());
-    // console.log('getInnerHeight',this.getInnerHeight());
-    // console.log('getFrameHeight',this.getFrameHeight());
-    var height = this.getView().scroller.getHeight()
-    // height -= this.getFrameHeight();
+    // console.log('getInnerHeight() is',this.getInnerHeight());
+    // console.log('getFrameHeight() is',this.getFrameHeight());
+    // var height = this.getView().scroller.getHeight();
+    var height = this.getInnerHeight();
+    // var height = this.getView().mainBody.getHeight();
+    // var height = this.getHeight() - this.getFrameHeight();
     var ps = Math.floor(height / rowHeight);
-    ps -= 1; // extra row
+    // console.log(height,'/',rowHeight,'->',ps);
+    ps -= 3; // experimental value
     return (ps > 1 ? ps : false);
   },
   postEditValue : function(value, originalValue, r, field){
@@ -2375,12 +2407,12 @@ Ext.onReady(function(){ """
 class BaseViewReportRequest(reports.ReportRequest):
     
     def __init__(self,request,rh,*args,**kw):
-        kw.update(rh.report.params)
+        reports.ReportRequest.__init__(self,rh)
         self.request = request
-        kw = self.parse_req(request,rh,**kw)
-        reports.ReportRequest.__init__(self,rh,*args,**kw)
         self.store = rh.store
         request._lino_request = self
+        kw = self.parse_req(request,rh,**kw)
+        self.setup(*args,**kw)
         
     def parse_req(self,request,rh,**kw):
         quick_search = request.GET.get(URL_PARAM_FILTER,None)
@@ -2420,6 +2452,12 @@ class CSVReportRequest(BaseViewReportRequest):
     def get_absolute_url(self,**kw):
         kw['csv'] = True
         return BaseViewReportRequest.get_absolute_url(self,**kw)
+        
+    def parse_req(self,request,rh,**kw):
+        quick_search = request.GET.get(URL_PARAM_FILTER,None)
+        if quick_search:
+            kw.update(quick_search=quick_search)
+        return kw
         
     def render_to_csv(self):
         response = HttpResponse(mimetype='text/csv')
@@ -2526,6 +2564,7 @@ class ViewReportRequest(BaseViewReportRequest):
                       master_model.__name__,pk)
                 else:
                     kw.update(master_instance=m)
+            print '20100212', self #, kw['master_instance']
         sort = request.GET.get('sort',None)
         if sort:
             self.sort_column = sort
@@ -2810,7 +2849,6 @@ class ExtUI(base.UI):
 
     def get_action_url(self,a,**kw):
         url = "/action/" + a.app_label + "/" + a.name 
-        #url = "/action/" + a.actor_id # app_label + "/" + a.name 
         if len(kw):
             url += "?" + urlencode(kw)
         return url
@@ -2824,10 +2862,6 @@ class ExtUI(base.UI):
     def get_button_url(self,btn,**kw):
         a = btn.lh.link.actor
         return build_url("/form",a.app_label,a.name,btn.name,**kw)
-        #~ url = "/form/" + a.app_label + "/" + a.name + "/" + btn.name
-        #~ if len(kw):
-            #~ url += "?" + urlencode(kw)
-        #~ return url
         
     def get_choices_url(self,fke,**kw):
         return build_url("/choices",fke.lh.link.report.app_label,fke.lh.link.report.name,fke.field.name,**kw)
@@ -2901,11 +2935,16 @@ class ExtUI(base.UI):
         """
         rpt = context.actor
         rh = self.get_report_handle(rpt)
-        rr = ViewReportRequest(context.request,rh)
-        lh = rr.layout 
+        #rr = ViewReportRequest(context.request,rh)
+        layout = context.request.GET.get('layout')
+        if layout is None:
+            lh = rh.layouts[rpt.default_layout]
+        else:
+            lh = rh.layouts[int(layout)]
+        #lh = rr.layout 
         # kw['defaultButton'] = js_code('this.main_grid')
         kw = self.window_options(lh,**kw)
-        context.response.update(call=lh._main.js_job_constructor(rr,**kw))
+        context.response.update(call=lh._main.js_job_constructor(**kw))
         
         
     def view_form(self,context,**kw):
@@ -2915,8 +2954,8 @@ class ExtUI(base.UI):
         #fh.setup()
         lh = fh.lh
         kw = self.window_options(lh,**kw)
-        rr = None
-        context.response.update(call=lh._main.js_job_constructor(rr,**kw))
+        #rr = None
+        context.response.update(call=lh._main.js_job_constructor(**kw))
         
             
     

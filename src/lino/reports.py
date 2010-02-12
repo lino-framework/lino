@@ -251,6 +251,7 @@ class Report(actors.Actor): # actions.Action): #
     can_delete = perms.is_authenticated
     
     default_action = ViewReport()
+    default_layout = 1
     
     typo_check = True
     url = None
@@ -641,35 +642,41 @@ class ReportRequest:
     instance = None
     extra = None
     
-    def __init__(self,rh,
+    def __init__(self,rh):
+        assert isinstance(rh,ReportHandle)
+        self.report = rh.report
+        self.rh = rh
+      
+    def __str__(self):
+        return self.report.actor_id + "Request(%r,...)" % self.master_instance
+
+    def setup(self,
             master_instance=None,
             offset=None,limit=None,
             layout=None,user=None,
             extra=None,
             **kw):
-        assert isinstance(rh,ReportHandle)
-        self.report = rh.report
         self.user = user
-        self.rh = rh
-        self.name = rh.report.actor_id+"Request"
-        self.master_kw = rh.report.get_master_kw(master_instance)
+        #self.name = rh.report.actor_id+"Request"
+        kw.update(self.report.params)
+        self.master_kw = self.report.get_master_kw(master_instance)
         if self.extra is None:
             if extra is None:
                 if self.master_kw is None:
                     extra = 0
-                elif rh.report.can_add.passes(self):
+                elif self.report.can_add.passes(self):
                     extra = 1
                 else:
                     extra = 0
             self.extra = extra
         self.master_instance = master_instance
         if layout is None:
-            layout = self.rh.layouts[1]
+            layout = self.rh.layouts[self.report.default_layout]
         else:
             assert isinstance(layout,layouts.LayoutHandle), \
                 "Value %r is not a LayoutHandle" % layout
         self.layout = layout
-        rh.report.setup_request(self)
+        self.report.setup_request(self)
         #lino.log.debug('%sRequest.__init__(%r)',rh.report.actor_id,master_instance)        
         self.queryset = self.get_queryset(**kw)
         #print 20091211, self, self.queryset
@@ -684,16 +691,16 @@ class ReportRequest:
             self.offset = offset
             
         if limit is None:
-            limit = rh.report.page_length
+            limit = self.report.page_length
         if limit is not None:
             self.queryset = self.queryset[:int(limit)]
             self.limit = limit
             
-        self.page_length = rh.report.page_length
+        self.page_length = self.report.page_length
 
     def get_title(self):
         return self.report.get_title(self)
-
+        
     def create_instance(self,**kw):
         kw.update(self.master_kw)
         #lino.log.debug('%s.create_instance(%r)',self,kw)
