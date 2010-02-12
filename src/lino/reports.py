@@ -544,6 +544,7 @@ class ReportHandle(layouts.DataLink):
         #~ for n in 'get_fields', 'get_slave','try_get_field','try_get_meth',
                   #~ 'get_title'):
             #~ setattr(self,n,getattr(report,n))
+        self.content_type = ContentType.objects.get_for_model(self.report.model).pk
             
     def __str__(self):
         return self.report.name + 'Handle'

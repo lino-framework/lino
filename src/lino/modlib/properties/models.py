@@ -11,7 +11,9 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"See lino.test_apps.properties.models.py"
+"""
+Documentation: see lino.test_apps.properties.models.py
+"""
 
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
@@ -52,8 +54,8 @@ class Property(models.Model):
         return i
                 
     def set_value_for(self,owner,v):
-        vm = self.value_type.model_class()
         assert owner.pk is not None, "must save the owner first"
+        vm = self.value_type.model_class()
         try:
             pv = vm.objects.get(prop__exact=self,owner_id__exact=owner.pk)
         except vm.DoesNotExist,e:
@@ -61,6 +63,10 @@ class Property(models.Model):
         else:
             pv.value = v
             pv.save()
+            
+    def set_choice_for(self,owner,i):
+        pv = self.choices_list()[i]
+        return self.set_value_for(owner,pv.value)
         
     def choices_list(self):
         cl = self.value_type.model_class()

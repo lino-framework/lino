@@ -54,6 +54,7 @@ class Form(actors.Actor): # actions.Action):
 
 
 class FormHandle(layouts.DataLink):
+    content_type = None
     def __init__(self,ui,form):
         lino.log.debug('FormHandle.__init__(%s)',form)
         layouts.DataLink.__init__(self,ui,form.actor_id)

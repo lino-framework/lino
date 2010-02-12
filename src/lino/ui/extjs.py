@@ -490,7 +490,19 @@ class Store(Component):
             if not f.field.primary_key:
                 f.get_from_form(instance,post_values)
         return instance
-                    
+        
+    def js_declare(self):
+        for ln in Component.js_declare(self):
+            yield ln
+            
+        if self.report.master is None:
+            yield "%s.load();" % self.as_ext()
+        else:
+            yield "caller.main_grid.add_row_listener("
+            yield "  function(sm,rowIndex,record) { Lino.load_master(%s,caller,record)})" % self.as_ext()
+            yield "Lino.load_master(%s,caller,caller.get_current_record());" % self.as_ext()
+            
+            
         
 
 class ColumnModel(Component):
@@ -1257,7 +1269,11 @@ class GridElement(Container): #,DataElementMixin):
         self.report = rh.report
         lh.needs_store(rh)
         self.column_model = ColumnModel(self)
-        self.mt = ContentType.objects.get_for_model(self.report.model).pk
+        #self.mt = ContentType.objects.get_for_model(self.report.model).pk
+        if self.report.master is not None:
+            self.mt = ContentType.objects.get_for_model(self.report.master).pk
+        else:
+            self.mt = 'undefined'
 
         
           
@@ -1295,21 +1311,23 @@ class GridElement(Container): #,DataElementMixin):
         #d.update(layout='fit')
         d.update(enableColLock=False)
         if self.__class__ is not GridMainPanel: 
+            mt = ContentType.objects.get_for_model(self.report.model).pk
             js="Lino.show_slave(this,%r,%s,%s)" % (
                 self.rh.row_layout.get_absolute_url(run=True),
-                py2js(self.rh.report.label),self.mt)
+                py2js(self.rh.report.label),mt)
             d.update(listeners=dict(click=js_code(js)))
         return d
         
-    def js_declare(self):
-        for ln in Container.js_declare(self):
-            yield ln
-        if self.rh.report.master is not None:
-            yield "this.main_grid.add_row_listener(function(sm,rowIndex,record) {"
-            yield "  var p = { %s: record.id }" % URL_PARAM_MASTER_PK
-            yield "  p[%r] = %r;" % (URL_PARAM_MASTER_TYPE,self.mt)
-            yield "  %s.load({params:p});" % self.rh.store.as_ext()
-            yield "});"
+    #~ def js_declare(self):
+        #~ for ln in Container.js_declare(self):
+            #~ yield ln
+        #~ if self.rh.report.master is not None:
+            #~ yield "this.main_grid.add_row_listener(function(sm,rowIndex,record) {"
+            #~ yield "  var p = { %s: record.id }" % URL_PARAM_MASTER_PK
+            #~ yield "  p[%r] = %r;" % (URL_PARAM_MASTER_TYPE,self.mt)
+            #~ yield "  console.log('20100212 GridElement.js_declare()',p);"
+            #~ yield "  %s.load({params:p});" % self.rh.store.as_ext()
+            #~ yield "});"
             
       
             
@@ -1413,6 +1431,7 @@ class MainPanel:
         yield "  this.window = new Ext.Window(%s);" % py2js(kw)
         # for permalink:
         yield "  this.window._permalink = %s;" % py2js(id2js(self.lh.name))
+        yield "  this.content_type = %s;" % py2js(self.lh.link.content_type)
         #~ yield "  console.log(4);"
         yield "  this.stop = function() {"
         yield "     this.window.close();"
@@ -1582,43 +1601,23 @@ class GridMainPanel(GridElement,MainPanel):
         yield "  return sel_pks;"
         yield "}"
         
-        yield "var grid = this.main_grid;"
-        yield "var store = grid.getStore();"
-        if self.lh.link.report.master is None:
-            yield "store.load();" 
-        else:
-            master_type = ContentType.objects.get_for_model(self.lh.link.report.master).pk
-            #~ master_type = ContentType.objects.get_for_model(self.lh.link.report.model).pk
-            yield "this.load_master = function(record) {"
-            #~ yield "  var p = { %s:record.id, %s:%r };" % (
-              #~ URL_PARAM_MASTER_PK,URL_PARAM_MASTER_TYPE,master_type)
-            #~ yield "  console.log('load_master()',p);"
-            yield "  store.setBaseParam(%r,%s);" % (URL_PARAM_MASTER_TYPE,master_type)
-            yield "  store.setBaseParam(%r,record.id);" % URL_PARAM_MASTER_PK
-            yield "  store.load();" 
-            #~ yield "  store.load({params:p});" 
-            yield "}"
-            #~ yield "if (caller) {"
-            yield "caller.main_grid.add_row_listener("
-            yield "  function(sm,rowIndex,record) { client_job.load_master(record)})"
-            yield "this.load_master(caller.get_current_record());"
+        #~ yield "var grid = this.main_grid;"
+        #~ yield "var store = grid.getStore();"
+        #~ if self.lh.link.report.master is None:
+            #~ yield "store.load();" 
+        #~ else:
+            #~ master_type = ContentType.objects.get_for_model(self.lh.link.report.master).pk
+            #~ #master_type = ContentType.objects.get_for_model(self.lh.link.report.model).pk
+            #~ yield "this.load_master = function(record) {"
+            #~ yield "  console.log('load_master() mt=%s,mk=',record.id);" % master_type
+            #~ yield "  store.setBaseParam(%r,%s);" % (URL_PARAM_MASTER_TYPE,master_type)
+            #~ yield "  store.setBaseParam(%r,record.id);" % URL_PARAM_MASTER_PK
+            #~ yield "  store.load();" 
             #~ yield "}"
-            #~ if rr.master_instance is None:
-                #~ mpk = None
-            #~ else:
-                #~ mpk = rr.master_instance.pk
-            #~ yield "store.load({params:{ %s:%s, %s:%r }});" % (
-              #~ URL_PARAM_MASTER_PK,py2js(mpk),URL_PARAM_MASTER_TYPE,master_type)
-            #~ yield "}"
-          
-            # der folgende fall ist noch nicht uebernommen:
-            #~ yield "    if(master) {"
-            #~ yield "      %s.setBaseParam(%r,master);" % (self.store.as_ext(),URL_PARAM_MASTER_PK)
-            #~ yield "      %s.load();" % self.store.as_ext()
+            #~ yield "caller.main_grid.add_row_listener("
+            #~ yield "  function(sm,rowIndex,record) { client_job.load_master(record)})"
+            #~ yield "this.load_master(caller.get_current_record());"
             
-        #~ for col in self.column_model.columns:
-            #~ for ln in col.editor.js_column_lines(self.as_ext()):
-                #~ yield ln
         
         # the following doesn't work and i don't understand why
         #~ yield "  this.window.on('show',function() {"
@@ -2024,12 +2023,13 @@ Lino.grid_action = function(caller,name,url) {
 };
 Lino.show_slave = function (caller,url,name,mt) { 
   return function(btn,evt) {
-    console.log('show_slave()',caller,url,name,mt)
+    // console.log('show_slave()',caller,url,name,mt)
     // p = caller.main_grid.getStore().baseParams;
     // console.log('show_detail',name,url,p)
     // Lino.do_action(caller,url,name,p);
-    var record = caller.get_current_record();
-    Lino.do_action(caller,url,name,{mt:mt,mk:record.id});
+    //var record = caller.get_current_record();
+    //Lino.do_action(caller,url,name,{mt:mt,mk:record.id});
+    Lino.do_action(caller,url,name,{});
   }
 };
 """ 
@@ -2144,6 +2144,17 @@ Lino.cell_context_menu = function(job) {
 }
 
         """
+        
+        def js():
+            yield "Lino.load_master = function(store,caller,record) {"
+            #~ yield "  console.log('load_master() mt=',caller.content_type,',mk=',record.id);"
+            yield "  store.setBaseParam(%r,caller.content_type);" % URL_PARAM_MASTER_TYPE
+            yield "  store.setBaseParam(%r,record.id);" % URL_PARAM_MASTER_PK
+            yield "  store.load();" 
+            yield "}"
+            
+        s += py2js(js())
+        
         s += """
 Lino.on_load_menu = function(response) {
   // console.log('success',response.responseText);
@@ -2304,7 +2315,7 @@ Ext.override(Ext.form.ComboBox, {
     },
     setQueryContext : function(qc){
         if(this.contextParam) {
-            console.log(this.name,'.setQueryContext',this.contextParam,'=',qc);
+            // console.log(this.name,'.setQueryContext',this.contextParam,'=',qc);
             if(this.queryContext != qc) {
                 this.queryContext = qc;
                 // delete this.lastQuery;
@@ -2564,7 +2575,7 @@ class ViewReportRequest(BaseViewReportRequest):
                       master_model.__name__,pk)
                 else:
                     kw.update(master_instance=m)
-            print '20100212', self #, kw['master_instance']
+            #~ print '20100212', self #, kw['master_instance']
         sort = request.GET.get('sort',None)
         if sort:
             self.sort_column = sort
