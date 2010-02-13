@@ -1,0 +1,57 @@
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title id="title">20100213 PropertyGrid</title>
+<!-- ** CSS ** -->
+<!-- base library -->
+<link rel="stylesheet" type="text/css" href="../../resources/css/ext-all.css" />
+<!-- overrides to base library -->
+<!-- ** Javascript ** -->
+<!-- ExtJS library: base/adapter -->
+<script type="text/javascript" src="../../adapter/ext/ext-base.js"></script>
+<!-- ExtJS library: all widgets -->
+<script type="text/javascript" src="../../ext-all-debug.js"></script>
+<!-- page specific -->
+<script type="text/javascript">
+
+
+test1 = function() {
+  var grid = new Ext.grid.PropertyGrid({
+      title: 'Properties Grid',
+      autoHeight: true,
+      width: 300,
+      source: {
+          "(name)": "My Object",
+          "Created": new Date(Date.parse('10/15/2006')),
+          "Available": false,
+          "Version": .01,
+          "Description": "A test object",
+          'Start Time': '10:00 AM',
+          Available: true
+      },
+      customEditors: {
+        'Start Time': new Ext.grid.GridEditor(new Ext.form.TimeField({selectOnFocus:true}))
+      },
+      customRenderers: {
+        Available: function(v){
+            if(v){
+                return '<span style="color: green;">Yes</span>';
+            }else{
+                return '<span style="color: red;">No</span>';
+            }
+        }
+      },
+          
+  });
+    
+  var win = new Ext.Window({ 
+    layout: "fit", title: "PropertyGrid 1", items: grid, height:400, width: 400, x:10, y:10});
+  win.show();
+}
+
+
+Ext.onReady(function() {
+  test1();
+});
+</script>
+</head><body>
+</body></html>
