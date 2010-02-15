@@ -157,7 +157,7 @@ def py2js(v,**kw):
         return "\n".join([ln for ln in v])
     if callable(v):
         raise Exception("Please call the function yourself")
-        return "\n".join([ln for ln in v(**kw)])
+        #~ return "\n".join([ln for ln in v(**kw)])
 
     if isinstance(v,js_code):
         return v.s
@@ -189,11 +189,16 @@ class Variable(object):
     #declare_type = DECLARE_INLINE
     ext_suffix = ''
     value_template = "%s"
+    name = None
+    ext_name = None
     
     def __init__(self,name,value):
-        self.name = name
         self.value = value
-        self.ext_name = id2js(name) + self.ext_suffix
+        if name is None:
+            self.declare_type = DECLARE_INLINE
+        else:
+            self.name = name
+            self.ext_name = id2js(name) + self.ext_suffix
         
     def js_declare(self):
         for v in self.subvars():
@@ -227,7 +232,7 @@ class Variable(object):
         
 class Component(Variable): # better name? JSObject? Scriptable?
     
-    def __init__(self,name,**options):
+    def __init__(self,name=None,**options):
         Variable.__init__(self,name,options)
         
     def as_ext_value(self):
@@ -567,6 +572,11 @@ class GridColumn(Component):
         kw.update(editor=self.editor)
         return kw
         
+class ComboBox(Component):
+    value_template = 'new Ext.form.ComboBox(%s)'
+                    
+        
+        
 class VisibleComponent(Component):
     width = None
     height = None
@@ -794,12 +804,15 @@ class PropertyGridElement(LayoutElement):
         self.pgrid = pgrid
         # fill the grid rows
         self.source = {}
-        #self.customEditors = {}
+        self.customEditors = {}
         self.propertyNames = {}
-        from lino.modlib.properties.models import Property
+        from lino.modlib.properties.models import Property, CharPropValue
         for p in Property.properties_for_model(self.lh.link.report.model):
-            pvm = p.value_type.model_class()
-            default = pvm._meta.get_field('value').default
+            # PropValue model
+            pvm = p.value_type.model_class() 
+            # PropValue field
+            pvf = pvm._meta.get_field('value') 
+            default = pvf.default
             if default is models.NOT_PROVIDED:
                 default = ''
             elif callable(default):
@@ -807,6 +820,13 @@ class PropertyGridElement(LayoutElement):
             self.source[p.name] = default 
             if p.label:
                 self.propertyNames[p.name] = p.label
+                
+            if pvm is CharPropValue:
+                choices = [unicode(pv.value) for pv in pvm.objects.filter(prop=p,owner_id__isnull=True)]
+                if choices:
+                    editor = ComboBox(store=choices,mode='local',selectOnFocus=True)
+                    editor = 'new Ext.grid.GridEditor(%s)' % py2js(editor)
+                    self.customEditors[p.name] = js_code(editor)
     
 
     def ext_options(self,**kw):
@@ -814,7 +834,7 @@ class PropertyGridElement(LayoutElement):
         #kw.update(title='Properties')
         kw.update(source=self.source,
           autoHeight=True)
-        #kw.update(customEditors=self.customEditors)
+        kw.update(customEditors=self.customEditors)
         if len(self.propertyNames) > 0:
             kw.update(propertyNames=self.propertyNames)
         return kw
@@ -1465,10 +1485,10 @@ class MainPanel:
     
         yield "function(caller) {"
         yield "  var client_job = this;" 
-        yield "  // MainPanel.js_job_constructor() calls self.js_declare()"
+        #~ yield "  // MainPanel.js_job_constructor() calls self.js_declare()"
         for ln in self.js_declare():
             yield "  " + ln
-        yield "  // MainPanel.js_job_constructor() called self.js_declare()"
+        #~ yield "  // MainPanel.js_job_constructor() called self.js_declare()"
         yield "  this.window = new Ext.Window(%s);" % py2js(kw)
         # for permalink:
         yield "  this.window._permalink = %s;" % py2js(id2js(self.lh.name))
@@ -1692,7 +1712,7 @@ class DetailMainPanel(Panel,WrappingMainPanel):
             #~ yield e
             
     def subvars(self):
-        print 'DetailMainPanel.subvars()', self
+        #~ print 'DetailMainPanel.subvars()', self
         for e in MainPanel.subvars(self):
             yield e
         for e in Panel.subvars(self):
@@ -1721,7 +1741,7 @@ class DetailMainPanel(Panel,WrappingMainPanel):
         
     def js_declare(self):
         #yield "console.log(10);"
-        yield "// begin DetailMainPanel.js_declare()"
+        #~ yield "// begin DetailMainPanel.js_declare()"
         yield "this.refresh = function() { if(caller) caller.refresh(); };"
         yield "this.get_current_record = function() { return this.current_record;};"
         yield "this.get_selected = function() {"
@@ -1734,7 +1754,7 @@ class DetailMainPanel(Panel,WrappingMainPanel):
         #yield "  this.add_row_listener = function(fn,scope) {};"
         yield "  this.main_grid = undefined;"
         yield "}"
-        yield "// DetailMainPanel.js_declare() calls Panel.js_declare(self) :"
+        #~ yield "// DetailMainPanel.js_declare() calls Panel.js_declare(self) :"
         for ln in Panel.js_declare(self):
             yield ln
         yield "// DetailMainPanel.js_declare() called Panel.js_declare(self) :"
@@ -2477,10 +2497,12 @@ class BaseViewReportRequest(reports.ReportRequest):
             kw.update(quick_search=quick_search)
         offset = request.GET.get('start',None)
         if offset:
-            kw.update(offset=offset)
+            kw.update(offset=int(offset))
         limit = request.GET.get('limit',None)
         if limit:
-            kw.update(limit=limit)
+            kw.update(limit=int(limit))
+        else:
+            kw.update(limit=self.report.page_length)
         kw.update(user=request.user)
         return kw
       

@@ -99,10 +99,12 @@ class Property(models.Model):
         ct = ContentType.objects.get_for_model(model)
         lino.log.debug('properties_for_model() %s %s',model,ct)
         #~ return cls.objects.filter(only_for__in=(ct,None))
-        for o in cls.objects.filter(only_for=ct):
-            yield o
-        for o in cls.objects.filter(only_for__exact=None):
-            yield o
+        q = models.Q(only_for__exact=None) | models.Q(only_for=ct)
+        return cls.objects.filter(q)
+        #~ for o in cls.objects.filter(only_for__exact=None):
+            #~ yield o
+        #~ for o in cls.objects.filter(only_for=ct):
+            #~ yield o
         
     
 class Properties(reports.Report):
@@ -176,6 +178,9 @@ class PropValue(models.Model):
 
 class CharPropValue(PropValue):
     value = models.CharField(max_length=200)
+    
+class TextPropValue(PropValue):
+    value = models.TextField()
     
 class IntegerPropValue(PropValue):
     value = models.IntegerField()

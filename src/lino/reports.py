@@ -688,13 +688,18 @@ class ReportRequest:
             self.total_count = len(self.queryset)
         
         if offset is not None:
-            self.queryset = self.queryset[int(offset):]
+            self.queryset = self.queryset[offset:]
             self.offset = offset
             
-        if limit is None:
-            limit = self.report.page_length
+        #~ if limit is None:
+            #~ limit = self.report.page_length
+            
+        """
+        Report.page_length is not a default value for ReportRequest.limit
+        For example CSVReportRequest wants all rows.
+        """
         if limit is not None:
-            self.queryset = self.queryset[:int(limit)]
+            self.queryset = self.queryset[:limit]
             self.limit = limit
             
         self.page_length = self.report.page_length
