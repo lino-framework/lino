@@ -173,6 +173,15 @@ class DeleteSelected(Action):
             row.delete()
         context.refresh()
 
+#~ class ShowProperties(Action):
+    #~ #needs_selection = True
+    #~ label = _("Properties")
+    
+    #~ def run(self,context):
+        #~ if len(context.selected_rows) != 1:
+            #~ raise NotImplementedError()
+        #~ row = context.selected_rows[0]
+        #~ context.ui.show_properties(context,row)
     
 class CancelDialog(Action):
     label = "Cancel"

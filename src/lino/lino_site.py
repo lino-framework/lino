@@ -86,8 +86,12 @@ class LinoSite:
         #from lino import reports
         reports.setup()
         
+        from django.utils.importlib import import_module
+
+        
         from lino.ui import extjs
-        self.ui = extjs.ui
+        ui_module = import_module('lino.ui.extjs')
+        self.ui = ui_module.ui
         self.ui.setup_site(self)
         
         lino.log.debug("Registering Global Actors...")

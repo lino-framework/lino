@@ -181,18 +181,18 @@ class LayoutHandle:
         self.slave_grids = []
         self._store_fields = []
         self._buttons = []
-        self._main_class = self.ui.main_panel_class(layout)
+        self.main_class = self.ui.main_panel_class(layout)
         if hasattr(layout,"main"):
-            self._main = self.create_element(self._main_class,'main')
+            self._main = self.create_element(self.main_class,'main')
         else:
             if desc is None:
                 desc = self.layout.join_str.join(self.link.data_elems())
                 #lino.log.debug('desc for %s is %r',self.name,desc)
-                self._main = self.desc2elem(self._main_class,"main",desc)
+                self._main = self.desc2elem(self.main_class,"main",desc)
             else:
                 if not isinstance(desc,basestring):
                     raise Exception("%r is not a string" % desc)
-                self._main = self.desc2elem(self._main_class,"main",desc)
+                self._main = self.desc2elem(self.main_class,"main",desc)
         if isinstance(self.layout,RowLayout):
             assert len(self._main.elements) > 0, "%s : Grid %s has no columns" % (link.name,self.ext_name)
             self.columns = self._main.elements
@@ -233,29 +233,18 @@ class LayoutHandle:
             f.write("\n".join(self._main.debug_lines()))
             f.close()
         
-        
-    #~ def renderer(self,rr):
-        #~ return LayoutRenderer(self,rr)
-        
-    #~ def get_title(self,renderer):
-        #~ return self.link.get_title(renderer) 
-        
     def get_title(self,renderer):
         if self.layout.label is None:
             return self.link.get_title(renderer) 
         return self.link.get_title(renderer) + " - " + self.layout.label
-            
 
-        
     def walk(self):
         return self._main.walk()
-        
         
     def ext_lines(self,request):
         return self._main.ext_lines(request)
   
   
-        
     def desc2elem(self,panelclass,desc_name,desc,**kw):
         #lino.log.debug("desc2elem(panelclass,%r,%r)",desc_name,desc)
         #assert desc != 'Countries_choices2'
@@ -277,7 +266,7 @@ class LayoutHandle:
                 if len(x) > 0 and not x.startswith("#"):
                     i += 1
                     elems.append(self.desc2elem(self.ui.Panel,desc_name+'_'+str(i),x,**kw))
-            if len(elems) == 1 and panelclass != self._main_class:
+            if len(elems) == 1 and panelclass != self.main_class:
                 return elems[0]
             #return self.vbox_class(self,name,*elems,**kw)
             return panelclass(self,desc_name,True,*elems,**kw)
@@ -293,7 +282,7 @@ class LayoutHandle:
                     e = self.create_element(self.ui.Panel,x)
                     if e:
                         elems.append(e)
-            if len(elems) == 1 and panelclass != self._main_class:
+            if len(elems) == 1 and panelclass != self.main_class:
                 return elems[0]
             #return self.hbox_class(self,name,*elems,**kw)
             return panelclass(self,desc_name,False,*elems,**kw)
@@ -301,81 +290,7 @@ class LayoutHandle:
     def create_element(self,panelclass,desc_name):
         #lino.log.debug("create_element(panelclass,%r)", desc_name)
         name,kw = self.splitdesc(desc_name)
-        
-        if name == "_":
-            return self.ui.Spacer(self,name,**kw)
-            
-        de = self.link.get_data_elem(name)
-        
-        if isinstance(de,models.Field):
-            return self.create_field_element(de,**kw)
-        if isinstance(de,generic.GenericForeignKey):
-            return self.ui.VirtualFieldElement(self,name,de,**kw)
-            
-        from lino import reports
-        
-        if isinstance(de,reports.Report):
-            e = self.ui.GridElement(self,name,de.get_handle(self.ui),**kw)
-            self.slave_grids.append(e)
-            return e
-        if isinstance(de,actions.Action):
-            e = self.ui.ButtonElement(self,name,de,**kw)
-            self._buttons.append(e)
-            return e
-            
-        from lino import forms
-        
-        if isinstance(de,forms.Input):
-            e = self.ui.InputElement(self,de,**kw)
-            if not self.start_focus:
-                self.start_focus = e
-            return e
-        if callable(de):
-            return self.create_meth_element(name,de,**kw)
-            
-        if not name in ('__str__','__unicode__','name','label'):
-            value = getattr(self.layout,name,None)
-            if value is not None:
-                if isinstance(value,basestring):
-                    return self.desc2elem(panelclass,name,value,**kw)
-                if isinstance(value,StaticText):
-                    return self.ui.StaticTextElement(self,name,value)
-                if isinstance(value,PropertyGrid):
-                    return self.ui.PropertyGridElement(self,name,value)
-                raise KeyError("Cannot handle value %r in %s.%s." % (value,self.layout.name,name))
-        msg = "Unknown element %r referred in layout %s" % (name,self.layout)
-        #print "[Warning]", msg
-        raise KeyError(msg)
-        
-    #~ def create_button_element(self,name,action,**kw):
-        #~ e = self.ui.ButtonElement(self,name,action,**kw)
-        #~ self._buttons.append(e)
-        #~ return e
-          
-    def create_meth_element(self,name,meth,**kw):
-        rt = getattr(meth,'return_type',None)
-        if rt is None:
-            rt = models.TextField()
-        e = self.ui.MethodElement(self,name,meth,rt,**kw)
-        assert e.field is not None,"e.field is None for %s.%s" % (self.layout,name)
-        self._store_fields.append(e.field)
-        return e
-          
-    #~ def create_virt_element(self,name,field,**kw):
-        #~ e = self.ui.VirtualFieldElement(self,name,field,**kw)
-        #~ return e
-        
-    def field2elem(self,field,**kw):
-        # used also by lion.ui.extjs.MethodElement
-        return self._main_class.field2elem(self,field,**kw)
-        # return self.ui.field2elem(self,field,**kw)
-        
-    def create_field_element(self,field,**kw):
-        e = self.field2elem(field,**kw)
-        assert e.field is not None,"e.field is None for %s.%s" % (self.layout,name)
-        self._store_fields.append(e.field)
-        return e
-        #return FieldElement(self,field,**kw)
+        return self.ui.create_layout_element(self,panelclass,name,**kw)
         
     def splitdesc(self,picture):
         a = picture.split(":",1)

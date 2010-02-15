@@ -264,6 +264,7 @@ class Report(actors.Actor): # actions.Action): #
         self._handles = {}
         self._setup_done = False
         self._setup_doing = False
+        #~ self.actions = self.actions + [ actions.ShowProperties(), actions.DeleteSelected(), actions.InsertRow() ]
         self.actions = self.actions + [ actions.DeleteSelected(), actions.InsertRow() ]
         
         #~ if self.field is None:
@@ -569,9 +570,9 @@ class ReportHandle(layouts.DataLink):
         for lc in self.report.page_layouts:
             self.layouts.append(lh(lc,index))
             index += 1
-            
-        self.store = self.ui.Store(self)
-
+        
+        self.ui.setup_report(self)
+        
     def get_absolute_url(self,*args,**kw):
         return self.ui.get_report_url(self,*args,**kw)
         
