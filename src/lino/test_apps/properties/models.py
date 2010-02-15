@@ -1,4 +1,6 @@
 """
+Module `lino.modlib.properties`
+-------------------------------
 
   >>> CHAR = ContentType.objects.get_for_model(properties.CharPropValue)
   >>> INT = ContentType.objects.get_for_model(properties.IntegerPropValue)

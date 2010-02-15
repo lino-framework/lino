@@ -167,7 +167,7 @@ def py2js(v,**kw):
         return "[ %s ]" % ", ".join([py2js(x) for x in v])
     if isinstance(v,dict): # ) is types.DictType:
         return "{ %s }" % ", ".join([
-            "%s: %s" % (k,py2js(v)) for k,v in v.items()])
+            "%s: %s" % (py2js(k),py2js(v)) for k,v in v.items()])
     if isinstance(v,bool): # types.BooleanType:
         return str(v).lower()
     if isinstance(v, (int, long)):
@@ -779,7 +779,47 @@ class StaticTextElement(LayoutElement):
         #kw.update(xtype=self.xtype)
         kw.update(html=self.text.text)
         return kw
-        
+
+class PropertyGridElement(LayoutElement):
+    #declare_type = DECLARE_INLINE
+    declare_type = DECLARE_THIS
+    #declare_type = DECLARE_VAR
+    xtype = 'propertygrid'
+    #value_template = 'new Ext.grid.PropertyGrid(%s)'
+    ext_suffix = '_pgrid'
+
+    
+    def __init__(self,lh,name,pgrid,**kw):
+        LayoutElement.__init__(self,lh,name,**kw)
+        self.pgrid = pgrid
+        # fill the grid rows
+        self.source = {}
+        #self.customEditors = {}
+        self.propertyNames = {}
+        from lino.modlib.properties.models import Property
+        for p in Property.properties_for_model(self.lh.link.report.model):
+            pvm = p.value_type.model_class()
+            default = pvm._meta.get_field('value').default
+            if default is models.NOT_PROVIDED:
+                default = ''
+            elif callable(default):
+                default = default()
+            self.source[p.name] = default 
+            if p.label:
+                self.propertyNames[p.name] = p.label
+    
+
+    def ext_options(self,**kw):
+        kw = LayoutElement.ext_options(self,**kw)
+        #kw.update(title='Properties')
+        kw.update(source=self.source,
+          autoHeight=True)
+        #kw.update(customEditors=self.customEditors)
+        if len(self.propertyNames) > 0:
+            kw.update(propertyNames=self.propertyNames)
+        return kw
+
+
 class Spacer(LayoutElement):
     declare_type = DECLARE_INLINE
     #xtype = 'label'
@@ -1425,9 +1465,10 @@ class MainPanel:
     
         yield "function(caller) {"
         yield "  var client_job = this;" 
+        yield "  // MainPanel.js_job_constructor() calls self.js_declare()"
         for ln in self.js_declare():
             yield "  " + ln
-            
+        yield "  // MainPanel.js_job_constructor() called self.js_declare()"
         yield "  this.window = new Ext.Window(%s);" % py2js(kw)
         # for permalink:
         yield "  this.window._permalink = %s;" % py2js(id2js(self.lh.name))
@@ -1633,7 +1674,6 @@ class GridMainPanel(GridElement,MainPanel):
 
 
 class DetailMainPanel(Panel,WrappingMainPanel):
-#~ class DetailMainPanel(DataElementMixin,Panel,WrappingMainPanel):
     declare_type = DECLARE_THIS
     value_template = "new Ext.form.FormPanel(%s)"
     def __init__(self,lh,name,vertical,*elements,**kw):
@@ -1652,6 +1692,7 @@ class DetailMainPanel(Panel,WrappingMainPanel):
             #~ yield e
             
     def subvars(self):
+        print 'DetailMainPanel.subvars()', self
         for e in MainPanel.subvars(self):
             yield e
         for e in Panel.subvars(self):
@@ -1680,6 +1721,7 @@ class DetailMainPanel(Panel,WrappingMainPanel):
         
     def js_declare(self):
         #yield "console.log(10);"
+        yield "// begin DetailMainPanel.js_declare()"
         yield "this.refresh = function() { if(caller) caller.refresh(); };"
         yield "this.get_current_record = function() { return this.current_record;};"
         yield "this.get_selected = function() {"
@@ -1692,8 +1734,10 @@ class DetailMainPanel(Panel,WrappingMainPanel):
         #yield "  this.add_row_listener = function(fn,scope) {};"
         yield "  this.main_grid = undefined;"
         yield "}"
+        yield "// DetailMainPanel.js_declare() calls Panel.js_declare(self) :"
         for ln in Panel.js_declare(self):
             yield ln
+        yield "// DetailMainPanel.js_declare() called Panel.js_declare(self) :"
         #yield "console.log(11);"
         #yield "mastergrid = Ext.getCmp()"
         #yield "var slaves = [ %s ];" % ','.join([slave.rh.store.as_ext() for slave in self.lh.slave_grids])
@@ -1771,6 +1815,8 @@ class DetailMainPanel(Panel,WrappingMainPanel):
         for btn in buttons:
             yield "%s.addButton(%s);" % (self.as_ext(),py2js(btn))
     
+        yield "// end DetailMainPanel.js_declare()"
+        
     def js_run(self):
         yield "if(this.main_grid) {"
         yield "  var sels = this.main_grid.getSelectionModel().getSelections()"
@@ -2784,6 +2830,7 @@ class ExtUI(base.UI):
         self.Store = Store
         self.Spacer = Spacer
         self.StaticTextElement = StaticTextElement
+        self.PropertyGridElement = PropertyGridElement
         #self.ActionContext = ActionContext
         self.InputElement = InputElement
         self.window_configs = {}

@@ -147,8 +147,9 @@ class FormLayout(Layout):
 class StaticText:
     def __init__(self,text):
           self.text = text
-    def render(self,row):
-        return self.text
+
+class PropertyGrid:
+    pass
 
 class LayoutHandle:
     """
@@ -284,7 +285,12 @@ class LayoutHandle:
             elems = []
             for x in desc.split():
                 if not x.startswith("#"):
-                    e = self.create_element(panelclass,x)
+                    """
+                    20100214 dsbe.PersonDetail hatte 2 MainPanels, 
+                    weil PageLayout kein einzeiliges (horizontales) `main` vertrug
+                    """
+                    #~ e = self.create_element(panelclass,x) 
+                    e = self.create_element(self.ui.Panel,x)
                     if e:
                         elems.append(e)
             if len(elems) == 1 and panelclass != self._main_class:
@@ -334,6 +340,8 @@ class LayoutHandle:
                     return self.desc2elem(panelclass,name,value,**kw)
                 if isinstance(value,StaticText):
                     return self.ui.StaticTextElement(self,name,value)
+                if isinstance(value,PropertyGrid):
+                    return self.ui.PropertyGridElement(self,name,value)
                 raise KeyError("Cannot handle value %r in %s.%s." % (value,self.layout.name,name))
         msg = "Unknown element %r referred in layout %s" % (name,self.layout)
         #print "[Warning]", msg

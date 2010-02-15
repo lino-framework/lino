@@ -19,6 +19,7 @@ from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
+import lino
 from lino import reports
 from lino import layouts
 from lino.utils import perms
@@ -93,6 +94,17 @@ class Property(models.Model):
             return getattr(instance,pvm.__name__.lower())
         return instance
                 
+    @classmethod
+    def properties_for_model(cls,model):
+        ct = ContentType.objects.get_for_model(model)
+        lino.log.debug('properties_for_model() %s %s',model,ct)
+        #~ return cls.objects.filter(only_for__in=(ct,None))
+        for o in cls.objects.filter(only_for=ct):
+            yield o
+        for o in cls.objects.filter(only_for__exact=None):
+            yield o
+        
+    
 class Properties(reports.Report):
     model = Property
     columnNames = 'name *' #label only_for value_type'
@@ -192,3 +204,4 @@ def set_value_for(owner,**kw):
             print Property.objects.all()
             raise Exception("There's no property named %r" % k)
         p.set_value_for(owner,v)
+        
