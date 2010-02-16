@@ -21,9 +21,6 @@ class UI:
     def get_urls():
         pass
         
-    def setup_site(self,lino_site):
-        pass
-    
     def field2elem(self,lui,field,**kw):
         pass
         
@@ -47,26 +44,13 @@ class UI:
             h.setup()
         return h
         
+    def setup_site(self,lino_site):
+        pass
+    
+    def setup_report(self,rh):
+        pass
+        
+    def setup_form(self,fh):
+        pass
         
         
-    def old_get_form_handle(self,frm):
-        frm.setup()
-        h = frm._handles.get(self,None)
-        if h is None:
-            h = forms.FormHandle(self,frm)
-            frm._handles[self] = h
-            h.setup()
-        return h
-        
-    def old_get_dialog_handle(self,layout):
-        assert isinstance(layout,layouts.DialogLayout)
-        h = layout._handles.get(self,None)
-        if h is None:
-            lnk = layouts.DialogLink(self,layout)
-            h = layouts.LayoutHandle(lnk,layout,1)
-            layout._handles[self] = h
-            #h.setup()
-        return h
-        
-
-

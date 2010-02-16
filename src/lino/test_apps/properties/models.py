@@ -2,32 +2,29 @@
 Module `lino.modlib.properties`
 -------------------------------
 
-  >>> CHAR = ContentType.objects.get_for_model(properties.CharPropValue)
-  >>> INT = ContentType.objects.get_for_model(properties.IntegerPropValue)
-  >>> BOOL = ContentType.objects.get_for_model(properties.BooleanPropValue)
-  
 Imagine that we are doing a study about alimentary habits. We observe a 
 defined series of properties on the people who participate in our study.
-Here are the properties that we are going to observe:
+Here are the properties that we are going to observe::
 
-  >>> weight = properties.Property(name='weight',value_type=INT)
+
+  >>> weight = properties.INT.create_property(name='weight')
   >>> weight.save()
   
-  >>> married = properties.Property(name='married',value_type=BOOL)
+  >>> married = properties.BOOL.create_property(name='married')
   >>> married.save()
   
-  >>> favdish = properties.Property(name='favdish',value_type=CHAR,label='favorite dish')
+  >>> favdish = properties.CHAR.create_property(name='favdish',label='favorite dish')
   >>> favdish.save()
   >>> favdish.create_value("Cookies")
-  <CharPropValue: One choice for 'favorite dish' is Cookies>
+  <CHAR: One choice for 'favorite dish' is Cookies>
   >>> favdish.create_value("Fish")
-  <CharPropValue: One choice for 'favorite dish' is Fish>
+  <CHAR: One choice for 'favorite dish' is Fish>
   >>> favdish.create_value("Meat")
-  <CharPropValue: One choice for 'favorite dish' is Meat>
+  <CHAR: One choice for 'favorite dish' is Meat>
   >>> favdish.create_value("Vegetables")
-  <CharPropValue: One choice for 'favorite dish' is Vegetables>
+  <CHAR: One choice for 'favorite dish' is Vegetables>
   
-Now we have setup the properties. Let's have a look at this metadata:
+Now we have setup the properties. Let's have a look at this metadata::
   
   >>> print [v.value for v in favdish.choices_list()]
   [u'Cookies', u'Fish', u'Meat', u'Vegetables']
@@ -35,9 +32,8 @@ Now we have setup the properties. Let's have a look at this metadata:
   >>> ["%s (%s)" % (p.name,','.join([pv.value for pv in p.choices_list()])) for p in qs]
   [u'weight ()', u'married ()', u'favdish (Cookies,Fish,Meat,Vegetables)']
   
-  
-  
-Here are the people we are going to analyze:  
+ 
+Here are the people we are going to analyze::
 
   >>> chris = Person(name='Chris')
   >>> chris.save()

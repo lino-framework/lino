@@ -93,6 +93,9 @@ class Actor(object):
             return self.default_action
             #action_name = self.default_action
         return getattr(self,action_name,None)
+        
+    def setup(self):
+        pass
 
 
 def unused_get_actor(app_label,name):

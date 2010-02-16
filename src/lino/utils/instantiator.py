@@ -11,12 +11,16 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-from django.db import models
+import decimal
 import datetime
 from dateutil import parser as dateparser
-import decimal
+
+from django.db import models
+from django.contrib.contenttypes.models import ContentType
 
 import lino
+from lino.modlib.tools import resolve_model
+
 
 def i2d(i):
     d = dateparser.parse(str(i))
@@ -35,18 +39,6 @@ class Converter:
     def convert(self,**kw):
         return kw
       
-
-#~ def parse_date(value):
-    #~ if len(value) == 8:
-        #~ year = int(value[:4])
-        #~ month = int(value[4:6])
-        #~ day = int(value[6:8])
-    #~ elif len(value) == 10:
-        #~ year,month,day = map(int,value.split('-'))
-    #~ else:
-        #~ raise ValueError("Invalid value %r for date." % value)
-    #~ return datetime.date(year,month,day)
-
 
 class DateConverter(Converter):
     def convert(self,**kw):
@@ -74,13 +66,16 @@ class ForeignKeyConverter(Converter):
         if value is not None:
             model = self.field.rel.to
             if not isinstance(value,model):
-                lookup_kw = {self.lookup_field: value}
-                try:
-                    p = model.objects.get(**lookup_kw)
-                except model.DoesNotExist,e:
-                    raise DataError("%s.objects.get(**%r) : %s" % (
-                          model.__name__,lookup_kw,e))
-                kw[self.field.name] = p
+                if model is ContentType:
+                    value = ContentType.objects.get_for_model(resolve_model(value))
+                else:
+                    lookup_kw = {self.lookup_field: value}
+                    try:
+                        value = model.objects.get(**lookup_kw)
+                    except model.DoesNotExist,e:
+                        raise DataError("%s.objects.get(**%r) : %s" % (
+                              model.__name__,lookup_kw,e))
+            kw[self.field.name] = value
         return kw
 
 class ManyToManyConverter(Converter):
@@ -105,8 +100,6 @@ class ManyToManyConverter(Converter):
         return kw
 
       
-from lino.modlib.tools import resolve_model
-
 class Instantiator:
     def __init__(self,model,fieldnames=None,
           converter_classes={},**kw):
@@ -136,9 +129,6 @@ class Instantiator:
         #for f in self.fields:
         for f in self.model._meta.fields + self.model._meta.many_to_many:
             cv = None
-            #f = getattr(model_class,name)
-            #print repr(f)
-            #print f.name
             cvc = converter_classes.get(f.name,None)
             if cvc is not None:
                 cv = cvc(f)

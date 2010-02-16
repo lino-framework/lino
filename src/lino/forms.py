@@ -49,9 +49,6 @@ class Form(actors.Actor): # actions.Action):
     def get_handle(self,ui):
         return ui.get_form_handle(self)
         
-    def setup(self):
-        pass
-
 
 class FormHandle(layouts.DataLink):
     content_type = None
@@ -81,6 +78,7 @@ class FormHandle(layouts.DataLink):
                 
     def setup(self):
         self.lh = layouts.LayoutHandle(self,self.form.layout(),1)
+        self.ui.setup_form(self)
 
     def get_title(self,context):
         return self.form.title or self.form.layout.label

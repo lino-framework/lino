@@ -27,7 +27,7 @@ from lino.utils.jsgen import py2js, Variable, Component, id2js, js_code
 
 from lino.ui.extjs import ext_requests
 
-from lino.modlib.properties.models import Property, CharPropValue
+from lino.modlib.properties import models as properties # import Property, CharPropValue
 
 EXT_CHAR_WIDTH = 9
 EXT_CHAR_HEIGHT = 22
@@ -46,22 +46,6 @@ class ColumnModel(Component):
         self.grid = grid
         Component.__init__(self,grid.name)
         self.columns = [GridColumn(e) for e in self.grid.elements]
-        #grid.layout.report.add_variable(self)
-
-        #Element.__init__(self,layout,report.name+"_cols"+str(layout.index))
-        #Element.__init__(self,layout,report.name+"_cols")
-        #self.report = report
-        
-        #~ columns = []
-        #~ for e in layout.walk():
-            #~ if isinstance(e,FieldElement):
-                #~ columns.append(e)
-        #~ self.columns = columns
-        
-    #~ def __init__(self,layout,report):
-        #~ self.layout = layout # the owning layout
-        #~ self.report = report
-        #~ self.name = report.name
         
     def subvars(self):
         for col in self.columns:
@@ -319,15 +303,17 @@ class PropertiesWindow(Component):
     #ext_suffix = "_props"
     value_template = "new Ext.Window(%s)"
     
-    def __init__(self,rh):
-        self.rh = rh
+    def __init__(self,ui,model,props):
+        self.ui = ui
+        self.model = model
         Component.__init__(self,'props')
         self.source = {}
         self.customEditors = {}
         self.propertyNames = {}
-        for p in Property.properties_for_model(self.rh.report.model):
+        for p in props:
             # PropValue model
-            pvm = p.value_type.model_class() 
+            pvm = p.value_type.model_class()
+            assert pvm is not None, ('%s.value_type.model_class() returned None'%p)
             # PropValue field
             pvf = pvm._meta.get_field('value') 
             default = pvf.default
@@ -339,7 +325,7 @@ class PropertiesWindow(Component):
             if p.label:
                 self.propertyNames[p.name] = p.label
                 
-            if pvm is CharPropValue:
+            if pvm is properties.CHAR:
                 choices = [unicode(pv.value) for pv in pvm.objects.filter(prop=p,owner_id__isnull=True)]
                 if choices:
                     editor = ComboBox(store=choices,mode='local',selectOnFocus=True)
@@ -353,59 +339,63 @@ class PropertiesWindow(Component):
         grid.update(source=self.source,
           autoHeight=True)
         grid.update(customEditors=self.customEditors)
+        url = self.ui.get_props_url(self.model)
+        listeners = dict(
+          afteredit=js_code('Lino.grid_afteredit(this,"%s")' % url))
+        grid.update(listeners=listeners)
         if len(self.propertyNames) > 0:
             grid.update(propertyNames=self.propertyNames)
         kw.update(layout='fit',items=grid)
         return kw
     
 
-class PropertyGridElement(LayoutElement):
-    #declare_type = jsgen.DECLARE_INLINE
-    declare_type = jsgen.DECLARE_THIS
-    #declare_type = jsgen.DECLARE_VAR
-    xtype = 'propertygrid'
-    #value_template = 'new Ext.grid.PropertyGrid(%s)'
-    ext_suffix = '_pgrid'
+#~ class PropertyGridElement(LayoutElement):
+    #~ #declare_type = jsgen.DECLARE_INLINE
+    #~ declare_type = jsgen.DECLARE_THIS
+    #~ #declare_type = jsgen.DECLARE_VAR
+    #~ xtype = 'propertygrid'
+    #~ #value_template = 'new Ext.grid.PropertyGrid(%s)'
+    #~ ext_suffix = '_pgrid'
 
     
-    def __init__(self,lh,name,pgrid,**kw):
-        LayoutElement.__init__(self,lh,name,**kw)
-        self.pgrid = pgrid
-        # fill the grid rows
-        self.source = {}
-        self.customEditors = {}
-        self.propertyNames = {}
-        for p in Property.properties_for_model(self.lh.link.report.model):
-            # PropValue model
-            pvm = p.value_type.model_class() 
-            # PropValue field
-            pvf = pvm._meta.get_field('value') 
-            default = pvf.default
-            if default is models.NOT_PROVIDED:
-                default = ''
-            elif callable(default):
-                default = default()
-            self.source[p.name] = default 
-            if p.label:
-                self.propertyNames[p.name] = p.label
+    #~ def __init__(self,lh,name,pgrid,**kw):
+        #~ LayoutElement.__init__(self,lh,name,**kw)
+        #~ self.pgrid = pgrid
+        #~ # fill the grid rows
+        #~ self.source = {}
+        #~ self.customEditors = {}
+        #~ self.propertyNames = {}
+        #~ for p in Property.properties_for_model(self.lh.link.report.model):
+            #~ # PropValue model
+            #~ pvm = p.value_type.model_class() 
+            #~ # PropValue field
+            #~ pvf = pvm._meta.get_field('value') 
+            #~ default = pvf.default
+            #~ if default is models.NOT_PROVIDED:
+                #~ default = ''
+            #~ elif callable(default):
+                #~ default = default()
+            #~ self.source[p.name] = default 
+            #~ if p.label:
+                #~ self.propertyNames[p.name] = p.label
                 
-            if pvm is CharPropValue:
-                choices = [unicode(pv.value) for pv in pvm.objects.filter(prop=p,owner_id__isnull=True)]
-                if choices:
-                    editor = ComboBox(store=choices,mode='local',selectOnFocus=True)
-                    editor = 'new Ext.grid.GridEditor(%s)' % py2js(editor)
-                    self.customEditors[p.name] = js_code(editor)
+            #~ if pvm is CharPropValue:
+                #~ choices = [unicode(pv.value) for pv in pvm.objects.filter(prop=p,owner_id__isnull=True)]
+                #~ if choices:
+                    #~ editor = ComboBox(store=choices,mode='local',selectOnFocus=True)
+                    #~ editor = 'new Ext.grid.GridEditor(%s)' % py2js(editor)
+                    #~ self.customEditors[p.name] = js_code(editor)
     
 
-    def ext_options(self,**kw):
-        kw = LayoutElement.ext_options(self,**kw)
-        #kw.update(title='Properties')
-        kw.update(source=self.source,
-          autoHeight=True)
-        kw.update(customEditors=self.customEditors)
-        if len(self.propertyNames) > 0:
-            kw.update(propertyNames=self.propertyNames)
-        return kw
+    #~ def ext_options(self,**kw):
+        #~ kw = LayoutElement.ext_options(self,**kw)
+        #~ #kw.update(title='Properties')
+        #~ kw.update(source=self.source,
+          #~ autoHeight=True)
+        #~ kw.update(customEditors=self.customEditors)
+        #~ if len(self.propertyNames) > 0:
+            #~ kw.update(propertyNames=self.propertyNames)
+        #~ return kw
 
 
 class Spacer(LayoutElement):
@@ -1066,10 +1056,10 @@ class MainPanel(Reaction):
                 keys.append(dict(
                   handler=h,
                   key=a.key.keycode,ctrl=a.key.ctrl,alt=a.key.alt,shift=a.key.shift))
-        
-        #~ h = js_code("function(btn,state) {Lino.toggle_props(this)}")
-        h = js_code("Lino.toggle_props(this)")
-        buttons.append(dict(text=_('Properties'),toggleHandler=h,enableToggle=True))
+        if dl.props is not None:
+            #~ h = js_code("function(btn,state) {Lino.toggle_props(this)}")
+            h = js_code("Lino.toggle_props(this)")
+            buttons.append(dict(text=_('Properties'),toggleHandler=h,enableToggle=True))
         if self.__class__ is GridMainPanel:
             details = dl.get_details()
             if len(details):
@@ -1145,7 +1135,8 @@ class GridMainPanel(GridElement,MainPanel):
         for e in MainPanel.subvars(self):
             yield e
         yield self.pager
-        yield self.lh.link.props
+        if self.lh.link.props is not None:
+            yield self.lh.link.props
         
     def get_datalink(self):
         return self.rh
@@ -1174,10 +1165,8 @@ class GridMainPanel(GridElement,MainPanel):
         self.setup()
         for ln in Container.js_declare(self):
             yield ln
-        yield "%s.on('afteredit', Lino.grid_afteredit(this,'%s','%s'));" % (
-          self.as_ext(),
-          self.rh.get_absolute_url(grid_afteredit=True),
-          self.rh.store.pk.name)
+        yield "%s.on('afteredit', Lino.grid_afteredit(this,'%s'));" % (
+          self.as_ext(),self.rh.get_absolute_url(grid_afteredit=True))
         yield "%s.on('cellcontextmenu', Lino.cell_context_menu(this));" % self.as_ext()
         # recalculate page size when size changes
         yield "%s.on('resize', function(cmp,aw,ah,rw,rh) {" % self.as_ext()

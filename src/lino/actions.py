@@ -73,6 +73,7 @@ class Action: # (actors.Actor):
         raise NotImplementedError
         
 class ActionContext:
+    selected_rows = []
     def __init__(self,ui,actor,action_name,*args,**kw):
         self.response = dict(success=True,must_reload=False,msg=None,stop_caller=False)
         self.ui = ui
@@ -144,6 +145,109 @@ class ActionContext:
     def js_eval(self,js):
         self.response.update(js_eval=js)
 
+
+class Dialog:
+    """
+    Replacement for ActionContext. 
+    A Dialog is a conversation between client and server, initiated by the client. Server answers
+    """
+    selected_rows = []
+    over = False
+    redirect = None
+    alert_msg = None
+    confirm_msg = None
+    refresh_menu = False
+    refresh_caller = False
+    stop_caller = False
+    exec_js = None
+    
+    def __init__(self,ui,actor,action_name,*args,**kw):
+        self.ui = ui
+        self.actor = actor
+        self.action = actor.get_action(action_name)
+        self._kw = kw
+        self._args = args
+        if not isinstance(self.action,Action):
+            raise Exception("%s.get_action(%r) returned %r which is not an Action." % (actor,action_name,self.action))
+        
+        self.dialog_id = hash(self)
+        self.running = None
+            
+        
+    def start(self):
+        self.dialog_id = ui.start_dialog(self)
+        if self.action.needs_selection and len(self.selected_rows) == 0:
+            yield self.console_msg(_("No selection. Nothing to do.").over()
+        else:
+            lino.log.debug('Dialog.run() : %s.%s(%r,%r)',self.actor,self.action.name,self._args,self._kw)
+            self.running = self.action.run_in_dlg(self,*self._args,**self._kw)
+            yield self.running.next()
+        return self.response
+        
+    def get_response(self):
+        return dict(
+          over=self.over,
+          redirect=self.redirect,
+          alert_msg=self.alert_msg,
+          confirm_msg=self.confirm_msg,
+          refresh_menu=self.refresh_menu,
+          refresh_caller=self.refresh_caller,
+          stop_caller=self.stop_caller,
+          exec_js=self.exec_js,
+          dialog_id = self.dialog_id,
+        )
+      
+        
+    """
+    Public Dialog API
+    """
+        
+    def get_user(self):
+        raise NotImplementedError()
+        
+    def console_msg(self,msg):
+        self.console_msg = msg
+        return self
+
+    def refresh_caller(self):
+        self.refresh_caller=True
+        return self
+        
+    def stop_caller(self):
+        self.stop_caller=True
+        return self
+        
+    def refresh_menu(self):
+        self.refresh_menu = True
+        return self
+        
+    def over(self):
+        self.over = True
+        return self
+        
+    def exec_js(self,js):
+        self.exec_js = js
+        return self
+        
+    def redirect(self,url):
+        self.redirect = url
+        return self
+        
+    def cancel(self,msg=None):
+        if msg is not None:
+              self.alert(msg)
+        self.over()
+        return self
+        
+    def confirm(self,msg,**kw):
+        self.confirm_msg = msg
+        return self
+        
+    def alert(self,msg,**kw):
+        self.alert_msg = msg
+        return self
+        
+
 class InsertRow(Action):
     label = _("Insert")
     key = INSERT # (ctrl=True)
@@ -156,6 +260,14 @@ class InsertRow(Action):
         row = rr.create_instance()
         row.save()
         context.refresh()
+        
+    def run_in_dlg(self,dlg):
+        yield dlg.confirm(_("Insert new row. Are you sure?"))
+        rr = context.get_report_request()
+        row = rr.create_instance()
+        row.save()
+        yield dlg.refresh()
+        
         
   
 class DeleteSelected(Action):
@@ -172,6 +284,16 @@ class DeleteSelected(Action):
             #print "DELETE:", row
             row.delete()
         context.refresh()
+        
+    def run_in_dlg(self,dlg):
+        if len(context.selected_rows) == 1:
+            yield dlg.confirm(_("Delete row %s. Are you sure?") % dlg.selected_rows[0])
+        else:
+            yield dlg.confirm(_("Delete %d rows. Are you sure?") % len(dlg.selected_rows))
+        for row in dlg.selected_rows:
+            #print "DELETE:", row
+            row.delete()
+        yield dlg.refresh().over()
 
 #~ class ShowProperties(Action):
     #~ #needs_selection = True
@@ -189,6 +311,9 @@ class CancelDialog(Action):
     
     def run(self,context):
         context.cancel()
+        
+    def run_in_dlg(self,dlg):
+        yield dlg.cancel()
 
 class OK(Action):
     needs_validation = True
@@ -197,12 +322,21 @@ class OK(Action):
 
     def run(self,context):
         context.done()
+    def run_in_dlg(self,dlg):
+        yield dlg.done()
+
 
 
 class RunCommand(Action):
   
     def run(self,context,*args,**kw):
         context.actor.run(context,*args,**kw)
+        
+    def run_in_dlg(self,dlg):
+        return dlg.actor.run_in_dlg(dlg)
+        #~ for x in dlg.actor.run_in_dlg(dlg,*args,**kw):
+            #~ yield x
+        #~ yield dlg.done()
 
 class Command(actors.Actor):
     default_action = RunCommand()
@@ -210,4 +344,8 @@ class Command(actors.Actor):
     def run(self,context):
         # override this in subclasses
         context.done()
+        
+    def run_in_dlg(self,dlg):
+        # override this in subclasses
+        yield dlg.done()
       

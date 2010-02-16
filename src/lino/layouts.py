@@ -40,7 +40,7 @@ class DataLink:
 
     def try_get_virt(self,name):
         return None
-
+        
     def get_absolute_url(self,*args,**kw):
         raise NotImplementedError
 
@@ -148,8 +148,8 @@ class StaticText:
     def __init__(self,text):
           self.text = text
 
-class PropertyGrid:
-    pass
+#~ class PropertyGrid:
+    #~ pass
 
 class LayoutHandle:
     """

@@ -605,6 +605,7 @@ class ReportHandle(layouts.DataLink):
     def get_slaves(self):
         return [ sl.get_handle(self.ui) for sl in self.report._slaves ]
             
+
         
           
           

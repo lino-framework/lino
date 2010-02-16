@@ -126,7 +126,12 @@ class Properties(reports.Report):
     #~ model = PropChoice
 
 class PropValue(models.Model):
-    "Note: PropValue instances with owner None = possible choices"
+    """
+    Although PropValue is not abstract, you may instantiate only subclasses that define a value field.
+    
+    PropValue instances with owner None are used to store choices for this property.
+    
+    """
     owner_type = models.ForeignKey(ContentType,blank=True,null=True)
     owner_id = models.PositiveIntegerField(blank=True,null=True)
     owner = generic.GenericForeignKey('owner_type', 'owner_id')
@@ -137,6 +142,7 @@ class PropValue(models.Model):
         #~ abstract = True
     
     def save(self,*args,**kw):
+        assert self.__class__ is not PropValue
         child = self.prop.get_child(self)
         self.value_text = unicode(child.value)
         models.Model.save(self,*args,**kw)
@@ -176,16 +182,26 @@ class PropValue(models.Model):
     def value_choices(self,recipient):
         return recipient.prop.propchoice_set.all(owner__exact=None)
 
-class CharPropValue(PropValue):
+    @classmethod
+    def create_property(cls,**kw):
+        kw.update(value_type=ContentType.objects.get_for_model(cls))
+        only_for = kw.get('only_for',None)
+        if only_for is not None:
+            if not isinstance(only_for,ContentType):
+                only_for = resolve_model(only_for)
+                kw.update(only_for=ContentType.objects.get_for_model(only_for))
+        return Property(**kw)
+        
+class CHAR(PropValue):
     value = models.CharField(max_length=200)
     
-class TextPropValue(PropValue):
+class TEXT(PropValue):
     value = models.TextField()
     
-class IntegerPropValue(PropValue):
+class INT(PropValue):
     value = models.IntegerField()
 
-class BooleanPropValue(PropValue):
+class BOOL(PropValue):
     value = models.BooleanField()
 
 

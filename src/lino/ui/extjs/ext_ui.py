@@ -32,7 +32,7 @@ from lino.utils import actors
 from lino.utils import menus
 from lino.utils.jsgen import py2js, js_code, id2js
 from lino.ui.extjs import ext_elems, ext_requests, ext_store
-
+from lino.modlib.properties.models import Property
 
 from django.conf.urls.defaults import patterns, url, include
 
@@ -120,6 +120,10 @@ def act_view(request,app_label=None,actor=None,action=None,**kw):
     context.run()
     return json_response(context.response)
 
+def props_view(request,app_label=None,model_name=None,**kw):
+    model = resolve_model(app_label+'.'+model_name)
+    raise NotImplementedError
+    
 
 def choices_view(request,app_label=None,rptname=None,fldname=None,**kw):
     rpt = actors.get_actor2(app_label,rptname)
@@ -312,7 +316,7 @@ Lino.form_submit = function (job,url,store,pkname) {
 };
 
 
-Lino.grid_afteredit = function (caller,url,pk) {
+Lino.grid_afteredit = function (caller,url) {
   return function(e) {
     /*
     e.grid - This grid
@@ -410,8 +414,49 @@ Lino.do_action = function(caller,url,name,params) {
   doit(0);
 };
 
+Lino.do_dialog = function(caller,url,params) {
+  var doit = function(dialog_step) {
+    params['dialog_step'] = dialog_step;
+    console.log('Lino.do_dialog()',url,params);
+    Ext.Ajax.request({
+      waitMsg: 'Please wait...',
+      url: url,
+      params: params, 
+      success: function(response){
+        var result = Ext.decode(response.responseText);
+        if(result.success) {
+          params['dialog_step'] = dialog_step;
+          if (result.msg) Ext.MessageBox.alert('Success',result.msg);
+          if (result.call) params['call_result'] = result.call(caller);
+          if (result.must_reload && caller) caller.refresh();
+          // Lino.last_result = result;
+        } else {
+          if (result.msg) Ext.MessageBox.alert('Action failed',result.msg);
+          if(result.confirm) Ext.Msg.show({
+            title: 'Confirmation',
+            msg: result.confirm,
+            buttons: Ext.Msg.YESNOCANCEL,
+            fn: function(btn) {
+              if (btn == 'yes') {
+                  // console.log(btn);
+                  doit(confirmed+1);
+              }
+            }
+          })
+        }
+        if (result.stop_caller && caller) caller.stop();
+        if (result.refresh_menu) Lino.load_main_menu();
+      },
+      failure: function(response){
+        // console.log(response);
+        Ext.MessageBox.alert('Error','Lino.do_action() could not connect to the server.');
+      }
+    });
+  };
+  doit(0);
+};
+
 Lino.grid_action = function(caller,name,url) {
-  // console.log("grid_action()",caller,name,url);
   return function(event) {
     Lino.do_action(caller,url,name,{selected:caller.get_selected()});
   };
@@ -880,8 +925,8 @@ class ExtUI(base.UI):
                     return lh.desc2elem(panelclass,name,value,**kw)
                 if isinstance(value,layouts.StaticText):
                     return ext_elems.StaticTextElement(lh,name,value)
-                if isinstance(value,layouts.PropertyGrid):
-                    return ext_elems.PropertyGridElement(lh,name,value)
+                #~ if isinstance(value,layouts.PropertyGrid):
+                    #~ return ext_elems.PropertyGridElement(lh,name,value)
                 raise KeyError("Cannot handle value %r in %s.%s." % (value,lh.layout.name,name))
         msg = "Unknown element %r referred in layout %s" % (name,lh.layout)
         #print "[Warning]", msg
@@ -965,10 +1010,26 @@ class ExtUI(base.UI):
             (r'^form/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', act_view),
             (r'^form/(?P<app_label>\w+)/(?P<actor>\w+)$', act_view),
             (r'^action/(?P<app_label>\w+)/(?P<actor>\w+)$', act_view),
+            (r'^dialog/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.dialog_view),
+            (r'^dialog/(?P<app_label>\w+)/(?P<actor>\w+)$', self.dialog_view),
             (r'^choices/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<fldname>\w+)$', choices_view),
             (r'^save_win/(?P<name>\w+)$', save_win_view),
             (r'^permalink_do/(?P<name>\w+)$', permalink_do_view),
+            (r'^props/(?P<app_label>\w+)/(?P<model_name>\w+)$', props_view),
         )
+        
+    def dialog_view(self,request,app_label=None,actor=None,action=None,**kw):
+        dialog_id = request.POST.get('dialog_id',None)
+        if dialog_id is None:
+            actor = actors.get_actor2(app_label,actor)
+            dlg = ext_requests.Dialog(request,self,actor,action)
+            dlg.start()
+            return json_response(dlg.get_response())
+        else:
+            context.run()
+        return json_response(context.response)
+
+        
 
     def get_action_url(self,a,**kw):
         url = "/action/" + a.app_label + "/" + a.name 
@@ -988,6 +1049,9 @@ class ExtUI(base.UI):
         
     def get_choices_url(self,fke,**kw):
         return build_url("/choices",fke.lh.link.report.app_label,fke.lh.link.report.name,fke.field.name,**kw)
+        
+    def get_props_url(self,model,**kw):
+        return build_url('/props',model._meta.app_label)
         
     def get_report_url(self,rh,master_instance=None,
             submit=False,grid_afteredit=False,grid_action=None,run=False,csv=False,**kw):
@@ -1015,6 +1079,8 @@ class ExtUI(base.UI):
         if len(kw):
             url += "?" + urlencode(kw)
         return url
+        
+        
         
     def window_options(self,lh,**kw):
         name = id2js(lh.name)
@@ -1089,7 +1155,13 @@ class ExtUI(base.UI):
         
     def setup_report(self,rh):
         rh.store = ext_store.Store(rh)
-        rh.props = ext_elems.PropertiesWindow(rh)
+        props = Property.properties_for_model(rh.report.model)
+        if props.count() == 0:
+            rh.props = None
+        else:
+            rh.props = ext_elems.PropertiesWindow(self,rh.report.model,props)
 
+    def setup_form(self,fh):
+        fh.props = None
 
 ui = ExtUI()

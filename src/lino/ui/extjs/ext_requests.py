@@ -41,7 +41,7 @@ def authenticated_user(user):
     return user
         
       
-class ActionContext(actions.ActionContext):
+class old_ActionContext(actions.ActionContext):
     def __init__(self,request,*args,**kw):
         actions.ActionContext.__init__(self,*args,**kw)
         self.request = request
@@ -57,7 +57,7 @@ class ActionContext(actions.ActionContext):
     def get_report_request(self):
         raise NotImplementedError()
         
-class GridActionContext(ActionContext):
+class old_GridActionContext(ActionContext):
     def __init__(self,request,*args,**kw):
         ActionContext.__init__(self,request,*args,**kw)
         assert isinstance(self.actor,reports.Report)
@@ -72,6 +72,31 @@ class GridActionContext(ActionContext):
         raise "what's about kw and ReportRequest.setup() here?"
         rh = self.actor.get_handle(self.ui)
         return ViewReportRequest(self.request,rh)
+
+
+class Dialog(actions.Dialog):
+    def __init__(self,request,*args,**kw):
+        actions.Dialog.__init__(self,*args,**kw)
+        self.request = request
+        
+        self.confirmed = self.request.POST.get('confirmed',None)
+        
+    def get_user(self):
+        return authenticated_user(self.request.user)
+        
+    def get_report_request(self):
+        raise NotImplementedError()
+        
+class GridDialog(Dialog):
+    def __init__(self,request,*args,**kw):
+        Dialog.__init__(self,request,*args,**kw)
+        assert isinstance(self.actor,reports.Report)
+        selected = self.request.POST.get('selected',None)
+        if selected:
+            self.selected_rows = [
+              self.actor.model.objects.get(pk=pk) for pk in selected.split(',') if pk]
+        else:
+            self.selected_rows = []
 
 
 
