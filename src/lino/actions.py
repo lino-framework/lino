@@ -72,7 +72,7 @@ class Action: # (actors.Actor):
     def run(self,context):
         raise NotImplementedError
         
-class ActionContext:
+class old_ActionContext:
     selected_rows = []
     def __init__(self,ui,actor,action_name,*args,**kw):
         self.response = dict(success=True,must_reload=False,msg=None,stop_caller=False)
@@ -146,49 +146,28 @@ class ActionContext:
         self.response.update(js_eval=js)
 
 
-class Dialog:
-    """
-    Replacement for ActionContext. 
-    A Dialog is a conversation between client and server, initiated by the client. Server answers
-    """
-    selected_rows = []
-    over = False
+class DialogResponse:
     redirect = None
     alert_msg = None
     confirm_msg = None
+    notify_msg = None
     refresh_menu = False
     refresh_caller = False
     stop_caller = False
     exec_js = None
+    dialog_id = None
     
-    def __init__(self,ui,actor,action_name,*args,**kw):
-        self.ui = ui
-        self.actor = actor
-        self.action = actor.get_action(action_name)
-        self._kw = kw
-        self._args = args
-        if not isinstance(self.action,Action):
-            raise Exception("%s.get_action(%r) returned %r which is not an Action." % (actor,action_name,self.action))
-        
-        self.dialog_id = hash(self)
-        self.running = None
-            
-        
-    def start(self):
-        self.dialog_id = ui.start_dialog(self)
-        if self.action.needs_selection and len(self.selected_rows) == 0:
-            yield self.console_msg(_("No selection. Nothing to do.").over()
-        else:
-            lino.log.debug('Dialog.run() : %s.%s(%r,%r)',self.actor,self.action.name,self._args,self._kw)
-            self.running = self.action.run_in_dlg(self,*self._args,**self._kw)
-            yield self.running.next()
-        return self.response
-        
-    def get_response(self):
+    def __init__(self,**kw):
+        for k,v in kw.items():
+            assert hasattr(self,k)
+            setattr(self,k,v)
+              
+    
+    def as_dict(self):
         return dict(
-          over=self.over,
           redirect=self.redirect,
           alert_msg=self.alert_msg,
+          notify_msg=self.notify_msg,
           confirm_msg=self.confirm_msg,
           refresh_menu=self.refresh_menu,
           refresh_caller=self.refresh_caller,
@@ -197,56 +176,126 @@ class Dialog:
           dialog_id = self.dialog_id,
         )
       
+running_dialogs = {}
+
+def get_dialog(dialog_id):
+    return running_dialogs.get(dialog_id,None)
+
+class Dialog:
+    """
+    Replaces ActionContext. 
+    A Dialog is a conversation between client and server, initiated by the client.
+    Each `yield` of an `Action.run_in_dlg()` defines a response to the client.
+    See also `Lino.do_dialog()` in `lino.ui.extjs`.
+    The current API is rather influenced by ExtJS...
+    """
+    selected_rows = []
+    
+    def __init__(self,ui,actor,action_name,*args,**kw):
+        self.is_over = False
+        self.ui = ui
+        self.actor = actor
+        self.action = actor.get_action(action_name)
+        self._kw = kw
+        self._args = args
+        if not isinstance(self.action,Action):
+            raise Exception("%s.get_action(%r) returned %r which is not an Action." % (actor,action_name,self.action))
+        self.running = None
+        self.response = None
+        
+    def save_to_store(self):
+        self.response.dialog_id = hash(self)
+        assert not running_dialogs.has_key(self.response.dialog_id)
+        running_dialogs[self.response.dialog_id] = self
+        
+    def start_dialog(self):
+        if self.action.needs_selection and len(self.selected_rows) == 0:
+            #~ self.console_msg(_("No selection. Nothing to do.")).over()
+            return DialogResponse(notify_msg=_("No selection. Nothing to do."))
+            
+
+        lino.log.debug('Dialog.run() : %s.%s(%r,%r)',self.actor,self.action.name,self._args,self._kw)
+        self.running = self.action.run_in_dlg(self,*self._args,**self._kw)
+        r = self.step_dialog()
+        if not self.is_over:
+            self.save_to_store()
+        return r
+        
+    def step_dialog(self):
+        self.response = DialogResponse()
+        try:
+            dlg = self.running.next()
+            assert dlg is self
+        except StopIteration:
+            self.is_over = True
+            
+            if self.response.dialog_id is not None:
+                del running_dialogs[self.response.dialog_id]
+                self.response.dialog_id = None
+        return self.response
+        
         
     """
-    Public Dialog API
+    API used during `Action.run_in_dialog()`.
     """
         
     def get_user(self):
         raise NotImplementedError()
         
-    def console_msg(self,msg):
-        self.console_msg = msg
-        return self
-
     def refresh_caller(self):
-        self.refresh_caller=True
+        self.response.refresh_caller=True
         return self
         
     def stop_caller(self):
-        self.stop_caller=True
+        self.response.stop_caller=True
         return self
         
     def refresh_menu(self):
-        self.refresh_menu = True
+        self.response.refresh_menu = True
         return self
         
     def over(self):
-        self.over = True
+        self.is_over = True
         return self
         
     def exec_js(self,js):
-        self.exec_js = js
+        #~ assert js.strip().startswith('function')
+        #~ self.response.exec_js = py2js(js)
+        self.response.exec_js = js
         return self
         
     def redirect(self,url):
-        self.redirect = url
-        return self
-        
-    def cancel(self,msg=None):
-        if msg is not None:
-              self.alert(msg)
-        self.over()
+        self.response.redirect = url
         return self
         
     def confirm(self,msg,**kw):
-        self.confirm_msg = msg
+        self.response.confirm_msg = msg
         return self
         
     def alert(self,msg,**kw):
-        self.alert_msg = msg
+        self.response.alert_msg = msg
         return self
         
+    def notify(self,msg):
+        self.response.notify_msg = msg
+        return self
+
+    ## higher level API methods
+
+    def cancel(self,msg=None):
+        if msg is not None:
+              self.notify(msg)
+        return self.stop_caller().over()
+        
+    def ok(self,msg=None):
+        if msg is not None:
+              self.notify(msg)
+        return self.stop_caller().over()
+        
+
+
+
+
 
 class InsertRow(Action):
     label = _("Insert")
@@ -313,7 +362,7 @@ class CancelDialog(Action):
         context.cancel()
         
     def run_in_dlg(self,dlg):
-        yield dlg.cancel()
+        yield dlg.stop_caller().over()
 
 class OK(Action):
     needs_validation = True
@@ -322,8 +371,10 @@ class OK(Action):
 
     def run(self,context):
         context.done()
+        
     def run_in_dlg(self,dlg):
-        yield dlg.done()
+        yield dlg.stop_caller().over()
+        #~ yield dlg.over()
 
 
 

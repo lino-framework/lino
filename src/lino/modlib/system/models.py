@@ -53,8 +53,9 @@ class ContentTypes(reports.Report):
 
 class PasswordResetOK(actions.Action):
     label = _("Request Password Reset")
-    def run(self,context):
-        context.error('not implemented')
+    
+    def run_in_dlg(self,dlg):
+        yield dlg.cancel('not implemented')
 
 class PasswordResetLayout(layouts.FormLayout):
     #form = PasswordResetForm
@@ -85,10 +86,25 @@ class LoginOK(actions.OK):
 
     label = _("Login")
     
-    def run(self,context):
+    #~ def run(self,context):
       
-        username = context.request.POST.get('username')
-        password = context.request.POST.get('password')
+        #~ username = context.request.POST.get('username')
+        #~ password = context.request.POST.get('password')
+
+        #~ user = authenticate(username=username, password=password)
+        #~ if user is None:
+            #~ raise actions.ValidationError(
+            #~ _(u"Please enter a correct username and password. Note that both fields are case-sensitive."))
+        #~ elif not user.is_active:
+            #~ raise actions.ValidationError(_("This account is inactive."))
+        #~ login(context.request, user)
+        #~ #lino.log.info("User %s logged in.",user)
+        #~ context.refresh_menu()
+        #~ context.done("Welcome, %s!" % user)
+        
+    def run_in_dlg(self,dlg):
+        username = dlg.request.POST.get('username')
+        password = dlg.request.POST.get('password')
 
         user = authenticate(username=username, password=password)
         if user is None:
@@ -96,10 +112,9 @@ class LoginOK(actions.OK):
             _(u"Please enter a correct username and password. Note that both fields are case-sensitive."))
         elif not user.is_active:
             raise actions.ValidationError(_("This account is inactive."))
-        login(context.request, user)
+        login(dlg.request, user)
         #lino.log.info("User %s logged in.",user)
-        context.refresh_menu()
-        context.done("Welcome, %s!" % user)
+        yield dlg.ok("Welcome, %s!" % user).refresh_menu()
         
 
 class LoginLayout(layouts.FormLayout):
@@ -134,12 +149,11 @@ class Logout(actions.Command): #actions.OK):
   
     label = _("Log out")
     
-    def run(self,context):
-        user = context.get_user()
-        context.confirm(_("%s, are you sure you want to log out?") % user)
-        logout(context.request)
-        context.refresh_menu()
-        context.done("Goodbye, %s!" % user)
+    def run_in_dlg(self,dlg):
+        user = dlg.get_user()
+        yield dlg.confirm(_("%s, are you sure you want to log out?") % user)
+        logout(dlg.request)
+        yield dlg.notify("Goodbye, %s!" % user).refresh_menu().over()
 
     
 

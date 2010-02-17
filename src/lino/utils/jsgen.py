@@ -39,7 +39,8 @@ def py2js(v,**kw):
         
     if isinstance(v,menus.MenuItem):
         from lino.lino_site import lino_site
-        handler = "function(btn,evt){Lino.do_action(undefined,%r,%r,{})}" % (v.actor.get_url(lino_site.ui),id2js(v.actor.actor_id))
+        #~ handler = "function(btn,evt){Lino.do_action(undefined,%r,%r,{})}" % (v.actor.get_url(lino_site.ui),id2js(v.actor.actor_id))
+        handler = "function(btn,evt){Lino.do_dialog(undefined,%r,{})}" % v.actor.get_url(lino_site.ui)
         return py2js(dict(text=v.label,handler=js_code(handler)))
         #~ if v.args:
             #~ handler = "function(btn,evt) {%s.show(btn,evt,%s);}" % (
@@ -54,8 +55,8 @@ def py2js(v,**kw):
     assert len(kw) == 0, "py2js() : value %r not allowed with keyword parameters" % v
     if type(v) is types.GeneratorType:
         return "\n".join([ln for ln in v])
-    if callable(v):
-        raise Exception("Please call the function yourself")
+    #~ if callable(v):
+        #~ raise Exception("Please call the function yourself")
         #~ return "\n".join([ln for ln in v(**kw)])
 
     if isinstance(v,js_code):

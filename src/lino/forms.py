@@ -23,8 +23,12 @@ class Input:
         self.options = kw
 
 class ViewForm(actions.Action):
+  
     def run(self,context):
         return context.ui.view_form(context)
+        
+    def run_in_dlg(self,dlg):
+        return dlg.ui.view_form(dlg)
 
 class Form(actors.Actor): # actions.Action):
     layout = None

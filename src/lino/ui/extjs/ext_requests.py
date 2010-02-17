@@ -41,37 +41,37 @@ def authenticated_user(user):
     return user
         
       
-class old_ActionContext(actions.ActionContext):
-    def __init__(self,request,*args,**kw):
-        actions.ActionContext.__init__(self,*args,**kw)
-        self.request = request
-        self.confirmed = self.request.POST.get('confirmed',None)
-        if self.confirmed is not None:
-            self.confirmed = int(self.confirmed)
-        self.confirms = 0
-        #print 'ActionContext.__init__()', self.confirmed, self.selected_rows
+#~ class ActionContext(actions.ActionContext):
+    #~ def __init__(self,request,*args,**kw):
+        #~ actions.ActionContext.__init__(self,*args,**kw)
+        #~ self.request = request
+        #~ self.confirmed = self.request.POST.get('confirmed',None)
+        #~ if self.confirmed is not None:
+            #~ self.confirmed = int(self.confirmed)
+        #~ self.confirms = 0
+        #~ #print 'ActionContext.__init__()', self.confirmed, self.selected_rows
         
-    def get_user(self):
-        return authenticated_user(self.request.user)
+    #~ def get_user(self):
+        #~ return authenticated_user(self.request.user)
         
-    def get_report_request(self):
-        raise NotImplementedError()
+    #~ def get_report_request(self):
+        #~ raise NotImplementedError()
         
-class old_GridActionContext(ActionContext):
-    def __init__(self,request,*args,**kw):
-        ActionContext.__init__(self,request,*args,**kw)
-        assert isinstance(self.actor,reports.Report)
-        selected = self.request.POST.get('selected',None)
-        if selected:
-            self.selected_rows = [
-              self.actor.model.objects.get(pk=pk) for pk in selected.split(',') if pk]
-        else:
-            self.selected_rows = []
+#~ class GridActionContext(ActionContext):
+    #~ def __init__(self,request,*args,**kw):
+        #~ ActionContext.__init__(self,request,*args,**kw)
+        #~ assert isinstance(self.actor,reports.Report)
+        #~ selected = self.request.POST.get('selected',None)
+        #~ if selected:
+            #~ self.selected_rows = [
+              #~ self.actor.model.objects.get(pk=pk) for pk in selected.split(',') if pk]
+        #~ else:
+            #~ self.selected_rows = []
         
-    def get_report_request(self):
-        raise "what's about kw and ReportRequest.setup() here?"
-        rh = self.actor.get_handle(self.ui)
-        return ViewReportRequest(self.request,rh)
+    #~ def get_report_request(self):
+        #~ raise "what's about kw and ReportRequest.setup() here?"
+        #~ rh = self.actor.get_handle(self.ui)
+        #~ return ViewReportRequest(self.request,rh)
 
 
 class Dialog(actions.Dialog):

@@ -209,8 +209,8 @@ def get_model_report(model):
     return model._lino_model_report
 
 class ViewReport(actions.Action):
-    def run(self,context):
-        return context.ui.view_report(context)
+    def run_in_dlg(self,dlg):
+        return dlg.ui.view_report(dlg)
         
 
 class Report(actors.Actor): # actions.Action): # 
