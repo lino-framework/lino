@@ -33,6 +33,7 @@ URL_PARAM_MASTER_PK = 'mk'
 URL_PARAM_FILTER = 'query'
 URL_PARAM_CHOICES_PK = "ck"
 
+POST_PARAM_SELECTED = 'selected'
 
 
 def authenticated_user(user):
@@ -76,22 +77,25 @@ def authenticated_user(user):
 
 class Dialog(actions.Dialog):
     def __init__(self,request,*args,**kw):
-        actions.Dialog.__init__(self,*args,**kw)
         self.request = request
-        
-        self.confirmed = self.request.POST.get('confirmed',None)
+        actions.Dialog.__init__(self,*args,**kw)
+        #self.confirmed = self.request.POST.get('confirmed',None)
         
     def get_user(self):
         return authenticated_user(self.request.user)
         
+    def __getitem__(self,*args,**kw):
+        return self.request.POST.__getitem__(*args,**kw)
+    def get(self,*args,**kw):
+        return self.request.POST.get(*args,**kw)
+        
     def get_report_request(self):
         raise NotImplementedError()
-        
 class GridDialog(Dialog):
     def __init__(self,request,*args,**kw):
         Dialog.__init__(self,request,*args,**kw)
         assert isinstance(self.actor,reports.Report)
-        selected = self.request.POST.get('selected',None)
+        selected = self.request.POST.get(POST_PARAM_SELECTED,None)
         if selected:
             self.selected_rows = [
               self.actor.model.objects.get(pk=pk) for pk in selected.split(',') if pk]

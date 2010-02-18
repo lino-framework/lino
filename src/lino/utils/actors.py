@@ -83,7 +83,8 @@ class Actor(object):
         return self.label
         
     def __str__(self):
-        return '<' + self.actor_id + '>'
+        #~ return '<' + self.actor_id + '>'
+        return self.actor_id 
     
     def get_url(self,ui,**kw):
         return ui.get_action_url(self,**kw)

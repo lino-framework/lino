@@ -97,7 +97,7 @@ class Property(models.Model):
     @classmethod
     def properties_for_model(cls,model):
         ct = ContentType.objects.get_for_model(model)
-        lino.log.debug('properties_for_model() %s %s',model,ct)
+        #~ lino.log.debug('Property.properties_for_model() %s %s',model,ct)
         #~ return cls.objects.filter(only_for__in=(ct,None))
         q = models.Q(only_for__exact=None) | models.Q(only_for=ct)
         return cls.objects.filter(q)
@@ -222,7 +222,7 @@ def set_value_for(owner,**kw):
         try:
             p = Property.objects.get(pk=k)
         except Property.DoesNotExist:
-            print Property.objects.all()
+            #~ print Property.objects.all()
             raise Exception("There's no property named %r" % k)
         p.set_value_for(owner,v)
         

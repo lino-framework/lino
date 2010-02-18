@@ -250,9 +250,9 @@ Lino.do_dialog = function(caller,url,params) {
         buttons: Ext.Msg.YESNOCANCEL,
         fn: function(btn) {
           if (btn == 'yes') step_dialog(result);
-          else if (btn == 'no') abort_dialog(result);
+          else abort_dialog(result);
         }
-      }) 
+      })
     } else {
       step_dialog(result);
     }
@@ -266,14 +266,26 @@ Lino.do_dialog = function(caller,url,params) {
       Ext.MessageBox.alert('Error','Lino.do_dialog() could not connect to the server.');
     }
   });
-};
+};"""
 
+        if False:
+            s += """
 Lino.grid_action = function(caller,name,url) {
   return function(event) {
-    // Lino.do_action(caller,url,name,{selected:caller.get_selected()});
-    Lino.do_dialog(caller,url,{selected:caller.get_selected()});
+    Lino.do_dialog(caller,url,{selected:caller.get_selected()}); // POST_PARAM_SELECTED
   };
-};
+};"""
+        def js():
+            yield "Lino.grid_action = function(caller,name,url) {"
+            yield "  return function(event) {"
+            #yield "    // Lino.do_action(caller,url,name,{selected:caller.get_selected()});"
+            yield "    Lino.do_dialog(caller,url,{%s:caller.get_selected()});" \
+                       % ext_requests.POST_PARAM_SELECTED
+            yield "}};"
+            
+        s += '\n'.join(js())
+
+        s += """
 Lino.show_slave = function (caller,url,name,mt) { 
   return function(btn,evt) {
     // console.log('show_slave()',caller,url,name,mt)

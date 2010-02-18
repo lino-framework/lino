@@ -53,7 +53,7 @@ class ValidationError(Exception):
     
     
     
-class Action: # (actors.Actor):
+class Action: 
     label = None
     name = None
     key = None
@@ -61,15 +61,15 @@ class Action: # (actors.Actor):
     needs_validation = False
     
     def __init__(self):
-        #actors.Actor.__init__(self)
         if self.name is None:
             self.name = self.__class__.__name__ # label
         if self.label is None:
             self.label = self.name #self.__class__.__name__
-        #self.report = report
         
+    def __str__(self):
+        return self.name
         
-    def run(self,context):
+    def run_in_dlg(self,dlg):
         raise NotImplementedError
         
 class old_ActionContext:
@@ -203,22 +203,31 @@ class Dialog:
         self.running = None
         self.response = None
         
-    def save_to_store(self):
+    def __str__(self):
+        return 'Dialog `%s.%s`' % (self.actor,self.action)
+        
+    def _open(self):
+        if self.is_over:
+            return
         self.response.dialog_id = hash(self)
         assert not running_dialogs.has_key(self.response.dialog_id)
         running_dialogs[self.response.dialog_id] = self
+        
+    def _close(self):
+        self.is_over = True
+        if self.response.dialog_id is None:
+            return
+        del running_dialogs[self.response.dialog_id]
+        self.response.dialog_id = None
         
     def start_dialog(self):
         if self.action.needs_selection and len(self.selected_rows) == 0:
             #~ self.console_msg(_("No selection. Nothing to do.")).over()
             return DialogResponse(notify_msg=_("No selection. Nothing to do."))
-            
-
-        lino.log.debug('Dialog.run() : %s.%s(%r,%r)',self.actor,self.action.name,self._args,self._kw)
+        #~ lino.log.debug('Dialog.run() : %s.%s(%r,%r)',self.actor,self.action.name,self._args,self._kw)
         self.running = self.action.run_in_dlg(self,*self._args,**self._kw)
         r = self.step_dialog()
-        if not self.is_over:
-            self.save_to_store()
+        self._open()
         return r
         
     def step_dialog(self):
@@ -227,13 +236,13 @@ class Dialog:
             dlg = self.running.next()
             assert dlg is self
         except StopIteration:
-            self.is_over = True
-            
-            if self.response.dialog_id is not None:
-                del running_dialogs[self.response.dialog_id]
-                self.response.dialog_id = None
+            self._close()
         return self.response
         
+        
+    def abort_dialog(self):
+        self._close()
+        return DialogResponse(notify_msg=_("Client abort in %s") % self)
         
     """
     API used during `Action.run_in_dialog()`.

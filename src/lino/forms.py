@@ -78,7 +78,7 @@ class FormHandle(layouts.DataLink):
             else:
                 #lino.log.debug("ignored %s attribute %r=%r",self.form,n,v)
                 pass
-        lino.log.debug("%s handle : %s",form,self.elements.keys())
+        #~ lino.log.debug("%s handle : %s",form,self.elements.keys())
                 
     def setup(self):
         self.lh = layouts.LayoutHandle(self,self.form.layout(),1)

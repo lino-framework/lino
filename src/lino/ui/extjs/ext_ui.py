@@ -178,7 +178,6 @@ def csv_report_view(request,**kw):
     kw['csv'] = True
     return json_report_view(request,**kw)
     
-    
 def json_report_view(request,app_label=None,rptname=None,**kw):
     rpt = actors.get_actor2(app_label,rptname)
     return json_report_view_(request,rpt,**kw)
@@ -375,8 +374,8 @@ class ExtUI(base.UI):
             (r'^form/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.act_view),
             (r'^form/(?P<app_label>\w+)/(?P<actor>\w+)$', self.act_view),
             (r'^action/(?P<app_label>\w+)/(?P<actor>\w+)$', self.act_view),
-            (r'^start_dialog/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.start_dialog_view),
-            (r'^start_dialog/(?P<app_label>\w+)/(?P<actor>\w+)$', self.start_dialog_view),
+            #~ (r'^start_dialog/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.start_dialog_view),
+            #~ (r'^start_dialog/(?P<app_label>\w+)/(?P<actor>\w+)$', self.start_dialog_view),
             #~ (r'^step_dialog/(?P<dialog_id>\w+)$', self.step_dialog_view),
             (r'^step_dialog$', self.step_dialog_view),
             (r'^abort_dialog$', self.abort_dialog_view),
@@ -386,45 +385,43 @@ class ExtUI(base.UI):
             (r'^props/(?P<app_label>\w+)/(?P<model_name>\w+)$', props_view),
         )
         
-    def start_dialog_view(self,request,app_label=None,actor=None,action=None,**kw):
+    #~ def start_dialog_view(self,request,app_label=None,actor=None,action=None,**kw):
+        #~ actor = actors.get_actor2(app_label,actor)
+        #~ dlg = ext_requests.Dialog(request,self,actor,action)
+        #~ r = dlg.start_dialog().as_dict()
+        #~ lino.log.debug('%s.start_dialog() -> %r',dlg,r)
+        #~ return json_response(r)
+
+    def act_view(self,request,app_label=None,actor=None,action=None,**kw):
         actor = actors.get_actor2(app_label,actor)
         dlg = ext_requests.Dialog(request,self,actor,action)
-        return json_response(dlg.start_dialog().as_dict())
-        #~ if not dlg.over:
-            #~ dialogs = self.get_dlgdict(request)
-            #~ dialogs[dlg.dialog_id] = dlg
-        #~ return json_response(dlg.get_response())
-
-    #~ def step_dialog_view(self,request,dialog_id=None):
+        r = dlg.start_dialog().as_dict()
+        lino.log.debug('[ExtUI.act_view()] %s.start_dialog() -> %r',dlg,r)
+        return json_response(r)
+        
     def step_dialog_view(self,request):
+        return self.json_dialog_view_(request,'step_dialog')
+        
+    def abort_dialog_view(self,request):
+        return self.json_dialog_view_(request,'abort_dialog')
+        
+    def json_dialog_view_(self,request,meth_name,**kw):
         dialog_id = long(request.POST.get('dialog_id'))
         dlg = actions.get_dialog(dialog_id)
         if dlg is None:
-            print actions.running_dialogs
             return json_response(actions.DialogResponse(
               alert_msg=_('No dialog %r running on this server.' % dialog_id)
               ).as_dict())
-        if False and dlg.request.session is not request.session:
+        if dlg.request.user != request.user:
+            #~ print 20100218, dlg.request.user, '!=', request.user
             return json_response(actions.DialogResponse(
-              alert_msg=_('No dialog %r for your session.' % dialog_id)
+              alert_msg=_('Dialog %r ist not for you.' % dialog_id)
               ).as_dict())
-        return json_response(dlg.step_dialog().as_dict())
-        
-    def abort_dialog_view(self,request):
-        dlg abrufen wie in step_dialog_view.
-        Fehler-Handling per exception?
-        #~ dialog_id = request.POST.get('dialog_id')
-        #~ dialogs = self.get_dlgdict(request)
-        #~ del dialogs[dialog_id]
-        #~ return json_response({})
-        
-    #~ def get_dlgdict(self,request)
-        #~ dialogs = request.session.get('dialogs',None)
-        #~ if dialogs is None:
-            #~ dialogs = {}
-            #~ request.session.set('dialogs',dialogs)
-        #~ return dialogs
-        
+        m = getattr(dlg,meth_name)
+        r = m().as_dict()
+        lino.log.debug('%s.%s() -> %r',dlg,meth_name,r)
+        return json_response(r)
+    
     def menu_view(self,request):
         from lino import lino_site
         return json_response(lino_site.get_menu(request))
@@ -444,11 +441,6 @@ class ExtUI(base.UI):
         dlg = ext_requests.Dialog(request,self,actor,None,name)
         return json_response(dlg.start_dialog().as_dict())
 
-        
-    def act_view(self,request,app_label=None,actor=None,action=None,**kw):
-        actor = actors.get_actor2(app_label,actor)
-        dlg = ext_requests.Dialog(request,self,actor,action)
-        return json_response(dlg.start_dialog().as_dict())
         
 
     def get_action_url(self,a,**kw):
