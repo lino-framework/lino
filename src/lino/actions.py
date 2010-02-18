@@ -220,17 +220,17 @@ class Dialog:
         del running_dialogs[self.response.dialog_id]
         self.response.dialog_id = None
         
-    def start_dialog(self):
+    def _start(self):
         if self.action.needs_selection and len(self.selected_rows) == 0:
             #~ self.console_msg(_("No selection. Nothing to do.")).over()
             return DialogResponse(notify_msg=_("No selection. Nothing to do."))
-        #~ lino.log.debug('Dialog.run() : %s.%s(%r,%r)',self.actor,self.action.name,self._args,self._kw)
+        lino.log.debug('Dialog._start() %s.%s(%r,%r)',self.actor,self.action.name,self._args,self._kw)
         self.running = self.action.run_in_dlg(self,*self._args,**self._kw)
-        r = self.step_dialog()
+        r = self._step()
         self._open()
         return r
         
-    def step_dialog(self):
+    def _step(self):
         self.response = DialogResponse()
         try:
             dlg = self.running.next()
@@ -240,7 +240,7 @@ class Dialog:
         return self.response
         
         
-    def abort_dialog(self):
+    def _abort(self):
         self._close()
         return DialogResponse(notify_msg=_("Client abort in %s") % self)
         
@@ -251,12 +251,12 @@ class Dialog:
     def get_user(self):
         raise NotImplementedError()
         
-    def refresh_caller(self):
-        self.response.refresh_caller=True
-        return self
-        
     def stop_caller(self):
         self.response.stop_caller=True
+        return self
+        
+    def refresh_caller(self):
+        self.response.refresh_caller=True
         return self
         
     def refresh_menu(self):
@@ -324,7 +324,7 @@ class InsertRow(Action):
         rr = context.get_report_request()
         row = rr.create_instance()
         row.save()
-        yield dlg.refresh()
+        yield dlg.refresh_caller()
         
         
   
@@ -333,43 +333,21 @@ class DeleteSelected(Action):
     label = _("Delete")
     key = DELETE # (ctrl=True)
     
-    def run(self,context):
-        if len(context.selected_rows) == 1:
-            context.confirm(_("Delete row %s. Are you sure?") % context.selected_rows[0])
-        else:
-            context.confirm(_("Delete %d rows. Are you sure?") % len(context.selected_rows))
-        for row in context.selected_rows:
-            #print "DELETE:", row
-            row.delete()
-        context.refresh()
         
     def run_in_dlg(self,dlg):
-        if len(context.selected_rows) == 1:
+        if len(dlg.selected_rows) == 1:
             yield dlg.confirm(_("Delete row %s. Are you sure?") % dlg.selected_rows[0])
         else:
             yield dlg.confirm(_("Delete %d rows. Are you sure?") % len(dlg.selected_rows))
         for row in dlg.selected_rows:
-            #print "DELETE:", row
             row.delete()
-        yield dlg.refresh().over()
+        yield dlg.refresh_caller().over()
 
-#~ class ShowProperties(Action):
-    #~ #needs_selection = True
-    #~ label = _("Properties")
-    
-    #~ def run(self,context):
-        #~ if len(context.selected_rows) != 1:
-            #~ raise NotImplementedError()
-        #~ row = context.selected_rows[0]
-        #~ context.ui.show_properties(context,row)
     
 class CancelDialog(Action):
     label = "Cancel"
     key = ESCAPE 
     
-    def run(self,context):
-        context.cancel()
-        
     def run_in_dlg(self,dlg):
         yield dlg.stop_caller().over()
 
@@ -378,34 +356,19 @@ class OK(Action):
     label = "OK"
     key = RETURN
 
-    def run(self,context):
-        context.done()
-        
     def run_in_dlg(self,dlg):
         yield dlg.stop_caller().over()
-        #~ yield dlg.over()
 
 
 
 class RunCommand(Action):
   
-    def run(self,context,*args,**kw):
-        context.actor.run(context,*args,**kw)
-        
-    def run_in_dlg(self,dlg):
-        return dlg.actor.run_in_dlg(dlg)
-        #~ for x in dlg.actor.run_in_dlg(dlg,*args,**kw):
-            #~ yield x
-        #~ yield dlg.done()
+    def run_in_dlg(self,dlg,*args,**kw):
+        return dlg.actor.run_in_dlg(dlg,*args,**kw)
 
 class Command(actors.Actor):
     default_action = RunCommand()
     
-    def run(self,context):
-        # override this in subclasses
-        context.done()
-        
-    def run_in_dlg(self,dlg):
-        # override this in subclasses
-        yield dlg.done()
+    def run_in_dlg(self,dlg,*args,**kw):
+        raise NotImplementedError
       

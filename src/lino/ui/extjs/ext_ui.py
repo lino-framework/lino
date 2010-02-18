@@ -35,7 +35,8 @@ from lino.utils import menus
 from lino.utils.jsgen import py2js, js_code, id2js
 from lino.ui.extjs import ext_elems, ext_requests, ext_store
 from lino.ui.extjs import ext_viewport
-from lino.modlib.properties.models import Property
+#from lino.modlib.properties.models import Property
+from lino.modlib.properties import models as properties
 
 from django.conf.urls.defaults import patterns, url, include
 
@@ -61,37 +62,25 @@ def json_response(x):
 
 
 class SaveWindowConfig(actions.Command):
-    def run(self,context,name):
-        h = int(context.request.POST.get('h'))
-        w = int(context.request.POST.get('w'))
-        maximized = context.request.POST.get('max')
-        if maximized == 'true':
-            maximized = True
-        else:
-            maximized = False
-        x = int(context.request.POST.get('x'))
-        y = int(context.request.POST.get('y'))
-        context.confirm("Save %r window config (%r,%r,%r,%r,%r)\nAre you sure?" % (name,x,y,h,w,maximized))
-        #context.confirm("%r,%r,%r,%r : Are you sure?!" % (name,h,w,maximized))
-        ui.window_configs[name] = (x,y,w,h,maximized)
-        #ui.window_configs[name] = (w,h,maximized)
-        ui.save_window_configs()
-
+  
     def run_in_dlg(self,dlg,name):
-        h = int(context.request.POST.get('h'))
-        w = int(context.request.POST.get('w'))
-        maximized = context.request.POST.get('max')
+        #~ h = int(context.request.POST.get('h'))
+        #~ w = int(context.request.POST.get('w'))
+        h = int(dlg.get('h'))
+        w = int(dlg.get('w'))
+        maximized = dlg.get('max')
         if maximized == 'true':
             maximized = True
         else:
             maximized = False
-        x = int(context.request.POST.get('x'))
-        y = int(context.request.POST.get('y'))
-        dlg.confirm("Save %r window config (%r,%r,%r,%r,%r)\nAre you sure?" % (name,x,y,h,w,maximized))
+        x = int(dlg.get('x'))
+        y = int(dlg.get('y'))
+        yield dlg.confirm("Save %r window config (%r,%r,%r,%r,%r)\nAre you sure?" % (name,x,y,h,w,maximized))
         #context.confirm("%r,%r,%r,%r : Are you sure?!" % (name,h,w,maximized))
         ui.window_configs[name] = (x,y,w,h,maximized)
         #ui.window_configs[name] = (w,h,maximized)
         ui.save_window_configs()
+        yield dlg.notify("Window config %r has been saved" % name).over()
 
 
 #~ def permalink_do_view(request,name=None):
@@ -137,98 +126,6 @@ def menu2js(ui,v,**kw):
     return py2js(v,**kw)        
 """  
 
-#~ def menu_view(request):
-    #~ from lino import lino_site
-    #~ s = py2js(lino_site.get_menu(request))
-    #~ return HttpResponse(s, mimetype='text/html')
-
-
-#~ def act_view(request,app_label=None,actor=None,action=None,**kw):
-    #~ actor = actors.get_actor2(app_label,actor)
-    #~ #action = actor.get_action(action)
-    #~ context = ext_requests.ActionContext(request,ui,actor,action)
-    #~ context.run()
-    #~ return json_response(context.response)
-
-def props_view(request,app_label=None,model_name=None,**kw):
-    model = resolve_model(app_label+'.'+model_name)
-    raise NotImplementedError
-    
-
-def choices_view(request,app_label=None,rptname=None,fldname=None,**kw):
-    rpt = actors.get_actor2(app_label,rptname)
-    kw['choices_for_field'] = fldname
-    return json_report_view_(request,rpt,**kw)
-    
-    
-def grid_afteredit_view(request,**kw):
-    kw['colname'] = request.POST['grid_afteredit_colname']
-    kw['submit'] = True
-    return json_report_view(request,**kw)
-
-def form_submit_view(request,**kw):
-    kw['submit'] = True
-    return json_report_view(request,**kw)
-
-def list_report_view(request,**kw):
-    #kw['simple_list'] = True
-    return json_report_view(request,**kw)
-    
-def csv_report_view(request,**kw):
-    kw['csv'] = True
-    return json_report_view(request,**kw)
-    
-def json_report_view(request,app_label=None,rptname=None,**kw):
-    rpt = actors.get_actor2(app_label,rptname)
-    return json_report_view_(request,rpt,**kw)
-
-def json_report_view_(request,rpt,grid_action=None,colname=None,submit=None,choices_for_field=None,csv=False):
-    if not rpt.can_view.passes(request):
-        return json_response_kw(success=False,
-            msg="User %s cannot view %s." % (request.user,rpt))
-    if grid_action:
-        #~ a = rpt.get_action(grid_action)
-        #~ if a is None:
-            #~ return json_response_kw(
-                #~ success=False,
-                #~ msg="Report %s has no action %r" % (rpt,grid_action))
-        context = ext_requests.GridActionContext(request,ui,rpt,grid_action)
-        context.run()
-        #d = a.get_response(rptreq)
-        return json_response(context.response)
-            
-    rh = rpt.get_handle(ui)
-    if choices_for_field:
-        rptreq = ext_requests.ChoicesReportRequest(request,rh,choices_for_field)
-    elif csv:
-        rptreq = ext_requests.CSVReportRequest(request,rh,choices_for_field)
-        return rptreq.render_to_csv()
-    else:
-        rptreq = ext_requests.ViewReportRequest(request,rh)
-        if submit:
-            pk = request.POST.get(rh.store.pk.name) #,None)
-            #~ if pk == reports.UNDEFINED:
-                #~ pk = None
-            try:
-                data = rh.store.get_from_form(request.POST)
-                if pk in ('', None):
-                    #return json_response(success=False,msg="No primary key was specified")
-                    instance = rptreq.create_instance(**data)
-                    instance.save(force_insert=True)
-                else:
-                    instance = rpt.model.objects.get(pk=pk)
-                    for k,v in data.items():
-                        setattr(instance,k,v)
-                    instance.save(force_update=True)
-                return json_response_kw(success=True,
-                      msg="%s has been saved" % instance)
-            except Exception,e:
-                lino.log.exception(e)
-                #traceback.format_exc(e)
-                return json_response_kw(success=False,msg="Exception occured: "+cgi.escape(str(e)))
-        # otherwise it's a simple list:
-    d = rptreq.render_to_json()
-    return json_response(d)
     
 
 
@@ -268,7 +165,7 @@ class ExtUI(base.UI):
             lh.slave_grids.append(e)
             return e
         if isinstance(de,actions.Action):
-            e = ext_elems.ButtonElement(lh,name,de,**kw)
+            e = ext_elems.ActionElement(lh,name,de,**kw)
             lh._buttons.append(e)
             return e
             
@@ -366,44 +263,39 @@ class ExtUI(base.UI):
         return patterns('',
             (r'^$', self.index_view),
             (r'^menu$', self.menu_view),
-            (r'^list/(?P<app_label>\w+)/(?P<rptname>\w+)$', list_report_view),
-            (r'^csv/(?P<app_label>\w+)/(?P<rptname>\w+)$', csv_report_view),
-            (r'^grid_action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<grid_action>\w+)$', json_report_view),
-            (r'^submit/(?P<app_label>\w+)/(?P<rptname>\w+)$', form_submit_view),
-            (r'^grid_afteredit/(?P<app_label>\w+)/(?P<rptname>\w+)$', grid_afteredit_view),
+            (r'^list/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.list_report_view),
+            (r'^csv/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.csv_report_view),
+            (r'^grid_action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<grid_action>\w+)$', self.json_report_view),
+            (r'^submit/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.form_submit_view),
+            (r'^grid_afteredit/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.grid_afteredit_view),
             (r'^form/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.act_view),
             (r'^form/(?P<app_label>\w+)/(?P<actor>\w+)$', self.act_view),
             (r'^action/(?P<app_label>\w+)/(?P<actor>\w+)$', self.act_view),
-            #~ (r'^start_dialog/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.start_dialog_view),
-            #~ (r'^start_dialog/(?P<app_label>\w+)/(?P<actor>\w+)$', self.start_dialog_view),
-            #~ (r'^step_dialog/(?P<dialog_id>\w+)$', self.step_dialog_view),
             (r'^step_dialog$', self.step_dialog_view),
             (r'^abort_dialog$', self.abort_dialog_view),
-            (r'^choices/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<fldname>\w+)$', choices_view),
+            (r'^choices/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<fldname>\w+)$', self.choices_view),
             (r'^save_win/(?P<name>\w+)$', self.save_win_view),
             (r'^permalink_do/(?P<name>\w+)$', self.permalink_do_view),
-            (r'^props/(?P<app_label>\w+)/(?P<model_name>\w+)$', props_view),
+            #~ (r'^props/(?P<app_label>\w+)/(?P<model_name>\w+)$', self.props_view),
+            (r'^props$', self.props_view),
         )
         
-    #~ def start_dialog_view(self,request,app_label=None,actor=None,action=None,**kw):
-        #~ actor = actors.get_actor2(app_label,actor)
-        #~ dlg = ext_requests.Dialog(request,self,actor,action)
-        #~ r = dlg.start_dialog().as_dict()
-        #~ lino.log.debug('%s.start_dialog() -> %r',dlg,r)
-        #~ return json_response(r)
 
     def act_view(self,request,app_label=None,actor=None,action=None,**kw):
         actor = actors.get_actor2(app_label,actor)
         dlg = ext_requests.Dialog(request,self,actor,action)
-        r = dlg.start_dialog().as_dict()
-        lino.log.debug('[ExtUI.act_view()] %s.start_dialog() -> %r',dlg,r)
+        return self.start_dialog(dlg)
+        
+    def start_dialog(self,dlg):
+        r = dlg._start().as_dict()
+        lino.log.debug('ExtUI.start_dialog(%s) -> %r',dlg,r)
         return json_response(r)
         
     def step_dialog_view(self,request):
-        return self.json_dialog_view_(request,'step_dialog')
+        return self.json_dialog_view_(request,'_step')
         
     def abort_dialog_view(self,request):
-        return self.json_dialog_view_(request,'abort_dialog')
+        return self.json_dialog_view_(request,'_abort')
         
     def json_dialog_view_(self,request,meth_name,**kw):
         dialog_id = long(request.POST.get('dialog_id'))
@@ -417,6 +309,7 @@ class ExtUI(base.UI):
             return json_response(actions.DialogResponse(
               alert_msg=_('Dialog %r ist not for you.' % dialog_id)
               ).as_dict())
+        dlg.request = request
         m = getattr(dlg,meth_name)
         r = m().as_dict()
         lino.log.debug('%s.%s() -> %r',dlg,meth_name,r)
@@ -433,13 +326,93 @@ class ExtUI(base.UI):
         name = name.replace('_','.')
         actor = actors.get_actor(name)
         dlg = ext_requests.Dialog(request,self,actor,None)
-        return json_response(dlg.start_dialog().as_dict())
+        return self.start_dialog(dlg)
 
     def save_win_view(self,request,name=None):
         #print 'save_win_view()',name
         actor = SaveWindowConfig()
         dlg = ext_requests.Dialog(request,self,actor,None,name)
-        return json_response(dlg.start_dialog().as_dict())
+        return self.start_dialog(dlg)
+        
+
+    #~ def props_view(self,request,app_label=None,model_name=None,**kw):
+    def props_view(self,request,**kw):
+        # model = resolve_model(app_label+'.'+model_name)
+        rh = properties.PropValuesByOwner().get_handle(self)
+        rr = ext_requests.ViewReportRequest(request,rh)
+        #~ rr = ext_requests.PropertiesReportRequest(request,rh)
+        r = rr.render_to_json()
+        return json_response(r)
+        
+
+    def choices_view(self,request,app_label=None,rptname=None,fldname=None,**kw):
+        rpt = actors.get_actor2(app_label,rptname)
+        kw['choices_for_field'] = fldname
+        return self.json_report_view_(request,rpt,**kw)
+        
+        
+    def grid_afteredit_view(self,request,**kw):
+        kw['colname'] = request.POST['grid_afteredit_colname']
+        kw['submit'] = True
+        return self.json_report_view(request,**kw)
+
+    def form_submit_view(self,request,**kw):
+        kw['submit'] = True
+        return self.json_report_view(request,**kw)
+
+    def list_report_view(self,request,**kw):
+        #kw['simple_list'] = True
+        return self.json_report_view(request,**kw)
+        
+    def csv_report_view(self,request,**kw):
+        kw['csv'] = True
+        return self.json_report_view(request,**kw)
+        
+    def json_report_view(self,request,app_label=None,rptname=None,**kw):
+        rpt = actors.get_actor2(app_label,rptname)
+        return self.json_report_view_(request,rpt,**kw)
+
+    def json_report_view_(self,request,rpt,grid_action=None,colname=None,submit=None,choices_for_field=None,csv=False):
+        if not rpt.can_view.passes(request):
+            return self.json_response_kw(success=False,
+                msg="User %s cannot view %s." % (request.user,rpt))
+        if grid_action:
+            dlg = ext_requests.GridDialog(request,self,rpt,grid_action)
+            return self.start_dialog(dlg)
+                
+        rh = rpt.get_handle(self)
+        if choices_for_field:
+            rptreq = ext_requests.ChoicesReportRequest(request,rh,choices_for_field)
+        elif csv:
+            rptreq = ext_requests.CSVReportRequest(request,rh)
+            return rptreq.render_to_csv()
+        else:
+            rptreq = ext_requests.ViewReportRequest(request,rh)
+            if submit:
+                pk = request.POST.get(rh.store.pk.name) #,None)
+                #~ if pk == reports.UNDEFINED:
+                    #~ pk = None
+                try:
+                    data = rh.store.get_from_form(request.POST)
+                    if pk in ('', None):
+                        #return json_response(success=False,msg="No primary key was specified")
+                        instance = rptreq.create_instance(**data)
+                        instance.save(force_insert=True)
+                    else:
+                        instance = rpt.model.objects.get(pk=pk)
+                        for k,v in data.items():
+                            setattr(instance,k,v)
+                        instance.save(force_update=True)
+                    return json_response_kw(success=True,
+                          msg="%s has been saved" % instance)
+                except Exception,e:
+                    lino.log.exception(e)
+                    #traceback.format_exc(e)
+                    return json_response_kw(success=False,msg="Exception occured: "+cgi.escape(str(e)))
+            # otherwise it's a simple list:
+        d = rptreq.render_to_json()
+        return json_response(d)
+        
 
         
 
@@ -463,7 +436,8 @@ class ExtUI(base.UI):
         return build_url("/choices",fke.lh.link.report.app_label,fke.lh.link.report.name,fke.field.name,**kw)
         
     def get_props_url(self,model,**kw):
-        return build_url('/props',model._meta.app_label)
+        #~ return build_url('/props',model._meta.app_label,model.__class__.__name__)
+        return build_url('/props')
         
     def get_report_url(self,rh,master_instance=None,
             submit=False,grid_afteredit=False,grid_action=None,run=False,csv=False,**kw):
@@ -530,22 +504,6 @@ class ExtUI(base.UI):
         return kw
             
         
-    #~ def view_report(self,context,**kw):
-        #~ """
-        #~ called from Report.view()
-        #~ """
-        #~ rpt = context.actor
-        #~ rh = self.get_report_handle(rpt)
-        #~ #rr = ViewReportRequest(context.request,rh)
-        #~ layout = context.request.GET.get('layout')
-        #~ if layout is None:
-            #~ lh = rh.layouts[rpt.default_layout]
-        #~ else:
-            #~ lh = rh.layouts[int(layout)]
-        #~ #lh = rr.layout 
-        #~ # kw['defaultButton'] = js_code('this.main_grid')
-        #~ kw = self.window_options(lh,**kw)
-        #~ context.response.update(call=lh._main.js_job_constructor(**kw))
         
     def view_report(self,dlg,**kw):
         """
@@ -562,7 +520,7 @@ class ExtUI(base.UI):
         #lh = rr.layout 
         # kw['defaultButton'] = js_code('this.main_grid')
         kw = self.window_options(lh,**kw)
-        yield dlg.exec_js(lh._main.js_job_constructor(**kw))
+        yield dlg.exec_js(lh._main.js_job_constructor(**kw)).over()
         
         
     def view_form(self,dlg,**kw):
@@ -575,30 +533,10 @@ class ExtUI(base.UI):
         #rr = None
         yield dlg.exec_js(lh._main.js_job_constructor(**kw)).over()
         
-    #~ def view_form(self,context,**kw):
-        #~ "called from Form.run()"
-        #~ frm = context.actor
-        #~ fh = self.get_form_handle(frm)
-        #~ #fh.setup()
-        #~ lh = fh.lh
-        #~ kw = self.window_options(lh,**kw)
-        #~ #rr = None
-        #~ context.response.update(call=lh._main.js_job_constructor(**kw))
-        
-    #~ def show_properties(self,context,row,**kw):
-        #~ "called from lino.actions.ShowProperties.run()"
-        #~ propseditor = ext_elems.ShowPropertiesWindow(row)
-        #~ context.response.update(call=propseditor.js_job_constructor(**kw))
-
-    def get_dialog(self,session,dlg_id):
-        
-        raise NotImplementedError
-        
-        
         
     def setup_report(self,rh):
         rh.store = ext_store.Store(rh)
-        props = Property.properties_for_model(rh.report.model)
+        props = properties.Property.properties_for_model(rh.report.model)
         if props.count() == 0:
             rh.props = None
         else:

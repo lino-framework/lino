@@ -166,10 +166,23 @@ class Variable(object):
         elif self.declare_type == DECLARE_THIS:
             yield "this.%s = %s;" % (self.ext_name,value)
             
-    def js_run(self):
+    #~ def js_column_lines(self):
+        #~ return []
+        
+    def js_before_body(self):
         for v in self.subvars():
-            for ln in v.js_run():
+            for ln in v.js_before_body():
                 yield ln
+    def js_body(self):
+        for v in self.subvars():
+            for ln in v.js_body():
+                yield ln
+                
+    def js_after_body(self):
+        for v in self.subvars():
+            for ln in v.js_after_body():
+                yield ln
+        
                 
     def subvars(self):
         return []

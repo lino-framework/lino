@@ -41,38 +41,6 @@ def authenticated_user(user):
         return None
     return user
         
-      
-#~ class ActionContext(actions.ActionContext):
-    #~ def __init__(self,request,*args,**kw):
-        #~ actions.ActionContext.__init__(self,*args,**kw)
-        #~ self.request = request
-        #~ self.confirmed = self.request.POST.get('confirmed',None)
-        #~ if self.confirmed is not None:
-            #~ self.confirmed = int(self.confirmed)
-        #~ self.confirms = 0
-        #~ #print 'ActionContext.__init__()', self.confirmed, self.selected_rows
-        
-    #~ def get_user(self):
-        #~ return authenticated_user(self.request.user)
-        
-    #~ def get_report_request(self):
-        #~ raise NotImplementedError()
-        
-#~ class GridActionContext(ActionContext):
-    #~ def __init__(self,request,*args,**kw):
-        #~ ActionContext.__init__(self,request,*args,**kw)
-        #~ assert isinstance(self.actor,reports.Report)
-        #~ selected = self.request.POST.get('selected',None)
-        #~ if selected:
-            #~ self.selected_rows = [
-              #~ self.actor.model.objects.get(pk=pk) for pk in selected.split(',') if pk]
-        #~ else:
-            #~ self.selected_rows = []
-        
-    #~ def get_report_request(self):
-        #~ raise "what's about kw and ReportRequest.setup() here?"
-        #~ rh = self.actor.get_handle(self.ui)
-        #~ return ViewReportRequest(self.request,rh)
 
 
 class Dialog(actions.Dialog):
@@ -91,6 +59,8 @@ class Dialog(actions.Dialog):
         
     def get_report_request(self):
         raise NotImplementedError()
+        
+        
 class GridDialog(Dialog):
     def __init__(self,request,*args,**kw):
         Dialog.__init__(self,request,*args,**kw)
@@ -107,14 +77,36 @@ class GridDialog(Dialog):
 class BaseViewReportRequest(reports.ReportRequest):
     
     def __init__(self,request,rh,*args,**kw):
+        if rh.report.master is ContentType:
+            mt = request.GET.get(URL_PARAM_MASTER_TYPE)
+            self.master = ContentType.objects.get(pk=mt).model_class()
         reports.ReportRequest.__init__(self,rh)
         self.request = request
         self.store = rh.store
         request._lino_request = self
+        
         kw = self.parse_req(request,rh,**kw)
         self.setup(*args,**kw)
         
     def parse_req(self,request,rh,**kw):
+        if self.master is not None and not kw.has_key('master_instance'):
+            pk = request.GET.get(URL_PARAM_MASTER_PK,None)
+            #~ if pk == UNDEFINED:
+                #~ pk = None
+            if pk == '':
+                pk = None
+            if pk is None:
+                kw.update(master_instance=None)
+            else:
+                try:
+                    m = self.master.objects.get(pk=pk)
+                except self.master.DoesNotExist,e:
+                    lino.log.warning(
+                      "There's no %s with primary key %r",
+                      self.master.__name__,pk)
+                else:
+                    kw.update(master_instance=m)
+            #~ print '20100212', self #, kw['master_instance']
         quick_search = request.GET.get(URL_PARAM_FILTER,None)
         if quick_search:
             kw.update(quick_search=quick_search)
@@ -145,8 +137,18 @@ class BaseViewReportRequest(reports.ReportRequest):
             row = self.create_instance()
             rows.append(self.obj2json(row))
             total_count += 1
-        return dict(count=total_count,rows=rows)
+        return dict(count=total_count,rows=rows,title=unicode(self.master_instance))
         
+#~ class PropertiesReportRequest(BaseViewReportRequest):
+
+    #~ def render_to_json(self):
+        #~ source = {}
+        #~ for row in self.queryset:
+            #~ self.obj2dict(row,source)
+        #~ return dict(source=source,title=unicode(self.master_instance))
+
+    #~ def obj2dict(self,obj,d):
+        #~ d[obj.prop.name] = obj.get_child().value
 
 class CSVReportRequest(BaseViewReportRequest):
     extra = 0
@@ -205,9 +207,9 @@ class ChoicesReportRequest(BaseViewReportRequest):
         #~ kw['extra'] = 0
         #~ return kw
           
-    def get_queryset(self,**kw):
+    def setup_queryset(self):
         pk = self.request.GET.get(URL_PARAM_CHOICES_PK,None)
-        return self.report.get_field_choices(self.rec_field,pk,**kw)
+        self.queryset = self.report.get_field_choices(self.rec_field,pk,**self.params)
         #return self.report.get_queryset(self,master_instance=self.master_instance,**kw)
         
     def get_absolute_url(self,**kw):
@@ -221,19 +223,6 @@ class ChoicesReportRequest(BaseViewReportRequest):
         #kw[self.fieldname] = obj.pk 
         return kw
           
-    #~ rh = 
-    #~ req = ChoicesReportRequest(rpt,request)
-    #~ pk = request.GET.get(URL_PARAM_CHOICES_PK,None)
-    #~ choices_filter = rpt.get_field_choices(pk)
-    #~ qs = rpt.get_queryset
-    #~ choices = rpt.get_choice_field
-    #~ model = models.get_model(app_label,modname)
-    #~ field = model._meta.get_field_by_name(fldname)
-    #~ get_field_choices
-    #~ rpt = field._lino_choices_report
-    #~ #kw['colname'] = request.POST['colname']
-    #~ return json_report_view_(request,rpt,**kw)
-        
   
 class ViewReportRequest(BaseViewReportRequest):
   
@@ -244,29 +233,6 @@ class ViewReportRequest(BaseViewReportRequest):
     
     def parse_req(self,request,rh,**kw):
         kw = BaseViewReportRequest.parse_req(self,request,rh,**kw)
-        if rh.report.master is not None and not kw.has_key('master_instance'):
-            pk = request.GET.get(URL_PARAM_MASTER_PK,None)
-            #~ if pk == UNDEFINED:
-                #~ pk = None
-            if pk == '':
-                pk = None
-            if pk is None:
-                kw.update(master_instance=None)
-            else:
-                if rh.report.master is ContentType:
-                    mt = request.GET.get(URL_PARAM_MASTER_TYPE)
-                    master_model = ContentType.objects.get(pk=mt).model_class()
-                else:
-                    master_model = rh.report.master
-                try:
-                    m = master_model.objects.get(pk=pk)
-                except master_model.DoesNotExist,e:
-                    lino.log.warning(
-                      "There's no %s with primary key %r",
-                      master_model.__name__,pk)
-                else:
-                    kw.update(master_instance=m)
-            #~ print '20100212', self #, kw['master_instance']
         sort = request.GET.get('sort',None)
         if sort:
             self.sort_column = sort

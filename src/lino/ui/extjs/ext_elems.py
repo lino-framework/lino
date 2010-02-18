@@ -217,9 +217,6 @@ class LayoutElement(VisibleComponent):
             kw.update(collapsible=self.collapsible)
         return kw
         
-    def js_column_lines(self,grid):
-        return []
-        
     #~ def ext_width(self):
         #~ if self.width is None:
             #~ return None
@@ -253,29 +250,35 @@ class InputElement(LayoutElement):
         
 class ButtonElement(LayoutElement):
     #declare_type = jsgen.DECLARE_INLINE
-    #declare_type = jsgen.DECLARE_THIS
-    declare_type = jsgen.DECLARE_VAR
+    declare_type = jsgen.DECLARE_THIS
+    #declare_type = jsgen.DECLARE_VAR
     ext_suffix = "_btn"
-    xtype = 'button'
+    xtype = None # 'button'
     preferred_height = 0
+    value_template = "new Ext.Button(%s)"
 
+    def ext_options(self,**kw):
+        kw = LayoutElement.ext_options(self,**kw)
+        if self.lh.default_button == self:
+            kw.update(plugins='defaultButton')
+        return kw
+        
+class ActionElement(ButtonElement):
+  
     def __init__(self,lh,name,action,**kw):
         #lino.log.debug("ButtonElement.__init__(%r,%r,%r)",lh,name,action)
-        LayoutElement.__init__(self,lh,name,**kw)
+        ButtonElement.__init__(self,lh,name,**kw)
         assert isinstance(lh.layout,layouts.Layout), "%s is not a Layout" % lh.name
         self.action = action
         
     def ext_options(self,**kw):
-        #kw = super(StaticTextElement,self).ext_options(**kw)
-        kw = LayoutElement.ext_options(self,**kw)
+        kw = ButtonElement.ext_options(self,**kw)
         #kw.update(xtype=self.xtype)
         label = self.action.label or self.name
         kw.update(text=label)
         #kw.update(maxHeight=self.preferred_height*EXT_CHAR_HEIGHT)
         kw.update(maxWidth=len(label)*EXT_CHAR_WIDTH)
         kw.update(id=self.name)
-        if self.lh.default_button == self:
-            kw.update(plugins='defaultButton')
         kw.update(handler=js_code('Lino.form_action(this,%r,%s,%r)' % (
           self.name,py2js(self.action.needs_validation),self.lh.ui.get_button_url(self))))
         return kw
@@ -300,13 +303,13 @@ class StaticTextElement(LayoutElement):
 
 class PropertiesWindow(Component):
     declare_type = jsgen.DECLARE_THIS
-    #ext_suffix = "_props"
     value_template = "new Ext.Window(%s)"
     
-    def __init__(self,ui,model,props):
+    def __init__(self,ui,model,props,**kw):
         self.ui = ui
         self.model = model
-        Component.__init__(self,'props')
+        kw.update(closeAction='hide')
+        Component.__init__(self,'properties_window',**kw)
         self.source = {}
         self.customEditors = {}
         self.propertyNames = {}
@@ -347,7 +350,7 @@ class PropertiesWindow(Component):
             grid.update(propertyNames=self.propertyNames)
         kw.update(layout='fit',items=grid)
         return kw
-    
+        
 
 #~ class PropertyGridElement(LayoutElement):
     #~ #declare_type = jsgen.DECLARE_INLINE
@@ -590,9 +593,9 @@ class ForeignKeyElement(FieldElement):
             #kw.update(lazyInit=True)
         return kw
         
-    def js_column_lines(self,grid):
+    def js_after_body(self):
         if self.lh.link.report.get_field_choices_meth(self.field) is not None:
-            yield "%s.add_row_listener(function(sm,rowIndex,record) {" % grid
+            yield "this.main_grid.add_row_listener(function(sm,rowIndex,record) {" 
             #yield "  console.log('20100124b',this,client_job);"
             yield "  %s.setQueryContext(record.data.id)});" % self.as_ext()
             #yield "client_job.add_row_listener(function(sm,rowIndex,record) {console.log('20100124b',this)},this);"
@@ -929,10 +932,8 @@ class GridElement(Container): #,DataElementMixin):
         #d.update(layout='fit')
         d.update(enableColLock=False)
         if self.__class__ is not GridMainPanel: 
-            mt = ContentType.objects.get_for_model(self.report.model).pk
-            js="Lino.show_slave(this,%r,%s,%s)" % (
-                self.rh.row_layout.get_absolute_url(run=True),
-                py2js(self.rh.report.label),mt)
+            js="Lino.action_handler(this,%r)" % \
+                self.rh.row_layout.get_absolute_url(run=True)
             d.update(listeners=dict(click=js_code(js)))
         return d
         
@@ -958,25 +959,25 @@ class M2mGridElement(GridElement):
         rh = rpt.get_handle(lh.ui)
         GridElement.__init__(self,lh,id2js(rpt.actor_id),rh,*elements,**kw)
   
-class Reaction:
+class Reaction(jsgen.Variable):
   
     def setup(self):
         pass
         
-    def subvars(self):
-        return []
+    #~ def subvars(self):
+        #~ return []
         
-    def js_declare(self):
-        return []
+    #~ def js_declare(self):
+        #~ return []
         
-    def js_body(self):
-        return []
+    #~ def js_body(self):
+        #~ return []
         
-    def js_after_body(self):
-        return []
+    #~ def js_after_body(self):
+        #~ return []
         
-    def js_before_body(self):
-        return []
+    #~ def js_before_body(self):
+        #~ return []
         
     def js_job_constructor(self,**kw):
         yield "function(caller) {"
@@ -1017,29 +1018,12 @@ class MainPanel(Reaction):
         self.keys = None
         self.buttons = None
         self.cmenu = None
+        self.props_button = None
         
-    def subvars(self):
-        self.setup()
-        for rh in self.lh._needed_stores:
-            yield rh.store
-        yield self.buttons
-        yield self.keys
-        yield self.cmenu
-  
-    def js_after_body(self):
-        for e in self.lh.walk():
-            for ln in e.js_column_lines('this.main_grid'):
-                yield ln
-                
-  
     def get_datalink(self):
         raise NotImplementedError
         
-    def js_before_body(self):
-        # for permalink:
-        yield "  this.window._permalink = %s;" % py2js(id2js(self.lh.name))
-        yield "  this.content_type = %s;" % py2js(self.lh.link.content_type)
-        
+  
     def setup(self):
         if self.keys:
             return
@@ -1047,19 +1031,23 @@ class MainPanel(Reaction):
         keys = []
         buttons = []
         dl = self.get_datalink()
+        if dl.props is not None:
+            #~ h = js_code("function(btn,state) {Lino.toggle_props(this)}")
+            h = js_code("Lino.props_handler(this)")
+            self.props_button = ButtonElement(self.lh,'props',\
+                text=_('Properties'),
+                toggleHandler=h,
+                enableToggle=True)
+            buttons.append(self.props_button)
+            #~ buttons.append(dict(text=_('Properties'),toggleHandler=h,enableToggle=True))
         for a in dl.get_actions():
-            h = js_code("Lino.grid_action(this,'%s','%s')" % (
-                  a.name, 
+            h = js_code("Lino.action_handler(this,%r)" % (
                   dl.get_absolute_url(grid_action=a.name)))
             buttons.append(dict(text=a.label,handler=h))
             if a.key:
                 keys.append(dict(
                   handler=h,
                   key=a.key.keycode,ctrl=a.key.ctrl,alt=a.key.alt,shift=a.key.shift))
-        if dl.props is not None:
-            #~ h = js_code("function(btn,state) {Lino.toggle_props(this)}")
-            h = js_code("Lino.toggle_props(this)")
-            buttons.append(dict(text=_('Properties'),toggleHandler=h,enableToggle=True))
         if self.__class__ is GridMainPanel:
             details = dl.get_details()
             if len(details):
@@ -1067,21 +1055,22 @@ class MainPanel(Reaction):
                 key = actions.RETURN(ctrl=True)
                 lh = details[0]
                 keys.append(dict(
-                  handler=js_code("Lino.show_slave(this,%r,%s,%s)" % (lh.get_absolute_url(run=True),py2js(lh.label),self.mt)),
+                  handler=js_code("Lino.action_handler(this,%r)" % \
+                    lh.get_absolute_url(run=True)),
                   key=key.keycode,ctrl=key.ctrl,alt=key.alt,shift=key.shift))
 
-                for lh in details[1:]: # self.rh.layouts[2:]:
+                for lh in details[1:]: 
                     buttons.append(dict(
-                  handler=js_code("Lino.show_slave(this,%r,%s,%s)" % (lh.get_absolute_url(run=True),py2js(lh.label),self.mt)),
+                      handler=js_code("Lino.action_handler(this,%r)" % \
+                        lh.get_absolute_url(run=True)),
                       text=lh.layout.label))
                   
             slaves = dl.get_slaves()
             for rh in slaves:
                 #rh = sl.get_handle(self.lh.ui)
                 buttons.append(dict(
-                  handler=js_code("Lino.show_slave(this,%r,%s,%s)" % (
-                    rh.row_layout.get_absolute_url(run=True),
-                    py2js(rh.report.label),self.mt)),
+                  handler=js_code("Lino.action_handler(this,%r)" % \
+                    rh.row_layout.get_absolute_url(run=True)),
                   #handler=js_code("Lino.show_slave(this,%r)" % id2js(rh.row_layout.name)),
                   text = rh.report.label,
                 ))
@@ -1090,6 +1079,60 @@ class MainPanel(Reaction):
         self.buttons = Variable(self.ext_name+'_buttons',buttons)
         self.cmenu = Variable('cmenu',js_code("new Ext.menu.Menu(%s)" % py2js(self.buttons)))
         
+    def subvars(self):
+        self.setup()
+        for rh in self.lh._needed_stores:
+            yield rh.store
+        if self.props_button is not None:
+            yield self.props_button 
+        yield self.buttons
+        yield self.keys
+        yield self.cmenu
+        
+  
+    def js_before_body(self):
+        for ln in Reaction.js_before_body(self):
+            yield ln
+        # for permalink:
+        yield "  this.window._permalink = %s;" % py2js(id2js(self.lh.name))
+        yield "  this.content_type = %s;" % py2js(self.lh.link.content_type)
+        
+    def js_after_body(self):
+        for ln in Reaction.js_after_body(self):
+            yield ln
+        if self.lh.link.props is not None:
+            yield "this.properties_window.on('hide',function(){ this.props_btn.toggle(false)},scope=this);"
+            yield "this.main_grid.add_row_listener(function(sm,rowIndex,record) {"
+            # yield "  console.log('20100218 ext_elems',record);"
+            yield "  // if(this.properties_window.hidden)"
+            yield "  var params = {%r:this.content_type," % ext_requests.URL_PARAM_MASTER_TYPE
+            yield "  %r:record.id};" % ext_requests.URL_PARAM_MASTER_PK
+            
+            yield """\
+  var on_success = function(response) {
+    var result = Ext.decode(response.responseText);
+    this.properties_window.setTitle(result.title);
+    var grid = this.properties_window.items.get(0);
+    for (i in result.rows) {
+      grid.setProperty(result.rows[i].prop_name,result.rows[i].value_text)
+    }
+  };
+  Ext.Ajax.request({
+    waitMsg: 'Loading properties...',
+    url: '/props',
+    method: 'GET',
+    params: params,
+    scope: this,
+    success: on_success,
+    failure: function(response) {
+      Ext.MessageBox.alert('error','could not connect to the LinoSite.');
+    }
+  });"""
+            #~ yield "  this.properties_window.items.get(0).setSource({foo:'bar'});"
+            yield "},this);"
+    
+                
+                
     @classmethod
     def field2elem(cls,lh,field,**kw):
         for cl,x in _field2elem:
@@ -1098,9 +1141,6 @@ class MainPanel(Reaction):
         raise NotImplementedError("No LayoutElement for %s" % field.__class__)
         #~ raise NotImplementedError("field %r" % field)
 
-#~ class FieldPanel(Container):
-    #~ xtype = "container"
-  
 class WrappingMainPanel(MainPanel):
     """Inherited by DetailMainPanel and FormMainPanel (not GridPanel)
     Wraps each FieldElement into a Panel with FormLayout.
@@ -1317,12 +1357,12 @@ class DetailMainPanel(Panel,WrappingMainPanel):
         yield "this.refresh = function() { if(caller) caller.refresh(); };"
         yield "this.get_current_record = function() { return this.current_record;};"
         yield "this.get_selected = function() {"
-        yield "  return this.current_record.id;"
+        yield "  if (this.current_record) return this.current_record.id;"
         yield "}"
         yield "if(caller) {"
         #yield "  this.add_row_listener = function(fn,scope){caller.add_row_listener(fn,scope)};"
         yield "  this.main_grid = caller.main_grid;"
-        yield "  this.props = caller.props;"
+        yield "  this.properties_window = caller.properties_window;"
         yield "}else{"
         #yield "  this.add_row_listener = function(fn,scope) {};"
         yield "  this.main_grid = undefined;"

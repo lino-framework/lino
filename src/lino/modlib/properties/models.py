@@ -51,19 +51,22 @@ class Property(models.Model):
             i = cl(value=v,prop=self)
         else:
             i = cl(value=v,prop=self,owner=owner)
-        i.save()
         return i
                 
     def set_value_for(self,owner,v):
+        pv = self.get_value_for(owner)
+        pv.value = v
+        pv.save()
+        
+    def get_value_for(self,owner):
         assert owner.pk is not None, "must save the owner first"
         vm = self.value_type.model_class()
         try:
-            pv = vm.objects.get(prop__exact=self,owner_id__exact=owner.pk)
+            return vm.objects.get(prop__exact=self,owner_id__exact=owner.pk)
         except vm.DoesNotExist,e:
-            self.create_value(v,owner)
-        else:
-            pv.value = v
-            pv.save()
+            if owner is None:
+                return vm(prop=self)
+            return vm(prop=self,owner=owner)
             
     def set_choice_for(self,owner,i):
         pv = self.choices_list()[i]
@@ -101,10 +104,6 @@ class Property(models.Model):
         #~ return cls.objects.filter(only_for__in=(ct,None))
         q = models.Q(only_for__exact=None) | models.Q(only_for=ct)
         return cls.objects.filter(q)
-        #~ for o in cls.objects.filter(only_for__exact=None):
-            #~ yield o
-        #~ for o in cls.objects.filter(only_for=ct):
-            #~ yield o
         
     
 class Properties(reports.Report):
@@ -156,6 +155,18 @@ class PropValue(models.Model):
             return u"One choice for '%s' is %s" % (label,self.value)
         return u"%s for '%s' is %s" % (label,self.owner,self.value)
         
+    def get_child(self):
+        if self.__class__ is PropValue: 
+            pvm = self.prop.value_type.model_class()
+            return getattr(self,pvm.__name__.lower())
+        return self
+        
+    def prop_name(self):
+        if self.prop_id is None:
+            return ''
+        return self.prop.name
+    prop_name.result_type = models.CharField(max_length=20)
+                
         
     def by_owner(self):
         #~ if self.prop_id is None:
@@ -213,8 +224,13 @@ class PropValuesByOwner(reports.Report):
     model = PropValue
     #master = ContentType
     fk_name = 'owner'
-    columnNames = "prop value_text"
+    columnNames = "prop_name value_text"
     order_by = "prop__name"
+    
+    def get_queryset(self,rr):
+        return [
+          p.get_value_for(rr.master_instance) 
+            for p in Property.properties_for_model(rr.master)]
 
 
 def set_value_for(owner,**kw):

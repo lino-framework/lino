@@ -164,63 +164,8 @@ Lino.grid_afteredit = function (caller,url) {
   }
 };
 
-// Lino.jobs = Array();
-// Lino.active_job = undefined;
-
-Lino.old_do_action = function(caller,url,name,params) {
-  var doit = function(confirmed) {
-    params['confirmed'] = confirmed;
-    console.log('Lino.do_action()',name,params);
-    Ext.Ajax.request({
-      waitMsg: 'Running action "' + name + '". Please wait...',
-      url: url,
-      params: params, 
-      success: function(response){
-        // console.log('raw response:',response.responseText);
-        var result = Ext.decode(response.responseText);
-        // console.log('got response:',result);
-        if(result.success) {
-          if (result.msg) Ext.MessageBox.alert('Success',result.msg);
-          if (result.html) { new Ext.Window({html:result.html}).show(); };
-          if (result.window) { new Ext.Window(result.window).show(); };
-          if (result.call) {
-            var job = new result.call(caller);
-            // Lino.active_job = Lino.jobs.length;
-            // Lino.jobs[Lino.jobs.length] = job;
-            // job.run();
-            // console.log(Lino.jobs);
-          };
-          if (result.redirect) { window.open(result.redirect); };
-          if (result.must_reload && caller) caller.refresh();
-          // Lino.last_result = result;
-        } else {
-          if (result.msg) Ext.MessageBox.alert('Action failed',result.msg);
-          if(result.confirm) Ext.Msg.show({
-            title: 'Confirmation',
-            msg: result.confirm,
-            buttons: Ext.Msg.YESNOCANCEL,
-            fn: function(btn) {
-              if (btn == 'yes') {
-                  // console.log(btn);
-                  doit(confirmed+1);
-              }
-            }
-          })
-        }
-        if (result.stop_caller && caller) caller.stop();
-        if (result.refresh_menu) Lino.load_main_menu();
-      },
-      failure: function(response){
-        // console.log(response);
-        Ext.MessageBox.alert('Error','Lino.do_action() could not connect to the server.');
-      }
-    });
-  };
-  doit(0);
-};
-
 Lino.do_dialog = function(caller,url,params) {
-  console.log('Lino.do_dialog()',url,params);
+  // console.log('Lino.do_dialog()',url,params);
   var step_dialog = function(result) {
     if (result.dialog_id) {
       params['dialog_id'] = result.dialog_id;
@@ -234,13 +179,12 @@ Lino.do_dialog = function(caller,url,params) {
     }
   }
   var handle_response = function(response) {
-    var abort = false;
     var result = Ext.decode(response.responseText);
     // console.log('Lino.do_dialog() got',result);
     if (result.alert_msg) Ext.MessageBox.alert('Alert',result.alert_msg);
     if (result.notify_msg) Lino.notify(result.notify_msg);
     if (result.exec_js) new result.exec_js(caller);
-    if (result.must_reload && caller) caller.refresh();
+    if (result.refresh_caller && caller) caller.refresh();
     if (result.stop_caller && caller) caller.stop();
     if (result.refresh_menu) Lino.load_main_menu();
     if (result.confirm_msg) {
@@ -263,46 +207,34 @@ Lino.do_dialog = function(caller,url,params) {
     params: params, 
     success: handle_response,
     failure: function(response){
-      Ext.MessageBox.alert('Error','Lino.do_dialog() could not connect to the server.');
+      Ext.MessageBox.alert('Error','Connection to the server failed.');
     }
   });
 };"""
 
-        if False:
-            s += """
-Lino.grid_action = function(caller,name,url) {
-  return function(event) {
-    Lino.do_dialog(caller,url,{selected:caller.get_selected()}); // POST_PARAM_SELECTED
-  };
-};"""
         def js():
-            yield "Lino.grid_action = function(caller,name,url) {"
+            yield "Lino.action_handler = function(caller,url) {"
             yield "  return function(event) {"
             #yield "    // Lino.do_action(caller,url,name,{selected:caller.get_selected()});"
-            yield "    Lino.do_dialog(caller,url,{%s:caller.get_selected()});" \
-                       % ext_requests.POST_PARAM_SELECTED
+            yield "    Lino.do_dialog(caller,url,\
+              {%s:caller.get_selected()});" % ext_requests.POST_PARAM_SELECTED
             yield "}};"
             
-        s += '\n'.join(js())
+        s += py2js(js())
 
-        s += """
-Lino.show_slave = function (caller,url,name,mt) { 
+        if False: s += """
+Lino.slave_handler = function (caller,url) { 
   return function(btn,evt) {
-    // console.log('show_slave()',caller,url,name,mt)
-    // p = caller.main_grid.getStore().baseParams;
-    // console.log('show_detail',name,url,p)
-    // Lino.do_action(caller,url,name,p);
-    //var record = caller.get_current_record();
-    //Lino.do_action(caller,url,name,{mt:mt,mk:record.id});
-    // Lino.do_action(caller,url,name,{});
     Lino.do_dialog(caller,url,{});
   }
 };
+""" 
+        s += """
+        
 Lino.notify = function(msg) {
   console.log(msg);
 }
 """ 
-
         s += """
 Lino.gup = function( name )
 {
@@ -341,12 +273,10 @@ Lino.form_action = function (caller,name,needs_validation,url) {
   }
 };
 
-
-Lino.toggle_props = function (caller) {
+Lino.props_handler = function (caller) {
   return function(btn,state) {
-    // console.log('toggle_props()',btn,state);
-    if(state) { caller.props.show() } 
-    else { caller.props.hide() }
+    if(state) { caller.properties_window.show() } 
+    else { caller.properties_window.hide() }
   }
 };
 
@@ -422,8 +352,7 @@ Lino.cell_context_menu = function(job) {
     job.cmenu.showAt(xy);
   }
 }
-
-        """
+"""
         
         def js():
             yield "Lino.load_master = function(store,caller,record) {"

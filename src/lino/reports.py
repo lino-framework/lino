@@ -400,15 +400,13 @@ class Report(actors.Actor): # actions.Action): #
             #~ return self.label
         return self.title or self.label
         
-    def get_queryset(self,master_instance=None,quick_search=None,order_by=None,**kw):
-        #~ assert isinstance (req,ReportRequest)
-        #~ assert req.report is self
-        #lino.log.debug('%sReport.get_queryset(%r)',self.actor_id,master_instance)
+    #~ def get_queryset(self,master_instance=None,quick_search=None,order_by=None,**kw):
+    def get_queryset(self,rr):
         if self.queryset is not None:
             qs = self.queryset
         else:
             qs = self.model.objects.all()
-        kw = self.get_master_kw(master_instance,**kw)
+        kw = self.get_master_kw(rr.master_instance,**rr.params)
         if kw is None:
             return []
         if len(kw):
@@ -419,9 +417,9 @@ class Report(actors.Actor): # actions.Action): #
         if self.exclude:
             qs = qs.exclude(**self.exclude)
               
-        if quick_search is not None:
-            qs = add_quick_search_filter(qs,self.model,quick_search)
-        order_by = order_by or self.order_by
+        if rr.quick_search is not None:
+            qs = add_quick_search_filter(qs,self.model,rr.quick_search)
+        order_by = rr.order_by or self.order_by
         if order_by:
             qs = qs.order_by(*order_by.split())
         return qs
@@ -642,6 +640,7 @@ class ReportRequest:
     limit = None
     offset = None
     master_instance = None
+    master = None
     instance = None
     extra = None
     
@@ -649,19 +648,24 @@ class ReportRequest:
         assert isinstance(rh,ReportHandle)
         self.report = rh.report
         self.rh = rh
+        if self.master is None:
+            self.master = rh.report.master
       
     def __str__(self):
-        return self.report.actor_id + "Request(%r,...)" % self.master_instance
+        return self.__class__.__name__ + '(' + self.report.actor_id + ",%r,...)" % self.master_instance
 
     def setup(self,
             master_instance=None,
             offset=None,limit=None,
             layout=None,user=None,
-            extra=None,
+            extra=None,quick_search=None,
+            order_by=None,
             **kw):
         self.user = user
-        #self.name = rh.report.actor_id+"Request"
+        self.quick_search = quick_search
+        self.order_by = order_by
         kw.update(self.report.params)
+        self.params = kw
         self.master_kw = self.report.get_master_kw(master_instance)
         if self.extra is None:
             if extra is None:
@@ -680,9 +684,8 @@ class ReportRequest:
                 "Value %r is not a LayoutHandle" % layout
         self.layout = layout
         self.report.setup_request(self)
-        #lino.log.debug('%sRequest.__init__(%r)',rh.report.actor_id,master_instance)        
-        self.queryset = self.get_queryset(**kw)
-        #print 20091211, self, self.queryset
+        self.setup_queryset()
+        lino.log.debug(unicode(self))
         # get_queryset() may return a list
         if isinstance(self.queryset,models.query.QuerySet):
             self.total_count = self.queryset.count()
@@ -717,9 +720,10 @@ class ReportRequest:
     def get_user(self):
         raise NotImplementedError
         
-    def get_queryset(self,**kw):
+    def setup_queryset(self):
         # overridden by ChoicesReportRequest
-        return self.report.get_queryset(master_instance=self.master_instance,**kw)
+        self.queryset = self.report.get_queryset(self)
+        #~ return self.report.get_queryset(master_instance=self.master_instance,**kw)
         
 
 

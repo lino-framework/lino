@@ -276,10 +276,13 @@ class Store(Component):
                 f.get_from_form(instance,post_values)
         return instance
         
-    def js_declare(self):
-        for ln in Component.js_declare(self):
-            yield ln
+    #~ def js_declare(self):
+        #~ for ln in Component.js_declare(self):
+            #~ yield ln
             
+    def js_after_body(self):
+        for ln in Component.js_after_body(self):
+            yield ln
         if self.report.master is None:
             yield "%s.load();" % self.as_ext()
         else:
