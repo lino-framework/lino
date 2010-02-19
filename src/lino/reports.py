@@ -362,6 +362,7 @@ class Report(actors.Actor): # actions.Action): #
         
     # implements actors.Actor
     def get_handle(self,ui):
+        #~ assert isinstance(ui,BaseUI)
         return ui.get_report_handle(self)
         
     def get_action(self,name):
@@ -603,34 +604,8 @@ class ReportHandle(layouts.DataLink):
     def get_slaves(self):
         return [ sl.get_handle(self.ui) for sl in self.report._slaves ]
             
-
-        
-          
-          
-    #~ def get_fields(self):
-        #~ return [ f.name for f in self.report.model._meta.fields + self.report.model._meta.many_to_many]
-        
-    #~ def try_get_field(self,name):
-        #~ try:
-            #~ return self.report.model._meta.get_field(name)
-        #~ except models.FieldDoesNotExist,e:
-            #~ return None
-            
-    #~ def try_get_meth(self,name):
-        #~ return get_unbound_meth(self.report.model,name)
-            
-    #~ def try_get_virt(self,name):
-        #~ for vf in self.report.model._meta.virtual_fields:
-            #~ if vf.name == name:
-                #~ return vf
-            
-    #~ def get_slave(self,name):
-        #~ return get_slave(self.report.model,name)
-        #~ #l = self.slaves() # to populate
-        #~ #return self._slaves.get(name,None)
-        
-    def get_title(self,renderer):
-        return self.report.get_title(renderer)
+    def get_title(self,rr):
+        return self.report.get_title(rr)
         
     
 class ReportRequest:

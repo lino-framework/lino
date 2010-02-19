@@ -277,7 +277,7 @@ class ExtUI(base.UI):
             (r'^save_win/(?P<name>\w+)$', self.save_win_view),
             (r'^permalink_do/(?P<name>\w+)$', self.permalink_do_view),
             #~ (r'^props/(?P<app_label>\w+)/(?P<model_name>\w+)$', self.props_view),
-            (r'^props$', self.props_view),
+            # (r'^props$', self.props_view),
         )
         
 
@@ -435,9 +435,8 @@ class ExtUI(base.UI):
     def get_choices_url(self,fke,**kw):
         return build_url("/choices",fke.lh.link.report.app_label,fke.lh.link.report.name,fke.field.name,**kw)
         
-    def get_props_url(self,model,**kw):
-        #~ return build_url('/props',model._meta.app_label,model.__class__.__name__)
-        return build_url('/props')
+    #~ def get_props_url(self,model,**kw):
+        #~ return build_url('/props')
         
     def get_report_url(self,rh,master_instance=None,
             submit=False,grid_afteredit=False,grid_action=None,run=False,csv=False,**kw):

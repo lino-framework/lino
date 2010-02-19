@@ -268,7 +268,6 @@ class ActionElement(ButtonElement):
     def __init__(self,lh,name,action,**kw):
         #lino.log.debug("ButtonElement.__init__(%r,%r,%r)",lh,name,action)
         ButtonElement.__init__(self,lh,name,**kw)
-        assert isinstance(lh.layout,layouts.Layout), "%s is not a Layout" % lh.name
         self.action = action
         
     def ext_options(self,**kw):
@@ -310,6 +309,9 @@ class PropertiesWindow(Component):
         self.model = model
         kw.update(closeAction='hide')
         Component.__init__(self,'properties_window',**kw)
+        
+        self.rh = properties.PropValuesByOwner().get_handle(ui)
+        
         self.source = {}
         self.customEditors = {}
         self.propertyNames = {}
@@ -342,7 +344,8 @@ class PropertiesWindow(Component):
         grid.update(source=self.source,
           autoHeight=True)
         grid.update(customEditors=self.customEditors)
-        url = self.ui.get_props_url(self.model)
+        url = self.rh.get_absolute_url(grid_afteredit=True)
+        #~ url = self.ui.get_props_url(self.model)
         listeners = dict(
           afteredit=js_code('Lino.grid_afteredit(this,"%s")' % url))
         grid.update(listeners=listeners)
@@ -351,6 +354,41 @@ class PropertiesWindow(Component):
         kw.update(layout='fit',items=grid)
         return kw
         
+    def js_after_body(self):
+        for ln in Component.js_after_body(self):
+            yield ln
+        url = self.rh.get_absolute_url()
+        yield "this.properties_window.on('hide',function(){ this.props_btn.toggle(false)},scope=this);"
+        yield "this.main_grid.add_row_listener(function(sm,rowIndex,record) {"
+        # yield "  console.log('20100218 ext_elems',record);"
+        yield "  // if(this.properties_window.hidden)"
+        yield "  var params = {%r:this.content_type," % ext_requests.URL_PARAM_MASTER_TYPE
+        yield "  %r:record.id};" % ext_requests.URL_PARAM_MASTER_PK
+        yield """\
+  var on_success = function(response) {
+    var result = Ext.decode(response.responseText);
+    this.properties_window.setTitle(result.title);
+    var grid = this.properties_window.items.get(0);
+    for (i in result.rows) {
+      grid.setProperty(result.rows[i].prop_name,result.rows[i].value_text)
+    }
+  };"""
+        yield """\
+  Ext.Ajax.request({
+    waitMsg: 'Loading properties...',
+    url: %r,
+    method: 'GET',
+    params: params,
+    scope: this,
+    success: on_success,
+    failure: function(response) {
+      Ext.MessageBox.alert('error','could not connect to the LinoSite.');
+    }
+  });""" % url
+            #~ yield "  this.properties_window.items.get(0).setSource({foo:'bar'});"
+        yield "},this);"
+    
+                
 
 #~ class PropertyGridElement(LayoutElement):
     #~ #declare_type = jsgen.DECLARE_INLINE
@@ -1097,41 +1135,6 @@ class MainPanel(Reaction):
         yield "  this.window._permalink = %s;" % py2js(id2js(self.lh.name))
         yield "  this.content_type = %s;" % py2js(self.lh.link.content_type)
         
-    def js_after_body(self):
-        for ln in Reaction.js_after_body(self):
-            yield ln
-        if self.lh.link.props is not None:
-            yield "this.properties_window.on('hide',function(){ this.props_btn.toggle(false)},scope=this);"
-            yield "this.main_grid.add_row_listener(function(sm,rowIndex,record) {"
-            # yield "  console.log('20100218 ext_elems',record);"
-            yield "  // if(this.properties_window.hidden)"
-            yield "  var params = {%r:this.content_type," % ext_requests.URL_PARAM_MASTER_TYPE
-            yield "  %r:record.id};" % ext_requests.URL_PARAM_MASTER_PK
-            
-            yield """\
-  var on_success = function(response) {
-    var result = Ext.decode(response.responseText);
-    this.properties_window.setTitle(result.title);
-    var grid = this.properties_window.items.get(0);
-    for (i in result.rows) {
-      grid.setProperty(result.rows[i].prop_name,result.rows[i].value_text)
-    }
-  };
-  Ext.Ajax.request({
-    waitMsg: 'Loading properties...',
-    url: '/props',
-    method: 'GET',
-    params: params,
-    scope: this,
-    success: on_success,
-    failure: function(response) {
-      Ext.MessageBox.alert('error','could not connect to the LinoSite.');
-    }
-  });"""
-            #~ yield "  this.properties_window.items.get(0).setSource({foo:'bar'});"
-            yield "},this);"
-    
-                
                 
     @classmethod
     def field2elem(cls,lh,field,**kw):
