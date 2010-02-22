@@ -44,13 +44,13 @@ class Property(models.Model):
                 
     def create_value(self,v,owner=None):
         #print "%s.%s = %r" % (owner,self,v)
-        cl = self.value_type.model_class()
+        vm = self.value_type.model_class()
         #qs = cl.objects.all()
         #qs.create(name=n,prop=self,owner=owner)
         if owner is None:
-            i = cl(value=v,prop=self)
+            i = vm(value=v,prop=self)
         else:
-            i = cl(value=v,prop=self,owner=owner)
+            i = vm(value=v,prop=self,owner=owner)
         return i
                 
     def set_value_for(self,owner,v):
@@ -59,13 +59,17 @@ class Property(models.Model):
         pv.save()
         
     def get_value_for(self,owner):
-        assert owner.pk is not None, "must save the owner first"
         vm = self.value_type.model_class()
+        if owner is None:
+            #~ try:
+                #~ return vm.objects.get(prop__exact=self,owner_id__isnull=True)
+            #~ except vm.DoesNotExist,e:
+                #~ return vm(prop=self)
+            return vm(prop=self)
+        assert owner.pk is not None, "must save the owner first"
         try:
             return vm.objects.get(prop__exact=self,owner_id__exact=owner.pk)
         except vm.DoesNotExist,e:
-            if owner is None:
-                return vm(prop=self)
             return vm(prop=self,owner=owner)
             
     def set_choice_for(self,owner,i):
@@ -166,6 +170,11 @@ class PropValue(models.Model):
             return ''
         return self.prop.name
     prop_name.result_type = models.CharField(max_length=20)
+    
+    #~ def value(self):
+        #~ self = self.prop.get_child(self)
+        #~ return self.value
+    #~ value.result_type = None # means variable result_type
                 
         
     def by_owner(self):
@@ -222,9 +231,12 @@ class PropValues(reports.Report):
     
 class PropValuesByOwner(reports.Report):
     model = PropValue
+    use_layouts = False
+    can_edit = perms.never
+    can_add = perms.never
     #master = ContentType
     fk_name = 'owner'
-    columnNames = "prop_name value_text"
+    columnNames = "prop_name value"
     order_by = "prop__name"
     
     def get_queryset(self,rr):

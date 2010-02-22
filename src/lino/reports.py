@@ -91,6 +91,13 @@ generic_slaves = {}
 
 def register_report(cls):
     #rptclass.app_label = rptclass.__module__.split('.')[-2]
+    if cls.typo_check:
+        myattrs = set(cls.__dict__.keys())
+        for attr in base_attrs(cls):
+            myattrs.discard(attr)
+        if len(myattrs):
+            lino.log.warning("%s defines new attribute(s) %s", cls, ",".join(myattrs))
+    
     if cls.model is None:
         lino.log.debug("%s is an abstract report", cls)
         return
@@ -110,23 +117,6 @@ def register_report(cls):
         slave_reports.append(rpt)
 
     
-def unused_get_report(app_label,rptname):
-    # replaced by actors.get_actor()
-    """this method is called for each request, and it does not need to work when the AppCache is populating
-    """
-    lino.log.debug('reports.get_report(%r,%r)',app_label,rptname)
-    #app = models.get_app(app_label)
-    app = get_app(app_label)
-    #~ if app is None:
-        #~ return None
-    rptclass = getattr(app,rptname,None)
-    if rptclass is None:
-        raise ImportError("No report %s in application %r" % (rptname,app))
-        #~ lino.log.warning("No report %s in application %r",rptname,app)
-        #~ return None
-    return rptclass()
-
-    
 def setup():
     """
     - Each model can receive a number of "slaves". 
@@ -142,12 +132,6 @@ def setup():
     lino.log.debug("Register Report actors...")
     for cls in actors.actors_dict.values():
         if issubclass(cls,Report) and cls is not Report:
-            if cls.typo_check:
-                myattrs = set(cls.__dict__.keys())
-                for attr in base_attrs(cls):
-                    myattrs.discard(attr)
-                if len(myattrs):
-                    lino.log.warning("%s defines new attribute(s) %s", cls, ",".join(myattrs))
             register_report(cls)
     
     lino.log.debug("Instantiate model reports...")
@@ -157,26 +141,14 @@ def setup():
             cls = report_factory(model)
             register_report(cls)
             model._lino_model_report = cls()
-    #~ i = 0
-    #~ for model in models.get_models():
-        #~ i += 1
-        #~ lino.log.debug("%2d: %s %s %s",i,model._meta.db_table,model,model._lino_model_report.actor_id)
-        
-    #~ lino.log.debug("Instantiate choice reports...")
-    #~ for model in models.get_models():
-        #~ for fld in model._meta.fields:
-            #~ if isinstance(fld,models.ForeignKey):
-                #~ if not hasattr(fld,'_lino_choice_report'):
-                    #~ cls = choice_report_factory(model,fld)
-                    #~ register_report(cls)
-                    #~ fld._lino_choice_report = cls()
-        
+            
     lino.log.debug("Analyze %d slave reports...",len(slave_reports))
     for rpt in slave_reports:
         slaves = getattr(rpt.master,"_lino_slaves",None)
         if slaves is None:
             slaves = {}
-            setattr(rpt.master,'_lino_slaves',slaves)
+            #~ setattr(rpt.master,'_lino_slaves',slaves)
+            rpt.master._lino_slaves = slaves
         slaves[rpt.actor_id] = rpt
         lino.log.debug("%s: slave for %s",rpt.actor_id, rpt.master.__name__)
     lino.log.debug("Assigned %d slave reports to their master.",len(slave_reports))
@@ -185,6 +157,11 @@ def setup():
     for model in models.get_models():
         model._lino_model_report.setup()
         
+    #~ lino.log.debug("Instantiate property editors...")
+    #~ for model in models.get_models():
+        #~ pw = ext_elems.PropertiesWindow(model)
+        #~ model._lino_properties_window = pw
+            
     lino.log.debug("reports.setup() done")
 
 def get_slave(model,name):
@@ -256,6 +233,8 @@ class Report(actors.Actor): # actions.Action): #
     typo_check = True
     url = None
     actions = []
+    
+    use_layouts = True
     
     def __init__(self):
         actors.Actor.__init__(self)
@@ -396,10 +375,15 @@ class Report(actors.Actor): # actions.Action): #
 
         
             
-    def get_title(self,renderer):
+    def get_title(self,rr):
         #~ if self.title is None:
             #~ return self.label
-        return self.title or self.label
+        
+            
+        title = self.title or self.label
+        if self.master is not None:
+            title += ": " + unicode(rr.master_instance)
+        return title
         
     #~ def get_queryset(self,master_instance=None,quick_search=None,order_by=None,**kw):
     def get_queryset(self,rr):
@@ -514,6 +498,17 @@ class Report(actors.Actor): # actions.Action): #
     @classmethod
     def register_page_layout(cls,*layouts):
         cls.page_layouts = tuple(cls.page_layouts) + layouts
+        
+    def row2dict(self,row,**kw):
+        for n in self.columnNames.split():
+            kw[n] = getattr(row,n)
+        return kw
+        
+    def render_to_dict(self,**kw):
+        rh = ReportHandle(None,self)
+        rr = rh.request()
+        rr.setup(**kw)
+        return rr.render_to_dict()
 
         
 def report_factory(model):
@@ -550,26 +545,24 @@ class ReportHandle(layouts.DataLink):
         return self.report.name + 'Handle'
             
     def setup(self):
-        def lh(layout_class,*args,**kw):
-            return layouts.LayoutHandle(self,layout_class(),*args,**kw)
-            #h.needs_store(self)
-            #return h
-        
-        self.choice_layout = lh(layouts.RowLayout,0,self.report.display_field)
-        
-        index = 1
-        if self.report.row_layout_class is None:
-            self.row_layout = lh(layouts.RowLayout,index,self.report.columnNames)
-        else:
-            assert self.report.columnNames is None
-            self.row_layout = lh(self.report.row_layout_class,index)
+        if self.report.use_layouts:
+            def lh(layout_class,*args,**kw):
+                return layouts.LayoutHandle(self,layout_class(),*args,**kw)
             
-        self.layouts = [ self.choice_layout, self.row_layout ]
-        index = 2
-        for lc in self.report.page_layouts:
-            self.layouts.append(lh(lc,index))
-            index += 1
-        
+            self.choice_layout = lh(layouts.RowLayout,0,self.report.display_field)
+            
+            index = 1
+            if self.report.row_layout_class is None:
+                self.row_layout = lh(layouts.RowLayout,index,self.report.columnNames)
+            else:
+                assert self.report.columnNames is None
+                self.row_layout = lh(self.report.row_layout_class,index)
+                
+            self.layouts = [ self.choice_layout, self.row_layout ]
+            index = 2
+            for lc in self.report.page_layouts:
+                self.layouts.append(lh(lc,index))
+                index += 1
         self.ui.setup_report(self)
         
     def get_absolute_url(self,*args,**kw):
@@ -607,10 +600,16 @@ class ReportHandle(layouts.DataLink):
     def get_title(self,rr):
         return self.report.get_title(rr)
         
+    def request(self,**kw):
+        rr = ReportRequest(self)
+        rr.setup(**kw)
+        return rr
+        
     
 class ReportRequest:
     """
     An instance of this will be created for every request.
+    
     """
     limit = None
     offset = None
@@ -623,6 +622,7 @@ class ReportRequest:
         assert isinstance(rh,ReportHandle)
         self.report = rh.report
         self.rh = rh
+        # Subclasses (e.g. BaseViewReportRequest) may set `master` before calling ReportRequest.__init__()
         if self.master is None:
             self.master = rh.report.master
       
@@ -652,15 +652,16 @@ class ReportRequest:
                     extra = 0
             self.extra = extra
         self.master_instance = master_instance
-        if layout is None:
-            layout = self.rh.layouts[self.report.default_layout]
-        else:
-            assert isinstance(layout,layouts.LayoutHandle), \
-                "Value %r is not a LayoutHandle" % layout
-        self.layout = layout
+        if self.report.use_layouts:
+            if layout is None:
+                layout = self.rh.layouts[self.report.default_layout]
+            else:
+                assert isinstance(layout,layouts.LayoutHandle), \
+                    "Value %r is not a LayoutHandle" % layout
+            self.layout = layout
         self.report.setup_request(self)
         self.setup_queryset()
-        lino.log.debug(unicode(self))
+        #~ lino.log.debug(unicode(self))
         # get_queryset() may return a list
         if isinstance(self.queryset,models.query.QuerySet):
             self.total_count = self.queryset.count()
@@ -687,6 +688,9 @@ class ReportRequest:
     def get_title(self):
         return self.report.get_title(self)
         
+    def __iter__(self):
+        return self.queryset.__iter__()
+        
     def create_instance(self,**kw):
         kw.update(self.master_kw)
         #lino.log.debug('%s.create_instance(%r)',self,kw)
@@ -699,6 +703,21 @@ class ReportRequest:
         # overridden by ChoicesReportRequest
         self.queryset = self.report.get_queryset(self)
         #~ return self.report.get_queryset(master_instance=self.master_instance,**kw)
+        
+    def render_to_dict(self):
+        rows = [ self.row2dict(row) for row in self.queryset ]
+        total_count = self.total_count
+        #lino.log.debug('%s.render_to_dict() total_count=%d extra=%d',self,total_count,self.extra)
+        # add extra blank row(s):
+        for i in range(0,self.extra):
+            row = self.create_instance()
+            rows.append(self.row2dict(row))
+            total_count += 1
+        return dict(count=total_count,rows=rows,title=self.report.get_title(self))
+        
+    def row2dict(self,row,**kw):
+        # overridden in extjs.ViewReport
+        return self.report.row2dict(row)
         
 
 

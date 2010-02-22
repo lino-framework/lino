@@ -128,16 +128,6 @@ class BaseViewReportRequest(reports.ReportRequest):
             kw.update(start=self.offset)
         return self.report.get_absolute_url(**kw)
         
-    def render_to_json(self):
-        rows = [ self.obj2json(row) for row in self.queryset ]
-        total_count = self.total_count
-        #lino.log.debug('%s.render_to_json() total_count=%d extra=%d',self,total_count,self.extra)
-        # add extra blank row(s):
-        for i in range(0,self.extra):
-            row = self.create_instance()
-            rows.append(self.obj2json(row))
-            total_count += 1
-        return dict(count=total_count,rows=rows,title=unicode(self.master_instance))
         
 #~ class PropertiesReportRequest(BaseViewReportRequest):
 
@@ -216,7 +206,7 @@ class ChoicesReportRequest(BaseViewReportRequest):
         kw['choices_for_field'] = self.fieldname
         return BaseViewReportRequest.get_absolute_url(self,**kw)
         
-    def obj2json(self,obj,**kw):
+    def row2dict(self,obj,**kw):
         kw[CHOICES_TEXT_FIELD] = unicode(obj)
         #kw['__unicode__'] = unicode(obj)
         kw[CHOICES_VALUE_FIELD] = obj.pk # getattr(obj,'pk')
@@ -262,11 +252,14 @@ class ViewReportRequest(BaseViewReportRequest):
             kw.update(layout=self.layout.index)
         return BaseViewReportRequest.get_absolute_url(self,**kw)
 
-    def obj2json(self,obj,**kw):
-        #lino.log.debug('obj2json(%s)',obj.__class__)
-        #lino.log.debug('obj2json(%r)',obj)
-        for fld in self.store.fields:
-            fld.obj2json(obj,kw)
+    def row2dict(self,row,**kw):
+        #lino.log.debug('row2dict(%s)',row.__class__)
+        #lino.log.debug('row2dict(%r)',row)
+        if self.report.use_layouts:
+            for fld in self.store.fields:
+                fld.obj2json(row,kw)
+        else:
+            self.report.row2dict(row)
         #lino.log.debug('  -> %r',kw)
         return kw
  

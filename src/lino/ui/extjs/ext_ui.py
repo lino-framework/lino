@@ -335,14 +335,11 @@ class ExtUI(base.UI):
         return self.start_dialog(dlg)
         
 
-    #~ def props_view(self,request,app_label=None,model_name=None,**kw):
-    def props_view(self,request,**kw):
-        # model = resolve_model(app_label+'.'+model_name)
-        rh = properties.PropValuesByOwner().get_handle(self)
-        rr = ext_requests.ViewReportRequest(request,rh)
-        #~ rr = ext_requests.PropertiesReportRequest(request,rh)
-        r = rr.render_to_json()
-        return json_response(r)
+    #~ def props_view(self,request,**kw):
+        #~ rh = properties.PropValuesByOwner().get_handle(self)
+        #~ rr = ext_requests.ViewReportRequest(request,rh)
+        #~ r = rr.render_to_json()
+        #~ return json_response(r)
         
 
     def choices_view(self,request,app_label=None,rptname=None,fldname=None,**kw):
@@ -410,7 +407,7 @@ class ExtUI(base.UI):
                     #traceback.format_exc(e)
                     return json_response_kw(success=False,msg="Exception occured: "+cgi.escape(str(e)))
             # otherwise it's a simple list:
-        d = rptreq.render_to_json()
+        d = rptreq.render_to_dict()
         return json_response(d)
         
 
@@ -534,12 +531,17 @@ class ExtUI(base.UI):
         
         
     def setup_report(self,rh):
-        rh.store = ext_store.Store(rh)
-        props = properties.Property.properties_for_model(rh.report.model)
-        if props.count() == 0:
-            rh.props = None
+        if rh.report.use_layouts:
+            rh.store = ext_store.Store(rh)
         else:
-            rh.props = ext_elems.PropertiesWindow(self,rh.report.model,props)
+            rh.store = None
+        #~ props = properties.Property.properties_for_model(rh.report.model)
+        rh.props = ext_elems.PropertiesWindow(self,rh.report.model)
+        #~ if rh.report.model._lino_properties_window.has_properties():
+            #~ rh.props = ext_elems.PropertiesWindow(self,rh.report.model,props)
+            #~ rh.props = props
+        #~ else:
+            #~ rh.props = None
 
     def setup_form(self,fh):
         fh.props = None

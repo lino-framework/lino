@@ -304,7 +304,7 @@ class PropertiesWindow(Component):
     declare_type = jsgen.DECLARE_THIS
     value_template = "new Ext.Window(%s)"
     
-    def __init__(self,ui,model,props,**kw):
+    def __init__(self,ui,model,**kw):
         self.ui = ui
         self.model = model
         kw.update(closeAction='hide')
@@ -315,18 +315,9 @@ class PropertiesWindow(Component):
         self.source = {}
         self.customEditors = {}
         self.propertyNames = {}
-        for p in props:
-            # PropValue model
-            pvm = p.value_type.model_class()
-            assert pvm is not None, ('%s.value_type.model_class() returned None'%p)
-            # PropValue field
-            pvf = pvm._meta.get_field('value') 
-            default = pvf.default
-            if default is models.NOT_PROVIDED:
-                default = ''
-            elif callable(default):
-                default = default()
-            self.source[p.name] = default 
+        for pv in self.rh.request(master=model,master_instance=None):
+            p = pv.prop
+            self.source[p.name] = pv.value
             if p.label:
                 self.propertyNames[p.name] = p.label
                 
@@ -336,7 +327,31 @@ class PropertiesWindow(Component):
                     editor = ComboBox(store=choices,mode='local',selectOnFocus=True)
                     editor = 'new Ext.grid.GridEditor(%s)' % py2js(editor)
                     self.customEditors[p.name] = js_code(editor)
-    
+            
+        #~ for p in props:
+            #~ # PropValue model
+            #~ pvm = p.value_type.model_class()
+            #~ assert pvm is not None, ('%s.value_type.model_class() returned None'%p)
+            #~ # PropValue field
+            #~ pvf = pvm._meta.get_field('value') 
+            #~ default = pvf.default
+            #~ if default is models.NOT_PROVIDED:
+                #~ default = ''
+            #~ elif callable(default):
+                #~ default = default()
+            #~ self.source[p.name] = default 
+            #~ if p.label:
+                #~ self.propertyNames[p.name] = p.label
+                
+            #~ if pvm is properties.CHAR:
+                #~ choices = [unicode(pv.value) for pv in pvm.objects.filter(prop=p,owner_id__isnull=True)]
+                #~ if choices:
+                    #~ editor = ComboBox(store=choices,mode='local',selectOnFocus=True)
+                    #~ editor = 'new Ext.grid.GridEditor(%s)' % py2js(editor)
+                    #~ self.customEditors[p.name] = js_code(editor)
+                    
+    def has_properties(self):
+        return len(self.source) > 0
 
     def ext_options(self,**kw):
         kw = Component.ext_options(self,**kw)
@@ -1069,7 +1084,7 @@ class MainPanel(Reaction):
         keys = []
         buttons = []
         dl = self.get_datalink()
-        if dl.props is not None:
+        if dl.props.has_properties(): # is not None:
             #~ h = js_code("function(btn,state) {Lino.toggle_props(this)}")
             h = js_code("Lino.props_handler(this)")
             self.props_button = ButtonElement(self.lh,'props',\

@@ -15,13 +15,15 @@ Here are the properties that we are going to observe::
   
   >>> favdish = properties.CHAR.create_property(name='favdish',label='favorite dish')
   >>> favdish.save()
-  >>> favdish.create_value("Cookies")
-  <CHAR: One choice for 'favorite dish' is Cookies>
-  >>> favdish.create_value("Fish")
+  >>> favdish.create_value("Cookies").save()
+  >>> v = favdish.create_value("Fish").save()
+  >>> favdish.create_value("Meat").save()
+  >>> favdish.create_value("Vegetables").save()
+
+blabla...
+
   <CHAR: One choice for 'favorite dish' is Fish>
-  >>> favdish.create_value("Meat")
   <CHAR: One choice for 'favorite dish' is Meat>
-  >>> favdish.create_value("Vegetables")
   <CHAR: One choice for 'favorite dish' is Vegetables>
   
 Now we have setup the properties. Let's have a look at this metadata::
@@ -31,6 +33,10 @@ Now we have setup the properties. Let's have a look at this metadata::
   >>> qs = properties.Property.objects.all()
   >>> ["%s (%s)" % (p.name,','.join([pv.value for pv in p.choices_list()])) for p in qs]
   [u'weight ()', u'married ()', u'favdish (Cookies,Fish,Meat,Vegetables)']
+  
+blabla
+
+  >>> properties.PropValuesByOwner().render_to_dict(master=Person)
   
  
 Here are the people we are going to analyze::
