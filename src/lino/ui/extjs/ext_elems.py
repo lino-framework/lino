@@ -315,14 +315,16 @@ class PropertiesWindow(Component):
         self.source = {}
         self.customEditors = {}
         self.propertyNames = {}
-        for pv in self.rh.request(master=model,master_instance=None):
+        #~ for pv in self.rh.request(master=model,master_instance=None):
+        for pv in self.rh.request(master=model):
             p = pv.prop
             self.source[p.name] = pv.value
             if p.label:
                 self.propertyNames[p.name] = p.label
-                
+            pvm = p.value_type.model_class()
             if pvm is properties.CHAR:
-                choices = [unicode(pv.value) for pv in pvm.objects.filter(prop=p,owner_id__isnull=True)]
+                #~ choices = [unicode(pv.value) for pv in pvm.objects.filter(prop=p,owner_id__isnull=True)]
+                choices = [unicode(choice) for choice in pv.value_choices(p)]
                 if choices:
                     editor = ComboBox(store=choices,mode='local',selectOnFocus=True)
                     editor = 'new Ext.grid.GridEditor(%s)' % py2js(editor)
@@ -373,6 +375,7 @@ class PropertiesWindow(Component):
         for ln in Component.js_after_body(self):
             yield ln
         url = self.rh.get_absolute_url()
+        yield "this.window.on('hide',function(){ this.properties_window.hide()},scope=this);"
         yield "this.properties_window.on('hide',function(){ this.props_btn.toggle(false)},scope=this);"
         yield "this.main_grid.add_row_listener(function(sm,rowIndex,record) {"
         # yield "  console.log('20100218 ext_elems',record);"
@@ -385,7 +388,7 @@ class PropertiesWindow(Component):
     this.properties_window.setTitle(result.title);
     var grid = this.properties_window.items.get(0);
     for (i in result.rows) {
-      grid.setProperty(result.rows[i].prop_name,result.rows[i].value_text)
+      grid.setProperty(result.rows[i].name,result.rows[i].value)
     }
   };"""
         yield """\
@@ -1084,7 +1087,7 @@ class MainPanel(Reaction):
         keys = []
         buttons = []
         dl = self.get_datalink()
-        if dl.props.has_properties(): # is not None:
+        if dl.properties_window is not None:
             #~ h = js_code("function(btn,state) {Lino.toggle_props(this)}")
             h = js_code("Lino.props_handler(this)")
             self.props_button = ButtonElement(self.lh,'props',\
@@ -1193,8 +1196,8 @@ class GridMainPanel(GridElement,MainPanel):
         for e in MainPanel.subvars(self):
             yield e
         yield self.pager
-        if self.lh.link.props is not None:
-            yield self.lh.link.props
+        if self.lh.link.properties_window is not None:
+            yield self.lh.link.properties_window
         
     def get_datalink(self):
         return self.rh

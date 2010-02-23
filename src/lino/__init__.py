@@ -27,25 +27,30 @@ distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""
 
 
-# Copied from Sphinx <http://sphinx.pocoo.org>
-from os import path
-package_dir = path.abspath(path.dirname(__file__))
-if '+' in __version__ or 'pre' in __version__:
-    # try to find out the changeset hash if checked out from hg, and append
-    # it to __version__ (since we use this value from setup.py, it gets
-    # automatically propagated to an installed copy as well)
-    try:
-        import subprocess
-        p = subprocess.Popen(['hg', 'id', '-i', '-R',
-                              path.join(package_dir, '..', '..')],
-                             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        out, err = p.communicate()
-        if out:
-            __version__ += ' (Hg ' + out.strip() +')'
-        #~ if err:
-            #~ print err
-    except Exception:
-        pass
+if False: 
+    """
+    subprocess.Popen() took very long and even got stuck on Windows XP.
+    I didn't yet explore this phenomen more.
+    """
+    # Copied from Sphinx <http://sphinx.pocoo.org>
+    from os import path
+    package_dir = path.abspath(path.dirname(__file__))
+    if '+' in __version__ or 'pre' in __version__:
+        # try to find out the changeset hash if checked out from hg, and append
+        # it to __version__ (since we use this value from setup.py, it gets
+        # automatically propagated to an installed copy as well)
+        try:
+            import subprocess
+            p = subprocess.Popen(['hg', 'id', '-i', '-R',
+                                  path.join(package_dir, '..', '..')],
+                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            out, err = p.communicate()
+            if out:
+                __version__ += ' (Hg ' + out.strip() +')'
+            #~ if err:
+                #~ print err
+        except Exception:
+            pass
 
 
 

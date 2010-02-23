@@ -20,11 +20,6 @@ Here are the properties that we are going to observe::
   >>> favdish.create_value("Meat").save()
   >>> favdish.create_value("Vegetables").save()
 
-blabla...
-
-  <CHAR: One choice for 'favorite dish' is Fish>
-  <CHAR: One choice for 'favorite dish' is Meat>
-  <CHAR: One choice for 'favorite dish' is Vegetables>
   
 Now we have setup the properties. Let's have a look at this metadata::
   
@@ -34,9 +29,10 @@ Now we have setup the properties. Let's have a look at this metadata::
   >>> ["%s (%s)" % (p.name,','.join([pv.value for pv in p.choices_list()])) for p in qs]
   [u'weight ()', u'married ()', u'favdish (Cookies,Fish,Meat,Vegetables)']
   
-blabla
+PropValuesByOwner is a report that cannot be rendered into a normal grid because the 'value' column has variable data type, but it's render_to_dict() method is used to fill an `Ext.grid.PropertyGrid`:
 
   >>> properties.PropValuesByOwner().render_to_dict(master=Person)
+  {'count': 3, 'rows': [{'name': u'favdish', 'value': ''}, {'name': u'married', 'value': None}, {'name': u'weight', 'value': None}], 'title': u'Properties for persons'}
   
  
 Here are the people we are going to analyze::
@@ -77,17 +73,16 @@ in one line of code:
   
 Note that Mary didn't know her weight.
 
-To see the property values of a person, we can use
+To see the property values of a person, we can use a manual query...
 
   >>> qs = properties.PropValue.objects.filter(owner_id=fred.pk).order_by('prop__name')
   >>> [v.by_owner() for v in qs]
   [u'favdish: Fish', u'married: False', u'weight: 110']
   
-Or use the `PropValuesByOwner` report:
+... or use the `PropValuesByOwner` report:
 
-  >>> qs = properties.PropValuesByOwner().get_queryset(fred)
-  >>> [v.by_owner() for v in qs]
-  [u'favdish: Fish', u'married: False', u'weight: 110']
+  >>> properties.PropValuesByOwner().render_to_dict(master_instance=fred)
+  {'count': 3, 'rows': [{'name': u'favdish', 'value': u'Fish'}, {'name': u'married', 'value': False}, {'name': u'weight', 'value': 110}], 'title': u'Properties for Fred'}
   
 Query by property:
 
@@ -95,7 +90,7 @@ Query by property:
   >>> [v.by_property() for v in qs]
   [u'Chris: 70', u'Fred: 110', u'Vera: 60']
   
-  >>> qs = weight.propvalues_set()
+  >>> qs = weight.values_query().order_by('value')
   >>> [v.by_property() for v in qs]
   [u'Vera: 60', u'Chris: 70', u'Fred: 110']
   

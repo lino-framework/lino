@@ -499,15 +499,15 @@ class Report(actors.Actor): # actions.Action): #
     def register_page_layout(cls,*layouts):
         cls.page_layouts = tuple(cls.page_layouts) + layouts
         
-    def row2dict(self,row,**kw):
+    def row2dict(self,row,d):
+        "Overridden by lino.modlib.properties.PropValuesByOwner"
         for n in self.columnNames.split():
-            kw[n] = getattr(row,n)
-        return kw
+            d[n] = getattr(row,n)
+        return d
         
     def render_to_dict(self,**kw):
         rh = ReportHandle(None,self)
-        rr = rh.request()
-        rr.setup(**kw)
+        rr = rh.request(**kw)
         return rr.render_to_dict()
 
         
@@ -630,6 +630,7 @@ class ReportRequest:
         return self.__class__.__name__ + '(' + self.report.actor_id + ",%r,...)" % self.master_instance
 
     def setup(self,
+            master=None,
             master_instance=None,
             offset=None,limit=None,
             layout=None,user=None,
@@ -639,9 +640,16 @@ class ReportRequest:
         self.user = user
         self.quick_search = quick_search
         self.order_by = order_by
+        
+        if master is None:
+            master = self.report.master
+            # master might still be None
+        self.master = master
+        
         kw.update(self.report.params)
         self.params = kw
         self.master_kw = self.report.get_master_kw(master_instance)
+        self.master_instance = master_instance
         if self.extra is None:
             if extra is None:
                 if self.master_kw is None:
@@ -651,7 +659,6 @@ class ReportRequest:
                 else:
                     extra = 0
             self.extra = extra
-        self.master_instance = master_instance
         if self.report.use_layouts:
             if layout is None:
                 layout = self.rh.layouts[self.report.default_layout]
@@ -705,19 +712,25 @@ class ReportRequest:
         #~ return self.report.get_queryset(master_instance=self.master_instance,**kw)
         
     def render_to_dict(self):
-        rows = [ self.row2dict(row) for row in self.queryset ]
+        rows = [ self.row2dict(row,{}) for row in self.queryset ]
+        #~ rows = []
+        #~ for row in self.queryset:
+            #~ d = self.row2dict(row,{})
+            #~ rows.append(d)
         total_count = self.total_count
         #lino.log.debug('%s.render_to_dict() total_count=%d extra=%d',self,total_count,self.extra)
         # add extra blank row(s):
         for i in range(0,self.extra):
             row = self.create_instance()
-            rows.append(self.row2dict(row))
+            #~ d = self.row2dict(row,{})
+            #~ rows.append(d)
+            rows.append(self.row2dict(row,{}))
             total_count += 1
         return dict(count=total_count,rows=rows,title=self.report.get_title(self))
         
-    def row2dict(self,row,**kw):
+    def row2dict(self,row,d):
         # overridden in extjs.ViewReport
-        return self.report.row2dict(row)
+        return self.report.row2dict(row,d)
         
 
 

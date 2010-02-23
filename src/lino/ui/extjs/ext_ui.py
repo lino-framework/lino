@@ -536,7 +536,10 @@ class ExtUI(base.UI):
         else:
             rh.store = None
         #~ props = properties.Property.properties_for_model(rh.report.model)
-        rh.props = ext_elems.PropertiesWindow(self,rh.report.model)
+        pw = ext_elems.PropertiesWindow(self,rh.report.model)
+        if not pw.has_properties():
+            pw = None
+        rh.properties_window = pw
         #~ if rh.report.model._lino_properties_window.has_properties():
             #~ rh.props = ext_elems.PropertiesWindow(self,rh.report.model,props)
             #~ rh.props = props
@@ -544,6 +547,6 @@ class ExtUI(base.UI):
             #~ rh.props = None
 
     def setup_form(self,fh):
-        fh.props = None
+        fh.properties_window = None
 
 ui = ExtUI()

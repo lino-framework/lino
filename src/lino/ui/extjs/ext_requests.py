@@ -13,6 +13,7 @@
 
 from django.http import HttpResponse
 
+import lino
 from lino import actions
 from lino import reports
 from lino.utils import ucsv
@@ -77,33 +78,31 @@ class GridDialog(Dialog):
 class BaseViewReportRequest(reports.ReportRequest):
     
     def __init__(self,request,rh,*args,**kw):
-        if rh.report.master is ContentType:
-            mt = request.GET.get(URL_PARAM_MASTER_TYPE)
-            self.master = ContentType.objects.get(pk=mt).model_class()
         reports.ReportRequest.__init__(self,rh)
         self.request = request
         self.store = rh.store
         request._lino_request = self
-        
         kw = self.parse_req(request,rh,**kw)
         self.setup(*args,**kw)
         
     def parse_req(self,request,rh,**kw):
-        if self.master is not None and not kw.has_key('master_instance'):
+        if self.report.master is ContentType:
+            mt = request.GET.get(URL_PARAM_MASTER_TYPE)
+            kw['master'] = ContentType.objects.get(pk=mt).model_class()
+        master = kw.get('master',None)
+        if master is not None and not kw.has_key('master_instance'):
             pk = request.GET.get(URL_PARAM_MASTER_PK,None)
-            #~ if pk == UNDEFINED:
-                #~ pk = None
             if pk == '':
                 pk = None
             if pk is None:
                 kw.update(master_instance=None)
             else:
                 try:
-                    m = self.master.objects.get(pk=pk)
-                except self.master.DoesNotExist,e:
+                    m = master.objects.get(pk=pk)
+                except master.DoesNotExist,e:
                     lino.log.warning(
                       "There's no %s with primary key %r",
-                      self.master.__name__,pk)
+                      master.__name__,pk)
                 else:
                     kw.update(master_instance=m)
             #~ print '20100212', self #, kw['master_instance']
@@ -206,12 +205,12 @@ class ChoicesReportRequest(BaseViewReportRequest):
         kw['choices_for_field'] = self.fieldname
         return BaseViewReportRequest.get_absolute_url(self,**kw)
         
-    def row2dict(self,obj,**kw):
-        kw[CHOICES_TEXT_FIELD] = unicode(obj)
-        #kw['__unicode__'] = unicode(obj)
-        kw[CHOICES_VALUE_FIELD] = obj.pk # getattr(obj,'pk')
-        #kw[self.fieldname] = obj.pk 
-        return kw
+    def row2dict(self,obj,d):
+        d[CHOICES_TEXT_FIELD] = unicode(obj)
+        #d['__unicode__'] = unicode(obj)
+        d[CHOICES_VALUE_FIELD] = obj.pk # getattr(obj,'pk')
+        #d[self.fieldname] = obj.pk 
+        return d
           
   
 class ViewReportRequest(BaseViewReportRequest):
@@ -252,15 +251,15 @@ class ViewReportRequest(BaseViewReportRequest):
             kw.update(layout=self.layout.index)
         return BaseViewReportRequest.get_absolute_url(self,**kw)
 
-    def row2dict(self,row,**kw):
+    def row2dict(self,row,d):
         #lino.log.debug('row2dict(%s)',row.__class__)
         #lino.log.debug('row2dict(%r)',row)
         if self.report.use_layouts:
             for fld in self.store.fields:
-                fld.obj2json(row,kw)
+                fld.obj2json(row,d)
         else:
-            self.report.row2dict(row)
+            self.report.row2dict(row,d)
         #lino.log.debug('  -> %r',kw)
-        return kw
+        return d
  
 
