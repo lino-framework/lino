@@ -73,6 +73,14 @@ class GridDialog(Dialog):
         else:
             self.selected_rows = []
 
+class ViewFormRequest:
+    def __init__(self,request,fh):
+        self.request = request
+        self.fh = fh
+        self.layout = fh.lh
+        
+    def get_title(self):
+        return self.fh.get_title(self)
 
 
 class BaseViewReportRequest(reports.ReportRequest):
@@ -86,40 +94,58 @@ class BaseViewReportRequest(reports.ReportRequest):
         self.setup(*args,**kw)
         
     def parse_req(self,request,rh,**kw):
-        if self.report.master is ContentType:
-            mt = request.GET.get(URL_PARAM_MASTER_TYPE)
-            kw['master'] = ContentType.objects.get(pk=mt).model_class()
-        master = kw.get('master',None)
+        master = kw.get('master',self.report.master)
+        if master is ContentType:
+            mt = request.REQUEST.get(URL_PARAM_MASTER_TYPE)
+            master = kw['master'] = ContentType.objects.get(pk=mt).model_class()
+            #~ print kw
         if master is not None and not kw.has_key('master_instance'):
-            pk = request.GET.get(URL_PARAM_MASTER_PK,None)
+            pk = request.REQUEST.get(URL_PARAM_MASTER_PK,None)
             if pk == '':
                 pk = None
             if pk is None:
-                kw.update(master_instance=None)
+                kw['master_instance'] = None
             else:
                 try:
-                    m = master.objects.get(pk=pk)
+                    kw['master_instance'] = master.objects.get(pk=pk)
                 except master.DoesNotExist,e:
+                    # todo: ReportRequest should become a subclass of Dialog and this exception should call dlg.error()
                     lino.log.warning(
                       "There's no %s with primary key %r",
                       master.__name__,pk)
-                else:
-                    kw.update(master_instance=m)
             #~ print '20100212', self #, kw['master_instance']
-        quick_search = request.GET.get(URL_PARAM_FILTER,None)
+        quick_search = request.REQUEST.get(URL_PARAM_FILTER,None)
         if quick_search:
             kw.update(quick_search=quick_search)
-        offset = request.GET.get('start',None)
+        offset = request.REQUEST.get('start',None)
         if offset:
             kw.update(offset=int(offset))
-        limit = request.GET.get('limit',None)
+        limit = request.REQUEST.get('limit',None)
         if limit:
             kw.update(limit=int(limit))
         else:
             kw.update(limit=self.report.page_length)
+            
+        sort = request.REQUEST.get('sort',None)
+        if sort:
+            self.sort_column = sort
+            sort_dir = request.REQUEST.get('dir','ASC')
+            if sort_dir == 'DESC':
+                sort = '-'+sort
+                self.sort_direction = 'DESC'
+            kw.update(order_by=sort)
+        
+        layout = request.REQUEST.get('layout',None)
+        if layout:
+            kw.update(layout=int(layout))
+            #~ kw.update(layout=rh.layouts[int(layout)])
+            
         kw.update(user=request.user)
         return kw
       
+    def get_user(self):
+        return authenticated_user(self.request.user)
+
     def get_absolute_url(self,**kw):
         if self.limit != self.__class__.limit:
             kw.update(limit=self.limit)
@@ -220,26 +246,23 @@ class ViewReportRequest(BaseViewReportRequest):
     sort_column = None
     sort_direction = None
     
-    def parse_req(self,request,rh,**kw):
-        kw = BaseViewReportRequest.parse_req(self,request,rh,**kw)
-        sort = request.GET.get('sort',None)
-        if sort:
-            self.sort_column = sort
-            sort_dir = request.GET.get('dir','ASC')
-            if sort_dir == 'DESC':
-                sort = '-'+sort
-                self.sort_direction = 'DESC'
-            kw.update(order_by=sort)
+    #~ def parse_req(self,request,rh,**kw):
+        #~ kw = BaseViewReportRequest.parse_req(self,request,rh,**kw)
+        #~ sort = request.GET.get('sort',None)
+        #~ if sort:
+            #~ self.sort_column = sort
+            #~ sort_dir = request.GET.get('dir','ASC')
+            #~ if sort_dir == 'DESC':
+                #~ sort = '-'+sort
+                #~ self.sort_direction = 'DESC'
+            #~ kw.update(order_by=sort)
         
-        layout = request.GET.get('layout',None)
-        if layout:
-            kw.update(layout=rh.layouts[int(layout)])
-        return kw
+        #~ layout = request.GET.get('layout',None)
+        #~ if layout:
+            #~ kw.update(layout=rh.layouts[int(layout)])
+        #~ return kw
         
         
-    def get_user(self):
-        return authenticated_user(self.request.user)
-
     def get_absolute_url(self,**kw):
         if self.master_instance is not None:
             kw.update(master_instance=self.master_instance)

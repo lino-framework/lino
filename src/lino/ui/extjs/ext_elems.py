@@ -361,10 +361,12 @@ class PropertiesWindow(Component):
         grid.update(source=self.source,
           autoHeight=True)
         grid.update(customEditors=self.customEditors)
-        url = self.rh.get_absolute_url(grid_afteredit=True)
+        #~ url = self.rh.get_absolute_url(grid_afteredit=True)
         #~ url = self.ui.get_props_url(self.model)
         listeners = dict(
-          afteredit=js_code('Lino.grid_afteredit(this,"%s")' % url))
+          #~ afteredit=js_code('Lino.grid_afteredit(this,"%s")' % url))
+          #~ afteredit=js_code('Lino.props_afteredit(this)'))
+          afteredit=js_code('function(e){Lino.submit_property(this,e)}'),scope=js_code('this'))
         grid.update(listeners=listeners)
         if len(self.propertyNames) > 0:
             grid.update(propertyNames=self.propertyNames)
@@ -374,87 +376,12 @@ class PropertiesWindow(Component):
     def js_after_body(self):
         for ln in Component.js_after_body(self):
             yield ln
-        url = self.rh.get_absolute_url()
         yield "this.window.on('hide',function(){ this.properties_window.hide()},scope=this);"
         yield "this.properties_window.on('hide',function(){ this.props_btn.toggle(false)},scope=this);"
-        yield "this.main_grid.add_row_listener(function(sm,rowIndex,record) {"
-        # yield "  console.log('20100218 ext_elems',record);"
-        yield "  // if(this.properties_window.hidden)"
-        yield "  var params = {%r:this.content_type," % ext_requests.URL_PARAM_MASTER_TYPE
-        yield "  %r:record.id};" % ext_requests.URL_PARAM_MASTER_PK
-        yield """\
-  var on_success = function(response) {
-    var result = Ext.decode(response.responseText);
-    this.properties_window.setTitle(result.title);
-    var grid = this.properties_window.items.get(0);
-    for (i in result.rows) {
-      grid.setProperty(result.rows[i].name,result.rows[i].value)
-    }
-  };"""
-        yield """\
-  Ext.Ajax.request({
-    waitMsg: 'Loading properties...',
-    url: %r,
-    method: 'GET',
-    params: params,
-    scope: this,
-    success: on_success,
-    failure: function(response) {
-      Ext.MessageBox.alert('error','could not connect to the LinoSite.');
-    }
-  });""" % url
-            #~ yield "  this.properties_window.items.get(0).setSource({foo:'bar'});"
-        yield "},this);"
-    
-                
-
-#~ class PropertyGridElement(LayoutElement):
-    #~ #declare_type = jsgen.DECLARE_INLINE
-    #~ declare_type = jsgen.DECLARE_THIS
-    #~ #declare_type = jsgen.DECLARE_VAR
-    #~ xtype = 'propertygrid'
-    #~ #value_template = 'new Ext.grid.PropertyGrid(%s)'
-    #~ ext_suffix = '_pgrid'
-
-    
-    #~ def __init__(self,lh,name,pgrid,**kw):
-        #~ LayoutElement.__init__(self,lh,name,**kw)
-        #~ self.pgrid = pgrid
-        #~ # fill the grid rows
-        #~ self.source = {}
-        #~ self.customEditors = {}
-        #~ self.propertyNames = {}
-        #~ for p in Property.properties_for_model(self.lh.link.report.model):
-            #~ # PropValue model
-            #~ pvm = p.value_type.model_class() 
-            #~ # PropValue field
-            #~ pvf = pvm._meta.get_field('value') 
-            #~ default = pvf.default
-            #~ if default is models.NOT_PROVIDED:
-                #~ default = ''
-            #~ elif callable(default):
-                #~ default = default()
-            #~ self.source[p.name] = default 
-            #~ if p.label:
-                #~ self.propertyNames[p.name] = p.label
-                
-            #~ if pvm is CharPropValue:
-                #~ choices = [unicode(pv.value) for pv in pvm.objects.filter(prop=p,owner_id__isnull=True)]
-                #~ if choices:
-                    #~ editor = ComboBox(store=choices,mode='local',selectOnFocus=True)
-                    #~ editor = 'new Ext.grid.GridEditor(%s)' % py2js(editor)
-                    #~ self.customEditors[p.name] = js_code(editor)
-    
-
-    #~ def ext_options(self,**kw):
-        #~ kw = LayoutElement.ext_options(self,**kw)
-        #~ #kw.update(title='Properties')
-        #~ kw.update(source=self.source,
-          #~ autoHeight=True)
-        #~ kw.update(customEditors=self.customEditors)
-        #~ if len(self.propertyNames) > 0:
-            #~ kw.update(propertyNames=self.propertyNames)
-        #~ return kw
+        url = self.rh.get_absolute_url()
+        yield "this.properties_window.on('show',function(){"
+        yield "  Lino.load_properties(this,%r,this.get_current_record())},scope=this);" % url
+        yield "this.main_grid.add_row_listener(function(sm,ri,rec){Lino.load_properties(this,%r,rec)},this);" % url
 
 
 class Spacer(LayoutElement):
@@ -1035,14 +962,14 @@ class Reaction(jsgen.Variable):
     #~ def js_before_body(self):
         #~ return []
         
-    def js_job_constructor(self,**kw):
+    def js_job_constructor(self,rr):
         yield "function(caller) {"
         yield "  var client_job = this;" 
         #~ yield "  // MainPanel.js_job_constructor() calls self.js_declare()"
         for ln in self.js_declare():
             yield "  " + ln
         #~ yield "  // MainPanel.js_job_constructor() called self.js_declare()"
-        yield "  this.window = new Ext.Window(%s);" % py2js(kw)
+        yield "  this.window = new Ext.Window(%s);" % py2js(self.window_options(rr))
         #~ yield "  console.log(4);"
         yield "  this.stop = function() {"
         yield "     this.window.close();"
@@ -1151,6 +1078,7 @@ class MainPanel(Reaction):
             yield ln
         # for permalink:
         yield "  this.window._permalink = %s;" % py2js(id2js(self.lh.name))
+        # for generic slaves:
         yield "  this.content_type = %s;" % py2js(self.lh.link.content_type)
         
                 
@@ -1161,6 +1089,44 @@ class MainPanel(Reaction):
                 return x(lh,field,**kw)
         raise NotImplementedError("No LayoutElement for %s" % field.__class__)
         #~ raise NotImplementedError("field %r" % field)
+
+    def window_options(self,rr,**kw):
+        lh = rr.layout
+        name = id2js(lh.name)
+        kw.update(title=rr.get_title())
+        # kw.update(closeAction='hide')
+        kw.update(maximizable=True)
+        #kw.update(id=name)
+        url = '/save_win/' + name
+        js = 'Lino.save_window_config(this,%r)' % url
+        kw.update(tools=[dict(id='save',handler=js_code(js))])
+        kw.update(layout='fit')
+        kw.update(items=lh._main)
+        if lh.start_focus is not None:
+            kw.update(defaultButton=lh.start_focus.name)
+        wc = lh.ui.window_configs.get(name,None)
+        #kw.update(defaultButton=self.lh.link.inputs[0].name)
+        if wc is None:
+            if lh.height is None:
+                kw.update(height=300)
+            else:
+                kw.update(height=lh.height*EXT_CHAR_HEIGHT + 7*EXT_CHAR_HEIGHT)
+            if lh.width is None:
+                kw.update(width=400)
+            else:
+                kw.update(width=lh.width*EXT_CHAR_WIDTH + 10*EXT_CHAR_WIDTH)
+        else:
+            assert len(wc) == 5
+            kw.update(x=wc[0])
+            kw.update(y=wc[1])
+            kw.update(width=wc[2])
+            kw.update(height=wc[3])
+            #kw.update(width=js_code('Lino.viewport.getWidth()*%d/100' % wc[0]))
+            #kw.update(height=js_code('Lino.viewport.getHeight()*%d/100' % wc[1]))
+            kw.update(maximized=wc[4])
+        return kw
+            
+
 
 class WrappingMainPanel(MainPanel):
     """Inherited by DetailMainPanel and FormMainPanel (not GridPanel)

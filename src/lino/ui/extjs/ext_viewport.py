@@ -156,10 +156,7 @@ Lino.grid_afteredit = function (caller,url) {
           Ext.MessageBox.alert('Action failed',result.msg);
         }
       },
-      failure: function(response) {
-        // console.log(response);
-        Ext.MessageBox.alert('Action failed','Lino server did not respond to Ajax request '+url);
-      }
+      failure: Lino.ajax_error_handler
     })
   }
 };
@@ -206,9 +203,7 @@ Lino.do_dialog = function(caller,url,params) {
     url: url,
     params: params, 
     success: handle_response,
-    failure: function(response){
-      Ext.MessageBox.alert('Error','Connection to the server failed.');
-    }
+    failure: Lino.ajax_error_handler
   });
 };"""
 
@@ -280,7 +275,75 @@ Lino.props_handler = function (caller) {
   }
 };
 
+Lino.ajax_error_handler = function(response,options) {
+    console.log('AJAX failure:',response,options);
+    // Ext.MessageBox.alert('Action failed','Lino server did not respond to Ajax request');
+}
+// Ext.Ajax.on('requestexception',Lino.ajax_error_handler)
 
+Lino.submit_property = function (caller,e) {
+  /*
+  e.grid - This grid
+  e.record - The record being edited
+  e.field - The field name being edited
+  e.value - The value being set
+  e.originalValue - The original value for the field, before the edit.
+  e.row - The grid row index
+  e.column - The grid column index
+  */
+  // var p = e.record.data;
+  var p = {};
+  // p['grid_afteredit_colname'] = e.field;
+  // p[e.field] = e.value;
+  p['mt'] = caller.content_type // URL_PARAM_MASTER_TYPE
+  p['mk'] = caller.get_current_record().id // URL_PARAM_MASTER_PK
+  console.log('submit_property()',e.record.data);
+  p['name'] = e.record.data.name
+  p['value'] = e.record.data.value
+  Ext.Ajax.request({
+    method: 'POST',
+    waitMsg: 'Please wait...',
+    url: '/submit_property',
+    params: p, 
+    success: function(response) {
+      var result=Ext.decode(response.responseText);
+      // console.log(result);
+      if (result.success) {
+        // Lino.load_properties();        // reload our datastore.
+      } else {
+        Ext.MessageBox.alert('Action failed',result.msg);
+      }
+    },
+    failure: Lino.ajax_error_handler
+  })
+};
+
+Lino.load_properties = function(caller,url,record) { 
+  if(caller.properties_window.hidden) return;
+  if(record === undefined) return;
+  // console.log('load_properties',caller,url,record);
+  var params = {mt:caller.content_type, mk:record.id}; // URL_PARAM_MASTER_TYPE, URL_PARAM_MASTER_PK
+  var on_success = function(response) {
+    var result = Ext.decode(response.responseText);
+    caller.properties_window.setTitle(result.title);
+    var grid = caller.properties_window.items.get(0);
+    for (i in result.rows) {
+      grid.setProperty(result.rows[i].name,result.rows[i].value)
+    }
+  };
+  Ext.Ajax.request({
+    waitMsg: 'Loading properties...',
+    url: url,
+    method: 'GET',
+    params: params,
+    scope: this,
+    success: on_success,
+    failure: Lino.ajax_error_handler
+  });
+}"""
+
+
+        s += """
 Lino.main_menu = new Ext.Toolbar({});
 
 // Path to the blank image should point to a valid location on your server
@@ -403,10 +466,7 @@ Lino.load_main_menu = function() {
     waitMsg: 'Loading main menu...',
     url: '/menu',
     success: Lino.on_load_menu,
-    failure: function(response) {
-      // console.log(response);
-      Ext.MessageBox.alert('error','could not connect to the LinoSite.');
-    }
+    failure: Lino.ajax_error_handler
   });
 };
 

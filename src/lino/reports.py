@@ -663,8 +663,9 @@ class ReportRequest:
             if layout is None:
                 layout = self.rh.layouts[self.report.default_layout]
             else:
-                assert isinstance(layout,layouts.LayoutHandle), \
-                    "Value %r is not a LayoutHandle" % layout
+                layout = self.rh.layouts[layout]
+                #~ assert isinstance(layout,layouts.LayoutHandle), \
+                    #~ "Value %r is not a LayoutHandle" % layout
             self.layout = layout
         self.report.setup_request(self)
         self.setup_queryset()

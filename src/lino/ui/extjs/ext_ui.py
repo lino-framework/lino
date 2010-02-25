@@ -125,7 +125,6 @@ def menu2js(ui,v,**kw):
         
     return py2js(v,**kw)        
 """  
-
     
 
 
@@ -236,6 +235,36 @@ class ExtUI(base.UI):
             
 
     
+    def save_window_configs(self):
+        f = open(self.window_configs_file,'wb')
+        pickle.dump(self.window_configs,f)
+        f.close()
+        self._response = None
+
+  
+    def get_urls(self):
+        return patterns('',
+            (r'^$', self.index_view),
+            (r'^menu$', self.menu_view),
+            (r'^submit_property$', self.submit_property_view),
+            (r'^list/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.list_report_view),
+            (r'^csv/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.csv_report_view),
+            (r'^grid_action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<grid_action>\w+)$', self.json_report_view),
+            (r'^grid_afteredit/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.grid_afteredit_view),
+            (r'^submit/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.form_submit_view),
+            (r'^form/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.act_view),
+            (r'^form/(?P<app_label>\w+)/(?P<actor>\w+)$', self.act_view),
+            (r'^action/(?P<app_label>\w+)/(?P<actor>\w+)$', self.act_view),
+            (r'^step_dialog$', self.step_dialog_view),
+            (r'^abort_dialog$', self.abort_dialog_view),
+            (r'^choices/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<fldname>\w+)$', self.choices_view),
+            (r'^save_win/(?P<name>\w+)$', self.save_win_view),
+            (r'^permalink_do/(?P<name>\w+)$', self.permalink_do_view),
+            #~ (r'^props/(?P<app_label>\w+)/(?P<model_name>\w+)$', self.props_view),
+            # (r'^props$', self.props_view),
+        )
+        
+
     def index_view(self, request):
         if self._response is None:
             lino.log.debug("building extjs._response...")
@@ -252,34 +281,11 @@ class ExtUI(base.UI):
             self._response = HttpResponse(s)
         return self._response
 
-    def save_window_configs(self):
-        f = open(self.window_configs_file,'wb')
-        pickle.dump(self.window_configs,f)
-        f.close()
-        self._response = None
-
-  
-    def get_urls(self):
-        return patterns('',
-            (r'^$', self.index_view),
-            (r'^menu$', self.menu_view),
-            (r'^list/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.list_report_view),
-            (r'^csv/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.csv_report_view),
-            (r'^grid_action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<grid_action>\w+)$', self.json_report_view),
-            (r'^submit/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.form_submit_view),
-            (r'^grid_afteredit/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.grid_afteredit_view),
-            (r'^form/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.act_view),
-            (r'^form/(?P<app_label>\w+)/(?P<actor>\w+)$', self.act_view),
-            (r'^action/(?P<app_label>\w+)/(?P<actor>\w+)$', self.act_view),
-            (r'^step_dialog$', self.step_dialog_view),
-            (r'^abort_dialog$', self.abort_dialog_view),
-            (r'^choices/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<fldname>\w+)$', self.choices_view),
-            (r'^save_win/(?P<name>\w+)$', self.save_win_view),
-            (r'^permalink_do/(?P<name>\w+)$', self.permalink_do_view),
-            #~ (r'^props/(?P<app_label>\w+)/(?P<model_name>\w+)$', self.props_view),
-            # (r'^props$', self.props_view),
-        )
-        
+    def menu_view(self,request):
+        from lino import lino_site
+        return json_response(lino_site.get_menu(request))
+        #~ s = py2js(lino_site.get_menu(request))
+        #~ return HttpResponse(s, mimetype='text/html')
 
     def act_view(self,request,app_label=None,actor=None,action=None,**kw):
         actor = actors.get_actor2(app_label,actor)
@@ -314,13 +320,24 @@ class ExtUI(base.UI):
         r = m().as_dict()
         lino.log.debug('%s.%s() -> %r',dlg,meth_name,r)
         return json_response(r)
+        
+    def submit_property_view(self,request):
+        rpt = properties.PropValuesByOwner()
+        if not rpt.can_change.passes(request):
+            return json_response_kw(success=False,
+                msg="User %s cannot edit %s." % (request.user,rpt))
+        rh = rpt.get_handle(self)
+        rr = ext_requests.BaseViewReportRequest(request,rh)
+        name = request.POST.get('name')
+        value = request.POST.get('value')
+        try:
+            p = properties.Property.objects.get(pk=name)
+        except properties.Property.DoesNotExist:
+            return json_response_kw(success=False,
+                msg="No property named %r." % name)
+        p.set_value_for(rr.master_instance,value)
+        return json_response_kw(success=True,msg='%s : %s = %r' % (rr.master_instance,name,value))
     
-    def menu_view(self,request):
-        from lino import lino_site
-        return json_response(lino_site.get_menu(request))
-        #~ s = py2js(lino_site.get_menu(request))
-        #~ return HttpResponse(s, mimetype='text/html')
-
         
     def permalink_do_view(self,request,name=None):
         name = name.replace('_','.')
@@ -464,41 +481,6 @@ class ExtUI(base.UI):
         
         
         
-    def window_options(self,lh,**kw):
-        name = id2js(lh.name)
-        kw.update(title=lh.get_title(self))
-        # kw.update(closeAction='hide')
-        kw.update(maximizable=True)
-        #kw.update(id=name)
-        url = '/save_win/' + name
-        js = 'Lino.save_window_config(this,%r)' % url
-        kw.update(tools=[dict(id='save',handler=js_code(js))])
-        kw.update(layout='fit')
-        kw.update(items=lh._main)
-        if lh.start_focus is not None:
-            kw.update(defaultButton=lh.start_focus.name)
-        wc = self.window_configs.get(name,None)
-        #kw.update(defaultButton=self.lh.link.inputs[0].name)
-        if wc is None:
-            if lh.height is None:
-                kw.update(height=300)
-            else:
-                kw.update(height=lh.height*EXT_CHAR_HEIGHT + 7*EXT_CHAR_HEIGHT)
-            if lh.width is None:
-                kw.update(width=400)
-            else:
-                kw.update(width=lh.width*EXT_CHAR_WIDTH + 10*EXT_CHAR_WIDTH)
-        else:
-            assert len(wc) == 5
-            kw.update(x=wc[0])
-            kw.update(y=wc[1])
-            kw.update(width=wc[2])
-            kw.update(height=wc[3])
-            #kw.update(width=js_code('Lino.viewport.getWidth()*%d/100' % wc[0]))
-            #kw.update(height=js_code('Lino.viewport.getHeight()*%d/100' % wc[1]))
-            kw.update(maximized=wc[4])
-        return kw
-            
         
         
     def view_report(self,dlg,**kw):
@@ -507,27 +489,29 @@ class ExtUI(base.UI):
         """
         rpt = dlg.actor
         rh = self.get_report_handle(rpt)
-        #rr = ViewReportRequest(context.request,rh)
-        layout = dlg.request.GET.get('layout')
-        if layout is None:
-            lh = rh.layouts[rpt.default_layout]
-        else:
-            lh = rh.layouts[int(layout)]
+        rr = ext_requests.ViewReportRequest(dlg.request,rh)
+        #~ layout = dlg.request.GET.get('layout')
+        #~ if layout is None:
+            #~ lh = rh.layouts[rpt.default_layout]
+        #~ else:
+            #~ lh = rh.layouts[int(layout)]
         #lh = rr.layout 
         # kw['defaultButton'] = js_code('this.main_grid')
-        kw = self.window_options(lh,**kw)
-        yield dlg.exec_js(lh._main.js_job_constructor(**kw)).over()
+        #~ kw = self.window_options(lh,**kw)
+        lh = rr.layout
+        yield dlg.exec_js(lh._main.js_job_constructor(rr)).over()
         
         
     def view_form(self,dlg,**kw):
         "called from ViewForm.run_in_dlg()"
         frm = dlg.actor
         fh = self.get_form_handle(frm)
+        fr = ext_requests.ViewFormRequest(dlg.request,fh)
         #fh.setup()
         lh = fh.lh
-        kw = self.window_options(lh,**kw)
+        #~ kw = self.window_options(lh,**kw)
         #rr = None
-        yield dlg.exec_js(lh._main.js_job_constructor(**kw)).over()
+        yield dlg.exec_js(lh._main.js_job_constructor(fr)).over()
         
         
     def setup_report(self,rh):
