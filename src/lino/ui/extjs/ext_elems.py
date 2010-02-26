@@ -299,24 +299,99 @@ class StaticTextElement(LayoutElement):
         #kw.update(xtype=self.xtype)
         kw.update(html=self.text.text)
         return kw
-
-class PropertiesWindow(Component):
+        
+        
+        
+class ReportRequestWindow(jsgen.Component):
     declare_type = jsgen.DECLARE_THIS
     value_template = "new Ext.Window(%s)"
+    
+    def __init__(self,rr,name,main,permalink_name,**kw):
+        self.rr = rr
+        self.main = main
+        self.permalink_name = permalink_name
+        jsgen.Component.__init__(self,name,**kw)
+        
+    def subvars(self):
+        yield self.main
+        
+    def ext_options(self,**kw):
+        
+        kw.update(title=self.rr.get_title())
+        # kw.update(closeAction='hide')
+        kw.update(maximizable=True)
+        #kw.update(id=name)
+        kw.update(layout='fit')
+        kw.update(items=self.main)
+        
+        
+        if self.rr.report.use_layouts:
+            lh = self.rr.layout
+            
+            if lh.start_focus is not None:
+                kw.update(defaultButton=lh.start_focus.name)
+        
+        
+        js = 'Lino.save_window_config(this)'
+        kw.update(tools=[dict(id='save',handler=js_code(js))])
+        
+        
+        
+        #name = id2js(self.rr.layout.name)
+        wc = self.rr.rh.ui.get_window_config(self.permalink_name)
+        #kw.update(defaultButton=self.lh.link.inputs[0].name)
+        if wc is None:
+            if self.rr.report.use_layouts:
+                if lh.height is None:
+                    kw.update(height=300)
+                else:
+                    kw.update(height=lh.height*EXT_CHAR_HEIGHT + 7*EXT_CHAR_HEIGHT)
+                if lh.width is None:
+                    kw.update(width=400)
+                else:
+                    kw.update(width=lh.width*EXT_CHAR_WIDTH + 10*EXT_CHAR_WIDTH)
+        else:
+            assert len(wc) == 5
+            kw.update(x=wc[0])
+            kw.update(y=wc[1])
+            kw.update(width=wc[2])
+            kw.update(height=wc[3])
+            #kw.update(width=js_code('Lino.viewport.getWidth()*%d/100' % wc[0]))
+            #kw.update(height=js_code('Lino.viewport.getHeight()*%d/100' % wc[1]))
+            kw.update(maximized=wc[4])
+        return kw
+            
+    def js_before_body(self):
+        for ln in jsgen.Component.js_before_body(self):
+            yield ln
+        # for permalink:
+        #~ yield "  %s._permalink_name = %s;" % (self.as_ext(),py2js(id2js(self.rr.layout.name)))
+        yield "  %s._permalink_name = %s;" % (self.as_ext(),py2js(self.permalink_name))
+        
+        
+        
+        
+        #~ ReportRequestWindow(rr,'window',rr.layout._main)
+
+#~ class PropertiesWindow(Component):
+class PropertiesWindow(ReportRequestWindow):
+    #~ declare_type = jsgen.DECLARE_THIS
+    #~ value_template = "new Ext.Window(%s)"
     
     def __init__(self,ui,model,**kw):
         self.ui = ui
         self.model = model
         kw.update(closeAction='hide')
-        Component.__init__(self,'properties_window',**kw)
+        #~ Component.__init__(self,'properties_window',**kw)
         
         self.rh = properties.PropValuesByOwner().get_handle(ui)
+        rr = self.rh.request(master=model)
         
         self.source = {}
         self.customEditors = {}
         self.propertyNames = {}
         #~ for pv in self.rh.request(master=model,master_instance=None):
-        for pv in self.rh.request(master=model):
+        for pv in rr:
             p = pv.prop
             self.source[p.name] = pv.value
             if p.label:
@@ -329,6 +404,25 @@ class PropertiesWindow(Component):
                     editor = ComboBox(store=choices,mode='local',selectOnFocus=True)
                     editor = 'new Ext.grid.GridEditor(%s)' % py2js(editor)
                     self.customEditors[p.name] = js_code(editor)
+                    
+                    
+        grid = dict(xtype='propertygrid')
+        grid.update(source=self.source,
+          autoHeight=True)
+        grid.update(customEditors=self.customEditors)
+        #~ url = self.rh.get_absolute_url(grid_afteredit=True)
+        #~ url = self.ui.get_props_url(self.model)
+        listeners = dict(
+          #~ afteredit=js_code('Lino.grid_afteredit(this,"%s")' % url))
+          #~ afteredit=js_code('Lino.props_afteredit(this)'))
+          afteredit=js_code('function(e){Lino.submit_property(this,e)}'),scope=js_code('this'))
+        grid.update(listeners=listeners)
+        if len(self.propertyNames) > 0:
+            grid.update(propertyNames=self.propertyNames)
+        grid = jsgen.Value(grid)
+        permalink_name = self.model._meta.app_label+'_'+self.model.__name__+'_properties'
+        ReportRequestWindow.__init__(self,rr,'properties_window',grid,permalink_name,**kw)
+                    
             
         #~ for p in props:
             #~ # PropValue model
@@ -355,8 +449,9 @@ class PropertiesWindow(Component):
     def has_properties(self):
         return len(self.source) > 0
 
-    def ext_options(self,**kw):
-        kw = Component.ext_options(self,**kw)
+    def unused_ext_options(self,**kw):
+        #~ kw = Component.ext_options(self,**kw)
+        kw = ReportRequestWindow.ext_options(self,**kw)
         grid = dict(xtype='propertygrid')
         grid.update(source=self.source,
           autoHeight=True)
@@ -376,10 +471,11 @@ class PropertiesWindow(Component):
     def js_after_body(self):
         for ln in Component.js_after_body(self):
             yield ln
-        yield "this.window.on('hide',function(){ this.properties_window.hide()},scope=this);"
-        yield "this.properties_window.on('hide',function(){ this.props_btn.toggle(false)},scope=this);"
+        yield "this.window.on('hide',function(){ this.%s.hide()},scope=this);" % self.name
+        #~ yield "%s._permalink_name = %s;" % (self.as_ext(),py2js(self.model._meta.app_label+'_'+self.model.__name__+'_properties'))
+        yield "%s.on('hide',function(){ this.props_btn.toggle(false)},scope=this);" % self.as_ext()
         url = self.rh.get_absolute_url()
-        yield "this.properties_window.on('show',function(){"
+        yield "%s.on('show',function(){" % self.as_ext()
         yield "  Lino.load_properties(this,%r,this.get_current_record())},scope=this);" % url
         yield "this.main_grid.add_row_listener(function(sm,ri,rec){Lino.load_properties(this,%r,rec)},this);" % url
 
@@ -942,34 +1038,31 @@ class M2mGridElement(GridElement):
         rh = rpt.get_handle(lh.ui)
         GridElement.__init__(self,lh,id2js(rpt.actor_id),rh,*elements,**kw)
   
+  
+      
 class Reaction(jsgen.Variable):
   
+    def __init__(self,rr):
+        jsgen.Variable.__init__(self,None,None)
+        permalink_name = id2js(rr.layout.name)
+        self.window = ReportRequestWindow(rr,'window',rr.layout._main,permalink_name)
+        
+    def subvars(self):
+        yield self.window
+        
+        
     def setup(self):
         pass
         
-    #~ def subvars(self):
-        #~ return []
-        
-    #~ def js_declare(self):
-        #~ return []
-        
-    #~ def js_body(self):
-        #~ return []
-        
-    #~ def js_after_body(self):
-        #~ return []
-        
-    #~ def js_before_body(self):
-        #~ return []
-        
-    def js_job_constructor(self,rr):
+    def as_ext_value(self):
+    #~ def js_job_constructor(self):
         yield "function(caller) {"
         yield "  var client_job = this;" 
         #~ yield "  // MainPanel.js_job_constructor() calls self.js_declare()"
         for ln in self.js_declare():
             yield "  " + ln
         #~ yield "  // MainPanel.js_job_constructor() called self.js_declare()"
-        yield "  this.window = new Ext.Window(%s);" % py2js(self.window_options(rr))
+        #~ yield "  this.window = new Ext.Window(%s);" % py2js(self.window_options(rr))
         #~ yield "  console.log(4);"
         yield "  this.stop = function() {"
         yield "     this.window.close();"
@@ -993,15 +1086,15 @@ class Reaction(jsgen.Variable):
         
         
             
-class MainPanel(Reaction):
+#~ class MainPanel(Reaction):
+class MainPanel(jsgen.Variable):
   
     def __init__(self):
-    #~ def __init__(self,dl):
-        #~ self.dl = dl # DataLink (i.e. a ReportHandle or a FormHandle)
         self.keys = None
         self.buttons = None
         self.cmenu = None
         self.props_button = None
+        #~ Reaction.__init__(self,)
         
     def get_datalink(self):
         raise NotImplementedError
@@ -1074,10 +1167,8 @@ class MainPanel(Reaction):
         
   
     def js_before_body(self):
-        for ln in Reaction.js_before_body(self):
+        for ln in jsgen.Variable.js_before_body(self):
             yield ln
-        # for permalink:
-        yield "  this.window._permalink = %s;" % py2js(id2js(self.lh.name))
         # for generic slaves:
         yield "  this.content_type = %s;" % py2js(self.lh.link.content_type)
         
@@ -1090,42 +1181,6 @@ class MainPanel(Reaction):
         raise NotImplementedError("No LayoutElement for %s" % field.__class__)
         #~ raise NotImplementedError("field %r" % field)
 
-    def window_options(self,rr,**kw):
-        lh = rr.layout
-        name = id2js(lh.name)
-        kw.update(title=rr.get_title())
-        # kw.update(closeAction='hide')
-        kw.update(maximizable=True)
-        #kw.update(id=name)
-        url = '/save_win/' + name
-        js = 'Lino.save_window_config(this,%r)' % url
-        kw.update(tools=[dict(id='save',handler=js_code(js))])
-        kw.update(layout='fit')
-        kw.update(items=lh._main)
-        if lh.start_focus is not None:
-            kw.update(defaultButton=lh.start_focus.name)
-        wc = lh.ui.window_configs.get(name,None)
-        #kw.update(defaultButton=self.lh.link.inputs[0].name)
-        if wc is None:
-            if lh.height is None:
-                kw.update(height=300)
-            else:
-                kw.update(height=lh.height*EXT_CHAR_HEIGHT + 7*EXT_CHAR_HEIGHT)
-            if lh.width is None:
-                kw.update(width=400)
-            else:
-                kw.update(width=lh.width*EXT_CHAR_WIDTH + 10*EXT_CHAR_WIDTH)
-        else:
-            assert len(wc) == 5
-            kw.update(x=wc[0])
-            kw.update(y=wc[1])
-            kw.update(width=wc[2])
-            kw.update(height=wc[3])
-            #kw.update(width=js_code('Lino.viewport.getWidth()*%d/100' % wc[0]))
-            #kw.update(height=js_code('Lino.viewport.getHeight()*%d/100' % wc[1]))
-            kw.update(maximized=wc[4])
-        return kw
-            
 
 
 class WrappingMainPanel(MainPanel):
@@ -1140,6 +1195,48 @@ class WrappingMainPanel(MainPanel):
         ct.field = field
         return ct
 
+class PagingToolbar(jsgen.Variable):
+    declare_type = jsgen.DECLARE_THIS
+    value_template = "new Ext.PagingToolbar(%s)"
+    
+    def __init__(self,grid,name):
+        #~ self.grid = grid
+        
+        # searchString thanks to http://www.extjs.com/forum/showthread.php?t=82838
+        def js_keypress():
+            yield "function(field, e) {"
+            # searching starts when user presses ENTER.
+            yield "  if(e.getKey() == e.RETURN) {"
+            # yield "    console.log('keypress',field.getValue(),store)"
+            yield "    store.setBaseParam('%s',field.getValue());" % ext_requests.URL_PARAM_FILTER
+            yield "    store.load({params: { start: 0, limit: this.pager.pageSize }});" 
+            yield "  }"
+            yield "}"
+        search_field = dict(
+            id = 'seachString',
+            fieldLabel = 'Search',
+            xtype = 'textfield',
+            enableKeyEvents = True, # required if you need to detect key-presses
+            #listeners = dict(keypress=dict(handler=keypress,scope=js_code('this')))
+            listeners = dict(keypress=js_keypress,scope=js_code('this'))
+        )
+        dl = grid.get_datalink()
+        buttons = [search_field]
+        #export_csv = dict(xtype='exportbutton',store=self.dl.store) #,scope=js_code('this'))
+        #export_csv = dict(text="CSV",handler=js_code("function(){console.log('not implemented')}"),scope=js_code('this'))
+        export_csv = dict(text=_("Download"),handler=js_code(
+          "function() {window.open(%r);}" % dl.get_absolute_url(csv=True)))
+        buttons.append(export_csv)
+        tbar = dict(
+          store=grid.rh.store,
+          displayInfo=True,
+          pageSize=grid.report.page_length,
+          prependButtons=True,
+          items=buttons, 
+        )
+        #~ self.pager = Variable('pager',js_code("new Ext.PagingToolbar(%s)" % py2js(tbar)))
+        jsgen.Variable.__init__(self,name,tbar)
+    
 class GridMainPanel(GridElement,MainPanel):
     value_template = "new Lino.GridPanel(%s)"
     #declare_type = jsgen.DECLARE_VAR
@@ -1155,6 +1252,12 @@ class GridMainPanel(GridElement,MainPanel):
         #~ if self.width is None:
             #~ self.width = self.preferred_width
         #lino.log.debug("GridMainPanel.__init__() %s",self.name)
+        
+    def setup(self):
+        if self.pager is not None:
+            return
+        MainPanel.setup(self)
+        self.pager = PagingToolbar(self,'pager')
         
     def subvars(self):
         for e in GridElement.subvars(self):
@@ -1184,13 +1287,10 @@ class GridMainPanel(GridElement,MainPanel):
         kw.update(bbar=self.buttons)
         return kw
         
-    #~ def js_declare(self):
-        #~ for ln in GridElement.js_declare(self):
-            #~ yield ln
-            
     def js_declare(self):
         self.setup()
         for ln in Container.js_declare(self):
+            #~ print 20100226, repr(ln)
             yield ln
         yield "%s.on('afteredit', Lino.grid_afteredit(this,'%s'));" % (
           self.as_ext(),self.rh.get_absolute_url(grid_afteredit=True))
@@ -1207,45 +1307,6 @@ class GridMainPanel(GridElement,MainPanel):
         #~ yield "  // this.refresh();"
         #~ #yield "  %s.load({params:{limit:this.pager.pageSize,start:this.pager.cursor}});" % self.rh.store.as_ext()
         #~ yield "}, this, {delay:100});"
-        
-    def setup(self):
-        if self.pager:
-            return
-        MainPanel.setup(self)
-        # searchString thanks to http://www.extjs.com/forum/showthread.php?t=82838
-        def js_keypress():
-            yield "function(field, e) {"
-            # searching starts when user presses ENTER.
-            yield "  if(e.getKey() == e.RETURN) {"
-            # yield "    console.log('keypress',field.getValue(),store)"
-            #    // var searchString = Ext.getCmp('seachString').getValue();
-            yield "    store.setBaseParam('%s',field.getValue());" % ext_requests.URL_PARAM_FILTER
-            yield "    store.load({params: { start: 0, limit: this.pager.pageSize }});" 
-            yield "  }"
-            yield "}"
-        search_field = dict(
-            id = 'seachString',
-            fieldLabel = 'Search',
-            xtype = 'textfield',
-            enableKeyEvents = True, # required if you need to detect key-presses
-            #listeners = dict(keypress=dict(handler=keypress,scope=js_code('this')))
-            listeners = dict(keypress=js_keypress(),scope=js_code('this'))
-        )
-        dl = self.get_datalink()
-        buttons = [search_field]
-        #export_csv = dict(xtype='exportbutton',store=self.dl.store) #,scope=js_code('this'))
-        #export_csv = dict(text="CSV",handler=js_code("function(){console.log('not implemented')}"),scope=js_code('this'))
-        export_csv = dict(text=_("Download"),handler=js_code(
-          "function() {window.open(%r);}" % dl.get_absolute_url(csv=True)))
-        buttons.append(export_csv)
-        tbar = dict(
-          store=self.rh.store,
-          displayInfo=True,
-          pageSize=self.report.page_length,
-          prependButtons=True,
-          items=buttons, 
-        )
-        self.pager = Variable('pager',js_code("new Ext.PagingToolbar(%s)" % py2js(tbar)))
         
     def js_body(self):
         #yield "this.refresh = function() { this.%s.getStore().load()}" % self.ext_name

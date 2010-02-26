@@ -76,20 +76,19 @@ Lino.on_store_exception = function (store,type,action,options,reponse,arg) {
   // console.log("Ha! on_store_exception() was called!");
   console.log("on_store_exception:",store,type,action,options,reponse,arg);
 };
-Lino.save_window_config = function(caller,url) {
+Lino.save_window_config = function(caller,unused_url) {
   return function(event,toolEl,panel,tc) {
+    var url = '/save_window_config'
+    // var url = '/save_win/' + panel._permalink_name
     // console.log(panel.id,panel.getSize(),panel.getPosition());
     var pos = panel.getPosition();
     var size = panel.getSize();
-    var w = size['width'] * 100 / Lino.viewport.getWidth();
-    var h = size['height'] * 100 / Lino.viewport.getHeight();
-    // Lino.do_action(url,'save_window_config',{h:Math.round(h),w:Math.round(w),max:panel.maximized});
+    // var w = size['width'] * 100 / Lino.viewport.getWidth();
+    // var h = size['height'] * 100 / Lino.viewport.getHeight();
     Lino.do_dialog(caller,url,{
-      x:pos[0],y:pos[1],h:size['height'],w:size['width'],
+      name: panel._permalink_name,
+      x:pos[0],y:pos[1],h:size.height,w:size.width,
       max:panel.maximized});
-    // Lino.do_action(caller,url,'save_window_config',{
-    //  x:pos[0],y:pos[1],h:size['height'],w:size['width'],
-    //  max:panel.maximized});
   }
 };
 
@@ -215,7 +214,7 @@ Lino.do_dialog = function(caller,url,params) {
               {%s:caller.get_selected()});" % ext_requests.POST_PARAM_SELECTED
             yield "}};"
             
-        s += py2js(js())
+        s += py2js(js)
 
         if False: s += """
 Lino.slave_handler = function (caller,url) { 
@@ -250,7 +249,7 @@ Lino.goto_permalink = function () {
     var windows = "";
     var sep = '';
     Ext.WindowMgr.each(function(win){
-      if(!win.hidden) {windows+=sep+win._permalink;sep=","}
+      if(!win.hidden) {windows+=sep+win._permalink_name;sep=","}
     });
     document.location = "%s?show=" + windows;
 };""" % uri
@@ -425,7 +424,7 @@ Lino.cell_context_menu = function(job) {
             yield "  store.load();" 
             yield "}"
             
-        s += py2js(js())
+        s += py2js(js)
         
         s += """
 Lino.on_load_menu = function(response) {

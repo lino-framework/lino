@@ -49,15 +49,16 @@ def py2js(v,**kw):
         #~ else:
             #~ handler = "function(btn,evt) {%s.show(btn,evt);}" % id2js(v.actor.actor_id)
         #~ return py2js(dict(text=v.label,handler=js_code(handler)))
-    if isinstance(v,Variable):
+    assert len(kw) == 0, "py2js() : value %r not allowed with keyword parameters" % v
+    if isinstance(v,Value):
         return v.as_ext(**kw)
         
-    assert len(kw) == 0, "py2js() : value %r not allowed with keyword parameters" % v
     if type(v) is types.GeneratorType:
-        return "\n".join([ln for ln in v])
-    #~ if callable(v):
+        raise Exception("Please don't call the generator function yourself")
+        #~ return "\n".join([ln for ln in v])
+    if callable(v):
         #~ raise Exception("Please call the function yourself")
-        #~ return "\n".join([ln for ln in v(**kw)])
+        return "\n".join([ln for ln in v(**kw)])
 
     if isinstance(v,js_code):
         return v.s
@@ -66,6 +67,7 @@ def py2js(v,**kw):
     if isinstance(v,(list,tuple)): # (types.ListType, types.TupleType):
         return "[ %s ]" % ", ".join([py2js(x) for x in v])
     if isinstance(v,dict): # ) is types.DictType:
+        #~ print 20100226, repr(v)
         return "{ %s }" % ", ".join([
             "%s: %s" % (py2js(k),py2js(v)) for k,v in v.items()])
     if isinstance(v,bool): # types.BooleanType:
@@ -138,16 +140,46 @@ DECLARE_INLINE = 0
 DECLARE_VAR = 1
 DECLARE_THIS = 2
 
-class Variable(object):
-    declare_type = DECLARE_THIS
-    #declare_type = DECLARE_INLINE
-    ext_suffix = ''
+class Value(object):
+  
+    declare_type = DECLARE_INLINE
     value_template = "%s"
+    
+    def __init__(self,value):
+        self.value = value
+        
+    def js_declare(self):
+        return []
+    
+    def subvars(self):
+        return []
+            
+    def js_before_body(self):
+        for v in self.subvars():
+            for ln in v.js_before_body():
+                yield ln
+    def js_body(self):
+        for v in self.subvars():
+            for ln in v.js_body():
+                yield ln
+                
+    def js_after_body(self):
+        for v in self.subvars():
+            for ln in v.js_after_body():
+                yield ln
+        
+    def as_ext(self):
+        return self.value_template % py2js(self.value)
+        
+class Variable(Value):
+    declare_type = DECLARE_THIS
+    ext_suffix = ''
     name = None
     ext_name = None
     
     def __init__(self,name,value):
-        self.value = value
+        Value.__init__(self,value)
+        #~ assert self.declare_type != DECLARE_INLINE
         if name is None:
             self.declare_type = DECLARE_INLINE
         else:
@@ -169,24 +201,7 @@ class Variable(object):
     #~ def js_column_lines(self):
         #~ return []
         
-    def js_before_body(self):
-        for v in self.subvars():
-            for ln in v.js_before_body():
-                yield ln
-    def js_body(self):
-        for v in self.subvars():
-            for ln in v.js_body():
-                yield ln
                 
-    def js_after_body(self):
-        for v in self.subvars():
-            for ln in v.js_after_body():
-                yield ln
-        
-                
-    def subvars(self):
-        return []
-            
     def as_ext(self):
         if self.declare_type == DECLARE_INLINE:
             return self.as_ext_value()

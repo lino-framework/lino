@@ -63,9 +63,11 @@ def json_response(x):
 
 class SaveWindowConfig(actions.Command):
   
-    def run_in_dlg(self,dlg,name):
+    #~ def run_in_dlg(self,dlg,name):
+    def run_in_dlg(self,dlg):
         #~ h = int(context.request.POST.get('h'))
         #~ w = int(context.request.POST.get('w'))
+        name = dlg.get('name')
         h = int(dlg.get('h'))
         w = int(dlg.get('w'))
         maximized = dlg.get('max')
@@ -76,10 +78,9 @@ class SaveWindowConfig(actions.Command):
         x = int(dlg.get('x'))
         y = int(dlg.get('y'))
         yield dlg.confirm("Save %r window config (%r,%r,%r,%r,%r)\nAre you sure?" % (name,x,y,h,w,maximized))
-        #context.confirm("%r,%r,%r,%r : Are you sure?!" % (name,h,w,maximized))
-        ui.window_configs[name] = (x,y,w,h,maximized)
-        #ui.window_configs[name] = (w,h,maximized)
-        ui.save_window_configs()
+        #~ ui.window_configs[name] = (x,y,w,h,maximized)
+        #~ ui.save_window_configs()
+        ui.save_window_config(name,(x,y,w,h,maximized))
         yield dlg.notify("Window config %r has been saved" % name).over()
 
 
@@ -235,11 +236,15 @@ class ExtUI(base.UI):
             
 
     
-    def save_window_configs(self):
+    def save_window_config(self,name,wc):
+        self.window_configs[name] = wc
         f = open(self.window_configs_file,'wb')
         pickle.dump(self.window_configs,f)
         f.close()
         self._response = None
+
+    def get_window_config(self,name):
+        return self.window_configs.get(name,None)
 
   
     def get_urls(self):
@@ -258,7 +263,8 @@ class ExtUI(base.UI):
             (r'^step_dialog$', self.step_dialog_view),
             (r'^abort_dialog$', self.abort_dialog_view),
             (r'^choices/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<fldname>\w+)$', self.choices_view),
-            (r'^save_win/(?P<name>\w+)$', self.save_win_view),
+            #~ (r'^save_win/(?P<name>\w+)$', self.save_win_view),
+            (r'^save_window_config$', self.save_window_config_view),
             (r'^permalink_do/(?P<name>\w+)$', self.permalink_do_view),
             #~ (r'^props/(?P<app_label>\w+)/(?P<model_name>\w+)$', self.props_view),
             # (r'^props$', self.props_view),
@@ -345,11 +351,16 @@ class ExtUI(base.UI):
         dlg = ext_requests.Dialog(request,self,actor,None)
         return self.start_dialog(dlg)
 
-    def save_win_view(self,request,name=None):
-        #print 'save_win_view()',name
+    def save_window_config_view(self,request):
         actor = SaveWindowConfig()
-        dlg = ext_requests.Dialog(request,self,actor,None,name)
+        dlg = ext_requests.Dialog(request,self,actor,None)
         return self.start_dialog(dlg)
+        
+    #~ def save_win_view(self,request,name=None):
+        #~ #print 'save_win_view()',name
+        #~ actor = SaveWindowConfig()
+        #~ dlg = ext_requests.Dialog(request,self,actor,None,name)
+        #~ return self.start_dialog(dlg)
         
 
     #~ def props_view(self,request,**kw):
@@ -499,7 +510,9 @@ class ExtUI(base.UI):
         # kw['defaultButton'] = js_code('this.main_grid')
         #~ kw = self.window_options(lh,**kw)
         lh = rr.layout
-        yield dlg.exec_js(lh._main.js_job_constructor(rr)).over()
+        job = ext_elems.Reaction(rr) #,lh._main)
+        yield dlg.exec_js(job.as_ext_value).over()
+        #~ yield dlg.exec_js(lh._main.js_job_constructor(rr)).over()
         
         
     def view_form(self,dlg,**kw):
@@ -511,7 +524,9 @@ class ExtUI(base.UI):
         lh = fh.lh
         #~ kw = self.window_options(lh,**kw)
         #rr = None
-        yield dlg.exec_js(lh._main.js_job_constructor(fr)).over()
+        job = ext_elems.Reaction(fr) #,fr.lh._main)
+        yield dlg.exec_js(job.as_ext_value).over()
+     #~ yield dlg.exec_js(lh._main.js_job_constructor(fr)).over()
         
         
     def setup_report(self,rh):
