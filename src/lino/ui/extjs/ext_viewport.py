@@ -325,7 +325,8 @@ Lino.load_properties = function(caller,url,record) {
   var on_success = function(response) {
     var result = Ext.decode(response.responseText);
     caller.properties_window.setTitle(result.title);
-    var grid = caller.properties_window.items.get(0);
+    // var grid = caller.properties_window.items.get(0);
+    var grid = caller.properties_window.items.get(0).items.get(0);
     for (i in result.rows) {
       grid.setProperty(result.rows[i].name,result.rows[i].value)
     }

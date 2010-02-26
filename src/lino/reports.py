@@ -617,11 +617,13 @@ class ReportRequest:
     master = None
     instance = None
     extra = None
+    layout = None
     
     def __init__(self,rh):
         assert isinstance(rh,ReportHandle)
         self.report = rh.report
         self.rh = rh
+        self.ui = rh.ui
         # Subclasses (e.g. BaseViewReportRequest) may set `master` before calling ReportRequest.__init__()
         if self.master is None:
             self.master = rh.report.master

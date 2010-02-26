@@ -78,6 +78,7 @@ class ViewFormRequest:
         self.request = request
         self.fh = fh
         self.layout = fh.lh
+        self.ui = fh.ui
         
     def get_title(self):
         return self.fh.get_title(self)

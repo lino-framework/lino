@@ -325,7 +325,7 @@ class ReportRequestWindow(jsgen.Component):
         kw.update(items=self.main)
         
         
-        if self.rr.report.use_layouts:
+        if self.rr.layout is not None: # report.use_layouts:
             lh = self.rr.layout
             
             if lh.start_focus is not None:
@@ -338,10 +338,11 @@ class ReportRequestWindow(jsgen.Component):
         
         
         #name = id2js(self.rr.layout.name)
-        wc = self.rr.rh.ui.get_window_config(self.permalink_name)
+        wc = self.rr.ui.get_window_config(self.permalink_name)
         #kw.update(defaultButton=self.lh.link.inputs[0].name)
         if wc is None:
-            if self.rr.report.use_layouts:
+            #~ if self.rr.report.use_layouts:
+            if self.rr.layout is not None: 
                 if lh.height is None:
                     kw.update(height=300)
                 else:
@@ -396,19 +397,22 @@ class PropertiesWindow(ReportRequestWindow):
             self.source[p.name] = pv.value
             if p.label:
                 self.propertyNames[p.name] = p.label
-            pvm = p.value_type.model_class()
+            #~ pvm = p.value_type.model_class()
+            pvm = pv.__class__ 
             if pvm is properties.CHAR:
                 #~ choices = [unicode(pv.value) for pv in pvm.objects.filter(prop=p,owner_id__isnull=True)]
-                choices = [unicode(choice) for choice in pv.value_choices(p)]
+                #~ choices = [unicode(choice) for choice in pv.value_choices(p)]
+                choices = pvm.choices_list(p) # [unicode(choice) for choice in pv.value_choices(p)]
                 if choices:
                     editor = ComboBox(store=choices,mode='local',selectOnFocus=True)
                     editor = 'new Ext.grid.GridEditor(%s)' % py2js(editor)
                     self.customEditors[p.name] = js_code(editor)
                     
-                    
+        #~ print 20100226, self.model,len(self.source), self.source
         grid = dict(xtype='propertygrid')
-        grid.update(source=self.source,
-          autoHeight=True)
+        #~ grid.update(clicksToEdit=2)
+        grid.update(source=self.source)
+        grid.update(autoHeight=True)
         grid.update(customEditors=self.customEditors)
         #~ url = self.rh.get_absolute_url(grid_afteredit=True)
         #~ url = self.ui.get_props_url(self.model)
@@ -417,11 +421,13 @@ class PropertiesWindow(ReportRequestWindow):
           #~ afteredit=js_code('Lino.props_afteredit(this)'))
           afteredit=js_code('function(e){Lino.submit_property(this,e)}'),scope=js_code('this'))
         grid.update(listeners=listeners)
+        #~ grid.update(pageSize=10)
         if len(self.propertyNames) > 0:
             grid.update(propertyNames=self.propertyNames)
-        grid = jsgen.Value(grid)
+        panel = dict(xtype='panel',autoScroll=True,items=grid)
+        main = jsgen.Value(panel)
         permalink_name = self.model._meta.app_label+'_'+self.model.__name__+'_properties'
-        ReportRequestWindow.__init__(self,rr,'properties_window',grid,permalink_name,**kw)
+        ReportRequestWindow.__init__(self,rr,'properties_window',main,permalink_name,**kw)
                     
             
         #~ for p in props:

@@ -23,11 +23,11 @@ Here are the properties that we are going to observe::
   
 Now we have setup the properties. Let's have a look at this metadata::
   
-  >>> print [v.value for v in favdish.choices_list()]
+  >>> print favdish.choices_list()
   [u'Cookies', u'Fish', u'Meat', u'Vegetables']
   >>> qs = properties.Property.objects.all()
-  >>> ["%s (%s)" % (p.name,','.join([pv.value for pv in p.choices_list()])) for p in qs]
-  [u'weight ()', u'married ()', u'favdish (Cookies,Fish,Meat,Vegetables)']
+  >>> ["%s (%s)" % (p.name,','.join(map(unicode,p.choices_list()))) for p in qs]
+  [u'weight ()', u'married (True,False)', u'favdish (Cookies,Fish,Meat,Vegetables)']
   
 PropValuesByOwner is a report that cannot be rendered into a normal grid because the 'value' column has variable data type, but it's render_to_dict() method is used to fill an `Ext.grid.PropertyGrid`:
 
@@ -83,6 +83,11 @@ To see the property values of a person, we can use a manual query...
 
   >>> properties.PropValuesByOwner().render_to_dict(master_instance=fred)
   {'count': 3, 'rows': [{'name': u'favdish', 'value': u'Fish'}, {'name': u'married', 'value': False}, {'name': u'weight', 'value': 110}], 'title': u'Properties for Fred'}
+  
+Note how properties.PropValuesByOwner also returns 3 rows for Mary although we don't know her weight:
+  
+  >>> properties.PropValuesByOwner().render_to_dict(master_instance=mary)
+  {'count': 3, 'rows': [{'name': u'favdish', 'value': u'Meat'}, {'name': u'married', 'value': True}, {'name': u'weight', 'value': None}], 'title': u'Properties for Mary'}
   
 Query by property:
 

@@ -74,12 +74,12 @@ class Property(models.Model):
             return vm(prop=self,owner=owner)
             
     def set_choice_for(self,owner,i):
-        pv = self.choices_list()[i]
-        return self.set_value_for(owner,pv.value)
+        v = self.choices_list()[i]
+        return self.set_value_for(owner,v)
         
     def choices_list(self):
         cl = self.value_type.model_class()
-        return cl.objects.filter(owner_id__isnull=True,prop__exact=self)
+        return cl.choices_list(self)
         
     def values_query(self):
         cl = self.value_type.model_class()
@@ -193,6 +193,11 @@ class PropValue(models.Model):
         #~ self = self.prop.get_child(self)
         #~ return unicode(self.value)
         
+    @classmethod
+    def choices_list(cls,prop):
+        #~ return [pv.value for pv in cls.objects.filter(owner_id__isnull=True,prop__exact=prop)]
+        return [pv.value for pv in cls.value_choices(prop)]
+        
     def prop_choices(self,owner):
         """
         This answers the question "What Properties are possible for this PropValue?", 
@@ -202,12 +207,11 @@ class PropValue(models.Model):
         mt = ContentType.objects.get_for_model(owner.__class__)
         return Property.objects.filter(only_for__in=(mt,None))
         
-    def value_choices(self,prop):
-        "List of choices for comboboxes"
-        #~ return prop.propvalue_set.filter(owner__exact=None)
-        #~ return prop.propvalue_set.filter(owner__isnull=True)
-        #~ return prop.propvalue_set.filter(owner_id__exact=None)
-        return prop.propvalue_set.filter(owner_id__isnull=True)
+    @classmethod
+    def value_choices(cls,prop):
+        "List of PropValue instances choices for comboboxes"
+        return cls.objects.filter(owner_id__isnull=True,prop__exact=prop)
+        #~ return prop.propvalue_set.filter(owner_id__isnull=True)
 
     @classmethod
     def create_property(cls,**kw):
@@ -230,6 +234,10 @@ class INT(PropValue):
 
 class BOOL(PropValue):
     value = models.NullBooleanField()
+    
+    @classmethod
+    def choices_list(self,prop):
+        return [ True, False ]
 
 
 class PropValues(reports.Report):
