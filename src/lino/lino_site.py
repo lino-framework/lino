@@ -14,7 +14,7 @@
 
 import os
 import sys
-import imp
+#~ import imp
 
 from django.conf import settings
 

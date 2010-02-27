@@ -58,7 +58,7 @@ log = logging.getLogger('lino')
     
 if len(log.handlers) == 0:
   
-    print "Using default logging config"
+    #~ print "Using default logging config"
     
     """
     If you don't like Lino's default logging config, then configure 
