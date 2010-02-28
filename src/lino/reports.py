@@ -262,7 +262,7 @@ class Report(actors.Actor): # actions.Action): #
                 assert not m2m
                 master = fk.rel.to
             except models.FieldDoesNotExist,e:
-                lino.log.debug("FieldDoesNotExist in %r._meta.get_field_by_name(%r)",self.model,self.fk_name)
+                #~ lino.log.debug("FieldDoesNotExist in %r._meta.get_field_by_name(%r)",self.model,self.fk_name)
                 master = None
                 for vf in self.model._meta.virtual_fields:
                     if vf.name == self.fk_name:

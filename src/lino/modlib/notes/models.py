@@ -64,11 +64,34 @@ class Note(models.Model):
         
 
 class NoteDetail(layouts.PageLayout):
-    main = """
-    date short type user
-    person company
-    text:40x5 links.LinksByOwner:40x5
+    #~ main = """
+    #~ date short type user
+    #~ person company
+    #~ text:40x5 links.LinksByOwner:40x5
+    #~ """
+    
+    #~ box1 = """
+    #~ date type user
+    #~ short 
+    #~ person 
+    #~ company
+    #~ """
+    #~ main = """
+    #~ box1 links.LinksByOwner:40
+    #~ text:80x5 
+    #~ """
+    
+    
+    box1 = """
+    person 
+    company
     """
+    main = """
+    date short type user 
+    box1:40 links.LinksByOwner:40
+    text:80x5 
+    """
+    
 class Notes(reports.Report):
     page_layouts = (NoteDetail,)
     model = 'notes.Note'

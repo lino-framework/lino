@@ -564,7 +564,8 @@ class FieldElement(LayoutElement):
         
         
 class TextFieldElement(FieldElement):
-    xtype = 'textarea'
+    #~ xtype = 'textarea'
+    xtype = 'htmleditor'
     #width = 60
     preferred_width = 60
     preferred_height = 3

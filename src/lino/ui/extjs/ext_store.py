@@ -286,9 +286,11 @@ class Store(Component):
         if self.report.master is None:
             yield "%s.load();" % self.as_ext()
         else:
+            yield "if (caller) {"
             yield "caller.main_grid.add_row_listener("
             yield "  function(sm,rowIndex,record) { Lino.load_master(%s,caller,record)})" % self.as_ext()
             yield "Lino.load_master(%s,caller,caller.get_current_record());" % self.as_ext()
+            yield "} else %s.load();" % self.as_ext()
             
             
         
