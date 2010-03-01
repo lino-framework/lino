@@ -871,20 +871,22 @@ class Panel(Container):
             elements = []
             for eg in egroups:
                 if eg[0].vflex:
-                    for e in eg: e.update(flex=1,align='stretch')
+                    #~ for e in eg: e.update(flex=1,align='stretch')
+                    for e in eg: e.update(flex=1)
                     if len(eg) == 1:
                         g = eg[0]
                     else:
                         g = Container(lh,name,*eg,**dict(layout='vbox',flex=1))
                 else:
-                    for e in eg: e.update(align='stretch')
+                    #~ for e in eg: e.update(align='stretch')
                     if len(eg) == 1:
                         g = eg[0]
                     else:
                         g = Container(lh,name,*eg,**dict(layout='form',autoHeight=True))
-                g.update(align='stretch')
+                #~ g.update(align='stretch')
+                #~ g.update(layoutConfig=dict(align='stretch'))
                 elements.append(g)
-            self.update(layout='vbox',align='stretch')
+            self.update(layout='vbox',layoutConfig=dict(align='stretch'))
             #~ self.value['align'] = 'stretch'
               
         for e in elements:
