@@ -225,3 +225,7 @@ class Component(Variable): # better name? JSObject? Scriptable?
         kw.update(self.value)
         return kw
         
+    def update(self,**kw):
+        self.value.update(**kw)
+      
+        

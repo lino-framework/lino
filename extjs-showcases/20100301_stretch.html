@@ -1,0 +1,66 @@
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title id="title">20100228 htmleditor</title>
+<!-- ** CSS ** -->
+<!-- base library -->
+<link rel="stylesheet" type="text/css" href="../../resources/css/ext-all.css" />
+<!-- overrides to base library -->
+<!-- ** Javascript ** -->
+<!-- ExtJS library: base/adapter -->
+<script type="text/javascript" src="../../adapter/ext/ext-base.js"></script>
+<!-- ExtJS library: all widgets -->
+<script type="text/javascript" src="../../ext-all-debug.js"></script>
+<!-- page specific -->
+<script type="text/javascript">
+
+test5 = function() {
+
+  // define 3 fields:
+  var name_field = { "fieldLabel": "name", "xtype": "textfield", "name": "name", "maxLength": 200, "anchor": "100%", "allowBlank": false };
+  var language_field = { "fieldLabel": "language", "xtype": "textfield", "maxLength": 10, "anchor": "100%", "name": "language" };
+  var remarks_field = { "fieldLabel": "remarks", "anchor": "100% 100%", "name": "remarks", "xtype": "textarea" };
+  
+  // wrap each field into a form layout container:
+  var name_wrapper = { "border": false, "labelWidth": 45, "xtype": "container", "items": [ name_field ], 
+    "frame": true, "labelAlign": "top", "bodyBorder": false, "anchor": "100%", "layout": "form" };
+  var language_wrapper = { "border": false, "labelWidth": 81, "xtype": "container", "items": [ language_field ], 
+    "frame": true, "labelAlign": "top", "bodyBorder": false, "anchor": "100%", "layout": "form" };
+  var remarks_wrapper = { 
+    "flex": 1, "border": false, "layout": "form", "xtype": "container", "labelWidth": 72, 
+    "items": [ remarks_field ], "align": "stretch", "bodyBorder": false, 
+    "frame": true, "labelAlign": "top" };
+  
+  // additional wrappers
+  var row1a = { "border": false, "layout": "form", "xtype": "container", 
+    "items": name_wrapper, 
+    "columnWidth": 0.5714285714285714, "frame": true, "bodyBorder": false, "labelAlign": "top" };
+  var row1b = { "border": false, "layout": "form", "xtype": "container", 
+    "items": language_wrapper, 
+    "columnWidth": 0.42857142857142855, "frame": true, "bodyBorder": false, "labelAlign": "top" };
+  var row1 = { 
+    "layout": "column", "xtype": "container", "items": [ row1a, row1b ], 
+    "align": "stretch", "border": false, "frame": false };
+
+  // main_panel
+  var main_panel = new Ext.form.FormPanel({ 
+    "layout": "vbox", "items": [ row1, remarks_wrapper ], 
+    "align": "stretch", "autoScroll": true, 
+    "border": false, "bodyBorder": false, "frame": true, "labelAlign": "top" });
+
+  win = new Ext.Window({
+    layout:		'fit',
+    height:		400,
+    width:		500,
+    resizable:	true,
+    items:		main_panel
+  });
+  win.show();
+}
+
+
+Ext.onReady(function() {
+  test5();
+});
+</script>
+</head><body>
+</body></html>

@@ -816,6 +816,7 @@ class Container(LayoutElement):
 
 class Panel(Container):
     ext_suffix = "_panel"
+    
     def __init__(self,lh,name,vertical,*elements,**kw):
         self.vertical = vertical
         Container.__init__(self,lh,name,*elements,**kw)
@@ -824,15 +825,20 @@ class Panel(Container):
             self.collapsible = True
             self.label = label
             
-        if self.vertical:
-            vflex_elems = [e for e in elements if e.vflex]
-            if len(flex_elems) > 0:
-                assert len(kw) == 0, "%r is not empty" % kw
-                vfix_elems = [e for e in elements if not e.vflex]
-                flex_panel = Panel(lh,name,vertical,*vflex_elems)
-                fix_panel = Panel(lh,name,vertical,*vfix_elems)
+        #~ if self.vertical:
+            #~ vflex_elems = [e for e in elements if e.vflex]
+            #~ if len(flex_elems) > 0:
+                #~ assert len(kw) == 0, "%r is not empty" % kw
+                #~ vfix_elems = [e for e in elements if not e.vflex]
+                #~ flex_panel = Panel(lh,name,vertical,*vflex_elems)
+                #~ fix_panel = Panel(lh,name,vertical,*vfix_elems)
                 
-            
+        """
+        A vertical Panel is vflex if and only if at least one of its children is vflex.
+        A horizontal Panel is vflex, if and only if *all* its children are vflex 
+        (if vflex and non-vflex elements are together in a hbox, then the 
+        vflex elements will get the height of the highest non-vflex element).
+        """        
         self.vflex = not vertical
         for e in elements:
             if not isinstance(e,LayoutElement):
@@ -844,20 +850,42 @@ class Panel(Container):
                 if not e.vflex:
                     self.vflex = False
                     
-        if self.vertical and self.vflex:
-            # maybe we must split this panel and use border layout
-            # elsets: each element is a list of elements who have same vflex
-            elsets = []
-            for e in elements:
-                if len(elsets) and elsets[-1][0].vflex == e.vflex:
-                    elsets[-1].append(e)
-                else:
-                    elsets.append([e])
-            if len(elsets) == 1:
-                # all elements are vflex
-                assert elsets[0] == elements
-                if len(elements) > 1:
+        if len(elements) > 1 and self.vertical and self.vflex:
+            #~ print 20100301, self
+            # so we must split this panel into several containers. 
+            # vflex elements go into a vbox, the others into a form layout. 
             
+            # Rearrange elements into "element groups"
+            # Each element of egroups is a list of elements who have same vflex
+            egroups = []
+            for e in elements:
+                if len(egroups) and egroups[-1][0].vflex == e.vflex:
+                    egroups[-1].append(e)
+                else:
+                    egroups.append([e])
+                    
+            if len(egroups) == 1:
+                # all elements are vflex
+                assert tuple(egroups[0]) == elements, "%r != %r" % (tuple(egroups[0]), elements)
+                
+            elements = []
+            for eg in egroups:
+                if eg[0].vflex:
+                    for e in eg: e.update(flex=1,align='stretch')
+                    if len(eg) == 1:
+                        g = eg[0]
+                    else:
+                        g = Container(lh,name,*eg,**dict(layout='vbox',flex=1))
+                else:
+                    for e in eg: e.update(align='stretch')
+                    if len(eg) == 1:
+                        g = eg[0]
+                    else:
+                        g = Container(lh,name,*eg,**dict(layout='form',autoHeight=True))
+                g.update(align='stretch')
+                elements.append(g)
+            self.update(layout='vbox',align='stretch')
+            #~ self.value['align'] = 'stretch'
               
         for e in elements:
             e.set_parent(self)
@@ -869,7 +897,7 @@ class Panel(Container):
                     w = len(e.label) + 1 # +1 for the ":"
                     if self.label_width < w:
                         self.label_width = w
-            
+
         w = h = 0
         for e in elements:
             ew = e.width or e.preferred_width
@@ -895,15 +923,18 @@ class Panel(Container):
                 d.update(layout='column')
                 
         if d['layout'] == 'form':
-            for e in elements:
-                #~ h = e.height or e.preferred_height
-                if e.vflex:
+            assert self.vertical
+            if len(elements) == 1 and elements[0].vflex:
+                elements[0].update(anchor="100% 100%")
+            else:
+                for e in elements:
+                    #~ assert not e.vflex
                     #~ h = e.height or e.preferred_height
-                    #~ pc = int(float(h)*100/self.preferred_height)
-                    #~ e.value.update(anchor="100%% %d%%" % pc)
-                    e.value.update(anchor="100% bottom")
-                else:
-                    e.value.update(anchor="100%")
+                    #~ if e.vflex:
+                        #~ e.value.update(anchor="100% 100%")
+                    #~ else:
+                        #~ e.value.update(anchor="100%")
+                    e.update(anchor="100%")
         elif d['layout'] == 'column':
             for e in elements:
                 w = e.width or e.preferred_width
@@ -1393,6 +1424,7 @@ class GridMainPanel(GridElement,MainPanel):
 
 class DetailMainPanel(Panel,WrappingMainPanel):
     declare_type = jsgen.DECLARE_THIS
+    xtype = None
     value_template = "new Ext.form.FormPanel(%s)"
     def __init__(self,lh,name,vertical,*elements,**kw):
         self.rh = lh.link
