@@ -135,6 +135,7 @@ INSTALLED_APPS = (
   'lino.test_apps.20100206', # 
   
   'lino.test_apps.20100212', # Explaining Django ticket 12801
+  'lino.test_apps.20100301', # new API for Report.get_field_choices()
 )
 
 

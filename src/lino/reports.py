@@ -469,19 +469,17 @@ class Report(actors.Actor): # actions.Action): #
         methname = fld.name + "_choices"
         return getattr(self.model,methname,None)
         
-    def get_field_choices(self,fld,pk,quick_search=None):
-        # pk is the primary key of the "receiving" instance (who is asking for a list of choices)
-        # query is a string typed by user to filter the choices
+    def get_field_choices(self,fld,context,quick_search=None):
+        # context is a dict of field values in the receiving instance
+        # query is a string entered to a combobox to filter the choices
         meth = self.get_field_choices_meth(fld)
         choices = None
         if meth is not None:
-            try:
-                #recipient = fld.rel.to.objects.get(pk=pk)
-                recipient = self.model.objects.get(pk=pk)
-            except self.model.DoesNotExist:
-                pass
-            else:
-                choices = meth(recipient)
+            args = [] 
+            for varname in meth.func_code.co_varnames[1:]:
+                args.append(context.get(varname,None))
+                #~ context_field, remote, direct, m2m = self.model._meta.get_field_by_name(varname)
+            choices = meth(*args)
         if choices is None:
             choices = fld.rel.to.objects.all()
         if quick_search is not None:

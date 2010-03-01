@@ -89,13 +89,14 @@ class Contact(models.Model):
             lines.append(unicode(self.country))
         lino.log.debug('%s : as_address() -> %r',self,lines)
         return mark_safe(linesep.join(lines))
-    
-    def city_choices(self):
+        
+    @classmethod
+    def city_choices(cls,country):
         #print "city_choices", repr(recipient)
         #recipient = self.objects.get(pk=pk)
-        if self.country:
+        if country is not None:
         #if recipient and recipient.country:
-            return self.country.city_set.order_by('name')
+            return country.city_set.order_by('name')
         #return countries.City.oiesByCountry().get_queryset(master_instance=recipient.country)
         #return dict(country__in=(recipient.country,))
         

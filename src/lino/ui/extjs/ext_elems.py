@@ -596,34 +596,8 @@ class ForeignKeyElement(FieldElement):
     
     def __init__(self,*args,**kw):
         FieldElement.__init__(self,*args,**kw)
-        #self.report = self.lh.link.report.get_field_choices(self.field)
         self.report = reports.get_model_report(self.field.rel.to)
-        #self.report = rd.get_handle(self.lh.ui)
-        #self.rh = self.report.get_handle(self.lh.ui)
-        #self.lh.needs_store(self.rh)
-        #~ if self.editable:
-            #~ setup_report(self.choice_report)
-            #self.store = rpt.choice_store
-            #self.layout.choice_stores.append(self.store)
-            #self.report.setup()
-            #self.store = Store(rpt,autoLoad=True)
-            #self.layout.report.add_variable(self.store)
       
-    #~ def ext_variables(self):
-        #~ #yield self.store
-        #~ setup_report(self.report)
-        #~ yield self.report.choice_layout.store
-        #~ yield self
-        
-    def unused_get_column_options(self,**kw):
-        kw = FieldElement.get_column_options(self,**kw)
-        #kw.update(dataIndex=self.name+CHOICES_HIDDEN_SUFFIX)
-        #js = "function(v, meta, rec, row, col, store) {return rec.data.%s}" % (self.name+CHOICES_HIDDEN_SUFFIX)
-        # js = "function(v, meta, rec, row, col, store) {return v.text}" 
-        #js = "function(v, meta, rec, row, col, store) {return v[1]}" 
-        #kw.update(renderer=js_code('Lino.ForeignKeyRenderer(%r)' % (self.name+"Hidden") ))
-        #kw.update(renderer=js_code(js))
-        return kw    
         
     def store_options(self,**kw):
         proxy = dict(url=self.lh.ui.get_choices_url(self),method='GET')
@@ -631,16 +605,13 @@ class ForeignKeyElement(FieldElement):
           "new Ext.data.HttpProxy(%s)" % py2js(proxy)
         ))
         # a JsonStore without explicit proxy sometimes used method POST
-        # d.update(url=self.rr.get_absolute_url(json=True))
-        # d.update(method='GET')
         # kw.update(autoLoad=True)
         kw.update(totalProperty='count')
         kw.update(root='rows')
         kw.update(id=ext_requests.CHOICES_VALUE_FIELD) # self.report.model._meta.pk.name)
         kw.update(fields=[ext_requests.CHOICES_VALUE_FIELD,ext_requests.CHOICES_TEXT_FIELD])
         #~ kw.update(listeners=dict(exception=js_code("Lino.on_store_exception")))
-        listeners = dict(exception=js_code("Lino.on_store_exception"))
-        kw.update(listeners=listeners)
+        kw.update(listeners=dict(exception=js_code("Lino.on_store_exception")))
         return kw
       
         
@@ -680,7 +651,9 @@ class ForeignKeyElement(FieldElement):
         return kw
         
     def js_after_body(self):
-        if self.lh.link.report.get_field_choices_meth(self.field) is not None:
+        meth = self.lh.link.report.get_field_choices_meth(self.field)
+        if meth is not None:
+            print 20100301, meth.func_code.co_varnames
             yield "this.main_grid.add_row_listener(function(sm,rowIndex,record) {" 
             #yield "  console.log('20100124b',this,client_job);"
             yield "  %s.setQueryContext(record.data.id)});" % self.as_ext()
@@ -1279,8 +1252,8 @@ class PagingToolbar(jsgen.Variable):
             # searching starts when user presses ENTER.
             yield "  if(e.getKey() == e.RETURN) {"
             # yield "    console.log('keypress',field.getValue(),store)"
-            yield "    store.setBaseParam('%s',field.getValue());" % ext_requests.URL_PARAM_FILTER
-            yield "    store.load({params: { start: 0, limit: this.pager.pageSize }});" 
+            yield "    this.main_grid.getStore().setBaseParam('%s',field.getValue());" % ext_requests.URL_PARAM_FILTER
+            yield "    this.main_grid.getStore().load({params: { start: 0, limit: this.pager.pageSize }});" 
             yield "  }"
             yield "}"
         search_field = dict(
