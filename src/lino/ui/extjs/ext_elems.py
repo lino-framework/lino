@@ -86,6 +86,7 @@ class ComboBox(Component):
         
         
 class VisibleComponent(Component):
+    vflex = False
     width = None
     height = None
     preferred_width = 10
@@ -184,13 +185,6 @@ class LayoutElement(VisibleComponent):
         if self.label:
             if parent.labelAlign == layouts.LABEL_ALIGN_LEFT:
                 self.preferred_width += len(self.label)
-            #~ elif parent.labelAlign == layouts.LABEL_ALIGN_TOP:
-                #~ self.preferred_height += 1
-        #~ if self.flex is None:
-            #~ if parent.vertical:
-                #~ self.flex = self.height or self.preferred_height
-            #~ else:
-                #~ self.flex = self.width or self.preferred_width
 
     def ext_options(self,**kw):
         kw = VisibleComponent.ext_options(self,**kw)
@@ -530,7 +524,7 @@ class FieldElement(LayoutElement):
         if self.xtype:
             kw.update(xtype=self.xtype)
         kw.update(name=self.name)
-        kw.update(anchor="100%")
+        #~ kw.update(anchor="100%")
         #~ kw.update(anchor="100% 100%")
         #kw.update(style=dict(padding='0px'),color='green')
         if self.label:
@@ -565,12 +559,18 @@ class FieldElement(LayoutElement):
         
 class TextFieldElement(FieldElement):
     #~ xtype = 'textarea'
+    vflex = True
     xtype = 'htmleditor'
     #width = 60
     preferred_width = 60
     preferred_height = 3
     #collapsible = True
 
+    #~ def get_field_options(self,**kw):
+        #~ kw = FieldElement.get_field_options(self,**kw)
+        #~ kw.update(anchor="100% 100%")
+        #~ return kw
+        
 class CharFieldElement(FieldElement):
     xtype = "textfield"
     sortable = True
@@ -816,7 +816,6 @@ class Container(LayoutElement):
 
 class Panel(Container):
     ext_suffix = "_panel"
-    
     def __init__(self,lh,name,vertical,*elements,**kw):
         self.vertical = vertical
         Container.__init__(self,lh,name,*elements,**kw)
@@ -824,9 +823,43 @@ class Panel(Container):
         if label:
             self.collapsible = True
             self.label = label
+            
+        if self.vertical:
+            vflex_elems = [e for e in elements if e.vflex]
+            if len(flex_elems) > 0:
+                assert len(kw) == 0, "%r is not empty" % kw
+                vfix_elems = [e for e in elements if not e.vflex]
+                flex_panel = Panel(lh,name,vertical,*vflex_elems)
+                fix_panel = Panel(lh,name,vertical,*vfix_elems)
+                
+            
+        self.vflex = not vertical
         for e in elements:
             if not isinstance(e,LayoutElement):
                 raise Exception("%r is not a LayoutElement" % e)
+            if self.vertical:
+                if e.vflex:
+                    self.vflex = True
+            else:
+                if not e.vflex:
+                    self.vflex = False
+                    
+        if self.vertical and self.vflex:
+            # maybe we must split this panel and use border layout
+            # elsets: each element is a list of elements who have same vflex
+            elsets = []
+            for e in elements:
+                if len(elsets) and elsets[-1][0].vflex == e.vflex:
+                    elsets[-1].append(e)
+                else:
+                    elsets.append([e])
+            if len(elsets) == 1:
+                # all elements are vflex
+                assert elsets[0] == elements
+                if len(elements) > 1:
+            
+              
+        for e in elements:
             e.set_parent(self)
             if isinstance(e,FieldElement):
                 self.is_fieldset = True
@@ -854,33 +887,27 @@ class Panel(Container):
         
         d = self.value
         if not d.has_key('layout'):
-            if len(self.elements) == 1:
+            if len(elements) == 1:
                 d.update(layout='fit')
             elif self.vertical:
                 d.update(layout='form')
-                for e in self.elements:
-                    h = e.height or e.preferred_height
-                    e.value.update(anchor="100%")
-                    #~ if h == 0:
-                        #~ e.value.update(anchor="95%")
-                    #~ else:
-                        #~ e.value.update(anchor="95%% %d%%" % (100.0*self.preferred_height/h))
-                    #e.value.update(flex=h)
-                #~ #align = 'left'
-                #~ align = 'stretch'
-                #~ #align = 'stretchmax'
-                #~ d.update(layout='vbox',layoutConfig=dict(align=align))
-                #~ d.update(pack='end')
             else:
                 d.update(layout='column')
-                for e in self.elements:
-                    w = e.width or e.preferred_width
-                    e.value.update(columnWidth=float(w)/self.preferred_width)
                 
-                #~ #align = 'top'
-                #~ align = 'stretch'
-                #~ #align = 'stretchmax'
-                #~ d.update(layout='hbox',layoutConfig=dict(align=align))
+        if d['layout'] == 'form':
+            for e in elements:
+                #~ h = e.height or e.preferred_height
+                if e.vflex:
+                    #~ h = e.height or e.preferred_height
+                    #~ pc = int(float(h)*100/self.preferred_height)
+                    #~ e.value.update(anchor="100%% %d%%" % pc)
+                    e.value.update(anchor="100% bottom")
+                else:
+                    e.value.update(anchor="100%")
+        elif d['layout'] == 'column':
+            for e in elements:
+                w = e.width or e.preferred_width
+                e.value.update(columnWidth=float(w)/self.preferred_width)
             
         
         
@@ -947,6 +974,7 @@ class GridElement(Container): #,DataElementMixin):
     #value_template = "new Ext.grid.EditorGridPanel(%s)"
     value_template = "new Ext.grid.GridPanel(%s)"
     ext_suffix = "_grid"
+    vflex = True
     
     def __init__(self,lh,name,rh,*elements,**kw):
         """
@@ -1198,7 +1226,10 @@ class WrappingMainPanel(MainPanel):
     @classmethod
     def field2elem(cls,lh,field,**kw):
         e = MainPanel.field2elem(lh,field,**kw)
-        ct = Panel(lh,field.name+"_ct",True,e,layout='form')#,flex=0)
+        po = dict(layout='form')
+        #~ if isinstance(e,TextFieldElement):
+            #~ po.update(anchor='100% 100%')
+        ct = Panel(lh,field.name+"_ct",True,e,**po)#,flex=0)
         ct.field = field
         return ct
 

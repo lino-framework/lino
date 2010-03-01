@@ -1,0 +1,129 @@
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title id="title">20100228 htmleditor</title>
+<!-- ** CSS ** -->
+<!-- base library -->
+<link rel="stylesheet" type="text/css" href="../../resources/css/ext-all.css" />
+<!-- overrides to base library -->
+<!-- ** Javascript ** -->
+<!-- ExtJS library: base/adapter -->
+<script type="text/javascript" src="../../adapter/ext/ext-base.js"></script>
+<!-- ExtJS library: all widgets -->
+<script type="text/javascript" src="../../ext-all-debug.js"></script>
+<!-- page specific -->
+<script type="text/javascript">
+
+// richardtallent Oct 2007 : http://extjs.net/forum/showthread.php?p=98654
+
+test1 = function() {
+  win = new Ext.Window({
+    layout:		'fit',
+    height:		400,
+    width:		500,
+    resizable:	true,
+    items:		[ new Ext.FormPanel({
+      url:		'view-page-ajax.aspx',
+      fileUpload:	true,
+      frame:		true,
+      items: { layout: 'border', anchor: '100% 100%', items: [
+          { region: 'north', layout: 'form', autoHeight: true, labelWidth: 70, items: [
+            { tabIndex: 0,	xtype:'textfield',	fieldLabel: 'Title',		name: 'title', anchor: '100%' },
+            { tabIndex: 1,	xtype:'textfield',	fieldLabel: 'Attachment',	name: 'file', inputType: 'file' }
+          ] }, 
+          { region: 'center', layout: 'anchor', items: [
+            { tabIndex: 2,	xtype:'htmleditor',	hideLabel: true, name: 'description',	anchor: '100% 100%' }
+            ] }
+          ] }
+      })]
+    });
+  win.show();
+}
+
+test2 = function() {
+  win = new Ext.Window({
+    layout:		'fit',
+    height:		400,
+    width:		500,
+    resizable:	true,
+    items:		[ new Ext.FormPanel({
+      url:		'view-page-ajax.aspx',
+      fileUpload:	true,
+      frame:		true,
+      items: { layout: 'border', anchor: '100% 100%', items: [
+          { region: 'north', layout: 'form', autoHeight: true, labelWidth: 70, items: [
+            { tabIndex: 0,	xtype:'textfield',	fieldLabel: 'Title',		name: 'title', anchor: '100%' },
+            { tabIndex: 1,	xtype:'textfield',	fieldLabel: 'Attachment',	name: 'file', inputType: 'file' }
+          ] }, 
+          { region: 'center', layout: 'fit', 
+            items: { tabIndex: 2,	xtype:'htmleditor',	hideLabel: true, name: 'description'}
+          }
+          ] }
+      })]
+    });
+  win.show();
+}
+
+test3 = function() {
+  win = new Ext.Window({
+    layout:		'fit',
+    height:		400,
+    width:		500,
+    resizable:	true,
+    items:		[ new Ext.FormPanel({
+      url:		'view-page-ajax.aspx',
+      fileUpload:	true,
+      frame:		true,
+      layout: 'border',
+      items: [
+          { region: 'north', layout: 'form', autoHeight: true, labelWidth: 70, 
+            items: [
+              { tabIndex: 0,	xtype:'textfield',	fieldLabel: 'Title',		name: 'title', anchor: '100%' },
+              { tabIndex: 1,	xtype:'textfield',	fieldLabel: 'Attachment',	name: 'file', inputType: 'file' }
+            ] 
+          }, 
+          { region: 'center', layout: 'fit', 
+            items: { tabIndex: 2,	xtype:'htmleditor',	hideLabel: true, name: 'description'}
+          }
+      ]
+    })]
+  });
+  win.show();
+}
+
+test4 = function() {
+  win = new Ext.Window({
+    layout:		'fit',
+    height:		400,
+    width:		500,
+    resizable:	true,
+    items:		[ new Ext.FormPanel({
+      url:		'view-page-ajax.aspx',
+      fileUpload:	true,
+      frame:		true,
+      layout: 'vbox',
+      items: [
+          { layout: 'form', autoHeight: true, labelWidth: 70, 
+            items: [
+              { tabIndex: 0,	xtype:'textfield',	fieldLabel: 'Title',		name: 'title', anchor: '100%' },
+              { tabIndex: 1,	xtype:'textfield',	fieldLabel: 'Attachment',	name: 'file', inputType: 'file' }
+            ] 
+          }, 
+          { flex: 1, layout: 'fit', 
+            items: { tabIndex: 2,	xtype:'htmleditor',	hideLabel: true, name: 'description'}
+          }
+      ]
+    })]
+  });
+  win.show();
+}
+
+
+Ext.onReady(function() {
+  //test1();
+  //test2();
+  // test3();
+  test4();
+});
+</script>
+</head><body>
+</body></html>

@@ -48,9 +48,200 @@ test1 = function() {
   win.show();
 }
 
+test2 = function() {
+  var grid = { 
+    // source: { test: "wow" }, 
+    source: {}, 
+    columnWidth: 0.4, 
+    autoHeight: true, 
+    xtype: "propertygrid"};
+
+  var remarks_field = { fieldLabel: "remarks", xtype: "textarea", name: "remarks", anchor: "100%" };
+  var remarks_panel = { 
+    border: false, labelWidth: 72, 
+    xtype: "container", 
+    items: [ remarks_field ], 
+    columnWidth: 0.6, 
+    frame: true, labelAlign: "top", bodyBorder: false, 
+    layout: "form" 
+    };
+    
+  var buttons = [ { text: "Delete", }, { text: "Insert"  } ];
+  var main_panel = new Ext.form.FormPanel({ 
+    layout: "column", 
+    bbar: buttons,
+    autoScroll: true, 
+    items: [ remarks_panel, grid ], frame: true, border: false });
+    
+
+    
+  var win = new Ext.Window({ 
+    layout: "fit", title: "PropertyGrid 2", items: main_panel, height:400, width: 400, x:30, y:30});
+  win.show();
+}
+
+
+
+test3 = function(caller) {
+  var client_job = this;
+  this.refresh = function() { if(caller) caller.refresh(); };
+  this.get_current_record = function() { return this.current_record;};
+  this.get_selected = function() {
+    return this.current_record.id;
+  }
+  if(caller) {
+    this.main_grid = caller.main_grid;
+  }else{
+    this.main_grid = undefined;
+  }
+  var notes_NotesByPerson_store = new Ext.data.JsonStore({ totalProperty: "count", proxy: new Ext.data.HttpProxy({ url: "/list/notes/NotesByPerson", method: "GET" }), remoteSort: true, fields: [ { type: "date", name: "date" }, { name: "user" },'userHidden', { name: "type" },'typeHidden', { name: "short" }, { name: "text" }, { name: "__unicode__" }, { name: "person" },'personHidden', { name: "company" },'companyHidden', { type: "int", name: "id" } ], storeId: "notes_NotesByPerson_store", root: "rows", id: "id" });
+  this.main_panel_buttons = [ { text: "L\u00f6schen"}, { text: "Insert" } ];
+  this.main_panel_keys = [ 
+    { shift: false, alt: false, key: 46, ctrl: false }, 
+    { shift: false, alt: false, key: 44, ctrl: false } ];
+  this.cmenu = new Ext.menu.Menu(this.main_panel_buttons);
+  this.refresh = function() { if(caller) caller.refresh(); };
+  this.get_current_record = function() { return this.current_record;};
+  this.get_selected = function() {
+    return this.current_record.id;
+  }
+  if(caller) {
+    this.main_grid = caller.main_grid;
+  }else{
+    this.main_grid = undefined;
+  }
+  var notes_NotesByPerson_store = new Ext.data.JsonStore({ totalProperty: "count", proxy: new Ext.data.HttpProxy({ url: "/list/notes/NotesByPerson", method: "GET" }), remoteSort: true, fields: [ { type: "date", name: "date" }, { name: "user" },'userHidden', { name: "type" },'typeHidden', { name: "short" }, { name: "text" }, { name: "__unicode__" }, { name: "person" },'personHidden', { name: "company" },'companyHidden', { type: "int", name: "id" } ], storeId: "notes_NotesByPerson_store", root: "rows", id: "id" });
+  this.left_panel_buttons = [ { text: "L\u00f6schen" }, { text: "Insert" } ];
+  this.left_panel_keys = [ { shift: false, alt: false, key: 46, ctrl: false }, 
+    { shift: false, alt: false, key: 44, ctrl: false } ];
+  this.cmenu = new Ext.menu.Menu(this.left_panel_buttons);
+  var last_name_field = { fieldLabel: "last name", xtype: "textfield", maxLength: 200, anchor: "100%", name: "last_name" };
+  this.last_name_ct_panel = { border: false, labelWidth: 90, xtype: "container", items: [ last_name_field ], columnWidth: 0.44444444444444442, frame: true, labelAlign: "top", bodyBorder: false, layout: "form" };
+  var first_name_field = { fieldLabel: "first name", xtype: "textfield", maxLength: 200, anchor: "100%", name: "first_name" };
+  this.first_name_ct_panel = { border: false, labelWidth: 99, xtype: "container", items: [ first_name_field ], columnWidth: 0.33333333333333331, frame: true, labelAlign: "top", bodyBorder: false, layout: "form" };
+  var title_field = { fieldLabel: "title", xtype: "textfield", maxLength: 200, anchor: "100%", name: "title" };
+  this.title_ct_panel = { border: false, labelWidth: 54, xtype: "container", items: [ title_field ], columnWidth: 0.22222222222222221, frame: true, labelAlign: "top", bodyBorder: false, layout: "form" };
+  this.box1_panel = { layout: "column", xtype: "container", items: [ this.last_name_ct_panel, this.first_name_ct_panel, this.title_ct_panel ], frame: false, border: false, anchor: "100%" };
+  var birth_date_field = { fieldLabel: "Geburtdatum", xtype: "textfield", maxLength: 10, anchor: "100%", name: "birth_date" };
+  this.birth_date_ct_panel = { border: false, labelWidth: 108, xtype: "container", items: [ birth_date_field ], columnWidth: 0.33333333333333331, frame: true, labelAlign: "top", bodyBorder: false, layout: "form" };
+  var birth_place_field = { fieldLabel: "Geburtsort", xtype: "textfield", maxLength: 200, anchor: "100%", name: "birth_place" };
+  this.birth_place_ct_panel = { border: false, labelWidth: 99, xtype: "container", items: [ birth_place_field ], columnWidth: 0.66666666666666663, frame: true, labelAlign: "top", bodyBorder: false, layout: "form" };
+  this.box2_1_panel = { layout: "column", xtype: "container", items: [ this.birth_date_ct_panel, this.birth_place_ct_panel ], frame: false, border: false, anchor: "100%" };
+  var birth_country_field = new Ext.form.ComboBox({ resizable: true, emptyText: "Select a Country...", submitValue: true, pageSize: 10, queryParam: "query", displayField: "text", fieldLabel: "Geburtsland", name: "birth_country", hiddenName: "birth_countryHidden", typeAhead: true, valueField: "value", mode: "remote", triggerAction: "all", selectOnFocus: true, minChars: 2, queryDelay: 300, anchor: "100%", store: new Ext.data.JsonStore({ proxy: new Ext.data.HttpProxy({ url: "/choices/contacts/Persons/birth_country", method: "GET" }), totalProperty: "count", fields: [ "value", "text" ], root: "rows", id: "value" }) });
+  this.birth_country_ct_panel = { border: false, labelWidth: 108, xtype: "container", items: [ birth_country_field ], frame: true, labelAlign: "top", bodyBorder: false, anchor: "100%", layout: "form" };
+  var civil_state_field = { fieldLabel: "Zivilstand", xtype: "textfield", maxLength: 10, anchor: "100%", name: "civil_state" };
+  this.civil_state_ct_panel = { border: false, labelWidth: 99, xtype: "container", items: [ civil_state_field ], columnWidth: 0.5, frame: true, labelAlign: "top", bodyBorder: false, layout: "form" };
+  var tim_nr_field = { fieldLabel: "TIM-Nummer", xtype: "textfield", maxLength: 10, anchor: "100%", name: "tim_nr" };
+  this.tim_nr_ct_panel = { border: false, labelWidth: 99, xtype: "container", items: [ tim_nr_field ], columnWidth: 0.5, frame: true, labelAlign: "top", bodyBorder: false, layout: "form" };
+  this.box2_3_panel = { layout: "column", xtype: "container", items: [ this.civil_state_ct_panel, this.tim_nr_ct_panel ], frame: false, border: false, anchor: "100%" };
+  this.box2_panel = { border: false, layout: "form", xtype: "container", items: [ this.box2_1_panel, this.birth_country_ct_panel, this.box2_3_panel ], columnWidth: 0.59999999999999998, frame: true, bodyBorder: false, labelAlign: "top" };
+  var national_id_field = { fieldLabel: "national id", xtype: "textfield", maxLength: 200, anchor: "100%", name: "national_id" };
+  this.national_id_ct_panel = { border: false, labelWidth: 108, xtype: "container", items: [ national_id_field ], columnWidth: 0.75, frame: true, labelAlign: "top", bodyBorder: false, layout: "form" };
+  var id_field = { readOnly: true, fieldLabel: "ID", xtype: "numberfield", anchor: "100%", name: "id" };
+  this.id_ct_panel = { border: false, labelWidth: 27, xtype: "container", items: [ id_field ], columnWidth: 0.25, frame: true, labelAlign: "top", bodyBorder: false, layout: "form" };
+  this.box5_1_panel = { layout: "column", xtype: "container", items: [ this.national_id_ct_panel, this.id_ct_panel ], frame: false, border: false, anchor: "100%" };
+  var nationality_field = new Ext.form.ComboBox({ resizable: true, emptyText: "Select a Country...", submitValue: true, pageSize: 10, queryParam: "query", displayField: "text", fieldLabel: "nationality", name: "nationality", hiddenName: "nationalityHidden", typeAhead: true, valueField: "value", mode: "remote", triggerAction: "all", selectOnFocus: true, minChars: 2, queryDelay: 300, anchor: "100%", store: new Ext.data.JsonStore({ proxy: new Ext.data.HttpProxy({ url: "/choices/contacts/Persons/nationality", method: "GET" }), totalProperty: "count", fields: [ "value", "text" ], root: "rows", id: "value" }) });
+  this.nationality_ct_panel = { border: false, labelWidth: 108, xtype: "container", items: [ nationality_field ], frame: true, labelAlign: "top", bodyBorder: false, anchor: "100%", layout: "form" };
+  var language_field = new Ext.form.ComboBox({ resizable: true, emptyText: "Select a Language...", submitValue: true, pageSize: 10, queryParam: "query", displayField: "text", fieldLabel: "language", name: "language", hiddenName: "languageHidden", typeAhead: true, valueField: "value", mode: "remote", triggerAction: "all", selectOnFocus: true, minChars: 2, queryDelay: 300, anchor: "100%", store: new Ext.data.JsonStore({ proxy: new Ext.data.HttpProxy({ url: "/choices/contacts/Persons/language", method: "GET" }), totalProperty: "count", fields: [ "value", "text" ], root: "rows", id: "value" }) });
+  this.language_ct_panel = { border: false, labelWidth: 81, xtype: "container", items: [ language_field ], frame: true, labelAlign: "top", bodyBorder: false, anchor: "100%", layout: "form" };
+  this.box5_panel = { border: false, layout: "form", xtype: "container", items: [ this.box5_1_panel, this.nationality_ct_panel, this.language_ct_panel ], columnWidth: 0.40000000000000002, frame: true, bodyBorder: false, labelAlign: "top" };
+  this.intro_box_2_panel = { layout: "column", xtype: "container", items: [ this.box2_panel, this.box5_panel ], frame: false, border: false, anchor: "100%" };
+  this.intro_box_panel = { border: false, layout: "form", xtype: "container", items: [ this.box1_panel, this.intro_box_2_panel ], frame: true, bodyBorder: false, anchor: "100%", labelAlign: "top" };
+  var country_field = new Ext.form.ComboBox({ resizable: true, emptyText: "Select a Country...", submitValue: true, pageSize: 10, queryParam: "query", displayField: "text", fieldLabel: "country", name: "country", hiddenName: "countryHidden", typeAhead: true, valueField: "value", mode: "remote", triggerAction: "all", selectOnFocus: true, minChars: 2, queryDelay: 300, anchor: "100%", store: new Ext.data.JsonStore({ proxy: new Ext.data.HttpProxy({ url: "/choices/contacts/Persons/country", method: "GET" }), totalProperty: "count", fields: [ "value", "text" ], root: "rows", id: "value" }) });
+  this.country_ct_panel = { border: false, labelWidth: 72, xtype: "container", items: [ country_field ], columnWidth: 0.33333333333333331, frame: true, labelAlign: "top", bodyBorder: false, layout: "form" };
+  var region_field = { fieldLabel: "region", xtype: "textfield", maxLength: 200, anchor: "100%", name: "region" };
+  this.region_ct_panel = { border: false, labelWidth: 63, xtype: "container", items: [ region_field ], columnWidth: 0.66666666666666663, frame: true, labelAlign: "top", bodyBorder: false, layout: "form" };
+  this.box3_1_panel = { layout: "column", xtype: "container", items: [ this.country_ct_panel, this.region_ct_panel ], frame: false, border: false, anchor: "100%" };
+  var city_field = new Ext.form.ComboBox({ resizable: true, emptyText: "Select a City...", submitValue: true, pageSize: 10, contextParam: "ck", queryParam: "query", displayField: "text", fieldLabel: "city", name: "city", hiddenName: "cityHidden", typeAhead: true, valueField: "value", mode: "remote", triggerAction: "all", selectOnFocus: true, minChars: 2, queryDelay: 300, anchor: "100%", store: new Ext.data.JsonStore({ proxy: new Ext.data.HttpProxy({ url: "/choices/contacts/Persons/city", method: "GET" }), totalProperty: "count", fields: [ "value", "text" ], root: "rows", id: "value" }) });
+  this.city_ct_panel = { border: false, labelWidth: 45, xtype: "container", items: [ city_field ], columnWidth: 0.5, frame: true, labelAlign: "top", bodyBorder: false, layout: "form" };
+  var zip_code_field = { fieldLabel: "zip code", xtype: "textfield", maxLength: 10, anchor: "100%", name: "zip_code" };
+  this.zip_code_ct_panel = { border: false, labelWidth: 81, xtype: "container", items: [ zip_code_field ], columnWidth: 0.5, frame: true, labelAlign: "top", bodyBorder: false, layout: "form" };
+  this.box3_2_panel = { layout: "column", xtype: "container", items: [ this.city_ct_panel, this.zip_code_ct_panel ], frame: false, border: false, anchor: "100%" };
+  var street_field = { fieldLabel: "street", xtype: "textfield", maxLength: 200, anchor: "100%", name: "street" };
+  this.street_ct_panel = { border: false, labelWidth: 63, xtype: "container", items: [ street_field ], columnWidth: 0.55555555555555558, frame: true, labelAlign: "top", bodyBorder: false, layout: "form" };
+  var street_no_field = { fieldLabel: "street no", xtype: "textfield", maxLength: 10, anchor: "100%", name: "street_no" };
+  this.street_no_ct_panel = { border: false, labelWidth: 90, xtype: "container", items: [ street_no_field ], columnWidth: 0.22222222222222221, frame: true, labelAlign: "top", bodyBorder: false, layout: "form" };
+  var street_box_field = { fieldLabel: "street box", xtype: "textfield", maxLength: 10, anchor: "100%", name: "street_box" };
+  this.street_box_ct_panel = { border: false, labelWidth: 99, xtype: "container", items: [ street_box_field ], columnWidth: 0.22222222222222221, frame: true, labelAlign: "top", bodyBorder: false, layout: "form" };
+  this.box3_3_panel = { layout: "column", xtype: "container", items: [ this.street_ct_panel, this.street_no_ct_panel, this.street_box_ct_panel ], frame: false, border: false, anchor: "100%" };
+  var addr1_field = { fieldLabel: "addr1", xtype: "textfield", maxLength: 200, anchor: "100%", name: "addr1" };
+  this.addr1_ct_panel = { border: false, labelWidth: 54, xtype: "container", items: [ addr1_field ], frame: true, labelAlign: "top", bodyBorder: false, anchor: "100%", layout: "form" };
+  this.box3_panel = { border: false, layout: "form", xtype: "container", items: [ this.box3_1_panel, this.box3_2_panel, this.box3_3_panel, this.addr1_ct_panel ], columnWidth: 0.52941176470588236, frame: true, bodyBorder: false, labelAlign: "top" };
+  var email_field = { fieldLabel: "email", xtype: "textfield", maxLength: 75, anchor: "100%", name: "email" };
+  this.email_ct_panel = { border: false, labelWidth: 54, xtype: "container", items: [ email_field ], frame: true, labelAlign: "top", bodyBorder: false, anchor: "100%", layout: "form" };
+  var url_field = { fieldLabel: "url", xtype: "textfield", maxLength: 200, anchor: "100%", name: "url" };
+  this.url_ct_panel = { border: false, labelWidth: 36, xtype: "container", items: [ url_field ], frame: true, labelAlign: "top", bodyBorder: false, anchor: "100%", layout: "form" };
+  var phone_field = { fieldLabel: "phone", xtype: "textfield", maxLength: 200, anchor: "100%", name: "phone" };
+  this.phone_ct_panel = { border: false, labelWidth: 54, xtype: "container", items: [ phone_field ], frame: true, labelAlign: "top", bodyBorder: false, anchor: "100%", layout: "form" };
+  var gsm_field = { fieldLabel: "gsm", xtype: "textfield", maxLength: 200, anchor: "100%", name: "gsm" };
+  this.gsm_ct_panel = { border: false, labelWidth: 36, xtype: "container", items: [ gsm_field ], frame: true, labelAlign: "top", bodyBorder: false, anchor: "100%", layout: "form" };
+  this.box4_panel = { border: false, layout: "form", xtype: "container", items: [ this.email_ct_panel, this.url_ct_panel, this.phone_ct_panel, this.gsm_ct_panel ], columnWidth: 0.47058823529411764, frame: true, bodyBorder: false, labelAlign: "top" };
+  this.address_box_panel = { layout: "column", xtype: "container", items: [ this.box3_panel, this.box4_panel ], frame: false, border: false, anchor: "100%" };
+  var remarks_field = { fieldLabel: "remarks", xtype: "textarea", name: "remarks", anchor: "100%" };
+  this.remarks_ct_panel = { border: false, labelWidth: 72, xtype: "container", items: [ remarks_field ], columnWidth: 0.40000000000000002, frame: true, labelAlign: "top", bodyBorder: false, layout: "form" };
+  var date_field = { fieldLabel: "date", xtype: "datefield", name: "date", anchor: "100%", allowBlank: false };
+  var date_col = new Ext.grid.DateColumn({ header: "date", sortable: true, dataIndex: "date", width: 72, format: "d.m.y", editable: true, editor: date_field });
+  var short_field = { fieldLabel: "short", xtype: "textfield", maxLength: 200, anchor: "100%", name: "short" };
+  var short_col = new Ext.grid.Column({ header: "short", sortable: true, dataIndex: "short", width: 180, editable: true, editor: short_field });
+  var user_field = new Ext.form.ComboBox({ resizable: true, emptyText: "Select a User...", submitValue: true, pageSize: 10, queryParam: "query", displayField: "text", fieldLabel: "user", name: "user", hiddenName: "userHidden", typeAhead: true, valueField: "value", mode: "remote", triggerAction: "all", selectOnFocus: true, minChars: 2, queryDelay: 300, anchor: "100%", store: new Ext.data.JsonStore({ proxy: new Ext.data.HttpProxy({ url: "/choices/notes/NotesByPerson/user", method: "GET" }), totalProperty: "count", fields: [ "value", "text" ], root: "rows", id: "value" }) });
+  var user_col = new Ext.grid.Column({ header: "user", sortable: true, dataIndex: "user", width: 90, editable: true, editor: user_field });
+  this.notes_NotesByPerson_cols = new Ext.grid.ColumnModel({ columns: [ date_col, short_col, user_col ] });
+  this.notes_NotesByPerson_grid = new Ext.grid.GridPanel({ clicksToEdit: 2, autoHeight: true, xtype: "container", title: "NotesByPerson", columnWidth: 0.59999999999999998, emptyText: "Nix gefunden...", viewConfig: { showPreview: true, scrollOffset: 200, emptyText: "Nix gefunden!" }, enableColLock: false, store: notes_NotesByPerson_store, colModel: this.notes_NotesByPerson_cols });
+  this.bottom_box_panel = { layout: "column", xtype: "container", items: [ this.remarks_ct_panel, this.notes_NotesByPerson_grid ], frame: false, border: false, anchor: "100%" };
+  this.left_panel = new Ext.form.FormPanel({ border: false, bbar: this.left_panel_buttons, layout: "form", xtype: "container", items: [ this.intro_box_panel, this.address_box_panel, this.bottom_box_panel ], autoScroll: true, columnWidth: 0.83333333333333337, frame: true, bodyBorder: false, labelAlign: "top" });
+  var load_record = this.load_record = function(record) {
+    this.current_record = record;
+    this.left_panel.form.loadRecord(record);
+  };
+  if(this.main_grid) {
+    this.main_grid.add_row_listener(
+      function(sm,rowIndex,record) { this.load_record(record); },this);
+    this.left_panel.keys = [ { handler: function() {this.main_grid.getSelectionModel().selectPrevious()}, key: 33, ctrl: false, shift: false, alt: false, scope: this }, { handler: function() {this.main_grid.getSelectionModel().selectNext()}, key: 34, ctrl: false, shift: false, alt: false, scope: this } ];
+    this.left_panel.addButton({ text: "Previous", handler: function() {this.main_grid.getSelectionModel().selectPrevious()}, scope: this });
+    this.left_panel.addButton({ text: "Next", handler: function() {this.main_grid.getSelectionModel().selectNext()}, scope: this });
+  }
+  this.left_panel.addButton({ text: "Submit" });
+  this.props_pgrid = { columnWidth: 0.16666666666666666, autoHeight: true, xtype: "propertygrid", source: {  } };
+  this.main_panel = new Ext.form.FormPanel({ bbar: this.main_panel_buttons, layout: "column", xtype: "container", autoScroll: true, items: [ this.left_panel, this.props_pgrid ], frame: false, border: false });
+  var load_record = this.load_record = function(record) {
+    this.current_record = record;
+    this.main_panel.form.loadRecord(record);
+  };
+  if(this.main_grid) {
+    this.main_grid.add_row_listener(
+      function(sm,rowIndex,record) { this.load_record(record); },this);
+    this.main_panel.keys = [ { handler: function() {this.main_grid.getSelectionModel().selectPrevious()}, key: 33, ctrl: false, shift: false, alt: false, scope: this }, { handler: function() {this.main_grid.getSelectionModel().selectNext()}, key: 34, ctrl: false, shift: false, alt: false, scope: this } ];
+    this.main_panel.addButton({ text: "Previous", handler: function() {this.main_grid.getSelectionModel().selectPrevious()}, scope: this });
+    this.main_panel.addButton({ text: "Next", handler: function() {this.main_grid.getSelectionModel().selectNext()}, scope: this });
+  }
+  this.main_panel.addButton({ text: "Submit" });
+  this.window = new Ext.Window({ layout: "fit", title: "Persons - Detail", items: this.main_panel, height: 623, width: 698, maximizable: true, maximized: false, y: 46, x: 328, tools: [  ] });
+  this.window._permalink = "contacts_Persons2";
+  this.content_type = 16;
+  this.stop = function() {
+     this.window.close();
+  }
+  if (caller) {
+    caller.window.on('close',function() {
+      this.stop();
+    },this);
+  }
+  if(this.main_grid) {
+    var sels = this.main_grid.getSelectionModel().getSelections()
+    if(sels.length > 0) this.load_record(sels[0]);
+  }
+this.main_grid.add_row_listener(function(sm,rowIndex,record) {
+  city_field.setQueryContext(record.data.id)});
+  this.window.show();
+  this.window.syncSize();
+  this.window.focus();
+}
+
 
 Ext.onReady(function() {
   test1();
+  test2();
+  test3();
 });
 </script>
 </head><body>
