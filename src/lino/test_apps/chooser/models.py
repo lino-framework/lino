@@ -1,7 +1,7 @@
 """
 
-Module lino.modlib.chooser
---------------------------
+Module lino.utils.chooser
+-------------------------
 
 You instantiate a Chooser by specifying a model and a fieldname. 
 The fieldname must be the name of a field that has been defined in your model.
@@ -99,7 +99,7 @@ a choices attribut will return an empty list.
 
 from django.db import models
 from lino import reports
-from lino.modlib import chooser
+from lino.utils import chooser
 
 YEAR_IN_SCHOOL_CHOICES = (
     ('FR', 'Freshman'),

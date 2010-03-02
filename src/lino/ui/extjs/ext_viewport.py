@@ -519,6 +519,8 @@ Lino.load_main_menu = function() {
 Feature request developed in http://extjs.net/forum/showthread.php?t=75751
 */
 Ext.override(Ext.form.ComboBox, {
+    // contextParams : array of names of variables to add to query
+    // contextValues : array of values of variables to add to query
     // queryContext : null, 
     // contextParam : null, 
     setValue : function(v){
@@ -578,18 +580,28 @@ Ext.override(Ext.form.ComboBox, {
             p.limit = this.pageSize;
         }
         // now my code:
-        if(this.queryContext) 
-            p[this.contextParam] = this.queryContext;
+        if(this.contextParams) {
+          for(i = 0; i <= this.contextParams.length; i++)
+            p[this.contextParams[i]] = this.contextValues[i];
+        }
         return p;
     },
-    setQueryContext : function(qc){
-        if(this.contextParam) {
-            // console.log(this.name,'.setQueryContext',this.contextParam,'=',qc);
-            if(this.queryContext != qc) {
-                this.queryContext = qc;
-                // delete this.lastQuery;
-                this.lastQuery = null;
-    }   }   }
+    setContextValues : function(values){
+      if(this.contextParams) {
+        console.log(this.name,'.setQueryContext',this.contextParams,'=',values);
+        if (this.contextValues === undefined) {
+          this.contextValues = values;
+          this.lastQuery = null;
+          return
+        }
+        for(i = 0; i <= this.contextParams.length; i++) {
+          if (this.contextValues[i] != values[i]) {
+            this.contextValues[i] = values[i];
+            this.lastQuery = null;
+          }
+        }
+      }   
+    }
 });
 
 

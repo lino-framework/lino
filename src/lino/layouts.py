@@ -20,7 +20,7 @@ from django.conf import settings
 #from django.utils.safestring import mark_safe
 #from django.utils.text import capfirst
 #from django.template.loader import render_to_string
-from django.contrib.contenttypes import generic
+#~ from django.contrib.contenttypes import generic
 
 import lino
 from lino.utils import perms, menus, actors

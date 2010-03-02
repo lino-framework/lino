@@ -17,7 +17,7 @@ import lino
 from lino import actions
 from lino import reports
 from lino.utils import ucsv
-from lino.modlib import chooser
+from lino.utils import chooser
 
 from django.contrib.contenttypes.models import ContentType
 #~ from django.contrib.contenttypes import generic
@@ -211,7 +211,7 @@ class ChoicesReportRequest(BaseViewReportRequest):
     def __init__(self,request,rh,fldname,*args,**kw):
         #self.recipient_report = rh.report
         self.fieldname = fldname
-        self.chooser = chooser.FormChooser(rh.report.model,fldname)
+        #~ self.chooser = chooser.FormChooser(rh.report.model,fldname)
         #~ fld, remote, direct, m2m = rh.report.model._meta.get_field_by_name(fldname)
         #fld = rpt.model._meta.get_field_by_name(fldname)
         #~ assert direct
@@ -230,9 +230,10 @@ class ChoicesReportRequest(BaseViewReportRequest):
         #~ self.queryset = self.report.get_field_choices(self.rec_field,pk,**self.params)
         #~ print self.request.GET
         kw = {}
-        for k,v in self.request.GET.lists():
+        #~ for k,v in self.request.GET.lists():
+        for k,v in self.request.GET.items():
             kw[str(k)] = v
-        self.queryset = self.chooser.get_choices(**kw)
+        self.queryset = self.rh.choosers[self.fieldname].get_choices(**kw)
         #return self.report.get_queryset(self,master_instance=self.master_instance,**kw)
         
     def get_absolute_url(self,**kw):

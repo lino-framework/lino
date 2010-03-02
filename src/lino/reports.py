@@ -69,6 +69,20 @@ def add_quick_search_filter(qs,model,search_text):
             q = q | models.Q(**kw)
     return qs.filter(q)
         
+def get_data_elem(model,name):
+    try:
+        return model._meta.get_field(name)
+    except models.FieldDoesNotExist,e:
+        pass
+    rpt = get_slave(model,name)
+    if rpt is not None: return rpt
+    m = get_unbound_meth(model,name)
+    if m is not None: return m
+    
+    for vf in model._meta.virtual_fields:
+        if vf.name == name:
+            return vf
+                
 
 
 class ReportParameterForm(forms.Form):
@@ -574,19 +588,8 @@ class ReportHandle(layouts.DataLink):
         # todo: for slave in self.report.slaves
           
     def get_data_elem(self,name):
-        try:
-            return self.report.model._meta.get_field(name)
-        except models.FieldDoesNotExist,e:
-            pass
-        rpt = get_slave(self.report.model,name)
-        if rpt is not None: return rpt
-        m = get_unbound_meth(self.report.model,name)
-        if m is not None: return m
+        return get_data_elem(self.report.model,name)
         
-        for vf in self.report.model._meta.virtual_fields:
-            if vf.name == name:
-                return vf
-                
     def get_actions(self):
         return self.report.actions
         

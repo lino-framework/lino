@@ -24,6 +24,7 @@ from lino import layouts, reports, actions
 from lino.utils import constrain
 from lino.utils import jsgen
 from lino.utils.jsgen import py2js, Variable, Component, id2js, js_code
+from lino.utils import chooser
 
 from lino.ui.extjs import ext_requests
 
@@ -648,9 +649,23 @@ class ForeignKeyElement(FieldElement):
         #~ if self.lh.link.report.get_field_choices_meth(self.field): 
             #~ kw.update(contextParam=ext_requests.URL_PARAM_CHOICES_PK)
             #kw.update(lazyInit=True)
+        chooser = self.lh.link.choosers[self.field.name]
+        if chooser.context_params:
+        #~ cp = chooser.get_context_params(self.lh.link.report.model,self.field.name)
+        #~ if cp:    
+            kw.update(contextParams=chooser.context_params)
         return kw
         
-    #~ def js_after_body(self):
+    def js_after_body(self):
+        #~ cp = chooser.get_context_params(self.lh.link.report.model,self.field.name)
+        #~ if cp:
+        chooser = self.lh.link.choosers[self.field.name]
+        if chooser.context_values:
+            yield "this.main_grid.add_row_listener(function(sm,rowIndex,record) {" 
+            yield "  %s.setContextValues([" % self.as_ext()
+            for name in chooser.context_values:
+                yield "record.data.%s," % name
+            yield "])});"
         #~ meth = self.lh.link.report.get_field_choices_meth(self.field)
         #~ if meth is not None:
             #~ print 20100301, meth.func_code.co_varnames

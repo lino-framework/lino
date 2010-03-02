@@ -32,6 +32,7 @@ from lino import actions, layouts
 from lino.ui import base
 from lino.utils import actors
 from lino.utils import menus
+from lino.utils import chooser
 from lino.utils.jsgen import py2js, js_code, id2js
 from lino.ui.extjs import ext_elems, ext_requests, ext_store
 from lino.ui.extjs import ext_viewport
@@ -539,6 +540,7 @@ class ExtUI(base.UI):
         if not pw.has_properties():
             pw = None
         rh.properties_window = pw
+        rh.choosers = chooser.get_choosers_for_model(rh.report.model,chooser.FormChooser)
         #~ if rh.report.model._lino_properties_window.has_properties():
             #~ rh.props = ext_elems.PropertiesWindow(self,rh.report.model,props)
             #~ rh.props = props
