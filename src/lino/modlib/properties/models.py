@@ -247,7 +247,7 @@ class PropValues(reports.Report):
 class PropValuesByOwner(reports.Report):
     model = PropValue
     use_layouts = False
-    can_edit = perms.never
+    #~ can_edit = perms.never
     can_add = perms.never
     #master = ContentType
     fk_name = 'owner'

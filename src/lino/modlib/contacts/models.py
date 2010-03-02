@@ -97,6 +97,7 @@ class Contact(models.Model):
         if country is not None:
         #if recipient and recipient.country:
             return country.city_set.order_by('name')
+        return cls.city.field.rel.to.objects.order_by('name')
         #return countries.City.oiesByCountry().get_queryset(master_instance=recipient.country)
         #return dict(country__in=(recipient.country,))
         

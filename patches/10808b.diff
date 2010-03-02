@@ -1,8 +1,8 @@
 Index: django/db/models/base.py
 ===================================================================
---- django/db/models/base.py	(revision 11231)
+--- django/db/models/base.py	(revision 12653)
 +++ django/db/models/base.py	(working copy)
-@@ -273,7 +273,15 @@
+@@ -282,7 +282,15 @@
          # Now we're left with the unprocessed fields that *must* come from
          # keywords, or default.
  
@@ -18,7 +18,7 @@ Index: django/db/models/base.py
              is_related_object = False
              # This slightly odd construct is so that we can access any
              # data-descriptor object (DeferredAttribute) without triggering its
-@@ -311,6 +319,7 @@
+@@ -327,6 +335,7 @@
                  setattr(self, field.name, rel_obj)
              else:
                  setattr(self, field.attname, val)
@@ -28,9 +28,9 @@ Index: django/db/models/base.py
              for prop in kwargs.keys():
 Index: django/forms/models.py
 ===================================================================
---- django/forms/models.py	(revision 11231)
+--- django/forms/models.py	(revision 12653)
 +++ django/forms/models.py	(working copy)
-@@ -793,15 +793,11 @@
+@@ -764,15 +764,11 @@
      from django.db.models import ForeignKey
      opts = model._meta
      if fk_name:
@@ -53,11 +53,11 @@ Index: django/forms/models.py
          fks_to_parent = [
 Index: tests/modeltests/model_inheritance/models.py
 ===================================================================
---- tests/modeltests/model_inheritance/models.py	(revision 11231)
+--- tests/modeltests/model_inheritance/models.py	(revision 12653)
 +++ tests/modeltests/model_inheritance/models.py	(working copy)
-@@ -116,6 +116,26 @@
+@@ -144,6 +144,26 @@
      def __unicode__(self):
-         return u"%s the parking lot" % self.name
+         return self.content
  
 +#
 +# Diamond inheritance test
@@ -82,7 +82,7 @@ Index: tests/modeltests/model_inheritance/models.py
  __test__ = {'API_TESTS':"""
  # The Student and Worker models both have 'name' and 'age' fields on them and
  # inherit the __unicode__() method, just as with normal Python subclassing.
-@@ -310,4 +330,37 @@
+@@ -376,4 +396,37 @@
  3
  >>> settings.DEBUG = False
  

@@ -125,6 +125,7 @@ INSTALLED_APPS = (
   # apps that test and document modlib apps
   'lino.test_apps.journals',  
   'lino.test_apps.properties',
+  'lino.test_apps.chooser', 
   
   # apps that test some specific problem encountered
   'lino.test_apps.20090714',
@@ -135,7 +136,6 @@ INSTALLED_APPS = (
   'lino.test_apps.20100206', # 
   
   'lino.test_apps.20100212', # Explaining Django ticket 12801
-  'lino.test_apps.20100301', # new API for Report.get_field_choices()
 )
 
 

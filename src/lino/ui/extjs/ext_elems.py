@@ -645,19 +645,19 @@ class ForeignKeyElement(FieldElement):
         kw.update(pageSize=self.report.page_length)
         kw.update(emptyText='Select a %s...' % self.report.model.__name__)
         # test whether field has a %s_choices() method
-        if self.lh.link.report.get_field_choices_meth(self.field): 
-            kw.update(contextParam=ext_requests.URL_PARAM_CHOICES_PK)
+        #~ if self.lh.link.report.get_field_choices_meth(self.field): 
+            #~ kw.update(contextParam=ext_requests.URL_PARAM_CHOICES_PK)
             #kw.update(lazyInit=True)
         return kw
         
-    def js_after_body(self):
-        meth = self.lh.link.report.get_field_choices_meth(self.field)
-        if meth is not None:
-            print 20100301, meth.func_code.co_varnames
-            yield "this.main_grid.add_row_listener(function(sm,rowIndex,record) {" 
-            #yield "  console.log('20100124b',this,client_job);"
-            yield "  %s.setQueryContext(record.data.id)});" % self.as_ext()
-            #yield "client_job.add_row_listener(function(sm,rowIndex,record) {console.log('20100124b',this)},this);"
+    #~ def js_after_body(self):
+        #~ meth = self.lh.link.report.get_field_choices_meth(self.field)
+        #~ if meth is not None:
+            #~ print 20100301, meth.func_code.co_varnames
+            #~ yield "this.main_grid.add_row_listener(function(sm,rowIndex,record) {" 
+            #~ #yield "  console.log('20100124b',this,client_job);"
+            #~ yield "  %s.setQueryContext(record.data.id)});" % self.as_ext()
+            #~ #yield "client_job.add_row_listener(function(sm,rowIndex,record) {console.log('20100124b',this)},this);"
         
 
         

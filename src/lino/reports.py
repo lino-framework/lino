@@ -48,6 +48,7 @@ from lino import actions
 from lino.utils import perms, menus, actors
 
 from lino.modlib.tools import resolve_model, resolve_field, get_app
+#~ from lino.modlib import field_choices
 
 def base_attrs(cl):
     #~ if cl is Report or len(cl.__bases__) == 0:
@@ -464,24 +465,24 @@ class Report(actors.Actor): # actions.Action): #
         from lino.ui import console
         return console.ui.report_as_text(self)
         
-    def get_field_choices_meth(self,fld):
-        # used also in extjs to test whether this field does have context-sensitive choices
-        methname = fld.name + "_choices"
-        return getattr(self.model,methname,None)
         
-    def get_field_choices(self,fld,context,quick_search=None):
-        # context is a dict of field values in the receiving instance
-        # query is a string entered to a combobox to filter the choices
-        meth = self.get_field_choices_meth(fld)
-        choices = None
-        if meth is not None:
-            args = [] 
-            for varname in meth.func_code.co_varnames[1:]:
-                args.append(context.get(varname,None))
+    def unused_get_field_choices_meth(self,fldname):
+        return field_choices.get_field_choices_meth(self.model,fldname)
+        
+    def unused_get_field_choices(self,fld,context,quick_search=None):
+        choices = field_choices.get_field_choices(self.model,fld,context)
+        #~ # context is a dict of field values in the receiving instance
+        #~ # query is a string entered to a combobox to filter the choices
+        #~ meth = self.get_field_choices_meth(fld.name)
+        #~ choices = None
+        #~ if meth is not None:
+            #~ args = [] 
+            #~ for varname in meth.func_code.co_varnames[1:]:
+                #~ args.append(context.get(varname,None))
                 #~ context_field, remote, direct, m2m = self.model._meta.get_field_by_name(varname)
-            choices = meth(*args)
-        if choices is None:
-            choices = fld.rel.to.objects.all()
+            #~ choices = meth(*args)
+        #~ if choices is None:
+            #~ choices = fld.rel.to.objects.all()
         if quick_search is not None:
             choices = add_quick_search_filter(choices,fld.rel.to,quick_search)
         return choices

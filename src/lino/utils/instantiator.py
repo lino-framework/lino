@@ -99,10 +99,18 @@ class ManyToManyConverter(Converter):
             kw['_m2m'][self.field.name] = l
         return kw
 
+def make_converter(f,lookup_fields={}):
+    if isinstance(f,models.ForeignKey):
+        return ForeignKeyConverter(f,lookup_fields.get(f.name,"pk"))
+    if isinstance(f,models.ManyToManyField):
+        return ManyToManyConverter(f,lookup_fields.get(f.name,"pk"))
+    if isinstance(f,models.DateField):
+        return DateConverter(f)
+    if isinstance(f,models.DecimalField):
+        return DecimalConverter(f)
       
 class Instantiator:
-    def __init__(self,model,fieldnames=None,
-          converter_classes={},**kw):
+    def __init__(self,model,fieldnames=None,converter_classes={},**kw):
         self.model = resolve_model(model)
         if self.model._meta.pk is None: 
             raise Exception("Model %r is not installed (_meta.pk is None)." % self.model)
@@ -133,16 +141,7 @@ class Instantiator:
             if cvc is not None:
                 cv = cvc(f)
             else:
-                if isinstance(f,models.ForeignKey):
-                    cv = ForeignKeyConverter(f,
-                      lookup_fields.get(f.name,"pk"))
-                elif isinstance(f,models.ManyToManyField):
-                    cv = ManyToManyConverter(f,
-                      lookup_fields.get(f.name,"pk"))
-                elif isinstance(f,models.DateField):
-                    cv = DateConverter(f)
-                elif isinstance(f,models.DecimalField):
-                    cv = DecimalConverter(f)
+                cv = make_converter(f,lookup_fields)
             if cv is not None:
                 self.converters.append(cv)
         #~ for f in model_class._meta.many_to_many:
