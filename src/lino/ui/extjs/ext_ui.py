@@ -33,6 +33,7 @@ from lino.ui import base
 from lino.utils import actors
 from lino.utils import menus
 from lino.utils import chooser
+from lino.utils import jsgen
 from lino.utils.jsgen import py2js, js_code, id2js
 from lino.ui.extjs import ext_elems, ext_requests, ext_store
 from lino.ui.extjs import ext_viewport
@@ -127,7 +128,289 @@ def menu2js(ui,v,**kw):
         
     return py2js(v,**kw)        
 """  
+
+
+
+class Window(jsgen.Component):
+    declare_type = jsgen.DECLARE_THIS
+    value_template = "new Ext.Window(%s)"
     
+    def __init__(self,ui,name,main,lh,**kw):
+        #~ self.rr = rr
+        self.ui = ui
+        self.lh = lh # may be None
+        if lh is not None:
+            kw['title'] = lh.get_title(None) # label or lh.name
+        self.main = main
+        #~ self.permalink_name = permalink_name
+        
+        #~ kw.update(title=self.rr.get_title())
+        #~ kw.update(title=self.label)
+        # kw.update(closeAction='hide')
+        kw.update(maximizable=True)
+        #kw.update(id=name)
+        kw.update(layout='fit')
+        kw.update(items=self.main)
+        
+        jsgen.Component.__init__(self,name,**kw)
+        
+    def subvars(self):
+        yield self.main
+        
+    def ext_options(self,**kw):
+        
+        
+        js = 'Lino.save_window_config(this)'
+        kw.update(tools=[dict(id='save',handler=js_code(js))])
+        
+        if self.lh is not None: # report.use_layouts:
+            
+            if self.lh.start_focus is not None:
+                kw.update(defaultButton=self.lh.start_focus.name)
+        
+        #name = id2js(self.rr.layout.name)
+        wc = self.ui.get_window_config(self.name)
+        #kw.update(defaultButton=self.lh.link.inputs[0].name)
+        if wc is None:
+            #~ if self.rr.report.use_layouts:
+            if self.lh is not None: 
+                if self.lh.height is None:
+                    kw.update(height=300)
+                else:
+                    kw.update(height=self.lh.height*EXT_CHAR_HEIGHT + 7*EXT_CHAR_HEIGHT)
+                if self.lh.width is None:
+                    kw.update(width=400)
+                else:
+                    kw.update(width=self.lh.width*EXT_CHAR_WIDTH + 10*EXT_CHAR_WIDTH)
+        else:
+            assert len(wc) == 5
+            kw.update(x=wc[0])
+            kw.update(y=wc[1])
+            kw.update(width=wc[2])
+            kw.update(height=wc[3])
+            #kw.update(width=js_code('Lino.viewport.getWidth()*%d/100' % wc[0]))
+            #kw.update(height=js_code('Lino.viewport.getHeight()*%d/100' % wc[1]))
+            kw.update(maximized=wc[4])
+        return kw
+            
+    #~ def js_body(self):
+        #~ # for permalink:
+        #~ yield "  %s._permalink_name = %s;" % (self.as_ext(),py2js(self.permalink_name))
+        #~ for ln in jsgen.Component.js_body(self):
+            #~ yield ln
+        
+        
+
+
+class WindowWrapper(jsgen.Object):
+  
+    def __init__(self,name,window):
+        #~ permalink_name = id2js(rr.layout.name)
+        assert window.ext_name == 'window', ("expected 'window' but got %r" % window.ext_name)
+        self.window = window
+        jsgen.Object.__init__(self,name)
+        
+    def vars(self):
+        yield self.window
+        
+    def __str__(self):
+        return self.ext_name + "(" + self.__class__.__name__ + ")"
+        
+    def js_main(self):
+        yield "// main %s" % self
+        
+    def js_show(self):
+        return []
+        
+    def js_render(self):
+        yield "function(caller) {"
+        yield "  // begin js_render() %s" % self
+        #~ yield "  var client_job = this;" 
+        yield "  this.close = function() { this.window.close() }"
+        yield "  this.hide = function() { this.window.hide() }"
+        yield "  this.show = function() {"
+        for ln in self.js_show():
+            yield "    " + ln
+        yield "    this.window.show();"
+        yield "    this.window.syncSize();"
+        yield "    this.window.focus();"
+        yield "  }"
+        yield "  // declare variables of %s" % self
+        for v in self.vars():
+            #~ yield "  // variable %s:" % v.ext_name
+            for ln in v.js_declare():
+                yield "  " + ln
+        yield "  // js_main() %s :" % self
+        for ln in self.js_main():
+            yield "  " + ln
+        yield "  // contributions of variables in %s" % self
+        for v in self.vars():
+            yield "  // variable %s contributes:" % v.ext_name
+            for ln in v.js_body():
+                yield "  " + ln
+        yield "  // end js_render() %s" % self
+        yield "}"
+        
+class MasterWrapper(WindowWrapper):
+  
+    def __init__(self,datalink,**kw):
+        assert isinstance(datalink,layouts.DataLink)
+        self.datalink = datalink
+        lh = datalink.get_default_layout()
+        window = Window(datalink.ui,"window",lh._main,lh,**kw)
+        WindowWrapper.__init__(self,datalink.name,window)
+        
+    def vars(self):
+        for w in self.datalink.slave_windows:
+            yield w
+        for b in self.datalink.grid_buttons:
+            yield b
+        for v in WindowWrapper.vars(self):
+            yield v
+        
+    
+        
+        
+
+class SlaveWrapper(WindowWrapper):
+  
+    def __init__(self,master_lh,name,window,button_text):
+        self.master_lh = master_lh
+        h = js_code("function(btn,state) { Lino.toggle_window(btn,state,this.%s)}" % id2js(name))
+        self.button = ext_elems.ButtonElement(
+            master_lh,name+'_btn',
+            text=button_text,
+            toggleHandler=h,
+            scope=js_code('this'),
+            enableToggle=True)
+        WindowWrapper.__init__(self,name,window)
+        
+    def vars(self):
+        for b in self.master_lh.datalink.detail_buttons:
+            yield b
+        for v in WindowWrapper.vars(self):
+            yield v
+            
+    def subvars(self):
+        for v in WindowWrapper.subvars(self):
+            yield v
+        yield self.button
+        
+    def js_show(self):
+    #~ def js_main(self):
+    #~ def js_body(self):
+        #~ yield "// begin SlaveWrapper.js_body()"
+        #~ for ln in WindowWrapper.js_body(self):
+            #~ yield ln
+        #~ yield "    if (caller) {"
+        yield "caller.window.on('close',function() { this.close() },this);"
+        #~ yield "    };"
+        yield "caller.window.on('hide',function(){ this.window.hide()},this);" 
+        yield "this.window.on('hide',"
+        yield "  function(){ caller.%s.toggle(false)},this);" % self.button.ext_name
+        yield "this.window.on('show',function(){this.load_record(caller.get_current_record())},this)" 
+        yield "caller.main_grid.add_row_listener(function(sm,ri,rec){this.load_record(rec)},this);"
+        #~ yield "// end SlaveWrapper.js_body()"
+
+
+class GridSlaveWrapper(SlaveWrapper):
+  
+    def __init__(self,master_lh,slave_rh):
+        self.slave_rh = slave_rh
+        slave_lh = slave_rh.row_layout
+        window = Window(master_lh.ui,'window',slave_lh._main,slave_lh)
+        SlaveWrapper.__init__(self,master_lh,slave_rh.name,window,slave_lh.label)
+        
+    def vars(self):
+        for w in self.slave_rh.slave_windows:
+            yield w
+        for b in self.slave_rh.grid_buttons:
+            yield b
+        for v in WindowWrapper.vars(self):
+            yield v
+        
+class DetailSlaveWrapper(SlaveWrapper):
+    def __init__(self,master_lh,detail_lh,**kw):
+        window = Window(master_lh.ui,'window',detail_lh._main,detail_lh,**kw)
+        SlaveWrapper.__init__(self,master_lh,detail_lh.name,window,detail_lh.label)
+
+class PropertiesWrapper(SlaveWrapper):
+    #~ declare_type = jsgen.DECLARE_THIS
+    #~ value_template = "new Ext.Window(%s)"
+    
+    def __init__(self,master_lh,rr,**kw):
+      
+        self.ui = rr.rh.ui
+        self.model = rr.master
+        self.rh = rr.rh
+        
+        kw.update(closeAction='hide')
+        self.source = {}
+        self.customEditors = {}
+        self.propertyNames = {}
+        #~ for pv in self.rh.request(master=model,master_instance=None):
+        for pv in rr:
+            p = pv.prop
+            self.source[p.name] = pv.value
+            if p.label:
+                self.propertyNames[p.name] = p.label
+            #~ pvm = p.value_type.model_class()
+            pvm = pv.__class__ 
+            if pvm is properties.CHAR:
+                #~ choices = [unicode(pv.value) for pv in pvm.objects.filter(prop=p,owner_id__isnull=True)]
+                #~ choices = [unicode(choice) for choice in pv.value_choices(p)]
+                choices = pvm.choices_list(p) # [unicode(choice) for choice in pv.value_choices(p)]
+                if choices:
+                    editor = ext_elems.ComboBox(store=choices,mode='local',selectOnFocus=True)
+                    editor = 'new Ext.grid.GridEditor(%s)' % py2js(editor)
+                    self.customEditors[p.name] = js_code(editor)
+                    
+        #~ print 20100226, self.model,len(self.source), self.source
+        grid = dict(xtype='propertygrid')
+        #~ grid.update(clicksToEdit=2)
+        grid.update(source=self.source)
+        grid.update(autoHeight=True)
+        grid.update(customEditors=self.customEditors)
+        #~ url = self.rh.get_absolute_url(grid_afteredit=True)
+        #~ url = self.ui.get_props_url(self.model)
+        listeners = dict(
+          #~ afteredit=js_code('Lino.grid_afteredit(this,"%s")' % url))
+          #~ afteredit=js_code('Lino.props_afteredit(this)'))
+          afteredit=js_code('function(e){Lino.submit_property(this,e)}'),scope=js_code('this'))
+        grid.update(listeners=listeners)
+        #~ grid.update(pageSize=10)
+        if len(self.propertyNames) > 0:
+            grid.update(propertyNames=self.propertyNames)
+        panel = dict(xtype='panel',autoScroll=True,items=grid)
+        main = jsgen.Value(panel)
+        #~ permalink_name = self.model._meta.app_label+'_'+self.model.__name__+'_properties'
+        
+        #~ window = Window(ui,rr.rh.name+'_properties',main,None,**kw)
+        window = Window(ui,'window',main,None,**kw)
+        
+        SlaveWrapper.__init__(self,master_lh,'properties',window,rr.rh.report.label)
+                    
+                    
+    def has_properties(self):
+        return len(self.source) > 0
+
+    def js_main(self):
+        for ln in super(PropertiesWrapper,self).js_main():
+            yield ln
+            
+        url = self.rh.get_absolute_url()
+        yield "this.load_record = function(record) {"
+        yield "  Lino.load_properties(this,%r,rec);" % url
+        yield "}"
+        yield "this.get_window_config = function() {"
+        yield "  return { 'window_type': 'props' }"
+        yield "}"
+        
+
+def key_handler(key,h):
+    return dict(handler=h,key=key.keycode,ctrl=key.ctrl,alt=key.alt,shift=key.shift)
+
+
 
 
 class ExtUI(base.UI):
@@ -152,7 +435,7 @@ class ExtUI(base.UI):
         if name == "_":
             return ext_elems.Spacer(lh,name,**kw)
             
-        de = lh.link.get_data_elem(name)
+        de = lh.datalink.get_data_elem(name)
         
         if isinstance(de,models.Field):
             return self.create_field_element(lh,de,**kw)
@@ -400,7 +683,7 @@ class ExtUI(base.UI):
 
     def json_report_view_(self,request,rpt,grid_action=None,colname=None,submit=None,choices_for_field=None,csv=False):
         if not rpt.can_view.passes(request):
-            return self.json_response_kw(success=False,
+            return json_response_kw(success=False,
                 msg="User %s cannot view %s." % (request.user,rpt))
         if grid_action:
             dlg = ext_requests.GridDialog(request,self,rpt,grid_action)
@@ -455,11 +738,14 @@ class ExtUI(base.UI):
         return url
         
     def get_button_url(self,btn,**kw):
-        a = btn.lh.link.actor
+        a = btn.lh.datalink.actor
         return build_url("/form",a.app_label,a.name,btn.name,**kw)
         
     def get_choices_url(self,fke,**kw):
-        return build_url("/choices",fke.lh.link.report.app_label,fke.lh.link.report.name,fke.field.name,**kw)
+        return build_url("/choices",
+            fke.lh.datalink.report.app_label,
+            fke.lh.datalink.report.name,
+            fke.field.name,**kw)
         
     #~ def get_props_url(self,model,**kw):
         #~ return build_url('/props')
@@ -501,53 +787,82 @@ class ExtUI(base.UI):
         """
         rpt = dlg.actor
         rh = self.get_report_handle(rpt)
-        rr = ext_requests.ViewReportRequest(dlg.request,rh)
-        #~ layout = dlg.request.GET.get('layout')
-        #~ if layout is None:
-            #~ lh = rh.layouts[rpt.default_layout]
-        #~ else:
-            #~ lh = rh.layouts[int(layout)]
-        #lh = rr.layout 
-        # kw['defaultButton'] = js_code('this.main_grid')
-        #~ kw = self.window_options(lh,**kw)
-        lh = rr.layout
-        job = ext_elems.Reaction(rr) #,lh._main)
-        yield dlg.exec_js(job.as_ext_value).over()
-        #~ yield dlg.exec_js(lh._main.js_job_constructor(rr)).over()
+        #~ rr = ext_requests.ViewReportRequest(dlg.request,rh)
+        #~ ww = WindowWrapper(rr) 
+        yield dlg.show_window(rh.window_wrapper.js_render).over()
         
         
     def view_form(self,dlg,**kw):
         "called from ViewForm.run_in_dlg()"
         frm = dlg.actor
         fh = self.get_form_handle(frm)
-        fr = ext_requests.ViewFormRequest(dlg.request,fh)
-        #fh.setup()
-        lh = fh.lh
-        #~ kw = self.window_options(lh,**kw)
-        #rr = None
-        job = ext_elems.Reaction(fr) #,fr.lh._main)
-        yield dlg.exec_js(job.as_ext_value).over()
-     #~ yield dlg.exec_js(lh._main.js_job_constructor(fr)).over()
-        
+        #~ fr = ext_requests.ViewFormRequest(dlg.request,fh)
+        #~ ww = WindowWrapper(fr) 
+        yield dlg.show_window(fh.window_wrapper.js_render).over()
         
     def setup_report(self,rh):
         if rh.report.use_layouts:
             rh.store = ext_store.Store(rh)
+            rh.window_wrapper = MasterWrapper(rh)
+            lh = rh.get_default_layout()
         else:
             rh.store = None
-        #~ props = properties.Property.properties_for_model(rh.report.model)
-        pw = ext_elems.PropertiesWindow(self,rh.report.model)
-        if not pw.has_properties():
-            pw = None
-        rh.properties_window = pw
+            lh = None
+            rh.window_wrapper = None
+            
         rh.choosers = chooser.get_choosers_for_model(rh.report.model,chooser.FormChooser)
-        #~ if rh.report.model._lino_properties_window.has_properties():
-            #~ rh.props = ext_elems.PropertiesWindow(self,rh.report.model,props)
-            #~ rh.props = props
+        
+        rh.detail_buttons = []
+        rh.grid_buttons = []
+        rh.slave_windows = []
+        
+        props_request = properties.PropValuesByOwner().request(\
+            self,master=rh.report.model)
+        if len(props_request) > 0:
+            ww = PropertiesWrapper(lh,props_request)
+            rh.grid_buttons.append(ww.button)
+            rh.slave_windows.append(ww)
         #~ else:
-            #~ rh.props = None
+            #~ rh.properties_window = None
+        
+        #~ keys = []
+        for a in rh.get_actions():
+            #~ h = js_code("Lino.action_handler(this,%r)" % (
+                  #~ rh.get_absolute_url(grid_action=a.name)))
+            rh.detail_buttons.append(ext_elems.ActionElement(lh,a.name,a)) 
+            rh.grid_buttons.append(ext_elems.ActionElement(lh,a.name,a)) 
+            #dict(text=a.label,handler=h))
+            #~ if a.key:
+                #~ keys.append(key_handler(a.key,h))
+        # the first detail window can be opend with Ctrl+ENTER 
+        #~ key = actions.RETURN(ctrl=True)
+        for dtl_lh in rh.get_details(): 
+            ww = DetailSlaveWrapper(lh,dtl_lh)
+            rh.grid_buttons.append(ww.button)
+            rh.slave_windows.append(ww)
+            #~ dict(
+              #~ handler=js_code("Lino.action_handler(this,%r)" % \
+                #~ lh.get_absolute_url(run=True)),
+              #~ text=lh.layout.label))
+              
+        for slave_rh in rh.get_slaves():
+            ww = GridSlaveWrapper(lh,slave_rh)
+            rh.grid_buttons.append(ww.button)
+            rh.slave_windows.append(ww)
+            #rh = sl.get_handle(self.lh.ui)
+            #~ buttons.append(dict(
+              #~ handler=js_code("Lino.action_handler(this,%r)" % \
+                #~ rh.row_layout.get_absolute_url(run=True)),
+              #~ #handler=js_code("Lino.show_slave(this,%r)" % id2js(rh.row_layout.name)),
+              #~ text = rh.report.label,
+            #~ ))
+            
+            
 
     def setup_form(self,fh):
-        fh.properties_window = None
+        fh.window_wrapper = MasterWrapper(fh)
+        #~ fh.properties_window = None
+        fh.action_buttons = []
+        fh.slave_windows = []
 
 ui = ExtUI()

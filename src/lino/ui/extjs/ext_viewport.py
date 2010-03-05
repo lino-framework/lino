@@ -85,10 +85,11 @@ Lino.save_window_config = function(caller,unused_url) {
     var size = panel.getSize();
     // var w = size['width'] * 100 / Lino.viewport.getWidth();
     // var h = size['height'] * 100 / Lino.viewport.getHeight();
-    Lino.do_dialog(caller,url,{
-      name: panel._permalink_name,
+    wc = caller.get_window_config();
+    Ext.applyIf(wc,{ name: panel._permalink_name,
       x:pos[0],y:pos[1],h:size.height,w:size.width,
       max:panel.maximized});
+    Lino.do_dialog(caller,url,wc);
   }
 };
 
@@ -179,9 +180,9 @@ Lino.do_dialog = function(caller,url,params) {
     // console.log('Lino.do_dialog() got',result);
     if (result.alert_msg) Ext.MessageBox.alert('Alert',result.alert_msg);
     if (result.notify_msg) Lino.notify(result.notify_msg);
-    if (result.exec_js) new result.exec_js(caller);
+    if (result.show_window) new result.show_window(caller).show();
     if (result.refresh_caller && caller) caller.refresh();
-    if (result.stop_caller && caller) caller.stop();
+    if (result.close_caller && caller) caller.close();
     if (result.refresh_menu) Lino.load_main_menu();
     if (result.confirm_msg) {
       Ext.Msg.show({
@@ -267,11 +268,8 @@ Lino.form_action = function (caller,name,needs_validation,url) {
   }
 };
 
-Lino.props_handler = function (caller) {
-  return function(btn,state) {
-    if(state) { caller.properties_window.show() } 
-    else { caller.properties_window.hide() }
-  }
+Lino.toggle_window = function(btn,state,ww) {
+  if(state) { ww.show() } else { ww.hide() }
 };
 
 Lino.ajax_error_handler = function(response,options) {
@@ -403,6 +401,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     this.getSelectionModel().addListener('rowselect',fn,scope);
   }
   });
+  
 
 Lino.cell_context_menu = function(job) {
   return function(grid,row,col,e) {
@@ -423,8 +422,19 @@ Lino.cell_context_menu = function(job) {
             yield "  store.setBaseParam(%r,caller.content_type);" % ext_requests.URL_PARAM_MASTER_TYPE
             yield "  store.setBaseParam(%r,record.id);" % ext_requests.URL_PARAM_MASTER_PK
             yield "  store.load();" 
-            yield "}"
+            yield "};"
             
+        s += py2js(js)
+        
+        def js():
+            yield "Lino.search_handler = function(caller) { return function(field, e) {"
+            yield "  if(e.getKey() == e.RETURN) {"
+            # yield "    console.log('keypress',field.getValue(),store)"
+            yield "    caller.main_grid.getStore().setBaseParam('%s',field.getValue());" % ext_requests.URL_PARAM_FILTER
+            yield "    caller.main_grid.getStore().load({params: { start: 0, limit: caller.pager.pageSize }});" 
+            yield "  }"
+            yield "}};"
+        
         s += py2js(js)
         
         s += """
@@ -580,7 +590,7 @@ Ext.override(Ext.form.ComboBox, {
             p.limit = this.pageSize;
         }
         // now my code:
-        if(this.contextParams) {
+        if(this.contextParams && this.contextValues) {
           for(i = 0; i <= this.contextParams.length; i++)
             p[this.contextParams[i]] = this.contextValues[i];
         }

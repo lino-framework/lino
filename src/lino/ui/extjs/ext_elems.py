@@ -54,9 +54,9 @@ class ColumnModel(Component):
             yield col
         
         
-    def ext_options(self):
+    def ext_options(self,**d):
         #self.report.setup()
-        d = Component.ext_options(self)
+        d = Component.ext_options(self,**d)
         #d.update(columns=[e.get_column_options() for e in self.grid.elements])
         d.update(columns=self.columns)
         #d.update(defaultSortable=True)
@@ -247,7 +247,7 @@ class ButtonElement(LayoutElement):
     #declare_type = jsgen.DECLARE_INLINE
     declare_type = jsgen.DECLARE_THIS
     #declare_type = jsgen.DECLARE_VAR
-    ext_suffix = "_btn"
+    #~ ext_suffix = "_btn"
     xtype = None # 'button'
     preferred_height = 0
     value_template = "new Ext.Button(%s)"
@@ -261,9 +261,9 @@ class ButtonElement(LayoutElement):
 class ActionElement(ButtonElement):
   
     def __init__(self,lh,name,action,**kw):
-        #lino.log.debug("ButtonElement.__init__(%r,%r,%r)",lh,name,action)
-        ButtonElement.__init__(self,lh,name,**kw)
+        #lino.log.debug("ActionElement.__init__(%r,%r,%r)",lh,name,action)
         self.action = action
+        ButtonElement.__init__(self,lh,name,**kw)
         
     def ext_options(self,**kw):
         kw = ButtonElement.ext_options(self,**kw)
@@ -297,189 +297,6 @@ class StaticTextElement(LayoutElement):
         
         
         
-class ReportRequestWindow(jsgen.Component):
-    declare_type = jsgen.DECLARE_THIS
-    value_template = "new Ext.Window(%s)"
-    
-    def __init__(self,rr,name,main,permalink_name,**kw):
-        self.rr = rr
-        self.main = main
-        self.permalink_name = permalink_name
-        jsgen.Component.__init__(self,name,**kw)
-        
-    def subvars(self):
-        yield self.main
-        
-    def ext_options(self,**kw):
-        
-        kw.update(title=self.rr.get_title())
-        # kw.update(closeAction='hide')
-        kw.update(maximizable=True)
-        #kw.update(id=name)
-        kw.update(layout='fit')
-        kw.update(items=self.main)
-        
-        
-        if self.rr.layout is not None: # report.use_layouts:
-            lh = self.rr.layout
-            
-            if lh.start_focus is not None:
-                kw.update(defaultButton=lh.start_focus.name)
-        
-        
-        js = 'Lino.save_window_config(this)'
-        kw.update(tools=[dict(id='save',handler=js_code(js))])
-        
-        
-        
-        #name = id2js(self.rr.layout.name)
-        wc = self.rr.ui.get_window_config(self.permalink_name)
-        #kw.update(defaultButton=self.lh.link.inputs[0].name)
-        if wc is None:
-            #~ if self.rr.report.use_layouts:
-            if self.rr.layout is not None: 
-                if lh.height is None:
-                    kw.update(height=300)
-                else:
-                    kw.update(height=lh.height*EXT_CHAR_HEIGHT + 7*EXT_CHAR_HEIGHT)
-                if lh.width is None:
-                    kw.update(width=400)
-                else:
-                    kw.update(width=lh.width*EXT_CHAR_WIDTH + 10*EXT_CHAR_WIDTH)
-        else:
-            assert len(wc) == 5
-            kw.update(x=wc[0])
-            kw.update(y=wc[1])
-            kw.update(width=wc[2])
-            kw.update(height=wc[3])
-            #kw.update(width=js_code('Lino.viewport.getWidth()*%d/100' % wc[0]))
-            #kw.update(height=js_code('Lino.viewport.getHeight()*%d/100' % wc[1]))
-            kw.update(maximized=wc[4])
-        return kw
-            
-    def js_before_body(self):
-        for ln in jsgen.Component.js_before_body(self):
-            yield ln
-        # for permalink:
-        #~ yield "  %s._permalink_name = %s;" % (self.as_ext(),py2js(id2js(self.rr.layout.name)))
-        yield "  %s._permalink_name = %s;" % (self.as_ext(),py2js(self.permalink_name))
-        
-        
-        
-        
-        #~ ReportRequestWindow(rr,'window',rr.layout._main)
-
-#~ class PropertiesWindow(Component):
-class PropertiesWindow(ReportRequestWindow):
-    #~ declare_type = jsgen.DECLARE_THIS
-    #~ value_template = "new Ext.Window(%s)"
-    
-    def __init__(self,ui,model,**kw):
-        self.ui = ui
-        self.model = model
-        kw.update(closeAction='hide')
-        #~ Component.__init__(self,'properties_window',**kw)
-        
-        self.rh = properties.PropValuesByOwner().get_handle(ui)
-        rr = self.rh.request(master=model)
-        
-        self.source = {}
-        self.customEditors = {}
-        self.propertyNames = {}
-        #~ for pv in self.rh.request(master=model,master_instance=None):
-        for pv in rr:
-            p = pv.prop
-            self.source[p.name] = pv.value
-            if p.label:
-                self.propertyNames[p.name] = p.label
-            #~ pvm = p.value_type.model_class()
-            pvm = pv.__class__ 
-            if pvm is properties.CHAR:
-                #~ choices = [unicode(pv.value) for pv in pvm.objects.filter(prop=p,owner_id__isnull=True)]
-                #~ choices = [unicode(choice) for choice in pv.value_choices(p)]
-                choices = pvm.choices_list(p) # [unicode(choice) for choice in pv.value_choices(p)]
-                if choices:
-                    editor = ComboBox(store=choices,mode='local',selectOnFocus=True)
-                    editor = 'new Ext.grid.GridEditor(%s)' % py2js(editor)
-                    self.customEditors[p.name] = js_code(editor)
-                    
-        #~ print 20100226, self.model,len(self.source), self.source
-        grid = dict(xtype='propertygrid')
-        #~ grid.update(clicksToEdit=2)
-        grid.update(source=self.source)
-        grid.update(autoHeight=True)
-        grid.update(customEditors=self.customEditors)
-        #~ url = self.rh.get_absolute_url(grid_afteredit=True)
-        #~ url = self.ui.get_props_url(self.model)
-        listeners = dict(
-          #~ afteredit=js_code('Lino.grid_afteredit(this,"%s")' % url))
-          #~ afteredit=js_code('Lino.props_afteredit(this)'))
-          afteredit=js_code('function(e){Lino.submit_property(this,e)}'),scope=js_code('this'))
-        grid.update(listeners=listeners)
-        #~ grid.update(pageSize=10)
-        if len(self.propertyNames) > 0:
-            grid.update(propertyNames=self.propertyNames)
-        panel = dict(xtype='panel',autoScroll=True,items=grid)
-        main = jsgen.Value(panel)
-        permalink_name = self.model._meta.app_label+'_'+self.model.__name__+'_properties'
-        ReportRequestWindow.__init__(self,rr,'properties_window',main,permalink_name,**kw)
-                    
-            
-        #~ for p in props:
-            #~ # PropValue model
-            #~ pvm = p.value_type.model_class()
-            #~ assert pvm is not None, ('%s.value_type.model_class() returned None'%p)
-            #~ # PropValue field
-            #~ pvf = pvm._meta.get_field('value') 
-            #~ default = pvf.default
-            #~ if default is models.NOT_PROVIDED:
-                #~ default = ''
-            #~ elif callable(default):
-                #~ default = default()
-            #~ self.source[p.name] = default 
-            #~ if p.label:
-                #~ self.propertyNames[p.name] = p.label
-                
-            #~ if pvm is properties.CHAR:
-                #~ choices = [unicode(pv.value) for pv in pvm.objects.filter(prop=p,owner_id__isnull=True)]
-                #~ if choices:
-                    #~ editor = ComboBox(store=choices,mode='local',selectOnFocus=True)
-                    #~ editor = 'new Ext.grid.GridEditor(%s)' % py2js(editor)
-                    #~ self.customEditors[p.name] = js_code(editor)
-                    
-    def has_properties(self):
-        return len(self.source) > 0
-
-    def unused_ext_options(self,**kw):
-        #~ kw = Component.ext_options(self,**kw)
-        kw = ReportRequestWindow.ext_options(self,**kw)
-        grid = dict(xtype='propertygrid')
-        grid.update(source=self.source,
-          autoHeight=True)
-        grid.update(customEditors=self.customEditors)
-        #~ url = self.rh.get_absolute_url(grid_afteredit=True)
-        #~ url = self.ui.get_props_url(self.model)
-        listeners = dict(
-          #~ afteredit=js_code('Lino.grid_afteredit(this,"%s")' % url))
-          #~ afteredit=js_code('Lino.props_afteredit(this)'))
-          afteredit=js_code('function(e){Lino.submit_property(this,e)}'),scope=js_code('this'))
-        grid.update(listeners=listeners)
-        if len(self.propertyNames) > 0:
-            grid.update(propertyNames=self.propertyNames)
-        kw.update(layout='fit',items=grid)
-        return kw
-        
-    def js_after_body(self):
-        for ln in Component.js_after_body(self):
-            yield ln
-        yield "this.window.on('hide',function(){ this.%s.hide()},scope=this);" % self.name
-        #~ yield "%s._permalink_name = %s;" % (self.as_ext(),py2js(self.model._meta.app_label+'_'+self.model.__name__+'_properties'))
-        yield "%s.on('hide',function(){ this.props_btn.toggle(false)},scope=this);" % self.as_ext()
-        url = self.rh.get_absolute_url()
-        yield "%s.on('show',function(){" % self.as_ext()
-        yield "  Lino.load_properties(this,%r,this.get_current_record())},scope=this);" % url
-        yield "this.main_grid.add_row_listener(function(sm,ri,rec){Lino.load_properties(this,%r,rec)},this);" % url
-
 
 class Spacer(LayoutElement):
     declare_type = jsgen.DECLARE_INLINE
@@ -649,17 +466,20 @@ class ForeignKeyElement(FieldElement):
         #~ if self.lh.link.report.get_field_choices_meth(self.field): 
             #~ kw.update(contextParam=ext_requests.URL_PARAM_CHOICES_PK)
             #kw.update(lazyInit=True)
-        chooser = self.lh.link.choosers[self.field.name]
+        chooser = self.lh.datalink.choosers[self.field.name]
         if chooser.context_params:
         #~ cp = chooser.get_context_params(self.lh.link.report.model,self.field.name)
         #~ if cp:    
             kw.update(contextParams=chooser.context_params)
         return kw
         
-    def js_after_body(self):
+    def js_body(self):
+        for ln in super(ForeignKeyElement,self).js_body():
+            yield ln
+    #~ def js_after_body(self):
         #~ cp = chooser.get_context_params(self.lh.link.report.model,self.field.name)
         #~ if cp:
-        chooser = self.lh.link.choosers[self.field.name]
+        chooser = self.lh.datalink.choosers[self.field.name]
         if chooser.context_values:
             yield "this.main_grid.add_row_listener(function(sm,rowIndex,record) {" 
             yield "  %s.setContextValues([" % self.as_ext()
@@ -688,7 +508,7 @@ class DateFieldElement(FieldElement):
     def get_column_options(self,**kw):
         kw = FieldElement.get_column_options(self,**kw)
         #kw.update(xtype='datecolumn')
-        kw.update(format=self.lh.link.report.date_format)
+        kw.update(format=self.lh.datalink.report.date_format)
         return kw
     
 class IntegerFieldElement(FieldElement):
@@ -731,9 +551,9 @@ class BooleanFieldElement(FieldElement):
     def get_column_options(self,**kw):
         kw = FieldElement.get_column_options(self,**kw)
         #kw.update(xtype='booleancolumn')
-        kw.update(trueText=self.lh.link.report.boolean_texts[0])
-        kw.update(falseText=self.lh.link.report.boolean_texts[1])
-        kw.update(undefinedText=self.lh.link.report.boolean_texts[2])
+        kw.update(trueText=self.lh.datalink.report.boolean_texts[0])
+        kw.update(falseText=self.lh.datalink.report.boolean_texts[1])
+        kw.update(undefinedText=self.lh.datalink.report.boolean_texts[2])
         return kw
         
     def get_from_form(self,instance,values):
@@ -974,8 +794,8 @@ class TabPanel(Container):
         #~ self.width = self.elements[0].ext_width() or 300
     
 
-    def ext_options(self):
-        d = dict(
+    def ext_options(self,**d):
+        d.update(
           xtype="tabpanel",
           #region="east",
           split=True,
@@ -1042,9 +862,9 @@ class GridElement(Container): #,DataElementMixin):
         #yield self.rh.store
         yield self.column_model
 
-    def ext_options(self):
+    def ext_options(self,**d):
         #~ self.setup()
-        d = LayoutElement.ext_options(self)
+        d = LayoutElement.ext_options(self,**d)
         d.update(clicksToEdit=2)
         d.update(viewConfig=dict(
           #autoScroll=True,
@@ -1066,7 +886,7 @@ class GridElement(Container): #,DataElementMixin):
         d.update(autoHeight=True)
         #d.update(layout='fit')
         d.update(enableColLock=False)
-        if self.__class__ is not GridMainPanel: 
+        if False and self.__class__ is not GridMainPanel: 
             js="Lino.action_handler(this,%r)" % \
                 self.rh.row_layout.get_absolute_url(run=True)
             d.update(listeners=dict(click=js_code(js)))
@@ -1094,139 +914,95 @@ class M2mGridElement(GridElement):
         rh = rpt.get_handle(lh.ui)
         GridElement.__init__(self,lh,id2js(rpt.actor_id),rh,*elements,**kw)
   
+
+class PagingToolbar(jsgen.Variable):
+    declare_type = jsgen.DECLARE_THIS
+    value_template = "new Ext.PagingToolbar(%s)"
+    
+    def __init__(self,grid,name):
+        #~ self.grid = grid
+        
+        # searchString thanks to http://www.extjs.com/forum/showthread.php?t=82838
+        #~ def js_keypress():
+            #~ yield "function(field, e) {"
+            #~ # searching starts when user presses ENTER.
+            #~ yield "  if(e.getKey() == e.RETURN) {"
+            #~ # yield "    console.log('keypress',field.getValue(),store)"
+            #~ yield "    this.main_grid.getStore().setBaseParam('%s',field.getValue());" % ext_requests.URL_PARAM_FILTER
+            #~ yield "    this.main_grid.getStore().load({params: { start: 0, limit: this.pager.pageSize }});" 
+            #~ yield "  }"
+            #~ yield "}"
+        buttons = []
+        
+        h = js_code('Lino.search_handler(this)')
+        search_field = dict(
+            id = 'seachString',
+            fieldLabel = 'Search',
+            xtype = 'textfield',
+            enableKeyEvents = True, # required if you need to detect key-presses
+            #listeners = dict(keypress=dict(handler=keypress,scope=js_code('this')))
+            #~ listeners = dict(keypress=js_keypress,scope=js_code('this'))
+            listeners = dict(keypress=h)
+        )
+        dl = grid.get_datalink()
+        buttons.append(search_field)
+        #export_csv = dict(xtype='exportbutton',store=self.dl.store) #,scope=js_code('this'))
+        #export_csv = dict(text="CSV",handler=js_code("function(){console.log('not implemented')}"),scope=js_code('this'))
+        export_csv = dict(text=_("Download"),handler=js_code(
+          "function() {window.open(%r);}" % dl.get_absolute_url(csv=True)))
+        buttons.append(export_csv)
+        tbar = dict(
+          store=grid.rh.store,
+          displayInfo=True,
+          pageSize=grid.report.page_length,
+          prependButtons=True,
+          items=buttons, 
+        )
+        #~ self.pager = Variable('pager',js_code("new Ext.PagingToolbar(%s)" % py2js(tbar)))
+        jsgen.Variable.__init__(self,name,tbar)
+    
   
       
-class Reaction(jsgen.Variable):
-  
-    def __init__(self,rr):
-        jsgen.Variable.__init__(self,None,None)
-        permalink_name = id2js(rr.layout.name)
-        self.window = ReportRequestWindow(rr,'window',rr.layout._main,permalink_name)
-        
-    def subvars(self):
-        yield self.window
-        
-        
-    def setup(self):
-        pass
-        
-    def as_ext_value(self):
-    #~ def js_job_constructor(self):
-        yield "function(caller) {"
-        yield "  var client_job = this;" 
-        #~ yield "  // MainPanel.js_job_constructor() calls self.js_declare()"
-        for ln in self.js_declare():
-            yield "  " + ln
-        #~ yield "  // MainPanel.js_job_constructor() called self.js_declare()"
-        #~ yield "  this.window = new Ext.Window(%s);" % py2js(self.window_options(rr))
-        #~ yield "  console.log(4);"
-        yield "  this.stop = function() {"
-        yield "     this.window.close();"
-        yield "  }"
-        yield "  if (caller) {"
-        yield "    caller.window.on('close',function() {"
-        #yield "      console.log('close',caller,this);"
-        yield "      this.stop();"
-        yield "    },this);"
-        yield "  }"
-        for ln in self.js_before_body():
-            yield "  " + ln
-        for ln in self.js_body():
-            yield "  " + ln
-        for ln in self.js_after_body():
-            yield "  " + ln
-        yield "  this.window.show();"
-        yield "  this.window.syncSize();"
-        yield "  this.window.focus();"
-        yield "}"
-        
-        
             
-#~ class MainPanel(Reaction):
 class MainPanel(jsgen.Variable):
   
     def __init__(self):
         self.keys = None
         self.buttons = None
         self.cmenu = None
-        self.props_button = None
-        #~ Reaction.__init__(self,)
+        #~ self.props_button = None
         
     def get_datalink(self):
         raise NotImplementedError
         
   
     def setup(self):
-        if self.keys:
-            return
-        #setup_report(self.report)
-        keys = []
-        buttons = []
-        dl = self.get_datalink()
-        if dl.properties_window is not None:
-            #~ h = js_code("function(btn,state) {Lino.toggle_props(this)}")
-            h = js_code("Lino.props_handler(this)")
-            self.props_button = ButtonElement(self.lh,'props',\
-                text=_('Properties'),
-                toggleHandler=h,
-                enableToggle=True)
-            buttons.append(self.props_button)
-            #~ buttons.append(dict(text=_('Properties'),toggleHandler=h,enableToggle=True))
-        for a in dl.get_actions():
-            h = js_code("Lino.action_handler(this,%r)" % (
-                  dl.get_absolute_url(grid_action=a.name)))
-            buttons.append(dict(text=a.label,handler=h))
-            if a.key:
-                keys.append(dict(
-                  handler=h,
-                  key=a.key.keycode,ctrl=a.key.ctrl,alt=a.key.alt,shift=a.key.shift))
-        if self.__class__ is GridMainPanel:
-            details = dl.get_details()
-            if len(details):
-                # the first detail window can be opend with Ctrl+ENTER 
-                key = actions.RETURN(ctrl=True)
-                lh = details[0]
-                keys.append(dict(
-                  handler=js_code("Lino.action_handler(this,%r)" % \
-                    lh.get_absolute_url(run=True)),
-                  key=key.keycode,ctrl=key.ctrl,alt=key.alt,shift=key.shift))
-
-                for lh in details[1:]: 
-                    buttons.append(dict(
-                      handler=js_code("Lino.action_handler(this,%r)" % \
-                        lh.get_absolute_url(run=True)),
-                      text=lh.layout.label))
-                  
-            slaves = dl.get_slaves()
-            for rh in slaves:
-                #rh = sl.get_handle(self.lh.ui)
-                buttons.append(dict(
-                  handler=js_code("Lino.action_handler(this,%r)" % \
-                    rh.row_layout.get_absolute_url(run=True)),
-                  #handler=js_code("Lino.show_slave(this,%r)" % id2js(rh.row_layout.name)),
-                  text = rh.report.label,
-                ))
+        pass
+        #~ if self.keys:
+            #~ return
+        #~ keys = []
+        #~ buttons = []
+        #~ dl = self.get_datalink() # the ReportHandle
             
-        self.keys = Variable(self.ext_name+'_keys',keys)
-        self.buttons = Variable(self.ext_name+'_buttons',buttons)
-        self.cmenu = Variable('cmenu',js_code("new Ext.menu.Menu(%s)" % py2js(self.buttons)))
+        #~ self.keys = Variable(self.ext_name+'_keys',keys)
+        #~ self.buttons = Variable(self.ext_name+'_buttons',buttons)
+        #~ self.cmenu = Variable('cmenu',js_code("new Ext.menu.Menu(%s)" % py2js(self.buttons)))
         
     def subvars(self):
         self.setup()
         for rh in self.lh._needed_stores:
             yield rh.store
-        if self.props_button is not None:
-            yield self.props_button 
-        yield self.buttons
-        yield self.keys
-        yield self.cmenu
+        #~ if self.props_button is not None:
+            #~ yield self.props_button 
+        #~ yield self.buttons
+        #~ yield self.keys
+        #~ yield self.cmenu
         
   
-    def js_before_body(self):
-        for ln in jsgen.Variable.js_before_body(self):
+    def js_body(self):
+        yield "this.content_type = %s;" % py2js(self.lh.datalink.content_type)
+        for ln in jsgen.Variable.js_body(self):
             yield ln
-        # for generic slaves:
-        yield "  this.content_type = %s;" % py2js(self.lh.link.content_type)
         
                 
     @classmethod
@@ -1254,48 +1030,6 @@ class WrappingMainPanel(MainPanel):
         ct.field = field
         return ct
 
-class PagingToolbar(jsgen.Variable):
-    declare_type = jsgen.DECLARE_THIS
-    value_template = "new Ext.PagingToolbar(%s)"
-    
-    def __init__(self,grid,name):
-        #~ self.grid = grid
-        
-        # searchString thanks to http://www.extjs.com/forum/showthread.php?t=82838
-        def js_keypress():
-            yield "function(field, e) {"
-            # searching starts when user presses ENTER.
-            yield "  if(e.getKey() == e.RETURN) {"
-            # yield "    console.log('keypress',field.getValue(),store)"
-            yield "    this.main_grid.getStore().setBaseParam('%s',field.getValue());" % ext_requests.URL_PARAM_FILTER
-            yield "    this.main_grid.getStore().load({params: { start: 0, limit: this.pager.pageSize }});" 
-            yield "  }"
-            yield "}"
-        search_field = dict(
-            id = 'seachString',
-            fieldLabel = 'Search',
-            xtype = 'textfield',
-            enableKeyEvents = True, # required if you need to detect key-presses
-            #listeners = dict(keypress=dict(handler=keypress,scope=js_code('this')))
-            listeners = dict(keypress=js_keypress,scope=js_code('this'))
-        )
-        dl = grid.get_datalink()
-        buttons = [search_field]
-        #export_csv = dict(xtype='exportbutton',store=self.dl.store) #,scope=js_code('this'))
-        #export_csv = dict(text="CSV",handler=js_code("function(){console.log('not implemented')}"),scope=js_code('this'))
-        export_csv = dict(text=_("Download"),handler=js_code(
-          "function() {window.open(%r);}" % dl.get_absolute_url(csv=True)))
-        buttons.append(export_csv)
-        tbar = dict(
-          store=grid.rh.store,
-          displayInfo=True,
-          pageSize=grid.report.page_length,
-          prependButtons=True,
-          items=buttons, 
-        )
-        #~ self.pager = Variable('pager',js_code("new Ext.PagingToolbar(%s)" % py2js(tbar)))
-        jsgen.Variable.__init__(self,name,tbar)
-    
 class GridMainPanel(GridElement,MainPanel):
     value_template = "new Lino.GridPanel(%s)"
     #declare_type = jsgen.DECLARE_VAR
@@ -1305,7 +1039,7 @@ class GridMainPanel(GridElement,MainPanel):
         #lh.report.setup()
         self.pager = None
         MainPanel.__init__(self)
-        GridElement.__init__(self,lh,name,lh.link,*elements,**kw)
+        GridElement.__init__(self,lh,name,lh.datalink,*elements,**kw)
         #~ if self.height is None:
             #~ self.height = self.preferred_height
         #~ if self.width is None:
@@ -1324,8 +1058,8 @@ class GridMainPanel(GridElement,MainPanel):
         for e in MainPanel.subvars(self):
             yield e
         yield self.pager
-        if self.lh.link.properties_window is not None:
-            yield self.lh.link.properties_window
+        #~ if self.lh.datalink.properties_window is not None:
+            #~ yield self.lh.datalink.properties_window
         
     def get_datalink(self):
         return self.rh
@@ -1343,7 +1077,7 @@ class GridMainPanel(GridElement,MainPanel):
         del kw['title']
         kw.update(selModel=js_code("new Ext.grid.RowSelectionModel({singleSelect:false})"))
         kw.update(tbar=self.pager)
-        kw.update(bbar=self.buttons)
+        kw.update(bbar=self.rh.grid_buttons)
         return kw
         
     def js_declare(self):
@@ -1368,6 +1102,9 @@ class GridMainPanel(GridElement,MainPanel):
         #~ yield "}, this, {delay:100});"
         
     def js_body(self):
+        for ln in MainPanel.js_body(self):
+        #~ for ln in super(GridMainPanel,self).js_body():
+            yield ln
         #yield "this.refresh = function() { this.%s.getStore().load()}" % self.ext_name
         yield "this.refresh = function() { "
         #yield "  this.pager.pageSize = %s.calculatePageSize() || 10;" % self.as_ext()
@@ -1380,35 +1117,14 @@ class GridMainPanel(GridElement,MainPanel):
         yield "  for(var i=0;i<sels.length;i++) { sel_pks += sels[i].id + ','; };"
         yield "  return sel_pks;"
         yield "}"
+        yield "this.get_window_config = function() {"
+        #~ yield "  console.log(this.main_grid.colModel.columns);"
+        yield "  return {"
+        yield "    window_type: 'grid',"
+        yield "    column_widths: Ext.pluck(this.main_grid.colModel.columns,'width')"
+        yield "  }"
+        yield "}"
         
-        #~ yield "var grid = this.main_grid;"
-        #~ yield "var store = grid.getStore();"
-        #~ if self.lh.link.report.master is None:
-            #~ yield "store.load();" 
-        #~ else:
-            #~ master_type = ContentType.objects.get_for_model(self.lh.link.report.master).pk
-            #~ #master_type = ContentType.objects.get_for_model(self.lh.link.report.model).pk
-            #~ yield "this.load_master = function(record) {"
-            #~ yield "  console.log('load_master() mt=%s,mk=',record.id);" % master_type
-            #~ yield "  store.setBaseParam(%r,%s);" % (URL_PARAM_MASTER_TYPE,master_type)
-            #~ yield "  store.setBaseParam(%r,record.id);" % URL_PARAM_MASTER_PK
-            #~ yield "  store.load();" 
-            #~ yield "}"
-            #~ yield "caller.main_grid.add_row_listener("
-            #~ yield "  function(sm,rowIndex,record) { client_job.load_master(record)})"
-            #~ yield "this.load_master(caller.get_current_record());"
-            
-        
-        # the following doesn't work and i don't understand why
-        #~ yield "  this.window.on('show',function() {"
-        #~ yield "    grid.focus();"
-        #~ yield "  });"
-        #~ yield "  grid.on('viewready',function() {"
-        #~ #yield "    console.log('on render');"
-        #~ #yield "    grid.getView().focusRow(1);"
-        #~ yield "    grid.getSelectionModel().selectFirstRow();"
-        #~ #yield "    grid.getView().focusEl.focus();"
-        #~ yield "  });"
 
 
 
@@ -1417,7 +1133,7 @@ class DetailMainPanel(Panel,WrappingMainPanel):
     xtype = None
     value_template = "new Ext.form.FormPanel(%s)"
     def __init__(self,lh,name,vertical,*elements,**kw):
-        self.rh = lh.link
+        self.rh = lh.datalink
         self.report = self.rh.report
         MainPanel.__init__(self)
         #~ DataElementMixin.__init__(self,lh.link)
@@ -1438,14 +1154,14 @@ class DetailMainPanel(Panel,WrappingMainPanel):
         for e in Panel.subvars(self):
             yield e
             
-    def ext_options(self):
+    def ext_options(self,**kw):
         self.setup()
-        d = Panel.ext_options(self)
+        kw = Panel.ext_options(self,**kw)
         #d.update(title=self.layout.label)
         #d.update(region='east',split=True) #,width=300)
-        d.update(autoScroll=True)
+        kw.update(autoScroll=True)
         if False:
-            d.update(tbar=js_code("""new Ext.PagingToolbar({
+            kw.update(tbar=js_code("""new Ext.PagingToolbar({
               store: %s,
               displayInfo: true,
               pageSize: 1,
@@ -1453,11 +1169,12 @@ class DetailMainPanel(Panel,WrappingMainPanel):
             }) """ % self.rh.store.ext_name))
         #d.update(items=js_code(self._main.as_ext(request)))
         #d.update(items=js_code("[%s]" % ",".join([e.as_ext() for e in self.elements])))
-        d.update(items=self.elements)
+        kw.update(items=self.elements)
         #d.update(autoHeight=False)
-        d.update(bbar=self.buttons)
+        kw.update(bbar=self.rh.detail_buttons)
+        #~ kw.update(bbar=self.buttons)
         #d.update(standardSubmit=True)
-        return d
+        return kw
         
     def js_declare(self):
         #yield "console.log(10);"
@@ -1534,34 +1251,28 @@ class DetailMainPanel(Panel,WrappingMainPanel):
           scope=js_code('this'),
           key=key.keycode,ctrl=key.ctrl,alt=key.alt,shift=key.shift))
         buttons.append(dict(handler=js,scope=js_code('this'),text="Next"))
-        if len(keys):
-            #yield "console.log(%s);" % self.as_ext()
-            #yield "console.log(%s.comp);" % self.as_ext()
-            yield "  %s.keys = %s;" % (self.as_ext(),py2js(keys))
         
-        for btn in buttons:
-            yield "  %s.addButton(%s);" % (self.as_ext(),py2js(btn))
-    
-        yield "}"
-        
-        # the following also if caller was false
-
-        buttons = []
-
         url = self.rh.get_absolute_url(submit=True)
         js = js_code("Lino.form_submit(this,'%s',this.main_grid.getStore(),'%s')" % (
                 url,self.rh.store.pk.name))
         buttons.append(dict(handler=js,text='Submit'))
         
+        if len(keys):
+            yield "  %s.keys = %s;" % (self.as_ext(),py2js(keys))
         for btn in buttons:
-            yield "%s.addButton(%s);" % (self.as_ext(),py2js(btn))
-    
+            yield "  %s.addButton(%s);" % (self.as_ext(),py2js(btn))
+        yield "}"
         yield "// end DetailMainPanel.js_declare()"
         
     def js_body(self):
+        for ln in super(DetailMainPanel,self).js_body():
+            yield ln
         yield "if(this.main_grid) {"
         yield "  var sels = this.main_grid.getSelectionModel().getSelections()"
         yield "  if(sels.length > 0) this.load_record(sels[0]);"
+        yield "}"
+        yield "this.get_window_config = function() {"
+        yield "  return { 'window_type': 'detail' }"
         yield "}"
         
 
@@ -1574,7 +1285,7 @@ class FormMainPanel(Panel,WrappingMainPanel):
         MainPanel.__init__(self)
 
     def get_datalink(self):
-        return self.lh.link
+        return self.lh.datalink
         
     def ext_options(self,**d):
         d = Panel.ext_options(self,**d)
@@ -1596,10 +1307,13 @@ class FormMainPanel(Panel,WrappingMainPanel):
     def js_body(self):
         yield "  this.get_values = function() {"
         yield "    var v = {};"
-        for e in self.lh.link.inputs:
+        for e in self.lh.datalink.inputs:
             yield "    v[%r] = this.main_panel.getForm().findField(%r).getValue();" % (e.name,e.name)
         yield "    return v;"
         yield "  };"
+        yield "this.get_window_config = function() {"
+        yield "  return { 'window_type': 'form' }"
+        yield "}"
 
 _field2elem = (
     (models.TextField, TextFieldElement),

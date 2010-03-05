@@ -69,7 +69,7 @@ def py2js(v,**kw):
     if isinstance(v,dict): # ) is types.DictType:
         #~ print 20100226, repr(v)
         return "{ %s }" % ", ".join([
-            "%s: %s" % (py2js(k),py2js(v)) for k,v in v.items()])
+            "%s: %s" % (id2js(k),py2js(v)) for k,v in v.items()])
     if isinstance(v,bool): # types.BooleanType:
         return str(v).lower()
     if isinstance(v, (int, long)):
@@ -126,7 +126,7 @@ def py2js(v,**kw):
 """
 
 def id2js(s):
-    return s.replace('.','_')
+    return s.replace('.','_').replace(' ','_')
   
 class js_code:
     "A string that py2js will represent as is, not between quotes."
@@ -154,19 +154,19 @@ class Value(object):
     def subvars(self):
         return []
             
-    def js_before_body(self):
-        for v in self.subvars():
-            for ln in v.js_before_body():
-                yield ln
+    #~ def js_before_body(self):
+        #~ for v in self.subvars():
+            #~ for ln in v.js_before_body():
+                #~ yield ln
     def js_body(self):
         for v in self.subvars():
             for ln in v.js_body():
                 yield ln
                 
-    def js_after_body(self):
-        for v in self.subvars():
-            for ln in v.js_after_body():
-                yield ln
+    #~ def js_after_body(self):
+        #~ for v in self.subvars():
+            #~ for ln in v.js_after_body():
+                #~ yield ln
         
     def as_ext(self):
         return self.value_template % py2js(self.value)
@@ -212,13 +212,13 @@ class Variable(Value):
     def as_ext_value(self):
         return self.value_template % py2js(self.value)
         
-class Component(Variable): # better name? JSObject? Scriptable?
+class Component(Variable): 
     
     def __init__(self,name=None,**options):
         Variable.__init__(self,name,options)
         
     def as_ext_value(self):
-        value = self.ext_options()
+        value = self.ext_options(**self.value)
         return self.value_template % py2js(value)
         
     def ext_options(self,**kw):
@@ -228,4 +228,23 @@ class Component(Variable): # better name? JSObject? Scriptable?
     def update(self,**kw):
         self.value.update(**kw)
       
+class Function(Variable):
+  
+    def __init__(self,name=None):
+        Variable.__init__(self,name,None)
         
+    def as_ext_value(self):
+        return '\n'.join(self.js_render())
+        
+    
+      
+class Object(Function):
+    def __init__(self,name,params='this'):
+        assert isinstance(params,basestring)
+        self.params = params
+        Function.__init__(self,name)
+        
+    def as_ext_value(self):
+        return "new " + '\n  '.join(self.js_render()) + "(" + self.params + ")"
+    
+      

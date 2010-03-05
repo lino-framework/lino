@@ -396,7 +396,7 @@ class Report(actors.Actor): # actions.Action): #
         
             
         title = self.title or self.label
-        if self.master is not None:
+        if rr is not None and self.master is not None:
             title += ": " + unicode(rr.master_instance)
         return title
         
@@ -522,6 +522,9 @@ class Report(actors.Actor): # actions.Action): #
         rh = ReportHandle(None,self)
         rr = rh.request(**kw)
         return rr.render_to_dict()
+        
+    def request(self,ui,**kw):
+        return ui.get_report_handle(self).request(**kw)
 
         
 def report_factory(model):
@@ -576,7 +579,15 @@ class ReportHandle(layouts.DataLink):
             for lc in self.report.page_layouts:
                 self.layouts.append(lh(lc,index))
                 index += 1
+        else:
+            self.choice_layout = None
+            self.row_layout = None
+            self.layouts = []
+            
         self.ui.setup_report(self)
+        
+    def get_default_layout(self):
+        return self.layouts[self.report.default_layout]
         
     def get_absolute_url(self,*args,**kw):
         return self.ui.get_report_url(self,*args,**kw)
@@ -594,7 +605,8 @@ class ReportHandle(layouts.DataLink):
         return self.report.actions
         
     def get_details(self):
-        return self.layouts[1:]
+        return self.layouts[2:]
+        #~ return self.layouts[1:]
           
     def get_slaves(self):
         return [ sl.get_handle(self.ui) for sl in self.report._slaves ]
@@ -702,6 +714,9 @@ class ReportRequest:
         
     def __iter__(self):
         return self.queryset.__iter__()
+        
+    def __len__(self):
+        return self.queryset.__len__()
         
     def create_instance(self,**kw):
         kw.update(self.master_kw)

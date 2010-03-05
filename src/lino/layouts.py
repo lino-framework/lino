@@ -159,20 +159,24 @@ class LayoutHandle:
     """
     start_focus = None
     
-    def __init__(self,link,layout,index,desc=None,main=None):
+    def __init__(self,dl,layout,index,desc=None,main=None):
         # lino.log.debug('LayoutHandle.__init__(%s,%s,%d)',link,layout,index)
-        assert isinstance(link.name,basestring), "link.name %r is not a string" % link.name
+        assert isinstance(dl.name,basestring), "link.name %r is not a string" % link.name
         assert isinstance(layout,Layout)
         #assert isinstance(link,reports.ReportHandle)
-        self.ui = link.ui
-        self._ld = layout 
+        self.ui = dl.ui
+        #~ self._ld = layout 
+        self._ld = NotImplementedError('LayoutHandle._ls renamed to LayoutHandle.layout')
         self.layout = layout
         if index == 1:
-            self.name = link.name
+            self.name = dl.name
         else:
-            self.name = link.name + str(index)
+            self.name = dl.name + str(index)
         #lino.log.debug('LayoutHandle.__init__(%s)',self.name)
-        self.link = link
+        self.datalink = dl
+        self.dl = NotImplementedError('LayoutHandle.dl renamed to LayoutHandle.datalink')
+        self.link = NotImplementedError('LayoutHandle.link renamed to LayoutHandle.datalink')
+        #~ self.link = dl
         self.index = index
         self.label = layout.label or ''
         #self.inputs = []
@@ -186,7 +190,7 @@ class LayoutHandle:
             self._main = self.create_element(self.main_class,'main')
         else:
             if desc is None:
-                desc = self.layout.join_str.join(self.link.data_elems())
+                desc = self.layout.join_str.join(dl.data_elems())
                 #lino.log.debug('desc for %s is %r',self.name,desc)
                 self._main = self.desc2elem(self.main_class,"main",desc)
             else:
@@ -194,7 +198,7 @@ class LayoutHandle:
                     raise Exception("%r is not a string" % desc)
                 self._main = self.desc2elem(self.main_class,"main",desc)
         if isinstance(self.layout,RowLayout):
-            assert len(self._main.elements) > 0, "%s : Grid %s has no columns" % (link.name,self.ext_name)
+            assert len(self._main.elements) > 0, "%s : Grid %s has no columns" % (dl.name,self.ext_name)
             self.columns = self._main.elements
             
         #~ self.width = self.layout.width or self._main.width
@@ -222,7 +226,7 @@ class LayoutHandle:
         return s
         
     def get_absolute_url(self,**kw):
-        return self.link.get_absolute_url(layout=self.index,**kw)
+        return self.datalink.get_absolute_url(layout=self.index,**kw)
         
     def add_hidden_field(self,field):
         return HiddenField(self,field)
@@ -235,8 +239,8 @@ class LayoutHandle:
         
     def get_title(self,renderer):
         if self.layout.label is None:
-            return self.link.get_title(renderer) 
-        return self.link.get_title(renderer) + " - " + self.layout.label
+            return self.datalink.get_title(renderer) 
+        return self.datalink.get_title(renderer) + " - " + self.layout.label
 
     def walk(self):
         return self._main.walk()
@@ -255,7 +259,7 @@ class LayoutHandle:
                     name,kw = self.splitdesc(spec)
                     explicit_specs.add(name)
             wildcard_fields = self.layout.join_str.join([
-                name for name in self.link.data_elems() if name not in explicit_specs])
+                name for name in self.datalink.data_elems() if name not in explicit_specs])
             desc = desc.replace('*',wildcard_fields)
             #lino.log.debug('desc -> %r',desc)
         if "\n" in desc:

@@ -84,6 +84,9 @@ class FormHandle(layouts.DataLink):
         self.lh = layouts.LayoutHandle(self,self.form.layout(),1)
         self.ui.setup_form(self)
 
+    def get_default_layout(self):
+        return self.lh
+        
     def get_title(self,fr):
         return self.form.title or self.form.layout.label
         

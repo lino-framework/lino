@@ -44,6 +44,7 @@ def objects():
     yield city(u'Den Haag','NL')
     yield city(u'Rotterdam','NL')
     yield city(u'Utrecht','NL')
+    yield city(u'Breda','NL')
     
     yield city(u'Paris','FR')
     yield city(u'Nice','FR')
@@ -58,12 +59,18 @@ def objects():
     yield company(u'Bäckerei Schmitz',    '4700', 'Eupen',  u'Aachener Straße','53')
     yield company(u'Garage Mergelsberg',  '4720', 'Kelmis', u'Kasinostraße','13')
     
-    company = Instantiator('contacts.Company',country='NL',language='nl').build
-    yield company(name=u'Donderweer bv')
+    company = Instantiator('contacts.Company',"name zip_code city:name street street_no",country='NL',language='nl').build
+    yield company(u'Donderweer BV','4816 AR','Breda', 'Edisonstraat','12')
+    yield company(u'Van Achter NV','4836 LG','Breda', 'Hazeldonk','2')
     
-    company = Instantiator('contacts.Company',country='DE',language='de').build
-    yield company(name=u'Hans Flott & Co')
-    yield company(name=u'Bernd Brechts Bücherladen')
+    company = Instantiator('contacts.Company',"name zip_code city:name street street_no",country='DE',language='de').build
+    yield company(u'Hans Flott & Co','22453','Hamburg',u'Niendorfer Weg','532')
+    yield company(u'Bernd Brechts Bücherladen','80333',u'München',u'Brienner Straße','18')
+    yield company(u'Reinhards Baumschule','12487 ',u'Berlin',u'Segelfliegerdamm','123')
+    
+    company = Instantiator('contacts.Company',"name zip_code city:name street street_no",country='FR',language='fr').build
+    yield company(u'Moulin Rouge','75018','Paris',u'Boulevard de Clichy','82')
+    yield company(u'Auto École Verte','54000 ','Nancy',u'rue de Mon Désert','12')
     
     City = resolve_model('countries.City')
     eupen = City.objects.get(name__exact='Eupen')

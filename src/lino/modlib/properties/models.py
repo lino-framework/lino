@@ -245,6 +245,7 @@ class PropValues(reports.Report):
     order_by = "prop__name"
     
 class PropValuesByOwner(reports.Report):
+    label = _('Properties')
     model = PropValue
     use_layouts = False
     #~ can_edit = perms.never

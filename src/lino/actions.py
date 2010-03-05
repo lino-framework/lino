@@ -80,8 +80,8 @@ class DialogResponse:
     notify_msg = None
     refresh_menu = False
     refresh_caller = False
-    stop_caller = False
-    exec_js = None
+    close_caller = False
+    show_window = None
     dialog_id = None
     
     def __init__(self,**kw):
@@ -98,8 +98,8 @@ class DialogResponse:
           confirm_msg=self.confirm_msg,
           refresh_menu=self.refresh_menu,
           refresh_caller=self.refresh_caller,
-          stop_caller=self.stop_caller,
-          exec_js=self.exec_js,
+          close_caller=self.close_caller,
+          show_window=self.show_window,
           dialog_id = self.dialog_id,
         )
       
@@ -178,8 +178,8 @@ class Dialog:
     def get_user(self):
         raise NotImplementedError()
         
-    def stop_caller(self):
-        self.response.stop_caller=True
+    def close_caller(self):
+        self.response.close_caller=True
         return self
         
     def refresh_caller(self):
@@ -194,10 +194,10 @@ class Dialog:
         self.is_over = True
         return self
         
-    def exec_js(self,js):
+    def show_window(self,js):
         #~ assert js.strip().startswith('function')
-        #~ self.response.exec_js = py2js(js)
-        self.response.exec_js = js
+        #~ self.response.show_window = py2js(js)
+        self.response.show_window = js
         return self
         
     def redirect(self,url):
@@ -221,12 +221,12 @@ class Dialog:
     def cancel(self,msg=None):
         if msg is not None:
               self.notify(msg)
-        return self.stop_caller().over()
+        return self.close_caller().over()
         
     def ok(self,msg=None):
         if msg is not None:
               self.notify(msg)
-        return self.stop_caller().over()
+        return self.close_caller().over()
         
 
 
@@ -276,7 +276,7 @@ class CancelDialog(Action):
     key = ESCAPE 
     
     def run_in_dlg(self,dlg):
-        yield dlg.stop_caller().over()
+        yield dlg.close_caller().over()
 
 class OK(Action):
     needs_validation = True
@@ -284,7 +284,7 @@ class OK(Action):
     key = RETURN
 
     def run_in_dlg(self,dlg):
-        yield dlg.stop_caller().over()
+        yield dlg.close_caller().over()
 
 
 
