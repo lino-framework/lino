@@ -251,6 +251,8 @@ class Report(actors.Actor): # actions.Action): #
     
     use_layouts = True
     
+    button_label = None
+    
     def __init__(self):
         actors.Actor.__init__(self)
         #actions.Action.__init__(self)
@@ -340,6 +342,9 @@ class Report(actors.Actor): # actions.Action): #
                     self._slaves.append(sl)
         else:
             self._slaves = []
+            
+        if self.button_label is None:
+            self.button_label = self.label
 
         self._setup_doing = False
         self._setup_done = True

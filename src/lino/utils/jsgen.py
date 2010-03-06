@@ -69,7 +69,7 @@ def py2js(v,**kw):
     if isinstance(v,dict): # ) is types.DictType:
         #~ print 20100226, repr(v)
         return "{ %s }" % ", ".join([
-            "%s: %s" % (id2js(k),py2js(v)) for k,v in v.items()])
+            "%s: %s" % (key2js(k),py2js(v)) for k,v in v.items()])
     if isinstance(v,bool): # types.BooleanType:
         return str(v).lower()
     if isinstance(v, (int, long)):
@@ -125,8 +125,13 @@ def py2js(v,**kw):
     
 """
 
+def key2js(s):
+    if isinstance(s,str):
+        return s
+    return simplejson.dumps(s,cls=DjangoJSONEncoder)
+    
 def id2js(s):
-    return s.replace('.','_').replace(' ','_')
+    return s.replace('.','_')
   
 class js_code:
     "A string that py2js will represent as is, not between quotes."
@@ -190,7 +195,7 @@ class Variable(Value):
         for v in self.subvars():
             for ln in v.js_declare():
                 yield ln
-        value = self.as_ext_value()
+        value = '\n'.join(self.js_value())
         if self.declare_type == DECLARE_INLINE:
             pass
         elif self.declare_type == DECLARE_VAR:
@@ -204,22 +209,22 @@ class Variable(Value):
                 
     def as_ext(self):
         if self.declare_type == DECLARE_INLINE:
-            return self.as_ext_value()
+            return '\n'.join(self.js_value())
         if self.declare_type == DECLARE_THIS:
             return "this." + self.ext_name
         return self.ext_name
 
-    def as_ext_value(self):
-        return self.value_template % py2js(self.value)
+    def js_value(self):
+        yield self.value_template % py2js(self.value)
         
 class Component(Variable): 
     
     def __init__(self,name=None,**options):
         Variable.__init__(self,name,options)
         
-    def as_ext_value(self):
+    def js_value(self):
         value = self.ext_options(**self.value)
-        return self.value_template % py2js(value)
+        yield self.value_template % py2js(value)
         
     def ext_options(self,**kw):
         kw.update(self.value)
@@ -233,8 +238,9 @@ class Function(Variable):
     def __init__(self,name=None):
         Variable.__init__(self,name,None)
         
-    def as_ext_value(self):
-        return '\n'.join(self.js_render())
+    def js_value(self):
+        for ln in self.js_render():
+            yield ln
         
     
       
@@ -244,7 +250,10 @@ class Object(Function):
         self.params = params
         Function.__init__(self,name)
         
-    def as_ext_value(self):
-        return "new " + '\n  '.join(self.js_render()) + "(" + self.params + ")"
+    def js_value(self):
+        yield "new " 
+        for ln in self.js_render():
+            yield "  " + ln
+        yield "(" + self.params + ")"
     
       

@@ -315,16 +315,16 @@ Lino.submit_property = function (caller,e) {
   })
 };
 
-Lino.load_properties = function(caller,url,record) { 
-  if(caller.properties_window.hidden) return;
+Lino.load_properties = function(caller,pw,url,record) { 
+  if(pw.hidden) return;
   if(record === undefined) return;
   // console.log('load_properties',caller,url,record);
   var params = {mt:caller.content_type, mk:record.id}; // URL_PARAM_MASTER_TYPE, URL_PARAM_MASTER_PK
   var on_success = function(response) {
     var result = Ext.decode(response.responseText);
-    caller.properties_window.setTitle(result.title);
+    pw.window.setTitle(result.title);
     // var grid = caller.properties_window.items.get(0);
-    var grid = caller.properties_window.items.get(0).items.get(0);
+    var grid = pw.window.items.get(0).items.get(0);
     for (i in result.rows) {
       grid.setProperty(result.rows[i].name,result.rows[i].value)
     }
@@ -598,7 +598,7 @@ Ext.override(Ext.form.ComboBox, {
     },
     setContextValues : function(values){
       if(this.contextParams) {
-        console.log(this.name,'.setQueryContext',this.contextParams,'=',values);
+        // console.log(this.name,'.setQueryContext',this.contextParams,'=',values);
         if (this.contextValues === undefined) {
           this.contextValues = values;
           this.lastQuery = null;

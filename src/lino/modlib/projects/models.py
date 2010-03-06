@@ -13,6 +13,8 @@
 
 
 from django.db import models
+from django.utils.translation import ugettext as _
+
 from lino.modlib import fields
 from lino import reports
 
@@ -47,4 +49,5 @@ class Project(models.Model):
 class Projects(reports.Report):
     model = 'projects.Project'
     order_by = "name"
+    button_label = _("Projects")
     

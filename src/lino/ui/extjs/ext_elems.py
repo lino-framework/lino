@@ -16,18 +16,14 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.utils.translation import ugettext as _
 
-
 import lino
 
 from lino import layouts, reports, actions
-
 from lino.utils import constrain
 from lino.utils import jsgen
 from lino.utils.jsgen import py2js, Variable, Component, id2js, js_code
 from lino.utils import chooser
-
 from lino.ui.extjs import ext_requests
-
 from lino.modlib.properties import models as properties # import Property, CharPropValue
 
 EXT_CHAR_WIDTH = 9
@@ -481,7 +477,7 @@ class ForeignKeyElement(FieldElement):
         #~ if cp:
         chooser = self.lh.datalink.choosers[self.field.name]
         if chooser.context_values:
-            yield "this.main_grid.add_row_listener(function(sm,rowIndex,record) {" 
+            yield "if(this.main_grid) this.main_grid.add_row_listener(function(sm,rowIndex,record) {" 
             yield "  %s.setContextValues([" % self.as_ext()
             for name in chooser.context_values:
                 yield "record.data.%s," % name
@@ -999,10 +995,10 @@ class MainPanel(jsgen.Variable):
         #~ yield self.cmenu
         
   
-    def js_body(self):
-        yield "this.content_type = %s;" % py2js(self.lh.datalink.content_type)
-        for ln in jsgen.Variable.js_body(self):
-            yield ln
+    #~ def js_body(self):
+        #~ yield "this.content_type = %s;" % py2js(self.lh.datalink.content_type)
+        #~ for ln in jsgen.Variable.js_body(self):
+            #~ yield ln
         
                 
     @classmethod
@@ -1080,7 +1076,7 @@ class GridMainPanel(GridElement,MainPanel):
         kw.update(bbar=self.rh.grid_buttons)
         return kw
         
-    def js_declare(self):
+    def unused_js_declare(self):
         self.setup()
         for ln in Container.js_declare(self):
             #~ print 20100226, repr(ln)
@@ -1101,7 +1097,7 @@ class GridMainPanel(GridElement,MainPanel):
         #~ #yield "  %s.load({params:{limit:this.pager.pageSize,start:this.pager.cursor}});" % self.rh.store.as_ext()
         #~ yield "}, this, {delay:100});"
         
-    def js_body(self):
+    def unused_js_body(self):
         for ln in MainPanel.js_body(self):
         #~ for ln in super(GridMainPanel,self).js_body():
             yield ln
@@ -1176,7 +1172,7 @@ class DetailMainPanel(Panel,WrappingMainPanel):
         #d.update(standardSubmit=True)
         return kw
         
-    def js_declare(self):
+    def unused_js_declare(self):
         #yield "console.log(10);"
         #~ yield "// begin DetailMainPanel.js_declare()"
         yield "this.refresh = function() { if(caller) caller.refresh(); };"
@@ -1264,7 +1260,7 @@ class DetailMainPanel(Panel,WrappingMainPanel):
         yield "}"
         yield "// end DetailMainPanel.js_declare()"
         
-    def js_body(self):
+    def unused_js_body(self):
         for ln in super(DetailMainPanel,self).js_body():
             yield ln
         yield "if(this.main_grid) {"
@@ -1304,7 +1300,7 @@ class FormMainPanel(Panel,WrappingMainPanel):
             yield e
             
 
-    def js_body(self):
+    def unused_js_body(self):
         yield "  this.get_values = function() {"
         yield "    var v = {};"
         for e in self.lh.datalink.inputs:

@@ -15,6 +15,7 @@
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
+from django.utils.translation import ugettext as _
 
 from lino.modlib import fields, tools
 from lino import reports
@@ -97,11 +98,13 @@ class Notes(reports.Report):
     model = 'notes.Note'
     columnNames = "id date user short * text"
     order_by = "id"
+    button_label = _("Notes")
 
 class MyNotes(Notes):
     fk_name = 'user'
     columnNames = "date short * text user"
     can_view = perms.is_authenticated
+    button_label = _("My Notes")
     
     def setup_request(self,req):
         #print 20091211, "MyNotes.setup_request"
