@@ -64,18 +64,18 @@ class GridColumn(Component):
     value_template = "new Ext.grid.Column(%s)"
     
     def __init__(self,editor,**kw):
-        Component.__init__(self,editor.name,**kw)
         self.editor = editor
         self.value_template = editor.grid_column_template
+        kw.update(self.editor.get_column_options())
+        kw.update(editor=self.editor)
+        Component.__init__(self,editor.name,**kw)
     
         #~ if self.editable:
             #~ editor = self.get_field_options()
         
-    def ext_options(self,**kw):
-        kw = Component.ext_options(self,**kw)
-        kw.update(self.editor.get_column_options())
-        kw.update(editor=self.editor)
-        return kw
+    #~ def ext_options(self,**kw):
+        #~ kw = Component.ext_options(self,**kw)
+        #~ return kw
         
 class ComboBox(Component):
     value_template = 'new Ext.form.ComboBox(%s)'
@@ -971,6 +971,8 @@ class MainPanel(jsgen.Variable):
     def get_datalink(self):
         raise NotImplementedError
         
+    def apply_window_config(self,wc):
+        pass
   
     def setup(self):
         pass
@@ -1047,6 +1049,13 @@ class GridMainPanel(GridElement,MainPanel):
             return
         MainPanel.setup(self)
         self.pager = PagingToolbar(self,'pager')
+        
+    def apply_window_config(self,wc):
+        #~ print 20100310, wc.column_widths
+        i = 0
+        for w in wc.column_widths:
+            self.column_model.columns[i].update(width=w)
+            i += 1
         
     def subvars(self):
         for e in GridElement.subvars(self):

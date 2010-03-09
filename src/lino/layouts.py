@@ -44,55 +44,17 @@ class DataLink:
     def get_absolute_url(self,*args,**kw):
         raise NotImplementedError
 
-#~ def register_dialog_class(cls):
-    #~ if cls.__name__ == 'DialogLayout':
-        #~ return
-    #~ lino.log.debug("register_layout_class(%s)", cls)
-    #~ cls.app_label = cls.__module__.split('.')[-2]
-    #~ dialogs.append(cls)
-    
-#~ def get_dialog(app_label,name):
-    #~ app = models.get_app(app_label)
-    #~ cls = getattr(app,name,None)
-    #~ if cls is None:
-        #~ return None
-    #~ return cls()
-
-
-#~ def setup():
-    #~ lino.log.debug("Instantiate forms.")
-    
-
-#~ class DialogLayoutMetaClass(type):
-    #~ def __new__(meta, classname, bases, classDict):
-        #~ cls = type.__new__(meta, classname, bases, classDict)
-        #~ register_dialog_class(cls)
-        #~ return cls
-
-    #~ def __init__(cls, name, bases, dict):
-        #~ type.__init__(cls,name, bases, dict)
-        #~ cls.instance = None 
-
-    #~ def __call__(cls,*args,**kw):
-        #~ if cls.instance is None:
-            #~ cls.instance = type.__call__(cls,*args, **kw)
-        #~ return cls.instance
-
-
-
 
 class Layout:
     """
     A Layout specifies how fields of a Report should be arranged when they are
     displayed in a form or a grid. 
     
-    Each Layout will get one LayoutHandle per UI that analyzes it's Layout's
-    "descriptor" and builds a tree of LayoutElements. 
-    
     A layout descriptor is a plain text with some simple rules:
     - each word will lead to an element
     - ...todo...
     
+   
     """
     # for internal use:
     join_str = None # set by subclasses
@@ -148,14 +110,12 @@ class StaticText:
     def __init__(self,text):
           self.text = text
 
-#~ class PropertyGrid:
-    #~ pass
 
 class LayoutHandle:
     """
-    todo: 
-    - remove '_ld' attribute and test whether all external code is converted to use 'layout' instead
-    - rename this. It is not a handle in the same meaning as for Report and Form.
+    Each UI will create one LayoutHandle per Layout.
+    LayoutHandle instances are stored in the ReportHandle or FormHandle to which they belong. 
+    LayoutHandle analyzes it's Layout's descriptor and builds a tree of LayoutElements.    
     """
     start_focus = None
     
@@ -174,8 +134,8 @@ class LayoutHandle:
             self.name = dl.name + str(index)
         #lino.log.debug('LayoutHandle.__init__(%s)',self.name)
         self.datalink = dl
-        self.dl = NotImplementedError('LayoutHandle.dl renamed to LayoutHandle.datalink')
-        self.link = NotImplementedError('LayoutHandle.link renamed to LayoutHandle.datalink')
+        #~ self.dl = NotImplementedError('LayoutHandle.dl renamed to LayoutHandle.datalink')
+        #~ self.link = NotImplementedError('LayoutHandle.link renamed to LayoutHandle.datalink')
         #~ self.link = dl
         self.index = index
         self.label = layout.label or ''

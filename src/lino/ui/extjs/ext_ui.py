@@ -42,7 +42,7 @@ from lino.modlib.properties import models as properties
 
 from django.conf.urls.defaults import patterns, url, include
 
-
+WC_TYPE_GRID = 'grid'
 
 def build_url(*args,**kw):
     url = "/".join(args)  
@@ -62,30 +62,70 @@ def json_response(x):
 
 
 
+#~ class Param:
+    #~ def parse(self,s):
+        #~ return s
+    
+#~ class CharParam(Param):
+    #~ pass
+  
+#~ class IntegerParam(Param):
+    #~ pass
+        
+#~ class ListOfIntParam(Param):
+    #~ def parse(self,s):
+        #~ return s
+      
 
 class SaveWindowConfig(actions.Command):
+    #~ params_def = dict(
+      #~ name=actions.CharParam(),
+      #~ type=actions.CharParam(),
+      #~ height=actions.IntegerParam(),
+      #~ width=actions.IntegerParam(),
+      #~ x=actions.IntegerParam(),
+      #~ y=actions.IntegerParam(),
+      #~ maximized=actions.BooleanParam(),
+      #~ column_widths=actions.ListOfIntParam(),
+    #~ )
   
-    #~ def run_in_dlg(self,dlg,name):
     def run_in_dlg(self,dlg):
-        #~ h = int(context.request.POST.get('h'))
-        #~ w = int(context.request.POST.get('w'))
-        name = dlg.get('name')
-        h = int(dlg.get('h'))
-        w = int(dlg.get('w'))
-        maximized = dlg.get('max')
-        if maximized == 'true':
-            maximized = True
+        wc = WindowConfig(dlg.params)
+        yield dlg.confirm(u"Save %s\nAre you sure?" % wc)
+        ui.save_window_config(wc.name,wc) 
+        yield dlg.notify(u"%r has been saved" % wc).over()
+
+class WindowConfig:
+    "pickleable object"
+    def __init__(self,params):
+        self.name = params.get('name')[0]
+        self.type = params.get('window_config_type')[0]
+        self.height = int(params.get('h')[0])
+        self.width = int(params.get('w')[0])
+        self.maximized = params.get('max')[0]
+        if self.maximized == 'true':
+            self.maximized = True
         else:
-            maximized = False
-        x = int(dlg.get('x'))
-        y = int(dlg.get('y'))
-        yield dlg.confirm("Save %r window config (%r,%r,%r,%r,%r)\nAre you sure?" % (name,x,y,h,w,maximized))
-        #~ ui.window_configs[name] = (x,y,w,h,maximized)
-        #~ ui.save_window_configs()
-        ui.save_window_config(name,(x,y,w,h,maximized))
-        yield dlg.notify("Window config %r has been saved" % name).over()
-
-
+            self.maximized = False
+        self.x = int(params.get('x')[0])
+        self.y = int(params.get('y')[0])
+        cw = params.get('column_widths',None)
+        if cw is not None: 
+            ocw = cw
+            cw = []
+            for w in ocw:
+                if w: 
+                    cw.append(int(w))
+                else:
+                    cw.append(100)
+            #~ cw = map(int,cw)
+        self.column_widths = cw
+        
+    def __unicode__(self):
+        return u"WindowConfig %r (%r,%r,%r,%r,%r,%r,%r)" % (
+          self.name,
+          self.type,self.x,self.y,self.height,self.width,
+          self.maximized,self.column_widths)
 
 
 """
@@ -136,24 +176,11 @@ class Window(jsgen.Component):
         kw.update(layout='fit')
         kw.update(items=self.main)
         
-        jsgen.Component.__init__(self,name,**kw)
-        
-    def subvars(self):
-        yield self.main
-        
-    def ext_options(self,**kw):
-        
         js = 'Lino.save_window_config(this)'
         kw.update(tools=[dict(id='save',handler=js_code(js))])
         
-        if self.lh is not None: # report.use_layouts:
-            
-            if self.lh.start_focus is not None:
-                kw.update(defaultButton=self.lh.start_focus.name)
-        
         #name = id2js(self.rr.layout.name)
         wc = self.ui.load_window_config(self.permalink_name)
-        #kw.update(defaultButton=self.lh.link.inputs[0].name)
         if wc is None:
             #~ if self.rr.report.use_layouts:
             if self.lh is not None: 
@@ -166,15 +193,35 @@ class Window(jsgen.Component):
                 else:
                     kw.update(width=self.lh.width*EXT_CHAR_WIDTH + 10*EXT_CHAR_WIDTH)
         else:
-            assert len(wc) == 5
-            kw.update(x=wc[0])
-            kw.update(y=wc[1])
-            kw.update(width=wc[2])
-            kw.update(height=wc[3])
-            #kw.update(width=js_code('Lino.viewport.getWidth()*%d/100' % wc[0]))
-            #kw.update(height=js_code('Lino.viewport.getHeight()*%d/100' % wc[1]))
-            kw.update(maximized=wc[4])
-        return kw
+            if isinstance(wc,WindowConfig):
+                kw.update(x=wc.x)
+                kw.update(y=wc.y)
+                kw.update(width=wc.width)
+                kw.update(height=wc.height)
+                kw.update(maximized=wc.maximized)
+                if lh is not None:
+                    lh._main.apply_window_config(wc)
+            elif len(wc) == 5: # only for backwards compatibility
+                kw.update(x=wc[0])
+                kw.update(y=wc[1])
+                kw.update(width=wc[2])
+                kw.update(height=wc[3])
+                kw.update(maximized=wc[4])
+        
+        if self.lh is not None: # report.use_layouts:
+            if self.lh.start_focus is not None:
+                kw.update(defaultButton=self.lh.start_focus.name)
+        #kw.update(defaultButton=self.lh.link.inputs[0].name)
+        
+        
+        jsgen.Component.__init__(self,name,**kw)
+        
+    def subvars(self):
+        yield self.main
+        
+    #~ def ext_options(self,**kw):
+        
+        #~ return kw
             
     #~ def js_body(self):
         #~ # for permalink:
@@ -187,9 +234,12 @@ class Window(jsgen.Component):
 
 class WindowWrapper(jsgen.Object):
   
+    window_config_type = None
+    
     def __init__(self,name,window):
         #~ permalink_name = id2js(rr.layout.name)
         assert window.ext_name == 'window', ("expected 'window' but got %r" % window.ext_name)
+        assert self.window_config_type is not None, "%s.window_config_type is None" % self.__class__
         self.window = window
         jsgen.Object.__init__(self,name)
         
@@ -203,6 +253,9 @@ class WindowWrapper(jsgen.Object):
         yield "// main %s" % self
         
     def js_show(self):
+        return []
+        
+    def js_window_config(self):
         return []
         
     def js_preamble(self):
@@ -236,6 +289,13 @@ class WindowWrapper(jsgen.Object):
             yield "  // variable %s contributes:" % v.ext_name
             for ln in v.js_body():
                 yield "  " + ln
+        yield "this.window._permalink_name = %s;" % py2js(self.window.permalink_name)
+        yield "this.get_window_config = function() {"
+        yield "  var wc = { window_config_type: %r }" % self.window_config_type
+        for ln in self.js_window_config():
+            yield "  " + ln
+        yield "  return wc;"
+        yield "}"
         yield "  // end js_render() %s" % self
         yield "}"
         
@@ -252,7 +312,7 @@ class MasterWrapper(WindowWrapper):
     def js_preamble(self):
         if self.datalink.content_type is not None:
             yield "this.content_type = %s;" % py2js(self.datalink.content_type)
-        
+            
     def vars(self):
         for w in self.datalink.slave_windows:
             yield w
@@ -262,7 +322,7 @@ class MasterWrapper(WindowWrapper):
             yield v
         
 class FormMasterWrapper(MasterWrapper):
-  
+    window_config_type = 'form'
     def js_main(self):
         #~ yield "// begin SlaveWrapper.js_body()"
         for ln in WindowWrapper.js_main(self):
@@ -273,11 +333,16 @@ class FormMasterWrapper(MasterWrapper):
             yield "    v[%r] = this.main_panel.getForm().findField(%r).getValue();" % (e.name,e.name)
         yield "    return v;"
         yield "  };"
-        yield "this.get_window_config = function() {"
-        yield "  return { 'window_type': 'form' }"
-        yield "}"
+        
     
-class GridMasterWrapper(MasterWrapper):
+class GridWrapperMixin:
+  
+    window_config_type = WC_TYPE_GRID
+    
+    def js_window_config(self):
+        yield "wc['column_widths'] = Ext.pluck(this.main_grid.colModel.columns,'width');"
+    
+class GridMasterWrapper(GridWrapperMixin,MasterWrapper):
   
     def js_main(self):
         for ln in MasterWrapper.js_main(self):
@@ -292,13 +357,6 @@ class GridMasterWrapper(MasterWrapper):
         yield "  var sels = this.main_grid.getSelectionModel().getSelections();"
         yield "  for(var i=0;i<sels.length;i++) { sel_pks += sels[i].id + ','; };"
         yield "  return sel_pks;"
-        yield "}"
-        yield "this.get_window_config = function() {"
-        #~ yield "  console.log(this.main_grid.colModel.columns);"
-        yield "  return {"
-        yield "    window_type: 'grid',"
-        yield "    column_widths: Ext.pluck(this.main_grid.colModel.columns,'width')"
-        yield "  }"
         yield "}"
         yield "this.main_grid.on('afteredit', Lino.grid_afteredit(this,'%s'));" \
           % self.datalink.get_absolute_url(grid_afteredit=True)
@@ -350,7 +408,7 @@ class SlaveWrapper(WindowWrapper):
         #~ yield "// end SlaveWrapper.js_body()"
 
 
-class GridSlaveWrapper(SlaveWrapper):
+class GridSlaveWrapper(GridWrapperMixin,SlaveWrapper):
   
     def __init__(self,master_lh,slave_rh):
         self.slave_rh = slave_rh
@@ -386,6 +444,8 @@ class GridSlaveWrapper(SlaveWrapper):
         
 class DetailSlaveWrapper(SlaveWrapper):
   
+    window_config_type = 'detail'
+    
     def __init__(self,master_lh,detail_lh,**kw):
         self.detail_lh = detail_lh
         permalink_name = id2js(detail_lh.name)
@@ -412,11 +472,11 @@ class DetailSlaveWrapper(SlaveWrapper):
         yield "}else{"
         yield "  this.main_grid = undefined;"
         yield "}"
-        yield "// DetailMainPanel.js_declare() called Panel.js_declare(self) :"
         #~ yield "var load_record = this.load_record = function(record) {"
         yield "this.load_record = function(record) {"
         yield "  this.current_record = record;" 
-        yield "  this.main_panel.form.loadRecord(record);"
+        yield "  if (record) this.main_panel.form.loadRecord(record)"
+        yield "  else this.main_panel.form.reset();"
         yield "};"
         yield "if(this.main_grid) {"
         yield "  this.main_grid.add_row_listener("
@@ -458,23 +518,11 @@ class DetailSlaveWrapper(SlaveWrapper):
         yield "  var sels = this.main_grid.getSelectionModel().getSelections()"
         yield "  if(sels.length > 0) this.load_record(sels[0]);"
         yield "}"
-        yield "this.get_window_config = function() {"
-        yield "  return { 'window_type': 'detail' }"
-        yield "}"
-
-
-
-
-
-
-
-
-
-
 
         
 
 class PropertiesWrapper(SlaveWrapper):
+    window_config_type = 'props'
     #~ declare_type = jsgen.DECLARE_THIS
     #~ value_template = "new Ext.Window(%s)"
     
@@ -544,10 +592,10 @@ class PropertiesWrapper(SlaveWrapper):
         yield "this.load_record = function(rec) {"
         yield "  Lino.load_properties(caller,this,%r,rec);" % url
         yield "}"
-        yield "this.get_window_config = function() {"
-        yield "  return { 'window_type': 'props' }"
-        yield "}"
         
+    def js_window_config(self):
+        yield "console.log('PropertiesWrapper',this.window.items.get(0).get(0));"
+        yield "wc['column_widths'] = Ext.pluck(this.window.items.get(0).get(0).colModel.columns,'width');"
 
 def key_handler(key,h):
     return dict(handler=h,key=key.keycode,ctrl=key.ctrl,alt=key.alt,shift=key.shift)
@@ -783,20 +831,6 @@ class ExtUI(base.UI):
         dlg = ext_requests.Dialog(request,self,actor,None)
         return self.start_dialog(dlg)
         
-    #~ def save_win_view(self,request,name=None):
-        #~ #print 'save_win_view()',name
-        #~ actor = SaveWindowConfig()
-        #~ dlg = ext_requests.Dialog(request,self,actor,None,name)
-        #~ return self.start_dialog(dlg)
-        
-
-    #~ def props_view(self,request,**kw):
-        #~ rh = properties.PropValuesByOwner().get_handle(self)
-        #~ rr = ext_requests.ViewReportRequest(request,rh)
-        #~ r = rr.render_to_json()
-        #~ return json_response(r)
-        
-
     def choices_view(self,request,app_label=None,rptname=None,fldname=None,**kw):
         rpt = actors.get_actor2(app_label,rptname)
         kw['choices_for_field'] = fldname

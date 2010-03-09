@@ -46,18 +46,24 @@ def authenticated_user(user):
 
 
 class Dialog(actions.Dialog):
-    def __init__(self,request,*args,**kw):
+    
+    def __init__(self,request,ui,actor,actor_name):
+        params = {}
+        for k,v in request.POST.iterlists():
+            #~ if type(v) == list and len(v)
+            params[k] = v
+        #~ params = dict(request.POST.iterlists())
         self.request = request
-        actions.Dialog.__init__(self,*args,**kw)
+        actions.Dialog.__init__(self,ui,actor,actor_name,params)
         #self.confirmed = self.request.POST.get('confirmed',None)
         
     def get_user(self):
         return authenticated_user(self.request.user)
         
-    def __getitem__(self,*args,**kw):
-        return self.request.POST.__getitem__(*args,**kw)
-    def get(self,*args,**kw):
-        return self.request.POST.get(*args,**kw)
+    #~ def __getitem__(self,*args,**kw):
+        #~ return self.request.POST.__getitem__(*args,**kw)
+    #~ def get(self,*args,**kw):
+        #~ return self.request.POST.get(*args,**kw)
         
     def get_report_request(self):
         raise NotImplementedError()

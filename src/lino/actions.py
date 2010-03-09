@@ -117,14 +117,16 @@ class Dialog:
     The current API is rather influenced by ExtJS...
     """
     selected_rows = []
+    params_def = ()
     
-    def __init__(self,ui,actor,action_name,*args,**kw):
+    def __init__(self,ui,actor,action_name,params):
         self.is_over = False
         self.ui = ui
         self.actor = actor
         self.action = actor.get_action(action_name)
-        self._kw = kw
-        self._args = args
+        self.params = params
+        #~ self.start_kw = start_kw
+        #~ self.start_args = start_args
         if not isinstance(self.action,Action):
             raise Exception("%s.get_action(%r) returned %r which is not an Action." % (actor,action_name,self.action))
         self.running = None
@@ -151,8 +153,8 @@ class Dialog:
         if self.action.needs_selection and len(self.selected_rows) == 0:
             #~ self.console_msg(_("No selection. Nothing to do.")).over()
             return DialogResponse(notify_msg=_("No selection. Nothing to do."))
-        lino.log.debug('Dialog._start() %s.%s(%r,%r)',self.actor,self.action.name,self._args,self._kw)
-        self.running = self.action.run_in_dlg(self,*self._args,**self._kw)
+        lino.log.debug('Dialog._start() %s.%s(%r)',self.actor,self.action.name,self.params)
+        self.running = self.action.run_in_dlg(self)
         r = self._step()
         self._open()
         return r
