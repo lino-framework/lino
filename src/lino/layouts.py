@@ -166,12 +166,12 @@ class LayoutHandle:
         self.width = self._main.width
         self.height = self._main.height
         self.write_debug_info()
-        self.default_button = None
-        if layout.default_button is not None:
-            for e in self._buttons:
-                if e.name == layout.default_button:
-                    self.default_button = e
-                    break
+        #~ self.default_button = None
+        #~ if layout.default_button is not None:
+            #~ for e in self._buttons:
+                #~ if e.name == layout.default_button:
+                    #~ self.default_button = e
+                    #~ break
                 
     def needs_store(self,rh):
         self._needed_stores.add(rh)

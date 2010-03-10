@@ -210,7 +210,6 @@ Lino.do_dialog = function(caller,url,params) {
         def js():
             yield "Lino.action_handler = function(caller,url) {"
             yield "  return function(event) {"
-            #yield "    // Lino.do_action(caller,url,name,{selected:caller.get_selected()});"
             yield "    Lino.do_dialog(caller,url,\
               {%s:caller.get_selected()});" % ext_requests.POST_PARAM_SELECTED
             yield "}};"
@@ -256,7 +255,7 @@ Lino.goto_permalink = function () {
 };""" % uri
 
         s += """
-Lino.form_action = function (caller,name,needs_validation,url) { 
+Lino.form_action = function (caller,needs_validation,url) { 
   return function(btn,evt) {
     // console.log('Lino.form_action()',caller,name,needs_validation);
     if (needs_validation && !caller.main_panel.form.isValid()) {

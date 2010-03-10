@@ -248,30 +248,46 @@ class ButtonElement(LayoutElement):
     preferred_height = 0
     value_template = "new Ext.Button(%s)"
 
+    def __init__(self,lh,name,label,**kw):
+        #~ self.button_text = button_text
+        if lh.layout.default_button == name:
+            kw.update(plugins='defaultButton')
+        kw.update(text=label)
+        #kw.update(maxHeight=self.preferred_height*EXT_CHAR_HEIGHT)
+        kw.update(maxWidth=len(label)*EXT_CHAR_WIDTH)
+        kw.update(id=name)
+        LayoutElement.__init__(self,lh,name,**kw)
+      
     def ext_options(self,**kw):
         kw = LayoutElement.ext_options(self,**kw)
-        if self.lh.default_button == self:
-            kw.update(plugins='defaultButton')
+        #~ kw.update(
+          #~ handler=js_code(self.ext_handler()),
+          #~ scope=js_code('this'))
         return kw
         
 class ActionElement(ButtonElement):
   
-    def __init__(self,lh,name,action,**kw):
+    def __init__(self,lh,name,action,handler,**kw):
         #lino.log.debug("ActionElement.__init__(%r,%r,%r)",lh,name,action)
+        label = action.label or name
+        kw.update(handler=js_code(handler),scope=js_code('this'))
         self.action = action
-        ButtonElement.__init__(self,lh,name,**kw)
+        ButtonElement.__init__(self,lh,name,label,**kw)
         
-    def ext_options(self,**kw):
-        kw = ButtonElement.ext_options(self,**kw)
-        #kw.update(xtype=self.xtype)
-        label = self.action.label or self.name
-        kw.update(text=label)
-        #kw.update(maxHeight=self.preferred_height*EXT_CHAR_HEIGHT)
-        kw.update(maxWidth=len(label)*EXT_CHAR_WIDTH)
-        kw.update(id=self.name)
-        kw.update(handler=js_code('Lino.form_action(this,%r,%s,%r)' % (
-          self.name,py2js(self.action.needs_validation),self.lh.ui.get_button_url(self))))
-        return kw
+        
+class FormActionElement(ActionElement):
+    def __init__(self,lh,fh,name,action,**kw):
+        handler = 'Lino.form_action(this,%s,%r)' % (
+            py2js(action.needs_validation),
+            lh.ui.get_form_action_url(fh,action))
+        ActionElement.__init__(self,lh,name,action,handler,**kw)
+        
+        
+class RowActionElement(ActionElement):
+    def __init__(self,lh,rh,name,action,**kw):
+        handler = 'Lino.action_handler(this,%r)' % (
+            rh.get_absolute_url(grid_action=action.name))
+        ActionElement.__init__(self,lh,name,action,handler,**kw)
 
 
 class StaticTextElement(LayoutElement):
@@ -1082,7 +1098,7 @@ class GridMainPanel(GridElement,MainPanel):
         del kw['title']
         kw.update(selModel=js_code("new Ext.grid.RowSelectionModel({singleSelect:false})"))
         kw.update(tbar=self.pager)
-        kw.update(bbar=self.rh.grid_buttons)
+        #~ kw.update(bbar=self.rh.grid_buttons)
         return kw
         
     def unused_js_declare(self):
@@ -1176,7 +1192,7 @@ class DetailMainPanel(Panel,WrappingMainPanel):
         #d.update(items=js_code("[%s]" % ",".join([e.as_ext() for e in self.elements])))
         kw.update(items=self.elements)
         #d.update(autoHeight=False)
-        kw.update(bbar=self.rh.detail_buttons)
+        #~ kw.update(bbar=self.bbar_buttons)
         #~ kw.update(bbar=self.buttons)
         #d.update(standardSubmit=True)
         return kw

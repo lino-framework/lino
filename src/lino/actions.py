@@ -239,21 +239,12 @@ class InsertRow(Action):
     label = _("Insert")
     key = INSERT # (ctrl=True)
     
-    def run(self,context):
-        #if len(context.selected_rows) != 1:
-        #    return context.error(_("More than one row selected."))
-        context.confirm(_("Insert new row. Are you sure?"))
-        rr = context.get_report_request()
-        row = rr.create_instance()
-        row.save()
-        context.refresh()
-        
     def run_in_dlg(self,dlg):
         yield dlg.confirm(_("Insert new row. Are you sure?"))
         rr = context.get_report_request()
         row = rr.create_instance()
         row.save()
-        yield dlg.refresh_caller()
+        yield dlg.refresh_caller().over()
         
         
   
@@ -274,7 +265,7 @@ class DeleteSelected(Action):
 
     
 class CancelDialog(Action):
-    label = "Cancel"
+    label = _("Cancel")
     key = ESCAPE 
     
     def run_in_dlg(self,dlg):
@@ -282,7 +273,7 @@ class CancelDialog(Action):
 
 class OK(Action):
     needs_validation = True
-    label = "OK"
+    label = _("OK")
     key = RETURN
 
     def run_in_dlg(self,dlg):
