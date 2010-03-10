@@ -93,15 +93,16 @@ Lino.save_window_config = function(caller,unused_url) {
   }
 };
 
-Lino.form_submit = function (job,url,store,pkname) {
-  // console.log("Lino.form_submit:",job);
+Lino.form_submit = function (url,pkname) {
+  // console.log("Lino.form_submit 1:",this);
   return function(btn,evt) {
+    // console.log('Lino.form_submit 2',this);
     p = {};
     // p[pkname] = store.getAt(0).data.id;
     // p[pkname] = job.current_pk;
-    p[pkname] = job.get_current_record().id;
-    // console.log('Lino.form_submit',p);
-    job.main_panel.form.submit({
+    p[pkname] = this.get_current_record().id;
+    var caller = this;
+    this.main_panel.form.submit({
       clientValidation: false,
       url: url, 
       failure: function(form, action) {
@@ -112,9 +113,9 @@ Lino.form_submit = function (job,url,store,pkname) {
       params: p, 
       waitMsg: 'Saving Data...', 
       success: function (form, action) {
-        Ext.MessageBox.alert('Saved OK',
-          action.result ? action.result.msg : '(undefined action result)');
-        store.reload();
+        Lino.notify(action.result ? action.result.msg : '(undefined action result)');
+        // this.main_grid.getStore().reload();
+        caller.refresh();
       }
     })
   } 
@@ -256,8 +257,8 @@ Lino.goto_permalink = function () {
 
         s += """
 Lino.form_action = function (caller,needs_validation,url) { 
+  console.log('Lino.form_action()',caller,name,needs_validation);
   return function(btn,evt) {
-    // console.log('Lino.form_action()',caller,name,needs_validation);
     if (needs_validation && !caller.main_panel.form.isValid()) {
         Ext.MessageBox.alert('error',"One or more fields contain invalid data.");
         return;
@@ -268,6 +269,7 @@ Lino.form_action = function (caller,needs_validation,url) {
 };
 
 Lino.toggle_window = function(btn,state,ww) {
+  console.log('Lino.toggle_window',ww);
   if(state) { ww.show() } else { ww.hide() }
 };
 

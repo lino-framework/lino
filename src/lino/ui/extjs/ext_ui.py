@@ -207,12 +207,22 @@ class WindowWrapper(jsgen.Object):
         assert window.ext_name == 'window', ("expected 'window' but got %r" % window.ext_name)
         assert self.window_config_type is not None, "%s.window_config_type is None" % self.__class__
         self.window = window
+        #~ rh.detail_buttons = []
+        #~ rh.grid_buttons = []
+        self.slave_windows = []
+        self.bbar_buttons = []
         jsgen.Object.__init__(self,name)
         wc = window.ui.load_window_config(window.permalink_name)
         self.apply_window_config(window,wc)
         
+        
     def vars(self):
+        for w in self.slave_windows:
+            yield w
+        for b in self.bbar_buttons:
+            yield b
         yield self.window
+        
         
     def __str__(self):
         return self.ext_name + "(" + self.__class__.__name__ + ")"
@@ -224,6 +234,9 @@ class WindowWrapper(jsgen.Object):
         return []
         
     def js_window_config(self):
+        return []
+        
+    def js_on_window_render(self):
         return []
         
     def js_preamble(self):
@@ -269,6 +282,7 @@ class WindowWrapper(jsgen.Object):
     def js_render(self):
         yield "function(caller) {"
         yield "  // begin js_render() %s" % self
+        yield "  this.caller = caller"
         for ln in self.js_preamble():
             yield "  " + ln
         #~ yield "  var client_job = this;" 
@@ -295,15 +309,14 @@ class WindowWrapper(jsgen.Object):
             for ln in v.js_body():
                 yield "  " + ln
         yield "this.window._permalink_name = %s;" % py2js(self.window.permalink_name)
+        for ln in self.js_on_window_render():
+            yield "  " + ln
         yield "this.get_window_config = function() {"
         yield "  var wc = { window_config_type: %r }" % self.window_config_type
         for ln in self.js_window_config():
             yield "  " + ln
         yield "  return wc;"
         yield "}"
-        
-        # also needed by SlaveGridWrapper:
-        yield "this.get_current_record = function() { return this.main_grid.getSelectionModel().getSelected()};"
         
         yield "  // end js_render() %s" % self
         yield "}"
@@ -317,11 +330,6 @@ class MasterWrapper(WindowWrapper):
         window = WrappedWindow(self,datalink.ui, "window", lh._main, lh, permalink_name, **kw)
         WindowWrapper.__init__(self,datalink.name,window)
         
-        #~ rh.detail_buttons = []
-        #~ rh.grid_buttons = []
-        self.slave_windows = []
-        self.bbar_buttons = []
-        
         
     def apply_window_config(self,win,wc):
         WindowWrapper.apply_window_config(self,win,wc)
@@ -332,14 +340,6 @@ class MasterWrapper(WindowWrapper):
         if self.datalink.content_type is not None:
             yield "this.content_type = %s;" % py2js(self.datalink.content_type)
             
-    def vars(self):
-        for w in self.slave_windows:
-            yield w
-        for b in self.bbar_buttons:
-            yield b
-        for v in WindowWrapper.vars(self):
-            yield v
-        
 class FormMasterWrapper(MasterWrapper):
   
     window_config_type = 'form'
@@ -354,7 +354,7 @@ class FormMasterWrapper(MasterWrapper):
         fh.lh._main.update(bbar=self.bbar_buttons)
         
     def js_main(self):
-        #~ yield "// begin SlaveWrapper.js_body()"
+        #~ yield "// begin SlaveWrapper.js_main()"
         for ln in super(FormMasterWrapper,self).js_main():
             yield ln
         yield "  this.get_values = function() {"
@@ -365,7 +365,15 @@ class FormMasterWrapper(MasterWrapper):
         yield "  };"
         
     
+class unused_ReportWrapperMixin: 
+    """
+    Used by GridMasterWrapper and DetailSlaveWrapper (all windows that 
+    """
+  
 class GridWrapperMixin:
+    """
+    Used by GridMasterWrapper and GridSlaveWrapper
+    """
   
     window_config_type = WC_TYPE_GRID
     
@@ -431,6 +439,8 @@ class GridMasterWrapper(GridWrapperMixin,MasterWrapper):
         yield "    this.pager.pageSize = cmp.calculatePageSize(this,aw,ah,rw,rh) || 10;" 
         yield "    this.refresh();"
         yield "  }, this, {delay:500});"
+        yield "this.get_current_record = function() { return this.main_grid.getSelectionModel().getSelected()};"
+        
         
   
 
@@ -468,8 +478,14 @@ class SlaveWrapper(WindowWrapper):
         yield "this.window.on('hide',"
         yield "  function(){ caller.%s.toggle(false)},this);" % self.button.ext_name
         yield "this.window.on('show',function(){this.load_record(caller.get_current_record())},this)" 
-        yield "caller.main_grid.add_row_listener(function(sm,ri,rec){this.load_record(rec)},this);"
         #~ yield "// end SlaveWrapper.js_body()"
+        
+    def js_on_window_render(self):
+        yield "this.window.on('render',function() {"
+        yield "  this.caller.main_grid.add_row_listener(function(sm,ri,rec){this.load_record(rec)},this);"
+        yield "  var sels = this.caller.main_grid.getSelectionModel().getSelections()"
+        yield "  if(sels.length > 0) this.load_record(sels[0]);"
+        yield "},this)"
 
 
 class GridSlaveWrapper(GridWrapperMixin,SlaveWrapper):
@@ -481,17 +497,20 @@ class GridSlaveWrapper(GridWrapperMixin,SlaveWrapper):
         permalink_name = id2js(slave_lh.name)
         window = WrappedWindow(self,master_lh.ui,'window',slave_lh._main,slave_lh,permalink_name)
         SlaveWrapper.__init__(self, master_lh, slave_rh.name, window, button_text)
+        self.bbar_buttons = slave_rh.window_wrapper.bbar_buttons
+        self.slave_windows = slave_rh.window_wrapper.slave_windows
+        slave_lh._main.update(bbar=self.bbar_buttons)
         
     def js_preamble(self):
         yield "this.content_type = %s;" % py2js(self.slave_rh.content_type)
         
-    def vars(self):
-        for w in self.slave_rh.window_wrapper.slave_windows:
-            yield w
-        for b in self.slave_rh.window_wrapper.bbar_buttons:
-            yield b
-        for v in WindowWrapper.vars(self):
-            yield v
+    #~ def vars(self):
+        #~ for w in self.slave_rh.window_wrapper.slave_windows:
+            #~ yield w
+        #~ for b in self.slave_rh.window_wrapper.bbar_buttons:
+            #~ yield b
+        #~ for v in WindowWrapper.vars(self):
+            #~ yield v
             
     def js_main(self):
         #~ yield "// begin SlaveWrapper.js_body()"
@@ -517,45 +536,17 @@ class DetailSlaveWrapper(SlaveWrapper):
         button_text = detail_lh.label
         SlaveWrapper.__init__(self, master_lh, detail_lh.name, window, button_text)
         
-    def js_preamble(self):
-        yield "this.content_type = %s;" % py2js(self.detail_lh.datalink.content_type)
+        rh = detail_lh.datalink
         
-    def js_main(self):
-        #~ yield "// begin SlaveWrapper.js_body()"
-        #~ for ln in WindowWrapper.js_main(self):
-        for ln in super(DetailSlaveWrapper,self).js_main():
-            yield ln
-        yield "this.refresh = function() { if(caller) caller.refresh(); };"
-        yield "this.get_current_record = function() { return this.current_record;};"
-        yield "this.get_selected = function() {"
-        yield "  if (this.current_record) return this.current_record.id;"
-        yield "}"
-        yield "if(caller) {"
-        #yield "  this.add_row_listener = function(fn,scope){caller.add_row_listener(fn,scope)};"
-        yield "  this.main_grid = caller.main_grid;"
-        yield "  this.properties_window = caller.properties_window;"
-        yield "}else{"
-        yield "  this.main_grid = undefined;"
-        yield "}"
-        #~ yield "var load_record = this.load_record = function(record) {"
-        yield "this.load_record = function(record) {"
-        yield "  this.current_record = record;" 
-        yield "  if (record) this.main_panel.form.loadRecord(record)"
-        yield "  else this.main_panel.form.reset();"
-        yield "};"
-        yield "if(this.main_grid) {"
-        yield "  this.main_grid.add_row_listener("
-        yield "    function(sm,rowIndex,record) { this.load_record(record); },this);"
-      
-      
-        #das folgende muss nach rh.detail_buttons:
+        for a in rh.get_actions():
+            self.bbar_buttons.append(ext_elems.RowActionElement(detail_lh,rh,a.name,a)) 
         
         keys = []
         buttons = []
 
         #main_name = id2js(self.lh.link.row_layout.name) + '.' + 'main_grid'
         key = actions.PAGE_UP
-        js = js_code("function() {this.main_grid.getSelectionModel().selectPrevious()}")
+        js = js_code("function() {console.log('20100310e'); this.main_grid.getSelectionModel().selectPrevious()}")
         keys.append(dict(
           handler=js,
           scope=js_code('this'),
@@ -570,22 +561,56 @@ class DetailSlaveWrapper(SlaveWrapper):
           key=key.keycode,ctrl=key.ctrl,alt=key.alt,shift=key.shift))
         buttons.append(dict(handler=js,scope=js_code('this'),text="Next"))
         
-        url = self.detail_lh.datalink.get_absolute_url(submit=True)
-        js = js_code("Lino.form_submit(this,'%s',this.main_grid.getStore(),'%s')" % (
-                url,self.detail_lh.datalink.store.pk.name))
-        buttons.append(dict(handler=js,text='Submit'))
+        #~ url = self.detail_lh.datalink.get_absolute_url(submit=True)
+        #~ js = js_code("Lino.form_submit(this,'%s','%s')" % (
+                #~ url,self.detail_lh.datalink.store.pk.name))
+        #~ buttons.append(dict(handler=js,text='Submit'))
         
-        if len(keys):
-            yield "this.main_panel.keys = %s;" % py2js(keys)
-        for btn in buttons:
-            yield "this.main_panel.addButton(%s);" % py2js(btn)
+        self.bbar_buttons.append(ext_elems.SubmitActionElement(detail_lh,rh))
+        
+        #~ if len(keys):
+            #~ yield "this.main_panel.keys = %s;" % py2js(keys)
+        #~ for btn in buttons:
+            #~ yield "this.main_panel.addButton(%s);" % py2js(btn)
+        #~ yield "}"
+        detail_lh._main.update(bbar=self.bbar_buttons)
+        
+        
+        
+    def js_preamble(self):
+        yield "this.content_type = %s;" % py2js(self.detail_lh.datalink.content_type)
+        
+    def js_main(self):
+        #~ yield "// begin SlaveWrapper.js_body()"
+        #~ for ln in WindowWrapper.js_main(self):
+        for ln in super(DetailSlaveWrapper,self).js_main():
+            yield ln
+        yield "this.refresh = function() { if(caller) caller.refresh(); };"
+        yield "this.get_current_record = function() { return this.current_record;};"
+        yield "this.get_selected = function() {"
+        yield "  if (this.current_record) return this.current_record.id;"
         yield "}"
-        #~ yield "// end DetailMainPanel.js_declare()"
+        yield "this.load_record = function(record) {"
+        yield "  this.current_record = record;" 
+        yield "  if (record) this.main_panel.form.loadRecord(record)"
+        yield "  else this.main_panel.form.reset();"
+        yield "};"
         
-        yield "if(this.main_grid) {"
+    def unused_js_on_window_render(self):
+        yield "this.window.on('render',function() {"
+        yield "if(caller) {"
+        #yield "  this.add_row_listener = function(fn,scope){caller.add_row_listener(fn,scope)};"
+        yield "  this.main_grid = caller.main_grid;"
+        yield "  this.properties_window = caller.properties_window;"
+        yield "console.log('20100310f'); "
+        yield "  this.main_grid.add_row_listener("
+        yield "    function(sm,rowIndex,record) { this.load_record(record); },this);"
         yield "  var sels = this.main_grid.getSelectionModel().getSelections()"
         yield "  if(sels.length > 0) this.load_record(sels[0]);"
+        yield "}else{"
+        yield "  this.main_grid = undefined;"
         yield "}"
+        yield "},this)"
 
         
 

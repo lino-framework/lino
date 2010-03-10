@@ -258,36 +258,44 @@ class ButtonElement(LayoutElement):
         kw.update(id=name)
         LayoutElement.__init__(self,lh,name,**kw)
       
-    def ext_options(self,**kw):
-        kw = LayoutElement.ext_options(self,**kw)
-        #~ kw.update(
-          #~ handler=js_code(self.ext_handler()),
-          #~ scope=js_code('this'))
-        return kw
+    #~ def ext_options(self,**kw):
+        #~ kw = LayoutElement.ext_options(self,**kw)
+        #~ return kw
         
 class ActionElement(ButtonElement):
   
-    def __init__(self,lh,name,action,handler,**kw):
+    def __init__(self,lh,name,action,onclick,**kw):
         #lino.log.debug("ActionElement.__init__(%r,%r,%r)",lh,name,action)
         label = action.label or name
-        kw.update(handler=js_code(handler),scope=js_code('this'))
+        kw.update(handler=js_code(onclick),scope=js_code('this'))
         self.action = action
         ButtonElement.__init__(self,lh,name,label,**kw)
         
         
 class FormActionElement(ActionElement):
     def __init__(self,lh,fh,name,action,**kw):
-        handler = 'Lino.form_action(this,%s,%r)' % (
+        onclick = 'Lino.form_action(this,%s,%r)' % (
             py2js(action.needs_validation),
             lh.ui.get_form_action_url(fh,action))
-        ActionElement.__init__(self,lh,name,action,handler,**kw)
+        ActionElement.__init__(self,lh,name,action,onclick,**kw)
         
         
 class RowActionElement(ActionElement):
     def __init__(self,lh,rh,name,action,**kw):
-        handler = 'Lino.action_handler(this,%r)' % (
+        onclick = 'Lino.action_handler(this,%r)' % (
             rh.get_absolute_url(grid_action=action.name))
-        ActionElement.__init__(self,lh,name,action,handler,**kw)
+        ActionElement.__init__(self,lh,name,action,onclick,**kw)
+
+class SubmitActionElement(ButtonElement):
+  
+    def __init__(self,lh,rh,**kw):
+        url = rh.get_absolute_url(submit=True)
+        onclick = \
+            "Lino.form_submit('%s','%s')" % (url, rh.store.pk.name)
+        kw.update(handler=js_code(onclick),scope=js_code('this'))
+        ButtonElement.__init__(self,lh,'submit_btn',_('Submit'),**kw)
+        
+        
 
 
 class StaticTextElement(LayoutElement):
@@ -1196,105 +1204,6 @@ class DetailMainPanel(Panel,WrappingMainPanel):
         #~ kw.update(bbar=self.buttons)
         #d.update(standardSubmit=True)
         return kw
-        
-    def unused_js_declare(self):
-        #yield "console.log(10);"
-        #~ yield "// begin DetailMainPanel.js_declare()"
-        yield "this.refresh = function() { if(caller) caller.refresh(); };"
-        yield "this.get_current_record = function() { return this.current_record;};"
-        yield "this.get_selected = function() {"
-        yield "  if (this.current_record) return this.current_record.id;"
-        yield "}"
-        yield "if(caller) {"
-        #yield "  this.add_row_listener = function(fn,scope){caller.add_row_listener(fn,scope)};"
-        yield "  this.main_grid = caller.main_grid;"
-        yield "  this.properties_window = caller.properties_window;"
-        yield "}else{"
-        #yield "  this.add_row_listener = function(fn,scope) {};"
-        yield "  this.main_grid = undefined;"
-        yield "}"
-        #~ yield "// DetailMainPanel.js_declare() calls Panel.js_declare(self) :"
-        for ln in Panel.js_declare(self):
-            yield ln
-        yield "// DetailMainPanel.js_declare() called Panel.js_declare(self) :"
-        #yield "console.log(11);"
-        #yield "mastergrid = Ext.getCmp()"
-        #yield "var slaves = [ %s ];" % ','.join([slave.rh.store.as_ext() for slave in self.lh.slave_grids])
-        yield "var load_record = this.load_record = function(record) {"
-        #yield "function load_record (record) {"
-        #yield "  console.log('DetailMainPanel-%s.load_record()',record);" % self.report
-        #name = id2js(self.lh.name) + '.' + self.lh._main.ext_name
-        #name = 'this.' + self.lh._main.ext_name
-        #name = self.as_ext()
-        #yield "  this.current_pk = record.data.id;" 
-        yield "  this.current_record = record;" 
-        yield "  %s.form.loadRecord(record);" % self.as_ext()
-        
-        #~ yield "  var p = { %s: record.id }" % URL_PARAM_MASTER_PK
-        #~ #yield "  var p = { %s: record.data.%s }" % (URL_PARAM_MASTER_PK,self.rh.store.pk.name)
-        #~ mt = ContentType.objects.get_for_model(self.report.model).pk
-        #~ yield "  p[%r] = %r;" % (URL_PARAM_MASTER_TYPE,mt)
-        #~ for slave in self.lh.slave_grids:
-            #~ yield "  %s.load({params:p});" % slave.rh.store.as_ext()
-        #~ #yield "  for(i=0;i++;i<slaves.length) { console.log('load slave',slaves[i],p); slaves[i].load({params:p}) };"
-        
-        yield "};"
-        yield "if(this.main_grid) {"
-        yield "  this.main_grid.add_row_listener("
-        yield "    function(sm,rowIndex,record) { this.load_record(record); },this);"
-        
-        
-        #~ yield "%s.addListener('load',function(store,rows,options) { " % self.report.store.ext_name
-        #~ yield "  %s.form.loadRecord(rows[0]);" % self.ext_name
-        #~ for slave in self.lh.slave_grids:
-            #~ yield "  %s.load({params: { master: rows[0].data['%s'] } });" % (
-                 #~ slave.report.store.ext_name,
-                 #~ self.report.store.pk.name)
-                 #~ #slave.store.name,request._lino_report.lh.pk.name)
-        #~ yield "});"
-      
-        keys = []
-        buttons = []
-
-        #main_name = id2js(self.lh.link.row_layout.name) + '.' + 'main_grid'
-        key = actions.PAGE_UP
-        js = js_code("function() {this.main_grid.getSelectionModel().selectPrevious()}")
-        keys.append(dict(
-          handler=js,
-          scope=js_code('this'),
-          key=key.keycode,ctrl=key.ctrl,alt=key.alt,shift=key.shift))
-        buttons.append(dict(handler=js,scope=js_code('this'),text="Previous"))
-
-        key = actions.PAGE_DOWN
-        js = js_code("function() {this.main_grid.getSelectionModel().selectNext()}")
-        keys.append(dict(
-          handler=js,
-          scope=js_code('this'),
-          key=key.keycode,ctrl=key.ctrl,alt=key.alt,shift=key.shift))
-        buttons.append(dict(handler=js,scope=js_code('this'),text="Next"))
-        
-        url = self.rh.get_absolute_url(submit=True)
-        js = js_code("Lino.form_submit(this,'%s',this.main_grid.getStore(),'%s')" % (
-                url,self.rh.store.pk.name))
-        buttons.append(dict(handler=js,text='Submit'))
-        
-        if len(keys):
-            yield "  %s.keys = %s;" % (self.as_ext(),py2js(keys))
-        for btn in buttons:
-            yield "  %s.addButton(%s);" % (self.as_ext(),py2js(btn))
-        yield "}"
-        yield "// end DetailMainPanel.js_declare()"
-        
-    def unused_js_body(self):
-        for ln in super(DetailMainPanel,self).js_body():
-            yield ln
-        yield "if(this.main_grid) {"
-        yield "  var sels = this.main_grid.getSelectionModel().getSelections()"
-        yield "  if(sels.length > 0) this.load_record(sels[0]);"
-        yield "}"
-        yield "this.get_window_config = function() {"
-        yield "  return { 'window_type': 'detail' }"
-        yield "}"
         
 
 class FormMainPanel(Panel,WrappingMainPanel):
