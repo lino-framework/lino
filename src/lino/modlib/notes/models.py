@@ -21,6 +21,7 @@ from lino.modlib import fields, tools
 from lino import reports
 from lino import layouts
 from lino.utils import perms
+from lino.modlib.documents.utils import Printable
 
 tools.requires_apps('auth','contenttypes','links')
 
@@ -30,7 +31,7 @@ class NoteType(models.Model):
         return self.name
 
 
-class Note(models.Model):
+class Note(models.Model,Printable):
     #~ class Meta:
         #~ abstract = True
         

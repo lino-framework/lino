@@ -125,8 +125,6 @@ class Dialog:
         self.actor = actor
         self.action = actor.get_action(action_name)
         self.params = params
-        #~ self.start_kw = start_kw
-        #~ self.start_args = start_args
         if not isinstance(self.action,Action):
             raise Exception("%s.get_action(%r) returned %r which is not an Action." % (actor,action_name,self.action))
         self.running = None
@@ -180,6 +178,10 @@ class Dialog:
     def get_user(self):
         raise NotImplementedError()
         
+    def get_request(self,**kw):
+        kw.update(user=self.get_user())
+        return self.actor.request(self.ui,**kw)
+        
     def close_caller(self):
         self.response.close_caller=True
         return self
@@ -213,7 +215,12 @@ class Dialog:
     def alert(self,msg,**kw):
         self.response.alert_msg = msg
         return self
-        
+
+    def exception(self,e):
+        self.response.alert_msg = unicode(e)
+        traceback.print_exc(e)
+        return self
+
     def notify(self,msg):
         self.response.notify_msg = msg
         return self
@@ -229,7 +236,6 @@ class Dialog:
         if msg is not None:
               self.notify(msg)
         return self.close_caller().over()
-        
 
 
 
@@ -241,7 +247,7 @@ class InsertRow(Action):
     
     def run_in_dlg(self,dlg):
         yield dlg.confirm(_("Insert new row. Are you sure?"))
-        rr = context.get_report_request()
+        rr = dlg.get_request()
         row = rr.create_instance()
         row.save()
         yield dlg.refresh_caller().over()
@@ -274,6 +280,7 @@ class CancelDialog(Action):
 class OK(Action):
     needs_validation = True
     label = _("OK")
+    name = "ok"
     key = RETURN
 
     def run_in_dlg(self,dlg):

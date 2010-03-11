@@ -86,22 +86,6 @@ class LoginOK(actions.OK):
 
     label = _("Login")
     
-    #~ def run(self,context):
-      
-        #~ username = context.request.POST.get('username')
-        #~ password = context.request.POST.get('password')
-
-        #~ user = authenticate(username=username, password=password)
-        #~ if user is None:
-            #~ raise actions.ValidationError(
-            #~ _(u"Please enter a correct username and password. Note that both fields are case-sensitive."))
-        #~ elif not user.is_active:
-            #~ raise actions.ValidationError(_("This account is inactive."))
-        #~ login(context.request, user)
-        #~ #lino.log.info("User %s logged in.",user)
-        #~ context.refresh_menu()
-        #~ context.done("Welcome, %s!" % user)
-        
     def run_in_dlg(self,dlg):
         username = dlg.request.POST.get('username')
         password = dlg.request.POST.get('password')

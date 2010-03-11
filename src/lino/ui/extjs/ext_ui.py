@@ -179,9 +179,6 @@ class WrappedWindow(jsgen.Component):
         
         jsgen.Component.__init__(self,name,**kw)
         
-        
-        
-        
     def subvars(self):
         yield self.main
         
@@ -232,6 +229,9 @@ class WindowWrapper(jsgen.Object):
         
     def js_show(self):
         return []
+        
+    def js_add_row_listener(self):
+        yield "console.lsg('js_add_rowlisterner() not implemented')"
         
     def js_window_config(self):
         return []
@@ -288,6 +288,10 @@ class WindowWrapper(jsgen.Object):
         #~ yield "  var client_job = this;" 
         yield "  this.close = function() { this.window.close() }"
         yield "  this.hide = function() { this.window.hide() }"
+        yield "  this.add_row_listener = function(fn) {"
+        for ln in self.js_add_row_listener():
+            yield "    " + ln
+        yield "  }"
         yield "  this.show = function() {"
         for ln in self.js_show():
             yield "    " + ln
@@ -308,15 +312,15 @@ class WindowWrapper(jsgen.Object):
             yield "  // variable %s contributes:" % v.ext_name
             for ln in v.js_body():
                 yield "  " + ln
-        yield "this.window._permalink_name = %s;" % py2js(self.window.permalink_name)
+        yield "  this.window._permalink_name = %s;" % py2js(self.window.permalink_name)
         for ln in self.js_on_window_render():
             yield "  " + ln
-        yield "this.get_window_config = function() {"
-        yield "  var wc = { window_config_type: %r }" % self.window_config_type
+        yield "  this.get_window_config = function() {"
+        yield "    var wc = { window_config_type: %r }" % self.window_config_type
         for ln in self.js_window_config():
-            yield "  " + ln
-        yield "  return wc;"
-        yield "}"
+            yield "    " + ln
+        yield "    return wc;"
+        yield "  }"
         
         yield "  // end js_render() %s" % self
         yield "}"
@@ -372,7 +376,7 @@ class unused_ReportWrapperMixin:
   
 class GridWrapperMixin:
     """
-    Used by GridMasterWrapper and GridSlaveWrapper
+    Used by both GridMasterWrapper and GridSlaveWrapper
     """
   
     window_config_type = WC_TYPE_GRID
@@ -437,9 +441,13 @@ class GridMasterWrapper(GridWrapperMixin,MasterWrapper):
         # recalculate page size when size changes
         yield "this.main_grid.on('resize', function(cmp,aw,ah,rw,rh) {" 
         yield "    this.pager.pageSize = cmp.calculatePageSize(this,aw,ah,rw,rh) || 10;" 
+        #~ yield "    console.log('resize',this.pager.pageSize);" 
         yield "    this.refresh();"
         yield "  }, this, {delay:500});"
         yield "this.get_current_record = function() { return this.main_grid.getSelectionModel().getSelected()};"
+        
+    def js_add_row_listener(self):
+        yield "this.main_grid.add_row_listener(fn,this);"
         
         
   
@@ -455,6 +463,7 @@ class SlaveWrapper(WindowWrapper):
             scope=js_code('this'),
             enableToggle=True)
         WindowWrapper.__init__(self,name,window)
+        window.update(closeAction='hide')
         
     #~ def vars(self):
         #~ for b in self.master_lh.datalink.detail_buttons:
@@ -482,10 +491,16 @@ class SlaveWrapper(WindowWrapper):
         
     def js_on_window_render(self):
         yield "this.window.on('render',function() {"
-        yield "  this.caller.main_grid.add_row_listener(function(sm,ri,rec){this.load_record(rec)},this);"
+        yield "  this.add_row_listener(function(sm,ri,rec){this.load_record(rec)});"
         yield "  var sels = this.caller.main_grid.getSelectionModel().getSelections()"
         yield "  if(sels.length > 0) this.load_record(sels[0]);"
         yield "},this)"
+        
+    def js_add_row_listener(self):
+        yield "if (this.caller.main_grid) {"
+        yield "  this.caller.main_grid.add_row_listener(fn,this);"
+        yield "} else console.log('called add_row_listener but caller has no main_grid');"
+
 
 
 class GridSlaveWrapper(GridWrapperMixin,SlaveWrapper):
@@ -523,6 +538,10 @@ class GridSlaveWrapper(GridWrapperMixin,SlaveWrapper):
         yield "  %s.load({params:p});" % self.slave_rh.store.as_ext()
         yield "};"
         
+    #~ def on_load_record(self):
+        #~ for v in self.vars():
+            #~ for ln in v.on_load_record():
+                #~ yield ln
         
         
 class DetailSlaveWrapper(SlaveWrapper):
@@ -596,21 +615,6 @@ class DetailSlaveWrapper(SlaveWrapper):
         yield "  else this.main_panel.form.reset();"
         yield "};"
         
-    def unused_js_on_window_render(self):
-        yield "this.window.on('render',function() {"
-        yield "if(caller) {"
-        #yield "  this.add_row_listener = function(fn,scope){caller.add_row_listener(fn,scope)};"
-        yield "  this.main_grid = caller.main_grid;"
-        yield "  this.properties_window = caller.properties_window;"
-        yield "console.log('20100310f'); "
-        yield "  this.main_grid.add_row_listener("
-        yield "    function(sm,rowIndex,record) { this.load_record(record); },this);"
-        yield "  var sels = this.main_grid.getSelectionModel().getSelections()"
-        yield "  if(sels.length > 0) this.load_record(sels[0]);"
-        yield "}else{"
-        yield "  this.main_grid = undefined;"
-        yield "}"
-        yield "},this)"
 
         
 
@@ -884,7 +888,7 @@ class ExtUI(base.UI):
         
     def start_dialog(self,dlg):
         r = dlg._start().as_dict()
-        lino.log.debug('ExtUI.start_dialog(%s) -> %r',dlg,r)
+        #~ lino.log.debug('ExtUI.start_dialog(%s) -> %r',dlg,r)
         return json_response(r)
         
     def step_dialog_view(self,request):
@@ -1023,7 +1027,6 @@ class ExtUI(base.UI):
             url += "?" + urlencode(kw)
         return url
         
-    #~ def get_button_url(self,btn,**kw):
     def get_form_action_url(self,fh,action,**kw):
         #~ a = btn.lh.datalink.actor
         #~ a = action.actor
@@ -1034,9 +1037,6 @@ class ExtUI(base.UI):
             fke.lh.datalink.report.app_label,
             fke.lh.datalink.report.name,
             fke.field.name,**kw)
-        
-    #~ def get_props_url(self,model,**kw):
-        #~ return build_url('/props')
         
     def get_report_url(self,rh,master_instance=None,
             submit=False,grid_afteredit=False,grid_action=None,run=False,csv=False,**kw):
@@ -1099,9 +1099,6 @@ class ExtUI(base.UI):
             rh.window_wrapper = None
             
         rh.choosers = chooser.get_choosers_for_model(rh.report.model,chooser.FormChooser)
-        
-            
-            
 
     def setup_form(self,fh):
         fh.window_wrapper = FormMasterWrapper(fh)

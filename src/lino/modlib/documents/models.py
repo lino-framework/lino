@@ -13,7 +13,7 @@
 
 
 """
-This defines AbstractDocument which knows how to "print" an instance.
+This defines AbstractDocument which knows how to "print" a document.
 
 
 """
@@ -22,37 +22,21 @@ This defines AbstractDocument which knows how to "print" an instance.
 import os
 import sys
 import datetime
-import cStringIO
-import logging
 
 
 from django.conf import settings
 from django.db import models
-from django.template.loader import render_to_string, get_template, select_template, Context
-from django.http import HttpResponse, HttpResponseRedirect, Http404
-
-try:
-    import ho.pisa as pisa
-    #pisa.showLogging()
-except ImportError:
-    pisa = None
-
-if False:
-    try:
-        from lino.utils import appy_pod
-    except ImportError:
-        appy_pod = None
 
 import lino
 from lino import reports
-from lino import actions
 
+from lino.modlib.documents.utils import Printable
 
 class DocumentError(Exception):
     pass
+
   
-    
-class AbstractDocument(models.Model):
+class AbstractDocument(models.Model,Printable):
     
     class Meta:
         abstract = True
@@ -72,10 +56,9 @@ class AbstractDocument(models.Model):
         related_name = model.__name__.lower()
         return getattr(self,related_name)
         
-    def odt_template(self):
-        # when using appy_pod
-        return os.path.join(os.path.dirname(__file__),
-                            'odt',self._meta.db_table)+'.odt'
+    def get_last_modified_time(self):
+        return self.last_modified 
+
     def html_templates(self):
         # when using pisa
         model = self.get_child_model()
@@ -93,76 +76,6 @@ class AbstractDocument(models.Model):
             return False
         return self.sent_time is None
         
-    def pdf_root(self):
-        return os.path.join(settings.MEDIA_ROOT,"pdf_cache")
-        
-    def pdf_url(self):
-        return settings.MEDIA_URL + "/".join(["pdf_cache",self.pdf_filename()])
-        
-    def pdf_path(self):
-        return os.path.join(self.pdf_root(),self.pdf_filename())
-        
-    def pdf_filename(self):
-        return self._meta.db_table + "/" + str(self.pk) + '.pdf'
-
-        
-    def make_pisa_html(self,MEDIA_URL=settings.MEDIA_URL):
-        context = dict(
-          instance=self,
-          title = unicode(self),
-          MEDIA_URL = MEDIA_URL,
-        )
-        template = select_template(self.html_templates())
-        return template.render(Context(context))
-
-    def make_pdf(self):
-        filename = self.pdf_path()
-        if not filename:
-            return
-        lino.log.debug("make_pdf(%s) -> %s", self, filename)
-        if self.last_modified is not None and os.path.exists(filename):
-            mtime = os.path.getmtime(filename)
-            #~ st = os.stat(filename)
-            #~ mtime = st.st_mtime
-            mtime = datetime.datetime.fromtimestamp(mtime)
-            if mtime >= self.last_modified:
-                lino.log.debug(" -> %s is up to date",filename)
-                return
-            os.remove(filename)
-        dirname = os.path.dirname(filename)
-        if not os.path.isdir(dirname):
-            os.makedirs(dirname)
-        if False:
-            # using appy.pod
-            context = dict(instance=self)
-            template = self.odt_template()
-            appy_pod.process_pod(template,context,filename)
-        else:
-            # using pisa
-            #url = "file:///"+settings.MEDIA_ROOT + os.path.sep
-            #url = "file:///"+settings.MEDIA_ROOT.replace('\\','/') + '/'
-            url = settings.MEDIA_ROOT.replace('\\','/') + '/'
-            html = self.make_pisa_html(MEDIA_URL=url)
-            html = html.encode("ISO-8859-1")
-            file(filename+'.html','w').write(html)
-            result = cStringIO.StringIO()
-            h = logging.FileHandler(filename+'.log','w')
-            pisa.log.addHandler(h)
-            pdf = pisa.pisaDocument(cStringIO.StringIO(html), result)
-            pisa.log.removeHandler(h)
-            h.close()
-            file(filename,'wb').write(result.getvalue())
-            if pdf.err:
-                raise Exception("pisa.pisaDocument.err is %r" % pdf.err)
-            #return result.getvalue()
-            
-    def view_pdf(self,request):
-        self.make_pdf()
-        s = open(self.pdf_path()).read()
-        return HttpResponse(s,mimetype='application/pdf')
-        
-    def view_printable(self,request):
-        return HttpResponse(self.make_pisa_html())
         
     def send(self,simulate=True):
         self.make_pdf()
@@ -176,32 +89,4 @@ class AbstractDocument(models.Model):
             self.sent_time = datetime.datetime.now()
             self.save()
             
-    @classmethod
-    def setup_report(cls,rpt):
-        rpt.add_actions(PrintAction(),PdfAction())
-        
     
-class PrintAction(actions.Action):
-    needs_selection = True
-    label = "Print"
-    def run(self,context):
-        row = context.selected_rows[0].get_child_instance()
-        context.show_window(
-          title="Printable view",
-          maximizable=True,
-          html=row.make_pisa_html()
-          )
-        #context._response.update(html=row.make_pisa_html())
-        #return row.view_printable(context.request)
-
-class PdfAction(actions.Action):
-    needs_selection = True
-    label = "PDF"
-    def run(self,context):
-        row = context.selected_rows[0].get_child_instance()
-        row.make_pdf()
-        #lino.log.debug("redirect to", row.pdf_url())
-        context.redirect(row.pdf_url())
-        #return row.view_pdf(context.request)
-
-

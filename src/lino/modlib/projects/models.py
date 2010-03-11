@@ -17,6 +17,7 @@ from django.utils.translation import ugettext as _
 
 from lino.modlib import fields
 from lino import reports
+from lino import layouts
 
 
 #
@@ -42,12 +43,21 @@ class Project(models.Model):
     type = models.ForeignKey(ProjectType,blank=True,null=True)
     started = fields.MyDateField(blank=True,null=True) 
     stopped = fields.MyDateField(blank=True,null=True) 
+    text = models.TextField(blank=True,null=True)
     
     def __unicode__(self):
         return self.name
         
+class ProjectDetail(layouts.PageLayout):
+    main = """
+    name type
+    started stopped
+    text
+    """
+
 class Projects(reports.Report):
     model = 'projects.Project'
     order_by = "name"
     button_label = _("Projects")
+    page_layouts = (ProjectDetail,)
     

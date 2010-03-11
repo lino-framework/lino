@@ -19,6 +19,7 @@ from django.conf import settings
 from django.utils.importlib import import_module
 
 from django.db import models
+from django.db.models.query import QuerySet
 from django import forms
 from django.conf.urls.defaults import patterns, url, include
 from django.forms.models import modelform_factory
@@ -60,10 +61,13 @@ def base_attrs(cl):
         for k in b.__dict__.keys():
             yield k
 
-    
-def add_quick_search_filter(qs,model,search_text):
+
+def add_quick_search_filter(qs,search_text):
+    if not isinstance(qs,QuerySet): 
+        # TODO: filter also simple lists 
+        return qs
     q = models.Q()
-    for field in model._meta.fields:
+    for field in qs.model._meta.fields:
         if isinstance(field,models.CharField):
             kw = {field.name+"__contains": search_text}
             q = q | models.Q(**kw)
@@ -371,7 +375,7 @@ class Report(actors.Actor): # actions.Action): #
         return actors.Actor.get_action(self,name)
               
     def add_actions(self,*args):
-        """Used in Model.setup_report() to specify actions for each report that uses 
+        """Used in Model.setup_report() to specify actions for each report on
         this model."""
         self.actions += args
         #~ for a in more_actions:
@@ -423,7 +427,8 @@ class Report(actors.Actor): # actions.Action): #
             qs = qs.exclude(**self.exclude)
               
         if rr.quick_search is not None:
-            qs = add_quick_search_filter(qs,self.model,rr.quick_search)
+            #~ qs = add_quick_search_filter(qs,self.model,rr.quick_search)
+            qs = add_quick_search_filter(qs,rr.quick_search)
         order_by = rr.order_by or self.order_by
         if order_by:
             qs = qs.order_by(*order_by.split())
@@ -483,35 +488,6 @@ class Report(actors.Actor): # actions.Action): #
     def as_text(self, *args,**kw):
         from lino.ui import console
         return console.ui.report_as_text(self)
-        
-        
-    def unused_get_field_choices_meth(self,fldname):
-        return field_choices.get_field_choices_meth(self.model,fldname)
-        
-    def unused_get_field_choices(self,fld,context,quick_search=None):
-        choices = field_choices.get_field_choices(self.model,fld,context)
-        #~ # context is a dict of field values in the receiving instance
-        #~ # query is a string entered to a combobox to filter the choices
-        #~ meth = self.get_field_choices_meth(fld.name)
-        #~ choices = None
-        #~ if meth is not None:
-            #~ args = [] 
-            #~ for varname in meth.func_code.co_varnames[1:]:
-                #~ args.append(context.get(varname,None))
-                #~ context_field, remote, direct, m2m = self.model._meta.get_field_by_name(varname)
-            #~ choices = meth(*args)
-        #~ if choices is None:
-            #~ choices = fld.rel.to.objects.all()
-        if quick_search is not None:
-            choices = add_quick_search_filter(choices,fld.rel.to,quick_search)
-        return choices
-        # return get_model_report(field.rel.to)
-        #return field._lino_choice_report
-        #~ rpt = getattr(field,'_lino_choice_report',None)
-        #~ if rpt is None:
-            #~ return get_model_report(field.rel.to)
-        #~ return rpt
-        
         
     @classmethod
     def register_page_layout(cls,*layouts):

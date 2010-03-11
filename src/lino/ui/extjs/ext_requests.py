@@ -65,9 +65,6 @@ class Dialog(actions.Dialog):
     #~ def get(self,*args,**kw):
         #~ return self.request.POST.get(*args,**kw)
         
-    def get_report_request(self):
-        raise NotImplementedError()
-        
         
 class GridDialog(Dialog):
     def __init__(self,request,*args,**kw):
@@ -239,7 +236,11 @@ class ChoicesReportRequest(BaseViewReportRequest):
         #~ for k,v in self.request.GET.lists():
         for k,v in self.request.GET.items():
             kw[str(k)] = v
-        self.queryset = self.rh.choosers[self.fieldname].get_choices(**kw)
+        chooser = self.rh.choosers[self.fieldname]
+        qs = chooser.get_choices(**kw)
+        if self.quick_search is not None:
+            qs = reports.add_quick_search_filter(qs,self.quick_search)
+        self.queryset = qs
         #return self.report.get_queryset(self,master_instance=self.master_instance,**kw)
         
     def get_absolute_url(self,**kw):

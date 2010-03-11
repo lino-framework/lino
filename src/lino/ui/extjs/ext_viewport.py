@@ -182,6 +182,7 @@ Lino.do_dialog = function(caller,url,params) {
     if (result.alert_msg) Ext.MessageBox.alert('Alert',result.alert_msg);
     if (result.notify_msg) Lino.notify(result.notify_msg);
     if (result.show_window) new result.show_window(caller).show();
+    if (result.redirect) window.open(result.redirect);
     if (result.refresh_caller && caller) caller.refresh();
     if (result.close_caller && caller) caller.close();
     if (result.refresh_menu) Lino.load_main_menu();
@@ -374,7 +375,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
   // Thanks to Christophe Badoit on http://www.extjs.net/forum/showthread.php?t=82647
   calculatePageSize : function(caller,aw,ah,rw,rh) {
     if (!this.rendered) { return false; }
-    var rowHeight = 41;
+    var rowHeight = 22; // experimental value
     var row = this.view.getRow(0);
     if (row) rowHeight = Ext.get(row).getHeight();
     // console.log('rowHeight',rowHeight,this,caller);
@@ -389,7 +390,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     // var height = this.getView().mainBody.getHeight();
     // var height = this.getHeight() - this.getFrameHeight();
     var ps = Math.floor(height / rowHeight);
-    // console.log(height,'/',rowHeight,'->',ps);
+    // console.log('calculatePageSize():',height,'/',rowHeight,'->',ps);
     ps -= 3; // experimental value
     return (ps > 1 ? ps : false);
   },
@@ -599,7 +600,7 @@ Ext.override(Ext.form.ComboBox, {
     },
     setContextValues : function(values){
       if(this.contextParams) {
-        // console.log(this.name,'.setQueryContext',this.contextParams,'=',values);
+        console.log(this.name,'.setContextValues',this.contextParams,'=',values);
         if (this.contextValues === undefined) {
           this.contextValues = values;
           this.lastQuery = null;

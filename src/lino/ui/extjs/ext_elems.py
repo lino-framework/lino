@@ -493,27 +493,27 @@ class ForeignKeyElement(FieldElement):
             kw.update(contextParams=chooser.context_params)
         return kw
         
+    #~ def js_on_load_record(self):
+        #~ for ln in super(ForeignKeyElement,self).js_on_load_record():
+            #~ yield ln
+        #~ chooser = self.lh.datalink.choosers[self.field.name]
+        #~ if chooser.context_values:
+            #~ yield "  %s.setContextValues([" % self.as_ext()
+            #~ yield ",".join("record.data." + name for name in chooser.context_values]
+            #~ yield "]);"
+
     def js_body(self):
         for ln in super(ForeignKeyElement,self).js_body():
             yield ln
-    #~ def js_after_body(self):
-        #~ cp = chooser.get_context_params(self.lh.link.report.model,self.field.name)
-        #~ if cp:
         chooser = self.lh.datalink.choosers[self.field.name]
         if chooser.context_values:
-            yield "if(this.main_grid) this.main_grid.add_row_listener(function(sm,rowIndex,record) {" 
-            yield "  %s.setContextValues([" % self.as_ext()
-            for name in chooser.context_values:
-                yield "record.data.%s," % name
-            yield "])});"
-        #~ meth = self.lh.link.report.get_field_choices_meth(self.field)
-        #~ if meth is not None:
-            #~ print 20100301, meth.func_code.co_varnames
-            #~ yield "this.main_grid.add_row_listener(function(sm,rowIndex,record) {" 
-            #~ #yield "  console.log('20100124b',this,client_job);"
-            #~ yield "  %s.setQueryContext(record.data.id)});" % self.as_ext()
-            #~ #yield "client_job.add_row_listener(function(sm,rowIndex,record) {console.log('20100124b',this)},this);"
-        
+            yield "this.window.on('render',function() {" 
+            #~ yield "  console.log(20100311);" 
+            yield "  this.add_row_listener(function(sm,rowIndex,record) {" 
+            yield "    %s.setContextValues([" % self.as_ext()
+            yield "      " + ",".join(["record.data." + name for name in chooser.context_values])
+            yield "])})},this);"
+
 
         
             
@@ -1062,10 +1062,6 @@ class GridMainPanel(GridElement,MainPanel):
         self.pager = None
         MainPanel.__init__(self)
         GridElement.__init__(self,lh,name,lh.datalink,*elements,**kw)
-        #~ if self.height is None:
-            #~ self.height = self.preferred_height
-        #~ if self.width is None:
-            #~ self.width = self.preferred_width
         #lino.log.debug("GridMainPanel.__init__() %s",self.name)
         
     def setup(self):
@@ -1108,52 +1104,6 @@ class GridMainPanel(GridElement,MainPanel):
         kw.update(tbar=self.pager)
         #~ kw.update(bbar=self.rh.grid_buttons)
         return kw
-        
-    def unused_js_declare(self):
-        self.setup()
-        for ln in Container.js_declare(self):
-            #~ print 20100226, repr(ln)
-            yield ln
-        yield "%s.on('afteredit', Lino.grid_afteredit(this,'%s'));" % (
-          self.as_ext(),self.rh.get_absolute_url(grid_afteredit=True))
-        yield "%s.on('cellcontextmenu', Lino.cell_context_menu(this));" % self.as_ext()
-        # recalculate page size when size changes
-        yield "%s.on('resize', function(cmp,aw,ah,rw,rh) {" % self.as_ext()
-        yield "    this.pager.pageSize = cmp.calculatePageSize(this,aw,ah,rw,rh) || 10;" # % self.as_ext()
-        yield "    this.refresh();"
-        yield "  }, this, {delay:500});"
-        # yield "  }, this);"
-        # first load with "offset" and "limit" params
-        #~ yield "%s.on('render', function() {" % self.as_ext()
-        #~ yield "  this.pager.pageSize = %s.calculatePageSize('render') || 10;" % self.as_ext()
-        #~ yield "  // this.refresh();"
-        #~ #yield "  %s.load({params:{limit:this.pager.pageSize,start:this.pager.cursor}});" % self.rh.store.as_ext()
-        #~ yield "}, this, {delay:100});"
-        
-    def unused_js_body(self):
-        for ln in MainPanel.js_body(self):
-        #~ for ln in super(GridMainPanel,self).js_body():
-            yield ln
-        #yield "this.refresh = function() { this.%s.getStore().load()}" % self.ext_name
-        yield "this.refresh = function() { "
-        #yield "  this.pager.pageSize = %s.calculatePageSize() || 10;" % self.as_ext()
-        yield "  %s.getStore().load({params:{limit:this.pager.pageSize,start:this.pager.cursor}});" % self.as_ext()
-        yield "}"
-        yield "this.get_current_record = function() { return this.main_grid.getSelectionModel().getSelected()};"
-        yield "this.get_selected = function() {"
-        yield "  var sel_pks = '';"
-        yield "  var sels = this.main_grid.getSelectionModel().getSelections();"
-        yield "  for(var i=0;i<sels.length;i++) { sel_pks += sels[i].id + ','; };"
-        yield "  return sel_pks;"
-        yield "}"
-        yield "this.get_window_config = function() {"
-        #~ yield "  console.log(this.main_grid.colModel.columns);"
-        yield "  return {"
-        yield "    window_type: 'grid',"
-        yield "    column_widths: Ext.pluck(this.main_grid.colModel.columns,'width')"
-        yield "  }"
-        yield "}"
-        
 
 
 

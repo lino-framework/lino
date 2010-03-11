@@ -30,8 +30,9 @@ from lino import layouts
 from lino.utils import perms
 
 from lino.modlib.contacts.utils import join_words
+from lino.modlib.documents.utils import Printable
 
-class Contact(models.Model):
+class Contact(models.Model,Printable):
   
     class Meta:
         abstract = True
