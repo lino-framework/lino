@@ -32,7 +32,7 @@ class Country(models.Model):
 class Countries(reports.Report):
     model = 'countries.Country'
     order_by = "isocode"
-    columnNames = "isocode name short_code"
+    column_names = "isocode name short_code"
     
 FREQUENT_COUNTRIES = ['BE','NL','DE', 'FR', 'LU']
 
@@ -51,7 +51,7 @@ class City(models.Model):
 class Cities(reports.Report):
     model = 'countries.City'
     order_by = "country name"
-    columnNames = "country name zip_code"
+    column_names = "country name zip_code"
     
 
 

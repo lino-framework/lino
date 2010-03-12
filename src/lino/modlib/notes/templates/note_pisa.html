@@ -64,14 +64,14 @@ headerContent right centered
 
 <pdf:spacer height="20mm">
 
-<h1>Notiz</h1>
+<h1>{{instance}}</h1>
 
 <p>User: {{instance.user}}
 <p>datum: {{instance.date}}
 <p>Typ: {{instance.type}}
 <p>Betreff: {{instance.short}}
 
-<p>{{instance.text}}
+<p>{{instance.text|safe}}
 
 </body>
 </html>

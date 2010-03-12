@@ -189,7 +189,7 @@ class CustomerPageLayout(layouts.PageLayout):
     
 class Customers(reports.Report):
     page_layouts = (CustomerPageLayout,)
-    columnNames = "name payment_term vat_exempt item_vat company person"
+    column_names = "name payment_term vat_exempt item_vat company person"
     can_delete = True
     model = Customer
     order_by = "name"
@@ -569,7 +569,7 @@ class OrdersByJournal(Orders):
     order_by = "number"
     #master = journals.Journal
     fk_name = 'journal' # see django issue 10808
-    columnNames = "number:4 creation_date customer:20 imode " \
+    column_names = "number:4 creation_date customer:20 imode " \
                   "sales_remark:20 subject:20 total_incl " \
                   "cycle start_date covered_until"
     
@@ -595,7 +595,7 @@ class InvoicesByJournal(Invoices):
     order_by = "number"
     fk_name = 'journal' # see django issue 10808
     #master = journals.Journal
-    columnNames = "number:4 creation_date due_date " \
+    column_names = "number:4 creation_date due_date " \
                   "customer:10 " \
                   "total_incl order subject:10 sales_remark:10 " \
                   "ledger_remark:10 " \
@@ -617,7 +617,7 @@ class DocumentsToSign(Invoices):
     use_as_default_report = False
     filter = dict(user__exact=None)
     can_add = perms.never
-    columnNames = "number:4 order creation_date " \
+    column_names = "number:4 order creation_date " \
                   "customer:10 imode " \
                   "subject:10 total_incl total_excl total_vat "
     actions = Invoices.actions + [ SignAction() ]
@@ -641,7 +641,7 @@ class InvoicesByOrder(SalesDocuments):
     #master = Order
     fk_name = "order"
     order_by = "number"
-    columnNames = "number creation_date your_ref total_excl total_vat shipping_mode payment_term due_date subject sales_remark vat_exempt item_vat "
+    column_names = "number creation_date your_ref total_excl total_vat shipping_mode payment_term due_date subject sales_remark vat_exempt item_vat "
 
     
 #~ class ItemsByDocumentRowLayout(layouts.RowLayout):
@@ -652,7 +652,7 @@ class InvoicesByOrder(SalesDocuments):
     #~ main = "pos:3 title_box description:20x1 discount unit_price qty total"
 
 class ItemsByDocument(reports.Report):
-    columnNames = "pos:3 product title description:20x1 discount unit_price qty total"
+    column_names = "pos:3 product title description:20x1 discount unit_price qty total"
     #row_layout_class = ItemsByDocumentRowLayout
     model = DocItem
     #master = SalesDocument
@@ -672,7 +672,7 @@ class ItemsByDocument(reports.Report):
             
 
 class DocumentsByCustomer(SalesDocuments):
-    columnNames = "journal:4 number:4 creation_date:8 " \
+    column_names = "journal:4 number:4 creation_date:8 " \
                   "total_incl total_excl total_vat"
     #master = 'contacts.Partner'
     fk_name = 'customer'

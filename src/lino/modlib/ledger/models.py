@@ -139,11 +139,11 @@ class Booking(models.Model):
 
 class Accounts(reports.Report):
     model = Account
-    #columnNames = "id name:50"
+    #column_names = "id name:50"
 
     
 #~ class LedgerJournals(journals.Journals):
     #~ model = LedgerJournal
-    #~ columnNames = journals.Journals.columnNames + " account"
+    #~ column_names = journals.Journals.column_names + " account"
     
 

@@ -1,4 +1,4 @@
-## Copyright 2008-2009 Luc Saffre
+## Copyright 2008-2010 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -68,4 +68,4 @@ class Products(reports.Report):
     page_layouts = (ProductPageLayout,)
     model = Product
     order_by = "id"
-    columnNames = "id:3 name description:30x1 cat vatExempt price:6"
+    column_names = "id:3 name description:30x1 cat vatExempt price:6"

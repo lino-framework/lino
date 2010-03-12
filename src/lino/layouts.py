@@ -21,6 +21,7 @@ from django.conf import settings
 #from django.utils.text import capfirst
 #from django.template.loader import render_to_string
 #~ from django.contrib.contenttypes import generic
+from django.utils.translation import ugettext as _
 
 import lino
 from lino.utils import perms, menus, actors
@@ -53,14 +54,12 @@ class Layout:
     A layout descriptor is a plain text with some simple rules:
     - each word will lead to an element
     - ...todo...
-    
    
     """
     # for internal use:
     join_str = None # set by subclasses
     
-    # the following may be overriddedn in subclasses:
-    #target = None
+    # the following attributes may be overriddedn in subclasses:
     layout_for = None # not yet used
     label = None
     has_frame = False # True
@@ -70,32 +69,25 @@ class Layout:
     default_button = None
     collapsible_elements  = {}
     
+    def get_hidden_elements(self,lh):
+        return set()
     
 
 class RowLayout(Layout):
-    label = "List"
+    label = _("List")
     show_labels = False
     join_str = " "
     
-    #~ def __init__(self,report,index,desc=None,main=None):
-        #~ #from lino.utils import extjs
-        #~ #self.main_class = extjs.MainGridElement
-        #~ Layout.__init__(self,report,index,desc,main)
-        #~ #print "RowLayout.__init__(%r,%r,%r,%r)" % (report.name,index,desc,main)
-        #~ assert len(self._main.elements) > 0, "%s : Grid %s has no columns" % (report.name,self.ext_name)
-        #~ self.columns = self._main.elements
-        #~ #self._main = extjs.Panel(self,"scrollgrid",True,self._main,region="center",autoScroll=True)
-    
+    def get_hidden_elements(self,lh):
+        if lh.datalink.report.hide_columns is None:
+            return set()
+        return set(lh.datalink.report.hide_columns.split())
 
 class PageLayout(Layout):
-    label = "Detail"
+    label = _("Detail")
     show_labels = True
     join_str = "\n"
-    #main_class = extjs.MainPanel
-    #~ def __init__(self,*args,**kw):
-        #~ from lino.utils import extjs
-        #~ self.main_class = extjs.MainPanel
-        #~ Layout.__init__(self,*args,**kw)
+    
     
 class FormLayout(Layout):
     #label = "Dialog"
@@ -108,7 +100,7 @@ class FormLayout(Layout):
 
 class StaticText:
     def __init__(self,text):
-          self.text = text
+        self.text = text
 
 
 class LayoutHandle:
@@ -145,6 +137,7 @@ class LayoutHandle:
         self.slave_grids = []
         self._store_fields = []
         self._buttons = []
+        self.hide_elements = layout.get_hidden_elements(self)
         self.main_class = self.ui.main_panel_class(layout)
         if hasattr(layout,"main"):
             self._main = self.create_element(self.main_class,'main')
@@ -185,6 +178,11 @@ class LayoutHandle:
             s += "(%s)" % self._main
         return s
         
+    def setup_element(self,e):
+        if e.name in self.hide_elements:
+            self.hidden = True
+        
+        
     def get_absolute_url(self,**kw):
         return self.datalink.get_absolute_url(layout=self.index,**kw)
         
@@ -219,7 +217,9 @@ class LayoutHandle:
                     name,kw = self.splitdesc(spec)
                     explicit_specs.add(name)
             wildcard_fields = self.layout.join_str.join([
-                name for name in self.datalink.data_elems() if name not in explicit_specs])
+                name for name in self.datalink.data_elems() \
+                  if (name not in explicit_specs) \
+                    and (name not in self.hide_elements)])
             desc = desc.replace('*',wildcard_fields)
             #lino.log.debug('desc -> %r',desc)
         if "\n" in desc:

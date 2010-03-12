@@ -164,7 +164,7 @@ class Persons(Contacts):
     model = "contacts.Person"
     label = _("Persons")
     page_layouts = (PersonDetail,)
-    columnNames = "first_name last_name title country id name"
+    column_names = "first_name last_name title country id name"
     can_delete = True
     order_by = "last_name first_name id"
     #can_view = perms.is_authenticated
@@ -173,12 +173,12 @@ class Persons(Contacts):
 class PersonsByCountry(Persons):
     fk_name = 'country'
     order_by = "city addr1"
-    columnNames = "city addr1 name nationality language"
+    column_names = "city addr1 name nationality language"
 
 class PersonsByNationality(Persons):
     fk_name = 'nationality'
     order_by = "city addr1"
-    columnNames = "city addr1 name country language"
+    column_names = "city addr1 name country language"
 
 
 
@@ -200,7 +200,7 @@ class CompanyDetail(ContactDetail):
 class Companies(Contacts):
     label = _("Companies")
     page_layouts = (CompanyDetail,)
-    columnNames = "name country city id address"
+    column_names = "name country city id address"
     model = 'contacts.Company'
     order_by = "name"
     #~ queryset = Contact.objects.exclude(companyName__exact=None)\
@@ -208,7 +208,7 @@ class Companies(Contacts):
     
 class CompaniesByCountry(Companies):
     fk_name = 'country'
-    columnNames = "city addr1 name country language"
+    column_names = "city addr1 name country language"
     order_by = "city addr1"
     
 #~ class PersonsByCountryPage(layouts.PageLayout):
@@ -234,7 +234,7 @@ class CompaniesByCountry(Companies):
             
 #~ class Contacts(reports.Report):
     #~ page_layouts = (ContactPageLayout,)
-    #~ columnNames = "id:3 companyName firstName lastName title country"
+    #~ column_names = "id:3 companyName firstName lastName title country"
     #~ can_delete = True
     #~ model = Contact
     #~ order_by = "id"
@@ -243,7 +243,7 @@ class CompaniesByCountry(Companies):
         
 #~ class Companies(Contacts):
     #~ #queryset=Contact.objects.order_by("companyName")
-    #~ columnNames = "companyName country title firstName lastName"
+    #~ column_names = "companyName country title firstName lastName"
     #~ exclude = dict(companyName__exact='')
     #~ order_by = "companyName"
     
@@ -251,7 +251,7 @@ class CompaniesByCountry(Companies):
 #~ class Persons(Contacts):
     #~ filter = dict(companyName__exact='')
     #~ order_by = "lastName firstName"
-    #~ columnNames = "title firstName lastName country id"
+    #~ column_names = "title firstName lastName country id"
     
 
 

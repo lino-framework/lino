@@ -97,13 +97,14 @@ class NoteDetail(layouts.PageLayout):
 class Notes(reports.Report):
     page_layouts = (NoteDetail,)
     model = 'notes.Note'
-    columnNames = "id date user short * text"
+    column_names = "id date user short * text"
     order_by = "id"
     button_label = _("Notes")
 
 class MyNotes(Notes):
     fk_name = 'user'
-    columnNames = "date short * text user"
+    column_names = "date short *"
+    hide_columns = "text"
     can_view = perms.is_authenticated
     button_label = _("My Notes")
     
@@ -115,17 +116,17 @@ class MyNotes(Notes):
 
 class NotesByProject(Notes):
     fk_name = 'project'
-    columnNames = "date short user"
+    column_names = "date short user"
     order_by = "date"
   
 class NotesByPerson(Notes):
     fk_name = 'person'
-    columnNames = "date short user"
+    column_names = "date short user"
     order_by = "date"
   
 class NotesByCompany(Notes):
     fk_name = 'company'
-    columnNames = "date short user"
+    column_names = "date short user"
     order_by = "date"
   
   

@@ -1,4 +1,4 @@
-## Copyright 2008-2009 Luc Saffre
+## Copyright 2008-2010 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -289,36 +289,36 @@ class Rehearsals(reports.Report):
     #page_layouts = (EventPageLayout,)
     model = Rehearsal
     #page_layout_class = RehearsalPageLayout
-    columnNames = "date remark songs:20 singers:10"
+    column_names = "date remark songs:20 singers:10"
     order_by = "date"
 
 class Performances(reports.Report):
     model = Performance
-    columnNames = "date place remark songs:20 singers:10"
+    column_names = "date place remark songs:20 singers:10"
     order_by = "date"
     page_layouts = (PerformancePageLayout,)
     
 
 class Collections(reports.Report):
     model = Collection
-    columnNames = "title place year author id"
+    column_names = "title place year author id"
 
 class Places(reports.Report):
     model = Place
-    columnNames = "name country id"
+    column_names = "name country id"
 
 
 class Singers(reports.Report):
     model = Singer
     #page_layout_class = RehearsalPageLayout
-    columnNames = "id first_name last_name voice"
+    column_names = "id first_name last_name voice"
     order_by = "last_name"
 
 class Authors(reports.Report):
     model = Author
     #queryset = Author.objects.filter(singer__exact=None)
     #page_layout_class = RehearsalPageLayout
-    columnNames = "id get_full_name born died first_name last_name"
+    column_names = "id get_full_name born died first_name last_name"
     order_by = "last_name"
 
     
@@ -326,18 +326,18 @@ class EventsBySong(reports.Report):
     model = SongEvent
     #master = Song
     fk_name = 'song'
-    columnNames = "event remark link_set"
+    column_names = "event remark link_set"
     
 class SongsByEvent(reports.Report):
     model = SongEvent
     #master = Event
     fk_name = 'event'
-    columnNames = "seq song link_set remark"
+    column_names = "seq song link_set remark"
 
 class Songs(reports.Report):
     model = Song
     page_layouts = (SongPageLayout,)
-    columnNames = "id title language voices composed_by text_by written_by"
+    column_names = "id title language voices composed_by text_by written_by"
 
 class SongEvents(reports.Report):
     model = SongEvent
@@ -346,7 +346,7 @@ class SongsByEvent(reports.Report):
     model = SongEvent
     #master = Event
     fk_name = 'event'
-    columnNames = "seq song remark link_set"
+    column_names = "seq song remark link_set"
 
 
 class Links(reports.Report):

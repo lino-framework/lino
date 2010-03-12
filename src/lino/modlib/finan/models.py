@@ -170,18 +170,18 @@ class FinDocPageLayout(layouts.PageLayout):
 class BankStatements(journals.DocumentsByJournal):
     model = BankStatement
     page_layouts = (FinDocPageLayout, )
-    columnNames = "number date balance1 balance2 ledger_remark value_date"
+    column_names = "number date balance1 balance2 ledger_remark value_date"
     
     
     
 class DocItems(reports.Report):
-    columnNames = "document pos:3 "\
+    column_names = "document pos:3 "\
                   "date account company person remark debit credit" 
     model = DocItem
     order_by = "pos"
 
 class ItemsByDocument(DocItems):
-    columnNames = "pos:3 date account company person remark debit credit" 
+    column_names = "pos:3 date account company person remark debit credit" 
     #master = BankStatement
     fk_name = 'document'
     order_by = "pos"

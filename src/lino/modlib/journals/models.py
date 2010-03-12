@@ -272,7 +272,7 @@ class AbstractDocument(documents.AbstractDocument):
 class Journals(reports.Report):
     model = Journal
     order_by = "id"
-    columnNames = "id name doctype force_sequence"
+    column_names = "id name doctype force_sequence"
     
     
 class DocumentsByJournal(reports.Report):
@@ -303,7 +303,7 @@ class unused_DocumentsByJournal(reports.Report):
           page_layouts=rpt.page_layouts,
           master_instance=journal,
           title=u"%s (journal %s)" % (journal.name,journal.id),
-          columnNames=rpt.columnNames,
+          column_names=rpt.column_names,
         )
         params.update(kw)
         reports.Report.__init__(self,**params)

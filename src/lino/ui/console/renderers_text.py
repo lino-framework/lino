@@ -189,8 +189,8 @@ class ColumnsReportRequest(reports.ReportRequest):
         self.columns_by_name = {}
         columns = []
         meta = rh.report.model._meta
-        if rh.report.columnNames:
-            for colname in rh.report.columnNames.split() :
+        if rh.report.column_names:
+            for colname in rh.report.column_names.split() :
                 a = colname.split(":")
                 if len(a) == 1:
                     fieldname = colname

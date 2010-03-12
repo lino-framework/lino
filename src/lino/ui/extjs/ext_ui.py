@@ -337,8 +337,13 @@ class MasterWrapper(WindowWrapper):
         
     def apply_window_config(self,win,wc):
         WindowWrapper.apply_window_config(self,win,wc)
-        if isinstance(wc,WindowConfig):
-            win.lh._main.apply_window_config(wc)
+        try:
+            if isinstance(wc,WindowConfig):
+                win.lh._main.apply_window_config(wc)
+        except Exception,e:
+            lino.log.warning("Error while applying window_config %s",wc.name)
+            lino.log.exception(e)
+            
             
     def js_preamble(self):
         if self.datalink.content_type is not None:

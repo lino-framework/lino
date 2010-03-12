@@ -76,40 +76,50 @@ class LinoSite:
             #raise Exception("LinoSite.setup() called recursively.")
         self._setting_up = True
         
+
+        
+        lino.log.debug("Setting up Actors...")
+        from lino.utils import actors
+        actors.setup()
+        
+        lino.log.info("Setting up Reports...")
+        #from lino import reports
+        reports.setup()
+        
+        #~ lino.log.debug("Registering Global Actors...")
+        #~ self.global_forms = []
+        #~ self.global_actions = []
+        #~ for a in actors.actors_dict.values():
+            #~ if isinstance(a,actions.Action):
+                #~ self.global_actions.append(a)
+            #~ if isinstance(a,forms.Form):
+                #~ self.global_forms.append(a)
+        #~ for cls in actors.actors_dict.values():
+            #~ if cls not in (actions.Action, reports.Report, forms.Form):
+                #~ if issubclass(cls,actions.Action):
+                    #~ self.global_actions.append(cls())
+                #~ if issubclass(cls,forms.Form):
+                    #~ self.global_forms.append(cls())
+    
+            
+        lino.log.debug("ACTORS:")
+        for k in sorted(actors.actors_dict.keys()):
+            a = actors.actors_dict[k]
+            lino.log.debug("%s -> %r",k,a.__class__)
+          
         if hasattr(settings,'LINO_SETTINGS'):
             lino.log.info("Reading %s...", settings.LINO_SETTINGS)
             execfile(settings.LINO_SETTINGS,dict(lino=self))
         else:
             lino.log.warning("settings.LINO_SETTINGS entry is missing")
             
-        lino.log.info("Setting up Lino reports...")
-        #from lino import reports
-        reports.setup()
-        
+        USER_INTERFACE = 'lino.ui.extjs'
+        lino.log.debug("Starting user interface %s",USER_INTERFACE)
         from django.utils.importlib import import_module
-
-        
-        from lino.ui import extjs
-        ui_module = import_module('lino.ui.extjs')
+        ui_module = import_module(USER_INTERFACE)
         self.ui = ui_module.ui
         self.ui.setup_site(self)
         
-        lino.log.debug("Registering Global Actors...")
-        from lino.utils import actors
-        self.global_forms = []
-        self.global_actions = []
-        for cls in actors.actors_dict.values():
-            if cls not in (actions.Action, reports.Report, forms.Form):
-                if issubclass(cls,actions.Action):
-                    self.global_actions.append(cls())
-                if issubclass(cls,forms.Form):
-                    self.global_forms.append(cls())
-    
-            
-        lino.log.debug("ACTORS:")
-        for k,v in actors.actors_dict.items():
-            lino.log.debug("%s -> %r",k,v)
-          
         lino.log.info("LinoSite %r is ready.", self.title)
           
         self._setup_done = True

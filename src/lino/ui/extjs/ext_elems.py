@@ -42,7 +42,7 @@ class ColumnModel(Component):
     def __init__(self,grid):
         self.grid = grid
         Component.__init__(self,grid.name)
-        self.columns = [GridColumn(e) for e in self.grid.elements]
+        self.columns = [GridColumn(e) for e in self.grid.elements if not e.hidden]
         
     def subvars(self):
         for col in self.columns:
@@ -138,6 +138,7 @@ class LayoutElement(VisibleComponent):
     xtype = None # set by subclasses
     grid_column_template = "new Ext.grid.Column(%s)"
     collapsible = False
+    hidden = False
     
     def __init__(self,lh,name,**kw):
         #lino.log.debug("LayoutElement.__init__(%r,%r)", lh.layout,name)
@@ -146,12 +147,7 @@ class LayoutElement(VisibleComponent):
         self.lh = lh
         if lh is not None:
             assert isinstance(lh,layouts.LayoutHandle)
-            #assert isinstance(layout,Layout), "%r is not a Layout" % layout
-            #self.ext_name = layout.name + "_" + name + self.ext_suffix
-            #self.ext_name = name
-            #~ if self.declared:
-                #~ self.layout.report.add_variable(self)
-                
+            lh.setup_element(self)
 
         
     def get_property(self,name):
@@ -159,7 +155,6 @@ class LayoutElement(VisibleComponent):
         if self.parent is None or v is not None:
             return v
         return self.parent.get_property(name)
-        
         
     def get_column_options(self,**kw):
         kw.update(
@@ -172,9 +167,6 @@ class LayoutElement(VisibleComponent):
         kw.update(width=w*EXT_CHAR_WIDTH)
         return kw    
         
-    #~ def as_ext_column(self):
-        #~ return py2js(self.get_column_options())
-        
     def set_parent(self,parent):
         if self.parent is not None:
             raise Exception("%s : parent is already %s, cannot set it to %s" % (self,self.parent,parent))
@@ -185,34 +177,12 @@ class LayoutElement(VisibleComponent):
 
     def ext_options(self,**kw):
         kw = VisibleComponent.ext_options(self,**kw)
-        #~ if self.flex is not None:
-            #~ kw.update(flex=self.flex)
-        #~ if self.width is None:
-            #~ """
-            #~ an element without explicit width will get flex=1 when in a hbox, otherwise anchor="100%".
-            #~ """
-            #~ if self.parent is not None:
-                #~ if self.parent.vertical:
-                    #~ kw.update(anchor="100%")
-                #~ else:
-                    #~ kw.update(flex=1)
-            #~ else:
-                #~ lino.log.warning("%s %s : parent is None",self.__class__.__name__,self.ext_name)
-        #~ else:
-            #~ kw.update(width=self.ext_width())
-        #~ if self.height is not None:
-            #~ kw.update(height=self.height * EXT_CHAR_HEIGHT)
         if self.xtype is not None:
             kw.update(xtype=self.xtype)
         if self.collapsible:
             kw.update(collapsible=self.collapsible)
         return kw
         
-    #~ def ext_width(self):
-        #~ if self.width is None:
-            #~ return None
-        #~ #if self.parent.labelAlign == 'top':
-        #~ return max(self.width,self.label_width) * EXT_CHAR_WIDTH + self.xpadding
         
 class InputElement(LayoutElement):
     #declare_type = jsgen.DECLARE_INLINE

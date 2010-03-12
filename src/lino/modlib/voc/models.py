@@ -1,4 +1,4 @@
-## Copyright 2008-2009 Luc Saffre
+## Copyright 2008-2010 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -200,11 +200,11 @@ class Units(reports.Report):
     model = Unit
     #model_form = UnitForm
     order_by = "id"
-    columnNames = "id title name parent seq format"
+    column_names = "id title name parent seq format"
 
 class UnitsPerParent(reports.Report):
     #model_form = UnitForm
-    columnNames = "id title name seq format parent"
+    column_names = "id title name seq format parent"
     order_by = "seq"
     master = Unit
     model = Unit

@@ -104,28 +104,31 @@ class ReportParameterForm(forms.Form):
 def rc_name(rptclass):
     return rptclass.app_label + '.' + rptclass.__name__
     
+def model_label(model):
+    return model._meta.app_label + '.' + model._meta.object_name
+    
 master_reports = []
 slave_reports = []
 generic_slaves = {}
 
-def register_report(cls):
+def register_report(rpt):
     #rptclass.app_label = rptclass.__module__.split('.')[-2]
-    if cls.typo_check:
-        myattrs = set(cls.__dict__.keys())
-        for attr in base_attrs(cls):
+    if rpt.typo_check:
+        myattrs = set(rpt.__class__.__dict__.keys())
+        for attr in base_attrs(rpt.__class__):
             myattrs.discard(attr)
         if len(myattrs):
-            lino.log.warning("%s defines new attribute(s) %s", cls, ",".join(myattrs))
+            lino.log.warning("%s defines new attribute(s) %s", rpt.__class__, ",".join(myattrs))
     
-    if cls.model is None:
-        lino.log.debug("%s is an abstract report", cls)
+    if rpt.model is None:
+        lino.log.debug("%s is an abstract report", rpt)
         return
         
-    rpt = cls()
+    #~ rpt = cls()
     if rpt.master is None:
         master_reports.append(rpt)
         if rpt.use_as_default_report:
-            lino.log.debug("register %s : model_report for %r", rpt.actor_id, rpt.model)
+            lino.log.debug("register %s : model_report for %s", rpt.actor_id, model_label(rpt.model))
             rpt.model._lino_model_report = rpt
         else:
             lino.log.debug("register %s: not used as model_report",rpt.actor_id)
@@ -149,17 +152,17 @@ def setup():
 
     """
     lino.log.debug("Register Report actors...")
-    for cls in actors.actors_dict.values():
-        if issubclass(cls,Report) and cls is not Report:
-            register_report(cls)
+    for rpt in actors.actors_dict.values():
+        if isinstance(rpt,Report) and rpt.__class__ is not Report:
+            register_report(rpt)
     
     lino.log.debug("Instantiate model reports...")
     for model in models.get_models():
         rpt = getattr(model,'_lino_model_report',None)
         if rpt is None:
-            cls = report_factory(model)
-            register_report(cls)
-            model._lino_model_report = cls()
+            rpt = report_factory(model)
+            register_report(rpt)
+            model._lino_model_report = rpt
             
     lino.log.debug("Analyze %d slave reports...",len(slave_reports))
     for rpt in slave_reports:
@@ -220,7 +223,9 @@ class Report(actors.Actor): # actions.Action): #
     filter = None
     exclude = None
     title = None
-    columnNames = None
+    column_names = None
+    hide_columns = None
+    #~ hide_fields = None
     #label = None
     param_form = ReportParameterForm
     #default_filter = ''
@@ -258,22 +263,22 @@ class Report(actors.Actor): # actions.Action): #
     button_label = None
     
     def __init__(self):
-        actors.Actor.__init__(self)
-        #actions.Action.__init__(self)
-        lino.log.debug("Report.__init__() %s", self.actor_id)
-        self._handles = {}
-        self._setup_done = False
-        self._setup_doing = False
-        #~ self.actions = self.actions + [ actions.ShowProperties(), actions.DeleteSelected(), actions.InsertRow() ]
-        self.actions = self.actions + [ actions.DeleteSelected(), actions.InsertRow() ]
-        
-        #~ if self.field is None:
         if self.model is None:
             if self.queryset is not None:
                 self.model = self.queryset.model
             # raise Exception(self.__class__)
         else:
             self.model = resolve_model(self.model,self.app_label,self)
+        if self.model is not None:
+            self.app_label = self.model._meta.app_label
+        actors.Actor.__init__(self)
+        #actions.Action.__init__(self)
+        lino.log.debug("Report.__init__() %s", self.__class__)
+        self._handles = {}
+        self._setup_done = False
+        self._setup_doing = False
+        #~ self.actions = self.actions + [ actions.ShowProperties(), actions.DeleteSelected(), actions.InsertRow() ]
+        self.actions = self.actions + [ actions.DeleteSelected(), actions.InsertRow() ]
         
         if self.fk_name:
             #~ self.master = resolve_model(self.master,self.app_label)
@@ -352,7 +357,7 @@ class Report(actors.Actor): # actions.Action): #
 
         self._setup_doing = False
         self._setup_done = True
-        lino.log.debug("Report.setup() done: %s", self.actor_id)
+        #~ lino.log.debug("Report.setup() done: %s", self.actor_id)
         return True
         
     # implements actions.Action
@@ -495,7 +500,7 @@ class Report(actors.Actor): # actions.Action): #
         
     def row2dict(self,row,d):
         "Overridden by lino.modlib.properties.PropValuesByOwner"
-        for n in self.columnNames.split():
+        for n in self.column_names.split():
             d[n] = getattr(row,n)
         return d
         
@@ -510,12 +515,16 @@ class Report(actors.Actor): # actions.Action): #
         
 def report_factory(model):
     lino.log.debug('report_factory(%s) -> app_label=%r',model.__name__,model._meta.app_label)
-    return type(model.__name__+"Report",(Report,),dict(model=model,app_label=model._meta.app_label))
+    cls = type(model.__name__+"Report",(Report,),dict(model=model,app_label=model._meta.app_label))
+    rpt = cls()
+    assert not actors.actors_dict.has_key(rpt.actor_id)
+    actors.actors_dict[rpt.actor_id] = rpt
+    return rpt
 
 #~ def choice_report_factory(model,field):
     #~ clsname = model.__name__+"_"+field.name+'_'+"Choices"
     #~ fldname = model._meta.app_label+'.'+model.__class__.__name__+'.'+field.name
-    #~ return type(clsname,(Report,),dict(field=fldname,app_label=model._meta.app_label,columnNames='__unicode__'))
+    #~ return type(clsname,(Report,),dict(field=fldname,app_label=model._meta.app_label,column_names='__unicode__'))
 
 def get_unbound_meth(cl,name):
     meth = getattr(cl,name,None)
@@ -550,9 +559,9 @@ class ReportHandle(layouts.DataLink):
             
             index = 1
             if self.report.row_layout_class is None:
-                self.row_layout = lh(layouts.RowLayout,index,self.report.columnNames)
+                self.row_layout = lh(layouts.RowLayout,index,self.report.column_names)
             else:
-                assert self.report.columnNames is None
+                assert self.report.column_names is None
                 self.row_layout = lh(self.report.row_layout_class,index)
                 
             self.layouts = [ self.choice_layout, self.row_layout ]

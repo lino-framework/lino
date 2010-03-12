@@ -27,7 +27,8 @@ def welcome():
     i = 0
     for model in models_list:
         i += 1
-        lino.log.debug("  %2d: %s %r",i,model._meta.db_table,model)
+        lino.log.debug("  %2d: %s.%s -> %r",i,model._meta.app_label,model._meta.object_name,model)
+        #~ lino.log.debug("  %2d: %s %r",i,model._meta.db_table,model)
     
     
     

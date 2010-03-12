@@ -16,43 +16,44 @@ from django.db import models
 
 import lino
 
-actors_dict = {}
+actors_dict = None
+actor_classes = []
 
 ACTOR_SEP = '.'
 
 def get_actor(actor_id):
-    cls = actors_dict[actor_id]
-    return cls()
+    return actors_dict[actor_id]
+    #~ return cls()
     
 def get_actor2(app_label,name):
     k = app_label + ACTOR_SEP + name
-    cls = actors_dict.get(k,None)
-    if cls is None:
-        return cls
-    return cls()
+    return actors_dict.get(k,None)
+    #~ cls = actors_dict.get(k,None)
+    #~ if cls is None:
+        #~ return cls
+    #~ return cls()
     
-
+def setup():
+    global actors_dict
+    assert actors_dict is None
+    actors_dict = {}
+    for cls in actor_classes:
+        a = cls()
+        old = actors_dict.get(a.actor_id,None)
+        if old is not None:
+            lino.log.debug("Actor %s : %r replaced by %r",a.actor_id,old.__class__,a.__class__)
+        actors_dict[a.actor_id] = a
+            
+        
 class ActorMetaClass(type):
     def __new__(meta, classname, bases, classDict):
         #~ if not classDict.has_key('app_label'):
             #~ classDict['app_label'] = cls.__module__.split('.')[-2]
         cls = type.__new__(meta, classname, bases, classDict)
         #lino.log.debug("actor(%s)", cls)
-        if not classDict.has_key('app_label'):
-            # dynamically created report classes must specify themselves their app_label,
-            # otherwise the app_label will be 'utils' (from utils.report_factory()).
-            cls.app_label = cls.__module__.split('.')[-2]
-        name = classDict.get('name',None)
-        if name is None:
-            name = cls.__name__
-            cls.name = name
-        cls.actor_id = cls.app_label + ACTOR_SEP + cls.name
-        old = actors_dict.get(cls.actor_id,None)
-        if old is not None:
-            lino.log.debug("ActorMetaClass %s : %r replaced by %r",cls.actor_id,old,cls)
-        if classname not in ('Report','Action'):
-            actors_dict[cls.actor_id] = cls
-        #actors.append(cls)
+        if classname not in ('Report','Action','Actor','Form','Command'):
+            #~ actors_dict[cls.actor_id] = cls
+            actor_classes.append(cls)
         return cls
 
     def __init__(cls, name, bases, dict):
@@ -67,6 +68,7 @@ class ActorMetaClass(type):
 
 class Actor(object):
     __metaclass__ = ActorMetaClass
+    app_label = None
     name = None
     label = None
     #default_action = 'view'
@@ -74,8 +76,11 @@ class Actor(object):
     def __init__(self):
         if self.label is None:
             self.label = self.__class__.__name__
-        #~ if self.name is None:
-            #~ self.name = self.__class__.__name__
+        if self.name is None:
+            self.name = self.__class__.__name__
+        if self.app_label is None:
+            self.app_label = self.__class__.__module__.split('.')[-2]
+        self.actor_id = self.app_label + ACTOR_SEP + self.name
 
     def get_label(self):
         #~ if self.label is None:

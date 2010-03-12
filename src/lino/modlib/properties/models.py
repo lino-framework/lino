@@ -113,7 +113,7 @@ class Property(models.Model):
     
 class Properties(reports.Report):
     model = Property
-    columnNames = 'name *' #label only_for value_type'
+    column_names = 'name *' #label only_for value_type'
     order_by = "name"
         
 
@@ -252,7 +252,7 @@ class PropValuesByOwner(reports.Report):
     can_add = perms.never
     #master = ContentType
     fk_name = 'owner'
-    #columnNames = "prop__name value"
+    #column_names = "prop__name value"
     order_by = "prop__name"
     
     def get_queryset(self,rr):
