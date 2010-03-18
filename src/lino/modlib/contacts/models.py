@@ -39,9 +39,9 @@ class Contact(models.Model,Printable):
         
     name = models.CharField(max_length=200)
     national_id = models.CharField(max_length=200,blank=True)
-    street = models.CharField(max_length=200,blank=True)
-    street_no = models.CharField(max_length=10,blank=True)
-    street_box = models.CharField(max_length=10,blank=True)
+    street = models.CharField(_("Street"),max_length=200,blank=True)
+    street_no = models.CharField(_("No."),max_length=10,blank=True)
+    street_box = models.CharField(_("Box"),max_length=10,blank=True)
     addr1 = models.CharField(max_length=200,blank=True)
     #addr2 = models.CharField(max_length=200,blank=True)
     country = models.ForeignKey('countries.Country',blank=True,null=True)

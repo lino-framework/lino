@@ -35,12 +35,15 @@ def get_actor2(app_label,name):
     #~ return cls()
     
 def discover():
-    #~ global actor_classes
+    global actor_classes
     global actors_dict
     assert actors_dict is None
     actors_dict = {}
+    lino.log.debug("actors.discover() : %d actor_classes",len(actor_classes))
     for cls in actor_classes:
         register_actor(cls())
+    actor_classes = None
+    lino.log.debug("actors.discover() done")
         #~ a = cls()
         #~ old = actors_dict.get(a.actor_id,None)
         #~ if old is not None:
@@ -51,8 +54,10 @@ def discover():
 
 def register_actor(a):
     old = actors_dict.get(a.actor_id,None)
-    if old is not None:
-        lino.log.debug("Actor %s : %r replaced by %r",a.actor_id,old.__class__,a.__class__)
+    if old is None:
+        lino.log.debug("register_actor %s = %r",a.actor_id,a.__class__)
+    else:
+        lino.log.debug("register_actor %s : %r replaced by %r",a.actor_id,old.__class__,a.__class__)
     actors_dict[a.actor_id] = a
     return a
   
@@ -75,11 +80,14 @@ class ActorMetaClass(type):
             #~ classDict['app_label'] = cls.__module__.split('.')[-2]
         cls = type.__new__(meta, classname, bases, classDict)
         #lino.log.debug("actor(%s)", cls)
-        if classname not in ('Report','Action','Actor','Command',
+        if classname not in ('Report','Action','HandledActor','Actor','Command',
               'Layout','ListLayout','DetailLayout','FormLayout',
               'ModelLayout'):
             #~ actors_dict[cls.actor_id] = cls
-            actor_classes.append(cls)
+            if actor_classes is None:
+                lino.log.debug("%s definition was after discover",cls)
+            else:
+                actor_classes.append(cls)
         return cls
 
     def __init__(cls, name, bases, dict):
@@ -102,6 +110,8 @@ class Actor(object):
     #default_action = 'view'
 
     def __init__(self):
+        self._setup_done = False
+        self._setup_doing = False
         if self.label is None:
             self.label = self.__class__.__name__
         if self.title is None:
@@ -135,6 +145,24 @@ class Actor(object):
         return getattr(self,action_name,None)
         
     def setup(self):
+        assert not self._setup_done, "%s.setup() called again" % self
+        if self._setup_done:
+            return True
+        if self._setup_doing:
+            if True: # severe error handling
+                raise Exception("%s.setup() called recursively" % self.actor_id)
+            else:
+                lino.log.warning("%s.setup() called recursively" % self.actor_id)
+                return False
+        lino.log.debug("Actor.setup() %s", self)
+        self._setup_doing = True
+        self.do_setup()
+        self._setup_doing = False
+        self._setup_done = True
+        #~ lino.log.debug("Report.setup() done: %s", self.actor_id)
+        return True
+        
+    def do_setup(self):
         pass
 
 class HandledActor(Actor):

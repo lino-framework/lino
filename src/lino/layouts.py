@@ -244,7 +244,7 @@ class FormLayout(Layout):
     label_align = 'left'
     layout_command = None
     
-    def setup(self):
+    def do_setup(self):
         self.layout_command = actors.resolve_actor(self.layout_command,self.app_label)
         if self.layout_command is None:
             raise ValueError("%s : layout_command is None" % self)
@@ -254,7 +254,7 @@ class FormLayout(Layout):
 
 class ModelLayout(Layout):
     layout_model = None
-    def setup(self):
+    def do_setup(self):
         lino.log.debug("ModelLayout.setup() %s",self)
         if self.layout_model is None:
             #~ raise ValueError("%s : layout_model is None" % self)
@@ -279,8 +279,8 @@ class DetailLayout(ModelLayout):
     label = _("Detail")
     show_labels = True
     join_str = "\n"
-    def setup(self):
-        ModelLayout.setup(self)
+    def do_setup(self):
+        ModelLayout.do_setup(self)
         if self.layout_model is not None:
             l = getattr(self.layout_model,'_lino_layouts',None)
             if l is None:

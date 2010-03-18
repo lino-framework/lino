@@ -48,6 +48,7 @@ from lino import reports, forms, layouts, actions
 from lino import diag
 from lino.utils import perms
 from lino.utils import menus
+from lino.utils import actors
 
 
 class LinoSite:
@@ -76,17 +77,18 @@ class LinoSite:
         self._setting_up = True
         
 
-        
-        lino.log.debug("Setting up Actors...")
-        from lino.utils import actors
         actors.discover()
         
         #~ layouts.setup()
         
-        reports.setup()
+        reports.discover()
 
         for a in actors.actors_dict.values():
-            a.setup()
+            if isinstance(a,layouts.DetailLayout):
+                a.setup()
+        for a in actors.actors_dict.values():
+            if not isinstance(a,layouts.DetailLayout):
+                a.setup()
 
             
         lino.log.debug("ACTORS:")

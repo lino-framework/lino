@@ -139,7 +139,7 @@ def register_report(rpt):
 
     
     
-def setup():
+def discover():
     """
     - Each model can receive a number of "slaves". 
       Slaves are reports that display detail data for a known instance of that model (their master).
@@ -152,7 +152,7 @@ def setup():
 
     """
     
-    lino.log.info("Setting up Reports...")
+    lino.log.info("Analyzing up Reports...")
     lino.log.debug("Register Report actors...")
     for rpt in actors.actors_dict.values():
         if isinstance(rpt,Report) and rpt.__class__ is not Report:
@@ -362,15 +362,8 @@ class Report(actors.HandledActor): # actions.Action): #
             
         actors.HandledActor.__init__(self)
         
-        lino.log.debug("Report.__init__() %s", self)
-        self._setup_done = False
-        self._setup_doing = False
+        #~ lino.log.debug("Report.__init__() %s", self)
         self.actions = self.actions + [ actions.DeleteSelected(), actions.InsertRow() ]
-        
-        if self.model is not None:
-            #self._actions = [cl(self) for cl in self.actions]
-            self.list_layout = layouts.list_layout_factory(self)
-            
         
         if self.fk_name:
             #~ self.master = resolve_model(self.master,self.app_label)
@@ -410,20 +403,9 @@ class Report(actors.HandledActor): # actions.Action): #
         kw['app_label'] = cls.app_label
         return type(cls.__name__+str(suffix),(cls,),kw)
         
-    def setup(self):
-        assert not self._setup_done, "%s.setup() called again" % self
-        if self._setup_done:
-            return True
-        if self._setup_doing:
-            if True: # severe error handling
-                raise Exception("%s.setup() called recursively" % self.actor_id)
-            else:
-                lino.log.warning("%s.setup() called recursively" % self.actor_id)
-                return False
-        lino.log.debug("Report.setup() %s", self)
-        self._setup_doing = True
-        
+    def do_setup(self):
         if self.model is not None:
+            self.list_layout = layouts.list_layout_factory(self)
             setup = getattr(self.model,'setup_report',None)
             if setup:
                 setup(self)
@@ -449,10 +431,6 @@ class Report(actors.HandledActor): # actions.Action): #
         if self.button_label is None:
             self.button_label = self.label
 
-        self._setup_doing = False
-        self._setup_done = True
-        #~ lino.log.debug("Report.setup() done: %s", self.actor_id)
-        return True
         
     # implements actions.Action
     def get_url(self,ui,**kw):
