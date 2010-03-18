@@ -76,8 +76,8 @@ from lino.django.utils import reports
 from lino.django.utils import layouts
 from lino.django.utils import perms
 
-class FinDocPageLayout(layouts.PageLayout):
-    
+class FinDocDetail(layouts.DetailLayout):
+    layout_model = 'FinancialDocument'
     balance = """
     balance1
     balance2
@@ -100,7 +100,7 @@ class Accounts(reports.Report):
     model = Account
     
 class FinancialDocuments(reports.Report):
-    page_layouts = (FinDocPageLayout, )
+    #~ page_layouts = (FinDocPageLayout, )
     model = FinancialDocument
     order_by = "number"
 

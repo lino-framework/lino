@@ -161,9 +161,9 @@ class ExtUI(base.UI):
 
 
     def main_panel_class(self,layout):
-        if isinstance(layout,layouts.RowLayout) : 
+        if isinstance(layout,layouts.ListLayout) : 
             return ext_elems.GridMainPanel
-        if isinstance(layout,layouts.PageLayout) : 
+        if isinstance(layout,layouts.DetailLayout) : 
             return ext_elems.DetailMainPanel
         if isinstance(layout,layouts.FormLayout) : 
             return ext_elems.FormMainPanel
@@ -176,6 +176,9 @@ class ExtUI(base.UI):
         f = open(self.window_configs_file,'wb')
         pickle.dump(self.window_configs,f)
         f.close()
+        #~ lh = actors.get_actor(name).get_handle(self)
+        #~ if lh is not None:
+            #~ lh.window_wrapper.try_apply_window_config(wc)
         self._response = None
 
     def load_window_config(self,name):

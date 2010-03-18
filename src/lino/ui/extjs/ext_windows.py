@@ -117,13 +117,12 @@ class WrappedWindow(jsgen.Component):
     declare_type = jsgen.DECLARE_THIS
     value_template = "new Ext.Window(%s)"
     
-    def __init__(self,ww,ui,name,main,lh,permalink_name,**kw):
-        #~ self.rr = rr
+    def __init__(self,ww,ui,name,main,permalink_name,**kw):
         self.wrapper = ww
         self.ui = ui
-        self.lh = lh # may be None
-        if lh is not None:
-            kw.update(title=lh.get_title(None))
+        #~ self.lh = lh # may be None
+        #~ if lh is not None:
+            #~ kw.update(title=lh.get_title(None))
         self.main = main
         self.permalink_name = permalink_name
         
@@ -134,6 +133,10 @@ class WrappedWindow(jsgen.Component):
         #kw.update(id=name)
         kw.update(layout='fit')
         kw.update(items=self.main)
+        js = 'Lino.save_window_config(this)'
+        kw.update(tools=[
+          dict(id='save',handler=js_code(js),
+              qtip=_("Save window config %s") % permalink_name )])
         
         jsgen.Component.__init__(self,name,**kw)
         
@@ -150,13 +153,9 @@ class WindowWrapper(jsgen.Object):
         assert window.ext_name == 'window', ("expected 'window' but got %r" % window.ext_name)
         assert self.window_config_type is not None, "%s.window_config_type is None" % self.__class__
         self.window = window
-        #~ rh.detail_buttons = []
-        #~ rh.grid_buttons = []
         self.slave_windows = []
         self.bbar_buttons = []
         jsgen.Object.__init__(self,name)
-        wc = window.ui.load_window_config(window.permalink_name)
-        self.apply_window_config(window,wc)
         
         
     def vars(self):
@@ -173,6 +172,9 @@ class WindowWrapper(jsgen.Object):
     def js_main(self):
         yield "// main %s" % self
         
+    def js_get_values(self):
+        return []
+        
     def js_show(self):
         return []
         
@@ -188,51 +190,47 @@ class WindowWrapper(jsgen.Object):
     def js_preamble(self):
         return []
         
-    def apply_window_config(self,win,wc):
-        assert win is self.window
-        js = 'Lino.save_window_config(this)'
-        win.update(tools=[dict(id='save',handler=js_code(js),qtip=_("Save window config %s") % win.permalink_name )])
+    def try_apply_window_config(self,wc):
+        try:
+            self.apply_window_config(wc)
+        except Exception,e:
+            lino.log.warning("Error while applying window_config %s:",wc.name)
+            lino.log.exception(e)
+      
+    def apply_window_config(self,wc):
         
-        #name = id2js(self.rr.layout.name)
-        if wc is None:
-            #~ if self.rr.report.use_layouts:
-            if win.lh is not None: 
-                if win.lh.height is None:
-                    win.update(height=300)
-                else:
-                    win.update(height=win.lh.height*EXT_CHAR_HEIGHT + 7*EXT_CHAR_HEIGHT)
-                if win.lh.width is None:
-                    win.update(width=400)
-                else:
-                    win.update(width=win.lh.width*EXT_CHAR_WIDTH + 10*EXT_CHAR_WIDTH)
-        else:
-            if isinstance(wc,WindowConfig):
-                win.update(x=wc.x)
-                win.update(y=wc.y)
-                win.update(width=wc.width)
-                win.update(height=wc.height)
-                win.update(maximized=wc.maximized)
-            elif len(wc) == 5: # only for backwards compatibility
-                win.update(x=wc[0])
-                win.update(y=wc[1])
-                win.update(width=wc[2])
-                win.update(height=wc[3])
-                win.update(maximized=wc[4])
+        #~ if wc is None:
+            #~ if win.lh is not None:
+                #~ if win.lh.height is None:
+                    #~ win.update(height=300)
+                #~ else:
+                    #~ win.update(height=win.lh.height*EXT_CHAR_HEIGHT + 7*EXT_CHAR_HEIGHT)
+                #~ if win.lh.width is None:
+                    #~ win.update(width=400)
+                #~ else:
+                    #~ win.update(width=win.lh.width*EXT_CHAR_WIDTH + 10*EXT_CHAR_WIDTH)
+        if isinstance(wc,WindowConfig):
+            self.window.update(x=wc.x)
+            self.window.update(y=wc.y)
+            self.window.update(width=wc.width)
+            self.window.update(height=wc.height)
+            self.window.update(maximized=wc.maximized)
         
-        if win.lh is not None: # report.use_layouts:
-            if win.lh.start_focus is not None:
-                win.update(defaultButton=win.lh.start_focus.name)
+        #~ if win.lh is not None: # report.use_layouts:
+            #~ if win.lh.start_focus is not None:
+                #~ win.update(defaultButton=win.lh.start_focus.name)
         #win.update(defaultButton=self.lh.link.inputs[0].name)
       
         
     def js_render(self):
+        wc = self.window.ui.load_window_config(self.window.permalink_name)
+        self.try_apply_window_config(wc)
         yield "function(caller,on_click) {"
         yield "  // begin js_render() %s" % self
         yield "  this.caller = caller;"
         yield "  this.on_click = on_click;"
         for ln in self.js_preamble():
             yield "  " + ln
-        #~ yield "  var client_job = this;" 
         yield "  this.close = function() { this.window.close() }"
         yield "  this.hide = function() { this.window.hide() }"
         yield "  this.add_row_listener = function(fn) {"
@@ -246,6 +244,12 @@ class WindowWrapper(jsgen.Object):
         yield "    this.window.syncSize();"
         yield "    this.window.focus();"
         yield "  }"
+        yield "  this.get_values = function() {"
+        yield "    var v = {};"
+        for ln in self.js_get_values():
+            yield "    " + ln
+        yield "    return v;"
+        yield "  };"
         yield "  // declare variables of %s" % self
         for v in self.vars():
             #~ yield "  // variable %s:" % v.ext_name
@@ -272,35 +276,44 @@ class WindowWrapper(jsgen.Object):
         yield "  // end js_render() %s" % self
         yield "}"
         
+def lh2win(lh,kw):
+    kw.update(height=300)
+    kw.update(width=400)
+    if lh is not None:
+        kw.update(title=lh.get_title(None))
+        if lh.height is not None:
+            kw.update(height=lh.height*EXT_CHAR_HEIGHT + 7*EXT_CHAR_HEIGHT)
+        if lh.width is not None:
+            kw.update(width=lh.width*EXT_CHAR_WIDTH + 10*EXT_CHAR_WIDTH)
+        if lh.start_focus is not None:
+            win.update(defaultButton=lh.start_focus.name)
+  
 class MasterWrapper(WindowWrapper):
   
     def __init__(self,lh,**kw):
         #~ assert isinstance(lh.datalink,layouts.DataLink)
+        self.lh = lh
         self.datalink = lh.datalink
-        permalink_name = id2js(lh.layout.actor_id)
-        window = WrappedWindow(self,lh.datalink.ui, "window", lh._main, lh, permalink_name, **kw)
+        #~ permalink_name = id2js(lh.layout.actor_id)
+        permalink_name = lh.layout.actor_id
+        lh2win(lh,kw)
+        window = WrappedWindow(self,lh.datalink.ui, "window", lh._main, permalink_name, **kw)
         WindowWrapper.__init__(self,lh.datalink.name,window)
         
         
-    def apply_window_config(self,win,wc):
-        WindowWrapper.apply_window_config(self,win,wc)
-        try:
-            if isinstance(wc,WindowConfig):
-                win.lh._main.apply_window_config(wc)
-        except Exception,e:
-            lino.log.warning("Error while applying window_config %s",wc.name)
-            lino.log.exception(e)
+    def apply_window_config(self,wc):
+        WindowWrapper.apply_window_config(self,wc)
+        if isinstance(wc,WindowConfig):
+            self.lh._main.apply_window_config(wc)
             
             
     def js_preamble(self):
         if self.datalink.content_type is not None:
             yield "this.content_type = %s;" % py2js(self.datalink.content_type)
-        yield "this.get_values = function() {"
-        yield "  var v = {};"
+            
+    def js_get_values(self):
         for e in self.datalink.inputs:
             yield "  v[%r] = this.main_panel.getForm().findField(%r).getValue();" % (e.name,e.name)
-        yield "  return v;"
-        yield "};"
             
 class FormMasterWrapper(MasterWrapper):
   
@@ -389,10 +402,13 @@ class unused_DetailMasterWrapper(MasterWrapper):
 class GridMasterWrapper(GridWrapperMixin,MasterWrapper):
   
     def __init__(self,rh,**kw):
-        lh = rh.row_layout
+        lh = rh.list_layout
         MasterWrapper.__init__(self,lh,**kw)
+        cmenu_buttons = []
         for a in rh.get_actions():
-            self.bbar_buttons.append(ext_elems.RowActionElement(lh,a.name,a)) 
+            btn = ext_elems.RowActionElement(lh,a.name,a)
+            self.bbar_buttons.append(btn) 
+            cmenu_buttons.append(btn.ext_options()) 
                 
         
         #~ keys = []
@@ -421,8 +437,14 @@ class GridMasterWrapper(GridWrapperMixin,MasterWrapper):
             self.bbar_buttons.append(ww.button)
             self.slave_windows.append(ww)
             
-        rh.row_layout._main.update(bbar=self.bbar_buttons)
+        rh.list_layout._main.update(bbar=self.bbar_buttons)
+        self.cmenu = jsgen.Variable('cmenu',js_code("new Ext.menu.Menu(%s)" % py2js(cmenu_buttons)))        
   
+    def vars(self):
+        for v in MasterWrapper.vars(self):
+            yield v
+        yield self.cmenu
+        
     def js_main(self):
         for ln in MasterWrapper.js_main(self):
             yield ln
@@ -438,7 +460,7 @@ class GridMasterWrapper(GridWrapperMixin,MasterWrapper):
         yield "}"
         yield "this.main_grid.on('afteredit', Lino.grid_afteredit(this,'%s'));" \
           % self.datalink.get_absolute_url(grid_afteredit=True)
-        yield "this.main_grid.on('cellcontextmenu', Lino.cell_context_menu(this));" 
+        yield "this.main_grid.on('cellcontextmenu', Lino.cell_context_menu, this);" 
         # recalculate page size when size changes
         yield "this.main_grid.on('resize', function(cmp,aw,ah,rw,rh) {" 
         yield "    this.pager.pageSize = cmp.calculatePageSize(this,aw,ah,rw,rh) || 10;" 
@@ -506,12 +528,15 @@ class SlaveWrapper(WindowWrapper):
 
 class GridSlaveWrapper(GridWrapperMixin,SlaveWrapper):
   
-    def __init__(self,master_lh,slave_rh):
+    def __init__(self,master_lh,slave_rh,**kw):
         self.slave_rh = slave_rh
-        slave_lh = slave_rh.row_layout
+        slave_lh = slave_rh.list_layout
         button_text = slave_rh.report.button_label
-        permalink_name = id2js(slave_lh.name)
-        window = WrappedWindow(self,master_lh.ui,'window',slave_lh._main,slave_lh,permalink_name)
+        #~ permalink_name = id2js(slave_lh.name)
+        permalink_name = slave_lh.name
+        #~ kw.update(title=slave_lh.get_title(None))
+        lh2win(slave_lh,kw)
+        window = WrappedWindow(self,master_lh.ui,'window',slave_lh._main,permalink_name,**kw)
         SlaveWrapper.__init__(self, master_lh, slave_rh.name, window, button_text)
         self.bbar_buttons = slave_rh.window_wrapper.bbar_buttons
         self.slave_windows = slave_rh.window_wrapper.slave_windows
@@ -551,8 +576,11 @@ class DetailSlaveWrapper(SlaveWrapper):
     
     def __init__(self,master_lh,detail_lh,**kw):
         self.detail_lh = detail_lh
-        permalink_name = id2js(detail_lh.name)
-        window = WrappedWindow(self,master_lh.ui, 'window', detail_lh._main, detail_lh, permalink_name, **kw)
+        #~ permalink_name = id2js(detail_lh.name)
+        permalink_name = detail_lh.name
+        #~ kw.update(title=detail_lh.get_title(None))
+        lh2win(detail_lh,kw)
+        window = WrappedWindow(self,master_lh.ui, 'window', detail_lh._main, permalink_name, **kw)
         button_text = detail_lh.label
         SlaveWrapper.__init__(self, master_lh, detail_lh.name, window, button_text)
         
@@ -564,7 +592,7 @@ class DetailSlaveWrapper(SlaveWrapper):
         keys = []
         buttons = []
 
-        #main_name = id2js(self.lh.link.row_layout.name) + '.' + 'main_grid'
+        #main_name = id2js(self.lh.link.list_layout.name) + '.' + 'main_grid'
         key = actions.PAGE_UP
         js = js_code("function() {console.log('20100310e'); this.main_grid.getSelectionModel().selectPrevious()}")
         keys.append(dict(
@@ -672,8 +700,9 @@ class PropertiesWrapper(SlaveWrapper):
         main = jsgen.Value(panel)
         permalink_name = self.model._meta.app_label+'_'+self.model.__name__+'_properties'
         
+        lh2win(None,kw)
         #~ window = Window(ui,rr.rh.name+'_properties',main,None,**kw)
-        window = WrappedWindow(self,self.ui, 'window', main, None, permalink_name, **kw)
+        window = WrappedWindow(self,self.ui, 'window', main, permalink_name, **kw)
         
         button_text = rr.rh.report.label
         
@@ -705,8 +734,8 @@ class PropertiesWrapper(SlaveWrapper):
         yield "wc['column_widths'] = col_widths;"
         yield "wc['column_hidden'] = col_hidden;"
 
-    def apply_window_config(self,win,wc):
-        WindowWrapper.apply_window_config(self,win,wc)
+    def apply_window_config(self,wc):
+        WindowWrapper.apply_window_config(self,wc)
         if isinstance(wc,WindowConfig):
             self.grid['columns'] = [ dict(width=w) for w in wc.column_widths]
                 

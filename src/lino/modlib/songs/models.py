@@ -263,7 +263,7 @@ class Collection(models.Model):
 # reports
 
 
-class SongPageLayout(layouts.PageLayout):
+class SongDetail(layouts.DetailLayout):
     layout_model = 'songs.Song'
     main = """
     id title language voices
@@ -276,7 +276,7 @@ class SongPageLayout(layouts.PageLayout):
     def inlines(self):
         return dict(events=EventsBySong())
 
-class PerformancePageLayout(layouts.PageLayout):
+class PerformanceDetail(layouts.DetailLayout):
     layout_model = 'songs.Performance'
   
     main = """
@@ -290,7 +290,7 @@ class PerformancePageLayout(layouts.PageLayout):
     
 class Rehearsals(reports.Report):
     model = Rehearsal
-    #page_layout_class = RehearsalPageLayout
+    #page_layout_class = RehearsalDetail
     column_names = "date remark songs:20 singers:10"
     order_by = "date"
 
@@ -298,7 +298,7 @@ class Performances(reports.Report):
     model = Performance
     column_names = "date place remark songs:20 singers:10"
     order_by = "date"
-    #~ page_layouts = (PerformancePageLayout,)
+    #~ page_layouts = (PerformanceDetail,)
     
 
 class Collections(reports.Report):
@@ -312,14 +312,14 @@ class Places(reports.Report):
 
 class Singers(reports.Report):
     model = Singer
-    #page_layout_class = RehearsalPageLayout
+    #page_layout_class = RehearsalDetail
     column_names = "id first_name last_name voice"
     order_by = "last_name"
 
 class Authors(reports.Report):
     model = Author
     #queryset = Author.objects.filter(singer__exact=None)
-    #page_layout_class = RehearsalPageLayout
+    #page_layout_class = RehearsalDetail
     column_names = "id get_full_name born died first_name last_name"
     order_by = "last_name"
 
@@ -338,7 +338,7 @@ class SongsByEvent(reports.Report):
 
 class Songs(reports.Report):
     model = Song
-    #~ page_layouts = (SongPageLayout,)
+    #~ page_layouts = (SongDetail,)
     column_names = "id title language voices composed_by text_by written_by"
 
 class SongEvents(reports.Report):

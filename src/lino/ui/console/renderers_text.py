@@ -203,7 +203,7 @@ class ColumnsReportRequest(reports.ReportRequest):
                       meta.get_field_by_name(fieldname)
                     #print field, model, direct, m2m 
                 except models.FieldDoesNotExist,e:
-                    dtlrep = rh.report.row_layout._inlines.get(fieldname,None)
+                    dtlrep = rh.report.list_layout._inlines.get(fieldname,None)
                     if dtlrep != None:
                         col = DetailColumn(self,
                                            fieldname,

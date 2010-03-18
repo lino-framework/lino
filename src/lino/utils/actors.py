@@ -23,7 +23,7 @@ actor_classes = []
 ACTOR_SEP = '.'
 
 def get_actor(actor_id):
-    return actors_dict[actor_id]
+    return actors_dict.get(actor_id,None)
     #~ return cls()
     
 def get_actor2(app_label,name):
@@ -75,7 +75,9 @@ class ActorMetaClass(type):
             #~ classDict['app_label'] = cls.__module__.split('.')[-2]
         cls = type.__new__(meta, classname, bases, classDict)
         #lino.log.debug("actor(%s)", cls)
-        if classname not in ('Report','Action','Actor','Command','Layout','RowLayout','PageLayout','FormLayout','ModelLayout'):
+        if classname not in ('Report','Action','Actor','Command',
+              'Layout','ListLayout','DetailLayout','FormLayout',
+              'ModelLayout'):
             #~ actors_dict[cls.actor_id] = cls
             actor_classes.append(cls)
         return cls

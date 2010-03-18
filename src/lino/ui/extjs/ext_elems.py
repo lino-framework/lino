@@ -822,7 +822,7 @@ class GridElement(Container): #,DataElementMixin):
         """
         assert isinstance(rh,reports.ReportHandle), "%r is not a ReportHandle!" % rh
         if len(elements) == 0:
-            elements = rh.row_layout._main.elements
+            elements = rh.list_layout._main.elements
         w = 0
         for e in elements:
             w += (e.width or e.preferred_width)
@@ -887,7 +887,7 @@ class GridElement(Container): #,DataElementMixin):
         d.update(enableColLock=False)
         if False and self.__class__ is not GridMainPanel: 
             js="Lino.action_handler(this,%r)" % \
-                self.rh.row_layout.get_absolute_url(run=True)
+                self.rh.list_layout.get_absolute_url(run=True)
             d.update(listeners=dict(click=js_code(js)))
         return d
         
@@ -968,7 +968,7 @@ class MainPanel(jsgen.Variable):
     def __init__(self):
         self.keys = None
         self.buttons = None
-        self.cmenu = None
+        #~ self.cmenu = None
         #~ self.props_button = None
         
     def get_datalink(self):

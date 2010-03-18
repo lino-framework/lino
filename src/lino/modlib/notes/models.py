@@ -65,7 +65,7 @@ class Note(models.Model,Printable):
             self.user = u
         
 
-class NoteDetail(layouts.PageLayout):
+class NoteDetail(layouts.DetailLayout):
     layout_model = 'notes.Note'
     #~ main = """
     #~ date short type user

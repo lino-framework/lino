@@ -48,7 +48,7 @@ class ProductCats(reports.Report):
     order_by = "id"
     can_view = perms.is_staff
 
-class ProductPageLayout(layouts.PageLayout):
+class ProductDetail(layouts.DetailLayout):
   
     layout_model = 'products.Product'
     

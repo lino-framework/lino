@@ -82,7 +82,7 @@ class LayoutHandle:
         else:
             main = self.layout.join_str.join(dl.data_elems())
             self._main = self.desc2elem(self.main_class,"main",main)
-        if isinstance(self.layout,RowLayout):
+        if isinstance(self.layout,ListLayout):
             assert len(self._main.elements) > 0, "%s : Grid has no columns" % self.name
             self.columns = self._main.elements
             
@@ -265,7 +265,7 @@ class ModelLayout(Layout):
         #~ self.app_label = self.layout_model._meta.app_label
         
   
-class RowLayout(ModelLayout):
+class ListLayout(ModelLayout):
     label = _("List")
     show_labels = False
     join_str = " "
@@ -275,7 +275,7 @@ class RowLayout(ModelLayout):
             return set()
         return set(lh.datalink.report.hide_columns.split())
 
-class PageLayout(ModelLayout):
+class DetailLayout(ModelLayout):
     label = _("Detail")
     show_labels = True
     join_str = "\n"
@@ -288,9 +288,11 @@ class PageLayout(ModelLayout):
                 setattr(self.layout_model,'_lino_layouts',l)
             lino.log.debug('Register %s detail layout %d for %s',self,len(l),model_label(self.layout_model))
             l.append(self)
+            
+#~ PageLayout = DetailLayout
     
 
-def row_layout_factory(rpt):
-    cls = type(rpt._actor_name+"Grid",(RowLayout,),dict(app_label=rpt.app_label,main=rpt.column_names,layout_model=rpt.model))
+def list_layout_factory(rpt):
+    cls = type(rpt._actor_name+"List",(ListLayout,),dict(app_label=rpt.app_label,main=rpt.column_names,layout_model=rpt.model))
     return actors.register_actor(cls())
 

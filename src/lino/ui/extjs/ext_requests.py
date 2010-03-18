@@ -201,7 +201,7 @@ class CSVReportRequest(BaseViewReportRequest):
         w = ucsv.UnicodeWriter(response)
         names = [] # fld.name for fld in self.fields]
         fields = []
-        for col in self.rh.row_layout._main.column_model.columns:
+        for col in self.rh.list_layout._main.column_model.columns:
             names.append(col.editor.field.name)
             fields.append(col.editor.field)
         w.writerow(names)

@@ -150,7 +150,7 @@ class DocItem(models.Model):
 ##        
         
 
-class FinDocPageLayout(layouts.PageLayout):
+class FinDocDetail(layouts.DetailLayout):
     layout_model = 'finan.BankStatement'
     box1 = """
     date value_date

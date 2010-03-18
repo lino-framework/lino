@@ -197,11 +197,11 @@ class Dialog:
         return self.ah.request(**kw)
         
     def close_caller(self):
-        self.response.close_caller=True
+        self.response.close_caller = True
         return self
         
     def refresh_caller(self):
-        self.response.refresh_caller=True
+        self.response.refresh_caller = True
         return self
         
     def refresh_menu(self):
@@ -268,17 +268,19 @@ class InsertRow(Action):
     label = _("Insert")
     key = INSERT # (ctrl=True)
     
-    def run_in_dlg(self,dlg):
+    def old_run_in_dlg(self,dlg):
+        
         for r in dlg.ui.insert_row(dlg):
             yield r
         
-        #~ yield dlg.confirm(_("Insert new row. Are you sure?"))
-        #~ rr = dlg.get_request()
+    def run_in_dlg(self,dlg):
+        yield dlg.confirm(_("Insert new row. Are you sure?"))
+        rr = dlg.get_request()
         #~ for r in rr.insert_row(self): 
             #~ yield r
-        #~ row = rr.create_instance()
-        #~ row.save()
-        #~ yield dlg.refresh_caller().over()
+        row = rr.create_instance()
+        row.save()
+        yield dlg.refresh_caller().over()
         
     def old_run_in_dlg(self,dlg):
         yield dlg.confirm(_("Insert new row. Are you sure?"))
@@ -297,12 +299,13 @@ class DeleteSelected(Action):
         
     def run_in_dlg(self,dlg):
         if len(dlg.selected_rows) == 1:
-            yield dlg.confirm(_("Delete row %s. Are you sure?") % dlg.selected_rows[0])
+            msg = _("Delete row %s") % dlg.selected_rows[0]
         else:
-            yield dlg.confirm(_("Delete %d rows. Are you sure?") % len(dlg.selected_rows))
+            msg = _("Delete %d rows") % len(dlg.selected_rows)
+        yield dlg.confirm(msg + '. ' + _("Are you sure?"))
         for row in dlg.selected_rows:
             row.delete()
-        yield dlg.refresh_caller().over()
+        yield dlg.refresh_caller().notify(_("Success") + ": " + msg).over()
 
     
 class Cancel(Action):

@@ -437,16 +437,14 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
   });
   
 
-Lino.cell_context_menu = function(job) {
-  return function(grid,row,col,e) {
-    // console.log('contextmenu',grid,row,col,e);
-    e.stopEvent();
-    grid.getView().focusRow(row);
-    if(!job.cmenu.el){job.cmenu.render(); }
-    var xy = e.getXY();
-    xy[1] -= job.cmenu.el.getHeight();
-    job.cmenu.showAt(xy);
-  }
+Lino.cell_context_menu = function(grid,row,col,e) {
+  // console.log('contextmenu',grid,row,col,e);
+  e.stopEvent();
+  grid.getView().focusRow(row);
+  if(!this.cmenu.el){this.cmenu.render(); }
+  var xy = e.getXY();
+  xy[1] -= this.cmenu.el.getHeight();
+  this.cmenu.showAt(xy);
 }
 """
         

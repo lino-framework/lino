@@ -180,7 +180,7 @@ class Customer(models.Model):
         recipient = self.company or self.person
         return recipient.as_address(self,*args,**kw)
     
-class CustomerPageLayout(layouts.PageLayout):
+class CustomerDetail(layouts.DetailLayout):
     layout_model = 'sales.Customer'
     main = """
            company person
@@ -490,7 +490,7 @@ class DocItem(models.Model):
 
 
     
-class DocumentPageLayout(layouts.PageLayout):
+class DocumentDetail(layouts.DetailLayout):
     box1 = """
       journal number your_ref 
       creation_date 
@@ -524,7 +524,7 @@ class DocumentPageLayout(layouts.PageLayout):
       """
       
         
-class OrderPageLayout(DocumentPageLayout):
+class OrderDetail(DocumentDetail):
     layout_model = 'sales.Order'
     box5 = """
       cycle:20
@@ -533,13 +533,13 @@ class OrderPageLayout(DocumentPageLayout):
       """
         
         
-class InvoicePageLayout(DocumentPageLayout):
+class InvoiceDetail(DocumentDetail):
     layout_model = 'sales.Invoice'
     box5 = """
       order
       """
 
-class EmittedInvoicesPageLayout(OrderPageLayout):
+class EmittedInvoicesDetail(OrderDetail):
     layout_model = 'sales.Order'
     label = "Emitted invoices"
     main = """
@@ -645,7 +645,7 @@ class InvoicesByOrder(SalesDocuments):
     column_names = "number creation_date your_ref total_excl total_vat shipping_mode payment_term due_date subject sales_remark vat_exempt item_vat "
 
     
-#~ class ItemsByDocumentRowLayout(layouts.RowLayout):
+#~ class ItemsByDocumentListLayout(layouts.ListLayout):
     #~ title_box = """
     #~ product
     #~ title
@@ -654,7 +654,7 @@ class InvoicesByOrder(SalesDocuments):
 
 class ItemsByDocument(reports.Report):
     column_names = "pos:3 product title description:20x1 discount unit_price qty total"
-    #row_layout_class = ItemsByDocumentRowLayout
+    #list_layout_class = ItemsByDocumentListLayout
     model = DocItem
     #master = SalesDocument
     fk_name = 'document'

@@ -189,9 +189,8 @@ def setup():
     lino.log.debug("reports.setup() done")
 
 def get_slave(model,name):
-    try:
-        rpt = actors.get_actor(name)
-    except KeyError:
+    rpt = actors.get_actor(name)
+    if rpt is None: 
         return None
     if rpt.master is not ContentType:
         assert issubclass(model,rpt.master), "%s.master is %r,\nmust be subclass of %r" % (name,rpt.master,model)
@@ -232,9 +231,9 @@ class ReportHandle(datalinks.DataLink):
             
     def setup(self):
         if self.report.use_layouts:
-            self.row_layout = self.report.row_layout.get_handle(self)
+            self.list_layout = self.report.list_layout.get_handle(self)
             self.details = [ pl.get_handle(self) for pl in self.report.detail_layouts ]
-            self.layouts = [ self.row_layout ] + self.details
+            self.layouts = [ self.list_layout ] + self.details
         else:
             self.details = []
             self.layouts = []
@@ -245,7 +244,7 @@ class ReportHandle(datalinks.DataLink):
             #~ self.choice_layout = lh(layouts.RowLayout,0,self.report.display_field)
             
             #~ index = 1
-            #~ self.row_layout = lh(layouts.RowLayout,index,self.report.column_names)
+            #~ self.list_layout = lh(layouts.RowLayout,index,self.report.column_names)
             
             #~ self.layouts = [ self.choice_layout, self.row_layout ]
             #~ index = 2
@@ -370,7 +369,7 @@ class Report(actors.HandledActor): # actions.Action): #
         
         if self.model is not None:
             #self._actions = [cl(self) for cl in self.actions]
-            self.row_layout = layouts.row_layout_factory(self)
+            self.list_layout = layouts.list_layout_factory(self)
             
         
         if self.fk_name:

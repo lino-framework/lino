@@ -105,7 +105,7 @@ class Contact(models.Model,Printable):
 class Contacts(reports.Report):
     pass
   
-class ContactDetail(layouts.PageLayout):
+class ContactDetail(layouts.DetailLayout):
     box1 = "name"
     box2 = """national_id:15
               language
@@ -211,7 +211,7 @@ class CompaniesByCountry(Companies):
     column_names = "city addr1 name country language"
     order_by = "city addr1"
     
-#~ class PersonsByCountryPage(layouts.PageLayout):
+#~ class PersonsByCountryPage(layouts.DetailLayout):
     #~ label = "Persons by Country"
     #~ main = """
     #~ isocode name
@@ -219,7 +219,7 @@ class CompaniesByCountry(Companies):
     #~ """
 #~ countries.Countries.register_page_layout(PersonsByCountryPage)
 
-#~ class CompaniesByCountryPage(layouts.PageLayout):
+#~ class CompaniesByCountryPage(layouts.DetailLayout):
     #~ label = "Companies by Country"
     #~ main = """
     #~ isocode name
@@ -259,7 +259,7 @@ class CompaniesByCountry(Companies):
     #~ master = "countries.Country"
     #~ order_by = "city addr1"
     
-#~ class CountryAndPartnersPage(layouts.PageLayout):
+#~ class CountryAndPartnersPage(layouts.DetailLayout):
     #~ label = "Contacts by Country"
     #~ main = """
     #~ isocode name
