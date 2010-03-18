@@ -1,4 +1,4 @@
-## Copyright 2009 Luc Saffre
+## Copyright 2009-2010 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -49,6 +49,7 @@ class Project(models.Model):
         return self.name
         
 class ProjectDetail(layouts.PageLayout):
+    layout_model = 'projects.Project'
     main = """
     name type
     started stopped
@@ -59,5 +60,4 @@ class Projects(reports.Report):
     model = 'projects.Project'
     order_by = "name"
     button_label = _("Projects")
-    page_layouts = (ProjectDetail,)
     

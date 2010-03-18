@@ -225,7 +225,7 @@ class ButtonElement(LayoutElement):
         kw.update(text=label)
         #kw.update(maxHeight=self.preferred_height*EXT_CHAR_HEIGHT)
         kw.update(maxWidth=len(label)*EXT_CHAR_WIDTH)
-        kw.update(id=name)
+        #~ kw.update(id=name)
         LayoutElement.__init__(self,lh,name,**kw)
       
     #~ def ext_options(self,**kw):
@@ -243,28 +243,37 @@ class ActionElement(ButtonElement):
         
         
 class FormActionElement(ActionElement):
-    def __init__(self,lh,fh,name,action,**kw):
-        onclick = 'Lino.form_action(this,%s,%r)' % (
-            py2js(action.needs_validation),
-            lh.ui.get_form_action_url(fh,action))
+    def __init__(self,lh,name,action,**kw):
+        onclick = 'function() {this.on_click(%r)}' % name
+        #~ onclick = 'this.on_click'
+        #~ onclick = 'Lino.form_action(this,%s,%r)' % (
+            #~ py2js(action.needs_validation),
+            #~ lh.ui.get_form_action_url(lh,action))
         ActionElement.__init__(self,lh,name,action,onclick,**kw)
         
         
 class RowActionElement(ActionElement):
-    def __init__(self,lh,rh,name,action,**kw):
+    def __init__(self,lh,name,action,**kw):
         onclick = 'Lino.action_handler(this,%r)' % (
-            rh.get_absolute_url(grid_action=action.name))
+            lh.datalink.get_absolute_url(grid_action=action.name))
         ActionElement.__init__(self,lh,name,action,onclick,**kw)
 
-class SubmitActionElement(ButtonElement):
+class unused_SubmitActionElement(ButtonElement):
   
     def __init__(self,lh,rh,**kw):
         url = rh.get_absolute_url(submit=True)
-        onclick = \
-            "Lino.form_submit('%s','%s')" % (url, rh.store.pk.name)
+        onclick = "Lino.submit_handler('%s','%s')" % (url, rh.store.pk.name)
         kw.update(handler=js_code(onclick),scope=js_code('this'))
         ButtonElement.__init__(self,lh,'submit_btn',_('Submit'),**kw)
-        
+
+class SubmitActionElement(ButtonElement):
+  
+    def __init__(self,lh,**kw):
+        url = lh.datalink.get_absolute_url(submit=True)
+        onclick = "function(b,e) { Lino.submit_form(this,'%s','%s')}" % (url, lh.datalink.store.pk.name)
+        kw.update(handler=js_code(onclick),scope=js_code('this'))
+        ButtonElement.__init__(self,lh,'submit_btn',_('Submit'),**kw)
+
         
 
 

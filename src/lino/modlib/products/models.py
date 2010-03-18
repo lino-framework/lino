@@ -49,6 +49,9 @@ class ProductCats(reports.Report):
     can_view = perms.is_staff
 
 class ProductPageLayout(layouts.PageLayout):
+  
+    layout_model = 'products.Product'
+    
     #~ main = """
     #~ id:5 name:50 cat
     #~ description:50x6
@@ -65,7 +68,6 @@ class ProductPageLayout(layouts.PageLayout):
     g3 = "id \n vatExempt"
 
 class Products(reports.Report):
-    page_layouts = (ProductPageLayout,)
     model = Product
     order_by = "id"
     column_names = "id:3 name description:30x1 cat vatExempt price:6"

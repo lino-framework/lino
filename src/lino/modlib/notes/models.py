@@ -66,6 +66,7 @@ class Note(models.Model,Printable):
         
 
 class NoteDetail(layouts.PageLayout):
+    layout_model = 'notes.Note'
     #~ main = """
     #~ date short type user
     #~ person company
@@ -95,7 +96,6 @@ class NoteDetail(layouts.PageLayout):
     """
     
 class Notes(reports.Report):
-    page_layouts = (NoteDetail,)
     model = 'notes.Note'
     column_names = "id date user short * text"
     order_by = "id"

@@ -48,7 +48,6 @@ from lino import reports, forms, layouts, actions
 from lino import diag
 from lino.utils import perms
 from lino.utils import menus
-#from . import layouts
 
 
 class LinoSite:
@@ -80,27 +79,15 @@ class LinoSite:
         
         lino.log.debug("Setting up Actors...")
         from lino.utils import actors
-        actors.setup()
+        actors.discover()
         
-        lino.log.info("Setting up Reports...")
-        #from lino import reports
+        #~ layouts.setup()
+        
         reports.setup()
-        
-        #~ lino.log.debug("Registering Global Actors...")
-        #~ self.global_forms = []
-        #~ self.global_actions = []
-        #~ for a in actors.actors_dict.values():
-            #~ if isinstance(a,actions.Action):
-                #~ self.global_actions.append(a)
-            #~ if isinstance(a,forms.Form):
-                #~ self.global_forms.append(a)
-        #~ for cls in actors.actors_dict.values():
-            #~ if cls not in (actions.Action, reports.Report, forms.Form):
-                #~ if issubclass(cls,actions.Action):
-                    #~ self.global_actions.append(cls())
-                #~ if issubclass(cls,forms.Form):
-                    #~ self.global_forms.append(cls())
-    
+
+        for a in actors.actors_dict.values():
+            a.setup()
+
             
         lino.log.debug("ACTORS:")
         for k in sorted(actors.actors_dict.keys()):
@@ -114,7 +101,7 @@ class LinoSite:
             lino.log.warning("settings.LINO_SETTINGS entry is missing")
             
         USER_INTERFACE = 'lino.ui.extjs'
-        lino.log.debug("Starting user interface %s",USER_INTERFACE)
+        lino.log.info("Starting user interface %s",USER_INTERFACE)
         from django.utils.importlib import import_module
         ui_module = import_module(USER_INTERFACE)
         self.ui = ui_module.ui

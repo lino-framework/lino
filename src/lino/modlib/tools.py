@@ -84,3 +84,8 @@ def requires_apps(self,*app_labels):
         get_app(app_label)
     
     
+    
+def model_label(model):
+    return model._meta.app_label + '.' + model._meta.object_name
+    
+    

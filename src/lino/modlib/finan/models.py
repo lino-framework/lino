@@ -151,7 +151,7 @@ class DocItem(models.Model):
         
 
 class FinDocPageLayout(layouts.PageLayout):
-    
+    layout_model = 'finan.BankStatement'
     box1 = """
     date value_date
     ledger_remark
@@ -169,7 +169,6 @@ class FinDocPageLayout(layouts.PageLayout):
     
 class BankStatements(journals.DocumentsByJournal):
     model = BankStatement
-    page_layouts = (FinDocPageLayout, )
     column_names = "number date balance1 balance2 ledger_remark value_date"
     
     

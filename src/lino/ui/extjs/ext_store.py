@@ -155,7 +155,7 @@ class ForeignKeyStoreField(StoreField):
         #print self.field.name,"=","%s.objects.get(pk=%r)" % (self.model.__name__,v)
         #v = post_data.getlist(self.field.name)
         #print "%s=%r" % (self.field.name, v)
-        if v == '': # and self.field.null:
+        if v in ('','undefined'): # and self.field.null:
             v = None
         if v is not None:
             try:
@@ -173,6 +173,8 @@ class ForeignKeyStoreField(StoreField):
         except self.field.rel.to.DoesNotExist,e:
             v = None
         if v is None:
+            #~ d[self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX] = ''
+            #~ d[self.field.name] = ''
             d[self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX] = None
             d[self.field.name] = None
         else:
@@ -275,7 +277,14 @@ class Store(Component):
             if not f.field.primary_key:
                 f.get_from_form(instance,post_values)
         return instance
-        
+
+    def row2dict(self,row):
+        d = {}
+        for f in self.fields:
+            if not f.field.primary_key:
+                f.obj2json(row,d)
+        return d
+
     #~ def js_declare(self):
         #~ for ln in Component.js_declare(self):
             #~ yield ln

@@ -16,7 +16,6 @@ from django.utils.translation import ugettext as _
 from django.utils.encoding import force_unicode
 
 import lino
-from lino.utils import actors
 
 class Hotkey:
     keycode = None
@@ -82,6 +81,7 @@ class DialogResponse:
     refresh_caller = False
     close_caller = False
     show_window = None
+    show_modal_window = None
     dialog_id = None
     
     def __init__(self,**kw):
@@ -100,6 +100,7 @@ class DialogResponse:
           refresh_caller=self.refresh_caller,
           close_caller=self.close_caller,
           show_window=self.show_window,
+          show_modal_window=self.show_modal_window,
           dialog_id = self.dialog_id,
         )
       
@@ -118,20 +119,29 @@ class Dialog:
     """
     selected_rows = []
     params_def = ()
+    button_clicked = None
     
-    def __init__(self,ui,actor,action_name,params):
+    def __init__(self,ah,action_name,params):
+    #~ def __init__(self,ui,actor,action_name,params):
         self.is_over = False
-        self.ui = ui
-        self.actor = actor
-        self.action = actor.get_action(action_name)
+        self.ui = ah.ui
+        #~ self.ah = actor.get_handle(ui)
+        self.ah = ah
+        self.action = ah.actor.get_action(action_name)
         self.params = params
         if not isinstance(self.action,Action):
-            raise Exception("%s.get_action(%r) returned %r which is not an Action." % (actor,action_name,self.action))
+            raise Exception("%s.get_action(%r) returned %r which is not an Action." % (ah.actor,action_name,self.action))
         self.running = None
         self.response = None
         
+    def set_button_clicked(self,name):
+        if name is None:
+            self.button_clicked = None
+        else:
+            self.button_clicked = getattr(self.ah.actor,name,None)
+        
     def __str__(self):
-        return 'Dialog `%s.%s`' % (self.actor,self.action)
+        return 'Dialog `%s.%s`' % (self.ah.actor,self.action)
         
     def _open(self):
         if self.is_over:
@@ -151,14 +161,18 @@ class Dialog:
         if self.action.needs_selection and len(self.selected_rows) == 0:
             #~ self.console_msg(_("No selection. Nothing to do.")).over()
             return DialogResponse(notify_msg=_("No selection. Nothing to do."))
-        lino.log.debug('Dialog._start() %s.%s(%r)',self.actor,self.action.name,self.params)
+        lino.log.debug('Dialog._start() %s.%s(%r)',self.ah.actor,self.action.name,self.params)
         self.running = self.action.run_in_dlg(self)
         r = self._step()
         self._open()
         return r
         
+    def before_step(self):
+        pass
+        
     def _step(self):
         self.response = DialogResponse()
+        self.before_step()
         try:
             dlg = self.running.next()
             assert dlg is self
@@ -180,7 +194,7 @@ class Dialog:
         
     def get_request(self,**kw):
         kw.update(user=self.get_user())
-        return self.actor.request(self.ui,**kw)
+        return self.ah.request(**kw)
         
     def close_caller(self):
         self.response.close_caller=True
@@ -202,6 +216,15 @@ class Dialog:
         #~ assert js.strip().startswith('function')
         #~ self.response.show_window = py2js(js)
         self.response.show_window = js
+        return self
+        
+    def show_modal_window(self,js):
+        self.response.show_modal_window = js
+        return self
+        
+        
+    def show_modal_form(self,name):
+        self.ui.show_modal_form(self,name)
         return self
         
     def redirect(self,url):
@@ -246,6 +269,18 @@ class InsertRow(Action):
     key = INSERT # (ctrl=True)
     
     def run_in_dlg(self,dlg):
+        for r in dlg.ui.insert_row(dlg):
+            yield r
+        
+        #~ yield dlg.confirm(_("Insert new row. Are you sure?"))
+        #~ rr = dlg.get_request()
+        #~ for r in rr.insert_row(self): 
+            #~ yield r
+        #~ row = rr.create_instance()
+        #~ row.save()
+        #~ yield dlg.refresh_caller().over()
+        
+    def old_run_in_dlg(self,dlg):
         yield dlg.confirm(_("Insert new row. Are you sure?"))
         rr = dlg.get_request()
         row = rr.create_instance()
@@ -270,8 +305,9 @@ class DeleteSelected(Action):
         yield dlg.refresh_caller().over()
 
     
-class CancelDialog(Action):
+class Cancel(Action):
     label = _("Cancel")
+    name = 'cancel'
     key = ESCAPE 
     
     def run_in_dlg(self,dlg):
@@ -287,15 +323,3 @@ class OK(Action):
         yield dlg.close_caller().over()
 
 
-
-class RunCommand(Action):
-  
-    def run_in_dlg(self,dlg,*args,**kw):
-        return dlg.actor.run_in_dlg(dlg,*args,**kw)
-
-class Command(actors.Actor):
-    default_action = RunCommand()
-    
-    def run_in_dlg(self,dlg,*args,**kw):
-        raise NotImplementedError
-      

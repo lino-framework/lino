@@ -155,6 +155,7 @@ class Person(Contact):
             self.name = " ".join(l)
 
 class PersonDetail(ContactDetail):
+    layout_model = 'contacts.Person'
     box1 = "last_name first_name:15 title:10"
     box2 = """national_id:15 id
               nationality language
@@ -163,7 +164,6 @@ class PersonDetail(ContactDetail):
 class Persons(Contacts):
     model = "contacts.Person"
     label = _("Persons")
-    page_layouts = (PersonDetail,)
     column_names = "first_name last_name title country id name"
     can_delete = True
     order_by = "last_name first_name id"
@@ -194,12 +194,12 @@ class Company(Contact):
         #~ return self.name + linesep + s
 
 class CompanyDetail(ContactDetail):
+    layout_model = 'contacts.Company'
     box1 = """name 
     vat_id:12"""
               
 class Companies(Contacts):
     label = _("Companies")
-    page_layouts = (CompanyDetail,)
     column_names = "name country city id address"
     model = 'contacts.Company'
     order_by = "name"
@@ -233,7 +233,6 @@ class CompaniesByCountry(Companies):
 
             
 #~ class Contacts(reports.Report):
-    #~ page_layouts = (ContactPageLayout,)
     #~ column_names = "id:3 companyName firstName lastName title country"
     #~ can_delete = True
     #~ model = Contact
@@ -268,8 +267,6 @@ class CompaniesByCountry(Companies):
     #~ """
     
 
-#~ class Countries(countries.Countries):
-    #~ page_layouts = (layouts.PageLayout,CountryAndPartnersPage)
     
   
 

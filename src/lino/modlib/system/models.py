@@ -24,6 +24,7 @@ from lino import reports
 from lino import forms
 from lino import layouts
 from lino import actions
+from lino import commands
 from lino.utils import perms
 
 
@@ -51,15 +52,10 @@ class ContentTypes(reports.Report):
     model = contenttypes.ContentType
 
 
-class PasswordResetOK(actions.Action):
-    label = _("Request Password Reset")
-    
-    def run_in_dlg(self,dlg):
-        yield dlg.cancel('not implemented')
 
-class PasswordResetLayout(layouts.FormLayout):
-    #form = PasswordResetForm
-    #width = 50
+class PasswordResetForm(layouts.FormLayout):
+    layout_command = 'system.PasswordReset'
+    label = _("Request Password Reset")
     
     intro = layouts.StaticText("""
     Please fill in your e-mail adress.
@@ -72,64 +68,65 @@ class PasswordResetLayout(layouts.FormLayout):
     ok cancel
     """
     
-class PasswordReset(forms.Form):
-    layout = PasswordResetLayout
+class PasswordReset(commands.Command):
+    #~ layout = PasswordResetLayout
     title = _("Request Password Reset")
     #email = models.EmailField(verbose_name=_("E-mail"), max_length=75)
     email = forms.Input(fieldLabel=_("E-mail"),maxLength=75)
-    ok = PasswordResetOK()
+    #~ ok = PasswordResetOK()
     
+    def run_in_dlg(self,dlg):
+        yield dlg.cancel('not implemented')
+        yield dlg.show_modal_form(PasswordResetForm())
     
 from django.contrib.auth import login, authenticate, logout
 
-class LoginOK(actions.OK):
-
-    label = _("Login")
+class LoginForm(layouts.FormLayout):
+    layout_command = 'Login'
     
-    def run_in_dlg(self,dlg):
-        username = dlg.request.POST.get('username')
-        password = dlg.request.POST.get('password')
-
-        user = authenticate(username=username, password=password)
-        if user is None:
-            raise actions.ValidationError(
-            _(u"Please enter a correct username and password. Note that both fields are case-sensitive."))
-        elif not user.is_active:
-            raise actions.ValidationError(_("This account is inactive."))
-        login(dlg.request, user)
-        #lino.log.info("User %s logged in.",user)
-        yield dlg.ok("Welcome, %s!" % user).refresh_menu()
-        
-
-class LoginLayout(layouts.FormLayout):
+    text = layouts.StaticText(_("Please enter your username and password to authentificate."))
+  
     main = """
     text
     username
     password
     _ cancel ok
     """
-    text = layouts.StaticText(_("Please enter your username and password to authentificate."))
-    #default_button = 'username'
-    
 
 
-class Login(forms.Form):
-    layout = LoginLayout
-    #username = models.CharField(verbose_name=_("Username"), max_length=75)    
-    #password = models.CharField(verbose_name=_("Password"), max_length=75)
+class Login(commands.Command):
+
+    label = _("Login")
     username = forms.Input(fieldLabel=_("Username"),maxLength=75,allowBlank=False)
     password = forms.Input(fieldLabel=_("Password"),maxLength=75,inputType='password',allowBlank=False)
-    ok = LoginOK()
-  
-
-    def before(self,context):
-        # not used
-        if not context.request.session.test_cookie_worked():
-            raise actions.ValidationError(
-                _("Your Web browser doesn't appear to have cookies enabled. Cookies are required for logging in."))
+    
+    
+    def run_in_dlg(self,dlg):
+        yield dlg.show_modal_form('LoginForm')
         
+        while True:
+            if dlg.button_clicked != self.ok:
+                yield dlg.cancel()
+        
+            username = dlg.params.get('username')
+            password = dlg.params.get('password')
+            print username,password
+            user = authenticate(username=username, password=password)
+            if user is None:
+                #~ raise actions.ValidationError(
+                yield dlg.notify(
+                _(u"Please enter a correct username and password. Both fields are case-sensitive."))
+            elif not user.is_active:
+                #~ raise actions.ValidationError(_("This account is inactive."))
+                yield dlg.notify(_("This account is inactive."))
+            else:
+                login(dlg.request, user)
+                #lino.log.info("User %s logged in.",user)
+                yield dlg.ok("Welcome, %s!" % user).refresh_menu()
 
-class Logout(actions.Command): #actions.OK):
+
+
+class Logout(commands.Command): #actions.OK):
   
     label = _("Log out")
     

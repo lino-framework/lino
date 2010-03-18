@@ -264,6 +264,7 @@ class Collection(models.Model):
 
 
 class SongPageLayout(layouts.PageLayout):
+    layout_model = 'songs.Song'
     main = """
     id title language voices
     origin based_on bible_ref
@@ -276,6 +277,8 @@ class SongPageLayout(layouts.PageLayout):
         return dict(events=EventsBySong())
 
 class PerformancePageLayout(layouts.PageLayout):
+    layout_model = 'songs.Performance'
+  
     main = """
     id date place remark 
     choir
@@ -286,7 +289,6 @@ class PerformancePageLayout(layouts.PageLayout):
         return dict(songs=SongsByEvent())
     
 class Rehearsals(reports.Report):
-    #page_layouts = (EventPageLayout,)
     model = Rehearsal
     #page_layout_class = RehearsalPageLayout
     column_names = "date remark songs:20 singers:10"
@@ -296,7 +298,7 @@ class Performances(reports.Report):
     model = Performance
     column_names = "date place remark songs:20 singers:10"
     order_by = "date"
-    page_layouts = (PerformancePageLayout,)
+    #~ page_layouts = (PerformancePageLayout,)
     
 
 class Collections(reports.Report):
@@ -336,7 +338,7 @@ class SongsByEvent(reports.Report):
 
 class Songs(reports.Report):
     model = Song
-    page_layouts = (SongPageLayout,)
+    #~ page_layouts = (SongPageLayout,)
     column_names = "id title language voices composed_by text_by written_by"
 
 class SongEvents(reports.Report):

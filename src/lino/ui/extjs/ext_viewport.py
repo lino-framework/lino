@@ -87,38 +87,10 @@ Lino.save_window_config = function(caller,unused_url) {
     // var h = size['height'] * 100 / Lino.viewport.getHeight();
     wc = caller.get_window_config();
     Ext.applyIf(wc,{ name: panel._permalink_name,
-      x:pos[0],y:pos[1],h:size.height,w:size.width,
+      x:pos[0],y:pos[1],height:size.height,width:size.width,
       max:panel.maximized});
     Lino.do_dialog(caller,url,wc);
   }
-};
-
-Lino.form_submit = function (url,pkname) {
-  // console.log("Lino.form_submit 1:",this);
-  return function(btn,evt) {
-    // console.log('Lino.form_submit 2',this);
-    p = {};
-    // p[pkname] = store.getAt(0).data.id;
-    // p[pkname] = job.current_pk;
-    p[pkname] = this.get_current_record().id;
-    var caller = this;
-    this.main_panel.form.submit({
-      clientValidation: false,
-      url: url, 
-      failure: function(form, action) {
-        // console.log("form:",form);
-        Ext.MessageBox.alert('Submit failed!', 
-        action.result ? action.result.msg : '(undefined action result)');
-      }, 
-      params: p, 
-      waitMsg: 'Saving Data...', 
-      success: function (form, action) {
-        Lino.notify(action.result ? action.result.msg : '(undefined action result)');
-        // this.main_grid.getStore().reload();
-        caller.refresh();
-      }
-    })
-  } 
 };
 
 
@@ -162,17 +134,20 @@ Lino.grid_afteredit = function (caller,url) {
   }
 };
 
-Lino.do_dialog = function(caller,url,params) {
+Lino.build_ajax_request = function(caller,url,params) {
   // console.log('Lino.do_dialog()',url,params);
   var step_dialog = function(result) {
     if (result.dialog_id) {
+      if (caller) Ext.apply(params,caller.get_values());
       params['dialog_id'] = result.dialog_id;
+      params['last_button'] = result.last_button;
       Ext.Ajax.request({ url:'/step_dialog', params:params, success: handle_response});
     }
   }
   var abort_dialog = function(result) {
     if (result.dialog_id) {
       params['dialog_id'] = result.dialog_id;
+      params['last_button'] = result.last_button;
       Ext.Ajax.request({ url:'/abort_dialog', params:params, success: handle_response});
     }
   }
@@ -181,33 +156,90 @@ Lino.do_dialog = function(caller,url,params) {
     // console.log('Lino.do_dialog() got',result);
     if (result.alert_msg) Ext.MessageBox.alert('Alert',result.alert_msg);
     if (result.notify_msg) Lino.notify(result.notify_msg);
-    if (result.show_window) new result.show_window(caller).show();
+    if (result.show_window) {
+      caller = new result.show_window(caller);
+      caller.show();
+    }
     if (result.redirect) window.open(result.redirect);
     if (result.refresh_caller && caller) caller.refresh();
-    if (result.close_caller && caller) caller.close();
+    if (result.close_caller && caller) {
+      caller.close();
+      caller = caller.caller;
+    }
     if (result.refresh_menu) Lino.load_main_menu();
     if (result.confirm_msg) {
-      Ext.Msg.show({
+      Ext.MessageBox.show({
         title: 'Confirmation',
         msg: result.confirm_msg,
-        buttons: Ext.Msg.YESNOCANCEL,
+        buttons: Ext.MessageBox.YESNOCANCEL,
         fn: function(btn) {
           if (btn == 'yes') step_dialog(result);
           else abort_dialog(result);
         }
       })
+    } else if (result.show_modal_window) {
+      var on_click = function(btn_name) {result.last_button = btn_name;step_dialog(result)};
+      caller = new result.show_modal_window(caller,on_click)
+      // ww.ok = function(btn_name) {result.last_button = btn_name;step_dialog(result)};
+      // ww.cancel = function(btn_name) {result.last_button = btn_name;abort_dialog(result)};
+      caller.show();
     } else {
       step_dialog(result);
     }
   }
-  Ext.Ajax.request({
+  return { 
     waitMsg: 'Please wait...',
     url: url,
     params: params, 
     success: handle_response,
     failure: Lino.ajax_error_handler
-  });
-};"""
+  }
+}
+
+Lino.do_dialog = function(caller,url,params) {
+  var rc = Lino.build_ajax_request(caller,url,params);
+  Ext.Ajax.request(rc);
+};
+
+Lino.submit_form = function (caller,url,pkname) {
+  params = {};
+  var rec = caller.get_current_record();
+  if (rec) params[pkname] = rec.id;
+  var rc = Lino.build_ajax_request(caller,url,params);
+  rc.clientValidation = true;
+  rc.waitMsg = 'Saving Data...';
+  caller.main_panel.form.submit(rc);
+}    
+
+Lino.unused_form_submit = function (url,pkname) {
+  return function(btn,evt) {
+    params = {};
+    var rec = this.get_current_record();
+    if (rec) params[pkname] = rec.id;
+    var caller = this;
+    this.main_panel.form.submit({
+      clientValidation: true,
+      url: url, 
+      failure: function(form, action) {
+        // console.log("form:",form);
+        Ext.MessageBox.alert('Submit failed!', 
+        action.result ? action.result.msg : '(undefined action result)');
+      }, 
+      params: p, 
+      waitMsg: 'Saving Data...', 
+      success: function (form, action) {
+        Lino.notify(action.result ? action.result.msg : '(undefined action result)');
+        // this.main_grid.getStore().reload();
+        caller.refresh();
+      }
+    })
+  } 
+};
+
+
+
+
+"""
 
         def js():
             yield "Lino.action_handler = function(caller,url) {"
@@ -694,6 +726,7 @@ Ext.onReady(function(){ """
   Lino.load_main_menu();"""
         
         s += """
+  Ext.QuickTips.init();
   var windows = Lino.gup('show').split(',');
   for(i=0;i<windows.length;i++) {
     // console.log(windows[i]);

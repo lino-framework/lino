@@ -15,6 +15,7 @@ from django.utils.translation import ugettext as _
 from django.db import models
 
 import lino
+from lino.ui import base
 
 actors_dict = None
 actor_classes = []
@@ -33,17 +34,40 @@ def get_actor2(app_label,name):
         #~ return cls
     #~ return cls()
     
-def setup():
+def discover():
+    #~ global actor_classes
     global actors_dict
     assert actors_dict is None
     actors_dict = {}
     for cls in actor_classes:
-        a = cls()
-        old = actors_dict.get(a.actor_id,None)
-        if old is not None:
-            lino.log.debug("Actor %s : %r replaced by %r",a.actor_id,old.__class__,a.__class__)
-        actors_dict[a.actor_id] = a
-            
+        register_actor(cls())
+        #~ a = cls()
+        #~ old = actors_dict.get(a.actor_id,None)
+        #~ if old is not None:
+            #~ lino.log.debug("Actor %s : %r replaced by %r",a.actor_id,old.__class__,a.__class__)
+        #~ actors_dict[a.actor_id] = a
+    #~ for a in actors_dict.values():
+        #~ a.setup()
+
+def register_actor(a):
+    old = actors_dict.get(a.actor_id,None)
+    if old is not None:
+        lino.log.debug("Actor %s : %r replaced by %r",a.actor_id,old.__class__,a.__class__)
+    actors_dict[a.actor_id] = a
+    return a
+  
+    #~ actor.setup()
+    #~ assert not actors_dict.has_key(actor.actor_id), "duplicate actor_id %s" % actor.actor_id
+    #~ actors_dict[actor.actor_id] = actor
+    #~ return actor
+    
+def resolve_actor(actor,app_label):
+    if actor is None: return None
+    if isinstance(actor,Actor): return actor
+    s = actor.split(ACTOR_SEP)
+    if len(s) == 1:
+        return get_actor2(app_label,actor)
+    return get_actor(actor)
         
 class ActorMetaClass(type):
     def __new__(meta, classname, bases, classDict):
@@ -51,7 +75,7 @@ class ActorMetaClass(type):
             #~ classDict['app_label'] = cls.__module__.split('.')[-2]
         cls = type.__new__(meta, classname, bases, classDict)
         #lino.log.debug("actor(%s)", cls)
-        if classname not in ('Report','Action','Actor','Form','Command'):
+        if classname not in ('Report','Action','Actor','Command','Layout','RowLayout','PageLayout','FormLayout','ModelLayout'):
             #~ actors_dict[cls.actor_id] = cls
             actor_classes.append(cls)
         return cls
@@ -65,22 +89,30 @@ class ActorMetaClass(type):
             cls.instance = type.__call__(cls,*args, **kw)
         return cls.instance
 
-
+  
 class Actor(object):
+    "inherited by Report, Command, Layout"
     __metaclass__ = ActorMetaClass
     app_label = None
-    name = None
+    _actor_name = None
+    title = None
     label = None
     #default_action = 'view'
 
     def __init__(self):
         if self.label is None:
             self.label = self.__class__.__name__
-        if self.name is None:
-            self.name = self.__class__.__name__
+        if self.title is None:
+            self.title = self.label
+        if self._actor_name is None:
+            self._actor_name = self.__class__.__name__
+        else:
+            assert type(self._actor_name) is str
         if self.app_label is None:
+            #~ self.__class__.app_label = self.__class__.__module__.split('.')[-2]
             self.app_label = self.__class__.__module__.split('.')[-2]
-        self.actor_id = self.app_label + ACTOR_SEP + self.name
+        self.actor_id = self.app_label + ACTOR_SEP + self._actor_name
+        lino.log.debug("Actor.__init__() %s",self)
 
     def get_label(self):
         #~ if self.label is None:
@@ -103,6 +135,22 @@ class Actor(object):
     def setup(self):
         pass
 
+class HandledActor(Actor):
+    _handle_class = None
+    _handle_selector = None
+    def __init__(self):
+        Actor.__init__(self)
+        self._handles = {}
+        
+    def get_handle(self,k):
+        assert k is None or isinstance(k,self._handle_selector), "%s.get_handle() : %r is not a %s" % (self,k,self._handle_selector)
+        h = self._handles.get(k,None)
+        if h is None:
+            h = self._handle_class(k,self)
+            self._handles[k] = h
+            h.setup()
+        return h
+        
 
 def unused_get_actor(app_label,name):
     app = models.get_app(app_label)

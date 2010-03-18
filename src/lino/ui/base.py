@@ -11,8 +11,6 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-from lino.utils import actors
-from lino import reports, forms
 
 class UI:
     """
@@ -23,26 +21,6 @@ class UI:
         
     def field2elem(self,lui,field,**kw):
         pass
-        
-    def _get_report_handle(self,app_label,rptname):
-        rpt = actors.get_actor(app_label,rptname)
-        #rpt = get_report(app_label,rptname)
-        return self.get_report_handle(rpt)
-        
-    def get_report_handle(self,rpt):
-        return self.get_actor_handle(rpt,reports.ReportHandle)
-    def get_form_handle(self,frm):
-        return self.get_actor_handle(frm,forms.FormHandle)
-        
-    def get_actor_handle(self,actor,cls):
-        #lino.log.debug('get_report_handle(%s)',rpt)
-        actor.setup()
-        h = actor._handles.get(self,None)
-        if h is None:
-            h = cls(self,actor)
-            actor._handles[self] = h
-            h.setup()
-        return h
         
     def setup_site(self,lino_site):
         pass

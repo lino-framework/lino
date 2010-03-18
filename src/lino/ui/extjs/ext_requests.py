@@ -12,15 +12,17 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 from django.http import HttpResponse
+from django.contrib.contenttypes.models import ContentType
+#~ from django.contrib.contenttypes import generic
 
 import lino
 from lino import actions
 from lino import reports
+from lino import forms
 from lino.utils import ucsv
 from lino.utils import chooser
+#~ from lino.ui.extjs import ext_windows
 
-from django.contrib.contenttypes.models import ContentType
-#~ from django.contrib.contenttypes import generic
 
 #~ UNDEFINED = "nix"
 
@@ -47,15 +49,25 @@ def authenticated_user(user):
 
 class Dialog(actions.Dialog):
     
-    def __init__(self,request,ui,actor,actor_name):
-        params = {}
-        for k,v in request.POST.iterlists():
-            #~ if type(v) == list and len(v)
-            params[k] = v
-        #~ params = dict(request.POST.iterlists())
+    #~ def __init__(self,request,ui,actor,action_name):
+    def __init__(self,request,ah,action_name):
         self.request = request
-        actions.Dialog.__init__(self,ui,actor,actor_name,params)
+        actions.Dialog.__init__(self,ah,action_name,{})
         #self.confirmed = self.request.POST.get('confirmed',None)
+        
+    def before_step(self):
+        #~ params = {}
+        for i in self.ah.inputs:
+            if isinstance(i,forms.List):
+                v = self.request.POST.getlist(i.name)
+            else:
+                v = self.request.POST.get(i.name)
+            self.params[i.name] = v
+        #~ for k,v in request.POST.iterlists():
+            #~ params[k] = v
+        #~ params = dict(request.POST.iterlists())
+        #~ print 20100318, self.params
+        
         
     def get_user(self):
         return authenticated_user(self.request.user)
@@ -69,11 +81,11 @@ class Dialog(actions.Dialog):
 class GridDialog(Dialog):
     def __init__(self,request,*args,**kw):
         Dialog.__init__(self,request,*args,**kw)
-        assert isinstance(self.actor,reports.Report)
+        assert isinstance(self.ah.actor,reports.Report)
         selected = self.request.POST.get(POST_PARAM_SELECTED,None)
         if selected:
             self.selected_rows = [
-              self.actor.model.objects.get(pk=pk) for pk in selected.split(',') if pk]
+              self.ah.actor.model.objects.get(pk=pk) for pk in selected.split(',') if pk]
         else:
             self.selected_rows = []
 
@@ -148,6 +160,7 @@ class BaseViewReportRequest(reports.ReportRequest):
         kw.update(user=request.user)
         return kw
       
+        
     def get_user(self):
         return authenticated_user(self.request.user)
 

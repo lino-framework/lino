@@ -46,9 +46,11 @@ except ImportError:
 import lino
 from lino import layouts
 from lino import actions
+from lino import datalinks
 from lino.utils import perms, menus, actors
+from lino.ui import base
 
-from lino.modlib.tools import resolve_model, resolve_field, get_app
+from lino.modlib.tools import resolve_model, resolve_field, get_app, model_label
 #~ from lino.modlib import field_choices
 
 def base_attrs(cl):
@@ -104,9 +106,6 @@ class ReportParameterForm(forms.Form):
 def rc_name(rptclass):
     return rptclass.app_label + '.' + rptclass.__name__
     
-def model_label(model):
-    return model._meta.app_label + '.' + model._meta.object_name
-    
 master_reports = []
 slave_reports = []
 generic_slaves = {}
@@ -139,6 +138,7 @@ def register_report(rpt):
         slave_reports.append(rpt)
 
     
+    
 def setup():
     """
     - Each model can receive a number of "slaves". 
@@ -151,11 +151,13 @@ def setup():
       `_lino_model_report`
 
     """
+    
+    lino.log.info("Setting up Reports...")
     lino.log.debug("Register Report actors...")
     for rpt in actors.actors_dict.values():
         if isinstance(rpt,Report) and rpt.__class__ is not Report:
             register_report(rpt)
-    
+            
     lino.log.debug("Instantiate model reports...")
     for model in models.get_models():
         rpt = getattr(model,'_lino_model_report',None)
@@ -175,9 +177,9 @@ def setup():
         lino.log.debug("%s: slave for %s",rpt.actor_id, rpt.master.__name__)
     lino.log.debug("Assigned %d slave reports to their master.",len(slave_reports))
         
-    lino.log.debug("Setup model reports...")
-    for model in models.get_models():
-        model._lino_model_report.setup()
+    #~ lino.log.debug("Setup model reports...")
+    #~ for model in models.get_models():
+        #~ model._lino_model_report.setup()
         
     #~ lino.log.debug("Instantiate property editors...")
     #~ for model in models.get_models():
@@ -212,8 +214,94 @@ class ViewReport(actions.Action):
         return dlg.ui.view_report(dlg)
         
 
-class Report(actors.Actor): # actions.Action): # 
-    #__metaclass__ = ReportMetaClass
+
+class ReportHandle(datalinks.DataLink):
+    def __init__(self,ui,report):
+        #lino.log.debug('ReportHandle.__init__(%s)',rd)
+        datalinks.DataLink.__init__(self,ui,report)
+        assert isinstance(report,Report)
+        #self._rd = rd
+        self.report = report
+        #~ for n in 'get_fields', 'get_slave','try_get_field','try_get_meth',
+                  #~ 'get_title'):
+            #~ setattr(self,n,getattr(report,n))
+        self.content_type = ContentType.objects.get_for_model(self.report.model).pk
+            
+    def __str__(self):
+        return self.report.name + 'Handle'
+            
+    def setup(self):
+        if self.report.use_layouts:
+            self.row_layout = self.report.row_layout.get_handle(self)
+            self.details = [ pl.get_handle(self) for pl in self.report.detail_layouts ]
+            self.layouts = [ self.row_layout ] + self.details
+        else:
+            self.details = []
+            self.layouts = []
+        #~ if self.report.use_layouts:
+            #~ def lh(layout_class,*args,**kw):
+                #~ return layouts.LayoutHandle(self,layout_class(),*args,**kw)
+            
+            #~ self.choice_layout = lh(layouts.RowLayout,0,self.report.display_field)
+            
+            #~ index = 1
+            #~ self.row_layout = lh(layouts.RowLayout,index,self.report.column_names)
+            
+            #~ self.layouts = [ self.choice_layout, self.row_layout ]
+            #~ index = 2
+            #~ for lc in self.report.page_layouts:
+                #~ self.layouts.append(lh(lc,index))
+                #~ index += 1
+        #~ else:
+            #~ self.choice_layout = None
+            #~ self.row_layout = None
+            #~ self.layouts = []
+            
+        self.ui.setup_report(self)
+        
+    #~ def get_default_layout(self):
+        #~ return self.layouts[self.report.default_layout]
+        
+    #~ def get_create_layout(self):
+        #~ return self.layouts[2]
+        
+    def get_layout(self,name):
+        return self.layouts[name]
+        
+    def get_absolute_url(self,*args,**kw):
+        return self.ui.get_report_url(self,*args,**kw)
+        
+    def data_elems(self):
+        for f in self.report.model._meta.fields: yield f.name
+        for f in self.report.model._meta.many_to_many: yield f.name
+        for f in self.report.model._meta.virtual_fields: yield f.name
+        # todo: for slave in self.report.slaves
+          
+    def get_data_elem(self,name):
+        return get_data_elem(self.report.model,name)
+        
+    def get_actions(self):
+        return self.report.actions
+        
+    def get_details(self):
+        return self.details
+        #~ return self.layouts[1:]
+          
+    def get_slaves(self):
+        return [ sl.get_handle(self.ui) for sl in self.report._slaves ]
+            
+    def get_title(self,rr):
+        return self.report.get_title(rr)
+        
+    def request(self,**kw):
+        rr = ReportRequest(self)
+        rr.setup(**kw)
+        return rr
+        
+
+class Report(actors.HandledActor): # actions.Action): # 
+    _handle_class = ReportHandle
+    _handle_selector = base.UI
     params = {}
     field = None
     queryset = None 
@@ -243,8 +331,8 @@ class Report(actors.Actor): # actions.Action): #
     date_format = 'd.m.y'
     #date_format = '%d.%m.%y'
     
-    page_layouts = (layouts.PageLayout ,)
-    row_layout_class = None
+    page_layouts = None # (layouts.PageLayout ,)
+    #~ row_layout_class = None
     
     can_view = perms.always
     can_add = perms.is_authenticated
@@ -252,7 +340,7 @@ class Report(actors.Actor): # actions.Action): #
     can_delete = perms.is_authenticated
     
     default_action = ViewReport()
-    default_layout = 1
+    default_layout = 0
     
     typo_check = True
     url = None
@@ -261,6 +349,7 @@ class Report(actors.Actor): # actions.Action): #
     use_layouts = True
     
     button_label = None
+    
     
     def __init__(self):
         if self.model is None:
@@ -271,14 +360,18 @@ class Report(actors.Actor): # actions.Action): #
             self.model = resolve_model(self.model,self.app_label,self)
         if self.model is not None:
             self.app_label = self.model._meta.app_label
-        actors.Actor.__init__(self)
-        #actions.Action.__init__(self)
-        lino.log.debug("Report.__init__() %s", self.__class__)
-        self._handles = {}
+            
+        actors.HandledActor.__init__(self)
+        
+        lino.log.debug("Report.__init__() %s", self)
         self._setup_done = False
         self._setup_doing = False
-        #~ self.actions = self.actions + [ actions.ShowProperties(), actions.DeleteSelected(), actions.InsertRow() ]
         self.actions = self.actions + [ actions.DeleteSelected(), actions.InsertRow() ]
+        
+        if self.model is not None:
+            #self._actions = [cl(self) for cl in self.actions]
+            self.row_layout = layouts.row_layout_factory(self)
+            
         
         if self.fk_name:
             #~ self.master = resolve_model(self.master,self.app_label)
@@ -319,6 +412,7 @@ class Report(actors.Actor): # actions.Action): #
         return type(cls.__name__+str(suffix),(cls,),kw)
         
     def setup(self):
+        assert not self._setup_done, "%s.setup() called again" % self
         if self._setup_done:
             return True
         if self._setup_doing:
@@ -327,30 +421,31 @@ class Report(actors.Actor): # actions.Action): #
             else:
                 lino.log.warning("%s.setup() called recursively" % self.actor_id)
                 return False
+        lino.log.debug("Report.setup() %s", self)
         self._setup_doing = True
         
-        #self._actions = [cl(self) for cl in self.actions]
-        
-        setup = getattr(self.model,'setup_report',None)
-        if setup:
-            setup(self)
-        
-        if hasattr(self.model,'_lino_slaves'):
-            if self.slaves is None:
-                #self._slaves = [sl() for sl in self.model._lino_slaves.values()]
-                self._slaves = self.model._lino_slaves.values()
+        if self.model is not None:
+            setup = getattr(self.model,'setup_report',None)
+            if setup:
+                setup(self)
+            
+            self.detail_layouts = getattr(self.model,'_lino_layouts',[])
+            if hasattr(self.model,'_lino_slaves'):
+                if self.slaves is None:
+                    #self._slaves = [sl() for sl in self.model._lino_slaves.values()]
+                    self._slaves = self.model._lino_slaves.values()
+                else:
+                    raise Exception("20091120 no longer possible")
+                    self._slaves = []
+                    for slave_name in self.slaves.split():
+                        sl = get_slave(self.model,slave_name)
+                        if sl is None:
+                            lino.log.info(
+                                "[Warning] invalid name %s in %s.slaves" % (
+                                    slave_name,self.actor_id))
+                        self._slaves.append(sl)
             else:
-                raise Exception("20091120 no longer possible")
                 self._slaves = []
-                for slave_name in self.slaves.split():
-                    sl = get_slave(self.model,slave_name)
-                    if sl is None:
-                        lino.log.info(
-                            "[Warning] invalid name %s in %s.slaves" % (
-                                slave_name,self.actor_id))
-                    self._slaves.append(sl)
-        else:
-            self._slaves = []
             
         if self.button_label is None:
             self.button_label = self.label
@@ -367,11 +462,6 @@ class Report(actors.Actor): # actions.Action): #
         return rh.get_absolute_url(**kw)
         #return ui.get_report_url(rh,**kw)
         
-        
-    # implements actors.Actor
-    def get_handle(self,ui):
-        #~ assert isinstance(ui,BaseUI)
-        return ui.get_report_handle(self)
         
     def get_action(self,name):
         for a in self.actions:
@@ -505,21 +595,18 @@ class Report(actors.Actor): # actions.Action): #
         return d
         
     def render_to_dict(self,**kw):
-        rh = ReportHandle(None,self)
-        rr = rh.request(**kw)
+        #~ rh = self.get_handle(None) # ReportHandle(None,self)
+        rr = self.request(None,**kw)
         return rr.render_to_dict()
         
     def request(self,ui,**kw):
-        return ui.get_report_handle(self).request(**kw)
+        return self.get_handle(ui).request(**kw)
 
         
 def report_factory(model):
     lino.log.debug('report_factory(%s) -> app_label=%r',model.__name__,model._meta.app_label)
     cls = type(model.__name__+"Report",(Report,),dict(model=model,app_label=model._meta.app_label))
-    rpt = cls()
-    assert not actors.actors_dict.has_key(rpt.actor_id)
-    actors.actors_dict[rpt.actor_id] = rpt
-    return rpt
+    return actors.register_actor(cls())
 
 #~ def choice_report_factory(model,field):
     #~ clsname = model.__name__+"_"+field.name+'_'+"Choices"
@@ -535,81 +622,6 @@ def get_unbound_meth(cl,name):
         if meth is not None:
             return meth
 
-class ReportHandle(layouts.DataLink):
-    def __init__(self,ui,report):
-        #lino.log.debug('ReportHandle.__init__(%s)',rd)
-        layouts.DataLink.__init__(self,ui,report.actor_id)
-        assert isinstance(report,Report)
-        #self._rd = rd
-        self.actor = self.report = report
-        #~ for n in 'get_fields', 'get_slave','try_get_field','try_get_meth',
-                  #~ 'get_title'):
-            #~ setattr(self,n,getattr(report,n))
-        self.content_type = ContentType.objects.get_for_model(self.report.model).pk
-            
-    def __str__(self):
-        return self.report.name + 'Handle'
-            
-    def setup(self):
-        if self.report.use_layouts:
-            def lh(layout_class,*args,**kw):
-                return layouts.LayoutHandle(self,layout_class(),*args,**kw)
-            
-            self.choice_layout = lh(layouts.RowLayout,0,self.report.display_field)
-            
-            index = 1
-            if self.report.row_layout_class is None:
-                self.row_layout = lh(layouts.RowLayout,index,self.report.column_names)
-            else:
-                assert self.report.column_names is None
-                self.row_layout = lh(self.report.row_layout_class,index)
-                
-            self.layouts = [ self.choice_layout, self.row_layout ]
-            index = 2
-            for lc in self.report.page_layouts:
-                self.layouts.append(lh(lc,index))
-                index += 1
-        else:
-            self.choice_layout = None
-            self.row_layout = None
-            self.layouts = []
-            
-        self.ui.setup_report(self)
-        
-    def get_default_layout(self):
-        return self.layouts[self.report.default_layout]
-        
-    def get_absolute_url(self,*args,**kw):
-        return self.ui.get_report_url(self,*args,**kw)
-        
-    def data_elems(self):
-        for f in self.report.model._meta.fields: yield f.name
-        for f in self.report.model._meta.many_to_many: yield f.name
-        for f in self.report.model._meta.virtual_fields: yield f.name
-        # todo: for slave in self.report.slaves
-          
-    def get_data_elem(self,name):
-        return get_data_elem(self.report.model,name)
-        
-    def get_actions(self):
-        return self.report.actions
-        
-    def get_details(self):
-        return self.layouts[2:]
-        #~ return self.layouts[1:]
-          
-    def get_slaves(self):
-        return [ sl.get_handle(self.ui) for sl in self.report._slaves ]
-            
-    def get_title(self,rr):
-        return self.report.get_title(rr)
-        
-    def request(self,**kw):
-        rr = ReportRequest(self)
-        rr.setup(**kw)
-        return rr
-        
-    
 class ReportRequest:
     """
     An instance of this will be created for every request.

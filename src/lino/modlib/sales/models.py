@@ -181,6 +181,7 @@ class Customer(models.Model):
         return recipient.as_address(self,*args,**kw)
     
 class CustomerPageLayout(layouts.PageLayout):
+    layout_model = 'sales.Customer'
     main = """
            company person
            payment_term 
@@ -188,7 +189,6 @@ class CustomerPageLayout(layouts.PageLayout):
            """
     
 class Customers(reports.Report):
-    page_layouts = (CustomerPageLayout,)
     column_names = "name payment_term vat_exempt item_vat company person"
     can_delete = True
     model = Customer
@@ -525,6 +525,7 @@ class DocumentPageLayout(layouts.PageLayout):
       
         
 class OrderPageLayout(DocumentPageLayout):
+    layout_model = 'sales.Order'
     box5 = """
       cycle:20
       start_date
@@ -533,11 +534,13 @@ class OrderPageLayout(DocumentPageLayout):
         
         
 class InvoicePageLayout(DocumentPageLayout):
+    layout_model = 'sales.Invoice'
     box5 = """
       order
       """
 
 class EmittedInvoicesPageLayout(OrderPageLayout):
+    layout_model = 'sales.Order'
     label = "Emitted invoices"
     main = """
     journal number:4 creation_date customer:20 start_date
@@ -547,7 +550,7 @@ class EmittedInvoicesPageLayout(OrderPageLayout):
 
 class SalesDocuments(reports.Report):
     model = SalesDocument
-    page_layouts = (DocumentPageLayout,)
+    #~ page_layouts = (DocumentPageLayout,)
     #actions = reports.Report.actions + [ PrintAction ]
     
     #~ def inlines(self):
@@ -557,7 +560,6 @@ class SalesDocuments(reports.Report):
 class Orders(SalesDocuments):
     model = Order
     order_by = "number"
-    page_layouts = (OrderPageLayout,EmittedInvoicesPageLayout,)
     can_view = perms.is_authenticated
     
     #~ def inlines(self):
@@ -588,7 +590,6 @@ class PendingOrders(Orders):
 class Invoices(SalesDocuments):
     model = Invoice
     order_by = "id"
-    page_layouts = (InvoicePageLayout,)
     can_view = perms.is_staff
     
 class InvoicesByJournal(Invoices):

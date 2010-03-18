@@ -26,78 +26,23 @@ from django.utils.translation import ugettext as _
 import lino
 from lino.utils import perms, menus, actors
 from lino import actions
+from lino import datalinks
 
+from lino.modlib.tools import resolve_model, model_label
 
 LABEL_ALIGN_TOP = 'top'
 LABEL_ALIGN_LEFT = 'left'
 LABEL_ALIGN_RIGHT = 'right'
 
 
-class DataLink:
-    "inherited by lino.forms.FormHandle and lino.reports.ReportHandle"
-    def __init__(self,ui,name):
-        self.ui = ui
-        self.name = name
 
-    def try_get_virt(self,name):
-        return None
-        
-    def get_absolute_url(self,*args,**kw):
-        raise NotImplementedError
+#~ def setup():
+    #~ lino.log.info("Register Layouts...")
+    #~ for layout in actors.actors_dict.values():
+        #~ if isinstance(layout,PageLayout) and layout.__class__ is not PageLayout:
+            #~ layout.setup()
 
-
-class Layout:
-    """
-    A Layout specifies how fields of a Report should be arranged when they are
-    displayed in a form or a grid. 
     
-    A layout descriptor is a plain text with some simple rules:
-    - each word will lead to an element
-    - ...todo...
-   
-    """
-    # for internal use:
-    join_str = None # set by subclasses
-    
-    # the following attributes may be overriddedn in subclasses:
-    layout_for = None # not yet used
-    label = None
-    has_frame = False # True
-    label_align = LABEL_ALIGN_TOP
-    #label_align = LABEL_ALIGN_LEFT
-    #label_align = 'left'
-    default_button = None
-    collapsible_elements  = {}
-    
-    def get_hidden_elements(self,lh):
-        return set()
-    
-
-class RowLayout(Layout):
-    label = _("List")
-    show_labels = False
-    join_str = " "
-    
-    def get_hidden_elements(self,lh):
-        if lh.datalink.report.hide_columns is None:
-            return set()
-        return set(lh.datalink.report.hide_columns.split())
-
-class PageLayout(Layout):
-    label = _("Detail")
-    show_labels = True
-    join_str = "\n"
-    
-    
-class FormLayout(Layout):
-    #label = "Dialog"
-    show_labels = True
-    join_str = "\n"
-    form = None
-    title = None
-    label_align = 'left'
-    
-
 class StaticText:
     def __init__(self,text):
         self.text = text
@@ -105,33 +50,25 @@ class StaticText:
 
 class LayoutHandle:
     """
-    Each UI will create one LayoutHandle per Layout.
-    LayoutHandle instances are stored in the ReportHandle or FormHandle to which they belong. 
-    LayoutHandle analyzes it's Layout's descriptor and builds a tree of LayoutElements.    
+    LayoutHandle analyzes a Layout and builds a tree of LayoutElements.
+    
     """
     start_focus = None
     
-    def __init__(self,dl,layout,index,desc=None,main=None):
+    def __init__(self,dl,layout):
         # lino.log.debug('LayoutHandle.__init__(%s,%s,%d)',link,layout,index)
-        assert isinstance(dl.name,basestring), "link.name %r is not a string" % link.name
         assert isinstance(layout,Layout)
         #assert isinstance(link,reports.ReportHandle)
         self.ui = dl.ui
-        #~ self._ld = layout 
-        self._ld = NotImplementedError('LayoutHandle._ls renamed to LayoutHandle.layout')
         self.layout = layout
-        if index == 1:
-            self.name = dl.name
-        else:
-            self.name = dl.name + str(index)
+        #~ if index == 1:
+            #~ self.name = dl.name
+        #~ else:
+            #~ self.name = dl.name + str(index)
         #lino.log.debug('LayoutHandle.__init__(%s)',self.name)
         self.datalink = dl
-        #~ self.dl = NotImplementedError('LayoutHandle.dl renamed to LayoutHandle.datalink')
-        #~ self.link = NotImplementedError('LayoutHandle.link renamed to LayoutHandle.datalink')
-        #~ self.link = dl
-        self.index = index
+        self.name = layout._actor_name
         self.label = layout.label or ''
-        #self.inputs = []
         self._store_fields = []
         self._needed_stores = set()
         self.slave_grids = []
@@ -139,26 +76,21 @@ class LayoutHandle:
         self._buttons = []
         self.hide_elements = layout.get_hidden_elements(self)
         self.main_class = self.ui.main_panel_class(layout)
-        if hasattr(layout,"main"):
+        if layout.main is not None:
+        #~ if hasattr(layout,"main"):
             self._main = self.create_element(self.main_class,'main')
         else:
-            if desc is None:
-                desc = self.layout.join_str.join(dl.data_elems())
-                #lino.log.debug('desc for %s is %r',self.name,desc)
-                self._main = self.desc2elem(self.main_class,"main",desc)
-            else:
-                if not isinstance(desc,basestring):
-                    raise Exception("%r is not a string" % desc)
-                self._main = self.desc2elem(self.main_class,"main",desc)
+            main = self.layout.join_str.join(dl.data_elems())
+            self._main = self.desc2elem(self.main_class,"main",main)
         if isinstance(self.layout,RowLayout):
-            assert len(self._main.elements) > 0, "%s : Grid %s has no columns" % (dl.name,self.ext_name)
+            assert len(self._main.elements) > 0, "%s : Grid has no columns" % self.name
             self.columns = self._main.elements
             
         #~ self.width = self.layout.width or self._main.width
         #~ self.height = self.layout.height or self._main.height
         self.width = self._main.width
         self.height = self._main.height
-        self.write_debug_info()
+        #~ self.write_debug_info()
         #~ self.default_button = None
         #~ if layout.default_button is not None:
             #~ for e in self._buttons:
@@ -170,7 +102,7 @@ class LayoutHandle:
         self._needed_stores.add(rh)
             
     def __str__(self):
-        return self.name # self.report.model._meta.app_label+"."+self.name # __class__.__name__
+        return str(self.layout) + " Handle"
         
     def unused__repr__(self):
         s = self.name # self.__class__.__name__ 
@@ -181,6 +113,9 @@ class LayoutHandle:
     def setup_element(self,e):
         if e.name in self.hide_elements:
             self.hidden = True
+            
+    def setup(self):
+        pass
         
         
     def get_absolute_url(self,**kw):
@@ -268,4 +203,94 @@ class LayoutHandle:
             elif len(a) == 2:
                 return name, dict(width=int(a[0]),height=int(a[1]))
         raise Exception("Invalid picture descriptor %s" % picture)
-                
+
+class Layout(actors.HandledActor):
+    """
+    A Layout specifies how fields of a Report should be arranged when they are
+    displayed in a form or a grid. 
+    
+    A layout descriptor is a plain text with some simple rules:
+    - each word will lead to an element
+    - ...todo...
+   
+    """
+    # for internal use:
+    _handle_class = LayoutHandle
+    _handle_selector = datalinks.DataLink
+    join_str = None # set by subclasses
+    
+    #~ label = None
+    has_frame = False # True
+    label_align = LABEL_ALIGN_TOP
+    #label_align = LABEL_ALIGN_LEFT
+    #label_align = 'left'
+    default_button = None
+    collapsible_elements  = {}
+    main = None
+    
+    def get_hidden_elements(self,lh):
+        return set()
+        
+    #~ def get_handle(self,dl):
+        #~ return LayoutHandle(dl,self)
+        
+
+class FormLayout(Layout):
+    #label = "Dialog"
+    show_labels = True
+    join_str = "\n"
+    form = None
+    title = None
+    label_align = 'left'
+    layout_command = None
+    
+    def setup(self):
+        self.layout_command = actors.resolve_actor(self.layout_command,self.app_label)
+        if self.layout_command is None:
+            raise ValueError("%s : layout_command is None" % self)
+        self.layout_command.forms[self._actor_name] = self
+        #~ self.app_label = self.layout_command.app_label
+    
+
+class ModelLayout(Layout):
+    layout_model = None
+    def setup(self):
+        lino.log.debug("ModelLayout.setup() %s",self)
+        if self.layout_model is None:
+            #~ raise ValueError("%s : layout_model is None" % self)
+            pass 
+            # e.g. contacts.contactdetail is an abstract ModelLayout
+        else:
+            self.layout_model = resolve_model(self.layout_model,self.app_label)
+        #~ self.app_label = self.layout_model._meta.app_label
+        
+  
+class RowLayout(ModelLayout):
+    label = _("List")
+    show_labels = False
+    join_str = " "
+    
+    def get_hidden_elements(self,lh):
+        if lh.datalink.report.hide_columns is None:
+            return set()
+        return set(lh.datalink.report.hide_columns.split())
+
+class PageLayout(ModelLayout):
+    label = _("Detail")
+    show_labels = True
+    join_str = "\n"
+    def setup(self):
+        ModelLayout.setup(self)
+        if self.layout_model is not None:
+            l = getattr(self.layout_model,'_lino_layouts',None)
+            if l is None:
+                l = []
+                setattr(self.layout_model,'_lino_layouts',l)
+            lino.log.debug('Register %s detail layout %d for %s',self,len(l),model_label(self.layout_model))
+            l.append(self)
+    
+
+def row_layout_factory(rpt):
+    cls = type(rpt._actor_name+"Grid",(RowLayout,),dict(app_label=rpt.app_label,main=rpt.column_names,layout_model=rpt.model))
+    return actors.register_actor(cls())
+
