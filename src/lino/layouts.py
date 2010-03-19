@@ -27,6 +27,8 @@ import lino
 from lino.utils import perms, menus, actors
 from lino import actions
 from lino import datalinks
+from lino import commands
+from lino.ui import base
 
 from lino.modlib.tools import resolve_model, model_label
 
@@ -55,18 +57,18 @@ class LayoutHandle:
     """
     start_focus = None
     
-    def __init__(self,dl,layout):
+    def __init__(self,ui,layout):
         # lino.log.debug('LayoutHandle.__init__(%s,%s,%d)',link,layout,index)
         assert isinstance(layout,Layout)
         #assert isinstance(link,reports.ReportHandle)
-        self.ui = dl.ui
+        self.ui = ui
         self.layout = layout
         #~ if index == 1:
             #~ self.name = dl.name
         #~ else:
             #~ self.name = dl.name + str(index)
         #lino.log.debug('LayoutHandle.__init__(%s)',self.name)
-        self.datalink = dl
+        self.datalink = layout.get_datalink(ui)
         self.name = layout._actor_name
         self.label = layout.label or ''
         self._store_fields = []
@@ -80,7 +82,7 @@ class LayoutHandle:
         #~ if hasattr(layout,"main"):
             self._main = self.create_element(self.main_class,'main')
         else:
-            main = self.layout.join_str.join(dl.data_elems())
+            main = self.layout.join_str.join(self.datalink.data_elems())
             self._main = self.desc2elem(self.main_class,"main",main)
         if isinstance(self.layout,ListLayout):
             assert len(self._main.elements) > 0, "%s : Grid has no columns" % self.name
@@ -216,7 +218,9 @@ class Layout(actors.HandledActor):
     """
     # for internal use:
     _handle_class = LayoutHandle
-    _handle_selector = datalinks.DataLink
+    #~ _handle_selector = datalinks.DataLink
+    _handle_selector = base.UI
+    datalink = None
     join_str = None # set by subclasses
     
     #~ label = None
@@ -234,35 +238,45 @@ class Layout(actors.HandledActor):
     #~ def get_handle(self,dl):
         #~ return LayoutHandle(dl,self)
         
-
 class FormLayout(Layout):
     #label = "Dialog"
     show_labels = True
     join_str = "\n"
-    form = None
+    #~ form = None
     title = None
     label_align = 'left'
-    layout_command = None
+    #~ layout_command = None
     
     def do_setup(self):
-        self.layout_command = actors.resolve_actor(self.layout_command,self.app_label)
-        if self.layout_command is None:
-            raise ValueError("%s : layout_command is None" % self)
-        self.layout_command.forms[self._actor_name] = self
+        self.datalink = actors.resolve_actor(self.datalink,self.app_label)
+        assert isinstance(self.datalink,commands.Command), \
+          "datalink for %s is %r, must be a Command." % (self,self.datalink)
+            
+        #~ if self.datalink is None:
+            #~ raise ValueError("%s : datalink is None" % self)
+        self.datalink._forms[self._actor_name] = self
         #~ self.app_label = self.layout_command.app_label
     
+    def get_datalink(self,ui):
+        return self.datalink.get_handle(ui)
+        
 
 class ModelLayout(Layout):
-    layout_model = None
+    #~ layout_model = None
     def do_setup(self):
         lino.log.debug("ModelLayout.setup() %s",self)
-        if self.layout_model is None:
+        if self.datalink is None:
             #~ raise ValueError("%s : layout_model is None" % self)
             pass 
             # e.g. contacts.contactdetail is an abstract ModelLayout
         else:
-            self.layout_model = resolve_model(self.layout_model,self.app_label)
+            self.datalink = resolve_model(self.datalink,self.app_label)
+            assert issubclass(self.datalink,models.Model), \
+              "datalink for %s is %r, must be a Model." % (self,self.datalink)
         #~ self.app_label = self.layout_model._meta.app_label
+        
+    def get_datalink(self,ui):
+        return self.datalink._lino_model_report.get_handle(ui)
         
   
 class ListLayout(ModelLayout):
@@ -281,18 +295,22 @@ class DetailLayout(ModelLayout):
     join_str = "\n"
     def do_setup(self):
         ModelLayout.do_setup(self)
-        if self.layout_model is not None:
-            l = getattr(self.layout_model,'_lino_layouts',None)
+        if self.datalink is not None:
+            l = getattr(self.datalink,'_lino_layouts',None)
             if l is None:
                 l = []
-                setattr(self.layout_model,'_lino_layouts',l)
-            lino.log.debug('Register %s detail layout %d for %s',self,len(l),model_label(self.layout_model))
+                setattr(self.datalink,'_lino_layouts',l)
+            lino.log.debug('Register %s detail layout %d for %s',self,len(l),model_label(self.datalink))
             l.append(self)
+            
+def get_detail_layout(model):
+    if len(model._lino_layouts) > 0:
+        return model._lino_layouts[0]
             
 #~ PageLayout = DetailLayout
     
 
 def list_layout_factory(rpt):
-    cls = type(rpt._actor_name+"List",(ListLayout,),dict(app_label=rpt.app_label,main=rpt.column_names,layout_model=rpt.model))
+    cls = type(rpt._actor_name+"List",(ListLayout,),dict(app_label=rpt.app_label,main=rpt.column_names,datalink=rpt.model))
     return actors.register_actor(cls())
 

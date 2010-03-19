@@ -181,7 +181,7 @@ class Customer(models.Model):
         return recipient.as_address(self,*args,**kw)
     
 class CustomerDetail(layouts.DetailLayout):
-    layout_model = 'sales.Customer'
+    datalink = 'sales.Customer'
     main = """
            company person
            payment_term 
@@ -525,7 +525,7 @@ class DocumentDetail(layouts.DetailLayout):
       
         
 class OrderDetail(DocumentDetail):
-    layout_model = 'sales.Order'
+    datalink = 'sales.Order'
     box5 = """
       cycle:20
       start_date
@@ -534,13 +534,13 @@ class OrderDetail(DocumentDetail):
         
         
 class InvoiceDetail(DocumentDetail):
-    layout_model = 'sales.Invoice'
+    datalink = 'sales.Invoice'
     box5 = """
       order
       """
 
 class EmittedInvoicesDetail(OrderDetail):
-    layout_model = 'sales.Order'
+    datalink = 'sales.Order'
     label = "Emitted invoices"
     main = """
     journal number:4 creation_date customer:20 start_date

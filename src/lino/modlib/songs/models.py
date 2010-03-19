@@ -264,7 +264,7 @@ class Collection(models.Model):
 
 
 class SongDetail(layouts.DetailLayout):
-    layout_model = 'songs.Song'
+    datalink = 'songs.Song'
     main = """
     id title language voices
     origin based_on bible_ref
@@ -277,7 +277,7 @@ class SongDetail(layouts.DetailLayout):
         return dict(events=EventsBySong())
 
 class PerformanceDetail(layouts.DetailLayout):
-    layout_model = 'songs.Performance'
+    datalink = 'songs.Performance'
   
     main = """
     id date place remark 

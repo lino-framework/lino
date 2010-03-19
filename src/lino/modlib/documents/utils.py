@@ -152,7 +152,7 @@ class unused_PrintAction(actions.Action):
         #context._response.update(html=row.make_pisa_html())
         #return row.view_printable(context.request)
 
-class PdfAction(actions.Action):
+class PdfAction(actions.RowsAction):
     name = 'pdf'
     needs_selection = True
     label = "PDF"

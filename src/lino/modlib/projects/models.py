@@ -49,7 +49,7 @@ class Project(models.Model):
         return self.name
         
 class ProjectDetail(layouts.DetailLayout):
-    layout_model = 'projects.Project'
+    datalink = 'projects.Project'
     main = """
     name type
     started stopped

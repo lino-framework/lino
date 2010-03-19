@@ -124,6 +124,7 @@ class Actor(object):
             #~ self.__class__.app_label = self.__class__.__module__.split('.')[-2]
             self.app_label = self.__class__.__module__.split('.')[-2]
         self.actor_id = self.app_label + ACTOR_SEP + self._actor_name
+        self._forms = {} # will be filled by lino.layouts.FormLayout.setup()
         lino.log.debug("Actor.__init__() %s",self)
 
     def get_label(self):

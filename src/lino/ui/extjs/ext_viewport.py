@@ -290,7 +290,7 @@ Lino.goto_permalink = function () {
 
         s += """
 Lino.form_action = function (caller,needs_validation,url) { 
-  console.log('Lino.form_action()',caller,name,needs_validation);
+  // console.log('Lino.form_action()',caller,name,needs_validation);
   return function(btn,evt) {
     if (needs_validation && !caller.main_panel.form.isValid()) {
         Ext.MessageBox.alert('error',"One or more fields contain invalid data.");

@@ -50,7 +50,7 @@ class ProductCats(reports.Report):
 
 class ProductDetail(layouts.DetailLayout):
   
-    layout_model = 'products.Product'
+    datalink = 'products.Product'
     
     #~ main = """
     #~ id:5 name:50 cat

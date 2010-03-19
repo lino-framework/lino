@@ -26,15 +26,15 @@ class RunCommand(actions.Action):
 
 class CommandHandle(datalinks.DataLink):
   
-    def __init__(self,ui,command):
-        assert isinstance(command,Command)
-        datalinks.DataLink.__init__(self,ui,command)
-        self.form_handles = {}
-        for frm in command.forms.values():
-            self.form_handles[frm._actor_name] = frm.get_handle(self)
+    #~ def __init__(self,ui,command):
+        #~ assert isinstance(command,Command)
+        #~ datalinks.DataLink.__init__(self,ui,command)
+        #~ self.form_handles = {}
+        #~ for frm in command.forms.values():
+            #~ self.form_handles[frm._actor_name] = frm.get_handle(self)
             
-    def get_form_handle(self,name):
-        return self.form_handles[name]
+    #~ def get_form_handle(self,name):
+        #~ return self.form_handles[name]
         
     def setup(self):
         #~ self.lh = layouts.LayoutHandle(self,self.form.layout(),1)
@@ -47,9 +47,9 @@ class Command(actors.HandledActor):
     _handle_class = CommandHandle
     _handle_selector = base.UI
     
-    def __init__(self):
-        actors.HandledActor.__init__(self)
-        self.forms = {} # will be filled by lino.layouts.FormLayout.setup()
+    #~ def __init__(self):
+        #~ actors.HandledActor.__init__(self)
+        #~ self.forms = {} # will be filled by lino.layouts.FormLayout.setup()
         
     def run_in_dlg(self,dlg):
         raise NotImplementedError

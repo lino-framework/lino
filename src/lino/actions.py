@@ -52,7 +52,7 @@ class ValidationError(Exception):
     
     
     
-class Action: 
+class Action:
     label = None
     name = None
     key = None
@@ -71,6 +71,16 @@ class Action:
     def run_in_dlg(self,dlg):
         raise NotImplementedError
         
+    def before_run(self,dlg):
+        pass
+
+class RowsAction(Action):
+    needs_selection = False
+    needs_validation = False
+    
+    def before_run(self,dlg):
+        if self.needs_selection and len(dlg.selected_rows) == 0:
+            return _("No selection. Nothing to do.")
 
 class DialogResponse:
     redirect = None
@@ -111,18 +121,17 @@ def get_dialog(dialog_id):
 
 class Dialog:
     """
-    Replaces ActionContext. 
-    A Dialog is a conversation between client and server, initiated by the client.
-    Each `yield` of an `Action.run_in_dlg()` defines a response to the client.
+    A Dialog is a conversation between client and server.
+    Dialogs are initiated by a client request.
+    Each `yield` of an `Action.run()` defines a response to the client, and execution continues only when the client has answered.
     See also `Lino.do_dialog()` in `lino.ui.extjs`.
-    The current API is rather influenced by ExtJS...
+    The current API is rather influenced by ExtJS.
     """
     selected_rows = []
     params_def = ()
     button_clicked = None
     
     def __init__(self,ah,action_name,params):
-    #~ def __init__(self,ui,actor,action_name,params):
         self.is_over = False
         self.ui = ah.ui
         #~ self.ah = actor.get_handle(ui)
@@ -158,9 +167,9 @@ class Dialog:
         self.response.dialog_id = None
         
     def _start(self):
-        if self.action.needs_selection and len(self.selected_rows) == 0:
-            #~ self.console_msg(_("No selection. Nothing to do.")).over()
-            return DialogResponse(notify_msg=_("No selection. Nothing to do."))
+        msg = self.action.before_run(self)
+        if msg:
+            return DialogResponse(notify_msg=msg)
         lino.log.debug('Dialog._start() %s.%s(%r)',self.ah.actor,self.action.name,self.params)
         self.running = self.action.run_in_dlg(self)
         r = self._step()
@@ -222,9 +231,11 @@ class Dialog:
         self.response.show_modal_window = js
         return self
         
+    def get_form(self,name):
+        return self.ah.get_form_handle(name)
         
-    def show_modal_form(self,name):
-        self.ui.show_modal_form(self,name)
+    def show_modal_form(self,fh):
+        self.ui.show_modal_form(self,fh)
         return self
         
     def redirect(self,url):
@@ -262,50 +273,6 @@ class Dialog:
 
 
 
-
-
-class InsertRow(Action):
-    label = _("Insert")
-    key = INSERT # (ctrl=True)
-    
-    def old_run_in_dlg(self,dlg):
-        
-        for r in dlg.ui.insert_row(dlg):
-            yield r
-        
-    def run_in_dlg(self,dlg):
-        yield dlg.confirm(_("Insert new row. Are you sure?"))
-        rr = dlg.get_request()
-        #~ for r in rr.insert_row(self): 
-            #~ yield r
-        row = rr.create_instance()
-        row.save()
-        yield dlg.refresh_caller().over()
-        
-    def old_run_in_dlg(self,dlg):
-        yield dlg.confirm(_("Insert new row. Are you sure?"))
-        rr = dlg.get_request()
-        row = rr.create_instance()
-        row.save()
-        yield dlg.refresh_caller().over()
-        
-        
-  
-class DeleteSelected(Action):
-    needs_selection = True
-    label = _("Delete")
-    key = DELETE # (ctrl=True)
-    
-        
-    def run_in_dlg(self,dlg):
-        if len(dlg.selected_rows) == 1:
-            msg = _("Delete row %s") % dlg.selected_rows[0]
-        else:
-            msg = _("Delete %d rows") % len(dlg.selected_rows)
-        yield dlg.confirm(msg + '. ' + _("Are you sure?"))
-        for row in dlg.selected_rows:
-            row.delete()
-        yield dlg.refresh_caller().notify(_("Success") + ": " + msg).over()
 
     
 class Cancel(Action):

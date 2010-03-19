@@ -17,6 +17,7 @@ import traceback
 
 from django.conf import settings
 from django.utils.importlib import import_module
+from django.utils.translation import ugettext as _
 
 from django.db import models
 from django.db.models.query import QuerySet
@@ -211,8 +212,61 @@ def get_model_report(model):
 class ViewReport(actions.Action):
     def run_in_dlg(self,dlg):
         return dlg.ui.view_report(dlg)
-        
 
+
+class InsertRow(actions.RowsAction):
+    label = _("Insert")
+    key = actions.INSERT # (ctrl=True)
+    
+    def old_run_in_dlg(self,dlg):
+        
+        for r in dlg.ui.insert_row(dlg):
+            yield r
+        
+    def run_in_dlg(self,dlg):
+        rr = dlg.get_request()
+        #~ for r in rr.insert_row(self): 
+            #~ yield r
+        row = rr.create_instance()
+        fh = dlg.ui.get_detail_form(row)
+        if fh is None:
+            yield dlg.confirm(_("Insert new row. Are you sure?"))
+            row.save()
+            yield dlg.notify(_("Row has been created.")).refresh_caller().over()
+        yield dlg.show_modal_form(fh)
+        while True:
+            if dlg.button_clicked != self.ok:
+                yield dlg.cancel()
+            if row_handle.update(self):
+                row.save()
+                yield dlg.refresh_caller().over()
+        
+    def old_run_in_dlg(self,dlg):
+        yield dlg.confirm(_("Insert new row. Are you sure?"))
+        rr = dlg.get_request()
+        row = rr.create_instance()
+        row.save()
+        yield dlg.refresh_caller().over()
+        
+        
+  
+class DeleteSelected(actions.RowsAction):
+    needs_selection = True
+    label = _("Delete")
+    key = actions.DELETE # (ctrl=True)
+    
+        
+    def run_in_dlg(self,dlg):
+        if len(dlg.selected_rows) == 1:
+            msg = _("Delete row %s") % dlg.selected_rows[0]
+        else:
+            msg = _("Delete %d rows") % len(dlg.selected_rows)
+        yield dlg.confirm(msg + '. ' + _("Are you sure?"))
+        for row in dlg.selected_rows:
+            row.delete()
+        yield dlg.refresh_caller().notify(_("Success") + ": " + msg).over()
+        
+        
 
 class ReportHandle(datalinks.DataLink):
     def __init__(self,ui,report):
@@ -231,12 +285,15 @@ class ReportHandle(datalinks.DataLink):
             
     def setup(self):
         if self.report.use_layouts:
-            self.list_layout = self.report.list_layout.get_handle(self)
-            self.details = [ pl.get_handle(self) for pl in self.report.detail_layouts ]
+            self.list_layout = self.report.list_layout.get_handle(self.ui)
+            self.details = [ pl.get_handle(self.ui) for pl in self.report.detail_layouts ]
             self.layouts = [ self.list_layout ] + self.details
         else:
             self.details = []
             self.layouts = []
+            
+        self.ui.setup_report(self)
+        
         #~ if self.report.use_layouts:
             #~ def lh(layout_class,*args,**kw):
                 #~ return layouts.LayoutHandle(self,layout_class(),*args,**kw)
@@ -256,13 +313,15 @@ class ReportHandle(datalinks.DataLink):
             #~ self.row_layout = None
             #~ self.layouts = []
             
-        self.ui.setup_report(self)
         
     #~ def get_default_layout(self):
         #~ return self.layouts[self.report.default_layout]
         
     #~ def get_create_layout(self):
         #~ return self.layouts[2]
+        
+    def get_queryset(self,rr):
+        return self.report.get_queryset(rr)
         
     def get_layout(self,name):
         return self.layouts[name]
@@ -297,6 +356,17 @@ class ReportHandle(datalinks.DataLink):
         rr.setup(**kw)
         return rr
         
+
+class RowHandle(ReportHandle):
+  
+    def __init__(self,rh,row):
+        self.row = row
+        ReportHandle.__init__(self,rh.ui,rh.report)
+        
+    def get_queryset(self,rr):
+        return [ self.row ]
+        
+
 
 class Report(actors.HandledActor): # actions.Action): # 
     _handle_class = ReportHandle
@@ -363,7 +433,7 @@ class Report(actors.HandledActor): # actions.Action): #
         actors.HandledActor.__init__(self)
         
         #~ lino.log.debug("Report.__init__() %s", self)
-        self.actions = self.actions + [ actions.DeleteSelected(), actions.InsertRow() ]
+        self.actions = self.actions + [ DeleteSelected(), InsertRow() ]
         
         if self.fk_name:
             #~ self.master = resolve_model(self.master,self.app_label)
@@ -707,7 +777,7 @@ class ReportRequest:
         
     def setup_queryset(self):
         # overridden by ChoicesReportRequest
-        self.queryset = self.report.get_queryset(self)
+        self.queryset = self.rh.get_queryset(self)
         #~ return self.report.get_queryset(master_instance=self.master_instance,**kw)
         
     def render_to_dict(self):

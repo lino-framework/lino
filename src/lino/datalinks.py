@@ -29,6 +29,7 @@ class DataLink:
         self.name = actor.actor_id
         self.elements = SortedDict() # datalink elements
         self.inputs = []
+        self.form_handles = {}
         
         for n in dir(actor):
             v = getattr(actor,n)
@@ -44,7 +45,15 @@ class DataLink:
             else:
                 #lino.log.debug("ignored %s attribute %r=%r",self.form,n,v)
                 pass
+                
+        for frm in actor._forms.values():
+            self.form_handles[frm._actor_name] = frm.get_handle(self)
+            
         #~ lino.log.debug("%s handle : %s",form,self.elements.keys())
+        
+    def get_form_handle(self,name):
+        return self.form_handles[name]
+        
 
     def try_get_virt(self,name):
         return None

@@ -286,7 +286,7 @@ def lh2win(lh,kw):
         if lh.width is not None:
             kw.update(width=lh.width*EXT_CHAR_WIDTH + 10*EXT_CHAR_WIDTH)
         if lh.start_focus is not None:
-            win.update(defaultButton=lh.start_focus.name)
+            kw.update(defaultButton=lh.start_focus.name)
   
 class MasterWrapper(WindowWrapper):
   

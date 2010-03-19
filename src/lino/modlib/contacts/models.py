@@ -155,7 +155,7 @@ class Person(Contact):
             self.name = " ".join(l)
 
 class PersonDetail(ContactDetail):
-    layout_model = 'contacts.Person'
+    datalink = 'contacts.Person'
     box1 = "last_name first_name:15 title:10"
     box2 = """national_id:15 id
               nationality language
@@ -194,7 +194,7 @@ class Company(Contact):
         #~ return self.name + linesep + s
 
 class CompanyDetail(ContactDetail):
-    layout_model = 'contacts.Company'
+    datalink = 'contacts.Company'
     box1 = """name 
     vat_id:12"""
               

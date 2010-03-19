@@ -151,7 +151,7 @@ class DocItem(models.Model):
         
 
 class FinDocDetail(layouts.DetailLayout):
-    layout_model = 'finan.BankStatement'
+    datalink = 'finan.BankStatement'
     box1 = """
     date value_date
     ledger_remark

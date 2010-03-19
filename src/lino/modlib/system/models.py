@@ -54,7 +54,7 @@ class ContentTypes(reports.Report):
 
 
 class PasswordResetForm(layouts.FormLayout):
-    layout_command = 'system.PasswordReset'
+    datalink = 'system.PasswordReset'
     label = _("Request Password Reset")
     
     intro = layouts.StaticText("""
@@ -82,7 +82,7 @@ class PasswordReset(commands.Command):
 from django.contrib.auth import login, authenticate, logout
 
 class LoginForm(layouts.FormLayout):
-    layout_command = 'Login'
+    datalink = 'Login'
     
     text = layouts.StaticText(_("Please enter your username and password to authentificate."))
   
@@ -102,7 +102,9 @@ class Login(commands.Command):
     
     
     def run_in_dlg(self,dlg):
-        yield dlg.show_modal_form('LoginForm')
+      
+        fh = dlg.get_form('LoginForm')
+        yield dlg.show_modal_form(fh) 
         
         while True:
             if dlg.button_clicked != self.ok:
@@ -110,7 +112,7 @@ class Login(commands.Command):
         
             username = dlg.params.get('username')
             password = dlg.params.get('password')
-            print username,password
+            #~ print username,password
             user = authenticate(username=username, password=password)
             if user is None:
                 #~ raise actions.ValidationError(

@@ -66,7 +66,7 @@ class Note(models.Model,Printable):
         
 
 class NoteDetail(layouts.DetailLayout):
-    layout_model = 'notes.Note'
+    datalink = 'notes.Note'
     #~ main = """
     #~ date short type user
     #~ person company

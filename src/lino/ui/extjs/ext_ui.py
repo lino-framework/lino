@@ -437,13 +437,11 @@ class ExtUI(base.UI):
         yield dlg.show_window(rh.window_wrapper.js_render).over()
         
         
-    def view_form(self,dlg,**kw):
-        "called from ViewForm.run_in_dlg()"
-        frm = dlg.actor
-        fh = self.get_form_handle(frm)
-        #~ fr = ext_requests.ViewFormRequest(dlg.request,fh)
-        #~ ww = WindowWrapper(fr) 
-        yield dlg.show_window(fh.window_wrapper.js_render).over()
+    #~ def view_form(self,dlg,**kw):
+        #~ "called from ViewForm.run_in_dlg()"
+        #~ frm = dlg.actor
+        #~ fh = self.get_form_handle(frm)
+        #~ yield dlg.show_window(fh.window_wrapper.js_render).over()
         
     def setup_report(self,rh):
         if rh.report.use_layouts:
@@ -466,12 +464,15 @@ class ExtUI(base.UI):
             lh.action_buttons = []
             lh.slave_windows = []
             
-    def show_modal_form(self,dlg,name):
-        fh = dlg.ah.get_form_handle(name)
+    def show_modal_form(self,dlg,fh):
         ww = ext_windows.FormMasterWrapper(fh)
         dlg.show_modal_window(ww.js_render)
         
-
+    def get_detail_form(self,row):
+        layout = layouts.get_detail_layout(row.__class__)
+        row_handle = RowHandle(rr.rh,row)
+        fh = layout.get_handle(dl)
+        
     def insert_row(self,dlg):
         if False:
             yield dlg.confirm(_("Insert new row. Are you sure?"))
