@@ -17,7 +17,7 @@ from django.utils.translation import ugettext as _
 
 import lino
 from lino import actions, layouts, commands
-from lino import forms
+#~ from lino import forms
 from lino.ui import base
 from lino.utils import actors
 from lino.utils import menus
@@ -49,14 +49,14 @@ WC_TYPE_GRID = 'grid'
 
 class SaveWindowConfig(commands.Command):
   
-    name = forms.Input()
-    window_config_type = forms.Input()
-    height = forms.Input()
-    width = forms.Input()
-    x = forms.Input()
-    y = forms.Input()
-    maximized = forms.Input()
-    column_widths = forms.List()
+    name = commands.Input()
+    window_config_type = commands.Input()
+    height = commands.Input()
+    width = commands.Input()
+    x = commands.Input()
+    y = commands.Input()
+    maximized = commands.Input()
+    column_widths = commands.List()
     
     #~ params_def = dict(
       #~ name=actions.CharParam(),
@@ -158,7 +158,7 @@ class WindowWrapper(jsgen.Object):
         jsgen.Object.__init__(self,name)
         
         
-    def vars(self):
+    def subvars(self):
         for w in self.slave_windows:
             yield w
         for b in self.bbar_buttons:
@@ -251,7 +251,7 @@ class WindowWrapper(jsgen.Object):
         yield "    return v;"
         yield "  };"
         yield "  // declare variables of %s" % self
-        for v in self.vars():
+        for v in self.subvars():
             #~ yield "  // variable %s:" % v.ext_name
             for ln in v.js_declare():
                 yield "  " + ln
@@ -259,7 +259,7 @@ class WindowWrapper(jsgen.Object):
         for ln in self.js_main():
             yield "  " + ln
         yield "  // contributions of variables in %s" % self
-        for v in self.vars():
+        for v in self.subvars():
             yield "  // variable %s contributes:" % v.ext_name
             for ln in v.js_body():
                 yield "  " + ln
@@ -290,15 +290,17 @@ def lh2win(lh,kw):
   
 class MasterWrapper(WindowWrapper):
   
-    def __init__(self,lh,**kw):
+    def __init__(self,lh,dl,**kw):
         #~ assert isinstance(lh.datalink,layouts.DataLink)
         self.lh = lh
-        self.datalink = lh.datalink
+        self.datalink = dl # lh.datalink
         #~ permalink_name = id2js(lh.layout.actor_id)
         permalink_name = lh.layout.actor_id
+        name = id2js(lh.layout.actor_id)
         lh2win(lh,kw)
-        window = WrappedWindow(self,lh.datalink.ui, "window", lh._main, permalink_name, **kw)
-        WindowWrapper.__init__(self,lh.datalink.name,window)
+        window = WrappedWindow(self,dl.ui, "window", lh._main, permalink_name, **kw)
+        #~ WindowWrapper.__init__(self,dl.name,window)
+        WindowWrapper.__init__(self,name,window)
         
         
     def apply_window_config(self,wc):
@@ -311,23 +313,28 @@ class MasterWrapper(WindowWrapper):
         if self.datalink.content_type is not None:
             yield "this.content_type = %s;" % py2js(self.datalink.content_type)
             
-    def js_get_values(self):
-        for e in self.datalink.inputs:
-            yield "  v[%r] = this.main_panel.getForm().findField(%r).getValue();" % (e.name,e.name)
-            
 class FormMasterWrapper(MasterWrapper):
   
     window_config_type = 'form'
     
-    def __init__(self,lh,**kw):
-        MasterWrapper.__init__(self,lh,**kw)
-        for a in lh.datalink.get_actions():
+    def __init__(self,lh,dl,**kw):
+        MasterWrapper.__init__(self,lh,dl,**kw)
+        for a in dl.get_actions():
             self.bbar_buttons.append(ext_elems.FormActionElement(lh,a.name,a)) 
             #dict(text=a.label,handler=h))
             #~ if a.key:
                 #~ keys.append(key_handler(a.key,h))
         lh._main.update(bbar=self.bbar_buttons)
         
+    def js_get_values(self):
+        #~ for e in self.datalink.inputs:
+            #~ yield "  v[%r] = this.main_panel.getForm().findField(%r).getValue();" % (e.name,e.name)
+        for name in self.lh._submit_fields:
+            yield "  v[%r] = this.main_panel.getForm().findField(%r).getValue();" % (name,name)
+        #~ for e in self.lh.walk():
+            #~ if isinstance(e,ext_elems.FieldElement):
+                #~ yield "  v[%r] = this.main_panel.getForm().findField(%r).getValue();" % (e.name,e.name)
+            
     #~ def js_preamble(self):
         #~ for ln in super(FormMasterWrapper,self).js_preamble():
             #~ yield ln
@@ -403,7 +410,7 @@ class GridMasterWrapper(GridWrapperMixin,MasterWrapper):
   
     def __init__(self,rh,**kw):
         lh = rh.list_layout
-        MasterWrapper.__init__(self,lh,**kw)
+        MasterWrapper.__init__(self,lh,rh,**kw)
         cmenu_buttons = []
         for a in rh.get_actions():
             btn = ext_elems.RowActionElement(lh,a.name,a)
@@ -440,10 +447,12 @@ class GridMasterWrapper(GridWrapperMixin,MasterWrapper):
         rh.list_layout._main.update(bbar=self.bbar_buttons)
         self.cmenu = jsgen.Variable('cmenu',js_code("new Ext.menu.Menu(%s)" % py2js(cmenu_buttons)))        
   
-    def vars(self):
-        for v in MasterWrapper.vars(self):
+    def subvars(self): # 20100319
+        for v in MasterWrapper.subvars(self):
             yield v
+        yield self.datalink.store
         yield self.cmenu
+        
         
     def js_main(self):
         for ln in MasterWrapper.js_main(self):
@@ -534,16 +543,22 @@ class GridSlaveWrapper(GridWrapperMixin,SlaveWrapper):
         button_text = slave_rh.report.button_label
         #~ permalink_name = id2js(slave_lh.name)
         permalink_name = slave_lh.name
+        name = id2js(slave_lh.name)
         #~ kw.update(title=slave_lh.get_title(None))
         lh2win(slave_lh,kw)
         window = WrappedWindow(self,master_lh.ui,'window',slave_lh._main,permalink_name,**kw)
-        SlaveWrapper.__init__(self, master_lh, slave_rh.name, window, button_text)
+        SlaveWrapper.__init__(self, master_lh, name, window, button_text)
         self.bbar_buttons = slave_rh.window_wrapper.bbar_buttons
         self.slave_windows = slave_rh.window_wrapper.slave_windows
         slave_lh._main.update(bbar=self.bbar_buttons)
         
     def js_preamble(self):
         yield "this.content_type = %s;" % py2js(self.slave_rh.content_type)
+        
+    def subvars(self): 
+        for v in SlaveWrapper.subvars(self):
+            yield v
+        yield self.slave_rh.store
         
     #~ def vars(self):
         #~ for w in self.slave_rh.window_wrapper.slave_windows:
@@ -577,7 +592,8 @@ class DetailSlaveWrapper(SlaveWrapper):
     def __init__(self,master_lh,detail_lh,**kw):
         self.detail_lh = detail_lh
         #~ permalink_name = id2js(detail_lh.name)
-        permalink_name = detail_lh.name
+        #~ permalink_name = detail_lh.name
+        permalink_name = detail_lh.layout.actor_id
         #~ kw.update(title=detail_lh.get_title(None))
         lh2win(detail_lh,kw)
         window = WrappedWindow(self,master_lh.ui, 'window', detail_lh._main, permalink_name, **kw)

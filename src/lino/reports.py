@@ -76,6 +76,12 @@ def add_quick_search_filter(qs,search_text):
             q = q | models.Q(**kw)
     return qs.filter(q)
         
+def data_elems(meta):
+    for f in meta.fields: yield f.name
+    for f in meta.many_to_many: yield f.name
+    for f in meta.virtual_fields: yield f.name
+    # todo: for slave in self.report.slaves
+    
 def get_data_elem(model,name):
     try:
         return model._meta.get_field(name)
@@ -228,14 +234,19 @@ class InsertRow(actions.RowsAction):
         #~ for r in rr.insert_row(self): 
             #~ yield r
         row = rr.create_instance()
-        fh = dlg.ui.get_detail_form(row)
-        if fh is None:
+        
+        layout = layouts.get_detail_layout(row.__class__)
+        
+        if layout is None:
             yield dlg.confirm(_("Insert new row. Are you sure?"))
             row.save()
             yield dlg.notify(_("Row has been created.")).refresh_caller().over()
+        lh = layout.get_handle(dlg.ui)
+        dl = RowHandle(dlg.ui,row)
+        fh = actions.FormHandle(lh,dl)
         yield dlg.show_modal_form(fh)
         while True:
-            if dlg.button_clicked != self.ok:
+            if dlg.modal_exit != 'ok':
                 yield dlg.cancel()
             if row_handle.update(self):
                 row.save()
@@ -268,10 +279,11 @@ class DeleteSelected(actions.RowsAction):
         
         
 
-class ReportHandle(datalinks.DataLink):
+class ReportHandle(datalinks.DataLink,actors.ActorHandle):
     def __init__(self,ui,report):
         #lino.log.debug('ReportHandle.__init__(%s)',rd)
-        datalinks.DataLink.__init__(self,ui,report)
+        datalinks.DataLink.__init__(self,ui,report.actions)
+        actors.ActorHandle.__init__(self,report)
         assert isinstance(report,Report)
         #self._rd = rd
         self.report = report
@@ -281,7 +293,7 @@ class ReportHandle(datalinks.DataLink):
         self.content_type = ContentType.objects.get_for_model(self.report.model).pk
             
     def __str__(self):
-        return self.report.name + 'Handle'
+        return str(self.report) + 'Handle'
             
     def setup(self):
         if self.report.use_layouts:
@@ -320,6 +332,9 @@ class ReportHandle(datalinks.DataLink):
     #~ def get_create_layout(self):
         #~ return self.layouts[2]
         
+    def submit_elems(self):
+        return []
+        
     def get_queryset(self,rr):
         return self.report.get_queryset(rr)
         
@@ -330,16 +345,16 @@ class ReportHandle(datalinks.DataLink):
         return self.ui.get_report_url(self,*args,**kw)
         
     def data_elems(self):
-        for f in self.report.model._meta.fields: yield f.name
-        for f in self.report.model._meta.many_to_many: yield f.name
-        for f in self.report.model._meta.virtual_fields: yield f.name
-        # todo: for slave in self.report.slaves
+        for de in data_elems(self.report.model._meta): yield de
           
     def get_data_elem(self,name):
         return get_data_elem(self.report.model,name)
+        #~ if de is not None:
+            #~ return de
+        #~ return getattr(self.report,name)
         
-    def get_actions(self):
-        return self.report.actions
+    #~ def get_actions(self):
+        #~ return self.report.actions
         
     def get_details(self):
         return self.details
@@ -357,14 +372,28 @@ class ReportHandle(datalinks.DataLink):
         return rr
         
 
-class RowHandle(ReportHandle):
+class RowHandle(datalinks.DataLink):
   
-    def __init__(self,rh,row):
+    def __init__(self,ui,row):
         self.row = row
-        ReportHandle.__init__(self,rh.ui,rh.report)
+        datalinks.DataLink.__init__(self,ui,[actions.Cancel(), actions.OK()])
+        self.inputs = []
         
     def get_queryset(self,rr):
         return [ self.row ]
+        
+    def data_elems(self):
+        for de in data_elems(self.row._meta): yield de
+          
+    def get_data_elem(self,name):
+        return get_data_elem(self.row.__class__,name)
+        
+    def get_title(self,dlg):
+        return unicode(self.row)
+        
+    def submit_elems(self):
+        for name in data_elems(self.row._meta): yield name
+        
         
 
 
@@ -413,7 +442,6 @@ class Report(actors.HandledActor): # actions.Action): #
     
     typo_check = True
     url = None
-    actions = []
     
     use_layouts = True
     
@@ -429,11 +457,14 @@ class Report(actors.HandledActor): # actions.Action): #
             self.model = resolve_model(self.model,self.app_label,self)
         if self.model is not None:
             self.app_label = self.model._meta.app_label
-            
+            self.actions = self.actions + [ DeleteSelected(), InsertRow() ]
+            m = getattr(self.model,'setup_report',None)
+            if m:
+                m(self)
+        
         actors.HandledActor.__init__(self)
         
         #~ lino.log.debug("Report.__init__() %s", self)
-        self.actions = self.actions + [ DeleteSelected(), InsertRow() ]
         
         if self.fk_name:
             #~ self.master = resolve_model(self.master,self.app_label)
@@ -476,9 +507,6 @@ class Report(actors.HandledActor): # actions.Action): #
     def do_setup(self):
         if self.model is not None:
             self.list_layout = layouts.list_layout_factory(self)
-            setup = getattr(self.model,'setup_report',None)
-            if setup:
-                setup(self)
             
             self.detail_layouts = getattr(self.model,'_lino_layouts',[])
             if hasattr(self.model,'_lino_slaves'):
@@ -497,7 +525,7 @@ class Report(actors.HandledActor): # actions.Action): #
                         self._slaves.append(sl)
             else:
                 self._slaves = []
-            
+                
         if self.button_label is None:
             self.button_label = self.label
 
@@ -510,11 +538,11 @@ class Report(actors.HandledActor): # actions.Action): #
         #return ui.get_report_url(rh,**kw)
         
         
-    def get_action(self,name):
-        for a in self.actions:
-            if a.name == name:
-                return a
-        return actors.Actor.get_action(self,name)
+    #~ def get_action(self,name):
+        #~ for a in self.actions:
+            #~ if a.name == name:
+                #~ return a
+        #~ return actors.Actor.get_action(self,name)
               
     def add_actions(self,*args):
         """Used in Model.setup_report() to specify actions for each report on

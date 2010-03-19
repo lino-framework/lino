@@ -50,7 +50,7 @@ class StaticText:
         self.text = text
 
 
-class LayoutHandle:
+class LayoutHandle(actors.ActorHandle):
     """
     LayoutHandle analyzes a Layout and builds a tree of LayoutElements.
     
@@ -62,6 +62,7 @@ class LayoutHandle:
         assert isinstance(layout,Layout)
         #assert isinstance(link,reports.ReportHandle)
         self.ui = ui
+        actors.ActorHandle.__init__(self,layout)
         self.layout = layout
         #~ if index == 1:
             #~ self.name = dl.name
@@ -72,6 +73,7 @@ class LayoutHandle:
         self.name = layout._actor_name
         self.label = layout.label or ''
         self._store_fields = []
+        self._submit_fields = []
         self._needed_stores = set()
         self.slave_grids = []
         self._store_fields = []
@@ -102,7 +104,7 @@ class LayoutHandle:
                 
     def needs_store(self,rh):
         self._needed_stores.add(rh)
-            
+        
     def __str__(self):
         return str(self.layout) + " Handle"
         
@@ -191,7 +193,9 @@ class LayoutHandle:
     def create_element(self,panelclass,desc_name):
         #lino.log.debug("create_element(panelclass,%r)", desc_name)
         name,kw = self.splitdesc(desc_name)
-        return self.ui.create_layout_element(self,panelclass,name,**kw)
+        e = self.ui.create_layout_element(self,panelclass,name,**kw)
+        self._submit_fields += e.submit_fields()
+        return e
         
     def splitdesc(self,picture):
         a = picture.split(":",1)

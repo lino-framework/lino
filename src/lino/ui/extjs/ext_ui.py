@@ -28,7 +28,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
 import lino
-from lino import actions, layouts
+from lino import actions, layouts, commands
 from lino.ui import base
 from lino.utils import actors
 from lino.utils import menus
@@ -86,6 +86,13 @@ class ExtUI(base.UI):
         if name == "_":
             return ext_elems.Spacer(lh,name,**kw)
             
+        a = lh.datalink.get_action(name)
+        if a is not None:
+            e = ext_elems.FormActionElement(lh,name,a,**kw)
+            lh._buttons.append(e)
+            return e
+            
+          
         de = lh.datalink.get_data_elem(name)
         
         if isinstance(de,models.Field):
@@ -99,14 +106,9 @@ class ExtUI(base.UI):
             e = ext_elems.GridElement(lh,name,de.get_handle(self),**kw)
             lh.slave_grids.append(e)
             return e
-        if isinstance(de,actions.Action):
-            e = ext_elems.FormActionElement(lh,name,de,**kw)
-            lh._buttons.append(e)
-            return e
-            
-        from lino import forms
+        #~ from lino import forms
         
-        if isinstance(de,forms.Input):
+        if isinstance(de,commands.Input):
             e = ext_elems.InputElement(lh,de,**kw)
             if not lh.start_focus:
                 lh.start_focus = e
@@ -234,7 +236,12 @@ class ExtUI(base.UI):
 
     def act_view(self,request,app_label=None,actor=None,action=None,**kw):
         actor = actors.get_actor2(app_label,actor)
-        dlg = ext_requests.Dialog(request,actor.get_handle(self),action)
+        ah = actor.get_handle(self)
+        if action is None:
+            action = actor.default_action
+        else:
+            action = ah.get_action(action)
+        dlg = ext_requests.Dialog(request,ah,action)
         #~ dlg = ext_requests.Dialog(request,self,actor,action)
         return self.start_dialog(dlg)
         
@@ -262,7 +269,7 @@ class ExtUI(base.UI):
               alert_msg=_('Dialog %r ist not for you.' % dialog_id)
               ).as_dict())
         dlg.request = request
-        dlg.set_button_clicked(request.POST.get('last_button'))
+        dlg.set_modal_exit(request.POST.get('last_button'))
         m = getattr(dlg,meth_name)
         r = m().as_dict()
         lino.log.debug('%s.%s() -> %r',dlg,meth_name,r)
@@ -290,12 +297,12 @@ class ExtUI(base.UI):
         name = name.replace('_','.')
         actor = actors.get_actor(name)
         #~ dlg = ext_requests.Dialog(request,self,actor,None)
-        dlg = ext_requests.Dialog(request,actor.get_handle(self),None)
+        dlg = ext_requests.Dialog(request,actor.get_handle(self),actor.default_action)
         return self.start_dialog(dlg)
 
     def save_window_config_view(self,request):
         actor = ext_windows.SaveWindowConfig()
-        dlg = ext_requests.Dialog(request,actor.get_handle(self),None)
+        dlg = ext_requests.Dialog(request,actor.get_handle(self),actor.default_action)
         return self.start_dialog(dlg)
         
     def choices_view(self,request,app_label=None,rptname=None,fldname=None,**kw):
@@ -330,7 +337,10 @@ class ExtUI(base.UI):
             return json_response_kw(success=False,
                 msg="User %s cannot view %s." % (request.user,rpt))
         if grid_action:
-            dlg = ext_requests.GridDialog(request,rpt.get_handle(self),grid_action)
+            rh = rpt.get_handle(self)
+            a = rh.get_action(grid_action)
+            assert a is not None, "No action %s in %s" % (grid_action,rh)
+            dlg = ext_requests.GridDialog(request,rh,a)
             return self.start_dialog(dlg)
                 
         rh = rpt.get_handle(self)
@@ -458,20 +468,24 @@ class ExtUI(base.UI):
     def setup_command(self,ch):
         pass
         
-    def setup_layout(self,lh):
+    def unused_setup_layout(self,lh):
         if isinstance(lh.datalink,actions.Command):
             lh.window_wrapper = ext_windows.FormMasterWrapper(fh)
             lh.action_buttons = []
             lh.slave_windows = []
             
+    def setup_form(self,fh):
+        fh.window_wrapper = ext_windows.FormMasterWrapper(fh.lh,fh.dl)
+      
     def show_modal_form(self,dlg,fh):
-        ww = ext_windows.FormMasterWrapper(fh)
-        dlg.show_modal_window(ww.js_render)
+        #~ ww = ext_windows.FormMasterWrapper(fh.lh,fh.dl)
+        dlg.show_modal_window(fh.window_wrapper.js_render)
         
-    def get_detail_form(self,row):
-        layout = layouts.get_detail_layout(row.__class__)
-        row_handle = RowHandle(rr.rh,row)
-        fh = layout.get_handle(dl)
+    #~ def get_detail_form(self,row):
+        #~ layout = layouts.get_detail_layout(row.__class__)
+        #~ lh = layout.get_handle(self)
+        #~ dl = reports.RowHandle(row)
+        #~ return actions.FormHandle(lh,dl)
         
     def insert_row(self,dlg):
         if False:

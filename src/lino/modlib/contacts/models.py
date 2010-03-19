@@ -88,7 +88,7 @@ class Contact(models.Model,Printable):
             #~ foreigner = (self.country != self.objects.get(pk=1).country)
         if foreigner and self.country: # (if self.country != sender's country)
             lines.append(unicode(self.country))
-        lino.log.debug('%s : as_address() -> %r',self,lines)
+        #~ lino.log.debug('%s : as_address() -> %r',self,lines)
         return mark_safe(linesep.join(lines))
         
     @classmethod

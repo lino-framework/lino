@@ -15,13 +15,13 @@ from django.contrib.auth import models as auth
 from django.contrib.sessions import models as sessions
 from django.contrib.contenttypes import models as contenttypes
 
-from django import forms
+#~ from django import forms
 from django.db import models
 from django.utils.translation import ugettext as _
 
 import lino
 from lino import reports
-from lino import forms
+#~ from lino import forms
 from lino import layouts
 from lino import actions
 from lino import commands
@@ -72,7 +72,7 @@ class PasswordReset(commands.Command):
     #~ layout = PasswordResetLayout
     title = _("Request Password Reset")
     #email = models.EmailField(verbose_name=_("E-mail"), max_length=75)
-    email = forms.Input(fieldLabel=_("E-mail"),maxLength=75)
+    email = commands.Input(fieldLabel=_("E-mail"),maxLength=75)
     #~ ok = PasswordResetOK()
     
     def run_in_dlg(self,dlg):
@@ -97,8 +97,8 @@ class LoginForm(layouts.FormLayout):
 class Login(commands.Command):
 
     label = _("Login")
-    username = forms.Input(fieldLabel=_("Username"),maxLength=75,allowBlank=False)
-    password = forms.Input(fieldLabel=_("Password"),maxLength=75,inputType='password',allowBlank=False)
+    username = commands.Input(fieldLabel=_("Username"),maxLength=75,allowBlank=False)
+    password = commands.Input(fieldLabel=_("Password"),maxLength=75,inputType='password',allowBlank=False)
     
     
     def run_in_dlg(self,dlg):
@@ -107,7 +107,7 @@ class Login(commands.Command):
         yield dlg.show_modal_form(fh) 
         
         while True:
-            if dlg.button_clicked != self.ok:
+            if dlg.modal_exit != 'ok':
                 yield dlg.cancel()
         
             username = dlg.params.get('username')

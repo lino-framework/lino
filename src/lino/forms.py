@@ -12,9 +12,3 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 
-class Input:
-    def __init__(self,**kw):
-        self.options = kw
-
-class List(Input):
-    pass

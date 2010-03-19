@@ -34,6 +34,14 @@ def get_actor2(app_label,name):
         #~ return cls
     #~ return cls()
     
+def resolve_actor(actor,app_label):
+    if actor is None: return None
+    if isinstance(actor,Actor): return actor
+    s = actor.split(ACTOR_SEP)
+    if len(s) == 1:
+        return get_actor2(app_label,actor)
+    return get_actor(actor)
+        
 def discover():
     global actor_classes
     global actors_dict
@@ -66,14 +74,6 @@ def register_actor(a):
     #~ actors_dict[actor.actor_id] = actor
     #~ return actor
     
-def resolve_actor(actor,app_label):
-    if actor is None: return None
-    if isinstance(actor,Actor): return actor
-    s = actor.split(ACTOR_SEP)
-    if len(s) == 1:
-        return get_actor2(app_label,actor)
-    return get_actor(actor)
-        
 class ActorMetaClass(type):
     def __new__(meta, classname, bases, classDict):
         #~ if not classDict.has_key('app_label'):
@@ -107,6 +107,7 @@ class Actor(object):
     _actor_name = None
     title = None
     label = None
+    actions = []
     #default_action = 'view'
 
     def __init__(self):
@@ -135,15 +136,19 @@ class Actor(object):
     def __str__(self):
         #~ return '<' + self.actor_id + '>'
         return self.actor_id 
+        
+    #~ def define_action(self,a):
+        #~ self._actions_list.append(a)
+        #~ self._actions_dict[a.name] = a
     
     def get_url(self,ui,**kw):
         return ui.get_action_url(self,**kw)
 
-    def get_action(self,action_name=None):
-        if action_name is None:
-            return self.default_action
-            #action_name = self.default_action
-        return getattr(self,action_name,None)
+    #~ def get_action(self,action_name=None):
+        #~ if action_name is None:
+            #~ return self.default_action
+            #~ #action_name = self.default_action
+        #~ return getattr(self,action_name,None)
         
     def setup(self):
         assert not self._setup_done, "%s.setup() called again" % self
@@ -181,6 +186,11 @@ class HandledActor(Actor):
             self._handles[k] = h
             h.setup()
         return h
+        
+class ActorHandle:
+  
+    def __init__(self,actor):
+        self.actor = actor
         
 
 def unused_get_actor(app_label,name):

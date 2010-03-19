@@ -149,6 +149,9 @@ class LayoutElement(VisibleComponent):
             assert isinstance(lh,layouts.LayoutHandle)
             lh.setup_element(self)
 
+    def submit_fields(self):
+        return []
+        
         
     def get_property(self,name):
         v = getattr(self,name,None)
@@ -198,6 +201,9 @@ class InputElement(LayoutElement):
         LayoutElement.__init__(self,lh,input.name,**kw)
         assert isinstance(lh.layout,layouts.FormLayout), "%s is not a FormLayout" % lh.name
         self.input = input
+        
+    def submit_fields(self):
+        return [self.input.name]
         
     def ext_options(self,**kw):
         kw = LayoutElement.ext_options(self,**kw)
@@ -337,6 +343,9 @@ class FieldElement(LayoutElement):
             #~ kw.update(editor=fo)
         #~ return kw    
         
+    def submit_fields(self):
+        return [self.field.name]
+        
     def get_field_options(self,**kw):
         if self.xtype:
             kw.update(xtype=self.xtype)
@@ -415,6 +424,8 @@ class ForeignKeyElement(FieldElement):
         FieldElement.__init__(self,*args,**kw)
         self.report = reports.get_model_report(self.field.rel.to)
       
+    def submit_fields(self):
+        return [self.field.name,self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX]
         
     def store_options(self,**kw):
         proxy = dict(url=self.lh.ui.get_choices_url(self),method='GET')

@@ -50,23 +50,10 @@ def authenticated_user(user):
 class Dialog(actions.Dialog):
     
     #~ def __init__(self,request,ui,actor,action_name):
-    def __init__(self,request,ah,action_name):
+    def __init__(self,request,ah,action):
         self.request = request
-        actions.Dialog.__init__(self,ah,action_name,{})
+        actions.Dialog.__init__(self,ah,action,{})
         #self.confirmed = self.request.POST.get('confirmed',None)
-        
-    def before_step(self):
-        #~ params = {}
-        for i in self.ah.inputs:
-            if isinstance(i,forms.List):
-                v = self.request.POST.getlist(i.name)
-            else:
-                v = self.request.POST.get(i.name)
-            self.params[i.name] = v
-        #~ for k,v in request.POST.iterlists():
-            #~ params[k] = v
-        #~ params = dict(request.POST.iterlists())
-        #~ print 20100318, self.params
         
         
     def get_user(self):

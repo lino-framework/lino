@@ -16,6 +16,7 @@ from django.utils.translation import ugettext as _
 from django.utils.encoding import force_unicode
 
 import lino
+from lino.utils import actors
 
 class Hotkey:
     keycode = None
@@ -49,6 +50,12 @@ class ValidationError(Exception):
     
 #~ class MustConfirm(ActionEvent):
     #~ pass
+    
+class FormHandle:
+    def __init__(self,lh,dl):
+        self.lh = lh
+        self.dl = dl
+        lh.ui.setup_form(self)
     
     
     
@@ -125,32 +132,33 @@ class Dialog:
     Dialogs are initiated by a client request.
     Each `yield` of an `Action.run()` defines a response to the client, and execution continues only when the client has answered.
     See also `Lino.do_dialog()` in `lino.ui.extjs`.
-    The current API is rather influenced by ExtJS.
+    The current API is rather influenced by the possibilities of the ExtJS UI.
     """
     selected_rows = []
     params_def = ()
-    button_clicked = None
+    modal_exit = None
     
-    def __init__(self,ah,action_name,params):
+    def __init__(self,ah,action,params):
         self.is_over = False
         self.ui = ah.ui
         #~ self.ah = actor.get_handle(ui)
         self.ah = ah
-        self.action = ah.actor.get_action(action_name)
         self.params = params
-        if not isinstance(self.action,Action):
-            raise Exception("%s.get_action(%r) returned %r which is not an Action." % (ah.actor,action_name,self.action))
+        self.action = action # ah.actor.get_action(action_name)
+        if not isinstance(action,Action):
+            raise Exception("%s : %r is not an Action." % (self,action))
         self.running = None
         self.response = None
         
-    def set_button_clicked(self,name):
-        if name is None:
-            self.button_clicked = None
-        else:
-            self.button_clicked = getattr(self.ah.actor,name,None)
+    def set_modal_exit(self,name):
+        self.modal_exit = name
+        #~ if name is None:
+            #~ self.button_clicked = None
+        #~ else:
+            #~ self.button_clicked = self.ah.get_action(name)
         
     def __str__(self):
-        return 'Dialog `%s.%s`' % (self.ah.actor,self.action)
+        return 'Dialog `%s.%s`' % (self.ah,self.action)
         
     def _open(self):
         if self.is_over:
@@ -170,18 +178,19 @@ class Dialog:
         msg = self.action.before_run(self)
         if msg:
             return DialogResponse(notify_msg=msg)
-        lino.log.debug('Dialog._start() %s.%s(%r)',self.ah.actor,self.action.name,self.params)
+        lino.log.debug('Dialog._start() %s.%s(%r)',self.ah,self.action.name,self.params)
         self.running = self.action.run_in_dlg(self)
         r = self._step()
         self._open()
         return r
         
-    def before_step(self):
-        pass
+    #~ def before_step(self):
+        #~ pass
         
     def _step(self):
         self.response = DialogResponse()
-        self.before_step()
+        #~ self.before_step()
+        self.ah.before_step(self)
         try:
             dlg = self.running.next()
             assert dlg is self
@@ -204,6 +213,14 @@ class Dialog:
     def get_request(self,**kw):
         kw.update(user=self.get_user())
         return self.ah.request(**kw)
+    
+    def get_form(self,name):
+        layout = actors.resolve_actor(name,self.ah.actor.app_label)
+        lh = layout.get_handle(self.ui)
+        fh = FormHandle(lh,self.ah)
+        return fh # self.ah.get_form_handle(name)
+        
+    ## message methods to be used in yield statements
         
     def close_caller(self):
         self.response.close_caller = True
@@ -231,9 +248,6 @@ class Dialog:
         self.response.show_modal_window = js
         return self
         
-    def get_form(self,name):
-        return self.ah.get_form_handle(name)
-        
     def show_modal_form(self,fh):
         self.ui.show_modal_form(self,fh)
         return self
@@ -259,8 +273,6 @@ class Dialog:
         self.response.notify_msg = msg
         return self
 
-    ## higher level API methods
-
     def cancel(self,msg=None):
         if msg is not None:
               self.notify(msg)
@@ -270,7 +282,6 @@ class Dialog:
         if msg is not None:
               self.notify(msg)
         return self.close_caller().over()
-
 
 
 

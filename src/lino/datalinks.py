@@ -18,41 +18,31 @@ import lino
 from lino import forms
 from lino import actions
 
+                
 class DataLink:
-    "inherited by CommandHandle and ReportHandle"
+    "Abstract base class for CommandHandle, ReportHandle and RowHandle."
     
     content_type = None
     
-    def __init__(self,ui,actor):
+    def __init__(self,ui,actions):
         self.ui = ui
-        self.actor = actor
-        self.name = actor.actor_id
-        self.elements = SortedDict() # datalink elements
-        self.inputs = []
-        self.form_handles = {}
+        self._actions_list = actions
+        self._actions_dict = {}
+        for a in actions:
+            self._actions_dict[a.name] = a
         
-        for n in dir(actor):
-            v = getattr(actor,n)
-            if isinstance(v,forms.Input):
-                v.name = n
-                self.elements[n] = v
-                self.inputs.append(v)
-            elif isinstance(v,actions.Action):
-                #v.name = n
-                self.elements[n] = v
-            elif callable(v):
-                self.elements[n] = v
-            else:
-                #lino.log.debug("ignored %s attribute %r=%r",self.form,n,v)
-                pass
-                
-        for frm in actor._forms.values():
-            self.form_handles[frm._actor_name] = frm.get_handle(self)
+        #~ self.actor = actor
+        #~ self.name = actor.actor_id
+        #~ self.elements = SortedDict() # datalink elements
+        #~ self.form_handles = {}
+        
+        #~ for frm in actor._forms.values():
+            #~ self.form_handles[frm._actor_name] = frm.get_handle(self)
             
         #~ lino.log.debug("%s handle : %s",form,self.elements.keys())
         
-    def get_form_handle(self,name):
-        return self.form_handles[name]
+    #~ def get_form_handle(self,name):
+        #~ return self.form_handles[name]
         
 
     def try_get_virt(self,name):
@@ -62,24 +52,31 @@ class DataLink:
         #~ return self.lh
         
     def get_title(self,dlg):
-        return self.actor.title # or self.lh.layout.label
+        raise NotImplementedError
         
     def data_elems(self):
-        for k in self.elements.keys(): yield k
-          
+        raise NotImplementedError
+        
     def get_data_elem(self,name):
-        return getattr(self.actor,name,None)
-                
+        raise NotImplementedError
+        
+    def before_step(self,dlg):
+        pass
+        
     def get_absolute_url(self,*args,**kw):
         return self.ui.get_actor_url(self,*args,**kw)
 
-    def get_actions(self):
-        return []
-        
     def get_details(self):
         return []
 
     def get_slaves(self):
         return []
         
-      
+    def get_action(self,name):
+        return self._actions_dict.get(name,None)
+        
+    def get_actions(self):
+        return self._actions_list
+    
+
+
