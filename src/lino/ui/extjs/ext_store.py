@@ -192,7 +192,7 @@ class Store(Component):
     value_template = "new Ext.data.JsonStore(%s)"
     
     def __init__(self,rh,**options):
-        assert isinstance(rh,reports.ReportHandle)
+        assert isinstance(rh,reports.ReportDataLink)
         Component.__init__(self,id2js(rh.report.actor_id),**options)
         self.rh = rh
         self.report = rh.report

@@ -20,14 +20,6 @@ from lino import actions
 from lino import datalinks
 from lino.ui import base
 
-class Input:
-    def __init__(self,**kw):
-        self.options = kw
-
-class List(Input):
-    pass
-
-  
 class CommandHandle(datalinks.DataLink,actors.ActorHandle):
 #~ class CommandHandle(datalinks.FormHandle):
   
@@ -66,21 +58,6 @@ class CommandHandle(datalinks.DataLink,actors.ActorHandle):
           
     def get_data_elem(self,name):
         return getattr(self.command,name,None)
-        
-    def before_step(self,dlg):
-        for i in self.inputs:
-            if isinstance(i,List):
-                v = dlg.request.POST.getlist(i.name)
-            else:
-                v = dlg.request.POST.get(i.name)
-            dlg.params[i.name] = v
-        #~ for k,v in request.POST.iterlists():
-            #~ params[k] = v
-        #~ params = dict(request.POST.iterlists())
-        #~ print 20100318, self.params
-        
-    #~ def get_form_handle(self,name):
-        #~ return self.form_handles[name]
         
     def setup(self):
         #~ self.lh = layouts.LayoutHandle(self,self.form.layout(),1)

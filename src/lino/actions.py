@@ -51,13 +51,6 @@ class ValidationError(Exception):
 #~ class MustConfirm(ActionEvent):
     #~ pass
     
-class FormHandle:
-    def __init__(self,lh,dl):
-        self.lh = lh
-        self.dl = dl
-        lh.ui.setup_form(self)
-    
-    
     
 class Action:
     label = None
@@ -100,6 +93,8 @@ class DialogResponse:
     show_window = None
     show_modal_window = None
     dialog_id = None
+    success = True # for Ext.form.Action.Submit
+    errors = None # for Ext.form.Action.Submit
     
     def __init__(self,**kw):
         for k,v in kw.items():
@@ -109,6 +104,7 @@ class DialogResponse:
     
     def as_dict(self):
         return dict(
+          success=self.success,
           redirect=self.redirect,
           alert_msg=self.alert_msg,
           notify_msg=self.notify_msg,

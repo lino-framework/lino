@@ -29,7 +29,9 @@ from django.contrib.contenttypes import generic
 
 import lino
 from lino import actions, layouts, commands
+from lino import reports        
 from lino.ui import base
+from lino import forms
 from lino.utils import actors
 from lino.utils import menus
 from lino.utils import chooser
@@ -91,7 +93,6 @@ class ExtUI(base.UI):
             e = ext_elems.FormActionElement(lh,name,a,**kw)
             lh._buttons.append(e)
             return e
-            
           
         de = lh.datalink.get_data_elem(name)
         
@@ -99,23 +100,17 @@ class ExtUI(base.UI):
             return self.create_field_element(lh,de,**kw)
         if isinstance(de,generic.GenericForeignKey):
             return ext_elems.VirtualFieldElement(lh,name,de,**kw)
-            
-        from lino import reports
-        
+        if callable(de):
+            return self.create_meth_element(lh,name,de,**kw)
         if isinstance(de,reports.Report):
             e = ext_elems.GridElement(lh,name,de.get_handle(self),**kw)
             lh.slave_grids.append(e)
             return e
-        #~ from lino import forms
-        
-        if isinstance(de,commands.Input):
+        if isinstance(de,forms.Input):
             e = ext_elems.InputElement(lh,de,**kw)
             if not lh.start_focus:
                 lh.start_focus = e
             return e
-        if callable(de):
-            return self.create_meth_element(lh,name,de,**kw)
-            
         if not name in ('__str__','__unicode__','name','label'):
             value = getattr(lh.layout,name,None)
             if value is not None:
@@ -189,7 +184,9 @@ class ExtUI(base.UI):
 
   
     def get_urls(self):
-        return patterns('',
+        urlpatterns = patterns('',
+            (r'^$', self.index_view))
+        urlpatterns += patterns('',
             (r'^$', self.index_view),
             (r'^menu$', self.menu_view),
             (r'^submit_property$', self.submit_property_view),
@@ -211,19 +208,55 @@ class ExtUI(base.UI):
             # (r'^props$', self.props_view),
         )
         
+        from django_restapi.model_resource import Collection
+        from django_restapi import responder
+        from django_restapi.resource import Resource
+        
+        for a in ('contacts.Persons','contacts.Companies','projects.Projects'):
+            rpt = actors.get_actor(a)
+            rr = rpt.request(self)
+            rsc = Collection(
+                queryset = rr.queryset,
+                permitted_methods = ('GET', 'POST', 'PUT', 'DELETE'),
+                responder = responder.JSONResponder(paginate_by=rr.limit)
+            )
+            urlpatterns += patterns('',
+               url(r'^json/%s/%s/(.*?)/?$' % (rpt.app_label,rpt._actor_name), rsc),
+            )
+
+        #~ class MainMenu(Resource):
+            #~ def read(self, request):
+                #~ return self.menu_view(request)
+                
+        #~ urlpatterns += patterns('',
+           #~ url(r'^menu$' , MainMenu()),
+        #~ )
+        
+        return urlpatterns
+        
 
     def index_view(self, request):
         if self._response is None:
             lino.log.debug("building extjs._response...")
             from lino.lino_site import lino_site
-            comp = ext_elems.VisibleComponent("index",
-                xtype="panel",
+            index = ext_elems.VisibleComponent("index",
+                #~ xtype="panel",
                 html=lino_site.index_html.encode('ascii','xmlcharrefreplace'),
                 autoScroll=True,
                 #width=50000,
                 #height=50000,
                 region="center")
-            vp = ext_viewport.Viewport(lino_site.title,comp)
+            console = jsgen.Component("konsole",
+                #~ xtype="panel",
+                split=True,
+                collapsible=True,
+                title=_("Console"),
+                id="konsole",
+                html='Console started',
+                autoScroll=True,
+                height=100,
+                region="south")
+            vp = ext_viewport.Viewport(lino_site.title,console,index)
             s = vp.render_to_html(request)
             self._response = HttpResponse(s)
         return self._response
@@ -465,9 +498,6 @@ class ExtUI(base.UI):
             
         rh.choosers = chooser.get_choosers_for_model(rh.report.model,chooser.FormChooser)
 
-    def setup_command(self,ch):
-        pass
-        
     def unused_setup_layout(self,lh):
         if isinstance(lh.datalink,actions.Command):
             lh.window_wrapper = ext_windows.FormMasterWrapper(fh)

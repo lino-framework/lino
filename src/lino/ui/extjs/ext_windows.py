@@ -17,7 +17,7 @@ from django.utils.translation import ugettext as _
 
 import lino
 from lino import actions, layouts, commands
-#~ from lino import forms
+from lino import forms
 from lino.ui import base
 from lino.utils import actors
 from lino.utils import menus
@@ -49,14 +49,14 @@ WC_TYPE_GRID = 'grid'
 
 class SaveWindowConfig(commands.Command):
   
-    name = commands.Input()
-    window_config_type = commands.Input()
-    height = commands.Input()
-    width = commands.Input()
-    x = commands.Input()
-    y = commands.Input()
-    maximized = commands.Input()
-    column_widths = commands.List()
+    name = forms.Input()
+    window_config_type = forms.Input()
+    height = forms.Input()
+    width = forms.Input()
+    x = forms.Input()
+    y = forms.Input()
+    maximized = forms.Input()
+    column_widths = forms.List()
     
     #~ params_def = dict(
       #~ name=actions.CharParam(),
@@ -326,11 +326,31 @@ class FormMasterWrapper(MasterWrapper):
                 #~ keys.append(key_handler(a.key,h))
         lh._main.update(bbar=self.bbar_buttons)
         
-    def js_get_values(self):
+    def js_main(self):
+        for ln in MasterWrapper.js_main(self):
+            yield ln
+        yield "this.refresh = function() { console.log('DetailMasterWrapper.refresh() is not implemented') };"
+        yield "this.get_current_record = function() { return this.current_record;};"
+        yield "this.get_selected = function() {"
+        yield "  return this.current_record.id;"
+        yield "}"
+        yield "this.load_record = function(record) {"
+        yield "  this.current_record = record;" 
+        yield "  if (record) this.main_panel.form.loadRecord(record)"
+        yield "  else this.main_panel.form.reset();"
+        yield "};"
+        #~ yield "this.load_record(%s);" % py2js(ext_store.Record(self.datalink.store,object))
+        yield "var fn = Ext.data.Record.create(%s)" % \
+            py2js([js_code(f.as_js()) for f in self.datalink.store.fields])
+        d = self.datalink.store.row2dict(self.datalink.row)
+        yield "this.load_record(fn(%s));" % py2js(d)
+        
+    #~ def js_get_values(self):
         #~ for e in self.datalink.inputs:
             #~ yield "  v[%r] = this.main_panel.getForm().findField(%r).getValue();" % (e.name,e.name)
-        for name in self.lh._submit_fields:
-            yield "  v[%r] = this.main_panel.getForm().findField(%r).getValue();" % (name,name)
+        #~ print 20100319, self.lh
+        #~ for name in self.lh._submit_fields:
+            #~ yield "  v[%r] = this.main_panel.getForm().findField(%r).getValue();" % (name,name)
         #~ for e in self.lh.walk():
             #~ if isinstance(e,ext_elems.FieldElement):
                 #~ yield "  v[%r] = this.main_panel.getForm().findField(%r).getValue();" % (e.name,e.name)
@@ -344,15 +364,6 @@ class FormMasterWrapper(MasterWrapper):
         #~ yield "  this.close();"
         #~ yield "}"
         
-    #~ def js_main(self):
-        #~ for ln in super(FormMasterWrapper,self).js_main():
-            #~ yield ln
-        #~ yield "this.get_values = function() {"
-        #~ yield "  var v = {};"
-        #~ for e in self.datalink.inputs:
-            #~ yield "  v[%r] = this.main_panel.getForm().findField(%r).getValue();" % (e.name,e.name)
-        #~ yield "  return v;"
-        #~ yield "};"
         
     
 class unused_ReportWrapperMixin: 
@@ -630,7 +641,7 @@ class DetailSlaveWrapper(SlaveWrapper):
                 #~ url,self.detail_lh.datalink.store.pk.name))
         #~ buttons.append(dict(handler=js,text='Submit'))
         
-        self.bbar_buttons.append(ext_elems.SubmitActionElement(detail_lh))
+        self.bbar_buttons.append(ext_elems.SubmitActionElement(detail_lh,True))
         
         #~ if len(keys):
             #~ yield "this.main_panel.keys = %s;" % py2js(keys)

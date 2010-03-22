@@ -14,7 +14,6 @@
 #import traceback
 #import types
 
-#from django import forms
 from django.db import models
 from django.conf import settings
 #from django.utils.safestring import mark_safe
@@ -25,6 +24,7 @@ from django.utils.translation import ugettext as _
 
 import lino
 from lino.utils import perms, menus, actors
+from lino import forms
 from lino import actions
 from lino import datalinks
 from lino import commands
@@ -64,11 +64,6 @@ class LayoutHandle(actors.ActorHandle):
         self.ui = ui
         actors.ActorHandle.__init__(self,layout)
         self.layout = layout
-        #~ if index == 1:
-            #~ self.name = dl.name
-        #~ else:
-            #~ self.name = dl.name + str(index)
-        #lino.log.debug('LayoutHandle.__init__(%s)',self.name)
         self.datalink = layout.get_datalink(ui)
         self.name = layout._actor_name
         self.label = layout.label or ''
@@ -80,12 +75,14 @@ class LayoutHandle(actors.ActorHandle):
         self._buttons = []
         self.hide_elements = layout.get_hidden_elements(self)
         self.main_class = self.ui.main_panel_class(layout)
+        
         if layout.main is not None:
         #~ if hasattr(layout,"main"):
             self._main = self.create_element(self.main_class,'main')
         else:
             main = self.layout.join_str.join(self.datalink.data_elems())
             self._main = self.desc2elem(self.main_class,"main",main)
+            
         if isinstance(self.layout,ListLayout):
             assert len(self._main.elements) > 0, "%s : Grid has no columns" % self.name
             self.columns = self._main.elements
@@ -106,7 +103,7 @@ class LayoutHandle(actors.ActorHandle):
         self._needed_stores.add(rh)
         
     def __str__(self):
-        return str(self.layout) + " Handle"
+        return str(self.layout) + "Handle"
         
     def unused__repr__(self):
         s = self.name # self.__class__.__name__ 
@@ -194,7 +191,8 @@ class LayoutHandle(actors.ActorHandle):
         #lino.log.debug("create_element(panelclass,%r)", desc_name)
         name,kw = self.splitdesc(desc_name)
         e = self.ui.create_layout_element(self,panelclass,name,**kw)
-        self._submit_fields += e.submit_fields()
+        for child in e.walk():
+            self._submit_fields += child.submit_fields()
         return e
         
     def splitdesc(self,picture):
@@ -250,16 +248,15 @@ class FormLayout(Layout):
     title = None
     label_align = 'left'
     #~ layout_command = None
+    actions = [actions.Cancel(),actions.OK()]
     
     def do_setup(self):
-        self.datalink = actors.resolve_actor(self.datalink,self.app_label)
-        assert isinstance(self.datalink,commands.Command), \
-          "datalink for %s is %r, must be a Command." % (self,self.datalink)
-            
-        #~ if self.datalink is None:
-            #~ raise ValueError("%s : datalink is None" % self)
-        self.datalink._forms[self._actor_name] = self
-        #~ self.app_label = self.layout_command.app_label
+        self.datalink = forms.Form(self)
+    #~ def do_setup(self):
+        #~ self.datalink = actors.resolve_actor(self.datalink,self.app_label)
+        #~ assert isinstance(self.datalink,commands.Command), \
+          #~ "datalink for %s is %r, must be a Command." % (self,self.datalink)
+        #~ self.datalink._forms[self._actor_name] = self
     
     def get_datalink(self,ui):
         return self.datalink.get_handle(ui)

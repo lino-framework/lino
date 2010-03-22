@@ -21,7 +21,7 @@ from django.utils.translation import ugettext as _
 
 import lino
 from lino import reports
-#~ from lino import forms
+from lino import forms
 from lino import layouts
 from lino import actions
 from lino import commands
@@ -53,8 +53,21 @@ class ContentTypes(reports.Report):
 
 
 
+class PasswordReset(commands.Command):
+    #~ layout = PasswordResetLayout
+    title = _("Request Password Reset")
+    
+    def run_in_dlg(self,dlg):
+        yield dlg.cancel('not implemented')
+        yield dlg.show_modal_form(PasswordResetForm())
+
+
 class PasswordResetForm(layouts.FormLayout):
-    datalink = 'system.PasswordReset'
+    actions = [ actions.Cancel(), PasswordReset()]
+    #~ datalink = 'system.PasswordReset'
+    #email = models.EmailField(verbose_name=_("E-mail"), max_length=75)
+    email = forms.Input(fieldLabel=_("E-mail"),maxLength=75)
+    #~ ok = PasswordResetOK()
     label = _("Request Password Reset")
     
     intro = layouts.StaticText("""
@@ -68,38 +81,15 @@ class PasswordResetForm(layouts.FormLayout):
     ok cancel
     """
     
-class PasswordReset(commands.Command):
-    #~ layout = PasswordResetLayout
-    title = _("Request Password Reset")
-    #email = models.EmailField(verbose_name=_("E-mail"), max_length=75)
-    email = commands.Input(fieldLabel=_("E-mail"),maxLength=75)
-    #~ ok = PasswordResetOK()
-    
-    def run_in_dlg(self,dlg):
-        yield dlg.cancel('not implemented')
-        yield dlg.show_modal_form(PasswordResetForm())
+        
     
 from django.contrib.auth import login, authenticate, logout
 
-class LoginForm(layouts.FormLayout):
-    datalink = 'Login'
-    
-    text = layouts.StaticText(_("Please enter your username and password to authentificate."))
-  
-    main = """
-    text
-    username
-    password
-    _ cancel ok
-    """
 
-
-class Login(commands.Command):
+#~ class Login(commands.Command):
+class Login(actions.OK):
 
     label = _("Login")
-    username = commands.Input(fieldLabel=_("Username"),maxLength=75,allowBlank=False)
-    password = commands.Input(fieldLabel=_("Password"),maxLength=75,inputType='password',allowBlank=False)
-    
     
     def run_in_dlg(self,dlg):
       
@@ -110,8 +100,8 @@ class Login(commands.Command):
             if dlg.modal_exit != 'ok':
                 yield dlg.cancel()
         
-            username = dlg.params.get('username')
-            password = dlg.params.get('password')
+            username = fh.get_value('username')
+            password = fh.get_value('password')
             #~ print username,password
             user = authenticate(username=username, password=password)
             if user is None:
@@ -128,6 +118,22 @@ class Login(commands.Command):
 
 
 
+class LoginForm(layouts.FormLayout):
+    #~ datalink = 'Login'
+    actions = [ actions.Cancel(), Login()]
+    
+    text = layouts.StaticText(_("Please enter your username and password to authentificate."))
+    username = forms.Input(fieldLabel=_("Username"),maxLength=75,allowBlank=False)
+    password = forms.Input(fieldLabel=_("Password"),maxLength=75,inputType='password',allowBlank=False)
+  
+    main = """
+    text
+    username
+    password
+    _ cancel ok
+    """
+
+
 class Logout(commands.Command): #actions.OK):
   
     label = _("Log out")
@@ -142,7 +148,8 @@ class Logout(commands.Command): #actions.OK):
 
 
 def add_auth_menu(lino):
-    m = lino.add_menu("auth",_("~Authentificate"))
-    m.add_action('system.Login',can_view=perms.is_anonymous)
-    m.add_action('system.Logout',can_view=perms.is_authenticated)
-    m.add_action('system.PasswordReset',can_view=perms.is_authenticated)
+    if False:
+        m = lino.add_menu("auth",_("~Authentificate"))
+        m.add_action('system.Login',can_view=perms.is_anonymous)
+        m.add_action('system.Logout',can_view=perms.is_authenticated)
+        m.add_action('system.PasswordReset',can_view=perms.is_authenticated)

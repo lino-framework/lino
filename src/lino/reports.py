@@ -224,11 +224,6 @@ class InsertRow(actions.RowsAction):
     label = _("Insert")
     key = actions.INSERT # (ctrl=True)
     
-    def old_run_in_dlg(self,dlg):
-        
-        for r in dlg.ui.insert_row(dlg):
-            yield r
-        
     def run_in_dlg(self,dlg):
         rr = dlg.get_request()
         #~ for r in rr.insert_row(self): 
@@ -243,12 +238,14 @@ class InsertRow(actions.RowsAction):
             yield dlg.notify(_("Row has been created.")).refresh_caller().over()
         lh = layout.get_handle(dlg.ui)
         dl = RowHandle(dlg.ui,row)
+        dl.setup()
         fh = actions.FormHandle(lh,dl)
         yield dlg.show_modal_form(fh)
         while True:
             if dlg.modal_exit != 'ok':
                 yield dlg.cancel()
-            if row_handle.update(self):
+            print dlg.params
+            if row.update(dlg.params):
                 row.save()
                 yield dlg.refresh_caller().over()
         
@@ -279,19 +276,13 @@ class DeleteSelected(actions.RowsAction):
         
         
 
-class ReportHandle(datalinks.DataLink,actors.ActorHandle):
-    def __init__(self,ui,report):
-        #lino.log.debug('ReportHandle.__init__(%s)',rd)
-        datalinks.DataLink.__init__(self,ui,report.actions)
-        actors.ActorHandle.__init__(self,report)
+class ReportDataLink(datalinks.DataLink):
+    def __init__(self,ui,report,actions):
         assert isinstance(report,Report)
-        #self._rd = rd
+        datalinks.DataLink.__init__(self,ui,actions)
         self.report = report
-        #~ for n in 'get_fields', 'get_slave','try_get_field','try_get_meth',
-                  #~ 'get_title'):
-            #~ setattr(self,n,getattr(report,n))
         self.content_type = ContentType.objects.get_for_model(self.report.model).pk
-            
+  
     def __str__(self):
         return str(self.report) + 'Handle'
             
@@ -371,29 +362,53 @@ class ReportHandle(datalinks.DataLink,actors.ActorHandle):
         rr.setup(**kw)
         return rr
         
+class ReportHandle(ReportDataLink,actors.ActorHandle):
+    def __init__(self,ui,report):
+        #lino.log.debug('ReportHandle.__init__(%s)',rd)
+        ReportDataLink.__init__(self,ui,report,report.actions)
+        actors.ActorHandle.__init__(self,report)
+            
 
-class RowHandle(datalinks.DataLink):
+#~ class RowHandle(datalinks.DataLink):
+class RowHandle(ReportDataLink):
   
     def __init__(self,ui,row):
         self.row = row
-        datalinks.DataLink.__init__(self,ui,[actions.Cancel(), actions.OK()])
+        rpt = get_model_report(row.__class__)
+        #~ RowHandle.__init__(self,ui,[actions.Cancel(), actions.OK()])
+        ReportDataLink.__init__(self,ui,rpt,[actions.Cancel(), actions.OK()])
         self.inputs = []
         
     def get_queryset(self,rr):
         return [ self.row ]
         
-    def data_elems(self):
-        for de in data_elems(self.row._meta): yield de
+    def before_step(self,dlg):
+        d = self.rh.store.get_from_form(dlg.params)
+        dlg.params.update(**d)
+        #~ for i in self.rh.store.inputs:
+            #~ if isinstance(i,List):
+                #~ v = dlg.request.POST.getlist(i.name)
+            #~ else:
+                #~ v = dlg.request.POST.get(i.name)
+            #~ dlg.params[i.name] = v
+            
+    #~ def data_elems(self):
+        #~ for de in data_elems(self.row._meta): yield de
           
-    def get_data_elem(self,name):
-        return get_data_elem(self.row.__class__,name)
+    #~ def get_data_elem(self,name):
+        #~ return get_data_elem(self.row.__class__,name)
         
-    def get_title(self,dlg):
-        return unicode(self.row)
+    #~ def get_title(self,dlg):
+        #~ return unicode(self.row)
         
-    def submit_elems(self):
-        for name in data_elems(self.row._meta): yield name
+    #~ def submit_elems(self):
+        #~ for name in data_elems(self.row._meta): yield name
         
+    #~ def setup(self):
+        #~ self.list_layout = rpt.get_handle(self.ui)
+        #~ self.details = [ pl.get_handle(self.ui) for pl in rpt.detail_layouts ]
+        #~ self.layouts = [ self.list_layout ] + self.details
+        #~ self.ui.setup_report(self)
         
 
 

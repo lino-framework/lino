@@ -15,12 +15,14 @@ from django.utils.datastructures import SortedDict
 from django.utils.translation import ugettext as _
 
 import lino
-from lino import forms
 from lino import actions
 
                 
 class DataLink:
-    "Abstract base class for CommandHandle, ReportHandle and RowHandle."
+    """
+    A DataLink provides the columns of a tabular data view (or the fields of a form data view) and the row actions.
+    Abstract base class for CommandHandle, ReportHandle and RowHandle.
+    """
     
     content_type = None
     
@@ -80,3 +82,11 @@ class DataLink:
     
 
 
+class RowLink:
+  
+    def get_from_form(self,post_data):
+        raise NotImplementedError()
+        
+    def update(self,**kw):
+        raise NotImplementedError()
+      

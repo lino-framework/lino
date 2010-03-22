@@ -137,11 +137,25 @@ Lino.grid_afteredit = function (caller,url) {
 Lino.build_ajax_request = function(caller,url,params) {
   // console.log('Lino.do_dialog()',url,params);
   var step_dialog = function(result) {
-    if (result.dialog_id) {
-      if (caller) Ext.apply(params,caller.get_values());
+    if (result.dialog_id) { // server wants me to continue this dialog
+      // if (caller) Ext.apply(params,caller.get_values());
       params['dialog_id'] = result.dialog_id;
       params['last_button'] = result.last_button;
-      Ext.Ajax.request({ url:'/step_dialog', params:params, success: handle_response});
+      if (caller && caller.main_panel) {
+        if (!caller.main_panel.form.isValid()) {
+          Lino.notify("One or more fields contain invalid data.");
+          return;
+        }
+        // var rec = caller.get_current_record();
+        // if (rec) params['pk'] = rec.id;
+        console.log("using form.submit()");
+        caller.main_panel.form.submit({ url:'/step_dialog', params:params, 
+          success: function(form, action) { console.log(action.result); handle_response(action.result)}});
+      } else {
+        console.log("using Ajax.request()");
+        Ext.Ajax.request({ url:'/step_dialog', params:params, success: handle_response});
+      }
+
     }
   }
   var abort_dialog = function(result) {
@@ -200,8 +214,12 @@ Lino.do_dialog = function(caller,url,params) {
   var rc = Lino.build_ajax_request(caller,url,params);
   Ext.Ajax.request(rc);
 };
-
-Lino.submit_form = function (caller,url,pkname) {
+Lino.submit_form = function (caller,url,pkname,must_validate) {
+  // still used for submit button in DetailSlaveWrapper
+  if (must_validate && !caller.main_panel.form.isValid()) {
+      Lino.notify("One or more fields contain invalid data.");
+      return;
+  }
   params = {};
   var rec = caller.get_current_record();
   if (rec) params[pkname] = rec.id;
@@ -261,6 +279,7 @@ Lino.slave_handler = function (caller,url) {
         
 Lino.notify = function(msg) {
   console.log(msg);
+  Ext.getCmp('konsole').update(msg);
 }
 """ 
         s += """
@@ -289,7 +308,7 @@ Lino.goto_permalink = function () {
 };""" % uri
 
         s += """
-Lino.form_action = function (caller,needs_validation,url) { 
+Lino.unused_form_action = function (caller,needs_validation,url) { 
   // console.log('Lino.form_action()',caller,name,needs_validation);
   return function(btn,evt) {
     if (needs_validation && !caller.main_panel.form.isValid()) {

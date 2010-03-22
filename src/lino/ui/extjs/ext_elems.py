@@ -264,19 +264,11 @@ class RowActionElement(ActionElement):
             lh.datalink.get_absolute_url(grid_action=action.name))
         ActionElement.__init__(self,lh,name,action,onclick,**kw)
 
-class unused_SubmitActionElement(ButtonElement):
-  
-    def __init__(self,lh,rh,**kw):
-        url = rh.get_absolute_url(submit=True)
-        onclick = "Lino.submit_handler('%s','%s')" % (url, rh.store.pk.name)
-        kw.update(handler=js_code(onclick),scope=js_code('this'))
-        ButtonElement.__init__(self,lh,'submit_btn',_('Submit'),**kw)
-
 class SubmitActionElement(ButtonElement):
   
-    def __init__(self,lh,**kw):
+    def __init__(self,lh,must_validate,**kw):
         url = lh.datalink.get_absolute_url(submit=True)
-        onclick = "function(b,e) { Lino.submit_form(this,'%s','%s')}" % (url, lh.datalink.store.pk.name)
+        onclick = "function(b,e) { Lino.submit_form(this,'%s','%s',%s)}" % (url, lh.datalink.store.pk.name,py2js(must_validate))
         kw.update(handler=js_code(onclick),scope=js_code('this'))
         ButtonElement.__init__(self,lh,'submit_btn',_('Submit'),**kw)
 
