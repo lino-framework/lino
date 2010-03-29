@@ -48,7 +48,7 @@ from lino import reports, forms, layouts, actions
 from lino import diag
 from lino.utils import perms
 from lino.utils import menus
-from lino.utils import actors
+from lino.core import actors
 
 
 class LinoSite:

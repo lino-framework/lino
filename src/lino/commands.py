@@ -14,10 +14,10 @@
 from django.utils.translation import ugettext as _
 
 import lino
-from lino.utils import actors
+from lino.core import actors
 #~ from lino import forms
 from lino import actions
-from lino import datalinks
+from lino.core import datalinks
 from lino.ui import base
 
 class CommandHandle(datalinks.DataLink,actors.ActorHandle):

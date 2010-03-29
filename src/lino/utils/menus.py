@@ -22,7 +22,7 @@ from django.utils.safestring import mark_safe
 from django import template 
 
 from lino.utils import perms
-from lino.utils import actors
+from lino.core import actors
 
 class MenuItem:
   

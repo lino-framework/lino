@@ -32,7 +32,8 @@ from lino import actions, layouts, commands
 from lino import reports        
 from lino.ui import base
 from lino import forms
-from lino.utils import actors
+from lino.core import actors
+from lino.core import action_requests
 from lino.utils import menus
 from lino.utils import chooser
 from lino.utils import jsgen
@@ -198,8 +199,8 @@ class ExtUI(base.UI):
             (r'^form/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.act_view),
             (r'^form/(?P<app_label>\w+)/(?P<actor>\w+)$', self.act_view),
             (r'^action/(?P<app_label>\w+)/(?P<actor>\w+)$', self.act_view),
-            (r'^step_dialog$', self.step_dialog_view),
-            (r'^abort_dialog$', self.abort_dialog_view),
+            #~ (r'^step_dialog$', self.step_dialog_view),
+            #~ (r'^abort_dialog$', self.abort_dialog_view),
             (r'^choices/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<fldname>\w+)$', self.choices_view),
             #~ (r'^save_win/(?P<name>\w+)$', self.save_win_view),
             (r'^save_window_config$', self.save_window_config_view),
@@ -274,39 +275,40 @@ class ExtUI(base.UI):
             action = actor.default_action
         else:
             action = ah.get_action(action)
-        dlg = ext_requests.Dialog(request,ah,action)
+        ar = ext_requests.ViewReportRequest(request,ah,action)
+        return json_response(ar.run().as_dict())
         #~ dlg = ext_requests.Dialog(request,self,actor,action)
-        return self.start_dialog(dlg)
+        #~ return self.start_dialog(dlg)
         
-    def start_dialog(self,dlg):
-        r = dlg._start().as_dict()
+    #~ def start_dialog(self,dlg):
+        #~ r = dlg._start().as_dict()
         #~ lino.log.debug('ExtUI.start_dialog(%s) -> %r',dlg,r)
-        return json_response(r)
+        #~ return json_response(r)
         
-    def step_dialog_view(self,request):
-        return self.json_dialog_view_(request,'_step')
+    #~ def step_dialog_view(self,request):
+        #~ return self.json_dialog_view_(request,'_step')
         
-    def abort_dialog_view(self,request):
-        return self.json_dialog_view_(request,'_abort')
+    #~ def abort_dialog_view(self,request):
+        #~ return self.json_dialog_view_(request,'_abort')
         
-    def json_dialog_view_(self,request,meth_name,**kw):
-        dialog_id = long(request.POST.get('dialog_id'))
-        dlg = actions.get_dialog(dialog_id)
-        if dlg is None:
-            return json_response(actions.DialogResponse(
-              alert_msg=_('No dialog %r running on this server.' % dialog_id)
-              ).as_dict())
-        if dlg.request.user != request.user:
+    #~ def json_dialog_view_(self,request,meth_name,**kw):
+        #~ dialog_id = long(request.POST.get('dialog_id'))
+        #~ dlg = actions.get_dialog(dialog_id)
+        #~ if dlg is None:
+            #~ return json_response(actions.DialogResponse(
+              #~ alert_msg=_('No dialog %r running on this server.' % dialog_id)
+              #~ ).as_dict())
+        #~ if dlg.request.user != request.user:
             #~ print 20100218, dlg.request.user, '!=', request.user
-            return json_response(actions.DialogResponse(
-              alert_msg=_('Dialog %r ist not for you.' % dialog_id)
-              ).as_dict())
-        dlg.request = request
-        dlg.set_modal_exit(request.POST.get('last_button'))
-        m = getattr(dlg,meth_name)
-        r = m().as_dict()
-        lino.log.debug('%s.%s() -> %r',dlg,meth_name,r)
-        return json_response(r)
+            #~ return json_response(actions.DialogResponse(
+              #~ alert_msg=_('Dialog %r ist not for you.' % dialog_id)
+              #~ ).as_dict())
+        #~ dlg.request = request
+        #~ dlg.set_modal_exit(request.POST.get('last_button'))
+        #~ m = getattr(dlg,meth_name)
+        #~ r = m().as_dict()
+        #~ lino.log.debug('%s.%s() -> %r',dlg,meth_name,r)
+        #~ return json_response(r)
         
     def submit_property_view(self,request):
         rpt = properties.PropValuesByOwner()
@@ -330,13 +332,15 @@ class ExtUI(base.UI):
         name = name.replace('_','.')
         actor = actors.get_actor(name)
         #~ dlg = ext_requests.Dialog(request,self,actor,None)
-        dlg = ext_requests.Dialog(request,actor.get_handle(self),actor.default_action)
-        return self.start_dialog(dlg)
+        ar = ext_requests.ViewReportRequest(request,actor.get_handle(self),actor.default_action)
+        return json_response(ar.run().as_dict())
+        #~ return self.start_dialog(dlg)
 
     def save_window_config_view(self,request):
         actor = ext_windows.SaveWindowConfig()
-        dlg = ext_requests.Dialog(request,actor.get_handle(self),actor.default_action)
-        return self.start_dialog(dlg)
+        ar = ext_requests.ViewReportRequest(request,actor.get_handle(self),actor.default_action)
+        return json_response(ar.run().as_dict())
+        #~ return self.start_dialog(dlg)
         
     def choices_view(self,request,app_label=None,rptname=None,fldname=None,**kw):
         rpt = actors.get_actor2(app_label,rptname)
@@ -369,21 +373,22 @@ class ExtUI(base.UI):
         if not rpt.can_view.passes(request):
             return json_response_kw(success=False,
                 msg="User %s cannot view %s." % (request.user,rpt))
-        if grid_action:
-            rh = rpt.get_handle(self)
-            a = rh.get_action(grid_action)
-            assert a is not None, "No action %s in %s" % (grid_action,rh)
-            dlg = ext_requests.GridDialog(request,rh,a)
-            return self.start_dialog(dlg)
                 
         rh = rpt.get_handle(self)
+        
+        if grid_action:
+            a = rh.get_action(grid_action)
+            assert a is not None, "No action %s in %s" % (grid_action,rh)
+            ar = ext_requests.ViewReportRequest(request,rh,a)
+            return json_response(ar.run().as_dict())
+                
         if choices_for_field:
             rptreq = ext_requests.ChoicesReportRequest(request,rh,choices_for_field)
         elif csv:
             rptreq = ext_requests.CSVReportRequest(request,rh)
             return rptreq.render_to_csv()
         else:
-            rptreq = ext_requests.ViewReportRequest(request,rh)
+            rptreq = ext_requests.ViewReportRequest(request,rh,rh.report.default_action)
             if submit:
                 pk = request.POST.get(rh.store.pk.name) #,None)
                 #~ if pk == reports.UNDEFINED:
@@ -470,14 +475,14 @@ class ExtUI(base.UI):
         
         
         
-    def view_report(self,dlg,**kw):
+    def view_report(self,ar,**kw):
         """
         called from Report.view()
         """
-        rh = dlg.ah
+        #~ rh = ar.ah
         #~ rpt = dlg.actor
         #~ rh = rpt.get_handle(self)
-        yield dlg.show_window(rh.window_wrapper.js_render).over()
+        ar.show_window(ar.ah.window_wrapper.js_render)
         
         
     #~ def view_form(self,dlg,**kw):
@@ -530,5 +535,9 @@ class ExtUI(base.UI):
         row.update(data)
         row.save(force_insert=True)
         
+    def get_report_ar(self,rh,**kw):
+        ar = action_requests.ReportActionRequest(rh,rh.report.default_action)
+        ar.setup(**kw)
+        return ar
         
 ui = ExtUI()

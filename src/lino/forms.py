@@ -11,7 +11,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-from lino import datalinks
+from lino.core import datalinks
 
 class Input:
     def __init__(self,**kw):

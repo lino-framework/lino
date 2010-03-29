@@ -47,8 +47,9 @@ except ImportError:
 import lino
 from lino import layouts
 from lino import actions
-from lino import datalinks
-from lino.utils import perms, menus, actors
+from lino.utils import perms, menus
+from lino.core import datalinks
+from lino.core import actors
 from lino.ui import base
 
 from lino.modlib.tools import resolve_model, resolve_field, get_app, model_label
@@ -95,19 +96,6 @@ def get_data_elem(model,name):
     for vf in model._meta.virtual_fields:
         if vf.name == name:
             return vf
-                
-
-
-class ReportParameterForm(forms.Form):
-    #~ pgn = forms.IntegerField(required=False,label="Page number") 
-    #~ pgl = forms.IntegerField(required=False,label="Rows per page")
-    flt = forms.CharField(required=False,label="Text filter")
-    #~ fmt = forms.ChoiceField(required=False,label="Format",choices=(
-      #~ ( 'form', "editable form" ),
-      #~ ( 'show', "read-only display" ),
-      #~ ( 'text', "plain text" ),
-    #~ ))
-    
 
 
 def rc_name(rptclass):
@@ -216,8 +204,8 @@ def get_model_report(model):
     return model._lino_model_report
 
 class ViewReport(actions.Action):
-    def run_in_dlg(self,dlg):
-        return dlg.ui.view_report(dlg)
+    def run_action(self,ar):
+        return ar.ui.view_report(ar)
 
 
 class InsertRow(actions.RowsAction):
@@ -277,6 +265,7 @@ class DeleteSelected(actions.RowsAction):
         
 
 class ReportDataLink(datalinks.DataLink):
+  
     def __init__(self,ui,report,actions):
         assert isinstance(report,Report)
         datalinks.DataLink.__init__(self,ui,actions)
@@ -358,9 +347,8 @@ class ReportDataLink(datalinks.DataLink):
         return self.report.get_title(rr)
         
     def request(self,**kw):
-        rr = ReportRequest(self)
-        rr.setup(**kw)
-        return rr
+        return self.ui.get_report_ar(self,**kw)
+        
         
 class ReportHandle(ReportDataLink,actors.ActorHandle):
     def __init__(self,ui,report):
@@ -428,7 +416,7 @@ class Report(actors.HandledActor): # actions.Action): #
     hide_columns = None
     #~ hide_fields = None
     #label = None
-    param_form = ReportParameterForm
+    #~ param_form = ReportParameterForm
     #default_filter = ''
     #name = None
     form_class = None
@@ -711,138 +699,4 @@ def get_unbound_meth(cl,name):
         meth = getattr(b,name,None)
         if meth is not None:
             return meth
-
-class ReportRequest:
-    """
-    An instance of this will be created for every request.
-    
-    """
-    limit = None
-    offset = None
-    master_instance = None
-    master = None
-    instance = None
-    extra = None
-    layout = None
-    
-    def __init__(self,rh):
-        assert isinstance(rh,ReportHandle)
-        self.report = rh.report
-        self.rh = rh
-        self.ui = rh.ui
-        # Subclasses (e.g. BaseViewReportRequest) may set `master` before calling ReportRequest.__init__()
-        if self.master is None:
-            self.master = rh.report.master
-      
-    def __str__(self):
-        return self.__class__.__name__ + '(' + self.report.actor_id + ",%r,...)" % self.master_instance
-
-    def setup(self,
-            master=None,
-            master_instance=None,
-            offset=None,limit=None,
-            layout=None,user=None,
-            extra=None,quick_search=None,
-            order_by=None,
-            **kw):
-        self.user = user
-        self.quick_search = quick_search
-        self.order_by = order_by
-        
-        if master is None:
-            master = self.report.master
-            # master might still be None
-        self.master = master
-        
-        kw.update(self.report.params)
-        self.params = kw
-        self.master_kw = self.report.get_master_kw(master_instance)
-        self.master_instance = master_instance
-        if self.extra is None:
-            if extra is None:
-                if self.master_kw is None:
-                    extra = 0
-                elif self.report.can_add.passes(self):
-                    extra = 1
-                else:
-                    extra = 0
-            self.extra = extra
-        if self.report.use_layouts:
-            if layout is None:
-                layout = self.rh.layouts[self.report.default_layout]
-            else:
-                layout = self.rh.layouts[layout]
-                #~ assert isinstance(layout,layouts.LayoutHandle), \
-                    #~ "Value %r is not a LayoutHandle" % layout
-            self.layout = layout
-        self.report.setup_request(self)
-        self.setup_queryset()
-        #~ lino.log.debug(unicode(self))
-        # get_queryset() may return a list
-        if isinstance(self.queryset,models.query.QuerySet):
-            self.total_count = self.queryset.count()
-        else:
-            self.total_count = len(self.queryset)
-        
-        if offset is not None:
-            self.queryset = self.queryset[offset:]
-            self.offset = offset
-            
-        #~ if limit is None:
-            #~ limit = self.report.page_length
-            
-        """
-        Report.page_length is not a default value for ReportRequest.limit
-        For example CSVReportRequest wants all rows.
-        """
-        if limit is not None:
-            self.queryset = self.queryset[:limit]
-            self.limit = limit
-            
-        self.page_length = self.report.page_length
-
-    def get_title(self):
-        return self.report.get_title(self)
-        
-    def __iter__(self):
-        return self.queryset.__iter__()
-        
-    def __len__(self):
-        return self.queryset.__len__()
-        
-    def create_instance(self,**kw):
-        kw.update(self.master_kw)
-        #lino.log.debug('%s.create_instance(%r)',self,kw)
-        return self.report.create_instance(self,**kw)
-        
-    def get_user(self):
-        raise NotImplementedError
-        
-    def setup_queryset(self):
-        # overridden by ChoicesReportRequest
-        self.queryset = self.rh.get_queryset(self)
-        #~ return self.report.get_queryset(master_instance=self.master_instance,**kw)
-        
-    def render_to_dict(self):
-        rows = [ self.row2dict(row,{}) for row in self.queryset ]
-        #~ rows = []
-        #~ for row in self.queryset:
-            #~ d = self.row2dict(row,{})
-            #~ rows.append(d)
-        total_count = self.total_count
-        #lino.log.debug('%s.render_to_dict() total_count=%d extra=%d',self,total_count,self.extra)
-        # add extra blank row(s):
-        for i in range(0,self.extra):
-            row = self.create_instance()
-            #~ d = self.row2dict(row,{})
-            #~ rows.append(d)
-            rows.append(self.row2dict(row,{}))
-            total_count += 1
-        return dict(count=total_count,rows=rows,title=self.report.get_title(self))
-        
-    def row2dict(self,row,d):
-        # overridden in extjs.ViewReport
-        return self.report.row2dict(row,d)
-        
-
 

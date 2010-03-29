@@ -23,10 +23,11 @@ from django.conf import settings
 from django.utils.translation import ugettext as _
 
 import lino
-from lino.utils import perms, menus, actors
+from lino.utils import perms, menus
+from lino.core import actors
 from lino import forms
 from lino import actions
-from lino import datalinks
+from lino.core import datalinks
 from lino import commands
 from lino.ui import base
 

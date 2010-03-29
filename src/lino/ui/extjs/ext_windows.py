@@ -19,7 +19,7 @@ import lino
 from lino import actions, layouts, commands
 from lino import forms
 from lino.ui import base
-from lino.utils import actors
+from lino.core import actors
 from lino.utils import menus
 from lino.utils import chooser
 from lino.utils import jsgen

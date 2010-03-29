@@ -31,4 +31,6 @@ class UI:
     def setup_form(self,fh):
         pass
         
+    def get_report_ar(self,rh,**kw):
+        raise NotImplementedError()
         

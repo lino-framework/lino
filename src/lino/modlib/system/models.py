@@ -53,7 +53,7 @@ class ContentTypes(reports.Report):
 
 
 
-class PasswordReset(commands.Command):
+class PasswordReset(actions.OK):
     #~ layout = PasswordResetLayout
     title = _("Request Password Reset")
     

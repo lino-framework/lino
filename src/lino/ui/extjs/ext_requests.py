@@ -16,9 +16,10 @@ from django.contrib.contenttypes.models import ContentType
 #~ from django.contrib.contenttypes import generic
 
 import lino
-from lino import actions
+#~ from lino import actions
 from lino import reports
 from lino import forms
+from lino.core import action_requests
 from lino.utils import ucsv
 from lino.utils import chooser
 #~ from lino.ui.extjs import ext_windows
@@ -47,50 +48,20 @@ def authenticated_user(user):
         
 
 
-class Dialog(actions.Dialog):
+#~ class ActionRequest(actions.ActionRequest):
     
-    #~ def __init__(self,request,ui,actor,action_name):
-    def __init__(self,request,ah,action):
-        self.request = request
-        actions.Dialog.__init__(self,ah,action,{})
-        #self.confirmed = self.request.POST.get('confirmed',None)
+    #~ def __init__(self,request,ah,action):
+        #~ self.request = request
+        #~ actions.ActionRequest.__init__(self,ah,action,{})
         
+    #~ def get_user(self):
+        #~ return authenticated_user(self.request.user)
         
-    def get_user(self):
-        return authenticated_user(self.request.user)
-        
-    #~ def __getitem__(self,*args,**kw):
-        #~ return self.request.POST.__getitem__(*args,**kw)
-    #~ def get(self,*args,**kw):
-        #~ return self.request.POST.get(*args,**kw)
-        
-        
-class GridDialog(Dialog):
-    def __init__(self,request,*args,**kw):
-        Dialog.__init__(self,request,*args,**kw)
-        assert isinstance(self.ah.actor,reports.Report)
-        selected = self.request.POST.get(POST_PARAM_SELECTED,None)
-        if selected:
-            self.selected_rows = [
-              self.ah.actor.model.objects.get(pk=pk) for pk in selected.split(',') if pk]
-        else:
-            self.selected_rows = []
 
-class ViewFormRequest:
-    def __init__(self,request,fh):
-        self.request = request
-        self.fh = fh
-        self.layout = fh.lh
-        self.ui = fh.ui
-        
-    def get_title(self):
-        return self.fh.get_title(self)
-
-
-class BaseViewReportRequest(reports.ReportRequest):
+class BaseViewReportRequest(action_requests.ReportActionRequest):
     
-    def __init__(self,request,rh,*args,**kw):
-        reports.ReportRequest.__init__(self,rh)
+    def __init__(self,request,rh,action,*args,**kw):
+        action_requests.ReportActionRequest.__init__(self,rh,action)
         self.request = request
         self.store = rh.store
         request._lino_request = self
@@ -145,6 +116,13 @@ class BaseViewReportRequest(reports.ReportRequest):
             #~ kw.update(layout=rh.layouts[int(layout)])
             
         kw.update(user=request.user)
+        
+        if self.action.needs_selection:
+            selected = request.POST.get(POST_PARAM_SELECTED,None)
+            if selected:
+                kw.update(selected_rows = [
+                  self.ah.actor.model.objects.get(pk=pk) for pk in selected.split(',') if pk])
+        
         return kw
       
         
@@ -158,17 +136,6 @@ class BaseViewReportRequest(reports.ReportRequest):
             kw.update(start=self.offset)
         return self.report.get_absolute_url(**kw)
         
-        
-#~ class PropertiesReportRequest(BaseViewReportRequest):
-
-    #~ def render_to_json(self):
-        #~ source = {}
-        #~ for row in self.queryset:
-            #~ self.obj2dict(row,source)
-        #~ return dict(source=source,title=unicode(self.master_instance))
-
-    #~ def obj2dict(self,obj,d):
-        #~ d[obj.prop.name] = obj.get_child().value
 
 class CSVReportRequest(BaseViewReportRequest):
     extra = 0
