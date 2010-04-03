@@ -196,8 +196,9 @@ class ExtUI(base.UI):
             (r'^grid_action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<grid_action>\w+)$', self.json_report_view),
             (r'^grid_afteredit/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.grid_afteredit_view),
             (r'^submit/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.form_submit_view),
-            (r'^form/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.act_view),
-            (r'^form/(?P<app_label>\w+)/(?P<actor>\w+)$', self.act_view),
+            #~ (r'^form/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.act_view),
+            #~ (r'^form/(?P<app_label>\w+)/(?P<actor>\w+)$', self.act_view),
+            (r'^action/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.act_view),
             (r'^action/(?P<app_label>\w+)/(?P<actor>\w+)$', self.act_view),
             #~ (r'^step_dialog$', self.step_dialog_view),
             #~ (r'^abort_dialog$', self.abort_dialog_view),
@@ -208,22 +209,24 @@ class ExtUI(base.UI):
             #~ (r'^props/(?P<app_label>\w+)/(?P<model_name>\w+)$', self.props_view),
             # (r'^props$', self.props_view),
         )
+        #~ urlpatterns += patterns('',         
+            #~ (r'^api/', include('lino.api.urls')),
         
-        from django_restapi.model_resource import Collection
-        from django_restapi import responder
-        from django_restapi.resource import Resource
+        #~ from django_restapi.model_resource import Collection
+        #~ from django_restapi import responder
+        #~ from django_restapi.resource import Resource
         
-        for a in ('contacts.Persons','contacts.Companies','projects.Projects'):
-            rpt = actors.get_actor(a)
-            rr = rpt.request(self)
-            rsc = Collection(
-                queryset = rr.queryset,
-                permitted_methods = ('GET', 'POST', 'PUT', 'DELETE'),
-                responder = responder.JSONResponder(paginate_by=rr.limit)
-            )
-            urlpatterns += patterns('',
-               url(r'^json/%s/%s/(.*?)/?$' % (rpt.app_label,rpt._actor_name), rsc),
-            )
+        #~ for a in ('contacts.Persons','contacts.Companies','projects.Projects'):
+            #~ rpt = actors.get_actor(a)
+            #~ rr = rpt.request(self)
+            #~ rsc = Collection(
+                #~ queryset = rr.queryset,
+                #~ permitted_methods = ('GET', 'POST', 'PUT', 'DELETE'),
+                #~ responder = responder.JSONResponder(paginate_by=rr.limit)
+            #~ )
+            #~ urlpatterns += patterns('',
+               #~ url(r'^json/%s/%s/(.*?)/?$' % (rpt.app_label,rpt._actor_name), rsc),
+            #~ )
 
         #~ class MainMenu(Resource):
             #~ def read(self, request):
@@ -385,7 +388,7 @@ class ExtUI(base.UI):
         if choices_for_field:
             rptreq = ext_requests.ChoicesReportRequest(request,rh,choices_for_field)
         elif csv:
-            rptreq = ext_requests.CSVReportRequest(request,rh)
+            rptreq = ext_requests.CSVReportRequest(request,rh,rh.report.default_action)
             return rptreq.render_to_csv()
         else:
             rptreq = ext_requests.ViewReportRequest(request,rh,rh.report.default_action)
@@ -410,7 +413,7 @@ class ExtUI(base.UI):
                     lino.log.exception(e)
                     #traceback.format_exc(e)
                     return json_response_kw(success=False,msg="Exception occured: "+cgi.escape(str(e)))
-            # otherwise it's a simple list:
+        # otherwise it's a simple list:
         d = rptreq.render_to_dict()
         return json_response(d)
         
@@ -473,15 +476,10 @@ class ExtUI(base.UI):
         
         
         
-        
-        
-    def view_report(self,ar,**kw):
+    def gridedit_report(self,ar,**kw):
         """
-        called from Report.view()
+        called from reports.GridEdit.run_action()
         """
-        #~ rh = ar.ah
-        #~ rpt = dlg.actor
-        #~ rh = rpt.get_handle(self)
         ar.show_window(ar.ah.window_wrapper.js_render)
         
         
@@ -494,14 +492,26 @@ class ExtUI(base.UI):
     def setup_report(self,rh):
         if rh.report.use_layouts:
             rh.store = ext_store.Store(rh)
-            rh.window_wrapper = ext_windows.GridMasterWrapper(rh)
+            if rh.report.master is None:
+                rh.window_wrapper = ext_windows.GridMasterWrapper(rh)
+            else:
+                rh.window_wrapper = ext_windows.GridSlaveWrapper(rh)
+            if rh.detail_link is not None:
+                rh.detail_wrapper = ext_windows.DetailMasterWrapper(rh.detail_link.lh,rh.detail_link)
+            else:
+                rh.detail_wrapper = None
             #~ lh = rh.get_default_layout()
         else:
             rh.store = None
             #~ lh = None
             rh.window_wrapper = None
+            rh.detail_wrapper = None
             
         rh.choosers = chooser.get_choosers_for_model(rh.report.model,chooser.FormChooser)
+        
+    def show_detail(self,ar,row):
+        ar.show_window(ar.ah.detail_wrapper.js_render)
+        
 
     def unused_setup_layout(self,lh):
         if isinstance(lh.datalink,actions.Command):
@@ -509,12 +519,11 @@ class ExtUI(base.UI):
             lh.action_buttons = []
             lh.slave_windows = []
             
-    def setup_form(self,fh):
-        fh.window_wrapper = ext_windows.FormMasterWrapper(fh.lh,fh.dl)
+    #~ def setup_form(self,fh):
+        #~ fh.window_wrapper = ext_windows.FormMasterWrapper(fh.lh,fh.dl)
       
-    def show_modal_form(self,dlg,fh):
-        #~ ww = ext_windows.FormMasterWrapper(fh.lh,fh.dl)
-        dlg.show_modal_window(fh.window_wrapper.js_render)
+    #~ def show_modal_form(self,dlg,fh):
+        #~ dlg.show_modal_window(fh.window_wrapper.js_render)
         
     #~ def get_detail_form(self,row):
         #~ layout = layouts.get_detail_layout(row.__class__)
@@ -522,18 +531,17 @@ class ExtUI(base.UI):
         #~ dl = reports.RowHandle(row)
         #~ return actions.FormHandle(lh,dl)
         
-    def insert_row(self,dlg):
-        if False:
-            yield dlg.confirm(_("Insert new row. Are you sure?"))
-        rr = dlg.get_request()
-        row = rr.create_instance()
-        ww = ext_windows.DetailMasterWrapper(rr.rh,row)
-        #~ yield dlg.show_window(ww.js_render).over()
-        yield dlg.show_modal_window(ww.js_render)
+    #~ def insert_row(self,dlg):
+        #~ if False:
+            #~ yield dlg.confirm(_("Insert new row. Are you sure?"))
+        #~ rr = dlg.get_request()
+        #~ row = rr.create_instance()
+        #~ ww = ext_windows.DetailMasterWrapper(rr.rh,row)
+        #~ yield dlg.show_modal_window(ww.js_render)
         
-        data = rh.store.get_from_form(request.POST)
-        row.update(data)
-        row.save(force_insert=True)
+        #~ data = rh.store.get_from_form(request.POST)
+        #~ row.update(data)
+        #~ row.save(force_insert=True)
         
     def get_report_ar(self,rh,**kw):
         ar = action_requests.ReportActionRequest(rh,rh.report.default_action)

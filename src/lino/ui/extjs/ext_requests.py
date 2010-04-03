@@ -64,7 +64,7 @@ class BaseViewReportRequest(action_requests.ReportActionRequest):
         action_requests.ReportActionRequest.__init__(self,rh,action)
         self.request = request
         self.store = rh.store
-        request._lino_request = self
+        #~ request._lino_request = self
         kw = self.parse_req(request,rh,**kw)
         self.setup(*args,**kw)
         
@@ -179,28 +179,15 @@ class ChoicesReportRequest(BaseViewReportRequest):
     extra = 0
     
     def __init__(self,request,rh,fldname,*args,**kw):
-        #self.recipient_report = rh.report
         self.fieldname = fldname
-        #~ self.chooser = chooser.FormChooser(rh.report.model,fldname)
-        #~ fld, remote, direct, m2m = rh.report.model._meta.get_field_by_name(fldname)
-        #fld = rpt.model._meta.get_field_by_name(fldname)
-        #~ assert direct
-        #~ self.rec_field = fld
-        #called_rpt = reports.get_model_report(fld.rel.to)
-        #rh = rpt.get_handle(ui)
-        BaseViewReportRequest.__init__(self,request,rh,*args,**kw)
+        BaseViewReportRequest.__init__(self,request,rh,rh.report.default_action,*args,**kw)
         
-    #~ def parse_req(self,request,rh,**kw):
-        #~ kw = BaseViewReportRequest.parse_req(self,request,rh,**kw)
-        #~ kw['extra'] = 0
-        #~ return kw
-          
+    def get_absolute_url(self,**kw):
+        kw['choices_for_field'] = self.fieldname
+        return BaseViewReportRequest.get_absolute_url(self,**kw)
+        
     def setup_queryset(self):
-        #~ pk = self.request.GET.get(URL_PARAM_CHOICES_PK,None)
-        #~ self.queryset = self.report.get_field_choices(self.rec_field,pk,**self.params)
-        #~ print self.request.GET
         kw = {}
-        #~ for k,v in self.request.GET.lists():
         for k,v in self.request.GET.items():
             kw[str(k)] = v
         chooser = self.rh.choosers[self.fieldname]
@@ -208,11 +195,6 @@ class ChoicesReportRequest(BaseViewReportRequest):
         if self.quick_search is not None:
             qs = reports.add_quick_search_filter(qs,self.quick_search)
         self.queryset = qs
-        #return self.report.get_queryset(self,master_instance=self.master_instance,**kw)
-        
-    def get_absolute_url(self,**kw):
-        kw['choices_for_field'] = self.fieldname
-        return BaseViewReportRequest.get_absolute_url(self,**kw)
         
     def row2dict(self,obj,d):
         d[CHOICES_TEXT_FIELD] = unicode(obj)
@@ -229,23 +211,6 @@ class ViewReportRequest(BaseViewReportRequest):
     sort_column = None
     sort_direction = None
     
-    #~ def parse_req(self,request,rh,**kw):
-        #~ kw = BaseViewReportRequest.parse_req(self,request,rh,**kw)
-        #~ sort = request.GET.get('sort',None)
-        #~ if sort:
-            #~ self.sort_column = sort
-            #~ sort_dir = request.GET.get('dir','ASC')
-            #~ if sort_dir == 'DESC':
-                #~ sort = '-'+sort
-                #~ self.sort_direction = 'DESC'
-            #~ kw.update(order_by=sort)
-        
-        #~ layout = request.GET.get('layout',None)
-        #~ if layout:
-            #~ kw.update(layout=rh.layouts[int(layout)])
-        #~ return kw
-        
-        
     def get_absolute_url(self,**kw):
         if self.master_instance is not None:
             kw.update(master_instance=self.master_instance)

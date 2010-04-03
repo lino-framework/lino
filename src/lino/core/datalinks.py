@@ -47,8 +47,8 @@ class DataLink:
         #~ return self.form_handles[name]
         
 
-    def try_get_virt(self,name):
-        return None
+    #~ def try_get_virt(self,name):
+        #~ return None
         
     #~ def get_default_layout(self):
         #~ return self.lh
@@ -62,8 +62,8 @@ class DataLink:
     def get_data_elem(self,name):
         raise NotImplementedError
         
-    def before_step(self,dlg):
-        pass
+    #~ def before_step(self,dlg):
+        #~ pass
         
     def get_absolute_url(self,*args,**kw):
         return self.ui.get_actor_url(self,*args,**kw)

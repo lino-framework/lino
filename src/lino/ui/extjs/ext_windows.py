@@ -313,7 +313,8 @@ class MasterWrapper(WindowWrapper):
         if self.datalink.content_type is not None:
             yield "this.content_type = %s;" % py2js(self.datalink.content_type)
             
-class FormMasterWrapper(MasterWrapper):
+#~ class FormMasterWrapper(MasterWrapper):
+class DetailMasterWrapper(MasterWrapper):
   
     window_config_type = 'form'
     
@@ -345,32 +346,8 @@ class FormMasterWrapper(MasterWrapper):
         d = self.datalink.store.row2dict(self.datalink.row)
         yield "this.load_record(fn(%s));" % py2js(d)
         
-    #~ def js_get_values(self):
-        #~ for e in self.datalink.inputs:
-            #~ yield "  v[%r] = this.main_panel.getForm().findField(%r).getValue();" % (e.name,e.name)
-        #~ print 20100319, self.lh
-        #~ for name in self.lh._submit_fields:
-            #~ yield "  v[%r] = this.main_panel.getForm().findField(%r).getValue();" % (name,name)
-        #~ for e in self.lh.walk():
-            #~ if isinstance(e,ext_elems.FieldElement):
-                #~ yield "  v[%r] = this.main_panel.getForm().findField(%r).getValue();" % (e.name,e.name)
-            
-    #~ def js_preamble(self):
-        #~ for ln in super(FormMasterWrapper,self).js_preamble():
-            #~ yield ln
-        #~ yield "this.on_click = function(name) {"
-        #~ yield "  console.log(20100317,btn,e);"
-        #~ yield "  this.close_button = btn;"
-        #~ yield "  this.close();"
-        #~ yield "}"
-        
         
     
-class unused_ReportWrapperMixin: 
-    """
-    Used by GridMasterWrapper and DetailSlaveWrapper (all windows that 
-    """
-  
 class GridWrapperMixin:
     """
     Used by both GridMasterWrapper and GridSlaveWrapper
@@ -381,42 +358,6 @@ class GridWrapperMixin:
     def js_window_config(self):
         yield "wc['column_widths'] = Ext.pluck(this.main_grid.colModel.columns,'width');"
 
-
-class unused_DetailMasterWrapper(MasterWrapper):
-  
-    window_config_type = 'create'
-    
-    def __init__(self,rh,object,**kw):
-        self.object = object
-        lh = rh.get_create_layout()
-        MasterWrapper.__init__(self,rh,lh,**kw)
-        self.bbar_buttons.append(ext_elems.SubmitActionElement(lh))
-        lh._main.update(bbar=self.bbar_buttons)
-  
-    def js_preamble(self):
-        yield "this.content_type = %s;" % py2js(self.datalink.content_type)
-        
-    def js_main(self):
-        for ln in MasterWrapper.js_main(self):
-            yield ln
-        yield "this.refresh = function() { console.log('DetailMasterWrapper.refresh() is not implemented') };"
-        yield "this.get_current_record = function() { return this.current_record;};"
-        yield "this.get_selected = function() {"
-        yield "  return this.current_record.id;"
-        yield "}"
-        yield "this.load_record = function(record) {"
-        yield "  this.current_record = record;" 
-        yield "  if (record) this.main_panel.form.loadRecord(record)"
-        yield "  else this.main_panel.form.reset();"
-        yield "};"
-        #~ yield "this.load_record(%s);" % py2js(ext_store.Record(self.datalink.store,object))
-        
-        yield "var fn = Ext.data.Record.create(%s)" % \
-            py2js([js_code(f.as_js()) for f in self.datalink.store.fields])
-              
-        d = self.datalink.store.row2dict(self.object)
-        yield "this.load_record(fn(%s));" % py2js(d)
-        
 class GridMasterWrapper(GridWrapperMixin,MasterWrapper):
   
     def __init__(self,rh,**kw):
@@ -427,10 +368,7 @@ class GridMasterWrapper(GridWrapperMixin,MasterWrapper):
             btn = ext_elems.RowActionElement(lh,a.name,a)
             self.bbar_buttons.append(btn) 
             cmenu_buttons.append(btn.ext_options()) 
-                
         
-        #~ keys = []
-        #~ if isinstance(datalink,reports.ReportHandle):
         if rh.report.model is not None:
             props_request = properties.PropValuesByOwner().request(\
                 rh.ui,master=rh.report.model)
@@ -439,71 +377,61 @@ class GridMasterWrapper(GridWrapperMixin,MasterWrapper):
                 self.bbar_buttons.append(ww.button)
                 self.slave_windows.append(ww)
         
-        # the first detail window can be opend with Ctrl+ENTER 
-        #~ key = actions.RETURN(ctrl=True)
         for dtl_lh in rh.get_details(): 
             ww = DetailSlaveWrapper(lh,dtl_lh)
             self.bbar_buttons.append(ww.button)
             self.slave_windows.append(ww)
-            #~ dict(
-              #~ handler=js_code("Lino.action_handler(this,%r)" % \
-                #~ lh.get_absolute_url(run=True)),
-              #~ text=lh.layout.label))
               
         for slave_rh in rh.get_slaves():
             ww = GridSlaveWrapper(lh,slave_rh)
             self.bbar_buttons.append(ww.button)
             self.slave_windows.append(ww)
             
-        rh.list_layout._main.update(bbar=self.bbar_buttons)
+        #~ rh.list_layout._main.update(bbar=self.bbar_buttons)
         self.cmenu = jsgen.Variable('cmenu',js_code("new Ext.menu.Menu(%s)" % py2js(cmenu_buttons)))        
+        for b in self.bbar_buttons:
+            b.declare_type = jsgen.DECLARE_INLINE
   
     def subvars(self): # 20100319
         for v in MasterWrapper.subvars(self):
             yield v
-        yield self.datalink.store
+        #~ yield self.datalink.store
         yield self.cmenu
         
-        
-    def js_main(self):
-        for ln in MasterWrapper.js_main(self):
-            yield ln
-        yield "this.refresh = function() { "
-        #yield "  this.pager.pageSize = %s.calculatePageSize() || 10;" % self.as_ext()
-        yield "  this.main_grid.getStore().load({params:{limit:this.pager.pageSize,start:this.pager.cursor}});"
+    def js_render(self):
+        wc = self.window.ui.load_window_config(self.window.permalink_name)
+        self.try_apply_window_config(wc)
+        d = dict()
+        d.update(actions=[dict(label=a.label,name=a.name) for a in self.bbar_buttons])
+        d.update(fields=[js_code(f.as_js()) for f in self.datalink.store.fields])
+        d.update(colModel=self.lh._main.column_model)
+        d.update(content_type=self.datalink.content_type)
+        d.update(title=self.datalink.get_title(None))
+        d.update(url='/'+self.datalink.report.app_label+'/'+self.datalink.report._actor_name)
+        for k in 'width','height','x','y','maximized':
+            d[k] = self.window.value[k]
+        yield "function(caller) { "
+        #~ yield "  console.log(1);"
+        yield "  var ww_being_configured = new Lino.GridMasterWrapper(caller);"
+        #~ yield "  console.log(2);"
+        #~ yield "  var ww = new Lino.GridMasterWrapper(caller,%s);" % py2js(d)
+        yield "  ww_being_configured.configure(%s);" % py2js(d)
+        #~ yield "  console.log(3);"
+        yield "  return ww_being_configured;"
         yield "}"
-        yield "this.get_selected = function() {"
-        yield "  var sel_pks = '';"
-        yield "  var sels = this.main_grid.getSelectionModel().getSelections();"
-        yield "  for(var i=0;i<sels.length;i++) { sel_pks += sels[i].id + ','; };"
-        yield "  return sel_pks;"
-        yield "}"
-        yield "this.main_grid.on('afteredit', Lino.grid_afteredit(this,'%s'));" \
-          % self.datalink.get_absolute_url(grid_afteredit=True)
-        yield "this.main_grid.on('cellcontextmenu', Lino.cell_context_menu, this);" 
-        # recalculate page size when size changes
-        yield "this.main_grid.on('resize', function(cmp,aw,ah,rw,rh) {" 
-        yield "    this.pager.pageSize = cmp.calculatePageSize(this,aw,ah,rw,rh) || 10;" 
-        #~ yield "    console.log('resize',this.pager.pageSize);" 
-        yield "    this.refresh();"
-        yield "  }, this, {delay:500});"
-        yield "this.get_current_record = function() { return this.main_grid.getSelectionModel().getSelected()};"
-        
-    def js_add_row_listener(self):
-        yield "this.main_grid.add_row_listener(fn,this);"
-        
-        
+      
   
 
 class SlaveWrapper(WindowWrapper):
   
     def __init__(self, master_lh,name, window, button_text):
         self.master_lh = master_lh
-        h = js_code("function(btn,state) { Lino.toggle_window(btn,state,this.%s)}" % id2js(name))
+        #~ h = js_code("function(btn,state) { Lino.toggle_window(btn,state,this.%s)}" % id2js(name))
+        h = js_code("Lino.toggle_window_handler(this,%r)" % id2js(name))
         self.button = ext_elems.ButtonElement(
             master_lh, name+'_btn',button_text,
             toggleHandler=h,
-            scope=js_code('this'),
+            #~ scope=js_code('this'),
             enableToggle=True)
         WindowWrapper.__init__(self,name,window)
         window.update(closeAction='hide')
@@ -514,12 +442,12 @@ class SlaveWrapper(WindowWrapper):
         #~ for v in WindowWrapper.vars(self):
             #~ yield v
             
-    def subvars(self):
-        for v in WindowWrapper.subvars(self):
-            yield v
-        yield self.button
+    #~ def subvars(self):
+        #~ for v in WindowWrapper.subvars(self):
+            #~ yield v
+        #~ yield self.button
         
-    def js_show(self):
+    def unused_js_show(self):
         #~ yield "// begin SlaveWrapper.js_body()"
         for ln in WindowWrapper.js_show(self):
             yield ln
@@ -532,14 +460,14 @@ class SlaveWrapper(WindowWrapper):
         yield "this.window.on('show',function(){this.load_record(caller.get_current_record())},this)" 
         #~ yield "// end SlaveWrapper.js_body()"
         
-    def js_on_window_render(self):
+    def unused_js_on_window_render(self):
         yield "this.window.on('render',function() {"
         yield "  this.add_row_listener(function(sm,ri,rec){this.load_record(rec)});"
         yield "  var sels = this.caller.main_grid.getSelectionModel().getSelections()"
         yield "  if(sels.length > 0) this.load_record(sels[0]);"
         yield "},this)"
         
-    def js_add_row_listener(self):
+    def unused_js_add_row_listener(self):
         yield "if (this.caller.main_grid) {"
         yield "  this.caller.main_grid.add_row_listener(fn,this);"
         yield "} else console.log('called add_row_listener but caller has no main_grid');"
@@ -566,10 +494,10 @@ class GridSlaveWrapper(GridWrapperMixin,SlaveWrapper):
     def js_preamble(self):
         yield "this.content_type = %s;" % py2js(self.slave_rh.content_type)
         
-    def subvars(self): 
-        for v in SlaveWrapper.subvars(self):
-            yield v
-        yield self.slave_rh.store
+    #~ def subvars(self): 
+        #~ yield self.slave_rh.store
+        #~ for v in SlaveWrapper.subvars(self):
+            #~ yield v
         
     #~ def vars(self):
         #~ for w in self.slave_rh.window_wrapper.slave_windows:

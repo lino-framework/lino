@@ -32,9 +32,9 @@ EXT_CHAR_HEIGHT = 22
 
 
 class ColumnModel(Component):
-    declare_type = jsgen.DECLARE_THIS
+    #~ declare_type = jsgen.DECLARE_THIS
     #declare_type = jsgen.DECLARE_VAR
-    #declare_type = jsgen.DECLARE_INLINE
+    declare_type = jsgen.DECLARE_INLINE
     ext_suffix = "_cols"
     value_template = "new Ext.grid.ColumnModel(%s)"
     #declaration_order = 2
@@ -59,7 +59,8 @@ class ColumnModel(Component):
         return d
         
 class GridColumn(Component):
-    declare_type = jsgen.DECLARE_VAR
+    #~ declare_type = jsgen.DECLARE_VAR
+    declare_type = jsgen.DECLARE_INLINE
     ext_suffix = "_col"
     value_template = "new Ext.grid.Column(%s)"
     
@@ -188,8 +189,8 @@ class LayoutElement(VisibleComponent):
         
         
 class InputElement(LayoutElement):
-    #declare_type = jsgen.DECLARE_INLINE
-    declare_type = jsgen.DECLARE_THIS
+    declare_type = jsgen.DECLARE_INLINE
+    #~ declare_type = jsgen.DECLARE_THIS
     #declare_type = jsgen.DECLARE_VAR
     ext_suffix = "_input"
     xtype = 'textfield'
@@ -216,8 +217,8 @@ class InputElement(LayoutElement):
         return panel_options
         
 class ButtonElement(LayoutElement):
-    #declare_type = jsgen.DECLARE_INLINE
-    declare_type = jsgen.DECLARE_THIS
+    declare_type = jsgen.DECLARE_INLINE
+    #~ declare_type = jsgen.DECLARE_THIS
     #declare_type = jsgen.DECLARE_VAR
     #~ ext_suffix = "_btn"
     xtype = None # 'button'
@@ -260,9 +261,11 @@ class FormActionElement(ActionElement):
         
 class RowActionElement(ActionElement):
     def __init__(self,lh,name,action,**kw):
-        onclick = 'Lino.action_handler(this,%r)' % (
-            lh.datalink.get_absolute_url(grid_action=action.name))
+        onclick = 'Lino.action_handler(ww_being_configured,%r)' % action.name
+        #~ onclick = 'Lino.action_handler(this,%r)' % (
+            #~ lh.datalink.get_absolute_url(grid_action=action.name))
         ActionElement.__init__(self,lh,name,action,onclick,**kw)
+        #~ del self.value['scope']
 
 class SubmitActionElement(ButtonElement):
   
@@ -276,9 +279,9 @@ class SubmitActionElement(ButtonElement):
 
 
 class StaticTextElement(LayoutElement):
-    #declare_type = jsgen.DECLARE_INLINE
+    declare_type = jsgen.DECLARE_INLINE
     #declare_type = jsgen.DECLARE_THIS
-    declare_type = jsgen.DECLARE_VAR
+    #~ declare_type = jsgen.DECLARE_VAR
     xtype = 'label'
     
     def __init__(self,lh,name,text,**kw):
@@ -315,9 +318,9 @@ class VirtualFieldElement(LayoutElement):
         
         
 class FieldElement(LayoutElement):
-    #declare_type = jsgen.DECLARE_INLINE
+    declare_type = jsgen.DECLARE_INLINE
     #declare_type = jsgen.DECLARE_THIS
-    declare_type = jsgen.DECLARE_VAR
+    #~ declare_type = jsgen.DECLARE_VAR
     stored = True
     #declaration_order = 3
     ext_suffix = "_field"

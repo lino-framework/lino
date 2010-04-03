@@ -192,9 +192,12 @@ class Variable(Value):
             self.ext_name = id2js(name) + self.ext_suffix
         
     def js_declare(self):
+        yield "// begin js_declare %s" % self
+        yield "// declare subvars of %s" % self
         for v in self.subvars():
             for ln in v.js_declare():
                 yield ln
+        yield "// end declare subvars of %s" % self
         value = '\n'.join(self.js_value())
         if self.declare_type == DECLARE_INLINE:
             pass
@@ -202,6 +205,7 @@ class Variable(Value):
             yield "var %s = %s;" % (self.ext_name,value)
         elif self.declare_type == DECLARE_THIS:
             yield "this.%s = %s;" % (self.ext_name,value)
+        yield "// end js_declare %s" % self
             
     #~ def js_column_lines(self):
         #~ return []

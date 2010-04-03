@@ -309,8 +309,6 @@ def get_detail_layout(model):
     if len(model._lino_layouts) > 0:
         return model._lino_layouts[0]
             
-#~ PageLayout = DetailLayout
-    
 
 def list_layout_factory(rpt):
     cls = type(rpt._actor_name+"List",(ListLayout,),dict(app_label=rpt.app_label,main=rpt.column_names,datalink=rpt.model))

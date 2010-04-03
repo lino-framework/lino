@@ -203,39 +203,45 @@ def get_slave(model,name):
 def get_model_report(model):
     return model._lino_model_report
 
-class ViewReport(actions.Action):
+class GridEdit(actions.Action):
+    name = 'grid'
     def run_action(self,ar):
-        return ar.ui.view_report(ar)
+        return ar.ui.gridedit_report(ar)
 
 
 class InsertRow(actions.RowsAction):
     label = _("Insert")
     key = actions.INSERT # (ctrl=True)
     
-    def run_in_dlg(self,dlg):
-        rr = dlg.get_request()
+    def run_action(self,rr):
+        #~ rr = dlg.get_request()
         #~ for r in rr.insert_row(self): 
             #~ yield r
+            
+        if rr.rh.detail_link is None:
+            raise Exception("This report has no detail layout")
+        
         row = rr.create_instance()
         
-        layout = layouts.get_detail_layout(row.__class__)
+        return rr.show_detail(row)
         
-        if layout is None:
-            yield dlg.confirm(_("Insert new row. Are you sure?"))
-            row.save()
-            yield dlg.notify(_("Row has been created.")).refresh_caller().over()
-        lh = layout.get_handle(dlg.ui)
-        dl = RowHandle(dlg.ui,row)
-        dl.setup()
-        fh = actions.FormHandle(lh,dl)
-        yield dlg.show_modal_form(fh)
-        while True:
-            if dlg.modal_exit != 'ok':
-                yield dlg.cancel()
-            print dlg.params
-            if row.update(dlg.params):
-                row.save()
-                yield dlg.refresh_caller().over()
+        #~ layout = layouts.get_detail_layout(row.__class__)
+        
+        #~ if layout is None:
+        #~ dl = RowDataLink(rr.ui,row)
+        #~ dl.setup()
+        #~ lh = layout.get_handle(rr.ui)
+        #~ return rr.show_window(dl,lh)
+        
+        #~ fh = actions.FormHandle(lh,dl)
+        #~ yield dlg.show_modal_form(fh)
+        #~ while True:
+            #~ if dlg.modal_exit != 'ok':
+                #~ yield dlg.cancel()
+            #~ print dlg.params
+            #~ if row.update(dlg.params):
+                #~ row.save()
+                #~ yield dlg.refresh_caller().over()
         
     def old_run_in_dlg(self,dlg):
         yield dlg.confirm(_("Insert new row. Are you sure?"))
@@ -252,6 +258,16 @@ class DeleteSelected(actions.RowsAction):
     key = actions.DELETE # (ctrl=True)
     
         
+    def run_action(self,rr):
+        if len(dlg.selected_rows) == 1:
+            msg = _("Deleted row %s") % dlg.selected_rows[0]
+        else:
+            msg = _("Deleted %d rows") % len(dlg.selected_rows)
+            
+        for row in dlg.selected_rows:
+            row.delete()
+        return rr.refresh_caller().notify(_("Success") + ": " + msg)
+        
     def run_in_dlg(self,dlg):
         if len(dlg.selected_rows) == 1:
             msg = _("Delete row %s") % dlg.selected_rows[0]
@@ -264,11 +280,15 @@ class DeleteSelected(actions.RowsAction):
         
         
 
-class ReportDataLink(datalinks.DataLink):
+class ReportHandle(datalinks.DataLink,actors.ActorHandle):
   
-    def __init__(self,ui,report,actions):
+    detail_link = None
+    
+    def __init__(self,ui,report):
+        #lino.log.debug('ReportHandle.__init__(%s)',rd)
+        actors.ActorHandle.__init__(self,report)
         assert isinstance(report,Report)
-        datalinks.DataLink.__init__(self,ui,actions)
+        datalinks.DataLink.__init__(self,ui,report.actions)
         self.report = report
         self.content_type = ContentType.objects.get_for_model(self.report.model).pk
   
@@ -280,9 +300,12 @@ class ReportDataLink(datalinks.DataLink):
             self.list_layout = self.report.list_layout.get_handle(self.ui)
             self.details = [ pl.get_handle(self.ui) for pl in self.report.detail_layouts ]
             self.layouts = [ self.list_layout ] + self.details
+            if len(self.details) > 0:
+                self.detail_link = DetailDataLink(self,self.details[0])
         else:
             self.details = []
             self.layouts = []
+            
             
         self.ui.setup_report(self)
         
@@ -350,29 +373,26 @@ class ReportDataLink(datalinks.DataLink):
         return self.ui.get_report_ar(self,**kw)
         
         
-class ReportHandle(ReportDataLink,actors.ActorHandle):
-    def __init__(self,ui,report):
-        #lino.log.debug('ReportHandle.__init__(%s)',rd)
-        ReportDataLink.__init__(self,ui,report,report.actions)
-        actors.ActorHandle.__init__(self,report)
             
 
 #~ class RowHandle(datalinks.DataLink):
-class RowHandle(ReportDataLink):
+class DetailDataLink(datalinks.DataLink):
   
-    def __init__(self,ui,row):
-        self.row = row
-        rpt = get_model_report(row.__class__)
+    def __init__(self,rh,lh):
+        self.rh = rh
+        self.lh = lh
+        #~ self.rh = get_model_report(row.__class__).get_handle(ui)
         #~ RowHandle.__init__(self,ui,[actions.Cancel(), actions.OK()])
-        ReportDataLink.__init__(self,ui,rpt,[actions.Cancel(), actions.OK()])
+        datalinks.DataLink.__init__(self,rh.ui,[actions.Cancel(), actions.OK()])
         self.inputs = []
+        self.row = None
         
     def get_queryset(self,rr):
         return [ self.row ]
         
-    def before_step(self,dlg):
-        d = self.rh.store.get_from_form(dlg.params)
-        dlg.params.update(**d)
+    #~ def before_step(self,dlg):
+        #~ d = self.rh.store.get_from_form(dlg.params)
+        #~ dlg.params.update(**d)
         #~ for i in self.rh.store.inputs:
             #~ if isinstance(i,List):
                 #~ v = dlg.request.POST.getlist(i.name)
@@ -380,14 +400,15 @@ class RowHandle(ReportDataLink):
                 #~ v = dlg.request.POST.get(i.name)
             #~ dlg.params[i.name] = v
             
-    #~ def data_elems(self):
-        #~ for de in data_elems(self.row._meta): yield de
+    def data_elems(self):
+        return self.rh.data_elems()
+        #~ for de in self.rh.data_elems(): yield de
           
-    #~ def get_data_elem(self,name):
-        #~ return get_data_elem(self.row.__class__,name)
+    def get_data_elem(self,name):
+        return self.rh.get_data_elem(name)
         
-    #~ def get_title(self,dlg):
-        #~ return unicode(self.row)
+    def get_title(self,dlg):
+        return unicode(self.row)
         
     #~ def submit_elems(self):
         #~ for name in data_elems(self.row._meta): yield name
@@ -440,7 +461,7 @@ class Report(actors.HandledActor): # actions.Action): #
     can_change = perms.is_authenticated
     can_delete = perms.is_authenticated
     
-    default_action = ViewReport()
+    default_action = GridEdit()
     default_layout = 0
     
     typo_check = True

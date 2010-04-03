@@ -78,11 +78,10 @@ class ActionRequest:
         lino.log.debug('ActionRequest._start() %s.%s',self.ah,self.action.name)
         #~ lino.log.debug('ActionRequest._start() %s.%s(%r)',self.ah,self.action.name,self.params)
         self.response = ActionResponse()
-        
         try:
             self.action.run_action(self)
         except Exception,e:
-            traceback.print_exc(e)
+            self.exception(e)
         return self.response
         
     """
@@ -107,6 +106,11 @@ class ActionRequest:
         self.response.refresh_menu = True
         return self
         
+    def show_detail(self,row):
+        assert self.ah.detail_link is not None
+        self.ah.detail_link.row = row
+        return self.ui.show_detail(self,row)
+        
     def show_window(self,js):
         #~ assert js.strip().startswith('function')
         #~ self.response.show_window = py2js(js)
@@ -130,6 +134,7 @@ class ActionRequest:
         return self
 
     def exception(self,e):
+        self.response.success = False
         self.response.alert_msg = unicode(e)
         traceback.print_exc(e)
         return self
@@ -280,7 +285,7 @@ class ReportActionRequest(ActionRequest): # was ReportRequest
         return dict(count=total_count,rows=rows,title=self.report.get_title(self))
         
     def row2dict(self,row,d):
-        # overridden in extjs.ViewReport
+        # overridden in extjs.ext_requests.ChoicesReportRequest
         return self.report.row2dict(row,d)
         
 
