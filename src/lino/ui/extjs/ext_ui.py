@@ -19,7 +19,7 @@ from urllib import urlencode
 
 from django.db import models
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.core import exceptions
 
 from django.utils.translation import ugettext as _
@@ -274,11 +274,15 @@ class ExtUI(base.UI):
     def act_view(self,request,app_label=None,actor=None,action=None,**kw):
         actor = actors.get_actor2(app_label,actor)
         ah = actor.get_handle(self)
-        if action is None:
-            action = actor.default_action
+        if not action:
+            a = actor.default_action
         else:
-            action = ah.get_action(action)
-        ar = ext_requests.ViewReportRequest(request,ah,action)
+            a = ah.get_action(action)
+            if a is None:
+                msg = "No action %s in %s" % (action,ah)
+                print msg
+                raise Http404(msg)
+        ar = ext_requests.ViewReportRequest(request,ah,a)
         return json_response(ar.run().as_dict())
         #~ dlg = ext_requests.Dialog(request,self,actor,action)
         #~ return self.start_dialog(dlg)

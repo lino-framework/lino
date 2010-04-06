@@ -211,6 +211,7 @@ class GridEdit(actions.Action):
 
 class InsertRow(actions.RowsAction):
     label = _("Insert")
+    name = 'insert'
     key = actions.INSERT # (ctrl=True)
     
     def run_action(self,rr):
@@ -255,6 +256,7 @@ class InsertRow(actions.RowsAction):
 class DeleteSelected(actions.RowsAction):
     needs_selection = True
     label = _("Delete")
+    name = 'delete'
     key = actions.DELETE # (ctrl=True)
     
         
@@ -278,6 +280,37 @@ class DeleteSelected(actions.RowsAction):
             row.delete()
         yield dlg.refresh_caller().notify(_("Success") + ": " + msg).over()
         
+class DetailAction(actions.ToggleWindowAction):
+    def __init__(self,dtl):
+        assert isinstance(dtl,layouts.DetailLayout)
+        self.detail = dtl
+        self.name = dtl._actor_name
+        self.label = dtl.label
+        actions.ToggleWindowAction.__init__(self)
+        
+    def run_action(self,rr):
+        rr.toggle_window(self.detail)
+                
+class PropertiesAction(actions.ToggleWindowAction):
+    name = 'properties'
+    label = _('Properties')
+    
+class SlaveGridAction(actions.ToggleWindowAction):
+    def __init__(self,slave):
+        assert isinstance(slave,Report)
+        self.slave = slave
+        self.name = slave._actor_name
+        self.label = slave.label
+        actions.ToggleWindowAction.__init__(self)
+        
+    def run_action(self,rr):
+        #~ slave_rh = rr.ui.get_handle(self.slave)
+        #~ return self.slave.default_action.run_action()
+        slave_rr = rr.ui.get_report_ar(self.slave)
+        #~ slave_rh.
+        #~ rr.toggle_window(slave_rh.)
+        slave_rr.run()
+                
         
 
 class ReportHandle(datalinks.DataLink,actors.ActorHandle):
@@ -288,9 +321,25 @@ class ReportHandle(datalinks.DataLink,actors.ActorHandle):
         #lino.log.debug('ReportHandle.__init__(%s)',rd)
         actors.ActorHandle.__init__(self,report)
         assert isinstance(report,Report)
-        datalinks.DataLink.__init__(self,ui,report.actions)
+        actions = list(report.actions)
+        if report.model is not None:
+            for dtl in report.detail_layouts:
+                actions.append(DetailAction(dtl))
+            for slave in report._slaves:
+                actions.append(SlaveGridAction(slave))
+            from lino.modlib.properties import models as properties
+            #~ props_request = properties.PropValuesByOwner().request(\
+                #~ ui,master=report.model)
+            #~ if len(props_request) > 0:
+            if len(properties.Property.properties_for_model(report.model)) > 0:
+                actions.append(PropertiesAction())
+        
+        datalinks.DataLink.__init__(self,ui,actions)
         self.report = report
         self.content_type = ContentType.objects.get_for_model(self.report.model).pk
+        
+                
+        
   
     def __str__(self):
         return str(self.report) + 'Handle'
@@ -485,6 +534,7 @@ class Report(actors.HandledActor): # actions.Action): #
             m = getattr(self.model,'setup_report',None)
             if m:
                 m(self)
+                
         
         actors.HandledActor.__init__(self)
         

@@ -52,6 +52,7 @@ class ValidationError(Exception):
     
     
 class Action:
+    action_type = 'open_window'
     label = None
     name = None
     key = None
@@ -84,7 +85,8 @@ class RowsAction(Action):
             return _("No selection. Nothing to do.")
 
 
-
+class ToggleWindowAction(Action):
+    action_type = 'toggle_window'
     
 class Cancel(Action):
     label = _("Cancel")
