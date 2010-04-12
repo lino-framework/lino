@@ -76,6 +76,7 @@ class BaseViewReportRequest(action_requests.ReportActionRequest):
             #~ print kw
         if master is not None and not kw.has_key('master_instance'):
             pk = request.REQUEST.get(URL_PARAM_MASTER_PK,None)
+            #~ print '20100406a', self.report,URL_PARAM_MASTER_PK,"=",pk
             if pk == '':
                 pk = None
             if pk is None:
@@ -89,6 +90,7 @@ class BaseViewReportRequest(action_requests.ReportActionRequest):
                       "There's no %s with primary key %r",
                       master.__name__,pk)
             #~ print '20100212', self #, kw['master_instance']
+        #~ print '20100406b', self.report,kw
         quick_search = request.REQUEST.get(URL_PARAM_FILTER,None)
         if quick_search:
             kw.update(quick_search=quick_search)

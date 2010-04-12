@@ -108,7 +108,7 @@ class Actor(object):
     title = None
     label = None
     actions = []
-    #default_action = 'view'
+    default_action = None
 
     def __init__(self):
         self._setup_done = False
@@ -142,7 +142,7 @@ class Actor(object):
         #~ self._actions_dict[a.name] = a
     
     def get_url(self,ui,**kw):
-        return ui.get_action_url(self,**kw)
+        return ui.get_action_url(self,self.default_action,**kw)
 
     #~ def get_action(self,action_name=None):
         #~ if action_name is None:

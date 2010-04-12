@@ -596,7 +596,7 @@ class Container(LayoutElement):
     #declare_type = jsgen.DECLARE_INLINE
     #declare_type = jsgen.DECLARE_THIS
     #declare_type = jsgen.DECLARE_VAR
-    declare_type = jsgen.DECLARE_THIS
+    #~ declare_type = jsgen.DECLARE_THIS
     
     
     def __init__(self,lh,name,*elements,**kw):
@@ -920,7 +920,7 @@ class M2mGridElement(GridElement):
         GridElement.__init__(self,lh,id2js(rpt.actor_id),rh,*elements,**kw)
   
 
-class PagingToolbar(jsgen.Variable):
+class unused_PagingToolbar(jsgen.Variable):
     declare_type = jsgen.DECLARE_THIS
     value_template = "new Ext.PagingToolbar(%s)"
     
@@ -970,6 +970,7 @@ class PagingToolbar(jsgen.Variable):
       
             
 class MainPanel(jsgen.Variable):
+    declare_type = jsgen.DECLARE_INLINE
   
     def __init__(self):
         self.keys = None
@@ -1039,7 +1040,6 @@ class WrappingMainPanel(MainPanel):
 
 class GridMainPanel(GridElement,MainPanel):
     value_template = "new Lino.GridPanel(%s)"
-    #declare_type = jsgen.DECLARE_VAR
     #collapsible = False
     def __init__(self,lh,name,vertical,*elements,**kw):
         'ignore the "vertical" arg'
@@ -1093,7 +1093,7 @@ class GridMainPanel(GridElement,MainPanel):
 
 
 class DetailMainPanel(Panel,WrappingMainPanel):
-    declare_type = jsgen.DECLARE_THIS
+    #~ declare_type = jsgen.DECLARE_THIS
     xtype = None
     value_template = "new Ext.form.FormPanel(%s)"
     def __init__(self,lh,name,vertical,*elements,**kw):

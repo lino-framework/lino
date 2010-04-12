@@ -205,7 +205,8 @@ class ExtUI(base.UI):
             (r'^choices/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<fldname>\w+)$', self.choices_view),
             #~ (r'^save_win/(?P<name>\w+)$', self.save_win_view),
             (r'^save_window_config$', self.save_window_config_view),
-            (r'^permalink_do/(?P<name>\w+)$', self.permalink_do_view),
+            #~ (r'^permalink/(?P<name>\w+)$', self.permalink_do_view),
+            #~ (r'^permalink$', self.permalink_do_view),
             #~ (r'^props/(?P<app_label>\w+)/(?P<model_name>\w+)$', self.props_view),
             # (r'^props$', self.props_view),
         )
@@ -335,12 +336,23 @@ class ExtUI(base.UI):
         return json_response_kw(success=True,msg='%s : %s = %r' % (rr.master_instance,name,value))
     
         
-    def permalink_do_view(self,request,name=None):
-        name = name.replace('_','.')
-        actor = actors.get_actor(name)
+    def unused_permalink_do_view(self,request):
+        print request.GET.get('show')
+        def js():
+            for name in request.GET.get('show'):
+                name = name.replace('_','.')
+                actor = actors.get_actor(name)
+                if actor is None:
+                    print "No actor", name
+                else:
+                    rh = actor.get_handle(self)
+                    for ln in rh.window_wrapper.js_render(): 
+                        yield ln
+                    yield '().show();'
         #~ dlg = ext_requests.Dialog(request,self,actor,None)
-        ar = ext_requests.ViewReportRequest(request,actor.get_handle(self),actor.default_action)
-        return json_response(ar.run().as_dict())
+        #~ ar = ext_requests.ViewReportRequest(request,actor.get_handle(self),actor.default_action)
+        #~ return json_response(ar.run().as_dict())
+        return json_response_kw(success=True,exec_js=js)
         #~ return self.start_dialog(dlg)
 
     def save_window_config_view(self,request):
@@ -418,14 +430,15 @@ class ExtUI(base.UI):
                     #traceback.format_exc(e)
                     return json_response_kw(success=False,msg="Exception occured: "+cgi.escape(str(e)))
         # otherwise it's a simple list:
+        #~ print 20100406, rptreq
         d = rptreq.render_to_dict()
         return json_response(d)
         
 
         
 
-    def get_action_url(self,actor,**kw):
-        return build_url("/action",actor.app_label,actor._actor_name,**kw)
+    def get_action_url(self,actor,action,**kw):
+        return build_url("/action",actor.app_label,actor._actor_name,action.name,**kw)
         #~ url = "/action/" + a.app_label + "/" + a._actor_name 
         #~ if len(kw):
             #~ url += "?" + urlencode(kw)
@@ -437,7 +450,7 @@ class ExtUI(base.UI):
             #~ url += "?" + urlencode(kw)
         #~ return url
         
-    def get_actor_url(self,actor,**kw):
+    def unused_get_actor_url(self,actor,**kw):
         return build_url("/form",actor.app_label,actor._actor_name,**kw)
         
     def get_form_action_url(self,fh,action,**kw):
@@ -480,12 +493,12 @@ class ExtUI(base.UI):
         
         
         
-    def gridedit_report(self,ar,**kw):
-        """
-        called from reports.GridEdit.run_action()
-        """
-        ar.show_window(ar.ah.window_wrapper.js_render)
-        
+    def show_report(self,ar,rh,**kw):
+        ar.show_window(rh.window_wrapper.js_render)
+
+    def show_detail(self,ar,lh,**kw):
+        ar.show_window(lh.window_wrapper.js_render)
+
         
     #~ def view_form(self,dlg,**kw):
         #~ "called from ViewForm.run_in_dlg()"
@@ -499,11 +512,15 @@ class ExtUI(base.UI):
             if rh.report.master is None:
                 rh.window_wrapper = ext_windows.GridMasterWrapper(rh)
             else:
+                #~ print 20100406, rh.report, ': master is', rh.report.master
                 rh.window_wrapper = ext_windows.GridSlaveWrapper(rh)
-            if rh.detail_link is not None:
-                rh.detail_wrapper = ext_windows.DetailMasterWrapper(rh.detail_link.lh,rh.detail_link)
-            else:
-                rh.detail_wrapper = None
+            #~ if rh.detail_link is not None:
+            for lh in rh.details:
+                lh.window_wrapper = ext_windows.DetailSlaveWrapper(lh)
+                
+                #~ rh.detail_wrapper = ext_windows.DetailMasterWrapper(rh.detail_link.lh,rh.detail_link)
+            #~ else:
+                #~ rh.detail_wrapper = None
             #~ lh = rh.get_default_layout()
         else:
             rh.store = None
@@ -513,8 +530,8 @@ class ExtUI(base.UI):
             
         rh.choosers = chooser.get_choosers_for_model(rh.report.model,chooser.FormChooser)
         
-    def show_detail(self,ar,row):
-        ar.show_window(ar.ah.detail_wrapper.js_render)
+    #~ def show_detail(self,ar,row):
+        #~ ar.show_window(ar.ah.detail_wrapper.js_render)
         
 
     def unused_setup_layout(self,lh):

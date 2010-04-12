@@ -26,8 +26,12 @@ class DataLink:
     
     content_type = None
     
-    def __init__(self,ui,actions):
+    def __init__(self,ui):
         self.ui = ui
+        self._actions_list = []
+        self._actions_dict = {}
+        
+    def set_actions(self,actions):
         self._actions_list = actions
         self._actions_dict = {}
         for a in actions:

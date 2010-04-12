@@ -135,13 +135,7 @@ Ext.onReady(function(){ """
   Lino.viewport.render('body');
   Lino.load_main_menu();
   Ext.QuickTips.init();
-  var windows = Lino.gup('show').split(',');
-  for(i=0;i<windows.length;i++) {
-    // console.log(windows[i]);
-    // if(windows[i]) eval(windows[i]+".show()");
-    // if(windows[i]) Lino.do_action(undefined,'/permalink_do/'+windows[i],windows[i],{});
-    if(windows[i]) Lino.do_dialog(undefined,'/permalink_do/'+windows[i],{});
-  }
+  Lino.run_permalink();
         """
         s += "\n}); // end of onReady()"
         s += "\n</script></head><body></body></html>"

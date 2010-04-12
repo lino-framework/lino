@@ -137,8 +137,7 @@ def register_report(rpt):
 def discover():
     """
     - Each model can receive a number of "slaves". 
-      Slaves are reports that display detail data for a known instance of that model (their master).
-      They are stored in a dictionary called '_lino_slaves'.
+      Slaves are reports whose data depends on an instance of another model (their master).
       
     - For each model we want to find out the "model report" ot "default report".
       The "choices report" for a foreignkey field is also currently simply the pointed model's
@@ -206,7 +205,7 @@ def get_model_report(model):
 class GridEdit(actions.Action):
     name = 'grid'
     def run_action(self,ar):
-        return ar.ui.gridedit_report(ar)
+        return ar.show_report(ar.ah)
 
 
 class InsertRow(actions.RowsAction):
@@ -214,17 +213,17 @@ class InsertRow(actions.RowsAction):
     name = 'insert'
     key = actions.INSERT # (ctrl=True)
     
-    def run_action(self,rr):
+    def run_action(self,ar):
         #~ rr = dlg.get_request()
         #~ for r in rr.insert_row(self): 
             #~ yield r
             
-        if rr.rh.detail_link is None:
-            raise Exception("This report has no detail layout")
+        #~ if ar.rh.detail_link is None:
+            #~ raise Exception("This report has no detail layout")
         
-        row = rr.create_instance()
+        row = ar.create_instance()
         
-        return rr.show_detail(row)
+        return ar.show_detail(row)
         
         #~ layout = layouts.get_detail_layout(row.__class__)
         
@@ -281,15 +280,21 @@ class DeleteSelected(actions.RowsAction):
         yield dlg.refresh_caller().notify(_("Success") + ": " + msg).over()
         
 class DetailAction(actions.ToggleWindowAction):
-    def __init__(self,dtl):
-        assert isinstance(dtl,layouts.DetailLayout)
-        self.detail = dtl
-        self.name = dtl._actor_name
-        self.label = dtl.label
-        actions.ToggleWindowAction.__init__(self)
+    name = 'detail'
+    #~ label = _('Detail')
+    def __init__(self,lh):
+        self.lh = lh
+        self.label = lh.label
+        #~ assert isinstance(dtl,layouts.DetailLayout)
+        #~ self.detail = dtl
+        #~ self.rh = rh
+        #~ self.name = rh.report._actor_name
+        #~ self.label = rh.report.label
+        #~ actions.ToggleWindowAction.__init__(self)
         
-    def run_action(self,rr):
-        rr.toggle_window(self.detail)
+    def run_action(self,ar):
+        ar.show_detail(self.lh)
+        #~ rr.toggle_window(self.detail)
                 
 class PropertiesAction(actions.ToggleWindowAction):
     name = 'properties'
@@ -303,42 +308,27 @@ class SlaveGridAction(actions.ToggleWindowAction):
         self.label = slave.label
         actions.ToggleWindowAction.__init__(self)
         
-    def run_action(self,rr):
-        #~ slave_rh = rr.ui.get_handle(self.slave)
+    def run_action(self,ar):
+        slave_rh = self.slave.get_handle(ar.ui)
         #~ return self.slave.default_action.run_action()
-        slave_rr = rr.ui.get_report_ar(self.slave)
+        #~ slave_rr = ar.ui.get_report_ar(self.slave)
         #~ slave_rh.
         #~ rr.toggle_window(slave_rh.)
-        slave_rr.run()
+        #~ slave_rr.run()
+        ar.show_report(slave_rh)
                 
         
 
 class ReportHandle(datalinks.DataLink,actors.ActorHandle):
   
-    detail_link = None
+    #~ detail_link = None
     
     def __init__(self,ui,report):
         #lino.log.debug('ReportHandle.__init__(%s)',rd)
-        actors.ActorHandle.__init__(self,report)
         assert isinstance(report,Report)
-        actions = list(report.actions)
-        if report.model is not None:
-            for dtl in report.detail_layouts:
-                actions.append(DetailAction(dtl))
-            for slave in report._slaves:
-                actions.append(SlaveGridAction(slave))
-            from lino.modlib.properties import models as properties
-            #~ props_request = properties.PropValuesByOwner().request(\
-                #~ ui,master=report.model)
-            #~ if len(props_request) > 0:
-            if len(properties.Property.properties_for_model(report.model)) > 0:
-                actions.append(PropertiesAction())
-        
-        datalinks.DataLink.__init__(self,ui,actions)
         self.report = report
-        self.content_type = ContentType.objects.get_for_model(self.report.model).pk
-        
-                
+        actors.ActorHandle.__init__(self,report)
+        datalinks.DataLink.__init__(self,ui)
         
   
     def __str__(self):
@@ -349,8 +339,27 @@ class ReportHandle(datalinks.DataLink,actors.ActorHandle):
             self.list_layout = self.report.list_layout.get_handle(self.ui)
             self.details = [ pl.get_handle(self.ui) for pl in self.report.detail_layouts ]
             self.layouts = [ self.list_layout ] + self.details
-            if len(self.details) > 0:
-                self.detail_link = DetailDataLink(self,self.details[0])
+            #~ if len(self.details) > 0:
+                #~ self.detail_link = DetailDataLink(self,self.details[0])
+                
+            actions = list(self.report.actions)
+            for lh in self.details:
+                actions.append(DetailAction(lh))
+            #~ else:
+                #~ print 'no detail in %s : %r' % (report,report.detail_layouts)
+            for slave in self.report._slaves:
+                actions.append(SlaveGridAction(slave))
+            if self.report.model is not None:
+                from lino.modlib.properties import models as properties
+                #~ props_request = properties.PropValuesByOwner().request(\
+                    #~ ui,master=report.model)
+                #~ if len(props_request) > 0:
+                if len(properties.Property.properties_for_model(self.report.model)) > 0:
+                    actions.append(PropertiesAction())
+                self.content_type = ContentType.objects.get_for_model(self.report.model).pk
+            actions.append(self.report.default_action)
+            self.set_actions(actions)
+                
         else:
             self.details = []
             self.layouts = []
@@ -502,7 +511,7 @@ class Report(actors.HandledActor): # actions.Action): #
     date_format = 'd.m.y'
     #date_format = '%d.%m.%y'
     
-    page_layouts = None # (layouts.PageLayout ,)
+    #~ page_layout = None # (layouts.PageLayout ,)
     #~ row_layout_class = None
     
     can_view = perms.always
@@ -605,7 +614,7 @@ class Report(actors.HandledActor): # actions.Action): #
 
         
     # implements actions.Action
-    def get_url(self,ui,**kw):
+    def unused_get_url(self,ui,**kw):
         kw['run'] = True
         rh = self.get_handle(ui)
         return rh.get_absolute_url(**kw)
@@ -734,8 +743,12 @@ class Report(actors.HandledActor): # actions.Action): #
         return console.ui.report_as_text(self)
         
     @classmethod
-    def register_page_layout(cls,*layouts):
-        cls.page_layouts = tuple(cls.page_layouts) + layouts
+    def unused_register_page_layout(cls,layout):
+        if cls.page_layout is not None:
+            lino.warning('Detail layout %s in %s overridden by %s',
+              cls.page_layout,cls,layout)
+        cls.page_layout = layout
+        #~ cls.page_layout = tuple(cls.page_layouts) + layouts
         
     def row2dict(self,row,d):
         "Overridden by lino.modlib.properties.PropValuesByOwner"

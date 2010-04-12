@@ -106,7 +106,13 @@ class ActionRequest:
         self.response.refresh_menu = True
         return self
         
-    def show_detail(self,row):
+    def show_report(self,rh):
+        return self.ui.show_report(self,rh)
+        
+    def show_detail(self,lh):
+        return self.ui.show_detail(self,lh)
+        
+    def unused_show_detail(self,row):
         assert self.ah.detail_link is not None
         self.ah.detail_link.row = row
         return self.ui.show_detail(self,row)

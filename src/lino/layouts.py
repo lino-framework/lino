@@ -295,15 +295,23 @@ class DetailLayout(ModelLayout):
     label = _("Detail")
     show_labels = True
     join_str = "\n"
+    
     def do_setup(self):
         ModelLayout.do_setup(self)
         if self.datalink is not None:
+            new_details = []
             l = getattr(self.datalink,'_lino_layouts',None)
             if l is None:
                 l = []
                 setattr(self.datalink,'_lino_layouts',l)
-            lino.log.debug('Register %s detail layout %d for %s',self,len(l),model_label(self.datalink))
-            l.append(self)
+            lino.log.debug('Register %s detail layout %d for %s',
+                self,len(l),model_label(self.datalink))
+            for dtl in l:
+                if not isinstance(self,dtl.__class__):
+                    new_details.append(dtl)
+            new_details.append(self)
+            setattr(self.datalink,'_lino_layouts',new_details)
+            
             
 def get_detail_layout(model):
     if len(model._lino_layouts) > 0:

@@ -40,7 +40,7 @@ def py2js(v,**kw):
     if isinstance(v,menus.MenuItem):
         from lino.lino_site import lino_site
         #~ handler = "function(btn,evt){Lino.do_action(undefined,%r,%r,{})}" % (v.actor.get_url(lino_site.ui),id2js(v.actor.actor_id))
-        handler = "function(btn,evt){Lino.do_dialog(undefined,%r,{})}" % v.actor.get_url(lino_site.ui)
+        handler = "function(btn,evt){Lino.do_action(undefined,%r,{})}" % v.actor.get_url(lino_site.ui)
         return py2js(dict(text=v.label,handler=js_code(handler)))
         #~ if v.args:
             #~ handler = "function(btn,evt) {%s.show(btn,evt,%s);}" % (
@@ -177,7 +177,7 @@ class Value(object):
         return self.value_template % py2js(self.value)
         
 class Variable(Value):
-    declare_type = DECLARE_THIS
+    declare_type = DECLARE_INLINE
     ext_suffix = ''
     name = None
     ext_name = None
