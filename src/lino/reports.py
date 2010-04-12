@@ -282,7 +282,7 @@ class DeleteSelected(actions.RowsAction):
 class DetailAction(actions.ToggleWindowAction):
     name = 'detail'
     #~ label = _('Detail')
-    def __init__(self,lh):
+    def __init__(self,ah,lh):
         self.lh = lh
         self.label = lh.label
         #~ assert isinstance(dtl,layouts.DetailLayout)
@@ -290,23 +290,20 @@ class DetailAction(actions.ToggleWindowAction):
         #~ self.rh = rh
         #~ self.name = rh.report._actor_name
         #~ self.label = rh.report.label
-        #~ actions.ToggleWindowAction.__init__(self)
+        actions.ToggleWindowAction.__init__(self,ah)
         
     def run_action(self,ar):
         ar.show_detail(self.lh)
         #~ rr.toggle_window(self.detail)
                 
-class PropertiesAction(actions.ToggleWindowAction):
-    name = 'properties'
-    label = _('Properties')
-    
 class SlaveGridAction(actions.ToggleWindowAction):
-    def __init__(self,slave):
+  
+    def __init__(self,ah,slave):
         assert isinstance(slave,Report)
         self.slave = slave
         self.name = slave._actor_name
-        self.label = slave.label
-        actions.ToggleWindowAction.__init__(self)
+        self.label = slave.button_label
+        actions.ToggleWindowAction.__init__(self,ah)
         
     def run_action(self,ar):
         slave_rh = self.slave.get_handle(ar.ui)
@@ -318,9 +315,27 @@ class SlaveGridAction(actions.ToggleWindowAction):
         ar.show_report(slave_rh)
                 
         
+class PropertiesAction(actions.ToggleWindowAction):
+    name = 'properties'
+    label = _('Properties')
+    rh = None
+    
+    def __init__(self,ah):
+      
+        if ah.report.model is not None:
+            from lino.modlib.properties import models as properties
+            if ah.report.model is not properties.PropValue:
+                self.rh = properties.PropValuesByOwner().get_handle(ah.ui)
+        actions.ToggleWindowAction.__init__(self,ah)
+        
+    def run_action(self,ar):
+        ar.show_properties(self.ah)
+    
 
 class ReportHandle(datalinks.DataLink,actors.ActorHandle):
   
+    properties = None
+    
     #~ detail_link = None
     
     def __init__(self,ui,report):
@@ -335,6 +350,7 @@ class ReportHandle(datalinks.DataLink,actors.ActorHandle):
         return str(self.report) + 'Handle'
             
     def setup(self):
+        self.default_action = self.report.default_action(self)
         if self.report.use_layouts:
             self.list_layout = self.report.list_layout.get_handle(self.ui)
             self.details = [ pl.get_handle(self.ui) for pl in self.report.detail_layouts ]
@@ -342,22 +358,32 @@ class ReportHandle(datalinks.DataLink,actors.ActorHandle):
             #~ if len(self.details) > 0:
                 #~ self.detail_link = DetailDataLink(self,self.details[0])
                 
-            actions = list(self.report.actions)
+            actions = [ ac(self) for ac in self.report.actions ]
             for lh in self.details:
-                actions.append(DetailAction(lh))
+                actions.append(DetailAction(self,lh))
             #~ else:
                 #~ print 'no detail in %s : %r' % (report,report.detail_layouts)
             for slave in self.report._slaves:
-                actions.append(SlaveGridAction(slave))
+                actions.append(SlaveGridAction(self,slave))
+                
             if self.report.model is not None:
-                from lino.modlib.properties import models as properties
-                #~ props_request = properties.PropValuesByOwner().request(\
-                    #~ ui,master=report.model)
-                #~ if len(props_request) > 0:
-                if len(properties.Property.properties_for_model(self.report.model)) > 0:
-                    actions.append(PropertiesAction())
+                self.properties = PropertiesAction(self)
+                actions.append(self.properties)
+                
+                #~ from lino.modlib.properties import models as properties
+                #~ if self.report.model is not properties.PropValue:
+                    #~ rh = properties.PropValuesByOwner().get_handle(self.ui)
+                    #~ self.properties = PropertiesAction(self,rh)
+                    #~ actions.append(self.properties)
+                    
+                    #~ rr = rh.request(master=self.report.model)
+                    #~ if len(props_request) > 0:
+                    #~ #if len(properties.Property.properties_for_model(self.report.model)) > 0:
+                        #~ self.properties = PropertiesAction(self,rr)
+                        #~ actions.append(self.properties)
+                    
                 self.content_type = ContentType.objects.get_for_model(self.report.model).pk
-            actions.append(self.report.default_action)
+            actions.append(self.default_action)
             self.set_actions(actions)
                 
         else:
@@ -519,7 +545,7 @@ class Report(actors.HandledActor): # actions.Action): #
     can_change = perms.is_authenticated
     can_delete = perms.is_authenticated
     
-    default_action = GridEdit()
+    default_action = GridEdit
     default_layout = 0
     
     typo_check = True
@@ -539,7 +565,7 @@ class Report(actors.HandledActor): # actions.Action): #
             self.model = resolve_model(self.model,self.app_label,self)
         if self.model is not None:
             self.app_label = self.model._meta.app_label
-            self.actions = self.actions + [ DeleteSelected(), InsertRow() ]
+            self.actions = self.actions + [ DeleteSelected, InsertRow ]
             m = getattr(self.model,'setup_report',None)
             if m:
                 m(self)

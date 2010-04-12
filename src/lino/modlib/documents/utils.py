@@ -40,7 +40,7 @@ class Printable:
     @classmethod
     def setup_report(cls,rpt):
         #~ rpt.add_actions(PrintAction(),PdfAction())
-        rpt.add_actions(PdfAction())
+        rpt.add_actions(PdfAction)
         
     def pdf_root(self):
         return os.path.join(settings.MEDIA_ROOT,"pdf_cache")

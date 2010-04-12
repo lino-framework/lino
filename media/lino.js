@@ -388,8 +388,8 @@ Lino.submit_property = function (caller,e) {
 
 Lino.load_properties = function(caller,pw,url,record) { 
   if(pw.hidden) return;
+  
   if(record === undefined) return;
-  // console.log('load_properties',caller,url,record);
   var params = {mt:caller.content_type, mk:record.id}; // URL_PARAM_MASTER_TYPE, URL_PARAM_MASTER_PK
   var on_success = function(response) {
     var result = Ext.decode(response.responseText);
@@ -400,6 +400,7 @@ Lino.load_properties = function(caller,pw,url,record) {
       grid.setProperty(result.rows[i].name,result.rows[i].value)
     }
   };
+  console.log('load_properties',caller,url,record);
   Ext.Ajax.request({
     waitMsg: 'Loading properties...',
     url: url,
@@ -561,6 +562,12 @@ Ext.apply(Lino.WindowWrapper.prototype,{
     return v;
   },
   setup : function() { 
+    this.window = new Ext.Window({ layout: "fit", title: this.config.title, items: this.main_item, 
+      height: this.config.height, width: this.config.width, maximizable: true, maximized: this.config.maximized, 
+      y: this.config.y, x: this.config.x, 
+      closeAction:'close',
+      tools: [ { qtip: "Save window config", handler: Lino.save_window_config(this), id: "save" } ] 
+      });
     this.window.window_wrapper = this;
     //~ if (this.caller) this.window._permalink_name = this.config.permalink_name;
     this.window.on('render',this.on_render,this)
@@ -593,12 +600,8 @@ Lino.GridWindowWrapper = Ext.extend(Lino.WindowWrapper,{
       viewConfig: { showPreview: true, scrollOffset: 200, emptyText: "Nix gefunden!" }, 
       enableColLock: false, store: this.store, colModel: this.config.colModel });
       
-    this.window = new Ext.Window({ layout: "fit", title: this.config.title, items: this.main_grid, 
-      height: this.config.height, width: this.config.width, maximizable: true, maximized: this.config.maximized, 
-      y: this.config.y, x: this.config.x, 
-      closeAction:'close',
-      tools: [ { qtip: "Save window config", handler: Lino.save_window_config(this), id: "save" } ] 
-      });
+    this.main_item = this.main_grid;
+      
     this.main_grid.on('afteredit', Lino.grid_afteredit(this,'/grid_afteredit'+this.config.url));
     // this.main_grid.on('cellcontextmenu', Lino.cell_context_menu, this);
     this.main_grid.on('resize', function(cmp,aw,ah,rw,rh) {
@@ -646,7 +649,9 @@ Lino.SlaveWrapper = Ext.extend(Lino.WindowWrapper, {
     this.caller.add_row_listener( function(sm,ri,rec){this.load_record(rec)}, this );
     // var sels = this.caller.main_grid.getSelectionModel().getSelections();
     // if (sels.length > 0) this.load_record(sels[0]);
+    console.log('Lino.SlaveWrapper.on_render b');
     this.load_record(this.caller.get_current_record());
+    console.log('Lino.SlaveWrapper.on_render c');
   },
   add_row_listener : function(fn,scope) {
     this.caller.add_row_listener(fn,scope);
@@ -671,14 +676,9 @@ Lino.GridSlaveWrapper = Ext.extend(Lino.SlaveWrapper, {
 
 Lino.DetailSlaveWrapper = Ext.extend(Lino.SlaveWrapper, {
   setup:function() {
-    console.log('Lino.DetailSlaveWrapper setup',20100409,this);
-    this.window = new Ext.Window({ layout: "fit", title: this.config.title, items: this.config.main_panel, 
-      height: this.config.height, width: this.config.width, maximizable: true, maximized: this.config.maximized, 
-      y: this.config.y, x: this.config.x, 
-      closeAction:'close',
-      tools: [ { qtip: "Save window config", handler: Lino.save_window_config(this), id: "save" } ] 
-      });
-    // Lino.SlaveWrapper.superclass.setup.call(this);
+    //~ console.log('Lino.DetailSlaveWrapper setup',20100409,this);
+    this.main_item = this.config.main_panel;
+    Lino.WindowWrapper.prototype.setup.call(this);
     Lino.SlaveWrapper.prototype.setup.call(this);
   },
   load_record : function(record) {
@@ -688,10 +688,14 @@ Lino.DetailSlaveWrapper = Ext.extend(Lino.SlaveWrapper, {
 });
 
 Lino.PropertiesWrapper = Ext.extend(Lino.SlaveWrapper, {
-  setup:function() {
+  setup : function() {
     // console.log('Lino.GridMasterWrapper configure',20100401,this);
+    this.main_item = this.config.main_panel;
     Lino.WindowWrapper.prototype.setup.call(this);    
-    Lino.SlaveWrapper.superclass.setup.call(this);
+    Lino.SlaveWrapper.prototype.setup.call(this);
+  },
+  load_record : function(rec) {
+    Lino.load_properties(this.caller,this,this.config.url,rec);
   }
 });
 

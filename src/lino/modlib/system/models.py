@@ -63,7 +63,7 @@ class PasswordReset(actions.OK):
 
 
 class PasswordResetForm(layouts.FormLayout):
-    actions = [ actions.Cancel(), PasswordReset()]
+    actions = [ actions.Cancel, PasswordReset]
     #~ datalink = 'system.PasswordReset'
     #email = models.EmailField(verbose_name=_("E-mail"), max_length=75)
     email = forms.Input(fieldLabel=_("E-mail"),maxLength=75)
@@ -120,7 +120,7 @@ class Login(actions.OK):
 
 class LoginForm(layouts.FormLayout):
     #~ datalink = 'Login'
-    actions = [ actions.Cancel(), Login()]
+    actions = [ actions.Cancel, Login]
     
     text = layouts.StaticText(_("Please enter your username and password to authentificate."))
     username = forms.Input(fieldLabel=_("Username"),maxLength=75,allowBlank=False)

@@ -76,8 +76,8 @@ class RunCommand(actions.Action):
         return dlg.ah.command.run_in_dlg(dlg)
 
 class Command(actors.HandledActor):
-    actions = [actions.Cancel(), actions.OK()]
-    default_action = RunCommand()
+    actions = [actions.Cancel, actions.OK]
+    default_action = RunCommand
     _handle_class = CommandHandle
     _handle_selector = base.UI
     

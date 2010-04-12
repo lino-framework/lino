@@ -59,7 +59,8 @@ class Action:
     needs_selection = False
     needs_validation = False
     
-    def __init__(self):
+    def __init__(self,ah):
+        self.ah = ah # actor handle
         if self.name is None:
             self.name = self.__class__.__name__ # label
         if self.label is None:

@@ -17,6 +17,7 @@ from django.utils.translation import ugettext as _
 
 import lino
 from lino import actions, layouts, commands
+from lino import reports
 from lino import forms
 from lino.ui import base
 from lino.core import actors
@@ -379,7 +380,7 @@ class GridWrapperMixin(WindowWrapper):
         d.update(colModel=self.lh._main.column_model)
         d.update(content_type=self.datalink.content_type)
         d.update(title=self.datalink.get_title(None))
-        d.update(url='/'+self.datalink.report.app_label+'/'+self.datalink.report._actor_name)
+        d.update(url='/'+self.datalink.report.app_label+'/'+self.datalink.report._actor_name )
         return d
         
 class GridMasterWrapper(GridWrapperMixin,MasterWrapper):
@@ -616,16 +617,19 @@ class PropertiesWrapper(SlaveWrapper):
     #~ declare_type = jsgen.DECLARE_THIS
     #~ value_template = "new Ext.Window(%s)"
     
-    def __init__(self,master_lh,rr,**kw):
+    def __init__(self,action,**kw):
       
-        self.ui = rr.rh.ui
-        self.model = rr.master
-        self.rh = rr.rh
+        assert isinstance(action,reports.PropertiesAction)
+        self.action = action
+        self.ui = action.ah.ui
+        self.model = action.ah.report.model # rr.master
+        self.rh = action.rh
         
         kw.update(closeAction='hide')
         self.source = {}
         self.customEditors = {}
         self.propertyNames = {}
+        rr = self.rh.request(master=self.model)
         #~ for pv in self.rh.request(master=model,master_instance=None):
         for pv in rr:
             p = pv.prop
@@ -668,15 +672,26 @@ class PropertiesWrapper(SlaveWrapper):
         #~ window = Window(ui,rr.rh.name+'_properties',main,None,**kw)
         window = WrappedWindow(self,self.ui, 'window', main, permalink_name, **kw)
         
-        button_text = rr.rh.report.label
+        #~ button_text = rr.rh.report.label
         
-        SlaveWrapper.__init__(self,master_lh,'properties',window,button_text)
+        SlaveWrapper.__init__(self,action.name,window)
                     
                     
     def has_properties(self):
         return len(self.source) > 0
+        
+        
+    def js_render(self):
+        yield "function(caller) { return new Lino.PropertiesWrapper(caller,%s);}" % py2js(self.config)
+        
+    def get_config(self):
+        d = SlaveWrapper.get_config(self)
+        d.update(main_panel=self.window.main)
+        d.update(url=self.rh.get_absolute_url())
+        return d
+        
 
-    def js_main(self):
+    def unused_js_main(self):
         for ln in super(PropertiesWrapper,self).js_main():
             yield ln
             

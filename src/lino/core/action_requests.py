@@ -59,6 +59,7 @@ class ActionRequest:
     selected_rows = []
     
     def __init__(self,ah,action):
+        # TODO: ah parameter not needed here because it is now stored in action.ah
         #~ self.is_over = False
         self.ui = ah.ui
         self.ah = ah # actor handle
@@ -111,6 +112,9 @@ class ActionRequest:
         
     def show_detail(self,lh):
         return self.ui.show_detail(self,lh)
+        
+    def show_properties(self,lh):
+        return self.ui.show_properties(self)
         
     def unused_show_detail(self,row):
         assert self.ah.detail_link is not None

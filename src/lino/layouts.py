@@ -249,7 +249,7 @@ class FormLayout(Layout):
     title = None
     label_align = 'left'
     #~ layout_command = None
-    actions = [actions.Cancel(),actions.OK()]
+    actions = [actions.Cancel,actions.OK]
     
     def do_setup(self):
         self.datalink = forms.Form(self)
@@ -304,11 +304,14 @@ class DetailLayout(ModelLayout):
             if l is None:
                 l = []
                 setattr(self.datalink,'_lino_layouts',l)
-            lino.log.debug('Register %s detail layout %d for %s',
-                self,len(l),model_label(self.datalink))
+            lino.log.debug('Register DetailLayout %s as %r for model %s',
+                self,self._actor_name,model_label(self.datalink))
             for dtl in l:
-                if not isinstance(self,dtl.__class__):
+                if self._actor_name != dtl._actor_name:
+                #~ if not isinstance(self,dtl.__class__):
                     new_details.append(dtl)
+                else:
+                    lino.log.debug('not isinstance(%r,%r)',self,dtl.__class__)
             new_details.append(self)
             setattr(self.datalink,'_lino_layouts',new_details)
             

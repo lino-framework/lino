@@ -198,8 +198,8 @@ class ExtUI(base.UI):
             (r'^submit/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.form_submit_view),
             #~ (r'^form/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.act_view),
             #~ (r'^form/(?P<app_label>\w+)/(?P<actor>\w+)$', self.act_view),
-            (r'^action/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.act_view),
-            (r'^action/(?P<app_label>\w+)/(?P<actor>\w+)$', self.act_view),
+            (r'^action/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.action_view),
+            #~ (r'^action/(?P<app_label>\w+)/(?P<actor>\w+)$', self.action_view),
             #~ (r'^step_dialog$', self.step_dialog_view),
             #~ (r'^abort_dialog$', self.abort_dialog_view),
             (r'^choices/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<fldname>\w+)$', self.choices_view),
@@ -272,17 +272,17 @@ class ExtUI(base.UI):
         #~ s = py2js(lino_site.get_menu(request))
         #~ return HttpResponse(s, mimetype='text/html')
 
-    def act_view(self,request,app_label=None,actor=None,action=None,**kw):
+    def action_view(self,request,app_label=None,actor=None,action=None,**kw):
         actor = actors.get_actor2(app_label,actor)
         ah = actor.get_handle(self)
-        if not action:
-            a = actor.default_action
-        else:
-            a = ah.get_action(action)
-            if a is None:
-                msg = "No action %s in %s" % (action,ah)
-                print msg
-                raise Http404(msg)
+        #~ if not action:
+            #~ a = actor.default_action
+        #~ else:
+        a = ah.get_action(action)
+        if a is None:
+            msg = "No action %s in %s" % (action,ah)
+            #~ print msg
+            raise Http404(msg)
         ar = ext_requests.ViewReportRequest(request,ah,a)
         return json_response(ar.run().as_dict())
         #~ dlg = ext_requests.Dialog(request,self,actor,action)
@@ -357,7 +357,8 @@ class ExtUI(base.UI):
 
     def save_window_config_view(self,request):
         actor = ext_windows.SaveWindowConfig()
-        ar = ext_requests.ViewReportRequest(request,actor.get_handle(self),actor.default_action)
+        ah = actor.get_handle(self)
+        ar = ext_requests.ViewReportRequest(request,ah,ah.default_action)
         return json_response(ar.run().as_dict())
         #~ return self.start_dialog(dlg)
         
@@ -404,10 +405,10 @@ class ExtUI(base.UI):
         if choices_for_field:
             rptreq = ext_requests.ChoicesReportRequest(request,rh,choices_for_field)
         elif csv:
-            rptreq = ext_requests.CSVReportRequest(request,rh,rh.report.default_action)
+            rptreq = ext_requests.CSVReportRequest(request,rh,rh.default_action)
             return rptreq.render_to_csv()
         else:
-            rptreq = ext_requests.ViewReportRequest(request,rh,rh.report.default_action)
+            rptreq = ext_requests.ViewReportRequest(request,rh,rh.default_action)
             if submit:
                 pk = request.POST.get(rh.store.pk.name) #,None)
                 #~ if pk == reports.UNDEFINED:
@@ -499,6 +500,9 @@ class ExtUI(base.UI):
     def show_detail(self,ar,lh,**kw):
         ar.show_window(lh.window_wrapper.js_render)
 
+    def show_properties(self,ar,**kw):
+        ar.show_window(ar.rh.properties_wrapper.js_render)
+
         
     #~ def view_form(self,dlg,**kw):
         #~ "called from ViewForm.run_in_dlg()"
@@ -508,6 +512,7 @@ class ExtUI(base.UI):
         
     def setup_report(self,rh):
         if rh.report.use_layouts:
+            lino.log.debug('ExtUI.setup_report() %s',rh.report)
             rh.store = ext_store.Store(rh)
             if rh.report.master is None:
                 rh.window_wrapper = ext_windows.GridMasterWrapper(rh)
@@ -522,6 +527,8 @@ class ExtUI(base.UI):
             #~ else:
                 #~ rh.detail_wrapper = None
             #~ lh = rh.get_default_layout()
+            if rh.properties is not None:
+                rh.properties_wrapper = ext_windows.PropertiesWrapper(rh.properties)
         else:
             rh.store = None
             #~ lh = None
@@ -565,7 +572,7 @@ class ExtUI(base.UI):
         #~ row.save(force_insert=True)
         
     def get_report_ar(self,rh,**kw):
-        ar = action_requests.ReportActionRequest(rh,rh.report.default_action)
+        ar = action_requests.ReportActionRequest(rh,rh.default_action)
         ar.setup(**kw)
         return ar
         
