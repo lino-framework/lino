@@ -327,7 +327,6 @@ class MasterWrapper(WindowWrapper):
         if self.datalink.content_type is not None:
             yield "this.content_type = %s;" % py2js(self.datalink.content_type)
             
-#~ class FormMasterWrapper(MasterWrapper):
 class DetailMasterWrapper(MasterWrapper):
   
     window_config_type = 'form'
@@ -385,8 +384,10 @@ class GridWrapperMixin(WindowWrapper):
         
 class GridMasterWrapper(GridWrapperMixin,MasterWrapper):
   
-    def __init__(self,rh,**kw):
-        MasterWrapper.__init__(self,rh.list_layout,rh,**kw)
+    def __init__(self,ui,action,**kw):
+        self.action = action
+        ah = action.get_handle(ui)
+        MasterWrapper.__init__(self,ah.list_layout,ah,**kw)
         #~ self.config = self.get_config()
   
         #~ wc = self.window.ui.load_window_config(self.window.permalink_name)
@@ -406,124 +407,54 @@ class GridMasterWrapper(GridWrapperMixin,MasterWrapper):
 
 class SlaveWrapper(WindowWrapper):
   
-    def unused__init__(self, master_lh,name, window, button_text):
-        self.master_lh = master_lh
-        h = js_code("Lino.toggle_window_handler(this,%r)" % id2js(name))
-        self.button = ext_elems.ButtonElement(
-            master_lh, name+'_btn',button_text,
-            toggleHandler=h,
-            enableToggle=True)
-        WindowWrapper.__init__(self,name,window)
-        window.update(closeAction='hide')
-        
-    #~ def vars(self):
-        #~ for b in self.master_lh.datalink.detail_buttons:
-            #~ yield b
-        #~ for v in WindowWrapper.vars(self):
-            #~ yield v
-            
-    #~ def subvars(self):
-        #~ for v in WindowWrapper.subvars(self):
-            #~ yield v
-        #~ yield self.button
-        
-    def unused_js_show(self):
-        #~ yield "// begin SlaveWrapper.js_body()"
-        for ln in WindowWrapper.js_show(self):
-            yield ln
-        #~ yield "    if (caller) {"
-        yield "caller.window.on('close',function() { this.close() },this);"
-        #~ yield "    };"
-        yield "caller.window.on('hide',function(){ this.window.hide()},this);" 
-        yield "this.window.on('hide',"
-        yield "  function(){ caller.%s.toggle(false)},this);" % self.button.ext_name
-        yield "this.window.on('show',function(){this.load_record(caller.get_current_record())},this)" 
-        #~ yield "// end SlaveWrapper.js_body()"
-        
-    def unused_js_on_window_render(self):
-        yield "this.window.on('render',function() {"
-        yield "  this.add_row_listener(function(sm,ri,rec){this.load_record(rec)});"
-        yield "  var sels = this.caller.main_grid.getSelectionModel().getSelections()"
-        yield "  if(sels.length > 0) this.load_record(sels[0]);"
-        yield "},this)"
-        
-    def unused_js_add_row_listener(self):
-        yield "if (this.caller.main_grid) {"
-        yield "  this.caller.main_grid.add_row_listener(fn,this);"
-        yield "} else console.log('called add_row_listener but caller has no main_grid');"
-
-
+    pass
 
 class GridSlaveWrapper(GridWrapperMixin,SlaveWrapper):
   
-    def __init__(self,slave_rh,**kw):
-        self.datalink = slave_rh
-        self.lh = slave_rh.list_layout
+    def __init__(self,ui,action,**kw):
+        self.action = action
+        ah = action.actor.get_handle(ui)
+        self.datalink = ah # slave_rh
+        self.lh = ah.list_layout
         #~ button_text = slave_rh.report.button_label
         #~ permalink_name = id2js(slave_lh.name)
         permalink_name = self.lh.name
         name = id2js(self.lh.name)
         #~ kw.update(title=slave_lh.get_title(None))
         lh2win(self.lh,kw)
-        window = WrappedWindow(self,slave_rh.ui,'window',self.lh._main,permalink_name,**kw)
+        window = WrappedWindow(self,ui,'window',self.lh._main,permalink_name,**kw)
         #~ SlaveWrapper.__init__(self, name, window, button_text)
         SlaveWrapper.__init__(self, name, window)
         #~ self.bbar_buttons = slave_rh.window_wrapper.bbar_buttons
         #~ self.slave_windows = slave_rh.window_wrapper.slave_windows
         #~ slave_lh._main.update(bbar=self.bbar_buttons)
-        self.actions = [dict(type=a.action_type,name=a.name,label=a.label) for a in slave_rh.get_actions()]
+        self.actions = [dict(type=a.action_type,name=a.name,label=a.label) for a in ah.get_actions()]
         
     def js_render(self):
         yield "function(caller) { return new Lino.GridSlaveWrapper(caller,%s);}" % py2js(self.config)
         
-    def unused_js_preamble(self):
-        yield "this.content_type = %s;" % py2js(self.slave_rh.content_type)
-        
-    #~ def subvars(self): 
-        #~ yield self.slave_rh.store
-        #~ for v in SlaveWrapper.subvars(self):
-            #~ yield v
-        
-    #~ def vars(self):
-        #~ for w in self.slave_rh.window_wrapper.slave_windows:
-            #~ yield w
-        #~ for b in self.slave_rh.window_wrapper.bbar_buttons:
-            #~ yield b
-        #~ for v in WindowWrapper.vars(self):
-            #~ yield v
             
-    def unused_js_main(self):
-        #~ yield "// begin SlaveWrapper.js_body()"
-        for ln in WindowWrapper.js_main(self):
-            yield ln
-        yield "this.load_record = function(record) {"
-        yield "  this.current_record = record;" 
-        yield "  var p = { %s: record.id }" % ext_requests.URL_PARAM_MASTER_PK
-        yield "  p[%r] = this.content_type;" % ext_requests.URL_PARAM_MASTER_TYPE
-        yield "  %s.load({params:p});" % self.slave_rh.store.as_ext()
-        yield "};"
-        
-    #~ def on_load_record(self):
-        #~ for v in self.vars():
-            #~ for ln in v.on_load_record():
-                #~ yield ln
-                
+    def get_config(self):
+        d = super(GridSlaveWrapper,self).get_config()
+        d.update(name=self.action.name)
+        return d
         
         
 class DetailSlaveWrapper(SlaveWrapper):
   
     window_config_type = 'detail'
     
-    def __init__(self,lh,**kw):
+    def __init__(self,ui,action,**kw):
+        self.action = action
         #~ self.datalink = rh
-        self.lh = lh
+        self.lh = action.layout.get_handle(ui)
         #~ button_text = slave_rh.report.button_label
         #~ permalink_name = id2js(slave_lh.name)
-        permalink_name = lh.name
-        name = id2js(lh.name)
+        permalink_name = self.lh.name
+        name = id2js(self.lh.name)
         #~ kw.update(title=slave_lh.get_title(None))
-        lh2win(lh,kw)
-        window = WrappedWindow(self,lh.ui,'window',lh._main,permalink_name,**kw)
+        lh2win(self.lh,kw)
+        window = WrappedWindow(self,ui,'window',self.lh._main,permalink_name,**kw)
         #~ SlaveWrapper.__init__(self, name, window, button_text)
         SlaveWrapper.__init__(self, name, window)
         #~ self.bbar_buttons = slave_rh.window_wrapper.bbar_buttons
@@ -537,7 +468,9 @@ class DetailSlaveWrapper(SlaveWrapper):
     def get_config(self):
         d = super(DetailSlaveWrapper,self).get_config()
         d.update(main_panel=self.lh._main)
+        d.update(name=self.action.name)
         return d
+        
     def unused__init__(self,master_lh,detail_lh,**kw):
         self.detail_lh = detail_lh
         #~ permalink_name = id2js(detail_lh.name)
@@ -547,7 +480,8 @@ class DetailSlaveWrapper(SlaveWrapper):
         lh2win(detail_lh,kw)
         window = WrappedWindow(self,master_lh.ui, 'window', detail_lh._main, permalink_name, **kw)
         button_text = detail_lh.label
-        SlaveWrapper.__init__(self, master_lh, detail_lh.name, window, button_text)
+        #~ SlaveWrapper.__init__(self, master_lh, detail_lh.name, window, button_text)
+        SlaveWrapper.__init__(self, detail_lh.name, window)
         
         rh = detail_lh.datalink
         
@@ -617,21 +551,22 @@ class PropertiesWrapper(SlaveWrapper):
     #~ declare_type = jsgen.DECLARE_THIS
     #~ value_template = "new Ext.Window(%s)"
     
-    def __init__(self,action,**kw):
+    def __init__(self,ui,action,**kw):
       
-        assert isinstance(action,reports.PropertiesAction)
+        assert isinstance(action,properties.PropertiesAction)
         self.action = action
-        self.ui = action.ah.ui
-        self.model = action.ah.report.model # rr.master
-        self.rh = action.rh
+        self.ui = ui
+        self.model = action.actor.model # rr.master
+        #~ self.rh = action.rh
         
         kw.update(closeAction='hide')
         self.source = {}
         self.customEditors = {}
         self.propertyNames = {}
-        rr = self.rh.request(master=self.model)
+        
         #~ for pv in self.rh.request(master=model,master_instance=None):
-        for pv in rr:
+        #~ for pv in action.prop_values(ui):
+        for pv in action.get_queryset(None):
             p = pv.prop
             self.source[p.name] = pv.value
             if p.label:
@@ -688,6 +623,7 @@ class PropertiesWrapper(SlaveWrapper):
         d = SlaveWrapper.get_config(self)
         d.update(main_panel=self.window.main)
         d.update(url=self.rh.get_absolute_url())
+        d.update(name=self.action.name)
         return d
         
 

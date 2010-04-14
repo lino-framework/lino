@@ -23,6 +23,7 @@ from django.utils.translation import ugettext as _
 import lino
 from lino import reports
 from lino import layouts
+from lino import actions
 from lino.utils import perms
 from lino.utils.ticket7623 import child_from_parent
 
@@ -255,23 +256,54 @@ class PropValuesByOwner(reports.Report):
     #column_names = "prop__name value"
     order_by = "prop__name"
     
-    def get_queryset(self,rr):
-        "returns one PropValue instance for each possible Property"
-        return [
-          p.get_value_for(rr.master_instance) 
-            for p in Property.properties_for_model(rr.master).order_by('name')]
 
+class PropertiesAction(actions.ToggleWindowAction):
+    name = 'properties'
+    label = _('Properties')
+    #~ propvalues_report = None
+    
+    #~ def __init__(self,actor):
+        #~ rpt = actor
+        #~ if rpt.model is not None:
+            #~ from lino.modlib.properties import models as properties
+            #~ if rpt.model is not properties.PropValue:
+                #~ self.propvalues_report = properties.PropValuesByOwner() # .get_handle(ah.ui)
+        #~ actions.ToggleWindowAction.__init__(self,rpt)
+        
     def get_title(self,rr):
         if rr.master_instance is None:
             return _('Properties for %s') % rr.master._meta.verbose_name_plural
         return _('Properties for %s') % rr.master_instance
             
+    def get_queryset(self,ar):
+        "returns one PropValue instance for each possible Property"
+        if ar is None:
+            master_instance = None
+        else:
+            master_instance = ar.master_instance
+        return [ p.get_value_for(master_instance) 
+            for p in Property.properties_for_model(self.actor.model).order_by('name')]
+
+    #~ def prop_values(self,ui):
+        #~ if self.propvalues_report is not None:
+          
+        #~ from lino.modlib.properties import models as properties
+        #~ if self.actor.model is not properties.PropValue:
+            #~ rh = properties.PropValuesByOwner().get_handle(ui)
+            #~ return rh.request(master=self.actor.model)
+            
+    def run_action(self,ar):
+        ar.show_action_window(self)
+        #~ ar.show_properties(self.ah)
+    
     def row2dict(self,row,d):
         d['name'] = row.prop.name
         #~ d['label'] = row.prop.label
         d['value'] = row.value
         #~ d['choices'] = [unicode(pv) for pv in row.value_choices(row.prop)]
         return d
+        
+        
         
 
 def set_value_for(owner,**kw):

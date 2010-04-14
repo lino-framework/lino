@@ -66,7 +66,6 @@ def json_response(x):
 
 
 
-
 class ExtUI(base.UI):
     _response = None
     
@@ -497,12 +496,15 @@ class ExtUI(base.UI):
     def show_report(self,ar,rh,**kw):
         ar.show_window(rh.window_wrapper.js_render)
 
-    def show_detail(self,ar,lh,**kw):
-        ar.show_window(lh.window_wrapper.js_render)
+    def show_detail(self,ar):
+        ar.show_window(ar.action.window_wrapper.js_render)
+
+    def show_action_window(self,ar,action):
+        ar.show_window(action.window_wrapper.js_render)
 
     def show_properties(self,ar,**kw):
-        ar.show_window(ar.rh.properties_wrapper.js_render)
-
+        ar.show_window(ar.rh.properties.window_wrapper.js_render)
+        
         
     #~ def view_form(self,dlg,**kw):
         #~ "called from ViewForm.run_in_dlg()"
@@ -510,25 +512,29 @@ class ExtUI(base.UI):
         #~ fh = self.get_form_handle(frm)
         #~ yield dlg.show_window(fh.window_wrapper.js_render).over()
         
+    def action_window_wrapper(self,a):
+        if isinstance(a,reports.SlaveGridAction):
+            return ext_windows.GridSlaveWrapper(self,a.slave.default_action)
+        if isinstance(a,reports.GridEdit):
+            if a.ah.report.master is None:
+                return ext_windows.GridMasterWrapper(self,a)
+            else:
+                return ext_windows.GridSlaveWrapper(self,a)
+        if isinstance(a,reports.DetailAction):
+            return ext_windows.DetailSlaveWrapper(self,a)
+        if isinstance(a,properties.PropertiesAction):
+            return ext_windows.PropertiesWrapper(self,a)
+        
+
+        
+        
     def setup_report(self,rh):
         if rh.report.use_layouts:
             lino.log.debug('ExtUI.setup_report() %s',rh.report)
             rh.store = ext_store.Store(rh)
-            if rh.report.master is None:
-                rh.window_wrapper = ext_windows.GridMasterWrapper(rh)
-            else:
-                #~ print 20100406, rh.report, ': master is', rh.report.master
-                rh.window_wrapper = ext_windows.GridSlaveWrapper(rh)
-            #~ if rh.detail_link is not None:
-            for lh in rh.details:
-                lh.window_wrapper = ext_windows.DetailSlaveWrapper(lh)
+            for a in rh.get_actions():
+                a.window_wrapper = self.action_window_wrapper(a)
                 
-                #~ rh.detail_wrapper = ext_windows.DetailMasterWrapper(rh.detail_link.lh,rh.detail_link)
-            #~ else:
-                #~ rh.detail_wrapper = None
-            #~ lh = rh.get_default_layout()
-            if rh.properties is not None:
-                rh.properties_wrapper = ext_windows.PropertiesWrapper(rh.properties)
         else:
             rh.store = None
             #~ lh = None
@@ -536,44 +542,6 @@ class ExtUI(base.UI):
             rh.detail_wrapper = None
             
         rh.choosers = chooser.get_choosers_for_model(rh.report.model,chooser.FormChooser)
-        
-    #~ def show_detail(self,ar,row):
-        #~ ar.show_window(ar.ah.detail_wrapper.js_render)
-        
-
-    def unused_setup_layout(self,lh):
-        if isinstance(lh.datalink,actions.Command):
-            lh.window_wrapper = ext_windows.FormMasterWrapper(fh)
-            lh.action_buttons = []
-            lh.slave_windows = []
             
-    #~ def setup_form(self,fh):
-        #~ fh.window_wrapper = ext_windows.FormMasterWrapper(fh.lh,fh.dl)
-      
-    #~ def show_modal_form(self,dlg,fh):
-        #~ dlg.show_modal_window(fh.window_wrapper.js_render)
-        
-    #~ def get_detail_form(self,row):
-        #~ layout = layouts.get_detail_layout(row.__class__)
-        #~ lh = layout.get_handle(self)
-        #~ dl = reports.RowHandle(row)
-        #~ return actions.FormHandle(lh,dl)
-        
-    #~ def insert_row(self,dlg):
-        #~ if False:
-            #~ yield dlg.confirm(_("Insert new row. Are you sure?"))
-        #~ rr = dlg.get_request()
-        #~ row = rr.create_instance()
-        #~ ww = ext_windows.DetailMasterWrapper(rr.rh,row)
-        #~ yield dlg.show_modal_window(ww.js_render)
-        
-        #~ data = rh.store.get_from_form(request.POST)
-        #~ row.update(data)
-        #~ row.save(force_insert=True)
-        
-    def get_report_ar(self,rh,**kw):
-        ar = action_requests.ReportActionRequest(rh,rh.default_action)
-        ar.setup(**kw)
-        return ar
         
 ui = ExtUI()

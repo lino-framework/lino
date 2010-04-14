@@ -126,6 +126,8 @@ class Actor(object):
             self.app_label = self.__class__.__module__.split('.')[-2]
         self.actor_id = self.app_label + ACTOR_SEP + self._actor_name
         self._forms = {} # will be filled by lino.layouts.FormLayout.setup()
+        self._actions_list = []
+        self._actions_dict = {}
         lino.log.debug("Actor.__init__() %s",self)
 
     def get_label(self):
@@ -170,6 +172,21 @@ class Actor(object):
         
     def do_setup(self):
         pass
+        
+        
+    def set_actions(self,actions):
+        self._actions_list = actions
+        self._actions_dict = {}
+        for a in actions:
+            self._actions_dict[a.name] = a
+            
+    def get_action(self,name):
+        return self._actions_dict.get(name,None)
+        
+    def get_actions(self):
+        return self._actions_list
+    
+        
 
 class HandledActor(Actor):
     _handle_class = None

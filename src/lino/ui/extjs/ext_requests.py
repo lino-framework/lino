@@ -58,10 +58,10 @@ def authenticated_user(user):
         #~ return authenticated_user(self.request.user)
         
 
-class BaseViewReportRequest(action_requests.ReportActionRequest):
+class BaseViewReportRequest(reports.ReportActionRequest):
     
     def __init__(self,request,rh,action,*args,**kw):
-        action_requests.ReportActionRequest.__init__(self,rh,action)
+        reports.ReportActionRequest.__init__(self,rh,action)
         self.request = request
         self.store = rh.store
         #~ request._lino_request = self
@@ -188,7 +188,7 @@ class ChoicesReportRequest(BaseViewReportRequest):
         kw['choices_for_field'] = self.fieldname
         return BaseViewReportRequest.get_absolute_url(self,**kw)
         
-    def setup_queryset(self):
+    def get_queryset(self):
         kw = {}
         for k,v in self.request.GET.items():
             kw[str(k)] = v
@@ -196,7 +196,7 @@ class ChoicesReportRequest(BaseViewReportRequest):
         qs = chooser.get_choices(**kw)
         if self.quick_search is not None:
             qs = reports.add_quick_search_filter(qs,self.quick_search)
-        self.queryset = qs
+        return qs # self.queryset = qs
         
     def row2dict(self,obj,d):
         d[CHOICES_TEXT_FIELD] = unicode(obj)

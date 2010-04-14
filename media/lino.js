@@ -363,7 +363,7 @@ Lino.submit_property = function (caller,e) {
   var p = {};
   // p['grid_afteredit_colname'] = e.field;
   // p[e.field] = e.value;
-  p['mt'] = caller.content_type // URL_PARAM_MASTER_TYPE
+  p['mt'] = caller.config.content_type // URL_PARAM_MASTER_TYPE
   p['mk'] = caller.get_current_record().id // URL_PARAM_MASTER_PK
   console.log('submit_property()',e.record.data);
   p['name'] = e.record.data.name
@@ -387,10 +387,10 @@ Lino.submit_property = function (caller,e) {
 };
 
 Lino.load_properties = function(caller,pw,url,record) { 
-  if(pw.hidden) return;
+  if(pw.window.hidden) return;
   
   if(record === undefined) return;
-  var params = {mt:caller.content_type, mk:record.id}; // URL_PARAM_MASTER_TYPE, URL_PARAM_MASTER_PK
+  var params = {mt:caller.config.content_type, mk:record.id}; // URL_PARAM_MASTER_TYPE, URL_PARAM_MASTER_PK
   var on_success = function(response) {
     var result = Ext.decode(response.responseText);
     pw.window.setTitle(result.title);
@@ -641,7 +641,7 @@ Lino.SlaveWrapper = Ext.extend(Lino.WindowWrapper, {
     //~ Lino.WindowWrapper.prototype.setup.call(this);
     this.caller.window.on('close',function() { this.close() },this);
     this.caller.window.on('hide',function(){ this.window.hide()},this);
-    this.window.on('hide',function(){ this.caller[this.config.name+'_button'].toggle(false)},this);
+    this.window.on('hide',function(){ console.log(20100414,this.config.name);this.caller[this.config.name+'_button'].toggle(false)},this);
     this.window.on('show',function(){this.load_record(this.caller.get_current_record())},this);
   },
   on_render : function() {

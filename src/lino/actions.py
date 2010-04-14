@@ -59,8 +59,9 @@ class Action:
     needs_selection = False
     needs_validation = False
     
-    def __init__(self,ah):
-        self.ah = ah # actor handle
+    def __init__(self,actor):
+        #~ self.ah = ah # actor handle of the actor who offers this action
+        self.actor = actor # actor who offers this action
         if self.name is None:
             self.name = self.__class__.__name__ # label
         if self.label is None:
