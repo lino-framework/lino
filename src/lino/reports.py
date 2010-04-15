@@ -209,12 +209,6 @@ class GridEdit(actions.Action):
     def run_action(self,ar):
         return ar.show_action_window(self)
 
-    def get_queryset(self,ar):
-        return self.actor.get_queryset(ar)
-        
-    def get_title(self,rr):
-        return self.actor.get_title(ar)
-        
     def row2dict(self,row,d):
         #~ "Overridden by lino.modlib.properties.PropValuesByOwner"
         "Overridden by lino.modlib.properties.PropertiesAction"

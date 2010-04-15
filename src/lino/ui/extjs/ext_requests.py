@@ -60,9 +60,12 @@ def authenticated_user(user):
 
 class BaseViewReportRequest(reports.ReportActionRequest):
     
-    def __init__(self,request,rh,action,*args,**kw):
-        reports.ReportActionRequest.__init__(self,rh,action)
+    def __init__(self,request,rpt,action,ui,*args,**kw):
+    #~ def __init__(self,request,rh,action,*args,**kw):
+        #~ reports.ReportActionRequest.__init__(self,rh,action)
         self.request = request
+        reports.ReportActionRequest.__init__(self,rpt,action,ui)
+        rh = rpt.get_handle(ui)
         self.store = rh.store
         #~ request._lino_request = self
         kw = self.parse_req(request,rh,**kw)
@@ -180,9 +183,9 @@ class CSVReportRequest(BaseViewReportRequest):
 class ChoicesReportRequest(BaseViewReportRequest):
     extra = 0
     
-    def __init__(self,request,rh,fldname,*args,**kw):
+    def __init__(self,request,rpt,fldname,*args,**kw):
         self.fieldname = fldname
-        BaseViewReportRequest.__init__(self,request,rh,rh.report.default_action,*args,**kw)
+        BaseViewReportRequest.__init__(self,request,rpt,rpt.default_action,ui,*args,**kw)
         
     def get_absolute_url(self,**kw):
         kw['choices_for_field'] = self.fieldname

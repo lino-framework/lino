@@ -258,7 +258,8 @@ class PropValuesByOwner(reports.Report):
     
 
 class PropertiesAction(actions.ToggleWindowAction):
-    name = 'properties'
+    name = 'props'
+    #~ name = 'properties'
     label = _('Properties')
     #~ propvalues_report = None
     

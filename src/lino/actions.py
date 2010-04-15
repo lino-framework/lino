@@ -76,6 +76,13 @@ class Action:
     def before_run(self,act):
         pass
         
+    def get_queryset(self,ar):
+        return self.actor.get_queryset(ar)
+        
+    def get_title(self,ar):
+        return self.actor.get_title(ar)
+        
+        
         
 
 class RowsAction(Action):

@@ -282,7 +282,7 @@ class ExtUI(base.UI):
             msg = "No action %s in %s" % (action,ah)
             #~ print msg
             raise Http404(msg)
-        ar = ext_requests.ViewReportRequest(request,ah,a)
+        ar = ext_requests.ViewReportRequest(request,actor,a,self)
         return json_response(ar.run().as_dict())
         #~ dlg = ext_requests.Dialog(request,self,actor,action)
         #~ return self.start_dialog(dlg)
@@ -322,8 +322,8 @@ class ExtUI(base.UI):
         if not rpt.can_change.passes(request):
             return json_response_kw(success=False,
                 msg="User %s cannot edit %s." % (request.user,rpt))
-        rh = rpt.get_handle(self)
-        rr = ext_requests.BaseViewReportRequest(request,rh)
+        #~ rh = rpt.get_handle(self)
+        rr = ext_requests.BaseViewReportRequest(request,rpt,rpt.default_action,self)
         name = request.POST.get('name')
         value = request.POST.get('value')
         try:
@@ -356,8 +356,8 @@ class ExtUI(base.UI):
 
     def save_window_config_view(self,request):
         actor = ext_windows.SaveWindowConfig()
-        ah = actor.get_handle(self)
-        ar = ext_requests.ViewReportRequest(request,ah,ah.default_action)
+        #~ ah = actor.get_handle(self)
+        ar = ext_requests.ViewReportRequest(request,actor,actor.default_action,self)
         return json_response(ar.run().as_dict())
         #~ return self.start_dialog(dlg)
         
@@ -396,18 +396,18 @@ class ExtUI(base.UI):
         rh = rpt.get_handle(self)
         
         if grid_action:
-            a = rh.get_action(grid_action)
+            a = rpt.get_action(grid_action)
             assert a is not None, "No action %s in %s" % (grid_action,rh)
-            ar = ext_requests.ViewReportRequest(request,rh,a)
+            ar = ext_requests.ViewReportRequest(request,rpt,a,self)
             return json_response(ar.run().as_dict())
                 
         if choices_for_field:
-            rptreq = ext_requests.ChoicesReportRequest(request,rh,choices_for_field)
+            rptreq = ext_requests.ChoicesReportRequest(request,rpt,choices_for_field,self)
         elif csv:
-            rptreq = ext_requests.CSVReportRequest(request,rh,rh.default_action)
+            rptreq = ext_requests.CSVReportRequest(request,rpt,rpt.default_action,self)
             return rptreq.render_to_csv()
         else:
-            rptreq = ext_requests.ViewReportRequest(request,rh,rh.default_action)
+            rptreq = ext_requests.ViewReportRequest(request,rpt,rpt.default_action,self)
             if submit:
                 pk = request.POST.get(rh.store.pk.name) #,None)
                 #~ if pk == reports.UNDEFINED:
@@ -516,7 +516,7 @@ class ExtUI(base.UI):
         if isinstance(a,reports.SlaveGridAction):
             return ext_windows.GridSlaveWrapper(self,a.slave.default_action)
         if isinstance(a,reports.GridEdit):
-            if a.ah.report.master is None:
+            if a.actor.master is None:
                 return ext_windows.GridMasterWrapper(self,a)
             else:
                 return ext_windows.GridSlaveWrapper(self,a)

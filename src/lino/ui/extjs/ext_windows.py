@@ -386,7 +386,7 @@ class GridMasterWrapper(GridWrapperMixin,MasterWrapper):
   
     def __init__(self,ui,action,**kw):
         self.action = action
-        ah = action.get_handle(ui)
+        ah = action.actor.get_handle(ui)
         MasterWrapper.__init__(self,ah.list_layout,ah,**kw)
         #~ self.config = self.get_config()
   
@@ -471,77 +471,7 @@ class DetailSlaveWrapper(SlaveWrapper):
         d.update(name=self.action.name)
         return d
         
-    def unused__init__(self,master_lh,detail_lh,**kw):
-        self.detail_lh = detail_lh
-        #~ permalink_name = id2js(detail_lh.name)
-        #~ permalink_name = detail_lh.name
-        permalink_name = detail_lh.layout.actor_id
-        #~ kw.update(title=detail_lh.get_title(None))
-        lh2win(detail_lh,kw)
-        window = WrappedWindow(self,master_lh.ui, 'window', detail_lh._main, permalink_name, **kw)
-        button_text = detail_lh.label
-        #~ SlaveWrapper.__init__(self, master_lh, detail_lh.name, window, button_text)
-        SlaveWrapper.__init__(self, detail_lh.name, window)
         
-        rh = detail_lh.datalink
-        
-        for a in rh.get_actions():
-            self.bbar_buttons.append(ext_elems.RowActionElement(detail_lh,a.name,a)) 
-        
-        keys = []
-        buttons = []
-
-        #main_name = id2js(self.lh.link.list_layout.name) + '.' + 'main_grid'
-        key = actions.PAGE_UP
-        js = js_code("function() {console.log('20100310e'); this.main_grid.getSelectionModel().selectPrevious()}")
-        keys.append(dict(
-          handler=js,
-          scope=js_code('this'),
-          key=key.keycode,ctrl=key.ctrl,alt=key.alt,shift=key.shift))
-        buttons.append(dict(handler=js,scope=js_code('this'),text="Previous"))
-
-        key = actions.PAGE_DOWN
-        js = js_code("function() {this.main_grid.getSelectionModel().selectNext()}")
-        keys.append(dict(
-          handler=js,
-          scope=js_code('this'),
-          key=key.keycode,ctrl=key.ctrl,alt=key.alt,shift=key.shift))
-        buttons.append(dict(handler=js,scope=js_code('this'),text="Next"))
-        
-        #~ url = self.detail_lh.datalink.get_absolute_url(submit=True)
-        #~ js = js_code("Lino.form_submit(this,'%s','%s')" % (
-                #~ url,self.detail_lh.datalink.store.pk.name))
-        #~ buttons.append(dict(handler=js,text='Submit'))
-        
-        self.bbar_buttons.append(ext_elems.SubmitActionElement(detail_lh,True))
-        
-        #~ if len(keys):
-            #~ yield "this.main_panel.keys = %s;" % py2js(keys)
-        #~ for btn in buttons:
-            #~ yield "this.main_panel.addButton(%s);" % py2js(btn)
-        #~ yield "}"
-        detail_lh._main.update(bbar=self.bbar_buttons)
-        
-        
-        
-    def unused_js_preamble(self):
-        yield "this.content_type = %s;" % py2js(self.detail_lh.datalink.content_type)
-        
-    def unused_js_main(self):
-        #~ yield "// begin SlaveWrapper.js_body()"
-        #~ for ln in WindowWrapper.js_main(self):
-        for ln in super(DetailSlaveWrapper,self).js_main():
-            yield ln
-        yield "this.refresh = function() { if(caller) caller.refresh(); };"
-        yield "this.get_current_record = function() { return this.current_record;};"
-        yield "this.get_selected = function() {"
-        yield "  if (this.current_record) return this.current_record.id;"
-        yield "}"
-        yield "this.load_record = function(record) {"
-        yield "  this.current_record = record;" 
-        yield "  if (record) this.main_panel.form.loadRecord(record)"
-        yield "  else this.main_panel.form.reset();"
-        yield "};"
         
 
         
@@ -622,19 +552,10 @@ class PropertiesWrapper(SlaveWrapper):
     def get_config(self):
         d = SlaveWrapper.get_config(self)
         d.update(main_panel=self.window.main)
-        d.update(url=self.rh.get_absolute_url())
+        d.update(url=self.ui.get_action_url(self.action.actor,self.action))
         d.update(name=self.action.name)
         return d
-        
 
-    def unused_js_main(self):
-        for ln in super(PropertiesWrapper,self).js_main():
-            yield ln
-            
-        url = self.rh.get_absolute_url()
-        yield "this.load_record = function(rec) {"
-        yield "  Lino.load_properties(caller,this,%r,rec);" % url
-        yield "}"
         
     def js_window_config(self):
         #~ yield "console.log('PropertiesWrapper',this.window.items.get(0).get(0));"
