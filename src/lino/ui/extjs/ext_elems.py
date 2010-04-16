@@ -267,7 +267,7 @@ class RowActionElement(ActionElement):
         ActionElement.__init__(self,lh,name,action,onclick,**kw)
         #~ del self.value['scope']
 
-class SubmitActionElement(ButtonElement):
+class unused_SubmitActionElement(ButtonElement):
   
     def __init__(self,lh,must_validate,**kw):
         url = lh.datalink.get_absolute_url(submit=True)
@@ -513,7 +513,7 @@ class DateFieldElement(FieldElement):
     def get_column_options(self,**kw):
         kw = FieldElement.get_column_options(self,**kw)
         #kw.update(xtype='datecolumn')
-        kw.update(format=self.lh.datalink.report.date_format)
+        kw.update(format=self.lh.layout.date_format)
         return kw
     
 class IntegerFieldElement(FieldElement):
@@ -556,9 +556,9 @@ class BooleanFieldElement(FieldElement):
     def get_column_options(self,**kw):
         kw = FieldElement.get_column_options(self,**kw)
         #kw.update(xtype='booleancolumn')
-        kw.update(trueText=self.lh.datalink.report.boolean_texts[0])
-        kw.update(falseText=self.lh.datalink.report.boolean_texts[1])
-        kw.update(undefinedText=self.lh.datalink.report.boolean_texts[2])
+        kw.update(trueText=self.lh.layout.boolean_texts[0])
+        kw.update(falseText=self.lh.layout.boolean_texts[1])
+        kw.update(undefinedText=self.lh.layout.boolean_texts[2])
         return kw
         
     def get_from_form(self,instance,values):
@@ -822,11 +822,13 @@ class GridElement(Container): #,DataElementMixin):
     ext_suffix = "_grid"
     vflex = True
     
-    def __init__(self,lh,name,rh,*elements,**kw):
+    def __init__(self,lh,name,rpt,*elements,**kw):
         """
         Note: lh is the owning layout handle, rh is the report being managed by this Grid.
         """
-        assert isinstance(rh,reports.ReportHandle), "%r is not a ReportHandle!" % rh
+        assert isinstance(rpt,reports.Report), "%r is not a ReportHandle!" % rh
+        #~ assert isinstance(rh,reports.ReportHandle), "%r is not a ReportHandle!" % rh
+        self.rh = rpt.get_handle(lh.ui)
         if len(elements) == 0:
             elements = rh.list_layout._main.elements
         w = 0
@@ -848,7 +850,7 @@ class GridElement(Container): #,DataElementMixin):
         
         self.rh = rh
         self.report = rh.report
-        lh.needs_store(rh)
+        #~ lh.needs_store(rh)
         self.column_model = ColumnModel(self)
         #self.mt = ContentType.objects.get_for_model(self.report.model).pk
         if self.report.master is not None:
@@ -916,8 +918,8 @@ class M2mGridElement(GridElement):
     def __init__(self,lh,field,*elements,**kw):
         self.field = field
         rpt = reports.get_model_report(field.rel.to)
-        rh = rpt.get_handle(lh.ui)
-        GridElement.__init__(self,lh,id2js(rpt.actor_id),rh,*elements,**kw)
+        #~ rh = rpt.get_handle(lh.ui)
+        GridElement.__init__(self,lh,id2js(rpt.actor_id),rpt,*elements,**kw)
   
 
 class unused_PagingToolbar(jsgen.Variable):
@@ -996,15 +998,10 @@ class MainPanel(jsgen.Variable):
         #~ self.buttons = Variable(self.ext_name+'_buttons',buttons)
         #~ self.cmenu = Variable('cmenu',js_code("new Ext.menu.Menu(%s)" % py2js(self.buttons)))
         
-    def subvars(self):
-        self.setup()
-        for rh in self.lh._needed_stores:
-            yield rh.store
-        #~ if self.props_button is not None:
-            #~ yield self.props_button 
-        #~ yield self.buttons
-        #~ yield self.keys
-        #~ yield self.cmenu
+    #~ def subvars(self):
+        #~ self.setup()
+        #~ for rh in self.lh._needed_stores:
+            #~ yield rh.store
         
   
     #~ def js_body(self):

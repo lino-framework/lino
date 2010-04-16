@@ -148,13 +148,13 @@ class ExtUI(base.UI):
         if name == "_":
             return ext_elems.Spacer(lh,name,**kw)
             
-        a = lh.datalink.get_action(name)
-        if a is not None:
-            e = ext_elems.FormActionElement(lh,name,a,**kw)
-            lh._buttons.append(e)
-            return e
+        #~ a = lh.datalink.get_action(name)
+        #~ if a is not None:
+            #~ e = ext_elems.FormActionElement(lh,name,a,**kw)
+            #~ lh._buttons.append(e)
+            #~ return e
           
-        de = lh.datalink.get_data_elem(name)
+        de = reports.get_data_elem(lh.layout.datalink,name)
         
         if isinstance(de,models.Field):
             return self.create_field_element(lh,de,**kw)
@@ -605,14 +605,14 @@ class ExtUI(base.UI):
 
         
         
-    def action_window_wrapper(self,a):
+    def action_window_wrapper(self,a,h):
         if isinstance(a,reports.SlaveGridAction):
-            return ext_windows.GridSlaveWrapper(self,a.name,a.slave.default_action)
+            return ext_windows.GridSlaveWrapper(h,a) # a.name,a.slave.default_action)
         if isinstance(a,reports.GridEdit):
-            if a.actor.master is None:
-                return ext_windows.GridMasterWrapper(self,a)
-            else:
-                return ext_windows.GridSlaveWrapper(self,a.name,a)
+            assert a.actor.master is None
+            return ext_windows.GridMasterWrapper(h,a)
+            #~ else:
+                #~ return ext_windows.GridSlaveWrapper(self,a.name,a)
         if isinstance(a,reports.DetailAction):
             return ext_windows.DetailSlaveWrapper(self,a)
         if isinstance(a,properties.PropertiesAction):
@@ -620,20 +620,21 @@ class ExtUI(base.UI):
         
         
         
-    def setup_report(self,rh):
-        if rh.report.use_layouts:
-            lino.log.debug('ExtUI.setup_report() %s',rh.report)
-            rh.store = ext_store.Store(rh)
-            for a in rh.get_actions():
-                a.window_wrapper = self.action_window_wrapper(a)
+    def setup_handle(self,h):
+        if isinstance(h,reports.ReportHandle):
+            lino.log.debug('ExtUI.setup_report() %s',h.report)
+            h.choosers = chooser.get_choosers_for_model(h.report.model,chooser.FormChooser)
+            if h.report.use_layouts:
+                h.store = ext_store.Store(h)
+                for a in h.get_actions():
+                    a.window_wrapper = self.action_window_wrapper(a,h)
+                    
+            else:
+                h.store = None
+                #~ lh = None
+                #~ rh.window_wrapper = None
+                #~ rh.detail_wrapper = None
                 
-        else:
-            rh.store = None
-            #~ lh = None
-            #~ rh.window_wrapper = None
-            #~ rh.detail_wrapper = None
-            
-        rh.choosers = chooser.get_choosers_for_model(rh.report.model,chooser.FormChooser)
             
         
 ui = ExtUI()

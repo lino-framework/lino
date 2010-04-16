@@ -147,7 +147,7 @@ def discover():
 
     """
     
-    lino.log.info("Analyzing up Reports...")
+    lino.log.info("Analyzing Reports...")
     lino.log.debug("Register Report actors...")
     for rpt in actors.actors_dict.values():
         if isinstance(rpt,Report) and rpt.__class__ is not Report:
@@ -284,33 +284,13 @@ class DeleteSelected(actions.RowsAction):
             row.delete()
         return rr.refresh_caller().notify(_("Success") + ": " + msg)
         
-    def run_in_dlg(self,dlg):
-        if len(dlg.selected_rows) == 1:
-            msg = _("Delete row %s") % dlg.selected_rows[0]
-        else:
-            msg = _("Delete %d rows") % len(dlg.selected_rows)
-        yield dlg.confirm(msg + '. ' + _("Are you sure?"))
-        for row in dlg.selected_rows:
-            row.delete()
-        yield dlg.refresh_caller().notify(_("Success") + ": " + msg).over()
-        
 class DetailAction(actions.ToggleWindowAction):
     name = 'detail'
-    #~ label = _('Detail')
     def __init__(self,actor,layout):
-        #~ self.lh = layout.get_handle(ah.ui)
         self.layout = layout
         self.label = layout.label
-        #~ assert isinstance(dtl,layouts.DetailLayout)
-        #~ self.detail = dtl
-        #~ self.rh = rh
-        #~ self.name = rh.report._actor_name
-        #~ self.label = rh.report.label
         actions.ToggleWindowAction.__init__(self,actor)
         
-    def run_action(self,ar):
-        ar.show_action_window(self)
-        #~ rr.toggle_window(self.detail)
                 
 class SlaveGridAction(actions.ToggleWindowAction):
   
@@ -322,20 +302,9 @@ class SlaveGridAction(actions.ToggleWindowAction):
         self.label = slave.button_label
         actions.ToggleWindowAction.__init__(self,actor)
         
-    def run_action(self,ar):
-        #~ print 201004152,self.name
-        #~ slave_rh = self.slave.get_handle(ar.ui)
-        #~ return self.slave.default_action.run_action()
-        #~ slave_rr = ar.ui.get_report_ar(self.slave)
-        #~ slave_rh.
-        #~ rr.toggle_window(slave_rh.)
-        #~ slave_rr.run()
-        #~ ar.show_report(self.slave)
-        ar.show_action_window(self) # .slave.default_action)
-                
         
 
-class ReportHandle(datalinks.DataLink,actors.ActorHandle):
+class ReportHandle(datalinks.DataLink,base.Handle): #,actors.ActorHandle):
   
     #~ properties = None
     
@@ -345,8 +314,9 @@ class ReportHandle(datalinks.DataLink,actors.ActorHandle):
         #lino.log.debug('ReportHandle.__init__(%s)',rd)
         assert isinstance(report,Report)
         self.report = report
-        actors.ActorHandle.__init__(self,report)
+        #~ actors.ActorHandle.__init__(self,report)
         datalinks.DataLink.__init__(self,ui)
+        base.Handle.__init__(self,ui)
         
   
     def __str__(self):
@@ -364,9 +334,7 @@ class ReportHandle(datalinks.DataLink,actors.ActorHandle):
         else:
             self.layouts = []
             
-        if self.ui is not None:
-            self.ui.setup_report(self)
-        
+        base.Handle.setup(self)    
         #~ if self.report.use_layouts:
             #~ def lh(layout_class,*args,**kw):
                 #~ return layouts.LayoutHandle(self,layout_class(),*args,**kw)
@@ -615,9 +583,9 @@ class ReportActionRequest(action_requests.ActionRequest): # was ReportRequest
         
 
 
-class Report(actors.HandledActor): # actions.Action): # 
+class Report(actors.Actor,base.Handled): # actions.Action): # 
     _handle_class = ReportHandle
-    _handle_selector = base.UI
+    #~ _handle_selector = base.UI
     params = {}
     field = None
     queryset = None 
@@ -642,9 +610,7 @@ class Report(actors.HandledActor): # actions.Action): #
     #master_instance = None
     page_length = 10
     display_field = '__unicode__'
-    boolean_texts = ('Ja','Nein',' ')
     #date_format = 'Y-m-d'
-    date_format = 'd.m.y'
     #date_format = '%d.%m.%y'
     
     #~ page_layout = None # (layouts.PageLayout ,)
@@ -683,7 +649,8 @@ class Report(actors.HandledActor): # actions.Action): #
                 m(self)
                 
         
-        actors.HandledActor.__init__(self)
+        actors.Actor.__init__(self)
+        base.Handled.__init__(self)
         
         #~ lino.log.debug("Report.__init__() %s", self)
         
@@ -732,7 +699,7 @@ class Report(actors.HandledActor): # actions.Action): #
         actions = [ ac(self) for ac in self.actions ]
           
         if self.model is not None:
-            self.list_layout = layouts.list_layout_factory(self)
+            self.list_layout = layouts.list_layout_factory(self)()
             self.detail_layouts = getattr(self.model,'_lino_layouts',[])
             if hasattr(self.model,'_lino_slaves'):
                 self._slaves = self.model._lino_slaves.values()

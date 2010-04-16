@@ -50,8 +50,8 @@ class StaticText:
     def __init__(self,text):
         self.text = text
 
-
-class LayoutHandle(actors.ActorHandle):
+        
+class LayoutHandle(base.Handle):
     """
     LayoutHandle analyzes a Layout and builds a tree of LayoutElements.
     
@@ -62,15 +62,15 @@ class LayoutHandle(actors.ActorHandle):
         # lino.log.debug('LayoutHandle.__init__(%s,%s,%d)',link,layout,index)
         assert isinstance(layout,Layout)
         #assert isinstance(link,reports.ReportHandle)
-        self.ui = ui
-        actors.ActorHandle.__init__(self,layout)
+        base.Handle.__init__(self,ui)
+        #~ actors.ActorHandle.__init__(self,layout)
         self.layout = layout
-        self.datalink = layout.get_datalink(ui)
-        self.name = layout._actor_name
+        #~ self.datalink = layout.get_datalink(ui)
+        #~ self.name = layout._actor_name
         self.label = layout.label or ''
         self._store_fields = []
         self._submit_fields = []
-        self._needed_stores = set()
+        #~ self._needed_stores = set()
         self.slave_grids = []
         self._store_fields = []
         self._buttons = []
@@ -100,8 +100,8 @@ class LayoutHandle(actors.ActorHandle):
                     #~ self.default_button = e
                     #~ break
                 
-    def needs_store(self,rh):
-        self._needed_stores.add(rh)
+    #~ def needs_store(self,rh):
+        #~ self._needed_stores.add(rh)
         
     def __str__(self):
         return str(self.layout) + "Handle"
@@ -116,10 +116,6 @@ class LayoutHandle(actors.ActorHandle):
         if e.name in self.hide_elements:
             self.hidden = True
             
-    def setup(self):
-        pass
-        
-        
     def get_absolute_url(self,**kw):
         return self.datalink.get_absolute_url(layout=self.index,**kw)
         
@@ -209,7 +205,7 @@ class LayoutHandle(actors.ActorHandle):
                 return name, dict(width=int(a[0]),height=int(a[1]))
         raise Exception("Invalid picture descriptor %s" % picture)
 
-class Layout(actors.HandledActor):
+class Layout(actors.Actor):
     """
     A Layout specifies how fields of a Report should be arranged when they are
     displayed in a form or a grid. 
@@ -222,9 +218,12 @@ class Layout(actors.HandledActor):
     # for internal use:
     _handle_class = LayoutHandle
     #~ _handle_selector = datalinks.DataLink
-    _handle_selector = base.UI
+    #~ _handle_selector = base.UI
     datalink = None
     join_str = None # set by subclasses
+    date_format = 'd.m.y'
+    boolean_texts = ('Ja','Nein',' ')
+
     
     #~ label = None
     has_frame = False # True
@@ -234,6 +233,12 @@ class Layout(actors.HandledActor):
     default_button = None
     collapsible_elements  = {}
     main = None
+    #~ layout_name = None
+    
+    #~ def __init__(self):
+        #~ if self.layout_name is None:
+            #~ self.layout_name = self.__class__.__name__
+        #~ actors.Actor.__init__(self)
     
     def get_hidden_elements(self,lh):
         return set()
@@ -241,7 +246,7 @@ class Layout(actors.HandledActor):
     #~ def get_handle(self,dl):
         #~ return LayoutHandle(dl,self)
         
-class FormLayout(Layout):
+class unused_FormLayout(Layout):
     #label = "Dialog"
     show_labels = True
     join_str = "\n"
@@ -277,8 +282,8 @@ class ModelLayout(Layout):
               "datalink for %s is %r, must be a Model." % (self,self.datalink)
         #~ self.app_label = self.layout_model._meta.app_label
         
-    def get_datalink(self,ui):
-        return self.datalink._lino_model_report.get_handle(ui)
+    #~ def get_datalink(self,ui):
+        #~ return self.datalink._lino_model_report.get_handle(ui)
         
   
 class ListLayout(ModelLayout):
@@ -286,7 +291,7 @@ class ListLayout(ModelLayout):
     show_labels = False
     join_str = " "
     
-    def get_hidden_elements(self,lh):
+    def unused_get_hidden_elements(self,lh):
         if lh.datalink.report.hide_columns is None:
             return set()
         return set(lh.datalink.report.hide_columns.split())
@@ -322,6 +327,7 @@ def get_detail_layout(model):
             
 
 def list_layout_factory(rpt):
-    cls = type(rpt._actor_name+"List",(ListLayout,),dict(app_label=rpt.app_label,main=rpt.column_names,datalink=rpt.model))
-    return actors.register_actor(cls())
+    return type(rpt._actor_name+"List",(ListLayout,),dict(app_label=rpt.app_label,main=rpt.column_names,datalink=rpt.model))
+    #~ cls = type(rpt._actor_name+"List",(ListLayout,),dict(app_label=rpt.app_label,main=rpt.column_names,datalink=rpt.model))
+    #~ return actors.register_actor(cls())
 

@@ -49,9 +49,21 @@ class ValidationError(Exception):
     
 #~ class MustConfirm(ActionEvent):
     #~ pass
+
+#~ class ActionHandle:
+    #~ def __init__(self,ui,action):
+        #~ assert isinstance(action,Action)
+        #~ self.ui = ui
+        #~ self.action = action
+        
+    #~ def setup(self):
+        #~ if self.ui is not None:
+            #~ self.ui.setup_action(self)
+        
     
     
-class Action:
+class Action: # (base.Handled):
+    #~ handle_class = ActionHandle
     action_type = 'open_window'
     label = None
     name = None
@@ -66,6 +78,7 @@ class Action:
             self.name = self.__class__.__name__ # label
         if self.label is None:
             self.label = self.name #self.__class__.__name__
+        
         
     def __str__(self):
         return self.name
@@ -96,6 +109,11 @@ class RowsAction(Action):
 
 class ToggleWindowAction(Action):
     action_type = 'toggle_window'
+    
+    def run_action(self,ar):
+        ar.show_action_window(self) 
+                
+    
     
 class Cancel(Action):
     label = _("Cancel")

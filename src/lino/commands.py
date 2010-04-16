@@ -20,7 +20,7 @@ from lino import actions
 from lino.core import datalinks
 from lino.ui import base
 
-class CommandHandle(datalinks.DataLink,actors.ActorHandle):
+class CommandHandle(datalinks.DataLink,base.Handle):
 #~ class CommandHandle(datalinks.FormHandle):
   
     def __init__(self,ui,command):
@@ -75,11 +75,11 @@ class RunCommand(actions.Action):
     def run_in_dlg(self,dlg):
         return dlg.ah.command.run_in_dlg(dlg)
 
-class Command(actors.HandledActor):
+class Command(actors.Actor):
     actions = [actions.Cancel, actions.OK]
     default_action = RunCommand
     _handle_class = CommandHandle
-    _handle_selector = base.UI
+    #~ _handle_selector = base.UI
     
     #~ def __init__(self):
         #~ actors.HandledActor.__init__(self)

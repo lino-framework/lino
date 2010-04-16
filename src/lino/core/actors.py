@@ -17,6 +17,7 @@ from django.db import models
 import lino
 from lino.ui import base
 from lino import actions
+from lino.ui.base import Handled
 
 actors_dict = None
 actor_classes = []
@@ -114,7 +115,7 @@ class ActorMetaClass(type):
         return cls.instance
 
   
-class Actor(object):
+class Actor(Handled):
     "inherited by Report, Command, Layout"
     __metaclass__ = ActorMetaClass
     app_label = None
@@ -142,6 +143,8 @@ class Actor(object):
         self._forms = {} # will be filled by lino.layouts.FormLayout.setup()
         self._actions_list = []
         self._actions_dict = {}
+        Handled.__init__(self)
+
         lino.log.debug("Actor.__init__() %s",self)
 
     def get_label(self):
@@ -202,26 +205,10 @@ class Actor(object):
     
         
 
-class HandledActor(Actor):
-    _handle_class = None
-    _handle_selector = None
-    def __init__(self):
-        Actor.__init__(self)
-        self._handles = {}
-        
-    def get_handle(self,k):
-        assert k is None or isinstance(k,self._handle_selector), "%s.get_handle() : %r is not a %s" % (self,k,self._handle_selector)
-        h = self._handles.get(k,None)
-        if h is None:
-            h = self._handle_class(k,self)
-            self._handles[k] = h
-            h.setup()
-        return h
-        
-class ActorHandle:
+#~ class Handle:
   
-    def __init__(self,actor):
-        self.actor = actor
+    #~ def __init__(self,actor):
+        #~ self.actor = actor
         
 
 def unused_get_actor(app_label,name):

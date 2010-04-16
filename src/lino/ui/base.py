@@ -12,6 +12,37 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 
+class Handle:
+  
+    def __init__(self,ui):
+        self.ui = ui
+        
+    def setup(self):
+        if self.ui is not None:
+            self.ui.setup_handle(self)
+        
+        
+class Handled(object):
+  
+    "Inherited by Report, Layout, and maybe others"
+    
+    _handle_class = None
+    #~ _handle_selector = None
+    
+    def __init__(self):
+        self._handles = {}
+        
+    def get_handle(self,k):
+        #~ assert k is None or isinstance(k,self._handle_selector), "%s.get_handle() : %r is not a %s" % (self,k,self._handle_selector)
+        assert k is None or isinstance(k,UI), "%s.get_handle() : %r is not a BaseUI" % (self,k)
+        h = self._handles.get(k,None)
+        if h is None:
+            h = self._handle_class(k,self)
+            self._handles[k] = h
+            h.setup()
+        return h
+        
+        
 class UI:
     """
     """
@@ -25,10 +56,7 @@ class UI:
     def setup_site(self,lino_site):
         pass
     
-    def setup_report(self,rh):
-        pass
-        
-    def setup_form(self,fh):
+    def setup_handle(self,h):
         pass
         
     def get_report_ar(self,rh,**kw):
