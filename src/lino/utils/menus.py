@@ -23,12 +23,14 @@ from django import template
 
 from lino.utils import perms
 from lino.core import actors
+from lino import actions
 
 class MenuItem:
   
     HOTKEY_MARKER = '~'
-    def __init__(self,parent,name,label,doc=None,enabled=True,
-                 can_view=perms.always):
+    
+    def __init__(self,parent,action,name=None,label=None,doc=None,enabled=True,
+                 can_view=perms.always,hotkey=None):
         p = parent
         l = []
         while p is not None:
@@ -37,17 +39,29 @@ class MenuItem:
             l.append(p)
             p = p.parent
         self.parent = parent
+        self.action = action
+        
+        if action is not None:
+            if name is None:
+                name = action.name
+            if label is None:
+                label = action.label 
+            if can_view is None:
+                can_view = action.can_view
+        
         self.name = name
         self.doc = doc
         self.enabled = enabled
-        if label is None:
-            label = self.__class__.__name__
+        self.hotkey = hotkey
+        
         n = label.find(self.HOTKEY_MARKER)
         if n != -1:
             label = label.replace(self.HOTKEY_MARKER,'')
             #label=label[:n] + '<u>' + label[n] + '</u>' + label[n+1:]
         self.label = label
+        
         self.can_view = can_view
+        
         
 
     def getLabel(self):
@@ -112,7 +126,7 @@ class MenuItem:
 
 
         
-class Action(MenuItem):
+class unused_Action(MenuItem):
     def __init__(self,parent,actor=None,
                  name=None,label=None,
                  hotkey=None,url=None,
@@ -141,19 +155,24 @@ class Action(MenuItem):
 class Menu(MenuItem):
     template_to_response = 'lino/menu.html'
     def __init__(self,name,label=None,parent=None,**kw):
-        MenuItem.__init__(self,parent,name,label,**kw)
+        MenuItem.__init__(self,parent,None,name,label,**kw)
         self.items = []
         #self.items_dict = {}
 
-    def add_action(self,actor,can_view=None,**kw):
-        if isinstance(actor,basestring):
-            actor = actors.get_actor(actor)
-        if can_view is None:
-            can_view = actor.can_view
-        return self._add_item(Action(self,actor,can_view=can_view,**kw))
+    def add_action(self,spec,**kw):
+        action = actors.resolve_action(spec)
+        if action is None:
+            raise "%r is not a valid action specifier" % spec
+        #~ if isinstance(actor,basestring):
+            #~ actor = actors.resolve_action(actor)
+            #~ actor = actors.get_actor(actor)
+        #~ if can_view is None:
+            #~ can_view = actor.can_view
+        #~ return self._add_item(Action(self,actor,can_view=can_view,**kw))
+        return self._add_item(MenuItem(self,action,**kw))
 
-    def add_item(self,**kw):
-        return self._add_item(Action(self,**kw))
+    #~ def add_item(self,**kw):
+        #~ return self._add_item(Action(self,**kw))
 
     
     def add_menu(self,name,label,**kw):
@@ -185,7 +204,7 @@ class Menu(MenuItem):
             for i in mi.get_items():
                 yield i
         
-    def sort_items(self,front=None,back=None):
+    def unused_sort_items(self,front=None,back=None):
         new_items = []
         if front:
             for name in front.split():

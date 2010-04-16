@@ -23,25 +23,29 @@ from lino.utils import menus
 def dict2js(d):
     return ", ".join(["%s: %s" % (k,py2js(v)) for k,v in d.items()])
 
+CONVERTERS = []
+
+def register_converter(func):
+    CONVERTERS.append(func)
 
 
-
-def py2js(v,**kw):
+def py2js(v):
     # lino.log.debug("py2js(%r,%r)",v,kw)
+    for cv in CONVERTERS:
+        v = cv(v)
         
-    if isinstance(v,menus.Menu):
-        if v.parent is None:
-            return py2js(v.items)
-            #kw.update(region='north',height=27,items=v.items)
-            #return py2js(kw)
-        kw.update(text=v.label,menu=dict(items=v.items))
-        return py2js(kw)
+    #~ if isinstance(v,menus.Menu):
+        #~ if v.parent is None:
+            #~ return py2js(v.items)
+            #~ #kw.update(region='north',height=27,items=v.items)
+            #~ #return py2js(kw)
+        #~ kw.update(text=v.label,menu=dict(items=v.items))
+        #~ return py2js(kw)
         
-    if isinstance(v,menus.MenuItem):
-        from lino.lino_site import lino_site
-        #~ handler = "function(btn,evt){Lino.do_action(undefined,%r,%r,{})}" % (v.actor.get_url(lino_site.ui),id2js(v.actor.actor_id))
-        handler = "function(btn,evt){Lino.do_action(undefined,%r,{})}" % v.actor.get_url(lino_site.ui)
-        return py2js(dict(text=v.label,handler=js_code(handler)))
+    #~ if isinstance(v,menus.MenuItem):
+        #~ from lino.lino_site import lino_site
+        #~ handler = "function(btn,evt){Lino.do_action(undefined,%r,{})}" % v.actor.get_url(lino_site.ui)
+        #~ return py2js(dict(text=v.label,handler=js_code(handler)))
         #~ if v.args:
             #~ handler = "function(btn,evt) {%s.show(btn,evt,%s);}" % (
                 #~ id2js(v.actor.actor_id),
@@ -49,16 +53,16 @@ def py2js(v,**kw):
         #~ else:
             #~ handler = "function(btn,evt) {%s.show(btn,evt);}" % id2js(v.actor.actor_id)
         #~ return py2js(dict(text=v.label,handler=js_code(handler)))
-    assert len(kw) == 0, "py2js() : value %r not allowed with keyword parameters" % v
+    #~ assert len(kw) == 0, "py2js() : value %r not allowed with keyword parameters" % v
     if isinstance(v,Value):
-        return v.as_ext(**kw)
+        return v.as_ext()
         
     if type(v) is types.GeneratorType:
         raise Exception("Please don't call the generator function yourself")
         #~ return "\n".join([ln for ln in v])
     if callable(v):
         #~ raise Exception("Please call the function yourself")
-        return "\n".join([ln for ln in v(**kw)])
+        return "\n".join([ln for ln in v()])
 
     if isinstance(v,js_code):
         return v.s

@@ -1,4 +1,16 @@
 /*
+ Copyright 2009-2010 Luc Saffre
+ This file is part of the Lino project.
+ Lino is free software; you can redistribute it and/or modify 
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 3 of the License, or
+ (at your option) any later version.
+ Lino is distributed in the hope that it will be useful, 
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ GNU General Public License for more details.
+ You should have received a copy of the GNU General Public License
+ along with Lino; if not, see <http://www.gnu.org/licenses/>.
 */
 Ext.namespace('Lino');
 Lino.on_store_exception = function (store,type,action,options,reponse,arg) {
@@ -270,7 +282,7 @@ Lino.run_permalink = function() {
     // if(windows[i]) eval(windows[i]+".show()");
     // if(windows[i]) Lino.do_action(undefined,'/permalink_do/'+windows[i],windows[i],{});
     if(links[i]) {
-      Lino.do_action(undefined,'/action'+links[i],{});
+      Lino.do_action(undefined,links[i]+'/grid.act',{});
       //~ var a = links[i].split('.');
       //~ if (a.length == 2) {
           //~ Lino.do_dialog(undefined,'/action/'+a[0]+'/'+a[1],{});
@@ -300,20 +312,20 @@ Lino.toggle_window = function(btn,state,ww) {
 */
 
 Lino.setup_child = function(caller,name,btn) {
-  //~ console.log('Lino.setup_child() ',caller,name,'=',caller[name]);
+  //~ console.log(20100414,'Lino.setup_child() ',caller,name,'=',caller[name]);
   if (caller[name]) return (caller[name] != 'loading');
   caller[name] = 'loading';
   Ext.Ajax.request({
     method: 'GET',
     waitMsg: 'Please wait...',
-    url: '/action'+caller.config.url + '/' + name,
+    url: caller.config.url + '/' + name + '.act',
     params: {}, 
     success: function(response) {
       var result = Ext.decode(response.responseText);
       if (result.show_window) {
-        //~ console.log('setup_child.show_window',name,caller); // [name]);
-        caller[name] = result.show_window(caller);
+        //~ console.log(20100414,'setup_child.show_window',name,caller); // [name]);
         caller[name+'_button'] = btn;
+        caller[name] = result.show_window(caller);
         caller[name].show();
       } 
       if (result.alert_msg) Ext.MessageBox.alert('Alert',result.alert_msg);
@@ -387,6 +399,7 @@ Lino.submit_property = function (caller,e) {
 };
 
 Lino.load_properties = function(caller,pw,url,record) { 
+  console.log('load_properties',caller,url,record);
   if(pw.window.hidden) return;
   
   if(record === undefined) return;
@@ -400,7 +413,6 @@ Lino.load_properties = function(caller,pw,url,record) {
       grid.setProperty(result.rows[i].name,result.rows[i].value)
     }
   };
-  console.log('load_properties',caller,url,record);
   Ext.Ajax.request({
     waitMsg: 'Loading properties...',
     url: url,
@@ -551,6 +563,7 @@ Lino.WindowWrapper = function(caller,config) {
   this.setup();
 };
 Ext.apply(Lino.WindowWrapper.prototype,{
+  closeAction : 'close',
   show : function() {
     console.log('Lino.WindowWrapper.show',this);
     this.window.show();
@@ -565,7 +578,7 @@ Ext.apply(Lino.WindowWrapper.prototype,{
     this.window = new Ext.Window({ layout: "fit", title: this.config.title, items: this.main_item, 
       height: this.config.height, width: this.config.width, maximizable: true, maximized: this.config.maximized, 
       y: this.config.y, x: this.config.x, 
-      closeAction:'close',
+      closeAction:this.closeAction,
       tools: [ { qtip: "Save window config", handler: Lino.save_window_config(this), id: "save" } ] 
       });
     this.window.window_wrapper = this;
@@ -582,15 +595,15 @@ Lino.GridWindowWrapper = Ext.extend(Lino.WindowWrapper,{
   setup : function() {
     this.store = new Ext.data.JsonStore({ 
       listeners: { exception: Lino.on_store_exception }, 
-      proxy: new Ext.data.HttpProxy({ url: "/list"+this.config.url, method: "GET" }), remoteSort: true, 
+      proxy: new Ext.data.HttpProxy({ url: this.config.url+'/grid.json', method: "GET" }), remoteSort: true, 
       fields: this.config.fields, 
       totalProperty: "count", 
       root: "rows", 
       id: "id" });
     this.pager = new Ext.PagingToolbar({ prependButtons: true, items: [ 
-      { xtype: "textfield", listeners: { keypress: Lino.search_handler(this) }, 
+      { scope:this, xtype: "textfield", listeners: { keypress: Lino.search_handler(this) }, 
         fieldLabel: "Search", enableKeyEvents: true, id: "seachString" }, 
-      { text: "Download", handler: function() {window.open('/csv'+this.config.url);} } 
+      { scope:this, text: "Download", handler: function() {window.open(this.config.url+'/grid.csv');} } 
     ], pageSize: 10, store: this.store, displayInfo: true });
     
     this.main_grid = new Lino.GridPanel({ clicksToEdit: 2, xtype: "container", tbar: this.pager, 
@@ -602,7 +615,7 @@ Lino.GridWindowWrapper = Ext.extend(Lino.WindowWrapper,{
       
     this.main_item = this.main_grid;
       
-    this.main_grid.on('afteredit', Lino.grid_afteredit(this,'/grid_afteredit'+this.config.url));
+    this.main_grid.on('afteredit', Lino.grid_afteredit(this,this.config.url+'/grid.submit'));
     // this.main_grid.on('cellcontextmenu', Lino.cell_context_menu, this);
     this.main_grid.on('resize', function(cmp,aw,ah,rw,rh) {
         this.pager.pageSize = cmp.calculatePageSize(this,aw,ah,rw,rh) || 10;
@@ -636,22 +649,28 @@ Lino.GridMasterWrapper = Ext.extend(Lino.GridWindowWrapper, {
 
 
 Lino.SlaveWrapper = Ext.extend(Lino.WindowWrapper, {
+  closeAction : 'hide',
   setup : function() {
-    // console.log('Lino.SlaveWrapper.setup',this.config.title,this);
+    console.log('Lino.SlaveWrapper.setup',this.config.name,this);
     //~ Lino.WindowWrapper.prototype.setup.call(this);
     this.caller.window.on('close',function() { this.close() },this);
     this.caller.window.on('hide',function(){ this.window.hide()},this);
-    this.window.on('hide',function(){ console.log(20100414,this.config.name);this.caller[this.config.name+'_button'].toggle(false)},this);
-    this.window.on('show',function(){this.load_record(this.caller.get_current_record())},this);
+    this.window.on('hide',function(){ 
+      //~ console.log(20100414,this.config.name);
+      this.caller[this.config.name+'_button'].toggle(false)
+    },this);
+    this.window.on('show',function(){
+      this.load_record(this.caller.get_current_record())
+    },this);
   },
   on_render : function() {
-    console.log('Lino.SlaveWrapper.on_render',this.config.title,this);
+    //~ console.log('Lino.SlaveWrapper.on_render',this.config.title,this);
     this.caller.add_row_listener( function(sm,ri,rec){this.load_record(rec)}, this );
     // var sels = this.caller.main_grid.getSelectionModel().getSelections();
     // if (sels.length > 0) this.load_record(sels[0]);
-    console.log('Lino.SlaveWrapper.on_render b');
+    //~ console.log('Lino.SlaveWrapper.on_render b');
     this.load_record(this.caller.get_current_record());
-    console.log('Lino.SlaveWrapper.on_render c');
+    //~ console.log('Lino.SlaveWrapper.on_render c');
   },
   add_row_listener : function(fn,scope) {
     this.caller.add_row_listener(fn,scope);
@@ -667,8 +686,13 @@ Lino.GridSlaveWrapper = Ext.extend(Lino.SlaveWrapper, {
   get_window_config  : Lino.GridWindowWrapper.prototype.get_window_config,
   load_record : function(record) {
     this.current_record = record;
-    var p = { mk: record.id } // ext_requests.URL_PARAM_MASTER_PK
+    var p = { }
     p['mt'] = this.config.content_type; // ext_requests.URL_PARAM_MASTER_TYPE
+    if (record) {
+      p['mk'] = record.id; // ext_requests.URL_PARAM_MASTER_PK
+    } else {
+      p['mk'] = undefined;
+    }
     this.store.load({params:p}); 
   },
 });
@@ -691,12 +715,25 @@ Lino.PropertiesWrapper = Ext.extend(Lino.SlaveWrapper, {
   setup : function() {
     // console.log('Lino.GridMasterWrapper configure',20100401,this);
     this.main_item = this.config.main_panel;
-    Lino.WindowWrapper.prototype.setup.call(this);    
+    Lino.WindowWrapper.prototype.setup.call(this);
     Lino.SlaveWrapper.prototype.setup.call(this);
   },
   load_record : function(rec) {
-    Lino.load_properties(this.caller,this,this.config.url,rec);
-  }
+    Lino.load_properties(this.caller,this,this.config.url+'/props.json',rec);
+  },
+  get_window_config : function() {
+    var wc = { window_config_type: 'props' }
+    var cm = this.window.items.get(0).get(0).colModel;
+    var col_widths = new Array(cm.getColumnCount());
+    var col_hidden = new Array(cm.getColumnCount());
+    for(i=0;i<cm.getColumnCount();i++) {
+      col_widths[i] = cm.getColumnWidth(i);
+      col_hidden[i] = cm.isHidden(i);
+    }
+    wc['column_widths'] = col_widths;
+    wc['column_hidden'] = col_hidden;
+    return wc;
+  },
 });
 
 

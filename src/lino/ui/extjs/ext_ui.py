@@ -28,6 +28,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
 import lino
+from lino.utils import ucsv
 from lino import actions, layouts, commands
 from lino import reports        
 from lino.ui import base
@@ -63,7 +64,66 @@ def json_response(x):
     #lino.log.debug("json_response() -> %r", s)
     return HttpResponse(s, mimetype='text/html')
 
+EMITTERS = {}
 
+class Emitter:    
+    fmt = None
+    def handle_request(self,ar):
+        raise NotImplementedError()
+        
+class run_Emitter:    
+    fmt = ext_requests.FMT_RUN 
+    def handle_request(self,ar):
+        return json_response(ar.run().as_dict())
+        
+class json_Emitter:
+  
+    fmt = ext_requests.FMT_JSON
+    
+    def handle_request(self,ar):
+        d = ar.render_to_dict()
+        return json_response(d)
+        
+class csv_Emitter:
+    fmt = 'csv'
+    def handle_request(self,ar):
+        response = HttpResponse(mimetype='text/csv')
+        w = ucsv.UnicodeWriter(response)
+        names = [] # fld.name for fld in self.fields]
+        fields = []
+        for col in ar.ah.list_layout._main.column_model.columns:
+            names.append(col.editor.field.name)
+            fields.append(col.editor.field)
+        w.writerow(names)
+        for row in ar.queryset:
+            values = []
+            for fld in fields:
+                # uh, this is tricky...
+                meth = getattr(fld,'_return_type_for_method',None)
+                if meth is not None:
+                    v = meth(row)
+                else:
+                    v = fld.value_to_string(row)
+                #lino.log.debug("20100202 %r.%s is %r",row,fld.name,v)
+                values.append(v)
+            w.writerow(values)
+        return response
+        
+class submit_Emitter:
+    fmt = 'submit'
+    def handle_request(self,ar):
+        kw['colname'] = ar.request.POST['grid_afteredit_colname']
+        kw['submit'] = True
+        return ui.json_report_view(request,**kw)
+        
+        
+def register_emitter(e):
+    EMITTERS[e.fmt] = e
+
+register_emitter(run_Emitter())
+register_emitter(json_Emitter())
+register_emitter(submit_Emitter())
+register_emitter(csv_Emitter())
 
 
 class ExtUI(base.UI):
@@ -191,13 +251,14 @@ class ExtUI(base.UI):
             (r'^menu$', self.menu_view),
             (r'^submit_property$', self.submit_property_view),
             (r'^list/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.list_report_view),
-            (r'^csv/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.csv_report_view),
+            #~ (r'^csv/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.csv_report_view),
             (r'^grid_action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<grid_action>\w+)$', self.json_report_view),
-            (r'^grid_afteredit/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.grid_afteredit_view),
+            #~ (r'^grid_afteredit/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.grid_afteredit_view),
             (r'^submit/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.form_submit_view),
             #~ (r'^form/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.act_view),
             #~ (r'^form/(?P<app_label>\w+)/(?P<actor>\w+)$', self.act_view),
-            (r'^action/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.action_view),
+            (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)\.(?P<fmt>\w+)$', self.api_view),
+            #~ (r'^action/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.action_view),
             #~ (r'^action/(?P<app_label>\w+)/(?P<actor>\w+)$', self.action_view),
             #~ (r'^step_dialog$', self.step_dialog_view),
             #~ (r'^abort_dialog$', self.abort_dialog_view),
@@ -271,6 +332,19 @@ class ExtUI(base.UI):
         #~ s = py2js(lino_site.get_menu(request))
         #~ return HttpResponse(s, mimetype='text/html')
 
+    def api_view(self,request,app_label=None,actor=None,action=None,fmt=None):
+        actor = actors.get_actor2(app_label,actor)
+        a = actor.get_action(action)
+        if a is None:
+            msg = "No action %s in %s" % (action,actor)
+            #~ print msg
+            raise Http404(msg)
+        ar = ext_requests.ViewReportRequest(request,actor,a,self)
+        e = EMITTERS.get(fmt,None)
+        if e is None:
+            raise Http404("Unknown format %r " % fmt)
+        return e.handle_request(ar)
+        
     def action_view(self,request,app_label=None,actor=None,action=None,**kw):
         actor = actors.get_actor2(app_label,actor)
         ah = actor.get_handle(self)
@@ -367,10 +441,10 @@ class ExtUI(base.UI):
         return self.json_report_view_(request,rpt,**kw)
         
         
-    def grid_afteredit_view(self,request,**kw):
-        kw['colname'] = request.POST['grid_afteredit_colname']
-        kw['submit'] = True
-        return self.json_report_view(request,**kw)
+    #~ def grid_afteredit_view(self,request,**kw):
+        #~ kw['colname'] = request.POST['grid_afteredit_colname']
+        #~ kw['submit'] = True
+        #~ return self.json_report_view(request,**kw)
 
     def form_submit_view(self,request,**kw):
         kw['submit'] = True
@@ -380,9 +454,9 @@ class ExtUI(base.UI):
         #kw['simple_list'] = True
         return self.json_report_view(request,**kw)
         
-    def csv_report_view(self,request,**kw):
-        kw['csv'] = True
-        return self.json_report_view(request,**kw)
+    #~ def csv_report_view(self,request,**kw):
+        #~ kw['csv'] = True
+        #~ return self.json_report_view(request,**kw)
         
     def json_report_view(self,request,app_label=None,rptname=None,**kw):
         rpt = actors.get_actor2(app_label,rptname)
@@ -390,8 +464,9 @@ class ExtUI(base.UI):
 
     def json_report_view_(self,request,rpt,grid_action=None,colname=None,submit=None,choices_for_field=None,csv=False):
         if not rpt.can_view.passes(request):
-            return json_response_kw(success=False,
-                msg="User %s cannot view %s." % (request.user,rpt))
+            msg = "User %s cannot view %s." % (request.user,rpt)
+            raise Http404(msg)
+            #~ return json_response_kw(success=False,msg=msg)
                 
         rh = rpt.get_handle(self)
         
@@ -436,9 +511,11 @@ class ExtUI(base.UI):
         
 
         
+    def get_actor_url(self,actor,**kw):
+        return build_url("/api",actor.app_label,actor._actor_name,**kw)
 
-    def get_action_url(self,actor,action,**kw):
-        return build_url("/action",actor.app_label,actor._actor_name,action.name,**kw)
+    def get_action_url(self,action,**kw):
+        return build_url("/api",action.actor.app_label,action.actor._actor_name,action.name,**kw)
         #~ url = "/action/" + a.app_label + "/" + a._actor_name 
         #~ if len(kw):
             #~ url += "?" + urlencode(kw)
@@ -512,20 +589,35 @@ class ExtUI(base.UI):
         #~ fh = self.get_form_handle(frm)
         #~ yield dlg.show_window(fh.window_wrapper.js_render).over()
         
+    def py2js_converter(self,v):
+        if isinstance(v,menus.Menu):
+            if v.parent is None:
+                return v.items
+                #kw.update(region='north',height=27,items=v.items)
+                #return py2js(kw)
+            return dict(text=v.label,menu=dict(items=v.items))
+        if isinstance(v,menus.MenuItem):
+            #~ handler = "function(btn,evt){Lino.do_action(undefined,%r,%r,{})}" % (v.actor.get_url(lino_site.ui),id2js(v.actor.actor_id))
+            handler = "function(btn,evt){Lino.do_action(undefined,'%s.act',{})}" % self.get_action_url(v.action)
+            return dict(text=v.label,handler=js_code(handler))
+        return v
+
+
+        
+        
     def action_window_wrapper(self,a):
         if isinstance(a,reports.SlaveGridAction):
-            return ext_windows.GridSlaveWrapper(self,a.slave.default_action)
+            return ext_windows.GridSlaveWrapper(self,a.name,a.slave.default_action)
         if isinstance(a,reports.GridEdit):
             if a.actor.master is None:
                 return ext_windows.GridMasterWrapper(self,a)
             else:
-                return ext_windows.GridSlaveWrapper(self,a)
+                return ext_windows.GridSlaveWrapper(self,a.name,a)
         if isinstance(a,reports.DetailAction):
             return ext_windows.DetailSlaveWrapper(self,a)
         if isinstance(a,properties.PropertiesAction):
             return ext_windows.PropertiesWrapper(self,a)
         
-
         
         
     def setup_report(self,rh):
@@ -538,10 +630,12 @@ class ExtUI(base.UI):
         else:
             rh.store = None
             #~ lh = None
-            rh.window_wrapper = None
-            rh.detail_wrapper = None
+            #~ rh.window_wrapper = None
+            #~ rh.detail_wrapper = None
             
         rh.choosers = chooser.get_choosers_for_model(rh.report.model,chooser.FormChooser)
             
         
 ui = ExtUI()
+
+jsgen.register_converter(ui.py2js_converter)

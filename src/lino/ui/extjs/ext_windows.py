@@ -231,6 +231,8 @@ class WindowWrapper(jsgen.Object):
             if v is not None:
                 d[k] = v
         d.update(permalink_name=self.window.permalink_name)
+        #~ d.update(url=self.ui.get_action_url(self.action)) # ,ext_requests.FMT_JSON))
+        d.update(url=self.ui.get_actor_url(self.action.actor)) # ,ext_requests.FMT_JSON))
         return d
         
     def js_render(self):
@@ -305,6 +307,7 @@ def lh2win(lh,kw):
 class MasterWrapper(WindowWrapper):
   
     def __init__(self,lh,dl,**kw):
+        self.ui = lh.ui
         #~ assert isinstance(lh.datalink,layouts.DataLink)
         self.lh = lh
         self.datalink = dl # lh.datalink
@@ -379,7 +382,7 @@ class GridWrapperMixin(WindowWrapper):
         d.update(colModel=self.lh._main.column_model)
         d.update(content_type=self.datalink.content_type)
         d.update(title=self.datalink.get_title(None))
-        d.update(url='/'+self.datalink.report.app_label+'/'+self.datalink.report._actor_name )
+        #~ d.update(url='/'+self.datalink.report.app_label+'/'+self.datalink.report._actor_name )
         return d
         
 class GridMasterWrapper(GridWrapperMixin,MasterWrapper):
@@ -411,15 +414,18 @@ class SlaveWrapper(WindowWrapper):
 
 class GridSlaveWrapper(GridWrapperMixin,SlaveWrapper):
   
-    def __init__(self,ui,action,**kw):
+    def __init__(self,ui,name,action,**kw):
+        self.ui = ui
         self.action = action
+        self.name = name
         ah = action.actor.get_handle(ui)
         self.datalink = ah # slave_rh
         self.lh = ah.list_layout
         #~ button_text = slave_rh.report.button_label
         #~ permalink_name = id2js(slave_lh.name)
         permalink_name = self.lh.name
-        name = id2js(self.lh.name)
+        name = None
+        #~ name = id2js(self.lh.name)
         #~ kw.update(title=slave_lh.get_title(None))
         lh2win(self.lh,kw)
         window = WrappedWindow(self,ui,'window',self.lh._main,permalink_name,**kw)
@@ -436,7 +442,7 @@ class GridSlaveWrapper(GridWrapperMixin,SlaveWrapper):
             
     def get_config(self):
         d = super(GridSlaveWrapper,self).get_config()
-        d.update(name=self.action.name)
+        d.update(name=self.name)
         return d
         
         
@@ -445,6 +451,7 @@ class DetailSlaveWrapper(SlaveWrapper):
     window_config_type = 'detail'
     
     def __init__(self,ui,action,**kw):
+        self.ui = ui
         self.action = action
         #~ self.datalink = rh
         self.lh = action.layout.get_handle(ui)
@@ -552,23 +559,9 @@ class PropertiesWrapper(SlaveWrapper):
     def get_config(self):
         d = SlaveWrapper.get_config(self)
         d.update(main_panel=self.window.main)
-        d.update(url=self.ui.get_action_url(self.action.actor,self.action))
+        #~ d.update(url=self.ui.get_action_url(self.action,ext_requests.FMT_JSON))
         d.update(name=self.action.name)
         return d
-
-        
-    def js_window_config(self):
-        #~ yield "console.log('PropertiesWrapper',this.window.items.get(0).get(0));"
-        yield "var cm = this.window.items.get(0).get(0).colModel;"
-        yield ""
-        yield "var col_widths = new Array(cm.getColumnCount());"
-        yield "var col_hidden = new Array(cm.getColumnCount());"
-        yield "for(i=0;i<cm.getColumnCount();i++) {"
-        yield "  col_widths[i] = cm.getColumnWidth(i);"
-        yield "  col_hidden[i] = cm.isHidden(i);"
-        yield "}"
-        yield "wc['column_widths'] = col_widths;"
-        yield "wc['column_hidden'] = col_hidden;"
 
     def apply_window_config(self,wc):
         WindowWrapper.apply_window_config(self,wc)

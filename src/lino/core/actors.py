@@ -16,12 +16,26 @@ from django.db import models
 
 import lino
 from lino.ui import base
+from lino import actions
 
 actors_dict = None
 actor_classes = []
 
 ACTOR_SEP = '.'
 
+def resolve_action(spec,app_label=None):
+    if spec is None: return None
+    if isinstance(spec,actions.Action): return spec
+    s = spec.split(ACTOR_SEP)
+    if len(s) == 1:
+        actor = get_actor2(app_label,spec)
+    elif len(s) == 3:
+        actor = get_actor(ACTOR_SEP.join(s[0:2]))
+        return actor.get_action(s[2])
+    else:
+        actor = get_actor(spec)
+    return actor.default_action
+  
 def get_actor(actor_id):
     return actors_dict.get(actor_id,None)
     #~ return cls()

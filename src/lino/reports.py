@@ -206,6 +206,10 @@ class GridEdit(actions.Action):
   
     name = 'grid'
     
+    def __init__(self,rpt):
+        self.label = rpt.label
+        actions.Action.__init__(self,rpt)
+    
     def run_action(self,ar):
         return ar.show_action_window(self)
 
@@ -215,6 +219,8 @@ class GridEdit(actions.Action):
         for n in self.actor.column_names.split():
             d[n] = getattr(row,n)
         return d
+        
+        
         
 
 class InsertRow(actions.RowsAction):
@@ -312,10 +318,12 @@ class SlaveGridAction(actions.ToggleWindowAction):
         assert isinstance(slave,Report)
         self.slave = slave # .get_handle(ah.ui)
         self.name = slave._actor_name
+        #~ print 20100415,self.name
         self.label = slave.button_label
         actions.ToggleWindowAction.__init__(self,actor)
         
     def run_action(self,ar):
+        #~ print 201004152,self.name
         #~ slave_rh = self.slave.get_handle(ar.ui)
         #~ return self.slave.default_action.run_action()
         #~ slave_rr = ar.ui.get_report_ar(self.slave)
@@ -356,8 +364,8 @@ class ReportHandle(datalinks.DataLink,actors.ActorHandle):
         else:
             self.layouts = []
             
-            
-        self.ui.setup_report(self)
+        if self.ui is not None:
+            self.ui.setup_report(self)
         
         #~ if self.report.use_layouts:
             #~ def lh(layout_class,*args,**kw):

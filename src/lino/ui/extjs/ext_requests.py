@@ -40,6 +40,8 @@ URL_PARAM_CHOICES_PK = "ck"
 
 POST_PARAM_SELECTED = 'selected'
 
+FMT_RUN = 'act'
+FMT_JSON = 'json'
 
 def authenticated_user(user):
     if user.is_anonymous():
@@ -142,7 +144,7 @@ class BaseViewReportRequest(reports.ReportActionRequest):
         return self.report.get_absolute_url(**kw)
         
 
-class CSVReportRequest(BaseViewReportRequest):
+class unused_CSVReportRequest(BaseViewReportRequest):
     extra = 0
     
     def get_absolute_url(self,**kw):
@@ -234,7 +236,7 @@ class ViewReportRequest(BaseViewReportRequest):
             for fld in self.store.fields:
                 fld.obj2json(row,d)
         else:
-            self.report.row2dict(row,d)
+            self.action.row2dict(row,d)
         #lino.log.debug('  -> %r',kw)
         return d
  

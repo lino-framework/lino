@@ -74,9 +74,6 @@ class FormChooser(Chooser):
         return Chooser.get_choices(self,**data)
     
 
-#~ def get_chooser(model,fldname):
-    #~ if meth is not None:
-        #~ return Chooser(model,fldname,meth)
         
 def get_choosers_for_model(model,cl=Chooser):
     #~ print model._meta.fields
@@ -87,30 +84,3 @@ def get_choosers_for_model(model,cl=Chooser):
             d[f.name] = chooser
     return d
         
-        
-        
-def unused_get_context_params(model,fieldname):
-    methname = fieldname + "_choices"
-    meth = getattr(model,methname,None)
-    if meth is None: return []
-    return meth.func_code.co_varnames[1:]
-
-def unused_get_field_choices_meth(model,fldname):
-    # used also in extjs to test whether this field does have context-sensitive choices
-    methname = fldname + "_choices"
-    return getattr(model,methname,None)
-
-
-def unused_get_field_choices(model,fld,context):
-    # context is a dict of field values in the receiving instance
-    meth = get_field_choices_meth(model,fld.name)
-    choices = None
-    if meth is not None:
-        args = [] 
-        for varname in meth.func_code.co_varnames[1:]:
-            args.append(context.get(varname,None))
-            #~ context_field, remote, direct, m2m = self.model._meta.get_field_by_name(varname)
-        choices = meth(*args)
-    if choices is None:
-        choices = fld.rel.to.objects.all()
-    return choices
