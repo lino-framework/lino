@@ -197,7 +197,7 @@ class Store(Component):
         self.rh = rh
         self.report = rh.report
         fields = set()
-        for layout in rh.layouts:
+        for layout in rh.get_used_layouts():
             for fld in layout._store_fields:
                 assert fld is not None
                 fields.add(fld)
@@ -206,7 +206,7 @@ class Store(Component):
           self.report.actor_id,self.report.model)
         if not self.pk in fields:
             fields.add(self.pk)
-        self.fields = [self.create_field(fld) for fld in fields]
+        self.fields = [ self.create_field(fld) for fld in fields ]
           
     def create_field(self,fld):
         meth = getattr(fld,'_return_type_for_method',None)

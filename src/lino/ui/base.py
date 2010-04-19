@@ -11,6 +11,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+import lino
 
 class Handle:
   
@@ -54,8 +55,14 @@ class UI:
         pass
         
     def setup_site(self,lino_site):
-        pass
-    
+        from lino import reports
+        # instantiate all ReportHandles already at server startup.
+        # TODO: in fact this is currently called only when a first request comes in,
+        #       because Django does not yet provide a `server_startup` signal.
+        lino.log.debug('%s.setup_site()' % self)
+        for rpt in reports.master_reports + reports.slave_reports:
+            rpt.get_handle(self)
+        
     def setup_handle(self,h):
         pass
         

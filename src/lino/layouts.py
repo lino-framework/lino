@@ -32,6 +32,7 @@ from lino import commands
 from lino.ui import base
 
 from lino.modlib.tools import resolve_model, model_label
+from lino.core import coretools
 
 LABEL_ALIGN_TOP = 'top'
 LABEL_ALIGN_LEFT = 'left'
@@ -80,12 +81,15 @@ class LayoutHandle(base.Handle):
         if layout.main is not None:
         #~ if hasattr(layout,"main"):
             self._main = self.create_element(self.main_class,'main')
-        else:
-            main = self.layout.join_str.join(self.datalink.data_elems())
+        elif self.layout.datalink is not None:
+            elems = coretools.data_elems(self.layout.datalink)
+            main = self.layout.join_str.join(elems)
             self._main = self.desc2elem(self.main_class,"main",main)
+        else:
+            raise Exception("%s has no datalink" % self.layout)
             
         if isinstance(self.layout,ListLayout):
-            assert len(self._main.elements) > 0, "%s : Grid has no columns" % self.name
+            assert len(self._main.elements) > 0, "%s : Grid has no columns" % self
             self.columns = self._main.elements
             
         #~ self.width = self.layout.width or self._main.width
@@ -119,6 +123,9 @@ class LayoutHandle(base.Handle):
     def get_absolute_url(self,**kw):
         return self.datalink.get_absolute_url(layout=self.index,**kw)
         
+          
+        
+        
     def add_hidden_field(self,field):
         return HiddenField(self,field)
         
@@ -128,11 +135,9 @@ class LayoutHandle(base.Handle):
             f.write("\n".join(self._main.debug_lines()))
             f.close()
         
-    def get_title(self,renderer):
-        if self.layout.label is None:
-            return self.datalink.get_title(renderer) 
-        return self.datalink.get_title(renderer) + " - " + self.layout.label
-
+    def get_title(self,ar):
+        return self.layout.get_title(ar)
+        
     def walk(self):
         return self._main.walk()
         
@@ -150,7 +155,7 @@ class LayoutHandle(base.Handle):
                     name,kw = self.splitdesc(spec)
                     explicit_specs.add(name)
             wildcard_fields = self.layout.join_str.join([
-                name for name in self.datalink.data_elems() \
+                name for name in coretools.data_elems(self.layout.datalink) \
                   if (name not in explicit_specs) \
                     and (name not in self.hide_elements)])
             desc = desc.replace('*',wildcard_fields)
@@ -220,9 +225,8 @@ class Layout(actors.Actor):
     #~ _handle_selector = datalinks.DataLink
     #~ _handle_selector = base.UI
     datalink = None
+    datalink_report = None
     join_str = None # set by subclasses
-    date_format = 'd.m.y'
-    boolean_texts = ('Ja','Nein',' ')
 
     
     #~ label = None
@@ -240,6 +244,11 @@ class Layout(actors.Actor):
             #~ self.layout_name = self.__class__.__name__
         #~ actors.Actor.__init__(self)
     
+    def get_title(self,ar):
+        if self.label is None:
+            return self.datalink_report.get_title(ar) 
+        return self.datalink_report.get_title(ar) + " - " + self.label
+
     def get_hidden_elements(self,lh):
         return set()
         
@@ -273,13 +282,18 @@ class ModelLayout(Layout):
     def do_setup(self):
         lino.log.debug("ModelLayout.setup() %s",self)
         if self.datalink is None:
-            #~ raise ValueError("%s : layout_model is None" % self)
-            pass 
-            # e.g. contacts.contactdetail is an abstract ModelLayout
+            if self.datalink_report is not None:
+                self.datalink = self.datalink_report.model
+            else:
+                pass # e.g. contacts.contactdetail is an abstract ModelLayout
         else:
             self.datalink = resolve_model(self.datalink,self.app_label)
             assert issubclass(self.datalink,models.Model), \
               "datalink for %s is %r, must be a Model." % (self,self.datalink)
+            if self.datalink_report is None:
+                self.datalink_report = coretools.get_model_report(self.datalink)
+        
+          
         #~ self.app_label = self.layout_model._meta.app_label
         
     #~ def get_datalink(self,ui):
@@ -327,7 +341,14 @@ def get_detail_layout(model):
             
 
 def list_layout_factory(rpt):
-    return type(rpt._actor_name+"List",(ListLayout,),dict(app_label=rpt.app_label,main=rpt.column_names,datalink=rpt.model))
+    cls = type(rpt._actor_name+"List",(ListLayout,),dict(
+      app_label=rpt.app_label,
+      main=rpt.column_names,
+      datalink_report=rpt
+    ))
+    #~ return type(rpt._actor_name+"List",(ListLayout,),dict(app_label=rpt.app_label,main=rpt.column_names,datalink=rpt.model))
     #~ cls = type(rpt._actor_name+"List",(ListLayout,),dict(app_label=rpt.app_label,main=rpt.column_names,datalink=rpt.model))
-    #~ return actors.register_actor(cls())
+    layout = cls()
+    layout.setup()
+    return actors.register_actor(layout)
 

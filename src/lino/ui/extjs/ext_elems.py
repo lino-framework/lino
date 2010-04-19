@@ -471,7 +471,8 @@ class ForeignKeyElement(FieldElement):
         #~ if self.lh.link.report.get_field_choices_meth(self.field): 
             #~ kw.update(contextParam=ext_requests.URL_PARAM_CHOICES_PK)
             #kw.update(lazyInit=True)
-        chooser = self.lh.datalink.choosers[self.field.name]
+        rh = self.lh.layout.datalink_report.get_handle(self.lh.ui)
+        chooser = rh.choosers[self.field.name]
         if chooser.context_params:
         #~ cp = chooser.get_context_params(self.lh.link.report.model,self.field.name)
         #~ if cp:    
@@ -513,7 +514,7 @@ class DateFieldElement(FieldElement):
     def get_column_options(self,**kw):
         kw = FieldElement.get_column_options(self,**kw)
         #kw.update(xtype='datecolumn')
-        kw.update(format=self.lh.layout.date_format)
+        kw.update(format=self.lh.layout.datalink_report.date_format)
         return kw
     
 class IntegerFieldElement(FieldElement):
@@ -556,9 +557,9 @@ class BooleanFieldElement(FieldElement):
     def get_column_options(self,**kw):
         kw = FieldElement.get_column_options(self,**kw)
         #kw.update(xtype='booleancolumn')
-        kw.update(trueText=self.lh.layout.boolean_texts[0])
-        kw.update(falseText=self.lh.layout.boolean_texts[1])
-        kw.update(undefinedText=self.lh.layout.boolean_texts[2])
+        kw.update(trueText=self.lh.layout.datalink_report.boolean_texts[0])
+        kw.update(falseText=self.lh.layout.datalink_report.boolean_texts[1])
+        kw.update(undefinedText=self.lh.layout.datalink_report.boolean_texts[2])
         return kw
         
     def get_from_form(self,instance,values):
@@ -824,12 +825,12 @@ class GridElement(Container): #,DataElementMixin):
     
     def __init__(self,lh,name,rpt,*elements,**kw):
         """
-        Note: lh is the owning layout handle, rh is the report being managed by this Grid.
+        Note: lh is the owning layout handle, rpt is the report being displayed by this GridElement.
         """
-        assert isinstance(rpt,reports.Report), "%r is not a ReportHandle!" % rh
+        assert isinstance(rpt,reports.Report), "%r is not a Report!" % rpt
         #~ assert isinstance(rh,reports.ReportHandle), "%r is not a ReportHandle!" % rh
-        self.rh = rpt.get_handle(lh.ui)
         if len(elements) == 0:
+            rh = rpt.get_handle(lh.ui)
             elements = rh.list_layout._main.elements
         w = 0
         for e in elements:
@@ -841,15 +842,15 @@ class GridElement(Container): #,DataElementMixin):
         #self.dl = rh
         
         # override Container's height algorithm
-        self.preferred_height = rh.report.page_length 
+        self.preferred_height = rpt.page_length 
         #~ ADD_GRID_HEIGHT = 4 # experimental value...
         #~ if self.height:
             #~ self.height += ADD_GRID_HEIGHT
         #~ else:
             #~ self.preferred_height += ADD_GRID_HEIGHT
         
-        self.rh = rh
-        self.report = rh.report
+        #~ self.rh = rh
+        self.report = rpt
         #~ lh.needs_store(rh)
         self.column_model = ColumnModel(self)
         #self.mt = ContentType.objects.get_for_model(self.report.model).pk
@@ -1043,7 +1044,7 @@ class GridMainPanel(GridElement,MainPanel):
         #lh.report.setup()
         self.pager = None
         MainPanel.__init__(self)
-        GridElement.__init__(self,lh,name,lh.datalink,*elements,**kw)
+        GridElement.__init__(self,lh,name,lh.layout.datalink_report,*elements,**kw)
         #lino.log.debug("GridMainPanel.__init__() %s",self.name)
         
     def setup(self):
@@ -1094,8 +1095,8 @@ class DetailMainPanel(Panel,WrappingMainPanel):
     xtype = None
     value_template = "new Ext.form.FormPanel(%s)"
     def __init__(self,lh,name,vertical,*elements,**kw):
-        self.rh = lh.datalink
-        self.report = self.rh.report
+        #~ self.rh = lh.datalink
+        self.report = lh.layout.datalink_report
         MainPanel.__init__(self)
         #~ DataElementMixin.__init__(self,lh.link)
         Panel.__init__(self,lh,name,vertical,*elements,**kw)

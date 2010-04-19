@@ -163,7 +163,8 @@ class ExtUI(base.UI):
         if callable(de):
             return self.create_meth_element(lh,name,de,**kw)
         if isinstance(de,reports.Report):
-            e = ext_elems.GridElement(lh,name,de.get_handle(self),**kw)
+            e = ext_elems.GridElement(lh,name,de,**kw)
+            #~ e = ext_elems.GridElement(lh,name,de.get_handle(self),**kw)
             lh.slave_grids.append(e)
             return e
         if isinstance(de,forms.Input):
@@ -514,21 +515,18 @@ class ExtUI(base.UI):
     def get_actor_url(self,actor,**kw):
         return build_url("/api",actor.app_label,actor._actor_name,**kw)
 
-    def get_action_url(self,action,**kw):
-        return build_url("/api",action.actor.app_label,action.actor._actor_name,action.name,**kw)
+    def get_action_url(self,action,fmt,**kw):
+        if isinstance(action,properties.PropertiesAction):
+            action = properties.PropValuesByOwner().default_action
+        if isinstance(action,reports.SlaveGridAction):
+            action = action.slave.default_action
+            #~ return build_url("/api",action.actor.app_label,action.actor._actor_name,action.name,**kw)
+        return build_url("/api",action.actor.app_label,action.actor._actor_name,action.name+'.'+fmt,**kw)
         #~ url = "/action/" + a.app_label + "/" + a._actor_name 
         #~ if len(kw):
             #~ url += "?" + urlencode(kw)
         #~ return url
         
-    #~ def get_form_url(self,fh,**kw):
-        #~ url = "/form/" + fh.form.app_label + "/" + fh.form.name 
-        #~ if len(kw):
-            #~ url += "?" + urlencode(kw)
-        #~ return url
-        
-    def unused_get_actor_url(self,actor,**kw):
-        return build_url("/form",actor.app_label,actor._actor_name,**kw)
         
     def get_form_action_url(self,fh,action,**kw):
         #~ a = btn.lh.datalink.actor
@@ -537,8 +535,8 @@ class ExtUI(base.UI):
         
     def get_choices_url(self,fke,**kw):
         return build_url("/choices",
-            fke.lh.datalink.report.app_label,
-            fke.lh.datalink.report._actor_name,
+            fke.lh.layout.datalink_report.app_label,
+            fke.lh.layout.datalink_report._actor_name,
             fke.field.name,**kw)
         
     def get_report_url(self,rh,master_instance=None,
@@ -598,7 +596,7 @@ class ExtUI(base.UI):
             return dict(text=v.label,menu=dict(items=v.items))
         if isinstance(v,menus.MenuItem):
             #~ handler = "function(btn,evt){Lino.do_action(undefined,%r,%r,{})}" % (v.actor.get_url(lino_site.ui),id2js(v.actor.actor_id))
-            handler = "function(btn,evt){Lino.do_action(undefined,'%s.act',{})}" % self.get_action_url(v.action)
+            handler = "function(btn,evt){Lino.do_action(undefined,%r,{})}" % self.get_action_url(v.action,ext_requests.FMT_RUN)
             return dict(text=v.label,handler=js_code(handler))
         return v
 
@@ -607,9 +605,12 @@ class ExtUI(base.UI):
         
     def action_window_wrapper(self,a,h):
         if isinstance(a,reports.SlaveGridAction):
-            return ext_windows.GridSlaveWrapper(h,a) # a.name,a.slave.default_action)
+            return None
+            #~ return ext_windows.GridSlaveWrapper(h,a) # a.name,a.slave.default_action)
         if isinstance(a,reports.GridEdit):
-            assert a.actor.master is None
+            if a.actor.master is not None:
+                #~ raise Exception("action_window_wrapper() for slave report %s" % a.actor)
+                return ext_windows.GridSlaveWrapper(h,a) 
             return ext_windows.GridMasterWrapper(h,a)
             #~ else:
                 #~ return ext_windows.GridSlaveWrapper(self,a.name,a)
@@ -622,7 +623,7 @@ class ExtUI(base.UI):
         
     def setup_handle(self,h):
         if isinstance(h,reports.ReportHandle):
-            lino.log.debug('ExtUI.setup_report() %s',h.report)
+            lino.log.debug('ExtUI.setup_handle() %s',h.report)
             h.choosers = chooser.get_choosers_for_model(h.report.model,chooser.FormChooser)
             if h.report.use_layouts:
                 h.store = ext_store.Store(h)

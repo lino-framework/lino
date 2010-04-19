@@ -311,22 +311,26 @@ Lino.toggle_window = function(btn,state,ww) {
 }; 
 */
 
-Lino.setup_child = function(caller,name,btn) {
+Lino.setup_child = function(caller,action,btn) {
   //~ console.log(20100414,'Lino.setup_child() ',caller,name,'=',caller[name]);
-  if (caller[name]) return (caller[name] != 'loading');
-  caller[name] = 'loading';
+  if (caller[action.name]) return (caller[action.name] != 'loading');
+  caller[action.name] = 'loading';
+  var p = {};
+  p['mt'] = caller.config.content_type // URL_PARAM_MASTER_TYPE
+  var mrec = caller.get_current_record();
+  if (mrec) p['mk'] = mrec.id // URL_PARAM_MASTER_PK
   Ext.Ajax.request({
     method: 'GET',
     waitMsg: 'Please wait...',
-    url: caller.config.url + '/' + name + '.act',
-    params: {}, 
+    url: action.url, // caller.config.url + '/' + name + '.act',
+    params: p, 
     success: function(response) {
       var result = Ext.decode(response.responseText);
       if (result.show_window) {
         //~ console.log(20100414,'setup_child.show_window',name,caller); // [name]);
-        caller[name+'_button'] = btn;
-        caller[name] = result.show_window(caller);
-        caller[name].show();
+        caller[action.name+'_button'] = btn;
+        caller[action.name] = result.show_window(caller);
+        caller[action.name].show();
       } 
       if (result.alert_msg) Ext.MessageBox.alert('Alert',result.alert_msg);
       if (result.notify_msg) Lino.notify(result.notify_msg);
@@ -336,21 +340,21 @@ Lino.setup_child = function(caller,name,btn) {
   return false;
 };
 
-Lino.open_window_handler = function(caller,name) {
+Lino.open_window_handler = function(caller,action) {
   return function(event) {
-    if (!Lino.setup_child(caller,name)) return;
+    if (!Lino.setup_child(caller,action)) return;
     // caller[name].show();
 }};
 
 
-Lino.toggle_window_handler = function(caller,name) {
+Lino.toggle_window_handler = function(caller,action) {
   return function(btn,state) {
     // console.log(20100406,'toggle_window_handler',name);
-    if (!Lino.setup_child(caller,name,btn)) return;
+    if (!Lino.setup_child(caller,action,btn)) return;
     if(state) { 
-      caller[name].show() 
+      caller[action.name].show() 
     } else { 
-      caller[name].hide() 
+      caller[action.name].hide() 
     }
   }
 };
@@ -537,7 +541,7 @@ Lino.load_main_menu = function() {
   bbar
   columns
   fields
-  actions : array of {name,name}
+  actions : array of {name,label,url}
   content_type
 **/
 
@@ -551,10 +555,10 @@ Lino.WindowWrapper = function(caller,config) {
           text: config.actions[i].label,
         }
         if (config.actions[i].type == 'toggle_window') {
-          btn.toggleHandler = Lino.toggle_window_handler(this,config.actions[i].name);
+          btn.toggleHandler = Lino.toggle_window_handler(this,config.actions[i]);
           btn.enableToggle = true;
         } else if (config.actions[i].type == 'open_window') {
-          btn.handler = Lino.open_window_handler(this,config.actions[i].name);
+          btn.handler = Lino.open_window_handler(this,config.actions[i]);
         }
         this.bbar[i] = new Ext.Button(btn);
       }
@@ -644,7 +648,9 @@ Lino.GridMasterWrapper = Ext.extend(Lino.GridWindowWrapper, {
     for(var i=0;i<sels.length;i++) { sel_pks += sels[i].id + ','; };
     return sel_pks;
   },
-  get_current_record : function() { return this.main_grid.getSelectionModel().getSelected()}
+  get_current_record : function() { 
+    return this.main_grid.getSelectionModel().getSelected()
+  }
 });
 
 
@@ -705,6 +711,8 @@ Lino.DetailSlaveWrapper = Ext.extend(Lino.SlaveWrapper, {
     Lino.WindowWrapper.prototype.setup.call(this);
     Lino.SlaveWrapper.prototype.setup.call(this);
   },
+  get_selected : function() { return this.current_record.id },
+  get_current_record : function() {  return this.current_record },
   load_record : function(record) {
     this.current_record = record;
     this.config.main_panel.form.load(record);

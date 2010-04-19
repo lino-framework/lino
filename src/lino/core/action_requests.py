@@ -77,7 +77,7 @@ class ActionRequest:
         msg = self.action.before_run(self)
         if msg:
             return ActionResponse(notify_msg=msg,success=False)
-        #~ lino.log.debug('ActionRequest._start() %s.%s',self.ah,self.action.name)
+        lino.log.debug('ActionRequest %s.%s',self.ah,self.action.name)
         #~ lino.log.debug('ActionRequest._start() %s.%s(%r)',self.ah,self.action.name,self.params)
         self.response = ActionResponse()
         try:

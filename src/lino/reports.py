@@ -54,6 +54,8 @@ from lino.core import action_requests
 from lino.ui import base
 
 from lino.modlib.tools import resolve_model, resolve_field, get_app, model_label
+from lino.core.coretools import get_slave, get_model_report, data_elems, get_data_elem
+
 #~ from lino.modlib import field_choices
 
 def base_attrs(cl):
@@ -78,26 +80,6 @@ def add_quick_search_filter(qs,search_text):
             q = q | models.Q(**kw)
     return qs.filter(q)
         
-def data_elems(meta):
-    for f in meta.fields: yield f.name
-    for f in meta.many_to_many: yield f.name
-    for f in meta.virtual_fields: yield f.name
-    # todo: for slave in self.report.slaves
-    
-def get_data_elem(model,name):
-    try:
-        return model._meta.get_field(name)
-    except models.FieldDoesNotExist,e:
-        pass
-    rpt = get_slave(model,name)
-    if rpt is not None: return rpt
-    m = get_unbound_meth(model,name)
-    if m is not None: return m
-    
-    for vf in model._meta.virtual_fields:
-        if vf.name == name:
-            return vf
-
 
 def rc_name(rptclass):
     return rptclass.app_label + '.' + rptclass.__name__
@@ -181,26 +163,6 @@ def discover():
         #~ model._lino_properties_window = pw
             
     lino.log.debug("reports.setup() done")
-
-def get_slave(model,name):
-    rpt = actors.get_actor(name)
-    if rpt is None: 
-        return None
-    if rpt.master is not ContentType:
-        assert issubclass(model,rpt.master), "%s.master is %r,\nmust be subclass of %r" % (name,rpt.master,model)
-    return rpt
-    #~ rpt = generic_slaves.get(name,None)
-    #~ if rpt is not None:
-        #~ return rpt
-    #~ for b in (model,) + model.__bases__:
-        #~ d = getattr(b,"_lino_slaves",None)
-        #~ if d:
-            #~ rpt = d.get(name,None)
-            #~ if rpt is not None:
-                #~ return rpt
-
-def get_model_report(model):
-    return model._lino_model_report
 
 class GridEdit(actions.Action):
   
@@ -310,31 +272,36 @@ class ReportHandle(datalinks.DataLink,base.Handle): #,actors.ActorHandle):
     
     #~ detail_link = None
     
+    
     def __init__(self,ui,report):
         #lino.log.debug('ReportHandle.__init__(%s)',rd)
         assert isinstance(report,Report)
         self.report = report
+        self._layouts = None
         #~ actors.ActorHandle.__init__(self,report)
         datalinks.DataLink.__init__(self,ui)
         base.Handle.__init__(self,ui)
+        if self.report.use_layouts:
+            self.list_layout = self.report.list_layout.get_handle(self.ui)
         
   
     def __str__(self):
         return str(self.report) + 'Handle'
             
-    def setup(self):
+    def setup_layouts(self):
+        if self._layouts is not None:
+            return
         #~ self.default_action = self.report.default_action(self)
         if self.report.use_layouts:
-            self.list_layout = self.report.list_layout.get_handle(self.ui)
-            self.layouts = [ self.list_layout ] + [ dtl.layout.get_handle(self.ui) for dtl in self.report.details ]
+            self._layouts = [ self.list_layout ] + [ dtl.layout.get_handle(self.ui) for dtl in self.report.details ]
             #~ if len(self.details) > 0:
                 #~ self.detail_link = DetailDataLink(self,self.details[0])
                 
                 
         else:
-            self.layouts = []
+            self._layouts = []
             
-        base.Handle.setup(self)    
+        #~ base.Handle.setup(self)    
         #~ if self.report.use_layouts:
             #~ def lh(layout_class,*args,**kw):
                 #~ return layouts.LayoutHandle(self,layout_class(),*args,**kw)
@@ -364,8 +331,14 @@ class ReportHandle(datalinks.DataLink,base.Handle): #,actors.ActorHandle):
     def submit_elems(self):
         return []
         
-    def get_layout(self,name):
-        return self.layouts[name]
+    def get_layout(self,i):
+        self.setup_layouts()
+        return self._layouts[i]
+        
+    def get_used_layouts(self):
+        self.setup_layouts()
+        return self._layouts
+        
         
     def get_absolute_url(self,*args,**kw):
         return self.ui.get_report_url(self,*args,**kw)
@@ -375,9 +348,6 @@ class ReportHandle(datalinks.DataLink,base.Handle): #,actors.ActorHandle):
           
     def get_data_elem(self,name):
         return get_data_elem(self.report.model,name)
-        #~ if de is not None:
-            #~ return de
-        #~ return getattr(self.report,name)
         
     def get_action(self,name):
         return self.report.get_action(name)
@@ -503,9 +473,9 @@ class ReportActionRequest(action_requests.ActionRequest): # was ReportRequest
             self.extra = extra
         if self.report.use_layouts:
             if layout is None:
-                layout = self.ah.layouts[self.report.default_layout]
+                layout = self.ah._layouts[self.report.default_layout]
             else:
-                layout = self.ah.layouts[layout]
+                layout = self.ah._layouts[layout]
             self.layout = layout
         self.report.setup_request(self)
         self.queryset = self.get_queryset()
@@ -616,6 +586,9 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
     #~ page_layout = None # (layouts.PageLayout ,)
     #~ row_layout_class = None
     
+    date_format = 'd.m.y'
+    boolean_texts = (_('Yes'),_('No'),' ')
+    
     can_view = perms.always
     can_add = perms.is_authenticated
     can_change = perms.is_authenticated
@@ -699,7 +672,7 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
         actions = [ ac(self) for ac in self.actions ]
           
         if self.model is not None:
-            self.list_layout = layouts.list_layout_factory(self)()
+            self.list_layout = layouts.list_layout_factory(self)
             self.detail_layouts = getattr(self.model,'_lino_layouts',[])
             if hasattr(self.model,'_lino_slaves'):
                 self._slaves = self.model._lino_slaves.values()
@@ -770,7 +743,14 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
             #~ comps = [l._main for l in self.layouts[1:]]
             #~ yield layouts.TabPanel(None,"EastPanel",*comps)
 
+    def data_elems(self):
+        for de in data_elems(self.model._meta): yield de
+          
+    def get_data_elem(self,name):
+        return get_data_elem(self.model,name)
         
+    def get_details(self):
+        return self.details
             
     def get_title(self,rr):
         #~ if self.title is None:
@@ -892,12 +872,5 @@ def report_factory(model):
     #~ fldname = model._meta.app_label+'.'+model.__class__.__name__+'.'+field.name
     #~ return type(clsname,(Report,),dict(field=fldname,app_label=model._meta.app_label,column_names='__unicode__'))
 
-def get_unbound_meth(cl,name):
-    meth = getattr(cl,name,None)
-    if meth is not None:
-        return meth
-    for b in cl.__bases__:
-        meth = getattr(b,name,None)
-        if meth is not None:
-            return meth
+
 

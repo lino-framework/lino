@@ -118,14 +118,14 @@ class WrappedWindow(jsgen.Component):
     declare_type = jsgen.DECLARE_THIS
     value_template = "new Ext.Window(%s)"
     
-    def __init__(self,ww,ui,name,main,permalink_name,**kw):
+    def __init__(self,ww,ui,name,main,**kw):
         self.wrapper = ww
         self.ui = ui
         #~ self.lh = lh # may be None
         #~ if lh is not None:
             #~ kw.update(title=lh.get_title(None))
         self.main = main
-        self.permalink_name = permalink_name
+        self.permalink_name = None # permalink_name
         
         #~ kw.update(title=self.rr.get_title())
         #~ kw.update(title=self.label)
@@ -137,7 +137,7 @@ class WrappedWindow(jsgen.Component):
         js = 'Lino.save_window_config(this)'
         kw.update(tools=[
           dict(id='save',handler=js_code(js),
-              qtip=_("Save window config %s") % permalink_name )])
+              qtip=_("Save window config %s") % self.permalink_name )])
         
         jsgen.Component.__init__(self,name,**kw)
         
@@ -313,7 +313,7 @@ class MasterWrapper(WindowWrapper):
         #~ self.ui = lh.ui
         #~ assert isinstance(lh.datalink,layouts.DataLink)
         #~ self.lh = lh
-        self.datalink = rh # lh.datalink
+        #~ self.datalink = rh # lh.datalink
         #~ permalink_name = id2js(lh.layout.actor_id)
         #~ permalink_name = lh.layout.layout_name
         #~ name = id2js(lh.layout.layout_name)
@@ -348,7 +348,10 @@ class GridWrapperMixin(WindowWrapper):
 
     def get_config(self):
         d = super(GridWrapperMixin,self).get_config()
-        d.update(actions=[dict(type=a.action_type,name=a.name,label=a.label) for a in self.rh.get_actions()])
+        d.update(actions=[dict(
+            type=a.action_type,name=a.name,label=a.label,
+            url=self.ui.get_action_url(a,ext_requests.FMT_RUN)
+          ) for a in self.rh.get_actions()])
         #~ d.update(actions=[dict(label=a.label,name=a.name) for a in self.bbar_buttons])
         d.update(fields=[js_code(f.as_js()) for f in self.rh.store.fields])
         d.update(colModel=self.lh._main.column_model)
@@ -361,6 +364,7 @@ class GridMasterWrapper(GridWrapperMixin,MasterWrapper):
   
     def __init__(self,rh,action,**kw):
         self.action = action
+        GridWrapperMixin.__init__(self,rh)
         MasterWrapper.__init__(self,rh,action,rh.list_layout,**kw)
       
   
@@ -372,16 +376,18 @@ class SlaveWrapper(WindowWrapper):
 class GridSlaveWrapper(GridWrapperMixin,SlaveWrapper):
   
     def __init__(self,rh,action,**kw):
-        assert isinstance(action,actions.SlaveGridAction)
+        #~ assert isinstance(action,reports.SlaveGridAction)
         self.name = action.name
+        #~ slave_rh = action.slave.get_handle(rh.ui)
         #~ ah = action.actor.get_handle(ui)
-        self.lh = rh.list_layout
+        #~ self.lh = rh.list_layout
         GridWrapperMixin.__init__(self,rh)
-        SlaveWrapper.__init__(self, action,rh.ui,rh.list_layout,rh.list_layout._main,**kw)
+        lh = rh.list_layout
+        SlaveWrapper.__init__(self, action, rh.ui, lh, lh._main, **kw)
         #~ self.bbar_buttons = slave_rh.window_wrapper.bbar_buttons
         #~ self.slave_windows = slave_rh.window_wrapper.slave_windows
         #~ slave_lh._main.update(bbar=self.bbar_buttons)
-        self.actions = [dict(type=a.action_type,name=a.name,label=a.label) for a in rh.get_actions()]
+        #~ self.actions = [dict(type=a.action_type,name=a.name,label=a.label) for a in rh.get_actions()]
         
     def js_render(self):
         yield "function(caller) { return new Lino.GridSlaveWrapper(caller,%s);}" % py2js(self.config)
@@ -532,8 +538,8 @@ class unused_DetailMasterWrapper(MasterWrapper):
         yield "};"
         #~ yield "this.load_record(%s);" % py2js(ext_store.Record(self.datalink.store,object))
         yield "var fn = Ext.data.Record.create(%s)" % \
-            py2js([js_code(f.as_js()) for f in self.datalink.store.fields])
-        d = self.datalink.store.row2dict(self.datalink.row)
+            py2js([js_code(f.as_js()) for f in self.rh.store.fields])
+        d = self.rh.store.row2dict(self.rh.row)
         yield "this.load_record(fn(%s));" % py2js(d)
         
         
