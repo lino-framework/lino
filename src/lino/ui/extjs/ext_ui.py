@@ -604,20 +604,25 @@ class ExtUI(base.UI):
         
         
     def action_window_wrapper(self,a,h):
-        if isinstance(a,reports.SlaveGridAction):
-            return None
-            #~ return ext_windows.GridSlaveWrapper(h,a) # a.name,a.slave.default_action)
         if isinstance(a,reports.GridEdit):
             if a.actor.master is not None:
                 #~ raise Exception("action_window_wrapper() for slave report %s" % a.actor)
-                return ext_windows.GridSlaveWrapper(h,a) 
+                return ext_windows.GridSlaveWrapper(h,a)
             return ext_windows.GridMasterWrapper(h,a)
             #~ else:
                 #~ return ext_windows.GridSlaveWrapper(self,a.name,a)
         if isinstance(a,reports.DetailAction):
             return ext_windows.DetailSlaveWrapper(self,a)
+            
+        if isinstance(a,properties.PropsEdit):
+            return ext_windows.PropertiesWrapper(self,h,a)
+            
         if isinstance(a,properties.PropertiesAction):
-            return ext_windows.PropertiesWrapper(self,a)
+            return None
+            #~ return ext_windows.PropertiesWrapper(self,a)
+        if isinstance(a,reports.SlaveGridAction):
+            return None
+            #~ return ext_windows.GridSlaveWrapper(h,a) # a.name,a.slave.default_action)
         
         
         
@@ -627,15 +632,12 @@ class ExtUI(base.UI):
             h.choosers = chooser.get_choosers_for_model(h.report.model,chooser.FormChooser)
             if h.report.use_layouts:
                 h.store = ext_store.Store(h)
-                for a in h.get_actions():
-                    a.window_wrapper = self.action_window_wrapper(a,h)
                     
             else:
                 h.store = None
-                #~ lh = None
-                #~ rh.window_wrapper = None
-                #~ rh.detail_wrapper = None
                 
+            for a in h.get_actions():
+                a.window_wrapper = self.action_window_wrapper(a,h)
             
         
 ui = ExtUI()

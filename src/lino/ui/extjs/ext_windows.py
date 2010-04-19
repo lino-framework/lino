@@ -355,7 +355,7 @@ class GridWrapperMixin(WindowWrapper):
         #~ d.update(actions=[dict(label=a.label,name=a.name) for a in self.bbar_buttons])
         d.update(fields=[js_code(f.as_js()) for f in self.rh.store.fields])
         d.update(colModel=self.lh._main.column_model)
-        d.update(content_type=self.rh.content_type)
+        d.update(content_type=self.rh.report.content_type)
         d.update(title=self.rh.get_title(None))
         #~ d.update(url='/'+self.datalink.report.app_label+'/'+self.datalink.report._actor_name )
         return d
@@ -377,7 +377,7 @@ class GridSlaveWrapper(GridWrapperMixin,SlaveWrapper):
   
     def __init__(self,rh,action,**kw):
         #~ assert isinstance(action,reports.SlaveGridAction)
-        self.name = action.name
+        self.name = action.actor._actor_name
         #~ slave_rh = action.slave.get_handle(rh.ui)
         #~ ah = action.actor.get_handle(ui)
         #~ self.lh = rh.list_layout
@@ -388,6 +388,7 @@ class GridSlaveWrapper(GridWrapperMixin,SlaveWrapper):
         #~ self.slave_windows = slave_rh.window_wrapper.slave_windows
         #~ slave_lh._main.update(bbar=self.bbar_buttons)
         #~ self.actions = [dict(type=a.action_type,name=a.name,label=a.label) for a in rh.get_actions()]
+        #~ print 20100419, self.__class__, self.name
         
     def js_render(self):
         yield "function(caller) { return new Lino.GridSlaveWrapper(caller,%s);}" % py2js(self.config)
@@ -430,12 +431,14 @@ class PropertiesWrapper(SlaveWrapper):
     #~ declare_type = jsgen.DECLARE_THIS
     #~ value_template = "new Ext.Window(%s)"
     
-    def __init__(self,ui,action,**kw):
+    def __init__(self,ui,rh,action,**kw):
       
-        assert isinstance(action,properties.PropertiesAction)
+        #~ assert isinstance(action,properties.PropertiesAction)
+        assert isinstance(action,properties.PropsEdit)
         self.action = action
         self.ui = ui
-        self.model = action.actor.model # rr.master
+        self.model = rh.report.model
+        #~ self.model = action.actor.model # rr.master
         #~ self.rh = action.rh
         
         kw.update(closeAction='hide')
@@ -445,7 +448,8 @@ class PropertiesWrapper(SlaveWrapper):
         
         #~ for pv in self.rh.request(master=model,master_instance=None):
         #~ for pv in action.prop_values(ui):
-        for pv in action.get_queryset(None):
+        #~ for pv in action.get_queryset(None):
+        for pv in action.actor.request(ui,master=self.model):
             p = pv.prop
             self.source[p.name] = pv.value
             if p.label:

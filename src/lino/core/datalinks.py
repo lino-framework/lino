@@ -24,7 +24,7 @@ class DataLink:
     Abstract base class for CommandHandle, ReportHandle and RowHandle.
     """
     
-    content_type = None
+    #~ content_type = None
     
     def __init__(self,ui):
         self.ui = ui

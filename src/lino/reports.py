@@ -164,16 +164,13 @@ def discover():
             
     lino.log.debug("reports.setup() done")
 
-class GridEdit(actions.Action):
+class GridEdit(actions.OpenWindowAction):
   
     name = 'grid'
     
     def __init__(self,rpt):
         self.label = rpt.label
         actions.Action.__init__(self,rpt)
-    
-    def run_action(self,ar):
-        return ar.show_action_window(self)
 
     def row2dict(self,row,d):
         #~ "Overridden by lino.modlib.properties.PropValuesByOwner"
@@ -554,6 +551,7 @@ class ReportActionRequest(action_requests.ActionRequest): # was ReportRequest
 
 
 class Report(actors.Actor,base.Handled): # actions.Action): # 
+    default_action_class = GridEdit
     _handle_class = ReportHandle
     #~ _handle_selector = base.UI
     params = {}
@@ -667,7 +665,7 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
         
     def do_setup(self):
       
-        self.default_action = GridEdit(self)
+        self.default_action = self.default_action_class(self)
         
         actions = [ ac(self) for ac in self.actions ]
           
@@ -682,8 +680,9 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
         
             if self.use_layouts:
                 self.details = [ DetailAction(self,pl) for pl in self.detail_layouts ]
-                for dtl in self.details:
-                    actions.append(dtl)
+                actions += self.details
+                #~ for dtl in self.details:
+                    #~ actions.append(dtl)
                 #~ else:
                     #~ print 'no detail in %s : %r' % (report,report.detail_layouts)
             

@@ -64,7 +64,7 @@ class ValidationError(Exception):
     
 class Action: # (base.Handled):
     #~ handle_class = ActionHandle
-    action_type = 'open_window'
+    action_type = '?'
     label = None
     name = None
     key = None
@@ -82,6 +82,7 @@ class Action: # (base.Handled):
         
     def __str__(self):
         return self.name
+        
         
     def run_action(self,act):
         raise NotImplementedError
@@ -107,6 +108,13 @@ class RowsAction(Action):
             return _("No selection. Nothing to do.")
 
 
+class OpenWindowAction(Action):
+    action_type = 'open_window'
+    
+    def run_action(self,ar):
+        ar.show_action_window(self) 
+                
+    
 class ToggleWindowAction(Action):
     action_type = 'toggle_window'
     

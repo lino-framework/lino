@@ -195,6 +195,8 @@ class Actor(Handled):
         self._actions_list = actions
         self._actions_dict = {}
         for a in actions:
+            if self._actions_dict.has_key(a.name):
+                lino.log.warning("%s action %r : %s overridden by %s",self,a.name,self._actions_dict[a.name],a)
             self._actions_dict[a.name] = a
             
     def get_action(self,name):
