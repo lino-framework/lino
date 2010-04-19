@@ -248,6 +248,7 @@ class PropValues(reports.Report):
     
 
 class PropertiesAction(actions.ToggleWindowAction):
+    "Used on reports whose model have properties"
     #~ name = 'props'
     name = 'properties'
     label = _('Properties')
@@ -271,7 +272,7 @@ class PropertiesAction(actions.ToggleWindowAction):
     
 
 class PropsEdit(actions.OpenWindowAction):
-  
+    "Default action for PropValuesByOwner"
     name = 'pgrid'
     
     def get_title(self,rr):
@@ -279,16 +280,6 @@ class PropsEdit(actions.OpenWindowAction):
             return _('Properties for %s') % rr.master._meta.verbose_name_plural
         return _('Properties for %s') % rr.master_instance
             
-    def get_queryset(self,ar):
-        "returns one PropValue instance for each possible Property"
-        if ar is None:
-            master_instance = None
-        else:
-            master_instance = ar.master_instance
-        return [ p.get_value_for(master_instance) 
-            for p in Property.properties_for_model(self.actor.model).order_by('name')]
-
-        
     def row2dict(self,row,d):
         d['name'] = row.prop.name
         #~ d['label'] = row.prop.label
@@ -309,6 +300,16 @@ class PropValuesByOwner(reports.Report):
     #column_names = "prop__name value"
     order_by = "prop__name"
     
+    def get_queryset(self,ar):
+        "returns one PropValue instance for each possible Property"
+        #~ if ar is None:
+            #~ master_instance = None
+        #~ else:
+            #~ master_instance = ar.master_instance
+        return [ p.get_value_for(ar.master_instance) 
+            for p in Property.properties_for_model(ar.master).order_by('name')]
+
+        
         
 
 def set_value_for(owner,**kw):

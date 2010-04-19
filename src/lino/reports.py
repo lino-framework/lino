@@ -50,7 +50,7 @@ from lino import actions
 from lino.utils import perms, menus
 from lino.core import datalinks
 from lino.core import actors
-from lino.core import action_requests
+#~ from lino.core import action_requests
 from lino.ui import base
 
 from lino.modlib.tools import resolve_model, resolve_field, get_app, model_label
@@ -172,12 +172,6 @@ class GridEdit(actions.OpenWindowAction):
         self.label = rpt.label
         actions.Action.__init__(self,rpt)
 
-    def row2dict(self,row,d):
-        #~ "Overridden by lino.modlib.properties.PropValuesByOwner"
-        "Overridden by lino.modlib.properties.PropertiesAction"
-        for n in self.actor.column_names.split():
-            d[n] = getattr(row,n)
-        return d
         
         
         
@@ -412,7 +406,71 @@ class unused_DetailDataLink(datalinks.DataLink):
         #~ self.ui.setup_report(self)
         
 
-class ReportActionRequest(action_requests.ActionRequest): # was ReportRequest
+
+class DataAction(actions.Action):
+    #~ response_format = 'json' # ext_requests.FMT_JSON
+    name = 'data'
+    
+    def render_to_dict(self,ar):
+        rows = [ self.row2dict(row,{}) for row in ar.queryset ]
+        #~ rows = []
+        #~ for row in self.queryset:
+            #~ d = self.row2dict(row,{})
+            #~ rows.append(d)
+        total_count = ar.total_count
+        #lino.log.debug('%s.render_to_dict() total_count=%d extra=%d',self,total_count,self.extra)
+        # add extra blank row(s):
+        for i in range(0,ar.extra):
+            row = ar.create_instance()
+            #~ d = self.row2dict(row,{})
+            #~ rows.append(d)
+            rows.append(self.row2dict(row,{}))
+            total_count += 1
+        return dict(count=total_count,rows=rows,title=self.get_title(ar))
+        
+    def row2dict(self,row,d):
+        "Overridden by lino.modlib.properties.PropertiesAction"
+        for n in self.actor.column_names.split():
+            d[n] = getattr(row,n)
+        return d
+        
+    def get_queryset(self,ar):
+        return self.actor.get_queryset(ar)
+        
+    def get_title(self,ar):
+        return self.actor.get_title(ar)
+        
+    def run_action(self,ar):
+        ar.show_action_window(self) 
+        
+class ChoicesAction(DataAction):
+  
+    def __init__(self,rpt,fldname):
+        self.name = fldname+'_choices'
+        self.fieldname = fldname
+        DataAction.__init__(self,rpt)
+  
+    
+    def get_queryset(self,ar):
+        kw = {}
+        for k,v in ar.request.GET.items():
+            kw[str(k)] = v
+        chooser = ar.rh.choosers[self.fieldname]
+        qs = chooser.get_choices(**kw)
+        if ar.quick_search is not None:
+            qs = add_quick_search_filter(qs,ar.quick_search)
+        return qs # self.queryset = qs
+        
+    def row2dict(self,obj,d):
+        d[CHOICES_TEXT_FIELD] = unicode(obj)
+        #d['__unicode__'] = unicode(obj)
+        d[CHOICES_VALUE_FIELD] = obj.pk # getattr(obj,'pk')
+        #d[self.fieldname] = obj.pk 
+        return d
+    
+
+
+class ReportActionRequest(actions.ActionRequest): # was ReportRequest
     limit = None
     offset = None
     master_instance = None
@@ -429,7 +487,7 @@ class ReportActionRequest(action_requests.ActionRequest): # was ReportRequest
         # Subclasses (e.g. BaseViewReportRequest) may set `master` before calling ReportRequest.__init__()
         if self.master is None:
             self.master = rpt.master
-        action_requests.ActionRequest.__init__(self,rpt,action,ui)
+        actions.ActionRequest.__init__(self,rpt,action,ui)
         #~ self.rh = self.ah
       
     def __str__(self):
@@ -524,25 +582,11 @@ class ReportActionRequest(action_requests.ActionRequest): # was ReportRequest
         raise NotImplementedError
         
     def render_to_dict(self):
-        rows = [ self.row2dict(row,{}) for row in self.queryset ]
-        #~ rows = []
-        #~ for row in self.queryset:
-            #~ d = self.row2dict(row,{})
-            #~ rows.append(d)
-        total_count = self.total_count
-        #lino.log.debug('%s.render_to_dict() total_count=%d extra=%d',self,total_count,self.extra)
-        # add extra blank row(s):
-        for i in range(0,self.extra):
-            row = self.create_instance()
-            #~ d = self.row2dict(row,{})
-            #~ rows.append(d)
-            rows.append(self.row2dict(row,{}))
-            total_count += 1
-        return dict(count=total_count,rows=rows,title=self.get_title())
+        return self.action.render_to_dict(ar)
         
-    def row2dict(self,row,d):
-        # overridden in extjs.ext_requests.ChoicesReportRequest
-        return self.action.row2dict(row,d)
+    #~ def row2dict(self,row,d):
+        #~ # overridden in extjs.ext_requests.ChoicesReportRequest
+        #~ return self.action.row2dict(row,d)
         
 
 
@@ -666,6 +710,7 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
     def do_setup(self):
       
         self.default_action = self.default_action_class(self)
+        self.data_action = DataAction(self)
         
         actions = [ ac(self) for ac in self.actions ]
           
@@ -856,7 +901,7 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
         #~ return self.get_handle(ui).request(**kw)
 
     def request(self,*args,**kw):
-        ar = ReportActionRequest(self,self.default_action,*args)
+        ar = ReportActionRequest(self,self.data_action,*args)
         ar.setup(**kw)
         return ar
         

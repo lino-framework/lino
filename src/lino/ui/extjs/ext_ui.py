@@ -34,7 +34,7 @@ from lino import reports
 from lino.ui import base
 from lino import forms
 from lino.core import actors
-from lino.core import action_requests
+#~ from lino.core import action_requests
 from lino.utils import menus
 from lino.utils import chooser
 from lino.utils import jsgen
@@ -515,19 +515,6 @@ class ExtUI(base.UI):
     def get_actor_url(self,actor,**kw):
         return build_url("/api",actor.app_label,actor._actor_name,**kw)
 
-    def get_action_url(self,action,fmt,**kw):
-        if isinstance(action,properties.PropertiesAction):
-            action = properties.PropValuesByOwner().default_action
-        if isinstance(action,reports.SlaveGridAction):
-            action = action.slave.default_action
-            #~ return build_url("/api",action.actor.app_label,action.actor._actor_name,action.name,**kw)
-        return build_url("/api",action.actor.app_label,action.actor._actor_name,action.name+'.'+fmt,**kw)
-        #~ url = "/action/" + a.app_label + "/" + a._actor_name 
-        #~ if len(kw):
-            #~ url += "?" + urlencode(kw)
-        #~ return url
-        
-        
     def get_form_action_url(self,fh,action,**kw):
         #~ a = btn.lh.datalink.actor
         #~ a = action.actor
@@ -601,13 +588,27 @@ class ExtUI(base.UI):
         return v
 
 
+    def get_action_url(self,action,fmt,**kw):
+        #~ if isinstance(action,properties.PropertiesAction):
+            #~ action = properties.PropValuesByOwner().default_action
+        #~ if isinstance(action,reports.SlaveGridAction):
+            #~ action = action.slave.default_action
+            #~ return build_url("/api",action.actor.app_label,action.actor._actor_name,action.name,**kw)
+        return build_url("/api",action.actor.app_label,action.actor._actor_name,action.name+'.'+fmt,**kw)
+        #~ url = "/action/" + a.app_label + "/" + a._actor_name 
+        #~ if len(kw):
+            #~ url += "?" + urlencode(kw)
+        #~ return url
+        
+        
         
         
     def action_window_wrapper(self,a,h):
         if isinstance(a,reports.GridEdit):
             if a.actor.master is not None:
+                return None
                 #~ raise Exception("action_window_wrapper() for slave report %s" % a.actor)
-                return ext_windows.GridSlaveWrapper(h,a)
+                #~ return ext_windows.GridSlaveWrapper(h,a)
             return ext_windows.GridMasterWrapper(h,a)
             #~ else:
                 #~ return ext_windows.GridSlaveWrapper(self,a.name,a)
@@ -615,14 +616,15 @@ class ExtUI(base.UI):
             return ext_windows.DetailSlaveWrapper(self,a)
             
         if isinstance(a,properties.PropsEdit):
-            return ext_windows.PropertiesWrapper(self,h,a)
+            #~ return ext_windows.PropertiesWrapper(self,h,a)
+            return None
             
         if isinstance(a,properties.PropertiesAction):
-            return None
-            #~ return ext_windows.PropertiesWrapper(self,a)
+            #~ return None
+            return ext_windows.PropertiesWrapper(h,a)
         if isinstance(a,reports.SlaveGridAction):
-            return None
-            #~ return ext_windows.GridSlaveWrapper(h,a) # a.name,a.slave.default_action)
+            #~ return None
+            return ext_windows.GridSlaveWrapper(h,a) # a.name,a.slave.default_action)
         
         
         

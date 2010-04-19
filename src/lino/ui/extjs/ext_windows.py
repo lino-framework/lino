@@ -427,17 +427,19 @@ class DetailSlaveWrapper(SlaveWrapper):
         
 
 class PropertiesWrapper(SlaveWrapper):
+    "Handle requests like GET /api/contacts/Persons/pgrid.extjs"
     window_config_type = 'props'
+    name = 'pgrid'
     #~ declare_type = jsgen.DECLARE_THIS
     #~ value_template = "new Ext.Window(%s)"
     
-    def __init__(self,ui,rh,action,**kw):
-      
-        #~ assert isinstance(action,properties.PropertiesAction)
-        assert isinstance(action,properties.PropsEdit)
+    def __init__(self,rh,action,**kw):
+        
+        assert isinstance(action,properties.PropertiesAction)
+        #~ assert isinstance(action,properties.PropsEdit)
         self.action = action
-        self.ui = ui
-        self.model = rh.report.model
+        self.ui = rh.ui
+        self.model = action.actor.model
         #~ self.model = action.actor.model # rr.master
         #~ self.rh = action.rh
         
@@ -448,8 +450,9 @@ class PropertiesWrapper(SlaveWrapper):
         
         #~ for pv in self.rh.request(master=model,master_instance=None):
         #~ for pv in action.prop_values(ui):
-        #~ for pv in action.get_queryset(None):
-        for pv in action.actor.request(ui,master=self.model):
+        #~ for pv in action.actor.request(rh.ui,master=self.model):
+        #~ for pv in action.request(rh.ui):
+        for pv in properties.PropValuesByOwner().request(rh.ui,master=self.model):
             p = pv.prop
             self.source[p.name] = pv.value
             if p.label:

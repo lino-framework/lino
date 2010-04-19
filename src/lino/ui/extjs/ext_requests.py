@@ -19,7 +19,7 @@ import lino
 #~ from lino import actions
 from lino import reports
 from lino import forms
-from lino.core import action_requests
+#~ from lino.core import action_requests
 from lino.utils import ucsv
 from lino.utils import chooser
 #~ from lino.ui.extjs import ext_windows
@@ -182,7 +182,7 @@ class unused_CSVReportRequest(BaseViewReportRequest):
 
         
   
-class ChoicesReportRequest(BaseViewReportRequest):
+class unused_ChoicesReportRequest(BaseViewReportRequest):
     extra = 0
     
     def __init__(self,request,rpt,fldname,*args,**kw):
