@@ -68,25 +68,31 @@ EMITTERS = {}
 
 class Emitter:    
     fmt = None
-    def handle_request(self,ar):
+    def handle_request(self,request,ah,a):
         raise NotImplementedError()
         
 class run_Emitter:    
     fmt = ext_requests.FMT_RUN 
-    def handle_request(self,ar):
+    #~ def handle_request(self,ar):
+    def handle_request(self,request,ah,a):
+        ar = ext_requests.ViewActionRequest(request,ah,a)
         return json_response(ar.run().as_dict())
         
 class json_Emitter:
   
     fmt = ext_requests.FMT_JSON
     
-    def handle_request(self,ar):
+    #~ def handle_request(self,ar):
+    def handle_request(self,request,ah,a):
+        ar = ext_requests.ViewReportRequest(request,ah,a)
         d = ar.render_to_dict()
         return json_response(d)
         
 class csv_Emitter:
     fmt = 'csv'
-    def handle_request(self,ar):
+    #~ def handle_request(self,ar):
+    def handle_request(self,request,ah,a):
+        ar = ext_requests.ViewReportRequest(request,ah,a)
         response = HttpResponse(mimetype='text/csv')
         w = ucsv.UnicodeWriter(response)
         names = [] # fld.name for fld in self.fields]
@@ -111,7 +117,8 @@ class csv_Emitter:
         
 class submit_Emitter:
     fmt = 'submit'
-    def handle_request(self,ar):
+    def handle_request(self,request,ah,a):
+    #~ def handle_request(self,ar):
         kw['colname'] = ar.request.POST['grid_afteredit_colname']
         kw['submit'] = True
         return ui.json_report_view(request,**kw)
@@ -340,11 +347,11 @@ class ExtUI(base.UI):
             msg = "No action %s in %s" % (action,actor)
             #~ print msg
             raise Http404(msg)
-        ar = ext_requests.ViewReportRequest(request,actor,a,self)
+        ah = actor.get_handle(self)
         e = EMITTERS.get(fmt,None)
         if e is None:
             raise Http404("Unknown format %r " % fmt)
-        return e.handle_request(ar)
+        return e.handle_request(request,ah,a)
         
     def action_view(self,request,app_label=None,actor=None,action=None,**kw):
         actor = actors.get_actor2(app_label,actor)
@@ -357,7 +364,8 @@ class ExtUI(base.UI):
             msg = "No action %s in %s" % (action,ah)
             #~ print msg
             raise Http404(msg)
-        ar = ext_requests.ViewReportRequest(request,actor,a,self)
+        ah = actor.get_handle(self)
+        ar = ext_requests.ViewReportRequest(request,ah,a)
         return json_response(ar.run().as_dict())
         #~ dlg = ext_requests.Dialog(request,self,actor,action)
         #~ return self.start_dialog(dlg)
@@ -397,8 +405,8 @@ class ExtUI(base.UI):
         if not rpt.can_change.passes(request):
             return json_response_kw(success=False,
                 msg="User %s cannot edit %s." % (request.user,rpt))
-        #~ rh = rpt.get_handle(self)
-        rr = ext_requests.BaseViewReportRequest(request,rpt,rpt.default_action,self)
+        rh = rpt.get_handle(self)
+        rr = ext_requests.BaseViewReportRequest(request,rh,rh.report.default_action)
         name = request.POST.get('name')
         value = request.POST.get('value')
         try:
@@ -431,8 +439,8 @@ class ExtUI(base.UI):
 
     def save_window_config_view(self,request):
         actor = ext_windows.SaveWindowConfig()
-        #~ ah = actor.get_handle(self)
-        ar = ext_requests.ViewReportRequest(request,actor,actor.default_action,self)
+        ah = actor.get_handle(self)
+        ar = ext_requests.ViewReportRequest(request,ah,actor.default_action)
         return json_response(ar.run().as_dict())
         #~ return self.start_dialog(dlg)
         
@@ -474,16 +482,16 @@ class ExtUI(base.UI):
         if grid_action:
             a = rpt.get_action(grid_action)
             assert a is not None, "No action %s in %s" % (grid_action,rh)
-            ar = ext_requests.ViewReportRequest(request,rpt,a,self)
+            ar = ext_requests.ViewReportRequest(request,rh,a)
             return json_response(ar.run().as_dict())
                 
         if choices_for_field:
-            rptreq = ext_requests.ChoicesReportRequest(request,rpt,choices_for_field,self)
+            rptreq = ext_requests.ChoicesReportRequest(request,rh,choices_for_field)
         elif csv:
-            rptreq = ext_requests.CSVReportRequest(request,rpt,rpt.default_action,self)
+            rptreq = ext_requests.CSVReportRequest(request,rh,rpt.default_action)
             return rptreq.render_to_csv()
         else:
-            rptreq = ext_requests.ViewReportRequest(request,rpt,rpt.default_action,self)
+            rptreq = ext_requests.ViewReportRequest(request,rh,rpt.default_action)
             if submit:
                 pk = request.POST.get(rh.store.pk.name) #,None)
                 #~ if pk == reports.UNDEFINED:
@@ -512,6 +520,9 @@ class ExtUI(base.UI):
         
 
         
+    #~ def get_actor_url(self,actor,action_name,**kw):
+        #~ return build_url("/api",actor.app_label,actor._actor_name,action_name,**kw)
+
     def get_actor_url(self,actor,**kw):
         return build_url("/api",actor.app_label,actor._actor_name,**kw)
 
@@ -620,10 +631,8 @@ class ExtUI(base.UI):
             return None
             
         if isinstance(a,properties.PropertiesAction):
-            #~ return None
             return ext_windows.PropertiesWrapper(h,a)
         if isinstance(a,reports.SlaveGridAction):
-            #~ return None
             return ext_windows.GridSlaveWrapper(h,a) # a.name,a.slave.default_action)
         
         

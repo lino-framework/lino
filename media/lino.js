@@ -267,7 +267,7 @@ Lino.goto_permalink = function () {
     var sep = '';
     Ext.WindowMgr.each(function(win) {
       if(!win.hidden && !win.window_wrapper.caller) { 
-        windows += sep + win.window_wrapper.config.url; 
+        windows += sep + win.window_wrapper.config.permalink_name; 
         sep = ","
       }
     });
@@ -604,7 +604,7 @@ Lino.GridWindowWrapper = Ext.extend(Lino.WindowWrapper,{
   setup : function() {
     this.store = new Ext.data.JsonStore({ 
       listeners: { exception: Lino.on_store_exception }, 
-      proxy: new Ext.data.HttpProxy({ url: this.config.url+'/grid.json', method: "GET" }), remoteSort: true, 
+      proxy: new Ext.data.HttpProxy({ url: this.config.url+'/data.json', method: "GET" }), remoteSort: true, 
       fields: this.config.fields, 
       totalProperty: "count", 
       root: "rows", 
@@ -612,7 +612,7 @@ Lino.GridWindowWrapper = Ext.extend(Lino.WindowWrapper,{
     this.pager = new Ext.PagingToolbar({ prependButtons: true, items: [ 
       { scope:this, xtype: "textfield", listeners: { keypress: Lino.search_handler(this) }, 
         fieldLabel: "Search", enableKeyEvents: true, id: "seachString" }, 
-      { scope:this, text: "Download", handler: function() {window.open(this.config.url+'/grid.csv');} } 
+      { scope:this, text: "Download", handler: function() {window.open(this.config.url+'/data.csv');} } 
     ], pageSize: 10, store: this.store, displayInfo: true });
     
     this.main_grid = new Lino.GridPanel({ clicksToEdit: 2, xtype: "container", tbar: this.pager, 
@@ -725,7 +725,7 @@ Lino.PropertiesWrapper = Ext.extend(Lino.SlaveWrapper, {
     Lino.SlaveWrapper.prototype.setup.call(this);
   },
   load_record : function(rec) {
-    Lino.load_properties(this.caller,this,this.config.url+'/pgrid.json',rec);
+    Lino.load_properties(this.caller,this,this.config.url+'/data.json',rec);
   },
   get_window_config : function() {
     var wc = { window_config_type: 'props' }

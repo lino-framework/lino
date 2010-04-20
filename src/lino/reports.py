@@ -358,6 +358,11 @@ class ReportHandle(datalinks.DataLink,base.Handle): #,actors.ActorHandle):
     #~ def request(self,**kw):
         #~ return self.ui.get_report_ar(self,**kw)
         
+    def request(self,*args,**kw):
+        ar = ReportActionRequest(self,self.report.data_action)
+        ar.setup(*args,**kw)
+        return ar
+        
         
             
 
@@ -411,8 +416,14 @@ class DataAction(actions.Action):
     #~ response_format = 'json' # ext_requests.FMT_JSON
     name = 'data'
     
+    def get_queryset(self,ar):
+        return self.actor.get_queryset(ar)
+        
+    def get_title(self,ar):
+        return self.actor.get_title(ar)
+        
     def render_to_dict(self,ar):
-        rows = [ self.row2dict(row,{}) for row in ar.queryset ]
+        rows = [ ar.row2dict(row,{}) for row in ar.queryset ]
         #~ rows = []
         #~ for row in self.queryset:
             #~ d = self.row2dict(row,{})
@@ -424,24 +435,10 @@ class DataAction(actions.Action):
             row = ar.create_instance()
             #~ d = self.row2dict(row,{})
             #~ rows.append(d)
-            rows.append(self.row2dict(row,{}))
+            rows.append(ar.row2dict(row,{}))
             total_count += 1
-        return dict(count=total_count,rows=rows,title=self.get_title(ar))
-        
-    def row2dict(self,row,d):
-        "Overridden by lino.modlib.properties.PropertiesAction"
-        for n in self.actor.column_names.split():
-            d[n] = getattr(row,n)
-        return d
-        
-    def get_queryset(self,ar):
-        return self.actor.get_queryset(ar)
-        
-    def get_title(self,ar):
-        return self.actor.get_title(ar)
-        
-    def run_action(self,ar):
-        ar.show_action_window(self) 
+        #~ print 20100420, rows
+        return dict(count=total_count,rows=rows,title=ar.get_title())
         
 class ChoicesAction(DataAction):
   
@@ -479,15 +476,16 @@ class ReportActionRequest(actions.ActionRequest): # was ReportRequest
     extra = None
     layout = None
     
-    #~ def __init__(self,rh,action):
-    def __init__(self,rpt,action,ui):
-        #~ assert isinstance(rh,ReportHandle)
-        self.report = rpt
-        self.ui = ui
+    def __init__(self,rh,action):
+    #~ def __init__(self,rpt,action,ui):
+        assert isinstance(rh,ReportHandle)
+        self.report = rh.report
+        self.ui = rh.ui
         # Subclasses (e.g. BaseViewReportRequest) may set `master` before calling ReportRequest.__init__()
         if self.master is None:
-            self.master = rpt.master
-        actions.ActionRequest.__init__(self,rpt,action,ui)
+            self.master = rh.report.master
+        #~ actions.ActionRequest.__init__(self,rpt,action,ui)
+        actions.ActionRequest.__init__(self,rh,action)
         #~ self.rh = self.ah
       
     def __str__(self):
@@ -582,11 +580,14 @@ class ReportActionRequest(actions.ActionRequest): # was ReportRequest
         raise NotImplementedError
         
     def render_to_dict(self):
-        return self.action.render_to_dict(ar)
+        return self.action.render_to_dict(self)
         
-    #~ def row2dict(self,row,d):
-        #~ # overridden in extjs.ext_requests.ChoicesReportRequest
-        #~ return self.action.row2dict(row,d)
+    def row2dict(self,row,d):
+        # overridden in extjs.ext_requests.ViewReportRequest
+        return self.report.row2dict(row,d)
+        
+    #~ def run_action(self,ar):
+        #~ ar.show_action_window(self) 
         
 
 
@@ -743,7 +744,8 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
             a = properties.PropertiesAction(self)
             actions.append(a)
             
-        actions.append(self.default_action)            
+        actions.append(self.default_action)
+        actions.append(self.data_action)
         self.set_actions(actions)
                 
         if self.button_label is None:
@@ -892,18 +894,22 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
         cls.page_layout = layout
         #~ cls.page_layout = tuple(cls.page_layouts) + layouts
         
-    def render_to_dict(self,**kw):
+    #~ def render_to_dict(self,**kw):
         #~ rh = self.get_handle(None) # ReportHandle(None,self)
-        rr = self.request(None,**kw)
-        return rr.render_to_dict()
+        #~ rr = self.request(None,**kw)
+        #~ return rr.render_to_dict()
         
-    #~ def request(self,ui,**kw):
-        #~ return self.get_handle(ui).request(**kw)
+    def request(self,ui,**kw):
+        return self.get_handle(ui).request(**kw)
 
-    def request(self,*args,**kw):
-        ar = ReportActionRequest(self,self.data_action,*args)
-        ar.setup(**kw)
-        return ar
+    def row2dict(self,row,d):
+        """
+        Overridden by lino.modlib.properties.PropValuesByOwner.
+        See also lino.ui.extjs.ext_requests.ViewReportRequest.
+        """
+        for n in self.column_names.split():
+            d[n] = getattr(row,n)
+        return d
         
         
 def report_factory(model):

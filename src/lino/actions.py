@@ -73,6 +73,7 @@ class Action: # (base.Handled):
     needs_validation = False
     
     def __init__(self,actor):
+    #~ def __init__(self,ah):
         #~ self.ah = ah # actor handle of the actor who offers this action
         self.actor = actor # actor who offers this action
         if self.name is None:
@@ -174,15 +175,16 @@ class ActionRequest:
     """
     selected_rows = []
     
-    #~ def __init__(self,ah,action):
-    def __init__(self,actor,action,ui=None):
+    def __init__(self,ah,action):
+    #~ def __init__(self,actor,action,ui=None):
         #~ self.params = params
-        self.actor = actor
-        self.action = action # ah.actor.get_action(action_name)
-        self.ui = ui
-        self.ah = actor.get_handle(ui) # ah # actor handle
         if not isinstance(action,Action):
             raise Exception("%s : %r is not an Action." % (self,action))
+        self.ah = ah # actor handle
+        self.action = action # ah.actor.get_action(action_name)
+        
+        #~ self.actor = ah.actor
+        self.ui = ah.ui
         self.response = None
         
     def __str__(self):

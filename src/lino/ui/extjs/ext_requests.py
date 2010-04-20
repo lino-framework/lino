@@ -16,7 +16,7 @@ from django.contrib.contenttypes.models import ContentType
 #~ from django.contrib.contenttypes import generic
 
 import lino
-#~ from lino import actions
+from lino import actions
 from lino import reports
 from lino import forms
 #~ from lino.core import action_requests
@@ -62,12 +62,12 @@ def authenticated_user(user):
 
 class BaseViewReportRequest(reports.ReportActionRequest):
     
-    def __init__(self,request,rpt,action,ui,*args,**kw):
-    #~ def __init__(self,request,rh,action,*args,**kw):
-        #~ reports.ReportActionRequest.__init__(self,rh,action)
+    #~ def __init__(self,request,rpt,action,ui,*args,**kw):
+    def __init__(self,request,rh,action,*args,**kw):
+        reports.ReportActionRequest.__init__(self,rh,action)
         self.request = request
-        reports.ReportActionRequest.__init__(self,rpt,action,ui)
-        rh = rpt.get_handle(ui)
+        #~ reports.ReportActionRequest.__init__(self,rpt,action,ui)
+        #~ rh = rpt.get_handle(ui)
         self.store = rh.store
         #~ request._lino_request = self
         kw = self.parse_req(request,rh,**kw)
@@ -230,14 +230,20 @@ class ViewReportRequest(BaseViewReportRequest):
         return BaseViewReportRequest.get_absolute_url(self,**kw)
 
     def row2dict(self,row,d):
-        #lino.log.debug('row2dict(%s)',row.__class__)
+        #~ lino.log.debug('%s.row2dict(%s)',self,row.__class__)
         #lino.log.debug('row2dict(%r)',row)
         if self.report.use_layouts:
             for fld in self.store.fields:
                 fld.obj2json(row,d)
         else:
-            self.action.row2dict(row,d)
+            reports.ReportActionRequest.row2dict(self,row,d)
+            #~ self.action.row2dict(row,d)
         #lino.log.debug('  -> %r',kw)
         return d
  
 
+class ViewActionRequest(actions.ActionRequest):
+    def __init__(self,request,ah,action,*args,**kw):
+        self.request = request
+        actions.ActionRequest.__init__(self,ah,action,*args,**kw)
+        

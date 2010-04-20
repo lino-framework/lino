@@ -235,7 +235,6 @@ class WindowWrapper(jsgen.Object):
                 d[k] = v
         d.update(permalink_name=self.window.permalink_name)
         #~ d.update(url=self.ui.get_action_url(self.action)) # ,ext_requests.FMT_JSON))
-        d.update(url=self.ui.get_actor_url(self.action.actor)) # ,ext_requests.FMT_JSON))
         return d
         
     def js_render(self):
@@ -343,7 +342,7 @@ class GridWrapperMixin(WindowWrapper):
     def __init__(self,rh):
         self.rh = rh
     
-    def js_window_config(self):
+    def unused_js_window_config(self):
         yield "wc['column_widths'] = Ext.pluck(this.main_grid.colModel.columns,'width');"
 
     def get_config(self):
@@ -358,6 +357,7 @@ class GridWrapperMixin(WindowWrapper):
         d.update(content_type=self.rh.report.content_type)
         d.update(title=self.rh.get_title(None))
         #~ d.update(url='/'+self.datalink.report.app_label+'/'+self.datalink.report._actor_name )
+        d.update(url=self.ui.get_actor_url(self.rh.report)) 
         return d
         
 class GridMasterWrapper(GridWrapperMixin,MasterWrapper):
@@ -376,9 +376,9 @@ class SlaveWrapper(WindowWrapper):
 class GridSlaveWrapper(GridWrapperMixin,SlaveWrapper):
   
     def __init__(self,rh,action,**kw):
-        #~ assert isinstance(action,reports.SlaveGridAction)
+        assert isinstance(action,reports.SlaveGridAction)
         self.name = action.actor._actor_name
-        #~ slave_rh = action.slave.get_handle(rh.ui)
+        rh = action.slave.get_handle(rh.ui)
         #~ ah = action.actor.get_handle(ui)
         #~ self.lh = rh.list_layout
         GridWrapperMixin.__init__(self,rh)
@@ -391,6 +391,7 @@ class GridSlaveWrapper(GridWrapperMixin,SlaveWrapper):
         #~ print 20100419, self.__class__, self.name
         
     def js_render(self):
+        print ' GridSlaveWrapper.render()', self.rh, self.lh
         yield "function(caller) { return new Lino.GridSlaveWrapper(caller,%s);}" % py2js(self.config)
         
             
@@ -494,7 +495,7 @@ class PropertiesWrapper(SlaveWrapper):
         
         #~ button_text = rr.rh.report.label
         
-        SlaveWrapper.__init__(self,action,ui,None,main)
+        SlaveWrapper.__init__(self,action,rh.ui,None,main)
                     
                     
     def has_properties(self):
@@ -509,6 +510,7 @@ class PropertiesWrapper(SlaveWrapper):
         d.update(main_panel=self.window.main)
         #~ d.update(url=self.ui.get_action_url(self.action,ext_requests.FMT_JSON))
         d.update(name=self.action.name)
+        d.update(url=self.ui.get_actor_url(properties.PropValuesByOwner())) 
         return d
 
     def apply_window_config(self,wc):

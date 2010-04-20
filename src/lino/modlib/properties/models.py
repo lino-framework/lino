@@ -105,7 +105,7 @@ class Property(models.Model):
                 
     @classmethod
     def properties_for_model(cls,model):
-        print 'properties_for_model', model
+        #~ print 'properties_for_model', model
         ct = ContentType.objects.get_for_model(model)
         #~ lino.log.debug('Property.properties_for_model() %s %s',model,ct)
         #~ return cls.objects.filter(only_for__in=(ct,None))
@@ -254,7 +254,7 @@ class PropertiesAction(actions.ToggleWindowAction):
     label = _('Properties')
     #~ propvalues_report = None
     
-    #~ def __init__(self,actor):
+    #~ def __init__(self,report):
         #~ rpt = actor
         #~ if rpt.model is not None:
             #~ from lino.modlib.properties import models as properties
@@ -280,13 +280,6 @@ class PropsEdit(actions.OpenWindowAction):
             return _('Properties for %s') % rr.master._meta.verbose_name_plural
         return _('Properties for %s') % rr.master_instance
             
-    def row2dict(self,row,d):
-        d['name'] = row.prop.name
-        #~ d['label'] = row.prop.label
-        d['value'] = row.value
-        #~ d['choices'] = [unicode(pv) for pv in row.value_choices(row.prop)]
-        return d
-        
 
 class PropValuesByOwner(reports.Report):
     default_action_class = PropsEdit
@@ -309,6 +302,13 @@ class PropValuesByOwner(reports.Report):
         return [ p.get_value_for(ar.master_instance) 
             for p in Property.properties_for_model(ar.master).order_by('name')]
 
+    def row2dict(self,row,d):
+        d['name'] = row.prop.name
+        #~ d['label'] = row.prop.label
+        d['value'] = row.value
+        #~ d['choices'] = [unicode(pv) for pv in row.value_choices(row.prop)]
+        return d
+        
         
         
 
