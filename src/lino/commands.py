@@ -11,6 +11,8 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+raise "no longer used"
+
 from django.utils.translation import ugettext as _
 
 import lino
@@ -70,21 +72,16 @@ class CommandHandle(datalinks.DataLink,base.Handle):
         for i in self.inputs: yield i.name
         
       
-class RunCommand(actions.Action):
+#~ class RunCommand(actions.Action):
   
-    def run_in_dlg(self,dlg):
-        return dlg.ah.command.run_in_dlg(dlg)
+    #~ def run_in_dlg(self,dlg):
+        #~ return dlg.ah.command.run_in_dlg(dlg)
 
-class Command(actors.Actor):
-    actions = [actions.Cancel, actions.OK]
-    default_action = RunCommand
-    _handle_class = CommandHandle
-    #~ _handle_selector = base.UI
-    
-    #~ def __init__(self):
-        #~ actors.HandledActor.__init__(self)
-        #~ self.forms = {} # will be filled by lino.layouts.FormLayout.setup()
+#~ class Command(actors.Actor):
+    #~ actions = [actions.Cancel, actions.OK]
+    #~ default_action = RunCommand
+    #~ _handle_class = CommandHandle
         
-    def run_in_dlg(self,dlg):
-        raise NotImplementedError
+    #~ def run_in_dlg(self,dlg):
+        #~ raise NotImplementedError
       

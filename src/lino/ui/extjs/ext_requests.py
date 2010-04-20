@@ -247,3 +247,5 @@ class ViewActionRequest(actions.ActionRequest):
         self.request = request
         actions.ActionRequest.__init__(self,ah,action,*args,**kw)
         
+    def handle_wc(self):
+        return self.action.handle_wc(self)

@@ -165,6 +165,7 @@ def discover():
     lino.log.debug("reports.setup() done")
 
 class GridEdit(actions.OpenWindowAction):
+    hidden = True
   
     name = 'grid'
     
@@ -414,6 +415,7 @@ class unused_DetailDataLink(datalinks.DataLink):
 
 class DataAction(actions.Action):
     #~ response_format = 'json' # ext_requests.FMT_JSON
+    hidden = True
     name = 'data'
     
     def get_queryset(self,ar):

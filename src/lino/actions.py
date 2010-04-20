@@ -71,6 +71,8 @@ class Action: # (base.Handled):
     key = None
     needs_selection = False
     needs_validation = False
+    #~ grid_button = True
+    hidden = False
     
     def __init__(self,actor):
     #~ def __init__(self,ah):
@@ -83,7 +85,7 @@ class Action: # (base.Handled):
         
         
     def __str__(self):
-        return self.name
+        return str(self.actor)+'.'+self.name
 
         
     def run_action(self,act):
@@ -102,12 +104,15 @@ class RowsAction(Action):
     def before_run(self,ar):
         if self.needs_selection and len(ar.selected_rows) == 0:
             return _("No selection. Nothing to do.")
+            
+            
 
 class WindowAction(Action):
     #~ response_format = 'act' # ext_requests.FMT_RUN
 
     def run_action(self,ar):
         ar.show_action_window(self) 
+        
                 
 class OpenWindowAction(WindowAction):
     action_type = 'open_window'
@@ -118,22 +123,22 @@ class ToggleWindowAction(WindowAction):
                 
     
     
-class Cancel(Action):
-    label = _("Cancel")
-    name = 'cancel'
-    key = ESCAPE 
+#~ class Cancel(Action):
+    #~ label = _("Cancel")
+    #~ name = 'cancel'
+    #~ key = ESCAPE 
     
-    def run_in_dlg(self,dlg):
-        yield dlg.close_caller().over()
+    #~ def run_in_dlg(self,dlg):
+        #~ yield dlg.close_caller().over()
 
-class OK(Action):
-    needs_validation = True
-    label = _("OK")
-    name = "ok"
-    key = RETURN
+#~ class OK(Action):
+    #~ needs_validation = True
+    #~ label = _("OK")
+    #~ name = "ok"
+    #~ key = RETURN
 
-    def run_in_dlg(self,dlg):
-        yield dlg.close_caller().over()
+    #~ def run_in_dlg(self,dlg):
+        #~ yield dlg.close_caller().over()
 
 
 

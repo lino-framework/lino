@@ -28,7 +28,7 @@ from lino.core import actors
 from lino import forms
 from lino import actions
 from lino.core import datalinks
-from lino import commands
+#~ from lino import commands
 from lino.ui import base
 
 from lino.modlib.tools import resolve_model, model_label
@@ -263,7 +263,7 @@ class unused_FormLayout(Layout):
     title = None
     label_align = 'left'
     #~ layout_command = None
-    actions = [actions.Cancel,actions.OK]
+    #~ actions = [actions.Cancel,actions.OK]
     
     def do_setup(self):
         self.datalink = forms.Form(self)

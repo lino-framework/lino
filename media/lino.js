@@ -22,20 +22,31 @@ Lino.on_store_exception = function (store,type,action,options,reponse,arg) {
 
 
 
-Lino.save_window_config = function(caller,unused_url) {
+Lino.save_wc_handler = function(ww) {
   return function(event,toolEl,panel,tc) {
-    var url = '/save_window_config'
+    var url = ww.config.url_action+'.wc';
+    // var url = '/save_window_config'
     // var url = '/save_win/' + panel._permalink_name
     // console.log(panel.id,panel.getSize(),panel.getPosition());
     var pos = panel.getPosition();
     var size = panel.getSize();
     // var w = size['width'] * 100 / Lino.viewport.getWidth();
     // var h = size['height'] * 100 / Lino.viewport.getHeight();
-    wc = caller.get_window_config();
-    Ext.applyIf(wc,{ name: panel._permalink_name,
+    wc = ww.get_window_config();
+    Ext.applyIf(wc,{ 
+      // name: ww._permalink_name,
       x:pos[0],y:pos[1],height:size.height,width:size.width,
-      max:panel.maximized});
-    Lino.do_dialog(caller,url,wc);
+      maximized:panel.maximized});
+    //~ Lino.do_dialog(caller,url,wc);
+    Lino.do_action(ww,url,wc,'POST');
+    //~ Ext.Ajax.request({ 
+      //~ waitMsg: 'Saving window config...',
+      //~ method: 'PUT',
+      //~ url: url,
+      //~ params: params, 
+      //~ success: on_success,
+      //~ failure: Lino.ajax_error_handler
+    //~ });
   }
 };
 
@@ -162,7 +173,7 @@ Lino.unused_build_ajax_request = function(caller,url,params) {
   }
 }
 
-Lino.do_action = function(caller,url,params) {
+Lino.do_action = function(caller,url,params,method) {
   var on_success = function(response) {
     var result = Ext.decode(response.responseText);
     // console.log('Lino.do_dialog() got',result);
@@ -196,6 +207,7 @@ Lino.do_action = function(caller,url,params) {
     waitMsg: 'Please wait...',
     url: url,
     params: params, 
+    method: method,
     success: on_success,
     failure: Lino.ajax_error_handler
   });
@@ -282,7 +294,7 @@ Lino.run_permalink = function() {
     // if(windows[i]) eval(windows[i]+".show()");
     // if(windows[i]) Lino.do_action(undefined,'/permalink_do/'+windows[i],windows[i],{});
     if(links[i]) {
-      Lino.do_action(undefined,links[i]+'/grid.act',{});
+      Lino.do_action(undefined,'/api/'+links[i]+'.act',{},'GET');
       //~ var a = links[i].split('.');
       //~ if (a.length == 2) {
           //~ Lino.do_dialog(undefined,'/action/'+a[0]+'/'+a[1],{});
@@ -559,10 +571,10 @@ Ext.apply(Lino.WindowWrapper.prototype,{
   },
   setup : function() { 
     this.window = new Ext.Window({ layout: "fit", title: this.config.title, items: this.main_item, 
-      height: this.config.height, width: this.config.width, maximizable: true, maximized: this.config.maximized, 
-      y: this.config.y, x: this.config.x, 
+      height: this.config.wc.height, width: this.config.wc.width, maximizable: true, maximized: this.config.wc.maximized, 
+      y: this.config.wc.y, x: this.config.wc.x, 
       closeAction:this.closeAction,
-      tools: [ { qtip: "Save window config", handler: Lino.save_window_config(this), id: "save" } ] 
+      tools: [ { qtip: this.config.qtip, handler: Lino.save_wc_handler(this), id: "save" } ] 
       });
     this.window.window_wrapper = this;
     //~ if (this.caller) this.window._permalink_name = this.config.permalink_name;
@@ -604,7 +616,7 @@ Lino.GridWindowWrapper = Ext.extend(Lino.WindowWrapper,{
   setup : function() {
     this.store = new Ext.data.JsonStore({ 
       listeners: { exception: Lino.on_store_exception }, 
-      proxy: new Ext.data.HttpProxy({ url: this.config.url+'/data.json', method: "GET" }), remoteSort: true, 
+      proxy: new Ext.data.HttpProxy({ url: this.config.url_data+'.json', method: "GET" }), remoteSort: true, 
       fields: this.config.fields, 
       totalProperty: "count", 
       root: "rows", 
@@ -612,7 +624,7 @@ Lino.GridWindowWrapper = Ext.extend(Lino.WindowWrapper,{
     this.pager = new Ext.PagingToolbar({ prependButtons: true, items: [ 
       { scope:this, xtype: "textfield", listeners: { keypress: Lino.search_handler(this) }, 
         fieldLabel: "Search", enableKeyEvents: true, id: "seachString" }, 
-      { scope:this, text: "Download", handler: function() {window.open(this.config.url+'/data.csv');} } 
+      { scope:this, text: "Download", handler: function() {window.open(this.config.url_data+'.csv');} } 
     ], pageSize: 10, store: this.store, displayInfo: true });
     
     this.main_grid = new Lino.GridPanel({ clicksToEdit: 2, xtype: "container", tbar: this.pager, 
@@ -624,7 +636,7 @@ Lino.GridWindowWrapper = Ext.extend(Lino.WindowWrapper,{
       
     this.main_item = this.main_grid;
       
-    this.main_grid.on('afteredit', Lino.grid_afteredit(this,this.config.url+'/grid.submit'));
+    this.main_grid.on('afteredit', Lino.grid_afteredit(this,this.config.url_data+'.submit'));
     // this.main_grid.on('cellcontextmenu', Lino.cell_context_menu, this);
     this.main_grid.on('resize', function(cmp,aw,ah,rw,rh) {
         this.pager.pageSize = cmp.calculatePageSize(this,aw,ah,rw,rh) || 10;
@@ -636,6 +648,9 @@ Lino.GridWindowWrapper = Ext.extend(Lino.WindowWrapper,{
     var wc = { window_config_type: 'grid' }
     wc['column_widths'] = Ext.pluck(this.main_grid.colModel.columns,'width');
     return wc;
+  },
+  get_current_record : function() { 
+    return this.main_grid.getSelectionModel().getSelected()
   },
 });
 
@@ -653,9 +668,6 @@ Lino.GridMasterWrapper = Ext.extend(Lino.GridWindowWrapper, {
     for(var i=0;i<sels.length;i++) { sel_pks += sels[i].id + ','; };
     return sel_pks;
   },
-  get_current_record : function() { 
-    return this.main_grid.getSelectionModel().getSelected()
-  }
 });
 
 
@@ -695,6 +707,7 @@ Lino.GridSlaveWrapper = Ext.extend(Lino.SlaveWrapper, {
     Lino.SlaveWrapper.prototype.setup.call(this);
   },
   get_window_config  : Lino.GridWindowWrapper.prototype.get_window_config,
+  get_current_record  : Lino.GridWindowWrapper.prototype.get_current_record,
   load_record : function(record) {
     this.current_record = record;
     this.store.load({params:this.get_master_params(record)}); 
@@ -725,7 +738,7 @@ Lino.PropertiesWrapper = Ext.extend(Lino.SlaveWrapper, {
     Lino.SlaveWrapper.prototype.setup.call(this);
   },
   load_record : function(rec) {
-    Lino.load_properties(this.caller,this,this.config.url+'/data.json',rec);
+    Lino.load_properties(this.caller,this,this.config.url_data+'.json',rec);
   },
   get_window_config : function() {
     var wc = { window_config_type: 'props' }

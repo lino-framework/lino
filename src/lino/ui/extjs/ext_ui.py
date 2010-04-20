@@ -29,7 +29,7 @@ from django.contrib.contenttypes import generic
 
 import lino
 from lino.utils import ucsv
-from lino import actions, layouts, commands
+from lino import actions, layouts #, commands
 from lino import reports        
 from lino.ui import base
 from lino import forms
@@ -46,10 +46,19 @@ from lino.modlib.properties import models as properties
 
 from django.conf.urls.defaults import patterns, url, include
 
-from lino.ui.extjs.ext_windows import WindowConfig # 20100316 backwards-compat window_confics.pck 
+#~ from lino.ui.extjs.ext_windows import WindowConfig # 20100316 backwards-compat window_confics.pck 
+
+def parse_bool(s):
+    return s == 'true'
+    
+def parse_int(s,default=None):
+    if s is None: return None
+    return int(s)
+
+            
 
 def build_url(*args,**kw):
-    url = "/".join(args)  
+    url = "/".join(args)
     if len(kw):
         url += "?" + urlencode(kw)
     return url
@@ -78,6 +87,31 @@ class run_Emitter:
         ar = ext_requests.ViewActionRequest(request,ah,a)
         return json_response(ar.run().as_dict())
         
+
+class wc_Emitter:
+  
+    fmt = 'wc'
+    
+    def handle_request(self,request,ah,a):
+        #~ ar = ext_requests.ViewActionRequest(request,ah,a)
+        #~ return ui.handle_wc(request,ah,a)
+        params = request.POST
+        wc = dict()
+        #~ name = str(ar.ah.report)
+        wc['height'] = parse_int(params.get('height'))
+        wc['width'] = parse_int(params.get('width'))
+        wc['maximized'] = parse_bool(params.get('maximized'))
+        wc['x'] = parse_int(params.get('x'))
+        wc['y'] = parse_int(params.get('y'))
+        cw = params.getlist('column_widths')
+        assert type(cw) is list, "cw is %r (expected list)" % cw
+        wc['column_widths'] = [parse_int(w,100) for w in cw]
+        #~ wc = WindowConfig(str(ar.ah.report),**wc)
+        #~ name = str(a)
+        ui.save_window_config(a,wc)
+        return json_response_kw(success=True,
+          msg=_(u'Window config %s has been saved (%r)') % (a,wc))
+  
 class json_Emitter:
   
     fmt = ext_requests.FMT_JSON
@@ -119,9 +153,30 @@ class submit_Emitter:
     fmt = 'submit'
     def handle_request(self,request,ah,a):
     #~ def handle_request(self,ar):
-        kw['colname'] = ar.request.POST['grid_afteredit_colname']
-        kw['submit'] = True
-        return ui.json_report_view(request,**kw)
+        #~ kw['colname'] = request.POST['grid_afteredit_colname']
+        #~ kw['submit'] = True
+        #~ return json_report_view(request,**kw)
+        ar = ext_requests.ViewReportRequest(request,ah,a)
+        pk = request.POST.get(ah.store.pk.name) #,None)
+        #~ try:
+        data = ah.store.get_from_form(request.POST)
+        if pk in ('', None):
+            #return json_response(success=False,msg="No primary key was specified")
+            instance = ar.create_instance(**data)
+            instance.save(force_insert=True)
+        else:
+            instance = ar.report.model.objects.get(pk=pk)
+            for k,v in data.items():
+                setattr(instance,k,v)
+            instance.save(force_update=True)
+        return json_response_kw(success=True,
+              msg="%s has been saved" % instance)
+        #~ except Exception,e:
+            #~ lino.log.exception(e)
+            #~ #traceback.format_exc(e)
+            #~ return json_response_kw(success=False,msg="Exception occured: "+cgi.escape(str(e)))
+        
+        
         
         
 def register_emitter(e):
@@ -131,6 +186,7 @@ register_emitter(run_Emitter())
 register_emitter(json_Emitter())
 register_emitter(submit_Emitter())
 register_emitter(csv_Emitter())
+register_emitter(wc_Emitter())
 
 
 class ExtUI(base.UI):
@@ -236,19 +292,25 @@ class ExtUI(base.UI):
             
 
     
-    def save_window_config(self,name,wc):
-        self.window_configs[name] = wc
+    def save_window_config(self,a,wc):
+        self.window_configs[str(a)] = wc
+        a.window_wrapper.config.update(wc=wc)
         f = open(self.window_configs_file,'wb')
         pickle.dump(self.window_configs,f)
         f.close()
+        lino.log.debug("save_window_config(%r) -> %s",wc,a)
         #~ lh = actors.get_actor(name).get_handle(self)
         #~ if lh is not None:
             #~ lh.window_wrapper.try_apply_window_config(wc)
         self._response = None
 
-    def load_window_config(self,name):
-        lino.log.debug("load_window_config(%r)",name)
-        return self.window_configs.get(name,None)
+    def load_window_config(self,action,**kw):
+    #~ def load_window_config(self,name):
+        wc = self.window_configs.get(str(action),None)
+        if wc is not None:
+            lino.log.debug("load_window_config(%r) -> %s",str(action),wc)
+            kw.update(**wc)
+        return kw
 
   
     def get_urls(self):
@@ -266,13 +328,14 @@ class ExtUI(base.UI):
             #~ (r'^form/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.act_view),
             #~ (r'^form/(?P<app_label>\w+)/(?P<actor>\w+)$', self.act_view),
             (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)\.(?P<fmt>\w+)$', self.api_view),
+            (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.api_view),
             #~ (r'^action/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.action_view),
             #~ (r'^action/(?P<app_label>\w+)/(?P<actor>\w+)$', self.action_view),
             #~ (r'^step_dialog$', self.step_dialog_view),
             #~ (r'^abort_dialog$', self.abort_dialog_view),
             (r'^choices/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<fldname>\w+)$', self.choices_view),
             #~ (r'^save_win/(?P<name>\w+)$', self.save_win_view),
-            (r'^save_window_config$', self.save_window_config_view),
+            #~ (r'^save_window_config$', self.save_window_config_view),
             #~ (r'^permalink/(?P<name>\w+)$', self.permalink_do_view),
             #~ (r'^permalink$', self.permalink_do_view),
             #~ (r'^props/(?P<app_label>\w+)/(?P<model_name>\w+)$', self.props_view),
@@ -352,6 +415,7 @@ class ExtUI(base.UI):
         if e is None:
             raise Http404("Unknown format %r " % fmt)
         return e.handle_request(request,ah,a)
+        #~ raise Http404("Unknown request method %r " % request.method)
         
     def action_view(self,request,app_label=None,actor=None,action=None,**kw):
         actor = actors.get_actor2(app_label,actor)
@@ -436,8 +500,9 @@ class ExtUI(base.UI):
         #~ return json_response(ar.run().as_dict())
         return json_response_kw(success=True,exec_js=js)
         #~ return self.start_dialog(dlg)
+        
 
-    def save_window_config_view(self,request):
+    def unused_save_window_config_view(self,request):
         actor = ext_windows.SaveWindowConfig()
         ah = actor.get_handle(self)
         ar = ext_requests.ViewReportRequest(request,ah,actor.default_action)
@@ -599,13 +664,17 @@ class ExtUI(base.UI):
         return v
 
 
-    def get_action_url(self,action,fmt,**kw):
+    def get_action_url(self,action,fmt=None,**kw):
         #~ if isinstance(action,properties.PropertiesAction):
             #~ action = properties.PropValuesByOwner().default_action
         #~ if isinstance(action,reports.SlaveGridAction):
             #~ action = action.slave.default_action
             #~ return build_url("/api",action.actor.app_label,action.actor._actor_name,action.name,**kw)
-        return build_url("/api",action.actor.app_label,action.actor._actor_name,action.name+'.'+fmt,**kw)
+        if fmt:
+            name = action.name+'.'+fmt
+        else:
+            name = action.name
+        return build_url("/api",action.actor.app_label,action.actor._actor_name,name,**kw)
         #~ url = "/action/" + a.app_label + "/" + a._actor_name 
         #~ if len(kw):
             #~ url += "?" + urlencode(kw)
@@ -641,6 +710,7 @@ class ExtUI(base.UI):
         if isinstance(h,reports.ReportHandle):
             lino.log.debug('ExtUI.setup_handle() %s',h.report)
             h.choosers = chooser.get_choosers_for_model(h.report.model,chooser.FormChooser)
+            #~ h.report.add_action(ext_windows.SaveWindowConfig(h.report))
             if h.report.use_layouts:
                 h.store = ext_store.Store(h)
                     

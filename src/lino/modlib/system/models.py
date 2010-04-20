@@ -24,7 +24,7 @@ from lino import reports
 from lino import forms
 from lino import layouts
 from lino import actions
-from lino import commands
+#~ from lino import commands
 from lino.utils import perms
 
 
