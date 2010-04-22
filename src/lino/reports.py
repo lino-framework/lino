@@ -360,7 +360,7 @@ class ReportHandle(datalinks.DataLink,base.Handle): #,actors.ActorHandle):
         #~ return self.ui.get_report_ar(self,**kw)
         
     def request(self,*args,**kw):
-        ar = ReportActionRequest(self,self.report.data_action)
+        ar = ReportActionRequest(self,self.report.list_action)
         ar.setup(*args,**kw)
         return ar
         
@@ -413,10 +413,18 @@ class unused_DetailDataLink(datalinks.DataLink):
         
 
 
-class DataAction(actions.Action):
+class ElementAction(actions.Action):
+    def __init__(self,obj):
+        self.obj = obj
+        actions.Action.__init(self)
+        
+    def get_queryset(self,ar):
+        return self.actor.get_queryset(ar)
+  
+class ListAction(actions.Action):
     #~ response_format = 'json' # ext_requests.FMT_JSON
     hidden = True
-    name = 'data'
+    name = 'list'
     
     def get_queryset(self,ar):
         return self.actor.get_queryset(ar)
@@ -442,12 +450,12 @@ class DataAction(actions.Action):
         #~ print 20100420, rows
         return dict(count=total_count,rows=rows,title=ar.get_title())
         
-class ChoicesAction(DataAction):
+class unused_ChoicesAction(ListAction):
   
     def __init__(self,rpt,fldname):
         self.name = fldname+'_choices'
         self.fieldname = fldname
-        DataAction.__init__(self,rpt)
+        ListaAction.__init__(self,rpt)
   
     
     def get_queryset(self,ar):
@@ -564,9 +572,6 @@ class ReportActionRequest(actions.ActionRequest): # was ReportRequest
         return self.action.get_queryset(self)
         #~ return self.report.get_queryset(master_instance=self.master_instance,**kw)
         
-    def get_title(self):
-        return self.action.get_title(self)
-        
     def __iter__(self):
         return self.queryset.__iter__()
         
@@ -580,6 +585,9 @@ class ReportActionRequest(actions.ActionRequest): # was ReportRequest
         
     def get_user(self):
         raise NotImplementedError
+        
+    def get_title(self):
+        return self.action.get_title(self)
         
     def render_to_dict(self):
         return self.action.render_to_dict(self)
@@ -713,7 +721,7 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
     def do_setup(self):
       
         self.default_action = self.default_action_class(self)
-        self.data_action = DataAction(self)
+        self.list_action = ListAction(self)
         
         actions = [ ac(self) for ac in self.actions ]
           
@@ -747,7 +755,7 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
             actions.append(a)
             
         actions.append(self.default_action)
-        actions.append(self.data_action)
+        #~ actions.append(self.data_action)
         self.set_actions(actions)
                 
         if self.button_label is None:

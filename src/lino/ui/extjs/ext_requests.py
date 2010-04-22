@@ -245,10 +245,10 @@ class ViewReportRequest(BaseViewReportRequest):
         return d
  
 
-#~ class ViewActionRequest(actions.ActionRequest):
-    #~ def __init__(self,request,ah,action,*args,**kw):
-        #~ self.request = request
-        #~ actions.ActionRequest.__init__(self,ah,action,*args,**kw)
+class ViewActionRequest(actions.ActionRequest):
+    def __init__(self,request,ah,action,*args,**kw):
+        self.request = request
+        actions.ActionRequest.__init__(self,ah,action,*args,**kw)
         
-    #~ def handle_wc(self):
-        #~ return self.action.handle_wc(self)
+    def handle_wc(self):
+        return self.action.handle_wc(self)

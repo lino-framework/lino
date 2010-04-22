@@ -24,7 +24,7 @@ Lino.on_store_exception = function (store,type,action,options,reponse,arg) {
 
 Lino.save_wc_handler = function(ww) {
   return function(event,toolEl,panel,tc) {
-    var url = ww.config.url_action+'.wc';
+    var url = ww.config.url_action;
     // var url = '/save_window_config'
     // var url = '/save_win/' + panel._permalink_name
     // console.log(panel.id,panel.getSize(),panel.getPosition());
@@ -178,21 +178,22 @@ Lino.do_action = function(caller,action) {
     var result = Ext.decode(response.responseText);
     // console.log('Lino.do_dialog() got',result);
     if (result.alert_msg) Ext.MessageBox.alert('Alert',result.alert_msg);
+    if (result.message) Lino.notify(result.message);
     if (result.notify_msg) Lino.notify(result.notify_msg);
     if (result.js_code) { 
       var jsr = result.js_code(caller);
       if (action.after_js_code) action.after_js_code(jsr);
     };
-    if (result.show_window) {
-      var ww = result.show_window(caller);
-      ww.show();
-    };
-    if (result.redirect) window.open(result.redirect);
-    if (result.refresh_caller && caller) caller.refresh();
-    if (result.close_caller && caller) {
-      caller.close();
-    }
-    if (result.refresh_menu) Lino.load_main_menu();
+    //~ if (result.show_window) {
+      //~ var ww = result.show_window(caller);
+      //~ ww.show();
+    //~ };
+    //~ if (result.redirect) window.open(result.redirect);
+    //~ if (result.refresh_caller && caller) caller.refresh();
+    //~ if (result.close_caller && caller) {
+      //~ caller.close();
+    //~ }
+    //~ if (result.refresh_menu) Lino.load_main_menu();
     if (result.confirm_msg) {
       Ext.MessageBox.show({
         title: 'Confirmation',
@@ -573,14 +574,15 @@ Ext.apply(Lino.WindowWrapper.prototype,{
 
 
 Lino.button_handler = function(caller,action,btn) {
+  Ext.applyIf(action, {params : {}, method:'GET'});
   return function(event) {
-    Ext.applyIf(action, {params : {}, method:'GET'});
     action.params.selected = caller.get_selected(); // POST_PARAM_SELECTED
     Lino.do_action(caller,action);
   }
 };
 
 Lino.toggle_button_handler = function(caller,action) {
+  Ext.applyIf(action, {params : {}, method:'GET'});
   return function(btn,state) {
     if (caller.slaves[action.name] == 'loading') {
       Lino.notify('loading...');
@@ -727,7 +729,7 @@ Lino.DetailSlaveWrapper = Ext.extend(Lino.SlaveWrapper, {
     Lino.WindowWrapper.prototype.setup.call(this);
     Lino.SlaveWrapper.prototype.setup.call(this);
   },
-  get_selected : function() { return this.current_record.id },
+  get_selected : function() { return [ this.current_record.id ] },
   get_current_record : function() {  return this.current_record },
   load_record : function(record) {
     this.current_record = record;

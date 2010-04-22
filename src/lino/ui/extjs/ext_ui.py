@@ -19,7 +19,7 @@ from urllib import urlencode
 
 from django.db import models
 from django.conf import settings
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.core import exceptions
 
 from django.utils.translation import ugettext as _
@@ -45,6 +45,7 @@ from lino.ui.extjs import ext_viewport
 from lino.modlib.properties import models as properties
 
 from django.conf.urls.defaults import patterns, url, include
+from lino.modlib.documents.utils import PdfAction
 
 #~ from lino.ui.extjs.ext_windows import WindowConfig # 20100316 backwards-compat window_confics.pck 
 
@@ -77,55 +78,71 @@ EMITTERS = {}
 
 class Emitter:    
     fmt = None
-    def handle_request(self,request,ah,a):
+    def handle_request(self,request,ah):
         raise NotImplementedError()
         
-class act_Emitter:    
-    fmt = ext_requests.FMT_RUN 
-    #~ def handle_request(self,ar):
-    def handle_request(self,request,ah,a):
-        ar = ext_requests.ViewReportRequest(request,ah,a)
-        return json_response(ar.run())
+#~ class act_Emitter:    
+    #~ fmt = ext_requests.FMT_RUN 
+    #~ def handle_request(self,request,ah,a):
+        #~ ar = ext_requests.ViewReportRequest(request,ah,a)
+        #~ return json_response(ar.run())
         
 
-class wc_Emitter:
-  
-    fmt = 'wc'
+class pdf_Emitter:
+    fmt = 'pdf'
     
-    def handle_request(self,request,ah,a):
-        #~ ar = ext_requests.ViewActionRequest(request,ah,a)
-        #~ return ui.handle_wc(request,ah,a)
-        params = request.POST
-        wc = dict()
-        #~ name = str(ar.ah.report)
-        wc['height'] = parse_int(params.get('height'))
-        wc['width'] = parse_int(params.get('width'))
-        wc['maximized'] = parse_bool(params.get('maximized'))
-        wc['x'] = parse_int(params.get('x'))
-        wc['y'] = parse_int(params.get('y'))
-        cw = params.getlist('column_widths')
-        assert type(cw) is list, "cw is %r (expected list)" % cw
-        wc['column_widths'] = [parse_int(w,100) for w in cw]
-        #~ wc = WindowConfig(str(ar.ah.report),**wc)
-        #~ name = str(a)
-        ui.save_window_config(a,wc)
-        return json_response_kw(success=True,
-          msg=_(u'Window config %s has been saved (%r)') % (a,wc))
-  
+    def handle_list_request(self,request,rh):
+        raise NotImplementedError()
+        
+    def handle_element_request(self,request,ah,elem):
+        elem.make_pdf()
+        return HttpResponseRedirect(elem.pdf_url())
+        
+        
+      
+    
 class json_Emitter:
   
     fmt = ext_requests.FMT_JSON
     
-    #~ def handle_request(self,ar):
-    def handle_request(self,request,ah,a):
-        ar = ext_requests.ViewReportRequest(request,ah,a)
-        d = ar.render_to_dict()
-        return json_response(d)
+    #~ def handle_request(self,request,ah):
+        #~ d = ar.render_to_dict()
+        #~ return json_response(d)
+        
+    def handle_list_request(self,request,rh):
+        a = rh.report.list_action
+        ar = ext_requests.ViewReportRequest(request,rh,a)
+        
+        if rh.report.use_layouts:
+            def row2dict(row,d):
+                for fld in rh.store.fields:
+                    fld.obj2json(row,d)
+                return d
+        else:
+            row2dict = rh.report.row2dict
+        
+        rows = [ row2dict(row,{}) for row in ar.queryset ]
+        total_count = ar.total_count
+        #lino.log.debug('%s.render_to_dict() total_count=%d extra=%d',self,total_count,self.extra)
+        # add extra blank row(s):
+        for i in range(0,ar.extra):
+            row = ar.create_instance()
+            rows.append(row2dict(row,{}))
+            total_count += 1
+        return json_response_kw(count=total_count,rows=rows,title=ar.get_title())
+        
+    def handle_element_request(self,request,ah,elem):
+        raise NotImplementedError()
+        
         
 class csv_Emitter:
     fmt = 'csv'
-    #~ def handle_request(self,ar):
-    def handle_request(self,request,ah,a):
+    
+    def handle_element_request(self,request,ah,elem):
+        raise NotImplementedError()
+        
+    def handle_list_request(self,request,ah):
+        a = ah.report.list_action
         ar = ext_requests.ViewReportRequest(request,ah,a)
         response = HttpResponse(mimetype='text/csv')
         w = ucsv.UnicodeWriter(response)
@@ -151,7 +168,7 @@ class csv_Emitter:
         
 class submit_Emitter:
     fmt = 'submit'
-    def handle_request(self,request,ah,a):
+    def handle_element_request(self,request,ah,a):
     #~ def handle_request(self,ar):
         #~ kw['colname'] = request.POST['grid_afteredit_colname']
         #~ kw['submit'] = True
@@ -176,17 +193,15 @@ class submit_Emitter:
             #~ #traceback.format_exc(e)
             #~ return json_response_kw(success=False,msg="Exception occured: "+cgi.escape(str(e)))
         
-        
-        
-        
 def register_emitter(e):
     EMITTERS[e.fmt] = e
 
-register_emitter(act_Emitter())
+#~ register_emitter(act_Emitter())
 register_emitter(json_Emitter())
 register_emitter(submit_Emitter())
 register_emitter(csv_Emitter())
-register_emitter(wc_Emitter())
+#~ register_emitter(wc_Emitter())
+register_emitter(pdf_Emitter())
 
 
 class ExtUI(base.UI):
@@ -327,8 +342,10 @@ class ExtUI(base.UI):
             (r'^submit/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.form_submit_view),
             #~ (r'^form/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.act_view),
             #~ (r'^form/(?P<app_label>\w+)/(?P<actor>\w+)$', self.act_view),
-            (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)\.(?P<fmt>\w+)$', self.api_view),
-            (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.api_view),
+            (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)\.(?P<fmt>\w+)$', self.api_list_view),
+            (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>\w+)\.(?P<fmt>\w+)$', self.api_element_view),
+            #~ (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.api_view),
+            (r'^ui/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.ui_view),
             #~ (r'^action/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.action_view),
             #~ (r'^action/(?P<app_label>\w+)/(?P<actor>\w+)$', self.action_view),
             #~ (r'^step_dialog$', self.step_dialog_view),
@@ -403,21 +420,25 @@ class ExtUI(base.UI):
         #~ s = py2js(lino_site.get_menu(request))
         #~ return HttpResponse(s, mimetype='text/html')
 
-    def api_view(self,request,app_label=None,actor=None,action=None,fmt=None):
+    def api_list_view(self,request,app_label=None,actor=None,fmt=None):
         actor = actors.get_actor2(app_label,actor)
-        a = actor.get_action(action)
-        if a is None:
-            msg = "No action %s in %s" % (action,actor)
-            #~ print msg
-            raise Http404(msg)
         ah = actor.get_handle(self)
         e = EMITTERS.get(fmt,None)
         if e is None:
             raise Http404("Unknown format %r " % fmt)
-        return e.handle_request(request,ah,a)
+        return e.handle_list_request(request,ah)
+        
+    def api_element_view(self,request,app_label=None,actor=None,pk=None,fmt=None):
+        rpt = actors.get_actor2(app_label,actor)
+        instance = rpt.model.objects.get(pk=pk)
+        ah = rpt.get_handle(self)
+        e = EMITTERS.get(fmt,None)
+        if e is None:
+            raise Http404("Unknown format %r " % fmt)
+        return e.handle_element_request(request,ah,instance)
         #~ raise Http404("Unknown request method %r " % request.method)
         
-    def action_view(self,request,app_label=None,actor=None,action=None,**kw):
+    def ui_view(self,request,app_label=None,actor=None,action=None,**kw):
         actor = actors.get_actor2(app_label,actor)
         ah = actor.get_handle(self)
         #~ if not action:
@@ -428,12 +449,27 @@ class ExtUI(base.UI):
             msg = "No action %s in %s" % (action,ah)
             #~ print msg
             raise Http404(msg)
-        ah = actor.get_handle(self)
-        ar = ext_requests.ViewReportRequest(request,ah,a)
-        return json_response(ar.run())
-        #~ return json_response(ar.run().as_dict())
-        #~ dlg = ext_requests.Dialog(request,self,actor,action)
-        #~ return self.start_dialog(dlg)
+        if request.method == 'GET':
+            return json_response_kw(success=True,js_code=a.window_wrapper.js_render)
+            
+        params = request.POST
+        wc = dict()
+        #~ name = str(ar.ah.report)
+        wc['height'] = parse_int(params.get('height'))
+        wc['width'] = parse_int(params.get('width'))
+        wc['maximized'] = parse_bool(params.get('maximized'))
+        wc['x'] = parse_int(params.get('x'))
+        wc['y'] = parse_int(params.get('y'))
+        cw = params.getlist('column_widths')
+        assert type(cw) is list, "cw is %r (expected list)" % cw
+        wc['column_widths'] = [parse_int(w,100) for w in cw]
+        #~ wc = WindowConfig(str(ar.ah.report),**wc)
+        #~ name = str(a)
+        ui.save_window_config(a,wc)
+        return json_response_kw(success=True,
+          message=_(u'Window config %s has been saved (%r)') % (a,wc))
+  
+        
         
     #~ def start_dialog(self,dlg):
         #~ r = dlg._start().as_dict()
@@ -469,7 +505,7 @@ class ExtUI(base.UI):
         rpt = properties.PropValuesByOwner()
         if not rpt.can_change.passes(request):
             return json_response_kw(success=False,
-                msg="User %s cannot edit %s." % (request.user,rpt))
+                message="User %s cannot edit %s." % (request.user,rpt))
         rh = rpt.get_handle(self)
         rr = ext_requests.BaseViewReportRequest(request,rh,rh.report.default_action)
         name = request.POST.get('name')
@@ -478,7 +514,7 @@ class ExtUI(base.UI):
             p = properties.Property.objects.get(pk=name)
         except properties.Property.DoesNotExist:
             return json_response_kw(success=False,
-                msg="No property named %r." % name)
+                message="No property named %r." % name)
         p.set_value_for(rr.master_instance,value)
         return json_response_kw(success=True,msg='%s : %s = %r' % (rr.master_instance,name,value))
     
@@ -512,8 +548,22 @@ class ExtUI(base.UI):
         
     def choices_view(self,request,app_label=None,rptname=None,fldname=None,**kw):
         rpt = actors.get_actor2(app_label,rptname)
-        kw['choices_for_field'] = fldname
-        return self.json_report_view_(request,rpt,**kw)
+        rh = rpt.get_handle(self)
+        for k,v in request.GET.items():
+            kw[str(k)] = v
+        chooser = rh.choosers[fldname]
+        qs = chooser.get_choices(**kw)
+        quick_search = request.REQUEST.get(ext_requests.URL_PARAM_FILTER,None)
+        if quick_search is not None:
+            qs = add_quick_search_filter(qs,quick_search)
+        
+        def row2dict(self,obj,d):
+            d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
+            d[ext_requests.CHOICES_VALUE_FIELD] = obj.pk # getattr(obj,'pk')
+            return d
+            
+        rows = [ row2dict(row,{}) for row in qs ]
+        return json_response(count=len(rows),rows=rows,title='Choices for %s' % fldname)
         
         
     #~ def grid_afteredit_view(self,request,**kw):
@@ -662,7 +712,8 @@ class ExtUI(base.UI):
             return dict(text=v.label,menu=dict(items=v.items))
         if isinstance(v,menus.MenuItem):
             #~ handler = "function(btn,evt){Lino.do_action(undefined,%r,%r,{})}" % (v.actor.get_url(lino_site.ui),id2js(v.actor.actor_id))
-            handler = "function(btn,evt){Lino.do_action(undefined,{url:%r})}" % self.get_action_url(v.action,ext_requests.FMT_RUN)
+            url = build_url("/ui",v.action.actor.app_label,v.action.actor._actor_name,v.action.name)
+            handler = "function(btn,evt){Lino.do_action(undefined,{url:%r})}" % url
             return dict(text=v.label,handler=js_code(handler))
         return v
 
@@ -687,6 +738,8 @@ class ExtUI(base.UI):
         
         
     def action_window_wrapper(self,a,h):
+        if isinstance(a,PdfAction):
+            return ext_windows.DownloadRenderer(self,a)
         if isinstance(a,reports.GridEdit):
             if a.actor.master is not None:
                 return None
