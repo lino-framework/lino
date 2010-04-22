@@ -254,62 +254,6 @@ class WindowWrapper(jsgen.Object):
         d.update(url_action=self.ui.get_action_url(self.action)) # ,ext_requests.FMT_JSON))
         return d
         
-    def js_render(self):
-        yield "function(caller) { return new Lino.%s(caller,%s);}" % (self.__class__.__name__,py2js(self.config))
-        
-    def unused_js_render(self):
-        wc = self.window.ui.load_window_config(self.window.permalink_name)
-        self.try_apply_window_config(wc)
-        yield "function(caller,on_click) {"
-        yield "  // begin js_render() %s" % self
-        yield "  this.caller = caller;"
-        yield "  this.on_click = on_click;"
-        for ln in self.js_preamble():
-            yield "  " + ln
-        yield "  this.close = function() { this.window.close() }"
-        yield "  this.hide = function() { this.window.hide() }"
-        yield "  this.add_row_listener = function(fn) {"
-        for ln in self.js_add_row_listener():
-            yield "    " + ln
-        yield "  }"
-        yield "  this.show = function() {"
-        for ln in self.js_show():
-            yield "    " + ln
-        yield "    this.window.show();"
-        yield "    this.window.syncSize();"
-        yield "    this.window.focus();"
-        yield "  }"
-        yield "  this.get_values = function() {"
-        yield "    var v = {};"
-        for ln in self.js_get_values():
-            yield "    " + ln
-        yield "    return v;"
-        yield "  };"
-        yield "  // declare variables of %s" % self
-        for v in self.subvars():
-            #~ yield "  // variable %s:" % v.ext_name
-            for ln in v.js_declare():
-                yield "  " + ln
-        yield "  // js_main() %s :" % self
-        for ln in self.js_main():
-            yield "  " + ln
-        yield "  // contributions of variables in %s" % self
-        for v in self.subvars():
-            yield "  // variable %s contributes:" % v.ext_name
-            for ln in v.js_body():
-                yield "  " + ln
-        yield "  this.window._permalink_name = %s;" % py2js(self.window.permalink_name)
-        for ln in self.js_on_window_render():
-            yield "  " + ln
-        yield "  this.get_window_config = function() {"
-        yield "    var wc = { window_config_type: %r }" % self.window_config_type
-        for ln in self.js_window_config():
-            yield "    " + ln
-        yield "    return wc;"
-        yield "  }"
-        
-        yield "  // end js_render() %s" % self
-        yield "}"
         
 def lh2win(lh,**kw):
     kw.update(height=300)
@@ -339,6 +283,9 @@ class MasterWrapper(WindowWrapper):
         WindowWrapper.__init__(self,action,lh.ui,lh,lh._main,**kw)
         
         
+    def js_render(self):
+        yield "function(caller) { new Lino.%s(caller,%s).show();}" % (self.__class__.__name__,py2js(self.config))
+        
     def unused_apply_window_config(self,wc):
         WindowWrapper.apply_window_config(self,wc)
         if isinstance(wc,WindowConfig):
@@ -360,13 +307,10 @@ class GridWrapperMixin(WindowWrapper):
     def __init__(self,rh):
         self.rh = rh
     
-    def unused_js_window_config(self):
-        yield "wc['column_widths'] = Ext.pluck(this.main_grid.colModel.columns,'width');"
-
     def get_config(self):
         d = super(GridWrapperMixin,self).get_config()
         d.update(actions=[dict(
-            type=a.action_type,name=a.name,label=a.label,
+            opens_a_slave=a.opens_a_slave,name=a.name,label=a.label,
             url=self.ui.get_action_url(a,ext_requests.FMT_RUN)
           ) for a in self.rh.get_actions() if not a.hidden])
         #~ d.update(actions=[dict(label=a.label,name=a.name) for a in self.bbar_buttons])
@@ -391,7 +335,9 @@ class GridMasterWrapper(GridWrapperMixin,MasterWrapper):
 
 class SlaveWrapper(WindowWrapper):
   
-    pass
+    def js_render(self):
+        yield "function(caller) { return new Lino.%s(caller,%s);}" % (self.__class__.__name__,py2js(self.config))
+        
 
 class GridSlaveWrapper(GridWrapperMixin,SlaveWrapper):
   
@@ -410,7 +356,7 @@ class GridSlaveWrapper(GridWrapperMixin,SlaveWrapper):
         #~ self.actions = [dict(type=a.action_type,name=a.name,label=a.label) for a in rh.get_actions()]
         #~ print 20100419, self.__class__, self.name
         
-    def js_render(self):
+    def unused_js_render(self):
         print ' GridSlaveWrapper.render()', self.rh, self.lh
         yield "function(caller) { return new Lino.GridSlaveWrapper(caller,%s);}" % py2js(self.config)
         
@@ -433,8 +379,8 @@ class DetailSlaveWrapper(SlaveWrapper):
         #~ slave_lh._main.update(bbar=self.bbar_buttons)
         self.actions = [] # [dict(type=a.action_type,name=a.name,label=a.label) for a in rh.get_actions()]
         
-    def js_render(self):
-        yield "function(caller) { return new Lino.DetailSlaveWrapper(caller,%s);}" % py2js(self.config)
+    #~ def js_render(self):
+        #~ yield "function(caller) { return new Lino.DetailSlaveWrapper(caller,%s);}" % py2js(self.config)
         
     def get_config(self):
         d = super(DetailSlaveWrapper,self).get_config()
@@ -522,8 +468,8 @@ class PropertiesWrapper(SlaveWrapper):
         return len(self.source) > 0
         
         
-    def js_render(self):
-        yield "function(caller) { return new Lino.PropertiesWrapper(caller,%s);}" % py2js(self.config)
+    #~ def js_render(self):
+        #~ yield "function(caller) { return new Lino.PropertiesWrapper(caller,%s);}" % py2js(self.config)
         
     def get_config(self):
         d = SlaveWrapper.get_config(self)

@@ -64,7 +64,8 @@ class ValidationError(Exception):
     
 class Action: # (base.Handled):
     #~ handle_class = ActionHandle
-    action_type = '?'
+    #~ action_type = '?'
+    opens_a_slave = False
     response_format = 'act' # ext_requests.FMT_RUN
     label = None
     name = None
@@ -115,11 +116,13 @@ class WindowAction(Action):
         
                 
 class OpenWindowAction(WindowAction):
-    action_type = 'open_window'
+    pass
+    #~ action_type = 'open_window'
     
     
 class ToggleWindowAction(WindowAction):
-    action_type = 'toggle_window'    
+    opens_a_slave = True
+    #~ action_type = 'toggle_window'    
                 
     
     
@@ -142,7 +145,7 @@ class ToggleWindowAction(WindowAction):
 
 
 
-class ActionResponse:
+class unused_ActionResponse:
     redirect = None
     alert_msg = None
     confirm_msg = None
@@ -150,7 +153,8 @@ class ActionResponse:
     refresh_menu = False
     refresh_caller = False
     close_caller = False
-    show_window = None
+    #~ show_window = None
+    js_code = None
     success = True # for Ext.form.Action.Submit
     errors = None # for Ext.form.Action.Submit
     
@@ -170,7 +174,8 @@ class ActionResponse:
           refresh_menu=self.refresh_menu,
           refresh_caller=self.refresh_caller,
           close_caller=self.close_caller,
-          show_window=self.show_window,
+          #~ show_window=self.show_window,
+          js_code=self.js_code,
         )
 
 class ActionRequest:
@@ -187,10 +192,21 @@ class ActionRequest:
             raise Exception("%s : %r is not an Action." % (self,action))
         self.ah = ah # actor handle
         self.action = action # ah.actor.get_action(action_name)
-        
         #~ self.actor = ah.actor
         self.ui = ah.ui
-        self.response = None
+        self.response = dict(
+          #~ redirect = None,
+          #~ alert_msg = None,
+          #~ confirm_msg = None,
+          #~ notify_msg = None,
+          #~ refresh_menu = False,
+          #~ refresh_caller = False,
+          #~ close_caller = False,
+          #~ show_window = None,
+          #~ js_code = None,
+          success = True, # for Ext.form.Action.Submit
+          errors = None, # for Ext.form.Action.Submit
+        )
         
     def __str__(self):
         return 'ActionRequest `%s.%s`' % (self.ah,self.action)
@@ -198,10 +214,11 @@ class ActionRequest:
     def run(self):
         msg = self.action.before_run(self)
         if msg:
-            return ActionResponse(notify_msg=msg,success=False)
+            return dict(notify_msg=msg,success=False)
+            #~ return ActionResponse(notify_msg=msg,success=False)
         lino.log.debug('ActionRequest %s.%s',self.ah,self.action.name)
         #~ lino.log.debug('ActionRequest._start() %s.%s(%r)',self.ah,self.action.name,self.params)
-        self.response = ActionResponse()
+        #~ self.response = ActionResponse()
         try:
             #~ self.ui.run_action(self)
             self.action.run_action(self)
@@ -218,37 +235,38 @@ class ActionRequest:
         
         
     ## message methods to be used in yield statements
+    
         
     def close_caller(self):
-        self.response.close_caller = True
+        self.response.update(close_caller = True)
         return self
         
     def refresh_caller(self):
-        self.response.refresh_caller = True
+        self.response.update(refresh_caller = True)
         return self
         
     def refresh_menu(self):
-        self.response.refresh_menu = True
+        self.response.update(refresh_menu = True)
         return self
         
-    def show_report(self,rh):
-        return self.ui.show_report(self,rh)
+    #~ def show_report(self,rh):
+        #~ return self.ui.show_report(self,rh)
         
     def show_action_window(self,action):
         return self.ui.show_action_window(self,action)
         
-    def show_detail(self):
-        return self.ui.show_detail(self)
+    #~ def show_detail(self):
+        #~ return self.ui.show_detail(self)
         
-    def show_properties(self,lh):
-        return self.ui.show_properties(self)
+    #~ def show_properties(self,lh):
+        #~ return self.ui.show_properties(self)
         
     def unused_show_detail(self,row):
         assert self.ah.detail_link is not None
         self.ah.detail_link.row = row
         return self.ui.show_detail(self,row)
         
-    def show_window(self,js):
+    def unused_show_window(self,js):
         #~ assert js.strip().startswith('function')
         #~ self.response.show_window = py2js(js)
         self.response.show_window = js
@@ -259,36 +277,36 @@ class ActionRequest:
         return self
         
     def redirect(self,url):
-        self.response.redirect = url
+        self.response.update(redirect = url)
         return self
         
     def confirm(self,msg,**kw):
-        self.response.confirm_msg = msg
+        self.response.update(confirm_msg = msg)
         return self
         
     def alert(self,msg,**kw):
-        self.response.alert_msg = msg
+        self.response.update(alert_msg = msg)
         return self
 
     def exception(self,e):
-        self.response.success = False
-        self.response.alert_msg = unicode(e)
+        self.response.update(success = False)
+        self.response.update(alert_msg = unicode(e))
         traceback.print_exc(e)
         return self
 
     def notify(self,msg):
-        self.response.notify_msg = msg
+        self.response.update(notify_msg = msg)
         return self
 
-    def cancel(self,msg=None):
-        if msg is not None:
-              self.notify(msg)
-        return self.close_caller().over()
+    #~ def cancel(self,msg=None):
+        #~ if msg is not None:
+              #~ self.notify(msg)
+        #~ return self.close_caller().over()
         
-    def ok(self,msg=None):
-        if msg is not None:
-              self.notify(msg)
-        return self.close_caller().over()
+    #~ def ok(self,msg=None):
+        #~ if msg is not None:
+              #~ self.notify(msg)
+        #~ return self.close_caller().over()
 
 
 

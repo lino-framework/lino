@@ -117,18 +117,21 @@ class BaseViewReportRequest(reports.ReportActionRequest):
                 self.sort_direction = 'DESC'
             kw.update(order_by=sort)
         
-        layout = request.REQUEST.get('layout',None)
-        if layout:
-            kw.update(layout=int(layout))
+        #~ layout = request.REQUEST.get('layout',None)
+        #~ if layout:
+            #~ kw.update(layout=int(layout))
             #~ kw.update(layout=rh.layouts[int(layout)])
             
         kw.update(user=request.user)
         
         if self.action.needs_selection:
-            selected = request.POST.get(POST_PARAM_SELECTED,None)
-            if selected:
-                kw.update(selected_rows = [
-                  self.ah.actor.model.objects.get(pk=pk) for pk in selected.split(',') if pk])
+            kw.update(selected_rows = [
+              self.ah.actor.model.objects.get(pk=pk) 
+              for pk in request.REQUEST.getlist(POST_PARAM_SELECTED)])
+            #~ selected = request.REQUEST.get(POST_PARAM_SELECTED,None)
+            #~ if selected:
+                #~ kw.update(selected_rows = [
+                  #~ self.ah.actor.model.objects.get(pk=pk) for pk in selected.split(',') if pk])
         
         return kw
       
@@ -242,10 +245,10 @@ class ViewReportRequest(BaseViewReportRequest):
         return d
  
 
-class ViewActionRequest(actions.ActionRequest):
-    def __init__(self,request,ah,action,*args,**kw):
-        self.request = request
-        actions.ActionRequest.__init__(self,ah,action,*args,**kw)
+#~ class ViewActionRequest(actions.ActionRequest):
+    #~ def __init__(self,request,ah,action,*args,**kw):
+        #~ self.request = request
+        #~ actions.ActionRequest.__init__(self,ah,action,*args,**kw)
         
-    def handle_wc(self):
-        return self.action.handle_wc(self)
+    #~ def handle_wc(self):
+        #~ return self.action.handle_wc(self)

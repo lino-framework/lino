@@ -80,12 +80,12 @@ class Emitter:
     def handle_request(self,request,ah,a):
         raise NotImplementedError()
         
-class run_Emitter:    
+class act_Emitter:    
     fmt = ext_requests.FMT_RUN 
     #~ def handle_request(self,ar):
     def handle_request(self,request,ah,a):
-        ar = ext_requests.ViewActionRequest(request,ah,a)
-        return json_response(ar.run().as_dict())
+        ar = ext_requests.ViewReportRequest(request,ah,a)
+        return json_response(ar.run())
         
 
 class wc_Emitter:
@@ -182,7 +182,7 @@ class submit_Emitter:
 def register_emitter(e):
     EMITTERS[e.fmt] = e
 
-register_emitter(run_Emitter())
+register_emitter(act_Emitter())
 register_emitter(json_Emitter())
 register_emitter(submit_Emitter())
 register_emitter(csv_Emitter())
@@ -430,7 +430,8 @@ class ExtUI(base.UI):
             raise Http404(msg)
         ah = actor.get_handle(self)
         ar = ext_requests.ViewReportRequest(request,ah,a)
-        return json_response(ar.run().as_dict())
+        return json_response(ar.run())
+        #~ return json_response(ar.run().as_dict())
         #~ dlg = ext_requests.Dialog(request,self,actor,action)
         #~ return self.start_dialog(dlg)
         
@@ -506,7 +507,7 @@ class ExtUI(base.UI):
         actor = ext_windows.SaveWindowConfig()
         ah = actor.get_handle(self)
         ar = ext_requests.ViewReportRequest(request,ah,actor.default_action)
-        return json_response(ar.run().as_dict())
+        return json_response(ar.run())
         #~ return self.start_dialog(dlg)
         
     def choices_view(self,request,app_label=None,rptname=None,fldname=None,**kw):
@@ -548,7 +549,8 @@ class ExtUI(base.UI):
             a = rpt.get_action(grid_action)
             assert a is not None, "No action %s in %s" % (grid_action,rh)
             ar = ext_requests.ViewReportRequest(request,rh,a)
-            return json_response(ar.run().as_dict())
+            return json_response(ar.run())
+            #~ return json_response(ar.run().as_dict())
                 
         if choices_for_field:
             rptreq = ext_requests.ChoicesReportRequest(request,rh,choices_for_field)
@@ -631,17 +633,18 @@ class ExtUI(base.UI):
         
         
         
-    def show_report(self,ar,rh,**kw):
-        ar.show_window(rh.window_wrapper.js_render)
+    #~ def show_report(self,ar,rh,**kw):
+        #~ ar.show_window(rh.window_wrapper.js_render)
 
-    def show_detail(self,ar):
-        ar.show_window(ar.action.window_wrapper.js_render)
+    #~ def show_detail(self,ar):
+        #~ ar.show_window(ar.action.window_wrapper.js_render)
 
     def show_action_window(self,ar,action):
-        ar.show_window(action.window_wrapper.js_render)
+        ar.response.update(js_code = action.window_wrapper.js_render)
+        #~ ar.show_window(action.window_wrapper.js_render)
 
-    def show_properties(self,ar,**kw):
-        ar.show_window(ar.rh.properties.window_wrapper.js_render)
+    #~ def show_properties(self,ar,**kw):
+        #~ ar.show_window(ar.rh.properties.window_wrapper.js_render)
         
         
     #~ def view_form(self,dlg,**kw):
@@ -659,7 +662,7 @@ class ExtUI(base.UI):
             return dict(text=v.label,menu=dict(items=v.items))
         if isinstance(v,menus.MenuItem):
             #~ handler = "function(btn,evt){Lino.do_action(undefined,%r,%r,{})}" % (v.actor.get_url(lino_site.ui),id2js(v.actor.actor_id))
-            handler = "function(btn,evt){Lino.do_action(undefined,%r,{})}" % self.get_action_url(v.action,ext_requests.FMT_RUN)
+            handler = "function(btn,evt){Lino.do_action(undefined,{url:%r})}" % self.get_action_url(v.action,ext_requests.FMT_RUN)
             return dict(text=v.label,handler=js_code(handler))
         return v
 
