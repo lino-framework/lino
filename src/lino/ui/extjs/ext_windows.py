@@ -46,14 +46,19 @@ class DownloadRenderer(ActionRenderer):
   
     def js_render(self):
         yield "function(caller) { "
-        yield "  console.log(caller.get_selected());"
+        #~ yield "  console.log(caller.get_selected());"
         yield "  caller.get_selected().forEach(function(pk) {"
         url = '/'.join(('/api',self.action.actor.app_label,self.action.actor._actor_name))+'/'
         yield "    console.log(pk);"
         yield "    window.open(%r+pk+'.pdf');" % url
         yield "  })"
         yield "}" 
+
+class DeleteRenderer(ActionRenderer):
   
+    def js_render(self):
+        yield "function(caller) { Lino.delete_selected(caller); }"
+
 class WindowWrapper(ActionRenderer):
   
     window_config_type = None
@@ -159,6 +164,19 @@ class GridWrapperMixin(WindowWrapper):
             label=a.label,
             url="/".join(("/ui",a.actor.app_label,a.actor._actor_name,a.name))
           ) for a in self.rh.get_actions() if not a.hidden])
+        #~ i = 0
+        #~ actions = []
+        #~ for a in self.rh.get_actions():
+            #~ if not a.hidden:
+                #~ i += 1
+                #~ btn = dict(text=a.label)
+                #~ if a.opens_a_slave: 
+                    #~ btn.update(toggleHandler=js_code('Lino.toggle_button_handler(caller,%d)' % i))
+                    #~ btn.update(enableToggle = True)
+                #~ else:
+                    #~ btn.update(handler=js_code('Lino.button_handler(caller,%d)' % i))
+                #~ actions.append(btn)
+        #~ d.update(actions=actions)
         #~ d.update(actions=[dict(label=a.label,name=a.name) for a in self.bbar_buttons])
         d.update(fields=[js_code(f.as_js()) for f in self.rh.store.fields])
         d.update(colModel=self.lh._main.column_model)
@@ -234,7 +252,7 @@ class InsertWrapper(MasterWrapper):
             name='submit',
             label='Submit',
             method='POST',
-            url="/".join(("/api",self.action.actor.app_label,self.action.actor._actor_name,'insert'))
+            url="/".join(("/api",self.action.actor.app_label,self.action.actor._actor_name))+'.json'
           ),
           ])
         return d
@@ -322,7 +340,7 @@ class unused_DetailMasterWrapper(MasterWrapper):
                 #~ keys.append(key_handler(a.key,h))
         lh._main.update(bbar=self.bbar_buttons)
         
-    def js_main(self):
+    def unused_js_main(self):
         for ln in MasterWrapper.js_main(self):
             yield ln
         yield "this.refresh = function() { console.log('DetailMasterWrapper.refresh() is not implemented') };"

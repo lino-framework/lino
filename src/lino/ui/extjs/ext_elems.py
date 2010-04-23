@@ -1092,8 +1092,9 @@ class GridMainPanel(GridElement,MainPanel):
 
 class DetailMainPanel(Panel,WrappingMainPanel):
     #~ declare_type = jsgen.DECLARE_THIS
-    xtype = None
-    value_template = "new Ext.form.FormPanel(%s)"
+    xtype = 'form'
+    #~ xtype = None
+    #~ value_template = "new Ext.form.FormPanel(%s)"
     def __init__(self,lh,name,vertical,*elements,**kw):
         #~ self.rh = lh.datalink
         self.report = lh.layout.datalink_report

@@ -49,6 +49,10 @@ from lino.modlib.documents.utils import PdfAction
 
 #~ from lino.ui.extjs.ext_windows import WindowConfig # 20100316 backwards-compat window_confics.pck 
 
+class HttpResponseDeleted(HttpResponse):
+    status_code = 204
+
+
 def parse_bool(s):
     return s == 'true'
     
@@ -78,8 +82,40 @@ EMITTERS = {}
 
 class Emitter:    
     fmt = None
-    def handle_request(self,request,ah):
-        raise NotImplementedError()
+    def handle_list_request(self,request,rh):
+        raise Http404("%r emitter has not handle_list_request() " % fmt)
+    def handle_element_request(self,request,ah,elem):
+        raise Http404("%r emitter has not handle_element_request() " % fmt)
+        
+    
+class DefaultEmitter(Emitter):
+  
+    fmt = None
+    
+    def handle_list_request(self,request,rh):
+        a = rh.report.list_action
+        ar = ext_requests.ViewReportRequest(request,rh,a)
+        if request.method == 'POST':
+            pk = request.POST.get(rh.store.pk.name) #,None)
+            #~ try:
+            data = rh.store.get_from_form(request.POST)
+            if pk in ('', None):
+                #return json_response(success=False,msg="No primary key was specified")
+                instance = ar.create_instance(**data)
+                instance.save(force_insert=True)
+            else:
+                instance = ar.report.model.objects.get(pk=pk)
+                for k,v in data.items():
+                    setattr(instance,k,v)
+                instance.save(force_update=True)
+            return json_response_kw(success=True,
+                  msg="%s has been saved" % instance)
+        
+    def handle_element_request(self,request,ah,elem):
+        if request.method == 'DELETE':
+            elem.delete()
+            return HttpResponseDeleted()
+            
         
 
 class pdf_Emitter:
@@ -102,24 +138,24 @@ class json_Emitter:
     def handle_list_request(self,request,rh):
         a = rh.report.list_action
         ar = ext_requests.ViewReportRequest(request,rh,a)
-        
-        if rh.report.use_layouts:
-            def row2dict(row,d):
-                for fld in rh.store.fields:
-                    fld.obj2json(row,d)
-                return d
-        else:
-            row2dict = rh.report.row2dict
-        
-        rows = [ row2dict(row,{}) for row in ar.queryset ]
-        total_count = ar.total_count
-        #lino.log.debug('%s.render_to_dict() total_count=%d extra=%d',self,total_count,self.extra)
-        # add extra blank row(s):
-        for i in range(0,ar.extra):
-            row = ar.create_instance()
-            rows.append(row2dict(row,{}))
-            total_count += 1
-        return json_response_kw(count=total_count,rows=rows,title=ar.get_title())
+        if request.method == 'GET':
+            if rh.report.use_layouts:
+                def row2dict(row,d):
+                    for fld in rh.store.fields:
+                        fld.obj2json(row,d)
+                    return d
+            else:
+                row2dict = rh.report.row2dict
+            
+            rows = [ row2dict(row,{}) for row in ar.queryset ]
+            total_count = ar.total_count
+            #lino.log.debug('%s.render_to_dict() total_count=%d extra=%d',self,total_count,self.extra)
+            # add extra blank row(s):
+            for i in range(0,ar.extra):
+                row = ar.create_instance()
+                rows.append(row2dict(row,{}))
+                total_count += 1
+            return json_response_kw(count=total_count,rows=rows,title=ar.get_title())
         
     def handle_element_request(self,request,ah,elem):
         raise NotImplementedError()
@@ -156,7 +192,7 @@ class csv_Emitter:
             w.writerow(values)
         return response
         
-class submit_Emitter:
+class unused_submit_Emitter:
     fmt = 'submit'
     def handle_element_request(self,request,ah,a):
         ar = ext_requests.ViewReportRequest(request,ah,a)
@@ -183,8 +219,9 @@ def register_emitter(e):
     EMITTERS[e.fmt] = e
 
 #~ register_emitter(act_Emitter())
+register_emitter(DefaultEmitter())
 register_emitter(json_Emitter())
-register_emitter(submit_Emitter())
+#~ register_emitter(submit_Emitter())
 register_emitter(csv_Emitter())
 #~ register_emitter(wc_Emitter())
 register_emitter(pdf_Emitter())
@@ -328,8 +365,10 @@ class ExtUI(base.UI):
             (r'^submit/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.form_submit_view),
             #~ (r'^form/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.act_view),
             #~ (r'^form/(?P<app_label>\w+)/(?P<actor>\w+)$', self.act_view),
+            (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)$', self.api_list_view),
             (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)\.(?P<fmt>\w+)$', self.api_list_view),
             (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>\w+)\.(?P<fmt>\w+)$', self.api_element_view),
+            (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>\w+)$', self.api_element_view),
             #~ (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.api_view),
             (r'^ui/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.ui_view),
             #~ (r'^action/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.action_view),
@@ -724,8 +763,9 @@ class ExtUI(base.UI):
         
         
     def action_window_wrapper(self,a,h):
-        if isinstance(a,PdfAction):
-            return ext_windows.DownloadRenderer(self,a)
+        if isinstance(a,PdfAction): return ext_windows.DownloadRenderer(self,a)
+        if isinstance(a,reports.DeleteSelected): return ext_windows.DeleteRenderer(self,a)
+          
         if isinstance(a,reports.GridEdit):
             if a.actor.master is not None:
                 return None

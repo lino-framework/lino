@@ -14,10 +14,26 @@
 */
 Ext.namespace('Lino');
 Lino.on_store_exception = function (store,type,action,options,reponse,arg) {
-  // console.log("Ha! on_store_exception() was called!");
   console.log("on_store_exception:",store,type,action,options,reponse,arg);
 };
 
+Lino.on_submit_success = function(form, action) {
+   Lino.notify(action.result.msg);
+   this.close();
+};
+
+Lino.on_submit_failure = function(form, action) {
+    switch (action.failureType) {
+        case Ext.form.Action.CLIENT_INVALID:
+            Ext.Msg.alert('Failure', 'Form fields may not be submitted with invalid values');
+            break;
+        case Ext.form.Action.CONNECT_FAILURE:
+            Ext.Msg.alert('Failure', 'Ajax communication failed');
+            break;
+        case Ext.form.Action.SERVER_INVALID:
+           Ext.Msg.alert('Failure', action.result.msg);
+   }
+};
 
 
 
@@ -51,7 +67,7 @@ Lino.save_wc_handler = function(ww) {
 };
 
 
-Lino.grid_afteredit = function (caller,url) {
+Lino.grid_afteredit_handler = function (caller) {
   return function(e) {
     /*
     e.grid - This grid
@@ -73,7 +89,7 @@ Lino.grid_afteredit = function (caller,url) {
     // console.log("grid_afteredit:",e.field,'=',e.value);
     Ext.Ajax.request({
       waitMsg: 'Please wait...',
-      url: url,
+      url: this.config.url_data,
       params: p, 
       success: function(response) {
         // console.log('success',response.responseText);
@@ -91,119 +107,58 @@ Lino.grid_afteredit = function (caller,url) {
   }
 };
 
-Lino.unused_build_ajax_request = function(caller,url,params) {
-  // console.log('Lino.do_dialog()',url,params);
-  var step_dialog = function(result) {
-    if (result.dialog_id) { // server wants me to continue this dialog
-      // if (caller) Ext.apply(params,caller.get_values());
-      params['dialog_id'] = result.dialog_id;
-      params['last_button'] = result.last_button;
-      if (caller && caller.main_panel) {
-        if (!caller.main_panel.form.isValid()) {
-          Lino.notify("One or more fields contain invalid data.");
-          return;
-        }
-        // var rec = caller.get_current_record();
-        // if (rec) params['pk'] = rec.id;
-        console.log("using form.submit()");
-        caller.main_panel.form.submit({ url:'/step_dialog', params:params, 
-          success: function(form, action) { 
-            console.log('build_ajax_request',action.result); 
-            handle_response(action.result)
-          }});
-      } else {
-        console.log("using Ajax.request()");
-        Ext.Ajax.request({ url:'/step_dialog', params:params, success: handle_response});
-      }
 
+Lino.delete_selected = function(caller) {
+  var pk_list = caller.get_selected();
+  Ext.MessageBox.show({
+    title: 'Confirmation',
+    msg: "Delete " + String(pk_list.length) + " rows. Are you sure?",
+    buttons: Ext.MessageBox.YESNOCANCEL,
+    fn: function(btn) {
+      if (btn == 'yes') {
+        pk_list.forEach(function(pk) {
+          Lino.do_action(caller,{method:'DELETE',url:caller.config.url_data+'/'+pk})
+        });
+        caller.refresh();
+      }
+      else Lino.notify("Dann eben nicht.");
     }
-  }
-  var abort_dialog = function(result) {
-    if (result.dialog_id) {
-      params['dialog_id'] = result.dialog_id;
-      params['last_button'] = result.last_button;
-      Ext.Ajax.request({ url:'/abort_dialog', params:params, success: handle_response});
-    }
-  }
-  var handle_response = function(response) {
-    var result = Ext.decode(response.responseText);
-    // console.log('Lino.do_dialog() got',result);
-    if (result.alert_msg) Ext.MessageBox.alert('Alert',result.alert_msg);
-    if (result.notify_msg) Lino.notify(result.notify_msg);
-    if (result.exec_js) { result.exec_js(caller) };
-    if (result.show_window) {
-      var ww = result.show_window(caller);
-      ww.show();
-      // caller = new result.show_window(caller);
-      // caller.show();
-    }
-    if (result.redirect) window.open(result.redirect);
-    if (result.refresh_caller && caller) caller.refresh();
-    if (result.close_caller && caller) {
-      caller.close();
-      caller = caller.caller;
-    }
-    if (result.refresh_menu) Lino.load_main_menu();
-    if (result.confirm_msg) {
-      Ext.MessageBox.show({
-        title: 'Confirmation',
-        msg: result.confirm_msg,
-        buttons: Ext.MessageBox.YESNOCANCEL,
-        fn: function(btn) {
-          if (btn == 'yes') step_dialog(result);
-          else abort_dialog(result);
-        }
-      })
-    } else if (result.show_modal_window) {
-      var on_click = function(btn_name) {result.last_button = btn_name;step_dialog(result)};
-      caller = new result.show_modal_window(caller,on_click)
-      // ww.ok = function(btn_name) {result.last_button = btn_name;step_dialog(result)};
-      // ww.cancel = function(btn_name) {result.last_button = btn_name;abort_dialog(result)};
-      caller.show();
-    } else {
-      step_dialog(result);
-    }
-  }
-  return { 
-    waitMsg: 'Please wait...',
-    url: url,
-    params: params, 
-    success: handle_response,
-    failure: Lino.ajax_error_handler
-  }
-}
+  });
+};
 
 Lino.do_action = function(caller,action) {
   action.success = function(response) {
-    var result = Ext.decode(response.responseText);
-    // console.log('Lino.do_dialog() got',result);
-    if (result.alert_msg) Ext.MessageBox.alert('Alert',result.alert_msg);
-    if (result.message) Lino.notify(result.message);
-    if (result.notify_msg) Lino.notify(result.notify_msg);
-    if (result.js_code) { 
-      var jsr = result.js_code(caller);
-      if (action.after_js_code) action.after_js_code(jsr);
-    };
-    //~ if (result.show_window) {
-      //~ var ww = result.show_window(caller);
-      //~ ww.show();
-    //~ };
-    //~ if (result.redirect) window.open(result.redirect);
-    //~ if (result.refresh_caller && caller) caller.refresh();
-    //~ if (result.close_caller && caller) {
-      //~ caller.close();
-    //~ }
-    //~ if (result.refresh_menu) Lino.load_main_menu();
-    if (result.confirm_msg) {
-      Ext.MessageBox.show({
-        title: 'Confirmation',
-        msg: result.confirm_msg,
-        buttons: Ext.MessageBox.YESNOCANCEL,
-        fn: function(btn) {
-          if (btn == 'yes') step_dialog(result);
-          else abort_dialog(result);
-        }
-      })
+    if (response.responseText) {
+      var result = Ext.decode(response.responseText);
+      // console.log('Lino.do_dialog() got',result);
+      if (result.alert_msg) Ext.MessageBox.alert('Alert',result.alert_msg);
+      if (result.message) Lino.notify(result.message);
+      if (result.notify_msg) Lino.notify(result.notify_msg);
+      if (result.js_code) { 
+        var jsr = result.js_code(caller);
+        if (action.after_js_code) action.after_js_code(jsr);
+      };
+      //~ if (result.show_window) {
+        //~ var ww = result.show_window(caller);
+        //~ ww.show();
+      //~ };
+      //~ if (result.redirect) window.open(result.redirect);
+      //~ if (result.refresh_caller && caller) caller.refresh();
+      //~ if (result.close_caller && caller) {
+        //~ caller.close();
+      //~ }
+      //~ if (result.refresh_menu) Lino.load_main_menu();
+      //~ if (result.confirm_msg) {
+        //~ Ext.MessageBox.show({
+          //~ title: 'Confirmation',
+          //~ msg: result.confirm_msg,
+          //~ buttons: Ext.MessageBox.YESNOCANCEL,
+          //~ fn: function(btn) {
+            //~ if (btn == 'yes') step_dialog(result);
+            //~ else abort_dialog(result);
+          //~ }
+        //~ })
+      //~ }
     }
   };
   Ext.applyIf(action,{
@@ -294,7 +249,7 @@ Lino.run_permalink = function() {
     // if(windows[i]) eval(windows[i]+".show()");
     // if(windows[i]) Lino.do_action(undefined,'/permalink_do/'+windows[i],windows[i],{});
     if(links[i]) {
-      Lino.do_action(undefined,{url:'/api/'+links[i]+'.act',method:'GET'});
+      Lino.do_action(undefined,{url:'/ui/'+links[i],method:'GET'});
       //~ var a = links[i].split('.');
       //~ if (a.length == 2) {
           //~ Lino.do_dialog(undefined,'/action/'+a[0]+'/'+a[1],{});
@@ -515,7 +470,7 @@ Lino.WindowWrapper = function(caller,config) {
   this.config = config; 
   this.slaves = {};
   if (config.actions) {
-      this.bbar = Array(config.actions.length);
+      this.bbar_actions = Array(config.actions.length);
       for(var i=0;i<config.actions.length;i++) { 
         var btn = {
           text: config.actions[i].label,
@@ -526,7 +481,7 @@ Lino.WindowWrapper = function(caller,config) {
         } else  {
           btn.handler = Lino.button_handler(this,config.actions[i]);
         }
-        this.bbar[i] = new Ext.Button(btn);
+        this.bbar_actions[i] = new Ext.Button(btn);
       }
   }
   //~ console.log('Lino.WindowWrapper.constructor',config.title,this);
@@ -560,6 +515,7 @@ Ext.apply(Lino.WindowWrapper.prototype,{
       height: this.config.wc.height, width: this.config.wc.width, maximizable: true, maximized: this.config.wc.maximized, 
       y: this.config.wc.y, x: this.config.wc.x, 
       closeAction:this.closeAction,
+      bbar: this.bbar_actions,
       tools: [ { qtip: this.config.qtip, handler: Lino.save_wc_handler(this), id: "save" } ] 
       });
     this.window.window_wrapper = this;
@@ -574,7 +530,9 @@ Ext.apply(Lino.WindowWrapper.prototype,{
 });
 
 
-Lino.button_handler = function(caller,action,btn) {
+//~ Lino.button_handler = function(caller,action,btn) {
+Lino.button_handler = function(caller,action) {
+  //~ var action = caller.config.bbar_actions[i];
   Ext.applyIf(action, {params : {}, method:'GET'});
   return function(event) {
     action.params.selected = caller.get_selected(); // POST_PARAM_SELECTED
@@ -583,6 +541,7 @@ Lino.button_handler = function(caller,action,btn) {
 };
 
 Lino.toggle_button_handler = function(caller,action) {
+  //~ var action = caller.config.bbar_actions[i];
   Ext.applyIf(action, {params : {}, method:'GET'});
   return function(btn,state) {
     if (caller.slaves[action.name] == 'loading') {
@@ -637,13 +596,13 @@ Lino.GridMixin = Ext.extend(Lino.WindowWrapper,{
     this.main_grid = new Lino.GridPanel({ clicksToEdit: 2, xtype: "container", tbar: this.pager, 
       selModel: new Ext.grid.RowSelectionModel({singleSelect:false}), 
       emptyText: "Nix gefunden...", 
-      bbar: this.bbar, 
+      //~ bbar: this.bbar_actions, 
       viewConfig: { showPreview: true, scrollOffset: 200, emptyText: "Nix gefunden!" }, 
       enableColLock: false, store: this.store, colModel: this.config.colModel });
       
     this.main_item = this.main_grid;
       
-    this.main_grid.on('afteredit', Lino.grid_afteredit(this,this.config.url_data+'.submit'));
+    this.main_grid.on('afteredit', Lino.grid_afteredit_handler(this));
     // this.main_grid.on('cellcontextmenu', Lino.cell_context_menu, this);
     this.main_grid.on('resize', function(cmp,aw,ah,rw,rh) {
         this.pager.pageSize = cmp.calculatePageSize(this,aw,ah,rw,rh) || 10;
@@ -714,7 +673,8 @@ Lino.DetailMixin = {
   get_current_record : function() {  return this.current_record },
   load_record : function(record) {
     this.current_record = record;
-    this.config.main_panel.form.load(record);
+    //~ this.config.main_panel.form.load(record);    
+    this.main_form.load(record);    
   },
 };
 
@@ -724,20 +684,46 @@ Lino.DetailSlaveWrapper = Ext.extend(Lino.SlaveMixin, {
     this.main_item = this.config.main_panel;
     Lino.WindowWrapper.prototype.setup.call(this);
     Lino.SlaveMixin.prototype.setup.call(this);
+    this.main_form = this.window.getComponent(0);
   },
 });
-Ext.extend(Lino.DetailSlaveWrapper,Lino.DetailMixin);
+Ext.apply(Lino.DetailSlaveWrapper.prototype,Lino.DetailMixin);
 
 Lino.InsertWrapper = Ext.extend(Lino.WindowWrapper, {
   setup:function() {
     //~ console.log('Lino.DetailSlaveWrapper setup',20100409,this);
     this.main_item = this.config.main_panel;
-      ... hier muss noch die bbar: this.bbar, 
-    
+    this.bbar_actions = [
+      {
+        text: "New Submit", 
+        scope: this,
+        handler: function() {
+          this.main_form.form.submit({
+            url:this.caller.config.url_data,
+            method: 'POST',
+            //~ success: Lino.on_submit_success,
+            success: function(form, action) {
+              console.log(this);
+              Lino.notify(action.result.msg);
+              this.close();
+            },
+            failure: Lino.on_submit_failure,
+            clientValidation: true,
+          })
+        },
+      }
+    ];
+    //~ this.main_item.bbar = this.config.bbar_actions;
+    //~ this.main_item = Ext.Panel({
+        //~ items: this.config.main_panel,
+        //~ bbar: this.config.bbar_actions,
+        //~ autoScroll: true,});
     Lino.WindowWrapper.prototype.setup.call(this);
+    this.main_form = this.window.getComponent(0);
+    this.load_record(new this.caller.store.recordType());
   },
 })
-Ext.extend(Lino.InsertWrapper,Lino.DetailMixin);
+Ext.apply(Lino.InsertWrapper.prototype,Lino.DetailMixin);
 
 Lino.PropertiesWrapper = Ext.extend(Lino.SlaveMixin, {
   setup : function() {
