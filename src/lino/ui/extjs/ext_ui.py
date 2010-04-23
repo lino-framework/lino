@@ -81,12 +81,6 @@ class Emitter:
     def handle_request(self,request,ah):
         raise NotImplementedError()
         
-#~ class act_Emitter:    
-    #~ fmt = ext_requests.FMT_RUN 
-    #~ def handle_request(self,request,ah,a):
-        #~ ar = ext_requests.ViewReportRequest(request,ah,a)
-        #~ return json_response(ar.run())
-        
 
 class pdf_Emitter:
     fmt = 'pdf'
@@ -105,10 +99,6 @@ class json_Emitter:
   
     fmt = ext_requests.FMT_JSON
     
-    #~ def handle_request(self,request,ah):
-        #~ d = ar.render_to_dict()
-        #~ return json_response(d)
-        
     def handle_list_request(self,request,rh):
         a = rh.report.list_action
         ar = ext_requests.ViewReportRequest(request,rh,a)
@@ -169,10 +159,6 @@ class csv_Emitter:
 class submit_Emitter:
     fmt = 'submit'
     def handle_element_request(self,request,ah,a):
-    #~ def handle_request(self,ar):
-        #~ kw['colname'] = request.POST['grid_afteredit_colname']
-        #~ kw['submit'] = True
-        #~ return json_report_view(request,**kw)
         ar = ext_requests.ViewReportRequest(request,ah,a)
         pk = request.POST.get(ah.store.pk.name) #,None)
         #~ try:
@@ -750,6 +736,9 @@ class ExtUI(base.UI):
                 #~ return ext_windows.GridSlaveWrapper(self,a.name,a)
         if isinstance(a,reports.DetailAction):
             return ext_windows.DetailSlaveWrapper(self,a)
+            
+        if isinstance(a,reports.InsertRow):
+            return ext_windows.InsertWrapper(h,a)
             
         if isinstance(a,properties.PropsEdit):
             #~ return ext_windows.PropertiesWrapper(self,h,a)

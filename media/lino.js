@@ -570,6 +570,7 @@ Ext.apply(Lino.WindowWrapper.prototype,{
   refresh : function() {},
   hide : function() { this.window.hide() },
   close : function() { this.window.close() },  
+  get_window_config : function() { return {} },
 });
 
 
@@ -618,7 +619,7 @@ Lino.toggle_button_handler = function(caller,action) {
   }
 };
 
-Lino.GridWindowWrapper = Ext.extend(Lino.WindowWrapper,{
+Lino.GridMixin = Ext.extend(Lino.WindowWrapper,{
   setup : function() {
     this.store = new Ext.data.JsonStore({ 
       listeners: { exception: Lino.on_store_exception }, 
@@ -660,7 +661,7 @@ Lino.GridWindowWrapper = Ext.extend(Lino.WindowWrapper,{
   },
 });
 
-Lino.GridMasterWrapper = Ext.extend(Lino.GridWindowWrapper, {
+Lino.GridMasterWrapper = Ext.extend(Lino.GridMixin, {
   add_row_listener : function(fn,scope) {
     // this.main_grid.add_row_listener(fn,scope);
     this.main_grid.getSelectionModel().addListener('rowselect',fn,scope);
@@ -678,29 +679,16 @@ Lino.GridMasterWrapper = Ext.extend(Lino.GridWindowWrapper, {
 });
 
 
-Lino.SlaveWrapper = Ext.extend(Lino.WindowWrapper, {
+Lino.SlaveMixin = Ext.extend(Lino.WindowWrapper, {
   closeAction : 'hide',
-  unused_setup : function() {
-    console.log('Lino.SlaveWrapper.setup',this.config.name,this);
-    //~ Lino.WindowWrapper.prototype.setup.call(this);
-    this.caller.window.on('close',function() { this.close() },this);
-    this.caller.window.on('hide',function(){ this.hide()},this);
-    this.window.on('hide',function(){ 
-      //~ console.log(20100414,this.config.name);
-      this.caller[this.config.name+'_button'].toggle(false)
-    },this);
-    this.window.on('show',function(){
-      this.load_record(this.caller.get_current_record())
-    },this);
-  },
   on_render : function() {
-    //~ console.log('Lino.SlaveWrapper.on_render',this.config.title,this);
+    //~ console.log('Lino.SlaveMixin.on_render',this.config.title,this);
     this.caller.add_row_listener( function(sm,ri,rec){this.load_record(rec)}, this );
     // var sels = this.caller.main_grid.getSelectionModel().getSelections();
     // if (sels.length > 0) this.load_record(sels[0]);
-    //~ console.log('Lino.SlaveWrapper.on_render b');
+    //~ console.log('Lino.SlaveMixin.on_render b');
     this.load_record(this.caller.get_current_record());
-    //~ console.log('Lino.SlaveWrapper.on_render c');
+    //~ console.log('Lino.SlaveMixin.on_render c');
   },
   add_row_listener : function(fn,scope) {
     this.caller.add_row_listener(fn,scope);
@@ -708,41 +696,55 @@ Lino.SlaveWrapper = Ext.extend(Lino.WindowWrapper, {
   
 });
 
-Lino.GridSlaveWrapper = Ext.extend(Lino.SlaveWrapper, {
+Lino.GridSlaveWrapper = Ext.extend(Lino.SlaveMixin, {
   setup : function() {
-    Lino.GridWindowWrapper.prototype.setup.call(this);
-    Lino.SlaveWrapper.prototype.setup.call(this);
+    Lino.GridMixin.prototype.setup.call(this);
+    Lino.SlaveMixin.prototype.setup.call(this);
   },
-  get_window_config  : Lino.GridWindowWrapper.prototype.get_window_config,
-  get_current_record  : Lino.GridWindowWrapper.prototype.get_current_record,
+  get_window_config  : Lino.GridMixin.prototype.get_window_config,
+  get_current_record  : Lino.GridMixin.prototype.get_current_record,
   load_record : function(record) {
     this.current_record = record;
     this.store.load({params:this.get_master_params(record)}); 
   },
 });
 
-
-Lino.DetailSlaveWrapper = Ext.extend(Lino.SlaveWrapper, {
-  setup:function() {
-    //~ console.log('Lino.DetailSlaveWrapper setup',20100409,this);
-    this.main_item = this.config.main_panel;
-    Lino.WindowWrapper.prototype.setup.call(this);
-    Lino.SlaveWrapper.prototype.setup.call(this);
-  },
+Lino.DetailMixin = {
   get_selected : function() { return [ this.current_record.id ] },
   get_current_record : function() {  return this.current_record },
   load_record : function(record) {
     this.current_record = record;
     this.config.main_panel.form.load(record);
   },
-});
+};
 
-Lino.PropertiesWrapper = Ext.extend(Lino.SlaveWrapper, {
+Lino.DetailSlaveWrapper = Ext.extend(Lino.SlaveMixin, {
+  setup:function() {
+    //~ console.log('Lino.DetailSlaveWrapper setup',20100409,this);
+    this.main_item = this.config.main_panel;
+    Lino.WindowWrapper.prototype.setup.call(this);
+    Lino.SlaveMixin.prototype.setup.call(this);
+  },
+});
+Ext.extend(Lino.DetailSlaveWrapper,Lino.DetailMixin);
+
+Lino.InsertWrapper = Ext.extend(Lino.WindowWrapper, {
+  setup:function() {
+    //~ console.log('Lino.DetailSlaveWrapper setup',20100409,this);
+    this.main_item = this.config.main_panel;
+      ... hier muss noch die bbar: this.bbar, 
+    
+    Lino.WindowWrapper.prototype.setup.call(this);
+  },
+})
+Ext.extend(Lino.InsertWrapper,Lino.DetailMixin);
+
+Lino.PropertiesWrapper = Ext.extend(Lino.SlaveMixin, {
   setup : function() {
     // console.log('Lino.GridMasterWrapper configure',20100401,this);
     this.main_item = this.config.main_panel;
     Lino.WindowWrapper.prototype.setup.call(this);
-    Lino.SlaveWrapper.prototype.setup.call(this);
+    Lino.SlaveMixin.prototype.setup.call(this);
   },
   load_record : function(rec) {
     Lino.load_properties(this.caller,this,this.config.url_data+'.json',rec);

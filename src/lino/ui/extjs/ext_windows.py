@@ -164,9 +164,6 @@ class GridWrapperMixin(WindowWrapper):
         d.update(colModel=self.lh._main.column_model)
         d.update(content_type=self.rh.report.content_type)
         d.update(title=self.rh.get_title(None))
-        #~ d.update(url='/'+self.datalink.report.app_label+'/'+self.datalink.report._actor_name )
-        #~ a = self.rh.report.get_action('data')
-        #~ d.update(url_data=self.ui.get_action_url(self.action)) 
         d.update(url_data=self.ui.get_actor_url(self.rh.report)) # +'/data') 
         return d
         
@@ -217,6 +214,29 @@ class DetailSlaveWrapper(SlaveWrapper):
         d = super(DetailSlaveWrapper,self).get_config()
         d.update(main_panel=self.lh._main)
         d.update(name=self.action.name)
+        return d
+        
+class InsertWrapper(MasterWrapper):
+  
+    window_config_type = 'insert'
+    
+    def __init__(self,rh,action,**kw):
+        lh = action.layout.get_handle(rh.ui)
+        MasterWrapper.__init__(self, rh, action, lh)
+        #~ self.actions = [] # [dict(type=a.action_type,name=a.name,label=a.label) for a in rh.get_actions()]
+        
+    def get_config(self):
+        d = super(InsertWrapper,self).get_config()
+        d.update(main_panel=self.lh._main)
+        d.update(name=self.action.name)
+        d.update(actions=[
+          dict(
+            name='submit',
+            label='Submit',
+            method='POST',
+            url="/".join(("/api",self.action.actor.app_label,self.action.actor._actor_name,'insert'))
+          ),
+          ])
         return d
         
         

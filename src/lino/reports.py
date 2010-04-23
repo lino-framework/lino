@@ -177,11 +177,16 @@ class GridEdit(actions.OpenWindowAction):
         
         
 
-class InsertRow(actions.RowsAction):
+#~ class InsertRow(actions.RowsAction):
+class InsertRow(actions.OpenWindowAction):
     label = _("Insert")
     name = 'insert'
     key = actions.INSERT # (ctrl=True)
     
+    def __init__(self,actor,layout):
+        self.layout = layout
+        actions.OpenWindowAction.__init__(self,actor)
+        
     def run_action(self,ar):
         #~ rr = dlg.get_request()
         #~ for r in rr.insert_row(self): 
@@ -669,7 +674,7 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
             self.model = resolve_model(self.model,self.app_label,self)
         if self.model is not None:
             self.app_label = self.model._meta.app_label
-            self.actions = self.actions + [ DeleteSelected, InsertRow ]
+            self.actions = self.actions + [ DeleteSelected ] #, InsertRow ]
             m = getattr(self.model,'setup_report',None)
             if m:
                 m(self)
@@ -728,15 +733,19 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
         if self.model is not None:
             self.list_layout = layouts.list_layout_factory(self)
             self.detail_layouts = getattr(self.model,'_lino_layouts',[])
+              
             if hasattr(self.model,'_lino_slaves'):
                 self._slaves = self.model._lino_slaves.values()
             else:
                 self._slaves = []
                 
+            if len(self.detail_layouts) > 0:
+                actions.append(InsertRow(self,self.detail_layouts[0]))
         
             if self.use_layouts:
                 self.details = [ DetailAction(self,pl) for pl in self.detail_layouts ]
                 actions += self.details
+                    
                 #~ for dtl in self.details:
                     #~ actions.append(dtl)
                 #~ else:
