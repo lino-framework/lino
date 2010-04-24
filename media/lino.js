@@ -674,8 +674,13 @@ Lino.DetailMixin = {
   get_current_record : function() {  return this.current_record },
   load_record : function(record) {
     this.current_record = record;
+    console.log('Lino.DetailMixin.load_record',record);
     //~ this.config.main_panel.form.load(record);    
-    this.main_form.load(record);    
+    if (record) {
+      this.main_form.form.loadRecord(record) 
+    } else {
+      this.main_form.form.reset();
+    }
   },
 };
 
@@ -684,8 +689,8 @@ Lino.DetailSlaveWrapper = Ext.extend(Lino.SlaveMixin, {
     //~ console.log('Lino.DetailSlaveWrapper setup',20100409,this);
     this.main_item = this.config.main_panel;
     Lino.WindowWrapper.prototype.setup.call(this);
-    Lino.SlaveMixin.prototype.setup.call(this);
     this.main_form = this.window.getComponent(0);
+    Lino.SlaveMixin.prototype.setup.call(this);
   },
 });
 Ext.override(Lino.DetailSlaveWrapper,Lino.DetailMixin);
@@ -704,7 +709,7 @@ Lino.InsertWrapper = Ext.extend(Lino.WindowWrapper, {
             method: 'POST',
             //~ success: Lino.on_submit_success,
             success: function(form, action) {
-              console.log(this);
+              console.log('Lino.InsertWrapper.setup.handler.success',this);
               Lino.notify(action.result.msg);
               this.close();
             },
