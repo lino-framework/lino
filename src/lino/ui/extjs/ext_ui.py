@@ -580,15 +580,15 @@ class ExtUI(base.UI):
         qs = chooser.get_choices(**kw)
         quick_search = request.REQUEST.get(ext_requests.URL_PARAM_FILTER,None)
         if quick_search is not None:
-            qs = add_quick_search_filter(qs,quick_search)
+            qs = reports.add_quick_search_filter(qs,quick_search)
         
-        def row2dict(self,obj,d):
+        def row2dict(obj,d):
             d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
             d[ext_requests.CHOICES_VALUE_FIELD] = obj.pk # getattr(obj,'pk')
             return d
             
         rows = [ row2dict(row,{}) for row in qs ]
-        return json_response(count=len(rows),rows=rows,title='Choices for %s' % fldname)
+        return json_response_kw(count=len(rows),rows=rows,title=_('Choices for %s') % fldname)
         
         
     #~ def grid_afteredit_view(self,request,**kw):

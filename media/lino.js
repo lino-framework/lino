@@ -89,7 +89,8 @@ Lino.grid_afteredit_handler = function (caller) {
     // console.log("grid_afteredit:",e.field,'=',e.value);
     Ext.Ajax.request({
       waitMsg: 'Please wait...',
-      url: this.config.url_data,
+      method: 'POST',
+      url: caller.config.url_data,
       params: p, 
       success: function(response) {
         // console.log('success',response.responseText);
@@ -687,7 +688,7 @@ Lino.DetailSlaveWrapper = Ext.extend(Lino.SlaveMixin, {
     this.main_form = this.window.getComponent(0);
   },
 });
-Ext.apply(Lino.DetailSlaveWrapper.prototype,Lino.DetailMixin);
+Ext.override(Lino.DetailSlaveWrapper,Lino.DetailMixin);
 
 Lino.InsertWrapper = Ext.extend(Lino.WindowWrapper, {
   setup:function() {
@@ -723,7 +724,7 @@ Lino.InsertWrapper = Ext.extend(Lino.WindowWrapper, {
     this.load_record(new this.caller.store.recordType());
   },
 })
-Ext.apply(Lino.InsertWrapper.prototype,Lino.DetailMixin);
+Ext.override(Lino.InsertWrapper,Lino.DetailMixin);
 
 Lino.PropertiesWrapper = Ext.extend(Lino.SlaveMixin, {
   setup : function() {

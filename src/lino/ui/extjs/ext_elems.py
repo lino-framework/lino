@@ -477,6 +477,16 @@ class ForeignKeyElement(FieldElement):
         #~ cp = chooser.get_context_params(self.lh.link.report.model,self.field.name)
         #~ if cp:    
             kw.update(contextParams=chooser.context_params)
+            
+        #~ ... hier weiss ich noch nicht...
+        #~ if chooser.context_values:
+            #~ kw.update(contextValueNames=chooser.chooser.context_values)
+            #~ def js():
+                #~ yield "  this.add_row_listener(function(sm,rowIndex,record) {" 
+                #~ yield "    %s.setContextValues([" % self.as_ext()
+                #~ yield "      " + ",".join(["record.data." + name for name in chooser.context_values])
+                #~ yield "])})}"
+            #~ kw.update(master_listener=js)
         return kw
         
     #~ def js_on_load_record(self):
