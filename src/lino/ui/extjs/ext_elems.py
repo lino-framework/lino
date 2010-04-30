@@ -393,8 +393,9 @@ class TextFieldElement(FieldElement):
         #~ return kw
         
 class CharFieldElement(FieldElement):
-    xtype = "textfield"
+    #~ xtype = "textfield"
     sortable = True
+    value_template = "new Ext.form.TextField(%s)"
   
     def __init__(self,*args,**kw):
         FieldElement.__init__(self,*args,**kw)

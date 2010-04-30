@@ -40,7 +40,7 @@ Lino.on_submit_failure = function(form, action) {
 
 Lino.save_wc_handler = function(ww) {
   return function(event,toolEl,panel,tc) {
-    var url = ww.config.url_action;
+    //~ var url = ww.config.url_action;
     // var url = '/save_window_config'
     // var url = '/save_win/' + panel._permalink_name
     // console.log(panel.id,panel.getSize(),panel.getPosition());
@@ -54,7 +54,7 @@ Lino.save_wc_handler = function(ww) {
       x:pos[0],y:pos[1],height:size.height,width:size.width,
       maximized:panel.maximized});
     //~ Lino.do_dialog(caller,url,wc);
-    Lino.do_action(ww,{url:url,params:wc,method:'POST'});
+    Lino.do_action(ww,{url:ww.config.url_action,params:wc,method:'POST'});
     //~ Ext.Ajax.request({ 
       //~ waitMsg: 'Saving window config...',
       //~ method: 'PUT',
@@ -192,7 +192,8 @@ Lino.unused_form_submit = function (url,pkname) {
   return function(btn,evt) {
     params = {};
     var rec = this.get_current_record();
-    if (rec) params[pkname] = rec.id;
+
+if (rec) params[pkname] = rec.id;
     var caller = this;
     this.main_panel.form.submit({
       clientValidation: true,
@@ -521,7 +522,8 @@ Ext.apply(Lino.WindowWrapper.prototype,{
       });
     this.window.window_wrapper = this;
     //~ if (this.caller) this.window._permalink_name = this.config.permalink_name;
-    this.window.on('render',this.on_render,this)
+    //~ this.window.on('beforeshow',this.on_render,this)
+    //~ this.window.on('beforerender',this.on_render,this)
   },
   on_render : function() {},
   refresh : function() {},
@@ -568,6 +570,10 @@ Lino.toggle_button_handler = function(caller,action) {
           js_result.window.on('hide',function(){ btn.toggle(false,false)});
           // when slave is shown, update it's data:
           js_result.window.on('show',function(){ js_result.load_record(caller.get_current_record())});
+          
+          caller.add_row_listener( function(sm,ri,rec){js_result.load_record(rec)}, js_result );
+          // js_result.load_record(caller.get_current_record());
+          
           // show slave:
           js_result.show();
         };
@@ -641,8 +647,8 @@ Lino.GridMasterWrapper = Ext.extend(Lino.GridMixin, {
 
 Lino.SlaveMixin = Ext.extend(Lino.WindowWrapper, {
   closeAction : 'hide',
-  on_render : function() {
-    //~ console.log('Lino.SlaveMixin.on_render',this.config.title,this);
+  unused_on_render : function() {
+    console.log('Lino.SlaveMixin.on_render',this.config.title,this);
     this.caller.add_row_listener( function(sm,ri,rec){this.load_record(rec)}, this );
     // var sels = this.caller.main_grid.getSelectionModel().getSelections();
     // if (sels.length > 0) this.load_record(sels[0]);

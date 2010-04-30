@@ -232,6 +232,7 @@ class DetailSlaveWrapper(SlaveWrapper):
         d = super(DetailSlaveWrapper,self).get_config()
         d.update(main_panel=self.lh._main)
         d.update(name=self.action.name)
+        d.update(title=self.action.actor.get_title(None) + u" - " + self.action.label)
         return d
         
 class InsertWrapper(MasterWrapper):
