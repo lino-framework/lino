@@ -451,6 +451,9 @@ class DocItem(models.Model):
     qty = fields.QuantityField(blank=True,null=True)
     total = fields.PriceField(blank=True,null=True)
     
+    class Meta:
+        unique_together  = ('document','pos')
+    
     #~ def total_excl(self):
         #~ if self.unitPrice is not None:
             #~ qty = self.qty or 1

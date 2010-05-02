@@ -381,6 +381,7 @@ class FieldElement(LayoutElement):
 class TextFieldElement(FieldElement):
     #~ xtype = 'textarea'
     vflex = True
+    #~ value_template = "new Ext.form.HtmlEditor(%s)"
     xtype = 'htmleditor'
     #width = 60
     preferred_width = 60
@@ -1103,9 +1104,9 @@ class GridMainPanel(GridElement,MainPanel):
 
 class DetailMainPanel(Panel,WrappingMainPanel):
     #~ declare_type = jsgen.DECLARE_THIS
-    xtype = 'form'
-    #~ xtype = None
-    #~ value_template = "new Ext.form.FormPanel(%s)"
+    #~ xtype = 'form'
+    xtype = None
+    value_template = "new Ext.form.FormPanel(%s)"
     def __init__(self,lh,name,vertical,*elements,**kw):
         #~ self.rh = lh.datalink
         self.report = lh.layout.datalink_report

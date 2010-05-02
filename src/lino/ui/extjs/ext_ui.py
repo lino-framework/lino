@@ -17,7 +17,9 @@ import cgi
 import cPickle as pickle
 from urllib import urlencode
 
+from django import http
 from django.db import models
+from django.db import IntegrityError
 from django.conf import settings
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.core import exceptions
@@ -96,25 +98,44 @@ class DefaultEmitter(Emitter):
         a = rh.report.list_action
         ar = ext_requests.ViewReportRequest(request,rh,a)
         if request.method == 'POST':
-            pk = request.POST.get(rh.store.pk.name) #,None)
-            #~ try:
+            """
+            Create a new entry in the collection where the ID is assigned automatically by the collection. 
+            The ID created is usually included as part of the data returned by this operation. 
+            """
             data = rh.store.get_from_form(request.POST)
-            if pk in ('', None):
-                #return json_response(success=False,msg="No primary key was specified")
-                instance = ar.create_instance(**data)
-                instance.save(force_insert=True)
-            else:
-                instance = ar.report.model.objects.get(pk=pk)
-                for k,v in data.items():
-                    setattr(instance,k,v)
-                instance.save(force_update=True)
-            return json_response_kw(success=True,
-                  msg="%s has been saved" % instance)
+            instance = ar.create_instance(**data)
+            instance.save(force_insert=True)
+            return json_response_kw(success=True,msg="%s has been created" % instance)
+        raise Http404("Method %s not supported for container %s" % (request.method,rh))
         
     def handle_element_request(self,request,ah,elem):
         if request.method == 'DELETE':
             elem.delete()
             return HttpResponseDeleted()
+        if request.method == 'PUT':
+            #~ pk = request.POST.get(rh.store.pk.name)
+            #~ try:
+                #~ instance = ar.report.model.objects.get(pk=pk)
+            #~ except ar.report.model.DoesNotExist:
+                #~ raise Http404("No primary key %r in %s" % (pk,ar.report))
+            PUT = http.QueryDict(request.raw_post_data)
+            data = ah.store.get_from_form(PUT)
+            #~ data = ah.store.get_from_form(request.POST)
+            #~ print data
+            for k,v in data.items():
+                setattr(elem,k,v)
+            try:
+                elem.save(force_update=True)
+            except IntegrityError,e:
+                #~ print unicode(elem)
+                lino.log.exception(e)
+                return json_response_kw(success=False,
+                      msg=_("There was a problem while saving your data:\n%s") % e)
+                
+            return json_response_kw(success=True,
+                  msg="%s has been saved" % elem)
+        raise Http404("Method %s not supported for element %s of %s" % (request.method,elem,ah))
+            
             
         
 
@@ -446,6 +467,14 @@ class ExtUI(base.UI):
         #~ return HttpResponse(s, mimetype='text/html')
 
     def api_list_view(self,request,app_label=None,actor=None,fmt=None):
+        """
+        GET : List the members of the collection. 
+        PUT : Replace the entire collection with another collection. 
+        POST : Create a new entry in the collection where the ID is assigned automatically by the collection. 
+               The ID created is included as part of the data returned by this operation. 
+        DELETE : Delete the entire collection.
+        (Source: http://en.wikipedia.org/wiki/Restful)
+        """
         actor = actors.get_actor2(app_label,actor)
         ah = actor.get_handle(self)
         e = EMITTERS.get(fmt,None)
@@ -454,6 +483,13 @@ class ExtUI(base.UI):
         return e.handle_list_request(request,ah)
         
     def api_element_view(self,request,app_label=None,actor=None,pk=None,fmt=None):
+        """
+        GET : Retrieve a representation of the addressed member of the collection expressed in an appropriate MIME type.
+        PUT : Update the addressed member of the collection or create it with the specified ID. 
+        POST : Treats the addressed member as a collection and creates a new subordinate of it. 
+        DELETE : Delete the addressed member of the collection. 
+        (Source: http://en.wikipedia.org/wiki/Restful)
+        """
         rpt = actors.get_actor2(app_label,actor)
         instance = rpt.model.objects.get(pk=pk)
         ah = rpt.get_handle(self)

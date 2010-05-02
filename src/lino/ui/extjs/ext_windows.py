@@ -248,6 +248,7 @@ class InsertWrapper(MasterWrapper):
         d = super(InsertWrapper,self).get_config()
         d.update(main_panel=self.lh._main)
         d.update(name=self.action.name)
+        d.update(title=self.action.label + _(' into ') + self.action.actor.get_title(None))
         d.update(actions=[
           dict(
             name='submit',

@@ -556,12 +556,12 @@ Lino.toggle_button_handler = function(caller,action) {
         caller.slaves[action.name].show();
       } else {
         caller.slaves[action.name] = 'loading';
-        console.log('Lino.toggle_button_handler() ',caller,action.name,'=',caller.slaves[action.name]);
+        //~ console.log('Lino.toggle_button_handler() ',caller,action.name,'=',caller.slaves[action.name]);
         action.params = caller.get_master_params(caller.get_current_record())
         //~ action.params.selected = caller.get_selected(); // POST_PARAM_SELECTED
         action.after_js_code = function(js_result) { 
           caller.slaves[action.name] = js_result;
-          console.log('Lino.toggle_button_handler.after_js_code() ',caller,action.name,'=',caller.slaves[action.name]);
+          //~ console.log('Lino.toggle_button_handler.after_js_code() ',caller,action.name,'=',caller.slaves[action.name]);
           // when master closes, close slave:
           caller.window.on('close',function() { js_result.close() });
           // when master hides, hide slave:          
@@ -594,11 +594,20 @@ Lino.GridMixin = Ext.extend(Lino.WindowWrapper,{
       totalProperty: "count", 
       root: "rows", 
       id: "id" });
-    this.pager = new Ext.PagingToolbar({ prependButtons: true, items: [ 
-      { scope:this, xtype: "textfield", listeners: { keypress: Lino.search_handler(this) }, 
-        fieldLabel: "Search", enableKeyEvents: true, id: "seachString" }, 
-      { scope:this, text: "Download", handler: function() {window.open(this.config.url_data+'.csv');} } 
-    ], pageSize: 10, store: this.store, displayInfo: true });
+    this.pager = new Ext.PagingToolbar({ 
+      prependButtons: true, pageSize: 10, displayInfo: true, 
+      store: this.store, 
+      items: [ 
+        { xtype: "textfield", 
+          fieldLabel: "Search", 
+          listeners: { scope:this, change:this.search_change },
+          //~ scope:this, 
+          //~ enableKeyEvents: true, 
+          //~ listeners: { keypress: this.search_keypress }, 
+          //~ id: "seachString" 
+        }, 
+        { scope:this, text: "csv", handler: function() { window.open(this.config.url_data+'.csv') } } 
+      ]});
     
     this.main_grid = new Lino.GridPanel({ clicksToEdit: 2, xtype: "container", tbar: this.pager, 
       selModel: new Ext.grid.RowSelectionModel({singleSelect:false}), 
@@ -625,6 +634,19 @@ Lino.GridMixin = Ext.extend(Lino.WindowWrapper,{
   get_current_record : function() { 
     return this.main_grid.getSelectionModel().getSelected()
   },
+  unused_search_keypress : function(field, e) {
+    if(e.getKey() == e.RETURN) {
+      console.log('keypress',field.getValue(),store)
+      this.main_grid.getStore().setBaseParam('query',field.getValue()); // URL_PARAM_FILTER
+      this.main_grid.getStore().load({params: { start: 0, limit: this.pager.pageSize }});
+    }
+  },
+  search_change : function(field,oldValue,newValue) {
+    console.log('search_query',field.getValue(),oldValue,newValue)
+    this.main_grid.getStore().setBaseParam('query',field.getValue()); // URL_PARAM_FILTER
+    this.main_grid.getStore().load({params: { start: 0, limit: this.pager.pageSize }});
+  },
+  
 });
 
 Lino.GridMasterWrapper = Ext.extend(Lino.GridMixin, {
@@ -683,9 +705,11 @@ Lino.DetailMixin = {
     console.log('Lino.DetailMixin.load_record',record);
     //~ this.config.main_panel.form.load(record);    
     if (record) {
+      this.main_form.enable();
       this.main_form.form.loadRecord(record) 
     } else {
       this.main_form.form.reset();
+      this.main_form.disable();
     }
   },
 };
@@ -694,6 +718,30 @@ Lino.DetailSlaveWrapper = Ext.extend(Lino.SlaveMixin, {
   setup:function() {
     //~ console.log('Lino.DetailSlaveWrapper setup',20100409,this);
     this.main_item = this.config.main_panel;
+    this.bbar_actions = [
+      {
+        text: "Save", 
+        scope: this,
+        handler: function() {
+          var rec = this.get_current_record();
+          if (rec) {
+            //~ console.log('Save handler: this=',this);
+            this.main_form.form.submit({
+              url:this.caller.config.url_data + '/' + rec.id,
+              method: 'PUT',
+              scope: this,
+              success: function(form, action) {
+                Lino.notify(action.result.msg);
+                this.caller.refresh();
+              },
+              failure: Lino.on_submit_failure,
+              clientValidation: true,
+            })
+          } else Lino.notify("Sorry, no current record.");
+        },
+      },
+      { text: "Cancel", scope: this, handler: function() { this.close()} }
+    ];
     Lino.WindowWrapper.prototype.setup.call(this);
     this.main_form = this.window.getComponent(0);
     Lino.SlaveMixin.prototype.setup.call(this);
@@ -707,23 +755,24 @@ Lino.InsertWrapper = Ext.extend(Lino.WindowWrapper, {
     this.main_item = this.config.main_panel;
     this.bbar_actions = [
       {
-        text: "New Submit", 
+        text: "Submit", 
         scope: this,
         handler: function() {
           this.main_form.form.submit({
             url:this.caller.config.url_data,
             method: 'POST',
-            //~ success: Lino.on_submit_success,
+            scope: this,
             success: function(form, action) {
-              console.log('Lino.InsertWrapper.setup.handler.success',this);
               Lino.notify(action.result.msg);
               this.close();
+              this.caller.refresh();
             },
             failure: Lino.on_submit_failure,
             clientValidation: true,
           })
         },
-      }
+      },
+      { text: "Cancel", scope: this, handler: function() { this.close()} }
     ];
     //~ this.main_item.bbar = this.config.bbar_actions;
     //~ this.main_item = Ext.Panel({
