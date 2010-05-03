@@ -49,7 +49,7 @@ class DownloadRenderer(ActionRenderer):
         #~ yield "  console.log(caller.get_selected());"
         yield "  caller.get_selected().forEach(function(pk) {"
         url = '/'.join(('/api',self.action.actor.app_label,self.action.actor._actor_name))+'/'
-        yield "    console.log(pk);"
+        #~ yield "    console.log(pk);"
         yield "    window.open(%r+pk+'.pdf');" % url
         yield "  })"
         yield "}" 
@@ -95,12 +95,11 @@ class WindowWrapper(ActionRenderer):
         #~ d.update(url_action=self.ui.get_action_url(self.action)) # ,ext_requests.FMT_JSON))
         return d
         
-        
 def lh2win(lh,**kw):
     kw.update(height=300)
     kw.update(width=400)
     if lh is not None:
-        kw.update(title=lh.get_title(None))
+        #~ kw.update(title=lh.get_title(None))
         if lh.height is not None:
             kw.update(height=lh.height*EXT_CHAR_HEIGHT + 7*EXT_CHAR_HEIGHT)
         if lh.width is not None:

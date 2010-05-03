@@ -80,6 +80,7 @@ def json_response(x):
     #lino.log.debug("json_response() -> %r", s)
     return HttpResponse(s, mimetype='text/html')
 
+            
 EMITTERS = {}
 
 class Emitter:    
@@ -368,6 +369,10 @@ class ExtUI(base.UI):
         wc = self.window_configs.get(str(action),None)
         if wc is not None:
             lino.log.debug("load_window_config(%r) -> %s",str(action),wc)
+            for n in ('x','y','width','height'):
+                if wc.get(n,0) is None:
+                    del wc[n]
+                    #~ raise Exception('invalid window configuration %r' % wc)
             kw.update(**wc)
         return kw
 

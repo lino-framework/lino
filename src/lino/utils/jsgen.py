@@ -67,6 +67,7 @@ def py2js(v):
     if isinstance(v,js_code):
         return v.s
     if v is None:
+        #~ return 'undefined'
         return 'null'
     if isinstance(v,(list,tuple)): # (types.ListType, types.TupleType):
         return "[ %s ]" % ", ".join([py2js(x) for x in v])

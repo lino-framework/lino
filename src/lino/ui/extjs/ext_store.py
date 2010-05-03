@@ -186,8 +186,8 @@ class ForeignKeyStoreField(StoreField):
 
 class Store(Component):
     #declare_type = jsgen.DECLARE_THIS
-    declare_type = jsgen.DECLARE_VAR
-    #declare_type = jsgen.DECLARE_INLINE
+    #~ declare_type = jsgen.DECLARE_VAR
+    declare_type = jsgen.DECLARE_INLINE
     ext_suffix = "_store"
     value_template = "new Ext.data.JsonStore(%s)"
     

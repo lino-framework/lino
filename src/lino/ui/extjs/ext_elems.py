@@ -381,8 +381,9 @@ class FieldElement(LayoutElement):
 class TextFieldElement(FieldElement):
     #~ xtype = 'textarea'
     vflex = True
-    #~ value_template = "new Ext.form.HtmlEditor(%s)"
-    xtype = 'htmleditor'
+    value_template = "new Ext.form.HtmlEditor(%s)"
+    xtype = None
+    #~ xtype = 'htmleditor'
     #width = 60
     preferred_width = 60
     preferred_height = 3
@@ -397,6 +398,7 @@ class CharFieldElement(FieldElement):
     #~ xtype = "textfield"
     sortable = True
     value_template = "new Ext.form.TextField(%s)"
+    xtype = None
   
     def __init__(self,*args,**kw):
         FieldElement.__init__(self,*args,**kw)
@@ -884,6 +886,7 @@ class GridElement(Container): #,DataElementMixin):
 
     def ext_options(self,**d):
         #~ self.setup()
+        rh = self.report.get_handle(self.lh.ui)
         d = LayoutElement.ext_options(self,**d)
         d.update(clicksToEdit=2)
         d.update(viewConfig=dict(
@@ -898,17 +901,17 @@ class GridElement(Container): #,DataElementMixin):
         #d.update(autoScroll=True)
         #d.update(fitToFrame=True)
         d.update(emptyText="Nix gefunden...")
-        d.update(store=self.rh.store) # js_code(self.rh.store.ext_name))
+        d.update(store=rh.store) # js_code(self.rh.store.ext_name))
         d.update(colModel=self.column_model)
-        d.update(title=self.rh.report.label)
+        d.update(title=self.report.label)
         #d.update(colModel=js_code('this.cols'))
         #d.update(colModel=js_code(self.column_model.ext_name))
-        d.update(autoHeight=True)
+        #~ d.update(autoHeight=True)
         #d.update(layout='fit')
         d.update(enableColLock=False)
         if False and self.__class__ is not GridMainPanel: 
             js="Lino.action_handler(this,%r)" % \
-                self.rh.list_layout.get_absolute_url(run=True)
+                rh.list_layout.get_absolute_url(run=True)
             d.update(listeners=dict(click=js_code(js)))
         return d
         

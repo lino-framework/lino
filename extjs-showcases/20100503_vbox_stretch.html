@@ -1,0 +1,230 @@
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title id="title">20100503_vbox_stretch</title>
+<!-- ** CSS ** -->
+<!-- base library -->
+<link rel="stylesheet" type="text/css" href="../../resources/css/ext-all.css" />
+<!-- overrides to base library -->
+<!-- ** Javascript ** -->
+<!-- ExtJS library: base/adapter -->
+<script type="text/javascript" src="../../adapter/ext/ext-base.js"></script>
+<!-- ExtJS library: all widgets -->
+<script type="text/javascript" src="../../ext-all-debug.js"></script>
+<!-- page specific -->
+
+<script type="text/javascript">
+
+
+function js_code() {
+
+    var text_field1 = new Ext.form.TextField({
+        allowBlank: false,
+        fieldLabel: "name",
+        anchor: "100%",
+        name: "name",
+        maxLength: 200
+    });
+
+    var text_field2 = new Ext.form.TextField({
+        allowBlank: false,
+        fieldLabel: "country",
+        anchor: "100%",
+        name: "country",
+        maxLength: 200
+    });
+    
+    var row1a = {
+        xtype: "container", layout: "form",
+        border: false,
+        columnWidth: 0.5714285714285714,
+        frame: true,
+        bodyBorder: false,
+        labelAlign: "top",
+        items: [{
+            xtype: "container", layout: "form",
+            border: false,
+            labelWidth: 45,
+            frame: true,
+            labelAlign: "top",
+            bodyBorder: false,
+            anchor: "100%",
+            items: [
+            text_field1
+            ],
+        },
+        ],
+    };
+    
+    var row1b = {
+        xtype: "container", layout: "form",
+        columnWidth: 0.42857142857142855,
+        border: false,
+        frame: true,
+        bodyBorder: false,
+        labelAlign: "top",
+        items: [{
+            border: false,
+            labelWidth: 108,
+            xtype: "container",
+            items: [new Ext.form.TextField({
+                maxLength: 200,
+                fieldLabel: "national id",
+                anchor: "100%",
+                name: "national_id"
+            })],
+            frame: true,
+            labelAlign: "top",
+            bodyBorder: false,
+            anchor: "100%",
+            layout: "form"
+        },
+        ],
+    };
+    
+    var row2a = {
+        xtype: "container",
+        layout: "form",
+        columnWidth: 0.52941176470588236,
+        border: false,
+        frame: true,
+        bodyBorder: false,
+        labelAlign: "top",
+        items: [{
+            layout: "column",
+            xtype: "container",
+            items: [
+            {
+                xtype: "container",
+                layout: "form",
+                columnWidth: 0.33333333333333331,
+                frame: true,
+                labelAlign: "top",
+                bodyBorder: false,
+                border: false,
+                labelWidth: 72,
+                items: [
+                text_field2
+                ],
+            },
+            {
+                xtype: "container",
+                layout: "form",
+                border: false,
+                labelWidth: 63,
+                columnWidth: 0.66666666666666663,
+                frame: true,
+                labelAlign: "top",
+                bodyBorder: false,
+                items: [new Ext.form.TextField({
+                    maxLength: 200,
+                    fieldLabel: "region",
+                    anchor: "100%",
+                    name: "region"
+                })],
+            }],
+            frame: false,
+            border: false,
+            anchor: "100%"
+        },
+        ],
+    };
+    
+    var row2b = {
+        layout: "form",
+        xtype: "container",
+        columnWidth: 0.47058823529411764,
+        border: false,
+        frame: true,
+        bodyBorder: false,
+        labelAlign: "top",
+        items: [{
+            border: false,
+            labelWidth: 54,
+            xtype: "container",
+            frame: true,
+            labelAlign: "top",
+            bodyBorder: false,
+            anchor: "100%",
+            layout: "form",
+            items: [new Ext.form.TextField({
+                maxLength: 75,
+                fieldLabel: "email",
+                anchor: "100%",
+                name: "email"
+            })],
+        },
+        ],
+    };
+    
+    var row1 = {
+        xtype: "container",
+        layout: "column",
+        frame: false,
+        border: false,
+        items: [ row1a, row1b ],
+    };
+    
+    var row2 = {
+        xtype: "container",
+        layout: "column",
+        frame: false,
+        border: false,
+        items: [ row2a, row2b ],
+    };
+    
+    var html_editor = {
+        xtype: "container",
+        layout: "form",
+        frame: true,
+        border: false,
+        labelWidth: 72,
+        bodyBorder: false,
+        labelAlign: "top",
+        flex: 1,
+        items: [new Ext.form.HtmlEditor({
+            fieldLabel: "remarks",
+            anchor: "100% 100%",
+            name: "remarks"
+        })],
+    };
+    
+    
+
+    var main_panel = new Ext.form.FormPanel({
+        border: false,
+        layout: "vbox",
+        items: [ 
+            row1,
+            row2, 
+            html_editor,
+        ],
+        autoScroll: true,
+        bodyBorder: false,
+        frame: true,
+        layoutConfig: {
+            align: "stretch"
+        },
+        labelAlign: "top"
+    });
+            
+        
+    var win = new Ext.Window({
+        width: 400,
+        height: 400,
+        title: "Insert into Companies",
+        items: main_panel,
+        layout: 'fit',
+    });
+    
+    win.show();
+    
+}
+
+
+
+Ext.onReady(function() {
+  js_code();
+});
+</script>
+</head><body>
+</body></html>
