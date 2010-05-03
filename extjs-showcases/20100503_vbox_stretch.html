@@ -50,9 +50,9 @@ function js_code() {
             anchor: "100%",
             items: [
             text_field1
-            ],
-        },
-        ],
+            ]
+        }
+        ]
     };
     
     var row1b = {
@@ -77,8 +77,8 @@ function js_code() {
             bodyBorder: false,
             anchor: "100%",
             layout: "form"
-        },
-        ],
+        }
+        ]
     };
     
     var row2a = {
@@ -104,7 +104,7 @@ function js_code() {
                 labelWidth: 72,
                 items: [
                 text_field2
-                ],
+                ]
             },
             {
                 xtype: "container",
@@ -120,13 +120,13 @@ function js_code() {
                     fieldLabel: "region",
                     anchor: "100%",
                     name: "region"
-                })],
+                })]
             }],
             frame: false,
             border: false,
             anchor: "100%"
-        },
-        ],
+        }
+        ]
     };
     
     var row2b = {
@@ -151,9 +151,9 @@ function js_code() {
                 fieldLabel: "email",
                 anchor: "100%",
                 name: "email"
-            })],
-        },
-        ],
+            })]
+        }
+        ]
     };
     
     var row1 = {
@@ -161,7 +161,7 @@ function js_code() {
         layout: "column",
         frame: false,
         border: false,
-        items: [ row1a, row1b ],
+        items: [ row1a, row1b ]
     };
     
     var row2 = {
@@ -169,7 +169,7 @@ function js_code() {
         layout: "column",
         frame: false,
         border: false,
-        items: [ row2a, row2b ],
+        items: [ row2a, row2b ]
     };
     
     var html_editor = {
@@ -185,7 +185,7 @@ function js_code() {
             fieldLabel: "remarks",
             anchor: "100% 100%",
             name: "remarks"
-        })],
+        })]
     };
     
     
@@ -196,7 +196,7 @@ function js_code() {
         items: [ 
             row1,
             row2, 
-            html_editor,
+            html_editor
         ],
         autoScroll: true,
         bodyBorder: false,
@@ -213,7 +213,7 @@ function js_code() {
         height: 400,
         title: "Insert into Companies",
         items: main_panel,
-        layout: 'fit',
+        layout: 'fit'
     });
     
     win.show();
