@@ -16,9 +16,9 @@ from django.db import models
 from django.db.models import loading
 
 def welcome():
-
-    for name,url,version in thanks_to():
-        lino.log.info("%s %s <%s>",name,version,url)
+    lino.log.info(thanks_to())
+    #~ for name,url,version in thanks_to():
+        #~ lino.log.info("%s %s <%s>",name,version,url)
     apps = app_labels()
       
     lino.log.debug("%d applications: %s.", len(apps),", ".join(apps))
@@ -38,17 +38,25 @@ def welcome():
         #~ return mark_safe('<a href="%s">%s</a> %s' % (url,name,version))
     #~ for name,url,version in thanks_to():
         #~ yield HREF(name,url,version)
-        
-      
+
 def thanks_to():
+    l = ["%s %s <%s>" % (name,version,url) 
+          for name,url,version in thanks_to_()]
+    return '\n'.join(l[:3])
+      
+def thanks_to_():
     yield ("Lino",
-           "http://lino.saffre-rumma.ee",
+           lino.__url__,
            lino.__version__)
     
     import django
     yield ("Django",
            "http://www.djangoproject.com",
            django.get_version())
+    
+    import sys
+    version = "%d.%d.%d" % sys.version_info[:3]
+    yield ("Python","http://www.python.org/",version)
     
     import reportlab
     yield ("ReportLab Toolkit",
@@ -62,10 +70,6 @@ def thanks_to():
     import dateutil
     version = getattr(dateutil,'__version__','')
     yield ("python-dateutil","http://labix.org/python-dateutil",version)
-    
-    import sys
-    version = "%d.%d.%d" % sys.version_info[:3]
-    yield ("Python","http://www.python.org/",version)
     
     try:
         # l:\snapshot\xhtml2pdf
