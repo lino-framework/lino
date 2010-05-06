@@ -22,6 +22,7 @@ from lino.ui.extjs import ext_requests
 
 import lino
 from lino import reports
+from lino.modlib.properties import models as properties
 
 
 class StoreField(object):
@@ -40,7 +41,7 @@ class StoreField(object):
         #d[self.field.name] = self.field.value_to_string(obj)
         d[self.field.name] = self.field.value_from_object(obj)
         
-    def get_from_form(self,instance,post_data):
+    def unused_get_from_form(self,instance,post_data):
         v = post_data.get(self.field.name)
         #~ if v == '' and self.field.null:
             #~ v = None
@@ -52,19 +53,59 @@ class StoreField(object):
             lino.log.exception("%s = %r : %s",self.field.name,v,e)
             raise 
         #setattr(instance,self.field.name,v)
+
+    def form2obj(self,instance,post_data):
+        v = post_data.get(self.field.name,None)
+        #~ if v == '' and self.field.null:
+            #~ v = None
+        if v is None:
+            return
+        #~ if v == '':
+            #~ v = self.field.get_default()
+        try:
+            setattr(instance,self.field.name,self.field.to_python(v))
+        except exceptions.ValidationError,e:
+            lino.log.exception("%s = %r : %s",self.field.name,v,e)
+            raise 
+
         
-        
+#~ class PropertiesStoreField(StoreField):
+#~ class PropertyStoreField(StoreField):
+    #~ def __init__(self,field,**kw):
+        #~ kw['type'] = ...
+        #~ StoreField.__init__(self,field,**kw)
+    #~ def get_from_form(self,instance,post_data):
+        #~ v = post_data.get(self.field.name)
+        #~ if v == 'true':
+            #~ v = True
+        #~ else:
+            #~ v = False
+        #~ instance[self.field.name] = v
+  
 class BooleanStoreField(StoreField):
     def __init__(self,field,**kw):
         kw['type'] = 'boolean'
         StoreField.__init__(self,field,**kw)
-    def get_from_form(self,instance,post_data):
-        v = post_data.get(self.field.name)
+        
+    #~ def get_from_form(self,instance,post_data):
+        #~ v = post_data.get(self.field.name)
+        #~ if v == 'true':
+            #~ v = True
+        #~ else:
+            #~ v = False
+        #~ instance[self.field.name] = v
+        
+    def form2obj(self,instance,post_data):
+        v = post_data.get(self.field.name,None)
+        if v is None:
+            return
         if v == 'true':
             v = True
         else:
             v = False
-        instance[self.field.name] = v
+        setattr(instance,self.field.name,v)
+        
+        
 
 class DateStoreField(StoreField):
   
@@ -80,14 +121,25 @@ class DateStoreField(StoreField):
             #print value
             d[self.field.name] = value
             
-    def get_from_form(self,instance,post_data):
-        v = post_data.get(self.field.name)
+    #~ def get_from_form(self,instance,post_data):
+        #~ v = post_data.get(self.field.name)
+        #~ if v == '' and self.field.null:
+            #~ v = None
+        #~ if v is not None:
+            #~ #print v
+            #~ v = dateparser.parse(v,fuzzy=True)
+        #~ instance[self.field.name] = v
+
+    def form2obj(self,instance,post_data):
+        v = post_data.get(self.field.name,None)
+        if v is None:
+            return
         if v == '' and self.field.null:
             v = None
         if v is not None:
             #print v
             v = dateparser.parse(v,fuzzy=True)
-        instance[self.field.name] = v
+        setattr(instance,self.field.name,v)
 
 class unused_IntegerStoreField(StoreField):
   
@@ -116,19 +168,31 @@ class MethodStoreField(StoreField):
         
     def get_from_form(self,instance,post_data):
         pass
+        
+    def form2obj(self,instance,post_data):
+        pass
         #raise Exception("Cannot update a virtual field")
 
 
 class OneToOneStoreField(StoreField):
         
-    def get_from_form(self,instance,post_data):
+    def form2obj(self,instance,post_data):
         #v = values.get(self.field.name,None)
-        v = post_data.get(self.field.name)
+        v = post_data.get(self.field.name,None)
         if v == '' and self.field.null:
             v = None
         if v is not None:
             v = self.field.rel.to.objects.get(pk=v)
-        instance[self.field.name] = v
+        setattr(instance,self.field.name,v)
+        
+    #~ def get_from_form(self,instance,post_data):
+        #~ #v = values.get(self.field.name,None)
+        #~ v = post_data.get(self.field.name)
+        #~ if v == '' and self.field.null:
+            #~ v = None
+        #~ if v is not None:
+            #~ v = self.field.rel.to.objects.get(pk=v)
+        #~ instance[self.field.name] = v
         
     def obj2json(self,obj,d):
         try:
@@ -148,10 +212,30 @@ class ForeignKeyStoreField(StoreField):
         s += "," + repr(self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
         return s 
         
-    def get_from_form(self,instance,post_data):
+    #~ def get_from_form(self,instance,post_data):
+        #~ #v = post_data.get(self.name,None)
+        #~ #v = post_data.get(self.field.name+"Hidden",None)
+        #~ v = post_data.get(self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
+        #~ #print self.field.name,"=","%s.objects.get(pk=%r)" % (self.model.__name__,v)
+        #~ #v = post_data.getlist(self.field.name)
+        #~ #print "%s=%r" % (self.field.name, v)
+        #~ if v in ('','undefined'): # and self.field.null:
+            #~ v = None
+        #~ if v is not None:
+            #~ try:
+                #~ v = self.field.rel.to.objects.get(pk=v)
+            #~ except self.field.rel.to.DoesNotExist,e:
+                #~ #print "[get_from_form]", v, values.get(self.field.name)
+                #~ # lino.log.debug("[%r,%r] : %s",v,text,e)
+                #~ v = None
+        #~ instance[self.field.name] = v
+        
+    def form2obj(self,instance,post_data):
         #v = post_data.get(self.name,None)
         #v = post_data.get(self.field.name+"Hidden",None)
-        v = post_data.get(self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
+        v = post_data.get(self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX,None)
+        if v is None:
+            return
         #print self.field.name,"=","%s.objects.get(pk=%r)" % (self.model.__name__,v)
         #v = post_data.getlist(self.field.name)
         #print "%s=%r" % (self.field.name, v)
@@ -164,7 +248,7 @@ class ForeignKeyStoreField(StoreField):
                 #print "[get_from_form]", v, values.get(self.field.name)
                 # lino.log.debug("[%r,%r] : %s",v,text,e)
                 v = None
-        instance[self.field.name] = v
+        setattr(instance,self.field.name,v)
 
 
     def obj2json(self,obj,d):
@@ -207,6 +291,8 @@ class Store(Component):
         if not self.pk in fields:
             fields.add(self.pk)
         self.fields = [ self.create_field(fld) for fld in fields ]
+        #~ self.fields.append(PropertiesStoreField)
+        #~ self.fields_dict = dict([(f.field.name,f) for f in self.fields])
           
     def create_field(self,fld):
         meth = getattr(fld,'_return_type_for_method',None)
@@ -271,11 +357,31 @@ class Store(Component):
         d.update(listeners=dict(exception=js_code("Lino.on_store_exception")))
         return d
         
-    def get_from_form(self,post_values):
+    def unused_get_from_form(self,post_values):
         instance = {}
         for f in self.fields:
             if not f.field.primary_key:
                 f.get_from_form(instance,post_values)
+        return instance
+        
+    def form2obj(self,form_values,instance):
+        for f in self.fields:
+            f.form2obj(instance,form_values)
+        for p in properties.Property.properties_for_model(instance.__class__):
+            p.form2obj(instance,form_values)
+            
+    def unused_get_from_form(self,form_values):
+        instance = {}
+        for k,v in form_values.items():
+            if k.startswith('property_'):
+                name = k[9:]
+                print "TODO: get property %r from form" % name
+            else:
+                f = self.fields_dict.get(k,None)
+                if f is None:
+                    pass
+                else:
+                    f.get_from_form(instance,form_values)
         return instance
 
     def row2dict(self,row):

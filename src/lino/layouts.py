@@ -73,7 +73,7 @@ class LayoutHandle(base.Handle):
         self._submit_fields = []
         #~ self._needed_stores = set()
         self.slave_grids = []
-        self._store_fields = []
+        #~ self._store_fields = []
         self._buttons = []
         self.hide_elements = layout.get_hidden_elements(self)
         self.main_class = self.ui.main_panel_class(layout)

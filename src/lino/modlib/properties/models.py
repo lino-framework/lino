@@ -88,6 +88,14 @@ class Property(models.Model):
             #~ order_by = ['value']
         return cl.objects.filter(owner_id__isnull=False,prop__exact=self) #.order_by(*order_by)
         
+    def form2obj(self,instance,post_data):
+        ""
+        v = post_data.get(self.name,None)
+        if v is None:
+            return
+        self.set_value_for(instance,v)
+        
+        
         
     #~ def get_child(self,instance):
         #~ """

@@ -411,6 +411,20 @@ class CharFieldElement(FieldElement):
         kw = FieldElement.get_field_options(self,**kw)
         kw.update(maxLength=self.field.max_length)
         return kw
+        
+#~ class PropertyElement(LayoutElement):        
+    #~ def __init__(self,lh,prop,**kw):
+        #~ assert field.name, Exception("field %r has no name!" % field)
+        #~ LayoutElement.__init__(self,lh,prop.name,label=prop.label,**kw)
+        #~ self.prop = prop
+        #~ self.editable = True
+        #~ self.delegate = field2e
+        #~ value_type = prop.value_type._meta.get_field value
+        #~ fk, remote, direct, m2m = self.model._meta.get_field_by_name(self.fk_name)
+        #~ FieldElement.__init__(self,lh,value_type)
+        #~ delegate = lh.main_class.field2elem(lh,return_type,**kw)
+        #~ for a in ('ext_options','get_column_options','get_field_options','grid_column_template'):
+            #~ setattr(self,a,getattr(delegate,a))
 
         
 class ForeignKeyElement(FieldElement):
@@ -584,6 +598,8 @@ class BooleanFieldElement(FieldElement):
         instance[self.name] = values.get(self.name,False)
 
 
+
+#~ class DelegateFieldElement(FieldElement):
 
 class MethodElement(FieldElement):
     stored = True
@@ -1205,6 +1221,7 @@ _field2elem = (
     (models.ForeignKey, ForeignKeyElement),
     (models.AutoField, IntegerFieldElement),
     (models.EmailField, CharFieldElement),
+    #~ (properties.Property, PropertyElement),
 )
     
 

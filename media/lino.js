@@ -274,7 +274,7 @@ Lino.ajax_error_handler = function(response,options) {
 // Ext.Ajax.on('requestexception',Lino.ajax_error_handler)
 
 //~ Lino.submit_property = function (caller,e) {
-Lino.submit_property_handler = function(caller) { 
+Lino.unused_submit_property_handler = function(caller) { 
   return function(e) {
     /*
     e.grid - This grid
@@ -293,9 +293,83 @@ Lino.submit_property_handler = function(caller) {
     p['name'] = e.record.data.name
     p['value'] = e.record.data.value
     Ext.Ajax.request({
-      method: 'PUT',
+      method: 'POST',
       waitMsg: 'Please wait...',
       url: '/submit_property',
+      params: p, 
+      success: function(response) {
+        var result=Ext.decode(response.responseText);
+        // console.log(result);
+        if (result.success) {
+          // Lino.load_properties();        // reload our datastore.
+        } else {
+          Ext.MessageBox.alert('Action failed',result.msg);
+        }
+      },
+      failure: Lino.ajax_error_handler
+    })
+  }
+};
+Lino.submit_property_handler = function(caller) { 
+  return function(e) {
+    /*
+    e.grid - This grid
+    e.record - The record being edited
+    e.field - The field name being edited
+    e.value - The value being set
+    e.originalValue - The original value for the field, before the edit.
+    e.row - The grid row index
+    e.column - The grid column index
+    */
+    // var p = e.record.data;
+    //~ var p = caller.get_master_params(caller.get_current_record());
+    // p['grid_afteredit_colname'] = e.field;
+    // p[e.field] = e.value;
+    //~ console.log('submit_property()',e.record.data);
+    var rec = caller.get_current_record();
+    var p = {}
+    //~ p['property_'+e.record.data.name] = e.record.data.value
+    p[e.record.data.name] = e.record.data.value
+    Ext.Ajax.request({
+      method: 'PUT',
+      waitMsg: 'Please wait...',
+      url: caller.config.url_data + '/' + rec.id,
+      params: p, 
+      success: function(response) {
+        var result=Ext.decode(response.responseText);
+        // console.log(result);
+        if (result.success) {
+          // Lino.load_properties();        // reload our datastore.
+        } else {
+          Ext.MessageBox.alert('Action failed',result.msg);
+        }
+      },
+      failure: Lino.ajax_error_handler
+    })
+  }
+};
+Lino.unused2_submit_property_handler = function(caller) { 
+  return function(e) {
+    /*
+    e.grid - This grid
+    e.record - The record being edited
+    e.field - The field name being edited
+    e.value - The value being set
+    e.originalValue - The original value for the field, before the edit.
+    e.row - The grid row index
+    e.column - The grid column index
+    */
+    // var p = e.record.data;
+    var p = caller.get_master_params(caller.get_current_record());
+    // p['grid_afteredit_colname'] = e.field;
+    // p[e.field] = e.value;
+    //~ console.log('submit_property()',e.record.data);
+    p['name'] = e.record.data.name
+    p['value'] = e.record.data.value
+    Ext.Ajax.request({
+      method: 'POST',
+      waitMsg: 'Please wait...',
+      url: '/api/properties/PropValuesByOwner',
       params: p, 
       success: function(response) {
         var result=Ext.decode(response.responseText);

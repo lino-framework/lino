@@ -101,11 +101,14 @@ class DefaultEmitter(Emitter):
         ar = ext_requests.ViewReportRequest(request,rh,a)
         if request.method == 'POST':
             """
+            Wikipedia:
             Create a new entry in the collection where the ID is assigned automatically by the collection. 
             The ID created is usually included as part of the data returned by this operation. 
             """
-            data = rh.store.get_from_form(request.POST)
-            instance = ar.create_instance(**data)
+            #~ data = rh.store.get_from_form(request.POST)
+            #~ instance = ar.create_instance(**data)
+            instance = ar.create_instance()
+            rh.store.form2obj(request.POST,instance)
             instance.save(force_insert=True)
             return json_response_kw(success=True,msg="%s has been created" % instance)
         raise Http404("Method %s not supported for container %s" % (request.method,rh))
@@ -121,11 +124,11 @@ class DefaultEmitter(Emitter):
             #~ except ar.report.model.DoesNotExist:
                 #~ raise Http404("No primary key %r in %s" % (pk,ar.report))
             PUT = http.QueryDict(request.raw_post_data)
-            data = ah.store.get_from_form(PUT)
-            #~ data = ah.store.get_from_form(request.POST)
+            ah.store.form2obj(PUT,elem)
+            #~ data = ah.store.get_from_form(PUT)
             #~ print data
-            for k,v in data.items():
-                setattr(elem,k,v)
+            #~ for k,v in data.items():
+                #~ setattr(elem,k,v)
             try:
                 elem.save(force_update=True)
             except IntegrityError,e:
@@ -280,6 +283,8 @@ class ExtUI(base.UI):
           
         de = reports.get_data_elem(lh.layout.datalink,name)
         
+        if isinstance(de,properties.Property):
+            return self.create_prop_element(lh,de,**kw)
         if isinstance(de,models.Field):
             return self.create_field_element(lh,de,**kw)
         if isinstance(de,generic.GenericForeignKey):
@@ -333,6 +338,9 @@ class ExtUI(base.UI):
         #~ return lh.main_class.field2elem(lh,field,**kw)
         #~ # return self.ui.field2elem(self,field,**kw)
         
+    #~ def create_prop_element(self,lh,prop,**kw):
+        #~ ...
+      
     def create_field_element(self,lh,field,**kw):
         e = lh.main_class.field2elem(lh,field,**kw)
         assert e.field is not None,"e.field is None for %s.%s" % (lh.layout,name)
@@ -384,7 +392,7 @@ class ExtUI(base.UI):
         urlpatterns += patterns('',
             (r'^$', self.index_view),
             (r'^menu$', self.menu_view),
-            (r'^submit_property$', self.submit_property_view),
+            #~ (r'^submit_property$', self.submit_property_view),
             (r'^list/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.list_report_view),
             #~ (r'^csv/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.csv_report_view),
             (r'^grid_action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<grid_action>\w+)$', self.json_report_view),
@@ -572,22 +580,22 @@ class ExtUI(base.UI):
         #~ lino.log.debug('%s.%s() -> %r',dlg,meth_name,r)
         #~ return json_response(r)
         
-    def submit_property_view(self,request):
-        rpt = properties.PropValuesByOwner()
-        if not rpt.can_change.passes(request):
-            return json_response_kw(success=False,
-                message="User %s cannot edit %s." % (request.user,rpt))
-        rh = rpt.get_handle(self)
-        rr = ext_requests.BaseViewReportRequest(request,rh,rh.report.default_action)
-        name = request.POST.get('name')
-        value = request.POST.get('value')
-        try:
-            p = properties.Property.objects.get(pk=name)
-        except properties.Property.DoesNotExist:
-            return json_response_kw(success=False,
-                message="No property named %r." % name)
-        p.set_value_for(rr.master_instance,value)
-        return json_response_kw(success=True,msg='%s : %s = %r' % (rr.master_instance,name,value))
+    #~ def submit_property_view(self,request):
+        #~ rpt = properties.PropValuesByOwner()
+        #~ if not rpt.can_change.passes(request):
+            #~ return json_response_kw(success=False,
+                #~ message="User %s cannot edit %s." % (request.user,rpt))
+        #~ rh = rpt.get_handle(self)
+        #~ rr = ext_requests.BaseViewReportRequest(request,rh,rh.report.default_action)
+        #~ name = request.POST.get('name')
+        #~ value = request.POST.get('value')
+        #~ try:
+            #~ p = properties.Property.objects.get(pk=name)
+        #~ except properties.Property.DoesNotExist:
+            #~ return json_response_kw(success=False,
+                #~ message="No property named %r." % name)
+        #~ p.set_value_for(rr.master_instance,value)
+        #~ return json_response_kw(success=True,msg='%s : %s = %r' % (rr.master_instance,name,value))
     
         
     def unused_permalink_do_view(self,request):
