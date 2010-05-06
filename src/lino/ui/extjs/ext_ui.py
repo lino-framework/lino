@@ -520,6 +520,7 @@ class ExtUI(base.UI):
             #~ print msg
             raise Http404(msg)
         if request.method == 'GET':
+            assert a.window_wrapper is not None, "%r %s has no window_wrapper" % (a,a)
             return json_response_kw(success=True,js_code=a.window_wrapper.js_render)
             
         params = request.POST
@@ -812,8 +813,8 @@ class ExtUI(base.UI):
         if isinstance(a,reports.DeleteSelected): return ext_windows.DeleteRenderer(self,a)
           
         if isinstance(a,reports.GridEdit):
-            if a.actor.master is not None:
-                return None
+            #~ if a.actor.master is not None:
+                #~ return None
                 #~ raise Exception("action_window_wrapper() for slave report %s" % a.actor)
                 #~ return ext_windows.GridSlaveWrapper(h,a)
             return ext_windows.GridMasterWrapper(h,a)

@@ -45,13 +45,16 @@ class ActionRenderer(object):
 class DownloadRenderer(ActionRenderer):
   
     def js_render(self):
+        url = '/'.join(('/api',self.action.actor.app_label,self.action.actor._actor_name))+'/'
         yield "function(caller) { "
         #~ yield "  console.log(caller.get_selected());"
-        yield "  caller.get_selected().forEach(function(pk) {"
-        url = '/'.join(('/api',self.action.actor.app_label,self.action.actor._actor_name))+'/'
+        yield "  var l = caller.get_selected();"
+        yield "  for (var i = 0; i < l.length; i++) "
+        yield "    window.open(%r+l[i]+'.pdf');" % url
+        #~ yield "  caller.get_selected().forEach(function(pk) {"
         #~ yield "    console.log(pk);"
-        yield "    window.open(%r+pk+'.pdf');" % url
-        yield "  })"
+        #~ yield "    window.open(%r+pk+'.pdf');" % url
+        #~ yield "  })"
         yield "}" 
 
 class DeleteRenderer(ActionRenderer):
@@ -248,6 +251,7 @@ class InsertWrapper(MasterWrapper):
         d.update(main_panel=self.lh._main)
         d.update(name=self.action.name)
         d.update(title=self.action.label + _(' into ') + self.action.actor.get_title(None))
+        d.update(fk_name=self.action.actor.fk_name);
         d.update(actions=[
           dict(
             name='submit',
@@ -304,7 +308,8 @@ class PropertiesWrapper(SlaveWrapper):
         grid.update(autoHeight=True)
         grid.update(customEditors=self.customEditors)
         listeners = dict(
-          afteredit=js_code('function(e){Lino.submit_property(this,e)}'),scope=js_code('this'))
+          #~ afteredit=js_code('function(e){Lino.submit_property(this,e)}'),scope=js_code('this'))
+          afteredit=js_code('Lino.submit_property_handler(caller)'))
         grid.update(listeners=listeners)
         #~ grid.update(pageSize=10)
         if len(self.propertyNames) > 0:

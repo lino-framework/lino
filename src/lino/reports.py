@@ -760,8 +760,9 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
                 actions.append(SlaveGridAction(self,slave))
                 
             from lino.modlib.properties import models as properties
-            a = properties.PropertiesAction(self)
-            actions.append(a)
+            if properties.Property.properties_for_model(self.model).count() > 0:
+                a = properties.PropertiesAction(self)
+                actions.append(a)
             
         actions.append(self.default_action)
         #~ actions.append(self.data_action)

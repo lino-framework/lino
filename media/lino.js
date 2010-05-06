@@ -273,39 +273,42 @@ Lino.ajax_error_handler = function(response,options) {
 }
 // Ext.Ajax.on('requestexception',Lino.ajax_error_handler)
 
-Lino.submit_property = function (caller,e) {
-  /*
-  e.grid - This grid
-  e.record - The record being edited
-  e.field - The field name being edited
-  e.value - The value being set
-  e.originalValue - The original value for the field, before the edit.
-  e.row - The grid row index
-  e.column - The grid column index
-  */
-  // var p = e.record.data;
-  var p = caller.get_master_params(caller.get_current_record());
-  // p['grid_afteredit_colname'] = e.field;
-  // p[e.field] = e.value;
-  //~ console.log('submit_property()',e.record.data);
-  p['name'] = e.record.data.name
-  p['value'] = e.record.data.value
-  Ext.Ajax.request({
-    method: 'POST',
-    waitMsg: 'Please wait...',
-    url: '/submit_property',
-    params: p, 
-    success: function(response) {
-      var result=Ext.decode(response.responseText);
-      // console.log(result);
-      if (result.success) {
-        // Lino.load_properties();        // reload our datastore.
-      } else {
-        Ext.MessageBox.alert('Action failed',result.msg);
-      }
-    },
-    failure: Lino.ajax_error_handler
-  })
+//~ Lino.submit_property = function (caller,e) {
+Lino.submit_property_handler = function(caller) { 
+  return function(e) {
+    /*
+    e.grid - This grid
+    e.record - The record being edited
+    e.field - The field name being edited
+    e.value - The value being set
+    e.originalValue - The original value for the field, before the edit.
+    e.row - The grid row index
+    e.column - The grid column index
+    */
+    // var p = e.record.data;
+    var p = caller.get_master_params(caller.get_current_record());
+    // p['grid_afteredit_colname'] = e.field;
+    // p[e.field] = e.value;
+    //~ console.log('submit_property()',e.record.data);
+    p['name'] = e.record.data.name
+    p['value'] = e.record.data.value
+    Ext.Ajax.request({
+      method: 'PUT',
+      waitMsg: 'Please wait...',
+      url: '/submit_property',
+      params: p, 
+      success: function(response) {
+        var result=Ext.decode(response.responseText);
+        // console.log(result);
+        if (result.success) {
+          // Lino.load_properties();        // reload our datastore.
+        } else {
+          Ext.MessageBox.alert('Action failed',result.msg);
+        }
+      },
+      failure: Lino.ajax_error_handler
+    })
+  }
 };
 
 Lino.load_properties = function(caller,pw,url,record) { 
@@ -464,9 +467,13 @@ Lino.load_main_menu = function() {
 
 Lino.button_handler = function(caller,action) {
   //~ var action = caller.config.bbar_actions[i];
-  Ext.applyIf(action, {params : {}, method:'GET'});
+  Ext.applyIf(action, {
+    params : {},
+    method:'GET'
+  });
   return function(event) {
     action.params.selected = caller.get_selected(); // POST_PARAM_SELECTED
+    //~ Ext.apply(action.params,caller.get_base_params());
     Lino.do_action(caller,action);
   }
 };
@@ -486,7 +493,7 @@ Lino.toggle_button_handler = function(caller,action) {
       } else {
         caller.slaves[action.name] = 'loading';
         //~ console.log('Lino.toggle_button_handler() ',caller,action.name,'=',caller.slaves[action.name]);
-        action.params = caller.get_master_params(caller.get_current_record())
+        Ext.applyIf(action.params,caller.get_master_params(caller.get_current_record()));
         //~ action.params.selected = caller.get_selected(); // POST_PARAM_SELECTED
         action.after_js_code = function(js_result) { 
           caller.slaves[action.name] = js_result;
@@ -498,10 +505,10 @@ Lino.toggle_button_handler = function(caller,action) {
           // when slave's close button is clicked, toggle button off:
           js_result.window.on('hide',function(){ btn.toggle(false,false)});
           // when slave is shown, update it's data:
-          js_result.window.on('show',function(){ js_result.load_record(caller.get_current_record())});
-          
-          caller.add_row_listener( function(sm,ri,rec){js_result.load_record(rec)}, js_result );
-          // js_result.load_record(caller.get_current_record());
+          js_result.window.on('show',function(){ js_result.on_master_change(caller.get_current_record())});
+          //~ js_result.on_master_change(caller.get_current_record());
+          caller.add_row_listener( function(sm,ri,rec){js_result.on_master_change(rec)}, js_result );
+          // js_result.on_master_change(caller.get_current_record());
           
           // show slave:
           js_result.show();
@@ -558,6 +565,7 @@ Ext.override(Lino.WindowWrapper,{
     }
     return p;
   },
+  //~ get_base_params : function() { return {} },
   get_values : function() {
     var v = {};
     return v;
@@ -636,7 +644,7 @@ Lino.GridMixin = {
     return wc;
   },
   get_current_record : function() { 
-    return this.main_grid.getSelectionModel().getSelected()
+    if (this.main_grid) return this.main_grid.getSelectionModel().getSelected();
   },
   unused_search_keypress : function(field, e) {
     if(e.getKey() == e.RETURN) {
@@ -664,7 +672,6 @@ Lino.GridMixin = {
 };
 
 Lino.GridMasterWrapper = Ext.extend(Lino.WindowWrapper,Lino.GridMixin);
-//~ Lino.GridMasterWrapper = Ext.extend(Lino.GridMixin, {
 Lino.GridMasterWrapper.override({
   add_row_listener : function(fn,scope) {
     // this.main_grid.add_row_listener(fn,scope);
@@ -675,27 +682,18 @@ Lino.GridMasterWrapper.override({
 
 Lino.SlaveMixin = {
   closeAction : 'hide',
-  unused_on_render : function() {
-    //~ console.log('Lino.SlaveMixin.on_render',this.config.title,this);
-    this.caller.add_row_listener( function(sm,ri,rec){this.load_record(rec)}, this );
-    // var sels = this.caller.main_grid.getSelectionModel().getSelections();
-    // if (sels.length > 0) this.load_record(sels[0]);
-    //~ console.log('Lino.SlaveMixin.on_render b');
-    this.load_record(this.caller.get_current_record());
-    //~ console.log('Lino.SlaveMixin.on_render c');
-  },
   add_row_listener : function(fn,scope) {
     this.caller.add_row_listener(fn,scope);
   }
-  
+  //~ get_base_params : function() { return this.caller.get_master_params(this.caller.get_current_record()) }
 };
 
 Lino.DetailMixin = {
   get_selected : function() { return [ this.current_record.id ] },
   get_current_record : function() {  return this.current_record },
-  load_record : function(record) {
+  on_master_change : function(record) {
     this.current_record = record;
-    //~ console.log('Lino.DetailMixin.load_record',record);
+    //~ console.log('Lino.DetailMixin.on_master_change',record);
     //~ this.config.main_panel.form.load(record);    
     if (record) {
       this.main_form.enable();
@@ -713,10 +711,12 @@ Lino.GridSlaveWrapper = Ext.extend(Lino.WindowWrapper,{});
 Lino.GridSlaveWrapper.override(Lino.SlaveMixin);
 Lino.GridSlaveWrapper.override(Lino.GridMixin);
 Lino.GridSlaveWrapper.override({
-  load_record : function(record) {
+  on_master_change : function(record) {
     //~ this.current_record = record;
-    console.log('GridSlaveWrapper.load_record()',record)
-    this.store.load({params:this.get_master_params(record)}); 
+    console.log('GridSlaveWrapper.on_master_change()',record)
+    var p = this.get_master_params(record);
+    for (k in p) this.store.setBaseParam(k,p[k]);
+    this.store.load(); // {params:this.get_master_params(record)}); 
   }
 });
 
@@ -792,7 +792,17 @@ Lino.InsertWrapper.override({
         //~ autoScroll: true,});
     Lino.WindowWrapper.prototype.setup.call(this);
     this.main_form = this.window.getComponent(0);
-    this.load_record(new this.caller.store.recordType());
+    var data = {};
+    if (this.config.fk_name) {
+      var master = this.caller.caller.get_current_record();
+      if (master) {
+          //~ data[this.config.fk_name+'Hidden'] = this.caller.caller.content_type;
+          data[this.config.fk_name+'Hidden'] = master.id;
+      }
+    }
+    var rec = new this.caller.store.recordType(data);
+    console.log(rec);
+    this.on_master_change(rec);
   }
 })
 
@@ -802,10 +812,14 @@ Lino.PropertiesWrapper.override({
   setup : function() {
     // console.log('Lino.GridMasterWrapper configure',20100401,this);
     this.main_item = this.config.main_panel;
+    //~ Ext.applyIf(this.main_item,{listeners: {}});
+    //~ Ext.apply(this.main_item.listeners,{afteredit: Lino.submit_property_handler(this)});
+    //~ this.main_item.listeners = {afteredit: Lino.submit_property_handler(this)};
     Lino.WindowWrapper.prototype.setup.call(this);
     //~ Lino.SlaveMixin.prototype.setup.call(this);
   },
-  load_record : function(rec) {
+  get_current_record : function() {  return this.caller.get_current_record() },
+  on_master_change : function(rec) {
     Lino.load_properties(this.caller,this,this.config.url_data+'.json',rec);
   },
   get_window_config : function() {
