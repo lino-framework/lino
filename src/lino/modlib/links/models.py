@@ -15,6 +15,7 @@
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
+from django.utils.translation import ugettext as _
 
 from lino.modlib import fields
 from lino.modlib import tools
@@ -34,7 +35,16 @@ class Link(models.Model):
         verbose_name='Description')
     
     def __unicode__(self):
-        return self.desc
+        return self.desc or url or u""
+        
+class LinkDetail(layouts.DetailLayout):
+    datalink = 'links.Link'
+    main = """
+    url
+    desc
+    user date owner
+    """
+        
 
 class Links(reports.Report):
     model = 'links.Link'
@@ -46,6 +56,8 @@ class MyLinks(Links):
     column_names = "date desc owner"
 
 class LinksByOwner(Links):
+    button_label = _("Links")
+    title = _("Links by owner")
     fk_name = 'owner'
     column_names = "url date desc user"
     order_by = "date"

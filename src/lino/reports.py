@@ -187,7 +187,7 @@ class InsertRow(actions.OpenWindowAction):
         self.layout = layout
         actions.OpenWindowAction.__init__(self,actor)
         
-    def run_action(self,ar):
+    def unused_run_action(self,ar):
         #~ rr = dlg.get_request()
         #~ for r in rr.insert_row(self): 
             #~ yield r
@@ -752,8 +752,6 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
                     #~ print 'no detail in %s : %r' % (report,report.detail_layouts)
             
                 
-        if self.model is not None:
-          
             self.content_type = ContentType.objects.get_for_model(self.model).pk
             
             for slave in self._slaves:
@@ -763,6 +761,9 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
             if properties.Property.properties_for_model(self.model).count() > 0:
                 a = properties.PropertiesAction(self)
                 actions.append(a)
+                
+            from lino.modlib.links import models as links
+            actions.append(SlaveGridAction(self,links.LinksByOwner()))
             
         actions.append(self.default_action)
         #~ actions.append(self.data_action)

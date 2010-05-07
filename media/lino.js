@@ -552,52 +552,53 @@ Lino.button_handler = function(caller,action) {
   }
 };
 
-Lino.toggle_button_handler = function(caller,action) {
-  //~ var action = caller.config.bbar_actions[i];
+Lino.toggle_button_handler = function(master,action) {
+  //~ var action = master.config.bbar_actions[i];
   Ext.applyIf(action, {params : {}, method:'GET'});
   return function(btn,state) {
-    if (caller.slaves[action.name] == 'loading') {
+    if (master.slaves[action.name] == 'loading') {
       Lino.notify('loading...');
       return;
     }
     if(state) { 
-      if (caller.slaves[action.name]) {
-        //~ console.log('Lino.toggle_button_handler() ',caller,action.name,' exists : show again.');
-        caller.slaves[action.name].show();
+      if (master.slaves[action.name]) {
+        //~ console.log('Lino.toggle_button_handler() ',master,action.name,' exists : show again.');
+        master.slaves[action.name].show();
       } else {
-        caller.slaves[action.name] = 'loading';
-        //~ console.log('Lino.toggle_button_handler() ',caller,action.name,'=',caller.slaves[action.name]);
-        Ext.applyIf(action.params,caller.get_master_params(caller.get_current_record()));
+        master.slaves[action.name] = 'loading';
+        //~ console.log('Lino.toggle_button_handler() ',master,action.name,'=',master.slaves[action.name]);
+        Ext.apply(action.params,master.get_master_params(master.get_current_record()));
         //~ action.params.selected = caller.get_selected(); // POST_PARAM_SELECTED
-        action.after_js_code = function(js_result) { 
-          caller.slaves[action.name] = js_result;
+        action.after_js_code = function(slave) { 
+          master.slaves[action.name] = slave;
           //~ console.log('Lino.toggle_button_handler.after_js_code() ',caller,action.name,'=',caller.slaves[action.name]);
           // when master closes, close slave:
-          caller.window.on('close',function() { js_result.close() });
+          master.window.on('close',function() { slave.close() });
           // when master hides, hide slave:          
-          caller.window.on('hide',function(){ js_result.hide()});
+          master.window.on('hide',function(){ slave.hide()});
           // when slave's close button is clicked, toggle button off:
-          js_result.window.on('hide',function(){ btn.toggle(false,false)});
+          slave.window.on('hide',function(){ btn.toggle(false,false)});
           // when slave is shown, update it's data:
-          js_result.window.on('show',function(){ js_result.on_master_change(caller.get_current_record())});
+          slave.window.on('show',function(){ slave.on_master_change(master.get_current_record())});
           //~ js_result.on_master_change(caller.get_current_record());
-          caller.add_row_listener( function(sm,ri,rec){js_result.on_master_change(rec)}, js_result );
+          master.add_row_listener( function(sm,ri,rec){slave.on_master_change(rec)}, slave );
           // js_result.on_master_change(caller.get_current_record());
           
           // show slave:
-          js_result.show();
+          slave.show();
         };
-        Lino.do_action(caller,action);
+        Lino.do_action(master,action);
       }
     } else {
-      caller.slaves[action.name].hide();
+      master.slaves[action.name].hide();
     }
   }
 };
 
 
-Lino.WindowWrapper = function(caller,config) {
-  this.caller = caller;
+Lino.WindowWrapper = function(master,config) {
+  console.log('Lino.WindowWrapper.constructor',config.title,' : master is ',master);
+  this.master = master;
   this.config = config; 
   this.slaves = {};
   if (config.actions) {
@@ -616,7 +617,7 @@ Lino.WindowWrapper = function(caller,config) {
       }
       //~ Lino.debug(this.bbar_actions);
   }
-  //~ console.log('Lino.WindowWrapper.constructor',config.title,'gonna call setup');
+  console.log('Lino.WindowWrapper.constructor',config.title,'gonna call setup.');
   this.setup();
   //~ console.log('Lino.WindowWrapper.constructor',config.title,'returned from setup');
 };
@@ -757,7 +758,7 @@ Lino.GridMasterWrapper.override({
 Lino.SlaveMixin = {
   closeAction : 'hide',
   add_row_listener : function(fn,scope) {
-    this.caller.add_row_listener(fn,scope);
+    this.master.add_row_listener(fn,scope);
   }
   //~ get_base_params : function() { return this.caller.get_master_params(this.caller.get_current_record()) }
 };
@@ -788,7 +789,7 @@ Lino.GridSlaveWrapper.override({
   on_master_change : function(record) {
     //~ this.current_record = record;
     console.log('GridSlaveWrapper.on_master_change()',record)
-    var p = this.get_master_params(record);
+    var p = this.master.get_master_params(record);
     for (k in p) this.store.setBaseParam(k,p[k]);
     this.store.load(); // {params:this.get_master_params(record)}); 
   }
@@ -810,12 +811,12 @@ Lino.DetailSlaveWrapper.override({
           if (rec) {
             //~ console.log('Save handler: this=',this);
             this.main_form.form.submit({
-              url:this.caller.config.url_data + '/' + rec.id,
+              url:this.master.config.url_data + '/' + rec.id,
               method: 'PUT',
               scope: this,
               success: function(form, action) {
                 Lino.notify(action.result.msg);
-                this.caller.refresh();
+                this.master.refresh();
               },
               failure: Lino.on_submit_failure,
               clientValidation: true
@@ -844,13 +845,13 @@ Lino.InsertWrapper.override({
         scope: this,
         handler: function() {
           this.main_form.form.submit({
-            url:this.caller.config.url_data,
+            url:this.master.config.url_data,
             method: 'POST',
             scope: this,
             success: function(form, action) {
               Lino.notify(action.result.msg);
               this.close();
-              this.caller.refresh();
+              this.master.refresh();
             },
             failure: Lino.on_submit_failure,
             clientValidation: true
@@ -868,13 +869,13 @@ Lino.InsertWrapper.override({
     this.main_form = this.window.getComponent(0);
     var data = {};
     if (this.config.fk_name) {
-      var master = this.caller.caller.get_current_record();
+      var master = this.master.master.get_current_record();
       if (master) {
           //~ data[this.config.fk_name+'Hidden'] = this.caller.caller.content_type;
           data[this.config.fk_name+'Hidden'] = master.id;
       }
     }
-    var rec = new this.caller.store.recordType(data);
+    var rec = new this.master.store.recordType(data);
     console.log(rec);
     this.on_master_change(rec);
   }
@@ -892,9 +893,9 @@ Lino.PropertiesWrapper.override({
     Lino.WindowWrapper.prototype.setup.call(this);
     //~ Lino.SlaveMixin.prototype.setup.call(this);
   },
-  get_current_record : function() {  return this.caller.get_current_record() },
+  get_current_record : function() {  return this.master.get_current_record() },
   on_master_change : function(rec) {
-    Lino.load_properties(this.caller,this,this.config.url_data+'.json',rec);
+    Lino.load_properties(this.master,this,this.config.url_data+'.json',rec);
   },
   get_window_config : function() {
     var wc = { window_config_type: 'props' }
