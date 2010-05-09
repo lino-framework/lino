@@ -242,9 +242,9 @@ class InsertWrapper(MasterWrapper):
     window_config_type = 'insert'
     
     def __init__(self,rh,action,**kw):
+        assert isinstance(action,reports.InsertRow)
         lh = action.layout.get_handle(rh.ui)
         MasterWrapper.__init__(self, rh, action, lh)
-        #~ self.actions = [] # [dict(type=a.action_type,name=a.name,label=a.label) for a in rh.get_actions()]
         
     def get_config(self):
         d = super(InsertWrapper,self).get_config()
@@ -252,6 +252,7 @@ class InsertWrapper(MasterWrapper):
         d.update(name=self.action.name)
         d.update(title=self.action.label + _(' into ') + self.action.actor.get_title(None))
         d.update(fk_name=self.action.actor.fk_name);
+        #~ d.update(formdata=)
         d.update(actions=[
           dict(
             name='submit',

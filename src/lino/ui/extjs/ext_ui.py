@@ -154,6 +154,21 @@ class pdf_Emitter:
         elem.make_pdf()
         return HttpResponseRedirect(elem.pdf_url())
         
+class jpg_Emitter:
+    fmt = 'jpg'
+    
+    def handle_list_request(self,request,rh):
+        raise NotImplementedError()
+        
+    def handle_element_request(self,request,ah,elem):
+        m = getattr(elem,'image_url',None)
+        if m is None:
+            raise Http404("%s has no image_url" % elem)
+        url = elem.image_url()
+        if url is None:
+            raise Http404("%s has no picture" % elem)
+        return HttpResponseRedirect(url)
+        
         
       
     
@@ -162,26 +177,34 @@ class json_Emitter:
     fmt = ext_requests.FMT_JSON
     
     def handle_list_request(self,request,rh):
-        a = rh.report.list_action
-        ar = ext_requests.ViewReportRequest(request,rh,a)
-        if request.method == 'GET':
-            if rh.report.use_layouts:
-                def row2dict(row,d):
-                    for fld in rh.store.fields:
-                        fld.obj2json(row,d)
-                    return d
-            else:
-                row2dict = rh.report.row2dict
-            
-            rows = [ row2dict(row,{}) for row in ar.queryset ]
-            total_count = ar.total_count
-            #lino.log.debug('%s.render_to_dict() total_count=%d extra=%d',self,total_count,self.extra)
-            # add extra blank row(s):
-            for i in range(0,ar.extra):
-                row = ar.create_instance()
-                rows.append(row2dict(row,{}))
-                total_count += 1
-            return json_response_kw(count=total_count,rows=rows,title=ar.get_title())
+        try:
+            a = rh.report.list_action
+            ar = ext_requests.ViewReportRequest(request,rh,a)
+            if request.method == 'GET':
+                if rh.report.use_layouts:
+                    def row2dict(row,d):
+                        for fld in rh.store.fields:
+                            fld.obj2json(row,d)
+                        return d
+                else:
+                    row2dict = rh.report.row2dict
+                
+                rows = [ row2dict(row,{}) for row in ar.queryset ]
+                total_count = ar.total_count
+                #lino.log.debug('%s.render_to_dict() total_count=%d extra=%d',self,total_count,self.extra)
+                # add extra blank row(s):
+                #~ for i in range(0,ar.extra):
+                if ar.extra:
+                    row = ar.create_instance()
+                    d = row2dict(row,{})
+                    d[rh.report.model._meta.pk.name] = -99999
+                    rows.append(d)
+                    total_count += 1
+                return json_response_kw(count=total_count,rows=rows,title=ar.get_title())
+        except Exception,e:
+            lino.log.debug(str(request))
+            lino.log.exception(e)
+            return json_response_kw(count=0,rows=[],message=str(e))
         
     def handle_element_request(self,request,ah,elem):
         raise NotImplementedError()
@@ -251,6 +274,7 @@ register_emitter(json_Emitter())
 register_emitter(csv_Emitter())
 #~ register_emitter(wc_Emitter())
 register_emitter(pdf_Emitter())
+register_emitter(jpg_Emitter())
 
 
 class ExtUI(base.UI):
@@ -288,7 +312,9 @@ class ExtUI(base.UI):
         if isinstance(de,models.Field):
             return self.create_field_element(lh,de,**kw)
         if isinstance(de,generic.GenericForeignKey):
-            return ext_elems.VirtualFieldElement(lh,name,de,**kw)
+            # create a horizontal panel with 2 comboboxes
+            return lh.desc2elem(panelclass,name,de.ct_field + ' ' + de.fk_field,**kw)
+            #~ return ext_elems.VirtualFieldElement(lh,name,de,**kw)
         if callable(de):
             return self.create_meth_element(lh,name,de,**kw)
         if isinstance(de,reports.Report):
@@ -308,6 +334,11 @@ class ExtUI(base.UI):
                     return lh.desc2elem(panelclass,name,value,**kw)
                 if isinstance(value,layouts.StaticText):
                     return ext_elems.StaticTextElement(lh,name,value)
+                if isinstance(value,layouts.DataView):
+                    return ext_elems.DataViewElement(lh,name,value)
+                    #~ return ext_elems.TemplateElement(lh,name,value)
+                if isinstance(value,layouts.Picture):
+                    return ext_elems.PictureElement(lh,name,value)
                 #~ if isinstance(value,layouts.PropertyGrid):
                     #~ return ext_elems.PropertyGridElement(lh,name,value)
                 raise KeyError("Cannot handle value %r in %s.%s." % (value,lh.layout._actor_name,name))
@@ -404,6 +435,7 @@ class ExtUI(base.UI):
             (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)\.(?P<fmt>\w+)$', self.api_list_view),
             (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>\w+)\.(?P<fmt>\w+)$', self.api_element_view),
             (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>\w+)$', self.api_element_view),
+            #~ (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>\w+)/(?P<method>\w+)$', self.api_element_view),
             #~ (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.api_view),
             (r'^ui/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.ui_view),
             #~ (r'^action/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.action_view),

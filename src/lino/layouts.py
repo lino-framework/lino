@@ -50,7 +50,13 @@ LABEL_ALIGN_RIGHT = 'right'
 class StaticText:
     def __init__(self,text):
         self.text = text
-
+        
+class Picture:
+    pass
+    
+class DataView:
+    def __init__(self,tpl):
+        self.xtemplate = tpl
         
 class LayoutHandle(base.Handle):
     """

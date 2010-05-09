@@ -15,6 +15,7 @@ Quick links:
   http://dsbe.saffre-rumma.ee
 - `PyPI entry <http://pypi.python.org/pypi/lino>`__
 - :doc:`changes/index`
+- :doc:`todo`
 
 
 The rest of this page is being migrated to the above sites.

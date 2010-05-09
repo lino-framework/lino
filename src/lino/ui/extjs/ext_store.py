@@ -39,7 +39,11 @@ class StoreField(object):
         #d[self.field.name] = getattr(obj,self.field.name)
         #v = getattr(obj,self.field.name)
         #d[self.field.name] = self.field.value_to_string(obj)
-        d[self.field.name] = self.field.value_from_object(obj)
+        try:
+            d[self.field.name] = self.field.value_from_object(obj)
+        except ValueError,e:
+            print obj.__class__, self.field.name, e
+            lino.log.exception(e)
         
     def unused_get_from_form(self,instance,post_data):
         v = post_data.get(self.field.name)
@@ -366,7 +370,8 @@ class Store(Component):
         
     def form2obj(self,form_values,instance):
         for f in self.fields:
-            f.form2obj(instance,form_values)
+            if not f.field.primary_key:
+                f.form2obj(instance,form_values)
         for p in properties.Property.properties_for_model(instance.__class__):
             p.form2obj(instance,form_values)
             

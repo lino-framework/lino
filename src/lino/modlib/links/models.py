@@ -35,7 +35,8 @@ class Link(models.Model):
         verbose_name='Description')
     
     def __unicode__(self):
-        return self.desc or url or u""
+        return self.desc or self.url or u""
+        
         
 class LinkDetail(layouts.DetailLayout):
     datalink = 'links.Link'

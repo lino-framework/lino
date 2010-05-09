@@ -40,9 +40,10 @@ class ColumnModel(Component):
     #declaration_order = 2
     
     def __init__(self,grid):
+        assert isinstance(grid,GridElement)
         self.grid = grid
         Component.__init__(self,grid.name)
-        self.columns = [GridColumn(e) for e in self.grid.elements if not e.hidden]
+        self.columns = [GridColumn(self,e) for e in self.grid.elements if not e.hidden]
         
     def subvars(self):
         for col in self.columns:
@@ -64,19 +65,20 @@ class GridColumn(Component):
     ext_suffix = "_col"
     value_template = "new Ext.grid.Column(%s)"
     
-    def __init__(self,editor,**kw):
+    def __init__(self,cm,editor,**kw):
+        #~ assert isinstance(editor,FieldElement), \
+            #~ "%s.%s is a %r (expected FieldElement instance)" % (cm.grid.report,editor.name,editor)
         self.editor = editor
         self.value_template = editor.grid_column_template
         kw.update(self.editor.get_column_options())
         kw.update(editor=self.editor)
+        if isinstance(editor,FieldElement) and editor.field.primary_key:
+            kw.update(renderer=js_code('Lino.id_renderer'))
         Component.__init__(self,editor.name,**kw)
     
         #~ if self.editable:
             #~ editor = self.get_field_options()
         
-    #~ def ext_options(self,**kw):
-        #~ kw = Component.ext_options(self,**kw)
-        #~ return kw
         
 class ComboBox(Component):
     value_template = 'new Ext.form.ComboBox(%s)'
@@ -278,6 +280,45 @@ class unused_SubmitActionElement(ButtonElement):
         
 
 
+class DataViewElement(LayoutElement):
+    declare_type = jsgen.DECLARE_INLINE
+    value_template = "new Ext.DataView(%s)"
+    vflex = True
+    
+    def __init__(self,lh,name,dv,**kw):
+        #~ self.dv = dv
+        kw.update(store=js_code('this.store'))
+        kw.update(tpl=js_code('new Ext.XTemplate(%s)' % py2js(dv.xtemplate)))
+        kw.update(emptyText='No images to display')
+        kw.update(itemSelector='div.thumb-wrap')
+        kw.update(loadingText='Loading...')
+        LayoutElement.__init__(self,lh,name,**kw)
+
+class TemplateElement(LayoutElement):
+    declare_type = jsgen.DECLARE_INLINE
+    value_template = "new Ext.BoxComponent(%s)"
+    vflex = True
+    
+    def __init__(self,lh,name,dv,**kw):
+        #~ self.dv = dv
+        #~ kw.update(tpl=js_code('new Ext.XTemplate(%s)' % py2js(dv.xtemplate)))
+        kw.update(plugins=js_code('new Lino.TemplateBoxPlugin(caller,%s)' % py2js(dv.xtemplate)))
+        LayoutElement.__init__(self,lh,name,**kw)
+
+class PictureElement(LayoutElement):
+    declare_type = jsgen.DECLARE_INLINE
+    value_template = "new Ext.BoxComponent(%s)"
+    vflex = True
+    
+    def __init__(self,lh,name,picture,**kw):
+        kw.update(autoEl=dict(tag='img'))
+        #~ kw.update(cls='ext-el-mask')
+        kw.update(style=dict(height='100%'))
+        kw.update(plugins=js_code('new Lino.PictureBoxPlugin(caller)'))
+        LayoutElement.__init__(self,lh,name,**kw)
+
+        
+
 class StaticTextElement(LayoutElement):
     declare_type = jsgen.DECLARE_INLINE
     #declare_type = jsgen.DECLARE_THIS
@@ -304,7 +345,7 @@ class Spacer(LayoutElement):
     value_template = "new Ext.Spacer(%s)"
     
         
-class VirtualFieldElement(LayoutElement):
+class unused_VirtualFieldElement(LayoutElement):
     def __init__(self,lh,name,gfk,**kw):
         assert isinstance(gfk,generic.GenericForeignKey)
         self.gfk = gfk
@@ -327,9 +368,9 @@ class FieldElement(LayoutElement):
     
     def __init__(self,lh,field,**kw):
         assert field.name, Exception("field %r has no name!" % field)
-        LayoutElement.__init__(self,lh,field.name,label=field.verbose_name,**kw)
         self.field = field
         self.editable = field.editable and not field.primary_key
+        LayoutElement.__init__(self,lh,field.name,label=field.verbose_name,**kw)
         
     #~ def get_column_options(self,**kw):
         #~ kw = LayoutElement.get_column_options(self,**kw)
@@ -858,6 +899,7 @@ class GridElement(Container): #,DataElementMixin):
         Note: lh is the owning layout handle, rpt is the report being displayed by this GridElement.
         """
         assert isinstance(rpt,reports.Report), "%r is not a Report!" % rpt
+        self.report = rpt
         #~ assert isinstance(rh,reports.ReportHandle), "%r is not a ReportHandle!" % rh
         if len(elements) == 0:
             rh = rpt.get_handle(lh.ui)
@@ -880,7 +922,6 @@ class GridElement(Container): #,DataElementMixin):
             #~ self.preferred_height += ADD_GRID_HEIGHT
         
         #~ self.rh = rh
-        self.report = rpt
         #~ lh.needs_store(rh)
         self.column_model = ColumnModel(self)
         #self.mt = ContentType.objects.get_for_model(self.report.model).pk

@@ -111,24 +111,28 @@ Lino.grid_afteredit_handler = function (caller) {
     p[e.field+'Hidden'] = e.value;
     // p[pk] = e.record.data[pk];
     // console.log("grid_afteredit:",e.field,'=',e.value);
-    Ext.Ajax.request({
-      waitMsg: 'Please wait...',
-      method: 'PUT',
-      url: caller.config.url_data + '/' + e.record.id,
-      params: p, 
-      success: function(response) {
-        // console.log('success',response.responseText);
-        var result=Ext.decode(response.responseText);
-        // console.log(result);
-        if (result.success) {
-          caller.main_grid.getStore().commitChanges(); // get rid of the red triangles
-          caller.main_grid.getStore().reload();        // reload our datastore.
-        } else {
-          Ext.MessageBox.alert('Action failed',result.msg);
-        }
-      },
-      failure: Lino.ajax_error_handler
-    })
+    Ext.apply(p,caller.store.baseParams);
+    function after_success(result) {
+      caller.main_grid.getStore().commitChanges(); // get rid of the red triangles
+      caller.main_grid.getStore().reload();        // reload our datastore.
+    };
+    //~ console.log(e.record.id);
+    if (e.record.id == -99999) {
+      Lino.do_action(caller,{
+        method:'POST',url: caller.config.url_data,
+        params:p,after_success:after_success})
+    } else 
+      Lino.do_action(caller,{
+        method:'PUT',url: caller.config.url_data+'/'+e.record.id, 
+        params:p, after_success:after_success});
+    //~ Ext.Ajax.request({
+      //~ waitMsg: 'Please wait...',
+      //~ method: 'PUT',
+      //~ url: caller.config.url_data + '/' + e.record.id,
+      //~ params: p, 
+      //~ success: on_success,
+      //~ failure: Lino.ajax_error_handler
+    //~ })
   }
 };
 
@@ -161,6 +165,7 @@ Lino.do_action = function(caller,action) {
     if (response.responseText) {
       var result = Ext.decode(response.responseText);
       //~ console.log('Lino.do_action()',action.name,'result is',result);
+      if (result.success && action.after_success) action.after_success(result);
       if (result.alert_msg) Ext.MessageBox.alert('Alert',result.alert_msg);
       if (result.message) Lino.notify(result.message);
       if (result.notify_msg) Lino.notify(result.notify_msg);
@@ -417,6 +422,15 @@ Lino.main_menu = new Ext.Toolbar({});
 // Path to the blank image should point to a valid location on your server
 Ext.BLANK_IMAGE_URL = '/extjs/resources/images/default/s.gif';
 
+
+// used as Ext.grid.Column.renderer for id columns in order to hide the special id value -99999
+Lino.id_renderer = function(value, metaData, record, rowIndex, colIndex, store) {
+  if (value == -99999) return '';
+  return value;
+}
+
+
+
 Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
   afterRender : function() {
     Lino.GridPanel.superclass.afterRender.call(this);
@@ -596,9 +610,9 @@ Lino.toggle_button_handler = function(master,action) {
 };
 
 
-Lino.WindowWrapper = function(master,config) {
-  console.log('Lino.WindowWrapper.constructor',config.title,' : master is ',master);
-  this.master = master;
+Lino.WindowWrapper = function(caller,config) {
+  //~ console.log('Lino.WindowWrapper.constructor',config.title,' : caller is ',caller);
+  this.caller = caller;
   this.config = config; 
   this.slaves = {};
   if (config.actions) {
@@ -617,7 +631,7 @@ Lino.WindowWrapper = function(master,config) {
       }
       //~ Lino.debug(this.bbar_actions);
   }
-  console.log('Lino.WindowWrapper.constructor',config.title,'gonna call setup.');
+  //~ console.log('Lino.WindowWrapper.constructor',config.title,'gonna call setup.');
   this.setup();
   //~ console.log('Lino.WindowWrapper.constructor',config.title,'returned from setup');
 };
@@ -665,6 +679,57 @@ Ext.override(Lino.WindowWrapper,{
   hide : function() { this.window.hide() },
   close : function() { this.window.close() },  
   get_window_config : function() { return {} }
+});
+
+Lino.template_handler = function(tpl,cmp) {
+  return function(record) {
+      console.log(20100509,'Lino.template_handler',cmp);
+      if (cmp.el) tpl.overwrite(cmp.el,record.data);
+      //~ cmp.el = 'foo <img src="/media/images/empty.jpg"/> bar'
+  }
+};
+Lino.TemplateBoxPlugin = function(caller,s) {
+  this.tpl = new Ext.XTemplate(s);
+  this.caller = caller;
+};
+Ext.override(Lino.TemplateBoxPlugin,{
+  init : function (cmp) {
+    this.caller.add_row_listener(Lino.template_handler(this.tpl,cmp));
+    //~ function(record) {
+      //~ this.tpl.overwrite(cmp.body,{'national_id':'123'});
+    //~ });
+  }
+});
+
+Lino.load_picture = function(caller,cmp,record) {
+  if (record && cmp.el) {
+    var src = caller.config.url_data + "/" + record.id + ".jpg"
+    //~ console.log('Lino.load_picture()',src);
+    cmp.el.dom.src = src; 
+  } else console.log('Lino.load_picture() no record or cmp not rendered',caller,cmp,record);
+}
+//~ Lino.PictureBox_handler = function(caller,cmp) {
+  //~ return function(sm,ri,record) {
+      //~ console.log(20100509,'Lino.imgbox_handler',caller,record,cmp);
+      //~ if (record && cmp.el) {
+        //~ cmp.el.dom.src = caller.config.url_data + "/" + record.id + ".jpg"; 
+      //~ }
+      
+  //~ }
+//~ };
+Lino.PictureBoxPlugin = function(caller) {
+  this.caller = caller;
+};
+Ext.override(Lino.PictureBoxPlugin,{
+  init : function (cmp) {
+    //~ console.log('Lino.PictureBoxPlugin.init()',this);
+    cmp.on('render',function(){ Lino.load_picture(this.caller,cmp,this.caller.get_current_record())},this);
+    this.caller.add_row_listener(function(sm,ri,rec) { Lino.load_picture(this.caller,cmp,rec) }, this );
+    //~ this.caller.add_row_listener(Lino.PictureBox_handler(this.caller,cmp));
+    //~ function(record) {
+      //~ this.tpl.overwrite(cmp.body,{'national_id':'123'});
+    //~ });
+  }
 });
 
 
@@ -751,6 +816,7 @@ Lino.GridMasterWrapper.override({
   add_row_listener : function(fn,scope) {
     // this.main_grid.add_row_listener(fn,scope);
     this.main_grid.getSelectionModel().addListener('rowselect',fn,scope);
+    //~ console.log(20100509,'Lino.GridMasterWrapper.add_row_listener',this.config.title);
   }
 });
 
@@ -758,7 +824,7 @@ Lino.GridMasterWrapper.override({
 Lino.SlaveMixin = {
   closeAction : 'hide',
   add_row_listener : function(fn,scope) {
-    this.master.add_row_listener(fn,scope);
+    this.caller.add_row_listener(fn,scope);
   }
   //~ get_base_params : function() { return this.caller.get_master_params(this.caller.get_current_record()) }
 };
@@ -789,7 +855,7 @@ Lino.GridSlaveWrapper.override({
   on_master_change : function(record) {
     //~ this.current_record = record;
     console.log('GridSlaveWrapper.on_master_change()',record)
-    var p = this.master.get_master_params(record);
+    var p = this.caller.get_master_params(record);
     for (k in p) this.store.setBaseParam(k,p[k]);
     this.store.load(); // {params:this.get_master_params(record)}); 
   }
@@ -811,12 +877,12 @@ Lino.DetailSlaveWrapper.override({
           if (rec) {
             //~ console.log('Save handler: this=',this);
             this.main_form.form.submit({
-              url:this.master.config.url_data + '/' + rec.id,
+              url:this.caller.config.url_data + '/' + rec.id,
               method: 'PUT',
               scope: this,
               success: function(form, action) {
                 Lino.notify(action.result.msg);
-                this.master.refresh();
+                this.caller.refresh();
               },
               failure: Lino.on_submit_failure,
               clientValidation: true
@@ -845,13 +911,14 @@ Lino.InsertWrapper.override({
         scope: this,
         handler: function() {
           this.main_form.form.submit({
-            url:this.master.config.url_data,
+            url:this.caller.config.url_data,
+            params: this.caller.caller.get_master_params(this.caller.caller.get_current_record()),
             method: 'POST',
             scope: this,
             success: function(form, action) {
               Lino.notify(action.result.msg);
               this.close();
-              this.master.refresh();
+              this.caller.refresh();
             },
             failure: Lino.on_submit_failure,
             clientValidation: true
@@ -867,15 +934,16 @@ Lino.InsertWrapper.override({
         //~ autoScroll: true,});
     Lino.WindowWrapper.prototype.setup.call(this);
     this.main_form = this.window.getComponent(0);
-    var data = {};
-    if (this.config.fk_name) {
-      var master = this.master.master.get_current_record();
-      if (master) {
-          //~ data[this.config.fk_name+'Hidden'] = this.caller.caller.content_type;
-          data[this.config.fk_name+'Hidden'] = master.id;
-      }
-    }
-    var rec = new this.master.store.recordType(data);
+    //~ var data = {};
+    //~ if (this.config.fk_name) {
+      //~ var master = this.caller.caller.get_current_record();
+      //~ if (master) {
+          //~ data[this.config.fk_name+'Hidden'] = master.id;
+      //~ }
+    //~ }
+    //~ var rec = new this.caller.store.recordType(data);
+    //~ var rec = new this.caller.store.recordType(this.config.formdata);
+    var rec = this.caller.store.getById(-99999);
     console.log(rec);
     this.on_master_change(rec);
   }
@@ -893,9 +961,9 @@ Lino.PropertiesWrapper.override({
     Lino.WindowWrapper.prototype.setup.call(this);
     //~ Lino.SlaveMixin.prototype.setup.call(this);
   },
-  get_current_record : function() {  return this.master.get_current_record() },
+  get_current_record : function() {  return this.caller.get_current_record() },
   on_master_change : function(rec) {
-    Lino.load_properties(this.master,this,this.config.url_data+'.json',rec);
+    Lino.load_properties(this.caller,this,this.config.url_data+'.json',rec);
   },
   get_window_config : function() {
     var wc = { window_config_type: 'props' }

@@ -11,7 +11,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.contrib.contenttypes.models import ContentType
 #~ from django.contrib.contenttypes import generic
 
@@ -48,7 +48,8 @@ def authenticated_user(user):
         return None
     return user
         
-
+#~ class InvalidRequest(Exception):
+    #~ pass
 
 #~ class ActionRequest(actions.ActionRequest):
     
@@ -77,23 +78,27 @@ class BaseViewReportRequest(reports.ReportActionRequest):
         master = kw.get('master',self.report.master)
         if master is ContentType:
             mt = request.REQUEST.get(URL_PARAM_MASTER_TYPE)
-            master = kw['master'] = ContentType.objects.get(pk=mt).model_class()
+            try:
+                master = kw['master'] = ContentType.objects.get(pk=mt).model_class()
+            except ContentType.DoesNotExist,e:
+                raise ContentType.DoesNotExist("ContentType %r does not exist." % mt)
+                
             #~ print kw
         if master is not None and not kw.has_key('master_instance'):
             pk = request.REQUEST.get(URL_PARAM_MASTER_PK,None)
             #~ print '20100406a', self.report,URL_PARAM_MASTER_PK,"=",pk
-            if pk == '':
+            if pk in ('', '-99999'):
                 pk = None
             if pk is None:
                 kw['master_instance'] = None
             else:
                 try:
                     kw['master_instance'] = master.objects.get(pk=pk)
+                except ValueError,e:
+                    raise Http404("Invalid primary key %r for %s",pk,master.__name__)
                 except master.DoesNotExist,e:
                     # todo: ReportRequest should become a subclass of Dialog and this exception should call dlg.error()
-                    lino.log.warning(
-                      "There's no %s with primary key %r",
-                      master.__name__,pk)
+                    raise Http404("There's no %s with primary key %r",master.__name__,pk)
             #~ print '20100212', self #, kw['master_instance']
         #~ print '20100406b', self.report,kw
         quick_search = request.REQUEST.get(URL_PARAM_FILTER,None)

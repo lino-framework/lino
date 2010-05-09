@@ -10,7 +10,7 @@ OPENHTML     = 'C:\\Program Files\\Mozilla Firefox\\firefox.exe'
 
 # You can set these variables from the command line.
 SPHINXOPTS    =
-SPHINXBUILD   = python l:\\snapshot\\sphinx\\sphinx-build.py
+SPHINXBUILD   = python l:\\snapshots\\sphinx\\sphinx-build.py
 PAPER         =
 
 # Internal variables.
