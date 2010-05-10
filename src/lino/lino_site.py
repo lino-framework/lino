@@ -17,6 +17,9 @@ import sys
 #~ import imp
 
 from django.conf import settings
+if hasattr(settings,'LINO_SETTINGS'):
+    lino.log.debug('settings.LINO_SETTINGS is %r',settings.LINO_SETTINGS)
+        
 
 from django.db import models
 #from django.shortcuts import render_to_response 
@@ -75,9 +78,6 @@ class LinoSite:
             return 
             #raise Exception("LinoSite.setup() called recursively.")
         self._setting_up = True
-        
-        if hasattr(settings,'LINO_SETTINGS'):
-            pass
         
 
         actors.discover()
