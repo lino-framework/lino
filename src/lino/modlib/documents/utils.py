@@ -64,7 +64,9 @@ class Printable:
           title = unicode(self),
           MEDIA_URL = MEDIA_URL,
         )
-        template = select_template(self.html_templates())
+        tpls = self.html_templates()
+        #~ lino.log.debug('make_pisa_html %s',tpls)
+        template = select_template(tpls)
         return template.render(Context(context))
         
     def get_last_modified_time(self):
@@ -74,7 +76,7 @@ class Printable:
         filename = self.pdf_path()
         if not filename:
             return
-        lino.log.debug("make_pdf(%s) -> %s", self, filename)
+        lino.log.debug("make_pdf %s -> %s", self, filename)
         last_modified = self.get_last_modified_time() 
         if last_modified is not None and os.path.exists(filename):
             mtime = os.path.getmtime(filename)
@@ -122,7 +124,7 @@ class Printable:
 
     def html_templates(self):
         # when using pisa
-        return [ '%s_pisa.html' % self.__class__.__name__.lower() ]
+        return [ '%s.%s.pisa.html' % (self._meta.app_label,self.__class__.__name__) ]
 
     def get_child_model(self):
         return self.__class__
