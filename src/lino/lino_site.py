@@ -39,7 +39,8 @@ from django.contrib.auth import models as auth
 from django.utils.safestring import mark_safe
 
 
-from django.db.models import loading
+#~ from django.db.models import loading
+#~ loading.get_apps()
 #~ def db_apps():
     #~ return [a.__name__.split('.')[-2] for a in loading.get_apps()]
 
@@ -77,6 +78,8 @@ class LinoSite:
             #raise Exception("LinoSite.setup() called recursively.")
         self._setting_up = True
         
+        from lino import diag
+        diag.welcome()
 
         actors.discover()
         
