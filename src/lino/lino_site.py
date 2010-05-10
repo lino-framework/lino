@@ -18,11 +18,6 @@ import sys
 
 from django.conf import settings
 
-# two lines for mod_python
-from django.core.management import setup_environ
-setup_environ(settings)
-
-
 from django.db import models
 #from django.shortcuts import render_to_response 
 #from django.contrib.auth.models import User
