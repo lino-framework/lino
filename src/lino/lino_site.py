@@ -39,32 +39,23 @@ from django.contrib.auth import models as auth
 from django.utils.safestring import mark_safe
 from django.db.models import loading
 
-
-
-
-#~ from django.db.models import loading
-#~ loading.get_apps()
-#~ def db_apps():
-    #~ return [a.__name__.split('.')[-2] for a in loading.get_apps()]
-
 import lino
         
 from lino import reports, forms, layouts, actions
-#~ from lino import diag
 from lino.utils import perms
 from lino.utils import menus
 from lino.core import actors
 
 
-def thanks_to():
-    l = ["%s %s <%s>" % (name,version,url) 
-          for name,url,version in lino.thanks_to()]
-    return '\n'.join(l)
-      
-
 def app_labels():
     return [a.__name__.split('.')[-2] for a in loading.get_apps()]
         
+#~ def thanks_to():
+    #~ l = ["%s %s <%s>" % (name,version,url) 
+          #~ for name,url,version in lino.thanks_to()]
+    #~ return '\n'.join(l)
+      
+
 
 
 
@@ -88,19 +79,16 @@ class LinoSite:
         if self._setup_done:
             return
         if self._setting_up:
-            lino.log.warning("LinoSite.setup() called recursively.")
-            return 
-            #raise Exception("LinoSite.setup() called recursively.")
+            #~ lino.log.warning("LinoSite.setup() called recursively.")
+            #~ return 
+            raise Exception("LinoSite.setup() called recursively.")
         self._setting_up = True
         
-        #~ from lino import diag
-        #~ diag.welcome()
+        ## The following not only logs diagnostic information, it also has an 
+        ## important side effect: it causes django.db.models.loading.cache to 
+        ## be populated. This must be done before calling actors.discover().
         
-        lino.log.info(lino.thanks_to())
-        #~ for name,url,version in thanks_to():
-            #~ lino.log.info("%s %s <%s>",name,version,url)
         apps = app_labels()
-          
         lino.log.debug("%d applications: %s.", len(apps),", ".join(apps))
         models_list = models.get_models()
         lino.log.debug("%d models:",len(models_list))
@@ -108,9 +96,6 @@ class LinoSite:
         for model in models_list:
             i += 1
             lino.log.debug("  %2d: %s.%s -> %r",i,model._meta.app_label,model._meta.object_name,model)
-            #~ lino.log.debug("  %2d: %s %r",i,model._meta.db_table,model)
-        
-        
         
 
         actors.discover()

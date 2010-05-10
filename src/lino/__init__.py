@@ -122,8 +122,6 @@ def thanks_to_():
     version = "%d.%d.%d" % sys.version_info[:3]
     yield ("Python","http://www.python.org/",version)
     
-def thanks_to2():
-  
     import reportlab
     yield ("ReportLab Toolkit",
            "http://www.reportlab.org/rl_toolkit.html",
@@ -138,7 +136,6 @@ def thanks_to2():
     yield ("python-dateutil","http://labix.org/python-dateutil",version)
     
     try:
-        # l:\snapshot\xhtml2pdf
         import ho.pisa as pisa
         version = getattr(pisa,'__version__','')
         yield ("xhtml2pdf","http://www.xhtml2pdf.com//",version)
@@ -147,3 +144,4 @@ def thanks_to2():
     
 
 
+log.info(thanks_to())
