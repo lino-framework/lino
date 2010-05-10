@@ -173,7 +173,7 @@ class LinoSite:
       
     def fill(self,fixtures=[]):
       
-        # self.setup()
+        self.setup()
         
         from django.core.management import call_command
         from timtools.console import syscon
