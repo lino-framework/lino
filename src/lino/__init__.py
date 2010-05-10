@@ -105,5 +105,45 @@ if len(log.handlers) == 0:
 #~ print "log.parent=", log.parent
 #~ print "log.manager.disable=", log.manager.disable
 
+def thanks_to():
+    l = ["%s %s <%s>" % (name,version,url) 
+          for name,url,version in thanks_to_()]
+    return '\n'.join(l)
+    
+def thanks_to_():
+    yield ("Lino", __url__, __version__)
+    
+    import django
+    yield ("Django",
+           "http://www.djangoproject.com",
+           django.get_version())
+    
+    import sys
+    version = "%d.%d.%d" % sys.version_info[:3]
+    yield ("Python","http://www.python.org/",version)
+    
+def thanks_to2():
+  
+    import reportlab
+    yield ("ReportLab Toolkit",
+           "http://www.reportlab.org/rl_toolkit.html",
+           reportlab.Version)
+               
+    import yaml
+    version = getattr(yaml,'__version__','')
+    yield ("PyYaml","http://pyyaml.org/",version)
+    
+    import dateutil
+    version = getattr(dateutil,'__version__','')
+    yield ("python-dateutil","http://labix.org/python-dateutil",version)
+    
+    try:
+        # l:\snapshot\xhtml2pdf
+        import ho.pisa as pisa
+        version = getattr(pisa,'__version__','')
+        yield ("xhtml2pdf","http://www.xhtml2pdf.com//",version)
+    except ImportError:
+        pisa = None
+    
 
 

@@ -11,74 +11,19 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+raise "no longer used. moved to lino_site"
+
 import lino
 from django.db import models
 from django.db.models import loading
 
-def welcome():
-    lino.log.info(thanks_to())
-    #~ for name,url,version in thanks_to():
-        #~ lino.log.info("%s %s <%s>",name,version,url)
-    apps = app_labels()
-      
-    lino.log.debug("%d applications: %s.", len(apps),", ".join(apps))
-    models_list = models.get_models()
-    lino.log.debug("%d models:",len(models_list))
-    i = 0
-    for model in models_list:
-        i += 1
-        lino.log.debug("  %2d: %s.%s -> %r",i,model._meta.app_label,model._meta.object_name,model)
-        #~ lino.log.debug("  %2d: %s %r",i,model._meta.db_table,model)
-    
-    
-    
-    
-#~ def versions():
-    #~ def HREF(name,url,version):
-        #~ return mark_safe('<a href="%s">%s</a> %s' % (url,name,version))
-    #~ for name,url,version in thanks_to():
-        #~ yield HREF(name,url,version)
+#~ def welcome():
 
 def thanks_to():
     l = ["%s %s <%s>" % (name,version,url) 
-          for name,url,version in thanks_to_()]
-    return '\n'.join(l[:3])
+          for name,url,version in lino.thanks_to()]
+    return '\n'.join(l)
       
-def thanks_to_():
-    yield ("Lino",
-           lino.__url__,
-           lino.__version__)
-    
-    import django
-    yield ("Django",
-           "http://www.djangoproject.com",
-           django.get_version())
-    
-    import sys
-    version = "%d.%d.%d" % sys.version_info[:3]
-    yield ("Python","http://www.python.org/",version)
-    
-    import reportlab
-    yield ("ReportLab Toolkit",
-           "http://www.reportlab.org/rl_toolkit.html",
-           reportlab.Version)
-               
-    import yaml
-    version = getattr(yaml,'__version__','')
-    yield ("PyYaml","http://pyyaml.org/",version)
-    
-    import dateutil
-    version = getattr(dateutil,'__version__','')
-    yield ("python-dateutil","http://labix.org/python-dateutil",version)
-    
-    try:
-        # l:\snapshot\xhtml2pdf
-        import ho.pisa as pisa
-        version = getattr(pisa,'__version__','')
-        yield ("xhtml2pdf","http://www.xhtml2pdf.com//",version)
-    except ImportError:
-        pisa = None
-    
 
 def app_labels():
     return [a.__name__.split('.')[-2] for a in loading.get_apps()]

@@ -37,6 +37,9 @@ from django.contrib.auth import models as auth
 
 
 from django.utils.safestring import mark_safe
+from django.db.models import loading
+
+
 
 
 #~ from django.db.models import loading
@@ -47,10 +50,22 @@ from django.utils.safestring import mark_safe
 import lino
         
 from lino import reports, forms, layouts, actions
-from lino import diag
+#~ from lino import diag
 from lino.utils import perms
 from lino.utils import menus
 from lino.core import actors
+
+
+def thanks_to():
+    l = ["%s %s <%s>" % (name,version,url) 
+          for name,url,version in lino.thanks_to()]
+    return '\n'.join(l)
+      
+
+def app_labels():
+    return [a.__name__.split('.')[-2] for a in loading.get_apps()]
+        
+
 
 
 class LinoSite:
@@ -78,8 +93,25 @@ class LinoSite:
             #raise Exception("LinoSite.setup() called recursively.")
         self._setting_up = True
         
-        from lino import diag
-        diag.welcome()
+        #~ from lino import diag
+        #~ diag.welcome()
+        
+        lino.log.info(lino.thanks_to())
+        #~ for name,url,version in thanks_to():
+            #~ lino.log.info("%s %s <%s>",name,version,url)
+        apps = app_labels()
+          
+        lino.log.debug("%d applications: %s.", len(apps),", ".join(apps))
+        models_list = models.get_models()
+        lino.log.debug("%d models:",len(models_list))
+        i = 0
+        for model in models_list:
+            i += 1
+            lino.log.debug("  %2d: %s.%s -> %r",i,model._meta.app_label,model._meta.object_name,model)
+            #~ lino.log.debug("  %2d: %s %r",i,model._meta.db_table,model)
+        
+        
+        
 
         actors.discover()
         
@@ -175,7 +207,7 @@ class LinoSite:
                 if os.path.exists(settings.DATABASE_NAME):
                     os.remove(settings.DATABASE_NAME)
         else:
-            call_command('reset',*diag.app_labels(),**options)
+            call_command('reset',*app_labels(),**options)
         #call_command('reset','songs','auth',interactive=False)
         lino.log.info("syncdb")
         call_command('syncdb',**options)

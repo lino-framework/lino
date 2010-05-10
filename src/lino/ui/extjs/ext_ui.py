@@ -34,7 +34,7 @@ from lino.utils import ucsv
 from lino import actions, layouts #, commands
 from lino import reports        
 from lino.ui import base
-from lino import diag
+#~ from lino import diag
 from lino import forms
 from lino.core import actors
 #~ from lino.core import action_requests
@@ -510,7 +510,7 @@ class ExtUI(base.UI):
         from lino.lino_site import lino_site
         #~ from lino import lino_site
         return json_response_kw(success=True,
-          message=(_("Welcome on Lino server %r.") % lino_site.title) + '\n' + diag.thanks_to(),
+          message=(_("Welcome on Lino server %r.") % lino_site.title) + '\n' + lino.thanks_to(),
           load_menu=lino_site.get_menu(request))
         #~ s = py2js(lino_site.get_menu(request))
         #~ return HttpResponse(s, mimetype='text/html')
