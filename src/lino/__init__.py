@@ -84,8 +84,10 @@ if len(log.handlers) == 0:
         log.addHandler(h)
 
     else:
-      
-        h = logging.RotatingFileHandler('/var/log/lino/lino.log',maxBytes=10000,backupCount=5)
+        if hasattr(logging,'RotatingFileHandler'):
+            h = logging.RotatingFileHandler('/var/log/lino/lino.log',maxBytes=10000,backupCount=5)
+        else:
+            h = logging.FileHandler('/var/log/lino/lino.log')
         h.setLevel(logging.DEBUG)
         fmt = logging.Formatter(
             fmt='%(asctime)s %(levelname)s %(module)s : %(message)s',
