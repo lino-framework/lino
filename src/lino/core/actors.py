@@ -35,6 +35,8 @@ def resolve_action(spec,app_label=None):
         return actor.get_action(s[2])
     else:
         actor = get_actor(spec)
+    if actor is None:
+        raise Exception("Actor %r does not exist" % spec)
     return actor.default_action
   
 def get_actor(actor_id):
