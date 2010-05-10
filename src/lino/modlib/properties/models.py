@@ -21,6 +21,7 @@ from django.contrib.contenttypes import generic
 from django.utils.translation import ugettext as _
 
 import lino
+lino.log.debug(__file__+' : started')
 from lino import reports
 from lino import layouts
 from lino import actions
@@ -329,3 +330,4 @@ def set_value_for(owner,**kw):
             raise Exception("There's no property named %r" % k)
         p.set_value_for(owner,v)
         
+lino.log.debug(__file__+' : done')

@@ -28,6 +28,7 @@ from django.conf import settings
 from django.db import models
 
 import lino
+lino.log.debug(__file__+' : started')
 from lino import reports
 
 from lino.modlib.documents.utils import Printable
@@ -90,3 +91,4 @@ class AbstractDocument(models.Model,Printable):
             self.save()
             
     
+lino.log.debug(__file__+' : done')
