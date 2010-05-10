@@ -104,6 +104,7 @@ class ActorMetaClass(type):
             if actor_classes is None:
                 lino.log.debug("%s definition was after discover",cls)
             else:
+                lino.log.debug("Found actor %s.",cls)
                 actor_classes.append(cls)
         return cls
 
