@@ -85,7 +85,7 @@ if len(log.handlers) == 0:
 
     else:
       
-        h = logging.FileHandler('/var/log/lino/lino.log','a')
+        h = logging.FileHandler('/var/log/lino/lino.log','w')
         h.setLevel(logging.DEBUG)
         fmt = logging.Formatter(
             fmt='%(asctime)s %(levelname)s %(module)s : %(message)s',
