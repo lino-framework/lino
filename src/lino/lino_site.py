@@ -17,9 +17,6 @@ import sys
 #~ import imp
 
 from django.conf import settings
-if hasattr(settings,'LINO_SETTINGS'):
-    lino.log.debug('settings.LINO_SETTINGS is %r',settings.LINO_SETTINGS)
-        
 
 from django.db import models
 #from django.shortcuts import render_to_response 
@@ -47,6 +44,9 @@ from django.db.models import loading
     #~ return [a.__name__.split('.')[-2] for a in loading.get_apps()]
 
 import lino
+if hasattr(settings,'LINO_SETTINGS'):
+    lino.log.debug('settings.LINO_SETTINGS is %r',settings.LINO_SETTINGS)
+        
 from lino import reports, forms, layouts, actions
 from lino import diag
 from lino.utils import perms
