@@ -76,6 +76,9 @@ class LinoSite:
             #raise Exception("LinoSite.setup() called recursively.")
         self._setting_up = True
         
+        if hasattr(settings,'LINO_SETTINGS'):
+            pass
+        
 
         actors.discover()
         
@@ -191,7 +194,7 @@ class LinoSite:
   
 
 lino_site = LinoSite()
-
+lino.log.debug("lino.lino_site has been instantiated")
 #'get_urls','fill','context'
 
 fill = lino_site.fill
