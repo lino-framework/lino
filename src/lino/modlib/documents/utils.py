@@ -96,6 +96,8 @@ class Printable:
             template = self.odt_template()
             appy_pod.process_pod(template,context,filename)
         else:
+            if pisa is None:
+                raise Http404('xhtml2pdf not installed on this server')
             # using pisa
             #url = "file:///"+settings.MEDIA_ROOT + os.path.sep
             #url = "file:///"+settings.MEDIA_ROOT.replace('\\','/') + '/'

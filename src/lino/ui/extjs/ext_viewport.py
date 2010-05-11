@@ -40,17 +40,17 @@ class Viewport:
         s += """
 <!-- ** CSS ** -->
 <!-- base library -->
-<link rel="stylesheet" type="text/css" href="/extjs/resources/css/ext-all.css" />""" 
+<link rel="stylesheet" type="text/css" href="%sextjs/resources/css/ext-all.css" />""" % settings.MEDIA_URL 
         s += """
 <!-- overrides to base library -->
 <!-- ** Javascript ** -->
 <!-- ExtJS library: base/adapter -->
-<script type="text/javascript" src="/extjs/adapter/ext/ext-base.js"></script>""" 
+<script type="text/javascript" src="%sextjs/adapter/ext/ext-base.js"></script>""" % settings.MEDIA_URL 
         widget_library = 'ext-all-debug'
         #widget_library = 'ext-all'
         s += """
 <!-- ExtJS library: all widgets -->
-<script type="text/javascript" src="/extjs/%s.js"></script>""" % widget_library
+<script type="text/javascript" src="%sextjs/%s.js"></script>""" % (settings.MEDIA_URL, widget_library)
         if True:
             s += """
 <style type="text/css">
@@ -59,15 +59,15 @@ class Viewport:
   white-space: normal; /* changed from nowrap */
 }
 </style>"""
-        if True:
+        if False:
             s += """
-<script type="text/javascript" src="/extjs/Exporter-all.js"></script>""" 
+<script type="text/javascript" src="%sextjs/Exporter-all.js"></script>""" % settings.MEDIA_URL 
 
         if True:
             s += """
 <!-- overrides to library -->
-<link rel="stylesheet" type="text/css" href="/lino_media/lino.css">
-<script type="text/javascript" src="/lino_media/lino.js"></script>"""
+<link rel="stylesheet" type="text/css" href="%slino/lino.css">
+<script type="text/javascript" src="%slino/lino.js"></script>""" % (settings.MEDIA_URL,settings.MEDIA_URL)
         s += """
 <!-- page specific -->
 <script type="text/javascript">

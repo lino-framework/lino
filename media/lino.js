@@ -420,7 +420,7 @@ Lino.load_properties = function(caller,pw,url,record) {
 Lino.main_menu = new Ext.Toolbar({});
 
 // Path to the blank image should point to a valid location on your server
-Ext.BLANK_IMAGE_URL = '/extjs/resources/images/default/s.gif';
+Ext.BLANK_IMAGE_URL = '/media/extjs/resources/images/default/s.gif'; // settings.MEDIA_URL
 
 
 // used as Ext.grid.Column.renderer for id columns in order to hide the special id value -99999
