@@ -295,25 +295,19 @@ class PropValuesByOwner(reports.Report):
     label = _('Properties')
     model = PropValue
     use_layouts = False
-    #~ can_edit = perms.never
     can_add = perms.never
-    #master = ContentType
     fk_name = 'owner'
-    #column_names = "prop__name value"
     order_by = "prop__name"
     
     def get_queryset(self,ar):
         "returns one PropValue instance for each possible Property"
-        #~ if ar is None:
-            #~ master_instance = None
-        #~ else:
-            #~ master_instance = ar.master_instance
         return [ p.get_value_for(ar.master_instance) 
             for p in Property.properties_for_model(ar.master).order_by('name')]
 
     def row2dict(self,row,d):
         d['name'] = row.prop.name
-        #~ d['label'] = row.prop.label
+        d['label'] = row.prop.label
+        d['type'] = row.prop.value_type.__class__.__name__
         d['value'] = row.value
         #~ d['choices'] = [unicode(pv) for pv in row.value_choices(row.prop)]
         return d

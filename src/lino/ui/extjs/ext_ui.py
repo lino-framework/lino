@@ -118,17 +118,8 @@ class DefaultEmitter(Emitter):
             elem.delete()
             return HttpResponseDeleted()
         if request.method == 'PUT':
-            #~ pk = request.POST.get(rh.store.pk.name)
-            #~ try:
-                #~ instance = ar.report.model.objects.get(pk=pk)
-            #~ except ar.report.model.DoesNotExist:
-                #~ raise Http404("No primary key %r in %s" % (pk,ar.report))
             PUT = http.QueryDict(request.raw_post_data)
             ah.store.form2obj(PUT,elem)
-            #~ data = ah.store.get_from_form(PUT)
-            #~ print data
-            #~ for k,v in data.items():
-                #~ setattr(elem,k,v)
             try:
                 elem.save(force_update=True)
             except IntegrityError,e:
@@ -174,7 +165,8 @@ class jpg_Emitter:
     
 class json_Emitter:
   
-    fmt = ext_requests.FMT_JSON
+    #~ fmt = ext_requests.FMT_JSON
+    fmt = 'json'
     
     def handle_list_request(self,request,rh):
         try:
@@ -207,6 +199,7 @@ class json_Emitter:
             return json_response_kw(count=0,rows=[],message=str(e))
         
     def handle_element_request(self,request,ah,elem):
+        #~ l = [dict(id=p.pk,name=p.name,label=p.label,value=p.value) for p in properties.Property.properties_for_model(elem.__class__)]
         raise NotImplementedError()
         
         

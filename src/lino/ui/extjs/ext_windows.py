@@ -268,6 +268,7 @@ class InsertWrapper(MasterWrapper):
 
         
 
+
 class PropertiesWrapper(SlaveWrapper):
     "Handle requests like GET /api/contacts/Persons/pgrid.extjs"
     window_config_type = 'props'
@@ -291,8 +292,11 @@ class PropertiesWrapper(SlaveWrapper):
         for pv in properties.PropValuesByOwner().request(rh.ui,master=self.model):
             p = pv.prop
             self.source[p.name] = pv.value
-            if p.label:
-                self.propertyNames[p.name] = p.label
+            label = p.label or p.name
+            level = len(p.name.split('.')) - 1
+            if level:
+                label = ('-' * level) + p.name
+            self.propertyNames[p.name] = label
             #~ pvm = p.value_type.model_class()
             pvm = pv.__class__ 
             if pvm is properties.CHAR:
@@ -306,6 +310,8 @@ class PropertiesWrapper(SlaveWrapper):
         grid = dict(xtype='propertygrid')
         #~ grid.update(clicksToEdit=2)
         grid.update(source=self.source)
+        grid.update(autoExpandColumn=1)
+        #~ grid.update(viewConfig=dict(autoFit=True))
         grid.update(autoHeight=True)
         grid.update(customEditors=self.customEditors)
         listeners = dict(
@@ -316,7 +322,7 @@ class PropertiesWrapper(SlaveWrapper):
         if len(self.propertyNames) > 0:
             grid.update(propertyNames=self.propertyNames)
         self.grid = grid
-        panel = dict(xtype='panel',autoScroll=True,items=grid)
+        panel = dict(xtype='panel',autoScroll=True,items=grid) #,layout='fit')
         main = jsgen.Value(panel)
         
         SlaveWrapper.__init__(self,action,rh.ui,None,main)

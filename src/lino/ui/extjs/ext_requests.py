@@ -41,7 +41,7 @@ URL_PARAM_CHOICES_PK = "ck"
 POST_PARAM_SELECTED = 'selected'
 
 FMT_RUN = 'act'
-FMT_JSON = 'json'
+#~ FMT_JSON = 'json'
 
 def authenticated_user(user):
     if user.is_anonymous():
