@@ -244,10 +244,11 @@ class DeleteSelected(actions.RowsAction):
         return rr.refresh_caller().notify(_("Success") + ": " + msg)
         
 class DetailAction(actions.ToggleWindowAction):
-    name = 'detail'
+    #~ name = 'detail'
     def __init__(self,actor,layout):
         self.layout = layout
         self.label = layout.label
+        self.name = layout._actor_name
         actions.ToggleWindowAction.__init__(self,actor)
         
                 

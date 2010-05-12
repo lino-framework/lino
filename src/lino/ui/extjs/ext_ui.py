@@ -311,7 +311,7 @@ class ExtUI(base.UI):
         if callable(de):
             return self.create_meth_element(lh,name,de,**kw)
         if isinstance(de,reports.Report):
-            e = ext_elems.GridElement(lh,name,de,**kw)
+            e = ext_elems.SlaveGridElement(lh,name,de,**kw)
             #~ e = ext_elems.GridElement(lh,name,de.get_handle(self),**kw)
             lh.slave_grids.append(e)
             return e
@@ -417,7 +417,7 @@ class ExtUI(base.UI):
             (r'^$', self.index_view),
             (r'^menu$', self.menu_view),
             #~ (r'^submit_property$', self.submit_property_view),
-            (r'^list/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.list_report_view),
+            #~ (r'^list/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.list_report_view),
             #~ (r'^csv/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.csv_report_view),
             (r'^grid_action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<grid_action>\w+)$', self.json_report_view),
             #~ (r'^grid_afteredit/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.grid_afteredit_view),

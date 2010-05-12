@@ -347,7 +347,8 @@ class Store(Component):
         #url = self.report.get_absolute_url(json=True,mode=self.mode)
         #url = self.get_absolute_url(json=True)
         #self.report.setup()
-        proxy = dict(url=self.rh.get_absolute_url(),method='GET')
+        url = "/".join(("/api",self.rh.report.app_label,self.rh.report._actor_name+'.json'))
+        proxy = dict(url=url,method='GET')
         d.update(proxy=js_code(
           "new Ext.data.HttpProxy(%s)" % py2js(proxy)
         ))

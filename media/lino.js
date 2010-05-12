@@ -701,6 +701,9 @@ Ext.override(Lino.TemplateBoxPlugin,{
   }
 });
 
+Lino.SlavePlugin = function(caller) {
+  this.caller = caller;
+};
 Lino.load_picture = function(caller,cmp,record) {
   if (record && cmp.el) {
     var src = caller.config.url_data + "/" + record.id + ".jpg"
@@ -708,23 +711,31 @@ Lino.load_picture = function(caller,cmp,record) {
     cmp.el.dom.src = src; 
   } else console.log('Lino.load_picture() no record or cmp not rendered',caller,cmp,record);
 }
-//~ Lino.PictureBox_handler = function(caller,cmp) {
-  //~ return function(sm,ri,record) {
-      //~ console.log(20100509,'Lino.imgbox_handler',caller,record,cmp);
-      //~ if (record && cmp.el) {
-        //~ cmp.el.dom.src = caller.config.url_data + "/" + record.id + ".jpg"; 
-      //~ }
-      
-  //~ }
-//~ };
-Lino.PictureBoxPlugin = function(caller) {
-  this.caller = caller;
-};
-Ext.override(Lino.PictureBoxPlugin,{
+Lino.PictureBoxPlugin = Ext.extend(Lino.SlavePlugin,{
   init : function (cmp) {
     //~ console.log('Lino.PictureBoxPlugin.init()',this);
     cmp.on('render',function(){ Lino.load_picture(this.caller,cmp,this.caller.get_current_record())},this);
     this.caller.add_row_listener(function(sm,ri,rec) { Lino.load_picture(this.caller,cmp,rec) }, this );
+    //~ this.caller.add_row_listener(Lino.PictureBox_handler(this.caller,cmp));
+    //~ function(record) {
+      //~ this.tpl.overwrite(cmp.body,{'national_id':'123'});
+    //~ });
+  }
+});
+
+Lino.load_slavegrid = function(caller,cmp,record) {
+  if (record && cmp.el) {
+    //~ var src = caller.config.url_data + "/" + record.id + ".jpg"
+    console.log('Lino.load_slavegrid()',record);
+    var p = caller.get_master_params(record);
+    for (k in p) cmp.getStore().setBaseParam(k,p[k]);
+    cmp.getStore().load(); 
+  } else console.log('Lino.load_picture() no record or cmp not rendered',caller,cmp,record);
+}
+Lino.SlaveGridPlugin = Ext.extend(Lino.SlavePlugin,{
+  init : function (cmp) {
+    cmp.on('render',function(){ Lino.load_slavegrid(this.caller,cmp,this.caller.get_current_record())},this);
+    this.caller.add_row_listener(function(sm,ri,rec) { Lino.load_slavegrid(this.caller,cmp,rec) }, this );
     //~ this.caller.add_row_listener(Lino.PictureBox_handler(this.caller,cmp));
     //~ function(record) {
       //~ this.tpl.overwrite(cmp.body,{'national_id':'123'});
@@ -853,11 +864,11 @@ Lino.GridSlaveWrapper.override(Lino.SlaveMixin);
 Lino.GridSlaveWrapper.override(Lino.GridMixin);
 Lino.GridSlaveWrapper.override({
   on_master_change : function(record) {
-    //~ this.current_record = record;
     console.log('GridSlaveWrapper.on_master_change()',record)
-    var p = this.caller.get_master_params(record);
-    for (k in p) this.store.setBaseParam(k,p[k]);
-    this.store.load(); // {params:this.get_master_params(record)}); 
+    Lino.load_slavegrid(this.caller,this.main_grid,record);
+    //~ var p = this.caller.get_master_params(record);
+    //~ for (k in p) this.store.setBaseParam(k,p[k]);
+    //~ this.store.load(); // {params:this.get_master_params(record)}); 
   }
 });
 

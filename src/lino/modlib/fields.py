@@ -17,6 +17,14 @@
 
 from django.db import models
 
+class MonthField(models.CharField):
+    def __init__(self, *args, **kw):
+        defaults = dict(
+            max_length=10,
+            )
+        defaults.update(kw)
+        models.CharField.__init__(self,*args, **defaults)
+  
 class PriceField(models.DecimalField):
     def __init__(self, *args, **kwargs):
         defaults = dict(

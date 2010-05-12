@@ -324,13 +324,13 @@ class DetailLayout(ModelLayout):
     def do_setup(self):
         ModelLayout.do_setup(self)
         if self.datalink is not None:
-            new_details = []
             l = getattr(self.datalink,'_lino_layouts',None)
             if l is None:
                 l = []
                 setattr(self.datalink,'_lino_layouts',l)
             lino.log.debug('Register DetailLayout %s as %r for model %s',
                 self,self._actor_name,model_label(self.datalink))
+            new_details = []
             for dtl in l:
                 if self._actor_name != dtl._actor_name:
                 #~ if not isinstance(self,dtl.__class__):

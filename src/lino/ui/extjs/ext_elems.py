@@ -1,3 +1,4 @@
+#coding: utf8
 ## Copyright 2009-2010 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
@@ -18,7 +19,7 @@ from django.utils.translation import ugettext as _
 
 import lino
 
-from lino import layouts, reports, actions
+from lino import layouts, reports
 from lino.utils import constrain
 from lino.utils import jsgen
 from lino.utils.jsgen import py2js, Variable, Component, id2js, js_code
@@ -966,10 +967,6 @@ class GridElement(Container): #,DataElementMixin):
         #~ d.update(autoHeight=True)
         #d.update(layout='fit')
         d.update(enableColLock=False)
-        if False and self.__class__ is not GridMainPanel: 
-            js="Lino.action_handler(this,%r)" % \
-                rh.list_layout.get_absolute_url(run=True)
-            d.update(listeners=dict(click=js_code(js)))
         return d
         
     #~ def js_declare(self):
@@ -984,7 +981,25 @@ class GridElement(Container): #,DataElementMixin):
             #~ yield "});"
             
       
-            
+class SlaveGridElement(GridElement):
+    def ext_options(self,**kw):
+        kw = GridElement.ext_options(self,**kw)
+        kw.update(plugins=js_code('new Lino.SlaveGridPlugin(caller)'))
+        
+        #~ js = "Lino.do_action(caller,%r)" % \
+            #~ rh.list_layout.get_absolute_url(run=True)
+        js = "function(){ Lino.notify('Das ist noch nicht fertig... siehe ext_elems.py:990');}"
+        u"""
+        vgl. Aufbau und Konvertierung von config.actions:
+        ext_windows.py:163 
+        lino.js:620
+        
+        Wenn ich auf ein Gridelement klicke, dann soll das ja ein SlaveGridWrapper werden. Und der braucht momentan immer togglebuttons. Also ein Detail kriegt automatisch die Togglebuttons jener GridElemente, die es enthält. Die Master-Grid kriegt par défaut keine GridSlave-Buttons.
+        Müssen Detail-Fenster auch eine NavigationBar kriegen?
+        
+        """
+        kw.update(listeners=dict(click=js_code(js)))
+        return kw
       
         
 class M2mGridElement(GridElement):
