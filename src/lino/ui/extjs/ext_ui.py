@@ -40,6 +40,7 @@ from lino.core import actors
 #~ from lino.core import action_requests
 from lino.utils import menus
 from lino.utils import chooser
+from lino.utils import build_url
 from lino.utils import jsgen
 from lino.utils.jsgen import py2js, js_code, id2js
 from lino.ui.extjs import ext_elems, ext_requests, ext_store, ext_windows
@@ -63,14 +64,6 @@ def parse_int(s,default=None):
     if s is None: return None
     return int(s)
 
-            
-
-def build_url(*args,**kw):
-    url = "/".join(args)
-    if len(kw):
-        url += "?" + urlencode(kw)
-    return url
-        
 def json_response_kw(**kw):
     return json_response(kw)
     
@@ -82,192 +75,112 @@ def json_response(x):
     return HttpResponse(s, mimetype='text/html')
 
             
-EMITTERS = {}
-
-class Emitter:    
-    fmt = None
-    def handle_list_request(self,request,rh):
-        raise Http404("%r emitter has not handle_list_request() " % fmt)
-    def handle_element_request(self,request,ah,elem):
-        raise Http404("%r emitter has not handle_element_request() " % fmt)
-        
     
-class DefaultEmitter(Emitter):
-  
-    fmt = None
-    
-    def handle_list_request(self,request,rh):
-        a = rh.report.list_action
-        ar = ext_requests.ViewReportRequest(request,rh,a)
-        if request.method == 'POST':
-            """
-            Wikipedia:
-            Create a new entry in the collection where the ID is assigned automatically by the collection. 
-            The ID created is usually included as part of the data returned by this operation. 
-            """
-            #~ data = rh.store.get_from_form(request.POST)
-            #~ instance = ar.create_instance(**data)
-            instance = ar.create_instance()
-            rh.store.form2obj(request.POST,instance)
-            instance.save(force_insert=True)
-            return json_response_kw(success=True,msg="%s has been created" % instance)
-        raise Http404("Method %s not supported for container %s" % (request.method,rh))
+def handle_list_request(request,rh):
+    a = rh.report.list_action
+    ar = ext_requests.ViewReportRequest(request,rh,a)
+    if request.method == 'POST':
+        """
+        Wikipedia:
+        Create a new entry in the collection where the ID is assigned automatically by the collection. 
+        The ID created is usually included as part of the data returned by this operation. 
+        """
+        #~ data = rh.store.get_from_form(request.POST)
+        #~ instance = ar.create_instance(**data)
+        instance = ar.create_instance()
+        rh.store.form2obj(request.POST,instance)
+        instance.save(force_insert=True)
+        return json_response_kw(success=True,msg="%s has been created" % instance)
         
-    def handle_element_request(self,request,ah,elem):
-        if request.method == 'DELETE':
-            elem.delete()
-            return HttpResponseDeleted()
-        if request.method == 'PUT':
-            PUT = http.QueryDict(request.raw_post_data)
-            ah.store.form2obj(PUT,elem)
-            try:
-                elem.save(force_update=True)
-            except IntegrityError,e:
-                #~ print unicode(elem)
-                lino.log.exception(e)
-                return json_response_kw(success=False,
-                      msg=_("There was a problem while saving your data:\n%s") % e)
-                
-            return json_response_kw(success=True,
-                  msg="%s has been saved" % elem)
-        raise Http404("Method %s not supported for element %s of %s" % (request.method,elem,ah))
+        
+    if request.method == 'GET':
+        fmt = request.GET.get('fmt',None)
+        if fmt == 'csv':
+            response = HttpResponse(mimetype='text/csv')
+            w = ucsv.UnicodeWriter(response)
+            names = [] # fld.name for fld in self.fields]
+            fields = []
+            for col in ar.ah.list_layout._main.column_model.columns:
+                names.append(col.editor.field.name)
+                fields.append(col.editor.field)
+            w.writerow(names)
+            for row in ar.queryset:
+                values = []
+                for fld in fields:
+                    # uh, this is tricky...
+                    meth = getattr(fld,'_return_type_for_method',None)
+                    if meth is not None:
+                        v = meth(row)
+                    else:
+                        v = fld.value_to_string(row)
+                    #lino.log.debug("20100202 %r.%s is %r",row,fld.name,v)
+                    values.append(v)
+                w.writerow(values)
+            return response
             
+        if fmt is None:
+            #~ if rh.report.use_layouts:
+                #~ def row2dict(row):
+                    #~ d = {}
+                    #~ for fld in rh.store.fields:
+                        #~ fld.obj2json(row,d)
+                    #~ return d
+            #~ else:
+                #~ row2dict = rh.report.row2dict
+            #~ rows = [ row2dict(row,{}) for row in ar.queryset ]
             
-        
+            rows = [ ar.row2dict(row) for row in ar.queryset ]
+            total_count = ar.total_count
+            #lino.log.debug('%s.render_to_dict() total_count=%d extra=%d',self,total_count,self.extra)
+            # add extra blank row(s):
+            #~ for i in range(0,ar.extra):
+            if ar.extra:
+                row = ar.create_instance()
+                d = ar.row2dict(row)
+                d[rh.report.model._meta.pk.name] = -99999
+                rows.append(d)
+                total_count += 1
+            return json_response_kw(count=total_count,rows=rows,title=ar.get_title())
 
-class pdf_Emitter:
-    fmt = 'pdf'
+
+    raise Http404("Method %s not supported for container %s" % (request.method,rh))
     
-    def handle_list_request(self,request,rh):
-        raise NotImplementedError()
-        
-    def handle_element_request(self,request,ah,elem):
-        elem.make_pdf()
-        return HttpResponseRedirect(elem.pdf_url())
-        
-class jpg_Emitter:
-    fmt = 'jpg'
     
-    def handle_list_request(self,request,rh):
-        raise NotImplementedError()
-        
-    def handle_element_request(self,request,ah,elem):
-        m = getattr(elem,'image_url',None)
-        if m is None:
-            raise Http404("%s has no image_url" % elem)
-        url = elem.image_url()
-        if url is None:
-            raise Http404("%s has no picture" % elem)
-        return HttpResponseRedirect(url)
-        
-        
-      
-    
-class json_Emitter:
-  
-    #~ fmt = ext_requests.FMT_JSON
-    fmt = 'json'
-    
-    def handle_list_request(self,request,rh):
+def handle_element_request(request,ah,elem):
+    if request.method == 'DELETE':
+        elem.delete()
+        return HttpResponseDeleted()
+    if request.method == 'PUT':
+        PUT = http.QueryDict(request.raw_post_data)
+        ah.store.form2obj(PUT,elem)
         try:
-            a = rh.report.list_action
-            ar = ext_requests.ViewReportRequest(request,rh,a)
-            if request.method == 'GET':
-                if rh.report.use_layouts:
-                    def row2dict(row,d):
-                        for fld in rh.store.fields:
-                            fld.obj2json(row,d)
-                        return d
-                else:
-                    row2dict = rh.report.row2dict
-                
-                rows = [ row2dict(row,{}) for row in ar.queryset ]
-                total_count = ar.total_count
-                #lino.log.debug('%s.render_to_dict() total_count=%d extra=%d',self,total_count,self.extra)
-                # add extra blank row(s):
-                #~ for i in range(0,ar.extra):
-                if ar.extra:
-                    row = ar.create_instance()
-                    d = row2dict(row,{})
-                    d[rh.report.model._meta.pk.name] = -99999
-                    rows.append(d)
-                    total_count += 1
-                return json_response_kw(count=total_count,rows=rows,title=ar.get_title())
-        except Exception,e:
-            lino.log.debug(str(request))
+            elem.save(force_update=True)
+        except IntegrityError,e:
+            #~ print unicode(elem)
             lino.log.exception(e)
-            return json_response_kw(count=0,rows=[],message=str(e))
-        
-    def handle_element_request(self,request,ah,elem):
-        #~ l = [dict(id=p.pk,name=p.name,label=p.label,value=p.value) for p in properties.Property.properties_for_model(elem.__class__)]
-        raise NotImplementedError()
-        
-        
-class csv_Emitter:
-    fmt = 'csv'
-    
-    def handle_element_request(self,request,ah,elem):
-        raise NotImplementedError()
-        
-    def handle_list_request(self,request,ah):
-        a = ah.report.list_action
-        ar = ext_requests.ViewReportRequest(request,ah,a)
-        response = HttpResponse(mimetype='text/csv')
-        w = ucsv.UnicodeWriter(response)
-        names = [] # fld.name for fld in self.fields]
-        fields = []
-        for col in ar.ah.list_layout._main.column_model.columns:
-            names.append(col.editor.field.name)
-            fields.append(col.editor.field)
-        w.writerow(names)
-        for row in ar.queryset:
-            values = []
-            for fld in fields:
-                # uh, this is tricky...
-                meth = getattr(fld,'_return_type_for_method',None)
-                if meth is not None:
-                    v = meth(row)
-                else:
-                    v = fld.value_to_string(row)
-                #lino.log.debug("20100202 %r.%s is %r",row,fld.name,v)
-                values.append(v)
-            w.writerow(values)
-        return response
-        
-class unused_submit_Emitter:
-    fmt = 'submit'
-    def handle_element_request(self,request,ah,a):
-        ar = ext_requests.ViewReportRequest(request,ah,a)
-        pk = request.POST.get(ah.store.pk.name) #,None)
-        #~ try:
-        data = ah.store.get_from_form(request.POST)
-        if pk in ('', None):
-            #return json_response(success=False,msg="No primary key was specified")
-            instance = ar.create_instance(**data)
-            instance.save(force_insert=True)
-        else:
-            instance = ar.report.model.objects.get(pk=pk)
-            for k,v in data.items():
-                setattr(instance,k,v)
-            instance.save(force_update=True)
+            return json_response_kw(success=False,
+                  msg=_("There was a problem while saving your data:\n%s") % e)
         return json_response_kw(success=True,
-              msg="%s has been saved" % instance)
-        #~ except Exception,e:
-            #~ lino.log.exception(e)
-            #~ #traceback.format_exc(e)
-            #~ return json_response_kw(success=False,msg="Exception occured: "+cgi.escape(str(e)))
+              msg="%s has been saved" % elem)
+              
+    if request.method == 'GET':
+        fmt = request.GET.get('fmt',None)
+        if fmt == 'pdf':
+            elem.make_pdf()
+            return HttpResponseRedirect(elem.pdf_url())
+        if fmt == 'jpg':
+            m = getattr(elem,'image_url',None)
+            if m is None:
+                raise Http404("%s has no image_url" % elem)
+            url = elem.image_url()
+            if url is None:
+                raise Http404("%s has no picture" % elem)
+            return HttpResponseRedirect(url)
+        #~ if fmt == 'json':
+        return json_response_kw(id=elem.pk,data=ah.store.row2dict(elem),title=unicode(elem))
+            #~ return json_response_kw(count=1,rows=[ah.store.row2dict(elem)],title=unicode(elem))
+    raise Http404("Method %r not supported for elements of %s" % (request.method,ah.report))
         
-def register_emitter(e):
-    EMITTERS[e.fmt] = e
-
-#~ register_emitter(act_Emitter())
-register_emitter(DefaultEmitter())
-register_emitter(json_Emitter())
-#~ register_emitter(submit_Emitter())
-register_emitter(csv_Emitter())
-#~ register_emitter(wc_Emitter())
-register_emitter(pdf_Emitter())
-register_emitter(jpg_Emitter())
 
 
 class ExtUI(base.UI):
@@ -377,10 +290,12 @@ class ExtUI(base.UI):
     def main_panel_class(self,layout):
         if isinstance(layout,layouts.ListLayout) : 
             return ext_elems.GridMainPanel
+        #~ if isinstance(layout,layouts.TabLayout) : 
+            #~ return ext_elems.TabMainPanel
         if isinstance(layout,layouts.DetailLayout) : 
             return ext_elems.DetailMainPanel
-        if isinstance(layout,layouts.FormLayout) : 
-            return ext_elems.FormMainPanel
+        #~ if isinstance(layout,layouts.FormLayout) : 
+            #~ return ext_elems.FormMainPanel
         raise Exception("No element class for layout %r" % layout)
             
 
@@ -416,32 +331,18 @@ class ExtUI(base.UI):
         urlpatterns += patterns('',
             (r'^$', self.index_view),
             (r'^menu$', self.menu_view),
-            #~ (r'^submit_property$', self.submit_property_view),
             #~ (r'^list/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.list_report_view),
-            #~ (r'^csv/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.csv_report_view),
             (r'^grid_action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<grid_action>\w+)$', self.json_report_view),
             #~ (r'^grid_afteredit/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.grid_afteredit_view),
             (r'^submit/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.form_submit_view),
-            #~ (r'^form/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.act_view),
-            #~ (r'^form/(?P<app_label>\w+)/(?P<actor>\w+)$', self.act_view),
             (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)$', self.api_list_view),
             (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)\.(?P<fmt>\w+)$', self.api_list_view),
-            (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>\w+)\.(?P<fmt>\w+)$', self.api_element_view),
-            (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>\w+)$', self.api_element_view),
+            #~ (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>[-\w]+)\.(?P<fmt>\w+)$', self.api_element_view),
+            (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$', self.api_element_view),
             #~ (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>\w+)/(?P<method>\w+)$', self.api_element_view),
             #~ (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.api_view),
             (r'^ui/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.ui_view),
-            #~ (r'^action/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.action_view),
-            #~ (r'^action/(?P<app_label>\w+)/(?P<actor>\w+)$', self.action_view),
-            #~ (r'^step_dialog$', self.step_dialog_view),
-            #~ (r'^abort_dialog$', self.abort_dialog_view),
             (r'^choices/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<fldname>\w+)$', self.choices_view),
-            #~ (r'^save_win/(?P<name>\w+)$', self.save_win_view),
-            #~ (r'^save_window_config$', self.save_window_config_view),
-            #~ (r'^permalink/(?P<name>\w+)$', self.permalink_do_view),
-            #~ (r'^permalink$', self.permalink_do_view),
-            #~ (r'^props/(?P<app_label>\w+)/(?P<model_name>\w+)$', self.props_view),
-            # (r'^props$', self.props_view),
         )
         #~ urlpatterns += patterns('',         
             #~ (r'^api/', include('lino.api.urls')),
@@ -519,12 +420,9 @@ class ExtUI(base.UI):
         """
         actor = actors.get_actor2(app_label,actor)
         ah = actor.get_handle(self)
-        e = EMITTERS.get(fmt,None)
-        if e is None:
-            raise Http404("Unknown format %r " % fmt)
-        return e.handle_list_request(request,ah)
+        return handle_list_request(request,ah)
         
-    def api_element_view(self,request,app_label=None,actor=None,pk=None,fmt=None):
+    def api_element_view(self,request,app_label=None,actor=None,pk=None):
         """
         GET : Retrieve a representation of the addressed member of the collection expressed in an appropriate MIME type.
         PUT : Update the addressed member of the collection or create it with the specified ID. 
@@ -533,20 +431,18 @@ class ExtUI(base.UI):
         (Source: http://en.wikipedia.org/wiki/Restful)
         """
         rpt = actors.get_actor2(app_label,actor)
-        instance = rpt.model.objects.get(pk=pk)
         ah = rpt.get_handle(self)
-        e = EMITTERS.get(fmt,None)
-        if e is None:
-            raise Http404("Unknown format %r " % fmt)
-        return e.handle_element_request(request,ah,instance)
+        if pk == '-99999':
+            ar = ext_requests.ViewReportRequest(request,ah,ah.report.list_action)
+            instance = ar.create_instance()
+        else:
+            instance = rpt.model.objects.get(pk=pk)
+        return handle_element_request(request,ah,instance)
         #~ raise Http404("Unknown request method %r " % request.method)
         
     def ui_view(self,request,app_label=None,actor=None,action=None,**kw):
         actor = actors.get_actor2(app_label,actor)
         ah = actor.get_handle(self)
-        #~ if not action:
-            #~ a = actor.default_action
-        #~ else:
         a = ah.get_action(action)
         if a is None:
             msg = "No action %s in %s" % (action,ah)
@@ -567,88 +463,10 @@ class ExtUI(base.UI):
         cw = params.getlist('column_widths')
         assert type(cw) is list, "cw is %r (expected list)" % cw
         wc['column_widths'] = [parse_int(w,100) for w in cw]
-        #~ wc = WindowConfig(str(ar.ah.report),**wc)
-        #~ name = str(a)
         ui.save_window_config(a,wc)
         return json_response_kw(success=True,
           message=_(u'Window config %s has been saved (%r)') % (a,wc))
   
-        
-        
-    #~ def start_dialog(self,dlg):
-        #~ r = dlg._start().as_dict()
-        #~ lino.log.debug('ExtUI.start_dialog(%s) -> %r',dlg,r)
-        #~ return json_response(r)
-        
-    #~ def step_dialog_view(self,request):
-        #~ return self.json_dialog_view_(request,'_step')
-        
-    #~ def abort_dialog_view(self,request):
-        #~ return self.json_dialog_view_(request,'_abort')
-        
-    #~ def json_dialog_view_(self,request,meth_name,**kw):
-        #~ dialog_id = long(request.POST.get('dialog_id'))
-        #~ dlg = actions.get_dialog(dialog_id)
-        #~ if dlg is None:
-            #~ return json_response(actions.DialogResponse(
-              #~ alert_msg=_('No dialog %r running on this server.' % dialog_id)
-              #~ ).as_dict())
-        #~ if dlg.request.user != request.user:
-            #~ print 20100218, dlg.request.user, '!=', request.user
-            #~ return json_response(actions.DialogResponse(
-              #~ alert_msg=_('Dialog %r ist not for you.' % dialog_id)
-              #~ ).as_dict())
-        #~ dlg.request = request
-        #~ dlg.set_modal_exit(request.POST.get('last_button'))
-        #~ m = getattr(dlg,meth_name)
-        #~ r = m().as_dict()
-        #~ lino.log.debug('%s.%s() -> %r',dlg,meth_name,r)
-        #~ return json_response(r)
-        
-    #~ def submit_property_view(self,request):
-        #~ rpt = properties.PropValuesByOwner()
-        #~ if not rpt.can_change.passes(request):
-            #~ return json_response_kw(success=False,
-                #~ message="User %s cannot edit %s." % (request.user,rpt))
-        #~ rh = rpt.get_handle(self)
-        #~ rr = ext_requests.BaseViewReportRequest(request,rh,rh.report.default_action)
-        #~ name = request.POST.get('name')
-        #~ value = request.POST.get('value')
-        #~ try:
-            #~ p = properties.Property.objects.get(pk=name)
-        #~ except properties.Property.DoesNotExist:
-            #~ return json_response_kw(success=False,
-                #~ message="No property named %r." % name)
-        #~ p.set_value_for(rr.master_instance,value)
-        #~ return json_response_kw(success=True,msg='%s : %s = %r' % (rr.master_instance,name,value))
-    
-        
-    def unused_permalink_do_view(self,request):
-        print request.GET.get('show')
-        def js():
-            for name in request.GET.get('show'):
-                name = name.replace('_','.')
-                actor = actors.get_actor(name)
-                if actor is None:
-                    print "No actor", name
-                else:
-                    rh = actor.get_handle(self)
-                    for ln in rh.window_wrapper.js_render(): 
-                        yield ln
-                    yield '().show();'
-        #~ dlg = ext_requests.Dialog(request,self,actor,None)
-        #~ ar = ext_requests.ViewReportRequest(request,actor.get_handle(self),actor.default_action)
-        #~ return json_response(ar.run().as_dict())
-        return json_response_kw(success=True,exec_js=js)
-        #~ return self.start_dialog(dlg)
-        
-
-    def unused_save_window_config_view(self,request):
-        actor = ext_windows.SaveWindowConfig()
-        ah = actor.get_handle(self)
-        ar = ext_requests.ViewReportRequest(request,ah,actor.default_action)
-        return json_response(ar.run())
-        #~ return self.start_dialog(dlg)
         
     def choices_view(self,request,app_label=None,rptname=None,fldname=None,**kw):
         rpt = actors.get_actor2(app_label,rptname)
@@ -669,11 +487,6 @@ class ExtUI(base.UI):
         rows = [ row2dict(row,{}) for row in qs ]
         return json_response_kw(count=len(rows),rows=rows,title=_('Choices for %s') % fldname)
         
-        
-    #~ def grid_afteredit_view(self,request,**kw):
-        #~ kw['colname'] = request.POST['grid_afteredit_colname']
-        #~ kw['submit'] = True
-        #~ return self.json_report_view(request,**kw)
 
     def form_submit_view(self,request,**kw):
         kw['submit'] = True
@@ -853,11 +666,12 @@ class ExtUI(base.UI):
             return ext_windows.GridMasterWrapper(h,a)
             #~ else:
                 #~ return ext_windows.GridSlaveWrapper(self,a.name,a)
-        if isinstance(a,reports.DetailAction):
-            return ext_windows.DetailSlaveWrapper(self,a)
-            
         if isinstance(a,reports.InsertRow):
             return ext_windows.InsertWrapper(h,a)
+            
+        if isinstance(a,reports.OpenDetailAction):
+            return ext_windows.DetailWrapper(h,a)
+            
             
         if isinstance(a,properties.PropsEdit):
             #~ return ext_windows.PropertiesWrapper(self,h,a)
@@ -867,10 +681,17 @@ class ExtUI(base.UI):
             return ext_windows.PropertiesWrapper(h,a)
         if isinstance(a,reports.SlaveGridAction):
             return ext_windows.GridSlaveWrapper(h,a) # a.name,a.slave.default_action)
+            
+        if isinstance(a,reports.SlaveDetailAction): # not tested
+            return ext_windows.DetailSlaveWrapper(self,a)
+            
         
         
         
     def setup_handle(self,h):
+        #~ if isinstance(h,layouts.TabPanelHandle):
+            #~ h._main = ext_elems.TabPanel([l.get_handle(self) for l in h.layouts])
+          
         if isinstance(h,reports.ReportHandle):
             lino.log.debug('ExtUI.setup_handle() %s',h.report)
             h.choosers = chooser.get_choosers_for_model(h.report.model,chooser.FormChooser)

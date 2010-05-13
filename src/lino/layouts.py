@@ -58,6 +58,14 @@ class DataView:
     def __init__(self,tpl):
         self.xtemplate = tpl
         
+#~ class TabPanelHandle(base.Handle):
+  
+    #~ def __init__(self,ui,layouts):
+        #~ assert isinstance(layout,DetailLayout)
+        #~ self.layouts = layouts
+        #~ base.Handle.__init__(self,ui)
+        #~ self.label = layout.label or ''
+  
 class LayoutHandle(base.Handle):
     """
     LayoutHandle analyzes a Layout and builds a tree of LayoutElements.
@@ -128,8 +136,6 @@ class LayoutHandle(base.Handle):
             
     def get_absolute_url(self,**kw):
         return self.datalink.get_absolute_url(layout=self.index,**kw)
-        
-          
         
         
     def add_hidden_field(self,field):
@@ -302,9 +308,6 @@ class ModelLayout(Layout):
           
         #~ self.app_label = self.layout_model._meta.app_label
         
-    #~ def get_datalink(self,ui):
-        #~ return self.datalink._lino_model_report.get_handle(ui)
-        
   
 class ListLayout(ModelLayout):
     label = _("List")
@@ -331,15 +334,31 @@ class DetailLayout(ModelLayout):
             lino.log.debug('Register DetailLayout %s as %r for model %s',
                 self,self._actor_name,model_label(self.datalink))
             new_details = []
+            found = False
+            #~ if len(l) > 0:
+                #~ print self,l
             for dtl in l:
-                if self._actor_name != dtl._actor_name:
-                #~ if not isinstance(self,dtl.__class__):
-                    new_details.append(dtl)
+                if self._actor_name == dtl._actor_name:
+                    lino.log.debug('Detail %r : replaced %r by %r',dtl._actor_name,dtl.__class__,self)
+                    new_details.append(self)
+                    found = True
                 else:
-                    lino.log.debug('not isinstance(%r,%r)',self,dtl.__class__)
-            new_details.append(self)
+                    new_details.append(dtl)
+            if not found:
+                new_details.append(self)
             setattr(self.datalink,'_lino_layouts',new_details)
-            
+            #~ if len(new_details) > 1:
+                #~ print self,new_details
+
+#~ class TabPanelLayout(ModelLayout):
+    #~ _handle_class = TabPanelLayoutHandle
+    #~ def __init__(self,tabs):
+        #~ if self.layout_name is None:
+            #~ self.layout_name = self.__class__.__name__
+        #~ self.tabs = tabs
+        #~ actors.Actor.__init__(self)
+    
+    
             
 def get_detail_layout(model):
     if len(model._lino_layouts) > 0:
@@ -355,6 +374,6 @@ def list_layout_factory(rpt):
     #~ return type(rpt._actor_name+"List",(ListLayout,),dict(app_label=rpt.app_label,main=rpt.column_names,datalink=rpt.model))
     #~ cls = type(rpt._actor_name+"List",(ListLayout,),dict(app_label=rpt.app_label,main=rpt.column_names,datalink=rpt.model))
     layout = cls()
-    layout.setup()
+    #~ layout.setup()
     return actors.register_actor(layout)
 

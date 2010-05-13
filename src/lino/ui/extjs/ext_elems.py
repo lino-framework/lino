@@ -865,25 +865,6 @@ class Panel(Container):
         return d
         
 
-class TabPanel(Container):
-    value_template = "new Ext.TabPanel(%s)"
-    #~ def __init__(self,lh,name,*elements,**options):
-        #~ Container.__init__(self,lh,name,*elements,**options)
-        #~ self.width = self.elements[0].ext_width() or 300
-    
-
-    def ext_options(self,**d):
-        d.update(
-          xtype="tabpanel",
-          #region="east",
-          split=True,
-          activeTab=0,
-          width=300,
-          #items=js_code("[%s]" % ",".join([l.ext_name for l in self.layouts]))
-          items=self.elements
-        )
-        return d
-        
 
 #~ class DataElementMixin:
     #~ "common for Grids, Details and Forms"
@@ -1010,54 +991,6 @@ class M2mGridElement(GridElement):
         GridElement.__init__(self,lh,id2js(rpt.actor_id),rpt,*elements,**kw)
   
 
-class unused_PagingToolbar(jsgen.Variable):
-    declare_type = jsgen.DECLARE_THIS
-    value_template = "new Ext.PagingToolbar(%s)"
-    
-    def __init__(self,grid,name):
-        #~ self.grid = grid
-        
-        # searchString thanks to http://www.extjs.com/forum/showthread.php?t=82838
-        #~ def js_keypress():
-            #~ yield "function(field, e) {"
-            #~ # searching starts when user presses ENTER.
-            #~ yield "  if(e.getKey() == e.RETURN) {"
-            #~ # yield "    console.log('keypress',field.getValue(),store)"
-            #~ yield "    this.main_grid.getStore().setBaseParam('%s',field.getValue());" % ext_requests.URL_PARAM_FILTER
-            #~ yield "    this.main_grid.getStore().load({params: { start: 0, limit: this.pager.pageSize }});" 
-            #~ yield "  }"
-            #~ yield "}"
-        buttons = []
-        
-        h = js_code('Lino.search_handler(this)')
-        search_field = dict(
-            id = 'seachString',
-            fieldLabel = 'Search',
-            xtype = 'textfield',
-            enableKeyEvents = True, # required if you need to detect key-presses
-            #listeners = dict(keypress=dict(handler=keypress,scope=js_code('this')))
-            #~ listeners = dict(keypress=js_keypress,scope=js_code('this'))
-            listeners = dict(keypress=h)
-        )
-        dl = grid.get_datalink()
-        buttons.append(search_field)
-        #export_csv = dict(xtype='exportbutton',store=self.dl.store) #,scope=js_code('this'))
-        #export_csv = dict(text="CSV",handler=js_code("function(){console.log('not implemented')}"),scope=js_code('this'))
-        export_csv = dict(text=_("Download"),handler=js_code(
-          "function() {window.open(%r);}" % dl.get_absolute_url(csv=True)))
-        buttons.append(export_csv)
-        tbar = dict(
-          store=grid.rh.store,
-          displayInfo=True,
-          pageSize=grid.report.page_length,
-          prependButtons=True,
-          items=buttons, 
-        )
-        #~ self.pager = Variable('pager',js_code("new Ext.PagingToolbar(%s)" % py2js(tbar)))
-        jsgen.Variable.__init__(self,name,tbar)
-    
-  
-      
             
 class MainPanel(jsgen.Variable):
     declare_type = jsgen.DECLARE_INLINE
@@ -1068,7 +1001,7 @@ class MainPanel(jsgen.Variable):
         #~ self.cmenu = None
         #~ self.props_button = None
         
-    def get_datalink(self):
+    def unused_get_datalink(self):
         raise NotImplementedError
         
     def apply_window_config(self,wc):
@@ -1156,7 +1089,7 @@ class GridMainPanel(GridElement,MainPanel):
         #~ if self.lh.datalink.properties_window is not None:
             #~ yield self.lh.datalink.properties_window
         
-    def get_datalink(self):
+    def unused_get_datalink(self):
         return self.rh
         
     def ext_options(self,**kw):
@@ -1181,7 +1114,8 @@ class DetailMainPanel(Panel,WrappingMainPanel):
     #~ declare_type = jsgen.DECLARE_THIS
     #~ xtype = 'form'
     xtype = None
-    value_template = "new Ext.form.FormPanel(%s)"
+    #~ value_template = "new Ext.form.FormPanel(%s)"
+    value_template = "new Ext.Panel(%s)"
     def __init__(self,lh,name,vertical,*elements,**kw):
         #~ self.rh = lh.datalink
         self.report = lh.layout.datalink_report
@@ -1190,13 +1124,9 @@ class DetailMainPanel(Panel,WrappingMainPanel):
         Panel.__init__(self,lh,name,vertical,*elements,**kw)
         #lh.needs_store(self.rh)
         
-    def get_datalink(self):
+    def unused_get_datalink(self):
         return self.rh
         
-    #~ def subvars(self):
-        #~ for e in DataElementMixin.subvars(self):
-            #~ yield e
-            
     def subvars(self):
         #~ print 'DetailMainPanel.subvars()', self
         for e in MainPanel.subvars(self):
@@ -1207,7 +1137,7 @@ class DetailMainPanel(Panel,WrappingMainPanel):
     def ext_options(self,**kw):
         self.setup()
         kw = Panel.ext_options(self,**kw)
-        #d.update(title=self.layout.label)
+        kw.update(title=self.lh.layout.label)
         #d.update(region='east',split=True) #,width=300)
         kw.update(autoScroll=True)
         if False:
@@ -1226,8 +1156,36 @@ class DetailMainPanel(Panel,WrappingMainPanel):
         #d.update(standardSubmit=True)
         return kw
         
+class TabPanel(jsgen.Value):
+    value_template = "new Ext.TabPanel(%s)"
+    #~ def __init__(self,lh,name,*elements,**options):
+        #~ Container.__init__(self,lh,name,*elements,**options)
+        #~ self.width = self.elements[0].ext_width() or 300
+        
+    def __init__(self,tabs,**kw):
+        kw.update(
+          split=True,
+          activeTab=0,
+          #~ autoScroll=True, # ! http://code.google.com/p/lino/wiki/20100513
+          #~ width=300,
+          items=tabs,
+          # http://www.extjs.com/forum/showthread.php?26564-Solved-FormPanel-in-a-TabPanel
+          #~ listeners=dict(activate=js_code("function(p) {p.doLayout();}"),single=True),
+        )
+        jsgen.Value.__init__(self,kw)
 
-class FormMainPanel(Panel,WrappingMainPanel):
+        
+class FormPanel(jsgen.Value):
+    value_template = "new Ext.form.FormPanel(%s)"
+    def __init__(self,main,**kw):
+        kw.update(
+          items=main,
+          #~ autoScroll=True,
+          layout='fit',
+        )
+        jsgen.Value.__init__(self,kw)
+
+class unused_FormMainPanel(Panel,WrappingMainPanel):
     value_template = "new Ext.form.FormPanel(%s)"
     
     def __init__(self,lh,name,vertical,*elements,**kw):
@@ -1235,7 +1193,7 @@ class FormMainPanel(Panel,WrappingMainPanel):
         Panel.__init__(self,lh,name,vertical,*elements,**kw)
         MainPanel.__init__(self)
 
-    def get_datalink(self):
+    def unused_get_datalink(self):
         return self.lh.datalink
         
     def ext_options(self,**d):

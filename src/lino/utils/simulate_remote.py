@@ -35,5 +35,8 @@ To use this, insert it to your MIDDLEWARE_CLASSES somewhere before
 
 class SimulateRemoteUserMiddleware(object):
     def process_request(self, request):
-        request.META['REMOTE_USER'] = os.environ.get('REMOTE_USER')
+        x = os.environ.get('REMOTE_USER')
+        if x:
+            request.META['REMOTE_USER'] = x
+            #~ print "WARNING: Treating all requests as coming from authenticated user %s" % x
 

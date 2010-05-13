@@ -44,19 +44,6 @@ class StoreField(object):
         except ValueError,e:
             print obj.__class__, self.field.name, e
             lino.log.exception(e)
-        
-    def unused_get_from_form(self,instance,post_data):
-        v = post_data.get(self.field.name)
-        #~ if v == '' and self.field.null:
-            #~ v = None
-        if v == '':
-            v = self.field.get_default()
-        try:
-            instance[self.field.name] = self.field.to_python(v)
-        except exceptions.ValidationError,e:
-            lino.log.exception("%s = %r : %s",self.field.name,v,e)
-            raise 
-        #setattr(instance,self.field.name,v)
 
     def form2obj(self,instance,post_data):
         v = post_data.get(self.field.name,None)
@@ -91,14 +78,6 @@ class BooleanStoreField(StoreField):
         kw['type'] = 'boolean'
         StoreField.__init__(self,field,**kw)
         
-    #~ def get_from_form(self,instance,post_data):
-        #~ v = post_data.get(self.field.name)
-        #~ if v == 'true':
-            #~ v = True
-        #~ else:
-            #~ v = False
-        #~ instance[self.field.name] = v
-        
     def form2obj(self,instance,post_data):
         v = post_data.get(self.field.name,None)
         if v is None:
@@ -124,15 +103,6 @@ class DateStoreField(StoreField):
             value = value.ctime() # strftime('%Y-%m-%d')
             #print value
             d[self.field.name] = value
-            
-    #~ def get_from_form(self,instance,post_data):
-        #~ v = post_data.get(self.field.name)
-        #~ if v == '' and self.field.null:
-            #~ v = None
-        #~ if v is not None:
-            #~ #print v
-            #~ v = dateparser.parse(v,fuzzy=True)
-        #~ instance[self.field.name] = v
 
     def form2obj(self,instance,post_data):
         v = post_data.get(self.field.name,None)

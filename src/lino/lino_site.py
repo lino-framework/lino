@@ -100,14 +100,12 @@ class LinoSite:
 
         actors.discover()
         
-        #~ layouts.setup()
-        
         reports.discover()
 
-        for a in actors.actors_dict.values():
+        for a in actors.actors_list:
             if isinstance(a,layouts.DetailLayout):
                 a.setup()
-        for a in actors.actors_dict.values():
+        for a in actors.actors_list:
             if not isinstance(a,layouts.DetailLayout):
                 a.setup()
 

@@ -19,8 +19,9 @@ from lino.ui import base
 from lino import actions
 from lino.ui.base import Handled
 
-actors_dict = None
 actor_classes = []
+actors_dict = None
+actors_list = None
 
 ACTOR_SEP = '.'
 
@@ -59,15 +60,39 @@ def resolve_actor(actor,app_label):
         return get_actor2(app_label,actor)
     return get_actor(actor)
         
+def register_actor(a):
+    old = actors_dict.get(a.actor_id,None)
+    if old is None:
+        lino.log.debug("register_actor %s = %r",a.actor_id,a.__class__)
+    else:
+        lino.log.debug("register_actor %s : %r replaced by %r",a.actor_id,old.__class__,a.__class__)
+        actors_list.remove(old)
+    actors_dict[a.actor_id] = a
+    actors_list.append(a)
+    return a
+  
+    #~ actor.setup()
+    #~ assert not actors_dict.has_key(actor.actor_id), "duplicate actor_id %s" % actor.actor_id
+    #~ actors_dict[actor.actor_id] = actor
+    #~ return actor
+
 def discover():
     global actor_classes
     global actors_dict
+    global actors_list
     assert actors_dict is None
+    assert actors_list is None
     actors_dict = {}
-    lino.log.debug("actors.discover() : %d actor_classes",len(actor_classes))
+    actors_list = []
+    lino.log.debug("actors.discover() : instantiating %d actors",len(actor_classes))
     for cls in actor_classes:
         register_actor(cls())
     actor_classes = None
+    
+    #~ lino.log.debug("actors.discover() : setup %d actors",len(actors_list))
+    #~ for a in actors_list:
+        #~ a.setup()
+        
     lino.log.debug("actors.discover() done")
         #~ a = cls()
         #~ old = actors_dict.get(a.actor_id,None)
@@ -77,20 +102,7 @@ def discover():
     #~ for a in actors_dict.values():
         #~ a.setup()
 
-def register_actor(a):
-    old = actors_dict.get(a.actor_id,None)
-    if old is None:
-        lino.log.debug("register_actor %s = %r",a.actor_id,a.__class__)
-    else:
-        lino.log.debug("register_actor %s : %r replaced by %r",a.actor_id,old.__class__,a.__class__)
-    actors_dict[a.actor_id] = a
-    return a
-  
-    #~ actor.setup()
-    #~ assert not actors_dict.has_key(actor.actor_id), "duplicate actor_id %s" % actor.actor_id
-    #~ actors_dict[actor.actor_id] = actor
-    #~ return actor
-    
+
 class ActorMetaClass(type):
     def __new__(meta, classname, bases, classDict):
         #~ if not classDict.has_key('app_label'):
@@ -212,17 +224,4 @@ class Actor(Handled):
         return self._actions_list
     
         
-
-#~ class Handle:
-  
-    #~ def __init__(self,actor):
-        #~ self.actor = actor
-        
-
-def unused_get_actor(app_label,name):
-    app = models.get_app(app_label)
-    cls = getattr(app,name,None)
-    if cls is None:
-        return None
-    return cls()
 

@@ -278,43 +278,6 @@ Lino.ajax_error_handler = function(response,options) {
 }
 // Ext.Ajax.on('requestexception',Lino.ajax_error_handler)
 
-//~ Lino.submit_property = function (caller,e) {
-Lino.unused_submit_property_handler = function(caller) { 
-  return function(e) {
-    /*
-    e.grid - This grid
-    e.record - The record being edited
-    e.field - The field name being edited
-    e.value - The value being set
-    e.originalValue - The original value for the field, before the edit.
-    e.row - The grid row index
-    e.column - The grid column index
-    */
-    // var p = e.record.data;
-    var p = caller.get_master_params(caller.get_current_record());
-    // p['grid_afteredit_colname'] = e.field;
-    // p[e.field] = e.value;
-    //~ console.log('submit_property()',e.record.data);
-    p['name'] = e.record.data.name
-    p['value'] = e.record.data.value
-    Ext.Ajax.request({
-      method: 'POST',
-      waitMsg: 'Please wait...',
-      url: '/submit_property',
-      params: p, 
-      success: function(response) {
-        var result=Ext.decode(response.responseText);
-        // console.log(result);
-        if (result.success) {
-          // Lino.load_properties();        // reload our datastore.
-        } else {
-          Ext.MessageBox.alert('Action failed',result.msg);
-        }
-      },
-      failure: Lino.ajax_error_handler
-    })
-  }
-};
 Lino.submit_property_handler = function(caller) { 
   return function(e) {
     /*
@@ -339,42 +302,6 @@ Lino.submit_property_handler = function(caller) {
       method: 'PUT',
       waitMsg: 'Please wait...',
       url: caller.config.url_data + '/' + rec.id,
-      params: p, 
-      success: function(response) {
-        var result=Ext.decode(response.responseText);
-        // console.log(result);
-        if (result.success) {
-          // Lino.load_properties();        // reload our datastore.
-        } else {
-          Ext.MessageBox.alert('Action failed',result.msg);
-        }
-      },
-      failure: Lino.ajax_error_handler
-    })
-  }
-};
-Lino.unused2_submit_property_handler = function(caller) { 
-  return function(e) {
-    /*
-    e.grid - This grid
-    e.record - The record being edited
-    e.field - The field name being edited
-    e.value - The value being set
-    e.originalValue - The original value for the field, before the edit.
-    e.row - The grid row index
-    e.column - The grid column index
-    */
-    // var p = e.record.data;
-    var p = caller.get_master_params(caller.get_current_record());
-    // p['grid_afteredit_colname'] = e.field;
-    // p[e.field] = e.value;
-    //~ console.log('submit_property()',e.record.data);
-    p['name'] = e.record.data.name
-    p['value'] = e.record.data.value
-    Ext.Ajax.request({
-      method: 'POST',
-      waitMsg: 'Please wait...',
-      url: '/api/properties/PropValuesByOwner',
       params: p, 
       success: function(response) {
         var result=Ext.decode(response.responseText);
@@ -593,10 +520,10 @@ Lino.toggle_button_handler = function(master,action) {
           // when slave's close button is clicked, toggle button off:
           slave.window.on('hide',function(){ btn.toggle(false,false)});
           // when slave is shown, update it's data:
-          slave.window.on('show',function(){ slave.on_master_change(master.get_current_record())});
-          //~ js_result.on_master_change(caller.get_current_record());
-          master.add_row_listener( function(sm,ri,rec){slave.on_master_change(rec)}, slave );
-          // js_result.on_master_change(caller.get_current_record());
+          slave.window.on('show',function(){ slave.load_master_record(master.get_current_record())});
+          //~ js_result.load_master_record(caller.get_current_record());
+          master.add_row_listener( function(sm,ri,rec){slave.load_master_record(rec)}, slave );
+          // js_result.load_master_record(caller.get_current_record());
           
           // show slave:
           slave.show();
@@ -706,7 +633,7 @@ Lino.SlavePlugin = function(caller) {
 };
 Lino.load_picture = function(caller,cmp,record) {
   if (record && cmp.el) {
-    var src = caller.config.url_data + "/" + record.id + ".jpg"
+    var src = caller.config.url_data + "/" + record.id + "?fmt=jpg"
     //~ console.log('Lino.load_picture()',src);
     cmp.el.dom.src = src; 
   } else console.log('Lino.load_picture() no record or cmp not rendered',caller,cmp,record);
@@ -768,7 +695,7 @@ Lino.GridMixin = {
           //~ listeners: { keypress: this.search_keypress }, 
           //~ id: "seachString" 
         }, 
-        { scope:this, text: "csv", handler: function() { window.open(this.config.url_data+'.csv') } } 
+        { scope:this, text: "csv", handler: function() { window.open(this.config.url_data+'?fmt=csv') } } 
       ]});
     //~ console.log('Lino.GridMixin.setup 2',this);
     
@@ -843,13 +770,14 @@ Lino.SlaveMixin = {
 Lino.DetailMixin = {
   get_selected : function() { return [ this.current_record.id ] },
   get_current_record : function() {  return this.current_record },
-  on_master_change : function(record) {
+  load_master_record : function(record) {
     this.current_record = record;
-    //~ console.log('Lino.DetailMixin.on_master_change',record);
+    //~ console.log('Lino.DetailMixin.load_master_record',record);
     //~ this.config.main_panel.form.load(record);    
     if (record) {
       this.main_form.enable();
       this.main_form.form.loadRecord(record) 
+      this.main_form.setTitle(record.title);
     } else {
       this.main_form.form.reset();
       this.main_form.disable();
@@ -863,8 +791,8 @@ Lino.GridSlaveWrapper = Ext.extend(Lino.WindowWrapper,{});
 Lino.GridSlaveWrapper.override(Lino.SlaveMixin);
 Lino.GridSlaveWrapper.override(Lino.GridMixin);
 Lino.GridSlaveWrapper.override({
-  on_master_change : function(record) {
-    console.log('GridSlaveWrapper.on_master_change()',record)
+  load_master_record : function(record) {
+    console.log('GridSlaveWrapper.load_master_record()',record)
     Lino.load_slavegrid(this.caller,this.main_grid,record);
     //~ var p = this.caller.get_master_params(record);
     //~ for (k in p) this.store.setBaseParam(k,p[k]);
@@ -910,6 +838,7 @@ Lino.DetailSlaveWrapper.override({
 });
 //~ Ext.override(Lino.DetailSlaveWrapper,Lino.DetailMixin);
 
+/***
 Lino.InsertWrapper = Ext.extend(Lino.WindowWrapper, {});
 Lino.InsertWrapper.override(Lino.DetailMixin);
 Lino.InsertWrapper.override({
@@ -923,7 +852,7 @@ Lino.InsertWrapper.override({
         handler: function() {
           this.main_form.form.submit({
             url:this.caller.config.url_data,
-            params: this.caller.caller.get_master_params(this.caller.caller.get_current_record()),
+            params: this.caller.get_master_params(this.caller.get_current_record()),
             method: 'POST',
             scope: this,
             success: function(form, action) {
@@ -938,27 +867,72 @@ Lino.InsertWrapper.override({
       },
       { text: "Cancel", scope: this, handler: function() { this.close()} }
     ];
-    //~ this.main_item.bbar = this.config.bbar_actions;
-    //~ this.main_item = Ext.Panel({
-        //~ items: this.config.main_panel,
-        //~ bbar: this.config.bbar_actions,
-        //~ autoScroll: true,});
     Lino.WindowWrapper.prototype.setup.call(this);
     this.main_form = this.window.getComponent(0);
-    //~ var data = {};
-    //~ if (this.config.fk_name) {
-      //~ var master = this.caller.caller.get_current_record();
-      //~ if (master) {
-          //~ data[this.config.fk_name+'Hidden'] = master.id;
-      //~ }
-    //~ }
-    //~ var rec = new this.caller.store.recordType(data);
-    //~ var rec = new this.caller.store.recordType(this.config.formdata);
     var rec = this.caller.store.getById(-99999);
-    console.log(rec);
-    this.on_master_change(rec);
+    //~ console.log(rec);
+    this.load_master_record(rec);
+  },
+  goto_record: function(id) {
+  }
+});
+***/
+
+Lino.DetailWrapper = Ext.extend(Lino.WindowWrapper, {});
+Lino.DetailWrapper.override(Lino.DetailMixin);
+Lino.DetailWrapper.override({
+  setup:function() {
+    //~ console.log('Lino.DetailSlaveWrapper setup',20100409,this);
+    this.main_item = this.config.main_panel;
+    this.bbar_actions = [
+      {
+        text: "Submit", 
+        scope: this,
+        handler: function() {
+          this.main_form.form.submit({
+            url:this.caller.config.url_data,
+            //~ params: this.caller.get_master_params(this.caller.get_current_record()),
+            method: 'POST',
+            scope: this,
+            success: function(form, action) {
+              Lino.notify(action.result.msg);
+              this.close();
+              this.caller.refresh();
+            },
+            failure: Lino.on_submit_failure,
+            clientValidation: true
+          })
+        }
+      },
+      { text: "Cancel", scope: this, handler: function() { this.close()} }
+    ];
+    
+    Lino.WindowWrapper.prototype.setup.call(this);
+    this.main_form = this.window.getComponent(0);
+    if (! this.config.record_id) {
+      this.config.record_id = this.caller.get_current_record().id;
+    }
+    var this_caller = this;
+    Ext.Ajax.request({ 
+      waitMsg: 'Loading record...',
+      method: 'GET',
+      url:this.config.url_data + '/' + this.config.record_id,
+      success: function(response) {
+        //~ console.log('Lino.do_action()',action,'action success');
+        if (response.responseText) {
+            var rec = Ext.decode(response.responseText);
+            this_caller.load_master_record(rec);
+            this_caller.window.setTitle(rec.title);
+        }
+      },
+      failure: Lino.ajax_error_handler
+    });
   }
 })
+
+Lino.InsertWrapper = Ext.extend(Lino.DetailWrapper, {
+});
+
 
 Lino.PropertiesWrapper = Ext.extend(Lino.WindowWrapper, {});
 Lino.PropertiesWrapper.override(Lino.SlaveMixin);
@@ -973,7 +947,7 @@ Lino.PropertiesWrapper.override({
     //~ Lino.SlaveMixin.prototype.setup.call(this);
   },
   get_current_record : function() {  return this.caller.get_current_record() },
-  on_master_change : function(rec) {
+  load_master_record : function(rec) {
     Lino.load_properties(this.caller,this,this.config.url_data+'.json',rec);
   },
   get_window_config : function() {

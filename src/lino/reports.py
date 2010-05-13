@@ -131,7 +131,7 @@ def discover():
     
     lino.log.info("Analyzing Reports...")
     lino.log.debug("Register Report actors...")
-    for rpt in actors.actors_dict.values():
+    for rpt in actors.actors_list:
         if isinstance(rpt,Report) and rpt.__class__ is not Report:
             register_report(rpt)
             
@@ -164,6 +164,9 @@ def discover():
             
     lino.log.debug("reports.setup() done")
 
+
+
+
 class GridEdit(actions.OpenWindowAction):
     hidden = True
   
@@ -173,82 +176,30 @@ class GridEdit(actions.OpenWindowAction):
         self.label = rpt.label
         actions.Action.__init__(self,rpt)
 
-        
-        
-        
 
-#~ class InsertRow(actions.RowsAction):
-class InsertRow(actions.OpenWindowAction):
-    label = _("Insert")
-    name = 'insert'
-    key = actions.INSERT # (ctrl=True)
-    
-    def __init__(self,actor,layout):
-        self.layout = layout
-        actions.OpenWindowAction.__init__(self,actor)
-        
-    def unused_run_action(self,ar):
-        #~ rr = dlg.get_request()
-        #~ for r in rr.insert_row(self): 
-            #~ yield r
-            
-        #~ if ar.rh.detail_link is None:
-            #~ raise Exception("This report has no detail layout")
-        
-        row = ar.create_instance()
-        
-        return ar.show_detail(row)
-        
-        #~ layout = layouts.get_detail_layout(row.__class__)
-        
-        #~ if layout is None:
-        #~ dl = RowDataLink(rr.ui,row)
-        #~ dl.setup()
-        #~ lh = layout.get_handle(rr.ui)
-        #~ return rr.show_window(dl,lh)
-        
-        #~ fh = actions.FormHandle(lh,dl)
-        #~ yield dlg.show_modal_form(fh)
-        #~ while True:
-            #~ if dlg.modal_exit != 'ok':
-                #~ yield dlg.cancel()
-            #~ print dlg.params
-            #~ if row.update(dlg.params):
-                #~ row.save()
-                #~ yield dlg.refresh_caller().over()
-        
-    def old_run_in_dlg(self,dlg):
-        yield dlg.confirm(_("Insert new row. Are you sure?"))
-        rr = dlg.get_request()
-        row = rr.create_instance()
-        row.save()
-        yield dlg.refresh_caller().over()
-        
-        
-  
-class DeleteSelected(actions.RowsAction):
+#~ class InsertRow(actions.OpenWindowAction):
+class OpenDetailAction(actions.OpenWindowAction):
     needs_selection = True
-    label = _("Delete")
-    name = 'delete'
-    key = actions.DELETE # (ctrl=True)
+    name = 'detail'
+    label = _("Detail")
     
+    #~ def __init__(self,rpt,layout):
+        #~ self.layout = layout
+        #~ self.label = layout.label
+        #~ self.name = layout._actor_name
+        #~ actions.OpenWindowAction.__init__(self,rpt)
         
-    def run_action(self,rr):
-        if len(dlg.selected_rows) == 1:
-            msg = _("Deleted row %s") % dlg.selected_rows[0]
-        else:
-            msg = _("Deleted %d rows") % len(dlg.selected_rows)
-            
-        for row in dlg.selected_rows:
-            row.delete()
-        return rr.refresh_caller().notify(_("Success") + ": " + msg)
-        
-class DetailAction(actions.ToggleWindowAction):
-    #~ name = 'detail'
+class InsertRow(OpenDetailAction):
+    name = 'insert'
+    label = _("Insert")
+    key = actions.INSERT # (ctrl=True)
+  
+class SlaveDetailAction(actions.ToggleWindowAction):
+    name = 'detail'
     def __init__(self,actor,layout):
         self.layout = layout
         self.label = layout.label
-        self.name = layout._actor_name
+        #~ self.name = layout._actor_name
         actions.ToggleWindowAction.__init__(self,actor)
         
                 
@@ -262,6 +213,13 @@ class SlaveGridAction(actions.ToggleWindowAction):
         self.label = slave.button_label
         actions.ToggleWindowAction.__init__(self,actor)
         
+        
+class DeleteSelected(actions.RowsAction):
+    needs_selection = True
+    label = _("Delete")
+    name = 'delete'
+    key = actions.DELETE # (ctrl=True)
+    
         
 
 class ReportHandle(datalinks.DataLink,base.Handle): #,actors.ActorHandle):
@@ -741,18 +699,14 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
                 self._slaves = []
                 
             if len(self.detail_layouts) > 0:
-                actions.append(InsertRow(self,self.detail_layouts[0]))
-        
-            if self.use_layouts:
-                self.details = [ DetailAction(self,pl) for pl in self.detail_layouts ]
-                actions += self.details
+                #~ actions.append(InsertRow(self,self.detail_layouts[0]))
+                #~ 20100513
+                actions.append(InsertRow(self))
+                # 20100513
+                #~ self.details = [ DetailAction(self,pl) for pl in self.detail_layouts ]
+                #~ actions += self.details
+                actions.append(OpenDetailAction(self))
                     
-                #~ for dtl in self.details:
-                    #~ actions.append(dtl)
-                #~ else:
-                    #~ print 'no detail in %s : %r' % (report,report.detail_layouts)
-            
-                
             self.content_type = ContentType.objects.get_for_model(self.model).pk
             
             for slave in self._slaves:

@@ -61,9 +61,13 @@ def authenticated_user(user):
         #~ return authenticated_user(self.request.user)
         
 
-class BaseViewReportRequest(reports.ReportActionRequest):
+class ViewReportRequest(reports.ReportActionRequest):
     
-    #~ def __init__(self,request,rpt,action,ui,*args,**kw):
+    editing = 0
+    selector = None
+    sort_column = None
+    sort_direction = None
+    
     def __init__(self,request,rh,action,*args,**kw):
         reports.ReportActionRequest.__init__(self,rh,action)
         self.request = request
@@ -144,87 +148,6 @@ class BaseViewReportRequest(reports.ReportActionRequest):
     def get_user(self):
         return authenticated_user(self.request.user)
 
-    def get_absolute_url(self,**kw):
-        if self.limit != self.__class__.limit:
-            kw.update(limit=self.limit)
-        if self.offset is not None:
-            kw.update(start=self.offset)
-        return self.report.get_absolute_url(**kw)
-        
-
-class unused_CSVReportRequest(BaseViewReportRequest):
-    extra = 0
-    
-    def get_absolute_url(self,**kw):
-        kw['csv'] = True
-        return BaseViewReportRequest.get_absolute_url(self,**kw)
-        
-    def parse_req(self,request,rh,**kw):
-        quick_search = request.GET.get(URL_PARAM_FILTER,None)
-        if quick_search:
-            kw.update(quick_search=quick_search)
-        return kw
-        
-    def render_to_csv(self):
-        response = HttpResponse(mimetype='text/csv')
-        w = ucsv.UnicodeWriter(response)
-        names = [] # fld.name for fld in self.fields]
-        fields = []
-        for col in self.rh.list_layout._main.column_model.columns:
-            names.append(col.editor.field.name)
-            fields.append(col.editor.field)
-        w.writerow(names)
-        for row in self.queryset:
-            values = []
-            for fld in fields:
-                # uh, this is tricky...
-                meth = getattr(fld,'_return_type_for_method',None)
-                if meth is not None:
-                    v = meth(row)
-                else:
-                    v = fld.value_to_string(row)
-                #lino.log.debug("20100202 %r.%s is %r",row,fld.name,v)
-                values.append(v)
-            w.writerow(values)
-        return response
-
-        
-  
-class unused_ChoicesReportRequest(BaseViewReportRequest):
-    extra = 0
-    
-    def __init__(self,request,rpt,fldname,*args,**kw):
-        self.fieldname = fldname
-        BaseViewReportRequest.__init__(self,request,rpt,rpt.default_action,ui,*args,**kw)
-        
-    def get_absolute_url(self,**kw):
-        kw['choices_for_field'] = self.fieldname
-        return BaseViewReportRequest.get_absolute_url(self,**kw)
-        
-    def get_queryset(self):
-        kw = {}
-        for k,v in self.request.GET.items():
-            kw[str(k)] = v
-        chooser = self.rh.choosers[self.fieldname]
-        qs = chooser.get_choices(**kw)
-        if self.quick_search is not None:
-            qs = reports.add_quick_search_filter(qs,self.quick_search)
-        return qs # self.queryset = qs
-        
-    def row2dict(self,obj,d):
-        d[CHOICES_TEXT_FIELD] = unicode(obj)
-        #d['__unicode__'] = unicode(obj)
-        d[CHOICES_VALUE_FIELD] = obj.pk # getattr(obj,'pk')
-        #d[self.fieldname] = obj.pk 
-        return d
-          
-  
-class ViewReportRequest(BaseViewReportRequest):
-  
-    editing = 0
-    selector = None
-    sort_column = None
-    sort_direction = None
     
     def get_absolute_url(self,**kw):
         if self.master_instance is not None:
@@ -235,18 +158,20 @@ class ViewReportRequest(BaseViewReportRequest):
             kw.update(dir=self.sort_direction)
         if self.layout is not self.rh.layouts[1]:
             kw.update(layout=self.layout.index)
-        return BaseViewReportRequest.get_absolute_url(self,**kw)
+        if self.limit != self.__class__.limit:
+            kw.update(limit=self.limit)
+        if self.offset is not None:
+            kw.update(start=self.offset)
+        return self.report.get_absolute_url(**kw)
 
-    def row2dict(self,row,d):
+    def row2dict(self,row):
         #~ lino.log.debug('%s.row2dict(%s)',self,row.__class__)
         #lino.log.debug('row2dict(%r)',row)
-        if self.report.use_layouts:
-            for fld in self.store.fields:
-                fld.obj2json(row,d)
-        else:
-            reports.ReportActionRequest.row2dict(self,row,d)
-            #~ self.action.row2dict(row,d)
-        #lino.log.debug('  -> %r',kw)
+        if not self.report.use_layouts:
+            return reports.ReportActionRequest.row2dict(self,row,d)
+        d = {}
+        for fld in self.store.fields:
+            fld.obj2json(row,d)
         return d
  
 

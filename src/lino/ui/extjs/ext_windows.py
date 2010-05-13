@@ -24,6 +24,7 @@ from lino.core import actors
 from lino.utils import menus
 from lino.utils import chooser
 from lino.utils import jsgen
+from lino.utils import build_url
 from lino.utils.jsgen import py2js, js_code, id2js
 from lino.ui.extjs import ext_elems, ext_requests
 from lino.ui.extjs import ext_viewport
@@ -50,7 +51,7 @@ class DownloadRenderer(ActionRenderer):
         #~ yield "  console.log(caller.get_selected());"
         yield "  var l = caller.get_selected();"
         yield "  for (var i = 0; i < l.length; i++) "
-        yield "    window.open(%r+l[i]+'.pdf');" % url
+        yield "    window.open(%r+l[i]+'?fmt=pdf');" % url
         #~ yield "  caller.get_selected().forEach(function(pk) {"
         #~ yield "    console.log(pk);"
         #~ yield "    window.open(%r+pk+'.pdf');" % url
@@ -72,10 +73,7 @@ class WindowWrapper(ActionRenderer):
         self.main = main
         self.permalink_name = str(action).replace('.','/') # permalink_name
         self.lh = lh
-        #~ self.window = WrappedWindow(self,ui,'window',main,**kw)
-        #~ self.slave_windows = []
         self.bbar_buttons = []
-        #~ jsgen.Object.__init__(self,None)
         self.config = self.get_config()
         
         
@@ -85,12 +83,6 @@ class WindowWrapper(ActionRenderer):
     def get_config(self,**d):
         wc = lh2win(self.lh)
         wc = self.ui.load_window_config(self.action,**wc)
-        #~ wc = self.window.ui.load_window_config(self.window.permalink_name)
-        #~ self.try_apply_window_config(wc)
-        #~ for k in 'width','height','x','y','maximized':
-            #~ v = getattr(wc,k,None)
-            #~ if v is not None:
-                #~ d[k] = v
         d.update(permalink_name=self.permalink_name)
         d.update(wc=wc)
         url = '/ui/' + '/'.join((self.action.actor.app_label,self.action.actor._actor_name,self.action.name))
@@ -120,30 +112,11 @@ class SlaveWrapper(WindowWrapper):
 class MasterWrapper(WindowWrapper):
   
     def __init__(self,rh,action,lh,**kw):
-        #~ self.ui = lh.ui
-        #~ assert isinstance(lh.datalink,layouts.DataLink)
-        #~ self.lh = lh
-        #~ self.datalink = rh # lh.datalink
-        #~ permalink_name = id2js(lh.layout.actor_id)
-        #~ permalink_name = lh.layout.layout_name
-        #~ name = id2js(lh.layout.layout_name)
-        #~ lh2win(lh,kw)
-        #~ window = WrappedWindow(self,self.ui, "window", lh._main, permalink_name, **kw)
         WindowWrapper.__init__(self,action,lh.ui,lh,lh._main,**kw)
-        
         
     def js_render(self):
         yield "function(caller) { new Lino.%s(caller,%s).show();}" % (self.__class__.__name__,py2js(self.config))
         
-    def unused_apply_window_config(self,wc):
-        WindowWrapper.apply_window_config(self,wc)
-        if isinstance(wc,WindowConfig):
-            self.lh._main.apply_window_config(wc)
-            
-            
-    #~ def js_preamble(self):
-        #~ if self.datalink.content_type is not None:
-            #~ yield "this.content_type = %s;" % py2js(self.datalink.content_type)
             
     
 class GridWrapperMixin(WindowWrapper):
@@ -237,7 +210,7 @@ class DetailSlaveWrapper(SlaveWrapper):
         d.update(title=self.action.actor.get_title(None) + u" - " + self.action.label)
         return d
         
-class InsertWrapper(MasterWrapper):
+class unused_InsertWrapper(MasterWrapper):
   
     window_config_type = 'insert'
     
@@ -263,8 +236,40 @@ class InsertWrapper(MasterWrapper):
           ])
         return d
         
+class DetailWrapper(MasterWrapper):
+  
+    window_config_type = 'detail'
+    
+    def __init__(self,rh,action,**kw):
+        assert isinstance(action,reports.OpenDetailAction)
+        if len(rh.report.detail_layouts) == 1:
+            lh = rh.report.detail_layouts[0].get_handle(rh.ui)
+            WindowWrapper.__init__(self,action,rh.ui,lh,lh._main,**kw)        
+        else:
+            #~ tl = layouts.TabLayout(rh.report.detail_layouts)
+            #~ lh = layouts.TabPanelHandle(rh,rh.report.detail_layouts)
+            lh = rh.report.detail_layouts[0].get_handle(rh.ui)
+            tabs = [l.get_handle(rh.ui)._main for l in rh.report.detail_layouts]
+            main = ext_elems.FormPanel(ext_elems.TabPanel(tabs))
+            WindowWrapper.__init__(self,action,rh.ui,None,main,**kw) 
+        
+    def get_config(self):
+        d = MasterWrapper.get_config(self)
+        url = build_url('/api',self.action.actor.app_label,self.action.actor._actor_name)
+        d.update(url_data=url) 
+        d.update(main_panel=self.main)
+        d.update(name=self.action.name)
+        d.update(fk_name=self.action.actor.fk_name);
+        #~ d.update(formdata=)
+        return d
         
         
+class InsertWrapper(DetailWrapper):
+    def get_config(self):
+        d = DetailWrapper.get_config(self)
+        d.update(title=self.action.label + _(' into ') + self.action.actor.get_title(None))
+        d.update(record_id=-99999)
+        return d
 
         
 

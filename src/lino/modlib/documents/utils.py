@@ -160,14 +160,5 @@ class PdfAction(actions.RowsAction):
     name = 'pdf'
     needs_selection = True
     label = "PDF"
-    def run_in_dlg(self,dlg):
-        row = dlg.selected_rows[0].get_child_instance()
-        try:
-            row.make_pdf()
-        except Exception,e:
-            yield dlg.exception(e).over()
-        #lino.log.debug("redirect to", row.pdf_url())
-        yield dlg.redirect(row.pdf_url()).over()
-        #return row.view_pdf(context.request)
 
 
