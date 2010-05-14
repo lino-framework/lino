@@ -1166,8 +1166,8 @@ class TabPanel(jsgen.Value):
         kw.update(
           split=True,
           activeTab=0,
-          #~ autoScroll=True, # ! http://code.google.com/p/lino/wiki/20100513
-          #~ width=300,
+          #~ autoScroll=True, 
+          #~ width=300, # ! http://code.google.com/p/lino/wiki/20100513
           items=tabs,
           # http://www.extjs.com/forum/showthread.php?26564-Solved-FormPanel-in-a-TabPanel
           #~ listeners=dict(activate=js_code("function(p) {p.doLayout();}"),single=True),

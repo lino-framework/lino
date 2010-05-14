@@ -244,13 +244,14 @@ class DetailWrapper(MasterWrapper):
         assert isinstance(action,reports.OpenDetailAction)
         if len(rh.report.detail_layouts) == 1:
             lh = rh.report.detail_layouts[0].get_handle(rh.ui)
-            WindowWrapper.__init__(self,action,rh.ui,lh,lh._main,**kw)        
+            main = ext_elems.FormPanel(lh._main) # ,autoScroll=True)
+            WindowWrapper.__init__(self,action,rh.ui,lh,main,**kw)        
         else:
             #~ tl = layouts.TabLayout(rh.report.detail_layouts)
             #~ lh = layouts.TabPanelHandle(rh,rh.report.detail_layouts)
             lh = rh.report.detail_layouts[0].get_handle(rh.ui)
             tabs = [l.get_handle(rh.ui)._main for l in rh.report.detail_layouts]
-            main = ext_elems.FormPanel(ext_elems.TabPanel(tabs))
+            main = ext_elems.FormPanel(ext_elems.TabPanel(tabs)) # ,autoScroll=True)
             WindowWrapper.__init__(self,action,rh.ui,None,main,**kw) 
         
     def get_config(self):
