@@ -146,7 +146,7 @@ def handle_list_request(request,rh):
                 d[rh.report.model._meta.pk.name] = -99999
                 rows.append(d)
                 total_count += 1
-            return json_response_kw(count=total_count,rows=rows,title=ar.get_title())
+            return json_response_kw(count=total_count,rows=rows,title=unicode(ar.get_title()))
 
 
     raise Http404("Method %s not supported for container %s" % (request.method,rh))
