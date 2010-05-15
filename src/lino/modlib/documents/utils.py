@@ -43,10 +43,10 @@ class Printable:
         rpt.add_actions(PdfAction)
         
     def pdf_root(self):
-        return os.path.join(settings.MEDIA_ROOT,"pdf_cache")
+        return os.path.join(settings.MEDIA_ROOT,'cache','pdf')
         
     def pdf_url(self):
-        return settings.MEDIA_URL + "/".join(["pdf_cache",self.pdf_filename()])
+        return settings.MEDIA_URL + "/".join(['cache','pdf',self.pdf_filename()])
         
     def pdf_path(self):
         return os.path.join(self.pdf_root(),self.pdf_filename())

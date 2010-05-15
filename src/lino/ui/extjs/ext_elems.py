@@ -56,8 +56,8 @@ class ColumnModel(Component):
         #self.report.setup()
         d = Component.ext_options(self,**d)
         #d.update(columns=[e.get_column_options() for e in self.grid.elements])
-        d.update(columns=self.columns)
         #d.update(defaultSortable=True)
+        d.update(columns=self.columns)
         return d
         
 class GridColumn(Component):
@@ -67,6 +67,7 @@ class GridColumn(Component):
     value_template = "new Ext.grid.Column(%s)"
     
     def __init__(self,cm,editor,**kw):
+        #~ print 20100515, editor.name, editor.__class__
         #~ assert isinstance(editor,FieldElement), \
             #~ "%s.%s is a %r (expected FieldElement instance)" % (cm.grid.report,editor.name,editor)
         self.editor = editor
@@ -371,7 +372,7 @@ class FieldElement(LayoutElement):
         assert field.name, Exception("field %r has no name!" % field)
         self.field = field
         self.editable = field.editable and not field.primary_key
-        LayoutElement.__init__(self,lh,field.name,label=field.verbose_name,**kw)
+        LayoutElement.__init__(self,lh,field.name,label=unicode(field.verbose_name),**kw)
         
     #~ def get_column_options(self,**kw):
         #~ kw = LayoutElement.get_column_options(self,**kw)

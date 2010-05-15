@@ -85,9 +85,9 @@ class WindowWrapper(ActionRenderer):
         wc = self.ui.load_window_config(self.action,**wc)
         d.update(permalink_name=self.permalink_name)
         d.update(wc=wc)
-        url = '/ui/' + '/'.join((self.action.actor.app_label,self.action.actor._actor_name,self.action.name))
-        d.update(url_action=url) # ,ext_requests.FMT_JSON))
-        #~ d.update(url_action=self.ui.get_action_url(self.action)) # ,ext_requests.FMT_JSON))
+        #~ url = '/ui/' + '/'.join((self.action.actor.app_label,self.action.actor._actor_name,self.action.name))
+        #~ d.update(url_action=url) # ,ext_requests.FMT_JSON))
+        #~ d.update(handler=js_code("Lino.%s" % self.action)) 
         return d
         
 def lh2win(lh,**kw):
@@ -135,9 +135,10 @@ class GridWrapperMixin(WindowWrapper):
         #~ url = '' self.ui.get_action_url(a,ext_requests.FMT_RUN)
         d.update(actions=[dict(
             opens_a_slave=a.opens_a_slave,
+            handler=js_code("Lino.%s" % a),
             name=a.name,
             label=a.label,
-            url="/".join(("/ui",a.actor.app_label,a.actor._actor_name,a.name))
+            #~ url="/".join(("/ui",a.actor.app_label,a.actor._actor_name,a.name))
           ) for a in self.rh.get_actions() if not a.hidden])
         #~ i = 0
         #~ actions = []

@@ -82,7 +82,8 @@ class BooleanStoreField(StoreField):
         v = post_data.get(self.field.name,None)
         if v is None:
             return
-        if v == 'true':
+        if v == 'on':
+        #~ if v in ('true','on'):
             v = True
         else:
             v = False

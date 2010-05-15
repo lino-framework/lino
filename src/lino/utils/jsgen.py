@@ -17,6 +17,7 @@ import datetime
 from django.utils import simplejson
 from django.core.serializers.json import DjangoJSONEncoder
 
+import lino
 from lino.utils import menus
 
 
@@ -30,7 +31,7 @@ def register_converter(func):
 
 
 def py2js(v):
-    # lino.log.debug("py2js(%r,%r)",v,kw)
+    #~ lino.log.debug("py2js(%r)",v)
     for cv in CONVERTERS:
         v = cv(v)
         

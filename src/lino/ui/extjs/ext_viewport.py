@@ -18,8 +18,10 @@ from lino.utils.jsgen import py2js, js_code, id2js
 
 class Viewport:
   
-    def __init__(self,title,*components):
-        self.title = title
+    def __init__(self,ui,site,*components):
+        self.title = site.title
+        self.site = site
+        self.ui = ui
         #self.main_menu = main_menu
         
         #self.variables = []
@@ -63,40 +65,20 @@ class Viewport:
             s += """
 <script type="text/javascript" src="%sextjs/Exporter-all.js"></script>""" % settings.MEDIA_URL 
 
-        if True:
-            s += """
+        s += """
 <!-- overrides to library -->
-<link rel="stylesheet" type="text/css" href="%slino/lino.css">
-<script type="text/javascript" src="%slino/lino.js"></script>""" % (settings.MEDIA_URL,settings.MEDIA_URL)
+<link rel="stylesheet" type="text/css" href="%slino/lino.css">""" % settings.MEDIA_URL
+        s += """
+<script type="text/javascript" src="%slino/lino.js"></script>""" % settings.MEDIA_URL
+        s += """
+<script type="text/javascript" src="%s"></script>""" % (settings.MEDIA_URL + "/".join(self.ui.js_cache_name(self.site)))
+
         s += """
 <!-- page specific -->
 <script type="text/javascript">
 """
 
-        if False:
-            def js():
-                yield "Lino.action_handler = function(caller,url) {"
-                yield "  return function(event) {"
-                yield "    Lino.do_dialog(caller,url,\
-                  {%s:caller.get_selected()});" % ext_requests.POST_PARAM_SELECTED
-                yield "}};"
-                
-            s += py2js(js)
-
-        if False: s += """
-Lino.slave_handler = function (caller,url) { 
-  return function(btn,evt) {
-    Lino.do_dialog(caller,url,{});
-  }
-};
-""" 
-        #uri = request.build_absolute_uri()
-        uri = request.path
-        s += """
-""" 
-
-        s += """
-"""
+        #~ uri = request.path
         
         def js():
             yield "Lino.load_master = function(store,caller,record) {"
@@ -140,8 +122,3 @@ Ext.onReady(function(){ """
         s += "\n}); // end of onReady()"
         s += "\n</script></head><body></body></html>"
         return s
-
-
-
-
-

@@ -480,20 +480,21 @@ Lino.load_main_menu = function() {
 
 
 
-Lino.button_handler = function(caller,action) {
+//~ Lino.button_handler = function(caller,action) {
   //~ var action = caller.config.bbar_actions[i];
-  Ext.applyIf(action, {
-    params : {},
-    method:'GET'
-  });
-  return function(event) {
-    action.params.selected = caller.get_selected(); // POST_PARAM_SELECTED
+  //~ Ext.applyIf(action, {
+    //~ params : {},
+    //~ method:'GET'
+  //~ });
+  //~ return function(event) {
+    //~ action.params.selected = caller.get_selected(); // POST_PARAM_SELECTED
     //~ Ext.apply(action.params,caller.get_base_params());
-    Lino.do_action(caller,action);
-  }
-};
+    //~ Lino.do_action(caller,action);
+  //~ }
+//~ };
 
-Lino.toggle_button_handler = function(master,action) {
+
+Lino.unused_toggle_button_handler = function(master,action) {
   //~ var action = master.config.bbar_actions[i];
   Ext.applyIf(action, {params : {}, method:'GET'});
   return function(btn,state) {
@@ -535,6 +536,42 @@ Lino.toggle_button_handler = function(master,action) {
     }
   }
 };
+
+Lino.button_handler = function(caller,action) {
+  return function(event) { action.handler(caller) }
+};
+
+Lino.toggle_button_handler = function(master,action) {
+  //~ var action = master.config.bbar_actions[i];
+  return function(btn,state) {
+    if(state) { 
+      if (master.slaves[action.name]) {
+        master.slaves[action.name].show();
+      } else {
+        var slave = new action.handler(master);
+        master.slaves[action.name] = slave;
+        //~ console.log('Lino.toggle_button_handler.after_js_code() ',caller,action.name,'=',caller.slaves[action.name]);
+        // when master closes, close slave:
+        master.window.on('close',function() { slave.close() });
+        // when master hides, hide slave:          
+        master.window.on('hide',function(){ slave.hide()});
+        // when slave's close button is clicked, toggle button off:
+        slave.window.on('hide',function(){ btn.toggle(false,false)});
+        // when slave is shown, update it's data:
+        slave.window.on('show',function(){ slave.load_master_record(master.get_current_record())});
+        //~ js_result.load_master_record(caller.get_current_record());
+        master.add_row_listener( function(sm,ri,rec){slave.load_master_record(rec)}, slave );
+        // js_result.load_master_record(caller.get_current_record());
+        
+        // show slave:
+        slave.show();
+      }
+    } else {
+      master.slaves[action.name].hide();
+    }
+  }
+};
+
 
 
 Lino.WindowWrapper = function(caller,config) {
@@ -881,6 +918,21 @@ Lino.InsertWrapper.override({
 Lino.DetailWrapper = Ext.extend(Lino.WindowWrapper, {});
 Lino.DetailWrapper.override(Lino.DetailMixin);
 Lino.DetailWrapper.override({
+  on_submit: function() {
+    this.main_form.form.submit({
+      url:this.caller.config.url_data + '/' + this.config.record_id,
+      //~ params: this.caller.get_master_params(this.caller.get_current_record()),
+      method: 'PUT',
+      scope: this,
+      success: function(form, action) {
+        Lino.notify(action.result.msg);
+        //~ this.close();
+        this.caller.refresh();
+      },
+      failure: Lino.on_submit_failure,
+      clientValidation: true
+    })
+  },
   setup:function() {
     //~ console.log('Lino.DetailSlaveWrapper setup',20100409,this);
     this.main_item = this.config.main_panel;
@@ -888,21 +940,7 @@ Lino.DetailWrapper.override({
       {
         text: "Submit", 
         scope: this,
-        handler: function() {
-          this.main_form.form.submit({
-            url:this.caller.config.url_data,
-            //~ params: this.caller.get_master_params(this.caller.get_current_record()),
-            method: 'POST',
-            scope: this,
-            success: function(form, action) {
-              Lino.notify(action.result.msg);
-              this.close();
-              this.caller.refresh();
-            },
-            failure: Lino.on_submit_failure,
-            clientValidation: true
-          })
-        }
+        handler: this.on_submit
       },
       { text: "Cancel", scope: this, handler: function() { this.close()} }
     ];
@@ -931,6 +969,21 @@ Lino.DetailWrapper.override({
 })
 
 Lino.InsertWrapper = Ext.extend(Lino.DetailWrapper, {
+  on_submit: function() {
+    this.main_form.form.submit({
+      url:this.caller.config.url_data,
+      //~ params: this.caller.get_master_params(this.caller.get_current_record()),
+      method: 'POST',
+      scope: this,
+      success: function(form, action) {
+        Lino.notify(action.result.msg);
+        this.close();
+        this.caller.refresh();
+      },
+      failure: Lino.on_submit_failure,
+      clientValidation: true
+    })
+  },
 });
 
 

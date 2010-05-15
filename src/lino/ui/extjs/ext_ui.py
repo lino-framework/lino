@@ -52,6 +52,8 @@ from lino.modlib.properties import models as properties
 from django.conf.urls.defaults import patterns, url, include
 from lino.modlib.documents.utils import PdfAction
 
+from lino.core.coretools import app_labels
+
 #~ from lino.ui.extjs.ext_windows import WindowConfig # 20100316 backwards-compat window_confics.pck 
 
 class HttpResponseDeleted(HttpResponse):
@@ -402,7 +404,7 @@ class ExtUI(base.UI):
                 autoScroll=True,
                 height=100,
                 region="south")
-            vp = ext_viewport.Viewport(lino_site.title,console,index)
+            vp = ext_viewport.Viewport(self,lino_site,console,index)
             s = vp.render_to_html(request)
             self._response = HttpResponse(s)
         return self._response
@@ -447,6 +449,29 @@ class ExtUI(base.UI):
         return handle_element_request(request,ah,instance)
         #~ raise Http404("Unknown request method %r " % request.method)
         
+    def js_cache_name(self,site):
+        return ('cache','js','site.js')
+        
+    def setup_site(self,site):
+        base.UI.setup_site(self,site) # will create a.window_wrapper for all actions
+        #~ for app_label in site.
+        fn = os.path.join(settings.MEDIA_ROOT,*self.js_cache_name(site)) 
+        #~ fn = r'c:\temp\dsbe.js'
+        lino.log.debug("Generating %s ...", fn)
+        f = open(fn,'w')
+        for rpt in reports.master_reports + reports.slave_reports:
+            f.write("Ext.namespace('Lino.%s')\n" % rpt)
+            for a in rpt.get_actions():
+                if a.window_wrapper is not None:
+                    #~ print a, "..."
+                    f.write('Lino.%s = ' % a )
+                    for ln in a.window_wrapper.js_render():
+                        f.write(ln + "\n")
+                    f.write("\n")
+        f.close()
+          
+        
+        
     def ui_view(self,request,app_label=None,actor=None,action=None,**kw):
         actor = actors.get_actor2(app_label,actor)
         ah = actor.get_handle(self)
@@ -455,24 +480,25 @@ class ExtUI(base.UI):
             msg = "No action %s in %s" % (action,ah)
             #~ print msg
             raise Http404(msg)
-        if request.method == 'GET':
-            assert a.window_wrapper is not None, "%r %s has no window_wrapper" % (a,a)
-            return json_response_kw(success=True,js_code=a.window_wrapper.js_render)
+        #~ if request.method == 'GET':
+            #~ assert a.window_wrapper is not None, "%r %s has no window_wrapper" % (a,a)
+            #~ return json_response_kw(success=True,js_code=a.window_wrapper.js_render)
             
-        params = request.POST
-        wc = dict()
-        #~ name = str(ar.ah.report)
-        wc['height'] = parse_int(params.get('height'))
-        wc['width'] = parse_int(params.get('width'))
-        wc['maximized'] = parse_bool(params.get('maximized'))
-        wc['x'] = parse_int(params.get('x'))
-        wc['y'] = parse_int(params.get('y'))
-        cw = params.getlist('column_widths')
-        assert type(cw) is list, "cw is %r (expected list)" % cw
-        wc['column_widths'] = [parse_int(w,100) for w in cw]
-        ui.save_window_config(a,wc)
-        return json_response_kw(success=True,
-          message=_(u'Window config %s has been saved (%r)') % (a,wc))
+        if request.method == 'POST':
+            params = request.POST
+            wc = dict()
+            #~ name = str(ar.ah.report)
+            wc['height'] = parse_int(params.get('height'))
+            wc['width'] = parse_int(params.get('width'))
+            wc['maximized'] = parse_bool(params.get('maximized'))
+            wc['x'] = parse_int(params.get('x'))
+            wc['y'] = parse_int(params.get('y'))
+            cw = params.getlist('column_widths')
+            assert type(cw) is list, "cw is %r (expected list)" % cw
+            wc['column_widths'] = [parse_int(w,100) for w in cw]
+            ui.save_window_config(a,wc)
+            return json_response_kw(success=True,
+              message=_(u'Window config %s has been saved (%r)') % (a,wc))
   
         
     def choices_view(self,request,app_label=None,rptname=None,fldname=None,**kw):
@@ -637,7 +663,8 @@ class ExtUI(base.UI):
         if isinstance(v,menus.MenuItem):
             #~ handler = "function(btn,evt){Lino.do_action(undefined,%r,%r,{})}" % (v.actor.get_url(lino_site.ui),id2js(v.actor.actor_id))
             url = build_url("/ui",v.action.actor.app_label,v.action.actor._actor_name,v.action.name)
-            handler = "function(btn,evt){Lino.do_action(undefined,{url:%r})}" % url
+            #~ handler = "function(btn,evt){Lino.do_action(undefined,{url:%r})}" % url
+            handler = "function(btn,evt){new Lino.%s().show()}" % v.action
             return dict(text=v.label,handler=js_code(handler))
         return v
 

@@ -37,7 +37,6 @@ from django.contrib.auth import models as auth
 
 
 from django.utils.safestring import mark_safe
-from django.db.models import loading
 
 import lino
         
@@ -45,17 +44,7 @@ from lino import reports, forms, layouts, actions
 from lino.utils import perms
 from lino.utils import menus
 from lino.core import actors
-
-
-def app_labels():
-    return [a.__name__.split('.')[-2] for a in loading.get_apps()]
-        
-#~ def thanks_to():
-    #~ l = ["%s %s <%s>" % (name,version,url) 
-          #~ for name,url,version in lino.thanks_to()]
-    #~ return '\n'.join(l)
-      
-
+from lino.core.coretools import app_labels
 
 
 
@@ -96,7 +85,8 @@ class LinoSite:
         for model in models_list:
             i += 1
             lino.log.debug("  %2d: %s.%s -> %r",i,model._meta.app_label,model._meta.object_name,model)
-        
+            
+        ## django.db.models.loading.cache is now populated
 
         actors.discover()
         
@@ -110,13 +100,13 @@ class LinoSite:
                 a.setup()
 
             
-        lino.log.debug("ACTORS:")
-        for k in sorted(actors.actors_dict.keys()):
-            a = actors.actors_dict[k]
-            lino.log.debug("%s -> %r",k,a.__class__)
+        #~ lino.log.debug("ACTORS:")
+        #~ for k in sorted(actors.actors_dict.keys()):
+            #~ a = actors.actors_dict[k]
+            #~ lino.log.debug("%s -> %r",k,a.__class__)
           
         if hasattr(settings,'LINO_SETTINGS'):
-            lino.log.info("Reading %s...", settings.LINO_SETTINGS)
+            lino.log.info("Reading %s ...", settings.LINO_SETTINGS)
             execfile(settings.LINO_SETTINGS,dict(lino=self))
         else:
             lino.log.warning("settings.LINO_SETTINGS entry is missing")

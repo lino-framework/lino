@@ -13,10 +13,14 @@
 
 "coretools may not be used in models modules (but well during lino_site set up)."
 
+from django.db.models import loading
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from lino.core import actors
 
+def app_labels():
+    return [a.__name__.split('.')[-2] for a in loading.get_apps()]
+        
 def get_slave(model,name):
     rpt = actors.get_actor(name)
     if rpt is None: 

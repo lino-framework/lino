@@ -84,6 +84,7 @@ def add_quick_search_filter(qs,search_text):
 def rc_name(rptclass):
     return rptclass.app_label + '.' + rptclass.__name__
     
+# TODO : move these global variables to LinoSite
 master_reports = []
 slave_reports = []
 generic_slaves = {}
