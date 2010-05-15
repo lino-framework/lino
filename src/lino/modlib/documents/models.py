@@ -26,6 +26,7 @@ import datetime
 
 from django.conf import settings
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 
 import lino
 lino.log.debug(__file__+' : started')

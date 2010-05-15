@@ -18,7 +18,7 @@ import cStringIO
 from django.conf import settings
 from django.template.loader import render_to_string, get_template, select_template, Context
 from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 
 try:
     import ho.pisa as pisa
@@ -141,7 +141,7 @@ class Printable:
 class unused_PrintAction(actions.Action):
     name = 'print'
     needs_selection = True
-    label = "Print"
+    label = _("Print")
     def run_in_dlg(self,dlg):
         row = dlg.selected_rows[0].get_child_instance()
         try:

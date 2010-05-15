@@ -137,7 +137,7 @@ class GridWrapperMixin(WindowWrapper):
             opens_a_slave=a.opens_a_slave,
             handler=js_code("Lino.%s" % a),
             name=a.name,
-            label=a.label,
+            label=unicode(a.label),
             #~ url="/".join(("/ui",a.actor.app_label,a.actor._actor_name,a.name))
           ) for a in self.rh.get_actions() if not a.hidden])
         #~ i = 0
@@ -157,7 +157,7 @@ class GridWrapperMixin(WindowWrapper):
         d.update(fields=[js_code(f.as_js()) for f in self.rh.store.fields])
         d.update(colModel=self.lh._main.column_model)
         d.update(content_type=self.rh.report.content_type)
-        d.update(title=self.rh.get_title(None))
+        d.update(title=unicode(self.rh.get_title(None)))
         d.update(url_data=self.ui.get_actor_url(self.rh.report)) # +'/data') 
         return d
         
@@ -208,7 +208,7 @@ class DetailSlaveWrapper(SlaveWrapper):
         d = super(DetailSlaveWrapper,self).get_config()
         d.update(main_panel=self.lh._main)
         d.update(name=self.action.name)
-        d.update(title=self.action.actor.get_title(None) + u" - " + self.action.label)
+        d.update(title=u"%s - %s" % (self.action.actor.get_title(None),self.action.label))
         return d
         
 class unused_InsertWrapper(MasterWrapper):
@@ -269,7 +269,7 @@ class DetailWrapper(MasterWrapper):
 class InsertWrapper(DetailWrapper):
     def get_config(self):
         d = DetailWrapper.get_config(self)
-        d.update(title=self.action.label + _(' into ') + self.action.actor.get_title(None))
+        d.update(title=_('%s into %s') %(self.action.label,self.action.actor.get_title(None)))
         d.update(record_id=-99999)
         return d
 

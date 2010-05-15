@@ -659,13 +659,13 @@ class ExtUI(base.UI):
                 return v.items
                 #kw.update(region='north',height=27,items=v.items)
                 #return py2js(kw)
-            return dict(text=v.label,menu=dict(items=v.items))
+            return dict(text=unicode(v.label),menu=dict(items=v.items))
         if isinstance(v,menus.MenuItem):
             #~ handler = "function(btn,evt){Lino.do_action(undefined,%r,%r,{})}" % (v.actor.get_url(lino_site.ui),id2js(v.actor.actor_id))
-            url = build_url("/ui",v.action.actor.app_label,v.action.actor._actor_name,v.action.name)
+            #~ url = build_url("/ui",v.action.actor.app_label,v.action.actor._actor_name,v.action.name)
             #~ handler = "function(btn,evt){Lino.do_action(undefined,{url:%r})}" % url
             handler = "function(btn,evt){new Lino.%s().show()}" % v.action
-            return dict(text=v.label,handler=js_code(handler))
+            return dict(text=unicode(v.label),handler=js_code(handler))
         return v
 
 

@@ -17,7 +17,7 @@ from dateutil.relativedelta import relativedelta
 
 from django.db import models
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 
 #from lino.modlib.countries import models as countries
 #countries = reports.get_app('countries')

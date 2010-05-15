@@ -18,8 +18,7 @@ Documentation: see lino.test_apps.properties.models.py
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
-from django.utils.translation import ugettext as _
-
+from django.utils.translation import ugettext_lazy as _
 import lino
 lino.log.debug(__file__+' : started')
 from lino import reports

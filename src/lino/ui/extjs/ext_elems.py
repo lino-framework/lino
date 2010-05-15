@@ -949,7 +949,7 @@ class GridElement(Container): #,DataElementMixin):
         d.update(emptyText="Nix gefunden...")
         d.update(store=rh.store) # js_code(self.rh.store.ext_name))
         d.update(colModel=self.column_model)
-        d.update(title=self.report.label)
+        d.update(title=unicode(self.report.label))
         #d.update(colModel=js_code('this.cols'))
         #d.update(colModel=js_code(self.column_model.ext_name))
         #~ d.update(autoHeight=True)
@@ -1144,7 +1144,7 @@ class DetailMainPanel(Panel,WrappingMainPanel):
     def ext_options(self,**kw):
         self.setup()
         kw = Panel.ext_options(self,**kw)
-        kw.update(title=self.lh.layout.label)
+        kw.update(title=unicode(self.lh.layout.label))
         #d.update(region='east',split=True) #,width=300)
         kw.update(autoScroll=True)
         if False:
