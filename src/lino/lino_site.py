@@ -164,9 +164,9 @@ class LinoSite:
         #m.add_item(system.Login(),can_view=perms.is_anonymous)
         #m.add_item(system.Logout(),can_view=perms.is_authenticated)
         
-    def get_menu(self,request):
+    def get_menu(self,user):
         self.setup()
-        return self._menu.menu_request(request)
+        return self._menu.menu_request(user)
         
       
     def fill(self,fixtures=[]):

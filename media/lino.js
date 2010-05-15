@@ -632,7 +632,7 @@ Lino.SlavePlugin = function(caller) {
   this.caller = caller;
 };
 Lino.load_picture = function(caller,cmp,record) {
-  if (record && cmp.el) {
+  if (record && cmp.el && cmp.el.dom) {
     var src = caller.config.url_data + "/" + record.id + "?fmt=jpg"
     //~ console.log('Lino.load_picture()',src);
     cmp.el.dom.src = src; 

@@ -18,28 +18,28 @@ class Condition:
     
 class never(Condition):
     @staticmethod
-    def passes(request): return False
+    def passes(user): return False
       
 class always(Condition):        
     @staticmethod
-    def passes(request): return True
+    def passes(user): return True
       
 class is_staff(Condition):        
     @staticmethod
-    def passes(request):
+    def passes(user):
         #print "requests.is_staff()", request.user.is_staff
-        return request.user.is_staff
+        return user.is_staff
         
 class is_authenticated(Condition):
     @staticmethod
-    def passes(request):
+    def passes(user):
         #print request.user, request.user.is_authenticated
-        return request.user.is_authenticated()
+        return user.is_authenticated()
 
 class is_anonymous(Condition):
     @staticmethod
-    def passes(request):
-        return not request.user.is_authenticated()
+    def passes(user):
+        return not user.is_authenticated()
         
         
 from django.conf import settings

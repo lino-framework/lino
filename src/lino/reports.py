@@ -493,7 +493,7 @@ class ReportActionRequest(actions.ActionRequest): # was ReportRequest
             if extra is None:
                 if self.master_kw is None:
                     extra = 0
-                elif self.report.can_add.passes(self):
+                elif self.report.can_add.passes(self.user):
                     extra = 1
                 else:
                     extra = 0

@@ -21,7 +21,8 @@ from django import http
 from django.db import models
 from django.db import IntegrityError
 from django.conf import settings
-from django.http import HttpResponse, Http404, HttpResponseRedirect
+from django.http import HttpResponse, Http404
+from django import http
 from django.core import exceptions
 
 from django.utils.translation import ugettext as _
@@ -77,6 +78,9 @@ def json_response(x):
             
     
 def handle_list_request(request,rh):
+    if not rh.report.can_view.passes(request.user):
+        msg = "User %s cannot view %s." % (request.user,rh.report)
+        return http.HttpResponseForbidden()
     a = rh.report.list_action
     ar = ext_requests.ViewReportRequest(request,rh,a)
     if request.method == 'POST':
@@ -147,6 +151,9 @@ def handle_list_request(request,rh):
     
     
 def handle_element_request(request,ah,elem):
+    if not ah.report.can_view.passes(request.user):
+        msg = "User %s cannot view %s." % (request.user,ah.report)
+        return http.HttpResponseForbidden()
     if request.method == 'DELETE':
         elem.delete()
         return HttpResponseDeleted()
@@ -167,7 +174,7 @@ def handle_element_request(request,ah,elem):
         fmt = request.GET.get('fmt',None)
         if fmt == 'pdf':
             elem.make_pdf()
-            return HttpResponseRedirect(elem.pdf_url())
+            return http.HttpResponseRedirect(elem.pdf_url())
         if fmt == 'jpg':
             m = getattr(elem,'image_url',None)
             if m is None:
@@ -175,7 +182,7 @@ def handle_element_request(request,ah,elem):
             url = elem.image_url()
             if url is None:
                 raise Http404("%s has no picture" % elem)
-            return HttpResponseRedirect(url)
+            return http.HttpResponseRedirect(url)
         #~ if fmt == 'json':
         return json_response_kw(id=elem.pk,data=ah.store.row2dict(elem),title=unicode(elem))
             #~ return json_response_kw(count=1,rows=[ah.store.row2dict(elem)],title=unicode(elem))
@@ -405,7 +412,7 @@ class ExtUI(base.UI):
         #~ from lino import lino_site
         return json_response_kw(success=True,
           message=(_("Welcome on Lino server %r, user %s") % (lino_site.title,request.user)) + '\n' + lino.thanks_to(),
-          load_menu=lino_site.get_menu(request))
+          load_menu=lino_site.get_menu(request.user))
         #~ s = py2js(lino_site.get_menu(request))
         #~ return HttpResponse(s, mimetype='text/html')
 

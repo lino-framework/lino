@@ -30,7 +30,7 @@ class MenuItem:
     HOTKEY_MARKER = '~'
     
     def __init__(self,parent,action,name=None,label=None,doc=None,enabled=True,
-                 can_view=perms.always,hotkey=None):
+                 can_view=None,hotkey=None):
         p = parent
         l = []
         while p is not None:
@@ -47,7 +47,7 @@ class MenuItem:
             if label is None:
                 label = action.label 
             if can_view is None:
-                can_view = action.can_view
+                can_view = action.actor.can_view
         
         self.name = name
         self.doc = doc
@@ -60,7 +60,7 @@ class MenuItem:
             #label=label[:n] + '<u>' + label[n] + '</u>' + label[n+1:]
         self.label = label
         
-        self.can_view = can_view
+        self.can_view = can_view or perms.always
         
         
 
@@ -110,8 +110,8 @@ class MenuItem:
         return mark_safe('<a href="%s">%s</a>' % (
               self.get_url_path(),self.label))
               
-    def menu_request(self,request):
-        if self.can_view.passes(request):
+    def menu_request(self,user):
+        if self.can_view.passes(user):
             return self
 
     #~ def can_view(self,request):
@@ -240,12 +240,12 @@ class Menu(MenuItem):
         except Exception, e:
             traceback.print_exc(e)
 
-    def menu_request(self,request):
-        if self.can_view.passes(request):
+    def menu_request(self,user):
+        if self.can_view.passes(user):
             m = copy.copy(self)
             items = []
             for i in m.items:
-                r = i.menu_request(request)
+                r = i.menu_request(user)
                 if r is not None:
                     items.append(r)
             m.items = items

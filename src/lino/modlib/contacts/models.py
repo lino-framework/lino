@@ -38,7 +38,6 @@ class Contact(models.Model,Printable):
         abstract = True
         
     name = models.CharField(max_length=200)
-    national_id = models.CharField(max_length=200,blank=True)
     street = models.CharField(_("Street"),max_length=200,blank=True)
     street_no = models.CharField(_("No."),max_length=10,blank=True)
     street_box = models.CharField(_("Box"),max_length=10,blank=True)
@@ -107,9 +106,7 @@ class Contacts(reports.Report):
   
 class ContactDetail(layouts.DetailLayout):
     box1 = "name"
-    box2 = """national_id:15
-              language
-              """
+    box2 = """id language"""
     box3 = """country region
               city zip_code:10
               street:25 street_no street_box
@@ -136,9 +133,6 @@ class Person(Contact):
     first_name = models.CharField(max_length=200,blank=True)
     last_name = models.CharField(max_length=200,blank=True)
     title = models.CharField(max_length=200,blank=True)
-    nationality = models.ForeignKey('countries.Country',
-        blank=True,null=True,
-        related_name='by_nationality')
         
     class Meta:
         abstract = True
@@ -157,9 +151,6 @@ class Person(Contact):
 class PersonDetail(ContactDetail):
     datalink = 'contacts.Person'
     box1 = "last_name first_name:15 title:10"
-    box2 = """national_id:15 id
-              nationality language
-              """
 
 class Persons(Contacts):
     model = "contacts.Person"

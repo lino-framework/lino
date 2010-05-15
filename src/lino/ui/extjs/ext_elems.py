@@ -624,6 +624,12 @@ class BooleanFieldElement(FieldElement):
     #~ def __init__(self,*args,**kw):
         #~ FieldElement.__init__(self,*args,**kw)
         
+    def get_field_options(self,**kw):
+        kw = FieldElement.get_field_options(self,**kw)
+        del kw['fieldLabel']
+        kw.update(boxLabel=self.label)
+        return kw
+        
     def get_column_options(self,**kw):
         kw = FieldElement.get_column_options(self,**kw)
         #kw.update(xtype='booleancolumn')

@@ -17,6 +17,14 @@
 
 from django.db import models
 
+class PercentageField(models.SmallIntegerField):
+    def __init__(self, *args, **kw):
+        defaults = dict(
+            max_length=3,
+            )
+        defaults.update(kw)
+        models.SmallIntegerField.__init__(self,*args, **defaults)
+  
 class MonthField(models.CharField):
     def __init__(self, *args, **kw):
         defaults = dict(
