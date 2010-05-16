@@ -40,7 +40,7 @@ from django.utils.safestring import mark_safe
 
 import lino
         
-from lino import reports, forms, layouts, actions
+from lino import reports, layouts, actions
 from lino.utils import perms
 from lino.utils import menus
 from lino.core import actors

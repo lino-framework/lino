@@ -21,7 +21,7 @@ from django.utils.translation import ugettext as _
 
 import lino
 from lino import reports
-from lino import forms
+#~ from lino import forms
 from lino import layouts
 from lino import actions
 #~ from lino import commands

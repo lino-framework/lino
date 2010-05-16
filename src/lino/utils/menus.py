@@ -54,10 +54,6 @@ class MenuItem:
         self.enabled = enabled
         self.hotkey = hotkey
         
-        n = label.find(self.HOTKEY_MARKER)
-        if n != -1:
-            label = label.replace(self.HOTKEY_MARKER,'')
-            #label=label[:n] + '<u>' + label[n] + '</u>' + label[n+1:]
         self.label = label
         
         self.can_view = can_view or perms.always
@@ -113,43 +109,7 @@ class MenuItem:
     def menu_request(self,user):
         if self.can_view.passes(user):
             return self
-
-    #~ def can_view(self,request):
-        #~ return True
         
-    #~ def as_ext(self,level=1):
-        #~ #s = """ { text: "%s", href: "%s" } """ % (self.label,self.get_url_path())
-        #~ s = """ { text: "%s", handler: %s } """ % (self.label,self.actor.as_ext())
-        #~ #return mark_safe(s)
-        #~ return s
-        
-
-
-        
-class unused_Action(MenuItem):
-    def __init__(self,parent,actor=None,
-                 name=None,label=None,
-                 hotkey=None,url=None,
-                 args=[],**kw):
-        assert actor is not None
-        if not kw.has_key('can_view'):
-            kw.update(can_view=actor.can_view)
-        name = name or actor.actor_id
-        label = label or actor.label
-        self.args = args
-        #self._url = url or actor.get_absolute_url(**params)
-        self.actor = actor
-        self.hotkey = hotkey
-        MenuItem.__init__(self,parent,name,label,**kw)
-        
-    def get_url_path(self):
-        return self._url
-        
-    #~ def view(self,request):
-        #~ return self.actor.view(request)
-        
-    #~ def get_urls(self,name):
-        #~ return self.actor.get_urls(name)
 
 
 class Menu(MenuItem):

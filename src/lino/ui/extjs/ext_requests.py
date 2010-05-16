@@ -18,7 +18,7 @@ from django.contrib.contenttypes.models import ContentType
 import lino
 from lino import actions
 from lino import reports
-from lino import forms
+#~ from lino import forms
 #~ from lino.core import action_requests
 from lino.utils import ucsv
 from lino.utils import chooser

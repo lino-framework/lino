@@ -359,6 +359,10 @@ Lino.id_renderer = function(value, metaData, record, rowIndex, colIndex, store) 
 
 
 Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
+  initComponent : function(){
+    Lino.GridPanel.superclass.initComponent.call(this);
+  },
+
   afterRender : function() {
     Lino.GridPanel.superclass.afterRender.call(this);
     // this.getView().mainBody.focus();
@@ -407,9 +411,6 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     //~ console.log('GridPanel.postEdit()',value, originalValue, r, field);
     return value;
   }
-  //~ add_row_listener : function(fn,scope) {
-    //~ this.getSelectionModel().addListener('rowselect',fn,scope);
-  //~ }
   });
   
 

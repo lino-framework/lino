@@ -36,7 +36,7 @@ from lino import actions, layouts #, commands
 from lino import reports        
 from lino.ui import base
 #~ from lino import diag
-from lino import forms
+#~ from lino import forms
 from lino.core import actors
 #~ from lino.core import action_requests
 from lino.utils import menus
@@ -58,6 +58,15 @@ from lino.core.coretools import app_labels
 
 class HttpResponseDeleted(HttpResponse):
     status_code = 204
+    
+def prepare_label(mi):
+    label = unicode(mi.label) # trigger translation
+    n = label.find(mi.HOTKEY_MARKER)
+    if n != -1:
+        label = label.replace(mi.HOTKEY_MARKER,'')
+        #label=label[:n] + '<u>' + label[n] + '</u>' + label[n+1:]
+    return label
+        
 
 
 def parse_bool(s):
@@ -237,11 +246,11 @@ class ExtUI(base.UI):
             #~ e = ext_elems.GridElement(lh,name,de.get_handle(self),**kw)
             lh.slave_grids.append(e)
             return e
-        if isinstance(de,forms.Input):
-            e = ext_elems.InputElement(lh,de,**kw)
-            if not lh.start_focus:
-                lh.start_focus = e
-            return e
+        #~ if isinstance(de,forms.Input):
+            #~ e = ext_elems.InputElement(lh,de,**kw)
+            #~ if not lh.start_focus:
+                #~ lh.start_focus = e
+            #~ return e
         if not name in ('__str__','__unicode__','name','label'):
             value = getattr(lh.layout,name,None)
             if value is not None:
@@ -457,7 +466,7 @@ class ExtUI(base.UI):
         #~ for app_label in site.
         fn = os.path.join(settings.MEDIA_ROOT,*self.js_cache_name(site)) 
         #~ fn = r'c:\temp\dsbe.js'
-        lino.log.debug("Generating %s ...", fn)
+        lino.log.info("Generating %s ...", fn)
         f = open(fn,'w')
         for rpt in reports.master_reports + reports.slave_reports:
             f.write("Ext.namespace('Lino.%s')\n" % rpt)
@@ -653,19 +662,20 @@ class ExtUI(base.UI):
         #~ fh = self.get_form_handle(frm)
         #~ yield dlg.show_window(fh.window_wrapper.js_render).over()
         
+        
     def py2js_converter(self,v):
         if isinstance(v,menus.Menu):
             if v.parent is None:
                 return v.items
                 #kw.update(region='north',height=27,items=v.items)
                 #return py2js(kw)
-            return dict(text=unicode(v.label),menu=dict(items=v.items))
+            return dict(text=prepare_label(v),menu=dict(items=v.items))
         if isinstance(v,menus.MenuItem):
             #~ handler = "function(btn,evt){Lino.do_action(undefined,%r,%r,{})}" % (v.actor.get_url(lino_site.ui),id2js(v.actor.actor_id))
             #~ url = build_url("/ui",v.action.actor.app_label,v.action.actor._actor_name,v.action.name)
             #~ handler = "function(btn,evt){Lino.do_action(undefined,{url:%r})}" % url
             handler = "function(btn,evt){new Lino.%s().show()}" % v.action
-            return dict(text=unicode(v.label),handler=js_code(handler))
+            return dict(text=prepare_label(v),handler=js_code(handler))
         return v
 
 

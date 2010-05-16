@@ -25,7 +25,7 @@ from django.utils.translation import ugettext as _
 import lino
 from lino.utils import perms, menus
 from lino.core import actors
-from lino import forms
+#~ from lino import forms
 from lino import actions
 from lino.core import datalinks
 #~ from lino import commands
@@ -96,7 +96,8 @@ class LayoutHandle(base.Handle):
         #~ if hasattr(layout,"main"):
             self._main = self.create_element(self.main_class,'main')
         elif self.layout.datalink is not None:
-            elems = coretools.data_elems(self.layout.datalink)
+            elems = [name for name in coretools.data_elems(self.layout.datalink) 
+                if name != self.layout.datalink_report.fk_name]
             main = self.layout.join_str.join(elems)
             self._main = self.desc2elem(self.main_class,"main",main)
         else:
@@ -169,7 +170,9 @@ class LayoutHandle(base.Handle):
             wildcard_fields = self.layout.join_str.join([
                 name for name in coretools.data_elems(self.layout.datalink) \
                   if (name not in explicit_specs) \
-                    and (name not in self.hide_elements)])
+                    and (name not in self.hide_elements) \
+                    and (name != self.layout.datalink_report.fk_name) \
+                ])
             desc = desc.replace('*',wildcard_fields)
             #lino.log.debug('desc -> %r',desc)
         if "\n" in desc:
@@ -277,8 +280,8 @@ class unused_FormLayout(Layout):
     #~ layout_command = None
     #~ actions = [actions.Cancel,actions.OK]
     
-    def do_setup(self):
-        self.datalink = forms.Form(self)
+    #~ def do_setup(self):
+        #~ self.datalink = forms.Form(self)
     #~ def do_setup(self):
         #~ self.datalink = actors.resolve_actor(self.datalink,self.app_label)
         #~ assert isinstance(self.datalink,commands.Command), \

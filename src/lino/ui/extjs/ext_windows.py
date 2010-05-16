@@ -18,7 +18,7 @@ from django.utils.translation import ugettext as _
 import lino
 from lino import actions, layouts #, commands
 from lino import reports
-from lino import forms
+#~ from lino import forms
 from lino.ui import base
 from lino.core import actors
 from lino.utils import menus
@@ -133,7 +133,8 @@ class GridWrapperMixin(WindowWrapper):
       
         d = super(GridWrapperMixin,self).get_config()
         #~ url = '' self.ui.get_action_url(a,ext_requests.FMT_RUN)
-        d.update(actions=[dict(
+        if False:
+          d.update(actions=[dict(
             opens_a_slave=a.opens_a_slave,
             handler=js_code("Lino.%s" % a),
             name=a.name,
@@ -159,6 +160,7 @@ class GridWrapperMixin(WindowWrapper):
         d.update(content_type=self.rh.report.content_type)
         d.update(title=unicode(self.rh.get_title(None)))
         d.update(url_data=self.ui.get_actor_url(self.rh.report)) # +'/data') 
+        d.update(main_panel=self.lh._main)
         return d
         
 class GridMasterWrapper(GridWrapperMixin,MasterWrapper):
@@ -190,7 +192,8 @@ class GridSlaveWrapper(GridWrapperMixin,SlaveWrapper):
         
             
     def get_config(self):
-        d = super(GridSlaveWrapper,self).get_config()
+        #~ d = super(GridSlaveWrapper,self).get_config()
+        d = GridWrapperMixin.get_config(self)
         d.update(name=self.name)
         return d
         

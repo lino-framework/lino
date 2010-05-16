@@ -192,94 +192,6 @@ class LayoutElement(VisibleComponent):
         return kw
         
         
-class InputElement(LayoutElement):
-    declare_type = jsgen.DECLARE_INLINE
-    #~ declare_type = jsgen.DECLARE_THIS
-    #declare_type = jsgen.DECLARE_VAR
-    ext_suffix = "_input"
-    xtype = 'textfield'
-    preferred_height = 0
-    field = None 
-    
-    def __init__(self,lh,input,**kw):
-        #lino.log.debug("InputElement.__init__(%r,%r)",lh,input)
-        LayoutElement.__init__(self,lh,input.name,**kw)
-        assert isinstance(lh.layout,layouts.FormLayout), "%s is not a FormLayout" % lh.name
-        self.input = input
-        
-    def submit_fields(self):
-        return [self.input.name]
-        
-    def ext_options(self,**kw):
-        kw = LayoutElement.ext_options(self,**kw)
-        kw.update(self.input.options)
-        kw.update(name=self.name)
-        kw.update(id=self.name)
-        #kw.update(xtype='textfield')
-        panel_options = dict(xtype='container',layout='form',items=kw)
-        #panel_options.update(maxHeight=self.preferred_height*EXT_CHAR_HEIGHT)
-        return panel_options
-        
-class ButtonElement(LayoutElement):
-    declare_type = jsgen.DECLARE_INLINE
-    #~ declare_type = jsgen.DECLARE_THIS
-    #declare_type = jsgen.DECLARE_VAR
-    #~ ext_suffix = "_btn"
-    xtype = None # 'button'
-    preferred_height = 0
-    value_template = "new Ext.Button(%s)"
-
-    def __init__(self,lh,name,label,**kw):
-        #~ self.button_text = button_text
-        if lh.layout.default_button == name:
-            kw.update(plugins='defaultButton')
-        kw.update(text=label)
-        #kw.update(maxHeight=self.preferred_height*EXT_CHAR_HEIGHT)
-        kw.update(maxWidth=len(label)*EXT_CHAR_WIDTH)
-        #~ kw.update(id=name)
-        LayoutElement.__init__(self,lh,name,**kw)
-      
-    #~ def ext_options(self,**kw):
-        #~ kw = LayoutElement.ext_options(self,**kw)
-        #~ return kw
-        
-class ActionElement(ButtonElement):
-  
-    def __init__(self,lh,name,action,onclick,**kw):
-        #lino.log.debug("ActionElement.__init__(%r,%r,%r)",lh,name,action)
-        label = action.label or name
-        kw.update(handler=js_code(onclick),scope=js_code('this'))
-        self.action = action
-        ButtonElement.__init__(self,lh,name,label,**kw)
-        
-        
-class FormActionElement(ActionElement):
-    def __init__(self,lh,name,action,**kw):
-        onclick = 'function() {this.on_click(%r)}' % name
-        #~ onclick = 'this.on_click'
-        #~ onclick = 'Lino.form_action(this,%s,%r)' % (
-            #~ py2js(action.needs_validation),
-            #~ lh.ui.get_form_action_url(lh,action))
-        ActionElement.__init__(self,lh,name,action,onclick,**kw)
-        
-        
-class RowActionElement(ActionElement):
-    def __init__(self,lh,name,action,**kw):
-        onclick = 'Lino.action_handler(ww_being_configured,%r)' % action.name
-        #~ onclick = 'Lino.action_handler(this,%r)' % (
-            #~ lh.datalink.get_absolute_url(grid_action=action.name))
-        ActionElement.__init__(self,lh,name,action,onclick,**kw)
-        #~ del self.value['scope']
-
-class unused_SubmitActionElement(ButtonElement):
-  
-    def __init__(self,lh,must_validate,**kw):
-        url = lh.datalink.get_absolute_url(submit=True)
-        onclick = "function(b,e) { Lino.submit_form(this,'%s','%s',%s)}" % (url, lh.datalink.store.pk.name,py2js(must_validate))
-        kw.update(handler=js_code(onclick),scope=js_code('this'))
-        ButtonElement.__init__(self,lh,'submit_btn',_('Submit'),**kw)
-
-        
 
 
 class DataViewElement(LayoutElement):
@@ -891,8 +803,8 @@ class GridElement(Container): #,DataElementMixin):
         self.report = rpt
         #~ assert isinstance(rh,reports.ReportHandle), "%r is not a ReportHandle!" % rh
         if len(elements) == 0:
-            rh = rpt.get_handle(lh.ui)
-            elements = rh.list_layout._main.elements
+            self.rh = rpt.get_handle(lh.ui)
+            elements = self.rh.list_layout._main.elements
         w = 0
         for e in elements:
             w += (e.width or e.preferred_width)
@@ -921,7 +833,7 @@ class GridElement(Container): #,DataElementMixin):
 
         
           
-    def subvars(self):
+    def unused_subvars(self):
         """
         GridElement, unlike Container, doesn't generate the declaration of its elements 
         because self.column_model does this indirectly.
@@ -955,37 +867,29 @@ class GridElement(Container): #,DataElementMixin):
         #~ d.update(autoHeight=True)
         #d.update(layout='fit')
         d.update(enableColLock=False)
+        
+        def a2btn(a):
+            return dict(
+              handler=js_code("Lino.%s" % a),
+              label=unicode(a.label),
+            )
+        #~ d.update(bbar=[dict(text="Test")])
+        
+        d.update(bbar=[a2btn(a) for a in self.rh.get_actions() if not a.hidden])
+        
+        
         return d
         
-    #~ def js_declare(self):
-        #~ for ln in Container.js_declare(self):
-            #~ yield ln
-        #~ if self.rh.report.master is not None:
-            #~ yield "this.main_grid.add_row_listener(function(sm,rowIndex,record) {"
-            #~ yield "  var p = { %s: record.id }" % URL_PARAM_MASTER_PK
-            #~ yield "  p[%r] = %r;" % (URL_PARAM_MASTER_TYPE,self.mt)
-            #~ yield "  console.log('20100212 GridElement.js_declare()',p);"
-            #~ yield "  %s.load({params:p});" % self.rh.store.as_ext()
-            #~ yield "});"
-            
       
 class SlaveGridElement(GridElement):
     def ext_options(self,**kw):
         kw = GridElement.ext_options(self,**kw)
         kw.update(plugins=js_code('new Lino.SlaveGridPlugin(caller)'))
         
+        
         #~ js = "Lino.do_action(caller,%r)" % \
             #~ rh.list_layout.get_absolute_url(run=True)
         js = "function(){ Lino.notify('Das ist noch nicht fertig... siehe ext_elems.py:990');}"
-        u"""
-        vgl. Aufbau und Konvertierung von config.actions:
-        ext_windows.py:163 
-        lino.js:620
-        
-        Wenn ich auf ein Gridelement klicke, dann soll das ja ein SlaveGridWrapper werden. Und der braucht momentan immer togglebuttons. Also ein Detail kriegt automatisch die Togglebuttons jener GridElemente, die es enthält. Die Master-Grid kriegt par défaut keine GridSlave-Buttons.
-        Müssen Detail-Fenster auch eine NavigationBar kriegen?
-        
-        """
         kw.update(listeners=dict(click=js_code(js)))
         return kw
       
@@ -1064,56 +968,45 @@ class WrappingMainPanel(MainPanel):
         return ct
 
 class GridMainPanel(GridElement,MainPanel):
-    value_template = "new Lino.GridPanel(%s)"
-    #collapsible = False
+    #~ value_template = "new Lino.GridPanel(%s)"
     def __init__(self,lh,name,vertical,*elements,**kw):
         'ignore the "vertical" arg'
         #lh.report.setup()
-        self.pager = None
+        #~ self.pager = None
         MainPanel.__init__(self)
         GridElement.__init__(self,lh,name,lh.layout.datalink_report,*elements,**kw)
         #lino.log.debug("GridMainPanel.__init__() %s",self.name)
         
-    def setup(self):
-        if self.pager is not None:
-            return
-        MainPanel.setup(self)
-        self.pager = PagingToolbar(self,'pager')
+    #~ def setup(self):
+        #~ if self.pager is not None:
+            #~ return
+        #~ MainPanel.setup(self)
+        #~ self.pager = PagingToolbar(self,'pager')
         
-    def apply_window_config(self,wc):
-        #~ print 20100310, wc.column_widths
-        i = 0
-        for w in wc.column_widths:
-            self.column_model.columns[i].update(width=w)
-            i += 1
+    #~ def apply_window_config(self,wc):
+        #~ i = 0
+        #~ for w in wc.column_widths:
+            #~ self.column_model.columns[i].update(width=w)
+            #~ i += 1
         
-    def subvars(self):
-        for e in GridElement.subvars(self):
-            yield e
-        for e in MainPanel.subvars(self):
-            yield e
-        yield self.pager
-        #~ if self.lh.datalink.properties_window is not None:
-            #~ yield self.lh.datalink.properties_window
+    #~ def subvars(self):
+        #~ for e in GridElement.subvars(self):
+            #~ yield e
+        #~ for e in MainPanel.subvars(self):
+            #~ yield e
+        #~ yield self.pager
         
-    def unused_get_datalink(self):
-        return self.rh
+    #~ def unused_get_datalink(self):
+        #~ return self.rh
         
-    def ext_options(self,**kw):
-        self.setup()
-        kw = GridElement.ext_options(self,**kw)
-        # d = Layout.ext_options(self,request)
-        # d = dict(title=request._lino_report.get_title()) 
-        #kw.update(title=request._lino_request.get_title()) 
-        #kw.update(title=self.layout.label)
-        #kw.update(title=self.report.get_title(None)) 
-        #kw.update(region='center',split=True)
-        del kw['autoHeight']
-        del kw['title']
-        kw.update(selModel=js_code("new Ext.grid.RowSelectionModel({singleSelect:false})"))
-        kw.update(tbar=self.pager)
-        #~ kw.update(bbar=self.rh.grid_buttons)
-        return kw
+    #~ def ext_options(self,**kw):
+        #~ self.setup()
+        #~ kw = GridElement.ext_options(self,**kw)
+        #~ del kw['autoHeight']
+        #~ del kw['title']
+        #~ kw.update(selModel=js_code("new Ext.grid.RowSelectionModel({singleSelect:false})"))
+        #~ kw.update(tbar=self.pager)
+        #~ return kw
 
 
 

@@ -20,7 +20,7 @@ import traceback
 from django.utils.translation import ugettext as _
 
 import lino
-from lino import layouts, forms
+from lino import layouts
 
 from lino.utils import jsgen 
 py2js = jsgen.py2js
