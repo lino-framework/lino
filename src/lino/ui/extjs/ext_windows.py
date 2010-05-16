@@ -50,6 +50,7 @@ class DownloadRenderer(ActionRenderer):
         yield "function(caller) { "
         #~ yield "  console.log(caller.get_selected());"
         yield "  var l = caller.get_selected();"
+        yield "  if (l.length == 0) Lino.notify('No selection.');"
         yield "  for (var i = 0; i < l.length; i++) "
         yield "    window.open(%r+l[i]+'?fmt=pdf');" % url
         #~ yield "  caller.get_selected().forEach(function(pk) {"
@@ -62,6 +63,7 @@ class DeleteRenderer(ActionRenderer):
   
     def js_render(self):
         yield "function(caller) { Lino.delete_selected(caller); }"
+        #~ yield "function() { Lino.delete_selected(this); }"
 
 class WindowWrapper(ActionRenderer):
   
@@ -155,11 +157,11 @@ class GridWrapperMixin(WindowWrapper):
                 #~ actions.append(btn)
         #~ d.update(actions=actions)
         #~ d.update(actions=[dict(label=a.label,name=a.name) for a in self.bbar_buttons])
-        d.update(fields=[js_code(f.as_js()) for f in self.rh.store.fields])
-        d.update(colModel=self.lh._main.column_model)
+        #~ d.update(fields=[js_code(f.as_js()) for f in self.rh.store.fields])
+        #~ d.update(colModel=self.lh._main.column_model)
         d.update(content_type=self.rh.report.content_type)
         d.update(title=unicode(self.rh.get_title(None)))
-        d.update(url_data=self.ui.get_actor_url(self.rh.report)) # +'/data') 
+        #~ d.update(url_data=self.ui.get_actor_url(self.rh.report)) # +'/data') 
         d.update(main_panel=self.lh._main)
         return d
         

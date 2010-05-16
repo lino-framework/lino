@@ -1,0 +1,35 @@
+﻿## Copyright 2009-2010 Luc Saffre
+## This file is part of the Lino project.
+## Lino is free software; you can redistribute it and/or modify 
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 3 of the License, or
+## (at your option) any later version.
+## Lino is distributed in the hope that it will be useful, 
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+## GNU General Public License for more details.
+## You should have received a copy of the GNU General Public License
+## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+
+from django.db import models
+
+from lino.utils.instantiator import Instantiator
+
+companyType = Instantiator('contacts.CompanyType',"abbr name").build
+
+def objects():
+
+    yield companyType('Firma','Firma')
+    yield companyType('asbl','asbl')
+    yield companyType('A.S.B.L.','A.S.B.L.')
+    yield companyType('sprl','sprl')
+    yield companyType('GmbH','GmbH')
+    yield companyType('AG','AG')
+    yield companyType('S.A.','S.A.')
+    yield companyType('S.C.','S.C.')
+    yield companyType('V.o.G.','V.o.G.')
+    yield companyType('G.o.E.','G.o.E.')
+    yield companyType('A.S.B.L.','Association sans but lucratif')
+    yield companyType('Maison','Maison')
+    yield companyType('Fachklinik','Fachklinik')
+    yield companyType("Centre d'Accueil d'Urgence","Centre d'Accueil d'Urgence")

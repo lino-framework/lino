@@ -218,7 +218,7 @@ class SlaveGridAction(actions.ToggleWindowAction):
 class DeleteSelected(actions.RowsAction):
     needs_selection = True
     label = _("Delete")
-    name = 'delete'
+    #~ name = 'delete'
     key = actions.DELETE # (ctrl=True)
     
         

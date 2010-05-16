@@ -43,7 +43,7 @@ class Contact(models.Model,Printable):
     street_box = models.CharField(_("Box"),max_length=10,blank=True)
     addr1 = models.CharField(max_length=200,blank=True)
     #addr2 = models.CharField(max_length=200,blank=True)
-    country = models.ForeignKey('countries.Country',blank=True,null=True)
+    country = models.ForeignKey('countries.Country',blank=True,null=True,verbose_name=_("Country"))
     city = models.ForeignKey('countries.City',blank=True,null=True)
     #city = models.CharField(max_length=200,blank=True)
     zip_code = models.CharField(max_length=10,blank=True)
@@ -172,13 +172,26 @@ class PersonsByNationality(Persons):
     column_names = "city addr1 name country language"
 
 
-
+class CompanyType(models.Model):
+    #~ id = models.CharField(max_length=10,primary_key=True)
+    abbr = models.CharField(max_length=10,verbose_name=_("Abbreviation"))
+    name = models.CharField(max_length=200,verbose_name=_("Designation"))
+    def __unicode__(self):
+        return self.name
+        
+class CompanyTypes(reports.Report):
+    model = 'contacts.CompanyType'
+    label = _("Company types")
+        
+  
 class Company(Contact):
     class Meta:
         abstract = True
         app_label = 'contacts'
     
     vat_id = models.CharField(max_length=200,blank=True)
+    type = models.ForeignKey('contacts.CompanyType',blank=True,null=True,verbose_name=_("Company type"))
+    prefix = models.CharField(max_length=200,blank=True)
     
     #~ def as_address(self,linesep="\n<br/>"):
         #~ s = Contact.as_address(self,linesep)

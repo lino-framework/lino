@@ -111,6 +111,12 @@ class LinoSite:
         else:
             lino.log.warning("settings.LINO_SETTINGS entry is missing")
             
+        lino.log.info("LinoSite %r is ready.", self.title)
+          
+        self._setup_done = True
+        self._setting_up = False
+        
+    def setup_ui(self):
         USER_INTERFACE = 'lino.ui.extjs'
         lino.log.info("Starting user interface %s",USER_INTERFACE)
         from django.utils.importlib import import_module
@@ -118,10 +124,6 @@ class LinoSite:
         self.ui = ui_module.ui
         self.ui.setup_site(self)
         
-        lino.log.info("LinoSite %r is ready.", self.title)
-          
-        self._setup_done = True
-        self._setting_up = False
         
         
     def add_menu(self,*args,**kw):
@@ -144,6 +146,7 @@ class LinoSite:
         
     def get_urls(self):
         self.setup()
+        self.setup_ui()
         return self.ui.get_urls()
         
     def add_program_menu(self):

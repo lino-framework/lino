@@ -791,7 +791,8 @@ class Panel(Container):
 
 class GridElement(Container): #,DataElementMixin):
     #value_template = "new Ext.grid.EditorGridPanel(%s)"
-    value_template = "new Ext.grid.GridPanel(%s)"
+    #~ value_template = "new Ext.grid.GridPanel(%s)"
+    value_template = "new Lino.GridPanel(%s)"
     ext_suffix = "_grid"
     vflex = True
     
@@ -859,38 +860,52 @@ class GridElement(Container): #,DataElementMixin):
         #d.update(autoScroll=True)
         #d.update(fitToFrame=True)
         d.update(emptyText="Nix gefunden...")
-        d.update(store=rh.store) # js_code(self.rh.store.ext_name))
+        #~ d.update(store=rh.store) # js_code(self.rh.store.ext_name))
+        #~ d.update(ls_data_url=rh.store) # js_code(self.rh.store.ext_name))
+        d.update(ls_data_url=rh.ui.get_actor_url(rh.report)) 
+        d.update(ls_store_fields=[js_code(f.as_js()) for f in rh.store.fields]) 
         d.update(colModel=self.column_model)
-        d.update(title=unicode(self.report.label))
         #d.update(colModel=js_code('this.cols'))
         #d.update(colModel=js_code(self.column_model.ext_name))
         #~ d.update(autoHeight=True)
         #d.update(layout='fit')
         d.update(enableColLock=False)
+        d.update(ls_quick_edit=True)
+        d.update(ls_content_type=rh.report.content_type)
         
-        def a2btn(a):
-            return dict(
-              handler=js_code("Lino.%s" % a),
-              label=unicode(a.label),
-            )
-        #~ d.update(bbar=[dict(text="Test")])
+        #~ def a2btn(a):
+            #~ return dict(
+              #~ handler=js_code("Lino.%s.createCallback(this)" % a),
+              #~ text=unicode(a.label),
+            #~ )
         
-        d.update(bbar=[a2btn(a) for a in self.rh.get_actions() if not a.hidden])
+        #~ d.update(bbar=[a2btn(a) for a in rh.get_actions() if not a.hidden])
+        d.update(ls_bbar_actions=[a2btn(a) for a in rh.get_actions() if not a.hidden])
+        #~ d.update(ls_bbar_actions=[a for a in rh.get_actions() if not a.hidden])
         
         
         return d
         
+def a2btn(a):
+    return dict(
+      opens_a_slave=a.opens_a_slave,
+      handler=js_code("Lino.%s" % a),
+      name=a.name,
+      label=unicode(a.label),
+      #~ url="/".join(("/ui",a.actor.app_label,a.actor._actor_name,a.name))
+    )
       
 class SlaveGridElement(GridElement):
     def ext_options(self,**kw):
         kw = GridElement.ext_options(self,**kw)
         kw.update(plugins=js_code('new Lino.SlaveGridPlugin(caller)'))
         
+        kw.update(title=unicode(self.report.label))
         
         #~ js = "Lino.do_action(caller,%r)" % \
             #~ rh.list_layout.get_absolute_url(run=True)
-        js = "function(){ Lino.notify('Das ist noch nicht fertig... siehe ext_elems.py:990');}"
-        kw.update(listeners=dict(click=js_code(js)))
+        #~ js = "function(){ Lino.notify('Das ist noch nicht fertig... siehe ext_elems.py:990');}"
+        #~ kw.update(listeners=dict(click=js_code(js)))
         return kw
       
         
