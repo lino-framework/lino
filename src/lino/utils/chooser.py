@@ -39,8 +39,6 @@ class Chooser:
                     self.context_values.append(name+"Hidden")
                 else:
                     self.context_values.append(name)
-
-        
         
     def get_choices(self,**data):
         if self.meth is not None:

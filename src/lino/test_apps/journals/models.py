@@ -1,4 +1,7 @@
 """
+Trying whether test is being run:
+  >>> print "foo"
+  bar
 
 Shortcut to create Journal instances:
 
@@ -44,10 +47,11 @@ Note how the documents have an internal pk that doesn't depend on their Journal:
 
 """
 
-#from django.db import models
+#~ from django.db import models
 from lino.modlib.journals import models as journals
 
     
+#~ class Document(models.Model):
 class Document(journals.AbstractDocument):
     pass #customer = models.ForeignKey(Customer,blank=True,null=True)
     

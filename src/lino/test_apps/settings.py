@@ -117,7 +117,7 @@ TEMPLATE_DIRS = (
 
 INSTALLED_APPS = (
 
-  # modlib apps required by other
+  # modlib apps required by some test_apps
   'lino.modlib.journals', 
   'lino.modlib.properties',
   'django.contrib.contenttypes',

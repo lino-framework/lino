@@ -29,8 +29,8 @@ import os
 from django.db import models
 import lino
 from lino import reports
-from lino.modlib.documents import models as documents
-#documents = reports.get_app('documents')
+#~ from lino.modlib.documents import models as documents
+from lino.utils import mixins
 
 
 class DocumentError(Exception):
@@ -155,24 +155,8 @@ class Journal(models.Model):
                 raise DocumentError(
                   "%s is not the last document in journal" % unicode(doc)
                   )
-        
-#~ def get_journal(id):
-    #~ return JOURNALS[id]
-    
-#~ def get_journals_by_docclass(cls):
-    #~ #from lino.utils.sites import lino_site # ensure setup
-    #~ #print 'JOURNALS:', JOURNALS
-    #~ return [jnl for jnl in JOURNALS.values() if jnl.docclass == cls]
-      
-#~ def get_journal_by_docclass(cls,num=0):
-    #~ l = get_journals_by_docclass(cls)
-    #~ if len(l) > num:
-        #~ return l[num]
-    #~ raise RuntimeError("No journal %s in lino_settings.py" % cls.__name__)
-      
-    
+                  
 def JournalRef(**kw):
-    #return models.CharField(max_length=4,choices=JOURNALS,**kw)
     kw.update(null=True) # Django Ticket #12708
     return models.ForeignKey(Journal,**kw)
 
@@ -180,18 +164,13 @@ def DocumentRef(**kw):
     return models.IntegerField(**kw)
 
 
-class AbstractDocument(documents.AbstractDocument):
+class AbstractDocument(mixins.Printable, mixins.MultiTableBase):
   
     journal = JournalRef()
-    #idjnl = models.CharField(max_length=4,choices=JOURNALS)
     number = DocumentRef()
+    last_modified = models.DateTimeField(auto_now=True)
+    sent_time = models.DateTimeField(blank=True,null=True)
     
-    #~ journal_class = Journal
-    
-    class Meta:
-        abstract = True
-        
-        
     @classmethod
     def create_journal(cls,id,**kw):
         doctype = get_doctype(cls)
@@ -222,6 +201,43 @@ class AbstractDocument(documents.AbstractDocument):
             #~ return "%s#%d (%d)" % (self.journal.id,self.number, self.id)
         return "%s#%s (%d)" % (self.journal,self.number,self.id)
         
+    def get_last_modified_time(self):
+        return self.last_modified 
+
+    def html_templates(self):
+        # when using pisa
+        model = self.get_child_model()
+        return [
+          '%s_pisa.html' % self.journal,
+          '%s_pisa.html' % model.__name__.lower(),
+          'document_pisa.html'
+        ]
+
+    def can_send(self):
+        return True
+      
+    def must_send(self):
+        if not self.can_send():
+            return False
+        return self.sent_time is None
+        
+        
+    def send(self,simulate=True):
+        self.make_pdf()
+        if False:
+            result = render.print_instance(self,as_pdf=True)
+            #print result
+            fn = "%s%d.pdf" % (self.journal.id,self.id)
+            file(fn,"w").write(result)
+        if not simulate:
+            # todo : here we should really send it
+            self.sent_time = datetime.datetime.now()
+            self.save()
+            
+    
+        
+        
+        
     def before_save(self):
         #~ assert self.journal is not None
         #~ assert JOURNALS.has_key(self.journal)
@@ -245,6 +261,7 @@ class AbstractDocument(documents.AbstractDocument):
         return super(AbstractDocument,self).delete()
         
     def get_child_model(self):
+        ## overrides Typed
         return DOCTYPES[self.journal.doctype][0]
         
     def pdf_filename(self):
@@ -277,7 +294,6 @@ class Journals(reports.Report):
     
 class DocumentsByJournal(reports.Report):
     order_by = "number"
-    #master = Journal
     fk_name = 'journal' # see django issue 10808
     
     def get_title(self,renderer):
@@ -309,4 +325,4 @@ class unused_DocumentsByJournal(reports.Report):
         reports.Report.__init__(self,**params)
 
 
-__all__ = ['Journal']
+#~ __all__ = ['Journal']

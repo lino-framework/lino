@@ -52,7 +52,7 @@ class DownloadRenderer(ActionRenderer):
         yield "  var l = caller.get_selected();"
         yield "  if (l.length == 0) Lino.notify('No selection.');"
         yield "  for (var i = 0; i < l.length; i++) "
-        yield "    window.open(%r+l[i]+'?fmt=pdf');" % url
+        yield "    window.open(%r+l[i]+'?fmt=%s');" % (url,self.action.name)
         #~ yield "  caller.get_selected().forEach(function(pk) {"
         #~ yield "    console.log(pk);"
         #~ yield "    window.open(%r+pk+'.pdf');" % url

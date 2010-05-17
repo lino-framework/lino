@@ -19,20 +19,17 @@ from django.db import models
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
-#from lino.modlib.countries import models as countries
-#countries = reports.get_app('countries')
-
 from django import forms
 
 import lino
 from lino import reports
 from lino import layouts
 from lino.utils import perms
+from lino.utils import mixins
 
 from lino.modlib.contacts.utils import join_words
-from lino.modlib.documents.utils import Printable
 
-class Contact(models.Model,Printable):
+class Contact(models.Model,mixins.Printable):
   
     class Meta:
         abstract = True
@@ -155,7 +152,7 @@ class PersonDetail(ContactDetail):
 class Persons(Contacts):
     model = "contacts.Person"
     label = _("Persons")
-    column_names = "first_name last_name title country id name"
+    column_names = "first_name last_name title country id name *"
     can_delete = True
     order_by = "last_name first_name id"
     #can_view = perms.is_authenticated
@@ -204,73 +201,13 @@ class CompanyDetail(ContactDetail):
               
 class Companies(Contacts):
     label = _("Companies")
-    column_names = "name country city id address"
+    column_names = "name country city id address *"
     model = 'contacts.Company'
     order_by = "name"
-    #~ queryset = Contact.objects.exclude(companyName__exact=None)\
-      #~ .order_by("companyName")
     
 class CompaniesByCountry(Companies):
     fk_name = 'country'
     column_names = "city addr1 name country language"
     order_by = "city addr1"
     
-#~ class PersonsByCountryPage(layouts.DetailLayout):
-    #~ label = "Persons by Country"
-    #~ main = """
-    #~ isocode name
-    #~ PersonsByCountry
-    #~ """
-#~ countries.Countries.register_page_layout(PersonsByCountryPage)
-
-#~ class CompaniesByCountryPage(layouts.DetailLayout):
-    #~ label = "Companies by Country"
-    #~ main = """
-    #~ isocode name
-    #~ CompaniesByCountry
-    #~ """
-#~ countries.Countries.register_page_layout(CompaniesByCountryPage)
-
-        
-
-
-
-            
-#~ class Contacts(reports.Report):
-    #~ column_names = "id:3 companyName firstName lastName title country"
-    #~ can_delete = True
-    #~ model = Contact
-    #~ order_by = "id"
-    #~ #can_view = perms.is_authenticated
-
-        
-#~ class Companies(Contacts):
-    #~ #queryset=Contact.objects.order_by("companyName")
-    #~ column_names = "companyName country title firstName lastName"
-    #~ exclude = dict(companyName__exact='')
-    #~ order_by = "companyName"
-    
-
-#~ class Persons(Contacts):
-    #~ filter = dict(companyName__exact='')
-    #~ order_by = "lastName firstName"
-    #~ column_names = "title firstName lastName country id"
-    
-
-
-#~ class ContactsByCountry(Contacts):
-    #~ model = "contacts.Partner"
-    #~ master = "countries.Country"
-    #~ order_by = "city addr1"
-    
-#~ class CountryAndPartnersPage(layouts.DetailLayout):
-    #~ label = "Contacts by Country"
-    #~ main = """
-    #~ isocode name
-    #~ ContactsByCountry
-    #~ """
-    
-
-    
-  
 

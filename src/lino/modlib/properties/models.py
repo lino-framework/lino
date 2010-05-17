@@ -283,10 +283,6 @@ class PropsEdit(actions.OpenWindowAction):
     "Default action for PropValuesByOwner"
     name = 'pgrid'
     
-    def get_title(self,rr):
-        if rr.master_instance is None:
-            return _('Properties for %s') % rr.master._meta.verbose_name_plural
-        return _('Properties for %s') % rr.master_instance
             
 
 class PropValuesByOwner(reports.Report):
@@ -298,6 +294,11 @@ class PropValuesByOwner(reports.Report):
     fk_name = 'owner'
     order_by = "prop__name"
     
+    def get_title(self,rr):
+        if rr.master_instance is None:
+            return _('Properties for %s') % rr.master._meta.verbose_name_plural
+        return _('Properties for %s') % rr.master_instance
+        
     def get_queryset(self,ar):
         "returns one PropValue instance for each possible Property"
         return [ p.get_value_for(ar.master_instance) 
@@ -305,8 +306,8 @@ class PropValuesByOwner(reports.Report):
 
     def row2dict(self,row,d):
         d['name'] = row.prop.name
-        d['label'] = row.prop.label
-        d['type'] = row.prop.value_type.__class__.__name__
+        #~ d['label'] = row.prop.label
+        #~ d['type'] = row.prop.value_type.__class__.__name__
         d['value'] = row.value
         #~ d['choices'] = [unicode(pv) for pv in row.value_choices(row.prop)]
         return d

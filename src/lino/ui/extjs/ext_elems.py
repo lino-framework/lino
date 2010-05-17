@@ -361,6 +361,8 @@ class CharFieldElement(FieldElement):
         #~ if self.width is None and self.field.max_length < 10:
             #~ # "small" texfields should not be expanded, so they get an explicit width
             #~ self.width = self.field.max_length
+        #~ if self.field.choices...
+            #~ self.value_template = "new Ext.form.ComboBox(%s)"
             
     def get_field_options(self,**kw):
         kw = FieldElement.get_field_options(self,**kw)

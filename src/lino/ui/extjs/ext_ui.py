@@ -32,6 +32,7 @@ from django.contrib.contenttypes import generic
 
 import lino
 from lino.utils import ucsv
+from lino.utils import mixins
 from lino import actions, layouts #, commands
 from lino import reports        
 from lino.ui import base
@@ -50,7 +51,7 @@ from lino.ui.extjs import ext_viewport
 from lino.modlib.properties import models as properties
 
 from django.conf.urls.defaults import patterns, url, include
-from lino.modlib.documents.utils import PdfAction
+from lino.utils.mixins import PrintAction
 
 from lino.core.coretools import app_labels
 
@@ -183,17 +184,23 @@ def handle_element_request(request,ah,elem):
               
     if request.method == 'GET':
         fmt = request.GET.get('fmt',None)
-        if fmt == 'pdf':
-            elem.make_pdf()
-            return http.HttpResponseRedirect(elem.pdf_url())
-        if fmt == 'jpg':
-            m = getattr(elem,'image_url',None)
-            if m is None:
-                raise Http404("%s has no image_url" % elem)
-            url = elem.image_url()
-            if url is None:
-                raise Http404("%s has no picture" % elem)
-            return http.HttpResponseRedirect(url)
+        if fmt:
+            pm = mixins.get_print_method(fmt)
+            target = pm.get_target_url(elem)
+            if target is None:
+                raise Http404("%s could not build %r" % (pm,elem))
+            return http.HttpResponseRedirect(target)
+        #~ if fmt == 'pdf':
+            #~ elem.make_pdf()
+            #~ return http.HttpResponseRedirect(elem.pdf_url())
+        #~ if fmt == 'jpg':
+            #~ m = getattr(elem,'image_url',None)
+            #~ if m is None:
+                #~ raise Http404("%s has no image_url" % elem)
+            #~ url = elem.image_url()
+            #~ if url is None:
+                #~ raise Http404("%s has no picture" % elem)
+            #~ return http.HttpResponseRedirect(url)
         #~ if fmt == 'json':
         return json_response_kw(id=elem.pk,data=ah.store.row2dict(elem),title=unicode(elem))
             #~ return json_response_kw(count=1,rows=[ah.store.row2dict(elem)],title=unicode(elem))
@@ -700,7 +707,7 @@ class ExtUI(base.UI):
         
         
     def action_window_wrapper(self,a,h):
-        if isinstance(a,PdfAction): return ext_windows.DownloadRenderer(self,a)
+        if isinstance(a,PrintAction): return ext_windows.DownloadRenderer(self,a)
         if isinstance(a,reports.DeleteSelected): return ext_windows.DeleteRenderer(self,a)
           
         if isinstance(a,reports.GridEdit):

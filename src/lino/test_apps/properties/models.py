@@ -31,7 +31,7 @@ Now we have setup the properties. Let's have a look at this metadata::
   
 PropValuesByOwner is a report that cannot be rendered into a normal grid because the 'value' column has variable data type, but it's render_to_dict() method is used to fill an `Ext.grid.PropertyGrid`:
 
-  >>> properties.PropValuesByOwner().render_to_dict(master=Person)
+  >>> properties.PropValuesByOwner().request(master=Person).render_to_dict()
   {'count': 3, 'rows': [{'name': u'favdish', 'value': ''}, {'name': u'married', 'value': None}, {'name': u'weight', 'value': None}], 'title': u'Properties for persons'}
   
  
@@ -81,12 +81,12 @@ To see the property values of a person, we can use a manual query...
   
 ... or use the `PropValuesByOwner` report:
 
-  >>> properties.PropValuesByOwner().render_to_dict(master_instance=fred)
+  >>> properties.PropValuesByOwner().request(master_instance=fred).render_to_dict()
   {'count': 3, 'rows': [{'name': u'favdish', 'value': u'Fish'}, {'name': u'married', 'value': False}, {'name': u'weight', 'value': 110}], 'title': u'Properties for Fred'}
   
 Note how properties.PropValuesByOwner also returns 3 rows for Mary although we don't know her weight:
   
-  >>> properties.PropValuesByOwner().render_to_dict(master_instance=mary)
+  >>> properties.PropValuesByOwner().request(master_instance=mary).render_to_dict()
   {'count': 3, 'rows': [{'name': u'favdish', 'value': u'Meat'}, {'name': u'married', 'value': True}, {'name': u'weight', 'value': None}], 'title': u'Properties for Mary'}
   
 Query by property:

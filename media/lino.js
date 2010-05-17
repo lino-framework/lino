@@ -775,7 +775,7 @@ Lino.SlavePlugin = function(caller) {
 };
 Lino.load_picture = function(caller,cmp,record) {
   if (record && cmp.el && cmp.el.dom) {
-    var src = caller.ls_data_url + "/" + record.id + "?fmt=jpg"
+    var src = caller.ls_data_url + "/" + record.id + "?fmt=picture"
     //~ console.log('Lino.load_picture()',src);
     cmp.el.dom.src = src; 
   } else console.log('Lino.load_picture() no record or cmp not rendered',caller,cmp,record);

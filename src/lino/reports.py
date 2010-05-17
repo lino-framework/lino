@@ -48,6 +48,7 @@ import lino
 from lino import layouts
 from lino import actions
 from lino.utils import perms, menus
+from lino.utils import mixins
 from lino.core import datalinks
 from lino.core import actors
 #~ from lino.core import action_requests
@@ -638,7 +639,6 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
             m = getattr(self.model,'setup_report',None)
             if m:
                 m(self)
-                
         
         actors.Actor.__init__(self)
         base.Handled.__init__(self)
@@ -672,6 +672,9 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
             #~ assert issubclass(self.master,models.Model), "%s.master is a %r" % (self.actor_id,self.master)
             #~ self.fk = _get_foreign_key(self.master,self.model) #,self.fk_name)
         
+        self.default_action = self.default_action_class(self)
+        self.list_action = ListAction(self)
+        
         
         #self.setup()
         
@@ -685,15 +688,17 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
         
     def do_setup(self):
       
-        self.default_action = self.default_action_class(self)
-        self.list_action = ListAction(self)
-        
         actions = [ ac(self) for ac in self.actions ]
           
         if self.model is not None:
             self.list_layout = layouts.list_layout_factory(self)
             self.detail_layouts = getattr(self.model,'_lino_layouts',[])
               
+            if issubclass(self.model,mixins.Printable):
+                #~ print 20100517, mixins.pm_list
+                for pm in mixins.pm_list:
+                    actions.append(mixins.PrintAction(self,pm))
+                    
             if hasattr(self.model,'_lino_slaves'):
                 self._slaves = self.model._lino_slaves.values()
             else:
@@ -876,7 +881,7 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
         #~ rr = self.request(None,**kw)
         #~ return rr.render_to_dict()
         
-    def request(self,ui,**kw):
+    def request(self,ui=None,**kw):
         return self.get_handle(ui).request(**kw)
 
     def row2dict(self,row,d):

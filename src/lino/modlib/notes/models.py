@@ -21,19 +21,27 @@ from lino.modlib import fields, tools
 from lino import reports
 from lino import layouts
 from lino.utils import perms
-from lino.modlib.documents.utils import Printable
+from lino.utils import mixins
 
 tools.requires_apps('auth','contenttypes','links')
 
 class NoteType(models.Model):
     name = models.CharField(max_length=200)
+    print_method = models.CharField(max_length=20,choices=mixins.print_method_choices())
+    template = models.CharField(max_length=200)
+    
     def __unicode__(self):
         return self.name
+        
+    def template_choices(self,print_method=None):
+        pm = mixins.get_print_method(print_method)
+        import glob
+        from django.conf import settings
+        return glob.glob(settings.DATA_DIR+'*'+pm.template_ext)
+        
 
 
-class Note(models.Model,Printable):
-    #~ class Meta:
-        #~ abstract = True
+class Note(models.Model,mixins.Printable):
         
     user = models.ForeignKey("auth.User",blank=True,null=True)
     date = fields.MyDateField()
@@ -41,12 +49,14 @@ class Note(models.Model,Printable):
     #~ owner_id = models.PositiveIntegerField(blank=True,null=True)
     #~ owner = generic.GenericForeignKey('owner_type', 'owner_id')
     type = models.ForeignKey(NoteType,blank=True,null=True)
-    short = models.CharField(max_length=200,blank=True,null=True)
-    text = models.TextField(blank=True)
+    subject = models.CharField(max_length=200,blank=True,null=True)
+    body = models.TextField(blank=True)
     
-    project = models.ForeignKey("projects.Project",blank=True,null=True)
+    #~ project = models.ForeignKey("projects.Project",blank=True,null=True)
     person = models.ForeignKey("contacts.Person",blank=True,null=True)
     company = models.ForeignKey("contacts.Company",blank=True,null=True)
+    
+    url = models.URLField(verify_exists=True)
     
     # partner = models.ForeignKey("contacts.Partner",blank=True,null=True)
     
@@ -55,14 +65,21 @@ class Note(models.Model,Printable):
             s = u"(%s %s)" % (self.user,self.date)
         else:
             s = u"(Anon %s)" % (self.date)
-        if self.short:
-            return self.short + " " + s
+        if self.subject:
+            return self.subject + " " + s
         return s
         
     def on_create(self,req):
         u = req.get_user()
         if u is not None:
             self.user = u
+        
+    def get_print_templates(self,pm):
+        if self.type is None:
+            return mixins.Printable.get_print_templates(self,pm)
+            #[self.filename_root() + pm.template_ext]
+        assert self.type.template.endswith(pm.template_ext)
+        return [ self.type.template ]
         
 
 class NoteDetail(layouts.DetailLayout):
@@ -90,21 +107,24 @@ class NoteDetail(layouts.DetailLayout):
     company
     """
     main = """
-    date short type user 
+    date subject type user 
     box1:40 links.LinksByOwner:40
-    text:80x5 
+    body:80x5 
     """
+    
+class NoteTypes(reports.Report):
+    model = 'notes.NoteType'
     
 class Notes(reports.Report):
     model = 'notes.Note'
-    column_names = "id date user short * text"
+    column_names = "id date user subject * body"
     order_by = "id"
     button_label = _("Notes")
 
 class MyNotes(Notes):
     fk_name = 'user'
-    column_names = "date short *"
-    hide_columns = "text"
+    column_names = "date subject *"
+    hide_columns = "body"
     can_view = perms.is_authenticated
     button_label = _("My Notes")
     
@@ -114,19 +134,19 @@ class MyNotes(Notes):
             req.master_instance = req.get_user()
             #print req.master_instance
 
-class NotesByProject(Notes):
-    fk_name = 'project'
-    column_names = "date short user"
-    order_by = "date"
+#~ class NotesByProject(Notes):
+    #~ fk_name = 'project'
+    #~ column_names = "date subject user *"
+    #~ order_by = "date"
   
 class NotesByPerson(Notes):
     fk_name = 'person'
-    column_names = "date short user"
+    column_names = "date subject user *"
     order_by = "date"
   
 class NotesByCompany(Notes):
     fk_name = 'company'
-    column_names = "date short user"
+    column_names = "date subject user *"
     order_by = "date"
   
   

@@ -12,7 +12,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Note that the following won't work because the contacs.Person is abstract:
+Note that the following won't work because `contacs.Person` is abstract:
 
   >>> get_app('contacts')
   >>> p = contacts.Person(name="Foo")
@@ -32,7 +32,7 @@ from django.utils.importlib import import_module
 def get_app(app_label):
     """
     This is called in models modules instead of "from x.y import models as y"
-    It is probably quicker than loading.get_app().
+    It is probably quicker than `loading.get_app()`.
     It doesn't work during loading.appcache._populate().
     Didn't test how they compare in multi-threading cases.
     
