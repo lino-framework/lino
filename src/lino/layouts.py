@@ -295,7 +295,7 @@ class unused_FormLayout(Layout):
 class ModelLayout(Layout):
     #~ layout_model = None
     def do_setup(self):
-        lino.log.debug("ModelLayout.setup() %s",self)
+        #~ lino.log.debug("ModelLayout.setup() %s",self)
         if self.datalink is None:
             if self.datalink_report is not None:
                 self.datalink = self.datalink_report.model
@@ -334,15 +334,15 @@ class DetailLayout(ModelLayout):
             if l is None:
                 l = []
                 setattr(self.datalink,'_lino_layouts',l)
-            lino.log.debug('Register DetailLayout %s as %r for model %s',
-                self,self._actor_name,model_label(self.datalink))
+            #~ lino.log.debug('Register DetailLayout %s as %r for model %s',
+                #~ self,self._actor_name,model_label(self.datalink))
             new_details = []
             found = False
             #~ if len(l) > 0:
                 #~ print self,l
             for dtl in l:
                 if self._actor_name == dtl._actor_name:
-                    lino.log.debug('Detail %r : replaced %r by %r',dtl._actor_name,dtl.__class__,self)
+                    #~ lino.log.debug('Detail %r : replaced %r by %r',dtl._actor_name,dtl.__class__,self)
                     new_details.append(self)
                     found = True
                 else:

@@ -31,7 +31,7 @@ def register_converter(func):
 
 
 def py2js(v):
-    lino.log.debug("py2js(%r)",v)
+    #~ lino.log.debug("py2js(%r)",v)
     for cv in CONVERTERS:
         v = cv(v)
         

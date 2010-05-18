@@ -74,7 +74,7 @@ if len(log.handlers) == 0:
         h.setFormatter(fmt)
         log.addHandler(h)
         
-        h = logging.FileHandler('lino.log','w')
+        h = logging.FileHandler('lino.log') #,'w')
         h.setLevel(logging.DEBUG)
         fmt = logging.Formatter(
             fmt='%(asctime)s %(levelname)s %(module)s : %(message)s',

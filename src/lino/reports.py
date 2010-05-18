@@ -100,19 +100,20 @@ def register_report(rpt):
             lino.log.warning("%s defines new attribute(s) %s", rpt.__class__, ",".join(myattrs))
     
     if rpt.model is None:
-        lino.log.debug("%s is an abstract report", rpt)
+        #~ lino.log.debug("%s is an abstract report", rpt)
         return
         
     #~ rpt = cls()
     if rpt.master is None:
         master_reports.append(rpt)
         if rpt.use_as_default_report:
-            lino.log.debug("register %s : model_report for %s", rpt.actor_id, model_label(rpt.model))
+            #~ lino.log.debug("register %s : model_report for %s", rpt.actor_id, model_label(rpt.model))
             rpt.model._lino_model_report = rpt
         else:
-            lino.log.debug("register %s: not used as model_report",rpt.actor_id)
+            #~ lino.log.debug("register %s: not used as model_report",rpt.actor_id)
+            pass
     elif rpt.master is ContentType:
-        lino.log.debug("register %s : generic slave for %r", rpt.actor_id, rpt.fk_name)
+        #~ lino.log.debug("register %s : generic slave for %r", rpt.actor_id, rpt.fk_name)
         generic_slaves[rpt.actor_id] = rpt
     else:
         slave_reports.append(rpt)
@@ -132,12 +133,12 @@ def discover():
     """
     
     lino.log.info("Analyzing Reports...")
-    lino.log.debug("Register Report actors...")
+    #~ lino.log.debug("Register Report actors...")
     for rpt in actors.actors_list:
         if isinstance(rpt,Report) and rpt.__class__ is not Report:
             register_report(rpt)
             
-    lino.log.debug("Instantiate model reports...")
+    #~ lino.log.debug("Instantiate model reports...")
     for model in models.get_models():
         rpt = getattr(model,'_lino_model_report',None)
         if rpt is None:
@@ -145,15 +146,15 @@ def discover():
             register_report(rpt)
             model._lino_model_report = rpt
             
-    lino.log.debug("Analyze %d slave reports...",len(slave_reports))
+    #~ lino.log.debug("Analyze %d slave reports...",len(slave_reports))
     for rpt in slave_reports:
         slaves = getattr(rpt.master,"_lino_slaves",None)
         if slaves is None:
             slaves = {}
             rpt.master._lino_slaves = slaves
         slaves[rpt.actor_id] = rpt
-        lino.log.debug("%s: slave for %s",rpt.actor_id, rpt.master.__name__)
-    lino.log.debug("Assigned %d slave reports to their master.",len(slave_reports))
+        #~ lino.log.debug("%s: slave for %s",rpt.actor_id, rpt.master.__name__)
+    #~ lino.log.debug("Assigned %d slave reports to their master.",len(slave_reports))
         
     #~ lino.log.debug("Setup model reports...")
     #~ for model in models.get_models():
@@ -164,7 +165,7 @@ def discover():
         #~ pw = ext_elems.PropertiesWindow(model)
         #~ model._lino_properties_window = pw
             
-    lino.log.debug("reports.setup() done")
+    #~ lino.log.debug("reports.setup() done")
 
 
 

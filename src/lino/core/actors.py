@@ -62,10 +62,8 @@ def resolve_actor(actor,app_label):
         
 def register_actor(a):
     old = actors_dict.get(a.actor_id,None)
-    if old is None:
-        lino.log.debug("register_actor %s = %r",a.actor_id,a.__class__)
-    else:
-        lino.log.debug("register_actor %s : %r replaced by %r",a.actor_id,old.__class__,a.__class__)
+    if old is not None:
+        #~ lino.log.debug("register_actor %s : %r replaced by %r",a.actor_id,old.__class__,a.__class__)
         actors_list.remove(old)
     actors_dict[a.actor_id] = a
     actors_list.append(a)
@@ -84,7 +82,7 @@ def discover():
     assert actors_list is None
     actors_dict = {}
     actors_list = []
-    lino.log.debug("actors.discover() : instantiating %d actors",len(actor_classes))
+    #~ lino.log.debug("actors.discover() : instantiating %d actors",len(actor_classes))
     for cls in actor_classes:
         register_actor(cls())
     actor_classes = None
@@ -93,7 +91,7 @@ def discover():
     #~ for a in actors_list:
         #~ a.setup()
         
-    lino.log.debug("actors.discover() done")
+    #~ lino.log.debug("actors.discover() done")
         #~ a = cls()
         #~ old = actors_dict.get(a.actor_id,None)
         #~ if old is not None:
@@ -114,9 +112,10 @@ class ActorMetaClass(type):
               'ModelLayout'):
             #~ actors_dict[cls.actor_id] = cls
             if actor_classes is None:
-                lino.log.debug("%s definition was after discover",cls)
+                #~ lino.log.debug("%s definition was after discover",cls)
+                pass
             else:
-                lino.log.debug("Found actor %s.",cls)
+                #~ lino.log.debug("Found actor %s.",cls)
                 actor_classes.append(cls)
         return cls
 
@@ -160,7 +159,7 @@ class Actor(Handled):
         self._actions_dict = {}
         Handled.__init__(self)
 
-        lino.log.debug("Actor.__init__() %s",self)
+        #~ lino.log.debug("Actor.__init__() %s",self)
 
     def get_label(self):
         #~ if self.label is None:
@@ -194,7 +193,7 @@ class Actor(Handled):
             else:
                 lino.log.warning("%s.setup() called recursively" % self.actor_id)
                 return False
-        lino.log.debug("Actor.setup() %s", self)
+        #~ lino.log.debug("Actor.setup() %s", self)
         self._setup_doing = True
         self.do_setup()
         self._setup_doing = False

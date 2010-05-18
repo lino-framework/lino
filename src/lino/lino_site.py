@@ -81,10 +81,11 @@ class LinoSite:
         lino.log.debug("%d applications: %s.", len(apps),", ".join(apps))
         models_list = models.get_models()
         lino.log.debug("%d models:",len(models_list))
-        i = 0
-        for model in models_list:
-            i += 1
-            lino.log.debug("  %2d: %s.%s -> %r",i,model._meta.app_label,model._meta.object_name,model)
+        if False:
+            i = 0
+            for model in models_list:
+                i += 1
+                lino.log.debug("  %2d: %s.%s -> %r",i,model._meta.app_label,model._meta.object_name,model)
             
         ## django.db.models.loading.cache is now populated
 
