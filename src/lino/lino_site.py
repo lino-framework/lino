@@ -11,7 +11,6 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-
 import os
 import sys
 #~ import imp
@@ -46,6 +45,20 @@ from lino.utils import menus
 from lino.core import actors
 from lino.core.coretools import app_labels
 
+## The following not only logs diagnostic information, it also has an 
+## important side effect: it causes django.db.models.loading.cache to 
+## be populated. This must be done before calling actors.discover().
+
+apps = app_labels()
+lino.log.debug("%d applications: %s.", len(apps),", ".join(apps))
+models_list = models.get_models() # populates django.db.models.loading.cache 
+lino.log.debug("%d models:",len(models_list))
+if settings.MODEL_DEBUG:
+    i = 0
+    for model in models_list:
+        i += 1
+        lino.log.debug("  %2d: %s.%s -> %r",i,model._meta.app_label,model._meta.object_name,model)
+
 
 
 class LinoSite:
@@ -73,22 +86,6 @@ class LinoSite:
             raise Exception("LinoSite.setup() called recursively.")
         self._setting_up = True
         
-        ## The following not only logs diagnostic information, it also has an 
-        ## important side effect: it causes django.db.models.loading.cache to 
-        ## be populated. This must be done before calling actors.discover().
-        
-        apps = app_labels()
-        lino.log.debug("%d applications: %s.", len(apps),", ".join(apps))
-        models_list = models.get_models()
-        lino.log.debug("%d models:",len(models_list))
-        if False:
-            i = 0
-            for model in models_list:
-                i += 1
-                lino.log.debug("  %2d: %s.%s -> %r",i,model._meta.app_label,model._meta.object_name,model)
-            
-        ## django.db.models.loading.cache is now populated
-
         actors.discover()
         
         reports.discover()
@@ -100,11 +97,11 @@ class LinoSite:
             if not isinstance(a,layouts.DetailLayout):
                 a.setup()
 
-            
-        #~ lino.log.debug("ACTORS:")
-        #~ for k in sorted(actors.actors_dict.keys()):
-            #~ a = actors.actors_dict[k]
-            #~ lino.log.debug("%s -> %r",k,a.__class__)
+        if settings.MODEL_DEBUG:
+            lino.log.debug("ACTORS:")
+            for k in sorted(actors.actors_dict.keys()):
+                a = actors.actors_dict[k]
+                lino.log.debug("%s -> %r",k,a.__class__)
           
         if hasattr(settings,'LINO_SETTINGS'):
             lino.log.info("Reading %s ...", settings.LINO_SETTINGS)
@@ -204,7 +201,7 @@ class LinoSite:
   
 
 lino_site = LinoSite()
-lino.log.debug("lino.lino_site has been instantiated")
+#~ lino.log.debug("lino.lino_site has been instantiated")
 #'get_urls','fill','context'
 
 fill = lino_site.fill

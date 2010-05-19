@@ -25,15 +25,17 @@ import lino
 from lino import reports
 from lino import layouts
 from lino.utils import perms
-from lino.utils import mixins
+#~ from lino.utils import mixins
 
 from lino.modlib.contacts.utils import join_words
 
-class Contact(models.Model,mixins.Printable):
+#~ class ContactMixin:
+#~ class Contact(models.Model,mixins.Printable):
+class Contact(models.Model):
   
     class Meta:
         abstract = True
-        
+  
     name = models.CharField(max_length=200)
     street = models.CharField(_("Street"),max_length=200,blank=True)
     street_no = models.CharField(_("No."),max_length=10,blank=True)
@@ -126,18 +128,20 @@ class ContactDetail(layouts.DetailLayout):
        
  
 
-class Person(Contact):    
+#~ class PersonMixin(ContactMixin):
+class Person(Contact):
+    class Meta:
+        abstract = True
+        app_label = 'contacts'
+
     first_name = models.CharField(max_length=200,blank=True)
     last_name = models.CharField(max_length=200,blank=True)
     title = models.CharField(max_length=200,blank=True)
         
-    class Meta:
-        abstract = True
-        app_label = 'contacts'
     
     def save(self,*args,**kw):
         self.before_save()
-        r = super(Person,self).save(*args,**kw)
+        r = super(PersonMixin,self).save(*args,**kw)
         return r
         
     def before_save(self):
@@ -185,10 +189,10 @@ class Company(Contact):
     class Meta:
         abstract = True
         app_label = 'contacts'
+#~ class CompanyMixin:
     
     vat_id = models.CharField(max_length=200,blank=True)
     type = models.ForeignKey('contacts.CompanyType',blank=True,null=True,verbose_name=_("Company type"))
-    prefix = models.CharField(max_length=200,blank=True)
     
     #~ def as_address(self,linesep="\n<br/>"):
         #~ s = Contact.as_address(self,linesep)
