@@ -186,6 +186,8 @@ def handle_element_request(request,ah,elem):
         fmt = request.GET.get('fmt',None)
         if fmt:
             pm = mixins.get_print_method(fmt)
+            if pm is None:
+                raise Http404("Unknown format %r" % fmt)
             target = pm.get_target_url(elem)
             if target is None:
                 raise Http404("%s could not build %r" % (pm,elem))
