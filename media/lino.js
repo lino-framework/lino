@@ -64,29 +64,16 @@ Lino.on_submit_failure = function(form, action) {
 
 Lino.save_wc_handler = function(ww) {
   return function(event,toolEl,panel,tc) {
-    //~ var url = ww.config.url_action;
-    // var url = '/save_window_config'
-    // var url = '/save_win/' + panel._permalink_name
-    // console.log(panel.id,panel.getSize(),panel.getPosition());
+    //~ console.log('save_wc_handler',panel.id,panel.getSize(),panel.getPosition());
     var pos = panel.getPosition();
     var size = panel.getSize();
-    // var w = size['width'] * 100 / Lino.viewport.getWidth();
-    // var h = size['height'] * 100 / Lino.viewport.getHeight();
     wc = ww.get_window_config();
     Ext.applyIf(wc,{ 
-      // name: ww._permalink_name,
       x:pos[0],y:pos[1],height:size.height,width:size.width,
       maximized:panel.maximized});
-    //~ Lino.do_dialog(caller,url,wc);
-    Lino.do_action(ww,{url:ww.config.url_action,params:wc,method:'POST'});
-    //~ Ext.Ajax.request({ 
-      //~ waitMsg: 'Saving window config...',
-      //~ method: 'PUT',
-      //~ url: url,
-      //~ params: params, 
-      //~ success: on_success,
-      //~ failure: Lino.ajax_error_handler
-    //~ });
+    //~ console.log('save_wc_handler',ww,{url:ww.config.url_action,params:wc,method:'POST'});
+    //~ Lino.do_action(ww,{url:ww.config.url_action,params:wc,method:'POST'});
+    Lino.do_action(ww,{url:'/window_configs/'+ww.config.permalink_name,params:wc,method:'POST'});
   }
 };
 
@@ -677,6 +664,57 @@ Lino.toggle_button_handler = function(master,action) {
   }
 };
 
+Lino.template_handler = function(tpl,cmp) {
+  return function(record) {
+      //~ console.log(20100509,'Lino.template_handler',cmp);
+      if (cmp.el) tpl.overwrite(cmp.el,record.data);
+      //~ cmp.el = 'foo <img src="/media/images/empty.jpg"/> bar'
+  }
+};
+Lino.TemplateBoxPlugin = function(caller,s) {
+  this.tpl = new Ext.XTemplate(s);
+  this.caller = caller;
+};
+Ext.override(Lino.TemplateBoxPlugin,{
+  init : function (cmp) {
+    this.caller.add_row_listener(Lino.template_handler(this.tpl,cmp));
+    //~ function(record) {
+      //~ this.tpl.overwrite(cmp.body,{'national_id':'123'});
+    //~ });
+  }
+});
+
+Lino.SlavePlugin = function(caller) {
+  this.caller = caller;
+};
+Lino.load_picture = function(caller,cmp,record) {
+  if (record && cmp.el && cmp.el.dom) {
+    var src = caller.ls_data_url + "/" + record.id + "?fmt=picture"
+    //~ console.log('Lino.load_picture()',src);
+    cmp.el.dom.src = src; 
+  } else console.log('Lino.load_picture() no record or cmp not rendered',caller,cmp,record);
+}
+Lino.PictureBoxPlugin = Ext.extend(Lino.SlavePlugin,{
+  init : function (cmp) {
+    //~ console.log('Lino.PictureBoxPlugin.init()',this);
+    cmp.on('render',function(){ Lino.load_picture(this.caller,cmp,this.caller.get_current_record())},this);
+    this.caller.add_row_listener(function(sm,ri,rec) { Lino.load_picture(this.caller,cmp,rec) }, this );
+    //~ this.caller.add_row_listener(Lino.PictureBox_handler(this.caller,cmp));
+    //~ function(record) {
+      //~ this.tpl.overwrite(cmp.body,{'national_id':'123'});
+    //~ });
+  }
+});
+
+Lino.load_slavegrid = function(caller,cmp,record) {
+  if (record && cmp.el) {
+    //~ var src = caller.config.url_data + "/" + record.id + ".jpg"
+    console.log('Lino.load_slavegrid()',record);
+    var p = caller.get_master_params(record);
+    for (k in p) cmp.getStore().setBaseParam(k,p[k]);
+    cmp.getStore().load(); 
+  } else console.log('Lino.load_picture() no record or cmp not rendered',caller,cmp,record);
+}
 
 
 Lino.WindowWrapper = function(caller,config) {
@@ -750,57 +788,6 @@ Ext.override(Lino.WindowWrapper,{
   get_window_config : function() { return {} }
 });
 
-Lino.template_handler = function(tpl,cmp) {
-  return function(record) {
-      //~ console.log(20100509,'Lino.template_handler',cmp);
-      if (cmp.el) tpl.overwrite(cmp.el,record.data);
-      //~ cmp.el = 'foo <img src="/media/images/empty.jpg"/> bar'
-  }
-};
-Lino.TemplateBoxPlugin = function(caller,s) {
-  this.tpl = new Ext.XTemplate(s);
-  this.caller = caller;
-};
-Ext.override(Lino.TemplateBoxPlugin,{
-  init : function (cmp) {
-    this.caller.add_row_listener(Lino.template_handler(this.tpl,cmp));
-    //~ function(record) {
-      //~ this.tpl.overwrite(cmp.body,{'national_id':'123'});
-    //~ });
-  }
-});
-
-Lino.SlavePlugin = function(caller) {
-  this.caller = caller;
-};
-Lino.load_picture = function(caller,cmp,record) {
-  if (record && cmp.el && cmp.el.dom) {
-    var src = caller.ls_data_url + "/" + record.id + "?fmt=picture"
-    //~ console.log('Lino.load_picture()',src);
-    cmp.el.dom.src = src; 
-  } else console.log('Lino.load_picture() no record or cmp not rendered',caller,cmp,record);
-}
-Lino.PictureBoxPlugin = Ext.extend(Lino.SlavePlugin,{
-  init : function (cmp) {
-    //~ console.log('Lino.PictureBoxPlugin.init()',this);
-    cmp.on('render',function(){ Lino.load_picture(this.caller,cmp,this.caller.get_current_record())},this);
-    this.caller.add_row_listener(function(sm,ri,rec) { Lino.load_picture(this.caller,cmp,rec) }, this );
-    //~ this.caller.add_row_listener(Lino.PictureBox_handler(this.caller,cmp));
-    //~ function(record) {
-      //~ this.tpl.overwrite(cmp.body,{'national_id':'123'});
-    //~ });
-  }
-});
-
-Lino.load_slavegrid = function(caller,cmp,record) {
-  if (record && cmp.el) {
-    //~ var src = caller.config.url_data + "/" + record.id + ".jpg"
-    console.log('Lino.load_slavegrid()',record);
-    var p = caller.get_master_params(record);
-    for (k in p) cmp.getStore().setBaseParam(k,p[k]);
-    cmp.getStore().load(); 
-  } else console.log('Lino.load_picture() no record or cmp not rendered',caller,cmp,record);
-}
 Lino.SlaveGridPlugin = Ext.extend(Lino.SlavePlugin,{
   init : function (cmp) {
     cmp.on('render',function(){ Lino.load_slavegrid(this.caller,cmp,this.caller.get_current_record())},this);
@@ -830,25 +817,21 @@ Lino.GridMixin = {
       
     Lino.WindowWrapper.prototype.setup.call(this);
   },
-  get_window_config : function() {
-    var wc = { window_config_type: 'grid' }
-    wc['column_widths'] = Ext.pluck(this.main_grid.colModel.columns,'width');
-    return wc;
-  },
   get_current_record : function() { 
-    if (this.main_grid) return this.main_grid.getSelectionModel().getSelected();
+    if (this.main_item) return this.main_item.getSelectionModel().getSelected();
   },
   refresh : function() { 
     this.main_item.refresh();
   },
   get_selected : function() {
-    //~ var sel_pks = '';
-    var sels = this.main_grid.getSelectionModel().getSelections();
+    var sels = this.main_item.getSelectionModel().getSelections();
     return Ext.pluck(sels,'id');
-    //~ for(var i=0;i<sels.length;i++) { sel_pks += sels[i].id + ','; };
-    //~ return sel_pks;
+  },
+  get_window_config : function() {
+    var wc = { window_config_type: 'grid' };
+    wc['column_widths'] = Ext.pluck(this.main_item.colModel.columns,'width');
+    return wc;
   }
-  
 };
 
 Lino.GridMasterWrapper = Ext.extend(Lino.WindowWrapper,Lino.GridMixin);
@@ -894,7 +877,7 @@ Lino.GridSlaveWrapper.override(Lino.SlaveMixin);
 Lino.GridSlaveWrapper.override(Lino.GridMixin);
 Lino.GridSlaveWrapper.override({
   load_master_record : function(record) {
-    console.log('GridSlaveWrapper.load_master_record()',record)
+    //~ console.log('GridSlaveWrapper.load_master_record()',record)
     Lino.load_slavegrid(this.caller,this.main_grid,record);
     //~ var p = this.caller.get_master_params(record);
     //~ for (k in p) this.store.setBaseParam(k,p[k]);
@@ -985,7 +968,8 @@ Lino.DetailWrapper.override(Lino.DetailMixin);
 Lino.DetailWrapper.override({
   on_submit: function() {
     this.main_form.form.submit({
-      url:this.caller.config.url_data + '/' + this.config.record_id,
+      //~ url:this.caller.config.url_data + '/' + this.config.record_id,
+      url:this.caller.ls_data_url + '/' + this.config.record_id,
       //~ params: this.caller.get_master_params(this.caller.get_current_record()),
       method: 'PUT',
       scope: this,
@@ -1036,7 +1020,8 @@ Lino.DetailWrapper.override({
 Lino.InsertWrapper = Ext.extend(Lino.DetailWrapper, {
   on_submit: function() {
     this.main_form.form.submit({
-      url:this.caller.config.url_data,
+      //~ url:this.caller.config.url_data,
+      url:this.caller.ls_data_url,
       //~ params: this.caller.get_master_params(this.caller.get_current_record()),
       method: 'POST',
       scope: this,
@@ -1048,7 +1033,7 @@ Lino.InsertWrapper = Ext.extend(Lino.DetailWrapper, {
       failure: Lino.on_submit_failure,
       clientValidation: true
     })
-  },
+  }
 });
 
 

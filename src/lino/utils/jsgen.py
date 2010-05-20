@@ -14,8 +14,11 @@
 import types
 import datetime
 
-from django.utils import simplejson
 from django.core.serializers.json import DjangoJSONEncoder
+from django.utils import simplejson
+from django.utils.functional import Promise
+from django.utils.encoding import force_unicode
+
 
 import lino
 from lino.utils import menus
@@ -35,36 +38,14 @@ def py2js(v):
     for cv in CONVERTERS:
         v = cv(v)
         
-    #~ if isinstance(v,menus.Menu):
-        #~ if v.parent is None:
-            #~ return py2js(v.items)
-            #~ #kw.update(region='north',height=27,items=v.items)
-            #~ #return py2js(kw)
-        #~ kw.update(text=v.label,menu=dict(items=v.items))
-        #~ return py2js(kw)
-        
-    #~ if isinstance(v,menus.MenuItem):
-        #~ from lino.lino_site import lino_site
-        #~ handler = "function(btn,evt){Lino.do_action(undefined,%r,{})}" % v.actor.get_url(lino_site.ui)
-        #~ return py2js(dict(text=v.label,handler=js_code(handler)))
-        #~ if v.args:
-            #~ handler = "function(btn,evt) {%s.show(btn,evt,%s);}" % (
-                #~ id2js(v.actor.actor_id),
-                #~ ",".join([py2js(a) for a in v.args]))
-        #~ else:
-            #~ handler = "function(btn,evt) {%s.show(btn,evt);}" % id2js(v.actor.actor_id)
-        #~ return py2js(dict(text=v.label,handler=js_code(handler)))
-    #~ assert len(kw) == 0, "py2js() : value %r not allowed with keyword parameters" % v
     if isinstance(v,Value):
         return v.as_ext()
-        
     if type(v) is types.GeneratorType:
         raise Exception("Please don't call the generator function yourself")
         #~ return "\n".join([ln for ln in v])
     if callable(v):
         #~ raise Exception("Please call the function yourself")
         return "\n".join([ln for ln in v()])
-
     if isinstance(v,js_code):
         return v.s
     if v is None:
@@ -84,6 +65,9 @@ def py2js(v):
         return repr(v)
     #return simplejson.encoder.encode_basestring(v)
     #print repr(v)
+    # http://docs.djangoproject.com/en/dev/topics/serialization/
+    if isinstance(v,Promise):
+        v = force_unicode(v)
     return simplejson.dumps(v,cls=DjangoJSONEncoder) # http://code.djangoproject.com/ticket/3324
     
 

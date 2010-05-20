@@ -15,6 +15,7 @@ from dateutil import parser as dateparser
 
 from django.db import models
 from django.core import exceptions
+from django.utils.translation import ugettext as _
 
 from lino.utils import jsgen 
 from lino.utils.jsgen import py2js, Component, id2js, js_code
@@ -35,6 +36,9 @@ class StoreField(object):
     def as_js(self):
         return py2js(self.options)
         
+    def parse_form_value(self,v):
+        return self.field.to_python(v)
+        
     def obj2json(self,obj,d):
         #d[self.field.name] = getattr(obj,self.field.name)
         #v = getattr(obj,self.field.name)
@@ -51,10 +55,13 @@ class StoreField(object):
             #~ v = None
         if v is None:
             return
-        #~ if v == '':
-            #~ v = self.field.get_default()
+        v = self.parse_form_value(v)
+        if self.field.primary_key and instance.pk is not None:
+            if instance.pk == v:
+                return
+            raise exceptions.ValidationError({self.field.name:_("Primary key %r may not be modified.") % instance.pk})
         try:
-            setattr(instance,self.field.name,self.field.to_python(v))
+            setattr(instance,self.field.name,v)
         except exceptions.ValidationError,e:
             lino.log.exception("%s = %r : %s",self.field.name,v,e)
             raise 
@@ -78,16 +85,23 @@ class BooleanStoreField(StoreField):
         kw['type'] = 'boolean'
         StoreField.__init__(self,field,**kw)
         
-    def form2obj(self,instance,post_data):
-        v = post_data.get(self.field.name,None)
-        if v is None:
-            return
-        if v == 'on':
+    def parse_form_value(self,v):
+        if v in ('true','on'):
+            return True
+        if v in ('false','off'):
+            return False
+        return None
+        
+        
+    #~ def form2obj(self,instance,post_data):
+        #~ v = post_data.get(self.field.name,None)
+        #~ if v is None:
+            #~ return
         #~ if v in ('true','on'):
-            v = True
-        else:
-            v = False
-        setattr(instance,self.field.name,v)
+            #~ v = True
+        #~ else:
+            #~ v = False
+        #~ setattr(instance,self.field.name,v)
         
         
 
@@ -104,35 +118,20 @@ class DateStoreField(StoreField):
             value = value.ctime() # strftime('%Y-%m-%d')
             #print value
             d[self.field.name] = value
+            
+    def parse_form_value(self,v):
+        return dateparser.parse(v,fuzzy=True)
 
-    def form2obj(self,instance,post_data):
-        v = post_data.get(self.field.name,None)
-        if v is None:
-            return
-        if v == '' and self.field.null:
-            v = None
-        if v is not None:
-            #print v
-            v = dateparser.parse(v,fuzzy=True)
-        setattr(instance,self.field.name,v)
-
-class unused_IntegerStoreField(StoreField):
-  
-    def __init__(self,field,**kw):
-        kw['type'] = 'int'
-        StoreField.__init__(self,field,**kw)
-        
-    def get_from_form(self,instance,post_data):
-        v = post_data.get(self.field.name)
-        if v == '':
-            v = None
-            #~ if self.field.default is models.NOT_PROVIDED:
-                #~ v = None
-            #~ else:
-                #~ v = self.field.default
-        else:
-            v = int(v)
-        instance[self.field.name] = v
+    #~ def form2obj(self,instance,post_data):
+        #~ v = post_data.get(self.field.name,None)
+        #~ if v is None:
+            #~ return
+        #~ if v == '' and self.field.null:
+            #~ v = None
+        #~ if v is not None:
+            #~ #print v
+            #~ v = dateparser.parse(v,fuzzy=True)
+        #~ setattr(instance,self.field.name,v)
 
 class MethodStoreField(StoreField):
   
@@ -179,67 +178,59 @@ class OneToOneStoreField(StoreField):
         else:
             d[self.field.name] = v.pk
         
-
-class ForeignKeyStoreField(StoreField):
-        
+class ChoicesStoreField(StoreField):
+  
     def as_js(self):
         s = StoreField.as_js(self)
         s += "," + repr(self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
         return s 
         
-    #~ def get_from_form(self,instance,post_data):
-        #~ #v = post_data.get(self.name,None)
-        #~ #v = post_data.get(self.field.name+"Hidden",None)
-        #~ v = post_data.get(self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
-        #~ #print self.field.name,"=","%s.objects.get(pk=%r)" % (self.model.__name__,v)
-        #~ #v = post_data.getlist(self.field.name)
-        #~ #print "%s=%r" % (self.field.name, v)
-        #~ if v in ('','undefined'): # and self.field.null:
-            #~ v = None
-        #~ if v is not None:
-            #~ try:
-                #~ v = self.field.rel.to.objects.get(pk=v)
-            #~ except self.field.rel.to.DoesNotExist,e:
-                #~ #print "[get_from_form]", v, values.get(self.field.name)
-                #~ # lino.log.debug("[%r,%r] : %s",v,text,e)
-                #~ v = None
-        #~ instance[self.field.name] = v
+    def get_value_text(self,obj):
+        v = getattr(obj,self.field.name)
+        if v is None or v == '':
+            return (None, None)
+        else:
+            for i in self.field.choices:
+                if i[0] == v:
+                    return (v, unicode(i[1]))
+            return (v, _("%r (invalid choice)") % v)
         
     def form2obj(self,instance,post_data):
-        #v = post_data.get(self.name,None)
-        #v = post_data.get(self.field.name+"Hidden",None)
+        assert not self.field.primary_key
         v = post_data.get(self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX,None)
         if v is None:
             return
-        #print self.field.name,"=","%s.objects.get(pk=%r)" % (self.model.__name__,v)
-        #v = post_data.getlist(self.field.name)
-        #print "%s=%r" % (self.field.name, v)
-        if v in ('','undefined'): # and self.field.null:
+        if v in ('','undefined'): 
             v = None
         if v is not None:
-            try:
-                v = self.field.rel.to.objects.get(pk=v)
-            except self.field.rel.to.DoesNotExist,e:
-                #print "[get_from_form]", v, values.get(self.field.name)
-                # lino.log.debug("[%r,%r] : %s",v,text,e)
-                v = None
+            v = self.parse_form_value(v)
         setattr(instance,self.field.name,v)
 
 
     def obj2json(self,obj,d):
+        value,text = self.get_value_text(obj)
+        d[self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX] = value
+        d[self.field.name] = text
+        
+        
+class ForeignKeyStoreField(ChoicesStoreField):
+        
+    def get_value_text(self,obj):
         try:
             v = getattr(obj,self.field.name)
         except self.field.rel.to.DoesNotExist,e:
             v = None
         if v is None:
-            #~ d[self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX] = ''
-            #~ d[self.field.name] = ''
-            d[self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX] = None
-            d[self.field.name] = None
+            return (None, None)
         else:
-            d[self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX] = v.pk
-            d[self.field.name] = unicode(v)
-        
+            return (v.pk, unicode(v))
+            
+    def parse_form_value(self,v):
+        try:
+            return self.field.rel.to.objects.get(pk=v)
+        except self.field.rel.to.DoesNotExist,e:
+            return None
+            
 
 
 
@@ -276,33 +267,25 @@ class Store(Component):
             return MethodStoreField(fld)
         if isinstance(fld,models.ManyToManyField):
             return StoreField(fld)
-            #raise NotImplementedError
         if isinstance(fld,models.OneToOneField):
             return OneToOneStoreField(fld)
         if isinstance(fld,models.ForeignKey):
-            #related_rpt = self.report.get_field_choices(fld)
-            #self.related_stores.append(related_rpt.choice_store)
             return ForeignKeyStoreField(fld)
-            #yield dict(name=fld.name)
-            #yield dict(name=fld.name+"Hidden")
         if isinstance(fld,models.DateField):
-            #return StoreField(fld,type="date",dateFormat='Y-m-d')
-            #return StoreField(fld,type="date",dateFormat=self.report.date_format)
             return DateStoreField(fld,self.report.date_format)
-        if isinstance(fld,models.IntegerField):
-            return StoreField(fld,type='int')
-            #~ return IntegerStoreField(fld)
-        if isinstance(fld,models.AutoField):
-            return StoreField(fld,type='int')
-            #~ return IntegerStoreField(fld)
         if isinstance(fld,models.BooleanField):
             return BooleanStoreField(fld)
-        return StoreField(fld)
-        #~ else:
-            #~ kw['type'] = DATATYPES.get(fld.__class__,'auto')
-            #~ kw['dateFormat'] = 'Y-m-d'
-            #~ kw['name'] = fld.name
-            #~ yield kw
+        kw = {}
+        if isinstance(fld,models.SmallIntegerField):
+            kw.update(type='int')
+        if isinstance(fld,models.IntegerField):
+            kw.update(type='int')
+        if isinstance(fld,models.AutoField):
+            kw.update(type='int')
+        if fld.choices:
+            return ChoicesStoreField(fld,**kw)
+        else:
+            return StoreField(fld,**kw)
 
       
     def ext_options(self):
@@ -342,8 +325,10 @@ class Store(Component):
         
     def form2obj(self,form_values,instance):
         for f in self.fields:
-            if not f.field.primary_key:
+            try:
                 f.form2obj(instance,form_values)
+            except exceptions.ValidationError,e:
+                raise exceptions.ValidationError({f.field.name:e})
         for p in properties.Property.properties_for_model(instance.__class__):
             p.form2obj(instance,form_values)
             
@@ -364,8 +349,8 @@ class Store(Component):
     def row2dict(self,row):
         d = {}
         for f in self.fields:
-            if not f.field.primary_key:
-                f.obj2json(row,d)
+            #~ if not f.field.primary_key:
+            f.obj2json(row,d)
         return d
 
     #~ def js_declare(self):

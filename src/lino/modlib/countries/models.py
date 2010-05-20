@@ -44,7 +44,6 @@ class City(models.Model):
     
     class Meta:
         verbose_name_plural = _("Cities")
-        unique_together = ('country','zip_code') # not supported in sqlite?
     
     def __unicode__(self):
         return self.name

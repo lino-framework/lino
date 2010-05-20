@@ -11,6 +11,9 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+import os
+import sys
+import glob
 
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
@@ -22,6 +25,7 @@ from lino import reports
 from lino import layouts
 from lino.utils import perms
 from lino.utils import mixins
+from django.conf import settings
 
 tools.requires_apps('auth','contenttypes','links')
 
@@ -33,11 +37,18 @@ class NoteType(models.Model):
     def __unicode__(self):
         return self.name
         
-    def template_choices(self,print_method=None):
+    @classmethod
+    def template_choices(cls,print_method):
         pm = mixins.get_print_method(print_method)
-        import glob
-        from django.conf import settings
-        return glob.glob(settings.DATA_DIR+'*'+pm.template_ext)
+        if pm is None:
+            print "unknown print method", print_method
+            gp = os.path.join(settings.DATA_DIR,'*.jpg')
+        else:
+            gp = os.path.join(settings.DATA_DIR,'*'+pm.template_ext)
+        r = glob.glob(gp)
+        #~ print r
+        return [fn.decode(sys.getfilesystemencoding()) for fn in r]
+            
         
 
 

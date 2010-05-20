@@ -259,34 +259,7 @@ class ReportHandle(datalinks.DataLink,base.Handle): #,actors.ActorHandle):
                 
         else:
             self._layouts = []
-            
-        #~ base.Handle.setup(self)    
-        #~ if self.report.use_layouts:
-            #~ def lh(layout_class,*args,**kw):
-                #~ return layouts.LayoutHandle(self,layout_class(),*args,**kw)
-            
-            #~ self.choice_layout = lh(layouts.RowLayout,0,self.report.display_field)
-            
-            #~ index = 1
-            #~ self.list_layout = lh(layouts.RowLayout,index,self.report.column_names)
-            
-            #~ self.layouts = [ self.choice_layout, self.row_layout ]
-            #~ index = 2
-            #~ for lc in self.report.page_layouts:
-                #~ self.layouts.append(lh(lc,index))
-                #~ index += 1
-        #~ else:
-            #~ self.choice_layout = None
-            #~ self.row_layout = None
-            #~ self.layouts = []
-            
-        
-    #~ def get_default_layout(self):
-        #~ return self.layouts[self.report.default_layout]
-        
-    #~ def get_create_layout(self):
-        #~ return self.layouts[2]
-        
+
     def submit_elems(self):
         return []
         
@@ -297,7 +270,6 @@ class ReportHandle(datalinks.DataLink,base.Handle): #,actors.ActorHandle):
     def get_used_layouts(self):
         self.setup_layouts()
         return self._layouts
-        
         
     def get_absolute_url(self,*args,**kw):
         return self.ui.get_report_url(self,*args,**kw)
@@ -331,56 +303,9 @@ class ReportHandle(datalinks.DataLink,base.Handle): #,actors.ActorHandle):
         ar.setup(*args,**kw)
         return ar
         
-        
-            
-
-#~ class RowHandle(datalinks.DataLink):
-class unused_DetailDataLink(datalinks.DataLink):
-  
-    def __init__(self,rh,lh):
-        self.rh = rh
-        self.lh = lh
-        #~ self.rh = get_model_report(row.__class__).get_handle(ui)
-        #~ RowHandle.__init__(self,ui,[actions.Cancel(), actions.OK()])
-        datalinks.DataLink.__init__(self,rh.ui,[actions.Cancel(), actions.OK()])
-        self.inputs = []
-        self.row = None
-        
-    def get_queryset(self,rr):
-        return [ self.row ]
-        
-    #~ def before_step(self,dlg):
-        #~ d = self.rh.store.get_from_form(dlg.params)
-        #~ dlg.params.update(**d)
-        #~ for i in self.rh.store.inputs:
-            #~ if isinstance(i,List):
-                #~ v = dlg.request.POST.getlist(i.name)
-            #~ else:
-                #~ v = dlg.request.POST.get(i.name)
-            #~ dlg.params[i.name] = v
-            
-    def data_elems(self):
-        return self.rh.data_elems()
-        #~ for de in self.rh.data_elems(): yield de
-          
-    def get_data_elem(self,name):
-        return self.rh.get_data_elem(name)
-        
-    def get_title(self,dlg):
-        return unicode(self.row)
-        
-    #~ def submit_elems(self):
-        #~ for name in data_elems(self.row._meta): yield name
-        
-    #~ def setup(self):
-        #~ self.list_layout = rpt.get_handle(self.ui)
-        #~ self.details = [ pl.get_handle(self.ui) for pl in rpt.detail_layouts ]
-        #~ self.layouts = [ self.list_layout ] + self.details
-        #~ self.ui.setup_report(self)
-        
 
 
-class ElementAction(actions.Action):
+class unused_ElementAction(actions.Action):
     def __init__(self,obj):
         self.obj = obj
         actions.Action.__init(self)
@@ -416,32 +341,6 @@ class ListAction(actions.Action):
             total_count += 1
         #~ print 20100420, rows
         return dict(count=total_count,rows=rows,title=ar.get_title())
-        
-class unused_ChoicesAction(ListAction):
-  
-    def __init__(self,rpt,fldname):
-        self.name = fldname+'_choices'
-        self.fieldname = fldname
-        ListaAction.__init__(self,rpt)
-  
-    
-    def get_queryset(self,ar):
-        kw = {}
-        for k,v in ar.request.GET.items():
-            kw[str(k)] = v
-        chooser = ar.rh.choosers[self.fieldname]
-        qs = chooser.get_choices(**kw)
-        if ar.quick_search is not None:
-            qs = add_quick_search_filter(qs,ar.quick_search)
-        return qs # self.queryset = qs
-        
-    def row2dict(self,obj,d):
-        d[CHOICES_TEXT_FIELD] = unicode(obj)
-        #d['__unicode__'] = unicode(obj)
-        d[CHOICES_VALUE_FIELD] = obj.pk # getattr(obj,'pk')
-        #d[self.fieldname] = obj.pk 
-        return d
-    
 
 
 class ReportActionRequest(actions.ActionRequest): # was ReportRequest
@@ -698,7 +597,8 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
             if issubclass(self.model,mixins.Printable):
                 #~ print 20100517, mixins.pm_list
                 for pm in mixins.pm_list:
-                    actions.append(mixins.PrintAction(self,pm))
+                    if pm.button_label:
+                        actions.append(mixins.PrintAction(self,pm))
                     
             if hasattr(self.model,'_lino_slaves'):
                 self._slaves = self.model._lino_slaves.values()

@@ -30,6 +30,8 @@ def resolve_action(spec,app_label=None):
     if isinstance(spec,actions.Action): return spec
     s = spec.split(ACTOR_SEP)
     if len(s) == 1:
+        if not app_label:
+            return
         actor = get_actor2(app_label,spec)
     elif len(s) == 3:
         actor = get_actor(ACTOR_SEP.join(s[0:2]))
@@ -37,7 +39,8 @@ def resolve_action(spec,app_label=None):
     else:
         actor = get_actor(spec)
     if actor is None:
-        raise Exception("Actor %r does not exist" % spec)
+        return None
+        #~ raise Exception("Actor %r does not exist" % spec)
     return actor.default_action
   
 def get_actor(actor_id):

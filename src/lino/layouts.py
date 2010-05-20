@@ -51,8 +51,8 @@ class StaticText:
     def __init__(self,text):
         self.text = text
         
-class Picture:
-    pass
+#~ class Picture:
+    #~ pass
     
 class DataView:
     def __init__(self,tpl):
@@ -135,8 +135,8 @@ class LayoutHandle(base.Handle):
         if e.name in self.hide_elements:
             self.hidden = True
             
-    def get_absolute_url(self,**kw):
-        return self.datalink.get_absolute_url(layout=self.index,**kw)
+    #~ def get_absolute_url(self,**kw):
+        #~ return self.datalink.get_absolute_url(layout=self.index,**kw)
         
         
     def add_hidden_field(self,field):

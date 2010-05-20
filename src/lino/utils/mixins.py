@@ -66,14 +66,10 @@ pm_dict = {}
 pm_list = []
         
 class PrintAction(actions.Action):
-    #~ name = 'print'
-    #~ needs_selection = True
-    #~ label = _("Print")
-    #~ format = 'pdf'
     def __init__(self,actor,pm):
         self.pm = pm
         self.name = pm.name
-        self.label = pm.label
+        self.label = pm.button_label
         actions.Action.__init__(self,actor)
 
 
@@ -142,6 +138,9 @@ class PrintMethod:
     label = None
     target_format = None
     template_ext = None
+    button_label = None
+    label = None
+    
     def __init__(self):
         if self.label is None:
             self.label = _(self.__class__.__name__)
@@ -211,7 +210,7 @@ class PicturePrintMethod(PrintMethod):
 class AppyPrintMethod(PrintMethod):
     name = 'appy'
     target_format = 'odt'
-    label = _("odt")
+    button_label = _("ODT")
     template_ext = '.odt'  
     def build(self,elem):
         tpls = elem.get_print_templates(self)
@@ -231,7 +230,7 @@ class AppyPrintMethod(PrintMethod):
 class PisaPrintMethod(PrintMethod):
     name = 'pisa'
     target_format = 'pdf'
-    label = _("PDF")
+    button_label = _("PDF")
     template_ext = '.pisa.html'  
     
     def build(self,elem):
@@ -257,7 +256,7 @@ class PisaPrintMethod(PrintMethod):
 class RtfPrintMethod(PrintMethod):
   
     name = 'rtf'
-    label = _("RTF")
+    button_label = _("RTF")
     target_format = 'rtf'
     template_ext = '.rtf'  
     

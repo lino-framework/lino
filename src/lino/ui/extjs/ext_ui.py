@@ -24,6 +24,7 @@ from django.conf import settings
 from django.http import HttpResponse, Http404
 from django import http
 from django.core import exceptions
+from django.utils import functional
 
 from django.utils.translation import ugettext as _
 
@@ -170,8 +171,11 @@ def handle_element_request(request,ah,elem):
         elem.delete()
         return HttpResponseDeleted()
     if request.method == 'PUT':
-        PUT = http.QueryDict(request.raw_post_data)
-        ah.store.form2obj(PUT,elem)
+        data = http.QueryDict(request.raw_post_data)
+        try:
+            ah.store.form2obj(data,elem)
+        except exceptions.ValidationError,e:
+            return json_response_kw(success=False,msg=unicode(e))
         try:
             elem.save(force_update=True)
         except IntegrityError,e:
@@ -270,7 +274,7 @@ class ExtUI(base.UI):
                 if isinstance(value,layouts.DataView):
                     return ext_elems.DataViewElement(lh,name,value)
                     #~ return ext_elems.TemplateElement(lh,name,value)
-                if isinstance(value,layouts.Picture):
+                if isinstance(value,mixins.PicturePrintMethod):
                     return ext_elems.PictureElement(lh,name,value)
                 #~ if isinstance(value,layouts.PropertyGrid):
                     #~ return ext_elems.PropertyGridElement(lh,name,value)
@@ -334,10 +338,12 @@ class ExtUI(base.UI):
         pickle.dump(self.window_configs,f)
         f.close()
         lino.log.debug("save_window_config(%r) -> %s",wc,a)
+        from lino.lino_site import lino_site
+        self.build_lino_js(lino_site)
         #~ lh = actors.get_actor(name).get_handle(self)
         #~ if lh is not None:
             #~ lh.window_wrapper.try_apply_window_config(wc)
-        self._response = None
+        #~ self._response = None
 
     def load_window_config(self,action,**kw):
     #~ def load_window_config(self,name):
@@ -368,7 +374,8 @@ class ExtUI(base.UI):
             (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$', self.api_element_view),
             #~ (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>\w+)/(?P<method>\w+)$', self.api_element_view),
             #~ (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.api_view),
-            (r'^ui/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.ui_view),
+            (r'^window_configs/(?P<wc_name>.+)$', self.window_configs_view),
+            #~ (r'^ui/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.ui_view),
             (r'^choices/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<fldname>\w+)$', self.choices_view),
         )
         #~ urlpatterns += patterns('',         
@@ -463,7 +470,10 @@ class ExtUI(base.UI):
             ar = ext_requests.ViewReportRequest(request,ah,ah.report.list_action)
             instance = ar.create_instance()
         else:
-            instance = rpt.model.objects.get(pk=pk)
+            try:
+                instance = rpt.model.objects.get(pk=pk)
+            except rpt.model.DoesNotExist:
+                raise Http404("%s %s does not exist." % (rpt,pk))
         return handle_element_request(request,ah,instance)
         #~ raise Http404("Unknown request method %r " % request.method)
         
@@ -472,6 +482,9 @@ class ExtUI(base.UI):
         
     def setup_site(self,site):
         base.UI.setup_site(self,site) # will create a.window_wrapper for all actions
+        self.build_lino_js(site)
+        
+    def build_lino_js(self,site):
         #~ for app_label in site.
         fn = os.path.join(settings.MEDIA_ROOT,*self.js_cache_name(site)) 
         #~ fn = r'c:\temp\dsbe.js'
@@ -489,19 +502,7 @@ class ExtUI(base.UI):
         f.close()
           
         
-        
-    def ui_view(self,request,app_label=None,actor=None,action=None,**kw):
-        actor = actors.get_actor2(app_label,actor)
-        ah = actor.get_handle(self)
-        a = ah.get_action(action)
-        if a is None:
-            msg = "No action %s in %s" % (action,ah)
-            #~ print msg
-            raise Http404(msg)
-        #~ if request.method == 'GET':
-            #~ assert a.window_wrapper is not None, "%r %s has no window_wrapper" % (a,a)
-            #~ return json_response_kw(success=True,js_code=a.window_wrapper.js_render)
-            
+    def window_configs_view(self,request,wc_name=None,**kw):
         if request.method == 'POST':
             params = request.POST
             wc = dict()
@@ -514,27 +515,62 @@ class ExtUI(base.UI):
             cw = params.getlist('column_widths')
             assert type(cw) is list, "cw is %r (expected list)" % cw
             wc['column_widths'] = [parse_int(w,100) for w in cw]
+            a = actors.resolve_action(wc_name)
+            if a is None:
+                return json_response_kw(success=False,
+                  message=_(u'%r : no such action') % wc_name)
             ui.save_window_config(a,wc)
             return json_response_kw(success=True,
               message=_(u'Window config %s has been saved (%r)') % (a,wc))
   
+      
+    def unused_ui_view(self,request,app_label=None,actor=None,action=None,**kw):
+        actor = actors.get_actor2(app_label,actor)
+        ah = actor.get_handle(self)
+        a = ah.get_action(action)
+        if a is None:
+            msg = "No action %s in %s" % (action,ah)
+            #~ print msg
+            raise Http404(msg)
+        #~ if request.method == 'GET':
+            #~ assert a.window_wrapper is not None, "%r %s has no window_wrapper" % (a,a)
+            #~ return json_response_kw(success=True,js_code=a.window_wrapper.js_render)
+            
         
     def choices_view(self,request,app_label=None,rptname=None,fldname=None,**kw):
         rpt = actors.get_actor2(app_label,rptname)
         rh = rpt.get_handle(self)
-        for k,v in request.GET.items():
-            kw[str(k)] = v
-        chooser = rh.choosers[fldname]
-        qs = chooser.get_choices(**kw)
-        quick_search = request.REQUEST.get(ext_requests.URL_PARAM_FILTER,None)
+        field = rpt.model._meta.get_field(fldname)
+        chooser = getattr(field,'_lino_chooser',None)
+        if chooser:
+            qs = chooser.get_request_choices(request)
+        elif field.choices:
+            qs = field.choices
+        elif isinstance(field,models.ForeignKey):
+            qs = field.rel.to.objects.all()
+        else:
+            raise Http404("No choices for %s" % fldname)
+        #~ for k,v in request.GET.items():
+            #~ kw[str(k)] = v
+        #~ chooser = rh.choosers[fldname]
+        #~ qs = chooser.get_choices(**kw)
+        quick_search = request.GET.get(ext_requests.URL_PARAM_FILTER,None)
         if quick_search is not None:
             qs = reports.add_quick_search_filter(qs,quick_search)
-        
-        def row2dict(obj,d):
-            d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
-            d[ext_requests.CHOICES_VALUE_FIELD] = obj.pk # getattr(obj,'pk')
-            return d
-            
+        if isinstance(field,models.ForeignKey):
+            def row2dict(obj,d):
+                d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
+                d[ext_requests.CHOICES_VALUE_FIELD] = obj.pk # getattr(obj,'pk')
+                return d
+        else:
+            def row2dict(obj,d):
+                if type(obj) is list or type(obj) is tuple:
+                    d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj[1])
+                    d[ext_requests.CHOICES_VALUE_FIELD] = obj[1]
+                else:
+                    d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
+                    d[ext_requests.CHOICES_VALUE_FIELD] = unicode(obj)
+                return d
         rows = [ row2dict(row,{}) for row in qs ]
         return json_response_kw(count=len(rows),rows=rows,title=_('Choices for %s') % fldname)
         
@@ -671,7 +707,6 @@ class ExtUI(base.UI):
         #~ fh = self.get_form_handle(frm)
         #~ yield dlg.show_window(fh.window_wrapper.js_render).over()
         
-        
     def py2js_converter(self,v):
         if isinstance(v,menus.Menu):
             if v.parent is None:
@@ -748,7 +783,7 @@ class ExtUI(base.UI):
           
         if isinstance(h,reports.ReportHandle):
             lino.log.debug('ExtUI.setup_handle() %s',h.report)
-            h.choosers = chooser.get_choosers_for_model(h.report.model,chooser.FormChooser)
+            #~ h.choosers = chooser.get_choosers_for_model(h.report.model,chooser.FormChooser)
             #~ h.report.add_action(ext_windows.SaveWindowConfig(h.report))
             if h.report.use_layouts:
                 h.store = ext_store.Store(h)

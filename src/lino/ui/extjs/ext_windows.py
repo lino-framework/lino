@@ -73,7 +73,8 @@ class WindowWrapper(ActionRenderer):
         ActionRenderer.__init__(self,ui,action)
         assert self.window_config_type is not None, "%s.window_config_type is None" % self.__class__
         self.main = main
-        self.permalink_name = str(action).replace('.','/') # permalink_name
+        #~ self.permalink_name = str(action).replace('.','/')
+        self.permalink_name = str(action)
         self.lh = lh
         self.bbar_buttons = []
         self.config = self.get_config()

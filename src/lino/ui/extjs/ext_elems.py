@@ -190,8 +190,6 @@ class LayoutElement(VisibleComponent):
         if self.collapsible:
             kw.update(collapsible=self.collapsible)
         return kw
-        
-        
 
 
 class DataViewElement(LayoutElement):
@@ -224,7 +222,7 @@ class PictureElement(LayoutElement):
     value_template = "new Ext.BoxComponent(%s)"
     vflex = True
     
-    def __init__(self,lh,name,picture,**kw):
+    def __init__(self,lh,name,pm,**kw):
         kw.update(autoEl=dict(tag='img'))
         #~ kw.update(cls='ext-el-mask')
         kw.update(style=dict(height='100%'))
@@ -283,7 +281,7 @@ class FieldElement(LayoutElement):
     def __init__(self,lh,field,**kw):
         assert field.name, Exception("field %r has no name!" % field)
         self.field = field
-        self.editable = field.editable and not field.primary_key
+        self.editable = field.editable # and not field.primary_key
         LayoutElement.__init__(self,lh,field.name,label=unicode(field.verbose_name),**kw)
         
     #~ def get_column_options(self,**kw):
@@ -350,24 +348,131 @@ class TextFieldElement(FieldElement):
         #~ return kw
         
 class CharFieldElement(FieldElement):
-    #~ xtype = "textfield"
-    sortable = True
     value_template = "new Ext.form.TextField(%s)"
+    sortable = True
     xtype = None
   
     def __init__(self,*args,**kw):
         FieldElement.__init__(self,*args,**kw)
-        self.preferred_width = min(20,self.field.max_length)
-        #~ if self.width is None and self.field.max_length < 10:
-            #~ # "small" texfields should not be expanded, so they get an explicit width
-            #~ self.width = self.field.max_length
-        #~ if self.field.choices...
-            #~ self.value_template = "new Ext.form.ComboBox(%s)"
+        self.preferred_width = min(20,max(3,self.field.max_length))
             
     def get_field_options(self,**kw):
         kw = FieldElement.get_field_options(self,**kw)
         kw.update(maxLength=self.field.max_length)
         return kw
+        
+class ComboFieldElement(FieldElement):
+    value_template = "new Ext.form.ComboBox(%s)"        
+    sortable = True
+    xtype = None
+    
+class ChoicesFieldElement(ComboFieldElement):
+  
+    def __init__(self,*args,**kw):
+        FieldElement.__init__(self,*args,**kw)
+        self.preferred_width = 20
+        
+    def get_field_options(self,**kw):
+        kw = FieldElement.get_field_options(self,**kw)
+        kw.update(store=self.field.choices)
+        kw.update(mode='local')
+        #~ kw.update(editable=False)
+        kw.update(forceSelection=False)
+        kw.update(triggerAction='all')
+        #~ kw.update(typeAhead=False)
+        kw.update(submitValue=True)
+        kw.update(hiddenName=self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
+        kw.update(valueField=ext_requests.CHOICES_VALUE_FIELD) 
+        kw.update(displayField=ext_requests.CHOICES_TEXT_FIELD)
+        #~ kw.update(maxLength=self.field.max_length)
+        return kw
+        
+
+class RemoteComboFieldElement(ComboFieldElement):
+        
+    def store_options(self,**kw):
+        proxy = dict(url=self.lh.ui.get_choices_url(self),method='GET')
+        kw.update(proxy=js_code("new Ext.data.HttpProxy(%s)" % py2js(proxy)))
+        # a JsonStore without explicit proxy sometimes used method POST
+        # kw.update(autoLoad=True)
+        kw.update(totalProperty='count')
+        kw.update(root='rows')
+        kw.update(id=ext_requests.CHOICES_VALUE_FIELD) # self.report.model._meta.pk.name)
+        kw.update(fields=[ext_requests.CHOICES_VALUE_FIELD,ext_requests.CHOICES_TEXT_FIELD])
+        #~ kw.update(listeners=dict(exception=js_code("Lino.on_store_exception")))
+        kw.update(listeners=dict(exception=js_code("Lino.on_store_exception")))
+        return kw
+      
+    def get_field_options(self,**kw):
+        # see blog 20100222
+        kw = FieldElement.get_field_options(self,**kw)
+        kw.update(mode='remote')
+        #setup_report(self.report)
+        #kw.update(store=self.rh.store)
+        sto = self.store_options()
+        #print repr(sto)
+        kw.update(store=js_code("new Ext.data.JsonStore(%s)" % py2js(sto)))
+        #kw.update(store=js_code(self.store.as_ext_value(request)))
+        kw.update(hiddenName=self.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
+        kw.update(valueField=ext_requests.CHOICES_VALUE_FIELD) #self.report.model._meta.pk.name)
+        kw.update(submitValue=True)
+        kw.update(displayField=ext_requests.CHOICES_TEXT_FIELD) # self.report.display_field)
+        #kw.update(valueField='id')
+        #kw.update(valueField=self.name)
+        kw.update(triggerAction='all')
+        #kw.update(listeners=dict(beforequery=js_code("function(qe) {console.log('beforequery',qe); return true;}")))
+        
+        kw.update(typeAhead=True)
+        kw.update(minChars=2) # default 4 is to much
+        kw.update(queryDelay=300) # default 500 is maybe slow
+        kw.update(queryParam=ext_requests.URL_PARAM_FILTER)
+        kw.update(typeAhead=True)
+        #kw.update(typeAheadDelay=300) # default 500 is maybe slow
+        kw.update(selectOnFocus=True) # select any existing text in the field immediately on focus.
+        kw.update(resizable=True)
+        # test whether field has a %s_choices() method
+        #~ if self.lh.link.report.get_field_choices_meth(self.field): 
+            #~ kw.update(contextParam=ext_requests.URL_PARAM_CHOICES_PK)
+            #kw.update(lazyInit=True)
+        #~ rh = self.lh.layout.datalink_report.get_handle(self.lh.ui)
+        #~ chooser = rh.choosers[self.field.name]
+        chooser = getattr(self.field,'_lino_chooser',None)
+        if chooser:
+            kw.update(contextParams=chooser.context_params)
+            
+        return kw
+        
+    
+        
+class ForeignKeyElement(RemoteComboFieldElement):
+    
+    def __init__(self,*args,**kw):
+        FieldElement.__init__(self,*args,**kw)
+        self.report = reports.get_model_report(self.field.rel.to)
+      
+    def submit_fields(self):
+        return [self.field.name,self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX]
+        
+        
+    def get_field_options(self,**kw):
+        kw = RemoteComboFieldElement.get_field_options(self,**kw)
+        kw.update(pageSize=self.report.page_length)
+        kw.update(emptyText='Select a %s...' % self.report.model.__name__)
+        return kw
+        
+
+    def js_body(self):
+        for ln in super(ForeignKeyElement,self).js_body():
+            yield ln
+        chooser = self.lh.datalink.choosers[self.field.name]
+        if chooser.context_values:
+            yield "this.window.on('render',function() {" 
+            yield "  this.add_row_listener(function(sm,rowIndex,record) {" 
+            yield "    %s.setContextValues([" % self.as_ext()
+            yield "      " + ",".join(["record.data." + name for name in chooser.context_values])
+            yield "])})},this);"
+
+
         
 #~ class PropertyElement(LayoutElement):        
     #~ def __init__(self,lh,prop,**kw):
@@ -383,110 +488,6 @@ class CharFieldElement(FieldElement):
         #~ for a in ('ext_options','get_column_options','get_field_options','grid_column_template'):
             #~ setattr(self,a,getattr(delegate,a))
 
-        
-class ForeignKeyElement(FieldElement):
-    #xtype = "combo"
-    sortable = True
-    #width = 20
-    value_template = "new Ext.form.ComboBox(%s)"
-    
-    def __init__(self,*args,**kw):
-        FieldElement.__init__(self,*args,**kw)
-        self.report = reports.get_model_report(self.field.rel.to)
-      
-    def submit_fields(self):
-        return [self.field.name,self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX]
-        
-    def store_options(self,**kw):
-        proxy = dict(url=self.lh.ui.get_choices_url(self),method='GET')
-        kw.update(proxy=js_code(
-          "new Ext.data.HttpProxy(%s)" % py2js(proxy)
-        ))
-        # a JsonStore without explicit proxy sometimes used method POST
-        # kw.update(autoLoad=True)
-        kw.update(totalProperty='count')
-        kw.update(root='rows')
-        kw.update(id=ext_requests.CHOICES_VALUE_FIELD) # self.report.model._meta.pk.name)
-        kw.update(fields=[ext_requests.CHOICES_VALUE_FIELD,ext_requests.CHOICES_TEXT_FIELD])
-        #~ kw.update(listeners=dict(exception=js_code("Lino.on_store_exception")))
-        kw.update(listeners=dict(exception=js_code("Lino.on_store_exception")))
-        return kw
-      
-        
-    def get_field_options(self,**kw):
-        # see blog 20100222
-        kw = FieldElement.get_field_options(self,**kw)
-        kw.update(mode='remote')
-        #setup_report(self.report)
-        #kw.update(store=self.rh.store)
-        sto = self.store_options()
-        #print repr(sto)
-        kw.update(store=js_code("new Ext.data.JsonStore(%s)" % py2js(sto)))
-        #kw.update(store=js_code(self.store.as_ext_value(request)))
-        kw.update(hiddenName=self.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
-        kw.update(valueField=ext_requests.CHOICES_VALUE_FIELD) #self.report.model._meta.pk.name)
-        #kw.update(valueField='id')
-        #kw.update(valueField=self.name)
-        kw.update(triggerAction='all')
-        #kw.update(listeners=dict(beforequery=js_code("function(qe) {console.log('beforequery',qe); return true;}")))
-        
-        kw.update(submitValue=True)
-        kw.update(displayField=ext_requests.CHOICES_TEXT_FIELD) # self.report.display_field)
-        kw.update(typeAhead=True)
-        kw.update(minChars=2) # default 4 is to much
-        kw.update(queryDelay=300) # default 500 is maybe slow
-        kw.update(queryParam=ext_requests.URL_PARAM_FILTER)
-        kw.update(typeAhead=True)
-        #kw.update(typeAheadDelay=300) # default 500 is maybe slow
-        kw.update(selectOnFocus=True) # select any existing text in the field immediately on focus.
-        kw.update(resizable=True)
-        kw.update(pageSize=self.report.page_length)
-        kw.update(emptyText='Select a %s...' % self.report.model.__name__)
-        # test whether field has a %s_choices() method
-        #~ if self.lh.link.report.get_field_choices_meth(self.field): 
-            #~ kw.update(contextParam=ext_requests.URL_PARAM_CHOICES_PK)
-            #kw.update(lazyInit=True)
-        rh = self.lh.layout.datalink_report.get_handle(self.lh.ui)
-        chooser = rh.choosers[self.field.name]
-        if chooser.context_params:
-        #~ cp = chooser.get_context_params(self.lh.link.report.model,self.field.name)
-        #~ if cp:    
-            kw.update(contextParams=chooser.context_params)
-            
-        #~ ... hier weiss ich noch nicht...
-        #~ if chooser.context_values:
-            #~ kw.update(contextValueNames=chooser.chooser.context_values)
-            #~ def js():
-                #~ yield "  this.add_row_listener(function(sm,rowIndex,record) {" 
-                #~ yield "    %s.setContextValues([" % self.as_ext()
-                #~ yield "      " + ",".join(["record.data." + name for name in chooser.context_values])
-                #~ yield "])})}"
-            #~ kw.update(master_listener=js)
-        return kw
-        
-    #~ def js_on_load_record(self):
-        #~ for ln in super(ForeignKeyElement,self).js_on_load_record():
-            #~ yield ln
-        #~ chooser = self.lh.datalink.choosers[self.field.name]
-        #~ if chooser.context_values:
-            #~ yield "  %s.setContextValues([" % self.as_ext()
-            #~ yield ",".join("record.data." + name for name in chooser.context_values]
-            #~ yield "]);"
-
-    def js_body(self):
-        for ln in super(ForeignKeyElement,self).js_body():
-            yield ln
-        chooser = self.lh.datalink.choosers[self.field.name]
-        if chooser.context_values:
-            yield "this.window.on('render',function() {" 
-            #~ yield "  console.log(20100311);" 
-            yield "  this.add_row_listener(function(sm,rowIndex,record) {" 
-            yield "    %s.setContextValues([" % self.as_ext()
-            yield "      " + ",".join(["record.data." + name for name in chooser.context_values])
-            yield "])})},this);"
-
-
-        
             
 class DateFieldElement(FieldElement):
     xtype = 'datefield'
@@ -937,30 +938,13 @@ class MainPanel(jsgen.Variable):
   
     def setup(self):
         pass
-        #~ if self.keys:
-            #~ return
-        #~ keys = []
-        #~ buttons = []
-        #~ dl = self.get_datalink() # the ReportHandle
-            
-        #~ self.keys = Variable(self.ext_name+'_keys',keys)
-        #~ self.buttons = Variable(self.ext_name+'_buttons',buttons)
-        #~ self.cmenu = Variable('cmenu',js_code("new Ext.menu.Menu(%s)" % py2js(self.buttons)))
-        
-    #~ def subvars(self):
-        #~ self.setup()
-        #~ for rh in self.lh._needed_stores:
-            #~ yield rh.store
-        
-  
-    #~ def js_body(self):
-        #~ yield "this.content_type = %s;" % py2js(self.lh.datalink.content_type)
-        #~ for ln in jsgen.Variable.js_body(self):
-            #~ yield ln
-        
                 
     @classmethod
     def field2elem(cls,lh,field,**kw):
+        if hasattr(field,'_lino_chooser'):
+            return RemoteComboFieldElement(lh,field,**kw)
+        if field.choices:
+            return ChoicesFieldElement(lh,field,**kw)
         for cl,x in _field2elem:
             if isinstance(field,cl):
                 return x(lh,field,**kw)
