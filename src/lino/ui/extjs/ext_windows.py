@@ -22,7 +22,7 @@ from lino import reports
 from lino.ui import base
 from lino.core import actors
 from lino.utils import menus
-from lino.utils import chooser
+from lino.utils import choosers
 from lino.utils import jsgen
 from lino.utils import build_url
 from lino.utils.jsgen import py2js, js_code, id2js
@@ -75,7 +75,7 @@ class WindowWrapper(ActionRenderer):
         self.main = main
         #~ self.permalink_name = str(action).replace('.','/')
         self.permalink_name = str(action)
-        self.lh = lh
+        self.lh = lh # may be None
         self.bbar_buttons = []
         self.config = self.get_config()
         
@@ -121,9 +121,22 @@ class MasterWrapper(WindowWrapper):
         WindowWrapper.__init__(self,action,lh.ui,lh,lh._main,**kw)
         
     def js_render(self):
+        yield ''
         yield "function(caller) { "
         for ln in jsgen.declare_vars(self.config):
             yield '  '+ln
+        if self.lh is not None:
+            yield ''
+            for e in self.lh._main.walk():
+                if hasattr(e,'field'):
+                    chooser = choosers.get_for_field(e.field)
+                    if chooser:
+                        #~ kw.update(contextParams=chooser.context_params)
+                        #~ kw.update(plugins=js_code('new Lino.ChooserPlugin(caller,%s)' % py2js(chooser.context_values)))
+                        #~ kw.update(listeners=dict(added=js_code('Lino.chooser_handler(ww,%s)' % py2js(chooser.context_values))))
+                        for f in chooser.context_fields:
+                            yield "  %s_field.on('change',Lino.chooser_handler(%s,%r));" % (f.name,e.ext_name,f.name)
+          
         yield "new Lino.%s(caller,function(ww) { return %s}).show();}" % (self.__class__.__name__,py2js(self.config))
         
             

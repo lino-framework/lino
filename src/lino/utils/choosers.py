@@ -17,31 +17,6 @@ from lino.utils.instantiator import make_converter
 from lino.core.coretools import get_data_elem
 import lino
   
-#~ class Chooser:
-    #~ context_params = []
-    #~ context_values = []
-    #~ context_fields = []
-  
-    #~ def __init__(self,model,field):
-        #~ self.model = model
-        #~ self.field = model._meta.get_field(fldname)
-        #~ self.field = field
-        
-    #~ def get_choices(self,request,**params):
-        #~ raise NotImplementedError
-        #~ if self.field.choices:
-            #~ return self.field.choices
-        #~ if isinstance(self.field,models.ForeignKey):
-            #~ return self.field.rel.to.objects.all()
-            
-#~ class ChoicesChooser(Chooser):
-    #~ def get_choices(self,**data):
-        #~ return self.field.choices
-
-#~ class ForeignKeyChooser(Chooser):
-    #~ def get_choices(self,**data):
-        #~ return self.field.rel.to.objects.all()
-        
             
 class Chooser:
     def __init__(self,model,field,meth):
@@ -49,13 +24,17 @@ class Chooser:
         #~ self.field = model._meta.get_field(fldname)
         self.field = field
         self.meth = meth
-        self.context_params = meth.func_code.co_varnames[1:]
+        self.context_params = meth.func_code.co_varnames[1:meth.func_code.co_argcount]
+        #~ lino.log.warning("20100527 %s %s",self.context_params,meth)
         self.context_values = []
         self.context_fields = []
         for name in self.context_params:
             f = get_data_elem(self.model,name)
-            self.context_fields.append(f)
-            self.context_values.append(name+"Hidden")
+            if f is None:
+                lino.log.warning("Model %s has no field %s as asked by %s",self.model,name,meth)
+            else:
+                self.context_fields.append(f)
+                self.context_values.append(name+"Hidden")
             #~ if isinstance(f,models.ForeignKey):
                 #~ self.context_values.append(name+"Hidden")
             #~ else:
@@ -83,39 +62,6 @@ class Chooser:
             kw = cv.convert(**kw)
         return self.get_choices(**kw)
 
-  
-#~ class FormChooser(Chooser):
-    #~ def __init__(self,*args):
-        #~ Chooser.__init__(self,*args)
-        #~ if self.meth is not None:
-                    
-    #~ def get_choices(self,**data):
-        #~ for cv in self.converters:
-            #~ data = cv.convert(**data)
-        #~ return Chooser.get_choices(self,**data)
-        
-
-#~ def get_field_chooser(model,field):
-    #~ methname = field.name + "_choices"
-    #~ m = getattr(model,methname,None)
-    #~ if m is not None:
-        #~ return ContextChooser(model,f,m)
-    #~ elif f.choices:
-        #~ return ChoicesChooser(model,f)
-    #~ elif isinstance(self.field,models.ForeignKey):
-        #~ return ForeignKeyChooser(model,f)
-        
-def unused_get_choosers_for_model(model,cl=Chooser):
-    #~ print model._meta.fields
-    d = {}
-    for f in model._meta.fields:
-        chooser = get_field_chooser(model,f)
-        if chooser is not None:
-        #~ chooser = cl(model,f)
-        #~ if chooser.is_useful():
-            d[f.name] = chooser
-    return d
-        
 def discover():
     lino.log.info("Discovering choosers...")
     #~ lino.log.debug("Instantiate model reports...")
@@ -124,4 +70,7 @@ def discover():
             methname = field.name + "_choices"
             m = getattr(model,methname,None)
             if m is not None:
-                field._lino_chooser = Chooser(model,field,m)
+                setattr(field,'_lino_chooser',Chooser(model,field,m))
+
+def get_for_field(field):
+    return getattr(field,'_lino_chooser',None)

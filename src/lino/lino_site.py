@@ -59,7 +59,7 @@ if settings.MODEL_DEBUG:
         i += 1
         lino.log.debug("  %2d: %s.%s -> %r",i,model._meta.app_label,model._meta.object_name,model)
 
-from lino.utils import chooser
+from lino.utils import choosers
 
 class LinoSite:
     help_url = "http://code.google.com/p/lino"
@@ -90,7 +90,7 @@ class LinoSite:
         
         reports.discover()
         
-        chooser.discover()
+        choosers.discover()
 
         for a in actors.actors_list:
             if isinstance(a,layouts.DetailLayout):

@@ -11,17 +11,46 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+Example:
+
+  >>> class TextField(Component):
+  ...    declare_type = DECLARE_VAR
+  >>> class Panel(Component):
+  ...    declare_type = DECLARE_VAR
+  >>> fld1 = TextField(fieldLabel="Field 1",name='fld1',xtype='textfield')
+  >>> fld2 = TextField(fieldLabel="Field 2",name='fld2',xtype='textfield')
+  >>> fld3 = TextField(fieldLabel="Field 3",name='fld3',xtype='textfield')
+  >>> p1 = Panel(title="Panel",name='p1',xtype='panel',items=[fld2,fld3])
+  >>> main = Component(title="Main",name='main',xtype='form',items=[fld1,p1])
+  >>> d = dict(main=main,wc=[1,2,3])
+  
+  >>> for ln in declare_vars(d):
+  ...   print ln
+  var fld1 = { fieldLabel: "Field 1", xtype: "textfield" };
+  var fld2 = { fieldLabel: "Field 2", xtype: "textfield" };
+  var fld3 = { fieldLabel: "Field 3", xtype: "textfield" };
+  var p1 = { xtype: "panel", title: "Panel", items: [ fld2, fld3 ] };
+  
+  >>> print py2js(d)
+  { main: { xtype: "form", title: "Main", items: [ fld1, p1 ] }, wc: [ 1, 2, 3 ] }
+  
+Another example...
+
+
+"""
+
 import types
 import datetime
 
-from django.core.serializers.json import DjangoJSONEncoder
+#~ from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import simplejson
 from django.utils.functional import Promise
 from django.utils.encoding import force_unicode
 
 
 import lino
-from lino.utils import menus
+#~ from lino.utils import menus
 
 
 def dict2js(d):
@@ -33,16 +62,37 @@ def register_converter(func):
     CONVERTERS.append(func)
     
 def declare_vars(v):
+    #~ if isinstance(v,Component) and v.declare_type == DECLARE_VAR:
+        #~ print "20100527", v
+    #~ if isinstance(v,list) or isinstance(v,tuple): 
     if isinstance(v,(list,tuple)): 
         for sub in v:
             for ln in declare_vars(sub):
                 yield ln
+        return
     if isinstance(v,dict): # ) is types.DictType:
         for sub in v.values():
             for ln in declare_vars(sub):
                 yield ln
+        return
+    #~ ok = False
+    if isinstance(v,Component): 
+        #~ ok = True
+        for sub in v.ext_options().values():
+            for ln in declare_vars(sub):
+                yield ln
+        # DON'T return
+    elif isinstance(v,Value): 
+        #~ ok = True
+        for ln in declare_vars(v.value):
+            yield ln
+        # DON'T return
     if isinstance(v,Variable) and v.declare_type == DECLARE_VAR:
+        #~ ok = True
         yield "var %s = %s;" % (v.ext_name,'\n'.join(v.js_value())) 
+    #~ if v is not None and not ok:
+        #~ if not v.__class__ in (unicode,str, int,bool,js_code):
+            #~ print "20100527 Ignoring", v.__class__, v
 
 def py2js(v):
     #~ lino.log.debug("py2js(%r)",v)
@@ -79,7 +129,8 @@ def py2js(v):
     # http://docs.djangoproject.com/en/dev/topics/serialization/
     if isinstance(v,Promise):
         v = force_unicode(v)
-    return simplejson.dumps(v,cls=DjangoJSONEncoder) # http://code.djangoproject.com/ticket/3324
+    return simplejson.dumps(v)
+    #~ return simplejson.dumps(v,cls=DjangoJSONEncoder) # http://code.djangoproject.com/ticket/3324
     
 
 """
@@ -129,7 +180,7 @@ def py2js(v,**kw):
 def key2js(s):
     if isinstance(s,str):
         return s
-    return simplejson.dumps(s,cls=DjangoJSONEncoder)
+    return simplejson.dumps(s) # ,cls=DjangoJSONEncoder)
     
 def id2js(s):
     return s.replace('.','_')
@@ -261,4 +312,12 @@ class Object(Function):
             yield "  " + ln
         yield "(" + self.params + ")"
     
+      
+      
+def _test():
+    import doctest
+    doctest.testmod()
+
+if __name__ == "__main__":
+    _test()
       

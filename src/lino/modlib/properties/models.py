@@ -208,7 +208,8 @@ class PropValue(models.Model):
         #~ return [pv.value for pv in cls.objects.filter(owner_id__isnull=True,prop__exact=prop)]
         return [pv.value for pv in cls.value_choices(prop)]
         
-    def prop_choices(self,owner):
+    @classmethod
+    def prop_choices(cls,owner):
         """
         This answers the question "What Properties are possible for this PropValue?", 
         which basically is "All Properties that apply to this type of owner". 

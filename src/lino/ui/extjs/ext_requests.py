@@ -21,7 +21,7 @@ from lino import reports
 #~ from lino import forms
 #~ from lino.core import action_requests
 from lino.utils import ucsv
-from lino.utils import chooser
+#~ from lino.utils import choosers
 #~ from lino.ui.extjs import ext_windows
 
 

@@ -34,6 +34,7 @@ from django.contrib.contenttypes import generic
 import lino
 from lino.utils import ucsv
 from lino.utils import mixins
+from lino.utils import choosers
 from lino import actions, layouts #, commands
 from lino import reports        
 from lino.ui import base
@@ -42,7 +43,6 @@ from lino.ui import base
 from lino.core import actors
 #~ from lino.core import action_requests
 from lino.utils import menus
-from lino.utils import chooser
 from lino.utils import build_url
 from lino.utils import jsgen
 from lino.utils.jsgen import py2js, js_code, id2js
@@ -541,7 +541,7 @@ class ExtUI(base.UI):
         rpt = actors.get_actor2(app_label,rptname)
         rh = rpt.get_handle(self)
         field = rpt.model._meta.get_field(fldname)
-        chooser = getattr(field,'_lino_chooser',None)
+        chooser = choosers.get_for_field(field)
         if chooser:
             qs = chooser.get_request_choices(request)
         elif field.choices:

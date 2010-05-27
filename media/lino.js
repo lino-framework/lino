@@ -701,17 +701,23 @@ Lino.PictureBoxPlugin = Ext.extend(Lino.SlavePlugin,{
     this.caller.add_row_listener(function(sm,ri,rec) { Lino.load_picture(this.caller,cmp,rec) }, this );
   }
 });
-Lino.chooser_handler = function(ww,context_values) {
-  return function(cmp,ownerCt,index) {
-    console.log('Lino.chooser_handler()',cmp,ww,context_values);
-    ww.add_row_listener(function(sm,ri,rec) { 
-      var values = Array(context_values.length);
-      for (var i = 0; i < context_values.length; i++)
-          values[i] = rec.data[context_values[i]];
-      cmp.setContextValues(values);        
-    }, ww );
+Lino.chooser_handler = function(combo,name) {
+  return function(cmp,newValue,oldValue) {
+    console.log('Lino.chooser_handler()',cmp,oldValue,newValue);
+    combo.setContextValue(name,newValue);
   }
 };
+//~ Lino.chooser_handler = function(ww,context_values) {
+  //~ return function(cmp,ownerCt,index) {
+    //~ console.log('Lino.chooser_handler()',cmp,ww,context_values);
+    //~ ww.add_row_listener(function(sm,ri,rec) { 
+      //~ var values = Array(context_values.length);
+      //~ for (var i = 0; i < context_values.length; i++)
+          //~ values[i] = rec.data[context_values[i]];
+      //~ cmp.setContextValues(values);        
+    //~ }, ww );
+  //~ }
+//~ };
 Lino.unused_ChooserPlugin = function(caller,context_values) {
   this.caller = caller;
   this.context_values = context_values;
@@ -1215,6 +1221,16 @@ Ext.override(Ext.form.ComboBox, {
           }
         }
       }   
+    },
+    setContextValue : function(name,value) {
+      console.log('setContextValue',this,this.name,':',name,'=',value);
+      if (this.contextValues === undefined) {
+          this.contextValues = Array(this.contextParams.length);
+      }
+      if (this.contextValues[name] != value) {
+        this.contextValues[name] = value;
+        this.lastQuery = null;
+      }
     }
 });
 

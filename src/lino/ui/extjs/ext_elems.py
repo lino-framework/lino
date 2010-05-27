@@ -21,9 +21,10 @@ import lino
 
 from lino import layouts, reports
 from lino.utils import constrain
+from lino.utils import choosers
 from lino.utils import jsgen
 from lino.utils.jsgen import py2js, Variable, Component, id2js, js_code
-from lino.utils import chooser
+from lino.utils import choosers
 from lino.ui.extjs import ext_requests
 from lino.modlib.properties import models as properties # import Property, CharPropValue
 
@@ -40,19 +41,20 @@ class ColumnModel(Component):
     value_template = "new Ext.grid.ColumnModel(%s)"
     #declaration_order = 2
     
-    def __init__(self,grid):
+    def __init__(self,grid,**kw):
         assert isinstance(grid,GridElement)
         self.grid = grid
-        Component.__init__(self,grid.name)
-        self.columns = [GridColumn(self,e) for e in self.grid.elements if not e.hidden]
+        kw.update(columns=[GridColumn(self,e) for e in self.grid.elements if not e.hidden])
+        Component.__init__(self,grid.name,**kw)
+        #~ self.columns = [GridColumn(self,e) for e in self.grid.elements if not e.hidden]
         
-    def subvars(self):
-        for col in self.columns:
-            yield col.editor
-            yield col
+    #~ def subvars(self):
+        #~ for col in self.columns:
+            #~ yield col.editor
+            #~ yield col
         
         
-    def ext_options(self,**d):
+    def unused_ext_options(self,**d):
         #self.report.setup()
         d = Component.ext_options(self,**d)
         #d.update(columns=[e.get_column_options() for e in self.grid.elements])
@@ -271,9 +273,9 @@ class unused_VirtualFieldElement(LayoutElement):
         
         
 class FieldElement(LayoutElement):
-    declare_type = jsgen.DECLARE_INLINE
-    #declare_type = jsgen.DECLARE_THIS
-    #~ declare_type = jsgen.DECLARE_VAR
+    #~ declare_type = jsgen.DECLARE_INLINE
+    #~ declare_type = jsgen.DECLARE_THIS
+    declare_type = jsgen.DECLARE_VAR
     stored = True
     #declaration_order = 3
     ext_suffix = "_field"
@@ -436,14 +438,14 @@ class RemoteComboFieldElement(ComboFieldElement):
             #kw.update(lazyInit=True)
         #~ rh = self.lh.layout.datalink_report.get_handle(self.lh.ui)
         #~ chooser = rh.choosers[self.field.name]
-        chooser = getattr(self.field,'_lino_chooser',None)
+        #~ chooser = getattr(self.field,'_lino_chooser',None)
+        chooser = choosers.get_for_field(self.field)
         if chooser:
             kw.update(contextParams=chooser.context_params)
             #~ kw.update(plugins=js_code('new Lino.ChooserPlugin(caller,%s)' % py2js(chooser.context_values)))
-            kw.update(listeners=dict(added=js_code('Lino.chooser_handler(ww,%s)' % py2js(chooser.context_values))))
+            #~ kw.update(listeners=dict(added=js_code('Lino.chooser_handler(ww,%s)' % py2js(chooser.context_values))))
         return kw
         
-    
         
 class ForeignKeyElement(RemoteComboFieldElement):
     
@@ -462,7 +464,7 @@ class ForeignKeyElement(RemoteComboFieldElement):
         return kw
         
 
-    def js_body(self):
+    def unused_js_body(self):
         for ln in super(ForeignKeyElement,self).js_body():
             yield ln
         chooser = self.lh.datalink.choosers[self.field.name]
@@ -794,7 +796,7 @@ class Panel(Container):
   
 
 class GridElement(Container): #,DataElementMixin):
-    #~ declare_type = jsgen.DECLARE_VAR
+    declare_type = jsgen.DECLARE_VAR
     #value_template = "new Ext.grid.EditorGridPanel(%s)"
     #~ value_template = "new Ext.grid.GridPanel(%s)"
     value_template = "new Lino.GridPanel(%s)"
@@ -943,7 +945,8 @@ class MainPanel(jsgen.Variable):
                 
     @classmethod
     def field2elem(cls,lh,field,**kw):
-        if hasattr(field,'_lino_chooser'):
+        #~ if hasattr(field,'_lino_chooser'):
+        if choosers.get_for_field(field):
             return RemoteComboFieldElement(lh,field,**kw)
         if field.choices:
             return ChoicesFieldElement(lh,field,**kw)
@@ -1078,7 +1081,8 @@ class TabPanel(jsgen.Value):
         jsgen.Value.__init__(self,kw)
 
         
-class FormPanel(jsgen.Value):
+#~ class FormPanel(jsgen.Value):
+class FormPanel(jsgen.Component):
     value_template = "new Ext.form.FormPanel(%s)"
     def __init__(self,main,**kw):
         kw.update(
