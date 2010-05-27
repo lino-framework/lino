@@ -439,7 +439,8 @@ class RemoteComboFieldElement(ComboFieldElement):
         chooser = getattr(self.field,'_lino_chooser',None)
         if chooser:
             kw.update(contextParams=chooser.context_params)
-            
+            #~ kw.update(plugins=js_code('new Lino.ChooserPlugin(caller,%s)' % py2js(chooser.context_values)))
+            kw.update(listeners=dict(added=js_code('Lino.chooser_handler(ww,%s)' % py2js(chooser.context_values))))
         return kw
         
     
@@ -793,6 +794,7 @@ class Panel(Container):
   
 
 class GridElement(Container): #,DataElementMixin):
+    #~ declare_type = jsgen.DECLARE_VAR
     #value_template = "new Ext.grid.EditorGridPanel(%s)"
     #~ value_template = "new Ext.grid.GridPanel(%s)"
     value_template = "new Lino.GridPanel(%s)"

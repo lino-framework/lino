@@ -109,7 +109,10 @@ def lh2win(lh,**kw):
 class SlaveWrapper(WindowWrapper):
   
     def js_render(self):
-        yield "function(caller) { return new Lino.%s(caller,%s);}" % (self.__class__.__name__,py2js(self.config))
+        yield "function(caller) { "
+        for ln in jsgen.declare_vars(self.config):
+            yield '  '+ln
+        yield "return new Lino.%s(caller,function(ww) { return %s});}" % (self.__class__.__name__,py2js(self.config))
         
 
 class MasterWrapper(WindowWrapper):
@@ -118,7 +121,10 @@ class MasterWrapper(WindowWrapper):
         WindowWrapper.__init__(self,action,lh.ui,lh,lh._main,**kw)
         
     def js_render(self):
-        yield "function(caller) { new Lino.%s(caller,%s).show();}" % (self.__class__.__name__,py2js(self.config))
+        yield "function(caller) { "
+        for ln in jsgen.declare_vars(self.config):
+            yield '  '+ln
+        yield "new Lino.%s(caller,function(ww) { return %s}).show();}" % (self.__class__.__name__,py2js(self.config))
         
             
     

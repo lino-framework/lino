@@ -699,12 +699,36 @@ Lino.PictureBoxPlugin = Ext.extend(Lino.SlavePlugin,{
     //~ console.log('Lino.PictureBoxPlugin.init()',this);
     cmp.on('render',function(){ Lino.load_picture(this.caller,cmp,this.caller.get_current_record())},this);
     this.caller.add_row_listener(function(sm,ri,rec) { Lino.load_picture(this.caller,cmp,rec) }, this );
-    //~ this.caller.add_row_listener(Lino.PictureBox_handler(this.caller,cmp));
-    //~ function(record) {
-      //~ this.tpl.overwrite(cmp.body,{'national_id':'123'});
-    //~ });
   }
 });
+Lino.chooser_handler = function(ww,context_values) {
+  return function(cmp,ownerCt,index) {
+    console.log('Lino.chooser_handler()',cmp,ww,context_values);
+    ww.add_row_listener(function(sm,ri,rec) { 
+      var values = Array(context_values.length);
+      for (var i = 0; i < context_values.length; i++)
+          values[i] = rec.data[context_values[i]];
+      cmp.setContextValues(values);        
+    }, ww );
+  }
+};
+Lino.unused_ChooserPlugin = function(caller,context_values) {
+  this.caller = caller;
+  this.context_values = context_values;
+};
+Ext.override(Lino.unused_ChooserPlugin,{
+  init : function (cmp) {
+    console.log('Lino.ChooserPlugin.init()',this);
+    // cmp.on('render',function(){ Lino.load_picture(this.caller,cmp,this.caller.get_current_record())},this);
+    if (this.caller) this.caller.add_row_listener(function(sm,ri,rec) { 
+      var values = Array(this.context_values.length);
+      for (var i = 0; i < this.context_values.length; i++)
+          values[i] = rec.data[this.context_values[i]];
+      cmp.setContextValues(values);        
+    }, this );
+  }
+});
+
 
 Lino.load_slavegrid = function(caller,cmp,record) {
   if (record && cmp.el) {
@@ -715,24 +739,31 @@ Lino.load_slavegrid = function(caller,cmp,record) {
     cmp.getStore().load(); 
   } else console.log('Lino.load_picture() no record or cmp not rendered',caller,cmp,record);
 }
+Lino.SlaveGridPlugin = Ext.extend(Lino.SlavePlugin,{
+  init : function (cmp) {
+    cmp.on('render',function(){ Lino.load_slavegrid(this.caller,cmp,this.caller.get_current_record())},this);
+    this.caller.add_row_listener(function(sm,ri,rec) { Lino.load_slavegrid(this.caller,cmp,rec) }, this );
+  }
+});
 
 
-Lino.WindowWrapper = function(caller,config) {
+
+Lino.WindowWrapper = function(caller,config_fn) {
   //~ console.log('Lino.WindowWrapper.constructor',config.title,' : caller is ',caller);
   this.caller = caller;
-  this.config = config; 
+  this.config = config_fn(this); 
   this.slaves = {};
-  if (config.actions) {
-      this.bbar_actions = Array(config.actions.length);
-      for(var i=0;i<config.actions.length;i++) { 
+  if (this.config.actions) {
+      this.bbar_actions = Array(this.config.actions.length);
+      for(var i=0;i<this.config.actions.length;i++) { 
         var btn = {
-          text: config.actions[i].label
+          text: this.config.actions[i].label
         };
-        if (config.actions[i].opens_a_slave) {
-          btn.toggleHandler = Lino.toggle_button_handler(this,config.actions[i]);
+        if (this.config.actions[i].opens_a_slave) {
+          btn.toggleHandler = Lino.toggle_button_handler(this,this.config.actions[i]);
           btn.enableToggle = true;
         } else  {
-          btn.handler = Lino.button_handler(this,config.actions[i]);
+          btn.handler = Lino.button_handler(this,this.config.actions[i]);
         }
         this.bbar_actions[i] = new Ext.Button(btn);
       }
@@ -788,17 +819,6 @@ Ext.override(Lino.WindowWrapper,{
   get_window_config : function() { return {} }
 });
 
-Lino.SlaveGridPlugin = Ext.extend(Lino.SlavePlugin,{
-  init : function (cmp) {
-    cmp.on('render',function(){ Lino.load_slavegrid(this.caller,cmp,this.caller.get_current_record())},this);
-    this.caller.add_row_listener(function(sm,ri,rec) { Lino.load_slavegrid(this.caller,cmp,rec) }, this );
-    //~ this.caller.add_row_listener(Lino.PictureBox_handler(this.caller,cmp));
-    //~ function(record) {
-      //~ this.tpl.overwrite(cmp.body,{'national_id':'123'});
-    //~ });
-  }
-});
-
 
 
 Lino.GridMixin = {
@@ -838,7 +858,7 @@ Lino.GridMasterWrapper = Ext.extend(Lino.WindowWrapper,Lino.GridMixin);
 Lino.GridMasterWrapper.override({
   add_row_listener : function(fn,scope) {
     // this.main_grid.add_row_listener(fn,scope);
-    this.main_grid.getSelectionModel().addListener('rowselect',fn,scope);
+    this.main_item.getSelectionModel().addListener('rowselect',fn,scope);
     //~ console.log(20100509,'Lino.GridMasterWrapper.add_row_listener',this.config.title);
   }
 });
@@ -877,11 +897,7 @@ Lino.GridSlaveWrapper.override(Lino.SlaveMixin);
 Lino.GridSlaveWrapper.override(Lino.GridMixin);
 Lino.GridSlaveWrapper.override({
   load_master_record : function(record) {
-    //~ console.log('GridSlaveWrapper.load_master_record()',record)
     Lino.load_slavegrid(this.caller,this.main_grid,record);
-    //~ var p = this.caller.get_master_params(record);
-    //~ for (k in p) this.store.setBaseParam(k,p[k]);
-    //~ this.store.load(); // {params:this.get_master_params(record)}); 
   }
 });
 

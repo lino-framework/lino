@@ -31,7 +31,18 @@ CONVERTERS = []
 
 def register_converter(func):
     CONVERTERS.append(func)
-
+    
+def declare_vars(v):
+    if isinstance(v,(list,tuple)): 
+        for sub in v:
+            for ln in declare_vars(sub):
+                yield ln
+    if isinstance(v,dict): # ) is types.DictType:
+        for sub in v.values():
+            for ln in declare_vars(sub):
+                yield ln
+    if isinstance(v,Variable) and v.declare_type == DECLARE_VAR:
+        yield "var %s = %s;" % (v.ext_name,'\n'.join(v.js_value())) 
 
 def py2js(v):
     #~ lino.log.debug("py2js(%r)",v)
