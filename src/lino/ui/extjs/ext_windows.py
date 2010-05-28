@@ -125,10 +125,11 @@ class MasterWrapper(WindowWrapper):
         yield "function(caller) { "
         for ln in jsgen.declare_vars(self.config):
             yield '  '+ln
+        on_load_record = []
         if self.lh is not None:
             yield ''
             for e in self.lh._main.walk():
-                if hasattr(e,'field'):
+                if isinstance(e,ext_elems.FieldElement):
                     chooser = choosers.get_for_field(e.field)
                     if chooser:
                         #~ kw.update(contextParams=chooser.context_params)
@@ -136,7 +137,9 @@ class MasterWrapper(WindowWrapper):
                         #~ kw.update(listeners=dict(added=js_code('Lino.chooser_handler(ww,%s)' % py2js(chooser.context_values))))
                         for f in chooser.context_fields:
                             yield "  %s_field.on('change',Lino.chooser_handler(%s,%r));" % (f.name,e.ext_name,f.name)
-          
+                            #~ on_load_record.append("%s.setContextValue(%r,record.data[%r]);" % (e.ext_name,f.name,f.name))
+                            on_load_record.append("%s.setContextValue(%r,%s_field.getValue());" % (e.ext_name,f.name,f.name))
+        self.config.update(on_load_record=js_code('function(record){%s}' % ('\n'.join(on_load_record))))
         yield "new Lino.%s(caller,function(ww) { return %s}).show();}" % (self.__class__.__name__,py2js(self.config))
         
             

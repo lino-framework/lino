@@ -892,7 +892,9 @@ Lino.DetailMixin = {
     } else {
       this.main_form.form.reset();
       this.main_form.disable();
+      this.main_form.setTitle('');
     }
+    this.config.on_load_record(record);
   }
 };
 
@@ -1139,6 +1141,7 @@ Lino.PropertiesWrapper.override({
 Feature request developed in http://extjs.net/forum/showthread.php?t=75751
 */
 Ext.override(Ext.form.ComboBox, {
+    contextParams : {}, 
     // contextParams : array of names of variables to add to query
     // contextValues : array of values of variables to add to query
     // queryContext : null, 
@@ -1200,36 +1203,39 @@ Ext.override(Ext.form.ComboBox, {
             p.limit = this.pageSize;
         }
         // now my code:
-        if(this.contextParams && this.contextValues) {
-          for(i = 0; i <= this.contextParams.length; i++)
-            p[this.contextParams[i]] = this.contextValues[i];
-        }
+        if(this.contextParams) Ext.apply(p,this.contextParams);
+        //~ if(this.contextParams && this.contextValues) {
+          //~ for(i = 0; i <= this.contextParams.length; i++)
+            //~ p[this.contextParams[i]] = this.contextValues[i];
+        //~ }
         return p;
     },
-    setContextValues : function(values){
-      if(this.contextParams) {
-        console.log('setContextValues',this.name,this.contextParams,'=',values);
-        if (this.contextValues === undefined) {
-          this.contextValues = values;
-          this.lastQuery = null;
-          return
-        }
-        for(i = 0; i <= this.contextParams.length; i++) {
-          if (this.contextValues[i] != values[i]) {
-            this.contextValues[i] = values[i];
-            this.lastQuery = null;
-          }
-        }
-      }   
-    },
+    //~ setContextValues : function(values){
+      //~ if(this.contextParams) {
+        //~ console.log('setContextValues',this.name,this.contextParams,'=',values);
+        //~ if (this.contextValues === undefined) {
+          //~ this.contextValues = values;
+          //~ this.lastQuery = null;
+          //~ return
+        //~ }
+        //~ for(i = 0; i <= this.contextParams.length; i++) {
+          //~ if (this.contextValues[i] != values[i]) {
+            //~ this.contextValues[i] = values[i];
+            //~ this.lastQuery = null;
+          //~ }
+        //~ }
+      //~ }   
+    //~ },
     setContextValue : function(name,value) {
       console.log('setContextValue',this,this.name,':',name,'=',value);
-      if (this.contextValues === undefined) {
-          this.contextValues = Array(this.contextParams.length);
-      }
-      if (this.contextValues[name] != value) {
-        this.contextValues[name] = value;
+      //~ if (this.contextValues === undefined) {
+          //~ this.contextValues = Array(); // this.contextParams.length);
+      //~ }
+      if (this.contextParams[name] != value) {
+        console.log('setContextValue 1',this.contextParams);
+        this.contextParams[name] = value;
         this.lastQuery = null;
+        console.log('setContextValue 2',this.contextParams);
       }
     }
 });

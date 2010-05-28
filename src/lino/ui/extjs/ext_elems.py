@@ -439,9 +439,10 @@ class RemoteComboFieldElement(ComboFieldElement):
         #~ rh = self.lh.layout.datalink_report.get_handle(self.lh.ui)
         #~ chooser = rh.choosers[self.field.name]
         #~ chooser = getattr(self.field,'_lino_chooser',None)
-        chooser = choosers.get_for_field(self.field)
-        if chooser:
-            kw.update(contextParams=chooser.context_params)
+        #~ kw.update(contextParams={})
+        #~ chooser = choosers.get_for_field(self.field)
+        #~ if chooser:
+            #~ kw.update(contextParams=chooser.context_params)
             #~ kw.update(plugins=js_code('new Lino.ChooserPlugin(caller,%s)' % py2js(chooser.context_values)))
             #~ kw.update(listeners=dict(added=js_code('Lino.chooser_handler(ww,%s)' % py2js(chooser.context_values))))
         return kw
