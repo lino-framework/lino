@@ -703,7 +703,7 @@ Lino.PictureBoxPlugin = Ext.extend(Lino.SlavePlugin,{
 });
 Lino.chooser_handler = function(combo,name) {
   return function(cmp,newValue,oldValue) {
-    console.log('Lino.chooser_handler()',cmp,oldValue,newValue);
+    //~ console.log('Lino.chooser_handler()',cmp,oldValue,newValue);
     combo.setContextValue(name,newValue);
   }
 };
@@ -840,6 +840,7 @@ Lino.GridMixin = {
       
     //~ this.main_item = this.main_grid;
     this.main_item = this.config.main_panel;
+    this.main_item.on('beforeedit',function(e) { this.config.before_row_edit(e.record)},this);
       
     Lino.WindowWrapper.prototype.setup.call(this);
   },
@@ -883,7 +884,7 @@ Lino.DetailMixin = {
   get_current_record : function() {  return this.current_record },
   load_master_record : function(record) {
     this.current_record = record;
-    //~ console.log('Lino.DetailMixin.load_master_record',record);
+    console.log('20100531 Lino.DetailMixin.load_master_record',record);
     //~ this.config.main_panel.form.load(record);    
     if (record) {
       this.main_form.enable();
@@ -894,7 +895,8 @@ Lino.DetailMixin = {
       this.main_form.disable();
       this.main_form.setTitle('');
     }
-    this.config.on_load_record(record);
+    //~ console.log('20100531 Lino.DetailMixin.on_load_master_record',this.main_form);
+    this.config.before_row_edit(record);
   }
 };
 
@@ -1023,17 +1025,18 @@ Lino.DetailWrapper.override({
     if (! this.config.record_id) {
       this.config.record_id = this.caller.get_current_record().id;
     }
-    var this_caller = this;
+    //~ console.log('Lino.DetailWrapper.setup() calls Ajax');
+    var this_ = this;
     Ext.Ajax.request({ 
       waitMsg: 'Loading record...',
       method: 'GET',
       url:this.config.url_data + '/' + this.config.record_id,
       success: function(response) {
-        //~ console.log('Lino.DetailWrapper.setup()',action,'success:',reponse);
         if (response.responseText) {
             var rec = Ext.decode(response.responseText);
-            this_caller.load_master_record(rec);
-            this_caller.window.setTitle(rec.title);
+            console.log('20100531 Lino.DetailWrapper.setup() success',rec);
+            this_.load_master_record(rec);
+            this_.window.setTitle(rec.title);
         }
       },
       failure: Lino.ajax_error_handler
@@ -1136,7 +1139,20 @@ Lino.PropertiesWrapper.override({
 
 })(); 
 
-
+Ext.override(Ext.form.BasicForm,{
+    loadRecord : function(record){
+        var field, id;
+        for(id in record.data){
+            if(!Ext.isFunction(record.data[id]) && (field = this.findField(id))){
+                field.setValue(record.data[id],record);
+                if(this.trackResetOnLoad){
+                    field.originalValue = field.getValue();
+                }
+            }
+        }
+        return this;
+    },
+});
 /*
 Feature request developed in http://extjs.net/forum/showthread.php?t=75751
 */
@@ -1146,14 +1162,17 @@ Ext.override(Ext.form.ComboBox, {
     // contextValues : array of values of variables to add to query
     // queryContext : null, 
     // contextParam : null, 
-    setValue : function(v){
-        // if(this.name == 'country') console.log('country ComboBox.setValue()',v);
+    setValue : function(v,record){
+        if(this.name == 'country') console.log('20100531 country ComboBox.setValue()',v,record);
         var text = v;
         if(this.valueField){
           if(v === null) { 
               // console.log(this.name,'.setValue',v,'no lookup needed, value is null');
               v = null;
-          }else{
+          } else if (record != undefined) {
+            text = record.data[this.name];
+            //~ console.log(this.name,'.setValue',v,'got text ',this.name,' from record ',record);
+          } else {
             // if(this.mode == 'remote' && !Ext.isDefined(this.store.totalLength)){
             if(this.mode == 'remote' && ( this.lastQuery === null || (!Ext.isDefined(this.store.totalLength)))){
                 // console.log(this.name,'.setValue',v,'must wait for load');
@@ -1232,10 +1251,10 @@ Ext.override(Ext.form.ComboBox, {
           //~ this.contextValues = Array(); // this.contextParams.length);
       //~ }
       if (this.contextParams[name] != value) {
-        console.log('setContextValue 1',this.contextParams);
+        //~ console.log('setContextValue 1',this.contextParams);
         this.contextParams[name] = value;
         this.lastQuery = null;
-        console.log('setContextValue 2',this.contextParams);
+        //~ console.log('setContextValue 2',this.contextParams);
       }
     }
 });

@@ -14,6 +14,7 @@
 import os
 
 from django.utils.translation import ugettext as _
+from django.db import models
 
 import lino
 from lino import actions, layouts #, commands
@@ -125,7 +126,8 @@ class MasterWrapper(WindowWrapper):
         yield "function(caller) { "
         for ln in jsgen.declare_vars(self.config):
             yield '  '+ln
-        on_load_record = []
+        before_row_edit = []
+        before_row_edit.append("console.log('ext_windows.py 20100531',record);")
         if self.lh is not None:
             yield ''
             for e in self.lh._main.walk():
@@ -137,9 +139,16 @@ class MasterWrapper(WindowWrapper):
                         #~ kw.update(listeners=dict(added=js_code('Lino.chooser_handler(ww,%s)' % py2js(chooser.context_values))))
                         for f in chooser.context_fields:
                             yield "  %s_field.on('change',Lino.chooser_handler(%s,%r));" % (f.name,e.ext_name,f.name)
-                            #~ on_load_record.append("%s.setContextValue(%r,record.data[%r]);" % (e.ext_name,f.name,f.name))
-                            on_load_record.append("%s.setContextValue(%r,%s_field.getValue());" % (e.ext_name,f.name,f.name))
-        self.config.update(on_load_record=js_code('function(record){%s}' % ('\n'.join(on_load_record))))
+                            #~ yield "  %s_field.on('render',function(cmp) { %s.setContextValue(%r,cmp.getValue())});" % (f.name,e.ext_name,f.name)
+                            #~ yield "  %s.on('focus',function(cmp) { cmp.setContextValue(%r,%s_field.getValue())});" % (e.ext_name,f.name,f.name)
+                            if isinstance(f,models.ForeignKey) or (isinstance(f,models.Field) and f.choices):
+                                fname = f.name+ext_requests.CHOICES_HIDDEN_SUFFIX
+                            else:
+                                fname = f.name
+                            before_row_edit.append("%s.setContextValue(%r,record.data[%r]);" % (
+                                e.ext_name,f.name,fname))
+                            #~ before_row_edit.append("%s.setContextValue(%r,%s_field.getValue());" % (e.ext_name,f.name,f.name))
+        self.config.update(before_row_edit=js_code('function(record){%s}' % ('\n'.join(before_row_edit))))
         yield "new Lino.%s(caller,function(ww) { return %s}).show();}" % (self.__class__.__name__,py2js(self.config))
         
             
