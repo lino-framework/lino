@@ -724,7 +724,7 @@ Lino.unused_ChooserPlugin = function(caller,context_values) {
 };
 Ext.override(Lino.unused_ChooserPlugin,{
   init : function (cmp) {
-    console.log('Lino.ChooserPlugin.init()',this);
+    //~ console.log('Lino.ChooserPlugin.init()',this);
     // cmp.on('render',function(){ Lino.load_picture(this.caller,cmp,this.caller.get_current_record())},this);
     if (this.caller) this.caller.add_row_listener(function(sm,ri,rec) { 
       var values = Array(this.context_values.length);
@@ -739,7 +739,7 @@ Ext.override(Lino.unused_ChooserPlugin,{
 Lino.load_slavegrid = function(caller,cmp,record) {
   if (record && cmp.el) {
     //~ var src = caller.config.url_data + "/" + record.id + ".jpg"
-    console.log('Lino.load_slavegrid()',record);
+    //~ console.log('Lino.load_slavegrid()',record);
     var p = caller.get_master_params(record);
     for (k in p) cmp.getStore().setBaseParam(k,p[k]);
     cmp.getStore().load(); 
@@ -884,7 +884,7 @@ Lino.DetailMixin = {
   get_current_record : function() {  return this.current_record },
   load_master_record : function(record) {
     this.current_record = record;
-    console.log('20100531 Lino.DetailMixin.load_master_record',record);
+    //~ console.log('20100531 Lino.DetailMixin.load_master_record',record);
     //~ this.config.main_panel.form.load(record);    
     if (record) {
       this.main_form.enable();
@@ -1034,7 +1034,7 @@ Lino.DetailWrapper.override({
       success: function(response) {
         if (response.responseText) {
             var rec = Ext.decode(response.responseText);
-            console.log('20100531 Lino.DetailWrapper.setup() success',rec);
+            //~ console.log('20100531 Lino.DetailWrapper.setup() success',rec);
             this_.load_master_record(rec);
             this_.window.setTitle(rec.title);
         }
@@ -1163,7 +1163,7 @@ Ext.override(Ext.form.ComboBox, {
     // queryContext : null, 
     // contextParam : null, 
     setValue : function(v,record){
-        if(this.name == 'country') console.log('20100531 country ComboBox.setValue()',v,record);
+        //~ if(this.name == 'country') console.log('20100531 country ComboBox.setValue()',v,record);
         var text = v;
         if(this.valueField){
           if(v === null) { 
@@ -1246,7 +1246,7 @@ Ext.override(Ext.form.ComboBox, {
       //~ }   
     //~ },
     setContextValue : function(name,value) {
-      console.log('setContextValue',this,this.name,':',name,'=',value);
+      //~ console.log('setContextValue',this,this.name,':',name,'=',value);
       //~ if (this.contextValues === undefined) {
           //~ this.contextValues = Array(); // this.contextParams.length);
       //~ }

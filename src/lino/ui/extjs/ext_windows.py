@@ -127,7 +127,7 @@ class MasterWrapper(WindowWrapper):
         for ln in jsgen.declare_vars(self.config):
             yield '  '+ln
         before_row_edit = []
-        before_row_edit.append("console.log('ext_windows.py 20100531',record);")
+        #~ before_row_edit.append("console.log('ext_windows.py 20100531',record);")
         if self.lh is not None:
             yield ''
             for e in self.lh._main.walk():
