@@ -753,8 +753,8 @@ Lino.SlaveGridPlugin = Ext.extend(Lino.SlavePlugin,{
 });
 
 
-//~ Lino.USE_WINDOWS = false;
-Lino.USE_WINDOWS = true;
+Lino.USE_WINDOWS = false;
+//~ Lino.USE_WINDOWS = true;
 
 Lino.WindowWrapper = function(caller,config_fn) {
   //~ console.log('Lino.WindowWrapper.constructor',config.title,' : caller is ',caller);
@@ -824,7 +824,8 @@ Ext.override(Lino.WindowWrapper,{
         tools: [ { qtip: this.config.qtip, handler: Lino.save_wc_handler(this), id: "save" } ] 
         });
     } else {
-      this.window = new Ext.Panel({ layout: "fit",
+      this.window = new Ext.Panel({ layout: "fit", 
+      //~ autoHeight: true,
         title: this.config.title, items: this.main_item, 
         bbar: this.bbar_actions,
         tools: [ { qtip: this.config.qtip, handler: Lino.save_wc_handler(this), id: "save" } ] 

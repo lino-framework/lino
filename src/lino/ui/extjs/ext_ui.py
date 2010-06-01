@@ -11,6 +11,9 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+
+USE_WINDOWS = False
+
 import os
 import cgi
 #import traceback
@@ -416,13 +419,17 @@ class ExtUI(base.UI):
             index = dict(
                 xtype="panel",
                 html=lino_site.index_html.encode('ascii','xmlcharrefreplace'),
+                layout='fit',
                 autoScroll=True,
-                #~ layout='fit',
                 #~ autoHeight=True,
-                id="main_area",
                 #width=50000,
                 #height=50000,
                 region="center")
+            if not USE_WINDOWS:
+                index.update(
+                    id="main_area",
+                    #~ layout='form',
+                    )
             console = jsgen.Component("konsole",
                 #~ xtype="panel",
                 split=True,
