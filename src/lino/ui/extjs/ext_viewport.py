@@ -104,9 +104,9 @@ class Viewport:
         s += """
 Ext.onReady(function(){ """
 
-        for c in self.components:
-            for ln in c.js_declare():
-                s += "\n" + ln
+        #~ for c in self.components:
+            #~ for ln in c.js_declare():
+                #~ s += "\n" + ln
 
         d = dict(layout='border')
         d.update(items=js_code(py2js([js_code('Lino.main_menu')]+list(self.components))))

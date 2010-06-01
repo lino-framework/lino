@@ -412,10 +412,14 @@ class ExtUI(base.UI):
         if self._response is None:
             lino.log.debug("building extjs._response...")
             from lino.lino_site import lino_site
-            index = ext_elems.VisibleComponent("index",
-                #~ xtype="panel",
+            #~ index = ext_elems.VisibleComponent("index",
+            index = dict(
+                xtype="panel",
                 html=lino_site.index_html.encode('ascii','xmlcharrefreplace'),
                 autoScroll=True,
+                #~ layout='fit',
+                #~ autoHeight=True,
+                id="main_area",
                 #width=50000,
                 #height=50000,
                 region="center")

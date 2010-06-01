@@ -753,6 +753,8 @@ Lino.SlaveGridPlugin = Ext.extend(Lino.SlavePlugin,{
 });
 
 
+//~ Lino.USE_WINDOWS = false;
+Lino.USE_WINDOWS = true;
 
 Lino.WindowWrapper = function(caller,config_fn) {
   //~ console.log('Lino.WindowWrapper.constructor',config.title,' : caller is ',caller);
@@ -782,12 +784,6 @@ Lino.WindowWrapper = function(caller,config_fn) {
 //~ Ext.apply(Lino.WindowWrapper.prototype,{
 Ext.override(Lino.WindowWrapper,{
   closeAction : 'close',
-  show : function() {
-    //~ console.log('Lino.WindowWrapper.show',this);
-    this.window.show();
-    this.window.syncSize();
-    this.window.focus();
-  },
   get_master_params : function(record) {
     var p = {}
     p['mt'] = this.config.content_type; // ext_requests.URL_PARAM_MASTER_TYPE
@@ -803,15 +799,37 @@ Ext.override(Lino.WindowWrapper,{
     var v = {};
     return v;
   },
+  show : function() {
+    //~ console.log('Lino.WindowWrapper.show',this);
+    if (Lino.USE_WINDOWS) {
+      this.window.show();
+      this.window.syncSize();
+      this.window.focus();
+    } else {
+      var cmp = Ext.getCmp('main_area');
+      //~ cmp.update(this.window);
+      cmp.update('');
+      this.window.render('main_area');
+      //~ Ext.DomHelper.overwrite(cmp,this.window);
+    }
+  },
   setup : function() { 
     //~ console.log('Lino.WindowWrapper.setup',this);
-    this.window = new Ext.Window({ layout: "fit", title: this.config.title, items: this.main_item, 
-      height: this.config.wc.height, width: this.config.wc.width, maximizable: true, maximized: this.config.wc.maximized, 
-      y: this.config.wc.y, x: this.config.wc.x, 
-      closeAction:this.closeAction,
-      bbar: this.bbar_actions,
-      tools: [ { qtip: this.config.qtip, handler: Lino.save_wc_handler(this), id: "save" } ] 
+    if (Lino.USE_WINDOWS) {
+      this.window = new Ext.Window({ layout: "fit", title: this.config.title, items: this.main_item, 
+        height: this.config.wc.height, width: this.config.wc.width, maximizable: true, maximized: this.config.wc.maximized, 
+        y: this.config.wc.y, x: this.config.wc.x, 
+        closeAction:this.closeAction,
+        bbar: this.bbar_actions,
+        tools: [ { qtip: this.config.qtip, handler: Lino.save_wc_handler(this), id: "save" } ] 
+        });
+    } else {
+      this.window = new Ext.Panel({ layout: "fit",
+        title: this.config.title, items: this.main_item, 
+        bbar: this.bbar_actions,
+        tools: [ { qtip: this.config.qtip, handler: Lino.save_wc_handler(this), id: "save" } ] 
       });
+    }
     this.window.window_wrapper = this;
     //~ console.log('Lino.WindowWrapper.setup done',this);
     //~ if (this.caller) this.window._permalink_name = this.config.permalink_name;
