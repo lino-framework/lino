@@ -13,7 +13,6 @@
 
 import os
 import sys
-import glob
 
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
@@ -27,7 +26,7 @@ from lino.utils import perms
 from lino.utils import mixins
 from django.conf import settings
 
-tools.requires_apps('auth','contenttypes','links')
+#~ tools.requires_apps('auth','contenttypes','links')
 
 class NoteType(models.Model):
     name = models.CharField(max_length=200)
@@ -39,16 +38,8 @@ class NoteType(models.Model):
         
     @classmethod
     def template_choices(cls,print_method):
-        pm = mixins.get_print_method(print_method)
-        if pm is None:
-            print "unknown print method", print_method
-            gp = os.path.join(settings.DATA_DIR,'*.jpg')
-        else:
-            gp = os.path.join(settings.DATA_DIR,'*'+pm.template_ext)
-        r = glob.glob(gp)
-        #~ print r
-        return [fn.decode(sys.getfilesystemencoding()) for fn in r]
-            
+        return mixins.template_choices(print_method)
+        
         
 
 
@@ -85,6 +76,15 @@ class Note(models.Model,mixins.Printable):
         if u is not None:
             self.user = u
         
+    def get_print_method(self,fmt):
+        if self.type is None:
+            print 'get_print_method',self,'type is None'
+            return None
+        if not self.type.print_method:
+            print 'get_print_method',self,' : type ', self.type, 'has no print_method'
+            return None
+        return mixins.get_print_method(self.type.print_method)
+        
     def get_print_templates(self,pm):
         if self.type is None:
             return mixins.Printable.get_print_templates(self,pm)
@@ -114,12 +114,18 @@ class NoteDetail(layouts.DetailLayout):
     
     
     box1 = """
+    date 
+    type 
+    user 
+    """
+    box2 = """
+    subject
     person 
     company
     """
+    
     main = """
-    date subject type user 
-    box1:40 links.LinksByOwner:40
+    box1 box2
     body:80x5 
     """
     

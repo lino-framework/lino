@@ -12,8 +12,11 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 import os
+import sys
 import logging
 import cStringIO
+import glob
+from fnmatch import fnmatch
 
 from django.conf import settings
 from django.template.loader import render_to_string, get_template, select_template, Context, TemplateDoesNotExist
@@ -40,6 +43,12 @@ except ImportError:
     #~ except ImportError:
         #~ appy_pod = None
         
+pm_dict = {}
+pm_list = []
+        
+render_methods = {}
+
+
 class MultiTableBase:
   
     """
@@ -62,39 +71,21 @@ class MultiTableBase:
         related_name = model.__name__.lower()
         return getattr(self,related_name)
         
-pm_dict = {}
-pm_list = []
-        
+
 class PrintAction(actions.Action):
-    def __init__(self,actor,pm):
-        self.pm = pm
-        self.name = pm.name
-        self.label = pm.button_label
-        actions.Action.__init__(self,actor)
+    name = 'print'
+    label = _('Print')
+    #~ def __init__(self,actor,pm):
+        #~ self.pm = pm
+        #~ self.name = pm.name
+        #~ self.label = pm.button_label
+        #~ actions.Action.__init__(self,actor)
 
 
 class Printable:
     """
-    Mixin for Models whose instances can "print" a document.
+    Mixin for Models whose instances can "print" (generate a document).
     """
-    
-  
-    #~ @classmethod
-    #~ def setup_report(cls,rpt):
-        #~ rpt.add_actions(PdfAction)
-        
-    #~ def odt_template(self):
-        # when using appy_pod
-        #~ return self.filename_root() +'.odt'
-        #~ return os.path.join(os.path.dirname(__file__),
-                            #~ 'odt',self._meta.db_table)+'.odt'
-    #~ def html_templates(self):
-        # when using pisa
-        #~ return [ self.filename_root() +'.pisa.html' ]
-        #~ return [ '%s.%s.pisa.html' % (self._meta.app_label,self.__class__.__name__) ]
-
-    #~ def rtf_templates(self):
-        #~ return [ self.filename_root() +'.rtf' ]
 
     def filename_root(self):
         return self._meta.app_label + '.' + self.__class__.__name__
@@ -105,31 +96,25 @@ class Printable:
     def get_target_parts(self,pm):
         return ['cache', pm.name, self.filename_root() + '-' + str(self.pk) + '.' + pm.target_format]
         
-    #~ def rtf_target_parts(self):
-        #~ return ['cache', 'rtf', self.filename_root(), str(self.pk)+'.rtf']
-
-    #~ def pdf_target_path(self):
-        #~ return os.path.join(settings.MEDIA_ROOT,*self.pdf_target_parts())
-        
-    #~ def pdf_target_url(self):
-        #~ return settings.MEDIA_URL + "/".join(self.pdf_target_parts())
-        
     def get_last_modified_time(self):
         return None
         
-    def get_print_method(self):
+    def must_rebuild_target(self,filename,pm):
+        last_modified = self.get_last_modified_time() 
+        if last_modified is None:
+            return True
+        mtime = os.path.getmtime(filename)
+        #~ st = os.stat(filename)
+        #~ mtime = st.st_mtime
+        mtime = datetime.datetime.fromtimestamp(mtime)
+        if mtime >= last_modified:
+            return False
+        return True
+      
+    def get_print_method(self,fmt):
         ## e.g. lino.modlib.notes.Note overrides this
-        return 'pisa'
-        
-
-            
-    #~ def view_pdf(self,request):
-        #~ self.make_pdf()
-        #~ s = open(self.pdf_path()).read()
-        #~ return HttpResponse(s,mimetype='application/pdf')
-        
-    #~ def view_printable(self,request):
-        #~ return HttpResponse(self.make_pisa_html())
+        return get_print_method('pisa')
+        #~ return 'pisa'
         
 
 
@@ -138,12 +123,14 @@ class PrintMethod:
     label = None
     target_format = None
     template_ext = None
-    button_label = None
+    #~ button_label = None
     label = None
     
     def __init__(self):
         if self.label is None:
             self.label = _(self.__class__.__name__)
+        self.templates_dir = os.path.join(settings.DATA_DIR,'templates',self.name)
+
             
     def __unicode__(self):
         return unicode(self.label)
@@ -162,23 +149,20 @@ class PrintMethod:
         filename = self.get_target_name(elem)
         if not filename:
             return
-        last_modified = elem.get_last_modified_time() 
-        if last_modified is not None and os.path.exists(filename):
-            mtime = os.path.getmtime(filename)
-            #~ st = os.stat(filename)
-            #~ mtime = st.st_mtime
-            mtime = datetime.datetime.fromtimestamp(mtime)
-            if mtime >= last_modified:
+            
+        if os.path.exists(filename):
+            if not elem.must_rebuild_target(filename,self):
                 lino.log.debug("%s : %s -> %s is up to date",self,elem,filename)
                 return
             os.remove(filename)
+        else:
+            dirname = os.path.dirname(filename)
+            if not os.path.isdir(dirname):
+                if True:
+                    raise Exception("Please create yourself directory %s" % dirname)
+                else:
+                    os.makedirs(dirname)
         lino.log.debug("%s : %s -> %s", self,elem,filename)
-        dirname = os.path.dirname(filename)
-        if not os.path.isdir(dirname):
-            if True:
-                raise Exception("Please create yourself directory %s" % dirname)
-            else:
-                os.makedirs(dirname)
         return filename
         
     def get_template(self,elem):
@@ -210,18 +194,24 @@ class PicturePrintMethod(PrintMethod):
 class AppyPrintMethod(PrintMethod):
     name = 'appy'
     target_format = 'odt'
-    button_label = _("ODT")
+    #~ button_label = _("ODT")
     template_ext = '.odt'  
     def build(self,elem):
-        tpls = elem.get_print_templates(self)
-        if len(tpls) == 0:
-            raise Exception("No templates defined for %r" % elem)
-        #~ tpl = self.get_template(elem) 
-        tpl = os.path.join(settings.DATA_DIR,'templates',tpls[0])
         target = self.prepare_cache(elem)
-        if target is None:
+        if not target:
             return
-        context = dict(instance=self)
+            
+        tpls = elem.get_print_templates(self)
+        if not tpls:
+            return
+        if len(tpls) != 1:
+            raise Exception(
+              "%s.get_print_templates() must return exactly 1 template (got %r)" % (
+                elem.__class__.__name__,tpls))
+        #~ tpl = self.get_template(elem) 
+        tpl = os.path.join(self.templates_dir,tpls[0])
+        
+        context = dict(instance=elem)
         from appy.pod.renderer import Renderer
         renderer = Renderer(tpl, context, target)
         renderer.run()
@@ -230,7 +220,7 @@ class AppyPrintMethod(PrintMethod):
 class PisaPrintMethod(PrintMethod):
     name = 'pisa'
     target_format = 'pdf'
-    button_label = _("PDF")
+    #~ button_label = _("PDF")
     template_ext = '.pisa.html'  
     
     def build(self,elem):
@@ -256,7 +246,7 @@ class PisaPrintMethod(PrintMethod):
 class RtfPrintMethod(PrintMethod):
   
     name = 'rtf'
-    button_label = _("RTF")
+    #~ button_label = _("RTF")
     target_format = 'rtf'
     template_ext = '.rtf'  
     
@@ -268,7 +258,8 @@ class RtfPrintMethod(PrintMethod):
         result = self.render_template(elem,tpl) # ,MEDIA_URL=url)
         file(filename,'wb').write(result)
         
-    
+
+
 def register_print_method(pm):
     pm_dict[pm.name] = pm
     pm_list.append(pm)
@@ -286,3 +277,30 @@ def print_method_choices():
 
 def get_print_method(name):
     return pm_dict.get(name)
+
+def render_element(elem,fmt):
+    rm = render_methods.get(fmt,None)
+    
+    
+    
+def template_choices(print_method):
+    pm = get_print_method(print_method)
+    if pm is None:
+        #~ print "unknown print method", print_method
+        return []
+    glob_spec = os.path.join(pm.templates_dir,'*'+pm.template_ext)
+    
+    fnames = []
+    top = pm.templates_dir
+    for dirpath, dirs, files in os.walk(top):
+        for fn in files:
+            if fnmatch(fn,'*'+pm.template_ext):
+                if len(dirpath) > len(top):
+                    fn = os.path.join(dirpath[len(top)+1:],fn)
+                fnames.append(fn.decode(sys.getfilesystemencoding()))
+    #~ l = [fn.decode(sys.getfilesystemencoding()) for fn in glob.glob(glob_spec)]
+    if len(fnames) == 0:
+        print "No files %s" % glob_spec
+    return fnames
+            
+    

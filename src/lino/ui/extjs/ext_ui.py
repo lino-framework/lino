@@ -12,7 +12,8 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 
-USE_WINDOWS = False
+USE_WINDOWS = True
+# If you change this, then change also Lino.USE_WINDOWS in lino.js
 
 import os
 import cgi
@@ -191,28 +192,19 @@ def handle_element_request(request,ah,elem):
               
     if request.method == 'GET':
         fmt = request.GET.get('fmt',None)
-        if fmt:
-            pm = mixins.get_print_method(fmt)
+        if fmt is None:
+            return json_response_kw(id=elem.pk,data=ah.store.row2dict(elem),title=unicode(elem))
+                #~ return json_response_kw(count=1,rows=[ah.store.row2dict(elem)],title=unicode(elem))
+        if fmt == 'picture':
+            pm = mixins.get_print_method('picture')
+        else:
+            pm = elem.get_print_method(fmt)
             if pm is None:
-                raise Http404("Unknown format %r" % fmt)
-            target = pm.get_target_url(elem)
-            if target is None:
-                raise Http404("%s could not build %r" % (pm,elem))
-            return http.HttpResponseRedirect(target)
-        #~ if fmt == 'pdf':
-            #~ elem.make_pdf()
-            #~ return http.HttpResponseRedirect(elem.pdf_url())
-        #~ if fmt == 'jpg':
-            #~ m = getattr(elem,'image_url',None)
-            #~ if m is None:
-                #~ raise Http404("%s has no image_url" % elem)
-            #~ url = elem.image_url()
-            #~ if url is None:
-                #~ raise Http404("%s has no picture" % elem)
-            #~ return http.HttpResponseRedirect(url)
-        #~ if fmt == 'json':
-        return json_response_kw(id=elem.pk,data=ah.store.row2dict(elem),title=unicode(elem))
-            #~ return json_response_kw(count=1,rows=[ah.store.row2dict(elem)],title=unicode(elem))
+                raise Http404("%r has no print method (fmt=%r)" % (elem,fmt))
+        target = pm.get_target_url(elem)
+        if target is None:
+            raise Http404("%s could not build %r" % (pm,elem))
+        return http.HttpResponseRedirect(target)
     raise Http404("Method %r not supported for elements of %s" % (request.method,ah.report))
         
 

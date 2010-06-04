@@ -753,8 +753,8 @@ Lino.SlaveGridPlugin = Ext.extend(Lino.SlavePlugin,{
 });
 
 
-Lino.USE_WINDOWS = false;
-//~ Lino.USE_WINDOWS = true;
+/* If you change this, then change also USE_WINDOWS in ext_ui.py */
+Lino.USE_WINDOWS = true;
 
 Lino.WindowWrapper = function(caller,config_fn) {
   //~ console.log('Lino.WindowWrapper.constructor',config.title,' : caller is ',caller);

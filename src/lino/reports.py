@@ -595,10 +595,11 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
             self.detail_layouts = getattr(self.model,'_lino_layouts',[])
               
             if issubclass(self.model,mixins.Printable):
+                actions.append(mixins.PrintAction(self))
                 #~ print 20100517, mixins.pm_list
-                for pm in mixins.pm_list:
-                    if pm.button_label:
-                        actions.append(mixins.PrintAction(self,pm))
+                #~ for pm in mixins.pm_list:
+                    #~ if pm.button_label:
+                        #~ actions.append(mixins.PrintAction(self,pm))
                     
             if hasattr(self.model,'_lino_slaves'):
                 self._slaves = self.model._lino_slaves.values()
@@ -619,13 +620,14 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
             for slave in self._slaves:
                 actions.append(SlaveGridAction(self,slave))
                 
-            from lino.modlib.properties import models as properties
-            if properties.Property.properties_for_model(self.model).count() > 0:
-                a = properties.PropertiesAction(self)
-                actions.append(a)
-                
-            from lino.modlib.links import models as links
-            actions.append(SlaveGridAction(self,links.LinksByOwner()))
+            if False: # lino.modlib.properties and lino.modlib.links are currently not necessary
+                from lino.modlib.properties import models as properties
+                if properties.Property.properties_for_model(self.model).count() > 0:
+                    a = properties.PropertiesAction(self)
+                    actions.append(a)
+                    
+                from lino.modlib.links import models as links
+                actions.append(SlaveGridAction(self,links.LinksByOwner()))
             
         actions.append(self.default_action)
         #~ actions.append(self.data_action)
