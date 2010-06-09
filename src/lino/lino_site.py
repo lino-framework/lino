@@ -43,7 +43,7 @@ from lino import reports, layouts, actions
 from lino.utils import perms
 from lino.utils import menus
 from lino.core import actors
-from lino.core.coretools import app_labels
+from lino.core.coretools import app_labels, data_elems
 
 ## The following not only logs diagnostic information, it also has an 
 ## important side effect: it causes django.db.models.loading.cache to 
@@ -58,6 +58,8 @@ if settings.MODEL_DEBUG:
     for model in models_list:
         i += 1
         lino.log.debug("  %2d: %s.%s -> %r",i,model._meta.app_label,model._meta.object_name,model)
+        lino.log.debug("      data_elems : %s",' '.join(data_elems(model)))
+
 
 from lino.utils import choosers
 

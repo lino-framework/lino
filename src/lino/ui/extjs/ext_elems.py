@@ -48,20 +48,6 @@ class ColumnModel(Component):
         Component.__init__(self,grid.name,**kw)
         #~ self.columns = [GridColumn(self,e) for e in self.grid.elements if not e.hidden]
         
-    #~ def subvars(self):
-        #~ for col in self.columns:
-            #~ yield col.editor
-            #~ yield col
-        
-        
-    def unused_ext_options(self,**d):
-        #self.report.setup()
-        d = Component.ext_options(self,**d)
-        #d.update(columns=[e.get_column_options() for e in self.grid.elements])
-        #d.update(defaultSortable=True)
-        d.update(columns=self.columns)
-        return d
-        
 class GridColumn(Component):
     #~ declare_type = jsgen.DECLARE_VAR
     declare_type = jsgen.DECLARE_INLINE
@@ -69,6 +55,8 @@ class GridColumn(Component):
     value_template = "new Ext.grid.Column(%s)"
     
     def __init__(self,cm,editor,**kw):
+        """editor may be a Panel for columns on a GenericForeignKey
+        """
         #~ print 20100515, editor.name, editor.__class__
         #~ assert isinstance(editor,FieldElement), \
             #~ "%s.%s is a %r (expected FieldElement instance)" % (cm.grid.report,editor.name,editor)
@@ -150,11 +138,12 @@ class LayoutElement(VisibleComponent):
     def __init__(self,lh,name,**kw):
         #lino.log.debug("LayoutElement.__init__(%r,%r)", lh.layout,name)
         #self.parent = parent
+        #~ name = lh.layout._actor_name + '_' + name
         VisibleComponent.__init__(self,name,**kw)
         self.lh = lh
-        if lh is not None:
-            assert isinstance(lh,layouts.LayoutHandle)
-            lh.setup_element(self)
+        #~ if lh is not None:
+        assert isinstance(lh,layouts.LayoutHandle)
+        lh.setup_element(self)
 
     def submit_fields(self):
         return []
@@ -167,15 +156,7 @@ class LayoutElement(VisibleComponent):
         return self.parent.get_property(name)
         
     def get_column_options(self,**kw):
-        kw.update(
-          dataIndex=self.name, 
-          editable=self.editable,
-          header=unicode(self.label) if self.label else self.name,
-          sortable=self.sortable
-          )
-        w = self.width or self.preferred_width
-        kw.update(width=w*EXT_CHAR_WIDTH)
-        return kw    
+        return kw
         
     def set_parent(self,parent):
         if self.parent is not None:
@@ -284,7 +265,11 @@ class FieldElement(LayoutElement):
         assert field.name, Exception("field %r has no name!" % field)
         self.field = field
         self.editable = field.editable # and not field.primary_key
-        LayoutElement.__init__(self,lh,field.name,label=unicode(field.verbose_name),**kw)
+        if hasattr(field,'model'):
+            var_name = field.model.__name__ + '_' + field.name
+        else: # e.g. Field instances used as return_type for methods
+            var_name = field.name
+        LayoutElement.__init__(self,lh,var_name,label=unicode(field.verbose_name),**kw)
         
     #~ def get_column_options(self,**kw):
         #~ kw = LayoutElement.get_column_options(self,**kw)
@@ -293,13 +278,26 @@ class FieldElement(LayoutElement):
             #~ kw.update(editor=fo)
         #~ return kw    
         
+    def get_column_options(self,**kw):
+        #~ raise "get_column_options() %s" % self.__class__
+        kw.update(
+          dataIndex=self.field.name, 
+          editable=self.editable,
+          header=unicode(self.label) if self.label else self.field.name,
+          sortable=self.sortable
+          )
+        w = self.width or self.preferred_width
+        kw.update(width=w*EXT_CHAR_WIDTH)
+        return kw    
+        
+        
     def submit_fields(self):
         return [self.field.name]
         
     def get_field_options(self,**kw):
         if self.xtype:
             kw.update(xtype=self.xtype)
-        kw.update(name=self.name)
+        kw.update(name=self.field.name)
         #~ kw.update(anchor="100%")
         #~ kw.update(anchor="100% 100%")
         #kw.update(style=dict(padding='0px'),color='green')
@@ -415,7 +413,7 @@ class RemoteComboFieldElement(ComboFieldElement):
         #print repr(sto)
         kw.update(store=js_code("new Ext.data.JsonStore(%s)" % py2js(sto)))
         #kw.update(store=js_code(self.store.as_ext_value(request)))
-        kw.update(hiddenName=self.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
+        kw.update(hiddenName=self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
         kw.update(valueField=ext_requests.CHOICES_VALUE_FIELD) #self.report.model._meta.pk.name)
         kw.update(submitValue=True)
         kw.update(displayField=ext_requests.CHOICES_TEXT_FIELD) # self.report.display_field)
@@ -501,6 +499,11 @@ class DateFieldElement(FieldElement):
     # todo: DateFieldElement.preferred_width should be computed from Report.date_format
     grid_column_template = "new Ext.grid.DateColumn(%s)"
     
+    def get_field_options(self,**kw):
+        kw = FieldElement.get_field_options(self,**kw)
+        kw.update(format=self.lh.layout.datalink_report.date_format)
+        return kw
+        
     def get_column_options(self,**kw):
         kw = FieldElement.get_column_options(self,**kw)
         #kw.update(xtype='datecolumn')
@@ -563,7 +566,7 @@ class BooleanFieldElement(FieldElement):
         standard HTML submits checkboxes of a form only when they are checked.
         So if the field is not contained in values, we take False as value.
         """
-        instance[self.name] = values.get(self.name,False)
+        instance[self.field.name] = values.get(self.field.name,False)
 
 
 

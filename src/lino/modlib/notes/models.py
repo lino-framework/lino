@@ -41,7 +41,7 @@ class NoteType(models.Model):
         return mixins.template_choices(print_method)
         
         
-
+from lino.modlib.contacts.models import default_language
 
 class Note(models.Model,mixins.Printable):
         
@@ -57,6 +57,7 @@ class Note(models.Model,mixins.Printable):
     #~ project = models.ForeignKey("projects.Project",blank=True,null=True)
     person = models.ForeignKey("contacts.Person",blank=True,null=True)
     company = models.ForeignKey("contacts.Company",blank=True,null=True)
+    language = models.ForeignKey('countries.Language',default=default_language)
     
     url = models.URLField(verify_exists=True)
     
@@ -116,7 +117,7 @@ class NoteDetail(layouts.DetailLayout):
     box1 = """
     date 
     type 
-    user 
+    user language
     """
     box2 = """
     subject

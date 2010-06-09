@@ -263,7 +263,7 @@ Lino.run_permalink = function() {
 
 
 Lino.ajax_error_handler = function(response,options) {
-    Lino.notify('AJAX failure:'+String(response)+','+String(options));
+    console.log('AJAX failure:',response,options);
     // Ext.MessageBox.alert('Action failed','Lino server did not respond to Ajax request');
 }
 // Ext.Ajax.on('requestexception',Lino.ajax_error_handler)

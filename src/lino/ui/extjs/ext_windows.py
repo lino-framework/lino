@@ -138,7 +138,8 @@ class MasterWrapper(WindowWrapper):
                         #~ kw.update(plugins=js_code('new Lino.ChooserPlugin(caller,%s)' % py2js(chooser.context_values)))
                         #~ kw.update(listeners=dict(added=js_code('Lino.chooser_handler(ww,%s)' % py2js(chooser.context_values))))
                         for f in chooser.context_fields:
-                            yield "  %s_field.on('change',Lino.chooser_handler(%s,%r));" % (f.name,e.ext_name,f.name)
+                            field_extname = chooser.model.__name__ + '_' + f.name
+                            yield "  %s_field.on('change',Lino.chooser_handler(%s,%r));" % (field_extname,e.ext_name,f.name)
                             #~ yield "  %s_field.on('render',function(cmp) { %s.setContextValue(%r,cmp.getValue())});" % (f.name,e.ext_name,f.name)
                             #~ yield "  %s.on('focus',function(cmp) { cmp.setContextValue(%r,%s_field.getValue())});" % (e.ext_name,f.name,f.name)
                             if isinstance(f,models.ForeignKey) or (isinstance(f,models.Field) and f.choices):

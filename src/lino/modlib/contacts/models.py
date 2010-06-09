@@ -29,6 +29,10 @@ from lino.utils import perms
 
 from lino.modlib.contacts.utils import join_words
 
+def default_language():
+    from django.conf import settings
+    return settings.LANGUAGE_CODE[:2]
+
 #~ class ContactMixin:
 #~ class Contact(models.Model,mixins.Printable):
 class Contact(models.Model):
@@ -47,7 +51,7 @@ class Contact(models.Model):
     #city = models.CharField(max_length=200,blank=True)
     zip_code = models.CharField(max_length=10,blank=True)
     region = models.CharField(max_length=200,blank=True)
-    language = models.ForeignKey('countries.Language',blank=True,null=True)
+    language = models.ForeignKey('countries.Language',default=default_language)
     
     email = models.EmailField(blank=True)
     url = models.URLField(blank=True)

@@ -84,7 +84,7 @@ class LayoutHandle(base.Handle):
         #~ self.name = layout._actor_name
         self.label = layout.label or ''
         self._store_fields = []
-        self._submit_fields = []
+        #~ self._submit_fields = []
         self.slave_grids = []
         self._buttons = []
         self.hide_elements = layout.get_hidden_elements(self)
@@ -206,8 +206,8 @@ class LayoutHandle(base.Handle):
         #lino.log.debug("create_element(panelclass,%r)", desc_name)
         name,kw = self.splitdesc(desc_name)
         e = self.ui.create_layout_element(self,panelclass,name,**kw)
-        for child in e.walk():
-            self._submit_fields += child.submit_fields()
+        #~ for child in e.walk():
+            #~ self._submit_fields += child.submit_fields()
         return e
         
     def splitdesc(self,picture):

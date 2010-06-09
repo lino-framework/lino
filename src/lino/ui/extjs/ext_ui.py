@@ -231,12 +231,6 @@ class ExtUI(base.UI):
         if name == "_":
             return ext_elems.Spacer(lh,name,**kw)
             
-        #~ a = lh.datalink.get_action(name)
-        #~ if a is not None:
-            #~ e = ext_elems.FormActionElement(lh,name,a,**kw)
-            #~ lh._buttons.append(e)
-            #~ return e
-          
         de = reports.get_data_elem(lh.layout.datalink,name)
         
         if isinstance(de,properties.Property):
@@ -441,7 +435,7 @@ class ExtUI(base.UI):
         from lino.lino_site import lino_site
         #~ from lino import lino_site
         return json_response_kw(success=True,
-          message=(_("Welcome on Lino server %r, user %s") % (lino_site.title,request.user)) + '\n' + lino.thanks_to(),
+          message=(_("Welcome on Lino server %r, user %s") % (lino_site.title,request.user)),
           load_menu=lino_site.get_menu(request.user))
         #~ s = py2js(lino_site.get_menu(request))
         #~ return HttpResponse(s, mimetype='text/html')
