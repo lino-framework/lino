@@ -1,0 +1,354 @@
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title id="title">20100609 New Layout for Detail Windows?</title>
+<!-- ** CSS ** -->
+<!-- base library -->
+<link rel="stylesheet" type="text/css" href="../../resources/css/ext-all.css" />
+<!-- overrides to base library -->
+<!-- ** Javascript ** -->
+<!-- ExtJS library: base/adapter -->
+<script type="text/javascript" src="../../adapter/ext/ext-base.js"></script>
+<!-- ExtJS library: all widgets -->
+<script type="text/javascript" src="../../ext-all-debug.js"></script>
+<script type="text/javascript" src="file://t:/hgwork/lino/media/lino.js"></script>
+<!-- page specific -->
+<!-- 
+class PersonDetail(layouts.DetailLayout):
+    datalink = 'contacts.Person'
+    picture = mixins.get_print_method('picture')
+    box1 = "last_name first_name:15 title:10"
+    box2 = """id language"""
+    box3 = """country region
+              city zip_code:10
+              street:25 street_no street_box
+              addr1:40
+              """
+    box4 = """email:40 
+              url
+              phone
+              gsm
+              """
+    intro_box = "box1 box2"
+    address_box = "box3 box4"
+    bottom_box = "remarks:30 picture:30"
+    main = """intro_box
+              address_box
+              bottom_box
+              """
+    
+-->
+
+<script type="text/javascript">
+Ext.onReady(function() {
+  var Person_last_name_field = new Ext.form.TextField({ maxLength: 200, fieldLabel: "last name", anchor: "100%", name: "last_name" });
+  var Person_first_name_field = new Ext.form.TextField({ maxLength: 200, fieldLabel: "first name", anchor: "100%", name: "first_name" });
+  var Person_title_field = new Ext.form.TextField({ maxLength: 200, fieldLabel: "title", anchor: "100%", name: "title" });
+  var Person_id_field = { fieldLabel: "ID", anchor: "100%", name: "id", xtype: "numberfield" };
+  var Person_language_field = new Ext.form.ComboBox({ resizable: true, emptyText: "Select a Language...", submitValue: true, pageSize: 10, queryParam: "query", name: "language", displayField: "text", fieldLabel: "language", allowBlank: false, hiddenName: "languageHidden", typeAhead: true, valueField: "value", mode: "remote", triggerAction: "all", selectOnFocus: true, minChars: 2, queryDelay: 300, anchor: "100%", store: new Ext.data.JsonStore({ listeners: { exception: Lino.on_store_exception }, proxy: new Ext.data.HttpProxy({ url: "/choices/contacts/Persons/language", method: "GET" }), totalProperty: "count", fields: [ "value", "text" ], root: "rows", id: "value" }) });
+  var Person_country_field = new Ext.form.ComboBox({ resizable: true, emptyText: "Select a Country...", submitValue: true, pageSize: 10, queryParam: "query", displayField: "text", fieldLabel: "Land", name: "country", hiddenName: "countryHidden", typeAhead: true, valueField: "value", mode: "remote", triggerAction: "all", selectOnFocus: true, minChars: 2, queryDelay: 300, anchor: "100%", store: new Ext.data.JsonStore({ listeners: { exception: Lino.on_store_exception }, proxy: new Ext.data.HttpProxy({ url: "/choices/contacts/Persons/country", method: "GET" }), totalProperty: "count", fields: [ "value", "text" ], root: "rows", id: "value" }) });
+  var Person_region_field = new Ext.form.TextField({ maxLength: 200, fieldLabel: "region", anchor: "100%", name: "region" });
+  var Person_city_field = new Ext.form.ComboBox({ resizable: true, submitValue: true, queryParam: "query", displayField: "text", fieldLabel: "city", name: "city", hiddenName: "cityHidden", typeAhead: true, valueField: "value", mode: "remote", triggerAction: "all", selectOnFocus: true, minChars: 2, queryDelay: 300, anchor: "100%", store: new Ext.data.JsonStore({ listeners: { exception: Lino.on_store_exception }, proxy: new Ext.data.HttpProxy({ url: "/choices/contacts/Persons/city", method: "GET" }), totalProperty: "count", fields: [ "value", "text" ], root: "rows", id: "value" }) });
+  var Person_zip_code_field = new Ext.form.TextField({ maxLength: 10, fieldLabel: "zip code", anchor: "100%", name: "zip_code" });
+  var Person_street_field = new Ext.form.TextField({ maxLength: 200, fieldLabel: "Stra\u00dfe", anchor: "100%", name: "street" });
+  var Person_street_no_field = new Ext.form.TextField({ maxLength: 10, fieldLabel: "Nr.", anchor: "100%", name: "street_no" });
+  var Person_street_box_field = new Ext.form.TextField({ maxLength: 10, fieldLabel: "Box", anchor: "100%", name: "street_box" });
+  var Person_addr1_field = new Ext.form.TextField({ maxLength: 200, fieldLabel: "addr1", anchor: "100%", name: "addr1" });
+  var Person_email_field = new Ext.form.TextField({ maxLength: 75, fieldLabel: "email", anchor: "100%", name: "email" });
+  var Person_url_field = new Ext.form.TextField({ maxLength: 200, fieldLabel: "url", anchor: "100%", name: "url" });
+  var Person_phone_field = new Ext.form.TextField({ maxLength: 200, fieldLabel: "phone", anchor: "100%", name: "phone" });
+  var Person_gsm_field = new Ext.form.TextField({ maxLength: 200, fieldLabel: "gsm", anchor: "100%", name: "gsm" });
+  //~ var Person_remarks_field = new Ext.form.HtmlEditor({ fieldLabel: "remarks", anchor: "100% 100%", name: "remarks" });
+  var Person_remarks_field = new Ext.form.TextArea({ fieldLabel: "remarks", anchor: "100% 100%", name: "remarks" });
+  
+var intro_box = {
+            items: [{
+                layout: "column",
+                xtype: "container",
+                items: [{
+                    border: false,
+                    labelWidth: 90,
+                    xtype: "container",
+                    items: [Person_last_name_field],
+                    columnWidth: 0.44444444444444442,
+                    frame: true,
+                    labelAlign: "top",
+                    bodyBorder: false,
+                    layout: "form"
+                }, {
+                    border: false,
+                    labelWidth: 99,
+                    xtype: "container",
+                    items: [Person_first_name_field],
+                    columnWidth: 0.33333333333333331,
+                    frame: true,
+                    labelAlign: "top",
+                    bodyBorder: false,
+                    layout: "form"
+                }, {
+                    border: false,
+                    labelWidth: 54,
+                    xtype: "container",
+                    items: [Person_title_field],
+                    columnWidth: 0.22222222222222221,
+                    frame: true,
+                    labelAlign: "top",
+                    bodyBorder: false,
+                    layout: "form"
+                }],
+                columnWidth: 0.75,
+                frame: false,
+                border: false
+            }, {
+                layout: "column",
+                xtype: "container",
+                items: [{
+                    border: false,
+                    labelWidth: 27,
+                    xtype: "container",
+                    items: [Person_id_field],
+                    columnWidth: 0.33333333333333331,
+                    frame: true,
+                    labelAlign: "top",
+                    bodyBorder: false,
+                    layout: "form"
+                }, {
+                    border: false,
+                    labelWidth: 81,
+                    xtype: "container",
+                    items: [Person_language_field],
+                    columnWidth: 0.66666666666666663,
+                    frame: true,
+                    labelAlign: "top",
+                    bodyBorder: false,
+                    layout: "form"
+                }],
+                columnWidth: 0.25,
+                frame: false,
+                border: false
+            }],
+            frame: false,
+            border: false,
+            layout: "column",
+            xtype: "container"
+        };        
+        
+var address_box = {
+            items: [{
+                border: false,
+                layout: "form",
+                xtype: "container",
+                items: [{
+                    layout: "column",
+                    xtype: "container",
+                    items: [{
+                        border: false,
+                        labelWidth: 45,
+                        xtype: "container",
+                        items: [Person_country_field],
+                        columnWidth: 0.33333333333333331,
+                        frame: true,
+                        labelAlign: "top",
+                        bodyBorder: false,
+                        layout: "form"
+                    }, {
+                        border: false,
+                        labelWidth: 63,
+                        xtype: "container",
+                        items: [Person_region_field],
+                        columnWidth: 0.66666666666666663,
+                        frame: true,
+                        labelAlign: "top",
+                        bodyBorder: false,
+                        layout: "form"
+                    }],
+                    frame: false,
+                    border: false,
+                    anchor: "100%"
+                }, {
+                    layout: "column",
+                    xtype: "container",
+                    items: [{
+                        border: false,
+                        labelWidth: 45,
+                        xtype: "container",
+                        items: [Person_city_field],
+                        columnWidth: 0.5,
+                        frame: true,
+                        labelAlign: "top",
+                        bodyBorder: false,
+                        layout: "form"
+                    }, {
+                        border: false,
+                        labelWidth: 81,
+                        xtype: "container",
+                        items: [Person_zip_code_field],
+                        columnWidth: 0.5,
+                        frame: true,
+                        labelAlign: "top",
+                        bodyBorder: false,
+                        layout: "form"
+                    }],
+                    frame: false,
+                    border: false,
+                    anchor: "100%"
+                }, {
+                    layout: "column",
+                    xtype: "container",
+                    items: [{
+                        border: false,
+                        labelWidth: 63,
+                        xtype: "container",
+                        items: [Person_street_field],
+                        columnWidth: 0.55555555555555558,
+                        frame: true,
+                        labelAlign: "top",
+                        bodyBorder: false,
+                        layout: "form"
+                    }, {
+                        border: false,
+                        labelWidth: 36,
+                        xtype: "container",
+                        items: [Person_street_no_field],
+                        columnWidth: 0.22222222222222221,
+                        frame: true,
+                        labelAlign: "top",
+                        bodyBorder: false,
+                        layout: "form"
+                    }, {
+                        border: false,
+                        labelWidth: 36,
+                        xtype: "container",
+                        items: [Person_street_box_field],
+                        columnWidth: 0.22222222222222221,
+                        frame: true,
+                        labelAlign: "top",
+                        bodyBorder: false,
+                        layout: "form"
+                    }],
+                    frame: false,
+                    border: false,
+                    anchor: "100%"
+                }, {
+                    border: false,
+                    labelWidth: 54,
+                    xtype: "container",
+                    items: [Person_addr1_field],
+                    frame: true,
+                    labelAlign: "top",
+                    bodyBorder: false,
+                    anchor: "100%",
+                    layout: "form"
+                }],
+                columnWidth: 0.52941176470588236,
+                frame: true,
+                bodyBorder: false,
+                labelAlign: "top"
+            }, {
+                border: false,
+                layout: "form",
+                xtype: "container",
+                items: [{
+                    border: false,
+                    labelWidth: 54,
+                    xtype: "container",
+                    items: [Person_email_field],
+                    frame: true,
+                    labelAlign: "top",
+                    bodyBorder: false,
+                    anchor: "100%",
+                    layout: "form"
+                }, {
+                    border: false,
+                    labelWidth: 36,
+                    xtype: "container",
+                    items: [Person_url_field],
+                    frame: true,
+                    labelAlign: "top",
+                    bodyBorder: false,
+                    anchor: "100%",
+                    layout: "form"
+                }, {
+                    border: false,
+                    labelWidth: 54,
+                    xtype: "container",
+                    items: [Person_phone_field],
+                    frame: true,
+                    labelAlign: "top",
+                    bodyBorder: false,
+                    anchor: "100%",
+                    layout: "form"
+                }, {
+                    border: false,
+                    labelWidth: 36,
+                    xtype: "container",
+                    items: [Person_gsm_field],
+                    frame: true,
+                    labelAlign: "top",
+                    bodyBorder: false,
+                    anchor: "100%",
+                    layout: "form"
+                }],
+                columnWidth: 0.47058823529411764,
+                frame: true,
+                bodyBorder: false,
+                labelAlign: "top"
+            }],
+            frame: false,
+            border: false,
+            layout: "column",
+            xtype: "container"
+        };        
+        
+var bottom_box = {
+            flex: 1,
+            layout: "column",
+            xtype: "container",
+            items: [{
+                border: false,
+                labelWidth: 72,
+                xtype: "container",
+                items: [Person_remarks_field],
+                columnWidth: 0.75,
+                frame: true,
+                labelAlign: "top",
+                bodyBorder: false,
+                layout: "form"
+            }, new Ext.BoxComponent({
+                style: {
+                    height: "100%"
+                }, columnWidth: 0.25,
+                autoEl: {
+                    tag: "img"
+                }
+            })],
+            frame: false,
+            border: false
+        };
+        
+  
+  var tab1 = new Ext.Panel({
+        border: false,
+        layout: "vbox",
+        items: [intro_box , address_box , 
+          bottom_box 
+        ],
+        autoScroll: true,
+        bodyBorder: false,
+        frame: true,
+        title: "Detail",
+        layoutConfig: {
+            align: "stretch"
+        }, labelAlign: "top"
+    });
+    
+
+  var win = new Ext.Window({
+      layout:'fit',  
+      width:800,  height:600,
+      items:tab1
+  });
+  win.show();
+});
+</script>
+</head><body>
+</body></html>

@@ -1170,7 +1170,7 @@ Ext.override(Ext.form.BasicForm,{
             }
         }
         return this;
-    },
+    }
 });
 /*
 Feature request developed in http://extjs.net/forum/showthread.php?t=75751
