@@ -14,6 +14,172 @@
 */
 Ext.namespace('Lino');
 
+
+/*
+Based on feature request developed in http://extjs.net/forum/showthread.php?t=75751
+*/
+Ext.override(Ext.form.ComboBox, {
+    contextParams : {}, 
+    // contextParams : array of names of variables to add to query
+    // contextValues : array of values of variables to add to query
+    // queryContext : null, 
+    // contextParam : null, 
+    setValue : function(v,record){
+        //~ if(this.name == 'country') console.log('20100531 country ComboBox.setValue()',v,record);
+        var text = v;
+        if(this.valueField){
+          if(v === null) { 
+              // console.log(this.name,'.setValue',v,'no lookup needed, value is null');
+              v = null;
+          } else if (record != undefined) {
+            text = record.data[this.name];
+            //~ console.log(this.name,'.setValue',v,'got text ',this.name,' from record ',record);
+          } else {
+            // if(this.mode == 'remote' && !Ext.isDefined(this.store.totalLength)){
+            if(this.mode == 'remote' && ( this.lastQuery === null || (!Ext.isDefined(this.store.totalLength)))){
+                // console.log(this.name,'.setValue',v,'must wait for load');
+                this.store.on('load', this.setValue.createDelegate(this, arguments), null, {single: true});
+                if(this.store.lastOptions === null || this.lastQuery === null){
+                    var params;
+                    if(this.valueParam){
+                        params = {};
+                        params[this.valueParam] = v;
+                    }else{
+                        var q = this.allQuery;
+                        this.lastQuery = q;
+                        this.store.setBaseParam(this.queryParam, q);
+                        params = this.getParams(q);
+                    }
+                    // console.log(this.name,'.setValue',v,' : call load() with params ',params);
+                    this.store.load({params: params});
+                }else{
+                    // console.log(this.name,'.setValue',v,' : but store is loading',this.store.lastOptions);
+                }
+                return;
+            }else{
+                // console.log(this.name,'.setValue',v,' : store is loaded, lastQuery is "',this.lastQuery,'"');
+            }
+            var r = this.findRecord(this.valueField, v);
+            if(r){
+                text = r.data[this.displayField];
+            }else if(this.valueNotFoundText !== undefined){
+                text = this.valueNotFoundText;
+            }
+          }
+        }
+        this.lastSelectionText = text;
+        if(this.hiddenField){
+            this.hiddenField.value = v;
+        }
+        Ext.form.ComboBox.superclass.setValue.call(this, text);
+        this.value = v;
+    },
+    getParams : function(q){
+        // p = Ext.form.ComboBox.superclass.getParams.call(this, q);
+        // causes "Ext.form.ComboBox.superclass.getParams is undefined"
+        var p = {};
+        //p[this.queryParam] = q;
+        if(this.pageSize){
+            p.start = 0;
+            p.limit = this.pageSize;
+        }
+        // now my code:
+        if(this.contextParams) Ext.apply(p,this.contextParams);
+        //~ if(this.contextParams && this.contextValues) {
+          //~ for(i = 0; i <= this.contextParams.length; i++)
+            //~ p[this.contextParams[i]] = this.contextValues[i];
+        //~ }
+        return p;
+    },
+    //~ setContextValues : function(values){
+      //~ if(this.contextParams) {
+        //~ console.log('setContextValues',this.name,this.contextParams,'=',values);
+        //~ if (this.contextValues === undefined) {
+          //~ this.contextValues = values;
+          //~ this.lastQuery = null;
+          //~ return
+        //~ }
+        //~ for(i = 0; i <= this.contextParams.length; i++) {
+          //~ if (this.contextValues[i] != values[i]) {
+            //~ this.contextValues[i] = values[i];
+            //~ this.lastQuery = null;
+          //~ }
+        //~ }
+      //~ }   
+    //~ },
+    setContextValue : function(name,value) {
+      //~ console.log('setContextValue',this,this.name,':',name,'=',value);
+      //~ if (this.contextValues === undefined) {
+          //~ this.contextValues = Array(); // this.contextParams.length);
+      //~ }
+      if (this.contextParams[name] != value) {
+        //~ console.log('setContextValue 1',this.contextParams);
+        this.contextParams[name] = value;
+        this.lastQuery = null;
+        //~ console.log('setContextValue 2',this.contextParams);
+      }
+    }
+});
+
+
+/*
+Ext.override(Ext.form.ComboBox, {
+    setValue : function(v){
+        // if(this.name == 'country') 
+        // if(! v) { v = { text:'', value:undefined }};
+        if(! v) { v = [undefined, '']};
+        var text = v;
+        this.lastSelectionText = v[1];
+        if(this.hiddenField){
+            this.hiddenField.value = v[0];
+        }
+        Ext.form.ComboBox.superclass.setValue.call(this, v[1]);
+        this.value = v;
+    },
+    getValue : function(){
+        v = Ext.form.ComboBox.superclass.getValue.call(this);
+    },
+    onSelect : function(record, index){
+        if(this.fireEvent('beforeselect', this, record, index) !== false){
+            this.setValue([record.data[this.valueField], record.data[this.displayField]]);
+            this.collapse();
+            this.fireEvent('select', this, record, index);
+        }
+    },
+    beforeBlur : function(){
+        var val = this.getRawValue(),
+            rec = this.findRecord(this.displayField, val);
+        if(!rec && this.forceSelection){
+            if(val.length > 0 && val != this.emptyText){
+                this.el.dom.value = Ext.isEmpty(this.lastSelectionText) ? '' : this.lastSelectionText;
+                this.applyEmptyText();
+            }else{
+                this.clearValue();
+            }
+        }else{
+            if(rec){
+                val = [rec.get(this.valueField),rec.get(this.displayField)];
+            }else{
+                val = [undefined, '']
+            }
+            this.setValue(val);
+        }
+    },
+    clearValue : function(){
+        if(this.hiddenField){
+            this.hiddenField.value = '';
+        }
+        this.setRawValue('');
+        this.lastSelectionText = '';
+        this.applyEmptyText();
+        this.value = [undefined, ''];
+    },
+
+});
+*/
+
+
+
 function PseudoConsole() {
     this.log = function() {};
 };
@@ -38,7 +204,7 @@ Lino.show_about = function() {
 };
 
 Lino.on_store_exception = function (store,type,action,options,reponse,arg) {
-  Lino.notify("on_store_exception:",store,type,action,options,reponse,arg);
+  console.log("on_store_exception:",store,type,action,options,reponse,arg);
 };
 
 Lino.on_submit_success = function(form, action) {
@@ -753,6 +919,43 @@ Lino.SlaveGridPlugin = Ext.extend(Lino.SlavePlugin,{
 });
 
 
+Lino.ComboBox = Ext.extend(Ext.form.ComboBox,{
+  triggerAction: 'all',
+  submitValue: true,
+  displayField: 'text', // ext_requests.CHOICES_TEXT_FIELD
+  valueField: 'value' // ext_requests.CHOICES_VALUE_FIELD
+});
+
+Lino.ChoicesFieldElement = Ext.extend(Lino.ComboBox,{
+  mode: 'local',
+  forceSelection: false
+});
+
+
+Lino.RemoteComboStore = Ext.extend(Ext.data.JsonStore,{
+  constructor: function(config){
+      Lino.RemoteComboStore.superclass.constructor.call(this, Ext.apply(config, {
+          totalProperty: 'count',
+          root: 'rows',
+          id: 'value', // ext_requests.CHOICES_VALUE_FIELD
+          fields: ['value','text'], // ext_requests.CHOICES_VALUE_FIELD, // ext_requests.CHOICES_TEXT_FIELD
+          listeners: { exception: Lino.on_store_exception }
+      }));
+  }
+});
+
+Lino.RemoteComboFieldElement = Ext.extend(Lino.ComboBox,{
+  mode: 'remote',
+  //~ typeAhead: true,
+  //~ forceSelection:false,
+  minChars: 2, // default 4 is to much
+  queryDelay: 300, // default 500 is maybe slow
+  queryParam: 'query', // ext_requests.URL_PARAM_FILTER)
+  typeAhead: true,
+  selectOnFocus: true, // select any existing text in the field immediately on focus.
+  resizable: true
+});
+
 /* If you change this, then change also USE_WINDOWS in ext_ui.py */
 Lino.USE_WINDOWS = true;
 
@@ -1172,165 +1375,3 @@ Ext.override(Ext.form.BasicForm,{
         return this;
     }
 });
-/*
-Feature request developed in http://extjs.net/forum/showthread.php?t=75751
-*/
-Ext.override(Ext.form.ComboBox, {
-    contextParams : {}, 
-    // contextParams : array of names of variables to add to query
-    // contextValues : array of values of variables to add to query
-    // queryContext : null, 
-    // contextParam : null, 
-    setValue : function(v,record){
-        //~ if(this.name == 'country') console.log('20100531 country ComboBox.setValue()',v,record);
-        var text = v;
-        if(this.valueField){
-          if(v === null) { 
-              // console.log(this.name,'.setValue',v,'no lookup needed, value is null');
-              v = null;
-          } else if (record != undefined) {
-            text = record.data[this.name];
-            //~ console.log(this.name,'.setValue',v,'got text ',this.name,' from record ',record);
-          } else {
-            // if(this.mode == 'remote' && !Ext.isDefined(this.store.totalLength)){
-            if(this.mode == 'remote' && ( this.lastQuery === null || (!Ext.isDefined(this.store.totalLength)))){
-                // console.log(this.name,'.setValue',v,'must wait for load');
-                this.store.on('load', this.setValue.createDelegate(this, arguments), null, {single: true});
-                if(this.store.lastOptions === null || this.lastQuery === null){
-                    var params;
-                    if(this.valueParam){
-                        params = {};
-                        params[this.valueParam] = v;
-                    }else{
-                        var q = this.allQuery;
-                        this.lastQuery = q;
-                        this.store.setBaseParam(this.queryParam, q);
-                        params = this.getParams(q);
-                    }
-                    // console.log(this.name,'.setValue',v,' : call load() with params ',params);
-                    this.store.load({params: params});
-                }else{
-                    // console.log(this.name,'.setValue',v,' : but store is loading',this.store.lastOptions);
-                }
-                return;
-            }else{
-                // console.log(this.name,'.setValue',v,' : store is loaded, lastQuery is "',this.lastQuery,'"');
-            }
-            var r = this.findRecord(this.valueField, v);
-            if(r){
-                text = r.data[this.displayField];
-            }else if(this.valueNotFoundText !== undefined){
-                text = this.valueNotFoundText;
-            }
-          }
-        }
-        this.lastSelectionText = text;
-        if(this.hiddenField){
-            this.hiddenField.value = v;
-        }
-        Ext.form.ComboBox.superclass.setValue.call(this, text);
-        this.value = v;
-    },
-    getParams : function(q){
-        // p = Ext.form.ComboBox.superclass.getParams.call(this, q);
-        // causes "Ext.form.ComboBox.superclass.getParams is undefined"
-        var p = {};
-        //p[this.queryParam] = q;
-        if(this.pageSize){
-            p.start = 0;
-            p.limit = this.pageSize;
-        }
-        // now my code:
-        if(this.contextParams) Ext.apply(p,this.contextParams);
-        //~ if(this.contextParams && this.contextValues) {
-          //~ for(i = 0; i <= this.contextParams.length; i++)
-            //~ p[this.contextParams[i]] = this.contextValues[i];
-        //~ }
-        return p;
-    },
-    //~ setContextValues : function(values){
-      //~ if(this.contextParams) {
-        //~ console.log('setContextValues',this.name,this.contextParams,'=',values);
-        //~ if (this.contextValues === undefined) {
-          //~ this.contextValues = values;
-          //~ this.lastQuery = null;
-          //~ return
-        //~ }
-        //~ for(i = 0; i <= this.contextParams.length; i++) {
-          //~ if (this.contextValues[i] != values[i]) {
-            //~ this.contextValues[i] = values[i];
-            //~ this.lastQuery = null;
-          //~ }
-        //~ }
-      //~ }   
-    //~ },
-    setContextValue : function(name,value) {
-      //~ console.log('setContextValue',this,this.name,':',name,'=',value);
-      //~ if (this.contextValues === undefined) {
-          //~ this.contextValues = Array(); // this.contextParams.length);
-      //~ }
-      if (this.contextParams[name] != value) {
-        //~ console.log('setContextValue 1',this.contextParams);
-        this.contextParams[name] = value;
-        this.lastQuery = null;
-        //~ console.log('setContextValue 2',this.contextParams);
-      }
-    }
-});
-
-
-/*
-Ext.override(Ext.form.ComboBox, {
-    setValue : function(v){
-        // if(this.name == 'country') 
-        // if(! v) { v = { text:'', value:undefined }};
-        if(! v) { v = [undefined, '']};
-        var text = v;
-        this.lastSelectionText = v[1];
-        if(this.hiddenField){
-            this.hiddenField.value = v[0];
-        }
-        Ext.form.ComboBox.superclass.setValue.call(this, v[1]);
-        this.value = v;
-    },
-    getValue : function(){
-        v = Ext.form.ComboBox.superclass.getValue.call(this);
-    },
-    onSelect : function(record, index){
-        if(this.fireEvent('beforeselect', this, record, index) !== false){
-            this.setValue([record.data[this.valueField], record.data[this.displayField]]);
-            this.collapse();
-            this.fireEvent('select', this, record, index);
-        }
-    },
-    beforeBlur : function(){
-        var val = this.getRawValue(),
-            rec = this.findRecord(this.displayField, val);
-        if(!rec && this.forceSelection){
-            if(val.length > 0 && val != this.emptyText){
-                this.el.dom.value = Ext.isEmpty(this.lastSelectionText) ? '' : this.lastSelectionText;
-                this.applyEmptyText();
-            }else{
-                this.clearValue();
-            }
-        }else{
-            if(rec){
-                val = [rec.get(this.valueField),rec.get(this.displayField)];
-            }else{
-                val = [undefined, '']
-            }
-            this.setValue(val);
-        }
-    },
-    clearValue : function(){
-        if(this.hiddenField){
-            this.hiddenField.value = '';
-        }
-        this.setRawValue('');
-        this.lastSelectionText = '';
-        this.applyEmptyText();
-        this.value = [undefined, ''];
-    },
-
-});
-*/

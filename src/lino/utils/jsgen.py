@@ -288,6 +288,14 @@ class Component(Variable):
         
     def update(self,**kw):
         self.value.update(**kw)
+        
+    def walk(self):
+        items = self.value['items']
+        if not isinstance(items,(list,tuple)):
+            items = [items]
+        for i in items:
+            for e in i.walk():
+                yield e
       
 class Function(Variable):
   

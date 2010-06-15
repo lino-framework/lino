@@ -128,27 +128,33 @@ class MasterWrapper(WindowWrapper):
             yield '  '+ln
         before_row_edit = []
         #~ before_row_edit.append("console.log('ext_windows.py 20100531',record);")
-        if self.lh is not None:
-            yield ''
-            for e in self.lh._main.walk():
-                if isinstance(e,ext_elems.FieldElement):
-                    chooser = choosers.get_for_field(e.field)
-                    if chooser:
-                        #~ kw.update(contextParams=chooser.context_params)
-                        #~ kw.update(plugins=js_code('new Lino.ChooserPlugin(caller,%s)' % py2js(chooser.context_values)))
-                        #~ kw.update(listeners=dict(added=js_code('Lino.chooser_handler(ww,%s)' % py2js(chooser.context_values))))
-                        for f in chooser.context_fields:
-                            field_extname = chooser.model.__name__ + '_' + f.name
-                            yield "  %s_field.on('change',Lino.chooser_handler(%s,%r));" % (field_extname,e.ext_name,f.name)
-                            #~ yield "  %s_field.on('render',function(cmp) { %s.setContextValue(%r,cmp.getValue())});" % (f.name,e.ext_name,f.name)
-                            #~ yield "  %s.on('focus',function(cmp) { cmp.setContextValue(%r,%s_field.getValue())});" % (e.ext_name,f.name,f.name)
-                            if isinstance(f,models.ForeignKey) or (isinstance(f,models.Field) and f.choices):
-                                fname = f.name+ext_requests.CHOICES_HIDDEN_SUFFIX
-                            else:
-                                fname = f.name
-                            before_row_edit.append("%s.setContextValue(%r,record.data[%r]);" % (
-                                e.ext_name,f.name,fname))
-                            #~ before_row_edit.append("%s.setContextValue(%r,%s_field.getValue());" % (e.ext_name,f.name,f.name))
+        yield ''
+        for e in self.main.walk():
+        #~ for e in self.lh._main.walk():
+            if isinstance(e,ext_elems.FieldElement):
+                chooser = choosers.get_for_field(e.field)
+                if chooser:
+                    #~ lino.log.debug("20100615 %s.%s has chooser", self.lh.layout, e.field.name)
+                    #~ kw.update(contextParams=chooser.context_params)
+                    #~ kw.update(plugins=js_code('new Lino.ChooserPlugin(caller,%s)' % py2js(chooser.context_values)))
+                    #~ kw.update(listeners=dict(added=js_code('Lino.chooser_handler(ww,%s)' % py2js(chooser.context_values))))
+                    for f in chooser.context_fields:
+                        field_extname = chooser.model.__name__ + '_' + f.name
+                        yield "  %s_field.on('change',Lino.chooser_handler(%s,%r));" % (field_extname,e.ext_name,f.name)
+                        #~ yield "  %s_field.on('render',function(cmp) { %s.setContextValue(%r,cmp.getValue())});" % (f.name,e.ext_name,f.name)
+                        #~ yield "  %s.on('focus',function(cmp) { cmp.setContextValue(%r,%s_field.getValue())});" % (e.ext_name,f.name,f.name)
+                        if isinstance(f,models.ForeignKey) or (isinstance(f,models.Field) and f.choices):
+                            fname = f.name+ext_requests.CHOICES_HIDDEN_SUFFIX
+                        else:
+                            fname = f.name
+                        before_row_edit.append("%s.setContextValue(%r,record.data[%r]);" % (
+                            e.ext_name,f.name,fname))
+                        #~ before_row_edit.append("%s.setContextValue(%r,%s_field.getValue());" % (e.ext_name,f.name,f.name))
+                #~ else:
+                    #~ lino.log.debug("20100615 no chooser for %s.%s", self.lh.layout, e.field.name)
+            #~ else:
+                #~ lino.log.debug("20100615 %s.%s not a FieldElement", self.lh.layout, e)
+        #~ lino.log.debug("20100615 %s has %d choosers", self.lh.layout, len(before_row_edit))
         self.config.update(before_row_edit=js_code('function(record){%s}' % ('\n'.join(before_row_edit))))
         yield "new Lino.%s(caller,function(ww) { return %s}).show();}" % (self.__class__.__name__,py2js(self.config))
         

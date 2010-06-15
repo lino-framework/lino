@@ -334,7 +334,8 @@ class FieldElement(LayoutElement):
 class TextFieldElement(FieldElement):
     #~ xtype = 'textarea'
     vflex = True
-    value_template = "new Ext.form.HtmlEditor(%s)"
+    value_template = "new Ext.form.TextArea(%s)"
+    #~ value_template = "new Ext.form.HtmlEditor(%s)"
     xtype = None
     #~ xtype = 'htmleditor'
     #width = 60
@@ -362,11 +363,12 @@ class CharFieldElement(FieldElement):
         return kw
         
 class ComboFieldElement(FieldElement):
-    value_template = "new Ext.form.ComboBox(%s)"        
+    #~ value_template = "new Ext.form.ComboBox(%s)"        
     sortable = True
     xtype = None
     
 class ChoicesFieldElement(ComboFieldElement):
+    value_template = "new Lino.ChoicesFieldElement(%s)"
   
     def __init__(self,*args,**kw):
         FieldElement.__init__(self,*args,**kw)
@@ -375,61 +377,62 @@ class ChoicesFieldElement(ComboFieldElement):
     def get_field_options(self,**kw):
         kw = FieldElement.get_field_options(self,**kw)
         kw.update(store=self.field.choices)
-        kw.update(mode='local')
-        #~ kw.update(editable=False)
-        kw.update(forceSelection=False)
-        kw.update(triggerAction='all')
-        #~ kw.update(typeAhead=False)
-        kw.update(submitValue=True)
+        #~ kw.update(mode='local')
+        #~ # kw.update(editable=False)
+        #~ kw.update(forceSelection=False)
+        #~ kw.update(triggerAction='all')
+        #~ # kw.update(typeAhead=False)
+        #~ kw.update(submitValue=True)
         kw.update(hiddenName=self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
-        kw.update(valueField=ext_requests.CHOICES_VALUE_FIELD) 
-        kw.update(displayField=ext_requests.CHOICES_TEXT_FIELD)
+        #~ kw.update(valueField=ext_requests.CHOICES_VALUE_FIELD) 
+        #~ kw.update(displayField=ext_requests.CHOICES_TEXT_FIELD)
         #~ kw.update(maxLength=self.field.max_length)
         return kw
         
 
 class RemoteComboFieldElement(ComboFieldElement):
+    value_template = "new Lino.RemoteComboFieldElement(%s)"
         
     def store_options(self,**kw):
         proxy = dict(url=self.lh.ui.get_choices_url(self),method='GET')
         kw.update(proxy=js_code("new Ext.data.HttpProxy(%s)" % py2js(proxy)))
         # a JsonStore without explicit proxy sometimes used method POST
         # kw.update(autoLoad=True)
-        kw.update(totalProperty='count')
-        kw.update(root='rows')
-        kw.update(id=ext_requests.CHOICES_VALUE_FIELD) # self.report.model._meta.pk.name)
-        kw.update(fields=[ext_requests.CHOICES_VALUE_FIELD,ext_requests.CHOICES_TEXT_FIELD])
+        #~ kw.update(totalProperty='count')
+        #~ kw.update(root='rows')
+        #~ kw.update(id=ext_requests.CHOICES_VALUE_FIELD) # self.report.model._meta.pk.name)
+        #~ kw.update(fields=[ext_requests.CHOICES_VALUE_FIELD,ext_requests.CHOICES_TEXT_FIELD])
         #~ kw.update(listeners=dict(exception=js_code("Lino.on_store_exception")))
-        kw.update(listeners=dict(exception=js_code("Lino.on_store_exception")))
         return kw
       
     def get_field_options(self,**kw):
         # see blog 20100222
         kw = FieldElement.get_field_options(self,**kw)
-        kw.update(mode='remote')
+        #~ kw.update(mode='remote')
         #setup_report(self.report)
         #kw.update(store=self.rh.store)
         sto = self.store_options()
         #print repr(sto)
-        kw.update(store=js_code("new Ext.data.JsonStore(%s)" % py2js(sto)))
+        kw.update(store=js_code("new Lino.RemoteComboStore(%s)" % py2js(sto)))
+        #~ kw.update(store=js_code("new Ext.data.JsonStore(%s)" % py2js(sto)))
         #kw.update(store=js_code(self.store.as_ext_value(request)))
         kw.update(hiddenName=self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
-        kw.update(valueField=ext_requests.CHOICES_VALUE_FIELD) #self.report.model._meta.pk.name)
-        kw.update(submitValue=True)
-        kw.update(displayField=ext_requests.CHOICES_TEXT_FIELD) # self.report.display_field)
+        #~ kw.update(valueField=ext_requests.CHOICES_VALUE_FIELD) #self.report.model._meta.pk.name)
+        #~ kw.update(submitValue=True)
+        #~ kw.update(displayField=ext_requests.CHOICES_TEXT_FIELD) # self.report.display_field)
         #kw.update(valueField='id')
         #kw.update(valueField=self.name)
-        kw.update(triggerAction='all')
+        #~ kw.update(triggerAction='all')
         #kw.update(listeners=dict(beforequery=js_code("function(qe) {console.log('beforequery',qe); return true;}")))
         
-        kw.update(typeAhead=True)
-        kw.update(minChars=2) # default 4 is to much
-        kw.update(queryDelay=300) # default 500 is maybe slow
-        kw.update(queryParam=ext_requests.URL_PARAM_FILTER)
-        kw.update(typeAhead=True)
+        #~ kw.update(typeAhead=True)
+        #~ kw.update(minChars=2) # default 4 is to much
+        #~ kw.update(queryDelay=300) # default 500 is maybe slow
+        #~ kw.update(queryParam=ext_requests.URL_PARAM_FILTER)
+        #~ kw.update(typeAhead=True)
+        #~ kw.update(selectOnFocus=True) # select any existing text in the field immediately on focus.
+        #~ kw.update(resizable=True)
         #kw.update(typeAheadDelay=300) # default 500 is maybe slow
-        kw.update(selectOnFocus=True) # select any existing text in the field immediately on focus.
-        kw.update(resizable=True)
         # test whether field has a %s_choices() method
         #~ if self.lh.link.report.get_field_choices_meth(self.field): 
             #~ kw.update(contextParam=ext_requests.URL_PARAM_CHOICES_PK)
@@ -459,20 +462,9 @@ class ForeignKeyElement(RemoteComboFieldElement):
     def get_field_options(self,**kw):
         kw = RemoteComboFieldElement.get_field_options(self,**kw)
         kw.update(pageSize=self.report.page_length)
-        kw.update(emptyText='Select a %s...' % self.report.model.__name__)
+        kw.update(emptyText=_('Select a %s...') % self.report.model.__name__)
         return kw
-        
 
-    def unused_js_body(self):
-        for ln in super(ForeignKeyElement,self).js_body():
-            yield ln
-        chooser = self.lh.datalink.choosers[self.field.name]
-        if chooser.context_values:
-            yield "this.window.on('render',function() {" 
-            yield "  this.add_row_listener(function(sm,rowIndex,record) {" 
-            yield "    %s.setContextValues([" % self.as_ext()
-            yield "      " + ",".join(["record.data." + name for name in chooser.context_values])
-            yield "])})},this);"
 
 
         
@@ -613,7 +605,7 @@ class Container(LayoutElement):
     def walk(self):
         for e in self.elements:
             for el in e.walk():
-              yield el
+                yield el
         yield self
         
 
@@ -650,7 +642,7 @@ class Panel(Container):
                 
         """
         A vertical Panel is vflex if and only if at least one of its children is vflex.
-        A horizontal Panel is vflex, if and only if *all* its children are vflex 
+        A horizontal Panel is vflex if and only if *all* its children are vflex 
         (if vflex and non-vflex elements are together in a hbox, then the 
         vflex elements will get the height of the highest non-vflex element).
         """        
@@ -664,9 +656,10 @@ class Panel(Container):
             else:
                 if not e.vflex:
                     self.vflex = False
+                    #~ print 20100615, self.lh.layout, self, "hbox loses vflex because of", e
                     
         if len(elements) > 1 and self.vertical and self.vflex:
-            #~ print 20100301, self
+            #~ print 20100615, self.lh, self
             # so we must split this panel into several containers. 
             # vflex elements go into a vbox, the others into a form layout. 
             
@@ -737,7 +730,8 @@ class Panel(Container):
             elif self.vertical:
                 d.update(layout='form')
             else:
-                d.update(layout='column')
+                #~ d.update(layout='column') # 20100615
+                d.update(layout='hbox')
                 
         if d['layout'] == 'form':
             assert self.vertical
@@ -752,10 +746,12 @@ class Panel(Container):
                     #~ else:
                         #~ e.value.update(anchor="100%")
                     e.update(anchor="100%")
-        elif d['layout'] == 'column':
+        #~ elif d['layout'] == 'column': # 20100615
+        elif d['layout'] == 'hbox':
             for e in elements:
                 w = e.width or e.preferred_width
-                e.value.update(columnWidth=float(w)/self.preferred_width)
+                #~ e.value.update(columnWidth=float(w)/self.preferred_width) # 20100615
+                e.value.update(flex=int(w*100/self.preferred_width))
             
         
         
@@ -1066,13 +1062,12 @@ class DetailMainPanel(Panel,WrappingMainPanel):
         #d.update(standardSubmit=True)
         return kw
         
-class TabPanel(jsgen.Value):
+class TabPanel(jsgen.Component):
+#~ class TabPanel(jsgen.Value):
     value_template = "new Ext.TabPanel(%s)"
-    #~ def __init__(self,lh,name,*elements,**options):
-        #~ Container.__init__(self,lh,name,*elements,**options)
-        #~ self.width = self.elements[0].ext_width() or 300
         
     def __init__(self,tabs,**kw):
+        self.tabs = tabs
         kw.update(
           split=True,
           activeTab=0,
@@ -1083,6 +1078,7 @@ class TabPanel(jsgen.Value):
           #~ listeners=dict(activate=js_code("function(p) {p.doLayout();}"),single=True),
         )
         jsgen.Value.__init__(self,kw)
+        
 
         
 #~ class FormPanel(jsgen.Value):

@@ -71,6 +71,9 @@ def discover():
             m = getattr(model,methname,None)
             if m is not None:
                 setattr(field,'_lino_chooser',Chooser(model,field,m))
+                #~ lino.log.info("Chooser for %s.%s",model,field.name)
+            #~ else:
+                #~ lino.log.info("No chooser for %s.%s",model,field.name)
 
 def get_for_field(field):
     return getattr(field,'_lino_chooser',None)
