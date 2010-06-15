@@ -271,13 +271,6 @@ class FieldElement(LayoutElement):
             var_name = field.name
         LayoutElement.__init__(self,lh,var_name,label=unicode(field.verbose_name),**kw)
         
-    #~ def get_column_options(self,**kw):
-        #~ kw = LayoutElement.get_column_options(self,**kw)
-        #~ if self.editable:
-            #~ fo = self.get_field_options()
-            #~ kw.update(editor=fo)
-        #~ return kw    
-        
     def get_column_options(self,**kw):
         #~ raise "get_column_options() %s" % self.__class__
         kw.update(
@@ -298,36 +291,18 @@ class FieldElement(LayoutElement):
         if self.xtype:
             kw.update(xtype=self.xtype)
         kw.update(name=self.field.name)
-        #~ kw.update(anchor="100%")
-        #~ kw.update(anchor="100% 100%")
-        #kw.update(style=dict(padding='0px'),color='green')
         if self.label:
             kw.update(fieldLabel=unicode(self.label))
         if not self.field.blank:
             kw.update(allowBlank=False)
         if not self.editable:
             kw.update(readOnly=True)
-        #kw.update(maxHeight=self.preferred_height*EXT_CHAR_HEIGHT)
         return kw
         
     def ext_options(self,**kw):
-        """
-        ExtJS renders fieldLabels only if the field's Container has layout 'form', so we create a panel around each field
-        """
         kw = LayoutElement.ext_options(self,**kw)
         kw.update(self.get_field_options())
-        #~ h = self.preferred_height*EXT_CHAR_HEIGHT
-        #~ kw.update(minHeight=h)
-        #~ kw.update(height=h)
-        #kw.update(flex=0)
-        #kw.update(xtype='panel',layout='form') 
-        #kw.update(style=dict(padding='0px'),color='green')
-        #kw.update(hideBorders=True)
-        #kw.update(margins='0')
         return kw
-        #~ kw.update(xtype='container',layout='form')
-        #~ kw.update(items=self.get_field_options())
-        #~ return kw
     
         
         
@@ -343,10 +318,6 @@ class TextFieldElement(FieldElement):
     preferred_height = 3
     #collapsible = True
 
-    #~ def get_field_options(self,**kw):
-        #~ kw = FieldElement.get_field_options(self,**kw)
-        #~ kw.update(anchor="100% 100%")
-        #~ return kw
         
 class CharFieldElement(FieldElement):
     value_template = "new Ext.form.TextField(%s)"
@@ -377,16 +348,7 @@ class ChoicesFieldElement(ComboFieldElement):
     def get_field_options(self,**kw):
         kw = FieldElement.get_field_options(self,**kw)
         kw.update(store=self.field.choices)
-        #~ kw.update(mode='local')
-        #~ # kw.update(editable=False)
-        #~ kw.update(forceSelection=False)
-        #~ kw.update(triggerAction='all')
-        #~ # kw.update(typeAhead=False)
-        #~ kw.update(submitValue=True)
         kw.update(hiddenName=self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
-        #~ kw.update(valueField=ext_requests.CHOICES_VALUE_FIELD) 
-        #~ kw.update(displayField=ext_requests.CHOICES_TEXT_FIELD)
-        #~ kw.update(maxLength=self.field.max_length)
         return kw
         
 
@@ -397,55 +359,14 @@ class RemoteComboFieldElement(ComboFieldElement):
         proxy = dict(url=self.lh.ui.get_choices_url(self),method='GET')
         kw.update(proxy=js_code("new Ext.data.HttpProxy(%s)" % py2js(proxy)))
         # a JsonStore without explicit proxy sometimes used method POST
-        # kw.update(autoLoad=True)
-        #~ kw.update(totalProperty='count')
-        #~ kw.update(root='rows')
-        #~ kw.update(id=ext_requests.CHOICES_VALUE_FIELD) # self.report.model._meta.pk.name)
-        #~ kw.update(fields=[ext_requests.CHOICES_VALUE_FIELD,ext_requests.CHOICES_TEXT_FIELD])
-        #~ kw.update(listeners=dict(exception=js_code("Lino.on_store_exception")))
         return kw
       
     def get_field_options(self,**kw):
-        # see blog 20100222
         kw = FieldElement.get_field_options(self,**kw)
-        #~ kw.update(mode='remote')
-        #setup_report(self.report)
-        #kw.update(store=self.rh.store)
         sto = self.store_options()
         #print repr(sto)
         kw.update(store=js_code("new Lino.RemoteComboStore(%s)" % py2js(sto)))
-        #~ kw.update(store=js_code("new Ext.data.JsonStore(%s)" % py2js(sto)))
-        #kw.update(store=js_code(self.store.as_ext_value(request)))
         kw.update(hiddenName=self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
-        #~ kw.update(valueField=ext_requests.CHOICES_VALUE_FIELD) #self.report.model._meta.pk.name)
-        #~ kw.update(submitValue=True)
-        #~ kw.update(displayField=ext_requests.CHOICES_TEXT_FIELD) # self.report.display_field)
-        #kw.update(valueField='id')
-        #kw.update(valueField=self.name)
-        #~ kw.update(triggerAction='all')
-        #kw.update(listeners=dict(beforequery=js_code("function(qe) {console.log('beforequery',qe); return true;}")))
-        
-        #~ kw.update(typeAhead=True)
-        #~ kw.update(minChars=2) # default 4 is to much
-        #~ kw.update(queryDelay=300) # default 500 is maybe slow
-        #~ kw.update(queryParam=ext_requests.URL_PARAM_FILTER)
-        #~ kw.update(typeAhead=True)
-        #~ kw.update(selectOnFocus=True) # select any existing text in the field immediately on focus.
-        #~ kw.update(resizable=True)
-        #kw.update(typeAheadDelay=300) # default 500 is maybe slow
-        # test whether field has a %s_choices() method
-        #~ if self.lh.link.report.get_field_choices_meth(self.field): 
-            #~ kw.update(contextParam=ext_requests.URL_PARAM_CHOICES_PK)
-            #kw.update(lazyInit=True)
-        #~ rh = self.lh.layout.datalink_report.get_handle(self.lh.ui)
-        #~ chooser = rh.choosers[self.field.name]
-        #~ chooser = getattr(self.field,'_lino_chooser',None)
-        #~ kw.update(contextParams={})
-        #~ chooser = choosers.get_for_field(self.field)
-        #~ if chooser:
-            #~ kw.update(contextParams=chooser.context_params)
-            #~ kw.update(plugins=js_code('new Lino.ChooserPlugin(caller,%s)' % py2js(chooser.context_values)))
-            #~ kw.update(listeners=dict(added=js_code('Lino.chooser_handler(ww,%s)' % py2js(chooser.context_values))))
         return kw
         
         
@@ -467,22 +388,6 @@ class ForeignKeyElement(RemoteComboFieldElement):
 
 
 
-        
-#~ class PropertyElement(LayoutElement):        
-    #~ def __init__(self,lh,prop,**kw):
-        #~ assert field.name, Exception("field %r has no name!" % field)
-        #~ LayoutElement.__init__(self,lh,prop.name,label=prop.label,**kw)
-        #~ self.prop = prop
-        #~ self.editable = True
-        #~ self.delegate = field2e
-        #~ value_type = prop.value_type._meta.get_field value
-        #~ fk, remote, direct, m2m = self.model._meta.get_field_by_name(self.fk_name)
-        #~ FieldElement.__init__(self,lh,value_type)
-        #~ delegate = lh.main_class.field2elem(lh,return_type,**kw)
-        #~ for a in ('ext_options','get_column_options','get_field_options','grid_column_template'):
-            #~ setattr(self,a,getattr(delegate,a))
-
-            
 class DateFieldElement(FieldElement):
     xtype = 'datefield'
     data_type = 'date' # for store column
@@ -580,8 +485,6 @@ class MethodElement(FieldElement):
         
 
 class Container(LayoutElement):
-    #ext_template = 'lino/includes/element.js'
-    #ext_container = 'Ext.Panel'
     vertical = False
     hpad = 1
     is_fieldset = False
@@ -839,17 +742,6 @@ class GridElement(Container): #,DataElementMixin):
         else:
             self.mt = 'undefined'
 
-        
-          
-    def unused_subvars(self):
-        """
-        GridElement, unlike Container, doesn't generate the declaration of its elements 
-        because self.column_model does this indirectly.
-        """
-        #self.setup()
-        #yield self.rh.store
-        yield self.column_model
-
     def ext_options(self,**d):
         #~ self.setup()
         rh = self.report.get_handle(self.lh.ui)
@@ -977,42 +869,10 @@ class GridMainPanel(GridElement,MainPanel):
     #~ value_template = "new Lino.GridPanel(%s)"
     def __init__(self,lh,name,vertical,*elements,**kw):
         'ignore the "vertical" arg'
-        #lh.report.setup()
-        #~ self.pager = None
         MainPanel.__init__(self)
         GridElement.__init__(self,lh,name,lh.layout.datalink_report,*elements,**kw)
         #lino.log.debug("GridMainPanel.__init__() %s",self.name)
         
-    #~ def setup(self):
-        #~ if self.pager is not None:
-            #~ return
-        #~ MainPanel.setup(self)
-        #~ self.pager = PagingToolbar(self,'pager')
-        
-    #~ def apply_window_config(self,wc):
-        #~ i = 0
-        #~ for w in wc.column_widths:
-            #~ self.column_model.columns[i].update(width=w)
-            #~ i += 1
-        
-    #~ def subvars(self):
-        #~ for e in GridElement.subvars(self):
-            #~ yield e
-        #~ for e in MainPanel.subvars(self):
-            #~ yield e
-        #~ yield self.pager
-        
-    #~ def unused_get_datalink(self):
-        #~ return self.rh
-        
-    #~ def ext_options(self,**kw):
-        #~ self.setup()
-        #~ kw = GridElement.ext_options(self,**kw)
-        #~ del kw['autoHeight']
-        #~ del kw['title']
-        #~ kw.update(selModel=js_code("new Ext.grid.RowSelectionModel({singleSelect:false})"))
-        #~ kw.update(tbar=self.pager)
-        #~ return kw
 
 
 

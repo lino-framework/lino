@@ -122,6 +122,9 @@ def py2js(v):
         return str(v).lower()
     if isinstance(v, (int, long)):
         return str(v)
+    if isinstance(v, datetime.date):
+        return 'new Date(%d,%d,%d)' % (v.year,v.month,v.day)
+
     if isinstance(v, float):
         return repr(v)
     #return simplejson.encoder.encode_basestring(v)

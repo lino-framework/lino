@@ -505,7 +505,7 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
     #~ page_layout = None # (layouts.PageLayout ,)
     #~ row_layout_class = None
     
-    date_format = 'd.m.y'
+    date_format = 'd.m.Y'
     boolean_texts = (_('Yes'),_('No'),' ')
     
     can_view = perms.always

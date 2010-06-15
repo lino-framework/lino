@@ -122,7 +122,7 @@ class ContactDetail(layouts.DetailLayout):
               """
     intro_box = "box1 box2"
     address_box = "box3 box4"
-    bottom_box = "remarks:60x6"
+    bottom_box = "remarks"
     main = """intro_box
               address_box
               bottom_box

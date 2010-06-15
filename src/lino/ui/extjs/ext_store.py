@@ -112,26 +112,17 @@ class DateStoreField(StoreField):
         kw['type'] = 'date'
         StoreField.__init__(self,field,**kw)
         
-    def obj2json(self,obj,d):
+    def unused_obj2json(self,obj,d): # date conversion done by py2js
         value = getattr(obj,self.field.name)
         if value is not None:
-            value = value.ctime() # strftime('%Y-%m-%d')
+            value = value.strftime(self.date_format)
+            #~ value = value.ctime() # strftime('%Y-%m-%d')
             #print value
             d[self.field.name] = value
             
     def parse_form_value(self,v):
         return dateparser.parse(v,fuzzy=True)
 
-    #~ def form2obj(self,instance,post_data):
-        #~ v = post_data.get(self.field.name,None)
-        #~ if v is None:
-            #~ return
-        #~ if v == '' and self.field.null:
-            #~ v = None
-        #~ if v is not None:
-            #~ #print v
-            #~ v = dateparser.parse(v,fuzzy=True)
-        #~ setattr(instance,self.field.name,v)
 
 class MethodStoreField(StoreField):
   
