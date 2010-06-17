@@ -53,6 +53,9 @@ def objects():
     yield city(u'Nancy','FR')
     yield city(u'Marseille','FR')
     
+    company = Instantiator('contacts.Company',"name zip_code city:name street street_no",country='EE',language='et').build
+    yield company(u'Rumma & Ko OÜ','10115','Tallinn',u'Tartu mnt','71')
+    
     company = Instantiator('contacts.Company',"name zip_code city:name street street_no",country='BE',language='de').build
     yield company(u'Bäckerei Ausdemwald', '4700', 'Eupen',  u'Vervierser Straße','45')
     yield company(u'Bäckerei Mießen',     '4700', 'Eupen',  u'Gospert','103')
@@ -73,6 +76,11 @@ def objects():
     yield company(u'Auto École Verte','54000 ','Nancy',u'rue de Mon Désert','12')
     
     City = resolve_model('countries.City')
+    tallinn = City.objects.get(name__exact='Tallinn')
+    person = Instantiator('contacts.Person',"first_name last_name",
+                country='EE',language='et',city=tallinn,zip_code='10115').build
+    yield person(u'Luc',  u'Saffre')
+    
     eupen = City.objects.get(name__exact='Eupen')
     person = Instantiator('contacts.Person',"first_name last_name",
                 country='BE',language='de',city=eupen,zip_code='4700').build

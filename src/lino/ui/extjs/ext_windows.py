@@ -123,7 +123,7 @@ class MasterWrapper(WindowWrapper):
         
     def js_render(self):
         yield ''
-        yield "function(caller) { "
+        yield "function(caller,params) { "
         for ln in jsgen.declare_vars(self.config):
             yield '  '+ln
         before_row_edit = []
@@ -156,7 +156,8 @@ class MasterWrapper(WindowWrapper):
                 #~ lino.log.debug("20100615 %s.%s not a FieldElement", self.lh.layout, e)
         #~ lino.log.debug("20100615 %s has %d choosers", self.lh.layout, len(before_row_edit))
         self.config.update(before_row_edit=js_code('function(record){%s}' % ('\n'.join(before_row_edit))))
-        yield "new Lino.%s(caller,function(ww) { return %s}).show();}" % (self.__class__.__name__,py2js(self.config))
+        yield "new Lino.%s(caller,function(ww) { return Ext.apply(%s,params)}).show();}" % (
+            self.__class__.__name__,py2js(self.config))
         
             
     
@@ -198,7 +199,7 @@ class GridWrapperMixin(WindowWrapper):
         #~ d.update(actions=[dict(label=a.label,name=a.name) for a in self.bbar_buttons])
         #~ d.update(fields=[js_code(f.as_js()) for f in self.rh.store.fields])
         #~ d.update(colModel=self.lh._main.column_model)
-        d.update(content_type=self.rh.report.content_type)
+        d.update(content_type=self.rh.content_type)
         d.update(title=unicode(self.rh.get_title(None)))
         #~ d.update(url_data=self.ui.get_actor_url(self.rh.report)) # +'/data') 
         d.update(main_panel=self.lh._main)
@@ -280,7 +281,15 @@ class unused_InsertWrapper(MasterWrapper):
           ),
           ])
         return d
-        
+    
+#~ class LayoutDetailWrapper(MasterWrapper):
+    #~ window_config_type = 'detail'
+    
+    #~ def __init__(self,lh,action,**kw):
+        #~ assert isinstance(action,layouts.ShowDetailAction)
+        #~ main = ext_elems.FormPanel(lh._main)
+        #~ WindowWrapper.__init__(self,action,lh.ui,lh,main,**kw)        
+  
 class DetailWrapper(MasterWrapper):
   
     window_config_type = 'detail'

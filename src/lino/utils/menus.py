@@ -30,7 +30,7 @@ class MenuItem:
     HOTKEY_MARKER = '~'
     
     def __init__(self,parent,action,name=None,label=None,doc=None,enabled=True,
-                 can_view=None,hotkey=None):
+                 can_view=None,hotkey=None,params={}):
         p = parent
         l = []
         while p is not None:
@@ -40,6 +40,7 @@ class MenuItem:
             p = p.parent
         self.parent = parent
         self.action = action
+        self.params = params
         
         if action is not None:
             if name is None:

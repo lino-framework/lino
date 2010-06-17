@@ -770,7 +770,7 @@ class GridElement(Container): #,DataElementMixin):
         #d.update(layout='fit')
         d.update(enableColLock=False)
         d.update(ls_quick_edit=True)
-        d.update(ls_content_type=rh.report.content_type)
+        d.update(ls_content_type=rh.content_type)
         
         #~ def a2btn(a):
             #~ return dict(

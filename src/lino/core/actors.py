@@ -35,6 +35,7 @@ def resolve_action(spec,app_label=None):
         actor = get_actor2(app_label,spec)
     elif len(s) == 3:
         actor = get_actor(ACTOR_SEP.join(s[0:2]))
+        #~ print 20100616, actor, s, actor._actions_dict
         return actor.get_action(s[2])
     else:
         actor = get_actor(spec)
@@ -177,6 +178,9 @@ class Actor(Handled):
         #~ self._actions_list.append(a)
         #~ self._actions_dict[a.name] = a
     
+    def debug_summary(self):
+        return "%s (%s)" % (self.__class__,','.join([a.name for a in self._actions_list]))
+        
     def get_url(self,ui,**kw):
         return ui.get_action_url(self,self.default_action,**kw)
 
@@ -187,6 +191,7 @@ class Actor(Handled):
         #~ return getattr(self,action_name,None)
         
     def setup(self):
+        #~ raise "20100616"
         assert not self._setup_done, "%s.setup() called again" % self
         if self._setup_done:
             return True

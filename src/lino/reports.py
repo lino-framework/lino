@@ -169,7 +169,6 @@ def discover():
 
 
 
-
 class GridEdit(actions.OpenWindowAction):
     hidden = True
   
@@ -242,6 +241,8 @@ class ReportHandle(datalinks.DataLink,base.Handle): #,actors.ActorHandle):
         base.Handle.__init__(self,ui)
         if self.report.use_layouts:
             self.list_layout = self.report.list_layout.get_handle(self.ui)
+        if self.report.model is not None:
+            self.content_type = ContentType.objects.get_for_model(self.report.model).pk
         
   
     def __str__(self):
@@ -615,10 +616,8 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
                 #~ actions += self.details
                 actions.append(OpenDetailAction(self))
                     
-            self.content_type = ContentType.objects.get_for_model(self.model).pk
-            
-            for slave in self._slaves:
-                actions.append(SlaveGridAction(self,slave))
+            #~ for slave in self._slaves:
+                #~ actions.append(SlaveGridAction(self,slave))
                 
             if False: # lino.modlib.properties and lino.modlib.links are currently not necessary
                 from lino.modlib.properties import models as properties
@@ -636,6 +635,10 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
         if self.button_label is None:
             self.button_label = self.label
 
+    #~ def debug_summary(self):
+        #~ if self.model is not None:
+            #~ return '%s detail_layouts=%s' % (self.__class__,[l.__class__ for l in self.detail_layouts])
+        #~ return self.__class__
         
     # implements actions.Action
     def unused_get_url(self,ui,**kw):

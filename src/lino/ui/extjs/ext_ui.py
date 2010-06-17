@@ -436,7 +436,7 @@ class ExtUI(base.UI):
         #~ from lino import lino_site
         return json_response_kw(success=True,
           message=(_("Welcome on Lino server %r, user %s") % (lino_site.title,request.user)),
-          load_menu=lino_site.get_menu(request.user))
+          load_menu=lino_site.get_site_menu(request.user))
         #~ s = py2js(lino_site.get_menu(request))
         #~ return HttpResponse(s, mimetype='text/html')
 
@@ -716,7 +716,7 @@ class ExtUI(base.UI):
             #~ url = build_url("/ui",v.action.actor.app_label,v.action.actor._actor_name,v.action.name)
             #~ handler = "function(btn,evt){Lino.do_action(undefined,{url:%r})}" % url
             #~ handler = "function(btn,evt){new Lino.%s().show()}" % v.action
-            handler = "function(btn,evt){Lino.%s()}" % v.action
+            handler = "function(btn,evt){Lino.%s(undefined,%s)}" % (v.action,py2js(v.params))
             return dict(text=prepare_label(v),handler=js_code(handler))
         return v
 
@@ -757,7 +757,10 @@ class ExtUI(base.UI):
             
         if isinstance(a,reports.OpenDetailAction):
             return ext_windows.DetailWrapper(h,a)
-            
+
+        #~ if isinstance(a,layouts.ShowDetailAction):
+            #~ return ext_windows.LayoutDetailWrapper(h,a)
+
             
         if isinstance(a,properties.PropsEdit):
             #~ return ext_windows.PropertiesWrapper(self,h,a)

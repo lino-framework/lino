@@ -27,6 +27,33 @@ from lino import actions
 #~ from lino import commands
 from lino.utils import perms
 
+class SiteConfig(models.Model):
+    site_company = models.ForeignKey('contacts.Company',blank=True,null=True,
+        verbose_name=_("The company that runs this site"))
+    next_partner_id = models.IntegerField(verbose_name=_("The next automatic id for Person or Company"))
+    # base_currency 
+
+class SiteConfigDetail(layouts.DetailLayout):
+    #~ label = _('Site Configuration')
+    datalink = 'system.SiteConfig'
+    main = """
+    site_company
+    next_partner_id
+    """
+
+class SiteConfigs(reports.Report):
+    model = SiteConfig
+    #~ default_action_class = reports.OpenDetailAction
+
+def get_site_config():
+    try:
+        return SiteConfig.objects.get(pk=1)
+    except SiteConfig.DoesNotExist:
+        lino.log.info("Creating SiteConfig record")
+        sc = SiteConfig(pk=1)
+        from lino.lino_site import lino_site
+        lino_site.init_site_config(sc)
+        return sc
 
 class Permissions(reports.Report):
     model = auth.Permission
@@ -54,6 +81,12 @@ class ContentTypes(reports.Report):
 
 
 def add_auth_menu(lino):
+    m = lino.add_menu("system",_("~System"))
+    #~ m.add_action('system.SiteConfigs',can_view=perms.is_staff,params=dict(pk=1))
+    m.add_action('system.SiteConfigs.detail',
+      label=_('Site Configuration'),
+      can_view=perms.is_staff,
+      params=dict(record_id=1))
     if False:
         m = lino.add_menu("auth",_("~Authentificate"))
         m.add_action('system.Login',can_view=perms.is_anonymous)

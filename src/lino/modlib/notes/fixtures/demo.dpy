@@ -27,18 +27,22 @@ def objects():
     yield notetype(name="phone report")
     yield notetype(name="todo")
     
+    
+    Person = resolve_model('contacts.Person')
+    Company = resolve_model('contacts.Company')
+    
+    print Person.objects.all()
+    
+    luc = Person.objects.get(name__exact='Saffre Luc')
+    rko = Company.objects.get(name__exact=u'Rumma & Ko OÜ')
+    
     note = Instantiator('notes.Note').build
-    n = note(user=u,date=i2d(20091208),subject="note for company 1",body="""Lorem ipsum...""",company=1)
+    n = note(user=u,date=i2d(20091208),subject="note for company 1",body="""Lorem ipsum...""",company=rko)
     yield n    
     
-    n = note(user=u,date=i2d(20091208),subject="note for person 2",body="""Lorem ipsum...""",person=2)
+    n = note(user=u,date=i2d(20091208),subject="note for person 2",body="""Lorem ipsum...""",person=luc)
     yield n 
-
-    #~ link = Instantiator('links.Link').build
-    #~ yield link(user=u,owner=n,url="http://www.djangoproject.com")
-    #~ yield link(user=u,owner=n,url="http://www.extjs.com")
-    #~ yield link(user=u,owner=n,url="http://www.python.org")
     
-    yield note(user=u,date=i2d(20100517),subject="Django website",person=2,url="http://www.djangoproject.com")
-    yield note(user=u,date=i2d(20100517),subject="ExtJS website",person=2,url="http://www.extjs.com")
-    yield note(user=u,date=i2d(20100517),subject="Python website",person=2,url="http://www.python.org")
+    yield note(user=u,date=i2d(20100517),subject="Django website",person=luc,url="http://www.djangoproject.com")
+    yield note(user=u,date=i2d(20100517),subject="ExtJS website",person=luc,url="http://www.extjs.com")
+    yield note(user=u,date=i2d(20100517),subject="Python website",person=luc,url="http://www.python.org")

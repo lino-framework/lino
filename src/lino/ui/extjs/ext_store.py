@@ -51,8 +51,9 @@ class StoreField(object):
 
     def form2obj(self,instance,post_data):
         v = post_data.get(self.field.name,None)
-        #~ if v == '' and self.field.null:
-            #~ v = None
+        if v == '': # and self.field.null:
+            # e.g. id field may be empty
+            v = None
         if v is None:
             return
         v = self.parse_form_value(v)

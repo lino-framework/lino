@@ -222,6 +222,13 @@ class LayoutHandle(base.Handle):
             elif len(a) == 2:
                 return name, dict(width=int(a[0]),height=int(a[1]))
         raise Exception("Invalid picture descriptor %s" % picture)
+        
+        
+#~ class ShowDetailAction(actions.OpenWindowAction):
+    #~ needs_selection = True
+    #~ name = 'detail'
+    #~ label = _("Detail")
+        
 
 class Layout(actors.Actor):
     """
@@ -267,6 +274,10 @@ class Layout(actors.Actor):
         
     #~ def get_handle(self,dl):
         #~ return LayoutHandle(dl,self)
+        
+    #~ def do_setup(self):
+        #~ self.default_action = ShowDetailAction(self)
+        
         
 class unused_FormLayout(Layout):
     #label = "Dialog"

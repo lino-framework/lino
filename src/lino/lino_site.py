@@ -52,14 +52,14 @@ from lino.core.coretools import app_labels, data_elems
 apps = app_labels()
 lino.log.debug("%d applications: %s.", len(apps),", ".join(apps))
 models_list = models.get_models() # populates django.db.models.loading.cache 
-lino.log.debug("%d models:",len(models_list))
+
 if settings.MODEL_DEBUG:
+    lino.log.debug("%d MODELS:",len(models_list))
     i = 0
     for model in models_list:
         i += 1
         lino.log.debug("  %2d: %s.%s -> %r",i,model._meta.app_label,model._meta.object_name,model)
         lino.log.debug("      data_elems : %s",' '.join(data_elems(model)))
-
 
 from lino.utils import choosers
 
@@ -105,7 +105,9 @@ class LinoSite:
             lino.log.debug("ACTORS:")
             for k in sorted(actors.actors_dict.keys()):
                 a = actors.actors_dict[k]
-                lino.log.debug("%s -> %r",k,a.__class__)
+                #~ lino.log.debug("%s -> %r",k,a.__class__)
+                lino.log.debug("%s -> %r",k,a.debug_summary())
+                  
           
         if hasattr(settings,'LINO_SETTINGS'):
             lino.log.info("Reading %s ...", settings.LINO_SETTINGS)
@@ -159,7 +161,7 @@ class LinoSite:
         #m.add_item(system.Login(),can_view=perms.is_anonymous)
         #m.add_item(system.Logout(),can_view=perms.is_authenticated)
         
-    def get_menu(self,user):
+    def get_site_menu(self,user):
         self.setup()
         return self._menu.menu_request(user)
         
@@ -200,6 +202,8 @@ class LinoSite:
         #self.setup()
         
             
+    def init_site_config(sc):
+        pass
 
   
   
@@ -211,5 +215,5 @@ lino_site = LinoSite()
 fill = lino_site.fill
 context = lino_site.context
 get_urls = lino_site.get_urls
-get_menu = lino_site.get_menu
+get_site_menu = lino_site.get_site_menu
 setup = lino_site.setup
