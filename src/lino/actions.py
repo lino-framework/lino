@@ -73,7 +73,9 @@ class Action: # (base.Handled):
     needs_selection = False
     needs_validation = False
     #~ grid_button = True
-    hidden = False
+    #~ hidden = False
+    show_in_detail = True
+    show_in_list = True
     
     def __init__(self,actor):
     #~ def __init__(self,ah):

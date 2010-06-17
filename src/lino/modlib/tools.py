@@ -63,8 +63,11 @@ def resolve_model(model_spec,app_label=None,who=None):
             model_spec,app_label,who,model))
     return model
     
-    
-
+def get_field(model,name):
+    fld, remote_model, direct, m2m = model._meta.get_field_by_name(name)
+    assert remote_model is None
+    return fld
+  
 
 def resolve_field(name,app_label):
     l = name.split('.')

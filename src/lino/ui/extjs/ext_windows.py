@@ -130,30 +130,16 @@ class MasterWrapper(WindowWrapper):
         #~ before_row_edit.append("console.log('ext_windows.py 20100531',record);")
         yield ''
         for e in self.main.walk():
-        #~ for e in self.lh._main.walk():
             if isinstance(e,ext_elems.FieldElement):
                 chooser = choosers.get_for_field(e.field)
                 if chooser:
                     #~ lino.log.debug("20100615 %s.%s has chooser", self.lh.layout, e.field.name)
-                    #~ kw.update(contextParams=chooser.context_params)
-                    #~ kw.update(plugins=js_code('new Lino.ChooserPlugin(caller,%s)' % py2js(chooser.context_values)))
-                    #~ kw.update(listeners=dict(added=js_code('Lino.chooser_handler(ww,%s)' % py2js(chooser.context_values))))
                     for f in chooser.context_fields:
-                        field_extname = chooser.model.__name__ + '_' + f.name
-                        yield "  %s_field.on('change',Lino.chooser_handler(%s,%r));" % (field_extname,e.ext_name,f.name)
-                        #~ yield "  %s_field.on('render',function(cmp) { %s.setContextValue(%r,cmp.getValue())});" % (f.name,e.ext_name,f.name)
-                        #~ yield "  %s.on('focus',function(cmp) { cmp.setContextValue(%r,%s_field.getValue())});" % (e.ext_name,f.name,f.name)
-                        if isinstance(f,models.ForeignKey) or (isinstance(f,models.Field) and f.choices):
-                            fname = f.name+ext_requests.CHOICES_HIDDEN_SUFFIX
-                        else:
-                            fname = f.name
+                        varname = ext_elems.varname_field(f)
+                        #~ field_extname = chooser.model.__name__ + '_' + f.name
+                        yield "  %s.on('change',Lino.chooser_handler(%s,%r));" % (varname,e.ext_name,f.name)
                         before_row_edit.append("%s.setContextValue(%r,record.data[%r]);" % (
-                            e.ext_name,f.name,fname))
-                        #~ before_row_edit.append("%s.setContextValue(%r,%s_field.getValue());" % (e.ext_name,f.name,f.name))
-                #~ else:
-                    #~ lino.log.debug("20100615 no chooser for %s.%s", self.lh.layout, e.field.name)
-            #~ else:
-                #~ lino.log.debug("20100615 %s.%s not a FieldElement", self.lh.layout, e)
+                            e.ext_name,f.name,ext_elems.form_field_name(f)))
         #~ lino.log.debug("20100615 %s has %d choosers", self.lh.layout, len(before_row_edit))
         self.config.update(before_row_edit=js_code('function(record){%s}' % ('\n'.join(before_row_edit))))
         yield "new Lino.%s(caller,function(ww) { return Ext.apply(%s,params)}).show();}" % (
@@ -256,45 +242,13 @@ class DetailSlaveWrapper(SlaveWrapper):
         d.update(title=u"%s - %s" % (self.action.actor.get_title(None),self.action.label))
         return d
         
-class unused_InsertWrapper(MasterWrapper):
   
-    window_config_type = 'insert'
-    
-    def __init__(self,rh,action,**kw):
-        assert isinstance(action,reports.InsertRow)
-        lh = action.layout.get_handle(rh.ui)
-        MasterWrapper.__init__(self, rh, action, lh)
-        
-    def get_config(self):
-        d = super(InsertWrapper,self).get_config()
-        d.update(main_panel=self.lh._main)
-        d.update(name=self.action.name)
-        d.update(title=self.action.label + _(' into ') + self.action.actor.get_title(None))
-        d.update(fk_name=self.action.actor.fk_name);
-        #~ d.update(formdata=)
-        d.update(actions=[
-          dict(
-            name='submit',
-            label='Submit',
-            method='POST',
-            url="/".join(("/api",self.action.actor.app_label,self.action.actor._actor_name))+'.json'
-          ),
-          ])
-        return d
-    
-#~ class LayoutDetailWrapper(MasterWrapper):
-    #~ window_config_type = 'detail'
-    
-    #~ def __init__(self,lh,action,**kw):
-        #~ assert isinstance(action,layouts.ShowDetailAction)
-        #~ main = ext_elems.FormPanel(lh._main)
-        #~ WindowWrapper.__init__(self,action,lh.ui,lh,main,**kw)        
-  
-class DetailWrapper(MasterWrapper):
+class BaseDetailWrapper(MasterWrapper):
   
     window_config_type = 'detail'
     
     def __init__(self,rh,action,**kw):
+        self.rh = rh
         assert isinstance(action,reports.OpenDetailAction)
         if len(rh.report.detail_layouts) == 1:
             lh = rh.report.detail_layouts[0].get_handle(rh.ui)
@@ -319,9 +273,16 @@ class DetailWrapper(MasterWrapper):
         return d
         
         
-class InsertWrapper(DetailWrapper):
+class DetailWrapper(BaseDetailWrapper):
     def get_config(self):
-        d = DetailWrapper.get_config(self)
+        d = BaseDetailWrapper.get_config(self)
+        #~ d.update(ls_bbar_actions=[ext_elems.a2btn(a) for a in self.rh.get_actions() if not a.hidden])
+        d.update(ls_bbar_actions=[ext_elems.a2btn(a) for a in self.rh.get_actions() if a.show_in_detail])
+        return d
+  
+class InsertWrapper(BaseDetailWrapper):
+    def get_config(self):
+        d = BaseDetailWrapper.get_config(self)
         d.update(title=_('%s into %s') %(self.action.label,self.action.actor.get_title(None)))
         d.update(record_id=-99999)
         return d

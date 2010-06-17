@@ -230,12 +230,13 @@ class PisaPrintMethod(PrintMethod):
             return
         #~ url = settings.MEDIA_ROOT.replace('\\','/') + '/'
         html = self.render_template(elem,tpl) # ,MEDIA_URL=url)
-        html = html.encode("ISO-8859-1")
+        #~ html = html.encode("ISO-8859-1")
+        html = html.encode("utf-8")
         file(filename+'.html','w').write(html)
         result = cStringIO.StringIO()
         h = logging.FileHandler(filename+'.log','w')
         pisa.log.addHandler(h)
-        pdf = pisa.pisaDocument(cStringIO.StringIO(html), result)
+        pdf = pisa.pisaDocument(cStringIO.StringIO(html), result,encoding='utf-8')
         pisa.log.removeHandler(h)
         h.close()
         file(filename,'wb').write(result.getvalue())

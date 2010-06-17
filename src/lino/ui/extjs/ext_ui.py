@@ -193,8 +193,10 @@ def handle_element_request(request,ah,elem):
     if request.method == 'GET':
         fmt = request.GET.get('fmt',None)
         if fmt is None:
-            return json_response_kw(id=elem.pk,data=ah.store.row2dict(elem),title=unicode(elem))
-                #~ return json_response_kw(count=1,rows=[ah.store.row2dict(elem)],title=unicode(elem))
+            return json_response_kw(id=elem.pk,
+              data=ah.store.row2dict(elem),
+              disabled_fields=[ext_elems.form_field_name(f) for f in ah.report.disabled_fields(request,elem)],
+              title=unicode(elem))
         if fmt == 'picture':
             pm = mixins.get_print_method('picture')
         else:

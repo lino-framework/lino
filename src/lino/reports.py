@@ -170,7 +170,9 @@ def discover():
 
 
 class GridEdit(actions.OpenWindowAction):
-    hidden = True
+    #~ hidden = True
+    show_in_list = False
+    show_in_detail = False
   
     name = 'grid'
     
@@ -181,6 +183,7 @@ class GridEdit(actions.OpenWindowAction):
 
 #~ class InsertRow(actions.OpenWindowAction):
 class OpenDetailAction(actions.OpenWindowAction):
+    show_in_detail = False
     needs_selection = True
     name = 'detail'
     label = _("Detail")
@@ -316,7 +319,9 @@ class unused_ElementAction(actions.Action):
   
 class ListAction(actions.Action):
     #~ response_format = 'json' # ext_requests.FMT_JSON
-    hidden = True
+    #~ hidden = True
+    show_in_list = False
+    #~ show_in_detail = True
     name = 'list'
     
     def get_queryset(self,ar):
@@ -586,6 +591,12 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
     def spawn(cls,suffix,**kw):
         kw['app_label'] = cls.app_label
         return type(cls.__name__+str(suffix),(cls,),kw)
+        
+    def disabled_fields(self,request,obj):
+        """return a list of fields that should not be editable.
+        Example in dsbe.models.Persons
+        """
+        return []
         
     def do_setup(self):
       

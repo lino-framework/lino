@@ -31,6 +31,18 @@ from lino.modlib.properties import models as properties # import Property, CharP
 EXT_CHAR_WIDTH = 9
 EXT_CHAR_HEIGHT = 22
 
+def form_field_name(f):
+    if isinstance(f,models.ForeignKey) or (isinstance(f,models.Field) and f.choices):
+        return f.name + ext_requests.CHOICES_HIDDEN_SUFFIX
+    else:
+        return f.name
+        
+def varname_field(f):
+    if hasattr(f,'model'):
+        return f.model.__name__ + '_' + f.name + '_field'
+    else: # e.g. Field instances used as return_type for methods
+        return f.name + '_field'
+        
 
 
 class ColumnModel(Component):
@@ -259,17 +271,13 @@ class FieldElement(LayoutElement):
     declare_type = jsgen.DECLARE_VAR
     stored = True
     #declaration_order = 3
-    ext_suffix = "_field"
+    #~ ext_suffix = "_field"
     
     def __init__(self,lh,field,**kw):
         assert field.name, Exception("field %r has no name!" % field)
         self.field = field
         self.editable = field.editable # and not field.primary_key
-        if hasattr(field,'model'):
-            var_name = field.model.__name__ + '_' + field.name
-        else: # e.g. Field instances used as return_type for methods
-            var_name = field.name
-        LayoutElement.__init__(self,lh,var_name,label=unicode(field.verbose_name),**kw)
+        LayoutElement.__init__(self,lh,varname_field(field),label=unicode(field.verbose_name),**kw)
         
     def get_column_options(self,**kw):
         #~ raise "get_column_options() %s" % self.__class__
@@ -561,44 +569,47 @@ class Panel(Container):
                     self.vflex = False
                     #~ print 20100615, self.lh.layout, self, "hbox loses vflex because of", e
                     
-        if len(elements) > 1 and self.vertical and self.vflex:
-            #~ print 20100615, self.lh, self
-            # so we must split this panel into several containers. 
-            # vflex elements go into a vbox, the others into a form layout. 
-            
-            # Rearrange elements into "element groups"
-            # Each element of egroups is a list of elements who have same vflex
-            egroups = []
-            for e in elements:
-                if len(egroups) and egroups[-1][0].vflex == e.vflex:
-                    egroups[-1].append(e)
-                else:
-                    egroups.append([e])
-                    
-            if len(egroups) == 1:
-                # all elements are vflex
-                assert tuple(egroups[0]) == elements, "%r != %r" % (tuple(egroups[0]), elements)
+        if self.vflex and len(elements) > 1:
+            if self.vertical:
+                #~ print 20100615, self.lh, self
+                # so we must split this panel into several containers. 
+                # vflex elements go into a vbox, the others into a form layout. 
                 
-            elements = []
-            for eg in egroups:
-                if eg[0].vflex:
-                    #~ for e in eg: e.update(flex=1,align='stretch')
-                    for e in eg: e.update(flex=1)
-                    if len(eg) == 1:
-                        g = eg[0]
+                # Rearrange elements into "element groups"
+                # Each element of egroups is a list of elements who have same vflex
+                egroups = []
+                for e in elements:
+                    if len(egroups) and egroups[-1][0].vflex == e.vflex:
+                        egroups[-1].append(e)
                     else:
-                        g = Container(lh,name,*eg,**dict(layout='vbox',flex=1))
-                else:
-                    #~ for e in eg: e.update(align='stretch')
-                    if len(eg) == 1:
-                        g = eg[0]
+                        egroups.append([e])
+                        
+                if len(egroups) == 1:
+                    # all elements are vflex
+                    assert tuple(egroups[0]) == elements, "%r != %r" % (tuple(egroups[0]), elements)
+                    
+                elements = []
+                for eg in egroups:
+                    if eg[0].vflex:
+                        #~ for e in eg: e.update(flex=1,align='stretch')
+                        for e in eg: e.update(flex=1)
+                        if len(eg) == 1:
+                            g = eg[0]
+                        else:
+                            g = Container(lh,name,*eg,**dict(layout='vbox',flex=1))
                     else:
-                        g = Container(lh,name,*eg,**dict(layout='form',autoHeight=True))
-                #~ g.update(align='stretch')
-                #~ g.update(layoutConfig=dict(align='stretch'))
-                elements.append(g)
-            self.update(layout='vbox',layoutConfig=dict(align='stretch'))
-            #~ self.value['align'] = 'stretch'
+                        #~ for e in eg: e.update(align='stretch')
+                        if len(eg) == 1:
+                            g = eg[0]
+                        else:
+                            g = Container(lh,name,*eg,**dict(layout='form',autoHeight=True))
+                    #~ g.update(align='stretch')
+                    #~ g.update(layoutConfig=dict(align='stretch'))
+                    elements.append(g)
+                self.update(layout='vbox',layoutConfig=dict(align='stretch'))
+                #~ self.value['align'] = 'stretch'
+            else: # not self.vertical
+                self.update(layout='hbox',layoutConfig=dict(align='stretch'))
               
         for e in elements:
             e.set_parent(self)
@@ -779,7 +790,7 @@ class GridElement(Container): #,DataElementMixin):
             #~ )
         
         #~ d.update(bbar=[a2btn(a) for a in rh.get_actions() if not a.hidden])
-        d.update(ls_bbar_actions=[a2btn(a) for a in rh.get_actions() if not a.hidden])
+        d.update(ls_bbar_actions=[a2btn(a) for a in rh.get_actions() if a.show_in_list])
         #~ d.update(ls_bbar_actions=[a for a in rh.get_actions() if not a.hidden])
         
         
