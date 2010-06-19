@@ -72,6 +72,73 @@ def prepare_label(mi):
         label = label.replace(mi.HOTKEY_MARKER,'')
         #label=label[:n] + '<u>' + label[n] + '</u>' + label[n+1:]
     return label
+    
+    
+    
+def html_page(title,tbar,main,bbar):
+    yield '<html><head>'
+    yield '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />'
+    yield '<title id="title">%s</title>' % title
+    #~ yield '<!-- ** CSS ** -->'
+    #~ yield '<!-- base library -->'
+    yield '<link rel="stylesheet" type="text/css" href="%sextjs/resources/css/ext-all.css" />' % settings.MEDIA_URL 
+    #~ yield '<!-- overrides to base library -->'
+    #~ yield '<!-- ** Javascript ** -->'
+    #~ yield '<!-- ExtJS library: base/adapter -->'
+    yield '<script type="text/javascript" src="%sextjs/adapter/ext/ext-base.js"></script>' % settings.MEDIA_URL 
+    widget_library = 'ext-all-debug'
+    #widget_library = 'ext-all'
+    #~ yield '<!-- ExtJS library: all widgets -->'
+    yield '<script type="text/javascript" src="%sextjs/%s.js"></script>' % (settings.MEDIA_URL, widget_library)
+    if True:
+        yield '<style type="text/css">'
+        # http://stackoverflow.com/questions/2106104/word-wrap-grid-cells-in-ext-js 
+        yield '.x-grid3-cell-inner, .x-grid3-hd-inner {'
+        yield '  white-space: normal;' # /* changed from nowrap */
+        yield '}'
+        yield '</style>'
+    if False:
+        yield '<script type="text/javascript" src="%sextjs/Exporter-all.js"></script>' % settings.MEDIA_URL 
+
+    #~ yield '<!-- overrides to library -->'
+    yield '<link rel="stylesheet" type="text/css" href="%slino/lino.css">' % settings.MEDIA_URL
+    yield '<script type="text/javascript" src="%slino/lino.js"></script>' % settings.MEDIA_URL
+    yield '<script type="text/javascript" src="%s"></script>' % (
+        settings.MEDIA_URL + "/".join(self.ui.js_cache_name(self.site)))
+
+    #~ yield '<!-- page specific -->'
+    yield '<script type="text/javascript">'
+
+    yield "Lino.load_master = function(store,caller,record) {"
+    #~ yield "  console.log('load_master() mt=',caller.content_type,',mk=',record.id);"
+    yield "  store.setBaseParam(%r,caller.content_type);" % ext_requests.URL_PARAM_MASTER_TYPE
+    yield "  store.setBaseParam(%r,record.id);" % ext_requests.URL_PARAM_MASTER_PK
+    yield "  store.load();" 
+    yield "};"
+            
+        
+    yield "Lino.search_handler = function(caller) { return function(field, e) {"
+    yield "  if(e.getKey() == e.RETURN) {"
+    # yield "    console.log('keypress',field.getValue(),store)"
+    yield "    caller.main_grid.getStore().setBaseParam('%s',field.getValue());" % ext_requests.URL_PARAM_FILTER
+    yield "    caller.main_grid.getStore().load({params: { start: 0, limit: caller.pager.pageSize }});" 
+    yield "  }"
+    yield "}};"
+        
+    yield 'Ext.onReady(function(){'
+  
+    yield '  %s.render("tbar");' % tbar.as_ext()
+    yield '  %s.render("main");' % main.as_ext()
+    yield '  %s.render("bbar");' % bbar.as_ext()
+    
+    yield '  Ext.QuickTips.init();'
+    yield "}); // end of onReady()"
+    yield "</script></head><body>"
+    yield '<div id="tbar"/>'
+    yield '<div id="main"/>'
+    yield '<div id="bbar"/>'
+    yield "</body></html>"
+    
         
 
 
@@ -369,6 +436,19 @@ class ExtUI(base.UI):
             #~ (r'^ui/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.ui_view),
             (r'^choices/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<fldname>\w+)$', self.choices_view),
         )
+        def rpt_action_view(a,request):
+            return a.window_wrapper.render_
+            
+        for rptname in ('contacts.Persons','contacts.Companies','projects.Projects'):
+            rpt = actors.get_actor(rptname)
+            #~ rh = rpt.get_handle(self)
+            for aname in ('grid','detail'):
+                a = rpt.get_action(aname)
+                urlpatterns += patterns('',
+                   url(r'^%s/%s/%s$' % (rpt.app_label,rpt._actor_name,a.name), rpt_action_view(a,request)),
+                )
+            
+        
         #~ urlpatterns += patterns('',         
             #~ (r'^api/', include('lino.api.urls')),
         

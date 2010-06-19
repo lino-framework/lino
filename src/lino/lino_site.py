@@ -121,7 +121,7 @@ class LinoSite:
         self._setting_up = False
         
     def setup_ui(self):
-        USER_INTERFACE = 'lino.ui.extjs'
+        USER_INTERFACE = 'lino.ui.extjsu'
         lino.log.info("Starting user interface %s",USER_INTERFACE)
         from django.utils.importlib import import_module
         ui_module = import_module(USER_INTERFACE)
