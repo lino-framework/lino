@@ -25,7 +25,7 @@ from lino.utils import choosers
 from lino.utils import jsgen
 from lino.utils.jsgen import py2js, Variable, Component, id2js, js_code
 from lino.utils import choosers
-from lino.ui.extjs import ext_requests
+from . import ext_requests
 from lino.modlib.properties import models as properties # import Property, CharPropValue
 
 EXT_CHAR_WIDTH = 9
@@ -45,6 +45,15 @@ def varname_field(f):
         
 
 
+class Toolbar(Component):
+    value_template = "new Ext.Toolbar(%s)"
+class ComboBox(Component):
+    value_template = 'new Ext.form.ComboBox(%s)'
+class ExtPanel(Component): # todo: rename this to Panel, and Panel to PanelElement or sth else
+    value_template = "new Ext.Panel(%s)"
+    
+                    
+  
 class ColumnModel(Component):
     #~ declare_type = jsgen.DECLARE_THIS
     #declare_type = jsgen.DECLARE_VAR
@@ -84,9 +93,6 @@ class GridColumn(Component):
             #~ editor = self.get_field_options()
         
         
-class ComboBox(Component):
-    value_template = 'new Ext.form.ComboBox(%s)'
-                    
         
         
 class VisibleComponent(Component):
@@ -186,6 +192,9 @@ class LayoutElement(VisibleComponent):
             kw.update(collapsible=self.collapsible)
         return kw
 
+class Spacer(LayoutElement):
+    declare_type = jsgen.DECLARE_INLINE
+    value_template = "new Ext.Spacer(%s)"
 
 class DataViewElement(LayoutElement):
     declare_type = jsgen.DECLARE_INLINE
@@ -246,11 +255,6 @@ class StaticTextElement(LayoutElement):
         
         
 
-class Spacer(LayoutElement):
-    declare_type = jsgen.DECLARE_INLINE
-    #xtype = 'label'
-    value_template = "new Ext.Spacer(%s)"
-    
         
 class unused_VirtualFieldElement(LayoutElement):
     def __init__(self,lh,name,gfk,**kw):

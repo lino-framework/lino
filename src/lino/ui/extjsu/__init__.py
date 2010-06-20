@@ -40,6 +40,6 @@ py2js = jsgen.py2js
 
 
 
-from lino.ui.extjs.ext_ui import ui    
+from lino.ui.extjsu.ext_ui import ui
 
 

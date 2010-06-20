@@ -29,6 +29,9 @@
 >>> constrain(10,2,5)
 5
 """
+
+from urllib import urlencode
+
 def constrain(value,lowest,highest):
     return min(highest,max(value,lowest))
     

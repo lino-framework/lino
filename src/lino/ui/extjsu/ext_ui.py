@@ -50,8 +50,12 @@ from lino.utils import menus
 from lino.utils import build_url
 from lino.utils import jsgen
 from lino.utils.jsgen import py2js, js_code, id2js
-from lino.ui.extjs import ext_elems, ext_requests, ext_store, ext_windows
-from lino.ui.extjs import ext_viewport
+#~ from . import ext_elems, ext_requests, ext_store, ext_windows
+from . import ext_windows
+from . import ext_store
+from . import ext_elems
+from . import ext_requests
+#~ from . import ext_viewport
 #from lino.modlib.properties.models import Property
 from lino.modlib.properties import models as properties
 
@@ -75,10 +79,11 @@ def prepare_label(mi):
     
     
     
-def html_page(title,tbar,main,bbar):
+def html_page(title=None,tbar=None,main=None,bbar=None):
     yield '<html><head>'
     yield '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />'
-    yield '<title id="title">%s</title>' % title
+    if title:
+        yield '<title id="title">%s</title>' % title
     #~ yield '<!-- ** CSS ** -->'
     #~ yield '<!-- base library -->'
     yield '<link rel="stylesheet" type="text/css" href="%sextjs/resources/css/ext-all.css" />' % settings.MEDIA_URL 
@@ -103,33 +108,35 @@ def html_page(title,tbar,main,bbar):
     #~ yield '<!-- overrides to library -->'
     yield '<link rel="stylesheet" type="text/css" href="%slino/lino.css">' % settings.MEDIA_URL
     yield '<script type="text/javascript" src="%slino/lino.js"></script>' % settings.MEDIA_URL
-    yield '<script type="text/javascript" src="%s"></script>' % (
-        settings.MEDIA_URL + "/".join(self.ui.js_cache_name(self.site)))
+    #~ yield '<script type="text/javascript" src="%s"></script>' % (
+        #~ settings.MEDIA_URL + "/".join(self.ui.js_cache_name(self.site)))
 
     #~ yield '<!-- page specific -->'
     yield '<script type="text/javascript">'
 
-    yield "Lino.load_master = function(store,caller,record) {"
-    #~ yield "  console.log('load_master() mt=',caller.content_type,',mk=',record.id);"
-    yield "  store.setBaseParam(%r,caller.content_type);" % ext_requests.URL_PARAM_MASTER_TYPE
-    yield "  store.setBaseParam(%r,record.id);" % ext_requests.URL_PARAM_MASTER_PK
-    yield "  store.load();" 
-    yield "};"
+    #~ yield "Lino.load_master = function(store,caller,record) {"
+    #~ # yield "  console.log('load_master() mt=',caller.content_type,',mk=',record.id);"
+    #~ yield "  store.setBaseParam(%r,caller.content_type);" % ext_requests.URL_PARAM_MASTER_TYPE
+    #~ yield "  store.setBaseParam(%r,record.id);" % ext_requests.URL_PARAM_MASTER_PK
+    #~ yield "  store.load();" 
+    #~ yield "};"
             
         
-    yield "Lino.search_handler = function(caller) { return function(field, e) {"
-    yield "  if(e.getKey() == e.RETURN) {"
-    # yield "    console.log('keypress',field.getValue(),store)"
-    yield "    caller.main_grid.getStore().setBaseParam('%s',field.getValue());" % ext_requests.URL_PARAM_FILTER
-    yield "    caller.main_grid.getStore().load({params: { start: 0, limit: caller.pager.pageSize }});" 
-    yield "  }"
-    yield "}};"
+    #~ yield "Lino.search_handler = function(caller) { return function(field, e) {"
+    #~ yield "  if(e.getKey() == e.RETURN) {"
+    #~ # yield "    console.log('keypress',field.getValue(),store)"
+    #~ yield "    caller.main_grid.getStore().setBaseParam('%s',field.getValue());" % ext_requests.URL_PARAM_FILTER
+    #~ yield "    caller.main_grid.getStore().load({params: { start: 0, limit: caller.pager.pageSize }});" 
+    #~ yield "  }"
+    #~ yield "}};"
         
     yield 'Ext.onReady(function(){'
-  
+    
     yield '  %s.render("tbar");' % tbar.as_ext()
-    yield '  %s.render("main");' % main.as_ext()
-    yield '  %s.render("bbar");' % bbar.as_ext()
+    if main:
+        yield '  %s.render("main");' % main.as_ext()
+    if bbar:
+        yield '  %s.render("bbar");' % bbar.as_ext()
     
     yield '  Ext.QuickTips.init();'
     yield "}); // end of onReady()"
@@ -183,6 +190,18 @@ def handle_list_request(request,rh):
         
     if request.method == 'GET':
         fmt = request.GET.get('fmt',None)
+        if fmt  == 'grid':
+            kw = {}
+            kw.update(title=unicode(rh.get_title(None)))
+            kw.update(main=rh.list_layout._main)
+            #~ kw.update(content_type=rh.content_type)
+            return HttpResponse(html_page(**kw))
+
+        if fmt in ('grid','detail','insert'):
+            a = ah.report.get_action(fmt)
+            a.window_wrapper.js_render()
+            kw = {}
+            return HttpResponse(html_page(**kw))
         if fmt == 'csv':
             response = HttpResponse(mimetype='text/csv')
             w = ucsv.UnicodeWriter(response)
@@ -397,7 +416,7 @@ class ExtUI(base.UI):
         f.close()
         lino.log.debug("save_window_config(%r) -> %s",wc,a)
         from lino.lino_site import lino_site
-        self.build_lino_js(lino_site)
+        #~ self.build_lino_js(lino_site)
         #~ lh = actors.get_actor(name).get_handle(self)
         #~ if lh is not None:
             #~ lh.window_wrapper.try_apply_window_config(wc)
@@ -420,14 +439,13 @@ class ExtUI(base.UI):
         urlpatterns = patterns('',
             (r'^$', self.index_view))
         urlpatterns += patterns('',
-            (r'^$', self.index_view),
-            (r'^menu$', self.menu_view),
+            #~ (r'^menu$', self.menu_view),
             #~ (r'^list/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.list_report_view),
             (r'^grid_action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<grid_action>\w+)$', self.json_report_view),
             #~ (r'^grid_afteredit/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.grid_afteredit_view),
             (r'^submit/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.form_submit_view),
             (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)$', self.api_list_view),
-            (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)\.(?P<fmt>\w+)$', self.api_list_view),
+            #~ (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)\.(?P<fmt>\w+)$', self.api_list_view),
             #~ (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>[-\w]+)\.(?P<fmt>\w+)$', self.api_element_view),
             (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$', self.api_element_view),
             #~ (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>\w+)/(?P<method>\w+)$', self.api_element_view),
@@ -436,17 +454,17 @@ class ExtUI(base.UI):
             #~ (r'^ui/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.ui_view),
             (r'^choices/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<fldname>\w+)$', self.choices_view),
         )
-        def rpt_action_view(a,request):
-            return a.window_wrapper.render_
+        
+        #~ def rpt_action_view(a,request):
+            #~ return a.window_wrapper.render_
             
-        for rptname in ('contacts.Persons','contacts.Companies','projects.Projects'):
-            rpt = actors.get_actor(rptname)
-            #~ rh = rpt.get_handle(self)
-            for aname in ('grid','detail'):
-                a = rpt.get_action(aname)
-                urlpatterns += patterns('',
-                   url(r'^%s/%s/%s$' % (rpt.app_label,rpt._actor_name,a.name), rpt_action_view(a,request)),
-                )
+        #~ for rptname in ('contacts.Persons','contacts.Companies','projects.Projects'):
+            #~ rpt = actors.get_actor(rptname)
+            #~ for aname in ('grid','detail'):
+                #~ a = rpt.get_action(aname)
+                #~ urlpatterns += patterns('',
+                   #~ url(r'^%s/%s/%s$' % (rpt.app_label,rpt._actor_name,a.name), rpt_action_view(a,request)),
+                #~ )
             
         
         #~ urlpatterns += patterns('',         
@@ -479,48 +497,21 @@ class ExtUI(base.UI):
         return urlpatterns
         
 
-    def index_view(self, request):
-        if self._response is None:
-            lino.log.debug("building extjs._response...")
-            from lino.lino_site import lino_site
-            #~ index = ext_elems.VisibleComponent("index",
-            index = dict(
-                xtype="panel",
-                html=lino_site.index_html.encode('ascii','xmlcharrefreplace'),
-                layout='fit',
-                autoScroll=True,
-                #~ autoHeight=True,
-                #width=50000,
-                #height=50000,
-                region="center")
-            if not USE_WINDOWS:
-                index.update(
-                    id="main_area",
-                    #~ layout='form',
-                    )
-            console = jsgen.Component("konsole",
-                #~ xtype="panel",
-                split=True,
-                collapsible=True,
-                title=_("Console"),
-                id="konsole",
-                html='Console started',
-                autoScroll=True,
-                height=100,
-                region="south")
-            vp = ext_viewport.Viewport(self,lino_site,console,index)
-            s = vp.render_to_html(request)
-            self._response = HttpResponse(s)
-        return self._response
-
-    def menu_view(self,request):
+    def index_view(self, request,**kw):
         from lino.lino_site import lino_site
-        #~ from lino import lino_site
-        return json_response_kw(success=True,
-          message=(_("Welcome on Lino server %r, user %s") % (lino_site.title,request.user)),
-          load_menu=lino_site.get_site_menu(request.user))
-        #~ s = py2js(lino_site.get_menu(request))
-        #~ return HttpResponse(s, mimetype='text/html')
+        kw.update(title=lino_site.title)
+        #~ mnu = py2js(lino_site.get_site_menu(request.user))
+        #~ print mnu
+        kw.update(tbar=ext_elems.Toolbar(items=lino_site.get_site_menu(request.user)))
+        kw.update(main=ext_elems.ExtPanel(html=lino_site.index_html.encode('ascii','xmlcharrefreplace')))
+        html = '\n'.join(html_page(**kw))
+        return HttpResponse(html)
+
+    #~ def menu_view(self,request):
+        #~ from lino.lino_site import lino_site
+        #~ return json_response_kw(success=True,
+          #~ message=(_("Welcome on Lino server %r, user %s") % (lino_site.title,request.user)),
+          #~ load_menu=lino_site.get_site_menu(request.user))
 
     def api_list_view(self,request,app_label=None,actor=None,fmt=None):
         """
@@ -559,11 +550,11 @@ class ExtUI(base.UI):
     def js_cache_name(self,site):
         return ('cache','js','site.js')
         
-    def setup_site(self,site):
-        base.UI.setup_site(self,site) # will create a.window_wrapper for all actions
-        self.build_lino_js(site)
+    #~ def setup_site(self,site):
+        #~ base.UI.setup_site(self,site) # will create a.window_wrapper for all actions
+        #~ self.build_lino_js(site)
         
-    def build_lino_js(self,site):
+    def unused_build_lino_js(self,site):
         #~ for app_label in site.
         fn = os.path.join(settings.MEDIA_ROOT,*self.js_cache_name(site)) 
         #~ fn = r'c:\temp\dsbe.js'
@@ -602,20 +593,6 @@ class ExtUI(base.UI):
             return json_response_kw(success=True,
               message=_(u'Window config %s has been saved (%r)') % (a,wc))
   
-      
-    def unused_ui_view(self,request,app_label=None,actor=None,action=None,**kw):
-        actor = actors.get_actor2(app_label,actor)
-        ah = actor.get_handle(self)
-        a = ah.get_action(action)
-        if a is None:
-            msg = "No action %s in %s" % (action,ah)
-            #~ print msg
-            raise Http404(msg)
-        #~ if request.method == 'GET':
-            #~ assert a.window_wrapper is not None, "%r %s has no window_wrapper" % (a,a)
-            #~ return json_response_kw(success=True,js_code=a.window_wrapper.js_render)
-            
-        
     def choices_view(self,request,app_label=None,rptname=None,fldname=None,**kw):
         rpt = actors.get_actor2(app_label,rptname)
         rh = rpt.get_handle(self)
@@ -772,8 +749,8 @@ class ExtUI(base.UI):
     #~ def show_detail(self,ar):
         #~ ar.show_window(ar.action.window_wrapper.js_render)
 
-    def show_action_window(self,ar,action):
-        ar.response.update(js_code = action.window_wrapper.js_render)
+    #~ def show_action_window(self,ar,action):
+        #~ ar.response.update(js_code = action.window_wrapper.js_render)
         #~ ar.show_window(action.window_wrapper.js_render)
 
     #~ def show_properties(self,ar,**kw):
@@ -798,7 +775,10 @@ class ExtUI(base.UI):
             #~ url = build_url("/ui",v.action.actor.app_label,v.action.actor._actor_name,v.action.name)
             #~ handler = "function(btn,evt){Lino.do_action(undefined,{url:%r})}" % url
             #~ handler = "function(btn,evt){new Lino.%s().show()}" % v.action
-            handler = "function(btn,evt){Lino.%s(undefined,%s)}" % (v.action,py2js(v.params))
+            #~ handler = "function(btn,evt){Lino.%s(undefined,%s)}" % (v.action,py2js(v.params))
+            #~ return dict(text=prepare_label(v),handler=js_code(handler))
+            url = build_url("/api",v.action.actor.app_label,v.action.actor._actor_name,fmt=v.action.name)
+            handler = "function(btn,evt){window.open(%r)}" % url
             return dict(text=prepare_label(v),handler=js_code(handler))
         return v
 
@@ -822,7 +802,7 @@ class ExtUI(base.UI):
         
         
         
-    def action_window_wrapper(self,a,h):
+    def action_renderer(self,a,h):
         if isinstance(a,PrintAction): return ext_windows.DownloadRenderer(self,a)
         if isinstance(a,reports.DeleteSelected): return ext_windows.DeleteRenderer(self,a)
           
@@ -857,6 +837,8 @@ class ExtUI(base.UI):
             return ext_windows.DetailSlaveWrapper(self,a)
             
         
+    def source_dir(self):
+        return os.path.abspath(os.path.dirname(__file__))
         
         
     def setup_handle(self,h):
@@ -874,9 +856,10 @@ class ExtUI(base.UI):
                 h.store = None
                 
             for a in h.get_actions():
-                a.window_wrapper = self.action_window_wrapper(a,h)
+                a.window_wrapper = self.action_renderer(a,h)
             
         
 ui = ExtUI()
 
 jsgen.register_converter(ui.py2js_converter)
+
