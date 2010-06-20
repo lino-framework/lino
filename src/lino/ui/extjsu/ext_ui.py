@@ -79,9 +79,10 @@ def prepare_label(mi):
     
     
     
-def html_page(title=None,tbar=None,main=None,bbar=None):
+def html_page(*comps,**kw):
     yield '<html><head>'
     yield '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />'
+    title = kw.get('title',None)
     if title:
         yield '<title id="title">%s</title>' % title
     #~ yield '<!-- ** CSS ** -->'
@@ -131,19 +132,20 @@ def html_page(title=None,tbar=None,main=None,bbar=None):
     #~ yield "}};"
         
     yield 'Ext.onReady(function(){'
+    for ln in jsgen.declare_vars(comps):
+        yield '  ' + ln
+        
+    #~ for cmp in comps:
+        #~ yield '  %s.render();' % cmp.as_ext()
     
-    yield '  %s.render("tbar");' % tbar.as_ext()
-    if main:
-        yield '  %s.render("main");' % main.as_ext()
-    if bbar:
-        yield '  %s.render("bbar");' % bbar.as_ext()
+    yield '  var viewport = new Ext.Viewport({items:%s,layout:"border"});' % py2js(comps)
     
     yield '  Ext.QuickTips.init();'
     yield "}); // end of onReady()"
     yield "</script></head><body>"
-    yield '<div id="tbar"/>'
-    yield '<div id="main"/>'
-    yield '<div id="bbar"/>'
+    #~ yield '<div id="tbar"/>'
+    #~ yield '<div id="main"/>'
+    #~ yield '<div id="bbar"/>'
     yield "</body></html>"
     
         
@@ -193,15 +195,9 @@ def handle_list_request(request,rh):
         if fmt  == 'grid':
             kw = {}
             kw.update(title=unicode(rh.get_title(None)))
-            kw.update(main=rh.list_layout._main)
             #~ kw.update(content_type=rh.content_type)
-            return HttpResponse(html_page(**kw))
+            return HttpResponse(html_page(rh.list_layout._main,**kw))
 
-        if fmt in ('grid','detail','insert'):
-            a = ah.report.get_action(fmt)
-            a.window_wrapper.js_render()
-            kw = {}
-            return HttpResponse(html_page(**kw))
         if fmt == 'csv':
             response = HttpResponse(mimetype='text/csv')
             w = ucsv.UnicodeWriter(response)
@@ -445,7 +441,7 @@ class ExtUI(base.UI):
             #~ (r'^grid_afteredit/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.grid_afteredit_view),
             (r'^submit/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.form_submit_view),
             (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)$', self.api_list_view),
-            #~ (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)\.(?P<fmt>\w+)$', self.api_list_view),
+            (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)\.(?P<fmt>\w+)$', self.api_list_view),
             #~ (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>[-\w]+)\.(?P<fmt>\w+)$', self.api_element_view),
             (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$', self.api_element_view),
             #~ (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>\w+)/(?P<method>\w+)$', self.api_element_view),
@@ -502,9 +498,9 @@ class ExtUI(base.UI):
         kw.update(title=lino_site.title)
         #~ mnu = py2js(lino_site.get_site_menu(request.user))
         #~ print mnu
-        kw.update(tbar=ext_elems.Toolbar(items=lino_site.get_site_menu(request.user)))
-        kw.update(main=ext_elems.ExtPanel(html=lino_site.index_html.encode('ascii','xmlcharrefreplace')))
-        html = '\n'.join(html_page(**kw))
+        tbar=ext_elems.Toolbar(items=lino_site.get_site_menu(request.user),region='north',height=29)# renderTo='tbar')
+        main=ext_elems.ExtPanel(html=lino_site.index_html.encode('ascii','xmlcharrefreplace'),region='center')#,renderTo='main')
+        html = '\n'.join(html_page(tbar,main,**kw))
         return HttpResponse(html)
 
     #~ def menu_view(self,request):
@@ -769,6 +765,7 @@ class ExtUI(base.UI):
                 return v.items
                 #kw.update(region='north',height=27,items=v.items)
                 #return py2js(kw)
+            #~ return dict(text=prepare_label(v),menu=dict(items=v.items,floating=False))
             return dict(text=prepare_label(v),menu=dict(items=v.items))
         if isinstance(v,menus.MenuItem):
             #~ handler = "function(btn,evt){Lino.do_action(undefined,%r,%r,{})}" % (v.actor.get_url(lino_site.ui),id2js(v.actor.actor_id))
@@ -778,8 +775,9 @@ class ExtUI(base.UI):
             #~ handler = "function(btn,evt){Lino.%s(undefined,%s)}" % (v.action,py2js(v.params))
             #~ return dict(text=prepare_label(v),handler=js_code(handler))
             url = build_url("/api",v.action.actor.app_label,v.action.actor._actor_name,fmt=v.action.name)
-            handler = "function(btn,evt){window.open(%r)}" % url
-            return dict(text=prepare_label(v),handler=js_code(handler))
+            #~ handler = "function(btn,evt){window.open(%r)}" % url
+            #~ return dict(text=prepare_label(v),handler=js_code(handler))
+            return dict(text=prepare_label(v),href=url)
         return v
 
 

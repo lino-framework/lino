@@ -22,6 +22,7 @@ import lino
 from lino import layouts, reports
 from lino.utils import constrain
 from lino.utils import choosers
+from lino.utils import build_url
 from lino.utils import jsgen
 from lino.utils.jsgen import py2js, Variable, Component, id2js, js_code
 from lino.utils import choosers
@@ -803,10 +804,10 @@ class GridElement(Container): #,DataElementMixin):
 def a2btn(a):
     return dict(
       opens_a_slave=a.opens_a_slave,
-      handler=js_code("Lino.%s" % a),
+      #~ handler=js_code("Lino.%s" % a),
       name=a.name,
       label=unicode(a.label),
-      #~ url="/".join(("/ui",a.actor.app_label,a.actor._actor_name,a.name))
+      url=build_url("/api",a.actor.app_label,a.actor._actor_name,fmt=a.name)
     )
       
 class SlaveGridElement(GridElement):
@@ -887,6 +888,8 @@ class GridMainPanel(GridElement,MainPanel):
         MainPanel.__init__(self)
         GridElement.__init__(self,lh,name,lh.layout.datalink_report,*elements,**kw)
         #lino.log.debug("GridMainPanel.__init__() %s",self.name)
+        self.value.update(region='center')
+        #~ self.value.update(renderTo='main')
         
 
 

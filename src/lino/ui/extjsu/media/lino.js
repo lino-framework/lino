@@ -516,7 +516,8 @@ Lino.build_bbar = function(scope,actions) {
       var btn = {
         text: actions[i].label
       };
-      btn.handler = actions[i].handler.createCallback(scope);
+      btn.handler = function(btn,evt) { window.open(actions[i].url) };
+      //~ btn.handler = actions[i].handler.createCallback(scope);
       bbar[i] = new Ext.Button(btn);
     }
     return bbar

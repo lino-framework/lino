@@ -796,6 +796,9 @@ class ExtUI(base.UI):
             for a in h.get_actions():
                 a.window_wrapper = self.action_window_wrapper(a,h)
             
+    def source_dir(self):
+        return os.path.abspath(os.path.dirname(__file__))
+        
         
 ui = ExtUI()
 
