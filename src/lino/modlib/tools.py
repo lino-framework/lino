@@ -11,20 +11,6 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
-Note that the following won't work because `contacs.Person` is abstract:
-
-  >>> get_app('contacts')
-  >>> p = contacts.Person(name="Foo")
-
-The real contacts.Person is defined in your application (lino-dsbe and lino-igen). 
-To get it, use resolve_model:
-
-  >>> resolve_model('contacts.Person')
-  >>> p = Person(name="Foo")
-    
-
-"""
 from django.conf import settings
 from django.db import models
 from django.utils.importlib import import_module
@@ -69,7 +55,7 @@ def get_field(model,name):
     return fld
   
 
-def resolve_field(name,app_label):
+def resolve_field(name,app_label=None):
     l = name.split('.')
     if len(l) == 3:
         app_label = l[0]
@@ -90,5 +76,15 @@ def requires_apps(self,*app_labels):
     
 def model_label(model):
     return model._meta.app_label + '.' + model._meta.object_name
+    
+    
+    
+def obj2str(i):
+    names = [fld.name for (fld,model) in i._meta.get_fields_with_model()]
+    s = ','.join(["%s=%r" % (n, getattr(i,n)) for n in names])
+    #~ print i, i._meta.get_all_field_names()
+    #~ s = ','.join(["%s=%r" % (n, getattr(i,n)) for n in i._meta.get_all_field_names()])
+    return "%s(%s)" % (i.__class__.__name__,s)
+
     
     

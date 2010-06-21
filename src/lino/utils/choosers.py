@@ -17,6 +17,7 @@ from lino.utils.instantiator import make_converter
 from lino.core.coretools import get_data_elem
 import lino
   
+  
             
 class Chooser:
     def __init__(self,model,field,meth):
@@ -29,12 +30,13 @@ class Chooser:
         self.context_values = []
         self.context_fields = []
         for name in self.context_params:
-            f = get_data_elem(self.model,name)
-            if f is None:
-                lino.log.warning("Model %s has no field %s as asked by %s",self.model,name,meth)
-            else:
-                self.context_fields.append(f)
-                self.context_values.append(name+"Hidden")
+            f = self.get_data_elem(name)
+            #~ f = get_data_elem(self.model,name)
+            #~ if f is None:
+                #~ lino.log.warning("Model %s has no field %s as asked by %s",self.model,name,meth)
+            #~ else:
+            self.context_fields.append(f)
+            self.context_values.append(name+"Hidden")
             #~ if isinstance(f,models.ForeignKey):
                 #~ self.context_values.append(name+"Hidden")
             #~ else:
@@ -47,6 +49,13 @@ class Chooser:
                     self.converters.append(cv)
         except models.FieldDoesNotExist,e:
             print e
+            
+    def get_data_elem(self,name):
+        for vf in self.model._meta.virtual_fields:
+            if vf.name == name:
+                return vf
+        return self.model._meta.get_field(name)
+            
                 
     def get_choices(self,**context):
         args = []
@@ -75,5 +84,9 @@ def discover():
             #~ else:
                 #~ lino.log.info("No chooser for %s.%s",model,field.name)
 
-def get_for_field(field):
-    return getattr(field,'_lino_chooser',None)
+def get_for_field(fld):
+    return getattr(fld,'_lino_chooser',None)
+
+#~ def get_for_field(fieldspec):
+    #~ fld = resolve_field(fieldspec)
+    #~ return get_for_field()

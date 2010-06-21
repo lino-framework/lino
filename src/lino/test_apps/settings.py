@@ -27,6 +27,12 @@ DEBUG_PROPAGATE_EXCEPTIONS = DEBUG
 #TEMPLATE_STRING_IF_INVALID = 'foo'
 
 PROJECT_DIR = normpath(dirname(__file__))
+if sys.platform == 'win32':
+    DATA_DIR = 'C:\\Temp\\test_apps\\'
+else:
+    #~ EXTJS_ROOT = None # don't serve extjs files because Apache does it
+    DATA_DIR = '/usr/local/lino/test_apps/'
+
 
 ADMINS = (
     ('Luc Saffre', 'luc.saffre@gmx.net'),

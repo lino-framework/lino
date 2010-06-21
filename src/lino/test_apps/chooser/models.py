@@ -1,18 +1,14 @@
 """
 
-Module lino.utils.chooser
--------------------------
+Module lino.utils.choosers
+--------------------------
 
 You instantiate a Chooser by specifying a model and a fieldname. 
 The fieldname must be the name of a field that has been defined in your model.
 A Chooser for a field FOO on a model will look whether the model defines a class method FOO_choices().
 
-Situation 1 
+Preparation
 ===========
-
-You have models Contact, Country and City. 
-A Contact has ForeignKey fields to Country and City. 
-In an entry form for a Contact you want only the cities of that country when selecting a city.
 
 Create some countries and some cities:
   
@@ -29,39 +25,46 @@ Create some countries and some cities:
   >>> lyon = City(country=fr,name='Lyon')
   >>> lyon.save()
   
+(Intermezzo to test `obj2str()`:)
+
+  >>> print obj2str(be)
+  Country(id=1,name='Belgium')
+  >>> print obj2str(paris)
+  City(id=3,name='Paris',country=<Country: France>)
+  
+The `choosers` needs initialization:
+
+  >>> choosers.discover()  
+  
+Situation 1 
+===========
+
+A Contact has ForeignKey fields to Country and City. 
+In an entry form for a Contact you want only the cities of that country when selecting a city.
+
 How to use a Chooser on a ForeignKey:
 
-  >>> city = chooser.Chooser(Contact,'city')
+  >>> city = choosers.get_for_field(get_field(Contact,'city'))
   >>> [unicode(o) for o in city.get_choices(country=be)]
   [u'Brussels', u'Eupen']
+  
   >>> [unicode(o) for o in city.get_choices(country=fr)]
   [u'Lyon', u'Paris']
   >>> [unicode(o) for o in city.get_choices()]
   [u'Brussels', u'Eupen', u'Lyon', u'Paris']
   
-Contact.country has no `_choices` method defined, so 
-Chooser.get_choices() returns all Country objects:
+There is no method `country_choices`, so `Contact.country` has no Chooser:
   
-  >>> country = chooser.Chooser(Contact,'country')
-  >>> [unicode(o) for o in country.get_choices()]
-  [u'Belgium', u'France']
+  >>> print choosers.get_for_field(get_field(Contact,'country'))
+  None
 
-A FormChooser is more intelligent, it accepts primary keys 
-and converts them to an instance. This is useful when data 
-comes from GET or POST of a request:
-  
-  >>> city = chooser.FormChooser(Contact,'city')
-  >>> [unicode(o) for o in city.get_choices(country=1)]
-  [u'Brussels', u'Eupen']
-  >>> [unicode(o) for o in city.get_choices(country='1')]
-  [u'Brussels', u'Eupen']
   
 Situation 2
 ===========
 
 How to use a Chooser on a field with choices:
 
-  >>> food = chooser.Chooser(Contact,'food')
+  >>> food = choosers.get_for_field(get_field(Contact,'food'))
   
   >>> [unicode(o) for o in food.get_choices()]
   [u'Potato', u'Vegetable', u'Meat', u'Fish']
@@ -76,22 +79,11 @@ How to use a Chooser on a field with choices:
 Special cases
 =============
 
-A FormChooser also accepts original values:
-
-  >>> [unicode(o) for o in city.get_choices(country=be)]
-  [u'Brussels', u'Eupen']
-  
-Chooser.get_choices() will ignore any unused keyword arguments:
+Note that `Chooser.get_choices()` ignores any unused keyword arguments:
   
   >>> [unicode(o) for o in city.get_choices(country=be,foo=1,bar=True,baz='7')]
   [u'Brussels', u'Eupen']
 
-A Chooser for a field that is neither a ForeignKey nor has 
-a choices attribut will return an empty list.
-  
-  >>> name = chooser.Chooser(Contact,'name')
-  >>> [unicode(o) for o in name.get_choices()]
-  []
   
   
 
@@ -99,7 +91,8 @@ a choices attribut will return an empty list.
 
 from django.db import models
 from lino import reports
-from lino.utils import chooser
+from lino.utils import choosers
+from lino.modlib.tools import obj2str, get_field
 
 YEAR_IN_SCHOOL_CHOICES = (
     ('FR', 'Freshman'),
