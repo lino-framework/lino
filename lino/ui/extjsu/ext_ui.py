@@ -79,76 +79,6 @@ def prepare_label(mi):
     
     
     
-def html_page(*comps,**kw):
-    yield '<html><head>'
-    yield '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />'
-    title = kw.get('title',None)
-    if title:
-        yield '<title id="title">%s</title>' % title
-    #~ yield '<!-- ** CSS ** -->'
-    #~ yield '<!-- base library -->'
-    yield '<link rel="stylesheet" type="text/css" href="%sextjs/resources/css/ext-all.css" />' % settings.MEDIA_URL 
-    #~ yield '<!-- overrides to base library -->'
-    #~ yield '<!-- ** Javascript ** -->'
-    #~ yield '<!-- ExtJS library: base/adapter -->'
-    yield '<script type="text/javascript" src="%sextjs/adapter/ext/ext-base.js"></script>' % settings.MEDIA_URL 
-    widget_library = 'ext-all-debug'
-    #widget_library = 'ext-all'
-    #~ yield '<!-- ExtJS library: all widgets -->'
-    yield '<script type="text/javascript" src="%sextjs/%s.js"></script>' % (settings.MEDIA_URL, widget_library)
-    if True:
-        yield '<style type="text/css">'
-        # http://stackoverflow.com/questions/2106104/word-wrap-grid-cells-in-ext-js 
-        yield '.x-grid3-cell-inner, .x-grid3-hd-inner {'
-        yield '  white-space: normal;' # /* changed from nowrap */
-        yield '}'
-        yield '</style>'
-    if False:
-        yield '<script type="text/javascript" src="%sextjs/Exporter-all.js"></script>' % settings.MEDIA_URL 
-
-    #~ yield '<!-- overrides to library -->'
-    yield '<link rel="stylesheet" type="text/css" href="%slino/extjsu/lino.css">' % settings.MEDIA_URL
-    yield '<script type="text/javascript" src="%slino/extjsu/lino.js"></script>' % settings.MEDIA_URL
-    #~ yield '<script type="text/javascript" src="%s"></script>' % (
-        #~ settings.MEDIA_URL + "/".join(self.ui.js_cache_name(self.site)))
-
-    #~ yield '<!-- page specific -->'
-    yield '<script type="text/javascript">'
-
-    #~ yield "Lino.load_master = function(store,caller,record) {"
-    #~ # yield "  console.log('load_master() mt=',caller.content_type,',mk=',record.id);"
-    #~ yield "  store.setBaseParam(%r,caller.content_type);" % ext_requests.URL_PARAM_MASTER_TYPE
-    #~ yield "  store.setBaseParam(%r,record.id);" % ext_requests.URL_PARAM_MASTER_PK
-    #~ yield "  store.load();" 
-    #~ yield "};"
-            
-        
-    #~ yield "Lino.search_handler = function(caller) { return function(field, e) {"
-    #~ yield "  if(e.getKey() == e.RETURN) {"
-    #~ # yield "    console.log('keypress',field.getValue(),store)"
-    #~ yield "    caller.main_grid.getStore().setBaseParam('%s',field.getValue());" % ext_requests.URL_PARAM_FILTER
-    #~ yield "    caller.main_grid.getStore().load({params: { start: 0, limit: caller.pager.pageSize }});" 
-    #~ yield "  }"
-    #~ yield "}};"
-        
-    yield 'Ext.onReady(function(){'
-    for ln in jsgen.declare_vars(comps):
-        yield '  ' + ln
-        
-    #~ for cmp in comps:
-        #~ yield '  %s.render();' % cmp.as_ext()
-    
-    yield '  var viewport = new Ext.Viewport({items:%s,layout:"border"});' % py2js(comps)
-    
-    yield '  Ext.QuickTips.init();'
-    yield "}); // end of onReady()"
-    yield "</script></head><body>"
-    #~ yield '<div id="tbar"/>'
-    #~ yield '<div id="main"/>'
-    #~ yield '<div id="bbar"/>'
-    yield "</body></html>"
-    
-        
 
 
 def parse_bool(s):
@@ -196,7 +126,8 @@ def handle_list_request(request,rh):
             kw = {}
             kw.update(title=unicode(rh.get_title(None)))
             #~ kw.update(content_type=rh.content_type)
-            return HttpResponse(html_page(rh.list_layout._main,**kw))
+            tbar=ext_elems.Toolbar(items=lino_site.get_site_menu(request.user),region='north',height=29)# renderTo='tbar')
+            return HttpResponse(self.html_page(rh.list_layout._main,tbar,**kw))
 
         if fmt == 'csv':
             response = HttpResponse(mimetype='text/csv')
@@ -401,6 +332,79 @@ class ExtUI(base.UI):
         #~ if isinstance(layout,layouts.FormLayout) : 
             #~ return ext_elems.FormMainPanel
         raise Exception("No element class for layout %r" % layout)
+        
+        
+    def html_page(self,*comps,**kw):
+        yield '<html><head>'
+        yield '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />'
+        title = kw.get('title',None)
+        if title:
+            yield '<title id="title">%s</title>' % title
+        #~ yield '<!-- ** CSS ** -->'
+        #~ yield '<!-- base library -->'
+        yield '<link rel="stylesheet" type="text/css" href="%sextjs/resources/css/ext-all.css" />' % settings.MEDIA_URL 
+        #~ yield '<!-- overrides to base library -->'
+        #~ yield '<!-- ** Javascript ** -->'
+        #~ yield '<!-- ExtJS library: base/adapter -->'
+        yield '<script type="text/javascript" src="%sextjs/adapter/ext/ext-base.js"></script>' % settings.MEDIA_URL 
+        widget_library = 'ext-all-debug'
+        #widget_library = 'ext-all'
+        #~ yield '<!-- ExtJS library: all widgets -->'
+        yield '<script type="text/javascript" src="%sextjs/%s.js"></script>' % (settings.MEDIA_URL, widget_library)
+        if True:
+            yield '<style type="text/css">'
+            # http://stackoverflow.com/questions/2106104/word-wrap-grid-cells-in-ext-js 
+            yield '.x-grid3-cell-inner, .x-grid3-hd-inner {'
+            yield '  white-space: normal;' # /* changed from nowrap */
+            yield '}'
+            yield '</style>'
+        if False:
+            yield '<script type="text/javascript" src="%sextjs/Exporter-all.js"></script>' % settings.MEDIA_URL 
+
+        #~ yield '<!-- overrides to library -->'
+        yield '<link rel="stylesheet" type="text/css" href="%slino/extjsu/lino.css">' % settings.MEDIA_URL
+        yield '<script type="text/javascript" src="%slino/extjsu/lino.js"></script>' % settings.MEDIA_URL
+        #~ yield '<script type="text/javascript" src="%s"></script>' % (
+            #~ settings.MEDIA_URL + "/".join(self.ui.js_cache_name(self.site)))
+
+        #~ yield '<!-- page specific -->'
+        yield '<script type="text/javascript">'
+
+        #~ yield "Lino.load_master = function(store,caller,record) {"
+        #~ # yield "  console.log('load_master() mt=',caller.content_type,',mk=',record.id);"
+        #~ yield "  store.setBaseParam(%r,caller.content_type);" % ext_requests.URL_PARAM_MASTER_TYPE
+        #~ yield "  store.setBaseParam(%r,record.id);" % ext_requests.URL_PARAM_MASTER_PK
+        #~ yield "  store.load();" 
+        #~ yield "};"
+                
+            
+        #~ yield "Lino.search_handler = function(caller) { return function(field, e) {"
+        #~ yield "  if(e.getKey() == e.RETURN) {"
+        #~ # yield "    console.log('keypress',field.getValue(),store)"
+        #~ yield "    caller.main_grid.getStore().setBaseParam('%s',field.getValue());" % ext_requests.URL_PARAM_FILTER
+        #~ yield "    caller.main_grid.getStore().load({params: { start: 0, limit: caller.pager.pageSize }});" 
+        #~ yield "  }"
+        #~ yield "}};"
+            
+        yield 'Ext.onReady(function(){'
+        for ln in jsgen.declare_vars(comps):
+            yield '  ' + ln
+            
+        #~ for cmp in comps:
+            #~ yield '  %s.render();' % cmp.as_ext()
+        
+        yield '  var viewport = new Ext.Viewport({items:%s,layout:"border"});' % py2js(comps)
+        
+        yield '  Ext.QuickTips.init();'
+        yield "}); // end of onReady()"
+        yield "</script></head><body>"
+        #~ yield '<div id="tbar"/>'
+        #~ yield '<div id="main"/>'
+        #~ yield '<div id="bbar"/>'
+        yield "</body></html>"
+        
+            
+        
             
 
     
@@ -500,14 +504,9 @@ class ExtUI(base.UI):
         #~ print mnu
         tbar=ext_elems.Toolbar(items=lino_site.get_site_menu(request.user),region='north',height=29)# renderTo='tbar')
         main=ext_elems.ExtPanel(html=lino_site.index_html.encode('ascii','xmlcharrefreplace'),region='center')#,renderTo='main')
-        html = '\n'.join(html_page(tbar,main,**kw))
+        html = '\n'.join(self.html_page(tbar,main,**kw))
         return HttpResponse(html)
 
-    #~ def menu_view(self,request):
-        #~ from lino.lino_site import lino_site
-        #~ return json_response_kw(success=True,
-          #~ message=(_("Welcome on Lino server %r, user %s") % (lino_site.title,request.user)),
-          #~ load_menu=lino_site.get_site_menu(request.user))
 
     def api_list_view(self,request,app_label=None,actor=None,fmt=None):
         """
@@ -542,31 +541,6 @@ class ExtUI(base.UI):
                 raise Http404("%s %s does not exist." % (rpt,pk))
         return handle_element_request(request,ah,instance)
         #~ raise Http404("Unknown request method %r " % request.method)
-        
-    def js_cache_name(self,site):
-        return ('cache','js','site.js')
-        
-    #~ def setup_site(self,site):
-        #~ base.UI.setup_site(self,site) # will create a.window_wrapper for all actions
-        #~ self.build_lino_js(site)
-        
-    def unused_build_lino_js(self,site):
-        #~ for app_label in site.
-        fn = os.path.join(settings.MEDIA_ROOT,*self.js_cache_name(site)) 
-        #~ fn = r'c:\temp\dsbe.js'
-        lino.log.info("Generating %s ...", fn)
-        f = open(fn,'w')
-        for rpt in reports.master_reports + reports.slave_reports:
-            f.write("Ext.namespace('Lino.%s')\n" % rpt)
-            for a in rpt.get_actions():
-                if a.window_wrapper is not None:
-                    #~ print a, "..."
-                    f.write('Lino.%s = ' % a )
-                    for ln in a.window_wrapper.js_render():
-                        f.write(ln + "\n")
-                    f.write("\n")
-        f.close()
-          
         
     def window_configs_view(self,request,wc_name=None,**kw):
         if request.method == 'POST':
