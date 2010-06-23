@@ -121,11 +121,16 @@ class LinoSite:
         self._setting_up = False
         
     def setup_ui(self):
-        lino.log.info("Starting user interface %s",settings.USER_INTERFACE)
-        from django.utils.importlib import import_module
-        ui_module = import_module(settings.USER_INTERFACE)
-        self.ui = ui_module.ui
-        self.ui.setup_site(self)
+        uis = []
+        for ui in settings.USER_INTERFACES:
+            lino.log.info("Starting user interface %s",ui)
+            from django.utils.importlib import import_module
+            ui_module = import_module(ui)
+            #~ self.ui = ui_module.ui
+            #~ self.ui.setup_site(self)
+            ui_module.ui.setup_site(self)
+            uis.append(ui_module.ui)
+        self.uis = uis
         
         
         
@@ -146,11 +151,26 @@ class LinoSite:
         d.update(kw)
         return d
         
+    def index_view(self,request):
+        html = '<html><body>'
+        html += 'Please select a user interface: <ul>'
+        for ui in self.uis:
+            html += '<li><a href="%s">%s</a></li>' % (ui.name,ui.verbose_name)
+        html += '</ul></body></html>'
+        return HttpResponse(html)
+        
         
     def get_urls(self):
         self.setup()
         self.setup_ui()
-        return self.ui.get_urls()
+        urlpatterns = patterns('',
+            ('^$', self.index_view))
+        for ui in self.uis:
+            urlpatterns += patterns('',
+                (ui.name, include(ui.get_urls())),
+            )
+        return urlpatterns
+        #~ return self.ui.get_urls()
         
     def add_program_menu(self):
         return

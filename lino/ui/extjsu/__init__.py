@@ -11,35 +11,23 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-import os
-import traceback
+#~ import os
+#~ import traceback
 
 #~ from django.db import models
 #~ from django.conf import settings
 #from django.utils import html
-from django.utils.translation import ugettext as _
+#~ from django.utils.translation import ugettext as _
 
-import lino
-from lino import layouts
-
+#~ import lino
+#~ from lino import layouts
 from lino.utils import jsgen 
-py2js = jsgen.py2js
+#~ py2js = jsgen.py2js
+from . import ext_ui
 
-#~ def define_vars(variables,indent=0,prefix="var "):
-    #~ template = "var %s = %s;"
-    #~ sep = "\n" + ' ' * indent
-    #~ s = ''
-    #~ for v in variables:
-        #~ #lino.log.debug("define_vars() : %s", v.ext_name)
-        #~ for ln in v.ext_lines_before():
-            #~ s += sep + ln 
-        #~ s += sep + template % (v.ext_name,v.as_ext_value())
-        #~ for ln in v.ext_lines_after():
-            #~ s += sep + ln 
-    #~ return s
+ui = ext_ui.ExtUI()
+jsgen.register_converter(ui.py2js_converter)
 
-
-
-from lino.ui.extjsu.ext_ui import ui
+#~ from lino.ui.extjsu.ext_ui import ui
 
 

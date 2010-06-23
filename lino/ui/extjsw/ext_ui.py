@@ -50,8 +50,11 @@ from lino.utils import menus
 from lino.utils import build_url
 from lino.utils import jsgen
 from lino.utils.jsgen import py2js, js_code, id2js
-from lino.ui.extjs import ext_elems, ext_requests, ext_store, ext_windows
-from lino.ui.extjs import ext_viewport
+from . import ext_elems
+from . import ext_store
+from . import ext_windows
+from . import ext_viewport
+from . import ext_requests
 #from lino.modlib.properties.models import Property
 from lino.modlib.properties import models as properties
 
@@ -213,7 +216,8 @@ def handle_element_request(request,ah,elem):
 
 class ExtUI(base.UI):
     _response = None
-    
+    name = 'extjsw'
+    verbose_name = "ExtJS with Windows"
     window_configs_file = os.path.join(settings.PROJECT_DIR,'window_configs.pck')
     Panel = ext_elems.Panel
                 
@@ -800,6 +804,6 @@ class ExtUI(base.UI):
         return os.path.abspath(os.path.dirname(__file__))
         
         
-ui = ExtUI()
+#~ ui = ExtUI()
 
-jsgen.register_converter(ui.py2js_converter)
+#~ jsgen.register_converter(ui.py2js_converter)

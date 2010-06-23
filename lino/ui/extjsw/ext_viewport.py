@@ -12,7 +12,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 from django.conf import settings
-from lino.ui.extjs import ext_requests
+from . import ext_requests
 from lino.utils.jsgen import py2js, js_code, id2js
 
 
@@ -67,9 +67,9 @@ class Viewport:
 
         s += """
 <!-- overrides to library -->
-<link rel="stylesheet" type="text/css" href="%slino/extsjw/lino.css">""" % settings.MEDIA_URL
+<link rel="stylesheet" type="text/css" href="%slino/extjsw/lino.css">""" % settings.MEDIA_URL
         s += """
-<script type="text/javascript" src="%slino/extsjw/lino.js"></script>""" % settings.MEDIA_URL
+<script type="text/javascript" src="%slino/extjsw/lino.js"></script>""" % settings.MEDIA_URL
         s += """
 <script type="text/javascript" src="%s"></script>""" % (settings.MEDIA_URL + "/".join(self.ui.js_cache_name(self.site)))
 

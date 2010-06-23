@@ -27,7 +27,7 @@ from lino.utils import choosers
 from lino.utils import jsgen
 from lino.utils import build_url
 from lino.utils.jsgen import py2js, js_code, id2js
-from lino.ui.extjs import ext_elems, ext_requests
+from . import ext_elems, ext_requests
 #~ from lino.ui.extjs import ext_viewport
 
 from lino.modlib.properties import models as properties

@@ -226,7 +226,8 @@ def handle_element_request(request,ah,elem):
 
 class ExtUI(base.UI):
     _response = None
-    
+    name = 'extjsu'
+    verbose_name = "ExtJS with URIs"
     window_configs_file = os.path.join(settings.PROJECT_DIR,'window_configs.pck')
     Panel = ext_elems.Panel
                 
@@ -436,9 +437,9 @@ class ExtUI(base.UI):
 
   
     def get_urls(self):
-        urlpatterns = patterns('',
+        urlpatterns = patterns(self.name,
             (r'^$', self.index_view))
-        urlpatterns += patterns('',
+        urlpatterns += patterns(self.name,
             #~ (r'^menu$', self.menu_view),
             #~ (r'^list/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.list_report_view),
             (r'^grid_action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<grid_action>\w+)$', self.json_report_view),
@@ -831,7 +832,7 @@ class ExtUI(base.UI):
                 a.window_wrapper = self.action_renderer(a,h)
             
         
-ui = ExtUI()
+#~ ui = ExtUI()
 
-jsgen.register_converter(ui.py2js_converter)
+#~ jsgen.register_converter(ui.py2js_converter)
 
