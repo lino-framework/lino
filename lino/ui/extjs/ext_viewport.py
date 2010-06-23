@@ -67,9 +67,9 @@ class Viewport:
 
         s += """
 <!-- overrides to library -->
-<link rel="stylesheet" type="text/css" href="%slino/lino.css">""" % settings.MEDIA_URL
+<link rel="stylesheet" type="text/css" href="%slino/extsjw/lino.css">""" % settings.MEDIA_URL
         s += """
-<script type="text/javascript" src="%slino/lino.js"></script>""" % settings.MEDIA_URL
+<script type="text/javascript" src="%slino/extsjw/lino.js"></script>""" % settings.MEDIA_URL
         s += """
 <script type="text/javascript" src="%s"></script>""" % (settings.MEDIA_URL + "/".join(self.ui.js_cache_name(self.site)))
 

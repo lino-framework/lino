@@ -107,8 +107,8 @@ def html_page(*comps,**kw):
         yield '<script type="text/javascript" src="%sextjs/Exporter-all.js"></script>' % settings.MEDIA_URL 
 
     #~ yield '<!-- overrides to library -->'
-    yield '<link rel="stylesheet" type="text/css" href="%slino/lino.css">' % settings.MEDIA_URL
-    yield '<script type="text/javascript" src="%slino/lino.js"></script>' % settings.MEDIA_URL
+    yield '<link rel="stylesheet" type="text/css" href="%slino/extjsu/lino.css">' % settings.MEDIA_URL
+    yield '<script type="text/javascript" src="%slino/extjsu/lino.js"></script>' % settings.MEDIA_URL
     #~ yield '<script type="text/javascript" src="%s"></script>' % (
         #~ settings.MEDIA_URL + "/".join(self.ui.js_cache_name(self.site)))
 
