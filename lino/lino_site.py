@@ -151,7 +151,7 @@ class LinoSite:
         d.update(kw)
         return d
         
-    def index_view(self,request):
+    def select_ui_view(self,request):
         html = '<html><body>'
         html += 'Please select a user interface: <ul>'
         for ui in self.uis:
@@ -163,8 +163,10 @@ class LinoSite:
     def get_urls(self):
         self.setup()
         self.setup_ui()
+        if len(self.uis) == 1:
+            return self.uis[0].get_urls()
         urlpatterns = patterns('',
-            ('^$', self.index_view))
+            ('^$', self.select_ui_view))
         for ui in self.uis:
             urlpatterns += patterns('',
                 (ui.name, include(ui.get_urls())),

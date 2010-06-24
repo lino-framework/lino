@@ -49,24 +49,16 @@ class UI:
     """
     """
     name = None
+    prefix = None
     verbose_name = None
     
     def build_url(self,*args,**kw):
         url = "/" + "/".join(args)
-        if self.name:
-            url = "/" + self.name + url
+        if self.prefix:
+            url = "/" + self.prefix + url
         if len(kw):
             url += "?" + urlencode(kw)
         return url
-        
-    def a2btn(self,a):
-        return dict(
-          opens_a_slave=a.opens_a_slave,
-          #~ handler=js_code("Lino.%s" % a),
-          name=a.name,
-          label=unicode(a.label),
-          url=self.build_url("api",a.actor.app_label,a.actor._actor_name,fmt=a.name)
-        )
         
     def get_urls():
         pass

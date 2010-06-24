@@ -597,24 +597,27 @@ Lino.id_renderer = function(value, metaData, record, rowIndex, colIndex, store) 
   return value;
 }
 
-Lino.build_bbar = function(scope,actions) {
+Lino.goto_url_handler = function (caller,url) {
+  return function(btn,evt) { window.location = url };
+};
+
+Lino.build_bbar = function(caller,actions) {
   if (actions) {
     var bbar = Array(actions.length);
     for(var i=0;i<actions.length;i++) { 
       var btn = {
         text: actions[i].label
       };
-      //~ btn.handler = function(btn,evt) { window.open(actions[i].url) };
-      //~ btn.handler = actions[i].handler.createCallback(scope);
-      btn.href = actions[i].url;
-      bbar[i] = new Ext.LinkButton(btn);
-      //~ bbar[i] = new Ext.Button(btn);
-      //~ bbar[i] = new Ext.menu.Item(btn);
+      btn.handler = Lino.goto_url_handler(caller,actions[i].url) ;
+      //~ btn.handler = actions[i].handler.createCallback(caller);
+      //~ btn.href = actions[i].url;
+      //~ bbar[i] = new Ext.LinkButton(btn);
+      bbar[i] = new Ext.Button(btn);
     }
     //~ console.log(20100624,bbar);
     return bbar
   }
-}
+};
 
 
 Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{

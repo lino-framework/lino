@@ -314,6 +314,15 @@ class ExtUI(base.UI):
             kw.update(**wc)
         return kw
 
+    def a2btn(self,a):
+        return dict(
+          opens_a_slave=a.opens_a_slave,
+          #~ handler=js_code("Lino.%s" % a),
+          name=a.name,
+          label=unicode(a.label),
+          url=self.build_url("api",a.actor.app_label,a.actor._actor_name,fmt=a.name)
+        )
+        
   
     def get_urls(self):
         urlpatterns = patterns(self.name,
