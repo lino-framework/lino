@@ -30,16 +30,16 @@
 5
 """
 
-from urllib import urlencode
 
 def constrain(value,lowest,highest):
     return min(highest,max(value,lowest))
     
-def build_url(*args,**kw):
-    url = "/".join(args)
-    if len(kw):
-        url += "?" + urlencode(kw)
-    return url
+# moved to lino.ui.base
+#~ def build_url(*args,**kw):
+    #~ url = "/".join(args)
+    #~ if len(kw):
+        #~ url += "?" + urlencode(kw)
+    #~ return url
         
     
 

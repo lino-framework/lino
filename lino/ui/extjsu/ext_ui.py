@@ -47,7 +47,7 @@ from lino.ui import base
 from lino.core import actors
 #~ from lino.core import action_requests
 from lino.utils import menus
-from lino.utils import build_url
+#~ from lino.utils import build_url
 from lino.utils import jsgen
 from lino.utils.jsgen import py2js, js_code, id2js
 #~ from . import ext_elems, ext_requests, ext_store, ext_windows
@@ -100,127 +100,6 @@ def json_response(x):
 
             
     
-def handle_list_request(request,rh):
-    if not rh.report.can_view.passes(request.user):
-        msg = "User %s cannot view %s." % (request.user,rh.report)
-        return http.HttpResponseForbidden()
-    a = rh.report.list_action
-    ar = ext_requests.ViewReportRequest(request,rh,a)
-    if request.method == 'POST':
-        """
-        Wikipedia:
-        Create a new entry in the collection where the ID is assigned automatically by the collection. 
-        The ID created is usually included as part of the data returned by this operation. 
-        """
-        #~ data = rh.store.get_from_form(request.POST)
-        #~ instance = ar.create_instance(**data)
-        instance = ar.create_instance()
-        rh.store.form2obj(request.POST,instance)
-        instance.save(force_insert=True)
-        return json_response_kw(success=True,msg="%s has been created" % instance)
-        
-        
-    if request.method == 'GET':
-        fmt = request.GET.get('fmt',None)
-        if fmt  == 'grid':
-            kw = {}
-            kw.update(title=unicode(rh.get_title(None)))
-            #~ kw.update(content_type=rh.content_type)
-            tbar=ext_elems.Toolbar(items=lino_site.get_site_menu(request.user),region='north',height=29)# renderTo='tbar')
-            return HttpResponse(self.html_page(rh.list_layout._main,tbar,**kw))
-
-        if fmt == 'csv':
-            response = HttpResponse(mimetype='text/csv')
-            w = ucsv.UnicodeWriter(response)
-            names = [] # fld.name for fld in self.fields]
-            fields = []
-            for col in ar.ah.list_layout._main.column_model.columns:
-                names.append(col.editor.field.name)
-                fields.append(col.editor.field)
-            w.writerow(names)
-            for row in ar.queryset:
-                values = []
-                for fld in fields:
-                    # uh, this is tricky...
-                    meth = getattr(fld,'_return_type_for_method',None)
-                    if meth is not None:
-                        v = meth(row)
-                    else:
-                        v = fld.value_to_string(row)
-                    #lino.log.debug("20100202 %r.%s is %r",row,fld.name,v)
-                    values.append(v)
-                w.writerow(values)
-            return response
-            
-        if fmt is None:
-            #~ if rh.report.use_layouts:
-                #~ def row2dict(row):
-                    #~ d = {}
-                    #~ for fld in rh.store.fields:
-                        #~ fld.obj2json(row,d)
-                    #~ return d
-            #~ else:
-                #~ row2dict = rh.report.row2dict
-            #~ rows = [ row2dict(row,{}) for row in ar.queryset ]
-            
-            rows = [ ar.row2dict(row) for row in ar.queryset ]
-            total_count = ar.total_count
-            #lino.log.debug('%s.render_to_dict() total_count=%d extra=%d',self,total_count,self.extra)
-            # add extra blank row(s):
-            #~ for i in range(0,ar.extra):
-            if ar.extra:
-                row = ar.create_instance()
-                d = ar.row2dict(row)
-                d[rh.report.model._meta.pk.name] = -99999
-                rows.append(d)
-                total_count += 1
-            return json_response_kw(count=total_count,rows=rows,title=unicode(ar.get_title()))
-
-
-    raise Http404("Method %s not supported for container %s" % (request.method,rh))
-    
-    
-def handle_element_request(request,ah,elem):
-    if not ah.report.can_view.passes(request.user):
-        msg = "User %s cannot view %s." % (request.user,ah.report)
-        return http.HttpResponseForbidden()
-    if request.method == 'DELETE':
-        elem.delete()
-        return HttpResponseDeleted()
-    if request.method == 'PUT':
-        data = http.QueryDict(request.raw_post_data)
-        try:
-            ah.store.form2obj(data,elem)
-        except exceptions.ValidationError,e:
-            return json_response_kw(success=False,msg=unicode(e))
-        try:
-            elem.save(force_update=True)
-        except IntegrityError,e:
-            #~ print unicode(elem)
-            lino.log.exception(e)
-            return json_response_kw(success=False,
-                  msg=_("There was a problem while saving your data:\n%s") % e)
-        return json_response_kw(success=True,
-              msg="%s has been saved" % elem)
-              
-    if request.method == 'GET':
-        fmt = request.GET.get('fmt',None)
-        if fmt is None:
-            return json_response_kw(id=elem.pk,
-              data=ah.store.row2dict(elem),
-              disabled_fields=[ext_elems.form_field_name(f) for f in ah.report.disabled_fields(request,elem)],
-              title=unicode(elem))
-        if fmt == 'picture':
-            pm = mixins.get_print_method('picture')
-        else:
-            pm = elem.get_print_method(fmt)
-            if pm is None:
-                raise Http404("%r has no print method (fmt=%r)" % (elem,fmt))
-        target = pm.get_target_url(elem)
-        if target is None:
-            raise Http404("%s could not build %r" % (pm,elem))
-        return http.HttpResponseRedirect(target)
-    raise Http404("Method %r not supported for elements of %s" % (request.method,ah.report))
         
 
 
@@ -411,7 +290,7 @@ class ExtUI(base.UI):
     
     def save_window_config(self,a,wc):
         self.window_configs[str(a)] = wc
-        a.window_wrapper.config.update(wc=wc)
+        a.window_wrapper_u.config.update(wc=wc)
         f = open(self.window_configs_file,'wb')
         pickle.dump(self.window_configs,f)
         f.close()
@@ -445,10 +324,10 @@ class ExtUI(base.UI):
             (r'^grid_action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<grid_action>\w+)$', self.json_report_view),
             #~ (r'^grid_afteredit/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.grid_afteredit_view),
             (r'^submit/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.form_submit_view),
-            (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)$', self.api_list_view),
-            (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)\.(?P<fmt>\w+)$', self.api_list_view),
+            (r'api/(?P<app_label>\w+)/(?P<actor>\w+)$', self.api_list_view),
+            (r'api/(?P<app_label>\w+)/(?P<actor>\w+)\.(?P<fmt>\w+)$', self.api_list_view),
             #~ (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>[-\w]+)\.(?P<fmt>\w+)$', self.api_element_view),
-            (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$', self.api_element_view),
+            (r'api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$', self.api_element_view),
             #~ (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>\w+)/(?P<method>\w+)$', self.api_element_view),
             #~ (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.api_view),
             (r'^window_configs/(?P<wc_name>.+)$', self.window_configs_view),
@@ -519,8 +398,90 @@ class ExtUI(base.UI):
         (Source: http://en.wikipedia.org/wiki/Restful)
         """
         actor = actors.get_actor2(app_label,actor)
-        ah = actor.get_handle(self)
-        return handle_list_request(request,ah)
+        rh = actor.get_handle(self)
+        
+        if not rh.report.can_view.passes(request.user):
+            msg = _("User %s cannot view %s.") % (request.user,rh.report)
+            return http.HttpResponseForbidden()
+        a = rh.report.list_action
+        ar = ext_requests.ViewReportRequest(request,rh,a)
+        if request.method == 'POST':
+            """
+            Wikipedia:
+            Create a new entry in the collection where the ID is assigned automatically by the collection. 
+            The ID created is usually included as part of the data returned by this operation. 
+            """
+            #~ data = rh.store.get_from_form(request.POST)
+            #~ instance = ar.create_instance(**data)
+            instance = ar.create_instance()
+            rh.store.form2obj(request.POST,instance)
+            instance.save(force_insert=True)
+            return json_response_kw(success=True,msg="%s has been created" % instance)
+            
+            
+        if request.method == 'GET':
+            fmt = request.GET.get('fmt',None)
+            if fmt  == 'grid':
+                kw = {}
+                kw.update(title=unicode(rh.get_title(None)))
+                #~ kw.update(content_type=rh.content_type)
+                tbar=ext_elems.Toolbar(
+                  items=self.site.get_site_menu(request.user),
+                  region='north',height=29)# renderTo='tbar')
+                return HttpResponse(self.html_page(rh.list_layout._main,tbar,**kw))
+
+            if fmt == 'csv':
+                response = HttpResponse(mimetype='text/csv')
+                w = ucsv.UnicodeWriter(response)
+                names = [] # fld.name for fld in self.fields]
+                fields = []
+                for col in ar.ah.list_layout._main.column_model.columns:
+                    names.append(col.editor.field.name)
+                    fields.append(col.editor.field)
+                w.writerow(names)
+                for row in ar.queryset:
+                    values = []
+                    for fld in fields:
+                        # uh, this is tricky...
+                        meth = getattr(fld,'_return_type_for_method',None)
+                        if meth is not None:
+                            v = meth(row)
+                        else:
+                            v = fld.value_to_string(row)
+                        #lino.log.debug("20100202 %r.%s is %r",row,fld.name,v)
+                        values.append(v)
+                    w.writerow(values)
+                return response
+                
+            if fmt is None:
+                #~ if rh.report.use_layouts:
+                    #~ def row2dict(row):
+                        #~ d = {}
+                        #~ for fld in rh.store.fields:
+                            #~ fld.obj2json(row,d)
+                        #~ return d
+                #~ else:
+                    #~ row2dict = rh.report.row2dict
+                #~ rows = [ row2dict(row,{}) for row in ar.queryset ]
+                
+                rows = [ ar.row2dict(row) for row in ar.queryset ]
+                total_count = ar.total_count
+                #lino.log.debug('%s.render_to_dict() total_count=%d extra=%d',self,total_count,self.extra)
+                # add extra blank row(s):
+                #~ for i in range(0,ar.extra):
+                if ar.extra:
+                    row = ar.create_instance()
+                    d = ar.row2dict(row)
+                    d[rh.report.model._meta.pk.name] = -99999
+                    rows.append(d)
+                    total_count += 1
+                return json_response_kw(count=total_count,rows=rows,title=unicode(ar.get_title()))
+
+
+        raise Http404("Method %s not supported for container %s" % (request.method,rh))
+    
+    
+        
         
     def api_element_view(self,request,app_label=None,actor=None,pk=None):
         """
@@ -532,16 +493,66 @@ class ExtUI(base.UI):
         """
         rpt = actors.get_actor2(app_label,actor)
         ah = rpt.get_handle(self)
+        if not ah.report.can_view.passes(request.user):
+            msg = "User %s cannot view %s." % (request.user,ah.report)
+            return http.HttpResponseForbidden()
         if pk == '-99999':
             ar = ext_requests.ViewReportRequest(request,ah,ah.report.list_action)
-            instance = ar.create_instance()
+            elem = ar.create_instance()
         else:
             try:
-                instance = rpt.model.objects.get(pk=pk)
+                elem = rpt.model.objects.get(pk=pk)
             except rpt.model.DoesNotExist:
                 raise Http404("%s %s does not exist." % (rpt,pk))
-        return handle_element_request(request,ah,instance)
-        #~ raise Http404("Unknown request method %r " % request.method)
+        if request.method == 'DELETE':
+            elem.delete()
+            return HttpResponseDeleted()
+        if request.method == 'PUT':
+            data = http.QueryDict(request.raw_post_data)
+            try:
+                ah.store.form2obj(data,elem)
+            except exceptions.ValidationError,e:
+                return json_response_kw(success=False,msg=unicode(e))
+            try:
+                elem.save(force_update=True)
+            except IntegrityError,e:
+                #~ print unicode(elem)
+                lino.log.exception(e)
+                return json_response_kw(success=False,
+                      msg=_("There was a problem while saving your data:\n%s") % e)
+            return json_response_kw(success=True,
+                  msg="%s has been saved" % elem)
+                  
+        if request.method == 'GET':
+            fmt = request.GET.get('fmt',None)
+            if fmt is None:
+                return json_response_kw(id=elem.pk,
+                  data=ah.store.row2dict(elem),
+                  disabled_fields=[ext_elems.form_field_name(f) for f in ah.report.disabled_fields(request,elem)],
+                  title=unicode(elem))
+            if fmt == 'detail':
+                a = rpt.get_action(fmt)
+                kw = {}
+                kw.update(title=unicode(elem))
+                #~ kw.update(content_type=rh.content_type)
+                tbar=ext_elems.Toolbar(
+                  items=self.site.get_site_menu(request.user),
+                  region='north',height=29)# renderTo='tbar')
+                print 20100624, a.window_wrapper_u.main
+                return HttpResponse(self.html_page(a.window_wrapper_u.main,tbar,**kw))
+              
+            elif fmt == 'picture':
+                pm = mixins.get_print_method('picture')
+            else:
+                pm = elem.get_print_method(fmt)
+                if pm is None:
+                    raise Http404("%r has no print method (fmt=%r)" % (elem,fmt))
+            target = pm.get_target_url(elem)
+            if target is None:
+                raise Http404("%s could not build %r" % (pm,elem))
+            return http.HttpResponseRedirect(target)
+        raise Http404("Method %r not supported for elements of %s" % (request.method,ah.report))
+        
         
     def window_configs_view(self,request,wc_name=None,**kw):
         if request.method == 'POST':
@@ -672,15 +683,15 @@ class ExtUI(base.UI):
         #~ return build_url("/api",actor.app_label,actor._actor_name,action_name,**kw)
 
     def get_actor_url(self,actor,**kw):
-        return build_url("/api",actor.app_label,actor._actor_name,**kw)
+        return self.build_url("api",actor.app_label,actor._actor_name,**kw)
 
     def get_form_action_url(self,fh,action,**kw):
         #~ a = btn.lh.datalink.actor
         #~ a = action.actor
-        return build_url("/form",fh.layout.app_label,fh.layout._actor_name,action.name,**kw)
+        return self.build_url("form",fh.layout.app_label,fh.layout._actor_name,action.name,**kw)
         
     def get_choices_url(self,fke,**kw):
-        return build_url("/choices",
+        return self.build_url("choices",
             fke.lh.layout.datalink_report.app_label,
             fke.lh.layout.datalink_report._actor_name,
             fke.field.name,**kw)
@@ -749,7 +760,7 @@ class ExtUI(base.UI):
             #~ handler = "function(btn,evt){new Lino.%s().show()}" % v.action
             #~ handler = "function(btn,evt){Lino.%s(undefined,%s)}" % (v.action,py2js(v.params))
             #~ return dict(text=prepare_label(v),handler=js_code(handler))
-            url = build_url("/api",v.action.actor.app_label,v.action.actor._actor_name,fmt=v.action.name)
+            url = self.build_url("api",v.action.actor.app_label,v.action.actor._actor_name,fmt=v.action.name)
             #~ handler = "function(btn,evt){window.open(%r)}" % url
             #~ return dict(text=prepare_label(v),handler=js_code(handler))
             return dict(text=prepare_label(v),href=url)
@@ -766,7 +777,7 @@ class ExtUI(base.UI):
             name = action.name+'.'+fmt
         else:
             name = action.name
-        return build_url("/api",action.actor.app_label,action.actor._actor_name,name,**kw)
+        return self.build_url("api",action.actor.app_label,action.actor._actor_name,name,**kw)
         #~ url = "/action/" + a.app_label + "/" + a._actor_name 
         #~ if len(kw):
             #~ url += "?" + urlencode(kw)
@@ -829,7 +840,7 @@ class ExtUI(base.UI):
                 h.store = None
                 
             for a in h.get_actions():
-                a.window_wrapper = self.action_renderer(a,h)
+                a.window_wrapper_u = self.action_renderer(a,h)
             
         
 #~ ui = ExtUI()

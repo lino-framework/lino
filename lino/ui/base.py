@@ -12,6 +12,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 import lino
+from urllib import urlencode
 
 class Handle:
   
@@ -47,14 +48,34 @@ class Handled(object):
 class UI:
     """
     """
+    name = None
+    verbose_name = None
     
+    def build_url(self,*args,**kw):
+        url = "/" + "/".join(args)
+        if self.name:
+            url = "/" + self.name + url
+        if len(kw):
+            url += "?" + urlencode(kw)
+        return url
+        
+    def a2btn(self,a):
+        return dict(
+          opens_a_slave=a.opens_a_slave,
+          #~ handler=js_code("Lino.%s" % a),
+          name=a.name,
+          label=unicode(a.label),
+          url=self.build_url("api",a.actor.app_label,a.actor._actor_name,fmt=a.name)
+        )
+        
     def get_urls():
         pass
         
     def field2elem(self,lui,field,**kw):
         pass
         
-    def setup_site(self,lino_site):
+    def setup_site(self,site):
+        self.site = site
         from lino import reports
         # instantiate all ReportHandles already at server startup.
         # TODO: in fact this is currently called only when a first request comes in,

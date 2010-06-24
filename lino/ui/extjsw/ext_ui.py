@@ -47,7 +47,7 @@ from lino.ui import base
 from lino.core import actors
 #~ from lino.core import action_requests
 from lino.utils import menus
-from lino.utils import build_url
+#~ from lino.utils import build_url
 from lino.utils import jsgen
 from lino.utils.jsgen import py2js, js_code, id2js
 from . import ext_elems
@@ -648,15 +648,15 @@ class ExtUI(base.UI):
         #~ return build_url("/api",actor.app_label,actor._actor_name,action_name,**kw)
 
     def get_actor_url(self,actor,**kw):
-        return build_url("/api",actor.app_label,actor._actor_name,**kw)
+        return self.build_url("api",actor.app_label,actor._actor_name,**kw)
 
     def get_form_action_url(self,fh,action,**kw):
         #~ a = btn.lh.datalink.actor
         #~ a = action.actor
-        return build_url("/form",fh.layout.app_label,fh.layout._actor_name,action.name,**kw)
+        return self.build_url("form",fh.layout.app_label,fh.layout._actor_name,action.name,**kw)
         
     def get_choices_url(self,fke,**kw):
-        return build_url("/choices",
+        return self.build_url("choices",
             fke.lh.layout.datalink_report.app_label,
             fke.lh.layout.datalink_report._actor_name,
             fke.field.name,**kw)
@@ -737,7 +737,7 @@ class ExtUI(base.UI):
             name = action.name+'.'+fmt
         else:
             name = action.name
-        return build_url("/api",action.actor.app_label,action.actor._actor_name,name,**kw)
+        return self.build_url("api",action.actor.app_label,action.actor._actor_name,name,**kw)
         #~ url = "/action/" + a.app_label + "/" + a._actor_name 
         #~ if len(kw):
             #~ url += "?" + urlencode(kw)

@@ -22,7 +22,7 @@ import lino
 from lino import layouts, reports
 from lino.utils import constrain
 from lino.utils import choosers
-from lino.utils import build_url
+#~ from lino.utils import build_url
 from lino.utils import jsgen
 from lino.utils.jsgen import py2js, Variable, Component, id2js, js_code
 from lino.utils import choosers
@@ -231,7 +231,7 @@ class PictureElement(LayoutElement):
         kw.update(autoEl=dict(tag='img'))
         #~ kw.update(cls='ext-el-mask')
         kw.update(style=dict(height='100%'))
-        kw.update(plugins=js_code('new Lino.PictureBoxPlugin(caller)'))
+        kw.update(plugins=js_code('new Lino.PictureBoxPlugin()'))
         LayoutElement.__init__(self,lh,name,**kw)
 
         
@@ -795,25 +795,17 @@ class GridElement(Container): #,DataElementMixin):
             #~ )
         
         #~ d.update(bbar=[a2btn(a) for a in rh.get_actions() if not a.hidden])
-        d.update(ls_bbar_actions=[a2btn(a) for a in rh.get_actions() if a.show_in_list])
+        d.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rh.get_actions() if a.show_in_list])
         #~ d.update(ls_bbar_actions=[a for a in rh.get_actions() if not a.hidden])
-        
+        print 20100624, d['ls_bbar_actions']
         
         return d
         
-def a2btn(a):
-    return dict(
-      opens_a_slave=a.opens_a_slave,
-      #~ handler=js_code("Lino.%s" % a),
-      name=a.name,
-      label=unicode(a.label),
-      url=build_url("/api",a.actor.app_label,a.actor._actor_name,fmt=a.name)
-    )
       
 class SlaveGridElement(GridElement):
     def ext_options(self,**kw):
         kw = GridElement.ext_options(self,**kw)
-        kw.update(plugins=js_code('new Lino.SlaveGridPlugin(caller)'))
+        kw.update(plugins=js_code('new Lino.SlaveGridPlugin()'))
         
         kw.update(title=unicode(self.report.label))
         
@@ -907,6 +899,7 @@ class DetailMainPanel(Panel,WrappingMainPanel):
         #~ DataElementMixin.__init__(self,lh.link)
         Panel.__init__(self,lh,name,vertical,*elements,**kw)
         #lh.needs_store(self.rh)
+        #~ self.value.update(region='center')
         
     def unused_get_datalink(self):
         return self.rh

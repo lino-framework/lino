@@ -15,6 +15,94 @@
 Ext.namespace('Lino');
 
 
+/**
+ Thanks to Animal <http://www.sencha.com/forum/showthread.php?12288-OPEN-635-Ext.Button-config-option-href-foo>
+
+ and to grEvenX <http://www.sencha.com/forum/showthread.php?97659-Ext.LinkButton-code-from-Animal-needs-update-for-ExtJS-3.2>
+
+ * @class Ext.LinkButton
+ * @extends Ext.Button
+ * A Button which encapsulates an &lt;a> element to enable navigation, or downloading of files.
+ * @constructor
+ * Creates a new LinkButton
+ */ 
+Ext.LinkButton = Ext.extend(Ext.Button, {
+  template: new Ext.Template(
+        '<table id="{4}" cellspacing="0" class="x-btn {3}"><tbody class="{1}">',
+            '<tr><td class="x-btn-tl"><i> </i></td><td class="x-btn-tc"></td><td class="x-btn-tr"><i> </i></td></tr>',
+            '<tr>',
+                '<td class="x-btn-ml"><i> </i></td>',
+                '<td class="x-btn-mc">',
+                    '<em class="{2}" unselectable="on">',
+                        '<a href="{5}" style="display:block" target="{6}" class="x-btn-text">{0}</a>',
+                    '</em>',
+                '</td>',
+                '<td class="x-btn-mr"><i> </i></td>',
+            '</tr>',
+            '<tr><td class="x-btn-bl"><i> </i></td><td class="x-btn-bc"></td><td class="x-btn-br"><i> </i></td></tr>',
+        '</tbody></table>'
+    ).compile(),
+
+    buttonSelector : 'a:first',
+
+    /** 
+     * @cfg String href
+     * The URL to create a link for.
+     */
+    /** 
+     * @cfg String target
+     * The target for the &lt;a> element.
+     */
+    /** 
+     * @cfg Object
+     * A set of parameters which are always passed to the URL specified in the href
+     */
+    baseParams: {},
+
+//  private
+    params: {},
+
+    getTemplateArgs: function() {
+        return Ext.Button.prototype.getTemplateArgs.apply(this).concat([this.getHref(), this.target]);
+    },
+
+    onClick : function(e){
+        if(e.button != 0){
+            return;
+        }
+        if(!this.disabled){
+            if (this.fireEvent("click", this, e) == false) {
+                e.stopEvent();
+            } else {
+                if(this.handler){
+                    this.handler.call(this.scope || this, this, e);
+                }
+            }
+        }
+    },
+
+    // private
+    getHref: function() {
+        var result = this.href;
+        var p = Ext.urlEncode(Ext.apply(Ext.apply({}, this.baseParams), this.params));
+        if (p.length) {
+            result += ((this.href.indexOf('?') == -1) ? '?' : '&') + p;
+        }
+        return result;
+    },
+
+    /**
+     * Sets the href of the link dynamically according to the params passed, and any {@link #baseParams} configured.
+     * @param {Object} Parameters to use in the href URL.
+     */
+    setParams: function(p) {
+        this.params = p;
+        this.el.child(this.buttonSelector, true).href = this.getHref();
+    }
+});
+Ext.reg('linkbutton', Ext.LinkButton);
+
+
 /*
 Based on feature request developed in http://extjs.net/forum/showthread.php?t=75751
 */
@@ -516,10 +604,14 @@ Lino.build_bbar = function(scope,actions) {
       var btn = {
         text: actions[i].label
       };
-      btn.handler = function(btn,evt) { window.open(actions[i].url) };
+      //~ btn.handler = function(btn,evt) { window.open(actions[i].url) };
       //~ btn.handler = actions[i].handler.createCallback(scope);
-      bbar[i] = new Ext.Button(btn);
+      btn.href = actions[i].url;
+      bbar[i] = new Ext.LinkButton(btn);
+      //~ bbar[i] = new Ext.Button(btn);
+      //~ bbar[i] = new Ext.menu.Item(btn);
     }
+    //~ console.log(20100624,bbar);
     return bbar
   }
 }
@@ -788,6 +880,7 @@ Ext.override(Lino.TemplateBoxPlugin,{
 });
 
 Lino.SlavePlugin = function(caller) {
+  //~ console.log(20100624,caller);
   this.caller = caller;
 };
 Lino.load_picture = function(caller,cmp,record) {
@@ -800,8 +893,10 @@ Lino.load_picture = function(caller,cmp,record) {
 Lino.PictureBoxPlugin = Ext.extend(Lino.SlavePlugin,{
   init : function (cmp) {
     //~ console.log('Lino.PictureBoxPlugin.init()',this);
-    cmp.on('render',function(){ Lino.load_picture(this.caller,cmp,this.caller.get_current_record())},this);
-    this.caller.add_row_listener(function(sm,ri,rec) { Lino.load_picture(this.caller,cmp,rec) }, this );
+    if (this.caller) {
+      cmp.on('render',function(){ Lino.load_picture(this.caller,cmp,this.caller.get_current_record())},this);
+      this.caller.add_row_listener(function(sm,ri,rec) { Lino.load_picture(this.caller,cmp,rec) }, this );
+    }
   }
 });
 Lino.chooser_handler = function(combo,name) {
@@ -850,8 +945,10 @@ Lino.load_slavegrid = function(caller,cmp,record) {
 }
 Lino.SlaveGridPlugin = Ext.extend(Lino.SlavePlugin,{
   init : function (cmp) {
-    cmp.on('render',function(){ Lino.load_slavegrid(this.caller,cmp,this.caller.get_current_record())},this);
-    this.caller.add_row_listener(function(sm,ri,rec) { Lino.load_slavegrid(this.caller,cmp,rec) }, this );
+    if (this.caller) {
+      cmp.on('render',function(){ Lino.load_slavegrid(this.caller,cmp,this.caller.get_current_record())},this);
+      this.caller.add_row_listener(function(sm,ri,rec) { Lino.load_slavegrid(this.caller,cmp,rec) }, this );
+    }
   }
 });
 

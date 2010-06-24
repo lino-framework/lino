@@ -25,7 +25,7 @@ from lino.core import actors
 from lino.utils import menus
 from lino.utils import choosers
 from lino.utils import jsgen
-from lino.utils import build_url
+#~ from lino.utils import build_url
 from lino.utils.jsgen import py2js, js_code, id2js
 from . import ext_elems, ext_requests
 #~ from lino.ui.extjs import ext_viewport
@@ -264,7 +264,7 @@ class BaseDetailWrapper(MasterWrapper):
         
     def get_config(self):
         d = MasterWrapper.get_config(self)
-        url = build_url('/api',self.action.actor.app_label,self.action.actor._actor_name)
+        url = self.ui.build_url('api',self.action.actor.app_label,self.action.actor._actor_name)
         d.update(url_data=url) 
         d.update(main_panel=self.main)
         d.update(name=self.action.name)
@@ -277,7 +277,7 @@ class DetailWrapper(BaseDetailWrapper):
     def get_config(self):
         d = BaseDetailWrapper.get_config(self)
         #~ d.update(ls_bbar_actions=[ext_elems.a2btn(a) for a in self.rh.get_actions() if not a.hidden])
-        d.update(ls_bbar_actions=[ext_elems.a2btn(a) for a in self.rh.get_actions() if a.show_in_detail])
+        d.update(ls_bbar_actions=[self.ui.a2btn(a) for a in self.rh.get_actions() if a.show_in_detail])
         return d
   
 class InsertWrapper(BaseDetailWrapper):
