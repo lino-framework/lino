@@ -100,6 +100,12 @@ def json_response(x):
 
             
     
+def elem2rec(request,ah,elem):
+    return dict(id=elem.pk,
+      data=ah.store.row2dict(elem),
+      disabled_fields=[ext_elems.form_field_name(f) for f in ah.report.disabled_fields(request,elem)],
+      title=unicode(elem))
+
         
 
 
@@ -244,8 +250,8 @@ class ExtUI(base.UI):
         #~ yield '<!-- overrides to library -->'
         yield '<link rel="stylesheet" type="text/css" href="%slino/extjsu/lino.css">' % settings.MEDIA_URL
         yield '<script type="text/javascript" src="%slino/extjsu/lino.js"></script>' % settings.MEDIA_URL
-        #~ yield '<script type="text/javascript" src="%s"></script>' % (
-            #~ settings.MEDIA_URL + "/".join(self.ui.js_cache_name(self.site)))
+        yield '<script type="text/javascript" src="%s"></script>' % (
+            settings.MEDIA_URL + "/".join(self.js_cache_name(self.site)))
 
         #~ yield '<!-- page specific -->'
         yield '<script type="text/javascript">'
@@ -273,7 +279,7 @@ class ExtUI(base.UI):
         #~ for cmp in comps:
             #~ yield '  %s.render();' % cmp.as_ext()
         
-        yield '  var viewport = new Ext.Viewport({items:%s,layout:"border"});' % py2js(comps)
+        yield '  var viewport = new Ext.Viewport({layout:"border",items:%s});' % py2js(comps)
         
         yield '  Ext.QuickTips.init();'
         yield "}); // end of onReady()"
@@ -286,6 +292,30 @@ class ExtUI(base.UI):
             
         
             
+    def js_cache_name(self,site):
+        return ('cache','js','site.js')
+        
+    def setup_site(self,site):
+        base.UI.setup_site(self,site) # will create a.window_wrapper for all actions
+        self.build_lino_js(site)
+        
+    def build_lino_js(self,site):
+        #~ for app_label in site.
+        fn = os.path.join(settings.MEDIA_ROOT,*self.js_cache_name(site)) 
+        #~ fn = r'c:\temp\dsbe.js'
+        lino.log.info("Generating %s ...", fn)
+        f = open(fn,'w')
+        for rpt in reports.master_reports + reports.slave_reports:
+            f.write("Ext.namespace('Lino.%s')\n" % rpt)
+            for a in rpt.get_actions():
+                if a.window_wrapper_u is not None:
+                    #~ print a, "..."
+                    f.write('Lino.%s = ' % a )
+                    for ln in a.window_wrapper_u.js_render():
+                        f.write(ln + "\n")
+                    f.write("\n")
+        f.close()
+          
 
     
     def save_window_config(self,a,wc):
@@ -334,7 +364,7 @@ class ExtUI(base.UI):
             #~ (r'^grid_afteredit/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.grid_afteredit_view),
             (r'^submit/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.form_submit_view),
             (r'api/(?P<app_label>\w+)/(?P<actor>\w+)$', self.api_list_view),
-            (r'api/(?P<app_label>\w+)/(?P<actor>\w+)\.(?P<fmt>\w+)$', self.api_list_view),
+            #~ (r'api/(?P<app_label>\w+)/(?P<actor>\w+)\.(?P<fmt>\w+)$', self.api_list_view),
             #~ (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>[-\w]+)\.(?P<fmt>\w+)$', self.api_element_view),
             (r'api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$', self.api_element_view),
             #~ (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>\w+)/(?P<method>\w+)$', self.api_element_view),
@@ -397,7 +427,8 @@ class ExtUI(base.UI):
         return HttpResponse(html)
 
 
-    def api_list_view(self,request,app_label=None,actor=None,fmt=None):
+    def api_list_view(self,request,app_label=None,actor=None):
+    #~ def api_list_view(self,request,app_label=None,actor=None,fmt=None):
         """
         GET : List the members of the collection. 
         PUT : Replace the entire collection with another collection. 
@@ -406,8 +437,8 @@ class ExtUI(base.UI):
         DELETE : Delete the entire collection.
         (Source: http://en.wikipedia.org/wiki/Restful)
         """
-        actor = actors.get_actor2(app_label,actor)
-        rh = actor.get_handle(self)
+        rpt = actors.get_actor2(app_label,actor)
+        rh = rpt.get_handle(self)
         
         if not rh.report.can_view.passes(request.user):
             msg = _("User %s cannot view %s.") % (request.user,rh.report)
@@ -431,13 +462,25 @@ class ExtUI(base.UI):
         if request.method == 'GET':
             fmt = request.GET.get('fmt',None)
             if fmt  == 'grid':
+                #~ kw = {}
+                #~ kw.update(title=unicode(rh.get_title(None)))
+                #~ tbar=ext_elems.Toolbar(
+                  #~ items=self.site.get_site_menu(request.user),
+                  #~ region='north',height=29)# renderTo='tbar')
+                #~ return HttpResponse(self.html_page(rh.list_layout._main,tbar,**kw))
+                
+                a = rpt.get_action(fmt)
                 kw = {}
                 kw.update(title=unicode(rh.get_title(None)))
-                #~ kw.update(content_type=rh.content_type)
                 tbar=ext_elems.Toolbar(
                   items=self.site.get_site_menu(request.user),
                   region='north',height=29)# renderTo='tbar')
-                return HttpResponse(self.html_page(rh.list_layout._main,tbar,**kw))
+                #~ print 20100624, a.window_wrapper_u.main
+                params = dict(region='center')
+                main = js_code('Lino.%s(%s)' % (a,py2js(params)))
+                #~ return HttpResponse(self.html_page(tbar,a.window_wrapper_u.main,**kw))
+                return HttpResponse(self.html_page(tbar,main,**kw))
+                
 
             if fmt == 'csv':
                 response = HttpResponse(mimetype='text/csv')
@@ -462,7 +505,8 @@ class ExtUI(base.UI):
                     w.writerow(values)
                 return response
                 
-            if fmt is None:
+            if fmt == 'json':
+            #~ if fmt is None:
                 #~ if rh.report.use_layouts:
                     #~ def row2dict(row):
                         #~ d = {}
@@ -505,6 +549,7 @@ class ExtUI(base.UI):
         if not ah.report.can_view.passes(request.user):
             msg = "User %s cannot view %s." % (request.user,ah.report)
             return http.HttpResponseForbidden()
+            
         if pk == '-99999':
             ar = ext_requests.ViewReportRequest(request,ah,ah.report.list_action)
             elem = ar.create_instance()
@@ -513,9 +558,11 @@ class ExtUI(base.UI):
                 elem = rpt.model.objects.get(pk=pk)
             except rpt.model.DoesNotExist:
                 raise Http404("%s %s does not exist." % (rpt,pk))
+                
         if request.method == 'DELETE':
             elem.delete()
             return HttpResponseDeleted()
+            
         if request.method == 'PUT':
             data = http.QueryDict(request.raw_post_data)
             try:
@@ -535,10 +582,7 @@ class ExtUI(base.UI):
         if request.method == 'GET':
             fmt = request.GET.get('fmt',None)
             if fmt is None:
-                return json_response_kw(id=elem.pk,
-                  data=ah.store.row2dict(elem),
-                  disabled_fields=[ext_elems.form_field_name(f) for f in ah.report.disabled_fields(request,elem)],
-                  title=unicode(elem))
+                return json_response(elem2rec(elem))
             if fmt == 'detail':
                 a = rpt.get_action(fmt)
                 kw = {}
@@ -547,10 +591,13 @@ class ExtUI(base.UI):
                 tbar=ext_elems.Toolbar(
                   items=self.site.get_site_menu(request.user),
                   region='north',height=29)# renderTo='tbar')
-                print 20100624, a.window_wrapper_u.main
-                return HttpResponse(self.html_page(a.window_wrapper_u.main,tbar,**kw))
+                #~ print 20100624, a.window_wrapper_u.main
+                params = dict(data_record=elem2rec(request,ah,elem),region='center')
+                main = js_code('Lino.%s(%s)' % (a,py2js(params)))
+                #~ return HttpResponse(self.html_page(tbar,a.window_wrapper_u.main,**kw))
+                return HttpResponse(self.html_page(tbar,main,**kw))
               
-            elif fmt == 'picture':
+            if fmt == 'picture':
                 pm = mixins.get_print_method('picture')
             else:
                 pm = elem.get_print_method(fmt)
@@ -732,28 +779,6 @@ class ExtUI(base.UI):
             url += "?" + urlencode(kw)
         return url
         
-        
-        
-    #~ def show_report(self,ar,rh,**kw):
-        #~ ar.show_window(rh.window_wrapper.js_render)
-
-    #~ def show_detail(self,ar):
-        #~ ar.show_window(ar.action.window_wrapper.js_render)
-
-    #~ def show_action_window(self,ar,action):
-        #~ ar.response.update(js_code = action.window_wrapper.js_render)
-        #~ ar.show_window(action.window_wrapper.js_render)
-
-    #~ def show_properties(self,ar,**kw):
-        #~ ar.show_window(ar.rh.properties.window_wrapper.js_render)
-        
-        
-    #~ def view_form(self,dlg,**kw):
-        #~ "called from ViewForm.run_in_dlg()"
-        #~ frm = dlg.actor
-        #~ fh = self.get_form_handle(frm)
-        #~ yield dlg.show_window(fh.window_wrapper.js_render).over()
-        
     def py2js_converter(self,v):
         if isinstance(v,menus.Menu):
             if v.parent is None:
@@ -813,16 +838,6 @@ class ExtUI(base.UI):
         if isinstance(a,reports.OpenDetailAction):
             return ext_windows.DetailWrapper(h,a)
 
-        #~ if isinstance(a,layouts.ShowDetailAction):
-            #~ return ext_windows.LayoutDetailWrapper(h,a)
-
-            
-        if isinstance(a,properties.PropsEdit):
-            #~ return ext_windows.PropertiesWrapper(self,h,a)
-            return None
-            
-        if isinstance(a,properties.PropertiesAction):
-            return ext_windows.PropertiesWrapper(h,a)
         if isinstance(a,reports.SlaveGridAction):
             return ext_windows.GridSlaveWrapper(h,a) # a.name,a.slave.default_action)
             

@@ -78,7 +78,7 @@ class WindowWrapper(ActionRenderer):
         self.permalink_name = str(action)
         self.lh = lh # may be None
         self.bbar_buttons = []
-        self.config = self.get_config()
+        #~ self.config = self.get_config()
         
         
     def __str__(self):
@@ -95,14 +95,13 @@ class WindowWrapper(ActionRenderer):
         return d
         
 def lh2win(lh,**kw):
-    kw.update(height=300)
-    kw.update(width=400)
+    #~ kw.update(height=300)
+    #~ kw.update(width=400)
     if lh is not None:
-        #~ kw.update(title=lh.get_title(None))
-        if lh.height is not None:
-            kw.update(height=lh.height*EXT_CHAR_HEIGHT + 7*EXT_CHAR_HEIGHT)
-        if lh.width is not None:
-            kw.update(width=lh.width*EXT_CHAR_WIDTH + 10*EXT_CHAR_WIDTH)
+        #~ if lh.height is not None:
+            #~ kw.update(height=lh.height*EXT_CHAR_HEIGHT + 7*EXT_CHAR_HEIGHT)
+        #~ if lh.width is not None:
+            #~ kw.update(width=lh.width*EXT_CHAR_WIDTH + 10*EXT_CHAR_WIDTH)
         if lh.start_focus is not None:
             kw.update(defaultButton=lh.start_focus.name)
     return kw
@@ -117,18 +116,14 @@ class SlaveWrapper(WindowWrapper):
         
 
 class MasterWrapper(WindowWrapper):
-  
+    #~ js_class_name = None
+    
     def __init__(self,rh,action,lh,**kw):
-        WindowWrapper.__init__(self,action,lh.ui,lh,lh._main,**kw)
         
-    def js_render(self):
-        yield ''
-        yield "function(caller,params) { "
-        for ln in jsgen.declare_vars(self.config):
-            yield '  '+ln
+        WindowWrapper.__init__(self,action,lh.ui,lh,lh._main,**kw)
         before_row_edit = []
+        on_change = []
         #~ before_row_edit.append("console.log('ext_windows.py 20100531',record);")
-        yield ''
         for e in self.main.walk():
             if isinstance(e,ext_elems.FieldElement):
                 chooser = choosers.get_for_field(e.field)
@@ -137,13 +132,21 @@ class MasterWrapper(WindowWrapper):
                     for f in chooser.context_fields:
                         varname = ext_elems.varname_field(f)
                         #~ field_extname = chooser.model.__name__ + '_' + f.name
-                        yield "  %s.on('change',Lino.chooser_handler(%s,%r));" % (varname,e.ext_name,f.name)
+                        on_change.append("  %s.on('change',Lino.chooser_handler(%s,%r));" % (varname,e.ext_name,f.name))
                         before_row_edit.append("%s.setContextValue(%r,record.data[%r]);" % (
                             e.ext_name,f.name,ext_elems.form_field_name(f)))
         #~ lino.log.debug("20100615 %s has %d choosers", self.lh.layout, len(before_row_edit))
-        self.config.update(before_row_edit=js_code('function(record){%s}' % ('\n'.join(before_row_edit))))
-        yield "new Lino.%s(caller,function(ww) { return Ext.apply(%s,params)}).show();}" % (
-            self.__class__.__name__,py2js(self.config))
+        self.main.update(before_row_edit=js_code('function(record){%s}' % ('\n'.join(before_row_edit))))
+        
+    def js_render(self):
+        #~ yield ''
+        yield "function(params) { "
+        for ln in jsgen.declare_vars(self.main):
+            yield '  '+ln
+        yield "  return %s}"  % py2js(self.main)
+        #~ yield "  return Ext.apply(%s,params)}"  % py2js(self.main)
+        #~ yield "  return new %s(Ext.apply(%s,params))}" % (
+            #~ self.js_class_name,py2js(self.config))
         
             
     
@@ -161,14 +164,6 @@ class GridWrapperMixin(WindowWrapper):
       
         d = super(GridWrapperMixin,self).get_config()
         #~ url = '' self.ui.get_action_url(a,ext_requests.FMT_RUN)
-        if False:
-          d.update(actions=[dict(
-            opens_a_slave=a.opens_a_slave,
-            handler=js_code("Lino.%s" % a),
-            name=a.name,
-            label=unicode(a.label),
-            #~ url="/".join(("/ui",a.actor.app_label,a.actor._actor_name,a.name))
-          ) for a in self.rh.get_actions() if not a.hidden])
         #~ i = 0
         #~ actions = []
         #~ for a in self.rh.get_actions():
@@ -192,11 +187,14 @@ class GridWrapperMixin(WindowWrapper):
         return d
         
 class GridMasterWrapper(GridWrapperMixin,MasterWrapper):
+    #~ js_class_name = 'Lino.GridPanel'
   
     def __init__(self,rh,action,**kw):
         self.action = action
         GridWrapperMixin.__init__(self,rh)
+        #~ print 20100626, self.__class__
         MasterWrapper.__init__(self,rh,action,rh.list_layout,**kw)
+        #~ print 20100626, self.__class__, self.main
       
   
 
@@ -226,7 +224,7 @@ class GridSlaveWrapper(GridWrapperMixin,SlaveWrapper):
         return d
         
         
-class DetailSlaveWrapper(SlaveWrapper):
+class unused_DetailSlaveWrapper(SlaveWrapper):
   
     window_config_type = 'detail'
     
@@ -252,16 +250,16 @@ class BaseDetailWrapper(MasterWrapper):
         assert isinstance(action,reports.OpenDetailAction)
         if len(rh.report.detail_layouts) == 1:
             lh = rh.report.detail_layouts[0].get_handle(rh.ui)
-            main = ext_elems.FormPanel(lh._main) # ,autoScroll=True)
+            main = ext_elems.FormPanel(rh,lh._main) # ,autoScroll=True)
             WindowWrapper.__init__(self,action,rh.ui,lh,main,**kw)        
         else:
             #~ tl = layouts.TabLayout(rh.report.detail_layouts)
             #~ lh = layouts.TabPanelHandle(rh,rh.report.detail_layouts)
             lh = rh.report.detail_layouts[0].get_handle(rh.ui)
             tabs = [l.get_handle(rh.ui)._main for l in rh.report.detail_layouts]
-            main = ext_elems.FormPanel(ext_elems.TabPanel(tabs)) # ,autoScroll=True)
+            main = ext_elems.FormPanel(rh,ext_elems.TabPanel(tabs)) # ,autoScroll=True)
             WindowWrapper.__init__(self,action,rh.ui,None,main,**kw) 
-        main.value.update(region='center')
+        #~ main.value.update(region='center')
         
     def get_config(self):
         d = MasterWrapper.get_config(self)
@@ -291,7 +289,7 @@ class InsertWrapper(BaseDetailWrapper):
         
 
 
-class PropertiesWrapper(SlaveWrapper):
+class unused_PropertiesWrapper(SlaveWrapper):
     "Handle requests like GET /api/contacts/Persons/pgrid.extjs"
     window_config_type = 'props'
     name = 'pgrid'

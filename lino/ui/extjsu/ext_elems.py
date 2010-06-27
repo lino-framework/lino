@@ -718,7 +718,7 @@ class GridElement(Container): #,DataElementMixin):
     declare_type = jsgen.DECLARE_VAR
     #value_template = "new Ext.grid.EditorGridPanel(%s)"
     #~ value_template = "new Ext.grid.GridPanel(%s)"
-    value_template = "new Lino.GridPanel(%s)"
+    value_template = "new Lino.GridPanel(%s,params)"
     ext_suffix = "_grid"
     vflex = True
     
@@ -797,7 +797,7 @@ class GridElement(Container): #,DataElementMixin):
         #~ d.update(bbar=[a2btn(a) for a in rh.get_actions() if not a.hidden])
         d.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rh.get_actions() if a.show_in_list])
         #~ d.update(ls_bbar_actions=[a for a in rh.get_actions() if not a.hidden])
-        print 20100624, d['ls_bbar_actions']
+        #~ print 20100624, d['ls_bbar_actions']
         
         return d
         
@@ -954,13 +954,15 @@ class TabPanel(jsgen.Component):
         
 #~ class FormPanel(jsgen.Value):
 class FormPanel(jsgen.Component):
-    value_template = "new Ext.form.FormPanel(%s)"
-    def __init__(self,main,**kw):
+    value_template = "new Lino.FormPanel(%s,params)"
+    #~ value_template = "new Ext.form.FormPanel(%s)"
+    def __init__(self,rh,main,**kw):
         kw.update(
           items=main,
           #~ autoScroll=True,
           layout='fit',
         )
+        kw.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rh.get_actions() if a.show_in_detail])
         jsgen.Value.__init__(self,kw)
 
 class unused_FormMainPanel(Panel,WrappingMainPanel):
