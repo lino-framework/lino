@@ -84,7 +84,7 @@ class WindowWrapper(ActionRenderer):
     def __str__(self):
         return self.ext_name + "(" + self.__class__.__name__ + ")"
         
-    def get_config(self,**d):
+    def unused_get_config(self,**d):
         wc = lh2win(self.lh)
         wc = self.ui.load_window_config(self.action,**wc)
         d.update(permalink_name=self.permalink_name)
@@ -160,7 +160,7 @@ class GridWrapperMixin(WindowWrapper):
     def __init__(self,rh):
         self.rh = rh
     
-    def get_config(self):
+    def unused_get_config(self):
       
         d = super(GridWrapperMixin,self).get_config()
         #~ url = '' self.ui.get_action_url(a,ext_requests.FMT_RUN)
@@ -217,7 +217,7 @@ class GridSlaveWrapper(GridWrapperMixin,SlaveWrapper):
         #~ print 20100419, self.__class__, self.name
         
             
-    def get_config(self):
+    def unused_get_config(self):
         #~ d = super(GridSlaveWrapper,self).get_config()
         d = GridWrapperMixin.get_config(self)
         d.update(name=self.name)
@@ -233,7 +233,7 @@ class unused_DetailSlaveWrapper(SlaveWrapper):
         SlaveWrapper.__init__(self, action, ui, lh, lh._main)
         self.actions = [] # [dict(type=a.action_type,name=a.name,label=a.label) for a in rh.get_actions()]
         
-    def get_config(self):
+    def unused_get_config(self):
         d = super(DetailSlaveWrapper,self).get_config()
         d.update(main_panel=self.lh._main)
         d.update(name=self.action.name)
@@ -247,7 +247,7 @@ class BaseDetailWrapper(MasterWrapper):
     
     def __init__(self,rh,action,**kw):
         self.rh = rh
-        assert isinstance(action,reports.OpenDetailAction)
+        assert isinstance(action,actions.OpenDetailAction)
         if len(rh.report.detail_layouts) == 1:
             lh = rh.report.detail_layouts[0].get_handle(rh.ui)
             main = ext_elems.FormPanel(rh,lh._main) # ,autoScroll=True)
@@ -259,9 +259,11 @@ class BaseDetailWrapper(MasterWrapper):
             tabs = [l.get_handle(rh.ui)._main for l in rh.report.detail_layouts]
             main = ext_elems.FormPanel(rh,ext_elems.TabPanel(tabs)) # ,autoScroll=True)
             WindowWrapper.__init__(self,action,rh.ui,None,main,**kw) 
-        #~ main.value.update(region='center')
+        #~ main.update(region='center')
+        main.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rh.get_actions(action)]) # if a.show_in_detail])
+        main.update(ls_data_url=rh.ui.get_actor_url(rh.report))
         
-    def get_config(self):
+    def unused_get_config(self):
         d = MasterWrapper.get_config(self)
         url = self.ui.build_url('api',self.action.actor.app_label,self.action.actor._actor_name)
         d.update(url_data=url) 
@@ -273,14 +275,16 @@ class BaseDetailWrapper(MasterWrapper):
         
         
 class DetailWrapper(BaseDetailWrapper):
-    def get_config(self):
+    def __init__(self,rh,action,**kw):
+        BaseDetailWrapper.__init__(self,rh,action,**kw)
+    def unused_get_config(self):
         d = BaseDetailWrapper.get_config(self)
         #~ d.update(ls_bbar_actions=[ext_elems.a2btn(a) for a in self.rh.get_actions() if not a.hidden])
         d.update(ls_bbar_actions=[self.ui.a2btn(a) for a in self.rh.get_actions() if a.show_in_detail])
         return d
   
 class InsertWrapper(BaseDetailWrapper):
-    def get_config(self):
+    def unused_get_config(self):
         d = BaseDetailWrapper.get_config(self)
         d.update(title=_('%s into %s') %(self.action.label,self.action.actor.get_title(None)))
         d.update(record_id=-99999)

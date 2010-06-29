@@ -74,8 +74,10 @@ class Action: # (base.Handled):
     needs_validation = False
     #~ grid_button = True
     #~ hidden = False
-    show_in_detail = True
-    show_in_list = True
+    #~ show_in_detail = True
+    #~ show_in_list = True
+    client_side = False
+    callable_from = None
     
     def __init__(self,actor):
     #~ def __init__(self,ah):
@@ -86,16 +88,19 @@ class Action: # (base.Handled):
         if self.label is None:
             self.label = self.name #self.__class__.__name__
         
+        assert self.callable_from is None or isinstance(self.callable_from,(tuple,type)), "%s" % self
         
     def __str__(self):
         return str(self.actor)+'.'+self.name
-
         
-    def run_action(self,act):
-        raise NotImplementedError
+    def get_list_title(self,rh):
+        return rh.get_title(None)
         
-    def before_run(self,act):
-        pass
+    #~ def run_action(self,act):
+        #~ raise NotImplementedError
+        
+    #~ def before_run(self,act):
+        #~ pass
         
         
         
@@ -103,7 +108,6 @@ class Action: # (base.Handled):
 class RowsAction(Action):
     needs_selection = False
     needs_validation = False
-    
     def before_run(self,ar):
         if self.needs_selection and len(ar.selected_rows) == 0:
             return _("No selection. Nothing to do.")
@@ -111,6 +115,7 @@ class RowsAction(Action):
             
 
 class WindowAction(Action):
+    client_side = False
     #~ response_format = 'act' # ext_requests.FMT_RUN
 
     def run_action(self,ar):
@@ -125,6 +130,76 @@ class OpenWindowAction(WindowAction):
 class ToggleWindowAction(WindowAction):
     opens_a_slave = True
     #~ action_type = 'toggle_window'    
+    
+class GridEdit(OpenWindowAction):
+    #~ hidden = True
+    #~ show_in_list = False
+    #~ show_in_detail = False
+    callable_from = tuple()
+  
+    name = 'grid'
+    
+    def __init__(self,rpt):
+        self.label = rpt.label
+        Action.__init__(self,rpt)
+
+
+#~ class InsertRow(actions.OpenWindowAction):
+class OpenDetailAction(OpenWindowAction):
+    callable_from = (GridEdit,)
+    #~ show_in_detail = False
+    needs_selection = True
+    name = 'detail'
+    label = _("Detail")
+    
+    def get_elem_title(self,elem):
+        return _("%s (Detail)")
+    
+    #~ def __init__(self,rpt,layout):
+        #~ self.layout = layout
+        #~ self.label = layout.label
+        #~ self.name = layout._actor_name
+        #~ actions.OpenWindowAction.__init__(self,rpt)
+        
+class InsertRow(OpenDetailAction):
+    callable_from = (GridEdit,OpenDetailAction)
+    name = 'insert'
+    label = _("Insert")
+    key = INSERT # (ctrl=True)
+    needs_selection = False
+    
+    def get_list_title(self,rh):
+        return _("Insert into %s" % force_unicode(rh.get_title(None)))
+  
+class unused_SlaveDetailAction(ToggleWindowAction):
+    name = 'detail'
+    def __init__(self,actor,layout):
+        self.layout = layout
+        self.label = layout.label
+        #~ self.name = layout._actor_name
+        ToggleWindowAction.__init__(self,actor)
+        
+                
+class SlaveGridAction(ToggleWindowAction):
+  
+    def __init__(self,actor,slave):
+        #~ assert isinstance(slave,Report)
+        self.slave = slave # .get_handle(ah.ui)
+        self.name = slave._actor_name
+        #~ print 20100415,self.name
+        self.label = slave.button_label
+        ToggleWindowAction.__init__(self,actor)
+        
+        
+class DeleteSelected(RowsAction):
+    needs_selection = True
+    label = _("Delete")
+    #~ name = 'delete'
+    key = DELETE # (ctrl=True)
+    client_side = True
+    
+        
+    
                 
     
     

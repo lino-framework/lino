@@ -762,16 +762,12 @@ class GridElement(Container): #,DataElementMixin):
         #~ self.setup()
         rh = self.report.get_handle(self.lh.ui)
         d = LayoutElement.ext_options(self,**d)
-        d.update(clicksToEdit=2)
-        d.update(viewConfig=dict(
-          #autoScroll=True,
-          #autoFill=True,
-          #forceFit=True,
-          #enableRowBody=True,
-          showPreview=True,
-          scrollOffset=200,
-          emptyText="Nix gefunden!"
-        ))
+        #~ d.update(clicksToEdit=2)
+        #~ d.update(viewConfig=dict(
+          #~ showPreview=True,
+          #~ scrollOffset=200,
+          #~ emptyText="Nix gefunden!"
+        #~ ))
         #d.update(autoScroll=True)
         #d.update(fitToFrame=True)
         d.update(emptyText="Nix gefunden...")
@@ -784,7 +780,7 @@ class GridElement(Container): #,DataElementMixin):
         #d.update(colModel=js_code(self.column_model.ext_name))
         #~ d.update(autoHeight=True)
         #d.update(layout='fit')
-        d.update(enableColLock=False)
+        #~ d.update(enableColLock=False)
         d.update(ls_quick_edit=True)
         d.update(ls_content_type=rh.content_type)
         
@@ -795,7 +791,7 @@ class GridElement(Container): #,DataElementMixin):
             #~ )
         
         #~ d.update(bbar=[a2btn(a) for a in rh.get_actions() if not a.hidden])
-        d.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rh.get_actions() if a.show_in_list])
+        d.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rh.get_actions(rh.report.default_action)]) # if a.show_in_list])
         #~ d.update(ls_bbar_actions=[a for a in rh.get_actions() if not a.hidden])
         #~ print 20100624, d['ls_bbar_actions']
         
@@ -951,8 +947,6 @@ class TabPanel(jsgen.Component):
         jsgen.Value.__init__(self,kw)
         
 
-        
-#~ class FormPanel(jsgen.Value):
 class FormPanel(jsgen.Component):
     value_template = "new Lino.FormPanel(%s,params)"
     #~ value_template = "new Ext.form.FormPanel(%s)"
@@ -962,47 +956,10 @@ class FormPanel(jsgen.Component):
           #~ autoScroll=True,
           layout='fit',
         )
-        kw.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rh.get_actions() if a.show_in_detail])
+        #~ kw.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rh.get_actions() if a.show_in_detail])
+        #~ kw.update(ls_data_url=rh.ui.get_actor_url(rh.report))
         jsgen.Value.__init__(self,kw)
 
-class unused_FormMainPanel(Panel,WrappingMainPanel):
-    value_template = "new Ext.form.FormPanel(%s)"
-    
-    def __init__(self,lh,name,vertical,*elements,**kw):
-        #DataElementMixin.__init__(self,lh.link)
-        Panel.__init__(self,lh,name,vertical,*elements,**kw)
-        MainPanel.__init__(self)
-
-    def unused_get_datalink(self):
-        return self.lh.datalink
-        
-    def ext_options(self,**d):
-        d = Panel.ext_options(self,**d)
-        #d.update(title=self.lh.label)
-        #d.update(region='east',split=True) #,width=300)
-        d.update(autoScroll=True)
-        #d.update(items=js_code("[%s]" % ",".join([e.as_ext() for e in self.elements])))
-        d.update(items=self.elements)
-        d.update(autoHeight=False)
-        return d
-        
-    def subvars(self):
-        for e in WrappingMainPanel.subvars(self):
-            yield e
-        for e in Panel.subvars(self):
-            yield e
-            
-
-    def unused_js_body(self):
-        yield "  this.get_values = function() {"
-        yield "    var v = {};"
-        for e in self.lh.datalink.inputs:
-            yield "    v[%r] = this.main_panel.getForm().findField(%r).getValue();" % (e.name,e.name)
-        yield "    return v;"
-        yield "  };"
-        yield "this.get_window_config = function() {"
-        yield "  return { 'window_type': 'form' }"
-        yield "}"
 
 _field2elem = (
     (models.TextField, TextFieldElement),

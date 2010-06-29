@@ -276,7 +276,8 @@ if (typeof(console) == 'undefined') console = new PseudoConsole();
 Lino.notify = function(msg) {
   console.log(msg);
   //~ Ext.getCmp('konsole').update(msg);
-  Ext.getCmp('konsole').update(msg.replace(/\n/g,'<br/>'));
+  Ext.get('konsole').update(msg.replace(/\n/g,'<br/>'));
+  //~ Ext.getCmp('konsole').update(msg.replace(/\n/g,'<br/>'));
 };
 
 //~ Lino.debug = function() {
@@ -599,19 +600,26 @@ Lino.id_renderer = function(value, metaData, record, rowIndex, colIndex, store) 
 }
 
 Lino.bbar_action_handler = function (caller,a) {
-  //~ console.log(20100624,caller);
-  return function(btn,evt) { 
+  console.log(20100629,caller,a);
+  if (a.client_side) return function(btn,evt) { 
+    return a.handler(caller);
+  };
+  if (a.needs_selection) return function(btn,evt) { 
     var l = caller.get_selected();
-    if (l.length == 0) 
+    if (l.length == 0)  {
       Lino.notify('No selection.');
-    else if (l.length == 1) 
+      return;
+    } 
+    if (l.length == 1) {
       window.location = caller.ls_data_url+'/'+l[0]+'?fmt='+a.name; 
-    else {
+    } else {
       for (var i = 0; i < l.length; i++) {
-        window.open(caller.ls_data_url+'/'+l[i]+'?fmt='+a.name); 
+        window.open(caller.ls_data_url+'/'+l[i]+'?fmt='+a.name);
         //~ window.location = caller.ls_data_url+'/'+l[i]+'?fmt='+a.name; 
       }
     }
+  }; else return function(btn,evt) { 
+    window.location = caller.ls_data_url+'?fmt='+a.name; 
   };
 };
 
@@ -640,6 +648,33 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   constructor : function(config,params){
     if (params) 
       Ext.apply(config,params);
+    config.bbar = Lino.build_bbar(this,config.ls_bbar_actions);
+    config.bbar.push({
+        text: "Save", 
+        scope: this,
+        handler: function() {
+          var rec = this.get_current_record();
+          if (rec) {
+            //~ console.log('Save handler: this=',this);
+            this.form.submit({
+              url:this.ls_data_url + '/' + rec.id,
+              method: 'PUT',
+              scope: this,
+              success: function(form, action) {
+                Lino.notify(action.result.msg);
+                //~ this.caller.refresh();
+              },
+              failure: Lino.on_submit_failure,
+              clientValidation: true
+            })
+          } else Lino.notify("Sorry, no current record.");
+        }
+      });
+    //~ console.log('20100629',this.ls_data_url);
+    config.bbar.push({
+        text: "Cancel", 
+        handler: function() { history.back()}
+    });
     Lino.FormPanel.superclass.constructor.call(this, config);
     if (config.data_record) {
       this.load_master_record(config.data_record);
@@ -679,6 +714,18 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
 });
     
 Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
+  clicksToEdit:2,
+  enableColLock: false,
+  viewConfig: {
+          //autoScroll:true,
+          //autoFill:true,
+          //forceFit=True,
+          //enableRowBody=True,
+          showPreview:true,
+          scrollOffset:200,
+          emptyText:"Nix gefunden!"
+        },
+  
   constructor : function(config,params){
     if (params) Ext.apply(config,params);
     config.store = new Ext.data.JsonStore({ 

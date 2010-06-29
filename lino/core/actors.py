@@ -227,8 +227,10 @@ class Actor(Handled):
     def get_action(self,name):
         return self._actions_dict.get(name,None)
         
-    def get_actions(self):
-        return self._actions_list
+    def get_actions(self,callable_from=None):
+        if callable_from is None:
+            return self._actions_list
+        return [a for a in self._actions_list if a.callable_from is None or isinstance(callable_from,a.callable_from)]
     
         
 

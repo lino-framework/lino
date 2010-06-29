@@ -75,11 +75,9 @@ class MultiTableBase:
 class PrintAction(actions.Action):
     name = 'print'
     label = _('Print')
-    #~ def __init__(self,actor,pm):
-        #~ self.pm = pm
-        #~ self.name = pm.name
-        #~ self.label = pm.button_label
-        #~ actions.Action.__init__(self,actor)
+    needs_selection = True
+    callable_from = None
+    
 
 
 class Printable:

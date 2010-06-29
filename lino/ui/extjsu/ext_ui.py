@@ -220,7 +220,11 @@ class ExtUI(base.UI):
         raise Exception("No element class for layout %r" % layout)
         
         
-    def html_page(self,*comps,**kw):
+    def html_page(self,request,*comps,**kw):
+        comps = (ext_elems.Toolbar(
+          items=self.site.get_site_menu(request.user),
+          region='north',height=29),) + comps
+      
         yield '<html><head>'
         yield '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />'
         title = kw.get('title',None)
@@ -287,6 +291,7 @@ class ExtUI(base.UI):
         #~ yield '<div id="tbar"/>'
         #~ yield '<div id="main"/>'
         #~ yield '<div id="bbar"/>'
+        yield '<div id="konsole"/>'
         yield "</body></html>"
         
             
@@ -344,15 +349,20 @@ class ExtUI(base.UI):
             kw.update(**wc)
         return kw
 
-    def a2btn(self,a):
-        return dict(
-          opens_a_slave=a.opens_a_slave,
+    def a2btn(self,a,**kw):
+        if a.client_side:
+            kw.update(handler=js_code('Lino.%s' % a))
+        else:
+            kw.update(url=self.build_url("api",a.actor.app_label,a.actor._actor_name,fmt=a.name))
+        kw.update(
+          client_side=a.client_side,
+          needs_selection=a.needs_selection,
+          #~ opens_a_slave=a.opens_a_slave,
           #~ handler=js_code("Lino.%s" % a),
           name=a.name,
           label=unicode(a.label),
-          url=self.build_url("api",a.actor.app_label,a.actor._actor_name,fmt=a.name)
         )
-        
+        return kw
   
     def get_urls(self):
         urlpatterns = patterns(self.name,
@@ -360,7 +370,8 @@ class ExtUI(base.UI):
         urlpatterns += patterns(self.name,
             #~ (r'^menu$', self.menu_view),
             #~ (r'^list/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.list_report_view),
-            (r'^grid_action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<grid_action>\w+)$', self.json_report_view),
+            #~ 20100629 check if the following is still used:
+            # (r'^grid_action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<grid_action>\w+)$', self.json_report_view),
             #~ (r'^grid_afteredit/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.grid_afteredit_view),
             (r'^submit/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.form_submit_view),
             (r'api/(?P<app_label>\w+)/(?P<actor>\w+)$', self.api_list_view),
@@ -421,11 +432,12 @@ class ExtUI(base.UI):
         kw.update(title=lino_site.title)
         #~ mnu = py2js(lino_site.get_site_menu(request.user))
         #~ print mnu
-        tbar=ext_elems.Toolbar(items=lino_site.get_site_menu(request.user),region='north',height=29)# renderTo='tbar')
+        #~ tbar=ext_elems.Toolbar(items=lino_site.get_site_menu(request.user),region='north',height=29)# renderTo='tbar')
         main=ext_elems.ExtPanel(html=lino_site.index_html.encode('ascii','xmlcharrefreplace'),region='center')#,renderTo='main')
-        html = '\n'.join(self.html_page(tbar,main,**kw))
+        html = '\n'.join(self.html_page(request,main,**kw))
         return HttpResponse(html)
 
+                
 
     def api_list_view(self,request,app_label=None,actor=None):
     #~ def api_list_view(self,request,app_label=None,actor=None,fmt=None):
@@ -443,8 +455,6 @@ class ExtUI(base.UI):
         if not rh.report.can_view.passes(request.user):
             msg = _("User %s cannot view %s.") % (request.user,rh.report)
             return http.HttpResponseForbidden()
-        a = rh.report.list_action
-        ar = ext_requests.ViewReportRequest(request,rh,a)
         if request.method == 'POST':
             """
             Wikipedia:
@@ -453,6 +463,7 @@ class ExtUI(base.UI):
             """
             #~ data = rh.store.get_from_form(request.POST)
             #~ instance = ar.create_instance(**data)
+            ar = ext_requests.ViewReportRequest(request,rh,rh.report.list_action)
             instance = ar.create_instance()
             rh.store.form2obj(request.POST,instance)
             instance.save(force_insert=True)
@@ -461,26 +472,16 @@ class ExtUI(base.UI):
             
         if request.method == 'GET':
             fmt = request.GET.get('fmt',None)
-            if fmt  == 'grid':
-                #~ kw = {}
-                #~ kw.update(title=unicode(rh.get_title(None)))
-                #~ tbar=ext_elems.Toolbar(
-                  #~ items=self.site.get_site_menu(request.user),
-                  #~ region='north',height=29)# renderTo='tbar')
-                #~ return HttpResponse(self.html_page(rh.list_layout._main,tbar,**kw))
-                
-                a = rpt.get_action(fmt)
+            a = rpt.get_action(fmt)
+            #~ if fmt  == 'grid':
+            if a is not None:
                 kw = {}
-                kw.update(title=unicode(rh.get_title(None)))
-                tbar=ext_elems.Toolbar(
-                  items=self.site.get_site_menu(request.user),
-                  region='north',height=29)# renderTo='tbar')
-                #~ print 20100624, a.window_wrapper_u.main
+                #~ kw.update(title=unicode(rh.get_title(None)))
+                kw.update(title=unicode(a.get_list_title(rh)))
                 params = dict(region='center')
                 main = js_code('Lino.%s(%s)' % (a,py2js(params)))
-                #~ return HttpResponse(self.html_page(tbar,a.window_wrapper_u.main,**kw))
-                return HttpResponse(self.html_page(tbar,main,**kw))
-                
+                return HttpResponse(self.html_page(request,main,**kw))
+            ar = ext_requests.ViewReportRequest(request,rh,rh.report.list_action)
 
             if fmt == 'csv':
                 response = HttpResponse(mimetype='text/csv')
@@ -583,19 +584,23 @@ class ExtUI(base.UI):
             fmt = request.GET.get('fmt',None)
             if fmt is None:
                 return json_response(elem2rec(elem))
-            if fmt == 'detail':
-                a = rpt.get_action(fmt)
-                kw = {}
-                kw.update(title=unicode(elem))
-                #~ kw.update(content_type=rh.content_type)
-                tbar=ext_elems.Toolbar(
-                  items=self.site.get_site_menu(request.user),
-                  region='north',height=29)# renderTo='tbar')
-                #~ print 20100624, a.window_wrapper_u.main
-                params = dict(data_record=elem2rec(request,ah,elem),region='center')
-                main = js_code('Lino.%s(%s)' % (a,py2js(params)))
-                #~ return HttpResponse(self.html_page(tbar,a.window_wrapper_u.main,**kw))
-                return HttpResponse(self.html_page(tbar,main,**kw))
+            a = rpt.get_action(fmt)
+            #~ if fmt == 'detail':
+            if a is not None:
+                if isinstance(a,actions.OpenWindowAction):
+                    kw = {}
+                    #~ kw.update(title=unicode(elem))
+                    kw.update(title=unicode(a.get_elem_title(elem)))
+                    #~ kw.update(content_type=rh.content_type)
+                    #~ tbar=ext_elems.Toolbar(
+                      #~ items=self.site.get_site_menu(request.user),
+                      #~ region='north',height=29)# renderTo='tbar')
+                    #~ print 20100624, a.window_wrapper_u.main
+                    params = dict(data_record=elem2rec(request,ah,elem),region='center')
+                    main = js_code('Lino.%s(%s)' % (a,py2js(params)))
+                    #~ return HttpResponse(self.html_page(tbar,a.window_wrapper_u.main,**kw))
+                    return HttpResponse(self.html_page(request,main,**kw))
+                raise NotImplementedError("%r action %r is not implemented)" % (elem,fmt))
               
             if fmt == 'picture':
                 pm = mixins.get_print_method('picture')
@@ -822,9 +827,9 @@ class ExtUI(base.UI):
         
     def action_renderer(self,a,h):
         if isinstance(a,PrintAction): return ext_windows.DownloadRenderer(self,a)
-        if isinstance(a,reports.DeleteSelected): return ext_windows.DeleteRenderer(self,a)
+        if isinstance(a,actions.DeleteSelected): return ext_windows.DeleteRenderer(self,a)
           
-        if isinstance(a,reports.GridEdit):
+        if isinstance(a,actions.GridEdit):
             #~ if a.actor.master is not None:
                 #~ return None
                 #~ raise Exception("action_window_wrapper() for slave report %s" % a.actor)
@@ -832,16 +837,16 @@ class ExtUI(base.UI):
             return ext_windows.GridMasterWrapper(h,a)
             #~ else:
                 #~ return ext_windows.GridSlaveWrapper(self,a.name,a)
-        if isinstance(a,reports.InsertRow):
+        if isinstance(a,actions.InsertRow):
             return ext_windows.InsertWrapper(h,a)
             
-        if isinstance(a,reports.OpenDetailAction):
+        if isinstance(a,actions.OpenDetailAction):
             return ext_windows.DetailWrapper(h,a)
 
-        if isinstance(a,reports.SlaveGridAction):
+        if isinstance(a,actions.SlaveGridAction):
             return ext_windows.GridSlaveWrapper(h,a) # a.name,a.slave.default_action)
             
-        if isinstance(a,reports.SlaveDetailAction): # not tested
+        if isinstance(a,actions.SlaveDetailAction): # not tested
             return ext_windows.DetailSlaveWrapper(self,a)
             
         

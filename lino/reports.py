@@ -169,63 +169,6 @@ def discover():
 
 
 
-class GridEdit(actions.OpenWindowAction):
-    #~ hidden = True
-    show_in_list = False
-    show_in_detail = False
-  
-    name = 'grid'
-    
-    def __init__(self,rpt):
-        self.label = rpt.label
-        actions.Action.__init__(self,rpt)
-
-
-#~ class InsertRow(actions.OpenWindowAction):
-class OpenDetailAction(actions.OpenWindowAction):
-    show_in_detail = False
-    needs_selection = True
-    name = 'detail'
-    label = _("Detail")
-    
-    #~ def __init__(self,rpt,layout):
-        #~ self.layout = layout
-        #~ self.label = layout.label
-        #~ self.name = layout._actor_name
-        #~ actions.OpenWindowAction.__init__(self,rpt)
-        
-class InsertRow(OpenDetailAction):
-    name = 'insert'
-    label = _("Insert")
-    key = actions.INSERT # (ctrl=True)
-  
-class SlaveDetailAction(actions.ToggleWindowAction):
-    name = 'detail'
-    def __init__(self,actor,layout):
-        self.layout = layout
-        self.label = layout.label
-        #~ self.name = layout._actor_name
-        actions.ToggleWindowAction.__init__(self,actor)
-        
-                
-class SlaveGridAction(actions.ToggleWindowAction):
-  
-    def __init__(self,actor,slave):
-        assert isinstance(slave,Report)
-        self.slave = slave # .get_handle(ah.ui)
-        self.name = slave._actor_name
-        #~ print 20100415,self.name
-        self.label = slave.button_label
-        actions.ToggleWindowAction.__init__(self,actor)
-        
-        
-class DeleteSelected(actions.RowsAction):
-    needs_selection = True
-    label = _("Delete")
-    #~ name = 'delete'
-    key = actions.DELETE # (ctrl=True)
-    
-        
 
 class ReportHandle(datalinks.DataLink,base.Handle): #,actors.ActorHandle):
   
@@ -286,8 +229,8 @@ class ReportHandle(datalinks.DataLink,base.Handle): #,actors.ActorHandle):
         
     def get_action(self,name):
         return self.report.get_action(name)
-    def get_actions(self):
-        return self.report.get_actions()
+    def get_actions(self,*args,**kw):
+        return self.report.get_actions(*args,**kw)
         
     def get_details(self):
         return self.report.details
@@ -319,7 +262,8 @@ class unused_ElementAction(actions.Action):
 class ListAction(actions.Action):
     #~ response_format = 'json' # ext_requests.FMT_JSON
     #~ hidden = True
-    show_in_list = False
+    callable_from = ()
+    #~ show_in_list = False
     #~ show_in_detail = True
     name = 'list'
     
@@ -477,7 +421,7 @@ class ReportActionRequest(actions.ActionRequest): # was ReportRequest
 
 
 class Report(actors.Actor,base.Handled): # actions.Action): # 
-    default_action_class = GridEdit
+    default_action_class = actions.GridEdit
     _handle_class = ReportHandle
     #~ _handle_selector = base.UI
     params = {}
@@ -540,7 +484,7 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
             self.model = resolve_model(self.model,self.app_label,self)
         if self.model is not None:
             self.app_label = self.model._meta.app_label
-            self.actions = self.actions + [ DeleteSelected ] #, InsertRow ]
+            self.actions = self.actions + [ actions.DeleteSelected ] #, InsertRow ]
             m = getattr(self.model,'setup_report',None)
             if m:
                 m(self)
@@ -599,14 +543,14 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
         
     def do_setup(self):
       
-        actions = [ ac(self) for ac in self.actions ]
+        alist = [ ac(self) for ac in self.actions ]
           
         if self.model is not None:
             self.list_layout = layouts.list_layout_factory(self)
             self.detail_layouts = getattr(self.model,'_lino_layouts',[])
               
             if issubclass(self.model,mixins.Printable):
-                actions.append(mixins.PrintAction(self))
+                alist.append(mixins.PrintAction(self))
                 #~ print 20100517, mixins.pm_list
                 #~ for pm in mixins.pm_list:
                     #~ if pm.button_label:
@@ -620,11 +564,11 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
             if len(self.detail_layouts) > 0:
                 #~ actions.append(InsertRow(self,self.detail_layouts[0]))
                 #~ 20100513
-                actions.append(InsertRow(self))
+                alist.append(actions.InsertRow(self))
                 # 20100513
                 #~ self.details = [ DetailAction(self,pl) for pl in self.detail_layouts ]
                 #~ actions += self.details
-                actions.append(OpenDetailAction(self))
+                alist.append(actions.OpenDetailAction(self))
                     
             #~ for slave in self._slaves:
                 #~ actions.append(SlaveGridAction(self,slave))
@@ -633,14 +577,14 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
                 from lino.modlib.properties import models as properties
                 if properties.Property.properties_for_model(self.model).count() > 0:
                     a = properties.PropertiesAction(self)
-                    actions.append(a)
+                    alist.append(a)
                     
                 from lino.modlib.links import models as links
-                actions.append(SlaveGridAction(self,links.LinksByOwner()))
+                alist.append(SlaveGridAction(self,links.LinksByOwner()))
             
-        actions.append(self.default_action)
+        alist.append(self.default_action)
         #~ actions.append(self.data_action)
-        self.set_actions(actions)
+        self.set_actions(alist)
                 
         if self.button_label is None:
             self.button_label = self.label
