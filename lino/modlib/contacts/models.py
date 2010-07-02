@@ -149,9 +149,9 @@ class Person(Contact):
         return r
         
     def before_save(self):
-        if not self.name:
-            l = filter(lambda x:x,[self.last_name,self.first_name,self.title])
-            self.name = " ".join(l)
+        #~ if not self.name:
+        l = filter(lambda x:x,[self.last_name,self.first_name,self.title])
+        self.name = " ".join(l)
 
 class PersonDetail(ContactDetail):
     datalink = 'contacts.Person'

@@ -76,7 +76,7 @@ class Action: # (base.Handled):
     #~ hidden = False
     #~ show_in_detail = True
     #~ show_in_list = True
-    client_side = False
+    #~ client_side = False
     callable_from = None
     
     def __init__(self,actor):
@@ -115,7 +115,7 @@ class RowsAction(Action):
             
 
 class WindowAction(Action):
-    client_side = False
+    #~ client_side = False
     #~ response_format = 'act' # ext_requests.FMT_RUN
 
     def run_action(self,ar):
@@ -144,8 +144,9 @@ class GridEdit(OpenWindowAction):
         Action.__init__(self,rpt)
 
 
+    
 #~ class InsertRow(actions.OpenWindowAction):
-class OpenDetailAction(OpenWindowAction):
+class ShowDetailAction(OpenWindowAction):
     callable_from = (GridEdit,)
     #~ show_in_detail = False
     needs_selection = True
@@ -153,7 +154,7 @@ class OpenDetailAction(OpenWindowAction):
     label = _("Detail")
     
     def get_elem_title(self,elem):
-        return _("%s (Detail)")
+        return _("%s (Detail)")  % unicode(elem)
     
     #~ def __init__(self,rpt,layout):
         #~ self.layout = layout
@@ -161,15 +162,15 @@ class OpenDetailAction(OpenWindowAction):
         #~ self.name = layout._actor_name
         #~ actions.OpenWindowAction.__init__(self,rpt)
         
-class InsertRow(OpenDetailAction):
-    callable_from = (GridEdit,OpenDetailAction)
+class InsertRow(OpenWindowAction):
+    callable_from = (GridEdit,ShowDetailAction)
     name = 'insert'
     label = _("Insert")
     key = INSERT # (ctrl=True)
     needs_selection = False
     
     def get_list_title(self,rh):
-        return _("Insert into %s" % force_unicode(rh.get_title(None)))
+        return _("Insert into %s") % force_unicode(rh.get_title(None))
   
 class unused_SlaveDetailAction(ToggleWindowAction):
     name = 'detail'
@@ -192,13 +193,23 @@ class SlaveGridAction(ToggleWindowAction):
         
         
 class DeleteSelected(RowsAction):
+    callable_from = (GridEdit,ShowDetailAction)
     needs_selection = True
     label = _("Delete")
     #~ name = 'delete'
     key = DELETE # (ctrl=True)
-    client_side = True
+    #~ client_side = True
     
         
+class SubmitDetail(Action):
+    #~ name = 'submit'
+    label = _("Save")
+    callable_from = (ShowDetailAction,)
+    
+class SubmitInsert(Action):
+    #~ name = 'submit'
+    label = _("Insert")
+    callable_from = (InsertRow,)
     
                 
     

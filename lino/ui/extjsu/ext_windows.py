@@ -247,7 +247,7 @@ class BaseDetailWrapper(MasterWrapper):
     
     def __init__(self,rh,action,**kw):
         self.rh = rh
-        assert isinstance(action,actions.OpenDetailAction)
+        assert isinstance(action,(actions.ShowDetailAction,actions.InsertRow))
         if len(rh.report.detail_layouts) == 1:
             lh = rh.report.detail_layouts[0].get_handle(rh.ui)
             main = ext_elems.FormPanel(rh,lh._main) # ,autoScroll=True)

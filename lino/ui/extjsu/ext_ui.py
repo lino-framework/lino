@@ -349,21 +349,6 @@ class ExtUI(base.UI):
             kw.update(**wc)
         return kw
 
-    def a2btn(self,a,**kw):
-        if a.client_side:
-            kw.update(handler=js_code('Lino.%s' % a))
-        else:
-            kw.update(url=self.build_url("api",a.actor.app_label,a.actor._actor_name,fmt=a.name))
-        kw.update(
-          client_side=a.client_side,
-          needs_selection=a.needs_selection,
-          #~ opens_a_slave=a.opens_a_slave,
-          #~ handler=js_code("Lino.%s" % a),
-          name=a.name,
-          label=unicode(a.label),
-        )
-        return kw
-  
     def get_urls(self):
         urlpatterns = patterns(self.name,
             (r'^$', self.index_view))
@@ -840,14 +825,14 @@ class ExtUI(base.UI):
         if isinstance(a,actions.InsertRow):
             return ext_windows.InsertWrapper(h,a)
             
-        if isinstance(a,actions.OpenDetailAction):
+        if isinstance(a,actions.ShowDetailAction):
             return ext_windows.DetailWrapper(h,a)
 
         if isinstance(a,actions.SlaveGridAction):
             return ext_windows.GridSlaveWrapper(h,a) # a.name,a.slave.default_action)
             
-        if isinstance(a,actions.SlaveDetailAction): # not tested
-            return ext_windows.DetailSlaveWrapper(self,a)
+        #~ if isinstance(a,actions.SlaveDetailAction): # not tested
+            #~ return ext_windows.DetailSlaveWrapper(self,a)
             
         
     def source_dir(self):
@@ -871,6 +856,28 @@ class ExtUI(base.UI):
             for a in h.get_actions():
                 a.window_wrapper_u = self.action_renderer(a,h)
             
+    def a2btn(self,a,**kw):
+        if isinstance(a,actions.SubmitDetail):
+            kw.update(client_side=True)
+            #~ kw.update(scope=js_code('this'))
+            kw.update(handler=js_code('Lino.submit_detail'))
+        elif isinstance(a,actions.SubmitInsert):
+            kw.update(client_side=True)
+            #~ kw.update(scope=js_code('this'))
+            kw.update(handler=js_code('Lino.submit_insert'))
+        elif isinstance(a,actions.DeleteSelected):
+            kw.update(client_side=True)
+            kw.update(handler=js_code('Lino.%s' % a))
+        else:
+            kw.update(client_side=False)
+            kw.update(url=self.build_url("api",a.actor.app_label,a.actor._actor_name,fmt=a.name))
+        kw.update(
+          needs_selection=a.needs_selection,
+          name=a.name,
+          label=unicode(a.label),
+        )
+        return kw
+  
         
 #~ ui = ExtUI()
 

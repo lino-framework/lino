@@ -562,13 +562,10 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
                 self._slaves = []
                 
             if len(self.detail_layouts) > 0:
-                #~ actions.append(InsertRow(self,self.detail_layouts[0]))
-                #~ 20100513
+                alist.append(actions.ShowDetailAction(self))
+                alist.append(actions.SubmitDetail(self))
                 alist.append(actions.InsertRow(self))
-                # 20100513
-                #~ self.details = [ DetailAction(self,pl) for pl in self.detail_layouts ]
-                #~ actions += self.details
-                alist.append(actions.OpenDetailAction(self))
+                alist.append(actions.SubmitInsert(self))
                     
             #~ for slave in self._slaves:
                 #~ actions.append(SlaveGridAction(self,slave))

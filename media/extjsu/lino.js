@@ -600,7 +600,7 @@ Lino.id_renderer = function(value, metaData, record, rowIndex, colIndex, store) 
 }
 
 Lino.bbar_action_handler = function (caller,a) {
-  console.log(20100629,caller,a);
+  //~ console.log(20100629,caller,a);
   if (a.client_side) return function(btn,evt) { 
     return a.handler(caller);
   };
@@ -632,6 +632,7 @@ Lino.build_bbar = function(caller,actions) {
       var btn = {
         text: actions[i].label
       };
+      btn.scope = caller;
       btn.handler = Lino.bbar_action_handler(caller,actions[i]) ;
       //~ btn.handler = actions[i].handler.createCallback(caller);
       //~ btn.href = actions[i].url;
@@ -643,33 +644,48 @@ Lino.build_bbar = function(caller,actions) {
   }
 };
 
+Lino.submit_detail = function(caller) {
+  var rec = caller.get_current_record();
+  if (rec) {
+    //~ console.log('Save handler: this=',this);
+    caller.form.submit({
+      url:caller.ls_data_url + '/' + rec.id,
+      method: 'PUT',
+      scope: caller,
+      success: function(form, action) {
+        Lino.notify(action.result.msg);
+        //~ this.caller.refresh();
+      },
+      failure: Lino.on_submit_failure,
+      clientValidation: true
+    })
+  } else Lino.notify("Sorry, no current record.");
+};
+
+Lino.submit_insert = function(caller) {
+  caller.form.submit({
+    url:caller.ls_data_url,
+    method: 'POST',
+    scope: caller,
+    success: function(form, action) {
+      Lino.notify(action.result.msg);
+      //~ this.caller.refresh();
+    },
+    failure: Lino.on_submit_failure,
+    clientValidation: true
+  })
+};
 
 Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   constructor : function(config,params){
     if (params) 
       Ext.apply(config,params);
     config.bbar = Lino.build_bbar(this,config.ls_bbar_actions);
-    config.bbar.push({
-        text: "Save", 
-        scope: this,
-        handler: function() {
-          var rec = this.get_current_record();
-          if (rec) {
-            //~ console.log('Save handler: this=',this);
-            this.form.submit({
-              url:this.ls_data_url + '/' + rec.id,
-              method: 'PUT',
-              scope: this,
-              success: function(form, action) {
-                Lino.notify(action.result.msg);
-                //~ this.caller.refresh();
-              },
-              failure: Lino.on_submit_failure,
-              clientValidation: true
-            })
-          } else Lino.notify("Sorry, no current record.");
-        }
-      });
+    //~ config.bbar.push({
+        //~ text: "Save", 
+        //~ scope: this,
+        //~ handler: Lino.submit_detail
+      //~ });
     //~ console.log('20100629',this.ls_data_url);
     config.bbar.push({
         text: "Cancel", 
