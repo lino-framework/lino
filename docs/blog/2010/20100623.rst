@@ -1,0 +1,27 @@
+20100623
+========
+
+Habe vorgestern mit dem Release in Eupen und auf Tups begonnen. 
+
+In Einem habe ich auch die unnütze Etage :file:`src` aus der Verzeichnisstruktur rausgeholt. 
+Also statt `/var/snapshots/lino/src/lino` muss man jetzt immer `/var/snapshots/lino/lino` sagen. 
+Idem für dsbe, igen, timtools und songbook. Dokumentation ist angepasst (wenn ich nichts vergessen habe).
+
+Erfreulich: Der Browser fragt die ext-all-debug.js und lino.js nicht jedesmal neu an, wenn sie mit Apache serviert wurde.
+
+Das bisherige `lino.ui.extjs` heißt jetzt `lino.ui.extjsw`. 
+
+17.45 Uhr : Jetzt wo die beiden user interfaces (jedes mit seinen Schwächen) laufen, wäre es natürlich schön, wenn ich sie beide zugleich anbieten könnte. Mal sehen, ob das sich so einfach machen lässt...
+
+19.10 Uhr : Der Anfang ist gemacht. http://127.0.0.1:8000/ zeigt jetzt einen eher asketischen Auswahlbildschirm:
+
+  Please select a user interface:
+
+    * ExtJS with URIs
+    * ExtJS with Windows
+
+Aber vieles funktioniert noch nicht:
+ * An einigen Stellen generiert er sich AJAX-Calls, die den Prefix noch nicht haben. Zum Beispiel http://127.0.0.1:8000/menu
+ * Einiges ist noch doppelt gemoppelt, wenn ich nun beide UIs auf einem Server habe. Zum Beispiel `jsgen.register_converter(ui.py2js_converter)` wird von beiden UIs gemacht. Für gut müsste ich eine gemeinsame Basisklasse für beide UIs haben.
+
+ * Auch die Frage, ob dieses Feature überhaupt Sinn macht. Spontan würde ich Ja sagen, denn irgendwann wird ja auch ein simple html interface kommen, das zusätzlich zum Haupt-Interface laufen soll. Aber ob das als eigenes UI-Modul implementiert werden wird, weiß ich noch nicht.

@@ -1,0 +1,98 @@
+20090310
+--------
+
+Working on :class:`Report`.
+
+The primary key field of a model is set to ``editable``, 
+but it is rendered with a hidden field.
+
+http://docs.djangoproject.com/en/dev/topics/forms/modelforms/#topics-forms-modelforms
+
+20090315
+--------
+
+Mit der momentanen URL-Struktur kriege ich zwar schön einen Report 
+angezeigt in Listen- und Seitenansicht, mit Auf- und Abblätterei... 
+aber für Unter-Reports ist das eine Sackgasse. Zum Beispiel das 
+folgende URL zeigt eine Rechnung in Vollbild:
+
+    /docs/invoices?flt=2009&pgl=5pgn=3&row=2
+
+Wenn diese Rechnung jetzt außerdem mehrere Seite an Inhalt hat, dann 
+muss man ja auch im Inhalt blättern können. Und auch im Inhalt einen 
+Filter setzen können. Also müsste ich die GET-Variablen mit einem 
+Präfix versehen, um URLs wie die folgende zu kriegen:
+  
+      /docs/invoices?flt=2009&pgl=5pgn=3&row=2&\
+      items_flt=a&items_pgl=5items_pgn=3&items_row=2
+      
+Stattdessen gibt es vielleicht eine bessere Lösung:
+Report.view() behält die drei momentanen Variablen flt, pgl und pgn, 
+aber schon :meth:`Row.links` in :xfile:`grid.html` verlässt diesen
+Report, verweist direkt auf die betreffende Rechnung:
+  
+  /by_pk/igen_invoice/<pk>
+  
+Das Blättern machen wir dann über eine Session-Variable::
+
+  nav = []
+  if page.has_next()
+      nav.append(html.A(
+        "~Next",href=again(request,row=page.number+1)))
+  if page.has_previous()
+      nav.append(html.A(
+        "~Previous",href=again(request,row=page.number-1)))
+  ...
+  request.session.navigation = nav
+
+Also das, was die Templates momentan im ``{% block navigation %}`` 
+konstruieren, wird dann im Code konstruiert und in der Session 
+gespeichert, und die Templates machen nur noch ein generelles
+
+  ``{{ nav.as_ul() }}``
+  
+Und wenn ich jemandem den Permalink einer Rechnung schicke, z.B. `/docs/invoices/7`, 
+dann sieht der Empfänger nicht mehr, wie ich diese Rechnung gefunden habe.
+
+Korrektur: Statt des oben erwähnten ``request.session.navigation = nav`` brauche 
+ich eine :class:`Navigator`.
+
+  nav = Navigator(page)
+  request.session['navigator'] = nav
+
+
+Mal sehen, ob es klappt.
+  
+Och nee, das geht nicht, dadurch verliere ich das Feature, im Vollbild durch einen Report
+blättern zu können. Denn wenn ich auf Vollbild schalte und dann auch Next klicke, wie soll er da
+den Navigator machen, ohne das Queryset selber in der Session zu speichern?
+
+Aber es geht anders: um einen Unterreport zu bearbeiten, verwendet das URL den pk der Rechnung,
+also wenn der Inhalt einer Rechnung "offen" ist, dann kann man eben nicht auf die nächste 
+Rechnung blättern. Ist ja logisch. Und wenn man den Inhalt speichert, ruft er einfach die
+Listenansicht Rechnungen wieder neu auf, mit Positionierung am Ende.
+
+Eine andere Frage ist die URL-Strukur. 
+Bisher war es ja schön einfach: alle URLs entstehen automatisch aus dem Hauptmenü.
+Aber jetzt brauche ich was Neues, 
+denn ich muss ja den primary key aus der URL holen, *ohne* dafür die 
+GET-Variablen zu benutzen.
+
+Also entweder alle Models verfügbar machen:
+
+  /_models/<db_table>/<pk>
+
+Oder aber für Reports wie InvoiceItems, die einen variablen obligatorischen Parameter
+``invoice`` haben (Signatur des Konstruktors analysieren, um die URL zu generieren?)
+
+  /_reports/ItemsByInvoice/<invoice_id>
+  /_reports/InvoicesByPartner/<partner_id>
+  
+Letzteres scheint mir richtig. Aber wie kriege ich das generiert? 
+Das Menü könnte die Actors abfragen, und wenn der Actor ein Report ist, 
+gibt er die URLs zu seinen Unter-Reports zurück.
+Also ein Report müssrw sich selbst nach Methoden durchsuchen...
+Hm...
+
+  
+  

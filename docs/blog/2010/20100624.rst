@@ -1,0 +1,53 @@
+20100624
+--------
+
+Die beiden UIs auf einmal funktionieren immer mehr. Zwei Punkte, an denen ich heute gearbeitet habe:
+
+ * Nachdem ich LinkButton eingebaut hatte, merkte ich, dass das keinen Sinn macht: für die tbar-buttons einer Grid braucht ich doch "normale" Buttons (mit handler: function(){ window.location = URL; }), weil das URL ja dynamisch aus der aktuellen Zeile ermittelt wird.
+
+ * extjsu.api_element_view() holt bei GET das `a.window_wrapper.main` der `detail`-Aktion, und das war ein `lino.ui.extjsw.ext_elems.FormPanel`! Wieso? Na logisch: weil beide UIs "ihren" Action Renderer nach `Action.action_wrapper` setzen. Einfallsreicher Workaround: `action_wrapper_u` statt `action_wrapper`.
+
+Und jetzt kann man also auch in extjsu ein Detail-Fenster in Aktion sehen (wenn man das URL manuell eingibt). Und zwei Dinge sind klar:
+
+ * Es geschieht kein Wunder bzgl. Performance.
+ * Die einfache fensterlose Anwendungsstruktur bleibt mir dennoch sympatisch.
+
+Check-in
+
+Entscheidung: vorläufig doch nur ein UI auf einmal. Weil das doch noch ein bisschen mehr Umbau erfordert. In `settings.py` lass ich bis auf weiteres trotzdem `USER_INTERFACES` (im Plural und als Liste), aber merke: momentan muss diese Liste genau ein Element haben, damit es funktioniert. 
+Also zum Beispiel::
+
+  USER_INTERFACES = [
+    #~ 'lino.ui.extjsu',
+    'lino.ui.extjsw'
+    ]
+
+Also `extjsw` funktioniert momentan zufriedenstellend. 
+Ich arbeite noch ein bicchen am `extjsu` weiter, damit die beiden einigermaßen vergleichbar sind und ich andere Leute um ihre Meinung fragen kann, welches sie bevorzugen.
+
+Ich habe momentan ein Problem (in extjsu), um die dynamische URL für den Detail-Button in einer Grid zu konstruieren. Ich mach mal einen Check-In:
+http://code.google.com/p/lino/source/detail?r=2c5fd25fa18956b5f1f6763fbc800f59626f0ecb
+
+Wenn ich mit dieser Version in der `Liste der Personen <http://127.0.0.1:8000/api/contacts/Persons?fmt=grid>`_
+auf dem Record 20475 und dann auf Detail klicke, dann muss er nach 
+http://127.0.0.1:8000/api/contacts/Persons/20475?fmt=detail
+gehen. Aber wie soll ich diese URL konstruieren lassen?
+Eigentlich muss die DetailAction "wissen", dass sie einen Positionsparameter braucht.
+
+Oder soll ich die URL-Struktur noch umbauen?
+
+========================================= =================================================
+URI                                       Inhalt
+========================================= =================================================
+GET /contacts/Persons?fmt=grid            Listenansicht 
+GET /contacts/Persons?fmt=grid&page=2     Listenansicht Seite 2
+GET /contacts/Persons?fmt=grid&page=-1    Listenansicht letzte Seite
+GET /contacts/Persons?fmt=grid&query=eup  Listenansicht mit quick search
+GET /contacts/Persons?fmt=insert          Fenster zum Erstellen eines neuen Records
+GET /contacts/Persons?fmt=detail&pk=1     Detailansicht Record 1 der Liste 
+GET /contacts/Persons?fmt=delete&sel=1,2  Bestätigung des Löschens der selektierten Records
+========================================= =================================================
+
+Das hieße, dass ich (auf URL-Ebene) nicht mehr die Trennung zwischen api_list_view und api_element_view, bzw. zwischen einer "collection" und einem "member of a collection". 
+
+Tja, darüber geh ich jetzt mal schlafen...

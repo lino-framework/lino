@@ -1,0 +1,23 @@
+20100629
+--------
+
+Also ich bin noch weiter am extjsu (fensterlosen UI) dran. Habe weiterhin das Gefühl, dass das der richtige Weg ist und hoffe ungeduldig, dass es bald fertig ist. Aber es gibt noch viel zu tun, und morgen und übermorgen werde ich wieder nicht dran arbeiten können. C'est la vie...
+
+Woran ich heute gearbeitet habe:
+
+Die Buttons in der bbar des Detail-Fensters sind wieder da, aber es gab und gibt da noch einiges zu klären. 
+'Insert' und 'Detail' machen ein GET zu einer neuen URL, aber 'Löschen' sollte lediglich eine Bestätigung fragen (clientseitiger Code), dann ein DELETE abschicken und dann zur Listenansicht redirecten. Diese beiden Methoden unterscheiden sich also schon im Handler des aufrufenden Buttons. Ein URL 'GET /api/.../delete' brauchen wir nicht. Oder genauer: *wollen* wir nicht. Weil es eines zu viel wäre. Die Bestätigung vor dem Löschen durch clientseitigen Code ist momentan noch nicht sehr benutzerfreundlich, aber der JS-Code kann ja `record.title` und `record.id` anzeigen und falls nötig adäquate Zusammenfassungen machen wenn man mehrere Records auf einmal löscht. Das würde ich zwar lieber in Python programmieren, aber das ist kein plausibler Grund, den Benutzer vor jeder Löschbestätigung warten zu lassen. Ein (neues) Attribut `client_site` macht jetzt für DeleteSelected diesen Unterschied.
+
+Mir ist aufgefallen, dass Actions mit 'needs_selection' immer durch `api_elem_view()` abgehandelt werden können, und actions ohne `needs_selection` immer durch `api_list_view()`. Also `insert` ist keine Element-Aktion (row action), sondern eine Listen-Aktion.
+
+Check-In vor der Zwangspause.
+
+TODO:
+
+ * `Insert <http://127.0.0.1:8000/api/contacts/Persons?fmt=insert>`_ kommt zwar, aber die buttons sind noch nicht richtig: 'Löschen' gehört da nicht hin, 'Save' muss 'Insert' heißen und ein POST statt eines PUT machen,...
+ * 'Print' funktioniert noch nicht. Das muss eine Action werden. 
+ * Ist ListAction überhaupt noch nötig?
+
+ * choosers sind nicht verknüpft
+ * disabled_fields kann man in der Grid trotzdem bearbeiten
+

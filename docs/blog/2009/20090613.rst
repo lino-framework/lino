@@ -1,0 +1,81 @@
+20090601
+--------
+
+- removed unused scripts in mysites/demo. 
+- renamed makedemo.py to reset_demo.py
+- make_invoices.py is a script in mysites/demo 
+  but later it might become a Django command.
+  
+- PendingOrders is the first example of a Report with a customized params_form.
+  Changed the handling of Report parameters.
+
+- OrderManager is my first usage of a manager. It is needed for PendingOrders
+
+20090603
+--------
+
+- Foreign keys are now rendered as clickable links to the pointed object's page. Clickable Pointers. 
+  - :meth:`lino.django.utils.sites.LinoSite.get_instance_url`
+  - :class:`lino.django.utils.reports.ReportMetaclass`
+
+20090604
+--------
+
+- New :class:`lino.django.igen.models.InvoicingTerm`
+
+
+20090605
+--------
+
+- Journals and Documents now functioning. 
+  The main visible result is that 
+  http://igen.saffre-rumma.ee/contacts/contacts/4?tab=1
+  is now able to show the documents' class (order or invoice)
+  
+- Document.number won't be with a document counter Journal.lastnum as in TIM.
+  Karen Tracey helped me to think on this:
+  http://groups.google.com/group/django-users/browse_thread/thread/227e9a638e4333fc
+  
+  TODO:
+  
+  - leave Journal and Document as a separate application "journals"?
+  
+  - payment terms, shipping modes and invoicing modes: 
+    how to make configurable default values for these settings? 
+    - Per Journal (by subclassing journals.Journal)?
+    - Currently this is in DocumentRule
+    - maybe rather a "template document" with number -1 ?
+    
+  - Is InvoicingMode the right word? 
+    If yes, then imode should be only in Order, not in Document.
+  
+- Committed revision 694.
+
+- The next big step is done: row actions. `DocumentsToSend <http://igen.saffre-rumma.ee/docs/documentstosend>`_ is a first usage example. You can select one or several rows in the grid view, then click on "sign" to sign them. Since this list shows only unsigned documents, they then disappear from this list.
+
+  Deleting rows is now also done using this mechanism, no longer using Django's FormSet.can_delete trick. In fact I find it strange that FormSet has a can_delete and can_order, but not a can_select...
+  
+  There are lots of little bugs hanging around, but the proof of concept is now almost complete.
+
+  TODO: confirmation dialog before deleting rows...
+
+- Committed revision 698.
+
+20090612
+--------
+
+- Payments for igen. New "ledger" module. The trunk is currently unstable because I'm experimenting with the general structure. Here are some design decisions I'm currently busy with:
+
+  Should the menu of a website be done automatically using LinoSite.autodiscover()? Maybe this idea is utopic. Maybe it's better to stay simple and let each site build it's own menu...
+  
+  There should probably be a menu entry for each Journal. So we have a database-driven menu, at least partially. The webserver will have to reload the urls when Journals gets modified...
+  Alternatively the journals may be non-persistent and "hard-coded" in some configuration file. 
+  
+  It seems that also pisa (xhtml2pdf) has a lot of problems. Pisa was my only hope to get away from LaTeX. 
+  Maybe still `XSL-FO <http://www.w3schools.com/xslfo/default.asp>`_
+  
+20090613
+--------
+
+- utils and ledger are now in INSTALLED_APPS
+

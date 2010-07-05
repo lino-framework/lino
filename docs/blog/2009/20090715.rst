@@ -1,5 +1,5 @@
-Moving from berlios.de to code.google.com
-=========================================
+20090715 Moving from berlios.de to code.google.com
+==================================================
 
 Jahrelang war ich glÃ¼cklich mit dem SVN-Repository von berlios.de. Aber jetzt habe ich ein Problem, wo ich keine LÃ¶sung sehe. Vielleicht habe ich auch nicht genug gesucht, weil ich sowieso seit einiger Zeit Lust hatte, nach code.google.com umzusteigen.
 
@@ -106,7 +106,7 @@ Probleme:
     checking files
     3207 files, 735 changesets, 8916 total revisions
   
-  Hmm... das hg-work auf jaama ist mir ja eigentlich egal, das war nur temporär. Ich probiere mal ein clone auf Armand::
+  Hmm... das hg-work auf jaama ist mir ja eigentlich egal, das war nur temporå²® Ich probiere mal ein clone auf Armand::
 
     T:\hgwork>hg clone https://lino.googlecode.com/hg/ lino
     T:\hgwork\lino>cd lino
@@ -141,4 +141,4 @@ Probleme:
     Success.
     T:\hgwork\lino>  
       
-  Voilà! Jetzt nur noch die restlichen Änderungen
+  VoilÃ , jetzt nur noch die restlichen Ã„nderungen

@@ -1,0 +1,15 @@
+20100627
+--------
+
+Sonntagmorgen 6.45 Uhr : Uff, das Detail-Fenster (in extjsu) wird nun erstmals mit Daten korrekt angezeigt. Seit Freitag habe ich da nur scheibchenweise dran arbeiten können.
+
+Check-In:
+http://code.google.com/p/lino/source/detail?r=1cb48b1551305c9ea70e319bdecb75138cb586fb
+
+TODO: 
+ * Es fehlen noch die Buttons in der bbar des Detail-Fensters.
+ * 'Insert' geht nicht.
+ * choosers sind nicht verknüpft
+ * disabled_fields kann man in der Grid trotzdem bearbeiten
+ 
+ 

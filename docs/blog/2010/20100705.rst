@@ -1,0 +1,4 @@
+20100705 Zurück zu Sphinx
+-------------------------
+
+Ich habe meinen Blog nach Sphinx migriert. Der erste Halbjahr 2010 bleibt vorläufig unter http://code.google.com/p/lino/wiki/WikiBlog

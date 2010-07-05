@@ -1,0 +1,13 @@
+20100702
+--------
+
+Im Fenster `Insert <http://127.0.0.1:8000/api/contacts/Persons?fmt=insert>`__:
+Der Button 'Löschen' ist raus. 
+Statt 'Save' steht nun 'Insert' dort (und der macht POST statt PUT).
+
+`Action.client_side` habe ich wieder rausgeholt, denn das ist schon UI-spezifischer Kram. Stattdessen benutzt `a2btn()` in `extjsu.ext_ui.UI` eine Serie von `isinstance`.
+
+Eine Action führt zu einem Button *und/oder* zu einer API-Methode. Also nicht unbedingt zu beidem. 
+
+`Person.before_save` setzt `Person.name` jetzt immer (nicht nur beim ersten Mal). 
+Als ich das änderte, hatte ich übrigens mal wieder überraschendes Verhalten, weil ein Model nicht mehrere Models auf einmal erben kann. `dsbe.Person` erbt ja schon :class:`lino.modlib.contacts.models.Contact` und kann deshalb nicht auch noch `lino.modlib.contacts.Person` erben. Doof ist das.

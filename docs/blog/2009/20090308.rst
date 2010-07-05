@@ -1,0 +1,44 @@
+20090308
+--------
+
+The Django volunteers are quick.
+Yesterday I created `my first Django ticket <http://code.djangoproject.com/ticket/10431>`__, 
+and it didn't last half an
+hour before somebody answered. 
+
+The answer wasn't long: It just said
+"Dupe of `#8164 <http://code.djangoproject.com/ticket/8164>`_".
+
+Yes, I didn't look at the SortedDict class.
+And this solution of just setting `SortedDict.keyOrder`
+is better and simpler than my method.
+
+But where is this update? The patch is marked "Accepted", 
+but is not yet in the trunk.  How can I now get it?
+Answer:
+
+- Download the patch from  http://code.djangoproject.com/attachment/ticket/8164/modelforms-fields-order.diff
+
+- Then in a command shell::
+
+    L:\snapshot\django>patch < c:\temp\modelforms-fields-order.diff
+    can't find file to patch at input line 5
+    Perhaps you should have used the -p or --strip option?
+    The text leading up to this was:
+    --------------------------
+    |diff --git a/django/forms/models.py b/django/forms/models.py
+    |index e6bbb98..d5eab82 100644
+    |--- a/django/forms/models.py
+    |+++ b/django/forms/models.py
+    --------------------------
+    File to patch:
+    L:\snapshot\django>cd trunk
+    The system cannot find the path specified.
+
+    L:\snapshot\django>patch -p1 < c:\temp\modelforms-fields-order.diff
+    patching file django/forms/models.py
+    patching file docs/topics/forms/modelforms.txt
+    patching file tests/modeltests/model_forms/models.py
+
+
+

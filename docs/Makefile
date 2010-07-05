@@ -1,5 +1,3 @@
-# Makefile for otimdev documentation
-#
 
 SITENAME     = lino
 TEMPDIR      = C:\\temp\\sphinxbuild\\$(SITENAME)

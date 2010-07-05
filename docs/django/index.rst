@@ -1,5 +1,11 @@
-Lino Django Utilities
-=====================
+Lino and Django
+===============
 
-Content moved to http://code.google.com/p/lino/wiki/LinoDjango
+.. toctree::
+   :maxdepth: 1
+   
+   DjangoPatches
+   DjangoPitfalls
+   
+   
 

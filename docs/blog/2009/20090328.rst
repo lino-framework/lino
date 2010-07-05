@@ -1,0 +1,13 @@
+20090328
+--------
+
+(Ich bin zur Zeit so wild am entwickeln, dass es sich nicht lohnt,
+das alles zu dokumentieren.)
+
+Notiz: den ``<input type="text" readonly>`` nutze ich im 
+ShowLayoutRenderer. (Besser gesagt dessen XML-kompatible Variante 
+``<input type="text" readonly="readonly">``, bevor ich das las, dachte ich, dass ich Djangos Funktion :func:`flatattr` verbessern müsste, damit sie auch Attribute ohne "=" dahinter generieren kann...)
+Dann merkte ich, dass das Attribut readonly für Checkboxen und Selects leider *nicht* funktioniert. Deshalb muss ich die selber rendern. 
+ 
+  
+  

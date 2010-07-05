@@ -1,6 +1,3 @@
-Changes 2009
-============
-
 20090510
 --------
 
@@ -18,12 +15,12 @@ Changes 2009
 
 - :mod:`mysites.demo.makedemo` now finds the list of installed apps automatically.
   So I no longer need to change :xfile:`makedemo.py` after changing
-  :configcmd:`INSTALLED_APPS`.
+  :settings:`INSTALLED_APPS`.
   
   
 - Worked on website pages 
-  :doc:`../django/index` and
-  :doc:`../about/what_is`.
+  :doc:`/django/index` and
+  :doc:`/about`.
   
 - :meth:`Row.field_as_readonly` now supports when a value is a :class:`Manager` (which is the case when you specify a ManyToManyField).
 
@@ -37,11 +34,11 @@ Changes 2009
 Common models
 -------------
 
-:class`Language` and :class`Country` are a first example of 
+:class:`Language` and :class`Country` are a first example of 
 models being used by several applications. They are now defined in
 :mod:`lino.django.utils`.
 
-The order of applications in :configcmd:`INSTALLED_APPS` becomes
+The order of applications in :settings:`INSTALLED_APPS` becomes
 important: :func:`lino_setup` is called in that order.
   
 This way of doing has unresolved issues:
@@ -60,11 +57,12 @@ This way of doing has unresolved issues:
 20090514
 --------
 
-- Worked on :xfile:`/src/lino/django/igen/fixtures/demo.dpy`.
+- Worked on :igen_src:`/igen/igen/fixtures/demo.dpy`.
 
-- Added :class:`lino.django.igen.models.Contract`.
+- Added :class:`igen.models.Contract`.
 
-- I noticed that Django's DateField does no validation and no conversion from string to date. :class:`lino.django.utils.instantiator.DateConverter`
+- I noticed that Django's DateField does no validation and no conversion from string to date. 
+  :class:`lino.utils.instantiator.DateConverter`
   How to parse a datetime.date from a string? 
   The standard Python module has now support at all, even not to 
   parse a simple iso-formatted date. `PEP 321 <http://www.python.org/dev/peps/pep-0321/>`_ was exactly what I'd need now, but it has been withdrawn... I also read
@@ -120,7 +118,6 @@ This way of doing has unresolved issues:
   `breathe <http://github.com/michaeljones/breathe/tree/master>`_?
   After playing around I continue to believe that documentation 
   must be maintained outside of the source code.
-  Result for today: :doc:`../django/igen/index`.
 
 - Pro-rata : the covered period in a generated invoice may be longer or shorter than
   normal in certain cases. 
@@ -197,137 +194,3 @@ This way of doing has unresolved issues:
   It's not yet clear how igen should decide which type of invoice to generate (normal or proforma).
 
 
-20090601
---------
-
-- removed unused scripts in mysites/demo. 
-- renamed makedemo.py to reset_demo.py
-- make_invoices.py is a script in mysites/demo 
-  but later it might become a Django command.
-  
-- PendingOrders is the first example of a Report with a customized params_form.
-  Changed the handling of Report parameters.
-
-- OrderManager is my first usage of a manager. It is needed for PendingOrders
-
-20090603
---------
-
-- Foreign keys are now rendered as clickable links to the pointed object's page. Clickable Pointers. 
-  - :meth:`lino.django.utils.sites.LinoSite.get_instance_url`
-  - :class:`lino.django.utils.reports.ReportMetaclass`
-
-20090604
---------
-
-- New :class:`lino.django.igen.models.InvoicingTerm`
-
-
-20090605
---------
-
-- Journals and Documents now functioning. 
-  The main visible result is that 
-  http://igen.saffre-rumma.ee/contacts/contacts/4?tab=1
-  is now able to show the documents' class (order or invoice)
-  
-- Document.number won't be with a document counter Journal.lastnum as in TIM.
-  Karen Tracey helped me to think on this:
-  http://groups.google.com/group/django-users/browse_thread/thread/227e9a638e4333fc
-  
-  TODO:
-  
-  - leave Journal and Document as a separate application "journals"?
-  
-  - payment terms, shipping modes and invoicing modes: 
-    how to make configurable default values for these settings? 
-    - Per Journal (by subclassing journals.Journal)?
-    - Currently this is in DocumentRule
-    - maybe rather a "template document" with number -1 ?
-    
-  - Is InvoicingMode the right word? 
-    If yes, then imode should be only in Order, not in Document.
-  
-- Committed revision 694.
-
-- The next big step is done: row actions. `DocumentsToSend <http://igen.saffre-rumma.ee/docs/documentstosend>`_ is a first usage example. You can select one or several rows in the grid view, then click on "sign" to sign them. Since this list shows only unsigned documents, they then disappear from this list.
-
-  Deleting rows is now also done using this mechanism, no longer using Django's FormSet.can_delete trick. In fact I find it strange that FormSet has a can_delete and can_order, but not a can_select...
-  
-  There are lots of little bugs hanging around, but the proof of concept is now almost complete.
-
-  TODO: confirmation dialog before deleting rows...
-
-- Committed revision 698.
-
-20090612
---------
-
-- Payments for igen. New "ledger" module. The trunk is currently unstable because I'm experimenting with the general structure. Here are some design decisions I'm currently busy with:
-
-  Should the menu of a website be done automatically using LinoSite.autodiscover()? Maybe this idea is utopic. Maybe it's better to stay simple and let each site build it's own menu...
-  
-  There should probably be a menu entry for each Journal. So we have a database-driven menu, at least partially. The webserver will have to reload the urls when Journals gets modified...
-  Alternatively the journals may be non-persistent and "hard-coded" in some configuration file. 
-  
-  It seems that also pisa (xhtml2pdf) has a lot of problems. Pisa was my only hope to get away from LaTeX. 
-  Maybe still `XSL-FO <http://www.w3schools.com/xslfo/default.asp>`_
-  
-20090613
---------
-
-- utils and ledger are now in INSTALLED_APPS
-
-20090716
---------
-
-- I you want to see an invoice generated by iGen, then click on
-  http://igen.saffre-rumma.ee/sales/invoices/2/pdf
-  But notice that you will first have to log in as root (password "1234"). 
-  
-20090811
---------
-
-- Working on ExtJS integration. The main menu was easy. 
-  Now I'm at the databrowse which uses a Ext.grid.Grid.
-
-- Should Lino use XML or JSON for AJAX? 
-
-  Answer (from http://ajaxian.com/archives/json-vs-xml-the-debate):
-  "JSON is a better fit for Web services that power Web mashups and AJAX widgets due to the fact that it is essentially serialized Javascript objects which makes it fit better client side scripting which is primarily done in Javascript. That’s it. XML will never fit the bill as well for these scenarios without changes to the existing browser ecosystem which I doubt are forthcoming anytime soon."
-  
-20091229
---------
-
-- Removed timtools-related changelog entries after having copied them to the timtools repository.
-  Seems that I will maintain a changelog using Sphinx for each of my projects.
-  
-- The ProjectsByCompany button in contacts.Companies now works. 
-  Lino.show_slave() no longer necessary since we can use Lino.show_detail() here too.
-  Code generated by run_report() before::
-
-      var tied_grid = call_params['tied_grid'];
-      if (tied_grid) {
-        tied_grid.main_grid.getSelectionModel().addListener('rowselect',
-          function(sm,rowIndex,record) { 
-            var p={mk:record.id};
-            p['mt'] = 16;
-            this.dsbe_ProjectsByCompany_store.load({params:p});        // [1]
-      })}
-      
-  and after::
-  
-      var tied_grid = call_params['tied_grid'];
-      if (tied_grid) {
-        var store = this.dsbe_ProjectsByCompany_store;                 // [2]
-        tied_grid.main_grid.getSelectionModel().addListener('rowselect',
-          function(sm,rowIndex,record) { 
-            var p={mk:record.id};
-            p['mt'] = 16;
-            store.load({params:p});
-      })}
-  
-  [1] and [2] The trick was to create another variable ``store`` because ``this`` is something else in the listener definition.
-
-
-.. _latest-news:
