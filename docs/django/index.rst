@@ -2,7 +2,7 @@ Lino and Django
 ===============
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    
    DjangoPatches
    DjangoPitfalls

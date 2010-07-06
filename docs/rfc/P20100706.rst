@@ -1,0 +1,15 @@
+Documenting Django applications with Sphinx
+-------------------------------------------
+
+When documenting Django applications with Sphinx arises the problem that 
+sphinx.ext.autodoc and 
+sphinx.ext.inheritance_diagram will fail to import your modules::
+
+
+  (WARNING/2) autodoc can't import/find module 'mypackage.mymod', \
+  it reported error: "Settings cannot be imported, because environment \
+  variable DJANGO_SETTINGS_MODULE is undefined.", please check your \
+  spelling and sys.path
+
+Current workaround is to manually do a 
+``set DJANGO_SETTINGS_MODULE=mymodule.settings`` before running ``make html``.

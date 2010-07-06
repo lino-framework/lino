@@ -1,4 +1,22 @@
 20100705 Zurück zu Sphinx
 -------------------------
 
-Ich habe meinen Blog nach Sphinx migriert. Der erste Halbjahr 2010 bleibt vorläufig unter http://code.google.com/p/lino/wiki/WikiBlog
+Ich habe meinen Blog nach Sphinx migriert. 
+Nach und nach will ich auch das erste Halbjahr 2010 nachträglich konvertieren, das 
+vorläufig noch unter http://code.google.com/p/lino/wiki/WikiBlog steht.
+
+Unterschiede:
+- Google funktioniert out-of-the-box, Sphinx braucht mehr Einarbeitung.
+
+Warum ich umsteige:
+- Sphinx's Markup-Sprache ist erweiterbar.
+- Sphinx's Web-Layout ist anpassbar, und sogar das Default-Layout ist deutlich besser als das von Google.
+- Insgesamt finde ich reST besser als Googles Markup. 
+  Allein dass Aufzählungen keine Zeilenumbrüche haben dürfen, fand ich störend.
+- Vielleicht will ich den Kram ja irgendwann mal als PDF veröffentlichen.
+- Jetzt kann ich mit meinem eigenen Lieblingseditor arbeiten.
+
+Was ich vermissen werde (bzw. was ich gerne noch automatisieren will):
+- Bei Google klickte man einfach auf "Edit this Page", bei Sphinx muss man überlegen und die rst-Datei in den Editor laden.
+- Mit Sphinx muss ich dran denken, den Kram hochzuladen.
+- 

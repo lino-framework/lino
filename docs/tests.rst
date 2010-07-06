@@ -1,6 +1,8 @@
 Tests
 =====
 
+Using the ``.. graphviz::`` directive:
+
 .. graphviz::
 
    digraph foo {
@@ -8,13 +10,20 @@ Tests
    }
    
    
-.. inheritance-diagram:: lino.modlib.contacts.models dsbe.models¶ 
+   
+Using the ``.. inheritance-diagram::`` directive:
+
+.. inheritance-diagram:: 
+  lino.modlib.contacts.models.Contact  dsbe.models.Contact
+  lino.modlib.contacts.models.Person   dsbe.models.Person
+  lino.modlib.contacts.models.Company  dsbe.models.Company
+
 
 
 Modules
 -------
 
-Sphinx cannot import `lino.modlib.*` because they import Django settings
+See also :doc:`rfc/P20100706` 
 
 .. automodule:: lino
   :members:

@@ -14,7 +14,7 @@ Und jetzt kann man also auch in extjsu ein Detail-Fenster in Aktion sehen (wenn 
 
 Check-in
 
-Entscheidung: vorläufig doch nur ein UI auf einmal. Weil das doch noch ein bisschen mehr Umbau erfordert. In `settings.py` lass ich bis auf weiteres trotzdem `USER_INTERFACES` (im Plural und als Liste), aber merke: momentan muss diese Liste genau ein Element haben, damit es funktioniert. 
+Entscheidung: vorläufig doch nur ein UI auf einmal. Weil das doch noch ein bisschen mehr Umbau erfordert. In `settings.py` lass ich bis auf weiteres trotzdem :setting:`USER_INTERFACES` (im Plural und als Liste), aber merke: momentan muss diese Liste genau ein Element haben, damit es funktioniert. 
 Also zum Beispiel::
 
   USER_INTERFACES = [
@@ -23,7 +23,7 @@ Also zum Beispiel::
     ]
 
 Also `extjsw` funktioniert momentan zufriedenstellend. 
-Ich arbeite noch ein bicchen am `extjsu` weiter, damit die beiden einigermaßen vergleichbar sind und ich andere Leute um ihre Meinung fragen kann, welches sie bevorzugen.
+Ich arbeite noch ein bisschen am `extjsu` weiter, damit die beiden einigermaßen vergleichbar sind und ich andere Leute um ihre Meinung fragen kann, welches sie bevorzugen.
 
 Ich habe momentan ein Problem (in extjsu), um die dynamische URL für den Detail-Button in einer Grid zu konstruieren. Ich mach mal einen Check-In:
 http://code.google.com/p/lino/source/detail?r=2c5fd25fa18956b5f1f6763fbc800f59626f0ecb

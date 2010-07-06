@@ -36,6 +36,7 @@ clean:
 html:
 	mkdir -p $(CACHEDIR) 
 	mkdir -p $(BUILDDIR)
+	set DJANGO_SETTINGS_MODULE=dsbe.demo.settings
 	$(SPHINXBUILD) -b html -d $(CACHEDIR) $(ALLSPHINXOPTS) . $(BUILDDIR)
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)."

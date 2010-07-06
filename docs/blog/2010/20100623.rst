@@ -1,7 +1,7 @@
 20100623
 ========
 
-Habe vorgestern mit dem Release in Eupen und auf Tups begonnen. 
+Habe vorgestern mit dem Release im :term:`DSBE` und auf :term:`Tups` begonnen. 
 
 In Einem habe ich auch die unnütze Etage :file:`src` aus der Verzeichnisstruktur rausgeholt. 
 Also statt `/var/snapshots/lino/src/lino` muss man jetzt immer `/var/snapshots/lino/lino` sagen. 

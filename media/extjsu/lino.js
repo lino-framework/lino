@@ -346,11 +346,11 @@ Lino.grid_afteredit_handler = function (caller) {
     */
     var p = e.record.data;
     // var p = {};
-    p['grid_afteredit_colname'] = e.field;
-    p[e.field] = e.value;
+    //~ p['grid_afteredit_colname'] = e.field;
+    //~ p[e.field] = e.value;
     // console.log(e);
     // add value used by ForeignKeyStoreField CHOICES_HIDDEN_SUFFIX
-    p[e.field+'Hidden'] = e.value;
+    //~ p[e.field+'Hidden'] = e.value;
     // p[pk] = e.record.data[pk];
     // console.log("grid_afteredit:",e.field,'=',e.value);
     Ext.apply(p,caller.store.baseParams);
@@ -359,7 +359,8 @@ Lino.grid_afteredit_handler = function (caller) {
       caller.getStore().reload();        // reload our datastore.
     };
     //~ console.log(e.record.id);
-    if (e.record.id == -99999) {
+    if (e.record.phantom) {
+      p.id = undefined;
       Lino.do_action(caller,{
         method:'POST',url: caller.ls_data_url,
         params:p,after_success:after_success})
@@ -773,6 +774,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
       
     config.bbar = Lino.build_bbar(this,config.ls_bbar_actions);
     Lino.GridPanel.superclass.constructor.call(this, config);
+    if (config.setup_events) config.setup_events();
   },
 
   initComponent : function(){

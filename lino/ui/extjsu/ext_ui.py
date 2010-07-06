@@ -451,7 +451,14 @@ class ExtUI(base.UI):
             ar = ext_requests.ViewReportRequest(request,rh,rh.report.list_action)
             instance = ar.create_instance()
             rh.store.form2obj(request.POST,instance)
+            try:
+                instance.full_clean()
+            except exceptions.ValidationError, e:
+                return json_response_kw(success=False,msg="Failed to save %s : %s" % (instance,e))
+            print instance, instance.id
             instance.save(force_insert=True)
+            #~ except models.IntegrityError,e:
+                #~ json_response_kw(success=False,msg="Failed to save %s : %e" % (instance,e))
             return json_response_kw(success=True,msg="%s has been created" % instance)
             
             
@@ -511,7 +518,7 @@ class ExtUI(base.UI):
                 if ar.extra:
                     row = ar.create_instance()
                     d = ar.row2dict(row)
-                    d[rh.report.model._meta.pk.name] = -99999
+                    #~ 20100706 d[rh.report.model._meta.pk.name] = -99999
                     rows.append(d)
                     total_count += 1
                 return json_response_kw(count=total_count,rows=rows,title=unicode(ar.get_title()))
@@ -536,14 +543,15 @@ class ExtUI(base.UI):
             msg = "User %s cannot view %s." % (request.user,ah.report)
             return http.HttpResponseForbidden()
             
-        if pk == '-99999':
-            ar = ext_requests.ViewReportRequest(request,ah,ah.report.list_action)
-            elem = ar.create_instance()
-        else:
-            try:
-                elem = rpt.model.objects.get(pk=pk)
-            except rpt.model.DoesNotExist:
-                raise Http404("%s %s does not exist." % (rpt,pk))
+        #~ 20100706    
+        #~ if pk == '-99999':
+            #~ ar = ext_requests.ViewReportRequest(request,ah,ah.report.list_action)
+            #~ elem = ar.create_instance()
+        #~ else:
+        try:
+            elem = rpt.model.objects.get(pk=pk)
+        except rpt.model.DoesNotExist:
+            raise Http404("%s %s does not exist." % (rpt,pk))
                 
         if request.method == 'DELETE':
             elem.delete()
@@ -585,18 +593,18 @@ class ExtUI(base.UI):
                     main = js_code('Lino.%s(%s)' % (a,py2js(params)))
                     #~ return HttpResponse(self.html_page(tbar,a.window_wrapper_u.main,**kw))
                     return HttpResponse(self.html_page(request,main,**kw))
+                    
+                if isinstance(a,PrintAction):
+                    pm = elem.get_print_method()
+                    if pm is None:
+                        raise Http404("%r has no print method (fmt=%r)" % (elem,fmt))
+                    target = pm.get_target_url(elem)
+                    if target is None:
+                        raise Http404("%s could not build %r" % (pm,elem))
+                    return http.HttpResponseRedirect(target)
+                  
                 raise NotImplementedError("%r action %r is not implemented)" % (elem,fmt))
               
-            if fmt == 'picture':
-                pm = mixins.get_print_method('picture')
-            else:
-                pm = elem.get_print_method(fmt)
-                if pm is None:
-                    raise Http404("%r has no print method (fmt=%r)" % (elem,fmt))
-            target = pm.get_target_url(elem)
-            if target is None:
-                raise Http404("%s could not build %r" % (pm,elem))
-            return http.HttpResponseRedirect(target)
         raise Http404("Method %r not supported for elements of %s" % (request.method,ah.report))
         
         

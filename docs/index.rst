@@ -25,6 +25,7 @@ Table of contents
    django/index
    rfc/index
    tests
+   glossary
 
 
 

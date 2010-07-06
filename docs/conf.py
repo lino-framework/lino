@@ -26,10 +26,12 @@ import lino
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = [
   'sphinx.ext.autodoc',
+  'sphinx.ext.inheritance_diagram',
   'sphinx.ext.extlinks',
   'sphinx.ext.graphviz',
-  'sphinx.ext.inheritance_diagram',
 ]
+
+primary_domain = 'py'
 
 extlinks = {
   'issue': ('http://code.google.com/p/lino/issues/detail?id=%s', 'issue '),
@@ -209,9 +211,12 @@ latex_documents = [
 #~ from timtools.sphinx import setup
 
 def setup(app):
-    app.add_description_unit('xfile','xfile',
-      'pair: %s; file')
-    app.add_description_unit('settings','settings',
-      'pair: %s; setting')
+    app.add_object_type(directivename='xfile',rolename='xfile',
+      indextemplate='pair: %s; file')
+    app.add_object_type(directivename='setting',rolename='setting',
+      indextemplate='pair: %s; setting')
     #app.connect('build-finished', handle_finished)
+    
+    
+    
     

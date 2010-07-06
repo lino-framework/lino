@@ -53,9 +53,9 @@ class MultiTableBase:
   
     """
     Mixin for Models that use Multi-table inheritance[1].
-    Subclassed by lino.modlib.journals.models.AbstractDocument
+    Subclassed by :class:`lino.modlib.journals.models.AbstractDocument`
     
-    [1] http://docs.djangoproject.com/en/dev/topics/db/models/#multi-table-inheritance)
+    [1] http://docs.djangoproject.com/en/dev/topics/db/models/#multi-table-inheritance
     """
     
     class Meta:
@@ -73,9 +73,16 @@ class MultiTableBase:
         
 
 class PrintAction(actions.Action):
+    needs_selection = True
+  
+class ImageAction(PrintAction):
+    name = 'image'
+    label = _('Image')
+    callable_from = tuple()
+  
+class DocumentAction(PrintAction):
     name = 'print'
     label = _('Print')
-    needs_selection = True
     callable_from = None
     
 
@@ -109,7 +116,7 @@ class Printable:
             return False
         return True
       
-    def get_print_method(self,fmt):
+    def get_print_method(self):
         ## e.g. lino.modlib.notes.Note overrides this
         return get_print_method('pisa')
         #~ return 'pisa'

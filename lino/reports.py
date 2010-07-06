@@ -550,7 +550,8 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
             self.detail_layouts = getattr(self.model,'_lino_layouts',[])
               
             if issubclass(self.model,mixins.Printable):
-                alist.append(mixins.PrintAction(self))
+                alist.append(mixins.ImageAction(self))
+                alist.append(mixins.DocumentAction(self))
                 #~ print 20100517, mixins.pm_list
                 #~ for pm in mixins.pm_list:
                     #~ if pm.button_label:

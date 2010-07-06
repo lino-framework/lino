@@ -122,7 +122,7 @@ class MasterWrapper(WindowWrapper):
         
         WindowWrapper.__init__(self,action,lh.ui,lh,lh._main,**kw)
         before_row_edit = []
-        on_change = []
+        setup_events = []
         #~ before_row_edit.append("console.log('ext_windows.py 20100531',record);")
         for e in self.main.walk():
             if isinstance(e,ext_elems.FieldElement):
@@ -132,11 +132,12 @@ class MasterWrapper(WindowWrapper):
                     for f in chooser.context_fields:
                         varname = ext_elems.varname_field(f)
                         #~ field_extname = chooser.model.__name__ + '_' + f.name
-                        on_change.append("  %s.on('change',Lino.chooser_handler(%s,%r));" % (varname,e.ext_name,f.name))
+                        setup_events.append("%s.on('change',Lino.chooser_handler(%s,%r));" % (varname,e.ext_name,f.name))
                         before_row_edit.append("%s.setContextValue(%r,record.data[%r]);" % (
                             e.ext_name,f.name,ext_elems.form_field_name(f)))
         #~ lino.log.debug("20100615 %s has %d choosers", self.lh.layout, len(before_row_edit))
         self.main.update(before_row_edit=js_code('function(record){%s}' % ('\n'.join(before_row_edit))))
+        self.main.update(setup_events=js_code('function(record){%s}' % ('\n'.join(setup_events))))
         
     def js_render(self):
         #~ yield ''
@@ -275,20 +276,22 @@ class BaseDetailWrapper(MasterWrapper):
         
         
 class DetailWrapper(BaseDetailWrapper):
-    def __init__(self,rh,action,**kw):
-        BaseDetailWrapper.__init__(self,rh,action,**kw)
-    def unused_get_config(self):
-        d = BaseDetailWrapper.get_config(self)
-        #~ d.update(ls_bbar_actions=[ext_elems.a2btn(a) for a in self.rh.get_actions() if not a.hidden])
-        d.update(ls_bbar_actions=[self.ui.a2btn(a) for a in self.rh.get_actions() if a.show_in_detail])
-        return d
+    pass
+    #~ def __init__(self,rh,action,**kw):
+        #~ BaseDetailWrapper.__init__(self,rh,action,**kw)
+    #~ def unused_get_config(self):
+        #~ d = BaseDetailWrapper.get_config(self)
+        #~ #d.update(ls_bbar_actions=[ext_elems.a2btn(a) for a in self.rh.get_actions() if not a.hidden])
+        #~ d.update(ls_bbar_actions=[self.ui.a2btn(a) for a in self.rh.get_actions() if a.show_in_detail])
+        #~ return d
   
 class InsertWrapper(BaseDetailWrapper):
-    def unused_get_config(self):
-        d = BaseDetailWrapper.get_config(self)
-        d.update(title=_('%s into %s') %(self.action.label,self.action.actor.get_title(None)))
-        d.update(record_id=-99999)
-        return d
+    pass
+    #~ def unused_get_config(self):
+        #~ d = BaseDetailWrapper.get_config(self)
+        #~ d.update(title=_('%s into %s') %(self.action.label,self.action.actor.get_title(None)))
+        #~ d.update(record_id=-99999)
+        #~ return d
 
         
 

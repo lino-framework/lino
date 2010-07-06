@@ -1,0 +1,75 @@
+20100706
+--------
+
+So, heute sind die Print-Aktionen (:class:`lino.utils.mixins.PrintMethod`) in :mod:`lino.ui.extjsu` dran. 
+Die funktionieren jetzt. Vorher musste ich einige Dinge verstehen:
+
+- Aktionen sind ja nur passive Klassen, die eine Aktion "äußerlich" beschreiben. Was z.B. GridEdit oder DeleteSelcted (oder demnächst PrintUsingAppy) genau tun, das hängt vom User Interface ab. Mit "äußerlich" meine ich: Name, Label, Erlaubtheit, Reihenfolge...
+
+- :classmeth:`lino.modlib.notes.NoteType.template_type` braucht eine globale Liste der PrintMethods, die auf dem Server zur Verfügung stehen (pisa, rtf, appy, latex,...). 
+
+- PrintMethods können keine Aktionen werden.
+
+- Sehr zufrieden bin ich noch nicht mit dem Aktionen-System. Notiert in :doc:`/todo`.
+
+Um das Drucken zu testen, muss ich allerdings Notizarten definieren. Und da kommt das Problem, dass die kein Detail haben und deshalb aus der Grid raus erstellt werden müssen. Und das funktioniert noch nicht im extjsu. Ran an den Speck... da kam vor allem ein IntegrityError auf dem Server. Okay, also in Django darf man nicht einfach `Model.save()` machen, sondern muss die Instanz zuerst validieren:
+http://docs.djangoproject.com/en/dev/ref/models/instances/#id1
+
+Aber ich kann noch immer keine Notizart erstellen, weil ich kein :attr:`lino.modlib.notes.models.NoteType.template` auswählen kann. Das liegt daran, dass die choosers noch nicht verknüpft sind. Der nächste Punkt aus der :doc:`/todo`.
+
+Die Response auf http://127.0.0.1:8000/api/notes/NoteTypes?fmt=grid ruft ja lediglich :js:func:`Lino.notes.NoteTypes.grid()`, die in der :file:`site.js` definiert ist::
+
+  Lino.notes.NoteTypes.grid = function(params) { 
+    var NoteType_id_field = { fieldLabel: "ID", xtype: "numberfield", name: "id" };
+    var NoteType_name_field = new Ext.form.TextField({ ... });
+    var NoteType_print_method_field = new Lino.ChoicesFieldElement({ ... });
+    var NoteType_template_field = new Lino.RemoteComboFieldElement({ ... });
+    var main_grid = new Lino.GridPanel({ ls_store_fields: [ ... ], 
+      before_row_edit: function(record){
+        NoteType_template_field.setContextValue('print_method',record.data['print_methodHidden']);
+      },
+      xtype: "container", ls_content_type: 23, ls_data_url: "/api/notes/NoteTypes",
+        colModel: new Ext.grid.ColumnModel({ columns: [ 
+          ..., 
+          new Ext.grid.Column({ ... dataIndex: "template", editor: NoteType_template_field }) 
+        ] }), 
+      ... },params);
+    return main_grid
+  }
+
+Was hier noch fehlt, ist der Handler fürs ``change``-Event von :var:`NoteType_print_method_field`. Deshalb nun ein neuer Konfigurationsparameter :var:`setup_events` für Lino.GridPanel. 
+
+Das funktioniert, nun kann ich alle Felder im Grid ausfüllen. Aber da kommt das nächste Problem::
+
+  Traceback (most recent call last):
+    ...
+    File "t:\hgwork\lino\lino\ui\extjsu\ext_ui.py", line 458, in api_list_view
+      instance.save(force_insert=True)
+    ...
+  IntegrityError: PRIMARY KEY must be unique
+  [06/Jul/2010 14:33:46] "POST /api/notes/NoteTypes HTTP/1.1" 500 2049
+  
+Das kommt daher, dass mein POST den pk des neuen Records auf -99999 setzt. 
+Logisch, dass :meth:`Model.full_clean` da nichts zu meckern findet. 
+Ich finde es ja nicht korrekt von Django, dass man IntegrityError nicht abfangen darf. 
+Aber okay, in diesem Beispiel haben sie Recht: wenn der Benutzer das als Meldung bekäme, könnte er sowieso nichts damit anfangen.
+
+Die Sache mit dem Pseudowert -99999 ist ja unschön. 
+Die hatte ich angefangen, weil ExtJS auch für leere Records eine id haben will. 
+Wenn ich keine id angebe, dann füllt er selber einen Wert im Stil ``'ext-record-6`` ein ("If an id is not specified a phantom Record will be created with an automatically generated id.", `ExtJS Doku <http://www.sencha.com/deploy/dev/docs/source/Record.html#cls-Ext.data.Record>`__), 
+und dann macht der Server beim PUT einen 
+``ValueError: invalid literal for int() with base 10: 'ext-record-6'``.
+Mein -99999 würde aber gar nicht funktionieren im Fall von mehr als einem Extra-Records. 
+Also muss ich mir da sowieso was Besseres einfallen lassen.
+Die Lösung ist: ich muss `Ext.data.Record.phantom` abfragen. 
+:js:func:`Lino.grid_afteredit_handler` tut das jetzt. 
+
+Aber da ist noch ein Problem: :js:func:`Lino.grid_afteredit_handler` schickt mindestens seit heute und vielleicht schon seit Längerem die Werte der ComboBoxen nicht richtig ab. Das war ja sowieso sehr holperig gemacht. Danach muss ich miorgen schauen, jetzt ist erst mal Feierabend...
+
+Check-In
+
+
+(Ich konnte mich natürlich nicht zurückhalten, zwischendurch auch immer mit Sphinx zu spielen: 
+:doc:`/blog/2010/index`, 
+:doc:`/rfc/P20100706` und
+:doc:`/tests`)
