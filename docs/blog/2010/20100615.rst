@@ -1,0 +1,77 @@
+20100615
+--------
+
+So. Nach einem langen Wochenende geht es nun wieder weiter mit Lino. Ich bin an der Performance des DetailWindow am arbeiten.
+
+(1) In der `20100206.html` habe ich jetzt einen Timer eingebaut, habe aber außer des HtmlEditors keine weiteren (mit dieser Methode messbaren) Performance-Blocker gefunden. Eine Hoffnung ist, was im Beispiel mit den beiden Versionen für `street_box` demonstriert ist: wenn ich als layout `hbox` statt `column` nehme, und die relative Breite der items in `flex` statt in `columnWidth` angebe, dann funktioniert es auch. Und `hbox` ist theoretisch effizienter als `column`. Außerdem wird dadurch nun der ExtJS-Bug mit dem Leerraum unter der `intro_row` umgangen.
+
+(2) Ich habe begonnen, "configuration classes" zu benutzen. 
+Zum Beispiel haben alle von Lino generierten ComboBoxen gewisse 
+Konfigurationsparameter immer gleich. Für diese konstanten Parameter 
+definiere ich meine eigenen Klassen::
+
+  Lino.ComboBox = Ext.extend(Ext.form.ComboBox,{
+    triggerAction: 'all',
+    submitValue: true,
+    displayField: 'text', // ext_requests.CHOICES_TEXT_FIELD
+    valueField: 'value' // ext_requests.CHOICES_VALUE_FIELD
+  });
+
+  Lino.RemoteComboFieldElement = Ext.extend(Lino.ComboBox,{
+    mode: 'remote',
+    //~ typeAhead: true,
+    //~ forceSelection:false,
+    minChars: 2, // default 4 is to much
+    queryDelay: 300, // default 500 is maybe slow
+    queryParam: 'query', // ext_requests.URL_PARAM_FILTER)
+    typeAhead: true,
+    selectOnFocus: true, // select any existing text in the field immediately on focus.
+    resizable: true
+  });
+
+So brauchen diese Parameter in der `site.js` nicht für jede Instanz einer 
+ComboBox wiederholt zu werden. Und ich hoffe, dass sich das positiv auf 
+die Performance auswirkt.
+
+Für `Ext.data.JsonStore` funktionierte der allgemeine Trick (einfach 
+Konfigurationsparameter in der Unterklassendefinition auflisten) nicht, 
+weil `JsonStore` etwas ungewöhnlich instanziert wird. Da musste ich den 
+ganzen Constructor überschreiben::
+
+  Lino.RemoteComboStore = Ext.extend(Ext.data.JsonStore,{
+    constructor: function(config){
+        Lino.RemoteComboStore.superclass.constructor.call(this, Ext.apply(config, {
+            totalProperty: 'count',
+            root: 'rows',
+            id: 'value', // ext_requests.CHOICES_VALUE_FIELD
+            fields: ['value','text'], // ext_requests.CHOICES_VALUE_FIELD, // ext_requests.CHOICES_TEXT_FIELD
+            listeners: { exception: Lino.on_store_exception }
+        }));
+    }
+  });
+
+
+(3) In PersonDetail (bzw. allen tabbed detail windows) waren die 
+ComboBoxen noch nicht kontextsensitiv. Behoben. 
+
+
+(4) Check-In. Die Performance ist jetzt deutlich besser, aber eben weil 
+ich auf den HtmlEditor verzichte. Das ist also keine definitive Lösung.
+
+
+(5) Behoben: Datumsfelder werden im Detail-Fenster leer angezeigt, obwohl 
+sie ein gültiges Datum haben, das in der Grid auch angezeigt wird. 
+
+`DateStoreField.obj2json()` benutzte die Python-Funktion 
+`ctime`, das funktionierte scheinbar solange ich 
+kein explizites Datumsformat in den DateFields angab. 
+Muss ich aber, damit Daten einigermaßen normal (d.h. 
+nicht amerikanisch) angezeigt werden. `strftime` konnte 
+ich auch nicht verwenden, weil Python und extJS zwei 
+ganz unterschiedeliche die Syntaxen für Datumsformate 
+haben (in ExtJs sagt man `'d.m.Y'`, in Pythons `strftime` muss es z.B. `'%d.%m.%Y'` heißen. Die Lösung war einfach: `jsgen.py2js()` kümmert sich um die Konvertierung::
+
+    if isinstance(v, datetime.date):
+        return 'new Date(%d,%d,%d)' % (v.year,v.month,v.day)
+
+(6) Check-In.

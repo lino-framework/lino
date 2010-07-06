@@ -1,0 +1,17 @@
+20100621
+--------
+
+Erste Resultate mit extjsu: 
+
+ * Das Hauptmenü funktioniert, und die Menübefehle haben nun ein `href`
+ * Gridfenster funktionieren (werden gerendert).
+
+Beobachtung: der Browser fragt die `ext-all-debug.js` zwischen den einzelnen Seitenaufrufen jedesmal neu an. Ich hatte gedacht, dass die automatisch gecached wird. Kann es sein, dass der Django Development Server (genauer gesagt `django.views.static`) die Lebenszeit auf 0 setzt? In der `Doku <http://docs.djangoproject.com/en/dev/howto/static-files/>`_ sagen sie nur, dass man das nicht auf einem Production Server benutzen soll.
+
+N.B. : In der :file:`settings.py` kann man jetzt sagen::
+
+  USER_INTERFACE = 'lino.ui.extjs'
+
+Also ich kann leicht von einem UI zum anderen wechseln.
+
+Also jetzt ist es Zeit für ein Release auf den Eupener Lino-Server. Erstens um den stabilen Teil mal zu zeigen, und zweitens um zu probieren, ob die `ext-all-debug.js` dort auch jedesmal neu angefragt wird.

@@ -1,0 +1,59 @@
+20100619
+--------
+
+Die Version von gestern ist einigermaßen stabil im Fenster-UI. Was mir da noch Sorge bereitet ist die Performance und die fundamentale Frage, ob die Benutzung von Fenstern (`Ext.Window`) gut ist.
+
+Gestern konnte ich nicht an Lino arbeiten, weil wir nach Pärnu fahren mussten, um Fenster zu bestellen. Und abends vor dem Einschlafen hatte ich erste konkrete Ideen für einen fensterlosen Lino. Das wird ein eigenes Modul `ui.extjsu`, das vom bestehenden `ui.extjs` ausgeht, sich aber an einigen Stellen stark unterscheiden wird. Das `u` ist, weil dieses fensterlose UI nun wieder mit eindeutigen URLs arbeiten kann. 
+
+Bei dieser Gelegenheit habe ich nochmal gesurft, ob jQuery dann nicht ein Ersatz für ExtJS sein kann. Antwort: scheinbar nein. `jqGrid <http://www.trirand.com/jqgridwiki/doku.php>`_ sieht zwar ganz geeignet aus (und ist frei), aber `FlexBox <http://flexbox.codeplex.com/>`_ der einzige potentielle Ersatz für ExtJS's (remote) ComboBox ist `nicht frei <http://flexbox.codeplex.com/license>`_. Auch `dieser Blog-Eintrag hier <http://coderseye.com/2008/why-i-didnt-switch-from-jquery-to-extjs-after-all.html>`_ bestätigt mir, dass ExtJS und nicht jQuery das Richtige sind für Lino.
+
+URL-Struktur in `ui.extjsu` :
+
+========================================= =============================
+GET /contacts/Persons?fmt=grid            Listenansicht 
+GET /contacts/Persons?fmt=grid&page=2     Listenansicht Seite 2
+GET /contacts/Persons?fmt=grid&page=-1    Listenansicht letzte Seite
+GET /contacts/Persons?fmt=grid&query=eup  Listenansicht mit quick search
+GET /contacts/Persons?fmt=insert          Fenster zum Erstellen eines neuen Records 
+GET /contacts/Persons?fmt=detail&row=1    Detailansicht Record 1 der Liste 
+GET /contacts/Persons/7?fmt=detail        Detailansicht Record mit pk=7 
+========================================= =============================
+
+ * Die "Aktion" (grid, detail, insert) wird also zum "Format"
+ * Die beiden letzten URIs geben fast das gleiche Resultat zurück, jedoch einmal mit Navigationsbuttons in der bbar.
+
+
+Allgemeine Seitenstruktur::
+
+  <html><head>
+  ...
+  <script type="text/javascript" src="/media/lino/lino.js"></script>
+  <script type="text/javascript" src="/media/cache/js/site.js"></script>
+  <script type="text/javascript">
+  Ext.onReady(function(){ 
+    new Ext.Toolbar({...}).render('tbar');
+    new Lino.GridWrapper({...}).render('main');
+    new Ext.Toolbar({...}).render('bbar');
+    Ext.QuickTips.init();        
+  }); // end of onReady()
+  </script></head>
+  <body>
+  <div id="tbar"/>
+  <div id="main"/>
+  <div id="bbar"/>
+  </body></html>
+
+Die :file:`site.js` ist dann vielleicht gar nicht mehr nötig. 
+In der lino.js kommen viele fundamentale Änderungen: ext_ui 
+hat ja den Report und eventuell den Record instanziert. 
+Den muss es an den ActionRenderer übergeben. Der muss kein 
+Window mehr erzeugen, sondern eine `jsgen.Component` (die 
+ihrerseits eine ext.Component generiert). Heißt also auch gar 
+nicht mehr `WindowWrapper`. Der Code wird wieder dynamisch generiert. 
+Das Argument `caller` fällt in den bisherigen WindowWrappers 
+komplett weg.
+
+Bei Upgrade beachten: die Dateien lino.js und lino.css sind jetzt 
+nicht mehr in /lino/media, sondern in lino/src/lino/ui/extjsu/media. 
+Für den Development-Server wird das automatisch gemacht 
+(in der urls.py), aber im Apache muss das manuell gemacht werden.

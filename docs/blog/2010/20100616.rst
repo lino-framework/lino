@@ -1,0 +1,36 @@
+20100616
+--------
+
+Heute lass ich die Layout-Probleme mal ruhen und will mich um folgenden Punkt kümmern:
+
+* Wenn man in Lino eine Person oder eine Firma erstellt, dann muss die ID anwendungsspezifisch ermittelt werden: eine gemeinsame Serie für Person und Company, range zwischen 200000 und 299999.
+
+Das kann ich wahrscheinlich in `Person.before_save()` einbinden. 
+Die Frage ist, wie ich den Sequenzzähler machen soll. 
+Ich schätze, dass ein Modell `SiteConfig` die beste Lösung ist, 
+von dem nur ein einziger Record existiert, der gewisse 
+Systemparameter enthält:
+
+* `next_partner_id` : die Partnernummer, die beim nächsten 
+  neuen Partner benutzt wird.
+* `myself` : FK zu einer Company, die meine eigene Firma ist
+* `base_currency` : Grundwährung
+
+In der `lino_settings.py` von DSBE wird dann mein 
+anwendungsspezifisches Verhalten definiert::
+
+
+  def init_site_config(sc):
+      sc.next_partner_id = 200000
+  lino.init_site_config = init_site_config
+
+Wie schaffe ich es, dass der Partnerzähler auch im multi-threaded-Betrieb 
+zuverlässig funktioniert? Da muss ich vielleicht mit manuellem 
+`transaction control 
+<http://docs.djangoproject.com/en/dev/topics/db/transactions>`_ arbeiten. Aber kann sein, dass das in der Praxis gar nicht so 
+dramatisch wird.
+
+Dramatischer ist, dass ich ans Schwitzen komme um den Menübefehl 
+:menuselection:`System --> Site Config` zu implementieren. Der zeigt erstmals keine Listenansicht 
+aller Records, sondern soll sogleich das Detail eines bestimmten Records 
+anzeigen. Das kann Lino momentan noch nicht. 

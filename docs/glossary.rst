@@ -64,3 +64,8 @@ Modules
   .. attribute:: template
     
     The template to be used.
+    
+.. class:: Note
+
+  .. attribute:: language    
+    

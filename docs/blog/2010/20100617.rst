@@ -1,0 +1,90 @@
+20100617
+========
+
+Neues von draußen
+-----------------
+
+Dirk Holtwick hat für Pisa bzw. xhtml2pdf 
+`von der GPL zur Apache License gewechselt
+<http://groups.google.com/group/xhtml2pdf/browse_thread/thread/b4d08b47f72e6d2e?hl=de>`_.
+Wenn ich das recht deute, hat er es aufgegeben, kommerzielle Wartung 
+für Pisa anzubieten. 
+"A complete rewrite from the ground would have been a good idea, 
+but there exist already other projects with more promising 
+foundations which could do the job, like Apache FOP". 
+
+Aha? Was ist denn Apache FOP?
+`Apache FOP <http://xmlgraphics.apache.org/fop/>`_ 
+ist ein Formatierer für XSL-FO. Damit wären Dokumentvorlagen im 
+`XSL-FO-Format <http://de.wikipedia.org/wiki/XSL-FO>`_. 
+Es gibt professionelle Vorlagen-Editoren, um solche Vorlagen 
+zu erstellen und zu bearbeiten (z.B. 
+`XF Designer <http://www.ecrion.com/Products/XFDesigner/Overview.aspx>`_ 
+für nur $795).
+Warum OpenOffice.org nicht schon lange XSL-FO kann, 
+ist mir ein Rätsel. AbiWord dagegen soll es können 
+(laut http://www.ibm.com/developerworks/xml/library/x-xslfo/
+und http://searjeant.blogspot.com/2008/09/generating-pdf-from-xml-with-xsl-fo.html).
+
+Ich notiere das in die :doc:`/todo` für den Fall, dass wir 
+mit appy_pod aus irgendeinem 
+Grund doch nicht zufrieden sein sollten.
+
+system.SiteConfig
+-----------------
+
+Anwendungsspezifisch ermittelte ID funktioniert jetzt: Personen und 
+Firmen, die in Lino-DSBE erstellt werden, kriegen nun eine Nummer mit 
+lokal definiertem Startwert (ab 200000 in der Demo) und gemeinsamem 
+Zähler (d.h. unique over both tables Person and Company). Neues Modell 
+`lino.modlib.system.models.SiteConfig`. Neuer Befehl "System 
+configuration" im Hauptmenü, wo dieser Zähler gesetzt werden kann.
+
+Inwiefern überschneiden sich :mod:`lino.modlib.system.models.SiteConfig` 
+und :mod:`django.contrib.sites`? (:doc:`/todo`)
+
+Slave-Buttons sind jetzt ganz weg, weil sie nicht funktionierten und weil diese Infos ja in den einzelnen Tabs enthalten sind. 
+
+Check-In  
+`Lino <http://code.google.com/p/lino/source/detail?r=b5f89319c71c8e068274850a8dc32e10b7b2f5af>`_ 
+und 
+`Lino-DSBE <http://code.google.com/p/lino-dsbe/source/detail?r=3f4e0b8ebb6383f0eefd3142fbceb5599a8db021>`_.
+
+Weitere Änderungen
+------------------
+
+* Die "row actions" (Buttons Delete, Insert, Print...) sind jetzt 
+  auch im Detail-Fenster enthalten. Der Button "Detail" natürlich 
+  nicht. Attribut `Action.hidden` ersetzt durch `show_in_list` 
+  und `show_in_detail`.
+
+* Kleiner Bug: wenn man Personen mit kyrillischen Buchstaben über 
+  Druckmethode Pisa ausdruckte, dann kam `UnicodeEncodeError: 'latin-1' 
+  codec can't encode characters in position 21-29: ordinal not in 
+  range(256)`. Behoben. Allerdings stehen im Dokument trotzdem 
+  schwarze Kästchen statt der kyrillischen Buchstaben... Ist 
+  aber sehr undringend...
+
+* Zufällig en passant gelöst: Beim Layout von PersonDetail stimmte 
+  das Stretching der `bottom_row` noch nicht. Jetzt wohl.
+
+* Der Punkt "Datenbank-Migrations-Tool" kann aus der ToDo-Liste raus: 
+  Ich habe `South <http://south.aeracode.org/docs/tutorial/part1.html>`_ 
+  installiert und bin zuversichtlich, dass das klappen wird.
+
+* Angaben, die aus TIM kommen, sind jetzt im Lino-UI nicht mehr editierbar
+  (aber im Datenbankmodell wohl).
+
+Dieser Punkt war noch lustig. Also Personen, die in Lino erstellt worden 
+sind, dürfen dort auch bearbeitet werden. Aber wenn `Person.id < 
+200000` ist, dann müssen einige Felder `disabled` werden. Das ist 
+Anwendungslogik, die pro Record auf dem Server und in Python laufen 
+soll. Mir fällt dazu nichts einfacheres ein, als dass der Server in 
+`ext_ui.handle_element_request()` (also wenn er nach einem Record 
+gefragt wird) außer außer `id`, `data` und `title` noch ein weiteres 
+Attribut in seiner json-Antwort angibt: `disabled_fields`. 
+
+In lino.js muss `Lino.DetailMixin.load_master_record` dann darauf testen 
+und ggf. diese Felder auf `disabled()` setzen.
+Ein Problem dabei ist: `BasicForm.findField()` findet `country` und `city` nicht. Weil das ComboBox-Felder sind und in der Form `countryHidden` bzw. `cityHidden` heißen. Doof. 
+

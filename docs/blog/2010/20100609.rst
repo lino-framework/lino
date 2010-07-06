@@ -1,0 +1,52 @@
+20100609
+========
+
+Gestern und heute habe ich ein bisschen an Lino arbeiten können. Ab morgen bis Sonntag ist wieder Pause, weil ich am [http://www.eelk.ee/kirikupaev2010/ Kirchensängerfest] teilnehme.
+
+Änderungen
+----------
+
+* Neues Feld `dsbe.Person.birth_date_circa`
+* Lino-DSBE hat jetzt seine eigene Versionsnummer (startet bei 0.1.1). Im Willkommensgruß wird das allerdings momentan nicht angezeigt (sondern nur in der `lino.log`)
+* Neue Funktion `default_language`, die die Standardsprache eines lino_site zurückgibt und als `default` für `contacts.Contact.language` verwendet wird.
+* Neues Feld :attr:`lino.modlib.notes.models.Note.language`. Also es müssen nicht mehr alle Notizen eines Partners in der gleichen Sprache sein.
+* Submit Persons.details (z.B.) funktionierte nicht, weil er glaubte, dass `Person.url` nicht leer sein darf. Das lag daran, dass die Variable `url` in der Funktion `Lino.contacts.Persons.detail()` zweimal als Variable definiert wurde: einmal für `Person.url` aus dem ersten Reiter, und ein zweites Mal für `Note.url` aus NotesByPerson im zweiten Reiter. 
+
+Neues von draußen
+-----------------
+
+Ich habe erst gestern entdeckt, dass es doch schon eine funktionierende 
+Lösung für die Datenbank-Migration in Django gibt: 
+`South <http://south.aeracode.org/>`_. Freut mich, dann brauche ich keinen 
+dpy-Serializer zu schreiben.
+
+Aha, Django ist nach der langen Wartezeit endlich in die Version 1.2 
+gesprungen. Da mach ich auch mal ein Upgrade meiner Kopie. Ich hatte 
+noch RC 1 (SVN-13269).
+
+Internes
+--------
+
+Weshalb schimpfte er beim Submit, dass `Person.url` leer war?
+Es liegt nicht an `coretools.data_elems()`, wie die lino.log mit 
+:setting:`MODEL_DEBUG` zeigt::
+
+  201006-09 07:37:38 DEBUG lino_site :   18: contacts.Person -> <class 'dsbe.models.Person'>
+  201006-09 07:37:38 DEBUG lino_site :       data_elems : name street street_no street_box addr1 country city zip_code region language email url phone gsm remarks id is_active activity first_name last_name title is_cpas is_senior is_minor user sex birth_date birth_date_circa birth_place birth_country civil_state national_id nationality card_number driving_license accepts_shift accepts_we has_own_car can_truck can_clark can_bus it_knowledge
+
+In `Lino.contacts.Persons.detail` sind viele Felder doppelt definiert. 
+Kann sein, dass das Problem schon länger existiert. 
+Erklärung: die sind nicht wirklich doppelt, sondern die Felder der SlaveGrids in Detail2 sind dort auch definiert. also lediglich keine Namenskollision.
+
+Jetzt heißt die Variable des Feldes `Model.fieldname` (und nicht 
+`Reiter.fieldname` wie ich zuerst dachte: das geht nicht, weil in 
+`ext_windows.py` die chooser benutzt werden, um die Felder miteinander 
+zu verknüpfen)
+
+Ich habe eine neuen Showcase 
+`20100609.html <http://code.google.com/p/lino/source/browse/extjs-showcases/20100609.html
+?r=cd9a6bf43f5c63ca87f5d1a5cefc68c69ae8a8c1>`_ begonnen, um 
+an der Performance des Detail-Fensters zu forschen. Leider noch keine 
+klare Vision, was ich da verbessern könnte. Der HtmlEditor ist scheinbar 
+ziemlich lahm. Eine Idee ist, dass ich mehr mit inherited configuration 
+arbeite.
