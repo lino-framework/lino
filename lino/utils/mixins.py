@@ -278,8 +278,9 @@ if appy:
 register_print_method(RtfPrintMethod())
 register_print_method(PicturePrintMethod())
 
+
 def print_method_choices():
-  return [ (pm.name,unicode(pm.label) ) for pm in pm_list]
+  return [ (pm.name,pm.label) for pm in pm_list]
 
 def get_print_method(name):
     return pm_dict.get(name)

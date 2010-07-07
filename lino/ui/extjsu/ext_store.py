@@ -23,8 +23,8 @@ from . import ext_requests
 
 import lino
 from lino import reports
-from lino.modlib.properties import models as properties
-
+#~ from lino.modlib.properties import models as properties
+from lino.utils import choosers
 
 class StoreField(object):
 
@@ -170,22 +170,12 @@ class OneToOneStoreField(StoreField):
         else:
             d[self.field.name] = v.pk
         
-class ChoicesStoreField(StoreField):
+class ComboStoreField(StoreField):
   
     def as_js(self):
         s = StoreField.as_js(self)
         s += "," + repr(self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
         return s 
-        
-    def get_value_text(self,obj):
-        v = getattr(obj,self.field.name)
-        if v is None or v == '':
-            return (None, None)
-        else:
-            for i in self.field.choices:
-                if i[0] == v:
-                    return (v, unicode(i[1]))
-            return (v, _("%r (invalid choice)") % v)
         
     def form2obj(self,instance,post_data):
         assert not self.field.primary_key
@@ -198,14 +188,15 @@ class ChoicesStoreField(StoreField):
             v = self.parse_form_value(v)
         setattr(instance,self.field.name,v)
 
-
     def obj2json(self,obj,d):
         value,text = self.get_value_text(obj)
         d[self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX] = value
         d[self.field.name] = text
         
+    def get_value_text(self,obj):
+        raise NotImplementedError
         
-class ForeignKeyStoreField(ChoicesStoreField):
+class ForeignKeyStoreField(ComboStoreField):
         
     def get_value_text(self,obj):
         try:
@@ -224,6 +215,32 @@ class ForeignKeyStoreField(ChoicesStoreField):
             return None
             
 
+class ChoicesStoreField(ComboStoreField):
+  
+    def get_value_text(self,obj):
+        v = getattr(obj,self.field.name)
+        if v is None or v == '':
+            return (None, None)
+        for i in self.field.choices:
+            if type(i) in (list,tuple):
+                if i[0] == v:
+                    return (v, unicode(i[1]))
+            elif i == v:
+                return (v, unicode(i))
+        return (v, _("%r (invalid choice)") % v)
+        
+class ChooserStoreField(ComboStoreField):
+    """
+    This will be used only for non-fk fields with chooser; 
+    ForeignKey fields will get a ForeignKeyStoreField even if they have a chooser.
+    """
+    def get_value_text(self,obj):
+        v = getattr(obj,self.field.name)
+        if v is None or v == '':
+            return (None, None)
+        ch = choosers.get_for_field(self.field) 
+        return (v, ch.get_text_for_value(v,obj))
+  
 
 
 class Store(Component):
@@ -276,6 +293,8 @@ class Store(Component):
             kw.update(type='int')
         if fld.choices:
             return ChoicesStoreField(fld,**kw)
+        if choosers.get_for_field(fld) is not None:
+            return ChooserStoreField(fld,**kw)
         else:
             return StoreField(fld,**kw)
 
@@ -321,8 +340,8 @@ class Store(Component):
                 f.form2obj(instance,form_values)
             except exceptions.ValidationError,e:
                 raise exceptions.ValidationError({f.field.name:e})
-        for p in properties.Property.properties_for_model(instance.__class__):
-            p.form2obj(instance,form_values)
+        #~ for p in properties.Property.properties_for_model(instance.__class__):
+            #~ p.form2obj(instance,form_values)
             
     def unused_get_from_form(self,form_values):
         instance = {}

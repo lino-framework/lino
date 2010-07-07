@@ -117,11 +117,11 @@ Ext.override(Ext.form.ComboBox, {
         var text = v;
         if(this.valueField){
           if(v === null) { 
-              console.log(this.name,'.setValue',v,'no lookup needed, value is null');
+              console.log(this.name,'.setValue',v,'no lookup needed because value is null');
               v = null;
           } else if (record != undefined) {
             text = record.data[this.name];
-            console.log(this.name,'.setValue',v,'got text ',this.name,' from record ',record);
+            console.log(this.name,'.setValue',v,'got text "',text,'" from given record ',record);
           } else {
             // if(this.mode == 'remote' && !Ext.isDefined(this.store.totalLength)){
             if(this.mode == 'remote' && ( this.lastQuery === null || (!Ext.isDefined(this.store.totalLength)))){
@@ -138,19 +138,22 @@ Ext.override(Ext.form.ComboBox, {
                         this.store.setBaseParam(this.queryParam, q);
                         params = this.getParams(q);
                     }
-                    console.log(this.name,'.setValue',v,' : call load() with params ',params);
+                    console.log(this.name,'.setValue',v,' : loads store with params ',params);
                     this.store.load({params: params});
                 }else{
                     console.log(this.name,'.setValue',v,' : but store is loading',this.store.lastOptions);
                 }
                 return;
             }else{
-                console.log(this.name,'.setValue',v,' : store is loaded, lastQuery is "',this.lastQuery,'"');
+              if (this.mode == 'remote') 
+                console.log(this.name,'.setValue',v,' : store already loaded, lastQuery is "',this.lastQuery,'"');
+              else
+                console.log(this.name,'.setValue',v,' : local mode (no need to load)');
             }
             var r = this.findRecord(this.valueField, v);
             if(r){
-                console.log(this.name,'.setValue',v,', findRecord() returned ',r);
                 text = r.data[this.displayField];
+                console.log(this.name,'.setValue',v,', findRecord() returned ',r, ', text is ',text);
             }else if(this.valueNotFoundText !== undefined){
                 text = this.valueNotFoundText;
             }
@@ -159,9 +162,11 @@ Ext.override(Ext.form.ComboBox, {
         this.lastSelectionText = text;
         if(this.hiddenField){
             this.hiddenField.value = v;
+            console.log('.setValue hiddenField',this.hiddenField.name,' = ',v);
         }
         Ext.form.ComboBox.superclass.setValue.call(this, text);
-        this.value = v;
+        //~ this.value = v; warum war das hier? 20100707
+        console.log('.setValue 20100707 done',this);
     },
     getParams : function(q){
         // p = Ext.form.ComboBox.superclass.getParams.call(this, q);
@@ -349,7 +354,7 @@ Lino.grid_afteredit_handler = function (caller) {
     // var p = {};
     //~ p['grid_afteredit_colname'] = e.field;
     //~ p[e.field] = e.value;
-    // console.log(e);
+    //~ console.log('grid_afteredit 20100707',p);
     // add value used by ForeignKeyStoreField CHOICES_HIDDEN_SUFFIX
     //~ p[e.field+'Hidden'] = e.value;
     // p[pk] = e.record.data[pk];
@@ -381,6 +386,16 @@ Lino.grid_afteredit_handler = function (caller) {
     //~ })
   }
 };
+
+
+Lino.comboRenderer = function(displayField){
+    return function(value,metadata,record,ri,ci,store){
+        if (record) return record.get(displayField)
+        //~ var record = combo.findRecord(combo.valueField, value);
+        //~ return record ? record.get(combo.displayField) : combo.valueNotFoundText;
+        return ''; 
+    }
+}
 
 
 Lino.delete_selected = function(caller) {
@@ -1087,8 +1102,6 @@ Lino.SlaveGridPlugin = Ext.extend(Lino.SlavePlugin,{
 Lino.ComboBox = Ext.extend(Ext.form.ComboBox,{
   triggerAction: 'all',
   submitValue: true,
-  displayField: 'text', // ext_requests.CHOICES_TEXT_FIELD
-  valueField: 'value' // ext_requests.CHOICES_VALUE_FIELD
 });
 
 Lino.ChoicesFieldElement = Ext.extend(Lino.ComboBox,{
@@ -1111,6 +1124,8 @@ Lino.RemoteComboStore = Ext.extend(Ext.data.JsonStore,{
 
 Lino.RemoteComboFieldElement = Ext.extend(Lino.ComboBox,{
   mode: 'remote',
+  displayField: 'text', // ext_requests.CHOICES_TEXT_FIELD
+  valueField: 'value', // ext_requests.CHOICES_VALUE_FIELD
   //~ typeAhead: true,
   //~ forceSelection:false,
   minChars: 2, // default 4 is to much

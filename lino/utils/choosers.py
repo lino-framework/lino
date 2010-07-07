@@ -70,6 +70,9 @@ class Chooser:
         for cv in self.converters:
             kw = cv.convert(**kw)
         return self.get_choices(**kw)
+        
+    def get_text_for_value(self,value,obj):
+        pass
 
 def discover():
     lino.log.info("Discovering choosers...")

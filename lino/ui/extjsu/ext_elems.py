@@ -16,6 +16,7 @@ from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.utils.translation import ugettext as _
+from django.utils.encoding import force_unicode
 
 import lino
 
@@ -351,6 +352,16 @@ class ComboFieldElement(FieldElement):
     sortable = True
     xtype = None
     
+    def get_column_options(self,**kw):
+        kw = FieldElement.get_column_options(self,**kw)
+        kw.update(dataIndex=self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
+        kw.update(renderer=js_code('Lino.comboRenderer(%r)' % self.field.name))
+        return kw    
+        
+        
+
+    
+    
 class ChoicesFieldElement(ComboFieldElement):
     value_template = "new Lino.ChoicesFieldElement(%s)"
   
@@ -360,6 +371,14 @@ class ChoicesFieldElement(ComboFieldElement):
         
     def get_field_options(self,**kw):
         kw = FieldElement.get_field_options(self,**kw)
+        
+        """Django requires that "choices" returns a sequence of two-tuples."""
+        #~ def row2dict(tt):
+            #~ d = {}
+            #~ d[ext_requests.CHOICES_TEXT_FIELD] = tt[1]
+            #~ d[ext_requests.CHOICES_VALUE_FIELD] = force_unicode(tt[0])
+            #~ return d
+        #~ kw.update(store=[row2dict(tt) for tt in self.field.choices])
         kw.update(store=self.field.choices)
         kw.update(hiddenName=self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
         return kw
@@ -390,6 +409,7 @@ class ForeignKeyElement(RemoteComboFieldElement):
         self.report = reports.get_model_report(self.field.rel.to)
       
     def submit_fields(self):
+        raise "no longer used (?)"
         return [self.field.name,self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX]
         
         
