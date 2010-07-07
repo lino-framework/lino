@@ -64,7 +64,7 @@ Also muss ich mir da sowieso was Besseres einfallen lassen.
 Die Lösung ist: ich muss `Ext.data.Record.phantom` abfragen. 
 :js:func:`Lino.grid_afteredit_handler` tut das jetzt. 
 
-Aber da ist noch ein Problem: :js:func:`Lino.grid_afteredit_handler` schickt mindestens seit heute und vielleicht schon seit Längerem die Werte der ComboBoxen nicht richtig ab. Das war ja sowieso sehr holperig gemacht. Danach muss ich miorgen schauen, jetzt ist erst mal Feierabend...
+Aber da ist noch ein Problem: :js:func:`Lino.grid_afteredit_handler` schickt mindestens seit heute und vielleicht schon seit Längerem die Werte der ComboBoxen nicht richtig ab. Das war ja sowieso sehr holperig gemacht. Danach muss ich morgen schauen, jetzt ist erst mal Feierabend...
 
 Check-In 1061:f8b8943bec84
 

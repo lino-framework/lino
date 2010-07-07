@@ -1,0 +1,50 @@
+20100707
+--------
+
+Also wie gestern festgestellt, schickt :js:func:`Lino.grid_afteredit_handler` die Werte der ComboBoxen nicht richtig ab. 
+
+Auch stelle ich mir die Frage, ob es nicht besser ist, erst beim Verlassen des Records abzuschicken.
+
+Fallbeispiel: ich gehe nach http://127.0.0.1:8000/api/notes/NoteTypes?fmt=grid und fülle 
+dort die drei Felder einer neuen Notizart aus:
+
+.. image:: http://lino.googlecode.com/hg/screenshots/20100707.jpg
+   :width: 40%
+   :target: http://lino.googlecode.com/hg/screenshots/20100707.jpg
+ 
+Nach jedem Feld schickt er ein POST ab, das der Server bei den ersten beiden Feldern 
+korrekterweise mit einer Fehlermeldung 
+beantwortet, weil die Felder print_method und template nicht ausgefüllt sind. 
+
+Beim dritten Mal müsste er eigentlich speichern... tut er aber nicht. 
+Und zwar, weil mit den Werten der ComboBoxen etwas nicht stimmt. 
+Hier die Werte, die er beim dritten POST abschickt:
+
+=================== =========
+id	            
+name	            test
+print_method        appy
+print_methodHidden  
+template	    phone.odt
+=================== =========
+
+Das ist nicht normal. 
+Wieso gibt es kein `templateHidden`? 
+Und wieso ist `print_methodHidden` leer?
+
+print_method und template sind in der site.js wie folgt definiert::
+
+  var NoteType_print_method_field = new Lino.ChoicesFieldElement({ 
+      allowBlank: false, fieldLabel: "print method", name: "print_method", 
+      store: [ [ "pisa", "PisaPrintMethod" ], [ "appy", "AppyPrintMethod" ], 
+          [ "rtf", "RtfPrintMethod" ], [ "picture", "PicturePrintMethod" ] ], 
+      hiddenName: "print_methodHidden" });
+  var NoteType_template_field = new Lino.RemoteComboFieldElement({ 
+      allowBlank: false, fieldLabel: "template", name: "template", 
+      store: new Lino.RemoteComboStore({ proxy: new Ext.data.HttpProxy({ 
+          url: "/choices/notes/NoteTypes/template", method: "GET" }) }), 
+      hiddenName: "templateHidden" });
+
+Das ist alles theoretisch richtig, also wo ist der Fehler?
+Vielleicht liegt es daran, dass `Lino.GridPanel` mein `ComboBox.setValue()` 
+ohne den zweiten Parameter `record` aufruft.

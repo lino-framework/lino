@@ -117,15 +117,15 @@ Ext.override(Ext.form.ComboBox, {
         var text = v;
         if(this.valueField){
           if(v === null) { 
-              // console.log(this.name,'.setValue',v,'no lookup needed, value is null');
+              console.log(this.name,'.setValue',v,'no lookup needed, value is null');
               v = null;
           } else if (record != undefined) {
             text = record.data[this.name];
-            //~ console.log(this.name,'.setValue',v,'got text ',this.name,' from record ',record);
+            console.log(this.name,'.setValue',v,'got text ',this.name,' from record ',record);
           } else {
             // if(this.mode == 'remote' && !Ext.isDefined(this.store.totalLength)){
             if(this.mode == 'remote' && ( this.lastQuery === null || (!Ext.isDefined(this.store.totalLength)))){
-                // console.log(this.name,'.setValue',v,'must wait for load');
+                console.log(this.name,'.setValue',v,'must wait for load');
                 this.store.on('load', this.setValue.createDelegate(this, arguments), null, {single: true});
                 if(this.store.lastOptions === null || this.lastQuery === null){
                     var params;
@@ -138,17 +138,18 @@ Ext.override(Ext.form.ComboBox, {
                         this.store.setBaseParam(this.queryParam, q);
                         params = this.getParams(q);
                     }
-                    // console.log(this.name,'.setValue',v,' : call load() with params ',params);
+                    console.log(this.name,'.setValue',v,' : call load() with params ',params);
                     this.store.load({params: params});
                 }else{
-                    // console.log(this.name,'.setValue',v,' : but store is loading',this.store.lastOptions);
+                    console.log(this.name,'.setValue',v,' : but store is loading',this.store.lastOptions);
                 }
                 return;
             }else{
-                // console.log(this.name,'.setValue',v,' : store is loaded, lastQuery is "',this.lastQuery,'"');
+                console.log(this.name,'.setValue',v,' : store is loaded, lastQuery is "',this.lastQuery,'"');
             }
             var r = this.findRecord(this.valueField, v);
             if(r){
+                console.log(this.name,'.setValue',v,', findRecord() returned ',r);
                 text = r.data[this.displayField];
             }else if(this.valueNotFoundText !== undefined){
                 text = this.valueNotFoundText;
@@ -596,7 +597,8 @@ Ext.BLANK_IMAGE_URL = '/media/extjs/resources/images/default/s.gif'; // settings
 
 // used as Ext.grid.Column.renderer for id columns in order to hide the special id value -99999
 Lino.id_renderer = function(value, metaData, record, rowIndex, colIndex, store) {
-  if (value == -99999) return '';
+  //~ if (value == -99999) return '';
+  if (record.phantom) return '';
   return value;
 }
 
