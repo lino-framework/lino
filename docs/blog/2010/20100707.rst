@@ -47,7 +47,8 @@ print_method und template sind in der site.js wie folgt definiert::
           url: "/choices/notes/NoteTypes/template", method: "GET" }) }), 
       hiddenName: "templateHidden" });
 
-Das ist theoretisch richtig. Die restlichen Parameter kommen aus der :file:`lino.js`::
+Das sieht richtig aus, und die restlichen Parameter der ComboBoxen sind 
+ja in der :file:`lino.js` definiert::
 
   Lino.ComboBox = Ext.extend(Ext.form.ComboBox,{
     triggerAction: 'all',
@@ -143,4 +144,8 @@ Jetzt habe ich noch das Problem, dass :meth:`ComboStoreField.get_value_text` fü
 
 Übrigens ist :attr:`NoteType.template` außerdem ein Feld mit eindimensionaler Auswahlliste, also keine "value,text"-Paare, sondern lediglich eine Liste von Dateienamen, die auch als solche angezeigt werden. 
 
+Also jedenfalls darf es nicht so sein, dass der Server pro `NoteType`jedesmal deren `template_choices` aufruft, nur um festzustellen, dass das ein eindimensionales Array ist und die Liste deshalb gar nicht nötig war.
+
 Diese Details müssen jetzt wohl bis morgen warten, denn es ist seit langem Feierabend...
+
+
