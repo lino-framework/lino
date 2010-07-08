@@ -366,7 +366,7 @@ Lino.grid_afteredit_handler = function (caller) {
     };
     //~ console.log(e.record.id);
     if (e.record.phantom) {
-      p.id = undefined;
+      //~ p.id = undefined;
       Lino.do_action(caller,{
         method:'POST',url: caller.ls_data_url,
         params:p,after_success:after_success})
@@ -740,8 +740,8 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
       this.setTitle('');
     }
     //~ console.log('20100531 Lino.DetailMixin.on_load_master_record',this.main_form);
-    console.log('TODO: before_row_edit',this);
-    //~ this.before_row_edit(record);
+    //~ console.log('TODO: before_row_edit',this);
+    this.before_row_edit(record);
   },
   get_selected : function() { return [ this.current_record.id ] },
   get_current_record : function() {  return this.current_record }
@@ -768,7 +768,8 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
       fields: config.ls_store_fields, 
       totalProperty: "count", 
       root: "rows", 
-      id: "id" });
+      //~ id: "id" });
+      idProperty: config.ls_id_property });
     if (config.ls_quick_edit) {
       config.selModel = new Ext.grid.CellSelectionModel()
     } else { 

@@ -795,6 +795,7 @@ class GridElement(Container): #,DataElementMixin):
         #~ d.update(autoHeight=True)
         #d.update(layout='fit')
         #~ d.update(enableColLock=False)
+        d.update(ls_id_property=rh.store.pk.name)
         d.update(ls_quick_edit=True)
         d.update(ls_content_type=rh.content_type)
         

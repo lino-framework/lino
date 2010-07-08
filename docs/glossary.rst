@@ -1,4 +1,5 @@
-﻿Glossary
+﻿========
+Glossary
 ========
 
 
@@ -53,7 +54,7 @@ Modules
 .. module:: lino.modlib.notes.models
 
 ``lino.modlib.notes``
-----------------------
+---------------------
 
 .. class:: NoteType
 
@@ -68,4 +69,24 @@ Modules
 .. class:: Note
 
   .. attribute:: language    
+    
+
+.. module:: lino.modlib.countries.models
+
+``lino.modlib.countries``
+-------------------------
+
+Source :srcref:`/lino/modlib/countries/models.py`.
+  
+Models
+======
+
+.. model:: countries.Country
+
+  One entry per country.
+  
+.. model:: countries.City
+
+  One entry per city.
+  
     

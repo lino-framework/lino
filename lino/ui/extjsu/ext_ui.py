@@ -455,7 +455,7 @@ class ExtUI(base.UI):
                 instance.full_clean()
             except exceptions.ValidationError, e:
                 return json_response_kw(success=False,msg="Failed to save %s : %s" % (instance,e))
-            print instance, instance.id
+            #~ print instance, instance.pk
             instance.save(force_insert=True)
             #~ except models.IntegrityError,e:
                 #~ json_response_kw(success=False,msg="Failed to save %s : %e" % (instance,e))

@@ -47,6 +47,18 @@ Einige der Konsequenzen:
   
 - Das ``this.value = v;`` am Ende meiner :func:`ComboBox.setValue` musste wieder rein. 
 
+Check-In und weiter.
+
+Nächstes Problem: in http://127.0.0.1:8000/api/countries/Countries?fmt=grid wurden die iso_code nicht angezeigt, weil der Store immer "id" als primary key erwartete. Jetzt gibt es deshalb den neuen Konfigurationsparameter `ls_id_property` für `Lino.GridPanel`. (:class:`lino.modlib.countries.models.Country` ist ja eine der wenigen Tabellen, die nicht 'id' als primary key haben).
+
+Nächstes Problem: wenn ich in der Grid ein neues Land erstellen wollte, dann schickter er zwar ein korrektes `POST http://127.0.0.1:8000/api/countries/Countries`, aber der Server machte dann::
+
+  ValidationError: {'isocode': ValidationError({'isocode': u"Primary key '' may not be modified."})}
+  
+Merke: der pk einer neu erstellten und noch nicht gespeicherten Instanz ist nicht unbedingt ``None``, sondern kann (wenn pk ein CharField ist) auch ``''`` sein.
+
+:model:`countries.Country` hat jetzt ein Detail-Layout, in dem der neue Report CitiesByCountry angezeigt wird. 
+
 
 Nebenbei
 --------

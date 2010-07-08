@@ -15,19 +15,28 @@
 import datetime
 from django.db import models
 from lino import reports
+from lino import layouts
 from django.utils.translation import ugettext as _
 
 
 class Country(models.Model):
     name = models.CharField(max_length=200)
     isocode = models.CharField(max_length=4,primary_key=True)
-    short_code = models.CharField(max_length=4)
+    short_code = models.CharField(max_length=4,blank=True)
     
     class Meta:
         verbose_name_plural = _("Countries")
     
     def __unicode__(self):
         return self.name
+        
+class CountryDetail(layouts.DetailLayout):
+    datalink = 'countries.Country'
+    main = """
+    isocode name short_code
+    countries.CitiesByCountry
+    """
+  
         
 class Countries(reports.Report):
     model = 'countries.Country'
@@ -53,7 +62,9 @@ class Cities(reports.Report):
     order_by = "country name"
     column_names = "country name zip_code"
     
-
+class CitiesByCountry(Cities):
+    column_names = "name zip_code country"
+    fk_name = 'country'
 
 
 class Language(models.Model):

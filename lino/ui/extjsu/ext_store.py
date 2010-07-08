@@ -57,10 +57,11 @@ class StoreField(object):
         if v is None:
             return
         v = self.parse_form_value(v)
-        if self.field.primary_key and instance.pk is not None:
+        if self.field.primary_key and instance.pk:
             if instance.pk == v:
                 return
-            raise exceptions.ValidationError({self.field.name:_("Primary key %r may not be modified.") % instance.pk})
+            raise exceptions.ValidationError({
+              self.field.name:_("Existing primary key value %r may not be modified.") % instance.pk})
         try:
             setattr(instance,self.field.name,v)
         except exceptions.ValidationError,e:

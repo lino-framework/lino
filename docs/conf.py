@@ -221,6 +221,8 @@ def setup(app):
       indextemplate='pair: %s; file')
     app.add_object_type(directivename='setting',rolename='setting',
       indextemplate='pair: %s; setting')
+    app.add_object_type(directivename='model',rolename='model',
+      indextemplate='pair: %s; model')
     #app.connect('build-finished', handle_finished)
     
     
