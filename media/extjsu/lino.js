@@ -740,8 +740,8 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
       this.setTitle('');
     }
     //~ console.log('20100531 Lino.DetailMixin.on_load_master_record',this.main_form);
-    //~ console.log('TODO: before_row_edit',this);
-    this.before_row_edit(record);
+    console.log('TODO: before_row_edit',this);
+    //~ this.before_row_edit(record);
   },
   get_selected : function() { return [ this.current_record.id ] },
   get_current_record : function() {  return this.current_record }
