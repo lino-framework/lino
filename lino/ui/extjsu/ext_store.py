@@ -194,7 +194,16 @@ class ComboStoreField(StoreField):
         d[self.field.name] = text
         
     def get_value_text(self,obj):
-        raise NotImplementedError
+        v = getattr(obj,self.field.name)
+        if v is None or v == '':
+            return (None, None)
+        ch = choosers.get_for_field(self.field) 
+        if ch is not None:
+            return (v, ch.get_text_for_value(v,obj))
+        for i in self.field.choices:
+            if i[0] == v:
+                return (v, unicode(i[1]))
+        return (v, _("%r (invalid choice)") % v)
         
 class ForeignKeyStoreField(ComboStoreField):
         
@@ -215,31 +224,22 @@ class ForeignKeyStoreField(ComboStoreField):
             return None
             
 
-class ChoicesStoreField(ComboStoreField):
+#~ class ChoicesStoreField(ComboStoreField):
   
-    def get_value_text(self,obj):
-        v = getattr(obj,self.field.name)
-        if v is None or v == '':
-            return (None, None)
-        for i in self.field.choices:
-            if type(i) in (list,tuple):
-                if i[0] == v:
-                    return (v, unicode(i[1]))
-            elif i == v:
-                return (v, unicode(i))
-        return (v, _("%r (invalid choice)") % v)
+    #~ def get_value_text(self,obj):
+        #~ v = getattr(obj,self.field.name)
+        #~ if v is None or v == '':
+            #~ return (None, None)
+        #~ for i in self.field.choices:
+            #~ if i[0] == v:
+                #~ return (v, unicode(i[1]))
+        #~ return (v, _("%r (invalid choice)") % v)
         
-class ChooserStoreField(ComboStoreField):
-    """
-    This will be used only for non-fk fields with chooser; 
-    ForeignKey fields will get a ForeignKeyStoreField even if they have a chooser.
-    """
-    def get_value_text(self,obj):
-        v = getattr(obj,self.field.name)
-        if v is None or v == '':
-            return (None, None)
-        ch = choosers.get_for_field(self.field) 
-        return (v, ch.get_text_for_value(v,obj))
+#~ class ChooserStoreField(ComboStoreField):
+    #~ """
+    #~ This will be used only for non-fk fields with chooser; 
+    #~ ForeignKey fields will get a ForeignKeyStoreField even if they have a chooser.
+    #~ """
   
 
 
@@ -291,12 +291,21 @@ class Store(Component):
             kw.update(type='int')
         if isinstance(fld,models.AutoField):
             kw.update(type='int')
-        if fld.choices:
-            return ChoicesStoreField(fld,**kw)
-        if choosers.get_for_field(fld) is not None:
-            return ChooserStoreField(fld,**kw)
-        else:
+        #~ if fld.choices:
+            #~ return ChoicesStoreField(fld,**kw)
+        #~ ch = choosers.get_for_field(fld)
+        #~ if ch.simple_values:
+            #~ return StoreField(fld,**kw)
+        #~ else:
+            #~ return ChooserStoreField(fld,**kw)
+        if choosers.uses_simple_values(fld):
             return StoreField(fld,**kw)
+        else:
+            return ComboStoreField(fld,**kw)
+        #~ if choosers.get_for_field(fld) is not None:
+            #~ return ChooserStoreField(fld,**kw)
+        #~ else:
+            #~ return StoreField(fld,**kw)
 
       
     def ext_options(self):

@@ -354,14 +354,13 @@ class ComboFieldElement(FieldElement):
     
     def get_column_options(self,**kw):
         kw = FieldElement.get_column_options(self,**kw)
-        kw.update(dataIndex=self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
-        kw.update(renderer=js_code('Lino.comboRenderer(%r)' % self.field.name))
+        if not choosers.uses_simple_values(self.field):
+            kw.update(hiddenName=self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
+            kw.update(dataIndex=self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
+            kw.update(renderer=js_code('Lino.comboRenderer(%r)' % self.field.name))
         return kw    
         
-        
 
-    
-    
 class ChoicesFieldElement(ComboFieldElement):
     value_template = "new Lino.ChoicesFieldElement(%s)"
   
@@ -380,25 +379,20 @@ class ChoicesFieldElement(ComboFieldElement):
             #~ return d
         #~ kw.update(store=[row2dict(tt) for tt in self.field.choices])
         kw.update(store=self.field.choices)
-        kw.update(hiddenName=self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
+        #~ if not choosers.uses_simple_values(self.field):
+            #~ kw.update(hiddenName=self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
         return kw
         
 
 class RemoteComboFieldElement(ComboFieldElement):
     value_template = "new Lino.RemoteComboFieldElement(%s)"
         
-    def store_options(self,**kw):
-        proxy = dict(url=self.lh.ui.get_choices_url(self),method='GET')
-        kw.update(proxy=js_code("new Ext.data.HttpProxy(%s)" % py2js(proxy)))
-        # a JsonStore without explicit proxy sometimes used method POST
-        return kw
-      
     def get_field_options(self,**kw):
         kw = FieldElement.get_field_options(self,**kw)
-        sto = self.store_options()
-        #print repr(sto)
-        kw.update(store=js_code("new Lino.RemoteComboStore(%s)" % py2js(sto)))
-        kw.update(hiddenName=self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
+        proxy = dict(url=self.lh.ui.get_choices_url(self),method='GET')
+        store = dict(proxy=js_code("new Ext.data.HttpProxy(%s)" % py2js(proxy)))
+        # a JsonStore without explicit proxy sometimes used method POST
+        kw.update(store=js_code("new Lino.RemoteComboStore(%s)" % py2js(store)))
         return kw
         
         

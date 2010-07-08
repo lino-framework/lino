@@ -148,4 +148,4 @@ Also jedenfalls darf es nicht so sein, dass der Server pro `NoteType`jedesmal de
 
 Diese Details müssen jetzt wohl bis morgen warten, denn es ist seit langem Feierabend...
 
-
+(Fortsetzung folgt :doc:`morgen <20100708>`)

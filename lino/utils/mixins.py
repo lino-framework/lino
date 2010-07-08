@@ -46,7 +46,7 @@ except ImportError:
 pm_dict = {}
 pm_list = []
         
-render_methods = {}
+#~ render_methods = {}
 
 
 class MultiTableBase:
@@ -285,29 +285,21 @@ def print_method_choices():
 def get_print_method(name):
     return pm_dict.get(name)
 
-def render_element(elem,fmt):
-    rm = render_methods.get(fmt,None)
+#~ def render_element(elem,fmt):
+    #~ rm = render_methods.get(fmt,None)
     
     
     
 def template_choices(print_method):
     pm = get_print_method(print_method)
-    if pm is None:
-        #~ print "unknown print method", print_method
-        return []
-    glob_spec = os.path.join(pm.templates_dir,'*'+pm.template_ext)
-    
-    fnames = []
-    top = pm.templates_dir
-    for dirpath, dirs, files in os.walk(top):
-        for fn in files:
-            if fnmatch(fn,'*'+pm.template_ext):
-                if len(dirpath) > len(top):
-                    fn = os.path.join(dirpath[len(top)+1:],fn)
-                fnames.append(fn.decode(sys.getfilesystemencoding()))
-    #~ l = [fn.decode(sys.getfilesystemencoding()) for fn in glob.glob(glob_spec)]
-    if len(fnames) == 0:
-        print "No files %s" % glob_spec
-    return fnames
+    if pm is not None:
+        glob_spec = os.path.join(pm.templates_dir,'*'+pm.template_ext)
+        top = pm.templates_dir
+        for dirpath, dirs, files in os.walk(top):
+            for fn in files:
+                if fnmatch(fn,'*'+pm.template_ext):
+                    if len(dirpath) > len(top):
+                        fn = os.path.join(dirpath[len(top)+1:],fn)
+                    yield fn.decode(sys.getfilesystemencoding())
             
     

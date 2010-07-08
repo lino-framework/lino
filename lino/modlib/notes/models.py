@@ -36,9 +36,11 @@ class NoteType(models.Model):
     def __unicode__(self):
         return self.name
         
-    @classmethod
+    #~ @classmethod
     def template_choices(cls,print_method):
         return mixins.template_choices(print_method)
+    template_choices.simple_values = True
+    template_choices = classmethod(template_choices)
         
         
 from lino.modlib.contacts.models import default_language

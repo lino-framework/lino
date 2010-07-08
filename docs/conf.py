@@ -132,12 +132,12 @@ html_static_path = ['.static']
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
-#html_last_updated_fmt = '%b %d, %Y'
-last_updated = True
+html_last_updated_fmt = '%b %d, %Y'
+#~ last_updated = True
 
 # If true, SmartyPants will be used to convert quotes and dashes to
 # typographically correct entities.
-# html_use_smartypants = True
+#~ html_use_smartypants = True
 
 # Custom sidebar templates, maps document names to template names.
 html_sidebars = {
@@ -146,7 +146,10 @@ html_sidebars = {
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.
-#html_additional_pages = {}
+#~ html_additional_pages = {
+    #~ '*': 'links.html',
+#~ }
+
 
 # If false, no module index is generated.
 html_use_modindex = True
@@ -158,12 +161,13 @@ html_use_index = True
 #html_split_index = False
 
 # If true, the reST sources are included in the HTML build as _sources/<name>.
-#html_copy_source = True
+html_copy_source = False
 
 # If true, an OpenSearch description file will be output, and all pages will
 # contain a <link> tag referring to it.  The value of this option must be the
 # base URL from which the finished HTML is served.
 #html_use_opensearch = ''
+html_use_opensearch = 'http://lino.saffre-rumma.ee'
 
 # If nonempty, this is the file name suffix for HTML files (e.g. ".xhtml").
 #html_file_suffix = ''
@@ -205,6 +209,8 @@ latex_documents = [
 #latex_use_modindex = True
 
 #language="de"
+
+#~ show_source = True
 
 #~ srcref_base_uri="http://code.google.com/lino"
 #~ srcref_base_uri="http://code.google.com/p/lino/source/browse/#hg" 

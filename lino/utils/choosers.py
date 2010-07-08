@@ -18,23 +18,28 @@ from lino.core.coretools import get_data_elem
 import lino
   
   
-            
-class Chooser:
+class BaseChooser:
+    def __init__(self,field):
+        self.field = field
+        
+class ChoicesChooser(BaseChooser):
+    def __init__(self,field):
+        BaseChooser.__init__(self,field)
+        self.simple_values = type(field.choices[0])
+  
+class Chooser(BaseChooser):
     def __init__(self,model,field,meth):
+        BaseChooser.__init__(self,field)
         self.model = model
         #~ self.field = model._meta.get_field(fldname)
-        self.field = field
         self.meth = meth
+        self.simple_values = getattr(meth,'simple_values',False)
         self.context_params = meth.func_code.co_varnames[1:meth.func_code.co_argcount]
         #~ lino.log.warning("20100527 %s %s",self.context_params,meth)
         self.context_values = []
         self.context_fields = []
         for name in self.context_params:
             f = self.get_data_elem(name)
-            #~ f = get_data_elem(self.model,name)
-            #~ if f is None:
-                #~ lino.log.warning("Model %s has no field %s as asked by %s",self.model,name,meth)
-            #~ else:
             self.context_fields.append(f)
             self.context_values.append(name+"Hidden")
             #~ if isinstance(f,models.ForeignKey):
@@ -56,7 +61,6 @@ class Chooser:
                 return vf
         return self.model._meta.get_field(name)
             
-                
     def get_choices(self,**context):
         args = []
         for varname in self.context_params:
@@ -89,6 +93,16 @@ def discover():
 
 def get_for_field(fld):
     return getattr(fld,'_lino_chooser',None)
+
+def uses_simple_values(fld):
+    if isinstance(fld,models.ForeignKey):
+        return False
+    ch = get_for_field(fld)
+    if ch is not None:
+        return ch.simple_values
+    if fld.choices and type(fld.choices[0]) in (list,tuple):
+        return False
+    return True
 
 #~ def get_for_field(fieldspec):
     #~ fld = resolve_field(fieldspec)

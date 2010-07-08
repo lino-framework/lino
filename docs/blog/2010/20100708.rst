@@ -1,0 +1,44 @@
+20100708
+--------
+
+(Fortsetzung von :doc:`gestern <20100707>`)
+
+Also Felder mit eindimensionaler Auswahlliste brauchen dieses System mit dem hidden field nicht. Genauer gesagt: dürfen das nicht haben. Deshalb die neue Funktion :func:`choosers.simple_values`
+
+Die Antwort auf http://127.0.0.1:8000/api/notes/NoteTypes?fmt=json kommt nun richtig; :attr:`NoteType.template` hat jetzt kein Hidden-Feld mehr::
+
+  { 
+    count: 2, rows: [ 
+      { print_methodHidden: "appy", print_method: "AppyPrintMethod", 
+        id: 0, template: "phone.odt", 
+        name: "phone report" 
+      }, 
+      { print_methodHidden: null, print_method: null, 
+        id: null, 
+        template: "", 
+        name: "" 
+      } 
+    ], 
+    title: "NoteTypes" 
+  }
+  
+  
+Und in der :xfile:`site.js` ist :js:func:`Lino.notes.NoteTypes.grid` auch richtig::
+
+  var NoteType_print_method_field = new Lino.ChoicesFieldElement({ 
+    fieldLabel: "print method", 
+    name: "print_method", 
+    store: [ 
+      [ "pisa", "PisaPrintMethod" ], [ "appy", "AppyPrintMethod" ], 
+      [ "rtf", "RtfPrintMethod" ], [ "picture", "PicturePrintMethod" ] 
+    ], allowBlank: false });
+  var NoteType_template_field = new Lino.RemoteComboFieldElement({ 
+    fieldLabel: "template", name: "template", 
+    store: new Lino.RemoteComboStore({ 
+      proxy: new Ext.data.HttpProxy({ url: "/choices/notes/NoteTypes/template", method: "GET" }) }), 
+      allowBlank: false });
+  
+  
+  
+Zwischendurch habe ich mich wieder nicht enthalten können, mit Sphinx zu spielen: Ein neuer Link "Show Source" im Fuß jeder Seite verweist auf den Quellcode der Dokumentation im Google-Repository. (Also die Sphinx-Option `html_copy_source
+<http://sphinx.pocoo.org/latest/config.html#confval-html_copy_source>`_ benutze ich nicht).
