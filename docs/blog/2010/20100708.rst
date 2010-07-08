@@ -1,44 +1,57 @@
 20100708
---------
+========
 
 (Fortsetzung von :doc:`gestern <20100707>`)
 
-Also Felder mit eindimensionaler Auswahlliste brauchen dieses System mit dem hidden field nicht. Genauer gesagt: dürfen das nicht haben. Deshalb die neue Funktion :func:`choosers.simple_values`
+Also Felder mit eindimensionaler Auswahlliste brauchen nicht nur kein hidden field, 
+sondern dürfen keins haben. Das funktioniert jetzt einigermaßen (mit ein paar Schönheitsfehlern, die aber nicht blockierend sind).
+Einige der Konsequenzen:
 
-Die Antwort auf http://127.0.0.1:8000/api/notes/NoteTypes?fmt=json kommt nun richtig; :attr:`NoteType.template` hat jetzt kein Hidden-Feld mehr::
+- Um rauszufinden, ob eine Auswahlliste "simple values" oder "value/text pairs" benutzt, gehe ich wie folgt vor: Um zu deklarieren, dass eine choices-Methode "simple values" (und nicht das Standardverhalten "value/text pairs") zurückgibt, muss man ihr ein Attribut :attr:`simple_values` mit dem Wert `True` verpassen. Spontan dachte ich, dass das ganz einfach sei::
 
-  { 
-    count: 2, rows: [ 
-      { print_methodHidden: "appy", print_method: "AppyPrintMethod", 
-        id: 0, template: "phone.odt", 
-        name: "phone report" 
-      }, 
-      { print_methodHidden: null, print_method: null, 
-        id: null, 
-        template: "", 
-        name: "" 
-      } 
-    ], 
-    title: "NoteTypes" 
-  }
+    @classmethod
+    def template_choices(cls,print_method):
+        return mixins.template_choices(print_method)
+    template_choices.simple_values = True
+    
+  Aber da hatte ich mich geirrt. Weil die Methode schon den Dekorator `@classmethod` hat, 
+  kann man ihr keine Attribute mehr verpassen::
+    
+    AttributeError: 'classmethod' object has no attribute 'simple_values'
+    
+  Um das zu umgehen, benutze ich momentan die alte Syntax::
   
+    def template_choices(cls,print_method):
+        return mixins.template_choices(print_method)
+    template_choices.simple_values = True
+    template_choices = classmethod(template_choices)
   
-Und in der :xfile:`site.js` ist :js:func:`Lino.notes.NoteTypes.grid` auch richtig::
+  Was sind eigentlich Dekoratoren? Ein interessanter `Artikel von Bruce Eckel <http://www.artima.com/weblogs/viewpost.jsp?thread=240808>`_ half mir zu verstehen.
+  
+- Die Antwort auf http://127.0.0.1:8000/api/notes/NoteTypes?fmt=json kommt nun richtig; :attr:`NoteType.template` hat jetzt kein Hidden-Feld mehr::
 
-  var NoteType_print_method_field = new Lino.ChoicesFieldElement({ 
-    fieldLabel: "print method", 
-    name: "print_method", 
-    store: [ 
-      [ "pisa", "PisaPrintMethod" ], [ "appy", "AppyPrintMethod" ], 
-      [ "rtf", "RtfPrintMethod" ], [ "picture", "PicturePrintMethod" ] 
-    ], allowBlank: false });
-  var NoteType_template_field = new Lino.RemoteComboFieldElement({ 
-    fieldLabel: "template", name: "template", 
-    store: new Lino.RemoteComboStore({ 
-      proxy: new Ext.data.HttpProxy({ url: "/choices/notes/NoteTypes/template", method: "GET" }) }), 
-      allowBlank: false });
+    { 
+      count: 2, rows: [ 
+        { print_methodHidden: "appy", print_method: "AppyPrintMethod", 
+          id: 0, template: "phone.odt", 
+          name: "phone report" 
+        }, 
+        { print_methodHidden: null, print_method: null, 
+          id: null, 
+          template: "", 
+          name: "" 
+        } 
+      ], 
+      title: "NoteTypes" 
+    }
   
-  
-  
-Zwischendurch habe ich mich wieder nicht enthalten können, mit Sphinx zu spielen: Ein neuer Link "Show Source" im Fuß jeder Seite verweist auf den Quellcode der Dokumentation im Google-Repository. (Also die Sphinx-Option `html_copy_source
-<http://sphinx.pocoo.org/latest/config.html#confval-html_copy_source>`_ benutze ich nicht).
+- Das ``this.value = v;`` am Ende meiner :func:`ComboBox.setValue` musste wieder rein. 
+
+
+Nebenbei
+--------
+- :igen_src:`dsbe/dsbe/demo/load_tim.py` vergaß, das Feld :attr:`contacts.Contact.country` zu füllen. Behoben.
+- Zwischendurch habe ich mich wieder nicht enthalten können, mit Sphinx zu spielen: Neuer Link "Show Source" im Fuß jeder Seite verweist auf den Quellcode der Dokumentation im Google-Repository. (Also die Sphinx-Option `html_copy_source
+  <http://sphinx.pocoo.org/latest/config.html#confval-html_copy_source>`_ benutze ich nicht). Neuer Link "Online Link", der auf die Seite selber verweist (den brauche vor allem ich, um von der lokal generierten Doku auf die Online-Version zu springen).
+
+Check-In

@@ -128,7 +128,7 @@ class MasterWrapper(WindowWrapper):
             if isinstance(e,ext_elems.FieldElement):
                 chooser = choosers.get_for_field(e.field)
                 if chooser:
-                    #~ lino.log.debug("20100615 %s.%s has chooser", self.lh.layout, e.field.name)
+                    lino.log.debug("20100615 %s.%s has chooser", self.lh.layout, e.field.name)
                     for f in chooser.context_fields:
                         varname = ext_elems.varname_field(f)
                         #~ field_extname = chooser.model.__name__ + '_' + f.name

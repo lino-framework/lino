@@ -144,16 +144,16 @@ Ext.override(Ext.form.ComboBox, {
                     console.log(this.name,'.setValue',v,' : but store is loading',this.store.lastOptions);
                 }
                 return;
-            }else{
-              if (this.mode == 'remote') 
-                console.log(this.name,'.setValue',v,' : store already loaded, lastQuery is "',this.lastQuery,'"');
-              else
-                console.log(this.name,'.setValue',v,' : local mode (no need to load)');
+            //~ }else{
+              //~ if (this.mode == 'remote') 
+                //~ console.log(this.name,'.setValue',v,' : store already loaded, lastQuery is "',this.lastQuery,'"');
+              //~ else
+                //~ console.log(this.name,'.setValue',v,' : local mode (no need to load)');
             }
             var r = this.findRecord(this.valueField, v);
             if(r){
                 text = r.data[this.displayField];
-                console.log(this.name,'.setValue',v,', findRecord() returned ',r, ', text is ',text);
+                //~ console.log(this.name,'.setValue',v,', findRecord() returned ',r, ', text is ',text);
             }else if(this.valueNotFoundText !== undefined){
                 text = this.valueNotFoundText;
             }
@@ -162,11 +162,11 @@ Ext.override(Ext.form.ComboBox, {
         this.lastSelectionText = text;
         if(this.hiddenField){
             this.hiddenField.value = v;
-            console.log('.setValue hiddenField',this.hiddenField.name,' = ',v);
+            //~ console.log('.setValue hiddenField',this.hiddenField.name,' = ',v);
         }
         Ext.form.ComboBox.superclass.setValue.call(this, text);
-        //~ this.value = v; warum war das hier? 20100707
-        console.log('.setValue 20100707 done',this);
+        this.value = v; // warum war das hier? 20100707
+        //~ console.log('.setValue 20100707 done',this);
     },
     getParams : function(q){
         // p = Ext.form.ComboBox.superclass.getParams.call(this, q);
@@ -792,6 +792,9 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     config.bbar = Lino.build_bbar(this,config.ls_bbar_actions);
     Lino.GridPanel.superclass.constructor.call(this, config);
     if (config.setup_events) config.setup_events();
+    this.on('beforeedit',function(e) { 
+      console.log(20100708,this); this.before_row_edit(e.record)
+    },this);
   },
 
   initComponent : function(){

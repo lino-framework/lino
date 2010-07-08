@@ -15,7 +15,7 @@
 
 - :mod:`mysites.demo.makedemo` now finds the list of installed apps automatically.
   So I no longer need to change :xfile:`makedemo.py` after changing
-  :settings:`INSTALLED_APPS`.
+  :setting:`INSTALLED_APPS`.
   
   
 - Worked on website pages 
@@ -38,7 +38,7 @@ Common models
 models being used by several applications. They are now defined in
 :mod:`lino.django.utils`.
 
-The order of applications in :settings:`INSTALLED_APPS` becomes
+The order of applications in :setting:`INSTALLED_APPS` becomes
 important: :func:`lino_setup` is called in that order.
   
 This way of doing has unresolved issues:
