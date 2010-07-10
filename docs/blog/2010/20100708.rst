@@ -47,7 +47,10 @@ Einige der Konsequenzen:
   
 - Das ``this.value = v;`` am Ende meiner :func:`ComboBox.setValue` musste wieder rein. 
 
-Check-In und weiter.
+Check-In 
+
+Diverse Bugs im extjsu behoben
+------------------------------
 
 Nächstes Problem: in http://127.0.0.1:8000/api/countries/Countries?fmt=grid wurden die iso_code nicht angezeigt, weil der Store immer "id" als primary key erwartete. Jetzt gibt es deshalb den neuen Konfigurationsparameter `ls_id_property` für `Lino.GridPanel`. (:class:`lino.modlib.countries.models.Country` ist ja eine der wenigen Tabellen, die nicht 'id' als primary key haben).
 
@@ -60,12 +63,15 @@ Merke: der pk einer neu erstellten und noch nicht gespeicherten Instanz ist nich
 :model:`countries.Country` hat jetzt ein Detail-Layout, in dem der neue Report CitiesByCountry angezeigt wird. 
 
 
-Nebenbei
---------
-- :igen_src:`dsbe/dsbe/demo/load_tim.py` vergaß, das Feld :attr:`contacts.Contact.country` zu füllen. Behoben.
-- Zwischendurch habe ich mich wieder nicht enthalten können, mit Sphinx zu spielen: Neuer Link "Show Source" im Fuß jeder Seite verweist auf den Quellcode der Dokumentation im Google-Repository. (Also die Sphinx-Option `html_copy_source
-  <http://sphinx.pocoo.org/latest/config.html#confval-html_copy_source>`_ benutze ich nicht). Neuer Link "Online Link", der auf die Seite selber verweist (den brauche vor allem ich, um von der lokal generierten Doku auf die Online-Version zu springen).
+:igen_src:`dsbe/dsbe/demo/load_tim.py` vergaß, das Feld :attr:`contacts.Contact.country` zu füllen. Behoben.
 
-Mehrere Check-Ins und zum Schluss : Release Lino 0.8.2. Diese Version läuft jetzt auf dem Prodktionsserver im :term:`DSBE`
+Zwischendurch habe ich mich wieder nicht enthalten können, mit Sphinx zu spielen: Neuer Link "Show Source" im Fuß jeder Seite verweist auf den Quellcode der Dokumentation im Google-Repository. (Also die Sphinx-Option `html_copy_source <http://sphinx.pocoo.org/latest/config.html#confval-html_copy_source>`_ benutze ich nicht). Neuer Link "Online Link", der auf die Seite selber verweist (den brauche vor allem ich, um von der lokal generierten Doku auf die Online-Version zu springen).
+
+Mehrere Check-Ins und zum Schluss:
+
+Release Lino 0.8.2 & DSBE 0.1.1
+-------------------------------
+
+Diese Versionen laufen jetzt im :term:`DSBE` und auf :term:`Tups`. Es sind noch viele Bugs drin, aber ich wollte mal sehen, wie die Performance auf einem "Produktionsserver" ist. Mein erster Eindruck: eher besorgniserregend... aber jetzt ist Feierabend.
 
 

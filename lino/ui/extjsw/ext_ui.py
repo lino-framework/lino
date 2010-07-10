@@ -101,7 +101,8 @@ def handle_list_request(request,rh):
     if not rh.report.can_view.passes(request.user):
         msg = "User %s cannot view %s." % (request.user,rh.report)
         return http.HttpResponseForbidden()
-    a = rh.report.list_action
+    a = rh.report.default_action
+    #~ a = rh.report.list_action
     ar = ext_requests.ViewReportRequest(request,rh,a)
     if request.method == 'POST':
         """
@@ -470,7 +471,8 @@ class ExtUI(base.UI):
         rpt = actors.get_actor2(app_label,actor)
         ah = rpt.get_handle(self)
         if pk == '-99999':
-            ar = ext_requests.ViewReportRequest(request,ah,ah.report.list_action)
+            ar = ext_requests.ViewReportRequest(request,ah,ah.report.default_action)
+            #~ ar = ext_requests.ViewReportRequest(request,ah,ah.report.list_action)
             instance = ar.create_instance()
         else:
             try:
@@ -748,9 +750,9 @@ class ExtUI(base.UI):
         
     def action_window_wrapper(self,a,h):
         if isinstance(a,PrintAction): return ext_windows.DownloadRenderer(self,a)
-        if isinstance(a,reports.DeleteSelected): return ext_windows.DeleteRenderer(self,a)
+        if isinstance(a,actions.DeleteSelected): return ext_windows.DeleteRenderer(self,a)
           
-        if isinstance(a,reports.GridEdit):
+        if isinstance(a,actions.GridEdit):
             #~ if a.actor.master is not None:
                 #~ return None
                 #~ raise Exception("action_window_wrapper() for slave report %s" % a.actor)
@@ -758,27 +760,26 @@ class ExtUI(base.UI):
             return ext_windows.GridMasterWrapper(h,a)
             #~ else:
                 #~ return ext_windows.GridSlaveWrapper(self,a.name,a)
-        if isinstance(a,reports.InsertRow):
+        if isinstance(a,actions.InsertRow):
             return ext_windows.InsertWrapper(h,a)
             
-        if isinstance(a,reports.OpenDetailAction):
+        if isinstance(a,actions.ShowDetailAction):
             return ext_windows.DetailWrapper(h,a)
 
         #~ if isinstance(a,layouts.ShowDetailAction):
             #~ return ext_windows.LayoutDetailWrapper(h,a)
 
             
-        if isinstance(a,properties.PropsEdit):
-            #~ return ext_windows.PropertiesWrapper(self,h,a)
-            return None
+        #~ if isinstance(a,properties.PropsEdit):
+            #~ return None
             
-        if isinstance(a,properties.PropertiesAction):
-            return ext_windows.PropertiesWrapper(h,a)
-        if isinstance(a,reports.SlaveGridAction):
+        #~ if isinstance(a,properties.PropertiesAction):
+            #~ return ext_windows.PropertiesWrapper(h,a)
+        if isinstance(a,actions.SlaveGridAction):
             return ext_windows.GridSlaveWrapper(h,a) # a.name,a.slave.default_action)
             
-        if isinstance(a,reports.SlaveDetailAction): # not tested
-            return ext_windows.DetailSlaveWrapper(self,a)
+        #~ if isinstance(a,actions.SlaveDetailAction): # not tested
+            #~ return ext_windows.DetailSlaveWrapper(self,a)
             
         
         
@@ -803,14 +804,23 @@ class ExtUI(base.UI):
     def source_dir(self):
         return os.path.abspath(os.path.dirname(__file__))
         
-    def a2btn(self,a):
-        return dict(
+    def a2btn(self,a,**kw):
+        if isinstance(a,actions.SubmitDetail):
+            #~ kw.update(client_side=True)
+            #~ kw.update(scope=js_code('this'))
+            kw.update(handler=js_code('Lino.submit_detail'))
+        elif isinstance(a,actions.SubmitInsert):
+            #~ kw.update(client_side=True)
+            #~ kw.update(scope=js_code('this'))
+            kw.update(handler=js_code('Lino.submit_insert'))
+        else:
+            kw.update(handler=js_code("Lino.%s" % a))
+        kw.update(
           opens_a_slave=a.opens_a_slave,
-          handler=js_code("Lino.%s" % a),
           name=a.name,
           label=unicode(a.label),
-          #~ url=self.build_url("api",a.actor.app_label,a.actor._actor_name,fmt=a.name)
         )
+        return kw
         
 #~ ui = ExtUI()
 

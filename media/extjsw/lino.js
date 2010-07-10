@@ -516,12 +516,47 @@ Lino.build_bbar = function(scope,actions) {
       var btn = {
         text: actions[i].label
       };
+      console.log("build_bbar",btn.text,":",actions[i]);
       btn.handler = actions[i].handler.createCallback(scope);
       bbar[i] = new Ext.Button(btn);
     }
     return bbar
   }
 }
+
+Lino.submit_detail = function(caller) {
+  var rec = caller.get_current_record();
+  if (rec) {
+    //~ console.log('Save handler: this=',this);
+    caller.form.submit({
+      url:caller.ls_data_url + '/' + rec.id,
+      method: 'PUT',
+      scope: caller,
+      success: function(form, action) {
+        Lino.notify(action.result.msg);
+        //~ this.caller.refresh();
+      },
+      failure: Lino.on_submit_failure,
+      clientValidation: true
+    })
+  } else Lino.notify("Sorry, no current record.");
+};
+
+Lino.submit_insert = function(caller) {
+  caller.form.submit({
+    url:caller.ls_data_url,
+    method: 'POST',
+    scope: caller,
+    success: function(form, action) {
+      Lino.notify(action.result.msg);
+      //~ this.caller.refresh();
+    },
+    failure: Lino.on_submit_failure,
+    clientValidation: true
+  })
+};
+
+
 
 
 Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{

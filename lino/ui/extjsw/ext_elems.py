@@ -790,7 +790,7 @@ class GridElement(Container): #,DataElementMixin):
             #~ )
         
         #~ d.update(bbar=[a2btn(a) for a in rh.get_actions() if not a.hidden])
-        d.update(ls_bbar_actions=[a2btn(a) for a in rh.get_actions() if a.show_in_list])
+        d.update(ls_bbar_actions=[a2btn(a) for a in rh.get_actions(rh.report.default_action)])
         #~ d.update(ls_bbar_actions=[a for a in rh.get_actions() if not a.hidden])
         
         

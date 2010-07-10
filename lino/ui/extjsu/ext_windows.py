@@ -225,22 +225,6 @@ class GridSlaveWrapper(GridWrapperMixin,SlaveWrapper):
         return d
         
         
-class unused_DetailSlaveWrapper(SlaveWrapper):
-  
-    window_config_type = 'detail'
-    
-    def __init__(self,ui,action,**kw):
-        lh = action.layout.get_handle(ui)
-        SlaveWrapper.__init__(self, action, ui, lh, lh._main)
-        self.actions = [] # [dict(type=a.action_type,name=a.name,label=a.label) for a in rh.get_actions()]
-        
-    def unused_get_config(self):
-        d = super(DetailSlaveWrapper,self).get_config()
-        d.update(main_panel=self.lh._main)
-        d.update(name=self.action.name)
-        d.update(title=u"%s - %s" % (self.action.actor.get_title(None),self.action.label))
-        return d
-        
   
 class BaseDetailWrapper(MasterWrapper):
   

@@ -145,7 +145,6 @@ class GridEdit(OpenWindowAction):
 
 
     
-#~ class InsertRow(actions.OpenWindowAction):
 class ShowDetailAction(OpenWindowAction):
     callable_from = (GridEdit,)
     #~ show_in_detail = False

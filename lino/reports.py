@@ -259,7 +259,7 @@ class unused_ElementAction(actions.Action):
     def get_queryset(self,ar):
         return self.actor.get_queryset(ar)
   
-class ListAction(actions.Action):
+class unused_ListAction(actions.Action):
     #~ response_format = 'json' # ext_requests.FMT_JSON
     #~ hidden = True
     callable_from = ()
@@ -384,7 +384,7 @@ class ReportActionRequest(actions.ActionRequest): # was ReportRequest
 
     def get_queryset(self):
         # overridden by ChoicesReportRequest
-        return self.action.get_queryset(self)
+        return self.report.get_queryset(self)
         #~ return self.report.get_queryset(master_instance=self.master_instance,**kw)
         
     def __iter__(self):
@@ -402,7 +402,7 @@ class ReportActionRequest(actions.ActionRequest): # was ReportRequest
         raise NotImplementedError
         
     def get_title(self):
-        return self.action.get_title(self)
+        return self.report.get_title(self)
         
     def render_to_dict(self):
         return self.action.render_to_dict(self)
@@ -522,7 +522,7 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
             #~ self.fk = _get_foreign_key(self.master,self.model) #,self.fk_name)
         
         self.default_action = self.default_action_class(self)
-        self.list_action = ListAction(self)
+        #~ self.list_action = ListAction(self)
         
         
         #self.setup()

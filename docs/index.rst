@@ -27,5 +27,6 @@ Some external links:
    rfc/index
    tests
    glossary
+   about
 
 

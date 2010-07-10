@@ -204,7 +204,7 @@ class GridMasterWrapper(GridWrapperMixin,MasterWrapper):
 class GridSlaveWrapper(GridWrapperMixin,SlaveWrapper):
   
     def __init__(self,rh,action,**kw):
-        assert isinstance(action,reports.SlaveGridAction)
+        assert isinstance(action,actions.SlaveGridAction)
         self.name = action.actor._actor_name
         rh = action.slave.get_handle(rh.ui)
         #~ ah = action.actor.get_handle(ui)
@@ -249,7 +249,7 @@ class BaseDetailWrapper(MasterWrapper):
     
     def __init__(self,rh,action,**kw):
         self.rh = rh
-        assert isinstance(action,reports.OpenDetailAction)
+        #~ assert isinstance(action,actions.BaseDetailAction)
         if len(rh.report.detail_layouts) == 1:
             lh = rh.report.detail_layouts[0].get_handle(rh.ui)
             main = ext_elems.FormPanel(lh._main) # ,autoScroll=True)
@@ -277,7 +277,7 @@ class DetailWrapper(BaseDetailWrapper):
     def get_config(self):
         d = BaseDetailWrapper.get_config(self)
         #~ d.update(ls_bbar_actions=[ext_elems.a2btn(a) for a in self.rh.get_actions() if not a.hidden])
-        d.update(ls_bbar_actions=[self.ui.a2btn(a) for a in self.rh.get_actions() if a.show_in_detail])
+        d.update(ls_bbar_actions=[self.ui.a2btn(a) for a in self.rh.get_actions(self.action)])
         return d
   
 class InsertWrapper(BaseDetailWrapper):
