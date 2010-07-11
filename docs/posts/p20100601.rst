@@ -1,6 +1,8 @@
 How to replace the content of a rendered component?
 ===================================================
 
+(Note: I found the answer to this question before I could post it... see :srcref:`/extjs-showcases/20100711.html` and :doc:`/blog/2010/20100709`)
+
 I have an :class:`Ext.Viewport` with a border layout. The top element contains a menu. 
 I would like the menu actions to dynamically render a component into the center area.
 
@@ -68,6 +70,9 @@ But this appends the component to existing content:
    :width: 50%
    :target: http://lino.googlecode.com/hg/screenshots/20100601/3.jpg
 
+
+I want to forget about what was there before and replace the content by a new component.
+
 My second guess (`showComp2()`) was after reading 
 http://www.extjs.com/forum/showthread.php?42465-replace-content-for-extJS-Tabs :
 
@@ -88,9 +93,11 @@ I tried `Ext.getCmp('main_area').update(cmp);` (`showComp3()`), which removes th
 
 Useful links:
 
- * `Manual:Basic Application Design <http://www.extjs.com/learn/Manual:Basic_Application_Design>`_
- * `Tutorial:Application Layout for Beginners <http://www.extjs.com/learn/Tutorial:Application_Layout_for_Beginners>`_
- * Writing a Big Application in Ext 
-   (`part 1 <http://blog.extjs.eu/know-how/writing-a-big-application-in-ext/>`_,
-   `part 2 <http://blog.extjs.eu/know-how/writing-a-big-application-in-ext-part-2/>`_, 
-   `part 3 <http://blog.extjs.eu/know-how/writing-a-big-application-in-ext-part-3/>`_)
+* `Manual:Basic Application Design <http://www.extjs.com/learn/Manual:Basic_Application_Design>`_
+
+* `Tutorial:Application Layout for Beginners <http://www.extjs.com/learn/Tutorial:Application_Layout_for_Beginners>`_
+
+* Writing a Big Application in Ext 
+  (`part 1 <http://blog.extjs.eu/know-how/writing-a-big-application-in-ext/>`_,
+  `part 2 <http://blog.extjs.eu/know-how/writing-a-big-application-in-ext-part-2/>`_, 
+  `part 3 <http://blog.extjs.eu/know-how/writing-a-big-application-in-ext-part-3/>`_)

@@ -29,7 +29,7 @@ Lino, when ready, will be a possible answer to what Jacob Kaplan-Moss writes in
 Here is a recent screenshot of a Lino application:
 
 .. image:: http://lino.googlecode.com/hg/screenshots/20100207.jpg
-  :widht: 50%
+  :width: 50%
   :target: http://lino.googlecode.com/hg/screenshots/20100207.jpg
 
 Lino integrates to your site through the `urls.py` in a similar way than Admin does::
@@ -45,8 +45,7 @@ Lino applications are basically normal Django applications, but
 instead of writing `Admin` classes for your Django models, you write Reports, Layouts and Actions. You'll define these classes in your application's 'models' module.
 
 Reports describe something that the user will see as a 
-[http://www.extjs.com/deploy/dev/examples/window/hello.html Window] with an
-[http://www.extjs.com/deploy/dev/examples/grid/edit-grid.html EditorGridPanel].
+Window with a Grid as main component.
 
 Layouts are my self-made approach to design entry forms in a GUI-independent way.
 Users see them as Tabs of a Detail window (whose main component is a 

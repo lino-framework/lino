@@ -20,7 +20,7 @@
   
 - Worked on website pages 
   :doc:`/django/index` and
-  :doc:`/about`.
+  :doc:`/about/index`.
   
 - :meth:`Row.field_as_readonly` now supports when a value is a :class:`Manager` (which is the case when you specify a ManyToManyField).
 

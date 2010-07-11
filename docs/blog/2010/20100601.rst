@@ -1,0 +1,12 @@
+01.-02.06.2010
+--------------
+
+4 Uhr: Jetzt hol ich zuerst mal (optional) die Fenster raus. Erstens weil ich keine RIA kenne, die mit Fenstern arbeitet. Und zweitens weil der langsame Aufbau des Detail-Fensters vielleicht damit zusammenhängt.
+
+6.30 Uhr: zweieinhalb Stunden lang geschwitzt, um eine Frage ans ExtJS-Forum zu formulieren (:doc:`/posts/p20100601`). Und die Frage ist noch nicht mal fertig, ich muss noch weiter dran feilen, damit sie verständlich ist... Ich lass das Thema jetzt erst mal was sacken, denn nach dem Rumprobieren scheint mir klar, dass der langsame Fensteraufbau von Detail-Fenstern dadurch nicht verbessert wird. 
+
+Druckvorlagen konfigurieren. Erkenntnis des Tages: Es sollte immer nur einen "Print"-Button geben und nicht wie momentan einen für jede PrintMethod. Zumindest eine Notiz entscheidet selber, welche PrintMethod benutzt werden soll (indem sie in ihrer NoteType nachschaut). Und auf den anderen Models wird es keinen Print-Button geben. Jeder Ausdruck eines Dokuments erfordert das Erstellen einer Notiz. 
+
+Anders ist es natürlich mit PicturePrintMethod und eventuellen zukünftigen Renderern. PicturePrintMethod ist momentan ebenfalls als PrintMethod implementiert. Das ist noch nicht sehr elegant geregelt in `ext_ui.handle_element_request`, aber die Logik mit `get_target_parts` zum Ermitteln bzw. Konfigurierbarmachen des Bildes, das zu einer Modellinstanz gehört, gefällt mir.
+
+Zwischendurch bemerkt: Die SlaveGrid-Fenster funktionieren momentan noch nicht. Das war bzw. ist aber auch eine ziemliche Fummelei mit diesen Toggle-Buttons. Ich frage mich, ob es da nichts Besseres gibt. Falls ich auf fensterlosen Betrieb überwechsle, würde das übrigens auch verschwinden...

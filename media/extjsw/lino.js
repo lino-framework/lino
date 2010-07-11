@@ -563,7 +563,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
   constructor : function(config){
     config.store = new Ext.data.JsonStore({ 
       listeners: { exception: Lino.on_store_exception }, 
-      proxy: new Ext.data.HttpProxy({ url: config.ls_data_url+'.json', method: "GET" }), remoteSort: true, 
+      proxy: new Ext.data.HttpProxy({ url: config.ls_data_url, method: "GET", baseParams: {fmt:'json'} }), remoteSort: true, 
       fields: config.ls_store_fields, 
       totalProperty: "count", 
       root: "rows", 
@@ -932,7 +932,7 @@ Lino.RemoteComboFieldElement = Ext.extend(Lino.ComboBox,{
 
 
 /* If you change this, then change also USE_WINDOWS in ext_ui.py */
-Lino.USE_WINDOWS = true;
+Lino.USE_WINDOWS = false;
 
 Lino.WindowWrapper = function(caller,config_fn) {
   //~ console.log('Lino.WindowWrapper.constructor',config.title,' : caller is ',caller);
@@ -973,9 +973,11 @@ Ext.override(Lino.WindowWrapper,{
         tools: [ { qtip: this.config.qtip, handler: Lino.save_wc_handler(this), id: "save" } ] 
         });
     } else {
-      this.window = new Ext.Panel({ layout: "fit", 
-      //~ autoHeight: true,
-        title: this.config.title, items: this.main_item, 
+      this.window = new Ext.Panel({ 
+        layout: "fit", 
+        //~ autoHeight: true,
+        title: this.config.title, 
+        items: this.main_item, 
         bbar: this.bbar_actions,
         tools: [ { qtip: this.config.qtip, handler: Lino.save_wc_handler(this), id: "save" } ] 
       });
@@ -1005,10 +1007,13 @@ Ext.override(Lino.WindowWrapper,{
       this.window.syncSize();
       this.window.focus();
     } else {
-      var cmp = Ext.getCmp('main_area');
-      //~ cmp.update(this.window);
-      cmp.update('');
-      this.window.render('main_area');
+      var main = Ext.getCmp('main_area');
+      main.removeAll();
+      Ext.apply(this.window,{autoSize: true});
+      main.add(this.window);
+      main.doLayout();
+      //~ cmp.update('');
+      //~ this.window.render('main_area');
       //~ Ext.DomHelper.overwrite(cmp,this.window);
     }
   },

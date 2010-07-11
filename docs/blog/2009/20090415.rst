@@ -11,7 +11,7 @@ Serializers.
 
 Here is my proposed solution:
 
-- Install Lino (see :doc:`/install`).
+- Install Lino (see :doc:`/admin/install`).
   (Lino is my collection of Python modules---
   poorly documented and partly in chaotic growth, but it should be easy to install it and throw it away again if you don't like it...)
 
@@ -23,11 +23,11 @@ Here is my proposed solution:
 - In your :file:`settings.py`, add the following::
 
     SERIALIZATION_MODULES = {
-        "dpy" : "lino.django.utils.dpyserializer",
+        "dpy" : "lino.utils.dpyserializer",
     }
   
   The code for dpyserializer is very simple:
-  :srcref:`/lino/django/utils/dpyserializer.py`
+  :srcref:`/lino/utils/dpyserializer.py`
   
 - Then write your fixtures as Python scripts with an 
   extension `.dpy` instead of the usual `.py`.
@@ -44,7 +44,6 @@ Here is my proposed solution:
   which is defined here:
 
   :srcref:`src/lino/django/utils/instantiator.py`
-
 
 Discussion:
 

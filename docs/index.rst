@@ -21,12 +21,12 @@ Some external links:
 
    blog/index
    todo
-   install
+   admin/index
    topics/index
    django/index
-   rfc/index
+   posts/index
    tests
    glossary
-   about
+   about/index
 
 

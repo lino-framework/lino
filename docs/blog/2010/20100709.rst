@@ -11,10 +11,10 @@ Einige erste Ideen um die Performance zu verbessern:
 - Gibt es nicht vielleicht doch eine Alternative? Neue Seite :doc:`/about/why_extjs`
 
 
-extjsw
-------
+extjsw kommt zurück
+-------------------
 
-Als erstes werde ich mal extjsw wieder ans Laufen kriegen, denn damit war Lino spürbar schneller.
+Als erstes werde ich mal extjsw wieder ans Laufen kriegen, denn damit war Lino spürbar schneller. 
 
 - eine ganze Serie von kleinen Änderungen in reports.py, actors.py waren reingekommen, als ich ungeniert an extjsu arbeitete.
 
@@ -22,3 +22,40 @@ Als erstes werde ich mal extjsw wieder ans Laufen kriegen, denn damit war Lino s
 
 - Wenn `sys.platform == 'win32'` ist (d.h. wenn es der Development-Server ist (die beiden sind für mich synonym)), wird  :setting:`DATA_DIR` in der settings.py von dsbe-demo jetzt nicht mehr auf ``'C:\\Temp\\dsbe\\'`` gesetzt, sondern auf 
     ``join(PROJECT_DIR,"data")``. Und dieses Verzeichnis habe ich dann in meiner :xfile:`.hgignore`. 
+
+
+Wohin jetzt?
+------------
+
+Also es sieht aus als ob der Browser eben doch auf jeder neuen Seite alle JS-Dateien im Header neu parst. Auch wenn sie im Cache sind und er sie nicht neu angefragt hat. 
+
+Ist eigentlich verständlich. Damit die ganze ExtJS nicht auf jeder Seite neu geladen würde, müsste sie ein Browser-Plugin sein.
+
+Also es war Utopie zu glauben, dass ich das traditionelle Browserverhalten "1 URL -> 1 Seite" beibehalten kann. RIA bedeutet eben unter anderem dynamisches HTML.
+
+Eine relativ teure Erkenntnis: den "Seitensprung" über extjsu habe ich am :doc:`19.06. <20100619>` begonnen und in diesen drei Wochen etwa 40 Stunden daran gearbeitet. Ich bereue das trotzdem kaum, denn das sind wichtige Entscheidungen und es besteht weiterhin kein trifftiger Grund, solche Entscheidungen übers Knie zu brechen.
+
+Ich sehe nun auch den nächsten Schritt: Ich muss meine Frage vom 01.06. (:doc:`/posts/p20100601`) fertig formulieren und falls nötig ins ExtJS-Forum posten.
+
+Weil wir seit heute morgen weder Telefon noch Internet haben, kann ich nicht posten, deshalb habe ich selber gesucht... und gefunden!
+Das war ein einfacher Fall von RTFM. Hier die Auszüge aus der ExtJS-Doku, die die Antwort enthielten:
+
+Ext.Component.add() : 
+  - If the Container is already rendered when add is called, you may need to call doLayout to refresh the view which causes any unrendered child Components to be rendered.
+  - Warning: Containers directly managed by the BorderLayout layout manager may not be removed or added. See the Notes for BorderLayout for more details.
+
+Ext.layout.BorderLayout:        
+  The regions of a BorderLayout are fixed at render time and thereafter, its child Components may not be removed or added. To add/remove Components within a BorderLayout, have them wrapped by an additional Container which is directly managed by the BorderLayout.
+  
+Also die Antwort auf :doc:`/posts/p20100601` steht in :srcref:`/extjs-showcases/20100711.html`.
+  
+Sonntag 23.15 Uhr: extjsw mit USE_WINDOWS=False hat funktioniert, mit zufriedenstellender Performance, und ich bin glücklich. 
+
+Checkin (aber push geht nicht, weil unser Internetanschluss erst morgen repariert wird...)
+
+TODO:
+- Momentan ist die Liste noch leer, weil ich api_list_view und api_elem_view in ext_ui.py noch fertig anpassen muss (im AJAX-GET der Grid fehlt `fmt=json`).
+- Print-Button funktionierte nicht. 
+- Einen Close-Button, der ins vorige Fenster zurückspringt.
+- Permalinks
+

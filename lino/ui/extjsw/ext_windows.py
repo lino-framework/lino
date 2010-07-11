@@ -79,6 +79,8 @@ class WindowWrapper(ActionRenderer):
         self.lh = lh # may be None
         self.bbar_buttons = []
         self.config = self.get_config()
+        if ui.USE_WINDOWS:
+            self.main.update(autoHeight=True,height=None,width=None)
         
         
     def __str__(self):

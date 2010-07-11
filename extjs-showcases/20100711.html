@@ -1,0 +1,80 @@
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title id="title">20100711</title>
+<!-- ** CSS ** -->
+<!-- base library -->
+<link rel="stylesheet" type="text/css" href="../../resources/css/ext-all.css" />
+<!-- overrides to base library -->
+<!-- ** Javascript ** -->
+<!-- ExtJS library: base/adapter -->
+<script type="text/javascript" src="../../adapter/ext/ext-base.js"></script>
+<!-- ExtJS library: all widgets -->
+<script type="text/javascript" src="../../ext-all-debug.js"></script>
+<!-- page specific -->
+<script type="text/javascript">
+
+
+
+function showComp(cmp) {
+  var main = Ext.getCmp('main_area');
+  main.removeAll(true);
+  main.add(cmp);
+  main.doLayout();
+}
+
+function cmd1() { showComp(sampleComp('first command')) }
+function cmd2() { showComp(sampleComp('second command')) }
+function cmd3() { showComp(sampleComp('third command')) }
+function sampleComp(msg) {
+  notify('You invoked command "'+msg+'".');
+  return new Ext.Panel({title:msg,
+    html:'Dummy Panel for '+msg+'. Actual application '+
+    'returns GridPanels, FormPanels and others.'})
+}
+function notify(msg) {
+  Ext.getCmp('message_area').update(msg.replace(/\n/g,'<br/>'));
+};
+
+
+Ext.onReady(function() {
+  var main_menu = new Ext.Toolbar({ 
+    region:'north',height:27,items:[
+    { text: 'First', menu: [
+      {text:'First command',handler:cmd1},
+      {text:'Second command',handler:cmd2}] },
+    { text: 'Second', menu: [
+      {text:'Third command',handler:cmd3} ] }
+  ]});  
+
+
+  var message_area = { 
+    region: "south", id: "message_area", xtype: "panel", 
+    //~ html:'This is the message area', 
+    split:true,
+    //~ collapsible:true,
+    autoScroll:true,
+    layout: 'fit', 
+    height:100 
+  } ;
+
+  var main_area = {
+     xtype: "panel", 
+     id: 'main_area',
+     items: { html:'This is the main area.'},
+     region: "center",
+     autoScroll:true,
+     //~ height:200
+     autoHeight: true,
+     //~ layout: 'fit'
+  };
+
+  viewport = new Ext.Viewport({ 
+    items: [ main_menu, main_area, message_area ], 
+    layout: "border" 
+  });
+
+  viewport.render('body');
+});
+</script>
+</head><body>
+</body></html>

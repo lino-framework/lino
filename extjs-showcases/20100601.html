@@ -13,35 +13,43 @@
 <!-- page specific -->
 <script type="text/javascript">
 
-function sampleComp() {
-  return new Ext.Panel({title:'Sample component',html:'This is just a dummy. Actual application returns GridPanels, FormPanels and others.'})
-}
-
-function cmd1() {
-  cmp = sampleComp();
+function showComp1(cmp) {
   cmp.render('main_area');
 }
-function cmd2() {
-  cmp = sampleComp();
+function showComp2(cmp) {
   ct = Ext.getCmp('main_area');
   ct.update('');
   cmp.render('main_area');
 }
-
-function cmd3() {
-  cmp = sampleComp();
+function showComp3(cmp) {
   Ext.getCmp('main_area').update(cmp);
 }
 
-var main_menu = new Ext.Toolbar({ region:'north',height:27,items:[
-  { text: 'First', menu: [{text:'First command',handler:cmd1},{text:'Second command',handler:cmd2}] },
-  { text: 'Second', menu: [{text:'Third command',handler:cmd3} ] }
+showComp = showComp2;
+
+function cmd1() { showComp(sampleComp()) }
+function cmd2() { showComp(sampleComp()) }
+function cmd3() { showComp(sampleComp()) }
+function sampleComp() {
+  return new Ext.Panel({title:'Sample component',
+    html:'This is just a dummy. Actual application'+
+    'returns GridPanels, FormPanels and others.'})
+}
+
+var main_menu = new Ext.Toolbar({ 
+  region:'north',height:27,items:[
+  { text: 'First', menu: [
+    {text:'First command',handler:cmd1},
+    {text:'Second command',handler:cmd2}] },
+  { text: 'Second', menu: [
+    {text:'Third command',handler:cmd3} ] }
 ]});  
 
 Ext.onReady(function() {
   var viewport = new Ext.Viewport({ 
     items: [ main_menu,
-      { region: "center", id: "main_area", xtype: "panel", html:'Welcome text.', layout: 'fit', autoHeight: true } 
+      { region: "center", id: "main_area", xtype: "panel", 
+        html:'Welcome text.', layout: 'fit', autoHeight: true } 
     ], layout: "border" 
   });
   viewport.render('body');

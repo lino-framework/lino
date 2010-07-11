@@ -1,0 +1,35 @@
+20100604
+========
+
+(In den letzten Tagen habe ich nicht viel Zeit für Lino gehabt, weil meine Frau doch gerne mal langsam ihren Notebook benutzen möchte und ich einige Probleme damit habe: [LinuxOnCompaqPresarioCQ61])
+
+Notizvorlagen konfigurieren
+---------------------------
+
+Aber jetzt funktioniert es erstmals, dass man eine Notiz "ausdrucken" kann, oder genauer gesagt dass Lino ein ODT-Template auf die Notiz anwendet und das Resultat an den Client ausliefert. Jetzt müssen freilich ein paar erste sinnvolle Dokumentvorlagen gemacht werden.
+
+Dokumentation dazu : :doc:`/admin/ConfigureNotesTemplates`
+
+Kleinkram
+---------
+
+Der "Links"-Button hing noch rum, der ist jetzt raus. `lino.modlib.properties` und `lino.modlib.links` werden momentan nicht gebraucht und vielleicht auch in Zukunft nie.
+
+Unkomplette Geburtsdaten
+------------------------
+
+Überlegungen zum Problem 
+
+Rahul Singla hat ein Plugin geschrieben, das mir allgemein nützlich scheint, um die manuelle Eingabe von Daten und Zeiten zu erleichtern:
+`ExtJs - Date-Time field plugins for efficient data entry <http://www.rahulsingla.com/blog/2010/05/extjs-date-time-field-plugins-for-efficient-data-entry>`_.
+Zum Speichern von unkompletten Daten nützt es allerdings nichts.
+
+Um unkomplette Geburtsdaten in den Griff zu kriegen, sehe ich zwei prinzipielle Möglichkeiten: (1) in der Datenbank drei Integer-Felder statt eines Feldes vom Typ DATE, und dann einen eigenes Widget programmieren. Oder (2) für unbekannte Teile des Datums eine 1 speichern, und in einem weiteren Feld festhalten, welche Teile des Datums unbekannt sind. Dieses weitere Feld kann ein einfacher SmallInteger sein, dessen Werte folgendermaßen zu interpretieren sind: 
+
+  == ================
+  1  Jahr unbekannt 
+  2  Monat unbekannt
+  4  Tag unbekannt  
+  == ================
+
+Also ein Wert 5 hieße, dass nur der Monat bekannt, und Jahr und Tag unbekannt sind.Für dieses Feld müssten wir freilich auch einen eigenen Editor bauen mit drei Ankreuzfeldern.

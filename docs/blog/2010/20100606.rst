@@ -1,0 +1,18 @@
+20100606
+========
+
+Mir ist heute zum ersten Mal bewusst geworden, dass es Silverlight gibt und welche Bedrohung es möglicherweie für die freie Softwareentwicklung darstellt. Bei der Softwareentwicklung auf Silverlight zu verzichten ist für mich Gewissensentscheidung: ich kann mir nicht vorstellen, dass es gut für die Menschheit ist, wenn wir uns von einer Firma regieren lassen. Zum Glück gibt es inzwischen immerhin `Moonlight <http://www.go-mono.com/moonlight/>`_, denn irgendwann wird Ly einen Silverligt-Film schauen wollen und zu mir kommen und spöttisch sagen "Hier ist schon wieder eine Website, die auf deinem komischen Linux nicht funktioniert"
+
+Hier ein paar Zitate, die ich notierenswert fand.
+
+Choosing how to develop and deploy your web app is becoming increasingly difficult these days. With the advent of mobile platforms, you have to tread very carefully. Sticking to HTML5 seems the best option so far, knowing that iPhone and iPad will never support Silverlight. Similarly I doubt Android and ChromeOS will do so in near future.
+(`Igor Zevaka 18.05.2010 <http://stackoverflow.com/questions/2861696/do-silverlight-and-ajax-play-complementary-roles-or-will-one-replace-the-other/2861828#2861828>`_)
+
+
+A plugin free web is of a little value in itself. Just about everybody has flash installed, and I suspect the same will one day be true of Silverlight. If the benefit to the user is there, they won't mind installing a 5MB plugin.
+
+So what does Silverlight offer that HTML 5 and javascript do not? A development model that doesn't suck. Seriously. It gives you a stripped down version of the windows desktop programming model. Creating software is faster, easier, and cheaper for Silverlight than it is using open web technologies. The software loads faster, runs faster, looks slicker, and you can do things that you cannot with just a browser. It's so nice to just target one platform instead of the hodgepodge that is the browsers that make up the internet (although in recent years this has become considerably less painful, it's still a mess.) So as a developer who's done a lot in both Silverlight and HTML/css/jQuery, I'd say I'd rather see a Silverlight dominated web than the "open web" any day. No I don't trust Microsoft, but neither do I trust glacially slow standards committees. Silverlight is seeing a new release every 6-10 months. HTML 5 is still vaporware. This is my opinion based on personal experience and some anecdotal comparisons of desktop vs web application development costs.
+
+(`Eloff 04.06.2010 <http://stackoverflow.com/questions/2963415/silverlight-vs-web-2-0/2963459#2963459>`_)
+
+Wie Silverlight 2007 im Ubuntu-Forum aufgenommen wurde: http://ubuntuforums.org/showthread.php?t=410858
