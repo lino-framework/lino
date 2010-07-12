@@ -1,0 +1,6 @@
+20100712
+========
+
+Weiter mit extjsw ohne USE_WINDOWS. Permalinks sind fast wieder da. SlaveGrids und Pictures funktionieren momentan gar nicht, denn ich will dass sie auch mit Permalink funktionieren und habe deshalb SlaveGridPlugin und PicturePlugin durch entsprechenden Code im MasterWrapper ersetzt.
+
+15.50 Uhr : Uff, nach 35 Stunden Unterbrechung ist unser Internet wieder da und saffre-rumma.ee wieder online. Verantwortlich für die lange Auszeit ist www.elion.ee, die aber trotzdem der beste Internetprovider ist, den ich kenne...

@@ -646,7 +646,7 @@ class ExtUI(base.UI):
         if request.method == 'GET':
             fmt = request.GET.get('fmt',None)
             if fmt is None:
-                return json_response(elem2rec(elem))
+                return json_response(elem2rec(request,ah,elem))
             a = rpt.get_action(fmt)
             #~ if fmt == 'detail':
             if a is not None:

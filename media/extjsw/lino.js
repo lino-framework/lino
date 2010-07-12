@@ -391,36 +391,59 @@ Lino.gup = function( name )
     return results[1];
 };
 
-Lino.goto_permalink = function () {
-    var windows = "";
-    var sep = '';
-    Ext.WindowMgr.each(function(win) {
-      if(!win.hidden && !win.window_wrapper.caller) { 
-        windows += sep + win.window_wrapper.config.permalink_name; 
-        sep = ","
+if (Lino.USE_WINDOWS) {
+  Lino.goto_permalink = function () {
+      var windows = "";
+      var sep = '';
+      Ext.WindowMgr.each(function(win) {
+        if(!win.hidden && !win.window_wrapper.caller) { 
+          windows += sep + win.window_wrapper.config.permalink_name; 
+          sep = ","
+        }
+      });
+      //~ document.location = "/permalink/?show=" + windows;
+      if (windows) document.location = "?permalink=" + windows;
+  };
+  Lino.run_permalink = function() {
+    //~ Lino.debug("run_permalink");
+    var links = Lino.gup('permalink').split(',');
+    for ( i=0; i < links.length; i++ ) {
+    //~ for ( i in links ) {
+      //~ console.log(links[i]);
+      // if(windows[i]) eval(windows[i]+".show()");
+      // if(windows[i]) Lino.do_action(undefined,'/permalink_do/'+windows[i],windows[i],{});
+      if(links[i]) {
+        Lino.do_action(undefined,{url:'/ui/'+links[i],method:'GET'});
+        //~ var a = links[i].split('.');
+        //~ if (a.length == 2) {
+            //~ Lino.do_dialog(undefined,'/action/'+a[0]+'/'+a[1],{});
+        //~ }
       }
-    });
-    //~ document.location = "/permalink/?show=" + windows;
-    if (windows) document.location = "?permalink=" + windows;
-};
-
-Lino.run_permalink = function() {
-  //~ Lino.debug("run_permalink");
-  var links = Lino.gup('permalink').split(',');
-  for ( i=0; i < links.length; i++ ) {
-  //~ for ( i in links ) {
-    //~ console.log(links[i]);
-    // if(windows[i]) eval(windows[i]+".show()");
-    // if(windows[i]) Lino.do_action(undefined,'/permalink_do/'+windows[i],windows[i],{});
-    if(links[i]) {
-      Lino.do_action(undefined,{url:'/ui/'+links[i],method:'GET'});
-      //~ var a = links[i].split('.');
-      //~ if (a.length == 2) {
-          //~ Lino.do_dialog(undefined,'/action/'+a[0]+'/'+a[1],{});
-      //~ }
     }
   }
-}
+  
+} else {
+  Lino.tools_close_handler = function (ww) {
+    return function() { 
+        ww.close();
+    }
+  };
+  Lino.permalink_handler = function (ww) {
+    return function() { 
+      document.location = "?permalink=" + ww.config.permalink_name +'()';
+    }
+  };
+  Lino.run_permalink = function() {
+    //~ Lino.debug("run_permalink");
+    var plinks = Lino.gup('permalink').split(',');
+    for ( i=0; i < plinks.length; i++ ) {
+      if(plinks[i]) {
+        eval('Lino.'+plinks[i]);
+      }
+    }
+  }
+}  
+
 
 
 
@@ -516,7 +539,7 @@ Lino.build_bbar = function(scope,actions) {
       var btn = {
         text: actions[i].label
       };
-      console.log("build_bbar",btn.text,":",actions[i]);
+      //~ console.log("build_bbar",btn.text,":",actions[i]);
       btn.handler = actions[i].handler.createCallback(scope);
       bbar[i] = new Ext.Button(btn);
     }
@@ -563,9 +586,10 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
   constructor : function(config){
     config.store = new Ext.data.JsonStore({ 
       listeners: { exception: Lino.on_store_exception }, 
-      proxy: new Ext.data.HttpProxy({ url: config.ls_data_url, method: "GET", baseParams: {fmt:'json'} }), remoteSort: true, 
+      proxy: new Ext.data.HttpProxy({ url: config.ls_data_url, method: "GET" }), remoteSort: true, 
       fields: config.ls_store_fields, 
       totalProperty: "count", 
+      baseParams: {fmt:'json'}, 
       root: "rows", 
       id: "id" });
     if (config.ls_quick_edit) {
@@ -829,9 +853,9 @@ Lino.load_picture = function(caller,cmp,record) {
     var src = caller.ls_data_url + "/" + record.id + "?fmt=picture"
     //~ console.log('Lino.load_picture()',src);
     cmp.el.dom.src = src; 
-  } else console.log('Lino.load_picture() no record or cmp not rendered',caller,cmp,record);
+  } else console.log('Lino.load_picture() no record or cmp not rendered',record,cmp);
 }
-Lino.PictureBoxPlugin = Ext.extend(Lino.SlavePlugin,{
+Lino.unused_PictureBoxPlugin = Ext.extend(Lino.SlavePlugin,{
   init : function (cmp) {
     //~ console.log('Lino.PictureBoxPlugin.init()',this);
     cmp.on('render',function(){ Lino.load_picture(this.caller,cmp,this.caller.get_current_record())},this);
@@ -880,9 +904,9 @@ Lino.load_slavegrid = function(caller,cmp,record) {
     var p = caller.get_master_params(record);
     for (k in p) cmp.getStore().setBaseParam(k,p[k]);
     cmp.getStore().load(); 
-  } else console.log('Lino.load_picture() no record or cmp not rendered',caller,cmp,record);
+  } else console.log('Lino.load_slavegrid() no record or cmp not rendered',record,cmp);
 }
-Lino.SlaveGridPlugin = Ext.extend(Lino.SlavePlugin,{
+Lino.unused_SlaveGridPlugin = Ext.extend(Lino.SlavePlugin,{
   init : function (cmp) {
     cmp.on('render',function(){ Lino.load_slavegrid(this.caller,cmp,this.caller.get_current_record())},this);
     this.caller.add_row_listener(function(sm,ri,rec) { Lino.load_slavegrid(this.caller,cmp,rec) }, this );
@@ -970,7 +994,9 @@ Ext.override(Lino.WindowWrapper,{
         y: this.config.wc.y, x: this.config.wc.x, 
         closeAction:this.closeAction,
         bbar: this.bbar_actions,
-        tools: [ { qtip: this.config.qtip, handler: Lino.save_wc_handler(this), id: "save" } ] 
+        tools: [ 
+          { qtip: this.config.qtip, handler: Lino.save_wc_handler(this), id: "save" } 
+        ] 
         });
     } else {
       this.window = new Ext.Panel({ 
@@ -979,7 +1005,11 @@ Ext.override(Lino.WindowWrapper,{
         title: this.config.title, 
         items: this.main_item, 
         bbar: this.bbar_actions,
-        tools: [ { qtip: this.config.qtip, handler: Lino.save_wc_handler(this), id: "save" } ] 
+        tools: [ 
+          { qtip: this.config.qtip, handler: Lino.save_wc_handler(this), id: "save" }, 
+          { qtip: 'permalink', handler: Lino.permalink_handler(this), id: "pin" },
+          { qtip: 'close', handler: Lino.tools_close_handler(this), id: "close" } 
+        ] 
       });
     }
     this.window.window_wrapper = this;
@@ -1044,7 +1074,7 @@ Lino.GridMixin = {
     Lino.WindowWrapper.prototype.setup.call(this);
   },
   get_current_record : function() { 
-    if (this.main_item) return this.main_item.getSelectionModel().getSelected();
+    if (this.main_item) return this.main_item.get_current_record()
   },
   refresh : function() { 
     this.main_item.refresh();
@@ -1081,6 +1111,9 @@ Lino.SlaveMixin = {
 Lino.DetailMixin = {
   get_selected : function() { return [ this.current_record.id ] },
   get_current_record : function() {  return this.current_record },
+  add_row_listener : function(fn,scope) {
+    if (this.config.caller) this.config.caller.add_row_listener(fn,scope);
+  },
   load_master_record : function(record) {
     this.current_record = record;
     //~ console.log('20100531 Lino.DetailMixin.load_master_record',record);

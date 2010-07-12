@@ -129,10 +129,16 @@ class MasterWrapper(WindowWrapper):
         for ln in jsgen.declare_vars(self.config):
             yield '  '+ln
         before_row_edit = []
+        slave_grids = []
+        picture_elements = []
         #~ before_row_edit.append("console.log('ext_windows.py 20100531',record);")
         yield ''
         for e in self.main.walk():
-            if isinstance(e,ext_elems.FieldElement):
+            if isinstance(e,ext_elems.GridElement):
+                slave_grids.append(e)
+            elif isinstance(e,ext_elems.PictureElement):
+                picture_elements.append(e)
+            elif isinstance(e,ext_elems.FieldElement):
                 chooser = choosers.get_for_field(e.field)
                 if chooser:
                     #~ lino.log.debug("20100615 %s.%s has chooser", self.lh.layout, e.field.name)
@@ -144,8 +150,18 @@ class MasterWrapper(WindowWrapper):
                             e.ext_name,f.name,ext_elems.form_field_name(f)))
         #~ lino.log.debug("20100615 %s has %d choosers", self.lh.layout, len(before_row_edit))
         self.config.update(before_row_edit=js_code('function(record){%s}' % ('\n'.join(before_row_edit))))
-        yield "new Lino.%s(caller,function(ww) { return Ext.apply(%s,params)}).show();}" % (
+        yield "var ww = new Lino.%s(caller,function(ww) { return Ext.apply(%s,params)})" % (
             self.__class__.__name__,py2js(self.config))
+        for sg in slave_grids:
+            n = sg.as_ext()
+            yield "%s.on('render',function(){ Lino.load_slavegrid(ww,%s,ww.get_current_record())});" % (n,n)
+            yield "ww.add_row_listener(function(sm,ri,rec) { Lino.load_slavegrid(ww,%s,rec) });" % n
+            
+        for pe in picture_elements:
+            n = pe.as_ext()
+            yield "%s.on('render',function(){ Lino.load_picture(ww,%s,ww.get_current_record())});" % (n,n)
+            yield "ww.add_row_listener(function(sm,ri,rec) { Lino.load_picture(ww,%s,rec) });" % n
+        yield "ww.show();}"
         
             
     

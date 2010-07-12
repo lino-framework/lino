@@ -54,6 +54,7 @@ Sonntag 23.15 Uhr: extjsw mit USE_WINDOWS=False hat funktioniert, mit zufriedens
 Checkin (aber push geht nicht, weil unser Internetanschluss erst morgen repariert wird...)
 
 TODO:
+
 - Momentan ist die Liste noch leer, weil ich api_list_view und api_elem_view in ext_ui.py noch fertig anpassen muss (im AJAX-GET der Grid fehlt `fmt=json`).
 - Print-Button funktionierte nicht. 
 - Einen Close-Button, der ins vorige Fenster zurückspringt.

@@ -213,7 +213,8 @@ class TemplateElement(LayoutElement):
         LayoutElement.__init__(self,lh,name,**kw)
 
 class PictureElement(LayoutElement):
-    declare_type = jsgen.DECLARE_INLINE
+    declare_type = jsgen.DECLARE_VAR
+    #~ declare_type = jsgen.DECLARE_INLINE
     value_template = "new Ext.BoxComponent(%s)"
     vflex = True
     
@@ -221,7 +222,7 @@ class PictureElement(LayoutElement):
         kw.update(autoEl=dict(tag='img'))
         #~ kw.update(cls='ext-el-mask')
         kw.update(style=dict(height='100%'))
-        kw.update(plugins=js_code('new Lino.PictureBoxPlugin(caller)'))
+        #~ kw.update(plugins=js_code('new Lino.PictureBoxPlugin(caller)'))
         LayoutElement.__init__(self,lh,name,**kw)
 
         
@@ -808,7 +809,7 @@ def a2btn(a):
 class SlaveGridElement(GridElement):
     def ext_options(self,**kw):
         kw = GridElement.ext_options(self,**kw)
-        kw.update(plugins=js_code('new Lino.SlaveGridPlugin(caller)'))
+        #~ kw.update(plugins=js_code('new Lino.SlaveGridPlugin(caller)'))
         
         kw.update(title=unicode(self.report.label))
         
