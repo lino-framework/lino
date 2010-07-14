@@ -787,7 +787,7 @@ class GridElement(Container): #,DataElementMixin):
         d.update(emptyText="Nix gefunden...")
         #~ d.update(store=rh.store) # js_code(self.rh.store.ext_name))
         #~ d.update(ls_data_url=rh.store) # js_code(self.rh.store.ext_name))
-        d.update(ls_data_url=rh.ui.get_actor_url(rh.report)) 
+        #~ d.update(ls_data_url=rh.ui.get_actor_url(rh.report)) 
         d.update(ls_store_fields=[js_code(f.as_js()) for f in rh.store.fields]) 
         d.update(colModel=self.column_model)
         #d.update(colModel=js_code('this.cols'))

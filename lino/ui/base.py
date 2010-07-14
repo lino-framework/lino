@@ -52,6 +52,16 @@ class UI:
     prefix = None
     verbose_name = None
     
+    def __init__(self,site):
+        self.site = site
+        from lino import reports
+        # instantiate all ReportHandles already at server startup.
+        # TODO: in fact this is currently called only when a first request comes in,
+        #       because Django does not yet provide a `server_startup` signal.
+        lino.log.debug('%s.setup_site()' % self)
+        for rpt in reports.master_reports + reports.slave_reports:
+            rpt.get_handle(self)
+        
     def build_url(self,*args,**kw):
         url = "/" + "/".join(args)
         if self.prefix:
@@ -65,16 +75,6 @@ class UI:
         
     def field2elem(self,lui,field,**kw):
         pass
-        
-    def setup_site(self,site):
-        self.site = site
-        from lino import reports
-        # instantiate all ReportHandles already at server startup.
-        # TODO: in fact this is currently called only when a first request comes in,
-        #       because Django does not yet provide a `server_startup` signal.
-        lino.log.debug('%s.setup_site()' % self)
-        for rpt in reports.master_reports + reports.slave_reports:
-            rpt.get_handle(self)
         
     def setup_handle(self,h):
         pass

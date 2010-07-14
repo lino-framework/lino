@@ -117,10 +117,6 @@ class LinoSite:
             
         lino.log.info("LinoSite %r is ready.", self.title)
           
-        self._setup_done = True
-        self._setting_up = False
-        
-    def setup_ui(self):
         uis = []
         for ui in settings.USER_INTERFACES:
             lino.log.info("Starting user interface %s",ui)
@@ -128,10 +124,12 @@ class LinoSite:
             ui_module = import_module(ui)
             #~ self.ui = ui_module.ui
             #~ self.ui.setup_site(self)
-            ui_module.ui.setup_site(self)
-            uis.append(ui_module.ui)
+            #~ ui_module.ui.setup_site(self)
+            uis.append(ui_module.get_ui(self))
         self.uis = uis
         
+        self._setup_done = True
+        self._setting_up = False
         
         
     def add_menu(self,*args,**kw):
@@ -162,7 +160,7 @@ class LinoSite:
         
     def get_urls(self):
         self.setup()
-        self.setup_ui()
+        #~ self.setup_ui()
         if len(self.uis) == 1:
             return self.uis[0].get_urls()
         urlpatterns = patterns('',

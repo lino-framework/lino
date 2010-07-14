@@ -75,12 +75,12 @@ class WindowWrapper(ActionRenderer):
         assert self.window_config_type is not None, "%s.window_config_type is None" % self.__class__
         self.main = main
         #~ self.permalink_name = str(action).replace('.','/')
-        self.permalink_name = str(action)
+        #~ self.permalink_name = str(action)
         self.lh = lh # may be None
         self.bbar_buttons = []
         self.config = self.get_config()
-        if ui.USE_WINDOWS:
-            self.main.update(autoHeight=True,height=None,width=None)
+        #~ if ui.USE_WINDOWS:
+            #~ self.main.update(autoHeight=True,height=None,width=None)
         
         
     def __str__(self):
@@ -89,11 +89,13 @@ class WindowWrapper(ActionRenderer):
     def get_config(self,**d):
         wc = lh2win(self.lh)
         wc = self.ui.load_window_config(self.action,**wc)
-        d.update(permalink_name=self.permalink_name)
+        #~ d.update(permalink_name=self.permalink_name)
+        d.update(permalink_name=str(self.action))
         d.update(wc=wc)
         #~ url = '/ui/' + '/'.join((self.action.actor.app_label,self.action.actor._actor_name,self.action.name))
         #~ d.update(url_action=url) # ,ext_requests.FMT_JSON))
         #~ d.update(handler=js_code("Lino.%s" % self.action)) 
+        #~ d.update(ls_data_url=self.ui.get_actor_url(self.action.actor))
         return d
         
 def lh2win(lh,**kw):
@@ -113,7 +115,7 @@ class SlaveWrapper(WindowWrapper):
   
     def js_render(self):
         yield "function(caller) { "
-        for ln in jsgen.declare_vars(self.config):
+        for ln in jsgen.declare_vars(self.main):
             yield '  '+ln
         yield "return new Lino.%s(caller,function(ww) { return %s});}" % (self.__class__.__name__,py2js(self.config))
         
@@ -148,19 +150,22 @@ class MasterWrapper(WindowWrapper):
                         yield "  %s.on('change',Lino.chooser_handler(%s,%r));" % (varname,e.ext_name,f.name)
                         before_row_edit.append("%s.setContextValue(%r,record.data[%r]);" % (
                             e.ext_name,f.name,ext_elems.form_field_name(f)))
+            #~ else:
+                #~ yield "// data element not handled: %s" % e
         #~ lino.log.debug("20100615 %s has %d choosers", self.lh.layout, len(before_row_edit))
         self.config.update(before_row_edit=js_code('function(record){%s}' % ('\n'.join(before_row_edit))))
-        yield "var ww = new Lino.%s(caller,function(ww) { return Ext.apply(%s,params)})" % (
+        #~ yield "var ww = new Lino.%s(caller,function(ww) { return Ext.apply(%s,params)})" % (
+        yield "var ww = new Lino.%s(caller,%s,params)" % (
             self.__class__.__name__,py2js(self.config))
         for sg in slave_grids:
             n = sg.as_ext()
-            yield "%s.on('render',function(){ Lino.load_slavegrid(ww,%s,ww.get_current_record())});" % (n,n)
-            yield "ww.add_row_listener(function(sm,ri,rec) { Lino.load_slavegrid(ww,%s,rec) });" % n
+            yield "%s.on('render',function(){ Lino.load_slavegrid(%s,%s,ww.get_current_record())});" % (n,self.main.as_ext(),n)
+            #~ yield "ww.add_row_listener(function(sm,ri,rec) { Lino.load_slavegrid(%s,%s,rec) });" % (self.main.as_ext(),n)
             
         for pe in picture_elements:
             n = pe.as_ext()
             yield "%s.on('render',function(){ Lino.load_picture(ww,%s,ww.get_current_record())});" % (n,n)
-            yield "ww.add_row_listener(function(sm,ri,rec) { Lino.load_picture(ww,%s,rec) });" % n
+            #~ yield "ww.add_row_listener(function(sm,ri,rec) { Lino.load_picture(ww,%s,rec) });" % n
         yield "ww.show();}"
         
             
@@ -244,7 +249,7 @@ class GridSlaveWrapper(GridWrapperMixin,SlaveWrapper):
         return d
         
         
-class DetailSlaveWrapper(SlaveWrapper):
+class unused_DetailSlaveWrapper(SlaveWrapper):
   
     window_config_type = 'detail'
     
@@ -270,15 +275,17 @@ class BaseDetailWrapper(MasterWrapper):
         #~ assert isinstance(action,actions.BaseDetailAction)
         if len(rh.report.detail_layouts) == 1:
             lh = rh.report.detail_layouts[0].get_handle(rh.ui)
-            main = ext_elems.FormPanel(lh._main) # ,autoScroll=True)
+            main = ext_elems.FormPanel(rh,lh._main) # ,autoScroll=True)
             WindowWrapper.__init__(self,action,rh.ui,lh,main,**kw)        
         else:
             #~ tl = layouts.TabLayout(rh.report.detail_layouts)
             #~ lh = layouts.TabPanelHandle(rh,rh.report.detail_layouts)
             lh = rh.report.detail_layouts[0].get_handle(rh.ui)
             tabs = [l.get_handle(rh.ui)._main for l in rh.report.detail_layouts]
-            main = ext_elems.FormPanel(ext_elems.TabPanel(tabs)) # ,autoScroll=True)
+            main = ext_elems.FormPanel(rh,ext_elems.TabPanel(tabs)) # ,autoScroll=True)
             WindowWrapper.__init__(self,action,rh.ui,None,main,**kw) 
+        self.config.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rh.get_actions(action)]) # if a.show_in_detail])
+            
         
     def get_config(self):
         d = MasterWrapper.get_config(self)
@@ -292,18 +299,19 @@ class BaseDetailWrapper(MasterWrapper):
         
         
 class DetailWrapper(BaseDetailWrapper):
-    def get_config(self):
-        d = BaseDetailWrapper.get_config(self)
-        #~ d.update(ls_bbar_actions=[ext_elems.a2btn(a) for a in self.rh.get_actions() if not a.hidden])
-        d.update(ls_bbar_actions=[self.ui.a2btn(a) for a in self.rh.get_actions(self.action)])
-        return d
+    pass
+    #~ def get_config(self):
+        #~ d = BaseDetailWrapper.get_config(self)
+        #~ d.update(ls_bbar_actions=[self.ui.a2btn(a) for a in self.rh.get_actions(self.action)])
+        #~ return d
   
 class InsertWrapper(BaseDetailWrapper):
-    def get_config(self):
-        d = BaseDetailWrapper.get_config(self)
-        d.update(title=_('%s into %s') %(self.action.label,self.action.actor.get_title(None)))
-        d.update(record_id=-99999)
-        return d
+    pass
+    #~ def get_config(self):
+        #~ d = BaseDetailWrapper.get_config(self)
+        #~ d.update(title=_('%s into %s') %(self.action.label,self.action.actor.get_title(None)))
+        #~ d.update(record_id=-99999)
+        #~ return d
 
         
 

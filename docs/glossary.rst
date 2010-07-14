@@ -20,7 +20,7 @@ Glossary
 
 
 Settings
---------
+========
 
 .. setting:: MEDIA_ROOT
 
@@ -66,7 +66,7 @@ Settings
 
   
 Modules
--------
+=======
 
 .. module:: lino.reports
     :synopsis: Report and ReportHandle
@@ -87,10 +87,6 @@ Modules
 
 .. module:: lino.utils.mixins
 
-.. js:function:: Lino.notes.NoteTypes.grid()
-
-    See :doc:`blog/2010/20100706`
-   
 
 .. module:: lino.modlib.notes.models
 
@@ -131,3 +127,43 @@ Models
   One entry per city.
   
     
+    
+Javascript functions
+====================
+
+.. js:class:: Lino.WindowWrapper
+
+
+.. js:class:: Lino.FormPanel
+
+  .. js:attribute:: Lino.FormPanel.ls_data_url
+  
+    The base URI of the report.
+  
+  .. js:attribute:: Lino.FormPanel.data_record
+  
+    An object that should have at least these attributes:
+    - title
+    - values
+  
+  See :doc:`blog/2010/20100714`
+  
+  .. js:function:: Lino.FormPanel.load_master_record
+  
+  
+    
+.. js:class:: Lino.GridPanel
+
+  .. js:attribute:: Lino.GridPanel.ls_data_url
+  
+    The base URI of the report.
+  
+  See :doc:`blog/2010/20100714`
+  
+.. js:function:: Lino.notes.NoteTypes.grid(params)
+
+  :param object params: Parameters to override default config values.
+  :returns: null
+   
+  See :doc:`blog/2010/20100706`
+   

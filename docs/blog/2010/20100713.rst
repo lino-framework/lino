@@ -1,0 +1,63 @@
+20100713
+========
+
+Permalinks funktionieren erstmals auch für Detail-Fenster
+---------------------------------------------------------
+
+Permalinks sind jetzt so implementiert, dass jedes "Fenster" einen weiteren Tool-Button "Pin" (im oberen rechten Rahmen) hat. 
+Wenn man z.B. in der Liste der Firmen darauf klickt, dann öffnet er den Link::
+
+  http://127.0.0.1:8000/?permalink=contacts.Companies.grid()
+
+Und :js:func:`Lino.run_permalink`, die direkt in der :js:func:`Ext.onReady` aufgerufen wird, ist ganz einfach::
+
+  Lino.run_permalink = function() {
+    var plink = Lino.gup('permalink');
+    if(plink) { eval('Lino.'+plink); }
+  }
+  
+Der Präfix 'Lino' ist also hardcodiert, vor allem weil das Sytem ansonsten eine große Sicherheitslücke hätte.
+
+Der handler des Permalink-Tool-Buttons ist wie folgt definiert::  
+  
+  Lino.permalink_handler = function (ww) {
+    return function() { 
+      document.location = "?permalink=" + ww.get_permalink();
+    }
+  };
+  
+
+Und dieses System funktioniert sogar fürs Detail-Fenster. 
+Also erstmals überhaupt habe ich einen Permalink für Detail-Fenster::
+
+  http://127.0.0.1:8000/?permalink=contacts.Companies.detail(undefined,{record_id=123})
+  
+Idem fürs Insert-Fenster::  
+  
+  http://127.0.0.1:8000/?permalink=contacts.Companies.insert()
+
+Die Syntax ist freilich noch nicht sehr schön. Die könnte eleganter werden::
+
+  http://127.0.0.1:8000/?permalink=contacts.Companies.detail(123)
+
+Dazu müsste ich mich aber definitiv von der Möglichkeit der Slave-Fenster verabschieden. 
+Slave-Fenster existieren ja schon momentan nur noch theoretisch.
+
+extjsw und extjsu wachsen weiter zusammen
+-----------------------------------------
+
+Detail-Fenster im extjsw arbeiten jetzt wie im extjsu mit `data_record` 
+statt `record_id` und brauchen also kein zweites GET mehr.
+
+Der Handler eines Detail-Button schickt jetzt 
+``{data_record:ww.get_current_record()}`` als 
+params an :js:func:`Lino.contacts.Companies.detail()`, 
+statt dass der DetailWrapper seinen caller danach fragt. 
+Das ist implementiert in ui.a2btn(). 
+
+
+todo:
+- ls_bbar_actions, lino.formpanel und gridpanel anpassen aus extjsu nach extjsw
+- api_element_view macht in bestimmten Fällen self.html_page(), was im extjsw ja nicht gehen kann.
+- Lino.id_renderer
+- record.phantom in Lino.grid_afteredit

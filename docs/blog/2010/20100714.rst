@@ -1,0 +1,25 @@
+20100714
+========
+
+Das System für die Permalinks von :doc:`gestern <20100713>` habe ich nochmal grundlegend revidiert. 
+Permalinks sind jetzt "normale" URIs. Und zwar genau die, die ich für extjsu ausgedacht hatte::
+
+  http://127.0.0.1:8000/api/contacts/Persons?fmt=grid
+  http://127.0.0.1:8000/api/contacts/Companies?fmt=insert 
+  http://127.0.0.1:8000/api/contacts/Persons/200076?fmt=detail
+
+Der wichtige Unterschied zum extjsu ist freilich, dass diese URIs einen Aufruf der entsprechenden JS-Funktion in die :js:func:`Ext.onReady()` hinein generieren. Den gleichen Aufruf, den auch ein entsprechender Button als Handler hat. Das ist super! Ich bin erstmals richtig zufrieden.
+
+Ach ja, die `extjsw.USE_WINDOWS` ist raus, also diese Entscheidung ist gefallen. 
+Diese Tür weiter offen zu halten hätte wenig Sinn.
+
+Es gibt trotzdem noch den :js:class:`WindowWrapper`. Der erzeugt ein Panel, das die Tools-Buttons und den Fenstertitel enthält, und dessen einziges Item ein :js:class:`Lino.GridPanel` oder :js:class:`Lino.FormPanel` ist. Momentan herrscht noch ziemliches Chaos darüber, was in WindowWrapper und was in dessen main_item gespeichert wird. 
+Zum Beispiel `ls_data_url` und `bbar_actions` : die sind im GridPanel und im FormPanel, nicht im WindowWrapper. Der Unterschied wird wichtig, wenn man in einem DetailWrapper mehrere GridElements hat. `load_master_record()` machen beide: der DetailWrapper holt sich seinen Titel, das FormPanel füllt seine Felder. current_record und get_current_record() kommen in den WindowWrapper. Die MainPanels haben ihren ww nicht zu kennen.
+
+TODO:
+
+- Passfotos werden nicht angezeigt. Das PictureElement wird korrekt gerendert, aber 
+  http://127.0.0.1:8000/api/contacts/Persons/200076?fmt=picture
+  macht ``NotImplementedError: <Person: Saffre Mari> action u'picture' is not implemented)``
+    
+- Close-Buttons. Im Prinzip soll er beim Schließen eines Fensters das vorherige Fenster anzeigen. Aber sollen alle offenen Fenster "erhalten" bleiben? das ist erstens Speicherverschwendung und zweitens vielleicht nicht leicht zu implementieren (weil die "Fenster" ja keine Windows sind sondern einfach Panels, die in die main_area injiziert werden). Besser also nur den entsprechende Funktionsaufruf speichern. Sonderfall ist das Hauptfenster, das keinen Close-Button haben soll. Interner Sonderfall ist, wenn man über einen Permalink startet: wenn das über den PL geöffnete Fenster geschlossen wird, kommt man ins Hauptmenü. Das Hauptmenü ist in Lino (im Gegensatz zu TIM) ja immer da. Also wenn man einen Befehl des HM startet, sollte die zuvorige Fensterhistorik auch gelöscht werden.

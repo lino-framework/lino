@@ -84,8 +84,13 @@ class GridColumn(Component):
             #~ editor = self.get_field_options()
         
         
+class Toolbar(Component):
+    value_template = "new Ext.Toolbar(%s)"
 class ComboBox(Component):
     value_template = 'new Ext.form.ComboBox(%s)'
+class ExtPanel(Component): # todo: rename this to Panel, and Panel to PanelElement or sth else
+    value_template = "new Ext.Panel(%s)"
+    
                     
         
         
@@ -773,7 +778,7 @@ class GridElement(Container): #,DataElementMixin):
         d.update(emptyText="Nix gefunden...")
         #~ d.update(store=rh.store) # js_code(self.rh.store.ext_name))
         #~ d.update(ls_data_url=rh.store) # js_code(self.rh.store.ext_name))
-        d.update(ls_data_url=rh.ui.get_actor_url(rh.report)) 
+        d.update(ls_data_url=rh.ui.get_actor_url(rh.report))
         d.update(ls_store_fields=[js_code(f.as_js()) for f in rh.store.fields]) 
         d.update(colModel=self.column_model)
         #d.update(colModel=js_code('this.cols'))
@@ -781,6 +786,7 @@ class GridElement(Container): #,DataElementMixin):
         #~ d.update(autoHeight=True)
         #d.update(layout='fit')
         d.update(enableColLock=False)
+        d.update(ls_id_property=rh.store.pk.name)
         d.update(ls_quick_edit=True)
         d.update(ls_content_type=rh.content_type)
         
@@ -791,7 +797,7 @@ class GridElement(Container): #,DataElementMixin):
             #~ )
         
         #~ d.update(bbar=[a2btn(a) for a in rh.get_actions() if not a.hidden])
-        d.update(ls_bbar_actions=[a2btn(a) for a in rh.get_actions(rh.report.default_action)])
+        d.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rh.get_actions(rh.report.default_action)])
         #~ d.update(ls_bbar_actions=[a for a in rh.get_actions() if not a.hidden])
         
         
@@ -952,17 +958,19 @@ class TabPanel(jsgen.Component):
         jsgen.Value.__init__(self,kw)
         
 
-        
-#~ class FormPanel(jsgen.Value):
 class FormPanel(jsgen.Component):
-    value_template = "new Ext.form.FormPanel(%s)"
-    def __init__(self,main,**kw):
+    value_template = "new Lino.FormPanel(%s,params)"
+    #~ value_template = "new Ext.form.FormPanel(%s)"
+    def __init__(self,rh,main,**kw):
         kw.update(
           items=main,
           #~ autoScroll=True,
           layout='fit',
         )
+        #~ kw.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rh.get_actions() if a.show_in_detail])
+        kw.update(ls_data_url=rh.ui.get_actor_url(rh.report))
         jsgen.Value.__init__(self,kw)
+
 
 class unused_FormMainPanel(Panel,WrappingMainPanel):
     value_template = "new Ext.form.FormPanel(%s)"

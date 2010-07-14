@@ -100,7 +100,7 @@ def elem2rec(request,ah,elem):
 
             
     
-def handle_list_request(request,rh):
+def unused_handle_list_request(request,rh):
     if not rh.report.can_view.passes(request.user):
         msg = "User %s cannot view %s." % (request.user,rh.report)
         return http.HttpResponseForbidden()
@@ -174,7 +174,7 @@ def handle_list_request(request,rh):
     raise Http404("Method %s not supported for container %s" % (request.method,rh))
     
     
-def handle_element_request(request,ah,elem):
+def unused_handle_element_request(request,ah,elem):
     if not ah.report.can_view.passes(request.user):
         msg = "User %s cannot view %s." % (request.user,ah.report)
         return http.HttpResponseForbidden()
@@ -225,9 +225,10 @@ class ExtUI(base.UI):
     window_configs_file = os.path.join(settings.PROJECT_DIR,'window_configs.pck')
     Panel = ext_elems.Panel
     
-    USE_WINDOWS = False  # If you change this, then change also Lino.USE_WINDOWS in lino.js
+    #~ USE_WINDOWS = False  # If you change this, then change also Lino.USE_WINDOWS in lino.js
 
-    def __init__(self):
+    def __init__(self,site):
+        jsgen.register_converter(self.py2js_converter)
         self.window_configs = {}
         if os.path.exists(self.window_configs_file):
             lino.log.info("Loading %s...",self.window_configs_file)
@@ -238,6 +239,9 @@ class ExtUI(base.UI):
         else:
             lino.log.warning("window_configs_file %s not found",self.window_configs_file)
             
+        base.UI.__init__(self,site) # will create a.window_wrapper for all actions
+        self.build_lino_js(site)
+        
     def create_layout_element(self,lh,panelclass,name,**kw):
         
         if name == "_":
@@ -409,30 +413,131 @@ class ExtUI(base.UI):
         return urlpatterns
         
 
-    def index_view(self, request):
+    def html_page(self,request,on_ready=[],**kw):
+        #~ main=ext_elems.ExtPanel(
+        main=dict(
+          id="main_area",
+          region="center",
+          layout='fit'          
+        )
+        if not on_ready:
+            main.update(items=dict(layout='fit',html=self.site.index_html.encode('ascii','xmlcharrefreplace')))
+        #~ main.update(id='main_area',region='center')
+        comps = [
+          #~ ext_elems.Toolbar(
+          dict(xtype='toolbar',
+            items=self.site.get_site_menu(request.user),
+            region='north',height=29),
+          main,
+          #~ jsgen.Component("konsole",
+          dict(
+            #~ xtype="panel",
+            split=True,
+            collapsible=True,
+            autoScroll=True,
+            title=_("Console"),
+            id="konsole",
+            html='Console started',
+            height=100,
+            region="south")
+        ]  
+        yield '<html><head>'
+        yield '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />'
+        #~ title = kw.get('title',None)
+        #~ if title:
+        yield '<title id="title">%s</title>' % self.site.title
+        #~ yield '<!-- ** CSS ** -->'
+        #~ yield '<!-- base library -->'
+        yield '<link rel="stylesheet" type="text/css" href="%sextjs/resources/css/ext-all.css" />' % settings.MEDIA_URL 
+        #~ yield '<!-- overrides to base library -->'
+        #~ yield '<!-- ** Javascript ** -->'
+        #~ yield '<!-- ExtJS library: base/adapter -->'
+        yield '<script type="text/javascript" src="%sextjs/adapter/ext/ext-base.js"></script>' % settings.MEDIA_URL 
+        widget_library = 'ext-all-debug'
+        #widget_library = 'ext-all'
+        #~ yield '<!-- ExtJS library: all widgets -->'
+        yield '<script type="text/javascript" src="%sextjs/%s.js"></script>' % (settings.MEDIA_URL, widget_library)
+        if True:
+            yield '<style type="text/css">'
+            # http://stackoverflow.com/questions/2106104/word-wrap-grid-cells-in-ext-js 
+            yield '.x-grid3-cell-inner, .x-grid3-hd-inner {'
+            yield '  white-space: normal;' # /* changed from nowrap */
+            yield '}'
+            yield '</style>'
+        if False:
+            yield '<script type="text/javascript" src="%sextjs/Exporter-all.js"></script>' % settings.MEDIA_URL 
+
+        #~ yield '<!-- overrides to library -->'
+        yield '<link rel="stylesheet" type="text/css" href="%slino/extjsu/lino.css">' % settings.MEDIA_URL
+        yield '<script type="text/javascript" src="%slino/extjsw/lino.js"></script>' % settings.MEDIA_URL
+        yield '<script type="text/javascript" src="%s"></script>' % (
+            settings.MEDIA_URL + "/".join(self.js_cache_name(self.site)))
+
+        #~ yield '<!-- page specific -->'
+        yield '<script type="text/javascript">'
+
+        #~ yield "Lino.load_master = function(store,caller,record) {"
+        #~ # yield "  console.log('load_master() mt=',caller.content_type,',mk=',record.id);"
+        #~ yield "  store.setBaseParam(%r,caller.content_type);" % ext_requests.URL_PARAM_MASTER_TYPE
+        #~ yield "  store.setBaseParam(%r,record.id);" % ext_requests.URL_PARAM_MASTER_PK
+        #~ yield "  store.load();" 
+        #~ yield "};"
+                
+            
+        #~ yield "Lino.search_handler = function(caller) { return function(field, e) {"
+        #~ yield "  if(e.getKey() == e.RETURN) {"
+        #~ # yield "    console.log('keypress',field.getValue(),store)"
+        #~ yield "    caller.main_grid.getStore().setBaseParam('%s',field.getValue());" % ext_requests.URL_PARAM_FILTER
+        #~ yield "    caller.main_grid.getStore().load({params: { start: 0, limit: caller.pager.pageSize }});" 
+        #~ yield "  }"
+        #~ yield "}};"
+            
+        yield 'Ext.onReady(function(){'
+        for ln in jsgen.declare_vars(comps):
+            yield '  ' + ln
+            
+        #~ for cmp in comps:
+            #~ yield '  %s.render();' % cmp.as_ext()
+        
+        yield '  var viewport = new Ext.Viewport({layout:"border",items:%s});' % py2js(comps)
+        yield '  Ext.QuickTips.init();'
+        
+        for ln in on_ready:
+            yield ln
+        
+        yield "}); // end of onReady()"
+        yield "</script></head><body>"
+        #~ yield '<div id="tbar"/>'
+        #~ yield '<div id="main"/>'
+        #~ yield '<div id="bbar"/>'
+        yield '<div id="konsole"/>'
+        yield "</body></html>"
+        
+            
+
+    def index_view(self, request,**kw):
+        #~ from lino.lino_site import lino_site
+        #~ kw.update(title=lino_site.title)
+        #~ mnu = py2js(lino_site.get_site_menu(request.user))
+        #~ print mnu
+        #~ tbar=ext_elems.Toolbar(items=lino_site.get_site_menu(request.user),region='north',height=29)# renderTo='tbar')
+        return HttpResponse(self.html_page(request,**kw))
+        #~ html = '\n'.join(self.html_page(request,main,konsole,**kw))
+        #~ return HttpResponse(html)
+
+    def old_index_view(self, request):
         if self._response is None:
             lino.log.debug("building extjs._response...")
             from lino.lino_site import lino_site
             #~ index = ext_elems.VisibleComponent("index",
-            if self.USE_WINDOWS:
-                index = dict(
-                    xtype="panel",
-                    html=lino_site.index_html.encode('ascii','xmlcharrefreplace'),
-                    layout='fit',
-                    autoScroll=True,
-                    #~ autoHeight=True,
-                    #width=50000,
-                    #height=50000,
-                    region="center")
-            else:
-                index = dict(
-                    xtype="panel",
-                    items=dict(layout='fit',html=lino_site.index_html.encode('ascii','xmlcharrefreplace')),
-                    id="main_area",
-                    region="center",
-                    layout='fit',
-                    #~ layout='form',
-                    )
+            index = dict(
+                xtype="panel",
+                items=dict(layout='fit',html=lino_site.index_html.encode('ascii','xmlcharrefreplace')),
+                id="main_area",
+                region="center",
+                layout='fit',
+                #~ layout='form',
+                )
             konsole = jsgen.Component("konsole",
                 #~ xtype="panel",
                 split=True,
@@ -539,10 +644,12 @@ class ExtUI(base.UI):
             if a is not None:
                 kw = {}
                 #~ kw.update(title=unicode(rh.get_title(None)))
-                kw.update(title=unicode(a.get_list_title(rh)))
-                params = dict(region='center')
-                main = js_code('Lino.%s(%s)' % (a,py2js(params)))
-                return HttpResponse(self.html_page(request,main,**kw))
+                #~ kw.update(title=unicode(a.get_list_title(rh)))
+                #~ params = dict(region='center')
+                #~ kw.update(on_ready=['Lino.%s(%s)' % (a,py2js(params))])
+                kw.update(on_ready=['Lino.%s()' % a])
+                return HttpResponse(self.html_page(request,**kw))
+                
             ar = ext_requests.ViewReportRequest(request,rh,rh.report.default_action)
 
             if fmt == 'csv':
@@ -651,18 +758,17 @@ class ExtUI(base.UI):
             #~ if fmt == 'detail':
             if a is not None:
                 if isinstance(a,actions.OpenWindowAction):
-                    kw = {}
+                    #~ kw = {}
                     #~ kw.update(title=unicode(elem))
-                    kw.update(title=unicode(a.get_elem_title(elem)))
+                    #~ kw.update(title=unicode(a.get_elem_title(elem)))
                     #~ kw.update(content_type=rh.content_type)
                     #~ tbar=ext_elems.Toolbar(
                       #~ items=self.site.get_site_menu(request.user),
                       #~ region='north',height=29)# renderTo='tbar')
                     #~ print 20100624, a.window_wrapper_u.main
                     params = dict(data_record=elem2rec(request,ah,elem),region='center')
-                    main = js_code('Lino.%s(%s)' % (a,py2js(params)))
                     #~ return HttpResponse(self.html_page(tbar,a.window_wrapper_u.main,**kw))
-                    return HttpResponse(self.html_page(request,main,**kw))
+                    return HttpResponse(self.html_page(request,on_ready=['Lino.%s(undefined,%s)' % (a,py2js(params))]))
                     
                 if isinstance(a,PrintAction):
                     pm = elem.get_print_method()
@@ -673,7 +779,7 @@ class ExtUI(base.UI):
                         raise Http404("%s could not build %r" % (pm,elem))
                     return http.HttpResponseRedirect(target)
                   
-                raise NotImplementedError("%r action %r is not implemented)" % (elem,fmt))
+            raise NotImplementedError("%r action %r is not implemented)" % (elem,fmt))
               
         raise Http404("Method %r not supported for elements of %s" % (request.method,ah.report))
         
@@ -682,10 +788,6 @@ class ExtUI(base.UI):
         
     def js_cache_name(self,site):
         return ('cache','js','site.js')
-        
-    def setup_site(self,site):
-        base.UI.setup_site(self,site) # will create a.window_wrapper for all actions
-        self.build_lino_js(site)
         
     def build_lino_js(self,site):
         #~ for app_label in site.
@@ -1011,6 +1113,9 @@ class ExtUI(base.UI):
             #~ kw.update(client_side=True)
             #~ kw.update(scope=js_code('this'))
             kw.update(handler=js_code('Lino.submit_insert'))
+        elif isinstance(a,actions.ShowDetailAction):
+            #~ kw.update(handler=js_code("function(ww) { Lino.%s(ww,{data_record:ww.get_current_record()})}" % a))
+            kw.update(handler=js_code("function(ww) { Lino.%s(ww,{record_id:ww.get_current_record().id})}" % a))
         else:
             kw.update(handler=js_code("Lino.%s" % a))
         kw.update(

@@ -21,12 +21,15 @@
 
 #~ import lino
 #~ from lino import layouts
-from lino.utils import jsgen 
+#~ from lino.utils import jsgen 
 #~ py2js = jsgen.py2js
 from . import ext_ui
 
-ui = ext_ui.ExtUI()
-jsgen.register_converter(ui.py2js_converter)
+def get_ui(site):
+    return ext_ui.ExtUI(site)
+    
+#~ ui = ext_ui.ExtUI()
+#~ jsgen.register_converter(ui.py2js_converter)
 
 #~ from lino.ui.extjsu.ext_ui import ui
 
