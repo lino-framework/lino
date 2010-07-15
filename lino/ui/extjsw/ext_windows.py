@@ -132,14 +132,16 @@ class MasterWrapper(WindowWrapper):
             yield '  '+ln
         before_row_edit = []
         slave_grids = []
-        picture_elements = []
+        #~ picture_elements = []
         #~ before_row_edit.append("console.log('ext_windows.py 20100531',record);")
         yield ''
         for e in self.main.walk():
             if isinstance(e,ext_elems.GridElement):
                 slave_grids.append(e)
             elif isinstance(e,ext_elems.PictureElement):
-                picture_elements.append(e)
+                #~ picture_elements.append(e)
+                n = e.as_ext()
+                before_row_edit.append("%s.on('render',function(){ Lino.load_picture(ww,%s,ww.get_current_record())});" % (n,n))
             elif isinstance(e,ext_elems.FieldElement):
                 chooser = choosers.get_for_field(e.field)
                 if chooser:
@@ -153,6 +155,9 @@ class MasterWrapper(WindowWrapper):
             #~ else:
                 #~ yield "// data element not handled: %s" % e
         #~ lino.log.debug("20100615 %s has %d choosers", self.lh.layout, len(before_row_edit))
+        #~ for pe in picture_elements:
+            #~ yield "%s.on('render',function(){ Lino.load_picture(ww,%s,ww.get_current_record())});" % (n,n)
+            #~ yield "ww.add_row_listener(function(sm,ri,rec) { Lino.load_picture(ww,%s,rec) });" % n
         self.config.update(before_row_edit=js_code('function(record){%s}' % ('\n'.join(before_row_edit))))
         #~ yield "var ww = new Lino.%s(caller,function(ww) { return Ext.apply(%s,params)})" % (
         yield "var ww = new Lino.%s(caller,%s,params)" % (
@@ -162,10 +167,6 @@ class MasterWrapper(WindowWrapper):
             yield "%s.on('render',function(){ Lino.load_slavegrid(%s,%s,ww.get_current_record())});" % (n,self.main.as_ext(),n)
             #~ yield "ww.add_row_listener(function(sm,ri,rec) { Lino.load_slavegrid(%s,%s,rec) });" % (self.main.as_ext(),n)
             
-        for pe in picture_elements:
-            n = pe.as_ext()
-            yield "%s.on('render',function(){ Lino.load_picture(ww,%s,ww.get_current_record())});" % (n,n)
-            #~ yield "ww.add_row_listener(function(sm,ri,rec) { Lino.load_picture(ww,%s,rec) });" % n
         yield "ww.show();}"
         
             

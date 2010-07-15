@@ -72,18 +72,20 @@ class MultiTableBase:
         return getattr(self,related_name)
         
 
-class PrintAction(actions.Action):
-    needs_selection = True
-  
-class ImageAction(PrintAction):
-    name = 'image'
-    label = _('Image')
-    callable_from = tuple()
-  
-class DocumentAction(PrintAction):
+
+class PrintAction(actions.RedirectAction):
     name = 'print'
     label = _('Print')
     callable_from = None
+    needs_selection = True
+  
+    def get_target_url(self,elem):
+        pm = pm_dict.get(elem.get_print_method(),None)
+        if pm is None:
+            raise Exception("%r has no print_method (%r)" % (elem,self))
+        pm.build(elem)
+        return settings.MEDIA_URL + "/".join(pm.get_target_parts(elem))
+        
     
 
 
@@ -98,9 +100,6 @@ class Printable:
     def get_print_templates(self,pm):
         return [self.filename_root() + pm.template_ext]
           
-    def get_target_parts(self,pm):
-        return ['cache', pm.name, self.filename_root() + '-' + str(self.pk) + '.' + pm.target_format]
-        
     def get_last_modified_time(self):
         return None
         
@@ -118,7 +117,7 @@ class Printable:
       
     def get_print_method(self):
         ## e.g. lino.modlib.notes.Note overrides this
-        return get_print_method('pisa')
+        return 'pisa'
         #~ return 'pisa'
         
 
@@ -126,7 +125,7 @@ class Printable:
 class PrintMethod:
     name = None
     label = None
-    target_format = None
+    target_ext = None
     template_ext = None
     #~ button_label = None
     label = None
@@ -140,15 +139,14 @@ class PrintMethod:
     def __unicode__(self):
         return unicode(self.label)
             
-    def build(self,elem):
-        pass
+    def get_target_parts(self,elem):
+        return ['cache', self.name, elem.filename_root() + '-' + str(elem.pk) + self.target_ext]
         
     def get_target_name(self,elem):
-        return os.path.join(settings.MEDIA_ROOT,*elem.get_target_parts(self))
+        return os.path.join(settings.MEDIA_ROOT,*self.get_target_parts(elem))
         
-    def get_target_url(self,elem):
-        self.build(elem)
-        return settings.MEDIA_URL + "/".join(elem.get_target_parts(self))
+    def build(self,elem):
+        pass
         
     def prepare_cache(self,elem):
         filename = self.get_target_name(elem)
@@ -191,14 +189,16 @@ class PrintMethod:
         return tpl.render(Context(context))
         
 
-class PicturePrintMethod(PrintMethod):
-    name = 'picture'
-    def get_target_name(self,elem):
-        return os.path.join(settings.MEDIA_ROOT,*elem.get_target_parts(self))
+#~ class PicturePrintMethod(PrintMethod):
+    #~ name = 'picture'
+    
+    #~ def get_target_name(self,elem):
+        #~ return os.path.join(settings.MEDIA_ROOT,*self.get_target_parts(elem))
+        
         
 class AppyPrintMethod(PrintMethod):
     name = 'appy'
-    target_format = 'odt'
+    target_ext = '.odt'
     #~ button_label = _("ODT")
     template_ext = '.odt'  
     def build(self,elem):
@@ -224,7 +224,7 @@ class AppyPrintMethod(PrintMethod):
         
 class PisaPrintMethod(PrintMethod):
     name = 'pisa'
-    target_format = 'pdf'
+    target_ext = '.pdf'
     #~ button_label = _("PDF")
     template_ext = '.pisa.html'  
     
@@ -253,7 +253,7 @@ class RtfPrintMethod(PrintMethod):
   
     name = 'rtf'
     #~ button_label = _("RTF")
-    target_format = 'rtf'
+    target_ext = '.rtf'
     template_ext = '.rtf'  
     
     def build(self,elem):
@@ -276,14 +276,14 @@ if pisa:
 if appy:
     register_print_method(AppyPrintMethod())
 register_print_method(RtfPrintMethod())
-register_print_method(PicturePrintMethod())
+#~ register_print_method(PicturePrintMethod())
 
 
 def print_method_choices():
   return [ (pm.name,pm.label) for pm in pm_list]
 
-def get_print_method(name):
-    return pm_dict.get(name)
+#~ def get_print_method(name):
+    #~ return pm_dict.get(name)
 
 #~ def render_element(elem,fmt):
     #~ rm = render_methods.get(fmt,None)
@@ -291,7 +291,8 @@ def get_print_method(name):
     
     
 def template_choices(print_method):
-    pm = get_print_method(print_method)
+    pm = pm_dict.get(print_method,None)
+    #~ pm = get_print_method(print_method)
     if pm is not None:
         glob_spec = os.path.join(pm.templates_dir,'*'+pm.template_ext)
         top = pm.templates_dir

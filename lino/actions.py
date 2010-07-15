@@ -14,6 +14,7 @@
 import traceback
 from django.utils.translation import ugettext as _
 from django.utils.encoding import force_unicode
+from django.conf import settings
 
 import lino
 
@@ -211,7 +212,23 @@ class SubmitInsert(Action):
     callable_from = (InsertRow,)
     
                 
+class RedirectAction(Action):
+  
+    def get_target_url(self,elem):
+        raise NotImplementedError
+        
+        
+class ImageAction(RedirectAction):
+    needs_selection = True
+    name = 'image'
+    label = _('Image')
+    callable_from = tuple()
     
+    def get_target_url(self,elem):
+        #~ return settings.MEDIA_URL + "/".join(elem.get_image_url(self))
+        return settings.MEDIA_URL + elem.get_image_url(self)
+      
+        
     
 #~ class Cancel(Action):
     #~ label = _("Cancel")

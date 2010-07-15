@@ -79,14 +79,19 @@ class Note(models.Model,mixins.Printable):
         if u is not None:
             self.user = u
         
+    #~ def get_print_method(self):
+        #~ if self.type is None:
+            #~ print 'get_print_method',self,'type is None'
+            #~ return None
+        #~ if not self.type.print_method:
+            #~ print 'get_print_method',self,' : type ', self.type, 'has no print_method'
+            #~ return None
+        #~ return mixins.get_print_method(self.type.print_method)
+        
     def get_print_method(self):
         if self.type is None:
-            print 'get_print_method',self,'type is None'
             return None
-        if not self.type.print_method:
-            print 'get_print_method',self,' : type ', self.type, 'has no print_method'
-            return None
-        return mixins.get_print_method(self.type.print_method)
+        return self.type.print_method
         
     def get_print_templates(self,pm):
         if self.type is None:

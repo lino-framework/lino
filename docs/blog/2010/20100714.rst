@@ -16,9 +16,11 @@ Diese Tür weiter offen zu halten hätte wenig Sinn.
 Es gibt trotzdem noch den :js:class:`WindowWrapper`. Der erzeugt ein Panel, das die Tools-Buttons und den Fenstertitel enthält, und dessen einziges Item ein :js:class:`Lino.GridPanel` oder :js:class:`Lino.FormPanel` ist. Momentan herrscht noch ziemliches Chaos darüber, was in WindowWrapper und was in dessen main_item gespeichert wird. 
 Zum Beispiel `ls_data_url` und `bbar_actions` : die sind im GridPanel und im FormPanel, nicht im WindowWrapper. Der Unterschied wird wichtig, wenn man in einem DetailWrapper mehrere GridElements hat. `load_master_record()` machen beide: der DetailWrapper holt sich seinen Titel, das FormPanel füllt seine Felder. current_record und get_current_record() kommen in den WindowWrapper. Die MainPanels haben ihren ww nicht zu kennen.
 
+Checkin wegen Feierabend.
+
 TODO:
 
-- Passfotos werden nicht angezeigt. Das PictureElement wird korrekt gerendert, aber 
+- Passfotos werden nicht angezeigt. Das PictureElement wird scheinbar korrekt generiert, aber 
   http://127.0.0.1:8000/api/contacts/Persons/200076?fmt=picture
   macht ``NotImplementedError: <Person: Saffre Mari> action u'picture' is not implemented)``
     

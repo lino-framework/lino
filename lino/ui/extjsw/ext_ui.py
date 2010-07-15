@@ -249,6 +249,11 @@ class ExtUI(base.UI):
             
         de = reports.get_data_elem(lh.layout.datalink,name)
         
+        if de is None:
+            a = lh.layout.datalink_report.get_action(name)
+            if isinstance(a,actions.ImageAction):
+                return ext_elems.PictureElement(lh,name,a)
+          
         if isinstance(de,properties.Property):
             return self.create_prop_element(lh,de,**kw)
         if isinstance(de,models.Field):
@@ -770,16 +775,15 @@ class ExtUI(base.UI):
                     #~ return HttpResponse(self.html_page(tbar,a.window_wrapper_u.main,**kw))
                     return HttpResponse(self.html_page(request,on_ready=['Lino.%s(undefined,%s)' % (a,py2js(params))]))
                     
-                if isinstance(a,PrintAction):
-                    pm = elem.get_print_method()
-                    if pm is None:
-                        raise Http404("%r has no print method (fmt=%r)" % (elem,fmt))
-                    target = pm.get_target_url(elem)
+                if isinstance(a,actions.RedirectAction):
+                    target = a.get_target_url(elem)
                     if target is None:
-                        raise Http404("%s could not build %r" % (pm,elem))
+                        raise Http404("%s could not build %r" % (a,elem))
                     return http.HttpResponseRedirect(target)
                   
-            raise NotImplementedError("%r action %r is not implemented)" % (elem,fmt))
+                raise NotImplementedError("Action %s is not implemented)" % a)
+                
+            raise Http404("%s has no action %r" % (ah.report,fmt))
               
         raise Http404("Method %r not supported for elements of %s" % (request.method,ah.report))
         

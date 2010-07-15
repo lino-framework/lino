@@ -223,7 +223,7 @@ class PictureElement(LayoutElement):
     value_template = "new Ext.BoxComponent(%s)"
     vflex = True
     
-    def __init__(self,lh,name,pm,**kw):
+    def __init__(self,lh,name,action,**kw):
         kw.update(autoEl=dict(tag='img'))
         #~ kw.update(cls='ext-el-mask')
         kw.update(style=dict(height='100%'))
@@ -959,7 +959,8 @@ class TabPanel(jsgen.Component):
         
 
 class FormPanel(jsgen.Component):
-    value_template = "new Lino.FormPanel(%s,params)"
+    declare_type = jsgen.DECLARE_VAR
+    value_template = "new Lino.FormPanel(%s)"
     #~ value_template = "new Ext.form.FormPanel(%s)"
     def __init__(self,rh,main,**kw):
         kw.update(
@@ -969,7 +970,7 @@ class FormPanel(jsgen.Component):
         )
         #~ kw.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rh.get_actions() if a.show_in_detail])
         kw.update(ls_data_url=rh.ui.get_actor_url(rh.report))
-        jsgen.Value.__init__(self,kw)
+        jsgen.Component.__init__(self,'form_panel',**kw)
 
 
 class unused_FormMainPanel(Panel,WrappingMainPanel):

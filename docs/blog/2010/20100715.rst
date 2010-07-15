@@ -1,0 +1,30 @@
+20100715
+========
+
+Passfotos werden noch immer nicht angezeigt, aber wir sind ein Stück weiter. Wenn ein DetailWrapper mit record_id gefragt wird, dann macht der einen Ajax-call und ruft load_master_record() erst wenn der zurück ist. In der Zwischenzeit ist das Fenster aber schon fertig mit Rendern. Die picture_elements in ext_windows dürfen also nicht mit 'render' verknüpft werden, sondern müssen eher eine Art row listener werden.
+
+Am Interface von Printable gefällt mir nicht, dass die Definition des Bildpfades so kompliziert ist::
+
+    def get_target_parts(self,pm):
+        if isinstance(pm,mixins.PicturePrintMethod):
+            if self.card_number:
+                return [ "beid", self.card_number+".jpg" ]
+            return [ "pictures", "contacts.Person.jpg" ]
+        return mixins.Printable.get_target_parts(self,pm)
+
+Schöner wäre doch::
+
+    def get_image_parts(self,pm):
+        if self.card_number:
+            return [ "beid", self.card_number+".jpg" ]
+        return [ "pictures", "contacts.Person.jpg" ]
+        
+Oder noch einfacher::        
+        
+    def get_image_url(self):
+        if self.card_number:
+            return "beid/"+ self.card_number+".jpg" ]
+        return "pictures/contacts.Person.jpg"
+        
+
+Also die PrintMethoden rufen nicht `elem.get_target_parts(self)` sondern `elem.get_%s_parts(self)` wobei %s durch den Namen der PrintMethode ersetzt wird. Und wenn so eine Methode nicht existiert, wird der Standard genommen.

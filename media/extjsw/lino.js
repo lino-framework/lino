@@ -598,6 +598,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     if (params) 
       Ext.apply(config,params);
     config.bbar = Lino.build_bbar(this,config.ls_bbar_actions);
+    //~ this.before_row_edit = config.before_row_edit;
     //~ config.bbar.push({
         //~ text: "Save", 
         //~ scope: this,
@@ -639,8 +640,8 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
       ww.window.setTitle('');
     }
     //~ console.log('20100531 Lino.DetailMixin.on_load_master_record',this.main_form);
-    console.log('TODO: before_row_edit',this);
-    //~ this.before_row_edit(record);
+    //~ console.log('TODO: before_row_edit',this);
+    ww.config.before_row_edit(record);
   },
   get_selected : function() { return [ this.current_record.id ] },
   get_current_record : function() {  
@@ -938,7 +939,7 @@ Lino.SlavePlugin = function(caller) {
 Lino.load_picture = function(ww,cmp,record) {
   //~ console.log('Lino.load_picture()',record);
   if (record && cmp.el && cmp.el.dom) {
-    var src = ww.main_item.ls_data_url + "/" + record.id + "?fmt=picture"
+    var src = ww.main_item.ls_data_url + "/" + record.id + "?fmt=image"
     console.log('Lino.load_picture()',src);
     cmp.el.dom.src = src; 
   } else console.log('Lino.load_picture() no record (',record,') or cmp not rendered',cmp);
@@ -1052,28 +1053,34 @@ Lino.WindowWrapper = function(caller,config,params) {
     Ext.apply(this.config,params);
   this.slaves = {};
   if (this.config.actions) {
-      //~ this.bbar_actions = Array(this.config.actions.length);
-      //~ for(var i=0;i<this.config.actions.length;i++) { 
-        //~ var btn = {
-          //~ text: this.config.actions[i].label
-        //~ };
-        //~ if (this.config.actions[i].opens_a_slave) {
-          //~ btn.toggleHandler = Lino.toggle_button_handler(this,this.config.actions[i]);
-          //~ btn.enableToggle = true;
-        //~ } else  {
-          //~ btn.handler = Lino.button_handler(this,this.config.actions[i]);
-        //~ }
-        //~ this.bbar_actions[i] = new Ext.Button(btn);
-      //~ }
-      //~ Lino.debug(this.bbar_actions);
       console.log('config.actions no longer used!!!');
   }
   //~ console.log('Lino.WindowWrapper.constructor',config.title,'gonna call setup.');
   this.setup();
   if (config.data_record) {
+    console.log('Lino.WindowWrapper with data_record');
     this.main_item.load_master_record(this,config.data_record);
     return;
   } 
+  if (config.record_id) {
+    console.log('Lino.WindowWrapper with record_id calls Ajax');
+    var this_ = this;
+    Ext.Ajax.request({ 
+      waitMsg: 'Loading record...',
+      method: 'GET',
+      url:this.main_item.ls_data_url + '/' + config.record_id,
+      success: function(response) {
+        if (response.responseText) {
+            var rec = Ext.decode(response.responseText);
+            console.log('Lino.WindowWrapper.config.record_id success',rec);
+            this_.main_item.load_master_record(this_,rec);
+            //~ this_.window.setTitle(rec.title);
+        }
+      },
+      failure: Lino.ajax_error_handler
+    });
+  }
+  
   //~ console.log('Lino.WindowWrapper.constructor',config.title,'returned from setup');
 };
 //~ Ext.apply(Lino.WindowWrapper.prototype,{
@@ -1098,7 +1105,8 @@ Ext.override(Lino.WindowWrapper,{
     //~ console.log('Lino.WindowWrapper.setup done',this);
   },
   get_current_record : function() { 
-    if (this.main_item) return this.main_item.get_current_record()
+    //~ if (this.main_item) return this.main_item.get_current_record()
+    return this.main_item.get_current_record()
   },
   get_selected : function() { 
     return this.main_item.get_selected();
@@ -1310,30 +1318,8 @@ Lino.DetailWrapperBase.override({
     //~ this.bbar_actions = Lino.build_bbar(this,this.config.ls_bbar_actions);
     
     Lino.WindowWrapper.prototype.setup.call(this);
-    this.main_form = this.window.getComponent(0);
+    //~ this.main_form = this.window.getComponent(0);
     
-    if (this.config.data_record) {
-      this.main_item.load_master_record(this,this.config.data_record);
-      return;
-    } 
-    if (this.config.record_id) {
-      console.log('Lino.DetailWrapper.setup() calls Ajax');
-      var this_ = this;
-      Ext.Ajax.request({ 
-        waitMsg: 'Loading record...',
-        method: 'GET',
-        url:this.main_item.ls_data_url + '/' + this.config.record_id,
-        success: function(response) {
-          if (response.responseText) {
-              var rec = Ext.decode(response.responseText);
-              console.log('20100531 Lino.DetailWrapper.setup() success',rec);
-              this_.main_item.load_master_record(this_,rec);
-              //~ this_.window.setTitle(rec.title);
-          }
-        },
-        failure: Lino.ajax_error_handler
-      });
-    }
   }
 })
 
