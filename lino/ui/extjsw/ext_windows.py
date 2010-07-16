@@ -140,8 +140,8 @@ class MasterWrapper(WindowWrapper):
                 slave_grids.append(e)
             elif isinstance(e,ext_elems.PictureElement):
                 #~ picture_elements.append(e)
-                n = e.as_ext()
-                before_row_edit.append("%s.on('render',function(){ Lino.load_picture(ww,%s,ww.get_current_record())});" % (n,n))
+                before_row_edit.append(
+                  "this.load_picture(%s,record);" % e.as_ext())
             elif isinstance(e,ext_elems.FieldElement):
                 chooser = choosers.get_for_field(e.field)
                 if chooser:
@@ -276,16 +276,16 @@ class BaseDetailWrapper(MasterWrapper):
         #~ assert isinstance(action,actions.BaseDetailAction)
         if len(rh.report.detail_layouts) == 1:
             lh = rh.report.detail_layouts[0].get_handle(rh.ui)
-            main = ext_elems.FormPanel(rh,lh._main) # ,autoScroll=True)
+            main = ext_elems.FormPanel(rh,action,lh._main) # ,autoScroll=True)
             WindowWrapper.__init__(self,action,rh.ui,lh,main,**kw)        
         else:
             #~ tl = layouts.TabLayout(rh.report.detail_layouts)
             #~ lh = layouts.TabPanelHandle(rh,rh.report.detail_layouts)
             lh = rh.report.detail_layouts[0].get_handle(rh.ui)
             tabs = [l.get_handle(rh.ui)._main for l in rh.report.detail_layouts]
-            main = ext_elems.FormPanel(rh,ext_elems.TabPanel(tabs)) # ,autoScroll=True)
+            main = ext_elems.FormPanel(rh,action,ext_elems.TabPanel(tabs)) # ,autoScroll=True)
             WindowWrapper.__init__(self,action,rh.ui,None,main,**kw) 
-        self.config.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rh.get_actions(action)]) # if a.show_in_detail])
+        #~ self.config.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rh.get_actions(action)]) # if a.show_in_detail])
             
         
     def get_config(self):

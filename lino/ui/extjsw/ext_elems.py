@@ -56,9 +56,9 @@ class ColumnModel(Component):
     def __init__(self,grid,**kw):
         assert isinstance(grid,GridElement)
         self.grid = grid
-        kw.update(columns=[GridColumn(self,e) for e in self.grid.elements if not e.hidden])
         Component.__init__(self,grid.name,**kw)
-        #~ self.columns = [GridColumn(self,e) for e in self.grid.elements if not e.hidden]
+        self.columns = [GridColumn(self,e) for e in self.grid.elements if not e.hidden]
+        kw.update(columns=self.columns)
         
 class GridColumn(Component):
     #~ declare_type = jsgen.DECLARE_VAR
@@ -76,7 +76,8 @@ class GridColumn(Component):
         self.value_template = editor.grid_column_template
         kw.update(self.editor.get_column_options())
         kw.update(editor=self.editor)
-        if isinstance(editor,FieldElement) and editor.field.primary_key:
+        #~ if isinstance(editor,FieldElement) and editor.field.primary_key:
+        if isinstance(editor,FieldElement) and isinstance(editor.field,models.AutoField):
             kw.update(renderer=js_code('Lino.id_renderer'))
         Component.__init__(self,editor.name,**kw)
     
@@ -224,9 +225,12 @@ class PictureElement(LayoutElement):
     vflex = True
     
     def __init__(self,lh,name,action,**kw):
+        #~ kw.update(html='<img height="100%"/>')
+        #~ kw.update(html='<img height="100%" onclick="Lino.img_onclick()"/>')
         kw.update(autoEl=dict(tag='img'))
+        #~ kw.update(onclick=js_code('"Lino.img_onclick()"'))
         #~ kw.update(cls='ext-el-mask')
-        kw.update(style=dict(height='100%'))
+        kw.update(style=dict(height='100%',cursor='pointer'))
         #~ kw.update(plugins=js_code('new Lino.PictureBoxPlugin(caller)'))
         LayoutElement.__init__(self,lh,name,**kw)
 
@@ -962,13 +966,13 @@ class FormPanel(jsgen.Component):
     declare_type = jsgen.DECLARE_VAR
     value_template = "new Lino.FormPanel(%s)"
     #~ value_template = "new Ext.form.FormPanel(%s)"
-    def __init__(self,rh,main,**kw):
+    def __init__(self,rh,action,main,**kw):
         kw.update(
           items=main,
           #~ autoScroll=True,
           layout='fit',
         )
-        #~ kw.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rh.get_actions() if a.show_in_detail])
+        kw.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rh.get_actions(action)])
         kw.update(ls_data_url=rh.ui.get_actor_url(rh.report))
         jsgen.Component.__init__(self,'form_panel',**kw)
 

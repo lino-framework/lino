@@ -6,7 +6,7 @@ Welcome to the Lino Website.
 Lino is still in pre-documentation phase, so don't hesitate to contact me if you are interested.
 
 - See my :doc:`Blog <blog/2010/index>` to get the hottest news about what's going on here. 
-- A few documents should be relatively up-to-date: :doc:`todo` and :doc:`install`.
+- A few documents should be relatively up-to-date: :doc:`todo` and :doc:`admin/install`.
 - But the final truth about what's going on is only `The Source Code <http://code.google.com/p/lino/source/list>`_.
 
 Some external links:

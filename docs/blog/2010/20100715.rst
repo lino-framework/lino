@@ -1,9 +1,12 @@
 20100715
 ========
 
-Passfotos werden noch immer nicht angezeigt, aber wir sind ein Stück weiter. Wenn ein DetailWrapper mit record_id gefragt wird, dann macht der einen Ajax-call und ruft load_master_record() erst wenn der zurück ist. In der Zwischenzeit ist das Fenster aber schon fertig mit Rendern. Die picture_elements in ext_windows dürfen also nicht mit 'render' verknüpft werden, sondern müssen eher eine Art row listener werden.
+Check-in um 23.00 Uhr:
 
-Am Interface von Printable gefällt mir nicht, dass die Definition des Bildpfades so kompliziert ist::
+Passfotos werden noch immer nicht angezeigt, aber wir sind ein Stück weiter: http://127.0.0.1:8000/api/contacts/Persons/200076?fmt=image zeigt nun das Foto an.
+Und ich habe verstanden, was noch fehlt: wenn ein DetailWrapper mit record_id gefragt wird, dann macht der einen Ajax-call und ruft load_master_record() erst wenn dieser Call zurück ist. In der Zwischenzeit ist das Fenster aber schon fertig mit Rendern. Die picture_elements in ext_windows dürfen also nicht ans 'render'-Event geknüpft werden, sondern müssen eher eine Art row listener werden. Genau: das ist ja mein Konfigurationsparameter before_row_edit.
+
+In dsbe.models.Person hatte mir nicht gefallen, dass die Definition des Bildpfades so umständlich ist::
 
     def get_target_parts(self,pm):
         if isinstance(pm,mixins.PicturePrintMethod):
@@ -23,8 +26,10 @@ Oder noch einfacher::
         
     def get_image_url(self):
         if self.card_number:
-            return "beid/"+ self.card_number+".jpg" ]
+            return "beid/"+ self.card_number+".jpg" 
         return "pictures/contacts.Person.jpg"
         
+In reports.py testet er, ob das Model eine Methode `get_image_url` hat. Wenn ja, kriegt der Report automagisch eine Methode `actions.ImageAction`, die sich als 'image' anmeldet.
 
-Also die PrintMethoden rufen nicht `elem.get_target_parts(self)` sondern `elem.get_%s_parts(self)` wobei %s durch den Namen der PrintMethode ersetzt wird. Und wenn so eine Methode nicht existiert, wird der Standard genommen.
+Das hat gar nichts mehr mit Printable zu tun. 
+PrintMethods und deren Actions habe ich bei der Gelegenheit etwas umstrukturiert.

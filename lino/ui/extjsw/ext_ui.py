@@ -458,8 +458,10 @@ class ExtUI(base.UI):
         #~ yield '<!-- ** Javascript ** -->'
         #~ yield '<!-- ExtJS library: base/adapter -->'
         yield '<script type="text/javascript" src="%sextjs/adapter/ext/ext-base.js"></script>' % settings.MEDIA_URL 
-        widget_library = 'ext-all-debug'
-        #widget_library = 'ext-all'
+        if settings.DEBUG:
+            widget_library = 'ext-all-debug'
+        else:
+            widget_library = 'ext-all'
         #~ yield '<!-- ExtJS library: all widgets -->'
         yield '<script type="text/javascript" src="%sextjs/%s.js"></script>' % (settings.MEDIA_URL, widget_library)
         if True:
@@ -498,6 +500,7 @@ class ExtUI(base.UI):
         #~ yield "}};"
             
         yield 'Ext.onReady(function(){'
+        yield "console.time('onReady');"
         for ln in jsgen.declare_vars(comps):
             yield '  ' + ln
             
@@ -510,6 +513,7 @@ class ExtUI(base.UI):
         for ln in on_ready:
             yield ln
         
+        yield "console.timeEnd('onReady');"
         yield "}); // end of onReady()"
         yield "</script></head><body>"
         #~ yield '<div id="tbar"/>'
@@ -652,7 +656,7 @@ class ExtUI(base.UI):
                 #~ kw.update(title=unicode(a.get_list_title(rh)))
                 #~ params = dict(region='center')
                 #~ kw.update(on_ready=['Lino.%s(%s)' % (a,py2js(params))])
-                kw.update(on_ready=['Lino.%s()' % a])
+                kw.update(on_ready=['Lino.%s();' % a])
                 return HttpResponse(self.html_page(request,**kw))
                 
             ar = ext_requests.ViewReportRequest(request,rh,rh.report.default_action)
@@ -773,7 +777,7 @@ class ExtUI(base.UI):
                     #~ print 20100624, a.window_wrapper_u.main
                     params = dict(data_record=elem2rec(request,ah,elem),region='center')
                     #~ return HttpResponse(self.html_page(tbar,a.window_wrapper_u.main,**kw))
-                    return HttpResponse(self.html_page(request,on_ready=['Lino.%s(undefined,%s)' % (a,py2js(params))]))
+                    return HttpResponse(self.html_page(request,on_ready=['Lino.%s(undefined,%s);' % (a,py2js(params))]))
                     
                 if isinstance(a,actions.RedirectAction):
                     target = a.get_target_url(elem)

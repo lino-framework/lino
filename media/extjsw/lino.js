@@ -244,102 +244,6 @@ Lino.save_wc_handler = function(ww) {
 };
 
 
-Lino.grid_afteredit_handler = function (gridpanel) {
-  return function(e) {
-    /*
-    e.grid - This grid
-    e.record - The record being edited
-    e.field - The field name being edited
-    e.value - The value being set
-    e.originalValue - The original value for the field, before the edit.
-    e.row - The grid row index
-    e.column - The grid column index
-    */
-    var p = e.record.data;
-    // var p = {};
-    //~ p['grid_afteredit_colname'] = e.field;
-    //~ p[e.field] = e.value;
-    //~ console.log('grid_afteredit 20100707',p);
-    // add value used by ForeignKeyStoreField CHOICES_HIDDEN_SUFFIX
-    //~ p[e.field+'Hidden'] = e.value;
-    // p[pk] = e.record.data[pk];
-    // console.log("grid_afteredit:",e.field,'=',e.value);
-    Ext.apply(p,gridpanel.store.baseParams);
-    function after_success(result) {
-      gridpanel.getStore().commitChanges(); // get rid of the red triangles
-      gridpanel.getStore().reload();        // reload our datastore.
-    };
-    //~ console.log(e.record.id);
-    if (e.record.phantom) {
-      //~ p.id = undefined;
-      Lino.do_action(gridpanel,{
-        method:'POST',url: gridpanel.ls_data_url,
-        params:p,after_success:after_success})
-    } else 
-      Lino.do_action(caller,{
-        method:'PUT',
-        //~ url: caller.config.url_data+'/'+e.record.id, 
-        url: gridpanel.ls_data_url+'/'+e.record.id, 
-        params:p, after_success:after_success});
-    //~ Ext.Ajax.request({
-      //~ waitMsg: 'Please wait...',
-      //~ method: 'PUT',
-      //~ url: caller.config.url_data + '/' + e.record.id,
-      //~ params: p, 
-      //~ success: on_success,
-      //~ failure: Lino.ajax_error_handler
-    //~ })
-  }
-};
-
-
-Lino.old_grid_afteredit_handler = function (gridpanel) {
-  return function(e) {
-    /*
-    e.grid - This grid
-    e.record - The record being edited
-    e.field - The field name being edited
-    e.value - The value being set
-    e.originalValue - The original value for the field, before the edit.
-    e.row - The grid row index
-    e.column - The grid column index
-    */
-    var p = e.record.data;
-    // var p = {};
-    p['grid_afteredit_colname'] = e.field;
-    p[e.field] = e.value;
-    // console.log(e);
-    // add value used by ForeignKeyStoreField CHOICES_HIDDEN_SUFFIX
-    p[e.field+'Hidden'] = e.value;
-    // p[pk] = e.record.data[pk];
-    // console.log("grid_afteredit:",e.field,'=',e.value);
-    Ext.apply(p,gridpanel.store.baseParams);
-    function after_success(result) {
-      gridpanel.store.commitChanges(); // get rid of the red triangles
-      gridpanel.store.reload();        // reload our datastore.
-    };
-    //~ console.log(e.record.id);
-    if (e.record.id == -99999) {
-      Lino.do_action(caller,{
-        method:'POST',url: caller.ls_data_url,
-        params:p,after_success:after_success})
-    } else 
-      Lino.do_action(caller,{
-        method:'PUT',
-        //~ url: caller.config.url_data+'/'+e.record.id, 
-        url: caller.ls_data_url+'/'+e.record.id, 
-        params:p, after_success:after_success});
-    //~ Ext.Ajax.request({
-      //~ waitMsg: 'Please wait...',
-      //~ method: 'PUT',
-      //~ url: caller.config.url_data + '/' + e.record.id,
-      //~ params: p, 
-      //~ success: on_success,
-      //~ failure: Lino.ajax_error_handler
-    //~ })
-  }
-};
-
 
 Lino.delete_selected = function(caller) {
   //~ console.log("Lino.delete_selected",caller);
@@ -382,27 +286,6 @@ Lino.do_action = function(caller,action) {
           //~ console.log('Lino.do_action()',action,' : after_js_code is false');
         }
       };
-      //~ if (result.show_window) {
-        //~ var ww = result.show_window(caller);
-        //~ ww.show();
-      //~ };
-      //~ if (result.redirect) window.open(result.redirect);
-      //~ if (result.refresh_caller && caller) caller.refresh();
-      //~ if (result.close_caller && caller) {
-        //~ caller.close();
-      //~ }
-      //~ if (result.refresh_menu) Lino.load_main_menu();
-      //~ if (result.confirm_msg) {
-        //~ Ext.MessageBox.show({
-          //~ title: 'Confirmation',
-          //~ msg: result.confirm_msg,
-          //~ buttons: Ext.MessageBox.YESNOCANCEL,
-          //~ fn: function(btn) {
-            //~ if (btn == 'yes') step_dialog(result);
-            //~ else abort_dialog(result);
-          //~ }
-        //~ })
-      //~ }
     }
   };
   Ext.applyIf(action,{
@@ -541,7 +424,8 @@ Ext.BLANK_IMAGE_URL = '/media/extjs/resources/images/default/s.gif'; // settings
 
 // used as Ext.grid.Column.renderer for id columns in order to hide the special id value -99999
 Lino.id_renderer = function(value, metaData, record, rowIndex, colIndex, store) {
-  if (value == -99999) return '';
+  //~ if (value == -99999) return '';
+  if (record.phantom) return '';
   return value;
 }
 
@@ -598,7 +482,6 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     if (params) 
       Ext.apply(config,params);
     config.bbar = Lino.build_bbar(this,config.ls_bbar_actions);
-    //~ this.before_row_edit = config.before_row_edit;
     //~ config.bbar.push({
         //~ text: "Save", 
         //~ scope: this,
@@ -640,8 +523,8 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
       ww.window.setTitle('');
     }
     //~ console.log('20100531 Lino.DetailMixin.on_load_master_record',this.main_form);
-    //~ console.log('TODO: before_row_edit',this);
-    ww.config.before_row_edit(record);
+    console.log('TODO: before_row_edit',this,ww);
+    ww.before_row_edit(record);
   },
   get_selected : function() { return [ this.current_record.id ] },
   get_current_record : function() {  
@@ -700,12 +583,54 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     config.bbar = Lino.build_bbar(this,config.ls_bbar_actions);
     Lino.GridPanel.superclass.constructor.call(this, config);
   },
+  
+  on_afteredit : function(e) {
+    /*
+    e.grid - This grid
+    e.record - The record being edited
+    e.field - The field name being edited
+    e.value - The value being set
+    e.originalValue - The original value for the field, before the edit.
+    e.row - The grid row index
+    e.column - The grid column index
+    */
+    var p = e.record.data;
+    // var p = {};
+    //~ p['grid_afteredit_colname'] = e.field;
+    //~ p[e.field] = e.value;
+    //~ console.log('grid_afteredit 20100707',p);
+    // add value used by ForeignKeyStoreField CHOICES_HIDDEN_SUFFIX
+    //~ p[e.field+'Hidden'] = e.value;
+    // p[pk] = e.record.data[pk];
+    // console.log("grid_afteredit:",e.field,'=',e.value);
+    Ext.apply(p,this.store.baseParams);
+    var self = this;
+    function after_success(result) {
+      self.getStore().commitChanges(); // get rid of the red triangles
+      self.getStore().reload();        // reload our datastore.
+    };
+    //~ console.log(e.record.id);
+    if (e.record.phantom) {
+      //~ p.id = undefined;
+      Lino.do_action(this,{
+        method:'POST',url: this.ls_data_url,
+        params:p,
+        after_success:after_success})
+    } else {
+      Lino.do_action(this,{
+        method:'PUT',
+        //~ url: caller.config.url_data+'/'+e.record.id, 
+        url: this.ls_data_url+'/'+e.record.id, 
+        params:p, 
+        after_success:after_success});
+    }
+  },
 
   initComponent : function(){
     //~ console.log('Lino.GridMixin.setup 1',this);
     //~ this.tbar = this.pager;
     Lino.GridPanel.superclass.initComponent.call(this);
-    this.on('afteredit', Lino.grid_afteredit_handler(this));
+    this.on('afteredit', this.on_afteredit);
     // this.main_grid.on('cellcontextmenu', Lino.cell_context_menu, this);
     this.on('resize', function(cmp,aw,ah,rw,rh) {
         cmp.getTopToolbar().pageSize = cmp.calculatePageSize(this,aw,ah,rw,rh) || 10;
@@ -933,24 +858,13 @@ Ext.override(Lino.TemplateBoxPlugin,{
   }
 });
 
+Lino.img_onclick = function() {
+  console.log('img_onclick',arguments);
+};
+
 Lino.SlavePlugin = function(caller) {
   this.caller = caller;
 };
-Lino.load_picture = function(ww,cmp,record) {
-  //~ console.log('Lino.load_picture()',record);
-  if (record && cmp.el && cmp.el.dom) {
-    var src = ww.main_item.ls_data_url + "/" + record.id + "?fmt=image"
-    console.log('Lino.load_picture()',src);
-    cmp.el.dom.src = src; 
-  } else console.log('Lino.load_picture() no record (',record,') or cmp not rendered',cmp);
-}
-Lino.unused_PictureBoxPlugin = Ext.extend(Lino.SlavePlugin,{
-  init : function (cmp) {
-    //~ console.log('Lino.PictureBoxPlugin.init()',this);
-    cmp.on('render',function(){ Lino.load_picture(this.caller,cmp,this.caller.get_current_record())},this);
-    this.caller.add_row_listener(function(sm,ri,rec) { Lino.load_picture(this.caller,cmp,rec) }, this );
-  }
-});
 Lino.chooser_handler = function(combo,name) {
   return function(cmp,newValue,oldValue) {
     //~ console.log('Lino.chooser_handler()',cmp,oldValue,newValue);
@@ -1046,12 +960,14 @@ Lino.RemoteComboFieldElement = Ext.extend(Lino.ComboBox,{
 
 Lino.WindowWrapper = function(caller,config,params) {
   //~ console.log('Lino.WindowWrapper.constructor',config.title,' : caller is ',caller);
+  console.time('WindowWrapper.constructor()');
   this.caller = caller;
   this.config = config; 
   //~ this.config = config_fn(this); 
   if (params) 
     Ext.apply(this.config,params);
   this.slaves = {};
+  this.before_row_edit = config.before_row_edit.createDelegate(this);
   if (this.config.actions) {
       console.log('config.actions no longer used!!!');
   }
@@ -1080,7 +996,7 @@ Lino.WindowWrapper = function(caller,config,params) {
       failure: Lino.ajax_error_handler
     });
   }
-  
+  console.timeEnd('WindowWrapper.constructor()');
   //~ console.log('Lino.WindowWrapper.constructor',config.title,'returned from setup');
 };
 //~ Ext.apply(Lino.WindowWrapper.prototype,{
@@ -1131,6 +1047,7 @@ Ext.override(Lino.WindowWrapper,{
       //~ return this.config.permalink_name+'()'  ;
   },
   show : function() {
+      console.time('WindowWrapper.show()');
     //~ console.log('Lino.WindowWrapper.show',this);
       var main = Ext.getCmp('main_area');
       main.removeAll();
@@ -1140,12 +1057,33 @@ Ext.override(Lino.WindowWrapper,{
       //~ cmp.update('');
       //~ this.window.render('main_area');
       //~ Ext.DomHelper.overwrite(cmp,this.window);
+      console.timeEnd('WindowWrapper.show()');
   },
   on_render : function() {},
   refresh : function() {},
   hide : function() { this.window.hide() },
   close : function() { this.window.close() },  
-  get_window_config : function() { return {} }
+  get_window_config : function() { return {} },
+  load_picture : function(cmp,record) {
+    //~ console.log('Lino.load_picture()',record);
+    if (record)
+      var src = this.main_item.ls_data_url + "/" + record.id + "?fmt=image"
+    else
+      var src = 'empty.jpg';
+    var f = function() {
+      //~ console.log('Lino.load_picture()',src);
+      cmp.el.dom.src = src;
+      //~ cmp.el.dom.onclick = 'Lino.img_onclick(src)';
+      //~ cmp.el.dom.onclick = 'window.open(src)';
+      cmp.el.on('click',function() {window.open(src)});
+    } 
+    if (cmp.el && cmp.el.dom) 
+      f()
+    else {
+      //~ console.log('Lino.load_picture() cmp not rendered',cmp);
+      cmp.on('render',f);
+    }
+  }
 });
 
 
@@ -1163,7 +1101,7 @@ Lino.GridMixin = {
       
     //~ this.main_item = this.main_grid;
     this.main_item = this.config.main_panel;
-    this.main_item.on('beforeedit',function(e) { this.config.before_row_edit(e.record)},this);
+    this.main_item.on('beforeedit',function(e) { this.before_row_edit(e.record)},this);
       
     Lino.WindowWrapper.prototype.setup.call(this);
   },
@@ -1230,7 +1168,7 @@ Lino.DetailMixin = {
       this.main_form.setTitle('');
     }
     //~ console.log('20100531 Lino.DetailMixin.on_load_master_record',this.main_form);
-    this.config.before_row_edit(record);
+    this.before_row_edit(record);
   }
 };
 
