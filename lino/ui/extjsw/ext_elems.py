@@ -56,9 +56,9 @@ class ColumnModel(Component):
     def __init__(self,grid,**kw):
         assert isinstance(grid,GridElement)
         self.grid = grid
-        Component.__init__(self,grid.name,**kw)
         self.columns = [GridColumn(self,e) for e in self.grid.elements if not e.hidden]
         kw.update(columns=self.columns)
+        Component.__init__(self,grid.name,**kw)
         
 class GridColumn(Component):
     #~ declare_type = jsgen.DECLARE_VAR

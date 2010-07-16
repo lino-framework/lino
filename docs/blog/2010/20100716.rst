@@ -12,7 +12,7 @@ Lino.grid_afteredit funktioniert wieder. Ist jetzt auch eine Methode `on_aftered
 :js:func:`Lino.id_renderer` testet nun ``record.phantom`` statt ``record.id == -99999`` (wie schon im extjsu gefunden) und (neu) wird nur für AutoField als renderer verwendet. Denn sonst sah man im Phantom-Record von Country den eingegebenen isocode erst wenn der Record abgespeichert worden war.
 
 Wenn :setting:`DEBUG` ``False`` ist, dann included er jetzt die ext-all.js statt der ext-all-debug.js.
-Allerdings fängt Django bei :setting:`DEBUG` ``False`` die Http505-Exceptions ab und will sie formatieren, was ihm nicht gelingt weil ich dafür noch gar keine Templates installiert habe. Deshalb vier neue Dateien in :dsbe_src:`dsbe/templates`, die ich einfach aus django.admin kopiert und ein wenig angepasst habe. Zum Beispiel habe ich mehrere ``{% load adminmedia %}`` entfernt, weil die natürlich nicht funktionieren wenn `django.contrib.admin` nicht in :setting:`INTALLED_APPS` ist.
+Allerdings fängt Django bei :setting:`DEBUG` ``False`` die Http505-Exceptions ab und will sie formatieren, was ihm nicht gelingt weil ich dafür noch gar keine Templates installiert habe. Deshalb vier neue Dateien in :dsbe_src:`dsbe/templates`, die ich einfach aus django.admin kopiert und ein wenig angepasst habe. Zum Beispiel habe ich mehrere ``{% load adminmedia %}`` entfernt, weil die natürlich nicht funktionieren wenn `django.contrib.admin` nicht in :setting:`INSTALLED_APPS` ist.
 
 Die Performance ist deutlich besser als mit extjsu, aber man kann noch nicht damit prahlen. Wo sind die größten Bottlenecks? Auf dem Server oder auf dem Client? Ich habe begonnen, FireBugs `console.profile()` bzw. `console.time()` zu nutzen. Bin noch nicht sicher, wo ich das einbauen muss, damit es sinnvoll ist. Hier ist eine Doku der console-API: http://getfirebug.com/wiki/index.php/Console_API
 
@@ -20,7 +20,12 @@ In der Grid kann man jetzt auch wieder ein neues Land erstellen, und man kann No
 
 Runterladen als CSV (http://127.0.0.1:8000/api/contacts/Persons?fmt=csv) funktionierte nicht. Behoben.
 
+13.05 Uhr : Check-in `Lino <http://code.google.com/p/lino/source/detail?r=3b31cd2d392e4eff35a43fffd1e1e0b9552ba52c>`_
+und `DSBE <http://code.google.com/p/lino-dsbe/source/detail?r=d82faa050502388b08a2e566f89990dbd13c2793>`_ mit oben beschriebenen Änderungen.
+
+Upps, durch den letzten Punkt vor dem Check-in war die obige Lino-Version komplett. Unbrauchbar. Lieber die nächste nehmen.
+
 TODO:
 
-- Beim Laden der Grid kommt in der Console "Lino.load_slavegrid() no record or cmp not rendered undefined".
+- Beim Laden der Grid kommt in der Konsole "Lino.load_slavegrid() no record or cmp not rendered undefined".
 - Close-Buttons. Im Prinzip soll er beim Schließen eines Fensters das vorherige Fenster anzeigen. Aber sollen alle offenen Fenster "erhalten" bleiben? das ist erstens Speicherverschwendung und zweitens vielleicht nicht leicht zu implementieren (weil die "Fenster" ja keine Windows sind sondern einfach Panels, die in die main_area injiziert werden). Besser also nur den entsprechende Funktionsaufruf speichern. Sonderfall ist das Hauptfenster, das keinen Close-Button haben soll. Interner Sonderfall ist, wenn man über einen Permalink startet: wenn das über den PL geöffnete Fenster geschlossen wird, kommt man ins Hauptmenü. Das Hauptmenü ist in Lino (im Gegensatz zu TIM) ja immer da. Also wenn man einen Befehl des HM startet, sollte die zuvorige Fensterhistorik auch gelöscht werden.
