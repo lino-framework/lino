@@ -16,7 +16,7 @@ Ich könnte auch festlegen, dass Detail-Fenster von Reports mit über 200 Zeilen
 
 Ich könnte das auch pro Report konfigurierbar machen: Report.show_prev_next. 
 
-24.10 Uhr : Wow, eigentlich wollte ich die Ideen nur schnell aufschreiben, aber dann konnte ich es nicht lassen und habe begonnen sie zu implementieren. Erste Erfolgserlebnisse.
+24.10 Uhr : Wow, eigentlich wollte ich die Ideen nur schnell aufschreiben, aber dann konnte ich es nicht lassen und habe begonnen sie zu implementieren. Erste Erfolgserlebnisse. Check-In.
 
 TODO:
 
