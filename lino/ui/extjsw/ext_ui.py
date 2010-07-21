@@ -92,10 +92,29 @@ def json_response(x):
     #lino.log.debug("json_response() -> %r", s)
     return HttpResponse(s, mimetype='text/html')
 
-def elem2rec(request,ah,elem):
+def elem2rec(request,rh,elem):
+    prev = None
+    next = None
+    if rh.report.show_prev_next:
+      ar = ext_requests.ViewReportRequest(request,rh,rh.report.default_action)
+      if ar.total_count < 200:
+          g = enumerate(ar.queryset) # a generator
+          try:
+              while True:
+                  index, item = g.next()
+                  if item == elem:
+                      if index > 0:
+                          prev = ar.queryset[index-1]
+                      i,next = g.next()
+                      break
+          except StopIteration:
+              pass
+          if prev is not None: prev = prev.pk
+          if next is not None: next = next.pk
     return dict(id=elem.pk,
-      data=ah.store.row2dict(elem),
-      disabled_fields=[ext_elems.form_field_name(f) for f in ah.report.disabled_fields(request,elem)],
+      prev=prev,next=next,
+      data=rh.store.row2dict(elem),
+      disabled_fields=[ext_elems.form_field_name(f) for f in rh.report.disabled_fields(request,elem)],
       title=unicode(elem))
 
             
@@ -426,7 +445,10 @@ class ExtUI(base.UI):
           layout='fit'          
         )
         if not on_ready:
-            main.update(items=dict(layout='fit',html=self.site.index_html.encode('ascii','xmlcharrefreplace')))
+            on_ready = [
+              'new Lino.IndexWrapper({html:%s}).show();' % 
+                py2js(self.site.index_html.encode('ascii','xmlcharrefreplace'))]
+            #~ main.update(items=dict(layout='fit',html=self.site.index_html.encode('ascii','xmlcharrefreplace')))
         #~ main.update(id='main_area',region='center')
         comps = [
           #~ ext_elems.Toolbar(
@@ -571,44 +593,8 @@ class ExtUI(base.UI):
         #~ s = py2js(lino_site.get_menu(request))
         #~ return HttpResponse(s, mimetype='text/html')
 
-    def old_api_list_view(self,request,app_label=None,actor=None,fmt=None):
-        """
-        GET : List the members of the collection. 
-        PUT : Replace the entire collection with another collection. 
-        POST : Create a new entry in the collection where the ID is assigned automatically by the collection. 
-               The ID created is included as part of the data returned by this operation. 
-        DELETE : Delete the entire collection.
-        (Source: http://en.wikipedia.org/wiki/Restful)
-        """
-        actor = actors.get_actor2(app_label,actor)
-        ah = actor.get_handle(self)
-        return handle_list_request(request,ah)
-        
-    def old_api_element_view(self,request,app_label=None,actor=None,pk=None):
-        """
-        GET : Retrieve a representation of the addressed member of the collection expressed in an appropriate MIME type.
-        PUT : Update the addressed member of the collection or create it with the specified ID. 
-        POST : Treats the addressed member as a collection and creates a new subordinate of it. 
-        DELETE : Delete the addressed member of the collection. 
-        (Source: http://en.wikipedia.org/wiki/Restful)
-        """
-        rpt = actors.get_actor2(app_label,actor)
-        ah = rpt.get_handle(self)
-        if pk == '-99999':
-            ar = ext_requests.ViewReportRequest(request,ah,ah.report.default_action)
-            #~ ar = ext_requests.ViewReportRequest(request,ah,ah.report.list_action)
-            instance = ar.create_instance()
-        else:
-            try:
-                instance = rpt.model.objects.get(pk=pk)
-            except rpt.model.DoesNotExist:
-                raise Http404("%s %s does not exist." % (rpt,pk))
-        return handle_element_request(request,ah,instance)
-        #~ raise Http404("Unknown request method %r " % request.method)
-        
         
     def api_list_view(self,request,app_label=None,actor=None):
-    #~ def api_list_view(self,request,app_label=None,actor=None,fmt=None):
         """
         GET : List the members of the collection. 
         PUT : Replace the entire collection with another collection. 
@@ -641,21 +627,14 @@ class ExtUI(base.UI):
                 return json_response_kw(success=False,msg="Failed to save %s : %s" % (instance,e))
             #~ print instance, instance.pk
             instance.save(force_insert=True)
-            #~ except models.IntegrityError,e:
-                #~ json_response_kw(success=False,msg="Failed to save %s : %e" % (instance,e))
             return json_response_kw(success=True,msg="%s has been created" % instance)
             
             
         if request.method == 'GET':
             fmt = request.GET.get('fmt',None)
             a = rpt.get_action(fmt)
-            #~ if fmt  == 'grid':
             if a is not None:
                 kw = {}
-                #~ kw.update(title=unicode(rh.get_title(None)))
-                #~ kw.update(title=unicode(a.get_list_title(rh)))
-                #~ params = dict(region='center')
-                #~ kw.update(on_ready=['Lino.%s(%s)' % (a,py2js(params))])
                 kw.update(on_ready=['Lino.%s();' % a])
                 return HttpResponse(self.html_page(request,**kw))
                 
@@ -764,19 +743,9 @@ class ExtUI(base.UI):
             if fmt is None:
                 return json_response(elem2rec(request,ah,elem))
             a = rpt.get_action(fmt)
-            #~ if fmt == 'detail':
             if a is not None:
                 if isinstance(a,actions.OpenWindowAction):
-                    #~ kw = {}
-                    #~ kw.update(title=unicode(elem))
-                    #~ kw.update(title=unicode(a.get_elem_title(elem)))
-                    #~ kw.update(content_type=rh.content_type)
-                    #~ tbar=ext_elems.Toolbar(
-                      #~ items=self.site.get_site_menu(request.user),
-                      #~ region='north',height=29)# renderTo='tbar')
-                    #~ print 20100624, a.window_wrapper_u.main
                     params = dict(data_record=elem2rec(request,ah,elem),region='center')
-                    #~ return HttpResponse(self.html_page(tbar,a.window_wrapper_u.main,**kw))
                     return HttpResponse(self.html_page(request,on_ready=['Lino.%s(undefined,%s);' % (a,py2js(params))]))
                     
                 if isinstance(a,actions.RedirectAction):
@@ -1127,9 +1096,9 @@ class ExtUI(base.UI):
         else:
             kw.update(handler=js_code("Lino.%s" % a))
         kw.update(
-          opens_a_slave=a.opens_a_slave,
-          name=a.name,
-          label=unicode(a.label),
+          #~ opens_a_slave=a.opens_a_slave,
+          #~ name=a.name,
+          text=unicode(a.label),
         )
         return kw
         

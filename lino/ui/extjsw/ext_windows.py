@@ -131,13 +131,15 @@ class MasterWrapper(WindowWrapper):
         for ln in jsgen.declare_vars(self.config):
             yield '  '+ln
         before_row_edit = []
-        slave_grids = []
+        #~ slave_grids = []
         #~ picture_elements = []
         #~ before_row_edit.append("console.log('ext_windows.py 20100531',record);")
         yield ''
         for e in self.main.walk():
             if isinstance(e,ext_elems.GridElement):
-                slave_grids.append(e)
+                before_row_edit.append(
+                  "this.load_slavegrid(%s,record);" % e.as_ext())
+                #~ slave_grids.append(e)
             elif isinstance(e,ext_elems.PictureElement):
                 #~ picture_elements.append(e)
                 before_row_edit.append(
@@ -162,9 +164,9 @@ class MasterWrapper(WindowWrapper):
         #~ yield "var ww = new Lino.%s(caller,function(ww) { return Ext.apply(%s,params)})" % (
         yield "var ww = new Lino.%s(caller,%s,params)" % (
             self.__class__.__name__,py2js(self.config))
-        for sg in slave_grids:
-            n = sg.as_ext()
-            yield "%s.on('render',function(){ Lino.load_slavegrid(%s,%s,ww.get_current_record())});" % (n,self.main.as_ext(),n)
+        #~ for sg in slave_grids:
+            #~ n = sg.as_ext()
+            #~ yield "%s.on('render',function(){ Lino.load_slavegrid(%s,%s,ww.get_current_record())});" % (n,self.main.as_ext(),n)
             #~ yield "ww.add_row_listener(function(sm,ri,rec) { Lino.load_slavegrid(%s,%s,rec) });" % (self.main.as_ext(),n)
             
         yield "ww.show();}"

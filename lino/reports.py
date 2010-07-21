@@ -462,6 +462,8 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
     can_change = perms.is_authenticated
     can_delete = perms.is_authenticated
     
+    show_prev_next = True
+    
     #~ default_action = GridEdit
     default_layout = 0
     

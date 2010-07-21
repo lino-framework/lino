@@ -71,10 +71,7 @@ class ViewReportRequest(reports.ReportActionRequest):
     def __init__(self,request,rh,action,*args,**kw):
         reports.ReportActionRequest.__init__(self,rh,action)
         self.request = request
-        #~ reports.ReportActionRequest.__init__(self,rpt,action,ui)
-        #~ rh = rpt.get_handle(ui)
         self.store = rh.store
-        #~ request._lino_request = self
         kw = self.parse_req(request,rh,**kw)
         self.setup(*args,**kw)
         

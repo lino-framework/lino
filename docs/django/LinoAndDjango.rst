@@ -26,6 +26,7 @@ Lino, when ready, will be a possible answer to what Jacob Kaplan-Moss writes in
   (I've written at more length about this in the past:
   http://jacobian.org/writing/snakes-on-the-web/#s-rich-web-applications)." 
 
+
 Here is a recent screenshot of a Lino application:
 
 .. image:: http://lino.googlecode.com/hg/screenshots/20100207.jpg

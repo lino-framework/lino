@@ -429,18 +429,21 @@ Lino.id_renderer = function(value, metaData, record, rowIndex, colIndex, store) 
   return value;
 }
 
-Lino.build_bbar = function(scope,actions) {
+Lino.build_buttons = function(scope,actions) {
   if (actions) {
-    var bbar = Array(actions.length);
+    var buttons = Array(actions.length);
     for(var i=0;i<actions.length;i++) { 
-      var btn = {
-        text: actions[i].label
-      };
       //~ console.log("build_bbar",btn.text,":",actions[i]);
-      btn.handler = actions[i].handler.createCallback(scope);
-      bbar[i] = new Ext.Button(btn);
+      if (actions[i].handler)
+          actions[i].handler = actions[i].handler.createCallback(scope);
+      buttons[i] = new Ext.Toolbar.Button(actions[i]);
+      //~ var btn = {
+        //~ text: actions[i].label
+      //~ };
+      //~ btn.handler = actions[i].handler.createCallback(scope);
+      //~ buttons[i] = new Ext.Button(btn);
     }
-    return bbar
+    return buttons
   }
 }
 
@@ -476,12 +479,19 @@ Lino.submit_insert = function(caller) {
   })
 };
 
-
 Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   constructor : function(config,params){
     if (params) 
       Ext.apply(config,params);
-    config.bbar = Lino.build_bbar(this,config.ls_bbar_actions);
+    config.bbar = Lino.build_buttons(this,config.ls_bbar_actions);
+    //~ config.tbar = Lino.build_buttons(this,config.ls_tbar_actions);
+    config.tbar = [
+      this.first = new Ext.Toolbar.Button({tooltip:"First",disabled:true,handler:this.moveFirst,scope:this,iconCls:'x-tbar-page-first'}),
+      this.prev = new Ext.Toolbar.Button({tooltip:"Previous",disabled:true,handler:this.movePrev,scope:this,iconCls:'x-tbar-page-prev'}),
+      this.next = new Ext.Toolbar.Button({tooltip:"Next",disabled:true,handler:this.moveNext,scope:this,iconCls:'x-tbar-page-next'}),
+      this.last = new Ext.Toolbar.Button({tooltip:"Last",disabled:true,handler:this.moveLast,scope:this,iconCls:'x-tbar-page-last'})
+    ];
+    
     //~ config.bbar.push({
         //~ text: "Save", 
         //~ scope: this,
@@ -498,14 +508,36 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
       //~ return;
     //~ } 
   },
-  load_master_record : function(ww,record) {
+  moveFirst : function() {},
+  movePrev : function() {this.goto_record_id(this.current_record.prev)},
+  moveNext : function() {this.goto_record_id(this.current_record.next)},
+  moveLast : function() {},
+  goto_record_id : function(record_id) {
+    console.log('Lino.DetailWrapperBase.goto_record_id() calls Ajax');
+    var this_ = this;
+    Ext.Ajax.request({ 
+      waitMsg: 'Loading record...',
+      method: 'GET',
+      url:this.ls_data_url + '/' + record_id,
+      success: function(response) {
+        if (response.responseText) {
+            var rec = Ext.decode(response.responseText);
+            console.log('Lino.WindowWrapper.config.record_id success',rec);
+            this_.load_master_record(rec);
+            //~ this_.window.setTitle(rec.title);
+        }
+      },
+      failure: Lino.ajax_error_handler
+    });
+  },
+  load_master_record : function(record) {
     this.current_record = record;
-    console.log('20100531 Lino.DetailMixin.load_master_record',record);
+    //~ console.log('20100531 Lino.DetailMixin.load_master_record',record);
     //~ this.config.main_panel.form.load(record);    
     if (record) {
       this.enable();
       this.form.loadRecord(record) 
-      ww.window.setTitle(record.title);
+      this.ww.window.setTitle(record.title);
       if (record.disabled_fields) {
         //~ console.log(20100617,record.disabled_fields);
         for (i in record.disabled_fields) {
@@ -516,15 +548,17 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
                 console.log(20100617,record.disabled_fields[i], 'field not found');
             }
         }
-      }
+      };
+      this.prev.setDisabled(!record.prev);
+      this.next.setDisabled(!record.next);
     } else {
       this.form.reset();
       this.disable();
-      ww.window.setTitle('');
+      this.ww.window.setTitle('');
     }
     //~ console.log('20100531 Lino.DetailMixin.on_load_master_record',this.main_form);
-    console.log('TODO: before_row_edit',this,ww);
-    ww.before_row_edit(record);
+    //~ console.log('TODO: before_row_edit',this,ww);
+    this.ww.before_row_edit(record);
   },
   get_selected : function() { return [ this.current_record.id ] },
   get_current_record : function() {  
@@ -580,7 +614,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
         }, 
         { scope:this, text: "csv", handler: function() { window.open(this.ls_data_url+'?fmt=csv') } } 
       ]});
-    config.bbar = Lino.build_bbar(this,config.ls_bbar_actions);
+    config.bbar = Lino.build_buttons(this,config.ls_bbar_actions);
     Lino.GridPanel.superclass.constructor.call(this, config);
   },
   
@@ -600,7 +634,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     //~ p[e.field] = e.value;
     //~ console.log('grid_afteredit 20100707',p);
     // add value used by ForeignKeyStoreField CHOICES_HIDDEN_SUFFIX
-    //~ p[e.field+'Hidden'] = e.value;
+    p[e.field+'Hidden'] = e.value;
     // p[pk] = e.record.data[pk];
     // console.log("grid_afteredit:",e.field,'=',e.value);
     Ext.apply(p,this.store.baseParams);
@@ -730,8 +764,8 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     //~ console.log('GridPanel.postEdit()',value, originalValue, r, field);
     return value;
   },
-  load_master_record : function(ww,record) {
-    Lino.load_slavegrid(ww,this,record);
+  load_master_record : function(record) {
+    this.ww.load_slavegrid(this,record);
   }
   });
   
@@ -801,43 +835,6 @@ Lino.load_main_menu = function() {
   content_type
 **/
 
-
-Lino.button_handler = function(caller,action) {
-  return function(event) { action.handler(caller) }
-};
-
-Lino.toggle_button_handler = function(master,action) {
-  //~ var action = master.config.bbar_actions[i];
-  return function(btn,state) {
-    //~ console.log('toggle_button_handler');
-    if(state) { 
-      if (master.slaves[action.name]) {
-        master.slaves[action.name].show();
-      } else {
-        var slave = new action.handler(master);
-        master.slaves[action.name] = slave;
-        //~ console.log('Lino.toggle_button_handler.after_js_code() ',caller,action.name,'=',caller.slaves[action.name]);
-        // when master closes, close slave:
-        master.window.on('close',function() { slave.close() });
-        // when master hides, hide slave:          
-        master.window.on('hide',function(){ slave.hide()});
-        // when slave's close button is clicked, toggle button off:
-        slave.window.on('hide',function(){ btn.toggle(false,false)});
-        // when slave is shown, update it's data:
-        slave.window.on('show',function(){ slave.load_master_record(slave,master.get_current_record())});
-        //~ js_result.load_master_record(caller.get_current_record());
-        master.add_row_listener( function(sm,ri,rec){slave.load_master_record(slave,rec)}, slave );
-        // js_result.load_master_record(caller.get_current_record());
-        
-        // show slave:
-        slave.show();
-      }
-    } else {
-      master.slaves[action.name].hide();
-    }
-  }
-};
-
 Lino.template_handler = function(tpl,cmp) {
   return function(record) {
       //~ console.log(20100509,'Lino.template_handler',cmp);
@@ -900,22 +897,6 @@ Ext.override(Lino.unused_ChooserPlugin,{
 });
 
 
-Lino.load_slavegrid = function(caller,cmp,record) {
-  if (record && cmp.el) {
-    //~ var src = caller.config.url_data + "/" + record.id + ".jpg"
-    //~ console.log('Lino.load_slavegrid()',record);
-    var p = caller.get_master_params(record);
-    for (k in p) cmp.getStore().setBaseParam(k,p[k]);
-    cmp.getStore().load(); 
-  } else console.log('Lino.load_slavegrid() no record or cmp not rendered',record,cmp);
-}
-Lino.unused_SlaveGridPlugin = Ext.extend(Lino.SlavePlugin,{
-  init : function (cmp) {
-    cmp.on('render',function(){ Lino.load_slavegrid(this.caller,cmp,this.caller.get_current_record())},this);
-    this.caller.add_row_listener(function(sm,ri,rec) { Lino.load_slavegrid(this.caller,cmp,rec) }, this );
-  }
-});
-
 
 Lino.ComboBox = Ext.extend(Ext.form.ComboBox,{
   triggerAction: 'all',
@@ -955,8 +936,45 @@ Lino.RemoteComboFieldElement = Ext.extend(Lino.ComboBox,{
 });
 
 
+Lino.WindowWrapperBase = {
+  show : function() {
+      console.time('WindowWrapper.show()');
+    //~ console.log('Lino.WindowWrapper.show',this);
+      var main = Ext.getCmp('main_area');
+      //~ console.log(main);
+      var old = main.items.first();
+      Lino.hidden_windows.push(old);
+      console.log(main.items);
+      //~ Ext.apply(this.window,{autoSize: true});
+      Ext.apply(this.window,{autoSize: true,id:'current_window'});
+      main.items.replace(this.window);
+      console.log(main.items);
+      //~ main.removeAll();
+      //~ main.add(this.window);
+      main.doLayout();
+      console.timeEnd('WindowWrapper.show()');
+  },
+  close : function() { 
+      //~ var main = Ext.getCmp('main_area');
+      //~ main.items[0].destroy();
+      var main = Ext.getCmp('main_area');
+      var current = main.items.first();
+      var w = Lino.hidden_windows.pop();
+      if (w) { 
+        main.items.replace(w);
+      } else {
+        main.removeAll();
+      }
+      current.destroy();
+  }
+};
 
+Lino.IndexWrapper = function(config) {
+  Ext.apply(config,{layout:'fit'});
+  this.window = new Ext.Panel(config);
+};
 
+Ext.override(Lino.IndexWrapper,Lino.WindowWrapperBase);
 
 Lino.WindowWrapper = function(caller,config,params) {
   //~ console.log('Lino.WindowWrapper.constructor',config.title,' : caller is ',caller);
@@ -973,32 +991,23 @@ Lino.WindowWrapper = function(caller,config,params) {
   }
   //~ console.log('Lino.WindowWrapper.constructor',config.title,'gonna call setup.');
   this.setup();
+  this.main_item.ww = this;
   if (config.data_record) {
     console.log('Lino.WindowWrapper with data_record');
-    this.main_item.load_master_record(this,config.data_record);
+    this.main_item.load_master_record(config.data_record);
     return;
   } 
   if (config.record_id) {
-    console.log('Lino.WindowWrapper with record_id calls Ajax');
-    var this_ = this;
-    Ext.Ajax.request({ 
-      waitMsg: 'Loading record...',
-      method: 'GET',
-      url:this.main_item.ls_data_url + '/' + config.record_id,
-      success: function(response) {
-        if (response.responseText) {
-            var rec = Ext.decode(response.responseText);
-            console.log('Lino.WindowWrapper.config.record_id success',rec);
-            this_.main_item.load_master_record(this_,rec);
-            //~ this_.window.setTitle(rec.title);
-        }
-      },
-      failure: Lino.ajax_error_handler
-    });
+    this.main_item.goto_record_id(config.record_id);
   }
   console.timeEnd('WindowWrapper.constructor()');
   //~ console.log('Lino.WindowWrapper.constructor',config.title,'returned from setup');
 };
+
+Ext.override(Lino.WindowWrapper,Lino.WindowWrapperBase);
+
+Lino.hidden_windows = [];
+
 //~ Ext.apply(Lino.WindowWrapper.prototype,{
 Ext.override(Lino.WindowWrapper,{
   closeAction : 'close',
@@ -1010,7 +1019,7 @@ Ext.override(Lino.WindowWrapper,{
       title: this.config.title,
       items: this.main_item, 
       //~ bbar: this.bbar_actions,
-      //~ bbar: Lino.build_bbar(this,this.config.ls_bbar_actions),
+      //~ bbar: Lino.build_buttons(this,this.config.ls_bbar_actions),
       tools: [ 
         { qtip: this.config.qtip, handler: Lino.save_wc_handler(this), id: "save" }, 
         { qtip: 'permalink', handler: Lino.permalink_handler(this), id: "pin" },
@@ -1046,23 +1055,9 @@ Ext.override(Lino.WindowWrapper,{
       return this.main_item.ls_data_url + '?fmt=grid';
       //~ return this.config.permalink_name+'()'  ;
   },
-  show : function() {
-      console.time('WindowWrapper.show()');
-    //~ console.log('Lino.WindowWrapper.show',this);
-      var main = Ext.getCmp('main_area');
-      main.removeAll();
-      Ext.apply(this.window,{autoSize: true});
-      main.add(this.window);
-      main.doLayout();
-      //~ cmp.update('');
-      //~ this.window.render('main_area');
-      //~ Ext.DomHelper.overwrite(cmp,this.window);
-      console.timeEnd('WindowWrapper.show()');
-  },
   on_render : function() {},
   refresh : function() {},
   hide : function() { this.window.hide() },
-  close : function() { this.window.close() },  
   get_window_config : function() { return {} },
   load_picture : function(cmp,record) {
     //~ console.log('Lino.load_picture()',record);
@@ -1083,7 +1078,17 @@ Ext.override(Lino.WindowWrapper,{
       //~ console.log('Lino.load_picture() cmp not rendered',cmp);
       cmp.on('render',f);
     }
+  },
+  load_slavegrid : function(cmp,record) {
+    if (record) {
+      //~ var src = caller.config.url_data + "/" + record.id + ".jpg"
+      //~ console.log('Lino.load_slavegrid()',record);
+      var p = this.get_master_params(record);
+      for (k in p) cmp.getStore().setBaseParam(k,p[k]);
+      cmp.getStore().load(); 
+    } else console.log('load_slavegrid() : no record',record,cmp);
   }
+  
 });
 
 
@@ -1251,9 +1256,9 @@ Lino.DetailWrapperBase.override({
       //~ },
       //~ { text: "Cancel", scope: this, handler: function() { this.close()} }
     //~ ];
-    //~ var row_actions = Lino.build_bbar(this,this.config.ls_bbar_actions);
+    //~ var row_actions = Lino.build_buttons(this,this.config.ls_bbar_actions);
     //~ if (row_actions) this.bbar_actions = this.bbar_actions.concat(row_actions);
-    //~ this.bbar_actions = Lino.build_bbar(this,this.config.ls_bbar_actions);
+    //~ this.bbar_actions = Lino.build_buttons(this,this.config.ls_bbar_actions);
     
     Lino.WindowWrapper.prototype.setup.call(this);
     //~ this.main_form = this.window.getComponent(0);
@@ -1262,6 +1267,9 @@ Lino.DetailWrapperBase.override({
 })
 
 Lino.DetailWrapper = Ext.extend(Lino.DetailWrapperBase, {
+  setup:function() {
+    Lino.DetailWrapperBase.prototype.setup.call(this);
+  },
   get_permalink : function() {
     //~ return this.config.permalink_name +'(undefined,{record_id:'+this.current_record.id+'})';
     return this.main_item.ls_data_url+'/'+this.main_item.current_record.id + '?fmt=detail';

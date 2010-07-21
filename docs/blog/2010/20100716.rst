@@ -1,7 +1,7 @@
 20100716
 ========
 
-Passfotos werden endlich wieder angezeigt. In Einem sind nun auch die Comboboxen wieder kontextsensitiv. Der Konfigurationsparameter `before_row_edit` funktioniert jetzt (sieht aus als ob Funktionen in Javascript anders gehandhabt werden als normale Werte, jedenfalls musste ich von der Funktion ein `createDelegate()` machen). `Lino.load_picture` ist jetzt eine Methode von :js:class:`Lino.WindowWrapper`. Bei data_record wird :js:meth:`Lino.WindowWrapper.load_master_record` ja gerufen, bevor der Component gerendert ist. Das verträgt er jetzt auc, er macht dann ein on('render'). 
+Passfotos werden endlich wieder angezeigt. In Einem sind nun auch die Comboboxen wieder kontextsensitiv. Der Konfigurationsparameter `before_row_edit` funktioniert jetzt (sieht aus als ob Funktionen in Javascript anders gehandhabt werden als normale Werte, jedenfalls musste ich von der Funktion ein `createDelegate()` machen). `Lino.load_picture` ist jetzt eine Methode von :js:class:`Lino.WindowWrapper`. Bei data_record wird :js:func:`Lino.WindowWrapper.load_master_record` ja gerufen, bevor der Component gerendert ist. Das verträgt er jetzt auc, er macht dann ein on('render'). 
 
 Außerdem sind die Passfotos jetzt erstmals anklickbar (das war subtil... die BoxComponent kriegt nicht nur das onlick-Event definiert, sondern auch cursor:pointer).
 
@@ -20,12 +20,59 @@ In der Grid kann man jetzt auch wieder ein neues Land erstellen, und man kann No
 
 Runterladen als CSV (http://127.0.0.1:8000/api/contacts/Persons?fmt=csv) funktionierte nicht. Behoben.
 
-13.05 Uhr : Check-in `Lino <http://code.google.com/p/lino/source/detail?r=3b31cd2d392e4eff35a43fffd1e1e0b9552ba52c>`_
+13.05 Uhr : Check-in `Lino <http://code.google.com/p/lino/source/detail?r=bbf5692fa56984676834cb1a569160c065caafc4>`_
 und `DSBE <http://code.google.com/p/lino-dsbe/source/detail?r=d82faa050502388b08a2e566f89990dbd13c2793>`_ mit oben beschriebenen Änderungen.
 
-Upps, durch den letzten Punkt vor dem Check-in war die obige Lino-Version komplett. Unbrauchbar. Lieber die nächste nehmen.
+14.26 Uhr : Close-Buttons funktionieren. Wenn ein neues Fenster geöffnet wird, wird das vorherige Fenster nicht gelöscht, sondern bleibt in einer Historik (Lino.hidden_windows) erhalten. Beim Schließen eines Fensters zeigt er das vorherige Fenster an. er macht das, indem er die main_area holt (die immer ein Ext.Container ist) und dann mit Ext.Container.replace() das window ersetzt. Neue Klasse :js:class:`Lino.IndexWrapper` war nötig, damit auch die leere Hauptseite restauriert werden kann. Diese hat ja keine Tool-Buttons und kann deshalb nicht geschlossen werden. Die Fensterhistorik wird übrigens nicht gelöscht, wenn man einen Befehl des HM startet. Habe nicht probiert, wie das wäre, aber das momentane Verhalten scheint mir okay. Zwei Details in der :doc:`todo` für später mal.
 
-TODO:
+16 Uhr : Die Grid-Elemente im Detail-Fenster funktionieren wieder. `Lino.load_slavegrid` ersetzt durch :js:func:`Lino.GridPanel.load_slavegrid`. (Die Namensgebung und Verteilung dieser Methoden könnte bei Gelegenheit verbessert werden.)
 
-- Beim Laden der Grid kommt in der Konsole "Lino.load_slavegrid() no record or cmp not rendered undefined".
-- Close-Buttons. Im Prinzip soll er beim Schließen eines Fensters das vorherige Fenster anzeigen. Aber sollen alle offenen Fenster "erhalten" bleiben? das ist erstens Speicherverschwendung und zweitens vielleicht nicht leicht zu implementieren (weil die "Fenster" ja keine Windows sind sondern einfach Panels, die in die main_area injiziert werden). Besser also nur den entsprechende Funktionsaufruf speichern. Sonderfall ist das Hauptfenster, das keinen Close-Button haben soll. Interner Sonderfall ist, wenn man über einen Permalink startet: wenn das über den PL geöffnete Fenster geschlossen wird, kommt man ins Hauptmenü. Das Hauptmenü ist in Lino (im Gegensatz zu TIM) ja immer da. Also wenn man einen Befehl des HM startet, sollte die zuvorige Fensterhistorik auch gelöscht werden.
+Jetzt möchte ich mal endlich probieren, ob ich prev/next-Buttons bzw. pgup/pgdn-Tasten im Detail-Fenster hinbekomme. django hat ja die Methoden `Model.get_next_by_FOO <http://docs.djangoproject.com/en/dev/ref/models/instances/#django.db.models.Model.get_next_by_FOO>`_ und `Model.get_previous_by_FOO <http://docs.djangoproject.com/en/dev/ref/models/instances/#django.db.models.Model.get_previous_by_FOO>`_, aber ich fürchte, dass die hier nichts nützen.
+
+Ich muss zunächst im URI-API einbauen, dass er auch bei einzelnen Elementen einen ReportActionRequest macht (also insbesondere order_by und quick_search auswertet). Ich habe dann also einen Report und ein Element. Wie findet man die Position (den index) eines Elements in einem QuerySet? Ha, hier ist die Frage auf Stackoverflow beantwortet: http://stackoverflow.com/questions/1042596/get-the-index-of-an-element-in-a-queryset
+
+In lino.ui.extjsw.ext_ui.elem2rec() implementiere ich das wie folgt::
+
+    prev = None
+    next = None
+    g = enumerate(ar.queryset) # a generator
+    try:
+        while True:
+            index, item = g.next()
+            if item == elem:
+                if index > 0:
+                    prev = ar.queryset[index-1]
+                i,next = g.next()
+                break
+    except StopIteration:
+        pass
+        
+Alternativ würde auch folgendes funktionieren::
+
+    prev = None
+    next = None
+    g = enumerate(ar.queryset) # a generator
+    for index, item in g:
+        if item == elem:
+            if index > 0:
+                prev = ar.queryset[index-1]
+            try:
+                i,next = g.next()
+            except StopIteration:
+                pass
+            break
+
+Ich glaube (ohne sicher zu sein), dass die erste Methode effizienter ist, weil die ``try ... except`` nur einmal aufgebaut wird und auch ein ``for ... in`` generell teurer als ein ``while True`` ist.
+
+Dieser Teil funktioniert. 
+Jetzt muss ich natürlich noch die Buttons einbauen.
+Und dann muss ich noch dafür sorgen, dass die gewünschten query-Parameter korrekt an die Detail-Abfrage weitergeleitet werden. Er darf z.B. nicht einfach die offset und limit von der Grid übernehmen, weil man sonst nicht über die erste Seite der Grid hinaus blättern könnte. Ich mach mir freilich auch noch Sorgen, wie lange elem2rec() dauert, wenn ich den siebzehntausendsten Record einer Liste von 20000 anfrage...
+
+Für die Buttons wäre ja ein echter Ext.PagingToolbar am schönsten. Leider verlangt der einen Store. Vielleicht gar nicht "leider"? Meine tolle prev/next-Suche in elem2rec() wäre dann zwar unnütz, aber wenn ich einen Store mit pageLen=1 machte? Dann würde ein Detail-Fenster gar nicht mehr api_elem_view sondern api_list_view benutzen. Und ich brauche mir keine Sorgen wegen möglicher Performanceproblem zu machen. Aber dann kann ich statt des pk ja gleich den index im URI-API einführen. Und ist das nicht ein bisschen Overkill, einen eigenen Store anzulegen nur zum Navigieren?
+
+
+Neue kurzfristige To-Do-Liste:
+
+- Übersetzungen
+- Warum gibt es zweimal Luc Saffre?
+- Geburtsort einer Person FK zu City?

@@ -57,6 +57,10 @@ Settings
    If this is `True`, Lino won't apply any user permission checks.
    
    
+.. setting:: DEBUG
+
+  See :doc:`blog/2010/20100716`
+  
 .. setting:: USER_INTERFACES
   
    Lino-specific setting. See :doc:`/blog/2010/20100624`.
@@ -131,9 +135,16 @@ Models
 Javascript functions
 ====================
 
+Defined in lino.js
+------------------
+
 .. js:class:: Lino.WindowWrapper
 
+  See :doc:`blog/2010/20100716`
+  
+  .. js:function:: Lino.WindowWrapper.load_master_record
 
+  
 .. js:class:: Lino.FormPanel
 
   .. js:attribute:: Lino.FormPanel.ls_data_url
@@ -154,12 +165,19 @@ Javascript functions
     
 .. js:class:: Lino.GridPanel
 
+  .. js:function:: Lino.GridPanel.load_slavegrid()
+  
   .. js:attribute:: Lino.GridPanel.ls_data_url
   
     The base URI of the report.
   
   See :doc:`blog/2010/20100714`
   
+.. js:function:: Lino.id_renderer()
+
+Defined in site.js
+------------------
+
 .. js:function:: Lino.notes.NoteTypes.grid(params)
 
   :param object params: Parameters to override default config values.

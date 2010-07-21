@@ -972,6 +972,12 @@ class FormPanel(jsgen.Component):
           #~ autoScroll=True,
           layout='fit',
         )
+        #~ kw.update(ls_tbar_actions=[
+        #~ dict(label="First",handler=js_code('Lino.goto_pk'),iconCls='x-tbar-page-first'),
+        #~ dict(label="Previous",handler=js_code('Lino.goto_pk'),iconCls='x-tbar-page-prev'),
+        #~ dict(label="Next",handler=js_code('Lino.goto_pk'),iconCls='x-tbar-page-next'),
+        #~ dict(label="Last",handler=js_code('Lino.goto_pk'),iconCls='x-tbar-page-last'),
+        #~ ])
         kw.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rh.get_actions(action)])
         kw.update(ls_data_url=rh.ui.get_actor_url(rh.report))
         jsgen.Component.__init__(self,'form_panel',**kw)

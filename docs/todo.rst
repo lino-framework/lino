@@ -31,17 +31,19 @@ Fehlende Grundfunktionen
 Kleinkram
 ---------
 
- * Abfragen mit komplexen Bedingungen zur Suche nach Personen
- * Die Zeilenhöhe einer Grid muss einen sinnvollen Maximalwert kriegen. In Explorer / Notes hat man momentan den Eindruck, dass es nur eine Zeile gibt; in Wirklichkeit ist der Memo-Text der ersten Zeile so lang, dass die Zeilenhöhe größer als das Fenster ist.
- * Hinter das QuickFilter-Feld muss ein Button, um den Filter zu aktivieren. Dass man einfach nur ENTER drücken muss ist nicht intuitiv.
- * Links ordentlich anzeigen und bequem erfassen können.
- * Kolonnen-Reihenfolge in window_config speichern.
- * Benutzbarkeit per Tastatur verbessern (issue 11, issue 64) 
- * Sehen können, nach welcher Kolonne eine Grid sortiert ist.
- * Nach Duplikaten suchen vor Erstellen einer neuen Person (issue 85)
- * URLs per drag & drop registrieren können
- * Ob ein Detail-Fenster Sklave ist oder nicht, könnte ich den Benutzer selber entscheiden lassen.
- * `lino.test_apps.journals` funktioniert nicht bzw. wird nicht ausgeführt. Sieht aus als Django-Ticket 11696 doch noch nicht behoben ist. Aber mein Patch 20091107.diff funktioniert nicht mehr und ich bin auch noch nicht sicher. Muss vielleicht mal einen Testcase schreiben, um das Problem zu identifizieren...
+- Wenn man direkt auf einen permalink einsteigt und dieses Fenster dann schließt, dann sieht man nicht den IndexWrapper. Wäre logisch, wenn der auch bei Permalink als erstes erstellt würde. 
+- Lustiger und ungewollter Effekt beim Öffnen eines neuen Fensters: das alte scheint vom neuen nach unten verschoben zu werden. 
+- Abfragen mit komplexen Bedingungen zur Suche nach Personen
+- Die Zeilenhöhe einer Grid muss einen sinnvollen Maximalwert kriegen. In Explorer / Notes hat man momentan den Eindruck, dass es nur eine Zeile gibt; in Wirklichkeit ist der Memo-Text der ersten Zeile so lang, dass die Zeilenhöhe größer als das Fenster ist.
+- Hinter das QuickFilter-Feld muss ein Button, um den Filter zu aktivieren. Dass man einfach nur ENTER drücken muss ist nicht intuitiv.
+- Links ordentlich anzeigen und bequem erfassen können.
+- Kolonnen-Reihenfolge in window_config speichern.
+- Benutzbarkeit per Tastatur verbessern (issue 11, issue 64) 
+- Sehen können, nach welcher Kolonne eine Grid sortiert ist.
+- Nach Duplikaten suchen vor Erstellen einer neuen Person (issue 85)
+- URLs per drag & drop registrieren können
+- Ob ein Detail-Fenster Sklave ist oder nicht, könnte ich den Benutzer selber entscheiden lassen.
+- `lino.test_apps.journals` funktioniert nicht bzw. wird nicht ausgeführt. Sieht aus als Django-Ticket 11696 doch noch nicht behoben ist. Aber mein Patch 20091107.diff funktioniert nicht mehr und ich bin auch noch nicht sicher. Muss vielleicht mal einen Testcase schreiben, um das Problem zu identifizieren...
 
 
 Langfristig
