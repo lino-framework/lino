@@ -1,0 +1,20 @@
+20100722
+========
+
+(Heute hatte ich nur eine Stunde zum Programmieren)
+
+DONE:
+
+- er skippt nur bis zum 10. Record (also der ar in elem2rec macht wahrscheinlich ein ungewolltes LIMIT)
+- first und last funktionieren noch nicht
+- quickfilter und csv-Buttons wie in der Listenansicht.
+- Bei jedem neuen Record in contacts.Persons macht er drei unnütze Ajax-Calls für die Slave-Grids, die doch im ersten Reiter gar nicht angezeigt werden (z.B. http://127.0.0.1:8000/api/dsbe/StudiesByPerson?_dc=1279746233056&fmt=json&mt=&mk=200022)
+- Beschluss: einen Button um in die Listenansicht zurück zu wechseln werde ich vorläufig nicht machen, denn dazu sollte man das "Fenster" schließen.
+
+
+TODO:
+
+- Release machen im :term:`DSBE`.
+- Insert in countries.Countries funktioniert nicht.
+- Beim Navigieren im Detail von contacts.Persons macht er zwar jetzt nicht mehr die unnützen load_slavegrid() (wenn der Reiter mit diesen Komponenten nicht angezeigt ist), aber wenn man auf den betreffenden Reiter klickt, dann vergißt er, die Ajax-Aufrufe nachzuholen...
+

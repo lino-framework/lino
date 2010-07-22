@@ -485,12 +485,14 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
       Ext.apply(config,params);
     config.bbar = Lino.build_buttons(this,config.ls_bbar_actions);
     //~ config.tbar = Lino.build_buttons(this,config.ls_tbar_actions);
-    config.tbar = [
+    config.tbar = this.tbar_items().concat([
       this.first = new Ext.Toolbar.Button({tooltip:"First",disabled:true,handler:this.moveFirst,scope:this,iconCls:'x-tbar-page-first'}),
       this.prev = new Ext.Toolbar.Button({tooltip:"Previous",disabled:true,handler:this.movePrev,scope:this,iconCls:'x-tbar-page-prev'}),
       this.next = new Ext.Toolbar.Button({tooltip:"Next",disabled:true,handler:this.moveNext,scope:this,iconCls:'x-tbar-page-next'}),
-      this.last = new Ext.Toolbar.Button({tooltip:"Last",disabled:true,handler:this.moveLast,scope:this,iconCls:'x-tbar-page-last'})
-    ];
+      this.last = new Ext.Toolbar.Button({tooltip:"Last",disabled:true,handler:this.moveLast,scope:this,iconCls:'x-tbar-page-last'}),
+      '->',
+      this.displayItem = new Ext.Toolbar.TextItem({})
+    ]);
     
     //~ config.bbar.push({
         //~ text: "Save", 
@@ -508,10 +510,10 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
       //~ return;
     //~ } 
   },
-  moveFirst : function() {},
-  movePrev : function() {this.goto_record_id(this.current_record.prev)},
-  moveNext : function() {this.goto_record_id(this.current_record.next)},
-  moveLast : function() {},
+  moveFirst : function() {this.goto_record_id(this.current_record.navinfo.first)},
+  movePrev : function() {this.goto_record_id(this.current_record.navinfo.prev)},
+  moveNext : function() {this.goto_record_id(this.current_record.navinfo.next)},
+  moveLast : function() {this.goto_record_id(this.current_record.navinfo.last)},
   goto_record_id : function(record_id) {
     console.log('Lino.DetailWrapperBase.goto_record_id() calls Ajax');
     var this_ = this;
@@ -519,6 +521,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
       waitMsg: 'Loading record...',
       method: 'GET',
       url:this.ls_data_url + '/' + record_id,
+      params: {query: this.search_field.getValue()},
       success: function(response) {
         if (response.responseText) {
             var rec = Ext.decode(response.responseText);
@@ -549,16 +552,29 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
             }
         }
       };
-      this.prev.setDisabled(!record.prev);
-      this.next.setDisabled(!record.next);
+      if (record.navinfo) {
+        this.first.setDisabled(!record.navinfo.first);
+        this.prev.setDisabled(!record.navinfo.prev);
+        this.next.setDisabled(!record.navinfo.next);
+        this.last.setDisabled(!record.navinfo.last);
+        this.displayItem.setText(record.navinfo.msg);
+      }
     } else {
       this.form.reset();
       this.disable();
       this.ww.window.setTitle('');
+      this.first.disable();
+      this.prev.disable();
+      this.next.disable();
+      this.last.disable();
     }
     //~ console.log('20100531 Lino.DetailMixin.on_load_master_record',this.main_form);
     //~ console.log('TODO: before_row_edit',this,ww);
     this.ww.before_row_edit(record);
+  },
+  search_change : function(field,oldValue,newValue) {
+    //~ console.log('search_change not yet implemented');
+    this.moveFirst();
   },
   get_selected : function() { return [ this.current_record.id ] },
   get_current_record : function() {  
@@ -566,8 +582,6 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     return this.current_record }
 });
     
-
-
 Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
   clicksToEdit:2,
   enableColLock: false,
@@ -603,19 +617,16 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     config.tbar = new Ext.PagingToolbar({ 
       prependButtons: true, pageSize: 10, displayInfo: true, 
       store: config.store, 
-      items: [ 
-        { xtype: "textfield", 
-          fieldLabel: "Search", 
-          listeners: { scope:this, change:this.search_change }
-          //~ scope:this, 
-          //~ enableKeyEvents: true, 
-          //~ listeners: { keypress: this.search_keypress }, 
-          //~ id: "seachString" 
-        }, 
-        { scope:this, text: "csv", handler: function() { window.open(this.ls_data_url+'?fmt=csv') } } 
-      ]});
+      items: this.tbar_items()
+    });
     config.bbar = Lino.build_buttons(this,config.ls_bbar_actions);
     Lino.GridPanel.superclass.constructor.call(this, config);
+  },
+  
+  search_change : function(field,oldValue,newValue) {
+    //~ console.log('search_change',field.getValue(),oldValue,newValue)
+    this.store.setBaseParam('query',field.getValue()); // URL_PARAM_FILTER
+    this.store.load({params: { start: 0, limit: this.getTopToolbar().pageSize }});
   },
   
   on_afteredit : function(e) {
@@ -678,11 +689,6 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
       this.main_grid.getStore().setBaseParam('query',field.getValue()); // URL_PARAM_FILTER
       this.main_grid.getStore().load({params: { start: 0, limit: this.getTopToolbar().pageSize }});
     }
-  },
-  search_change : function(field,oldValue,newValue) {
-    //~ console.log('search_change',field.getValue(),oldValue,newValue)
-    this.store.setBaseParam('query',field.getValue()); // URL_PARAM_FILTER
-    this.store.load({params: { start: 0, limit: this.getTopToolbar().pageSize }});
   },
   afterRender : function() {
     Lino.GridPanel.superclass.afterRender.call(this);
@@ -769,6 +775,25 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
   }
   });
   
+
+Lino.MainPanelMixin = {
+  tbar_items : function() {
+      return [ 
+        this.search_field = new Ext.form.TextField({ 
+          fieldLabel: "Search", 
+          listeners: { scope:this, change:this.search_change }
+          //~ scope:this, 
+          //~ enableKeyEvents: true, 
+          //~ listeners: { keypress: this.search_keypress }, 
+          //~ id: "seachString" 
+        }), 
+        { scope:this, text: "csv", handler: function() { window.open(this.ls_data_url+'?fmt=csv') } } 
+      ];
+  }
+};
+
+Ext.override(Lino.GridPanel,Lino.MainPanelMixin);
+Ext.override(Lino.FormPanel,Lino.MainPanelMixin);
 
 Lino.cell_context_menu = function(grid,row,col,e) {
   // console.log('contextmenu',grid,row,col,e);
@@ -1080,7 +1105,7 @@ Ext.override(Lino.WindowWrapper,{
     }
   },
   load_slavegrid : function(cmp,record) {
-    if (record) {
+    if (record && cmp.isVisible()) {
       //~ var src = caller.config.url_data + "/" + record.id + ".jpg"
       //~ console.log('Lino.load_slavegrid()',record);
       var p = this.get_master_params(record);

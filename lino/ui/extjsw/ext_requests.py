@@ -88,7 +88,8 @@ class ViewReportRequest(reports.ReportActionRequest):
         if master is not None and not kw.has_key('master_instance'):
             pk = request.REQUEST.get(URL_PARAM_MASTER_PK,None)
             #~ print '20100406a', self.report,URL_PARAM_MASTER_PK,"=",pk
-            if pk in ('', '-99999'):
+            #~ if pk in ('', '-99999'):
+            if pk == '':
                 pk = None
             if pk is None:
                 kw['master_instance'] = None
@@ -111,8 +112,8 @@ class ViewReportRequest(reports.ReportActionRequest):
         limit = request.REQUEST.get('limit',None)
         if limit:
             kw.update(limit=int(limit))
-        else:
-            kw.update(limit=self.report.page_length)
+        #~ else:
+            #~ kw.update(limit=self.report.page_length)
             
         sort = request.REQUEST.get('sort',None)
         if sort:

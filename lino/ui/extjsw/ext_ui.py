@@ -93,11 +93,21 @@ def json_response(x):
     return HttpResponse(s, mimetype='text/html')
 
 def elem2rec(request,rh,elem):
+    first = None
     prev = None
     next = None
+    last = None
     if rh.report.show_prev_next:
       ar = ext_requests.ViewReportRequest(request,rh,rh.report.default_action)
-      if ar.total_count < 200:
+      recno = 0
+      if ar.total_count > 0:
+          first = ar.queryset[0]
+          last = ar.queryset.reverse()[0]
+          if first is not None: first = first.pk
+          if last is not None: last = last.pk
+          if ar.total_count > 200:
+              #~ TODO: check performance
+              pass
           g = enumerate(ar.queryset) # a generator
           try:
               while True:
@@ -105,6 +115,7 @@ def elem2rec(request,rh,elem):
                   if item == elem:
                       if index > 0:
                           prev = ar.queryset[index-1]
+                      recno = index + 1
                       i,next = g.next()
                       break
           except StopIteration:
@@ -112,7 +123,7 @@ def elem2rec(request,rh,elem):
           if prev is not None: prev = prev.pk
           if next is not None: next = next.pk
     return dict(id=elem.pk,
-      prev=prev,next=next,
+      navinfo=dict(first=first,prev=prev,next=next,last=last,msg="Row %d of %d" % (recno,ar.total_count)),
       data=rh.store.row2dict(elem),
       disabled_fields=[ext_elems.form_field_name(f) for f in rh.report.disabled_fields(request,elem)],
       title=unicode(elem))
