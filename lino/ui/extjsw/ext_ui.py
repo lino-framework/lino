@@ -533,7 +533,7 @@ class ExtUI(base.UI):
         #~ yield "}};"
             
         yield 'Ext.onReady(function(){'
-        yield "console.time('onReady');"
+        #~ yield "console.time('onReady');"
         for ln in jsgen.declare_vars(comps):
             yield '  ' + ln
             
@@ -546,7 +546,7 @@ class ExtUI(base.UI):
         for ln in on_ready:
             yield ln
         
-        yield "console.timeEnd('onReady');"
+        #~ yield "console.timeEnd('onReady');"
         yield "}); // end of onReady()"
         yield "</script></head><body>"
         #~ yield '<div id="tbar"/>'
