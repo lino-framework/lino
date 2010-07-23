@@ -1,12 +1,42 @@
 20100723
 ========
 
-- :doc:`Release <release>` Lino 0.8.3 und Lino-DSBE 0.1.2 im :term:`DSBE` und 
-  auf `Tups <http://dsbe.saffre-rumma.ee/>`_. 
-  In dieser Version ist das neue "fensterlose" User Interface erstmals sichtbar.
-  Performance ist deutlich besser, aber ob man damit schon arbeiten könnte?
-  Kann sein, dass der Server inzwischen das Bottleneck ist.
-  Erstmals kann man in Detail-Fenstern auf und ab "blättern".
+:doc:`Release </releases>` Lino 0.8.3 und Lino-DSBE 0.1.2 im :term:`DSBE` und 
+auf `Tups <http://dsbe.saffre-rumma.ee/>`_. 
+In dieser Version ist das neue "fensterlose" User Interface erstmals sichtbar.
+Performance ist deutlich besser, aber ob man damit schon arbeiten könnte?
+Kann sein, dass der Server inzwischen das Bottleneck ist.
+Erstmals kann man in Detail-Fenstern auf und ab "blättern".
+
+- Die settings.py in dsbe.demo setzt das Datenverzeichnis auf einem UNIX-System 
+  auf `/usr/local/lino`, nicht `/usr/local/lino-dsbe`.
+- Die `console.time()` in der lino.js habe ich rausgeholt, weil dadurch 
+  Javascript runtime errors kommen können. 
+- Wenn ich im Laufe eines Releases mehrere `commit` und `push` mache,
+  dann ist der folgende Befehl nützlich, um den Tag für Version 0.8.3 
+  nachträglich zu ändern::
+
+    hg tag v0.8.3 -f
   
-  Die `console.time()` in der lino.js habe ich rausgeholt, weil ein Benutzer dadurch eine Fehlermeldung in der JS-Konsole bekam (obwohl er FireBug installiert hat).
- 
+- Die in der DSBE-Demo aus TIM importierten Benutzer haben `is_staff` natürlich nicht 
+  gesetzt. Wie kann ich die Benutzerliste zum manuellen Bearbeiten zur Verfügung stellen? 
+  En attendant ein primitives Script make_staff.py (das ja eigentlich ein Django command 
+  sein sollte).
+  
+- Kolonnenbreiten werden wieder gespeichert.
+
+- In der Grid funktionierte das Bearbeiten nicht. Er zeigte den Editor kurz an und schloss ihn sogleich wieder. 
+  Lag daran, dass auch die main grid in ihrem eigenen before_row_edit ein load_slavegrid() gemacht bekam.
+
+
+TODO:
+
+- Das "Öffnen" eines neuen "Fensters" ist langsamer als im UI mit Fenstern, 
+  weil jetzt der Inhalt des alten Fensters zunächst aus dem Viewport entfernt wird. 
+  Einfach ein neues Ext.Window zu öffnen und über den vorigen Browserinhalt zu knallen 
+  ging offenbar schneller. 
+- Beim Navigieren im Detail von `contacts.Persons` macht er zwar jetzt nicht mehr die 
+  unnützen load_slavegrid() wenn der Reiter mit diesen Komponenten nicht angezeigt ist, 
+  aber wenn man dann den betreffenden Reiter aktiviert, vergißt er, es nachzuholen. 
+  Man muss z.B. next und dann previous klicken, um sie zu aktualisieren.
+  

@@ -166,6 +166,8 @@ class LayoutElement(VisibleComponent):
     def submit_fields(self):
         return []
         
+    def update_config(self,wc):
+        pass
         
     def get_property(self,name):
         v = getattr(self,name,None)
@@ -726,6 +728,7 @@ class GridElement(Container): #,DataElementMixin):
     value_template = "new Lino.GridPanel(%s)"
     ext_suffix = "_grid"
     vflex = True
+    xtype = None
     
     def __init__(self,lh,name,rpt,*elements,**kw):
         """
@@ -763,6 +766,10 @@ class GridElement(Container): #,DataElementMixin):
         else:
             self.mt = 'undefined'
 
+    def update_config(self,wc):
+        for i,w in enumerate(wc['column_widths']):
+            self.column_model.columns[i].update(width = w)
+
     def ext_options(self,**d):
         #~ self.setup()
         rh = self.report.get_handle(self.lh.ui)
@@ -792,7 +799,7 @@ class GridElement(Container): #,DataElementMixin):
         d.update(enableColLock=False)
         d.update(ls_id_property=rh.store.pk.name)
         d.update(ls_quick_edit=True)
-        d.update(ls_content_type=rh.content_type)
+        #~ d.update(ls_content_type=rh.content_type)
         
         #~ def a2btn(a):
             #~ return dict(
@@ -847,9 +854,6 @@ class MainPanel(jsgen.Variable):
         self.buttons = None
         #~ self.cmenu = None
         #~ self.props_button = None
-        
-    def unused_get_datalink(self):
-        raise NotImplementedError
         
     def apply_window_config(self,wc):
         pass
@@ -1010,17 +1014,6 @@ class unused_FormMainPanel(Panel,WrappingMainPanel):
         for e in Panel.subvars(self):
             yield e
             
-
-    def unused_js_body(self):
-        yield "  this.get_values = function() {"
-        yield "    var v = {};"
-        for e in self.lh.datalink.inputs:
-            yield "    v[%r] = this.main_panel.getForm().findField(%r).getValue();" % (e.name,e.name)
-        yield "    return v;"
-        yield "  };"
-        yield "this.get_window_config = function() {"
-        yield "  return { 'window_type': 'form' }"
-        yield "}"
 
 _field2elem = (
     (models.TextField, TextFieldElement),

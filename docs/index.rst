@@ -28,5 +28,6 @@ Some external links:
    tests
    glossary
    about/index
+   releases
 
 

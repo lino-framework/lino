@@ -349,73 +349,6 @@ Lino.ajax_error_handler = function(response,options) {
 }
 // Ext.Ajax.on('requestexception',Lino.ajax_error_handler)
 
-Lino.submit_property_handler = function(caller) { 
-  return function(e) {
-    /*
-    e.grid - This grid
-    e.record - The record being edited
-    e.field - The field name being edited
-    e.value - The value being set
-    e.originalValue - The original value for the field, before the edit.
-    e.row - The grid row index
-    e.column - The grid column index
-    */
-    // var p = e.record.data;
-    //~ var p = caller.get_master_params(caller.get_current_record());
-    // p['grid_afteredit_colname'] = e.field;
-    // p[e.field] = e.value;
-    //~ console.log('submit_property()',e.record.data);
-    var rec = caller.get_current_record();
-    var p = {}
-    //~ p['property_'+e.record.data.name] = e.record.data.value
-    p[e.record.data.name] = e.record.data.value
-    Ext.Ajax.request({
-      method: 'PUT',
-      waitMsg: 'Please wait...',
-      url: caller.config.url_data + '/' + rec.id,
-      params: p, 
-      success: function(response) {
-        //~ console.log('submit_property_handler',response);
-        var result=Ext.decode(response.responseText);
-        if (result.success) {
-          // Lino.load_properties();        // reload our datastore.
-        } else {
-          Ext.MessageBox.alert('Action failed',result.msg);
-        }
-      },
-      failure: Lino.ajax_error_handler
-    })
-  }
-};
-
-Lino.load_properties = function(caller,pw,url,record) { 
-  //~ console.log('load_properties',caller,url,record);
-  if(pw.window.hidden) return;
-  var params = caller.get_master_params(record);
-  //~ if(record === undefined) return;
-  //~ var params = {mt:caller.config.content_type, mk:record.id}; // URL_PARAM_MASTER_TYPE, URL_PARAM_MASTER_PK
-  var on_success = function(response) {
-    //~ console.log('Lino.load_properties',response);
-    var result = Ext.decode(response.responseText);
-    pw.window.setTitle(result.title);
-    // var grid = caller.properties_window.items.get(0);
-    var grid = pw.window.items.get(0).items.get(0);
-    for (i in result.rows) {
-      grid.setProperty(result.rows[i].name,result.rows[i].value)
-    }
-  };
-  Ext.Ajax.request({
-    waitMsg: 'Loading properties...',
-    url: url,
-    method: 'GET',
-    params: params,
-    scope: this,
-    success: on_success,
-    failure: Lino.ajax_error_handler
-  });
-}
-
-
 Lino.main_menu = new Ext.Toolbar({});
 
 // Path to the blank image should point to a valid location on your server
@@ -515,7 +448,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   moveNext : function() {this.goto_record_id(this.current_record.navinfo.next)},
   moveLast : function() {this.goto_record_id(this.current_record.navinfo.last)},
   goto_record_id : function(record_id) {
-    console.log('Lino.DetailWrapperBase.goto_record_id() calls Ajax');
+    //~ console.log('Lino.DetailWrapperBase.goto_record_id() calls Ajax');
     var this_ = this;
     Ext.Ajax.request({ 
       waitMsg: 'Loading record...',
@@ -525,7 +458,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
       success: function(response) {
         if (response.responseText) {
             var rec = Ext.decode(response.responseText);
-            console.log('Lino.WindowWrapper.config.record_id success',rec);
+            //~ console.log('Lino.WindowWrapper.config.record_id success',rec);
             this_.load_master_record(rec);
             //~ this_.window.setTitle(rec.title);
         }
@@ -629,6 +562,9 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     this.store.load({params: { start: 0, limit: this.getTopToolbar().pageSize }});
   },
   
+  //~ on_beforeedit : function(e) {
+    //~ console.log('20100723 GridPanel.on_beforeedit()',e);
+  //~ },
   on_afteredit : function(e) {
     /*
     e.grid - This grid
@@ -643,7 +579,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     // var p = {};
     //~ p['grid_afteredit_colname'] = e.field;
     //~ p[e.field] = e.value;
-    //~ console.log('grid_afteredit 20100707',p);
+    console.log('20100723 GridPanel.on_afteredit()',e);
     // add value used by ForeignKeyStoreField CHOICES_HIDDEN_SUFFIX
     p[e.field+'Hidden'] = e.value;
     // p[pk] = e.record.data[pk];
@@ -731,16 +667,6 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
   },
   add_row_listener : function(fn,scope) {
     this.getSelectionModel().addListener('rowselect',fn,scope);
-  },
-  get_master_params : function(record) {
-    var p = {}
-    p['mt'] = this.ls_content_type; // ext_requests.URL_PARAM_MASTER_TYPE
-    if (record) {
-      p['mk'] = record.id; // ext_requests.URL_PARAM_MASTER_PK
-    } else {
-      p['mk'] = undefined;
-    }
-    return p;
   },
   // pageSize depends on grid height (Trying to remove scrollbar)
   // Thanks to Christophe Badoit on http://www.extjs.net/forum/showthread.php?t=82647
@@ -969,11 +895,11 @@ Lino.WindowWrapperBase = {
       //~ console.log(main);
       var old = main.items.first();
       Lino.hidden_windows.push(old);
-      console.log(main.items);
+      //~ console.log(main.items);
       //~ Ext.apply(this.window,{autoSize: true});
       Ext.apply(this.window,{autoSize: true,id:'current_window'});
       main.items.replace(this.window);
-      console.log(main.items);
+      //~ console.log(main.items);
       //~ main.removeAll();
       //~ main.add(this.window);
       main.doLayout();
@@ -1065,7 +991,11 @@ Ext.override(Lino.WindowWrapper,{
     var p = {}
     p['mt'] = this.config.content_type; // ext_requests.URL_PARAM_MASTER_TYPE
     if (record) {
-      p['mk'] = record.id; // ext_requests.URL_PARAM_MASTER_PK
+      if (record.phantom) {
+          p['mk'] = undefined; // ext_requests.URL_PARAM_MASTER_PK
+      }else{
+          p['mk'] = record.id; // ext_requests.URL_PARAM_MASTER_PK
+      }
     } else {
       p['mk'] = undefined;
     }
@@ -1132,6 +1062,7 @@ Lino.GridMixin = {
     //~ this.main_item = this.main_grid;
     this.main_item = this.config.main_panel;
     this.main_item.on('beforeedit',function(e) { this.before_row_edit(e.record)},this);
+    //~ this.main_item.on('beforeedit',this.main_item.on_beforeedit,this);
       
     Lino.WindowWrapper.prototype.setup.call(this);
   },
@@ -1167,42 +1098,6 @@ Lino.SlaveMixin = {
   //~ get_base_params : function() { return this.caller.get_master_params(this.caller.get_current_record()) }
 };
 
-Lino.DetailMixin = {
-  //~ get_selected : function() { return [ this.current_record.id ] },
-  //~ get_current_record : function() {  return this.current_record },
-  //~ add_row_listener : function(fn,scope) {
-    //~ if (this.config.caller) this.config.caller.add_row_listener(fn,scope);
-  //~ },
-  unused_load_master_record : function(ww,record) {
-    this.current_record = record;
-    //~ console.log('20100531 Lino.DetailMixin.load_master_record',record);
-    //~ this.config.main_panel.form.load(record);    
-    if (record) {
-      this.main_form.enable();
-      this.main_form.form.loadRecord(record) 
-      this.main_form.setTitle(record.title);
-      if (record.disabled_fields) {
-        //~ console.log(20100617,record.disabled_fields);
-        for (i in record.disabled_fields) {
-            var fld = this.main_form.form.findField(record.disabled_fields[i]);
-            if (fld) { 
-              fld.disable(); 
-            } else {
-                console.log(20100617,record.disabled_fields[i], 'field not found');
-            }
-        }
-      }
-    } else {
-      this.main_form.form.reset();
-      this.main_form.disable();
-      this.main_form.setTitle('');
-    }
-    //~ console.log('20100531 Lino.DetailMixin.on_load_master_record',this.main_form);
-    this.before_row_edit(record);
-  }
-};
-
-
 
 Lino.GridSlaveWrapper = Ext.extend(Lino.WindowWrapper,{});
 Lino.GridSlaveWrapper.override(Lino.SlaveMixin);
@@ -1215,7 +1110,6 @@ Lino.GridSlaveWrapper.override({
 
 Lino.DetailSlaveWrapper = Ext.extend(Lino.WindowWrapper,{});
 Lino.DetailSlaveWrapper.override(Lino.SlaveMixin);
-Lino.DetailSlaveWrapper.override(Lino.DetailMixin);
 Lino.DetailSlaveWrapper.override({
   setup:function() {
     //~ console.log('Lino.DetailSlaveWrapper setup',20100409,this);
@@ -1249,10 +1143,8 @@ Lino.DetailSlaveWrapper.override({
     //~ Lino.SlaveMixin.prototype.setup.call(this);
   }
 });
-//~ Ext.override(Lino.DetailSlaveWrapper,Lino.DetailMixin);
 
 Lino.DetailWrapperBase = Ext.extend(Lino.WindowWrapper, {});
-Lino.DetailWrapperBase.override(Lino.DetailMixin);
 Lino.DetailWrapperBase.override({
   on_submit: function() {
     this.main_form.form.submit({
@@ -1325,37 +1217,6 @@ Lino.InsertWrapper = Ext.extend(Lino.DetailWrapperBase, {
   }
 });
 
-
-Lino.PropertiesWrapper = Ext.extend(Lino.WindowWrapper, {});
-Lino.PropertiesWrapper.override(Lino.SlaveMixin);
-Lino.PropertiesWrapper.override({
-  setup : function() {
-    // console.log('Lino.GridMasterWrapper configure',20100401,this);
-    this.main_item = this.config.main_panel;
-    //~ Ext.applyIf(this.main_item,{listeners: {}});
-    //~ Ext.apply(this.main_item.listeners,{afteredit: Lino.submit_property_handler(this)});
-    //~ this.main_item.listeners = {afteredit: Lino.submit_property_handler(this)};
-    Lino.WindowWrapper.prototype.setup.call(this);
-    //~ Lino.SlaveMixin.prototype.setup.call(this);
-  },
-  get_current_record : function() {  return this.caller.get_current_record() },
-  load_master_record : function(rec) {
-    Lino.load_properties(this.caller,this,this.config.url_data+'.json',rec);
-  },
-  get_window_config : function() {
-    var wc = { window_config_type: 'props' }
-    var cm = this.window.items.get(0).get(0).colModel;
-    var col_widths = new Array(cm.getColumnCount());
-    var col_hidden = new Array(cm.getColumnCount());
-    for(i=0;i<cm.getColumnCount();i++) {
-      col_widths[i] = cm.getColumnWidth(i);
-      col_hidden[i] = cm.isHidden(i);
-    }
-    wc['column_widths'] = col_widths;
-    wc['column_hidden'] = col_hidden;
-    return wc;
-  }
-});
 
 
 (function(){

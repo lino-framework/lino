@@ -373,7 +373,8 @@ class ExtUI(base.UI):
     
     def save_window_config(self,a,wc):
         self.window_configs[str(a)] = wc
-        a.window_wrapper.config.update(wc=wc)
+        #~ a.window_wrapper.config.update(wc=wc)
+        a.window_wrapper.update_config(wc)
         f = open(self.window_configs_file,'wb')
         pickle.dump(self.window_configs,f)
         f.close()

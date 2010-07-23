@@ -41,6 +41,9 @@ class ActionRenderer(object):
         self.action = action
         self.ui = ui
         
+    def update_config(self,wc):
+        pass
+        
     def js_render(self):
         yield "function(caller) { return new Lino.%s(caller,%s);}" % (self.__class__.__name__,py2js(self.config))
     
@@ -87,11 +90,11 @@ class WindowWrapper(ActionRenderer):
         return self.ext_name + "(" + self.__class__.__name__ + ")"
         
     def get_config(self,**d):
+        d.update(permalink_name=str(self.action))
         wc = lh2win(self.lh)
         wc = self.ui.load_window_config(self.action,**wc)
         #~ d.update(permalink_name=self.permalink_name)
-        d.update(permalink_name=str(self.action))
-        d.update(wc=wc)
+        #~ d.update(wc=wc)
         #~ url = '/ui/' + '/'.join((self.action.actor.app_label,self.action.actor._actor_name,self.action.name))
         #~ d.update(url_action=url) # ,ext_requests.FMT_JSON))
         #~ d.update(handler=js_code("Lino.%s" % self.action)) 
@@ -99,14 +102,14 @@ class WindowWrapper(ActionRenderer):
         return d
         
 def lh2win(lh,**kw):
-    kw.update(height=300)
-    kw.update(width=400)
+    #~ kw.update(height=300)
+    #~ kw.update(width=400)
     if lh is not None:
         #~ kw.update(title=lh.get_title(None))
-        if lh.height is not None:
-            kw.update(height=lh.height*EXT_CHAR_HEIGHT + 7*EXT_CHAR_HEIGHT)
-        if lh.width is not None:
-            kw.update(width=lh.width*EXT_CHAR_WIDTH + 10*EXT_CHAR_WIDTH)
+        #~ if lh.height is not None:
+            #~ kw.update(height=lh.height*EXT_CHAR_HEIGHT + 7*EXT_CHAR_HEIGHT)
+        #~ if lh.width is not None:
+            #~ kw.update(width=lh.width*EXT_CHAR_WIDTH + 10*EXT_CHAR_WIDTH)
         if lh.start_focus is not None:
             kw.update(defaultButton=lh.start_focus.name)
     return kw
@@ -136,7 +139,7 @@ class MasterWrapper(WindowWrapper):
         #~ before_row_edit.append("console.log('ext_windows.py 20100531',record);")
         yield ''
         for e in self.main.walk():
-            if isinstance(e,ext_elems.GridElement):
+            if e is not self.main and isinstance(e,ext_elems.GridElement):
                 before_row_edit.append(
                   "this.load_slavegrid(%s,record);" % e.as_ext())
                 #~ slave_grids.append(e)
@@ -217,6 +220,9 @@ class GridWrapperMixin(WindowWrapper):
         d.update(main_panel=self.lh._main)
         return d
         
+    def update_config(self,wc):
+        self.lh._main.update_config(wc)
+
 class GridMasterWrapper(GridWrapperMixin,MasterWrapper):
   
     def __init__(self,rh,action,**kw):
@@ -224,8 +230,6 @@ class GridMasterWrapper(GridWrapperMixin,MasterWrapper):
         GridWrapperMixin.__init__(self,rh)
         MasterWrapper.__init__(self,rh,action,rh.list_layout,**kw)
       
-  
-
 
 class GridSlaveWrapper(GridWrapperMixin,SlaveWrapper):
   
