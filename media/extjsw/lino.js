@@ -963,7 +963,7 @@ Lino.RemoteComboFieldElement = Ext.extend(Lino.ComboBox,{
 
 Lino.WindowWrapperBase = {
   show : function() {
-      console.time('WindowWrapper.show()');
+      //~ console.time('WindowWrapper.show()');
     //~ console.log('Lino.WindowWrapper.show',this);
       var main = Ext.getCmp('main_area');
       //~ console.log(main);
@@ -977,7 +977,7 @@ Lino.WindowWrapperBase = {
       //~ main.removeAll();
       //~ main.add(this.window);
       main.doLayout();
-      console.timeEnd('WindowWrapper.show()');
+      //~ console.timeEnd('WindowWrapper.show()');
   },
   close : function() { 
       //~ var main = Ext.getCmp('main_area');
@@ -1003,7 +1003,7 @@ Ext.override(Lino.IndexWrapper,Lino.WindowWrapperBase);
 
 Lino.WindowWrapper = function(caller,config,params) {
   //~ console.log('Lino.WindowWrapper.constructor',config.title,' : caller is ',caller);
-  console.time('WindowWrapper.constructor()');
+  //~ console.time('WindowWrapper.constructor()');
   this.caller = caller;
   this.config = config; 
   //~ this.config = config_fn(this); 
@@ -1025,7 +1025,7 @@ Lino.WindowWrapper = function(caller,config,params) {
   if (config.record_id) {
     this.main_item.goto_record_id(config.record_id);
   }
-  console.timeEnd('WindowWrapper.constructor()');
+  //~ console.timeEnd('WindowWrapper.constructor()');
   //~ console.log('Lino.WindowWrapper.constructor',config.title,'returned from setup');
 };
 

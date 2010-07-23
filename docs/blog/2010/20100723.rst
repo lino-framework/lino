@@ -1,4 +1,12 @@
 20100723
 ========
 
-- Release Lino 0.8.3 und Lino-DSBE 0.1.2 im :term:`DSBE` und auf `Tups <http://dsbe.saffre-rumma.ee/>`.
+- :doc:`Release <release>` Lino 0.8.3 und Lino-DSBE 0.1.2 im :term:`DSBE` und 
+  auf `Tups <http://dsbe.saffre-rumma.ee/>`_. 
+  In dieser Version ist das neue "fensterlose" User Interface erstmals sichtbar.
+  Performance ist deutlich besser, aber ob man damit schon arbeiten könnte?
+  Kann sein, dass der Server inzwischen das Bottleneck ist.
+  Erstmals kann man in Detail-Fenstern auf und ab "blättern".
+  
+  Die `console.time()` in der lino.js habe ich rausgeholt, weil ein Benutzer dadurch eine Fehlermeldung in der JS-Konsole bekam (obwohl er FireBug installiert hat).
+ 
