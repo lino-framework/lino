@@ -8,9 +8,10 @@ Performance ist deutlich besser, aber ob man damit schon arbeiten könnte?
 Kann sein, dass der Server inzwischen das Bottleneck ist.
 Erstmals kann man in Detail-Fenstern auf und ab "blättern".
 
-- Die settings.py in dsbe.demo setzt das Datenverzeichnis auf einem UNIX-System 
-  auf `/usr/local/lino`, nicht `/usr/local/lino-dsbe`.
-- Die `console.time()` in der lino.js habe ich rausgeholt, weil dadurch 
+- :mod:`dsbe.demo.settings` setzt das Datenverzeichnis auf einem UNIX-System 
+  jetzt wieder auf :xfile:`/usr/local/lino` (nicht wie ich mir 
+  zwischendurch gedacht hatte auf :xfile:`/usr/local/lino-dsbe`).
+- Die :js:func:`console.time()` in der lino.js habe ich rausgeholt, weil dadurch 
   Javascript runtime errors kommen können. 
 - Wenn ich im Laufe eines Releases mehrere `commit` und `push` mache,
   dann ist der folgende Befehl nützlich, um den Tag für Version 0.8.3 
@@ -23,11 +24,17 @@ Erstmals kann man in Detail-Fenstern auf und ab "blättern".
   En attendant ein primitives Script make_staff.py (das ja eigentlich ein Django command 
   sein sollte).
   
+Nach dem Release habe ich noch weiter gearbeitet:
+ 
 - Kolonnenbreiten werden wieder gespeichert.
 
 - In der Grid funktionierte das Bearbeiten nicht. Er zeigte den Editor kurz an und schloss ihn sogleich wieder. 
   Lag daran, dass auch die main grid in ihrem eigenen before_row_edit ein load_slavegrid() gemacht bekam.
 
+- Dann habe ich http://bitbucket.org/etienned/sphinx-autopackage-script entdeckt und damit rumgespielt. 
+  Bin noch nicht fertig.
+  
+Check-In.  
 
 TODO:
 

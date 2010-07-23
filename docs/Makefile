@@ -4,6 +4,9 @@ TEMPDIR      = C:\\temp\\sphinxbuild\\$(SITENAME)
 BUILDDIR     = $(TEMPDIR)\\html
 CACHEDIR     = $(TEMPDIR)\\doctrees
 OPENHTML     = 'C:\\Program Files\\Mozilla Firefox\\firefox.exe'
+AUTODOC      = python l:\\snapshots\\sphinx-autopackage-script\\generate_modules.py
+#~ LINO_SRC     = t:\\hgwork\\lino\\lino
+# LINO_SRC     = `python -c "import lino,os; print os.path.dirname(lino.__file__)"`
 
 
 # You can set these variables from the command line.
@@ -17,7 +20,7 @@ PAPEROPT_letter = -D latex_paper_size=letter
 ALLSPHINXOPTS   = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS)
 
 
-.PHONY: help clean html show web pickle htmlhelp latex changes linkcheck
+.PHONY: help clean html show web pickle htmlhelp latex changes linkcheck autodoc
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
@@ -40,6 +43,11 @@ html:
 	$(SPHINXBUILD) -b html -d $(CACHEDIR) $(ALLSPHINXOPTS) . $(BUILDDIR)
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)."
+        
+autodoc:
+	#~ $(AUTODOC) t:\\hgwork\\lino -d autodoc/lino -s rst -n Lino
+	$(AUTODOC) lino -d autodoc/lino -s rst -n Lino
+	$(AUTODOC) dsbe -d autodoc/dsbe -s rst -n Lino-DSBE
   
 show:
 	$(OPENHTML) $(BUILDDIR)\index.html

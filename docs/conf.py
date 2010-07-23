@@ -33,12 +33,6 @@ extensions = [
 
 primary_domain = 'py'
 
-extlinks = {
-  'issue': ('http://code.google.com/p/lino/issues/detail?id=%s', 'issue '),
-  'srcref': ('http://code.google.com/p/lino/source/browse%s', 'file '),
-  'igen_src': ('http://code.google.com/p/igen/source/browse%s', 'file '),
-}
-
 
 
 # Add any paths that contain templates here, relative to this directory.
@@ -226,5 +220,12 @@ def setup(app):
     #app.connect('build-finished', handle_finished)
     
     
+extlinks = {
+  'issue': ('http://code.google.com/p/lino/issues/detail?id=%s', 'issue '),
+  'srcref': ('http://code.google.com/p/lino/source/browse%s', 'file '),
+  'igen_src': ('http://code.google.com/p/lino-igen/source/browse%s', 'file '),
+  'dsbe_src': ('http://code.google.com/p/lino-dsbe/source/browse%s', 'file '),
+}
+
     
     

@@ -6,7 +6,7 @@ Die funktionieren jetzt. Vorher musste ich einige Dinge verstehen:
 
 - Aktionen sind ja nur passive Klassen, die eine Aktion "äußerlich" beschreiben. Was z.B. GridEdit oder DeleteSelcted (oder demnächst PrintUsingAppy) genau tun, das hängt vom User Interface ab. Mit "äußerlich" meine ich: Name, Label, Erlaubtheit, Reihenfolge...
 
-- :classmeth:`lino.modlib.notes.NoteType.template_type` braucht eine globale Liste der PrintMethods, die auf dem Server zur Verfügung stehen (pisa, rtf, appy, latex,...). 
+- :meth:`lino.modlib.notes.NoteType.template_type` braucht eine globale Liste der PrintMethods, die auf dem Server zur Verfügung stehen (pisa, rtf, appy, latex,...). 
 
 - PrintMethods können keine Aktionen werden.
 
@@ -15,7 +15,10 @@ Die funktionieren jetzt. Vorher musste ich einige Dinge verstehen:
 Um das Drucken zu testen, muss ich allerdings Notizarten definieren. Und da kommt das Problem, dass die kein Detail haben und deshalb aus der Grid raus erstellt werden müssen. Und das funktioniert noch nicht im extjsu. Ran an den Speck... da kam vor allem ein IntegrityError auf dem Server. Okay, also in Django darf man nicht einfach `Model.save()` machen, sondern muss die Instanz zuerst validieren:
 http://docs.djangoproject.com/en/dev/ref/models/instances/#id1
 
-Aber ich kann noch immer keine Notizart erstellen, weil ich kein :attr:`lino.modlib.notes.models.NoteType.template` auswählen kann. Das liegt daran, dass die choosers noch nicht verknüpft sind. Der nächste Punkt aus der :doc:`/todo`.
+Aber ich kann noch immer keine Notizart erstellen, 
+weil ich kein :attr:`lino.modlib.notes.models.NoteType.template` 
+auswählen kann. Das liegt daran, dass die choosers noch nicht 
+verknüpft sind. Der nächste Punkt aus der :doc:`/todo`.
 
 Die Response auf http://127.0.0.1:8000/api/notes/NoteTypes?fmt=grid ruft ja lediglich :js:func:`Lino.notes.NoteTypes.grid()`, die in der :file:`site.js` definiert ist::
 
@@ -37,7 +40,7 @@ Die Response auf http://127.0.0.1:8000/api/notes/NoteTypes?fmt=grid ruft ja ledi
     return main_grid
   }
 
-Was hier noch fehlt, ist der Handler fürs ``change``-Event von :var:`NoteType_print_method_field`. Deshalb nun ein neuer Konfigurationsparameter :var:`setup_events` für Lino.GridPanel. 
+Was hier noch fehlt, ist der Handler fürs ``change``-Event von `NoteType_print_method_field`. Deshalb nun ein neuer Konfigurationsparameter `setup_events` für Lino.GridPanel. 
 
 Das funktioniert, nun kann ich alle Felder im Grid ausfüllen. Aber da kommt das nächste Problem::
 

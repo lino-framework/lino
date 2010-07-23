@@ -26,8 +26,10 @@ Some external links:
    django/index
    posts/index
    tests
-   glossary
+   ref/index
    about/index
    releases
+   autodoc/lino/modules
+   autodoc/dsbe/modules
 
 
