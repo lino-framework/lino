@@ -1,4 +1,4 @@
 20100723
 ========
 
-- Release Lino 0.8.3 und Lino-DSBE 0.1.2 im :term:`DSBE`.
+- Release Lino 0.8.3 und Lino-DSBE 0.1.2 im :term:`DSBE` und auf `Tups <http://dsbe.saffre-rumma.ee/>`.
