@@ -2,7 +2,7 @@
 ========
 
 :doc:`Release </releases>` Lino 0.8.3 und Lino-DSBE 0.1.2 im :term:`DSBE` und 
-auf `Tups <http://dsbe.saffre-rumma.ee/>`_. 
+auf :term:`Tups`. 
 In dieser Version ist das neue "fensterlose" User Interface erstmals sichtbar.
 Performance ist deutlich besser, aber ob man damit schon arbeiten könnte?
 Kann sein, dass der Server inzwischen das Bottleneck ist.
@@ -24,8 +24,6 @@ Erstmals kann man in Detail-Fenstern auf und ab "blättern".
   En attendant ein primitives Script make_staff.py (das ja eigentlich ein Django command 
   sein sollte).
   
-Nach dem Release habe ich noch weiter gearbeitet:
- 
 - Kolonnenbreiten werden wieder gespeichert.
 
 - In der Grid funktionierte das Bearbeiten nicht. Er zeigte den Editor kurz an und schloss ihn sogleich wieder. 
@@ -34,7 +32,7 @@ Nach dem Release habe ich noch weiter gearbeitet:
 - Dann habe ich http://bitbucket.org/etienned/sphinx-autopackage-script entdeckt und damit rumgespielt. 
   Bin noch nicht fertig.
   
-Check-In.  
+21.10 Uhr: Check-In und definitives Release 0.8.3 im :term:`DSBE` und auf :term:`Tups`
 
 TODO:
 
