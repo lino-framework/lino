@@ -108,7 +108,7 @@ Ext.override(Ext.form.ComboBox, {
       //~ }   
     //~ },
     setContextValue : function(name,value) {
-      //~ console.log('setContextValue',this,this.name,':',name,'=',value);
+      console.log('setContextValue',this,this.name,':',name,'=',value);
       //~ if (this.contextValues === undefined) {
           //~ this.contextValues = Array(); // this.contextParams.length);
       //~ }
@@ -579,7 +579,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     // var p = {};
     //~ p['grid_afteredit_colname'] = e.field;
     //~ p[e.field] = e.value;
-    console.log('20100723 GridPanel.on_afteredit()',e);
+    //~ console.log('20100723 GridPanel.on_afteredit()',e);
     // add value used by ForeignKeyStoreField CHOICES_HIDDEN_SUFFIX
     p[e.field+'Hidden'] = e.value;
     // p[pk] = e.record.data[pk];
@@ -1026,13 +1026,27 @@ Ext.override(Lino.WindowWrapper,{
     }
   },
   load_slavegrid : function(cmp,record) {
-    if (record && cmp.isVisible()) {
-      //~ var src = caller.config.url_data + "/" + record.id + ".jpg"
-      //~ console.log('Lino.load_slavegrid()',record);
-      var p = this.get_master_params(record);
-      for (k in p) cmp.getStore().setBaseParam(k,p[k]);
-      cmp.getStore().load(); 
-    } else console.log('load_slavegrid() : no record',record,cmp);
+    if (record) {
+      var todo = function() {
+        //~ var src = caller.config.url_data + "/" + record.id + ".jpg"
+        //~ console.log('Lino.load_slavegrid()',record);
+        var p = this.get_master_params(record);
+        for (k in p) cmp.getStore().setBaseParam(k,p[k]);
+        cmp.getStore().load(); 
+      };
+      if (cmp.isVisible()) { 
+        todo(); 
+      } else { 
+        //~ console.log('Lino.load_slavegrid() deferred',record);
+        if (cmp.rendered) {
+          cmp.on('show',todo,this,{single:true});
+        } else {
+          cmp.on('render',todo,this,{single:true});
+        }
+      }
+
+    } 
+    //~ else console.log('load_slavegrid() : no record',record);
   }
   
 });

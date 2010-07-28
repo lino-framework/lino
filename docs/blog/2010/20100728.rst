@@ -33,4 +33,31 @@ Wieso gibt es da kein Feld `rptnameHidden`? Richtig, weil das ein Chooser mit `s
 
 Genau: ext_elems.MainPanel.field2elem() macht immer ein Lino.RemoteComboFieldElement, wenn das Feld einen chooser hat. Das ist zu naiv. Wenn es einen chooser hat, dann muss er noch dessen Attribut `simple_values` schauen, und dann entweder ein ComplexRemoteComboFieldElement oder ein SimpleRemoteComboFieldElement generieren. Und die choices_view in ext_ui.py kann dieses  `simple_values` ebenfalls ausnutzen, um eine effizientere `row2dict()` zu machen wenn ein chooser existiert.
 
-Voilà, die ComboBox von rptname ist nicht mehr leer. Check-In und Mittagspause.
+Voilà, die ComboBox von rptname ist nicht mehr leer. 
+
+Check-In und Mittagspause.
+
+Abends: Wenn ich in :report:`system.ReportConfigs` in der Liste "Detail" klickte, dann hat die ColumnsByReport-Grid eine leere Extrazeile. Wenn ich dagegen den `Permalink <http://127.0.0.1:8000/api/system/ReportConfigs/1?fmt=detail>`_ benutzte , stand dort "Nix gefunden". Das lag daran, dass load_slavegrid() testet, ob die Grid sichtbar ist (`isVisible()`). Wenn sie es nicht ist, dann setzt sie jetzt einen event listener für "show" bzw. "render". Damit ist wahrscheinlich auch das folgende Problem gelöst, das noch in der Todo-Liste stand:
+
+  - Beim Navigieren im Detail von :class:`lino.modlib.contacts.Persons` macht er zwar jetzt nicht mehr die 
+    unnützen load_slavegrid() wenn der Reiter mit diesen Komponenten nicht angezeigt ist, 
+    aber wenn man dann den betreffenden Reiter aktiviert, vergißt er, diese Formalität nachzuholen. 
+    (Workaround: man muss z.B. next und dann previous klicken, um sie zu aktualisieren.)
+    
+Check-In wegen Feierabend.
+
+TODO:
+
+- Wenn ich im `Detail einer ReportConfig <http://127.0.0.1:8000/api/system/ReportConfigs/1?fmt=detail>`_ in colname die ComboBox triggere, schickt er folgenden AJAX-Call los::
+
+    http://127.0.0.1:8000/choices/system/ColumnsByReport/colname?_dc=1280352482122&query=
+    
+  Also colname hat ihren Context nicht gesetzt bekommen...
+  
+- Noch lustiger: wenn ich zuvor in :report:`contacts.Companies` die Kolonnen Country und City bearbeitet habe und dann wieder das Gleiche mache, dann schickt er folgenden Call los::
+
+    http://127.0.0.1:8000/choices/system/ColumnsByReport/colname?_dc=1280352622636&country=FR&query=
+    
+  Also die Context-Parameter werden irgendwo gespeichert wo sie nicht hingehören...
+  
+  

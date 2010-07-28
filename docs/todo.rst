@@ -8,11 +8,6 @@ Kurzfristig
   Weil jetzt der Inhalt des alten Fensters zunächst aus dem Viewport entfernt wird. 
   Einfach ein neues Ext.Window zu öffnen und über den vorigen Browserinhalt zu knallen ging offenbar schneller.
   
-- Beim Navigieren im Detail von :class:`lino.modlib.contacts.Persons` macht er zwar jetzt nicht mehr die 
-  unnützen load_slavegrid() wenn der Reiter mit diesen Komponenten nicht angezeigt ist, 
-  aber wenn man dann den betreffenden Reiter aktiviert, vergißt er, diese Formalität nachzuholen. 
-  (Workaround: man muss z.B. next und dann previous klicken, um sie zu aktualisieren.)
-  
 - disabled_fields lassen sich in der Grid bearbeiten.
 
 - Der Tool-Button zum Speichern der Konfiguration gehört nicht mehr in den Rahmen des "Fensters", sondern in die tbar des GridPanels. Das Ganze heißt auch nicht mehr "window config", sondern "grid config". 
