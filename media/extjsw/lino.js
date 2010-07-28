@@ -819,33 +819,6 @@ Lino.chooser_handler = function(combo,name) {
     combo.setContextValue(name,newValue);
   }
 };
-//~ Lino.chooser_handler = function(ww,context_values) {
-  //~ return function(cmp,ownerCt,index) {
-    //~ console.log('Lino.chooser_handler()',cmp,ww,context_values);
-    //~ ww.add_row_listener(function(sm,ri,rec) { 
-      //~ var values = Array(context_values.length);
-      //~ for (var i = 0; i < context_values.length; i++)
-          //~ values[i] = rec.data[context_values[i]];
-      //~ cmp.setContextValues(values);        
-    //~ }, ww );
-  //~ }
-//~ };
-Lino.unused_ChooserPlugin = function(caller,context_values) {
-  this.caller = caller;
-  this.context_values = context_values;
-};
-Ext.override(Lino.unused_ChooserPlugin,{
-  init : function (cmp) {
-    //~ console.log('Lino.ChooserPlugin.init()',this);
-    // cmp.on('render',function(){ Lino.load_picture(this.caller,cmp,this.caller.get_current_record())},this);
-    if (this.caller) this.caller.add_row_listener(function(sm,ri,rec) { 
-      var values = Array(this.context_values.length);
-      for (var i = 0; i < this.context_values.length; i++)
-          values[i] = rec.data[this.context_values[i]];
-      cmp.setContextValues(values);        
-    }, this );
-  }
-});
 
 
 
@@ -862,9 +835,21 @@ Lino.ChoicesFieldElement = Ext.extend(Lino.ComboBox,{
 });
 
 
-Lino.RemoteComboStore = Ext.extend(Ext.data.JsonStore,{
+Lino.SimpleRemoteComboStore = Ext.extend(Ext.data.JsonStore,{
   constructor: function(config){
-      Lino.RemoteComboStore.superclass.constructor.call(this, Ext.apply(config, {
+      Lino.SimpleRemoteComboStore.superclass.constructor.call(this, Ext.apply(config, {
+          totalProperty: 'count',
+          root: 'rows',
+          id: 'value', // ext_requests.CHOICES_VALUE_FIELD
+          fields: ['value' ], // ext_requests.CHOICES_VALUE_FIELD, // ext_requests.CHOICES_TEXT_FIELD
+          listeners: { exception: Lino.on_store_exception }
+      }));
+  }
+});
+
+Lino.ComplexRemoteComboStore = Ext.extend(Ext.data.JsonStore,{
+  constructor: function(config){
+      Lino.ComplexRemoteComboStore.superclass.constructor.call(this, Ext.apply(config, {
           totalProperty: 'count',
           root: 'rows',
           id: 'value', // ext_requests.CHOICES_VALUE_FIELD
@@ -886,12 +871,17 @@ Lino.RemoteComboFieldElement = Ext.extend(Lino.ComboBox,{
   resizable: true
 });
 
+Lino.SimpleRemoteComboFieldElement = Ext.extend(Lino.RemoteComboFieldElement,{
+  displayField: 'value', 
+  valueField: null
+});
 
 Lino.WindowWrapperBase = {
   show : function() {
       //~ console.time('WindowWrapper.show()');
     //~ console.log('Lino.WindowWrapper.show',this);
       var main = Ext.getCmp('main_area');
+      //~ main.suspendEvents();
       //~ console.log(main);
       var old = main.items.first();
       Lino.hidden_windows.push(old);
@@ -903,6 +893,7 @@ Lino.WindowWrapperBase = {
       //~ main.removeAll();
       //~ main.add(this.window);
       main.doLayout();
+      //~ main.resumeEvents();
       //~ console.timeEnd('WindowWrapper.show()');
   },
   close : function() { 

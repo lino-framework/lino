@@ -23,6 +23,7 @@ If the above code fails like this::
       'E'
   Got:
       ''      
+
 then you don't have the bug fixed. You can apply the patch
 by savig the file 10808.diff into you Django working copy and issuing::
 

@@ -123,6 +123,8 @@ class LayoutHandle(base.Handle):
     def __str__(self):
         return str(self.layout) + "Handle"
         
+    def has_field(self,f):
+        return self._main.has_field(f)
     def unused__repr__(self):
         s = self.name # self.__class__.__name__ 
         if hasattr(self,'_main'):

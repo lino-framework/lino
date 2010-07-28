@@ -4,32 +4,38 @@ To-Do-Liste
 Kurzfristig
 -----------
 
+- Das "Öffnen" eines neuen "Fensters" ist langsamer als im UI mit echten Fenstern (:extjs:`Ext.Window`). 
+  Weil jetzt der Inhalt des alten Fensters zunächst aus dem Viewport entfernt wird. 
+  Einfach ein neues Ext.Window zu öffnen und über den vorigen Browserinhalt zu knallen ging offenbar schneller.
+  
+- Beim Navigieren im Detail von :class:`lino.modlib.contacts.Persons` macht er zwar jetzt nicht mehr die 
+  unnützen load_slavegrid() wenn der Reiter mit diesen Komponenten nicht angezeigt ist, 
+  aber wenn man dann den betreffenden Reiter aktiviert, vergißt er, diese Formalität nachzuholen. 
+  (Workaround: man muss z.B. next und dann previous klicken, um sie zu aktualisieren.)
+  
+- disabled_fields lassen sich in der Grid bearbeiten.
 
- * Records aus der grid raus erstellen geht nicht. Z.B. kann man z.Z. keine NoteType definieren.
- * disabled_fields kann man in der Grid trotzdem bearbeiten
- * Ist ListAction überhaupt noch nötig?
+- Der Tool-Button zum Speichern der Konfiguration gehört nicht mehr in den Rahmen des "Fensters", sondern in die tbar des GridPanels. Das Ganze heißt auch nicht mehr "window config", sondern "grid config". 
+  Neben Kolonnenbreiten müssen darin auch Kolonnenreihenfolge, Kolonnenfilter und Daten-Sortierfolge
+  gespeichert werden.
+  Außerdem sollte man benutzerdefinierte grid configs erstellen und auswählen können.
 
-
- * Angaben, die aus TIM kommen, dürfen im Lino-UI nicht editierbar sein (aber im Datenbankmodell wohl)
-
- * Kolonnenbreiten werden nicht gespeichert.
-
- * Allgemein ist das Navigieren noch nicht gerade benutzerfreundlich.
-
- * Sprachabhängige Auswahl der Notizvorlage. Wenn Sprache der Notiz nicht die Hauptsprache des Lino-Sites ist, dann wird der Name des zu verwendenden Templates aus dem Standardnamen par convention abgeleitet, indem das Sprachkürzel als Suffix vor der Erweiterung eingefügt wird. Zum Beispiel für eine Telefonnotiz in `fr` auf einer Site mit Hauptsprache `de` (und Telefonnotizen haben `NoteType.template`den Wert `phone.odt` ) sucht Lino zuerst nach einer Datei `phone_fr.odt`. Wenn es so eine Datei nicht gibt, nimmt er die `phone.odt`. (Korrektur: nicht als Suffix, sondern in einem separaten Verzeichnis. Sonst muss ich ja beim Füllen der Auswahlliste die Fremdsprachen rausfiltern).
-
- * Das Passfoto in dsbe.PersonDetail ist noch nicht korrekt ausgeschnitten.
- * Layout von Detail-Fenstern : in Lino sind die "Zeilen" momentan ja immer im "Blocksatz" (also links- und rechtsbündig). Das ist unkonventionell: alle RIA die ich kenne, machen ihre Formulare nur linksbündig.
-
- * Kolonnenfilter. Beispiel: `1 <http://www.ajung.de/2009/03/24/extjs-erweiterter-list-filter/>`__ `2 <http://www.sk-typo3.de/ExtJS-Filter-Grid.345.0.html>`__ `3 <http://extjs.com/forum/showthread.php?t=14503>`__
+- Sprachabhängige Auswahl der Notizvorlage. Wenn Sprache der Notiz nicht die Hauptsprache des Lino-Sites ist, dann wird der Name des zu verwendenden Templates aus dem Standardnamen par convention abgeleitet, indem das Sprachkürzel als Suffix vor der Erweiterung eingefügt wird. Zum Beispiel für eine Telefonnotiz in `fr` auf einer Site mit Hauptsprache `de` (und Telefonnotizen haben `NoteType.template` den Wert `phone.odt` ) sucht Lino zuerst nach einer Datei `phone_fr.odt`. Wenn es so eine Datei nicht gibt, nimmt er die `phone.odt`. (Korrektur: nicht als Suffix, sondern in einem separaten Verzeichnis. Sonst muss ich ja beim Füllen der Auswahlliste die Fremdsprachen rausfiltern).
 
 Fehlende Grundfunktionen
 ------------------------
 
- * In `lino.modlib.countries.models.Countries` kann man nicht einfügen. Dieser Report ist ein Sonderfall, weil Country keinen automatischen primary key hat, sondern das Feld `isocode` dort der pk ist. Das darf natürlich im InsertWrapper und für die ExtraRow (aber nicht für die anderen Zeilen) nicht schreibgeschützt sein. Issue 122.
+- Kolonnenfilter. Beispiel: 
+  `1 <http://www.ajung.de/2009/03/24/extjs-erweiterter-list-filter/>`__ 
+  `2 <http://www.sk-typo3.de/ExtJS-Filter-Grid.345.0.html>`__ 
+  `3 <http://extjs.com/forum/showthread.php?t=14503>`__
+
+- In `lino.modlib.countries.models.Countries` kann man nicht einfügen. Dieser Report ist ein Sonderfall, weil Country keinen automatischen primary key hat, sondern das Feld `isocode` dort der pk ist. Das darf natürlich im InsertWrapper und für die ExtraRow (aber nicht für die anderen Zeilen) nicht schreibgeschützt sein. Issue 122.
 
 Kleinkram
 ---------
+
+- Das Passfoto in dsbe.PersonDetail ist noch nicht korrekt ausgeschnitten.
 
 - Wenn man direkt auf einen permalink einsteigt und dieses Fenster dann schließt, dann sieht man nicht den IndexWrapper. Wäre logisch, wenn der auch bei Permalink als erstes erstellt würde. 
 - Lustiger und ungewollter Effekt beim Öffnen eines neuen Fensters: das alte scheint vom neuen nach unten verschoben zu werden. 
@@ -49,6 +55,7 @@ Kleinkram
 Langfristig
 -----------
 
+- Layout von Detail-Fenstern : in Lino sind die "Zeilen" momentan ja immer im "Blocksatz" (also links- und rechtsbündig). Das ist unkonventionell: alle RIA die ich kenne, machen ihre Formulare nur linksbündig.
 - HtmlEditor oder TextArea? Der HtmlEditor verursacht deutliche Performanceeinbußen beim Bildschirmaufbau von Detail-Fenstern. Die Wahl sollte konfigurierbar sein. Markup auch.
 - "About"-Fenster mit `thanks_to()` muss irgendwo sichtbar gemacht werden.
 - In Insert-Fenstern machen Grid-Elemente keinen Sinn. Die können keine Daten enthalten, weil der Record noch keinen primary key hat. 

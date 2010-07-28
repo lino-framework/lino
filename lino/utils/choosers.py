@@ -17,7 +17,10 @@ from lino.utils.instantiator import make_converter
 from lino.core.coretools import get_data_elem
 import lino
   
-  
+
+
+
+
 class BaseChooser:
     def __init__(self,field):
         self.field = field
@@ -35,6 +38,7 @@ class Chooser(BaseChooser):
         self.meth = meth
         self.simple_values = getattr(meth,'simple_values',False)
         self.context_params = meth.func_code.co_varnames[1:meth.func_code.co_argcount]
+        #~ print '20100724c', meth, self.context_params 
         #~ lino.log.warning("20100527 %s %s",self.context_params,meth)
         self.context_values = []
         self.context_fields = []
@@ -65,7 +69,7 @@ class Chooser(BaseChooser):
         args = []
         for varname in self.context_params:
             args.append(context.get(varname,None))
-            return self.meth(*args)
+        return self.meth(*args)
       
     def get_request_choices(self,request):
         kw = {}
@@ -76,7 +80,10 @@ class Chooser(BaseChooser):
         return self.get_choices(**kw)
         
     def get_text_for_value(self,value,obj):
-        raise NotImplementedError
+        #~ raise NotImplementedError
+        #~ assert not self.simple_values
+        raise NotImplementedError("%s : Cannot get text for value %r" % (self.meth,value))
+        
 
 def discover():
     lino.log.info("Discovering choosers...")
@@ -107,3 +114,38 @@ def uses_simple_values(fld):
 #~ def get_for_field(fieldspec):
     #~ fld = resolve_field(fieldspec)
     #~ return get_for_field()
+
+
+"""
+Thanks to Bruce Eckel for his good explanations in
+http://www.artima.com/weblogs/viewpost.jsp?thread=240845
+
+but i didn't yet get it to work
+
+#~ class choices_method(object):
+    #~ def __init__(self,simple_values=False):
+        #~ self.simple_values = simple_values
+        
+    #~ def __call__(self,fn):
+        #~ setattr(fn,'simple_values',self.simple_values)
+        #~ return classmethod(fn)
+        
+class choices_method(object):
+    simple_values = False
+    def __init__(self,fn):
+        #~ print fn
+        #~ self.fn = classmethod(fn) # TypeError: 'classmethod' object is not callable
+        self.fn = fn
+        self.func_code = fn.func_code
+        
+    def __call__(self,**kw):
+        #~ print "20100724b", __file__
+        return self.fn(**kw)
+        
+class simple_choices_method(choices_method):
+    simple_values = True
+    #~ def __init__(self,fn):
+        #~ setattr(fn,'simple_values',True)
+        #~ choices_method.__init__(self,fn)
+        
+"""

@@ -11,6 +11,21 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+Importing this module will instantiate the :class:`LinoSite`. 
+This will automatically happen when your Django server gets its first web request 
+because the :xfile:`urls.py` of a Lino website contains::
+
+    from lino import lino_site
+    urlpatterns = patterns('',
+        (r'', include(lino_site.get_urls())),
+    )
+    
+The LinoSite first makes sure that the django.db.models.loading.cache is populated. 
+Then it analyzes the models and finds the corresponding Reports and Layouts.
+
+"""
+
 import os
 import sys
 #~ import imp

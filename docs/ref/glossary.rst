@@ -6,7 +6,7 @@ Glossary
 .. glossary::
 
   Tups
-     The machine that is serving saffre-rumma.ee
+     The machine that is serving the `saffre-rumma.ee` domain.
 
   DSBE
      "Dienst für Sozial-Berufliche Eingliederung"     

@@ -217,12 +217,15 @@ def setup(app):
       indextemplate='pair: %s; setting')
     app.add_object_type(directivename='model',rolename='model',
       indextemplate='pair: %s; model')
+    app.add_object_type(directivename='report',rolename='report',
+      indextemplate='pair: %s; report')
     #app.connect('build-finished', handle_finished)
     
     
 extlinks = {
   'issue': ('http://code.google.com/p/lino/issues/detail?id=%s', 'issue '),
   'srcref': ('http://code.google.com/p/lino/source/browse%s', 'file '),
+  'extjs': ('http://www.sencha.com/deploy/dev/docs/?class=%s', ''),
   'igen_src': ('http://code.google.com/p/lino-igen/source/browse%s', 'file '),
   'dsbe_src': ('http://code.google.com/p/lino-dsbe/source/browse%s', 'file '),
 }

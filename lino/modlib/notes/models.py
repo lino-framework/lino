@@ -25,6 +25,8 @@ from lino import layouts
 from lino.utils import perms
 from lino.utils import mixins
 from django.conf import settings
+#~ from lino import choices_method, simple_choices_method
+
 
 #~ tools.requires_apps('auth','contenttypes','links')
 
@@ -36,13 +38,25 @@ class NoteType(models.Model):
     def __unicode__(self):
         return self.name
         
-    #~ @classmethod
     def template_choices(cls,print_method):
         return mixins.template_choices(print_method)
     template_choices.simple_values = True
     template_choices = classmethod(template_choices)
         
+    #~ @simple_choices_method
+    #~ def template_choices(cls,print_method):
+        #~ return mixins.template_choices(print_method)
         
+class NoteTypeDetail(layouts.DetailLayout):
+    datalink = 'notes.NoteType'
+    main = """
+    id name
+    print_method
+    template
+    """
+
+
+
 from lino.modlib.contacts.models import default_language
 
 class Note(models.Model,mixins.Printable):

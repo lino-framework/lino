@@ -46,8 +46,9 @@ html:
         
 autodoc:
 	#~ $(AUTODOC) t:\\hgwork\\lino -d autodoc/lino -s rst -n Lino
-	$(AUTODOC) lino -d autodoc/lino -s rst -n Lino
-	$(AUTODOC) dsbe -d autodoc/dsbe -s rst -n Lino-DSBE
+	$(AUTODOC) t:\\hgwork\\dsbe -d autodoc/dsbe -s rst -n Lino-DSBE
+	#~ $(AUTODOC) lino -d autodoc/lino -s rst -n Lino
+	#~ $(AUTODOC) dsbe -d autodoc/dsbe -s rst -n Lino-DSBE
   
 show:
 	$(OPENHTML) $(BUILDDIR)\index.html

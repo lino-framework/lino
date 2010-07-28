@@ -182,7 +182,7 @@ class DetailColumn(Column):
   
 
 
-class ColumnsReportRequest(reports.ReportRequest):
+class ColumnsReportRequest(reports.ReportActionRequest):
         
     def __init__(self,rh,*args,**kw):
         reports.ReportRequest.__init__(self,rh,*args,**kw)

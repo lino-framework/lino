@@ -152,11 +152,13 @@ class MasterWrapper(WindowWrapper):
                 if chooser:
                     #~ lino.log.debug("20100615 %s.%s has chooser", self.lh.layout, e.field.name)
                     for f in chooser.context_fields:
-                        varname = ext_elems.varname_field(f)
-                        #~ field_extname = chooser.model.__name__ + '_' + f.name
-                        yield "  %s.on('change',Lino.chooser_handler(%s,%r));" % (varname,e.ext_name,f.name)
+                        #~ assert self.lh is not None, "lh is None in %s" % self.action
                         before_row_edit.append("%s.setContextValue(%r,record.data[%r]);" % (
                             e.ext_name,f.name,ext_elems.form_field_name(f)))
+                        if self.main.has_field(f):
+                            varname = ext_elems.varname_field(f)
+                            #~ field_extname = chooser.model.__name__ + '_' + f.name
+                            yield "  %s.on('change',Lino.chooser_handler(%s,%r));" % (varname,e.ext_name,f.name)
             #~ else:
                 #~ yield "// data element not handled: %s" % e
         #~ lino.log.debug("20100615 %s has %d choosers", self.lh.layout, len(before_row_edit))
@@ -177,9 +179,6 @@ class MasterWrapper(WindowWrapper):
             
     
 class GridWrapperMixin(WindowWrapper):
-    """
-    Used by both GridMasterWrapper and GridSlaveWrapper
-    """
   
     window_config_type = WC_TYPE_GRID
     
@@ -231,48 +230,6 @@ class GridMasterWrapper(GridWrapperMixin,MasterWrapper):
         MasterWrapper.__init__(self,rh,action,rh.list_layout,**kw)
       
 
-class GridSlaveWrapper(GridWrapperMixin,SlaveWrapper):
-  
-    def __init__(self,rh,action,**kw):
-        assert isinstance(action,actions.SlaveGridAction)
-        self.name = action.actor._actor_name
-        rh = action.slave.get_handle(rh.ui)
-        #~ ah = action.actor.get_handle(ui)
-        #~ self.lh = rh.list_layout
-        GridWrapperMixin.__init__(self,rh)
-        lh = rh.list_layout
-        SlaveWrapper.__init__(self, action, rh.ui, lh, lh._main, **kw)
-        #~ self.bbar_buttons = slave_rh.window_wrapper.bbar_buttons
-        #~ self.slave_windows = slave_rh.window_wrapper.slave_windows
-        #~ slave_lh._main.update(bbar=self.bbar_buttons)
-        #~ self.actions = [dict(type=a.action_type,name=a.name,label=a.label) for a in rh.get_actions()]
-        #~ print 20100419, self.__class__, self.name
-        
-            
-    def get_config(self):
-        #~ d = super(GridSlaveWrapper,self).get_config()
-        d = GridWrapperMixin.get_config(self)
-        d.update(name=self.name)
-        return d
-        
-        
-class unused_DetailSlaveWrapper(SlaveWrapper):
-  
-    window_config_type = 'detail'
-    
-    def __init__(self,ui,action,**kw):
-        lh = action.layout.get_handle(ui)
-        SlaveWrapper.__init__(self, action, ui, lh, lh._main)
-        self.actions = [] # [dict(type=a.action_type,name=a.name,label=a.label) for a in rh.get_actions()]
-        
-    def get_config(self):
-        d = super(DetailSlaveWrapper,self).get_config()
-        d.update(main_panel=self.lh._main)
-        d.update(name=self.action.name)
-        d.update(title=u"%s - %s" % (self.action.actor.get_title(None),self.action.label))
-        return d
-        
-  
 class BaseDetailWrapper(MasterWrapper):
   
     window_config_type = 'detail'
@@ -319,114 +276,6 @@ class InsertWrapper(BaseDetailWrapper):
         #~ d.update(title=_('%s into %s') %(self.action.label,self.action.actor.get_title(None)))
         #~ d.update(record_id=-99999)
         #~ return d
-
-        
-
-
-class PropertiesWrapper(SlaveWrapper):
-    "Handle requests like GET /api/contacts/Persons/pgrid.extjs"
-    window_config_type = 'props'
-    name = 'pgrid'
-    
-    def __init__(self,rh,action,**kw):
-        
-        assert isinstance(action,properties.PropertiesAction)
-        #~ assert isinstance(action,properties.PropsEdit)
-        self.action = action
-        self.ui = rh.ui
-        self.model = action.actor.model
-        #~ self.model = action.actor.model # rr.master
-        #~ self.rh = action.rh
-        
-        kw.update(closeAction='hide')
-        self.source = {}
-        self.customEditors = {}
-        self.propertyNames = {}
-        
-        for pv in properties.PropValuesByOwner().request(rh.ui,master=self.model):
-            p = pv.prop
-            self.source[p.name] = pv.value
-            label = p.label or p.name
-            level = len(p.name.split('.')) - 1
-            if level:
-                label = ('-' * level) + p.name
-            self.propertyNames[p.name] = label
-            #~ pvm = p.value_type.model_class()
-            pvm = pv.__class__ 
-            if pvm is properties.CHAR:
-                choices = pvm.choices_list(p) # [unicode(choice) for choice in pv.value_choices(p)]
-                if choices:
-                    editor = ext_elems.ComboBox(store=choices,mode='local',selectOnFocus=True)
-                    editor = 'new Ext.grid.GridEditor(%s)' % py2js(editor)
-                    self.customEditors[p.name] = js_code(editor)
-                    
-        #~ print 20100226, self.model,len(self.source), self.source
-        grid = dict(xtype='propertygrid')
-        #~ grid.update(clicksToEdit=2)
-        grid.update(source=self.source)
-        grid.update(autoExpandColumn=1)
-        #~ grid.update(viewConfig=dict(autoFit=True))
-        grid.update(autoHeight=True)
-        grid.update(customEditors=self.customEditors)
-        listeners = dict(
-          #~ afteredit=js_code('function(e){Lino.submit_property(this,e)}'),scope=js_code('this'))
-          afteredit=js_code('Lino.submit_property_handler(caller)'))
-        grid.update(listeners=listeners)
-        #~ grid.update(pageSize=10)
-        if len(self.propertyNames) > 0:
-            grid.update(propertyNames=self.propertyNames)
-        self.grid = grid
-        panel = dict(xtype='panel',autoScroll=True,items=grid) #,layout='fit')
-        main = jsgen.Value(panel)
-        
-        SlaveWrapper.__init__(self,action,rh.ui,None,main)
-                    
-                    
-    def has_properties(self):
-        return len(self.source) > 0
-        
-        
-    def get_config(self):
-        d = SlaveWrapper.get_config(self)
-        d.update(main_panel=self.main)
-        d.update(name=self.action.name)
-        d.update(url_data=self.ui.get_actor_url(properties.PropValuesByOwner())) #+'/data') 
-        return d
-
-
-class unused_DetailMasterWrapper(MasterWrapper):
-  
-    window_config_type = 'form'
-    
-    def __init__(self,lh,dl,**kw):
-        MasterWrapper.__init__(self,lh,dl,**kw)
-        for a in dl.get_actions():
-            self.bbar_buttons.append(ext_elems.FormActionElement(lh,a.name,a)) 
-            #dict(text=a.label,handler=h))
-            #~ if a.key:
-                #~ keys.append(key_handler(a.key,h))
-        lh._main.update(bbar=self.bbar_buttons)
-        
-    def unused_js_main(self):
-        for ln in MasterWrapper.js_main(self):
-            yield ln
-        yield "this.refresh = function() { console.log('DetailMasterWrapper.refresh() is not implemented') };"
-        yield "this.get_current_record = function() { return this.current_record;};"
-        yield "this.get_selected = function() {"
-        yield "  return this.current_record.id;"
-        yield "}"
-        yield "this.load_record = function(record) {"
-        yield "  this.current_record = record;" 
-        yield "  if (record) this.main_panel.form.loadRecord(record)"
-        yield "  else this.main_panel.form.reset();"
-        yield "};"
-        #~ yield "this.load_record(%s);" % py2js(ext_store.Record(self.datalink.store,object))
-        yield "var fn = Ext.data.Record.create(%s)" % \
-            py2js([js_code(f.as_js()) for f in self.rh.store.fields])
-        d = self.rh.store.row2dict(self.rh.row)
-        yield "this.load_record(fn(%s));" % py2js(d)
-        
-        
 
 
 def key_handler(key,h):

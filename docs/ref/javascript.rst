@@ -12,7 +12,13 @@ Defined in lino.js
 
   See :doc:`/blog/2010/20100716`
   
-  .. function:: Lino.WindowWrapper.load_master_record
+  .. function:: Lino.WindowWrapper.load_master_record(record)
+  
+    Loads the specified record into this window.
+  
+  .. function:: Lino.WindowWrapper.show()
+  
+    Display this window.
 
   
 .. js:class:: Lino.FormPanel

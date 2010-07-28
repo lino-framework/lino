@@ -31,7 +31,7 @@ def objects():
     Person = resolve_model('contacts.Person')
     Company = resolve_model('contacts.Company')
     
-    print Person.objects.all()
+    #~ print Person.objects.all()
     
     luc = Person.objects.get(name__exact='Saffre Luc')
     rko = Company.objects.get(name__exact=u'Rumma & Ko OÜ')

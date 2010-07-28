@@ -1,0 +1,30 @@
+20100724
+========
+
+:js:func:`Lino.WindowWrapper.show` benutzt jetzt 
+`suspendEvents()` und `resumeEvents()` (s.h. :extjs:`Ext.util.Observable`). 
+Aber ich kann leider keine Verbesserung der Performance feststellen.
+
+
+Hoho, ich habe endlich erste Ideen bekommen, wie ich Kolonnenfilter und speicherbare Report-Konfigurationen implementieren kann! 
+Zwei neue Modelle ReportConfig und ReportColumn werden die bisherigen window_configs ersetzen.
+Die stehen logicherweise in lino.modlib.system.models.
+
+Das Ganze funktioniert schon fast (nach 4 Stunden an einem Samstagabend):
+
+- In system.ColumnsByReport ist die Auswahlliste für colname abhängig von rptname. Logisch. 
+  Aber weil das ein Slave-Report ist, wird der Kontext der Combobox noch nicht gesetzt. 
+  Im `WindowWrapper.js_render()` kann dafür kein "on('change',...)" generiert werden, weil der Report gar kein Feld `report` hat zumindest kein sichtbares.
+
+- Das Schwierigste war hier ein Bug in choosers: :meth:`choosers.Chooser.get_choices` funktionierte nur für Methoden, die genau ein Argument hatten.
+
+- Außerdem habe ich eine ganze Zeitlang mit Dekoratoren rumgespielt. Ich würde ja gerne vermeiden, dass man die alte Syntax verwenden muss, um eine choice method mit simple_values=True zu definieren. Aber das hab ich wieder aufgegeben.
+
+- Chooser.get_text_for_value() ist noch nicht implementiert. Also choice methods für "normale" Felder (keine ForeignKey) sollten immer simple values machen. Deshalb wird in der Combobox von ReportConfig.rptname nur der Aktorname und nicht der Titel des Repotrs angezeigt. Das ist nicht schlimm (aber es hat mich Zeit gekostet, das Problem zu identifizieren).
+
+
+TODO:
+
+- Um Kolonnen manuell erstellen zu können, müsste er den Kontext für colname setzen. 
+  Tut er aber nicht (weil rptname der fk_name des Reports ist).
+- Wenn die Sache in der Datenbank steht, muss ichs natürlich noch ins UI einbauen. 

@@ -1,4 +1,3 @@
-=========
 Reference
 =========
 
@@ -6,9 +5,12 @@ Reference
 .. toctree::
    :maxdepth: 1
    
-   settings
-   python
-   javascript
    glossary
+   models
+   fixtures
+   settings
+   python/lino
+   python/dsbe
+   javascript
    
    

@@ -20,11 +20,9 @@ from lino import actions
                 
 class DataLink:
     """
-    A DataLink provides the columns of a tabular data view (or the fields of a form data view) and the row actions.
-    Abstract base class for CommandHandle, ReportHandle and RowHandle.
+    Provides the columns of a tabular data view (or the fields of a form data view) and the row actions.
+    Abstract base class for ReportHandle and RowHandle.
     """
-    
-    #~ content_type = None
     
     def __init__(self,ui):
         self.ui = ui

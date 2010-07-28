@@ -1,7 +1,7 @@
 Installing Lino
 ===============
 
-Lino is very experimental software. 
+Lino is in a very early development stage. 
 Don't hesitate to contact me if you get stucked.
 
 Note: The string `APP` on this page is to be replaced by either `dsbe` or `igen`, depending on which of the Lino demo applications you chose.

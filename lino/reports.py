@@ -89,6 +89,7 @@ def rc_name(rptclass):
 master_reports = []
 slave_reports = []
 generic_slaves = {}
+rptname_choices = []
 
 def register_report(rpt):
     #rptclass.app_label = rptclass.__module__.split('.')[-2]
@@ -103,7 +104,9 @@ def register_report(rpt):
         #~ lino.log.debug("%s is an abstract report", rpt)
         return
         
-    #~ rpt = cls()
+    #~ rptname_choices.append((rpt.actor_id, rpt.get_label()))
+    rptname_choices.append(rpt.actor_id)
+    
     if rpt.master is None:
         master_reports.append(rpt)
         if rpt.use_as_default_report:
@@ -170,7 +173,7 @@ def discover():
 
 
 
-class ReportHandle(datalinks.DataLink,base.Handle): #,actors.ActorHandle):
+class ReportHandle(datalinks.DataLink,base.Handle): 
   
     #~ properties = None
     
@@ -189,6 +192,8 @@ class ReportHandle(datalinks.DataLink,base.Handle): #,actors.ActorHandle):
             self.list_layout = self.report.list_layout.get_handle(self.ui)
         if self.report.model is not None:
             self.content_type = ContentType.objects.get_for_model(self.report.model).pk
+        self.data_elems = report.data_elems
+        self.get_data_elem = report.get_data_elem
         
   
     def __str__(self):
@@ -221,11 +226,10 @@ class ReportHandle(datalinks.DataLink,base.Handle): #,actors.ActorHandle):
     def get_absolute_url(self,*args,**kw):
         return self.ui.get_report_url(self,*args,**kw)
         
-    def data_elems(self):
-        for de in data_elems(self.report.model._meta): yield de
-          
-    def get_data_elem(self,name):
-        return get_data_elem(self.report.model,name)
+    #~ def data_elems(self):
+        #~ for de in self.report.data_elems(): yield de
+    #~ def get_data_elem(self,name):
+        #~ return get_data_elem(self.report.model,name)
         
     def get_action(self,name):
         return self.report.get_action(name)
@@ -249,47 +253,7 @@ class ReportHandle(datalinks.DataLink,base.Handle): #,actors.ActorHandle):
         ar = ReportActionRequest(self,self.report.list_action)
         ar.setup(*args,**kw)
         return ar
-        
 
-class unused_ElementAction(actions.Action):
-    def __init__(self,obj):
-        self.obj = obj
-        actions.Action.__init(self)
-        
-    def get_queryset(self,ar):
-        return self.actor.get_queryset(ar)
-  
-class unused_ListAction(actions.Action):
-    #~ response_format = 'json' # ext_requests.FMT_JSON
-    #~ hidden = True
-    callable_from = ()
-    #~ show_in_list = False
-    #~ show_in_detail = True
-    name = 'list'
-    
-    def get_queryset(self,ar):
-        return self.actor.get_queryset(ar)
-        
-    def get_title(self,ar):
-        return self.actor.get_title(ar)
-        
-    def render_to_dict(self,ar):
-        rows = [ ar.row2dict(row,{}) for row in ar.queryset ]
-        #~ rows = []
-        #~ for row in self.queryset:
-            #~ d = self.row2dict(row,{})
-            #~ rows.append(d)
-        total_count = ar.total_count
-        #lino.log.debug('%s.render_to_dict() total_count=%d extra=%d',self,total_count,self.extra)
-        # add extra blank row(s):
-        for i in range(0,ar.extra):
-            row = ar.create_instance()
-            #~ d = self.row2dict(row,{})
-            #~ rows.append(d)
-            rows.append(ar.row2dict(row,{}))
-            total_count += 1
-        #~ print 20100420, rows
-        return dict(count=total_count,rows=rows,title=ar.get_title())
 
 
 class ReportActionRequest(actions.ActionRequest): # was ReportRequest
@@ -382,6 +346,10 @@ class ReportActionRequest(actions.ActionRequest): # was ReportRequest
             
         self.page_length = self.report.page_length
 
+    def column_choices(self):
+        for de in data_elems(self.model._meta): 
+            yield [ de.name, unicode(de) ]
+      
     def get_queryset(self):
         # overridden by ChoicesReportRequest
         return self.report.get_queryset(self)
@@ -768,3 +736,12 @@ def report_factory(model):
 
 
 
+def column_choices(rptname):
+    rpt = actors.get_actor(rptname)
+    return rpt.column_choices()
+
+def unused_rptname_choices():
+    for rpt in actors.actors_list:
+      if isinstance(rpt,Report) and rpt.__class__ is not Report:
+          yield [rpt.actor_id, rpt.get_label]
+          

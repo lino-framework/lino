@@ -28,8 +28,6 @@ Some external links:
    tests
    ref/index
    about/index
-   releases
-   autodoc/lino/modules
-   autodoc/dsbe/modules
+   releases/index
 
 

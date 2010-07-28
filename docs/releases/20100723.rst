@@ -1,0 +1,7 @@
+Release 20100723 : Windowless UI without URI 
+============================================
+
+Lino 0.8.3 / Lino-DSBE 0.1.2
+
+Release notes: see :doc:`today's blog entry</blog/2010/20100723>`
+

@@ -1,0 +1,36 @@
+20100728
+========
+
+Nach drei Tagen Pause geht es heute nochmal mit Lino weiter. 
+Am 23. August treffe ich mich in Eupen mit den zukünftigen Benutzern, 
+die dann schon immerhin 9 Monate auf ihre Software warten. 
+Kann sein, dass dann die erste Lino-Anwendung geboren wird. 
+(Unter "Geburt" versteht sich im Fall von Lino, dass er erstmals benutzt wird.)
+Bis dahin müssten die folgenden Punkte nach gemacht werden:
+
+- Speicherbare Listen-Konfigurationen und Kolonnenfilter 
+- Performance beim Bildschirmaufbau
+- South in Betrieb nehmen
+
+Zu Punkt 1 sehe ich folgende Unterpunkte:
+
+- Im `Detail einer Reportconfig <http://127.0.0.1:8000/api/system/ReportConfigs/1?fmt=detail>`_ ist die ComboBox von rptname leer.
+- Um Kolonnen manuell erstellen zu können, müsste er den Kontext für colname setzen. 
+  Tut er aber nicht (weil rptname der fk_name des Reports ist).
+- Wenn die Sache in der Datenbank steht, muss ichs natürlich noch ins UI einbauen. 
+
+
+Also im `Detail einer Reportconfig <http://127.0.0.1:8000/api/system/ReportConfigs/1?fmt=detail>`_ ist die ComboBox von rptname leer.
+Die Antwort des Servers enthält `data_record.data` wie folgt:: 
+  {
+      label: "test",
+      rptname: "countries.Countries",
+      id: 1,
+      name: "test"
+  },
+  
+Wieso gibt es da kein Feld `rptnameHidden`? Richtig, weil das ein Chooser mit `simple_values` ist. Und die ComboBox scheint das nicht zu vertragen. Das hieße, dass das gleiche Problem auch im Detail von NoteType sein müsste für die Combobox von NoteType.template. Aha, dieses Detail gibt es gar nicht. Ist ja eigentlich auch nicht nötig. Aber allein schon um das zu prüfen, mache ich also eine `lino.modlib.notes.models.NoteTypeDetail`. In der Tat, auch dort ist die Combobox leer. 
+
+Genau: ext_elems.MainPanel.field2elem() macht immer ein Lino.RemoteComboFieldElement, wenn das Feld einen chooser hat. Das ist zu naiv. Wenn es einen chooser hat, dann muss er noch dessen Attribut `simple_values` schauen, und dann entweder ein ComplexRemoteComboFieldElement oder ein SimpleRemoteComboFieldElement generieren. Und die choices_view in ext_ui.py kann dieses  `simple_values` ebenfalls ausnutzen, um eine effizientere `row2dict()` zu machen wenn ein chooser existiert.
+
+Voilà, die ComboBox von rptname ist nicht mehr leer. Check-In und Mittagspause.

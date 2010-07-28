@@ -136,6 +136,12 @@ class VisibleComponent(Component):
         for e in self.walk():
             yield sep.join([str(getattr(e,n,"N/A")) for n in cols])
             
+    def has_field(self,fld):
+        for de in self.walk():
+            if isinstance(de,FieldElement) and de.field is fld:
+                return True
+        return False
+        
         
 class LayoutElement(VisibleComponent):
     stored = False
@@ -374,7 +380,7 @@ class ChoicesFieldElement(ComboFieldElement):
 
 class RemoteComboFieldElement(ComboFieldElement):
     value_template = "new Lino.RemoteComboFieldElement(%s)"
-        
+  
     def store_options(self,**kw):
         proxy = dict(url=self.lh.ui.get_choices_url(self),method='GET')
         kw.update(proxy=js_code("new Ext.data.HttpProxy(%s)" % py2js(proxy)))
@@ -385,12 +391,23 @@ class RemoteComboFieldElement(ComboFieldElement):
         kw = FieldElement.get_field_options(self,**kw)
         sto = self.store_options()
         #print repr(sto)
-        kw.update(store=js_code("new Lino.RemoteComboStore(%s)" % py2js(sto)))
+        kw.update(store=js_code("new Lino.ComplexRemoteComboStore(%s)" % py2js(sto)))
+        return kw
+        
+class SimpleRemoteComboFieldElement(RemoteComboFieldElement):
+    value_template = "new Lino.SimpleRemoteComboFieldElement(%s)"
+    
+  
+class ComplexRemoteComboFieldElement(RemoteComboFieldElement):
+    #~ value_template = "new Lino.ComplexRemoteComboFieldElement(%s)"
+        
+    def get_field_options(self,**kw):
+        kw = RemoteComboFieldElement.get_field_options(self,**kw)
         kw.update(hiddenName=self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
         return kw
         
         
-class ForeignKeyElement(RemoteComboFieldElement):
+class ForeignKeyElement(ComplexRemoteComboFieldElement):
     
     def __init__(self,*args,**kw):
         FieldElement.__init__(self,*args,**kw)
@@ -401,7 +418,7 @@ class ForeignKeyElement(RemoteComboFieldElement):
         
         
     def get_field_options(self,**kw):
-        kw = RemoteComboFieldElement.get_field_options(self,**kw)
+        kw = ComplexRemoteComboFieldElement.get_field_options(self,**kw)
         kw.update(pageSize=self.report.page_length)
         kw.update(emptyText=_('Select a %s...') % self.report.model.__name__)
         return kw
@@ -864,8 +881,12 @@ class MainPanel(jsgen.Variable):
     @classmethod
     def field2elem(cls,lh,field,**kw):
         #~ if hasattr(field,'_lino_chooser'):
-        if choosers.get_for_field(field):
-            return RemoteComboFieldElement(lh,field,**kw)
+        ch = choosers.get_for_field(field)
+        if ch:
+            if ch.simple_values:
+                return SimpleRemoteComboFieldElement(lh,field,**kw)
+            else:
+                return ComplexRemoteComboFieldElement(lh,field,**kw)
         if field.choices:
             return ChoicesFieldElement(lh,field,**kw)
         for cl,x in _field2elem:
@@ -965,12 +986,19 @@ class TabPanel(jsgen.Component):
         )
         jsgen.Value.__init__(self,kw)
         
+    def has_field(self,f):
+        for t in self.tabs:
+            if t.has_field(f): 
+                return True
+
 
 class FormPanel(jsgen.Component):
+#~ class FormPanel(VisibleComponent):
     declare_type = jsgen.DECLARE_VAR
     value_template = "new Lino.FormPanel(%s)"
     #~ value_template = "new Ext.form.FormPanel(%s)"
     def __init__(self,rh,action,main,**kw):
+        self.main = main
         kw.update(
           items=main,
           #~ autoScroll=True,
@@ -985,6 +1013,9 @@ class FormPanel(jsgen.Component):
         kw.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rh.get_actions(action)])
         kw.update(ls_data_url=rh.ui.get_actor_url(rh.report))
         jsgen.Component.__init__(self,'form_panel',**kw)
+        
+    def has_field(self,f):
+        return self.main.has_field(f)
 
 
 class unused_FormMainPanel(Panel,WrappingMainPanel):

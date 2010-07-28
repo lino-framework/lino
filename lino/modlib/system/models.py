@@ -21,11 +21,62 @@ from django.utils.translation import ugettext as _
 
 import lino
 from lino import reports
-#~ from lino import forms
 from lino import layouts
-from lino import actions
 #~ from lino import commands
 from lino.utils import perms
+#~ from lino import choices_method, simple_choices_method
+
+class ReportConfig(models.Model):
+  
+    rptname = models.CharField(max_length=100)
+    """The actor name of the report being customized."""
+    
+    name = models.CharField(max_length=20)
+    """Short name for this Configuration.
+    Must be identifying inside a same rptname. 
+    """
+    
+    label = models.CharField(max_length=100)
+    """Name presented to user when selecting a Config for a given report."""
+    
+    #~ @simple_choices_method
+    #~ @classmethod
+    def rptname_choices(cls):
+        """This is a choices_method (and not a `choices` 
+        parameter of rptname) because the list isnt' available 
+        during model population."""
+        #~ print 20100724, __file__
+        return reports.rptname_choices
+    rptname_choices.simple_values = True
+    rptname_choices = classmethod(rptname_choices)
+    
+    
+class ReportColumn(models.Model):
+    rptconfig = models.ForeignKey('system.ReportConfig')
+    seq = models.IntegerField()
+    colname = models.CharField(max_length=30)
+    
+    #~ @choices_method
+    @classmethod
+    def colname_choices(cls,rptconfig):
+        return reports.column_choices(rptconfig.rptname)
+        
+class ReportConfigDetail(layouts.DetailLayout):
+    datalink = 'system.ReportConfig'
+    main = """
+    rptname name label
+    system.ColumnsByReport
+    """
+    
+class ReportConfigs(reports.Report):
+    model = 'system.ReportConfig'
+    
+class ColumnsByReport(reports.Report):
+    model = 'system.ReportColumn'
+    fk_name = 'rptconfig'
+    
+    
+    
 
 class SiteConfig(models.Model):
     site_company = models.ForeignKey('contacts.Company',blank=True,null=True,
@@ -80,7 +131,7 @@ class ContentTypes(reports.Report):
 
 
 
-def add_auth_menu(lino):
+def add_system_menu(lino):
     m = lino.add_menu("system",_("~System"))
     #~ m.add_action('system.SiteConfigs',can_view=perms.is_staff,params=dict(pk=1))
     m.add_action('system.SiteConfigs.detail',

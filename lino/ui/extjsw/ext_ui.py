@@ -838,6 +838,7 @@ class ExtUI(base.UI):
         chooser = choosers.get_for_field(field)
         if chooser:
             qs = chooser.get_request_choices(request)
+            assert qs is not None, "%s.%s_choices() returned None" % (rpt.model,fldname)
         elif field.choices:
             qs = field.choices
         elif isinstance(field,models.ForeignKey):
@@ -856,11 +857,21 @@ class ExtUI(base.UI):
                 d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
                 d[ext_requests.CHOICES_VALUE_FIELD] = obj.pk # getattr(obj,'pk')
                 return d
+        elif chooser:
+            if chooser.simple_values:
+                def row2dict(obj,d):
+                    #~ d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
+                    d[ext_requests.CHOICES_VALUE_FIELD] = unicode(obj)
+                    return d
+            else:
+                def row2dict(obj,d):
+                    d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj[1])
+                    d[ext_requests.CHOICES_VALUE_FIELD] = obj[0]
         else:
             def row2dict(obj,d):
                 if type(obj) is list or type(obj) is tuple:
                     d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj[1])
-                    d[ext_requests.CHOICES_VALUE_FIELD] = obj[1]
+                    d[ext_requests.CHOICES_VALUE_FIELD] = obj[0]
                 else:
                     d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
                     d[ext_requests.CHOICES_VALUE_FIELD] = unicode(obj)
@@ -1064,8 +1075,8 @@ class ExtUI(base.UI):
             
         #~ if isinstance(a,properties.PropertiesAction):
             #~ return ext_windows.PropertiesWrapper(h,a)
-        if isinstance(a,actions.SlaveGridAction):
-            return ext_windows.GridSlaveWrapper(h,a) # a.name,a.slave.default_action)
+        #~ if isinstance(a,actions.SlaveGridAction):
+            #~ return ext_windows.GridSlaveWrapper(h,a) # a.name,a.slave.default_action)
             
         #~ if isinstance(a,actions.SlaveDetailAction): # not tested
             #~ return ext_windows.DetailSlaveWrapper(self,a)
