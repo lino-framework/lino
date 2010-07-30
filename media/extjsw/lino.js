@@ -92,7 +92,7 @@ Ext.override(Ext.form.ComboBox, {
         return p;
     },
     setContextValue : function(name,value) {
-      console.log('setContextValue',this,this.name,':',name,'=',value);
+      //~ console.log('setContextValue',this,this.name,':',name,'=',value);
       //~ if (this.contextValues === undefined) {
           //~ this.contextValues = Array(); // this.contextParams.length);
       //~ }
@@ -321,6 +321,23 @@ Lino.submit_detail = function(caller) {
   } else Lino.notify("Sorry, no current record.");
 };
 
+Lino.do_when_visible = function(cmp,todo) {
+  //~ if (cmp.el && cmp.el.dom) 
+  if (cmp.isVisible()) { 
+    // 'visible' means 'rendered and not hidden'
+    todo(); 
+  } else { 
+    //~ console.log('Lino.load_slavegrid() deferred',record);
+    if (cmp.rendered) {
+      cmp.on('show',todo,cmp,{single:true});
+    } else {
+      cmp.on('render',todo,cmp,{single:true});
+    }
+  }
+  
+};    
+
+
 Lino.submit_insert = function(caller) {
   caller.form.submit({
     url:caller.ls_data_url,
@@ -437,7 +454,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   get_current_record : function() {  
     //~ console.log(20100714,this.current_record);
     return this.current_record },
-  load_picture : function(record) {
+  load_picture_to : function(cmp,record) {
     //~ console.log('Lino.load_picture()',record);
     if (record)
       var src = this.ww.main_item.ls_data_url + "/" + record.id + "?fmt=image"
@@ -445,19 +462,18 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
       var src = 'empty.jpg';
     var f = function() {
       //~ console.log('Lino.load_picture()',src);
-      this.el.dom.src = src;
+      cmp.el.dom.src = src;
       //~ this.el.dom.onclick = 'Lino.img_onclick(src)';
       //~ this.el.dom.onclick = 'window.open(src)';
-      this.el.on('click',function() {window.open(src)});
-    } 
-    if (this.el && this.el.dom) 
-      f()
-    else {
-      //~ console.log('Lino.load_picture() cmp not rendered',this);
-      this.on('render',f);
-    }
+      //~ cmp.el.on('click',function() {window.open(src)});
+      
+    };
+    Lino.do_when_visible(cmp,f);
   }
 });
+
+
+
     
 Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
   clicksToEdit:2,
@@ -652,17 +668,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
         for (k in p) this.getStore().setBaseParam(k,p[k]);
         this.getStore().load(); 
       };
-      if (this.isVisible()) { 
-        // 'visible' means 'rendered and not hidden'
-        todo(); 
-      } else { 
-        //~ console.log('Lino.load_slavegrid() deferred',record);
-        if (this.rendered) {
-          this.on('show',todo,this,{single:true});
-        } else {
-          this.on('render',todo,this,{single:true});
-        }
-      }
+      Lino.do_when_visible(this,todo);
     } 
     //~ else console.log('load_slavegrid() : no record',record);
   }
@@ -773,8 +779,17 @@ Ext.override(Lino.TemplateBoxPlugin,{
   }
 });
 
-Lino.img_onclick = function() {
-  console.log('img_onclick',arguments);
+Lino.PictureBoxPlugin = {
+  init : function (cmp) {
+      Lino.do_when_visible(cmp,function() { cmp.el.on('click',function() { Lino.img_onclick(cmp) }) });
+      //~ cmp.el.on('click',Lino.img_click_handler(cmp.el.dom.src));
+  }
+}
+
+
+Lino.img_onclick = function(cmp) {
+  //~ console.log('img_onclick',cmp,arguments);
+  window.open(cmp.el.dom.src);
 };
 
 Lino.SlavePlugin = function(caller) {

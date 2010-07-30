@@ -241,7 +241,7 @@ class Variable(Value):
         Value.__init__(self,value)
         #~ assert self.declare_type != DECLARE_INLINE
         if name is None:
-            self.declare_type = DECLARE_INLINE
+            assert self.declare_type == DECLARE_INLINE
         else:
             self.name = name
             self.ext_name = id2js(name) + self.ext_suffix

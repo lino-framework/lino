@@ -55,7 +55,7 @@ def a2btn(a):
       
 def before_row_edit(panel):
     l = []
-    l.append("console.log('20100730',record);")
+    #~ l.append("console.log('20100730',record);")
     #~ for e in panel.walk():
     #~ if isinstance(panel,TabPanel):
         #~ print panel, panel.active_children
@@ -66,7 +66,7 @@ def before_row_edit(panel):
               "%s.load_master_record(record);" % e.as_ext())
         elif isinstance(e,PictureElement):
             l.append(
-              "this.load_picture(%s,record);" % e.as_ext())
+              "this.load_picture_to(%s,record);" % e.as_ext())
         elif isinstance(e,FieldElement):
             chooser = choosers.get_for_field(e.field)
             if chooser:
@@ -271,14 +271,20 @@ class PictureElement(LayoutElement):
     vflex = True
     
     def __init__(self,lh,name,action,**kw):
+        #~ print 20100730, name
         #~ kw.update(html='<img height="100%"/>')
         #~ kw.update(html='<img height="100%" onclick="Lino.img_onclick()"/>')
         kw.update(autoEl=dict(tag='img'))
+        #~ kw.update(autoEl=dict(tag='img',onclick="Lino.img_onclick(%s)" % name))
+        #~ kw.update(autoEl=dict(tag='img',onclick="Lino.img_onclick(this)" ))
         #~ kw.update(onclick=js_code('"Lino.img_onclick()"'))
         #~ kw.update(cls='ext-el-mask')
         kw.update(style=dict(height='100%',cursor='pointer'))
+        kw.update(plugins=js_code('Lino.PictureBoxPlugin'))
         #~ kw.update(plugins=js_code('new Lino.PictureBoxPlugin(caller)'))
+        #~ kw.update(listeners=dict(click=js_code('Lino.img_onclick')))
         LayoutElement.__init__(self,lh,name,**kw)
+        
 
         
 
