@@ -1,0 +1,45 @@
+20100729
+========
+
+Heute war wieder nur eine halbe Stunde für Lino übrig... aber ich habe jetzt immerhin verstanden, 
+weshalb `system.ReportColum.colname` im `Detail einer ReportConfig <http://127.0.0.1:8000/api/system/ReportConfigs/1?fmt=detail>`_  
+ihren Context nicht gesetzt bekommt. Lino generiert folgenden Code für before_row_edit in der 
+:js:func:`Lino.system.ReportConfigs.detail`::
+
+  before_row_edit: function(record){
+    ReportColumn_colname_field.setContextValue('rptconfig',record.data['rptconfigHidden']);
+    this.load_slavegrid(system_ColumnsByReport_grid,record);
+  }
+
+Das ist grundlegend falsch. Die :term:`CSC` in SlaveGrids dürfen ja nicht mit dem Master-Record verknüpft werden.
+:meth:`lino.ui.extjsw.ext_windows.MasterWrapper.js_render` macht was falsch. 
+Dort soll kein `walk()` übers `main` gemacht werden (das ja auch in die Kolonnen aller Slavegrids rein geht), 
+sondern nur die direkten Comboboxen der Form verknüpfen. 
+Stattdessen muss Lino.GridPanel auch einen `before_row_edit` kriegen.
+
+20100730
+========
+
+14 Uhr. Super : `system.ReportColum.colname` im Slave-Grid des `Details einer ReportConfig <http://127.0.0.1:8000/api/system/ReportConfigs/1?fmt=detail>`_  kriegt jetzt den Context gesetzt und lässt sich auswählen. 
+Dazu waren noch einige Umtrukturierungen nötig:
+
+- `before_row_edit` war bisher ein config parameter des WindowWrappers. Jetzt ist es auf dem main panel (GridPanel bzw. FormPanel). 
+  Also slavegrid-panels haben nun auch ihre eigene `before_row_edit`.
+
+- Daneben wurde ja in WindowWrapper.js_render (direkt, nicht erst in `before_row_edit`) für alle :term:`CSCs <CSC>` ein `Lino.chooser_handler` ans change-Event der Textfelder verknüpft, die Einfluss auf den Kontext haben. Diese Operation ist ein einer Grid nicht nötig (zumindest so lange dort immer nur ein Editor auf einmal aktiv ist). Achtung, diese Operation darf erst generiert werden, wenn alle Variablen für die Textfelder generiert worden sind, weil eine :term:`CSC` möglicherweise von einem Feld abhängen kann, dessen Editor nach ihr definiert wird. Deshalb ist der logische Ort dieser Operation in einem Listener aufs render-Event der Ext.Form.FormPanel. Das wird nun also in :meth:`lino.ui.extjs.ext_elems.FormPanel.__init__` gemacht.
+
+- `WindowWrapper.load_slavegrid(cmt,record)` wird jetzt direkt in `GridPanel.load_master_record` gemacht.
+  `get_master_params` ermittelt ja die Parameter mk und mt (master key und master type), die `load_slavegrid` braucht.
+
+- FormPanel und GridPanel müssen den WindowWrapper kennen, in dem sie definiert sind. Weil FormPanel.load_master_record dessen sindow.setTitle() ruft, und GridPanel.load_master_record dessen get_master_params braucht. Problem ist, dass SlaveGrids (Grid-Elemente in einem Detail) kein Attribut `ww` gesetzt bekommen haben, weil sie ja nicht das main_item sind. Das mach ich deshalb etwas unelegant in WindowWrapper.js_render::
+
+      for e in self.main.walk():
+          if e is not self.main and isinstance(e,ext_elems.GridElement):
+              yield "%s.ww = ww;" % e.ext_name
+
+Check-In wegen Feierabend.
+
+TODO:
+
+- Passfotos werden nicht angezeigt. Klick auf 'remarks' ist wie klick aufs Foto...
+- Wenn man eine Kolonne erstellen will, kommt auf dem Server 'IntegrityError: PRIMARY KEY must be unique'. Wahrscheinlich funktioniert INSERT in Slavegrids allgemein noch nicht.

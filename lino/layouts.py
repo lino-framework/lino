@@ -94,8 +94,8 @@ class LayoutHandle(base.Handle):
         #~ if hasattr(layout,"main"):
             self._main = self.create_element(self.main_class,'main')
         elif self.layout.datalink is not None:
-            elems = [name for name in coretools.data_elems(self.layout.datalink) 
-                if name != self.layout.datalink_report.fk_name]
+            elems = [de.name for de in coretools.data_elems(self.layout.datalink) 
+                if de.name != self.layout.datalink_report.fk_name]
             main = self.layout.join_str.join(elems)
             self._main = self.desc2elem(self.main_class,"main",main)
         else:
@@ -168,10 +168,10 @@ class LayoutHandle(base.Handle):
                     name,kw = self.splitdesc(spec)
                     explicit_specs.add(name)
             wildcard_fields = self.layout.join_str.join([
-                name for name in coretools.data_elems(self.layout.datalink) \
-                  if (name not in explicit_specs) \
-                    and (name not in self.hide_elements) \
-                    and (name != self.layout.datalink_report.fk_name) \
+                de.name for de in coretools.data_elems(self.layout.datalink) \
+                  if (de.name not in explicit_specs) \
+                    and (de.name not in self.hide_elements) \
+                    and (de.name != self.layout.datalink_report.fk_name) \
                 ])
             desc = desc.replace('*',wildcard_fields)
             #lino.log.debug('desc -> %r',desc)

@@ -85,6 +85,13 @@ def add_quick_search_filter(qs,search_text):
 def rc_name(rptclass):
     return rptclass.app_label + '.' + rptclass.__name__
     
+def de_verbose_name(de):
+    if isinstance(de,models.Field):
+        return de.verbose_name
+    return de.name
+
+    
+    
 # TODO : move these global variables to LinoSite
 master_reports = []
 slave_reports = []
@@ -346,10 +353,6 @@ class ReportActionRequest(actions.ActionRequest): # was ReportRequest
             
         self.page_length = self.report.page_length
 
-    def column_choices(self):
-        for de in data_elems(self.model._meta): 
-            yield [ de.name, unicode(de) ]
-      
     def get_queryset(self):
         # overridden by ChoicesReportRequest
         return self.report.get_queryset(self)
@@ -505,6 +508,16 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
         kw['app_label'] = cls.app_label
         return type(cls.__name__+str(suffix),(cls,),kw)
         
+    def column_choices(self):
+        return [ de.name for de in self.data_elems() ]
+        #~ l = []
+        #~ for de in self.data_elems():
+            #~ if isinstance(de,models.Field):
+                #~ l.append((de.name, unicode(de.verbose_name)))
+            #~ else:
+                #~ l.append((de.name, unicode(de)))  
+        #~ return l
+      
     def disabled_fields(self,request,obj):
         """return a list of fields that should not be editable.
         Example in dsbe.models.Persons
@@ -602,7 +615,7 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
             #~ yield layouts.TabPanel(None,"EastPanel",*comps)
 
     def data_elems(self):
-        for de in data_elems(self.model._meta): yield de
+        for de in data_elems(self.model): yield de
           
     def get_data_elem(self,name):
         return get_data_elem(self.model,name)

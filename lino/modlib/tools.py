@@ -86,5 +86,4 @@ def obj2str(i):
     #~ s = ','.join(["%s=%r" % (n, getattr(i,n)) for n in i._meta.get_all_field_names()])
     return "%s(%s)" % (i.__class__.__name__,s)
 
-    
-    
+   

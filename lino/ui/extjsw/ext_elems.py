@@ -1,4 +1,5 @@
 #coding: UTF-8
+#coding: UTF-8
 ## Copyright 2009-2010 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
@@ -43,6 +44,42 @@ def varname_field(f):
     else: # e.g. Field instances used as return_type for methods
         return f.name + '_field'
         
+def a2btn(a):
+    return dict(
+      opens_a_slave=a.opens_a_slave,
+      handler=js_code("Lino.%s" % a),
+      name=a.name,
+      label=unicode(a.label),
+      #~ url="/".join(("/ui",a.actor.app_label,a.actor._actor_name,a.name))
+    )
+      
+def before_row_edit(panel):
+    l = []
+    l.append("console.log('20100730',record);")
+    #~ for e in panel.walk():
+    #~ if isinstance(panel,TabPanel):
+        #~ print panel, panel.active_children
+    for e in panel.active_children:
+        #~ if e is not panel and isinstance(e,GridElement):
+        if isinstance(e,GridElement):
+            l.append(
+              "%s.load_master_record(record);" % e.as_ext())
+        elif isinstance(e,PictureElement):
+            l.append(
+              "this.load_picture(%s,record);" % e.as_ext())
+        elif isinstance(e,FieldElement):
+            chooser = choosers.get_for_field(e.field)
+            if chooser:
+                #~ lino.log.debug("20100615 %s.%s has chooser", self.lh.layout, e.field.name)
+                for f in chooser.context_fields:
+                    if panel.has_field(f):
+                        l.append("%s.setContextValue(%r,record.data[%r]);" % (
+                            e.ext_name,f.name,form_field_name(f)))
+                    elif True: # f.name = panel.fk_name:
+                        l.append("%s.setContextValue(%r,this.ww.get_current_record().id)" % (e.ext_name,f.name))
+    return js_code('function(record){%s}' % ('\n'.join(l)))
+
+
 
 
 class ColumnModel(Component):
@@ -158,6 +195,7 @@ class LayoutElement(VisibleComponent):
     grid_column_template = "new Ext.grid.Column(%s)"
     collapsible = False
     hidden = False
+    active_child = True
     
     def __init__(self,lh,name,**kw):
         #lino.log.debug("LayoutElement.__init__(%r,%r)", lh.layout,name)
@@ -537,6 +575,14 @@ class Container(LayoutElement):
         self.has_frame = lh.layout.has_frame
         self.labelAlign = lh.layout.label_align
         self.elements = elements
+        self.active_children = []
+        for e in elements:
+            if not isinstance(e,LayoutElement):
+                raise Exception("%r is not a LayoutElement" % e)
+            if e.active_child:
+                self.active_children.append(e)
+            elif isinstance(e,Panel):
+                self.active_children += e.active_children
         LayoutElement.__init__(self,lh,name,**kw)
         
     def subvars(self):
@@ -563,6 +609,7 @@ class Container(LayoutElement):
 
 class Panel(Container):
     ext_suffix = "_panel"
+    active_child = False
     
     def __init__(self,lh,name,vertical,*elements,**kw):
         self.vertical = vertical
@@ -588,8 +635,6 @@ class Panel(Container):
         """        
         self.vflex = not vertical
         for e in elements:
-            if not isinstance(e,LayoutElement):
-                raise Exception("%r is not a LayoutElement" % e)
             if self.vertical:
                 if e.vflex:
                     self.vflex = True
@@ -738,7 +783,7 @@ class Panel(Container):
     #~ "common for Grids, Details and Forms"
   
 
-class GridElement(Container): #,DataElementMixin):
+class GridElement(Container): 
     declare_type = jsgen.DECLARE_VAR
     #value_template = "new Ext.grid.EditorGridPanel(%s)"
     #~ value_template = "new Ext.grid.GridPanel(%s)"
@@ -763,6 +808,8 @@ class GridElement(Container): #,DataElementMixin):
         self.preferred_width = constrain(w,10,120)
         
         Container.__init__(self,lh,name,*elements,**kw)
+        assert not kw.has_key('before_row_edit')
+        self.update(before_row_edit=before_row_edit(self))
         #DataElementMixin.__init__(self,rh)
         #self.dl = rh
         
@@ -782,7 +829,7 @@ class GridElement(Container): #,DataElementMixin):
             self.mt = ContentType.objects.get_for_model(self.report.master).pk
         else:
             self.mt = 'undefined'
-
+            
     def update_config(self,wc):
         for i,w in enumerate(wc['column_widths']):
             self.column_model.columns[i].update(width = w)
@@ -831,15 +878,6 @@ class GridElement(Container): #,DataElementMixin):
         
         return d
         
-def a2btn(a):
-    return dict(
-      opens_a_slave=a.opens_a_slave,
-      handler=js_code("Lino.%s" % a),
-      name=a.name,
-      label=unicode(a.label),
-      #~ url="/".join(("/ui",a.actor.app_label,a.actor._actor_name,a.name))
-    )
-      
 class SlaveGridElement(GridElement):
     def ext_options(self,**kw):
         kw = GridElement.ext_options(self,**kw)
@@ -974,6 +1012,10 @@ class TabPanel(jsgen.Component):
     value_template = "new Ext.TabPanel(%s)"
         
     def __init__(self,tabs,**kw):
+        self.active_children = []
+        for t in tabs:
+            self.active_children += t.active_children
+      
         self.tabs = tabs
         kw.update(
           split=True,
@@ -992,11 +1034,13 @@ class TabPanel(jsgen.Component):
                 return True
 
 
+
 class FormPanel(jsgen.Component):
 #~ class FormPanel(VisibleComponent):
     declare_type = jsgen.DECLARE_VAR
     value_template = "new Lino.FormPanel(%s)"
     #~ value_template = "new Ext.form.FormPanel(%s)"
+    
     def __init__(self,rh,action,main,**kw):
         self.main = main
         kw.update(
@@ -1004,6 +1048,24 @@ class FormPanel(jsgen.Component):
           #~ autoScroll=True,
           layout='fit',
         )
+        
+        on_render = []
+        #~ for e in main.walk():
+        for e in main.active_children:
+            if isinstance(e,FieldElement):
+                chooser = choosers.get_for_field(e.field)
+                if chooser:
+                    #~ lino.log.debug("20100615 %s.%s has chooser", self.lh.layout, e.field.name)
+                    for f in chooser.context_fields:
+                        #~ if main.has_field(f):
+                        varname = varname_field(f)
+                        on_render.append("%s.on('change',Lino.chooser_handler(%s,%r));" % (varname,e.ext_name,f.name))
+        
+        if on_render:
+            assert not kw.has_key('listeners')
+            kw.update(listeners=dict(render=js_code('function(){%s}' % '\n'.join(on_render))))
+        kw.update(before_row_edit=before_row_edit(main))
+        
         #~ kw.update(ls_tbar_actions=[
         #~ dict(label="First",handler=js_code('Lino.goto_pk'),iconCls='x-tbar-page-first'),
         #~ dict(label="Previous",handler=js_code('Lino.goto_pk'),iconCls='x-tbar-page-prev'),

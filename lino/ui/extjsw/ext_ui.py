@@ -867,6 +867,7 @@ class ExtUI(base.UI):
                 def row2dict(obj,d):
                     d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj[1])
                     d[ext_requests.CHOICES_VALUE_FIELD] = obj[0]
+                    return d
         else:
             def row2dict(obj,d):
                 if type(obj) is list or type(obj) is tuple:

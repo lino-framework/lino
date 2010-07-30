@@ -22,6 +22,7 @@ from django.utils.translation import ugettext as _
 import lino
 from lino import reports
 from lino import layouts
+from lino.core import actors
 #~ from lino import commands
 from lino.utils import perms
 #~ from lino import choices_method, simple_choices_method
@@ -56,10 +57,20 @@ class ReportColumn(models.Model):
     seq = models.IntegerField()
     colname = models.CharField(max_length=30)
     
+    def verbose_name(self):
+        if self.colname and self.rptconfig:
+            rpt = actors.get_actor(self.rptconfig.rptname)
+            de = rpt.get_data_elem(self.colname)
+            return reports.de_verbose_name(de)
+        #~ return '%s.%s' % (self.rptconfig.rptname,self.colname)
+        return ''
+    
     #~ @choices_method
-    @classmethod
+    #~ @classmethod
     def colname_choices(cls,rptconfig):
         return reports.column_choices(rptconfig.rptname)
+    colname_choices.simple_values = True
+    colname_choices = classmethod(colname_choices)
         
 class ReportConfigDetail(layouts.DetailLayout):
     datalink = 'system.ReportConfig'
@@ -74,6 +85,7 @@ class ReportConfigs(reports.Report):
 class ColumnsByReport(reports.Report):
     model = 'system.ReportColumn'
     fk_name = 'rptconfig'
+    column_names = 'seq colname verbose_name'
     
     
     

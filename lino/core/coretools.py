@@ -49,12 +49,15 @@ def get_unbound_meth(cl,name):
         meth = getattr(b,name,None)
         if meth is not None:
             return meth
-
+            
 def data_elems(model):
     meta = model._meta
-    for f in meta.fields: yield f.name
-    for f in meta.many_to_many: yield f.name
-    for f in meta.virtual_fields: yield f.name
+    #~ for f in meta.fields: yield f.name
+    #~ for f in meta.many_to_many: yield f.name
+    #~ for f in meta.virtual_fields: yield f.name
+    for f in meta.fields: yield f
+    for f in meta.many_to_many: yield f
+    for f in meta.virtual_fields: yield f
     # todo: for slave in self.report.slaves
     
 def get_data_elem(model,name):
