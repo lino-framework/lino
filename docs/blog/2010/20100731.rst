@@ -1,0 +1,54 @@
+20100731
+========
+
+Diese Nacht hatte ich zwei Stunden gesurft und nach Ideen gesucht, was ich falsch mache beim Bildschirmaufbau. 
+Ohne Erfolg. 
+Es geht um folgenden Punkt aus der :doc:`/todo`:
+
+- Das "Öffnen" eines neuen "Fensters" ist langsamer als im UI mit echten Fenstern (:extjs:`Ext.Window`). 
+  Weil jetzt der Inhalt des alten Fensters zunächst aus dem Viewport entfernt wird. 
+  Einfach ein neues Ext.Window zu öffnen und über den vorigen Browserinhalt zu knallen ging offenbar schneller.
+  
+Heute morgen habe ich unsere beiden Schornsteine gefegt und wollte nach dem Mittagessen eigentlich den Rasen mähen gehen. 
+Aber da kam mir eine Idee für :js:func:`Lino.WindowWrapper.show` und :js:func:`Lino.WindowWrapper.close`. 
+Bisher waren diese beiden Funktionen wie folgt::
+
+  show : function() {
+      var main = Ext.getCmp('main_area');
+      var old = main.items.first();
+      Lino.hidden_windows.push(old);
+      Ext.apply(this.window,{autoSize: true,id:'current_window'});
+      main.items.replace(this.window);
+      main.doLayout();
+  },
+  close : function() { 
+      var main = Ext.getCmp('main_area');
+      var current = main.items.first();
+      var w = Lino.hidden_windows.pop();
+      if (w) { 
+        main.items.replace(w);
+      } else {
+        main.removeAll();
+      }
+      current.destroy();
+  }
+
+Zu bemerken ist, dass das `this.window` eines WindowWrapper ja kein :extjs:`Ext.Window` mehr ist, sondern ein :extjs:`Ext.Panel`.
+Jetzt zu meiner Idee. 
+Anstatt das so kompliziert zu machen, mache ich einfach::
+
+
+  show : function() {
+      Ext.apply(this.window,{renderTo: 'main_area', constrain:true, maximized:true });
+      this.window.show();
+  },
+  close : function() { 
+      this.window.close();
+  }
+
+Und außerdem ist das `this.window` jetzt wieder ein Ext.Window.
+Voilà. Ich bin nicht sicher, ob die Fenster jetzt tatsächlich *schneller* gerendert werden, aber durch irgendeinen Zaubertrick, 
+den :extjs:`Ext.Window` offensichtlich benutzt, sieht man jetzt nicht mehr mit bloßem Auge, wie der Fensterinhalt 
+stückweise aufgebaut wird.
+
+Check-In und Rasenmähen.

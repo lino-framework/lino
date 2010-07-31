@@ -858,23 +858,24 @@ Lino.SimpleRemoteComboFieldElement = Ext.extend(Lino.RemoteComboFieldElement,{
   valueField: null
 });
 
-Lino.WindowWrapperBase = {
+Lino.old_WindowWrapperBase = {
   show : function() {
       //~ console.time('WindowWrapper.show()');
     //~ console.log('Lino.WindowWrapper.show',this);
       var main = Ext.getCmp('main_area');
       //~ main.suspendEvents();
+      //~ main.hide();
       //~ console.log(main);
       var old = main.items.first();
       Lino.hidden_windows.push(old);
       //~ console.log(main.items);
       //~ Ext.apply(this.window,{autoSize: true});
       Ext.apply(this.window,{autoSize: true,id:'current_window'});
+      //~ main.el.dom.innerHtml = '<div>coucou</div>'
       main.items.replace(this.window);
       //~ console.log(main.items);
-      //~ main.removeAll();
-      //~ main.add(this.window);
       main.doLayout();
+      //~ main.show();
       //~ main.resumeEvents();
       //~ console.timeEnd('WindowWrapper.show()');
   },
@@ -893,9 +894,22 @@ Lino.WindowWrapperBase = {
   }
 };
 
+Lino.WindowWrapperBase = {
+  show : function() {
+      //~ console.time('WindowWrapper.show()');
+      //~ Ext.apply(this.window,{renderTo: 'main_area'});
+      this.window.show();
+  },
+  close : function() { 
+      this.window.close();
+  }
+};
+
+
 Lino.IndexWrapper = function(config) {
-  Ext.apply(config,{layout:'fit'});
-  this.window = new Ext.Panel(config);
+  Ext.apply(config,{layout:'fit',maximized:true, constrain: true, renderTo: 'main_area'});
+  //~ this.window = new Ext.Panel(config);
+  this.window = new Ext.Window(config);
 };
 
 Ext.override(Lino.IndexWrapper,Lino.WindowWrapperBase);
@@ -917,7 +931,7 @@ Lino.WindowWrapper = function(caller,config,params) {
   this.setup();
   this.main_item.ww = this;
   if (config.data_record) {
-    console.log('Lino.WindowWrapper with data_record');
+    //~ console.log('Lino.WindowWrapper with data_record');
     this.main_item.load_master_record(config.data_record);
     return;
   } 
@@ -930,15 +944,17 @@ Lino.WindowWrapper = function(caller,config,params) {
 
 Ext.override(Lino.WindowWrapper,Lino.WindowWrapperBase);
 
-Lino.hidden_windows = [];
+//~ Lino.hidden_windows = [];
 
 //~ Ext.apply(Lino.WindowWrapper.prototype,{
 Ext.override(Lino.WindowWrapper,{
   closeAction : 'close',
   setup : function() { 
     //~ console.log('Lino.WindowWrapper.setup',this);
-    this.window = new Ext.Panel({ 
+    this.window = new Ext.Window({ 
       layout: "fit", 
+      maximized: true,
+      renderTo: 'main_area', constrain: true,
       //~ autoHeight: true,
       title: this.config.title,
       items: this.main_item, 

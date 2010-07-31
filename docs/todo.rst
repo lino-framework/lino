@@ -4,10 +4,8 @@ To-Do-Liste
 Kurzfristig
 -----------
 
-- Das "Öffnen" eines neuen "Fensters" ist langsamer als im UI mit echten Fenstern (:extjs:`Ext.Window`). 
-  Weil jetzt der Inhalt des alten Fensters zunächst aus dem Viewport entfernt wird. 
-  Einfach ein neues Ext.Window zu öffnen und über den vorigen Browserinhalt zu knallen ging offenbar schneller.
-  
+- Bei prev/next im Detail werden die Slavegrids nicht aktualisiert.
+
 - disabled_fields lassen sich in der Grid bearbeiten.
 
 - Der Tool-Button zum Speichern der Konfiguration gehört nicht mehr in den Rahmen des "Fensters", sondern in die tbar des GridPanels. Das Ganze heißt auch nicht mehr "window config", sondern "grid config". 

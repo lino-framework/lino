@@ -453,13 +453,15 @@ class ExtUI(base.UI):
         #~ main=ext_elems.ExtPanel(
         main=dict(
           id="main_area",
+          xtype='container',
           region="center",
-          layout='fit'          
+          layout='fit',
+          html=self.site.index_html.encode('ascii','xmlcharrefreplace'),
         )
-        if not on_ready:
-            on_ready = [
-              'new Lino.IndexWrapper({html:%s}).show();' % 
-                py2js(self.site.index_html.encode('ascii','xmlcharrefreplace'))]
+        #~ if not on_ready:
+            #~ on_ready = [
+              #~ 'new Lino.IndexWrapper({html:%s}).show();' % 
+                #~ py2js(self.site.index_html.encode('ascii','xmlcharrefreplace'))]
             #~ main.update(items=dict(layout='fit',html=self.site.index_html.encode('ascii','xmlcharrefreplace')))
         #~ main.update(id='main_area',region='center')
         comps = [
@@ -517,30 +519,12 @@ class ExtUI(base.UI):
         #~ yield '<!-- page specific -->'
         yield '<script type="text/javascript">'
 
-        #~ yield "Lino.load_master = function(store,caller,record) {"
-        #~ # yield "  console.log('load_master() mt=',caller.content_type,',mk=',record.id);"
-        #~ yield "  store.setBaseParam(%r,caller.content_type);" % ext_requests.URL_PARAM_MASTER_TYPE
-        #~ yield "  store.setBaseParam(%r,record.id);" % ext_requests.URL_PARAM_MASTER_PK
-        #~ yield "  store.load();" 
-        #~ yield "};"
-                
-            
-        #~ yield "Lino.search_handler = function(caller) { return function(field, e) {"
-        #~ yield "  if(e.getKey() == e.RETURN) {"
-        #~ # yield "    console.log('keypress',field.getValue(),store)"
-        #~ yield "    caller.main_grid.getStore().setBaseParam('%s',field.getValue());" % ext_requests.URL_PARAM_FILTER
-        #~ yield "    caller.main_grid.getStore().load({params: { start: 0, limit: caller.pager.pageSize }});" 
-        #~ yield "  }"
-        #~ yield "}};"
-            
         yield 'Ext.onReady(function(){'
         #~ yield "console.time('onReady');"
+        yield "Ext.BLANK_IMAGE_URL = '%sextjs/resources/images/default/s.gif';" % settings.MEDIA_URL
         for ln in jsgen.declare_vars(comps):
             yield '  ' + ln
             
-        #~ for cmp in comps:
-            #~ yield '  %s.render();' % cmp.as_ext()
-        
         yield '  var viewport = new Ext.Viewport({layout:"border",items:%s});' % py2js(comps)
         yield '  Ext.QuickTips.init();'
         

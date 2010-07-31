@@ -20,7 +20,7 @@ Stattdessen muss Lino.GridPanel auch einen `before_row_edit` kriegen.
 20100730
 ========
 
-14 Uhr. Super : `system.ReportColum.colname` im Slave-Grid des `Details einer ReportConfig <http://127.0.0.1:8000/api/system/ReportConfigs/1?fmt=detail>`_  kriegt jetzt den Context gesetzt und lässt sich auswählen. 
+14 Uhr. Check-In 1094. Super : `system.ReportColum.colname` im Slave-Grid des `Details einer ReportConfig <http://127.0.0.1:8000/api/system/ReportConfigs/1?fmt=detail>`_  kriegt jetzt den Context gesetzt und lässt sich auswählen. 
 Dazu waren noch einige Umtrukturierungen nötig:
 
 - `before_row_edit` war bisher ein config parameter des WindowWrappers. Jetzt ist es auf dem main panel (GridPanel bzw. FormPanel). 
@@ -37,13 +37,13 @@ Dazu waren noch einige Umtrukturierungen nötig:
           if e is not self.main and isinstance(e,ext_elems.GridElement):
               yield "%s.ww = ww;" % e.ext_name
 
-Check-In 1.
 
-2030 Uhr : Noch ein paar Fehler weniger:
+20.30 Uhr : Check-In 1095. Wieder ein paar Fehler weniger:
 
 - Passfotos wurden nicht angezeigt, 
-- Klick auf 'remarks' öffnete ebenfalls das Foto, 
+- Klick auf 'remarks' öffnete ein neues Fenster
 - bei jedem load_master_record wurde ein onclick-Handler hinzugefügt (also nach 5x next und dann click aufs Foto öffneten sich 5 Fenster)
+
 
 TODO:
 
