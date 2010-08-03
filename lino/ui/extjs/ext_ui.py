@@ -135,7 +135,7 @@ def elem2rec(request,rh,elem):
 
 class ExtUI(base.UI):
     _response = None
-    name = 'extjsw'
+    name = 'extjs'
     verbose_name = "ExtJS with Windows"
     window_configs_file = os.path.join(settings.PROJECT_DIR,'window_configs.pck')
     Panel = ext_elems.Panel
@@ -396,8 +396,8 @@ class ExtUI(base.UI):
             yield '<script type="text/javascript" src="%sextjs/Exporter-all.js"></script>' % settings.MEDIA_URL 
 
         #~ yield '<!-- overrides to library -->'
-        yield '<link rel="stylesheet" type="text/css" href="%slino/extjsw/lino.css">' % settings.MEDIA_URL
-        yield '<script type="text/javascript" src="%slino/extjsw/lino.js"></script>' % settings.MEDIA_URL
+        yield '<link rel="stylesheet" type="text/css" href="%slino/extjs/lino.css">' % settings.MEDIA_URL
+        yield '<script type="text/javascript" src="%slino/extjs/lino.js"></script>' % settings.MEDIA_URL
         yield '<script type="text/javascript" src="%s"></script>' % (
             settings.MEDIA_URL + "/".join(self.js_cache_name(self.site)))
 

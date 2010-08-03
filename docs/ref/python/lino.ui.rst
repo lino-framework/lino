@@ -1,7 +1,9 @@
-Ui Documentation
-================
+The `lino.ui` Package 
+=====================
 
-This page contains the Ui Package documentation.
+This contains possible user interfaces for Lino applications. 
+Currently only :mod:`lino.ui.extjs` works.
+
 
 Subpackages
 -----------
@@ -9,8 +11,7 @@ Subpackages
 .. toctree::
 
     lino.ui.console
-    lino.ui.extjsu
-    lino.ui.extjsw
+    lino.ui.extjs
 
 The :mod:`base` Module
 ----------------------

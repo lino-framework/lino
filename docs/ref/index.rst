@@ -13,5 +13,6 @@ Reference
    python/lino
    python/dsbe
    javascript
+   obsolete
    
    

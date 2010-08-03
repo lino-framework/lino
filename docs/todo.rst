@@ -4,9 +4,8 @@ To-Do-Liste
 Kurzfristig
 -----------
 
-- `disabled_fields` auch in der Grid sperren.
-- South aktivieren
 - Insert in Persons sagt `{ msg: "Failed to save  : {'name': [u'Dieses Feld darf nicht leer sein.']}", success: false }`. 
+- South aktivieren
 - Der Tool-Button zum Speichern der Konfiguration gehört nicht mehr in den Rahmen des "Fensters", sondern in die tbar des GridPanels. Das Ganze heißt auch nicht mehr "window config", sondern "grid config". 
   Neben Kolonnenbreiten müssen darin auch Kolonnenreihenfolge, Kolonnenfilter und Daten-Sortierfolge
   gespeichert werden.
@@ -63,7 +62,9 @@ Langfristig
 - `Report.date_format` muss in der Syntax des UI (d.h. ExtJS) angegeben werden. 
 - Prüfen, ob Dokumentvorlagen im `XSL-FO-Format <http://de.wikipedia.org/wiki/XSL-FO>`__ besser wären. `Apache FOP <http://xmlgraphics.apache.org/fop/>`__ als Formatierer. Warum OpenOffice.org nicht schon lange XSL-FO kann, ist mir ein Rätsel. AbiWord dagegen soll es können (laut `1 <http://www.ibm.com/developerworks/xml/library/x-xslfo/>`__ und `2 <http://searjeant.blogspot.com/2008/09/generating-pdf-from-xml-with-xsl-fo.html>`__).
 - Inwiefern überschneiden sich :mod:`lino.modlib.system.models.SiteConfig` und :mod:`django.contrib.sites`? 
+
 - Actions:
+
   - Aktionen brauchen nicht unbedingt in :meth:`lino.reports.Report.do_setup` instanziert zu werden. Von den Standard-Aktionen GridEdit, DeleteSelected usw. reicht eine einzige Instanz. :attr:`Action.actor` käme dann weg, und :meth:`Action.__str__` könnte dann in dieser Form nicht mehr benutzt werden.
   - :attr:`Action.name` ist ja im Grunde ein kurzer Name, der pro Actor identifizierend ist. Der Vorteil ist, dass man sich beim Entwerfen von Reports keinen solchen Namen auszudenken braucht, also dass der Programmierer einer  Aktion auch deren Namen festlegt. Wenn zwei verschiedene Aktionen den gleichen Namen haben, wird nur die letzte beibehalten und eine Warnung in der :file:`lino.log` gemacht.
   - Übersicht der Aktionen, die momentan benutzt werden:

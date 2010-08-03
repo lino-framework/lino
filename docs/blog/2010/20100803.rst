@@ -25,6 +25,6 @@ Jedenfalls muss `disabled_fields` *pro Record* und *vom Server* ermittelt werden
 24 Uhr
 ------
 
-Ha! Die Idee: nicht wie ich mir das heute morgen dachte, sondern einfach im Store ein Pseudo-Datenfeld 'disabled_fields' definieren. Dazu leiste ich uns sogar eine eigene Klasse :class:`lino.ui.extjsw.ext_store.DisabledFieldsStoreField`.
+Ha! Die Erleuchtung (nach einem Tag des Grübelns): nicht wie ich mir das heute morgen dachte, sondern einfach im Store ein Pseudo-Datenfeld 'disabled_fields' definieren. Dazu brauchen wir eine eigene Klasse :class:`lino.ui.extjsw.ext_store.DisabledFieldsStoreField`, die eine ganz neue Art von :class:`lino.ui.extjsw.ext_store.StoreField` ist, weil sie keinem existierenden `django.db.models.Field` entspricht. Deshalb darf man bis auf weiteres in keinem Model ein *echtes* Datenbankfeld mit dem Namen 'disabled_fields' definieren. Falls das mal stören sollte, muss ich den verwendeten Namen z.B. nach '_disabled_fields' ändern.
 
-Nebenbei: lino.ui.extjsu kann jetzt weg. Demnächst wird extjsw wieder nach extjs umbenannt.
+Nebenbei: :mod:`lino.ui.extjsu` kann jetzt weg. Und :mod:`lino.ui.extjsw` heißt jetzt wieder  :mod:`lino.ui.extjs`.
