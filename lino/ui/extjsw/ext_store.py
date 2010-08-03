@@ -10,6 +10,11 @@
 ## GNU General Public License for more details.
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+"""
+
+Defines the `Store` class and its fields 
+
+"""
 
 from dateutil import parser as dateparser
 
@@ -39,7 +44,7 @@ class StoreField(object):
     def parse_form_value(self,v):
         return self.field.to_python(v)
         
-    def obj2json(self,obj,d):
+    def obj2json(self,request,obj,d):
         #d[self.field.name] = getattr(obj,self.field.name)
         #v = getattr(obj,self.field.name)
         #d[self.field.name] = self.field.value_to_string(obj)
@@ -67,6 +72,23 @@ class StoreField(object):
         except exceptions.ValidationError,e:
             lino.log.exception("%s = %r : %s",self.field.name,v,e)
             raise 
+
+class DisabledFieldsStoreField(StoreField):
+    """
+    See :doc:`/blog/2010/20100803`
+    """
+    def __init__(self,report):
+        self.options = dict(name='disabled_fields')
+        self.report = report
+        
+    def parse_form_value(self,v):
+        pass
+        
+    def obj2json(self,request,obj,d):
+        d.update(disabled_fields=[ext_requests.form_field_name(f) for f in self.report.disabled_fields(request,obj)])
+
+    def form2obj(self,instance,post_data):
+        pass
 
         
 #~ class PropertiesStoreField(StoreField):
@@ -114,7 +136,7 @@ class DateStoreField(StoreField):
         kw['type'] = 'date'
         StoreField.__init__(self,field,**kw)
         
-    def unused_obj2json(self,obj,d): # date conversion done by py2js
+    def unused_obj2json(self,request,obj,d): # date conversion done by py2js
         value = getattr(obj,self.field.name)
         if value is not None:
             value = value.strftime(self.date_format)
@@ -128,7 +150,7 @@ class DateStoreField(StoreField):
 
 class MethodStoreField(StoreField):
   
-    def obj2json(self,obj,d):
+    def obj2json(self,request,obj,d):
         meth = getattr(obj,self.field.name)
         #lino.log.debug('MethodStoreField.obj2json() %s',self.field.name)
         d[self.field.name] = meth()
@@ -161,7 +183,7 @@ class OneToOneStoreField(StoreField):
             #~ v = self.field.rel.to.objects.get(pk=v)
         #~ instance[self.field.name] = v
         
-    def obj2json(self,obj,d):
+    def obj2json(self,request,obj,d):
         try:
             v = getattr(obj,self.field.name)
         except self.field.rel.to.DoesNotExist,e:
@@ -189,7 +211,7 @@ class ComboStoreField(StoreField):
             v = self.parse_form_value(v)
         setattr(instance,self.field.name,v)
 
-    def obj2json(self,obj,d):
+    def obj2json(self,request,obj,d):
         value,text = self.get_value_text(obj)
         d[self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX] = value
         d[self.field.name] = text
@@ -245,6 +267,11 @@ class ForeignKeyStoreField(ComboStoreField):
 
 
 class Store(Component):
+    """
+    
+    Represents an :extjs:`Ext.data.JsonStore`.
+    
+    """
     #declare_type = jsgen.DECLARE_THIS
     #~ declare_type = jsgen.DECLARE_VAR
     declare_type = jsgen.DECLARE_INLINE
@@ -267,6 +294,7 @@ class Store(Component):
         if not self.pk in fields:
             fields.add(self.pk)
         self.fields = [ self.create_field(fld) for fld in fields ]
+        self.fields.append(DisabledFieldsStoreField(rh.report))
         #~ self.fields.append(PropertiesStoreField)
         #~ self.fields_dict = dict([(f.field.name,f) for f in self.fields])
           
@@ -367,11 +395,11 @@ class Store(Component):
                     f.get_from_form(instance,form_values)
         return instance
 
-    def row2dict(self,row):
+    def row2dict(self,request,row):
         d = {}
         for f in self.fields:
             #~ if not f.field.primary_key:
-            f.obj2json(row,d)
+            f.obj2json(request,row,d)
         return d
 
     #~ def js_declare(self):

@@ -4,10 +4,9 @@ To-Do-Liste
 Kurzfristig
 -----------
 
-- Bei prev/next im Detail werden die Slavegrids nicht aktualisiert.
-
-- disabled_fields lassen sich in der Grid bearbeiten.
-
+- `disabled_fields` auch in der Grid sperren.
+- South aktivieren
+- Insert in Persons sagt `{ msg: "Failed to save  : {'name': [u'Dieses Feld darf nicht leer sein.']}", success: false }`. 
 - Der Tool-Button zum Speichern der Konfiguration gehört nicht mehr in den Rahmen des "Fensters", sondern in die tbar des GridPanels. Das Ganze heißt auch nicht mehr "window config", sondern "grid config". 
   Neben Kolonnenbreiten müssen darin auch Kolonnenreihenfolge, Kolonnenfilter und Daten-Sortierfolge
   gespeichert werden.
@@ -28,7 +27,7 @@ Fehlende Grundfunktionen
 Kleinkram
 ---------
 
-- Das Passfoto in dsbe.PersonDetail ist noch nicht korrekt ausgeschnitten.
+- Das Passfoto in dsbe.PersonDetail ist manchmal verzerrt oder noch nicht korrekt ausgeschnitten.
 
 - Wenn man direkt auf einen permalink einsteigt und dieses Fenster dann schließt, dann sieht man nicht den IndexWrapper. Wäre logisch, wenn der auch bei Permalink als erstes erstellt würde. 
 - Lustiger und ungewollter Effekt beim Öffnen eines neuen Fensters: das alte scheint vom neuen nach unten verschoben zu werden. 
@@ -44,6 +43,12 @@ Kleinkram
 - Ob ein Detail-Fenster Sklave ist oder nicht, könnte ich den Benutzer selber entscheiden lassen.
 - `lino.test_apps.journals` funktioniert nicht bzw. wird nicht ausgeführt. Sieht aus als Django-Ticket 11696 doch noch nicht behoben ist. Aber mein Patch 20091107.diff funktioniert nicht mehr und ich bin auch noch nicht sicher. Muss vielleicht mal einen Testcase schreiben, um das Problem zu identifizieren...
 
+Dokumentation
+-------------
+
+- Anwendung lino.demo, die zum Generieren der Sphinx-Dokumentation bentuzt wird.
+- Intersphinx nutzen und Lino von Lino-DSBE trennen
+- dsbe.saffre-rumma.ee und igen.saffre-rumma.ee sollten nicht die Demo, sondern die Projekt-Doku zeigen. Für Demos wäre es ja elegant, einen Site demos.s-r.ee zu haben. Aber einfacher ist wahrscheinlich dsbe-demo.s-r-ee
 
 Langfristig
 -----------
@@ -77,5 +82,7 @@ Langfristig
   SubmitDetail           SubmitDetail  OK-Button in detail
   SubmitInsert           SubmitInsert  OK-Button in insert
   ====================== ============= =======================================================
+
+- Die interne Kolonnenliste eines Reports ist ja konstant. Also sollte ein Record im fmt=json nicht als ``dict`` sondern als ``list`` repräsentiert werden.
 
    

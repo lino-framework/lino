@@ -93,6 +93,10 @@ def json_response(x):
     return HttpResponse(s, mimetype='text/html')
 
 def elem2rec(request,rh,elem):
+    rec = dict(id=elem.pk,
+      data=rh.store.row2dict(request,elem),
+      #~ disabled_fields=[ext_elems.form_field_name(f) for f in rh.report.disabled_fields(request,elem)],
+      title=unicode(elem))
     first = None
     prev = None
     next = None
@@ -122,130 +126,11 @@ def elem2rec(request,rh,elem):
               pass
           if prev is not None: prev = prev.pk
           if next is not None: next = next.pk
-    return dict(id=elem.pk,
-      navinfo=dict(first=first,prev=prev,next=next,last=last,msg="Row %d of %d" % (recno,ar.total_count)),
-      data=rh.store.row2dict(elem),
-      disabled_fields=[ext_elems.form_field_name(f) for f in rh.report.disabled_fields(request,elem)],
-      title=unicode(elem))
-
+      rec.update(navinfo=dict(first=first,prev=prev,next=next,last=last,msg="Row %d of %d" % (recno,ar.total_count)))
+    return rec
             
     
-def unused_handle_list_request(request,rh):
-    if not rh.report.can_view.passes(request.user):
-        msg = "User %s cannot view %s." % (request.user,rh.report)
-        return http.HttpResponseForbidden()
-    a = rh.report.default_action
-    #~ a = rh.report.list_action
-    ar = ext_requests.ViewReportRequest(request,rh,a)
-    if request.method == 'POST':
-        """
-        Wikipedia:
-        Create a new entry in the collection where the ID is assigned automatically by the collection. 
-        The ID created is usually included as part of the data returned by this operation. 
-        """
-        #~ data = rh.store.get_from_form(request.POST)
-        #~ instance = ar.create_instance(**data)
-        instance = ar.create_instance()
-        rh.store.form2obj(request.POST,instance)
-        instance.save(force_insert=True)
-        return json_response_kw(success=True,msg="%s has been created" % instance)
-        
-        
-    if request.method == 'GET':
-        fmt = request.GET.get('fmt',None)
-        if fmt == 'csv':
-            response = HttpResponse(mimetype='text/csv')
-            w = ucsv.UnicodeWriter(response)
-            names = [] # fld.name for fld in self.fields]
-            fields = []
-            for col in ar.ah.list_layout._main.column_model.columns:
-                names.append(col.editor.field.name)
-                fields.append(col.editor.field)
-            w.writerow(names)
-            for row in ar.queryset:
-                values = []
-                for fld in fields:
-                    # uh, this is tricky...
-                    meth = getattr(fld,'_return_type_for_method',None)
-                    if meth is not None:
-                        v = meth(row)
-                    else:
-                        v = fld.value_to_string(row)
-                    #lino.log.debug("20100202 %r.%s is %r",row,fld.name,v)
-                    values.append(v)
-                w.writerow(values)
-            return response
-            
-        if fmt is None:
-            #~ if rh.report.use_layouts:
-                #~ def row2dict(row):
-                    #~ d = {}
-                    #~ for fld in rh.store.fields:
-                        #~ fld.obj2json(row,d)
-                    #~ return d
-            #~ else:
-                #~ row2dict = rh.report.row2dict
-            #~ rows = [ row2dict(row,{}) for row in ar.queryset ]
-            
-            rows = [ ar.row2dict(row) for row in ar.queryset ]
-            total_count = ar.total_count
-            #lino.log.debug('%s.render_to_dict() total_count=%d extra=%d',self,total_count,self.extra)
-            # add extra blank row(s):
-            #~ for i in range(0,ar.extra):
-            if ar.extra:
-                row = ar.create_instance()
-                d = ar.row2dict(row)
-                d[rh.report.model._meta.pk.name] = -99999
-                rows.append(d)
-                total_count += 1
-            return json_response_kw(count=total_count,rows=rows,title=unicode(ar.get_title()))
-
-
-    raise Http404("Method %s not supported for container %s" % (request.method,rh))
     
-    
-def unused_handle_element_request(request,ah,elem):
-    if not ah.report.can_view.passes(request.user):
-        msg = "User %s cannot view %s." % (request.user,ah.report)
-        return http.HttpResponseForbidden()
-    if request.method == 'DELETE':
-        elem.delete()
-        return HttpResponseDeleted()
-    if request.method == 'PUT':
-        data = http.QueryDict(request.raw_post_data)
-        try:
-            ah.store.form2obj(data,elem)
-        except exceptions.ValidationError,e:
-            return json_response_kw(success=False,msg=unicode(e))
-        try:
-            elem.save(force_update=True)
-        except IntegrityError,e:
-            #~ print unicode(elem)
-            lino.log.exception(e)
-            return json_response_kw(success=False,
-                  msg=_("There was a problem while saving your data:\n%s") % e)
-        return json_response_kw(success=True,
-              msg="%s has been saved" % elem)
-              
-    if request.method == 'GET':
-        fmt = request.GET.get('fmt',None)
-        if fmt is None:
-            return json_response_kw(id=elem.pk,
-              data=ah.store.row2dict(elem),
-              disabled_fields=[ext_elems.form_field_name(f) for f in ah.report.disabled_fields(request,elem)],
-              title=unicode(elem))
-        if fmt == 'picture':
-            pm = mixins.get_print_method('picture')
-        else:
-            pm = elem.get_print_method(fmt)
-            if pm is None:
-                raise Http404("%r has no print method (fmt=%r)" % (elem,fmt))
-        target = pm.get_target_url(elem)
-        if target is None:
-            raise Http404("%s could not build %r" % (pm,elem))
-        return http.HttpResponseRedirect(target)
-    raise Http404("Method %r not supported for elements of %s" % (request.method,ah.report))
-        
 
 
 class ExtUI(base.UI):
@@ -500,18 +385,18 @@ class ExtUI(base.UI):
             widget_library = 'ext-all'
         #~ yield '<!-- ExtJS library: all widgets -->'
         yield '<script type="text/javascript" src="%sextjs/%s.js"></script>' % (settings.MEDIA_URL, widget_library)
-        if True:
-            yield '<style type="text/css">'
-            # http://stackoverflow.com/questions/2106104/word-wrap-grid-cells-in-ext-js 
-            yield '.x-grid3-cell-inner, .x-grid3-hd-inner {'
-            yield '  white-space: normal;' # /* changed from nowrap */
-            yield '}'
-            yield '</style>'
+        #~ if True:
+            #~ yield '<style type="text/css">'
+            #~ # http://stackoverflow.com/questions/2106104/word-wrap-grid-cells-in-ext-js 
+            #~ yield '.x-grid3-cell-inner, .x-grid3-hd-inner {'
+            #~ yield '  white-space: normal;' # /* changed from nowrap */
+            #~ yield '}'
+            #~ yield '</style>'
         if False:
             yield '<script type="text/javascript" src="%sextjs/Exporter-all.js"></script>' % settings.MEDIA_URL 
 
         #~ yield '<!-- overrides to library -->'
-        yield '<link rel="stylesheet" type="text/css" href="%slino/extjsu/lino.css">' % settings.MEDIA_URL
+        yield '<link rel="stylesheet" type="text/css" href="%slino/extjsw/lino.css">' % settings.MEDIA_URL
         yield '<script type="text/javascript" src="%slino/extjsw/lino.js"></script>' % settings.MEDIA_URL
         yield '<script type="text/javascript" src="%s"></script>' % (
             settings.MEDIA_URL + "/".join(self.js_cache_name(self.site)))
@@ -660,17 +545,6 @@ class ExtUI(base.UI):
                 return response
                 
             if fmt == 'json':
-            #~ if fmt is None:
-                #~ if rh.report.use_layouts:
-                    #~ def row2dict(row):
-                        #~ d = {}
-                        #~ for fld in rh.store.fields:
-                            #~ fld.obj2json(row,d)
-                        #~ return d
-                #~ else:
-                    #~ row2dict = rh.report.row2dict
-                #~ rows = [ row2dict(row,{}) for row in ar.queryset ]
-                
                 rows = [ ar.row2dict(row) for row in ar.queryset ]
                 total_count = ar.total_count
                 #lino.log.debug('%s.render_to_dict() total_count=%d extra=%d',self,total_count,self.extra)
@@ -1091,21 +965,21 @@ class ExtUI(base.UI):
         
     def a2btn(self,a,**kw):
         if isinstance(a,actions.SubmitDetail):
-            #~ kw.update(client_side=True)
-            #~ kw.update(scope=js_code('this'))
-            kw.update(handler=js_code('Lino.submit_detail'))
+            kw.update(panel_btn_handler=js_code('Lino.submit_detail'))
         elif isinstance(a,actions.SubmitInsert):
-            #~ kw.update(client_side=True)
-            #~ kw.update(scope=js_code('this'))
-            kw.update(handler=js_code('Lino.submit_insert'))
+            kw.update(panel_btn_handler=js_code('Lino.submit_insert'))
         elif isinstance(a,actions.ShowDetailAction):
             #~ kw.update(handler=js_code("function(ww) { Lino.%s(ww,{data_record:ww.get_current_record()})}" % a))
-            kw.update(handler=js_code("function(ww) { Lino.%s(ww,{record_id:ww.get_current_record().id})}" % a))
+            #~ kw.update(handler=js_code("function(ww) { Lino.%s(ww,{record_id:ww.get_current_record().id})}" % a))
+            js = "Lino.%s(panel,{record_id:ww.get_current_record().id});" % a
+            #~ js = "btn.el.setStyle({cursor:'wait'}); %s btn.el.setStyle({cursor:'normal'});" % js
+            #~ js = "btn.disable(); %s btn.enable();" % js
+            js = "console.time('%s'); %s console.timeEnd('%s');" % (a,js,a)
+            js = "function(panel,btn) { %s }" % js
+            kw.update(panel_btn_handler=js_code(js))
         else:
-            kw.update(handler=js_code("Lino.%s" % a))
+            kw.update(panel_btn_handler=js_code("Lino.%s" % a))
         kw.update(
-          #~ opens_a_slave=a.opens_a_slave,
-          #~ name=a.name,
           text=unicode(a.label),
         )
         return kw

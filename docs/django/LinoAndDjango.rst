@@ -43,12 +43,12 @@ Lino integrates to your site through the `urls.py` in a similar way than Admin d
 Lino sites are normal Django sites, but your :setting:`INSTALLED_APPS` will usually contain applications designed to use Lino.
 
 Lino applications are basically normal Django applications, but 
-instead of writing `Admin` classes for your Django models, you write Reports, Layouts and Actions. You'll define these classes in your application's 'models' module.
+instead of writing `Admin` classes for your Django models, you write Reports and Layouts. 
+You'll define these classes in your application's 'models' module.
 
-Reports describe something that the user will see as a 
-Window with a Grid as main component.
+A Report describes a collection of tabular data : title, columns, model, queryset.
 
-Layouts are my self-made approach to design entry forms in a GUI-independent way.
+A Layout describes an entry form in a GUI-independent way.
 Users see them as Tabs of a Detail window (whose main component is a 
 [http://www.extjs.com/deploy/dev/examples/form/xml-form.html FormPanel])
 

@@ -99,6 +99,9 @@
   :doc:`31 <20100731>`
 
 .. |Aug| replace::  **August**
+  |br| 
+  02
+  :doc:`03 <20100803>`
 
 .. |Sep| replace::  **September**
 

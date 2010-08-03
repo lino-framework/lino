@@ -32,12 +32,6 @@ from lino.modlib.properties import models as properties # import Property, CharP
 EXT_CHAR_WIDTH = 9
 EXT_CHAR_HEIGHT = 22
 
-def form_field_name(f):
-    if isinstance(f,models.ForeignKey) or (isinstance(f,models.Field) and f.choices):
-        return f.name + ext_requests.CHOICES_HIDDEN_SUFFIX
-    else:
-        return f.name
-        
 def varname_field(f):
     if hasattr(f,'model'):
         return f.model.__name__ + '_' + f.name + '_field'
@@ -74,7 +68,7 @@ def before_row_edit(panel):
                 for f in chooser.context_fields:
                     if panel.has_field(f):
                         l.append("%s.setContextValue(%r,record.data[%r]);" % (
-                            e.ext_name,f.name,form_field_name(f)))
+                            e.ext_name,f.name,ext_requests.form_field_name(f)))
                     elif True: # f.name = panel.fk_name:
                         l.append("%s.setContextValue(%r,this.ww.get_current_record().id)" % (e.ext_name,f.name))
     return js_code('function(record){%s}' % ('\n'.join(l)))

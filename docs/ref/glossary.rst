@@ -14,8 +14,12 @@ Glossary
      
   ExtJS
     http://www.sencha.com/products/js/
+    
+  Django
+    http://docs.djangoproject.com
 
   CSC
     Context-sensitive ComboBox
     
-    
+  TIM
+      http://code.google.com/p/tim

@@ -6,6 +6,7 @@ Reference
    :maxdepth: 1
    
    glossary
+   files
    models
    fixtures
    settings

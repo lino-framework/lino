@@ -129,42 +129,11 @@ class MasterWrapper(WindowWrapper):
         WindowWrapper.__init__(self,action,lh.ui,lh,lh._main,**kw)
         
     def js_render(self):
-        yield ''
         yield "function(caller,params) { "
+        #~ yield "  Ext.getCmp('main_area').el.setStyle({cursor:'wait'});"
         for ln in jsgen.declare_vars(self.config):
             yield '  '+ln
-        if False:
-          before_row_edit = []
-          before_row_edit.append("console.log('ext_windows.py 20100531',record);")
-          yield ''
-          for e in self.main.walk():
-              if e is not self.main and isinstance(e,ext_elems.GridElement):
-                  before_row_edit.append(
-                    "this.load_slavegrid(%s,record);" % e.as_ext())
-              elif isinstance(e,ext_elems.PictureElement):
-                  before_row_edit.append(
-                    "this.load_picture(%s,record);" % e.as_ext())
-              elif isinstance(e,ext_elems.FieldElement):
-                  chooser = choosers.get_for_field(e.field)
-                  if chooser:
-                      #~ lino.log.debug("20100615 %s.%s has chooser", self.lh.layout, e.field.name)
-                      for f in chooser.context_fields:
-                          #~ assert self.lh is not None, "lh is None in %s" % self.action
-                          before_row_edit.append("%s.setContextValue(%r,record.data[%r]);" % (
-                              e.ext_name,f.name,ext_elems.form_field_name(f)))
-                          if self.main.has_field(f):
-                              varname = ext_elems.varname_field(f)
-                              #~ field_extname = chooser.model.__name__ + '_' + f.name
-                              # 20100730 yield "  %s.on('change',Lino.chooser_handler(%s,%r));" % (varname,e.ext_name,f.name)
-              #~ else:
-                  #~ yield "// data element not handled: %s" % e
-          #~ lino.log.debug("20100615 %s has %d choosers", self.lh.layout, len(before_row_edit))
-          #~ for pe in picture_elements:
-              #~ yield "%s.on('render',function(){ Lino.load_picture(ww,%s,ww.get_current_record())});" % (n,n)
-              #~ yield "ww.add_row_listener(function(sm,ri,rec) { Lino.load_picture(ww,%s,rec) });" % n
-          self.config.update(
-            before_row_edit=js_code('function(record){%s}' % ('\n'.join(before_row_edit))))
-          #~ yield "var ww = new Lino.%s(caller,function(ww) { return Ext.apply(%s,params)})" % (
+            
         yield "var ww = new Lino.%s(caller,%s,params)" % (
             self.__class__.__name__,py2js(self.config))
             

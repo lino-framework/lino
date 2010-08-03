@@ -1,0 +1,30 @@
+20100803
+========
+
+5.30 Uhr
+--------
+
+Done: 
+
+- Bei prev/next im Detail wurden die Slavegrids nicht aktualisiert.
+
+Das war mal wieder ein Problem wegen ``this``. 
+Für mich als Javascript-Anfänger und langjähriger Python-Liebhaber ist das ``this`` sehr gewöhnungsbedürftig...
+
+Weiter mit:
+
+- `disabled_fields` auch in der Grid sperren
+
+
+Das beforeedit-Event wird zwar jetzt korrekt aufgerufen, aber die Records der Grid haben noch kein Attribut `disabled_fields`. 
+
+Also muss ich in `ViewReportRequest.row2dict()` ein Level mehr produzieren (``dict(data=das_was_bisher_war,disabled_fields=[])``) und dann aber auch den :extjs:`Ext.data.JsonStore` entsprechend anpasse. Hm, das sieht nicht leicht aus...
+
+Jedenfalls muss `disabled_fields` *pro Record* und *vom Server* ermittelt werden. 
+
+24 Uhr
+------
+
+Ha! Die Idee: nicht wie ich mir das heute morgen dachte, sondern einfach im Store ein Pseudo-Datenfeld 'disabled_fields' definieren. Dazu leiste ich uns sogar eine eigene Klasse :class:`lino.ui.extjsw.ext_store.DisabledFieldsStoreField`.
+
+Nebenbei: lino.ui.extjsu kann jetzt weg. Demnächst wird extjsw wieder nach extjs umbenannt.

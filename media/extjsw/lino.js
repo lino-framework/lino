@@ -285,14 +285,16 @@ Lino.id_renderer = function(value, metaData, record, rowIndex, colIndex, store) 
   return value;
 }
 
-Lino.build_buttons = function(scope,actions) {
+Lino.build_buttons = function(panel,actions) {
   if (actions) {
     var buttons = Array(actions.length);
     for(var i=0;i<actions.length;i++) { 
       //~ console.log("build_bbar",btn.text,":",actions[i]);
-      if (actions[i].handler)
-          actions[i].handler = actions[i].handler.createCallback(scope);
+      //~ if (actions[i].handler)
+          //~ actions[i].handler = actions[i].handler.createCallback(panel);
       buttons[i] = new Ext.Toolbar.Button(actions[i]);
+      if (actions[i].panel_btn_handler)
+          buttons[i].on('click',actions[i].panel_btn_handler.createCallback(panel,buttons[i]));
       //~ var btn = {
         //~ text: actions[i].label
       //~ };
@@ -416,14 +418,14 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
       this.enable();
       this.form.loadRecord(record) 
       this.ww.window.setTitle(record.title);
-      if (record.disabled_fields) {
+      if (record.data.disabled_fields) {
         //~ console.log(20100617,record.disabled_fields);
-        for (i in record.disabled_fields) {
-            var fld = this.form.findField(record.disabled_fields[i]);
+        for (i in record.data.disabled_fields) {
+            var fld = this.form.findField(record.data.disabled_fields[i]);
             if (fld) { 
               fld.disable(); 
             } else {
-                console.log(20100617,record.disabled_fields[i], 'field not found');
+                console.log(20100617,record.data.disabled_fields[i], 'field not found');
             }
         }
       };
@@ -525,9 +527,20 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     this.store.load({params: { start: 0, limit: this.getTopToolbar().pageSize }});
   },
   
-  //~ on_beforeedit : function(e) {
-    //~ console.log('20100723 GridPanel.on_beforeedit()',e);
-  //~ },
+  on_beforeedit : function(e) {
+    console.log('20100803 GridPanel.on_beforeedit()',e);
+    if (e.record.data.disabled_fields) {
+      console.log('20100803 GridPanel.on_beforeedit()',e.record.data.disabled_fields);
+      for (i in e.record.data.disabled_fields) {
+        if(e.record.data.disabled_fields[i] == e.field) {
+          //~ console.log(20100803,'cancel');
+          e.cancel = true;
+          return
+        }
+      }
+    }
+    
+  },
   on_afteredit : function(e) {
     /*
     e.grid - This grid
@@ -575,6 +588,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     //~ this.tbar = this.pager;
     Lino.GridPanel.superclass.initComponent.call(this);
     this.on('afteredit', this.on_afteredit);
+    this.on('beforeedit', this.on_beforeedit);
     // this.main_grid.on('cellcontextmenu', Lino.cell_context_menu, this);
     this.on('resize', function(cmp,aw,ah,rw,rh) {
         cmp.getTopToolbar().pageSize = cmp.calculatePageSize(this,aw,ah,rw,rh) || 10;
@@ -661,12 +675,13 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
   },
   load_master_record : function(master_record) {
     if (master_record) {
+      cmp = this;
       var todo = function() {
         //~ var src = caller.config.url_data + "/" + record.id + ".jpg"
-        //~ console.log('Lino.load_slavegrid()',record);
-        var p = this.ww.get_master_params(master_record);
-        for (k in p) this.getStore().setBaseParam(k,p[k]);
-        this.getStore().load(); 
+        //~ console.log('load_master_record()',cmp,master_record);
+        var p = cmp.ww.get_master_params(master_record);
+        for (k in p) cmp.getStore().setBaseParam(k,p[k]);
+        cmp.getStore().load(); 
       };
       Lino.do_when_visible(this,todo);
     } 

@@ -11,6 +11,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+from django.db import models
 from django.http import HttpResponse, Http404
 from django.contrib.contenttypes.models import ContentType
 #~ from django.contrib.contenttypes import generic
@@ -42,6 +43,14 @@ POST_PARAM_SELECTED = 'selected'
 
 FMT_RUN = 'act'
 #~ FMT_JSON = 'json'
+
+def form_field_name(f):
+    if isinstance(f,models.ForeignKey) or (isinstance(f,models.Field) and f.choices):
+        return f.name + CHOICES_HIDDEN_SUFFIX
+    else:
+        return f.name
+        
+
 
 def authenticated_user(user):
     if user.is_anonymous():
@@ -168,8 +177,9 @@ class ViewReportRequest(reports.ReportActionRequest):
         if not self.report.use_layouts:
             return reports.ReportActionRequest.row2dict(self,row,d)
         d = {}
+        request = self.request
         for fld in self.store.fields:
-            fld.obj2json(row,d)
+            fld.obj2json(request,row,d)
         return d
  
 

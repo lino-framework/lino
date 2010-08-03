@@ -1,15 +1,33 @@
-Documenting Django applications with Sphinx
--------------------------------------------
+(solved) Documenting Django applications with Sphinx
+----------------------------------------------------
 
 When documenting Django applications with Sphinx arises the problem that 
 sphinx.ext.autodoc and 
 sphinx.ext.inheritance_diagram will fail to import your modules::
-
 
   (WARNING/2) autodoc can't import/find module 'mypackage.mymod', \
   it reported error: "Settings cannot be imported, because environment \
   variable DJANGO_SETTINGS_MODULE is undefined.", please check your \
   spelling and sys.path
 
-Current workaround is to manually do a 
+This is correct since `DJANGO_SETTINGS_MODULE` is not defined.
+
+Okay, I can just manually do a 
 ``set DJANGO_SETTINGS_MODULE=mymodule.settings`` before running ``make html``.
+
+My question is: how can I define an environment variable in the Makefile? The following doesn't work::
+
+  html:
+          set DJANGO_SETTINGS_MODULE=dsbe.demo.settings
+          $(SPHINXBUILD) -b html -d $(CACHEDIR) $(ALLSPHINXOPTS) . $(BUILDDIR)
+
+This is because each command line is executed in her own environment 
+("`When it is time to execute commands to update a target, they are 
+executed by making a new subshell for each line. 
+<http://ftp.gnu.org/old-gnu/Manuals/make-3.79.1/html_chapter/make_5.html#SEC46>`__")
+
+And the same section of the GNU Make manual also explains how to do it: put both commands into a single line, separating them with ";"::
+
+  html:
+          set DJANGO_SETTINGS_MODULE=dsbe.demo.settings ; \
+          $(SPHINXBUILD) -b html -d $(CACHEDIR) $(ALLSPHINXOPTS) . $(BUILDDIR)

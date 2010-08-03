@@ -22,6 +22,7 @@ Zu Punkt 1 sehe ich folgende Unterpunkte:
 
 Also im `Detail einer Reportconfig <http://127.0.0.1:8000/api/system/ReportConfigs/1?fmt=detail>`_ ist die ComboBox von rptname leer.
 Die Antwort des Servers enthält `data_record.data` wie folgt:: 
+
   {
       label: "test",
       rptname: "countries.Countries",
