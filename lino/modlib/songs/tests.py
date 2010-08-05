@@ -16,8 +16,12 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import unittest
-from lino.apps.songs.models import Song, Author
-from lino.apps.countries.models import Language
+
+from lino.modlib.tools import resolve_model
+
+Song = resolve_model('songs.Song')
+Author = resolve_model('songs.Author')
+Language = resolve_model('countries.Language')
 
 class TestCase(unittest.TestCase):
     

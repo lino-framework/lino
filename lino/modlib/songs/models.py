@@ -16,8 +16,6 @@ from django.db import models
 
 from django.utils.safestring import mark_safe
 
-from lino.utils.render import HREF
-
 from lino import reports
 from lino import layouts 
 from lino.utils import perms

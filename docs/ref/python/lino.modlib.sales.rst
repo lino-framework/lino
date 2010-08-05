@@ -1,17 +1,5 @@
-Sales Documentation
-===================
-
-This page contains the Sales Package documentation.
-
-Subpackages
------------
-
-.. toctree::
-
-    lino.modlib.sales.fixtures
-
-The :mod:`sales` Package
-------------------------
+The :mod:`lino.modlib.sales` Package
+====================================
 
 .. automodule:: lino.modlib.sales
     :members:

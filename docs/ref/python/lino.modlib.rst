@@ -20,7 +20,6 @@ Subpackages
     lino.modlib.projects
     lino.modlib.properties
     lino.modlib.sales
-    lino.modlib.sandbox
     lino.modlib.songs
     lino.modlib.system
     lino.modlib.voc

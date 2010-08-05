@@ -1,15 +1,15 @@
-Voc Documentation
-=================
+The :mod: `lino.modlib.voc` Package
+===================================
 
-This page contains the Voc Package documentation.
-
-The :mod:`makesql` Module
--------------------------
-
-.. automodule:: lino.modlib.voc.makesql
+.. automodule:: lino.modlib.voc
     :members:
     :undoc-members:
     :show-inheritance:
+
+
+.. xfile:: makesql.py
+.. xfile:: rstload.py
+
 
 The :mod:`models` Module
 ------------------------
@@ -19,13 +19,6 @@ The :mod:`models` Module
     :undoc-members:
     :show-inheritance:
 
-The :mod:`rstload` Module
--------------------------
-
-.. automodule:: lino.modlib.voc.rstload
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 The :mod:`tests` Module
 -----------------------

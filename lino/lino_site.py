@@ -74,7 +74,7 @@ if settings.MODEL_DEBUG:
     for model in models_list:
         i += 1
         lino.log.debug("  %2d: %s.%s -> %r",i,model._meta.app_label,model._meta.object_name,model)
-        lino.log.debug("      data_elems : %s",' '.join(data_elems(model)))
+        lino.log.debug("      data_elems : %s",' '.join([de.name for de in data_elems(model)]))
 
 from lino.utils import choosers
 

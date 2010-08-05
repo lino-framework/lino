@@ -1,21 +1,17 @@
-Console Documentation
-=====================
+The :mod:`lino.ui.console` Package
+==================================
 
-This page contains the Console Package documentation.
 
 The :mod:`console` Package
 --------------------------
 
-.. automodule:: lino.ui.console
-    :members:
-    :undoc-members:
-    :show-inheritance:
+.. module:: lino.ui.console
+
+(currently not maintained)
 
 The :mod:`renderers_text` Module
 --------------------------------
 
-.. automodule:: lino.ui.console.renderers_text
-    :members:
-    :undoc-members:
-    :show-inheritance:
+.. module:: lino.ui.renderers_text
 
+(currently not maintained)

@@ -77,7 +77,19 @@ def before_row_edit(panel):
 
 
 
-class ColumnModel(Component):
+class GridFilters(Component):
+    ext_suffix = "_filters"
+    declare_type = jsgen.DECLARE_VAR
+    value_template = "new Ext.ux.grid.GridFilters(%s)"
+    
+    def __init__(self,grid,**kw):
+        assert isinstance(grid,GridElement)
+        kw.update(encode='json')
+        kw.update(local=True)
+        #~ kw.update(filters=[])
+        Component.__init__(self,grid.name,**kw)
+
+class unused_ColumnModel(Component):
     #~ declare_type = jsgen.DECLARE_THIS
     declare_type = jsgen.DECLARE_VAR
     #~ declare_type = jsgen.DECLARE_INLINE
@@ -96,8 +108,8 @@ class ColumnModel(Component):
 class GridColumn(Component):
     #~ declare_type = jsgen.DECLARE_VAR
     declare_type = jsgen.DECLARE_INLINE
-    ext_suffix = "_col"
-    value_template = "new Ext.grid.Column(%s)"
+    #~ ext_suffix = "_col"
+    #~ value_template = "new Ext.grid.Column(%s)"
     
     def __init__(self,cm,editor,**kw):
         """editor may be a Panel for columns on a GenericForeignKey
@@ -106,7 +118,7 @@ class GridColumn(Component):
         #~ assert isinstance(editor,FieldElement), \
             #~ "%s.%s is a %r (expected FieldElement instance)" % (cm.grid.report,editor.name,editor)
         self.editor = editor
-        self.value_template = editor.grid_column_template
+        #~ self.value_template = editor.grid_column_template
         kw.update(self.editor.get_column_options())
         kw.update(editor=self.editor)
         #~ if isinstance(editor,FieldElement) and editor.field.primary_key:
@@ -188,7 +200,7 @@ class LayoutElement(VisibleComponent):
     editable = False
     sortable = False
     xtype = None # set by subclasses
-    grid_column_template = "new Ext.grid.Column(%s)"
+    #~ grid_column_template = "new Ext.grid.Column(%s)"
     collapsible = False
     hidden = False
     active_child = True
@@ -327,10 +339,15 @@ class FieldElement(LayoutElement):
         
     def get_column_options(self,**kw):
         #~ raise "get_column_options() %s" % self.__class__
+        #~ kw.update(xtype='gridcolumn')
         if not self.editable:
             kw.update(editable=False)
         if not self.sortable:
             kw.update(sortable=False)
+            
+        # 20100805 see also GridFilters.js
+        kw.update(filterable=True)  
+        #~ kw.update(filter=dict(type='auto'))
         kw.update(
           dataIndex=self.field.name, 
           header=unicode(self.label) if self.label else self.field.name,
@@ -461,7 +478,7 @@ class DateFieldElement(FieldElement):
     sortable = True
     preferred_width = 8 
     # todo: DateFieldElement.preferred_width should be computed from Report.date_format
-    grid_column_template = "new Ext.grid.DateColumn(%s)"
+    #~ grid_column_template = "new Ext.grid.DateColumn(%s)"
     
     def get_field_options(self,**kw):
         kw = FieldElement.get_field_options(self,**kw)
@@ -470,7 +487,7 @@ class DateFieldElement(FieldElement):
         
     def get_column_options(self,**kw):
         kw = FieldElement.get_column_options(self,**kw)
-        #kw.update(xtype='datecolumn')
+        kw.update(xtype='datecolumn')
         kw.update(format=self.lh.layout.datalink_report.date_format)
         return kw
     
@@ -484,7 +501,7 @@ class DecimalFieldElement(FieldElement):
     xtype = 'numberfield'
     sortable = True
     data_type = 'float' 
-    grid_column_template = "new Ext.grid.NumberColumn(%s)"
+    #~ grid_column_template = "new Ext.grid.NumberColumn(%s)"
     
     def __init__(self,*args,**kw):
         FieldElement.__init__(self,*args,**kw)
@@ -493,7 +510,7 @@ class DecimalFieldElement(FieldElement):
                 
     def get_column_options(self,**kw):
         kw = FieldElement.get_column_options(self,**kw)
-        #kw.update(xtype='numbercolumn')
+        kw.update(xtype='numbercolumn')
         kw.update(align='right')
         fmt = "0,000"
         if self.field.decimal_places > 0:
@@ -507,7 +524,7 @@ class BooleanFieldElement(FieldElement):
   
     xtype = 'checkbox'
     data_type = 'boolean' 
-    grid_column_template = "new Ext.grid.BooleanColumn(%s)"
+    #~ grid_column_template = "new Ext.grid.BooleanColumn(%s)"
     #~ def __init__(self,*args,**kw):
         #~ FieldElement.__init__(self,*args,**kw)
         
@@ -519,7 +536,7 @@ class BooleanFieldElement(FieldElement):
         
     def get_column_options(self,**kw):
         kw = FieldElement.get_column_options(self,**kw)
-        #kw.update(xtype='booleancolumn')
+        kw.update(xtype='booleancolumn')
         kw.update(trueText=self.lh.layout.datalink_report.boolean_texts[0])
         kw.update(falseText=self.lh.layout.datalink_report.boolean_texts[1])
         kw.update(undefinedText=self.lh.layout.datalink_report.boolean_texts[2])
@@ -547,7 +564,7 @@ class MethodElement(FieldElement):
         return_type._return_type_for_method = meth
         FieldElement.__init__(self,lh,return_type)
         delegate = lh.main_class.field2elem(lh,return_type,**kw)
-        for a in ('ext_options','get_column_options','get_field_options','grid_column_template'):
+        for a in ('ext_options','get_column_options','get_field_options'): # ,'grid_column_template'):
             setattr(self,a,getattr(delegate,a))
         
 
@@ -804,6 +821,7 @@ class GridElement(Container):
             w += (e.width or e.preferred_width)
         self.preferred_width = constrain(w,10,120)
         
+        
         Container.__init__(self,lh,name,*elements,**kw)
         assert not kw.has_key('before_row_edit')
         self.update(before_row_edit=before_row_edit(self))
@@ -820,6 +838,7 @@ class GridElement(Container):
         
         #~ self.rh = rh
         #~ lh.needs_store(rh)
+        self.gridfilters = GridFilters(self)
         #~ self.column_model = ColumnModel(self)
         #~ self.column_model = [GridColumn(self,e) for e in self.elements if not e.hidden]
         #self.mt = ContentType.objects.get_for_model(self.report.model).pk
@@ -848,6 +867,7 @@ class GridElement(Container):
           scrollOffset=200,
           emptyText="Nix gefunden!"
         ))
+        d.update(plugins=[self.gridfilters])
         #d.update(autoScroll=True)
         #d.update(fitToFrame=True)
         d.update(emptyText="Nix gefunden...")

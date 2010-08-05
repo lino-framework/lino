@@ -1,25 +1,21 @@
-Songs Documentation
-===================
+The :mod:`lino.modlib.songs` Package
+====================================
 
-This page contains the Songs Package documentation.
+.. automodule:: lino.modlib.songs
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
-Subpackages
------------
-
-.. toctree::
-
-    lino.modlib.songs.fixtures
-
-The :mod:`models` Module
-------------------------
+:mod:`models`
+-------------
 
 .. automodule:: lino.modlib.songs.models
     :members:
     :undoc-members:
     :show-inheritance:
 
-The :mod:`tests` Module
------------------------
+:mod:`tests`
+------------
 
 .. automodule:: lino.modlib.songs.tests
     :members:

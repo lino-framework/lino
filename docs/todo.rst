@@ -24,18 +24,24 @@ Kleinkram
 
 - Das Passfoto in dsbe.PersonDetail ist manchmal verzerrt oder noch nicht korrekt ausgeschnitten.
 
-- Wenn man direkt auf einen permalink einsteigt und dieses Fenster dann schließt, dann sieht man nicht den IndexWrapper. Wäre logisch, wenn der auch bei Permalink als erstes erstellt würde. 
-- Lustiger und ungewollter Effekt beim Öffnen eines neuen Fensters: das alte scheint vom neuen nach unten verschoben zu werden. 
 - Abfragen mit komplexen Bedingungen zur Suche nach Personen
+
 - Die Zeilenhöhe einer Grid muss einen sinnvollen Maximalwert kriegen. In Explorer / Notes hat man momentan den Eindruck, dass es nur eine Zeile gibt; in Wirklichkeit ist der Memo-Text der ersten Zeile so lang, dass die Zeilenhöhe größer als das Fenster ist.
+
 - Hinter das QuickFilter-Feld muss ein Button, um den Filter zu aktivieren. Dass man einfach nur ENTER drücken muss ist nicht intuitiv.
+
 - Links ordentlich anzeigen und bequem erfassen können.
-- Kolonnen-Reihenfolge in window_config speichern.
+
+- Kolonnen-Reihenfolge speichern können.
+
 - Benutzbarkeit per Tastatur verbessern (issue 11, issue 64) 
+
 - Sehen können, nach welcher Kolonne eine Grid sortiert ist.
+
 - Nach Duplikaten suchen vor Erstellen einer neuen Person (issue 85)
+
 - URLs per drag & drop registrieren können
-- Ob ein Detail-Fenster Sklave ist oder nicht, könnte ich den Benutzer selber entscheiden lassen.
+
 - `lino.test_apps.journals` funktioniert nicht bzw. wird nicht ausgeführt. Sieht aus als Django-Ticket 11696 doch noch nicht behoben ist. Aber mein Patch 20091107.diff funktioniert nicht mehr und ich bin auch noch nicht sicher. Muss vielleicht mal einen Testcase schreiben, um das Problem zu identifizieren...
 
 Dokumentation
@@ -49,14 +55,21 @@ Langfristig
 -----------
 
 - Layout von Detail-Fenstern : in Lino sind die "Zeilen" momentan ja immer im "Blocksatz" (also links- und rechtsbündig). Das ist unkonventionell: alle RIA die ich kenne, machen ihre Formulare nur linksbündig.
+
 - HtmlEditor oder TextArea? Der HtmlEditor verursacht deutliche Performanceeinbußen beim Bildschirmaufbau von Detail-Fenstern. Die Wahl sollte konfigurierbar sein. Markup auch.
+
 - "About"-Fenster mit `thanks_to()` muss irgendwo sichtbar gemacht werden.
-- In Insert-Fenstern machen Grid-Elemente keinen Sinn. Die können keine Daten enthalten, weil der Record noch keinen primary key hat. 
-- Das Detail-Fenster sollte nun auch einen permalink_name bekommen. Allerdings muss ich noch überlegen, ob und wie er sich dann merken soll, auf welchem Record er steht.
+
 - lino.test_apps.properties funktioniert nicht, scheinbar ist `actors.discover()` nicht aufgerufen worden.
+
 - Das Detail-Fenster sollte vielleicht par défaut nicht im Editier-Modus sein, sondern unten ein Button "Edit", und erst wenn man darauf klickt, werden alle Felder editierbar (und der Record in der Datenbank blockiert), und unten stehen dann zwei Buttons "Save" und "Cancel". Wobei darauf zu achten ist was passiert, wenn man während des Bearbeitens in der Grid auf eine andere Zeile klickt. Dann muss er am besten das Detail-Fenster speichern, und falls dort ungültige Daten stehen, in der Grid den Zeilenwechsel verweigern.
+
 - `Report.date_format` muss in der Syntax des UI (d.h. ExtJS) angegeben werden. 
+
+- Scripts wie :xfile:`fill.py`, :xfile:`load_tim.py`, :xfile:`send_invoices.py` usw. sollten durch `django-admin commands <http://docs.djangoproject.com/en/dev/howto/custom-management-commands/#howto-custom-management-commands>`_ ersetzt werden. Dazu brauche ich wahrscheinlich ein `Signal <http://docs.djangoproject.com/en/dev/topics/signals/>`_, das bei jedem Start eines Management Tools nach dem Laden der Modelle gefeuert wird. Vor load_data. Dort würde ich dann mein LinoSite.setup() aufrufen. Sieht aus wie `Django-Ticket 13024 <http://code.djangoproject.com/ticket/13024>`_.
+
 - Prüfen, ob Dokumentvorlagen im `XSL-FO-Format <http://de.wikipedia.org/wiki/XSL-FO>`__ besser wären. `Apache FOP <http://xmlgraphics.apache.org/fop/>`__ als Formatierer. Warum OpenOffice.org nicht schon lange XSL-FO kann, ist mir ein Rätsel. AbiWord dagegen soll es können (laut `1 <http://www.ibm.com/developerworks/xml/library/x-xslfo/>`__ und `2 <http://searjeant.blogspot.com/2008/09/generating-pdf-from-xml-with-xsl-fo.html>`__).
+
 - Inwiefern überschneiden sich :mod:`lino.modlib.system.models.SiteConfig` und :mod:`django.contrib.sites`? 
 
 - Actions:

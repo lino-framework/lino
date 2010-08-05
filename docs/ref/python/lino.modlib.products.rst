@@ -1,25 +1,13 @@
-Products Documentation
-======================
-
-This page contains the Products Package documentation.
-
-Subpackages
------------
-
-.. toctree::
-
-    lino.modlib.products.fixtures
-
-The :mod:`products` Package
----------------------------
+The :mod:`lino.modlib.products` Package
+=======================================
 
 .. automodule:: lino.modlib.products
     :members:
     :undoc-members:
     :show-inheritance:
 
-The :mod:`models` Module
-------------------------
+The :mod:`lino.modlib.products.models` Module
+---------------------------------------------
 
 .. automodule:: lino.modlib.products.models
     :members:

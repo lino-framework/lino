@@ -24,7 +24,8 @@ from django import forms
 from django.db import models
 from django.utils.safestring import mark_safe 
 
-from lino import reports, perms
+from lino import reports
+from lino.utils import perms
 
 from lino.utils.validatingmodel import TomModel, ModelValidationError
 

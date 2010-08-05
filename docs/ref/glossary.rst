@@ -21,5 +21,8 @@ Glossary
   CSC
     Context-sensitive ComboBox
     
+  GC
+    Grid Configuration. 
+    
   TIM
       http://code.google.com/p/tim

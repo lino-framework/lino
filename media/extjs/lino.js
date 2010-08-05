@@ -504,9 +504,13 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
       //~ id: "id" });
       idProperty: config.ls_id_property });
       
+    delete config.ls_store_fields;
+    
     this.before_row_edit = config.before_row_edit.createDelegate(this);
+    delete config.before_row_edit;
 
     if (config.ls_columns) {
+      //~ console.log(20100805,config.ls_columns);
       if (config.ls_grid_config) {
         var cols = Array(config.ls_grid_config.columns.length);
         for (var i in config.ls_grid_config.columns) {
@@ -517,17 +521,20 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
         config.colModel = new Ext.grid.ColumnModel({columns:config.ls_columns,defaults:{sortable:true}})
       }
     }
+    delete config.ls_columns
     if (config.ls_quick_edit) {
       config.selModel = new Ext.grid.CellSelectionModel()
     } else { 
       config.selModel = new Ext.grid.RowSelectionModel() 
     };
+    delete config.ls_quick_edit
     config.tbar = new Ext.PagingToolbar({ 
       prependButtons: true, pageSize: 10, displayInfo: true, 
       store: config.store, 
       items: this.tbar_items()
     });
     config.bbar = Lino.build_buttons(this,config.ls_bbar_actions);
+    delete config.ls_bbar_actions
     Lino.GridPanel.superclass.constructor.call(this, config);
     this.on('beforeedit',function(e) { this.before_row_edit(e.record)},this);
   },

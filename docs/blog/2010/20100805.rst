@@ -1,6 +1,9 @@
 20100805
 ========
 
+Tagsüber
+--------
+
 Weiter mit ReportConfig und Kolonnenfiltern.
   
 DONE:
@@ -29,9 +32,89 @@ DONE:
 TODO:
 
 - Wenn eine GridConfig erstellt wird, sollte er automatisch deren Kolonnen erstellen.
+
 - Wartbarkeit. Was passiert mit den GridConfigs, wenn deren Report verändert worden ist? 
   Prinzipiell kann sich Lino.GridPanel darauf verlassen, dass `ls_grid_config` sauber ist, 
   weil der Server das kontrollieren kann.
+  
 - In der `Lino.GridPanel.tbar` kommen zwei neue Elemente: eine ComboBox, in der man die verschiedenen ReportConfigs auswählen kann, und ein Button "Save Config" zum Speichern. Eine andere (bestehende) ReportConfig lädt man, indem man sie in der Combobox auswählt. Neue ReportConfigs erstellt man, indem man in der Combobox einen neuen Namen tippt und dann auf "Save Config" klickt. 
   
+17.40 Uhr : Check-In wegen Feierabend.  
+
+
+Abends
+------
+
+19.20 Uhr : Wie gut, dass man  manchmal gegen seinen Willen aus der Arbeit rausgerissen wird! Bei der Unterbrechung ist mir aufgefallen, dass es Quatsch ist, die Grid-Konfigurationen in der Datenbank zu speichern; die müssen in schlichten Textdateien auf dem Server liegen! Also system.GridConfig und system.GridColumn kommen wieder raus. Stattdessen wird :attr:`Report.grid_configs` in  :meth:`Report.do_setup` gefüllt, indem er nach einer Datei :xfile:`contacts.Persons.config.js` sucht. Für den Anfang dürfte eine Datei pro Report reichen, die alle :term:`GC's <GC>` dieses Reports enthält. Die Datei wird vom Server generiert und könnte (z.B. für :report:`countries.Countries`) ungefähr folgenden Inhalt haben::
+
+    [ 
+      { name: '', 
+        columns:[ 
+          [90, 'isocode','ASC',''],
+          [150, 'name','',''],
+          [90, 'short_code','','']
+          ] 
+      },
+      { name: 'by_name', 
+        columns:[ 
+          [150, 'name','ASC',''],
+          [90, 'isocode','',''],
+          [90, 'short_code','','']
+          ] 
+      },
+      { name: 'only short_code', 
+        columns:[ 
+          [90, 'short_code','ASC','isnull',false],
+          [90, 'isocode','','',''],
+          [150, 'name','','','']
+          ] 
+      }
+      
+      
+Also eine relativ kompakte Liste von Objekten (eines pro GC). Jede GC hat einen Namen und eine Liste von Kolonnen. 
+Jede Kolonne ist ein Array mit folgenden Feldern:
   
+   - width (:extjs:`Ext.grid.Column`.width)
+   - dataIndex (:extjs:`Ext.grid.Column`.dataIndex)
+   - sortDirection (:extjs:`Ext.data.Store`.sortInfo)
+   - filter_operator
+   - filter_value
+   
+   
+Für `filter_operator` begnügen wir uns fürs erste mit Djangos `field lookup operators <http://docs.djangoproject.com/en/1.2/ref/models/querysets/#field-lookups>`_::
+  
+    exact
+    contains
+    gt
+    gte
+    lt
+    lte
+    startswith
+    endswith
+    year
+    month
+    day
+    week_day
+    
+    in          Liste mit beliebig vielen Werten
+    range       Liste mit 2 Werten
+    
+    isnull      true/false
+   
+Das UI muss also wissen, welche Operatoren mit welchen Datentypen erlaubt sind und was sie als filter_value brauchen.
+
+Aber bevor ich auf der Serverseite weiter ins Detail gehe, sollte ich wohl besser 
+`Ext.ux.gridfilters <http://www.sencha.com/forum/showthread.php?76185-GridFilters-enhanced-filtering-for-grids>`_
+anschauen.
+
+0.30 Uhr. Dieses Plugin ist super! Obwohl ich zuerst mal anderthalb Stunden lang einen Bug suchen musste.
+(Ich habe in meinen Kolonnen einfach nur ``filterable:true`` konfiguriert.
+Laut Doku und auch laut Source (:js:func:`GridFilters.addFilters` in :file:`examples/ux/gridfilters/GridFilters.js`) 
+müsste das klappen, er findet dann den Datentyp selber raus, indem er in den Store schaut.
+Aber er findet trotzdem für `type` statt eines Strings (z.B. ``'auto'``) ein Objekt ``{type:'auto'}``.
+Tilt: Der GridFilters-Plugin verträgt keine :extjs:`Ext.data.Types`!
+Ende gut, alles gut, nachdem die Erklärung gefunden habe, musste ich das natürlich noch ins 
+`Forum mitteilen 
+<http://www.sencha.com/forum/showthread.php?76185-GridFilters-enhanced-filtering-for-grids&p=497959#post497959>`_.
+
+Aber jetzt ist erstmal Feierabend!  
