@@ -352,7 +352,7 @@ class ReportActionRequest(actions.ActionRequest): # was ReportRequest
             self.limit = limit
             
         self.page_length = self.report.page_length
-
+        
     def get_queryset(self):
         # overridden by ChoicesReportRequest
         return self.report.get_queryset(self)
@@ -447,6 +447,19 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
     
     details = []
     
+    grid_configs = []
+    """
+    Will be filled during :meth:`lino.reports.Report.do_setup`. 
+    """
+    
+    disabled_fields = None # see docs
+    """
+    If `disabled_fields` is not None, it must be a method that accepts two arguments `request` and `obj` 
+    and returns a list of field names that should not be editable. 
+    See usage example in :class::`dsbe.models.Persons` and :doc:`/blog/2010/20100804`.
+    
+    """
+    
     
     def __init__(self):
         if self.model is None:
@@ -518,12 +531,6 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
                 #~ l.append((de.name, unicode(de)))  
         #~ return l
       
-    def disabled_fields(self,request,obj):
-        """return a list of fields that should not be editable.
-        Example in dsbe.models.Persons
-        """
-        return []
-        
     def do_setup(self):
       
         alist = [ ac(self) for ac in self.actions ]
@@ -571,6 +578,10 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
                 
         if self.button_label is None:
             self.button_label = self.label
+            
+        from lino.modlib.system import models as system
+        self.grid_configs = [gc.name for gc in system.GridConfig.objects.filter(rptname=self.actor_id)]
+
 
     #~ def debug_summary(self):
         #~ if self.model is not None:

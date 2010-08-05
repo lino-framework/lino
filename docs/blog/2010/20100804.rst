@@ -1,0 +1,65 @@
+20100804
+========
+
+Nachtrag zum Thema `disabled_fields` : weil das ein Feature ist, 
+das wahrscheinlich selten benutzt werden wird, würde Lino in den meisten Anfragen für jeden Record die Info "disabled_fields: []" reinpacken. Machen wir so dass es dieses Pseudofeld nur generiert, wenn :attr:`lino.reports.Report.disabled_fields` nicht ``None`` ist.
+
+Ich habe dann doch mit :mod:`lino.demo` begonnen, weil ich sehen wollte, wie die Links im vorigen Absatz funktionieren. Eigentlich könnten Dokumentation und Webseite bis Ende August warten, aber "Sphinx makes programmers **want** to write documentation"...
+
+
+Nächster Punkt:
+
+- Insert in Persons sagt `{ msg: "Failed to save  : {'name': [u'Dieses Feld darf nicht leer sein.']}", success: false }`. 
+
+Das Feld `Person.name` ist ja nicht vom Benutzer editierbar, sondern wird automatisch aus den Feldern first_name. name und title generiert. Das muss vor jedem Abspeichern gemacht werden.
+
+Erste Idee: einfach in :meth:`lino.ui.extjs.ext_ui.ExtUI.api_list_view` ein ``instance.before_save()`` vor das ``instance.full_clean()`` setzen. 
+Aber das funktioniert nicht, wenn ein Model gar keine `before_save` definiert hat. 
+
+Ich könnte natürlich ``if hasattr(instance,'before_save')`` testen, 
+aber gibt es nicht bessere Lösungen? 
+
+Das wäre doch eigentlich ein Fall für Djangos Model Validation.
+
+Also zweite Idee: `before_save` kommt weg, und der `name` wird in einer `Model.clean` gesetzt.
+Pech, das geht nicht, weil ja :meth:`Model.clean_fields` (die sich über das leere Feld beschwert).
+vor der :meth:`Model.clean` gerufen wird.
+
+Noch eine Idee: ich definiere `name` in modlib.contacts.Contact mit einem `default`, 
+der ja laut Doku ein callable sein kann. 
+Das geht auch nicht, weil Django das Objekt, für das der Standardwert ermittelt werden soll, nicht übergibt. 
+Abgesehen davon sehe ich nicht, wie ich diese Methode dann in Unterklassen neudefinieren könnte.
+
+    def name_default(self):
+        l = filter(lambda x:x,[self.last_name,self.first_name,self.title])
+        return " ".join(l)
+
+Also lassen wir das. :meth:`lino.ui.extjs.ext_ui.ExtUI.api_list_view` macht ``if hasattr(instance,'before_save')`` und fertig.
+Ich bin nicht 100% zufrieden mit diesem System, aber momentan läuft das so, und ich warte bis sich konkrete Problemfälle zeigen.
+
+Der folgende Punkt war übrigens schon seit Längerem fertig:
+
+- In :report:`countries.Countries` kann man nicht einfügen. Dieser Report ist ein Sonderfall, weil Country keinen automatischen primary key hat, sondern das Feld `isocode` dort der pk ist. Das darf natürlich im InsertWrapper und für die ExtraRow (aber nicht für die anderen Zeilen) nicht schreibgeschützt sein. 
+
+
+So, jetzt weiter mit der hoffentlich letzten großen Herausforderung vor der Geburt: Kolonnenfilter und (vorher) ReportConfig.
+
+In der `Lino.GridPanel.tbar` kommen zwei neue Elemente: 
+- eine ComboBox, in der man die verschiedenen ReportConfigs auswählen kann. 
+- einen Button "Save-Config" zum Speichern.
+
+Ein GET eines Reports hat jetzt neben `rows`, `total` und `title` ein neues Attribut `configs`, das eine einfache Liste der Auswahlmöglichkeiten für diese Combobox ist.
+
+Eine andere (bestehende) ReportConfig lädt man, indem man sie in der Combobox auswählt. ViewReportRequest fragt einen neuen URI-Parameter `cfg` ab, der den Namen der gewünschten config enthält.
+
+Neue ReportConfigs erstellt man, indem man in der Combobox einen neuen Namen tippt und dann auf "Save Config" klickt.
+Wenn überhaupt keine ReportConfig existiert
+
+Aber jetzt erstmal Unterbrechung inklusive Mit
+tagspause und Rasenmähen.
+Nach der Unterbrechung habe ich mich ablenken lassen von :mod:`lino.demo`. 
+Die funktioniert ja noch überhaupt nicht. 
+
+Ich hab was verstanden: um meine Scripts :xfile:`fill.py`, :xfile:`load_tim.py` usw. durch Django managment commands zu ersetzen, brauche ich ein Signal, das bei jedem Start eines Management Tools nach dem Laden der Modelle gefeuert wird. Vor load_data. Dort würde ich dann mein LinoSite.setup() aufrufen.
+Sieht aus wie `Django-Ticket 13024 <http://code.djangoproject.com/ticket/13024>`_.
+Updated my copy of Django from 13336 to 13467.

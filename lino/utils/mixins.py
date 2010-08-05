@@ -58,8 +58,8 @@ class MultiTableBase:
     [1] http://docs.djangoproject.com/en/dev/topics/db/models/#multi-table-inheritance
     """
     
-    class Meta:
-        abstract = True
+    #~ class Meta:
+        #~ abstract = True
     
     def get_child_model(self):
         return self.__class__

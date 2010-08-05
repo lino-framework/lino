@@ -16,3 +16,8 @@ Deleted :doc:`/blog/2010/20100803`.
   :deprecated:
   
 :mod:`lino.ui.extjsw` was renamed back to :mod:`lino.ui.extjs` on :doc:`/blog/2010/20100803`.
+
+
+.. xfile:: fill.py
+
+Old name of :xfile:`initdb.py`.

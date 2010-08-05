@@ -282,7 +282,8 @@ class Component(Variable):
         Variable.__init__(self,name,options)
         
     def js_value(self):
-        value = self.ext_options(**self.value)
+        value = self.ext_options()
+        #~ value = self.ext_options(**self.value)
         yield self.value_template % py2js(value)
         
     def ext_options(self,**kw):

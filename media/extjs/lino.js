@@ -506,6 +506,17 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
       
     this.before_row_edit = config.before_row_edit.createDelegate(this);
 
+    if (config.ls_columns) {
+      if (config.ls_grid_config) {
+        var cols = Array(config.ls_grid_config.columns.length);
+        for (var i in config.ls_grid_config.columns) {
+          cols[i] = config.ls_columns[config.ls_grid_config.columns[i]];
+        }
+        config.colModel = new Ext.grid.ColumnModel({columns:cols,defaults:{sortable:true}})
+      } else {
+        config.colModel = new Ext.grid.ColumnModel({columns:config.ls_columns,defaults:{sortable:true}})
+      }
+    }
     if (config.ls_quick_edit) {
       config.selModel = new Ext.grid.CellSelectionModel()
     } else { 
@@ -525,6 +536,13 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     //~ console.log('search_change',field.getValue(),oldValue,newValue)
     this.store.setBaseParam('query',field.getValue()); // URL_PARAM_FILTER
     this.store.load({params: { start: 0, limit: this.getTopToolbar().pageSize }});
+  },
+  
+  save_grid_config : function () {
+    var p = {};
+    p.column_widths = Ext.pluck(this.colModel.columns,'width');
+    var a = { params:p, method:'PUT',url:'/api/system/GridConfigs/'+this.ls_grid_config.name};
+    Lino.do_action(this,a);
   },
   
   on_beforeedit : function(e) {
@@ -950,7 +968,7 @@ Lino.WindowWrapper = function(caller,config,params) {
     this.main_item.load_master_record(config.data_record);
     return;
   } 
-  if (config.record_id) {
+  if (config.record_id !== undefined) { // may be 0 
     this.main_item.goto_record_id(config.record_id);
   }
   //~ console.timeEnd('WindowWrapper.constructor()');
@@ -1047,11 +1065,11 @@ Lino.GridMixin = {
     //~ var sels = this.main_item.getSelectionModel().getSelections();
     //~ return Ext.pluck(sels,'id');
   //~ },
-  get_window_config : function() {
-    var wc = { window_config_type: 'grid' };
-    wc['column_widths'] = Ext.pluck(this.main_item.colModel.columns,'width');
-    return wc;
-  }
+  //~ get_window_config : function() {
+    //~ var wc = { window_config_type: 'grid' };
+    //~ wc['column_widths'] = Ext.pluck(this.main_item.colModel.columns,'width');
+    //~ return wc;
+  //~ }
 };
 
 Lino.GridMasterWrapper = Ext.extend(Lino.WindowWrapper,Lino.GridMixin);

@@ -1,6 +1,7 @@
 
 SITENAME               = lino
-DJANGO_SETTINGS_MODULE = dsbe.demo.settings
+#~ DJANGO_SETTINGS_MODULE = dsbe.demo.settings
+DJANGO_SETTINGS_MODULE = lino.demo.settings
 TEMPDIR                = C:\\temp\\sphinxbuild\\$(SITENAME)
 BUILDDIR               = $(TEMPDIR)\\html
 CACHEDIR               = $(TEMPDIR)\\doctrees

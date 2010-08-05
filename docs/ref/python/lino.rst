@@ -6,16 +6,14 @@ The :mod:`lino` Package
     :undoc-members:
     :show-inheritance:
 
-Subpackages
------------
+The :mod:`lino.reports` Module
+------------------------------
 
-.. toctree::
+.. automodule:: lino.reports
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
-    lino.core
-    lino.modlib
-    lino.test_apps
-    lino.ui
-    lino.utils
 
 The :mod:`lino.actions` Module
 ------------------------------
@@ -41,11 +39,16 @@ The :mod:`lino.lino_site` Module
     :undoc-members:
     :show-inheritance:
 
-The :mod:`lino.reports` Module
-------------------------------
 
-.. automodule:: lino.reports
-    :members:
-    :undoc-members:
-    :show-inheritance:
+Subpackages
+-----------
+
+.. toctree::
+
+    lino.core
+    lino.modlib
+    lino.test_apps
+    lino.ui
+    lino.utils
+    lino.demo
 

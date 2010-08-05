@@ -133,11 +133,8 @@ class ToggleWindowAction(WindowAction):
     #~ action_type = 'toggle_window'    
     
 class GridEdit(OpenWindowAction):
-    #~ hidden = True
-    #~ show_in_list = False
-    #~ show_in_detail = False
-    callable_from = tuple()
   
+    callable_from = tuple()
     name = 'grid'
     
     def __init__(self,rpt):

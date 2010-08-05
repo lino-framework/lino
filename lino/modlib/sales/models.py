@@ -199,7 +199,7 @@ class Customers(reports.Report):
 
 
 
-class SalesDocument(journals.AbstractDocument):
+class SalesDocument(models.Model,journals.AbstractDocument):
     
     creation_date = fields.MyDateField() #auto_now_add=True)
     customer = models.ForeignKey(Customer,
@@ -624,7 +624,7 @@ class DocumentsToSign(Invoices):
     column_names = "number:4 order creation_date " \
                   "customer:10 imode " \
                   "subject:10 total_incl total_excl total_vat "
-    actions = Invoices.actions + [ SignAction() ]
+    #~ actions = Invoices.actions + [ SignAction() ]
     
     #~ def get_row_actions(self,renderer):
         #~ l = super(Invoices,self).get_row_actions(renderer)

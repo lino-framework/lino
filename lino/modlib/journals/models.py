@@ -86,7 +86,11 @@ class Journal(models.Model):
     def create_document(self,**kw):
         cl = self.get_doc_model()
         kw.update(journal=self)
-        doc = cl(**kw)
+        try:
+            doc = cl(**kw)
+        except TypeError,e:
+            print 20100804, cl
+            raise
         doc.save()
         return doc
         

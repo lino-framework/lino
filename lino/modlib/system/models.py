@@ -27,14 +27,15 @@ from lino.core import actors
 from lino.utils import perms
 #~ from lino import choices_method, simple_choices_method
 
-class ReportConfig(models.Model):
+class GridConfig(models.Model):
   
     rptname = models.CharField(max_length=100)
     """The actor name of the report being customized."""
     
-    name = models.CharField(max_length=20)
+    name = models.CharField(max_length=20,blank=True)
     """Short name for this Configuration.
-    Must be identifying inside a same rptname. 
+    Must be identifying inside a same report. 
+    Empty string means default config.
     """
     
     label = models.CharField(max_length=100)
@@ -51,15 +52,22 @@ class ReportConfig(models.Model):
     rptname_choices.simple_values = True
     rptname_choices = classmethod(rptname_choices)
     
+    def __unicode__(self):
+        if self.name:
+            return self.rptname + ":" + self.name
+        return self.rptname + ":default"
     
-class ReportColumn(models.Model):
-    rptconfig = models.ForeignKey('system.ReportConfig')
+    
+class GridColumn(models.Model):
+    gc = models.ForeignKey('system.GridConfig')
     seq = models.IntegerField()
     colname = models.CharField(max_length=30)
+    filter = models.CharField(max_length=100,blank=True)
+    width = models.IntegerField()
     
     def verbose_name(self):
-        if self.colname and self.rptconfig:
-            rpt = actors.get_actor(self.rptconfig.rptname)
+        if self.colname and self.gc:
+            rpt = actors.get_actor(self.gc.rptname)
             de = rpt.get_data_elem(self.colname)
             return reports.de_verbose_name(de)
         #~ return '%s.%s' % (self.rptconfig.rptname,self.colname)
@@ -67,28 +75,30 @@ class ReportColumn(models.Model):
     
     #~ @choices_method
     #~ @classmethod
-    def colname_choices(cls,rptconfig):
-        return reports.column_choices(rptconfig.rptname)
+    def colname_choices(cls,gc):
+        return reports.column_choices(gc.rptname)
     colname_choices.simple_values = True
     colname_choices = classmethod(colname_choices)
         
-class ReportConfigDetail(layouts.DetailLayout):
-    datalink = 'system.ReportConfig'
+class GridConfigDetail(layouts.DetailLayout):
+    datalink = 'system.GridConfig'
     main = """
     rptname name label
-    system.ColumnsByReport
+    system.ColumnsByGrid
     """
     
-class ReportConfigs(reports.Report):
-    model = 'system.ReportConfig'
+class GridConfigs(reports.Report):
+    model = 'system.GridConfig'
     
-class ColumnsByReport(reports.Report):
-    model = 'system.ReportColumn'
-    fk_name = 'rptconfig'
-    column_names = 'seq colname verbose_name'
+class GridColumns(reports.Report):
+    model = 'system.GridColumn'
     
+class ColumnsByGrid(GridColumns):
+    fk_name = 'gc'
+    column_names = 'seq colname verbose_name *'
     
-    
+
+
 
 class SiteConfig(models.Model):
     site_company = models.ForeignKey('contacts.Company',blank=True,null=True,

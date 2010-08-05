@@ -25,6 +25,7 @@ from lino.utils import ucsv
 #~ from lino.utils import choosers
 #~ from lino.ui.extjs import ext_windows
 
+from lino.modlib.system import models as system
 
 #~ UNDEFINED = "nix"
 
@@ -69,13 +70,13 @@ def authenticated_user(user):
     #~ def get_user(self):
         #~ return authenticated_user(self.request.user)
         
-
 class ViewReportRequest(reports.ReportActionRequest):
     
     editing = 0
     selector = None
     sort_column = None
     sort_direction = None
+    gc = None
     
     def __init__(self,request,rh,action,*args,**kw):
         reports.ReportActionRequest.__init__(self,rh,action)
@@ -85,7 +86,11 @@ class ViewReportRequest(reports.ReportActionRequest):
         self.setup(*args,**kw)
         
     def parse_req(self,request,rh,**kw):
-        master = kw.get('master',self.report.master)
+        gc_name = kw.get('gc',None)
+        if gc_name:
+            self.gc = system.GridConfig.objects.get(rptname=self.report.actor_id,name=gc_name)
+            
+        master = kw.get('master',self.report.master)    
         if master is ContentType:
             mt = request.REQUEST.get(URL_PARAM_MASTER_TYPE)
             try:
@@ -156,7 +161,7 @@ class ViewReportRequest(reports.ReportActionRequest):
         return authenticated_user(self.request.user)
 
     
-    def get_absolute_url(self,**kw):
+    def unused_get_absolute_url(self,**kw):
         if self.master_instance is not None:
             kw.update(master_instance=self.master_instance)
         if self.sort_column is not None:
@@ -183,10 +188,10 @@ class ViewReportRequest(reports.ReportActionRequest):
         return d
  
 
-class ViewActionRequest(actions.ActionRequest):
-    def __init__(self,request,ah,action,*args,**kw):
-        self.request = request
-        actions.ActionRequest.__init__(self,ah,action,*args,**kw)
+#~ class ViewActionRequest(actions.ActionRequest):
+    #~ def __init__(self,request,ah,action,*args,**kw):
+        #~ self.request = request
+        #~ actions.ActionRequest.__init__(self,ah,action,*args,**kw)
         
-    def handle_wc(self):
-        return self.action.handle_wc(self)
+    #~ def handle_wc(self):
+        #~ return self.action.handle_wc(self)

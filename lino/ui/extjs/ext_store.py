@@ -56,22 +56,23 @@ class StoreField(object):
 
     def form2obj(self,instance,post_data):
         v = post_data.get(self.field.name,None)
-        if v == '': # and self.field.null:
-            # e.g. id field may be empty
-            v = None
         if v is None:
             return
+        #~ if v == '': # and self.field.null:
+            #~ # e.g. id field may be empty
+            #~ v = None
         v = self.parse_form_value(v)
         if self.field.primary_key and instance.pk:
             if instance.pk == v:
                 return
             raise exceptions.ValidationError({
               self.field.name:_("Existing primary key value %r may not be modified.") % instance.pk})
-        try:
-            setattr(instance,self.field.name,v)
-        except exceptions.ValidationError,e:
-            lino.log.exception("%s = %r : %s",self.field.name,v,e)
-            raise 
+        setattr(instance,self.field.name,v)
+        #~ try:
+            #~ setattr(instance,self.field.name,v)
+        #~ except exceptions.ValidationError,e:
+            #~ lino.log.exception("%s = %r : %s",self.field.name,v,e)
+            #~ raise 
 
 class DisabledFieldsStoreField(StoreField):
     """
@@ -116,6 +117,13 @@ class BooleanStoreField(StoreField):
             return False
         return None
         
+class AutoStoreField(StoreField):
+    def __init__(self,field,**kw):
+        kw['type'] = 'int'
+        StoreField.__init__(self,field,**kw)
+  
+    def form2obj(self,instance,post_data):
+        pass
         
     #~ def form2obj(self,instance,post_data):
         #~ v = post_data.get(self.field.name,None)
@@ -294,7 +302,8 @@ class Store(Component):
         if not self.pk in fields:
             fields.add(self.pk)
         self.fields = [ self.create_field(fld) for fld in fields ]
-        self.fields.append(DisabledFieldsStoreField(rh.report))
+        if rh.report.disabled_fields:
+            self.fields.append(DisabledFieldsStoreField(rh.report))
         #~ self.fields.append(PropertiesStoreField)
         #~ self.fields_dict = dict([(f.field.name,f) for f in self.fields])
           
@@ -313,12 +322,13 @@ class Store(Component):
             return DateStoreField(fld,self.report.date_format)
         if isinstance(fld,models.BooleanField):
             return BooleanStoreField(fld)
+        if isinstance(fld,models.AutoField):
+            return AutoStoreField(fld)
+            #~ kw.update(type='int')
         kw = {}
         if isinstance(fld,models.SmallIntegerField):
             kw.update(type='int')
         if isinstance(fld,models.IntegerField):
-            kw.update(type='int')
-        if isinstance(fld,models.AutoField):
             kw.update(type='int')
         #~ if fld.choices:
             #~ return ChoicesStoreField(fld,**kw)

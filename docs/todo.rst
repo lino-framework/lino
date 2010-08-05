@@ -4,8 +4,11 @@ To-Do-Liste
 Kurzfristig
 -----------
 
-- Insert in Persons sagt `{ msg: "Failed to save  : {'name': [u'Dieses Feld darf nicht leer sein.']}", success: false }`. 
-- South aktivieren
+- Kolonnenfilter. Beispiel: 
+  `1 <http://www.ajung.de/2009/03/24/extjs-erweiterter-list-filter/>`__ 
+  `2 <http://www.sk-typo3.de/ExtJS-Filter-Grid.345.0.html>`__ 
+  `3 <http://extjs.com/forum/showthread.php?t=14503>`__
+
 - Der Tool-Button zum Speichern der Konfiguration gehört nicht mehr in den Rahmen des "Fensters", sondern in die tbar des GridPanels. Das Ganze heißt auch nicht mehr "window config", sondern "grid config". 
   Neben Kolonnenbreiten müssen darin auch Kolonnenreihenfolge, Kolonnenfilter und Daten-Sortierfolge
   gespeichert werden.
@@ -13,15 +16,8 @@ Kurzfristig
 
 - Sprachabhängige Auswahl der Notizvorlage. Wenn Sprache der Notiz nicht die Hauptsprache des Lino-Sites ist, dann wird der Name des zu verwendenden Templates aus dem Standardnamen par convention abgeleitet, indem das Sprachkürzel als Suffix vor der Erweiterung eingefügt wird. Zum Beispiel für eine Telefonnotiz in `fr` auf einer Site mit Hauptsprache `de` (und Telefonnotizen haben `NoteType.template` den Wert `phone.odt` ) sucht Lino zuerst nach einer Datei `phone_fr.odt`. Wenn es so eine Datei nicht gibt, nimmt er die `phone.odt`. (Korrektur: nicht als Suffix, sondern in einem separaten Verzeichnis. Sonst muss ich ja beim Füllen der Auswahlliste die Fremdsprachen rausfiltern).
 
-Fehlende Grundfunktionen
-------------------------
+- South aktivieren
 
-- Kolonnenfilter. Beispiel: 
-  `1 <http://www.ajung.de/2009/03/24/extjs-erweiterter-list-filter/>`__ 
-  `2 <http://www.sk-typo3.de/ExtJS-Filter-Grid.345.0.html>`__ 
-  `3 <http://extjs.com/forum/showthread.php?t=14503>`__
-
-- In `lino.modlib.countries.models.Countries` kann man nicht einfügen. Dieser Report ist ein Sonderfall, weil Country keinen automatischen primary key hat, sondern das Feld `isocode` dort der pk ist. Das darf natürlich im InsertWrapper und für die ExtraRow (aber nicht für die anderen Zeilen) nicht schreibgeschützt sein. Issue 122.
 
 Kleinkram
 ---------

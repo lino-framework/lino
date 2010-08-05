@@ -21,3 +21,6 @@ Located usually in your :setting:`PROJET_DIR` (the same directory as :xfile:`set
 except if you change the default value of :setting:`LINO_SETTINGS`.
 
 
+.. xfile:: initdb.py
+
+A script that does a syncdb and reset of the database, and loads specified fixtures

@@ -1,0 +1,37 @@
+20100805
+========
+
+Weiter mit ReportConfig und Kolonnenfiltern.
+  
+DONE:
+
+- Nebenbei: :xfile:`fill.py` heißt jetzt :xfile:`initdb.py`. 
+
+- Die Antwort auf ein `GET` mit `fmt=json` eines Reports hat jetzt neben `rows`, `total` und `title` ein neues Attribut `gc_choices`, 
+  das eine einfache Liste der Auswahlmöglichkeiten für diese Combobox ist.
+  
+- Lino.GridPanel hat jetzt zwei neue config parameter `ls_columns` und `ls_grid_config`. 
+  In der site.js werden nun diese beiden Parameter statt colModel benutzt. 
+  `ls_grid_config` kann undefiniert sein: das bedeutet, dass keine GridConfig existiert.
+
+- ReportConfig habe ich nach GridConfig umbenannt (und ReportColumn nach GridColumn).
+
+- ViewReportRequest fragt einen neuen URI-Parameter `gc` ab, der den Namen der gewünschten GC enthält. 
+
+- Pro Report kann es auch eine GC mit leerem `name` geben. Das ist die Standard-Konfiguration. 
+  Die ist in der site.js schon berücksichtigt.
+  Also falls ViewReportRequest eine leere gc findet, macht er keine Datenbank-Abfrage.
+
+- Für die Tests musste ich GridConfigs manuell eingeben, dabei kamen noch einige Bugs beim Speichern raus. 
+  Er setzte für AutoField immer einen Wert 0 und deshalb konnte man übers UI höchstens einen Record erstellen.
+  Und man konnte ein normales Textfeld nicht auf leer setzen.
+  
+TODO:
+
+- Wenn eine GridConfig erstellt wird, sollte er automatisch deren Kolonnen erstellen.
+- Wartbarkeit. Was passiert mit den GridConfigs, wenn deren Report verändert worden ist? 
+  Prinzipiell kann sich Lino.GridPanel darauf verlassen, dass `ls_grid_config` sauber ist, 
+  weil der Server das kontrollieren kann.
+- In der `Lino.GridPanel.tbar` kommen zwei neue Elemente: eine ComboBox, in der man die verschiedenen ReportConfigs auswählen kann, und ein Button "Save Config" zum Speichern. Eine andere (bestehende) ReportConfig lädt man, indem man sie in der Combobox auswählt. Neue ReportConfigs erstellt man, indem man in der Combobox einen neuen Namen tippt und dann auf "Save Config" klickt. 
+  
+  

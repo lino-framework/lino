@@ -32,6 +32,15 @@ from lino.modlib.contacts.utils import join_words
 def default_language():
     from django.conf import settings
     return settings.LANGUAGE_CODE[:2]
+    
+    
+#~ def name_default(obj):
+    #~ l = filter(lambda x:x,[obj.last_name,obj.first_name,obj.title])
+    #~ return " ".join(l)
+        
+#~ Contact.name.default = name_default
+
+    
 
 #~ class ContactMixin:
 #~ class Contact(models.Model,mixins.Printable):
@@ -145,7 +154,7 @@ class Person(Contact):
     
     def save(self,*args,**kw):
         self.before_save()
-        r = super(PersonMixin,self).save(*args,**kw)
+        r = super(Person,self).save(*args,**kw)
         return r
         
     def before_save(self):

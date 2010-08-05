@@ -200,20 +200,20 @@ class LinoSite:
         return self._menu.menu_request(user)
         
       
-    def fill(self,fixtures=[]):
+    def initdb(self,fixtures=[]):
       
         self.setup()
         
         from django.core.management import call_command
         from timtools.console import syscon
-        #from lino import reports
+        from lino import reports
         
         sites = reports.get_app('sites')
         
         options = dict(interactive=False)
-        lino.log.info("lino_site.fill(%r)", fixtures)
-        if not syscon.confirm("Gonna reset database %s. Are you sure?" 
-            % settings.DATABASE_NAME):
+        lino.log.info("lino_site.initdb(%r)", fixtures)
+        if not syscon.confirm("Gonna reset database(s) %s.\nAre you sure?" 
+            % settings.DATABASES):
             return
         lino.log.info("reset")
         if False: # settings.DATABASE_ENGINE == 'sqlite3':
@@ -226,9 +226,11 @@ class LinoSite:
         lino.log.info("syncdb")
         call_command('syncdb',**options)
         #call_command('flush',interactive=False)
-        auth.User.objects.create_superuser('root','luc.saffre@gmx.net','1234')
-        auth.User.objects.create_user('user','luc.saffre@gmx.net','1234')
-        sites.Site(id=2,domain=self.domain,name=self.title).save()
+        #~ auth.User.objects.create_superuser('root','luc.saffre@gmx.net','1234')
+        #~ auth.User.objects.create_user('user','luc.saffre@gmx.net','1234')
+        
+        # 20100804 don't remember why this was used:
+        #~ sites.Site(id=2,domain=self.domain,name=self.title).save()
         
         for fix in fixtures:
             lino.log.info("loaddata %s",fix)
@@ -246,7 +248,7 @@ lino_site = LinoSite()
 #~ lino.log.debug("lino.lino_site has been instantiated")
 #'get_urls','fill','context'
 
-fill = lino_site.fill
+initdb = lino_site.initdb
 context = lino_site.context
 get_urls = lino_site.get_urls
 get_site_menu = lino_site.get_site_menu

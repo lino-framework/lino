@@ -53,7 +53,7 @@ class Account(models.Model):
     #~ account = models.ForeignKey(Account)
     
     
-class LedgerDocument(journals.AbstractDocument):
+class LedgerDocument(models.Model,journals.AbstractDocument):
   
     #journal_class = LedgerJournal
     #journal = models.ForeignKey(journals.Journal)
@@ -61,6 +61,9 @@ class LedgerDocument(journals.AbstractDocument):
     """
     django.core.exceptions.FieldError: Local field 'journal' in class 'LedgerDocument' clashes with field of similar name from base class 'AbstractDocument'
     """
+    
+    #~ class Meta:
+        #~ abstract = False
     
     value_date = fields.MyDateField(auto_now=True) 
     ledger_remark = models.CharField("Remark for ledger",

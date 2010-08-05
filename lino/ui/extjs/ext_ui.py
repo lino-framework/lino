@@ -474,6 +474,31 @@ class ExtUI(base.UI):
         #~ s = py2js(lino_site.get_menu(request))
         #~ return HttpResponse(s, mimetype='text/html')
 
+    def form2obj_and_save(self,ah,data,elem,**kw):
+        try:
+            ah.store.form2obj(data,elem)
+        except exceptions.ValidationError,e:
+            return json_response_kw(success=False,msg=unicode(e))
+            
+        if hasattr(elem,'before_save'): # see :doc:`/blog/2010/20100804`
+            elem.before_save()
+            
+        try:
+            elem.full_clean()
+        except exceptions.ValidationError, e:
+            return json_response_kw(success=False,msg="Failed to save %s : %s" % (elem,e))
+
+        try:
+            elem.save(**kw)
+        except IntegrityError,e:
+            #~ print unicode(elem)
+            lino.log.exception(e)
+            return json_response_kw(success=False,
+                  msg=_("There was a problem while saving your data:\n%s") % e)
+        return json_response_kw(success=True,
+              msg="%s has been saved" % elem)
+
+
         
     def api_list_view(self,request,app_label=None,actor=None):
         """
@@ -501,14 +526,17 @@ class ExtUI(base.UI):
             #~ ar = ext_requests.ViewReportRequest(request,rh,rh.report.list_action)
             ar = ext_requests.ViewReportRequest(request,rh,rh.report.default_action)
             instance = ar.create_instance()
-            rh.store.form2obj(request.POST,instance)
-            try:
-                instance.full_clean()
-            except exceptions.ValidationError, e:
-                return json_response_kw(success=False,msg="Failed to save %s : %s" % (instance,e))
-            #~ print instance, instance.pk
-            instance.save(force_insert=True)
-            return json_response_kw(success=True,msg="%s has been created" % instance)
+            return self.form2obj_and_save(rh,request.POST,instance,force_insert=True)
+            
+            #~ rh.store.form2obj(request.POST,instance)
+            #~ if hasattr(instance,'before_save'): # see :doc:`/blog/2010/20100804`
+                #~ instance.before_save()
+            #~ try:
+                #~ instance.full_clean()
+            #~ except exceptions.ValidationError, e:
+                #~ return json_response_kw(success=False,msg="Failed to save %s : %s" % (instance,e))
+            #~ instance.save(force_insert=True)
+            #~ return json_response_kw(success=True,msg="%s has been created" % instance)
             
             
         if request.method == 'GET':
@@ -556,7 +584,7 @@ class ExtUI(base.UI):
                     #~ 20100706 d[rh.report.model._meta.pk.name] = -99999
                     rows.append(d)
                     total_count += 1
-                return json_response_kw(count=total_count,rows=rows,title=unicode(ar.get_title()))
+                return json_response_kw(count=total_count,rows=rows,title=unicode(ar.get_title()),gc_choices=rpt.grid_configs)
 
 
         raise Http404("Method %s not supported for container %s" % (request.method,rh))
@@ -594,20 +622,8 @@ class ExtUI(base.UI):
             
         if request.method == 'PUT':
             data = http.QueryDict(request.raw_post_data)
-            try:
-                ah.store.form2obj(data,elem)
-            except exceptions.ValidationError,e:
-                return json_response_kw(success=False,msg=unicode(e))
-            try:
-                elem.save(force_update=True)
-            except IntegrityError,e:
-                #~ print unicode(elem)
-                lino.log.exception(e)
-                return json_response_kw(success=False,
-                      msg=_("There was a problem while saving your data:\n%s") % e)
-            return json_response_kw(success=True,
-                  msg="%s has been saved" % elem)
-                  
+            return self.form2obj_and_save(ah,data,elem,force_update=True)
+            
         if request.method == 'GET':
             fmt = request.GET.get('fmt',None)
             if fmt is None:
@@ -629,7 +645,6 @@ class ExtUI(base.UI):
             raise Http404("%s has no action %r" % (ah.report,fmt))
               
         raise Http404("Method %r not supported for elements of %s" % (request.method,ah.report))
-        
         
         
         
@@ -912,34 +927,14 @@ class ExtUI(base.UI):
         if isinstance(a,actions.DeleteSelected): return ext_windows.DeleteRenderer(self,a)
           
         if isinstance(a,actions.GridEdit):
-            #~ if a.actor.master is not None:
-                #~ return None
-                #~ raise Exception("action_window_wrapper() for slave report %s" % a.actor)
-                #~ return ext_windows.GridSlaveWrapper(h,a)
             return ext_windows.GridMasterWrapper(h,a)
-            #~ else:
-                #~ return ext_windows.GridSlaveWrapper(self,a.name,a)
+            
         if isinstance(a,actions.InsertRow):
             return ext_windows.InsertWrapper(h,a)
             
         if isinstance(a,actions.ShowDetailAction):
             return ext_windows.DetailWrapper(h,a)
 
-        #~ if isinstance(a,layouts.ShowDetailAction):
-            #~ return ext_windows.LayoutDetailWrapper(h,a)
-
-            
-        #~ if isinstance(a,properties.PropsEdit):
-            #~ return None
-            
-        #~ if isinstance(a,properties.PropertiesAction):
-            #~ return ext_windows.PropertiesWrapper(h,a)
-        #~ if isinstance(a,actions.SlaveGridAction):
-            #~ return ext_windows.GridSlaveWrapper(h,a) # a.name,a.slave.default_action)
-            
-        #~ if isinstance(a,actions.SlaveDetailAction): # not tested
-            #~ return ext_windows.DetailSlaveWrapper(self,a)
-            
         
         
         
