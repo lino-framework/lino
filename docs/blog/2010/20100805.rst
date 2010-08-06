@@ -104,7 +104,7 @@ Für `filter_operator` begnügen wir uns fürs erste mit Djangos `field lookup o
 Das UI muss also wissen, welche Operatoren mit welchen Datentypen erlaubt sind und was sie als filter_value brauchen.
 
 Aber bevor ich auf der Serverseite weiter ins Detail gehe, sollte ich wohl besser 
-`Ext.ux.gridfilters <http://www.sencha.com/forum/showthread.php?76185-GridFilters-enhanced-filtering-for-grids>`_
+`Ext.ux.grid.GridFilters <http://www.sencha.com/forum/showthread.php?76185-GridFilters-enhanced-filtering-for-grids>`_
 anschauen.
 
 0.30 Uhr. Dieses Plugin ist super! Obwohl ich zuerst mal anderthalb Stunden lang einen Bug suchen musste.
@@ -117,4 +117,4 @@ Ende gut, alles gut, nachdem die Erklärung gefunden habe, musste ich das natür
 `Forum mitteilen 
 <http://www.sencha.com/forum/showthread.php?76185-GridFilters-enhanced-filtering-for-grids&p=497959#post497959>`_.
 
-Aber jetzt ist erstmal Feierabend!  
+Aber jetzt ist erstmal Feierabend!

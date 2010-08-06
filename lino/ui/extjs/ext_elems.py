@@ -84,8 +84,9 @@ class GridFilters(Component):
     
     def __init__(self,grid,**kw):
         assert isinstance(grid,GridElement)
-        kw.update(encode='json')
-        kw.update(local=True)
+        #~ kw.update(encode='json')
+        kw.update(encode=True)
+        kw.update(local=False)
         #~ kw.update(filters=[])
         Component.__init__(self,grid.name,**kw)
 
@@ -328,6 +329,7 @@ class FieldElement(LayoutElement):
     #~ declare_type = jsgen.DECLARE_THIS
     declare_type = jsgen.DECLARE_VAR
     stored = True
+    filter_type = None # 'auto'
     #declaration_order = 3
     #~ ext_suffix = "_field"
     
@@ -340,18 +342,19 @@ class FieldElement(LayoutElement):
     def get_column_options(self,**kw):
         #~ raise "get_column_options() %s" % self.__class__
         #~ kw.update(xtype='gridcolumn')
-        if not self.editable:
-            kw.update(editable=False)
-        if not self.sortable:
-            kw.update(sortable=False)
-            
-        # 20100805 see also GridFilters.js
-        kw.update(filterable=True)  
-        #~ kw.update(filter=dict(type='auto'))
         kw.update(
           dataIndex=self.field.name, 
           header=unicode(self.label) if self.label else self.field.name,
           )
+        if not self.editable:
+            kw.update(editable=False)
+        if not self.sortable:
+            kw.update(sortable=False)
+        if self.filter_type:
+            # 20100805 see also GridFilters.js
+            #~ kw.update(filterable=True)  
+            #~ kw.update(filter=dict(type='auto'))
+            kw.update(filter=dict(type=self.filter_type))
         w = self.width or self.preferred_width
         kw.update(width=w*EXT_CHAR_WIDTH)
         return kw    
@@ -381,6 +384,7 @@ class FieldElement(LayoutElement):
         
 class TextFieldElement(FieldElement):
     #~ xtype = 'textarea'
+    filter_type = 'string'
     vflex = True
     value_template = "new Ext.form.TextArea(%s)"
     #~ value_template = "new Ext.form.HtmlEditor(%s)"
@@ -393,6 +397,7 @@ class TextFieldElement(FieldElement):
 
         
 class CharFieldElement(FieldElement):
+    filter_type = 'string'
     value_template = "new Ext.form.TextField(%s)"
     sortable = True
     xtype = None
@@ -410,6 +415,7 @@ class ComboFieldElement(FieldElement):
     #~ value_template = "new Ext.form.ComboBox(%s)"        
     sortable = True
     xtype = None
+    filter_type = 'string'
     
 class ChoicesFieldElement(ComboFieldElement):
     value_template = "new Lino.ChoicesFieldElement(%s)"
@@ -477,6 +483,7 @@ class DateFieldElement(FieldElement):
     data_type = 'date' # for store column
     sortable = True
     preferred_width = 8 
+    filter_type = 'date'
     # todo: DateFieldElement.preferred_width should be computed from Report.date_format
     #~ grid_column_template = "new Ext.grid.DateColumn(%s)"
     
@@ -492,12 +499,14 @@ class DateFieldElement(FieldElement):
         return kw
     
 class IntegerFieldElement(FieldElement):
+    filter_type = 'numeric'
     xtype = 'numberfield'
     sortable = True
     preferred_width = 5
     data_type = 'int' 
 
 class DecimalFieldElement(FieldElement):
+    filter_type = 'numeric'
     xtype = 'numberfield'
     sortable = True
     data_type = 'float' 
@@ -524,6 +533,7 @@ class BooleanFieldElement(FieldElement):
   
     xtype = 'checkbox'
     data_type = 'boolean' 
+    filter_type = 'boolean'
     #~ grid_column_template = "new Ext.grid.BooleanColumn(%s)"
     #~ def __init__(self,*args,**kw):
         #~ FieldElement.__init__(self,*args,**kw)
@@ -556,6 +566,7 @@ class BooleanFieldElement(FieldElement):
 class MethodElement(FieldElement):
     stored = True
     editable = False
+    #~ filter_type = 'numeric'
 
     def __init__(self,lh,name,meth,return_type,**kw):
         assert isinstance(lh,layouts.LayoutHandle)
@@ -564,7 +575,7 @@ class MethodElement(FieldElement):
         return_type._return_type_for_method = meth
         FieldElement.__init__(self,lh,return_type)
         delegate = lh.main_class.field2elem(lh,return_type,**kw)
-        for a in ('ext_options','get_column_options','get_field_options'): # ,'grid_column_template'):
+        for a in ('ext_options','get_column_options','get_field_options','filter_type'): # ,'grid_column_template'):
             setattr(self,a,getattr(delegate,a))
         
 

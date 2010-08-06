@@ -15,6 +15,7 @@ from django.db import models
 from django.http import HttpResponse, Http404
 from django.contrib.contenttypes.models import ContentType
 #~ from django.contrib.contenttypes import generic
+from django.utils import simplejson as json
 
 import lino
 from lino import actions
@@ -51,6 +52,12 @@ def form_field_name(f):
     else:
         return f.name
         
+def dict2kw(d):
+    newd = {}
+    for k,v in d.items():
+        newd[str(k)] = v
+    return newd
+
 
 
 def authenticated_user(user):
@@ -86,7 +93,7 @@ class ViewReportRequest(reports.ReportActionRequest):
         self.setup(*args,**kw)
         
     def parse_req(self,request,rh,**kw):
-        gc_name = kw.get('gc',None)
+        gc_name = request.REQUEST.get('gc',None)
         if gc_name:
             self.gc = system.GridConfig.objects.get(rptname=self.report.actor_id,name=gc_name)
             
@@ -117,6 +124,13 @@ class ViewReportRequest(reports.ReportActionRequest):
                     raise Http404("There's no %s with primary key %r",master.__name__,pk)
             #~ print '20100212', self #, kw['master_instance']
         #~ print '20100406b', self.report,kw
+        
+        filter = request.REQUEST.get('filter',None)
+        if filter is not None:
+            filter = json.loads(filter)
+            kw['gridfilters'] = [dict2kw(flt) for flt in filter]
+        
+        
         quick_search = request.REQUEST.get(URL_PARAM_FILTER,None)
         if quick_search:
             kw.update(quick_search=quick_search)

@@ -61,3 +61,10 @@ Defined in site.js
    
   See :doc:`/blog/2010/20100706`
    
+
+Names from external libraries
+-----------------------------
+
+.. js:class:: Ext.ux.grid.GridFilters
+
+

@@ -28,20 +28,10 @@ from django.forms.models import _get_foreign_key
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 
+from dateutil import parser as dateparser
 
 from django.http import HttpResponse
-#from django.core import serializers
-#from django.shortcuts import render_to_response
-#from django.utils import simplejson
 from django.utils.safestring import mark_safe
-
-try:
-    # l:\snapshot\xhtml2pdf
-    import ho.pisa as pisa
-except ImportError:
-    pisa = None
-
-
 
 
 import lino
@@ -54,7 +44,7 @@ from lino.core import actors
 #~ from lino.core import action_requests
 from lino.ui import base
 
-from lino.modlib.tools import resolve_model, resolve_field, get_app, model_label
+from lino.modlib.tools import resolve_model, resolve_field, get_app, model_label, get_field
 from lino.core.coretools import get_slave, get_model_report, data_elems, get_data_elem
 
 #~ from lino.modlib import field_choices
@@ -79,6 +69,47 @@ def add_quick_search_filter(qs,search_text):
         if isinstance(field,models.CharField):
             kw = {field.name+"__contains": search_text}
             q = q | models.Q(**kw)
+    return qs.filter(q)
+    
+def add_gridfilters(qs,gridfilters):
+    """
+    Converts a `filter` request in the format used by :extux:`Ext.ux.grid.GridFilters` into a 
+    `Django field lookup <http://docs.djangoproject.com/en/1.2/ref/models/querysets/#field-lookups>`_
+    on a :class:`django.db.models.query.QuerySet`.
+    
+    :param qs: the queryset to be modified.
+    :param gridfilters: a list of dictionaries, each having 3 keys `field`, `type` and `value`.
+    
+    """
+    if not isinstance(qs,QuerySet): 
+        raise NotImplementedError('TODO: filter also simple lists')
+    q = models.Q()
+    for flt in gridfilters:
+        field = get_field(qs.model,flt['field'])
+        flttype = flt['type']
+        kw = {}
+        if flttype == 'string':
+            if isinstance(field,models.CharField):
+                kw[field.name+"__contains"] =  flt['value']
+            elif isinstance(field,models.ForeignKey):
+                kw[field.name+"__name__contains"] = flt['value']
+            else:
+                raise NotImplementedError(repr(flt))
+        elif flttype == 'numeric':
+            cmp = str(flt['comparison'])
+            if cmp == 'eq': cmp = 'exact'
+            kw[field.name+"__"+cmp] = flt['value']
+        elif flttype == 'boolean':
+            kw[field.name+"__equals"] = flt['value']
+        elif flttype == 'date':
+            v = dateparser.parse(flt['value'],fuzzy=True)
+            cmp = str(flt['comparison'])
+            if cmp == 'eq': cmp = 'exact'
+            kw[field.name+"__"+cmp] = v
+            #~ print kw
+        else:
+            raise NotImplementedError(repr(flt))
+        q = q & models.Q(**kw)
     return qs.filter(q)
         
 
@@ -293,11 +324,13 @@ class ReportActionRequest(actions.ActionRequest): # was ReportRequest
             offset=None,limit=None,
             layout=None,user=None,
             extra=None,quick_search=None,
+            gridfilters=None,
             order_by=None,
             selected_rows=None,
             **kw):
         self.user = user
         self.quick_search = quick_search
+        self.gridfilters = gridfilters
         self.order_by = order_by
         if selected_rows is not None:
             self.selected_rows = selected_rows
@@ -642,7 +675,6 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
             title += ": " + unicode(rr.master_instance)
         return title
         
-    #~ def get_queryset(self,master_instance=None,quick_search=None,order_by=None,**kw):
     def get_queryset(self,rr):
         if self.queryset is not None:
             qs = self.queryset
@@ -662,6 +694,8 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
         if rr.quick_search is not None:
             #~ qs = add_quick_search_filter(qs,self.model,rr.quick_search)
             qs = add_quick_search_filter(qs,rr.quick_search)
+        if rr.gridfilters is not None:
+            qs = add_gridfilters(qs,rr.gridfilters)
         order_by = rr.order_by or self.order_by
         if order_by:
             qs = qs.order_by(*order_by.split())

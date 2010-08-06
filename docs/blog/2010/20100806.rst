@@ -1,0 +1,34 @@
+20100806
+========
+
+Wo sind die :js:class:`Ext.ux.grid.GridFilters` eigentlich dokumentiert? 
+Hier: http://extjs-ux.org/ext-docs/
+Aber warum ist dort noch Version 3.0?
+Zum Beispiel hat 
+:js:class:`Ext.ux.grid.filter.ListFilter` einen config param `options`, 
+der dort unter `Ext.ux.grid.filter.ListFilter <http://extjs-ux.org/ext-docs/?class=Ext.ux.grid.filter.ListFilter>` 
+nicht dokumentiert ist.
+Das ist ein bisschen lästig, weil die Docstrings in den js-Sourcen nicht gerade angenehm zu lesen sind...
+
+Aber okay. In der Version von gestern funktionierte z.B. :report:`contacts.Persons` nicht mehr, 
+er sagte dann `Cls is not a constructor`. 
+Das hieß, dass :js:func:`GridFilters.getFilterClass` keinen gültigen Klassennamen zurück gegeben hatte.
+Wie dem auch sei, ich denke dass ich sowieso irgendwann die Kolonnen im :extjs:`Ext.grid.ColumnModel` 
+mit einem selbst ermittelten `filter` statt des simplen `filterable`.
+
+Dann habe ich `local` auf `false` gesetzt. 
+Bei lokalem (client-seitigem) Filtern funktioniert nämlich die Paginierung nicht mehr.
+Das funktioniert auch schon für Textfelder.
+
+TODO 18.15 Uhr :
+
+- Wenn man in einem FK-Feld filtert, kriegt der Server einen `TypeError: Related Field has invalid lookup: contains`. Was logisch ist, weil :func:`lino.reports.add_gridfilters` noch verfeinert werden muss.
+  
+
+22.15 Uhr : Voilà, die Kolonnenfilter funktionieren. Außer für Datumsfelder, aber das lass ich jetzt mal warten. 
+
+TODO: Was jetzt diese Woche nicht mehr fertig geworden ist, ist das Abspeichern von dem ganzen Kram (Filter, Anordnung, Kolonnenbreiten) in den grid configs.
+
+- Wie gesagt: Speichern in Textdateien und nicht in der Datenbank
+- Wenn es nicht zu viel Aufwand macht, wäre es gut, dass die gespeicherten :term:`GC` UI-unabhängig wären.
+- Wenn ein Report weniger als X GCs hat, könnte ich die Combobox durch Radiobuttons ersetzen.

@@ -226,6 +226,7 @@ extlinks = {
   'issue': ('http://code.google.com/p/lino/issues/detail?id=%s', 'issue '),
   'srcref': ('http://code.google.com/p/lino/source/browse%s', 'file '),
   'extjs': ('http://www.sencha.com/deploy/dev/docs/?class=%s', ''),
+  'extux': ('http://extjs-ux.org/ext-docs/?class=%s', ''),
   'igen_src': ('http://code.google.com/p/lino-igen/source/browse%s', 'file '),
   'dsbe_src': ('http://code.google.com/p/lino-dsbe/source/browse%s', 'file '),
 }
