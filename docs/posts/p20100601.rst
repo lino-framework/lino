@@ -1,9 +1,9 @@
 How to replace the content of a rendered component?
 ===================================================
 
-(Note: I found the answer to this question before I could post it... see :srcref:`/extjs-showcases/20100711.html` and :doc:`/blog/2010/20100709`)
+(Note: I found myself the answer to this question before I could post it... see :srcref:`/extjs-showcases/20100711.html` and :doc:`/blog/2010/0709`)
 
-I have an :class:`Ext.Viewport` with a border layout. The top element contains a menu. 
+I have an :extjs:`Ext.Viewport` with a border layout. The top element contains a menu. 
 I would like the menu actions to dynamically render a component into the center area.
 
 Here is a showcase to demonstrate what I mean::
@@ -54,21 +54,21 @@ Here is a showcase to demonstrate what I mean::
 
 Here is how this looks after loading the page:
 
-.. image:: http://lino.googlecode.com/hg/screenshots/20100601/1.jpg
+.. image:: 20100601-1.jpg
    :width: 40%
-   :target: http://lino.googlecode.com/hg/screenshots/20100601/1.jpg
+   :target: ../_images/20100601-1.jpg
 
-.. image:: http://lino.googlecode.com/hg/screenshots/20100601/2.jpg
+.. image:: 20100601-2.jpg
    :width: 40%
-   :target: http://lino.googlecode.com/hg/screenshots/20100601/2.jpg
+   :target: ../_images/20100601-2.jpg
 
 
 My first guess (`showComp1()`) was to render the component into the main_area.
 But this appends the component to existing content:
 
-.. image:: http://lino.googlecode.com/hg/screenshots/20100601/3.jpg
+.. image:: 20100601-3.jpg
    :width: 50%
-   :target: http://lino.googlecode.com/hg/screenshots/20100601/3.jpg
+   :target: ../_images/20100601-3.jpg
 
 
 I want to forget about what was there before and replace the content by a new component.
@@ -76,9 +76,9 @@ I want to forget about what was there before and replace the content by a new co
 My second guess (`showComp2()`) was after reading 
 http://www.extjs.com/forum/showthread.php?42465-replace-content-for-extJS-Tabs :
 
-.. image:: http://lino.googlecode.com/hg/screenshots/20100601/4.jpg
+.. image:: 20100601-4.jpg
    :width: 50%
-   :target: http://lino.googlecode.com/hg/screenshots/20100601/4.jpg
+   :target: ../_images/20100601-4.jpg
 
 This is almost what I want, but the ``ct.update('')`` created an empty DIV between menu and main_area. 
 
@@ -86,9 +86,9 @@ How can I get rid of this useless DIV?
 
 I tried `Ext.getCmp('main_area').update(cmp);` (`showComp3()`), which removes the empty DIV but inserts a string representation of the panel object:
 
-.. image:: http://lino.googlecode.com/hg/screenshots/20100601/5.jpg
+.. image:: 20100601-5.jpg
    :width: 50%
-   :target: http://lino.googlecode.com/hg/screenshots/20100601/5.jpg
+   :target: ../_images/20100601-5.jpg
 
 
 Useful links:

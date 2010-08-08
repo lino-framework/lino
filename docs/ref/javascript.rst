@@ -10,7 +10,7 @@ Defined in lino.js
 
 .. class:: Lino.WindowWrapper
 
-  See :doc:`/blog/2010/20100716`
+  See :doc:`/blog/2010/0716`
   
   .. function:: Lino.WindowWrapper.load_master_record(record)
   
@@ -33,7 +33,7 @@ Defined in lino.js
     - title
     - values
   
-  See :doc:`/blog/2010/20100714`
+  See :doc:`/blog/2010/0714`
   
   .. js:function:: Lino.FormPanel.load_master_record
   
@@ -47,7 +47,7 @@ Defined in lino.js
   
     The base URI of the report.
   
-  See :doc:`/blog/2010/20100714`
+  See :doc:`/blog/2010/0714`
   
 .. js:function:: Lino.id_renderer()
 
@@ -59,7 +59,7 @@ Defined in site.js
   :param object params: Parameters to override default config values.
   :returns: null
    
-  See :doc:`/blog/2010/20100706`
+  See :doc:`/blog/2010/0706`
    
 
 Names from external libraries

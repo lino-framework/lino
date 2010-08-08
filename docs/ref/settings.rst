@@ -40,9 +40,9 @@ This section describes Lino-specific entries of the Django :xfile:`settings.py`.
    
 .. setting:: DEBUG
 
-  See :doc:`/blog/2010/20100716`
+  See :doc:`/blog/2010/0716`
   
 .. setting:: USER_INTERFACES
   
-   Lino-specific setting. See :doc:`/blog/2010/20100624`.
+   Lino-specific setting. See :doc:`/blog/2010/0624`.
    

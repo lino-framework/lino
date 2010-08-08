@@ -27,6 +27,8 @@ TODO 18.15 Uhr :
 
 22.15 Uhr : Voilà, die Kolonnenfilter funktionieren. Außer für Datumsfelder, aber das lass ich jetzt mal warten. 
 
+`Check-In 1101 <http://code.google.com/p/lino/source/detail?r=9062dce2b40eb9500bafa2e22fbfb732232177e4>`_
+
 TODO: Was jetzt diese Woche nicht mehr fertig geworden ist, ist das Abspeichern von dem ganzen Kram (Filter, Anordnung, Kolonnenbreiten) in den grid configs.
 
 - Wie gesagt: Speichern in Textdateien und nicht in der Datenbank

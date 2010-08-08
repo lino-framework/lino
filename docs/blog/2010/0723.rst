@@ -1,8 +1,7 @@
 20100723
 ========
 
-:doc:`Release </releases>` Lino 0.8.3 und Lino-DSBE 0.1.2 im :term:`DSBE` und 
-auf :term:`Tups`. 
+:doc:`Release </releases/20100723>` Lino 0.8.3 und Lino-DSBE 0.1.2 im :term:`DSBE` und auf :term:`Tups`. 
 In dieser Version ist das neue "fensterlose" User Interface erstmals sichtbar.
 Performance ist deutlich besser, aber ob man damit schon arbeiten könnte?
 Kann sein, dass der Server inzwischen das Bottleneck ist.
