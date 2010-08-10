@@ -76,7 +76,7 @@ class StoreField(object):
 
 class DisabledFieldsStoreField(StoreField):
     """
-    See :doc:`/blog/2010/20100803`
+    See :doc:`/blog/2010/0803`
     """
     def __init__(self,report):
         self.options = dict(name='disabled_fields')

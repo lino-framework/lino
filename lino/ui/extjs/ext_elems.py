@@ -28,7 +28,7 @@ from lino.utils.jsgen import py2js, Variable, Component, id2js, js_code
 from lino.utils import choosers
 from . import ext_requests
 #~ from lino.modlib.properties import models as properties # import Property, CharPropValue
-from lino.modlib.system import models as system
+#~ from lino.modlib.system import models as system
 
 EXT_CHAR_WIDTH = 9
 EXT_CHAR_HEIGHT = 22
@@ -77,32 +77,18 @@ def before_row_edit(panel):
 
 
 
-class GridFilters(Component):
+class unused_GridFilters(Component):
     ext_suffix = "_filters"
     declare_type = jsgen.DECLARE_VAR
     value_template = "new Ext.ux.grid.GridFilters(%s)"
     
-    def __init__(self,grid,**kw):
-        assert isinstance(grid,GridElement)
+    def __init__(self,name,**kw):
+        #~ assert isinstance(grid,GridElement)
         #~ kw.update(encode='json')
         kw.update(encode=True)
         kw.update(local=False)
         #~ kw.update(filters=[])
-        Component.__init__(self,grid.name,**kw)
-
-class unused_ColumnModel(Component):
-    #~ declare_type = jsgen.DECLARE_THIS
-    declare_type = jsgen.DECLARE_VAR
-    #~ declare_type = jsgen.DECLARE_INLINE
-    ext_suffix = "_cols"
-    value_template = "new Ext.grid.ColumnModel(%s)"
-    
-    def __init__(self,grid,**kw):
-        assert isinstance(grid,GridElement)
-        #~ self.grid = grid
-        self.columns = [GridColumn(self,e) for e in grid.elements if not e.hidden]
-        kw.update(columns=self.columns)
-        Component.__init__(self,grid.name,**kw)
+        Component.__init__(self,name,**kw)
 
 
 
@@ -112,7 +98,7 @@ class GridColumn(Component):
     #~ ext_suffix = "_col"
     #~ value_template = "new Ext.grid.Column(%s)"
     
-    def __init__(self,cm,editor,**kw):
+    def __init__(self,index,editor,**kw):
         """editor may be a Panel for columns on a GenericForeignKey
         """
         #~ print 20100515, editor.name, editor.__class__
@@ -122,6 +108,8 @@ class GridColumn(Component):
         #~ self.value_template = editor.grid_column_template
         kw.update(self.editor.get_column_options())
         kw.update(editor=self.editor)
+        kw.update(colIndex=index)
+        kw.update(hidden=editor.hidden)
         #~ if isinstance(editor,FieldElement) and editor.field.primary_key:
         if isinstance(editor,FieldElement) and isinstance(editor.field,models.AutoField):
             kw.update(renderer=js_code('Lino.id_renderer'))
@@ -194,6 +182,7 @@ class LayoutElement(VisibleComponent):
     ext_name = None
     ext_suffix = ""
     data_type = None 
+    filter_type = None
     parent = None # will be set by Container
     
     label = None
@@ -339,6 +328,15 @@ class FieldElement(LayoutElement):
         self.editable = field.editable # and not field.primary_key
         LayoutElement.__init__(self,lh,varname_field(field),label=unicode(field.verbose_name),**kw)
         
+    def get_filter_options(self,**kw):
+        if self.filter_type:
+            kw.update(dataIndex=self.field.name)
+            # 20100805 see also GridFilters.js
+            #~ kw.update(filterable=True)  
+            #~ kw.update(filter=dict(type='auto'))
+            kw.update(type=self.filter_type)
+        return kw
+            
     def get_column_options(self,**kw):
         #~ raise "get_column_options() %s" % self.__class__
         #~ kw.update(xtype='gridcolumn')
@@ -350,11 +348,6 @@ class FieldElement(LayoutElement):
             kw.update(editable=False)
         if not self.sortable:
             kw.update(sortable=False)
-        if self.filter_type:
-            # 20100805 see also GridFilters.js
-            #~ kw.update(filterable=True)  
-            #~ kw.update(filter=dict(type='auto'))
-            kw.update(filter=dict(type=self.filter_type))
         w = self.width or self.preferred_width
         kw.update(width=w*EXT_CHAR_WIDTH)
         return kw    
@@ -575,7 +568,9 @@ class MethodElement(FieldElement):
         return_type._return_type_for_method = meth
         FieldElement.__init__(self,lh,return_type)
         delegate = lh.main_class.field2elem(lh,return_type,**kw)
-        for a in ('ext_options','get_column_options','get_field_options','filter_type'): # ,'grid_column_template'):
+        for a in ('ext_options','get_column_options',
+                  'get_filter_options', 'get_field_options',
+                  'filter_type'): # ,'grid_column_template'):
             setattr(self,a,getattr(delegate,a))
         
 
@@ -814,16 +809,11 @@ class GridElement(Container):
     
     def __init__(self,lh,name,rpt,*elements,**kw):
         """
-        Note: lh is the layout owning this grid, rpt is the report being displayed.
+        :param lh: the handle of the DetailLayout owning this grid
+        :param rpt: the report being displayed
         """
         assert isinstance(rpt,reports.Report), "%r is not a Report!" % rpt
         self.report = rpt
-        try:
-            gc = system.GridConfig.objects.get(rptname=rpt.actor_id,name='')
-            kw.update(gc=dict(name='',columns=[col.colname for col in gc.gridcolumns_set.order_by('seq')]))
-        except system.GridConfig.DoesNotExist:
-            pass
-        #~ assert isinstance(rh,reports.ReportHandle), "%r is not a ReportHandle!" % rh
         if len(elements) == 0:
             self.rh = rpt.get_handle(lh.ui)
             elements = self.rh.list_layout._main.elements
@@ -831,28 +821,11 @@ class GridElement(Container):
         for e in elements:
             w += (e.width or e.preferred_width)
         self.preferred_width = constrain(w,10,120)
-        
-        
         Container.__init__(self,lh,name,*elements,**kw)
         assert not kw.has_key('before_row_edit')
         self.update(before_row_edit=before_row_edit(self))
-        #DataElementMixin.__init__(self,rh)
-        #self.dl = rh
         
-        # override Container's height algorithm
         self.preferred_height = rpt.page_length 
-        #~ ADD_GRID_HEIGHT = 4 # experimental value...
-        #~ if self.height:
-            #~ self.height += ADD_GRID_HEIGHT
-        #~ else:
-            #~ self.preferred_height += ADD_GRID_HEIGHT
-        
-        #~ self.rh = rh
-        #~ lh.needs_store(rh)
-        self.gridfilters = GridFilters(self)
-        #~ self.column_model = ColumnModel(self)
-        #~ self.column_model = [GridColumn(self,e) for e in self.elements if not e.hidden]
-        #self.mt = ContentType.objects.get_for_model(self.report.model).pk
         if self.report.master is not None:
             self.mt = ContentType.objects.get_for_model(self.report.master).pk
         else:
@@ -864,51 +837,21 @@ class GridElement(Container):
         #~ for i,w in enumerate(wc['column_widths']):
             #~ self.column_model.columns[i].update(width = w)
 
-    def ext_options(self,**d):
-        #~ self.setup()
+    def ext_options(self,**kw):
         rh = self.report.get_handle(self.lh.ui)
-        d = LayoutElement.ext_options(self,**d)
-        d.update(clicksToEdit=2)
-        d.update(viewConfig=dict(
-          #autoScroll=True,
-          #autoFill=True,
-          #forceFit=True,
-          #enableRowBody=True,
-          showPreview=True,
-          scrollOffset=200,
-          emptyText="Nix gefunden!"
-        ))
-        d.update(plugins=[self.gridfilters])
-        #d.update(autoScroll=True)
-        #d.update(fitToFrame=True)
-        d.update(emptyText="Nix gefunden...")
-        #~ d.update(store=rh.store) # js_code(self.rh.store.ext_name))
-        #~ d.update(ls_data_url=rh.store) # js_code(self.rh.store.ext_name))
-        d.update(ls_data_url=rh.ui.get_actor_url(rh.report))
-        d.update(ls_store_fields=[js_code(f.as_js()) for f in rh.store.fields])
-        d.update(ls_columns=[GridColumn(self,e) for e in self.elements if not e.hidden])
-        #~ d.update(colModel=self.column_model)
-        #d.update(colModel=js_code('this.cols'))
-        #d.update(colModel=js_code(self.column_model.ext_name))
-        #~ d.update(autoHeight=True)
-        #d.update(layout='fit')
-        d.update(enableColLock=False)
-        d.update(ls_id_property=rh.store.pk.name)
-        d.update(ls_quick_edit=True)
-        #~ d.update(ls_content_type=rh.content_type)
-        
-        #~ def a2btn(a):
-            #~ return dict(
-              #~ handler=js_code("Lino.%s.createCallback(this)" % a),
-              #~ text=unicode(a.label),
-            #~ )
-        
-        #~ d.update(bbar=[a2btn(a) for a in rh.get_actions() if not a.hidden])
-        d.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rh.get_actions(rh.report.default_action)])
-        #~ d.update(ls_bbar_actions=[a for a in rh.get_actions() if not a.hidden])
-        
-        
-        return d
+        kw = LayoutElement.ext_options(self,**kw)
+        #~ d.update(ls_data_url=rh.ui.get_actor_url(self.report))
+        kw.update(ls_url=rh.ui.build_url(self.report.app_label,self.report._actor_name))
+        kw.update(ls_store_fields=[js_code(f.as_js()) for f in rh.store.fields])
+        kw.update(ls_columns=[GridColumn(i,e) for i,e in enumerate(self.elements)])
+        kw.update(ls_filters=[e.get_filter_options() for e in self.elements if e.filter_type])
+        kw.update(ls_id_property=rh.store.pk.name)
+        kw.update(ls_quick_edit=True)
+        kw.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rh.get_actions(rh.report.default_action)])
+        gc = self.report.grid_configs.get('',None)
+        if gc is not None:
+            kw.update(ls_grid_config=gc)
+        return kw
         
 class SlaveGridElement(GridElement):
     def ext_options(self,**kw):
@@ -1105,7 +1048,8 @@ class FormPanel(jsgen.Component):
         #~ dict(label="Last",handler=js_code('Lino.goto_pk'),iconCls='x-tbar-page-last'),
         #~ ])
         kw.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rh.get_actions(action)])
-        kw.update(ls_data_url=rh.ui.get_actor_url(rh.report))
+        #~ kw.update(ls_data_url=rh.ui.get_actor_url(rh.report))
+        kw.update(ls_url=rh.ui.build_url(rh.report.app_label,rh.report._actor_name))
         jsgen.Component.__init__(self,'form_panel',**kw)
         
     def has_field(self,f):

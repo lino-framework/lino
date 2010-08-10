@@ -33,7 +33,7 @@ Ist eigentlich verständlich. Damit die ganze ExtJS nicht auf jeder Seite neu ge
 
 Also es war Utopie zu glauben, dass ich das traditionelle Browserverhalten "1 URL -> 1 Seite" beibehalten kann. RIA bedeutet eben unter anderem dynamisches HTML.
 
-Eine relativ teure Erkenntnis: den "Seitensprung" über extjsu habe ich am :doc:`19.06. <20100619>` begonnen und in diesen drei Wochen etwa 40 Stunden daran gearbeitet. Ich bereue das trotzdem kaum, denn das sind wichtige Entscheidungen und es besteht weiterhin kein trifftiger Grund, solche Entscheidungen übers Knie zu brechen.
+Eine relativ teure Erkenntnis: den "Seitensprung" über extjsu habe ich am :doc:`19.06. <0619>` begonnen und in diesen drei Wochen etwa 40 Stunden daran gearbeitet. Ich bereue das trotzdem kaum, denn das sind wichtige Entscheidungen und es besteht weiterhin kein trifftiger Grund, solche Entscheidungen übers Knie zu brechen.
 
 Ich sehe nun auch den nächsten Schritt: Ich muss meine Frage vom 01.06. (:doc:`/posts/p20100601`) fertig formulieren und falls nötig ins ExtJS-Forum posten.
 

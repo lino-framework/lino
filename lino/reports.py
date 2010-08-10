@@ -12,8 +12,10 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 
+import os
 import traceback
 #import logging ; logger = logging.getLogger('lino.reports')
+import cPickle as pickle
 
 from django.conf import settings
 from django.utils.importlib import import_module
@@ -465,6 +467,7 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
     can_add = perms.is_authenticated
     can_change = perms.is_authenticated
     can_delete = perms.is_authenticated
+    can_config = perms.is_staff
     
     show_prev_next = True
     
@@ -612,10 +615,20 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
         if self.button_label is None:
             self.button_label = self.label
             
-        from lino.modlib.system import models as system
-        self.grid_configs = [gc.name for gc in system.GridConfig.objects.filter(rptname=self.actor_id)]
+        #~ from lino.modlib.system import models as system
+        #~ self.grid_configs = [gc.name for gc in system.GridConfig.objects.filter(rptname=self.actor_id)]
+        filename = self.get_grid_config_file()
+        if os.path.exists(filename):
+            lino.log.info("Loading %s...",filename)
+            self.grid_configs = pickle.load(open(filename,"rU"))
+        else:
+            self.grid_configs = {}
+        
 
-
+    def get_grid_config_file(self):
+        filename = str(self) + ".cfg"
+        return os.path.join(settings.DATA_DIR,filename)
+        
     #~ def debug_summary(self):
         #~ if self.model is not None:
             #~ return '%s detail_layouts=%s' % (self.__class__,[l.__class__ for l in self.detail_layouts])

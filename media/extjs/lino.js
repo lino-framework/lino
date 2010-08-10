@@ -166,6 +166,16 @@ Lino.save_wc_handler = function(ww) {
   }
 };
 
+//~ Lino.save_gc_handler = function(panel) {
+  //~ return function() {
+    //~ console.log('TODO: save_gc_handler',panel,panel.ls_data_url);
+    //~ wc = ww.get_window_config();
+    //~ console.log('save_wc_handler',ww,{url:ww.config.url_action,params:wc,method:'POST'});
+    //~ Lino.do_action(ww,{url:ww.config.url_action,params:wc,method:'POST'});
+    //~ Lino.do_action(ww,{url:'/grid_configs/'+ww.config.permalink_name,params:wc,method:'PUT'});
+  //~ }
+//~ };
+
 
 
 Lino.delete_selected = function(caller) {
@@ -178,7 +188,7 @@ Lino.delete_selected = function(caller) {
     fn: function(btn) {
       if (btn == 'yes') {
         for ( var i=0; i < pk_list.length; i++ ) {
-          Lino.do_action(caller,{method:'DELETE',url:caller.ls_data_url+'/'+pk_list[i]})
+          Lino.do_action(caller,{method:'DELETE',url:'/api'+caller.ls_url+'/'+pk_list[i]})
         }
         caller.refresh();
       }
@@ -310,7 +320,7 @@ Lino.submit_detail = function(caller) {
   if (rec) {
     //~ console.log('Save handler: this=',this);
     caller.form.submit({
-      url:caller.ls_data_url + '/' + rec.id,
+      url:'/api'+caller.ls_url + '/' + rec.id,
       method: 'PUT',
       scope: caller,
       success: function(form, action) {
@@ -342,7 +352,7 @@ Lino.do_when_visible = function(cmp,todo) {
 
 Lino.submit_insert = function(caller) {
   caller.form.submit({
-    url:caller.ls_data_url,
+    url:'/api'+caller.ls_url,
     method: 'POST',
     scope: caller,
     success: function(form, action) {
@@ -353,6 +363,31 @@ Lino.submit_insert = function(caller) {
     clientValidation: true
   })
 };
+
+Lino.GridFilters = Ext.extend(Ext.ux.grid.GridFilters,{
+    getFilterValues : function () {
+        var filters = [], i, len;
+
+        this.filters.each(function (f) {
+            if (f.active) {
+                var d = [].concat(f.serialize());
+                for (i = 0, len = d.length; i < len; i++) {
+                    filters.push({
+                        field: f.dataIndex,
+                        data: d[i]
+                    });
+                }
+            }
+        });
+        return filters;
+    },
+    setFilterValues : function (filters) {
+      filters.each(function(fd) {
+        var f = this.filters.get(fd.field);
+        
+      });
+    },
+});
 
 Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   constructor : function(config,params){
@@ -397,7 +432,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     Ext.Ajax.request({ 
       waitMsg: 'Loading record...',
       method: 'GET',
-      url:this.ls_data_url + '/' + record_id,
+      url:'/api'+this.ls_url + '/' + record_id,
       params: {query: this.search_field.getValue()},
       success: function(response) {
         if (response.responseText) {
@@ -459,7 +494,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   load_picture_to : function(cmp,record) {
     //~ console.log('Lino.load_picture()',record);
     if (record)
-      var src = this.ww.main_item.ls_data_url + "/" + record.id + "?fmt=image"
+      var src = '/api'+this.ww.main_item.ls_url + "/" + record.id + "?fmt=image"
     else
       var src = 'empty.jpg';
     var f = function() {
@@ -496,7 +531,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     config.store = new Ext.data.JsonStore({ 
       listeners: { exception: Lino.on_store_exception }, 
       //~ proxy: new Ext.data.HttpProxy({ url: config.ls_data_url+'?fmt=json', method: "GET" }), remoteSort: true, 
-      proxy: new Ext.data.HttpProxy({ url: config.ls_data_url, method: "GET" }), remoteSort: true, 
+      proxy: new Ext.data.HttpProxy({ url: '/api'+config.ls_url, method: "GET" }), remoteSort: true, 
       baseParams: {fmt:'json'}, 
       fields: config.ls_store_fields, 
       totalProperty: "count", 
@@ -506,15 +541,27 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
       
     delete config.ls_store_fields;
     
+    if (config.ls_filters) {
+        config.plugins = [new Lino.GridFilters({encode:true,local:false,filters:config.ls_filters})];
+        if (config.ls_grid_config && config.ls_grid_config.filters) {
+          for (var i = 0; i < config.ls_grid_config.filters.length; i++) {
+            config.ls_grid_config.filters[i].field
+          }
+        }
+    }
+    delete config.ls_filters
+    
     this.before_row_edit = config.before_row_edit.createDelegate(this);
     delete config.before_row_edit;
 
     if (config.ls_columns) {
       //~ console.log(20100805,config.ls_columns);
       if (config.ls_grid_config) {
-        var cols = Array(config.ls_grid_config.columns.length);
-        for (var i in config.ls_grid_config.columns) {
+        var cols = Array(config.ls_columns.length);
+        for (var i = 0; i < config.ls_columns.length; i++) {
           cols[i] = config.ls_columns[config.ls_grid_config.columns[i]];
+          //~ console.log(20100810,cols,i);
+          cols[i].width = config.ls_grid_config.widths[i];
         }
         config.colModel = new Ext.grid.ColumnModel({columns:cols,defaults:{sortable:true}})
       } else {
@@ -524,8 +571,22 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     delete config.ls_columns
     if (config.ls_quick_edit) {
       config.selModel = new Ext.grid.CellSelectionModel()
+      this.get_selected = function() {
+        //~ console.log(this.getSelectionModel().selection);
+        return [ this.getSelectionModel().selection.record.id ];
+      };
+      this.get_current_record = function() { 
+        if (this.getSelectionModel().selection) return this.getSelectionModel().selection.record;
+      };
     } else { 
       config.selModel = new Ext.grid.RowSelectionModel() 
+      this.get_selected = function() {
+        var sels = this.getSelectionModel().getSelections();
+        return Ext.pluck(sels,'id');
+      };
+      this.get_current_record = function() { 
+        return this.getSelectionModel().getSelected();
+      };
     };
     delete config.ls_quick_edit
     config.tbar = new Ext.PagingToolbar({ 
@@ -535,9 +596,22 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     });
     config.bbar = Lino.build_buttons(this,config.ls_bbar_actions);
     delete config.ls_bbar_actions
+    config.bbar = config.bbar.concat(['->',
+      {text:'Save GC',handler:this.save_grid_config,qtip:"Save Grid Configuration",scope:this}
+    ])
+    
     Lino.GridPanel.superclass.constructor.call(this, config);
     this.on('beforeedit',function(e) { this.before_row_edit(e.record)},this);
   },
+  
+  //~ save_grid_config : function() {
+    //~ console.log('TODO: save_gc_handler',this,this.ls_data_url);
+    //~ wc = ww.get_window_config();
+    //~ console.log('save_wc_handler',ww,{url:ww.config.url_action,params:wc,method:'POST'});
+    //~ Lino.do_action(ww,{url:ww.config.url_action,params:wc,method:'POST'});
+    //~ Lino.do_action(ww,{url:'/grid_configs/'+ww.config.permalink_name,params:wc,method:'PUT'});
+  //~ },
+  
   
   search_change : function(field,oldValue,newValue) {
     //~ console.log('search_change',field.getValue(),oldValue,newValue)
@@ -546,10 +620,30 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
   },
   
   save_grid_config : function () {
-    var p = {};
-    p.column_widths = Ext.pluck(this.colModel.columns,'width');
-    var a = { params:p, method:'PUT',url:'/api/system/GridConfigs/'+this.ls_grid_config.name};
+    //~ console.log('TODO: save_grid_config',this);
+    
+    var widths = Array(this.colModel.columns.length);
+    var columns = Array(this.colModel.columns.length);
+    var hidden_cols = [];
+    var filters = this.filters.getFilterValues();
+    for (var i = 0; i < this.colModel.columns.length; i++) {
+      var col = this.colModel.columns[i];
+      columns[col.colIndex] = i;
+      widths[i] = col.width;
+      if (col.hidden) hidden_cols.push(col.colIndex);
+    }
+    p = {widths:widths,columns:columns};
+    p['name'] = this.ls_grid_config ? this.ls_grid_config.name : '';
+    if (hidden_cols.length > 0) p['hidden_cols'] = hidden_cols;
+    if (filters.length > 0) p['filters'] = filters;
+    //~ console.log('20100810 save_grid_config',p);
+    
+    //~ p.column_widths = Ext.pluck(this.colModel.columns,'width');
+    var a = { params:p, method:'PUT',url:'/grid_config'+this.ls_url};
     Lino.do_action(this,a);
+    
+    
+    
   },
   
   on_beforeedit : function(e) {
@@ -595,14 +689,14 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     if (e.record.phantom) {
       //~ p.id = undefined;
       Lino.do_action(this,{
-        method:'POST',url: this.ls_data_url,
+        method:'POST',url: '/api'+this.ls_url,
         params:p,
         after_success:after_success})
     } else {
       Lino.do_action(this,{
         method:'PUT',
         //~ url: caller.config.url_data+'/'+e.record.id, 
-        url: this.ls_data_url+'/'+e.record.id, 
+        url: '/api'+this.ls_url+'/'+e.record.id, 
         params:p, 
         after_success:after_success});
     }
@@ -651,7 +745,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
   refresh : function() { 
     this.store.load({params:{limit:this.getTopToolbar().pageSize,start:this.getTopToolbar().cursor}});
   },
-  get_selected : function() {
+  unused_get_selected : function() {
     if (this.ls_quick_edit) {
         //~ console.log(this.getSelectionModel().selection);
         return [ this.getSelectionModel().selection.record.id ];
@@ -660,7 +754,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
         return Ext.pluck(sels,'id');
     }
   },
-  get_current_record : function() { 
+  unused_get_current_record : function() { 
     if (this.ls_quick_edit) {
         if (this.getSelectionModel().selection) return this.getSelectionModel().selection.record;
     } else {
@@ -726,7 +820,7 @@ Lino.MainPanelMixin = {
           //~ listeners: { keypress: this.search_keypress }, 
           //~ id: "seachString" 
         }), 
-        { scope:this, text: "csv", handler: function() { window.open(this.ls_data_url+'?fmt=csv') } } 
+        { scope:this, text: "csv", handler: function() { window.open('/api'+this.ls_url+'?fmt=csv') } } 
       ];
   }
 };
@@ -1001,7 +1095,7 @@ Ext.override(Lino.WindowWrapper,{
       //~ bbar: this.bbar_actions,
       //~ bbar: Lino.build_buttons(this,this.config.ls_bbar_actions),
       tools: [ 
-        { qtip: this.config.qtip, handler: Lino.save_wc_handler(this), id: "save" }, 
+        //~ { qtip: this.config.qtip, handler: Lino.save_wc_handler(this), id: "save" }, 
         { qtip: 'permalink', handler: Lino.permalink_handler(this), id: "pin" },
         { qtip: 'close', handler: Lino.tools_close_handler(this), id: "close" } 
       ] 
@@ -1036,7 +1130,7 @@ Ext.override(Lino.WindowWrapper,{
     return v;
   },
   get_permalink : function() {
-      return this.main_item.ls_data_url + '?fmt=grid';
+      return '/api'+this.main_item.ls_url + '?fmt=grid';
       //~ return this.config.permalink_name+'()'  ;
   },
   on_render : function() {},
@@ -1121,7 +1215,7 @@ Lino.DetailWrapperBase.override({
   on_submit: function() {
     this.main_form.form.submit({
       //~ url:this.caller.config.url_data + '/' + this.config.record_id,
-      url:this.main_item.ls_data_url + '/' + this.config.record_id,
+      url:'/api'+this.main_item.ls_url + '/' + this.config.record_id,
       //~ params: this.caller.get_master_params(this.caller.get_current_record()),
       method: 'PUT',
       scope: this,
@@ -1161,20 +1255,20 @@ Lino.DetailWrapper = Ext.extend(Lino.DetailWrapperBase, {
   },
   get_permalink : function() {
     //~ return this.config.permalink_name +'(undefined,{record_id:'+this.current_record.id+'})';
-    return this.main_item.ls_data_url+'/'+this.main_item.current_record.id + '?fmt=detail';
+    return '/api'+this.main_item.ls_url+'/'+this.main_item.current_record.id + '?fmt=detail';
   }
 });
 
 Lino.InsertWrapper = Ext.extend(Lino.DetailWrapperBase, {
   get_permalink : function() {
     //~ return this.config.permalink_name +'(undefined,{record_id:'+this.current_record.id+'})';
-    return this.main_item.ls_data_url+'?fmt=insert';
+    return '/api'+this.main_item.ls_url+'?fmt=insert';
   },
   on_submit: function() {
     this.main_form.form.submit({
       //~ url:this.caller.config.url_data,
       //~ url:this.caller.ls_data_url,
-      url:this.main_item.ls_data_url,
+      url:'/api'+this.main_item.ls_url,
       //~ params: this.caller.get_master_params(this.caller.get_current_record()),
       method: 'POST',
       scope: this,

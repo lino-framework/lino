@@ -294,13 +294,15 @@ class ExtUI(base.UI):
             (r'^grid_action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<grid_action>\w+)$', self.json_report_view),
             #~ (r'^grid_afteredit/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.grid_afteredit_view),
             (r'^submit/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.form_submit_view),
+            (r'^grid_config/(?P<app_label>\w+)/(?P<actor>\w+)$', self.save_grid_config),
             (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)$', self.api_list_view),
             #~ (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)\.(?P<fmt>\w+)$', self.api_list_view),
             #~ (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>[-\w]+)\.(?P<fmt>\w+)$', self.api_element_view),
             (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$', self.api_element_view),
             #~ (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>\w+)/(?P<method>\w+)$', self.api_element_view),
             #~ (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.api_view),
-            (r'^window_configs/(?P<wc_name>.+)$', self.window_configs_view),
+            #~ (r'^window_configs/(?P<wc_name>.+)$', self.window_configs_view),
+            #~ (r'^grid_configs/(?P<wc_name>.+)$', self.window_configs_view),
             #~ (r'^ui/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.ui_view),
             (r'^choices/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<fldname>\w+)$', self.choices_view),
         )
@@ -514,13 +516,49 @@ class ExtUI(base.UI):
 
 
         
+    def save_grid_config(self,request,app_label=None,actor=None):
+        rpt = actors.get_actor2(app_label,actor)
+        if not rpt.can_config.passes(request.user):
+            msg = _("User %s cannot view %s.") % (request.user,rpt)
+            return http.HttpResponseForbidden()
+        if request.method == 'PUT':
+            PUT = http.QueryDict(request.raw_post_data)
+            gc = dict(
+              widths=[int(x) for x in PUT.getlist('widths')],
+              columns=[int(x) for x in PUT.getlist('columns')],
+              hidden_cols=PUT.getlist('hidden_cols'),
+              filters=PUT.getlist('filters'),
+            )
+            name = PUT.get('name','')
+            rpt.grid_configs[name] = gc
+            
+            #~ s = 'var grid_config = %s;' % py2js(gc)
+            filename = rpt.get_grid_config_file()
+            f = open(filename,'wb')
+            pickle.dump(gc,f)
+            f.close()
+            lino.log.info("save_grid_config(%r) -> %s",gc,filename)
+            #~ name = PUT.get('name','')
+            #~ if name:
+                #~ filename += '.' + name
+            #~ filename += '.js'
+            #~ print filename, s
+            
+            from lino.lino_site import lino_site
+            self.build_lino_js(lino_site)
+            
+            return json_response_kw(success=True,
+                  msg="%s would have been saved" % filename)
+        raise NotImplementedError
+        
+        
     def api_list_view(self,request,app_label=None,actor=None):
         """
-        GET : List the members of the collection. 
-        PUT : Replace the entire collection with another collection. 
-        POST : Create a new entry in the collection where the ID is assigned automatically by the collection. 
-               The ID created is included as part of the data returned by this operation. 
-        DELETE : Delete the entire collection.
+        - GET : List the members of the collection. 
+        - PUT : Replace the entire collection with another collection. 
+        - POST : Create a new entry in the collection where the ID is assigned automatically by the collection. 
+          The ID created is included as part of the data returned by this operation. 
+        - DELETE : Delete the entire collection.
         (Source: http://en.wikipedia.org/wiki/Restful)
         """
         rpt = actors.get_actor2(app_label,actor)
@@ -840,7 +878,7 @@ class ExtUI(base.UI):
     def get_actor_url(self,actor,**kw):
         return self.build_url("api",actor.app_label,actor._actor_name,**kw)
 
-    def get_form_action_url(self,fh,action,**kw):
+    def unused_get_form_action_url(self,fh,action,**kw):
         #~ a = btn.lh.datalink.actor
         #~ a = action.actor
         return self.build_url("form",fh.layout.app_label,fh.layout._actor_name,action.name,**kw)

@@ -55,20 +55,17 @@ Here is a showcase to demonstrate what I mean::
 Here is how this looks after loading the page:
 
 .. image:: 20100601-1.jpg
-   :width: 40%
-   :target: ../_images/20100601-1.jpg
+   :scale: 50
 
 .. image:: 20100601-2.jpg
-   :width: 40%
-   :target: ../_images/20100601-2.jpg
+   :scale: 50
 
 
 My first guess (`showComp1()`) was to render the component into the main_area.
 But this appends the component to existing content:
 
 .. image:: 20100601-3.jpg
-   :width: 50%
-   :target: ../_images/20100601-3.jpg
+   :scale: 50
 
 
 I want to forget about what was there before and replace the content by a new component.
@@ -77,8 +74,7 @@ My second guess (`showComp2()`) was after reading
 http://www.extjs.com/forum/showthread.php?42465-replace-content-for-extJS-Tabs :
 
 .. image:: 20100601-4.jpg
-   :width: 50%
-   :target: ../_images/20100601-4.jpg
+   :scale: 50
 
 This is almost what I want, but the ``ct.update('')`` created an empty DIV between menu and main_area. 
 
@@ -87,8 +83,7 @@ How can I get rid of this useless DIV?
 I tried `Ext.getCmp('main_area').update(cmp);` (`showComp3()`), which removes the empty DIV but inserts a string representation of the panel object:
 
 .. image:: 20100601-5.jpg
-   :width: 50%
-   :target: ../_images/20100601-5.jpg
+   :scale: 50
 
 
 Useful links:

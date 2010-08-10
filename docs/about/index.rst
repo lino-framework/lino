@@ -1,26 +1,22 @@
 About Lino
 ==========
 
-What is Lino?
--------------
-
 Lino is a framework for writing enterprise-level database applications, 
-using a combination of 
-:term:`Django` (application server and database model)
-and :term:`ExtJS` (user interface). 
+using :term:`Django's <Django>` database model and application server behind the scenes,
+and the :term:`ExtJS` Javascript library to provide a modern user interface.
 
-About the author
-----------------
+Lino has no users yet, but we are currently working on getting it started on a site in Belgium. We hope for success until the end of 2010.
 
-I am the author of :term:`TIM`, 
-a DOS-based framework to write database applications for small enterprises. 
-TIM is over 15 years old, and I live from maintaining it and giving support to its users.
+Luc Saffre, the author of Lino, is also the author of :term:`TIM`, 
+a DOS-based framework for writing database applications for small enterprises. TIM is over 15 years old, but Luc lives from maintaining it and giving support to its users. 
+TIM users have relatively wide-spread profiles, ranging from the independant craftsman who writes 50 invoices per year to the government agency with 30 users and hundreds of documents per day.
 
-I've been dreaming about a successor for TIM for over ten years.
-Since August 2004 I'm doing this using Python.
+Luc has been working on writing a successor for TIM since the early 1990s. He has done and dropped projects in C++, PHP and Java. Since August 2004 he's doing this using Python. In March 2009 he discovered :term:`Django` whose database model and application server concepts seem ideal for Lino. In August 2009 he started to use the ExtJS Javascript framework.
 
-In March 2009 I discovered :term:`Django` and decided to drop `lino.adamo` because Django did this job much better than what I had written so far.
+Don't hesitate to contact the author:
 
+  | E-mail: luc *dot* saffre *at* gmail *dot* com
+  | Skype: lsaffre
 
 .. toctree::
    :maxdepth: 1

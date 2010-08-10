@@ -1,0 +1,42 @@
+2010-08-09
+==========
+
+Grid Configurations
+-------------------
+
+Man kann jetzt den Button zum Speichern der :term:`GC` sehen. Der ist nicht wie ursprünglich geplant ein Tool-Button (oben rechts in Titelleiste des GridPanels), weil GridPanels ja gar keinen Titel haben, wenn sie das Hauptelement sind. Also denke ich, dass der Button in der unteren rechten Ecke als Teil der bbar relativ gut aufgehoben ist. Wie man diese Buttons mit schönen Icons versehen kann, muss ich bei Gelegenheit mal rausfinden, das kommt in die :doc:`/todo`.
+
+:js:class:`Lino.GridPanel` kriegt eine Methode `save_grid_config()` schickt einen Ajax-Request raus, ein PUT für die aktuell geladene GC (name, column_widths, columns, filters,...). Und im config param `ls_grid_config` ist das Array mit der GC für dieses Panel.
+
+Eine GridConfig hat folgende Struktur:
+
+:column_widths:  array of column widths
+:column_order:   array of column indexes
+:filters:        GridFilters data
+
+
+
+Wenn man über die Combobox von einer GC zur anderen wechselt, muss diese Grid eventuell neu konfiguriert und/oder neu geladen werden. Es wäre ja gut, wenn er dabei intelligent vorginge, also diese beiden Operationen nur wenn nötig ausführt. :extjs:`Ext.grid.EditorGridPanel` hat keine Methode `reconfigure` oder `setColumnModel`, also ich muss schon die ganze Komponente ersetzen, wenn sich die Kolonnenreihenfolge ändert. Wenn sich dagegen nur die Kolonnenfilter ändern, kann die Grid bleiben, aber ein neues GET an den Server muss gemacht werden. Wenn sich nur Kolonnebreiten ändern, dann kann das direkt angewendet werden.
+
+Für gut müsste ich vor dem Speichern einer GC ein Dialogfenster anzeigen::
+
+    +-- Save Grid Configuration --+ 
+    |                             |
+    | name: _____________________ |
+    |                             |
+    | X column widths             |
+    | X column order              |
+    | X filters                   |
+    |                             |
+    +-----------------------------+
+
+Wenn man z.B. eine bestimmte Filterkombination als custom GC abspeichert, dann lässt man die ersten beiden Optionen abgeschaltet. Wenn sich dann die Standard-GC für diesen Report ändert, dann "erbt" die custom GC diese Werte.
+
+Achtung: Kolonnenbreiten müssten also in der Reihenfolge der "internen" Kolonnen gespeichert werden, also nicht einfach nur ein ``Ext.pluck(this.colModel.columns,'width')``, sondern etwas im Stil::
+
+   var colwidths = Array(this.colModel.columns.length);
+   for (i in this.colModel.columns) {
+      colwidths[this.colModel.columns[i].colIndex] = this.colModel.columns[i].width
+   }
+
+

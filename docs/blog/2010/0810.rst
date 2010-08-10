@@ -1,0 +1,31 @@
+2010-08-10
+==========
+
+Vier Stunden Arbeit und ein erstes Erfolgserlebnis: Kolonnenbreiten und -reihenfolgen werden jetzt in der GC gespeichert. 
+
+Einige der heutigen Änderungen:
+
+- Modelle Gridconfig und GridColumn sind jetzt definitiv wieder raus. 
+  Für jeden Report gibt es eine entsprechende Pickle-Datei mit Erweiterung `.cfg` im :settings:`DATA_DIR`.
+
+- Es ist effizienter, meine `filters` dem GridFilters direkt im Konstruktor zu übergeben statt sie in mein colModel einzupfropfen und den Gridfilters sie dort raussuchen zu lassen.
+
+- Statt `ls_data_url` mit `/api/contacts/Persons` als config paramenter kriegt `Lino.GridPanel` 
+  jetzt  `ls_url`mit `/contacts/Persons` (also ohne ddas `/api` davor. 
+  Zum Speichern der GC macht er dann ein PUT nach '/grid_config/contacts/Persons'.
+
+- Neue Methode :meth:`lino.ui.extjs.ExtUI.save_grid_config` 
+
+Bemerkung: 
+
+- Wer die Kolonnenreihenfolgen ändern und speichern will, der würde womöglich auch die Sortierfolge ändern und speichern wollen, und dann sage ich irgendwann: mach doch gleich einen neuen Report. Lino geht davon aus, dass der Systemverwalter routinemäßig im Quellcode ändert und seine Änderungen eincheckt. Im User Interface wird das Auswählen einer GC mit anderer Kolonnenreihenfolge ziemlich genau so viel Zeit nehmen wie einen neue Report zu öffnen.
+
+
+TODO:
+
+- Speichern von Kolonnenfilter funktioniert noch nicht. 
+  Ich fürchte, ich muss den Ext.ux.grid.GridFilters erweitern: Lino.GridFilters
+  
+- Combobox und mehrere GC pro Report.
+
+Kann sein, dass die eingecheckte Version nicht funktioniert weil ich schon mit Lino.GridFilters begonnen habe.
