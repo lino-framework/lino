@@ -6,7 +6,7 @@ Vier Stunden Arbeit und ein erstes Erfolgserlebnis: Kolonnenbreiten und -reihenf
 Einige der heutigen Änderungen:
 
 - Modelle Gridconfig und GridColumn sind jetzt definitiv wieder raus. 
-  Für jeden Report gibt es eine entsprechende Pickle-Datei mit Erweiterung `.cfg` im :settings:`DATA_DIR`.
+  Für jeden Report gibt es eine entsprechende Pickle-Datei mit Erweiterung `.cfg` im :setting:`DATA_DIR`.
 
 - Es ist effizienter, meine `filters` dem GridFilters direkt im Konstruktor zu übergeben statt sie in mein colModel einzupfropfen und den Gridfilters sie dort raussuchen zu lassen.
 
@@ -27,5 +27,7 @@ TODO:
   Ich fürchte, ich muss den Ext.ux.grid.GridFilters erweitern: Lino.GridFilters
   
 - Combobox und mehrere GC pro Report.
+
+`Checkin <http://code.google.com/p/lino/source/detail?r=8f04130f44790bd03a9ccf22ef9ac49f9f95050a>`_.
 
 Kann sein, dass die eingecheckte Version nicht funktioniert weil ich schon mit Lino.GridFilters begonnen habe.

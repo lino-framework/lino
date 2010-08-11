@@ -26,7 +26,7 @@ from lino.utils import ucsv
 #~ from lino.utils import choosers
 #~ from lino.ui.extjs import ext_windows
 
-from lino.modlib.system import models as system
+#~ from lino.modlib.system import models as system
 
 #~ UNDEFINED = "nix"
 
@@ -93,9 +93,9 @@ class ViewReportRequest(reports.ReportActionRequest):
         self.setup(*args,**kw)
         
     def parse_req(self,request,rh,**kw):
-        gc_name = request.REQUEST.get('gc',None)
-        if gc_name:
-            self.gc = system.GridConfig.objects.get(rptname=self.report.actor_id,name=gc_name)
+        #~ gc_name = request.REQUEST.get('gc',None)
+        #~ if gc_name:
+            #~ self.gc = system.GridConfig.objects.get(rptname=self.report.actor_id,name=gc_name)
             
         master = kw.get('master',self.report.master)    
         if master is ContentType:

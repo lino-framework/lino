@@ -3,7 +3,7 @@
 
 22.45 Uhr. Diese Woche werde ich nicht viel Zeit für Lino haben, aber hier zwischendurch ein paar Gedanken.
 
-Also beim Implementieren von Previous/Next-Buttons im Detail-Fenster gibt es noch was zu Meditieren. Ich stehe vor der Entscheidung, ob ich im URI für einzelne Records eines Reports (1) den Primary Key oder (2) den Offset nehmen soll (also das "123" in einem URI `contacts/Persons/123`). Momentan ist es der PK. Aber zum Blättern wäre der Offset effizienter implementierbar. Zumindest fürchte ich, dass der Algorithmus von :doc:`vergangenem Freitag <20100716>` in Reports mit vielen Zeilen nicht tragbar ist.
+Also beim Implementieren von Previous/Next-Buttons im Detail-Fenster gibt es noch was zu Meditieren. Ich stehe vor der Entscheidung, ob ich im URI für einzelne Records eines Reports (1) den Primary Key oder (2) den Offset nehmen soll (also das "123" in einem URI `contacts/Persons/123`). Momentan ist es der PK. Aber zum Blättern wäre der Offset effizienter implementierbar. Zumindest fürchte ich, dass der Algorithmus von :doc:`vergangenem Freitag <0716>` in Reports mit vielen Zeilen nicht tragbar ist.
 
 Andererseits müsste ich bei Adressierung per Offset zunächst ein Mittel finden um zu verhindern, dass der Benutzer nach einem Submit in einem Detail-Fenster plötzlich einen ganz anderen Record angezeigt bekommt (weil inzwischen alle Offsets verschoben sind weil ein anderer Benutzer einen neuen Record erstellt hat).
 

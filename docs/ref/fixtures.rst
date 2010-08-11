@@ -23,5 +23,5 @@ your :xfile:`settings.py`::
 - demo_ee
 - be
 - et
-- iso3166 : in :mod:`lino.modlib.countries` populates :model:`countries.Country` all countries
+- iso3166 : in :mod:`lino.modlib.countries` populates all countries to :class:`countries.Country` 
 

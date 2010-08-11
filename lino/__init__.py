@@ -11,11 +11,6 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
-Lino is a Python package to be used inside of a Django site.
-You probably won't ``import lino`` directly, you just add a combination 
-of ``lino.modlib.*`` modules to your :setting:`INSTALLED_APPS`.
-"""
 
 import sys
 import logging

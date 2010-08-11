@@ -28,6 +28,7 @@ from django.core import exceptions
 from django.utils import functional
 
 from django.utils.translation import ugettext as _
+from django.utils import simplejson as json
 
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
@@ -453,33 +454,6 @@ class ExtUI(base.UI):
         #~ html = '\n'.join(self.html_page(request,main,konsole,**kw))
         #~ return HttpResponse(html)
 
-    def old_index_view(self, request):
-        if self._response is None:
-            lino.log.debug("building extjs._response...")
-            from lino.lino_site import lino_site
-            #~ index = ext_elems.VisibleComponent("index",
-            index = dict(
-                xtype="panel",
-                items=dict(layout='fit',html=lino_site.index_html.encode('ascii','xmlcharrefreplace')),
-                id="main_area",
-                region="center",
-                layout='fit',
-                #~ layout='form',
-                )
-            konsole = jsgen.Component("konsole",
-                #~ xtype="panel",
-                split=True,
-                collapsible=True,
-                autoScroll=True,
-                title=_("Console"),
-                id="konsole",
-                html='Console started',
-                height=100,
-                region="south")
-            vp = ext_viewport.Viewport(self,lino_site,konsole,index)
-            s = vp.render_to_html(request)
-            self._response = HttpResponse(s)
-        return self._response
 
     def menu_view(self,request):
         from lino.lino_site import lino_site
@@ -496,7 +470,7 @@ class ExtUI(base.UI):
         except exceptions.ValidationError,e:
             return json_response_kw(success=False,msg=unicode(e))
             
-        if hasattr(elem,'before_save'): # see :doc:`/blog/2010/20100804`
+        if hasattr(elem,'before_save'): # see :doc:`/blog/2010/0804`
             elem.before_save()
             
         try:
@@ -527,8 +501,14 @@ class ExtUI(base.UI):
               widths=[int(x) for x in PUT.getlist('widths')],
               columns=[int(x) for x in PUT.getlist('columns')],
               hidden_cols=PUT.getlist('hidden_cols'),
-              filters=PUT.getlist('filters'),
+              #~ filters=PUT.getlist('filter'),
             )
+            
+            filter = PUT.get('filter',None)
+            if filter is not None:
+                filter = json.loads(filter)
+                gc['filters'] = [ext_requests.dict2kw(flt) for flt in filter]
+            
             name = PUT.get('name','')
             rpt.grid_configs[name] = gc
             
@@ -581,7 +561,7 @@ class ExtUI(base.UI):
             return self.form2obj_and_save(rh,request.POST,instance,force_insert=True)
             
             #~ rh.store.form2obj(request.POST,instance)
-            #~ if hasattr(instance,'before_save'): # see :doc:`/blog/2010/20100804`
+            #~ if hasattr(instance,'before_save'): # see :doc:`/blog/2010/0804`
                 #~ instance.before_save()
             #~ try:
                 #~ instance.full_clean()

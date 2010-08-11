@@ -1,0 +1,13 @@
+2010-08-11
+==========
+
+14 Uhr : die Kolonnenfilter werden in der GC gespeichert und auch wiederhergestellt. 
+
+Kleiner Bug behoben: Virtuelle Kolonnen (z.B. :attr:`contacts.Contact.address`) hatten "None" als header.
+
+Auf virtuellen Kolonnen kann man bis auf weiteres nicht filtern.
+:attr:`lino.ui.extjs.ext_elems.MethodElement.filter_type` könnte ich zwar vom delegate übernehmen und dann 
+funktioniert das UI auch, aber dann müsste ich das auch in :func:`lino.reports.add_gridfilters` 
+in einen gültigen Django-Filter umwandeln.
+Kommt in die :doc:`/todo`.
+

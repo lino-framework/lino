@@ -1,28 +1,9 @@
-Modlib Documentation
-====================
+==============================
+The :mod:`lino.modlib` Package
+==============================
 
-This page contains the Modlib Package documentation.
-
-Subpackages
------------
-
-.. toctree::
-
-    lino.modlib.contacts
-    lino.modlib.countries
-    lino.modlib.documents
-    lino.modlib.finan
-    lino.modlib.journals
-    lino.modlib.ledger
-    lino.modlib.links
-    lino.modlib.notes
-    lino.modlib.products
-    lino.modlib.projects
-    lino.modlib.properties
-    lino.modlib.sales
-    lino.modlib.songs
-    lino.modlib.system
-    lino.modlib.voc
+This section contains technical documentation.
+See also :doc:`/ref/models`
 
 The :mod:`fields` Module
 ------------------------

@@ -1,7 +1,7 @@
 20100708
 ========
 
-(Fortsetzung von :doc:`gestern <20100707>`)
+(Fortsetzung von :doc:`gestern <0707>`)
 
 Also Felder mit eindimensionaler Auswahlliste brauchen nicht nur kein hidden field, 
 sondern dürfen keins haben. Das funktioniert jetzt einigermaßen (mit ein paar Schönheitsfehlern, die aber nicht blockierend sind).
@@ -60,7 +60,7 @@ Nächstes Problem: wenn ich in der Grid ein neues Land erstellen wollte, dann sc
   
 Merke: der pk einer neu erstellten und noch nicht gespeicherten Instanz ist nicht unbedingt ``None``, sondern kann (wenn pk ein CharField ist) auch ``''`` sein.
 
-:model:`countries.Country` hat jetzt ein Detail-Layout, in dem der neue Report CitiesByCountry angezeigt wird. 
+:class:`countries.Country` hat jetzt ein Detail-Layout, in dem der neue Report CitiesByCountry angezeigt wird. 
 
 
 :igen_src:`dsbe/dsbe/demo/load_tim.py` vergaß, das Feld :attr:`contacts.Contact.country` zu füllen. Behoben.

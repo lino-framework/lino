@@ -56,6 +56,8 @@ Dokumentation
 Langfristig
 -----------
 
+- Filter auf virtuelle Kolonnen setzen können. Siehe :doc:`/blog/2010/0811`.
+
 - Layout von Detail-Fenstern : in Lino sind die "Zeilen" momentan ja immer im "Blocksatz" (also links- und rechtsbündig). Das ist unkonventionell: alle RIA die ich kenne, machen ihre Formulare nur linksbündig.
 
 - HtmlEditor oder TextArea? Der HtmlEditor verursacht deutliche Performanceeinbußen beim Bildschirmaufbau von Detail-Fenstern. Die Wahl sollte konfigurierbar sein. Markup auch.

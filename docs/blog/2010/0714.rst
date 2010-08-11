@@ -1,7 +1,7 @@
 20100714
 ========
 
-Das System für die Permalinks von :doc:`gestern <20100713>` habe ich nochmal grundlegend revidiert. 
+Das System für die Permalinks von :doc:`gestern <0713>` habe ich nochmal grundlegend revidiert. 
 Permalinks sind jetzt "normale" URIs. Und zwar genau die, die ich für extjsu ausgedacht hatte::
 
   http://127.0.0.1:8000/api/contacts/Persons?fmt=grid

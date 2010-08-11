@@ -340,10 +340,11 @@ class FieldElement(LayoutElement):
     def get_column_options(self,**kw):
         #~ raise "get_column_options() %s" % self.__class__
         #~ kw.update(xtype='gridcolumn')
-        kw.update(
-          dataIndex=self.field.name, 
-          header=unicode(self.label) if self.label else self.field.name,
-          )
+        kw.update(dataIndex=self.field.name)
+        #~ if self.label is None:
+            #~ kw.update(header=self.field.name)
+        #~ else:
+        kw.update(header=unicode(self.label))
         if not self.editable:
             kw.update(editable=False)
         if not self.sortable:
@@ -559,18 +560,19 @@ class BooleanFieldElement(FieldElement):
 class MethodElement(FieldElement):
     stored = True
     editable = False
-    #~ filter_type = 'numeric'
+    filter_type = None
 
     def __init__(self,lh,name,meth,return_type,**kw):
         assert isinstance(lh,layouts.LayoutHandle)
         # uh, this is tricky...
         return_type.name = name
+        return_type.verbose_name = name
         return_type._return_type_for_method = meth
         FieldElement.__init__(self,lh,return_type)
         delegate = lh.main_class.field2elem(lh,return_type,**kw)
         for a in ('ext_options','get_column_options',
-                  'get_filter_options', 'get_field_options',
-                  'filter_type'): # ,'grid_column_template'):
+                  'get_filter_options', 'get_field_options'):
+                  #~ 'filter_type'): # ,'grid_column_template'):
             setattr(self,a,getattr(delegate,a))
         
 

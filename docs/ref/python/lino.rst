@@ -1,6 +1,11 @@
 The :mod:`lino` Package
 =======================
 
+Lino is a Python package to be used on Django sites.
+You probably won't ``import lino`` directly, you just add a combination 
+of ``lino.modlib.*`` modules to your :setting:`INSTALLED_APPS`.
+
+
 .. automodule:: lino
     :members:
     :undoc-members:

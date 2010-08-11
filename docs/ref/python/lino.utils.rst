@@ -107,14 +107,6 @@ The :mod:`perms` Module
     :undoc-members:
     :show-inheritance:
 
-The :mod:`render` Module
-------------------------
-
-.. automodule:: lino.utils.render
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 The :mod:`requests` Module
 --------------------------
 
