@@ -521,53 +521,9 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
       
     delete config.ls_store_fields;
     
-    if (config.ls_filters) {
-      if (config.ls_grid_config && config.ls_grid_config.filters) {
-        //~ console.log(20100811,'config.ls_filters',config.ls_filters);
-        //~ console.log(20100811,'config.ls_grid_config.filters',config.ls_grid_config.filters);
-        for (var i = 0; i < config.ls_grid_config.filters.length; i++) {
-          var fv = config.ls_grid_config.filters[i];
-          for (var j = 0; j < config.ls_filters.length;j++) {
-            var f = config.ls_filters[j];
-            if (f.dataIndex == fv.field) {
-              //~ console.log(20100811, f,' == ',fv);
-              if (fv.type == 'string') {
-                f.value = fv.value;
-                //~ if (fv.comparison !== undefined) f.comparison = fv.comparison;
-              } else {
-                //~ console.log(20100811, fv);
-                f.value = {};
-                f.value[fv.comparison] = fv.value;
-                //~ f.value = {value: fv.value, comparison: fv.comparison };
-              }
-              break;
-            }
-          };
-          //~ Ext.apply(config.ls_filters,config.ls_grid_config.filters[i])
-        }
-      }
-      config.plugins = [new Lino.GridFilters({filters:config.ls_filters})];
-    }
-    delete config.ls_filters
-    
     this.before_row_edit = config.before_row_edit.createDelegate(this);
     delete config.before_row_edit;
 
-    if (config.ls_columns) {
-      //~ console.log(20100805,config.ls_columns);
-      if (config.ls_grid_config) {
-        var cols = Array(config.ls_columns.length);
-        for (var i = 0; i < config.ls_columns.length; i++) {
-          cols[i] = config.ls_columns[config.ls_grid_config.columns[i]];
-          //~ console.log(20100810,cols,i);
-          cols[i].width = config.ls_grid_config.widths[i];
-        }
-        config.colModel = new Ext.grid.ColumnModel({columns:cols,defaults:{sortable:true}})
-      } else {
-        config.colModel = new Ext.grid.ColumnModel({columns:config.ls_columns,defaults:{sortable:true}})
-      }
-    }
-    delete config.ls_columns
     if (config.ls_quick_edit) {
       config.selModel = new Ext.grid.CellSelectionModel()
       this.get_selected = function() {
@@ -588,6 +544,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
       };
     };
     delete config.ls_quick_edit
+    
     config.tbar = new Ext.PagingToolbar({ 
       prependButtons: true, pageSize: 10, displayInfo: true, 
       store: config.store, 
@@ -595,11 +552,35 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     });
     config.bbar = Lino.build_buttons(this,config.ls_bbar_actions);
     delete config.ls_bbar_actions
-    config.bbar = config.bbar.concat(['->',
+    
+    var menu = [];
+    var set_gc = function(name) {
+      return function() {
+        console.log('set_gc() 20100812');
+        this.getColumnModel().setConfig(this.apply_grid_config(name,this.ls_grid_configs,this.ls_columns));
+      }
+    }
+    for (k in config.ls_grid_configs) {
+      menu.push({text:config.ls_grid_configs[k].label,handler:set_gc(k),scope:this})
+    }
+    if(menu.length > 1) {
+      config.bbar = config.bbar.concat([
+        {text:'View',menu: menu,tooltip:"Select another view of this report"}
+      ]);
+    }
+    config.bbar = config.bbar.concat([
+      '->',
+      //~ {text:'GC',handler:this.manage_grid_configs,qtip:"Manage Grid Configurations",scope:this},
       {text:'Save GC',handler:this.save_grid_config,qtip:"Save Grid Configuration",scope:this}
     ])
     
+    config.plugins = [new Lino.GridFilters()];
+    
+    config.columns = this.apply_grid_config(config.gc_name,config.ls_grid_configs,config.ls_columns);
+    
     Lino.GridPanel.superclass.constructor.call(this, config);
+    
+    
     this.on('beforeedit',function(e) { this.before_row_edit(e.record)},this);
   },
   
@@ -609,33 +590,169 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     this.store.load({params: { start: 0, limit: this.getTopToolbar().pageSize }});
   },
   
-  save_grid_config : function () {
-    //~ console.log('TODO: save_grid_config',this);
+  apply_grid_config : function(name,grid_configs,rpt_columns) {
+    //~ var rpt_columns = this.ls_columns;
+    var gc = grid_configs[name];    
+    console.log('apply_grid_config() 20100812',name,gc);
+    this.gc_name = name;
+    if (gc == undefined) {
+      return rpt_columns;
+      //~ config.columns = config.ls_columns;
+      //~ return;
+    } 
+    //~ delete config.ls_filters
     
-    var widths = Array(this.colModel.columns.length);
-    var columns = Array(this.colModel.columns.length);
+    //~ console.log(20100805,config.ls_columns);
+    var columns = Array(gc.columns.length);
+    for (var j = 0; j < rpt_columns.length;j++) {
+      var col = rpt_columns[j];
+      for (var i = 0; i < gc.columns.length; i++) {
+        if (col.dataIndex == gc.columns[i]) {
+          col.width = gc.widths[i];
+          columns[i] = col;
+          break;
+        }
+      }
+    }
+    
+    //~ var columns = Array(rpt_columns.length);
+    //~ for (var i = 0; i < rpt_columns.length; i++) {
+      //~ columns[i] = rpt_columns[gc.columns[i]];
+      //~ columns[i].width = gc.widths[i];
+    //~ }
+    
+    if (gc.hidden_cols) {
+      for (var i = 0; i < gc.hidden_cols.length; i++) {
+        var hc = gc.hidden_cols[i];
+        for (var j = 0; j < columns.length;j++) {
+          var col = columns[j];
+          if (col.dataIndex == hc) {
+            col.hidden = true;
+            break
+          }
+        }
+      }
+    }
+    if (gc.filters) {
+      //~ console.log(20100811,'config.ls_filters',config.ls_filters);
+      //~ console.log(20100811,'config.ls_grid_config.filters',config.ls_grid_config.filters);
+      for (var i = 0; i < gc.filters.length; i++) {
+        var fv = gc.filters[i];
+        for (var j = 0; j < columns.length;j++) {
+          var col = columns[j];
+          if (col.dataIndex == fv.field) {
+            //~ console.log(20100811, f,' == ',fv);
+            if (fv.type == 'string') {
+              col.filter.value = fv.value;
+              //~ if (fv.comparison !== undefined) f.comparison = fv.comparison;
+            } else {
+              //~ console.log(20100811, fv);
+              col.filter.value = {};
+              col.filter.value[fv.comparison] = fv.value;
+            }
+            break;
+          }
+        };
+      }
+    }
+    
+    return columns;
+    //~ config.columns = cols;
+    //~ delete config.ls_columns
+  },
+  
+  get_current_grid_config : function () {
+    var cm = this.getColumnModel();
+    var widths = Array(cm.config.length);
+    //~ var hiddens = Array(cm.config.length);
+    var columns = Array(cm.config.length);
+    //~ var columns = Array(cm.config.length);
     var hidden_cols = [];
     //~ var filters = this.filters.getFilterValues();
     var p = this.filters.buildQuery(this.filters.getFilterData())
-    for (var i = 0; i < this.colModel.columns.length; i++) {
-      var col = this.colModel.columns[i];
-      columns[col.colIndex] = i;
+    for (var i = 0; i < cm.config.length; i++) {
+      var col = cm.config[i];
+      columns[i] = col.dataIndex;
+      //~ hiddens[i] = col.hidden;
       widths[i] = col.width;
-      if (col.hidden) hidden_cols.push(col.colIndex);
+      if (col.hidden) hidden_cols.push(col.dataIndex);
     }
+    //~ p['hidden_cols'] = hidden_cols;
     p['widths'] = widths;
     p['columns'] = columns;
-    p['name'] = this.ls_grid_config ? this.ls_grid_config.name : '';
+    p['name'] = this.gc_name;
+    var gc = this.ls_grid_configs[this.gc_name];
+    if (gc == undefined) 
+      p['label'] = this.gc_name;
+    else 
+      p['label'] = gc.label
+    //~ p['name'] = this.ls_grid_config ? this.ls_grid_config.name : '';
     if (hidden_cols.length > 0) p['hidden_cols'] = hidden_cols;
     //~ if (filters.length > 0) p['filters'] = filters;
     //~ console.log('20100810 save_grid_config',p);
-    
+    return p;
+  },
+  
+  manage_grid_configs : function() {
+    var data = [];
+    for (k in this.ls_grid_configs) {
+      var v = this.ls_grid_configs[k];
+      var i = [k,String(v.columns),String(v.hidden_cols),String(v.filters)];
+      data.push(i)
+    }
+    if (this.ls_grid_configs[this.gc_name] == undefined) {
+      var v = this.get_current_grid_config();
+      var i = [k,String(v.columns),String(v.hidden_cols),String(v.filters)];
+      data.push(i);
+    }
+    //~ console.log(20100811, data);
+    var main = new Ext.grid.GridPanel({
+      store: new Ext.data.ArrayStore({
+        idIndex:0,
+        fields:['name','columns','hidden_cols','filters'],
+        autoDestroy:true,
+        data: data}),
+      //~ autoHeight:true,
+      selModel: new Ext.grid.RowSelectionModel(),
+      listeners: { 
+        rowdblclick: function(grid,rowIndex,e) {
+          console.log('row doubleclicked',grid, rowIndex,e);
+        },
+        rowclick: function(grid,rowIndex,e) {
+          console.log('row clicked',grid, rowIndex,e);
+        }
+      },
+      columns: [ 
+        {dataIndex:'name',header:'Name'}, 
+        {dataIndex:'columns',header:'columns'}, 
+        {dataIndex:'hidden_cols',header:'hidden columns'}, 
+        {dataIndex:'filters',header:'filters'} 
+      ]
+    });
+    var win = new Ext.Window({title:'GridConfigs Manager',layout:'fit',items:main,height:200});
+    win.show();
+  },
+  
+  edit_grid_config : function(name) {
+    gc = this.ls_grid_configs[name];
+    var win = new Ext.Window({
+      title:'Edit Grid Config',layout:'vbox', 
+      //~ layoutConfig:'stretch'
+      items:[
+        {xtype:'text', value: gc.name},
+        {xtype:'text', value: gc.columns},
+        {xtype:'text', value: gc.hidden_cols},
+        {xtype:'text', value: gc.filters}
+      ]
+    });
+    win.show();
+  },
+  
+  save_grid_config : function () {
+    //~ console.log('TODO: save_grid_config',this);
     //~ p.column_widths = Ext.pluck(this.colModel.columns,'width');
-    var a = { params:p, method:'PUT',url:'/grid_config'+this.ls_url};
+    var a = { params:this.get_current_grid_config(), method:'PUT',url:'/grid_config'+this.ls_url};
     Lino.do_action(this,a);
-    
-    
-    
   },
   
   on_beforeedit : function(e) {

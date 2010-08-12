@@ -483,7 +483,7 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
     
     details = []
     
-    grid_configs = []
+    grid_configs = {}
     """
     Will be filled during :meth:`lino.reports.Report.do_setup`. 
     """
@@ -620,13 +620,14 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
         filename = self.get_grid_config_file()
         if os.path.exists(filename):
             lino.log.info("Loading %s...",filename)
-            self.grid_configs = pickle.load(open(filename,"rU"))
+            execfile(filename,dict(self=self))
+            #~ self.grid_configs = pickle.load(open(filename,"rU"))
         else:
             self.grid_configs = {}
         
 
     def get_grid_config_file(self):
-        filename = str(self) + ".cfg"
+        filename = str(self) + ".py"
         return os.path.join(settings.DATA_DIR,filename)
         
     #~ def debug_summary(self):

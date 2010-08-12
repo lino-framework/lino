@@ -1,0 +1,45 @@
+2010-08-12
+==========
+
+02.30 Uhr
+---------
+
+Ich hatte gestern Abend begonnen mit dem GC-Manager (`manage_grid_configs` und `edit_grid_config`, aber das muss wenn schon in ein einziges kombiniertes Fenster mit listview links und Detail rechts), aber jetzt fällt mir auf: 
+
+Statt eines GC-Managers könnte ich als schnelle Lösung auch einfach nur das Format der cfg-Dateien ändern. Die sind momentan Pickle-Dateien und deshalb nicht editierbar. (Das `Standardformat von Pickle <http://docs.python.org/library/pickle.html#data-stream-format>`_ ist zwar notfalls lesbar ("for debugging or recovery purposes"), aber eindeutig nicht zum Bearbeiten gedacht.) Ich kann sie aber stattdessen als json-Dateien abspeichern::
+
+  { "default": 
+    { widths: [ ... ], hidden_cols: [  ], columns: [ ... ] } 
+  }
+
+Oder noch besser als .py-Dateien::
+  
+  self.grid_configs = { 
+    'default': { 'widths': [ ... ], 'hidden_cols': [  ], 'columns': [ ... ] } 
+    'narrow': { 'label':'Eng', 'widths': [ ... ], 'hidden_cols': [  ], 'columns': [ ... ] } 
+  }
+
+Ja, das gefällt mir. Den GC-Manager können wir uns wahrscheinlich bis auf weiteres ersparen!
+
+Der letzte Punkt in diesem Kapitel ist das Auswählen bzw. Aktivieren einer anderen GC. Das wird ja noch lustig.
+Zum Beispiel wenn die GC ein label hat, und wenn es eine Main Grid ist, dann muss der Fenstertitel geändert werden.
+
+9.30 Uhr
+--------
+
+Also für :report:`contacts.Companies` habe ich mal eine :file:`contacts.Companies.py` erstellen lassen und manuell eine weitere GC dort definiert. Der Button mit der Auswahlliste wird daraufhin nun schon angezeigt.
+
+Cool: :extjs:`Ext.grid.EditorGridPanel` hat eine Methode `setConfig()`. Also die Grid zu rekonfigurieren dürfte kein Problem sein.
+
+Problem ist noch, dass GridFilters im Fall eines reconfigure-Events seiner Grid nichts anderes tun kann, als deren neues colModel zu analysieren. Also meine Idee von :doc:`vorgestern <0810>` (Es ist effizienter, meine filters dem GridFilters direkt im Konstruktor zu übergeben statt sie in mein colModel einzupfropfen und den Gridfilters sie dort raussuchen zu lassen) war eine Mausefalle. Ich muss meine Filter doch ins ColumnModel einpfropfen.
+
+Und nicht zu vergessen: wenn ich den Namen eines Feldes ändere oder ein Feld lösche oder ein neues Feld hinzufüge, dann möchte ich nicht, dass man alls GC wegwerfen kann. Wenn man was im Report oder im Datenmodell ändert, dann sollte man relativ schmerzlos die entsprechenden GC-Dateien manuell anpassen können.
+
+Deshalb also neue Struktur der GC-Dateien:
+
+- columns: list of strings (columnnames)
+- widths : list of integers (width for column with name columns[i])
+- hiddens : list of of columnnames that are hidden
+- filters : list of objects {field,type,value,comparison}
+
+11.57 Uhr : Es funktioniert! Alles funktioniert! Check-In, und jetzt muss ich aufhören zu programmieren und mal anfangen, die Reise vorzubereiten (morgen fliegen wir nach Brüssel).

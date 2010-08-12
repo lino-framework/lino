@@ -17,6 +17,7 @@ import cgi
 #import traceback
 import cPickle as pickle
 from urllib import urlencode
+import pprint
 
 from django import http
 from django.db import models
@@ -156,7 +157,7 @@ class ExtUI(base.UI):
             lino.log.warning("window_configs_file %s not found",self.window_configs_file)
             
         base.UI.__init__(self,site) # will create a.window_wrapper for all actions
-        self.build_lino_js(site)
+        self.build_lino_js()
         
     def create_layout_element(self,lh,panelclass,name,**kw):
         
@@ -265,8 +266,9 @@ class ExtUI(base.UI):
         pickle.dump(self.window_configs,f)
         f.close()
         lino.log.debug("save_window_config(%r) -> %s",wc,a)
-        from lino.lino_site import lino_site
-        self.build_lino_js(lino_site)
+        #~ from lino.lino_site import lino_site
+        #~ self.build_lino_js(lino_site)
+        self.build_lino_js()
         #~ lh = actors.get_actor(name).get_handle(self)
         #~ if lh is not None:
             #~ lh.window_wrapper.try_apply_window_config(wc)
@@ -499,9 +501,8 @@ class ExtUI(base.UI):
             PUT = http.QueryDict(request.raw_post_data)
             gc = dict(
               widths=[int(x) for x in PUT.getlist('widths')],
-              columns=[int(x) for x in PUT.getlist('columns')],
-              hidden_cols=PUT.getlist('hidden_cols'),
-              #~ filters=PUT.getlist('filter'),
+              columns=[str(x) for x in PUT.getlist('columns')],
+              hidden_cols=[str(x) for x in PUT.getlist('hidden_cols')],
             )
             
             filter = PUT.get('filter',None)
@@ -509,23 +510,28 @@ class ExtUI(base.UI):
                 filter = json.loads(filter)
                 gc['filters'] = [ext_requests.dict2kw(flt) for flt in filter]
             
-            name = PUT.get('name','')
+            name = PUT.get('name',None)
+            if name is None:
+                name = 'default'
+            else:
+                name = str(name)
+                
+            gc.update(label=PUT.get('label',name))
+            
             rpt.grid_configs[name] = gc
             
             #~ s = 'var grid_config = %s;' % py2js(gc)
             filename = rpt.get_grid_config_file()
-            f = open(filename,'wb')
-            pickle.dump(gc,f)
-            f.close()
+            f = open(filename,'w')
+            f.write('self.grid_configs = %s\n' % pprint.pformat(rpt.grid_configs))
+            #~ f = open(filename,'wb')
+            #~ pickle.dump(rpt.grid_configs,f)
+            #~ f.close()
             lino.log.info("save_grid_config(%r) -> %s",gc,filename)
-            #~ name = PUT.get('name','')
-            #~ if name:
-                #~ filename += '.' + name
-            #~ filename += '.js'
-            #~ print filename, s
             
-            from lino.lino_site import lino_site
-            self.build_lino_js(lino_site)
+            #~ from lino.lino_site import lino_site
+            #~ self.build_lino_js(lino_site)
+            self.build_lino_js()
             
             return json_response_kw(success=True,
                   msg="%s would have been saved" % filename)
@@ -683,9 +689,9 @@ class ExtUI(base.UI):
     def js_cache_name(self,site):
         return ('cache','js','site.js')
         
-    def build_lino_js(self,site):
+    def build_lino_js(self):
         #~ for app_label in site.
-        fn = os.path.join(settings.MEDIA_ROOT,*self.js_cache_name(site)) 
+        fn = os.path.join(settings.MEDIA_ROOT,*self.js_cache_name(self.site)) 
         #~ fn = r'c:\temp\dsbe.js'
         lino.log.info("Generating %s ...", fn)
         f = open(fn,'w')

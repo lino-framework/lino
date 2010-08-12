@@ -1,7 +1,7 @@
 2010-08-11
 ==========
 
-14 Uhr : die Kolonnenfilter werden in der GC gespeichert und auch wiederhergestellt. 
+14 Uhr. Erfolgserlebnis : die Kolonnenfilter werden jetzt in der GC gespeichert und auch wiederhergestellt. 
 
 Kleiner Bug behoben: Virtuelle Kolonnen (z.B. :attr:`contacts.Contact.address`) hatten "None" als header.
 
@@ -11,3 +11,19 @@ funktioniert das UI auch, aber dann müsste ich das auch in :func:`lino.reports.
 in einen gültigen Django-Filter umwandeln.
 Kommt in die :doc:`/todo`.
 
+15.40 Uhr : Check-in.
+
+Was noch fehlt ist die Möglichkeit, mehrere GC's pro Report zu definieren und/oder auszuwählen.
+
+Erstmal die prinzipielle Möglichkeit: In der :xfile:`site.js` werden jetzt die Optionen 
+`ls_grid_configs` und `gc_name` gesetzt, d.h. jeder Report kennt alle seine GC::
+
+  ls_grid_configs: { "default": { widths: [ ... ], hidden_cols: [  ], columns: [ ... ] } }
+  gc_name: "default"
+
+Das *Auswählen* einer anderen GC als 'default' können wir mit einer ComboBox machen.
+Das *Erstellen* von neuen GCs sollte aber vielleicht besser doch nicht über so eine Combobox sein, weil das nicht intuitiv ist, weil ich sowieso einen "GridConfig Manager" in einem separaten Fenster brauchen werde, um das label einer GC eingeben zu können, und um GCs zu löschen.
+
+Vielleicht mit einer :extjs:`Ext.list.ListView` (`siehe Beispiel <http://dev.sencha.com/deploy/dev/examples/view/list-view.html>`_)?
+
+17 Uhr : Feierabend ohne Check-in.

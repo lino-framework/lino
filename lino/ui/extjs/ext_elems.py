@@ -110,6 +110,7 @@ class GridColumn(Component):
         kw.update(editor=self.editor)
         kw.update(colIndex=index)
         kw.update(hidden=editor.hidden)
+        kw.update(filter=dict(type=editor.filter_type))
         #~ if isinstance(editor,FieldElement) and editor.field.primary_key:
         if isinstance(editor,FieldElement) and isinstance(editor.field,models.AutoField):
             kw.update(renderer=js_code('Lino.id_renderer'))
@@ -328,14 +329,14 @@ class FieldElement(LayoutElement):
         self.editable = field.editable # and not field.primary_key
         LayoutElement.__init__(self,lh,varname_field(field),label=unicode(field.verbose_name),**kw)
         
-    def get_filter_options(self,**kw):
-        if self.filter_type:
-            kw.update(dataIndex=self.field.name)
+    #~ def get_filter_options(self,**kw):
+        #~ if self.filter_type:
+            #~ kw.update(dataIndex=self.field.name)
             # 20100805 see also GridFilters.js
             #~ kw.update(filterable=True)  
             #~ kw.update(filter=dict(type='auto'))
-            kw.update(type=self.filter_type)
-        return kw
+            #~ kw.update(type=self.filter_type)
+        #~ return kw
             
     def get_column_options(self,**kw):
         #~ raise "get_column_options() %s" % self.__class__
@@ -571,8 +572,10 @@ class MethodElement(FieldElement):
         FieldElement.__init__(self,lh,return_type)
         delegate = lh.main_class.field2elem(lh,return_type,**kw)
         for a in ('ext_options','get_column_options',
-                  'get_filter_options', 'get_field_options'):
-                  #~ 'filter_type'): # ,'grid_column_template'):
+                  'filter_type',
+                  #~ 'get_filter_options', 
+                  'get_field_options'):
+                  #~ ): # ,'grid_column_template'):
             setattr(self,a,getattr(delegate,a))
         
 
@@ -846,13 +849,15 @@ class GridElement(Container):
         kw.update(ls_url=rh.ui.build_url(self.report.app_label,self.report._actor_name))
         kw.update(ls_store_fields=[js_code(f.as_js()) for f in rh.store.fields])
         kw.update(ls_columns=[GridColumn(i,e) for i,e in enumerate(self.elements)])
-        kw.update(ls_filters=[e.get_filter_options() for e in self.elements if e.filter_type])
+        #~ kw.update(ls_filters=[e.get_filter_options() for e in self.elements if e.filter_type])
         kw.update(ls_id_property=rh.store.pk.name)
         kw.update(ls_quick_edit=True)
         kw.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rh.get_actions(rh.report.default_action)])
-        gc = self.report.grid_configs.get('',None)
-        if gc is not None:
-            kw.update(ls_grid_config=gc)
+        kw.update(ls_grid_configs=self.report.grid_configs)
+        kw.update(gc_name='default')
+        #~ gc = self.report.grid_configs.get('',None)
+        #~ if gc is not None:
+            #~ kw.update(ls_grid_config=gc)
         return kw
         
 class SlaveGridElement(GridElement):
