@@ -42,4 +42,11 @@ Deshalb also neue Struktur der GC-Dateien:
 - hiddens : list of of columnnames that are hidden
 - filters : list of objects {field,type,value,comparison}
 
-11.57 Uhr : Es funktioniert! Alles funktioniert! Check-In, und jetzt muss ich aufhören zu programmieren und mal anfangen, die Reise vorzubereiten (morgen fliegen wir nach Brüssel).
+11.57 Uhr : Es funktioniert! Alles funktioniert! 
+`Check-In <http://code.google.com/p/lino/source/detail?r=362efe46d929a1b61bdd89dd3ea3f29bd59a61f0>`_, 
+und jetzt muss ich aufhören zu programmieren und mal anfangen, die Reise vorzubereiten (morgen fliegen wir nach Brüssel).
+
+TODO:
+
+- Noch testen (z.B. werden Filter gespeichert?)
+- Release im :term:`DSBE` und auf :term:`Tups`.
