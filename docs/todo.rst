@@ -4,23 +4,19 @@ To-Do-Liste
 Kurzfristig
 -----------
 
-- Kolonnenfilter. Beispiel: 
-  `1 <http://www.ajung.de/2009/03/24/extjs-erweiterter-list-filter/>`__ 
-  `2 <http://www.sk-typo3.de/ExtJS-Filter-Grid.345.0.html>`__ 
-  `3 <http://extjs.com/forum/showthread.php?t=14503>`__
+- Noch testen (z.B. werden Filter gespeichert?)
 
-- Der Tool-Button zum Speichern der Konfiguration gehört nicht mehr in den Rahmen des "Fensters", sondern in die tbar des GridPanels. Das Ganze heißt auch nicht mehr "window config", sondern "grid config". 
-  Neben Kolonnenbreiten müssen darin auch Kolonnenreihenfolge, Kolonnenfilter und Daten-Sortierfolge
-  gespeichert werden.
-  Außerdem sollte man benutzerdefinierte grid configs erstellen und auswählen können.
+- Release im :term:`DSBE` und auf :term:`Tups`.
 
-- Sprachabhängige Auswahl der Notizvorlage. Wenn Sprache der Notiz nicht die Hauptsprache des Lino-Sites ist, dann wird der Name des zu verwendenden Templates aus dem Standardnamen par convention abgeleitet, indem das Sprachkürzel als Suffix vor der Erweiterung eingefügt wird. Zum Beispiel für eine Telefonnotiz in `fr` auf einer Site mit Hauptsprache `de` (und Telefonnotizen haben `NoteType.template` den Wert `phone.odt` ) sucht Lino zuerst nach einer Datei `phone_fr.odt`. Wenn es so eine Datei nicht gibt, nimmt er die `phone.odt`. (Korrektur: nicht als Suffix, sondern in einem separaten Verzeichnis. Sonst muss ich ja beim Füllen der Auswahlliste die Fremdsprachen rausfiltern).
+- South aktivieren.
 
-- South aktivieren
+- Sprachabhängige Auswahl der Notizvorlage. Auf mehrsprachigen Sites hat das templates-Verzeichnis pro unterstützter Sprache ein entsprechendes Unterverzeichnis (`de`, `fr`, `en`,...), was aber in NoteType.template nicht gespeichert wird (und in der Auswahlliste nicht erscheint). Dort werden immer die Templates der Hauptsprache angezeigt. Wenn Sprache der Notiz nicht die Hauptsprache des Lino-Sites ist, dann wird das Template zunächst in der Notizsprache gesucht. Falls es dort nicht existiert (z.B. weil die Vorlage noch nicht übersetzt wurde oder multilingual ist), nimmt er die Standard-Vorlage aus der Hauptsprache.
 
 
 Kleinkram
 ---------
+
+- Fenstertitel ändern bzw. anzeigen, welche GC momentan aktiv ist.
 
 - Das Passfoto in dsbe.PersonDetail ist manchmal verzerrt oder noch nicht korrekt ausgeschnitten.
 
@@ -78,27 +74,6 @@ Langfristig
 - Prüfen, ob Dokumentvorlagen im `XSL-FO-Format <http://de.wikipedia.org/wiki/XSL-FO>`__ besser wären. `Apache FOP <http://xmlgraphics.apache.org/fop/>`__ als Formatierer. Warum OpenOffice.org nicht schon lange XSL-FO kann, ist mir ein Rätsel. AbiWord dagegen soll es können (laut `1 <http://www.ibm.com/developerworks/xml/library/x-xslfo/>`__ und `2 <http://searjeant.blogspot.com/2008/09/generating-pdf-from-xml-with-xsl-fo.html>`__).
 
 - Inwiefern überschneiden sich :mod:`lino.modlib.system.models.SiteConfig` und :mod:`django.contrib.sites`? 
-
-- Actions:
-
-  - Aktionen brauchen nicht unbedingt in :meth:`lino.reports.Report.do_setup` instanziert zu werden. Von den Standard-Aktionen GridEdit, DeleteSelected usw. reicht eine einzige Instanz. :attr:`Action.actor` käme dann weg, und :meth:`Action.__str__` könnte dann in dieser Form nicht mehr benutzt werden.
-  - :attr:`Action.name` ist ja im Grunde ein kurzer Name, der pro Actor identifizierend ist. Der Vorteil ist, dass man sich beim Entwerfen von Reports keinen solchen Namen auszudenken braucht, also dass der Programmierer einer  Aktion auch deren Namen festlegt. Wenn zwei verschiedene Aktionen den gleichen Namen haben, wird nur die letzte beibehalten und eine Warnung in der :file:`lino.log` gemacht.
-  - Übersicht der Aktionen, die momentan benutzt werden:
-
-  ====================== ============= =======================================================
-  Klasse                 Name
-  ====================== ============= =======================================================
-  actions.Action
-  mixins.PrintAction     
-  mixins.DocumentAction  print         Dokument für diesen Record anzeigen (vorher falls nötig generieren)
-  mixins.ImageAction     image         Bild für diesen Record anzeigen 
-  reports.ListAction
-  GridEdit               grid          Report im Listeneditor zum Bearbeiten anzeigen
-  ShowDetailAction       detail        Diesen Record in Detail-Fenster zum Bearbeiten anzeigen
-  InsertRow              insert        Insert-Fenster anzeigen (mit leeren Feldern bzw. Standardwerten, und mit OK-Button)
-  SubmitDetail           SubmitDetail  OK-Button in detail
-  SubmitInsert           SubmitInsert  OK-Button in insert
-  ====================== ============= =======================================================
 
 - Die interne Kolonnenliste eines Reports ist ja konstant. Also sollte ein Record im fmt=json nicht als ``dict`` sondern als ``list`` repräsentiert werden.
 

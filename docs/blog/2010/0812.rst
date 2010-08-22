@@ -42,11 +42,8 @@ Deshalb also neue Struktur der GC-Dateien:
 - hiddens : list of of columnnames that are hidden
 - filters : list of objects {field,type,value,comparison}
 
-11.57 Uhr : Es funktioniert! Alles funktioniert! 
+11.57 Uhr : Es funktioniert! Alles funktioniert! Kolonnenfilter, -reihenfolge, -breiten und -sichtbarkeit werden jetzt in der Ansicht ("grid config") gespeichert. Innerhalb eines Reports kann man mehr als eine Ansicht definieren, was der Benutzer dann durch eine Combobox sieht, mit der er zwischen den verschiedenen Ansichten hin und herschalten kann.
+
 `Check-In <http://code.google.com/p/lino/source/detail?r=362efe46d929a1b61bdd89dd3ea3f29bd59a61f0>`_, 
 und jetzt muss ich aufhören zu programmieren und mal anfangen, die Reise vorzubereiten (morgen fliegen wir nach Brüssel).
 
-TODO:
-
-- Noch testen (z.B. werden Filter gespeichert?)
-- Release im :term:`DSBE` und auf :term:`Tups`.

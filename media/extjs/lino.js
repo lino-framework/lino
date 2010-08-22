@@ -1270,7 +1270,7 @@ Lino.GridMixin = {
   },
   refresh : function() { 
     this.main_item.refresh();
-  },
+  }
   //~ get_selected : function() {
     //~ var sels = this.main_item.getSelectionModel().getSelections();
     //~ return Ext.pluck(sels,'id');

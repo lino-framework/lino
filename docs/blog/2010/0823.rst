@@ -1,0 +1,21 @@
+2010-08-22
+==========
+
+0.05 Uhr
+--------
+
+Oho, Firefox hängt sich auf, wenn auf Lino/DSBE Demo gehe. 
+
+Internet Explorer meldet "Expected identifier, string or number" 
+in der :xfile:`site.js`, offenbar weil für ihn ``default`` ein 
+reserved keyword ist. Okay okay, nehm ich eben 'std' statt 'default'. 
+Aber nach dieser Änderung funktioniert dort alles.
+
+Verursacher scheint der Shockwave Flash Plugin Version 10.1.82.76 zu sein. 
+Der beißt sich scheinbar mit der ExtJS.
+Das passiert nicht nur mit Lino, sondern auch z.B. wenn ich auf 
+http://www.sencha.com/products/js/ gehe und dort irgendeines der Beispiele starte.
+
+Ich habe das Problem im `ExtJS-Forum 
+<http://www.sencha.com/forum/showthread.php?107790-Shockwave-Flash-plugin-causes-Firefox-to-freeze-on-ExtJS&p=504269>`__ 
+gemeldet.

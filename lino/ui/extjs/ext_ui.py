@@ -64,6 +64,8 @@ from lino.core.coretools import app_labels
 
 #~ from lino.ui.extjs.ext_windows import WindowConfig # 20100316 backwards-compat window_confics.pck 
 
+DEFAULT_GC_NAME = 'std'
+
 class HttpResponseDeleted(HttpResponse):
     status_code = 204
     
@@ -512,7 +514,7 @@ class ExtUI(base.UI):
             
             name = PUT.get('name',None)
             if name is None:
-                name = 'default'
+                name = DEFAULT_GC_NAME                 
             else:
                 name = str(name)
                 
@@ -1007,7 +1009,8 @@ class ExtUI(base.UI):
             js = "Lino.%s(panel,{record_id:ww.get_current_record().id});" % a
             #~ js = "btn.el.setStyle({cursor:'wait'}); %s btn.el.setStyle({cursor:'normal'});" % js
             #~ js = "btn.disable(); %s btn.enable();" % js
-            js = "console.time('%s'); %s console.timeEnd('%s');" % (a,js,a)
+            if False:
+                js = "console.time('%s'); %s console.timeEnd('%s');" % (a,js,a)
             js = "function(panel,btn) { %s }" % js
             kw.update(panel_btn_handler=js_code(js))
         else:

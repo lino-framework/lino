@@ -73,6 +73,7 @@ def add_quick_search_filter(qs,search_text):
             q = q | models.Q(**kw)
     return qs.filter(q)
     
+    
 def add_gridfilters(qs,gridfilters):
     """
     Converts a `filter` request in the format used by :extux:`Ext.ux.grid.GridFilters` into a 
@@ -715,6 +716,24 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
             qs = qs.order_by(*order_by.split())
         return qs
         
+
+    def as_string(self,qs,max_items=10,format=unicode,separator=', '):
+        """
+        Returns this report as a unicode string.
+        
+        :param max_items: don't include more than
+        """
+        s = u''
+        n = 0
+        for i in qs:
+            if n :
+                s += separator
+            n += 1
+            s += format(i)
+            if n >= max_items:
+                s += separator + '...'
+                return s
+        return s
         
     def setup_request(self,req):
         pass
