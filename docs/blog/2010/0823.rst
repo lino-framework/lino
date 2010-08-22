@@ -1,8 +1,8 @@
 2010-08-22
 ==========
 
-0.05 Uhr
---------
+Shockwave-Plugin mag ExtJS nicht
+--------------------------------
 
 Oho, Firefox hängt sich auf, wenn auf Lino/DSBE Demo gehe. 
 
@@ -19,3 +19,26 @@ http://www.sencha.com/products/js/ gehe und dort irgendeines der Beispiele start
 Ich habe das Problem im `ExtJS-Forum 
 <http://www.sencha.com/forum/showthread.php?107790-Shockwave-Flash-plugin-causes-Firefox-to-freeze-on-ExtJS&p=504269>`__ 
 gemeldet.
+
+
+Release im :term:`DSBE`
+-----------------------
+
+In :doc:`/admin/install` habe ich die Anweisungen zur Installation von :term:`Appy` hinzugefügt. 
+Pisa werden wir ja bis auf Weiteres nicht benutzen, aber ich lass das noch in den Anweisungen stehen.
+Die Druckmethoden (print methods) müsste ich ja mal dokumentieren. Bisher habe ich an zwei Stellen angefangen:
+:doc:`/admin/ConfigureNotesTemplates` und 
+:doc:`/topics/generate_documents`.
+
+
+Die Aussage "`print method` kann auch leer sein. 
+Eine Notiz dieser Art kann dann eben nur am Bildschirm konsultiert werden und ist nicht druckbar."
+stimmte noch nicht. 
+Jetzt wohl.
+Dazu musste ich in den beiden Feldern NoteType.print_method und NoteType.template 
+``blank=True`` und ``null=True`` hinzufügen. 
+Jetzt hätten wir mit dieser Änderung allerdings einen ersten Fall für South. 
+Denn solange ich die Datenbank nicht angepasst habe, kriege ich
+`IntegrityError: notes_notetype.print_method may not be NULL`.
+
+

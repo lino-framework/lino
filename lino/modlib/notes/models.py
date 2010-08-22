@@ -32,8 +32,8 @@ from django.conf import settings
 
 class NoteType(models.Model):
     name = models.CharField(max_length=200)
-    print_method = models.CharField(max_length=20,choices=mixins.print_method_choices())
-    template = models.CharField(max_length=200)
+    print_method = models.CharField(max_length=20,choices=mixins.print_method_choices(),blank=True,null=True)
+    template = models.CharField(max_length=200,blank=True,null=True)
     
     def __unicode__(self):
         return self.name

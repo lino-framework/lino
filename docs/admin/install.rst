@@ -41,15 +41,24 @@ The Django version provided by Debian Lenny `python-django` module is too old fo
 
   svn co http://code.djangoproject.com/svn/django/trunk/ django
 
-I also installed `ExtJS <http://www.extjs.com>`_ and `Pisa <http://www.xhtml2pdf.com/>` into `/var/snapshots/`::
+I also installed :term:`ExtJS`_, `Pisa <http://www.xhtml2pdf.com/>` and :term:`Appy` into `/var/snapshots/`::
 
   wget http://www.extjs.com/deploy/ext-3.2.1.zip
   unzip ext-3.2.1.zip
   rm ext-3.2.1.zip
 
-  http://pypi.python.org/packages/source/p/pisa/pisa-3.0.32.zip
+  wget http://launchpad.net/appy/0.5/0.5.5/+download/appy0.5.5.zip  
+  unzip appy0.5.5.zip -d appy-0.5.5
+  
+  wget http://pypi.python.org/packages/source/p/pisa/pisa-3.0.32.zip
   unzip pisa-3.0.32.zip
   rm pisa-3.0.32.zip
+  
+South::  
+  
+  hg clone http://bitbucket.org/andrewgodwin/south/
+  
+
 
 Add Lino and other software to your Python path
 -----------------------------------------------
@@ -65,6 +74,8 @@ Here is how `/usr/local/lib/python2.5/site-packages/snapshots.pth` might look in
   /var/snapshots/APP
   /var/snapshots/django
   /var/snapshots/pisa-3.0.32
+  /var/snapshots/appy-0.5.5
+  /var/snapshots/south
 
 To see which directories are on your Python path::
 
