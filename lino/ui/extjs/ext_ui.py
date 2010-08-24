@@ -1016,8 +1016,6 @@ class ExtUI(base.UI):
             js = "Lino.%s(panel,{record_id:ww.get_current_record().id});" % a
             #~ js = "btn.el.setStyle({cursor:'wait'}); %s btn.el.setStyle({cursor:'normal'});" % js
             #~ js = "btn.disable(); %s btn.enable();" % js
-            if False:
-                js = "console.time('%s'); %s console.timeEnd('%s');" % (a,js,a)
             js = "function(panel,btn) { %s }" % js
             kw.update(panel_btn_handler=js_code(js))
         elif isinstance(a,actions.InsertRow):

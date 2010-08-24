@@ -1,0 +1,28 @@
+2010-08-24
+==========
+
+Treffen im :term:`DSBE`. 
+
+- Datensynchronisierung TIM->Lino : wartet auf Lösung zu lokalem Problem "no write permission on mounted filesystem".
+
+- Datenaustausch mit `Banque-Carrefour <http://statbel.fgov.be/fr/entreprises/BCE/index.jsp>`__ : 
+  wartet auf Antwort.
+
+- Noch was Wichtiges für in die :doc:`/todo` : iCal-Dateien generieren. 
+  Im :class:`notes.NoteType` wird definiert, ob Lino einen Termin oder eine Erinnerung generieren und per E-Mail an den Benutzer verschicken soll.
+
+- Interview mit Nicole: Personnes à charge : DSBE braucht nur ein BooleanField und sonst nichts.
+  Import und Synchronisierung der PLP aus TIM kann deshalb auch noch warten.
+  
+
+
+Änderungen :
+
+- Neues Feld :attr:`dsbe.Person.has_family` (Personen zu Lasten (ja/nein)). 
+  Die Migrationen für dsbe.Person (:file:`0001_initial.py` und :file:`0002_auto__add_field_person_has_family.py`) 
+  schreibt South übrigens nach lino.modlib.contacts, was verständlich aber falsch ist. Ich habe sie manuell nach dsbe verschoben, aber das wird wahrscheinlich noch Probleme verursachen. 
+
+    manage.py migrate dsbe 0001 --fake
+    manage.py migrate
+  
+- Neue Konstante `lino.ui.extjs.ext_windows.USE_FF_CONSOLE`, weil Firefox manchmal meldet `console.time is not a function`.

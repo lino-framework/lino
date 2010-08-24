@@ -8,6 +8,7 @@ Upps, mir sind noch zwei Punte für die kurzfristige Todo-Liste eingefallen:
 - Es fehlt noch die Tabelle oder das Feld für die "Personen zu Lasten". Die einfachste Form wäre ein schlichtes IntegerField.
 
     PersonLinks:
+    
     - parent
     - child
     - type
@@ -15,6 +16,7 @@ Upps, mir sind noch zwei Punte für die kurzfristige Todo-Liste eingefallen:
     - date2
     
     PersonLinkTypes:
+    
     - id
     - name
     - in_charge

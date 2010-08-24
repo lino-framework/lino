@@ -173,13 +173,12 @@ Und :js:func:`Lino.build_buttons` verarbeitet die "actions" von a2btn ja dann zu
 - `panel_btn_handler` ist eine Funktion, die als Parameter sowohl das Panel als auch den Button kriegt.
 
 - Ein GET `/api/contacts/Persons?fmt=insert` gibt korrekterweise eine Insert-Form zurück, 
-die auch im Prinzip funktioniert. 
-Außer dass der Titel nicht richtig ist.
-Aber auch fehlen die Default-Werte der Felder: Zumindest language muss einen Defaultwert kriegen.
+  die auch im Prinzip funktioniert. Außer dass der Titel nicht richtig ist. Aber es fehlen die 
+  Default-Werte der Felder: Zumindest language muss einen Defaultwert kriegen.
 
 Das Insert-Fenster hatte auch Navigations-Buttons und ein Quickfilter-Feld, was natürlich Quatsch ist.
 
-Check-in für Release im :term:`DSBE`.
+Check-in zwischendurch im Rahmen des :doc:`/releases/20100824` (und Install im :term:`DSBE`).
 
 TODO:
 

@@ -33,7 +33,7 @@ from . import ext_elems, ext_requests
 #~ from lino.modlib.properties import models as properties
 
 WC_TYPE_GRID = 'grid'
-
+USE_FF_CONSOLE = False
 
 class ActionRenderer(object):
     def __init__(self,ui,action):
@@ -123,7 +123,8 @@ class MasterWrapper(WindowWrapper):
     def js_render(self):
         yield "function(caller,params) { "
         #~ yield "  Ext.getCmp('main_area').el.setStyle({cursor:'wait'});"
-        yield "  console.time('%s');" % self.action
+        if USE_FF_CONSOLE:
+            yield "  console.time('%s');" % self.action
         for ln in jsgen.declare_vars(self.config):
             yield '  '+ln
             
@@ -135,7 +136,8 @@ class MasterWrapper(WindowWrapper):
                 yield "  %s.ww = ww;" % e.ext_name
             
         yield "  ww.show();"
-        yield "  console.timeEnd('%s');" % self.action
+        if USE_FF_CONSOLE:
+            yield "  console.timeEnd('%s');" % self.action
         yield "}"
         
             

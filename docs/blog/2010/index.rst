@@ -118,6 +118,7 @@
   :doc:`21 <0821>`
   |br| 
   :doc:`23 <0823>`
+  :doc:`24 <0824>`
 
 .. |Sep| replace::  **September**
 
