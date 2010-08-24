@@ -113,7 +113,7 @@ class Contact(models.Model):
         #return countries.City.oiesByCountry().get_queryset(master_instance=recipient.country)
         #return dict(country__in=(recipient.country,))
         
-    def on_create(self,request,instance):
+    def on_create(self,request):
         print "lino.modlib.contacts.Contacts.on_create()"
         #~ instance.language = 
         

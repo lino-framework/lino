@@ -780,9 +780,6 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
             m(req)
         return instance
         
-    #~ def on_create(self,instance,req):
-        #~ pass
-        
     def getLabel(self):
         return self.label
         
