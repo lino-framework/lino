@@ -6,9 +6,10 @@ Kurzfristig
 
 - Noch testen (z.B. werden Filter gespeichert?)
 
-- Release im :term:`DSBE` und auf :term:`Tups`.
+- Insert in notes.Note : Datum sollte par défaut auf heute stehen.
 
-- South aktivieren.
+
+- Release im :term:`DSBE` (:term:`Tups` kann momentan warten).
 
 - Sprachabhängige Auswahl der Notizvorlage. Auf mehrsprachigen Sites hat das templates-Verzeichnis pro unterstützter Sprache ein entsprechendes Unterverzeichnis (`de`, `fr`, `en`,...), was aber in NoteType.template nicht gespeichert wird (und in der Auswahlliste nicht erscheint). Dort werden immer die Templates der Hauptsprache angezeigt. Wenn Sprache der Notiz nicht die Hauptsprache des Lino-Sites ist, dann wird das Template zunächst in der Notizsprache gesucht. Falls es dort nicht existiert (z.B. weil die Vorlage noch nicht übersetzt wurde oder multilingual ist), nimmt er die Standard-Vorlage aus der Hauptsprache.
 
@@ -20,7 +21,7 @@ Kleinkram
 
 - Das Passfoto in dsbe.PersonDetail ist manchmal verzerrt oder noch nicht korrekt ausgeschnitten.
 
-- Die Buttons der tbar sollten mit schönen Icons versehen werden. Für manche Funktionen (Insert,Delete) gibt es vielleicht schon Icons aus der ExtJS.
+- Die Buttons der tbar sollten mit Icons versehen werden. Für manche Funktionen (Insert,Delete) gibt es vielleicht schon Icons aus der ExtJS.
 
 - Abfragen mit komplexen Bedingungen zur Suche nach Personen
 
@@ -29,8 +30,6 @@ Kleinkram
 - Hinter das QuickFilter-Feld muss ein Button, um den Filter zu aktivieren. Dass man einfach nur ENTER drücken muss ist nicht intuitiv.
 
 - Links ordentlich anzeigen und bequem erfassen können.
-
-- Kolonnen-Reihenfolge speichern können.
 
 - Benutzbarkeit per Tastatur verbessern (issue 11, issue 64) 
 

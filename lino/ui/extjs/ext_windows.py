@@ -30,7 +30,7 @@ from lino.utils.jsgen import py2js, js_code, id2js
 from . import ext_elems, ext_requests
 #~ from lino.ui.extjs import ext_viewport
 
-from lino.modlib.properties import models as properties
+#~ from lino.modlib.properties import models as properties
 
 WC_TYPE_GRID = 'grid'
 
@@ -91,8 +91,8 @@ class WindowWrapper(ActionRenderer):
         
     def get_config(self,**d):
         d.update(permalink_name=str(self.action))
-        wc = lh2win(self.lh)
-        wc = self.ui.load_window_config(self.action,**wc)
+        #~ wc = lh2win(self.lh)
+        #~ wc = self.ui.load_window_config(self.action,**wc)
         #~ d.update(permalink_name=self.permalink_name)
         #~ d.update(wc=wc)
         #~ url = '/ui/' + '/'.join((self.action.actor.app_label,self.action.actor._actor_name,self.action.name))
@@ -114,14 +114,6 @@ def lh2win(lh,**kw):
             kw.update(defaultButton=lh.start_focus.name)
     return kw
   
-class unused_SlaveWrapper(WindowWrapper):
-  
-    def js_render(self):
-        yield "function(caller) { "
-        for ln in jsgen.declare_vars(self.main):
-            yield '  '+ln
-        yield "return new Lino.%s(caller,function(ww) { return %s});}" % (self.__class__.__name__,py2js(self.config))
-        
 
 class MasterWrapper(WindowWrapper):
   
@@ -131,22 +123,20 @@ class MasterWrapper(WindowWrapper):
     def js_render(self):
         yield "function(caller,params) { "
         #~ yield "  Ext.getCmp('main_area').el.setStyle({cursor:'wait'});"
+        yield "  console.time('%s');" % self.action
         for ln in jsgen.declare_vars(self.config):
             yield '  '+ln
             
-        yield "var ww = new Lino.%s(caller,%s,params)" % (
+        yield "  var ww = new Lino.%s(caller,%s,params)" % (
             self.__class__.__name__,py2js(self.config))
             
         for e in self.main.walk():
             if e is not self.main and isinstance(e,ext_elems.GridElement):
-                yield "%s.ww = ww;" % e.ext_name
+                yield "  %s.ww = ww;" % e.ext_name
             
-        #~ for sg in slave_grids:
-            #~ n = sg.as_ext()
-            #~ yield "%s.on('render',function(){ Lino.load_slavegrid(%s,%s,ww.get_current_record())});" % (n,self.main.as_ext(),n)
-            #~ yield "ww.add_row_listener(function(sm,ri,rec) { Lino.load_slavegrid(%s,%s,rec) });" % (self.main.as_ext(),n)
-            
-        yield "ww.show();}"
+        yield "  ww.show();"
+        yield "  console.timeEnd('%s');" % self.action
+        yield "}"
         
             
     
@@ -158,36 +148,9 @@ class GridWrapperMixin(WindowWrapper):
         self.rh = rh
     
     def get_config(self):
-      
         d = super(GridWrapperMixin,self).get_config()
-        #~ url = '' self.ui.get_action_url(a,ext_requests.FMT_RUN)
-        if False:
-          d.update(actions=[dict(
-            opens_a_slave=a.opens_a_slave,
-            handler=js_code("Lino.%s" % a),
-            name=a.name,
-            label=unicode(a.label),
-            #~ url="/".join(("/ui",a.actor.app_label,a.actor._actor_name,a.name))
-          ) for a in self.rh.get_actions() if not a.hidden])
-        #~ i = 0
-        #~ actions = []
-        #~ for a in self.rh.get_actions():
-            #~ if not a.hidden:
-                #~ i += 1
-                #~ btn = dict(text=a.label)
-                #~ if a.opens_a_slave: 
-                    #~ btn.update(toggleHandler=js_code('Lino.toggle_button_handler(caller,%d)' % i))
-                    #~ btn.update(enableToggle = True)
-                #~ else:
-                    #~ btn.update(handler=js_code('Lino.button_handler(caller,%d)' % i))
-                #~ actions.append(btn)
-        #~ d.update(actions=actions)
-        #~ d.update(actions=[dict(label=a.label,name=a.name) for a in self.bbar_buttons])
-        #~ d.update(fields=[js_code(f.as_js()) for f in self.rh.store.fields])
-        #~ d.update(colModel=self.lh._main.column_model)
         d.update(content_type=self.rh.content_type)
         d.update(title=unicode(self.rh.get_title(None)))
-        #~ d.update(url_data=self.ui.get_actor_url(self.rh.report)) # +'/data') 
         d.update(main_panel=self.lh._main)
         return d
         
@@ -211,14 +174,12 @@ class BaseDetailWrapper(MasterWrapper):
         #~ assert isinstance(action,actions.BaseDetailAction)
         if len(rh.report.detail_layouts) == 1:
             lh = rh.report.detail_layouts[0].get_handle(rh.ui)
-            main = ext_elems.FormPanel(rh,action,lh._main) # ,autoScroll=True)
+            main = ext_elems.FormPanel(rh,action,lh._main)
             WindowWrapper.__init__(self,action,rh.ui,lh,main,**kw)        
         else:
-            #~ tl = layouts.TabLayout(rh.report.detail_layouts)
-            #~ lh = layouts.TabPanelHandle(rh,rh.report.detail_layouts)
             lh = rh.report.detail_layouts[0].get_handle(rh.ui)
             tabs = [l.get_handle(rh.ui)._main for l in rh.report.detail_layouts]
-            main = ext_elems.FormPanel(rh,action,ext_elems.TabPanel(tabs)) # ,autoScroll=True)
+            main = ext_elems.FormPanel(rh,action,ext_elems.TabPanel(tabs))
             WindowWrapper.__init__(self,action,rh.ui,None,main,**kw) 
         #~ self.config.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rh.get_actions(action)]) # if a.show_in_detail])
             

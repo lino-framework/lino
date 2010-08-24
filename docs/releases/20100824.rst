@@ -1,0 +1,6 @@
+Release 20100824 : Shortly before birth
+=======================================
+
+Lino 0.8.4 / Lino-DSBE 0.1.3
+
+

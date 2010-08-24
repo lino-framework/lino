@@ -180,11 +180,10 @@ class PrintMethod:
 
         
     def render_template(self,elem,tpl): # ,MEDIA_URL=settings.MEDIA_URL):
-        url = settings.MEDIA_ROOT.replace('\\','/') + '/'
         context = dict(
           instance=elem,
           title = unicode(elem),
-          MEDIA_URL = url,
+          MEDIA_URL = settings.MEDIA_ROOT.replace('\\','/') + '/',
         )
         return tpl.render(Context(context))
         
@@ -249,6 +248,20 @@ class PisaPrintMethod(PrintMethod):
             raise Exception("pisa.pisaDocument.err is %r" % pdf.err)
         
         
+class LatexPrintMethod(PrintMethod):
+    name = 'latex'
+    target_ext = '.pdf'
+    template_ext = '.tex'  
+    
+    def build(self,elem):
+        raise NotImplementedError
+        tpl = self.get_template(elem) 
+        filename = self.prepare_cache(elem)
+        if filename is None:
+            return
+        result = self.render_template(elem,tpl) 
+        file(filename,'wb').write(result)
+        
 class RtfPrintMethod(PrintMethod):
   
     name = 'rtf'
@@ -257,6 +270,7 @@ class RtfPrintMethod(PrintMethod):
     template_ext = '.rtf'  
     
     def build(self,elem):
+        raise NotImplementedError
         tpl = self.get_template(elem) 
         filename = self.prepare_cache(elem)
         if filename is None:
@@ -275,6 +289,7 @@ if pisa:
     register_print_method(PisaPrintMethod())
 if appy:
     register_print_method(AppyPrintMethod())
+register_print_method(LatexPrintMethod())
 register_print_method(RtfPrintMethod())
 #~ register_print_method(PicturePrintMethod())
 

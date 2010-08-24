@@ -20,7 +20,7 @@ from django.utils.translation import ugettext as _
 
 import lino
 
-from lino import layouts, reports
+from lino import layouts, reports, actions
 from lino.utils import constrain
 from lino.utils import choosers
 from lino.utils import jsgen
@@ -32,6 +32,9 @@ from . import ext_requests
 
 EXT_CHAR_WIDTH = 9
 EXT_CHAR_HEIGHT = 22
+
+DEFAULT_GC_NAME = 'std'
+
 
 def varname_field(f):
     if hasattr(f,'model'):
@@ -854,7 +857,7 @@ class GridElement(Container):
         kw.update(ls_quick_edit=True)
         kw.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rh.get_actions(rh.report.default_action)])
         kw.update(ls_grid_configs=self.report.grid_configs)
-        kw.update(gc_name='default')
+        kw.update(gc_name=DEFAULT_GC_NAME)
         #~ gc = self.report.grid_configs.get('',None)
         #~ if gc is not None:
             #~ kw.update(ls_grid_config=gc)
@@ -1030,9 +1033,10 @@ class FormPanel(jsgen.Component):
           #~ autoScroll=True,
           layout='fit',
         )
+        if not isinstance(action,actions.InsertRow):
+            kw.update(has_navigator=True)
         
         on_render = []
-        #~ for e in main.walk():
         for e in main.active_children:
             if isinstance(e,FieldElement):
                 chooser = choosers.get_for_field(e.field)
@@ -1048,14 +1052,7 @@ class FormPanel(jsgen.Component):
             kw.update(listeners=dict(render=js_code('function(){%s}' % '\n'.join(on_render))))
         kw.update(before_row_edit=before_row_edit(main))
         
-        #~ kw.update(ls_tbar_actions=[
-        #~ dict(label="First",handler=js_code('Lino.goto_pk'),iconCls='x-tbar-page-first'),
-        #~ dict(label="Previous",handler=js_code('Lino.goto_pk'),iconCls='x-tbar-page-prev'),
-        #~ dict(label="Next",handler=js_code('Lino.goto_pk'),iconCls='x-tbar-page-next'),
-        #~ dict(label="Last",handler=js_code('Lino.goto_pk'),iconCls='x-tbar-page-last'),
-        #~ ])
         kw.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rh.get_actions(action)])
-        #~ kw.update(ls_data_url=rh.ui.get_actor_url(rh.report))
         kw.update(ls_url=rh.ui.build_url(rh.report.app_label,rh.report._actor_name))
         jsgen.Component.__init__(self,'form_panel',**kw)
         
@@ -1063,33 +1060,6 @@ class FormPanel(jsgen.Component):
         return self.main.has_field(f)
 
 
-class unused_FormMainPanel(Panel,WrappingMainPanel):
-    value_template = "new Ext.form.FormPanel(%s)"
-    
-    def __init__(self,lh,name,vertical,*elements,**kw):
-        #DataElementMixin.__init__(self,lh.link)
-        Panel.__init__(self,lh,name,vertical,*elements,**kw)
-        MainPanel.__init__(self)
-
-    def unused_get_datalink(self):
-        return self.lh.datalink
-        
-    def ext_options(self,**d):
-        d = Panel.ext_options(self,**d)
-        #d.update(title=self.lh.label)
-        #d.update(region='east',split=True) #,width=300)
-        d.update(autoScroll=True)
-        #d.update(items=js_code("[%s]" % ",".join([e.as_ext() for e in self.elements])))
-        d.update(items=self.elements)
-        d.update(autoHeight=False)
-        return d
-        
-    def subvars(self):
-        for e in WrappingMainPanel.subvars(self):
-            yield e
-        for e in Panel.subvars(self):
-            yield e
-            
 
 _field2elem = (
     (models.TextField, TextFieldElement),

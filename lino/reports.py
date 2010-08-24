@@ -763,12 +763,16 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
                 kw[self.fk.name] = master_instance
         return kw
         
+    #~ def on_create(self,instance,request):
+        #~ pass
+        
     def create_instance(self,req,**kw):
         instance = self.model(**kw)
+        #~ self.on_create(instance,req)
+        
         m = getattr(instance,'on_create',None)
         if m:
-            m(req)
-        #self.on_create(instance,req)
+            m(req,instance)
         return instance
         
     #~ def on_create(self,instance,req):

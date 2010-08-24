@@ -32,10 +32,10 @@ from django.conf import settings
 
 class NoteType(models.Model):
     name = models.CharField(max_length=200)
-    #~ print_method = models.CharField(max_length=20,choices=mixins.print_method_choices(),blank=True,null=True)
-    #~ template = models.CharField(max_length=200,blank=True,null=True)
-    print_method = models.CharField(max_length=20,choices=mixins.print_method_choices())
-    template = models.CharField(max_length=200)
+    print_method = models.CharField(max_length=20,choices=mixins.print_method_choices(),blank=True,null=True)
+    template = models.CharField(max_length=200,blank=True,null=True)
+    #~ print_method = models.CharField(max_length=20,choices=mixins.print_method_choices())
+    #~ template = models.CharField(max_length=200)
     
     def __unicode__(self):
         return self.name
@@ -77,7 +77,7 @@ class Note(models.Model,mixins.Printable):
     company = models.ForeignKey("contacts.Company",blank=True,null=True)
     language = models.ForeignKey('countries.Language',default=default_language)
     
-    url = models.URLField(verify_exists=True)
+    url = models.URLField(verify_exists=True,blank=True,null=True)
     
     # partner = models.ForeignKey("contacts.Partner",blank=True,null=True)
     

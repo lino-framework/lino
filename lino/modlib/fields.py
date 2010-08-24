@@ -14,6 +14,13 @@
 
 from django.db import models
 
+from south.modelsinspector import add_introspection_rules
+add_introspection_rules([], ["^lino\.modlib\.fields\.PercentageField"])
+add_introspection_rules([], ["^lino\.modlib\.fields\.MyDateField"])
+add_introspection_rules([], ["^lino\.modlib\.fields\.MonthField"])
+add_introspection_rules([], ["^lino\.modlib\.fields\.QuantityField"])
+
+
 class PercentageField(models.SmallIntegerField):
     def __init__(self, *args, **kw):
         defaults = dict(

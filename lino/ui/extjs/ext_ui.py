@@ -64,8 +64,6 @@ from lino.core.coretools import app_labels
 
 #~ from lino.ui.extjs.ext_windows import WindowConfig # 20100316 backwards-compat window_confics.pck 
 
-DEFAULT_GC_NAME = 'std'
-
 class HttpResponseDeleted(HttpResponse):
     status_code = 204
     
@@ -96,15 +94,19 @@ def json_response(x):
     #lino.log.debug("json_response() -> %r", s)
     return HttpResponse(s, mimetype='text/html')
 
-def elem2rec(request,rh,elem):
-    rec = dict(id=elem.pk,
-      data=rh.store.row2dict(request,elem),
-      #~ disabled_fields=[ext_elems.form_field_name(f) for f in rh.report.disabled_fields(request,elem)],
-      title=unicode(elem))
+def elem2rec1(request,rh,elem,**rec):
+    rec.update(data=rh.store.row2dict(request,elem))
+    #~ rec.update(disabled_fields=[ext_elems.form_field_name(f) for f in rh.report.disabled_fields(request,elem)])
+    return rec
+      
+def elem2rec(request,rh,elem,**rec):
+    rec = elem2rec1(request,rh,elem,**rec)
     first = None
     prev = None
     next = None
     last = None
+    rec.update(id=elem.pk)
+    rec.update(title=unicode(elem))
     if rh.report.show_prev_next:
       ar = ext_requests.ViewReportRequest(request,rh,rh.report.default_action)
       recno = 0
@@ -159,7 +161,7 @@ class ExtUI(base.UI):
             lino.log.warning("window_configs_file %s not found",self.window_configs_file)
             
         base.UI.__init__(self,site) # will create a.window_wrapper for all actions
-        self.build_lino_js()
+        self.build_site_js()
         
     def create_layout_element(self,lh,panelclass,name,**kw):
         
@@ -268,9 +270,7 @@ class ExtUI(base.UI):
         pickle.dump(self.window_configs,f)
         f.close()
         lino.log.debug("save_window_config(%r) -> %s",wc,a)
-        #~ from lino.lino_site import lino_site
-        #~ self.build_lino_js(lino_site)
-        self.build_lino_js()
+        self.build_site_js()
         #~ lh = actors.get_actor(name).get_handle(self)
         #~ if lh is not None:
             #~ lh.window_wrapper.try_apply_window_config(wc)
@@ -420,7 +420,7 @@ class ExtUI(base.UI):
         yield '<link rel="stylesheet" type="text/css" href="%slino/extjs/lino.css">' % settings.MEDIA_URL
         yield '<script type="text/javascript" src="%slino/extjs/lino.js"></script>' % settings.MEDIA_URL
         yield '<script type="text/javascript" src="%s"></script>' % (
-            settings.MEDIA_URL + "/".join(self.js_cache_name(self.site)))
+            settings.MEDIA_URL + "/".join(self.site_js_parts()))
 
         #~ yield '<!-- page specific -->'
         yield '<script type="text/javascript">'
@@ -514,7 +514,7 @@ class ExtUI(base.UI):
             
             name = PUT.get('name',None)
             if name is None:
-                name = DEFAULT_GC_NAME                 
+                name = ext_elems.DEFAULT_GC_NAME                 
             else:
                 name = str(name)
                 
@@ -532,8 +532,8 @@ class ExtUI(base.UI):
             lino.log.info("save_grid_config(%r) -> %s",gc,filename)
             
             #~ from lino.lino_site import lino_site
-            #~ self.build_lino_js(lino_site)
-            self.build_lino_js()
+            #~ self.build_site_js(lino_site)
+            self.build_site_js()
             
             return json_response_kw(success=True,
                   msg="%s would have been saved" % filename)
@@ -584,7 +584,13 @@ class ExtUI(base.UI):
             a = rpt.get_action(fmt)
             if a is not None:
                 kw = {}
-                kw.update(on_ready=['Lino.%s();' % a])
+                if isinstance(a,actions.InsertRow):
+                    ar = ext_requests.ViewReportRequest(request,rh,a)
+                    elem = ar.create_instance()
+                    params = dict(data_record=elem2rec1(request,rh,elem,title=ar.get_title()))
+                    kw.update(on_ready=['Lino.%s(undefined,%s);' % (a,py2js(params))])
+                else:
+                    kw.update(on_ready=['Lino.%s();' % a])
                 return HttpResponse(self.html_page(request,**kw))
                 
             ar = ext_requests.ViewReportRequest(request,rh,rh.report.default_action)
@@ -688,12 +694,13 @@ class ExtUI(base.UI):
         
         
         
-    def js_cache_name(self,site):
+    def site_js_parts(self):
+    #~ def js_cache_name(self):
         return ('cache','js','site.js')
         
-    def build_lino_js(self):
+    def build_site_js(self):
         #~ for app_label in site.
-        fn = os.path.join(settings.MEDIA_ROOT,*self.js_cache_name(self.site)) 
+        fn = os.path.join(settings.MEDIA_ROOT,*self.site_js_parts()) 
         #~ fn = r'c:\temp\dsbe.js'
         lino.log.info("Generating %s ...", fn)
         f = open(fn,'w')
@@ -709,7 +716,7 @@ class ExtUI(base.UI):
         f.close()
           
         
-    def window_configs_view(self,request,wc_name=None,**kw):
+    def unused_window_configs_view(self,request,wc_name=None,**kw):
         if request.method == 'POST':
             params = request.POST
             wc = dict()
@@ -1013,6 +1020,8 @@ class ExtUI(base.UI):
                 js = "console.time('%s'); %s console.timeEnd('%s');" % (a,js,a)
             js = "function(panel,btn) { %s }" % js
             kw.update(panel_btn_handler=js_code(js))
+        elif isinstance(a,actions.InsertRow):
+            kw.update(panel_btn_handler=js_code("Lino.%s" % a))
         else:
             kw.update(panel_btn_handler=js_code("Lino.%s" % a))
         kw.update(
