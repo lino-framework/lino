@@ -770,9 +770,14 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
         instance = self.model(**kw)
         #~ self.on_create(instance,req)
         
+        """
+        Used e.b. by modlib.notes.Note.on_create().
+        on_create gets the request as argument.
+        Didn't yet find out how to do that using a standard Django signal 
+        """
         m = getattr(instance,'on_create',None)
         if m:
-            m(req,instance)
+            m(req)
         return instance
         
     #~ def on_create(self,instance,req):

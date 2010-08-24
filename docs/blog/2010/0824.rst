@@ -21,8 +21,12 @@ Treffen im :term:`DSBE`.
 - Neues Feld :attr:`dsbe.Person.has_family` (Personen zu Lasten (ja/nein)). 
   Die Migrationen für dsbe.Person (:file:`0001_initial.py` und :file:`0002_auto__add_field_person_has_family.py`) 
   schreibt South übrigens nach lino.modlib.contacts, was verständlich aber falsch ist. Ich habe sie manuell nach dsbe verschoben, aber das wird wahrscheinlich noch Probleme verursachen. 
+  Die Migration hat geklappt::
 
     manage.py migrate dsbe 0001 --fake
     manage.py migrate
+    
+  Aber das Feld ist in der Grid noch nicht sichtbar (und ich weiß nicht warum).
+
   
 - Neue Konstante `lino.ui.extjs.ext_windows.USE_FF_CONSOLE`, weil Firefox manchmal meldet `console.time is not a function`.
