@@ -3,20 +3,19 @@
 
 Treffen im :term:`DSBE`. 
 
-- Datensynchronisierung TIM->Lino : wartet auf Lösung zu lokalem Problem "no write permission on mounted filesystem".
-
 - Datenaustausch mit `Banque-Carrefour <http://statbel.fgov.be/fr/entreprises/BCE/index.jsp>`__ : 
   wartet auf Antwort.
 
+- Bezeichnung "Notiz" allgemein übersetzen durch "Ereignis".
+
 - Noch was Wichtiges für in die :doc:`/todo` : iCal-Dateien generieren. 
-  Im :class:`notes.NoteType` wird definiert, ob Lino einen Termin oder eine Erinnerung generieren und per E-Mail an den Benutzer verschicken soll.
 
 - Interview mit Nicole: Personnes à charge : DSBE braucht nur ein BooleanField und sonst nichts.
   Import und Synchronisierung der PLP aus TIM kann deshalb auch noch warten.
   
+- Dateien in :file:`/usr/local/lino/templates/appy`.
 
-
-Änderungen :
+DONE:
 
 - Neues Feld :attr:`dsbe.Person.has_family` (Personen zu Lasten (ja/nein)). 
   Die Migrationen für dsbe.Person (:file:`0001_initial.py` und :file:`0002_auto__add_field_person_has_family.py`) 
@@ -28,5 +27,5 @@ Treffen im :term:`DSBE`.
     
   Aber das Feld ist in der Grid noch nicht sichtbar (und ich weiß nicht warum).
 
-  
 - Neue Konstante `lino.ui.extjs.ext_windows.USE_FF_CONSOLE`, weil Firefox manchmal meldet `console.time is not a function`.
+

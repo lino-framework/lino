@@ -27,6 +27,7 @@ from lino import layouts
 from lino.utils import perms
 #~ from lino.utils import mixins
 
+from lino.modlib import fields
 from lino.modlib.contacts.utils import join_words
 
 def default_language():
@@ -60,7 +61,8 @@ class Contact(models.Model):
     #city = models.CharField(max_length=200,blank=True)
     zip_code = models.CharField(max_length=10,blank=True)
     region = models.CharField(max_length=200,blank=True)
-    language = models.ForeignKey('countries.Language',default=default_language)
+    #~ language = models.ForeignKey('countries.Language',default=default_language)
+    language = fields.LanguageField(default=default_language)
     
     email = models.EmailField(blank=True)
     url = models.URLField(blank=True)

@@ -1,3 +1,4 @@
+#coding: utf8
 ## Copyright 2008-2010 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
@@ -13,14 +14,55 @@
 
 
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 
 from south.modelsinspector import add_introspection_rules
+add_introspection_rules([], ["^lino\.modlib\.fields\.KnowledgeField"])
 add_introspection_rules([], ["^lino\.modlib\.fields\.PercentageField"])
 add_introspection_rules([], ["^lino\.modlib\.fields\.MyDateField"])
 add_introspection_rules([], ["^lino\.modlib\.fields\.MonthField"])
 add_introspection_rules([], ["^lino\.modlib\.fields\.QuantityField"])
 
 
+
+
+LANGUAGE_CHOICES = (
+  ('en', _("English")),
+  ('de', _("German")),
+  ('fr', _("French")),
+  ('nl', _("Dutch")),
+  ('et', _("Estonian")),
+)
+
+KNOWLEDGE_CHOICES = (
+  (0, _("not at all")), # - gar nicht
+  (1, _("a bit")), #  - ein bisschen
+  (2, _("moderate")), #  - mittelmäßig
+  (3, _("quite well")), #  - gut
+  (4, _("very well")), #  - sehr gut
+)
+
+class LanguageField(models.CharField):
+    def __init__(self, *args, **kw):
+        defaults = dict(
+            verbose_name=_("Language"),
+            choices=LANGUAGE_CHOICES,
+            max_length=2,
+            #~ limit_to_choices=True,
+            )
+        defaults.update(kw)
+        models.CharField.__init__(self,*args, **defaults)
+
+class KnowledgeField(models.SmallIntegerField):
+    def __init__(self, *args, **kw):
+        defaults = dict(
+            choices=KNOWLEDGE_CHOICES,
+            max_length=1,
+            #~ limit_to_choices=True,
+            )
+        defaults.update(kw)
+        models.SmallIntegerField.__init__(self,*args, **defaults)
+  
 class PercentageField(models.SmallIntegerField):
     def __init__(self, *args, **kw):
         defaults = dict(

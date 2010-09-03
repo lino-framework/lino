@@ -67,14 +67,14 @@ class CitiesByCountry(Cities):
     fk_name = 'country'
 
 
-class Language(models.Model):
-    id = models.CharField(max_length=2,primary_key=True)
-    name = models.CharField(max_length=200)
+#~ class Language(models.Model):
+    #~ id = models.CharField(max_length=2,primary_key=True)
+    #~ name = models.CharField(max_length=200)
     
-    def __unicode__(self):
-        return self.name
+    #~ def __unicode__(self):
+        #~ return self.name
 
-class Languages(reports.Report):
-    model = 'countries.Language'
-    order_by = "id"
+#~ class Languages(reports.Report):
+    #~ model = 'countries.Language'
+    #~ order_by = "id"
 

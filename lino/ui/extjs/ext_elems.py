@@ -1,5 +1,4 @@
 #coding: UTF-8
-#coding: UTF-8
 ## Copyright 2009-2010 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
@@ -462,6 +461,8 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
     
     def __init__(self,*args,**kw):
         FieldElement.__init__(self,*args,**kw)
+        #~ print 20100903,repr(self.field.rel.to)
+        #~ assert issubclass(self.field.rel.to,models.Model), "%r is not a model" % self.field.rel.to
         self.report = reports.get_model_report(self.field.rel.to)
       
     def submit_fields(self):

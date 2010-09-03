@@ -11,21 +11,22 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-from django.db import models
+#~ from django.db import models
 #countries = models.get_app('countries')
 
-from lino.utils.instantiator import Instantiator
+#~ from lino.utils.instantiator import Instantiator
 
-language = Instantiator('countries.Language',"id name").build
+#~ language = Instantiator('countries.Language',"id name").build
 #country = Instantiator(countries.Country,"isocode name").build
 
 def objects():
+    return [] # just to avoid AttributeError: 'module' object has no attribute 'objects'
 
-    yield language('et','Estonian')
-    yield language('en','English')
-    yield language('de','German')
-    yield language('fr','French')
-    yield language('nl','Dutch')
+    #~ yield language('et','Estonian')
+    #~ yield language('en','English')
+    #~ yield language('de','German')
+    #~ yield language('fr','French')
+    #~ yield language('nl','Dutch')
 
     #~ yield country('ee',"Estonia")
     #~ yield country('be',"Belgium")

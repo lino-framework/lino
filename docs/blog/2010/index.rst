@@ -1,13 +1,6 @@
 2010
 ====
 
-.. toctree::
-   :maxdepth: 1
-   :glob:
-   :hidden:
-   
-   *
-   
 .. |br| raw:: html
 
    <br />   
@@ -119,14 +112,32 @@
   |br| 
   :doc:`23 <0823>`
   :doc:`24 <0824>`
+  25 26 27
 
 .. |Sep| replace::  **September**
+  |br| 
+  30 31 01 02 
+  :doc:`03 <0903>`
+
+.. |Oct| replace::  **October**
+
+.. |Nov| replace::  **November**
+
+.. |Dec| replace::  **December**
 
 ===== ===== =====
 |Jan| |Feb| |Mar|
 |Apr| |May| |Jun|
 |Jul| |Aug| |Sep|
+|Oct| |Nov| |Dec|
 ===== ===== =====
 
 
 
+.. toctree::
+   :maxdepth: 1
+   :glob:
+   :hidden:
+   
+   *
+   

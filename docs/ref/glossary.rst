@@ -26,4 +26,7 @@ Glossary
     See :doc:`/blog/2010/0809`,...
     
   TIM
-      http://code.google.com/p/tim
+    http://code.google.com/p/tim
+      
+  disabled fields
+    Fields that the user cannot edit (read-only fields). 

@@ -5,17 +5,16 @@ Yes, I principally publish my work under the `GPL <http://en.wikipedia.org/wiki/
 
 The BSD versus GPL discussion has a "religious" dimension.  The personal preference of a software developer seems to depend mainly on his or her life situation and beliefs. And as far as I can see, my personal faith is clear: the GPL is the only license that `"resists proprietary  vendors' attempts to embrace, extend and extinguish <http://en.wikipedia.org/wiki/Embrace,_extend_and_extinguish>`_".
 
-This said, I don't claim to understand the topic completely, that I'm open to comments and discussion, and maybe I'll even change my mind. One reason to make me change my mind might be if I hear that people who would otherwise collaborate on Lino, refrain from doing so because of the GPL licensing. Let me know if you are one of them.
-
-On the other hand, here are some reasons why other developers don't like the GPL, and that *won't* make me change my mind:
+I don't claim to understand the topic completely, so I'm open to comments and discussion, and maybe I'll even change my mind. One reason to make me change my mind might be if I hear that people who would otherwise collaborate on Lino, refrain from doing so because of the GPL licensing. Let me know if you are one of them. On the other hand, here are some thoughts of other developers against the GPL that *didn't* make me change my mind:
 
 * "I do not wish to pay for my javascript framework, nor do I want 
   to be forced to GPL it, as is the only other option available 
   to me if I use ExtJS." 
-  (coderseye.com 2008-06-04 <http://coderseye.com/2008/why-i-didnt-switch-from-jquery-to-extjs-after-all.html>`_) 
+  (`coderseye.com 2008-06-04 <http://coderseye.com/2008/why-i-didnt-switch-from-jquery-to-extjs-after-all.html>`_) 
   
-  My answer: Yes the GPL prohibits users of my work to publish their 
-  derived work with a less free license. That's the only way to protect the freedom of my work.
+  (My answer: Yes, that's why I like the GPL: it forces users of my work 
+  to give back to the public common. A public common that allows people to take 
+  without giving back cannot be sustainable.)
   
 * "I do not wish (...) to show some of the ugly code I play around with on “playground/testing” sites." 
   (`coderseye.com 2008-06-04 <http://coderseye.com/2008/why-i-didnt-switch-from-jquery-to-extjs-after-all.html>`_) 

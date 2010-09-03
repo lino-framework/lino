@@ -1,0 +1,105 @@
+2010-09-03
+==========
+
+Erstmals seit über einer Woche konnte ich heute 3 Stunden an Lino weiter arbeiten!
+
+DONE:
+
+- Die bisherigen Migrationen (in dsbe und lino.modlib.notes) kommen wieder raus, denn die waren nur für erste Versuche. Noch ist Lino nicht geboren (d.h. noch ist bei keinem das letzte :xfile:`initdb.py` gelaufen).
+  
+- Neue Feldart :class:`lino.modlib.fields.KnowledgeField` ist ein Feld mit folgender Auswahlliste:
+
+    - 0 - gar nicht
+    - 1 - ein bisschen
+    - 2 - mittelmäßig
+    - 3 - gut
+    - 4 - sehr gut
+
+  Wird benutzt für
+  :attr:`dsbe.models.Person.it_knowledge`,
+  :attr:`dsbe.models.LanguageKnowledge.spoken`,
+  :attr:`dsbe.models.LanguageKnowledge.written`.
+  
+- Feld `IT-Kenntnisse` fehlte im Eingabebildschirm.
+
+- Felder `Studieninhalt` und `Schule` in :class:`dsbe.models.Study` sind jetzt keine Combobox mehr, sondern einfache Textfelder.
+
+- :mod:`dsbe.demo.load_tim` konvertiert ein 'W' aus TIM jetzt nach 'F'.
+
+- Neues Datumsfeld :attr:`notes.Note.scheduled_for` ("Stichtag")
+
+- Neue Funktion :func:`dsbe.demo.load_tim.tim_fixture_objects` macht eine Serie von DSBE-spezifischen 
+  Notizarten.
+
+- Neues Feld :attr:`notes.NoteType.important`. 
+  :doc:`/todo` : NotesByPerson im Detail-Fenster einer Person sollte nur die wichtigen Ereignisse anzeigen.
+  
+- Änderungen in dsbe.models.Person:
+
+  - Person.driving_license ist jetzt kein FK mehr, sondern ein normales charfield mit einer hard-codierten Auswahlliste. Führerscheinklassen
+
+  - 2 Ankreuzfelder können raus: LKW-Führerschein und Bus-Führerschein
+   
+  - Neue Felder ("Banque-carrefour")::
+
+      residence_permit_until
+      residence_type (Citizen, Foreigner, Waiting)
+      unemployed_since
+      work_permit_exempt
+      work_permit_until
+      waiting_until
+  
+  - Neue Felder ("Profil")::
+  
+      physical_handicap
+      mental_handicap
+      psycho_handicap
+      health_problems
+      juristic_problems
+      dependency_problems
+      social_problems
+      motivation_lack
+      
+      unavailable
+      unavailable_until
+      unavailable_why
+      
+      fulltime_only
+      parttime_only
+      young_children
+      native_language
+      migration
+    
+- Neue Feldart :class:`lino.modlib.fields.LanguageField` ersetzt :class:`countries.Language`. 
+  Also die Liste von Sprachen ist jetzt nicht mehr in einer Tabelle gespeichert (das war eine dumme Idee aus alter Zeit).
+
+TODO:
+
+- Auch alle Daten aus PXS, die für DSBE nicht wichtig sind (z.B. Krankenkasse)
+
+
+- Neue Tabelle "Arbeitslosengeld-Sperren"
+
+  von | bis | Grund | Bemerkung
+
+- Neue Tabelle AG-Sperrgründe:
+
+  - Termin nicht eingehalten
+  - ONEM-Auflagen nicht erfüllt
+
+
+- Reiterbezeichungen:
+
+  - Stammdaten
+  - Profil (Hindernisse, Infos zum Zweck der Vermittlung)
+  - BC (Banque-Carrefour)
+  - Ereignisse (eine einzige Grid)
+  - Inhalt Detail3 kommt nach Detail1
+
+
+
+- Virtuelle Felder im Profil:
+
+  - Alter
+  - Analphabetismus (Ja wenn es keine Sprachkenntnisse DE, FR, NL oder EN gibt, die in written > 0 sind).
+

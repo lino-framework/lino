@@ -20,6 +20,8 @@ Ich habe das Problem im `ExtJS-Forum
 <http://www.sencha.com/forum/showthread.php?107790-Shockwave-Flash-plugin-causes-Firefox-to-freeze-on-ExtJS&p=504269>`__ 
 gemeldet.
 
+Nachtrag 20100828: hat nichts mit ExtJS zu tun, denn der Shockwave Flash Plugin Version 10.1.82.76 lässt meinen Firefox prinzipiell erfrieren, sobald er aktiviert wird.
+
 
 Release im :term:`DSBE`
 -----------------------
@@ -179,8 +181,4 @@ Und :js:func:`Lino.build_buttons` verarbeitet die "actions" von a2btn ja dann zu
 Das Insert-Fenster hatte auch Navigations-Buttons und ein Quickfilter-Feld, was natürlich Quatsch ist.
 
 Check-in zwischendurch im Rahmen des :doc:`/releases/20100824` (und Install im :term:`DSBE`).
-
-TODO:
-
-- Bei Insert in :class:`notes.NotesByPerson` wird Note.person (der fk zum Master) nicht eingetragen. Ein GET `/api/notes/NotesByPerson?fmt=insert` findet ja nie statt, weil NotesByPerson ein Slave-Report ist, der kein eigenes Fenster hat. Deshalb wird ein solcher Permalink nie generiert. Also :js:func:`Lino.notes.NotesByPerson.insert` darf sich darauf verlassen, einen caller zu haben, der dann seine get_master_params gefragt wird.
 

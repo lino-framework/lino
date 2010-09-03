@@ -36,6 +36,7 @@ class NoteType(models.Model):
     template = models.CharField(max_length=200,blank=True,null=True)
     #~ print_method = models.CharField(max_length=20,choices=mixins.print_method_choices())
     #~ template = models.CharField(max_length=200)
+    important = models.BooleanField(verbose_name=_("important"),default=False)
     
     def __unicode__(self):
         return self.name
@@ -75,8 +76,9 @@ class Note(models.Model,mixins.Printable):
     #~ project = models.ForeignKey("projects.Project",blank=True,null=True)
     person = models.ForeignKey("contacts.Person",blank=True,null=True)
     company = models.ForeignKey("contacts.Company",blank=True,null=True)
-    language = models.ForeignKey('countries.Language',default=default_language)
-    
+    #~ language = models.ForeignKey('countries.Language',default=default_language)
+    language = fields.LanguageField(default=default_language)
+
     url = models.URLField(verify_exists=True,blank=True,null=True)
     
     # partner = models.ForeignKey("contacts.Partner",blank=True,null=True)
@@ -150,6 +152,7 @@ class NoteDetail(layouts.DetailLayout):
     
     main = """
     box1 box2
+    url
     body:80x5 
     """
     
