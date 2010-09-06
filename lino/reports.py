@@ -421,6 +421,13 @@ class ReportActionRequest(actions.ActionRequest): # was ReportRequest
     #~ def run_action(self,ar):
         #~ ar.show_action_window(self) 
         
+    def as_text(self,*args,**kw):
+        from lino.ui import console
+        rh = self.get_report_handle(rpt)
+        rr = renderers_text.TextReportRequest(rh,*args,**kw)
+        return rr.render()
+        
+        return console.ui.report_as_text(self)
 
 
         
@@ -791,10 +798,6 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
         return HttpResponse("1", mimetype='text/x-json')
 
 
-    def as_text(self, *args,**kw):
-        from lino.ui import console
-        return console.ui.report_as_text(self)
-        
     @classmethod
     def unused_register_page_layout(cls,layout):
         if cls.page_layout is not None:
@@ -808,7 +811,9 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
         #~ rr = self.request(None,**kw)
         #~ return rr.render_to_dict()
         
-    def request(self,ui=None,**kw):
+    @classmethod
+    def request(cls,ui=None,**kw):
+        self = cls()
         return self.get_handle(ui).request(**kw)
 
     def row2dict(self,row,d):

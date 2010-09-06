@@ -13,13 +13,12 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-import os
-
 """
 Simulate HTTP authentication  when working with the development server 
-(`manage.py runserver`). This middleware simply reads the REMOTE_USER 
+(`manage.py runserver`). This middleware simply reads the :envvar:`REMOTE_USER` 
 environment variable (of the process running the development server) 
-and inserts this to `request.META['REMOTE_USER']`.
+and inserts this to every request.
+`.META['REMOTE_USER']`.
 
 To use this, insert it to your MIDDLEWARE_CLASSES somewhere before 
 'django.contrib.auth.middleware.RemoteUserMiddleware'
@@ -29,8 +28,14 @@ To use this, insert it to your MIDDLEWARE_CLASSES somewhere before
             'lino.utils.simulate_remote.SimulateRemoteUserMiddleware',
         ) + MIDDLEWARE_CLASSES 
         
+Be careful to not inadvertently include this to your :setting:`MIDDLEWARE_CLASSES` on a production server since it will override the HTTP authentication.
+
+See also http://docs.djangoproject.com/en/dev/howto/auth-remote-user/
+
 
 """
+
+import os
 
 
 class SimulateRemoteUserMiddleware(object):

@@ -2,6 +2,9 @@
 Settings
 ========
 
+Lino and the Django `settings.py` file
+--------------------------------------
+
 This section describes Lino-specific entries of the Django :xfile:`settings.py`.
 
 .. setting:: MEDIA_ROOT
@@ -29,10 +32,6 @@ This section describes Lino-specific entries of the Django :xfile:`settings.py`.
 
   If this is `True`, Lino will write more debugging info about the models and reports.
 
-.. setting:: REMOTE_USER
-  
-  To be used only for development server. Simulates 
-  
 .. setting:: BYPASS_PERMS
 
    If this is `True`, Lino won't apply any user permission checks.
@@ -46,3 +45,19 @@ This section describes Lino-specific entries of the Django :xfile:`settings.py`.
   
    Lino-specific setting. See :doc:`/blog/2010/0624`.
    
+   
+Environment variables
+---------------------
+
+.. envvar:: REMOTE_USER
+  
+  If :class:`lino.utils.simulate_remote.SimulateRemoteUserMiddleware` is active, this development server 
+  will simulate HTTP authentication and set the `REMOTE_USER` meta attribute of every request to this name. 
+  Without SimulateRemoteUserMiddleware active, this environment variable is not consulted.
+  
+  
+
+The `lino_settings.py` file
+---------------------------
+
+This contains settings that have no influence on the Django machinery.

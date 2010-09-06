@@ -575,6 +575,8 @@ class MethodElement(FieldElement):
         return_type._return_type_for_method = meth
         FieldElement.__init__(self,lh,return_type)
         delegate = lh.main_class.field2elem(lh,return_type,**kw)
+        if isinstance(delegate,Panel):
+            delegate = delegate.elements[0]
         for a in ('ext_options','get_column_options',
                   'filter_type',
                   #~ 'get_filter_options', 

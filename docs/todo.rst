@@ -4,6 +4,21 @@ To-Do-Liste
 Kurzfristig
 -----------
 
+TODO:
+
+- Sprachkenntnisse eingeben funktioniert noch nicht.
+- Auch alle Daten aus PXS, die für DSBE nicht wichtig sind (z.B. Krankenkasse)
+
+- Neue Tabelle "Arbeitslosengeld-Sperren"
+
+  von | bis | Grund | Bemerkung
+
+- Neue Tabelle AG-Sperrgründe:
+
+  - Termin nicht eingehalten
+  - ONEM-Auflagen nicht erfüllt
+
+
 - Datensynchronisierung TIM->Lino
 
 - NotesByPerson im Detail-Fenster einer Person sollte nur die wichtigen Ereignisse anzeigen (deren :attr:`notes.NoteType.important` eingeschaltet ist).
@@ -92,5 +107,7 @@ Langfristig
 
 - Slave-Grid in eigenem Fenster öffnen
 
-- :term:`disabled fields` sind schwer lesbar. Da muss wahrscheinlich nur ein custom style override gemacht werden. Aber welcher?
+- :term:`disabled fields` sind noch schwer lesbar, wenn es sich um Comboboxen handelt.
 
+- Benutzerverwaltung von der Kommandozeile aus. 
+  In Lino-DSBE gibt es :xfile:`make_staff.py`, aber das ist nur ein sehr primitives Skript.

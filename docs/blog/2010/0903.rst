@@ -72,34 +72,6 @@ DONE:
     
 - Neue Feldart :class:`lino.modlib.fields.LanguageField` ersetzt :class:`countries.Language`. 
   Also die Liste von Sprachen ist jetzt nicht mehr in einer Tabelle gespeichert (das war eine dumme Idee aus alter Zeit).
-
-TODO:
-
-- Auch alle Daten aus PXS, die für DSBE nicht wichtig sind (z.B. Krankenkasse)
-
-
-- Neue Tabelle "Arbeitslosengeld-Sperren"
-
-  von | bis | Grund | Bemerkung
-
-- Neue Tabelle AG-Sperrgründe:
-
-  - Termin nicht eingehalten
-  - ONEM-Auflagen nicht erfüllt
-
-
-- Reiterbezeichungen:
-
-  - Stammdaten
-  - Profil (Hindernisse, Infos zum Zweck der Vermittlung)
-  - BC (Banque-Carrefour)
-  - Ereignisse (eine einzige Grid)
-  - Inhalt Detail3 kommt nach Detail1
-
-
-
-- Virtuelle Felder im Profil:
-
-  - Alter
-  - Analphabetismus (Ja wenn es keine Sprachkenntnisse DE, FR, NL oder EN gibt, die in written > 0 sind).
+  
+(Check-in wegen Wochenende. :xfile:`load_tim.py` ist erfolgreich durchgelaufen.)
 

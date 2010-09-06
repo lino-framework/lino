@@ -8,5 +8,6 @@
  '(standard-indent 4)
  '(recent-files-include-save-now t))
 (custom-set-faces
- '(default ((t (:size "8pt" :family "Lucida Console"))))
- '(font-lock-string-face ((((class color) (background light)) (:foreground "ForestGreen")))))
+ '(default ((t (:size "12pt" :family "Lucida Console"))))
+ '(font-lock-string-face ((((class color) (background light)) (:foreground "ForestGreen"))))
+ )

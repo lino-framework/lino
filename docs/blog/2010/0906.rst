@@ -1,0 +1,60 @@
+2010-09-06
+==========
+
+- Dank `Condor 
+  <http://www.sencha.com/forum/showthread.php?76185-GridFilters-enhanced-filtering-for-grids&p=509374#post509374>`_
+  weiß ich jetzt, dass die Ext user extensions ab der kommenden Version 3.3 im SDK dokumentiert sein werden.
+  Insbesondere z.B. `Ext.ux.grid.GridFilters
+  <http://dev.sencha.com/deploy/ext-3.3-beta2-7080/examples/ux/docs/?class=Ext.ux.grid.GridFilters>`_.
+  Beruhigend zu wissen.
+
+
+- Ein doofer Bug, der mich mindestens eine Stunde lang abgelenkt hat: 
+  Im Development-Server (manage.py runserver) 
+  bekam man nur das Menü des AnonymousUser, obwohl :envvar:`REMOTE_USER` auf `root`
+  stand.
+  Das lag daran, dass User `root` (nach :xfile:`load_tim.py`) zwar existierte, aber `is_staff` auf `False` hatte.
+  Workaround: :file:`make_staff.py` setzt es nachträglich auf `True`.
+  Ich habe mal einen neuen Punkt "Benutzerverwaltung von der Kommandozeile aus" in die :doc:`/todo` eingetragen, 
+  denn bei solchen Problemen würde ich gerne bequemer sehen können, was in der :class:`auth.User` steht, 
+  und (was noch besser wäre) es von der Kommandozeile eventuell ändern können.
+  Als erstes wäre es für :xfile:`make_staff.py` schön, wenn :meth:`lino.reports.ReportRequest.as_text` funktionierte.
+  Naja, und auch das kann ruhig warten bis nach der Geburt.
+
+
+- Die :term:`disabled fields` werden jetzt in 90% Blau angezeigt statt bisher in 50% Grau, was sehr schwer lesbar war. 
+  Habe "einfach nur" folgendes in der :meth:`lino.ui.ext_ui.ExtUI.html_page` hinzugefügt::
+
+    <style type="text/css">
+    .x-item-disabled {
+      color: blue; opacity:.90;
+    }
+    </style>
+            
+  Leider funktioniert das bisher nur für normale Textfelder, aber noch nicht für deaktivierte Comboboxen und Datumsfelder. Die DOM-Struktur sieht bei Comboboxen wie folgt aus::
+
+    <input type="text" name="country" id="ext-comp-1033" 
+      autocomplete="off" size="24" 
+      class="x-form-text x-form-field" 
+      style="width: 170px;" 
+      disabled="">
+      
+  
+
+- :xfile:`tim2lino.py` funktioniert ganz gut. 
+  Da werden wahrscheinlich noch einige kleine Bugs in der Praxis auftauchen. 
+  Zum Beispiel wurde das Feld Geschlecht dort noch gar nicht aktualisiert.
+  Oder das Feld `street_no` wurde nach einer Änderung in TIM mit den führenden Leerzeichen nach Lino importiert.
+  
+  Änderungen im Mapping TIM-Lino müssen jeweils in beiden Skripts
+  :xfile:`load_tim.py` (Erstimport) und :xfile:`tim2lino.py` (Synchronisierung) getrennt implementiert werden. 
+  Das ist zwar doppelt gemoppelt, aber damit müssen wir leben, denn das sind zwei sehr unterschiedliche Situationen.
+  
+- Umkrempelungen in den PersonDetail-Layouts. Das ist lustig und da geht schnell viel Zeit verloren.
+
+- Neues virtuelles Feld :attr:`dsbe.Person.is_analpha` (Analphabetismus) ist True wenn es keine Sprachkenntnisse DE, FR, NL oder EN gibt, die in written > 0 sind.
+
+- Virtuelle Felder in Detail-Layout funktionierten noch nicht. 
+  Er sagte dann "AttributeError: 'Panel' object has no attribute 'get_field_options'". 
+  
+  

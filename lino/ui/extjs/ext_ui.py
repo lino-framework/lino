@@ -402,6 +402,13 @@ class ExtUI(base.UI):
             #~ yield '  white-space: normal;' # /* changed from nowrap */
             #~ yield '}'
             #~ yield '</style>'
+        if True:
+            yield '<style type="text/css">'
+            #~ yield '.x-item-disabled, .x-tree-node-disabled, .x-date-disabled {'
+            yield '.x-item-disabled {'
+            yield '  color: blue; opacity:.90;' 
+            yield '}'
+            yield '</style>'
         if False:
             yield '<script type="text/javascript" src="%sextjs/Exporter-all.js"></script>' % settings.MEDIA_URL 
             
