@@ -50,11 +50,11 @@
   :xfile:`load_tim.py` (Erstimport) und :xfile:`tim2lino.py` (Synchronisierung) getrennt implementiert werden. 
   Das ist zwar doppelt gemoppelt, aber damit müssen wir leben, denn das sind zwei sehr unterschiedliche Situationen.
   
-- Umkrempelungen in den PersonDetail-Layouts. Das ist lustig und da geht schnell viel Zeit verloren.
+- Umkrempelungen in den PersonDetail-Layouts. Das ist lustig und da geht schnell viel Zeit verloren. Ist noch lange nicht fertig.
 
 - Neues virtuelles Feld :attr:`dsbe.Person.is_analpha` (Analphabetismus) ist True wenn es keine Sprachkenntnisse DE, FR, NL oder EN gibt, die in written > 0 sind.
 
 - Virtuelle Felder in Detail-Layout funktionierten noch nicht. 
   Er sagte dann "AttributeError: 'Panel' object has no attribute 'get_field_options'". 
   
-  
+18.50 Uhr : Check-In wegen Feierabend.

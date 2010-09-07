@@ -29,6 +29,7 @@ extensions = [
   'sphinx.ext.inheritance_diagram',
   'sphinx.ext.extlinks',
   'sphinx.ext.graphviz',
+  'sphinx.ext.intersphinx',
 ]
 
 primary_domain = 'py'
@@ -234,4 +235,4 @@ extlinks = {
 }
 
     
-    
+intersphinx_mapping = {'dsbe': ('http://dsbe.saffre-rumma.ee', 'http://dsbe.saffre-rumma.ee/objects.inv')}

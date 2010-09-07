@@ -68,6 +68,7 @@ class Contact(models.Model):
     url = models.URLField(blank=True)
     phone = models.CharField(max_length=200,blank=True)
     gsm = models.CharField(max_length=200,blank=True)
+    fax = models.CharField(max_length=200,blank=True)
     #image = models.ImageField(blank=True,null=True,
     # upload_to=".")
     

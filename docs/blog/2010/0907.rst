@@ -1,0 +1,30 @@
+2010-09-07
+==========
+
+Noch Detailteufel in :xfile:`load_tim.py` und :xfile:`tim2lino.py` : 
+
+- birth_place wird jetzt aus der PXS übernommen
+
+- national_id wurde nur beim Erstimport übernommen, aber nicht aktualisiert.
+
+- Das Feld `Krankenkasse` ist speziell, weil das in TIM ein FK zur Tabelle ADR ist, die ansonsten nicht benutzt wird. Die Krankenkassen aus TIMs ADR sollen in Lino in :class:`contacts.Company` kommen. Aber wie mappe ich die Partnernummern? ADR->IdAdr ist sechstellig numerisch, und nur die ersten drei Positionen sind benutzt. Ich brauche also einen freien Bereich in den Partnernummern. Nehmen wir... 199000 bis 199999, also die letzte 1000er-Scheibe vor 200000.
+  Noch schlimmer: nicht IdAdr, sondern ADR->IdMut ist der PK in PXS->IdMut.
+
+- Neue Felder health_insurance, pharmacy, card_valid_from, card_valid_to
+
+
+- Die Demo läuft jetzt nicht mehr unter dsbe.saffre-rumma.ee, sondern dsbe-demo.saffre-rumma.ee.
+  Unter http://dsbe.saffre-rumma.ee ist jetzt die Dokumentation von Lino-DSBE.
+
+
+
+TODO: 
+
+- Wie soll ich es machen, dass der Benutzer beim Auswählen der Krankenkasse einer Person nicht alle Firmen, sondern nur die Krankenkassen angezeigt bekommt? Etwa ein eigenes Feld `Company.is_health_insurance`?
+
+- Intersphinx installieren, damit folgende Links funktionieren: 
+  :doc:`foo <dsbe:/tim2lino>`
+  :doc:`/tim2lino`
+  :class:`dsbe.models.Person`
+  
+  

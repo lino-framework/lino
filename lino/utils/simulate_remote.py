@@ -21,7 +21,7 @@ and inserts this to every request.
 `.META['REMOTE_USER']`.
 
 To use this, insert it to your MIDDLEWARE_CLASSES somewhere before 
-'django.contrib.auth.middleware.RemoteUserMiddleware'
+'django.contrib.auth.middleware.RemoteUserMiddleware'::
 
     if sys.platform == 'win32':
         MIDDLEWARE_CLASSES = (

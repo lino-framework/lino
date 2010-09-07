@@ -41,7 +41,7 @@ The Django version provided by Debian Lenny `python-django` module is too old fo
 
   svn co http://code.djangoproject.com/svn/django/trunk/ django
 
-I also installed :term:`ExtJS`_, `Pisa <http://www.xhtml2pdf.com/>` and :term:`Appy` into `/var/snapshots/`::
+I also installed :term:`ExtJS`, `Pisa <http://www.xhtml2pdf.com/>` and :term:`Appy` into `/var/snapshots/`::
 
   wget http://www.extjs.com/deploy/ext-3.2.1.zip
   unzip ext-3.2.1.zip
