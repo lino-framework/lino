@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-15 21:23+0100\n"
+"POT-Creation-Date: 2010-09-08 14:53+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,22 +17,80 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: .\models.py:41
+#: .\models.py:53
+msgid "Name"
+msgstr "Name"
+
+#: .\models.py:54
 msgid "Street"
 msgstr "Straße"
 
-#: .\models.py:42
+#: .\models.py:55
 msgid "No."
 msgstr "Nr."
 
-#: .\models.py:43
+#: .\models.py:56
 msgid "Box"
 msgstr "Box"
 
+#: .\models.py:59
+msgid "Country"
+msgstr "Land"
+
+#: .\models.py:67
+msgid "E-Mail"
+msgstr "E-Mail"
+
+#: .\models.py:68
+msgid "URL"
+msgstr "URL"
+
+#: .\models.py:69
+msgid "Phone"
+msgstr "Telefon"
+
+#: .\models.py:70
+msgid "GSM"
+msgstr "GSM"
+
+#: .\models.py:71
+msgid "Fax"
+msgstr "Fax"
+
 #: .\models.py:157
+msgid "First name"
+msgstr "Vorname"
+
+#: .\models.py:158
+msgid "Last name"
+msgstr "Familienname"
+
+#: .\models.py:159
+msgid "Title"
+msgstr "Anrede"
+
+#: .\models.py:178
 msgid "Persons"
 msgstr "Personen"
 
-#: .\models.py:193
+#: .\models.py:198
+msgid "Abbreviation"
+msgstr "Abkürzung"
+
+#: .\models.py:199
+msgid "Designation"
+msgstr "Bezeichnung"
+
+#: .\models.py:205
+#, fuzzy
+msgid "Company types"
+msgstr "Organisationen"
+
+#: .\models.py:215
+#, fuzzy
+msgid "Company type"
+msgstr "Organisationen"
+
+#: .\models.py:227
 msgid "Companies"
 msgstr "Organisationen"

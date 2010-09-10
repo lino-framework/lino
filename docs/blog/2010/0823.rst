@@ -20,7 +20,8 @@ Ich habe das Problem im `ExtJS-Forum
 <http://www.sencha.com/forum/showthread.php?107790-Shockwave-Flash-plugin-causes-Firefox-to-freeze-on-ExtJS&p=504269>`__ 
 gemeldet.
 
-Nachtrag 20100828: hat nichts mit ExtJS zu tun, denn der Shockwave Flash Plugin Version 10.1.82.76 lässt meinen Firefox prinzipiell erfrieren, sobald er aktiviert wird.
+- Nachtrag 28.08.: hat nichts mit ExtJS zu tun, denn der Shockwave Flash Plugin Version 10.1.82.76 lässt meinen Firefox (v. 3.6.8 on Windows XP) jedesmal erfrieren, sobald er aktiviert wird.
+- Nachtrag 09.09.: Nachdem FF sich auf 3.6.9 aktualisiert hat, funktioniert wieder alles. Das incremental upgrade funktionierte übrigens nicht, aber der Updater entschied dann automatisch, ein komplettes Ugprade zu machen.
 
 
 Release im :term:`DSBE`

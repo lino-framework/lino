@@ -9,8 +9,13 @@ This section describes Lino-specific entries of the Django :xfile:`settings.py`.
 
 .. setting:: MEDIA_ROOT
 
-   Used by FileSystemStorage
+  Used by FileSystemStorage
 
+
+.. setting:: LANGUAGES
+
+  Used by :class:`lino.modlib.fields.LanguageField`.
+  See http://docs.djangoproject.com/en/dev/ref/settings/#languages
 
 .. setting:: PROJECT_DIR
 

@@ -12,19 +12,8 @@ Noch Detailteufel in :xfile:`load_tim.py` und :xfile:`tim2lino.py` :
 
 - Neue Felder health_insurance, pharmacy, card_valid_from, card_valid_to
 
-
 - Die Demo läuft jetzt nicht mehr unter dsbe.saffre-rumma.ee, sondern dsbe-demo.saffre-rumma.ee.
   Unter http://dsbe.saffre-rumma.ee ist jetzt die Dokumentation von Lino-DSBE.
 
 
 
-TODO: 
-
-- Wie soll ich es machen, dass der Benutzer beim Auswählen der Krankenkasse einer Person nicht alle Firmen, sondern nur die Krankenkassen angezeigt bekommt? Etwa ein eigenes Feld `Company.is_health_insurance`?
-
-- Intersphinx installieren, damit folgende Links funktionieren: 
-  :doc:`foo <dsbe:/tim2lino>`
-  :doc:`/tim2lino`
-  :class:`dsbe.models.Person`
-  
-  

@@ -1,0 +1,20 @@
+2010-09-08
+==========
+
+- Die Auswahlliste für :class:`lino.modlib.fields.LanguageField` entnehme ich jetzt aus der :setting:`LANGUAGES`.
+  Falls ein Kunde nicht all diese Sprachen sehen will, kann ich in seiner :xfile:`settings.py` die Liste verkleinern.
+
+- Ich habe die Übersetzungen nochmal aktualisiert::
+
+    cd DIR
+    django-admin makemessages -l de
+    scite locale\de\LC_MESSAGES\django.po
+    django-admin compilemessages -l de
+    
+  Wobei DIR z.B. ist:
+
+    \hgwork\dsbe\dsbe
+    \hgwork\lino\lino\modlib\contacts
+   
+- Lino meinte "Dieses Feld darf nicht leer sein", wenn man in Sprachkenntnisse Schrift oder Wort "not at all" auswählte.
+   

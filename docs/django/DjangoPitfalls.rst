@@ -34,8 +34,7 @@ Here is the problem:
   >>> IntegerPerson.objects.all()
   [<IntegerPerson: Luc>, <IntegerPerson: Luc>]
 
-Oops! The second `save()` has created a second instance!
-That's not normal.
+Oops! The second `save()` has created a second instance! That's not normal!
 
 That's not normal because there's nothing wrong with saving your object a second time, it works for all the other cases I tried: 
 
@@ -56,3 +55,32 @@ That's not normal because there's nothing wrong with saving your object a second
   >>> p.save()
   >>> CharPerson.objects.all()
   [<CharPerson: Luc>]
+
+
+
+Keeping empty fixtures
+----------------------
+
+Never define an empty fixture (i.e. one that returns no objects).
+Django then thinks "If the fixture we loaded contains 0 objects, assume that an error 
+was encountered during fixture loading." and afterwards may behave strangely.
+
+Creating an empty fixture when using :mod:`lino.utils.dpyserializer` is easy. 
+Just create a file :xfile:`initial_data.dpy` in the :xfile:`fixtures` 
+subdir of one of your :setting:`INSTALLED_APPS` with this contents::
+
+    def objects():
+        return [] 
+
+Then you run::
+
+  manage.py loaddata demo
+  
+and `loaddata` says a warning:: 
+
+  No fixture data found for 'initial_data'. (File format may be invalid.)
+
+The strange behaviour is that 
+Django does a rollback of the `initial_data` fixtures of all your installed apps,
+but then continues to loaddata the `demo` fixtures.
+

@@ -13,6 +13,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 
+from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -24,15 +25,16 @@ add_introspection_rules([], ["^lino\.modlib\.fields\.MonthField"])
 add_introspection_rules([], ["^lino\.modlib\.fields\.QuantityField"])
 
 
+LANGUAGE_CHOICES = [ (k,_(v)) for k,v in settings.LANGUAGES ]
 
 
-LANGUAGE_CHOICES = (
-  ('en', _("English")),
-  ('de', _("German")),
-  ('fr', _("French")),
-  ('nl', _("Dutch")),
-  ('et', _("Estonian")),
-)
+#~ LANGUAGE_CHOICES = (
+  #~ ('en', _("English")),
+  #~ ('de', _("German")),
+  #~ ('fr', _("French")),
+  #~ ('nl', _("Dutch")),
+  #~ ('et', _("Estonian")),
+#~ )
 
 KNOWLEDGE_CHOICES = (
   (0, _("not at all")), # - gar nicht
@@ -58,6 +60,7 @@ class KnowledgeField(models.SmallIntegerField):
         defaults = dict(
             choices=KNOWLEDGE_CHOICES,
             max_length=1,
+            blank=True,null=True,
             #~ limit_to_choices=True,
             )
         defaults.update(kw)

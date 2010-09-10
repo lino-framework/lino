@@ -87,7 +87,7 @@ class LinoSite:
     def __init__(self):
         
         #self.django_settings = settings
-        
+        self.init_site_config = lambda sc: sc
         self._menu = menus.Menu("","Main Menu")
         self._setting_up = False
         self._setup_done = False
@@ -202,7 +202,7 @@ class LinoSite:
       
     def initdb(self,fixtures=[]):
       
-        self.setup()
+        #~ self.setup()
         
         from django.core.management import call_command
         from timtools.console import syscon
@@ -232,14 +232,14 @@ class LinoSite:
         # 20100804 don't remember why this was used:
         #~ sites.Site(id=2,domain=self.domain,name=self.title).save()
         
-        for fix in fixtures:
-            lino.log.info("loaddata %s",fix)
-            call_command('loaddata',fix)
+        lino.log.info("loaddata %s",' '.join(fixtures))
+        call_command('loaddata',*fixtures)
+        #~ for fix in fixtures:
+            #~ lino.log.info("loaddata %s",fix)
+            #~ call_command('loaddata',fix)
         #self.setup()
         
             
-    def init_site_config(sc):
-        pass
 
   
   

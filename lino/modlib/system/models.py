@@ -30,7 +30,9 @@ from lino.utils import perms
 class SiteConfig(models.Model):
     site_company = models.ForeignKey('contacts.Company',blank=True,null=True,
         verbose_name=_("The company that runs this site"))
-    next_partner_id = models.IntegerField(verbose_name=_("The next automatic id for Person or Company"))
+    next_partner_id = models.IntegerField(
+        default=1,
+        verbose_name=_("The next automatic id for Person or Company"))
     # base_currency 
 
 class SiteConfigDetail(layouts.DetailLayout):
@@ -53,6 +55,7 @@ def get_site_config():
         sc = SiteConfig(pk=1)
         from lino.lino_site import lino_site
         lino_site.init_site_config(sc)
+        sc.save()
         return sc
 
 class Permissions(reports.Report):

@@ -571,7 +571,7 @@ class MethodElement(FieldElement):
         assert isinstance(lh,layouts.LayoutHandle)
         # uh, this is tricky...
         return_type.name = name
-        return_type.verbose_name = name
+        #~ return_type.verbose_name = name
         return_type._return_type_for_method = meth
         FieldElement.__init__(self,lh,return_type)
         delegate = lh.main_class.field2elem(lh,return_type,**kw)
@@ -832,6 +832,7 @@ class GridElement(Container):
         for e in elements:
             w += (e.width or e.preferred_width)
         self.preferred_width = constrain(w,10,120)
+        #~ kw.update(boxMinWidth=500)
         Container.__init__(self,lh,name,*elements,**kw)
         assert not kw.has_key('before_row_edit')
         self.update(before_row_edit=before_row_edit(self))
@@ -960,6 +961,8 @@ class DetailMainPanel(Panel,WrappingMainPanel):
         self.report = lh.layout.datalink_report
         MainPanel.__init__(self)
         #~ DataElementMixin.__init__(self,lh.link)
+        kw.update(autoScroll=True)
+        #~ kw.update(height=800, autoScroll=True)
         Panel.__init__(self,lh,name,vertical,*elements,**kw)
         #lh.needs_store(self.rh)
         
@@ -978,7 +981,8 @@ class DetailMainPanel(Panel,WrappingMainPanel):
         kw = Panel.ext_options(self,**kw)
         kw.update(title=unicode(self.lh.layout.label))
         #d.update(region='east',split=True) #,width=300)
-        kw.update(autoScroll=True)
+        #~ kw.update(width=800)
+        #~ kw.update(autoScroll=True)
         if False:
             kw.update(tbar=js_code("""new Ext.PagingToolbar({
               store: %s,

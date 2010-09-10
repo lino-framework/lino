@@ -4,9 +4,8 @@ To-Do-Liste
 Kurzfristig
 -----------
 
-TODO:
+- Sprachkenntnisse eingeben funktioniert noch nicht. Die Comboboxen auf Integerfeldern zeigen NaN als Text an.
 
-- Sprachkenntnisse eingeben funktioniert noch nicht.
 - Auch alle Daten aus PXS, die für DSBE nicht wichtig sind (z.B. Krankenkasse)
 
 - Neue Tabelle "Arbeitslosengeld-Sperren"
@@ -46,6 +45,8 @@ TODO:
 Kleinkram
 ---------
 
+- Wie soll ich es machen, dass der Benutzer beim Auswählen der Krankenkasse einer Person nicht alle Firmen, sondern nur die Krankenkassen angezeigt bekommt? Etwa ein eigenes Feld `Company.is_health_insurance`?
+
 - Fenstertitel ändern bzw. anzeigen, welche GC momentan aktiv ist.
 
 - Das Passfoto in dsbe.PersonDetail ist manchmal verzerrt oder noch nicht korrekt ausgeschnitten.
@@ -76,9 +77,11 @@ Kleinkram
 Dokumentation
 -------------
 
-- Anwendung lino.demo, die zum Generieren der Sphinx-Dokumentation bentuzt wird.
-- Intersphinx nutzen und Lino von Lino-DSBE trennen
-- dsbe.saffre-rumma.ee und igen.saffre-rumma.ee sollten nicht die Demo, sondern die Projekt-Doku zeigen. Für Demos wäre es ja elegant, einen Site demos.s-r.ee zu haben. Aber einfacher ist wahrscheinlich dsbe-demo.s-r-ee
+- Intersphinx installieren, damit folgende Links funktionieren: 
+  :doc:`foo <dsbe:/tim2lino>`
+  :doc:`/tim2lino`
+  :class:`dsbe.models.Person`
+
 
 Langfristig
 -----------

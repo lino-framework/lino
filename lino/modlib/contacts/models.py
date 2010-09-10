@@ -50,7 +50,7 @@ class Contact(models.Model):
     class Meta:
         abstract = True
   
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=200,verbose_name=_('Name'))
     street = models.CharField(_("Street"),max_length=200,blank=True)
     street_no = models.CharField(_("No."),max_length=10,blank=True)
     street_box = models.CharField(_("Box"),max_length=10,blank=True)
@@ -64,11 +64,11 @@ class Contact(models.Model):
     #~ language = models.ForeignKey('countries.Language',default=default_language)
     language = fields.LanguageField(default=default_language)
     
-    email = models.EmailField(blank=True)
-    url = models.URLField(blank=True)
-    phone = models.CharField(max_length=200,blank=True)
-    gsm = models.CharField(max_length=200,blank=True)
-    fax = models.CharField(max_length=200,blank=True)
+    email = models.EmailField(blank=True,verbose_name=_('E-Mail'))
+    url = models.URLField(blank=True,verbose_name=_('URL'))
+    phone = models.CharField(max_length=200,blank=True,verbose_name=_('Phone'))
+    gsm = models.CharField(max_length=200,blank=True,verbose_name=_('GSM'))
+    fax = models.CharField(max_length=200,blank=True,verbose_name=_('Fax'))
     #image = models.ImageField(blank=True,null=True,
     # upload_to=".")
     
@@ -154,9 +154,9 @@ class Person(Contact):
         abstract = True
         app_label = 'contacts'
 
-    first_name = models.CharField(max_length=200,blank=True)
-    last_name = models.CharField(max_length=200,blank=True)
-    title = models.CharField(max_length=200,blank=True)
+    first_name = models.CharField(max_length=200,blank=True,verbose_name=_('First name'))
+    last_name = models.CharField(max_length=200,blank=True,verbose_name=_('Last name'))
+    title = models.CharField(max_length=200,blank=True,verbose_name=_('Title'))
         
     
     def save(self,*args,**kw):
