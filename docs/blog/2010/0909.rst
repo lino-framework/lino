@@ -58,3 +58,6 @@ Das funktioniert:
 .. image:: 0909b.jpg
  
 Als nächstes verdächtige ich die Grid-Elemente, dass die den Layoutmanager durcheinander bringen.
+
+
+Freitagabend: Check-in wegen Wochenende. Heute hatte ich zu viel Ablenkung, um an den Layout-Problemen weiter arbeiten zu können.

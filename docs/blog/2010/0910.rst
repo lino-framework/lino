@@ -1,0 +1,31 @@
+2010-09-10 23.45 Uhr
+====================
+
+Ich stochere weiter nach möglichen Ursachen für die Layout-Probleme. 
+
+Schon allein im Fenster :menuselection:`System --> Site Configuration` sind Layout-Probleme zu beobachten wenn man das Browserfenster so klein macht, dass nicht mehr alles drauf passt.
+
+Kleine Änderung nebenbei:
+
+- Das Fenster :menuselection:`System --> Site Configuration` hat jetzt keine Navigations-Buttons mehr. 
+  War ja dort unnütz.
+  
+Wenn man das Browserfenster vergrößert oder verkleinert, wird das window nicht immer richtig angepasst. Manchmal wohl.
+Und wenn man die Konsole einklappt, kriegt das Window dies nicht mit.
+  
+Ich nehme an, dass diese beiden Probleme damit zu tun haben, dass mein window die folgenden Konfigurationsparameter hat::
+  
+    maximized: true, renderTo: 'main_area', constrain: true
+    
+Und tada: in nur knapp zwei Stunden konnte ich das in einen Showcase isolieren und ans ExtJS-Forum posten:
+http://www.sencha.com/forum/showthread.php?109509-Resizing-viewport-containing-a-constrained-maximized-window&p=512168#post512168    
+    
+
+TODO: 
+
+- Im Fenster :menuselection:`System --> Site Configuration` müssten Delete und Insert auch noch weg. Und auch der titel 
+
+- http://code.google.com/p/extjs-public/
+  und
+  http://www.sencha.com/blog/2009/06/10/building-a-rating-widget-with-ext-core-30-final-and-google-cdn/
+  lesen.

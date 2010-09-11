@@ -1,0 +1,98 @@
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title id="title">2010-09-10</title>
+<!-- ** CSS ** -->
+<!-- base library -->
+<link rel="stylesheet" type="text/css" href="../../resources/css/ext-all.css" />
+<!-- overrides to base library -->
+<!-- ** Javascript ** -->
+<!-- ExtJS library: base/adapter -->
+<script type="text/javascript" src="../../adapter/ext/ext-base.js"></script>
+<!-- ExtJS library: all widgets -->
+<script type="text/javascript" src="../../ext-all-debug.js"></script>
+<!-- page specific -->
+<script type="text/javascript">
+
+
+function show_window(btn,event) {
+  //~ console.log(btn,event);
+  var win = new Ext.Window({
+            //~ layout: "fit",
+            //~ xtype: "container",
+            title: (btn == undefined ? "Title" : btn.text),
+            maximized : true,
+            //~ monitorResize: true,
+            constrain	: true,
+            renderTo: 'main_area',
+            layout: 'form',
+            items: [
+              {xtype: 'textfield', fieldLabel: 'A', value:'A'},
+              {xtype: 'textfield', fieldLabel: 'B', value:'B'},
+              {xtype: 'textfield', fieldLabel: 'C', value:'C'},
+              {xtype: 'textfield', fieldLabel: 'D', value:'D'},
+              {xtype: 'textfield', fieldLabel: 'E', value:'E'},
+              {xtype: 'textfield', fieldLabel: 'F', value:'F'},
+              {xtype: 'textfield', fieldLabel: 'G', value:'G'}
+            ],
+        });
+  var main_area = Ext.getCmp('main_area')
+  win.on('show', function(win) {
+      main_area.on('resize', win.onWindowResize, win);
+  });
+  win.on('hide', function(win) {
+      main_area.un('resize', win.onWindowResize, win);
+  });
+  win.show();
+}
+
+Ext.onReady(function(){
+
+
+  var menu = {
+            items: [ 
+              {text:"Foo",menu:[
+                {text:"First",handler:show_window},
+                {text:"Second",handler:show_window},
+                {text:"Third",handler:show_window}]},
+              {text:"Bar",menu:[
+                {text:"Fourth",handler:show_window},
+                {text:"Fifth",handler:show_window}]}
+            ],
+            region: "north",
+            xtype: "toolbar",
+            height: 29
+            };
+            
+  var main_area = {
+            region: "center",
+            //~ monitorResize: true,
+            layout: "fit",
+            xtype: "container",
+            html: "\nThis is the main screen. there is no open window.",
+            id: "main_area"
+        };
+        
+        
+  var message_area = {
+            collapsible: true,
+            title: "Messages",
+            region: "south",
+            height: 100,
+            html: "\nChoose any menu command to open a dummy window, then resize the browser's window to see layout problems",
+            //~ html: "Console started",
+            split: true,
+            autoScroll: true,
+            id: "konsole"
+        }  
+
+  var viewport = new Ext.Viewport({layout:"border",items:[menu,main_area,message_area]});
+  
+  show_window();
+        
+	
+});
+
+
+</script>
+</head><body>
+</body></html>

@@ -1,0 +1,10 @@
+2010-09-11
+==========
+
+Cool: die Forum-Software von ExtJS hat mir geholfen, die Lösung für mein gestriges Problem 
+(`Resizing viewport containing a constrained maximized window 
+<http://www.sencha.com/forum/showthread.php?109509-Resizing-viewport-containing-a-constrained-maximized-window&p=512168#post512168>`__)
+zu finden. Ein Laurent aus Paris hatte geantwortet. Sein Vorschlag war zwar nicht die Lösung, aber als ich ihm das gepostet hatte, sah ich die Liste von "Similar Threads", die man bei jedem Post automatisch generiert kriegt. Einer dieser Threads behandelte genau mein Problem!
+
+
+Check-in

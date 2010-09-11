@@ -17,7 +17,7 @@ from django.contrib.contenttypes import models as contenttypes
 
 #~ from django import forms
 from django.db import models
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 
 import lino
 from lino import reports
@@ -34,6 +34,9 @@ class SiteConfig(models.Model):
         default=1,
         verbose_name=_("The next automatic id for Person or Company"))
     # base_currency 
+    
+    def __unicode__(self):
+        return u"Site configuration"
 
 class SiteConfigDetail(layouts.DetailLayout):
     #~ label = _('Site Configuration')
@@ -46,7 +49,9 @@ class SiteConfigDetail(layouts.DetailLayout):
 class SiteConfigs(reports.Report):
     model = SiteConfig
     #~ default_action_class = reports.OpenDetailAction
-
+    has_navigator = False
+    can_delete = perms.never
+    
 def get_site_config():
     try:
         return SiteConfig.objects.get(pk=1)

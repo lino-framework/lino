@@ -1041,7 +1041,7 @@ class FormPanel(jsgen.Component):
           layout='fit',
         )
         if not isinstance(action,actions.InsertRow):
-            kw.update(has_navigator=True)
+            kw.update(has_navigator=rh.report.has_navigator)
         
         on_render = []
         for e in main.active_children:

@@ -504,6 +504,11 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
     
     """
     
+    has_navigator = True
+    """
+    Whether a Detail Form should have navigation buttons.
+    This option is False in :class:`system.SiteConfigs`.
+    """
     
     def __init__(self):
         if self.model is None:
@@ -643,20 +648,6 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
             #~ return '%s detail_layouts=%s' % (self.__class__,[l.__class__ for l in self.detail_layouts])
         #~ return self.__class__
         
-    # implements actions.Action
-    def unused_get_url(self,ui,**kw):
-        kw['run'] = True
-        rh = self.get_handle(ui)
-        return rh.get_absolute_url(**kw)
-        #return ui.get_report_url(rh,**kw)
-        
-        
-    #~ def get_action(self,name):
-        #~ for a in self.actions:
-            #~ if a.name == name:
-                #~ return a
-        #~ return actors.Actor.get_action(self,name)
-              
     def add_actions(self,*args):
         """Used in Model.setup_report() to specify actions for each report on
         this model."""
@@ -664,22 +655,6 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
         #~ for a in more_actions:
             #~ self._actions.append(a)
         
-    #~ def unused_ext_components(self):
-        #~ if len(self.store.layouts) == 2:
-            #~ for s in self.store.layouts:
-                #~ yield s._main
-        #~ else:
-            #~ yield self.store.layouts[0]._main
-            #~ comps = [l._main for l in self.store.layouts[1:]]
-            #~ yield extjs.TabPanel(None,"EastPanel",*comps)
-            
-        #~ yield self.layouts[0]._main
-        #~ if len(self.layouts) == 2:
-            #~ yield self.layouts[1]._main
-        #~ else:
-            #~ comps = [l._main for l in self.layouts[1:]]
-            #~ yield layouts.TabPanel(None,"EastPanel",*comps)
-
     def data_elems(self):
         for de in data_elems(self.model): yield de
           
@@ -728,7 +703,7 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
         """
         Returns this report as a unicode string.
         
-        :param max_items: don't include more than
+        :param max_items: don't include more than the specified number of items.
         """
         s = u''
         n = 0
@@ -799,19 +774,6 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
 
 
     @classmethod
-    def unused_register_page_layout(cls,layout):
-        if cls.page_layout is not None:
-            lino.warning('Detail layout %s in %s overridden by %s',
-              cls.page_layout,cls,layout)
-        cls.page_layout = layout
-        #~ cls.page_layout = tuple(cls.page_layouts) + layouts
-        
-    #~ def render_to_dict(self,**kw):
-        #~ rh = self.get_handle(None) # ReportHandle(None,self)
-        #~ rr = self.request(None,**kw)
-        #~ return rr.render_to_dict()
-        
-    @classmethod
     def request(cls,ui=None,**kw):
         self = cls()
         return self.get_handle(ui).request(**kw)
@@ -830,12 +792,6 @@ def report_factory(model):
     lino.log.debug('report_factory(%s) -> app_label=%r',model.__name__,model._meta.app_label)
     cls = type(model.__name__+"Report",(Report,),dict(model=model,app_label=model._meta.app_label))
     return actors.register_actor(cls())
-
-#~ def choice_report_factory(model,field):
-    #~ clsname = model.__name__+"_"+field.name+'_'+"Choices"
-    #~ fldname = model._meta.app_label+'.'+model.__class__.__name__+'.'+field.name
-    #~ return type(clsname,(Report,),dict(field=fldname,app_label=model._meta.app_label,column_names='__unicode__'))
-
 
 
 def column_choices(rptname):

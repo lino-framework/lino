@@ -114,3 +114,12 @@ Langfristig
 
 - Benutzerverwaltung von der Kommandozeile aus. 
   In Lino-DSBE gibt es :xfile:`make_staff.py`, aber das ist nur ein sehr primitives Skript.
+  
+- Im Fenster :menuselection:`System --> Site Configuration` müssten Delete und Insert noch weg. 
+
+- Wenn ein Detail-Fenster nur ein Layout hat (nur einen Tab), dann ist der Titel dieses Layouts unnütz.
+
+- http://code.google.com/p/extjs-public/
+  und
+  http://www.sencha.com/blog/2009/06/10/building-a-rating-widget-with-ext-core-30-final-and-google-cdn/
+  lesen.  
