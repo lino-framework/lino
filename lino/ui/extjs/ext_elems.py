@@ -224,10 +224,10 @@ class LayoutElement(VisibleComponent):
         return kw
         
     def set_parent(self,parent):
-        if self.parent is not None:
-            raise Exception("%s : parent is already %s, cannot set it to %s" % (self,self.parent,parent))
+        #~ if self.parent is not None:
+            #~ raise Exception("%s : parent is already %s, cannot set it to %s" % (self,self.parent,parent))
         self.parent = parent
-        if self.label:
+        if self.label and isinstance(parent,Panel):
             if parent.labelAlign == layouts.LABEL_ALIGN_LEFT:
                 self.preferred_width += len(self.label)
 
@@ -236,7 +236,7 @@ class LayoutElement(VisibleComponent):
         if self.xtype is not None:
             kw.update(xtype=self.xtype)
         if self.collapsible:
-            kw.update(collapsible=self.collapsible)
+            kw.update(collapsible=True)
         return kw
 
 
@@ -589,7 +589,8 @@ class Container(LayoutElement):
     vertical = False
     hpad = 1
     is_fieldset = False
-    xtype = 'container'
+    #~ xtype = 'container'
+    value_template = "new Ext.Container(%s)"
     
     #declare_type = jsgen.DECLARE_INLINE
     #declare_type = jsgen.DECLARE_THIS
@@ -602,13 +603,18 @@ class Container(LayoutElement):
         self.labelAlign = lh.layout.label_align
         self.elements = elements
         self.active_children = []
+        #~ self.has_fields = False
         for e in elements:
+            e.set_parent(self)
+            #~ if isinstance(e,FieldElement):
+                #~ self.has_fields = True
             if not isinstance(e,LayoutElement):
                 raise Exception("%r is not a LayoutElement" % e)
             if e.active_child:
                 self.active_children.append(e)
             elif isinstance(e,Panel):
                 self.active_children += e.active_children
+                #~ self.has_fields = True
         LayoutElement.__init__(self,lh,name,**kw)
         
     def subvars(self):
@@ -636,6 +642,8 @@ class Container(LayoutElement):
 class Panel(Container):
     ext_suffix = "_panel"
     active_child = False
+    #~ declare_type = jsgen.DECLARE_VAR
+    #~ value_template = "new Ext.Panel(%s)"
     
     def __init__(self,lh,name,vertical,*elements,**kw):
         self.vertical = vertical
@@ -660,7 +668,13 @@ class Panel(Container):
         vflex elements will get the height of the highest non-vflex element).
         """        
         self.vflex = not vertical
+        stretch = False
+        #~ monitorResize = False
         for e in elements:
+            #~ if e.collapsible:
+                #~ monitorResize = True
+            if e.vflex:
+                stretch = True
             if self.vertical:
                 if e.vflex:
                     self.vflex = True
@@ -692,17 +706,23 @@ class Panel(Container):
                 for eg in egroups:
                     if eg[0].vflex:
                         #~ for e in eg: e.update(flex=1,align='stretch')
-                        for e in eg: e.update(flex=1)
+                        for e in eg: 
+                            e.update(flex=1)
+                            e.collapsible = True
+                            #~ e.update(collapsible=True)
                         if len(eg) == 1:
                             g = eg[0]
                         else:
-                            g = Container(lh,name,*eg,**dict(layout='vbox',flex=1))
+                            #~ g = Container(lh,name,*eg,**dict(layout='vbox',flex=1)
+                            g = Panel(lh,name,*eg,**dict(layout='vbox',flex=1,layoutConfig=dict(align='stretch')))
                     else:
                         #~ for e in eg: e.update(align='stretch')
                         if len(eg) == 1:
                             g = eg[0]
                         else:
                             g = Container(lh,name,*eg,**dict(layout='form',autoHeight=True))
+                    #~ if monitorResize:
+                        #~ g.update(monitorResize=True)
                     #~ g.update(align='stretch')
                     #~ g.update(layoutConfig=dict(align='stretch'))
                     elements.append(g)
@@ -712,7 +732,7 @@ class Panel(Container):
                 self.update(layout='hbox',layoutConfig=dict(align='stretch'))
               
         for e in elements:
-            e.set_parent(self)
+            #~ e.set_parent(self)
             if isinstance(e,FieldElement):
                 self.is_fieldset = True
                 #~ if self.label_width < e.label_width:
@@ -742,10 +762,18 @@ class Panel(Container):
             if len(elements) == 1:
                 d.update(layout='fit')
             elif self.vertical:
-                d.update(layout='form')
+                #~ d.update(layout='form')
+                if self.vflex:
+                    d.update(layout='vbox',layoutConfig=dict(align='stretch'))
+                else:
+                    d.update(layout='form')
             else:
                 #~ d.update(layout='column') # 20100615
-                d.update(layout='hbox')
+                if stretch : # 20100912
+                #~ if self.vflex: # 20100912
+                    d.update(layout='hbox',layoutConfig=dict(align='stretch'))
+                else:
+                    d.update(layout='hbox')
                 
         if d['layout'] == 'form':
             assert self.vertical
@@ -771,8 +799,8 @@ class Panel(Container):
         
     def ext_options(self,**d):
         d = Container.ext_options(self,**d)
-        if self.collapsible:
-            d.update(xtype='panel')
+        #~ if self.collapsible:
+            #~ d.update(xtype='panel')
             #~ js = "function(cmp,aw,ah,rw,rh) { console.log('Panel.collapse',this,cmp,aw,ah,rw,rh); this.main_panel.doLayout(); }"
             #~ d.update(listeners=dict(scope=js_code('this'),collapse=js_code(js),expand=js_code(js)))
             #d.update(monitorResize=True)
@@ -807,6 +835,25 @@ class Panel(Container):
 
 #~ class DataElementMixin:
     #~ "common for Grids, Details and Forms"
+  
+class unused_GridElementBox(LayoutElement):
+  
+    declare_type = jsgen.DECLARE_VAR
+    #~ declare_type = jsgen.DECLARE_INLINE
+    ext_suffix = "_box"
+    #~ value_template = "new Ext.grid.Column(%s)"
+    
+    def __init__(self,lh,grid,**kw):
+        """editor may be a Panel for columns on a GenericForeignKey
+        """
+        #~ print 20100515, editor.name, editor.__class__
+        #~ assert isinstance(editor,FieldElement), \
+            #~ "%s.%s is a %r (expected FieldElement instance)" % (cm.grid.report,editor.name,editor)
+        kw.update(xtype='container')
+        kw.update(items=grid)
+        kw.update(layout='fit')
+        kw.update(autoScroll=True)
+        LayoutElement.__init__(self,lh,grid.name,**kw)
   
 
 class GridElement(Container): 

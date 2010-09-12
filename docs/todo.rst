@@ -4,19 +4,11 @@ To-Do-Liste
 Kurzfristig
 -----------
 
-- Sprachkenntnisse eingeben funktioniert noch nicht. Die Comboboxen auf Integerfeldern zeigen NaN als Text an.
+- Wenn in einer vbox mit 2 Grids ein der Grids kollabiert, sollte die andere den dadurch verfügbaren Raum ausfüllen.
+  collapse-Events beider Gridboxen an doLayout oder resize der vbox verknüpfen...
+  Showcase 20100912.html zeigt das Problem.
 
 - Auch alle Daten aus PXS, die für DSBE nicht wichtig sind (z.B. Krankenkasse)
-
-- Neue Tabelle "Arbeitslosengeld-Sperren"
-
-  von | bis | Grund | Bemerkung
-
-- Neue Tabelle AG-Sperrgründe:
-
-  - Termin nicht eingehalten
-  - ONEM-Auflagen nicht erfüllt
-
 
 - Datensynchronisierung TIM->Lino
 
@@ -119,7 +111,19 @@ Langfristig
 
 - Wenn ein Detail-Fenster nur ein Layout hat (nur einen Tab), dann ist der Titel dieses Layouts unnütz.
 
+- Bei mehrtabbigen Detail-Fenstern sollte im Permalink auch das aktive Tab angegeben werden.
+
 - http://code.google.com/p/extjs-public/
   und
   http://www.sencha.com/blog/2009/06/10/building-a-rating-widget-with-ext-core-30-final-and-google-cdn/
   lesen.  
+  
+- Feldgruppen. Z.B. bei den 3 Feldern für Arbeitserlaubnis (:attr:`dsbe.models.Person.work_permit`) in DSBE wäre es interessant, 
+  dass das Label "Arbeitserlaubnis" einmal über der Gruppe steht und in den Labels der einzelnen Felder nicht wiederholt wird.
+
+- Comboboxen auf Integerfeldern funktionieren nicht. Zeigen NaN als Text an.
+
+- Strings aus :data:`lino.modlib.fields.KNOWLEDGE_CHOICES` werden von makemessages nicht gefunden, 
+  weil sie nicht im Code der Anwendung stehen.
+  Rausfinden, ob man das nicht doch irgendwie automatisieren kann.
+  http://docs.djangoproject.com/en/dev/topics/i18n/localization/

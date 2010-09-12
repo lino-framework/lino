@@ -33,7 +33,7 @@ from . import ext_elems, ext_requests
 #~ from lino.modlib.properties import models as properties
 
 WC_TYPE_GRID = 'grid'
-USE_FF_CONSOLE = False
+USE_FF_CONSOLE = True
 
 class ActionRenderer(object):
     def __init__(self,ui,action):
@@ -134,6 +134,10 @@ class MasterWrapper(WindowWrapper):
         for e in self.main.walk():
             if e is not self.main and isinstance(e,ext_elems.GridElement):
                 yield "  %s.ww = ww;" % e.ext_name
+                #~ if e.collapsible:
+                    #~ yield "  %s.on('expand',Lino.collapse_handler(%s))" % (e.ext_name,e.parent.ext_name)
+                    #~ yield "  %s.on('collapse',Lino.collapse_handler(%s))" % (e.ext_name,e.parent.ext_name)
+                  
             
         yield "  ww.show();"
         if USE_FF_CONSOLE:

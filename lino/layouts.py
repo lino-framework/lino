@@ -180,9 +180,13 @@ class LayoutHandle(base.Handle):
             i = 0
             for x in desc.splitlines():
                 x = x.strip()
-                if len(x) > 0 and not x.startswith("#"):
+                if len(x) > 0 and not x.startswith("# "):
                     i += 1
-                    elems.append(self.desc2elem(self.ui.Panel,desc_name+'_'+str(i),x,**kw))
+                    e = self.desc2elem(self.ui.Panel,desc_name+'_'+str(i),x,**kw)
+                    if e is not None:
+                        elems.append(e)
+            if len(elems) == 0:
+                return None
             if len(elems) == 1 and panelclass != self.main_class:
                 return elems[0]
             #return self.vbox_class(self,name,*elems,**kw)
@@ -199,6 +203,8 @@ class LayoutHandle(base.Handle):
                     e = self.create_element(self.ui.Panel,x)
                     if e:
                         elems.append(e)
+            if len(elems) == 0:
+                return None
             if len(elems) == 1 and panelclass != self.main_class:
                 return elems[0]
             #return self.hbox_class(self,name,*elems,**kw)

@@ -37,11 +37,11 @@ LANGUAGE_CHOICES = [ (k,_(v)) for k,v in settings.LANGUAGES ]
 #~ )
 
 KNOWLEDGE_CHOICES = (
-  (0, _("not at all")), # - gar nicht
-  (1, _("a bit")), #  - ein bisschen
-  (2, _("moderate")), #  - mittelmäßig
-  (3, _("quite well")), #  - gut
-  (4, _("very well")), #  - sehr gut
+  ('0', _("not at all")), # - gar nicht
+  ('1', _("a bit")), #  - ein bisschen
+  ('2', _("moderate")), #  - mittelmäßig
+  ('3', _("quite well")), #  - gut
+  ('4', _("very well")), #  - sehr gut
 )
 
 class LanguageField(models.CharField):
@@ -55,7 +55,8 @@ class LanguageField(models.CharField):
         defaults.update(kw)
         models.CharField.__init__(self,*args, **defaults)
 
-class KnowledgeField(models.SmallIntegerField):
+#~ class KnowledgeField(models.SmallIntegerField):
+class KnowledgeField(models.CharField):
     def __init__(self, *args, **kw):
         defaults = dict(
             choices=KNOWLEDGE_CHOICES,
@@ -64,7 +65,8 @@ class KnowledgeField(models.SmallIntegerField):
             #~ limit_to_choices=True,
             )
         defaults.update(kw)
-        models.SmallIntegerField.__init__(self,*args, **defaults)
+        #~ models.SmallIntegerField.__init__(self,*args, **defaults)
+        models.CharField.__init__(self,*args, **defaults)
   
 class PercentageField(models.SmallIntegerField):
     def __init__(self, *args, **kw):

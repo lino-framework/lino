@@ -14,6 +14,188 @@
 */
 Ext.namespace('Lino');
 
+/*
+The following two overrides are from
+http://www.sencha.com/forum/showthread.php?98165-vbox-layout-with-two-grids-grid-collapse-does-not-stretch-non-collapsed-grid&p=463266  
+
+Ext.override(Ext.layout.BoxLayout, {
+    getVisibleItems: function(ct) {
+        var ct  = ct || this.container,
+            t   = ct.getLayoutTarget(),
+            cti = ct.items.items,
+            len = cti.length,
+            i, c, items = [];
+
+        for (i = 0; i < len; i++) {
+            if((c = cti[i]).rendered && this.isValidParent(c, t) && c.hidden !== true){ // no collapsed check
+                items.push(c);
+            }
+        }
+
+        return items;
+    }
+});
+
+Ext.override(Ext.layout.VBoxLayout, {
+    calculateChildBoxes: function(visibleItems, targetSize) {
+        var visibleCount = visibleItems.length,
+
+            padding      = this.padding,
+            topOffset    = padding.top,
+            leftOffset   = padding.left,
+            paddingVert  = topOffset  + padding.bottom,
+            paddingHoriz = leftOffset + padding.right,
+
+            width        = targetSize.width - this.scrollOffset,
+            height       = targetSize.height,
+            availWidth   = Math.max(0, width - paddingHoriz),
+
+            isStart      = this.pack == 'start',
+            isCenter     = this.pack == 'center',
+            isEnd        = this.pack == 'end',
+
+            nonFlexHeight= 0,
+            maxWidth     = 0,
+            totalFlex    = 0,
+
+            //used to cache the calculated size and position values for each child item
+            boxes        = [],
+
+            //used in the for loops below, just declared here for brevity
+            child, childWidth, childHeight, childSize, childMargins, canLayout, i, calcs, flexedHeight, horizMargins, stretchWidth;
+
+            //gather the total flex of all flexed items and the width taken up by fixed width items
+            for (i = 0; i < visibleCount; i++) {
+                child = visibleItems[i];
+                childHeight = child.collapsed ? child.getHeight() : child.height;
+                childWidth  = child.width;
+                canLayout   = !child.hasLayout && Ext.isFunction(child.doLayout);
+
+
+                // Static height (numeric) requires no calcs
+                if (!Ext.isNumber(childHeight)) {
+
+                    // flex and not 'auto' height
+                    if (child.flex && !childHeight) {
+                        totalFlex += child.flex;
+
+                    // Not flexed or 'auto' height or undefined height
+                    } else {
+                        //Render and layout sub-containers without a flex or width defined, as otherwise we
+                        //don't know how wide the sub-container should be and cannot calculate flexed widths
+                        if (!childHeight && canLayout) {
+                            child.doLayout();
+                        }
+
+                        childSize = child.getSize();
+                        childWidth = childSize.width;
+                        childHeight = childSize.height;
+                    }
+                }
+
+                childMargins = child.margins;
+
+                nonFlexHeight += (childHeight || 0) + childMargins.top + childMargins.bottom;
+
+                // Max width for align - force layout of non-layed out subcontainers without a numeric width
+                if (!Ext.isNumber(childWidth)) {
+                    if (canLayout) {
+                        child.doLayout();
+                    }
+                    childWidth = child.getWidth();
+                }
+
+                maxWidth = Math.max(maxWidth, childWidth + childMargins.left + childMargins.right);
+
+                //cache the size of each child component
+                boxes.push({
+                    component: child,
+                    height   : childHeight || undefined,
+                    width    : childWidth || undefined
+                });
+            }
+
+            //the height available to the flexed items
+            var availableHeight = Math.max(0, (height - nonFlexHeight - paddingVert));
+
+            if (isCenter) {
+                topOffset += availableHeight / 2;
+            } else if (isEnd) {
+                topOffset += availableHeight;
+            }
+
+            //temporary variables used in the flex height calculations below
+            var remainingHeight = availableHeight,
+                remainingFlex   = totalFlex;
+
+            //calculate the height of each flexed item, and the left + top positions of every item
+            for (i = 0; i < visibleCount; i++) {
+                child = visibleItems[i];
+                calcs = boxes[i];
+
+                childMargins = child.margins;
+                horizMargins = childMargins.left + childMargins.right;
+
+                topOffset   += childMargins.top;
+
+                if (isStart && child.flex && !child.collapsed && !child.height) {
+                    flexedHeight     = Math.ceil((child.flex / remainingFlex) * remainingHeight);
+                    remainingHeight -= flexedHeight;
+                    remainingFlex   -= child.flex;
+
+                    calcs.height = flexedHeight;
+                    calcs.dirtySize = true;
+                }
+
+                calcs.left = leftOffset + childMargins.left;
+                calcs.top  = topOffset;
+
+                switch (this.align) {
+                    case 'stretch':
+                        stretchWidth = availWidth - horizMargins;
+                        calcs.width  = stretchWidth.constrain(child.minWidth || 0, child.maxWidth || 1000000);
+                        calcs.dirtySize = true;
+                        break;
+                    case 'stretchmax':
+                        stretchWidth = maxWidth - horizMargins;
+                        calcs.width  = stretchWidth.constrain(child.minWidth || 0, child.maxWidth || 1000000);
+                        calcs.dirtySize = true;
+                        break;
+                    case 'center':
+                        var diff = availWidth - calcs.width - horizMargins;
+                        if (diff > 0) {
+                            calcs.left = leftOffset + horizMargins + (diff / 2);
+                        }
+                }
+
+                topOffset += calcs.height + childMargins.bottom;
+            }
+
+        return {
+            boxes: boxes,
+            meta : {
+                maxWidth: maxWidth
+            }
+        };
+    }
+});
+
+
+Lino.collapse_handler = function(ct) {
+  return function onExpandCollapse(c) {
+  //      Horrible Ext 2.* collapse handling has to be defeated...
+      console.log(20100912);
+      if (c.queuedBodySize) {
+          delete c.queuedBodySize.width;
+          delete c.queuedBodySize.height;
+      }
+      ct.doLayout();
+  }
+};
+*/
+
+
+
 
 /*
 Based on feature request developed in http://extjs.net/forum/showthread.php?t=75751
@@ -487,13 +669,14 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
 Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
   clicksToEdit:2,
   enableColLock: false,
+  autoHeight: false,
   viewConfig: {
           //autoScroll:true,
           //autoFill:true,
           //forceFit=True,
           //enableRowBody=True,
-          showPreview:true,
-          scrollOffset:200,
+          //~ showPreview:true,
+          //~ scrollOffset:200,
           emptyText:"Nix gefunden!"
         },
   

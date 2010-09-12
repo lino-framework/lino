@@ -88,7 +88,8 @@ def discover():
     actors_list = []
     #~ lino.log.debug("actors.discover() : instantiating %d actors",len(actor_classes))
     for cls in actor_classes:
-        register_actor(cls())
+        if not cls.__name__.startswith('unused_'):
+            register_actor(cls())
     actor_classes = None
     
     #~ lino.log.debug("actors.discover() : setup %d actors",len(actors_list))

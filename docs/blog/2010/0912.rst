@@ -1,0 +1,42 @@
+2010-09-12
+==========
+
+DONE:
+
+- Wäre es vielleicht besser, den Gridelementen eine sinnvolle Mindesthöhe zu geben, 
+  anstatt sie sich über die gesamte verfügbare Höhe verteilen zu lassen? Nein, ich glaube nicht.
+
+- Das Problem der zwei Grids in einer vbox ist gelöst.
+  Der showcase 20100912.html half mir beim Lösen.  
+  Die top level hbox des Profile-Tabs muss align=stretch haben.
+  Das wird in :meth:`lino.ui.extjs.ext_elems.Panel.__init__` geregelt.
+  Aber Achtung, nicht alle HBoxen dürfen align=stretch kriegen: 
+  nur die, die mindestens ein vflex-Element haben.
+  Deshalb der neue Test `stretch`.
+  Puh, das ist subtil! Aber jetzt klappt es!
+  Die :meth:`lino.ui.extjs.ext_elems.GridElementBox` von gestern ist wieder raus, das war nur eine Pseudolösung.
+
+- Um :data:`lino.modlib.fields.KNOWLEDGE_CHOICES` übersetzen zu können, musste ich etwas nachhelfen, 
+  denn diese Strings werden von makemessages nicht gefunden, weil sie nicht im Code der Anwendung stehen.
+  TODO: rausfinden, ob man das nicht doch irgendwie automatisieren kann.
+
+- Das Feld `work_permit_exempt` habe ich ersetzt durch `needs_work_permit` (also das Gegenteil). Weil mir das logischer scheint.
+
+- Das Ankreuzfeld `unavailable` (nicht verfügbar) habe ich rausgeschmissen. 
+  Also um jemanden als unverfügbar zu markeiren, muss man das entprechende Datum ausfüllen.
+  
+- Attribut `window_configs` und Co hing noch unnütz in der ext_ui.ExtUI rum. Raus damit.
+
+- LANGUAGE_CHOICES wird jetzt in der site.js als Variable deklariert und nicht mehr für jedes Sprachauswahlfeld inline neu definiert.
+
+- lino.modlib.fields.KnowledgeField ist jetzt ein CharField. Dadurch umgehe ich das Problem von IntegerField mit choices.
+
+- Neue Tabelle "Arbeitslosengeld-Sperren" (Exclusions) und AG-Sperrgründe (ExclusionTypes):
+
+- Ich habe mein Problem "collapsibles in a vbox" ins `Forum <http://www.sencha.com/forum/showthread.php?109555-collapsibles-in-a-vbox>` 
+  geposted, und wie sich dann rausstellte, ist genau die gleiche Frage im April von `nolo866  <http://www.sencha.com/forum/showthread.php?98165-vbox-layout-with-two-grids-grid-collapse-does-not-stretch-non-collapsed-grid&p=463266>`__ schon mal gestellt worden.
+  Leider gibt es keine einfache Lösung. Der Patch von Animal scheint okay, aber beim Generieren des Codes habe ich die Verknüpfung zum Container noch nicht hingekriegt. Noch während ich daran arbeitete, begann ich zu überlegen, ob nicht ein BorderLayout in solchen Fällen das Beste sei. Maximal 3 Grids untereinander ist eine Grenze, mit der man vielleicht leben kann. Und dann hätte man keinen Collapse/Expand, sondern könnte stufenlos die Größen verschieben.
+  Das Schwierige oder Neue dabei ist, dass ich in einem BorderLayout manche Maße in Pixeln angeben muss. 
+  Darüber muss ich erst mal schlafen...
+
+

@@ -62,6 +62,8 @@ from lino.utils.mixins import PrintAction
 
 from lino.core.coretools import app_labels
 
+from lino.modlib.fields import LANGUAGE_CHOICES
+
 #~ from lino.ui.extjs.ext_windows import WindowConfig # 20100316 backwards-compat window_confics.pck 
 
 class HttpResponseDeleted(HttpResponse):
@@ -143,22 +145,22 @@ class ExtUI(base.UI):
     _response = None
     name = 'extjs'
     verbose_name = "ExtJS with Windows"
-    window_configs_file = os.path.join(settings.PROJECT_DIR,'window_configs.pck')
+    #~ window_configs_file = os.path.join(settings.PROJECT_DIR,'window_configs.pck')
     Panel = ext_elems.Panel
     
     #~ USE_WINDOWS = False  # If you change this, then change also Lino.USE_WINDOWS in lino.js
 
     def __init__(self,site):
         jsgen.register_converter(self.py2js_converter)
-        self.window_configs = {}
-        if os.path.exists(self.window_configs_file):
-            lino.log.info("Loading %s...",self.window_configs_file)
-            wc = pickle.load(open(self.window_configs_file,"rU"))
-            #lino.log.debug("  -> %r",wc)
-            if type(wc) is dict:
-                self.window_configs = wc
-        else:
-            lino.log.warning("window_configs_file %s not found",self.window_configs_file)
+        #~ self.window_configs = {}
+        #~ if os.path.exists(self.window_configs_file):
+            #~ lino.log.info("Loading %s...",self.window_configs_file)
+            #~ wc = pickle.load(open(self.window_configs_file,"rU"))
+            #~ #lino.log.debug("  -> %r",wc)
+            #~ if type(wc) is dict:
+                #~ self.window_configs = wc
+        #~ else:
+            #~ lino.log.warning("window_configs_file %s not found",self.window_configs_file)
             
         base.UI.__init__(self,site) # will create a.window_wrapper for all actions
         self.build_site_js()
@@ -190,6 +192,7 @@ class ExtUI(base.UI):
             #~ e = ext_elems.GridElement(lh,name,de.get_handle(self),**kw)
             lh.slave_grids.append(e)
             return e
+            #~ return ext_elems.GridElementBox(lh,e)
         #~ if isinstance(de,forms.Input):
             #~ e = ext_elems.InputElement(lh,de,**kw)
             #~ if not lh.start_focus:
@@ -262,31 +265,30 @@ class ExtUI(base.UI):
             
 
     
-    def save_window_config(self,a,wc):
-        self.window_configs[str(a)] = wc
-        #~ a.window_wrapper.config.update(wc=wc)
-        a.window_wrapper.update_config(wc)
-        f = open(self.window_configs_file,'wb')
-        pickle.dump(self.window_configs,f)
-        f.close()
-        lino.log.debug("save_window_config(%r) -> %s",wc,a)
-        self.build_site_js()
+    #~ def save_window_config(self,a,wc):
+        #~ self.window_configs[str(a)] = wc
+        #~ #a.window_wrapper.config.update(wc=wc)
+        #~ a.window_wrapper.update_config(wc)
+        #~ f = open(self.window_configs_file,'wb')
+        #~ pickle.dump(self.window_configs,f)
+        #~ f.close()
+        #~ lino.log.debug("save_window_config(%r) -> %s",wc,a)
+        #~ self.build_site_js()
         #~ lh = actors.get_actor(name).get_handle(self)
         #~ if lh is not None:
             #~ lh.window_wrapper.try_apply_window_config(wc)
         #~ self._response = None
 
-    def load_window_config(self,action,**kw):
-    #~ def load_window_config(self,name):
-        wc = self.window_configs.get(str(action),None)
-        if wc is not None:
-            lino.log.debug("load_window_config(%r) -> %s",str(action),wc)
-            for n in ('x','y','width','height'):
-                if wc.get(n,0) is None:
-                    del wc[n]
-                    #~ raise Exception('invalid window configuration %r' % wc)
-            kw.update(**wc)
-        return kw
+    #~ def load_window_config(self,action,**kw):
+        #~ wc = self.window_configs.get(str(action),None)
+        #~ if wc is not None:
+            #~ lino.log.debug("load_window_config(%r) -> %s",str(action),wc)
+            #~ for n in ('x','y','width','height'):
+                #~ if wc.get(n,0) is None:
+                    #~ del wc[n]
+                    #~ #raise Exception('invalid window configuration %r' % wc)
+            #~ kw.update(**wc)
+        #~ return kw
 
   
     def get_urls(self):
@@ -711,6 +713,13 @@ class ExtUI(base.UI):
         #~ fn = r'c:\temp\dsbe.js'
         lino.log.info("Generating %s ...", fn)
         f = open(fn,'w')
+        f.write("""
+        // site.js --- 
+        // Don't edit. This file is generated at each server start.
+        """)
+        f.write("""
+        LANGUAGE_CHOICES = %s;
+        """ % py2js(list(LANGUAGE_CHOICES)))
         for rpt in reports.master_reports + reports.slave_reports:
             f.write("Ext.namespace('Lino.%s')\n" % rpt)
             for a in rpt.get_actions():
@@ -940,7 +949,10 @@ class ExtUI(base.UI):
         #~ fh = self.get_form_handle(frm)
         #~ yield dlg.show_window(fh.window_wrapper.js_render).over()
         
+        
     def py2js_converter(self,v):
+        if v is LANGUAGE_CHOICES:
+            return js_code('LANGUAGE_CHOICES')
         if isinstance(v,menus.Menu):
             if v.parent is None:
                 return v.items
