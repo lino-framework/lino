@@ -117,7 +117,7 @@ class Contact(models.Model):
         #return dict(country__in=(recipient.country,))
         
     def on_create(self,request):
-        print "lino.modlib.contacts.Contacts.on_create()"
+        #~ print "lino.modlib.contacts.Contacts.on_create()"
         #~ instance.language = 
         
 class Contacts(reports.Report):

@@ -13,7 +13,6 @@ http://docs.djangoproject.com/en/dev/howto/deployment/modwsgi/
 
 aptitude update
 aptitude dist-upgrade 
-aptitude remove libapache2-mod-python
 aptitude install libapache2-mod-wsgi
 
 

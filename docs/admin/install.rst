@@ -89,12 +89,18 @@ Create local Django project
 Create your Django project directory `/usr/local/django/myproject`, containing files
 :xfile:`settings.py`, :file:`__init__.py` and :xfile:`manage.py`.
 You may either create your Django project from scratch, or
-simply copy these files from :file:`/var/snapshots/LINO_APP/LINO_APP/demo`.
+simply link to these files from :file:`/var/snapshots/LINO_APP/LINO_APP/demo`.
+
+
+  ln /var/snapshots/dsbe/dsbe/demo/initdb.py .
+  ln /var/snapshots/dsbe/dsbe/demo/manage.py .
+  ln /var/snapshots/dsbe/dsbe/demo/make_staff.py .
 
 Adapt :xfile:`settings.py` to your needs.
 Consider using a simplified version of :xfile:`settings.py` that 
 imports settings from LINO_APP::
 
+  from os.path import join
   from LINO_APP.demo.settings import *
   DATA_DIR = '/usr/local/django/myproject'
   DATABASES = {
