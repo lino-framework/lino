@@ -85,16 +85,26 @@ if len(log.handlers) == 0:
         log.addHandler(h)
 
     else:
-        if hasattr(logging,'RotatingFileHandler'):
-            h = logging.RotatingFileHandler('/var/log/lino/lino.log',maxBytes=10000,backupCount=5)
-        else:
-            h = logging.FileHandler('/var/log/lino/lino.log')
-        h.setLevel(logging.DEBUG)
         fmt = logging.Formatter(
             fmt='%(asctime)s %(levelname)s %(module)s : %(message)s',
             datefmt='%Y%m-%d %H:%M:%S'
             )
+
+        # 20100913 A separate lino.log is not necessary
+        # Assuming we are under mod_wsgi, we just write to sys.stderr which goes to the web server's error lod
+        # Thanks to adroffner on http://djangosnippets.org/snippets/1731/
+        if False:
+            if hasattr(logging,'RotatingFileHandler'):
+                h = logging.RotatingFileHandler('/var/log/lino/lino.log',maxBytes=10000,backupCount=5)
+            else:
+                h = logging.FileHandler('/var/log/lino/lino.log')
+            h.setLevel(logging.DEBUG)
+            h.setFormatter(fmt)
+            log.addHandler(h)
+        
+        h = logging.StreamHandler(sys.stderr) 
         h.setFormatter(fmt)
+        h.setLevel(logging.DEBUG)
         log.addHandler(h)
         
         #~ logging.basicConfig(

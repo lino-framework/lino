@@ -90,11 +90,15 @@ Create your Django project directory `/usr/local/django/myproject`, containing f
 :xfile:`settings.py`, :file:`__init__.py` and :xfile:`manage.py`.
 You may either create your Django project from scratch, or
 simply link to these files from :file:`/var/snapshots/LINO_APP/LINO_APP/demo`.
+There's also :xfile:`initdb.py`, :xfile:`load_tim.py`, :xfile:`make_staff.py`
 
 
+
+  ln /var/snapshots/dsbe/dsbe/demo/__init__.py .
   ln /var/snapshots/dsbe/dsbe/demo/initdb.py .
   ln /var/snapshots/dsbe/dsbe/demo/manage.py .
   ln /var/snapshots/dsbe/dsbe/demo/make_staff.py .
+  ln /var/snapshots/dsbe/dsbe/demo/load_tim.py .
 
 Adapt :xfile:`settings.py` to your needs.
 Consider using a simplified version of :xfile:`settings.py` that 
@@ -110,8 +114,6 @@ imports settings from LINO_APP::
       }
   }
   
-There's also :xfile:`initdb.py`, :xfile:`load_tim.py`, :xfile:`make_staff.py`
-
   
   
 Set up Apache and `mod_wsgi`
@@ -162,7 +164,7 @@ Prefix            Description                                 location
 /media/extjs/     ExtJS library                               /var/snapshots/ext-3.2.1/ 
 /media/lino/      lino.js and lino.css                        /var/snapshots/lino/lino/ui/extjs/media/
 /media/pdf_cache/ files generated and served by 
-                  lino.modlib.documents                       /var/snapshots/lino/media/ 
+                  lino.modlib.documents                       /var/snapshots/LINO_APP/LINO_APP/demo/media/ 
 /media/beid/      image files for dsbe.models.PersonDetail    ... 
 ================= =========================================== ============================================
 

@@ -1,62 +1,33 @@
 2010-09-13
 ==========
 
-Oh, was les' ich `da <http://docs.djangoproject.com/en/dev/howto/deployment/modpython/>`__: 
-ich muss von Apache mod_python auf mod_wsgi umsteigen.
-
 Switching from mod_python to mod_wsgi
 -------------------------------------
 
-Also dann:
-http://docs.djangoproject.com/en/dev/howto/deployment/modwsgi/
+Oho, was les' ich `da <http://docs.djangoproject.com/en/dev/howto/deployment/modpython/>`__: 
+ich muss von Apache mod_python auf mod_wsgi umsteigen.
 
+Na dann mal los. Dokumentation steht auf
 
-aptitude update
-aptitude dist-upgrade 
-aptitude install libapache2-mod-wsgi
+- http://docs.djangoproject.com/en/dev/howto/deployment/modwsgi/
+- http://code.google.com/p/modwsgi/wiki/QuickConfigurationGuide
 
+Ich muss vor allem ``aptitude install libapache2-mod-wsgi`` machen und dann ein paar Kleinigkeiten ändern, die ich gar nicht erst hier, sondern gleich in :doc:`/admin/install` notiert habe. Endlich habe ich auch mal die seit langem wartende Änderung gemacht, dass jedes Projekt sein lokales Django Project Directory kriegt statt wie bisher direkt auf die demo-Verzeichnisse im source repository zuzugreifen. Auch die Datenbank (sqlite) ist jetzt in `/usr/local/django/dsbe-demo`. Das media-Verzeichnis steht momentan noch in `/usr/local/lino`.
 
-http://code.google.com/p/modwsgi/wiki/QuickConfigurationGuide
+Auf `dsbe-demo <http://dsbe-demo.saffre-rumma.ee/>`__ klappt es schon (der ist allerdings sehr sehr langsam).
+Auf `dsbe-eupen` habe ich jetzt folgende Fehlermeldung im Apache-Log:
 
+  ImproperlyConfigured: The Django remote user auth middleware requires the authentication middleware to be installed.  Edit your MIDDLEWARE_CLASSES setting to insert 'django.contrib.auth.middleware.AuthenticationMiddleware' before the RemoteUserMiddleware class.
+  
+Das ist eine von Djangos Macken: mich für dumm zu halten. 
+Denn natürlich hab ich in meiner :setting:`MIDDLEWARE_CLASSES` 
+die AuthenticationMiddleware vor der RemoteUserMiddleware stehen.
+Die Meldung kommt, weil RemoteUserMiddleware einen `request` kriegt, 
+der kein Attribut `user` hat.
+offenbar ist also irgendwo anders ein Fehler passiert, und Django hat den für 
+mich (weil ich ja dumm bin) abgefangen und weggeworfen.
 
+Jetzt würde ich gerne vom Django-Code aus mal schnell in den Apache error log loggen können.
 
-.. 
-
-  There are 6 newly obsolete packages: libbind9-40, libdns45, libisc45, libisccc40, libisccfg40, liblwres40
-  tups:/home/luc# aptitude dist-upgrade
-  Reading package lists... Done
-  Building dependency tree
-  Reading state information... Done
-  Reading extended state information
-  Initializing package states... Done
-  Reading task descriptions... Done
-  The following NEW packages will be installed:
-    libbind9-50{a} libdns55{a} libisc52{a} libisccc50{a} libisccfg50{a} liblwres50{a}
-  The following packages will be REMOVED:
-    libbind9-40{u} libdns45{u} libisc45{u} libisccc40{u} libisccfg40{u} liblwres40{u}
-  The following packages will be upgraded:
-    apache2 apache2-mpm-prefork apache2-utils apache2.2-common apt apt-utils avahi-daemon base-files bind9-host cpio
-    curl dbus dbus-x11 debian-archive-keyring dhcp-client dhcp3-client dhcp3-common dnsutils dpkg dpkg-dev dselect
-    fam ghostscript ghostscript-x git-core gnupg-agent gnupg2 gpgsm gs-common gs-gpl gstreamer0.10-plugins-good gzip
-    iputils-ping kdebase-data kdebase-doc kdelibs-data kdelibs4c2a khelpcenter ksysguardd libapache2-mod-php5 libapr1
-    libaudiofile0 libavahi-client3 libavahi-common-data libavahi-common3 libavahi-compat-libdnssd1 libavahi-core5
-    libavahi-glib1 libavahi-qt3-1 libavcodec51 libavutil49 libc6 libc6-dev libcups2 libcupsimage2 libcupsys2 libcurl3
-    libcurl3-gnutls libdbd-mysql-perl libdbd-pg-perl libdbus-1-3 libexpat1 libfam0 libfam0c102 libfinance-quote-perl
-    libfreetype6 libgd2-xpm libglib2.0-0 libglib2.0-data libgnutls26 libgs8 libgtk2.0-0 libgtk2.0-bin
-    libgtk2.0-common libhtml-parser-perl libjasper1 libkpathsea4 libkrb53 libltdl3 libmikmod2 libmodplug0c2
-    libmysqlclient15off libnetpbm10 libnewt0.52 libnspr4-0d libpango1.0-0 libpango1.0-common libpcsclite1 libpng12-0
-    libpoppler-glib3 libpoppler3 libpostproc51 libpq5 libpulse0 libsmbclient libssl0.9.8 libthai-data libthai0
-    libtheora0 libtiff-tools libtiff4 libvorbis0a libvorbisenc2 libvorbisfile3 libwbclient0 libwmf0.2-7 libwww-perl
-    libxext6 linux-libc-dev locales login mailman mysql-client mysql-client-5.0 mysql-common mysql-server
-    mysql-server-5.0 nano netkit-ping netpbm nfs-common nfs-kernel-server openssl passwd pcscd php-mail php-pear
-    php5-cli php5-common php5-gd php5-mcrypt php5-mysql phpmyadmin poppler-utils postgresql postgresql-8.3
-    postgresql-client postgresql-client-8.3 postgresql-contrib postgresql-contrib-8.3 postgresql-doc
-    postgresql-doc-8.3 python-docutils python-moinmoin python-newt python-roman python-support python-xml python2.4
-    python2.4-dev python2.4-minimal python2.5 python2.5-dev python2.5-minimal samba samba-common samba-doc smbclient
-    smbfs spamassassin spamc sudo swat tar texlive-base-bin texlive-base-bin-doc texlive-extra-utils
-    texlive-font-utils tzdata usbutils wget whiptail xfs xpdf xpdf-common xpdf-reader
-  The following packages are RECOMMENDED but will NOT be installed:
-    gstreamer0.10-x
-  176 packages upgraded, 6 newly installed, 6 to remove and 0 not upgraded.
-  Need to get 222MB of archives. After unpacking 829kB will be freed.
-  Do you want to continue? [Y/n/?]
+Hier ist was Interessantes
+http://djangosnippets.org/snippets/1731/
