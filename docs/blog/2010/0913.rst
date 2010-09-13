@@ -28,6 +28,30 @@ offenbar ist also irgendwo anders ein Fehler passiert, und Django hat den für
 mich (weil ich ja dumm bin) abgefangen und weggeworfen.
 
 Jetzt würde ich gerne vom Django-Code aus mal schnell in den Apache error log loggen können.
-
-Hier ist was Interessantes
+Hier ist dazu was Interessantes:
 http://djangosnippets.org/snippets/1731/
+Also ich brauche unter Apache gar keine :xfile:`lino.log` mehr, sondern `lino.log` geht einfach nach `sys.stderr` (der dann seinerseits vom Apache in dessen :file:`error.log` geschrieben wird.
+
+::
+  import lino
+  from django.conf import settings
+  
+  
+  class LazyUser(object):
+      def __get__(self, request, obj_type=None):
+          if not hasattr(request, '_cached_user'):
+              lino.log.debug("LazyUser.__get__() : install _cached_user")
+              from django.contrib.auth import get_user
+              request._cached_user = get_user(request)
+              lino.log.debug("LazyUser.__get__() : install _cached_user ok")
+          return request._cached_user  
+          
+  class AuthenticationMiddleware(object):
+      def process_request(self, request):
+          lino.log.debug("AuthenticationMiddleware 20100913 %s",settings.MIDDLEWARE_CLASSES)
+          assert hasattr(request, 'session'), "The Django authentication middleware requires session middleware to be ins
+          request.__class__.user = LazyUser()
+          if hasattr(request, 'user'):
+              lino.log.debug("AuthenticationMiddleware 20100913 ok")
+          return None
+          
