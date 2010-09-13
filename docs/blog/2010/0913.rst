@@ -15,6 +15,10 @@ Na dann mal los. Dokumentation steht auf
 Ich muss vor allem ``aptitude install libapache2-mod-wsgi`` machen und dann ein paar Kleinigkeiten ändern, die ich gar nicht erst hier, sondern gleich in :doc:`/admin/install` notiert habe. Endlich habe ich auch mal die seit langem wartende Änderung gemacht, dass jedes Projekt sein lokales Django Project Directory kriegt statt wie bisher direkt auf die demo-Verzeichnisse im source repository zuzugreifen. Auch die Datenbank (sqlite) ist jetzt in `/usr/local/django/dsbe-demo`. Das media-Verzeichnis steht momentan noch in `/usr/local/lino`.
 
 Auf `dsbe-demo <http://dsbe-demo.saffre-rumma.ee/>`__ klappt es schon (der ist allerdings sehr sehr langsam).
+
+When Django says `ImproperlyConfigured`...
+------------------------------------------
+
 Auf `dsbe-eupen` habe ich jetzt folgende Fehlermeldung im Apache-Log:
 
   ImproperlyConfigured: The Django remote user auth middleware requires the authentication middleware to be installed.  Edit your MIDDLEWARE_CLASSES setting to insert 'django.contrib.auth.middleware.AuthenticationMiddleware' before the RemoteUserMiddleware class.
@@ -22,20 +26,24 @@ Auf `dsbe-eupen` habe ich jetzt folgende Fehlermeldung im Apache-Log:
 Das ist eine von Djangos Macken: mich für dumm zu halten. 
 Denn natürlich hab ich in meiner :setting:`MIDDLEWARE_CLASSES` 
 die AuthenticationMiddleware vor der RemoteUserMiddleware stehen.
-Die Meldung kommt, weil RemoteUserMiddleware einen `request` kriegt, 
-der kein Attribut `user` hat.
-offenbar ist also irgendwo anders ein Fehler passiert, und Django hat den für 
+
+Ein erster Blick in den Code zeigt, dass die Meldung in Wirklichkeit daher kommt, 
+dass RemoteUserMiddleware einen `request` kriegt, der kein Attribut `user` hat.
+Offenbar ist also irgendwo anders ein Fehler passiert, und Django hat den für 
 mich (weil ich ja dumm bin) abgefangen und weggeworfen.
 
 Jetzt würde ich gerne vom Django-Code aus mal schnell in den Apache error log loggen können.
 Hier ist dazu was Interessantes:
 http://djangosnippets.org/snippets/1731/
-Also ich brauche unter Apache gar keine :xfile:`lino.log` mehr, sondern `lino.log` geht einfach nach `sys.stderr` (der dann seinerseits vom Apache in dessen :file:`error.log` geschrieben wird.
+Also ich brauche unter Apache gar keine :xfile:`lino.log` mehr, 
+sondern `lino.log` geht einfach nach `sys.stderr`, der dann seinerseits vom Apache 
+in dessen :file:`error.log` geschrieben wird.
+Super, das gefällt mir.
 
-::
+In der :file:`/var/snapshots/django/django/contrib/auth/middleware.py` füge ich diverse Aufrufe von `lino.log.debug()` ein::
+
   import lino
   from django.conf import settings
-  
   
   class LazyUser(object):
       def __get__(self, request, obj_type=None):
@@ -44,14 +52,151 @@ Also ich brauche unter Apache gar keine :xfile:`lino.log` mehr, sondern `lino.lo
               from django.contrib.auth import get_user
               request._cached_user = get_user(request)
               lino.log.debug("LazyUser.__get__() : install _cached_user ok")
-          return request._cached_user  
-          
+          return request._cached_user
+
+
   class AuthenticationMiddleware(object):
       def process_request(self, request):
-          lino.log.debug("AuthenticationMiddleware 20100913 %s",settings.MIDDLEWARE_CLASSES)
-          assert hasattr(request, 'session'), "The Django authentication middleware requires session middleware to be ins
+          lino.log.debug("AuthenticationMiddleware %s",settings.MIDDLEWARE_CLASSES)
+          assert hasattr(request, 'session'), "The Django authentication middleware requires sessi
           request.__class__.user = LazyUser()
           if hasattr(request, 'user'):
-              lino.log.debug("AuthenticationMiddleware 20100913 ok")
-          return None
+              lino.log.debug("AuthenticationMiddleware ok")
+          else:
+              lino.log.debug("hasattr(request,'user') returned False")
+          lino.log.debug("AuthenticationMiddleware str(request.user) is %s",request.user)
+          return None          
           
+Hier daraufhin die :file:`/var/log/apache2/error.log`::
+
+  [notice] Apache/2.2.9 (Debian) mod_python/3.3.1 Python/2.5.2 mod_wsgi/2.5 configured -- resuming normal operations
+  [error] INFO __init__ : Lino-DSBE 0.1.3 <http://dsbe.saffre-rumma.ee>
+  [error] Lino 0.8.4 <http://code.google.com/p/lino/>
+  [error] Django 1.3 pre-alpha SVN-13818 <http://www.djangoproject.com>
+  [error] Python 2.5.2 <http://www.python.org/>
+  [error] ReportLab Toolkit 2.1 <http://www.reportlab.org/rl_toolkit.html>
+  [error] PyYaml  <http://pyyaml.org/>
+  [error] python-dateutil 1.4.1 <http://labix.org/python-dateutil>
+  [error] DEBUG middleware : AuthenticationMiddleware ('django.middleware.common.CommonMiddleware', 'django.contrib.sessions.middleware.SessionMiddleware', 'django.contrib.auth.middleware.AuthenticationMiddleware','django.middleware.doc.XViewMiddleware','django.contrib.auth.middleware.RemoteUserMiddleware')
+  [error] DEBUG middleware : LazyUser.__get__() : install _cached_user
+  [error] DEBUG actions : /var/snapshots/lino/lino/actions.pyc : done
+  [error] DEBUG middleware : hasattr(request,'user') returned False
+  [error] DEBUG middleware : LazyUser.__get__() : install _cached_user
+  [error] DEBUG middleware : LazyUser.__get__() : install _cached_user ok
+  [error] DEBUG middleware : AuthenticationMiddleware str(request.user) is AnonymousUser
+  [error] [client 12.123.12.123] mod_wsgi (pid=20547): Exception occurred processing WSGI script '/usr/local/django/dsbe-eupen/apache.wsgi'.
+  [error] [client 12.123.12.123] Traceback (most recent call last):
+  [error] [client 12.123.12.123]   File "/var/snapshots/django/django/core/handlers/wsgi.py", line 241, in __call__
+  [error] [client 12.123.12.123]     response = self.get_response(request)
+  [error] [client 12.123.12.123]   File "/var/snapshots/django/django/core/handlers/base.py", line 141, in get_response
+  [error] [client 12.123.12.123]     return self.handle_uncaught_exception(request, resolver, sys.exc_info())
+  [error] [client 12.123.12.123]   File "/var/snapshots/django/django/core/handlers/base.py", line 80, in get_response
+  [error] [client 12.123.12.123]     response = middleware_method(request)
+  [error] [client 12.123.12.123]   File "/var/snapshots/django/django/contrib/auth/middleware.py", line 78, in process_request
+  [error] [client 12.123.12.123]     auth.login(request, user)
+  [error] [client 12.123.12.123]   File "/var/snapshots/django/django/contrib/auth/__init__.py", line 69, in login
+  [error] [client 12.123.12.123]     user.save()
+  [error] [client 12.123.12.123]   File "/var/snapshots/django/django/db/models/base.py", line 434, in save
+  [error] [client 12.123.12.123]     self.save_base(using=using, force_insert=force_insert, force_update=force_update)
+  [error] [client 12.123.12.123]   File "/var/snapshots/django/django/db/models/base.py", line 500, in save_base
+  [error] [client 12.123.12.123]     rows = manager.using(using).filter(pk=pk_val)._update(values)
+  [error] [client 12.123.12.123]   File "/var/snapshots/django/django/db/models/query.py", line 491, in _update
+  [error] [client 12.123.12.123]     return query.get_compiler(self.db).execute_sql(None)
+  [error] [client 12.123.12.123]   File "/var/snapshots/django/django/db/models/sql/compiler.py", line 861, in execute_sql
+  [error] [client 12.123.12.123]     cursor = super(SQLUpdateCompiler, self).execute_sql(result_type)
+  [error] [client 12.123.12.123]   File "/var/snapshots/django/django/db/models/sql/compiler.py", line 727, in execute_sql
+  [error] [client 12.123.12.123]     cursor.execute(sql, params)
+  [error] [client 12.123.12.123]   File "/var/snapshots/django/django/db/backends/util.py", line 15, in execute
+  [error] [client 12.123.12.123]     return self.cursor.execute(sql, params)
+  [error] [client 12.123.12.123]   File "/var/snapshots/django/django/db/backends/sqlite3/base.py", line 200, in execute
+  [error] [client 12.123.12.123]     return Database.Cursor.execute(self, query, params)
+  [error] [client 12.123.12.123] DatabaseError: unable to open database file
+
+
+Zum Vergleich: ohne meine loggings sieht es so aus::
+
+  [notice] Apache/2.2.9 (Debian) mod_python/3.3.1 Python/2.5.2 mod_wsgi/2.5 configured -- resuming normal operations
+  [error] INFO __init__ : Lino-DSBE 0.1.3 <http://dsbe.saffre-rumma.ee>
+  [error] Lino 0.8.4 <http://code.google.com/p/lino/>
+  [error] Django 1.3 pre-alpha SVN-13818 <http://www.djangoproject.com>
+  [error] Python 2.5.2 <http://www.python.org/>
+  [error] ReportLab Toolkit 2.1 <http://www.reportlab.org/rl_toolkit.html>
+  [error] PyYaml  <http://pyyaml.org/>
+  [error] python-dateutil 1.4.1 <http://labix.org/python-dateutil>
+  [error] DEBUG actions : /var/snapshots/lino/lino/actions.pyc : done
+  [error] [client 12.123.12.123] mod_wsgi (pid=20603): Exception occurred processing WSGI script '/usr/local/django/dsbe-eupen/apache.wsgi'.
+  [error] [client 12.123.12.123] Traceback (most recent call last):
+  [error] [client 12.123.12.123]   File "/var/snapshots/django/django/core/handlers/wsgi.py", line 241, in __call__
+  [error] [client 12.123.12.123]     response = self.get_response(request)
+  [error] [client 12.123.12.123]   File "/var/snapshots/django/django/core/handlers/base.py", line 141, in get_response
+  [error] [client 12.123.12.123]     return self.handle_uncaught_exception(request, resolver, sys.exc_info())
+  [error] [client 12.123.12.123]   File "/var/snapshots/django/django/core/handlers/base.py", line 80, in get_response
+  [error] [client 12.123.12.123]     response = middleware_method(request)
+  [error] [client 12.123.12.123]   File "/var/snapshots/django/django/contrib/auth/middleware.py", line 53, in process_request
+  [error] [client 12.123.12.123]     "The Django remote user auth middleware requires the"
+  [error] [client 12.123.12.123] ImproperlyConfigured: The Django remote user auth middleware requires the authentication middleware to be installed.  Edit your MIDDLEWARE_CLASSES setting to insert 'django.contrib.auth.middleware.AuthenticationMiddleware' before the RemoteUserMiddleware class.
+
+
+Interessant ist, dass ``hasattr(request,'user')`` False zurückgibt, nachdem er das Attribut 
+doch in der Zeile davor gesetzt hat (``request.__class__.user = LazyUser()``).
+Dass er es in die Klasse und nicht in die Instanz setzt, macht da keinen Unterschied::
+
+    >>> class Request(object):
+    ...     pass
+    ...
+    >>> r = Request()
+    >>> r.__class__.foo = 1
+    >>> hasattr(r,'foo')
+    True
+    >>> r.foo
+    1
+    >>>
+
+Das hat damit zu tun, dass LazyUser eine `owner 
+class <http://docs.python.org/reference/datamodel.html#implementing-descriptors>`__ ist 
+(weil sie eine Methode `__get__` definiert). 
+Sobald man ``request.user`` anfragt, wird die `__get__()` ausgeführt
+Den Trick kannte ich noch nicht. Hab ich wieder was gelernt.
+
+(...)
+
+Oh Mann! Nachdem ich über drei Stunden lang im obigen Stil rumprobiert habe, kann ich sagen, 
+dass es bloß am Zugriffsrecht auf die Datenbank lag!
+Die Fehlermeldung "DatabaseError: unable to open database file" hätte mich sogleich darauf gebracht.
+Aber Django fängt sie ja ab und liefert mir stattdessen seinen wohlgemeinten Rat,
+ich solle meine MIDDLEWARE_CLASSES in der richtigen Reihenfolge konfigurieren.
+So ein Ekel ist dieser Django!
+
+... und trotzdem besteht kein Zweifel, dass ich ihm seine Macken verzeihe, weil er so gut ist :-)
+
+
+Weiter
+------
+
+- Die :xfile:`settings.py` von `dsbe.demo` erbt nun aus der von `lino.demo`. 
+  So wie die lokalen settings.py seit heute morgen schon aus der `dsbe.demo.settings` erben.
+  Ich möchte dahin kommen, dass eine lohnenswerte Reihe von Einstellungen zentral von Lino übernommen werden.
+  
+- Die Konstante `USE_FF_CONSOLE` in ext_windows ist ersetzt durch :setting:`USE_FIREBUG`.
+
+- Bisher habe ich für die PersonDetail-Fenster in DSBE auf expliziten 
+  Wunsch des Kunden sehr volle Bildschirme gemacht: alle Daten in nur drei Tabs, 
+  und die Bildschirme passen nur wenn der Browser auf einem üblichen Desktop-Bildschirm 
+  maximiert ist.
+  Um über Alternativen nachdenken zu können, habe ich eine zweite Serie von 5 weiteren Detail-Layouts gemacht.
+  Dabei stellte sich raus, dass es bislang nicht möglich ist, ein Feld durch zwei verschiedene 
+  Elemente (auf verschiedenen Tabs) vertreten zu haben.
+  Erstens waren die Variablen im JS-Code dadurch doppelt, das ist behoben durch den neuen Zähler `variable_counter` in 
+  :mod:`lino.utils.jsgen`.
+  Dadurch werden jetzt zwar immerhin alle Felder angezeigt, aber dann merkte ich, dass 
+  ExtJS mehrere Felder mit dem gleichen Namen innerhalb einer Form nicht kapiert 
+  (siehe :extjs:`Ext.form.BasicForm`.`setValues()`).
+  Also es würde ziemlich aufwändig, dieses Feature zu implementieren.
+  
+- Um dennoch die beiden Serien von Detail-Fenstern gleichzeitig demonstrieren zu können, 
+  arbeite ich mit zwei Reports Persons1 und Persons2. Vorher musste ich mir noch was ausdenken, 
+  um sagen zu können, dass ein PageLayout nur in einem bestimmten Report verwendet werden soll: 
+  das ist das neue Attribut :attr:`lino.layouts.DetailLayout.only_for_report`.
+  
+Check-in und Release nach dsbe-eupen
+

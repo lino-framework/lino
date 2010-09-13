@@ -84,6 +84,7 @@ class LayoutHandle(base.Handle):
         #~ self.name = layout._actor_name
         self.label = layout.label or ''
         self._store_fields = []
+        #~ self._elems_by_field = {}
         #~ self._submit_fields = []
         self.slave_grids = []
         self._buttons = []
@@ -122,6 +123,9 @@ class LayoutHandle(base.Handle):
         
     def __str__(self):
         return str(self.layout) + "Handle"
+        
+    #~ def elems_by_field(self,name):
+        #~ return self._elems_by_field.get(name,[])
         
     def has_field(self,f):
         return self._main.has_field(f)
@@ -343,6 +347,7 @@ class DetailLayout(ModelLayout):
     label = _("Detail")
     show_labels = True
     join_str = "\n"
+    only_for_report = None
     
     def do_setup(self):
         ModelLayout.do_setup(self)
@@ -397,3 +402,6 @@ def list_layout_factory(rpt):
     #~ layout.setup()
     return actors.register_actor(layout)
 
+def get_detail_layouts_for_report(rpt):
+    l = getattr(rpt.model,'_lino_layouts',[])
+    return [x for x in l if x.only_for_report is None or (rpt._actor_name in x.only_for_report)]

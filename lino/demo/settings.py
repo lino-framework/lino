@@ -20,6 +20,7 @@ from os.path import join, abspath, dirname, normpath
 import lino
 
 # Lino specific settings
+USE_FIREBUG = True
 MODEL_DEBUG = True
 PROJECT_DIR = normpath(dirname(__file__))
 LINO_SETTINGS = join(PROJECT_DIR,"lino_settings.py")
@@ -84,6 +85,7 @@ USE_I18N = True
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
 # Used by FileSystemStorage
+# Lino generates the :xfile:`site.js` there
 if sys.platform == 'win32': # development server
     MEDIA_ROOT = abspath(join(PROJECT_DIR,'media'))
 else:
@@ -171,7 +173,7 @@ INSTALLED_APPS = (
   
   #~ 'lino.modlib.properties',
   #~ 'lino.modlib.links',
-  #~ 'south', # http://south.aeracode.org
+  'south', # http://south.aeracode.org
 )
 
 

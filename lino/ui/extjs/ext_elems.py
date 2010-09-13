@@ -1091,15 +1091,27 @@ class FormPanel(jsgen.Component):
             kw.update(has_navigator=rh.report.has_navigator)
         
         on_render = []
+        elems_by_field = {}
+        field_elems = []
         for e in main.active_children:
             if isinstance(e,FieldElement):
-                chooser = choosers.get_for_field(e.field)
-                if chooser:
-                    #~ lino.log.debug("20100615 %s.%s has chooser", self.lh.layout, e.field.name)
-                    for f in chooser.context_fields:
+                field_elems.append(e)
+                l = elems_by_field.get(e.field.name,None)
+                if l is None:
+                    l = []
+                    elems_by_field[e.field.name] = l
+                l.append(e)
+            
+        for e in field_elems:
+            chooser = choosers.get_for_field(e.field)
+            if chooser:
+                #~ lino.log.debug("20100615 %s.%s has chooser", self.lh.layout, e.field.name)
+                for f in chooser.context_fields:
+                    for el in elems_by_field.get(f.name,[]):
                         #~ if main.has_field(f):
-                        varname = varname_field(f)
-                        on_render.append("%s.on('change',Lino.chooser_handler(%s,%r));" % (varname,e.ext_name,f.name))
+                        #~ varname = varname_field(f)
+                        #~ on_render.append("%s.on('change',Lino.chooser_handler(%s,%r));" % (varname,e.ext_name,f.name))
+                        on_render.append("%s.on('change',Lino.chooser_handler(%s,%r));" % (el.ext_name,e.ext_name,f.name))
         
         if on_render:
             assert not kw.has_key('listeners')

@@ -465,6 +465,8 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
     #date_format = 'Y-m-d'
     #date_format = '%d.%m.%y'
     
+    #~ detail_layouts = None
+    
     #~ page_layout = None # (layouts.PageLayout ,)
     #~ row_layout_class = None
     
@@ -586,7 +588,8 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
           
         if self.model is not None:
             self.list_layout = layouts.list_layout_factory(self)
-            self.detail_layouts = getattr(self.model,'_lino_layouts',[])
+            self.detail_layouts = layouts.get_detail_layouts_for_report(self)
+            #~ self.detail_layouts = getattr(self.model,'_lino_layouts',[])
               
             if hasattr(self.model,'get_image_url'):
                 alist.append(actions.ImageAction(self))

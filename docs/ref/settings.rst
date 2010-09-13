@@ -7,9 +7,16 @@ Lino and the Django `settings.py` file
 
 This section describes Lino-specific entries of the Django :xfile:`settings.py`.
 
+.. setting:: USE_FIREBUG
+
+  If True, the generated JavaScript contains instructions that use the FireBug console. 
+  This is useful for profiling and debugging, but the client then needs FireBug installed and active.
+
 .. setting:: MEDIA_ROOT
 
-  Used by FileSystemStorage
+  Used by FileSystemStorage.
+  Used by :meth:`lino.ui.extjs.ext_ui.ExtUI.build_site_js` 
+  and Printable to determine the location of the cache.
 
 
 .. setting:: LANGUAGES

@@ -4,27 +4,26 @@ To-Do-Liste
 Kurzfristig
 -----------
 
+- Datensynchronisierung TIM->Lino
+
+- Beim Öffnen eines Detail-Fensters sind die Slave-Grids anfangs nicht richtig mit ihrem Master verknüpft. 
+  Erst wenn man PgUp und dann PgDn macht, kommen sie richtig.
+
 - Wenn in einer vbox mit 2 Grids ein der Grids kollabiert, sollte die andere den dadurch verfügbaren Raum ausfüllen.
   collapse-Events beider Gridboxen an doLayout oder resize der vbox verknüpfen...
   Showcase 20100912.html zeigt das Problem.
-
-- Auch alle Daten aus PXS, die für DSBE nicht wichtig sind (z.B. Krankenkasse)
-
-- Datensynchronisierung TIM->Lino
+  Oder in solchen Fällen mit BorderLayout arbeiten.
 
 - NotesByPerson im Detail-Fenster einer Person sollte nur die wichtigen Ereignisse anzeigen (deren :attr:`notes.NoteType.important` eingeschaltet ist).
 
-- Bei Insert in :class:`notes.NotesByPerson` wird Note.person (der fk zum Master) nicht eingetragen. Ein GET `/api/notes/NotesByPerson?fmt=insert` findet ja nie statt, weil NotesByPerson ein Slave-Report ist, der kein eigenes Fenster hat. Deshalb wird ein solcher Permalink nie generiert. Also :js:func:`Lino.notes.NotesByPerson.insert` darf sich darauf verlassen, einen caller zu haben, der dann seine get_master_params gefragt wird.
-
 - Lokale Dateinamen benutzerfreundlich als Notiz erfassen. Eventuell neues Feld `attached_file` statt `url`? 
 
-- Wenn ich eine NoteType lösche, werden momentan alle Notizen mit dieser Notizart gelöscht. Stattdessen muss das Löschen verweigert werden... Muss on_delete=RESTRICT oder on_delete=SET_NULL sein. Siehe `Django-Ticket 7539 <http://code.djangoproject.com/ticket/7539>`__.
-
-- Noch testen (z.B. werden Filter gespeichert?)
+- Wenn ich eine NoteType lösche, werden momentan alle Notizen mit dieser Notizart gelöscht. 
+  Stattdessen muss das Löschen verweigert werden... 
+  Muss on_delete=RESTRICT oder on_delete=SET_NULL sein. 
+  Siehe `Django-Ticket 7539 <http://code.djangoproject.com/ticket/7539>`__.
 
 - Insert in notes.Note : Datum sollte par défaut auf heute stehen, Sprache auf Deutsch.
-
-- Release im :term:`DSBE` (:term:`Tups` kann momentan warten).
 
 - Sprachabhängige Auswahl der Notizvorlage. Auf mehrsprachigen Sites hat das templates-Verzeichnis pro unterstützter Sprache ein entsprechendes Unterverzeichnis (`de`, `fr`, `en`,...), was aber in NoteType.template nicht gespeichert wird (und in der Auswahlliste nicht erscheint). Dort werden immer die Templates der Hauptsprache angezeigt. Wenn Sprache der Notiz nicht die Hauptsprache des Lino-Sites ist, dann wird das Template zunächst in der Notizsprache gesucht. Falls es dort nicht existiert (z.B. weil die Vorlage noch nicht übersetzt wurde oder multilingual ist), nimmt er die Standard-Vorlage aus der Hauptsprache.
 
@@ -33,6 +32,8 @@ Kurzfristig
   per E-Mail an den Benutzer verschicken soll.
 
 - Quickfilter im Detail von Personen geht nicht. 
+
+- Benutzermeldungen anzeigen. 
 
 Kleinkram
 ---------

@@ -231,6 +231,9 @@ class Value(object):
     def as_ext(self):
         return self.value_template % py2js(self.value)
         
+        
+variable_counter = 0
+        
 class Variable(Value):
     declare_type = DECLARE_INLINE
     ext_suffix = ''
@@ -240,12 +243,21 @@ class Variable(Value):
     def __init__(self,name,value):
         Value.__init__(self,value)
         #~ assert self.declare_type != DECLARE_INLINE
+        global variable_counter
+        variable_counter += 1
+        
         if name is None:
-            assert self.declare_type == DECLARE_INLINE
-            #~ self.name = "unnamed %s" % self.__class__.__name__
+            self.ext_name = "var%d%s" % (variable_counter,self.ext_suffix)
         else:
+            self.ext_name = "%s%d%s" % (id2js(name),variable_counter,self.ext_suffix)
             self.name = name
-            self.ext_name = id2js(name) + self.ext_suffix
+        #~ if name is None:
+            #~ assert self.declare_type == DECLARE_INLINE
+            #~ #self.name = "unnamed %s" % self.__class__.__name__
+        #~ else:
+            #~ self.name = name
+            #~ self.ext_name = id2js(name) + self.ext_suffix
+        #~ self.ext_name = id2js(name) + self.ext_suffix
         
     def js_declare(self):
         yield "// begin js_declare %s" % self

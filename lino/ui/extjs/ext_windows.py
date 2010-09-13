@@ -15,6 +15,7 @@ import os
 
 from django.utils.translation import ugettext as _
 from django.db import models
+from django.conf import settings
 
 import lino
 from lino import actions, layouts #, commands
@@ -32,8 +33,8 @@ from . import ext_elems, ext_requests
 
 #~ from lino.modlib.properties import models as properties
 
-WC_TYPE_GRID = 'grid'
-USE_FF_CONSOLE = True
+#~ WC_TYPE_GRID = 'grid'
+#~ USE_FF_CONSOLE = True
 
 class ActionRenderer(object):
     def __init__(self,ui,action):
@@ -71,11 +72,11 @@ class DeleteRenderer(ActionRenderer):
 
 class WindowWrapper(ActionRenderer):
   
-    window_config_type = None
+    #~ window_config_type = None
     
     def __init__(self,action,ui,lh,main,**kw):
         ActionRenderer.__init__(self,ui,action)
-        assert self.window_config_type is not None, "%s.window_config_type is None" % self.__class__
+        #~ assert self.window_config_type is not None, "%s.window_config_type is None" % self.__class__
         self.main = main
         #~ self.permalink_name = str(action).replace('.','/')
         #~ self.permalink_name = str(action)
@@ -123,7 +124,7 @@ class MasterWrapper(WindowWrapper):
     def js_render(self):
         yield "function(caller,params) { "
         #~ yield "  Ext.getCmp('main_area').el.setStyle({cursor:'wait'});"
-        if USE_FF_CONSOLE:
+        if settings.USE_FIREBUG:
             yield "  console.time('%s');" % self.action
         for ln in jsgen.declare_vars(self.config):
             yield '  '+ln
@@ -140,7 +141,7 @@ class MasterWrapper(WindowWrapper):
                   
             
         yield "  ww.show();"
-        if USE_FF_CONSOLE:
+        if settings.USE_FIREBUG:
             yield "  console.timeEnd('%s');" % self.action
         yield "}"
         
@@ -148,7 +149,7 @@ class MasterWrapper(WindowWrapper):
     
 class GridWrapperMixin(WindowWrapper):
   
-    window_config_type = WC_TYPE_GRID
+    #~ window_config_type = WC_TYPE_GRID
     
     def __init__(self,rh):
         self.rh = rh
@@ -173,7 +174,7 @@ class GridMasterWrapper(GridWrapperMixin,MasterWrapper):
 
 class BaseDetailWrapper(MasterWrapper):
   
-    window_config_type = 'detail'
+    #~ window_config_type = 'detail'
     
     def __init__(self,rh,action,**kw):
         self.rh = rh
