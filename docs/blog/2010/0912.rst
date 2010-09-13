@@ -17,26 +17,35 @@ DONE:
   Die :meth:`lino.ui.extjs.ext_elems.GridElementBox` von gestern ist wieder raus, das war nur eine Pseudolösung.
 
 - Um :data:`lino.modlib.fields.KNOWLEDGE_CHOICES` übersetzen zu können, musste ich etwas nachhelfen, 
-  denn diese Strings werden von makemessages nicht gefunden, weil sie nicht im Code der Anwendung stehen.
+  denn diese Strings werden von `makemessages` nicht gefunden, weil sie nicht im Code der Anwendung stehen.
   TODO: rausfinden, ob man das nicht doch irgendwie automatisieren kann.
 
 - Das Feld `work_permit_exempt` habe ich ersetzt durch `needs_work_permit` (also das Gegenteil). Weil mir das logischer scheint.
 
-- Das Ankreuzfeld `unavailable` (nicht verfügbar) habe ich rausgeschmissen. 
-  Also um jemanden als unverfügbar zu markeiren, muss man das entprechende Datum ausfüllen.
+- Das Ankreuzfeld `unavailable` (nicht verfügbar) habe ich rausgeschmissen. Also um jemanden als unverfügbar zu markeiren, muss man das entprechende Datum ausfüllen.
   
-- Attribut `window_configs` und Co hing noch unnütz in der ext_ui.ExtUI rum. Raus damit.
+- Attribut `window_configs` und Co hing noch unnütz in der `ext_ui.ExtUI` rum. Raus damit.
 
-- LANGUAGE_CHOICES wird jetzt in der site.js als Variable deklariert und nicht mehr für jedes Sprachauswahlfeld inline neu definiert.
+- `LANGUAGE_CHOICES` wird jetzt in der :xfile:`site.js` als Variable deklariert und nicht mehr für jedes Sprachauswahlfeld inline neu definiert.
 
-- lino.modlib.fields.KnowledgeField ist jetzt ein CharField. Dadurch umgehe ich das Problem von IntegerField mit choices.
+- :class:`lino.modlib.fields.KnowledgeField` ist jetzt ein CharField. Dadurch umgehe ich das Problem von IntegerField mit choices.
 
-- Neue Tabelle "Arbeitslosengeld-Sperren" (Exclusions) und AG-Sperrgründe (ExclusionTypes):
+- Neue Models und Reports "Arbeitslosengeld-Sperren" (Exclusions) und AG-Sperrgründe (ExclusionTypes):
 
-- Ich habe mein Problem "collapsibles in a vbox" ins `Forum <http://www.sencha.com/forum/showthread.php?109555-collapsibles-in-a-vbox>` 
-  geposted, und wie sich dann rausstellte, ist genau die gleiche Frage im April von `nolo866  <http://www.sencha.com/forum/showthread.php?98165-vbox-layout-with-two-grids-grid-collapse-does-not-stretch-non-collapsed-grid&p=463266>`__ schon mal gestellt worden.
-  Leider gibt es keine einfache Lösung. Der Patch von Animal scheint okay, aber beim Generieren des Codes habe ich die Verknüpfung zum Container noch nicht hingekriegt. Noch während ich daran arbeitete, begann ich zu überlegen, ob nicht ein BorderLayout in solchen Fällen das Beste sei. Maximal 3 Grids untereinander ist eine Grenze, mit der man vielleicht leben kann. Und dann hätte man keinen Collapse/Expand, sondern könnte stufenlos die Größen verschieben.
-  Das Schwierige oder Neue dabei ist, dass ich in einem BorderLayout manche Maße in Pixeln angeben muss. 
-  Darüber muss ich erst mal schlafen...
+Ich habe auch mein Problem "collapsibles in a vbox" 
+ins `Forum <http://www.sencha.com/forum/showthread.php?109555-collapsibles-in-a-vbox>`__ geposted, 
+und wie sich dann rausstellte, ist genau die gleiche Frage im April 2010 von 
+`nolo866  <http://www.sencha.com/forum/showthread.php?98165-vbox-layout-with-two-grids-grid-collapse-does-not-stretch-non-collapsed-grid&p=463266>`__ 
+schon mal gestellt worden.
+Leider gibt es keine einfache Lösung. 
+Der Patch von Animal scheint machbar, aber beim Generieren des Codes habe ich die 
+Verknüpfung zum Container noch nicht hingekriegt. Noch während ich daran arbeitete, 
+begann ich zu überlegen, ob nicht ein BorderLayout in solchen Fällen das Beste sei. 
+Maximal 3 Grids untereinander ist eine Grenze, mit der man vielleicht leben kann. 
+Und dann hätte man keinen Collapse/Expand, sondern könnte stufenlos die Größen verschieben.   
+Das Schwierige oder Neue dabei ist, dass ich in einem BorderLayout manche Maße in Pixeln angeben muss. 
+Darüber muss ich jetzt erst mal schlafen...
+
+Check-in und Upgrade im DSBE.
 
 

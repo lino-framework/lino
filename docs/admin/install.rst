@@ -4,7 +4,7 @@ Installing Lino
 Lino is in a very early development stage. 
 Don't hesitate to contact me if you get stucked.
 
-Note: The string `APP` on this page is to be replaced by either `dsbe` or `igen`, depending on which of the Lino demo applications you chose.
+Note: The string `LINO_APP` on this page is to be replaced by either `dsbe` or `igen`, depending on which of the :doc:`Lino demo applications </demos>` you chose to use as template.
 
 Software prerequisites
 ----------------------
@@ -15,16 +15,16 @@ You'll maybe need the following Debian packages installed:
  
       aptitude install mercurial subversion unzip
 
- * Packages needed by Django to run in Apache2::
-
-    aptitude install apache2 apache2-doc apache2-mpm-prefork \
-      apache2-utils libexpat1 ssl-cert libapache2-mod-python
-
-
  * Packages needed by Lino to work::
  
     aptitude install python-dateutil python-reportlab \
       python-yaml python-imaging python-html5lib
+
+ * Packages needed by Django to run in Apache2::
+
+    aptitude install apache2 apache2-doc apache2-mpm-prefork \
+      apache2-utils libexpat1 ssl-cert libapache2-mod-wsgi
+      
 
 Download
 --------
@@ -33,7 +33,7 @@ Create a directory :file:`/var/snapshots` and go to that directory::
 
   hg clone https://lino.googlecode.com/hg/ lino
   hg clone https://timtools.googlecode.com/hg/ timtools
-  hg clone https://lino-APP.googlecode.com/hg/ APP
+  hg clone https://lino-LINO_APP.googlecode.com/hg/ LINO_APP
 
 Note: don't run Lino's file `setup.py`, it is not necessary and doesn't work.  
 
@@ -60,27 +60,89 @@ South::
   
 
 
-Add Lino and other software to your Python path
------------------------------------------------
+Set up your Python path
+-----------------------
 
 For example on a Linux system, you can add a 
-path configuration file `snapshots.pth` 
+path configuration file `local.pth` 
 to a directory that's already on your `Python's path <http://www.python.org/doc/current/install/index.html>`_. 
 
-Here is how `/usr/local/lib/python2.5/site-packages/snapshots.pth` might look in our example::
+Here is how :file:`/usr/local/lib/python2.5/site-packages/local.pth` might look in our example::
 
   /var/snapshots/lino
   /var/snapshots/timtools/src
-  /var/snapshots/APP
+  /var/snapshots/LINO_APP
   /var/snapshots/django
   /var/snapshots/pisa-3.0.32
   /var/snapshots/appy-0.5.5
   /var/snapshots/south
+  /usr/local/django
 
 To see which directories are on your Python path::
 
   python -c "import sys; print sys.path"
 
+
+Create local Django project
+---------------------------
+
+Create your Django project directory `/usr/local/django/myproject`, containing files
+:xfile:`settings.py`, :file:`__init__.py` and :xfile:`manage.py`.
+You may either create your Django project from scratch, or
+simply copy these files from :file:`/var/snapshots/LINO_APP/LINO_APP/demo`.
+
+Adapt :xfile:`settings.py` to your needs.
+Consider using a simplified version of :xfile:`settings.py` that 
+imports settings from LINO_APP::
+
+  from LINO_APP.demo.settings import *
+  DATA_DIR = '/usr/local/django/myproject'
+  DATABASES = {
+      'default': {
+          'ENGINE': 'django.db.backends.sqlite3',
+          'NAME': join(DATA_DIR,'myproject.db')
+      }
+  }
+  
+There's also :xfile:`initdb.py`, :xfile:`load_tim.py`, :xfile:`make_staff.py`
+
+  
+  
+Set up Apache and `mod_wsgi`
+----------------------------
+
+Create a file `apache.wsgi` in `/usr/local/django/myproject`::
+
+  import os
+
+  os.environ['DJANGO_SETTINGS_MODULE'] = 'myproject.settings'
+
+  import django.core.handlers.wsgi
+  application = django.core.handlers.wsgi.WSGIHandler()
+
+
+
+  
+  <VirtualHost *:80>
+    ServerName myproject.example.com
+    ServerAdmin webmaster@example.com
+    WSGIScriptAlias / /usr/local/django/myproject/apache.wsgi
+
+    ErrorLog /var/log/apache2/myproject.error.log
+
+    # Possible values include: debug, info, notice, warn, error, crit,
+    # alert, emerg.
+    LogLevel info
+
+    CustomLog /var/log/apache2/myproject.access.log combined
+    #ServerSignature On
+
+    Alias /media/ /usr/local/lino/media/
+    <Location /media/>
+       SetHandler none
+    </Location>
+</VirtualHost>  
+  
 
 
 Static files
@@ -111,15 +173,16 @@ On a production server you'll probably add an ``Alias /media/ /usr/local/lino/me
   ln -s /var/snapshots/ext-3.2.1 extjs
 
 
-Configure Apache
-----------------
+Configure Apache `mod_python`
+-----------------------------
 
+Note that `mod_python` is obsolete. On new installations use `mod_wsgi`.
 Here is a simple example for file :file:`/etc/aspache2/sites-available/default`::
 
   <VirtualHost *:80>
       SetHandler python-program
       PythonHandler django.core.handlers.modpython
-      SetEnv DJANGO_SETTINGS_MODULE APP.demo.settings
+      SetEnv DJANGO_SETTINGS_MODULE LINO_APP.demo.settings
       PythonOption django.root
       PythonDebug On
 
@@ -141,8 +204,7 @@ You'll also need to configure Apache to do HTTP authentication: [ApacheHttpAuth 
 After modifying the apache config, you must restart the daemon:
 
   /etc/init.d/apache2 restart
-  
-
+ 
 
 User permissions
 ----------------
@@ -202,21 +264,21 @@ To test whether the Lino framework is okay::
 
   OK
 
-You may want to run the same command `python manage.py test` in your applications demo directory (:file:`/var/snapshots/APP/APP/demo` or :file:`/var/snapshots/APP/APP/demo`).
+You may want to run the same command `python manage.py test` in your applications demo directory (:file:`/var/snapshots/LINO_APP/LINO_APP/demo`).
 
 
 Create the demo database
 ------------------------
 
-Go to your `/var/snapshots/APP/APP/demo` directory and run::
+Go to your `/var/snapshots/LINO_APP/LINO_APP/demo` directory and run::
 
   python fill.py demo
   python manage.py runserver
 
 Currently there is also an unelegant thing to do by hand::
 
-  chgrp www-data /usr/local/lino/APP_demo.db
-  chmod g+w /usr/local/lino/APP_demo.db
+  chgrp www-data /usr/local/lino/LINO_APP_demo.db
+  chmod g+w /usr/local/lino/LINO_APP_demo.db
 
 Updating your Lino to the newest version
 ----------------------------------------
@@ -228,7 +290,7 @@ Updating your Lino to the newest version
 
 And the same for each Lino application::
 
-  cd /var/snapshots/APP
+  cd /var/snapshots/LINO_APP
   hg pull -u 
 
 You'll maybe have to do something like this::
