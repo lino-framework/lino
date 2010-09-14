@@ -4,9 +4,9 @@
 Optimierungen an :xfile:`tim2lino.py`
 -------------------------------------
 
-  - Rief unnötigerweise :meth:`lino.lino_site.setup`
-  - Wenn was schief geht, dann schreibt er die betreffende Zeile jetzt 
-    in eine Datei :xfile:`changelog.failed.json` und macht weiter.
+- Rief unnötigerweise :meth:`lino.lino_site.setup`
+- Wenn was schief geht, dann schreibt er die betreffende Zeile jetzt 
+  in eine Datei :xfile:`changelog.failed.json` und macht weiter.
 
 Release
 -------
@@ -115,8 +115,8 @@ Außerdem kann ich von einem ``manage.py shell`` aus sehr wohl auf die Datenbank
     
 Außerdem kommt der OperationalError sogar dann, wenn ich Apache runtergefahren habe.
   
-Also muss der OperationalError noch einen anderen Grund haben. Aber welchen?  
-  Scheinbar ist das ein `Newbie Mistake <http://code.djangoproject.com/wiki/NewbieMistakes#DjangosaysUnabletoOpenDatabaseFilewhenusingSQLite3>`__, aber keiner der dort angeführten Lösungsvorschläge trifft zu.
+Also muss der OperationalError noch einen anderen Grund haben. Aber welchen? 
+Scheinbar ist das ein `Newbie Mistake <http://code.djangoproject.com/wiki/NewbieMistakes#DjangosaysUnabletoOpenDatabaseFilewhenusingSQLite3>`__, aber keiner der dort angeführten Lösungsvorschläge trifft zu.
   
 Tilt! Nach stundenlanger Suche sehe ich, dass tim2lino.py irgendwie die falsche settings.py nimmt und deshalb versucht auf eine (nicht existierende) Datenbank in :file:`/var/snapshots/dsbe/demo/data` zuzugreifen! Das ist ein Wink mit dem Zaunpfahl! Jetzt mache ich aus tim2lino einen 
 `management command <http://docs.djangoproject.com/en/dev/howto/custom-management-commands>`__!
@@ -129,3 +129,14 @@ Die Aktion an sich hat kaum eine Stunde gedauert:
 
 Also wenn ich mich gestern noch über Djangos Macken geärgert habe, dann darf ich mich heute über seine Genialität freuen (und mich ärgern, dass ich meine Scripts nicht schon früher in management commands konvertiert hatte)!
   
+Den 10-mal-neu-versuchen-Loop hole ich dann auch wieder raus.
+
+
+Weiter
+------
+
+- :attr:`dsbe.Person.civil_state` ist jetzt ein CharField und nicht mehr ein SmallIntegerField. Weil ja choices auf Integer-Feldern noch nicht funktionieren.
+- Einige Felder waren noch nicht als read-only markiert für Personen die aus TIM importiert wurden.
+- Bankkonten und Gesdos-Nummer (PAR->NB1) werden nicht aus TIM übernommen
+- Der doppelte Report für Personen ist wieder raus. Kunde ist einverstanden, dass kleinere Bildschirme und mehr Tabs besser sind.
+- Kolonnen sind jetzt wieder sortierbar.

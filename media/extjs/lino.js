@@ -751,6 +751,8 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     
     config.plugins = [new Lino.GridFilters()];
     
+    //~ config.colModel = new ext.grid.columnModel({defaultSortable:true,
+      //~ columns:this.apply_grid_config(config.gc_name,config.ls_grid_configs,config.ls_columns)});
     config.columns = this.apply_grid_config(config.gc_name,config.ls_grid_configs,config.ls_columns);
     
     Lino.GridPanel.superclass.constructor.call(this, config);

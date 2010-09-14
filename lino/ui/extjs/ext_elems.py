@@ -109,6 +109,7 @@ class GridColumn(Component):
         self.editor = editor
         #~ self.value_template = editor.grid_column_template
         kw.update(self.editor.get_column_options())
+        kw.update(sortable=True)
         kw.update(editor=self.editor)
         kw.update(colIndex=index)
         kw.update(hidden=editor.hidden)
