@@ -69,7 +69,7 @@ if len(log.handlers) == 0:
     log.setLevel(logging.DEBUG)
     
     h = logging.StreamHandler()
-    h.setLevel(logging.WARNING)
+    h.setLevel(logging.INFO)
     fmt = logging.Formatter(fmt='%(message)s')
     h.setFormatter(fmt)
     log.addHandler(h)

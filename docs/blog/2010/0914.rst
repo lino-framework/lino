@@ -59,9 +59,36 @@ Ich habe drei Methoden, wie Lino gestartet wird:
   - :file:`tim2lino.py` (Hintergrundprozess)
  
 
-Noch Optimierungen an :xfile:`tim2lino.py`
-------------------------------------------
+Noch Bugs in :xfile:`tim2lino.py`
+---------------------------------
 
-- Loggt jetzt wieder in die :xfile`lino.log`
-- Wer eine Nationalregisternummer (PAR->NB2) hat ist eine Person, selbst wenn er auch eine MWst-Nummer hat.
-- Wenn er eine Exception "unable to open database file" kriegt, dann darf er natürlich nicht gleich aufgeben und die Zeile nach :xfile:`changelog.failed.json` schreiben (wo sie ja so gut wie verloren ist), sondern muss neu probieren. Denn dieser Fehler kommt ja nur, weil zu diesem Zeitpunkt der Webserver-Prozess die sqlite-Datenbank blockiert hat.
+Okay, wie zu erwarten sind wir mit der Synchronhaltung der Daten noch nicht so schnell 
+fertig.
+
+- Experimente, wie :xfile:`tim2lino.py` am besten loggen soll. Momentan mach ich::
+
+      import logging
+      logger = logging.getLogger('lino.tim2lino')
+
+
+- Die Entscheidung, ob ein PAR  eine Person oder eine Company ist, wird komplexer und deshalb in eine eigene Funktion :func:`tim2lino.is_company` ausgelagert: Wer eine Nationalregisternummer (PAR->NB2) hat ist eine Person, selbst wenn er auch eine MWSt-Nummer hat. Die MWSt-Nummer geht in so einem Fall verloren.
+
+- Wenn er einen OperationalError "unable to open database file" kriegt, dann darf er natürlich nicht gleich aufgeben und die Zeile nach :xfile:`changelog.failed.json` schreiben, sondern muss neu probieren. Denn dieser Fehler kommt ja nur, weil zu diesem Zeitpunkt der Webserver-Prozess die sqlite-Datenbank blockiert hat. Stimmt das?
+
+  An den Zugriffsrechten auf die Datenbank scheint es jedenfalls nicht zu liegen::
+
+    $ ls -al /usr/local/django/dsbe-eupen/data
+    total 3436
+    drwxrwsr-x 2 lsaffre www-data    4096 2010-09-14 10:09 .
+    drwxrwsr-x 3 lsaffre www-data    4096 2010-09-14 11:15 ..
+    -rw-rw-r-- 1 lsaffre www-data 3506176 2010-09-14 10:09 dsbe-eupen.db
+
+  Sieht aus als ob der Server-Prozess die Datenbank ziemlich lange gesperrt hält, und dass tim2lino somit nie zum Zuge kommt, wenn der Server einmal aktiv geworden ist. 
+  
+  TODO:
+  - (1) Im LinoServer selber ein Service Management einbauen und tim2lino im gleichen Prozess starten
+  
+- Die eigentliche :xfile:`tim2lino.py` habe ich von /dsbe/demo nach /dsbe verschoben. 
+  In `/dsbe/demo` steht jetzt ein Muster für eine lokale tim2lino.py, die das Logging konfiguriert und dann `from dsbe.tim2lino import main` macht und aufruft.
+  
+  
