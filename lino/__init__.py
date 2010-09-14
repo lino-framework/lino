@@ -15,7 +15,7 @@
 import sys
 import logging
 
-__version__ = "0.8.4"
+__version__ = "0.8.5"
 
 __author__ = "Luc Saffre <luc.saffre@gmx.net>"
 
@@ -86,7 +86,7 @@ if len(log.handlers) == 0:
 
     else:
         # 20100913 A separate lino.log is not necessary
-        # Assuming we are under mod_wsgi, we just write to sys.stderr which goes to the web server's error lod
+        # Assuming we are under mod_wsgi, we just write to sys.stderr which goes to the web server's error log
         # Thanks to adroffner on http://djangosnippets.org/snippets/1731/
         if False:
             fmt = logging.Formatter(
@@ -102,8 +102,8 @@ if len(log.handlers) == 0:
             h.setFormatter(fmt)
             log.addHandler(h)
         
-        fmt = logging.Formatter(fmt='%(levelname)s %(module)s : %(message)s')
         h = logging.StreamHandler(sys.stderr) 
+        fmt = logging.Formatter(fmt='%(levelname)s %(module)s : %(message)s')
         h.setFormatter(fmt)
         h.setLevel(logging.DEBUG)
         log.addHandler(h)

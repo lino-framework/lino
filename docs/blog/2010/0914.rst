@@ -1,0 +1,48 @@
+2010-09-14
+==========
+
+Optimierungen an :xfile:`tim2lino.py`
+-------------------------------------
+
+  - Rief unnötigerweise :meth:`lino.lino_site.setup`
+  - Wenn was schief geht, dann schreibt er die betreffende Zeile jetzt 
+    in eine Datei :file:`changelog.failed.json` und macht weiter.
+
+Gedanken zum `logging`
+----------------------
+
+Ich bin noch weiter am suchen, wie ich das Logging verwalten muss. 
+
+Die Standard-Konfiguration in :file:`lino/__init__.py` ist wohl noch nicht das non plus ultra...
+
+Interessante Lektüre:
+  - http://code.google.com/p/modwsgi/wiki/DebuggingTechniques
+  - http://code.google.com/p/modwsgi/wiki/ApplicationIssues#Writing_To_Standard_Output
+  
+Was will ich eigentlich? Ich will ja eigentlich nur, dass ich 
+von überall aus mit einem einfachen ``lino.log.info()`` oder ``lino.log.debug()`` 
+loggen kann.
+
+Die :file:`lino/__init__.py` macht ja vor allem::
+
+  import logging
+  log = logging.getLogger('lino')
+  
+Diese beiden Zeilen wären mir eben schon zu viel, wenn ich sie in jedem Modul schreiben müsste.
+
+Reicht eigentlich ein einziger Logger? 
+Müsste ich nicht einen zusätzlichen Logger vorsehen 
+für Meldungen, die die Daten selber betreffen?
+Zum Beispiel detaillierter changelog (falls ein Benutzer das will).
+Also einen weiteren Logger ``lino.data``, der auch in den zentralen Log geht (stimmt das?), 
+aber zusätzlich irgendwo separat geloggt wird für den Fall, dass man die 
+Historie der Änderungen in der Datenbank konsultieren will.
+
+Müsste es nicht doch immer eine lino.log geben, die in der :xfile:`settings.py` angegeben wird
+
+Ich habe drei Methoden, wie Lino gestartet wird:
+
+  - :file:`manage.py`, :file:`initdb.py`, :file:`load_tim.py` & Co. (interaktiv an der Kommandozeile)
+  - :file:`apache.wsgi` 
+  - :file:`tim2lino.py` (Daemon)  
+ 

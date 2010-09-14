@@ -135,8 +135,7 @@ Create a file `apache.wsgi` in `/usr/local/django/myproject`::
   import django.core.handlers.wsgi
   application = django.core.handlers.wsgi.WSGIHandler()
 
-
-
+And in your Apache config file::
   
   <VirtualHost *:80>
     ServerName myproject.example.com
@@ -156,7 +155,7 @@ Create a file `apache.wsgi` in `/usr/local/django/myproject`::
     <Location /media/>
        SetHandler none
     </Location>
-</VirtualHost>  
+  </VirtualHost>  
   
 
 

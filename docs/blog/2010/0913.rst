@@ -198,5 +198,7 @@ Weiter
   um sagen zu können, dass ein PageLayout nur in einem bestimmten Report verwendet werden soll: 
   das ist das neue Attribut :attr:`lino.layouts.DetailLayout.only_for_report`.
   
-Check-in und Release nach dsbe-eupen
+Check-in und Release nach dsbe-eupen.
+
+Erstmals versuche ich jetzt nach dem :xfile:`load_tim.py` auch die :xfile:`tim2lino.py` zu starten.
 

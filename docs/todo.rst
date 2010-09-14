@@ -4,10 +4,10 @@ To-Do-Liste
 Kurzfristig
 -----------
 
-- Datensynchronisierung TIM->Lino
+- Funktioniert die Datensynchronisierung TIM->Lino?
 
 - Beim Öffnen eines Detail-Fensters sind die Slave-Grids anfangs nicht richtig mit ihrem Master verknüpft. 
-  Erst wenn man PgUp und dann PgDn macht, kommen sie richtig.
+  Erst nach PgUp oder PgDn kommen sie richtig.
 
 - Wenn in einer vbox mit 2 Grids ein der Grids kollabiert, sollte die andere den dadurch verfügbaren Raum ausfüllen.
   collapse-Events beider Gridboxen an doLayout oder resize der vbox verknüpfen...
@@ -25,7 +25,7 @@ Kurzfristig
 
 - Insert in notes.Note : Datum sollte par défaut auf heute stehen, Sprache auf Deutsch.
 
-- Sprachabhängige Auswahl der Notizvorlage. Auf mehrsprachigen Sites hat das templates-Verzeichnis pro unterstützter Sprache ein entsprechendes Unterverzeichnis (`de`, `fr`, `en`,...), was aber in NoteType.template nicht gespeichert wird (und in der Auswahlliste nicht erscheint). Dort werden immer die Templates der Hauptsprache angezeigt. Wenn Sprache der Notiz nicht die Hauptsprache des Lino-Sites ist, dann wird das Template zunächst in der Notizsprache gesucht. Falls es dort nicht existiert (z.B. weil die Vorlage noch nicht übersetzt wurde oder multilingual ist), nimmt er die Standard-Vorlage aus der Hauptsprache.
+- Sprachabhängige Auswahl der Notizvorlage. Das templates-Verzeichnis muss pro unterstützter Sprache ein entsprechendes Unterverzeichnis (`de`, `fr`, `en`,...) haben. Dieser Teil des Dateinamens wird in :attr:`notes.NoteType.template` nicht gespeichert und erscheint auch nicht in der Auswahlliste. Dort werden immer die Templates der Hauptsprache angezeigt. Wenn Sprache der Notiz nicht die Hauptsprache des Lino-Sites ist, dann wird das Template zunächst in der Notizsprache gesucht. Falls es dort nicht existiert (z.B. weil die Vorlage noch nicht übersetzt wurde oder multilingual ist), nimmt er die Standard-Vorlage aus der Hauptsprache.
 
 - iCal-Dateien generieren. 
   Im :class:`notes.NoteType` wird definiert, ob Lino einen Termin (oder Erinnerung oder Task) 
@@ -128,3 +128,5 @@ Langfristig
   weil sie nicht im Code der Anwendung stehen.
   Rausfinden, ob man das nicht doch irgendwie automatisieren kann.
   http://docs.djangoproject.com/en/dev/topics/i18n/localization/
+  
+- 
