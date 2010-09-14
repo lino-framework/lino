@@ -6,7 +6,7 @@ Optimierungen an :xfile:`tim2lino.py`
 
   - Rief unnötigerweise :meth:`lino.lino_site.setup`
   - Wenn was schief geht, dann schreibt er die betreffende Zeile jetzt 
-    in eine Datei :file:`changelog.failed.json` und macht weiter.
+    in eine Datei :xfile:`changelog.failed.json` und macht weiter.
 
 Release
 -------
@@ -62,5 +62,6 @@ Ich habe drei Methoden, wie Lino gestartet wird:
 Noch Optimierungen an :xfile:`tim2lino.py`
 ------------------------------------------
 
-- Loggt jetzt auch wieder in die lino.log
+- Loggt jetzt wieder in die :xfile`lino.log`
 - Wer eine Nationalregisternummer (PAR->NB2) hat ist eine Person, selbst wenn er auch eine MWst-Nummer hat.
+- Wenn er eine Exception "unable to open database file" kriegt, dann darf er natürlich nicht gleich aufgeben und die Zeile nach :xfile:`changelog.failed.json` schreiben (wo sie ja so gut wie verloren ist), sondern muss neu probieren. Denn dieser Fehler kommt ja nur, weil zu diesem Zeitpunkt der Webserver-Prozess die sqlite-Datenbank blockiert hat.
