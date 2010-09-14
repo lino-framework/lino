@@ -59,6 +59,9 @@ Ich habe drei Methoden, wie Lino gestartet wird:
   - :file:`tim2lino.py` (Hintergrundprozess)
  
 
+Experiment: Die eigentliche :xfile:`tim2lino.py` habe ich von /dsbe/demo nach /dsbe verschoben. In `/dsbe/demo` steht jetzt ein Muster für eine lokale tim2lino.py, die das Logging konfiguriert und dann `from dsbe.tim2lino import main` macht und aufruft.
+
+
 Noch Bugs in :xfile:`tim2lino.py`
 ---------------------------------
 
@@ -73,9 +76,14 @@ fertig.
 
 - Die Entscheidung, ob ein PAR  eine Person oder eine Company ist, wird komplexer und deshalb in eine eigene Funktion :func:`tim2lino.is_company` ausgelagert: Wer eine Nationalregisternummer (PAR->NB2) hat ist eine Person, selbst wenn er auch eine MWSt-Nummer hat. Die MWSt-Nummer geht in so einem Fall verloren.
 
-- Wenn er einen OperationalError "unable to open database file" kriegt, dann darf er natürlich nicht gleich aufgeben und die Zeile nach :xfile:`changelog.failed.json` schreiben, sondern muss neu probieren. Denn dieser Fehler kommt ja nur, weil zu diesem Zeitpunkt der Webserver-Prozess die sqlite-Datenbank blockiert hat. Stimmt das?
+Management commands
+-------------------
 
-  An den Zugriffsrechten auf die Datenbank scheint es jedenfalls nicht zu liegen::
+Wenn tim2lino einen OperationalError "unable to open database file" kriegt, dann darf er natürlich nicht gleich aufgeben und die Zeile nach :xfile:`changelog.failed.json` schreiben, sondern muss neu probieren. Denn dieser Fehler kommt ja nur, weil zu diesem Zeitpunkt der Webserver-Prozess die sqlite-Datenbank blockiert hat. Deshalb macht er jetzt im Fall eines Fehlers 10 Versuche, bevor er aufgibt.
+
+Aber stimmt es, dass sqlite nicht erlaubt, dass zwei Prozesse gleichzeitig auf die Datenbank zugreifen?
+
+An den Zugriffsrechten auf die Datenbank scheint es jedenfalls nicht zu liegen::
 
     $ ls -al /usr/local/django/dsbe-eupen/data
     total 3436
@@ -83,12 +91,41 @@ fertig.
     drwxrwsr-x 3 lsaffre www-data    4096 2010-09-14 11:15 ..
     -rw-rw-r-- 1 lsaffre www-data 3506176 2010-09-14 10:09 dsbe-eupen.db
 
-  Sieht aus als ob der Server-Prozess die Datenbank ziemlich lange gesperrt hält, und dass tim2lino somit nie zum Zuge kommt, wenn der Server einmal aktiv geworden ist. 
+Andererseits sieht es aus als ob der Server-Prozess die Datenbank ziemlich lange gesperrt hält, und dass tim2lino somit nie zum Zuge kommt, wenn der Server einmal aktiv geworden ist.
   
-  TODO:
-  - (1) Im LinoServer selber ein Service Management einbauen und tim2lino im gleichen Prozess starten
+Außerdem kann ich von einem ``manage.py shell`` aus sehr wohl auf die Datenbank zugreifen und darin verändern, während der Serverprozess läuft::
   
-- Die eigentliche :xfile:`tim2lino.py` habe ich von /dsbe/demo nach /dsbe verschoben. 
-  In `/dsbe/demo` steht jetzt ein Muster für eine lokale tim2lino.py, die das Logging konfiguriert und dann `from dsbe.tim2lino import main` macht und aufruft.
+    $ python manage.py shell
+    Lino-DSBE 0.1.4 <http://dsbe.saffre-rumma.ee>
+    Lino 0.8.5 <http://code.google.com/p/lino/>
+    Django 1.3 pre-alpha SVN-13818 <http://www.djangoproject.com>
+    Python 2.5.2 <http://www.python.org/>
+    ReportLab Toolkit 2.1 <http://www.reportlab.org/rl_toolkit.html>
+    PyYaml  <http://pyyaml.org/>
+    python-dateutil 1.4.1 <http://labix.org/python-dateutil>
+    Python 2.5.2 (r252:60911, Jan 24 2010, 17:44:40)
+    [GCC 4.3.2] on linux2
+    Type "help", "copyright", "credits" or "license" for more information.
+    (InteractiveConsole)
+    >>> from dsbe.models import Person
+    >>> p = Person.objects.get(pk=20474)
+    >>> p.first_name += "TEST"
+    >>> p.save()
+    >>>  
+    
+Außerdem kommt der OperationalError sogar dann, wenn ich Apache runtergefahren habe.
   
+Also muss der OperationalError noch einen anderen Grund haben. Aber welchen?  
+  Scheinbar ist das ein `Newbie Mistake <http://code.djangoproject.com/wiki/NewbieMistakes#DjangosaysUnabletoOpenDatabaseFilewhenusingSQLite3>`__, aber keiner der dort angeführten Lösungsvorschläge trifft zu.
+  
+Tilt! Nach stundenlanger Suche sehe ich, dass tim2lino.py irgendwie die falsche settings.py nimmt und deshalb versucht auf eine (nicht existierende) Datenbank in :file:`/var/snapshots/dsbe/demo/data` zuzugreifen! Das ist ein Wink mit dem Zaunpfahl! Jetzt mache ich aus tim2lino einen 
+`management command <http://docs.djangoproject.com/en/dev/howto/custom-management-commands>`__!
+  
+Die Aktion an sich hat kaum eine Stunde gedauert:
+  
+  - :xfile:`tim2lino.py` ersetzt durch :mod:`dsbe.management.commands.watch_tim`.
+  - :xfile:`initdb.py` ersetzt durch :mod:`dsbe.management.commands.initdb`.
+  - :xfile:`load_tim.py` ersetzt durch :mod:`dsbe.management.commands.initdb_tim`.
+
+Also wenn ich mich gestern noch über Djangos Macken geärgert habe, dann darf ich mich heute über seine Genialität freuen (und mich ärgern, dass ich meine Scripts nicht schon früher in management commands konvertiert hatte)!
   

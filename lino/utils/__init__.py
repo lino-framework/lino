@@ -1,4 +1,4 @@
-## Copyright 2009 Luc Saffre
+## Copyright 2009-2010 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -28,20 +28,30 @@
 5
 >>> constrain(10,2,5)
 5
+
+>>> iif(1>2,'yes','no')
+no
+
 """
 
 
 def constrain(value,lowest,highest):
     return min(highest,max(value,lowest))
+
+def confirm(prompt=None):
+    while True:
+        ln = raw_input(prompt)
+        if ln.lower() in ('y','j','o'):
+            return True
+        if ln.lower() == 'n':
+            return false
+        print "Please anwer Y or N"
+
+def iif(l,y,f): 
+    if l: return y 
+    return f
     
-# moved to lino.ui.base
-#~ def build_url(*args,**kw):
-    #~ url = "/".join(args)
-    #~ if len(kw):
-        #~ url += "?" + urlencode(kw)
-    #~ return url
-        
-    
+   
 
 def _test():
     import doctest

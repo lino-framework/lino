@@ -94,8 +94,8 @@ simply link to these files from :file:`/var/snapshots/LINO_APP/LINO_APP/demo`.
 
 ::
 
-  ln /var/snapshots/LINO_APP/LINO_APP/demo/__init__.py .
-  ln /var/snapshots/LINO_APP/LINO_APP/demo/manage.py .
+  ln -s /var/snapshots/LINO_APP/LINO_APP/demo/__init__.py .
+  ln -s /var/snapshots/LINO_APP/LINO_APP/demo/manage.py .
   
 Adapt :xfile:`settings.py` to your needs.
 Consider using a simplified version of :xfile:`settings.py` that 
@@ -116,10 +116,11 @@ imports settings from LINO_APP::
 There's also the pseudo command scipts :xfile:`initdb.py`, :xfile:`load_tim.py`, :xfile:`make_staff.py`
 
 ::  
-  ln /var/snapshots/LINO_APP/LINO_APP/demo/initdb.py .
-  ln /var/snapshots/dsbe/dsbe/demo/make_staff.py .
-  ln /var/snapshots/dsbe/dsbe/demo/load_tim.py .
-  ln /var/snapshots/dsbe/igen/demo/make_invoices.py .
+  ln -s /var/snapshots/LINO_APP/LINO_APP/demo/initdb.py .
+  ln -s /var/snapshots/dsbe/dsbe/demo/make_staff.py .
+  ln -s /var/snapshots/dsbe/dsbe/demo/load_tim.py .
+  ln -s /var/snapshots/dsbe/dsbe/demo/tim2lino.py .
+  ln -s /var/snapshots/dsbe/igen/demo/make_invoices.py .
 
   
   
