@@ -63,3 +63,4 @@ Noch Optimierungen an :xfile:`tim2lino.py`
 ------------------------------------------
 
 - Loggt jetzt auch wieder in die lino.log
+- Wer eine Nationalregisternummer (PAR->NB2) hat ist eine Person, selbst wenn er auch eine MWst-Nummer hat.
