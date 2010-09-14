@@ -8,6 +8,18 @@ Optimierungen an :xfile:`tim2lino.py`
   - Wenn was schief geht, dann schreibt er die betreffende Zeile jetzt 
     in eine Datei :file:`changelog.failed.json` und macht weiter.
 
+Release
+-------
+
+Den heutigen Stand nenne ich Lino 0.8.5 und Lino-DSBE 0.1.4 
+und markiere das mit tags im Repository.
+
+0.8.4 und 0.1.3 sind nie released worden, weil ich eher aus 
+Versehen einen Fehler in meiner bisherigen Release-Methode bemerkt habe: 
+die neue Versionsnummer muss natürlich *vor* jedem Release entschieden werden. 
+In den Zwischenversionen nach dem Release bleibt die Nummer des letzten Releases stehen.
+Ein "+" um das zu kennzeichnen halte ich bis auf weiteres für unnötig.
+
 Gedanken zum `logging`
 ----------------------
 
@@ -46,3 +58,4 @@ Ich habe drei Methoden, wie Lino gestartet wird:
   - :file:`apache.wsgi` 
   - :file:`tim2lino.py` (Daemon)  
  
+
