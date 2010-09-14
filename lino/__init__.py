@@ -62,90 +62,104 @@ if len(log.handlers) == 0:
     #~ print "Using default logging config"
     
     """
-    If you don't like Lino's default logging config, then configure 
-    logging in your settings.py before importing lino.
+    To bypass Lino's default logging config, just configure 
+    logging yourself before importing lino.
     """
     
     log.setLevel(logging.DEBUG)
     
+    h = logging.StreamHandler()
+    h.setLevel(logging.WARNING)
+    fmt = logging.Formatter(fmt='%(message)s')
+    h.setFormatter(fmt)
+    log.addHandler(h)
+    
     if sys.platform == 'win32':
-        h = logging.StreamHandler()
-        h.setLevel(logging.INFO)
-        fmt = logging.Formatter(fmt='%(message)s')
-        h.setFormatter(fmt)
-        log.addHandler(h)
-        #~ h = logging.FileHandler(os.path.join(settings.DATA_DIR,'log','lino.log')) 
-        h = logging.FileHandler('lino.log','w')
-        h.setLevel(logging.DEBUG)
-        fmt = logging.Formatter(
-            fmt='%(asctime)s %(levelname)s %(module)s : %(message)s',
-            datefmt='%Y%m-%d %H:%M:%S'
-            )
-        h.setFormatter(fmt)
-        log.addHandler(h)
-
+        LOGFILE = 'lino.log'
     else:
-        # 20100913 A separate lino.log is not necessary
-        # Assuming we are under mod_wsgi, we just write to sys.stderr which goes to the web server's error log
-        # Thanks to adroffner on http://djangosnippets.org/snippets/1731/
-        if False:
+        LOGFILE = '/var/log/lino/lino.log'
+    if hasattr(logging,'RotatingFileHandler'):
+        h = logging.RotatingFileHandler(LOGFILE,maxBytes=10000,backupCount=5)
+    else:
+        h = logging.FileHandler(LOGFILE)
+    fmt = logging.Formatter(
+        fmt='%(asctime)s %(levelname)s %(module)s : %(message)s',
+        datefmt='%Y%m-%d %H:%M:%S'
+        )
+    h.setLevel(logging.DEBUG)
+    h.setFormatter(fmt)
+    log.addHandler(h)
+    
+    if False:
+        
+        if sys.platform == 'win32':
+            h = logging.StreamHandler()
+            h.setLevel(logging.INFO)
+            fmt = logging.Formatter(fmt='%(message)s')
+            h.setFormatter(fmt)
+            log.addHandler(h)
+            
+            h = logging.FileHandler('lino.log','w')
+            h.setLevel(logging.DEBUG)
             fmt = logging.Formatter(
                 fmt='%(asctime)s %(levelname)s %(module)s : %(message)s',
                 datefmt='%Y%m-%d %H:%M:%S'
                 )
-
-            if hasattr(logging,'RotatingFileHandler'):
-                h = logging.RotatingFileHandler('/var/log/lino/lino.log',maxBytes=10000,backupCount=5)
-            else:
-                h = logging.FileHandler('/var/log/lino/lino.log')
-            h.setLevel(logging.DEBUG)
             h.setFormatter(fmt)
             log.addHandler(h)
-        
-        h = logging.StreamHandler(sys.stderr) 
-        fmt = logging.Formatter(fmt='%(levelname)s %(module)s : %(message)s')
-        h.setFormatter(fmt)
-        h.setLevel(logging.DEBUG)
-        log.addHandler(h)
-        
-        #~ logging.basicConfig(
-          #~ format='%(asctime)s %(levelname)s %(module)s : %(message)s',
-          #~ datefmt='%Y%m-%d %H:%M:%S',
-          #~ level=logging.DEBUG,
-          #~ filename='/var/log/lino/lino.log',
-          #~ filemode='a',
-          #~ )
-          
-#~ print "log.parent=", log.parent
-#~ print "log.manager.disable=", log.manager.disable
 
-def thanks_to():
+        else:
+            # 20100913 A separate lino.log is not necessary
+            # Assuming we are under mod_wsgi, we just write to sys.stderr which goes to the web server's error log
+            # Thanks to adroffner on http://djangosnippets.org/snippets/1731/
+            if False:
+                fmt = logging.Formatter(
+                    fmt='%(asctime)s %(levelname)s %(module)s : %(message)s',
+                    datefmt='%Y%m-%d %H:%M:%S'
+                    )
+
+                if hasattr(logging,'RotatingFileHandler'):
+                    h = logging.RotatingFileHandler('/var/log/lino/lino.log',maxBytes=10000,backupCount=5)
+                else:
+                    h = logging.FileHandler('/var/log/lino/lino.log')
+                h.setLevel(logging.DEBUG)
+                h.setFormatter(fmt)
+                log.addHandler(h)
+            
+            h = logging.StreamHandler(sys.stderr) 
+            fmt = logging.Formatter(fmt='%(levelname)s %(module)s : %(message)s')
+            h.setFormatter(fmt)
+            h.setLevel(logging.DEBUG)
+            log.addHandler(h)
+        
+
+def thanks_to(all=True):
     yield ("Lino", __version__, __url__)
-    
-    import django
-    yield ("Django",django.get_version(),"http://www.djangoproject.com")
-    
-    import sys
-    version = "%d.%d.%d" % sys.version_info[:3]
-    yield ("Python",version,"http://www.python.org/")
-    
-    import reportlab
-    yield ("ReportLab Toolkit",reportlab.Version, "http://www.reportlab.org/rl_toolkit.html")
-               
-    import yaml
-    version = getattr(yaml,'__version__','')
-    yield ("PyYaml",version,"http://pyyaml.org/")
-    
-    import dateutil
-    version = getattr(dateutil,'__version__','')
-    yield ("python-dateutil",version,"http://labix.org/python-dateutil")
-    
-    try:
-        import ho.pisa as pisa
-        version = getattr(pisa,'__version__','')
-        yield ("xhtml2pdf",version,"http://www.xhtml2pdf.com")
-    except ImportError:
-        pass
+    if all:
+        import django
+        yield ("Django",django.get_version(),"http://www.djangoproject.com")
+        
+        import sys
+        version = "%d.%d.%d" % sys.version_info[:3]
+        yield ("Python",version,"http://www.python.org/")
+        
+        import reportlab
+        yield ("ReportLab Toolkit",reportlab.Version, "http://www.reportlab.org/rl_toolkit.html")
+                   
+        import yaml
+        version = getattr(yaml,'__version__','')
+        yield ("PyYaml",version,"http://pyyaml.org/")
+        
+        import dateutil
+        version = getattr(dateutil,'__version__','')
+        yield ("python-dateutil",version,"http://labix.org/python-dateutil")
+        
+        try:
+            import ho.pisa as pisa
+            version = getattr(pisa,'__version__','')
+            yield ("xhtml2pdf",version,"http://www.xhtml2pdf.com")
+        except ImportError:
+            pass
     
 
 #~ log.info(thanks_to())

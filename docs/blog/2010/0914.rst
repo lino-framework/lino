@@ -56,6 +56,10 @@ Ich habe drei Methoden, wie Lino gestartet wird:
 
   - :file:`manage.py`, :file:`initdb.py`, :file:`load_tim.py` & Co. (interaktiv an der Kommandozeile)
   - :file:`apache.wsgi` 
-  - :file:`tim2lino.py` (Daemon)  
+  - :file:`tim2lino.py` (Hintergrundprozess)
  
 
+Noch Optimierungen an :xfile:`tim2lino.py`
+------------------------------------------
+
+- Loggt jetzt auch wieder in die lino.log
