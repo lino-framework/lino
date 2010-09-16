@@ -57,7 +57,7 @@ class Command(BaseCommand):
             #~ if u.username.lower() in args:
             if u.is_staff:
                 print u, 'was already staff'
-            else
+            else:
                 u.is_staff = True
                 u.save()
                 print u, "is now staff"
