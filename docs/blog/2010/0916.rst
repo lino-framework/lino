@@ -21,3 +21,10 @@ Also z.B. in Person::
 
 In der Grid erlaubte er, dass man virtuelle Felder bearbeitet. Behoben.
 
+Release in Eupen: :doc:`/releases/20100916`.
+
+Aha, ich dachte mir schon, dass ich was falsch mache beim Start von watch_tim:
+http://www.linuxquestions.org/questions/linux-newbie-8/put-a-process-in-background-and-logout-261399/  
+
+- `make_staff` ist jetzt ebenfalls ein management command (von :mod:`lino.modlib.system`)
+

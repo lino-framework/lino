@@ -4,6 +4,18 @@ To-Do-Liste
 Kurzfristig
 -----------
 
+- Bankkonten fehlen in Detail.
+
+- Die Extra-Zeile sollte ganz leer sein (Standardwerte nicht anzeigen).
+
+- Löschen auf Extrazeile sollte deaktiviert sein. 
+  
+- Auto-Refresh wenn Fenster versteckt war und wieder sichtbar wird.
+  
+- In NotesByPerson funktioniert Detail nicht. Ist immer ler. 
+
+- Tabelle "Ansprechpartner pro Person" : DSBE, allgemeiner Sozialdienst, Schulderberatung, Energieberatung
+
 - Quickfilter im Detail von Personen geht nicht. 
 
 - Man kann noch nicht nach Personen suchen, die ein bestimmtes Studium haben
@@ -133,3 +145,4 @@ Langfristig
   
 - Der JS-Code, der ein Detail-Fenster definiert, wird für jeden Report zweimal generiert. 
   Ein einziges Mal für alle Reports würde reichen.
+  

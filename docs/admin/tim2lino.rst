@@ -17,3 +17,5 @@ When this is done, start the process that keeps data synchronized::
 Where :xfile:`watch_tim` contains something like::
  
   python manage.py watch_tim /mnt/path/to/tim/data/changelog
+  
+  

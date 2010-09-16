@@ -11,8 +11,6 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-
-
 class Condition:
     pass
     
@@ -48,17 +46,3 @@ if settings.BYPASS_PERMS:
     is_authenticated.passes = staticmethod(always.passes)
     is_staff.passes = staticmethod(always.passes)
 
-#~ def always(request): return True
-#~ def is_staff(request): 
-    #~ print "requests.is_staff()", request.user.is_staff
-    #~ return request.user.is_staff
-#~ def is_authenticated(request): return request.user.is_authenticated()
-
-#~ class AND:
-  #~ def __init__(self,*tests):
-      #~ self.tests = tests
-  #~ def test(self,*args,**kw):
-      #~ for t in self.tests:
-          #~ if not t(*args,**kw):
-              #~ return False
-      #~ return True
