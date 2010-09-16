@@ -137,6 +137,13 @@ Weiter
 
 - :attr:`dsbe.Person.civil_state` ist jetzt ein CharField und nicht mehr ein SmallIntegerField. Weil ja choices auf Integer-Feldern noch nicht funktionieren.
 - Einige Felder waren noch nicht als read-only markiert für Personen die aus TIM importiert wurden.
-- Bankkonten und Gesdos-Nummer (PAR->NB1) werden nicht aus TIM übernommen
+- Bankkonten und Gesdos-Nummer (PAR->NB1) werden jetzt aus TIM übernommen
 - Der doppelte Report für Personen ist wieder raus. Kunde ist einverstanden, dass kleinere Bildschirme und mehr Tabs besser sind.
 - Kolonnen sind jetzt wieder sortierbar.
+- Noch Übersetzungen
+
+Release und initdb_tim auf dsbe-eupen.
+Eine Latte von Warnungen::
+  pharmacy 0000086213 not found
+  pharmacy 0000086121 not found
+  pharmacy 0000086372 not found

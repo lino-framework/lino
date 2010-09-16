@@ -1,0 +1,151 @@
+2010-09-15
+==========
+
+- :mod:`dsbe.management.commands.watch_tim` : 
+
+  - Die Fehlermeldungen "{u'__date__': {u'month': 0, u'day': 0, u'year': 0}} : year is out of range"
+    müssten ab dem nächsten Release nicht mehr kommen.
+    
+  - Die Meldung `AttributeError("'datetime.date' object has no attribute 'read'",)` müsste, wenn sie nochmal kommt, von einem
+    detaillierten Traceback begleitet sein. Ohne den weiß ich momentan auch nicht weiter.
+  
+- `is_company` steht jetzt in :mod:`dsbe.management.commands.initdb_tim` und wird dort auch benutzt.
+
+- :class:`dsbe.Persons` und :class:`dsbe.Companies` erwartet jetzt eine Funktion :setting:`DSBE_IS_IMPORTED_PARTNER` in der :xfile:`settings.py`. Ich habe das ausgelagert, damit ich es auf einer Demo-Datenbank bequemer testen kann.
+
+- Die :term:`disabled fields` sind jetzt wieder disabled.
+
+- Feld :attr:`dsbe.Persons.is_minor` (Minderjährig) habe ich rausgeholt.
+
+- Das folgende Layout funktioniert nicht (Grid-Element nur in der rechten Box):
+
+    main:
+      box1 box2
+
+    box1:
+      driving_license it_knowledge
+      card_number card_valid_from card_valid_until
+      residence_type:18 residence_permit_until
+    
+    box2:
+      unavailable_until unavailable_why
+      unemployed_since
+      needs_work_permit work_permit_valid_until  work_permit_suspended_until
+      dsbe.ExclusionsByPerson
+      
+
+
+Slave-Reports als Kolonne einer Grid
+------------------------------------
+
+(Der ganze Rest dieser Seite ist nicht lesenswert, siehe :doc:`morgen <0916>`.)
+
+Slave-Reports als Kolonne einer Grid funktioniert noch überhaupt nicht. 
+Die :meth:`lino.reports.Report.as_string` müsste schon funktionieren, aber wenn ich folgendes probiere::
+
+  class Persons(contacts.Persons):
+      column_names = "name city dsbe.LanguageKnowledgesByPerson" 
+
+... dann knallt es, sobald ich den Report aufrufe. 
+Das ist normal, weil dieser Fall noch programmiert werden muss. 
+`dsbe.LanguageKnowledgesByPerson` ist ja kein Datenbankfeld.
+Hier der Anfang der `Lino.contacts.Persons.grid`, wie sie mit obigem `column_names` momentan generiert wird::
+
+  Lino.contacts.Persons.grid = function (caller, params) {
+      console.time('contacts.Persons.grid');
+      var Person_name_field159 = new Ext.form.TextField({
+          allowBlank: false,
+          fieldLabel: "Name",
+          name: "name",
+          maxLength: 200
+      });
+      var Person_city_field160 = new Lino.RemoteComboFieldElement({
+          fieldLabel: "city",
+          name: "city",
+          store: new Lino.ComplexRemoteComboStore({
+              proxy: new Ext.data.HttpProxy({
+                  url: "/choices/contacts/Persons/city",
+                  method: "GET"
+              })
+          }),
+          hiddenName: "cityHidden"
+      });
+      
+      
+Bis da ist okay. Aber dann generiert er unnützerweise 
+auch Editoren für die Kolonnen des Slave-Reports::
+      
+      
+      var LanguageKnowledge_language_field161 = new Lino.ChoicesFieldElement({
+          allowBlank: false,
+          fieldLabel: "Sprache",
+          name: "language",
+          store: LANGUAGE_CHOICES,
+          hiddenName: "languageHidden"
+      });
+      ...
+      
+Und dann kommt die eigentliche Grid, der 
+in `ls_store_fields` ein Feld `dsbe.LanguageKnowledgesByPerson` fehlt::
+
+
+      var main168_grid = new Lino.GridPanel({
+          ls_store_fields: [{
+              name: "name"
+          },
+          {
+              name: "city"
+          }, 'cityHidden',
+          {
+              type: "int",
+              name: "id"
+          },
+          {
+              name: "disabled_fields"
+          }],
+          
+
+Und `ls_columns` stimmt ebenfalls nicht::
+          
+          
+          ls_columns: [{
+              colIndex: 0,
+              sortable: true,
+              header: "Name",
+              filter: {
+                  type: "string"
+              },
+              width: 180,
+              editor: Person_name_field159,
+              hidden: false,
+              dataIndex: "name"
+          },
+          {
+              colIndex: 1,
+              sortable: true,
+              header: "city",
+              filter: {
+                  type: "string"
+              },
+              width: 90,
+              editor: Person_city_field160,
+              hidden: false,
+              dataIndex: "city"
+          },
+          {
+              filter: {
+                  type: null
+              },
+              colIndex: 2,
+              sortable: true,
+              hidden: false,
+              editor: dsbe_LanguageKnowledgesByPerson167_grid
+          }],
+          
+
+Der Rest ist okay.
+
+Aber bon, das Thema muss jetzt bis morgen warten, ich hatte heute nachmittag zwei 
+TIM-Anfragen, die natürlich Vorrang hatten, und jetzt ist Schlafenszeit.
+
+

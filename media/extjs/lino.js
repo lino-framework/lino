@@ -192,9 +192,8 @@ Lino.collapse_handler = function(ct) {
       ct.doLayout();
   }
 };
+
 */
-
-
 
 
 /*
@@ -607,7 +606,8 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
       this.ww.window.setTitle(record.title);
       if (record.data.disabled_fields) {
         //~ console.log(20100617,record.disabled_fields);
-        for (i in record.data.disabled_fields.length) {
+        //~ for (i in record.data.disabled_fields.length) {
+        for (i = 0; i < record.data.disabled_fields.length; i++) {
             var fld = this.form.findField(record.data.disabled_fields[i]);
             if (fld) { 
               fld.disable(); 

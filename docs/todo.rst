@@ -4,7 +4,11 @@ To-Do-Liste
 Kurzfristig
 -----------
 
-- Funktioniert die Datensynchronisierung TIM->Lino?
+- Quickfilter im Detail von Personen geht nicht. 
+
+- Man kann noch nicht nach Personen suchen, die ein bestimmtes Studium haben
+  
+- Datensynchronisierung TIM->Lino weiter beobachten.
 
 - Beim Öffnen eines Detail-Fensters sind die Slave-Grids anfangs nicht richtig mit ihrem Master verknüpft. 
   Erst nach PgUp oder PgDn kommen sie richtig.
@@ -30,8 +34,6 @@ Kurzfristig
 - iCal-Dateien generieren. 
   Im :class:`notes.NoteType` wird definiert, ob Lino einen Termin (oder Erinnerung oder Task) 
   per E-Mail an den Benutzer verschicken soll.
-
-- Quickfilter im Detail von Personen geht nicht. 
 
 - Benutzermeldungen anzeigen. 
 
@@ -129,4 +131,5 @@ Langfristig
   Rausfinden, ob man das nicht doch irgendwie automatisieren kann.
   http://docs.djangoproject.com/en/dev/topics/i18n/localization/
   
-- 
+- Der JS-Code, der ein Detail-Fenster definiert, wird für jeden Report zweimal generiert. 
+  Ein einziges Mal für alle Reports würde reichen.

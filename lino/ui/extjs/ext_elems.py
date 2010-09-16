@@ -110,13 +110,17 @@ class GridColumn(Component):
         #~ self.value_template = editor.grid_column_template
         kw.update(self.editor.get_column_options())
         kw.update(sortable=True)
-        kw.update(editor=self.editor)
+        kw.update(editor=editor)
         kw.update(colIndex=index)
         kw.update(hidden=editor.hidden)
         kw.update(filter=dict(type=editor.filter_type))
         #~ if isinstance(editor,FieldElement) and editor.field.primary_key:
-        if isinstance(editor,FieldElement) and isinstance(editor.field,models.AutoField):
-            kw.update(renderer=js_code('Lino.id_renderer'))
+        if isinstance(editor,FieldElement):
+            if isinstance(editor.field,models.AutoField):
+                kw.update(renderer=js_code('Lino.id_renderer'))
+            kw.update(editable=editor.editable)
+        else:
+            kw.update(editable=False)
         Component.__init__(self,editor.name,**kw)
     
         #~ if self.editable:
@@ -565,7 +569,7 @@ class BooleanFieldElement(FieldElement):
 
 class MethodElement(FieldElement):
     stored = True
-    editable = False
+    #~ editable = False
     filter_type = None
 
     def __init__(self,lh,name,meth,return_type,**kw):
@@ -584,6 +588,7 @@ class MethodElement(FieldElement):
                   'get_field_options'):
                   #~ ): # ,'grid_column_template'):
             setattr(self,a,getattr(delegate,a))
+        self.editable = False
         
 
 class Container(LayoutElement):
@@ -595,7 +600,7 @@ class Container(LayoutElement):
     
     #declare_type = jsgen.DECLARE_INLINE
     #declare_type = jsgen.DECLARE_THIS
-    #declare_type = jsgen.DECLARE_VAR
+    declare_type = jsgen.DECLARE_VAR
     #~ declare_type = jsgen.DECLARE_THIS
     
     
@@ -817,8 +822,7 @@ class Panel(Container):
         
         if self.is_fieldset:
             d.update(labelWidth=self.label_width * EXT_CHAR_WIDTH)
-            
-        if self.vertical:
+        if len(self.elements) > 1 and self.vertical:
             #d.update(frame=self.has_frame)
             d.update(frame=True)
             d.update(bodyBorder=False)
@@ -832,30 +836,6 @@ class Panel(Container):
             
         return d
         
-
-
-#~ class DataElementMixin:
-    #~ "common for Grids, Details and Forms"
-  
-class unused_GridElementBox(LayoutElement):
-  
-    declare_type = jsgen.DECLARE_VAR
-    #~ declare_type = jsgen.DECLARE_INLINE
-    ext_suffix = "_box"
-    #~ value_template = "new Ext.grid.Column(%s)"
-    
-    def __init__(self,lh,grid,**kw):
-        """editor may be a Panel for columns on a GenericForeignKey
-        """
-        #~ print 20100515, editor.name, editor.__class__
-        #~ assert isinstance(editor,FieldElement), \
-            #~ "%s.%s is a %r (expected FieldElement instance)" % (cm.grid.report,editor.name,editor)
-        kw.update(xtype='container')
-        kw.update(items=grid)
-        kw.update(layout='fit')
-        kw.update(autoScroll=True)
-        LayoutElement.__init__(self,lh,grid.name,**kw)
-  
 
 class GridElement(Container): 
     declare_type = jsgen.DECLARE_VAR

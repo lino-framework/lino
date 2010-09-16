@@ -1,0 +1,8 @@
+Release 20100916 : Lino 0.8.6 und DSBE 0.1.5
+============================================
+
+- Diverse Bugs in :doc:`/admin/tim2lino` behoben.
+- Die :term:`disabled fields` (die aus TIM importiert sind) sind jetzt wieder disabled.
+- Feld :attr:`dsbe.Persons.is_minor` (Minderjährig) habe ich rausgeholt.
+- Lino lässt es jetzt nicht mehr zu, virtuelle Felder zu bearbeiten.
+- Neue Kolonne "Sprachkenntnisse" (ein virtuelles Feld) in :menuselection:`Kontakte --> Personen`

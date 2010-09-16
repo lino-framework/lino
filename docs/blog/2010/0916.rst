@@ -1,0 +1,23 @@
+2010-09-16
+==========
+
+Die Idee von :doc:`gestern <0915>` (Slave-Reports als Kolonne einer Grid) ist Quatsch. 
+Statt im Slave-Report eine `as_string` zu schreiben, kann ich doch einfach 
+ein virtuelles Feld im Master machen. 
+
+Also z.B. in Person::
+
+  def language_knowledges(self):
+      l = []
+      for kn in self.languageknowledge_set.all():
+          if kn.spoken > '1' and kn.written > '1':
+              l.append(_(u"%s (s/w)") % kn.language)
+          elif kn.spoken > '1':
+              l.append(_(u"%s (s)")% kn.language)
+          elif kn.written > '1':
+              l.append(_(u"%s (w)")% kn.language)
+      return u", ".join(l)
+
+
+In der Grid erlaubte er, dass man virtuelle Felder bearbeitet. Behoben.
+

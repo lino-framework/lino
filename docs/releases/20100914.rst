@@ -1,0 +1,12 @@
+Release 20100914 : Lino 0.8.5 und DSBE 0.1.4
+============================================
+
+- Switched from mod_python to mod_wsgi
+
+- Optimierungen an tim2lino.py
+
+- Um die beiden Serien von Detail-Fenstern gleichzeitig demonstrieren zu können, 
+  gibt es zur Zeit provisorisch zwei Reports Persons1 und Persons2. 
+  
+- Erstmals versuche ich jetzt (wo ich Schreibzugriff aufs changelog-Verzeichnis habe) nach dem :xfile:`load_tim.py` auch die :xfile:`tim2lino.py` zu starten.
+
