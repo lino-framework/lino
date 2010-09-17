@@ -1,0 +1,10 @@
+2010-09-17
+==========
+
+
+- New showcase `20100917 <http://code.google.com/p/lino/source/browse/extjs-showcases/20100917.html>`_ 
+  to try whether I can use a borderlayout instead of the vbox of screenshot 20100912 to render the 3 grids.
+  
+  Resultat: Super, das klappt. Also ich habe eine neue Klasse Lino.VBorderPanel, die in ihren items nach einer 
+  Eigenschaft `vflex` schaut, die wie das flex einer vbox zu verstehen ist.
+

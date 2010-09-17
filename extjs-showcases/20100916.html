@@ -1,0 +1,211 @@
+<html><head>
+<!--  -->
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title id="title">2010-09-16</title>
+<!-- ** CSS ** -->
+<!-- base library -->
+<link rel="stylesheet" type="text/css" href="../../resources/css/ext-all.css" />
+<!-- overrides to base library -->
+<!-- ** Javascript ** -->
+<!-- ExtJS library: base/adapter -->
+<script type="text/javascript" src="../../adapter/ext/ext-base.js"></script>
+<!-- ExtJS library: all widgets -->
+<script type="text/javascript" src="../../ext-all-debug.js"></script>
+<script type="text/javascript">
+
+
+
+function do_when_visible (cmp,todo) {
+  //~ if (cmp.el && cmp.el.dom) 
+  if (cmp.isVisible()) { 
+    // 'visible' means 'rendered and not hidden'
+    console.log('do_when_visible() now',todo);
+    todo(); 
+  } else { 
+    console.log('do_when_visible() must defer because not isVisible()',todo,cmp);
+    //~ todo.defer(1000);
+    if (cmp.rendered) {
+      console.log('-> cmp is rendered but not visible: and now?');
+      //~ cmp.getVisibilityEl().on('show',todo,cmp,{single:true});
+      //~ if (cmp.hidden) {
+        //~ console.log('Lino.do_when_visible() later (on show)',cmp,todo);
+        //~ cmp.on('show',todo,cmp,{single:true});
+      //~ } else {
+        //~ console.log('Lino.do_when_visible() later (on activate)',cmp,todo);
+        //~ cmp.on('activate',todo,cmp,{single:true});
+      //~ }
+    } else {
+      console.log('-> do it on render');
+      cmp.on('render',todo,cmp,{single:true});
+    }
+  }
+  
+}
+
+
+function load_data_to(grid,rec) {
+  var f = function() {
+    console.log('load_data_to()',rec);
+    grid.getStore().loadData(rec.grid_data)
+  }
+  //~ do_when_visible(grid,f);
+  f();
+}
+
+function load_picture_to(picbox,record) {
+  if (record)
+    var src = record.picture_url;
+  else
+    var src = 'empty.jpg';
+  var f = function() {
+    console.log('load_picture_to()',src);
+    picbox.el.dom.src = src;
+    //~ this.el.dom.onclick = 'img_onclick(src)';
+    //~ this.el.dom.onclick = 'window.open(src)';
+    //~ cmp.el.on('click',function() {window.open(src)});
+    
+  };
+  do_when_visible(picbox,f);
+  //~ f();
+}
+
+var RECORD1 = {
+  title: 'first record',
+  picture_url: 'empty.jpg',
+  grid_data : [
+        ['3m Co',71.72,0.02,0.03,'8/1 12:00am', 'Manufacturing'],
+        ['Alcoa Inc',29.01,0.42,1.47,'9/1 12:00am', 'Manufacturing'],
+        ['Altria Group Inc',83.81,0.28,0.34,'10/1 12:00am', 'Manufacturing'],
+        ['American Express Company',52.55,0.01,0.02,'9/1 10:00am', 'Finance'],
+        ['American International Group, Inc.',64.13,0.31,0.49,'9/1 11:00am', 'Services'],
+        ['AT&T Inc.',31.61,-0.48,-1.54,'9/1 12:00am', 'Services'],
+        ['Boeing Co.',75.43,0.53,0.71,'9/1 12:00am', 'Manufacturing'],
+        ['Caterpillar Inc.',67.27,0.92,1.39,'9/1 12:00am', 'Services'],
+        ['Citigroup, Inc.',49.37,0.02,0.04,'9/1 12:00am', 'Finance']
+  ]
+}
+      
+
+var RECORD2 = {
+  title: 'second record',
+  picture_url: 'luc.jpg',
+  grid_data : [
+        ['E.I. du Pont de Nemours and Company',40.48,0.51,1.28,'9/1 12:00am', 'Manufacturing'],
+        ['Exxon Mobil Corp',68.1,-0.43,-0.64,'9/1 12:00am', 'Manufacturing'],
+        ['General Electric Company',34.14,-0.08,-0.23,'9/1 12:00am', 'Manufacturing'],
+        ['General Motors Corporation',30.27,1.09,3.74,'9/1 12:00am', 'Automotive'],
+        ['Hewlett-Packard Co.',36.53,-0.03,-0.08,'9/1 12:00am', 'Computer'],
+        ['Honeywell Intl Inc',38.77,0.05,0.13,'9/1 12:00am', 'Manufacturing'],
+        ['Intel Corporation',19.88,0.31,1.58,'9/1 12:00am', 'Computer'],
+        ['International Business Machines',81.41,0.44,0.54,'9/1 12:00am', 'Computer'],
+        ['Johnson & Johnson',64.72,0.06,0.09,'9/1 12:00am', 'Medical'],
+        ['JP Morgan & Chase & Co',45.73,0.07,0.15,'9/1 12:00am', 'Finance'],
+        ['McDonald\'s Corporation',36.76,0.86,2.40,'9/1 12:00am', 'Food'],
+        ['Merck & Co., Inc.',40.96,0.41,1.01,'9/1 12:00am', 'Medical'],
+        ['Microsoft Corporation',25.84,0.14,0.54,'9/1 12:00am', 'Computer'],
+        ['Pfizer Inc',27.96,0.4,1.45,'9/1 12:00am', 'Services', 'Medical'],
+        ['The Coca-Cola Company',45.07,0.26,0.58,'9/1 12:00am', 'Food'],
+        ['The Home Depot, Inc.',34.64,0.35,1.02,'9/1 12:00am', 'Retail'],
+        ['The Procter & Gamble Company',61.91,0.01,0.02,'9/1 12:00am', 'Manufacturing'],
+        ['United Technologies Corporation',63.26,0.55,0.88,'9/1 12:00am', 'Computer'],
+        ['Verizon Communications',35.57,0.39,1.11,'9/1 12:00am', 'Services'],
+        ['Wal-Mart Stores, Inc.',45.45,0.73,1.63,'9/1 12:00am', 'Retail'],
+        ['Walt Disney Company (The) (Holding Company)',29.89,0.24,0.81,'9/1 12:00am', 'Services']
+  ]
+}
+
+
+// taken from http://examples.extjs.eu/
+ExampleGrid = Ext.extend(Ext.grid.GridPanel, {
+  initComponent:function() {
+  // hard coded - cannot be changed from outside
+  var config = {
+    store: new Ext.data.ArrayStore({
+      id:0
+      ,fields:[
+        {name: 'company'}
+        ,{name: 'price', type: 'float'}
+        ,{name: 'change', type: 'float'}
+        ,{name: 'pctChange', type: 'float'}
+        ,{name: 'lastChange', type: 'date', dateFormat: 'n/j h:ia'}
+        ,{name: 'industry'}
+        ,{name: 'desc'}
+      ]
+      }
+    )
+    ,columns:[
+      {id:'company',header: "Company", width: 80, sortable: true, dataIndex: 'company'}
+      ,{header: "Price",               width: 40, sortable: true, renderer: Ext.util.Format.usMoney, dataIndex: 'price'}
+      ,{header: "Change",              width: 40, sortable: true, dataIndex: 'change'}
+      ,{header: "% Change",            width: 40, sortable: true, dataIndex: 'pctChange'}
+      ,{header: "Last Updated",        width: 40, sortable: true, renderer: Ext.util.Format.dateRenderer('m/d/Y'), dataIndex: 'lastChange'}
+    ]
+    ,viewConfig:{forceFit:true}
+    //~ ,collapsible: true
+  }; // eo config object
+ 
+  // apply config
+  Ext.apply(this, Ext.apply(this.initialConfig, config));
+   
+  // call parent
+  ExampleGrid.superclass.initComponent.apply(this, arguments);
+} // eo function initComponent
+ 
+});
+ 
+function img_onclick(cmp) {
+  //~ console.log('img_onclick',cmp,arguments);
+  window.open(cmp.el.dom.src);
+}
+
+PictureBoxPlugin = {
+  init : function (cmp) {
+      do_when_visible(cmp,function() { cmp.el.on('click',function() { img_onclick(cmp) }) });
+      //~ cmp.el.on('click',Lino.img_click_handler(cmp.el.dom.src));
+  }
+}
+
+
+Ext.onReady(function() {
+
+  var grid = new ExampleGrid({title:"First Grid"});
+  var gridbox = {flex:1,autoScroll:true,items:grid,xtype:'container',layout:'fit'}
+  
+  var picbox = new Ext.BoxComponent({
+        autoEl:{tag:'img'},
+        style:{height:'100%',cursor:'pointer'},
+        plugins: [PictureBoxPlugin],
+        flex: 1
+        });
+        
+  //~ var panel1 = { items: [{xtype:'label',html:'foo'},gridbox], layout: {type:'vbox',align:'stretch'}}
+  //~ var panel2 = { items: [{xtype:'label',html:'bar'},picbox], layout: {type:'vbox',align:'stretch'}}
+        
+        
+  function load_record(rec) {
+    win.setTitle(rec.title);
+    load_picture_to(picbox,rec);
+    load_data_to(grid,rec);
+  }
+  
+  
+  var win = new Ext.Window({
+    width: 600, height:400,
+    layout:'fit',
+    maximizable: true,
+    bbar: [ {text:'1', handler: function(){load_record(RECORD1)}}, {text:'2', handler: function(){load_record(RECORD2)}}],
+    items: {
+      xtype: 'tabpanel', items: [
+        {title: 'Grid', layout:'fit',items:gridbox},
+        {title: 'Picture',  layout:'fit',items:picbox}
+        //~ {title: 'Grid', layout:'fit',items:panel1},
+        //~ {title: 'Picture',  layout:'fit',items:panel2}
+      ]
+    }
+  });
+  load_record(RECORD1);
+  win.show();
+});
+</script>
+</head><body>
+</body></html>

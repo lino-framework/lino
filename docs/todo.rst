@@ -4,8 +4,6 @@ To-Do-Liste
 Kurzfristig
 -----------
 
-- Bankkonten fehlen in Detail.
-
 - Die Extra-Zeile sollte ganz leer sein (Standardwerte nicht anzeigen).
 
 - Löschen auf Extrazeile sollte deaktiviert sein. 
@@ -21,9 +19,6 @@ Kurzfristig
 - Man kann noch nicht nach Personen suchen, die ein bestimmtes Studium haben
   
 - Datensynchronisierung TIM->Lino weiter beobachten.
-
-- Beim Öffnen eines Detail-Fensters sind die Slave-Grids anfangs nicht richtig mit ihrem Master verknüpft. 
-  Erst nach PgUp oder PgDn kommen sie richtig.
 
 - Wenn in einer vbox mit 2 Grids ein der Grids kollabiert, sollte die andere den dadurch verfügbaren Raum ausfüllen.
   collapse-Events beider Gridboxen an doLayout oder resize der vbox verknüpfen...

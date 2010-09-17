@@ -1,10 +1,18 @@
 Demo sites
 ==========
 
-All personal data appearing on the following demo sites are fictitious. Any resemblance to real persons, living or dead, is purely coincidental.
+You can log into the demo sites listed below using one of the following user names:
 
-If you are asked to log in, then enter
-`root` or `user` as username, and `1234` as password.
+  ======== ========
+  username password
+  ======== ========
+  `root`   `1234`
+  `user`   `1234`
+  ======== ========
+
+You may change data, and your changes will remain visible to others until the next release.
+
+All person names and addresses appearing on the demo sites are fictitious. Any resemblance to real persons, living or dead, is purely coincidental.
 
 Be prepared to see things not working as expected. Keep in mind that Lino is still very young. Don't hesitate to contact the author if you have questions, comments, ideas, suggestions.
 

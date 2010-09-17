@@ -23,8 +23,39 @@ In der Grid erlaubte er, dass man virtuelle Felder bearbeitet. Behoben.
 
 Release in Eupen: :doc:`/releases/20100916`.
 
-Aha, ich dachte mir schon, dass ich was falsch mache beim Start von watch_tim:
-http://www.linuxquestions.org/questions/linux-newbie-8/put-a-process-in-background-and-logout-261399/  
+watch_tim
+---------
 
-- `make_staff` ist jetzt ebenfalls ein management command (von :mod:`lino.modlib.system`)
+Aha, ich dachte mir schon, dass ich was falsch mache beim Start von watch_tim:
+http://www.linuxquestions.org/questions/linux-newbie-8/put-a-process-in-background-and-logout-261399/ 
+
+make_staff
+----------
+
+`make_staff` ist jetzt ebenfalls ein management command (:mod:`lino.modlib.system.management.commands.make_staff`). 
+Das Ding ist freilich weiterhin primitiv und wird sich im Laufe der Zeit wohl noch stark ändern. 
+Vielleicht wird es sich aber auch als unnütz erweisen. Jedenfalls ist die einzige Funktion momentan, 
+dass man ausgewählten Benutzern ihr `is_staff` setzen kann.
+
+:js:func:`Lino.do_when_visible` funktioniert nicht
+--------------------------------------------------
+
+Jetzt nehmen wir uns mal folgendes Problem vor: 
+
+  Beim Öffnen eines Detail-Fensters sind die Slave-Grids anfangs nicht richtig mit ihrem Master verknüpft. 
+  Erst nach PgUp oder PgDn kommen sie richtig."
+
+Das kommt immer, wenn Lino.DetailWrapper mit einem data_record gerufen wird. Also z.B. über permalink.
+Dann ruft er load_master_record auf, der auch wie es sein muss Lino.do_when_visible ruft
+(mit load_picture bei Bildern bzw. setBaseParams bei Slavegrids), aber weil das Bild bzw. die Grid in diesem Moment 
+noch nicht isVisible ist, muss Lino.do_when_visible einen deferred call machen. 
+Aber die werden nie aufgerufen.
+Also Lino.do_when_visible funktioniert nicht.
+Er hängt die todo entweder ans `render`-Event oder ans `show`-Event. 
+Wie kann es kommen, dass `cmp.rendered` und nicht `cmp.hidden` ist, aber `cmp.isVisible()` trotzdem `false` zurück gibt?
+
+Puh! Nach über 6 Stunden Sucherei habe ich jetzt immerhin ein Post mit einem Showcase ans ExtJS-Forum schicken können:
+`Grid is rendered but not visible <http://www.sencha.com/forum/showthread.php?110043-Grid-is-rendered-but-not-visible>`__
+Wobei das Showcase, das ich geschrieben habe, leider perfekt funktioniert und folglich mein Problem nicht einmal reproduziert. 
+Also in einem ersten Schritt hoffe ich lediglich auf Ideen, wie ich den Fehler reproduziert bekommen könnte...
 

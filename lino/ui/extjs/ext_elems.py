@@ -705,7 +705,7 @@ class Panel(Container):
                         egroups.append([e])
                         
                 if len(egroups) == 1:
-                    # all elements are vflex
+                    # all elements have same vflex
                     assert tuple(egroups[0]) == elements, "%r != %r" % (tuple(egroups[0]), elements)
                     
                 elements = []
@@ -770,6 +770,7 @@ class Panel(Container):
             elif self.vertical:
                 #~ d.update(layout='form')
                 if self.vflex:
+                    self.value_template = 'new Lino.VBorderPanel(%s)'
                     d.update(layout='vbox',layoutConfig=dict(align='stretch'))
                 else:
                     d.update(layout='form')

@@ -452,7 +452,7 @@ class ExtUI(base.UI):
         #~ yield '<div id="tbar"/>'
         #~ yield '<div id="main"/>'
         #~ yield '<div id="bbar"/>'
-        yield '<div id="konsole"/>'
+        yield '<div id="konsole"></div>'
         yield "</body></html>"
         
             
@@ -686,7 +686,7 @@ class ExtUI(base.UI):
             a = rpt.get_action(fmt)
             if a is not None:
                 if isinstance(a,actions.OpenWindowAction):
-                    params = dict(data_record=elem2rec(request,ah,elem),region='center')
+                    params = dict(data_record=elem2rec(request,ah,elem))
                     return HttpResponse(self.html_page(request,on_ready=['Lino.%s(undefined,%s);' % (a,py2js(params))]))
                     
                 if isinstance(a,actions.RedirectAction):

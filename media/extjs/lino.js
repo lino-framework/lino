@@ -500,12 +500,23 @@ Lino.do_when_visible = function(cmp,todo) {
   //~ if (cmp.el && cmp.el.dom) 
   if (cmp.isVisible()) { 
     // 'visible' means 'rendered and not hidden'
+    console.log('Lino.do_when_visible() now',todo);
     todo(); 
   } else { 
-    //~ console.log('Lino.load_slavegrid() deferred',record);
+    console.log('Lino.do_when_visible() must defer because not isVisible()',todo,cmp);
+    //~ todo.defer(1000);
     if (cmp.rendered) {
-      cmp.on('show',todo,cmp,{single:true});
+      console.log('-> cmp is rendered but not visible: and now?');
+      //~ cmp.getVisibilityEl().on('show',todo,cmp,{single:true});
+      //~ if (cmp.hidden) {
+        //~ console.log('Lino.do_when_visible() later (on show)',cmp,todo);
+        //~ cmp.on('show',todo,cmp,{single:true});
+      //~ } else {
+        //~ console.log('Lino.do_when_visible() later (on activate)',cmp,todo);
+        //~ cmp.on('activate',todo,cmp,{single:true});
+      //~ }
     } else {
+      console.log('-> on render');
       cmp.on('render',todo,cmp,{single:true});
     }
   }
@@ -598,7 +609,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   },
   load_master_record : function(record) {
     this.current_record = record;
-    //~ console.log('20100531 Lino.DetailMixin.load_master_record',record);
+    console.log('Lino.FormPanel.load_master_record',record);
     //~ this.config.main_panel.form.load(record);    
     if (record) {
       this.enable();
@@ -611,8 +622,8 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
             var fld = this.form.findField(record.data.disabled_fields[i]);
             if (fld) { 
               fld.disable(); 
-            } else {
-                console.log(20100617,record.data.disabled_fields[i], 'field not found');
+            //~ } else {
+                //~ console.log(20100617,record.data.disabled_fields[i], 'field not found');
             }
         }
       };
@@ -646,13 +657,13 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     //~ console.log(20100714,this.current_record);
     return this.current_record },
   load_picture_to : function(cmp,record) {
-    //~ console.log('Lino.load_picture()',record);
+    console.log('FormPanel.load_picture_to()',record);
     if (record)
       var src = '/api'+this.ww.main_item.ls_url + "/" + record.id + "?fmt=image"
     else
       var src = 'empty.jpg';
     var f = function() {
-      //~ console.log('Lino.load_picture()',src);
+      console.log('Lino.load_picture()',src);
       cmp.el.dom.src = src;
       //~ this.el.dom.onclick = 'Lino.img_onclick(src)';
       //~ this.el.dom.onclick = 'window.open(src)';
@@ -660,6 +671,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
       
     };
     Lino.do_when_visible(cmp,f);
+    //~ f();
   }
 });
 
@@ -1083,7 +1095,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
       cmp = this;
       var todo = function() {
         //~ var src = caller.config.url_data + "/" + record.id + ".jpg"
-        //~ console.log('load_master_record()',cmp,master_record);
+        console.log('Lino.GridPanel.load_master_record()',cmp,master_record);
         var p = cmp.ww.get_master_params(master_record);
         for (k in p) cmp.getStore().setBaseParam(k,p[k]);
         cmp.getStore().load(); 
@@ -1389,7 +1401,10 @@ Lino.WindowWrapper = function(caller,config,params) {
   //~ console.log('Lino.WindowWrapper.setup done',this);
   this.setup();
   if (config.data_record) {
-    //~ console.log('Lino.WindowWrapper with data_record');
+    console.log('Lino.WindowWrapper with data_record',config.data_record);
+    //~ this.main_item.load_master_record.defer(2000,this.main_item,[config.data_record]);
+    //~ Lino.do_when_visible(this.main_item,function(){this.load_master_record(config.data_record)});
+    //~ this.main_item.on('afterrender',function(){this.main_item.load_master_record(config.data_record)},this,{single:true});
     this.main_item.load_master_record(config.data_record);
     return;
   } 
@@ -1487,32 +1502,6 @@ Lino.GridMasterWrapper.override({
 });
 
 
-//~ Lino.SlaveMixin = {
-  //~ closeAction : 'hide',
-  //~ add_row_listener : function(fn,scope) {
-    //~ this.caller.add_row_listener(fn,scope);
-  //~ }
-//~ };
-
-
-//~ Lino.GridSlaveWrapper = Ext.extend(Lino.WindowWrapper,{});
-//~ Lino.GridSlaveWrapper.override(Lino.SlaveMixin);
-//~ Lino.GridSlaveWrapper.override(Lino.GridMixin);
-//~ Lino.GridSlaveWrapper.override({
-  //~ unused_load_master_record : function(record) {
-    //~ Lino.load_slavegrid(this.caller,this.main_grid,record);
-  //~ }
-//~ });
-
-//~ Lino.DetailSlaveWrapper = Ext.extend(Lino.WindowWrapper,{});
-//~ Lino.DetailSlaveWrapper.override(Lino.SlaveMixin);
-//~ Lino.DetailSlaveWrapper.override({
-  //~ setup:function() {
-    //~ this.main_item = this.config.main_panel;
-    //~ Lino.WindowWrapper.prototype.setup.call(this);
-    //~ this.main_form = this.main_item;
-  //~ }
-//~ });
 
 Lino.DetailWrapperBase = Ext.extend(Lino.WindowWrapper, {});
 Lino.DetailWrapperBase.override({

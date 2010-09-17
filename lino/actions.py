@@ -210,7 +210,7 @@ class SubmitInsert(Action):
     
                 
 class RedirectAction(Action):
-  
+    #~ mimetype = None
     def get_target_url(self,elem):
         raise NotImplementedError
         
@@ -220,6 +220,7 @@ class ImageAction(RedirectAction):
     name = 'image'
     label = _('Image')
     callable_from = tuple()
+    #~ mimetype = 'image'
     
     def get_target_url(self,elem):
         #~ return settings.MEDIA_URL + "/".join(elem.get_image_url(self))
