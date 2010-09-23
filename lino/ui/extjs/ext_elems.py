@@ -19,7 +19,7 @@ from django.utils.translation import ugettext as _
 
 import lino
 
-from lino import layouts, reports, actions
+from lino import reports, actions
 from lino.utils import constrain
 from lino.utils import choosers
 from lino.utils import jsgen
@@ -35,7 +35,7 @@ EXT_CHAR_HEIGHT = 22
 DEFAULT_GC_NAME = 'std'
 
 
-def varname_field(f):
+def unused_varname_field(f):
     if hasattr(f,'model'):
         return f.model.__name__ + '_' + f.name + '_field'
     else: # e.g. Field instances used as return_type for methods
@@ -142,7 +142,7 @@ class VisibleComponent(Component):
     width = None
     height = None
     preferred_width = 10
-    preferred_height = 0
+    preferred_height = 1
     #flex = None
     
     def __init__(self,name,width=None,height=None,label=None,**kw):
@@ -159,14 +159,18 @@ class VisibleComponent(Component):
 
     def __str__(self):
         "This shows how elements are specified"
+        name = Component.__str__(self)
         if self.width is None:
-            return self.name
+            return name
         if self.height is None:
-            return self.name + ":%d" % self.width
-        return self.name + ":%dx%d" % (self.width,self.height)
+            return name + ":%d" % self.width
+        return name + ":%dx%d" % (self.width,self.height)
+        
+    def __repr__(self):
+        return str(self)
         
     def pprint(self,level=0):
-        return ("  " * level) + self.__str__()
+        return ("  " * level) + str(self)
         
     def walk(self):
         yield self
@@ -210,7 +214,7 @@ class LayoutElement(VisibleComponent):
         VisibleComponent.__init__(self,name,**kw)
         self.lh = lh
         #~ if lh is not None:
-        assert isinstance(lh,layouts.LayoutHandle)
+        assert isinstance(lh,reports.LayoutHandle)
         lh.setup_element(self)
 
     def submit_fields(self):
@@ -233,7 +237,7 @@ class LayoutElement(VisibleComponent):
             #~ raise Exception("%s : parent is already %s, cannot set it to %s" % (self,self.parent,parent))
         self.parent = parent
         if self.label and isinstance(parent,Panel):
-            if parent.labelAlign == layouts.LABEL_ALIGN_LEFT:
+            if parent.labelAlign == reports.LABEL_ALIGN_LEFT:
                 self.preferred_width += len(self.label)
 
     def ext_options(self,**kw):
@@ -334,7 +338,8 @@ class FieldElement(LayoutElement):
         assert field.name, Exception("field %r has no name!" % field)
         self.field = field
         self.editable = field.editable # and not field.primary_key
-        LayoutElement.__init__(self,lh,varname_field(field),label=unicode(field.verbose_name),**kw)
+        #~ LayoutElement.__init__(self,lh,varname_field(field),label=unicode(field.verbose_name),**kw)
+        LayoutElement.__init__(self,lh,field.name,label=unicode(field.verbose_name),**kw)
         
     #~ def get_filter_options(self,**kw):
         #~ if self.filter_type:
@@ -375,6 +380,9 @@ class FieldElement(LayoutElement):
             kw.update(allowBlank=False)
         if not self.editable:
             kw.update(readOnly=True)
+        #~ http://www.rowlands-bcs.com/extjs/tips/tooltips-form-fields
+        #~ if self.field.__doc__:
+            #~ kw.update(toolTipText=self.field.__doc__)
         return kw
         
     def ext_options(self,**kw):
@@ -394,7 +402,7 @@ class TextFieldElement(FieldElement):
     #~ xtype = 'htmleditor'
     #width = 60
     preferred_width = 60
-    preferred_height = 3
+    #~ preferred_height = 1
     #collapsible = True
 
         
@@ -437,7 +445,7 @@ class RemoteComboFieldElement(ComboFieldElement):
     value_template = "new Lino.RemoteComboFieldElement(%s)"
   
     def store_options(self,**kw):
-        proxy = dict(url=self.lh.ui.get_choices_url(self),method='GET')
+        proxy = dict(url=self.lh.rh.ui.get_choices_url(self),method='GET')
         kw.update(proxy=js_code("new Ext.data.HttpProxy(%s)" % py2js(proxy)))
         # a JsonStore without explicit proxy sometimes used method POST
         return kw
@@ -493,13 +501,13 @@ class DateFieldElement(FieldElement):
     
     def get_field_options(self,**kw):
         kw = FieldElement.get_field_options(self,**kw)
-        kw.update(format=self.lh.layout.datalink_report.date_format)
+        kw.update(format=self.lh.rh.report.date_format)
         return kw
         
     def get_column_options(self,**kw):
         kw = FieldElement.get_column_options(self,**kw)
         kw.update(xtype='datecolumn')
-        kw.update(format=self.lh.layout.datalink_report.date_format)
+        kw.update(format=self.lh.rh.report.date_format)
         return kw
     
 class IntegerFieldElement(FieldElement):
@@ -551,9 +559,9 @@ class BooleanFieldElement(FieldElement):
     def get_column_options(self,**kw):
         kw = FieldElement.get_column_options(self,**kw)
         kw.update(xtype='booleancolumn')
-        kw.update(trueText=self.lh.layout.datalink_report.boolean_texts[0])
-        kw.update(falseText=self.lh.layout.datalink_report.boolean_texts[1])
-        kw.update(undefinedText=self.lh.layout.datalink_report.boolean_texts[2])
+        kw.update(trueText=self.lh.rh.report.boolean_texts[0])
+        kw.update(falseText=self.lh.rh.report.boolean_texts[1])
+        kw.update(undefinedText=self.lh.rh.report.boolean_texts[2])
         return kw
         
     def get_from_form(self,instance,values):
@@ -573,7 +581,7 @@ class MethodElement(FieldElement):
     filter_type = None
 
     def __init__(self,lh,name,meth,return_type,**kw):
-        assert isinstance(lh,layouts.LayoutHandle)
+        assert isinstance(lh,reports.LayoutHandle)
         # uh, this is tricky...
         return_type.name = name
         #~ return_type.verbose_name = name
@@ -621,7 +629,14 @@ class Container(LayoutElement):
             elif isinstance(e,Panel):
                 self.active_children += e.active_children
                 #~ self.has_fields = True
+                
+        kw.update(items=elements)
+                
         LayoutElement.__init__(self,lh,name,**kw)
+        
+        if lh.layout.__class__.__name__ == 'CompanyDetail':
+            print 20100919, self.__class__.__name__, name, ':', str(elements)
+        
         
     def subvars(self):
         return self.elements
@@ -653,11 +668,6 @@ class Panel(Container):
     
     def __init__(self,lh,name,vertical,*elements,**kw):
         self.vertical = vertical
-        Container.__init__(self,lh,name,*elements,**kw)
-        label = lh.layout.collapsible_elements.get(name,None)
-        if label:
-            self.collapsible = True
-            self.label = label
             
         #~ if self.vertical:
             #~ vflex_elems = [e for e in elements if e.vflex]
@@ -691,8 +701,12 @@ class Panel(Container):
                     
         if self.vflex and len(elements) > 1:
             if self.vertical:
+                """
+                Example : The panel contains a mixture of fields and grids. 
+                Fields are not vflex, grids well.
+                """
                 #~ print 20100615, self.lh, self
-                # so we must split this panel into several containers. 
+                # so we must split this panel into several containers.
                 # vflex elements go into a vbox, the others into a form layout. 
                 
                 # Rearrange elements into "element groups"
@@ -720,22 +734,24 @@ class Panel(Container):
                             g = eg[0]
                         else:
                             #~ g = Container(lh,name,*eg,**dict(layout='vbox',flex=1)
-                            g = Panel(lh,name,*eg,**dict(layout='vbox',flex=1,layoutConfig=dict(align='stretch')))
+                            g = Panel(lh,name,vertical,*eg,**dict(layout='vbox',flex=1,layoutConfig=dict(align='stretch')))
+                            assert g.vflex is True
                     else:
                         #~ for e in eg: e.update(align='stretch')
                         if len(eg) == 1:
                             g = eg[0]
                         else:
                             g = Container(lh,name,*eg,**dict(layout='form',autoHeight=True))
+                            assert g.vflex is False
                     #~ if monitorResize:
                         #~ g.update(monitorResize=True)
                     #~ g.update(align='stretch')
                     #~ g.update(layoutConfig=dict(align='stretch'))
                     elements.append(g)
-                self.update(layout='vbox',layoutConfig=dict(align='stretch'))
-                #~ self.value['align'] = 'stretch'
+                kw.update(layout='vbox',layoutConfig=dict(align='stretch'))
+                #~ self.elements = elements
             else: # not self.vertical
-                self.update(layout='hbox',layoutConfig=dict(align='stretch'))
+                kw.update(layout='hbox',layoutConfig=dict(align='stretch'))
               
         for e in elements:
             #~ e.set_parent(self)
@@ -748,8 +764,17 @@ class Panel(Container):
                     if self.label_width < w:
                         self.label_width = w
 
+
+        label = lh.layout.collapsible_elements.get(name,None)
+        if label:
+            self.collapsible = True
+            self.label = label
+
+        Container.__init__(self,lh,name,*elements,**kw)
+        
+
         w = h = 0
-        for e in elements:
+        for e in self.elements:
             ew = e.width or e.preferred_width
             eh = e.height or e.preferred_height
             if self.vertical:
@@ -762,32 +787,35 @@ class Panel(Container):
                 h = max(h,eh)
         self.preferred_height = h
         self.preferred_width = w
+        assert self.preferred_height > 0, "%s : preferred_height is 0" % self
+        assert self.preferred_width > 0, "%s : preferred_width is 0" % self
         
         d = self.value
         if not d.has_key('layout'):
-            if len(elements) == 1:
+            if len(self.elements) == 1:
                 d.update(layout='fit')
             elif self.vertical:
                 #~ d.update(layout='form')
                 if self.vflex:
-                    self.value_template = 'new Lino.VBorderPanel(%s)'
                     d.update(layout='vbox',layoutConfig=dict(align='stretch'))
                 else:
+                    # 20100921b
                     d.update(layout='form')
+                    #~ d.update(layout='vbox',autoHeight=True)
             else:
                 #~ d.update(layout='column') # 20100615
                 if stretch : # 20100912
                 #~ if self.vflex: # 20100912
                     d.update(layout='hbox',layoutConfig=dict(align='stretch'))
                 else:
-                    d.update(layout='hbox')
+                    d.update(layout='hbox',autoHeight=True)
                 
         if d['layout'] == 'form':
             assert self.vertical
-            if len(elements) == 1 and elements[0].vflex:
-                elements[0].update(anchor="100% 100%")
+            if len(self.elements) == 1 and self.elements[0].vflex:
+                self.elements[0].update(anchor="100% 100%")
             else:
-                for e in elements:
+                for e in self.elements:
                     #~ assert not e.vflex
                     #~ h = e.height or e.preferred_height
                     #~ if e.vflex:
@@ -797,12 +825,25 @@ class Panel(Container):
                     e.update(anchor="100%")
         #~ elif d['layout'] == 'column': # 20100615
         elif d['layout'] == 'hbox':
-            for e in elements:
+            for e in self.elements:
                 w = e.width or e.preferred_width
                 #~ e.value.update(columnWidth=float(w)/self.preferred_width) # 20100615
                 e.value.update(flex=int(w*100/self.preferred_width))
+        elif d['layout'] == 'vbox':
+            h = self.height or self.preferred_height
+            for e in self.elements:
+                eh = e.height or e.preferred_height
+                e.value.update(flex=int(eh*100/h))
+            if len(self.elements) <= 3:
+                self.remove('layout','layoutConfig')
+                self.value_template = 'new Lino.VBorderPanel(%s)'
+                for e in self.elements:
+                    e.update(split=True)
+                self.elements[0].update(region='north')
+                self.elements[1].update(region='center')
+                if len(self.elements) == 3:
+                    self.elements[1].update(region='south')
             
-        
         
     def ext_options(self,**d):
         d = Container.ext_options(self,**d)
@@ -816,7 +857,7 @@ class Panel(Container):
         #d.update(margins='0')
         #d.update(style=dict(padding='0px'))
         
-        d.update(items=self.elements)
+        #~ d.update(items=self.elements)
         #l = [e.as_ext() for e in self.elements ]
         #d.update(items=js_code("[\n  %s\n]" % (", ".join(l))))
         #d.update(items=js_code("this.elements"))
@@ -846,23 +887,26 @@ class GridElement(Container):
     ext_suffix = "_grid"
     vflex = True
     xtype = None
+    preferred_height = 5
     
-    def __init__(self,lh,name,rpt,*elements,**kw):
+    def __init__(self,lh,name,rpt,*columns,**kw):
         """
         :param lh: the handle of the DetailLayout owning this grid
         :param rpt: the report being displayed
         """
         assert isinstance(rpt,reports.Report), "%r is not a Report!" % rpt
         self.report = rpt
-        if len(elements) == 0:
-            self.rh = rpt.get_handle(lh.ui)
-            elements = self.rh.list_layout._main.elements
+        if len(columns) == 0:
+            self.rh = rpt.get_handle(lh.rh.ui)
+            columns = self.rh.list_layout._main.columns
+            #~ columns = self.rh.list_layout._main.elements
         w = 0
-        for e in elements:
+        for e in columns:
             w += (e.width or e.preferred_width)
         self.preferred_width = constrain(w,10,120)
         #~ kw.update(boxMinWidth=500)
-        Container.__init__(self,lh,name,*elements,**kw)
+        self.columns = columns
+        Container.__init__(self,lh,name,**kw)
         assert not kw.has_key('before_row_edit')
         self.update(before_row_edit=before_row_edit(self))
         
@@ -879,12 +923,12 @@ class GridElement(Container):
             #~ self.column_model.columns[i].update(width = w)
 
     def ext_options(self,**kw):
-        rh = self.report.get_handle(self.lh.ui)
+        rh = self.report.get_handle(self.lh.rh.ui)
         kw = LayoutElement.ext_options(self,**kw)
         #~ d.update(ls_data_url=rh.ui.get_actor_url(self.report))
         kw.update(ls_url=rh.ui.build_url(self.report.app_label,self.report._actor_name))
         kw.update(ls_store_fields=[js_code(f.as_js()) for f in rh.store.fields])
-        kw.update(ls_columns=[GridColumn(i,e) for i,e in enumerate(self.elements)])
+        kw.update(ls_columns=[GridColumn(i,e) for i,e in enumerate(self.columns)])
         #~ kw.update(ls_filters=[e.get_filter_options() for e in self.elements if e.filter_type])
         kw.update(ls_id_property=rh.store.pk.name)
         kw.update(ls_quick_edit=True)
@@ -911,11 +955,11 @@ class SlaveGridElement(GridElement):
       
         
 class M2mGridElement(GridElement):
-    def __init__(self,lh,field,*elements,**kw):
+    def __init__(self,lh,field,*columns,**kw):
         self.field = field
         rpt = reports.get_model_report(field.rel.to)
         #~ rh = rpt.get_handle(lh.ui)
-        GridElement.__init__(self,lh,id2js(rpt.actor_id),rpt,*elements,**kw)
+        GridElement.__init__(self,lh,id2js(rpt.actor_id),rpt,*columns,**kw)
   
 
             
@@ -970,10 +1014,10 @@ class WrappingMainPanel(MainPanel):
 
 class GridMainPanel(GridElement,MainPanel):
     #~ value_template = "new Lino.GridPanel(%s)"
-    def __init__(self,lh,name,vertical,*elements,**kw):
+    def __init__(self,lh,name,vertical,*columns,**kw):
         'ignore the "vertical" arg'
         MainPanel.__init__(self)
-        GridElement.__init__(self,lh,name,lh.layout.datalink_report,*elements,**kw)
+        GridElement.__init__(self,lh,name,lh.rh.report,*columns,**kw)
         #lino.log.debug("GridMainPanel.__init__() %s",self.name)
         
 
@@ -987,7 +1031,7 @@ class DetailMainPanel(Panel,WrappingMainPanel):
     value_template = "new Ext.Panel(%s)"
     def __init__(self,lh,name,vertical,*elements,**kw):
         #~ self.rh = lh.datalink
-        self.report = lh.layout.datalink_report
+        self.report = lh.rh.report
         MainPanel.__init__(self)
         #~ DataElementMixin.__init__(self,lh.link)
         kw.update(autoScroll=True)
@@ -1021,7 +1065,7 @@ class DetailMainPanel(Panel,WrappingMainPanel):
             }) """ % self.rh.store.ext_name))
         #d.update(items=js_code(self._main.as_ext(request)))
         #d.update(items=js_code("[%s]" % ",".join([e.as_ext() for e in self.elements])))
-        kw.update(items=self.elements)
+        #~ kw.update(items=self.elements)
         #d.update(autoHeight=False)
         #~ kw.update(bbar=self.bbar_buttons)
         #~ kw.update(bbar=self.buttons)
@@ -1067,6 +1111,7 @@ class FormPanel(jsgen.Component):
         kw.update(
           items=main,
           #~ autoScroll=True,
+          #~ autoHeight=True,
           layout='fit',
         )
         if not isinstance(action,actions.InsertRow):

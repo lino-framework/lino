@@ -37,7 +37,7 @@ from django.utils.safestring import mark_safe
 
 
 import lino
-from lino import layouts
+#~ from lino import layouts
 from lino import actions
 from lino.utils import perms, menus
 from lino.utils import mixins
@@ -212,14 +212,20 @@ def discover():
     #~ lino.log.debug("reports.setup() done")
 
 
+class StaticText:
+    def __init__(self,text):
+        self.text = text
+        
+#~ class Picture:
+    #~ pass
+    
+class DataView:
+    def __init__(self,tpl):
+        self.xtemplate = tpl
 
 
 class ReportHandle(datalinks.DataLink,base.Handle): 
   
-    #~ properties = None
-    
-    #~ detail_link = None
-    
     
     def __init__(self,ui,report):
         #lino.log.debug('ReportHandle.__init__(%s)',rd)
@@ -229,8 +235,7 @@ class ReportHandle(datalinks.DataLink,base.Handle):
         #~ actors.ActorHandle.__init__(self,report)
         datalinks.DataLink.__init__(self,ui)
         base.Handle.__init__(self,ui)
-        if self.report.use_layouts:
-            self.list_layout = self.report.list_layout.get_handle(self.ui)
+        self.list_layout = LayoutHandle(self,ListLayout('main = '+self.report.column_names))
         if self.report.model is not None:
             self.content_type = ContentType.objects.get_for_model(self.report.model).pk
         self.data_elems = report.data_elems
@@ -244,14 +249,7 @@ class ReportHandle(datalinks.DataLink,base.Handle):
         if self._layouts is not None:
             return
         #~ self.default_action = self.report.default_action(self)
-        if self.report.use_layouts:
-            self._layouts = [ self.list_layout ] + [ dtl.layout.get_handle(self.ui) for dtl in self.report.details ]
-            #~ if len(self.details) > 0:
-                #~ self.detail_link = DetailDataLink(self,self.details[0])
-                
-                
-        else:
-            self._layouts = []
+        self._layouts = [ self.list_layout ] + [ LayoutHandle(self,dtl) for dtl in self.report.detail_layouts ]
 
     def submit_elems(self):
         return []
@@ -263,6 +261,10 @@ class ReportHandle(datalinks.DataLink,base.Handle):
     def get_used_layouts(self):
         self.setup_layouts()
         return self._layouts
+        
+    def get_detail_layouts(self):
+        self.setup_layouts()
+        return self._layouts[1:]
         
     def get_absolute_url(self,*args,**kw):
         return self.ui.get_report_url(self,*args,**kw)
@@ -356,12 +358,11 @@ class ReportActionRequest(actions.ActionRequest): # was ReportRequest
                 else:
                     extra = 0
             self.extra = extra
-        if self.report.use_layouts:
-            if layout is None:
-                layout = self.ah._layouts[self.report.default_layout]
-            else:
-                layout = self.ah._layouts[layout]
-            self.layout = layout
+        if layout is None:
+            layout = self.ah._layouts[self.report.default_layout]
+        else:
+            layout = self.ah._layouts[layout]
+        self.layout = layout
         self.report.setup_request(self)
         self.queryset = self.get_queryset()
         #~ self.setup_queryset()
@@ -447,7 +448,7 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
     filter = None
     exclude = None
     title = None
-    column_names = None
+    column_names = '*'
     hide_columns = None
     #~ hide_fields = None
     #label = None
@@ -487,11 +488,11 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
     typo_check = True
     url = None
     
-    use_layouts = True
+    #~ use_layouts = True
     
     button_label = None
     
-    details = []
+    detail_layouts = []
     
     grid_configs = {}
     """
@@ -587,9 +588,9 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
         alist = [ ac(self) for ac in self.actions ]
           
         if self.model is not None:
-            self.list_layout = layouts.list_layout_factory(self)
-            self.detail_layouts = layouts.get_detail_layouts_for_report(self)
-            #~ self.detail_layouts = getattr(self.model,'_lino_layouts',[])
+            #~ self.list_layout = layouts.list_layout_factory(self)
+            #~ self.detail_layouts = layouts.get_detail_layouts_for_report(self)
+            #~ self.detail_layouts = 
               
             if hasattr(self.model,'get_image_url'):
                 alist.append(actions.ImageAction(self))
@@ -777,6 +778,20 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
 
 
     @classmethod
+    def reset_details(cls,*args,**kw):
+        cls.detail_layouts = []
+      
+    @classmethod
+    def add_detail(cls,*args,**kw):
+        dtl = DetailLayout(*args,**kw)
+        cls.detail_layouts = list(cls.detail_layouts) # disconnect from base class
+        for i,layout in enumerate(cls.detail_layouts):
+            if layout.label == dtl.label:
+                cls.detail_layouts[i] = dtl
+                return
+        cls.detail_layouts.append(dtl)
+        
+    @classmethod
     def request(cls,ui=None,**kw):
         self = cls()
         return self.get_handle(ui).request(**kw)
@@ -806,3 +821,221 @@ def unused_rptname_choices():
       if isinstance(rpt,Report) and rpt.__class__ is not Report:
           yield [rpt.actor_id, rpt.get_label]
           
+
+
+LABEL_ALIGN_TOP = 'top'
+LABEL_ALIGN_LEFT = 'left'
+LABEL_ALIGN_RIGHT = 'right'
+
+class BaseLayout:
+    
+    has_frame = False # True
+    label_align = LABEL_ALIGN_TOP
+    #label_align = LABEL_ALIGN_LEFT
+    default_button = None
+    collapsible_elements  = {}
+        
+    def __init__(self,desc=None,**kw):
+        #~ self.label = label
+        for k,v in kw.items():
+            setattr(self,k,v)
+        attrname = None
+        for ln in desc.splitlines():
+            if ln:
+                if ln[0].isspace():
+                    if attrname is None:
+                        raise Exception('attrname is None')
+                    v = getattr(self,attrname) + '\n' + ln.strip()
+                    setattr(self,attrname,v) 
+                else:
+                    a = ln.split('=',1)
+                    if len(a) != 2:
+                        raise Exception('syntax error: "=" expected in %r' % ln)
+                    attrname = a[0].strip()
+                    if hasattr(self,attrname):
+                        raise Exception('duplicate attribute definition')
+                    setattr(self,attrname,a[1].strip())
+          
+    def get_hidden_elements(self,lh):
+        return set()
+        
+class ListLayout(BaseLayout):
+    label = _("List")
+    show_labels = False
+    join_str = " "
+    
+
+class DetailLayout(BaseLayout):
+    label = _("Detail")
+    show_labels = True
+    join_str = "\n"
+    only_for_report = None
+
+
+
+class LayoutHandle:
+    """
+    LayoutHandle analyzes a Layout and builds a tree of LayoutElements.
+    
+    """
+    start_focus = None
+    
+    def __init__(self,rh,layout):
+      
+        # lino.log.debug('LayoutHandle.__init__(%s,%s,%d)',link,layout,index)
+        assert isinstance(layout,BaseLayout)
+        #assert isinstance(link,reports.ReportHandle)
+        #~ base.Handle.__init__(self,ui)
+        #~ actors.ActorHandle.__init__(self,layout)
+        self.layout = layout
+        self.rh = rh
+        #~ self.datalink = layout.get_datalink(ui)
+        #~ self.name = layout._actor_name
+        self.label = layout.label or ''
+        self._store_fields = []
+        #~ self._elems_by_field = {}
+        #~ self._submit_fields = []
+        self.slave_grids = []
+        self._buttons = []
+        self.hide_elements = layout.get_hidden_elements(self)
+        self.main_class = rh.ui.main_panel_class(layout)
+        
+        if layout.main is not None:
+        #~ if hasattr(layout,"main"):
+            self._main = self.create_element(self.main_class,'main')
+        else:
+            raise Exception("%s has no main" % self.layout)
+            
+        #~ if isinstance(self.layout,ListLayout):
+            #~ assert len(self._main.elements) > 0, "%s : Grid has no columns" % self
+            #~ self.columns = self._main.elements
+            
+        #~ self.width = self.layout.width or self._main.width
+        #~ self.height = self.layout.height or self._main.height
+        self.width = self._main.width
+        self.height = self._main.height
+        #~ self.write_debug_info()
+        #~ self.default_button = None
+        #~ if layout.default_button is not None:
+            #~ for e in self._buttons:
+                #~ if e.name == layout.default_button:
+                    #~ self.default_button = e
+                    #~ break
+                
+    #~ def needs_store(self,rh):
+        #~ self._needed_stores.add(rh)
+        
+    def __str__(self):
+        return str(self.layout) + "Handle"
+        
+    #~ def elems_by_field(self,name):
+        #~ return self._elems_by_field.get(name,[])
+        
+    def has_field(self,f):
+        return self._main.has_field(f)
+    def unused__repr__(self):
+        s = self.name # self.__class__.__name__ 
+        if hasattr(self,'_main'):
+            s += "(%s)" % self._main
+        return s
+        
+    def setup_element(self,e):
+        if e.name in self.hide_elements:
+            self.hidden = True
+            
+    #~ def get_absolute_url(self,**kw):
+        #~ return self.datalink.get_absolute_url(layout=self.index,**kw)
+        
+        
+    def add_hidden_field(self,field):
+        return HiddenField(self,field)
+        
+    def write_debug_info(self):
+        if False:
+            f = file(self.name+".debug.csv","w")
+            f.write("\n".join(self._main.debug_lines()))
+            f.close()
+        
+    def get_title(self,ar):
+        return self.layout.get_title(ar)
+        
+    def walk(self):
+        return self._main.walk()
+        
+    def ext_lines(self,request):
+        return self._main.ext_lines(request)
+  
+  
+    def desc2elem(self,panelclass,desc_name,desc,**kw):
+        #lino.log.debug("desc2elem(panelclass,%r,%r)",desc_name,desc)
+        #assert desc != 'Countries_choices2'
+        if '*' in desc:
+            explicit_specs = set()
+            for spec in desc.split():
+                if spec != '*':
+                    name,kw = self.splitdesc(spec)
+                    explicit_specs.add(name)
+            wildcard_fields = self.layout.join_str.join([
+                de.name for de in self.rh.report.data_elems() \
+                  if (de.name not in explicit_specs) \
+                    and (de.name not in self.hide_elements) \
+                    and (de.name != self.rh.report.fk_name) \
+                ])
+            desc = desc.replace('*',wildcard_fields)
+            #lino.log.debug('desc -> %r',desc)
+        if "\n" in desc:
+            elems = []
+            i = 0
+            for x in desc.splitlines():
+                x = x.strip()
+                if len(x) > 0 and not x.startswith("# "):
+                    i += 1
+                    e = self.desc2elem(self.rh.ui.Panel,desc_name+'_'+str(i),x,**kw)
+                    if e is not None:
+                        elems.append(e)
+            if len(elems) == 0:
+                return None
+            if len(elems) == 1 and panelclass != self.main_class:
+                return elems[0]
+            #return self.vbox_class(self,name,*elems,**kw)
+            return panelclass(self,desc_name,True,*elems,**kw)
+        else:
+            elems = []
+            for x in desc.split():
+                if not x.startswith("#"):
+                    """
+                    20100214 dsbe.PersonDetail hatte 2 MainPanels, 
+                    weil PageLayout kein einzeiliges (horizontales) `main` vertrug
+                    """
+                    #~ e = self.create_element(panelclass,x) 
+                    e = self.create_element(self.rh.ui.Panel,x)
+                    if e:
+                        elems.append(e)
+            if len(elems) == 0:
+                return None
+            if len(elems) == 1 and panelclass != self.main_class:
+                return elems[0]
+            #return self.hbox_class(self,name,*elems,**kw)
+            return panelclass(self,desc_name,False,*elems,**kw)
+            
+    def create_element(self,panelclass,desc_name):
+        #lino.log.debug("create_element(panelclass,%r)", desc_name)
+        name,kw = self.splitdesc(desc_name)
+        e = self.rh.ui.create_layout_element(self,panelclass,name,**kw)
+        #~ for child in e.walk():
+            #~ self._submit_fields += child.submit_fields()
+        return e
+        
+    def splitdesc(self,picture):
+        a = picture.split(":",1)
+        if len(a) == 1:
+            return picture,{}
+        if len(a) == 2:
+            name = a[0]
+            a = a[1].split("x",1)
+            if len(a) == 1:
+                return name, dict(width=int(a[0]))
+            elif len(a) == 2:
+                return name, dict(width=int(a[0]),height=int(a[1]))
+        raise Exception("Invalid picture descriptor %s" % picture)
+        

@@ -21,7 +21,7 @@ from django.utils.translation import ugettext_lazy as _
 
 import lino
 from lino import reports
-from lino import layouts
+#~ from lino import layouts
 from lino.core import actors
 #~ from lino import commands
 from lino.utils import perms
@@ -38,19 +38,19 @@ class SiteConfig(models.Model):
     def __unicode__(self):
         return u"Site configuration"
 
-class SiteConfigDetail(layouts.DetailLayout):
-    #~ label = _('Site Configuration')
-    datalink = 'system.SiteConfig'
-    main = """
-    site_company
-    next_partner_id
-    """
-
 class SiteConfigs(reports.Report):
     model = SiteConfig
     #~ default_action_class = reports.OpenDetailAction
     has_navigator = False
     can_delete = perms.never
+    
+SiteConfigs.add_detail(label=_("Detail"),label_align = reports.LABEL_ALIGN_TOP,
+desc="""
+main = 
+    site_company
+    next_partner_id
+""")
+
     
 def get_site_config():
     try:

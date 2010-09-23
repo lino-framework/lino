@@ -15,7 +15,7 @@
 import datetime
 from django.db import models
 from lino import reports
-from lino import layouts
+#~ from lino import layouts
 from django.utils.translation import ugettext as _
 
 
@@ -30,18 +30,25 @@ class Country(models.Model):
     def __unicode__(self):
         return self.name
         
-class CountryDetail(layouts.DetailLayout):
-    datalink = 'countries.Country'
-    main = """
-    isocode name short_code
-    countries.CitiesByCountry
-    """
+#~ class CountryDetail(layouts.DetailLayout):
+    #~ datalink = 'countries.Country'
+    #~ main = """
+    #~ isocode name short_code
+    #~ countries.CitiesByCountry
+    #~ """
   
         
 class Countries(reports.Report):
     model = 'countries.Country'
     order_by = "isocode"
     column_names = "isocode name short_code"
+    
+Countries.add_detail(label=_("Detail"),label_align = reports.LABEL_ALIGN_TOP,
+desc="""
+main =
+    isocode name short_code
+    countries.CitiesByCountry
+""")    
     
 FREQUENT_COUNTRIES = ['BE','NL','DE', 'FR', 'LU']
 

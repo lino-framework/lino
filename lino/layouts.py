@@ -11,6 +11,10 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+raise """
+no longer used, see blog/2010/0921
+"""
+
 #import traceback
 #import types
 
@@ -102,9 +106,9 @@ class LayoutHandle(base.Handle):
         else:
             raise Exception("%s has no datalink" % self.layout)
             
-        if isinstance(self.layout,ListLayout):
-            assert len(self._main.elements) > 0, "%s : Grid has no columns" % self
-            self.columns = self._main.elements
+        #~ if isinstance(self.layout,ListLayout):
+            #~ assert len(self._main.elements) > 0, "%s : Grid has no columns" % self
+            #~ self.columns = self._main.elements
             
         #~ self.width = self.layout.width or self._main.width
         #~ self.height = self.layout.height or self._main.height

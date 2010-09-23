@@ -1,0 +1,92 @@
+2010-09-21...23
+===============
+
+Bin noch immer mit den Grids in der vbox dran. 
+Es war nicht leicht, Lino dazu zu bringen, dass der generierte Code  
+das neue VBorderPanel dann auch korrekt benutzt...
+
+Ich sollte unbedingt mal anfangen, automatisierte test cases zu 
+schreiben für diese Layout-Probleme.
+
+Das passt zusammen mit dem Plan, Layouts online ändern zu können ohne Server-Restart.
+
+22.09.
+------
+
+Also ran an den Speck. Lino geht in Vollnarkose.
+
+In einem ersten Schritt will ich die Layouts komplett aus dem Python-Code raus verlagern.
+Also die Layouts wären dann gar keine Python-Klassen mehr, sondern einfache Strings. 
+Denn das Feature der Vererbbarkeit von Layout-Elementen erweist sich als unpraktisch und unwichtig. 
+
+23.09.
+------
+
+10.20 Uhr. Na das ging ja noch relativ flink: Check-in. 
+
+Layouts sind jetzt keine Actors mehr, 
+sondern werden mit der class method `reports.Report.add_detail` definiert. 
+Wobei der Parameter `desc` die wichtigste Neuerung ist: es ist jetzt ein einziger String, 
+den ich mit einem primitiven selbstgemachten Parser interpretiere. 
+
+Also statt::
+
+  class ProjectDetail(layouts.DetailLayout):
+      datalink = 'projects.Project'
+      main = """
+      name type
+      started stopped
+      text
+      """
+      
+Mach ich::
+
+  Projects.add_detail(desc="""
+  main =
+      name type
+      started stopped
+      text
+  """)
+
+
+Hier noch ein komplexeres Beispiel::
+
+  main = 
+    intro_box
+    address_box
+    bottom_box
+
+  intro_box = box1 box2
+  address_box = box3 box4 box5
+  bottom_box = remarks:70 image:30
+
+  box1 = last_name first_name:15 title:10
+  box2 = id language
+  box3 = 
+    country region
+    city zip_code:10
+    street:25 street_no street_box
+    addr1:40
+
+  box4 = 
+    email:30 
+    phone 
+    fax
+    gsm
+
+  box5 =
+    url:30
+    bank_account1
+    bank_account2
+    gesdos_id
+
+Syntax-Regeln: 
+Leere Zeilen werden ignoriert.
+Felder und SlaveReports stehen als Elemente automatisch zur Verfügung und brauchen nicht definiert zu werden.
+Mit `NAME = WERT` wird ein neues Element definiert, das dann ein Panel wird.
+NAME muss ein neuer Name sein.
+WERT is a space-delimited List of element names.
+Es muss ein Element namens `main` definiert werden.
+Man kann beliebig viele sonstige Elemente definieren.
+Zeilen, die mit Whitespace beginnen, sind Fortsetzungen einer begonnenen Definition.
+

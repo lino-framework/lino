@@ -193,8 +193,8 @@ class ViewReportRequest(reports.ReportActionRequest):
     def row2dict(self,row):
         #~ lino.log.debug('%s.row2dict(%s)',self,row.__class__)
         #lino.log.debug('row2dict(%r)',row)
-        if not self.report.use_layouts:
-            return reports.ReportActionRequest.row2dict(self,row,d)
+        #~ if not self.report.use_layouts:
+            #~ return reports.ReportActionRequest.row2dict(self,row,d)
         d = {}
         request = self.request
         for fld in self.store.fields:

@@ -17,7 +17,7 @@ from django.utils.translation import ugettext as _
 
 from lino.modlib import fields
 from lino import reports
-from lino import layouts
+#~ from lino import layouts
 
 
 #
@@ -48,16 +48,23 @@ class Project(models.Model):
     def __unicode__(self):
         return self.name
         
-class ProjectDetail(layouts.DetailLayout):
-    datalink = 'projects.Project'
-    main = """
-    name type
-    started stopped
-    text
-    """
+#~ class ProjectDetail(layouts.DetailLayout):
+    #~ datalink = 'projects.Project'
+    #~ main = """
+    #~ name type
+    #~ started stopped
+    #~ text
+    #~ """
 
 class Projects(reports.Report):
     model = 'projects.Project'
     order_by = "name"
     button_label = _("Projects")
-    
+Projects.add_detail(label=_("Detail"),label_align = reports.LABEL_ALIGN_TOP,
+desc="""
+main =
+    name type
+    started stopped
+    text
+""")
+

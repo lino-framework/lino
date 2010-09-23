@@ -23,7 +23,7 @@ from django import forms
 
 import lino
 from lino import reports
-from lino import layouts
+#~ from lino import layouts
 from lino.utils import perms
 #~ from lino.utils import mixins
 
@@ -124,29 +124,7 @@ class Contact(models.Model):
 class Contacts(reports.Report):
     pass
   
-class ContactDetail(layouts.DetailLayout):
-    box1 = "name"
-    box2 = """id language"""
-    box3 = """country region
-              city zip_code:10
-              street:25 street_no street_box
-              addr1:40
-              """
-    box4 = """email:40 
-              url
-              phone
-              gsm
-              """
-    intro_box = "box1 box2"
-    address_box = "box3 box4"
-    bottom_box = "remarks"
-    main = """intro_box
-              address_box
-              bottom_box
-              """
-              
-    #collapsible_elements = dict(bottom_box=_("Bottom"),address_box=_("Address"))
-       
+  
  
 
 #~ class PersonMixin(ContactMixin):
@@ -170,9 +148,9 @@ class Person(Contact):
         l = filter(lambda x:x,[self.last_name,self.first_name,self.title])
         self.name = " ".join(l)
 
-class PersonDetail(ContactDetail):
-    datalink = 'contacts.Person'
-    box1 = "last_name first_name:15 title:10"
+#~ class PersonDetail(ContactDetail):
+    #~ datalink = 'contacts.Person'
+    #~ box1 = "last_name first_name:15 title:10"
 
 class Persons(Contacts):
     model = "contacts.Person"
@@ -181,6 +159,30 @@ class Persons(Contacts):
     can_delete = True
     order_by = "last_name first_name id"
     #can_view = perms.is_authenticated
+
+Persons.add_detail(label=_("Detail"),label_align = reports.LABEL_ALIGN_TOP,
+desc="""
+box1 = last_name first_name:15 title:10
+box2 = id language
+box3 = 
+  country region
+  city zip_code:10
+  street:25 street_no street_box
+  addr1:40
+
+box4 = 
+  email:40 
+  url
+  phone
+  gsm
+intro_box = box1 box2
+address_box = box3 box4
+bottom_box = remarks
+main = 
+  intro_box
+  address_box
+  bottom_box
+""")              
     
 
 class PersonsByCountry(Persons):
@@ -219,16 +221,42 @@ class Company(Contact):
         #~ s = Contact.as_address(self,linesep)
         #~ return self.name + linesep + s
 
-class CompanyDetail(ContactDetail):
-    datalink = 'contacts.Company'
-    box1 = """name 
-    vat_id:12"""
+#~ class CompanyDetail(ContactDetail):
+    #~ datalink = 'contacts.Company'
+    #~ box1 = """name 
+    #~ vat_id:12"""
               
 class Companies(Contacts):
     label = _("Companies")
     column_names = "name country city id address *"
     model = 'contacts.Company'
     order_by = "name"
+    
+Companies.add_detail(label=_("Detail"),label_align = reports.LABEL_ALIGN_TOP,
+desc="""
+main = 
+  intro_box
+  address_box
+  bottom_box
+intro_box = 
+  name 
+  id language vat_id:12 
+box3 = 
+  country region
+  city zip_code:10
+  street:25 street_no street_box
+  addr1:40
+
+box4 = 
+  email:40 
+  url
+  phone
+  gsm
+address_box = box3 box4
+bottom_box = remarks
+""")              
+
+    
     
 class CompaniesByCountry(Companies):
     fk_name = 'country'

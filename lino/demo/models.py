@@ -20,7 +20,6 @@ import lino
 #~ lino.log.debug(__file__+' : started')
 
 from lino import reports
-from lino import layouts
 from lino.utils import perms
 from lino.utils import mixins
 from lino.modlib import fields

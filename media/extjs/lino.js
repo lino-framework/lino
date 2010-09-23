@@ -14,6 +14,56 @@
 */
 Ext.namespace('Lino');
 
+
+
+Lino.VBorderPanel = Ext.extend(Ext.Panel,{
+    constructor : function(config) {
+      config.layout = 'border';
+      delete config.layoutConfig;
+      Lino.VBorderPanel.superclass.constructor.call(this,config);
+      for(var i=0; i < this.items.length;i++) {
+        var item = this.items.get(i);
+        if (this.isVertical(item) && item.collapsible) {
+          item.on('collapse',this.onBodyResize,this);
+          item.on('expand',this.onBodyResize,this);
+        }
+      }
+    },
+    isVertical : function(item) {
+       return (item.region == 'north' || item.region == 'south' || item.region == 'center');
+    },
+    onBodyResize: function(w, h){
+        var sumflex = 0;
+        var availableHeight = this.getInnerHeight();
+        for(var i=0; i < this.items.length;i++) {
+          var item = this.items.get(i);
+          if (this.isVertical(item) && item.getResizeEl()) {
+              if (item.collapsed || item.flex == 0) {
+                  //~ item.syncSize()
+                  //~ item.doLayout()
+                  if (item.region == "north") console.log('region north',item.getHeight(),item.id, item);
+                  //~ if (item.getHeight() == 0) console.log(20100921,'both flex and getHeight() are 0!');
+                  availableHeight -= item.getHeight();
+              } else {
+                  sumflex += item.flex;
+              }
+          }
+        }
+        var hunit = availableHeight / sumflex;
+        for(var i=0; i < this.items.length;i++) {
+          var item = this.items.get(i);
+          if (this.isVertical(item)) {
+              if (item.flex != 0 && ! item.collapsed) {
+                  item.setHeight(hunit * item.flex);
+                  //~ console.log(item.region,' : height set to',item.getHeight());
+              }
+          }
+        }
+        Lino.VBorderPanel.superclass.onBodyResize.call(this, w, h);
+    }
+});
+
+
 /*
 The following two overrides are from
 http://www.sencha.com/forum/showthread.php?98165-vbox-layout-with-two-grids-grid-collapse-does-not-stretch-non-collapsed-grid&p=463266  
@@ -500,10 +550,10 @@ Lino.do_when_visible = function(cmp,todo) {
   //~ if (cmp.el && cmp.el.dom) 
   if (cmp.isVisible()) { 
     // 'visible' means 'rendered and not hidden'
-    console.log('Lino.do_when_visible() now',todo);
+    //~ console.log('Lino.do_when_visible() now',todo);
     todo(); 
   } else { 
-    console.log('Lino.do_when_visible() must defer because not isVisible()',todo,cmp);
+    //~ console.log('Lino.do_when_visible() must defer because not isVisible()',todo,cmp);
     //~ todo.defer(1000);
     if (cmp.rendered) {
       console.log('-> cmp is rendered but not visible: and now?');
@@ -516,7 +566,7 @@ Lino.do_when_visible = function(cmp,todo) {
         //~ cmp.on('activate',todo,cmp,{single:true});
       //~ }
     } else {
-      console.log('-> on render');
+      //~ console.log('-> on render');
       cmp.on('render',todo,cmp,{single:true});
     }
   }

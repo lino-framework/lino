@@ -21,7 +21,7 @@ from django.utils.translation import ugettext as _
 
 from lino.modlib import fields, tools
 from lino import reports
-from lino import layouts
+#~ from lino import layouts
 from lino.utils import perms
 from lino.utils import mixins
 from django.conf import settings
@@ -50,15 +50,13 @@ class NoteType(models.Model):
     #~ def template_choices(cls,print_method):
         #~ return mixins.template_choices(print_method)
         
-class NoteTypeDetail(layouts.DetailLayout):
-    datalink = 'notes.NoteType'
-    main = """
-    id name
-    print_method
-    template
-    """
-
-
+#~ class NoteTypeDetail(layouts.DetailLayout):
+    #~ datalink = 'notes.NoteType'
+    #~ main = """
+    #~ id name
+    #~ print_method
+    #~ template
+    #~ """
 
 from lino.modlib.contacts.models import default_language
 
@@ -119,51 +117,43 @@ class Note(models.Model,mixins.Printable):
         return [ self.type.template ]
         
 
-class NoteDetail(layouts.DetailLayout):
-    datalink = 'notes.Note'
-    #~ main = """
-    #~ date short type user
-    #~ person company
-    #~ text:40x5 links.LinksByOwner:40x5
-    #~ """
-    
-    #~ box1 = """
-    #~ date type user
-    #~ short 
-    #~ person 
-    #~ company
-    #~ """
-    #~ main = """
-    #~ box1 links.LinksByOwner:40
-    #~ text:80x5 
-    #~ """
-    
-    
-    box1 = """
-    date 
-    type 
-    user language
-    """
-    box2 = """
-    subject
-    person 
-    company
-    """
-    
-    main = """
-    box1 box2
-    url
-    body:80x5 
-    """
+
+
     
 class NoteTypes(reports.Report):
     model = 'notes.NoteType'
+NoteTypes.add_detail(label=_("Detail"),label_align = reports.LABEL_ALIGN_TOP,
+desc="""
+main = 
+    id name
+    print_method
+    template
+""")
     
 class Notes(reports.Report):
     model = 'notes.Note'
     column_names = "id date user subject * body"
     order_by = "id"
     button_label = _("Notes")
+Notes.add_detail(label=_("Detail"),label_align = reports.LABEL_ALIGN_TOP,
+desc="""
+box1 =
+    date 
+    type 
+    user language
+
+box2 =
+    subject
+    person 
+    company
+    
+main =
+    box1 box2
+    url
+    body:80x5 
+
+""")
+
 
 class MyNotes(Notes):
     fk_name = 'user'

@@ -54,7 +54,7 @@ from django.utils.safestring import mark_safe
 
 import lino
         
-from lino import reports, layouts, actions
+from lino import reports, actions
 from lino.utils import perms
 from lino.utils import menus
 from lino.core import actors
@@ -110,11 +110,11 @@ class LinoSite:
         choosers.discover()
 
         for a in actors.actors_list:
-            if isinstance(a,layouts.DetailLayout):
+            #~ if isinstance(a,layouts.DetailLayout):
                 a.setup()
-        for a in actors.actors_list:
-            if not isinstance(a,layouts.DetailLayout):
-                a.setup()
+        #~ for a in actors.actors_list:
+            #~ if not isinstance(a,layouts.DetailLayout):
+                #~ a.setup()
 
         if settings.MODEL_DEBUG:
             lino.log.debug("ACTORS:")

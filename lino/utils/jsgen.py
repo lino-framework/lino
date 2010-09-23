@@ -247,9 +247,9 @@ class Variable(Value):
         variable_counter += 1
         
         if name is None:
-            self.ext_name = "var%d%s" % (variable_counter,self.ext_suffix)
+            self.ext_name = "var%s%d" % (self.ext_suffix,variable_counter)
         else:
-            self.ext_name = "%s%d%s" % (id2js(name),variable_counter,self.ext_suffix)
+            self.ext_name = "%s%s%d" % (id2js(name),self.ext_suffix,variable_counter)
             self.name = name
         #~ if name is None:
             #~ assert self.declare_type == DECLARE_INLINE
@@ -258,6 +258,10 @@ class Variable(Value):
             #~ self.name = name
             #~ self.ext_name = id2js(name) + self.ext_suffix
         #~ self.ext_name = id2js(name) + self.ext_suffix
+        
+    def __str__(self):
+        #~ assert self.name is not None
+        return self.ext_name
         
     def js_declare(self):
         yield "// begin js_declare %s" % self
@@ -305,6 +309,11 @@ class Component(Variable):
         
     def update(self,**kw):
         self.value.update(**kw)
+        
+    def remove(self,*keys):
+        for k in keys:
+            if self.value.has_key(k):
+                del self.value[k]
         
     def walk(self):
         items = self.value['items']

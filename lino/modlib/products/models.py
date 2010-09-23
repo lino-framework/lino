@@ -16,7 +16,7 @@ from django.db import models
 from lino.modlib import fields
 #journals = models.get_app('journals')
 from lino import reports
-from lino import layouts
+#~ from lino import layouts
 from lino.utils import perms
 
 
@@ -48,26 +48,36 @@ class ProductCats(reports.Report):
     order_by = "id"
     can_view = perms.is_staff
 
-class ProductDetail(layouts.DetailLayout):
+#~ class ProductDetail(layouts.DetailLayout):
   
-    datalink = 'products.Product'
+    #~ datalink = 'products.Product'
     
     #~ main = """
-    #~ id:5 name:50 cat
-    #~ description:50x6
-    #~ price vatExempt
+    #~ g1:60
+    #~ g2 g3:10
     #~ """
     
-    main = """
-    g1:60
-    g2 g3:10
-    """
-    
-    g1 = "name \n description"
-    g2 = "price \n cat"
-    g3 = "id \n vatExempt"
+    #~ g1 = "name \n description"
+    #~ g2 = "price \n cat"
+    #~ g3 = "id \n vatExempt"
 
 class Products(reports.Report):
     model = Product
     order_by = "id"
     column_names = "id:3 name description:30x1 cat vatExempt price:6"
+Products.add_detail(label=_("Detail"),label_align = reports.LABEL_ALIGN_TOP,
+desc="""
+main = 
+    g1:60
+    g2 g3:10
+    
+g1 = 
+  name 
+  description
+g2 = 
+  price
+  cat
+g3 = 
+  id 
+  vatExempt
+""")

@@ -18,7 +18,7 @@ from django.db import models
 from django.conf import settings
 
 import lino
-from lino import actions, layouts #, commands
+from lino import actions
 from lino import reports
 #~ from lino import forms
 from lino.ui import base
@@ -119,7 +119,7 @@ def lh2win(lh,**kw):
 class MasterWrapper(WindowWrapper):
   
     def __init__(self,rh,action,lh,**kw):
-        WindowWrapper.__init__(self,action,lh.ui,lh,lh._main,**kw)
+        WindowWrapper.__init__(self,action,lh.rh.ui,lh,lh._main,**kw)
         
     def js_render(self):
         yield "function(caller,params) { "
@@ -174,21 +174,20 @@ class GridMasterWrapper(GridWrapperMixin,MasterWrapper):
 
 class BaseDetailWrapper(MasterWrapper):
   
-    #~ window_config_type = 'detail'
-    
     def __init__(self,rh,action,**kw):
         self.rh = rh
         #~ assert isinstance(action,actions.BaseDetailAction)
         if len(rh.report.detail_layouts) == 1:
-            lh = rh.report.detail_layouts[0].get_handle(rh.ui)
+            lh = rh.get_detail_layouts()[0]
             main = ext_elems.FormPanel(rh,action,lh._main)
             WindowWrapper.__init__(self,action,rh.ui,lh,main,**kw)        
         else:
-            lh = rh.report.detail_layouts[0].get_handle(rh.ui)
-            tabs = [l.get_handle(rh.ui)._main for l in rh.report.detail_layouts]
+            #~ lh = rh.report.detail_layouts[0].get_handle(rh.ui)
+            #~ lh = rh.get_layout(0)
+            #~ tabs = [l.get_handle(rh.ui)._main for l in rh.report.detail_layouts]
+            tabs = [lh._main for lh in rh.get_detail_layouts()]
             main = ext_elems.FormPanel(rh,action,ext_elems.TabPanel(tabs))
             WindowWrapper.__init__(self,action,rh.ui,None,main,**kw) 
-        #~ self.config.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rh.get_actions(action)]) # if a.show_in_detail])
             
         
     def get_config(self):
@@ -198,24 +197,14 @@ class BaseDetailWrapper(MasterWrapper):
         d.update(main_panel=self.main)
         d.update(name=self.action.name)
         d.update(fk_name=self.action.actor.fk_name);
-        #~ d.update(formdata=)
         return d
         
         
 class DetailWrapper(BaseDetailWrapper):
     pass
-    #~ def get_config(self):
-        #~ d = BaseDetailWrapper.get_config(self)
-        #~ d.update(ls_bbar_actions=[self.ui.a2btn(a) for a in self.rh.get_actions(self.action)])
-        #~ return d
   
 class InsertWrapper(BaseDetailWrapper):
     pass
-    #~ def get_config(self):
-        #~ d = BaseDetailWrapper.get_config(self)
-        #~ d.update(title=_('%s into %s') %(self.action.label,self.action.actor.get_title(None)))
-        #~ d.update(record_id=-99999)
-        #~ return d
 
 
 def key_handler(key,h):

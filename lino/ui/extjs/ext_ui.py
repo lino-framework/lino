@@ -38,7 +38,7 @@ import lino
 from lino.utils import ucsv
 from lino.utils import mixins
 from lino.utils import choosers
-from lino import actions, layouts #, commands
+from lino import actions #, layouts #, commands
 from lino import reports        
 from lino.ui import base
 #~ from lino import diag
@@ -55,7 +55,7 @@ from . import ext_windows
 from . import ext_viewport
 from . import ext_requests
 #from lino.modlib.properties.models import Property
-from lino.modlib.properties import models as properties
+#~ from lino.modlib.properties import models as properties
 
 from django.conf.urls.defaults import patterns, url, include
 from lino.utils.mixins import PrintAction
@@ -170,15 +170,16 @@ class ExtUI(base.UI):
         if name == "_":
             return ext_elems.Spacer(lh,name,**kw)
             
-        de = reports.get_data_elem(lh.layout.datalink,name)
+        de = lh.rh.report.get_data_elem(name)
+        #~ de = reports.get_data_elem(lh.layout.datalink,name)
         
         if de is None:
-            a = lh.layout.datalink_report.get_action(name)
+            a = lh.rh.report.get_action(name)
             if isinstance(a,actions.ImageAction):
                 return ext_elems.PictureElement(lh,name,a)
           
-        if isinstance(de,properties.Property):
-            return self.create_prop_element(lh,de,**kw)
+        #~ if isinstance(de,properties.Property):
+            #~ return self.create_prop_element(lh,de,**kw)
         if isinstance(de,models.Field):
             return self.create_field_element(lh,de,**kw)
         if isinstance(de,generic.GenericForeignKey):
@@ -203,9 +204,9 @@ class ExtUI(base.UI):
             if value is not None:
                 if isinstance(value,basestring):
                     return lh.desc2elem(panelclass,name,value,**kw)
-                if isinstance(value,layouts.StaticText):
+                if isinstance(value,reports.StaticText):
                     return ext_elems.StaticTextElement(lh,name,value)
-                if isinstance(value,layouts.DataView):
+                if isinstance(value,reports.DataView):
                     return ext_elems.DataViewElement(lh,name,value)
                     #~ return ext_elems.TemplateElement(lh,name,value)
                 if isinstance(value,mixins.PicturePrintMethod):
@@ -253,11 +254,11 @@ class ExtUI(base.UI):
 
 
     def main_panel_class(self,layout):
-        if isinstance(layout,layouts.ListLayout) : 
+        if isinstance(layout,reports.ListLayout) : 
             return ext_elems.GridMainPanel
         #~ if isinstance(layout,layouts.TabLayout) : 
             #~ return ext_elems.TabMainPanel
-        if isinstance(layout,layouts.DetailLayout) : 
+        if isinstance(layout,reports.DetailLayout) : 
             return ext_elems.DetailMainPanel
         #~ if isinstance(layout,layouts.FormLayout) : 
             #~ return ext_elems.FormMainPanel
@@ -896,8 +897,8 @@ class ExtUI(base.UI):
         
     def get_choices_url(self,fke,**kw):
         return self.build_url("choices",
-            fke.lh.layout.datalink_report.app_label,
-            fke.lh.layout.datalink_report._actor_name,
+            fke.lh.rh.report.app_label,
+            fke.lh.rh.report._actor_name,
             fke.field.name,**kw)
         
     def get_report_url(self,rh,master_instance=None,
@@ -1012,12 +1013,8 @@ class ExtUI(base.UI):
             lino.log.debug('ExtUI.setup_handle() %s',h.report)
             #~ h.choosers = chooser.get_choosers_for_model(h.report.model,chooser.FormChooser)
             #~ h.report.add_action(ext_windows.SaveWindowConfig(h.report))
-            if h.report.use_layouts:
-                h.store = ext_store.Store(h)
+            h.store = ext_store.Store(h)
                     
-            else:
-                h.store = None
-                
             for a in h.get_actions():
                 a.window_wrapper = self.action_window_wrapper(a,h)
             

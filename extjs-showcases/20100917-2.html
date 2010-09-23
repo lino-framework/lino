@@ -1,0 +1,233 @@
+<html><head>
+<!--
+This is to try whether I can use a borderlayout instead of the vbox 
+of screenshot 20100912 to render the 3 grids.
+-->
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title id="title">20100917</title>
+<!-- ** CSS ** -->
+<!-- base library -->
+<link rel="stylesheet" type="text/css" href="../../resources/css/ext-all.css" />
+<!-- overrides to base library -->
+<!-- ** Javascript ** -->
+<!-- ExtJS library: base/adapter -->
+<script type="text/javascript" src="../../adapter/ext/ext-base.js"></script>
+<!-- ExtJS library: all widgets -->
+<script type="text/javascript" src="../../ext-all-debug.js"></script>
+<script type="text/javascript">
+
+// taken from http://examples.extjs.eu/
+ExampleGrid = Ext.extend(Ext.grid.GridPanel, {
+  initComponent:function() {
+  // hard coded - cannot be changed from outside
+  var config = {
+    store: new Ext.data.SimpleStore({
+      id:0
+      ,fields:[
+        {name: 'company'}
+        ,{name: 'price', type: 'float'}
+        ,{name: 'change', type: 'float'}
+        ,{name: 'pctChange', type: 'float'}
+        ,{name: 'lastChange', type: 'date', dateFormat: 'n/j h:ia'}
+        ,{name: 'industry'}
+        ,{name: 'desc'}
+      ]
+      ,data:[
+        ['3m Co',71.72,0.02,0.03,'8/1 12:00am', 'Manufacturing'],
+        ['Alcoa Inc',29.01,0.42,1.47,'9/1 12:00am', 'Manufacturing'],
+        ['Altria Group Inc',83.81,0.28,0.34,'10/1 12:00am', 'Manufacturing'],
+        ['American Express Company',52.55,0.01,0.02,'9/1 10:00am', 'Finance'],
+        ['American International Group, Inc.',64.13,0.31,0.49,'9/1 11:00am', 'Services'],
+        ['AT&T Inc.',31.61,-0.48,-1.54,'9/1 12:00am', 'Services'],
+        ['Boeing Co.',75.43,0.53,0.71,'9/1 12:00am', 'Manufacturing'],
+        ['Caterpillar Inc.',67.27,0.92,1.39,'9/1 12:00am', 'Services'],
+        ['Citigroup, Inc.',49.37,0.02,0.04,'9/1 12:00am', 'Finance'],
+        ['E.I. du Pont de Nemours and Company',40.48,0.51,1.28,'9/1 12:00am', 'Manufacturing'],
+        ['Exxon Mobil Corp',68.1,-0.43,-0.64,'9/1 12:00am', 'Manufacturing'],
+        ['General Electric Company',34.14,-0.08,-0.23,'9/1 12:00am', 'Manufacturing'],
+        ['General Motors Corporation',30.27,1.09,3.74,'9/1 12:00am', 'Automotive'],
+        ['Hewlett-Packard Co.',36.53,-0.03,-0.08,'9/1 12:00am', 'Computer'],
+        ['Honeywell Intl Inc',38.77,0.05,0.13,'9/1 12:00am', 'Manufacturing'],
+        ['Intel Corporation',19.88,0.31,1.58,'9/1 12:00am', 'Computer'],
+        ['International Business Machines',81.41,0.44,0.54,'9/1 12:00am', 'Computer'],
+        ['Johnson & Johnson',64.72,0.06,0.09,'9/1 12:00am', 'Medical'],
+        ['JP Morgan & Chase & Co',45.73,0.07,0.15,'9/1 12:00am', 'Finance'],
+        ['McDonald\'s Corporation',36.76,0.86,2.40,'9/1 12:00am', 'Food'],
+        ['Merck & Co., Inc.',40.96,0.41,1.01,'9/1 12:00am', 'Medical'],
+        ['Microsoft Corporation',25.84,0.14,0.54,'9/1 12:00am', 'Computer'],
+        ['Pfizer Inc',27.96,0.4,1.45,'9/1 12:00am', 'Services', 'Medical'],
+        ['The Coca-Cola Company',45.07,0.26,0.58,'9/1 12:00am', 'Food'],
+        ['The Home Depot, Inc.',34.64,0.35,1.02,'9/1 12:00am', 'Retail'],
+        ['The Procter & Gamble Company',61.91,0.01,0.02,'9/1 12:00am', 'Manufacturing'],
+        ['United Technologies Corporation',63.26,0.55,0.88,'9/1 12:00am', 'Computer'],
+        ['Verizon Communications',35.57,0.39,1.11,'9/1 12:00am', 'Services'],
+        ['Wal-Mart Stores, Inc.',45.45,0.73,1.63,'9/1 12:00am', 'Retail'],
+        ['Walt Disney Company (The) (Holding Company)',29.89,0.24,0.81,'9/1 12:00am', 'Services']
+        ]
+      }
+    )
+    ,columns:[
+      {id:'company',header: "Company", width: 80, sortable: true, dataIndex: 'company'}
+      ,{header: "Price",               width: 40, sortable: true, renderer: Ext.util.Format.usMoney, dataIndex: 'price'}
+      ,{header: "Change",              width: 40, sortable: true, dataIndex: 'change'}
+      ,{header: "% Change",            width: 40, sortable: true, dataIndex: 'pctChange'}
+      ,{header: "Last Updated",        width: 40, sortable: true, renderer: Ext.util.Format.dateRenderer('m/d/Y'), dataIndex: 'lastChange'}
+    ]
+    //~ ,viewConfig:{forceFit:true}
+  }; // eo config object
+ 
+  // apply config
+  Ext.apply(this, Ext.apply(this.initialConfig, config));
+   
+  // call parent
+  ExampleGrid.superclass.initComponent.apply(this, arguments);
+} // eo function initComponent
+ 
+});
+ 
+//~ Ext.reg('examplegrid', ExampleGrid);
+
+VBorderPanel = Ext.extend(Ext.Panel,{
+    constructor : function(config) {
+      config.layout = 'border';
+      VBorderPanel.superclass.constructor.call(this,config);
+      for(var i=0; i < this.items.length;i++) {
+        var item = this.items.get(i);
+        if (this.isVertical(item)) {
+          item.on('collapse',this.onBodyResize,this);
+          item.on('expand',this.onBodyResize,this);
+        }
+      }
+    },
+    isVertical : function(item) {
+       return (item.region == 'north' || item.region == 'south' || item.region == 'center');
+    },
+    onBodyResize: function(w, h){
+        var sumflex = 0;
+        var availableHeight = this.getInnerHeight();
+        for(var i=0; i < this.items.length;i++) {
+          var item = this.items.get(i);
+          if (this.isVertical(item)) {
+              if (item.collapsed) {
+                  availableHeight -= item.getHeight();
+              } else {
+                  sumflex += item.vflex;
+              }
+          }
+        }
+        var hunit = availableHeight / sumflex;
+        for(var i=0; i < this.items.length;i++) {
+          var item = this.items.get(i);
+          if (this.isVertical(item)) {
+              if (! item.collapsed) {
+                  item.setHeight(hunit * item.vflex)
+                  console.log(item.region,' : height set to',item.getHeight());
+              }
+          }
+        }
+        VBorderPanel.superclass.onBodyResize.call(this, w, h);
+    }
+});
+
+function simulate_vbox(adjWidth, adjHeight, rawWidth, rawHeight) {
+  var sumflex = 0;
+  //~ if (this.rendered) {
+      //~ r = ['north','center','south'];
+      //~ for (i = 0; i < r.length; i++) {
+          //~ region = this[r[i]];
+          //~ if(region) sumflex += region.vflex;
+      //~ }
+      //~ if (sumflex == 0) return;
+      //~ var hu = this.getInnerHeight() / sumflex;
+      //~ this.north.height = hu * this.north.vflex
+      //~ this.south.height = hu * this.south.vflex
+      //~ this.center.height = hu * this.center.vflex
+  //~ }
+  
+  //~ console.log('overall availableHeight=',availableHeight);
+  
+  for(var i=0; i < this.items.length;i++) {
+    var item = this.items.get(i);
+    if (item.region == 'north' || item.region == 'south' || item.region == 'center') {
+        sumflex += item.vflex;
+    }
+  }
+  var hunit = this.getInnerHeight() / sumflex;
+  for(var i=0; i < this.items.length;i++) {
+    var item = this.items.get(i);
+    if (item.region == 'north' || item.region == 'south' || item.region == 'center') {
+        item.setHeight(hunit * item.vflex)
+        console.log(item.region,' : height set to',item.getHeight());
+    }
+  }
+  
+  //~ console.log('remaining availableHeight=',availableHeight,'sumflex=',sumflex);
+  //~ for(var i=0;i<ct.items.length;i++) { 
+    //~ var item = ct.items.get(i);
+    //~ if(item.flex > 0) {
+      //~ item.setHeight(availableHeight * item.flex / sumflex)
+    //~ }
+  //~ }
+}
+  
+
+
+Ext.onReady(function() {
+  var leftPanel = {
+      layout: 'form',
+      flex:1,
+      autoScroll:true,
+      items: [
+        {xtype: 'textfield', fieldLabel: 'A', value:'A'},
+        {xtype: 'textfield', fieldLabel: 'B', value:'B'},
+        {xtype: 'textfield', fieldLabel: 'C', value:'C'},
+        {xtype: 'textfield', fieldLabel: 'D', value:'D'},
+        {xtype: 'textfield', fieldLabel: 'E', value:'E'},
+        {xtype: 'textfield', fieldLabel: 'F', value:'F'},
+        {xtype: 'textfield', fieldLabel: 'G', value:'G'}
+      ]
+  };
+  
+  //~ var grid1 = new ExampleGrid({title:"First Grid",collapsible:true});
+  //~ var gridbox1 = {vflex:1,autoScroll:true,items:grid1,xtype:'container',layout:'fit', split:true, region:'north'}
+  //~ var grid2 = new ExampleGrid({title:"Second Grid",collapsible:true});
+  //~ var gridbox2 = {vflex:2, autoScroll:true,items:grid2,xtype:'container',layout:'fit', split:true, region:'center'}
+  //~ var grid3 = new ExampleGrid({title:"Third Grid",collapsible:true});
+  //~ var gridbox3 = {vflex:3,autoScroll:true,items:grid3,xtype:'container',layout:'fit', split:true, region:'south'}
+
+  var grid1 = new ExampleGrid({title:"First Grid",collapsible:true,autoScroll:true,split:true, region:'north',vflex:1});
+  var grid2 = new ExampleGrid({title:"Second Grid",collapsible:true,autoScroll:true,split:true, region:'center',vflex:2});
+  var grid3 = new ExampleGrid({title:"Third Grid",collapsible:true,autoScroll:true,split:true, region:'south',vflex:3});
+
+  var rightPanel = new VBorderPanel({
+  //~ var rightPanel = new Ext.Panel({
+      //~ layout: 'form',
+      //~ layout:   'border', 
+      flex:1,
+      autoScroll:true,
+      //~ items: [ gridbox1, gridbox2, gridbox3 ]
+      items: [ grid1, grid2, grid3 ]
+  });
+  
+  rightPanel.on('activate',function(){console.log('activate',arguments)})
+  rightPanel.on('show',function(){console.log('show',arguments)})
+  rightPanel.on('render',function(){console.log('render',arguments)})
+  rightPanel.on('bodyresize',function(){console.log('bodyresize',arguments)})
+  
+  //~ rightPanel.on('bodyresize',simulate_vbox,rightPanel)
+  
+  
+  var win = new Ext.Window({
+    width: 600, height:600,
+    layout:'fit',
+    maximizable: true,
+    items: {
+      layout: 'hbox', layoutConfig: {align:'stretch'},
+      items: [leftPanel,rightPanel]
+    },
+  });
+  win.show();
+});
+</script>
+</head><body>
+</body></html>

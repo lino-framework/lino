@@ -28,13 +28,6 @@ The :mod:`lino.actions` Module
     :undoc-members:
     :show-inheritance:
 
-The :mod:`lino.layouts` Module
-------------------------------
-
-.. automodule:: lino.layouts
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 The :mod:`lino.lino_site` Module
 --------------------------------
