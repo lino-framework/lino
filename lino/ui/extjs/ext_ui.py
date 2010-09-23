@@ -662,11 +662,6 @@ class ExtUI(base.UI):
             msg = "User %s cannot view %s." % (request.user,ah.report)
             return http.HttpResponseForbidden()
             
-        #~ 20100706    
-        #~ if pk == '-99999':
-            #~ ar = ext_requests.ViewReportRequest(request,ah,ah.report.list_action)
-            #~ elem = ar.create_instance()
-        #~ else:
         try:
             elem = rpt.model.objects.get(pk=pk)
         except rpt.model.DoesNotExist:
@@ -688,6 +683,11 @@ class ExtUI(base.UI):
             if a is not None:
                 if isinstance(a,actions.OpenWindowAction):
                     params = dict(data_record=elem2rec(request,ah,elem))
+                    if a.window_wrapper.tabbed:
+                        tab = request.GET.get('tab',None)
+                        if tab is not None: 
+                            tab = int(tab)
+                            params.update(active_tab=tab)
                     return HttpResponse(self.html_page(request,on_ready=['Lino.%s(undefined,%s);' % (a,py2js(params))]))
                     
                 if isinstance(a,actions.RedirectAction):
@@ -733,40 +733,6 @@ class ExtUI(base.UI):
         f.close()
           
         
-    def unused_window_configs_view(self,request,wc_name=None,**kw):
-        if request.method == 'POST':
-            params = request.POST
-            wc = dict()
-            #~ name = str(ar.ah.report)
-            wc['height'] = parse_int(params.get('height'))
-            wc['width'] = parse_int(params.get('width'))
-            wc['maximized'] = parse_bool(params.get('maximized'))
-            wc['x'] = parse_int(params.get('x'))
-            wc['y'] = parse_int(params.get('y'))
-            cw = params.getlist('column_widths')
-            assert type(cw) is list, "cw is %r (expected list)" % cw
-            wc['column_widths'] = [parse_int(w,100) for w in cw]
-            a = actors.resolve_action(wc_name)
-            if a is None:
-                return json_response_kw(success=False,
-                  message=_(u'%r : no such action') % wc_name)
-            self.save_window_config(a,wc)
-            return json_response_kw(success=True,
-              message=_(u'Window config %s has been saved (%r)') % (a,wc))
-  
-      
-    def unused_ui_view(self,request,app_label=None,actor=None,action=None,**kw):
-        actor = actors.get_actor2(app_label,actor)
-        ah = actor.get_handle(self)
-        a = ah.get_action(action)
-        if a is None:
-            msg = "No action %s in %s" % (action,ah)
-            #~ print msg
-            raise Http404(msg)
-        #~ if request.method == 'GET':
-            #~ assert a.window_wrapper is not None, "%r %s has no window_wrapper" % (a,a)
-            #~ return json_response_kw(success=True,js_code=a.window_wrapper.js_render)
-            
         
     def choices_view(self,request,app_label=None,rptname=None,fldname=None,**kw):
         rpt = actors.get_actor2(app_label,rptname)

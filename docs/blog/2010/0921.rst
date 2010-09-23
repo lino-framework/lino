@@ -90,3 +90,4 @@ Es muss ein Element namens `main` definiert werden.
 Man kann beliebig viele sonstige Elemente definieren.
 Zeilen, die mit Whitespace beginnen, sind Fortsetzungen einer begonnenen Definition.
 
+11.15 Uhr : Der Permalink eines mehrtabbigen Details enthält jetzt auch den aktiven Tab.

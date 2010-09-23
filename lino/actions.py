@@ -142,7 +142,6 @@ class GridEdit(OpenWindowAction):
         Action.__init__(self,rpt)
 
 
-    
 class ShowDetailAction(OpenWindowAction):
     callable_from = (GridEdit,)
     #~ show_in_detail = False

@@ -494,6 +494,7 @@ Lino.tools_close_handler = function (ww) {
 };
 Lino.permalink_handler = function (ww) {
   return function() { 
+    //~ console.log(20100923,ww.get_permalink());
     document.location = ww.get_permalink();
     //~ document.location = "?permalink=" + ww.get_permalink();
     //~ document.location = "?permalink=" + ww.config.permalink_name +'()';
@@ -1433,6 +1434,12 @@ Lino.WindowWrapper = function(caller,config,params) {
   
   this.main_item = config.main_panel;
   
+  if (config.active_tab) {
+    //~ console.log('active_tab',config.active_tab,this.main_item.items.get(0));
+    this.main_item.items.get(0).activeTab = config.active_tab;
+    //~ this.main_item.items.get(0).activate(config.active_tab);
+  }
+  
   //~ console.log('Lino.WindowWrapper.setup',this);
   this.window = new Ext.Window({ 
     layout: "fit", 
@@ -1451,12 +1458,12 @@ Lino.WindowWrapper = function(caller,config,params) {
   //~ console.log('Lino.WindowWrapper.setup done',this);
   this.setup();
   if (config.data_record) {
-    console.log('Lino.WindowWrapper with data_record',config.data_record);
+    //~ console.log('Lino.WindowWrapper with data_record',config.data_record);
     //~ this.main_item.load_master_record.defer(2000,this.main_item,[config.data_record]);
     //~ Lino.do_when_visible(this.main_item,function(){this.load_master_record(config.data_record)});
     //~ this.main_item.on('afterrender',function(){this.main_item.load_master_record(config.data_record)},this,{single:true});
     this.main_item.load_master_record(config.data_record);
-    return;
+    //~ return;
   } 
   if (config.record_id !== undefined) { // may be 0 
     this.main_item.goto_record_id(config.record_id);
@@ -1584,7 +1591,14 @@ Lino.DetailWrapper = Ext.extend(Lino.DetailWrapperBase, {
   },
   get_permalink : function() {
     //~ return this.config.permalink_name +'(undefined,{record_id:'+this.current_record.id+'})';
-    return '/api'+this.main_item.ls_url+'/'+this.main_item.current_record.id + '?fmt=detail';
+    var url = '/api'+this.main_item.ls_url+'/'+this.main_item.current_record.id + '?fmt=detail';
+    var main = this.main_item.items.get(0);
+    if (main.activeTab) {
+      var tab = main.items.indexOf(main.activeTab);
+      //~ console.log('main.activeTab',tab,main.activeTab);
+      url += '&tab=' + String(tab)
+    }
+    return url
   }
 });
 
