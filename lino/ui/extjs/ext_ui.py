@@ -17,7 +17,6 @@ import cgi
 #import traceback
 import cPickle as pickle
 from urllib import urlencode
-import pprint
 
 from django import http
 from django.db import models
@@ -302,7 +301,8 @@ class ExtUI(base.UI):
             (r'^grid_action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<grid_action>\w+)$', self.json_report_view),
             #~ (r'^grid_afteredit/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.grid_afteredit_view),
             (r'^submit/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.form_submit_view),
-            (r'^grid_config/(?P<app_label>\w+)/(?P<actor>\w+)$', self.save_grid_config),
+            (r'^grid_config/(?P<app_label>\w+)/(?P<actor>\w+)$', self.grid_config_view),
+            (r'^detail_config/(?P<app_label>\w+)/(?P<actor>\w+)$', self.detail_config_view),
             (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)$', self.api_list_view),
             #~ (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)\.(?P<fmt>\w+)$', self.api_list_view),
             #~ (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>[-\w]+)\.(?P<fmt>\w+)$', self.api_element_view),
@@ -504,11 +504,36 @@ class ExtUI(base.UI):
 
 
         
-    def save_grid_config(self,request,app_label=None,actor=None):
+    def detail_config_view(self,request,app_label=None,actor=None):
         rpt = actors.get_actor2(app_label,actor)
         if not rpt.can_config.passes(request.user):
-            msg = _("User %s cannot view %s.") % (request.user,rpt)
-            return http.HttpResponseForbidden()
+            msg = _("User %s cannot configure %s.") % (request.user,rpt)
+            return http.HttpResponseForbidden(msg)
+        if request.method == 'GET':
+            tab = int(request.GET.get('tab','0'))
+            return json_response_kw(success=True,tab=tab,desc=rpt.detail_layouts[tab]._desc)
+        if request.method == 'PUT':
+            PUT = http.QueryDict(request.raw_post_data)
+            tab = int(PUT.get('tab','0'))
+            desc = PUT.get('desc',None)
+            if desc is None:
+                return json_response_kw(success=False,msg="desc is mandatory")
+            old_dtl = rpt.detail_layouts[tab]
+            old_dtl._kw.update(desc=desc)
+            dtl = reports.DetailLayout(**old_dtl._kw)
+            rpt.detail_layouts[tab] = dtl
+            rpt.save_config()
+            rh = rpt.get_handle(self)
+            rh._layouts[tab+1] = reports.LayoutHandle(rh,dtl)
+            self.build_site_js()            
+            return json_response_kw(success=True)
+            #detail_layout
+      
+    def grid_config_view(self,request,app_label=None,actor=None):
+        rpt = actors.get_actor2(app_label,actor)
+        if not rpt.can_config.passes(request.user):
+            msg = _("User %s cannot configure %s.") % (request.user,rpt)
+            return http.HttpResponseForbidden(msg)
         if request.method == 'PUT':
             PUT = http.QueryDict(request.raw_post_data)
             gc = dict(
@@ -531,22 +556,10 @@ class ExtUI(base.UI):
             gc.update(label=PUT.get('label',name))
             
             rpt.grid_configs[name] = gc
+            rpt.save_config()
+            self.build_site_js()            
+            return json_response_kw(success=True)
             
-            #~ s = 'var grid_config = %s;' % py2js(gc)
-            filename = rpt.get_grid_config_file()
-            f = open(filename,'w')
-            f.write('self.grid_configs = %s\n' % pprint.pformat(rpt.grid_configs))
-            #~ f = open(filename,'wb')
-            #~ pickle.dump(rpt.grid_configs,f)
-            #~ f.close()
-            lino.log.info("save_grid_config(%r) -> %s",gc,filename)
-            
-            #~ from lino.lino_site import lino_site
-            #~ self.build_site_js(lino_site)
-            self.build_site_js()
-            
-            return json_response_kw(success=True,
-                  msg="%s would have been saved" % filename)
         raise NotImplementedError
         
         
@@ -902,8 +915,8 @@ class ExtUI(base.UI):
     #~ def show_detail(self,ar):
         #~ ar.show_window(ar.action.window_wrapper.js_render)
 
-    def show_action_window(self,ar,action):
-        ar.response.update(js_code = action.window_wrapper.js_render)
+    #~ def show_action_window(self,ar,action):
+        #~ ar.response.update(js_code = action.window_wrapper.js_render)
         #~ ar.show_window(action.window_wrapper.js_render)
 
     #~ def show_properties(self,ar,**kw):

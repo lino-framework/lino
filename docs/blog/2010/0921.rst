@@ -88,6 +88,19 @@ NAME muss ein neuer Name sein.
 WERT is a space-delimited List of element names.
 Es muss ein Element namens `main` definiert werden.
 Man kann beliebig viele sonstige Elemente definieren.
-Zeilen, die mit Whitespace beginnen, sind Fortsetzungen einer begonnenen Definition.
+Zeilen, die mit Whitespace beginnen, sind Fortsetzungen einer zuvor begonnenen Definition.
 
-11.15 Uhr : Der Permalink eines mehrtabbigen Details enthält jetzt auch den aktiven Tab.
+11.15 Uhr : Der Permalink eines mehrtabbigen Details enthält jetzt auch den aktiven Tab. Super. Check-in.
+
+24.09.
+------
+
+Bisher wurde die lokale Report-Konfigurationsdatei in `ExtUI.save_grid_config` generiert.
+Das wird jetzt in `Report.save_config` gemacht, weil da jetzt auch die detail_layouts rein kommen.
+Neue URL mit Methoden GET und PUT und Parameter `tab`
+
+Die Operation ist fast fertig: Detail-Fenster haben jetzt einen Button "Layout Editor", wenn man darauf klickt kommt ein Fenster mit einem Texteditor, der das Layout (das des aktuellen Tabs) zum Bearbeiten anbietet. Der Editor kriegt dieses Layout mit `GET /layout_config/contacts/Persons?tab=X`. Und wenn man auf `Save` klickt, macht er ein `PUT` zur gleichen Adresse, der Server speichert das in der Report-Konfigurations-Datei und generiert dann seinen site.js neu. Der Save-Button schließt das Editorfenster und lädt document.location neu, damit man gleich das Resultat sehen kann. Super! Ich kann beruhigt ins Wochenende gehen. 
+
+TODO:
+- Der tab-Parameter stimmt nicht immer
+- Das Neuladen funktioniert in der Praxis noch nicht

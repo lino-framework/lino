@@ -16,10 +16,12 @@ import os
 import traceback
 #import logging ; logger = logging.getLogger('lino.reports')
 import cPickle as pickle
+import pprint
 
 from django.conf import settings
 from django.utils.importlib import import_module
 from django.utils.translation import ugettext as _
+from django.utils.encoding import force_unicode 
 
 from django.db import models
 from django.db.models.query import QuerySet
@@ -563,10 +565,6 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
         #~ self.list_action = ListAction(self)
         
         
-        #self.setup()
-        
-        #register_report(self)
-        
         
     @classmethod
     def spawn(cls,suffix,**kw):
@@ -575,16 +573,17 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
         
     def column_choices(self):
         return [ de.name for de in self.data_elems() ]
-        #~ l = []
-        #~ for de in self.data_elems():
-            #~ if isinstance(de,models.Field):
-                #~ l.append((de.name, unicode(de.verbose_name)))
-            #~ else:
-                #~ l.append((de.name, unicode(de)))  
-        #~ return l
       
     def do_setup(self):
       
+        filename = self.get_grid_config_file()
+        if os.path.exists(filename):
+            lino.log.info("Loading %s...",filename)
+            execfile(filename,dict(self=self))
+            #~ self.grid_configs = pickle.load(open(filename,"rU"))
+        else:
+            self.grid_configs = {}
+            
         alist = [ ac(self) for ac in self.actions ]
           
         if self.model is not None:
@@ -613,40 +612,30 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
                 alist.append(actions.InsertRow(self))
                 alist.append(actions.SubmitInsert(self))
                     
-            #~ for slave in self._slaves:
-                #~ actions.append(SlaveGridAction(self,slave))
-                
-            if False: # lino.modlib.properties and lino.modlib.links are currently not necessary
-                from lino.modlib.properties import models as properties
-                if properties.Property.properties_for_model(self.model).count() > 0:
-                    a = properties.PropertiesAction(self)
-                    alist.append(a)
-                    
-                from lino.modlib.links import models as links
-                alist.append(SlaveGridAction(self,links.LinksByOwner()))
-            
         alist.append(self.default_action)
-        #~ actions.append(self.data_action)
         self.set_actions(alist)
                 
         if self.button_label is None:
             self.button_label = self.label
             
-        #~ from lino.modlib.system import models as system
-        #~ self.grid_configs = [gc.name for gc in system.GridConfig.objects.filter(rptname=self.actor_id)]
-        filename = self.get_grid_config_file()
-        if os.path.exists(filename):
-            lino.log.info("Loading %s...",filename)
-            execfile(filename,dict(self=self))
-            #~ self.grid_configs = pickle.load(open(filename,"rU"))
-        else:
-            self.grid_configs = {}
         
 
     def get_grid_config_file(self):
         filename = str(self) + ".py"
         return os.path.join(settings.DATA_DIR,filename)
         
+    def save_config(self):
+        filename = self.get_grid_config_file()
+        lino.log.info("save_config() -> %s",filename)
+        f = open(filename,'w')
+        f.write("# Generated file. Delete it to restore factory settings.\n")
+        f.write('self.grid_configs = %s\n' % pprint.pformat(self.grid_configs))
+        f.write('self.reset_details()\n')
+        for dtl in self.detail_layouts:
+            kw = ','.join(['%s=%r' % (k,force_unicode(v)) for k,v in dtl._kw.items()])
+            f.write('self.add_detail(%s,%s)\n' % (pprint.pformat(dtl._desc),kw))
+        #~ f.write('self.detail_layouts = %s\n' % pprint.pformat(self.detail_layouts))
+            
     #~ def debug_summary(self):
         #~ if self.model is not None:
             #~ return '%s detail_layouts=%s' % (self.__class__,[l.__class__ for l in self.detail_layouts])
@@ -778,7 +767,7 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
 
 
     @classmethod
-    def reset_details(cls,*args,**kw):
+    def reset_details(cls):
         cls.detail_layouts = []
       
     @classmethod
@@ -837,6 +826,8 @@ class BaseLayout:
         
     def __init__(self,desc=None,**kw):
         #~ self.label = label
+        self._desc = desc
+        self._kw = kw
         for k,v in kw.items():
             setattr(self,k,v)
         attrname = None

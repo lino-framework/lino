@@ -631,6 +631,10 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
         this.displayItem = new Ext.Toolbar.TextItem({})
       ]);
     }
+    config.bbar = config.bbar.concat([
+      '->',
+      {text:'Layout Editor',handler:this.edit_detail_config,qtip:"Save Detail Configuration",scope:this}
+    ])
     this.before_row_edit = config.before_row_edit.createDelegate(this);
     
     Lino.FormPanel.superclass.constructor.call(this, config);
@@ -707,6 +711,49 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   get_current_record : function() {  
     //~ console.log(20100714,this.current_record);
     return this.current_record },
+  edit_detail_config : function () {
+    var editor = new Ext.form.TextArea();
+    var close = function() { win.close(); }
+    var _this = this;
+    var save = function() { 
+      console.log(arguments); 
+      var a = { 
+        params:{desc:editor.getValue(),tab:_this.ww.active_tab || 0}, 
+        method:'PUT',
+        url:'/detail_config'+_this.ls_url,
+        success: function(response) {
+          win.close();
+          document.location = _this.ww.get_permalink();
+        }
+      };
+      //~ console.log(a);
+      Ext.Ajax.request(a);
+    }
+    var save_btn = new Ext.Button({text:'Save',handler:save,disabled:true});
+    var win = new Ext.Window({title:'Detail Layout',
+      items:editor, layout:'fit',
+      width:500,height:500,
+      bbar:[{text:'Cancel',handler:close},save_btn]});
+    var a = { 
+      params:{tab:_this.ww.active_tab || 0}, 
+      method:'GET',
+      url:'/detail_config'+_this.ls_url,
+      success : function(response) {
+        //~ console.log('Lino.do_action()',response,'action success');
+        if (response.responseText) {
+          var result = Ext.decode(response.responseText);
+          if (result.success) {
+            //~ console.log('Lino.do_action()',action.name,'result is',result);
+            editor.setValue(result.desc);
+            save_btn.enable();
+          }
+        }
+      }
+    };
+    console.log(a);
+    Ext.Ajax.request(a);
+    win.show();
+  },
   load_picture_to : function(cmp,record) {
     console.log('FormPanel.load_picture_to()',record);
     if (record)
@@ -810,7 +857,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
       '->',
       //~ {text:'GC',handler:this.manage_grid_configs,qtip:"Manage Grid Configurations",scope:this},
       {text:'Save GC',handler:this.save_grid_config,qtip:"Save Grid Configuration",scope:this}
-    ])
+    ]);
     
     config.plugins = [new Lino.GridFilters()];
     

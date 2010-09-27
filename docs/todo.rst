@@ -141,3 +141,5 @@ Langfristig
 - Der JS-Code, der ein Detail-Fenster definiert, wird für jeden Report zweimal generiert. 
   Ein einziges Mal für alle Reports würde reichen.
   
+- Layout-Editor: Schade, dass das Editorfenster das darunterliegende Fenster verdeckt und auch nicht aus dem Browserfenster rausbewegt werden kann. Mögliche Lösung: dass das Editorfenster sich die east region pflanzt. 
+
