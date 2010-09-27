@@ -1,6 +1,15 @@
-0927 Weiter mit dem Layout-Editor
-=================================
+0927...28 Weiter mit dem Layout-Editor
+======================================
 
 Heute war nur wenig Lino-Zeit, aber immerhin ein Punkt funktioniert jetzt: 
 Der Layout-Editor wird jetzt mit dem richtigen tab-Parameter aufgerufen.
 Check-In wegen Feierabend.
+
+28.09.
+------
+
+Das Neuladen funktioniert jetzt. Er generierte zwar die site.js neu, aber 
+die hatte die Änderung noch nicht mitbekommen, weil auch `ExtUI.setup_handle` 
+noch gerufen werden muss, damit die window_wrapper der Aktionen neu instanziert 
+werden. Diese sehr interne Küche ist jetzt in `ReportHandle.update_detail` 
+geschrieben. Das ist zwar nicht gerade das superelegante Interface, aber es funktioniert.

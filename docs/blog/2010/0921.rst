@@ -102,5 +102,6 @@ Neue URL mit Methoden GET und PUT und Parameter `tab`
 Die Operation ist fast fertig: Detail-Fenster haben jetzt einen Button "Layout Editor", wenn man darauf klickt kommt ein Fenster mit einem Texteditor, der das Layout (das des aktuellen Tabs) zum Bearbeiten anbietet. Der Editor kriegt dieses Layout mit `GET /layout_config/contacts/Persons?tab=X`. Und wenn man auf `Save` klickt, macht er ein `PUT` zur gleichen Adresse, der Server speichert das in der Report-Konfigurations-Datei und generiert dann seinen site.js neu. Der Save-Button schließt das Editorfenster und lädt document.location neu, damit man gleich das Resultat sehen kann. Super! Ich kann beruhigt ins Wochenende gehen. Check-In.
 
 TODO:
+
 - Der Layout-Editor wird noch nicht mit dem richtigen tab-Parameter aufgerufen.
-- Das Neuladen funktioniert in der Praxis noch nicht
+- Das Neuladen funktioniert noch nicht. Er generiert zwar die site.js neu, aber die hat die Änderung noch nicht mitbekommen.

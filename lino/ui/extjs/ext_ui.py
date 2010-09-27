@@ -514,17 +514,12 @@ class ExtUI(base.UI):
             return json_response_kw(success=True,tab=tab,desc=rpt.detail_layouts[tab]._desc)
         if request.method == 'PUT':
             PUT = http.QueryDict(request.raw_post_data)
-            tab = int(PUT.get('tab','0'))
+            tab = int(PUT.get('tab',0))
             desc = PUT.get('desc',None)
             if desc is None:
                 return json_response_kw(success=False,msg="desc is mandatory")
-            old_dtl = rpt.detail_layouts[tab]
-            old_dtl._kw.update(desc=desc)
-            dtl = reports.DetailLayout(**old_dtl._kw)
-            rpt.detail_layouts[tab] = dtl
-            rpt.save_config()
             rh = rpt.get_handle(self)
-            rh._layouts[tab+1] = reports.LayoutHandle(rh,dtl)
+            rh.update_detail(tab,desc)
             self.build_site_js()            
             return json_response_kw(success=True)
             #detail_layout

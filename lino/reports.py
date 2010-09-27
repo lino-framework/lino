@@ -299,6 +299,15 @@ class ReportHandle(datalinks.DataLink,base.Handle):
         ar.setup(*args,**kw)
         return ar
 
+    def update_detail(self,tab,desc):
+        old_dtl = self.report.detail_layouts[tab]
+        #~ old_dtl._kw.update(desc=desc)
+        #~ old_dtl._desc=desc
+        dtl = DetailLayout(desc,**old_dtl._kw)
+        self.report.detail_layouts[tab] = dtl
+        self._layouts[tab+1] = LayoutHandle(self,dtl)
+        self.ui.setup_handle(self)
+        self.report.save_config()
 
 
 class ReportActionRequest(actions.ActionRequest): # was ReportRequest
