@@ -1,0 +1,6 @@
+0927 Weiter mit dem Layout-Editor
+=================================
+
+Heute war nur wenig Lino-Zeit, aber immerhin ein Punkt funktioniert jetzt: 
+Der Layout-Editor wird jetzt mit dem richtigen tab-Parameter aufgerufen.
+Check-In wegen Feierabend.

@@ -633,7 +633,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     }
     config.bbar = config.bbar.concat([
       '->',
-      {text:'Layout Editor',handler:this.edit_detail_config,qtip:"Save Detail Configuration",scope:this}
+      {text:'Layout Editor',handler:this.edit_detail_config,qtip:"Edit Detail Layout",scope:this}
     ])
     this.before_row_edit = config.before_row_edit.createDelegate(this);
     
@@ -712,13 +712,21 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     //~ console.log(20100714,this.current_record);
     return this.current_record },
   edit_detail_config : function () {
+    var active_tab = {};
+    var main = this.items.get(0);
+    if (main.getActiveTab !== undefined) {
+      var tabitem = main.getActiveTab();
+      Ext.apply(active_tab,{tab : main.items.indexOf(tabitem)});
+    }
     var editor = new Ext.form.TextArea();
     var close = function() { win.close(); }
     var _this = this;
     var save = function() { 
       console.log(arguments); 
+      var params = {desc: editor.getValue()};
+      Ext.apply(params,active_tab);
       var a = { 
-        params:{desc:editor.getValue(),tab:_this.ww.active_tab || 0}, 
+        params:params, 
         method:'PUT',
         url:'/detail_config'+_this.ls_url,
         success: function(response) {
@@ -735,7 +743,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
       width:500,height:500,
       bbar:[{text:'Cancel',handler:close},save_btn]});
     var a = { 
-      params:{tab:_this.ww.active_tab || 0}, 
+      params:active_tab, 
       method:'GET',
       url:'/detail_config'+_this.ls_url,
       success : function(response) {
