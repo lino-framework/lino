@@ -1,0 +1,68 @@
+2010-09-30 disabled fields
+==========================
+
+Jetzt wo der Layout-Editor fertig ist, machen wir weiter mit der :doc:`/todo`.
+
+disabled fields
+---------------
+
+- Wenn man in der Tabellenansicht versucht, ein :term:`disabled field <disabled fields>` 
+  zu bearbeiten, meldet 
+  er jetzt in der Konsole ein höfliches `Field "street" is disabled for this record`.
+  Diese Meldung formatiere ich jetzt erstmals mit :js:func:`String.format`. 
+  Um sie zu internationalisieren, muss ich entweder die :xfile:`lino.js` 
+  ebenfalls beim Serverstart generieren 
+  oder in der :xfile:`site.js` eine systemweite Konstante dafür vorsehen.
+    
+- :class:`ext_store.DisabledFieldsStoreField` hängt jetzt für Phantom-Records (d.h. deren ``pk == None``) 
+  den primary key in die Liste der :term:`disabled_fields`. Also der primary key sollte in 
+  :meth:`lino.reports.Report.disabled_fields` nicht angegeben werden.
+  
+- disabled ComboBox fields (z.B. Person.city) waren in der Tabellenansicht dennoch editierbar,
+  weil :class:`ext_store.DisabledFieldsStoreField` als Feldnamen `cityHidden` und nicht `city` 
+  in `disabled_fields` eintrug.
+  Konflikt: FormPanel wollte den Hidden-Namen des Feldes, GridPanel den eigentlichen Namen.
+  Lösung: 
+  :class:`ext_store.DisabledFieldsStoreField` trägt jetzt die eigentlichen Feldnamen (nicht mehr deren Hidden-Version) in in `disabled_fields` ein. Und `Lino.FormPanel.load_master_record` will jetzt auch den eigentlichen Namen (benutzt nicht mehr :extjs:`Ext.form.BasicForm`.findField(), sondern :extjs:`Ext.form.FormPanel`.find()).
+  
+  
+Detail of slave reports
+-----------------------
+
+Ein Punkt weniger in der :doc:`/todo`:
+
+- In slave reports (z.B. `NotesByPerson <http://127.0.0.1:8000/api/contacts/Persons/16?fmt=detail&tab=4>`_) 
+  funktioniert das Detail nicht (ist immer leer). 
+  Das liegt daran, dass er zum Laden des Records ein `GET /api/notes/NotesByPerson/16` 
+  fragt (also ohne mt und mk).
+
+Das Problem kam u.A. daher, dass ich `master record` und `current record` an ein paar Stellen verwechselte.
+Jedenfalls einige Änderungen in 
+:meth:`ext_ui.ExtUi.a2btn`,
+:meth:`ext_windows.MasterWrapper.js_render`
+und :xfile:`lino.js`
+
+Der master record eines slave reports ist es, der die Query-Parameter mt und mk definiert.
+Sowohl FormPanel als auch GridPanel können auf einem Slave Report sein und brauchen dann einen Master.
+Aber wo sitzt der Master? Na im WindowWrapper. 
+Wie wird der Master gesetzt? Momentan lediglich durch die Parameter `record_id` oder `data_record`
+Also jedes panel auf einem slave report fragt seinen ww nach dem Master record. 
+Das Formpanel tat das bisher nicht.
+FormPanel ist immer ein MainPanel: davon gibt es immer nur eines pro ww.
+
+Deleting records
+----------------
+
+Und noch ein Punkt weniger in der :doc:`/todo`:
+
+- Löschen auf Extrazeile sollte deaktiviert sein. 
+  
+Dafür wohl ein neuer (nicht so dringender) Punkt:
+
+- Ich würde in der Rückfrage ja auch gerne die `__unicode__` der zu löschenden Records anzeigen.
+  FormPanel und GridPanel.get_selected() geben deshalb jetzt nicht mehr bloß eine Liste der IDs, sondern eine Liste der Records.
+  Aber das nützt (noch) nichts, denn ich weiß nicht, wie ich den Grid-Store überredet bekomme, außer `data` 
+  auch eine Eigenschaft `title` aus jedem Record rauszulesen. 
+  Auf Serverseite wäre das kein Problem: ich bräuchte einfach nur title in `elem2rec1` statt in `elem2rec_detailed` zu setzen.
+  Aber das interessiert den Store der Grid nicht. Kann sein, dass ich ihn konfigurieren kann...
+  Oder ich würde es wie mit `disabled_fields` machen. Also ein neues automatisches virtuelles Feld __unicode__.

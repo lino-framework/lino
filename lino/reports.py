@@ -513,7 +513,7 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
     disabled_fields = None # see docs
     """
     If `disabled_fields` is not None, it must be a method that accepts two arguments `request` and `obj` 
-    and returns a list of field names that should not be editable. 
+    and returns a list of field names that should not be editable for the specified `obj`.
     See usage example in :class::`dsbe.models.Persons` and :doc:`/blog/2010/0804`.
     
     """

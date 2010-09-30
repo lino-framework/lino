@@ -4,17 +4,36 @@ To-Do-Liste
 Kurzfristig
 -----------
 
-- Die Extra-Zeile sollte ganz leer sein (Standardwerte nicht anzeigen).
-
-- Löschen auf Extrazeile sollte deaktiviert sein. 
+- Neue Tabelle "Ansprechpartner pro Person" mit einem Feld "Rolle" oder "Eigenschaft", 
+  dessen Auswahlliste konfigurierbar ist 
+  ('Hauptkontakt', 'DSBE', 'allgemeiner Sozialdienst', 'Schulderberatung', 'Energieberatung'). 
+  Das Feld `Person.user` kann dann raus, und `PAR->IdUsr` muss in diese Tabelle importiert werden.
+  Im Layout2 ("Person") muss dann ``user`` ersetzt werden durch eine Tabelle von Ansprechpartnern.
+  Konkret also vor allem 2 neue Tabellen:
   
-- Auto-Refresh wenn Fenster versteckt war und wieder sichtbar wird.
+  - CoachType : (id,name)
+  - Coach : (user,type,person,company)
   
-- In NotesByPerson funktioniert Detail nicht. Ist immer ler. 
+- Einfügen :
 
-- Tabelle "Ansprechpartner pro Person" : DSBE, allgemeiner Sozialdienst, Schulderberatung, Energieberatung
+  - Beim Einfügen in einem Slave werden Standardwerte und/oder Master nicht gesetzt.
 
-- Quickfilter im Detail von Personen geht nicht. 
+  - Die Extra-Zeile sollte ganz leer sein (Standardwerte nicht anzeigen).
+
+  - Nach Insert sollte die Tabelle im aufrufenden Fenster automatisch aktualisiert werden.
+    Evtl. allgemein automatisches Refresh wenn Fenster versteckt war und wieder sichtbar wird?
+    
+  - Wenn man z.B. in Companies.insert manuell eine ID eingibt, 
+    dann ignoriert der Server die und vergibt trotzdem seine automatische nächste ID.
+
+
+- Im Detail-Tab "Profil1" nimmt das GridElement anfangs den ganzen Raum ein, 
+  die Felder im oberen Teil werden erst nach einem resize sichtbar.
+
+- SlaveGrid-Elemente zeigen beim ersten Aufruf "Nix gefunden".
+  Liegt am Problem :doc:`/posts/20100916`.
+
+- Quickfilter im Detail von Personen geht nicht.
 
 - Man kann noch nicht nach Personen suchen, die ein bestimmtes Studium haben
   
@@ -141,5 +160,19 @@ Langfristig
 - Der JS-Code, der ein Detail-Fenster definiert, wird für jeden Report zweimal generiert. 
   Ein einziges Mal für alle Reports würde reichen.
   
-- Layout-Editor: Schade, dass das Editorfenster das darunterliegende Fenster verdeckt und auch nicht aus dem Browserfenster rausbewegt werden kann. Mögliche Lösung: dass das Editorfenster sich die east region pflanzt. 
+- Layout-Editor: 
 
+  - Fehlerbehandlung! Momentan knallt es, wenn man einen Tippfehler macht.
+  - Schade, dass das Editorfenster das darunterliegende Fenster verdeckt und auch nicht aus dem Browserfenster rausbewegt werden kann. Mögliche Lösung: dass das Editorfenster sich die east region pflanzt. 
+  - Button um Feldnamen komfortabel auszuwählen
+
+
+
+- Ich würde in der Rückfrage zum Löschen eine oder mehrerer Records ja auch 
+  gerne die `__unicode__` der zu löschenden Records anzeigen.
+  FormPanel und GridPanel.get_selected() geben deshalb jetzt nicht mehr bloß eine Liste der IDs, sondern eine Liste der Records.
+  Aber das nützt (noch) nichts, denn ich weiß nicht, wie ich den Grid-Store überredet bekomme, außer `data` 
+  auch eine Eigenschaft `title` aus jedem Record rauszulesen. 
+  Auf Serverseite wäre das kein Problem: ich bräuchte einfach nur title in `elem2rec1` statt in `elem2rec_detailed` zu setzen.
+  Aber das interessiert den Store der Grid nicht. Kann sein, dass ich ihn konfigurieren kann...
+  Oder ich würde es wie mit `disabled_fields` machen. Also ein neues automatisches virtuelles Feld __unicode__.

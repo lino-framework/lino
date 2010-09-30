@@ -78,15 +78,21 @@ class DisabledFieldsStoreField(StoreField):
     """
     See :doc:`/blog/2010/0803`
     """
-    def __init__(self,report):
+    def __init__(self,store):
         self.options = dict(name='disabled_fields')
-        self.report = report
+        self.store = store
+        #~ self.report = report
         
     def parse_form_value(self,v):
         pass
         
     def obj2json(self,request,obj,d):
-        d.update(disabled_fields=[ext_requests.form_field_name(f) for f in self.report.disabled_fields(request,obj)])
+        #~ l = [ ext_requests.form_field_name(f) 
+              #~ for f in self.store.report.disabled_fields(request,obj)]
+        l = [ f.name for f in self.store.report.disabled_fields(request,obj)]
+        if obj.pk is not None:
+            l.append(self.store.pk.name)
+        d.update(disabled_fields=l)
 
     def form2obj(self,instance,post_data):
         pass
@@ -303,7 +309,7 @@ class Store(Component):
             fields.add(self.pk)
         self.fields = [ self.create_field(fld) for fld in fields ]
         if rh.report.disabled_fields:
-            self.fields.append(DisabledFieldsStoreField(rh.report))
+            self.fields.append(DisabledFieldsStoreField(self))
         #~ self.fields.append(PropertiesStoreField)
         #~ self.fields_dict = dict([(f.field.name,f) for f in self.fields])
           

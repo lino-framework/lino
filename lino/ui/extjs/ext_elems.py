@@ -59,11 +59,9 @@ def before_row_edit(panel):
     for e in panel.active_children:
         #~ if e is not panel and isinstance(e,GridElement):
         if isinstance(e,GridElement):
-            l.append(
-              "%s.load_master_record(record);" % e.as_ext())
+            l.append("%s.on_master_changed();" % e.as_ext())
         elif isinstance(e,PictureElement):
-            l.append(
-              "this.load_picture_to(%s,record);" % e.as_ext())
+            l.append("this.load_picture_to(%s,record);" % e.as_ext())
         elif isinstance(e,FieldElement):
             chooser = choosers.get_for_field(e.field)
             if chooser:

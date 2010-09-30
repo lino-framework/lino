@@ -411,15 +411,22 @@ Lino.save_wc_handler = function(ww) {
 
 Lino.delete_selected = function(caller) {
   //~ console.log("Lino.delete_selected",caller);
-  var pk_list = caller.get_selected();
+  var recs1 = caller.get_selected();
+  var recs = [];
+  for ( var i=0; i < recs1.length; i++ ) { if (! recs1[i].phantom) recs.push(recs1[i]); }
+  if (recs.length == 0) {
+    Lino.notify("Please select at least one record.");
+    return;
+  };
+  console.log(recs);
   Ext.MessageBox.show({
     title: 'Confirmation',
-    msg: "Delete " + String(pk_list.length) + " rows. Are you sure?",
+    msg: "Delete " + String(recs.length) + " rows. Are you sure?",
     buttons: Ext.MessageBox.YESNOCANCEL,
     fn: function(btn) {
       if (btn == 'yes') {
-        for ( var i=0; i < pk_list.length; i++ ) {
-          Lino.do_action(caller,{method:'DELETE',url:'/api'+caller.ls_url+'/'+pk_list[i]})
+        for ( var i=0; i < recs.length; i++ ) {
+          Lino.do_action(caller,{method:'DELETE',url:'/api'+caller.ls_url+'/'+recs[i].id})
         }
         caller.refresh();
       }
@@ -574,11 +581,19 @@ Lino.do_when_visible = function(cmp,todo) {
   
 };    
 
-Lino.submit_detail = function(caller) {
-  var rec = caller.get_current_record();
+Lino.show_detail_handler = function(action) {
+  return function(panel,btn) {
+    var master = panel.get_current_record();
+    //~ action(panel,{record_id:master.id,base_params:panel.ww.config.base_params});
+    action(panel,{record_id:master.id,base_params:panel.ww.get_master_params()});
+  }
+};
+
+Lino.submit_detail = function(panel,btn) {
+  var rec = panel.get_current_record();
   if (rec) {
     //~ console.log('Save handler: this=',this);
-    caller.form.submit({
+    panel.form.submit({
       url:'/api'+caller.ls_url + '/' + rec.id,
       method: 'PUT',
       scope: caller,
@@ -593,11 +608,11 @@ Lino.submit_detail = function(caller) {
 };
 
 
-Lino.submit_insert = function(caller) {
-  caller.form.submit({
-    url:'/api'+caller.ls_url,
+Lino.submit_insert = function(panel,btn) {
+  panel.form.submit({
+    url:'/api'+panel.ls_url,
     method: 'POST',
-    scope: caller,
+    scope: panel,
     success: function(form, action) {
       Lino.notify(action.result.msg);
       //~ this.caller.refresh();
@@ -638,45 +653,51 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     this.before_row_edit = config.before_row_edit.createDelegate(this);
     
     Lino.FormPanel.superclass.constructor.call(this, config);
+    //~ this.base_params = config.base_params;
+    //~ console.log(20100930,this.base_params);
   },
   moveFirst : function() {this.goto_record_id(this.current_record.navinfo.first)},
   movePrev : function() {this.goto_record_id(this.current_record.navinfo.prev)},
   moveNext : function() {this.goto_record_id(this.current_record.navinfo.next)},
   moveLast : function() {this.goto_record_id(this.current_record.navinfo.last)},
   goto_record_id : function(record_id) {
-    //~ console.log('Lino.DetailWrapperBase.goto_record_id() calls Ajax');
+    console.log('Lino.DetailWrapperBase.goto_record_id() : ww.config = ',this.ww.config);
     var this_ = this;
     Ext.Ajax.request({ 
       waitMsg: 'Loading record...',
       method: 'GET',
+      params: this.ww.config.base_params,
       url:'/api'+this.ls_url + '/' + record_id,
       //~ params: {query: this.search_field.getValue()},
       success: function(response) {
         if (response.responseText) {
             var rec = Ext.decode(response.responseText);
-            //~ console.log('Lino.WindowWrapper.config.record_id success',rec);
-            this_.load_master_record(rec);
+            console.log('Lino.WindowWrapper.config.record_id success',rec);
+            this_.set_current_record(rec);
             //~ this_.window.setTitle(rec.title);
         }
       },
       failure: Lino.ajax_error_handler
     });
   },
-  load_master_record : function(record) {
+  set_current_record : function(record) {
     this.current_record = record;
-    console.log('Lino.FormPanel.load_master_record',record);
+    console.log('Lino.FormPanel.set_current_record',record);
     //~ this.config.main_panel.form.load(record);    
     if (record) {
       this.enable();
       this.form.loadRecord(record) 
       this.ww.window.setTitle(record.title);
       if (record.data.disabled_fields) {
-        //~ console.log(20100617,record.disabled_fields);
+        //~ console.log('20100930 disabled_fields =',record.data.disabled_fields);
+        //~ console.log('20100930 this.form =',this.form);
         //~ for (i in record.data.disabled_fields.length) {
         for (i = 0; i < record.data.disabled_fields.length; i++) {
-            var fld = this.form.findField(record.data.disabled_fields[i]);
-            if (fld) { 
-              fld.disable(); 
+            //~ var fld = this.form.findField(record.data.disabled_fields[i]);
+            var flds = this.find('name',record.data.disabled_fields[i]);
+            if (flds.length == 1) { 
+              //~ console.log('20100930 fld',record.data.disabled_fields[i],'=',flds[0]);
+              flds[0].disable(); 
             //~ } else {
                 //~ console.log(20100617,record.data.disabled_fields[i], 'field not found');
             }
@@ -763,13 +784,13 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     win.show();
   },
   load_picture_to : function(cmp,record) {
-    console.log('FormPanel.load_picture_to()',record);
+    //~ console.log('FormPanel.load_picture_to()',record);
     if (record)
       var src = '/api'+this.ww.main_item.ls_url + "/" + record.id + "?fmt=image"
     else
       var src = 'empty.jpg';
     var f = function() {
-      console.log('Lino.load_picture()',src);
+      //~ console.log('Lino.load_picture()',src);
       cmp.el.dom.src = src;
       //~ this.el.dom.onclick = 'Lino.img_onclick(src)';
       //~ this.el.dom.onclick = 'window.open(src)';
@@ -821,7 +842,9 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
       config.selModel = new Ext.grid.CellSelectionModel()
       this.get_selected = function() {
         //~ console.log(this.getSelectionModel().selection);
-        return [ this.getSelectionModel().selection.record.id ];
+        if (this.getSelectionModel().selection)
+            return [ this.getSelectionModel().selection.record ];
+        return [];
       };
       this.get_current_record = function() { 
         if (this.getSelectionModel().selection) return this.getSelectionModel().selection.record;
@@ -829,8 +852,9 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     } else { 
       config.selModel = new Ext.grid.RowSelectionModel() 
       this.get_selected = function() {
-        var sels = this.getSelectionModel().getSelections();
-        return Ext.pluck(sels,'id');
+        return this.getSelectionModel().getSelections();
+        //~ var sels = this.getSelectionModel().getSelections();
+        //~ return Ext.pluck(sels,'id');
       };
       this.get_current_record = function() { 
         return this.getSelectionModel().getSelected();
@@ -1058,6 +1082,8 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
         if(e.record.data.disabled_fields[i] == e.field) {
           //~ console.log(20100803,'cancel');
           e.cancel = true;
+          Lino.notify(String.format('Field "{0}" is disabled for this record',e.field));
+          //~ Lino.notify(e.field + ' : this field is disabled for record ' + e.record.title);
           return
         }
       }
@@ -1149,22 +1175,6 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
   refresh : function() { 
     this.store.load({params:{limit:this.getTopToolbar().pageSize,start:this.getTopToolbar().cursor}});
   },
-  unused_get_selected : function() {
-    if (this.ls_quick_edit) {
-        //~ console.log(this.getSelectionModel().selection);
-        return [ this.getSelectionModel().selection.record.id ];
-    } else {
-        var sels = this.getSelectionModel().getSelections();
-        return Ext.pluck(sels,'id');
-    }
-  },
-  unused_get_current_record : function() { 
-    if (this.ls_quick_edit) {
-        if (this.getSelectionModel().selection) return this.getSelectionModel().selection.record;
-    } else {
-        return this.getSelectionModel().getSelected();
-    }
-  },
   add_row_listener : function(fn,scope) {
     this.getSelectionModel().addListener('rowselect',fn,scope);
   },
@@ -1196,19 +1206,16 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     //~ console.log('GridPanel.postEdit()',value, originalValue, r, field);
     return value;
   },
-  load_master_record : function(master_record) {
-    if (master_record) {
-      cmp = this;
-      var todo = function() {
-        //~ var src = caller.config.url_data + "/" + record.id + ".jpg"
-        console.log('Lino.GridPanel.load_master_record()',cmp,master_record);
-        var p = cmp.ww.get_master_params(master_record);
-        for (k in p) cmp.getStore().setBaseParam(k,p[k]);
-        cmp.getStore().load(); 
-      };
-      Lino.do_when_visible(this,todo);
-    } 
-    //~ else console.log('load_slavegrid() : no record',record);
+  on_master_changed : function() {
+    cmp = this;
+    var todo = function() {
+      //~ var src = caller.config.url_data + "/" + record.id + ".jpg"
+      var p = cmp.ww.get_master_params();
+      console.log('Lino.GridPanel.on_master_changed()',cmp,p);
+      for (k in p) cmp.getStore().setBaseParam(k,p[k]);
+      cmp.getStore().load(); 
+    };
+    Lino.do_when_visible(this,todo);
   }
   });
   
@@ -1476,10 +1483,9 @@ Lino.WindowWrapper = function(caller,config,params) {
   //~ console.log('Lino.WindowWrapper.constructor',config);
   //~ console.time('WindowWrapper.constructor()');
   this.caller = caller;
+  if (params) Ext.apply(config,params);
   this.config = config; 
   //~ this.config = config_fn(this); 
-  if (params) 
-    Ext.apply(this.config,params);
   this.slaves = {};
   //~ this.before_row_edit = config.before_row_edit.createDelegate(this);
   //~ if (this.config.actions) {
@@ -1514,10 +1520,10 @@ Lino.WindowWrapper = function(caller,config,params) {
   this.setup();
   if (config.data_record) {
     //~ console.log('Lino.WindowWrapper with data_record',config.data_record);
-    //~ this.main_item.load_master_record.defer(2000,this.main_item,[config.data_record]);
-    //~ Lino.do_when_visible(this.main_item,function(){this.load_master_record(config.data_record)});
-    //~ this.main_item.on('afterrender',function(){this.main_item.load_master_record(config.data_record)},this,{single:true});
-    this.main_item.load_master_record(config.data_record);
+    //~ this.main_item.on_master_changed.defer(2000,this.main_item,[config.data_record]);
+    //~ Lino.do_when_visible(this.main_item,function(){this.on_master_changed(config.data_record)});
+    //~ this.main_item.on('afterrender',function(){this.main_item.on_master_changed(config.data_record)},this,{single:true});
+    this.main_item.set_current_record(config.data_record);
     //~ return;
   } 
   if (config.record_id !== undefined) { // may be 0 
@@ -1541,18 +1547,20 @@ Ext.override(Lino.WindowWrapper,{
   get_selected : function() { 
     return this.main_item.get_selected();
   },
-  get_master_params : function(record) {
+  get_master_params : function() {
     var p = {}
     p['mt'] = this.config.content_type; // ext_requests.URL_PARAM_MASTER_TYPE
-    if (record) {
-      if (record.phantom) {
+    rec = this.get_current_record()
+    if (rec) {
+      if (rec.phantom) {
           p['mk'] = undefined; // ext_requests.URL_PARAM_MASTER_PK
       }else{
-          p['mk'] = record.id; // ext_requests.URL_PARAM_MASTER_PK
+          p['mk'] = rec.id; // ext_requests.URL_PARAM_MASTER_PK
       }
     } else {
       p['mk'] = undefined;
     }
+    console.log('get_master_params returns',p);
     return p;
   },
   //~ get_base_params : function() { return {} },
@@ -1646,7 +1654,7 @@ Lino.DetailWrapper = Ext.extend(Lino.DetailWrapperBase, {
   },
   get_permalink : function() {
     //~ return this.config.permalink_name +'(undefined,{record_id:'+this.current_record.id+'})';
-    var url = '/api'+this.main_item.ls_url+'/'+this.main_item.current_record.id + '?fmt=detail';
+    var url = '/api'+this.main_item.ls_url+'/'+this.current_record.id + '?fmt=detail';
     var main = this.main_item.items.get(0);
     if (main.activeTab) {
       var tab = main.items.indexOf(main.activeTab);

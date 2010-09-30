@@ -1,0 +1,6 @@
+20100916 : cmp is rendered but not visible
+==========================================
+
+- http://www.sencha.com/forum/showthread.php?110043
+
+- :srcref:`/extjs-showcases/20100916.html`

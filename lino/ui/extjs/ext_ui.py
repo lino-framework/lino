@@ -97,17 +97,16 @@ def json_response(x):
 
 def elem2rec1(request,rh,elem,**rec):
     rec.update(data=rh.store.row2dict(request,elem))
-    #~ rec.update(disabled_fields=[ext_elems.form_field_name(f) for f in rh.report.disabled_fields(request,elem)])
     return rec
       
-def elem2rec(request,rh,elem,**rec):
+def elem2rec_detailed(request,rh,elem,**rec):
     rec = elem2rec1(request,rh,elem,**rec)
+    rec.update(id=elem.pk)
+    rec.update(title=unicode(elem))
     first = None
     prev = None
     next = None
     last = None
-    rec.update(id=elem.pk)
-    rec.update(title=unicode(elem))
     if rh.report.show_prev_next:
       ar = ext_requests.ViewReportRequest(request,rh,rh.report.default_action)
       recno = 0
@@ -686,11 +685,11 @@ class ExtUI(base.UI):
         if request.method == 'GET':
             fmt = request.GET.get('fmt',None)
             if fmt is None:
-                return json_response(elem2rec(request,ah,elem))
+                return json_response(elem2rec_detailed(request,ah,elem))
             a = rpt.get_action(fmt)
             if a is not None:
                 if isinstance(a,actions.OpenWindowAction):
-                    params = dict(data_record=elem2rec(request,ah,elem))
+                    params = dict(data_record=elem2rec_detailed(request,ah,elem))
                     if a.window_wrapper.tabbed:
                         tab = request.GET.get('tab',None)
                         if tab is not None: 
@@ -1001,13 +1000,17 @@ class ExtUI(base.UI):
         elif isinstance(a,actions.SubmitInsert):
             kw.update(panel_btn_handler=js_code('Lino.submit_insert'))
         elif isinstance(a,actions.ShowDetailAction):
+            kw.update(panel_btn_handler=js_code('Lino.show_detail_handler(Lino.%s)' % a))
             #~ kw.update(handler=js_code("function(ww) { Lino.%s(ww,{data_record:ww.get_current_record()})}" % a))
             #~ kw.update(handler=js_code("function(ww) { Lino.%s(ww,{record_id:ww.get_current_record().id})}" % a))
-            js = "Lino.%s(panel,{record_id:ww.get_current_record().id});" % a
+            #~ js = "var rec = panel.get_current_record(); Lino.%s(panel,{record_id:rec.id,base_params:panel.ww.get_master_params(rec)});" % a
             #~ js = "btn.el.setStyle({cursor:'wait'}); %s btn.el.setStyle({cursor:'normal'});" % js
             #~ js = "btn.disable(); %s btn.enable();" % js
-            js = "function(panel,btn) { %s }" % js
-            kw.update(panel_btn_handler=js_code(js))
+            #~ js = "console.log(20100930,panel); " + js
+            
+            #~ js = "var rec = panel.get_current_record(); Lino.%s(panel,{record_id:rec.id,base_params:panel.ww.config.base_params});" % a
+            #~ js = "function(panel,btn) { %s }" % js
+            #~ kw.update(panel_btn_handler=js_code(js))
         elif isinstance(a,actions.InsertRow):
             kw.update(panel_btn_handler=js_code("Lino.%s" % a))
         else:

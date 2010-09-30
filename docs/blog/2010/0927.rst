@@ -1,5 +1,5 @@
-0927...28 Weiter mit dem Layout-Editor
-======================================
+0927...28 Layout-Editor fertig
+==============================
 
 Heute war nur wenig Lino-Zeit, aber immerhin ein Punkt funktioniert jetzt: 
 Der Layout-Editor wird jetzt mit dem richtigen tab-Parameter aufgerufen.
@@ -8,8 +8,19 @@ Check-In wegen Feierabend.
 28.09.
 ------
 
-Das Neuladen funktioniert jetzt. Er generierte zwar die site.js neu, aber 
+Und jetzt funktioniert auch das Neuladen. 
+Er generierte zwar die site.js neu, aber 
 die hatte die Änderung noch nicht mitbekommen, weil auch `ExtUI.setup_handle` 
 noch gerufen werden muss, damit die window_wrapper der Aktionen neu instanziert 
 werden. Diese sehr interne Küche ist jetzt in `ReportHandle.update_detail` 
 geschrieben. Das ist zwar nicht gerade das superelegante Interface, aber es funktioniert.
+
+Also der Layout-Editor ist fertig! Wow! War weniger Arbeit als ich dachte!
+
+Natürlich gibt es noch Sachen, die besser gemacht werden könnten.
+Die kommen in die :doc:`/todo`:
+
+- Fehlerbehandlung! Momentan knallt es, wenn man einen Tippfehler macht.
+- Schade, dass das Editorfenster das darunterliegende Fenster verdeckt und auch nicht aus dem Browserfenster rausbewegt werden kann. Mögliche Lösung: dass das Editorfenster sich die east region pflanzt. 
+- Button um Feldnamen komfortabel auszuwählen
+

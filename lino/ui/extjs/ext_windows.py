@@ -126,9 +126,9 @@ class MasterWrapper(WindowWrapper):
         #~ yield "  Ext.getCmp('main_area').el.setStyle({cursor:'wait'});"
         if settings.USE_FIREBUG:
             yield "  console.time('%s');" % self.action
+            yield "  console.log('ext_windows',20100930,params);"
         for ln in jsgen.declare_vars(self.config):
             yield '  '+ln
-            
         yield "  var ww = new Lino.%s(caller,%s,params)" % (
             self.__class__.__name__,py2js(self.config))
             

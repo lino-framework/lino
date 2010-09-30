@@ -74,5 +74,5 @@ Check-In 1061:f8b8943bec84
 
 (Ich konnte mich natürlich nicht zurückhalten, zwischendurch auch immer mit Sphinx zu spielen: 
 :doc:`/blog/2010/index`, 
-:doc:`/posts/p20100706` und
+:doc:`/posts/20100706` und
 :doc:`/tests`)

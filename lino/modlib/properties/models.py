@@ -22,7 +22,7 @@ from django.utils.translation import ugettext_lazy as _
 import lino
 #~ lino.log.debug(__file__+' : started')
 from lino import reports
-from lino import layouts
+#~ from lino import layouts
 from lino import actions
 from lino.utils import perms
 from lino.utils.ticket7623 import child_from_parent
