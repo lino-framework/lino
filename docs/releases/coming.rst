@@ -4,8 +4,13 @@ Coming release
 Änderungen
 ----------
 
-- nationality und zip_code waren noch nicht disabled für importierte Partner.
-- Bankkonten, Fax-Nr und Gesdos-Nr werden jetzt angezeigt
+- Viele Bugfixes in DSBE (nationality und zip_code waren noch nicht disabled für importierte Partner, Bankkonten, Fax-Nr und Gesdos-Nr werden jetzt angezeigt,...)
+- Viele Bugfixes in Lino selber (VBorderPanel, Editierbarkeit ID, disabled fields, Deleting records, Detail of slave reports,...)
+- Neues Feature: Layout-Editor
+- Bei mehrtabbigen Detail-Fenstern enthält der Permalink jetzt auch das aktive Tab.
+
+
+
 
 
 Bei Upgrade beachten

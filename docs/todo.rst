@@ -4,6 +4,9 @@ To-Do-Liste
 Kurzfristig
 -----------
 
+- SlaveGrid-Elemente zeigen beim ersten Aufruf "Nix gefunden".
+  Liegt am Problem :doc:`/posts/20100916`.
+
 - Neue Tabelle "Ansprechpartner pro Person" mit einem Feld "Rolle" oder "Eigenschaft", 
   dessen Auswahlliste konfigurierbar ist 
   ('Hauptkontakt', 'DSBE', 'allgemeiner Sozialdienst', 'Schulderberatung', 'Energieberatung'). 
@@ -14,24 +17,8 @@ Kurzfristig
   - CoachType : (id,name)
   - Coach : (user,type,person,company)
   
-- Einfügen :
-
-  - Beim Einfügen in einem Slave werden Standardwerte und/oder Master nicht gesetzt.
-
-  - Die Extra-Zeile sollte ganz leer sein (Standardwerte nicht anzeigen).
-
-  - Nach Insert sollte die Tabelle im aufrufenden Fenster automatisch aktualisiert werden.
-    Evtl. allgemein automatisches Refresh wenn Fenster versteckt war und wieder sichtbar wird?
-    
-  - Wenn man z.B. in Companies.insert manuell eine ID eingibt, 
-    dann ignoriert der Server die und vergibt trotzdem seine automatische nächste ID.
-
-
 - Im Detail-Tab "Profil1" nimmt das GridElement anfangs den ganzen Raum ein, 
   die Felder im oberen Teil werden erst nach einem resize sichtbar.
-
-- SlaveGrid-Elemente zeigen beim ersten Aufruf "Nix gefunden".
-  Liegt am Problem :doc:`/posts/20100916`.
 
 - Quickfilter im Detail von Personen geht nicht.
 
@@ -53,15 +40,27 @@ Kurzfristig
   Muss on_delete=RESTRICT oder on_delete=SET_NULL sein. 
   Siehe `Django-Ticket 7539 <http://code.djangoproject.com/ticket/7539>`__.
 
-- Insert in notes.Note : Datum sollte par défaut auf heute stehen, Sprache auf Deutsch.
-
 - Sprachabhängige Auswahl der Notizvorlage. Das templates-Verzeichnis muss pro unterstützter Sprache ein entsprechendes Unterverzeichnis (`de`, `fr`, `en`,...) haben. Dieser Teil des Dateinamens wird in :attr:`notes.NoteType.template` nicht gespeichert und erscheint auch nicht in der Auswahlliste. Dort werden immer die Templates der Hauptsprache angezeigt. Wenn Sprache der Notiz nicht die Hauptsprache des Lino-Sites ist, dann wird das Template zunächst in der Notizsprache gesucht. Falls es dort nicht existiert (z.B. weil die Vorlage noch nicht übersetzt wurde oder multilingual ist), nimmt er die Standard-Vorlage aus der Hauptsprache.
 
 - iCal-Dateien generieren. 
   Im :class:`notes.NoteType` wird definiert, ob Lino einen Termin (oder Erinnerung oder Task) 
   per E-Mail an den Benutzer verschicken soll.
 
-- Benutzermeldungen anzeigen. 
+- Einfügen :
+
+  - Die Extra-Zeile sollte ganz leer sein (Standardwerte nicht anzeigen).
+
+  - Nach Insert sollte die Tabelle im aufrufenden Fenster automatisch aktualisiert werden.
+    Evtl. allgemein automatisches Refresh wenn Fenster versteckt war und wieder sichtbar wird?
+    
+  - Das Insert-Fenster sollte sich natürlich selber schließen nach erfolgreichem Insert.
+    Für die Situationen, wo man viele neue Records hintereinander erfasst, könnte
+    vielleicht ein zusätzlicher Knopf "Save and insert another" (wie im Django-Admin), 
+    oder aber das automatische Schließen des Insert-Fensters im Report abschalten können.
+
+  - Wenn man z.B. in Companies.insert manuell eine ID eingibt, 
+    dann ignoriert der Server die und vergibt trotzdem seine automatische nächste ID.
+
 
 Kleinkram
 ---------
@@ -121,8 +120,6 @@ Langfristig
 
 - `Report.date_format` muss in der Syntax des UI (d.h. ExtJS) angegeben werden. 
 
-- Scripts wie :xfile:`fill.py`, :xfile:`load_tim.py`, :xfile:`send_invoices.py` usw. sollten durch `django-admin commands <http://docs.djangoproject.com/en/dev/howto/custom-management-commands/#howto-custom-management-commands>`_ ersetzt werden. Dazu brauche ich wahrscheinlich ein `Signal <http://docs.djangoproject.com/en/dev/topics/signals/>`_, das bei jedem Start eines Management Tools nach dem Laden der Modelle gefeuert wird. Vor load_data. Dort würde ich dann mein LinoSite.setup() aufrufen. Sieht aus wie `Django-Ticket 13024 <http://code.djangoproject.com/ticket/13024>`_.
-
 - Prüfen, ob Dokumentvorlagen im `XSL-FO-Format <http://de.wikipedia.org/wiki/XSL-FO>`__ besser wären. `Apache FOP <http://xmlgraphics.apache.org/fop/>`__ als Formatierer. Warum OpenOffice.org nicht schon lange XSL-FO kann, ist mir ein Rätsel. AbiWord dagegen soll es können (laut `1 <http://www.ibm.com/developerworks/xml/library/x-xslfo/>`__ und `2 <http://searjeant.blogspot.com/2008/09/generating-pdf-from-xml-with-xsl-fo.html>`__).
 
 - Inwiefern überschneiden sich :mod:`lino.modlib.system.models.SiteConfig` und :mod:`django.contrib.sites`? 
@@ -139,8 +136,6 @@ Langfristig
 - Im Fenster :menuselection:`System --> Site Configuration` müssten Delete und Insert noch weg. 
 
 - Wenn ein Detail-Fenster nur ein Layout hat (nur einen Tab), dann ist der Titel dieses Layouts unnütz.
-
-- Bei mehrtabbigen Detail-Fenstern sollte im Permalink auch das aktive Tab angegeben werden.
 
 - http://code.google.com/p/extjs-public/
   und
@@ -165,7 +160,6 @@ Langfristig
   - Fehlerbehandlung! Momentan knallt es, wenn man einen Tippfehler macht.
   - Schade, dass das Editorfenster das darunterliegende Fenster verdeckt und auch nicht aus dem Browserfenster rausbewegt werden kann. Mögliche Lösung: dass das Editorfenster sich die east region pflanzt. 
   - Button um Feldnamen komfortabel auszuwählen
-
 
 
 - Ich würde in der Rückfrage zum Löschen eine oder mehrerer Records ja auch 

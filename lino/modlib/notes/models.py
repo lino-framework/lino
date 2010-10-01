@@ -13,6 +13,7 @@
 
 import os
 import sys
+import datetime
 
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
@@ -60,10 +61,12 @@ class NoteType(models.Model):
 
 from lino.modlib.contacts.models import default_language
 
+
 class Note(models.Model,mixins.Printable):
         
     user = models.ForeignKey("auth.User",blank=True,null=True)
-    date = fields.MyDateField()
+    #~ date = fields.MyDateField()
+    date = models.DateField(default=datetime.date.today)
     #~ owner_type = models.ForeignKey(ContentType,blank=True,null=True)
     #~ owner_id = models.PositiveIntegerField(blank=True,null=True)
     #~ owner = generic.GenericForeignKey('owner_type', 'owner_id')

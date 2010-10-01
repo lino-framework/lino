@@ -668,11 +668,15 @@ class ExtUI(base.UI):
         if not ah.report.can_view.passes(request.user):
             msg = "User %s cannot view %s." % (request.user,ah.report)
             return http.HttpResponseForbidden()
-            
-        try:
-            elem = rpt.model.objects.get(pk=pk)
-        except rpt.model.DoesNotExist:
-            raise Http404("%s %s does not exist." % (rpt,pk))
+        
+        if pk == '-99999':
+            ar = ext_requests.ViewReportRequest(request,ah,ah.report.default_action)
+            elem = ar.create_instance()
+        else:
+            try:
+                elem = rpt.model.objects.get(pk=pk)
+            except rpt.model.DoesNotExist:
+                raise Http404("%s %s does not exist." % (rpt,pk))
                 
         if request.method == 'DELETE':
             elem.delete()
@@ -1001,18 +1005,8 @@ class ExtUI(base.UI):
             kw.update(panel_btn_handler=js_code('Lino.submit_insert'))
         elif isinstance(a,actions.ShowDetailAction):
             kw.update(panel_btn_handler=js_code('Lino.show_detail_handler(Lino.%s)' % a))
-            #~ kw.update(handler=js_code("function(ww) { Lino.%s(ww,{data_record:ww.get_current_record()})}" % a))
-            #~ kw.update(handler=js_code("function(ww) { Lino.%s(ww,{record_id:ww.get_current_record().id})}" % a))
-            #~ js = "var rec = panel.get_current_record(); Lino.%s(panel,{record_id:rec.id,base_params:panel.ww.get_master_params(rec)});" % a
-            #~ js = "btn.el.setStyle({cursor:'wait'}); %s btn.el.setStyle({cursor:'normal'});" % js
-            #~ js = "btn.disable(); %s btn.enable();" % js
-            #~ js = "console.log(20100930,panel); " + js
-            
-            #~ js = "var rec = panel.get_current_record(); Lino.%s(panel,{record_id:rec.id,base_params:panel.ww.config.base_params});" % a
-            #~ js = "function(panel,btn) { %s }" % js
-            #~ kw.update(panel_btn_handler=js_code(js))
         elif isinstance(a,actions.InsertRow):
-            kw.update(panel_btn_handler=js_code("Lino.%s" % a))
+            kw.update(panel_btn_handler=js_code("Lino.show_insert_handler(Lino.%s)" % a))
         else:
             kw.update(panel_btn_handler=js_code("Lino.%s" % a))
         kw.update(

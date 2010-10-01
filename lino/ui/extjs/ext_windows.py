@@ -202,7 +202,11 @@ class DetailWrapper(BaseDetailWrapper):
     pass
   
 class InsertWrapper(BaseDetailWrapper):
-    pass
+    def get_config(self):
+        d = BaseDetailWrapper.get_config(self)
+        d.update(record_id=-99999);
+        return d
+        
 
 
 def key_handler(key,h):

@@ -589,14 +589,20 @@ Lino.show_detail_handler = function(action) {
   }
 };
 
+Lino.show_insert_handler = function(action) {
+  return function(panel,btn) {
+    action(panel,{record_id:-99999,base_params:panel.ww.get_master_params()});
+  }
+};
+
 Lino.submit_detail = function(panel,btn) {
   var rec = panel.get_current_record();
   if (rec) {
     //~ console.log('Save handler: this=',this);
     panel.form.submit({
-      url:'/api'+caller.ls_url + '/' + rec.id,
+      url:'/api'+panel.ls_url + '/' + rec.id,
       method: 'PUT',
-      scope: caller,
+      scope: panel,
       success: function(form, action) {
         Lino.notify(action.result.msg);
         //~ this.caller.refresh();
@@ -1654,7 +1660,7 @@ Lino.DetailWrapper = Ext.extend(Lino.DetailWrapperBase, {
   },
   get_permalink : function() {
     //~ return this.config.permalink_name +'(undefined,{record_id:'+this.current_record.id+'})';
-    var url = '/api'+this.main_item.ls_url+'/'+this.current_record.id + '?fmt=detail';
+    var url = '/api'+this.main_item.ls_url+'/'+this.get_current_record().id + '?fmt=detail';
     var main = this.main_item.items.get(0);
     if (main.activeTab) {
       var tab = main.items.indexOf(main.activeTab);

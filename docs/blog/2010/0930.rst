@@ -1,5 +1,5 @@
-2010-09-30 disabled fields
-==========================
+20100930 disabled fields
+========================
 
 Jetzt wo der Layout-Editor fertig ist, machen wir weiter mit der :doc:`/todo`.
 
@@ -14,7 +14,7 @@ disabled fields
   ebenfalls beim Serverstart generieren 
   oder in der :xfile:`site.js` eine systemweite Konstante dafür vorsehen.
     
-- :class:`ext_store.DisabledFieldsStoreField` hängt jetzt für Phantom-Records (d.h. deren ``pk == None``) 
+- :class:`ext_store.DisabledFieldsStoreField` hängt jetzt für normale (nicht Phantom-) Records (d.h. deren ``pk`` nicht ``None``) 
   den primary key in die Liste der :term:`disabled_fields`. Also der primary key sollte in 
   :meth:`lino.reports.Report.disabled_fields` nicht angegeben werden.
   
@@ -66,3 +66,6 @@ Dafür wohl ein neuer (nicht so dringender) Punkt:
   Auf Serverseite wäre das kein Problem: ich bräuchte einfach nur title in `elem2rec1` statt in `elem2rec_detailed` zu setzen.
   Aber das interessiert den Store der Grid nicht. Kann sein, dass ich ihn konfigurieren kann...
   Oder ich würde es wie mit `disabled_fields` machen. Also ein neues automatisches virtuelles Feld __unicode__.
+
+
+22 Uhr. Okay, für heute bin ich zufrieden. Check-In.

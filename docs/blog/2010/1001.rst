@@ -1,0 +1,67 @@
+20101001 Notizen einfügen
+=========================
+
+:func:`lino.utils.jsgen.py2js` hatte einen Bug: Datumswerte wurden um einen Monat verschoben. (Denn ich hatte noch nicht mitbekommen, dass der Parameter `month` bei 0 anfängt, wenn man in Javascript ein Datum mit ``new Date(year, month, day)`` instanziert.)
+  
+Tilt! Ich hab (endlich) verstanden, weshalb die Standardwerte im Insert-Fenster fehlten:
+Die kann ich natürlich nicht schon beim Generieren der :xfile:`site.js` kennen, also müssen 
+sie dynamisch bei jedem Insert-Request ermittelt werden.
+Konkret: :class:`lino.ui.extjs.ext_windows.InsertWrapper` macht jetzt `record_id=-99999`, 
+und :meth:`lino.ui.extjs.ext_ui.ExtUI.api_element_view` fängt diesen Fall ab und macht dann 
+ReportRequest.create_instance. 
+
+
+Jetzt fehlt noch das Datum, das ja standardmäßig ja auf heute stehen sollte. 
+Also die Felddefinition von :attr:`Note.date`.
+Ein `auto_now_add=True` im Model ist hier nicht das Richtige, weil das erst in Aktion tritt, wenn das Object gespeichert wird. 
+Aber `default=datetime.date.today` ist unser Kandidat.
+
+Schön. Jetzt sind alle Standardwerte vorbelegt im Insert-Fenster 
+(Ausnahme: der Master bei Insert in einem Slave-Fenster. Siehe später.)
+
+Aber vorher haben wir noch ein neues Problem, wenn ich eine neu erstellte notes.Note speichern will:: 
+
+  ValueError: invalid literal for int() with base 10: 'root'
+  
+Das liegt wahrscheinlich daran, dass username zwar unique ist, aber nicht der primary key ist.
+Das hieße, dass man allgemein einen ForeignKey nach :class:`auth.User` nicht speichern kann.
+Aber `dsbe.Person.user` kann man bearbeiten und speichern. Da funktioniert es. 
+(Upps: in `Lino.submit_detail` war noch ein kleiner Bug.)
+
+Der Unterschied ist: das PUT beim Speichern einer dsbe.Person sendet korrekterweise:
+
+  user=staff,userHidden=2
+  
+Aber das POST des submit_insert einer notes.Note sendet:
+
+  user=staff,userHidden=root
+
+Wie kommt er darauf, userHidden auf root zu setzen?
+   
+`GET /choices/contacts/Persons/user` antwortet korrekt:
+
+  { count: 3, rows: [ { text: "user", value: 1 }, { text: "staff", value: 2 }, { text: "root", value: 3 } ], title: "Choices for user" }    
+
+Und auch `GET /api/notes/NotesByPerson/-99999` oder `GET /api/notes/MyNotes/-99999` antworten korrekt:
+
+  { navinfo: { msg: "Row 0 of 2", next: null, prev: null, last: 10, first: 1 }, data: { body: "", language: "Deutsch", languageHidden: "de", company: null, typeHidden: null, personHidden: null, companyHidden: null, person: null, url: null, **userHidden: 3, user: "root",** date: new Date(2010,9,1), type: null, id: null, subject: null }, id: null, title: "(root 2010-10-01)" }
+
+Aber jetzt ist der Fehler von alleine verschwunden oder zumindest nicht mehr reproduzierbar. Also lassen wir das.
+
+Jetzt fehlt vor allem noch der Master bei Insert in einem Slave-Fenster.
+
+Also ich geh z.B. nach http://127.0.0.1:8000/api/contacts/Persons/79?fmt=detail&tab=4 und klicke aufs Insert der NotesByPerson. 
+Und das Feld Person ist dann nicht ausgefüllt. 
+Und das ist logisch, weil der InsertWrapper scheinbar keine base_params hat, denn er schickt ein 
+`GET api/notes/NotesByPerson/-99999` (es fehlt der Master, `mk=79`).
+Genau. Deshalb brauchen wir die neue :js:func:`Lino.show_insert_handler`.
+
+Fertig! Also die schlimmsten Bugs beim Einfügen sind behoben:
+
+- Insert in notes.Note : Datum sollte par défaut auf heute stehen, Sprache auf Deutsch.
+- Beim Einfügen in einem Slave wird der Master nicht gesetzt.
+
+
+Jetzt sollte ich wahrscheinlich als Nächstes das Problem :doc:`/posts/20100916` angehen (SlaveGrid-Elemente zeigen beim ersten Aufruf "Nix gefunden").
+
+
