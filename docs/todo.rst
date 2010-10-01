@@ -4,18 +4,6 @@ To-Do-Liste
 Kurzfristig
 -----------
 
-- Neue Tabelle "Ansprechpartner pro Person" mit einem Feld "Rolle" oder "Eigenschaft", 
-  dessen Auswahlliste konfigurierbar ist 
-  ('Hauptkontakt', 'DSBE', 'allgemeiner Sozialdienst', 'Schulderberatung', 'Energieberatung'). 
-  Das Feld `Person.user` kann dann raus, und `PAR->IdUsr` muss in diese Tabelle importiert werden.
-  Im Layout2 ("Person") muss dann ``user`` ersetzt werden durch eine Tabelle von Ansprechpartnern.
-  Konkret also vor allem 2 neue Tabellen:
-  
-  - CoachType : (id,name)
-  - Coach : (user,type,person,company)
-  
-- Im Detail-Tab "Profil1" nimmt das GridElement anfangs den ganzen Raum ein, die Felder im oberen Teil werden erst nach einem resize sichtbar.
-
 - Quickfilter im Detail von Personen geht nicht.
 
 - Man kann noch nicht nach Personen suchen, die ein bestimmtes Studium haben

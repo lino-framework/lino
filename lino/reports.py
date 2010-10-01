@@ -925,8 +925,11 @@ class LayoutHandle:
     #~ def needs_store(self,rh):
         #~ self._needed_stores.add(rh)
         
+    #~ def __str__(self):
+        #~ return str(self.layout) + "Handle"
+        
     def __str__(self):
-        return str(self.layout) + "Handle"
+        return "%s%s" % (self.rh.report,self.__class__.__name__)
         
     #~ def elems_by_field(self,name):
         #~ return self._elems_by_field.get(name,[])

@@ -5,10 +5,14 @@ Coming release
 ----------
 
 - Viele Bugfixes in DSBE (nationality und zip_code waren noch nicht disabled für importierte Partner, Bankkonten, Fax-Nr und Gesdos-Nr werden jetzt angezeigt,...)
-- Viele Bugfixes in Lino selber (VBorderPanel, Editierbarkeit ID, disabled fields, Deleting records, Detail of slave reports,...)
+- Viele Bugfixes in Lino selber (VBorderPanel, Editierbarkeit ID, disabled fields, 
+  Deleting records, 
+  Detail of slave reports,
+  Inserting records,
+  ...)
 - Neues Feature: Layout-Editor
+- Neue Tabellen :class:`dsbe.Coaching` und :class:`dsbe.CoachingType`
 - Bei mehrtabbigen Detail-Fenstern enthält der Permalink jetzt auch das aktive Tab.
-
 
 
 

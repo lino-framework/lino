@@ -212,7 +212,7 @@ class ExtUI(base.UI):
                 #~ if isinstance(value,layouts.PropertyGrid):
                     #~ return ext_elems.PropertyGridElement(lh,name,value)
                 raise KeyError("Cannot handle value %r in %s.%s." % (value,lh.layout._actor_name,name))
-        msg = "Unknown element %r referred in layout %s" % (name,lh.layout)
+        msg = "Unknown element %r referred in layout %s" % (name,lh)
         #print "[Warning]", msg
         raise KeyError(msg)
         

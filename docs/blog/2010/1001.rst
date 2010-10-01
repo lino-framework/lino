@@ -154,3 +154,30 @@ Fazit: Ich verstehe weiterhin nicht, wie ein Component im beschriebenen Fall ren
 ich kriegs auch nicht reproduziert in einem einfachen showcase, 
 aber jetzt habe ich immerhin eine funktionierende Lösung, die bis auf weiteres vollkommen reicht. 
 Also Problem :doc:`/posts/20100916` ist für mich abgeschlossen.
+
+`Check-In <http://code.google.com/p/lino/source/detail?r=d3e1a52c1d87c2fdbb0485d146001bb38aa57eeb>`__ und Wochenende.
+
+
+**(22 Uhr)** Vor dem Schlafengehen noch schnell einen Punkt aus der :doc:`/todo` abgearbeitet:
+
+- Neue Tabelle "Ansprechpartner pro Person" mit einem Feld "Rolle" oder "Eigenschaft", 
+  dessen Auswahlliste konfigurierbar ist 
+  ('Hauptkontakt', 'DSBE', 'allgemeiner Sozialdienst', 'Schulderberatung', 'Energieberatung'). 
+  Das Feld `Person.user` kann dann raus, und `PAR->IdUsr` muss in diese Tabelle importiert werden.
+  Im Layout2 ("Person") muss dann ``user`` ersetzt werden durch eine Tabelle von Ansprechpartnern.
+  Konkret also vor allem 2 neue Tabellen:
+  
+  - CoachType : (id,name)
+  - Coach : (user,type,person,company)
+  
+Eine Vereinfachung: das Feld `Person.user` (Hauptansprechpartner) bleibt dennoch drin. Vor allem weil es sonst kompliziert und untransparent wäre, diese eine Zeile bei importierten Personen schreibgeschützt zu machen.
+
+Interessant ist zu bemerken, dass die ganze Aktion nur 45 Minuten gedauert hat, inklusive fixtures und Reorganisierung der Eingabebildschirme (aber ohne Blogschreiben).
+
+Wobei die letzten 15 Minuten eigentlich nicht zählen, denn die habe ich gebraucht um rauszufinden, dass einige Layout-Bugs doch noch dringend behoben werden sollten. Im Moment sind die meisten Bugs sichtbar im Detail von dsbe.Persons. Da kriege ich Montag noch was zu tun:
+
+- Im Tab "Kontakt" fehlen die flags, die ich noch zwischen remarks und coaching knallen will. Zumindest will ich mal sehen, wie sich das macht. Aber wenn ich das tue, ist die ganze untere hbox nicht mehr da.
+- Im Tab "Kontakt", box "coaching" nimmt die Grid zu viel Platz ein. Da hat Lino unnötigerweise einen VBorderPanel benutzt. Das ist nicht nötig, wenn nur ein Element vflex ist.
+- Im Tab "Person" nimmt die Grid zu viel Höhe.
+- Im Detail-Tab "Profil 1" nimmt das GridElement anfangs den ganzen Raum ein, die Felder im oberen Teil werden erst nach einem resize sichtbar.
+- Wieso lässt "Studien & Erfahrungen" im Tab "Person" sich höhenverstellen, aber "AG-Sperren" in "Profil 1" nicht?
