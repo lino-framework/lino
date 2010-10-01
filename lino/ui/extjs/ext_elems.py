@@ -52,7 +52,7 @@ def a2btn(a):
       
 def before_row_edit(panel):
     l = []
-    #~ l.append("console.log('20100730',record);")
+    l.append("console.log('before_row_edit',record);")
     #~ for e in panel.walk():
     #~ if isinstance(panel,TabPanel):
         #~ print panel, panel.active_children

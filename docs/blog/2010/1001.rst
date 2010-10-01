@@ -1,19 +1,20 @@
 20101001 Notizen einfügen
 =========================
 
+**(3.17 Uhr)**
 :func:`lino.utils.jsgen.py2js` hatte einen Bug: Datumswerte wurden um einen Monat verschoben. (Denn ich hatte noch nicht mitbekommen, dass der Parameter `month` bei 0 anfängt, wenn man in Javascript ein Datum mit ``new Date(year, month, day)`` instanziert.)
   
-Tilt! Ich hab (endlich) verstanden, weshalb die Standardwerte im Insert-Fenster fehlten:
+**(4.38 Uhr)** 
+Tilt! Ich hab endlich verstanden, weshalb die Standardwerte im Insert-Fenster fehlten:
 Die kann ich natürlich nicht schon beim Generieren der :xfile:`site.js` kennen, also müssen 
 sie dynamisch bei jedem Insert-Request ermittelt werden.
 Konkret: :class:`lino.ui.extjs.ext_windows.InsertWrapper` macht jetzt `record_id=-99999`, 
 und :meth:`lino.ui.extjs.ext_ui.ExtUI.api_element_view` fängt diesen Fall ab und macht dann 
 ReportRequest.create_instance. 
 
-
 Jetzt fehlt noch das Datum, das ja standardmäßig ja auf heute stehen sollte. 
-Also die Felddefinition von :attr:`Note.date`.
-Ein `auto_now_add=True` im Model ist hier nicht das Richtige, weil das erst in Aktion tritt, wenn das Object gespeichert wird. 
+Das ist im Model, in der Felddefinition von :attr:`Note.date`.
+Ein `auto_now_add=True` ist hier nicht das Richtige, weil das erst in Aktion tritt, wenn das Object gespeichert wird. 
 Aber `default=datetime.date.today` ist unser Kandidat.
 
 Schön. Jetzt sind alle Standardwerte vorbelegt im Insert-Fenster 
@@ -62,6 +63,94 @@ Fertig! Also die schlimmsten Bugs beim Einfügen sind behoben:
 - Beim Einfügen in einem Slave wird der Master nicht gesetzt.
 
 
-Jetzt sollte ich wahrscheinlich als Nächstes das Problem :doc:`/posts/20100916` angehen (SlaveGrid-Elemente zeigen beim ersten Aufruf "Nix gefunden").
+Jetzt zuerst ein `Check-In <http://code.google.com/p/lino/source/detail?r=540f643cfc3e814438b9c8c2995b154eb01f49b6>`__ und eine Pause.
+
+**(15.30 Uhr)**
+Jetzt nehme ich das Problem :doc:`/posts/20100916` noch mal in die Mangel (SlaveGrid-Elemente zeigen beim ersten Aufruf "Nix gefunden").
+
+Es kommt z.B. wenn ich folgende URL aufrufe:
+
+  http://127.0.0.1:8000/api/contacts/Persons/16?fmt=detail&tab=0
+
+Das Bild wird dann nicht angezeigt, und in der Console steht **cmp is rendered but not visible: and now?**.
+
+Wie kann ein :extjs:`Ext.Component` einerseits `rendered` sein und andererseits nicht `visible`? 
+Okay, wenn er z.B. in einem Tab ist, das momentan versteckt ist. 
+Ist hier aber nicht der Fall, und außerdem würde der Component dann aufs show-Event reagieren.
+Er reagiert auf überhaupt keines der dokumentierten Events.
+
+`Ext.Component.isVisible()` ist einfach::
+
+    isVisible : function(){
+        return this.rendered && this.getVisibilityEl().isVisible();
+    },
+
+`getVisibilityEl()` ist eine private Funktion::
+
+    getVisibilityEl : function(){
+        return this.hideParent ? this.container : this.getActionEl();
+    },
+
+    getActionEl : function(){
+        return this[this.actionMode];
+    },
+
+Nee, das bringt alles keine Lösung. Ja, das visibilityEl is offensichtlich noch nicht visible. Aber das ist kein Component mehr und hat also kein render-Event, an das ich mich ran hängen könnte. 
+
+Tilt! Idee: ich probiers einfach eine Zehntelsekunde später nochmal::
+
+  Lino.do_when_visible = function(cmp,todo) {
+    if (cmp.isVisible()) { 
+      todo(); 
+    } else { 
+      if (cmp.rendered) {
+        Lino.do_when_visible.defer(100,this,[cmp,todo]);
+      } else {
+        cmp.on('afterrender',todo,cmp,{single:true});
+      }
+    }
+  };    
+
+Das ist zwar eine Frickelslösung, aber es funktioniert! Hurra!
+
+N.B. Anfangs funktionierte es nur fürs Bild, weil für die Slave Grids noch ein anderes Problem war. Preisfrage: Wo ist der Bug in folgendem Code? 
+
+::
+
+  on_master_changed : function() {
+    cmp = this;
+    var todo = function() {
+      var p = cmp.ww.get_master_params();
+      for (k in p) cmp.getStore().setBaseParam(k,p[k]);
+      cmp.getStore().load(); 
+    };
+    Lino.do_when_visible(this,todo);
+  }
+  
+Lösung: die zweite Zeile im obigen Code muss natürlich
+
+::
+
+    var cmp = this;
+    
+sein. Ich alter Python-Programmierer habe eine knappe Stunde gebraucht, um das fehlende ``var`` zu finden. 
+Ohne das ``var`` ist ``cmp``  eine globale Variable, 
+und dann ruft er `Lino.do_when_visible` zwar brav auf jeder Grid, aber wenn die sichtbar wird, wird die ``todo`` immer nur auf der letzten Grid (NotesByPerson) aufgerufen.
+
+Ich selber habs jetzt übrigens mit `createDelegate` statt einem `this`-Ersatz gemacht, 
+weil ich das eleganter finde::
+
+  on_master_changed : function() {
+    var todo = function() {
+      var p = this.ww.get_master_params();
+      for (k in p) this.getStore().setBaseParam(k,p[k]);
+      this.getStore().load(); 
+    };
+    Lino.do_when_visible(this,todo.createDelegate(this));
+  }
 
 
+Fazit: Ich verstehe weiterhin nicht, wie ein Component im beschriebenen Fall rendered und trotzdem nicht visible sein kann, 
+ich kriegs auch nicht reproduziert in einem einfachen showcase, 
+aber jetzt habe ich immerhin eine funktionierende Lösung, die bis auf weiteres vollkommen reicht. 
+Also Problem :doc:`/posts/20100916` ist für mich abgeschlossen.

@@ -4,9 +4,6 @@ To-Do-Liste
 Kurzfristig
 -----------
 
-- SlaveGrid-Elemente zeigen beim ersten Aufruf "Nix gefunden".
-  Liegt am Problem :doc:`/posts/20100916`.
-
 - Neue Tabelle "Ansprechpartner pro Person" mit einem Feld "Rolle" oder "Eigenschaft", 
   dessen Auswahlliste konfigurierbar ist 
   ('Hauptkontakt', 'DSBE', 'allgemeiner Sozialdienst', 'Schulderberatung', 'Energieberatung'). 
@@ -17,19 +14,13 @@ Kurzfristig
   - CoachType : (id,name)
   - Coach : (user,type,person,company)
   
-- Im Detail-Tab "Profil1" nimmt das GridElement anfangs den ganzen Raum ein, 
-  die Felder im oberen Teil werden erst nach einem resize sichtbar.
+- Im Detail-Tab "Profil1" nimmt das GridElement anfangs den ganzen Raum ein, die Felder im oberen Teil werden erst nach einem resize sichtbar.
 
 - Quickfilter im Detail von Personen geht nicht.
 
 - Man kann noch nicht nach Personen suchen, die ein bestimmtes Studium haben
   
 - Datensynchronisierung TIM->Lino weiter beobachten.
-
-- Wenn in einer vbox mit 2 Grids ein der Grids kollabiert, sollte die andere den dadurch verfügbaren Raum ausfüllen.
-  collapse-Events beider Gridboxen an doLayout oder resize der vbox verknüpfen...
-  Showcase 20100912.html zeigt das Problem.
-  Oder in solchen Fällen mit BorderLayout arbeiten.
 
 - NotesByPerson im Detail-Fenster einer Person sollte nur die wichtigen Ereignisse anzeigen (deren :attr:`notes.NoteType.important` eingeschaltet ist).
 
@@ -77,7 +68,7 @@ Kleinkram
 
 - Die Zeilenhöhe einer Grid muss einen sinnvollen Maximalwert kriegen. In Explorer / Notes hat man momentan den Eindruck, dass es nur eine Zeile gibt; in Wirklichkeit ist der Memo-Text der ersten Zeile so lang, dass die Zeilenhöhe größer als das Fenster ist.
 
-- Hinter das QuickFilter-Feld muss ein Button, um den Filter zu aktivieren. Dass man einfach nur ENTER drücken muss ist nicht intuitiv.
+- Hinter das QuickFilter-Feld muss ein Button, um den Filter zu aktivieren. Dass man einfach nur TAB drücken muss ist nicht intuitiv.
 
 - Links ordentlich anzeigen und bequem erfassen können.
 

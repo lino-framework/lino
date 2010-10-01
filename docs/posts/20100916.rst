@@ -1,6 +1,12 @@
-20100916 : cmp is rendered but not visible
-==========================================
+20100916 (Grid is rendered but not visible)
+===========================================
 
-- http://www.sencha.com/forum/showthread.php?110043
+- Post to ExtJS forum :
+  http://www.sencha.com/forum/showthread.php?110043
 
-- :srcref:`/extjs-showcases/20100916.html`
+- Showcase: 
+  :srcref:`/extjs-showcases/20100916.html`
+
+- Initial Blog entry: :doc:`/blog/2010/0916`
+
+- Solution (for me):  :doc:`/blog/2010/1001`

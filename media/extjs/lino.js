@@ -41,7 +41,7 @@ Lino.VBorderPanel = Ext.extend(Ext.Panel,{
               if (item.collapsed || item.flex == 0) {
                   //~ item.syncSize()
                   //~ item.doLayout()
-                  if (item.region == "north") console.log('region north',item.getHeight(),item.id, item);
+                  //~ if (item.region == "north") console.log('region north',item.getHeight(),item.id, item);
                   //~ if (item.getHeight() == 0) console.log(20100921,'both flex and getHeight() are 0!');
                   availableHeight -= item.getHeight();
               } else {
@@ -558,13 +558,40 @@ Lino.do_when_visible = function(cmp,todo) {
   //~ if (cmp.el && cmp.el.dom) 
   if (cmp.isVisible()) { 
     // 'visible' means 'rendered and not hidden'
-    //~ console.log('Lino.do_when_visible() now',todo);
+    //~ console.log('Lino.do_when_visible() now',cmp.title,todo);
     todo(); 
   } else { 
     //~ console.log('Lino.do_when_visible() must defer because not isVisible()',todo,cmp);
     //~ todo.defer(1000);
     if (cmp.rendered) {
-      console.log('-> cmp is rendered but not visible: and now?');
+      //~ console.log(cmp,'-> cmp is rendered but not visible: and now?');
+      console.log(cmp.title,'-> cmp is rendered but not visible: wait a second...');
+      //~ var fn = function() {Lino.do_when_visible(cmp,todo)};
+      //~ fn.defer(100);
+      
+      Lino.do_when_visible.defer(100,this,[cmp,todo]);
+      
+      //~ var ve = cmp.getVisibilityEl();
+      //~ console.log(cmp,'-> cmp is rendered but not visible: forward to visibilityEl', ve);
+      //~ ve.on('click',todo)
+      
+      //~ ve.on('show',function(){console.log('show',cmp)})
+      //~ if (ve == cmp) {
+        //~ console.log(cmp,'visibilityEl is same as cmp: and now?');
+        //~ return
+      //~ }
+      //~ if (ve === undefined) {
+        //~ console.log(cmp,'visibilityEl is undefined: and now?');
+        //~ return
+      //~ }
+      //~ return Lino.do_when_visible(ve,todo)
+      //~ cmp.on('show',function(){console.log('show',cmp)})
+      //~ cmp.on('added',function(){console.log('added',cmp)})
+      //~ cmp.on('afterrender',function(){console.log('afterrender',cmp)})
+      //~ cmp.on('beforestatesave',function(){console.log('beforestatesave',cmp)})
+      //~ cmp.on('enable',function(){console.log('enable',cmp)})
+      //~ cmp.on('hide',function(){console.log('hide',cmp)})
+      //~ cmp.on('render',function(){console.log('render',cmp)})
       //~ cmp.getVisibilityEl().on('show',todo,cmp,{single:true});
       //~ if (cmp.hidden) {
         //~ console.log('Lino.do_when_visible() later (on show)',cmp,todo);
@@ -574,8 +601,8 @@ Lino.do_when_visible = function(cmp,todo) {
         //~ cmp.on('activate',todo,cmp,{single:true});
       //~ }
     } else {
-      //~ console.log('-> on render');
-      cmp.on('render',todo,cmp,{single:true});
+      //~ console.log(cmp.title,'-> on render');
+      cmp.on('afterrender',todo,cmp,{single:true});
     }
   }
   
@@ -796,7 +823,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     else
       var src = 'empty.jpg';
     var f = function() {
-      //~ console.log('Lino.load_picture()',src);
+      console.log('Lino.load_picture()',src);
       cmp.el.dom.src = src;
       //~ this.el.dom.onclick = 'Lino.img_onclick(src)';
       //~ this.el.dom.onclick = 'window.open(src)';
@@ -1213,15 +1240,16 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     return value;
   },
   on_master_changed : function() {
-    cmp = this;
+    //~ cmp = this;
+    //~ console.log('Lino.GridPanel.on_master_changed()',this.title);
     var todo = function() {
+      //~ console.log('exec Lino.GridPanel.on_master_changed()',this.title);
       //~ var src = caller.config.url_data + "/" + record.id + ".jpg"
-      var p = cmp.ww.get_master_params();
-      console.log('Lino.GridPanel.on_master_changed()',cmp,p);
-      for (k in p) cmp.getStore().setBaseParam(k,p[k]);
-      cmp.getStore().load(); 
+      var p = this.ww.get_master_params();
+      for (k in p) this.getStore().setBaseParam(k,p[k]);
+      this.getStore().load(); 
     };
-    Lino.do_when_visible(this,todo);
+    Lino.do_when_visible(this,todo.createDelegate(this));
   }
   });
   
