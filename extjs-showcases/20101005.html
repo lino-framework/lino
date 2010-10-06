@@ -1,0 +1,123 @@
+<html><head>
+<!--
+Layout problem with 
+
+main = 
+  box1 picture
+  grid
+  
+Solution was to replace align "stretch" by "strechmax"
+  
+-->
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title id="title">20101005</title>
+<!-- ** CSS ** -->
+<!-- base library -->
+<link rel="stylesheet" type="text/css" href="../../resources/css/ext-all.css" />
+<!-- overrides to base library -->
+<!-- ** Javascript ** -->
+<!-- ExtJS library: base/adapter -->
+<script type="text/javascript" src="../../adapter/ext/ext-base.js"></script>
+<!-- ExtJS library: all widgets -->
+<script type="text/javascript" src="../../ext-all-debug.js"></script>
+
+<script type="text/javascript">
+
+Ext.BLANK_IMAGE_URL = '../../resources/images/default/s.gif';
+
+// taken from http://examples.extjs.eu/
+ExampleGrid = Ext.extend(Ext.grid.GridPanel, {
+  initComponent:function() {
+  var config = {
+    store: new Ext.data.SimpleStore({
+      id:0
+      ,fields:[
+        {name: 'company'}
+        ,{name: 'price', type: 'float'}
+        ,{name: 'change', type: 'float'}
+        ,{name: 'pctChange', type: 'float'}
+        ,{name: 'lastChange', type: 'date', dateFormat: 'n/j h:ia'}
+        ,{name: 'industry'}
+        ,{name: 'desc'}
+      ]
+      ,data:[
+        ['3m Co',71.72,0.02,0.03,'8/1 12:00am', 'Manufacturing'],
+        ['Alcoa Inc',29.01,0.42,1.47,'9/1 12:00am', 'Manufacturing'],
+        ['Altria Group Inc',83.81,0.28,0.34,'10/1 12:00am', 'Manufacturing'],
+        ['American Express Company',52.55,0.01,0.02,'9/1 10:00am', 'Finance'],
+        ['Walt Disney Company (The) (Holding Company)',29.89,0.24,0.81,'9/1 12:00am', 'Services']
+        ]
+      }
+    )
+    ,columns:[
+      {id:'company',header: "Company", width: 80, sortable: true, dataIndex: 'company'}
+      ,{header: "Price",               width: 40, sortable: true, renderer: Ext.util.Format.usMoney, dataIndex: 'price'}
+      ,{header: "Change",              width: 40, sortable: true, dataIndex: 'change'}
+      ,{header: "% Change",            width: 40, sortable: true, dataIndex: 'pctChange'}
+      ,{header: "Last Updated",        width: 40, sortable: true, renderer: Ext.util.Format.dateRenderer('m/d/Y'), dataIndex: 'lastChange'}
+    ]
+    ,viewConfig:{forceFit:true}
+  }; 
+  Ext.apply(this, Ext.apply(this.initialConfig, config));
+  ExampleGrid.superclass.initComponent.apply(this, arguments);
+} 
+});
+ 
+
+Ext.onReady(function() {
+  
+  var field1 = new Ext.form.TextField({ maxLength: 40, fieldLabel: "First field", 
+    anchor: "100%", name: "field1" });
+  var field2 = new Ext.form.TextField({ maxLength: 20, fieldLabel: "Second field", 
+    anchor: "100%", name: "field2" });
+  var fieldbox = new Ext.Container({ flex: 28, 
+    autoHeight: true, 
+    border: false, 
+    layout: "form", 
+    items: [ field1, field2 ], 
+    frame: true, bodyBorder: false, labelAlign: "top" 
+  });
+  
+  var image = new Ext.BoxComponent({ flex: 14, 
+    html:'<img height="100%" width="100%" src="empty.jpg"/>',
+    });
+  
+  //~ var upper_hbox = new Ext.Panel({ 
+    //~ collapsible: true,
+    //~ title: "Upper hbox",
+  var upper_hbox = new Ext.Container({ 
+    autoHeight: true, 
+    //~ height: 200,
+    border: false, 
+    layout: "hbox", split: true, 
+    items: [ 
+      fieldbox, 
+      image 
+    ], region: "north", 
+    //~ layoutConfig: { align: "stretch" }, 
+    layoutConfig: { align: "stretchmax" }, 
+    frame: false });
+  
+  var grid = new ExampleGrid({flex: 66, collapsible: true, region: "center", title: "Grid" });
+  
+  var main_panel = new Ext.FormPanel({ 
+    layout: 'vbox', layoutConfig: { align:'stretch'},
+    title: "Person", autoScroll: true, 
+    items: [ upper_hbox, grid ], 
+    frame: true, border: false, bodyBorder: false, labelAlign: "top" });
+  
+  
+  win = new Ext.Window({ 
+    layout: "fit", 
+    maximized: true, 
+    title: "Problem no. 20101005",
+    items: main_panel
+  });
+  
+  win.show()
+
+  
+});
+</script>
+</head><body>
+</body></html>

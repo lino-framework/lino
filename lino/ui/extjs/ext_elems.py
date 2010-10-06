@@ -282,6 +282,8 @@ class PictureElement(LayoutElement):
         #~ print 20100730, name
         #~ kw.update(html='<img height="100%"/>')
         #~ kw.update(html='<img height="100%" onclick="Lino.img_onclick()"/>')
+        #~ kw.update(autoHeight=True)
+        #~ kw.update(anchor="100% 100%")
         kw.update(autoEl=dict(tag='img'))
         #~ kw.update(autoEl=dict(tag='img',onclick="Lino.img_onclick(%s)" % name))
         #~ kw.update(autoEl=dict(tag='img',onclick="Lino.img_onclick(this)" ))
@@ -697,7 +699,7 @@ class Panel(Container):
                     self.vflex = False
                     #~ print 20100615, self.lh.layout, self, "hbox loses vflex because of", e
                     
-        if self.vflex and len(elements) > 1:
+        if len(elements) > 1 and self.vflex:
             if self.vertical:
                 """
                 Example : The panel contains a mixture of fields and grids. 
@@ -732,7 +734,8 @@ class Panel(Container):
                             g = eg[0]
                         else:
                             #~ g = Container(lh,name,*eg,**dict(layout='vbox',flex=1)
-                            g = Panel(lh,name,vertical,*eg,**dict(layout='vbox',flex=1,layoutConfig=dict(align='stretch')))
+                            g = Panel(lh,name,vertical,*eg,**dict(layout='vbox',
+                              flex=1,layoutConfig=dict(align='stretch')))
                             assert g.vflex is True
                     else:
                         #~ for e in eg: e.update(align='stretch')
@@ -740,6 +743,7 @@ class Panel(Container):
                             g = eg[0]
                         else:
                             g = Container(lh,name,*eg,**dict(layout='form',autoHeight=True))
+                            #~ g = Container(lh,name,*eg,**dict(layout='form'))
                             assert g.vflex is False
                     #~ if monitorResize:
                         #~ g.update(monitorResize=True)
@@ -798,18 +802,20 @@ class Panel(Container):
                     d.update(layout='vbox',layoutConfig=dict(align='stretch'))
                 else:
                     # 20100921b
-                    d.update(layout='form')
+                    #~ d.update(layout='form')
+                    d.update(layout='form',autoHeight=True)
                     #~ d.update(layout='vbox',autoHeight=True)
             else:
-                #~ d.update(layout='column') # 20100615
-                if stretch : # 20100912
-                #~ if self.vflex: # 20100912
-                    d.update(layout='hbox',layoutConfig=dict(align='stretch'))
-                else:
-                    d.update(layout='hbox',autoHeight=True)
+                d.update(layout='hbox',autoHeight=True)
+                d.update(layoutConfig=dict(align='stretchmax'))
+                #~ if stretch : # 20100912
+                    #~ d.update(layoutConfig=dict(align='stretch'))
+                #~ else:
+                    #~ d.update(layoutConfig=dict(align='stretchmax'))
                 
         if d['layout'] == 'form':
             assert self.vertical
+            #~ d.update(autoHeight=True)
             if len(self.elements) == 1 and self.elements[0].vflex:
                 self.elements[0].update(anchor="100% 100%")
             else:
@@ -821,26 +827,35 @@ class Panel(Container):
                     #~ else:
                         #~ e.value.update(anchor="100%")
                     e.update(anchor="100%")
-        #~ elif d['layout'] == 'column': # 20100615
-        elif d['layout'] == 'hbox':
+                
+        if d['layout'] == 'hbox':
+            if not self.vflex:
+                d.update(autoHeight=True)
             for e in self.elements:
                 w = e.width or e.preferred_width
                 #~ e.value.update(columnWidth=float(w)/self.preferred_width) # 20100615
                 e.value.update(flex=int(w*100/self.preferred_width))
         elif d['layout'] == 'vbox':
+            "a vbox with 2 or 3 elements, of which at least two are vflex will be implemented as a VBorderPanel"
+            assert len(self.elements) > 1
+            vflex_count = 0
             h = self.height or self.preferred_height
             for e in self.elements:
                 eh = e.height or e.preferred_height
-                e.value.update(flex=int(eh*100/h))
-            if len(self.elements) <= 3:
+                if e.vflex:
+                    e.value.update(flex=int(eh*100/h))
+                    vflex_count += 1
+            if vflex_count >= 2 and len(self.elements) <= 3:
                 self.remove('layout','layoutConfig')
                 self.value_template = 'new Lino.VBorderPanel(%s)'
                 for e in self.elements:
+                    #~ if e.vflex: # """as long as there are bugs, make also non-vflex resizable"""
                     e.update(split=True)
                 self.elements[0].update(region='north')
                 self.elements[1].update(region='center')
                 if len(self.elements) == 3:
                     self.elements[1].update(region='south')
+                
             
         
     def ext_options(self,**d):

@@ -33,11 +33,13 @@ Lino.VBorderPanel = Ext.extend(Ext.Panel,{
        return (item.region == 'north' || item.region == 'south' || item.region == 'center');
     },
     onBodyResize: function(w, h){
+        //~ console.log('VBorderPanel.onBodyResize',this.title)
         var sumflex = 0;
         var availableHeight = this.getInnerHeight();
         for(var i=0; i < this.items.length;i++) {
           var item = this.items.get(i);
-          if (this.isVertical(item) && item.getResizeEl()) {
+          //~ if (this.isVertical(item) && item.getResizeEl()) {
+          if (this.isVertical(item)) {
               if (item.collapsed || item.flex == 0) {
                   //~ item.syncSize()
                   //~ item.doLayout()
@@ -47,7 +49,8 @@ Lino.VBorderPanel = Ext.extend(Ext.Panel,{
               } else {
                   sumflex += item.flex;
               }
-          }
+          } 
+          //~ else console.log('non-vertical item in VBoderPanel:',item)
         }
         var hunit = availableHeight / sumflex;
         for(var i=0; i < this.items.length;i++) {
@@ -58,6 +61,7 @@ Lino.VBorderPanel = Ext.extend(Ext.Panel,{
                   //~ console.log(item.region,' : height set to',item.getHeight());
               }
           }
+          //~ else console.log('non-vertical item in VBoderPanel:',item)
         }
         Lino.VBorderPanel.superclass.onBodyResize.call(this, w, h);
     }
@@ -494,6 +498,13 @@ Lino.gup = function( name )
     return results[1];
 };
 
+Lino.refresh_handler = function (ww) {
+  return function() { 
+      console.log('refresh',ww);
+      ww.main_item.doLayout(false,true);
+      //~ ww.main_item.syncSize();
+  }
+};
 Lino.tools_close_handler = function (ww) {
   return function() { 
       ww.close();
@@ -1546,6 +1557,7 @@ Lino.WindowWrapper = function(caller,config,params) {
     //~ bbar: Lino.build_buttons(this,this.config.ls_bbar_actions),
     tools: [ 
       //~ { qtip: this.config.qtip, handler: Lino.save_wc_handler(this), id: "save" }, 
+      { qtip: 'Call doLayout() on main Container.', handler: Lino.refresh_handler(this), id: "refresh" },
       { qtip: 'permalink', handler: Lino.permalink_handler(this), id: "pin" },
       { qtip: 'close', handler: Lino.tools_close_handler(this), id: "close" } 
     ] 
