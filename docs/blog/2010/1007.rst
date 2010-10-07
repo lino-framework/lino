@@ -1,7 +1,7 @@
 20101007
 ========
 
-Das folgende Problem habe ich gestern Abend in nur einer Stunde (!) in einem :srcref:`/extjs-showcases/20101007.html <showcase>` isolieren können:
+Das folgende Problem habe ich gestern Abend in nur einer Stunde (!) in einem :srcref:`Showcase </extjs-showcases/20101007.html>` isolieren können:
 
 - Einige Details funktionieren nur, wenn sie über den Permalink aufgerufen werden. Also wenn man sich zu diesem Bildschirm hin klickt, sind Fehler. Der Permalink-Button ist dafür kein zufriedenstellender Workaround, weil bei dessen Verwendung die Historie verloren geht. Habe schon einen neuen Tool-Button "refresh" hingeklebt, der momentan `main_item.doLayout()` macht. Aber das hat leider auch keinen Effekt.
 
