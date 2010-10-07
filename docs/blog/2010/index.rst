@@ -149,6 +149,9 @@
 .. |Oct| replace::  **October**
   |br| 
   :doc:`04 <1004>`
+  :doc:`05 <1004>`
+  :doc:`06 <1004>`
+  :doc:`07 <1007>`
 
 .. |Nov| replace::  **November**
 

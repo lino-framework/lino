@@ -94,7 +94,7 @@ Und diese beiden kommen in ein VBorderPanel::
 
 Frage der Woche: wo ist der Fehler?
 
-05.10. und 06.10. : Arbeiten an /extjs-showcases/20101005.html
+05.10. und 06.10. : Arbeiten an :srcref:`/extjs-showcases/20101005.html`.
 
 06.10., 15 Uhr:  Tilt! 
 Eine hbox, die ein vflex-Element enthält (also die `main_1` im Beispiel)
@@ -112,4 +112,7 @@ Der Permalink-Button ist dafür kein zufriedenstellender Workaround, weil bei de
 Verwendung die Historie verloren geht. Habe schon einen neuen Tool-Button "refresh" hingeklebt, 
 der momentan `main_item.doLayout()` macht. Aber das hat leider auch keinen Effekt.
 
-Check-In.
+Check-In 
+`Lino <http://code.google.com/p/lino/source/detail?r=3203a1bb7c0be8c07aed3efe3b956ee6df15c70d>`__
+und
+`DSBE <http://code.google.com/p/lino-dsbe/source/detail?r=f73250498612e82f24e50582d557b486b806f5a8>`__.

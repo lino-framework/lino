@@ -1,0 +1,10 @@
+20101007
+========
+
+Das folgende Problem habe ich gestern Abend in nur einer Stunde (!) in einem :srcref:`/extjs-showcases/20101007.html <showcase>` isolieren können:
+
+- Einige Details funktionieren nur, wenn sie über den Permalink aufgerufen werden. Also wenn man sich zu diesem Bildschirm hin klickt, sind Fehler. Der Permalink-Button ist dafür kein zufriedenstellender Workaround, weil bei dessen Verwendung die Historie verloren geht. Habe schon einen neuen Tool-Button "refresh" hingeklebt, der momentan `main_item.doLayout()` macht. Aber das hat leider auch keinen Effekt.
+
+Habe den Showcase dann auch gleich im Help-Forum von ExtJS 
+`gepostet <http://www.sencha.com/forum/showthread.php?111749-Layout-works-for-activeTab-but-not-for-other-tabs>`__ und hoffe jetzt auf Hilfe von dort.
+
