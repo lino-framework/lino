@@ -232,6 +232,7 @@ extlinks = {
   'extux': ('http://extjs-ux.org/ext-docs/?class=%s', ''),
   'igen_src': ('http://code.google.com/p/lino-igen/source/browse%s', 'file '),
   'dsbe_src': ('http://code.google.com/p/lino-dsbe/source/browse%s', 'file '),
+  'djangoticket': ('http://code.djangoproject.com/ticket/%s', 'Django ticket #'),
 }
 
     

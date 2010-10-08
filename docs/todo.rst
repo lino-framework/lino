@@ -29,14 +29,6 @@ Kurzfristig
 
   - Die Extra-Zeile sollte ganz leer sein (Standardwerte nicht anzeigen).
 
-  - Nach Insert sollte die Tabelle im aufrufenden Fenster automatisch aktualisiert werden.
-    Evtl. allgemein automatisches Refresh wenn Fenster versteckt war und wieder sichtbar wird?
-    
-  - Das Insert-Fenster sollte sich natürlich selber schließen nach erfolgreichem Insert.
-    Für die Situationen, wo man viele neue Records hintereinander erfasst, könnte
-    vielleicht ein zusätzlicher Knopf "Save and insert another" (wie im Django-Admin), 
-    oder aber das automatische Schließen des Insert-Fensters im Report abschalten können.
-
   - Wenn man z.B. in Companies.insert manuell eine ID eingibt, 
     dann ignoriert der Server die und vergibt trotzdem seine automatische nächste ID.
 
@@ -127,9 +119,14 @@ Langfristig
 - Comboboxen auf Integerfeldern funktionieren nicht. Zeigen NaN als Text an.
 
 - Strings aus :data:`lino.modlib.fields.KNOWLEDGE_CHOICES` werden von makemessages nicht gefunden, 
-  weil sie nicht im Code der Anwendung stehen.
+  weil sie Teil des "Lino-Kernels" und keine direkte Django application sind.
+  Ebenso :mod:`lino.ui.extjs.ext_ui`, :mod:`lino.actions`, :mod:`lino.reports`, ...
   Rausfinden, ob man das nicht doch irgendwie automatisieren kann.
-  http://docs.djangoproject.com/en/dev/topics/i18n/localization/
+  Der Anfang ist gemacht in :srcref:`/Makefile`.
+  Aber Achtung: `make mm` überschreibt jedesmal alle Übersetzungen , siehe auch: 
+  :doc:`/blog/2010/1008`, 
+  :doc:`/topics/i18n`
+  
   
 - Der JS-Code, der ein Detail-Fenster definiert, wird für jeden Report zweimal generiert. 
   Ein einziges Mal für alle Reports würde reichen.
@@ -149,3 +146,8 @@ Langfristig
   Auf Serverseite wäre das kein Problem: ich bräuchte einfach nur title in `elem2rec1` statt in `elem2rec_detailed` zu setzen.
   Aber das interessiert den Store der Grid nicht. Kann sein, dass ich ihn konfigurieren kann...
   Oder ich würde es wie mit `disabled_fields` machen. Also ein neues automatisches virtuelles Feld __unicode__.
+  
+- Insert-Fenster: Für die Situationen, wo man viele neue Records hintereinander erfasst, könnte
+    vielleicht ein zusätzlicher Knopf "Save and insert another" (wie im Django-Admin), 
+    oder aber das automatische Schließen des Insert-Fensters im Report abschalten können.
+

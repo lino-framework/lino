@@ -44,6 +44,7 @@ from lino import actions
 from lino.utils import perms, menus
 from lino.utils import mixins
 from lino.core import datalinks
+from lino.core import boolean_texts
 from lino.core import actors
 #~ from lino.core import action_requests
 from lino.ui import base
@@ -443,10 +444,9 @@ class ReportActionRequest(actions.ActionRequest): # was ReportRequest
 
 
         
-        
 
 
-class Report(actors.Actor,base.Handled): # actions.Action): # 
+class Report(actors.Actor,base.Handled):
     default_action_class = actions.GridEdit
     _handle_class = ReportHandle
     #~ _handle_selector = base.UI
@@ -483,7 +483,7 @@ class Report(actors.Actor,base.Handled): # actions.Action): #
     #~ row_layout_class = None
     
     date_format = 'd.m.Y'
-    boolean_texts = (_('Yes'),_('No'),' ')
+    boolean_texts = boolean_texts
     
     can_view = perms.always
     can_add = perms.is_authenticated

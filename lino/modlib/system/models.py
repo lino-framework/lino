@@ -14,6 +14,7 @@
 from django.contrib.auth import models as auth
 from django.contrib.sessions import models as sessions
 from django.contrib.contenttypes import models as contenttypes
+from django.utils.encoding import force_unicode 
 
 #~ from django import forms
 from django.db import models
@@ -36,7 +37,7 @@ class SiteConfig(models.Model):
     # base_currency 
     
     def __unicode__(self):
-        return u"Site configuration"
+        return force_unicode(_("Site Configuration"))
 
 class SiteConfigs(reports.Report):
     model = SiteConfig

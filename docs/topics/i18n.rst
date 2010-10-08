@@ -1,0 +1,58 @@
+Internationalization
+====================
+
+This page contains Lino-specific notes about internationalization.
+
+The Django documentation on this topic applies as well:
+http://docs.djangoproject.com/en/dev/topics/i18n/
+
+Note that the output of 
+:command:`django-admin help makemessages` seems to be wrong: 
+(1) an option `--settings` is not necessary (if you specify it, it is ignored)
+(2) the option `-l` is mandatory.
+(See :djangoticket:`14419`.)
+
+We plan to translate Lino to languages `de`, `fr`, `nl` and `et` 
+in the near future (in that order of priority).
+
+
+Create or update :xfile:`*.po` files
+------------------------------------
+
+This process scans the source codes for messages that need translation, 
+then creates or updates the :xfile:`*.po` files.
+
+::
+
+    cd \hgwork\dsbe\dsbe
+    django-admin makemessages -a
+    
+    cd \hgwork\lino
+    make mm
+    
+
+Editing :xfile:`*.po` files
+---------------------------
+
+You can edit the files with your preferred text editor, but I am quite glad with 
+`poEdit <http://www.poedit.net>`__.
+
+::
+
+  scite locale\de\LC_MESSAGES\django.po
+  django-admin compilemessages -l de
+
+
+
+Compiling :xfile:`*.po` files
+-----------------------------
+
+When a :xfile:`*.po` file has been updated, we must run compilemessages::
+
+
+    cd \hgwork\dsbe\dsbe
+    django-admin compilemessages -a
+    
+    cd \hgwork\lino
+    make cm
+    

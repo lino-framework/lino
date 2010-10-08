@@ -113,9 +113,9 @@ class GridColumn(Component):
         kw.update(hidden=editor.hidden)
         kw.update(filter=dict(type=editor.filter_type))
         #~ if isinstance(editor,FieldElement) and editor.field.primary_key:
+        kw.update(renderer=js_code('Lino.phantom_renderer'))
         if isinstance(editor,FieldElement):
-            if isinstance(editor.field,models.AutoField):
-                kw.update(renderer=js_code('Lino.id_renderer'))
+            #~ if isinstance(editor.field,models.AutoField):
             kw.update(editable=editor.editable)
         else:
             kw.update(editable=False)

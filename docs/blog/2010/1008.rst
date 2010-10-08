@@ -1,0 +1,41 @@
+20101008
+========
+
+Einfügen
+--------
+
+Wenn man ein Insert-Fenster bestätigt (und das Einfügen erfolgreich war), 
+dann wird das Fenster jetzt geschlossen, und die Tabelle im aufrufenden Fenster 
+wird automatisch aktualisiert.
+Evtl. allgemein automatisches Refresh wenn Fenster versteckt war und wieder sichtbar wird?
+    
+
+i18n
+----
+
+Weitere Übersetzungen (z.B. :menuselection:`Notes --> My notes`), 
+sowie neue Dokumentationseite 
+:doc:`/topics/i18n`. 
+Dabei habe ich mich nicht enthalten können, noch mal wieder ein 
+:djangoticket:`14419` zu schreiben.
+
+Neue Datei :srcref:`/Makefile` mit den targets `mm` (make messages) und `cm` (compile messages). 
+Das ist der erste Versuch einer Lösung des Problems, dass Strings aus dem "Lino-Kernel" 
+(also alle Python-Module, die keine Django-Application (`lino.modlib.xyz`) 
+sind) nicht übersetzt werden. 
+Idee ist, dass die jetzt mit in die po-Dateien von :mod:`lino.modlib.system` rein kommen und ich nur 
+noch ein einziges Mal `make mm` im Oberverzeichnis von Lino tippen muss.
+Das geht aber leider erst zum Teil: er überschreibt die 
+:src:`/lino/modlib/system/locale/de/LC_MESSAGES/django.po` 
+jedesmal neu. Was völlig unpassend ist, denn ich will ja nicht nach jedem `make mm` alle bisherigen 
+Übersetzungen verlieren.
+
+Ich fürchte, dass ich mich da weiter an 
+`django.core.management.commands.makemessages` orientieren muss: 
+nicht nur :command:`xgettext` laufen lassen, sondern auch noch msguniq und msgmerge.
+
+Schade, dass es unter Windows keine symlinks gibt, sonst könnte ich einfach ``makemessages -s``
+benutzen und im Vezeichnis von system einen symlink 
+in den Lino-Source-Baum machen (wobei ich dann wohl vorher die modlib da rausklinken muss).
+
+Oder ich könnte den makemessages-Befehl erweitern um eine Option `--add-tree`

@@ -138,7 +138,7 @@ class GridEdit(OpenWindowAction):
     name = 'grid'
     
     def __init__(self,rpt):
-        self.label = rpt.label
+        self.label = rpt.button_label or rpt.label
         Action.__init__(self,rpt)
 
 

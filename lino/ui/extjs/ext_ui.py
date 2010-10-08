@@ -372,7 +372,7 @@ class ExtUI(base.UI):
             autoScroll=True,
             title=_("Console"),
             id="konsole",
-            html='Console started',
+            #~ html=_('Console started'),
             height=100,
             region="south")
         ]  
@@ -472,7 +472,9 @@ class ExtUI(base.UI):
         from lino.lino_site import lino_site
         #~ from lino import lino_site
         return json_response_kw(success=True,
-          message=(_("Welcome on Lino server %r, user %s") % (lino_site.title,request.user)),
+          message=(_("Welcome on Lino server %(title)r, user %(user)s") % dict(
+            title=lino_site.title,
+            user=request.user)),
           load_menu=lino_site.get_site_menu(request.user))
         #~ s = py2js(lino_site.get_menu(request))
         #~ return HttpResponse(s, mimetype='text/html')
@@ -506,7 +508,7 @@ class ExtUI(base.UI):
     def detail_config_view(self,request,app_label=None,actor=None):
         rpt = actors.get_actor2(app_label,actor)
         if not rpt.can_config.passes(request.user):
-            msg = _("User %s cannot configure %s.") % (request.user,rpt)
+            msg = _("User %(user)s cannot configure %(report)s.") % dict(user=request.user,report=rpt)
             return http.HttpResponseForbidden(msg)
         if request.method == 'GET':
             tab = int(request.GET.get('tab','0'))
@@ -526,7 +528,7 @@ class ExtUI(base.UI):
     def grid_config_view(self,request,app_label=None,actor=None):
         rpt = actors.get_actor2(app_label,actor)
         if not rpt.can_config.passes(request.user):
-            msg = _("User %s cannot configure %s.") % (request.user,rpt)
+            msg = _("User %(user)s cannot configure %(report)s.") % dict(user=request.user,report=rpt)
             return http.HttpResponseForbidden(msg)
         if request.method == 'PUT':
             PUT = http.QueryDict(request.raw_post_data)
@@ -570,7 +572,7 @@ class ExtUI(base.UI):
         rh = rpt.get_handle(self)
         
         if not rh.report.can_view.passes(request.user):
-            msg = _("User %s cannot view %s.") % (request.user,rh.report)
+            msg = _("User %(user)s cannot view %(report)s.") % dict(user=request.user,report=rpt)
             return http.HttpResponseForbidden()
         if request.method == 'POST':
             """

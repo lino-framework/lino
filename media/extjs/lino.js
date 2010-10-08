@@ -539,7 +539,7 @@ Ext.BLANK_IMAGE_URL = '/media/extjs/resources/images/default/s.gif'; // settings
 
 
 // used as Ext.grid.Column.renderer for id columns in order to hide the special id value -99999
-Lino.id_renderer = function(value, metaData, record, rowIndex, colIndex, store) {
+Lino.phantom_renderer = function(value, metaData, record, rowIndex, colIndex, store) {
   //~ if (value == -99999) return '';
   if (record.phantom) return '';
   return value;
@@ -659,6 +659,8 @@ Lino.submit_insert = function(panel,btn) {
     scope: panel,
     success: function(form, action) {
       Lino.notify(action.result.msg);
+      panel.ww.close();
+      if (panel.ww.caller) panel.ww.caller.refresh();
       //~ this.caller.refresh();
     },
     failure: Lino.on_submit_failure,

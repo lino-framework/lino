@@ -125,6 +125,7 @@ class Note(models.Model,mixins.Printable):
     
 class NoteTypes(reports.Report):
     model = 'notes.NoteType'
+    label = _("Note types")
 NoteTypes.add_detail(label=_("Detail"),label_align = reports.LABEL_ALIGN_TOP,
 desc="""
 main = 
@@ -137,7 +138,7 @@ class Notes(reports.Report):
     model = 'notes.Note'
     column_names = "id date user subject * body"
     order_by = "id"
-    button_label = _("Notes")
+    label = _("Notes")
 Notes.add_detail(label=_("Detail"),label_align = reports.LABEL_ALIGN_TOP,
 desc="""
 box1 =
@@ -163,7 +164,7 @@ class MyNotes(Notes):
     column_names = "date subject *"
     hide_columns = "body"
     can_view = perms.is_authenticated
-    button_label = _("My Notes")
+    label = _("My notes")
     
     def setup_request(self,req):
         #print 20091211, "MyNotes.setup_request"
@@ -180,10 +181,12 @@ class NotesByPerson(Notes):
     fk_name = 'person'
     column_names = "date subject user *"
     order_by = "date"
+    #~ label = _("Notes by person")
   
 class NotesByCompany(Notes):
     fk_name = 'company'
     column_names = "date subject user *"
     order_by = "date"
+    #~ label = _("Notes by person")
   
   
