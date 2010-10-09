@@ -4,6 +4,8 @@ To-Do-Liste
 Kurzfristig
 -----------
 
+- Beim Einfügen in notes.MyNotes (z.B.) funktioniert etwas mit dem Datum noch nicht. Da scheint noch ein Bug zu sein.
+
 - Quickfilter im Detail von Personen geht nicht.
 
 - Man kann noch nicht nach Personen suchen, die ein bestimmtes Studium haben
@@ -25,12 +27,8 @@ Kurzfristig
   Im :class:`notes.NoteType` wird definiert, ob Lino einen Termin (oder Erinnerung oder Task) 
   per E-Mail an den Benutzer verschicken soll.
 
-- Einfügen :
-
-  - Die Extra-Zeile sollte ganz leer sein (Standardwerte nicht anzeigen).
-
-  - Wenn man z.B. in Companies.insert manuell eine ID eingibt, 
-    dann ignoriert der Server die und vergibt trotzdem seine automatische nächste ID.
+- Wenn man z.B. in Companies.insert manuell eine ID eingibt, 
+  dann ignoriert der Server die und vergibt trotzdem seine automatische nächste ID.
 
 
 Kleinkram

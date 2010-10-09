@@ -541,6 +541,7 @@ Ext.BLANK_IMAGE_URL = '/media/extjs/resources/images/default/s.gif'; // settings
 // used as Ext.grid.Column.renderer for id columns in order to hide the special id value -99999
 Lino.phantom_renderer = function(value, metaData, record, rowIndex, colIndex, store) {
   //~ if (value == -99999) return '';
+  //~ console.log(rowIndex,colIndex,record,metaData);
   if (record.phantom) return '';
   return value;
 }
@@ -849,7 +850,14 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
 });
 
 
-
+Lino.getRowClass = function(record, rowIndex, rowParams, store) {
+  if (record.phantom) {
+    console.log(20101009);
+    //~ rowParams.bodyStyle = "color:red;background-color:blue";
+    return 'lino-phantom-row';
+    }
+  return '';
+}
     
 Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
   clicksToEdit:2,
@@ -862,6 +870,8 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
           //enableRowBody=True,
           //~ showPreview:true,
           //~ scrollOffset:200,
+          getRowClass: Lino.getRowClass,
+          //~ enableRowBody: true,
           emptyText:"Nix gefunden!"
         },
   

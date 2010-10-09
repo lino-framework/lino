@@ -606,7 +606,9 @@ class ExtUI(base.UI):
                 if isinstance(a,actions.InsertRow):
                     ar = ext_requests.ViewReportRequest(request,rh,a)
                     elem = ar.create_instance()
-                    params = dict(data_record=elem2rec1(request,rh,elem,title=ar.get_title()))
+                    rec = elem2rec1(request,rh,elem,title=ar.get_title())
+                    rec.update(phantom=True)
+                    params = dict(data_record=rec)
                     kw.update(on_ready=['Lino.%s(undefined,%s);' % (a,py2js(params))])
                 else:
                     kw.update(on_ready=['Lino.%s();' % a])

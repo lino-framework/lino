@@ -39,3 +39,5 @@ benutzen und im Vezeichnis von system einen symlink
 in den Lino-Source-Baum machen (wobei ich dann wohl vorher die modlib da rausklinken muss).
 
 Oder ich könnte den makemessages-Befehl erweitern um eine Option `--add-tree`
+
+Naja, aber jetzt ist erstmal Wochenende....

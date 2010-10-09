@@ -1,0 +1,38 @@
+20101009 Extra-Zeile jetzt in Blau
+==================================
+
+Abends nach der Sauna habe ich noch knapp zwei Stunden mit dem folgenden Problem verbracht:
+
+  - Die Extra-Zeile sollte ganz leer sein (Standardwerte nicht anzeigen).
+
+Zunächst musste ich mal in ext_ui.py machen, dass der Extra-Record überhaupt als phantom gekennzeichnet wird. 
+Dann dachte ich, dass ich für alle :extjs:`Ext.grid.Column` meinen eigenen `renderer` benutze, der  einen Leerstring zurück gibt, wenn `record.phantom` ist. 
+Das funktionierte sogar, außer für Datumskolonnen: wenn `xtype:'datecolumn'` ist, dann wird `renderer` ignoriert.
+
+Aber noch bevor ich eine Lösung für diesen Haken fand, 
+fiel mir auf, dass es nicht so toll ist, wenn man die Standardwerte der Extra-Zeile gar nicht sieht. 
+Wäre es nicht besser, wenn diese letzte Zeile einfach nur anders formatiert ist? 
+Also in einer anderen Farbe, oder halb durchsichtig, oder in italic, oder so.
+
+Ja, die momentane Lösung gefällt mir: 
+**Die Extrazeile zeigt weiterhin die Standardwerte an
+(die die neue Zeile kriegen würde, wenn man sie erstellt), aber in Blau.**
+
+Zur Implementierung:
+:js:func:`Lino.getRowClass` (die in Lino.GridPanel.viewConfig.getRowClass eingetragen wird) 
+sorgt dafür, dass die Zeile eine zusätzliche CSS-Klasse "lino-phantom-row" kriegt. 
+Und in der :xfile:`lino.css` steht eine neue Regel::
+
+  .lino-phantom-row table.x-grid3-row-table {
+	color: blue; 
+  }
+
+Das Schwierige war rauszufinden, weshalb mein erster Versuch keine Wirkung zeigte::
+
+  .lino-phantom-row {
+	color: blue; 
+  }
+
+Dass das nicht funktioniert, liegt an den Vererbungsregeln von CSS (mit denen ich bisher wenig zu tun hatte).
+Anfängerisch ausgedrückt definiert `table.x-grid3-row-table` 
+die normale Textfarbe, deshalb muss ich es auch dort ändern.
