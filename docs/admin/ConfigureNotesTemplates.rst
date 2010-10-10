@@ -1,26 +1,51 @@
 Notizvorlagen konfigurieren
 ===========================
 
-Allgemeine Vorgehensweise
--------------------------
+Für den Lino-Verwalter
+----------------------
 
-Im Web-Interface unter Configure / NoteTypes müssen die Notizarten definiert werden.
+Im Web-Interface unter :menuselection:`Configure --> NoteTypes` müssen die Notizarten definiert werden.
+
+.. image:: 1010a.jpg
+    :scale: 70
+
+
+- print_method:
  
-Im Feld `print method` gibt es momentan appy, rtf und pisa. 
-"pisa" werden wir so schnell nicht benutzen, weil man dann HTML-Dateien editieren muss, um Dokumentvorlagen zu bearbeiten.
+  - Wenn dieses Feld leer ist, kann eine Notiz dieser Art nur am Bildschirm konsultiert werden und ist nicht druckbar.
+  - In der Auswahlliste stehen zwar weitere Methoden, aber funktionieren tut bis auf weiteres nur die Methode AppyPrintMethod.
+
+- template:
+
+  - Wenn eine Druckmethode angegeben ist, muss außerdem im Feld `template` eine Vorlagedatei ausgewählt werden.
+
+
+Für den Systemverwalter
+-----------------------
+
+Seit Mai waren wir uns ja einig, dass AppyPrintMethod die einzige gangbare Strategie ist. 
+Dabei wird das Modul `pod <http://appyframework.org/pod.html>`_ (Python Open Document) 
+aus dem Framework "Appy" (Applications in python) benutzt.
+"pisa" werden wir so schnell nicht benutzen, weil man dann HTML-Dateien editieren muss, um Dokumentvorlagen zu bearbeiten. 
 Bevor ich mit Pisa anfinge, würde ich eher LaTeX benutzen.
-RTF funktioniert noch nicht, dazu müsste ich zunächst ein neues Templatesystem finden oder selberschreiben, 
-denn das Template-System von Django verträgt keine RTF-Dateien. 
-Also bleibt nur Appy, und wir waren uns ja auch einig, dass das fürs Erste reicht.
+RTF funktioniert noch nicht, dazu müsste ich zunächst ein neues Templatesystem finden oder selberschreiben, denn das Template-System von Django verträgt keine RTF-Dateien. 
 
-`print method` kann auch leer sein. 
-Eine Notiz dieser Art kann dann eben nur am Bildschirm konsultiert werden und ist nicht druckbar.
 
-Dann muss im Feld `template` eine Vorlagendatei ausgewählt werden. Welche Dateien dort angezeigt werden, kann man momentan nicht übers Web-Interface konfigurieren, und bis auf Weiteres sehe ich auch keinen Bedarf dazu. Der Lino-Server sucht diese Dateien im Verzeichnis `/local/lino/templates/appy`. Dieses Verzeichnis könnte z.B. ein Link nach F:\ANWPROG\LINO\TEMPLATES\APPY sein.
+Der Lino-Server sucht die Vorlagedateien im Verzeichnis :file:`/usr/local/lino/templates/appy/de`
+(`de` weil das die :func:`Standardsprache <lino.modlib.tools.default_language>` des Lino-Sites ist,
+`/usr/local/lino` weil das in :setting:`DATA_DIR` als euer lokales Lino-Verzeichnis definiert ist).
+Das templates-Verzeichnis muss pro unterstützter Sprache ein entsprechendes Unterverzeichnis (`de`, `fr`, `en`,...) haben. 
+Die Sprache wird in :attr:`notes.NoteType.template` nicht gespeichert und erscheint auch nicht in der Auswahlliste. 
+Dort werden immer die Templates der Hauptsprache angezeigt. 
 
-Die Vorlagedateien müssen ausgehend von den bestehenden Word-Dateien mit OpenOffice erstellt werden. Die einzelnen Felder müssen dabei, wie in http://appyframework.org/pod.html dokumentiert, eingebunden werden.
 
-Sprachabhängige Auswahl der Notizvorlage
-----------------------------------------
+Um die Dateien auch von einem Windows-Rechner aus bearbeiten zu können, könnte
+`/usr/local/lino` ein Link nach (z.B.) `F:\\ANWPROG\\LINO` sein.
 
-Das ist noch nicht implementiert.
+Die Vorlagedateien müssen ausgehend von den bestehenden Word-Dateien mit OpenOffice erstellt werden. 
+Die einzelnen Felder müssen dabei, wie bei appy_pod dokumentiert eingebunden werden:
+
+- http://appyframework.org/podWritingTemplates.html
+- http://appyframework.org/podWritingAdvancedTemplates.html
+
+

@@ -1,0 +1,11 @@
+20101010
+========
+
+Eigentlich wollte ich mal anfangen, mit den Templates für appy zu spielen... aber upps, 
+da stellt sich raus, dass die kontextsensitive combobox für notes.NoteType.template nicht funktioniert. 
+In der GridPanel.before_row_edit() fehlten die ``x.setContextValue()`` 
+Kann sein, dass ich in :func:`lino.ui.extjs.ext_elems.before_row_edit` jetzt einen Bug reingeholt habe, 
+denn den Test ``if panel.has_field(f):`` habe ich rausgeholt weil ich mich nicht erinnern kann, wozu der gut war.
+
+Die Sprachabhängige Auswahl der Notizvorlage habe ich in Einem mit implementiert, 
+und die Seite :doc:`/admin/ConfigureNotesTemplates` aktualisiert.

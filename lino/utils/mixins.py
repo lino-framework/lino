@@ -28,9 +28,6 @@ try:
     #pisa.showLogging()
 except ImportError:
     pisa = None
-    
-import lino
-from lino import actions
 
 try:
     import appy
@@ -43,6 +40,11 @@ except ImportError:
     #~ except ImportError:
         #~ appy_pod = None
         
+import lino
+from lino import actions
+from lino.modlib.tools import default_language
+
+
 pm_dict = {}
 pm_list = []
         
@@ -52,10 +54,9 @@ pm_list = []
 class MultiTableBase:
   
     """
-    Mixin for Models that use Multi-table inheritance[1].
-    Subclassed by :class:`lino.modlib.journals.models.AbstractDocument`
-    
-    [1] http://docs.djangoproject.com/en/dev/topics/db/models/#multi-table-inheritance
+    Mixin for Models that use `Multi-table inheritance 
+    <http://docs.djangoproject.com/en/dev/topics/db/models/#multi-table-inheritance>`__.
+    Subclassed by :class:`lino.modlib.journals.models.AbstractDocument`.
     """
     
     #~ class Meta:
@@ -96,6 +97,9 @@ class Printable:
 
     def filename_root(self):
         return self._meta.app_label + '.' + self.__class__.__name__
+        
+    def get_print_language(self,pm):
+        return default_language()
         
     def get_print_templates(self,pm):
         return [self.filename_root() + pm.template_ext]
@@ -212,8 +216,10 @@ class AppyPrintMethod(PrintMethod):
             raise Exception(
               "%s.get_print_templates() must return exactly 1 template (got %r)" % (
                 elem.__class__.__name__,tpls))
+                
+        lang = elem.get_print_language(self)
         #~ tpl = self.get_template(elem) 
-        tpl = os.path.join(self.templates_dir,tpls[0])
+        tpl = os.path.join(self.templates_dir,lang,tpls[0])
         
         context = dict(instance=elem)
         from appy.pod.renderer import Renderer
@@ -305,17 +311,21 @@ def print_method_choices():
     
     
     
-def template_choices(print_method):
-    pm = pm_dict.get(print_method,None)
+def template_choices(pmname):
+    """
+    :param:pmname: the name of a print method.
+    """
+    pm = pm_dict.get(pmname,None)
     #~ pm = get_print_method(print_method)
-    if pm is not None:
-        glob_spec = os.path.join(pm.templates_dir,'*'+pm.template_ext)
-        top = pm.templates_dir
-        for dirpath, dirs, files in os.walk(top):
-            for fn in files:
-                if fnmatch(fn,'*'+pm.template_ext):
-                    if len(dirpath) > len(top):
-                        fn = os.path.join(dirpath[len(top)+1:],fn)
-                    yield fn.decode(sys.getfilesystemencoding())
+    if pm is None:
+        raise Exception("%r : invalid print method name." % pmname)
+    #~ glob_spec = os.path.join(pm.templates_dir,'*'+pm.template_ext)
+    top = os.path.join(pm.templates_dir,default_language())
+    for dirpath, dirs, files in os.walk(top):
+        for fn in files:
+            if fnmatch(fn,'*'+pm.template_ext):
+                if len(dirpath) > len(top):
+                    fn = os.path.join(dirpath[len(top)+1:],fn)
+                yield fn.decode(sys.getfilesystemencoding())
             
     

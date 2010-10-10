@@ -24,7 +24,7 @@ from lino import reports
 from lino.ui import base
 from lino.core import actors
 from lino.utils import menus
-from lino.utils import choosers
+#~ from lino.utils import choosers
 from lino.utils import jsgen
 #~ from lino.utils import build_url
 from lino.utils.jsgen import py2js, js_code, id2js

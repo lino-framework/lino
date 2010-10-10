@@ -89,14 +89,17 @@ def discover():
     lino.log.info("Discovering choosers...")
     #~ lino.log.debug("Instantiate model reports...")
     for model in models.get_models():
+        #~ n = 0
         for field in model._meta.fields:
             methname = field.name + "_choices"
             m = getattr(model,methname,None)
             if m is not None:
+                #~ n += 1
                 setattr(field,'_lino_chooser',Chooser(model,field,m))
                 #~ lino.log.info("Chooser for %s.%s",model,field.name)
             #~ else:
                 #~ lino.log.info("No chooser for %s.%s",model,field.name)
+        #~ lino.log.debug("Discovered %d choosers in model %s.",n,model)
 
 def get_for_field(fld):
     return getattr(fld,'_lino_chooser',None)

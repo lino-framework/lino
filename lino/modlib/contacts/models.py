@@ -30,10 +30,9 @@ from lino.utils import perms
 from lino.modlib import fields
 from lino.modlib.contacts.utils import join_words
 
-def default_language():
-    from django.conf import settings
-    return settings.LANGUAGE_CODE[:2]
-    
+from lino.modlib.tools import default_language
+
+
     
 #~ def name_default(obj):
     #~ l = filter(lambda x:x,[obj.last_name,obj.first_name,obj.title])

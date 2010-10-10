@@ -24,7 +24,7 @@ def objects():
     u = auth.User.objects.get(pk=1)
     
     notetype = Instantiator('notes.NoteType').build
-    yield notetype(name="phone report",print_method='app',template='notes.NoteType.Telefonnotiz.odt')
+    yield notetype(name="phone report",print_method='appy',template='notes.NoteType.Telefonnotiz.odt')
     yield notetype(name="todo")
     
     

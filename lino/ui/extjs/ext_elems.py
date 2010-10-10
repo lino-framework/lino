@@ -21,7 +21,6 @@ import lino
 
 from lino import reports, actions
 from lino.utils import constrain
-from lino.utils import choosers
 from lino.utils import jsgen
 from lino.utils.jsgen import py2js, Variable, Component, id2js, js_code
 from lino.utils import choosers
@@ -67,11 +66,14 @@ def before_row_edit(panel):
             if chooser:
                 #~ lino.log.debug("20100615 %s.%s has chooser", self.lh.layout, e.field.name)
                 for f in chooser.context_fields:
-                    if panel.has_field(f):
-                        l.append("%s.setContextValue(%r,record.data[%r]);" % (
-                            e.ext_name,f.name,ext_requests.form_field_name(f)))
-                    elif True: # f.name = panel.fk_name:
-                        l.append("%s.setContextValue(%r,this.ww.get_current_record().id)" % (e.ext_name,f.name))
+                    l.append("%s.setContextValue(%r,record.data[%r]);" % (
+                        e.ext_name,f.name,ext_requests.form_field_name(f)))
+                    #~ see 20101010
+                    #~ if panel.has_field(f):
+                        #~ l.append("%s.setContextValue(%r,record.data[%r]);" % (
+                            #~ e.ext_name,f.name,ext_requests.form_field_name(f)))
+                    #~ elif True: # f.name = panel.fk_name:
+                        #~ l.append("%s.setContextValue(%r,this.ww.get_current_record().id)" % (e.ext_name,f.name))
     return js_code('function(record){%s}' % ('\n'.join(l)))
 
 
@@ -920,6 +922,7 @@ class GridElement(Container):
         #~ kw.update(boxMinWidth=500)
         self.columns = columns
         Container.__init__(self,lh,name,**kw)
+        self.active_children = columns
         assert not kw.has_key('before_row_edit')
         self.update(before_row_edit=before_row_edit(self))
         

@@ -21,14 +21,18 @@ Kurzfristig
   Muss on_delete=RESTRICT oder on_delete=SET_NULL sein. 
   Siehe `Django-Ticket 7539 <http://code.djangoproject.com/ticket/7539>`__.
 
-- Sprachabhängige Auswahl der Notizvorlage. Das templates-Verzeichnis muss pro unterstützter Sprache ein entsprechendes Unterverzeichnis (`de`, `fr`, `en`,...) haben. Dieser Teil des Dateinamens wird in :attr:`notes.NoteType.template` nicht gespeichert und erscheint auch nicht in der Auswahlliste. Dort werden immer die Templates der Hauptsprache angezeigt. Wenn Sprache der Notiz nicht die Hauptsprache des Lino-Sites ist, dann wird das Template zunächst in der Notizsprache gesucht. Falls es dort nicht existiert (z.B. weil die Vorlage noch nicht übersetzt wurde oder multilingual ist), nimmt er die Standard-Vorlage aus der Hauptsprache.
-
 - iCal-Dateien generieren. 
   Im :class:`notes.NoteType` wird definiert, ob Lino einen Termin (oder Erinnerung oder Task) 
   per E-Mail an den Benutzer verschicken soll.
 
 - Wenn man z.B. in Companies.insert manuell eine ID eingibt, 
   dann ignoriert der Server die und vergibt trotzdem seine automatische nächste ID.
+
+- Das Folgende macht er noch nicht:
+  Falls ein Template in der Sprache der Notiz nicht existiert 
+  (z.B. weil die Vorlage noch nicht übersetzt wurde oder multilingual ist), 
+  nimmt er die Standard-Vorlage aus der Hauptsprache.
+
 
 
 Kleinkram

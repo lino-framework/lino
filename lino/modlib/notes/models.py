@@ -21,12 +21,14 @@ from django.contrib.contenttypes import generic
 from django.utils.translation import ugettext as _
 
 from lino.modlib import fields, tools
+from lino.modlib.tools import default_language
 from lino import reports
 #~ from lino import layouts
 from lino.utils import perms
 from lino.utils import mixins
 from django.conf import settings
 #~ from lino import choices_method, simple_choices_method
+
 
 
 #~ tools.requires_apps('auth','contenttypes','links')
@@ -43,6 +45,7 @@ class NoteType(models.Model):
         return self.name
         
     def template_choices(cls,print_method):
+        #~ print cls, 'template_choices for method' ,print_method
         return mixins.template_choices(print_method)
     template_choices.simple_values = True
     template_choices = classmethod(template_choices)
@@ -59,7 +62,6 @@ class NoteType(models.Model):
     #~ template
     #~ """
 
-from lino.modlib.contacts.models import default_language
 
 
 class Note(models.Model,mixins.Printable):
@@ -88,7 +90,7 @@ class Note(models.Model,mixins.Printable):
         if self.user:
             s = u"(%s %s)" % (self.user,self.date)
         else:
-            s = u"(Anon %s)" % (self.date)
+            s = u"(Anon. %s)" % (self.date)
         if self.subject:
             return self.subject + " " + s
         return s
@@ -119,6 +121,8 @@ class Note(models.Model,mixins.Printable):
         assert self.type.template.endswith(pm.template_ext)
         return [ self.type.template ]
         
+    def get_print_language(self,pm):
+        return self.language
 
 
 
