@@ -4,7 +4,7 @@ To-Do-Liste
 Kurzfristig
 -----------
 
-- Beim Einfügen in notes.MyNotes (z.B.) funktioniert etwas mit dem Datum noch nicht. Da scheint noch ein Bug zu sein.
+- Wenn ein Detail- oder Insert-Fenster nur einen Tab hat, dann sollte dessen Titel ("Detail") nicht angezeigt werden.
 
 - Quickfilter im Detail von Personen geht nicht.
 
@@ -16,7 +16,7 @@ Kurzfristig
 
 - Lokale Dateinamen benutzerfreundlich als Notiz erfassen. Eventuell neues Feld `attached_file` statt `url`? 
 
-- Wenn ich eine NoteType lösche, werden momentan alle Notizen mit dieser Notizart gelöscht. 
+- Wenn ich eine NoteType lösche, werden momentan alle Notizen mit dieser Notizart gelöscht (oops!). 
   Stattdessen muss das Löschen verweigert werden... 
   Muss on_delete=RESTRICT oder on_delete=SET_NULL sein. 
   Siehe `Django-Ticket 7539 <http://code.djangoproject.com/ticket/7539>`__.
@@ -33,11 +33,14 @@ Kurzfristig
   (z.B. weil die Vorlage noch nicht übersetzt wurde oder multilingual ist), 
   nimmt er die Standard-Vorlage aus der Hauptsprache.
 
-
+- Report-Konfigurationsdateien sollten vielleicht besser YAML statt .py sein.
+  Und vielleicht für jedes Detail-Layout eine eigene Datei.
 
 Kleinkram
 ---------
 
+- (à observer) Beim Einfügen in :class:`notes.MyNotes` (z.B.) funktioniert manchmal etwas mit dem Datum noch nicht. Da scheint noch ein Bug zu sein.
+  
 - Wie soll ich es machen, dass der Benutzer beim Auswählen der Krankenkasse einer Person nicht alle Firmen, sondern nur die Krankenkassen angezeigt bekommt? Etwa ein eigenes Feld `Company.is_health_insurance`?
 
 - Fenstertitel ändern bzw. anzeigen, welche GC momentan aktiv ist.
@@ -101,8 +104,6 @@ Langfristig
 
 - Slave-Grid in eigenem Fenster öffnen
 
-- :term:`disabled fields` sind noch schwer lesbar, wenn es sich um Comboboxen handelt.
-
 - Benutzerverwaltung von der Kommandozeile aus. 
   In Lino-DSBE gibt es :xfile:`make_staff.py`, aber das ist nur ein sehr primitives Skript.
   
@@ -120,22 +121,22 @@ Langfristig
 
 - Comboboxen auf Integerfeldern funktionieren nicht. Zeigen NaN als Text an.
 
-- Strings aus :data:`lino.modlib.fields.KNOWLEDGE_CHOICES` werden von makemessages nicht gefunden, 
+- Strings aus :data:`lino.modlib.fields.KNOWLEDGE_CHOICES` werden von :command:`django-admin makemessages` nicht gefunden, 
   weil sie Teil des "Lino-Kernels" und keine direkte Django application sind.
   Ebenso :mod:`lino.ui.extjs.ext_ui`, :mod:`lino.actions`, :mod:`lino.reports`, ...
   Rausfinden, ob man das nicht doch irgendwie automatisieren kann.
   Der Anfang ist gemacht in :srcref:`/Makefile`.
-  Aber Achtung: `make mm` überschreibt jedesmal alle Übersetzungen , siehe auch: 
+  Siehe auch: 
   :doc:`/blog/2010/1008`, 
   :doc:`/topics/i18n`
   
-  
-- Der JS-Code, der ein Detail-Fenster definiert, wird für jeden Report zweimal generiert. 
+- Der JS-Code, der ein Detail-Fenster definiert, wird für jeden Report zweimal generiert (detail und insert).
   Ein einziges Mal für alle Reports würde reichen.
   
 - Layout-Editor: 
 
-  - Fehlerbehandlung! Momentan knallt es, wenn man einen Tippfehler macht.
+  - Fehlerbehandlung! Momentan knallt es, wenn man einen Tippfehler macht. 
+    Stattdessen sollte er die Fehlermeldung anzeigen und das vor allem Speichern verweigern.
   - Schade, dass das Editorfenster das darunterliegende Fenster verdeckt und auch nicht aus dem Browserfenster rausbewegt werden kann. Mögliche Lösung: dass das Editorfenster sich die east region pflanzt. 
   - Button um Feldnamen komfortabel auszuwählen
 

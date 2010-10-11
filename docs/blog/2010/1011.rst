@@ -1,0 +1,14 @@
+20101011
+========
+
+- Insert in NotesByPerson setzt jetzt seinen Master wieder. 
+  (`Lino.show_insert_handler` muss die base_params
+  
+- :term:`disabled fields` sind jetzt auch dann gut lesbar (blauer statt grauer Text), 
+  wenn es sich um Comboboxen handelt.
+  Danke ans Developer-Tools-Fenster in Chromium.
+  Das `color:blue` für `disabled fields` habe ich 
+  von `ext_ui.ExtUI.html_page` in die :xfile:`lino.css` versetzt.
+  
+- Im Insert-Fenster fehlte der Titel. Behoben. Jetzt lautet er (wieder) "Insert into %s...".
+

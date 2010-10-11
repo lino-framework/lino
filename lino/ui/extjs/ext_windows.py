@@ -179,6 +179,7 @@ class BaseDetailWrapper(MasterWrapper):
         if len(rh.report.detail_layouts) == 1:
             self.tabbed = False
             lh = rh.get_detail_layouts()[0]
+            #~ lh.label = None
             main = ext_elems.FormPanel(rh,action,lh._main)
             WindowWrapper.__init__(self,action,rh.ui,lh,main,**kw)        
         else:

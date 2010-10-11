@@ -1,6 +1,7 @@
 20101010
 ========
 
+(Morgens) 
 Eigentlich wollte ich mal anfangen, mit den Templates für appy zu spielen... aber upps, 
 da stellt sich raus, dass die kontextsensitive combobox für notes.NoteType.template nicht funktioniert. 
 In der GridPanel.before_row_edit() fehlten die ``x.setContextValue()`` 
@@ -9,3 +10,13 @@ denn den Test ``if panel.has_field(f):`` habe ich rausgeholt weil ich mich nicht
 
 Die Sprachabhängige Auswahl der Notizvorlage habe ich in Einem mit implementiert, 
 und die Seite :doc:`/admin/ConfigureNotesTemplates` aktualisiert.
+
+(Abends)
+
+Oho, hier war ja noch ein show stopper bug: 
+Detail in :class:`notes.MyNotes` funktionierte nicht (zeigte einen leeren Record an).
+Er schickte den falschen AJAX-Request `http://127.0.0.1:8000/api/notes/MyNotes/14?mt=15&mk=14`_ (das `mt=15` (model Note) und das `mk=14` sind falsch.
+Lino.show_detail_handler und Lino.insert_handler schickten die get_master_params.
+
+Aber momentan setzt deswegen jetzt ein Insert in NotesByPerson seinen Master nicht.
+Irgendwo ist da noch ein Denkfehler...

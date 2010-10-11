@@ -539,7 +539,7 @@ Ext.BLANK_IMAGE_URL = '/media/extjs/resources/images/default/s.gif'; // settings
 
 
 // used as Ext.grid.Column.renderer for id columns in order to hide the special id value -99999
-Lino.phantom_renderer = function(value, metaData, record, rowIndex, colIndex, store) {
+Lino.id_renderer = function(value, metaData, record, rowIndex, colIndex, store) {
   //~ if (value == -99999) return '';
   //~ console.log(rowIndex,colIndex,record,metaData);
   if (record.phantom) return '';
@@ -622,17 +622,27 @@ Lino.do_when_visible = function(cmp,todo) {
 
 Lino.show_detail_handler = function(action) {
   return function(panel,btn) {
-    var master = panel.get_current_record();
+    var rec = panel.get_current_record();
     //~ action(panel,{record_id:master.id,base_params:panel.ww.config.base_params});
-    action(panel,{record_id:master.id,base_params:panel.ww.get_master_params()});
+    //~ var bp = panel.ww.get_master_params();
+    //~ var bp = panel.ww.get_base_params();
+    //~ var bp = panel.getStore().baseParams;
+    //~ var bp = panel.ww.config.base_params;
+    action(panel,{record_id:rec.id,base_params:panel.get_base_params()});
   }
 };
 
 Lino.show_insert_handler = function(action) {
   return function(panel,btn) {
-    action(panel,{record_id:-99999,base_params:panel.ww.get_master_params()});
+    if (panel.getStore !== undefined)
+      var bp = panel.getStore().baseParams;
+    else
+      var bp = panel.ww.config.base_params;
+    action(panel,{record_id:-99999,base_params:bp});
+    action(panel,{record_id:-99999,base_params:panel.get_base_params()});
   }
 };
+
 
 Lino.submit_detail = function(panel,btn) {
   var rec = panel.get_current_record();
@@ -676,8 +686,7 @@ Lino.GridFilters = Ext.extend(Ext.ux.grid.GridFilters,{
 
 Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   constructor : function(config,params){
-    if (params) 
-      Ext.apply(config,params);
+    if (params) Ext.apply(config,params);
     config.bbar = Lino.build_buttons(this,config.ls_bbar_actions);
     if (config.has_navigator) {
       config.tbar = this.tbar_items().concat([
@@ -703,12 +712,15 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     //~ this.base_params = config.base_params;
     //~ console.log(20100930,this.base_params);
   },
+  get_base_params : function() {
+    return this.ww.config.base_params;
+  },
   moveFirst : function() {this.goto_record_id(this.current_record.navinfo.first)},
   movePrev : function() {this.goto_record_id(this.current_record.navinfo.prev)},
   moveNext : function() {this.goto_record_id(this.current_record.navinfo.next)},
   moveLast : function() {this.goto_record_id(this.current_record.navinfo.last)},
   goto_record_id : function(record_id) {
-    console.log('Lino.DetailWrapperBase.goto_record_id() : ww.config = ',this.ww.config);
+    //~ console.log('Lino.DetailWrapperBase.goto_record_id() : ww.config = ',this.ww.config);
     var this_ = this;
     Ext.Ajax.request({ 
       waitMsg: 'Loading record...',
@@ -837,7 +849,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     else
       var src = 'empty.jpg';
     var f = function() {
-      console.log('Lino.load_picture()',src);
+      //~ console.log('Lino.load_picture()',src);
       cmp.el.dom.src = src;
       //~ this.el.dom.onclick = 'Lino.img_onclick(src)';
       //~ this.el.dom.onclick = 'window.open(src)';
@@ -852,7 +864,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
 
 Lino.getRowClass = function(record, rowIndex, rowParams, store) {
   if (record.phantom) {
-    console.log(20101009);
+    //~ console.log(20101009);
     //~ rowParams.bodyStyle = "color:red;background-color:blue";
     return 'lino-phantom-row';
     }
@@ -878,11 +890,13 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
   constructor : function(config,params){
     if (params) Ext.apply(config,params);
     //~ this.ww = ww;
+    var bp = { fmt:'json' };
+    Ext.apply(bp,config.base_params);
     config.store = new Ext.data.JsonStore({ 
       listeners: { exception: Lino.on_store_exception }, 
       //~ proxy: new Ext.data.HttpProxy({ url: config.ls_data_url+'?fmt=json', method: "GET" }), remoteSort: true, 
       proxy: new Ext.data.HttpProxy({ url: '/api'+config.ls_url, method: "GET" }), remoteSort: true, 
-      baseParams: {fmt:'json'}, 
+      baseParams: bp, 
       fields: config.ls_store_fields, 
       totalProperty: "count", 
       root: "rows", 
@@ -957,6 +971,10 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     
     
     this.on('beforeedit',function(e) { this.before_row_edit(e.record)},this);
+  },
+  
+  get_base_params : function() {
+    return this.getStore().baseParams;
   },
   
   search_change : function(field,oldValue,newValue) {
@@ -1618,7 +1636,7 @@ Ext.override(Lino.WindowWrapper,{
     } else {
       p['mk'] = undefined;
     }
-    console.log('get_master_params returns',p);
+    //~ console.log('get_master_params returns',p);
     return p;
   },
   //~ get_base_params : function() { return {} },

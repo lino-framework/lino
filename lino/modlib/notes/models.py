@@ -169,6 +169,7 @@ class MyNotes(Notes):
     hide_columns = "body"
     can_view = perms.is_authenticated
     label = _("My notes")
+    order_by = "date"
     
     def setup_request(self,req):
         #print 20091211, "MyNotes.setup_request"

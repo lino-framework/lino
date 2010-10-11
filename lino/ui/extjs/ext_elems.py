@@ -117,7 +117,7 @@ class GridColumn(Component):
         #~ if isinstance(editor,FieldElement) and editor.field.primary_key:
         if isinstance(editor,FieldElement):
             if isinstance(editor.field,models.AutoField):
-                kw.update(renderer=js_code('Lino.phantom_renderer'))
+                kw.update(renderer=js_code('Lino.id_renderer'))
             kw.update(editable=editor.editable)
         else:
             kw.update(editable=False)

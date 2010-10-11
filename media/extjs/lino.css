@@ -20,9 +20,27 @@ http://stackoverflow.com/questions/2106104/word-wrap-grid-cells-in-ext-js
   white-space: normal; /* changed from nowrap */
 }
 
-.lino-phantom-row table.x-grid3-row-table {
+/*.lino-phantom-row table.x-grid3-row-table {
 	color: blue; 
+}*/
+.lino-phantom-row td {
+	font-style: italic; 
 }
+
+/* 
+.x-item-disabled, .x-tree-node-disabled, .x-date-disabled
+*/
+.x-item-disabled {
+  color: blue; 
+  /*   opacity: 1;  
+  font-weight: bold; */
+}
+
+.x-item-disabled * {
+  color: blue !important; 
+  /*font-weight: bold !important; */
+}
+
 .x-btn-noicon {
 	color: red; font-style:italic;
 }

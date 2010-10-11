@@ -387,6 +387,7 @@ class ExtUI(base.UI):
         #~ yield '<!-- overrides to base library -->'
         yield '<link rel="stylesheet" type="text/css" href="%sextjs/examples/ux/gridfilters/css/GridFilters.css" />' % settings.MEDIA_URL 
         yield '<link rel="stylesheet" type="text/css" href="%sextjs/examples/ux/gridfilters/css/RangeMenu.css" />' % settings.MEDIA_URL 
+        yield '<link rel="stylesheet" type="text/css" href="%slino/extjs/lino.css">' % settings.MEDIA_URL
          
         #~ yield '<!-- ** Javascript ** -->'
         #~ yield '<!-- ExtJS library: base/adapter -->'
@@ -404,7 +405,7 @@ class ExtUI(base.UI):
             #~ yield '  white-space: normal;' # /* changed from nowrap */
             #~ yield '}'
             #~ yield '</style>'
-        if True:
+        if False:
             yield '<style type="text/css">'
             #~ yield '.x-item-disabled, .x-tree-node-disabled, .x-date-disabled {'
             yield '.x-item-disabled {'
@@ -426,7 +427,6 @@ class ExtUI(base.UI):
              
 
         #~ yield '<!-- overrides to library -->'
-        yield '<link rel="stylesheet" type="text/css" href="%slino/extjs/lino.css">' % settings.MEDIA_URL
         yield '<script type="text/javascript" src="%slino/extjs/lino.js"></script>' % settings.MEDIA_URL
         yield '<script type="text/javascript" src="%s"></script>' % (
             settings.MEDIA_URL + "/".join(self.site_js_parts()))
@@ -692,12 +692,15 @@ class ExtUI(base.UI):
             
         if request.method == 'GET':
             fmt = request.GET.get('fmt',None)
-            if fmt is None:
-                return json_response(elem2rec_detailed(request,ah,elem))
+            datarec = elem2rec_detailed(request,ah,elem)
+            if pk == '-99999':
+                datarec.update(title=_("Insert into %s...") % ah.report.label)
+            if fmt is None or fmt == 'json':
+                return json_response(datarec)
             a = rpt.get_action(fmt)
             if a is not None:
                 if isinstance(a,actions.OpenWindowAction):
-                    params = dict(data_record=elem2rec_detailed(request,ah,elem))
+                    params = dict(data_record=datarec)
                     if a.window_wrapper.tabbed:
                         tab = request.GET.get('tab',None)
                         if tab is not None: 
