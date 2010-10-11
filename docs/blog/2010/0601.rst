@@ -3,7 +3,7 @@
 
 4 Uhr: Jetzt hol ich zuerst mal (optional) die Fenster raus. Erstens weil ich keine RIA kenne, die mit Fenstern arbeitet. Und zweitens weil der langsame Aufbau des Detail-Fensters vielleicht damit zusammenhängt.
 
-6.30 Uhr: zweieinhalb Stunden lang geschwitzt, um eine Frage ans ExtJS-Forum zu formulieren (:doc:`/posts/20100601`). Und die Frage ist noch nicht mal fertig, ich muss noch weiter dran feilen, damit sie verständlich ist... Ich lass das Thema jetzt erst mal was sacken, denn nach dem Rumprobieren scheint mir klar, dass der langsame Fensteraufbau von Detail-Fenstern dadurch nicht verbessert wird. 
+6.30 Uhr: zweieinhalb Stunden lang geschwitzt, um eine Frage ans ExtJS-Forum zu formulieren (:doc:`/tickets/3`). Und die Frage ist noch nicht mal fertig, ich muss noch weiter dran feilen, damit sie verständlich ist... Ich lass das Thema jetzt erst mal was sacken, denn nach dem Rumprobieren scheint mir klar, dass der langsame Fensteraufbau von Detail-Fenstern dadurch nicht verbessert wird. 
 
 Druckvorlagen konfigurieren. Erkenntnis des Tages: Es sollte immer nur einen "Print"-Button geben und nicht wie momentan einen für jede PrintMethod. Zumindest eine Notiz entscheidet selber, welche PrintMethod benutzt werden soll (indem sie in ihrer NoteType nachschaut). Und auf den anderen Models wird es keinen Print-Button geben. Jeder Ausdruck eines Dokuments erfordert das Erstellen einer Notiz. 
 

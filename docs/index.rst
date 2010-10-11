@@ -2,8 +2,6 @@
 Lino -- a framework for writing database applications 
 =====================================================
 
-
-
 Welcome to the Lino Website. 
 Lino is still in pre-documentation phase, so don't judge the project on this website only.
 
@@ -29,7 +27,7 @@ Some external links:
    admin/index
    topics/index
    django/index
-   posts/index
+   tickets/index
    tests
    ref/index
    releases/index

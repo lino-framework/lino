@@ -4,6 +4,8 @@ To-Do-Liste
 Kurzfristig
 -----------
 
+- :doc:`/tickets/1`
+
 - Wenn ein Detail- oder Insert-Fenster nur einen Tab hat, dann sollte dessen Titel ("Detail") nicht angezeigt werden.
 
 - Quickfilter im Detail von Personen geht nicht.
@@ -16,10 +18,7 @@ Kurzfristig
 
 - Lokale Dateinamen benutzerfreundlich als Notiz erfassen. Eventuell neues Feld `attached_file` statt `url`? 
 
-- Wenn ich eine NoteType lösche, werden momentan alle Notizen mit dieser Notizart gelöscht (oops!). 
-  Stattdessen muss das Löschen verweigert werden... 
-  Muss on_delete=RESTRICT oder on_delete=SET_NULL sein. 
-  Siehe `Django-Ticket 7539 <http://code.djangoproject.com/ticket/7539>`__.
+- :doc:`/tickets/2`
 
 - iCal-Dateien generieren. 
   Im :class:`notes.NoteType` wird definiert, ob Lino einen Termin (oder Erinnerung oder Task) 

@@ -1,5 +1,5 @@
-Documenting Django applications with Sphinx
--------------------------------------------
+#4 : Documenting Django applications with Sphinx
+------------------------------------------------
 
 When documenting Django applications with Sphinx and `sphinx.ext.autodoc` arises the problem that 
  autodoc fails to import your modules::

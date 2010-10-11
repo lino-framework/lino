@@ -1,7 +1,8 @@
-How to replace the content of a rendered component?
-===================================================
+#3 : How to replace the content of a rendered component?
+========================================================
 
-(Note: I found myself the answer to this question before I could post it... see :srcref:`/extjs-showcases/20100711.html` and :doc:`/blog/2010/0709`)
+(Note: I found myself the answer to this question before I could post it... see 
+:srcref:`/extjs-showcases/20100711.html` and :doc:`/blog/2010/0709`)
 
 I have an :extjs:`Ext.Viewport` with a border layout. The top element contains a menu. 
 I would like the menu actions to dynamically render a component into the center area.

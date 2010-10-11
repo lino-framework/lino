@@ -385,8 +385,9 @@ class ExtUI(base.UI):
         #~ yield '<!-- base library -->'
         yield '<link rel="stylesheet" type="text/css" href="%sextjs/resources/css/ext-all.css" />' % settings.MEDIA_URL 
         #~ yield '<!-- overrides to base library -->'
-        yield '<link rel="stylesheet" type="text/css" href="%sextjs/examples/ux/gridfilters/css/GridFilters.css" />' % settings.MEDIA_URL 
-        yield '<link rel="stylesheet" type="text/css" href="%sextjs/examples/ux/gridfilters/css/RangeMenu.css" />' % settings.MEDIA_URL 
+        if settings.USE_GRIDFILTERS:
+            yield '<link rel="stylesheet" type="text/css" href="%sextjs/examples/ux/gridfilters/css/GridFilters.css" />' % settings.MEDIA_URL 
+            yield '<link rel="stylesheet" type="text/css" href="%sextjs/examples/ux/gridfilters/css/RangeMenu.css" />' % settings.MEDIA_URL 
         yield '<link rel="stylesheet" type="text/css" href="%slino/extjs/lino.css">' % settings.MEDIA_URL
          
         #~ yield '<!-- ** Javascript ** -->'
@@ -414,16 +415,17 @@ class ExtUI(base.UI):
             yield '</style>'
         if False:
             yield '<script type="text/javascript" src="%sextjs/Exporter-all.js"></script>' % settings.MEDIA_URL 
-            
-        yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/menu/RangeMenu.js"></script>' % settings.MEDIA_URL
-        yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/menu/ListMenu.js"></script>' % settings.MEDIA_URL
-        yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/GridFilters.js"></script>' % settings.MEDIA_URL
-        yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/filter/Filter.js"></script>' % settings.MEDIA_URL
-        yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/filter/StringFilter.js"></script>' % settings.MEDIA_URL
-        yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/filter/DateFilter.js"></script>' % settings.MEDIA_URL
-        yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/filter/ListFilter.js"></script>' % settings.MEDIA_URL
-        yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/filter/NumericFilter.js"></script>' % settings.MEDIA_URL
-        yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/filter/BooleanFilter.js"></script>' % settings.MEDIA_URL
+
+        if settings.USE_GRIDFILTERS:
+            yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/menu/RangeMenu.js"></script>' % settings.MEDIA_URL
+            yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/menu/ListMenu.js"></script>' % settings.MEDIA_URL
+            yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/GridFilters.js"></script>' % settings.MEDIA_URL
+            yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/filter/Filter.js"></script>' % settings.MEDIA_URL
+            yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/filter/StringFilter.js"></script>' % settings.MEDIA_URL
+            yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/filter/DateFilter.js"></script>' % settings.MEDIA_URL
+            yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/filter/ListFilter.js"></script>' % settings.MEDIA_URL
+            yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/filter/NumericFilter.js"></script>' % settings.MEDIA_URL
+            yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/filter/BooleanFilter.js"></script>' % settings.MEDIA_URL
              
 
         #~ yield '<!-- overrides to library -->'

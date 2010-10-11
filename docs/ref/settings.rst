@@ -7,6 +7,11 @@ Lino and the Django `settings.py` file
 
 This section describes Lino-specific entries of the Django :xfile:`settings.py`.
 
+.. setting:: USE_GRIDFILTERS
+
+If True, the generated JavaScript uses the :extjs:`Ext.ux.grid.GridFilters` extension.
+
+
 .. setting:: USE_FIREBUG
 
   If True, the generated JavaScript contains instructions that use the FireBug console. 

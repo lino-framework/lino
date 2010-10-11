@@ -1,5 +1,5 @@
-20100916 (Grid is rendered but not visible)
-===========================================
+#5 : Grid is rendered but not visible
+=====================================
 
 - Post to ExtJS forum :
   http://www.sencha.com/forum/showthread.php?110043

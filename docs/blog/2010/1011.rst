@@ -12,3 +12,20 @@
   
 - Im Insert-Fenster fehlte der Titel. Behoben. Jetzt lautet er (wieder) "Insert into %s...".
 
+Check-In um 16.16 Uhr.
+
+- Worked on :doc:`/tickets/2`
+
+- Worked on :doc:`/tickets/1`
+
+Webseite: 
+Ich habe heute eine neue Seite :doc:`/tickets/index` begonnen 
+und dort auch die bisherigen "posts" (Questions to others") eingebaut.
+Weil laufende Nummern einfacher zu behalten sind als achtstellige Zahlen.
+Aber ein Ticketing-System wird das leider so schnell nicht werden, 
+denn schon bald würde diese Liste unübersichtlich. 
+Ich kann sie nach "open" und "closed" unterteilen, 
+aber eine CSV-Datei mit weiteren Eigenschaften wie Priorität, Subsystem usw. (wie Googlecode sie liefert) 
+ist wohl utopisch.
+Aber die Issues von googlecode haben den Nachteil, dass sie nicht so flexibel sind 
+und nicht ins Gesamtsystem integrierbar. À suivre...

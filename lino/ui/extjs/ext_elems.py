@@ -16,6 +16,7 @@ from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.utils.translation import ugettext as _
+from django.conf import settings
 
 import lino
 
@@ -113,7 +114,8 @@ class GridColumn(Component):
         kw.update(editor=editor)
         kw.update(colIndex=index)
         kw.update(hidden=editor.hidden)
-        kw.update(filter=dict(type=editor.filter_type))
+        if settings.USE_GRIDFILTERS:
+            kw.update(filter=dict(type=editor.filter_type))
         #~ if isinstance(editor,FieldElement) and editor.field.primary_key:
         if isinstance(editor,FieldElement):
             if isinstance(editor.field,models.AutoField):

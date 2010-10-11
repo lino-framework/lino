@@ -66,7 +66,7 @@ Fertig! Also die schlimmsten Bugs beim Einfügen sind behoben:
 Jetzt zuerst ein `Check-In <http://code.google.com/p/lino/source/detail?r=540f643cfc3e814438b9c8c2995b154eb01f49b6>`__ und eine Pause.
 
 **(15.30 Uhr)**
-Jetzt nehme ich das Problem :doc:`/posts/20100916` noch mal in die Mangel (SlaveGrid-Elemente zeigen beim ersten Aufruf "Nix gefunden").
+Jetzt nehme ich das Problem :doc:`/tickets/5` noch mal in die Mangel (SlaveGrid-Elemente zeigen beim ersten Aufruf "Nix gefunden").
 
 Es kommt z.B. wenn ich folgende URL aufrufe:
 
@@ -153,7 +153,7 @@ weil ich das eleganter finde::
 Fazit: Ich verstehe weiterhin nicht, wie ein Component im beschriebenen Fall rendered und trotzdem nicht visible sein kann, 
 ich kriegs auch nicht reproduziert in einem einfachen showcase, 
 aber jetzt habe ich immerhin eine funktionierende Lösung, die bis auf weiteres vollkommen reicht. 
-Also Problem :doc:`/posts/20100916` ist für mich abgeschlossen.
+Also Problem :doc:`/tickets/5` ist für mich abgeschlossen.
 
 `Check-In <http://code.google.com/p/lino/source/detail?r=d3e1a52c1d87c2fdbb0485d146001bb38aa57eeb>`__ und Wochenende.
 

@@ -679,10 +679,17 @@ Lino.submit_insert = function(panel,btn) {
   })
 };
 
-Lino.GridFilters = Ext.extend(Ext.ux.grid.GridFilters,{
-  encode:true,
-  local:false
-});
+if (Ext.ux.grid !== undefined) {
+    Lino.GridFilters = Ext.extend(Ext.ux.grid.GridFilters,{
+      encode:true,
+      local:false
+    });
+} else {
+    Lino.GridFilters = function() {}; // dummy
+    Ext.override(Lino.GridFilters,{
+      init : function() {}
+    });
+};
 
 Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   constructor : function(config,params){

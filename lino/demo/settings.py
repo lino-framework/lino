@@ -21,6 +21,7 @@ import lino
 
 # Lino specific settings
 USE_FIREBUG = True
+USE_GRIDFILTERS = True
 MODEL_DEBUG = True
 PROJECT_DIR = normpath(dirname(__file__))
 LINO_SETTINGS = join(PROJECT_DIR,"lino_settings.py")
