@@ -1,12 +1,14 @@
-2010112
-=======
+2010112 Detail layouts now stored in :xfile:`*.dtl` files 
+=========================================================
 
 Wow: Layout definitions for Detail panels are now stored in individual text files named `app_name.model_name.*dtl`.
 These are the logical equivalent of :xfile:`*.msk` files in TIM.
 They are stored in a `config` subdir of each Django application (:setting:`INSTALLED_APPS`) 
 and automatically discovered and loaded at server startup.
 Report.reset_details and Report.add_detail no longer exist; detail layouts are never defined in source code anymore.
-New function :func:`lino.reports.find_config_files`
+New function :func:`lino.modlib.tools.find_config_files`.
+Also converted modules :mod:`lino.modlib.projects`, :mod:`lino.modlib.products`, :mod:`lino.modlib.sales` 
+used by igen and lino.demo.
 
 Other changes:
 
@@ -26,14 +28,31 @@ Other changes:
         
   Solved by removing the "reorganisation into element groups" in :class:`lino.ui.extjs.ext_elems.Panel`.
   
-- Converted modules :mod:`lino.modlib.projects`, :mod:`lino.modlib.products`, :mod:`lino.modlib.sales` 
-  used by igen and lino.demo.
+- Committed Lino revision 1161 and DSBE 166
 
+- Layout editor now works again,
+  and files are never written to the source directories, always to DATA_DIR/config.
+  New class :class:`lino.modlib.tools.ConfigDir`.
 
+- Layout editor has now basic error handling:
+  if the user-submitted description causes some error, 
+  the file is not saved and the user get the error message in the console.
+
+- Wenn ein Detail- oder Insert-Fenster nur einen Tab hat, dann wird dessen Titel ("Detail") jetzt nicht mehr angezeigt.
+
+- Quickfilter im Detail von Personen geht wieder. 
+  Wenn durch meinen Filter der Record, auf dem ich gerade stand, verschwindet, 
+  springt er auf den ersten sichtbaren Record.
   
-TODO:
-  - Layout editor is probably broken. Add error handling.
-  - Layout.readonly and a method to automatically mark non-local repository config files as readonly. 
-  - Add logic to Layout.save_config to save readonly layouts to a local config dir.
+- Felder mit Id-Kartennummer und -Gültigkeit sind jetzt disabled für importierte Partner:
+  :attr:`dsbe.Person.card_number`,
+  :attr:`dsbe.Person.card_valid_from`,
+  :attr:`dsbe.Person.card_valid_until`
+
+- NoteTypes wurden in :mod:`dsbe.management.commands.initdb_tim` nicht gelöscht (weil 'notes' beim `reset` nicht in der Liste der Anwendungen war) 
+  und außerdem wurde ungefähr jede Notizart doppelt angelegt.
   
-  - get_first_record_id in GridPanel und FormPanel für show_detail_handler und 
+- Performance : In `Report.queryset` wird jetzt beim ersten Request ein queryset instanziert, 
+  das dann für alle späteren Requests als Vorlage dient. 
+  Kann sein, dass Django dadurch schneller ist.
+  

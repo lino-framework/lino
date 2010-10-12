@@ -1,13 +1,20 @@
 Coming release
 ==============
 
-Änderungen
-----------
+Changes
+-------
 
 
-
-
-Bei Upgrade beachten
+Upgrade instructions
 --------------------
 
-- Eventuelle Datei make_staff.py aus local project directories löschen.
+Nothing special::
+
+  cd /var/snapshots/lino
+  hg pull -u
+  cd /var/snapshots/dsbe
+  hg pull -u
+  cd /usr/local/django/myproject
+  python manage.py initdb_tim
+  python manage.py make_staff luc
+  sudo /etc/init.d/apache2 restart

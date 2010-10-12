@@ -15,12 +15,10 @@
 import os
 import traceback
 #import logging ; logger = logging.getLogger('lino.reports')
-import cPickle as pickle
+#~ import cPickle as pickle
 import pprint
-from fnmatch import fnmatch
 
 from django.conf import settings
-from django.utils.importlib import import_module
 from django.utils.translation import ugettext as _
 from django.utils.encoding import force_unicode 
 
@@ -50,34 +48,10 @@ from lino.core import actors
 #~ from lino.core import action_requests
 from lino.ui import base
 
-from lino.modlib.tools import resolve_model, resolve_field, get_app, model_label, get_field
+from lino.modlib.tools import resolve_model, resolve_field, get_app, model_label, get_field, find_config_files, LOCAL_CONFIG_DIR
 from lino.core.coretools import get_slave, get_model_report, data_elems, get_data_elem
 
 #~ from lino.modlib import field_choices
-
-
-def find_config_files(pattern):
-    """Returns a dict of filename->dirname entries for 
-    each config file on this site that matches the pattern.
-    Loops through your :setting:`INSTALLED_APPS` that have a :xfile:`config` 
-    subdir and collects matching files. 
-    When more than one file of the same name exists in different 
-    applications it gets overridden by later apps.
-    """
-    files = {}
-    for app_name in settings.INSTALLED_APPS:
-        app = import_module(app_name)
-        dirname = os.path.join(os.path.dirname(app.__file__),'config')
-        if os.path.isdir(dirname):
-            #~ print 'find_config_files() discover', dirname, pattern
-            for fn in os.listdir(dirname):
-                if fnmatch(fn,pattern):
-                    #~ if not files.has_key(fn):
-                    files[fn] = dirname
-        #~ else:
-            #~ print 'find_config_files() not a directory:', dirname
-    return files
-        
 
 
 def base_attrs(cl):
@@ -161,6 +135,8 @@ slave_reports = []
 generic_slaves = {}
 rptname_choices = []
 
+config_dirs = []
+
 def register_report(rpt):
     #rptclass.app_label = rptclass.__module__.split('.')[-2]
     if rpt.typo_check:
@@ -218,6 +194,25 @@ def discover():
             rpt = report_factory(model)
             register_report(rpt)
             model._lino_model_report = rpt
+            
+        model._lino_detail_layouts = []
+        
+        """
+        Naming conventions for :xfile:`*.dtl` files are:
+        - the first detail is called appname.Model.dtl
+        - If there are more Details, then they are called appname.Model.2.dtl, appname.Model.3.dtl etc.
+        The `sort()` below must remove the filename extension (".dtl") because otherwise the frist Detail would come last.
+        """
+        dtl_files = find_config_files('%s.%s.*dtl' % (model._meta.app_label,model.__name__)).items()
+        def fcmp(a,b):
+            return cmp(a[0][:-4],b[0][:-4])
+        dtl_files.sort(fcmp)
+        for filename,cd in dtl_files:
+            fn = os.path.join(cd.name,filename)
+            lino.log.info("Loading %s...",fn)
+            s = open(fn).read()
+            dtl = DetailLayout(s,cd,filename)
+            model._lino_detail_layouts.append(dtl)
             
     #~ lino.log.debug("Analyze %d slave reports...",len(slave_reports))
     for rpt in slave_reports:
@@ -278,7 +273,9 @@ class ReportHandle(datalinks.DataLink,base.Handle):
         if self._layouts is not None:
             return
         #~ self.default_action = self.report.default_action(self)
-        self._layouts = [ self.list_layout ] + [ LayoutHandle(self,dtl) for dtl in self.report.detail_layouts ]
+        self._layouts = [ self.list_layout ] 
+        if self.report.model is not None:
+            self._layouts += [ LayoutHandle(self,dtl) for dtl in self.report.model._lino_detail_layouts ]
 
     def submit_elems(self):
         return []
@@ -327,11 +324,11 @@ class ReportHandle(datalinks.DataLink,base.Handle):
         return ar
 
     def update_detail(self,tab,desc):
-        old_dtl = self.report.detail_layouts[tab]
+        old_dtl = self.report.model._lino_detail_layouts[tab]
         #~ old_dtl._kw.update(desc=desc)
         #~ old_dtl._desc=desc
-        dtl = DetailLayout(desc,**old_dtl._kw)
-        self.report.detail_layouts[tab] = dtl
+        dtl = DetailLayout(desc,old_dtl.cd,old_dtl.filename)
+        self.report.model._lino_detail_layouts[tab] = dtl
         self._layouts[tab+1] = LayoutHandle(self,dtl)
         self.ui.setup_handle(self)
         #~ self.report.save_config()
@@ -530,7 +527,7 @@ class Report(actors.Actor,base.Handled):
     
     button_label = None
     
-    detail_layouts = []
+    #~ detail_layouts = []
     
     grid_configs = {}
     """
@@ -623,19 +620,6 @@ class Report(actors.Actor,base.Handled):
         alist = [ ac(self) for ac in self.actions ]
           
         if self.model is not None:
-            """
-            The usual naming conventions are:
-            - the first detail is called appname.Model.dtl
-            - If there are more Details, then they are called appname.Model.2.dtl, appname.Model.3.dtl etc.
-            The `sort()` below must remove the filename extension (".dtl") because otherwise the frist Detail would come last.
-            """
-            dtl_files = list(find_config_files('%s.%s.*dtl' % (self.app_label,self.model.__name__)).items())
-            def fcmp(a,b):
-                return cmp(a[0][:-4],b[0][:-4])
-            dtl_files.sort(fcmp)
-            
-            for fn,dirname in dtl_files:
-                self.load_detail(os.path.join(dirname,fn))
                 
             #~ self.list_layout = layouts.list_layout_factory(self)
             #~ self.detail_layouts = layouts.get_detail_layouts_for_report(self)
@@ -656,7 +640,7 @@ class Report(actors.Actor,base.Handled):
             else:
                 self._slaves = []
                 
-            if len(self.detail_layouts) > 0:
+            if len(self.model._lino_detail_layouts) > 0:
                 alist.append(actions.ShowDetailAction(self))
                 alist.append(actions.SubmitDetail(self))
                 alist.append(actions.InsertRow(self))
@@ -668,12 +652,13 @@ class Report(actors.Actor,base.Handled):
         if self.button_label is None:
             self.button_label = self.label
             
-    def load_detail(self,fn):
-        print "load_detail(%s)" % fn
-        s = open(fn).read()
-        dtl = DetailLayout(s,filename=fn)
-        self.detail_layouts = list(self.detail_layouts) # disconnect from base class
-        self.detail_layouts.append(dtl)
+    #~ def load_detail(self,cd,filename):
+        #~ fn = os.path.join(cd.name,filename)
+        #~ lino.log.info("Loading %s...",fn)
+        #~ s = open(fn).read()
+        #~ dtl = DetailLayout(s,cd,filename)
+        #~ self.detail_layouts = list(self.detail_layouts) # disconnect from base class
+        #~ self.detail_layouts.append(dtl)
         
 
     def get_grid_config_file(self):
@@ -689,8 +674,7 @@ class Report(actors.Actor,base.Handled):
         f.close()
         
         #~ f.write('self.reset_details()\n')
-        for dtl in self.detail_layouts:
-            dtl.save_config()
+        #~ for dtl in self.detail_layouts:
             #~ kw = ','.join(['%s=%r' % (k,force_unicode(v)) for k,v in dtl._kw.items()])
             #~ f.write('self.add_detail(%s,%s)\n' % (pprint.pformat(dtl._desc),kw))
             
@@ -724,10 +708,13 @@ class Report(actors.Actor,base.Handled):
         return title
         
     def get_queryset(self,rr):
-        if self.queryset is not None:
-            qs = self.queryset
-        else:
-            qs = self.model.objects.all()
+        if self.queryset is None:
+            self.queryset = self.model.objects.all()
+        qs = self.queryset
+        #~ if self.queryset is not None:
+            #~ qs = self.queryset
+        #~ else:
+            #~ qs = self.model.objects.all()
         kw = self.get_master_kw(rr.master_instance,**rr.params)
         if kw is None:
             return []
@@ -886,15 +873,21 @@ class BaseLayout:
     default_button = None
     collapsible_elements  = {}
     filename = None
+    cd = None # ConfigDir
         
-    def __init__(self,desc=None,**kw):
+    def __init__(self,desc,cd=None,filename=None):
+        if filename is not None:
+            assert not os.sep in filename
         #~ self.label = label
         self._desc = desc
-        self._kw = kw
-        for k,v in kw.items():
-            if not hasattr(self,k):
-                raise Exception("Unexpected keyword argument %s=%r" % (k,v))
-            setattr(self,k,v)
+        self.filename = filename
+        self.cd = cd
+        #~ self._kw = kw
+        #~ for k,v in kw.items():
+            #~ if not hasattr(self,k):
+                #~ raise Exception("Unexpected keyword argument %s=%r" % (k,v))
+            #~ setattr(self,k,v)
+            
         attrname = None
         for ln in desc.splitlines():
             if ln and not ln.lstrip().startswith('## '):
@@ -922,6 +915,17 @@ class BaseLayout:
           
     def get_hidden_elements(self,lh):
         return set()
+        
+    def save_config(self):
+        if self.filename:
+            if not self.cd.can_write:
+                print self.cd, "is not writeable", self.filename
+                self.cd = LOCAL_CONFIG_DIR
+            fn = os.path.join(self.cd.name,self.filename)
+            lino.log.info("Layout.save_config() -> %s",fn)
+            f = open(fn,'w')
+            f.write(self._desc)
+            f.close()
         
 class ListLayout(BaseLayout):
     #~ label = _("List")

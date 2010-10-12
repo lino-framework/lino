@@ -11,9 +11,65 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+The Lino process creates a list config_dirs of all configuration directories on server startup
+by looping through :setting:`INSTALLED_APPS` that have a :xfile:`config` 
+subdir.
+
+"""
+
+import os
+from fnmatch import fnmatch
+
 from django.conf import settings
 from django.db import models
 from django.utils.importlib import import_module
+
+
+config_dirs = []
+LOCAL_CONFIG_DIR = None
+
+class ConfigDir:
+    """
+    A configuration directory is a directories that may contain configuration files.
+    
+    """
+    def __init__(self,name,can_write):
+        self.name = name
+        self.can_write = can_write
+    def __str__(self):
+        return "ConfigDir %s" % self.name
+      
+
+for app_name in settings.INSTALLED_APPS:
+    app = import_module(app_name)
+    fn = getattr(app,'__file__',None)
+    if fn is not None:
+        dirname = os.path.join(os.path.dirname(fn),'config')
+        if os.path.isdir(dirname):
+            config_dirs.append(ConfigDir(dirname,False))
+    LOCAL_CONFIG_DIR = ConfigDir(os.path.join(settings.DATA_DIR,'config'),True)
+    config_dirs.append(LOCAL_CONFIG_DIR)
+
+def find_config_files(pattern):
+    """Returns a dict of filename -> config_dir entries for 
+    each config file on this site that matches the pattern.
+    Loops through `config_dirs` and collects matching files. 
+    When more than one file of the same name exists in different 
+    applications it gets overridden by later apps.
+    """
+    
+    files = {}
+    for cd in config_dirs:
+        #~ print 'find_config_files() discover', dirname, pattern
+        for fn in os.listdir(cd.name):
+            if fnmatch(fn,pattern):
+                #~ if not files.has_key(fn):
+                files[fn] = cd
+        #~ else:
+            #~ print 'find_config_files() not a directory:', dirname
+    return files
+
 
 def default_language():
     """

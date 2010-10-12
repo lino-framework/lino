@@ -1,18 +1,10 @@
 :label: Notes
 :label_align: top
 
-box1 =
-    date 
-    type 
-    user language
-
-box2 =
-    subject
-    person 
-    company
-    
 main =
-    box1 box2
+    date type  user language
+    subject
+    person  company
     url
     body:80x5 
 

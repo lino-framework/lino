@@ -4,33 +4,38 @@ To-Do-Liste
 Kurzfristig
 -----------
 
-- :doc:`/tickets/1` Im Detail der Personen sind manche Tabs anfangs nicht korrekt gelayoutet. Dann muss man jeweile auf den Pin-Button oben rechts klicken (der die Seite mit Permalink neu öffnet) um das korrekte Layout sehen zu können. 
+- Dokumentvorlagen machen  
 
-- :doc:`/tickets/2`. Also Vorsicht beim Löschen von Notizarten, Studienarten, AG-Sperrgründen, Begleitungsarten, Städten, Ländern usw.!
+- NotesByPerson im Detail-Fenster einer Person sollte nur die wichtigen Ereignisse anzeigen 
+  (deren :attr:`notes.NoteType.important` eingeschaltet ist). 
 
-- Wenn ein Detail- oder Insert-Fenster nur einen Tab hat, dann sollte dessen Titel ("Detail") nicht angezeigt werden.
+- Vielleicht auch eine grundlegendere Vorgehensweise: 
+  "Notizen" aufteilen in "Dokumente" und "Dienstleistungen". 
+  Dienstleistungen halten fest, wann ein Mitarbeiter (Benutzer) für eine Person gearbeitet hat. 
 
-- Quickfilter im Detail von Personen geht nicht. Aber was soll passieren, wenn durch meinen Filter der Record, auf dem ich gerade stand, verschwindet? ExtUI.
-
-- Man kann noch nicht nach Personen suchen, die ein bestimmtes Studium haben
-
-- Felder mit Id-Kartennummer und -Gültigkeit sind noch nicht disabled für importierte Partner.
+- Lokale Dateinamen benutzerfreundlich als Notiz erfassen. 
+  Eventuell neues Feld `attached_file` statt `url`? 
+  Eine URL kann man jetzt schon durch DnD der Adresse vom Browserfenster in ein Textfeld kopieren.
   
-- Datensynchronisierung TIM nach Lino weiter beobachten, da sind bestimmt noch Teufel im Detail.
+- :doc:`/tickets/1` Im Detail der Personen sind manche Tabs anfangs nicht korrekt gelayoutet. 
+  Dann muss man jeweile auf den Pin-Button oben rechts klicken (der die Seite mit Permalink 
+  neu öffnet) um das korrekte Layout sehen zu können. 
 
-- Momentan wird der Synchronisierungs-Prozess (watch_tim) nach einem Server-Restart nicht automatisch neu gestartet. Ich habe nämlich lediglich in `/usr/local/django/myproject` eine Datei namens `watch_tim` mit folgendem Inhalt::
+- :doc:`/tickets/2`. Also Vorsicht beim Löschen von Notizarten, Studienarten, 
+  AG-Sperrgründen, Begleitungsarten, Städten, Ländern usw.!
+
+- Man kann z.B. noch nicht nach Personen suchen, die ein bestimmtes Studium haben.
+
+- Momentan wird der Synchronisierungs-Prozess (watch_tim) nach einem Server-Restart nicht automatisch neu gestartet. 
+  Ich habe nämlich lediglich in `/usr/local/django/myproject` eine Datei namens `watch_tim` mit folgendem Inhalt::
 
     nohup python manage.py watch_tim \  
       /mnt/oeshz_home_server/ANWPROG/TIM/CPAS/changelog > \
       /var/log/lino/watch_tim.log
       
-  Und diese Datei starte ich manuell nach einem Release. :command:`nohup` sorgt dafür, dass der Prozess nicht beendet wird, wenn ich mich auslogge. Aber stattdessen muss natürlich ein Skript in der /etc/init.d gemacht werden.
-
-- NotesByPerson im Detail-Fenster einer Person sollte nur die wichtigen Ereignisse anzeigen (deren :attr:`notes.NoteType.important` eingeschaltet ist). 
-
-- Vielleicht noch eine grundlegendere Vorgehensweise: "Notizen" aufteilen in "Dokumente" und "Dienstleistungen". Dienstleistungen halten fest, wann ein Mitarbeiter (Benutzer) für eine Person gearbeitet hat. 
-
-- Lokale Dateinamen benutzerfreundlich als Notiz erfassen. Eventuell neues Feld `attached_file` statt `url`? 
+  Und diese Datei starte ich manuell nach einem Release. 
+  :command:`nohup` sorgt dafür, dass der Prozess nicht beendet wird, wenn ich mich auslogge. 
+  Aber stattdessen muss natürlich ein Skript in der :file:`/etc/init.d` gemacht werden.
 
 - iCal-Dateien generieren. 
   Im :class:`notes.NoteType` wird definiert, ob Lino einen Termin (oder Erinnerung oder Task) 
@@ -39,19 +44,10 @@ Kurzfristig
 - Wenn man z.B. in Companies.insert manuell eine ID eingibt, 
   dann ignoriert der Server die und vergibt trotzdem seine automatische nächste ID.
 
-- Das Folgende macht er noch nicht:
-  Falls ein Template in der Sprache der Notiz nicht existiert 
-  (z.B. weil die Vorlage noch nicht übersetzt wurde oder multilingual ist), 
-  nimmt er die Standard-Vorlage aus der Hauptsprache.
-
-- Report-Konfigurationsdateien sollten vielleicht besser YAML statt .py sein.
-  Und vielleicht für jedes Detail-Layout eine eigene Datei.
-
-- Bei initdb_tim in dsbe-eupen kommt eine Latte von Warnungen::
-
-    pharmacy 0000086213 not found
-    pharmacy 0000086121 not found
-    pharmacy 0000086372 not found
+- Bei initdb_tim in dsbe-eupen kommt eine Latte von Warnungen "pharmacy X not found". 
+  Das kommt daher, dass in TIM die betreffenden Apotheken ihre MWSt-Nummer 
+  leer haben und deshalb als Personen importiert werden.
+  Zum Beispiel Partnernummern 0000086213, 0000086121 und 0000086372.
 
 Kleinkram
 ---------
@@ -98,6 +94,11 @@ Dokumentation
 
 Langfristig
 -----------
+
+- Upgrade nach ExtJS 3.3 : bisher besteht kein konkreter Grund dazu. 
+  Vorher muss das Problem mit GridFilters geregelt werden (sh. :doc:`/tickets/1`).  
+  Mögliche Antwort hier:
+  http://www.sencha.com/forum/showthread.php?76185-GridFilters-enhanced-filtering-for-grids&goto=newpost
 
 - Projekte einführen? Pro Person müsste man per Klick leicht ein Begleitungsprojekt anlegen können. Bei Import und Synchronisierung würden automatisch auch diese Projekte synchron gehalten. Dienstleistungen sind nicht mehr einer Person und/oder einer Firma, sondern allgemein einem Projekt zugewiesen. 
 
@@ -173,5 +174,12 @@ Langfristig
     vielleicht ein zusätzlicher Knopf "Save and insert another" (wie im Django-Admin), 
     oder aber das automatische Schließen des Insert-Fensters im Report abschalten können.
 
-    
-  - Die Labels der Details werden zwar übersetzt, aber nicht von makemessages gefunden.
+- Die Labels der Details werden zwar übersetzt, aber nicht von makemessages gefunden.
+
+- Report-Konfigurationsdateien sollten vielleicht besser YAML statt .py sein.  
+
+- Das Folgende macht er noch nicht:
+  Falls ein Template in der Sprache der Notiz nicht existiert 
+  (z.B. weil die Vorlage noch nicht übersetzt wurde oder multilingual ist), 
+  nimmt er die Standard-Vorlage aus der Hauptsprache.
+

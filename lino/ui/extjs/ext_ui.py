@@ -132,7 +132,7 @@ def elem2rec_detailed(request,rh,elem,**rec):
               pass
           if prev is not None: prev = prev.pk
           if next is not None: next = next.pk
-      rec.update(navinfo=dict(first=first,prev=prev,next=next,last=last,msg="Row %d of %d" % (recno,ar.total_count)))
+      rec.update(navinfo=dict(first=first,prev=prev,next=next,last=last,recno=recno,msg="Row %d of %d" % (recno,ar.total_count)))
     return rec
             
     
@@ -522,7 +522,10 @@ class ExtUI(base.UI):
             if desc is None:
                 return json_response_kw(success=False,msg="desc is mandatory")
             rh = rpt.get_handle(self)
-            rh.update_detail(tab,desc)
+            try:
+                rh.update_detail(tab,desc)
+            except Exception,e:
+                return json_response_kw(success=False,message=unicode(e))
             self.build_site_js()            
             return json_response_kw(success=True)
             #detail_layout

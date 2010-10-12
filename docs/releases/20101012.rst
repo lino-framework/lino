@@ -1,0 +1,31 @@
+20101012 : Lino 0.8.8 and DSBE 0.1.7
+====================================
+
+Changes
+-------
+
+- Layout definitions for Detail panels are now stored in 
+  individual text files named `app_name.model_name.*dtl`.
+  These are the logical equivalent of `*.msk` files in TIM.
+  There is one dtl file for each tab of a detail window.
+
+- Quickfilter im Detail von Personen geht wieder. 
+  Wenn durch meinen Filter der Record, auf dem ich gerade stand, verschwindet, 
+  springt er auf den ersten sichtbaren Record.
+  
+- Miscellaneous bugfixes and maybe some performance optimizations
+  (see :doc:`/blog/2010/1012`)
+
+
+Upgrade instructions
+--------------------
+
+Nothing special::
+
+  cd /var/snapshots/lino
+  hg pull -u
+  cd /var/snapshots/dsbe
+  hg pull -u
+  cd /usr/local/django/myproject
+  python manage.py initdb_tim
+  sudo /etc/init.d/apache2 restart

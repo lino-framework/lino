@@ -422,7 +422,7 @@ Lino.delete_selected = function(caller) {
     Lino.notify("Please select at least one record.");
     return;
   };
-  console.log(recs);
+  //~ console.log(recs);
   Ext.MessageBox.show({
     title: 'Confirmation',
     msg: "Delete " + String(recs.length) + " rows. Are you sure?",
@@ -577,7 +577,7 @@ Lino.do_when_visible = function(cmp,todo) {
     //~ todo.defer(1000);
     if (cmp.rendered) {
       //~ console.log(cmp,'-> cmp is rendered but not visible: and now?');
-      console.log(cmp.title,'-> cmp is rendered but not visible: wait a second...');
+      //~ console.log(cmp.title,'-> cmp is rendered but not visible: wait a second...');
       //~ var fn = function() {Lino.do_when_visible(cmp,todo)};
       //~ fn.defer(100);
       
@@ -635,18 +635,19 @@ Lino.show_detail_handler = function(action) {
     //~ var bp = panel.ww.get_base_params();
     //~ var bp = panel.getStore().baseParams;
     //~ var bp = panel.ww.config.base_params;
+    //~ console.log('show_detail_handler()',panel.get_base_params());
     action(panel,{record_id:rec.id,base_params:panel.get_base_params()});
   }
 };
 
 Lino.show_insert_handler = function(action) {
   return function(panel,btn) {
-    if (panel.getStore !== undefined)
-      var bp = panel.getStore().baseParams;
-    else
-      var bp = panel.ww.config.base_params;
+    //~ if (panel.getStore !== undefined)
+      //~ var bp = panel.getStore().baseParams;
+    //~ else
+    var bp = panel.get_base_params();
     action(panel,{record_id:-99999,base_params:bp});
-    action(panel,{record_id:-99999,base_params:panel.get_base_params()});
+    //~ action(panel,{record_id:-99999,base_params:panel.get_base_params()});
   }
 };
 
@@ -701,6 +702,9 @@ if (Ext.ux.grid !== undefined) {
 Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   constructor : function(config,params){
     if (params) Ext.apply(config,params);
+    //~ console.log('FormPanel.constructor() 1',config)
+    //~ Ext.applyIf(config,{base_params:{}});
+    //~ console.log('FormPanel.constructor() 2',config)
     config.bbar = Lino.build_buttons(this,config.ls_bbar_actions);
     if (config.has_navigator) {
       config.tbar = this.tbar_items().concat([
@@ -723,31 +727,46 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     this.before_row_edit = config.before_row_edit.createDelegate(this);
     
     Lino.FormPanel.superclass.constructor.call(this, config);
+    Ext.applyIf(this,{base_params:{}});
     //~ this.base_params = config.base_params;
     //~ console.log(20100930,this.base_params);
   },
   get_base_params : function() {
-    return this.ww.config.base_params;
+    return this.base_params;
+  },
+  set_base_params : function(p) {
+    this.base_params = p;
   },
   moveFirst : function() {this.goto_record_id(this.current_record.navinfo.first)},
   movePrev : function() {this.goto_record_id(this.current_record.navinfo.prev)},
   moveNext : function() {this.goto_record_id(this.current_record.navinfo.next)},
   moveLast : function() {this.goto_record_id(this.current_record.navinfo.last)},
+  
   goto_record_id : function(record_id) {
-    //~ console.log('Lino.DetailWrapperBase.goto_record_id() : ww.config = ',this.ww.config);
+    //~ console.log('Lino.FormPanel.goto_record_id()',record_id);
     var this_ = this;
     Ext.Ajax.request({ 
       waitMsg: 'Loading record...',
       method: 'GET',
       params: this.ww.config.base_params,
+      //~ params: this.base_params,
       url:'/api'+this.ls_url + '/' + record_id,
       //~ params: {query: this.search_field.getValue()},
-      success: function(response) {
+      success: function(response) {   
+        // todo: convert to Lino.action_handler.... but result 
         if (response.responseText) {
             var rec = Ext.decode(response.responseText);
-            //~ console.log('Lino.WindowWrapper.config.record_id success',rec);
-            this_.set_current_record(rec);
-            //~ this_.window.setTitle(rec.title);
+            //~ console.log('goto_record_id success',rec);
+            if (rec.navinfo.recno == 0) {
+                /* 
+                  recno 0 means "the requested pk exists but is not contained in the requested queryset".
+                  This can happen after search_change on a detail.
+                */
+                this_.goto_record_id(rec.navinfo.first);
+            } else {
+                this_.set_current_record(rec);
+                //~ this_.window.setTitle(rec.title);
+            }
         }
       },
       failure: Lino.ajax_error_handler
@@ -755,7 +774,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   },
   set_current_record : function(record) {
     this.current_record = record;
-    console.log('Lino.FormPanel.set_current_record',record);
+    //~ console.log('Lino.FormPanel.set_current_record',record);
     //~ this.config.main_panel.form.load(record);    
     if (record) {
       this.enable();
@@ -798,8 +817,10 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     this.before_row_edit(record);
   },
   search_change : function(field,oldValue,newValue) {
-    //~ console.log('search_change not yet implemented');
-    this.moveFirst();
+    //~ console.log('FormPanel.search_change()');
+    this.ww.config.base_params['query'] = field.getValue(); // URL_PARAM_FILTER
+    this.goto_record_id(this.current_record.id);
+    //~ this.moveFirst();
   },
   get_selected : function() { return [ this.current_record.id ] },
   get_current_record : function() {  
@@ -823,10 +844,10 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
         params:params, 
         method:'PUT',
         url:'/detail_config'+_this.ls_url,
-        success: function(response) {
+        success: Lino.action_handler( function(result) {
           win.close();
           document.location = _this.ww.get_permalink();
-        }
+        })
       };
       //~ console.log(a);
       Ext.Ajax.request(a);
@@ -875,6 +896,20 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   }
 });
 
+Lino.action_handler = function (success) {
+  return function (response) {
+    if (response.responseText) {
+      var result = Ext.decode(response.responseText);
+      //~ console.log('Lino.do_action()',action.name,'result is',result);
+      if (result.success) 
+          return success(result);
+      if (result.alert_msg) Ext.MessageBox.alert('Alert',result.alert_msg);
+      if (result.message) Lino.notify(result.message);
+    }
+  }
+}
+
+
 
 Lino.getRowClass = function(record, rowIndex, rowParams, store) {
   if (record.phantom) {
@@ -903,9 +938,10 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
   
   constructor : function(config,params){
     if (params) Ext.apply(config,params);
+    //~ Ext.applyIf(config,{base_params:{}});
     //~ this.ww = ww;
     var bp = { fmt:'json' };
-    Ext.apply(bp,config.base_params);
+    //~ Ext.apply(bp,config.base_params);
     config.store = new Ext.data.JsonStore({ 
       listeners: { exception: Lino.on_store_exception }, 
       //~ proxy: new Ext.data.HttpProxy({ url: config.ls_data_url+'?fmt=json', method: "GET" }), remoteSort: true, 
@@ -988,7 +1024,11 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
   },
   
   get_base_params : function() {
+    //~ return this.ww.config.base_params;
     return this.getStore().baseParams;
+  },
+  set_base_params : function(p) {
+    for (k in p) this.getStore().setBaseParam(k,p[k]);
   },
   
   search_change : function(field,oldValue,newValue) {
@@ -1300,8 +1340,9 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     var todo = function() {
       //~ console.log('exec Lino.GridPanel.on_master_changed()',this.title);
       //~ var src = caller.config.url_data + "/" + record.id + ".jpg"
-      var p = this.ww.get_master_params();
-      for (k in p) this.getStore().setBaseParam(k,p[k]);
+      //~ var p = this.ww.get_master_params();
+      //~ for (k in p) this.getStore().setBaseParam(k,p[k]);
+      this.set_base_params(this.ww.get_master_params());
       this.getStore().load(); 
     };
     Lino.do_when_visible(this,todo.createDelegate(this));
@@ -1315,6 +1356,7 @@ Lino.MainPanelMixin = {
         this.search_field = new Ext.form.TextField({ 
           fieldLabel: "Search", 
           listeners: { scope:this, change:this.search_change }
+          //~ value: this.get_base_params().query
           //~ scope:this, 
           //~ enableKeyEvents: true, 
           //~ listeners: { keypress: this.search_keypress }, 
@@ -1548,6 +1590,7 @@ Lino.WindowWrapperBase = {
     });
     this.window.window_wrapper = this;
     this.main_item.ww = this;
+    this.main_item.set_base_params(this.base_params);
   },
   show : function() {
       //~ console.time('WindowWrapper.show()');
@@ -1573,6 +1616,7 @@ Lino.WindowWrapper = function(caller,config,params) {
   //~ console.time('WindowWrapper.constructor()');
   this.caller = caller;
   if (params) Ext.apply(config,params);
+  Ext.applyIf(config,{base_params:{}});
   this.config = config; 
   //~ this.config = config_fn(this); 
   this.slaves = {};

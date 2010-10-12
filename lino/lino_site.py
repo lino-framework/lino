@@ -31,6 +31,7 @@ import sys
 #~ import imp
 
 from django.conf import settings
+from django.utils.importlib import import_module
 
 from django.db import models
 #from django.shortcuts import render_to_response 
@@ -103,6 +104,8 @@ class LinoSite:
             raise Exception("LinoSite.setup() called recursively.")
         self._setting_up = True
         
+        
+        
         actors.discover()
         
         reports.discover()
@@ -135,7 +138,6 @@ class LinoSite:
         uis = []
         for ui in settings.USER_INTERFACES:
             lino.log.info("Starting user interface %s",ui)
-            from django.utils.importlib import import_module
             ui_module = import_module(ui)
             #~ self.ui = ui_module.ui
             #~ self.ui.setup_site(self)
