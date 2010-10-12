@@ -1,0 +1,5 @@
+:label_align: top
+
+main =
+    isocode name short_code
+    countries.CitiesByCountry

@@ -130,37 +130,12 @@ class Note(models.Model,mixins.Printable):
 class NoteTypes(reports.Report):
     model = 'notes.NoteType'
     label = _("Note types")
-NoteTypes.add_detail(label=_("Detail"),label_align = reports.LABEL_ALIGN_TOP,
-desc="""
-main = 
-    id name
-    print_method
-    template
-""")
     
 class Notes(reports.Report):
     model = 'notes.Note'
     column_names = "id date user subject * body"
     order_by = "id"
     label = _("Notes")
-Notes.add_detail(label=_("Detail"),label_align = reports.LABEL_ALIGN_TOP,
-desc="""
-box1 =
-    date 
-    type 
-    user language
-
-box2 =
-    subject
-    person 
-    company
-    
-main =
-    box1 box2
-    url
-    body:80x5 
-
-""")
 
 
 class MyNotes(Notes):
@@ -191,6 +166,12 @@ class NotesByPerson(Notes):
 class NotesByCompany(Notes):
     fk_name = 'company'
     column_names = "date subject user *"
+    order_by = "date"
+    #~ label = _("Notes by person")
+  
+class NotesByType(Notes):
+    fk_name = 'type'
+    column_names = "date user subject *"
     order_by = "date"
     #~ label = _("Notes by person")
   

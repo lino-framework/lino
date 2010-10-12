@@ -44,12 +44,6 @@ class Countries(reports.Report):
     order_by = "isocode"
     column_names = "isocode name short_code"
     
-Countries.add_detail(label=_("Detail"),label_align = reports.LABEL_ALIGN_TOP,
-desc="""
-main =
-    isocode name short_code
-    countries.CitiesByCountry
-""")    
     
 FREQUENT_COUNTRIES = ['BE','NL','DE', 'FR', 'LU']
 

@@ -308,7 +308,8 @@ class ReportHandle(datalinks.DataLink,base.Handle):
         self.report.detail_layouts[tab] = dtl
         self._layouts[tab+1] = LayoutHandle(self,dtl)
         self.ui.setup_handle(self)
-        self.report.save_config()
+        #~ self.report.save_config()
+        dtl.save_config()
 
 
 class ReportActionRequest(actions.ActionRequest): # was ReportRequest
@@ -442,6 +443,30 @@ class ReportActionRequest(actions.ActionRequest): # was ReportRequest
         
         return console.ui.report_as_text(self)
 
+from fnmatch import fnmatch
+
+def find_config_files(pattern):
+    """Returns a dict of filename->dirname entries for 
+    each config file on this site that matches the pattern.
+    Loops through your :settings:`INSTALLED_APPS` that have a :xfile:`config` 
+    subdir and collects matching files. 
+    When more than one file of the same name exists in different 
+    applications it gets overridden by later apps.
+    """
+    files = {}
+    for app_name in settings.INSTALLED_APPS:
+        app = import_module(app_name)
+        dirname = os.path.join(os.path.dirname(app.__file__),'config')
+        if os.path.isdir(dirname):
+            #~ print 'find_config_files() discover', dirname, pattern
+            for fn in os.listdir(dirname):
+                if fnmatch(fn,pattern):
+                    #~ if not files.has_key(fn):
+                    files[fn] = dirname
+        #~ else:
+            #~ print 'find_config_files() not a directory:', dirname
+    return files
+        
 
         
 
@@ -596,6 +621,14 @@ class Report(actors.Actor,base.Handled):
         alist = [ ac(self) for ac in self.actions ]
           
         if self.model is not None:
+          
+            dtl_files = list(find_config_files('%s.%s.*dtl' % (self.app_label,self.model.__name__)).items())
+            def fcmp(a,b):
+                return cmp(a[0],b[0])
+            dtl_files.sort(fcmp)
+            for fn,dirname in dtl_files:
+                self.load_detail(os.path.join(dirname,fn))
+                
             #~ self.list_layout = layouts.list_layout_factory(self)
             #~ self.detail_layouts = layouts.get_detail_layouts_for_report(self)
             #~ self.detail_layouts = 
@@ -627,6 +660,12 @@ class Report(actors.Actor,base.Handled):
         if self.button_label is None:
             self.button_label = self.label
             
+    def load_detail(self,fn):
+        print "load_detail(%s)" % fn
+        s = open(fn).read()
+        dtl = DetailLayout(s,filename=fn)
+        self.detail_layouts = list(self.detail_layouts) # disconnect from base class
+        self.detail_layouts.append(dtl)
         
 
     def get_grid_config_file(self):
@@ -639,11 +678,13 @@ class Report(actors.Actor,base.Handled):
         f = open(filename,'w')
         f.write("# Generated file. Delete it to restore factory settings.\n")
         f.write('self.grid_configs = %s\n' % pprint.pformat(self.grid_configs))
-        f.write('self.reset_details()\n')
+        f.close()
+        
+        #~ f.write('self.reset_details()\n')
         for dtl in self.detail_layouts:
-            kw = ','.join(['%s=%r' % (k,force_unicode(v)) for k,v in dtl._kw.items()])
-            f.write('self.add_detail(%s,%s)\n' % (pprint.pformat(dtl._desc),kw))
-        #~ f.write('self.detail_layouts = %s\n' % pprint.pformat(self.detail_layouts))
+            dtl.save_config()
+            #~ kw = ','.join(['%s=%r' % (k,force_unicode(v)) for k,v in dtl._kw.items()])
+            #~ f.write('self.add_detail(%s,%s)\n' % (pprint.pformat(dtl._desc),kw))
             
     #~ def debug_summary(self):
         #~ if self.model is not None:
@@ -775,19 +816,21 @@ class Report(actors.Actor,base.Handled):
         return HttpResponse("1", mimetype='text/x-json')
 
 
-    @classmethod
-    def reset_details(cls):
-        cls.detail_layouts = []
+    #~ @classmethod
+    #~ def reset_details(cls):
+        #~ return
+        #~ cls.detail_layouts = []
       
-    @classmethod
-    def add_detail(cls,*args,**kw):
-        dtl = DetailLayout(*args,**kw)
-        cls.detail_layouts = list(cls.detail_layouts) # disconnect from base class
-        for i,layout in enumerate(cls.detail_layouts):
-            if layout.label == dtl.label:
-                cls.detail_layouts[i] = dtl
-                return
-        cls.detail_layouts.append(dtl)
+    #~ @classmethod
+    #~ def add_detail(cls,*args,**kw):
+        #~ return
+        #~ dtl = DetailLayout(*args,**kw)
+        #~ cls.detail_layouts = list(cls.detail_layouts) # disconnect from base class
+        #~ for i,layout in enumerate(cls.detail_layouts):
+            #~ if layout.label == dtl.label:
+                #~ cls.detail_layouts[i] = dtl
+                #~ return
+        #~ cls.detail_layouts.append(dtl)
         
     @classmethod
     def request(cls,ui=None,**kw):
@@ -820,7 +863,9 @@ def unused_rptname_choices():
           yield [rpt.actor_id, rpt.get_label]
           
 
-
+class LayoutError(RuntimeError):
+    pass
+  
 LABEL_ALIGN_TOP = 'top'
 LABEL_ALIGN_LEFT = 'left'
 LABEL_ALIGN_RIGHT = 'right'
@@ -832,25 +877,36 @@ class BaseLayout:
     #label_align = LABEL_ALIGN_LEFT
     default_button = None
     collapsible_elements  = {}
+    filename = None
         
     def __init__(self,desc=None,**kw):
         #~ self.label = label
         self._desc = desc
         self._kw = kw
         for k,v in kw.items():
+            if not hasattr(self,k):
+                raise Exception("Unexpected keyword argument %s=%r" % (k,v))
             setattr(self,k,v)
         attrname = None
         for ln in desc.splitlines():
             if ln:
                 if ln[0].isspace():
                     if attrname is None:
-                        raise Exception('attrname is None')
+                        raise LayoutError('attrname is None')
                     v = getattr(self,attrname) + '\n' + ln.strip()
                     setattr(self,attrname,v) 
+                elif ln.startswith(':'):
+                    a = ln.split(':',2)
+                    if len(a) != 3:
+                        raise LayoutError('Expected layout instruction `:field:value` ')
+                    attname = a[1]
+                    if not hasattr(self,attname):
+                        raise LayoutError('Invalid layout field %r' % attname)
+                    setattr(self,attname,a[2].strip())
                 else:
                     a = ln.split('=',1)
                     if len(a) != 2:
-                        raise Exception('syntax error: "=" expected in %r' % ln)
+                        raise LayoutError('"=" expected in %r' % ln)
                     attrname = a[0].strip()
                     if hasattr(self,attrname):
                         raise Exception('duplicate attribute definition')

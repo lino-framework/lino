@@ -1,0 +1,8 @@
+:label: Detail
+:label_align: top
+
+main = 
+    id name
+    print_method
+    template
+    notes.NotesByType

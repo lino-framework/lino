@@ -18,7 +18,9 @@ Check-In um 16.16 Uhr.
 
 - Worked on :doc:`/tickets/1`
 
-Webseite: 
+Webseite
+--------
+
 Ich habe heute eine neue Seite :doc:`/tickets/index` begonnen 
 und dort auch die bisherigen "posts" (Questions to others") eingebaut.
 Weil laufende Nummern einfacher zu behalten sind als achtstellige Zahlen.
@@ -29,3 +31,8 @@ aber eine CSV-Datei mit weiteren Eigenschaften wie Priorität, Subsystem usw. (w
 ist wohl utopisch.
 Aber die Issues von googlecode haben den Nachteil, dass sie nicht so flexibel sind 
 und nicht ins Gesamtsystem integrierbar. À suivre...
+
+Release
+-------
+
+Released :doc:`/releases/20101011`

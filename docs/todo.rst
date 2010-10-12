@@ -5,6 +5,7 @@ Kurzfristig
 -----------
 
 - :doc:`/tickets/1`
+- :doc:`/tickets/2`
 
 - Wenn ein Detail- oder Insert-Fenster nur einen Tab hat, dann sollte dessen Titel ("Detail") nicht angezeigt werden.
 
@@ -12,13 +13,15 @@ Kurzfristig
 
 - Man kann noch nicht nach Personen suchen, die ein bestimmtes Studium haben
   
-- Datensynchronisierung TIM->Lino weiter beobachten.
+- Datensynchronisierung TIM->Lino weiter beobachten. Momentan habe ich in `/usr/local/django/myproject` eine Datei namens `watch_tim` mit folgendem Inhalt::
+
+    nohup python manage.py watch_tim \  
+      /mnt/oeshz_home_server/ANWPROG/TIM/CPAS/changelog > \
+      /var/log/lino/watch_tim.log
 
 - NotesByPerson im Detail-Fenster einer Person sollte nur die wichtigen Ereignisse anzeigen (deren :attr:`notes.NoteType.important` eingeschaltet ist).
 
 - Lokale Dateinamen benutzerfreundlich als Notiz erfassen. Eventuell neues Feld `attached_file` statt `url`? 
-
-- :doc:`/tickets/2`
 
 - iCal-Dateien generieren. 
   Im :class:`notes.NoteType` wird definiert, ob Lino einen Termin (oder Erinnerung oder Task) 

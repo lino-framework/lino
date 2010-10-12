@@ -45,13 +45,6 @@ class SiteConfigs(reports.Report):
     has_navigator = False
     can_delete = perms.never
     
-SiteConfigs.add_detail(label=_("Detail"),label_align = reports.LABEL_ALIGN_TOP,
-desc="""
-main = 
-    site_company
-    next_partner_id
-""")
-
     
 def get_site_config():
     try:

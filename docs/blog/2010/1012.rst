@@ -1,0 +1,16 @@
+2010112
+=======
+
+Layout definitions for Detail panels are now stored in individual text files named `app_name.model_name.*dtl`.
+These are the logical equivalent of *.msk files in TIM.
+They are stored in a `config` subdir of each Django application (:setting:`INSTALLED_APPS`) 
+and automatically discovered and loaded at server startup.
+Report.reset_details and Report.add_detail no longer exist; detail layouts are never defined in source code anymore.
+New function :func:`lino.reports.find_config_files`
+
+New Report :class:`notes.NotesByType` is used in :xfile:`notes.NoteType.dtl`
+  
+TODO:
+  - Layout editor is probably broken. Add error handling.
+  - Layout.readonly
+  - a method to automatically mark non-local repository config files as readonly

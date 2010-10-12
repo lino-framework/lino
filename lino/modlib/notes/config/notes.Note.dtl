@@ -1,0 +1,18 @@
+:label: Notes
+:label_align: top
+
+box1 =
+    date 
+    type 
+    user language
+
+box2 =
+    subject
+    person 
+    company
+    
+main =
+    box1 box2
+    url
+    body:80x5 
+

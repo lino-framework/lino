@@ -1,0 +1,24 @@
+:label: Contact
+:label_align: top
+
+main = 
+  intro_box
+  address_box
+  bottom_box
+intro_box = 
+  name 
+  id language vat_id:12 
+box3 = 
+  country region
+  city zip_code:10
+  street:25 street_no street_box
+  addr1:40
+
+box4 = 
+  email:40 
+  url
+  phone
+  gsm
+address_box = box3 box4
+bottom_box = remarks
+

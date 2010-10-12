@@ -159,31 +159,6 @@ class Persons(Contacts):
     order_by = "last_name first_name id"
     #can_view = perms.is_authenticated
 
-Persons.add_detail(label=_("Detail"),label_align = reports.LABEL_ALIGN_TOP,
-desc="""
-box1 = last_name first_name:15 title:10
-box2 = id language
-box3 = 
-  country region
-  city zip_code:10
-  street:25 street_no street_box
-  addr1:40
-
-box4 = 
-  email:40 
-  url
-  phone
-  gsm
-intro_box = box1 box2
-address_box = box3 box4
-bottom_box = remarks
-main = 
-  intro_box
-  address_box
-  bottom_box
-""")              
-    
-
 class PersonsByCountry(Persons):
     fk_name = 'country'
     order_by = "city addr1"
@@ -231,30 +206,6 @@ class Companies(Contacts):
     model = 'contacts.Company'
     order_by = "name"
     
-Companies.add_detail(label=_("Detail"),label_align = reports.LABEL_ALIGN_TOP,
-desc="""
-main = 
-  intro_box
-  address_box
-  bottom_box
-intro_box = 
-  name 
-  id language vat_id:12 
-box3 = 
-  country region
-  city zip_code:10
-  street:25 street_no street_box
-  addr1:40
-
-box4 = 
-  email:40 
-  url
-  phone
-  gsm
-address_box = box3 box4
-bottom_box = remarks
-""")              
-
     
     
 class CompaniesByCountry(Companies):

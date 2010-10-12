@@ -123,7 +123,7 @@ class Menu(MenuItem):
     def add_action(self,spec,**kw):
         action = actors.resolve_action(spec)
         if action is None:
-            raise "%r is not a valid action specifier" % spec
+            raise Exception("%r is not a valid action specifier" % spec)
         #~ if isinstance(actor,basestring):
             #~ actor = actors.resolve_action(actor)
             #~ actor = actors.get_actor(actor)

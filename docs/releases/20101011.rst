@@ -1,0 +1,23 @@
+20101011 : Lino 0.8.7 und DSBE 0.1.6
+====================================
+
+Änderungen
+----------
+
+- Viele Bugfixes in DSBE (nationality und zip_code waren noch nicht disabled für importierte Partner, Bankkonten, Fax-Nr und Gesdos-Nr werden jetzt angezeigt,...)
+- Viele Bugfixes in Lino selber (VBorderPanel, Editierbarkeit ID, disabled fields, 
+  Deleting records, 
+  Detail of slave reports,
+  Inserting records,
+  ...)
+- Neues Feature: Layout-Editor
+- Neue Tabellen :class:`dsbe.Coaching` und :class:`dsbe.CoachingType`
+- Bei mehrtabbigen Detail-Fenstern enthält der Permalink jetzt auch das aktive Tab.
+
+
+
+
+Bei Upgrade beachten
+--------------------
+
+- Eventuelle Datei make_staff.py aus local project directories löschen.
