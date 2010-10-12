@@ -17,6 +17,7 @@ import traceback
 #import logging ; logger = logging.getLogger('lino.reports')
 import cPickle as pickle
 import pprint
+from fnmatch import fnmatch
 
 from django.conf import settings
 from django.utils.importlib import import_module
@@ -53,6 +54,31 @@ from lino.modlib.tools import resolve_model, resolve_field, get_app, model_label
 from lino.core.coretools import get_slave, get_model_report, data_elems, get_data_elem
 
 #~ from lino.modlib import field_choices
+
+
+def find_config_files(pattern):
+    """Returns a dict of filename->dirname entries for 
+    each config file on this site that matches the pattern.
+    Loops through your :setting:`INSTALLED_APPS` that have a :xfile:`config` 
+    subdir and collects matching files. 
+    When more than one file of the same name exists in different 
+    applications it gets overridden by later apps.
+    """
+    files = {}
+    for app_name in settings.INSTALLED_APPS:
+        app = import_module(app_name)
+        dirname = os.path.join(os.path.dirname(app.__file__),'config')
+        if os.path.isdir(dirname):
+            #~ print 'find_config_files() discover', dirname, pattern
+            for fn in os.listdir(dirname):
+                if fnmatch(fn,pattern):
+                    #~ if not files.has_key(fn):
+                    files[fn] = dirname
+        #~ else:
+            #~ print 'find_config_files() not a directory:', dirname
+    return files
+        
+
 
 def base_attrs(cl):
     #~ if cl is Report or len(cl.__bases__) == 0:
@@ -443,30 +469,6 @@ class ReportActionRequest(actions.ActionRequest): # was ReportRequest
         
         return console.ui.report_as_text(self)
 
-from fnmatch import fnmatch
-
-def find_config_files(pattern):
-    """Returns a dict of filename->dirname entries for 
-    each config file on this site that matches the pattern.
-    Loops through your :settings:`INSTALLED_APPS` that have a :xfile:`config` 
-    subdir and collects matching files. 
-    When more than one file of the same name exists in different 
-    applications it gets overridden by later apps.
-    """
-    files = {}
-    for app_name in settings.INSTALLED_APPS:
-        app = import_module(app_name)
-        dirname = os.path.join(os.path.dirname(app.__file__),'config')
-        if os.path.isdir(dirname):
-            #~ print 'find_config_files() discover', dirname, pattern
-            for fn in os.listdir(dirname):
-                if fnmatch(fn,pattern):
-                    #~ if not files.has_key(fn):
-                    files[fn] = dirname
-        #~ else:
-            #~ print 'find_config_files() not a directory:', dirname
-    return files
-        
 
         
 
@@ -621,11 +623,17 @@ class Report(actors.Actor,base.Handled):
         alist = [ ac(self) for ac in self.actions ]
           
         if self.model is not None:
-          
+            """
+            The usual naming conventions are:
+            - the first detail is called appname.Model.dtl
+            - If there are more Details, then they are called appname.Model.2.dtl, appname.Model.3.dtl etc.
+            The `sort()` below must remove the filename extension (".dtl") because otherwise the frist Detail would come last.
+            """
             dtl_files = list(find_config_files('%s.%s.*dtl' % (self.app_label,self.model.__name__)).items())
             def fcmp(a,b):
-                return cmp(a[0],b[0])
+                return cmp(a[0][:-4],b[0][:-4])
             dtl_files.sort(fcmp)
+            
             for fn,dirname in dtl_files:
                 self.load_detail(os.path.join(dirname,fn))
                 
@@ -871,7 +879,7 @@ LABEL_ALIGN_LEFT = 'left'
 LABEL_ALIGN_RIGHT = 'right'
 
 class BaseLayout:
-    
+    label = None
     has_frame = False # True
     label_align = LABEL_ALIGN_TOP
     #label_align = LABEL_ALIGN_LEFT
@@ -889,7 +897,7 @@ class BaseLayout:
             setattr(self,k,v)
         attrname = None
         for ln in desc.splitlines():
-            if ln:
+            if ln and not ln.lstrip().startswith('## '):
                 if ln[0].isspace():
                     if attrname is None:
                         raise LayoutError('attrname is None')
@@ -898,7 +906,7 @@ class BaseLayout:
                 elif ln.startswith(':'):
                     a = ln.split(':',2)
                     if len(a) != 3:
-                        raise LayoutError('Expected layout instruction `:field:value` ')
+                        raise LayoutError('Expected attribute `:attr:value` ')
                     attname = a[1]
                     if not hasattr(self,attname):
                         raise LayoutError('Invalid layout field %r' % attname)
@@ -909,20 +917,20 @@ class BaseLayout:
                         raise LayoutError('"=" expected in %r' % ln)
                     attrname = a[0].strip()
                     if hasattr(self,attrname):
-                        raise Exception('duplicate attribute definition')
+                        raise Exception('Duplicate element definition')
                     setattr(self,attrname,a[1].strip())
           
     def get_hidden_elements(self,lh):
         return set()
         
 class ListLayout(BaseLayout):
-    label = _("List")
+    #~ label = _("List")
     show_labels = False
     join_str = " "
     
 
 class DetailLayout(BaseLayout):
-    label = _("Detail")
+    #~ label = _("Detail")
     show_labels = True
     join_str = "\n"
     only_for_report = None
@@ -947,7 +955,7 @@ class LayoutHandle:
         self.rh = rh
         #~ self.datalink = layout.get_datalink(ui)
         #~ self.name = layout._actor_name
-        self.label = layout.label or ''
+        self.label = layout.label # or ''
         self._store_fields = []
         #~ self._elems_by_field = {}
         #~ self._submit_fields = []

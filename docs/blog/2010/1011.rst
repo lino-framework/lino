@@ -36,3 +36,4 @@ Release
 -------
 
 Released :doc:`/releases/20101011`
+(But oops, I forgot to commit the updated version numbers, so the released version wrongly presents itself as Lino 0.8.6 and Lino-DSBE 0.1.5)

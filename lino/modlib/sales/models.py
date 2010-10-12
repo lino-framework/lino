@@ -40,7 +40,6 @@ from lino.modlib import fields
 from django import forms
 
 from lino import reports
-from lino import layouts
 from lino import actions
 from lino.utils import perms
 
@@ -493,62 +492,62 @@ class DocItem(models.Model):
 
 
     
-class DocumentDetail(layouts.DetailLayout):
-    box1 = """
-      journal number your_ref 
-      creation_date 
-      customer 
-      ship_to
-      """
-    box2 = """
-      imode
-      shipping_mode 
-      payment_term
-      user sent_time
-      """
-    box3 = """
-      subject 
-      sales_remark:80
-      intro:80x5
-      """
-    box4 = """
-      vat_exempt 
-      item_vat
-      total_excl
-      total_vat
-      total_incl
-      """
-    box5 = ''
+#~ class DocumentDetail(layouts.DetailLayout):
+    #~ box1 = """
+      #~ journal number your_ref 
+      #~ creation_date 
+      #~ customer 
+      #~ ship_to
+      #~ """
+    #~ box2 = """
+      #~ imode
+      #~ shipping_mode 
+      #~ payment_term
+      #~ user sent_time
+      #~ """
+    #~ box3 = """
+      #~ subject 
+      #~ sales_remark:80
+      #~ intro:80x5
+      #~ """
+    #~ box4 = """
+      #~ vat_exempt 
+      #~ item_vat
+      #~ total_excl
+      #~ total_vat
+      #~ total_incl
+      #~ """
+    #~ box5 = ''
     
-    main = """
-      box1 box2 box4
-      box3 box5
-      sales.ItemsByDocument:100x5
-      """
+    #~ main = """
+      #~ box1 box2 box4
+      #~ box3 box5
+      #~ sales.ItemsByDocument:100x5
+      #~ """
       
         
-class OrderDetail(DocumentDetail):
-    datalink = 'sales.Order'
-    box5 = """
-      cycle:20
-      start_date
-      covered_until
-      """
+#~ class OrderDetail(DocumentDetail):
+    #~ datalink = 'sales.Order'
+    #~ box5 = """
+      #~ cycle:20
+      #~ start_date
+      #~ covered_until
+      #~ """
         
         
-class InvoiceDetail(DocumentDetail):
-    datalink = 'sales.Invoice'
-    box5 = """
-      order
-      """
+#~ class InvoiceDetail(DocumentDetail):
+    #~ datalink = 'sales.Invoice'
+    #~ box5 = """
+      #~ order
+      #~ """
 
-class EmittedInvoicesDetail(OrderDetail):
-    datalink = 'sales.Order'
-    label = "Emitted invoices"
-    main = """
-    journal number:4 creation_date customer:20 start_date
-    sales.InvoicesByOrder
-    """
+#~ class EmittedInvoicesDetail(OrderDetail):
+    #~ datalink = 'sales.Order'
+    #~ label = "Emitted invoices"
+    #~ main = """
+    #~ journal number:4 creation_date customer:20 start_date
+    #~ sales.InvoicesByOrder
+    #~ """
 
 
 class SalesDocuments(reports.Report):

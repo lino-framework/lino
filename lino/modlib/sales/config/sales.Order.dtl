@@ -1,0 +1,35 @@
+:label: Detail
+:label_align: top
+
+main =
+  box1 box2 box4
+  box3 box5
+  sales.ItemsByDocument:100x5
+
+box1 = 
+  journal number your_ref 
+  creation_date 
+  customer 
+  ship_to
+  
+box2 = 
+  imode
+  shipping_mode 
+  payment_term
+  user sent_time
+box3 = 
+  subject 
+  sales_remark:80
+  intro:80x5
+  
+box4 =
+  vat_exempt 
+  item_vat
+  total_excl
+  total_vat
+  total_incl
+
+box5 =
+  cycle:20
+  start_date
+  covered_until

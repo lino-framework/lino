@@ -665,6 +665,12 @@ class Container(LayoutElement):
 
 
 class Panel(Container):
+    """
+    A vertical Panel is vflex if and only if at least one of its children is vflex.
+    A horizontal Panel is vflex if and only if *all* its children are vflex 
+    (if vflex and non-vflex elements are together in a hbox, then the 
+    vflex elements will get the height of the highest non-vflex element).
+    """
     ext_suffix = "_panel"
     active_child = False
     #~ declare_type = jsgen.DECLARE_VAR
@@ -681,12 +687,6 @@ class Panel(Container):
                 #~ flex_panel = Panel(lh,name,vertical,*vflex_elems)
                 #~ fix_panel = Panel(lh,name,vertical,*vfix_elems)
                 
-        """
-        A vertical Panel is vflex if and only if at least one of its children is vflex.
-        A horizontal Panel is vflex if and only if *all* its children are vflex 
-        (if vflex and non-vflex elements are together in a hbox, then the 
-        vflex elements will get the height of the highest non-vflex element).
-        """        
         self.vflex = not vertical
         stretch = False
         #~ monitorResize = False
@@ -713,49 +713,50 @@ class Panel(Container):
                 # so we must split this panel into several containers.
                 # vflex elements go into a vbox, the others into a form layout. 
                 
-                # Rearrange elements into "element groups"
-                # Each element of egroups is a list of elements who have same vflex
-                egroups = []
-                for e in elements:
-                    if len(egroups) and egroups[-1][0].vflex == e.vflex:
-                        egroups[-1].append(e)
-                    else:
-                        egroups.append([e])
+                if False:
+                    # Rearrange elements into "element groups"
+                    # Each element of egroups is a list of elements who have same vflex
+                    egroups = []
+                    for e in elements:
+                        if len(egroups) and egroups[-1][0].vflex == e.vflex:
+                            egroups[-1].append(e)
+                        else:
+                            egroups.append([e])
+                            
+                    if len(egroups) == 1:
+                        # all elements have same vflex
+                        assert tuple(egroups[0]) == elements, "%r != %r" % (tuple(egroups[0]), elements)
                         
-                if len(egroups) == 1:
-                    # all elements have same vflex
-                    assert tuple(egroups[0]) == elements, "%r != %r" % (tuple(egroups[0]), elements)
-                    
-                elements = []
-                for eg in egroups:
-                    if eg[0].vflex:
-                        #~ for e in eg: e.update(flex=1,align='stretch')
-                        for e in eg: 
-                            e.update(flex=1)
-                            e.collapsible = True
-                            #~ e.update(collapsible=True)
-                        if len(eg) == 1:
-                            g = eg[0]
+                    elements = []
+                    for eg in egroups:
+                        if eg[0].vflex:
+                            #~ for e in eg: e.update(flex=1,align='stretch')
+                            for e in eg: 
+                                e.update(flex=1)
+                                e.collapsible = True
+                                #~ e.update(collapsible=True)
+                            if len(eg) == 1:
+                                g = eg[0]
+                            else:
+                                #~ g = Container(lh,name,*eg,**dict(layout='vbox',flex=1)
+                                g = Panel(lh,name,vertical,*eg,**dict(layout='vbox',
+                                  flex=1,layoutConfig=dict(align='stretch')))
+                                assert g.vflex is True
                         else:
-                            #~ g = Container(lh,name,*eg,**dict(layout='vbox',flex=1)
-                            g = Panel(lh,name,vertical,*eg,**dict(layout='vbox',
-                              flex=1,layoutConfig=dict(align='stretch')))
-                            assert g.vflex is True
-                    else:
-                        #~ for e in eg: e.update(align='stretch')
-                        if len(eg) == 1:
-                            g = eg[0]
-                        else:
-                            g = Container(lh,name,*eg,**dict(layout='form',autoHeight=True))
-                            #~ g = Container(lh,name,*eg,**dict(layout='form'))
-                            assert g.vflex is False
-                    #~ if monitorResize:
-                        #~ g.update(monitorResize=True)
-                    #~ g.update(align='stretch')
-                    #~ g.update(layoutConfig=dict(align='stretch'))
-                    elements.append(g)
-                kw.update(layout='vbox',layoutConfig=dict(align='stretch'))
-                #~ self.elements = elements
+                            #~ for e in eg: e.update(align='stretch')
+                            if len(eg) == 1:
+                                g = eg[0]
+                            else:
+                                g = Container(lh,name,*eg,**dict(layout='form',autoHeight=True))
+                                #~ g = Container(lh,name,*eg,**dict(layout='form'))
+                                assert g.vflex is False
+                        #~ if monitorResize:
+                            #~ g.update(monitorResize=True)
+                        #~ g.update(align='stretch')
+                        #~ g.update(layoutConfig=dict(align='stretch'))
+                        elements.append(g)
+                    kw.update(layout='vbox',layoutConfig=dict(align='stretch'))
+                    #~ self.elements = elements
             else: # not self.vertical
                 kw.update(layout='hbox',layoutConfig=dict(align='stretch'))
               
@@ -1070,7 +1071,9 @@ class DetailMainPanel(Panel,WrappingMainPanel):
     def ext_options(self,**kw):
         self.setup()
         kw = Panel.ext_options(self,**kw)
-        kw.update(title=unicode(self.lh.layout.label))
+        if self.lh.layout.label:
+            #~ kw.update(title=unicode(self.lh.layout.label))
+            kw.update(title=_(self.lh.layout.label))
         #d.update(region='east',split=True) #,width=300)
         #~ kw.update(width=800)
         #~ kw.update(autoScroll=True)

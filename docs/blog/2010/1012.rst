@@ -1,16 +1,39 @@
 2010112
 =======
 
-Layout definitions for Detail panels are now stored in individual text files named `app_name.model_name.*dtl`.
-These are the logical equivalent of *.msk files in TIM.
+Wow: Layout definitions for Detail panels are now stored in individual text files named `app_name.model_name.*dtl`.
+These are the logical equivalent of :xfile:`*.msk` files in TIM.
 They are stored in a `config` subdir of each Django application (:setting:`INSTALLED_APPS`) 
 and automatically discovered and loaded at server startup.
 Report.reset_details and Report.add_detail no longer exist; detail layouts are never defined in source code anymore.
 New function :func:`lino.reports.find_config_files`
 
-New Report :class:`notes.NotesByType` is used in :xfile:`notes.NoteType.dtl`
+Other changes:
+
+- New Report :class:`notes.NotesByType` is used in :xfile:`notes.NoteType.dtl`
+
+- Neues Feld :attr:`notes.NoteType.remark`
+
+- Meldung "Cannot show detail of phantom record." wenn man auf der Phantom-Zeile :guilabel:`Detail` klickt.
+
+- There was a "Maximum recursion limit" when using the following Detail Layout for notes.NoteType::
+
+    main = 
+        id name
+        print_method template
+        remark 
+        notes.NotesByType
+        
+  Solved by removing the "reorganisation into element groups" in :class:`lino.ui.extjs.ext_elems.Panel`.
+  
+- Converted modules :mod:`lino.modlib.projects`, :mod:`lino.modlib.products`, :mod:`lino.modlib.sales` 
+  used by igen and lino.demo.
+
+
   
 TODO:
   - Layout editor is probably broken. Add error handling.
-  - Layout.readonly
-  - a method to automatically mark non-local repository config files as readonly
+  - Layout.readonly and a method to automatically mark non-local repository config files as readonly. 
+  - Add logic to Layout.save_config to save readonly layouts to a local config dir.
+  
+  - get_first_record_id in GridPanel und FormPanel für show_detail_handler und 

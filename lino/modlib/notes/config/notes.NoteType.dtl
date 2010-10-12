@@ -3,6 +3,6 @@
 
 main = 
     id name
-    print_method
-    template
+    print_method template
+    remark:60x5
     notes.NotesByType

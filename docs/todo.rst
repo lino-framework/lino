@@ -4,22 +4,31 @@ To-Do-Liste
 Kurzfristig
 -----------
 
-- :doc:`/tickets/1`
-- :doc:`/tickets/2`
+- :doc:`/tickets/1` Im Detail der Personen sind manche Tabs anfangs nicht korrekt gelayoutet. Dann muss man jeweile auf den Pin-Button oben rechts klicken (der die Seite mit Permalink neu öffnet) um das korrekte Layout sehen zu können. 
+
+- :doc:`/tickets/2`. Also Vorsicht beim Löschen von Notizarten, Studienarten, AG-Sperrgründen, Begleitungsarten, Städten, Ländern usw.!
 
 - Wenn ein Detail- oder Insert-Fenster nur einen Tab hat, dann sollte dessen Titel ("Detail") nicht angezeigt werden.
 
-- Quickfilter im Detail von Personen geht nicht.
+- Quickfilter im Detail von Personen geht nicht. Aber was soll passieren, wenn durch meinen Filter der Record, auf dem ich gerade stand, verschwindet? ExtUI.
 
 - Man kann noch nicht nach Personen suchen, die ein bestimmtes Studium haben
+
+- Felder mit Id-Kartennummer und -Gültigkeit sind noch nicht disabled für importierte Partner.
   
-- Datensynchronisierung TIM->Lino weiter beobachten. Momentan habe ich in `/usr/local/django/myproject` eine Datei namens `watch_tim` mit folgendem Inhalt::
+- Datensynchronisierung TIM nach Lino weiter beobachten, da sind bestimmt noch Teufel im Detail.
+
+- Momentan wird der Synchronisierungs-Prozess (watch_tim) nach einem Server-Restart nicht automatisch neu gestartet. Ich habe nämlich lediglich in `/usr/local/django/myproject` eine Datei namens `watch_tim` mit folgendem Inhalt::
 
     nohup python manage.py watch_tim \  
       /mnt/oeshz_home_server/ANWPROG/TIM/CPAS/changelog > \
       /var/log/lino/watch_tim.log
+      
+  Und diese Datei starte ich manuell nach einem Release. :command:`nohup` sorgt dafür, dass der Prozess nicht beendet wird, wenn ich mich auslogge. Aber stattdessen muss natürlich ein Skript in der /etc/init.d gemacht werden.
 
-- NotesByPerson im Detail-Fenster einer Person sollte nur die wichtigen Ereignisse anzeigen (deren :attr:`notes.NoteType.important` eingeschaltet ist).
+- NotesByPerson im Detail-Fenster einer Person sollte nur die wichtigen Ereignisse anzeigen (deren :attr:`notes.NoteType.important` eingeschaltet ist). 
+
+- Vielleicht noch eine grundlegendere Vorgehensweise: "Notizen" aufteilen in "Dokumente" und "Dienstleistungen". Dienstleistungen halten fest, wann ein Mitarbeiter (Benutzer) für eine Person gearbeitet hat. 
 
 - Lokale Dateinamen benutzerfreundlich als Notiz erfassen. Eventuell neues Feld `attached_file` statt `url`? 
 
@@ -37,6 +46,12 @@ Kurzfristig
 
 - Report-Konfigurationsdateien sollten vielleicht besser YAML statt .py sein.
   Und vielleicht für jedes Detail-Layout eine eigene Datei.
+
+- Bei initdb_tim in dsbe-eupen kommt eine Latte von Warnungen::
+
+    pharmacy 0000086213 not found
+    pharmacy 0000086121 not found
+    pharmacy 0000086372 not found
 
 Kleinkram
 ---------
@@ -83,6 +98,8 @@ Dokumentation
 
 Langfristig
 -----------
+
+- Projekte einführen? Pro Person müsste man per Klick leicht ein Begleitungsprojekt anlegen können. Bei Import und Synchronisierung würden automatisch auch diese Projekte synchron gehalten. Dienstleistungen sind nicht mehr einer Person und/oder einer Firma, sondern allgemein einem Projekt zugewiesen. 
 
 - Filter auf virtuelle Kolonnen setzen können. Siehe :doc:`/blog/2010/0811`.
 
@@ -156,3 +173,5 @@ Langfristig
     vielleicht ein zusätzlicher Knopf "Save and insert another" (wie im Django-Admin), 
     oder aber das automatische Schließen des Insert-Fensters im Report abschalten können.
 
+    
+  - Die Labels der Details werden zwar übersetzt, aber nicht von makemessages gefunden.

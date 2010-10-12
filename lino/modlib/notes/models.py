@@ -40,6 +40,7 @@ class NoteType(models.Model):
     #~ print_method = models.CharField(max_length=20,choices=mixins.print_method_choices())
     #~ template = models.CharField(max_length=200)
     important = models.BooleanField(verbose_name=_("important"),default=False)
+    remark = models.TextField(blank=True)
     
     def __unicode__(self):
         return self.name

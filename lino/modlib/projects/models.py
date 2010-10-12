@@ -60,11 +60,11 @@ class Projects(reports.Report):
     model = 'projects.Project'
     order_by = "name"
     button_label = _("Projects")
-Projects.add_detail(label=_("Detail"),label_align = reports.LABEL_ALIGN_TOP,
-desc="""
-main =
-    name type
-    started stopped
-    text
-""")
+#~ Projects.add_detail(label=_("Detail"),label_align = reports.LABEL_ALIGN_TOP,
+#~ desc="""
+#~ main =
+    #~ name type
+    #~ started stopped
+    #~ text
+#~ """)
 

@@ -15,7 +15,7 @@ und die Seite :doc:`/admin/ConfigureNotesTemplates` aktualisiert.
 
 Oho, hier war ja noch ein show stopper bug: 
 Detail in :class:`notes.MyNotes` funktionierte nicht (zeigte einen leeren Record an).
-Er schickte den falschen AJAX-Request `http://127.0.0.1:8000/api/notes/MyNotes/14?mt=15&mk=14`_ (das `mt=15` (model Note) und das `mk=14` sind falsch.
+Er schickte den falschen AJAX-Request http://127.0.0.1:8000/api/notes/MyNotes/14?mt=15&mk=14 (das `mt=15` (model Note) und das `mk=14` sind falsch.
 Lino.show_detail_handler und Lino.insert_handler schickten die get_master_params.
 
 Aber momentan setzt deswegen jetzt ein Insert in NotesByPerson seinen Master nicht.

@@ -65,19 +65,3 @@ class Products(reports.Report):
     model = Product
     order_by = "id"
     column_names = "id:3 name description:30x1 cat vatExempt price:6"
-Products.add_detail(label=_("Detail"),label_align = reports.LABEL_ALIGN_TOP,
-desc="""
-main = 
-    g1:60
-    g2 g3:10
-    
-g1 = 
-  name 
-  description
-g2 = 
-  price
-  cat
-g3 = 
-  id 
-  vatExempt
-""")

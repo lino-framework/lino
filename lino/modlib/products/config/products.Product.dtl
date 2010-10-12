@@ -1,0 +1,16 @@
+:label: Detail
+:label_align: top
+
+main = 
+    g1:60
+    g2 g3:10
+    
+g1 = 
+  name 
+  description
+g2 = 
+  price
+  cat
+g3 = 
+  id 
+  vatExempt

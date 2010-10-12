@@ -623,6 +623,13 @@ Lino.do_when_visible = function(cmp,todo) {
 Lino.show_detail_handler = function(action) {
   return function(panel,btn) {
     var rec = panel.get_current_record();
+    if (rec == undefined) {
+      rec = panel.get_first_record();
+    }
+    if (rec.phantom) {
+      Lino.notify("Cannot show detail of phantom record.");
+      return;
+    }
     //~ action(panel,{record_id:master.id,base_params:panel.ww.config.base_params});
     //~ var bp = panel.ww.get_master_params();
     //~ var bp = panel.ww.get_base_params();
@@ -738,7 +745,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
       success: function(response) {
         if (response.responseText) {
             var rec = Ext.decode(response.responseText);
-            console.log('Lino.WindowWrapper.config.record_id success',rec);
+            //~ console.log('Lino.WindowWrapper.config.record_id success',rec);
             this_.set_current_record(rec);
             //~ this_.window.setTitle(rec.title);
         }

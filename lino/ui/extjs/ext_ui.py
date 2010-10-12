@@ -681,6 +681,9 @@ class ExtUI(base.UI):
         else:
             try:
                 elem = rpt.model.objects.get(pk=pk)
+            except ValueError:
+                msg = "Invalid primary key %r for %s.%s." % (pk,rpt.model._meta.app_label,rpt.model.__name__)
+                raise Http404(msg)
             except rpt.model.DoesNotExist:
                 raise Http404("%s %s does not exist." % (rpt,pk))
                 

@@ -144,6 +144,7 @@ Weiter
 
 Release und initdb_tim auf dsbe-eupen.
 Eine Latte von Warnungen::
+
   pharmacy 0000086213 not found
   pharmacy 0000086121 not found
   pharmacy 0000086372 not found
