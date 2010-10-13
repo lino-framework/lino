@@ -48,7 +48,7 @@ from lino.core import actors
 #~ from lino.core import action_requests
 from lino.ui import base
 
-from lino.modlib.tools import resolve_model, resolve_field, get_app, model_label, get_field, find_config_files, LOCAL_CONFIG_DIR
+from lino.tools import resolve_model, resolve_field, get_app, model_label, get_field, find_config_files, LOCAL_CONFIG_DIR
 from lino.core.coretools import get_slave, get_model_report, data_elems, get_data_elem
 
 #~ from lino.modlib import field_choices
@@ -545,7 +545,7 @@ class Report(actors.Actor,base.Handled):
     has_navigator = True
     """
     Whether a Detail Form should have navigation buttons.
-    This option is False in :class:`system.SiteConfigs`.
+    This option is False in :class:`lino.SiteConfigs`.
     """
     
     def __init__(self):

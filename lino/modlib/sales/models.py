@@ -32,13 +32,13 @@ ONE_DAY = relativedelta(days=1)
 
 from django.db import models
 from django.contrib.auth import models as auth
+from django import forms
+
 
 #from lino.utils.ticket7623 import child_from_parent
 
-from lino.modlib import fields
+from lino import fields
         
-from django import forms
-
 from lino import reports
 from lino import actions
 from lino.utils import perms

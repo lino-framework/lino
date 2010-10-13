@@ -4,6 +4,8 @@ To-Do-Liste
 Kurzfristig
 -----------
 
+- Auch die Grid configs sollten natürlich im neuen LOCAL_CONFIG_DIR stehen und nicht im DATA_DIR
+
 - Dokumentvorlagen machen  
 
 - NotesByPerson im Detail-Fenster einer Person sollte nur die wichtigen Ereignisse anzeigen 
@@ -47,7 +49,7 @@ Kurzfristig
 - Bei initdb_tim in dsbe-eupen kommt eine Latte von Warnungen "pharmacy X not found". 
   Das kommt daher, dass in TIM die betreffenden Apotheken ihre MWSt-Nummer 
   leer haben und deshalb als Personen importiert werden.
-  Zum Beispiel Partnernummern 0000086213, 0000086121 und 0000086372.
+  Zum Beispiel Partnernummern 87019, 86213, 86121, 86122 und 86372
 
 Kleinkram
 ---------

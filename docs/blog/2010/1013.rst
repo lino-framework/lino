@@ -1,0 +1,101 @@
+20101013
+========
+
+Tilt! Ich habe verstanden, wie das Problem zu lösen ist, dass `makemessages` die Meldungen im Lino-Core nicht findet. Ich muss einfach dafür sorgen, dass der "Lino-Kernel" inner- bzw. unterhalb von :mod:`lino.modlib.system` steht. Weil `makemessages` ja in den Verzeichnissen unterhalb jeder Django-Anwendung automatisch sucht.
+
+Dazu gibt es zwei Wege: spalten oder zusammenfügen
+
+Spalten (Dezentralisieren)
+--------------------------
+
+Ein Weg wäre, dass ich :mod:`lino.modlib` auslagere in ein neues Google-Projekt "lino-modlib" (oder "lino-contrib" oder "lino-apps") mache. Nur das bisherige :mod:`lino.modlib.system` bleibt im Hauptprojekt und kommt dabei nach :mod:`lino`.
+
+Also wenn :setting:`INSTALLED_APPS` bisher so aussieht::
+
+
+  INSTALLED_APPS = (
+    'django.contrib.auth',
+    ...
+    'lino.modlib.system',
+    'lino.modlib.countries',
+    ...
+    'dsbe',
+    'south', 
+  )
+
+dann sähe sie nachher so aus::
+
+  INSTALLED_APPS = (
+    'django.contrib.auth',
+    ...
+    'lino',
+    'lino_apps.countries',
+    ...
+    'dsbe',
+    'south', 
+  )
+
+
+Zusammenfügen (Zentralisieren)
+------------------------------
+
+Ein Grund, der gegen Spaltung spricht ist die Tatsache, dass das für mich unnötiger Mehraufwand ist, solange ich der einzige Mensch bin, der an Lino arbeitet. Wenn ich diesen Weg wähle, wäre es logisch, dass lino-dsbe ebenfalls in die lino.modlib kommt. Die beiden Versionsnummern bei jedem Release gehen mir nämlich mittlerweile auf den Keks.
+
+Wenn ich die lino.modlib *nicht* auslagern will, kann ich in :setting:`INSTALLED_APPS` nicht einfach nur ``lino`` reintun (weil makemessages sonst für die Django-Anwendung `lino` auch die Meldungen aus der lino.modlib extrahieren würde), sondern alles was bisher unter `lino` steht (auch `lino.ui`) muss nach `lino.core` oder `lino.base` oder `lino.main` kommen. 
+
+  =============== ==========================
+  Package         purpose
+  =============== ==========================
+  lino.main       include this in your INSTALLED_APPS
+  lino.tools      modules that might be usable without lino
+  lino.demo       example of a complete Lino site ("Django project")
+  lino.test_apps  test cases for unit testing
+  =============== ==========================
+  
+
+Also Alternative ohne Auslagerung::
+
+  INSTALLED_APPS = (
+    'django.contrib.auth',
+    ...
+    'lino.main',
+    'lino.modlib.countries',
+    ...
+    'dsbe',
+    'south', 
+  )
+
+
+Kompromiss
+----------
+
+Da fällt mir auf: makemessages hat doch eine Option `--ignore`! Also kann ich folgendes machen::
+
+  INSTALLED_APPS = (
+    'django.contrib.auth',
+    ...
+    'lino',
+    'lino.modlib.countries',
+    ...
+    'dsbe',
+    'south', 
+  )
+  
+Da habe ich die Vorteile beider Lösungen in Einem: 
+in :setting:`INSTALLED_APPS` kann einfach nur ``lino`` stehen,
+und die lino.modlib braucht nicht in ein neues Codeprojekt ausgelagert zu werden.
+  
+Das sind freilich trotzdem einige Module und Verzeichnisse, die sich verschieben::
+
+  lino.modlib.fields -> lino.fields
+  lino.modlib.tools -> lino.tools
+  lino.modlib.fixtures -> lino.fixtures
+  lino.modlib.management -> lino.management
+  
+Daneben natürlich Änderungen in der :srcref:`/Makefile`.
+
+Die Umstrukturierung an sich war nur eine halbe Stunde Arbeit. 
+Python ist super!
+
+Resultat : ``make mm`` findet jetzt alle Meldungen, die übersetzt werden müssen. 
+(Außer natürlich die Meldungen im JS-Code. Die sind ein anderes Kapitel, das kommt später mal.)

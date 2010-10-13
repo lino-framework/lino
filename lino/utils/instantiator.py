@@ -19,7 +19,7 @@ from django.db import models
 from django.contrib.contenttypes.models import ContentType
 
 import lino
-from lino.modlib.tools import resolve_model
+from lino.tools import resolve_model
 
 
 def i2d(i):

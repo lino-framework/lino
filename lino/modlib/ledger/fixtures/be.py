@@ -1,4 +1,4 @@
-#coding: utf8
+#coding: utf-8
 # source http://www.becompta.be/modules/mydownloads/downloads-6-18.html
 
 PCMN = u"""

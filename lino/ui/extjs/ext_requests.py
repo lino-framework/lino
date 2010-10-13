@@ -26,7 +26,6 @@ from lino.utils import ucsv
 #~ from lino.utils import choosers
 #~ from lino.ui.extjs import ext_windows
 
-#~ from lino.modlib.system import models as system
 
 #~ UNDEFINED = "nix"
 

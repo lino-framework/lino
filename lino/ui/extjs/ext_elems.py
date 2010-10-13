@@ -26,8 +26,6 @@ from lino.utils import jsgen
 from lino.utils.jsgen import py2js, Variable, Component, id2js, js_code
 from lino.utils import choosers
 from . import ext_requests
-#~ from lino.modlib.properties import models as properties # import Property, CharPropValue
-#~ from lino.modlib.system import models as system
 
 EXT_CHAR_WIDTH = 9
 EXT_CHAR_HEIGHT = 22

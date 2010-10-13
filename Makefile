@@ -1,7 +1,7 @@
 DJANGO_ADMIN = python l:\\snapshots\\django\\django\\bin\\django-admin.py
-LINO_ROOT := /cygdrive/t/hgwork/lino
-MODULES = system
-#~ MODULES = countries contacts notes system
+LINO_ROOT := /cygdrive/t/hgwork/lino/lino
+#~ MODULES = system
+MODULES = countries contacts notes
 
 #LANGUAGES = de fr nl et
 #INPUT_FILES = lino\\actions.py lino\\ui\\extjs\\ext_ui.py lino\\modlib\\fields.py lino\\modlib\\system\\models.py
@@ -15,9 +15,10 @@ help:
 
 
 mm:
+	cd $(LINO_ROOT) && $(DJANGO_ADMIN) makemessages -i 'modlib*' -i 'test_apps*' -s -a
 	@for MOD in $(MODULES); \
   do \
-    cd $(LINO_ROOT)/lino/modlib/$$MOD && $(DJANGO_ADMIN) makemessages -s -a; \
+    cd $(LINO_ROOT)/modlib/$$MOD && $(DJANGO_ADMIN) makemessages -s -a; \
   done
   
 unused:  
@@ -29,9 +30,10 @@ unused:
 
 
 cm:  
+	cd $(LINO_ROOT) && $(DJANGO_ADMIN) compilemessages 
 	@for MOD in $(MODULES); \
   do \
-    cd $(LINO_ROOT)/lino/modlib/$$MOD && $(DJANGO_ADMIN) compilemessages; \
+    cd $(LINO_ROOT)/modlib/$$MOD && $(DJANGO_ADMIN) compilemessages; \
   done
   
 unused2:  

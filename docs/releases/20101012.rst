@@ -1,5 +1,7 @@
-20101012 : Lino 0.8.8 and DSBE 0.1.7
-====================================
+Lino 0.8.8 and DSBE 0.1.7
+=========================
+
+Released :doc:`/blog/2010/1012`
 
 Changes
 -------
@@ -20,7 +22,13 @@ Changes
 Upgrade instructions
 --------------------
 
-Nothing special::
+There must be a `config` directory in your :setting:`DATA_DIR`. It may be empty, but it must exist.
+
+::
+
+  mkdir /usr/local/django/myproject/data/config
+
+Otherwise nothing special::
 
   cd /var/snapshots/lino
   hg pull -u

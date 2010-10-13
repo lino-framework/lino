@@ -23,8 +23,8 @@ from lino import layouts
 from lino.utils import perms
 
 from django.db import models
-from lino.modlib import fields
-from lino.modlib.tools import resolve_model
+from lino import fields
+from lino.tools import resolve_model
 
 contacts = reports.get_app('contacts')
 ledger = reports.get_app('ledger')

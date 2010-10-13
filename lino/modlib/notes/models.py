@@ -20,8 +20,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.utils.translation import ugettext as _
 
-from lino.modlib import fields, tools
-from lino.modlib.tools import default_language
+from lino import fields, tools
+from lino.tools import default_language
 from lino import reports
 #~ from lino import layouts
 from lino.utils import perms

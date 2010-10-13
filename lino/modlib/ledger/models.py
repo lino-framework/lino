@@ -13,7 +13,7 @@
 
 
 from django.db import models
-from lino.modlib import fields
+from lino import fields
 
 
 from django import forms
@@ -27,7 +27,7 @@ journals = reports.get_app('journals')
 #from lino.modlib.contacts import models as contacts
 #from lino.modlib.journals import models as journals
 
-from lino.modlib.tools import resolve_model
+from lino.tools import resolve_model
 Person = resolve_model('contacts.Person')
 Company = resolve_model('contacts.Company')
 

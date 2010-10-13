@@ -61,7 +61,7 @@ from lino.utils.mixins import PrintAction
 
 from lino.core.coretools import app_labels
 
-from lino.modlib.fields import LANGUAGE_CHOICES
+from lino.fields import LANGUAGE_CHOICES
 
 #~ from lino.ui.extjs.ext_windows import WindowConfig # 20100316 backwards-compat window_confics.pck 
 

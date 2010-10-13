@@ -28,8 +28,8 @@ from lino.modlib.contacts import models as contacts
 #from lino.modlib.properties import models as properties
 from lino.modlib.projects import models as projects
 from lino.modlib.notes import models as notes
-from lino.modlib.system.models import get_site_config
-from lino.modlib.tools import get_field
+#~ from lino.models import get_site_config
+from lino.tools import get_field
 
 
 class Person(contacts.Person):

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-08 15:32+0100\n"
+"POT-Creation-Date: 2010-10-13 09:03+0100\n"
 "PO-Revision-Date: 2010-10-08 12:08+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,10 +20,9 @@ msgstr ""
 msgid "Countries"
 msgstr "Länder"
 
-#: .\models.py:47
-msgid "Detail"
-msgstr "Detail"
-
-#: .\models.py:63 .\models.py:69
+#: .\models.py:57 .\models.py:63
 msgid "Cities"
 msgstr "Städte"
+
+#~ msgid "Detail"
+#~ msgstr "Detail"

@@ -17,7 +17,7 @@ lino.index_html += """</ul>"""
 #~ from django.db import models
 from lino.utils import perms
 
-from lino.modlib.system import models as system
+from lino import models as system
 #~ system = models.get_app('system')
 
 m = lino.add_menu("contacts",_("~Contacts"))
@@ -47,7 +47,7 @@ m.add_action('properties.PropValues')
 m.add_action('notes.Notes')
 #~ m.add_action('links.Links')
 m.add_action('contenttypes.ContentTypes')
-m.add_action('system.ReportConfigs')
+#~ m.add_action('system.ReportConfigs')
 
-system.add_system_menu(lino)
+system.add_site_menu(lino)
 

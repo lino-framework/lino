@@ -42,7 +42,7 @@ except ImportError:
         
 import lino
 from lino import actions
-from lino.modlib.tools import default_language
+from lino.tools import default_language
 
 
 pm_dict = {}

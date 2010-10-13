@@ -27,10 +27,10 @@ from lino import reports
 from lino.utils import perms
 #~ from lino.utils import mixins
 
-from lino.modlib import fields
+from lino import fields
 from lino.modlib.contacts.utils import join_words
 
-from lino.modlib.tools import default_language
+from lino.tools import default_language
 
 
     

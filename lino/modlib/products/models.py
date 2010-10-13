@@ -13,7 +13,7 @@
 
 
 from django.db import models
-from lino.modlib import fields
+from lino import fields
 #journals = models.get_app('journals')
 from lino import reports
 #~ from lino import layouts

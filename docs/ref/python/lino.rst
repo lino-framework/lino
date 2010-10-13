@@ -36,6 +36,25 @@ The :mod:`lino.lino_site` Module
     :members:
     :undoc-members:
     :show-inheritance:
+    
+    
+The :mod:`lino.fields` Module
+-----------------------------
+
+.. automodule:: lino.fields
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+The :mod:`lino.tools` Module
+----------------------------
+
+.. automodule:: lino.tools
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+    
 
 
 Subpackages

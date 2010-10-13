@@ -82,15 +82,10 @@ class ContentTypes(reports.Report):
 
 
 
-def add_system_menu(lino):
-    m = lino.add_menu("system",_("~System"))
+def add_site_menu(lino):
+    m = lino.add_menu("site",_("~Site"))
     #~ m.add_action('system.SiteConfigs',can_view=perms.is_staff,params=dict(pk=1))
-    m.add_action('system.SiteConfigs.detail',
+    m.add_action('lino.SiteConfigs.detail',
       label=_('Site Configuration'),
       can_view=perms.is_staff,
       params=dict(record_id=1))
-    if False:
-        m = lino.add_menu("auth",_("~Authentificate"))
-        m.add_action('system.Login',can_view=perms.is_anonymous)
-        m.add_action('system.Logout',can_view=perms.is_authenticated)
-        m.add_action('system.PasswordReset',can_view=perms.is_authenticated)

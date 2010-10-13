@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-08 15:32+0100\n"
+"POT-Creation-Date: 2010-10-13 09:03+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,22 +16,18 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: .\models.py:40
+#: .\models.py:42
 msgid "important"
 msgstr ""
 
-#: .\models.py:128
+#: .\models.py:133
 msgid "Note types"
 msgstr ""
 
-#: .\models.py:129 .\models.py:142
-msgid "Detail"
-msgstr ""
-
-#: .\models.py:141
+#: .\models.py:139
 msgid "Notes"
 msgstr ""
 
-#: .\models.py:167
+#: .\models.py:147
 msgid "My notes"
 msgstr ""

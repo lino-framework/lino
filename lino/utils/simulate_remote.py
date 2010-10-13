@@ -1,4 +1,4 @@
-#coding: utf8
+#coding: utf-8
 
 ## Copyright 2010 Luc Saffre
 ## This file is part of the Lino project.

@@ -15,7 +15,7 @@
 from django.db import models
 from django.utils.translation import ugettext as _
 
-from lino.modlib import fields
+from lino.modlib.system import fields
 from lino import reports
 #~ from lino import layouts
 

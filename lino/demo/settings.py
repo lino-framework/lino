@@ -159,8 +159,8 @@ INSTALLED_APPS = (
   #~ 'django.contrib.markup',
   #~ 'django.contrib.databrowse',
   
+  'lino',
   'lino.demo',
-  'lino.modlib.system',
   'lino.modlib.countries',
   'lino.modlib.contacts',
   'lino.modlib.products',

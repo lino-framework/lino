@@ -13,7 +13,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 import datetime
-from lino.modlib.tools import resolve_model
+from lino.tools import resolve_model
 from lino.utils.instantiator import Instantiator
 #from lino import reports
 #contacts = reports.get_app('contacts')

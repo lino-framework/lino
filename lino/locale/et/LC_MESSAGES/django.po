@@ -1,0 +1,170 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-10-13 09:03+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: .\actions.py:114
+msgid "No selection. Nothing to do."
+msgstr ""
+
+#: .\actions.py:150
+msgid "Detail"
+msgstr ""
+
+#: .\actions.py:153
+#, python-format
+msgid "%s (Detail)"
+msgstr ""
+
+#: .\actions.py:164 .\actions.py:207
+msgid "Insert"
+msgstr ""
+
+#: .\actions.py:169
+#, python-format
+msgid "Insert into %s"
+msgstr ""
+
+#: .\actions.py:194
+msgid "Delete"
+msgstr ""
+
+#: .\actions.py:202
+msgid "Save"
+msgstr ""
+
+#: .\actions.py:220
+msgid "Image"
+msgstr ""
+
+#: .\fields.py:40
+msgid "not at all"
+msgstr ""
+
+#: .\fields.py:41
+msgid "a bit"
+msgstr ""
+
+#: .\fields.py:42
+msgid "moderate"
+msgstr ""
+
+#: .\fields.py:43
+msgid "quite well"
+msgstr ""
+
+#: .\fields.py:44
+msgid "very well"
+msgstr ""
+
+#: .\fields.py:50
+msgid "Language"
+msgstr ""
+
+#: .\models.py:33
+msgid "The company that runs this site"
+msgstr ""
+
+#: .\models.py:36
+msgid "The next automatic id for Person or Company"
+msgstr ""
+
+#: .\models.py:40 .\models.py:89
+msgid "Site Configuration"
+msgstr ""
+
+#: .\models.py:86
+msgid "~Site"
+msgstr ""
+
+#: .\core\__init__.py:9
+msgid "Yes"
+msgstr ""
+
+#: .\core\__init__.py:9
+msgid "No"
+msgstr ""
+
+#: .\demo\lino_settings.py:23
+msgid "~Contacts"
+msgstr ""
+
+#: .\demo\lino_settings.py:27
+msgid "~Projects"
+msgstr ""
+
+#: .\demo\lino_settings.py:31
+msgid "~Configure"
+msgstr ""
+
+#: .\demo\lino_settings.py:43
+msgid "E~xplorer"
+msgstr ""
+
+#: .\ui\extjs\ext_elems.py:490
+#, python-format
+msgid "Select a %s..."
+msgstr ""
+
+#: .\ui\extjs\ext_store.py:69
+#, python-format
+msgid "Existing primary key value %r may not be modified."
+msgstr ""
+
+#: .\ui\extjs\ext_store.py:243
+#, python-format
+msgid "%r (invalid choice)"
+msgstr ""
+
+#: .\ui\extjs\ext_ui.py:373
+msgid "Console"
+msgstr ""
+
+#: .\ui\extjs\ext_ui.py:477
+#, python-format
+msgid "Welcome on Lino server %(title)r, user %(user)s"
+msgstr ""
+
+#: .\ui\extjs\ext_ui.py:504
+#, python-format
+msgid ""
+"There was a problem while saving your data:\n"
+"%s"
+msgstr ""
+
+#: .\ui\extjs\ext_ui.py:513 .\ui\extjs\ext_ui.py:536
+#, python-format
+msgid "User %(user)s cannot configure %(report)s."
+msgstr ""
+
+#: .\ui\extjs\ext_ui.py:580
+#, python-format
+msgid "User %(user)s cannot view %(report)s."
+msgstr ""
+
+#: .\ui\extjs\ext_ui.py:705
+#, python-format
+msgid "Insert into %s..."
+msgstr ""
+
+#: .\ui\extjs\ext_ui.py:810
+#, python-format
+msgid "Choices for %s"
+msgstr ""
+
+#: .\utils\mixins.py:79
+msgid "Print"
+msgstr ""

@@ -1,5 +1,8 @@
-2010112 Detail layouts now stored in :xfile:`*.dtl` files 
-=========================================================
+20101012
+========
+
+Detail layouts now stored in :xfile:`*.dtl` files 
+--------------------------------------------------
 
 Wow: Layout definitions for Detail panels are now stored in individual text files named `app_name.model_name.*dtl`.
 These are the logical equivalent of :xfile:`*.msk` files in TIM.
@@ -10,7 +13,8 @@ New function :func:`lino.modlib.tools.find_config_files`.
 Also converted modules :mod:`lino.modlib.projects`, :mod:`lino.modlib.products`, :mod:`lino.modlib.sales` 
 used by igen and lino.demo.
 
-Other changes:
+Other changes
+-------------
 
 - New Report :class:`notes.NotesByType` is used in :xfile:`notes.NoteType.dtl`
 
@@ -56,3 +60,8 @@ Other changes:
   das dann für alle späteren Requests als Vorlage dient. 
   Kann sein, dass Django dadurch schneller ist.
   
+
+Release
+-------
+
+Released :doc:`/releases/20101012`
