@@ -19,7 +19,7 @@ import decimal
 from django import forms
 
 from lino import reports
-from lino import layouts
+#~ from lino import layouts
 from lino.utils import perms
 
 from django.db import models
@@ -150,22 +150,22 @@ class DocItem(models.Model):
 ##        
         
 
-class FinDocDetail(layouts.DetailLayout):
-    datalink = 'finan.BankStatement'
-    box1 = """
-    date value_date
-    ledger_remark
-    """
+#~ class FinDocDetail(layouts.DetailLayout):
+    #~ datalink = 'finan.BankStatement'
+    #~ box1 = """
+    #~ date value_date
+    #~ ledger_remark
+    #~ """
     
-    balance = """
-    balance1
-    balance2
-    """
+    #~ balance = """
+    #~ balance1
+    #~ balance2
+    #~ """
     
-    main = """
-            box1 balance
-            finan.ItemsByDocument
-            """
+    #~ main = """
+            #~ box1 balance
+            #~ finan.ItemsByDocument
+            #~ """
     
 class BankStatements(journals.DocumentsByJournal):
     model = BankStatement

@@ -27,6 +27,7 @@ from lino.utils import mixins
 from lino import fields
 from lino.modlib.contacts import models as contacts
 from lino.modlib.notes import models as notes
+from lino.modlib.links import models as links
 from lino.models import get_site_config
 from lino.tools import get_field
 
@@ -54,6 +55,7 @@ RESIDENCE_TYPE_CHOICES = (
   (2  , _("Registry of foreigners") ), # Fremdenregister        Registre des étrangers      vreemdelingenregister 
   (3  , _("Waiting for registry")   ), # Warteregister
 )
+
 
 #~ class PersonPicture(Action)
 class Contact(contacts.Contact):
@@ -260,6 +262,11 @@ class Person(Contact,mixins.Printable):
         return u", ".join(l)
     language_knowledge.return_type = models.TextField(verbose_name=_("Language knowledge"))
     
+    def links_by_owner(self):
+        s = ', '.join([u'<a href="%s">%s</a>' % (lnk.url,lnk.name) for lnk in links.LinksByOwner.request(master_instance=self)])
+        return s
+    links_by_owner.return_type = models.TextField(verbose_name=_("Links"))
+    
 
 
 PERSON_TIM_FIELDS = [get_field(Person,n) for n in 
@@ -277,7 +284,8 @@ class Persons(contacts.Persons):
     can_view = perms.is_authenticated
     app_label = 'contacts'
     #~ page_layouts = (PersonDetail,)
-    column_names = "name city * language_knowledge"
+    column_names = "name city links_by_owner * language_knowledge"
+    #~ column_names = "name  city * language_knowledge"
     #~ column_names = "name city dsbe.LanguageKnowledgesByPerson" # dsbe.StudiesByPerson dsbe.ExclusionsByPerson"
 
     
@@ -286,6 +294,13 @@ class Persons(contacts.Persons):
             return PERSON_TIM_FIELDS
         return []
         
+class PersonsByNationality(Persons):
+    app_label = 'contacts'
+    fk_name = 'nationality'
+    order_by = "city addr1"
+    column_names = "city addr1 name country language"
+
+
 
 #~ class Persons2(contacts.Persons):
     #~ pass

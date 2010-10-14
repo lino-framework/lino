@@ -48,7 +48,7 @@ for app_name in settings.INSTALLED_APPS:
         dirname = os.path.join(os.path.dirname(fn),'config')
         if os.path.isdir(dirname):
             config_dirs.append(ConfigDir(dirname,False))
-    LOCAL_CONFIG_DIR = ConfigDir(os.path.join(settings.DATA_DIR,'config'),True)
+    LOCAL_CONFIG_DIR = ConfigDir(os.path.join(settings.PROJECT_DIR,'config'),True)
     config_dirs.append(LOCAL_CONFIG_DIR)
 
 def find_config_files(pattern):

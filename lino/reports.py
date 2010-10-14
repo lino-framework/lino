@@ -318,11 +318,11 @@ class ReportHandle(datalinks.DataLink,base.Handle):
     #~ def request(self,**kw):
         #~ return self.ui.get_report_ar(self,**kw)
         
-    def request(self,*args,**kw):
-        ar = ReportActionRequest(self,self.report.list_action)
-        ar.setup(*args,**kw)
-        return ar
-
+    #~ def request(self,*args,**kw):
+        #~ ar = ReportActionRequest(self.ui,self.report.list_action)
+        #~ ar.setup(*args,**kw)
+        #~ return ar
+        
     def update_detail(self,tab,desc):
         old_dtl = self.report.model._lino_detail_layouts[tab]
         #~ old_dtl._kw.update(desc=desc)
@@ -334,6 +334,9 @@ class ReportHandle(datalinks.DataLink,base.Handle):
         #~ self.report.save_config()
         dtl.save_config()
 
+class InvalidRequest(Exception):
+    pass
+
 
 class ReportActionRequest(actions.ActionRequest): # was ReportRequest
     limit = None
@@ -344,16 +347,17 @@ class ReportActionRequest(actions.ActionRequest): # was ReportRequest
     extra = None
     layout = None
     
-    def __init__(self,rh,action):
-    #~ def __init__(self,rpt,action,ui):
-        assert isinstance(rh,ReportHandle)
-        self.report = rh.report
-        self.ui = rh.ui
+    def __init__(self,ui, report,action):
+    #~ def __init__(self,rh,action):
+        #~ assert isinstance(rh,ReportHandle)
+        if ui is not None: assert ui.create_meth_element is not None
+        self.report = report
+        #~ self.ui = ui
         # Subclasses (e.g. BaseViewReportRequest) may set `master` before calling ReportRequest.__init__()
         if self.master is None:
-            self.master = rh.report.master
+            self.master = report.master
         #~ actions.ActionRequest.__init__(self,rpt,action,ui)
-        actions.ActionRequest.__init__(self,rh,action)
+        actions.ActionRequest.__init__(self,ui,action)
         #~ self.rh = self.ah
       
     def __str__(self):
@@ -369,6 +373,9 @@ class ReportActionRequest(actions.ActionRequest): # was ReportRequest
             order_by=None,
             selected_rows=None,
             **kw):
+        if user is not None and not self.report.can_view.passes(user):
+            msg = _("User %(user)s cannot view %(report)s.") % dict(user=user,report=self.report)
+            raise InvalidRequest(msg)
         self.user = user
         self.quick_search = quick_search
         self.gridfilters = gridfilters
@@ -389,16 +396,17 @@ class ReportActionRequest(actions.ActionRequest): # was ReportRequest
             if extra is None:
                 if self.master_kw is None:
                     extra = 0
-                elif self.report.can_add.passes(self.user):
+                elif self.user is not None and self.report.can_add.passes(self.user):
                     extra = 1
                 else:
                     extra = 0
             self.extra = extra
-        if layout is None:
-            layout = self.ah._layouts[self.report.default_layout]
-        else:
-            layout = self.ah._layouts[layout]
-        self.layout = layout
+        if self.ui is not None:
+            if layout is None:
+                layout = self.ah._layouts[self.report.default_layout]
+            else:
+                layout = self.ah._layouts[layout]
+            self.layout = layout
         self.report.setup_request(self)
         self.queryset = self.get_queryset()
         #~ self.setup_queryset()
@@ -568,6 +576,7 @@ class Report(actors.Actor,base.Handled):
         #~ lino.log.debug("Report.__init__() %s", self)
         
         if self.fk_name:
+            assert self.model is not None, "%s has .fk_name but .model is None" % self
             #~ self.master = resolve_model(self.master,self.app_label)
             try:
                 fk, remote, direct, m2m = self.model._meta.get_field_by_name(self.fk_name)
@@ -830,7 +839,11 @@ class Report(actors.Actor,base.Handled):
     @classmethod
     def request(cls,ui=None,**kw):
         self = cls()
-        return self.get_handle(ui).request(**kw)
+        ar = ReportActionRequest(ui,self,self.default_action)
+        #~ ar = ReportActionRequest(ui,self.list_action)
+        ar.setup(**kw)
+        return ar
+        #~ return self.get_handle(ui).request(**kw)
 
     def row2dict(self,row,d):
         """
@@ -919,13 +932,18 @@ class BaseLayout:
     def save_config(self):
         if self.filename:
             if not self.cd.can_write:
-                print self.cd, "is not writeable", self.filename
+                print self.cd, "is not writable", self.filename
                 self.cd = LOCAL_CONFIG_DIR
             fn = os.path.join(self.cd.name,self.filename)
             lino.log.info("Layout.save_config() -> %s",fn)
             f = open(fn,'w')
             f.write(self._desc)
             f.close()
+            
+    def __str__(self):
+        if self.filename:
+            return u"%s (from %s)" % (self.filename,self.cd.name)
+        return "%s(%r)" % (self.__class__.__name__,self._desc)
         
 class ListLayout(BaseLayout):
     #~ label = _("List")

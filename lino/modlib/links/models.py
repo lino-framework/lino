@@ -15,51 +15,45 @@
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 
-from lino.modlib.system import fields
-from lino.modlib.system import tools
+from lino import fields
+from lino import tools
 from lino import reports
-from lino import layouts
+#~ from lino import layouts
 
 tools.requires_apps('auth','contenttypes')
 
 class Link(models.Model):
-    user = models.ForeignKey("auth.User")
-    date = models.DateTimeField(auto_now=True) 
+    user = models.ForeignKey("auth.User",verbose_name=_('User'))
+    date = models.DateTimeField(verbose_name=_('Date')) 
     owner_type = models.ForeignKey(ContentType)
-    owner_id = models.PositiveIntegerField()
+    owner_id = models.PositiveIntegerField(verbose_name=_('Owner'))
     owner = generic.GenericForeignKey('owner_type', 'owner_id')
-    url = models.URLField(verify_exists=True)
-    desc = models.CharField(max_length=200,blank=True,null=True,
-        verbose_name='Description')
+    url = models.URLField()
+    name = models.CharField(max_length=200,blank=True,null=True,
+        verbose_name=_('Name'))
     
     def __unicode__(self):
-        return self.desc or self.url or u""
-        
-        
-class LinkDetail(layouts.DetailLayout):
-    datalink = 'links.Link'
-    main = """
-    url
-    desc
-    user date owner
-    """
+        return self.name or self.url or u""
         
 
 class Links(reports.Report):
     model = 'links.Link'
-    column_names = "id date user owner desc"
+    column_names = "id date user url name *"
     order_by = "id"
 
 class MyLinks(Links):
     fk_name = 'user'
-    column_names = "date desc owner"
+    column_names = "name url date *"
+    order_by = 'name'
 
 class LinksByOwner(Links):
     button_label = _("Links")
-    title = _("Links by owner")
+    label = _("Links by owner")
     fk_name = 'owner'
-    column_names = "url date desc user"
+    column_names = "url date name user *"
     order_by = "date"
   
+def links_by_owner(owner):
+    return Link.objects.filter(owner=owner)

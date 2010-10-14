@@ -36,7 +36,6 @@ Download
 Create a directory :file:`/var/snapshots` and go to that directory::
 
   hg clone https://lino.googlecode.com/hg/ lino
-  hg clone https://lino-LINO_APP.googlecode.com/hg/ LINO_APP
 
 Note: don't run Lino's file `setup.py`, it is not necessary and doesn't work.  
 
@@ -73,8 +72,6 @@ to a directory that's already on your `Python's path <http://www.python.org/doc/
 Here is how :file:`/usr/local/lib/python2.5/site-packages/local.pth` might look in our example::
 
   /var/snapshots/lino
-  /var/snapshots/timtools/src
-  /var/snapshots/LINO_APP
   /var/snapshots/django
   /var/snapshots/pisa-3.0.32
   /var/snapshots/appy-0.5.5
@@ -93,14 +90,15 @@ Create your Django project directory `/usr/local/django/myproject`, containing f
 :xfile:`settings.py`, :file:`__init__.py` and :xfile:`manage.py`.
 
 You may either create your Django project from scratch, or
-copy these files from :file:`/var/snapshots/LINO_APP/LINO_APP/demo`.
+copy these files from one of the subdirs of :file:`/var/snapshots/lino/lino/demos`.
 
 Adapt :xfile:`settings.py` to your needs.
 Consider using a simplified version of :xfile:`settings.py` that 
-imports settings from LINO_APP::
+imports settings from one of the Lino demos. 
+For example::
 
   from os.path import join
-  from LINO_APP.demo.settings import *
+  from lino.demos.dsbe.settings import *
   DATA_DIR = '/usr/local/django/myproject'
   DATABASES = {
       'default': {
@@ -159,7 +157,7 @@ Prefix            Description                                 location
 /media/extjs/     ExtJS library                               /var/snapshots/ext-3.2.1/ 
 /media/lino/      lino.js and lino.css                        /var/snapshots/lino/lino/ui/extjs/media/
 /media/pdf_cache/ files generated and served by 
-                  lino.modlib.documents                       /var/snapshots/LINO_APP/LINO_APP/demo/media/ 
+                  lino.modlib.documents                       /var/snapshots/lino/lino/demos/dsbe/media/ 
 /media/beid/      image files for dsbe.models.PersonDetail    ... 
 ================= =========================================== ============================================
 
@@ -184,13 +182,12 @@ User permissions
 
 You'll probably need to do something like this afterwards::
 
-  chgrp -R www-data /var/snapshots /var/log/lino /usr/local/django
-  chmod -R g+s /var/snapshots /var/log/lino  /usr/local/django
+  # chgrp -R www-data /var/snapshots /var/log/lino /usr/local/django
+  # chmod -R g+s /var/snapshots /var/log/lino  /usr/local/django
 
 ``chmod g+s`` sets the SGID to ensure that when a new file is created in the directory it will inherit the group of the directory.
 
 Maybe you'll also add `umask 002` to your `/etc/apache2/envvars`. For example if `lino.log` doesn't exist and Lino creates it, you may want it to be writable by group.
-
 
 
 And then add in your `/etc/mercurial/hgrc`::
@@ -198,15 +195,19 @@ And then add in your `/etc/mercurial/hgrc`::
   [trusted]
   groups = www-data
 
-I may be useful to tidy up::
+You'll maybe have to do something like this::
 
-  find /var/snapshots/ -name '*.pyc' -delete
+  # addgroup YOURSELF www-data
+  
+It may be useful to tidy up::
+
+  $ find /var/snapshots/ -name '*.pyc' -delete
 
 
 Apply a patch for Django
 ------------------------
 
-(this is probably no longer necessary)
+(This is probably no longer necessary)
 
 Lino needs Django ticket `#10808 <http://code.djangoproject.com/ticket/10808>`_
 to be fixed, here is how I do it::
@@ -224,23 +225,6 @@ The expected output is something like this::
   patching file tests/modeltests/model_inheritance/models.py
 
 Read :ref:`django/DjangoPatches` for more details.
-
-
-Test whether it worked
-----------------------
-
-To test whether the Lino framework is okay::
-
-  $ cd /var/snapshots/lino/src/test_apps
-  $ python manage.py test -v0
-  ..........
-  ----------------------------------------------------------------------
-  Ran 10 tests in 0.156s
-
-  OK
-
-You may want to run the same command `python manage.py test` in your applications 
-demo directory (:file:`/var/snapshots/LINO_APP/LINO_APP/demo`).
 
 
 Create the demo database
@@ -264,11 +248,4 @@ Updating your Lino to the newest version
   cd /var/snapshots/lino
   hg pull -u
 
-And the same for each Lino application::
 
-  cd /var/snapshots/LINO_APP
-  hg pull -u 
-
-You'll maybe have to do something like this::
-
-  addgroup YOURSELF www-data

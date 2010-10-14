@@ -4,6 +4,10 @@ To-Do-Liste
 Kurzfristig
 -----------
 
+- `Person.links_by_owner` wird in der Grid zwar angezeigt, aber nicht im Detail.
+
+- Da ich die LinksByOwner jetzt nicht mehr als Grid anzeige, kann man freilich keine Links mehr hinzufügen...
+
 - Auch die Grid configs sollten natürlich im neuen LOCAL_CONFIG_DIR stehen und nicht im DATA_DIR
 
 - Dokumentvorlagen machen  
@@ -165,3 +169,19 @@ Langfristig
   (z.B. weil die Vorlage noch nicht übersetzt wurde oder multilingual ist), 
   nimmt er die Standard-Vorlage aus der Hauptsprache.
 
+- :doc:`/tickets/6`.
+
+- Generic Foreign Keys: 
+  - In einem Detail sind ist owner_type ja schon eine ComboBox, aber der Owner könnte doch eigentlich auch eine sein. 
+    Müsste einen automatischen chooser kriegen.
+  - In einer Grid müssten zwei Kolonnen erzeugt werden (statt einer Kolonne, die dann nicht korrekt angezeigt wird)
+  
+- :mod:`lino.modlib.links` : die Bookmarks sollten natürlich jetzt benutzerfreundlich (anklickbar) angezeigt werden. 
+  Und auch gar nicht in einer Grid, sondern lediglich als formatierter String.
+
+- Foreign keys sollten im Detail-Fenster einen Button neben sich haben, mit dem man per permalink 
+  auf die foreign row springen kann.
+  
+- Google-Projekte lino-apps, lino-igen und Lino-DSBE löschen.
+
+ 

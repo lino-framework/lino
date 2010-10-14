@@ -112,7 +112,7 @@ class GridColumn(Component):
         kw.update(editor=editor)
         kw.update(colIndex=index)
         kw.update(hidden=editor.hidden)
-        if settings.USE_GRIDFILTERS:
+        if settings.USE_GRIDFILTERS and editor.filter_type:
             kw.update(filter=dict(type=editor.filter_type))
         #~ if isinstance(editor,FieldElement) and editor.field.primary_key:
         if isinstance(editor,FieldElement):

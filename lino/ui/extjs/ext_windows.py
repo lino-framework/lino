@@ -193,6 +193,7 @@ class BaseDetailWrapper(MasterWrapper):
     def get_config(self):
         d = MasterWrapper.get_config(self)
         url = self.ui.build_url('api',self.action.actor.app_label,self.action.actor._actor_name)
+        d.update(content_type=self.rh.content_type)
         d.update(url_data=url) 
         d.update(main_panel=self.main)
         d.update(name=self.action.name)

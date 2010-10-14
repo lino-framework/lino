@@ -1,5 +1,53 @@
 20101014
 ========
 
-Ich konnte es nicht lassen, die gestern begonnenen Reorganisierung (eine für die Benutzer völlig unsichtbare Änderung) weiter zu führen: Das Google-Projekt lino-dsbe wird abgeschaltet, weil es in Lino integriert wurde. Endlich Schluss mit getrennten Checkins und Versionsnummern.
+lino-dsbe und lino-igen nach lino.modlib
+----------------------------------------
 
+Ich konnte es nicht lassen, die gestern begonnene Reorganisierung weiter zu führen: 
+Das Google-Projekt lino-dsbe wird abgeschaltet, weil es nach Lino integriert wurde. 
+Endlich Schluss mit getrennten Checkins und Versionsnummern.
+
+Release auf tups und im DSBE. 
+
+:doc:`/admin/install` angepasst.
+
+N.B.: igen-demo funktioniert momentan nicht. Aber das kann warten (:doc:`/tickets/6`).
+
+
+modlib.links reaktivieren
+-------------------------
+
+So, jetzt kommt :mod:`lino.modlib.links` wieder rein. 
+Da kommen wahrscheinlich ein paar Überraschungen, 
+weil LinksByOwner ein generic slave report ist, 
+und dieses Feature ist seit Längerem nicht benutzt.
+
+- :meth:`lino.ui.extjs.ext_ui.ExtUI.build_site_js` vergaß die `reports.generic_slaves`
+
+- Im Detail-Fenster wurde :attr:`lino.ui.extjs.ext_requests.URL_PARAM_MASTER_TYPE` nicht übergeben.
+
+- Demo-Fixture für lino.modlib.links
+
+- lino.management.commands.initdb hat jetzt eine Option `--noinput`
+
+- GenericForeignKey-Felder werden in einer Grid nicht korrekt angezeigt.
+  Man darf deshalb nicht (explizit) `owner` als data element in einem Layout angeben.
+  
+- Neues virtuelles Feld `Person.links_by_owner` gibt einen 
+  formatierten String mit den anklickbaren Links zurück.
+  
+Kleinigkeiten en passant:
+
+- Das local config directory sollte nicht ein Unterverzeichnis des DATA_DIR, 
+  sondern des PROJECT_DIR sein. 
+  Im Gegensatz zum DATA_DIR sollte es mit in den source code repository.
+
+- Für `Person.links_by_owner` habe ich die Klassenmethode :meth:`lino.reports.Report.request` noch erweitern müssen, 
+  was zu einigen internen Aufräumarbeiten führte.  
+
+- Der Test `if report.can_view.passes(request.user)` stand ja bisher doppelt in ext_ui. 
+  Jetzt ist er in ReportActionRequest.
+  
+  
+18.30 Uhr : Check-in wegen Feierabend.

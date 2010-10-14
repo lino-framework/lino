@@ -213,7 +213,7 @@ class ExtUI(base.UI):
                 #~ if isinstance(value,layouts.PropertyGrid):
                     #~ return ext_elems.PropertyGridElement(lh,name,value)
                 raise KeyError("Cannot handle value %r in %s.%s." % (value,lh.layout._actor_name,name))
-        msg = "Unknown element %r referred in layout %s" % (name,lh)
+        msg = "Unknown element %r referred in layout %s" % (name,lh.layout)
         #print "[Warning]", msg
         raise KeyError(msg)
         
@@ -515,7 +515,7 @@ class ExtUI(base.UI):
             return http.HttpResponseForbidden(msg)
         if request.method == 'GET':
             tab = int(request.GET.get('tab','0'))
-            return json_response_kw(success=True,tab=tab,desc=rpt.detail_layouts[tab]._desc)
+            return json_response_kw(success=True,tab=tab,desc=rpt.model._lino_detail_layouts[tab]._desc)
         if request.method == 'PUT':
             PUT = http.QueryDict(request.raw_post_data)
             tab = int(PUT.get('tab',0))
@@ -577,9 +577,9 @@ class ExtUI(base.UI):
         rpt = actors.get_actor2(app_label,actor)
         rh = rpt.get_handle(self)
         
-        if not rh.report.can_view.passes(request.user):
-            msg = _("User %(user)s cannot view %(report)s.") % dict(user=request.user,report=rpt)
-            return http.HttpResponseForbidden()
+        #~ if not rh.report.can_view.passes(request.user):
+            #~ msg = _("User %(user)s cannot view %(report)s.") % dict(user=request.user,report=rpt)
+            #~ return http.HttpResponseForbidden()
         if request.method == 'POST':
             """
             Wikipedia:
@@ -675,9 +675,9 @@ class ExtUI(base.UI):
         """
         rpt = actors.get_actor2(app_label,actor)
         ah = rpt.get_handle(self)
-        if not ah.report.can_view.passes(request.user):
-            msg = "User %s cannot view %s." % (request.user,ah.report)
-            return http.HttpResponseForbidden()
+        #~ if not ah.report.can_view.passes(request.user):
+            #~ msg = "User %s cannot view %s." % (request.user,ah.report)
+            #~ return http.HttpResponseForbidden()
         
         if pk == '-99999':
             ar = ext_requests.ViewReportRequest(request,ah,ah.report.default_action)
@@ -736,6 +736,8 @@ class ExtUI(base.UI):
         return ('cache','js','site.js')
         
     def build_site_js(self):
+        """Generate the :xfile:`site.js`.
+        """
         #~ for app_label in site.
         fn = os.path.join(settings.MEDIA_ROOT,*self.site_js_parts()) 
         #~ fn = r'c:\temp\dsbe.js'
@@ -748,7 +750,8 @@ class ExtUI(base.UI):
         f.write("""
         LANGUAGE_CHOICES = %s;
         """ % py2js(list(LANGUAGE_CHOICES)))
-        for rpt in reports.master_reports + reports.slave_reports:
+        for rpt in reports.master_reports + reports.slave_reports + reports.generic_slaves.values():
+            rh = rpt.get_handle(self) # make sure that setup_handle is called (which adds the window_wrapper)
             f.write("Ext.namespace('Lino.%s')\n" % rpt)
             for a in rpt.get_actions():
                 if a.window_wrapper is not None:

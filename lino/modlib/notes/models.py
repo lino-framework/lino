@@ -83,7 +83,7 @@ class Note(models.Model,mixins.Printable):
     #~ language = models.ForeignKey('countries.Language',default=default_language)
     language = fields.LanguageField(default=default_language)
 
-    url = models.URLField(verify_exists=True,blank=True,null=True)
+    #~ url = models.URLField(verify_exists=True,blank=True,null=True)
     
     # partner = models.ForeignKey("contacts.Partner",blank=True,null=True)
     

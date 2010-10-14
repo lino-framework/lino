@@ -179,13 +179,13 @@ class Customer(models.Model):
         recipient = self.company or self.person
         return recipient.as_address(self,*args,**kw)
     
-class CustomerDetail(layouts.DetailLayout):
-    datalink = 'sales.Customer'
-    main = """
-           company person
-           payment_term 
-           vat_exempt item_vat
-           """
+#~ class CustomerDetail(layouts.DetailLayout):
+    #~ datalink = 'sales.Customer'
+    #~ main = """
+           #~ company person
+           #~ payment_term 
+           #~ vat_exempt item_vat
+           #~ """
     
 class Customers(reports.Report):
     column_names = "name payment_term vat_exempt item_vat company person"

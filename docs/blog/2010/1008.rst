@@ -26,7 +26,7 @@ sind) nicht übersetzt werden.
 Idee ist, dass die jetzt mit in die po-Dateien von :mod:`lino.modlib.system` rein kommen und ich nur 
 noch ein einziges Mal `make mm` im Oberverzeichnis von Lino tippen muss.
 Das geht aber leider erst zum Teil: er überschreibt die 
-:src:`/lino/modlib/system/locale/de/LC_MESSAGES/django.po` 
+:srcref:`/lino/modlib/system/locale/de/LC_MESSAGES/django.po` 
 jedesmal neu. Was völlig unpassend ist, denn ich will ja nicht nach jedem `make mm` alle bisherigen 
 Übersetzungen verlieren.
 

@@ -54,13 +54,13 @@ class UI:
     
     def __init__(self,site):
         self.site = site
-        from lino import reports
         # instantiate all ReportHandles already at server startup.
         # TODO: in fact this is currently called only when a first request comes in,
         #       because Django does not yet provide a `server_startup` signal.
-        lino.log.debug('%s.setup_site()' % self)
-        for rpt in reports.master_reports + reports.slave_reports:
-            rpt.get_handle(self)
+        #~ lino.log.debug('Instantiating %s...' % self)
+        #~ from lino import reports
+        #~ for rpt in reports.master_reports + reports.slave_reports:
+            #~ rpt.get_handle(self)
         
     def build_url(self,*args,**kw):
         url = "/" + "/".join(args)

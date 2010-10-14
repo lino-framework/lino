@@ -26,17 +26,20 @@ class is_staff(Condition):
     @staticmethod
     def passes(user):
         #print "requests.is_staff()", request.user.is_staff
+        #~ if user is None: return True
         return user.is_staff
         
 class is_authenticated(Condition):
     @staticmethod
     def passes(user):
         #print request.user, request.user.is_authenticated
+        #~ if user is None: return True
         return user.is_authenticated()
 
 class is_anonymous(Condition):
     @staticmethod
     def passes(user):
+        #~ if user is None: return True
         return not user.is_authenticated()
         
         

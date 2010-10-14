@@ -35,6 +35,9 @@ CHOICES_HIDDEN_SUFFIX = "Hidden"
 
 
 URL_PARAM_MASTER_TYPE = 'mt'
+"""
+The ContentType pk of the master model.
+"""
 URL_PARAM_MASTER_PK = 'mk'
 # URL_PARAM_MASTER_GRID = 'mg'
 URL_PARAM_FILTER = 'query'
@@ -64,9 +67,6 @@ def authenticated_user(user):
         return None
     return user
         
-#~ class InvalidRequest(Exception):
-    #~ pass
-
 #~ class ActionRequest(actions.ActionRequest):
     
     #~ def __init__(self,request,ah,action):
@@ -85,7 +85,8 @@ class ViewReportRequest(reports.ReportActionRequest):
     gc = None
     
     def __init__(self,request,rh,action,*args,**kw):
-        reports.ReportActionRequest.__init__(self,rh,action)
+        reports.ReportActionRequest.__init__(self,rh.ui,rh.report,action)
+        self.ah = rh
         self.request = request
         self.store = rh.store
         kw = self.parse_req(request,rh,**kw)

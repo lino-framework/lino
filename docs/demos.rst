@@ -26,5 +26,7 @@ iGen  An accounting tool focussed on     http://igen-demo.saffre-rumma.ee
       payments), and especially on 
       automatically generating recursive 
       invoices.
+      [:doc:`Currently broken 
+      </tickets/6>`]
 ===== ================================== ======================
 

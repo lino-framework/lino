@@ -286,33 +286,24 @@ class ActionRequest:
     """
     selected_rows = []
     
-    def __init__(self,ah,action):
-    #~ def __init__(self,actor,action,ui=None):
-        #~ self.params = params
-        if not isinstance(action,Action):
-            raise Exception("%s : %r is not an Action." % (self,action))
-        self.ah = ah # actor handle
+    def __init__(self,ui,action):
+    #~ def __init__(self,ah,action):
+        if ui is not None: assert ui.create_meth_element is not None
+        assert isinstance(action,Action), "%s : %r is not an Action." % (self,action)
+        #~ self.ah = ah # actor handle
         self.action = action # ah.actor.get_action(action_name)
         #~ self.actor = ah.actor
-        self.ui = ah.ui
-        self.response = dict(
-          #~ redirect = None,
-          #~ alert_msg = None,
-          #~ confirm_msg = None,
-          #~ notify_msg = None,
-          #~ refresh_menu = False,
-          #~ refresh_caller = False,
-          #~ close_caller = False,
-          #~ show_window = None,
-          #~ js_code = None,
-          success = True, # for Ext.form.Action.Submit
-          errors = None, # for Ext.form.Action.Submit
-        )
+        self.ui = ui
+        #~ self.ui = ah.ui
+        #~ self.response = dict(
+          #~ success = True, # for Ext.form.Action.Submit
+          #~ errors = None, # for Ext.form.Action.Submit
+        #~ )
         
     def __str__(self):
-        return 'ActionRequest `%s.%s`' % (self.ah,self.action)
+        return 'ActionRequest `%s.%s`' % (self.action.actor,self.action)
         
-    def run(self):
+    def unused_run(self):
         msg = self.action.before_run(self)
         if msg:
             return dict(notify_msg=msg,success=False)
@@ -338,15 +329,15 @@ class ActionRequest:
     ## message methods to be used in yield statements
     
         
-    def close_caller(self):
+    def unused_close_caller(self):
         self.response.update(close_caller = True)
         return self
         
-    def refresh_caller(self):
+    def unused_refresh_caller(self):
         self.response.update(refresh_caller = True)
         return self
         
-    def refresh_menu(self):
+    def unused_refresh_menu(self):
         self.response.update(refresh_menu = True)
         return self
         
@@ -377,25 +368,25 @@ class ActionRequest:
         self.response.show_modal_window = js
         return self
         
-    def redirect(self,url):
+    def unused_redirect(self,url):
         self.response.update(redirect = url)
         return self
         
-    def confirm(self,msg,**kw):
+    def unused_confirm(self,msg,**kw):
         self.response.update(confirm_msg = msg)
         return self
         
-    def alert(self,msg,**kw):
+    def unused_alert(self,msg,**kw):
         self.response.update(alert_msg = msg)
         return self
 
-    def exception(self,e):
+    def unused_exception(self,e):
         self.response.update(success = False)
         self.response.update(alert_msg = unicode(e))
         traceback.print_exc(e)
         return self
 
-    def notify(self,msg):
+    def unused_notify(self,msg):
         self.response.update(notify_msg = msg)
         return self
 

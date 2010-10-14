@@ -12,6 +12,8 @@
 ## You should have received a copy of the GNU General Public License
 ## along with TimTools; if not, see <http://www.gnu.org/licenses/>.
 
+from optparse import make_option 
+
 from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
@@ -21,14 +23,21 @@ from lino.core.coretools import app_labels
 from lino.utils import *
 
 class Command(BaseCommand):
-    args = '<fixtur1>, ...'
-    help = 'Performs a database reset and loads the specified fixtures'
+    help = """Performs a database reset and loads the specified fixtures.
+`initdb` is a combination of the commands `reset`, `syncdb` and `loaddata`."""
+    args = "fixture [fixture ...]"
+    
+    option_list = BaseCommand.option_list + (
+        make_option('--noinput', action='store_false', dest='interactive', default=True,
+            help='Do not prompt for input of any kind.'),
+    ) 
 
     def handle(self, *args, **options):
             
         dbname = settings.DATABASES['default']['NAME']
-        if not confirm("Gonna reset your database (%s).\nAre you sure (y/n) ?" % dbname):
-            raise CommandError("User abort.")
+        if options.get('interactive'):
+            if not confirm("Gonna reset your database (%s).\nAre you sure (y/n) ?" % dbname):
+                raise CommandError("User abort.")
         options.update(interactive=False)
         apps = app_labels()
         call_command('reset',*apps,**options)

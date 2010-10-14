@@ -1,20 +1,29 @@
-Coming release
-==============
+Coming
+======
 
 Changes
 -------
 
-
 Upgrade instructions
 --------------------
 
-Nothing special::
+- The local config dir is now in PROJECT_DIR, not in DATA_DIR::
 
-  cd /var/snapshots/lino
-  hg pull -u
-  cd /var/snapshots/dsbe
-  hg pull -u
-  cd /usr/local/django/myproject
-  python manage.py initdb_tim
-  python manage.py make_staff luc
-  sudo /etc/init.d/apache2 restart
+    cd /usr/local/myproject
+    mv data/config .
+
+
+- Upgrade you copy of the Lino sources::
+
+    cd /var/snapshots/lino
+    hg pull -u
+  
+- The usual things for DSBE::
+
+    cd /usr/local/django/myproject
+    python manage.py initdb_tim
+    python manage.py make_staff luc
+  
+- Restart Apache::
+
+    sudo /etc/init.d/apache2 restart

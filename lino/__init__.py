@@ -15,11 +15,12 @@
 import sys
 import logging
 
-__version__ = "0.8.8"
+__version__ = "0.8.9"
 
 __author__ = "Luc Saffre <luc.saffre@gmx.net>"
 
-__url__ = "http://code.google.com/p/lino/"
+__url__ = "http://lino.saffre-rumma.ee"
+#~ __url__ = "http://code.google.com/p/lino/"
 
 __copyright__ = """\
 Copyright (c) 2002-2010 Luc Saffre.

@@ -1,0 +1,12 @@
+main =
+    box1 balance
+    finan.ItemsByDocument
+
+box1 =
+    date value_date
+    ledger_remark
+    
+balance =
+    balance1
+    balance2
+    

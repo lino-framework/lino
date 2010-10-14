@@ -1,0 +1,27 @@
+Version 0.8.9
+=============
+
+Changes
+-------
+
+- I integrated the lino-dsbe project on Google into Lino to simplify 
+  maintenance, documentation and installation.
+  There should be no changes visible to end-users.
+
+Upgrade instructions
+--------------------
+
+- In your local :xfile:`settings.py`, replace ``from dsbe.demo.settings import *`` by::
+
+    from lino.demos.dsbe.settings import *
+  
+- Delete or rename directory :file:`/var/snapshots/dsbe` 
+  
+- No need to rebuild the database after this release.
+
+- Otherwise nothing special::
+
+    cd /var/snapshots/lino
+    hg pull -u
+    sudo /etc/init.d/apache2 restart
+

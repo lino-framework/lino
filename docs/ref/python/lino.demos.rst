@@ -9,7 +9,7 @@
 
 
 
-.. automodule:: lino.demos.std
+.. automodule:: lino.demos.dsbe
     :members:
     :undoc-members:
     :show-inheritance:

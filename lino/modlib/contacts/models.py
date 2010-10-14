@@ -164,12 +164,6 @@ class PersonsByCountry(Persons):
     order_by = "city addr1"
     column_names = "city addr1 name nationality language"
 
-class PersonsByNationality(Persons):
-    fk_name = 'nationality'
-    order_by = "city addr1"
-    column_names = "city addr1 name country language"
-
-
 class CompanyType(models.Model):
     #~ id = models.CharField(max_length=10,primary_key=True)
     abbr = models.CharField(max_length=10,verbose_name=_("Abbreviation"))

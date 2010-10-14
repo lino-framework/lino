@@ -19,26 +19,42 @@ from lino.tools import resolve_model
 
 from django.contrib.auth import models as auth
 
+from dateutil.relativedelta import relativedelta
+ONE_DAY = relativedelta(days=1)
+
+
+
+DEMO_LINKS = [
+  dict(name="Lino website",url="http://lino.saffre-rumma.ee"),
+  dict(name="Django website",url="http://www.djangoproject.com"),
+  dict(name="ExtJS website",url="http://www.sencha.com"),
+  dict(name="Python website",url="http://www.python.org"),
+  dict(name="Google",url="http://www.google.com"),
+]
+
 def objects():
   
     u = auth.User.objects.get(pk=1)
     
-    notetype = Instantiator('notes.NoteType').build
-    yield notetype(name="phone report",print_method='appy',template='notes.NoteType.Telefonnotiz.odt')
-    yield notetype(name="todo")
-    
+    link = Instantiator('links.Link').build
     
     Person = resolve_model('contacts.Person')
     Company = resolve_model('contacts.Company')
+    User = resolve_model('auth.User')
     
-    #~ print Person.objects.all()
+    users = User.objects.all()
     
-    luc = Person.objects.get(name__exact='Saffre Luc')
-    rko = Company.objects.get(name__exact=u'Rumma & Ko OÜ')
+    MAX_LINKS_PER_OWNER = 4
+    n = 0
+    date = i2d(20061014)
+    for model in Person, Company:
+        for obj in model.objects.all():
+            for x in range(1 + (n % MAX_LINKS_PER_OWNER)):
+                kw = dict(owner=obj, date=date)
+                kw.update(DEMO_LINKS[n % len(DEMO_LINKS)])
+                kw.update(user=users[n % users.count()])
+                date += ONE_DAY
+                n += 1
+                yield link(**kw)
+            
     
-    note = Instantiator('notes.Note').build
-    n = note(user=u,date=i2d(20091208),subject="note for company 1",body="""Lorem ipsum...""",company=rko)
-    yield n    
-    
-    n = note(user=u,date=i2d(20091208),subject="note for person 2",body="""Lorem ipsum...""",person=luc)
-    yield n 

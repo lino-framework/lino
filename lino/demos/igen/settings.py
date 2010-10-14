@@ -1,4 +1,4 @@
-## Copyright 2009-2010 Luc Saffre
+## Copyright 2008-2010 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -11,29 +11,17 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-import lino
+import os
+import sys
+from os.path import join,dirname, normpath, abspath
+from tempfile import gettempdir
 
 from lino.demos.std.settings import *
 
-def DSBE_IS_IMPORTED_PARTNER(obj):
-    "`obj` is either a Person or a Company"
-    #~ return obj.id is not None and (obj.id < 200000 or obj.id > 299999)
-    return obj.id is not None and (obj.id > 10 and obj.id < 21)
-              
 PROJECT_DIR = abspath(dirname(__file__))
 DATA_DIR = join(PROJECT_DIR,"data")
 LINO_SETTINGS = join(PROJECT_DIR,"lino_settings.py")
 MEDIA_ROOT = join(PROJECT_DIR,'media')
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': join(DATA_DIR,'dsbe_demo.db')
-        #~ 'NAME': ':memory:'
-    }
-}
-
-
 TIME_ZONE = 'Europe/Brussels'
 
 # Language code for this installation. All choices can be found here:
@@ -45,26 +33,29 @@ LANGUAGE_CODE = 'de-BE'
 
 SITE_ID = 1 # see also fill.py
 
+
 INSTALLED_APPS = (
-  'django.contrib.auth',
-  'django.contrib.contenttypes',
-  'django.contrib.sessions',
-  'django.contrib.sites',
-  #~ 'django.contrib.markup',
-  #~ 'lino.modlib.system',
-  'lino',
-  'lino.modlib.countries',
-  #~ 'lino.modlib.documents',
-  #~ 'lino.modlib.properties',
-  'lino.modlib.contacts',
-  #~ 'lino.modlib.projects',
-  'lino.modlib.notes',
-  'lino.modlib.links',
-  #'dsbe.modlib.contacts',
-  #'dsbe.modlib.projects',
-  'lino.modlib.dsbe',
-  'south', # http://south.aeracode.org
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.sites',
+    'django.contrib.markup',
+    #'django.contrib.admin',
+    #'django.contrib.databrowse',
+    
+    'lino',
+    'lino.modlib.countries',
+    'lino.modlib.contacts',
+    'lino.modlib.igen',
+    'lino.modlib.products',
+    'lino.modlib.journals',
+    #~ 'lino.modlib.documents',
+    'lino.modlib.ledger',
+    'lino.modlib.sales',
+    'lino.modlib.finan',
+    'lino.modlib.properties',
 )
+
 
 # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
 # Always use forward slashes, even on Windows.
@@ -77,7 +68,4 @@ TEMPLATE_DIRS = (
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'cqt^18t(Fb#14a@s%mbtdif+ih8fscpf8l9aw+0ivo2!3c(c%&'
-
-
-#~ __all__ = [x for x in dir() if x[0].isupper()]
 
