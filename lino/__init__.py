@@ -133,34 +133,32 @@ if len(log.handlers) == 0:
             log.addHandler(h)
         
 
-def thanks_to(all=True):
-    yield ("Lino", __version__, __url__)
-    if all:
-        import django
-        yield ("Django",django.get_version(),"http://www.djangoproject.com")
-        
-        import sys
-        version = "%d.%d.%d" % sys.version_info[:3]
-        yield ("Python",version,"http://www.python.org/")
-        
-        import reportlab
-        yield ("ReportLab Toolkit",reportlab.Version, "http://www.reportlab.org/rl_toolkit.html")
-                   
-        import yaml
-        version = getattr(yaml,'__version__','')
-        yield ("PyYaml",version,"http://pyyaml.org/")
-        
-        import dateutil
-        version = getattr(dateutil,'__version__','')
-        yield ("python-dateutil",version,"http://labix.org/python-dateutil")
-        
-        try:
-            import ho.pisa as pisa
-            version = getattr(pisa,'__version__','')
-            yield ("xhtml2pdf",version,"http://www.xhtml2pdf.com")
-        except ImportError:
-            pass
+def using():
+    import django
+    yield ("Django",django.get_version(),"http://www.djangoproject.com")
     
+    import sys
+    version = "%d.%d.%d" % sys.version_info[:3]
+    yield ("Python",version,"http://www.python.org/")
+    
+    import reportlab
+    yield ("ReportLab Toolkit",reportlab.Version, "http://www.reportlab.org/rl_toolkit.html")
+               
+    import yaml
+    version = getattr(yaml,'__version__','')
+    yield ("PyYaml",version,"http://pyyaml.org/")
+    
+    import dateutil
+    version = getattr(dateutil,'__version__','')
+    yield ("python-dateutil",version,"http://labix.org/python-dateutil")
+    
+    try:
+        import ho.pisa as pisa
+        version = getattr(pisa,'__version__','')
+        yield ("xhtml2pdf",version,"http://www.xhtml2pdf.com")
+    except ImportError:
+        pass
+
 
 #~ log.info(thanks_to())
 

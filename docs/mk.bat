@@ -1,3 +1,3 @@
 @echo off
-set DJANGO_SETTINGS_MODULE=lino.demo.settings
+set DJANGO_SETTINGS_MODULE=lino.demos.std.settings
 make html

@@ -67,5 +67,5 @@ Subpackages
     lino.test_apps
     lino.ui
     lino.utils
-    lino.demo
+    lino.demos
 

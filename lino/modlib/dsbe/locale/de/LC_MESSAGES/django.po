@@ -1,0 +1,582 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2010 Luc Saffre
+# This file is distributed under the same license as Lino/DSBE.
+# Luc Saffre <luc.saffre@gmx.net>, 2010.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Lino-DSBE\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-10-08 09:32+0100\n"
+"PO-Revision-Date: 2010-10-08 11:33+0200\n"
+"Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
+"Language-Team: de <luc.saffre@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+#: .\models.py:36
+msgid "single"
+msgstr "ledig"
+
+#: .\models.py:37
+msgid "married"
+msgstr "verheiratet"
+
+#: .\models.py:38
+msgid "divorced"
+msgstr "geschieden"
+
+#: .\models.py:39
+msgid "widowed"
+msgstr "verwitwet"
+
+#: .\models.py:45
+msgid "Motorcycles"
+msgstr "Motorrad"
+
+#: .\models.py:46
+msgid "Car"
+msgstr "PKW"
+
+#: .\models.py:47
+msgid "Lorry"
+msgstr "LKW"
+
+#: .\models.py:48
+msgid "Lorry with trailer"
+msgstr "LKW mit Anhänger"
+
+#: .\models.py:49
+msgid "Bus"
+msgstr "Bus"
+
+#: .\models.py:53
+msgid "Registry of citizens"
+msgstr "Einwohnerregister"
+
+#: .\models.py:54
+msgid "Registry of foreigners"
+msgstr "Fremdenregister"
+
+#: .\models.py:55
+msgid "Waiting for registry"
+msgstr "Warteregister"
+
+#: .\models.py:65
+msgid "ID"
+msgstr "ID"
+
+#: .\models.py:68
+msgid "is active"
+msgstr "aktiv"
+
+#: .\models.py:72
+msgid "Activity"
+msgstr "Beruf"
+
+#: .\models.py:76
+msgid "Bank account 1"
+msgstr "Bankkonto 1"
+
+#: .\models.py:79
+msgid "Bank account 2"
+msgstr "Bankkonto 2"
+
+#: .\models.py:103
+msgid "First name"
+msgstr "Vorname"
+
+#: .\models.py:104
+msgid "Last name"
+msgstr "Familienname"
+
+#: .\models.py:105
+msgid "Title"
+msgstr "Anrede"
+
+#: .\models.py:118
+msgid "Gesdos ID"
+msgstr "Gesdos-Nr"
+
+#: .\models.py:120
+msgid "receives social help"
+msgstr "Sozialhilfeempfänger"
+
+#: .\models.py:121
+msgid "is senior"
+msgstr "Altenheim"
+
+#: .\models.py:125
+msgid "User"
+msgstr "Benutzer"
+
+#: .\models.py:128
+msgid "Sex"
+msgstr "Geschlecht"
+
+#: .\models.py:129
+msgid "Male"
+msgstr "Männlich"
+
+#: .\models.py:129
+msgid "Female"
+msgstr "Weiblich"
+
+#: .\models.py:132
+msgid "Birth date"
+msgstr "Geburtsdatum"
+
+#: .\models.py:135
+msgid "not exact"
+msgstr "circa"
+
+#: .\models.py:141
+msgid "Birth country"
+msgstr "Geburtsland"
+
+#: .\models.py:144
+msgid "Civil state"
+msgstr "Zivilstand"
+
+#: .\models.py:146
+msgid "National ID"
+msgstr "Nat.reg.nummer"
+
+#: .\models.py:149
+msgid "Health insurance"
+msgstr "Krankenkasse"
+
+#: .\models.py:151
+msgid "Pharmacy"
+msgstr "Apotheke"
+
+#: .\models.py:156
+msgid "Nationality"
+msgstr "Staatsangehörigkeit"
+
+#: .\models.py:160
+msgid "eID card number"
+msgstr "eID-Kartennummer"
+
+#: .\models.py:163
+msgid "ID card valid from"
+msgstr "ID-Karte gültig von"
+
+#: .\models.py:166
+#: .\models.py:656
+msgid "until"
+msgstr "bis"
+
+#: .\models.py:170
+msgid "Driving license"
+msgstr "Führerschein"
+
+#: .\models.py:172
+msgid "ready to work in shifted time"
+msgstr "auch Schichtarbeit"
+
+#: .\models.py:173
+msgid "ready to work on week-end"
+msgstr "auch am Wochenende"
+
+#: .\models.py:174
+msgid "has own car"
+msgstr "eigenes Auto"
+
+#: .\models.py:176
+msgid "Clark driving license"
+msgstr "Clark-Führerschein"
+
+#: .\models.py:178
+msgid "Head of a family"
+msgstr "Personen zu Lasten"
+
+#: .\models.py:181
+msgid "IT knowledge"
+msgstr "IT-Kenntnisse"
+
+#: .\models.py:183
+msgid "Residence permit valid until"
+msgstr "Auf.Erl. gültig bis"
+
+#: .\models.py:185
+msgid "Residence type"
+msgstr "Art Auf.Erl."
+
+#: .\models.py:190
+msgid "Unemployed since"
+msgstr "Arbeitslos seit"
+
+#: .\models.py:192
+msgid "Needs work permit"
+msgstr "Braucht Arb.Erl."
+
+#: .\models.py:193
+msgid "Work permit valid until"
+msgstr "Arb.Erl. gültig bis"
+
+#: .\models.py:194
+msgid "suspended until"
+msgstr "Wartezeit bis"
+
+#: .\models.py:197
+msgid "Physical handicap"
+msgstr "Körperliche Behinderung"
+
+#: .\models.py:198
+msgid "Mental handicap"
+msgstr "Geistige Behinderung"
+
+#: .\models.py:199
+msgid "Psychological handicap"
+msgstr "Psychologische Hemmnisse"
+
+#: .\models.py:200
+msgid "Health problems"
+msgstr "Gesundheitsprobleme"
+
+#: .\models.py:201
+msgid "Juristic problems"
+msgstr "Juristische Probleme"
+
+#: .\models.py:202
+msgid "Dependency problems"
+msgstr "Suchtprobleme"
+
+#: .\models.py:203
+msgid "Lack of social competence"
+msgstr "Mangelnde Sozialkompetenz"
+
+#: .\models.py:204
+msgid "Lack of motivation"
+msgstr "Motivationsmangel"
+
+#: .\models.py:207
+msgid "Unavailable until"
+msgstr "Nicht verfügbar bis"
+
+#: .\models.py:208
+msgid "reason"
+msgstr "Grund"
+
+#: .\models.py:210
+msgid "Fulltime only"
+msgstr "nur Vollzeit"
+
+#: .\models.py:211
+msgid "Part-time only"
+msgstr "nur Teilzeit"
+
+#: .\models.py:212
+msgid "Young children"
+msgstr "Kleinkinder"
+
+#: .\models.py:215
+msgid "Native language"
+msgstr "Muttersprache"
+
+#: .\models.py:216
+msgid "Migration"
+msgstr "Ausländer"
+
+#: .\models.py:249
+msgid "illiterate"
+msgstr "Analphabet"
+
+#: .\models.py:255
+#, python-format
+msgid "%s (s/w)"
+msgstr "%s (W/S)"
+
+#: .\models.py:257
+#, python-format
+msgid "%s (s)"
+msgstr "%s (W)"
+
+#: .\models.py:259
+#, python-format
+msgid "%s (w)"
+msgstr "%s (S)"
+
+#: .\models.py:261
+#: .\models.py:598
+msgid "Language knowledge"
+msgstr "Sprachkenntnisse"
+
+#: .\models.py:282
+msgid "Contact"
+msgstr "Kontakt"
+
+#: .\models.py:328
+#: .\models.py:556
+msgid "Person"
+msgstr "Person"
+
+#: .\models.py:351
+msgid "Profile 1"
+msgstr "Profil 1"
+
+#: .\models.py:368
+msgid "Profile 2"
+msgstr "Profil 2"
+
+#: .\models.py:403
+msgid "Notes"
+msgstr "Notizen"
+
+#: .\models.py:420
+msgid "Company type"
+msgstr "Firmenart"
+
+#: .\models.py:437
+msgid "Detail"
+msgstr "Detail"
+
+#: .\models.py:522
+msgid "Designation"
+msgstr "Bezeichnung"
+
+#: .\models.py:528
+msgid "Study types"
+msgstr "Studienarten"
+
+#: .\models.py:557
+msgid "Study type"
+msgstr "Studienart"
+
+#: .\models.py:558
+msgid "Study content"
+msgstr "Studieninhalt"
+
+#: .\models.py:561
+msgid "started"
+msgstr "begonnen"
+
+#: .\models.py:562
+msgid "stopped"
+msgstr "beendet"
+
+#: .\models.py:563
+msgid "Success"
+msgstr "Abschluss"
+
+#: .\models.py:564
+msgid "Country"
+msgstr "Land"
+
+#: .\models.py:566
+msgid "Language"
+msgstr "Sprache"
+
+#: .\models.py:568
+msgid "School"
+msgstr "Schule"
+
+#: .\models.py:571
+msgid "Remarks"
+msgstr "Bemerkungen"
+
+#: .\models.py:579
+msgid "Studies & experiences"
+msgstr "Studien & Erfahrungen"
+
+#: .\models.py:580
+msgid "Studies"
+msgstr "Studien"
+
+#: .\models.py:592
+msgid "spoken"
+msgstr "Wort"
+
+#: .\models.py:593
+msgid "written"
+msgstr "Schrift"
+
+#: .\models.py:599
+msgid "Languages"
+msgstr "Sprachen"
+
+#: .\models.py:621
+msgid "Appears in Listing 104"
+msgstr "Listing 104"
+
+#: .\models.py:628
+msgid "Activities"
+msgstr "Berufe"
+
+#: .\models.py:647
+msgid "Exclusion Types"
+msgstr "AG-Sperrgründe"
+
+#: .\models.py:654
+msgid "Reason"
+msgstr "Grund"
+
+#: .\models.py:655
+msgid "from"
+msgstr "von"
+
+#: .\models.py:657
+#: .\models.py:694
+msgid "Remark"
+msgstr "Bemerkung"
+
+#: .\models.py:667
+msgid "Exclusions"
+msgstr "AG-Sperren"
+
+#: .\models.py:685
+msgid "Coaching Types"
+msgstr "Begleitungsarten"
+
+#: .\models.py:691
+msgid "Client"
+msgstr "Begleiteter"
+
+#: .\models.py:692
+msgid "Coach"
+msgstr "Begleiter"
+
+#: .\models.py:693
+msgid "Coaching type"
+msgstr "Begleitungsart"
+
+#: .\models.py:699
+msgid "Coaches"
+msgstr "Begleiter"
+
+#: .\demo\lino_settings.py:28
+msgid "~Contacts"
+msgstr "~Kontakte"
+
+#: .\demo\lino_settings.py:33
+msgid "~Notes"
+msgstr "~Notizen"
+
+#: .\demo\lino_settings.py:37
+msgid "~Configure"
+msgstr "~Konfigurierung"
+
+#: .\demo\lino_settings.py:56
+msgid "E~xplorer"
+msgstr "E~xplorer"
+
+#: .\templates\404.html.py:4
+#: .\templates\404.html.py:8
+msgid "Page not found"
+msgstr "Seite nicht gefunden"
+
+#: .\templates\404.html.py:10
+msgid "We're sorry, but the requested page could not be found."
+msgstr "Tut uns Leid, aber die angefragte Seite konnte nicht gefunden werden."
+
+#: .\templates\500.html.py:4
+#: .\templates\base.html.py:52
+msgid "Home"
+msgstr "Anfang"
+
+#: .\templates\500.html.py:4
+msgid "Server error"
+msgstr "Server error"
+
+#: .\templates\500.html.py:6
+msgid "Server error (500)"
+msgstr "Server error (500)"
+
+#: .\templates\500.html.py:9
+msgid "Server Error <em>(500)</em>"
+msgstr ""
+
+#: .\templates\500.html.py:10
+msgid "There's been an error. It's been reported to the site administrators via e-mail and should be fixed shortly. Thanks for your patience."
+msgstr ""
+
+#: .\templates\base.html.py:25
+msgid "Welcome,"
+msgstr "Willkommen,"
+
+#: .\templates\base.html.py:30
+msgid "Documentation"
+msgstr "Dokumentation"
+
+#: .\templates\base.html.py:38
+msgid "Change password"
+msgstr ""
+
+#: .\templates\base.html.py:45
+msgid "Log out"
+msgstr ""
+
+#: .\templates\base_site.html.py:4
+msgid "Django site admin"
+msgstr ""
+
+#: .\templates\base_site.html.py:7
+msgid "Django administration"
+msgstr "Django-Verwaltung"
+
+#~ msgid "Master data"
+#~ msgstr "Stammdaten"
+
+#~ msgid "Profile"
+#~ msgstr "Profil"
+
+#~ msgid "is minor"
+#~ msgstr "Minderjährig"
+
+#~ msgid "valid until"
+#~ msgstr "gültig bis"
+
+#~ msgid "not at all"
+#~ msgstr "überhaupt nicht"
+
+#~ msgid "a bit"
+#~ msgstr "ein bisschen"
+
+#~ msgid "moderate"
+#~ msgstr "mittelmäßig"
+
+#~ msgid "quite well"
+#~ msgstr "ziemlich gut"
+
+#~ msgid "very well"
+#~ msgstr "sehr gut"
+
+#, fuzzy
+#~ msgid "waiting until"
+#~ msgstr "Wartezeit bis"
+
+#~ msgid "Foreigner"
+#~ msgstr "Fremdenregister"
+
+#~ msgid "Work permit exemption"
+#~ msgstr "Arbeitsgenehmigung befreit"
+
+#~ msgid "TIM ID"
+#~ msgstr "TIM-Nummer"
+
+#~ msgid "Truck driving license"
+#~ msgstr "LKW-Führerschein"
+
+#~ msgid "Bus driving license"
+#~ msgstr "Bus-Führerschein"
+
+#~ msgid "why stopped"
+#~ msgstr "Grund Abbruch"
+
+#~ msgid "Projects by Person"
+#~ msgstr "Projekte"
+
+#~ msgid "Projects by Company"
+#~ msgstr "Projekte"
+
+#~ msgid "Study contents"
+#~ msgstr "Studieninhalte"
+
+#~ msgid "Driving licenses"
+#~ msgstr "Führerscheine"
+
+#~ msgid "~Projects"
+#~ msgstr "~Projekte"

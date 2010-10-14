@@ -1,0 +1,19 @@
+:label: Person
+:label_align: top
+
+main = 
+  box1:40 box2:20
+  dsbe.StudiesByPerson 
+
+box1 = 
+  sex:8 birth_date birth_date_circa     
+  
+  birth_country birth_place  
+  native_language civil_state 
+  nationality national_id:15 
+  card_number:10 card_valid_from card_valid_until:10
+
+box2 =
+  gesdos_id
+  health_insurance 
+  pharmacy

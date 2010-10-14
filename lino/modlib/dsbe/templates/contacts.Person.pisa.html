@@ -1,0 +1,89 @@
+<html>
+<head>
+<title>{{instance}}</title>
+<style type="text/css">
+body {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 14pt;
+}
+
+h1 { border: solid 1pt black; text-align: center;font-size: 16pt; }
+h2 { font-size: 14pt; }
+
+
+#footerContent { text-align: right; font-size: 8pt; }
+
+
+@page {
+
+  margin:2cm;
+  margin-left:3cm;
+  margin-bottom:25mm;
+  margin-top:45mm;
+  
+  @frameheader {
+    -pdf-frame-content:headerContent;
+    top:10mm;
+    height:33mm;
+    margin-left:1cm;
+    margin-right:1cm;
+    /* -pdf-frame-border: 0; */
+  }
+
+  @framefooter {
+    -pdf-frame-content:footerContent;
+    bottom:1cm;
+    margin-left:3cm;
+    margin-right:2cm;
+    height:1cm;
+    /* -pdf-frame-border: 0; */
+  }
+}
+
+</style>
+</head>
+<body>
+
+<div id="footerContent">
+[page <pdf:pagenumber>]
+</div>
+
+<div id="headerContent">
+<table>
+<tr>
+<td>
+<img src="{{ MEDIA_URL }}logo.jpg" width="30mm"/>
+</td>
+<td style="text-align:center;width:60mm">
+<b>ÖSHZ Eupen</b>
+<br/>Dienst für sozial-berufliche Eingliederung
+</td>
+</tr>
+</table>
+</div>
+
+<pdf:spacer height="20mm">
+
+<h1>Individuelles Auskunftsblatt</h1>
+
+<p>Erstgespräch am : ...../...../.........</p>
+<p>Anrede: {{instance.title}} 
+<p>Vorname: {{instance.first_name}} 
+<p>Name: {{instance.last_name}}</p>
+
+<p>MWSt-ID: {{instance.national_id}}
+<p>Sprache: {{instance.language}}
+<p>Land: {{instance.country}}
+<p>Region: {{instance.region}}
+<p>Stadt: {{instance.city}}
+<p>PLZ: {{instance.zip_code}}
+<p>Straße {{instance.street}} {{instance.street_no}} {{instance.street_box}}
+<p>Adresse 1 : {{instance.addr1}}
+<p>Adresse 2 : {{instance.addr2}}
+<p>E-Mail: {{instance.email}}
+<p>Webseite: {{instance.url}}
+<p>Tel: {{instance.phone}}
+<p>GSM: {{instance.gsm}}
+
+</body>
+</html>

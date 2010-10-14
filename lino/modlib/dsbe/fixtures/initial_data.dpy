@@ -1,0 +1,198 @@
+# -*- coding: UTF-8 -*-
+## Copyright 2008-2010 Luc Saffre
+## This file is part of the Lino-DSBE project.
+## Lino-DSBE is free software; you can redistribute it and/or modify 
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 3 of the License, or
+## (at your option) any later version.
+## Lino-DSBE is distributed in the hope that it will be useful, 
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+## GNU General Public License for more details.
+## You should have received a copy of the GNU General Public License
+## along with Lino-DSBE; if not, see <http://www.gnu.org/licenses/>.
+
+
+#~ from django.contrib.contenttypes.models import ContentType
+from lino.utils.instantiator import Instantiator, i2d
+from lino.tools import resolve_model
+from django.utils.translation import ugettext_lazy as _
+
+
+from django.db import models
+
+#~ auth = models.get_app('auth')
+
+Person = resolve_model('contacts.Person')
+Company = resolve_model('contacts.Company')
+ExclusionType = resolve_model('dsbe.ExclusionType')
+
+#~ from lino.modlib.properties import models as properties 
+
+def objects():
+  
+    
+    #~ company_property = Instantiator('properties.Property','name value_type',only_for=Company).build
+
+    #properties.CHAR.create_property(name=u"Aktivitätsbereich",only_for=Company)
+    #~ p = company_property(u"Betriebsform",properties.CHAR)
+    #~ p = properties.create_property(u"Aktivitätsbereich",properties.CHAR,Company)
+    #~ yield p
+    #~ p.create_values(u"""
+    #~ Verwaltung
+    #~ VoG
+    #~ Firma
+    #~ """)
+    
+    #~ yield company_property(u"Anzahl Arbeitnehmer",properties.INT)
+        
+    #~ person_property = Instantiator('properties.Property','name value_type',only_for=Person).build
+    
+    #~ p = person_property(u"Führerschein",properties.CHAR)
+    #~ p.create_values(u"""
+    #~ A
+    #~ B
+    #~ C""")
+    #~ yield p
+    
+    #~ p = person_property(u"Schulabschluss",properties.CHAR)
+    #~ yield p
+    #~ p.create_values(u"""
+    #~ ohne
+    #~ Primarschule
+    #~ Mittlere Reife
+    #~ Abitur
+    #~ Lehre
+    #~ Berufliche Qualifikation
+    #~ Studium KD
+    #~ Studium LD
+    #~ Studium Ausland
+    #~ TZU
+    #~ """)
+    
+    #~ for s in u"""
+    #~ Schulabschluss anerkannt
+    #~ Vollzeit
+    #~ Schichtarbeit
+    #~ Wochenende
+    #~ PKW-Führerschein
+    #~ Eigenes Fahrzeug
+    #~ LKW-Führerschein
+    #~ Clark-Führerschein
+    #~ """.splitlines():
+      #~ s = s.strip()
+      #~ if s:
+          #~ yield person_property(s,properties.BOOL)
+          
+    #~ yield person_property(u"EDV-Kenntnisse",properties.BOOL)
+          
+    #~ p = person_property(u"Familiäre Situation",properties.CHAR)
+    #~ yield p
+    #~ p.create_values(u"""
+    #~ Alleinlebend
+    #~ Mitbewohner
+    #~ Alleinerziehend
+    #~ Lebensgemeinschaft mit Kind
+    #~ """)
+    
+    #~ p = person_property(u"Zivilstand",properties.CHAR)
+    #~ yield p
+    #~ p.create_values(u"""
+    #~ ledig
+    #~ verheiratet
+    #~ verwitwet
+    #~ geschieden
+    #~ """)
+    
+    #~ person_property = Instantiator('properties.Property','name label value_type',only_for=Person).build
+    #~ p = person_property('knowledge.lang.fr',u"Sprachkenntnisse FR Wort",properties.CHAR)
+    #~ yield person_property('knowledge',u"Kenntnisse",properties.CHAR)
+    #~ yield person_property('knowledge.lang',u"Sprachen",properties.CHAR)
+    #~ yield person_property('knowledge.lang.fr',u"Französisch",properties.INT)
+    #~ yield person_property('knowledge.lang.fr.spoken',u"Wort",properties.INT)
+    #~ yield person_property('knowledge.lang.fr.written',u"Schrift",properties.INT)
+    #~ yield person_property('lang_fr_verbal',u"Sprachkenntnisse FR Schrift",properties.CHAR)
+    
+    
+    noteType = Instantiator('notes.NoteType',"name",print_method='appy',template='notes.Note.default.odt').build
+    
+    yield noteType(u"Beschluss")
+    yield noteType(u"Konvention",remark=u"Einmaliges Dokument in Verbindung mit Arbeitsvertrag")
+    yield noteType(u"Externes Dokument",remark=u"Aufenthaltsgenehmigung, Arbeitsgenehmigung, Arbeitsvertrag,...")
+    yield noteType(u"Brief oder Einschreiben")
+    yield noteType(u"Notiz",remark=u"Kontaktversuch, Gesprächsbericht, Telefonnotiz")
+    yield noteType(u"Vorladung",remark=u"Einladung zu einem persönlichen Gespräch")
+    yield noteType(u"VSE Ausbildung")
+    yield noteType(u"VSE Arbeitssuche")
+    yield noteType(u"VSE Integration")
+    yield noteType(u"VSE Lehre")
+    yield noteType(u"VSE Cardijn")
+    yield noteType(u"VSE Work & Job")
+    yield noteType(u"VSE Vollzeitstudium")
+    yield noteType(u"VSE Sprachkurs")
+    yield noteType(u"Vertrag 60-7")
+    yield noteType(u"Übergabeblatt",remark=u"Übergabeblatt vom allgemeinen Sozialdienst") # (--> Datum Eintragung DSBE)
+    yield noteType(u"Neuantrag")
+    yield noteType(u"Antragsformular")
+    yield noteType(u"Eröffnungsbericht")
+    yield noteType(u"Erstgespräch")
+    yield noteType(u"Abschlussbericht")
+    yield noteType((u"Auswertungsbogen allgemein"),template=u'Auswertungsbogen_allgemein.odt')
+    yield noteType((u"Anwesenheitsbescheinigung"),template=u'Anwesenheitsbescheinigung.odt')
+   
+    
+    #~ projectType = Instantiator('projects.ProjectType',"name").build
+    #~ yield projectType(u"VSE Ausbildung")
+    #~ yield projectType(u"VSE Arbeitssuche")
+    #~ yield projectType(u"VSE Integration")
+    #~ yield projectType(u"Hausinterne Arbeitsverträge")
+    #~ yield projectType(u"Externe Arbeitsverträge")
+    #~ yield projectType(u"Kurse und Zusatzausbildungen")
+    
+    #~ yield projectType(u"Sozialhilfe")
+    #~ yield projectType(u"EiEi")
+    #~ yield projectType(u"Aufenthaltsgenehmigung")
+    
+    studyType = Instantiator('dsbe.StudyType',"name").build
+    yield studyType(u"Schule")
+    yield studyType(u"Sonderschule")
+    yield studyType(u"Ausbildung")
+    yield studyType(u"Lehre")
+    yield studyType(u"Hochschule")
+    yield studyType(u"Universität")
+    yield studyType(u"Teilzeitunterricht")
+    yield studyType(u"Fernkurs")
+
+    #~ studyContent = Instantiator('dsbe.StudyContent',"name").build
+    #~ yield studyContent(u"Grundschule")
+    #~ yield studyContent(u"Mittlere Reife")
+    #~ yield studyContent(u"Abitur")
+    #~ yield studyContent(u"Schlosser")
+    #~ yield studyContent(u"Schreiner")
+    #~ yield studyContent(u"Biotechnologie")
+    #~ yield studyContent(u"Geschichte")
+
+    #~ license = Instantiator('dsbe.DrivingLicense',"id name").build
+    #~ yield license('A',u"Motorrad")
+    #~ yield license('B',u"PKW")
+    #~ yield license('C',u"LKW")
+    #~ yield license('CE',u"LKW über X Tonnen")
+    #~ yield license('D',u"Bus")
+    
+    
+    #~ exclType = Instantiator('dsbe.ExclusionType',"name").build
+    #~ yield exclType(u"Termin nicht eingehalten")
+    #~ yield exclType(u"ONEM-Auflagen nicht erfüllt")
+
+    
+    studyType = Instantiator('dsbe.CoachingType',"name").build
+    yield studyType(u"DSBE")
+    yield studyType(u"Schuldnerberatung")
+    yield studyType(u"Energieberatung")
+    yield studyType(u"allgemeiner Sozialdienst")
+    
+    
+    excltype = Instantiator('dsbe.ExclusionType','name').build
+    yield excltype(u"Termin nicht eingehalten")
+    yield excltype(u"ONEM-Auflagen nicht erfüllt")
+    

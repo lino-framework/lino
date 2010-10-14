@@ -1,0 +1,132 @@
+# -*- coding: UTF-8 -*-
+## Copyright 2008-2010 Luc Saffre
+## This file is part of the Lino-DSBE project.
+## Lino-DSBE is free software; you can redistribute it and/or modify 
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 3 of the License, or
+## (at your option) any later version.
+## Lino-DSBE is distributed in the hope that it will be useful, 
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+## GNU General Public License for more details.
+## You should have received a copy of the GNU General Public License
+## along with Lino-DSBE; if not, see <http://www.gnu.org/licenses/>.
+
+
+from django.contrib.contenttypes.models import ContentType
+from lino.utils.instantiator import Instantiator, i2d
+from lino.tools import resolve_model
+from django.utils.translation import ugettext as _
+
+
+from django.db import models
+
+
+auth = models.get_app('auth')
+#~ projects = models.get_app('projects')
+#~ contacts = models.get_app('contacts')
+#~ notes = models.get_app('notes')
+#~ properties = models.get_app('properties')
+
+Person = resolve_model('contacts.Person')
+Company = resolve_model('contacts.Company')
+
+person = Instantiator(Person).build
+company = Instantiator(Company).build
+
+#char_pv = Instantiator('properties.CharPropValue').build
+#CharPropValue = resolve_model('properties.CharPropValue')
+from lino.modlib.properties import models as properties # CharPropValue, BooleanPropValue
+#~ CHAR = ContentType.objects.get_for_model(properties.CharPropValue)
+#BOOL = ContentType.objects.get_for_model(properties.BooleanPropValue)
+#~ INT = ContentType.objects.get_for_model(properties.IntegerPropValue)
+
+#~ def fill_choices(p,model):
+    #~ i = 0
+    #~ choices = p.choices_list()
+    #~ if len(choices) == 0:
+        #~ return
+    #~ for owner in model.objects.all():
+        #~ p.set_value_for(owner,choices[i])
+        #~ if i + 1 < len(choices): 
+            #~ i += 1
+        #~ else:
+            #~ i = 0
+
+City = resolve_model('countries.City')
+StudyType = resolve_model('dsbe.StudyType')
+#~ StudyContent = resolve_model('dsbe.StudyContent')
+
+def objects():
+    
+    country = Instantiator('countries.Country',"isocode name").build
+    yield country('SUHH',"Soviet Union")
+    
+    eupen = City.objects.get(name__exact='Eupen')
+    kettenis = City.objects.get(name__exact='Kettenis')
+    vigala = City.objects.get(name__exact='Vigala')
+    
+    luc = person(first_name="Luc",last_name="Saffre",city=vigala,country='EE',card_number='122')
+    yield luc
+    yield person(first_name="Ly",last_name="Rumma",city=vigala,country='EE',card_number='123')
+    yield person(first_name="Mari",last_name="Saffre",city=vigala,country='EE',card_number='124')
+    yield person(first_name="Iiris",last_name="Saffre",city=vigala,country='EE',card_number='125')
+    
+    gerd = person(first_name="Gerd",last_name="Xhonneux",city=kettenis,name="Xhonneux Gerd",country='BE')
+    yield gerd
+    
+    tatjana = person(first_name=u"Татьяна",last_name=u"Казеннова",# name="Казеннова Татьяна",
+        city=kettenis,country='BE', 
+        birth_place="Moskau", birth_country='SUHH')
+    yield tatjana
+    
+    yield company(name=u"ÖSHZ Eupen",city="Eupen",city=eupen,country='BE')
+    
+    
+    #~ for p in properties.Property.properties_for_model(Company):
+        #~ fill_choices(p,Company)
+    #~ for p in properties.Property.properties_for_model(Person):
+        #~ fill_choices(p,Person)
+        
+    oshz = Company.objects.get(name=u"ÖSHZ Eupen")
+    schule = StudyType.objects.get(name=u"Schule")
+    uni = StudyType.objects.get(name=u"Universität")
+    #~ abi = StudyContent.objects.get(name=u"Abitur")
+    abi = u"Abitur"
+    
+    
+    #~ project = Instantiator('projects.Project').build
+    note = Instantiator('notes.Note').build
+    study = Instantiator('dsbe.Study').build
+    langk = Instantiator('dsbe.LanguageKnowledge').build
+
+    user = auth.User.objects.get(username='user')
+    
+    #~ prj = project(name="Testprojekt",company=oshz)
+    #~ yield prj 
+    #~ yield note(user=user,project=prj,date=i2d(20091006),subject="Programmierung",company=oshz)
+    
+    #~ prj = project(name="Testprojekt",company=oshz)
+    #~ yield prj 
+    #~ yield note(user=user,project=prj,date=i2d(20091007),subject="Anschauen",company=oshz)
+    
+    yield note(user=user,date=i2d(20091006),subject="Programmierung",company=oshz,person=luc)
+    yield note(user=user,date=i2d(20091007),subject="Testen",company=oshz,person=gerd)
+    yield note(user=user,date=i2d(20100517),subject="Programmierung",company=oshz,person=luc)
+    yield note(user=user,date=i2d(20100518),subject="Testen",company=oshz,person=gerd)
+        
+    yield study(person=luc,type=schule,content=abi,started='197409',stopped='198606')
+    yield study(person=gerd,type=schule,content=abi,started='197409',stopped='198606')
+
+    yield langk(person=luc,language='de',written=100,spoken=100)
+    yield langk(person=gerd,language='de',written=100,spoken=100)
+    
+    yield langk(person=luc,language='fr',written=100,spoken=90)
+    yield langk(person=gerd,language='fr',written=100,spoken=90)
+    
+    yield langk(person=luc,language='en',written=100,spoken=80)
+    yield langk(person=gerd,language='en',written=100,spoken=80)
+    
+    yield langk(person=luc,language='et',written=80,spoken=80)
+    yield langk(person=gerd,language='nl',written=80,spoken=80)
+    

@@ -139,7 +139,7 @@ if not BYPASS_PERMS:
       'django.contrib.auth.backends.RemoteUserBackend',
     )
 
-ROOT_URLCONF = 'lino.demo.urls'
+ROOT_URLCONF = 'lino.demos.std.urls'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
@@ -171,11 +171,16 @@ INSTALLED_APPS = (
   'lino.modlib.sales',
   'lino.modlib.ledger',
   'lino.modlib.finan',
+  'lino.modlib.dsbe',
   
   #~ 'lino.modlib.properties',
-  #~ 'lino.modlib.links',
+  'lino.modlib.links',
   'south', # http://south.aeracode.org
 )
+
+
+INSTALLED_APPS = []
+
 
 
 SERIALIZATION_MODULES = {

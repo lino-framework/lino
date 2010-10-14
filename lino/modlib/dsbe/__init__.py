@@ -12,18 +12,10 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-This defines abstract base classes for :class:`contacts.Person` and :class:`contacts.Company`.
-The simplest way to make them usable is to subclass them without any change::
+This defines the follwoing models:
 
-  from lino.modlib.contacts import models as contacts
-  
-  class Person(contacts.Person):
-      class Meta:
-          app_label = 'contacts'
-      
-  class Company(contacts.Company):
-      class Meta:
-          app_label = 'contacts'
-      
+- :class:`dsbe.Person` (overrides :class:`contacts.Person`)
+- :class:`dsbe.Company` (overrides :class:`contacts.Company`)
+- and many more...
 
 """

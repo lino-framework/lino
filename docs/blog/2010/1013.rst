@@ -1,12 +1,25 @@
 20101013
 ========
 
-Tilt! Ich habe verstanden, wie das Problem zu lösen ist, dass `makemessages` die Meldungen im Lino-Core nicht findet. Ich muss einfach dafür sorgen, dass der "Lino-Kernel" inner- bzw. unterhalb von :mod:`lino.modlib.system` steht. Weil `makemessages` ja in den Verzeichnissen unterhalb jeder Django-Anwendung automatisch sucht.
+makemessages für den Lino-Kernel
+--------------------------------
 
-Dazu gibt es zwei Wege: spalten oder zusammenfügen
+Tilt! Ich habe verstanden, wie ich das folgende Problem lösen muss:
 
-Spalten (Dezentralisieren)
---------------------------
+- Strings aus :data:`lino.modlib.fields.KNOWLEDGE_CHOICES` werden von :command:`django-admin makemessages` nicht gefunden, 
+  weil sie Teil des "Lino-Kernels" und keine direkte Django application sind.
+  Ebenso :mod:`lino.ui.extjs.ext_ui`, :mod:`lino.actions`, :mod:`lino.reports`, ...
+  Rausfinden, ob man das nicht doch irgendwie automatisieren kann.
+  Der Anfang ist gemacht in :srcref:`/Makefile`.
+  Siehe auch: 
+  :doc:`/blog/2010/1008`, 
+  :doc:`/topics/i18n`
+  
+Ich muss einfach dafür sorgen, dass der "Lino-Kernel" inner- bzw. unterhalb von :mod:`lino.modlib.system` steht. Weil `makemessages` ja in den Verzeichnissen unterhalb jeder Django-Anwendung automatisch sucht.
+
+Dazu gibt es zwei Wege: Aufteilen oder Zusammenfügen
+
+(1) Aufteilen
 
 Ein Weg wäre, dass ich :mod:`lino.modlib` auslagere in ein neues Google-Projekt "lino-modlib" (oder "lino-contrib" oder "lino-apps") mache. Nur das bisherige :mod:`lino.modlib.system` bleibt im Hauptprojekt und kommt dabei nach :mod:`lino`.
 
@@ -36,12 +49,18 @@ dann sähe sie nachher so aus::
   )
 
 
-Zusammenfügen (Zentralisieren)
-------------------------------
+(2) Zusammenfügen
 
-Ein Grund, der gegen Spaltung spricht ist die Tatsache, dass das für mich unnötiger Mehraufwand ist, solange ich der einzige Mensch bin, der an Lino arbeitet. Wenn ich diesen Weg wähle, wäre es logisch, dass lino-dsbe ebenfalls in die lino.modlib kommt. Die beiden Versionsnummern bei jedem Release gehen mir nämlich mittlerweile auf den Keks.
+Ein Grund, der gegen Spaltung spricht ist die Tatsache, dass das für mich unnötiger Mehraufwand ist, 
+solange ich der einzige Mensch bin, der an Lino arbeitet. 
+Wenn ich diesen Weg wähle, wäre es logisch, dass lino-dsbe ebenfalls in die lino.modlib kommt. 
+Die beiden Versionsnummern bei jedem Release gehen mir nämlich mittlerweile auf den Keks.
 
-Wenn ich die lino.modlib *nicht* auslagern will, kann ich in :setting:`INSTALLED_APPS` nicht einfach nur ``lino`` reintun (weil makemessages sonst für die Django-Anwendung `lino` auch die Meldungen aus der lino.modlib extrahieren würde), sondern alles was bisher unter `lino` steht (auch `lino.ui`) muss nach `lino.core` oder `lino.base` oder `lino.main` kommen. 
+Wenn ich die lino.modlib *nicht* auslagern will, kann ich aber dummerweise 
+in :setting:`INSTALLED_APPS` nicht einfach nur ``lino`` reintun (weil makemessages 
+sonst für die Django-Anwendung `lino` auch die Meldungen aus der lino.modlib 
+extrahieren würde), sondern alles was bisher unter `lino` steht (auch `lino.ui`) 
+muss nach `lino.core` oder `lino.base` oder `lino.main` kommen. 
 
   =============== ==========================
   Package         purpose
@@ -66,8 +85,7 @@ Also Alternative ohne Auslagerung::
   )
 
 
-Kompromiss
-----------
+(3) Beides
 
 Da fällt mir auf: makemessages hat doch eine Option `--ignore`! Also kann ich folgendes machen::
 
@@ -99,3 +117,51 @@ Python ist super!
 
 Resultat : ``make mm`` findet jetzt alle Meldungen, die übersetzt werden müssen. 
 (Außer natürlich die Meldungen im JS-Code. Die sind ein anderes Kapitel, das kommt später mal.)
+
+
+Aus "Notizen" werden "Dokumente", "Links" und "Termine"
+-------------------------------------------------------
+
+Und ich habe jetzt eine Vorstellung, die ich die folgenden drei Punkte angehen werde:
+
+- NotesByPerson im Detail-Fenster einer Person sollte nur die wichtigen Ereignisse anzeigen 
+  (deren :attr:`notes.NoteType.important` eingeschaltet ist). 
+
+- Vielleicht auch eine grundlegendere Vorgehensweise: 
+  "Notizen" aufteilen in "Dokumente" und "Dienstleistungen". 
+  Dienstleistungen halten fest, wann ein Mitarbeiter (Benutzer) für eine Person gearbeitet hat. 
+
+- Lokale Dateinamen benutzerfreundlich als Notiz erfassen. 
+  Eventuell neues Feld `attached_file` statt `url`? 
+  Eine URL kann man jetzt schon durch DnD der Adresse vom Browserfenster in ein Textfeld kopieren.
+  
+Die Wurzel des Übels ist, dass die Tabelle "Notizen" ein bisschen zu viele Dinge in den gleichen Topf wirft.
+
+- "Dokumente" sind .odt-Dateien, die Lino generiert hat, 
+  und die oft vom Benutzer noch manuell bearbeitet worden sind.
+  Ziel ist es, dass die Benutzer von Lino aus OpenOffice auf dem Dokument starten, darin arbeiten und es
+  dann abspeichern--- all das ohne sich um Dateinamen und -ordner kümmern zu müssen.
+
+  Pro Dokument speichert Lino, ob und wenn ja wann es "ausgeliefert" wurde. 
+  Ein ausgeliefertes Dokument sollte ja normalerweise nicht mehr bearbeitet werden.
+  
+  Die Liste der Dokumentarten bleibt ungefähr gleich, außer dass 
+  Dokumentarten wie "Externes Dokument" da rausfliegen.
+  
+- "Links" sind Verweise zu externen Dokumenten. 
+  Im DSBE werden das vor allem .pdf-Dateien mit dem Bild eines eingescannten externen Dokuments sein.
+  Vielleicht kommt noch eine neue Tabelle "Link-Arten" mit Einträgen im Stil:
+  
+  - Aufenthaltserlaubnis
+  - Arbeitserlaubnis
+  - Personalausweis
+  - Vertrag
+  - Sonstige
+  
+- "Termine" würden im DSBE zunächst nur benutzt, um sich von Lino Erinnerungen schicken zu lassen.
+  Termin-Arten wären z.B. "Gültigkeit eines externen Dokuments läuft ab".
+  Allerdings müsste mir noch was einfallen, wie die Erstellung 
+  von Terminen möglichst automatisch vonstatten gehen soll.
+  Statt dieser Tabelle könnte ich auch lediglich in den Links ein Datumsfeld `reminder` definieren. 
+  Wenn das ausgefüllt ist, kriegt der Benutzer an diesem Tag eine E-Mail geschickt. Das wäre die einfachste Lösung. Aber mit einer eigenen Tabelle von Terminen wäre die Sache flexibler und weitsichtiger.
+

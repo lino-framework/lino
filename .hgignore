@@ -9,4 +9,6 @@ syntax: glob
 build
 dist
 
-src\mysites\media\pdf_cache
+lino\demos\*\media\cache
+lino\demos\*\data
+lino\demos\dsbe\*.bat

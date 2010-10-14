@@ -1,0 +1,5 @@
+20101014
+========
+
+Ich konnte es nicht lassen, die gestern begonnenen Reorganisierung (eine für die Benutzer völlig unsichtbare Änderung) weiter zu führen: Das Google-Projekt lino-dsbe wird abgeschaltet, weil es in Lino integriert wurde. Endlich Schluss mit getrennten Checkins und Versionsnummern.
+

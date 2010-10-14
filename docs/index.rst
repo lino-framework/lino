@@ -31,6 +31,7 @@ Some external links:
    tests
    ref/index
    releases/index
+   dsbe/index
    download
    demos
 

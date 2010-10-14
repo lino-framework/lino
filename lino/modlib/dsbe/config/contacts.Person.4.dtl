@@ -1,0 +1,32 @@
+:label: Profile 2
+:label_align: top
+
+main = 
+  box1 box2 box3
+  dsbe.LanguageKnowledgesByPerson
+  
+
+box1 = 
+  has_own_car
+  can_clark
+  accepts_shift
+  accepts_we
+  fulltime_only
+  parttime_only
+
+  
+box2 = 
+  physical_handicap
+  mental_handicap
+  psycho_handicap
+  health_problems
+  juristic_problems
+  dependency_problems
+  
+box3 = 
+  social_competence
+  motivation_lack
+  has_family
+  young_children
+  migration
+  is_illiterate

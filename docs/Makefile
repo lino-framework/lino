@@ -1,7 +1,7 @@
 
 SITENAME               = lino
 #~ DJANGO_SETTINGS_MODULE = dsbe.demo.settings
-DJANGO_SETTINGS_MODULE = lino.demo.settings
+#~ DJANGO_SETTINGS_MODULE = lino.demos.std.settings
 TEMPDIR                = C:\\temp\\sphinxbuild\\$(SITENAME)
 BUILDDIR               = $(TEMPDIR)\\html
 CACHEDIR               = $(TEMPDIR)\\doctrees
@@ -41,10 +41,13 @@ clean:
 html:
 	mkdir -p $(CACHEDIR) 
 	mkdir -p $(BUILDDIR)
-	set DJANGO_SETTINGS_MODULE=$(DJANGO_SETTINGS_MODULE); $(SPHINXBUILD) -b html -d $(CACHEDIR) $(ALLSPHINXOPTS) . $(BUILDDIR)
+	$(SPHINXBUILD) -b html -d $(CACHEDIR) $(ALLSPHINXOPTS) . $(BUILDDIR)
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)."
-        
+
+unused:        
+	set DJANGO_SETTINGS_MODULE=$(DJANGO_SETTINGS_MODULE); $(SPHINXBUILD) -b html -d $(CACHEDIR) $(ALLSPHINXOPTS) . $(BUILDDIR)
+
 autodoc:
 	#~ $(AUTODOC) t:\\hgwork\\lino -d autodoc/lino -s rst -n Lino
 	$(AUTODOC) t:\\hgwork\\dsbe -d autodoc/dsbe -s rst -n Lino-DSBE

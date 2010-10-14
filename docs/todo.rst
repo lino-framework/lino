@@ -8,17 +8,6 @@ Kurzfristig
 
 - Dokumentvorlagen machen  
 
-- NotesByPerson im Detail-Fenster einer Person sollte nur die wichtigen Ereignisse anzeigen 
-  (deren :attr:`notes.NoteType.important` eingeschaltet ist). 
-
-- Vielleicht auch eine grundlegendere Vorgehensweise: 
-  "Notizen" aufteilen in "Dokumente" und "Dienstleistungen". 
-  Dienstleistungen halten fest, wann ein Mitarbeiter (Benutzer) für eine Person gearbeitet hat. 
-
-- Lokale Dateinamen benutzerfreundlich als Notiz erfassen. 
-  Eventuell neues Feld `attached_file` statt `url`? 
-  Eine URL kann man jetzt schon durch DnD der Adresse vom Browserfenster in ein Textfeld kopieren.
-  
 - :doc:`/tickets/1` Im Detail der Personen sind manche Tabs anfangs nicht korrekt gelayoutet. 
   Dann muss man jeweile auf den Pin-Button oben rechts klicken (der die Seite mit Permalink 
   neu öffnet) um das korrekte Layout sehen zu können. 
@@ -143,15 +132,6 @@ Langfristig
 
 - Comboboxen auf Integerfeldern funktionieren nicht. Zeigen NaN als Text an.
 
-- Strings aus :data:`lino.modlib.fields.KNOWLEDGE_CHOICES` werden von :command:`django-admin makemessages` nicht gefunden, 
-  weil sie Teil des "Lino-Kernels" und keine direkte Django application sind.
-  Ebenso :mod:`lino.ui.extjs.ext_ui`, :mod:`lino.actions`, :mod:`lino.reports`, ...
-  Rausfinden, ob man das nicht doch irgendwie automatisieren kann.
-  Der Anfang ist gemacht in :srcref:`/Makefile`.
-  Siehe auch: 
-  :doc:`/blog/2010/1008`, 
-  :doc:`/topics/i18n`
-  
 - Der JS-Code, der ein Detail-Fenster definiert, wird für jeden Report zweimal generiert (detail und insert).
   Ein einziges Mal für alle Reports würde reichen.
   
