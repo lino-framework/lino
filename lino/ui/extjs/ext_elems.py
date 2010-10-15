@@ -12,6 +12,8 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+from cgi import escape
+
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
@@ -20,7 +22,7 @@ from django.conf import settings
 
 import lino
 
-from lino import reports, actions
+from lino import reports, actions, fields
 from lino.utils import constrain
 from lino.utils import jsgen
 from lino.utils.jsgen import py2js, Variable, Component, id2js, js_code
@@ -48,6 +50,11 @@ def a2btn(a):
       #~ url="/".join(("/ui",a.actor.app_label,a.actor._actor_name,a.name))
     )
       
+def py2html(obj,name):
+    for n in name.split('.'):
+        obj = getattr(obj,n,"N/A")
+    return escape(unicode(obj))
+    
 def before_row_edit(panel):
     l = []
     l.append("console.log('before_row_edit',record);")
@@ -60,6 +67,9 @@ def before_row_edit(panel):
             l.append("%s.on_master_changed();" % e.as_ext())
         elif isinstance(e,PictureElement):
             l.append("this.load_picture_to(%s,record);" % e.as_ext())
+        elif isinstance(e,HtmlBoxElement):
+            l.append("%s.items.get(0).getEl().update(record.data.%s);" % (e.as_ext(),e.field.name))
+            #~ l.append("this.load_htmlbox_to(%s,record);" % e.as_ext())
         elif isinstance(e,FieldElement):
             chooser = choosers.get_for_field(e.field)
             if chooser:
@@ -75,21 +85,6 @@ def before_row_edit(panel):
                         #~ l.append("%s.setContextValue(%r,this.ww.get_current_record().id)" % (e.ext_name,f.name))
     return js_code('function(record){%s}' % ('\n'.join(l)))
 
-
-
-
-class unused_GridFilters(Component):
-    ext_suffix = "_filters"
-    declare_type = jsgen.DECLARE_VAR
-    value_template = "new Ext.ux.grid.GridFilters(%s)"
-    
-    def __init__(self,name,**kw):
-        #~ assert isinstance(grid,GridElement)
-        #~ kw.update(encode='json')
-        kw.update(encode=True)
-        kw.update(local=False)
-        #~ kw.update(filters=[])
-        Component.__init__(self,name,**kw)
 
 
 
@@ -109,7 +104,6 @@ class GridColumn(Component):
         #~ self.value_template = editor.grid_column_template
         kw.update(self.editor.get_column_options())
         kw.update(sortable=True)
-        kw.update(editor=editor)
         kw.update(colIndex=index)
         kw.update(hidden=editor.hidden)
         if settings.USE_GRIDFILTERS and editor.filter_type:
@@ -119,6 +113,8 @@ class GridColumn(Component):
             if isinstance(editor.field,models.AutoField):
                 kw.update(renderer=js_code('Lino.id_renderer'))
             kw.update(editable=editor.editable)
+            if editor.editable:
+                kw.update(editor=editor)
         else:
             kw.update(editable=False)
         Component.__init__(self,editor.name,**kw)
@@ -175,12 +171,13 @@ class VisibleComponent(Component):
     def walk(self):
         yield self
         
+        
     def debug_lines(self):
-        sep = ","
-        cols = "name label __class__ labelAlign vertical width preferred_width height preferred_height flex".split()
-        yield sep.join(cols) 
+        sep = u"</td><td>"
+        cols = "ext_name name parent label __class__.__name__ labelAlign vertical width preferred_width height preferred_height flex".split()
+        yield '<tr><td>' + sep.join(cols) + '</td></tr>'
         for e in self.walk():
-            yield sep.join([str(getattr(e,n,"N/A")) for n in cols])
+            yield '<tr><td>'+sep.join([py2html(e,n) for n in cols]) +'</td></tr>'
             
     def has_field(self,fld):
         for de in self.walk():
@@ -392,6 +389,25 @@ class FieldElement(LayoutElement):
         kw.update(self.get_field_options())
         return kw
     
+class HtmlBoxElement(FieldElement):
+    ext_suffix = "_htmlbox"
+    declare_type = jsgen.DECLARE_VAR
+    #~ declare_type = jsgen.DECLARE_INLINE
+    #~ value_template = "new Ext.BoxComponent(%s)"
+    value_template = "new Ext.Panel(%s)"
+    vflex = True
+    
+    #~ def __init__(self,lh,name,action,**kw):
+        #~ kw.update(plugins=js_code('Lino.HtmlBoxPlugin'))
+        #~ LayoutElement.__init__(self,lh,name,**kw)
+        
+    def get_field_options(self,**kw):
+        kw.update(name=self.field.name)
+        kw.update(layout='fit')
+        kw.update(items=js_code("new Ext.BoxComponent()"))
+        if self.label:
+            kw.update(title=unicode(self.label))
+        return kw
         
         
 class TextFieldElement(FieldElement):
@@ -577,10 +593,12 @@ class BooleanFieldElement(FieldElement):
 
 #~ class DelegateFieldElement(FieldElement):
 
-class MethodElement(FieldElement):
+class unused_MethodElement(FieldElement):
     stored = True
     #~ editable = False
     filter_type = None
+    editable = False
+    ext_suffix = "_meth"
 
     def __init__(self,lh,name,meth,return_type,**kw):
         assert isinstance(lh,reports.LayoutHandle)
@@ -598,7 +616,7 @@ class MethodElement(FieldElement):
                   'get_field_options'):
                   #~ ): # ,'grid_column_template'):
             setattr(self,a,getattr(delegate,a))
-        self.editable = False
+        #~ self.editable = False
         
 
 class Container(LayoutElement):
@@ -1174,6 +1192,7 @@ class FormPanel(jsgen.Component):
 
 
 _field2elem = (
+    (fields.HtmlBox, HtmlBoxElement),
     (models.TextField, TextFieldElement),
     (models.CharField, CharFieldElement),
     (models.DateField, DateFieldElement),

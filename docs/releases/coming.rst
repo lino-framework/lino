@@ -4,6 +4,9 @@ Coming
 Changes
 -------
 
+- :mod:`lino.modlib.links` has been reactivated.
+
+
 Upgrade instructions
 --------------------
 

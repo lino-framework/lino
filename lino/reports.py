@@ -14,6 +14,7 @@
 
 import os
 import traceback
+import codecs
 #import logging ; logger = logging.getLogger('lino.reports')
 #~ import cPickle as pickle
 import pprint
@@ -887,7 +888,8 @@ class BaseLayout:
     collapsible_elements  = {}
     filename = None
     cd = None # ConfigDir
-        
+    write_debug_info = False
+    
     def __init__(self,desc,cd=None,filename=None):
         if filename is not None:
             assert not os.sep in filename
@@ -1000,7 +1002,9 @@ class LayoutHandle:
         #~ self.height = self.layout.height or self._main.height
         self.width = self._main.width
         self.height = self._main.height
-        #~ self.write_debug_info()
+        if True:
+            self.write_debug_info()
+        
         #~ self.default_button = None
         #~ if layout.default_button is not None:
             #~ for e in self._buttons:
@@ -1040,9 +1044,13 @@ class LayoutHandle:
         return HiddenField(self,field)
         
     def write_debug_info(self):
-        if False:
-            f = file(self.name+".debug.csv","w")
-            f.write("\n".join(self._main.debug_lines()))
+        if self.layout.filename and self.layout.write_debug_info:
+            filename = "%s.debug.html" % self.layout.filename
+            lino.log.info("Writing %s..." % filename)
+            f = codecs.open(filename,"w",encoding='utf-8')
+            f.write('''<html><body><table border="1">''')
+            f.write(u"\n".join(self._main.debug_lines()))
+            f.write('''</table></body></html>''')
             f.close()
         
     def get_title(self,ar):

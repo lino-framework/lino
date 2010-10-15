@@ -78,6 +78,7 @@ class Contact(models.Model):
         
     def address(self):
         return self.as_address(', ')
+    address.return_type = models.TextField()
         
     def as_address(self,linesep="\n<br/>"):
         lines = [self.name]

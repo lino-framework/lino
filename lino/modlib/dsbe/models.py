@@ -265,7 +265,8 @@ class Person(Contact,mixins.Printable):
     def links_by_owner(self):
         s = ', '.join([u'<a href="%s">%s</a>' % (lnk.url,lnk.name) for lnk in links.LinksByOwner.request(master_instance=self)])
         return s
-    links_by_owner.return_type = models.TextField(verbose_name=_("Links"))
+    #~ links_by_owner.return_type = models.TextField(verbose_name=_("Links"))
+    links_by_owner.return_type = fields.HtmlBox(verbose_name=_("Links"))
     
 
 

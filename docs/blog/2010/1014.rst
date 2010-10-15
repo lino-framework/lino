@@ -31,8 +31,8 @@ und dieses Feature ist seit Längerem nicht benutzt.
 
 - lino.management.commands.initdb hat jetzt eine Option `--noinput`
 
-- GenericForeignKey-Felder werden in einer Grid nicht korrekt angezeigt.
-  Man darf deshalb nicht (explizit) `owner` als data element in einem Layout angeben.
+- GenericForeignKey-Felder werden in einer Grid nicht korrekt angezeigt,
+  deshalb darf man nicht (explizit) `owner` als data element in einem Layout angeben.
   
 - Neues virtuelles Feld `Person.links_by_owner` gibt einen 
   formatierten String mit den anklickbaren Links zurück.
@@ -43,7 +43,7 @@ Kleinigkeiten en passant:
   sondern des PROJECT_DIR sein. 
   Im Gegensatz zum DATA_DIR sollte es mit in den source code repository.
 
-- Für `Person.links_by_owner` habe ich die Klassenmethode :meth:`lino.reports.Report.request` noch erweitern müssen, 
+- Für :meth:`contacts.Person.links_by_owner` habe ich die Klassenmethode :meth:`lino.reports.Report.request` noch erweitern müssen, 
   was zu einigen internen Aufräumarbeiten führte.  
 
 - Der Test `if report.can_view.passes(request.user)` stand ja bisher doppelt in ext_ui. 

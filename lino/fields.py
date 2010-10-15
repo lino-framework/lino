@@ -127,3 +127,11 @@ class QuantityField(models.DecimalField):
         fld.widget.attrs['style'] = "text-align:right;"
         return fld
         
+
+class HtmlBox:
+    editable = False
+    choices = None
+    blank = True
+    def __init__(self,verbose_name=None):
+        self.verbose_name = verbose_name
+        

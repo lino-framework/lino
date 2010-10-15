@@ -3,5 +3,5 @@
 
 main = 
     #dsbe.StudiesByPerson
-    notes.NotesByPerson links_by_owner:20
-    #links.LinksByOwner
+    notes.NotesByPerson #links_by_owner:20
+    links.LinksByOwner

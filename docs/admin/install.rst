@@ -6,10 +6,6 @@ Don't hesitate to contact me if you get stucked.
 
 WARNING: Don't apply the instructions on this page without understanding what you are doing!
 
-Note: The strings `LINO_APP` on this page are to be replaced by either `dsbe` or `igen`, 
-depending on which of the :doc:`Lino demo applications </demos>` you chose to use as template.
-Currently you should opt for 'dsbe' because that's the one I'm working on.
-
 Software prerequisites
 ----------------------
 

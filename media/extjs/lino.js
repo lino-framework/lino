@@ -877,6 +877,10 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     Ext.Ajax.request(a);
     win.show();
   },
+  //~ load_htmlbox_to : function(cmp,record) {
+      //~ console.log('Lino.load_htmlbox_to()',cmp,record);
+      //~ cmp.getEl().update(record.data[cmp.name]);
+  //~ },
   load_picture_to : function(cmp,record) {
     //~ console.log('FormPanel.load_picture_to()',record);
     if (record)

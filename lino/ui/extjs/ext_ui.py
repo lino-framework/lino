@@ -15,6 +15,7 @@
 
 import os
 import cgi
+import time
 #import traceback
 import cPickle as pickle
 from urllib import urlencode
@@ -185,14 +186,16 @@ class ExtUI(base.UI):
             # create a horizontal panel with 2 comboboxes
             return lh.desc2elem(panelclass,name,de.ct_field + ' ' + de.fk_field,**kw)
             #~ return ext_elems.VirtualFieldElement(lh,name,de,**kw)
-        if callable(de):
-            return self.create_meth_element(lh,name,de,**kw)
         if isinstance(de,reports.Report):
             e = ext_elems.SlaveGridElement(lh,name,de,**kw)
             #~ e = ext_elems.GridElement(lh,name,de.get_handle(self),**kw)
             lh.slave_grids.append(e)
             return e
             #~ return ext_elems.GridElementBox(lh,e)
+        if callable(de):
+            rt = getattr(de,'return_type',None)
+            if rt is not None:
+                return self.create_meth_element(lh,name,de,rt,**kw)
         #~ if isinstance(de,forms.Input):
             #~ e = ext_elems.InputElement(lh,de,**kw)
             #~ if not lh.start_focus:
@@ -222,15 +225,31 @@ class ExtUI(base.UI):
         #~ self._buttons.append(e)
         #~ return e
           
-    def create_meth_element(self,lh,name,meth,**kw):
-        rt = getattr(meth,'return_type',None)
-        if rt is None:
-            rt = models.TextField()
-        e = ext_elems.MethodElement(lh,name,meth,rt,**kw)
+    def create_meth_element(self,lh,name,meth,rt,**kw):
+        rt.name = name
+        rt._return_type_for_method = meth
+        kw.update(editable=False)
+        return self.create_field_element(lh,rt,**kw)
+        #~ e = lh.main_class.field2elem(lh,return_type,**kw)
+        #~ assert e.field is not None,"e.field is None for %s.%s" % (lh.layout,name)
+        #~ lh._store_fields.append(e.field)
+        #~ return e
+            
+        #~ if rt is None:
+            #~ rt = models.TextField()
+            
+        #~ e = ext_elems.MethodElement(lh,name,meth,rt,**kw)
+        #~ assert e.field is not None,"e.field is None for %s.%s" % (lh.layout,name)
+        #~ lh._store_fields.append(e.field)
+        #~ return e
+          
+    def create_field_element(self,lh,field,**kw):
+        e = lh.main_class.field2elem(lh,field,**kw)
         assert e.field is not None,"e.field is None for %s.%s" % (lh.layout,name)
         lh._store_fields.append(e.field)
         return e
-          
+        #return FieldElement(self,field,**kw)
+        
     #~ def create_virt_element(self,name,field,**kw):
         #~ e = self.ui.VirtualFieldElement(self,name,field,**kw)
         #~ return e
@@ -243,13 +262,6 @@ class ExtUI(base.UI):
     #~ def create_prop_element(self,lh,prop,**kw):
         #~ ...
       
-    def create_field_element(self,lh,field,**kw):
-        e = lh.main_class.field2elem(lh,field,**kw)
-        assert e.field is not None,"e.field is None for %s.%s" % (lh.layout,name)
-        lh._store_fields.append(e.field)
-        return e
-        #return FieldElement(self,field,**kw)
-        
 
 
     def main_panel_class(self,layout):
@@ -527,7 +539,7 @@ class ExtUI(base.UI):
                 rh.update_detail(tab,desc)
             except Exception,e:
                 return json_response_kw(success=False,message=unicode(e))
-            self.build_site_js()            
+            self.build_site_js()
             return json_response_kw(success=True)
             #detail_layout
       
@@ -743,13 +755,8 @@ class ExtUI(base.UI):
         #~ fn = r'c:\temp\dsbe.js'
         lino.log.info("Generating %s ...", fn)
         f = open(fn,'w')
-        f.write("""
-        // site.js --- 
-        // Don't edit. This file is generated at each server start.
-        """)
-        f.write("""
-        LANGUAGE_CHOICES = %s;
-        """ % py2js(list(LANGUAGE_CHOICES)))
+        f.write("""// site.js --- generated %s by Lino version %s.\n""" % (time.ctime(),lino.__version__))
+        f.write("LANGUAGE_CHOICES = %s;\n" % py2js(list(LANGUAGE_CHOICES)))
         for rpt in reports.master_reports + reports.slave_reports + reports.generic_slaves.values():
             rh = rpt.get_handle(self) # make sure that setup_handle is called (which adds the window_wrapper)
             f.write("Ext.namespace('Lino.%s')\n" % rpt)
@@ -1013,6 +1020,7 @@ class ExtUI(base.UI):
                     
             for a in h.get_actions():
                 a.window_wrapper = self.action_window_wrapper(a,h)
+                
             
     def source_dir(self):
         return os.path.abspath(os.path.dirname(__file__))

@@ -102,7 +102,7 @@ class WindowWrapper(ActionRenderer):
         #~ d.update(ls_data_url=self.ui.get_actor_url(self.action.actor))
         return d
         
-def lh2win(lh,**kw):
+def unused_lh2win(lh,**kw):
     #~ kw.update(height=300)
     #~ kw.update(width=400)
     if lh is not None:

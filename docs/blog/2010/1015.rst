@@ -1,0 +1,31 @@
+20101015
+========
+
+- New class :class:`lino.fields.HtmlBox` to be used as `return_type` for 
+  :meth:`lino.modlib.dsbe.models.Person.links_by_owner`.
+  
+- `:write_debug_info:` as a field in a .dtl file means that Lino 
+  writes a `.debug.html` file for this Layout.
+  
+  
+  
+- Tilt! Class :class:`ext_elems.MethodElement` becomes unused, and `lino.ui.extjs.ext_ui.ExtUI.create_meth_element` 
+  calls `create_field_element` (faking a Django database field that has the name of the method).
+  
+- Nächstes Problem war: wie aktualisiert man ein Panel? 
+  Wie kriege ich es hin, dass das von :meth:`contacts.Person.links_by_owner` 
+  zurückgegebene HTML-Fragment "schön" gerendert wird? 
+  Erster Versuch war::
+  
+    cmp..getEl().update(record.data[cmp.name])
+    
+  Aber der `verbose_name` soll ja als Titel des Panels erscheinen. 
+  Wenn ich aber selber das body-Element bearbeite, dann verschwinden auch 
+  Titel und/oder eventuelle toolbars des Panels. Die will ich ja behalten. 
+  Ich will sozusagen nur in den inneren Bereich des Panels schreiben.
+  Lösung:
+  
+    var cmp = new Ext.Panel({title: 'Links', items:new Ext.BoxComponent()});
+    ...
+    cmp.items.get(0).getEl().update(record.data[cmp.name])
+  

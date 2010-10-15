@@ -4,7 +4,10 @@ To-Do-Liste
 Kurzfristig
 -----------
 
-- `Person.links_by_owner` wird in der Grid zwar angezeigt, aber nicht im Detail.
+- :mod:`lino.modlib.links` : die Bookmarks sollten natürlich jetzt 
+  benutzerfreundlich (anklickbar) angezeigt werden. 
+  Und auch gar nicht in einer Grid, sondern lediglich als formatierter String.
+ `Person.links_by_owner` wird in der Grid zwar angezeigt, aber nicht im Detail.
 
 - Da ich die LinksByOwner jetzt nicht mehr als Grid anzeige, kann man freilich keine Links mehr hinzufügen...
 
@@ -172,16 +175,18 @@ Langfristig
 - :doc:`/tickets/6`.
 
 - Generic Foreign Keys: 
-  - In einem Detail sind ist owner_type ja schon eine ComboBox, aber der Owner könnte doch eigentlich auch eine sein. 
-    Müsste einen automatischen chooser kriegen.
-  - In einer Grid müssten zwei Kolonnen erzeugt werden (statt einer Kolonne, die dann nicht korrekt angezeigt wird)
+  - In einem Detail sind ist owner_type ja schon eine ComboBox, 
+    aber der Owner könnte doch eigentlich auch eine sein. 
+    Müsste er einen automatischen chooser kriegen.
+  - Wenn ein GFK explizit in Report.column_names angegeben sit, 
+    müssten zwei Kolonnen erzeugt werden 
+    (statt momentan einer Kolonne, die dann nicht korrekt angezeigt wird)
   
-- :mod:`lino.modlib.links` : die Bookmarks sollten natürlich jetzt benutzerfreundlich (anklickbar) angezeigt werden. 
-  Und auch gar nicht in einer Grid, sondern lediglich als formatierter String.
-
 - Foreign keys sollten im Detail-Fenster einen Button neben sich haben, mit dem man per permalink 
   auf die foreign row springen kann.
   
 - Google-Projekte lino-apps, lino-igen und Lino-DSBE löschen.
 
- 
+- Main-Grids könnten mit `autoHeight=true` arbeiten. Dadurch würde der zweite Ajax-call unnötig.
+  autoHeight resizes the height to show all records. 
+  `limit` (Anzahl Records pro Seite) müsste dann freilich in die GC mit reinkommen.
