@@ -68,8 +68,8 @@ def before_row_edit(panel):
         elif isinstance(e,PictureElement):
             l.append("this.load_picture_to(%s,record);" % e.as_ext())
         elif isinstance(e,HtmlBoxElement):
-            l.append("%s.items.get(0).getEl().update(record.data.%s);" % (e.as_ext(),e.field.name))
-            #~ l.append("this.load_htmlbox_to(%s,record);" % e.as_ext())
+            #~ l.append("%s.items.get(0).getEl().update(record.data.%s);" % (e.as_ext(),e.field.name))
+            l.append("this.load_htmlbox_to(%s,record);" % e.as_ext())
         elif isinstance(e,FieldElement):
             chooser = choosers.get_for_field(e.field)
             if chooser:
@@ -395,7 +395,9 @@ class HtmlBoxElement(FieldElement):
     #~ declare_type = jsgen.DECLARE_INLINE
     #~ value_template = "new Ext.BoxComponent(%s)"
     value_template = "new Ext.Panel(%s)"
+    preferred_height = 5
     vflex = True
+    filter_type = 'string'
     
     #~ def __init__(self,lh,name,action,**kw):
         #~ kw.update(plugins=js_code('Lino.HtmlBoxPlugin'))

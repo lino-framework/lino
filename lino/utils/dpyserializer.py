@@ -22,6 +22,7 @@ import os
 import imp
 
 from django.core.serializers import base
+from django.core.exceptions import ValidationError
 
 
 SUFFIX = '.dpy'
@@ -35,6 +36,11 @@ class FakeDeserializedObject(base.DeserializedObject):
         self.object = obj
 
     def save(self, *args,**kw):
+        if True:
+            try:
+                self.object.full_clean()
+            except ValidationError,e:
+                raise Exception("Cannot save %s : %s" % (self.object,e))
         self.object.save(*args,**kw)
 
 

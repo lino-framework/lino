@@ -8,9 +8,8 @@ Auch stelle ich mir die Frage, ob es nicht besser ist, erst beim Verlassen des R
 Fallbeispiel: ich gehe nach http://127.0.0.1:8000/api/notes/NoteTypes?fmt=grid und fülle 
 dort die drei Felder einer neuen Notizart aus:
 
-.. image:: http://lino.googlecode.com/hg/screenshots/20100707.jpg
-   :width: 80%
-   :target: http://lino.googlecode.com/hg/screenshots/20100707.jpg
+.. image:: 20100707.jpg
+   :scale: 60
  
 Nach jedem Feld schickt er ein POST ab, das der Server bei den ersten beiden Feldern 
 korrekterweise mit einer Fehlermeldung 

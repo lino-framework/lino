@@ -30,7 +30,7 @@ class Link(models.Model):
     owner_type = models.ForeignKey(ContentType)
     owner_id = models.PositiveIntegerField(verbose_name=_('Owner'))
     owner = generic.GenericForeignKey('owner_type', 'owner_id')
-    url = models.URLField()
+    url = models.URLField(verify_exists=False)
     name = models.CharField(max_length=200,blank=True,null=True,
         verbose_name=_('Name'))
     
@@ -54,6 +54,13 @@ class LinksByOwner(Links):
     fk_name = 'owner'
     column_names = "url date name user *"
     order_by = "date"
+    show_slave_grid = False
+    
+    def summary_row(self,rr,obj):
+        if obj.url:
+            return u'<a href="%s" target="_blank">%s</a>' % (obj.url,unicode(obj))
+        return reports.Report.summary_row(self,rr,obj)
+    
   
-def links_by_owner(owner):
-    return Link.objects.filter(owner=owner)
+#~ def links_by_owner(owner):
+    #~ return Link.objects.filter(owner=owner)

@@ -66,8 +66,9 @@ def objects():
     kettenis = City.objects.get(name__exact='Kettenis')
     vigala = City.objects.get(name__exact='Vigala')
     
-    luc = person(first_name="Luc",last_name="Saffre",city=vigala,country='EE',card_number='122')
-    yield luc
+    #~ luc = person(first_name="Luc",last_name="Saffre",city=vigala,country='EE',card_number='122')
+    #~ yield luc
+    luc = Person.objects.get(name__exact="Saffre Luc")
     yield person(first_name="Ly",last_name="Rumma",city=vigala,country='EE',card_number='123')
     yield person(first_name="Mari",last_name="Saffre",city=vigala,country='EE',card_number='124')
     yield person(first_name="Iiris",last_name="Saffre",city=vigala,country='EE',card_number='125')
@@ -118,15 +119,15 @@ def objects():
     yield study(person=luc,type=schule,content=abi,started='197409',stopped='198606')
     yield study(person=gerd,type=schule,content=abi,started='197409',stopped='198606')
 
-    yield langk(person=luc,language='de',written=100,spoken=100)
-    yield langk(person=gerd,language='de',written=100,spoken=100)
+    yield langk(person=luc,language='de',written='4',spoken='4')
+    yield langk(person=gerd,language='de',written='4',spoken='4')
     
-    yield langk(person=luc,language='fr',written=100,spoken=90)
-    yield langk(person=gerd,language='fr',written=100,spoken=90)
+    yield langk(person=luc,language='fr',written='4',spoken='3')
+    yield langk(person=gerd,language='fr',written='4',spoken='3')
     
-    yield langk(person=luc,language='en',written=100,spoken=80)
-    yield langk(person=gerd,language='en',written=100,spoken=80)
+    yield langk(person=luc,language='en',written='4',spoken='3')
+    yield langk(person=gerd,language='en',written='4',spoken='3')
     
-    yield langk(person=luc,language='et',written=80,spoken=80)
-    yield langk(person=gerd,language='nl',written=80,spoken=80)
+    yield langk(person=luc,language='et',written='3',spoken='3')
+    yield langk(person=gerd,language='nl',written='3',spoken='3')
     

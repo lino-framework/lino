@@ -16,6 +16,7 @@
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.core.exceptions import ValidationError
 
 from south.modelsinspector import add_introspection_rules
 add_introspection_rules([], ["^lino\.modlib\.fields\.KnowledgeField"])
@@ -36,14 +37,6 @@ LANGUAGE_CHOICES = [ (k,_(v)) for k,v in settings.LANGUAGES ]
   #~ ('et', _("Estonian")),
 #~ )
 
-KNOWLEDGE_CHOICES = (
-  ('0', _("not at all")), # - gar nicht
-  ('1', _("a bit")), #  - ein bisschen
-  ('2', _("moderate")), #  - mittelmäßig
-  ('3', _("quite well")), #  - gut
-  ('4', _("very well")), #  - sehr gut
-)
-
 class LanguageField(models.CharField):
     def __init__(self, *args, **kw):
         defaults = dict(
@@ -55,6 +48,22 @@ class LanguageField(models.CharField):
         defaults.update(kw)
         models.CharField.__init__(self,*args, **defaults)
 
+KNOWLEDGE_CHOICES = (
+  ('0', _("not at all")), # - gar nicht
+  ('1', _("a bit")), #  - ein bisschen
+  ('2', _("moderate")), #  - mittelmäßig
+  ('3', _("quite well")), #  - gut
+  ('4', _("very well")), #  - sehr gut
+)
+
+#~ KNOWLEDGE_CHOICES_VALID = [x[0] for x in KNOWLEDGE_CHOICES]
+  
+def unused_validate_knowledge(cls,value):
+    if value in KNOWLEDGE_CHOICES_VALID: return True
+    raise ValidationError(_("Invalid value %(value). Must be one of (%(values)s)") % 
+      dict(value=value,
+        values=', '.join(KNOWLEDGE_CHOICES_VALID)))
+    
 #~ class KnowledgeField(models.SmallIntegerField):
 class KnowledgeField(models.CharField):
     def __init__(self, *args, **kw):
@@ -62,11 +71,14 @@ class KnowledgeField(models.CharField):
             choices=KNOWLEDGE_CHOICES,
             max_length=1,
             blank=True,null=True,
+            #~ validators=[validate_knowledge],
             #~ limit_to_choices=True,
             )
         defaults.update(kw)
         #~ models.SmallIntegerField.__init__(self,*args, **defaults)
         models.CharField.__init__(self,*args, **defaults)
+    
+        
   
 class PercentageField(models.SmallIntegerField):
     def __init__(self, *args, **kw):

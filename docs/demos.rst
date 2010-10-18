@@ -20,7 +20,7 @@ Be prepared to see things not working as expected. Keep in mind that Lino is sti
   A tool for social assistants that  
   help receivers of public aid to 
   find a suitable job or education.
-  `Try it <http://dsbe-demo.saffre-rumma.ee>`_
+  `Try it <http://dsbe-demo.saffre-rumma.ee>`__
 
 :doc:`iGen </igen/index>`
   An accounting tool focussed on     
@@ -28,7 +28,7 @@ Be prepared to see things not working as expected. Keep in mind that Lino is sti
   payments), and especially on       
   automatically generating recursive 
   invoices.
-  `Try it <http://igen-demo.saffre-rumma.ee>`_ (currently :doc:`broken </tickets/6>`)
+  `Try it <http://igen-demo.saffre-rumma.ee>`__ (currently :doc:`broken </tickets/taken/6>`)
 
 
 .. toctree::

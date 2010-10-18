@@ -224,16 +224,39 @@ def setup(app):
       indextemplate='pair: %s; report')
     #app.connect('build-finished', handle_finished)
     
+    app.connect('autodoc-skip-member',autodoc_skip_member)
+
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
+
+def autodoc_skip_member(app, what, name, obj, skip, options):
+    if name != '__builtins__':
+        #~ print 'autodoc_skip_member', what, repr(name), repr(obj)
+    
+        if what == 'class':
+            if name.endswith('MultipleObjectsReturned'):
+                return True
+            if name.endswith('DoesNotExist'):
+                return True
+                
+            #~ if isinstance(obj,ObjectDoesNotExist) \
+              #~ or isinstance(obj,MultipleObjectsReturned): 
+                #~ return True
+        
+    #~ if what == 'exception': 
+        #~ print 'autodoc_skip_member',what, repr(name), repr(obj), skip
+        #~ return True
+    
     
 extlinks = {
   'issue': ('http://code.google.com/p/lino/issues/detail?id=%s', 'issue '),
   'srcref': ('http://code.google.com/p/lino/source/browse%s', 'file '),
   'extjs': ('http://www.sencha.com/deploy/dev/docs/?class=%s', ''),
   'extux': ('http://extjs-ux.org/ext-docs/?class=%s', ''),
-  'igen_src': ('http://code.google.com/p/lino-igen/source/browse%s', 'file '),
-  'dsbe_src': ('http://code.google.com/p/lino-dsbe/source/browse%s', 'file '),
+  #~ 'igen_src': ('http://code.google.com/p/lino-igen/source/browse%s', 'file '),
+  #~ 'dsbe_src': ('http://code.google.com/p/lino-dsbe/source/browse%s', 'file '),
   'djangoticket': ('http://code.djangoproject.com/ticket/%s', 'Django ticket #'),
 }
-
     
-intersphinx_mapping = {'dsbe': ('http://dsbe.saffre-rumma.ee', 'http://dsbe.saffre-rumma.ee/objects.inv')}
+#~ intersphinx_mapping = {'dsbe': ('http://dsbe.saffre-rumma.ee', 'http://dsbe.saffre-rumma.ee/objects.inv')}
+
+

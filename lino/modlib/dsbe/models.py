@@ -12,6 +12,27 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+**Overview**
+
+  A :class:`Contact` is either a :class:`Person` or a :class:`Company`.
+
+  The :class:`Activity` of a :class:`Person` or :class:`Company` 
+  indicates in what professional area they are active.
+
+  :class:`Coaching` is when a :class:`auth.User` has been designated responsible 
+  for a :class:`Person`. There may be more than one responsible user per person, 
+  each one having a different :class:`CoachingType`.
+
+  For each :class:`Person` we keep a record of :class:`Exclusions <Exclusion>` 
+  (each with an optional :class:`ExclusionType`).
+
+  For each :class:`Person` we keep a record of her :class:`LanguageKnowledge`.
+
+  ...
+
+"""
+
 from django.db import models
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
@@ -59,7 +80,6 @@ RESIDENCE_TYPE_CHOICES = (
 
 #~ class PersonPicture(Action)
 class Contact(contacts.Contact):
-    
     class Meta:
         app_label = 'contacts'
         abstract = True
@@ -97,8 +117,10 @@ class Contact(contacts.Contact):
 
 class Person(Contact,mixins.Printable):
     """
-    Overrides :class:`contacts.Person`.
+    Implements :class:`contacts.Person`, but cannot inherit it directly 
+    (see :doc:`/tickets/7`).
     """
+    
     class Meta:
         app_label = 'contacts'
         
@@ -250,23 +272,23 @@ class Person(Contact,mixins.Printable):
         return True
     is_illiterate.return_type = models.BooleanField(verbose_name=_("illiterate"))
     
-    def language_knowledge(self):
-        l = []
-        for kn in self.languageknowledge_set.all():
-            if kn.spoken > '1' and kn.written > '1':
-                l.append(_(u"%s (s/w)") % kn.language)
-            elif kn.spoken > '1':
-                l.append(_(u"%s (s)")% kn.language)
-            elif kn.written > '1':
-                l.append(_(u"%s (w)")% kn.language)
-        return u", ".join(l)
-    language_knowledge.return_type = models.TextField(verbose_name=_("Language knowledge"))
+    #~ def language_knowledge(self):
+        #~ l = []
+        #~ for kn in self.languageknowledge_set.all():
+            #~ if kn.spoken > '1' and kn.written > '1':
+                #~ l.append(_(u"%s (s/w)") % kn.language)
+            #~ elif kn.spoken > '1':
+                #~ l.append(_(u"%s (s)")% kn.language)
+            #~ elif kn.written > '1':
+                #~ l.append(_(u"%s (w)")% kn.language)
+        #~ return u", ".join(l)
+    #~ language_knowledge.return_type = models.TextField(verbose_name=_("Language knowledge"))
     
-    def links_by_owner(self):
-        s = ', '.join([u'<a href="%s">%s</a>' % (lnk.url,lnk.name) for lnk in links.LinksByOwner.request(master_instance=self)])
-        return s
-    #~ links_by_owner.return_type = models.TextField(verbose_name=_("Links"))
-    links_by_owner.return_type = fields.HtmlBox(verbose_name=_("Links"))
+    #~ def links_by_owner(self):
+        #~ "Generate the content of the 'Links' panel"
+        #~ s = ', '.join([u'<a href="%s">%s</a>' % (lnk.url,lnk.name) for lnk in links.LinksByOwner.request(master_instance=self)])
+        #~ return s
+    #~ links_by_owner.return_type = fields.HtmlBox(verbose_name=_("Links"))
     
 
 
@@ -285,7 +307,8 @@ class Persons(contacts.Persons):
     can_view = perms.is_authenticated
     app_label = 'contacts'
     #~ page_layouts = (PersonDetail,)
-    column_names = "name city links_by_owner * language_knowledge"
+    column_names = "name city dsbe.LanguageKnowledgesByPerson *"
+    #~ column_names = "name city links.LinksByOwner language_knowledge"
     #~ column_names = "name  city * language_knowledge"
     #~ column_names = "name city dsbe.LanguageKnowledgesByPerson" # dsbe.StudiesByPerson dsbe.ExclusionsByPerson"
 
@@ -302,12 +325,17 @@ class PersonsByNationality(Persons):
     column_names = "city addr1 name country language"
 
 
-
 #~ class Persons2(contacts.Persons):
     #~ pass
               
 #~ class Company(Contact,contacts.Company):
 class Company(Contact):
+  
+    """
+    Implements :class:`contacts.Company`, but cannot inherit it directly 
+    (see :doc:`/tickets/7`).
+    """
+    
     class Meta:
         app_label = 'contacts'
     vat_id = models.CharField(max_length=200,blank=True)
@@ -465,6 +493,17 @@ class LanguageKnowledge(models.Model):
     spoken = fields.KnowledgeField(verbose_name=_("spoken"))
     written = fields.KnowledgeField(verbose_name=_("written"))
     
+    def __unicode__(self):
+        if self.spoken > '1' and self.written > '1':
+            return _(u"%s (s/w)") % self.language
+        elif self.spoken > '1':
+            return _(u"%s (s)") % self.language
+        elif self.written > '1':
+            return _(u"%s (w)") % self.language
+        else:
+            return unicode(self.language)
+      
+    
 class LanguageKnowledgesByPerson(reports.Report):
     model = LanguageKnowledge
     fk_name = 'person'
@@ -510,7 +549,7 @@ class Activities(reports.Report):
 # EXCLUSION TYPES (Sperrgründe)
 #
 class ExclusionType(models.Model):
-    name = models.CharField(max_length=20)
+    name = models.CharField(max_length=200)
     
     def __unicode__(self):
         return unicode(self.name)
@@ -548,7 +587,7 @@ class ExclusionsByPerson(Exclusions):
 # COACHING TYPES 
 #
 class CoachingType(models.Model):
-    name = models.CharField(max_length=20)
+    name = models.CharField(max_length=200)
     
     def __unicode__(self):
         return unicode(self.name)

@@ -1,0 +1,67 @@
+20101018
+========
+
+Heute feiern wir meinen Namenspatron, den
+`Heiligen Lukas <den http://de.wikipedia.org/wiki/Lukas_(Evangelist)>`_.
+
+Ich bin weiter mit dem neuen Feature dran, das ich "Report-Panels" nennen könnte. 
+Es geht darum, dass ein Slave-Report in einem Detail-Fenster nicht unbedingt 
+nur als Grid dargestellt werden soll, sondern dass manchmal stattdessen eine 
+zusammenfassende konfigurierbares HTML-Fragment nützlicher ist.
+Erstes konkretes Anwendungsbeispiel ist LinksByOwner, also die "Links pro Person", 
+die im DSBE dazu benutzn werden, um externe (eingescannte) Dokumente zu verwalten.
+
+14 Uhr: Hurra, es funktioniert! LinksByOwner kann ich jetzt sowohl als Kolonne einer Grid 
+oder als Element in einem Detail verwenden, und in beiden Fällen wird eine Liste 
+der Links im Stil 
+``<a href="<URL>"><lnk.name></a><br>...`` angezeigt. Und zwar ohne, 
+dass ich im Modell oder im Report des Masters (also hier 
+:class:`Person <lino.modlib.dsbe.models.Person>`) etwas sagen muss. 
+Einfach weil :attr:`links.LinksByOwner.slave_as_grid` auf `False` steht.
+
+Das Layout-Problem :doc:`/tickets/1` "funktioniert" leider auch bei HtmlBoxen. 
+Also im Detail einer Person muss man im Notizen-Tab zunächst auf den Permalink 
+klicken, damit die Seite (diesmal richtig) neu geladen wird.
+  
+Ein paar interne Änderungen waren noch nötig.
+Zum Beispiel :func:`lino.ui.extjs.ext_ui.elem2rec` und Co krigen 
+jetzt als ersten Parameter 
+einen ReportRequest und nicht mehr nur einen Django-Request.
+(ReportRequest und/oder ViewReportRequest 
+sind sowieso vielleicht 
+ein Fall für `Django-Middleware <http://docs.djangoproject.com/en/dev/topics/http/middleware/>`_,
+aber das kommt in die :doc:`/todo`).
+
+Wohin will man eigentlich, wenn man auf so einen Link klickt? 
+Im Fall von :class:`links.LinksByOwner` möchte man ja auf die 
+angewiesene externe Seite springen. 
+Aber das Standardverhalten ist, dass man auf die Detail-Seite kommt.   
+Das wird in :meth:`lino.reports.Report.summary_row` 
+definiert.
+
+Die Methode `Person.language_knowledge` ist jetzt nicht mehr nötig, 
+stattdessen definieren wir 
+:meth:`lino.modlib.dsbe.models.LanguageKnowledge.__unicode__`
+
+N.B.: :attr:`lino.modlib.dsbe.models.LanguageKnowledgesByPerson.slave_as_grid` 
+muss *nicht* auf `False` stehen, weil wir diesen Report in der Detail-Ansicht 
+ja als Grid haben wollen. 
+Das tolle Neue ist: wenn ein Report in Report.column_names genannt wird, 
+dann erscheint automatisch dieser summary
+:meth:`lino.reports.Report.slave_as_summary_meth` 
+
+In der Demo-Datenbank waren zwei Personen "Luc Saffre". Behoben.
+
+Die Demo-fixture für dsbe legte noch Integer-Werte für LanguageKnowledges an.
+Jetzt ruft dpyserializer auch :meth:`django.db.Model.full_clean` auf, 
+um so etwas in Zukunft zu vermeiden. Dabei kamen gleich noch ein paar 
+weitere kleine Bugs dieser Art zu Tage.
+:attr:`links.Link.url` ist jetzt mit `verify_exists=False`. 
+Ich wusste nicht, dass das par défaut eingeschaltet ist.
+Denn sonst ist initdb deutlich langsamer, wenn die Validierung eingeschaltet ist.
+  
+18 Uhr. Feierabend.
+Ich bin zufrieden, obgleich ich das Gefühl habe, mit 
+einem siebenköpfigen Drachen zu kämpfen, dessen Köpfe 
+schneller nachwachsen als man sie abschlagen kann....
+

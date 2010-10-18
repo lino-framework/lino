@@ -63,7 +63,7 @@ Merke: der pk einer neu erstellten und noch nicht gespeicherten Instanz ist nich
 :class:`countries.Country` hat jetzt ein Detail-Layout, in dem der neue Report CitiesByCountry angezeigt wird. 
 
 
-:igen_src:`dsbe/dsbe/demo/load_tim.py` vergaß, das Feld :attr:`contacts.Contact.country` zu füllen. Behoben.
+:mod:`lino.modlib.dsbe.management.commands.load_tim` vergaß, das Feld :attr:`contacts.Contact.country` zu füllen. Behoben.
 
 Zwischendurch habe ich mich wieder nicht enthalten können, mit Sphinx zu spielen: Neuer Link "Show Source" im Fuß jeder Seite verweist auf den Quellcode der Dokumentation im Google-Repository. (Also die Sphinx-Option `html_copy_source <http://sphinx.pocoo.org/latest/config.html#confval-html_copy_source>`_ benutze ich nicht). Neuer Link "Online Link", der auf die Seite selber verweist (den brauche vor allem ich, um von der lokal generierten Doku auf die Online-Version zu springen).
 

@@ -167,7 +167,7 @@ class PersonsByCountry(Persons):
 
 class CompanyType(models.Model):
     #~ id = models.CharField(max_length=10,primary_key=True)
-    abbr = models.CharField(max_length=10,verbose_name=_("Abbreviation"))
+    abbr = models.CharField(max_length=30,verbose_name=_("Abbreviation"))
     name = models.CharField(max_length=200,verbose_name=_("Designation"))
     def __unicode__(self):
         return self.name

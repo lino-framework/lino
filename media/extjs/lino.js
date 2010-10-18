@@ -877,10 +877,12 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     Ext.Ajax.request(a);
     win.show();
   },
-  //~ load_htmlbox_to : function(cmp,record) {
-      //~ console.log('Lino.load_htmlbox_to()',cmp,record);
-      //~ cmp.getEl().update(record.data[cmp.name]);
-  //~ },
+  load_htmlbox_to : function(cmp,record) {
+    console.log('Lino.load_htmlbox_to()',cmp,record);
+    Lino.do_when_visible(cmp,function() {
+      cmp.items.get(0).getEl().update(record.data[cmp.name])
+    });
+  },
   load_picture_to : function(cmp,record) {
     //~ console.log('FormPanel.load_picture_to()',record);
     if (record)
@@ -899,6 +901,10 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     //~ f();
   }
 });
+
+Lino.foo = function () {
+  console.log(arguments);
+}
 
 Lino.action_handler = function (success) {
   return function (response) {

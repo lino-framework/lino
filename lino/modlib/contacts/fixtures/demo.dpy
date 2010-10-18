@@ -76,9 +76,10 @@ def objects():
     yield company(u'Auto École Verte','54000 ','Nancy',u'rue de Mon Désert','12')
     
     City = resolve_model('countries.City')
-    tallinn = City.objects.get(name__exact='Tallinn')
+    vigala = City.objects.get(name__exact='Vigala')
+    #~ tallinn = City.objects.get(name__exact='Tallinn')
     person = Instantiator('contacts.Person',"first_name last_name",
-                country='EE',language='et',city=tallinn,zip_code='10115').build
+                country='EE',language='et',city=vigala,zip_code='78003').build
     yield person(u'Luc',  u'Saffre')
     
     eupen = City.objects.get(name__exact='Eupen')

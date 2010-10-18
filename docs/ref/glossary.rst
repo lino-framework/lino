@@ -30,3 +30,6 @@ Glossary
       
   disabled fields
     Fields that the user cannot edit (read-only fields). 
+    
+  appy
+    http://appyframework.org/pod.html

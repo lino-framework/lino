@@ -38,6 +38,9 @@ class StoreField(object):
         options['name'] = field.name
         self.options = options
         
+    def __repr__(self):
+        return self.__class__.__name__ + ' ' + self.field.name
+        
     def as_js(self):
         return py2js(self.options)
         
@@ -51,7 +54,7 @@ class StoreField(object):
         try:
             d[self.field.name] = self.field.value_from_object(obj)
         except ValueError,e:
-            print obj.__class__, self.field.name, e
+            #~ print obj.__class__, self.field.name, e
             lino.log.exception(e)
 
     def form2obj(self,instance,post_data):
@@ -165,9 +168,12 @@ class DateStoreField(StoreField):
 class MethodStoreField(StoreField):
   
     def obj2json(self,request,obj,d):
-        meth = getattr(obj,self.field.name)
-        #lino.log.debug('MethodStoreField.obj2json() %s',self.field.name)
-        d[self.field.name] = meth()
+        #~ lino.log.debug('MethodStoreField.obj2json() %s',self.field.name)
+        #~ print 'ext_store.py 20101018', self.field.name
+        unbound_meth = self.field._return_type_for_method
+        d[self.field.name] = unbound_meth(obj)
+        #~ meth = getattr(obj,self.field.name)
+        #~ d[self.field.name] = meth()
         
     def get_from_form(self,instance,post_data):
         pass
@@ -176,6 +182,12 @@ class MethodStoreField(StoreField):
         pass
         #raise Exception("Cannot update a virtual field")
 
+#~ class SlaveSummaryField(MethodStoreField):
+  
+    #~ def obj2json(self,request,obj,d):
+        #~ meth = getattr(obj,self.field.name)
+        #~ #lino.log.debug('MethodStoreField.obj2json() %s',self.field.name)
+        #~ d[self.field.name] = self.slave_report.()
 
 class OneToOneStoreField(StoreField):
         
@@ -308,6 +320,8 @@ class Store(Component):
         if not self.pk in fields:
             fields.add(self.pk)
         self.fields = [ self.create_field(fld) for fld in fields ]
+        #~ if self.report.actor_id == 'contacts.Persons':
+            #~ print 'ext_store 20101017:\n', '\n'.join([str(f) for f in self.fields])
         if rh.report.disabled_fields:
             self.fields.append(DisabledFieldsStoreField(self))
         #~ self.fields.append(PropertiesStoreField)
@@ -318,6 +332,8 @@ class Store(Component):
         if meth is not None:
             # uh, this is tricky...
             return MethodStoreField(fld)
+        #~ if isinstance(fld,fields.HtmlBox):
+            #~ ...
         if isinstance(fld,models.ManyToManyField):
             return StoreField(fld)
         if isinstance(fld,models.OneToOneField):

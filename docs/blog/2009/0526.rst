@@ -57,7 +57,7 @@ This way of doing has unresolved issues:
 20090514
 --------
 
-- Worked on :igen_src:`/igen/igen/fixtures/demo.dpy`.
+- Worked on :srcref:`/lino/modlib/igen/fixtures/demo.dpy`.
 
 - Added :class:`igen.models.Contract`.
 

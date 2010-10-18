@@ -35,7 +35,7 @@ Also es war Utopie zu glauben, dass ich das traditionelle Browserverhalten "1 UR
 
 Eine relativ teure Erkenntnis: den "Seitensprung" über extjsu habe ich am :doc:`19.06. <0619>` begonnen und in diesen drei Wochen etwa 40 Stunden daran gearbeitet. Ich bereue das trotzdem kaum, denn das sind wichtige Entscheidungen und es besteht weiterhin kein trifftiger Grund, solche Entscheidungen übers Knie zu brechen.
 
-Ich sehe nun auch den nächsten Schritt: Ich muss meine Frage vom 01.06. (:doc:`/tickets/3`) fertig formulieren und falls nötig ins ExtJS-Forum posten.
+Ich sehe nun auch den nächsten Schritt: Ich muss meine Frage vom 01.06. (:doc:`/tickets/closed/3`) fertig formulieren und falls nötig ins ExtJS-Forum posten.
 
 Weil wir seit heute morgen weder Telefon noch Internet haben, kann ich nicht posten, deshalb habe ich selber gesucht... und gefunden!
 Das war ein einfacher Fall von RTFM. Hier die Auszüge aus der ExtJS-Doku, die die Antwort enthielten:
@@ -47,7 +47,7 @@ Ext.Component.add() :
 Ext.layout.BorderLayout:        
   The regions of a BorderLayout are fixed at render time and thereafter, its child Components may not be removed or added. To add/remove Components within a BorderLayout, have them wrapped by an additional Container which is directly managed by the BorderLayout.
   
-Also die Antwort auf :doc:`/tickets/3` steht in :srcref:`/extjs-showcases/20100711.html`.
+Also die Antwort auf :doc:`/tickets/closed/3` steht in :srcref:`/extjs-showcases/20100711.html`.
   
 Sonntag 23.15 Uhr: extjsw mit USE_WINDOWS=False hat funktioniert, mit zufriedenstellender Performance, und ich bin glücklich. 
 

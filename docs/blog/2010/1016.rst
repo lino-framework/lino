@@ -1,0 +1,14 @@
+20101016
+========
+
+
+.. currentmodule:: lino.modlib.dsbe.models
+
+- Umstrukturierung der Seite :doc:`/tickets/index`, weil ich in den Docstrings von 
+  :class:`Person` und :class:`Company`
+  auf ein öffentliches Problem verweisen will, und von Sphinx gewarnt werden will, 
+  wenn das Problem gelöst wurde und ich den Docstring nicht aktualisiere.
+  Und weil Ticket # 6 prompt schon in der `index.rst` fehlte.
+  Und weil ich die Seite :doc:`/tickets/index` 
+  zu einer zuverlässigen Übersicht machen will für potentielle Helfer.  
+  Ich rufe Sphinx jetzt mit `-W` auf.

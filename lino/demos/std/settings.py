@@ -151,7 +151,7 @@ TEMPLATE_DIRS = (
 )
 #print "baz", __file__
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
   'django.contrib.auth',
   'django.contrib.contenttypes',
   'django.contrib.sessions',
@@ -160,26 +160,26 @@ INSTALLED_APPS = (
   #~ 'django.contrib.databrowse',
   
   'lino',
-  'lino.demo',
   'lino.modlib.countries',
   'lino.modlib.contacts',
   'lino.modlib.products',
   'lino.modlib.projects',
   'lino.modlib.notes',
   
-  'lino.modlib.journals',
-  'lino.modlib.sales',
-  'lino.modlib.ledger',
-  'lino.modlib.finan',
-  'lino.modlib.dsbe',
+  #~ 'lino.modlib.journals',
+  #~ 'lino.modlib.sales',
+  #~ 'lino.modlib.ledger',
+  #~ 'lino.modlib.finan',
   
   #~ 'lino.modlib.properties',
   'lino.modlib.links',
-  'south', # http://south.aeracode.org
-)
+  'lino.modlib.dsbe',
+  #~ 'lino.modlib.igen',
+  #~ 'south', # http://south.aeracode.org
+]
 
 
-INSTALLED_APPS = []
+#~ INSTALLED_APPS = []
 
 
 

@@ -31,7 +31,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db.utils import DatabaseError
 # OperationalError
 from django.utils import simplejson
-from lino.modlib.tools import resolve_model
+from lino.tools import resolve_model
 from lino.modlib.contacts.utils import name2kw, street2kw, join_words
 
 from lino.utils import confirm
@@ -41,7 +41,7 @@ from lino.utils import confirm
 #~ from lino import lino_site
 #~ lino_site.setup()
 
-from dsbe.management.commands.initdb_tim import convert_sex, ADR_id, country2kw, pxs2person, is_company
+from lino.modlib.dsbe.management.commands.initdb_tim import convert_sex, ADR_id, country2kw, pxs2person, is_company
 
 Country = resolve_model('countries.Country')
 City = resolve_model('countries.City')

@@ -10,6 +10,14 @@ The :mod:`contacts` Module
 
 .. automodule:: lino.modlib.contacts
     :members:
-    :undoc-members:
     :show-inheritance:
     
+
+
+Subpackages
+-----------
+
+.. toctree::
+
+    lino.modlib.dsbe
+

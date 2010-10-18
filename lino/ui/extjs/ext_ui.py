@@ -40,7 +40,8 @@ from lino.utils import ucsv
 from lino.utils import mixins
 from lino.utils import choosers
 from lino import actions #, layouts #, commands
-from lino import reports        
+from lino import reports
+from lino import fields
 from lino.ui import base
 #~ from lino import diag
 #~ from lino import forms
@@ -97,44 +98,46 @@ def json_response(x):
     #lino.log.debug("json_response() -> %r", s)
     return HttpResponse(s, mimetype='text/html')
 
-def elem2rec1(request,rh,elem,**rec):
-    rec.update(data=rh.store.row2dict(request,elem))
+def elem2rec1(ar,rh,elem,**rec):
+    rec.update(data=rh.store.row2dict(ar,elem))
     return rec
       
-def elem2rec_detailed(request,rh,elem,**rec):
-    rec = elem2rec1(request,rh,elem,**rec)
+def elem2rec_detailed(ar,rh,elem,**rec):
+    rec = elem2rec1(ar,rh,elem,**rec)
     rec.update(id=elem.pk)
     rec.update(title=unicode(elem))
-    first = None
-    prev = None
-    next = None
-    last = None
     if rh.report.show_prev_next:
-      ar = ext_requests.ViewReportRequest(request,rh,rh.report.default_action)
-      recno = 0
-      if ar.total_count > 0:
-          first = ar.queryset[0]
-          last = ar.queryset.reverse()[0]
-          if first is not None: first = first.pk
-          if last is not None: last = last.pk
-          if ar.total_count > 200:
-              #~ TODO: check performance
-              pass
-          g = enumerate(ar.queryset) # a generator
-          try:
-              while True:
-                  index, item = g.next()
-                  if item == elem:
-                      if index > 0:
-                          prev = ar.queryset[index-1]
-                      recno = index + 1
-                      i,next = g.next()
-                      break
-          except StopIteration:
-              pass
-          if prev is not None: prev = prev.pk
-          if next is not None: next = next.pk
-      rec.update(navinfo=dict(first=first,prev=prev,next=next,last=last,recno=recno,msg="Row %d of %d" % (recno,ar.total_count)))
+        first = None
+        prev = None
+        next = None
+        last = None
+        #~ ar = ext_requests.ViewReportRequest(request,rh,rh.report.default_action)
+        recno = 0
+        if ar.total_count > 0:
+            first = ar.queryset[0]
+            last = ar.queryset.reverse()[0]
+            if first is not None: first = first.pk
+            if last is not None: last = last.pk
+            if ar.total_count > 200:
+                #~ TODO: check performance
+                pass
+            g = enumerate(ar.queryset) # a generator
+            try:
+                while True:
+                    index, item = g.next()
+                    if item == elem:
+                        if index > 0:
+                            prev = ar.queryset[index-1]
+                        recno = index + 1
+                        i,next = g.next()
+                        break
+            except StopIteration:
+                pass
+            if prev is not None: prev = prev.pk
+            if next is not None: next = next.pk
+        rec.update(navinfo=dict(
+            first=first,prev=prev,next=next,last=last,recno=recno,
+            msg="Row %d of %d" % (recno,ar.total_count)))
     return rec
             
     
@@ -187,11 +190,27 @@ class ExtUI(base.UI):
             return lh.desc2elem(panelclass,name,de.ct_field + ' ' + de.fk_field,**kw)
             #~ return ext_elems.VirtualFieldElement(lh,name,de,**kw)
         if isinstance(de,reports.Report):
-            e = ext_elems.SlaveGridElement(lh,name,de,**kw)
-            #~ e = ext_elems.GridElement(lh,name,de.get_handle(self),**kw)
-            lh.slave_grids.append(e)
-            return e
-            #~ return ext_elems.GridElementBox(lh,e)
+            if isinstance(lh.layout,reports.DetailLayout):
+                if de.show_slave_grid:
+                    e = ext_elems.SlaveGridElement(lh,name,de,**kw)
+                    #~ e = ext_elems.GridElement(lh,name,de.get_handle(self),**kw)
+                    #~ lh.slave_grids.append(e)
+                    return e
+                    #~ return ext_elems.GridElementBox(lh,e)
+                else:
+                    field = fields.HtmlBox(verbose_name=de.label)
+                    field.name = de._actor_name
+                    field._return_type_for_method = de.slave_as_summary_meth(self,'<br>')
+                    lh.add_store_field(field)
+                    e = ext_elems.HtmlBoxElement(lh,field,**kw)
+                    return e
+            else:
+                field = fields.HtmlBox(verbose_name=de.label)
+                field.name = de._actor_name
+                field._return_type_for_method = de.slave_as_summary_meth(self,', ')
+                lh.add_store_field(field)
+                e = ext_elems.HtmlBoxElement(lh,field,**kw)
+                return e
         if callable(de):
             rt = getattr(de,'return_type',None)
             if rt is not None:
@@ -224,12 +243,15 @@ class ExtUI(base.UI):
         #~ e = self.ui.ButtonElement(self,name,action,**kw)
         #~ self._buttons.append(e)
         #~ return e
-          
+        
     def create_meth_element(self,lh,name,meth,rt,**kw):
         rt.name = name
         rt._return_type_for_method = meth
         kw.update(editable=False)
-        return self.create_field_element(lh,rt,**kw)
+        e = self.create_field_element(lh,rt,**kw)
+        if lh.rh.report.actor_id == 'contacts.Persons':
+            print 'ext_ui.py create_meth_element',name,'-->',e
+        return e
         #~ e = lh.main_class.field2elem(lh,return_type,**kw)
         #~ assert e.field is not None,"e.field is None for %s.%s" % (lh.layout,name)
         #~ lh._store_fields.append(e.field)
@@ -246,7 +268,8 @@ class ExtUI(base.UI):
     def create_field_element(self,lh,field,**kw):
         e = lh.main_class.field2elem(lh,field,**kw)
         assert e.field is not None,"e.field is None for %s.%s" % (lh.layout,name)
-        lh._store_fields.append(e.field)
+        lh.add_store_field(e.field)
+          #~ lh._store_fields.append(e.field)
         return e
         #return FieldElement(self,field,**kw)
         
@@ -584,6 +607,7 @@ class ExtUI(base.UI):
         - POST : Create a new entry in the collection where the ID is assigned automatically by the collection. 
           The ID created is included as part of the data returned by this operation. 
         - DELETE : Delete the entire collection.
+        
         (Source: http://en.wikipedia.org/wiki/Restful)
         """
         rpt = actors.get_actor2(app_label,actor)
@@ -593,11 +617,6 @@ class ExtUI(base.UI):
             #~ msg = _("User %(user)s cannot view %(report)s.") % dict(user=request.user,report=rpt)
             #~ return http.HttpResponseForbidden()
         if request.method == 'POST':
-            """
-            Wikipedia:
-            Create a new entry in the collection where the ID is assigned automatically by the collection. 
-            The ID created is usually included as part of the data returned by this operation. 
-            """
             #~ data = rh.store.get_from_form(request.POST)
             #~ instance = ar.create_instance(**data)
             #~ ar = ext_requests.ViewReportRequest(request,rh,rh.report.list_action)
@@ -624,7 +643,7 @@ class ExtUI(base.UI):
                 if isinstance(a,actions.InsertRow):
                     ar = ext_requests.ViewReportRequest(request,rh,a)
                     elem = ar.create_instance()
-                    rec = elem2rec1(request,rh,elem,title=ar.get_title())
+                    rec = elem2rec1(ar,rh,elem,title=ar.get_title())
                     rec.update(phantom=True)
                     params = dict(data_record=rec)
                     kw.update(on_ready=['Lino.%s(undefined,%s);' % (a,py2js(params))])
@@ -683,6 +702,7 @@ class ExtUI(base.UI):
         PUT : Update the addressed member of the collection or create it with the specified ID. 
         POST : Treats the addressed member as a collection and creates a new subordinate of it. 
         DELETE : Delete the addressed member of the collection. 
+        
         (Source: http://en.wikipedia.org/wiki/Restful)
         """
         rpt = actors.get_actor2(app_label,actor)
@@ -691,8 +711,9 @@ class ExtUI(base.UI):
             #~ msg = "User %s cannot view %s." % (request.user,ah.report)
             #~ return http.HttpResponseForbidden()
         
+        ar = ext_requests.ViewReportRequest(request,ah,ah.report.default_action)
+        
         if pk == '-99999':
-            ar = ext_requests.ViewReportRequest(request,ah,ah.report.default_action)
             elem = ar.create_instance()
         else:
             try:
@@ -713,7 +734,7 @@ class ExtUI(base.UI):
             
         if request.method == 'GET':
             fmt = request.GET.get('fmt',None)
-            datarec = elem2rec_detailed(request,ah,elem)
+            datarec = elem2rec_detailed(ar,ah,elem)
             if pk == '-99999':
                 datarec.update(title=_("Insert into %s...") % ah.report.label)
             if fmt is None or fmt == 'json':
@@ -722,6 +743,7 @@ class ExtUI(base.UI):
             if a is not None:
                 if isinstance(a,actions.OpenWindowAction):
                     params = dict(data_record=datarec)
+                    params.update(base_params=self.request2kw(ar))
                     if a.window_wrapper.tabbed:
                         tab = request.GET.get('tab',None)
                         if tab is not None: 
@@ -886,25 +908,27 @@ class ExtUI(base.UI):
         return json_response(d)
         
 
-        
-    #~ def get_actor_url(self,actor,action_name,**kw):
-        #~ return build_url("/api",actor.app_label,actor._actor_name,action_name,**kw)
+    def unused_get_actor_url(self,rpt,*args,**kw):
+        return self.build_url("api",rpt.app_label,rpt._actor_name,*args,**kw)
 
-    def get_actor_url(self,actor,**kw):
-        return self.build_url("api",actor.app_label,actor._actor_name,**kw)
-
-    def unused_get_form_action_url(self,fh,action,**kw):
-        #~ a = btn.lh.datalink.actor
-        #~ a = action.actor
-        return self.build_url("form",fh.layout.app_label,fh.layout._actor_name,action.name,**kw)
-        
     def get_choices_url(self,fke,**kw):
         return self.build_url("choices",
             fke.lh.rh.report.app_label,
             fke.lh.rh.report._actor_name,
             fke.field.name,**kw)
         
-    def get_report_url(self,rh,master_instance=None,
+    def request2kw(self,rr,**kw):
+        if rr.master_instance is not None:
+            kw[ext_requests.URL_PARAM_MASTER_PK] = rr.master_instance.pk
+            mt = ContentType.objects.get_for_model(rr.master_instance.__class__).pk
+            kw[ext_requests.URL_PARAM_MASTER_TYPE] = mt
+        return kw
+        
+    def get_request_url(self,rr,*args,**kw):
+        kw = self.request2kw(rr,**kw)
+        return self.build_url('api',rr.report.app_label,rr.report._actor_name,*args,**kw)
+      
+    def unused_get_report_url(self,rh,master_instance=None,
             submit=False,grid_afteredit=False,grid_action=None,run=False,csv=False,**kw):
         #~ lino.log.debug("get_report_url(%s)", [rh.name,master_instance,
             #~ simple_list,submit,grid_afteredit,action,kw])
@@ -919,7 +943,8 @@ class ExtUI(base.UI):
         elif csv:
             url = "/csv/"
         else:
-            url = "/list/"
+            #~ url = "/list/"
+            url = "/api/"
         url += rh.report.app_label + "/" + rh.report._actor_name
         if grid_action:
             url += "/" + grid_action

@@ -1,4 +1,3 @@
-
 SITENAME               = lino
 #~ DJANGO_SETTINGS_MODULE = dsbe.demo.settings
 #~ DJANGO_SETTINGS_MODULE = lino.demos.std.settings
@@ -13,7 +12,8 @@ AUTODOC                = python l:\\snapshots\\sphinx-autopackage-script\\genera
 
 # You can set these variables from the command line.
 SPHINXOPTS    =
-SPHINXBUILD   = python l:\\snapshots\\sphinx\\sphinx-build.py
+#~ SPHINXBUILD   = python l:\\snapshots\\sphinx\\sphinx-build.py -W
+SPHINXBUILD   = python l:\\snapshots\\sphinx\\sphinx-build.py 
 PAPER         =
 
 # Internal variables.
@@ -45,10 +45,10 @@ html:
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)."
 
-unused:        
+unused_html:        
 	set DJANGO_SETTINGS_MODULE=$(DJANGO_SETTINGS_MODULE); $(SPHINXBUILD) -b html -d $(CACHEDIR) $(ALLSPHINXOPTS) . $(BUILDDIR)
 
-autodoc:
+unused_autodoc:
 	#~ $(AUTODOC) t:\\hgwork\\lino -d autodoc/lino -s rst -n Lino
 	$(AUTODOC) t:\\hgwork\\dsbe -d autodoc/dsbe -s rst -n Lino-DSBE
 	#~ $(AUTODOC) lino -d autodoc/lino -s rst -n Lino

@@ -23,9 +23,19 @@
   Wenn ich aber selber das body-Element bearbeite, dann verschwinden auch 
   Titel und/oder eventuelle toolbars des Panels. Die will ich ja behalten. 
   Ich will sozusagen nur in den inneren Bereich des Panels schreiben.
-  Lösung:
+  Lösung::
   
     var cmp = new Ext.Panel({title: 'Links', items:new Ext.BoxComponent()});
     ...
     cmp.items.get(0).getEl().update(record.data[cmp.name])
   
+`Check-In <http://code.google.com/p/lino/source/detail?r=a0fcf6047490462fa68970e6e7dd0dbd1f128f71>`_.
+
+TODO:
+
+- drag & drop
+- link types
+- LinksByOwner : wie sortieren?
+- autoScroll für wenn viele Links da sind.
+- Links vom Panel aus bearbeiten können (ui.get_absolute_url, context menu)
+

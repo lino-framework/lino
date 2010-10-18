@@ -10,7 +10,6 @@ Reference
    models
    fixtures
    settings
-   python/lino
    javascript
    obsolete
    

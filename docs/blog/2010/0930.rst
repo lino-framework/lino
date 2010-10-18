@@ -15,7 +15,7 @@ disabled fields
   oder in der :xfile:`site.js` eine systemweite Konstante dafür vorsehen.
     
 - :class:`ext_store.DisabledFieldsStoreField` hängt jetzt für normale (nicht Phantom-) Records (d.h. deren ``pk`` nicht ``None``) 
-  den primary key in die Liste der :term:`disabled_fields`. Also der primary key sollte in 
+  den primary key in die Liste der disabled fields. Also der primary key sollte in 
   :meth:`lino.reports.Report.disabled_fields` nicht angegeben werden.
   
 - disabled ComboBox fields (z.B. Person.city) waren in der Tabellenansicht dennoch editierbar,

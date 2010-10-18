@@ -351,8 +351,10 @@ class ReportActionRequest(actions.ActionRequest): # was ReportRequest
     def __init__(self,ui, report,action):
     #~ def __init__(self,rh,action):
         #~ assert isinstance(rh,ReportHandle)
-        if ui is not None: assert ui.create_meth_element is not None
+        assert ui.create_meth_element is not None
+        #~ if ui is not None: assert ui.create_meth_element is not None
         self.report = report
+        self.ah = report.get_handle(ui)
         #~ self.ui = ui
         # Subclasses (e.g. BaseViewReportRequest) may set `master` before calling ReportRequest.__init__()
         if self.master is None:
@@ -467,19 +469,23 @@ class ReportActionRequest(actions.ActionRequest): # was ReportRequest
     #~ def run_action(self,ar):
         #~ ar.show_action_window(self) 
         
-    def as_text(self,*args,**kw):
-        from lino.ui import console
-        rh = self.get_report_handle(rpt)
-        rr = renderers_text.TextReportRequest(rh,*args,**kw)
-        return rr.render()
-        
-        return console.ui.report_as_text(self)
+    #~ def as_text(self,*args,**kw):
+        #~ from lino.ui import console
+        #~ rh = self.get_report_handle(rpt)
+        #~ rr = renderers_text.TextReportRequest(rh,*args,**kw)
+        #~ return rr.render()
+        #~ return console.ui.report_as_text(self)
 
+    def get_request_url(self,*args,**kw):
+        return self.ui.get_request_url(self,*args,**kw)
 
         
 
 
 class Report(actors.Actor,base.Handled):
+    """
+    Reports are a central concept in Lino and deserve more than one sentence of documentation.
+    """
     default_action_class = actions.GridEdit
     _handle_class = ReportHandle
     #~ _handle_selector = base.UI
@@ -537,6 +543,14 @@ class Report(actors.Actor,base.Handled):
     button_label = None
     
     #~ detail_layouts = []
+    
+    show_slave_grid = True
+    """
+    How to display this report when it is a slave in a Detail. 
+    Usually a slave report is rendered as a grid. 
+    If `show_slave_grid` is ``False``, show only a summary.
+    Example: :class:`links.LinksByOwner`
+    """
     
     grid_configs = {}
     """
@@ -747,23 +761,44 @@ class Report(actors.Actor,base.Handled):
         return qs
         
 
-    def as_string(self,qs,max_items=10,format=unicode,separator=', '):
+    def as_string(self,rr,format=None,separator=', ',max_items=5):
         """
         Returns this report as a unicode string.
         
         :param max_items: don't include more than the specified number of items.
         """
+        if format is None:
+            def format(rr,obj):
+                return unicode(obj)
         s = u''
         n = 0
-        for i in qs:
+        for i in rr:
             if n :
                 s += separator
             n += 1
-            s += format(i)
+            s += format(rr,i)
             if n >= max_items:
                 s += separator + '...'
                 return s
         return s
+        
+    def summary_row(self,rr,obj):
+        return u'<a href="%s" target="_blank">%s</a>' % (rr.get_request_url(str(obj.pk),fmt='detail'),unicode(obj))
+        #~ return u'<span onClick="foo">%s</span>' % (ui.get_actor_url(self,str(obj.pk)),unicode(obj))
+        #~ return u'<a href="#" onclick="Lino.foo">%s</a>' % unicode(obj)
+        
+    def slave_as_summary_meth(self,ui,row_separator):
+        """
+        Creates and returns the method to be used by when :attr:`Report.show_slave_grid` is `False`.
+        """
+        def meth(master):
+            rr = self.request(ui,master_instance=master)
+            s = self.as_string(rr,self.summary_row,row_separator)
+            #~ s = ', '.join([fmt(r) for r in rr])
+            #~ print 'reports.py 20101017', s
+            return s
+        return meth
+        
         
     def setup_request(self,req):
         pass
@@ -983,7 +1018,7 @@ class LayoutHandle:
         self._store_fields = []
         #~ self._elems_by_field = {}
         #~ self._submit_fields = []
-        self.slave_grids = []
+        #~ self.slave_grids = []
         self._buttons = []
         self.hide_elements = layout.get_hidden_elements(self)
         self.main_class = rh.ui.main_panel_class(layout)
@@ -1024,8 +1059,12 @@ class LayoutHandle:
     #~ def elems_by_field(self,name):
         #~ return self._elems_by_field.get(name,[])
         
+    def add_store_field(self,field):
+        self._store_fields.append(field)
+            
     def has_field(self,f):
         return self._main.has_field(f)
+        
     def unused__repr__(self):
         s = self.name # self.__class__.__name__ 
         if hasattr(self,'_main'):

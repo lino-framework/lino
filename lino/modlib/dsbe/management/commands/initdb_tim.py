@@ -12,6 +12,13 @@
 ## You should have received a copy of the GNU General Public License
 ## along with TimTools; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+
+Performs a database reset and initial import of your TIM data. 
+Mandatory argument is the path to your TIM data directory.
+
+"""
+
 
 import os
 import sys
@@ -32,7 +39,7 @@ from lino.utils import dbfreader
 from lino.modlib.contacts.utils import name2kw, street2kw, join_words
 from lino.utils.instantiator import Instantiator
 
-from lino.modlib.tools import resolve_model, obj2str
+from lino.tools import resolve_model, obj2str
 import lino
 
 from lino.utils import confirm, iif

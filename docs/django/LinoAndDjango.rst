@@ -29,9 +29,8 @@ Lino, when ready, will be a possible answer to what Jacob Kaplan-Moss writes in
 
 Here is a recent screenshot of a Lino application:
 
-.. image:: http://lino.googlecode.com/hg/screenshots/20100207.jpg
-  :width: 50%
-  :target: http://lino.googlecode.com/hg/screenshots/20100207.jpg
+.. image:: 20100207.jpg
+  :scale: 50
 
 Lino integrates to your site through the `urls.py` in a similar way than Admin does::
 

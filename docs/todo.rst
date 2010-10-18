@@ -4,14 +4,16 @@ To-Do-Liste
 Kurzfristig
 -----------
 
-- :mod:`lino.modlib.links` : die Bookmarks sollten natürlich jetzt 
-  benutzerfreundlich (anklickbar) angezeigt werden. 
-  Und auch gar nicht in einer Grid, sondern lediglich als formatierter String.
- `Person.links_by_owner` wird in der Grid zwar angezeigt, aber nicht im Detail.
+- :class:`links.LinksByOwner` müssen jetzt natürlich noch benutzerfreundlich bearbeitet werden können.
+    - Ein Button, um den Report in einem eigenen Fenster zu öffnen. 
+      Diesen Button sollte sowieso jeder Slave-Report haben.
+    - drag & drop
+    - autoScroll für wenn viele Links da sind.
+    - Links direkt vom Panel aus bearbeiten können per context menu.
 
-- Da ich die LinksByOwner jetzt nicht mehr als Grid anzeige, kann man freilich keine Links mehr hinzufügen...
+- Neues Model LinkTypes. Wie soll :class:`links.LinksByOwner` sortiert sein?
 
-- Auch die Grid configs sollten natürlich im neuen LOCAL_CONFIG_DIR stehen und nicht im DATA_DIR
+- Problem mit dem remote Bearbeiten von ODT-Dokumenten
 
 - Dokumentvorlagen machen  
 
@@ -84,23 +86,33 @@ Kleinkram
 Dokumentation
 -------------
 
-- Intersphinx installieren, damit folgende Links funktionieren: 
-  :doc:`foo <dsbe:/tim2lino>`
-  :doc:`/tim2lino`
-  :class:`dsbe.models.Person`
+- Wenn ich in der INSTALLED_APPS von lino.demos.std.settings auch die igen-Module reintue, dann 
+  kriege ich::
+  
+    ref\python\lino.modlib.dsbe.rst:17: (WARNING/2) autodoc can't import/find module 'lino.modlib.dsbe.models', 
+    it reported error: "resolve_model('contacts.Company',app_label='contacts',who=None) found None"
 
 
 Langfristig
 -----------
 
+- Filter auf virtuelle Kolonnen setzen können. Siehe :doc:`/blog/2010/0811`.
+
+- In Kolonne Sprachkenntnisse kann man noch keinen Filter setzen. 
+  Wenn man es tut, kommt auf dem Server ein 
+  `FieldDoesNotExist: Person has no field named u'LanguageKnowledgesByPerson'`.
+  Schnelle Lösung ist, dass ich hier einen einfach Textfilter mache.
+  Aber um das richtig zu lösen, müsste das Filters-Menü für diese Kolonne 
+  nicht nur ein einfaches Textfeld haben, sondern für jede Kolonne 
+  des Ziel-Reports ein Suchfeld. Damit man z.B. nach allen Personen suchen kann, 
+  die eine Sprache "mündlich mindestens gut und schriftlich mindestens ausreichend" kennen
+  
 - Upgrade nach ExtJS 3.3 : bisher besteht kein konkreter Grund dazu. 
-  Vorher muss das Problem mit GridFilters geregelt werden (sh. :doc:`/tickets/1`).  
+  Vorher muss das Problem mit GridFilters geregelt werden (sh. :doc:`/tickets/1`).
   Mögliche Antwort hier:
   http://www.sencha.com/forum/showthread.php?76185-GridFilters-enhanced-filtering-for-grids&goto=newpost
 
 - Projekte einführen? Pro Person müsste man per Klick leicht ein Begleitungsprojekt anlegen können. Bei Import und Synchronisierung würden automatisch auch diese Projekte synchron gehalten. Dienstleistungen sind nicht mehr einer Person und/oder einer Firma, sondern allgemein einem Projekt zugewiesen. 
-
-- Filter auf virtuelle Kolonnen setzen können. Siehe :doc:`/blog/2010/0811`.
 
 - Layout von Detail-Fenstern : in Lino sind die "Zeilen" momentan ja immer im "Blocksatz" (also links- und rechtsbündig). Das ist unkonventionell: alle RIA die ich kenne, machen ihre Formulare nur linksbündig.
 
@@ -119,8 +131,6 @@ Langfristig
 - Inwiefern überschneiden sich :mod:`lino.modlib.system.models.SiteConfig` und :mod:`django.contrib.sites`? 
 
 - Die interne Kolonnenliste eines Reports ist ja konstant. Also sollte ein Record im fmt=json nicht als ``dict`` sondern als ``list`` repräsentiert werden.
-
-- Slave-Grid in eigenem Fenster öffnen
 
 - Benutzerverwaltung von der Kommandozeile aus. 
   In Lino-DSBE gibt es :xfile:`make_staff.py`, aber das ist nur ein sehr primitives Skript.
@@ -172,9 +182,10 @@ Langfristig
   (z.B. weil die Vorlage noch nicht übersetzt wurde oder multilingual ist), 
   nimmt er die Standard-Vorlage aus der Hauptsprache.
 
-- :doc:`/tickets/6`.
+- :doc:`/tickets/taken/6`.
 
 - Generic Foreign Keys: 
+
   - In einem Detail sind ist owner_type ja schon eine ComboBox, 
     aber der Owner könnte doch eigentlich auch eine sein. 
     Müsste er einen automatischen chooser kriegen.
@@ -182,11 +193,27 @@ Langfristig
     müssten zwei Kolonnen erzeugt werden 
     (statt momentan einer Kolonne, die dann nicht korrekt angezeigt wird)
   
-- Foreign keys sollten im Detail-Fenster einen Button neben sich haben, mit dem man per permalink 
-  auf die foreign row springen kann.
-  
 - Google-Projekte lino-apps, lino-igen und Lino-DSBE löschen.
 
 - Main-Grids könnten mit `autoHeight=true` arbeiten. Dadurch würde der zweite Ajax-call unnötig.
   autoHeight resizes the height to show all records. 
   `limit` (Anzahl Records pro Seite) müsste dann freilich in die GC mit reinkommen.
+  
+- ReportRequest und/oder ViewReportRequest sind (glaube ich) ein Fall für 
+  `Django-Middleware <http://docs.djangoproject.com/en/dev/topics/http/middleware/>`_.
+  
+  
+- Foreign keys 
+  - sollten in der Grid anklickbar sein, 
+    so wie die Elemente eines Slave-Reports,
+    aber nicht *genau* so, 
+    sondern die sollten sich im gleichen Browserfenster öffnen. 
+    Außerdem muss natürlich (zumindest in quick_edit-Grids) die Möglichkeit 
+    des Bearbeitens erhalten bleiben. 
+  - sollten im Detail-Fenster einen Button neben sich haben, 
+    mit dem man per permalink auf die foreign row springen kann.
+  
+  
+
+- Auch die Grid configs sollten natürlich im neuen LOCAL_CONFIG_DIR stehen und nicht im DATA_DIR
+

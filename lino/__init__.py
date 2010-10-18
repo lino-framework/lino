@@ -15,6 +15,13 @@
 import sys
 import logging
 
+"""
+Lino is a Python package to be used on Django sites.
+You probably won't ``import lino`` directly, you just add a combination 
+of Lino modules to your :setting:`INSTALLED_APPS`::
+
+"""
+
 __version__ = "0.8.9"
 
 __author__ = "Luc Saffre <luc.saffre@gmx.net>"

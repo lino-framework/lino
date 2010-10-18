@@ -36,9 +36,14 @@ CHOICES_HIDDEN_SUFFIX = "Hidden"
 
 URL_PARAM_MASTER_TYPE = 'mt'
 """
-The ContentType pk of the master model.
+The pk of the ContentType of the master model.
 """
+
 URL_PARAM_MASTER_PK = 'mk'
+"""
+The pk of the master instance.
+"""
+
 # URL_PARAM_MASTER_GRID = 'mg'
 URL_PARAM_FILTER = 'query'
 URL_PARAM_CHOICES_PK = "ck"
