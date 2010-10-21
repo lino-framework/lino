@@ -31,6 +31,7 @@ Some external links:
    tests
    ref/index
    autodoc/lino
+   dev/index
    releases/index
    download
    demos

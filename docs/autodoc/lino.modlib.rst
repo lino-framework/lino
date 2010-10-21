@@ -1,17 +1,10 @@
-==============================
-The :mod:`lino.modlib` Package
-==============================
+==================
+:mod:`lino.modlib`
+==================
 
-This section contains technical documentation.
-See also :doc:`/ref/models`
-
-The :mod:`contacts` Module
---------------------------
-
-.. automodule:: lino.modlib.contacts
+.. automodule:: lino.modlib
     :members:
     :show-inheritance:
-    
 
 
 Subpackages
@@ -19,5 +12,6 @@ Subpackages
 
 .. toctree::
 
+    lino.modlib.contacts
     lino.modlib.dsbe
 

@@ -7,7 +7,6 @@ Reference
    
    glossary
    files
-   models
    fixtures
    settings
    javascript

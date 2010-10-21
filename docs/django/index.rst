@@ -6,7 +6,6 @@ Lino and Django
    
    DjangoPatches
    DjangoPitfalls
-   LinoAndDjango
    
    
 

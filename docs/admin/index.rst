@@ -5,7 +5,8 @@ Administrator's Manual
    :maxdepth: 2
 
    install
-   ConfigureNotesTemplates
    ApacheHttpAuth
+   printing
+   ConfigureNotesTemplates
    tim2lino
 

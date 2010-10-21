@@ -37,5 +37,5 @@ Glossary
   Pisa
     http://www.xhtml2pdf.com/
     HTML/CSS to PDF converter written in Python.
-    See also :doc:`/topics/generate_documents`,
+    See also :doc:`/admin/printing`,
     :doc:`/blog/2010/1020`

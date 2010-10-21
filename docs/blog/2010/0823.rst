@@ -31,7 +31,7 @@ In :doc:`/admin/install` habe ich die Anweisungen zur Installation von :term:`Ap
 Pisa werden wir ja bis auf Weiteres nicht benutzen, aber ich lass das noch in den Anweisungen stehen.
 Die Druckmethoden (print methods) müsste ich ja mal dokumentieren. Bisher habe ich an zwei Stellen angefangen:
 :doc:`/admin/ConfigureNotesTemplates` und 
-:doc:`/topics/generate_documents`.
+:doc:`/admin/printing`.
 
 
 Die Aussage "`print method` kann auch leer sein. 
