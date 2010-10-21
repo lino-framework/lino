@@ -724,6 +724,10 @@ class Report(actors.Actor,base.Handled):
         return self.details
             
     def get_title(self,rr):
+        """
+        Return the title of this Report for the given request `rr`.
+        Override this if your Report's title should mention filter conditions for example.
+        """
         #~ if self.title is None:
             #~ return self.label
         title = self.title or self.label

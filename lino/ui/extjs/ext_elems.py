@@ -968,6 +968,7 @@ class GridElement(Container):
         kw.update(ls_columns=[GridColumn(i,e) for i,e in enumerate(self.columns)])
         #~ kw.update(ls_filters=[e.get_filter_options() for e in self.elements if e.filter_type])
         kw.update(ls_id_property=rh.store.pk.name)
+        kw.update(pk_index=rh.store.pk_index)
         kw.update(ls_quick_edit=True)
         kw.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rh.get_actions(rh.report.default_action)])
         kw.update(ls_grid_configs=self.report.grid_configs)

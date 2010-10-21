@@ -139,8 +139,9 @@ class MasterWrapper(WindowWrapper):
                 #~ if e.collapsible:
                     #~ yield "  %s.on('expand',Lino.collapse_handler(%s))" % (e.ext_name,e.parent.ext_name)
                     #~ yield "  %s.on('collapse',Lino.collapse_handler(%s))" % (e.ext_name,e.parent.ext_name)
-                  
-            
+        if False and isinstance(self.main,ext_elems.GridMainPanel):
+            yield "%s.store.proxy.on('load',function(){console.log('MasterWrapper load 2',%s.store.reader.arrayData)});" % (
+                self.main.as_ext(), self.main.as_ext())
         yield "  ww.show();"
         if settings.USE_FIREBUG:
             yield "  console.timeEnd('%s');" % self.action

@@ -566,7 +566,7 @@ class Exclusion(models.Model):
     type = models.ForeignKey("dsbe.ExclusionType",verbose_name=_("Reason"))
     excluded_from = models.DateField(blank=True,null=True,verbose_name=_("from"))
     excluded_until = models.DateField(blank=True,null=True,verbose_name=_("until"))
-    remark = models.CharField(max_length=200,verbose_name=_("Remark"))
+    remark = models.CharField(max_length=200,blank=True,verbose_name=_("Remark"))
     
     def __unicode__(self):
         s = unicode(self.type)
@@ -603,7 +603,7 @@ class Coaching(models.Model):
     person = models.ForeignKey("contacts.Person",verbose_name=_("Client"))
     coach = models.ForeignKey("auth.User",verbose_name=_("Coach"))
     type = models.ForeignKey("dsbe.CoachingType",verbose_name=_("Coaching type"))
-    remark = models.CharField(max_length=200,verbose_name=_("Remark"))
+    remark = models.CharField(max_length=200,blank=True,verbose_name=_("Remark"))
     
 
 class Coachings(reports.Report):

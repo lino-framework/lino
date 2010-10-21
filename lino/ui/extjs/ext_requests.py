@@ -195,16 +195,20 @@ class ViewReportRequest(reports.ReportActionRequest):
             kw.update(start=self.offset)
         return self.report.get_absolute_url(**kw)
 
+    def row2list(self,row):
+        return self.store.row2list(self.request,row)
+        #~ l = []
+        #~ for fld in self.store.fields:
+            #~ l += fld.obj2list(self.request,row,d)
+        #~ return l
+      
     def row2dict(self,row):
-        #~ lino.log.debug('%s.row2dict(%s)',self,row.__class__)
-        #lino.log.debug('row2dict(%r)',row)
-        #~ if not self.report.use_layouts:
-            #~ return reports.ReportActionRequest.row2dict(self,row,d)
-        d = {}
-        request = self.request
-        for fld in self.store.fields:
-            fld.obj2json(request,row,d)
-        return d
+        return self.store.row2dict(self.request,row)
+        #~ d = {}
+        #~ request = self.request
+        #~ for fld in self.store.fields:
+            #~ fld.obj2dict(request,row,d)
+        #~ return d
  
 
 #~ class ViewActionRequest(actions.ActionRequest):

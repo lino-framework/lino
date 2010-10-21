@@ -1,15 +1,96 @@
 20101021
 ========
 
-- Hackerzacker! Mit Sphinx macht das Dokumentieren so viel Spaß, dass ich heute morgen mal 
-  wieder anderthalb Stunden lang rumgespielt habe statt was zu programmieren.
-  Der Bär ist noch nicht erlegt, aber ich versuche schon sein Fell zu verkaufen...
-  Aber wir sind ja guter Hoffnung, dass der Bär bald erlegt wird,
-  und wenn Lino geboren ist, wird die Webseite natürlich auch wichtig, 
-  um potentiellen Interessenten den Einstieg möglich zu machen.
+Hackerzacker! Mit Sphinx macht das Dokumentieren so viel Spaß, dass ich heute morgen mal 
+wieder anderthalb Stunden lang rumgespielt habe statt was zu programmieren.
+Der Bär ist noch nicht erlegt, aber ich versuche schon sein Fell zu verkaufen...
+Aber wir sind ja guter Hoffnung, dass der Bär bald erlegt wird,
+und wenn Lino geboren ist, wird die Webseite natürlich auch wichtig, 
+um potentiellen Interessenten den Einstieg möglich zu machen.
   
-- `Check-in <http://code.google.com/p/lino/source/detail?r=ea544a606942a5d9f59b0e4c970165ab94edf6ec>`_
+`Check-in <http://code.google.com/p/lino/source/detail?r=ea544a606942a5d9f59b0e4c970165ab94edf6ec>`_
 
-- Jetzt aber mal weiter mit der Bärenjagd.
-  Also wir brauchen einen Button, um den Slave-Report einer HtmlBox in einem eigenen Fenster zu öffnen (in dem dann der Report mit einer Grid editierbar ist). 
+New button "Show report in own window"
+--------------------------------------
+
+Jetzt aber mal weiter mit der Bärenjagd.
+Also wir brauchen einen Button, um den Slave-Report einer HtmlBox in einem eigenen Fenster zu öffnen 
+(in dem dann der Report als Grid editierbar ist). 
+
+12 Uhr : Der Button ist da und funktioniert. 
+Und zwar für zusammengefasste Reports (in einer HtmlBox dargestellt) 
+wie für normale SlaveReports (in einer Grid dargestellt).
+Es ist ein Tool-Button geworden, der also in der oberen rechten Ecke der Titelzeile der 
+HtmlBox bzw. des GridPanels steht.
+
+Ein Problem (das schon immer da war) wird jetzt lästig: der Titel des Reports 
+lautet einfach nur "Links by owner". Da muss natürlich auch der Name des Besitzers stehen 
+(also die Person, deren Links da bearbeitet werden). 
+Dieser Titel wird vom Server sogar schon zurückgegeben (:meth:`lino.reports.Report.get_title` 
+wird dazu ausgeführt), aber vom Client nicht beachtet.
+
+Aber zuerst mal ein Check-in, denn dieses "Detail" hat mit dem datareader des stores zu tun, 
+und die beste Lösung wird sein, wenn ich in Einem das Problem des uneffizienten Datenformats 
+löse. 
+  
+  
+JsonReader uses suboptimal data format
+--------------------------------------
+
+Das Problem des uneffizienten Datenformats ist wie folgt. 
+Das Füllen der Grid von :menuselection:`Kontakte --> Personen` 
+dauert momentan ziemlich lange.
+Die Antwort des Servers auf den AJAX-Call (`GET /api/contacts/Persons?fmt=json`) 
+ist auch immerhin stolze 50 KB dick. Und das für 20 Records. Wie kommts? 
+Ein Grund ist sicherlich, dass das Datenformat nicht optimal ist::
+
+  { count: 68, 
+    rows: [ 
+      { driving_licenseHidden: null, 
+        last_name: "Altenberg", 
+        street_box: "", 
+        cityHidden: 1, 
+        motivation_lack: false, 
+        birth_country: null, 
+        addr1: "", 
+        ... 
+      }, 
+      ... (für alle Records der ersten Grid-Seite so ein Objekt)
+    ],
+    ...
+  }
+
+Jede Row wird als Dictionary übergeben, aber eine einfache Liste würde vollkommen reichen. 
+Die Feldnamen sowie deren Metainfo ist dem Client ja von vorneherein bekannt, 
+die sind pro Report konstant.
+
+Dieses Datenformat wird durch den Store der Grid vorgegeben. Das ist ein
+:extjs:`Ext.data.JsonStore`, der einen :extjs:`Ext.data.JsonReader` benutzt.
+Stattdessen muss ich einen :extjs:`Ext.data.ArrayStore` benutzen.
+Und eine Serie von neuen Methoden :meth:`lino.ui.extjs.ext_store.StoreField.obj2list`.
+Und ein neues Attribut :attr:`lino.ui.extjs.ext_store.Store.pk_index`, 
+der zum KonfigurationsParameter `idIndex` des ArrayStore wird.
+Um die Position des PK im Array zu ermitteln, musste ich ein neues Klassenattribut
+:attr:`lino.ui.extjs.ext_store.StoreField.value_count` einführen (das für Comboboxen 2 ist, 
+ansonsten 1).
+  
+15.30 Uhr. Voilà, es funktioniert.
+Und die Antwort auf den AJAX-Call zum Füllen der 
+Grid schrumpft wie vorausgeahnt auf die Hälfte (von 50 auf 25 KB). Schön.
+
+16.40 Uhr. 
+Den Titel auszuwerten, das war dann doch auch nochmal eine Stunde Arbeit. 
+Aber okay.
+
+Für die Bemerkungsfelder in Coaching und Exclusion hatte ich das `blank=True` vergessen.
+Deshalb weigerte er sich zu speichern, selbst wenn man user und type ausgefüllt 
+hatte (aber eben nicht remark).
+Der fiesere Fehler ist, dass er die entsprechende Fehlermeldung nicht anzeigte.
+Da kam stattdessen eine Exception auf dem Server. 
+Die kommt jetzt nicht mehr, und die Fehlermeldung geht korrekt an den Client zurück.
+Aber trotzdem sieht der Benutzer sie noch nicht.
+Aha, das liegt am on_afteredit des GridPanels. Da wird noch ein altes Lino.do_action bentuzt.
+Das schau ich mir morgen mal an, jetzt mach ich Feierabend.
+
+
 

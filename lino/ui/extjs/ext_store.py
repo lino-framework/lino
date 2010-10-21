@@ -32,7 +32,10 @@ from lino import reports
 from lino.utils import choosers
 
 class StoreField(object):
-
+  
+    value_count = 1
+    "Necessary to compute :attr:`Store.pk_index`."
+    
     def __init__(self,field,**options):
         self.field = field
         options['name'] = field.name
@@ -47,15 +50,17 @@ class StoreField(object):
     def parse_form_value(self,v):
         return self.field.to_python(v)
         
-    def obj2json(self,request,obj,d):
-        #d[self.field.name] = getattr(obj,self.field.name)
-        #v = getattr(obj,self.field.name)
-        #d[self.field.name] = self.field.value_to_string(obj)
-        try:
+    def obj2list(self,request,obj):
+        return [self.field.value_from_object(obj)]
+        
+    def obj2dict(self,request,obj,d):
+        if True:
             d[self.field.name] = self.field.value_from_object(obj)
-        except ValueError,e:
-            #~ print obj.__class__, self.field.name, e
-            lino.log.exception(e)
+        else:
+            try:
+                d[self.field.name] = self.field.value_from_object(obj)
+            except ValueError,e:
+                lino.log.exception(e)
 
     def form2obj(self,instance,post_data):
         v = post_data.get(self.field.name,None)
@@ -89,13 +94,17 @@ class DisabledFieldsStoreField(StoreField):
     def parse_form_value(self,v):
         pass
         
-    def obj2json(self,request,obj,d):
-        #~ l = [ ext_requests.form_field_name(f) 
-              #~ for f in self.store.report.disabled_fields(request,obj)]
+    def value_from_object(self,request,obj):
         l = [ f.name for f in self.store.report.disabled_fields(request,obj)]
         if obj.pk is not None:
             l.append(self.store.pk.name)
-        d.update(disabled_fields=l)
+        return l
+        
+    def obj2list(self,request,obj):
+        return [self.value_from_object(request,obj)]
+      
+    def obj2dict(self,request,obj,d):
+        d.update(disabled_fields=self.value_from_object(request,obj))
 
     def form2obj(self,instance,post_data):
         pass
@@ -153,7 +162,7 @@ class DateStoreField(StoreField):
         kw['type'] = 'date'
         StoreField.__init__(self,field,**kw)
         
-    def unused_obj2json(self,request,obj,d): # date conversion done by py2js
+    def unused_obj2dict(self,request,obj,d): # date conversion done by py2js
         value = getattr(obj,self.field.name)
         if value is not None:
             value = value.strftime(self.date_format)
@@ -167,13 +176,16 @@ class DateStoreField(StoreField):
 
 class MethodStoreField(StoreField):
   
-    def obj2json(self,request,obj,d):
-        #~ lino.log.debug('MethodStoreField.obj2json() %s',self.field.name)
-        #~ print 'ext_store.py 20101018', self.field.name
+    def value_from_object(self,request,obj):
         unbound_meth = self.field._return_type_for_method
-        d[self.field.name] = unbound_meth(obj)
-        #~ meth = getattr(obj,self.field.name)
-        #~ d[self.field.name] = meth()
+        return unbound_meth(obj)
+        
+    def obj2list(self,request,obj):
+        return [self.value_from_object(request,obj)]
+        
+    def obj2dict(self,request,obj,d):
+        #~ lino.log.debug('MethodStoreField.obj2dict() %s',self.field.name)
+        d[self.field.name] = self.value_from_object(request,obj)
         
     def get_from_form(self,instance,post_data):
         pass
@@ -184,9 +196,9 @@ class MethodStoreField(StoreField):
 
 #~ class SlaveSummaryField(MethodStoreField):
   
-    #~ def obj2json(self,request,obj,d):
+    #~ def obj2dict(self,request,obj,d):
         #~ meth = getattr(obj,self.field.name)
-        #~ #lino.log.debug('MethodStoreField.obj2json() %s',self.field.name)
+        #~ #lino.log.debug('MethodStoreField.obj2dict() %s',self.field.name)
         #~ d[self.field.name] = self.slave_report.()
 
 class OneToOneStoreField(StoreField):
@@ -209,18 +221,25 @@ class OneToOneStoreField(StoreField):
             #~ v = self.field.rel.to.objects.get(pk=v)
         #~ instance[self.field.name] = v
         
-    def obj2json(self,request,obj,d):
+    def value_from_object(self,request,obj):
         try:
             v = getattr(obj,self.field.name)
         except self.field.rel.to.DoesNotExist,e:
             v = None
         if v is None:
-            d[self.field.name] = None
-        else:
-            d[self.field.name] = v.pk
+            return None
+        return v.pk
+      
+    def obj2list(self,request,obj):
+        return [self.value_from_object(request,obj)]
+        
+    def obj2dict(self,request,obj,d):
+        d[self.field.name] = self.value_from_object(request,obj)
         
 class ComboStoreField(StoreField):
   
+    value_count = 2
+    
     def as_js(self):
         s = StoreField.as_js(self)
         s += "," + repr(self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
@@ -233,14 +252,24 @@ class ComboStoreField(StoreField):
             return
         if v in ('','undefined'): 
             v = None
-        if v is not None:
+        if v is None:
+            if not self.field.blank:
+                raise exceptions.ValidationError("field may not be empty")
+                #~ raise exceptions.ValidationError({self.field.name: "field may not be empty"})
+                #~ print "20101021 cannot set empty value for", self.field.name
+                #~ return # 20101021
+        else:
             v = self.parse_form_value(v)
         setattr(instance,self.field.name,v)
 
-    def obj2json(self,request,obj,d):
+    def obj2list(self,request,obj):
         value,text = self.get_value_text(obj)
-        d[self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX] = value
+        return [text,value]
+        
+    def obj2dict(self,request,obj,d):
+        value,text = self.get_value_text(obj)
         d[self.field.name] = text
+        d[self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX] = value
         
     def get_value_text(self,obj):
         v = getattr(obj,self.field.name)
@@ -319,7 +348,14 @@ class Store(Component):
           self.report.actor_id,self.report.model)
         if not self.pk in fields:
             fields.add(self.pk)
+        #~ fields = list(fields)
+        #~ self.pk_index = fields.index(self.pk)
         self.fields = [ self.create_field(fld) for fld in fields ]
+        self.pk_index = 0
+        for fld in self.fields:
+            if fld.field == self.pk:
+                break
+            self.pk_index += fld.value_count
         #~ if self.report.actor_id == 'contacts.Persons':
             #~ print 'ext_store 20101017:\n', '\n'.join([str(f) for f in self.fields])
         if rh.report.disabled_fields:
@@ -397,13 +433,6 @@ class Store(Component):
         d.update(listeners=dict(exception=js_code("Lino.on_store_exception")))
         return d
         
-    def unused_get_from_form(self,post_values):
-        instance = {}
-        for f in self.fields:
-            if not f.field.primary_key:
-                f.get_from_form(instance,post_values)
-        return instance
-        
     def form2obj(self,form_values,instance):
         for f in self.fields:
             try:
@@ -413,30 +442,20 @@ class Store(Component):
         #~ for p in properties.Property.properties_for_model(instance.__class__):
             #~ p.form2obj(instance,form_values)
             
-    def unused_get_from_form(self,form_values):
-        instance = {}
-        for k,v in form_values.items():
-            if k.startswith('property_'):
-                name = k[9:]
-                print "TODO: get property %r from form" % name
-            else:
-                f = self.fields_dict.get(k,None)
-                if f is None:
-                    pass
-                else:
-                    f.get_from_form(instance,form_values)
-        return instance
+    def row2list(self,request,row):
+        l = []
+        for fld in self.fields:
+            l += fld.obj2list(request,row)
+        return l
+      
 
     def row2dict(self,request,row):
         d = {}
         for f in self.fields:
             #~ if not f.field.primary_key:
-            f.obj2json(request,row,d)
+            f.obj2dict(request,row,d)
         return d
 
-    #~ def js_declare(self):
-        #~ for ln in Component.js_declare(self):
-            #~ yield ln
             
     def js_after_body(self):
         for ln in Component.js_after_body(self):

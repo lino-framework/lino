@@ -190,6 +190,12 @@ class ExtUI(base.UI):
             #~ return ext_elems.VirtualFieldElement(lh,name,de,**kw)
         if isinstance(de,reports.Report):
             if isinstance(lh.layout,reports.DetailLayout):
+                kw.update(tools=[
+                  dict(
+                    qtip='Show report in own window', 
+                    handler=js_code("Lino.report_window_handler(Lino.%s)" % de.default_action),
+                    id="up"),
+                ])
                 if de.show_slave_grid:
                     e = ext_elems.SlaveGridElement(lh,name,de,**kw)
                     #~ e = ext_elems.GridElement(lh,name,de.get_handle(self),**kw)
@@ -201,12 +207,6 @@ class ExtUI(base.UI):
                     field.name = de._actor_name
                     field._return_type_for_method = de.slave_as_summary_meth(self,'<br>')
                     lh.add_store_field(field)
-                    kw.update(tools=[
-                      dict(
-                        qtip='Show report in own window', 
-                        handler=js_code("Lino.report_window_handler(Lino.%s)" % de.default_action),
-                        id="up"),
-                    ])
                     e = ext_elems.HtmlBoxElement(lh,field,**kw)
                     return e
             else:
@@ -683,18 +683,23 @@ class ExtUI(base.UI):
                 return response
                 
             if fmt == 'json':
-                rows = [ ar.row2dict(row) for row in ar.queryset ]
+                rows = [ ar.row2list(row) for row in ar.queryset ]
+                #~ rows = [ ar.row2dict(row) for row in ar.queryset ]
                 total_count = ar.total_count
                 #lino.log.debug('%s.render_to_dict() total_count=%d extra=%d',self,total_count,self.extra)
                 # add extra blank row(s):
                 #~ for i in range(0,ar.extra):
                 if ar.extra:
                     row = ar.create_instance()
-                    d = ar.row2dict(row)
+                    d = ar.row2list(row)
+                    #~ d = ar.row2dict(row)
                     #~ 20100706 d[rh.report.model._meta.pk.name] = -99999
                     rows.append(d)
                     total_count += 1
-                return json_response_kw(count=total_count,rows=rows,title=unicode(ar.get_title()),gc_choices=rpt.grid_configs)
+                return json_response_kw(count=total_count,
+                  rows=rows,
+                  title=unicode(ar.get_title()),
+                  gc_choices=rpt.grid_configs)
 
 
         raise Http404("Method %s not supported for container %s" % (request.method,rh))

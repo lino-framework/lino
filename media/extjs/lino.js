@@ -646,7 +646,7 @@ Lino.show_detail_handler = function(action) {
     //~ var bp = panel.getStore().baseParams;
     //~ var bp = panel.ww.config.base_params;
     //~ console.log('show_detail_handler()',panel.get_base_params());
-    action(panel,{record_id:rec.id,base_params:panel.get_base_params()});
+    action(panel.ww,{record_id:rec.id,base_params:panel.get_base_params()});
   }
 };
 
@@ -888,7 +888,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     win.show();
   },
   load_htmlbox_to : function(cmp,record) {
-    console.log('Lino.load_htmlbox_to()',cmp,record);
+    //~ console.log('Lino.load_htmlbox_to()',cmp,record);
     Lino.do_when_visible(cmp,function() {
       cmp.items.get(0).getEl().update(record.data[cmp.name])
     });
@@ -962,10 +962,22 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     //~ this.ww = ww;
     var bp = { fmt:'json' };
     //~ Ext.apply(bp,config.base_params);
-    config.store = new Ext.data.JsonStore({ 
+    
+    //~ function on_proxy_load( proxy, transactionObject, callbackOptions ) {
+      //~ console.log('on_proxy_load',transactionObject)
+    //~ }
+    var proxy = new Ext.data.HttpProxy({ 
+      url: '/api'+config.ls_url, 
+      method: "GET"
+      //~ listeners: {load:on_proxy_load} 
+    });
+    //~ config.store = new Ext.data.JsonStore({ 
+    config.store = new Ext.data.ArrayStore({ 
       listeners: { exception: Lino.on_store_exception }, 
       //~ proxy: new Ext.data.HttpProxy({ url: config.ls_data_url+'?fmt=json', method: "GET" }), remoteSort: true, 
-      proxy: new Ext.data.HttpProxy({ url: '/api'+config.ls_url, method: "GET" }), remoteSort: true, 
+      proxy: proxy, 
+      idIndex: config.pk_index,
+      remoteSort: true, 
       baseParams: bp, 
       fields: config.ls_store_fields, 
       totalProperty: "count", 
@@ -973,6 +985,11 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
       //~ id: "id" });
       idProperty: config.ls_id_property });
       
+    //~ proxy.on('load 1 20101021',function() {
+      //~ console.log('arrayData:',config.store.reader.arrayData);
+    //~ });
+      
+    //~ console.log('config.pk_index',config.pk_index,config.store),
     delete config.ls_store_fields;
     
     this.before_row_edit = config.before_row_edit.createDelegate(this);
@@ -1048,7 +1065,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     return this.getStore().baseParams;
   },
   set_base_params : function(p) {
-    console.log('GridPanel.set_base_params',p)
+    //~ console.log('GridPanel.set_base_params',p)
     for (k in p) this.getStore().setBaseParam(k,p[k]);
   },
   
@@ -1260,7 +1277,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     // console.log("grid_afteredit:",e.field,'=',e.value);
     Ext.apply(p,this.store.baseParams);
     var self = this;
-    function after_success(result) {
+    function on_success(result) {
       self.getStore().commitChanges(); // get rid of the red triangles
       self.getStore().reload();        // reload our datastore.
     };
@@ -1270,14 +1287,14 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
       Lino.do_action(this,{
         method:'POST',url: '/api'+this.ls_url,
         params:p,
-        after_success:after_success})
+        after_success:on_success})
     } else {
       Lino.do_action(this,{
         method:'PUT',
         //~ url: caller.config.url_data+'/'+e.record.id, 
         url: '/api'+this.ls_url+'/'+e.record.id, 
         params:p, 
-        after_success:after_success});
+        after_success:on_success});
     }
   },
 
@@ -1677,6 +1694,7 @@ Lino.WindowWrapper = function(caller,config,params) {
   this.setup();
   
   if (caller) {
+    console.log('get_master_params()',caller);
     this.main_item.set_base_params(caller.get_master_params());
   }
   
@@ -1751,6 +1769,16 @@ Lino.GridMixin = {
 
 Lino.GridMasterWrapper = Ext.extend(Lino.WindowWrapper,Lino.GridMixin);
 Lino.GridMasterWrapper.override({
+  setup : function() {
+    //~ this.main_item.store.proxy.on('load',
+    console.log('GridMasterWrapper.setup');
+    this.main_item.store.on('load', function() {
+        //~ console.log('GridMasterWrapper load',this.main_item.store.reader.arrayData);
+        this.window.setTitle(this.main_item.store.reader.arrayData.title);
+      }, this
+    );
+    Lino.WindowWrapper.prototype.setup.call(this);
+  },
   add_row_listener : function(fn,scope) {
     // this.main_grid.add_row_listener(fn,scope);
     this.main_item.getSelectionModel().addListener('rowselect',fn,scope);
