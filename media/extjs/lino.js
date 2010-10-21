@@ -401,6 +401,16 @@ Lino.save_wc_handler = function(ww) {
   }
 };
 
+Lino.report_window_handler = function(func) {
+  return function(event,toolEl,panel, tc) {
+      //~ var bp = panel.ww.get_master_params();
+      //~ console.log('report_window_handler',bp,panel.ww);
+      //~ func(panel.ww,{base_params:bp});
+      func(panel.ww);
+  }
+}
+
+
 //~ Lino.save_gc_handler = function(panel) {
   //~ return function() {
     //~ console.log('TODO: save_gc_handler',panel,panel.ls_data_url);
@@ -1038,6 +1048,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     return this.getStore().baseParams;
   },
   set_base_params : function(p) {
+    console.log('GridPanel.set_base_params',p)
     for (k in p) this.getStore().setBaseParam(k,p[k]);
   },
   
@@ -1600,7 +1611,7 @@ Lino.WindowWrapperBase = {
     });
     this.window.window_wrapper = this;
     this.main_item.ww = this;
-    this.main_item.set_base_params(this.base_params);
+    //~ 20101021 this.main_item.set_base_params(this.base_params);
   },
   show : function() {
       //~ console.time('WindowWrapper.show()');
@@ -1622,11 +1633,13 @@ Lino.IndexWrapper = function(config) {
 Ext.override(Lino.IndexWrapper,Lino.WindowWrapperBase);
 
 Lino.WindowWrapper = function(caller,config,params) {
-  //~ console.log('Lino.WindowWrapper.constructor',config);
+  //~ console.log('Lino.WindowWrapper.constructor','config:',config,'params:',params);
   //~ console.time('WindowWrapper.constructor()');
   this.caller = caller;
   if (params) Ext.apply(config,params);
+  //~ console.log('Lino.WindowWrapper.constructor 2','config:',config);
   Ext.applyIf(config,{base_params:{}});
+  //~ console.log('Lino.WindowWrapper.constructor 3','config:',config);
   this.config = config; 
   //~ this.config = config_fn(this); 
   this.slaves = {};
@@ -1662,6 +1675,11 @@ Lino.WindowWrapper = function(caller,config,params) {
   });
   //~ console.log('Lino.WindowWrapper.setup done',this);
   this.setup();
+  
+  if (caller) {
+    this.main_item.set_base_params(caller.get_master_params());
+  }
+  
   if (config.data_record) {
     //~ console.log('Lino.WindowWrapper with data_record',config.data_record);
     //~ this.main_item.on_master_changed.defer(2000,this.main_item,[config.data_record]);
@@ -1726,34 +1744,9 @@ Ext.override(Lino.WindowWrapper,{
 
 
 Lino.GridMixin = {
-  //~ setup : function() {
-    //~ console.log('Lino.GridMixin.setup',this);
-    //~ console.log('Lino.GridMixin.setup 2',this);
-    //~ this.main_grid = new Lino.GridPanel({ clicksToEdit: 2, xtype: "container", tbar: this.pager, 
-      //~ selModel: new Ext.grid.RowSelectionModel({singleSelect:false}), 
-      //~ emptyText: "Nix gefunden...", 
-      //~ // bbar: this.bbar_actions, 
-      //~ viewConfig: { showPreview: true, scrollOffset: 200, emptyText: "Nix gefunden!" }, 
-      //~ enableColLock: false, store: this.store, colModel: this.config.colModel });
-      
-    //~ this.main_item = this.main_grid;
-    //~ this.main_item = this.config.main_panel;
-    //~ this.main_item.on('beforeedit',this.main_item.on_beforeedit,this);
-      
-    //~ Lino.WindowWrapper.prototype.setup.call(this);
-  //~ },
   refresh : function() { 
     this.main_item.refresh();
   }
-  //~ get_selected : function() {
-    //~ var sels = this.main_item.getSelectionModel().getSelections();
-    //~ return Ext.pluck(sels,'id');
-  //~ },
-  //~ get_window_config : function() {
-    //~ var wc = { window_config_type: 'grid' };
-    //~ wc['column_widths'] = Ext.pluck(this.main_item.colModel.columns,'width');
-    //~ return wc;
-  //~ }
 };
 
 Lino.GridMasterWrapper = Ext.extend(Lino.WindowWrapper,Lino.GridMixin);
@@ -1793,7 +1786,7 @@ Lino.DetailWrapperBase.override({
 })
 
 Lino.DetailWrapper = Ext.extend(Lino.DetailWrapperBase, {
-  setup:function() {
+  setup : function() {
     Lino.DetailWrapperBase.prototype.setup.call(this);
   },
   get_permalink : function() {

@@ -1,4 +1,15 @@
 20101021
 ========
 
-`Check-in <>`_
+- Hackerzacker! Mit Sphinx macht das Dokumentieren so viel Spaß, dass ich heute morgen mal 
+  wieder anderthalb Stunden lang rumgespielt habe statt was zu programmieren.
+  Der Bär ist noch nicht erlegt, aber ich versuche schon sein Fell zu verkaufen...
+  Aber wir sind ja guter Hoffnung, dass der Bär bald erlegt wird,
+  und wenn Lino geboren ist, wird die Webseite natürlich auch wichtig, 
+  um potentiellen Interessenten den Einstieg möglich zu machen.
+  
+- `Check-in <http://code.google.com/p/lino/source/detail?r=ea544a606942a5d9f59b0e4c970165ab94edf6ec>`_
+
+- Jetzt aber mal weiter mit der Bärenjagd.
+  Also wir brauchen einen Button, um den Slave-Report einer HtmlBox in einem eigenen Fenster zu öffnen (in dem dann der Report mit einer Grid editierbar ist). 
+

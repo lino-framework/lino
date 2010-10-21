@@ -129,11 +129,12 @@ class MasterWrapper(WindowWrapper):
             #~ yield "  console.log('ext_windows',20100930,params);"
         for ln in jsgen.declare_vars(self.config):
             yield '  '+ln
-        yield "  var ww = new Lino.%s(caller,%s,params)" % (
+        yield "  var ww = new Lino.%s(caller,%s,params);" % (
             self.__class__.__name__,py2js(self.config))
             
         for e in self.main.walk():
-            if e is not self.main and isinstance(e,ext_elems.GridElement):
+            if e is not self.main and (
+                isinstance(e,ext_elems.GridElement) or isinstance(e,ext_elems.HtmlBoxElement)):
                 yield "  %s.ww = ww;" % e.ext_name
                 #~ if e.collapsible:
                     #~ yield "  %s.on('expand',Lino.collapse_handler(%s))" % (e.ext_name,e.parent.ext_name)

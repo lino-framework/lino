@@ -204,7 +204,7 @@ class ExtUI(base.UI):
                     kw.update(tools=[
                       dict(
                         qtip='Show report in own window', 
-                        handler=js_code("function() { Lino.%s(caller,{base_params:caller.get_master_params()})}" % de.default_action),
+                        handler=js_code("Lino.report_window_handler(Lino.%s)" % de.default_action),
                         id="up"),
                     ])
                     e = ext_elems.HtmlBoxElement(lh,field,**kw)
