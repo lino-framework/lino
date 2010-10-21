@@ -78,19 +78,29 @@ ansonsten 1).
 Und die Antwort auf den AJAX-Call zum Füllen der 
 Grid schrumpft wie vorausgeahnt auf die Hälfte (von 50 auf 25 KB). Schön.
 
+Dynamic window title
+--------------------
+
 16.40 Uhr. 
 Den Titel auszuwerten, das war dann doch auch nochmal eine Stunde Arbeit. 
 Aber okay.
 
+Fixing another validation bug
+-----------------------------
+
 Für die Bemerkungsfelder in Coaching und Exclusion hatte ich das `blank=True` vergessen.
 Deshalb weigerte er sich zu speichern, selbst wenn man user und type ausgefüllt 
 hatte (aber eben nicht remark).
+
 Der fiesere Fehler ist, dass er die entsprechende Fehlermeldung nicht anzeigte.
+Der ist jetzt erst halb behoben.
 Da kam stattdessen eine Exception auf dem Server. 
 Die kommt jetzt nicht mehr, und die Fehlermeldung geht korrekt an den Client zurück.
 Aber trotzdem sieht der Benutzer sie noch nicht.
-Aha, das liegt am on_afteredit des GridPanels. Da wird noch ein altes Lino.do_action bentuzt.
-Das schau ich mir morgen mal an, jetzt mach ich Feierabend.
+Das liegt am on_afteredit des GridPanels. 
+Da wird noch ein altes Lino.do_action bentuzt.
 
+Aber das schau ich mir morgen mal an, jetzt mach ich Feierabend!
 
+`Check-in <>`_
 
