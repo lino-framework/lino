@@ -1,15 +1,11 @@
-Utils Documentation
-===================
-
-This page contains the Utils Package documentation.
-
-The :mod:`utils` Package
-------------------------
+:mod:`lino.utils`
+=================
 
 .. automodule:: lino.utils
     :members:
     :undoc-members:
     :show-inheritance:
+
 
 The :mod:`appy_pod` Module
 --------------------------

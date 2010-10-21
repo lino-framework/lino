@@ -60,7 +60,8 @@ weitere kleine Bugs dieser Art zu Tage.
 Ich wusste nicht, dass das par défaut eingeschaltet ist.
 Denn sonst ist initdb deutlich langsamer, wenn die Validierung eingeschaltet ist.
   
-18 Uhr. Feierabend.
+18 Uhr. `Check-In <http://code.google.com/p/lino/source/detail?r=7ff3506984570682747ddb4b47c87f902128b8cf>`_ 
+wegen Feierabend.
 Ich bin zufrieden, obgleich ich das Gefühl habe, mit 
 einem siebenköpfigen Drachen zu kämpfen, dessen Köpfe 
 schneller nachwachsen als man sie abschlagen kann....

@@ -25,7 +25,7 @@ from lino.tools import default_language
 from lino import reports
 #~ from lino import layouts
 from lino.utils import perms
-from lino.utils import mixins
+from lino.utils import printable
 from django.conf import settings
 #~ from lino import choices_method, simple_choices_method
 
@@ -35,7 +35,7 @@ from django.conf import settings
 
 class NoteType(models.Model):
     name = models.CharField(max_length=200)
-    print_method = models.CharField(max_length=20,choices=mixins.print_method_choices(),blank=True,null=True)
+    print_method = models.CharField(max_length=20,choices=printable.print_method_choices(),blank=True,null=True)
     template = models.CharField(max_length=200,blank=True,null=True)
     #~ print_method = models.CharField(max_length=20,choices=mixins.print_method_choices())
     #~ template = models.CharField(max_length=200)
@@ -47,7 +47,7 @@ class NoteType(models.Model):
         
     def template_choices(cls,print_method):
         #~ print cls, 'template_choices for method' ,print_method
-        return mixins.template_choices(print_method)
+        return printable.template_choices(print_method)
     template_choices.simple_values = True
     template_choices = classmethod(template_choices)
         
@@ -65,7 +65,7 @@ class NoteType(models.Model):
 
 
 
-class Note(models.Model,mixins.Printable):
+class Note(models.Model,printable.Printable):
         
     user = models.ForeignKey("auth.User",blank=True,null=True)
     #~ date = fields.MyDateField()
@@ -117,7 +117,7 @@ class Note(models.Model,mixins.Printable):
         
     def get_print_templates(self,pm):
         if self.type is None:
-            return mixins.Printable.get_print_templates(self,pm)
+            return printable.Printable.get_print_templates(self,pm)
             #[self.filename_root() + pm.template_ext]
         assert self.type.template.endswith(pm.template_ext)
         return [ self.type.template ]

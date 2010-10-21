@@ -22,6 +22,7 @@ Subpackages
     lino.test_apps
     lino.ui
     lino.utils
+    lino.utils.printable
     lino.demos
 
 

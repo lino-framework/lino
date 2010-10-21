@@ -33,3 +33,9 @@ Glossary
     
   appy
     http://appyframework.org/pod.html
+    
+  Pisa
+    http://www.xhtml2pdf.com/
+    HTML/CSS to PDF converter written in Python.
+    See also :doc:`/topics/generate_documents`,
+    :doc:`/blog/2010/1020`

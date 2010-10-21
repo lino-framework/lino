@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-13 09:03+0100\n"
+"POT-Creation-Date: 2010-10-18 18:53+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -57,38 +57,38 @@ msgstr ""
 msgid "Fax"
 msgstr ""
 
-#: .\models.py:135
+#: .\models.py:136
 msgid "First name"
 msgstr ""
 
-#: .\models.py:136
+#: .\models.py:137
 msgid "Last name"
 msgstr ""
 
-#: .\models.py:137
+#: .\models.py:138
 msgid "Title"
 msgstr ""
 
-#: .\models.py:156
+#: .\models.py:157
 msgid "Persons"
 msgstr ""
 
-#: .\models.py:175
+#: .\models.py:170
 msgid "Abbreviation"
 msgstr ""
 
-#: .\models.py:176
+#: .\models.py:171
 msgid "Designation"
 msgstr ""
 
-#: .\models.py:182
+#: .\models.py:177
 msgid "Company types"
 msgstr ""
 
-#: .\models.py:192
+#: .\models.py:187
 msgid "Company type"
 msgstr ""
 
-#: .\models.py:204
+#: .\models.py:199
 msgid "Companies"
 msgstr ""

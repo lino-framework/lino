@@ -7,18 +7,18 @@ My source was http://httpd.apache.org/docs/2.0/howto/auth.html.
 
 Create a local directory for the flatfile user database::
 
-  # mkdir /usr/local/lino/htpasswd
+  # mkdir /usr/local/django/myproject/htpasswd
 
 Create a first user::
 
-  # htpasswd -c /usr/local/lino/htpasswd/passwords root
+  # htpasswd -c /usr/local/django/myproject/htpasswd/passwords root
 
 Create more users::
 
-  # htpasswd /usr/local/lino/htpasswd/passwords user
+  # htpasswd /usr/local/django/myproject/htpasswd/passwords user
 
 
-Create a groups file :file:`nano/usr/local/lino/htpasswd/groups` with the following content::
+Create a groups file :file:`nano/usr/local/django/myproject/htpasswd/groups` with the following content::
 
   lino: root user
 
@@ -27,7 +27,24 @@ Then, in your Apache config file (:file:`/etc/apache2/sites-available/default`):
   <Directory />
     AuthType Basic
     AuthName "Lino demo"
-    AuthUserFile /usr/local/lino/htpasswd/passwords
-    AuthGroupFile /usr/local/lino/htpasswd/groups
+    AuthUserFile /usr/local/django/myproject/htpasswd/passwords
+    AuthGroupFile /usr/local/django/myproject/htpasswd/groups
     Require group demo
+    AllowOverride None 
   </Directory>
+
+
+Do allow WebDAV, add another `<Directory>` directive::
+  
+  <Directory /usr/local/django/myproject/media/cache/>
+     DAV On
+     ForceType text/plain
+     AuthType Basic
+     AuthName "Lino/DSBE demo"
+     AuthUserFile /usr/local/django/myproject/htpasswd/passwords
+     AuthGroupFile /usr/local/django/myproject/htpasswd/groups
+     <LimitExcept GET>
+     Require group dav
+     </LimitExcept>
+  </Directory>
+

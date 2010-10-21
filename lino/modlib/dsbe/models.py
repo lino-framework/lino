@@ -44,7 +44,7 @@ import lino
 from lino import reports
 #~ from lino import layouts
 from lino.utils import perms
-from lino.utils import mixins
+from lino.utils.printable import Printable
 from lino import fields
 from lino.modlib.contacts import models as contacts
 from lino.modlib.notes import models as notes
@@ -115,7 +115,7 @@ class Contact(contacts.Contact):
         
 #~ class Person(Contact):
 
-class Person(Contact,mixins.Printable):
+class Person(Contact,Printable):
     """
     Implements :class:`contacts.Person`, but cannot inherit it directly 
     (see :doc:`/tickets/7`).

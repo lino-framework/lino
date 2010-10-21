@@ -103,7 +103,6 @@ For example::
       }
   }
   
-
   
 Set up Apache and `mod_wsgi`
 ----------------------------
@@ -139,7 +138,7 @@ And in your Apache config file::
     </Location>
   </VirtualHost>  
   
-You'll also need to configure Apache to do HTTP authentication: [ApacheHttpAuth simple example].
+You'll also need to configure Apache to do HTTP authentication: :doc:`ApacheHttpAuth`.
 
 
 Static files
@@ -152,7 +151,7 @@ Prefix            Description                                 location
 ================= =========================================== ============================================
 /media/extjs/     ExtJS library                               /var/snapshots/ext-3.2.1/ 
 /media/lino/      lino.js and lino.css                        /var/snapshots/lino/lino/ui/extjs/media/
-/media/pdf_cache/ files generated and served by 
+/media/cache/     files generated and served by 
                   lino.modlib.documents                       /var/snapshots/lino/lino/demos/dsbe/media/ 
 /media/beid/      image files for dsbe.models.PersonDetail    ... 
 ================= =========================================== ============================================
@@ -171,8 +170,6 @@ directive in your Apache config, and then use symbolic links in :file:`/usr/loca
   ln -s /var/snapshots/ext-3.2.1 extjs
 
 
- 
-
 User permissions
 ----------------
 
@@ -183,8 +180,8 @@ You'll probably need to do something like this afterwards::
 
 ``chmod g+s`` sets the SGID to ensure that when a new file is created in the directory it will inherit the group of the directory.
 
-Maybe you'll also add `umask 002` to your `/etc/apache2/envvars`. For example if `lino.log` doesn't exist and Lino creates it, you may want it to be writable by group.
-
+Maybe you'll also add `umask 002` to your `/etc/apache2/envvars`. 
+For example if `lino.log` doesn't exist and Lino creates it, you may want it to be writable by group.
 
 And then add in your `/etc/mercurial/hgrc`::
 

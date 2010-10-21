@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-13 09:03+0100\n"
-"PO-Revision-Date: 2010-10-13 11:05+0200\n"
+"POT-Creation-Date: 2010-10-18 18:53+0100\n"
+"PO-Revision-Date: 2010-10-18 20:56+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -18,7 +18,7 @@ msgstr ""
 
 #: .\actions.py:114
 msgid "No selection. Nothing to do."
-msgstr ""
+msgstr "Nichts ausgewählt, nichts zu tun."
 
 #: .\actions.py:150
 msgid "Detail"
@@ -51,29 +51,33 @@ msgstr "Speichern"
 msgid "Image"
 msgstr ""
 
-#: .\fields.py:40
+#: .\fields.py:43
+msgid "Language"
+msgstr "Sprache"
+
+#: .\fields.py:52
 msgid "not at all"
 msgstr "gar nicht"
 
-#: .\fields.py:41
+#: .\fields.py:53
 msgid "a bit"
 msgstr "ein bisschen"
 
-#: .\fields.py:42
+#: .\fields.py:54
 msgid "moderate"
 msgstr "mittelmäßig"
 
-#: .\fields.py:43
+#: .\fields.py:55
 msgid "quite well"
 msgstr "ziemlich gut"
 
-#: .\fields.py:44
+#: .\fields.py:56
 msgid "very well"
 msgstr "sehr gut"
 
-#: .\fields.py:50
-msgid "Language"
-msgstr "Sprache"
+#: .\fields.py:63
+msgid "Invalid value %(value). Must be one of (%(values)s)"
+msgstr ""
 
 #: .\models.py:33
 msgid "The company that runs this site"
@@ -92,83 +96,90 @@ msgstr "Anwendungsparameter"
 msgid "~Site"
 msgstr ""
 
+#: .\reports.py:380
+#, python-format
+msgid "User %(user)s cannot view %(report)s."
+msgstr "Benutzer  %(user)s hat kein Recht,  %(report)s zu sehen."
+
 #: .\core\__init__.py:9
 msgid "Yes"
-msgstr ""
+msgstr "Ja"
 
 #: .\core\__init__.py:9
 msgid "No"
-msgstr ""
+msgstr "Nein"
 
-#: .\demo\lino_settings.py:23
+#: .\demos\dsbe\lino_settings.py:27
+#: .\demos\std\lino_settings.py:23
 msgid "~Contacts"
+msgstr "~Kontakte"
+
+#: .\demos\dsbe\lino_settings.py:32
+msgid "~Notes"
 msgstr ""
 
-#: .\demo\lino_settings.py:27
-msgid "~Projects"
-msgstr ""
-
-#: .\demo\lino_settings.py:31
+#: .\demos\dsbe\lino_settings.py:36
+#: .\demos\std\lino_settings.py:31
 msgid "~Configure"
 msgstr ""
 
-#: .\demo\lino_settings.py:43
+#: .\demos\dsbe\lino_settings.py:55
+#: .\demos\std\lino_settings.py:43
 msgid "E~xplorer"
 msgstr ""
 
-#: .\ui\extjs\ext_elems.py:490
+#: .\demos\std\lino_settings.py:27
+msgid "~Projects"
+msgstr ""
+
+#: .\ui\extjs\ext_elems.py:508
 #, python-format
 msgid "Select a %s..."
 msgstr ""
 
-#: .\ui\extjs\ext_store.py:69
+#: .\ui\extjs\ext_store.py:72
 #, python-format
 msgid "Existing primary key value %r may not be modified."
 msgstr ""
 
-#: .\ui\extjs\ext_store.py:243
+#: .\ui\extjs\ext_store.py:255
 #, python-format
 msgid "%r (invalid choice)"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:373
+#: .\ui\extjs\ext_ui.py:409
 msgid "Console"
 msgstr "Konsole"
 
-#: .\ui\extjs\ext_ui.py:477
+#: .\ui\extjs\ext_ui.py:513
 #, python-format
 msgid "Welcome on Lino server %(title)r, user %(user)s"
-msgstr ""
+msgstr "Willkommen auf dem Lino-server %(title)r, %(user)s"
 
-#: .\ui\extjs\ext_ui.py:504
+#: .\ui\extjs\ext_ui.py:540
 #, python-format
 msgid ""
 "There was a problem while saving your data:\n"
 "%s"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:513
-#: .\ui\extjs\ext_ui.py:536
+#: .\ui\extjs\ext_ui.py:549
+#: .\ui\extjs\ext_ui.py:572
 #, python-format
 msgid "User %(user)s cannot configure %(report)s."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:580
-#, python-format
-msgid "User %(user)s cannot view %(report)s."
-msgstr ""
-
-#: .\ui\extjs\ext_ui.py:705
+#: .\ui\extjs\ext_ui.py:739
 #, python-format
 msgid "Insert into %s..."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:810
+#: .\ui\extjs\ext_ui.py:843
 #, python-format
 msgid "Choices for %s"
 msgstr ""
 
 #: .\utils\mixins.py:79
 msgid "Print"
-msgstr ""
+msgstr "Drucken"
 

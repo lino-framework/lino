@@ -37,7 +37,7 @@ from django.contrib.contenttypes import generic
 
 import lino
 from lino.utils import ucsv
-from lino.utils import mixins
+from lino.utils import printable
 from lino.utils import choosers
 from lino import actions #, layouts #, commands
 from lino import reports
@@ -60,7 +60,6 @@ from . import ext_requests
 #~ from lino.modlib.properties import models as properties
 
 from django.conf.urls.defaults import patterns, url, include
-from lino.utils.mixins import PrintAction
 
 from lino.core.coretools import app_labels
 
@@ -202,9 +201,16 @@ class ExtUI(base.UI):
                     field.name = de._actor_name
                     field._return_type_for_method = de.slave_as_summary_meth(self,'<br>')
                     lh.add_store_field(field)
+                    kw.update(tools=[
+                      dict(
+                        qtip='Show report in own window', 
+                        handler=js_code("function() { Lino.%s(caller,{base_params:caller.get_master_params()})}" % de.default_action),
+                        id="up"),
+                    ])
                     e = ext_elems.HtmlBoxElement(lh,field,**kw)
                     return e
             else:
+                #~ field = fields.TextField(verbose_name=de.label)
                 field = fields.HtmlBox(verbose_name=de.label)
                 field.name = de._actor_name
                 field._return_type_for_method = de.slave_as_summary_meth(self,', ')
@@ -230,7 +236,7 @@ class ExtUI(base.UI):
                 if isinstance(value,reports.DataView):
                     return ext_elems.DataViewElement(lh,name,value)
                     #~ return ext_elems.TemplateElement(lh,name,value)
-                if isinstance(value,mixins.PicturePrintMethod):
+                if isinstance(value,printable.PicturePrintMethod):
                     return ext_elems.PictureElement(lh,name,value)
                 #~ if isinstance(value,layouts.PropertyGrid):
                     #~ return ext_elems.PropertyGridElement(lh,name,value)
@@ -1018,7 +1024,7 @@ class ExtUI(base.UI):
         
         
     def action_window_wrapper(self,a,h):
-        if isinstance(a,PrintAction): return ext_windows.DownloadRenderer(self,a)
+        if isinstance(a,printable.PrintAction): return ext_windows.DownloadRenderer(self,a)
         if isinstance(a,actions.DeleteSelected): return ext_windows.DeleteRenderer(self,a)
           
         if isinstance(a,actions.GridEdit):

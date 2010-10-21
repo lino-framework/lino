@@ -1,17 +1,23 @@
-To-Do-Liste
-===========
+To-do list
+==========
 
-Kurzfristig
------------
+This document is in German because it is rather for internal use. 
+See also :doc:`/tickets/index` which is a list of tickets 
+for which I hope for help from other people.
+
+
+Short-term
+----------
 
 - :class:`links.LinksByOwner` müssen jetzt natürlich noch benutzerfreundlich bearbeitet werden können.
     - Ein Button, um den Report in einem eigenen Fenster zu öffnen. 
       Diesen Button sollte sowieso jeder Slave-Report haben.
     - drag & drop
     - autoScroll für wenn viele Links da sind.
-    - Links direkt vom Panel aus bearbeiten können per context menu.
 
-- Neues Model LinkTypes. Wie soll :class:`links.LinksByOwner` sortiert sein?
+- Neues Model LinkTypes. 
+
+- Wie soll :class:`links.LinksByOwner` sortiert sein?
 
 - Problem mit dem remote Bearbeiten von ODT-Dokumenten
 
@@ -49,7 +55,7 @@ Kurzfristig
   leer haben und deshalb als Personen importiert werden.
   Zum Beispiel Partnernummern 87019, 86213, 86121, 86122 und 86372
 
-Kleinkram
+Long-term
 ---------
 
 - (à observer) Beim Einfügen in :class:`notes.MyNotes` (z.B.) funktioniert manchmal etwas mit dem Datum noch nicht. Da scheint noch ein Bug zu sein.
@@ -83,18 +89,6 @@ Kleinkram
 - Prüfen, ob die neuen ExtJS-Features `Forms with vbox Layout <http://dev.sencha.com/deploy/dev/examples/form/vbox-form.html>`_ und
   `Composite Form Fields <http://dev.sencha.com/deploy/dev/examples/form/composite-field.html>`_ für Lino interessant sind.
 
-Dokumentation
--------------
-
-- Wenn ich in der INSTALLED_APPS von lino.demos.std.settings auch die igen-Module reintue, dann 
-  kriege ich::
-  
-    ref\python\lino.modlib.dsbe.rst:17: (WARNING/2) autodoc can't import/find module 'lino.modlib.dsbe.models', 
-    it reported error: "resolve_model('contacts.Company',app_label='contacts',who=None) found None"
-
-
-Langfristig
------------
 
 - Filter auf virtuelle Kolonnen setzen können. Siehe :doc:`/blog/2010/0811`.
 
@@ -154,9 +148,12 @@ Langfristig
   
 - Layout-Editor: 
 
-  - Fehlerbehandlung! Momentan knallt es, wenn man einen Tippfehler macht. 
-    Stattdessen sollte er die Fehlermeldung anzeigen und das vor allem Speichern verweigern.
-  - Schade, dass das Editorfenster das darunterliegende Fenster verdeckt und auch nicht aus dem Browserfenster rausbewegt werden kann. Mögliche Lösung: dass das Editorfenster sich die east region pflanzt. 
+  - Schade, dass das Editorfenster das darunterliegende Fenster verdeckt 
+    und auch nicht aus dem Browserfenster rausbewegt werden kann. 
+    Mögliche Lösungen: 
+    
+    - Fenster allgemein wieder mit maximizable=true machen
+    - dass das Editorfenster sich die east region pflanzt. 
   - Button um Feldnamen komfortabel auszuwählen
 
 
@@ -174,8 +171,6 @@ Langfristig
     oder aber das automatische Schließen des Insert-Fensters im Report abschalten können.
 
 - Die Labels der Details werden zwar übersetzt, aber nicht von makemessages gefunden.
-
-- Report-Konfigurationsdateien sollten vielleicht besser YAML statt .py sein.  
 
 - Das Folgende macht er noch nicht:
   Falls ein Template in der Sprache der Notiz nicht existiert 
@@ -204,6 +199,7 @@ Langfristig
   
   
 - Foreign keys 
+
   - sollten in der Grid anklickbar sein, 
     so wie die Elemente eines Slave-Reports,
     aber nicht *genau* so, 
@@ -213,7 +209,24 @@ Langfristig
   - sollten im Detail-Fenster einen Button neben sich haben, 
     mit dem man per permalink auf die foreign row springen kann.
   
-  
+- Grid configs 
 
-- Auch die Grid configs sollten natürlich im neuen LOCAL_CONFIG_DIR stehen und nicht im DATA_DIR
+  - sollten in den config dirs stehen und nicht im DATA_DIR
+  - sollten vielleicht besser YAML statt .py sein.  
+
+- Wenn ich einen Slave-Report sowohl in der Grid als auch in einem Detail als Element benutze, 
+  dann verursacht das einen Konflikt im ext_store.Store, weil er zwei virtuelle fields.HtmlBox-Felder 
+  mit dem gleichen Namen erzeugt, die sich nur durch den row_separator unterscheiden.
+  Lösung wäre, dass :meth:`lino.reports.Report.slave_as_summary_meth` nicht HTML, sondern JSON zurückgibt.
+
+
+Documentation
+-------------
+
+- Wenn ich in der INSTALLED_APPS von lino.demos.std.settings auch die igen-Module reintue, dann 
+  kriege ich::
+  
+    ref\python\lino.modlib.dsbe.rst:17: (WARNING/2) autodoc can't import/find module 'lino.modlib.dsbe.models', 
+    it reported error: "resolve_model('contacts.Company',app_label='contacts',who=None) found None"
+
 

@@ -2,7 +2,8 @@
 :label_align: top
 
 main =
-    date type  user language
+    date type
+    user language
     subject
     person  company
     body:80x5 

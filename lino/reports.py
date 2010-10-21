@@ -42,7 +42,7 @@ import lino
 #~ from lino import layouts
 from lino import actions
 from lino.utils import perms, menus
-from lino.utils import mixins
+from lino.utils import printable
 from lino.core import datalinks
 from lino.core import boolean_texts
 from lino.core import actors
@@ -652,8 +652,8 @@ class Report(actors.Actor,base.Handled):
             if hasattr(self.model,'get_image_url'):
                 alist.append(actions.ImageAction(self))
                 
-            if issubclass(self.model,mixins.Printable):
-                alist.append(mixins.PrintAction(self))
+            if issubclass(self.model,printable.Printable):
+                alist.append(printable.PrintAction(self))
                 #~ print 20100517, mixins.pm_list
                 #~ for pm in mixins.pm_list:
                     #~ if pm.button_label:
