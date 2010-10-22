@@ -96,6 +96,14 @@ def json_response(x):
     s = py2js(x)
     #lino.log.debug("json_response() -> %r", s)
     return HttpResponse(s, mimetype='text/html')
+    
+def error_response(e,message_prefix=''):
+    kw = dict(success=False)
+    if hasattr(e, 'message_dict'):
+        kw.update(errors=e.message_dict)
+    kw.update(message=message_prefix+unicode(e))
+    return json_response(kw)
+    
 
 def elem2rec1(ar,rh,elem,**rec):
     rec.update(data=rh.store.row2dict(ar,elem))
@@ -136,7 +144,7 @@ def elem2rec_detailed(ar,rh,elem,**rec):
             if next is not None: next = next.pk
         rec.update(navinfo=dict(
             first=first,prev=prev,next=next,last=last,recno=recno,
-            msg="Row %d of %d" % (recno,ar.total_count)))
+            message="Row %d of %d" % (recno,ar.total_count)))
     return rec
             
     
@@ -523,11 +531,12 @@ class ExtUI(base.UI):
         #~ s = py2js(lino_site.get_menu(request))
         #~ return HttpResponse(s, mimetype='text/html')
 
-    def form2obj_and_save(self,ah,data,elem,**kw):
+    def form2obj_and_save(self,ah,data,elem,**kw2save):
         try:
             ah.store.form2obj(data,elem)
         except exceptions.ValidationError,e:
-            return json_response_kw(success=False,msg=unicode(e))
+           return error_response(e)
+           #~ return error_response(e,_("There was a problem while validating your data : "))
             
         if hasattr(elem,'before_save'): # see :doc:`/blog/2010/0804`
             elem.before_save()
@@ -535,17 +544,20 @@ class ExtUI(base.UI):
         try:
             elem.full_clean()
         except exceptions.ValidationError, e:
-            return json_response_kw(success=False,msg="Failed to save %s : %s" % (elem,e))
+            return error_response(e) #,_("There was a problem while validating your data : "))
+            #~ return json_response_kw(success=False,msg="Failed to save %s : %s" % (elem,e))
 
         try:
-            elem.save(**kw)
+            elem.save(**kw2save)
         except IntegrityError,e:
             #~ print unicode(elem)
             lino.log.exception(e)
-            return json_response_kw(success=False,
-                  msg=_("There was a problem while saving your data:\n%s") % e)
+            return error_response(e) # ,_("There was a problem while saving your data : "))
+            #~ return json_response_kw(success=False,
+                  #~ msg=_("There was a problem while saving your data:\n%s") % e)
         return json_response_kw(success=True,
-              msg="%s has been saved" % elem)
+              message=_("%(name)s has been saved (%(model)s.%(pk)s)") % 
+                dict(name=unicode(elem),model=elem._meta.verbose_name,pk=elem.pk))
 
 
         
@@ -562,7 +574,7 @@ class ExtUI(base.UI):
             tab = int(PUT.get('tab',0))
             desc = PUT.get('desc',None)
             if desc is None:
-                return json_response_kw(success=False,msg="desc is mandatory")
+                return json_response_kw(success=False,message="desc is mandatory")
             rh = rpt.get_handle(self)
             try:
                 rh.update_detail(tab,desc)
@@ -908,11 +920,13 @@ class ExtUI(base.UI):
                             setattr(instance,k,v)
                         instance.save(force_update=True)
                     return json_response_kw(success=True,
-                          msg="%s has been saved" % instance)
+                          message="%s has been saved" % instance)
                 except Exception,e:
                     lino.log.exception(e)
                     #traceback.format_exc(e)
-                    return json_response_kw(success=False,msg="Exception occured: "+cgi.escape(str(e)))
+                    return error_response(e) #,_("There was a problem while saving your data : "))
+                    #~ return error_response(e)
+                    #~ return json_response_kw(success=False,msg="Exception occured: "+cgi.escape(str(e)))
         # otherwise it's a simple list:
         #~ print 20100406, rptreq
         d = rptreq.render_to_dict()
@@ -993,6 +1007,8 @@ class ExtUI(base.UI):
     def py2js_converter(self,v):
         if v is LANGUAGE_CHOICES:
             return js_code('LANGUAGE_CHOICES')
+        if isinstance(v,Exception):
+            return unicode(v)
         if isinstance(v,menus.Menu):
             if v.parent is None:
                 return v.items

@@ -14,23 +14,6 @@
 
 """
 :mod:`lino.modlib` is a collection of Django applications designed to use Lino.
-
-Overview
-
-- :mod:`lino.modlib.countries`
-- :mod:`lino.modlib.contacts`
-- :mod:`lino.modlib.notes`
-- :mod:`lino.modlib.projects`
-- :mod:`lino.modlib.products`
-- :mod:`lino.modlib.journals`
-- :mod:`lino.modlib.sales`
-- :mod:`lino.modlib.finan`
-- :mod:`lino.modlib.ledger`
-
-Top-level apps:
-
-- :mod:`lino.modlib.dsbe`
-- :mod:`lino.modlib.igen`
-
+See also :doc:`/ref/modlib`
 
 """

@@ -20,6 +20,9 @@ from django.utils.translation import ugettext as _
 
 
 class Country(models.Model):
+    """
+    Implements the :class:`countries.Country` convention.
+    """
     name = models.CharField(max_length=200)
     isocode = models.CharField(max_length=4,primary_key=True)
     short_code = models.CharField(max_length=4,blank=True)
@@ -29,14 +32,6 @@ class Country(models.Model):
     
     def __unicode__(self):
         return self.name
-        
-#~ class CountryDetail(layouts.DetailLayout):
-    #~ datalink = 'countries.Country'
-    #~ main = """
-    #~ isocode name short_code
-    #~ countries.CitiesByCountry
-    #~ """
-  
         
 class Countries(reports.Report):
     label = _("Countries")
@@ -49,6 +44,9 @@ FREQUENT_COUNTRIES = ['BE','NL','DE', 'FR', 'LU']
 
 
 class City(models.Model):
+    """
+    Implements the :class:`countries.City` convention.
+    """
     name = models.CharField(max_length=200)
     country = models.ForeignKey('countries.Country')
     zip_code = models.CharField(max_length=8,blank=True)
@@ -69,15 +67,4 @@ class CitiesByCountry(Cities):
     column_names = "name zip_code country"
     fk_name = 'country'
 
-
-#~ class Language(models.Model):
-    #~ id = models.CharField(max_length=2,primary_key=True)
-    #~ name = models.CharField(max_length=200)
-    
-    #~ def __unicode__(self):
-        #~ return self.name
-
-#~ class Languages(reports.Report):
-    #~ model = 'countries.Language'
-    #~ order_by = "id"
 

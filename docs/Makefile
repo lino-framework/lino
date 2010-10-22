@@ -11,9 +11,9 @@ AUTODOC                = python l:\\snapshots\\sphinx-autopackage-script\\genera
 
 
 # You can set these variables from the command line.
-SPHINXOPTS    =
-#~ SPHINXBUILD   = python l:\\snapshots\\sphinx\\sphinx-build.py -W
-SPHINXBUILD   = python l:\\snapshots\\sphinx\\sphinx-build.py 
+SPHINXOPTS    = -W
+#~ SPHINXOPTS    = 
+SPHINXBUILD   = python l:\\snapshots\\sphinx\\sphinx-build.py
 PAPER         =
 
 # Internal variables.

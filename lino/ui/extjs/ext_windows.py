@@ -46,29 +46,26 @@ class ActionRenderer(object):
         pass
         
     def js_render(self):
-        yield "function(caller) { return new Lino.%s(caller,%s);}" % (self.__class__.__name__,py2js(self.config))
+        yield "function(caller) { Lino.notify(); return new Lino.%s(caller,%s);}" % (self.__class__.__name__,py2js(self.config))
     
 class DownloadRenderer(ActionRenderer):
   
     def js_render(self):
-        url = '/'.join(('/api',self.action.actor.app_label,self.action.actor._actor_name))+'/'
-        yield "function(caller) { "
-        #~ yield "  console.log(caller.get_selected());"
-        yield "  var l = caller.get_selected();"
-        yield "  if (l.length == 0) Lino.notify('No selection.');"
-        yield "  for (var i = 0; i < l.length; i++) "
-        yield "    window.open(%r+l[i]+'?fmt=%s');" % (url,self.action.name)
-        #~ yield "  caller.get_selected().forEach(function(pk) {"
-        #~ yield "    console.log(pk);"
-        #~ yield "    window.open(%r+pk+'.pdf');" % url
-        #~ yield "  })"
-        yield "}" 
+        #~ url = '/'.join(('/api',self.action.actor.app_label,self.action.actor._actor_name))+'/'
+        yield "function(caller) { Lino.notify(); Lino.show_download(caller,%r);}" % self.action.name
+        #~ yield "function(caller) { return new Lino.show_download(caller,%r);}" % self.action.name
+        
+        #~ yield "function(caller) { "
+        #~ yield "  var l = caller.get_selected();"
+        #~ yield "  if (l.length == 0) Lino.notify('No selection.');"
+        #~ yield "  for (var i = 0; i < l.length; i++) "
+        #~ yield "    window.open(%r+l[i].id+'?fmt=%s');" % (url,self.action.name)
+        #~ yield "}" 
 
 class DeleteRenderer(ActionRenderer):
   
     def js_render(self):
         yield "function(caller) { Lino.delete_selected(caller); }"
-        #~ yield "function() { Lino.delete_selected(this); }"
 
 class WindowWrapper(ActionRenderer):
   
@@ -124,21 +121,26 @@ class MasterWrapper(WindowWrapper):
     def js_render(self):
         yield "function(caller,params) { "
         #~ yield "  Ext.getCmp('main_area').el.setStyle({cursor:'wait'});"
+        yield "Lino.notify();"
         if settings.USE_FIREBUG:
             yield "  console.time('%s');" % self.action
             #~ yield "  console.log('ext_windows',20100930,params);"
-        for ln in jsgen.declare_vars(self.config):
-            yield '  '+ln
         yield "  var ww = new Lino.%s(caller,%s,params);" % (
             self.__class__.__name__,py2js(self.config))
             
-        for e in self.main.walk():
-            if e is not self.main and (
-                isinstance(e,ext_elems.GridElement) or isinstance(e,ext_elems.HtmlBoxElement)):
-                yield "  %s.ww = ww;" % e.ext_name
-                #~ if e.collapsible:
-                    #~ yield "  %s.on('expand',Lino.collapse_handler(%s))" % (e.ext_name,e.parent.ext_name)
-                    #~ yield "  %s.on('collapse',Lino.collapse_handler(%s))" % (e.ext_name,e.parent.ext_name)
+        for ln in jsgen.declare_vars(self.main):
+            yield '  '+ln
+        yield "  ww.main_item = %s;" % self.main.as_ext()
+            
+        if False:
+            for e in self.main.walk():
+                if e.refers_to_ww:
+                #~ if e is not self.main and (
+                    #~ isinstance(e,ext_elems.GridElement) or isinstance(e,ext_elems.HtmlBoxElement)):
+                    yield "  %s.ww = ww;" % e.ext_name
+                    #~ if e.collapsible:
+                        #~ yield "  %s.on('expand',Lino.collapse_handler(%s))" % (e.ext_name,e.parent.ext_name)
+                        #~ yield "  %s.on('collapse',Lino.collapse_handler(%s))" % (e.ext_name,e.parent.ext_name)
         if False and isinstance(self.main,ext_elems.GridMainPanel):
             yield "%s.store.proxy.on('load',function(){console.log('MasterWrapper load 2',%s.store.reader.arrayData)});" % (
                 self.main.as_ext(), self.main.as_ext())
@@ -159,8 +161,8 @@ class GridWrapperMixin(WindowWrapper):
     def get_config(self):
         d = super(GridWrapperMixin,self).get_config()
         d.update(content_type=self.rh.content_type)
-        d.update(title=unicode(self.rh.get_title(None)))
-        d.update(main_panel=self.lh._main)
+        #~ d.update(title=unicode(self.rh.get_title(None)))
+        #~ 20101022 d.update(main_panel=self.lh._main)
         return d
         
     def update_config(self,wc):
@@ -197,7 +199,7 @@ class BaseDetailWrapper(MasterWrapper):
         url = self.ui.build_url('api',self.action.actor.app_label,self.action.actor._actor_name)
         d.update(content_type=self.rh.content_type)
         d.update(url_data=url) 
-        d.update(main_panel=self.main)
+        #~ 20101022 d.update(main_panel=self.main)
         d.update(name=self.action.name)
         d.update(fk_name=self.action.actor.fk_name);
         return d
@@ -205,6 +207,7 @@ class BaseDetailWrapper(MasterWrapper):
         
 class DetailWrapper(BaseDetailWrapper):
     pass
+  
   
 class InsertWrapper(BaseDetailWrapper):
     def get_config(self):

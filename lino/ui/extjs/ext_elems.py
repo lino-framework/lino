@@ -203,6 +203,7 @@ class LayoutElement(VisibleComponent):
     collapsible = False
     hidden = False
     active_child = True
+    refers_to_ww = False
     
     def __init__(self,lh,name,**kw):
         #lino.log.debug("LayoutElement.__init__(%r,%r)", lh.layout,name)
@@ -398,6 +399,7 @@ class HtmlBoxElement(FieldElement):
     preferred_height = 5
     vflex = True
     filter_type = 'string'
+    refers_to_ww = True
     
     #~ def __init__(self,lh,name,action,**kw):
         #~ kw.update(plugins=js_code('Lino.HtmlBoxPlugin'))
@@ -637,22 +639,23 @@ class Container(LayoutElement):
     def __init__(self,lh,name,*elements,**kw):
         self.has_frame = lh.layout.has_frame
         self.labelAlign = lh.layout.label_align
-        self.elements = elements
         self.active_children = []
-        #~ self.has_fields = False
-        for e in elements:
-            e.set_parent(self)
-            #~ if isinstance(e,FieldElement):
-                #~ self.has_fields = True
-            if not isinstance(e,LayoutElement):
-                raise Exception("%r is not a LayoutElement" % e)
-            if e.active_child:
-                self.active_children.append(e)
-            elif isinstance(e,Panel):
-                self.active_children += e.active_children
-                #~ self.has_fields = True
-                
-        kw.update(items=elements)
+        self.elements = elements
+        if elements:
+            #~ self.has_fields = False
+            for e in elements:
+                e.set_parent(self)
+                #~ if isinstance(e,FieldElement):
+                    #~ self.has_fields = True
+                if not isinstance(e,LayoutElement):
+                    raise Exception("%r is not a LayoutElement" % e)
+                if e.active_child:
+                    self.active_children.append(e)
+                elif isinstance(e,Panel):
+                    self.active_children += e.active_children
+                    #~ self.has_fields = True
+                    
+            kw.update(items=elements)
                 
         LayoutElement.__init__(self,lh,name,**kw)
         
@@ -919,11 +922,12 @@ class GridElement(Container):
     declare_type = jsgen.DECLARE_VAR
     #value_template = "new Ext.grid.EditorGridPanel(%s)"
     #~ value_template = "new Ext.grid.GridPanel(%s)"
-    value_template = "new Lino.GridPanel(%s)"
+    value_template = "new Lino.GridPanel(ww,%s)"
     ext_suffix = "_grid"
     vflex = True
     xtype = None
     preferred_height = 5
+    refers_to_ww = True
     
     def __init__(self,lh,name,rpt,*columns,**kw):
         """
@@ -1003,6 +1007,7 @@ class M2mGridElement(GridElement):
             
 class MainPanel(jsgen.Variable):
     declare_type = jsgen.DECLARE_INLINE
+    refers_to_ww = True
   
     def __init__(self):
         self.keys = None
@@ -1143,7 +1148,7 @@ class TabPanel(jsgen.Component):
 class FormPanel(jsgen.Component):
 #~ class FormPanel(VisibleComponent):
     declare_type = jsgen.DECLARE_VAR
-    value_template = "new Lino.FormPanel(%s)"
+    value_template = "new Lino.FormPanel(ww,%s)"
     #~ value_template = "new Ext.form.FormPanel(%s)"
     
     def __init__(self,rh,action,main,**kw):

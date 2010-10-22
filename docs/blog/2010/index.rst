@@ -167,6 +167,7 @@
   19
   :doc:`20 <1020>`
   :doc:`21 <1021>`
+  :doc:`22 <1022>`
 
 .. |Nov| replace::  **November**
 
@@ -179,9 +180,11 @@
 |Oct| |Nov| |Dec|
 ===== ===== =====
 
+Full list of entries
+--------------------
+
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :glob:
-   :hidden:
    
    *

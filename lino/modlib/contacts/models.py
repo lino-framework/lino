@@ -11,30 +11,6 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
-
-:class:`Contact` is the base class for :class:`Person` (physical persons) and :class:`Company` (companies, organisations). Everything that has may be contacted using a postal or email address or phone numbers. 
-  
-:attr:`Company.type` is a pointer to this company's :class:`CompanyType`. 
-:class:`CompanyTypes`
-  
-The :class:`contacts.Person` and :class:`contacts.Company` in this module are 
-only abstract base classes because you are probably going to extend them.
-The simplest way to make them usable is to subclass them 
-without any change::
-
-  from lino.modlib.contacts import models as contacts
-  
-  class Person(contacts.Person):
-      class Meta:
-          app_label = 'contacts'
-      
-  class Company(contacts.Company):
-      class Meta:
-          app_label = 'contacts'
-
-"""
-
 
 import datetime
 from dateutil.relativedelta import relativedelta
@@ -70,8 +46,7 @@ from lino.tools import default_language
 #~ class Contact(models.Model,mixins.Printable):
 class Contact(models.Model):
     """
-    Anything that has contact information (postal address, email, phone,...).
-    Base class for :class:`Company` and :class:`Person`.
+    Implements the :class:`contacts.Contact` convention.
     """
   
     class Meta:
@@ -83,8 +58,13 @@ class Contact(models.Model):
     street_box = models.CharField(_("Box"),max_length=10,blank=True)
     addr1 = models.CharField(max_length=200,blank=True)
     #addr2 = models.CharField(max_length=200,blank=True)
+    
     country = models.ForeignKey('countries.Country',blank=True,null=True,verbose_name=_("Country"))
+    "See :meth:`contacts.Contact.country`"
+    
     city = models.ForeignKey('countries.City',blank=True,null=True)
+    "See :meth:`contacts.Contact.city`"
+    
     #city = models.CharField(max_length=200,blank=True)
     zip_code = models.CharField(max_length=10,blank=True)
     region = models.CharField(max_length=200,blank=True)
@@ -105,10 +85,7 @@ class Contact(models.Model):
         return self.name
         
     def address(self):
-        """
-        The postal address, formatted according to the local rules in this country. 
-        Virtual field. 
-        """
+        "See :meth:`contacts.Contact.address`"
         return self.as_address(', ')
     address.return_type = models.TextField()
     
@@ -161,7 +138,9 @@ class Contacts(reports.Report):
  
 
 class Person(Contact):
-    "Used to store physical persons."
+    """
+    Implements the :class:`contacts.Person` convention.
+    """
     class Meta:
         abstract = True
         app_label = 'contacts'
@@ -199,6 +178,9 @@ class PersonsByCountry(Persons):
     column_names = "city addr1 name nationality language"
 
 class CompanyType(models.Model):
+    """
+    Implements the :class:`contacts.CompanyType` convention.
+    """
     #~ id = models.CharField(max_length=10,primary_key=True)
     abbr = models.CharField(max_length=30,verbose_name=_("Abbreviation"))
     name = models.CharField(max_length=200,verbose_name=_("Designation"))
@@ -212,27 +194,17 @@ class CompanyTypes(reports.Report):
   
 class Company(Contact):
     """
-    Used to store organisations of any kind. 
-    Also non-formal groups of persons.
+    Implements the :class:`contacts.Company` convention.
     """
     class Meta:
         abstract = True
         app_label = 'contacts'
-#~ class CompanyMixin:
     
     vat_id = models.CharField(max_length=200,blank=True)
     type = models.ForeignKey('contacts.CompanyType',blank=True,null=True,verbose_name=_("Company type"))
     """Pointer to this company's :class:`CompanyType`. 
     """
     
-    #~ def as_address(self,linesep="\n<br/>"):
-        #~ s = Contact.as_address(self,linesep)
-        #~ return self.name + linesep + s
-
-#~ class CompanyDetail(ContactDetail):
-    #~ datalink = 'contacts.Company'
-    #~ box1 = """name 
-    #~ vat_id:12"""
               
 class Companies(Contacts):
     label = _("Companies")

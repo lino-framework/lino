@@ -9,17 +9,19 @@ for which I hope for help from other people.
 Short-term
 ----------
 
+- django.db.Model._meta.verbose_name nutzen für :meth:`links.LinksByOwner.get_title`.
+
 - :class:`links.LinksByOwner` müssen jetzt natürlich noch benutzerfreundlich bearbeitet werden können.
-    - Ein Button, um den Report in einem eigenen Fenster zu öffnen. 
-      Diesen Button sollte sowieso jeder Slave-Report haben.
     - drag & drop
     - autoScroll für wenn viele Links da sind.
+    
+- Neues Model links.LinkTypes. 
 
-- Neues Model LinkTypes. 
-
-- Wie soll :class:`links.LinksByOwner` sortiert sein?
-
-- Problem mit dem remote Bearbeiten von ODT-Dokumenten
+- Wie soll :class:`links.LinksByOwner` sortiert sein? 
+  Am besten manuell, also ein Feld :attr:`links.Link.sequence` 
+  und ein user interface zum Verändern der Reihenfolge.
+  
+- Problem mit dem remote Bearbeiten von ODT-Dokumenten (WebDAV).
 
 - Dokumentvorlagen machen  
 
@@ -124,14 +126,10 @@ Long-term
 
 - Inwiefern überschneiden sich :mod:`lino.modlib.system.models.SiteConfig` und :mod:`django.contrib.sites`? 
 
-- Die interne Kolonnenliste eines Reports ist ja konstant. Also sollte ein Record im fmt=json nicht als ``dict`` sondern als ``list`` repräsentiert werden.
-
 - Benutzerverwaltung von der Kommandozeile aus. 
   In Lino-DSBE gibt es :xfile:`make_staff.py`, aber das ist nur ein sehr primitives Skript.
   
 - Im Fenster :menuselection:`System --> Site Configuration` müssten Delete und Insert noch weg. 
-
-- Wenn ein Detail-Fenster nur ein Layout hat (nur einen Tab), dann ist der Titel dieses Layouts unnütz.
 
 - http://code.google.com/p/extjs-public/
   und
@@ -143,8 +141,15 @@ Long-term
 
 - Comboboxen auf Integerfeldern funktionieren nicht. Zeigen NaN als Text an.
 
-- Der JS-Code, der ein Detail-Fenster definiert, wird für jeden Report zweimal generiert (detail und insert).
+- Der JS-Code, der ein Detail-Fenster definiert, wird in der :xfile:`site.js` 
+  für jeden Report zweimal generiert (detail und insert).
   Ein einziges Mal für alle Reports würde reichen.
+  
+- :xfile:`site.js` und :xfile:`lino.js` sollten eigentlich eine einzige Datei sein. 
+  Also die :file:`lino.js` muss templatisiert werden (wobei z.B. die dortigen Meldungen 
+  auch endlich übersetzbar würden), und am Ende würde das Template dann 
+  das Äquivalent von :meth:`lino.ui.extjs.ext_ui.ExtUI.build_site_js` aufrufen.
+  
   
 - Layout-Editor: 
 
@@ -154,6 +159,7 @@ Long-term
     
     - Fenster allgemein wieder mit maximizable=true machen
     - dass das Editorfenster sich die east region pflanzt. 
+    
   - Button um Feldnamen komfortabel auszuwählen
 
 
@@ -218,6 +224,23 @@ Long-term
   dann verursacht das einen Konflikt im ext_store.Store, weil er zwei virtuelle fields.HtmlBox-Felder 
   mit dem gleichen Namen erzeugt, die sich nur durch den row_separator unterscheiden.
   Lösung wäre, dass :meth:`lino.reports.Report.slave_as_summary_meth` nicht HTML, sondern JSON zurückgibt.
+  
+- LatexPrintMethod. Da müsste ja ohne Aufwand 
+  mal ein kleines Beispiel implementiert werden können.  
+  
+- Benutzermeldungen "wurde gespeichert" & Co bleiben manchmal auch 
+  nach der nächsten Aktion noch in der Console stehen.
+  Ich muss vielleicht konsequent immer Lino.action_handler benutzen.
+  
+- Zu prüfen: Wenn ich auf einem production server auf "Drucken" klicke 
+  und auf dem Server noch kein Verzeichnis 
+  für diese Druckmethode konfiguriert ist, kriegt man keine Fehlermeldung. 
+  
+- Sollten Links hierarchisiert werden können? 
+  Das hieße ein Feld :attr:`links.Link.parent` 
+  und ein TreePenel.
+  
+
 
 
 Documentation

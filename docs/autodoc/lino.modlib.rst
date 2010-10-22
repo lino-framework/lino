@@ -12,6 +12,7 @@ Subpackages
 
 .. toctree::
 
+    lino.modlib.countries
     lino.modlib.contacts
     lino.modlib.dsbe
 

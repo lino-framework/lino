@@ -1,0 +1,42 @@
+20101122
+========
+
+Noch zwei Ideen für die To-Do-Liste:
+
+- LatexPrintMethod. Da müsste ja ohne Aufwand 
+  mal ein kleines Beispiel implementiert werden können.
+  
+- verbose_name und verbose_name_plural eines django.db.Model nutze ich noch gar nicht, aber zumindest für :class:`links.LinksByOwner` wären die jetzt nützlich.
+  
+Sphinx is so fun...
+-------------------
+
+Zunächst habe ich versehentlich wieder zwei Stunden in der Dokumentation 
+gearbeitet: 
+Implementierungsspezifische Dokumentation 
+gehört in die docstrings 
+(d.h. :doc:`/autodoc/lino`), aber 
+wichtig ist auch ein Dokument
+:doc:`/ref/modlib`, 
+das auch für *third-party developers* 
+verbindlich ist.
+Für :class:`countries` und :class:`contacts` 
+habe ich mal diese meine neueste Idee ausprobiert.
+
+User messages & Console
+-----------------------
+
+Danach habe ich 4 Stunden lang 
+nach den Problemen mit den Benutzermeldungen und Record-Aktionen geschaut:
+"Drucken" und "Insert" funktionieren in der Grid nicht. Im Detail wohl.
+In der Grid werden die Meldungen nicht angezeigt. 
+Da war unter anderem ein Misverständnis zwischen Server und Client: der Server sagt `msg` und der Client schaute nach `message`. Manchmal auch umgekehrt. Jetzt heißt es `message`. 
+Aber vor allem kamen dadurch noch einige Umkrempelungen. WindowWrapper ist jetzt ein richtiger Wrapper in dem Sinne, dass das Window erst bei show() erzeugt wird. Also kann der ww instanziert werden und dann an Lino.GridPanel und Lino.FormPanel schon im Konstruktor angegeben werden.
+
+Ein Thema zum Meditieren ist noch, dass die Konsole ja immer nur eine Meldung anzeigt. 
+Die ursprüngliche Idee der Konsole war, dass man alle Benutzermeldungen einer Sitzung noch nachschauen kann. 
+Aber das funktioniert erstens bisher nicht (Konsole zeigt immer höchstens eine Meldung an), 
+und zweitens hat das bisher noch niemanden gestört. 
+Also lassen wir das. 
+Also könnte ich die Meldungen stattdessen in die Statuszeile schreiben... Hmm... Das ist natürlich nicht der ideale Platz für Feedback-Meldungen vom Server. Gibt es denn einen anderen Ort, wo diese Meldungen kommen könnten? Soll ich überhaupt so einen Nachfolger für die Meldungszeile von TIM machen? (Ja klar, oder wollt ihr lieber die Meldung jedesmal in einer Dialogbox anzeigen?)
+

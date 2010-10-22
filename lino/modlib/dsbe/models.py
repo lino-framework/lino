@@ -80,6 +80,9 @@ RESIDENCE_TYPE_CHOICES = (
 
 #~ class PersonPicture(Action)
 class Contact(contacts.Contact):
+    """
+    Implements :class:`contacts.Contact`
+    """
     class Meta:
         app_label = 'contacts'
         abstract = True
@@ -117,7 +120,8 @@ class Contact(contacts.Contact):
 
 class Person(Contact,Printable):
     """
-    Implements :class:`contacts.Person`, but cannot inherit it directly 
+    Implements :class:`contacts.Person`, 
+    but cannot inherit from :mod:`lino.modlib.contacts.models.Person`
     (see :doc:`/tickets/7`).
     """
     
@@ -332,7 +336,8 @@ class PersonsByNationality(Persons):
 class Company(Contact):
   
     """
-    Implements :class:`contacts.Company`, but cannot inherit it directly 
+    Implements :class:`contacts.Company`, 
+    but cannot inherit from :mod:`lino.modlib.contacts.models.Company`
     (see :doc:`/tickets/7`).
     """
     
@@ -603,7 +608,7 @@ class Coaching(models.Model):
     person = models.ForeignKey("contacts.Person",verbose_name=_("Client"))
     coach = models.ForeignKey("auth.User",verbose_name=_("Coach"))
     type = models.ForeignKey("dsbe.CoachingType",verbose_name=_("Coaching type"))
-    remark = models.CharField(max_length=200,blank=True,verbose_name=_("Remark"))
+    remark = models.CharField(max_length=200,blank=False,verbose_name=_("Remark"))
     
 
 class Coachings(reports.Report):

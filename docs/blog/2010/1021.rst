@@ -8,7 +8,7 @@ Aber wir sind ja guter Hoffnung, dass der Bär bald erlegt wird,
 und wenn Lino geboren ist, wird die Webseite natürlich auch wichtig, 
 um potentiellen Interessenten den Einstieg möglich zu machen.
   
-`Check-in <http://code.google.com/p/lino/source/detail?r=ea544a606942a5d9f59b0e4c970165ab94edf6ec>`_
+`Check-in <http://code.google.com/p/lino/source/detail?r=ea544a606942a5d9f59b0e4c970165ab94edf6ec>`__
 
 New button "Show report in own window"
 --------------------------------------
@@ -31,13 +31,18 @@ wird dazu ausgeführt), aber vom Client nicht beachtet.
 
 Aber zuerst mal ein Check-in, denn dieses "Detail" hat mit dem datareader des stores zu tun, 
 und die beste Lösung wird sein, wenn ich in Einem das Problem des uneffizienten Datenformats 
-löse. 
+löse.
+
   
   
 JsonReader uses suboptimal data format
 --------------------------------------
 
-Das Problem des uneffizienten Datenformats ist wie folgt. 
+Das Problem des uneffizienten Datenformats ist in der To-do-Liste folgendermaßen formuliert:
+
+- Die interne Kolonnenliste eines Reports ist ja konstant. 
+  Also sollte ein Record im fmt=json nicht als ``dict`` sondern als ``list`` repräsentiert werden.
+
 Das Füllen der Grid von :menuselection:`Kontakte --> Personen` 
 dauert momentan ziemlich lange.
 Die Antwort des Servers auf den AJAX-Call (`GET /api/contacts/Persons?fmt=json`) 
@@ -98,9 +103,9 @@ Da kam stattdessen eine Exception auf dem Server.
 Die kommt jetzt nicht mehr, und die Fehlermeldung geht korrekt an den Client zurück.
 Aber trotzdem sieht der Benutzer sie noch nicht.
 Das liegt am on_afteredit des GridPanels. 
-Da wird noch ein altes Lino.do_action bentuzt.
+Da wird noch ein altes Lino.do_action benutzt.
 
-Aber das schau ich mir morgen mal an, jetzt mach ich Feierabend!
-
-`Check-in <>`_
+Aber das schau ich mir morgen an, jetzt ist 
+`Check-in <http://code.google.com/p/lino/source/detail?r=a918fdc84dd3178af77141ffca7952c46db7250c>`__
+wegen Feierabend.
 
