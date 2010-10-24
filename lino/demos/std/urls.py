@@ -28,7 +28,8 @@ urlpatterns = patterns('',
 
 if sys.platform == 'win32':
 
-    EXTJS_ROOT = r's:\ext-3.2.1'
+    EXTJS_ROOT = r's:\ext-3.3.0'
+    #~ EXTJS_ROOT = r's:\ext-3.2.1'
     #~ EXTJS_ROOT = r's:\ext-3.3.0-rc'
     #~ EXTJS_URL = "/media/extjs/"
 

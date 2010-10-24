@@ -40,3 +40,7 @@ und zweitens hat das bisher noch niemanden gestört.
 Also lassen wir das. 
 Also könnte ich die Meldungen stattdessen in die Statuszeile schreiben... Hmm... Das ist natürlich nicht der ideale Platz für Feedback-Meldungen vom Server. Gibt es denn einen anderen Ort, wo diese Meldungen kommen könnten? Soll ich überhaupt so einen Nachfolger für die Meldungszeile von TIM machen? (Ja klar, oder wollt ihr lieber die Meldung jedesmal in einer Dialogbox anzeigen?)
 
+
+
+`Check-in <http://code.google.com/p/lino/source/detail?r=b29726b8bafb575bef04a02f6477a226013d0c3e>`__ 
+wegen Wochenende.

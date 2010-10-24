@@ -6,6 +6,14 @@ Changes
 
 - :mod:`lino.modlib.links` has been reactivated.
 
+Bugs fixed
+----------
+
+- Eingeben von Begleitern einer Person funktioniert nicht
+- Print-Button auf Person funktioniert nicht
+
+
+
 
 Upgrade instructions
 --------------------

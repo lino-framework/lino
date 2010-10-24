@@ -58,6 +58,9 @@ def store(kw,**d):
         if v:
             kw[k] = v
 
+def convert_username(name):
+    return name.lower()
+  
 def convert_sex(v):
     if v in ('W','F'): return 'F'
     if v == 'M': return 'M'
@@ -238,7 +241,8 @@ def load_tim_data(dbpath):
         now = datetime.datetime.now()
         if row['EMAIL']:
             user = auth.User(
-                username=row['USERID'], email=row['EMAIL'],
+                username=convert_username(row['USERID']), 
+                email=row['EMAIL'],
                 first_name=d['first_name'],
                 last_name=d['last_name'],
                 is_staff=False,is_active=True, is_superuser=False, 

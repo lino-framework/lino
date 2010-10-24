@@ -171,7 +171,13 @@ class DateStoreField(StoreField):
             d[self.field.name] = value
             
     def parse_form_value(self,v):
-        return dateparser.parse(v,fuzzy=True)
+        print '20101024 DateStoreField 1', v
+        if v:
+            v = dateparser.parse(v,fuzzy=True)
+        else:
+            v = None
+        print '20101024 DateStoreField 2', v
+        return v
 
 
 class MethodStoreField(StoreField):

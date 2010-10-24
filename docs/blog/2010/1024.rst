@@ -1,0 +1,114 @@
+20101024
+========
+
+.. currentmodule:: lino.modlib.dsbe.management.commands.initdb_tim
+
+- In :mod:`initdb_tim <lino.modlib.dsbe.management.commands.initdb_tim>` habe ich jetzt eine neue Funktion 
+  :func:`convert_username`. Die macht par défaut einfach nur eine Konvertierung in Kleinbuchstaben. 
+  Eventuelle lokale Ausnahmen können direkt hier eingegeben werden, 
+  weil `initdb_tim` ja doch nur einmal pro Site läuft. 
+
+- :meth:`lino.modlib.links.LinksByOwner.get_title` funktioniert jetzt.
+
+- Da war noch wieder ein dreifacher Bug mit der Übernahme von mt und mk:
+
+  - Die HtmlBox bekam kein Attribut `ww` mehr, seit ich das 
+    für Lino.GridPanel und Lino.FormPanel in den Konstruktor verlagert habe.
+    :js:func:`Lino.report_window_button` pfropft ihr das jetzt rein, bevor er die Aktion startet.
+    Nicht sehr schön, aber es funktioniert.
+  
+  - Der Permalink eines solchen Slave-Reports, der im eigenen Fenster geöffnet ist, 
+    funktionierte noch nicht, weil er mk und mt nicht übergab. Jetzt benutze ich :extjs:`Ext.urlEncode`.
+
+  - Wenn man einen Slave-Report im eigenen Fenster aufrief
+    (z.B. http://127.0.0.1:8000/api/links/LinksByOwner?fmt=grid&mt=12&mk=15),
+    dann funktionierte das auch noch nicht. Die Grid erschien zwar, 
+    aber die hatte ihrem Store den mt und mk nicht mitgeteilt.
+  
+  
+- Bugfix: wenn man ein Detail-Fenster abspeicherte, wurden leere Datumsfelder immer auf heute gesetzt. 
+  Zum Beispiel in http://127.0.0.1:8000/api/contacts/Persons/16?fmt=detail&tab=1.
+  Das PUT wurde vom client korrekt abgeschickt::
+  
+    http://127.0.0.1:8000/api/contacts/Persons/16?birth_country=Select%20a%20Country...\
+    &birth_countryHidden=&card_number=&card_valid_from=&card_valid_until=&civil_state=\
+    &civil_stateHidden=&ext-comp-1169=&native_language=
+    
+  Grund war, dass ich noch nicht wusste, ist dass :meth:`dateutil.dateparser.parse` das aktuelle Datum 
+  als Standardwert zurückgbit, wenn man ihm einen leeren String füttert::
+  
+    >>> from dateutil import parser as dateparser
+    >>> dateparser.parse('',fuzzy=True) 
+    datetime.datetime(2010, 10, 24, 0, 0)
+    
+- In der :srcref:`/docs/conf.py` und im :srcref:`/Makefile` habe ich jetzt 
+  `sphinx.ext.doctest <http://sphinx.pocoo.org/ext/doctest.html>`_ eingebaut, 
+  um den obigen Code-Auszug zu testen. Dummerweise lässt der sich nicht 
+  einfach testen, bzw. würde ab morgen jedesmal versagen. Deshalb wieder 
+  der ``::`` vor dem Textblock (wodurch es zu einem normalen preformatted code 
+  block wird, der nicht getestet wird).  
+  Die Tests werden bei einem normalen :command:`make html` 
+  *nicht* gefahren, dazu muss man explizit :command:`make doctest` rufen.
+  
+  Aber da jetzt nur eine Latte von Fehlermeldungen, 
+  weil ich auch an anderen Stellen ungetestete 
+  Code-Snippets habe. 
+  Zum Beispiel funktioniert ein Beispiel in 
+  :doc:`/django/DjangoPitfalls` nicht::
+  
+    File "django\DjangoPitfalls.rst", line 25, in default
+    Failed example:
+        from django.db import models
+
+        class Person(models.Model):
+            name = models.CharField(max_length=200)
+            def __unicode__(self):
+                return self.name
+
+        class AutoPerson(models.Model):
+            id = models.AutoField(primary_key=True)
+            # otherwise same as Person
+
+        class IntegerPerson(models.Model):
+            id = models.IntegerField(primary_key=True)
+            # otherwise same as Person
+
+        class CharPerson(models.Model):
+            id = models.CharField(primary_key=True,max_length=10)
+            # otherwise same as Person
+    Exception raised:
+        Traceback (most recent call last):
+          File "c:\Python25\lib\doctest.py", line 1228, in __run
+            compileflags, 1) in test.globs
+          File "<doctest default[0]>", line 3, in <module>
+            class Person(models.Model):
+          File "l:\snapshots\django\django\db\models\base.py", line 49, in __new__
+            kwargs = {"app_label": model_module.__name__.split('.')[-2]}
+        IndexError: list index out of range  
+      
+  Und ich wüsste momentan auch nicht, wie man das leicht ans Laufen bringen kann. 
+  Deshalb hier auch ``::`` vor alle Snippets.
+  
+  Ein anderes Problem ist z.B.::
+
+    File "autodoc\lino.utils.rst", line ?, in default
+    Failed example:
+        class TextField(Component):
+           declare_type = DECLARE_VAR
+    Exception raised:
+        Traceback (most recent call last):
+          File "c:\Python25\lib\doctest.py", line 1228, in __run
+            compileflags, 1) in test.globs
+          File "<doctest default[0]>", line 1, in <module>
+            class TextField(Component):
+        NameError: name 'Component' is not defined
+        
+  Das liegt daran, dass der normale Doctest, der unten in der Datei 
+  :srcref:`/lino/utils/jsgen.py` mit ``import doctest`` 
+  und ``doctest.testmod()`` gestartet wird, die im Modul 
+  definierten Namen beim Testen schon kennt. 
+  Und der Tester von Sphinx offenbar nicht.
+  
+  Lassen wir das jetzt mal. Kommt in die To-Do-Liste.
+
+    

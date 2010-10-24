@@ -21,7 +21,7 @@ Short-term
   Am besten manuell, also ein Feld :attr:`links.Link.sequence` 
   und ein user interface zum Verändern der Reihenfolge.
   
-- Problem mit dem remote Bearbeiten von ODT-Dokumenten (WebDAV).
+- WebDAV installieren und testen, wie das Bearbeiten von ODT-Dokumenten in der Praxis läuft.
 
 - Dokumentvorlagen machen  
 
@@ -237,9 +237,10 @@ Long-term
   für diese Druckmethode konfiguriert ist, kriegt man keine Fehlermeldung. 
   
 - Sollten Links hierarchisiert werden können? 
-  Das hieße ein Feld :attr:`links.Link.parent` 
-  und ein TreePenel.
+  Das hieße ein Feld :attr:`links.Link.parent` und ein TreePenel.
   
+- Lino könnte per LDAP-Request verschiedene Angaben in :class:`auth.User` (Name, E-Mail,...) direkt vom LDAP-Server anfragen.
+
 
 
 
@@ -252,4 +253,4 @@ Documentation
     ref\python\lino.modlib.dsbe.rst:17: (WARNING/2) autodoc can't import/find module 'lino.modlib.dsbe.models', 
     it reported error: "resolve_model('contacts.Company',app_label='contacts',who=None) found None"
 
-
+- ``make doctest`` nutzbar machen. Siehe :doc:`/blog/2010/1024`

@@ -293,14 +293,17 @@ class ReportHandle(datalinks.DataLink,base.Handle):
         self.setup_layouts()
         return self._layouts[1:]
         
-    def get_absolute_url(self,*args,**kw):
-        return self.ui.get_report_url(self,*args,**kw)
+    #~ def get_absolute_url(self,*args,**kw):
+        #~ return self.ui.get_report_url(self,*args,**kw)
         
     #~ def data_elems(self):
         #~ for de in self.report.data_elems(): yield de
     #~ def get_data_elem(self,name):
         #~ return get_data_elem(self.report.model,name)
         
+    def get_slaves(self):
+        return [ sl.get_handle(self.ui) for sl in self.report._slaves ]
+            
     def get_action(self,name):
         return self.report.get_action(name)
     def get_actions(self,*args,**kw):
@@ -310,11 +313,8 @@ class ReportHandle(datalinks.DataLink,base.Handle):
         return self.report.details
         #~ return self.layouts[1:]
           
-    def get_slaves(self):
-        return [ sl.get_handle(self.ui) for sl in self.report._slaves ]
-            
-    def get_title(self,rr):
-        return self.report.get_title(rr)
+    #~ def get_title(self,rr):
+        #~ return self.report.get_title(rr)
         
     #~ def request(self,**kw):
         #~ return self.ui.get_report_ar(self,**kw)
@@ -726,12 +726,14 @@ class Report(actors.Actor,base.Handled):
     def get_title(self,rr):
         """
         Return the title of this Report for the given request `rr`.
-        Override this if your Report's title should mention filter conditions for example.
+        Override this if your Report's title should mention for example filter conditions.
         """
         #~ if self.title is None:
             #~ return self.label
         title = self.title or self.label
-        if rr is not None and self.master is not None:
+        assert rr is not None
+        #~ if rr is not None and self.master is not None:
+        if self.master is not None:
             title += ": " + unicode(rr.master_instance)
         return title
         

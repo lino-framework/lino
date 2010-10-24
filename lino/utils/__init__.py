@@ -12,6 +12,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
+>>> from lino.utils import constrain, iif
 >>> constrain(-1,2,5)
 2
 >>> constrain(1,2,5)
@@ -30,7 +31,7 @@
 5
 
 >>> iif(1>2,'yes','no')
-no
+'no'
 
 """
 

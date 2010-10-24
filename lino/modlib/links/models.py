@@ -61,6 +61,11 @@ class LinksByOwner(Links):
             return u'<a href="%s" target="_blank">%s</a>' % (obj.url,unicode(obj))
         return reports.Report.summary_row(self,rr,obj)
     
+    def get_title(self,rr):
+        return _("Links by %(model)s %(owner)s") % dict(
+          model=rr.master_instance._meta.verbose_name,
+          owner=rr.master_instance)
+    
   
 #~ def links_by_owner(owner):
     #~ return Link.objects.filter(owner=owner)

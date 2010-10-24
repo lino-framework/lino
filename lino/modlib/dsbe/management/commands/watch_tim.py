@@ -36,11 +36,6 @@ from lino.modlib.contacts.utils import name2kw, street2kw, join_words
 
 from lino.utils import confirm
 
-#~ import lino
-
-#~ from lino import lino_site
-#~ lino_site.setup()
-
 from lino.modlib.dsbe.management.commands.initdb_tim import convert_sex, ADR_id, country2kw, pxs2person, is_company
 
 Country = resolve_model('countries.Country')

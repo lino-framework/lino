@@ -9,6 +9,8 @@ Don't define an IntegerField as explicit primary_key field, otherwise you'll get
 
 Consider the following Model definitions::
 
+  from django.db import models
+
   class Person(models.Model):  
       name = models.CharField(max_length=200)
       def __unicode__(self):
@@ -16,17 +18,14 @@ Consider the following Model definitions::
 
   class AutoPerson(models.Model):  
       id = models.AutoField(primary_key=True)
-      # otherwise same as Person
 
   class IntegerPerson(models.Model):  
       id = models.IntegerField(primary_key=True)
-      # otherwise same as Person
 
   class CharPerson(models.Model):  
       id = models.CharField(primary_key=True,max_length=10)
-      # otherwise same as Person
 
-Here is the problem:
+Here is the problem::
 
   >>> p = IntegerPerson(name="Luc")
   >>> p.save()
@@ -36,7 +35,8 @@ Here is the problem:
 
 Oops! The second `save()` has created a second instance! That's not normal!
 
-That's not normal because there's nothing wrong with saving your object a second time, it works for all the other cases I tried: 
+That's not normal because there's nothing wrong with saving your object a 
+second time, it works for all the other cases I tried::
 
   >>> p = AutoPerson(name="Luc")
   >>> p.save()

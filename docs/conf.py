@@ -30,6 +30,7 @@ extensions = [
   'sphinx.ext.extlinks',
   'sphinx.ext.graphviz',
   'sphinx.ext.intersphinx',
+  'sphinx.ext.doctest',
 ]
 
 primary_domain = 'py'

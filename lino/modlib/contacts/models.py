@@ -144,6 +144,7 @@ class Person(Contact):
     class Meta:
         abstract = True
         app_label = 'contacts'
+        verbose_name = _("person")
 
     first_name = models.CharField(max_length=200,blank=True,verbose_name=_('First name'))
     last_name = models.CharField(max_length=200,blank=True,verbose_name=_('Last name'))

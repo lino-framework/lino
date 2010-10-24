@@ -199,10 +199,7 @@ class ExtUI(base.UI):
         if isinstance(de,reports.Report):
             if isinstance(lh.layout,reports.DetailLayout):
                 kw.update(tools=[
-                  dict(
-                    qtip='Show report in own window', 
-                    handler=js_code("Lino.report_window_handler(Lino.%s)" % de.default_action),
-                    id="up"),
+                  js_code("Lino.report_window_button(ww,Lino.%s)" % de.default_action)
                 ])
                 if de.show_slave_grid:
                     e = ext_elems.SlaveGridElement(lh,name,de,**kw)
@@ -532,6 +529,7 @@ class ExtUI(base.UI):
         #~ return HttpResponse(s, mimetype='text/html')
 
     def form2obj_and_save(self,ah,data,elem,**kw2save):
+        #~ print '20101024', elem.card_valid_from
         try:
             ah.store.form2obj(data,elem)
         except exceptions.ValidationError,e:
@@ -540,12 +538,14 @@ class ExtUI(base.UI):
             
         if hasattr(elem,'before_save'): # see :doc:`/blog/2010/0804`
             elem.before_save()
-            
+        #~ print '20101024a', elem.card_valid_from
         try:
             elem.full_clean()
         except exceptions.ValidationError, e:
             return error_response(e) #,_("There was a problem while validating your data : "))
             #~ return json_response_kw(success=False,msg="Failed to save %s : %s" % (elem,e))
+            
+        #~ print '20101024b', elem.card_valid_from
 
         try:
             elem.save(**kw2save)
@@ -658,15 +658,17 @@ class ExtUI(base.UI):
             a = rpt.get_action(fmt)
             if a is not None:
                 kw = {}
+                ar = ext_requests.ViewReportRequest(request,rh,a)
+                params = dict(base_params=self.request2kw(ar))
+
                 if isinstance(a,actions.InsertRow):
-                    ar = ext_requests.ViewReportRequest(request,rh,a)
                     elem = ar.create_instance()
                     rec = elem2rec1(ar,rh,elem,title=ar.get_title())
                     rec.update(phantom=True)
-                    params = dict(data_record=rec)
-                    kw.update(on_ready=['Lino.%s(undefined,%s);' % (a,py2js(params))])
-                else:
-                    kw.update(on_ready=['Lino.%s();' % a])
+                    params.update(data_record=rec)
+
+                kw.update(on_ready=['Lino.%s(undefined,%s);' % (a,py2js(params))])
+                print '20101024 on_ready', params
                 return HttpResponse(self.html_page(request,**kw))
                 
             ar = ext_requests.ViewReportRequest(request,rh,rh.report.default_action)
