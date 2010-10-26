@@ -9,6 +9,15 @@ for which I hope for help from other people.
 Short-term
 ----------
 
+- IE sagt beim Öffnen von :menuselection:`Kontakte --> Personen`::
+
+    Message: 'id' is null or not an object
+    Line: 11
+    Char: 166504
+    Code: 0
+    URI: http://localhost:8080/media/extjs/ext-all.js
+
+
 - Im Detail der Personen sind manche Tabs anfangs nicht korrekt gelayoutet. 
   Dann muss man jeweils auf den Pin-Button oben rechts klicken (der die Seite mit Permalink 
   neu öffnet) um das korrekte Layout sehen zu können. 

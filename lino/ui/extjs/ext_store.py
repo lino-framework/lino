@@ -363,6 +363,9 @@ class Store:
             if df in detail_fields:
                 self.detail_fields.append(sf)
             
+        self.fields = tuple(self.fields)
+        self.list_fields = tuple(self.list_fields)
+        self.detail_fields = tuple(self.detail_fields)
         
         #~ fields = list(fields)
         #~ self.pk_index = fields.index(self.pk)
@@ -376,6 +379,7 @@ class Store:
             #~ print 'ext_store 20101017:\n', '\n'.join([str(f) for f in self.fields])
         if rh.report.disabled_fields:
             sf = DisabledFieldsStoreField(self)
+            self.fields.append(sf)
             self.list_fields.append(sf)
             self.detail_fields.append(sf)
         #~ self.fields.append(PropertiesStoreField)

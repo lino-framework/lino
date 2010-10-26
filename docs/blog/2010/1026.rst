@@ -9,10 +9,22 @@
   Posted this as a bug in 
   `ExtJS Bugs Forum <http://www.sencha.com/forum/showthread.php?113652-Wrong-layout-in-Chrome-and-FF-when-tab-gets-activated&p=530101>`__
  
-- Release :doc:`/releases/20101026` im DSBE. 
+- Release :doc:`/releases/20101026` im DSBE. Im Laufe des Releases 2 Check-ins wegen folgender Fehler:
 
-  Im Laufe des des Releases ein Check-in wegen folgendem Fehler::
+  - ::
+  
+      File "/var/snapshots/lino/lino/modlib/dsbe/management/commands/initdb_tim.py", line 78, in is_company
+        if data.get('NB2',False):
+      AttributeError: DBFRecord instance has no attribute 'get'
+    
+  - ::
+  
+      Message: Expected identifier, string or number
+      Line: 1334
+      Char: 7
+      Code: 0
+      URI: http://localhost:8080/media/lino/extjs/lino.js
 
-    File "/var/snapshots/lino/lino/modlib/dsbe/management/commands/initdb_tim.py", line 78, in is_company
-      if data.get('NB2',False):
-    AttributeError: DBFRecord instance has no attribute 'get'
+    
+    
+

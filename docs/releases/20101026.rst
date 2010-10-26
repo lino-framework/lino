@@ -10,8 +10,8 @@ Changes
 Bugs fixed
 ----------
 
-- Eingeben von Begleitern einer Person funktioniert nicht
-- Print-Button auf Person funktioniert nicht
+- Eingeben von Begleitern einer Person funktionierte nicht
+- Print-Button auf Person funktionierte nicht
 
 
 

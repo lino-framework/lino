@@ -52,7 +52,7 @@ class DownloadRenderer(ActionRenderer):
   
     def js_render(self):
         #~ url = '/'.join(('/api',self.action.actor.app_label,self.action.actor._actor_name))+'/'
-        yield "function(caller) { Lino.notify(); Lino.show_download(caller,%r);}" % self.action.name
+        yield "function(caller) { Lino.show_download(caller,%r);}" % self.action.name
         #~ yield "function(caller) { return new Lino.show_download(caller,%r);}" % self.action.name
         
         #~ yield "function(caller) { "
@@ -121,7 +121,7 @@ class MasterWrapper(WindowWrapper):
     def js_render(self):
         yield "function(caller,params) { "
         #~ yield "  Ext.getCmp('main_area').el.setStyle({cursor:'wait'});"
-        yield "Lino.notify();"
+        #~ yield "Lino.notify();"
         if settings.USE_FIREBUG:
             yield "  console.time('%s');" % self.action
             #~ yield "  console.log('ext_windows',20100930,params);"
