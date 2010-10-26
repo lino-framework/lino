@@ -1330,12 +1330,12 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     if (e.record.phantom) {
       Ext.apply(req,{
         method: 'POST',
-        url: '/api'+this.ls_url,
+        url: '/api'+this.ls_url
       });
     } else {
       Ext.apply(req,{
         method: 'PUT',
-        url: '/api'+this.ls_url+'/'+e.record.id, 
+        url: '/api'+this.ls_url+'/'+e.record.id
       });
     }
     Ext.Ajax.request(req);

@@ -11,7 +11,8 @@
  
 - Release :doc:`/releases/20101026` im DSBE. 
 
+  Im Laufe des des Releases ein Check-in wegen folgendem Fehler::
 
-  File "/var/snapshots/lino/lino/modlib/dsbe/management/commands/initdb_tim.py", line 78, in is_company
-    if data.get('NB2',False):
-  AttributeError: DBFRecord instance has no attribute 'get'
+    File "/var/snapshots/lino/lino/modlib/dsbe/management/commands/initdb_tim.py", line 78, in is_company
+      if data.get('NB2',False):
+    AttributeError: DBFRecord instance has no attribute 'get'
