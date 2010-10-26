@@ -1,13 +1,6 @@
 <html><head>
 <!--
-Problem 20101007
-
-The following showcase creates a TabPanel containing two Panels that are identical except for their title.
-The active tab is laid out correctly, the other not (the grid seems to get a height of 0).
-If you change the `activeTab` parameter from 0 to 1, then the second tab is correct but the first not.
-
-What am I doing wrong?
-  
+Problem 20101007 <http://lino.saffre-rumma.ee/tickets/1.html>
 -->
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title id="title">20101007</title>
@@ -78,7 +71,7 @@ function make_tab(title) {
   });
   
   var image = new Ext.BoxComponent({ flex: 14, 
-    html:'<img height="100%" width="100%" src="empty.jpg"/>',
+    html:'<img height="100%" width="100%" src="empty.jpg"/>'
     });
   
   //~ var upper_hbox = new Ext.Panel({ 
@@ -117,7 +110,14 @@ Ext.onReady(function() {
     autoScroll: true, 
     items: new Ext.TabPanel({
       items:[tab0,tab1], 
-      activeTab: 0, // change this to be either 0 and 1
+      layoutOnTabChange: true, // http://www.sencha.com/learn/Ext_FAQ_TabPanel
+      listeners: { // http://www.sencha.com/learn/Ext_FAQ_TabPanel
+          tabchange: function(tp,newTab){
+             var um = newTab.getUpdater();
+             if(um) um.refresh();
+          }
+      },
+      activeTab: 1, // change this to be either 0 or 1
       split: true }), 
     frame: true, border: false, bodyBorder: false, labelAlign: "top" });
   

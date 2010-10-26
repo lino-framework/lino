@@ -5,4 +5,4 @@
   `ExtJS Help Forum
   <http://www.sencha.com/forum/showthread.php?113648-dropTarget-and-notifyDrop-don-t-get-called>`__.
   
-- Did more testing and screenshots for :doc:`/tickets/8`.
+- Did more testing and screenshots for :doc:`/tickets/1`.
