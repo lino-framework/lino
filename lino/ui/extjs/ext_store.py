@@ -363,10 +363,6 @@ class Store:
             if df in detail_fields:
                 self.detail_fields.append(sf)
             
-        self.fields = tuple(self.fields)
-        self.list_fields = tuple(self.list_fields)
-        self.detail_fields = tuple(self.detail_fields)
-        
         #~ fields = list(fields)
         #~ self.pk_index = fields.index(self.pk)
         #~ self.fields = [ self.create_field(fld) for fld in fields ]
@@ -384,6 +380,11 @@ class Store:
             self.detail_fields.append(sf)
         #~ self.fields.append(PropertiesStoreField)
         #~ self.fields_dict = dict([(f.field.name,f) for f in self.fields])
+        
+        self.fields = tuple(self.fields)
+        self.list_fields = tuple(self.list_fields)
+        self.detail_fields = tuple(self.detail_fields)
+        
           
     def collect_fields(self,*layouts):
         fields = set()
