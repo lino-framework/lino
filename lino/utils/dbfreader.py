@@ -213,6 +213,9 @@ class DBFRecord:
 
     def __getitem__(self,name):
         return self._values[name]
+        
+    def get(self,*args,**kw):
+        return self._values.get(*args,**kw)
 
     def __repr__(self):
         return self._dbf.filename+"#"+str(self._recno)

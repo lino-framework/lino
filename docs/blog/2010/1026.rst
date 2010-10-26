@@ -10,3 +10,8 @@
   `ExtJS Bugs Forum <http://www.sencha.com/forum/showthread.php?113652-Wrong-layout-in-Chrome-and-FF-when-tab-gets-activated&p=530101>`__
  
 - Release :doc:`/releases/20101026` im DSBE. 
+
+
+  File "/var/snapshots/lino/lino/modlib/dsbe/management/commands/initdb_tim.py", line 78, in is_company
+    if data.get('NB2',False):
+  AttributeError: DBFRecord instance has no attribute 'get'
