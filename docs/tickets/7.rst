@@ -2,13 +2,27 @@
 ==========================================================
 
 
-Example: 
 .. currentmodule:: lino.modlib.dsbe.models
-in 
-:mod:`lino.modlib.dsbe.models`
-:class:`Person` implements :class:`contacts.Person` 
+
+Example: 
+:class:`Person` in :mod:`lino.modlib.dsbe` implements :class:`contacts.Person` 
 but it cannot inherit it directly because 
 Django models cannot inherit from more than one model.
 This causes duplicate code. 
+
 Same problem for :class:`Company` which implements 
 :class:`contacts.Company` 
+
+
+
+.. graphviz::
+
+   digraph foo {
+      "contacts.Contact" -> "contacts.Person";
+      "contacts.Contact" -> "contacts.Company";
+      "contacts.Contact" -> "dsbe.Contact";
+      "contacts.Person" -> "dsbe.Person";
+      "contacts.Company" -> "dsbe.Company";
+      "dsbe.Contact" -> "dsbe.Company";
+      "dsbe.Contact" -> "dsbe.Person";
+   }

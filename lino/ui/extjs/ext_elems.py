@@ -289,7 +289,7 @@ class PictureElement(LayoutElement):
         #~ kw.update(autoEl=dict(tag='img',onclick="Lino.img_onclick(this)" ))
         #~ kw.update(onclick=js_code('"Lino.img_onclick()"'))
         #~ kw.update(cls='ext-el-mask')
-        kw.update(style=dict(height='100%',cursor='pointer'))
+        kw.update(style=dict(width='100px',height='150px',cursor='pointer'))
         kw.update(plugins=js_code('Lino.PictureBoxPlugin'))
         #~ kw.update(plugins=js_code('new Lino.PictureBoxPlugin(caller)'))
         #~ kw.update(listeners=dict(click=js_code('Lino.img_onclick')))

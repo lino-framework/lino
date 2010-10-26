@@ -46,7 +46,7 @@ class ActionRenderer(object):
         pass
         
     def js_render(self):
-        yield "function(caller) { Lino.notify(); return new Lino.%s(caller,%s);}" % (self.__class__.__name__,py2js(self.config))
+        yield "function(caller) { return new Lino.%s(caller,%s);}" % (self.__class__.__name__,py2js(self.config))
     
 class DownloadRenderer(ActionRenderer):
   

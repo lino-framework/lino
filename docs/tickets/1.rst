@@ -1,5 +1,5 @@
-#1 : Wrong layout when tab gets activated
-=========================================
+#1 : Wrong layout in Chrome and FF when tab gets activated
+==========================================================
 
 ExtJS Version 3.3.0.
 Tested with Google Chrome, Firefox and Internet Explorer.
@@ -46,6 +46,61 @@ Chrome        |ch1|         |ch2|
 
 
 If you change the `activeTab` parameter from 0 to 1, then the second tab is correct but the first not.
+
+
+Solution
+--------
+
+Condor `answered 
+<http://www.sencha.com/forum/showthread.php?113652-Wrong-layout-in-Chrome-and-FF-when-tab-gets-activated&p=530144#post530144>`_ 
+that "The vbox layout needs to know the height of the top panel 
+when it renders, but in most cases the image won't have loaded yet, so it will get the wrong height." 
+and recommended to avoid using relative widths and heights.
+His suggested solution made it a lot better, 
+but even better is if I specify myself an absolute width and height::
+
+  var image = new Ext.BoxComponent({
+    flex: 14, 
+    autoEl: {tag: 'img', src: 'empty.jpg', width:'100px', height:'150px'}
+  });
+
+I'd call this workaround good enough to mark by bug report as solved.
+Although there are still small differences, especially also in how the grid is rendered. 
+But for these I'd rather find a more clear example and write a new bug report.
+
+Here again the screenshots with this change.
+
+.. |ie1b| image:: 1b-ie-1.jpg
+   :scale: 50
+   
+.. |ie2b| image:: 1b-ie-2.jpg
+   :scale: 50
+
+.. |ff1b| image:: 1b-ff-1.jpg
+   :scale: 50
+   
+.. |ff2b| image:: 1b-ff-2.jpg
+   :scale: 50
+ 
+.. |ch1b| image:: 1b-chrome-1.jpg
+   :scale: 50
+   
+.. |ch2b| image:: 1b-chrome-2.jpg
+   :scale: 50
+   
+   
+============= ============= ==============
+Browser       |left|        |right|
+------------- ------------- --------------
+IE            |ie1b|        |ie2b|
+------------- ------------- --------------
+FF            |ff1b|        |ff2b|
+------------- ------------- --------------
+Chrome        |ch1b|        |ch2b|
+============= ============= ==============
+
+
+
  
 Blog entries
 :doc:`/blog/2010/1007`,
