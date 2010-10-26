@@ -57,15 +57,15 @@ that "The vbox layout needs to know the height of the top panel
 when it renders, but in most cases the image won't have loaded yet, so it will get the wrong height." 
 and recommended to avoid using relative widths and heights.
 His suggested solution made it a lot better, 
-but even better is if I specify myself an absolute width and height::
+but the best results come if I specify myself an absolute width and height::
 
   var image = new Ext.BoxComponent({
     flex: 14, 
     autoEl: {tag: 'img', src: 'empty.jpg', width:'100px', height:'150px'}
   });
 
-I'd call this workaround good enough to mark by bug report as solved.
-Although there are still small differences, especially also in how the grid is rendered. 
+I'd call this workaround good enough to mark my bug report as solved.
+Although there are still small differences, especially in how the grid is rendered. 
 But for these I'd rather find a more clear example and write a new bug report.
 
 Here again the screenshots with this change.

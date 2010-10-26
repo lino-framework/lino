@@ -5,6 +5,8 @@
   `ExtJS Help Forum
   <http://www.sencha.com/forum/showthread.php?113648-dropTarget-and-notifyDrop-don-t-get-called>`__.
   
-- Did more testing and screenshots for :doc:`/tickets/1`.
+- Did more testing and screenshots for :doc:`/tickets/closed/1`.
   Posted this as a bug in 
   `ExtJS Bugs Forum <http://www.sencha.com/forum/showthread.php?113652-Wrong-layout-in-Chrome-and-FF-when-tab-gets-activated&p=530101>`__
+  
+  

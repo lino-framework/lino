@@ -16,7 +16,7 @@ Check-In um 16.16 Uhr.
 
 - Worked on :doc:`/tickets/2`
 
-- Worked on :doc:`/tickets/1`
+- Worked on :doc:`/tickets/closed/1`
 
 Strange: there's still no answer to my post after 4 days.
 Maybe nobody isn't interested in 3.2.1 bugs anymore 

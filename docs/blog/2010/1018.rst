@@ -19,7 +19,7 @@ dass ich im Modell oder im Report des Masters (also hier
 :class:`Person <lino.modlib.dsbe.models.Person>`) etwas sagen muss. 
 Einfach weil :attr:`links.LinksByOwner.slave_as_grid` auf `False` steht.
 
-Das Layout-Problem :doc:`/tickets/1` "funktioniert" leider auch bei HtmlBoxen. 
+Das Layout-Problem :doc:`/tickets/closed/1` "funktioniert" leider auch bei HtmlBoxen. 
 Also im Detail einer Person muss man im Notizen-Tab zunächst auf den Permalink 
 klicken, damit die Seite (diesmal richtig) neu geladen wird.
   

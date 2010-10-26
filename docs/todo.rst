@@ -9,9 +9,13 @@ for which I hope for help from other people.
 Short-term
 ----------
 
-- :doc:`/tickets/1` Im Detail der Personen sind manche Tabs anfangs nicht korrekt gelayoutet. 
-  Dann muss man jeweile auf den Pin-Button oben rechts klicken (der die Seite mit Permalink 
+- Im Detail der Personen sind manche Tabs anfangs nicht korrekt gelayoutet. 
+  Dann muss man jeweils auf den Pin-Button oben rechts klicken (der die Seite mit Permalink 
   neu öffnet) um das korrekte Layout sehen zu können. 
+  Condors Antwort in :doc:`/tickets/closed/1` 
+  war leider nur die Lösung für den dort beschriebenen spezifischen Fall.
+  Aber er hat mich auf eine Idee gebracht: die vbox-Layouts sind "schuld" am Problem. 
+  Deshalb hatte ich ja auch VBorderPanel geschrieben, aber das wird zumindest in "Profil 1" nicht benutzt.
 
 - Externe Links (Lesezeichen) notieren können, indem man sie von einem anderen Browserfenster 
   per drag & drop auf die HtmlBox zieht.   
@@ -92,11 +96,6 @@ Long-term
   des Ziel-Reports ein Suchfeld. Damit man z.B. nach allen Personen suchen kann, 
   die eine Sprache "mündlich mindestens gut und schriftlich mindestens ausreichend" kennen
   
-- Upgrade nach ExtJS 3.3 : bisher besteht kein konkreter Grund dazu. 
-  Vorher muss das Problem mit GridFilters geregelt werden (sh. :doc:`/tickets/1`).
-  Mögliche Antwort hier:
-  http://www.sencha.com/forum/showthread.php?76185-GridFilters-enhanced-filtering-for-grids&goto=newpost
-
 - Projekte einführen? Pro Person müsste man per Klick leicht ein Begleitungsprojekt anlegen können. Bei Import und Synchronisierung würden automatisch auch diese Projekte synchron gehalten. Dienstleistungen sind nicht mehr einer Person und/oder einer Firma, sondern allgemein einem Projekt zugewiesen. 
 
 - Layout von Detail-Fenstern : in Lino sind die "Zeilen" momentan ja immer im "Blocksatz" (also links- und rechtsbündig). Das ist unkonventionell: alle RIA die ich kenne, machen ihre Formulare nur linksbündig.
