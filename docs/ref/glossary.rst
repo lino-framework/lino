@@ -10,7 +10,8 @@ Glossary
 
   DSBE
      "Dienst für Sozial-Berufliche Eingliederung"     
-     A public service in Eupen (Belgium) who will probably be the first user of a Lino application.
+     A public service in Eupen (Belgium) who helped develop
+     the Lino application of the same name :doc:`/dsbe/index`.
      
   ExtJS
     http://www.sencha.com/products/js/
@@ -39,3 +40,6 @@ Glossary
     HTML/CSS to PDF converter written in Python.
     See also :doc:`/admin/printing`,
     :doc:`/blog/2010/1020`
+    
+  pyratemp
+    http://www.simple-is-better.org/template/pyratemp.html

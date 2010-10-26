@@ -39,9 +39,9 @@ The Django version provided by Debian Lenny `python-django` module is too old fo
 
   svn co http://code.djangoproject.com/svn/django/trunk/ django
 
-I also installed :term:`ExtJS`, `Pisa <http://www.xhtml2pdf.com/>` and :term:`Appy` into `/var/snapshots/`::
+I also installed :term:`ExtJS`, :term:`Pisa` and :term:`Appy` into `/var/snapshots/`::
 
-  wget http://www.extjs.com/deploy/ext-3.2.1.zip
+  wget http://www.sencha.com/deploy/ext-3.3.0.zip
   unzip ext-3.2.1.zip
   rm ext-3.2.1.zip
 
@@ -51,6 +51,9 @@ I also installed :term:`ExtJS`, `Pisa <http://www.xhtml2pdf.com/>` and :term:`Ap
   wget http://pypi.python.org/packages/source/p/pisa/pisa-3.0.32.zip
   unzip pisa-3.0.32.zip
   rm pisa-3.0.32.zip
+  
+  wget http://www.simple-is-better.org/template/pyratemp-0.2.0.tgz
+  tar -xvzf pyratemp-0.2.0.tgz
   
 South::  
   
@@ -62,17 +65,20 @@ Set up your Python path
 -----------------------
 
 For example on a Linux system, you can add a 
-path configuration file `local.pth` 
-to a directory that's already on your `Python's path <http://www.python.org/doc/current/install/index.html>`_. 
+path configuration file :file:`local.pth` 
+to a directory that's already on your 
+`Python's path <http://www.python.org/doc/current/install/index.html>`_. 
 
-Here is how :file:`/usr/local/lib/python2.5/site-packages/local.pth` might look in our example::
+Here is how :file:`/usr/local/lib/python2.5/site-packages/local.pth` 
+might look in our example::
 
   /var/snapshots/lino
   /var/snapshots/django
   /var/snapshots/pisa-3.0.32
   /var/snapshots/appy-0.5.5
+  /var/snapshots/pyratemp-0.2.0
   /var/snapshots/south
-  /usr/local/django
+  /usr/local/django  
 
 To see which directories are on your Python path::
 
@@ -82,11 +88,13 @@ To see which directories are on your Python path::
 Create local Django project
 ---------------------------
 
-Create your Django project directory `/usr/local/django/myproject`, containing files
+Create your Django project directory 
+`/usr/local/django/myproject`, containing files
 :xfile:`settings.py`, :file:`__init__.py` and :xfile:`manage.py`.
 
 You may either create your Django project from scratch, or
-copy these files from one of the subdirs of :file:`/var/snapshots/lino/lino/demos`.
+copy these files from one of the subdirs of 
+:file:`/var/snapshots/lino/lino/demos`.
 
 Adapt :xfile:`settings.py` to your needs.
 Consider using a simplified version of :xfile:`settings.py` that 

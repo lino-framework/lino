@@ -4,36 +4,25 @@ Coming
 Changes
 -------
 
-- :mod:`lino.modlib.links` has been reactivated.
 
 Bugs fixed
 ----------
-
-- Eingeben von Begleitern einer Person funktioniert nicht
-- Print-Button auf Person funktioniert nicht
-
 
 
 
 Upgrade instructions
 --------------------
 
-- The local config dir is now in PROJECT_DIR, not in DATA_DIR::
-
-    cd /usr/local/myproject
-    mv data/config .
-
-
-- Upgrade you copy of the Lino sources::
+- Upgrade your copy of the Lino sources::
 
     cd /var/snapshots/lino
     hg pull -u
   
-- The usual things for DSBE::
+- The usual things in your local directory::
 
     cd /usr/local/django/myproject
     python manage.py initdb_tim
-    python manage.py make_staff luc
+    python manage.py make_staff
   
 - Restart Apache::
 

@@ -8,5 +8,5 @@
 - Did more testing and screenshots for :doc:`/tickets/closed/1`.
   Posted this as a bug in 
   `ExtJS Bugs Forum <http://www.sencha.com/forum/showthread.php?113652-Wrong-layout-in-Chrome-and-FF-when-tab-gets-activated&p=530101>`__
-  
-  
+ 
+- Release :doc:`/releases/20101026` im DSBE. 

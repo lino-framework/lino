@@ -8,7 +8,7 @@ Ich konnte es nicht lassen, die gestern begonnene Reorganisierung weiter zu füh
 Das Google-Projekt lino-dsbe wird abgeschaltet, weil es nach Lino integriert wurde. 
 Endlich Schluss mit getrennten Checkins und Versionsnummern.
 
-Release auf tups und im DSBE. 
+Release :doc:`/releases/20101014` auf tups und im DSBE. 
 
 :doc:`/admin/install` angepasst.
 
