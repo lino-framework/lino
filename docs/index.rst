@@ -30,10 +30,12 @@ Some external links:
    tickets/index
    tests
    ref/index
-   autodoc/lino
    dev/index
+   autodoc/lino
    releases/index
    download
    demos
 
+
+..
 

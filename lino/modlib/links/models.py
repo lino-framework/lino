@@ -12,6 +12,8 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 
+import datetime
+
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
@@ -24,20 +26,47 @@ from lino import reports
 
 tools.requires_apps('auth','contenttypes')
 
+class LinkType(models.Model):
+    "Implements :class:`links.LinkType`."
+    name = models.CharField(max_length=200,verbose_name=_('Name'))
+    def __unicode__(self):
+        return self.name
+    
 class Link(models.Model):
+    "Implements :class:`links.Link`."
     user = models.ForeignKey("auth.User",verbose_name=_('User'))
-    date = models.DateTimeField(verbose_name=_('Date')) 
+    type = models.ForeignKey("links.LinkType",
+      blank=True,null=True,
+      verbose_name=_('Link type'))
+    date = models.DateTimeField(verbose_name=_('Date'),default=datetime.date.today) 
     owner_type = models.ForeignKey(ContentType)
     owner_id = models.PositiveIntegerField(verbose_name=_('Owner'))
     owner = generic.GenericForeignKey('owner_type', 'owner_id')
     url = models.URLField(verify_exists=False)
     name = models.CharField(max_length=200,blank=True,null=True,
         verbose_name=_('Name'))
+    valid_until = models.DateField(
+        blank=True,null=True,
+        verbose_name=_("valid until"))
+        
     
+    def on_create(self,req):
+        u = req.get_user()
+        if u is not None:
+            self.user = u
+            
     def __unicode__(self):
-        return self.name or self.url or u""
+        s = self.name or self.url or u""
+        if self.type:
+            s = unicode(self.type) + ' ' + s
+        return s
         
 
+class LinkTypes(reports.Report):
+    model = 'links.LinkType'
+    column_names = "name *"
+    order_by = "name"
+    
 class Links(reports.Report):
     model = 'links.Link'
     column_names = "id date user url name *"

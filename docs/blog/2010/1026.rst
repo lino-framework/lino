@@ -1,0 +1,8 @@
+20101026
+========
+
+- Wrote showcase for :doc:`/tickets/8`. Posted the problem to the 
+  `ExtJS Help Forum
+  <http://www.sencha.com/forum/showthread.php?113648-dropTarget-and-notifyDrop-don-t-get-called>`__.
+  
+- Did more testing and screenshots for :doc:`/tickets/8`.

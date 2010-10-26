@@ -408,6 +408,8 @@ class HtmlBoxElement(FieldElement):
     def get_field_options(self,**kw):
         kw.update(name=self.field.name)
         kw.update(layout='fit')
+        if self.field.drop_zone: # testing with drop_zone 'FooBar'
+            kw.update(listeners=dict(render=js_code('initialize%sDropZone' % self.field.drop_zone)))
         kw.update(items=js_code("new Ext.BoxComponent()"))
         if self.label:
             kw.update(title=unicode(self.label))
@@ -968,7 +970,7 @@ class GridElement(Container):
         kw = LayoutElement.ext_options(self,**kw)
         #~ d.update(ls_data_url=rh.ui.get_actor_url(self.report))
         kw.update(ls_url=rh.ui.build_url(self.report.app_label,self.report._actor_name))
-        kw.update(ls_store_fields=[js_code(f.as_js()) for f in rh.store.fields])
+        kw.update(ls_store_fields=[js_code(f.as_js()) for f in rh.store.list_fields])
         kw.update(ls_columns=[GridColumn(i,e) for i,e in enumerate(self.columns)])
         #~ kw.update(ls_filters=[e.get_filter_options() for e in self.elements if e.filter_type])
         kw.update(ls_id_property=rh.store.pk.name)

@@ -11,18 +11,18 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+Lino is a Python package to be used on Django sites.
+See :doc:`/admin/install` on how to use it.
+
+"""
 
 import sys
 import logging
 
-"""
-Lino is a Python package to be used on Django sites.
-You probably won't ``import lino`` directly, you just add a combination 
-of Lino modules to your :setting:`INSTALLED_APPS`::
-
-"""
-
 __version__ = "0.8.9"
+"""
+"""
 
 __author__ = "Luc Saffre <luc.saffre@gmx.net>"
 
@@ -64,15 +64,16 @@ if False:
 
 
 log = logging.getLogger('lino')
+"""
+The central logger used by Lino.
+To bypass Lino's default logging config, just configure 
+logging yourself before importing lino.
+"""
     
 if len(log.handlers) == 0:
   
     #~ print "Using default logging config"
     
-    """
-    To bypass Lino's default logging config, just configure 
-    logging yourself before importing lino.
-    """
     
     log.setLevel(logging.DEBUG)
     
@@ -142,12 +143,17 @@ if len(log.handlers) == 0:
         
 
 def using():
-    import django
-    yield ("Django",django.get_version(),"http://www.djangoproject.com")
+    """
+    Yields a list of third-party software descriptors used by Lino.
+    Each descriptor is a tuple (name, version, url).
     
+    """
     import sys
     version = "%d.%d.%d" % sys.version_info[:3]
     yield ("Python",version,"http://www.python.org/")
+    
+    import django
+    yield ("Django",django.get_version(),"http://www.djangoproject.com")
     
     import reportlab
     yield ("ReportLab Toolkit",reportlab.Version, "http://www.reportlab.org/rl_toolkit.html")
@@ -155,6 +161,10 @@ def using():
     import yaml
     version = getattr(yaml,'__version__','')
     yield ("PyYaml",version,"http://pyyaml.org/")
+    
+    import pyratemp
+    version = getattr(pyratemp,'__version__','')
+    yield ("pyratemp",version,"http://www.simple-is-better.org/template/pyratemp.html")
     
     import dateutil
     version = getattr(dateutil,'__version__','')

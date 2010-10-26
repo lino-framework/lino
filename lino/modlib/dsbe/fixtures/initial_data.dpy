@@ -180,11 +180,6 @@ def objects():
     #~ yield license('D',u"Bus")
     
     
-    #~ exclType = Instantiator('dsbe.ExclusionType',"name").build
-    #~ yield exclType(u"Termin nicht eingehalten")
-    #~ yield exclType(u"ONEM-Auflagen nicht erfüllt")
-
-    
     studyType = Instantiator('dsbe.CoachingType',"name").build
     yield studyType(u"DSBE")
     yield studyType(u"Schuldnerberatung")
@@ -195,4 +190,11 @@ def objects():
     excltype = Instantiator('dsbe.ExclusionType','name').build
     yield excltype(u"Termin nicht eingehalten")
     yield excltype(u"ONEM-Auflagen nicht erfüllt")
+    
+    linkType = Instantiator('links.LinkType',"name").build
+    yield studyType(u"Personalausweis")
+    yield studyType(u"Aufenthaltserlaubnis")
+    yield studyType(u"Arbeitserlaubnis")
+    yield studyType(u"Vertrag")
+    
     

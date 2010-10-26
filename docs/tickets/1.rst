@@ -1,45 +1,53 @@
 #1 : Wrong layout when tab gets activated
 =========================================
 
-showcase :srcref:`/extjs-showcases/20101007.html` creates a TabPanel containing two Panels that are identical except for their title.
-The active tab is laid out correctly, the other not (the grid seems to get a height of 0).
+ExtJS Version 3.3.0.
+Tested with Google Chrome, Firefox and Internet Explorer.
+Platform: Windows.
+
+The code in :srcref:`/extjs-showcases/20101007.html` creates a TabPanel containing two Panels 
+that are identical except for their title.
+The second Tab (the one that is active when the page loads) is laid out correctly in all browsers.
+But when the user activates the first tab, there are layout problems in Chrome and Firefox (not in IE).
+The following screenshots show the results.
+
+.. |ie1| image:: 1-ie-1.jpg
+   :scale: 50
+   
+.. |ie2| image:: 1-ie-2.jpg
+   :scale: 50
+
+.. |ff1| image:: 1-ff-1.jpg
+   :scale: 50
+   
+.. |ff2| image:: 1-ff-2.jpg
+   :scale: 50
+ 
+.. |ch1| image:: 1-chrome-1.jpg
+   :scale: 50
+   
+.. |ch2| image:: 1-chrome-2.jpg
+   :scale: 50
+   
+.. |left| replace:: After pages has been loaded 
+    (correct in all tested browsers)
+
+.. |right| replace:: After clicking on first tab (correct only in IE)
+   
+============= ============= ==============
+Browser       |left|        |right|
+------------- ------------- --------------
+IE            |ie1|         |ie2|
+------------- ------------- --------------
+FF            |ff1|         |ff2|
+------------- ------------- --------------
+Chrome        |ch1|         |ch2|
+============= ============= ==============
+
+
 If you change the `activeTab` parameter from 0 to 1, then the second tab is correct but the first not.
-
-20101006
---------
-
-Posted the problem to the 
-`ExtJS Help Forum
-<http://www.sencha.com/forum/showthread.php?111749-Layout-works-for-activeTab-but-not-for-other-tabs>`__.
-
-20101011
---------
-
-Strange: there's still no answer to my post after 4 days.
-Maybe nobody isn't interested in 3.2.1 bugs anymore 
-because `ExtJS 3.3 Release Candidate 
-<http://www.sencha.com/forum/announcement.php?f=40&a=15>`__
-is available?
-So I should rather test what happens with ExtJS 3.3.
-
-GridFilters seems to not work with version 3.3.0rc::
-
-  :8000/media/extjs/ext-all-debug.js:2593 Uncaught TypeError: Object #<an Object> has no method 'num'
-  :8000/media/extjs/examples/ux/gridfilters/menu/RangeMenu.js:19  Uncaught TypeError: Cannot read property 'Menu' of undefined
-  :8000/media/extjs/examples/ux/gridfilters/menu/ListMenu.js:16   Uncaught TypeError: Cannot read property 'Menu' of undefined
-  :8000/media/extjs/examples/ux/gridfilters/GridFilters.js:740    Uncaught TypeError: Object #<an Object> has no method 'preg'
-  :8000/media/extjs/examples/ux/gridfilters/filter/NumericFilter.js:31    Uncaught TypeError: Cannot read property 'NumberField' of undefined
-  :8000/media/extjs/adapter/ext/ext-base.js:7     Uncaught TypeError: Cannot read property 'prototype' of undefined
-  :8000/:1        Uncaught TypeError: undefined is not a function
-
-
-Added new Lino-specific setting :setting:`USE_GRIDFILTERS` and switched it off.
-Result: Version 3.3.0-rc doesn't solve the problem.
-
-Found `Ext FAQ TabPanel <http://www.sencha.com/learn/Ext_FAQ_TabPanel>`__ page and 
-tried `layoutOnTabChange: true` and doing a `refresh()` on `tabchange` event. 
-Nothing changes.
-
-Posted a `follow-up to my own post
-<http://www.sencha.com/forum/showthread.php?111749-Layout-works-for-activeTab-but-not-for-other-tabs&p=523523#post523523>`__.
-Giving up for today.
+ 
+Blog entries
+:doc:`/blog/2010/1007`,
+:doc:`/blog/2010/1011`,
+:doc:`/blog/2010/1026`

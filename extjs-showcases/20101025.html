@@ -1,0 +1,49 @@
+<html><head>
+<!--
+first steps with DnD
+-->
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title id="title">20101025 - first steps with DnD</title>
+<!-- ** CSS ** -->
+<!-- base library -->
+<link rel="stylesheet" type="text/css" href="../../resources/css/ext-all.css" />
+<!-- overrides to base library -->
+<!-- ** Javascript ** -->
+<!-- ExtJS library: base/adapter -->
+<script type="text/javascript" src="../../adapter/ext/ext-base.js"></script>
+<!-- ExtJS library: all widgets -->
+<script type="text/javascript" src="../../ext-all-debug.js"></script>
+<script type="text/javascript">
+
+function initializeDropZone(cmp) {
+    console.log('initializeDropZone',cmp);
+    cmp.dropTarget = new Ext.dd.DropTarget(cmp.body.dom, {
+      //~ ddGroup     : 'gridDDGroup',
+      notifyEnter : function(ddSource, e, data) {
+        console.log('notifyEnter',ddSource,e,data);
+      },
+      notifyDrop  : function(ddSource, e, data){
+        console.log('notifyDrop',ddSource,e,data);
+        return(true);
+      }
+    })
+}
+
+Ext.onReady(function() {
+  var dropPanel = {
+    html: 'Drop something here',
+    listeners: { render: initializeDropZone}
+  };
+
+  var win = new Ext.Window({
+    width: 600, height:600,
+    layout:'fit',
+    maximizable: true,
+    items: dropPanel
+  });
+  win.show();
+  
+});
+</script>
+</head><body>
+</body></html>

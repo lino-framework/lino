@@ -69,11 +69,11 @@ class Note(models.Model,printable.Printable):
         
     user = models.ForeignKey("auth.User",blank=True,null=True)
     #~ date = fields.MyDateField()
-    date = models.DateField(default=datetime.date.today)
+    date = models.DateField(verbose_name=_('Date'),default=datetime.date.today)
     #~ owner_type = models.ForeignKey(ContentType,blank=True,null=True)
     #~ owner_id = models.PositiveIntegerField(blank=True,null=True)
     #~ owner = generic.GenericForeignKey('owner_type', 'owner_id')
-    type = models.ForeignKey(NoteType,blank=True,null=True)
+    type = models.ForeignKey(NoteType,blank=True,null=True,verbose_name=_('Note type'))
     subject = models.CharField(max_length=200,blank=True,null=True)
     body = models.TextField(blank=True)
     

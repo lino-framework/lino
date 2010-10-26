@@ -1,0 +1,8 @@
+#8 : dropTarget and notifyDrop don't get called
+===============================================
+
+showcase :srcref:`/extjs-showcases/20101025.html` creates a Window with a single Panel that I want to act as a drop target for 
+an URL address from another browser window. 
+
+
+:doc:`/blog/2010/1026`

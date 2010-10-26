@@ -293,6 +293,10 @@ class ReportHandle(datalinks.DataLink,base.Handle):
         self.setup_layouts()
         return self._layouts[1:]
         
+    def get_list_layout(self):
+        self.setup_layouts()
+        return self._layouts[0]
+        
     #~ def get_absolute_url(self,*args,**kw):
         #~ return self.ui.get_report_url(self,*args,**kw)
         
@@ -439,7 +443,7 @@ class ReportActionRequest(actions.ActionRequest): # was ReportRequest
         
     def get_queryset(self):
         # overridden by ChoicesReportRequest
-        return self.report.get_queryset(self)
+        return self.report.get_request_queryset(self)
         #~ return self.report.get_queryset(master_instance=self.master_instance,**kw)
         
     def __iter__(self):
@@ -491,7 +495,10 @@ class Report(actors.Actor,base.Handled):
     #~ _handle_selector = base.UI
     params = {}
     field = None
-    queryset = None 
+    
+    base_queryset = None 
+    "See :meth:`Report.get_queryset`"
+    
     model = None
     use_as_default_report = True
     order_by = None
@@ -573,8 +580,8 @@ class Report(actors.Actor,base.Handled):
     
     def __init__(self):
         if self.model is None:
-            if self.queryset is not None:
-                self.model = self.queryset.model
+            if self.base_queryset is not None:
+                self.model = self.base_queryset.model
             # raise Exception(self.__class__)
         else:
             self.model = resolve_model(self.model,self.app_label,self)
@@ -737,10 +744,22 @@ class Report(actors.Actor,base.Handled):
             title += ": " + unicode(rr.master_instance)
         return title
         
-    def get_queryset(self,rr):
-        if self.queryset is None:
-            self.queryset = self.model.objects.all()
-        qs = self.queryset
+    def get_queryset(self):
+        """
+        Override this to use e.g. select_related().
+        """
+        #~ return self.model.objects.select_related()
+        return self.model.objects.all()
+      
+    def get_request_queryset(self,rr):
+        """
+        Build a Queryset for the specified request on this report.
+        Upon first call, this will also lazily install Report.queryset 
+        which will be reused on every subsequent call.
+        """
+        if self.base_queryset is None:
+            self.base_queryset = self.get_queryset()
+        qs = self.base_queryset
         #~ if self.queryset is not None:
             #~ qs = self.queryset
         #~ else:

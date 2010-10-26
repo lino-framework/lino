@@ -85,7 +85,7 @@ class Contact(models.Model):
         return self.name
         
     def address(self):
-        "See :meth:`contacts.Contact.address`"
+        "Implements :meth:`contacts.Contact.address`"
         return self.as_address(', ')
     address.return_type = models.TextField()
     
@@ -132,7 +132,9 @@ class Contact(models.Model):
         #~ instance.language = 
         
 class Contacts(reports.Report):
-    pass
+    column_names = "name * id" 
+    def get_queryset(self):
+        return self.model.objects.select_related('country','city')
   
   
  
@@ -168,7 +170,7 @@ class Person(Contact):
 class Persons(Contacts):
     model = "contacts.Person"
     label = _("Persons")
-    column_names = "first_name last_name title country id name *"
+    #~ column_names = "first_name last_name title country id name *"
     can_delete = True
     order_by = "last_name first_name id"
     #can_view = perms.is_authenticated
@@ -209,7 +211,7 @@ class Company(Contact):
               
 class Companies(Contacts):
     label = _("Companies")
-    column_names = "name country city id address *"
+    #~ column_names = "name country city id address *"
     model = 'contacts.Company'
     order_by = "name"
     

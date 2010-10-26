@@ -95,3 +95,26 @@ company's :class:`CompanyType`.
 .. class:: CompanyType
 
   Implemented in :class:`lino.modlib.contacts.models.CompanyType`
+
+
+
+The ``links`` application label
+-------------------------------
+
+.. module:: links
+
+Implemented in :mod:`lino.modlib.links`
+
+.. class:: Link
+
+  Implemented in :class:`lino.modlib.links.models.Link`
+  
+  A bookmark, made by a certain user at a certain date, usually assigned 
+  to a certain "owner" and possibly classified into a certain type.
+
+
+.. class:: LinkType
+
+  Implemented in :class:`lino.modlib.links.models.LinkType`
+
+

@@ -9,28 +9,20 @@ for which I hope for help from other people.
 Short-term
 ----------
 
-- django.db.Model._meta.verbose_name nutzen für :meth:`links.LinksByOwner.get_title`.
-
-- :class:`links.LinksByOwner` müssen jetzt natürlich noch benutzerfreundlich bearbeitet werden können.
-    - drag & drop
-    - autoScroll für wenn viele Links da sind.
-    
-- Neues Model links.LinkTypes. 
-
-- Wie soll :class:`links.LinksByOwner` sortiert sein? 
-  Am besten manuell, also ein Feld :attr:`links.Link.sequence` 
-  und ein user interface zum Verändern der Reihenfolge.
-  
-- WebDAV installieren und testen, wie das Bearbeiten von ODT-Dokumenten in der Praxis läuft.
-
-- Dokumentvorlagen machen  
-
 - :doc:`/tickets/1` Im Detail der Personen sind manche Tabs anfangs nicht korrekt gelayoutet. 
   Dann muss man jeweile auf den Pin-Button oben rechts klicken (der die Seite mit Permalink 
   neu öffnet) um das korrekte Layout sehen zu können. 
 
-- :doc:`/tickets/2`. Also Vorsicht beim Löschen von Notizarten, Studienarten, 
-  AG-Sperrgründen, Begleitungsarten, Städten, Ländern usw.!
+- Externe Links (Lesezeichen) notieren können, indem man sie von einem anderen Browserfenster 
+  per drag & drop auf die HtmlBox zieht.   
+  :doc:`/tickets/8` 
+
+- WebDAV installieren und testen, wie das Bearbeiten von RTF- und ODT-Dokumenten in der Praxis läuft.
+
+- Dokumentvorlagen machen  
+
+Undecided
+---------
 
 - Man kann z.B. noch nicht nach Personen suchen, die ein bestimmtes Studium haben.
 
@@ -38,30 +30,27 @@ Short-term
   Ich habe nämlich lediglich in `/usr/local/django/myproject` eine Datei namens `watch_tim` mit folgendem Inhalt::
 
     nohup python manage.py watch_tim \  
-      /mnt/oeshz_home_server/ANWPROG/TIM/CPAS/changelog > \
+      /mnt/server/TIM/CPAS/changelog > \
       /var/log/lino/watch_tim.log
       
   Und diese Datei starte ich manuell nach einem Release. 
   :command:`nohup` sorgt dafür, dass der Prozess nicht beendet wird, wenn ich mich auslogge. 
   Aber stattdessen muss natürlich ein Skript in der :file:`/etc/init.d` gemacht werden.
 
+
 - iCal-Dateien generieren. 
   Im :class:`notes.NoteType` wird definiert, ob Lino einen Termin (oder Erinnerung oder Task) 
   per E-Mail an den Benutzer verschicken soll.
 
+- :doc:`/tickets/2`. Also Vorsicht beim Löschen von Notizarten, Studienarten, 
+  AG-Sperrgründen, Begleitungsarten, Städten, Ländern usw.!
+
 - Wenn man z.B. in Companies.insert manuell eine ID eingibt, 
   dann ignoriert der Server die und vergibt trotzdem seine automatische nächste ID.
-
-- Bei initdb_tim in dsbe-eupen kommt eine Latte von Warnungen "pharmacy X not found". 
-  Das kommt daher, dass in TIM die betreffenden Apotheken ihre MWSt-Nummer 
-  leer haben und deshalb als Personen importiert werden.
-  Zum Beispiel Partnernummern 87019, 86213, 86121, 86122 und 86372
 
 Long-term
 ---------
 
-- (à observer) Beim Einfügen in :class:`notes.MyNotes` (z.B.) funktioniert manchmal etwas mit dem Datum noch nicht. Da scheint noch ein Bug zu sein.
-  
 - Wie soll ich es machen, dass der Benutzer beim Auswählen der Krankenkasse einer Person nicht alle Firmen, sondern nur die Krankenkassen angezeigt bekommt? Etwa ein eigenes Feld `Company.is_health_insurance`?
 
 - Fenstertitel ändern bzw. anzeigen, welche GC momentan aktiv ist.
@@ -239,9 +228,31 @@ Long-term
 - Sollten Links hierarchisiert werden können? 
   Das hieße ein Feld :attr:`links.Link.parent` und ein TreePenel.
   
-- Lino könnte per LDAP-Request verschiedene Angaben in :class:`auth.User` (Name, E-Mail,...) direkt vom LDAP-Server anfragen.
+- Lino könnte per LDAP-Request verschiedene Angaben 
+  in :class:`auth.User` (Name, E-Mail,...) 
+  direkt vom LDAP-Server anfragen.
+  Dazu wären wahrscheinlich
+  http://www.python-ldap.org/
+  und
+  http://www.openldap.org/
+  nötig.
 
+- Die HtmlBox braucht noch ein `autoScroll:true` für wenn viele Links da sind.
 
+- Neues Feld :attr:`links.Link.sequence`, und :class:`links.LinksByOwner` sollte dann danach sortiert sein.
+  
+- Problem mit :meth:`contacts.Contact.address`. 
+  Wenn ich dieses Feld in :class:`contacts.Persons` benutze, sagt er
+  `TypeError: unbound method address() must 
+  be called with Company instance as first argument (got Person instance instead)`.
+  Da stimmt was mit der Vererbung von virtuellen Feldern nicht.
+
+  Bei einem POST (Einfügen) werden die base parameters mk und mt zusammen 
+  mit allen Datenfeldern im gleichen Namensraum übertragen.
+  Deshalb sind Feldnamen wie mt, mk und fmt momentan nicht möglich.
+
+- Verändern der Reihenfolge per DnD in :class:`links.LinksByOwner`.
+    
 
 
 Documentation

@@ -33,7 +33,7 @@ from lino.utils import choosers
 
 class StoreField(object):
   
-    value_count = 1
+    list_values_count = 1
     "Necessary to compute :attr:`Store.pk_index`."
     
     def __init__(self,field,**options):
@@ -171,12 +171,12 @@ class DateStoreField(StoreField):
             d[self.field.name] = value
             
     def parse_form_value(self,v):
-        print '20101024 DateStoreField 1', v
+        #~ print '20101024 DateStoreField 1', v
         if v:
             v = dateparser.parse(v,fuzzy=True)
         else:
             v = None
-        print '20101024 DateStoreField 2', v
+        #~ print '20101024 DateStoreField 2', v
         return v
 
 
@@ -244,7 +244,7 @@ class OneToOneStoreField(StoreField):
         
 class ComboStoreField(StoreField):
   
-    value_count = 2
+    list_values_count = 2
     
     def as_js(self):
         s = StoreField.as_js(self)
@@ -327,7 +327,7 @@ class ForeignKeyStoreField(ComboStoreField):
   
 
 
-class Store(Component):
+class Store:
     """
     
     Represents an :extjs:`Ext.data.JsonStore`.
@@ -335,40 +335,62 @@ class Store(Component):
     """
     #declare_type = jsgen.DECLARE_THIS
     #~ declare_type = jsgen.DECLARE_VAR
-    declare_type = jsgen.DECLARE_INLINE
-    ext_suffix = "_store"
-    value_template = "new Ext.data.JsonStore(%s)"
+    #~ declare_type = jsgen.DECLARE_INLINE
+    #~ ext_suffix = "_store"
+    #~ value_template = "new Ext.data.JsonStore(%s)"
     
     def __init__(self,rh,**options):
         assert isinstance(rh,reports.ReportHandle)
-        Component.__init__(self,id2js(rh.report.actor_id),**options)
+        #~ Component.__init__(self,id2js(rh.report.actor_id),**options)
         self.rh = rh
         self.report = rh.report
-        fields = set()
-        for layout in rh.get_used_layouts():
-            for fld in layout._store_fields:
-                assert fld is not None
-                fields.add(fld)
         self.pk = self.report.model._meta.pk
         assert self.pk is not None, "Cannot make Store for %s because %s has no pk" % (
           self.report.actor_id,self.report.model)
-        if not self.pk in fields:
-            fields.add(self.pk)
+        
+        list_fields = self.collect_fields(rh.get_list_layout())
+        detail_fields = self.collect_fields(*rh.get_detail_layouts())
+        
+        self.fields = []
+        self.list_fields = []
+        self.detail_fields = []
+        
+        for df in list_fields | detail_fields: # set union
+            sf = self.create_field(df)
+            self.fields.append(sf)
+            if df in list_fields:
+                self.list_fields.append(sf)
+            if df in detail_fields:
+                self.detail_fields.append(sf)
+            
+        
         #~ fields = list(fields)
         #~ self.pk_index = fields.index(self.pk)
-        self.fields = [ self.create_field(fld) for fld in fields ]
+        #~ self.fields = [ self.create_field(fld) for fld in fields ]
         self.pk_index = 0
-        for fld in self.fields:
+        for fld in self.list_fields:
             if fld.field == self.pk:
                 break
-            self.pk_index += fld.value_count
+            self.pk_index += fld.list_values_count
         #~ if self.report.actor_id == 'contacts.Persons':
             #~ print 'ext_store 20101017:\n', '\n'.join([str(f) for f in self.fields])
         if rh.report.disabled_fields:
-            self.fields.append(DisabledFieldsStoreField(self))
+            sf = DisabledFieldsStoreField(self)
+            self.list_fields.append(sf)
+            self.detail_fields.append(sf)
         #~ self.fields.append(PropertiesStoreField)
         #~ self.fields_dict = dict([(f.field.name,f) for f in self.fields])
           
+    def collect_fields(self,*layouts):
+        fields = set()
+        for layout in layouts:
+            for fld in layout._store_fields:
+                assert fld is not None
+                fields.add(fld)
+        if not self.pk in fields:
+            fields.add(self.pk)
+        return fields
+        
     def create_field(self,fld):
         meth = getattr(fld,'_return_type_for_method',None)
         if meth is not None:
@@ -411,7 +433,31 @@ class Store(Component):
             #~ return StoreField(fld,**kw)
 
       
-    def ext_options(self):
+    def form2obj(self,form_values,instance):
+        for f in self.fields:
+            try:
+                f.form2obj(instance,form_values)
+            except exceptions.ValidationError,e:
+                raise exceptions.ValidationError({f.field.name:e})
+        #~ for p in properties.Property.properties_for_model(instance.__class__):
+            #~ p.form2obj(instance,form_values)
+            
+    def row2list(self,request,row):
+        l = []
+        for fld in self.list_fields:
+            l += fld.obj2list(request,row)
+        return l
+      
+
+    def row2dict(self,request,row):
+        d = {}
+        for f in self.detail_fields:
+            #~ if not f.field.primary_key:
+            f.obj2dict(request,row,d)
+        return d
+
+            
+    def unused_ext_options(self):
         d = Component.ext_options(self)
         #self.report.setup()
         #data_layout = self.report.layouts[self.layout_index]
@@ -439,31 +485,7 @@ class Store(Component):
         d.update(listeners=dict(exception=js_code("Lino.on_store_exception")))
         return d
         
-    def form2obj(self,form_values,instance):
-        for f in self.fields:
-            try:
-                f.form2obj(instance,form_values)
-            except exceptions.ValidationError,e:
-                raise exceptions.ValidationError({f.field.name:e})
-        #~ for p in properties.Property.properties_for_model(instance.__class__):
-            #~ p.form2obj(instance,form_values)
-            
-    def row2list(self,request,row):
-        l = []
-        for fld in self.fields:
-            l += fld.obj2list(request,row)
-        return l
-      
-
-    def row2dict(self,request,row):
-        d = {}
-        for f in self.fields:
-            #~ if not f.field.primary_key:
-            f.obj2dict(request,row,d)
-        return d
-
-            
-    def js_after_body(self):
+    def unused_js_after_body(self):
         for ln in Component.js_after_body(self):
             yield ln
         if self.report.master is None:

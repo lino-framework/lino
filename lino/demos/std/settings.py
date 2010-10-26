@@ -138,6 +138,13 @@ if not BYPASS_PERMS:
     AUTHENTICATION_BACKENDS = (
       'django.contrib.auth.backends.RemoteUserBackend',
     )
+    
+if False:
+    MIDDLEWARE_CLASSES += (
+      #~ 'lino.utils.sqllog.ShortSQLLogToConsoleMiddleware',
+      'lino.utils.sqllog.SQLLogMiddleware',
+    )
+    
 
 ROOT_URLCONF = 'lino.demos.std.urls'
 

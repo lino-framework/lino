@@ -132,6 +132,9 @@ class Person(Contact,Printable):
     last_name = models.CharField(max_length=200,blank=True,verbose_name=_('Last name'))
     title = models.CharField(max_length=200,blank=True,verbose_name=_('Title'))
         
+    def get_queryset(self):
+        return self.model.objects.select_related('country','city','user','nationality')
+        
     def before_save(self):
         l = filter(lambda x:x,[self.last_name,self.first_name,self.title])
         self.name = " ".join(l)
@@ -311,9 +314,9 @@ class Persons(contacts.Persons):
     can_view = perms.is_authenticated
     app_label = 'contacts'
     #~ page_layouts = (PersonDetail,)
-    column_names = "name city dsbe.LanguageKnowledgesByPerson *"
+    #~ column_names = "name city dsbe.LanguageKnowledgesByPerson *"
+    #~ column_names = "name city dsbe.LanguageKnowledgesByPerson *"
     #~ column_names = "name city links.LinksByOwner language_knowledge"
-    #~ column_names = "name  city * language_knowledge"
     #~ column_names = "name city dsbe.LanguageKnowledgesByPerson" # dsbe.StudiesByPerson dsbe.ExclusionsByPerson"
 
     

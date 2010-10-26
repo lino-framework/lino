@@ -26,6 +26,7 @@ import lino
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = [
   'sphinx.ext.autodoc',
+  #~ 'sphinx.ext.autosummary',
   'sphinx.ext.inheritance_diagram',
   'sphinx.ext.extlinks',
   'sphinx.ext.graphviz',
@@ -261,3 +262,4 @@ extlinks = {
 #~ intersphinx_mapping = {'dsbe': ('http://dsbe.saffre-rumma.ee', 'http://dsbe.saffre-rumma.ee/objects.inv')}
 
 
+autosummary_generate = True

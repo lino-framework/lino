@@ -2,8 +2,11 @@ API
 ===
 
 This part of the Lino website is generated 
-from source code by Sphinx's `Autodoc <http://sphinx.pocoo.org/ext/autodoc.html>` 
+from source code by Sphinx's `Autodoc <http://sphinx.pocoo.org/ext/autodoc.html>`_
 extension.
+
+:mod:`lino`
+-----------
 
 .. automodule:: lino
     :members:
@@ -17,40 +20,30 @@ Subpackages
 .. toctree::
 
     lino.reports
+    lino.fields
+    lino.actions
     lino.core
     lino.modlib
     lino.test_apps
     lino.ui
     lino.utils
     lino.utils.printable
+    lino.utils.sqllog
     lino.demos
 
 
-The :mod:`lino.actions` Module
-------------------------------
 
-.. automodule:: lino.actions
-    :members:
-    :show-inheritance:
-
-
-The :mod:`lino.lino_site` Module
---------------------------------
+:mod:`lino.lino_site`
+---------------------
 
 .. automodule:: lino.lino_site
     :members:
     :show-inheritance:
     
     
-The :mod:`lino.fields` Module
------------------------------
 
-.. automodule:: lino.fields
-    :members:
-    :show-inheritance:
-
-The :mod:`lino.tools` Module
-----------------------------
+:mod:`lino.tools`
+-----------------
 
 .. automodule:: lino.tools
     :members:

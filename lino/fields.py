@@ -144,6 +144,10 @@ class HtmlBox:
     editable = False
     choices = None
     blank = True
-    def __init__(self,verbose_name=None):
+    drop_zone = None
+    def __init__(self,verbose_name=None,**kw):
         self.verbose_name = verbose_name
+        for k,v in kw.items():
+            assert hasattr(self,k)
+            setattr(self,k,v)
         

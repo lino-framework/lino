@@ -208,7 +208,7 @@ class ExtUI(base.UI):
                     return e
                     #~ return ext_elems.GridElementBox(lh,e)
                 else:
-                    field = fields.HtmlBox(verbose_name=de.label)
+                    field = fields.HtmlBox(verbose_name=de.label,drop_zone="FooBar")
                     field.name = de._actor_name
                     field._return_type_for_method = de.slave_as_summary_meth(self,'<br>')
                     lh.add_store_field(field)
@@ -260,8 +260,8 @@ class ExtUI(base.UI):
         rt._return_type_for_method = meth
         kw.update(editable=False)
         e = self.create_field_element(lh,rt,**kw)
-        if lh.rh.report.actor_id == 'contacts.Persons':
-            print 'ext_ui.py create_meth_element',name,'-->',e
+        #~ if lh.rh.report.actor_id == 'contacts.Persons':
+            #~ print 'ext_ui.py create_meth_element',name,'-->',e
         return e
         #~ e = lh.main_class.field2elem(lh,return_type,**kw)
         #~ assert e.field is not None,"e.field is None for %s.%s" % (lh.layout,name)
@@ -528,10 +528,10 @@ class ExtUI(base.UI):
         #~ s = py2js(lino_site.get_menu(request))
         #~ return HttpResponse(s, mimetype='text/html')
 
-    def form2obj_and_save(self,ah,data,elem,**kw2save):
+    def form2obj_and_save(self,rh,data,elem,**kw2save):
         #~ print '20101024', elem.card_valid_from
         try:
-            ah.store.form2obj(data,elem)
+            rh.store.form2obj(data,elem)
         except exceptions.ValidationError,e:
            return error_response(e)
            #~ return error_response(e,_("There was a problem while validating your data : "))
@@ -668,7 +668,7 @@ class ExtUI(base.UI):
                     params.update(data_record=rec)
 
                 kw.update(on_ready=['Lino.%s(undefined,%s);' % (a,py2js(params))])
-                print '20101024 on_ready', params
+                #~ print '20101024 on_ready', params
                 return HttpResponse(self.html_page(request,**kw))
                 
             ar = ext_requests.ViewReportRequest(request,rh,rh.report.default_action)
@@ -735,12 +735,10 @@ class ExtUI(base.UI):
         #~ if not ah.report.can_view.passes(request.user):
             #~ msg = "User %s cannot view %s." % (request.user,ah.report)
             #~ return http.HttpResponseForbidden()
+            
+        elem = None
         
-        ar = ext_requests.ViewReportRequest(request,ah,ah.report.default_action)
-        
-        if pk == '-99999':
-            elem = ar.create_instance()
-        else:
+        if pk != '-99999':
             try:
                 elem = rpt.model.objects.get(pk=pk)
             except ValueError:
@@ -757,11 +755,18 @@ class ExtUI(base.UI):
             data = http.QueryDict(request.raw_post_data)
             return self.form2obj_and_save(ah,data,elem,force_update=True)
             
+        ar = ext_requests.ViewReportRequest(request,ah,ah.report.default_action)
+        if pk == '-99999':
+            elem = ar.create_instance()
+            
+            
         if request.method == 'GET':
             fmt = request.GET.get('fmt',None)
-            datarec = elem2rec_detailed(ar,ah,elem)
             if pk == '-99999':
+                datarec = elem2rec1(ar,ah,elem)
                 datarec.update(title=_("Insert into %s...") % ah.report.label)
+            else:
+                datarec = elem2rec_detailed(ar,ah,elem)
             if fmt is None or fmt == 'json':
                 return json_response(datarec)
             a = rpt.get_action(fmt)

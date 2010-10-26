@@ -407,10 +407,14 @@ Lino.report_window_button = function(ww,handler) {
     id:"up",
     handler: function(event,toolEl,panel, tc) {
       console.log('report_window_button',panel);
+      var bp = ww.get_master_params();
+      console.log('report_window_button',bp)
+      //~ action(panel,{record_id:-99999,base_params:bp});
+      
       //~ var bp = panel.ww.get_master_params();
       //~ handler(panel,{base_params:bp});
-      panel.ww = ww; // TODO: 
-      handler(panel);
+      panel.ww = ww; // for HtmlBox. see blog/2010/1022
+      handler(panel,{base_params:bp});
     }
   }
 }
@@ -461,7 +465,7 @@ Lino.delete_selected = function(caller) {
         for ( var i=0; i < recs.length; i++ ) {
           Lino.do_action(caller,{method:'DELETE',url:'/api'+caller.ls_url+'/'+recs[i].id})
         }
-        caller.refresh();
+        caller.after_delete();
       }
       else Lino.notify("Dann eben nicht.");
     }
@@ -676,6 +680,7 @@ Lino.show_insert_handler = function(action) {
       //~ var bp = panel.getStore().baseParams;
     //~ else
     var bp = panel.get_base_params();
+    //~ console.log('20101025 insert_handler',bp)
     action(panel,{record_id:-99999,base_params:bp});
     //~ action(panel,{record_id:-99999,base_params:panel.get_base_params()});
   }
@@ -705,6 +710,7 @@ Lino.submit_insert = function(panel,btn) {
   panel.form.submit({
     url:'/api'+panel.ls_url,
     method: 'POST',
+    params: panel.get_base_params(), // 20101025
     scope: panel,
     success: function(form, action) {
       Lino.notify(action.result.message);
@@ -758,15 +764,19 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     this.before_row_edit = config.before_row_edit.createDelegate(this);
     
     Lino.FormPanel.superclass.constructor.call(this, config);
-    Ext.applyIf(this,{base_params:{}});
+    //~ 20101025 Ext.applyIf(this,{base_params:{}});
     //~ this.base_params = config.base_params;
     //~ console.log(20100930,this.base_params);
   },
   get_base_params : function() {
-    return this.base_params;
+    return this.ww.config.base_params;
   },
   set_base_params : function(p) {
-    this.base_params = p;
+    this.ww.config.base_params = p;
+  },
+  after_delete : function() {
+    this.ww.close();
+    if (this.ww.caller) this.ww.caller.refresh();
   },
   moveFirst : function() {this.goto_record_id(this.current_record.navinfo.first)},
   movePrev : function() {this.goto_record_id(this.current_record.navinfo.prev)},
@@ -774,31 +784,31 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   moveLast : function() {this.goto_record_id(this.current_record.navinfo.last)},
   
   goto_record_id : function(record_id) {
-    //~ console.log('Lino.FormPanel.goto_record_id()',record_id);
+    console.log('Lino.FormPanel.goto_record_id()',record_id);
     Lino.notify(); 
     var this_ = this;
     Ext.Ajax.request({ 
       waitMsg: 'Loading record...',
       method: 'GET',
       //~ params: this.ww.config.base_params,
-      params: this.base_params,
+      params: this.ww.config.base_params,
       url:'/api'+this.ls_url + '/' + record_id,
       //~ params: {query: this.search_field.getValue()},
       success: function(response) {   
         // todo: convert to Lino.action_handler.... but result 
         if (response.responseText) {
-            var rec = Ext.decode(response.responseText);
-            //~ console.log('goto_record_id success',rec);
-            if (rec.navinfo.recno == 0) {
-                /* 
-                  recno 0 means "the requested pk exists but is not contained in the requested queryset".
-                  This can happen after search_change on a detail.
-                */
-                this_.goto_record_id(rec.navinfo.first);
-            } else {
-                this_.set_current_record(rec);
-                //~ this_.window.setTitle(rec.title);
-            }
+          var rec = Ext.decode(response.responseText);
+          //~ console.log('goto_record_id success',rec);
+          if (rec.navinfo && rec.navinfo.recno == 0) {
+              /* 
+                recno 0 means "the requested pk exists but is not contained in the requested queryset".
+                This can happen after search_change on a detail.
+              */
+              this_.goto_record_id(rec.navinfo.first);
+          } else {
+              this_.set_current_record(rec);
+              //~ this_.window.setTitle(rec.title);
+          }
         }
       },
       failure: Lino.ajax_error_handler
@@ -1270,9 +1280,9 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
   },
   
   on_beforeedit : function(e) {
-    console.log('20100803 GridPanel.on_beforeedit()',e);
+    //~ console.log('20100803 GridPanel.on_beforeedit()',e);
     if (e.record.data.disabled_fields) {
-      console.log('20100803 GridPanel.on_beforeedit()',e.record.data.disabled_fields);
+      //~ console.log('20100803 GridPanel.on_beforeedit()',e.record.data.disabled_fields);
       for (i in e.record.data.disabled_fields) {
         if(e.record.data.disabled_fields[i] == e.field) {
           //~ console.log(20100803,'cancel');
@@ -1304,7 +1314,9 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     p[e.field+'Hidden'] = e.value;
     // p[pk] = e.record.data[pk];
     // console.log("grid_afteredit:",e.field,'=',e.value);
-    Ext.apply(p,this.store.baseParams);
+    Ext.apply(p,this.get_base_params()); // needed for POST, ignored for PUT
+    //~ Ext.apply(p,this.ww.config.base_params);
+    //~ Ext.apply(p,this.store.baseParams);
     var self = this;
     var on_success = Lino.action_handler( function(result) {
       self.getStore().commitChanges(); // get rid of the red triangles
@@ -1383,6 +1395,9 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
   },
   refresh : function() { 
     this.store.load({params:{limit:this.getTopToolbar().pageSize,start:this.getTopToolbar().cursor}});
+  },
+  after_delete : function() {
+    this.refresh();
   },
   add_row_listener : function(fn,scope) {
     this.getSelectionModel().addListener('rowselect',fn,scope);
@@ -1626,7 +1641,7 @@ Lino.SimpleRemoteComboFieldElement = Ext.extend(Lino.RemoteComboFieldElement,{
 Lino.WindowWrapperBase = {
 
   setup : function() {
-    //~ console.log('Lino.WindowWrapper.setup',this);
+    console.log('Lino.WindowWrapper.setup',this);
     //~ this.window.window_wrapper = this;
     //~ this.main_item.ww = this;
     //~ 20101021 this.main_item.set_base_params(this.base_params);
@@ -1649,13 +1664,14 @@ Lino.WindowWrapperBase = {
         main_area.un('resize', win.onWindowResize, win);
     });
     
-    if (this.caller) {
-      console.log('get_master_params()',this.caller);
-      this.main_item.set_base_params(this.caller.ww.get_master_params());
-    }
+    //~ if (this.caller) {
+      //~ var p = this.caller.ww.get_master_params();
+      //~ console.log('get_master_params() from caller',p);
+      //~ this.main_item.set_base_params(p);
+    //~ }
     
     if (this.config.data_record) {
-      //~ console.log('Lino.WindowWrapper with data_record',config.data_record);
+      console.log('Lino.WindowWrapper with data_record',this.config.data_record);
       //~ this.main_item.on_master_changed.defer(2000,this.main_item,[config.data_record]);
       //~ Lino.do_when_visible(this.main_item,function(){this.on_master_changed(config.data_record)});
       //~ this.main_item.on('afterrender',function(){this.main_item.on_master_changed(config.data_record)},this,{single:true});
@@ -1663,6 +1679,7 @@ Lino.WindowWrapperBase = {
       //~ return;
     } 
     if (this.config.record_id !== undefined) { // may be 0 
+      console.log('Lino.WindowWrapper with record_id',this.config.record_id);
       this.main_item.goto_record_id(this.config.record_id);
     }
     
@@ -1779,6 +1796,7 @@ Ext.override(Lino.WindowWrapper,{
   },
   on_render : function() {},
   refresh : function() {},
+  
   hide : function() { this.window.hide() },
   get_window_config : function() { return {} }
   
@@ -1885,7 +1903,7 @@ Lino.InsertWrapper = Ext.extend(Lino.DetailWrapperBase, {
       //~ url:this.caller.config.url_data,
       //~ url:this.caller.ls_data_url,
       url:'/api'+this.main_item.ls_url,
-      //~ params: this.caller.get_master_params(this.caller.get_current_record()),
+      params: this.get_master_params(),
       method: 'POST',
       scope: this,
       success: function(form, action) {
@@ -1958,3 +1976,34 @@ Ext.override(Ext.form.BasicForm,{
         return this;
     }
 });
+
+
+
+
+function initializeFooBarDropZone(cmp) {
+    console.log('initializeFooBarDropZone',cmp);
+    cmp.dropTarget = new Ext.dd.DropTarget(cmp.bwrap, {
+      //~ ddGroup     : 'gridDDGroup',
+      notifyEnter : function(ddSource, e, data) {
+        console.log('notifyEnter',ddSource,e,data);
+        //Add some flare to invite drop.
+        cmp.body.stopFx();
+        cmp.body.highlight();
+      },
+      notifyDrop  : function(ddSource, e, data){
+        console.log('notifyDrop',ddSource,e,data);
+        // Reference the record (single selection) for readability
+        //~ var selectedRecord = ddSource.dragData.selections[0];
+
+
+        // Load the record into the form
+        //~ formPanel.getForm().loadRecord(selectedRecord);
+
+
+        // Delete record from the grid.  not really required.
+        //~ ddSource.grid.store.remove(selectedRecord);
+
+        return(true);
+      }
+    })
+}

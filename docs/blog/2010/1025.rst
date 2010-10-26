@@ -1,0 +1,251 @@
+20101025
+========
+
+Typed links
+-----------
+
+Neues Modell :class:`links.LinkType`.
+Beispiele in der der initial_data-Fixture für DSBE 
+(:mod:`lino.modlib.dsbe.fixtures.initial_data`).
+
+select related
+--------------
+
+Wird der Server schneller, wenn ich `select_related() 
+<http://docs.djangoproject.com/en/dev/ref/models/querysets/#select-related>`_ 
+benutze?
+
+Klinischer Test: in :meth:`lino.reports.Report.get_queryset` 
+mach ich einfach::
+
+    def get_queryset(self,rr):
+        if self.queryset is None:
+            self.queryset = self.model.objects.select_related()
+            # self.queryset = self.model.objects.all()
+
+
+Beide Varianten funktionieren, aber ich merke keinen Performance-Unterschied.
+
+Nachdem ich 
+http://djangosnippets.org/snippets/1672/ 
+und
+http://djangosnippets.org/snippets/161/ 
+gefunden habe, schreibe ich mir das neue Modul
+:mod:`lino.utils.sqllog`.
+
+In der :xfile:`settings.py` kommt dann::
+
+  MIDDLEWARE_CLASSES += (
+    'lino.utils.sqllog.SQLLogToConsoleMiddleware',
+  )
+
+Wenn ich dann http://127.0.0.1:8000/api/contacts/Persons?fmt=grid
+aufrufe, flimmert die Konsole vor Meldungen, das ist mir zuviel. 
+
+Deshalb meine eigene Kreation :class:`lino.utils.sqllog.ShortSQLLogToConsoleMiddleware`.
+
+Das ist jetzt schon aufschlussreicher. Hier ein Resultat mit select_related::
+
+  Validating models...
+  0 errors found
+
+  Django version 1.3 pre-alpha SVN-14140, using settings 'dsbe.settings'
+  Development server is running at http://127.0.0.1:8000/
+  Quit the server with CTRL-BREAK.
+  Analyzing Reports...
+  Loading t:\hgwork\lino\lino\config\lino.SiteConfig.dtl...
+  Loading t:\hgwork\lino\lino\modlib\countries\config\countries.Country.dtl...
+  Loading t:\hgwork\lino\lino\modlib\dsbe\config\contacts.Person.dtl...
+  Loading t:\hgwork\lino\lino\modlib\dsbe\config\contacts.Person.2.dtl...
+  Loading t:\hgwork\lino\lino\modlib\dsbe\config\contacts.Person.3.dtl...
+  Loading t:\hgwork\lino\lino\modlib\dsbe\config\contacts.Person.4.dtl...
+  Loading t:\hgwork\lino\lino\modlib\dsbe\config\contacts.Person.5.dtl...
+  Loading t:\hgwork\lino\lino\modlib\dsbe\config\contacts.Company.dtl...
+  Loading t:\hgwork\lino\lino\modlib\notes\config\notes.NoteType.dtl...
+  Loading T:\hgwork\lino\lino\demos\dsbe\config\notes.Note.dtl...
+  Loading t:\hgwork\lino\lino\modlib\links\config\links.Link.dtl...
+  Discovering choosers...
+  Reading T:\hgwork\lino\lino\demos\dsbe\lino_settings.py ...
+  This is Lino version 0.8.9.
+  Using Django 1.3 pre-alpha SVN-14140, Python 2.5.2, ReportLab Toolkit 2.4, PyYaml 3.08, python-dateutil 1.4.1, xhtml2pdf 3.0.32
+  Lino Site 'DSBE/Lino demo' is ready.
+  Starting user interface lino.ui.extjs
+  Generating T:\hgwork\lino\lino\demos\dsbe\media\cache\js\site.js ...
+  29 queries in 0.016 seconds
+  [25/Oct/2010 02:34:23] "GET /api/contacts/Persons?fmt=grid HTTP/1.1" 200 4636
+  2 queries in 0.0 seconds
+  [25/Oct/2010 02:34:23] "GET /media/extjs/resources/css/ext-all.css HTTP/1.1" 304 0
+  2 queries in 0.0 seconds
+  [25/Oct/2010 02:34:23] "GET /media/extjs/examples/ux/gridfilters/css/GridFilters.css HTTP/1.1" 304 0
+  2 queries in 0.0 seconds
+  [25/Oct/2010 02:34:23] "GET /media/extjs/examples/ux/gridfilters/css/RangeMenu.css HTTP/1.1" 304 0
+  2 queries in 0.0 seconds
+  [25/Oct/2010 02:34:23] "GET /media/lino/extjs/lino.css HTTP/1.1" 304 0
+  2 queries in 0.016 seconds
+  [25/Oct/2010 02:34:23] "GET /media/extjs/adapter/ext/ext-base.js HTTP/1.1" 304 0
+  2 queries in 0.016 seconds
+  [25/Oct/2010 02:34:23] "GET /media/extjs/ext-all-debug.js HTTP/1.1" 304 0
+  2 queries in 0.0 seconds
+  [25/Oct/2010 02:34:23] "GET /media/extjs/examples/ux/gridfilters/menu/RangeMenu.js HTTP/1.1" 304 0
+  2 queries in 0.0 seconds
+  [25/Oct/2010 02:34:23] "GET /media/extjs/examples/ux/gridfilters/menu/ListMenu.js HTTP/1.1" 304 0
+  2 queries in 0.0 seconds
+  [25/Oct/2010 02:34:23] "GET /media/extjs/examples/ux/gridfilters/GridFilters.js HTTP/1.1" 304 0
+  2 queries in 0.0 seconds
+  [25/Oct/2010 02:34:23] "GET /media/extjs/examples/ux/gridfilters/filter/Filter.js HTTP/1.1" 304 0
+  2 queries in 0.0 seconds
+  [25/Oct/2010 02:34:23] "GET /media/extjs/examples/ux/gridfilters/filter/StringFilter.js HTTP/1.1" 304 0
+  2 queries in 0.0 seconds
+  [25/Oct/2010 02:34:24] "GET /media/extjs/examples/ux/gridfilters/filter/DateFilter.js HTTP/1.1" 304 0
+  2 queries in 0.0 seconds
+  [25/Oct/2010 02:34:24] "GET /media/extjs/examples/ux/gridfilters/filter/ListFilter.js HTTP/1.1" 304 0
+  2 queries in 0.0 seconds
+  [25/Oct/2010 02:34:24] "GET /media/extjs/examples/ux/gridfilters/filter/NumericFilter.js HTTP/1.1" 304 0
+  2 queries in 0.0 seconds
+  [25/Oct/2010 02:34:24] "GET /media/extjs/examples/ux/gridfilters/filter/BooleanFilter.js HTTP/1.1" 304 0
+  2 queries in 0.0 seconds
+  [25/Oct/2010 02:34:24] "GET /media/lino/extjs/lino.js HTTP/1.1" 304 0
+  2 queries in 0.0 seconds
+  [25/Oct/2010 02:34:24] "GET /media/cache/js/site.js HTTP/1.1" 200 565544
+  2 queries in 0.0 seconds
+  159 queries in 0.094 seconds
+  [25/Oct/2010 02:34:25] "GET /api/contacts/Persons?_dc=1287970465295&limit=22&start=0&fmt=json HTTP/1.1" 200 22222
+  159 queries in 0.467 seconds
+  [25/Oct/2010 02:34:27] "GET /api/contacts/Persons?_dc=1287970465556&limit=22&start=0&fmt=json HTTP/1.1" 200 22222
+
+
+Das Gleiche ohne select_related::
+
+  159 queries in 0.125 seconds
+  [25/Oct/2010 02:38:18] "GET /api/contacts/Persons?_dc=1287970698273&limit=22&start=0&fmt=json HTTP/1.1" 200 22222
+  159 queries in 0.047 seconds
+  [25/Oct/2010 02:38:19] "GET /api/contacts/Persons?_dc=1287970698541&limit=22&start=0&fmt=json HTTP/1.1" 200 22222
+  
+  
+Nochmal wieder mit select_related::
+
+  159 queries in 0.125 seconds
+  [25/Oct/2010 03:02:48] "GET /api/contacts/Persons?_dc=1287972168153&limit=22&start=0&fmt=json HTTP/1.1" 200 22222
+  159 queries in 0.092 seconds
+  [25/Oct/2010 03:02:49] "GET /api/contacts/Persons?_dc=1287972168406&limit=22&start=0&fmt=json HTTP/1.1" 200 22222  
+  
+Und nochmal ohne::  
+
+  159 queries in 0.111 seconds
+  [25/Oct/2010 03:05:50] "GET /api/contacts/Persons?_dc=1287972349716&limit=22&start=0&fmt=json HTTP/1.1" 200 22222
+  159 queries in 0.375 seconds
+  [25/Oct/2010 03:05:51] "GET /api/contacts/Persons?_dc=1287972349949&limit=22&start=0&fmt=json HTTP/1.1" 200 22222  
+    
+  
+Die Klasse :class:`lino.utils.sqllog.SQLLogMiddleware` habe ich auch abändert. 
+Meine Version hängt ihr Resultat nicht an die Response dran
+(das kann man in meiner ExtJS-Bildschirmaufbau nicht sehen), 
+sondern schreibt sie in eine Datei :file:`sqllog.html`. 
+
+Erste Schlussfolgerungen:
+
+- Also select_related erzeugt die Gleiche Anzahl Queries, aber 10 mal langsamer. 
+  Da hat also was nicht geklappt mit dem select_related...
+  Andererseits spielen bei den Zeiten scheinbar noch andere Faktoren mit, 
+  weil die so variabel sind.
+
+- 159 Queries, um die Liste von 22 ersten Records aus :class:`contacts.Persons` 
+  zu liefern ist ganz schön viel. Da gibt es hoffentlich was zu optimieren.
+  Ein Lob für Django, dass ich das bisher kaum bemerkt habe.
+  
+- Mich wundert, dass die Anzahl 159 genau gleich bleibt.  
+  
+- Dass die Grid 2 AJAX-Calls `GET /api/contacts/Persons` macht, wusste ich ja, 
+  das ist wegen des :js:func:`Lino.GridBox.calculatePageSize`. 
+  Aber dass die beiden Queries so unterschiedliche Zeiten haben, wundert mich.
+  
+- All die Requests nach `/media` erzeugen ebenfalls 2 SQL-Queries. 
+  Der erste ist wahrscheinlich nach django_session und der zweite nach auth_user.
+  Das scheint mir unnötig. 
+  Ist aber eigentlich egal, weil auf einem Produktionsserver das /media-Verzeichnis 
+  gar nicht von Django ausgeliefert wird.
+
+Erste Ideen, um die Performance zu verbessern:
+
+- Die Slave-Reports LinksByOwner und LanguageKnowledgesByPerson sind natürlich 
+  Ursache für jeweils 2 zusätzliche Queries pro Zeile 
+  (einmal `SELECT count(*)` und dann `SELECT *`).   
+  Dabei wird diese Info erst im Detail benutzt 
+  (wo sie sowieso vorher nochmal abgefragt wird).
+  Die könnten also raus.
+  
+
+A Grid Store is not a Detail Store
+----------------------------------
+
+Da brauch ich gar nicht nach weiteren Ideen zu suchen, 
+unnütze Summaries von Slave Reports gehören natürlich nicht in die Grid,
+das ist ein klarer Fall von falschem Design aus historischen Gründen.
+
+Ich brauche nicht einen einzigen Store pro Report, sondern zwei: einen 
+für Listenansichten und einen anderen für Detail-Ansichten 
+(Detail und Insert). Der eine benutzt obj2list, der andere obj2dict.
+N.B. im Listen-Store können trotzdem auch Report-Summaries auftreten, 
+wenn die als Kolonne einer Grid angefragt wurden.
+
+Zu bemerken ist auch, dass der ext_store.Store gar kein jsgen.Component 
+mehr zu sein braucht. In der :xfile:`lino.js` instanziere ich ja 
+inzwischen selber einen :extjs:`Ext.data.ArrayStore`. 
+Und die DetailWrapper brauchen gar keinen :extjs:`Ext.data.Store`, 
+sondern nur dessen Felddefinitionen. Ein Store ist eine Sammlung 
+von Feldern, der deren manchmal komplexen Werte in Atome verteilt.
+
+Anstatt den Store zu verdoppeln, mach ich ihm zwei Listen von 
+StoreFields `detail_fields` und `list_fields`.
+Denn die meisten Datenfelder sind ja in beiden Stores vertreten, 
+und es ist ein bisschen schade, dafür jedesmal zwei Store-Felder 
+zu instanzieren. Das ist mir auch ein bisschen 
+`Mengenarithmetik <http://docs.python.org/library/stdtypes.html#set-types-set-frozenset>`_
+beim Initialisieren des Stores wert, die ja nur einmal beim 
+Hochfahren des Serverprozesses läuft.
+
+12 Uhr. Na bitte: eine Grid erzeugt jetzt nur noch 
+46 statt vorher 159 SQL-Queries.
+
+Für jede Zeile macht er jetzt doch noch zwei überflüssige SELECTS: 
+einen für die Bezeichnung des Landes und einen für die Bezeichnung der Stadt.
+Das sind eigentlich die Kolonnen, für die select_related nützlich wäre. 
+Aber für die bewirkt select_related nichts, weil das nullable Foreign Keys sind.
+Idee: ich muss pro Report individuell konfigurierbar machen, wie er select_related() 
+aufruft.
+
+
+12.20 Uhr. Und nochmal na bitte: Anzahl der Queries nochmal von 46 auf 4 
+runtergeschraubt, indem ich in :class:`lino.modlib.contacts.models.Contacts` 
+die Methode `get_queryset` überschreibe::
+
+  class Contacts(reports.Report):
+      def get_queryset(self):
+          return self.model.objects.select_related('country','city')
+  
+Kleine Probleme en passant
+--------------------------
+
+- Quicksearch im Detail funktionierte wieder nicht.
+
+- Grid eines Slave-Reports im eigenen Fenster
+  (z.B. http://127.0.0.1:8000/api/links/LinksByOwner?fmt=grid&mt=12&mk=16)
+  
+  - Hier funktionierte das Speichern noch nicht, da wurden mt und mk zwar 
+    übergeben, aber in ExtUI.api_elem_view nicht richtig ausgewertet. 
+    Beim PUT eines Elements brauchen die 
+    base_params (also z.B. mt und mk) eigentlich nicht übergeben zu werden. 
+  
+  - Bei Insert in so einem Report waren die Master-Felder nicht ausgefüllt.
+ 
+- Wenn man einen Record in der Detail-Ansicht hatte und dann löschte, 
+  dann blient das Fenster stehen. Stattdessen schließt sich jetzt das 
+  Detail-Fenster, und die eventuell darunterliegende Grid wird aktualisiert.
+
+
+First steps with Drag & Drop
+----------------------------
+
+- Nach einigen ersten Versuchen habe ich gleich ein Problem, das ich 
+  im ExtJS-Forum posten möchte: :srcref:`/extjs-showcases/20101025.html`.
+
