@@ -115,7 +115,7 @@ For example::
 Set up Apache and `mod_wsgi`
 ----------------------------
 
-Create a file `apache.wsgi` in `/usr/local/django/myproject`::
+Create a file `apache.wsgi` in `/usr/local/django/myproject/apache`::
 
   import os
 
@@ -129,6 +129,10 @@ And in your Apache config file::
   <VirtualHost *:80>
     ServerName myproject.example.com
     ServerAdmin webmaster@example.com
+    
+    #WSGIDaemonProcess example.com processes=2 threads=15
+    WSGIDaemonProcess example.com threads=15
+    WSGIProcessGroup example.com
     WSGIScriptAlias / /usr/local/django/myproject/apache.wsgi
 
     ErrorLog /var/log/apache2/myproject.error.log
@@ -146,8 +150,16 @@ And in your Apache config file::
     </Location>
   </VirtualHost>  
   
-You'll also need to configure Apache to do HTTP authentication: :doc:`ApacheHttpAuth`.
 
+Django docs on Apache and mod_wsgi:
+
+  - http://docs.djangoproject.com/en/dev/howto/deployment/modwsgi/
+  - http://code.djangoproject.com/wiki/django_apache_and_mod_wsgi
+  - http://code.google.com/p/modwsgi/wiki/IntegrationWithDjango
+  - :doc:`/tickets/closed/9`
+  - :doc:`/tickets/10`
+
+You'll also need to configure Apache to do HTTP authentication: :doc:`ApacheHttpAuth`.
 
 Static files
 ------------

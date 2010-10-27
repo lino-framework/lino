@@ -136,7 +136,7 @@ def elem2rec_detailed(ar,rh,elem,**rec):
                         if index > 0:
                             prev = ar.queryset[index-1]
                         recno = index + 1
-                        i,next = g.next()
+                        index,next = g.next()
                         break
             except StopIteration:
                 pass

@@ -1,15 +1,22 @@
 20101026
 ========
 
-- Wrote showcase for :doc:`/tickets/8`. Posted the problem to the 
-  `ExtJS Help Forum
-  <http://www.sencha.com/forum/showthread.php?113648-dropTarget-and-notifyDrop-don-t-get-called>`__.
+Working on ExtJS problems
+-------------------------
+
+Wrote showcase for :doc:`/tickets/8`. 
+Posted the problem to the `ExtJS Help Forum
+<http://www.sencha.com/forum/showthread.php?113648-dropTarget-and-notifyDrop-don-t-get-called>`__.
   
-- Did more testing and screenshots for :doc:`/tickets/closed/1`.
-  Posted this as a bug in 
-  `ExtJS Bugs Forum <http://www.sencha.com/forum/showthread.php?113652-Wrong-layout-in-Chrome-and-FF-when-tab-gets-activated&p=530101>`__
+Did more testing and screenshots for :doc:`/tickets/closed/1`.
+Posted this as a bug in 
+`ExtJS Bugs Forum <http://www.sencha.com/forum/showthread.php?113652-Wrong-layout-in-Chrome-and-FF-when-tab-gets-activated&p=530101>`__
  
-- Release :doc:`/releases/20101026` im DSBE. Im Laufe des Releases 2 Check-ins wegen folgender Fehler:
+Release :doc:`/releases/20101026` 
+---------------------------------
+
+Zunächst nur im DSBE. 
+Im Laufe des Releases mehrere Check-ins, u.A. wegen folgender Fehler:
 
   - ::
   
@@ -26,5 +33,36 @@
       URI: http://localhost:8080/media/lino/extjs/lino.js
 
     
-    
+  - Versuche beim Diagnostizieren von Ticket :doc:`/tickets/closed/9`
+  
+  - `DatabaseError: no such column: links_link.type_id` kam daher, dass in initdb_tim
+    in der Argumentliste von `call_command('reset')` noch `links` fehlte.
 
+
+Beobachtung am Rande
+--------------------
+
+Während meiner Suche zu :doc:`/tickets/closed/9` las ich 
+im Wiki von modwsgi einen Artikel 
+`Integration With Django 
+<http://code.google.com/p/modwsgi/wiki/IntegrationWithDjango>`_
+über Django-spezifische Probleme. 
+Dort steht:
+
+  (...) one might assume that Django itself does not actually have specific 
+  problems when used with a multi threaded server configuration. 
+  Unfortunately no definitive statement has been made by the Django developers 
+  that this is the case or not. Recent investigations by third parties 
+  are however starting to uncover some issues related to multithreading:
+
+    http://code.djangoproject.com/wiki/DjangoSpecifications/Core/Threading
+    
+Und wenn man dann nachschaut, steht unter der besagten Seite:
+
+  This page and several others were created by a wiki user who was not 
+  and is not a member of the Django core team. Previous contents of 
+  this and other similar pages are not and should not be confused 
+  with Django's own documentation, which remains the sole source of 
+  official documentation for the Django project.
+  
+Also ich finde das unsympatisch.

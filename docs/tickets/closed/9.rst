@@ -1,0 +1,113 @@
+#9 (mod_wsgi restarts Lino on each request)
+===========================================
+
+Lino Server restarts on every web request, wich makes the application *very* slow.
+
+After a first request to "/", :file:`/var/log/apache2/error.log` shows::
+
+  [Wed Oct 27 00:22:46 2010] [notice] \
+    Apache/2.2.9 (Debian) mod_wsgi/2.5 Python/2.5.2 configured -- resuming normal operations
+    
+  [Wed Oct 27 00:24:54 2010] [info] [client 123.123.123.123] \
+    mod_wsgi (pid=28043, process='', application='lino.lan.example.com:8080|'): \
+    Loading WSGI script '/usr/local/django/myproject/apache.wsgi'.
+  [Wed Oct 27 00:24:56 2010] [error] Analyzing Reports...
+  [Wed Oct 27 00:24:56 2010] [error] Loading /var/snapshots/lino/lino/config/lino.SiteConfig.dtl...
+  [Wed Oct 27 00:24:56 2010] [error] Loading /var/snapshots/lino/lino/modlib/countries/config/countries.Country.dtl...
+  [Wed Oct 27 00:24:56 2010] [error] Loading /var/snapshots/lino/lino/modlib/dsbe/config/contacts.Person.dtl...
+  [Wed Oct 27 00:24:56 2010] [error] Loading /var/snapshots/lino/lino/modlib/dsbe/config/contacts.Person.2.dtl...
+  [Wed Oct 27 00:24:56 2010] [error] Loading /var/snapshots/lino/lino/modlib/dsbe/config/contacts.Person.3.dtl...
+  [Wed Oct 27 00:24:56 2010] [error] Loading /var/snapshots/lino/lino/modlib/dsbe/config/contacts.Person.4.dtl...
+  [Wed Oct 27 00:24:56 2010] [error] Loading /var/snapshots/lino/lino/modlib/dsbe/config/contacts.Person.5.dtl...
+  [Wed Oct 27 00:24:56 2010] [error] Loading /var/snapshots/lino/lino/modlib/dsbe/config/contacts.Company.dtl...
+  [Wed Oct 27 00:24:56 2010] [error] Loading /var/snapshots/lino/lino/modlib/notes/config/notes.NoteType.dtl...
+  [Wed Oct 27 00:24:56 2010] [error] Loading /var/snapshots/lino/lino/modlib/notes/config/notes.Note.dtl...
+  [Wed Oct 27 00:24:56 2010] [error] Loading /var/snapshots/lino/lino/modlib/links/config/links.Link.dtl...
+  [Wed Oct 27 00:24:56 2010] [error] Discovering choosers...
+  [Wed Oct 27 00:24:56 2010] [error] Reading /var/snapshots/lino/lino/demos/dsbe/lino_settings.py ...
+  [Wed Oct 27 00:24:56 2010] [error] This is Lino version 0.8.10.
+  [Wed Oct 27 00:24:56 2010] [error] Using Python 2.5.2, Django 1.3 pre-alpha SVN-14148, ReportLab Toolkit 2.1, PyYaml , pyratemp 0.2.0, python-dateutil 1.4.1
+  [Wed Oct 27 00:24:56 2010] [error] Lino Site 'DSBE/Lino demo' is ready.
+  [Wed Oct 27 00:24:56 2010] [error] Starting user interface lino.ui.extjs
+  [Wed Oct 27 00:24:57 2010] [error] Generating /usr/local/lino/media/cache/js/site.js ...
+  
+  [Wed Oct 27 00:25:17 2010] [info] [client 123.123.123.123] \
+    mod_wsgi (pid=28044, process='', application='lino.lan.example.com:8080|'): \
+    Loading WSGI script '/usr/local/django/myproject/apache.wsgi'.    
+  [Wed Oct 27 00:25:18 2010] [error] Analyzing Reports...
+  [Wed Oct 27 00:25:18 2010] [error] Loading /var/snapshots/lino/lino/config/lino.SiteConfig.dtl...
+  [Wed Oct 27 00:25:18 2010] [error] Loading /var/snapshots/lino/lino/modlib/countries/config/countries.Country.dtl...
+  [Wed Oct 27 00:25:18 2010] [error] Loading /var/snapshots/lino/lino/modlib/dsbe/config/contacts.Person.dtl...
+  [Wed Oct 27 00:25:18 2010] [error] Loading /var/snapshots/lino/lino/modlib/dsbe/config/contacts.Person.2.dtl...
+  [Wed Oct 27 00:25:18 2010] [error] Loading /var/snapshots/lino/lino/modlib/dsbe/config/contacts.Person.3.dtl...
+  [Wed Oct 27 00:25:18 2010] [error] Loading /var/snapshots/lino/lino/modlib/dsbe/config/contacts.Person.4.dtl...
+  [Wed Oct 27 00:25:18 2010] [error] Loading /var/snapshots/lino/lino/modlib/dsbe/config/contacts.Person.5.dtl...
+  [Wed Oct 27 00:25:18 2010] [error] Loading /var/snapshots/lino/lino/modlib/dsbe/config/contacts.Company.dtl...
+  [Wed Oct 27 00:25:18 2010] [error] Loading /var/snapshots/lino/lino/modlib/notes/config/notes.NoteType.dtl...
+  [Wed Oct 27 00:25:18 2010] [error] Loading /var/snapshots/lino/lino/modlib/notes/config/notes.Note.dtl...
+  [Wed Oct 27 00:25:18 2010] [error] Loading /var/snapshots/lino/lino/modlib/links/config/links.Link.dtl...
+  [Wed Oct 27 00:25:18 2010] [error] Discovering choosers...
+  [Wed Oct 27 00:25:18 2010] [error] Reading /var/snapshots/lino/lino/demos/dsbe/lino_settings.py ...
+  [Wed Oct 27 00:25:18 2010] [error] This is Lino version 0.8.10.
+  [Wed Oct 27 00:25:18 2010] [error] Using Python 2.5.2, Django 1.3 pre-alpha SVN-14148, ReportLab Toolkit 2.1, PyYaml , pyratemp 0.2.0, python-dateutil 1.4.1
+  [Wed Oct 27 00:25:18 2010] [error] Lino Site 'DSBE/Lino demo' is ready.
+  [Wed Oct 27 00:25:18 2010] [error] Starting user interface lino.ui.extjs
+  [Wed Oct 27 00:25:18 2010] [error] Generating /usr/local/lino/media/cache/js/site.js ...    
+    
+These same messages appear again and again for each process.
+
+
+The following statements helped to understand the problem:
+
+- set LogLevel directive in Apache to 'info'. This will cause mod_wsgi to 
+  output extra debug 
+  information in Apache error logs about when it is starting up 
+  processes, loading WSGI script file etc. Would possibly like to see 
+  this so can rule out daemon process crashing at some point and having 
+  to restarted for each request. 
+  [#f2]_
+  
+- Have you confirmed in some way that your application is in fact running in daemon mode?
+  [#f1]_
+  
+- Be aware that on UNIX systems you have the choice of using mod_wsgi in embedded mode 
+  or daemon mode. If you are not adept at configuring Apache and do not know how to 
+  tune Apache MPM settings to suit a specific type of application, 
+  then make sure you use mod_wsgi daemon mode.  
+  [#f3]_
+  
+- To make use of daemon mode for WSGI applications hosted within a specific site, 
+  the 
+  `WSGIDaemonProcess 
+  <http://code.google.com/p/modwsgi/wiki/ConfigurationDirectives#WSGIDaemonProcess>`_ 
+  and 
+  `WSGIProcessGroup 
+  <http://code.google.com/p/modwsgi/wiki/ConfigurationDirectives#WSGIProcessGroup>`_ 
+  directives would need to be defined.
+  [#f4]_
+
+- are you still loading mod_python? In some cases mod_python can interfere with 
+  mod_wsgi and cause strange problems. When it occurs it is usually results in 
+  crashes, but don't rule out other things. 
+  [#f2]_
+  
+  
+Solution
+--------
+
+Explanation was that mod_wsgi wasn't running in daemon mode.
+
+Solution was to add 2 lines to Apache config::
+
+    WSGIDaemonProcess example.com threads=15
+    WSGIProcessGroup example.com
+
+See also :doc:`/tickets/10`.
+
+.. rubric:: Footnotes
+
+.. [#f1] http://groups.google.com/group/django-users/browse_thread/thread/2ff4e4b34b9afb44?pli=1
+.. [#f2] http://groups.google.com/group/modwsgi/browse_thread/thread/e33565e5cb4e2f2e
+.. [#f3] http://code.djangoproject.com/wiki/django_apache_and_mod_wsgi
+.. [#f4] http://code.google.com/p/modwsgi/wiki/QuickConfigurationGuide#Delegation_To_Daemon_Process
+

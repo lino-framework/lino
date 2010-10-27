@@ -153,7 +153,6 @@ def pxs2person(row,person):
             lino.log.warning(u"%s : invalid health_insurance %r",person,row['IDMUT'])
         except Company.DoesNotExist,e:
             lino.log.warning(u"%s : health_insurance %s not found",person,row['IDMUT'])
-            pass
   
     if row['APOTHEKE']:
         try:
@@ -385,7 +384,9 @@ class Command(BaseCommand):
         if not confirm("Gonna reset your database (%s).\nAre you sure (y/n) ?" % dbname):
             raise CommandError("User abort.")
             
-        call_command('reset','contacts','dsbe','countries','auth','notes','countries',interactive=False)
+        call_command('reset',
+          'contacts','dsbe','countries','auth','notes','countries','links',
+          interactive=False)
         
         call_command('syncdb',interactive=False)
             
