@@ -5,7 +5,7 @@
 WebDAV
 ------
 
-Ich habe ein bisschen im Modul :mod:`lino.utils.printables` dokumentiert.
+Ich habe ein bisschen im Modul :mod:`lino.utils.printable` dokumentiert.
 Mir ist noch nicht ganz klar, ob die Unterteilung zwischen 
 WebDAV-Dokumenten (die von Lino nur einmal generiert werden und dann vom Benutzer ausgefüllt, bearbeitet und über 
 WebDAV wieder gespeichert werden) und PDF-Dokumenten (die nur gelesen werden) noch einen Einfluss auf 
