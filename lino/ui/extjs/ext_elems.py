@@ -874,6 +874,7 @@ class Panel(Container):
                     e.value.update(flex=int(eh*100/h))
                     vflex_count += 1
             if vflex_count >= 2 and len(self.elements) <= 3:
+            #~ if vflex_count >= 1 and len(self.elements) <= 3:
                 self.remove('layout','layoutConfig')
                 self.value_template = 'new Lino.VBorderPanel(%s)'
                 for e in self.elements:

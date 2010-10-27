@@ -5,7 +5,7 @@ Changes
 -------
 
 - :mod:`lino.modlib.links` has been reactivated.
-- Server performance should be much better
+- Server performance should be much better (159 SQL queries for a grid reduced to 4)
 
 Bugs fixed
 ----------

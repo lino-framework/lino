@@ -9,22 +9,14 @@ for which I hope for help from other people.
 Short-term
 ----------
 
-- IE sagt beim Öffnen von :menuselection:`Kontakte --> Personen`::
-
-    Message: 'id' is null or not an object
-    Line: 11
-    Char: 166504
-    Code: 0
-    URI: http://localhost:8080/media/extjs/ext-all.js
-
-
 - Im Detail der Personen sind manche Tabs anfangs nicht korrekt gelayoutet. 
   Dann muss man jeweils auf den Pin-Button oben rechts klicken (der die Seite mit Permalink 
   neu öffnet) um das korrekte Layout sehen zu können. 
   Condors Antwort in :doc:`/tickets/closed/1` 
   war leider nur die Lösung für den dort beschriebenen spezifischen Fall.
-  Aber er hat mich auf eine Idee gebracht: die vbox-Layouts sind "schuld" am Problem. 
-  Deshalb hatte ich ja auch VBorderPanel geschrieben, aber das wird zumindest in "Profil 1" nicht benutzt.
+  Aber er hat mich auf eine Idee gebracht: die vbox-Layouts sind schuld am Problem. 
+  Deshalb hatte ich ja auch VBorderPanel geschrieben, 
+  aber das wird zumindest in "Profil 1" nicht benutzt.
 
 - Externe Links (Lesezeichen) notieren können, indem man sie von einem anderen Browserfenster 
   per drag & drop auf die HtmlBox zieht.   
