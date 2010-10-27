@@ -24,7 +24,8 @@ def objects():
     u = auth.User.objects.get(pk=1)
     
     notetype = Instantiator('notes.NoteType').build
-    yield notetype(name="phone report",print_method='appy',template='notes.NoteType.Telefonnotiz.odt')
+    tel = notetype(name="phone report",build_method='appy',template='notes.Note.Telefonnotiz.odt')
+    yield tel
     yield notetype(name="todo")
     
     
@@ -36,9 +37,9 @@ def objects():
     luc = Person.objects.get(name__exact='Saffre Luc')
     rko = Company.objects.get(name__exact=u'Rumma & Ko OÜ')
     
-    note = Instantiator('notes.Note').build
-    n = note(user=u,date=i2d(20091208),subject="note for company 1",body="""Lorem ipsum...""",company=rko)
+    note = Instantiator('notes.Note',type=tel).build
+    n = note(user=u,date=i2d(20091208),subject=u"note for company %s" % rko,body="""Lorem ipsum...""",owner=rko)
     yield n    
     
-    n = note(user=u,date=i2d(20091208),subject="note for person 2",body="""Lorem ipsum...""",person=luc)
+    n = note(user=u,date=i2d(20091208),subject=u"note for person %s" % luc,body="""Lorem ipsum...""",owner=luc)
     yield n 

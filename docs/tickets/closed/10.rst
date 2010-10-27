@@ -1,6 +1,8 @@
 #10 (Lino doesn't like multiple processes)
 ==========================================
 
+Solved in :doc:`/releases/20101027`.
+
 Lino requires Apache to be configured with
 
 ::
@@ -23,9 +25,9 @@ This is appearently not an urgent problem:
 The problem when Lino is running in multiple processes appears quickly: 
 the columns of most grids are mixed up. 
 
-The reason might be that I use Python `sets` when filling the field lists 
+The reason was be that I used Python `sets` when filling the field lists 
 (fields, list_fields, detail_fields) of :class:`lino.ui.extjs.ext_store.Store`. 
-Each process then results in its own column order.
+Each process then resulted in its own column order.
   
 .. rubric:: Footnotes  
 

@@ -420,7 +420,7 @@ Lino.report_window_button = function(ww,handler) {
 }
 
 
-Lino.show_download = function (caller,fmt) {
+Lino.unused_show_download = function (caller,fmt) {
     //~ console.log(caller.get_selected());
     var url = caller.ww.config.url_data; // ls_url;
     var l = caller.get_selected();
@@ -653,24 +653,50 @@ Lino.do_when_visible = function(cmp,todo) {
   
 };    
 
+Lino.do_on_current_record = function(panel,fn) {
+  var rec = panel.get_current_record();
+  if (rec == undefined) {
+    Lino.notify("There's no selected record.");
+    return;
+  }
+  if (rec.phantom) {
+    Lino.notify("Action not available on phantom record.");
+    return;
+  }
+  return fn(rec);
+};
+
+Lino.show_download_handler = function(fmt) {
+  return function(panel,btn) {
+    Lino.do_on_current_record(panel,function(rec) {
+      //~ console.log(panel);
+      var url = panel.get_record_url(rec.id);
+      var p = panel.ww.get_master_params();
+      p['fmt'] = fmt;
+      url += "?" + Ext.urlEncode(p);
+      console.log(url);
+      window.open(url);
+      //~ var l = caller.get_selected();
+      //~ if (l.length == 0) Lino.notify('No selection.');
+      //~ console.log('show_download',caller,l)
+      //~ for (var i = 0; i < l.length; i++) 
+          //~ window.open(url + '/' + String(l[i].id) + '?fmt='+fmt)
+      //~ }
+    });
+  }
+};
+
 Lino.show_detail_handler = function(action) {
   return function(panel,btn) {
-    var rec = panel.get_current_record();
-    if (rec == undefined) {
-      Lino.notify("There's no selected record.");
-      return;
-    }
-    if (rec.phantom) {
-      Lino.notify("Cannot show detail of phantom record.");
-      return;
-    }
-    //~ action(panel,{record_id:master.id,base_params:panel.ww.config.base_params});
-    //~ var bp = panel.ww.get_master_params();
-    //~ var bp = panel.ww.get_base_params();
-    //~ var bp = panel.getStore().baseParams;
-    //~ var bp = panel.ww.config.base_params;
-    //~ console.log('show_detail_handler()',panel.get_base_params());
-    action(panel,{record_id:rec.id,base_params:panel.get_base_params()});
+    Lino.do_on_current_record(panel,function(rec) {
+      //~ action(panel,{record_id:master.id,base_params:panel.ww.config.base_params});
+      //~ var bp = panel.ww.get_master_params();
+      //~ var bp = panel.ww.get_base_params();
+      //~ var bp = panel.getStore().baseParams;
+      //~ var bp = panel.ww.config.base_params;
+      //~ console.log('show_detail_handler()',panel.get_base_params());
+      action(panel,{record_id:rec.id,base_params:panel.get_base_params()});
+    });
   }
 };
 
@@ -783,6 +809,13 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   moveNext : function() {this.goto_record_id(this.current_record.navinfo.next)},
   moveLast : function() {this.goto_record_id(this.current_record.navinfo.last)},
   
+  get_record_url : function(record_id) {
+      var url = '/api'+this.ls_url
+      //~ var url = this.ww.config.url_data; // ls_url;
+      url += '/' + String(record_id);
+      return url;
+  },
+  
   goto_record_id : function(record_id) {
     console.log('Lino.FormPanel.goto_record_id()',record_id);
     Lino.notify(); 
@@ -792,7 +825,8 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
       method: 'GET',
       //~ params: this.ww.config.base_params,
       params: this.ww.config.base_params,
-      url:'/api'+this.ls_url + '/' + record_id,
+      url: this.get_record_url(record_id),
+      //~ url:'/api'+this.ls_url + '/' + record_id,
       //~ params: {query: this.search_field.getValue()},
       success: function(response) {   
         // todo: convert to Lino.action_handler.... but result 
@@ -928,7 +962,8 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   load_picture_to : function(cmp,record) {
     //~ console.log('FormPanel.load_picture_to()',record);
     if (record)
-      var src = '/api'+this.ww.main_item.ls_url + "/" + record.id + "?fmt=image"
+      var src = this.get_record_url(record.id) + "?fmt=image"
+      //~ var src = '/api'+this.ww.main_item.ls_url + "/" + record.id + "?fmt=image"
     else
       var src = 'empty.jpg';
     var f = function() {
@@ -1097,6 +1132,13 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     
     
     this.on('beforeedit',function(e) { this.before_row_edit(e.record)},this);
+  },
+  
+  get_record_url : function(record_id) {
+      var url = '/api'+this.ls_url
+      //~ var url = this.ww.config.url_data; // ls_url;
+      url += '/' + String(record_id);
+      return url;
   },
   
   get_base_params : function() {

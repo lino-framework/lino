@@ -102,7 +102,7 @@ Solution was to add 2 lines to Apache config::
     WSGIDaemonProcess example.com threads=15
     WSGIProcessGroup example.com
 
-See also :doc:`/tickets/10`.
+See also :doc:`/tickets/closed/10`.
 
 .. rubric:: Footnotes
 

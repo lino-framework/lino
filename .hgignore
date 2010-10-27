@@ -11,4 +11,5 @@ dist
 
 lino\demos\*\media\cache
 lino\demos\*\data
+lino\demos\*\doctemplates
 lino\demos\*\*.bat

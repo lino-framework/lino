@@ -130,8 +130,8 @@ And in your Apache config file::
     ServerName myproject.example.com
     ServerAdmin webmaster@example.com
     
-    #WSGIDaemonProcess example.com processes=2 threads=15
-    WSGIDaemonProcess example.com threads=15
+    WSGIDaemonProcess example.com processes=2 threads=15
+    #WSGIDaemonProcess example.com threads=15
     WSGIProcessGroup example.com
     WSGIScriptAlias / /usr/local/django/myproject/apache.wsgi
 
@@ -157,7 +157,7 @@ Django docs on Apache and mod_wsgi:
   - http://code.djangoproject.com/wiki/django_apache_and_mod_wsgi
   - http://code.google.com/p/modwsgi/wiki/IntegrationWithDjango
   - :doc:`/tickets/closed/9`
-  - :doc:`/tickets/10`
+  - :doc:`/tickets/closed/10`
 
 You'll also need to configure Apache to do HTTP authentication: :doc:`ApacheHttpAuth`.
 

@@ -29,37 +29,41 @@ from lino.utils import printable
 from django.conf import settings
 #~ from lino import choices_method, simple_choices_method
 
-
+TEMPLATE_GROUP = 'notes'
 
 #~ tools.requires_apps('auth','contenttypes','links')
 
 class NoteType(models.Model):
     name = models.CharField(max_length=200)
-    print_method = models.CharField(max_length=20,choices=printable.print_method_choices(),blank=True,null=True)
-    template = models.CharField(max_length=200,blank=True,null=True)
-    #~ print_method = models.CharField(max_length=20,choices=mixins.print_method_choices())
+    build_method = models.CharField(max_length=20,
+      verbose_name=_("Build method"),
+      choices=printable.build_method_choices(),blank=True,null=True)
+    template = models.CharField(max_length=200,
+      verbose_name=_("Template"),
+      blank=True,null=True)
+    #~ build_method = models.CharField(max_length=20,choices=mixins.build_method_choices())
     #~ template = models.CharField(max_length=200)
     important = models.BooleanField(verbose_name=_("important"),default=False)
-    remark = models.TextField(blank=True)
+    remark = models.TextField(verbose_name=_("Remark"),blank=True)
     
     def __unicode__(self):
         return self.name
         
-    def template_choices(cls,print_method):
-        #~ print cls, 'template_choices for method' ,print_method
-        return printable.template_choices(print_method)
+    def template_choices(cls,build_method):
+        #~ print cls, 'template_choices for method' ,build_method
+        return printable.template_choices(TEMPLATE_GROUP,build_method)
     template_choices.simple_values = True
     template_choices = classmethod(template_choices)
         
     #~ @simple_choices_method
-    #~ def template_choices(cls,print_method):
-        #~ return mixins.template_choices(print_method)
+    #~ def template_choices(cls,build_method):
+        #~ return mixins.template_choices(build_method)
         
 #~ class NoteTypeDetail(layouts.DetailLayout):
     #~ datalink = 'notes.NoteType'
     #~ main = """
     #~ id name
-    #~ print_method
+    #~ build_method
     #~ template
     #~ """
 
@@ -77,9 +81,13 @@ class Note(models.Model,printable.Printable):
     subject = models.CharField(max_length=200,blank=True,null=True)
     body = models.TextField(blank=True)
     
+    owner_type = models.ForeignKey(ContentType)
+    owner_id = models.PositiveIntegerField(verbose_name=_('Owner'))
+    owner = generic.GenericForeignKey('owner_type', 'owner_id')
+    
     #~ project = models.ForeignKey("projects.Project",blank=True,null=True)
-    person = models.ForeignKey("contacts.Person",blank=True,null=True)
-    company = models.ForeignKey("contacts.Company",blank=True,null=True)
+    #~ person = models.ForeignKey("contacts.Person",blank=True,null=True)
+    #~ company = models.ForeignKey("contacts.Company",blank=True,null=True)
     #~ language = models.ForeignKey('countries.Language',default=default_language)
     language = fields.LanguageField(default=default_language)
 
@@ -101,26 +109,26 @@ class Note(models.Model,printable.Printable):
         if u is not None:
             self.user = u
         
-    #~ def get_print_method(self):
+    #~ def get_build_method(self):
         #~ if self.type is None:
-            #~ print 'get_print_method',self,'type is None'
+            #~ print 'get_build_method',self,'type is None'
             #~ return None
-        #~ if not self.type.print_method:
-            #~ print 'get_print_method',self,' : type ', self.type, 'has no print_method'
+        #~ if not self.type.build_method:
+            #~ print 'get_build_method',self,' : type ', self.type, 'has no build_method'
             #~ return None
-        #~ return mixins.get_print_method(self.type.print_method)
+        #~ return mixins.get_build_method(self.type.build_method)
         
-    def get_print_method(self):
+    def get_build_method(self):
         if self.type is None:
             return None
-        return self.type.print_method
+        return self.type.build_method
         
     def get_print_templates(self,pm):
         if self.type is None:
             return printable.Printable.get_print_templates(self,pm)
             #[self.filename_root() + pm.template_ext]
         assert self.type.template.endswith(pm.template_ext)
-        return [ self.type.template ]
+        return [ TEMPLATE_GROUP +'/'+self.type.template ]
         
     def get_print_language(self,pm):
         return self.language
@@ -158,16 +166,16 @@ class MyNotes(Notes):
     #~ column_names = "date subject user *"
     #~ order_by = "date"
   
-class NotesByPerson(Notes):
-    fk_name = 'person'
+class NotesByOwner(Notes):
+    fk_name = 'owner'
     column_names = "date subject user *"
     order_by = "date"
     #~ label = _("Notes by person")
   
-class NotesByCompany(Notes):
-    fk_name = 'company'
-    column_names = "date subject user *"
-    order_by = "date"
+#~ class NotesByCompany(Notes):
+    #~ fk_name = 'company'
+    #~ column_names = "date subject user *"
+    #~ order_by = "date"
     #~ label = _("Notes by person")
   
 class NotesByType(Notes):

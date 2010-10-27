@@ -347,15 +347,17 @@ class Store:
         self.pk = self.report.model._meta.pk
         assert self.pk is not None, "Cannot make Store for %s because %s has no pk" % (
           self.report.actor_id,self.report.model)
-        
-        list_fields = self.collect_fields(rh.get_list_layout())
-        detail_fields = self.collect_fields(*rh.get_detail_layouts())
+          
+        fields = []
+        list_fields = self.collect_fields(fields,rh.get_list_layout())
+        detail_fields = self.collect_fields(fields,*rh.get_detail_layouts())
         
         self.fields = []
         self.list_fields = []
         self.detail_fields = []
         
-        for df in list_fields | detail_fields: # set union
+        #~ for df in list_fields | detail_fields: # set union
+        for df in fields: 
             sf = self.create_field(df)
             self.fields.append(sf)
             if df in list_fields:
@@ -386,14 +388,21 @@ class Store:
         self.detail_fields = tuple(self.detail_fields)
         
           
-    def collect_fields(self,*layouts):
-        fields = set()
+    def collect_fields(self,all_fields,*layouts):
+        #~ fields = set()
+        fields = []
+        def add(f):
+            fields.append(f)
+            if f not in all_fields:
+                all_fields.append(f)
         for layout in layouts:
             for fld in layout._store_fields:
                 assert fld is not None
-                fields.add(fld)
+                add(fld)
+                #~ fields.add(fld)
         if not self.pk in fields:
-            fields.add(self.pk)
+            #~ fields.add(self.pk)
+            add(self.pk)
         return fields
         
     def create_field(self,fld):

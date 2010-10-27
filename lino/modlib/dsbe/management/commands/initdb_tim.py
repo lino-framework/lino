@@ -201,7 +201,7 @@ def load_dbf(dbpath,tableName,load):
 
     
 def unused_tim_fixture_objects():
-    noteType = Instantiator('notes.NoteType','name print_method template').build
+    noteType = Instantiator('notes.NoteType','name build_method template').build
     yield noteType((u"Auswertungsbogen allgemein"),'appy',u'Auswertungsbogen_allgemein.odt')
     yield noteType((u"Anwesenheitsbescheinigung"),'appy',u'Anwesenheitsbescheinigung.odt')
     yield noteType((u"Beschluss"),'appy',u'Beschluss.odt')

@@ -20,5 +20,5 @@ box4 =
   phone
   gsm
 address_box = box3 box4
-bottom_box = remarks
+bottom_box = remarks notes.NotesByOwner
 

@@ -110,6 +110,13 @@ def elem2rec1(ar,rh,elem,**rec):
     return rec
       
 def elem2rec_detailed(ar,rh,elem,**rec):
+    """
+    Adds additional information for this record, used only by detail views.
+    The "navigation information" is a set of pointers to the next, previous, 
+    first and last record relativ to this record in this report. 
+    This can be relatively expensive for records that are towards 
+    the end of the report.
+    """
     rec = elem2rec1(ar,rh,elem,**rec)
     rec.update(id=elem.pk)
     rec.update(title=unicode(elem))
@@ -675,12 +682,14 @@ class ExtUI(base.UI):
 
             if fmt == 'csv':
                 response = HttpResponse(mimetype='text/csv')
+                response['Content-Disposition'] = 'attachment; filename=tmp.csv'
                 w = ucsv.UnicodeWriter(response)
                 names = [] # fld.name for fld in self.fields]
                 fields = []
-                for col in ar.ah.list_layout._main.column_model.columns:
-                    names.append(col.editor.field.name)
-                    fields.append(col.editor.field)
+                for e in ar.ah.list_layout._main.columns:
+                #~ for col in ar.ah.list_layout._main.column_model.columns:
+                    names.append(e.field.name)
+                    fields.append(e.field)
                 w.writerow(names)
                 for row in ar.queryset:
                     values = []
@@ -1052,7 +1061,7 @@ class ExtUI(base.UI):
         
         
     def action_window_wrapper(self,a,h):
-        if isinstance(a,printable.PrintAction): return ext_windows.DownloadRenderer(self,a)
+        #~ if isinstance(a,printable.PrintAction): return ext_windows.DownloadRenderer(self,a)
         if isinstance(a,actions.DeleteSelected): return ext_windows.DeleteRenderer(self,a)
           
         if isinstance(a,actions.GridEdit):
@@ -1093,6 +1102,8 @@ class ExtUI(base.UI):
             kw.update(panel_btn_handler=js_code('Lino.show_detail_handler(Lino.%s)' % a))
         elif isinstance(a,actions.InsertRow):
             kw.update(panel_btn_handler=js_code("Lino.show_insert_handler(Lino.%s)" % a))
+        elif isinstance(a,actions.RedirectAction):
+            kw.update(panel_btn_handler=js_code("Lino.show_download_handler(%r)" % a.name))
         else:
             kw.update(panel_btn_handler=js_code("Lino.%s" % a))
         kw.update(

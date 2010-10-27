@@ -9,7 +9,6 @@ Bugs fixed
 ----------
 
 
-
 Upgrade instructions
 --------------------
 

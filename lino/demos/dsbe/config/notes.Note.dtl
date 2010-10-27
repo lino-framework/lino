@@ -5,6 +5,6 @@ main =
     date type
     user language
     subject
-    person  company
+    owner
     body:80x5 
 

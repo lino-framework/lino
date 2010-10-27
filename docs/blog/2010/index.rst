@@ -173,6 +173,7 @@
   |br| 
   :doc:`25 <1025>`
   :doc:`26 <1026>`
+  :doc:`27 <1027>`
 
 .. |Nov| replace::  **November**
 

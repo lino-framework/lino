@@ -111,10 +111,10 @@ def objects():
     #~ yield prj 
     #~ yield note(user=user,project=prj,date=i2d(20091007),subject="Anschauen",company=oshz)
     
-    yield note(user=user,date=i2d(20091006),subject="Programmierung",company=oshz,person=luc)
-    yield note(user=user,date=i2d(20091007),subject="Testen",company=oshz,person=gerd)
-    yield note(user=user,date=i2d(20100517),subject="Programmierung",company=oshz,person=luc)
-    yield note(user=user,date=i2d(20100518),subject="Testen",company=oshz,person=gerd)
+    yield note(user=user,date=i2d(20091006),subject="Programmierung",owner=oshz)
+    yield note(user=user,date=i2d(20091007),subject="Testen",owner=oshz)
+    yield note(user=user,date=i2d(20100517),subject="Programmierung",owner=oshz)
+    yield note(user=user,date=i2d(20100518),subject="Testen",owner=oshz)
         
     yield study(person=luc,type=schule,content=abi,started='197409',stopped='198606')
     yield study(person=gerd,type=schule,content=abi,started='197409',stopped='198606')

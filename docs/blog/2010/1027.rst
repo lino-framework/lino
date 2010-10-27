@@ -1,0 +1,80 @@
+20101027
+========
+
+
+WebDAV
+------
+
+Ich habe ein bisschen im Modul :mod:`lino.utils.printables` dokumentiert.
+Mir ist noch nicht ganz klar, ob die Unterteilung zwischen 
+WebDAV-Dokumenten (die von Lino nur einmal generiert werden und dann vom Benutzer ausgefüllt, bearbeitet und über 
+WebDAV wieder gespeichert werden) und PDF-Dokumenten (die nur gelesen werden) noch einen Einfluss auf 
+z.B. das cache-Verzeichnis haben soll.
+Momentan sind jedenfalls auch die Verzeichnisse der Druckmethoden, 
+die .pdf generieren, per WebDAV bearbeitbar. Und das ist unnötig.
+
+Auch ein bisschen gesurft habe ich.
+Laut `diesem Artikel <http://barracudadrive.net/blog/2007/12/Edit-Remote-Documents-Using-Microsoft-Word>`_ 
+könnte WebDAV zumindest für .rtf-Dokumente out of the box mit dem bisherigen Schema funktionieren.
+
+To do: http://plone.org/documentation/kb/webdav lesen.
+
+
+Printable documents
+-------------------
+
+Wo sollen die lokalen Vorlagen gespeichert werden? 
+
+Erstmal verschiebe ich das lokale `templates`-Verzeichnis von :setting:`DATA_DIR` 
+nach :setting:`PROJECT_DIR`, weil das mir sonst zu sehr versteckt ist.
+
+Zu bemerken ist, dass die Vorlagen für Printables zumindest momentan *nicht* 
+wie Django-Templates in den jeweiligen Verzeichnissen der :setting:`INSTALLED_APPS` 
+gesucht werden.
+Deshalb ändere ich sogar den Namen `templates` nach... 
+sagen wir mal...  `print_templates`... nee, `doctemplates`.
+
+Der Name Printable ist etwas gefährlich, weil hier ja im Grunde 
+gar nichts gedruckt wird, sondern es werden lediglich 
+*druckbare Dokumente* generiert. 
+Ob und wenn ja wann die ausgedruckt oder ausgeliefert wurden, 
+darum kümmert sich Lino momentan noch nicht.
+Also "Printable" ist zwar gefährlich, aber im Grunde ganz korrekt.
+"PrintMethod" dagegen ist eindeutig falsch. 
+Das müsste stattdessen besser ... ähm... BuildMethod heißen.
+Gesagt, getan.
+
+Änderungen in fixtures/initial_data.dpy, weil ich WebDAV zunächst 
+mal mit RTF-Dokumenten ausprobieren will, um endlich brauchbare 
+Beispiele zu kriegen.
+
+Im `doctemplates`-Verzeichnis gibt es jetzt eine weitere mögliche 
+Ebene von Unterverzeichnissen:
+
+build_method / language [/ group]
+
+Wird benutzt in :attr:`notes.NoteType.template`, damit dort nur Dateien aus der Gruppe 
+names `notes` angezeigt werden.
+
+
+
+
+NotesByOwner
+------------
+
+Wo wir gerade dabei sind, machen wir auch eine Strukturänderung, 
+die ansonsten bestimmt irgendwann nötig würde. Note.person und Note.company 
+werden ersetzt durch Note.owner.
+
+
+Upps, der Drucken-Knopf hatte doch noch ein Problem. 
+Und der CSV-Button funktionierte ebenfalls nicht.
+Behoben.
+
+
+Release
+-------
+
+Released :doc:`/releases/20101027` im DSBE. Tups kann noch warten...
+
+

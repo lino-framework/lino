@@ -49,20 +49,25 @@ from lino import actions
 from lino.tools import default_language
 
 
-pm_dict = {}
-pm_list = []
+bm_dict = {}
+bm_list = []
         
 
 class PrintAction(actions.RedirectAction):
+    """Note that this action should rather be called 
+    'Open a printable document' than 'Print'.
+    When Lino one day supports server-side printing, then we'll may have to rename 
+    this class.
+    """
     name = 'print'
     label = _('Print')
     callable_from = None
     needs_selection = True
   
     def get_target_url(self,elem):
-        pm = pm_dict.get(elem.get_print_method(),None)
+        pm = bm_dict.get(elem.get_build_method(),None)
         if pm is None:
-            raise Exception("%r has no print_method (%r)" % (elem,self))
+            raise Exception("%r has no build_method (%r)" % (elem,self))
         pm.build(elem)
         return settings.MEDIA_URL + "/".join(pm.get_target_parts(elem))
         
@@ -82,13 +87,24 @@ class Printable:
         
     def get_print_templates(self,pm):
         """Return a list of filenames of templates for the specified print method.
+        Note that for subclasses of :class:`SimpleBuildMethod` this list must either 
+        be empty (which means "this item is not printable") or contain a single 
+        element.
         """
         return [self.filename_root() + pm.template_ext]
           
     def get_last_modified_time(self):
+        """Return a model-specific timestamp that expresses when 
+        this model instance has been last updated. If 
+        
+        """
         return None
         
     def must_rebuild_target(self,filename,pm):
+        """Default implementation to decide, when the target document already exists, 
+        whether it should be built again. The default implementation is to call
+        :meth:`get_last_modified_time` and 
+        """
         last_modified = self.get_last_modified_time() 
         if last_modified is None:
             return True
@@ -100,7 +116,7 @@ class Printable:
             return False
         return True
       
-    def get_print_method(self):
+    def get_build_method(self):
         ## e.g. lino.modlib.notes.Note overrides this
         return 'rtf'
         #~ return 'pisa'
@@ -108,7 +124,7 @@ class Printable:
         
 
 
-class PrintMethod:
+class BuildMethod:
     """
     Base class for all print methods.
     A print method encapsulates the process of generating a "document" 
@@ -125,7 +141,8 @@ class PrintMethod:
     def __init__(self):
         if self.label is None:
             self.label = _(self.__class__.__name__)
-        self.templates_dir = os.path.join(settings.DATA_DIR,'templates',self.name)
+        #~ self.templates_dir = os.path.join(settings.PROJECT_DIR,'templates',self.name)
+        self.templates_dir = os.path.join(settings.PROJECT_DIR,'doctemplates',self.name)
 
             
     def __unicode__(self):
@@ -140,7 +157,10 @@ class PrintMethod:
     def build(self,elem):
         raise NotImplementedError
         
-    def prepare_cache(self,elem):
+    def before_build(self,elem):
+        """Return the target filename if a document needs to be built,
+        otherwise return ``None``.
+        """
         filename = self.get_target_name(elem)
         if not filename:
             return
@@ -181,7 +201,7 @@ class PrintMethod:
         
 
 
-class PisaPrintMethod(PrintMethod):
+class PisaBuildMethod(BuildMethod):
     """
     Generates .pdf files from .html templates.
     """
@@ -192,7 +212,7 @@ class PisaPrintMethod(PrintMethod):
     
     def build(self,elem):
         tpl = self.get_template(elem) 
-        filename = self.prepare_cache(elem)
+        filename = self.before_build(elem)
         if filename is None:
             return
         html = self.render_template(elem,tpl) # ,MEDIA_URL=url)
@@ -211,10 +231,10 @@ class PisaPrintMethod(PrintMethod):
         
 
 
-class SimplePrintMethod(PrintMethod):
+class SimpleBuildMethod(BuildMethod):
   
     def build(self,elem):
-        target = self.prepare_cache(elem)
+        target = self.before_build(elem)
         if not target:
             return
             
@@ -227,12 +247,13 @@ class SimplePrintMethod(PrintMethod):
                 elem.__class__.__name__,tpls))
                 
         lang = elem.get_print_language(self)
-        #~ tpl = self.get_template(elem) 
         tpl = os.path.join(self.templates_dir,lang,tpls[0])
-        
         self.simple_build(elem,tpl,target)
         
-class AppyPrintMethod(SimplePrintMethod):
+    def simple_build(self,elem,tpl,target):
+        raise NotImplementedError
+        
+class AppyBuildMethod(SimpleBuildMethod):
   
     """
     Generates .odt files from .odt templates.
@@ -249,7 +270,7 @@ class AppyPrintMethod(SimplePrintMethod):
         renderer.run()
         
         
-class LatexPrintMethod(PrintMethod):
+class LatexBuildMethod(BuildMethod):
     """
     Generates .pdf files from .tex templates.
     """
@@ -257,16 +278,11 @@ class LatexPrintMethod(PrintMethod):
     target_ext = '.pdf'
     template_ext = '.tex'  
     
-    def build(self,elem):
+    def simple_build(self,elem,tpl,target):
+        context = dict(instance=elem)
         raise NotImplementedError
-        tpl = self.get_template(elem) 
-        filename = self.prepare_cache(elem)
-        if filename is None:
-            return
-        result = self.render_template(elem,tpl) 
-        file(filename,'wb').write(result)
-        
-class RtfPrintMethod(SimplePrintMethod):
+            
+class RtfBuildMethod(SimpleBuildMethod):
     """
     Generates .rtf files from .rtf templates.
     """
@@ -279,45 +295,52 @@ class RtfPrintMethod(SimplePrintMethod):
     def simple_build(self,elem,tpl,target):
         context = dict(instance=elem)
         t = pyratemp.Template(filename=tpl)
-        result = t(**context)
+        try:
+            result = t(**context)
+        except pyratemp.TemplateRenderError,e:
+            raise Exception(u"%s in %s" % (e,tpl))
         file(target,'wb').write(result)
         
 
 
-def register_print_method(pm):
-    pm_dict[pm.name] = pm
-    pm_list.append(pm)
+def register_build_method(pm):
+    bm_dict[pm.name] = pm
+    bm_list.append(pm)
     
 
 if pisa:
-    register_print_method(PisaPrintMethod())
+    register_build_method(PisaBuildMethod())
 if appy:
-    register_print_method(AppyPrintMethod())
+    register_build_method(AppyBuildMethod())
 if pyratemp:
-    register_print_method(RtfPrintMethod())
-register_print_method(LatexPrintMethod())
+    register_build_method(RtfBuildMethod())
+register_build_method(LatexBuildMethod())
 
 
-def print_method_choices():
-    return [ (pm.name,pm.label) for pm in pm_list]
+def build_method_choices():
+    return [ (pm.name,pm.label) for pm in bm_list]
 
     
     
-def template_choices(pmname):
+def template_choices(group,bmname):
     """
-    :param:pmname: the name of a print method.
+    :param:bmname: the name of a build method.
     """
-    pm = pm_dict.get(pmname,None)
-    #~ pm = get_print_method(print_method)
+    pm = bm_dict.get(bmname,None)
+    #~ pm = get_build_method(build_method)
     if pm is None:
-        raise Exception("%r : invalid print method name." % pmname)
+        raise Exception("%r : invalid print method name." % bmname)
     #~ glob_spec = os.path.join(pm.templates_dir,'*'+pm.template_ext)
-    top = os.path.join(pm.templates_dir,default_language())
+    top = os.path.join(pm.templates_dir,default_language(),group)
+    l = []
     for dirpath, dirs, files in os.walk(top):
         for fn in files:
             if fnmatch(fn,'*'+pm.template_ext):
                 if len(dirpath) > len(top):
                     fn = os.path.join(dirpath[len(top)+1:],fn)
-                yield fn.decode(sys.getfilesystemencoding())
+                l.append(fn.decode(sys.getfilesystemencoding()))
+    if not l:
+        lino.log.warning("template_choices() : no matches for (%r,%r) in %s",group,bmname,top)
+    return l
             
     

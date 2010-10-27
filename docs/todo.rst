@@ -53,6 +53,17 @@ Undecided
 - Wenn man z.B. in Companies.insert manuell eine ID eingibt, 
   dann ignoriert der Server die und vergibt trotzdem seine automatische nächste ID.
 
+- Projekte einführen? 
+  Gibt es nicht in der Praxis den Fall, dass man Notizen machen will, 
+  die "in einen Topf" gehören, aber dieser "Topf" kann 
+  nicht unbedingt einer (einzigen) Personen zugewiesen werden?
+  Falls das häufig vorkommt, schlage ich vor, dass wir noch das Konzept der Projekte einführen.
+  Pro Person müsste man per Klick leicht ein Begleitungsprojekt anlegen können. 
+  Bei Import und Synchronisierung würden automatisch auch diese Projekte synchron gehalten. 
+  Dienstleistungen sind nicht mehr einer Person und/oder einer Firma, 
+  sondern allgemein einem Projekt zugewiesen.
+  Momentan entspricht sozusagen automatisch jede Person einem einzigen Projekt.
+
 Long-term
 ---------
 
@@ -78,8 +89,6 @@ Long-term
 
 - Nach Duplikaten suchen vor Erstellen einer neuen Person (issue 85)
 
-- URLs per drag & drop registrieren können
-
 - `lino.test_apps.journals` funktioniert nicht bzw. wird nicht ausgeführt. Sieht aus als Django-Ticket 11696 doch noch nicht behoben ist. Aber mein Patch 20091107.diff funktioniert nicht mehr und ich bin auch noch nicht sicher. Muss vielleicht mal einen Testcase schreiben, um das Problem zu identifizieren...
 
 - Prüfen, ob die neuen ExtJS-Features `Forms with vbox Layout <http://dev.sencha.com/deploy/dev/examples/form/vbox-form.html>`_ und
@@ -97,8 +106,6 @@ Long-term
   des Ziel-Reports ein Suchfeld. Damit man z.B. nach allen Personen suchen kann, 
   die eine Sprache "mündlich mindestens gut und schriftlich mindestens ausreichend" kennen
   
-- Projekte einführen? Pro Person müsste man per Klick leicht ein Begleitungsprojekt anlegen können. Bei Import und Synchronisierung würden automatisch auch diese Projekte synchron gehalten. Dienstleistungen sind nicht mehr einer Person und/oder einer Firma, sondern allgemein einem Projekt zugewiesen. 
-
 - Layout von Detail-Fenstern : in Lino sind die "Zeilen" momentan ja immer im "Blocksatz" (also links- und rechtsbündig). Das ist unkonventionell: alle RIA die ich kenne, machen ihre Formulare nur linksbündig.
 
 - HtmlEditor oder TextArea? Der HtmlEditor verursacht deutliche Performanceeinbußen beim Bildschirmaufbau von Detail-Fenstern. Die Wahl sollte konfigurierbar sein. Markup auch.
@@ -253,7 +260,11 @@ Long-term
 
 - Verändern der Reihenfolge per DnD in :class:`links.LinksByOwner`.
     
-- :doc:`/tickets/10` 
+- Is there a better implementation for :func:`lino.ui.extjs.ext_ui.elem2rec_detailed`?
+
+- Wir brauchen in :class:`notes.Note` noch eine Methode `type_choices` und 
+  in :class:`notes.NoteType` ein Feld `only_for_owner_model`, das die Auswahlliste 
+  für Notizart ggf. auf bestimmte Arten von Owner beschränkt.
 
 
 Documentation

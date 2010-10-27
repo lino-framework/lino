@@ -50,7 +50,7 @@ class ActionRenderer(object):
     
 class DownloadRenderer(ActionRenderer):
   
-    def js_render(self):
+    def unused_js_render(self):
         #~ url = '/'.join(('/api',self.action.actor.app_label,self.action.actor._actor_name))+'/'
         yield "function(caller) { Lino.show_download(caller,%r);}" % self.action.name
         #~ yield "function(caller) { return new Lino.show_download(caller,%r);}" % self.action.name

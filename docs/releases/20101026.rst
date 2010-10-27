@@ -1,6 +1,9 @@
 Version 0.8.10
 ==============
 
+Revision `ded8156df9
+<http://code.google.com/p/lino/source/detail?r=ded8156df9560a9424ec6ccfe317a29bf7c1ae67>`_
+
 Changes
 -------
 
@@ -12,8 +15,6 @@ Bugs fixed
 
 - Eingeben von Begleitern einer Person funktionierte nicht
 - Print-Button auf Person funktionierte nicht
-
-
 
 
 Upgrade instructions

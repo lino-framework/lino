@@ -123,6 +123,8 @@ class Person(Contact,Printable):
     Implements :class:`contacts.Person`, 
     but cannot inherit from :mod:`lino.modlib.contacts.models.Person`
     (see :doc:`/tickets/7`).
+    
+    This is also Printable just to demonstrate that not only Notes are printables.
     """
     
     class Meta:

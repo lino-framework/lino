@@ -1,0 +1,43 @@
+Version 0.8.11
+==============
+
+Revision 
+
+Changes
+-------
+
+- Note.person and Note.company replaced by Note.owner.
+  NotesByPerson and NotesByCompany replaced by NotesByOwner
+
+- The configuration for templates of printable documents becomes usable.
+
+Bugs fixed
+----------
+
+- der Drucken-Knopf hatte doch noch ein Problem. 
+- Und der CSV-Button funktionierte ebenfalls nicht.
+
+
+Upgrade instructions
+--------------------
+
+- (:doc:`/blog/2010/1027`) Move your local `templates` directory from DATA_DIR to PROJECT_DIR and rename it 
+  to `doctemplates`::
+  
+    $ cd /use/local/django/myproject
+    $ mv data/templates doctemplates
+
+- Upgrade your copy of the Lino sources::
+
+    cd /var/snapshots/lino
+    hg pull -u
+  
+- The usual things in your local directory::
+
+    cd /usr/local/django/myproject
+    python manage.py initdb_tim
+    python manage.py make_staff
+  
+- Restart Apache::
+
+    sudo /etc/init.d/apache2 restart

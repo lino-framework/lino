@@ -12,36 +12,29 @@ Did more testing and screenshots for :doc:`/tickets/closed/1`.
 Posted this as a bug in 
 `ExtJS Bugs Forum <http://www.sencha.com/forum/showthread.php?113652-Wrong-layout-in-Chrome-and-FF-when-tab-gets-activated&p=530101>`__
  
-Release :doc:`/releases/20101026` 
+Release :doc:`/releases/20101026`
 ---------------------------------
 
 Zunächst nur im DSBE. 
 Im Laufe des Releases mehrere Check-ins, u.A. wegen folgender Fehler:
 
-  - ::
-  
-      File "/var/snapshots/lino/lino/modlib/dsbe/management/commands/initdb_tim.py", line 78, in is_company
-        if data.get('NB2',False):
-      AttributeError: DBFRecord instance has no attribute 'get'
+  - `AttributeError: DBFRecord instance has no attribute 'get'`
+    in :mod:`initdb_tim <lino.modlib.dsbe.management.commands.initdb_tim>`
     
-  - ::
-  
-      Message: Expected identifier, string or number
-      Line: 1334
-      Char: 7
-      Code: 0
-      URI: http://localhost:8080/media/lino/extjs/lino.js
-
+  - IE meldet die üblichen `Expected identifier, string or number` in der :xfile:`lino.js`.
     
   - Versuche beim Diagnostizieren von Ticket :doc:`/tickets/closed/9`
   
-  - `DatabaseError: no such column: links_link.type_id` kam daher, dass in initdb_tim
+  - `DatabaseError: no such column: links_link.type_id` kam daher, 
+    dass in 
+    :mod:`initdb_tim <lino.modlib.dsbe.management.commands.initdb_tim>`
     in der Argumentliste von `call_command('reset')` noch `links` fehlte.
 
 
-Beobachtung am Rande
---------------------
+Unsympatische Einstellung
+-------------------------
 
+Randbemerkung.
 Während meiner Suche zu :doc:`/tickets/closed/9` las ich 
 im Wiki von modwsgi einen Artikel 
 `Integration With Django 
@@ -65,4 +58,9 @@ Und wenn man dann nachschaut, steht unter der besagten Seite:
   with Django's own documentation, which remains the sole source of 
   official documentation for the Django project.
   
-Also ich finde das unsympatisch.
+Wenn ich richtig vermute, ist das ein weiteres Beispiel dafür, 
+wie allergisch die Django-Maintainer auf Informationen reagieren, 
+die möglicherweise kritisch sein könnten.
+Ich will diese Einstellung (falls meine Vermutung stimmt) 
+nicht einmal definitiv verurteilen, 
+aber *sympatisch* finde ich das nicht.

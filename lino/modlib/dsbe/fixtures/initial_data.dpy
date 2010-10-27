@@ -114,11 +114,11 @@ def objects():
     #~ yield person_property('lang_fr_verbal',u"Sprachkenntnisse FR Schrift",properties.CHAR)
     
     
-    noteType = Instantiator('notes.NoteType',"name",print_method='appy',template='notes.Note.default.odt').build
+    noteType = Instantiator('notes.NoteType',"name").build
     
     yield noteType(u"Beschluss")
     yield noteType(u"Konvention",remark=u"Einmaliges Dokument in Verbindung mit Arbeitsvertrag")
-    yield noteType(u"Externes Dokument",remark=u"Aufenthaltsgenehmigung, Arbeitsgenehmigung, Arbeitsvertrag,...")
+    #~ yield noteType(u"Externes Dokument",remark=u"Aufenthaltsgenehmigung, Arbeitsgenehmigung, Arbeitsvertrag,...")
     yield noteType(u"Brief oder Einschreiben")
     yield noteType(u"Notiz",remark=u"Kontaktversuch, Gesprächsbericht, Telefonnotiz")
     yield noteType(u"Vorladung",remark=u"Einladung zu einem persönlichen Gespräch")
@@ -137,8 +137,8 @@ def objects():
     yield noteType(u"Eröffnungsbericht")
     yield noteType(u"Erstgespräch")
     yield noteType(u"Abschlussbericht")
-    yield noteType((u"Auswertungsbogen allgemein"),template=u'Auswertungsbogen_allgemein.odt')
-    yield noteType((u"Anwesenheitsbescheinigung"),template=u'Anwesenheitsbescheinigung.odt')
+    yield noteType((u"Auswertungsbogen allgemein"),build_method='rtf',template=u'Auswertungsbogen_allgemein.rtf')
+    yield noteType((u"Anwesenheitsbescheinigung"),build_method='rtf',template=u'Anwesenheitsbescheinigung.rtf')
    
     
     #~ projectType = Instantiator('projects.ProjectType',"name").build
