@@ -1,60 +1,68 @@
 20101028
 ========
 
-- Ich habe mich mal drangesetzt und :mod:`lino.modlib.igen` repariert.
-  Zumindest :mod:`lino.management.commands.initdb` funktioniert jetzt 
-  wieder.
-  
-  Todo: 
-  
-  - eigentlich müssten ich Journaled, Bookable & Co als abstract
-    models implementieren, aber das funktionierte irgendwie nicht.
-  - Übergabe der master instance in den DocumentsByJournal-Reports 
-    funktioniert noch nicht
-  
-  
-  
-  Django Patterns: Model Inheritance
-  http://charlesleifer.com/blog/django-patterns-model-inheritance/
-  
-  Polymorphic Models for Django
-  http://github.com/bconstantin/django_polymorphic
-  http://bserve.webhop.org/django_polymorphic/
-  
+Started to reanimate iGen
+-------------------------
 
-- Das Layout-Problem in tabbed details ist gelöst!
-  Dazu waren drei Stunden lang Nachtschicht und am Ende eine Portion Glück nötig...
-  
-  Das Problem kommt für vertikale Container ohne vflex-Element 
-  (die also layout 'form' haben), deren items hboxen sind 
-  (also keine einfachen Felder) und die sich selber wiederum in einer hbox befinden. 
-  Wenn diese hbox sich in einer vbox zusammen 
-  mit einem vflex-element befindet (was ja praktisch immer der Fall ist), 
-  fragt die vbox nach ihrer höhe und kriegt darauf nicht die richtige Antwort.
-  Konkret kommt das vor in allen Tabs außer 4 (Profil 2) des Personen-Details.
-  Jetzt wo ich das schon mal verstanden habe, könnte ich mal einen neuen showcase 
-  schreiben.
-  
-  Wobei der erste Tab das Problem auf den ersten Blick nicht hat, weil der par 
-  défaut aktiv ist. Aber wenn man das Detail per Permalink mit einen anderen Tab 
-  aufruft (z.B. http://127.0.0.1:8000/api/contacts/Persons/16?fmt=detail&tab=1), 
-  dann ist der erste Tab ebenfalls falsch.
+Ich habe mich mal drangesetzt und :mod:`lino.modlib.igen` repariert.
+Zumindest :mod:`lino.management.commands.initdb` funktioniert jetzt 
+wieder.
 
-  Ein kleiner Erfolg: nachdem ich jetzt TabPanel.layoutOnTabChange auf true setze, 
-  sind die fehlerhaften Tabs ab dem zweiten Aktivieren korrekt. 
-  Also man braucht jetzt nicht mehr den Permalink, sondern es reicht wenn man
-  ein bisschen in den Tabs rumblättert...
-  
-  Für das 5. Tab (Notizen) funktioniert dieser Trick allerdings noch nicht, 
-  da hilft weiterhin nur der Permalink. Dieses Tab ist ja auch anders, dort 
-  ist es die HtmlBox von LinksByOwner, die nicht richtig gelayoutet wird.
-  
-  Nachdem ich das geschrieben hatte, probierte ich noch schnell eine 
-  andere Methode: statt layoutOnTabChange zu setzen, rufe ich das doLayout() 
-  ein bisschen später auf, indem ich eine Funktion Lino.on_tab_activate ans 
-  activate-Event aller Tabs des TabPanels hänge. Und siehe da: es funktioniert!
-  (Für die HtmlBox musste ich außerdem do_when_visible nicht auf cmp sondern auf 
-  cmp.items.get(0) ansetzen).
-  
-  2.30 Uhr. Puh, jetzt geh ich aber schlafen! Wenn wir 6 Monate früher wären, 
-  ginge jetzt die Sonne schon auf...
+Todo: 
+
+- eigentlich müssten ich Journaled, Bookable & Co als abstract
+  models implementieren, aber das funktionierte irgendwie nicht.
+- Übergabe der master instance in den DocumentsByJournal-Reports 
+  funktioniert noch nicht
+
+
+
+Django Patterns: Model Inheritance
+http://charlesleifer.com/blog/django-patterns-model-inheritance/
+
+Polymorphic Models for Django
+http://github.com/bconstantin/django_polymorphic
+http://bserve.webhop.org/django_polymorphic/
+
+
+
+Das Layout-Problem in tabbed details ist gelöst!
+
+Dazu waren drei Stunden lang Nachtschicht und am Ende eine Portion Glück nötig...
+
+Das Problem kommt für vertikale Container ohne vflex-Element 
+(die also layout 'form' haben), deren items hboxen sind 
+(also keine einfachen Felder) und die sich selber wiederum in einer hbox befinden. 
+Wenn diese hbox sich in einer vbox zusammen 
+mit einem vflex-element befindet (was ja praktisch immer der Fall ist), 
+fragt die vbox nach ihrer höhe und kriegt darauf nicht die richtige Antwort.
+Konkret kommt das vor in allen Tabs außer 4 (Profil 2) des Personen-Details.
+Jetzt wo ich das schon mal verstanden habe, könnte ich mal einen neuen showcase 
+schreiben.
+
+Wobei der erste Tab das Problem auf den ersten Blick nicht hat, weil der par 
+défaut aktiv ist. Aber wenn man das Detail per Permalink mit einen anderen Tab 
+aufruft (z.B. http://127.0.0.1:8000/api/contacts/Persons/16?fmt=detail&tab=1), 
+dann ist der erste Tab ebenfalls falsch.
+
+Ein kleiner Erfolg: nachdem ich jetzt TabPanel.layoutOnTabChange auf true setze, 
+sind die fehlerhaften Tabs ab dem zweiten Aktivieren korrekt. 
+Also man braucht jetzt nicht mehr den Permalink, sondern es reicht wenn man
+ein bisschen in den Tabs rumblättert...
+
+Für das 5. Tab (Notizen) funktioniert dieser Trick allerdings noch nicht, 
+da hilft weiterhin nur der Permalink. Dieses Tab ist ja auch anders, dort 
+ist es die HtmlBox von LinksByOwner, die nicht richtig gelayoutet wird.
+
+Nachdem ich das alles notiert hatte und das eigentlich bis morgen ruhen lassen wollte, 
+probierte ich noch schnell eine andere Idee: statt layoutOnTabChange zu setzen, 
+rufe ich doLayout() ein bisschen später selber auf, indem ich eine Funktion 
+Lino.on_tab_activate ans 
+activate-Event aller Tabs des TabPanels hänge. Und siehe da: es funktioniert!
+Für die HtmlBox musste ich außerdem do_when_visible nicht auf cmp sondern auf 
+cmp.items.get(0) ansetzen.
+
+2.30 Uhr. Puh, jetzt geh ich aber schlafen! Wenn wir 6 Monate früher wären, 
+ginge jetzt die Sonne schon auf...
+
+
