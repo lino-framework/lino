@@ -33,6 +33,7 @@ ONE_DAY = relativedelta(days=1)
 from django.db import models
 from django.contrib.auth import models as auth
 from django import forms
+from django.core.exceptions import ValidationError
 
 
 #from lino.utils.ticket7623 import child_from_parent
@@ -162,18 +163,25 @@ class Customer(models.Model):
     item_vat = models.BooleanField(default=False)
     
     def __unicode__(self):
+        if self.name is None:
+            return u"Unsaved customer %s" % self.id
         return self.name
         
-    def save(self,*args,**kw):
-        self.before_save()
-        return super(Customer,self).save(*args,**kw)
+    #~ def save(self,*args,**kw):
+        #~ print 'Customer.save', self
+        #~ self.before_save()
+        #~ return super(Customer,self).save(*args,**kw)
         
-    def before_save(self):
+    #~ def clean(self):
+    def full_clean(self,*args,**kw):
+    #~ def before_save(self):
+        #~ print 'Customer.before_save', self
         if self.company_id is not None:
             self.name = self.company.name
         elif self.person_id is not None:
             l = filter(lambda x:x,[self.person.last_name,self.person.first_name,self.person.title])
             self.name = " ".join(l)
+        super(Customer,self).full_clean(*args,**kw)
         
     def as_address(self,*args,**kw):
         recipient = self.company or self.person
@@ -198,7 +206,14 @@ class Customers(reports.Report):
 
 
 
-class SalesDocument(models.Model,journals.AbstractDocument):
+class SalesDocument(journals.Journaled,journals.Sendable,models.Model):
+    
+    # for Journaled:
+    journal = journals.JournalRef()
+    number = journals.DocumentRef()
+    
+    # for Sendable:
+    sent_time = models.DateTimeField(blank=True,null=True)
     
     creation_date = fields.MyDateField() #auto_now_add=True)
     customer = models.ForeignKey(Customer,
@@ -242,33 +257,38 @@ class SalesDocument(models.Model,journals.AbstractDocument):
             kw['unit_price'] = "%.2f" % unit_price
         kw['qty'] = qty
         #print self,kw
-        return self.docitem_set.create(**kw)
+        kw['document'] = self
+        return DocItem(**kw)
+        #~ return self.docitem_set.create(**kw)
         
     def total_incl(self):
         return self.total_excl + self.total_vat
     total_incl.return_type = fields.PriceField()
     
     def update_total(self):
-        total_excl = 0
-        total_vat = 0
-        for i in self.docitem_set.all():
-            if i.total is not None:
-                total_excl += i.total
-            #~ if not i.product.vatExempt:
-                #~ total_vat += i.total_excl() * 0.18
-        self.total_excl = total_excl
-        self.total_vat = total_vat
-        #~ if self.journal == "ORD":
-            #~ print "  done before_save:", self
+        if self.pk is not None:
+            total_excl = 0
+            total_vat = 0
+            for i in self.docitem_set.all():
+                if i.total is not None:
+                    total_excl += i.total
+                #~ if not i.product.vatExempt:
+                    #~ total_vat += i.total_excl() * 0.18
+            self.total_excl = total_excl
+            self.total_vat = total_vat
+            #~ if self.journal == "ORD":
+                #~ print "  done before_save:", self
         
 
-    def before_save(self):
+    def full_clean(self,*args,**kw):
+        #~ print 'SalesDocument.full_clean',self
+    #~ def before_save(self):
         #~ if self.journal == "ORD":
             #~ print "before_save:", self
-        journals.AbstractDocument.before_save(self)
         r = get_sales_rule(self)
         if r is None:
-            raise journals.DocumentError("No sales rule for %s",self)
+            raise ValidationError("No sales rule for %s",self)
+            #~ raise journals.DocumentError("No sales rule for %s",self)
         if self.imode is None:
             self.imode = r.imode
         if self.shipping_mode is None:
@@ -276,6 +296,7 @@ class SalesDocument(models.Model,journals.AbstractDocument):
         if self.shipping_mode is None:
             self.shipping_mode = r.shipping_mode
         self.update_total()
+        super(SalesDocument,self).full_clean(*args,**kw)
       
         
 class OrderManager(models.Manager):
@@ -398,9 +419,12 @@ class Order(SalesDocument):
             your_ref=unicode(self),
             )
             
-        #invoice.save()
+        invoice.full_clean() 
+        invoice.save()
         for d in items:
-            invoice.add_item(**d).save()
+            i = invoice.add_item(**d)
+            i.full_clean()
+            i.save()
             #i = DocItem(document=invoice,**d)
             #i.save()
         invoice.save() # save again because totals have been updated
@@ -410,7 +434,14 @@ class Order(SalesDocument):
             
         
     
-class Invoice(ledger.LedgerDocument,SalesDocument):
+class Invoice(ledger.Booked,SalesDocument):
+  
+    # implements Booked:
+    value_date = models.DateField(auto_now=True)
+    ledger_remark = models.CharField("Remark for ledger",
+      max_length=200,blank=True)
+    booked = models.BooleanField(default=False)
+    
     due_date = fields.MyDateField("Payable until",blank=True,null=True)
     order = models.ForeignKey(Order,blank=True,null=True)
     
@@ -461,27 +492,29 @@ class DocItem(models.Model):
             #~ return self.total
         #~ return 0
         
-    def save(self, *args, **kwargs):
-        self.before_save()
-        super(DocItem,self).save(*args,**kwargs)
+    #~ def save(self, *args, **kwargs):
+        #~ self.before_save()
+        #~ super(DocItem,self).save(*args,**kwargs)
                     
-    def before_save(self):
+    def full_clean(self,*args,**kw):
         #print "before_save()", self
-        if self.pos is None:
-            self.pos = self.document.docitem_set.count() + 1
-        if self.product:
-            if not self.title:
-                self.title = self.product.name
-            if not self.description:
-                self.description = self.product.description
-            if self.unit_price is None:
-                if self.product.price is not None:
-                    self.unit_price = self.product.price * (100 - self.discount) / 100
-        if self.unit_price is not None and self.qty is not None:
-            self.total = self.unit_price * self.qty
-        #self.document.save() # update total in document
-        self.document.update_total()
-    before_save.alters_data = True
+        if self.document.pk is not None:
+            if self.pos is None:
+                self.pos = self.document.docitem_set.count() + 1
+            if self.product:
+                if not self.title:
+                    self.title = self.product.name
+                if not self.description:
+                    self.description = self.product.description
+                if self.unit_price is None:
+                    if self.product.price is not None:
+                        self.unit_price = self.product.price * (100 - self.discount) / 100
+            if self.unit_price is not None and self.qty is not None:
+                self.total = self.unit_price * self.qty
+            #self.document.save() # update total in document
+            self.document.update_total()
+        super(DocItem,self).full_clean(*args,**kw)
+    #~ before_save.alters_data = True
 
     def __unicode__(self):
         return "%s object" % self.__class__.__name__

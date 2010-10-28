@@ -834,7 +834,8 @@ class Panel(Container):
                     d.update(layout='form',autoHeight=True)
                     #~ d.update(layout='vbox',autoHeight=True)
             else:
-                d.update(layout='hbox',autoHeight=True)
+                d.update(layout='hbox',autoHeight=True) # 20101028
+                #~ d.update(layout='hbox')
                 d.update(layoutConfig=dict(align='stretchmax'))
                 #~ if stretch : # 20100912
                     #~ d.update(layoutConfig=dict(align='stretch'))
@@ -857,7 +858,7 @@ class Panel(Container):
                     e.update(anchor="100%")
                 
         if d['layout'] == 'hbox':
-            if not self.vflex:
+            if not self.vflex: # 20101028
                 d.update(autoHeight=True)
             for e in self.elements:
                 w = e.width or e.preferred_width
@@ -1051,7 +1052,8 @@ class WrappingMainPanel(MainPanel):
     @classmethod
     def field2elem(cls,lh,field,**kw):
         e = MainPanel.field2elem(lh,field,**kw)
-        po = dict(layout='form')
+        #~ po = dict(layout='form')
+        po = dict(layout='form',autoHeight=True) # 20101028
         #~ if isinstance(e,TextFieldElement):
             #~ po.update(anchor='100% 100%')
         ct = Panel(lh,field.name+"_ct",True,e,**po)#,flex=0)
@@ -1128,11 +1130,15 @@ class TabPanel(jsgen.Component):
         self.active_children = []
         for t in tabs:
             self.active_children += t.active_children
+            t.update(listeners=dict(activate=js_code("Lino.on_tab_activate")))
       
         self.tabs = tabs
         kw.update(
           split=True,
           activeTab=0,
+          #~ layoutOnTabChange=True, # 20101028
+          #~ forceLayout=True, # 20101028
+          #~ deferredRender=False, # 20101028
           #~ autoScroll=True, 
           #~ width=300, # ! http://code.google.com/p/lino/wiki/20100513
           items=tabs,

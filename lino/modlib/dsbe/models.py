@@ -137,10 +137,10 @@ class Person(Contact,Printable):
     def get_queryset(self):
         return self.model.objects.select_related('country','city','user','nationality')
         
-    def before_save(self):
+    def full_clean(self,*args,**kw):
         l = filter(lambda x:x,[self.last_name,self.first_name,self.title])
         self.name = " ".join(l)
-        super(Person,self).before_save()
+        super(Person,self).full_clean(*args,**kw)
         
     #~ def clean(self):
         #~ l = filter(lambda x:x,[self.last_name,self.first_name,self.title])

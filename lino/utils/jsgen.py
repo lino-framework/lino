@@ -42,6 +42,7 @@ Another example...
 
 import types
 import datetime
+import decimal
 
 #~ from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import simplejson
@@ -120,7 +121,7 @@ def py2js(v):
             "%s: %s" % (key2js(k),py2js(v)) for k,v in v.items()])
     if isinstance(v,bool): # types.BooleanType:
         return str(v).lower()
-    if isinstance(v, (int, long)):
+    if isinstance(v, (int, long, decimal.Decimal)):
         return str(v)
     if isinstance(v, datetime.date):
         return 'new Date(%d,%d,%d)' % (v.year,v.month-1,v.day)

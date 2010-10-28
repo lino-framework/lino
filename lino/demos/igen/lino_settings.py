@@ -1,5 +1,5 @@
 #lino_site.help_url = "http://code.google.com/p/lino/wiki/IgenUserManual"
-lino.help_url = "http://lino.saffre-rumma.ee/django/igen/userman.html"
+lino.help_url = "http://lino.saffre-rumma.ee/igen/index.html"
 lino.title = "iGen demo"
 lino.index_html = """
 Welcome to iGen, the first Lino application.
@@ -17,7 +17,6 @@ to an initial state when necessary."""
 #~ """
 
 lino.index_html += """<ul>"""
-lino.index_html += """<li><a href="#" onclick="Lino.goto_permalink()">permalink with open windows</a></li>"""
 lino.index_html += """<li><a href="%s">User manual</a></li>""" % lino.help_url
 lino.index_html += """</ul>"""
 
@@ -26,17 +25,19 @@ lino.index_html += """</ul>"""
 
 from django.db import models
 
-system = models.get_app('system')
+#~ system = models.get_app('system')
 countries = models.get_app('countries')
 contacts = models.get_app('contacts')
 products = models.get_app('products')
-documents = models.get_app('documents')
+#~ documents = models.get_app('documents')
 ledger = models.get_app('ledger')
 sales = models.get_app('sales')
 finan = models.get_app('finan')
 journals = models.get_app('journals')
 
 from lino.utils import perms
+from lino import models as system
+
 
 ledger.set_accounts(
   #providers='4400',
@@ -58,9 +59,9 @@ m.add_action('products.ProductCats')
 m = lino.add_menu("journals","~Journals",can_view=perms.is_staff)
 for jnl in journals.Journal.objects.all().order_by('pos'):
     #m.add_action(jnl.get_doc_report())
-    #m.add_action(jnl.get_doc_report(),params={'master':jnl})
+    m.add_action(str(jnl.get_doc_report()),params={'master_id':jnl.pk})
     # m.add_action(jnl.get_doc_report(),args=[jnl.pk])
-    m.add_action(jnl.get_doc_report())
+    #~ m.add_action(str(jnl.get_doc_report()))
     
 m = lino.add_menu("sales","~Sales",
   can_view=perms.is_authenticated)
@@ -83,14 +84,13 @@ m.add_action('journals.Journals')
   #~ can_view=perms.is_authenticated)
 m.add_action('ledger.Accounts')
 
-m.add_action('countries.Languages')
 m.add_action('countries.Countries')
 #m.add_action(contacts.Countries())
-m.add_action('system.ContentTypes')
+m.add_action('contenttypes.ContentTypes')
 #m = lino.add_menu("system","~System")
-m.add_action('system.Permissions')
-m.add_action('system.Users')
-m.add_action('system.Groups')
+m.add_action('auth.Permissions')
+m.add_action('auth.Users')
+m.add_action('auth.Groups')
 #m.can_view = perms.is_staff
 
-system.add_system_menu(lino)
+system.add_site_menu(lino)

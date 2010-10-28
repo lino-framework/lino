@@ -45,7 +45,7 @@ def confirm(prompt=None):
         if ln.lower() in ('y','j','o'):
             return True
         if ln.lower() == 'n':
-            return false
+            return False
         print "Please anwer Y or N"
 
 def iif(l,y,f): 

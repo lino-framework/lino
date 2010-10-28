@@ -18,7 +18,7 @@
 #from lino.apps.finan import models as finan
 import decimal
 from lino.utils.instantiator import Instantiator, i2d
-from lino.modlib.tools import resolve_model
+from lino.tools import resolve_model
 
 #from lino.apps.ledger import models as ledger
 #from lino.apps.contacts import models as contacts

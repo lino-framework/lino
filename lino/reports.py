@@ -373,6 +373,7 @@ class ReportActionRequest(actions.ActionRequest): # was ReportRequest
     def setup(self,
             master=None,
             master_instance=None,
+            #~ master_id=None,
             offset=None,limit=None,
             layout=None,user=None,
             extra=None,quick_search=None,
@@ -397,6 +398,11 @@ class ReportActionRequest(actions.ActionRequest): # was ReportRequest
         
         kw.update(self.report.params)
         self.params = kw
+        
+        #~ if master_id is not None:
+            #~ assert master_instance is None
+            #~ master_instance = self.master.get(pk=master_pk)
+            
         self.master_kw = self.report.get_master_kw(master_instance)
         self.master_instance = master_instance
         if self.extra is None:
@@ -598,25 +604,26 @@ class Report(actors.Actor,base.Handled):
         #~ lino.log.debug("Report.__init__() %s", self)
         
         if self.fk_name:
-            assert self.model is not None, "%s has .fk_name but .model is None" % self
-            #~ self.master = resolve_model(self.master,self.app_label)
-            try:
-                fk, remote, direct, m2m = self.model._meta.get_field_by_name(self.fk_name)
-                assert direct
-                assert not m2m
-                master = fk.rel.to
-            except models.FieldDoesNotExist,e:
-                #~ lino.log.debug("FieldDoesNotExist in %r._meta.get_field_by_name(%r)",self.model,self.fk_name)
-                master = None
-                for vf in self.model._meta.virtual_fields:
-                    if vf.name == self.fk_name:
-                        fk = vf
-                        master = ContentType
-            if master is None:
-                raise Exception("%s : no master for fk_name %r in %s" % (
-                    self,self.fk_name,self.model.__name__))
-            self.master = master
-            self.fk = fk
+            if self.model is not None:
+                #~ assert self.model is not None, "%s has .fk_name but .model is None" % self
+                #~ self.master = resolve_model(self.master,self.app_label)
+                try:
+                    fk, remote, direct, m2m = self.model._meta.get_field_by_name(self.fk_name)
+                    assert direct
+                    assert not m2m
+                    master = fk.rel.to
+                except models.FieldDoesNotExist,e:
+                    #~ lino.log.debug("FieldDoesNotExist in %r._meta.get_field_by_name(%r)",self.model,self.fk_name)
+                    master = None
+                    for vf in self.model._meta.virtual_fields:
+                        if vf.name == self.fk_name:
+                            fk = vf
+                            master = ContentType
+                if master is None:
+                    raise Exception("%s : no master for fk_name %r in %s" % (
+                        self,self.fk_name,self.model.__name__))
+                self.master = master
+                self.fk = fk
         else:
             assert self.master is None
         #~ elif self.master:

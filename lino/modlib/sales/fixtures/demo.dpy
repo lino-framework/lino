@@ -1,4 +1,4 @@
-#coding: utf8
+#coding: utf-8
 ## Copyright 2008-2010 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
@@ -19,7 +19,7 @@ from dateutil import parser as dateparser
 #from lino.apps.contacts import models as contacts
 from lino.modlib.sales import utils
 from lino.utils.instantiator import Instantiator, i2d
-from lino.modlib.tools import resolve_model
+from lino.tools import resolve_model
 
 Person = resolve_model('contacts.Person')
 Company = resolve_model('contacts.Company')
@@ -49,8 +49,10 @@ def objects():
     yield shippingmode("rm","regular mail")
 
     for company in Company.objects.all():
+        #~ print 'sales.fixtures.demo',company
         yield Customer(company=company)
     for person in Person.objects.all():
+        #~ print 'sales.fixtures.demo', person
         yield Customer(person=person)
     
     #ORD = journals.get_journal_by_docclass(Order)

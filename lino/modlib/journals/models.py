@@ -31,6 +31,7 @@ import lino
 from lino import reports
 #~ from lino.modlib.documents import models as documents
 from lino.utils import mixins
+from lino.utils.printable import Printable
 
 
 class DocumentError(Exception):
@@ -62,8 +63,6 @@ def get_doctype(cl):
     return None
     
 
-#JOURNALS = {}
-
 class Journal(models.Model):
   
     id = models.CharField(max_length=4,primary_key=True)
@@ -78,7 +77,10 @@ class Journal(models.Model):
         #print self,DOCTYPE_CLASSES, self.doctype
         return DOCTYPES[self.doctype][0]
 
-    def get_doc_report(self,**kw):
+    def get_doc_report(self):
+        return DOCTYPES[self.doctype][1]()
+
+    def unused_get_doc_report(self,**kw):
         kw['master_instance'] = self
         rptclass = DOCTYPES[self.doctype][1].spawn(self.id,master=self.__class__,params=kw)
         return rptclass()
@@ -89,9 +91,10 @@ class Journal(models.Model):
         try:
             doc = cl(**kw)
         except TypeError,e:
-            print 20100804, cl
+            #~ print 20100804, cl
             raise
-        doc.save()
+        #~ doc.full_clean()
+        #~ doc.save()
         return doc
         
     def get_next_number(self):
@@ -168,12 +171,14 @@ def DocumentRef(**kw):
     return models.IntegerField(**kw)
 
 
-class AbstractDocument(mixins.Printable, mixins.MultiTableBase):
-  
-    journal = JournalRef()
-    number = DocumentRef()
-    last_modified = models.DateTimeField(auto_now=True)
-    sent_time = models.DateTimeField(blank=True,null=True)
+class Journaled(mixins.MultiTableBase):
+    """
+    A model that subclasses Journaled must provide 2 fields::
+    
+      journal = journals.JournalRef()
+      number = journals.DocumentRef()
+      
+    """
     
     @classmethod
     def create_journal(cls,id,**kw):
@@ -191,13 +196,6 @@ class AbstractDocument(mixins.Printable, mixins.MultiTableBase):
         return Journal.objects.filter(doctype=doctype).order_by('pos')
             
         
-    #~ def get_journal(self):
-        #~ return JOURNALS[self.journal]
-    
-    #~ @classmethod
-    #~ def get_journal_by_docclass(cls,*args,**kw):
-        #~ return get_journal_by_docclass(cls,*args,**kw)
-        
     def __unicode__(self):
         if self.id is None:
             return "(Unsaved %s document (journal=%r,number=%r))" % (
@@ -205,9 +203,55 @@ class AbstractDocument(mixins.Printable, mixins.MultiTableBase):
             #~ return "%s#%d (%d)" % (self.journal.id,self.number, self.id)
         return "%s#%s (%d)" % (self.journal,self.number,self.id)
         
+    def full_clean(self,*args,**kw):
+        if self.number is None:
+            self.number = self.journal.get_next_number()
+        super(Journaled,self).full_clean(*args,**kw)
+        
+    def before_save(self):
+        pass
+        #~ assert self.journal is not None
+        #~ assert JOURNALS.has_key(self.journal)
+        #jnl = self.get_journal()
+        #~ print 'Journaled.before_save', self.number
+        
+    def save(self,*args,**kw):
+        #~ print 'Journaled.save'
+        self.before_save()
+        r = super(Journaled,self).save(*args,**kw)
+        self.after_save()
+        return r
+        
+    def after_save(self):
+        #lino.log.info("Saved document %s",self)
+        pass
+        
+    def delete(self):
+        #jnl = self.get_journal()
+        self.journal.pre_delete_document(self)
+        return super(AbstractDocument,self).delete()
+        
+    def get_child_model(self):
+        ## overrides Typed
+        return DOCTYPES[self.journal.doctype][0]
+        
+        
+class ModifiedMixin(object):
+  
+    last_modified = models.DateTimeField(auto_now=True)
+  
     def get_last_modified_time(self):
         return self.last_modified 
 
+class Sendable(object):
+  
+    """
+    A model that subclasses Sendable must provide 1 field::
+    
+      sent_time = models.DateTimeField(blank=True,null=True)
+      
+    """
+    
     def html_templates(self):
         # when using pisa
         model = self.get_child_model()
@@ -242,45 +286,10 @@ class AbstractDocument(mixins.Printable, mixins.MultiTableBase):
         
         
         
-    def before_save(self):
-        #~ assert self.journal is not None
-        #~ assert JOURNALS.has_key(self.journal)
-        #jnl = self.get_journal()
-        if self.number is None:
-            self.number = self.journal.get_next_number()
-        
-    def save(self,*args,**kw):
-        self.before_save()
-        r = super(AbstractDocument,self).save(*args,**kw)
-        self.after_save()
-        return r
-        
-    def after_save(self):
-        #lino.log.info("Saved document %s",self)
-        pass
-        
-    def delete(self):
-        #jnl = self.get_journal()
-        self.journal.pre_delete_document(self)
-        return super(AbstractDocument,self).delete()
-        
-    def get_child_model(self):
-        ## overrides Typed
-        return DOCTYPES[self.journal.doctype][0]
-        
     def pdf_filename(self):
         return self.journal.id + "/" + str(self.number) + '.pdf'
         #return os.path.join(self.journal.id,str(self.number)) + '.pdf'
 
-    #~ def get_child_model(self):
-        #~ jnl = self.get_journal()
-        #~ return jnl.docclass
-        #~ #return DOCTYPE_CLASSES[jnl.doctype]
-        
-    #~ def pdf_filename(self):
-        #~ return os.path.join(self.pdf_root(),
-          #~ self.journal,
-          #~ str(self.number))+'.pdf'
           
 
 

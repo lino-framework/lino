@@ -75,6 +75,7 @@ Behoben.
 Release
 -------
 
-Released :doc:`/releases/20101027` im DSBE. Tups kann noch warten...
+Released :doc:`/releases/20101027` 
+Installed only on Tups.
 
 

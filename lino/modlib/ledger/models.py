@@ -52,31 +52,30 @@ class Account(models.Model):
     #~ account = models.ForeignKey(Account)
     
     
-class LedgerDocument(models.Model,journals.AbstractDocument):
+class Booked(journals.Journaled):
+    """
+    A model that subclasses Booked must provide 5 fields::
+    
+      journal = journals.JournalRef()
+      number = journals.DocumentRef()
   
-    #journal_class = LedgerJournal
-    #journal = models.ForeignKey(journals.Journal)
-    #journal = journals.JournalRef()
+      value_date = models.DateField(auto_now=True)
+      ledger_remark = models.CharField("Remark for ledger",
+        max_length=200,blank=True)
+      booked = models.BooleanField(default=False)
+    
     """
-    django.core.exceptions.FieldError: Local field 'journal' in class 'LedgerDocument' clashes with field of similar name from base class 'AbstractDocument'
-    """
-    
-    #~ class Meta:
-        #~ abstract = False
-    
-    value_date = fields.MyDateField(auto_now=True) 
-    ledger_remark = models.CharField("Remark for ledger",
-      max_length=200,blank=True)
-    booked = models.BooleanField(default=False)
-    
     def unbook(self):
         for b in self.booking_set.all():
             b.delete()
         self.booked = False
             
     def book(self):
+        self.full_clean()
+        self.save()
         bookings = [b for b in self.collect_bookings()]
         for b in bookings:
+            b.full_clean()
             b.save()
         self.booked = True
         #self.save()
@@ -85,8 +84,9 @@ class LedgerDocument(models.Model,journals.AbstractDocument):
         pass
         
     def create_booking(self,**kw):
-        #kw['journal'] = self.idjnl
-        kw['document'] = self
+        kw['journal'] = self.journal
+        kw['number'] = self.number
+        #~ kw['document'] = self
         #kw['number'] = self.number
         if not kw.get('date',None):
             kw['date'] = self.value_date
@@ -119,11 +119,11 @@ def get_account(name):
     
         
 class Booking(models.Model):
-    #journal = journals.JournalRef()
-    #number = models.IntegerField()
-    document = models.ForeignKey(LedgerDocument)
+    journal = journals.JournalRef()
+    number = journals.DocumentRef()
+    #~ document = models.ForeignKey(LedgerDocument)
     pos = models.IntegerField("Position",blank=True,null=True)
-    date = fields.MyDateField()
+    date = models.DateField()
     account = models.ForeignKey(Account)
     person = models.ForeignKey(Person,blank=True,null=True)
     company = models.ForeignKey(Company,blank=True,null=True)
@@ -132,6 +132,10 @@ class Booking(models.Model):
     
     def __unicode__(self):
         return u"%s.%d" % (self.document,self.pos)
+        
+    def document(self):
+        return "%s-%s" % (self.journal,self.number)
+    document.return_type = models.CharField(max_length=30)
     
 
 ##

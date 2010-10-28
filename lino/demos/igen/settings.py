@@ -46,6 +46,7 @@ INSTALLED_APPS = (
     'lino',
     'lino.modlib.countries',
     'lino.modlib.contacts',
+    'lino.modlib.notes',
     'lino.modlib.igen',
     'lino.modlib.products',
     'lino.modlib.journals',

@@ -7,11 +7,12 @@ About iGen
 iGen is a web application for writing invoices to customers and
 managing their payments. 
 
-This user manual uses the demo site 
-http://igen.saffre-rumma.ee/
-as example.
+You may use the demo site 
+http://igen-demo.saffre-rumma.ee/
+as a sandbox.
 
-The demo database contains fictive data. You can change this data and play with it, the database is being reset when necessary. 
+The demo database contains fictive data. 
+You can change this data and play with it, the database is being reset when necessary. 
 
 When you visit the demo site for the first time, 
 you must log in as "root" or "user".
@@ -19,7 +20,7 @@ Both users have "1234" as password.
 The login link is situated in the upper right corner.
 
 The menu changes depending on who you are.
-There are currently four levels of users: anonymous, normal user, staff user and root.
+There are currently four levels of users: anonymous, normal, staff and root.
 
   - Anonymous users can see our products. 
   - Normal users can create, change and delete their own orders. 

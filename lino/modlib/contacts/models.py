@@ -153,15 +153,17 @@ class Person(Contact):
     title = models.CharField(max_length=200,blank=True,verbose_name=_('Title'))
         
     
-    def save(self,*args,**kw):
-        self.before_save()
-        r = super(Person,self).save(*args,**kw)
-        return r
+    #~ def save(self,*args,**kw):
+        #~ self.before_save()
+        #~ r = super(Person,self).save(*args,**kw)
+        #~ return r
         
-    def before_save(self):
+    def full_clean(self,*args,**kw):
+    #~ def before_save(self):
         #~ if not self.name:
         l = filter(lambda x:x,[self.last_name,self.first_name,self.title])
         self.name = " ".join(l)
+        super(Contact,self).full_clean(*args,**kw)
 
 #~ class PersonDetail(ContactDetail):
     #~ datalink = 'contacts.Person'
@@ -178,7 +180,7 @@ class Persons(Contacts):
 class PersonsByCountry(Persons):
     fk_name = 'country'
     order_by = "city addr1"
-    column_names = "city addr1 name nationality language"
+    column_names = "city addr1 name language"
 
 class CompanyType(models.Model):
     """

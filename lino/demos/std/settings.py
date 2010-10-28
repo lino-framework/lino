@@ -31,16 +31,8 @@ USER_INTERFACES = [
   #~ 'lino.ui.extjsu',
   'lino.ui.extjs'
   ]
-if sys.platform == 'win32':
-    #~ EXTJS_ROOT = r's:\ext-3.2.0'
-    #~ EXTJS_ROOT = r's:\ext-3.2.1'
-    DATA_DIR = join(PROJECT_DIR,"data")
-else:
-    #~ EXTJS_ROOT = None # don't serve extjs files because Apache does it
-    DATA_DIR = '/usr/local/lino'
+DATA_DIR = join(PROJECT_DIR,"data")
     
-# end of Lino specific settings
-
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG

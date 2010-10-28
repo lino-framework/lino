@@ -14,7 +14,10 @@
 */
 Ext.namespace('Lino');
 
-
+Lino.on_tab_activate = function(item) {
+  //~ console.log('activate',item); 
+  if (item.rendered) item.doLayout();
+}
 
 Lino.VBorderPanel = Ext.extend(Ext.Panel,{
     constructor : function(config) {
@@ -955,8 +958,13 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   },
   load_htmlbox_to : function(cmp,record) {
     //~ console.log('Lino.load_htmlbox_to()',cmp,record);
-    Lino.do_when_visible(cmp,function() {
-      cmp.items.get(0).getEl().update(record.data[cmp.name])
+    //~ Lino.do_when_visible(cmp,function() {
+      //~ var el = cmp.items.get(0).getEl();
+      //~ if (el) el.update(record.data[cmp.name])
+    //~ });
+    Lino.do_when_visible(cmp.items.get(0),function() {
+      var el = cmp.items.get(0).getEl();
+      if (el) el.update(record.data[cmp.name])
     });
   },
   load_picture_to : function(cmp,record) {

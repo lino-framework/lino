@@ -115,7 +115,7 @@ For example::
 Set up Apache and `mod_wsgi`
 ----------------------------
 
-Create a file `apache.wsgi` in `/usr/local/django/myproject/apache`::
+Create a file `django.wsgi` in `/usr/local/django/myproject/apache`::
 
   import os
 
@@ -133,7 +133,7 @@ And in your Apache config file::
     WSGIDaemonProcess example.com processes=2 threads=15
     #WSGIDaemonProcess example.com threads=15
     WSGIProcessGroup example.com
-    WSGIScriptAlias / /usr/local/django/myproject/apache.wsgi
+    WSGIScriptAlias / /usr/local/django/myproject/apache/django.wsgi
 
     ErrorLog /var/log/apache2/myproject.error.log
 

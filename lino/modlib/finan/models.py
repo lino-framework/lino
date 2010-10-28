@@ -45,13 +45,24 @@ def _functionId(nFramesUp):
 def todo_notice(msg):
     print "[todo] in %s :\n       %s" % (_functionId(1),msg)
   
-class BankStatement(ledger.LedgerDocument):
+class BankStatement(ledger.Booked,models.Model):
+    
+    # implements Journaled:
+    journal = journals.JournalRef()
+    number = journals.DocumentRef()
+    
+    # implements Booked:
+    value_date = models.DateField(auto_now=True)
+    ledger_remark = models.CharField("Remark for ledger",
+      max_length=200,blank=True)
+    booked = models.BooleanField(default=False)
     
     date = fields.MyDateField()
     balance1 = fields.PriceField()
     balance2 = fields.PriceField()
     
-    def before_save(self):
+    def full_clean(self,*args,**kw):
+    #~ def before_save(self):
         if not self.booked:
             if self.value_date is None:
                 self.value_date = self.date
@@ -62,7 +73,7 @@ class BankStatement(ledger.LedgerDocument):
                 for i in self.docitem_set.all():
                     balance += i.debit - i.credit
             self.balance2 = balance
-        super(BankStatement,self).before_save()
+        super(BankStatement,self).full_clean(*args,**kw)
         
     #~ def after_save(self):
         #~ lino.log.info("Saved document %s (balances=%r,%r)",self,self.balance1,self.balance2)
@@ -111,7 +122,10 @@ class BankStatement(ledger.LedgerDocument):
             v = kw.get(k,None)
             if isinstance(v,basestring):
                 kw[k] = decimal.Decimal(v)
-        return self.docitem_set.create(**kw)
+        #~ return self.docitem_set.create(**kw)
+        kw['document'] = self
+        return DocItem(**kw)
+        #~ return self.docitem_set.create(**kw)
     
   
 class DocItem(models.Model):
@@ -125,10 +139,10 @@ class DocItem(models.Model):
     person = models.ForeignKey(Person,blank=True,null=True)
     company = models.ForeignKey(Company,blank=True,null=True)
     
-    def save(self,*args,**kw):
+    def full_clean(self,*args,**kw):
         if self.pos is None:
             self.pos = self.document.docitem_set.count() + 1
-        return super(DocItem,self).save(*args,**kw)
+        return super(DocItem,self).full_clean(*args,**kw)
         
     def __unicode__(self):
         return u"DocItem %s.%d" % (self.document,self.pos)
