@@ -55,6 +55,7 @@ from lino.modlib.properties import models as properties # CharPropValue, Boolean
 
 City = resolve_model('countries.City')
 StudyType = resolve_model('dsbe.StudyType')
+Country = resolve_model('countries.Country')
 #~ StudyContent = resolve_model('dsbe.StudyContent')
 
 def objects():
@@ -65,13 +66,21 @@ def objects():
     eupen = City.objects.get(name__exact='Eupen')
     kettenis = City.objects.get(name__exact='Kettenis')
     vigala = City.objects.get(name__exact='Vigala')
-    
+    ee = Country.objects.get(pk='EE')
+    be = Country.objects.get(isocode__exact='BE')
     #~ luc = person(first_name="Luc",last_name="Saffre",city=vigala,country='EE',card_number='122')
     #~ yield luc
     luc = Person.objects.get(name__exact="Saffre Luc")
-    yield person(first_name="Ly",last_name="Rumma",city=vigala,country='EE',card_number='123')
-    yield person(first_name="Mari",last_name="Saffre",city=vigala,country='EE',card_number='124')
-    yield person(first_name="Iiris",last_name="Saffre",city=vigala,country='EE',card_number='125')
+    luc.birth_place = 'Eupen'
+    luc.birth_country = be
+    luc.save()
+    yield person(first_name="Ly",last_name="Rumma",
+      city=vigala,country='EE',card_number='123',birth_country=ee,
+      birth_date=i2d(19680101),birth_date_circa=True)
+    yield person(first_name="Mari",last_name="Saffre",
+      city=vigala,country='EE',card_number='124',birth_country=ee,birth_date=i2d(20020405))
+    yield person(first_name="Iiris",last_name="Saffre",
+      city=vigala,country='EE',card_number='125',birth_country=ee,birth_date=i2d(20080324))
     
     gerd = person(first_name="Gerd",last_name="Xhonneux",city=kettenis,name="Xhonneux Gerd",country='BE')
     yield gerd

@@ -9,22 +9,13 @@ for which I hope for help from other people.
 Short-term
 ----------
 
-- Im Detail der Personen sind manche Tabs anfangs nicht korrekt gelayoutet. 
-  Dann muss man jeweils auf den Pin-Button oben rechts klicken (der die Seite mit Permalink 
-  neu öffnet) um das korrekte Layout sehen zu können. 
-  Condors Antwort in :doc:`/tickets/closed/1` 
-  war leider nur die Lösung für den dort beschriebenen spezifischen Fall.
-  Aber er hat mich auf eine Idee gebracht: die vbox-Layouts sind schuld am Problem. 
-  Deshalb hatte ich ja auch VBorderPanel geschrieben, 
-  aber das wird zumindest in "Profil 1" nicht benutzt.
+- WebDAV installieren und testen, wie das Bearbeiten von RTF- und ODT-Dokumenten in der Praxis läuft.
+
+- Dokumentvorlagen machen
 
 - Externe Links (Lesezeichen) notieren können, indem man sie von einem anderen Browserfenster 
   per drag & drop auf die HtmlBox zieht.   
   :doc:`/tickets/8` 
-
-- WebDAV installieren und testen, wie das Bearbeiten von RTF- und ODT-Dokumenten in der Praxis läuft.
-
-- Dokumentvorlagen machen  
 
 Undecided
 ---------
@@ -63,6 +54,10 @@ Undecided
   Dienstleistungen sind nicht mehr einer Person und/oder einer Firma, 
   sondern allgemein einem Projekt zugewiesen.
   Momentan entspricht sozusagen automatisch jede Person einem einzigen Projekt.
+  
+- Benutzername in Menüzeile anzeigen.
+
+- Nachrichten und Reminder im Body des Hauptfensters anzeigen.
 
 Long-term
 ---------
@@ -254,7 +249,7 @@ Long-term
   be called with Company instance as first argument (got Person instance instead)`.
   Da stimmt was mit der Vererbung von virtuellen Feldern nicht.
 
-  Bei einem POST (Einfügen) werden die base parameters mk und mt zusammen 
+- Bei einem POST (Einfügen) werden die base parameters mk und mt zusammen 
   mit allen Datenfeldern im gleichen Namensraum übertragen.
   Deshalb sind Feldnamen wie mt, mk und fmt momentan nicht möglich.
 
@@ -265,6 +260,8 @@ Long-term
 - Wir brauchen in :class:`notes.Note` noch eine Methode `type_choices` und 
   in :class:`notes.NoteType` ein Feld `only_for_owner_model`, das die Auswahlliste 
   für Notizart ggf. auf bestimmte Arten von Owner beschränkt.
+  
+- Continue to reanimate iGen. See :doc:`/blog/2010/1028`.
 
 
 Documentation

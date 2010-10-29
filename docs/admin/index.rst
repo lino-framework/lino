@@ -6,7 +6,7 @@ Administrator's Manual
 
    install
    ApacheHttpAuth
-   printing
+   printable
    ConfigureNotesTemplates
    tim2lino
 

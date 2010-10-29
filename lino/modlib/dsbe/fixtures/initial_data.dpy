@@ -139,7 +139,7 @@ def objects():
     yield noteType(u"Abschlussbericht")
     yield noteType((u"Auswertungsbogen allgemein"),build_method='rtf',template=u'Auswertungsbogen_allgemein.rtf')
     yield noteType((u"Anwesenheitsbescheinigung"),build_method='rtf',template=u'Anwesenheitsbescheinigung.rtf')
-   
+    
     
     #~ projectType = Instantiator('projects.ProjectType',"name").build
     #~ yield projectType(u"VSE Ausbildung")
@@ -180,11 +180,11 @@ def objects():
     #~ yield license('D',u"Bus")
     
     
-    studyType = Instantiator('dsbe.CoachingType',"name").build
-    yield studyType(u"DSBE")
-    yield studyType(u"Schuldnerberatung")
-    yield studyType(u"Energieberatung")
-    yield studyType(u"allgemeiner Sozialdienst")
+    coachingType = Instantiator('dsbe.CoachingType',"name").build
+    yield coachingType(u"DSBE")
+    yield coachingType(u"Schuldnerberatung")
+    yield coachingType(u"Energieberatung")
+    yield coachingType(u"allgemeiner Sozialdienst")
     
     
     excltype = Instantiator('dsbe.ExclusionType','name').build

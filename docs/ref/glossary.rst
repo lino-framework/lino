@@ -32,14 +32,3 @@ Glossary
   disabled fields
     Fields that the user cannot edit (read-only fields). 
     
-  appy
-    http://appyframework.org/pod.html
-    
-  Pisa
-    http://www.xhtml2pdf.com/
-    HTML/CSS to PDF converter written in Python.
-    See also :doc:`/admin/printing`,
-    :doc:`/blog/2010/1020`
-    
-  pyratemp
-    http://www.simple-is-better.org/template/pyratemp.html

@@ -34,7 +34,7 @@ Then, in your Apache config file (:file:`/etc/apache2/sites-available/default`):
   </Directory>
 
 
-Do allow WebDAV, add another `<Directory>` directive::
+To allow WebDAV, add another `<Directory>` directive::
   
   <Directory /usr/local/django/myproject/media/cache/>
      DAV On

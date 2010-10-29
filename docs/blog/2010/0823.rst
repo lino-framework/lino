@@ -27,7 +27,7 @@ gemeldet.
 Release im :term:`DSBE`
 -----------------------
 
-In :doc:`/admin/install` habe ich die Anweisungen zur Installation von :term:`Appy` hinzugefügt. 
+In :doc:`/admin/install` habe ich die Anweisungen zur Installation von :term:`appy_pod` hinzugefügt. 
 Pisa werden wir ja bis auf Weiteres nicht benutzen, aber ich lass das noch in den Anweisungen stehen.
 Die Druckmethoden (print methods) müsste ich ja mal dokumentieren. Bisher habe ich an zwei Stellen angefangen:
 :doc:`/admin/ConfigureNotesTemplates` und 

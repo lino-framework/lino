@@ -35,3 +35,9 @@ Management commands
     :show-inheritance:
 
 
+Fixtures
+--------
+
+- initial_data
+
+- demo
