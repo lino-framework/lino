@@ -1,0 +1,146 @@
+Index: django/db/models/base.py
+===================================================================
+--- django/db/models/base.py	(revision 14404)
++++ django/db/models/base.py	(working copy)
+@@ -300,7 +300,15 @@
+         # Now we're left with the unprocessed fields that *must* come from
+         # keywords, or default.
+ 
++        # In the case of diamond inheritance, where B and C inherit from A, and
++        # D inherits from B and C, D will have "redundant" copies of each of
++        # A's fields. As we iterate through all the fields, the second time we
++        # see a field we run the risk of reassigning it the default value, so
++        # if a field has already been seen in assigned_fields, we ignore it.
++        assigned_fields = set()
+         for field in fields_iter:
++            if field.attname in assigned_fields:
++                continue
+             is_related_object = False
+             # This slightly odd construct is so that we can access any
+             # data-descriptor object (DeferredAttribute) without triggering its
+@@ -345,6 +353,7 @@
+                 setattr(self, field.name, rel_obj)
+             else:
+                 setattr(self, field.attname, val)
++            assigned_fields.add(field.attname)
+ 
+         if kwargs:
+             for prop in kwargs.keys():
+Index: django/forms/models.py
+===================================================================
+--- django/forms/models.py	(revision 14404)
++++ django/forms/models.py	(working copy)
+@@ -796,15 +796,11 @@
+     from django.db.models import ForeignKey
+     opts = model._meta
+     if fk_name:
+-        fks_to_parent = [f for f in opts.fields if f.name == fk_name]
+-        if len(fks_to_parent) == 1:
+-            fk = fks_to_parent[0]
+-            if not isinstance(fk, ForeignKey) or \
+-                    (fk.rel.to != parent_model and
+-                     fk.rel.to not in parent_model._meta.get_parent_list()):
+-                raise Exception("fk_name '%s' is not a ForeignKey to %s" % (fk_name, parent_model))
+-        elif len(fks_to_parent) == 0:
+-            raise Exception("%s has no field named '%s'" % (model, fk_name))
++        fk = opts.get_field(fk_name,many_to_many=False)
++        if not isinstance(fk, ForeignKey) or \
++                (fk.rel.to != parent_model and
++                 fk.rel.to not in parent_model._meta.get_parent_list()):
++            raise Exception("fk_name '%s' is not a ForeignKey to %s" % (fk_name, parent_model))
+     else:
+         # Try to discover what the ForeignKey from model to parent_model is
+         fks_to_parent = [
+Index: tests/modeltests/model_inheritance/tests.py
+===================================================================
+--- tests/modeltests/model_inheritance/tests.py	(revision 14404)
++++ tests/modeltests/model_inheritance/tests.py	(working copy)
+@@ -2,9 +2,11 @@
+ 
+ from django.core.exceptions import FieldError
+ from django.test import TestCase
++from django.forms.models import inlineformset_factory
+ 
+ from models import (Chef, CommonInfo, ItalianRestaurant, ParkingLot, Place,
+-    Post, Restaurant, Student, StudentWorker, Supplier, Worker)
++    Post, Restaurant, Student, StudentWorker, Supplier, Worker,
++    FoodPlace, Bar, Pizzeria, PizzeriaBar, Owner)
+ 
+ 
+ class ModelInheritanceTests(TestCase):
+@@ -269,3 +271,46 @@
+         self.assertNumQueries(1,
+             lambda: ItalianRestaurant.objects.select_related("chef")[0].chef
+         )
++
++        # Test of diamond inheritance __init__. If B and C inherit from A, 
++        # and D inherits from B and C, we should be able to use __init__ 
++        # for D to properly set all the fields, regardless of the redundant 
++        # copies of A's fields that D inherits from B and C.
++
++        p = PizzeriaBar(name="Mike's", pizza_bar_specific_field="Doodle")
++        self.assertEqual(p.name,"Mike's")
++        self.assertEqual(p.pizza_bar_specific_field,"Doodle")
++
++        # Note that patch 10808.diff fixes only one symptom, not 
++        # the real problem. The real problem is that in case of diamond 
++        # inheritance there are duplicate field definitions (the first 
++        # 4 fields occur twice):
++
++        self.assertEqual(
++          [f.name for f in p._meta.fields],
++          'id name owner foodplace_ptr '
++          'id name owner foodplace_ptr '
++          'pizzeria_ptr bar_ptr pizza_bar_specific_field'.split())
++  
++        # Another symptom of this problem is:
++        # When the top-level model of your diamond structure contains a ForeignKey, 
++        # then you get problems when trying to create inline formsets:
++
++        try:
++            f = inlineformset_factory(Owner,PizzeriaBar)
++            self.fail("expected Exception: <class '...PizzeriaBar'> "
++                      "has more than 1 ForeignKey to <class '....Owner'>")
++        except Exception:
++            pass
++  
++        # Patch 10808b*.diff won't fix the real problem, but makes it possible to 
++        # work around to specify the fk_name explicitly.
++
++        f = inlineformset_factory(Owner,PizzeriaBar,fk_name='owner')
++  
++        # Before patch 10808b*.diff, the following failed because
++        # inlineformset_factory() just couldn't imagine that a model can 
++        # have two fields with the same name.
++
++
++         
+\ No newline at end of file
+Index: tests/modeltests/model_inheritance/models.py
+===================================================================
+--- tests/modeltests/model_inheritance/models.py	(revision 14404)
++++ tests/modeltests/model_inheritance/models.py	(working copy)
+@@ -143,3 +143,23 @@
+ 
+     def __unicode__(self):
+         return self.content
++
++#
++# Diamond inheritance test
++# 
++
++class Owner(models.Model):
++    name = models.CharField(max_length=255)
++    
++class FoodPlace(models.Model):
++    name = models.CharField(max_length=255)
++    owner = models.ForeignKey(Owner,blank=True,null=True)
++
++class Bar(FoodPlace):
++    pass
++
++class Pizzeria(FoodPlace):
++    pass
++
++class PizzeriaBar(Bar, Pizzeria):
++    pizza_bar_specific_field = models.CharField(max_length=255)

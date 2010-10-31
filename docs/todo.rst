@@ -9,6 +9,10 @@ for which I hope for help from other people.
 Short-term
 ----------
 
+- Neues virtuelles Feld Person.warnings, das im ersten Detail-Tab angezeigt wird, 
+  und in dem vor allem Mitteilungen wie "Achtung, Personalausweis läuft am 07.11.10 aus!" 
+  oder "VSB Lehre läuft am 07.11.10 aus!" kommen.
+
 - WebDAV installieren und testen, wie das Bearbeiten von RTF- und ODT-Dokumenten in der Praxis läuft.
 
 - Dokumentvorlagen machen
@@ -20,7 +24,22 @@ Short-term
 Undecided
 ---------
 
+- Sollen wir Nachrichten und Erinnerungen 
+  (z.B. Links, deren valid_until in den kommenden Tagen fällig ist)
+  in der :xfile:`welcome.html` anzeigen?
+  
 - Man kann z.B. noch nicht nach Personen suchen, die ein bestimmtes Studium haben.
+
+- Erinnerungen (iCal-Dateien per E-Mail).
+  E-Mails verschicken aus Django raus ist `einfach
+  <http://docs.djangoproject.com/en/dev/topics/email/>`_.
+  Aber wann genau soll eine Mail verschickt werden?
+  Bei jedem Speichern einer notes.Note mit type.notify? 
+  Oder periodisch von einem Hintergrundprozess aus?
+  Vielleicht im :class:`notes.NoteType` definieren, ob Lino einen Termin 
+  (oder Erinnerung oder Task) per E-Mail an den Benutzer verschicken 
+  soll. 
+  Brauchen wir noch ein neues Feld `notes.Note.notified`?
 
 - Momentan wird der Synchronisierungs-Prozess (watch_tim) nach einem Server-Restart nicht automatisch neu gestartet. 
   Ich habe nämlich lediglich in `/usr/local/django/myproject` eine Datei namens `watch_tim` mit folgendem Inhalt::
@@ -33,10 +52,6 @@ Undecided
   :command:`nohup` sorgt dafür, dass der Prozess nicht beendet wird, wenn ich mich auslogge. 
   Aber stattdessen muss natürlich ein Skript in der :file:`/etc/init.d` gemacht werden.
 
-
-- iCal-Dateien generieren. 
-  Im :class:`notes.NoteType` wird definiert, ob Lino einen Termin (oder Erinnerung oder Task) 
-  per E-Mail an den Benutzer verschicken soll.
 
 - :doc:`/tickets/2`. Also Vorsicht beim Löschen von Notizarten, Studienarten, 
   AG-Sperrgründen, Begleitungsarten, Städten, Ländern usw.!
@@ -55,14 +70,19 @@ Undecided
   sondern allgemein einem Projekt zugewiesen.
   Momentan entspricht sozusagen automatisch jede Person einem einzigen Projekt.
   
-- Benutzername in Menüzeile anzeigen.
-
-- Nachrichten und Reminder im Body des Hauptfensters anzeigen.
-
 Long-term
 ---------
 
-- Wie soll ich es machen, dass der Benutzer beim Auswählen der Krankenkasse einer Person nicht alle Firmen, sondern nur die Krankenkassen angezeigt bekommt? Etwa ein eigenes Feld `Company.is_health_insurance`?
+- Wie kann ich die Test-Templates für Notizen in den code repository rein kriegen?
+  Er soll sie dann auch unabhängig von der Sprache finden. 
+  Vielleicht werde ich doctemplates in die config-directories verschieben 
+  und mein System von config-Dateien erweitern, dass es auch Unterverzeichnisse verträgt.
+  Siehe :doc:`/blog/2010/1029`.
+  
+- (:mod:`lino.modlib.dsbe` : 
+  Wie soll ich es machen, dass der Benutzer beim Auswählen der Krankenkasse einer Person 
+  nicht alle Firmen, sondern nur die Krankenkassen angezeigt bekommt? 
+  Etwa ein eigenes Feld `Company.is_health_insurance`?
 
 - Fenstertitel ändern bzw. anzeigen, welche GC momentan aktiv ist.
 
@@ -216,16 +236,12 @@ Long-term
   mit dem gleichen Namen erzeugt, die sich nur durch den row_separator unterscheiden.
   Lösung wäre, dass :meth:`lino.reports.Report.slave_as_summary_meth` nicht HTML, sondern JSON zurückgibt.
   
-- LatexPrintMethod. Da müsste ja ohne Aufwand 
-  mal ein kleines Beispiel implementiert werden können.  
+- Für :class:`lino.utils.printable.LatexBuildMethod` müsste mal ohne viel Aufwand 
+  ein kleines Beispiel implementiert werden.
   
 - Benutzermeldungen "wurde gespeichert" & Co bleiben manchmal auch 
   nach der nächsten Aktion noch in der Console stehen.
   Ich muss vielleicht konsequent immer Lino.action_handler benutzen.
-  
-- Zu prüfen: Wenn ich auf einem production server auf "Drucken" klicke 
-  und auf dem Server noch kein Verzeichnis 
-  für diese Druckmethode konfiguriert ist, kriegt man keine Fehlermeldung. 
   
 - Sollten Links hierarchisiert werden können? 
   Das hieße ein Feld :attr:`links.Link.parent` und ein TreePenel.
@@ -262,6 +278,22 @@ Long-term
   für Notizart ggf. auf bestimmte Arten von Owner beschränkt.
   
 - Continue to reanimate iGen. See :doc:`/blog/2010/1028`.
+
+- Mehrsprachige Dokumentvorlagen: um das zu ermöglichen, muss ich 
+  wahrscheinlich im doctemplates-Baum zusätzlich zu 'de', 'fr' usw. 
+  ein weiteres Verzeichnis `default` verwenden.
+  
+- Lässt sich mein System von config-Dateien unter Verwendung von 
+  django.templates.loader neu implementieren? Erste Prognose lautet 
+  eher negativ, 
+  weil der template loader Django immer Template aus der Datei macht und 
+  den tatsächlichen Dateinamen nicht preisgibt.
+
+- :mod:`lino.modlib.ledger` und :mod:`lino.modlib.finan` 
+  könnten übrigens zusammengeschmolzen werden, 
+  denn ich kann mir nicht vorstellen, 
+  wie man das eine ohne das andere haben wollen könnte.
+
 
 
 Documentation

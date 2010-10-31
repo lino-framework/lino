@@ -1,0 +1,5 @@
+20101030
+========
+
+Der Text im Hauptbildschirm wird jetzt durch ein Template :srcref:`/lino/templates/welcome.html` 
+generiert.

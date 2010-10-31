@@ -1,0 +1,25 @@
+Django problems when using diamond inheritance
+==============================================
+
+Some lino.modlib modules use diamond abtract model inheritance, 
+which is currently an 
+:djangotickets:`open ticket in Django <10808>`.
+
+Test::
+
+  cd /var/snapshots/lino/lino/demos/igen
+  python manage.py initdb demo
+  
+Symptom::
+
+  ValidationError: {'journal': [u'This field cannot be blank.']}
+
+Other possible symptom::
+
+  Traceback...
+
+    File "/var/snapshots/django/django/forms/models.py", line 821, in _get_foreign_key
+      return fk
+  UnboundLocalError: local variable 'fk' referenced before assignment
+
+

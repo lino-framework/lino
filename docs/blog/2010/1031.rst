@@ -1,0 +1,81 @@
+20101031
+========
+
+Ideen
+-----
+
+3.36 Uhr (noch ist Sommerzeit, in Estland wird die Uhr um 4 Uhr eine Stunde zurückgesetzt).
+
+Lino ist in eine Phase gekommen, wo ich Ideen für neue Module kriege. 
+Die muss ich kurz aufschreiben, bevor ich weiterschlafen kann.
+
+- tasks : 
+
+  - Task (due_time,text,list,type)
+  - TaskList (name)
+  - TaskType(name)
+  
+- news : 
+
+  - Item (date,title,abstract,body,time_published,time_created)
+  - Groups (name)
+  - Members (group, person, company)
+  
+- events :
+
+  - Event (...), RepeatType
+  
+- sphinx : Automatisch generierte Sphinx-Dokumente. 
+  Das Modul hätte keine eigenen Modelle, sondern 
+  ein neues Setting :setting:`SPHINX_DOCS_ROOT` 
+  sowie eine Serie von management commands:
+  - make_sitedoc
+  - make_news
+  
+  Zum Beispiel könnten die news.Item automatisch 
+  für jedes news.Item eine Datei 
+  :file:`/docs/news/%s.rst` generieren, sowie eine 
+  Datei :file:`/docs/news/index.rst`.
+  
+Daneben habe ich auch in der :doc:`To-Do-Liste </todo>` gestöbert.  
+  
+3.38 Uhr. So, ich glaube ich kann wieder schlafen gehen. 
+Oh: TIM behauptet jetzt, ich hätte nur 2 Minuten gearbeitet... ;-)
+
+
+multiple inheritance using abstract base models
+-----------------------------------------------
+
+Bevor ich meine Ideen anpacke, sollte ich mal iGen wieder ans Laufen kriegen.
+Zuerst mal baue ich :mod:`lino.modlib.ledger.models.Booked`, journals.Journaled wieder zu abstrakten Models um. 
+Denn das ist zu doof, dass die ihre Felder nicht selber definieren.
+Meine Probleme damit beim letzten Mal kamen wahrscheinlich 
+lediglich daher, dass ich meinen 
+Patch :srcref:`/patches/10808b.diff` 
+zu Problem :doc:`/tickets/11` nicht installiert hatte.
+  
+Zunächst mal ein `svn update` für meine Kopie von Django. 
+Updated to revision 14404.
+
+Dann musste ich feststellten, dass besagter Patch 
+veraltet war und nicht mehr funktionierte. 
+Das heißt im Code hat sich nichts geändert, 
+aber die `tests/modeltests/model_inheritance` haben sie vom 
+doctest zum unittest-Format konvertiert. 
+Da habe ich ja prinzipiell 
+nichts gegen, deshalb mach ich mir die Mühe 
+und schreibe den Kram um und teste es wie folgt::
+
+    L:\snapshots\django\tests>python runtests.py --settings=lino.test_apps.settings model_inheritance
+    Creating test database 'default'...
+    ..
+    ----------------------------------------------------------------------
+    Ran 2 tests in 0.141s
+
+    OK
+    Destroying test database 'default'...
+
+Neuer Patch :src:`10808b-14404.diff`
+
+
+

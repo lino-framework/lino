@@ -206,14 +206,14 @@ class Customers(reports.Report):
 
 
 
-class SalesDocument(journals.Journaled,journals.Sendable,models.Model):
+class SalesDocument(journals.Journaled,journals.Sendable):
     
-    # for Journaled:
-    journal = journals.JournalRef()
-    number = journals.DocumentRef()
+    #~ # for Journaled:
+    #~ journal = journals.JournalRef()
+    #~ number = journals.DocumentRef()
     
-    # for Sendable:
-    sent_time = models.DateTimeField(blank=True,null=True)
+    #~ # for Sendable:
+    #~ sent_time = models.DateTimeField(blank=True,null=True)
     
     creation_date = fields.MyDateField() #auto_now_add=True)
     customer = models.ForeignKey(Customer,
@@ -436,14 +436,14 @@ class Order(SalesDocument):
     
 class Invoice(ledger.Booked,SalesDocument):
   
-    # implements Booked:
-    value_date = models.DateField(auto_now=True)
-    ledger_remark = models.CharField("Remark for ledger",
-      max_length=200,blank=True)
-    booked = models.BooleanField(default=False)
+    #~ # implements Booked:
+    #~ value_date = models.DateField(auto_now=True)
+    #~ ledger_remark = models.CharField("Remark for ledger",
+      #~ max_length=200,blank=True)
+    #~ booked = models.BooleanField(default=False)
     
     due_date = fields.MyDateField("Payable until",blank=True,null=True)
-    order = models.ForeignKey(Order,blank=True,null=True)
+    order = models.ForeignKey('sales.Order',blank=True,null=True)
     
     def before_save(self):
         if self.due_date is None:

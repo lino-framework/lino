@@ -47,15 +47,15 @@ def todo_notice(msg):
   
 class BankStatement(ledger.Booked,models.Model):
     
-    # implements Journaled:
-    journal = journals.JournalRef()
-    number = journals.DocumentRef()
+    #~ # implements Journaled:
+    #~ journal = journals.JournalRef()
+    #~ number = journals.DocumentRef()
     
-    # implements Booked:
-    value_date = models.DateField(auto_now=True)
-    ledger_remark = models.CharField("Remark for ledger",
-      max_length=200,blank=True)
-    booked = models.BooleanField(default=False)
+    #~ # implements Booked:
+    #~ value_date = models.DateField(auto_now=True)
+    #~ ledger_remark = models.CharField("Remark for ledger",
+      #~ max_length=200,blank=True)
+    #~ booked = models.BooleanField(default=False)
     
     date = fields.MyDateField()
     balance1 = fields.PriceField()

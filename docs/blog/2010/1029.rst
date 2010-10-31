@@ -2,19 +2,13 @@
 ========
 
 Experimente mit WebDAV, OpenOffice und Word.
+Word (Office 2003 auf Windows XP) hing sich auf,
+OOo öffnet .rtf-Datei und zweigt sie an, aber schreibgeschützt.
 
 Updated page :doc:`/admin/printable`
 
 In der neuen Datei :srcref:`/lino/modlib/notes/fixtures/initial_data.dpy` 
-werden jetzt zwei Notizarten zu Testzwecken gemacht, deren Name mit "Test" beginnt.
-
-TODO:
-
+werden jetzt zwei Notizarten zu Testzwecken gemacht.
 Jetzt muss ich mir noch was einfallen lassen, damit ich die beiden dazugehörigen 
 Templates in den code repository rein kriege.
-Er soll sie dann auch unabhängig von der Sprache finden. 
-Das bedeutet wahrscheinlich, dass im doctemplates-Baum statt der lokal 
-definierten default language ein Verzeichnis namens `default` verwenden muss.
-Vielleicht werde ich doctemplates in die config-directories verschieben 
-und mein System von config-Dateien erweitern, dass es auch Unterverzeichnisse verträgt.
-
+Momentan müssen alle doctemplates lokal installiert werden.

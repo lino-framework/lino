@@ -11,13 +11,17 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-class MultiTableBase(object):
+from django.db import models
+
+class MultiTableBase(models.Model):
   
     """
     Mixin for Models that use `Multi-table inheritance 
     <http://docs.djangoproject.com/en/dev/topics/db/models/#multi-table-inheritance>`__.
-    Subclassed by :class:`lino.modlib.journals.models.AbstractDocument`.
+    Subclassed by :class:`lino.modlib.journals.models.Journaled`.
     """
+    class Meta:
+        abstract = True
     
     def get_child_model(self):
         return self.__class__

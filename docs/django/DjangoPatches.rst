@@ -4,13 +4,11 @@ Patches that I suggest for Django
 Files in :srcref:`/patches`:
 
 10808b.diff : 
-    My suggestion for fixing `Django ticket #10808 <http://code.djangoproject.com/ticket/10808>`_ (Multiple inheritance (model-based) broken for __init__ of common fields in diamond inheritance).
-    In Django revision 12394 this wasn't yet included.
-    This patch is necessary to run Lino, otherwise you'll get a traceback that ends like this::
-
-        File "/var/snapshots/django/django/forms/models.py", line 821, in _get_foreign_key
-          return fk
-      UnboundLocalError: local variable 'fk' referenced before assignment
+    My suggestion for fixing 
+    :djangoticket:`10808`
+    (Multiple inheritance (model-based) broken for __init__ of common fields in diamond inheritance).
+    In Django revision 14404 this wasn't yet included.
+    This patch is necessary to run Lino if you have a case of :doc:`/tickets/11`
 
 
 20091107.diff : 

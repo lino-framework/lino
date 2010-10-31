@@ -180,6 +180,16 @@ def using():
         pass
 
 
+def welcome_text():
+    return "Lino version %s using %s" % (
+      __version__,
+      ', '.join(["%s %s" % (n,v) for n,v,u in using()]))
+
+def welcome_html():
+    return "Lino version %s using %s" % (
+      __version__,
+      ', '.join(['<a href="%s" target="_blank">%s</a> %s' % (u,n,v) for n,v,u in using()]))
+
 #~ log.info(thanks_to())
 
 #~ from lino.utils.choosers import choices_method, simple_choices_method

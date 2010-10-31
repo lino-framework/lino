@@ -133,10 +133,11 @@ class LinoSite:
         else:
             lino.log.warning("settings.LINO_SETTINGS entry is missing")
             
-        lino.log.info("This is Lino version %s." % lino.__version__)
-        using = ', '.join(["%s %s" % (n,v) for n,v,u in lino.using()])
-        lino.log.info("Using %s" % using)
-        lino.log.info("Lino Site %r is ready.", self.title)
+        lino.log.info(lino.welcome_text())
+        #~ lino.log.info("This is Lino version %s." % lino.__version__)
+        #~ using = ', '.join(["%s %s" % (n,v) for n,v,u in lino.using()])
+        #~ lino.log.info("Using %s" % using)
+        #~ lino.log.info("Lino Site %r is ready.", self.title)
           
         uis = []
         for ui in settings.USER_INTERFACES:

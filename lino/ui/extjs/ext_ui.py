@@ -29,6 +29,10 @@ from django import http
 from django.core import exceptions
 from django.utils import functional
 
+from django.template.loader import get_template
+from django.template import RequestContext
+
+
 from django.utils.translation import ugettext as _
 from django.utils import simplejson as json
 
@@ -180,6 +184,7 @@ class ExtUI(base.UI):
             #~ lino.log.warning("window_configs_file %s not found",self.window_configs_file)
             
         base.UI.__init__(self,site) # will create a.window_wrapper for all actions
+        self.welcome_template = get_template('welcome.html')
         self.build_site_js()
         
     def create_layout_element(self,lh,panelclass,name,**kw):
@@ -398,13 +403,16 @@ class ExtUI(base.UI):
         
 
     def html_page(self,request,on_ready=[],**kw):
+        c = RequestContext(request,dict(site=self.site,lino=lino))
+        
         #~ main=ext_elems.ExtPanel(
         main=dict(
           id="main_area",
           xtype='container',
           region="center",
           layout='fit',
-          html=self.site.index_html.encode('ascii','xmlcharrefreplace'),
+          html=self.welcome_template.render(c),
+          #~ html=self.site.index_html.encode('ascii','xmlcharrefreplace'),
         )
         #~ if not on_ready:
             #~ on_ready = [

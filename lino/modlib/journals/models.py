@@ -180,6 +180,12 @@ class Journaled(mixins.MultiTableBase):
       
     """
     
+    class Meta:
+        abstract = True
+        
+    journal = JournalRef()
+    number = DocumentRef()
+    
     @classmethod
     def create_journal(cls,id,**kw):
         doctype = get_doctype(cls)
@@ -236,14 +242,17 @@ class Journaled(mixins.MultiTableBase):
         return DOCTYPES[self.journal.doctype][0]
         
         
-class ModifiedMixin(object):
+class ModifiedMixin(models.Model):
   
+    class Meta:
+        abstract = True
+        
     last_modified = models.DateTimeField(auto_now=True)
   
     def get_last_modified_time(self):
         return self.last_modified 
 
-class Sendable(object):
+class Sendable(models.Model):
   
     """
     A model that subclasses Sendable must provide 1 field::
@@ -251,6 +260,11 @@ class Sendable(object):
       sent_time = models.DateTimeField(blank=True,null=True)
       
     """
+    
+    class Meta:
+        abstract = True
+        
+    sent_time = models.DateTimeField(blank=True,null=True)
     
     def html_templates(self):
         # when using pisa

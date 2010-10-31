@@ -65,6 +65,15 @@ class Booked(journals.Journaled):
       booked = models.BooleanField(default=False)
     
     """
+    
+    class Meta:
+        abstract = True
+        
+    value_date = models.DateField(auto_now=True)
+    ledger_remark = models.CharField("Remark for ledger",
+      max_length=200,blank=True)
+    booked = models.BooleanField(default=False)
+    
     def unbook(self):
         for b in self.booking_set.all():
             b.delete()

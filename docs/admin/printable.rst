@@ -74,7 +74,11 @@ commands when designing templates.
 - :class:`PisaBuildMethod` and :class:`LatexBuildMethod` use 
   `Django's template engine
   <http://docs.djangoproject.com/en/dev/topics/templates/>`_ whose 
-  template commands are delimited using ``<...>``.
+  template commands look for example like 
+  ``{% if instance.has_family %}yes{% else %}no{% endif %}``
+  or
+  ``My name is {{ instance.name }}.``.
+  
 
 
 - Appy/Pod (:class:`AppyBuildMethod` & Co) uses a special approach: 
@@ -138,9 +142,12 @@ Not yet implemented
 
 There are some other possible candidates that we didn't yet have time to meet with:
 
-- `rst2pdf <http://code.google.com/p/rst2pdf/>`_
+- `rst2pdf <http://rst2pdf.googlecode.com>`_
+  is a tool to convert restructured text to PDF using reportlab.
 
 - `wkhtmltopdf <http://code.google.com/p/wkhtmltopdf>`_.
+  converts html to pdf using the webkit rendering engine, and qt.
+  There is also a `Python binding <http://github.com/mreiferson/py-wkhtmltox>`_
   
 - `RTF Template <http://rtftemplate.sourceforge.net/>`_ uses another approach: 
   users design their templates by "using merge fields (MERGEFIELD), 

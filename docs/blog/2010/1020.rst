@@ -6,15 +6,16 @@
   Altes Problem: beim Definieren der components eines ww ist der ww ja noch nicht bekannt. 
   Deshalb habe ich ja die build_buttons geschrieben.
   
-- Ich habe auf Gregs Mail `The Future of Pisa <http://groups.google.com/group/xhtml2pdf/browse_thread/thread/32dcee769245fc8f?hl=en>`_
-  geantwortet und die Seite :doc:`/admin/printing` aktualisiert.
+- Ich habe auf Gregs Mail `The Future of Pisa 
+  <http://groups.google.com/group/xhtml2pdf/browse_thread/thread/32dcee769245fc8f?hl=en>`_
+  geantwortet und die Seite :doc:`/admin/printable` aktualisiert.
   
 - Nach Lektüre des hervorragenden Artikels `WebDAV mit Apache <http://www.itopen.de/webdav_mit_apache>`_ 
   habe ich :doc:`/admin/install` aktualisiert und auf Tups schon mal eingerichtet. 
   Ob es funktioniert, sehen wir beim nächsten Release. 
   Vorher sind noch ein paar Kleinigkeiten zu erledigen.
   
-- :class:`lino.utils.printable.RtfPrintMethod` ist jetzt implementiert. 
+- :class:`lino.utils.printable.RtfBuildMethod` ist jetzt implementiert. 
   Diese Druckmethode benutzt
   `pyratemp <http://www.simple-is-better.org/template/pyratemp.html>`_ als template engine.
   
