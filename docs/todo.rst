@@ -28,8 +28,6 @@ Undecided
   (z.B. Links, deren valid_until in den kommenden Tagen fällig ist)
   in der :xfile:`welcome.html` anzeigen?
   
-- Man kann z.B. noch nicht nach Personen suchen, die ein bestimmtes Studium haben.
-
 - Erinnerungen (iCal-Dateien per E-Mail).
   E-Mails verschicken aus Django raus ist `einfach
   <http://docs.djangoproject.com/en/dev/topics/email/>`_.
@@ -40,6 +38,8 @@ Undecided
   (oder Erinnerung oder Task) per E-Mail an den Benutzer verschicken 
   soll. 
   Brauchen wir noch ein neues Feld `notes.Note.notified`?
+
+- Man kann z.B. noch nicht nach Personen suchen, die ein bestimmtes Studium haben.
 
 - Momentan wird der Synchronisierungs-Prozess (watch_tim) nach einem Server-Restart nicht automatisch neu gestartet. 
   Ich habe nämlich lediglich in `/usr/local/django/myproject` eine Datei namens `watch_tim` mit folgendem Inhalt::
@@ -73,6 +73,22 @@ Undecided
 Long-term
 ---------
 
+- Einheitliches Interface um Reihenfolge zu verändern (Journals, DocItems, LinksByOwner,...). Erster Schritt: Abstract model "Ordered" mit einem Feld `pos` und zwei Actions "move up" und "move down".
+
+- Eingabe im Detail eines SalesDocument funktioniert noch nicht: 
+  Wenn man ein 
+  Produkt auswählt, antwortet der Server 
+  `{'unit_price': ValidationError([u'This value must be a decimal number.'])}` 
+  statt den Stückpreis selber auszufüllen.
+  
+- Das `params={'base_params':{'mk':jnl.pk}}` in der :xfile:`lino_settings.py` 
+  in :mod:`lino.demos.igen`
+  entspricht natürlich nicht dem Designprinzip, dass das Anwendungsmenü unabhängig 
+  vom UI sein soll.
+  stattdessen muss dort `master_id=jnl.pk` stehen, und beim Generieren des 
+  Menübefehls muss also ein ReportRequest instanziert werden, oder 
+  vielleicht nur `Report.get_master_kw(master_instance)` rufen.
+  
 - Wie kann ich die Test-Templates für Notizen in den code repository rein kriegen?
   Er soll sie dann auch unabhängig von der Sprache finden. 
   Vielleicht werde ich doctemplates in die config-directories verschieben 

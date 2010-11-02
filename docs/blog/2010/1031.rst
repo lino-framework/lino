@@ -75,7 +75,7 @@ und schreibe den Kram um und teste es wie folgt::
     OK
     Destroying test database 'default'...
 
-Neuer Patch :src:`10808b-14404.diff`
+Wie man die Test-Suite von Django laufen lässt, habe ich mir von Alex Gaynor in seinem Blog nochmals erklären lassen müssen: 
+http://lazypython.blogspot.com/2008/11/running-django-test-suite.html
 
-
-
+Neuer Patch :srcref:`/patches/10808b-14404.diff`.

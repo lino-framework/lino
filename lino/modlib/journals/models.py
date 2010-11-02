@@ -315,8 +315,8 @@ class Sendable(models.Model):
 
 class Journals(reports.Report):
     model = Journal
-    order_by = "id"
-    column_names = "id name doctype force_sequence"
+    order_by = "pos"
+    column_names = "id name doctype force_sequence *"
     
     
 class DocumentsByJournal(reports.Report):

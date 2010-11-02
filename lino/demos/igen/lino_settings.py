@@ -59,7 +59,7 @@ m.add_action('products.ProductCats')
 m = lino.add_menu("journals","~Journals",can_view=perms.is_staff)
 for jnl in journals.Journal.objects.all().order_by('pos'):
     #m.add_action(jnl.get_doc_report())
-    m.add_action(str(jnl.get_doc_report()),params={'master_id':jnl.pk})
+    m.add_action(str(jnl.get_doc_report()),params={'base_params':{'mk':jnl.pk}})
     # m.add_action(jnl.get_doc_report(),args=[jnl.pk])
     #~ m.add_action(str(jnl.get_doc_report()))
     

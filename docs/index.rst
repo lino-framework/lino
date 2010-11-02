@@ -1,14 +1,13 @@
-=====================================================
-Lino -- a framework for writing database applications 
-=====================================================
+=============================================
+Lino -- a framework for database applications
+=============================================
 
 Welcome to the Lino Website. 
 Lino is still in pre-documentation phase, so don't judge the project on this website only.
 
 - :doc:`What is Lino </about/index>`?
-- See my :doc:`Blog <blog/2010/index>` to get the hottest news about what's going on here. (But sorry, this is mostly in German.)
-- Welcome page for non-programmers see :doc:`/download`.
-- Try logging into the :doc:`/demos`.
+- Have a look at Lino by logging into the :doc:`/demos`.
+- See Luc's :doc:`Blog <blog/2010/index>` to get the hottest news about what's going on here. (But sorry, this is mostly in German.)
 - The final truth about what's going on is only `The Source Code <http://code.google.com/p/lino/source/list>`_.
 
 
@@ -22,6 +21,7 @@ Some external links:
    :hidden:
 
    about/index
+   community
    blog/index
    todo
    admin/index

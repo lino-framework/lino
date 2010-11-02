@@ -1691,7 +1691,7 @@ Lino.SimpleRemoteComboFieldElement = Ext.extend(Lino.RemoteComboFieldElement,{
 Lino.WindowWrapperBase = {
 
   setup : function() {
-    console.log('Lino.WindowWrapper.setup',this);
+    //~ console.log('Lino.WindowWrapper.setup',this);
     //~ this.window.window_wrapper = this;
     //~ this.main_item.ww = this;
     //~ 20101021 this.main_item.set_base_params(this.base_params);
@@ -1703,6 +1703,10 @@ Lino.WindowWrapperBase = {
       //~ console.log('active_tab',config.active_tab,this.main_item.items.get(0));
       this.main_item.items.get(0).activeTab = this.config.active_tab;
       //~ this.main_item.items.get(0).activate(config.active_tab);
+    }
+    if (this.config.base_params !== undefined) { // may be 0 
+      //~ console.log('Lino.WindowWrapper with base_params',this.config.base_params);
+      this.main_item.set_base_params(this.config.base_params);
     }
   
     this.window = new Ext.Window(this.window_config);
@@ -1727,7 +1731,7 @@ Lino.WindowWrapperBase = {
       //~ this.main_item.on('afterrender',function(){this.main_item.on_master_changed(config.data_record)},this,{single:true});
       this.main_item.set_current_record(this.config.data_record);
       //~ return;
-    } 
+    }
     if (this.config.record_id !== undefined) { // may be 0 
       console.log('Lino.WindowWrapper with record_id',this.config.record_id);
       this.main_item.goto_record_id(this.config.record_id);

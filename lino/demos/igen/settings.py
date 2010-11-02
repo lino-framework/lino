@@ -26,7 +26,7 @@ TIME_ZONE = 'Europe/Brussels'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'de-BE'
+LANGUAGE_CODE = 'en-US'
 #~ LANGUAGE_CODE = 'fr-BE'
 
 #~ ROOT_URLCONF = 'lino.demos.dsbe.urls'
@@ -73,7 +73,7 @@ SECRET_KEY = 'cqt^18t(Fb#14a@s%mbtdif+ih8fscpf8l9aw+0ivo2!3c(c%&'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        #~ 'NAME': join(DATA_DIR,'igen_demo.db')
-        'NAME': ':memory:'
+        'NAME': join(DATA_DIR,'igen_demo.db')
+        #~ 'NAME': ':memory:'
     }
 }

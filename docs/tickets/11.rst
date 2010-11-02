@@ -3,7 +3,7 @@ Django problems when using diamond inheritance
 
 Some lino.modlib modules use diamond abtract model inheritance, 
 which is currently an 
-:djangotickets:`open ticket in Django <10808>`.
+:djangoticket:`open ticket in Django <10808>`.
 
 Test::
 

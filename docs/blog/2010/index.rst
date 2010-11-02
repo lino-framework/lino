@@ -180,6 +180,9 @@
   :doc:`31 <1031>`
 
 .. |Nov| replace::  **November**
+  |br|
+  01
+  :doc:`02 <1102>`
 
 .. |Dec| replace::  **December**
 

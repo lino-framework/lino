@@ -1,0 +1,9 @@
+20101102
+========
+
+- iGen: Die Befehle im Menü :menuselection:`Journals` funktionieren jetzt.
+  Auch die konvertierten Detail-Fenster für Aufträge werden schon angezeigt.
+  Für Rechnungen muss ich noch konvertieren.
+  Eingabe im Detail eines SalesDocument geht noch gar nicht.
+
+

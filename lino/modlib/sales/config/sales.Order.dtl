@@ -1,10 +1,10 @@
-:label: Detail
+:label: General
 :label_align: top
 
 main =
   box1 box2 box4
   box3 box5
-  sales.ItemsByDocument:100x5
+  intro
 
 box1 = 
   journal number your_ref 
@@ -17,17 +17,14 @@ box2 =
   shipping_mode 
   payment_term
   user sent_time
+
 box3 = 
   subject 
-  sales_remark:80
-  intro:80x5
+  sales_remark
   
 box4 =
   vat_exempt 
   item_vat
-  total_excl
-  total_vat
-  total_incl
 
 box5 =
   cycle:20

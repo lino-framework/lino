@@ -10,25 +10,29 @@ You can log into the demo sites listed below using one of the following user nam
   `user`   `1234`
   ======== ========
 
+Be prepared to see things not working as expected. Don't hesitate to contact us if you have questions, comments, ideas, suggestions.
+
 You may change data, and your changes will remain visible to others until the next release.
 
-All person names and addresses appearing on the demo sites are fictitious. Any resemblance to real persons, living or dead, is purely coincidental.
+All person names and addresses appearing on the demo sites (except possibly data entered by demo users) are fictitious. Any resemblance to real persons, living or dead, is purely coincidental.
 
-Be prepared to see things not working as expected. Keep in mind that Lino is still very young. Don't hesitate to contact the author if you have questions, comments, ideas, suggestions.
+Demos are currently available on only one server, located in Estonia behind a slow Internet connection. So don't expect too much performance. We are looking forward to other people who agree to provide a Lino demo on their server.
 
-:doc:`DSBE </dsbe/index>`
+`DSBE <http://dsbe-demo.saffre-rumma.ee>`__
   A tool for social assistants that  
   help receivers of public aid to 
   find a suitable job or education.
-  `Try it <http://dsbe-demo.saffre-rumma.ee>`__
+  :doc:`More about Lino DSBE </dsbe/index>`
 
-:doc:`iGen </igen/index>`
+`iGen <http://igen-demo.saffre-rumma.ee>`__ 
+  (Currently :doc:`broken </tickets/taken/6>`)
   An accounting tool focussed on     
   sales (invoices and customer       
   payments), and especially on       
   automatically generating recursive 
   invoices.
-  `Try it <http://igen-demo.saffre-rumma.ee>`__ (currently :doc:`broken </tickets/taken/6>`)
+  :doc:`More about iGen </igen/index>`
+  
 
 
 .. toctree::

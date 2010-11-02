@@ -1,0 +1,6 @@
+:label: Emitted invoices
+:label_align: top
+
+main =
+    journal number:4 creation_date customer:20 start_date
+    sales.InvoicesByOrder
