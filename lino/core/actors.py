@@ -142,6 +142,7 @@ class Actor(Handled):
     label = None
     actions = []
     default_action = None
+    actor_id = None
 
     def __init__(self):
         self._setup_done = False

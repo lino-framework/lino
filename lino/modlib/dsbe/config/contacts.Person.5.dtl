@@ -4,4 +4,4 @@
 main = 
     #dsbe.StudiesByPerson
     notes.NotesByOwner 
-    links.LinksByOwner
+    dsbe.ContractsByPerson links.LinksByOwner

@@ -37,7 +37,9 @@ m = lino.add_menu("config",_("~Configure"),
   can_view=perms.is_staff)
 #~ m.add_action('projects.ProjectTypes')
 m.add_action('notes.NoteTypes')
+m.add_action('dsbe.ContractTypes')
 m.add_action('contacts.CompanyTypes')
+m.add_action('contacts.ContactTypes')
 #~ m.add_action('properties.Properties')
 #~ m.add_action('countries.Languages')
 m.add_action('countries.Countries')
@@ -60,6 +62,7 @@ m = lino.add_menu("explorer",_("E~xplorer"),
 m.add_action('notes.Notes')
 m.add_action('links.Links')
 m.add_action('dsbe.Exclusions')
+m.add_action('dsbe.Contracts')
 #~ m.add_action('links.Links')
 m.add_action('contenttypes.ContentTypes')
 

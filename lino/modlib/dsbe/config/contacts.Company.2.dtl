@@ -1,0 +1,7 @@
+:label: Notizen
+:label_align: top
+
+main = 
+  notes.NotesByOwner
+  dsbe.ContractsByCompany contacts.ContactsByCompany
+

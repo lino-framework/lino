@@ -1,13 +1,14 @@
-:label: Contact
+:label: General
 :label_align: top
 
 main = 
   intro_box
-  address_box
-  remarks coaching #flags
+  address_box 
+  # remarks:30 coaching:30 
+  overview contacts.ContactsByPerson
 
 intro_box = box1 box2
-address_box = box3 box4 box5 
+address_box = box3 box4 box5 flags:20
 
 
 box1 = last_name first_name:15 title:10

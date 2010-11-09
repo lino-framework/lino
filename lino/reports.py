@@ -21,10 +21,12 @@ import pprint
 
 from django.conf import settings
 from django.utils.translation import ugettext as _
+from django.utils.text import capfirst
 from django.utils.encoding import force_unicode 
 
 from django.db import models
 from django.db.models.query import QuerySet
+from django.db.models.fields.related import ForeignRelatedObjectsDescriptor
 from django import forms
 from django.conf.urls.defaults import patterns, url, include
 from django.forms.models import modelform_factory
@@ -181,7 +183,7 @@ def discover():
       `_lino_model_report`
 
     """
-    
+              
     lino.log.info("Analyzing Reports...")
     #~ lino.log.debug("Register Report actors...")
     for rpt in actors.actors_list:
@@ -196,24 +198,6 @@ def discover():
             register_report(rpt)
             model._lino_model_report = rpt
             
-        model._lino_detail_layouts = []
-        
-        """
-        Naming conventions for :xfile:`*.dtl` files are:
-        - the first detail is called appname.Model.dtl
-        - If there are more Details, then they are called appname.Model.2.dtl, appname.Model.3.dtl etc.
-        The `sort()` below must remove the filename extension (".dtl") because otherwise the frist Detail would come last.
-        """
-        dtl_files = find_config_files('%s.%s.*dtl' % (model._meta.app_label,model.__name__)).items()
-        def fcmp(a,b):
-            return cmp(a[0][:-4],b[0][:-4])
-        dtl_files.sort(fcmp)
-        for filename,cd in dtl_files:
-            fn = os.path.join(cd.name,filename)
-            lino.log.info("Loading %s...",fn)
-            s = open(fn).read()
-            dtl = DetailLayout(s,cd,filename)
-            model._lino_detail_layouts.append(dtl)
             
     #~ lino.log.debug("Analyze %d slave reports...",len(slave_reports))
     for rpt in slave_reports:
@@ -492,7 +476,7 @@ class ReportActionRequest(actions.ActionRequest): # was ReportRequest
         
 
 
-class Report(actors.Actor,base.Handled):
+class Report(actors.Actor): #,base.Handled):
     """
     Reports are a central concept in Lino and deserve more than one sentence of documentation.
     """
@@ -540,7 +524,7 @@ class Report(actors.Actor,base.Handled):
     can_view = perms.always
     can_add = perms.is_authenticated
     can_change = perms.is_authenticated
-    can_delete = perms.is_authenticated
+    #~ can_delete = perms.is_authenticated
     can_config = perms.is_staff
     
     show_prev_next = True
@@ -570,12 +554,21 @@ class Report(actors.Actor,base.Handled):
     Will be filled during :meth:`lino.reports.Report.do_setup`. 
     """
     
-    disabled_fields = None # see docs
+    disabled_fields = None 
     """
-    If `disabled_fields` is not None, it must be a method that accepts two arguments `request` and `obj` 
+    If not None, must be a method that accepts two arguments `request` and `obj` 
     and returns a list of field names that should not be editable for the specified `obj`.
     See usage example in :class::`dsbe.models.Persons` and :doc:`/blog/2010/0804`.
+    """
     
+    disable_delete = None
+    """
+    If not None, this must be a method that accepts two arguments `request` and `obj` 
+    and returns either `None` if this `obj` *is allowed* to be deleted by `request`,
+    or a string with a message explaining why, if not.
+    If this is None, the report will 
+    look whether it's Model has a `disable_delete` method.
+    See also :doc:`/tickets/closed/2`.
     """
     
     has_navigator = True
@@ -591,17 +584,31 @@ class Report(actors.Actor,base.Handled):
             # raise Exception(self.__class__)
         else:
             self.model = resolve_model(self.model,self.app_label,self)
+            
         if self.model is not None:
             self.app_label = self.model._meta.app_label
+            if self.label is None:
+                self.label = capfirst(self.model._meta.verbose_name_plural)
+            
+        #~ lino.log.debug("Report.__init__() %s", self)
+        actors.Actor.__init__(self)
+        #~ base.Handled.__init__(self)
+        
+        if self.model is not None:
             self.actions = self.actions + [ actions.DeleteSelected ] #, InsertRow ]
+            
+            if self.disable_delete is None:
+                m = getattr(self.model,'disable_delete',None)
+                if m:
+                    def disable_delete(self,request,obj):
+                        return obj.disable_delete(request)
+                    self.__class__.disable_delete = disable_delete
+                    #~ print 20101104, self, 'install disable_delete from',self.model.__name__
+                
             m = getattr(self.model,'setup_report',None)
             if m:
                 m(self)
         
-        actors.Actor.__init__(self)
-        base.Handled.__init__(self)
-        
-        #~ lino.log.debug("Report.__init__() %s", self)
         
         if self.fk_name:
             if self.model is not None:

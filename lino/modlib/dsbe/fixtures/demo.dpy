@@ -30,13 +30,15 @@ auth = models.get_app('auth')
 
 Person = resolve_model('contacts.Person')
 Company = resolve_model('contacts.Company')
+Contact = resolve_model('contacts.Contact')
 
 person = Instantiator(Person).build
 company = Instantiator(Company).build
+contact = Instantiator(Contact).build
 
 #char_pv = Instantiator('properties.CharPropValue').build
 #CharPropValue = resolve_model('properties.CharPropValue')
-from lino.modlib.properties import models as properties # CharPropValue, BooleanPropValue
+#~ from lino.modlib.properties import models as properties # CharPropValue, BooleanPropValue
 #~ CHAR = ContentType.objects.get_for_model(properties.CharPropValue)
 #BOOL = ContentType.objects.get_for_model(properties.BooleanPropValue)
 #~ INT = ContentType.objects.get_for_model(properties.IntegerPropValue)
@@ -70,6 +72,26 @@ def objects():
     be = Country.objects.get(isocode__exact='BE')
     #~ luc = person(first_name="Luc",last_name="Saffre",city=vigala,country='EE',card_number='122')
     #~ yield luc
+    andreas = Person.objects.get(name__exact="Arens Andreas")
+    annette = Person.objects.get(name__exact="Arens Annette")
+    hans = Person.objects.get(name__exact="Altenberg Hans")
+    
+    cpas = company(name=u"ÖSHZ Eupen",city=eupen,country='BE')
+    yield cpas
+    bisa = company(name=u"BISA",city=eupen,country='BE')
+    yield bisa 
+    bisa_dir = contact(company=bisa,person=annette,type=1)
+    yield bisa_dir 
+    rcycle = company(name=u"R-Cycle Sperrgutsortierzentrum",city=eupen,country='BE')
+    yield rcycle
+    rcycle_dir = contact(company=rcycle,person=andreas,type=1)
+    yield rcycle_dir
+    yield company(name=u"Die neue Alternative V.o.G.",city=eupen,country='BE')
+    yield company(name=u"Pro Aktiv V.o.G.",city=eupen,country='BE')
+    yield company(name=u"Werkstatt Cardijn V.o.G.",city=eupen,country='BE')
+    yield company(name=u"Behindertenstätten Eupen",city=eupen,country='BE')
+    yield company(name=u"Beschützende Werkstätte Eupen",city=eupen,country='BE')
+    
     luc = Person.objects.get(name__exact="Saffre Luc")
     luc.birth_place = 'Eupen'
     luc.birth_country = be
@@ -84,21 +106,17 @@ def objects():
     
     gerd = person(first_name="Gerd",last_name="Xhonneux",city=kettenis,name="Xhonneux Gerd",country='BE')
     yield gerd
+    yield contact(company=cpas,person=gerd,type=4)
+    
     
     tatjana = person(first_name=u"Татьяна",last_name=u"Казеннова",# name="Казеннова Татьяна",
         city=kettenis,country='BE', 
         birth_place="Moskau", birth_country='SUHH')
     yield tatjana
     
-    yield company(name=u"ÖSHZ Eupen",city="Eupen",city=eupen,country='BE')
     
     
-    #~ for p in properties.Property.properties_for_model(Company):
-        #~ fill_choices(p,Company)
-    #~ for p in properties.Property.properties_for_model(Person):
-        #~ fill_choices(p,Person)
-        
-    oshz = Company.objects.get(name=u"ÖSHZ Eupen")
+    #~ oshz = Company.objects.get(name=u"ÖSHZ Eupen")
     schule = StudyType.objects.get(name=u"Schule")
     uni = StudyType.objects.get(name=u"Universität")
     #~ abi = StudyContent.objects.get(name=u"Abitur")
@@ -120,10 +138,10 @@ def objects():
     #~ yield prj 
     #~ yield note(user=user,project=prj,date=i2d(20091007),subject="Anschauen",company=oshz)
     
-    yield note(user=user,date=i2d(20091006),subject="Programmierung",owner=oshz)
-    yield note(user=user,date=i2d(20091007),subject="Testen",owner=oshz)
-    yield note(user=user,date=i2d(20100517),subject="Programmierung",owner=oshz)
-    yield note(user=user,date=i2d(20100518),subject="Testen",owner=oshz)
+    yield note(user=user,date=i2d(20091006),subject="Programmierung",owner=cpas)
+    yield note(user=user,date=i2d(20091007),subject="Testen",owner=cpas)
+    yield note(user=user,date=i2d(20100517),subject="Programmierung",owner=cpas)
+    yield note(user=user,date=i2d(20100518),subject="Testen",owner=cpas)
         
     yield study(person=luc,type=schule,content=abi,started='197409',stopped='198606')
     yield study(person=gerd,type=schule,content=abi,started='197409',stopped='198606')
@@ -140,3 +158,9 @@ def objects():
     yield langk(person=luc,language='et',written='3',spoken='3')
     yield langk(person=gerd,language='nl',written='3',spoken='3')
     
+    
+    
+    contract = Instantiator('dsbe.Contract','type applies_from applies_until company contact',
+      user=user,client=hans).build
+    yield contract(1,i2d(20090518),i2d(20090517),rcycle,rcycle_dir)
+    yield contract(1,i2d(20100518),i2d(20100517),bisa,bisa_dir)

@@ -122,15 +122,6 @@ def objects():
     yield noteType(u"Brief oder Einschreiben")
     yield noteType(u"Notiz",remark=u"Kontaktversuch, Gesprächsbericht, Telefonnotiz")
     yield noteType(u"Vorladung",remark=u"Einladung zu einem persönlichen Gespräch")
-    yield noteType(u"VSE Ausbildung")
-    yield noteType(u"VSE Arbeitssuche")
-    yield noteType(u"VSE Integration")
-    yield noteType(u"VSE Lehre")
-    yield noteType(u"VSE Cardijn")
-    yield noteType(u"VSE Work & Job")
-    yield noteType(u"VSE Vollzeitstudium")
-    yield noteType(u"VSE Sprachkurs")
-    yield noteType(u"Vertrag 60-7")
     yield noteType(u"Übergabeblatt",remark=u"Übergabeblatt vom allgemeinen Sozialdienst") # (--> Datum Eintragung DSBE)
     yield noteType(u"Neuantrag")
     yield noteType(u"Antragsformular")
@@ -140,6 +131,16 @@ def objects():
     yield noteType((u"Auswertungsbogen allgemein"),build_method='rtf',template=u'Auswertungsbogen_allgemein.rtf')
     yield noteType((u"Anwesenheitsbescheinigung"),build_method='rtf',template=u'Anwesenheitsbescheinigung.rtf')
     
+    contractType = Instantiator('dsbe.ContractType',"name").build
+    yield contractType(u"Konvention 60§7",build_method='rtf',template=u'Konvention Sozialökonomie.rtf')
+    yield contractType(u"VSE Ausbildung")
+    yield contractType(u"VSE Arbeitssuche")
+    yield contractType(u"VSE Integration")
+    yield contractType(u"VSE Lehre")
+    yield contractType(u"VSE Cardijn")
+    yield contractType(u"VSE Work & Job")
+    yield contractType(u"VSE Vollzeitstudium")
+    yield contractType(u"VSE Sprachkurs")
     
     #~ projectType = Instantiator('projects.ProjectType',"name").build
     #~ yield projectType(u"VSE Ausbildung")

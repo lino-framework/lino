@@ -1,0 +1,14 @@
+20101104
+========
+
+- Super! Das hätte ich gestern nicht gedacht:
+  :doc:`/tickets/closed/2` ist fertig und kann abgeschlossen werden!
+
+- Statt :attr:`lino.reports.Report.label` benutze ich jetzt meistens `verbose_name_plural` des Django-Models.
+
+- Ein erstes proof of concept für `Person.overview` ist fast fertig. 
+  Der Server gibt den overview-Text schön zurück, aber die HtmlBox zeigt nichts an. 
+  Ich habe noch nicht verstanden weshalb LinksByOwner funktioniert und overview  nicht...
+  
+  
+Aber jetzt muss Lino erstmal was warten, denn es gibt ja auch noch anderes im Leben.

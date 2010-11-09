@@ -1,6 +1,10 @@
 2010
 ====
 
+Here is my diary about what I'm doing on Lino. 
+(January to June are in a `previous format <http://code.google.com/p/lino/wiki/WikiBlog>`_)
+As long as I am the only Lino developer, I'll write it mostly in German.
+
 .. |br| raw:: html
 
    <br />   
@@ -183,6 +187,14 @@
   |br|
   01
   :doc:`02 <1102>`
+  :doc:`03 <1103>`
+  :doc:`04 <1104>`
+  05
+  :doc:`06 <1106>`
+  |br|
+  08
+  :doc:`09 <1109>`
+  
 
 .. |Dec| replace::  **December**
 

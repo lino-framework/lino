@@ -1,4 +1,4 @@
-## :label: Contact
+:label: General
 :label_align: top
 
 main = 
@@ -17,7 +17,7 @@ box4 =
   phone
   gsm
 address_box = box3 box4
-bottom_box = remarks notes.NotesByOwner
+bottom_box = remarks contacts.ContactsByCompany
 
 intro_box = 
     name id language

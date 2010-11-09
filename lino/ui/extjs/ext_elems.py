@@ -391,6 +391,7 @@ class FieldElement(LayoutElement):
         return kw
     
 class HtmlBoxElement(FieldElement):
+#~ class HtmlBoxElement(LayoutElement):
     ext_suffix = "_htmlbox"
     declare_type = jsgen.DECLARE_VAR
     #~ declare_type = jsgen.DECLARE_INLINE
@@ -597,33 +598,6 @@ class BooleanFieldElement(FieldElement):
 
 
 
-#~ class DelegateFieldElement(FieldElement):
-
-class unused_MethodElement(FieldElement):
-    stored = True
-    #~ editable = False
-    filter_type = None
-    editable = False
-    ext_suffix = "_meth"
-
-    def __init__(self,lh,name,meth,return_type,**kw):
-        assert isinstance(lh,reports.LayoutHandle)
-        # uh, this is tricky...
-        return_type.name = name
-        #~ return_type.verbose_name = name
-        return_type._return_type_for_method = meth
-        FieldElement.__init__(self,lh,return_type)
-        delegate = lh.main_class.field2elem(lh,return_type,**kw)
-        if isinstance(delegate,Panel):
-            delegate = delegate.elements[0]
-        for a in ('ext_options','get_column_options',
-                  'filter_type',
-                  #~ 'get_filter_options', 
-                  'get_field_options'):
-                  #~ ): # ,'grid_column_template'):
-            setattr(self,a,getattr(delegate,a))
-        #~ self.editable = False
-        
 
 class Container(LayoutElement):
     vertical = False
@@ -864,6 +838,12 @@ class Panel(Container):
                 w = e.width or e.preferred_width
                 #~ e.value.update(columnWidth=float(w)/self.preferred_width) # 20100615
                 e.value.update(flex=int(w*100/self.preferred_width))
+                
+            #~ wrappers = []
+            #~ for e in self.elements:
+                #~ wrappers.append(dict(layout='form',autoHeight=True,items=e))
+            #~ d.update(items=wrappers)
+              
         elif d['layout'] == 'vbox':
             "a vbox with 2 or 3 elements, of which at least two are vflex will be implemented as a VBorderPanel"
             assert len(self.elements) > 1
@@ -885,7 +865,8 @@ class Panel(Container):
                 self.elements[1].update(region='center')
                 if len(self.elements) == 3:
                     self.elements[1].update(region='south')
-                
+        
+
             
         
     def ext_options(self,**d):
@@ -1044,22 +1025,11 @@ class MainPanel(jsgen.Variable):
 
 
 
-class WrappingMainPanel(MainPanel):
-    """Inherited by DetailMainPanel and FormMainPanel (not GridPanel)
+class unused_WrappingMainPanel(MainPanel):
+    """Inherited by DetailMainPanel but not GridPanel.
     Wraps each FieldElement into a Panel with FormLayout.
     """
     
-    @classmethod
-    def field2elem(cls,lh,field,**kw):
-        e = MainPanel.field2elem(lh,field,**kw)
-        #~ po = dict(layout='form')
-        po = dict(layout='form',autoHeight=True) # 20101028
-        #~ if isinstance(e,TextFieldElement):
-            #~ po.update(anchor='100% 100%')
-        ct = Panel(lh,field.name+"_ct",True,e,**po)#,flex=0)
-        ct.field = field
-        return ct
-
 class GridMainPanel(GridElement,MainPanel):
     #~ value_template = "new Lino.GridPanel(%s)"
     def __init__(self,lh,name,vertical,*columns,**kw):
@@ -1071,7 +1041,8 @@ class GridMainPanel(GridElement,MainPanel):
 
 
 
-class DetailMainPanel(Panel,WrappingMainPanel):
+class DetailMainPanel(Panel,MainPanel):
+#~ class DetailMainPanel(Panel,WrappingMainPanel):
     #~ declare_type = jsgen.DECLARE_THIS
     #~ xtype = 'form'
     xtype = None
@@ -1122,6 +1093,20 @@ class DetailMainPanel(Panel,WrappingMainPanel):
         #d.update(standardSubmit=True)
         return kw
         
+    @classmethod
+    def field2elem(cls,lh,field,**kw):
+        e = MainPanel.field2elem(lh,field,**kw)
+        if isinstance(e,HtmlBoxElement): return e
+        #~ if not e.value.has_key('fieldLabel'): return e
+        #~ if not e.label: return e
+        #~ po = dict(layout='form')
+        po = dict(layout='form',autoHeight=True) # 20101028
+        #~ if isinstance(e,TextFieldElement):
+            #~ po.update(anchor='100% 100%')
+        ct = Panel(lh,field.name+"_ct",True,e,**po)#,flex=0)
+        ct.field = field
+        return ct
+
 class TabPanel(jsgen.Component):
 #~ class TabPanel(jsgen.Value):
     value_template = "new Ext.TabPanel(%s)"

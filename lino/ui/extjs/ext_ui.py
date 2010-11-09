@@ -82,6 +82,8 @@ def prepare_label(mi):
         #label=label[:n] + '<u>' + label[n] + '</u>' + label[n+1:]
     return label
         
+def element_name(elem):
+    return u"%s (#%s in %s.%s)" % (elem,elem.pk,elem._meta.app_label,elem.__class__.__name__)
 
 
 def parse_bool(s):
@@ -124,6 +126,8 @@ def elem2rec_detailed(ar,rh,elem,**rec):
     rec = elem2rec1(ar,rh,elem,**rec)
     rec.update(id=elem.pk)
     rec.update(title=unicode(elem))
+    if rh.report.disable_delete:
+        rec.update(disable_delete=rh.report.disable_delete(ar.request,elem))
     if rh.report.show_prev_next:
         first = None
         prev = None
@@ -270,7 +274,7 @@ class ExtUI(base.UI):
     def create_meth_element(self,lh,name,meth,rt,**kw):
         rt.name = name
         rt._return_type_for_method = meth
-        kw.update(editable=False)
+        #~ kw.update(editable=False)
         e = self.create_field_element(lh,rt,**kw)
         #~ if lh.rh.report.actor_id == 'contacts.Persons':
             #~ print 'ext_ui.py create_meth_element',name,'-->',e
@@ -571,8 +575,9 @@ class ExtUI(base.UI):
             #~ return json_response_kw(success=False,
                   #~ msg=_("There was a problem while saving your data:\n%s") % e)
         return json_response_kw(success=True,
-              message=_("%(name)s has been saved (%(model)s.%(pk)s)") % 
-                dict(name=unicode(elem),model=elem._meta.verbose_name,pk=elem.pk))
+              message=_("%s has been saved.") % element_name(elem))
+              #~ message=_("%(name)s has been saved (%(model)s.%(pk)s)") % 
+                #~ dict(name=unicode(elem),model=elem._meta.verbose_name,pk=elem.pk))
 
 
         
@@ -765,7 +770,17 @@ class ExtUI(base.UI):
                 raise Http404("%s %s does not exist." % (rpt,pk))
                 
         if request.method == 'DELETE':
-            elem.delete()
+            if rpt.disable_delete is not None:
+                msg = rpt.disable_delete(request,elem)
+                if msg is not None:
+                    return error_response(msg)
+            try:
+                elem.delete()
+            except Exception,e:
+                msg = "Failed to delete %s." % element_name(elem)
+                return error_response(msg)
+                #~ raise Http404(msg)
+              
             return HttpResponseDeleted()
             
         if request.method == 'PUT':

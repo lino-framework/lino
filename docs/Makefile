@@ -2,6 +2,7 @@ SITENAME               = lino
 #~ DJANGO_SETTINGS_MODULE = dsbe.demo.settings
 #~ DJANGO_SETTINGS_MODULE = lino.demos.std.settings
 TEMPDIR                = C:\\temp\\sphinxbuild\\$(SITENAME)
+#~ TEMPDIR                = /cygdrive/c/temp/sphinxbuild/$(SITENAME)
 BUILDDIR               = $(TEMPDIR)\\html
 CACHEDIR               = $(TEMPDIR)\\doctrees
 OPENHTML               = 'C:\\Program Files\\Mozilla Firefox\\firefox.exe'
@@ -45,6 +46,13 @@ html:
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)."
 
+show:
+	$(OPENHTML) $(BUILDDIR)\index.html
+  
+upload:
+	cd $(BUILDDIR) && rsync -r --progress --delete --times ./ luc@saffre-rumma.ee:~/public_html/sphinxbuild/$(SITENAME)
+
+
 doctest:
 	mkdir -p $(CACHEDIR) 
 	mkdir -p $(BUILDDIR)
@@ -61,13 +69,6 @@ unused_autodoc:
 	#~ $(AUTODOC) lino -d autodoc/lino -s rst -n Lino
 	#~ $(AUTODOC) dsbe -d autodoc/dsbe -s rst -n Lino-DSBE
   
-show:
-	$(OPENHTML) $(BUILDDIR)\index.html
-  
-upload:
-	cd $(BUILDDIR) && rsync -r --progress --delete --times ./ luc@saffre-rumma.ee:/var/cache/sphinxbuild/$(SITENAME)
-
-
 
 pickle:
 	mkdir -p .build/pickle .build/doctrees

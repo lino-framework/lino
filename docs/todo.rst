@@ -9,9 +9,21 @@ for which I hope for help from other people.
 Short-term
 ----------
 
-- Neues virtuelles Feld Person.warnings, das im ersten Detail-Tab angezeigt wird, 
-  und in dem vor allem Mitteilungen wie "Achtung, Personalausweis läuft am 07.11.10 aus!" 
-  oder "VSB Lehre läuft am 07.11.10 aus!" kommen.
+- Im Hauptmenü eine anklickbare Liste aller Verträge und eingescannten Dokumente dieses Benutzers anzeigen, 
+  die demnächst ablaufen. 
+  Auf Verträgen und eingescannten Dokumenten ein Ankreuzfeld "Erinnerung im Hauptmenü anzeigen", 
+  um Einträge manuell abschalten zu können.
+
+- Hauptmenü nicht erreichbar, wenn ein Fenster offen ist. 
+  Dafür ein bequemer Button, um ein weiteres Browserfenster mit Lino zu öffnen.
+  Weil die Benutzer sonst irgendwann einen Stack overflow kriegen, 
+  weil sie sich nicht dessen bewusst sind, 
+  dass ihre Fenster offen bleiben.
+  
+  (Das hätte möglicherweise später als Folge, dass das Hauptmenü gar kein Pulldown-Menü mehr zu sein braucht, 
+  sondern eine für Webseiten klassischere Ansicht benutzen.)
+  
+- OOo-Server ans Laufen kriegen um .pdf-Dateien zu generieren.
 
 - WebDAV installieren und testen, wie das Bearbeiten von RTF- und ODT-Dokumenten in der Praxis läuft.
 
@@ -21,25 +33,10 @@ Short-term
   per drag & drop auf die HtmlBox zieht.   
   :doc:`/tickets/8` 
 
+- "Insert as copy"
+
 Undecided
 ---------
-
-- Sollen wir Nachrichten und Erinnerungen 
-  (z.B. Links, deren valid_until in den kommenden Tagen fällig ist)
-  in der :xfile:`welcome.html` anzeigen?
-  
-- Erinnerungen (iCal-Dateien per E-Mail).
-  E-Mails verschicken aus Django raus ist `einfach
-  <http://docs.djangoproject.com/en/dev/topics/email/>`_.
-  Aber wann genau soll eine Mail verschickt werden?
-  Bei jedem Speichern einer notes.Note mit type.notify? 
-  Oder periodisch von einem Hintergrundprozess aus?
-  Vielleicht im :class:`notes.NoteType` definieren, ob Lino einen Termin 
-  (oder Erinnerung oder Task) per E-Mail an den Benutzer verschicken 
-  soll. 
-  Brauchen wir noch ein neues Feld `notes.Note.notified`?
-
-- Man kann z.B. noch nicht nach Personen suchen, die ein bestimmtes Studium haben.
 
 - Momentan wird der Synchronisierungs-Prozess (watch_tim) nach einem Server-Restart nicht automatisch neu gestartet. 
   Ich habe nämlich lediglich in `/usr/local/django/myproject` eine Datei namens `watch_tim` mit folgendem Inhalt::
@@ -52,14 +49,32 @@ Undecided
   :command:`nohup` sorgt dafür, dass der Prozess nicht beendet wird, wenn ich mich auslogge. 
   Aber stattdessen muss natürlich ein Skript in der :file:`/etc/init.d` gemacht werden.
 
-
-- :doc:`/tickets/2`. Also Vorsicht beim Löschen von Notizarten, Studienarten, 
-  AG-Sperrgründen, Begleitungsarten, Städten, Ländern usw.!
-
 - Wenn man z.B. in Companies.insert manuell eine ID eingibt, 
   dann ignoriert der Server die und vergibt trotzdem seine automatische nächste ID.
 
-- Projekte einführen? 
+Medium-term
+-----------
+
+- Man kann z.B. noch nicht nach Personen suchen, die ein bestimmtes Studium haben.
+
+- Einheitliches Interface um Reihenfolge zu verändern (Journals, DocItems, LinksByOwner,...). Erster Schritt: Abstract model "Ordered" mit einem Feld `pos` und zwei Actions "move up" und "move down".
+
+- Eingabe im Detail eines SalesDocument funktioniert noch nicht: 
+  Wenn man ein 
+  Produkt auswählt, antwortet der Server 
+  `{'unit_price': ValidationError([u'This value must be a decimal number.'])}` 
+  statt den Stückpreis selber auszufüllen.
+  
+- Fenstertitel ändern bzw. anzeigen, welche GC momentan aktiv ist.
+
+- Das Passfoto in dsbe.PersonDetail ist manchmal verzerrt oder noch nicht korrekt ausgeschnitten.
+
+Long-term
+---------
+
+- :doc:`/tickets/12`
+
+- Projekte für DSBE einführen? 
   Gibt es nicht in der Praxis den Fall, dass man Notizen machen will, 
   die "in einen Topf" gehören, aber dieser "Topf" kann 
   nicht unbedingt einer (einzigen) Personen zugewiesen werden?
@@ -70,16 +85,9 @@ Undecided
   sondern allgemein einem Projekt zugewiesen.
   Momentan entspricht sozusagen automatisch jede Person einem einzigen Projekt.
   
-Long-term
----------
-
-- Einheitliches Interface um Reihenfolge zu verändern (Journals, DocItems, LinksByOwner,...). Erster Schritt: Abstract model "Ordered" mit einem Feld `pos` und zwei Actions "move up" und "move down".
-
-- Eingabe im Detail eines SalesDocument funktioniert noch nicht: 
-  Wenn man ein 
-  Produkt auswählt, antwortet der Server 
-  `{'unit_price': ValidationError([u'This value must be a decimal number.'])}` 
-  statt den Stückpreis selber auszufüllen.
+- Sollen wir Nachrichten und Erinnerungen 
+  (z.B. Links, deren valid_until in den kommenden Tagen fällig ist)
+  in der :xfile:`welcome.html` anzeigen?
   
 - Das `params={'base_params':{'mk':jnl.pk}}` in der :xfile:`lino_settings.py` 
   in :mod:`lino.demos.igen`
@@ -100,10 +108,6 @@ Long-term
   nicht alle Firmen, sondern nur die Krankenkassen angezeigt bekommt? 
   Etwa ein eigenes Feld `Company.is_health_insurance`?
 
-- Fenstertitel ändern bzw. anzeigen, welche GC momentan aktiv ist.
-
-- Das Passfoto in dsbe.PersonDetail ist manchmal verzerrt oder noch nicht korrekt ausgeschnitten.
-
 - Die Buttons der tbar sollten mit Icons versehen werden. Für manche Funktionen (Insert,Delete) gibt es vielleicht schon Icons aus der ExtJS.
 
 - Abfragen mit komplexen Bedingungen zur Suche nach Personen
@@ -112,18 +116,16 @@ Long-term
 
 - Hinter das QuickFilter-Feld muss ein Button, um den Filter zu aktivieren. Dass man einfach nur TAB drücken muss ist nicht intuitiv.
 
-- Links ordentlich anzeigen und bequem erfassen können.
-
 - Benutzbarkeit per Tastatur verbessern (issue 11, issue 64) 
 
 - Sehen können, nach welcher Kolonne eine Grid sortiert ist.
 
 - Nach Duplikaten suchen vor Erstellen einer neuen Person (issue 85)
 
-- `lino.test_apps.journals` funktioniert nicht bzw. wird nicht ausgeführt. Sieht aus als Django-Ticket 11696 doch noch nicht behoben ist. Aber mein Patch 20091107.diff funktioniert nicht mehr und ich bin auch noch nicht sicher. Muss vielleicht mal einen Testcase schreiben, um das Problem zu identifizieren...
+- Prüfen, ob die neuen ExtJS-Features für Lino interessant sind:
 
-- Prüfen, ob die neuen ExtJS-Features `Forms with vbox Layout <http://dev.sencha.com/deploy/dev/examples/form/vbox-form.html>`_ und
-  `Composite Form Fields <http://dev.sencha.com/deploy/dev/examples/form/composite-field.html>`_ für Lino interessant sind.
+  - `Forms with vbox Layout <http://dev.sencha.com/deploy/dev/examples/form/vbox-form.html>`_ 
+  - `Composite Form Fields <http://dev.sencha.com/deploy/dev/examples/form/composite-field.html>`_ 
 
 
 - Filter auf virtuelle Kolonnen setzen können. Siehe :doc:`/blog/2010/0811`.
@@ -140,10 +142,6 @@ Long-term
 - Layout von Detail-Fenstern : in Lino sind die "Zeilen" momentan ja immer im "Blocksatz" (also links- und rechtsbündig). Das ist unkonventionell: alle RIA die ich kenne, machen ihre Formulare nur linksbündig.
 
 - HtmlEditor oder TextArea? Der HtmlEditor verursacht deutliche Performanceeinbußen beim Bildschirmaufbau von Detail-Fenstern. Die Wahl sollte konfigurierbar sein. Markup auch.
-
-- "About"-Fenster mit `thanks_to()` muss irgendwo sichtbar gemacht werden.
-
-- lino.test_apps.properties funktioniert nicht, scheinbar ist `actors.discover()` nicht aufgerufen worden.
 
 - Das Detail-Fenster sollte vielleicht par défaut nicht im Editier-Modus sein, sondern unten ein Button "Edit", und erst wenn man darauf klickt, werden alle Felder editierbar (und der Record in der Datenbank blockiert), und unten stehen dann zwei Buttons "Save" und "Cancel". Wobei darauf zu achten ist was passiert, wenn man während des Bearbeitens in der Grid auf eine andere Zeile klickt. Dann muss er am besten das Detail-Fenster speichern, und falls dort ungültige Daten stehen, in der Grid den Zeilenwechsel verweigern.
 
@@ -210,8 +208,6 @@ Long-term
   (z.B. weil die Vorlage noch nicht übersetzt wurde oder multilingual ist), 
   nimmt er die Standard-Vorlage aus der Hauptsprache.
 
-- :doc:`/tickets/taken/6`.
-
 - Generic Foreign Keys: 
 
   - In einem Detail sind ist owner_type ja schon eine ComboBox, 
@@ -221,7 +217,10 @@ Long-term
     müssten zwei Kolonnen erzeugt werden 
     (statt momentan einer Kolonne, die dann nicht korrekt angezeigt wird)
   
-- Google-Projekte lino-apps, lino-igen und Lino-DSBE löschen.
+- When :djangoticket:`7539` is available, we'll modify these automatic 
+  `disable_delete` methods so that they act only for 
+  ForeignKey fields with `on_delete=RESTRICT`.
+  See :doc:`/tickets/closed/2`
 
 - Main-Grids könnten mit `autoHeight=true` arbeiten. Dadurch würde der zweite Ajax-call unnötig.
   autoHeight resizes the height to show all records. 
@@ -306,9 +305,23 @@ Long-term
   den tatsächlichen Dateinamen nicht preisgibt.
 
 - :mod:`lino.modlib.ledger` und :mod:`lino.modlib.finan` 
-  könnten übrigens zusammengeschmolzen werden, 
+  könnten zusammengeschmolzen werden, 
   denn ich kann mir nicht vorstellen, 
   wie man das eine ohne das andere haben wollen könnte.
+  
+- nosetests lesen: http://packages.python.org/nose/usage.html  
+
+- Django Test-Suite ans Laufen kriegen und Git-Benutzung lernen, 
+  um bei Diskussionen um Django-Tickets mitreden zu können.
+  (sh. :doc:`/blog/2010/1103`)
+  
+- Use event managers as suggested by Jonathan Julian (Tip #2 in  http://www.slideshare.net/jonathanjulian/five-tips-to-improve-your-ext-js-application). 
+  Maybe for each report::
+  
+    Lino.contacts.Persons.eventManager = new Ext.util.EventManager();
+    Lino.contacts.Persons.eventManager.addEvents('changed');
+    
+  Lino could use this to have an automatic refresh of each window that displays data. Maybe rather only one central event manager because if any data gets changed, basically all open windows may need a refresh.
 
 
 

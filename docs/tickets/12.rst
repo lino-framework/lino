@@ -1,0 +1,52 @@
+#12 : Communicate with Mozilla Calendar, GroupWise or MS-Outlook
+================================================================
+
+Lino-DSBE soll nicht GroupWise oder Outlook ersetzen, 
+sondern lediglich das Erstellen von Terminen oder Tasks 
+automatisieren bzw. erleichtern.
+
+Die Kommunikation mit dem Terminverwalterprogramm geschieht 
+über `iCalendar <http://en.wikipedia.org/wiki/ICalendar>`_-Dateien, 
+die per Mail an den Benutzer geschickt werden.
+E-Mails verschicken aus Django raus ist ja 
+`einfach <http://docs.djangoproject.com/en/dev/topics/email/>`_.
+
+Statt E-Mails mit iCal-Dateien zu verschicken, könnte der Lino-Server vielleicht auch einen Online-Kalender
+
+Zum Generieren von iCal-Dateien 
+werden wir wohl am besten
+http://codespeak.net/icalendar/
+benutzen.
+  
+Das User Interface muss ich noch bedenken. 
+
+Funktionale Beschreibung:
+
+- Möglichkeit, um manuell einen Termin 
+  mit einer bestimmten Person zu erstellen.
+  Einfach damit man Namen, Telefonnummer usw. 
+  nicht manuell irgendwo einzutragen braucht.
+  
+- Wenn das Gültig-bis-Feld eines Vertrags angegeben ist, 
+  dann soll GroupWise den Benutzer rechtzeitig daran erinnern, 
+  dass der Vertrag ausläuft.
+  
+  :attr:`dsbe.links.Link.valid_until` 
+  
+  dann soll Lino automatisch eine entsprechende 
+  Task bzw. Erinnerung in GroupWise erstellen.
+  
+  
+- Automatische Erinnerungen? 
+  Aber wann genau soll eine Mail verschickt werden?
+  Jedenfalls nicht periodisch von einem Hintergrundprozess aus, 
+  denn 
+  
+  Vielleicht ein Feld :attr:`notes.NoteType.notify` "ob Lino einen Termin 
+  per E-Mail an den Benutzer verschicken soll".
+  Eventuell noch ein neues Feld :attr:`notes.Note.notified`, 
+  damit Lino nicht bei jeder Änderung eine neue iCal-Datei abschickt. 
+
+
+
+- lino.modlib.tasks

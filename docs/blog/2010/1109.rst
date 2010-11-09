@@ -1,0 +1,53 @@
+20101109
+========
+
+http://appyframework.org/podRenderingTemplates.html
+
+Na dann wollen wir mal die Python-UNO Bridge installieren::
+
+  # aptitude install python-uno
+
+Er installiert automatisch eine ganze Reihe von Paketen, unter anderem Openoffice und X11::
+
+  Reading package lists... Done
+  Building dependency tree
+  Reading state information... Done
+  Reading extended state information
+  Initializing package states... Done
+  Reading task descriptions... Done
+  The following NEW packages will be installed:
+    ca-certificates{a} dictionaries-common{a} fontconfig{a} fontconfig-config{a} libatk1.0-0{a} libcairo2{a}
+    libcups2{a} libcurl3{a} libdatrie0{a} libdirectfb-1.0-0{a} libfontconfig1{a} libglib2.0-0{a}
+    libgstreamer-plugins-base0.10-0{a} libgstreamer0.10-0{a} libgtk2.0-0{a} libgtk2.0-common{a} libhunspell-1.2-0{a}
+    libhyphen0{a} libice6{a} libicu38{a} libidn11{a} libneon27{a} libnspr4-0d{a} libnss3-1d{a} libpango1.0-0{a}
+    libpango1.0-common{a} libpixman-1-0{a} libpng12-0{a} libsm6{a} libssh2-1{a} libsysfs2{a} libthai-data{a}
+    libthai0{a} libtiff4{a} libts-0.0-0{a} libx11-6{a} libx11-data{a} libxau6{a} libxaw7{a} libxcb-render-util0{a}
+    libxcb-render0{a} libxcb-xlib0{a} libxcb1{a} libxcomposite1{a} libxcursor1{a} libxdamage1{a} libxdmcp6{a}
+    libxext6{a} libxfixes3{a} libxft2{a} libxi6{a} libxinerama1{a} libxmu6{a} libxpm4{a} libxrandr2{a} libxrender1{a}
+    libxslt1.1{a} libxt6{a} libxtst6{a} openoffice.org-common{a} openoffice.org-core{a}
+    openoffice.org-style-andromeda{a} python-uno ttf-opensymbol{a} x11-common{a}
+  The following packages are RECOMMENDED but will NOT be installed:
+    hicolor-icon-theme hunspell-ar hunspell-da hunspell-de-at hunspell-de-ch hunspell-de-de hunspell-en-us
+    hunspell-eu-es hunspell-fr hunspell-ne hunspell-se hunspell-uz libatk1.0-data libglib2.0-data libgtk2.0-bin
+    myspell-af myspell-bg myspell-ca myspell-cs-cz myspell-da myspell-de-at myspell-de-ch myspell-de-de
+    myspell-de-de-oldspell myspell-en-au myspell-en-gb myspell-en-us myspell-en-za myspell-eo myspell-es myspell-et
+    myspell-eu-es myspell-fa myspell-fi myspell-fo myspell-fr myspell-fr-gut myspell-ga myspell-gd myspell-gl-es
+    myspell-gv myspell-he myspell-hr myspell-hu myspell-hy myspell-it myspell-ku myspell-lt myspell-lv myspell-nb
+    myspell-nl myspell-nn myspell-pl myspell-pt-br myspell-pt-pt myspell-ru myspell-sk myspell-sv-se myspell-sw
+    myspell-th myspell-uk openoffice.org-style-crystal openoffice.org-style-tango x-ttcidfont-conf
+  0 packages upgraded, 65 newly installed, 0 to remove and 1 not upgraded.
+  Need to get 82.9MB of archives. After unpacking 230MB will be used.
+  
+Jetzt müssen wir den OOo-Server starten (oder kann es sein, dass er ihn automatisch als Daemon installiert?). 
+Laut http://udk.openoffice.org/python/python-bridge.html kann man ihn manuell wie folgt starten::
+
+
+  lsaffre@lino:~$ soffice "-accept=socket,host=localhost,port=2002;urp;"
+  javaldx: Could not find a Java Runtime Environment!
+  Failed to open display
+  lsaffre@lino:~$ /usr/lib/openoffice/program/soffice.bin X11 error: Can't open display:
+     Set DISPLAY environment variable, use -display option
+     or check permissions of your X-Server
+     (See "man X" resp. "man xhost" for details)
+     
+Logisch, dass er keinen display findet. Mich stört das nicht. 

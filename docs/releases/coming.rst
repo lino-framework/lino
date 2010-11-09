@@ -4,6 +4,23 @@ Coming
 Changes
 -------
 
+- Neues virtuelles Feld :attr:`lino.modlib.dsbe.models.Person.overview`, das im ersten Detail-Tab
+  angezeigt wird, und in dem vor allem Mitteilungen wie "Achtung, Personalausweis läuft am 07.11.10 aus!" 
+  oder "VSB Lehre läuft am 07.11.10 aus!" kommen. 
+  Der genaue Inhalt ist noch zu diskutieren, momentan steht da nur ein erster Vorschlag.
+  
+- Verträge jetzt nicht als Notizen, sondern in eigener Tabelle, denn Verträge haben zusätzliche Felder:
+
+  - start_date, stop_date (Laufzeit von/bis)
+  - signed_date
+  - company (die Firma oder Organisation, mit der der Vertrag
+    abgeschlossen ist.)
+  - contact
+    
+- Es gibt jetzt die Notion von Kontaktpersonen innerhalb einer Organisation. 
+  Pro Kontaktperson kann man auch deren Eigenschaft in der Organisation angeben 
+  (GF, Direktor, Sekretär,...)
+
 
 Bugs fixed
 ----------

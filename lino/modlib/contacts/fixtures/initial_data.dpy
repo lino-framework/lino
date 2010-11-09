@@ -13,9 +13,12 @@
 
 from django.db import models
 
+from django.utils.translation import ugettext as _
+
 from lino.utils.instantiator import Instantiator
 
 companyType = Instantiator('contacts.CompanyType',"abbr name").build
+contactType = Instantiator('contacts.ContactType',"name").build
 
 def objects():
 
@@ -33,3 +36,8 @@ def objects():
     yield companyType('Maison','Maison')
     yield companyType('Fachklinik','Fachklinik')
     yield companyType("Centre d'Accueil d'Urgence","Centre d'Accueil d'Urgence")
+    
+    yield contactType(_("Manager"))
+    yield contactType(_("Director"))
+    yield contactType(_("Secretary"))
+    yield contactType(_("IT Manager"))

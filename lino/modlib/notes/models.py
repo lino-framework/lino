@@ -16,9 +16,10 @@ import sys
 import datetime
 
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
-from django.utils.translation import ugettext as _
+from django.db import IntegrityError
 
 from lino import fields, tools
 from lino.tools import default_language
@@ -33,27 +34,20 @@ TEMPLATE_GROUP = 'notes'
 
 #~ tools.requires_apps('auth','contenttypes','links')
 
-class NoteType(models.Model):
+class NoteType(printable.PrintableType):
+    class Meta:
+        verbose_name = _("note type")
+        verbose_name_plural = _("note types")
     name = models.CharField(max_length=200)
-    build_method = models.CharField(max_length=20,
-      verbose_name=_("Build method"),
-      choices=printable.build_method_choices(),blank=True,null=True)
-    template = models.CharField(max_length=200,
-      verbose_name=_("Template"),
-      blank=True,null=True)
-    #~ build_method = models.CharField(max_length=20,choices=mixins.build_method_choices())
-    #~ template = models.CharField(max_length=200)
     important = models.BooleanField(verbose_name=_("important"),default=False)
     remark = models.TextField(verbose_name=_("Remark"),blank=True)
     
     def __unicode__(self):
         return self.name
         
-    def template_choices(cls,build_method):
-        #~ print cls, 'template_choices for method' ,build_method
-        return printable.template_choices(TEMPLATE_GROUP,build_method)
-    template_choices.simple_values = True
-    template_choices = classmethod(template_choices)
+    #~ def disable_delete(self,request):
+        #~ if self.note_set.count() > 0:
+            #~ return _("Must delete all Note objects before deleting NoteType")
         
     #~ @simple_choices_method
     #~ def template_choices(cls,build_method):
@@ -69,7 +63,11 @@ class NoteType(models.Model):
 
 
 
-class Note(models.Model,printable.Printable):
+class Note(printable.Printable):
+        
+    class Meta:
+        verbose_name = _("note")
+        verbose_name_plural = _("notes")
         
     user = models.ForeignKey("auth.User",blank=True,null=True)
     #~ date = fields.MyDateField()
@@ -78,6 +76,7 @@ class Note(models.Model,printable.Printable):
     #~ owner_id = models.PositiveIntegerField(blank=True,null=True)
     #~ owner = generic.GenericForeignKey('owner_type', 'owner_id')
     type = models.ForeignKey(NoteType,blank=True,null=True,verbose_name=_('Note type'))
+    #,on_delete=RESTRICT)
     subject = models.CharField(max_length=200,blank=True,null=True)
     body = models.TextField(blank=True)
     
@@ -88,10 +87,8 @@ class Note(models.Model,printable.Printable):
     #~ project = models.ForeignKey("projects.Project",blank=True,null=True)
     #~ person = models.ForeignKey("contacts.Person",blank=True,null=True)
     #~ company = models.ForeignKey("contacts.Company",blank=True,null=True)
-    #~ language = models.ForeignKey('countries.Language',default=default_language)
-    language = fields.LanguageField(default=default_language)
-
     #~ url = models.URLField(verify_exists=True,blank=True,null=True)
+    language = fields.LanguageField(default=default_language)
     
     # partner = models.ForeignKey("contacts.Partner",blank=True,null=True)
     
@@ -138,13 +135,13 @@ class Note(models.Model,printable.Printable):
     
 class NoteTypes(reports.Report):
     model = 'notes.NoteType'
-    label = _("Note types")
+    #~ label = _("Note types")
     
 class Notes(reports.Report):
     model = 'notes.Note'
     column_names = "id date user subject * body"
     order_by = "id"
-    label = _("Notes")
+    #~ label = _("Notes")
 
 
 class MyNotes(Notes):

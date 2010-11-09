@@ -43,8 +43,7 @@ from lino.tools import default_language
     
 
 #~ class ContactMixin:
-#~ class Contact(models.Model,mixins.Printable):
-class Contact(models.Model):
+class Addressable(models.Model):
     """
     Implements the :class:`contacts.Contact` convention.
     """
@@ -87,7 +86,7 @@ class Contact(models.Model):
     def address(self):
         "Implements :meth:`contacts.Contact.address`"
         return self.as_address(', ')
-    address.return_type = models.TextField()
+    address.return_type = models.TextField(verbose_name=_("Address"))
     
         
     def as_address(self,linesep="\n<br/>"):
@@ -131,15 +130,13 @@ class Contact(models.Model):
         #~ print "lino.modlib.contacts.Contacts.on_create()"
         #~ instance.language = 
         
-class Contacts(reports.Report):
+class Addressables(reports.Report):
     column_names = "name * id" 
     def get_queryset(self):
         return self.model.objects.select_related('country','city')
   
-  
- 
 
-class Person(Contact):
+class Person(Addressable):
     """
     Implements the :class:`contacts.Person` convention.
     """
@@ -147,6 +144,7 @@ class Person(Contact):
         abstract = True
         app_label = 'contacts'
         verbose_name = _("person")
+        verbose_name_plural = _("persons")
 
     first_name = models.CharField(max_length=200,blank=True,verbose_name=_('First name'))
     last_name = models.CharField(max_length=200,blank=True,verbose_name=_('Last name'))
@@ -163,15 +161,15 @@ class Person(Contact):
         #~ if not self.name:
         l = filter(lambda x:x,[self.last_name,self.first_name,self.title])
         self.name = " ".join(l)
-        super(Contact,self).full_clean(*args,**kw)
+        super(Person,self).full_clean(*args,**kw)
 
 #~ class PersonDetail(ContactDetail):
     #~ datalink = 'contacts.Person'
     #~ box1 = "last_name first_name:15 title:10"
 
-class Persons(Contacts):
+class Persons(Addressables):
     model = "contacts.Person"
-    label = _("Persons")
+    #~ label = _("Persons")
     #~ column_names = "first_name last_name title country id name *"
     can_delete = True
     order_by = "last_name first_name id"
@@ -186,24 +184,33 @@ class CompanyType(models.Model):
     """
     Implements the :class:`contacts.CompanyType` convention.
     """
+    class Meta:
+        verbose_name = _("company type")
+        verbose_name_plural = _("company types")
     #~ id = models.CharField(max_length=10,primary_key=True)
     abbr = models.CharField(max_length=30,verbose_name=_("Abbreviation"))
     name = models.CharField(max_length=200,verbose_name=_("Designation"))
     def __unicode__(self):
         return self.name
         
+    #~ def disable_delete(self,request):
+        #~ if self.company_set.count() > 0:
+            #~ return _("Must delete all Company objects before deleting CompanyType")
+        
 class CompanyTypes(reports.Report):
     model = 'contacts.CompanyType'
-    label = _("Company types")
+    #~ label = _("Company types")
         
   
-class Company(Contact):
+class Company(Addressable):
     """
     Implements the :class:`contacts.Company` convention.
     """
     class Meta:
         abstract = True
         app_label = 'contacts'
+        verbose_name = _("company")
+        verbose_name_plural = _("companies")
     
     vat_id = models.CharField(max_length=200,blank=True)
     type = models.ForeignKey('contacts.CompanyType',blank=True,null=True,verbose_name=_("Company type"))
@@ -211,8 +218,8 @@ class Company(Contact):
     """
     
               
-class Companies(Contacts):
-    label = _("Companies")
+class Companies(Addressables):
+    #~ label = _("Companies")
     #~ column_names = "name country city id address *"
     model = 'contacts.Company'
     order_by = "name"
@@ -221,7 +228,44 @@ class Companies(Contacts):
     
 class CompaniesByCountry(Companies):
     fk_name = 'country'
-    column_names = "city addr1 name country language"
-    order_by = "city addr1"
+    column_names = "city street street_no name language *"
+    order_by = "city street street_no"
     
 
+class ContactType(models.Model):
+    """
+    Implements the :class:`contacts.ContactType` convention.
+    """
+    class Meta:
+        verbose_name = _("contact type")
+        verbose_name_plural = _("contact types")
+    #~ id = models.CharField(max_length=10,primary_key=True)
+    #~ abbr = models.CharField(max_length=30,verbose_name=_("Abbreviation"))
+    name = models.CharField(max_length=200,verbose_name=_("Designation"))
+    
+    def __unicode__(self):
+        return self.name
+
+class ContactTypes(reports.Report):
+    model = 'contacts.ContactType'
+
+
+class Contact(models.Model):
+  
+    person = models.ForeignKey('contacts.Person',verbose_name=_("person"))
+    company = models.ForeignKey('contacts.Company',verbose_name=_("company"))
+    type = models.ForeignKey('contacts.ContactType',blank=True,null=True,
+      verbose_name=_("contact type"))
+
+
+class ContactsByCompany(reports.Report):
+    model = 'contacts.Contact'
+    fk_name = 'company'
+    column_names = 'person type *'
+    
+class ContactsByPerson(reports.Report):
+    model = 'contacts.Contact'
+    fk_name = 'person'
+    column_names = 'company type *'
+    
+        

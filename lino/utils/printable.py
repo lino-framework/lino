@@ -23,10 +23,11 @@ import cStringIO
 import glob
 from fnmatch import fnmatch
 
+from django.db import models
+from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.template.loader import render_to_string, get_template, select_template, Context, TemplateDoesNotExist
 from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.utils.translation import ugettext_lazy as _
 
 try:
     import ho.pisa as pisa
@@ -51,6 +52,36 @@ from lino.tools import default_language
 
 bm_dict = {}
 bm_list = []
+
+
+
+def build_method_choices():
+    return [ (pm.name,pm.label) for pm in bm_list]
+
+    
+    
+def get_template_choices(group,bmname):
+    """
+    :param:bmname: the name of a build method.
+    """
+    pm = bm_dict.get(bmname,None)
+    #~ pm = get_build_method(build_method)
+    if pm is None:
+        raise Exception("%r : invalid print method name." % bmname)
+    #~ glob_spec = os.path.join(pm.templates_dir,'*'+pm.template_ext)
+    top = os.path.join(pm.templates_dir,default_language(),group)
+    l = []
+    for dirpath, dirs, files in os.walk(top):
+        for fn in files:
+            if fnmatch(fn,'*'+pm.template_ext):
+                if len(dirpath) > len(top):
+                    fn = os.path.join(dirpath[len(top)+1:],fn)
+                l.append(fn.decode(sys.getfilesystemencoding()))
+    if not l:
+        lino.log.warning("get_template_choices() : no matches for (%r,%r) in %s",group,bmname,top)
+    return l
+            
+    
         
 
 class PrintAction(actions.RedirectAction):
@@ -74,10 +105,32 @@ class PrintAction(actions.RedirectAction):
     
 
 
-class Printable:
+class PrintableType(models.Model):
+    class Meta:
+        abstract = True
+        
+    build_method = models.CharField(max_length=20,
+      verbose_name=_("Build method"),
+      choices=build_method_choices(),blank=True,null=True)
+    template = models.CharField(max_length=200,
+      verbose_name=_("Template"),
+      blank=True,null=True)
+    #~ build_method = models.CharField(max_length=20,choices=mixins.build_method_choices())
+    #~ template = models.CharField(max_length=200)
+        
+    def template_choices(cls,build_method):
+        #~ print cls, 'template_choices for method' ,build_method
+        return get_template_choices(TEMPLATE_GROUP,build_method)
+    template_choices.simple_values = True
+    template_choices = classmethod(template_choices)
+    
+class Printable(models.Model):
     """
     Mixin for Models whose instances can "print" (generate a document).
     """
+    class Meta:
+        abstract = True
+
 
     def filename_root(self):
         return self._meta.app_label + '.' + self.__class__.__name__
@@ -137,12 +190,13 @@ class BuildMethod:
     template_ext = None
     #~ button_label = None
     label = None
+    templates_name = None
     
     def __init__(self):
         if self.label is None:
             self.label = _(self.__class__.__name__)
         #~ self.templates_dir = os.path.join(settings.PROJECT_DIR,'templates',self.name)
-        self.templates_dir = os.path.join(settings.PROJECT_DIR,'doctemplates',self.name)
+        self.templates_dir = os.path.join(settings.PROJECT_DIR,'doctemplates',self.templates_name or self.name)
 
             
     def __unicode__(self):
@@ -257,18 +311,41 @@ class AppyBuildMethod(SimpleBuildMethod):
   
     """
     Generates .odt files from .odt templates.
+    This method doesn't require OpenOffice nor the Python UNO bridge installed. 
+    Except in some cases like updating fields
+    
+    http://appyframework.org/podRenderingTemplates.html
     """
     name = 'appy'
     target_ext = '.odt'
     #~ button_label = _("ODT")
     template_ext = '.odt'  
+    templates_name = 'appy' # subclasses use the same templates directory
     
     def simple_build(self,elem,tpl,target):
         context = dict(instance=elem)
         from appy.pod.renderer import Renderer
         renderer = Renderer(tpl, context, target)
         renderer.run()
-        
+
+class AppyPdfBuildMethod(AppyBuildMethod):
+    """
+    Generates .pdf files from .odt templates.
+    
+    """
+    name = 'appypdf'
+    target_ext = '.pdf'
+
+class AppyRtfBuildMethod(AppyBuildMethod):
+  
+    """
+    Generates .rtf files from .odt templates.
+    
+    """
+    name = 'appyrtf'
+    target_ext = '.rtf'
+
+
         
 class LatexBuildMethod(BuildMethod):
     """
@@ -312,35 +389,11 @@ if pisa:
     register_build_method(PisaBuildMethod())
 if appy:
     register_build_method(AppyBuildMethod())
+    register_build_method(AppyPdfBuildMethod())
+    register_build_method(AppyRtfBuildMethod())
+    
 if pyratemp:
     register_build_method(RtfBuildMethod())
 register_build_method(LatexBuildMethod())
 
 
-def build_method_choices():
-    return [ (pm.name,pm.label) for pm in bm_list]
-
-    
-    
-def template_choices(group,bmname):
-    """
-    :param:bmname: the name of a build method.
-    """
-    pm = bm_dict.get(bmname,None)
-    #~ pm = get_build_method(build_method)
-    if pm is None:
-        raise Exception("%r : invalid print method name." % bmname)
-    #~ glob_spec = os.path.join(pm.templates_dir,'*'+pm.template_ext)
-    top = os.path.join(pm.templates_dir,default_language(),group)
-    l = []
-    for dirpath, dirs, files in os.walk(top):
-        for fn in files:
-            if fnmatch(fn,'*'+pm.template_ext):
-                if len(dirpath) > len(top):
-                    fn = os.path.join(dirpath[len(top)+1:],fn)
-                l.append(fn.decode(sys.getfilesystemencoding()))
-    if not l:
-        lino.log.warning("template_choices() : no matches for (%r,%r) in %s",group,bmname,top)
-    return l
-            
-    

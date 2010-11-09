@@ -1,0 +1,209 @@
+20101103 -- worked on :doc:`/tickets/closed/2`
+==============================================
+
+Weiter an :doc:`/tickets/closed/2`.
+
+Upps, da hatte ich mir `einen neueren Patch <http://code.djangoproject.com/ticket/7539#comment:58>`_ 
+gefragt, und jetzt ist der auch schon wieder veraltet::
+
+    L:\snapshots\django>patch --dry-run -p0 < 7539.on_delete.r14291.diff
+    patching file `django/db/models/sql/subqueries.py'
+    patching file `django/db/models/base.py'
+    patching file `django/db/models/options.py'
+    patching file `django/db/models/fields/related.py'
+    patching file `django/db/models/__init__.py'
+    patching file `django/db/models/deletion.py'
+    patching file `django/db/models/query.py'
+    patching file `django/db/models/query_utils.py'
+    patching file `django/core/management/validation.py'
+    patching file `django/contrib/admin/util.py'
+    Hunk #2 succeeded at 92 with fuzz 2 (offset -13 lines).
+    Hunk #3 succeeded at 117 (offset -1 lines).
+    Hunk #4 succeeded at 143 (offset -13 lines).
+    patching file `tests/modeltests/invalid_models/models.py'
+    Hunk #1 succeeded at 210 with fuzz 2 (offset 3 lines).
+    Hunk #2 FAILED at 321.
+    1 out of 2 hunks FAILED -- saving rejects to tests/modeltests/invalid_models/models.py.rej
+    patching file `tests/modeltests/delete/tests.py'
+    patching file `tests/modeltests/on_delete/__init__.py'
+    patching file `tests/modeltests/on_delete/models.py'
+    patching file `tests/regressiontests/admin_util/tests.py'
+    patching file `tests/regressiontests/admin_util/models.py'
+
+Aber sowieso ist Carl Meyer inzwischen daran am arbeiten. 
+
+Ob ich seinen work in progress mal testen sollte?
+Dazu muss ich mir zunächst
+`Git installieren <http://help.github.com/win-git-installation/>`_ 
+und Carls Version von Django runterladen::
+
+  L:\snapshots\carljm>git clone git://github.com/carljm/django.git
+  Cloning into django...
+  remote: Counting objects: 82115, done.
+  remote: Compressing objects: 100% (18456/18456), done.
+  remote: Total 82115 (delta 62404), reused 81577 (delta 61973)
+  Receiving objects: 100% (82115/82115), 29.03 MiB | 115 KiB/s, done.
+  Resolving deltas: 100% (62404/62404), done.
+
+In meiner sitecustomize.py::
+
+  #~ site.addsitedir(r"l:\snapshots\django")
+  site.addsitedir(r"l:\snapshots\carljm\django")
+        
+  
+Dann füge ich ein `on_delete=RESTRICT` in :attr:`notes.Note.type` hinzu::
+
+    type = models.ForeignKey(NoteType,
+        blank=True,null=True,
+        verbose_name=_('Note type'),
+        on_delete=RESTRICT)
+        
+Und... nichts funktioniert! Django verhält sich genau wie vorher.
+Ich schätze, dass ich mir aus Carls Git-Hub lediglich den Master runtergeladen habe, 
+statt den Code, an dem er eigentlich gearbeitet hat.
+Denn in meiner Kopie gibt es keine Datei, 
+die den String `on_delete` enthält.
+
+Und die Dokumentation von `git pull und `git merge` hilft mir nicht. 
+Versuche::
+
+  L:\snapshots\carljm\django>git checkout t7539
+  Switched to branch 't7539'
+
+  L:\snapshots\carljm\django>git pull
+  You asked me to pull without telling me which branch you
+  want to merge with, and 'branch.t7539.merge' in
+  your configuration file does not tell me, either. Please
+  specify which branch you want to use on the command line and
+  try again (e.g. 'git pull <repository> <refspec>').
+  See git-pull(1) for details.
+
+  If you often merge with the same branch, you may want to
+  use something like the following in your configuration file:
+
+      [branch "t7539"]
+      remote = <nickname>
+      merge = <remote-ref>
+
+      [remote "<nickname>"]
+      url = <url>
+      fetch = <refspec>
+
+  See git-config(1) for details.
+
+Also momentan bin ich einfach noch zu doof für Git, 
+und mein Ticket #2 muss warten, basta.
+
+Zwischendurch habe ich auch nochmal probiert, 
+meine Django-Testsuite zu benutzen.
+Siehe auch :doc:`/admin/django_tests`.
+
+Ich habe mir in :file:`L:\\snapshots\\django\\tests` 
+eine :file:`runtests.bat` mit folgendem Inhalt gemacht::
+
+  python runtests.py --settings=test_sqlite %*
+
+Aber wenn ich damit meine Django-Kopie teste, dann sagt er mir hunderte Failures::
+
+  ........................................................................................................................
+  ........................................................................................................................
+  ...........................s............................................F...............................................
+  ........................................................................................................................
+  ..................FF...............................................F....................................................
+  ....................................x..............................................................................s....
+  .........F..............................................................................................................
+  ........................................................................................................................
+  ..........................................................s..........FF.......EEEEEFFFF.................F.FFF.E.........
+  ......................l:\snapshots\carljm\django\django\template\defaulttags.py:52: UserWarning: A {% csrf_token %} was
+  used in a template, but the context did not provide the value.  This is usually caused by not using RequestContext.
+    warnings.warn("A {% csrf_token %} was used in a template, but the context did not provide the value.  This is usually
+  caused by not using RequestContext.")
+  ................
+  
+Um irgendwann zu enden::
+
+
+  ======================================================================
+  FAIL: testFlagPost (regressiontests.comment_tests.tests.moderation_view_tests.FlagViewTests)
+  POST the flag view: actually flag the view (nice for XHR)
+  ----------------------------------------------------------------------
+  Traceback (most recent call last):
+    File "L:\snapshots\django\tests\regressiontests\comment_tests\tests\moderation_view_tests.py", line 23, in testFlagPot
+      self.assertEqual(response["Location"], "http://testserver/flagged/?c=%d" % pk)
+  AssertionError: 'http://testserver/accounts/login/?next=/flag/1/' != 'http://testserver/flagged/?c=1'
+
+  ======================================================================
+  FAIL: testFlagPostTwice (regressiontests.comment_tests.tests.moderation_view_tests.FlagViewTests)
+  Users don't get to flag comments more than once.
+  ----------------------------------------------------------------------
+  Traceback (most recent call last):
+    File "L:\snapshots\django\tests\regressiontests\comment_tests\tests\moderation_view_tests.py", line 30, in testFlagPotTwice
+      c = self.testFlagPost()
+    File "L:\snapshots\django\tests\regressiontests\comment_tests\tests\moderation_view_tests.py", line 23, in testFlagPot
+      self.assertEqual(response["Location"], "http://testserver/flagged/?c=%d" % pk)
+  AssertionError: 'http://testserver/accounts/login/?next=/flag/1/' != 'http://testserver/flagged/?c=1'
+
+  ======================================================================
+  FAIL: testFlagSignals (regressiontests.comment_tests.tests.moderation_view_tests.FlagViewTests)
+  Test signals emitted by the comment flag view
+  ----------------------------------------------------------------------
+  Traceback (most recent call last):
+    File "L:\snapshots\django\tests\regressiontests\comment_tests\tests\moderation_view_tests.py", line 64, in testFlagSinals
+      self.testFlagPost()
+    File "L:\snapshots\django\tests\regressiontests\comment_tests\tests\moderation_view_tests.py", line 23, in testFlagPot
+      self.assertEqual(response["Location"], "http://testserver/flagged/?c=%d" % pk)
+  AssertionError: 'http://testserver/accounts/login/?next=/flag/1/' != 'http://testserver/flagged/?c=1'
+
+
+Variante::
+
+  runtests.bat --noinput 2> 20101103.log
+  Creating test database 'default'...
+  Creating test database 'other'...
+  Destroying old test database 'other'...
+
+Okay, diese Log-Datei könnte ich mir bei Gelegenheit mal vornehmen.
+
+TODO: 
+Django Test-Suite ans Laufen kriegen und Git-Benutzung lernen, 
+um bei Diskussionen zu Django-Tickets mitreden zu können.
+
+Eine erste Lösungsidee war, dass ich manuell in jedem Fall eine eigene delete-Methode schreibe::
+
+
+    def delete(self):
+        if self.note_set.count() > 0:
+            raise IntegrityError("Must delete all Note objects before deleting NoteType")
+        super(NoteType, self).delete() 
+        
+
+Also zumindest mit NoteType wird die Panne nicht mehr passieren. 
+Das Gleiche müsste ich noch für viele andere Fälle machen.
+Aber das ist natürlich viel Tipperei im Vergleich zu einem `on_delete=RESTRICT`.
+
+Another problem that must be addressed even if we had `on_delete=RESTRICT` already working:
+
+When a user clicks on the Delete button of a NoteType for which Notes exist, 
+Lino will still ask a Confirmation "Delete 1 rows. Are you sure?". 
+Only when the user confirms, Lino will say that it isn't allowed to delete this record.
+
+This is not optimal. 
+Best would be to disable the Delete button, at least in Detail view.
+Which means that the server should return this information 
+together with the record.
+  
+The Delete button in a grid view cannot be disabled/enabled à priory since there may be 
+several rows selected. 
+The grid would need an URI request where it can ask whether *it is allowed* 
+to delete an object, without actually deleting it... 
+no: if the UI wants to handle this case, it can simply ask for the detailed 
+information of the record in question.
+
+Temporary solution: 
+:attr:`lino.reports.Report.disable_delete` and 
+for example :meth:`notes.NoteType.disable_delete`::
+
+    def disable_delete(self,request):
+        if self.note_set.count() > 0:
+            return _("Must delete all Note objects before deleting NoteType")
+

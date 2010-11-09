@@ -5,5 +5,7 @@
   Auch die konvertierten Detail-Fenster für Aufträge werden schon angezeigt.
   Für Rechnungen muss ich noch konvertieren.
   Eingabe im Detail eines SalesDocument geht noch gar nicht.
+  Dennoch ein inoffizielles Upgrade (ohne Release) auf Tups gemacht, 
+  damit die iGen-Demo wenigstens nicht mehr total versagt.
 
 

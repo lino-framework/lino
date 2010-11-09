@@ -10,13 +10,21 @@ You can log into the demo sites listed below using one of the following user nam
   `user`   `1234`
   ======== ========
 
-Be prepared to see things not working as expected. Don't hesitate to contact us if you have questions, comments, ideas, suggestions.
+Be prepared to see things not working as expected. 
+Don't hesitate to contact us if you have questions, comments, ideas, suggestions.
 
 You may change data, and your changes will remain visible to others until the next release.
 
-All person names and addresses appearing on the demo sites (except possibly data entered by demo users) are fictitious. Any resemblance to real persons, living or dead, is purely coincidental.
+All person names and addresses appearing on the demo sites 
+(except possibly data entered by demo users) are fictitious. 
+Any resemblance to real persons, living or dead, is purely coincidental.
 
-Demos are currently available on only one server, located in Estonia behind a slow Internet connection. So don't expect too much performance. We are looking forward to other people who agree to provide a Lino demo on their server.
+**The demos are slow**:
+Demos are currently available on only one server, located in Estonia behind a slow Internet connection. 
+Note also that :term:`ExtJS` has performance problems when using Firefox with FireBug enabled.
+We currently recommend Google Chrome for being the fastest browser.
+So don't expect too much performance. 
+We are looking forward to other people who agree to provide a Lino demo on their server.
 
 `DSBE <http://dsbe-demo.saffre-rumma.ee>`__
   A tool for social assistants that  
@@ -25,7 +33,6 @@ Demos are currently available on only one server, located in Estonia behind a sl
   :doc:`More about Lino DSBE </dsbe/index>`
 
 `iGen <http://igen-demo.saffre-rumma.ee>`__ 
-  (Currently :doc:`broken </tickets/taken/6>`)
   An accounting tool focussed on     
   sales (invoices and customer       
   payments), and especially on       

@@ -61,6 +61,9 @@ from lino.utils import menus
 from lino.core import actors
 from lino.core.coretools import app_labels, data_elems
 
+from lino.tools import resolve_model, resolve_field, get_app, model_label, get_field, find_config_files
+from lino.reports import DetailLayout
+
 ## The following not only logs diagnostic information, it also has an 
 ## important side effect: it causes django.db.models.loading.cache to 
 ## be populated. This must be done before calling actors.discover().
@@ -78,6 +81,79 @@ if settings.MODEL_DEBUG:
         lino.log.debug("      data_elems : %s",' '.join([de.name for de in data_elems(model)]))
 
 from lino.utils import choosers
+
+
+def discover():
+    
+    lino.log.info("Analyzing Models...")
+    ddhdict = {}
+    for model in models.get_models():
+    
+        model._lino_detail_layouts = []
+        
+        """
+        Naming conventions for :xfile:`*.dtl` files are:
+        
+        - the first detail is called appname.Model.dtl
+        - If there are more Details, then they are called 
+          appname.Model.2.dtl, appname.Model.3.dtl etc.
+        
+        The `sort()` below must remove the filename extension (".dtl") 
+        because otherwise the frist Detail would come last.
+        """
+        dtl_files = find_config_files('%s.%s.*dtl' % (model._meta.app_label,model.__name__)).items()
+        def fcmp(a,b):
+            return cmp(a[0][:-4],b[0][:-4])
+        dtl_files.sort(fcmp)
+        for filename,cd in dtl_files:
+            fn = os.path.join(cd.name,filename)
+            lino.log.info("Loading %s...",fn)
+            s = open(fn).read()
+            dtl = DetailLayout(s,cd,filename)
+            model._lino_detail_layouts.append(dtl)
+            
+        for f, m in model._meta.get_fields_with_model():
+            if isinstance(f,models.ForeignKey):
+                #~ print 20101104, model,f.rel.to
+                if not ddhdict.has_key(f.rel.to):
+                    ddhdict[f.rel.to] = DisableDeleteHandler(model)
+                ddhdict[f.rel.to].add_fk(model,f)
+                
+    for model,ddh in ddhdict.items():
+        if not hasattr(model,'disable_delete'):
+            lino.log.debug("install %s.disable_delete(%s)",
+              model.__name__,ddh)
+            model.disable_delete = ddh.handler()
+
+class DisableDeleteHandler():
+    def __init__(self,model):
+        self.model = model
+        self.fklist = []
+        
+    def add_fk(self,model,fk):
+        self.fklist.append((model,fk))
+        
+    def __str__(self):
+        return ','.join([m.__name__+'.'+fk.name for m,fk in self.fklist])
+        
+    def handler(self):
+        def disable_delete(obj,request):
+            #~ print 20101104, "called %s.disable_delete(%s)" % (obj,self)
+            
+            for m,fk in self.fklist:
+                kw = {}
+                kw[fk.name] = obj
+                n = m.objects.filter(**kw).count()
+                if n:
+                    msg = _("Cannot delete %(self)s because %(count)d %(refs)s refer to it.") % dict(
+                      self=obj,count=n,
+                      refs=m._meta.verbose_name_plural or m._meta.verbose_name+'s')
+                    #~ print msg
+                    return msg
+            return None
+        
+        return disable_delete
+
 
 class LinoSite:
     help_url = "http://code.google.com/p/lino"
@@ -105,6 +181,8 @@ class LinoSite:
         self._setting_up = True
         
         
+        
+        discover()
         
         actors.discover()
         

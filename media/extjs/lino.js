@@ -458,6 +458,12 @@ Lino.delete_selected = function(caller) {
     Lino.notify("Please select at least one record.");
     return;
   };
+  if (recs.length == 1) {
+      if (recs[0].disable_delete) {
+        Lino.notify(recs[0].disable_delete);
+        return;
+      }
+  };
   //~ console.log(recs);
   Ext.MessageBox.show({
     title: 'Confirmation',
@@ -475,9 +481,21 @@ Lino.delete_selected = function(caller) {
   });
 };
 
+Lino.action_handler = function (on_success) {
+  return function (response) {
+    if (response.responseText) {
+      var result = Ext.decode(response.responseText);
+      //~ console.log('Lino.do_action()',action.name,'result is',result);
+      if (result.success) on_success(result);
+      if (result.alert_msg) Ext.MessageBox.alert('Alert',result.alert_msg);
+      if (result.message) Lino.notify(result.message);
+    }
+  }
+}
+
 Lino.do_action = function(caller,action) {
   action.success = function(response) {
-    //~ console.log('Lino.do_action()',response,'action success');
+    console.log('Lino.do_action()',response,'action success');
     if (response.responseText) {
       var result = Ext.decode(response.responseText);
       //~ console.log('Lino.do_action()',action.name,'result is',result);
@@ -962,9 +980,15 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
       //~ var el = cmp.items.get(0).getEl();
       //~ if (el) el.update(record.data[cmp.name])
     //~ });
-    Lino.do_when_visible(cmp.items.get(0),function() {
-      var el = cmp.items.get(0).getEl();
-      if (el) el.update(record.data[cmp.name])
+    var box = cmp.items.get(0);
+    Lino.do_when_visible(box,function() {
+      //~ Lino.notify(record.data[cmp.name]);
+      var el = box.getEl();
+      if (el) {
+        el.update(record.data[cmp.name]);
+        console.log('Lino.FormPanel.load_htmlbox_to()',cmp.name,el);
+      }
+      
     });
   },
   load_picture_to : function(cmp,record) {
@@ -989,18 +1013,6 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
 
 Lino.foo = function () {
   console.log(arguments);
-}
-
-Lino.action_handler = function (on_success) {
-  return function (response) {
-    if (response.responseText) {
-      var result = Ext.decode(response.responseText);
-      //~ console.log('Lino.do_action()',action.name,'result is',result);
-      if (result.success) on_success(result);
-      if (result.alert_msg) Ext.MessageBox.alert('Alert',result.alert_msg);
-      if (result.message) Lino.notify(result.message);
-    }
-  }
 }
 
 

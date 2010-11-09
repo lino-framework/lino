@@ -143,6 +143,7 @@ if len(log.handlers) == 0:
             h.setLevel(logging.DEBUG)
             log.addHandler(h)
         
+NOT_FOUND_MSG = '(not found)'
 
 def using():
     """
@@ -178,6 +179,20 @@ def using():
         yield ("xhtml2pdf",version,"http://www.xhtml2pdf.com")
     except ImportError:
         pass
+
+    try:
+        import appy
+        from appy import version
+        yield ("appy.pod",version.verbose ,"http://appyframework.org/pod.html")
+    except ImportError:
+        pass
+
+    try:
+        import uno
+        version = getattr(uno,'__version__','')
+    except ImportError:
+        version = NOT_FOUND_MSG
+    yield ("Python-UNO",version ,"http://udk.openoffice.org/python/python-bridge.html")
 
 
 def welcome_text():

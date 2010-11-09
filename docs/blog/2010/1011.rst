@@ -14,7 +14,16 @@
 
 Check-In um 16.16 Uhr.
 
-- Worked on :doc:`/tickets/2`
+- Worked on :doc:`/tickets/closed/2`:
+
+Ich will mal den Patch zum :djangoticket:`7539` testen.
+Zuerst ein Upgrade meiner Django-Version von 14001 nach 14140.
+Patch 7539.on_delete.r12380.diff runterladen.
+Aber da sind einige Fehlermeldungen. 
+Bevor ich da selber dran fummle, frage ich lieber 
+`in der Ticket-Diskussion <http://code.djangoproject.com/ticket/7539#comment:57>`_, 
+ob jemand einen neuen Patch machen kann.
+
 
 - Worked on :doc:`/tickets/closed/1`
 

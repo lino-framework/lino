@@ -9,4 +9,5 @@ Administrator's Manual
    printable
    ConfigureNotesTemplates
    tim2lino
+   django_tests
 

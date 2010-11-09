@@ -1,0 +1,17 @@
+20101106
+========
+
+- New models dsbe.Contract (Verträge) and dsbe.ContractType (Vertragsarten)
+
+- Und hier noch eine Revolution in der DB-Struktur: 
+  Renamed contacts.Contact to contacts.Addressable.
+  This probably also solves :doc:`/tickets/7`.
+  Todo: adapt documentation.
+  New models Contact und ContactType (Manager, Director, Secretary, ...)
+  A "contact" now means a person in a company (Kontaktperson).
+  ContactsByCompany, ContactsByPerson
+  
+- Der Overview wird jetzt angezeigt. 
+  Das lag daran, dass die HtmlBox in einen Containers mit layout=form gewrappt wurde.
+  
+  

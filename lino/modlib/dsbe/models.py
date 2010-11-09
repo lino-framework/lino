@@ -37,6 +37,7 @@ from django.db import models
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
+from django.utils.encoding import force_unicode 
 
 import lino
 #~ lino.log.debug(__file__+' : started')
@@ -44,13 +45,14 @@ import lino
 from lino import reports
 #~ from lino import layouts
 from lino.utils import perms
-from lino.utils.printable import Printable
+from lino.utils import printable
 from lino import fields
 from lino.modlib.contacts import models as contacts
 from lino.modlib.notes import models as notes
 from lino.modlib.links import models as links
 from lino.models import get_site_config
 from lino.tools import get_field
+from lino.tools import default_language
 
 #~ from lino.modlib.fields import KNOWLEDGE_CHOICES # for makemessages
 
@@ -78,16 +80,14 @@ RESIDENCE_TYPE_CHOICES = (
 )
 
 
-#~ class PersonPicture(Action)
-class Contact(contacts.Contact):
+class Partner(models.Model):
     """
-    Implements :class:`contacts.Contact`
     """
     class Meta:
         app_label = 'contacts'
         abstract = True
   
-    id = models.AutoField(primary_key=True,verbose_name=_("ID"))
+    id = models.AutoField(primary_key=True,verbose_name=_("Partner #"))
     #~ id = models.CharField(max_length=10,primary_key=True,verbose_name=_("ID"))
     
     is_active = models.BooleanField(verbose_name=_("is active"),default=True)
@@ -105,7 +105,7 @@ class Contact(contacts.Contact):
         
     def save(self,*args,**kw):
         self.before_save()
-        r = super(Contact,self).save(*args,**kw)
+        r = super(Partner,self).save(*args,**kw)
         return r
         
     def before_save(self):
@@ -118,7 +118,7 @@ class Contact(contacts.Contact):
         
 #~ class Person(Contact):
 
-class Person(Contact,Printable):
+class Person(Partner,contacts.Person,printable.Printable):
     """
     Implements :class:`contacts.Person`, 
     but cannot inherit from :mod:`lino.modlib.contacts.models.Person`
@@ -130,17 +130,17 @@ class Person(Contact,Printable):
     class Meta:
         app_label = 'contacts'
         
-    first_name = models.CharField(max_length=200,blank=True,verbose_name=_('First name'))
-    last_name = models.CharField(max_length=200,blank=True,verbose_name=_('Last name'))
-    title = models.CharField(max_length=200,blank=True,verbose_name=_('Title'))
+    #~ first_name = models.CharField(max_length=200,blank=True,verbose_name=_('First name'))
+    #~ last_name = models.CharField(max_length=200,blank=True,verbose_name=_('Last name'))
+    #~ title = models.CharField(max_length=200,blank=True,verbose_name=_('Title'))
         
     def get_queryset(self):
         return self.model.objects.select_related('country','city','user','nationality')
         
-    def full_clean(self,*args,**kw):
-        l = filter(lambda x:x,[self.last_name,self.first_name,self.title])
-        self.name = " ".join(l)
-        super(Person,self).full_clean(*args,**kw)
+    #~ def full_clean(self,*args,**kw):
+        #~ l = filter(lambda x:x,[self.last_name,self.first_name,self.title])
+        #~ self.name = " ".join(l)
+        #~ super(Person,self).full_clean(*args,**kw)
         
     #~ def clean(self):
         #~ l = filter(lambda x:x,[self.last_name,self.first_name,self.title])
@@ -279,25 +279,28 @@ class Person(Contact,Printable):
             if lk.written > 0:
                 return False
         return True
-    is_illiterate.return_type = models.BooleanField(verbose_name=_("illiterate"))
+    is_illiterate.return_type = models.BooleanField(verbose_name=_("Illiterate"))
     
-    #~ def language_knowledge(self):
-        #~ l = []
-        #~ for kn in self.languageknowledge_set.all():
-            #~ if kn.spoken > '1' and kn.written > '1':
-                #~ l.append(_(u"%s (s/w)") % kn.language)
-            #~ elif kn.spoken > '1':
-                #~ l.append(_(u"%s (s)")% kn.language)
-            #~ elif kn.written > '1':
-                #~ l.append(_(u"%s (w)")% kn.language)
-        #~ return u", ".join(l)
-    #~ language_knowledge.return_type = models.TextField(verbose_name=_("Language knowledge"))
+    def overview(self):
+        
+        def qsfmt(qs):
+            s = qs.model._meta.verbose_name_plural + ': '
+            if qs.count():
+                s += ', '.join([unicode(lk) for lk in qs])
+            else:
+                s += '<b>%s</b>' % force_unicode(_("not filled in"))
+            return force_unicode(s)
+        
+        lines = []
+        #~ lines.append('<div>')
+        lines.append(qsfmt(self.languageknowledge_set.all()))
+        lines.append(qsfmt(self.study_set.all()))
+        lines.append(qsfmt(self.contract_set.all()))
+        #~ from django.utils.translation import string_concat
+        #~ lines.append('</div>')
+        return '<br/>'.join(lines)
+    overview.return_type = fields.HtmlBox(verbose_name=_("Overview"))
     
-    #~ def links_by_owner(self):
-        #~ "Generate the content of the 'Links' panel"
-        #~ s = ', '.join([u'<a href="%s">%s</a>' % (lnk.url,lnk.name) for lnk in links.LinksByOwner.request(master_instance=self)])
-        #~ return s
-    #~ links_by_owner.return_type = fields.HtmlBox(verbose_name=_("Links"))
     
 
 
@@ -330,15 +333,20 @@ class Persons(contacts.Persons):
 class PersonsByNationality(Persons):
     app_label = 'contacts'
     fk_name = 'nationality'
-    order_by = "city addr1"
-    column_names = "city addr1 name country language"
-
+    order_by = "city name"
+    column_names = "city addr1 name country language *"
+    
+class PersonsByCity(Persons):
+    app_label = 'contacts'
+    fk_name = 'city'
+    order_by = 'addr1 street street_no street_box'
+    column_names = "addr1 street street_no street_box name language *"
 
 #~ class Persons2(contacts.Persons):
     #~ pass
               
 #~ class Company(Contact,contacts.Company):
-class Company(Contact):
+class Company(Partner,contacts.Addressable,):
   
     """
     Implements :class:`contacts.Company`, 
@@ -364,67 +372,15 @@ COMPANY_TIM_FIELDS = [get_field(Company,n) for n in
   
 class Companies(contacts.Companies):
     app_label = 'contacts'
-    #~ page_layouts = (CompanyDetail,)
     
     def disabled_fields(self,request,obj):
         if settings.DSBE_IS_IMPORTED_PARTNER(obj):
             return COMPANY_TIM_FIELDS
         return []
     
-from lino.modlib.contacts.models import Companies
+#~ from lino.modlib.contacts.models import Companies
 
 
-
-#
-# PROJECT TYPE
-# 
-
-#~ class ProjectType(projects.ProjectType):
-    #~ class Meta:
-        #~ app_label = 'projects'
-
-#~ class ProjectTypes(projects.ProjectTypes):
-    #~ pass
-
-
-#
-# PROJECT
-# 
-
-#~ class Project(projects.Project):
-  
-    #~ person = models.ForeignKey("contacts.Person",blank=True,null=True,verbose_name=_("Person"))
-    #~ company = models.ForeignKey("contacts.Company",blank=True,null=True,verbose_name=_("Company"))
-    #~ why_stopped = models.CharField(max_length=200,blank=True,null=True,verbose_name=_("why stopped"))
-    
-    #~ class Meta:
-        #~ app_label = 'projects'
-        
-        
-#~ class ProjectDetail(projects.ProjectDetail):
-    #~ main = """
-    #~ name:40 type:20
-    #~ started stopped why_stopped
-    #~ person company
-    #~ text:60
-    #~ """
-        
-
-#~ class Projects(projects.Projects):
-    #~ can_view = perms.is_authenticated
-    #~ column_names = "name type person company *"
-    #~ order_by = "name"
-    
-#~ class ProjectsByPerson(Projects):
-    #~ label = _("Projects by Person")
-    #~ fk_name = 'person'
-    #~ order_by = "started"
-
-#~ class ProjectsByCompany(Projects):
-    #~ label = _("Projects by Company")
-    #~ fk_name = 'company'
-    #~ order_by = "started"
-    
     
 #
 # STUDY TYPE
@@ -432,11 +388,14 @@ from lino.modlib.contacts.models import Companies
 class StudyType(models.Model):
     name = models.CharField(max_length=200,verbose_name=_("Designation"))
     #~ text = models.TextField(blank=True,null=True,verbose_name=_("Description"))
+    class Meta:
+        verbose_name = _("study type")
+        verbose_name_plural = _("study types")
     def __unicode__(self):
         return self.name
 
 class StudyTypes(reports.Report):
-    label = _('Study types')
+    #~ label = _('Study types')
     model = StudyType
     order_by = "name"
 
@@ -464,6 +423,9 @@ class StudyTypes(reports.Report):
 
 
 class Study(models.Model):
+    class Meta:
+        verbose_name = _("study or experience")
+        verbose_name_plural = _("Studies & experiences")
     person = models.ForeignKey("contacts.Person",verbose_name=_("Person"))
     type = models.ForeignKey(StudyType,verbose_name=_("Study type"))
     content = models.CharField(max_length=200,blank=True,null=True,verbose_name=_("Study content"))
@@ -487,7 +449,7 @@ class Study(models.Model):
 class StudiesByPerson(reports.Report):
     model = Study
     fk_name = 'person'
-    label = _("Studies & experiences")
+    #~ label = _("Studies & experiences")
     button_label = _("Studies")
     order_by = "started"
     
@@ -497,6 +459,10 @@ class StudiesByPerson(reports.Report):
 #
 
 class LanguageKnowledge(models.Model):
+    class Meta:
+        verbose_name = _("language knowledge")
+        verbose_name_plural = _("language knowledges")
+        
     person = models.ForeignKey("contacts.Person")
     #~ language = models.ForeignKey("countries.Language")
     language = fields.LanguageField()
@@ -517,8 +483,8 @@ class LanguageKnowledge(models.Model):
 class LanguageKnowledgesByPerson(reports.Report):
     model = LanguageKnowledge
     fk_name = 'person'
-    label = _("Language knowledge")
-    button_label = _("Languages")
+    #~ label = _("Language knowledge")
+    #~ button_label = _("Languages")
     column_names = "language spoken written"
   
 #
@@ -539,6 +505,9 @@ class LanguageKnowledgesByPerson(reports.Report):
 # ACTIVITIY (Berufscode)
 #
 class Activity(models.Model):
+    class Meta:
+        verbose_name = _("activity")
+        verbose_name_plural = _("activities")
     name = models.CharField(max_length=20)
     lst104 = models.BooleanField(verbose_name=_("Appears in Listing 104"))
     
@@ -547,7 +516,7 @@ class Activity(models.Model):
 
 class Activities(reports.Report):
     model = Activity
-    label = _('Activities')
+    #~ label = _('Activities')
 
 #~ class ActivitiesByPerson(Activities):
     #~ fk_name = 'activity'
@@ -559,6 +528,10 @@ class Activities(reports.Report):
 # EXCLUSION TYPES (Sperrgründe)
 #
 class ExclusionType(models.Model):
+    class Meta:
+        verbose_name = _("exclusion type")
+        verbose_name_plural = _('exclusion types')
+        
     name = models.CharField(max_length=200)
     
     def __unicode__(self):
@@ -566,12 +539,16 @@ class ExclusionType(models.Model):
 
 class ExclusionTypes(reports.Report):
     model = ExclusionType
-    label = _('Exclusion Types')
+    #~ label = _('Exclusion Types')
     
 #
 # EXCLUSIONS (Arbeitslosengeld-Sperrungen)
 #
 class Exclusion(models.Model):
+    class Meta:
+        verbose_name = _("exclusion")
+        verbose_name_plural = _('exclusions')
+        
     person = models.ForeignKey("contacts.Person")
     type = models.ForeignKey("dsbe.ExclusionType",verbose_name=_("Reason"))
     excluded_from = models.DateField(blank=True,null=True,verbose_name=_("from"))
@@ -586,7 +563,7 @@ class Exclusion(models.Model):
 
 class Exclusions(reports.Report):
     model = Exclusion
-    label = _('Exclusions')
+    #~ label = _('Exclusions')
     
 class ExclusionsByPerson(Exclusions):
     fk_name = 'person'
@@ -597,6 +574,10 @@ class ExclusionsByPerson(Exclusions):
 # COACHING TYPES 
 #
 class CoachingType(models.Model):
+    class Meta:
+        verbose_name = _("coaching type")
+        verbose_name_plural = _('coaching types')
+        
     name = models.CharField(max_length=200)
     
     def __unicode__(self):
@@ -604,12 +585,15 @@ class CoachingType(models.Model):
 
 class CoachingTypes(reports.Report):
     model = CoachingType
-    label = _('Coaching Types')
+    #~ label = _('Coaching Types')
     
 #
 # COACHINGS
 #
 class Coaching(models.Model):
+    class Meta:
+        verbose_name = _("coaching")
+        verbose_name_plural = _('coachings')
     person = models.ForeignKey("contacts.Person",verbose_name=_("Client"))
     coach = models.ForeignKey("auth.User",verbose_name=_("Coach"))
     type = models.ForeignKey("dsbe.CoachingType",verbose_name=_("Coaching type"))
@@ -618,9 +602,60 @@ class Coaching(models.Model):
 
 class Coachings(reports.Report):
     model = Coaching
-    label = _('Coaches')
     
 class CoachingsByPerson(Coachings):
     fk_name = 'person'
-    column_names = 'coach type remark'
+    column_names = 'coach type remark *'
+    label = _('Coaches')
 
+#
+# CONTRACT TYPES 
+#
+class ContractType(printable.PrintableType):
+    class Meta:
+        verbose_name = _("contract type")
+        verbose_name_plural = _('contract types')
+        
+    name = models.CharField(max_length=200)
+    
+    def __unicode__(self):
+        return unicode(self.name)
+
+class ContractTypes(reports.Report):
+    model = ContractType
+    
+#
+# CONTRACTS
+#
+class Contract(printable.Printable):
+    class Meta:
+        verbose_name = _("contract")
+        verbose_name_plural = _('contracts')
+    client = models.ForeignKey("contacts.Person",verbose_name=_("Client"))
+    company = models.ForeignKey("contacts.Company",verbose_name=_("Company"))
+    contact = models.ForeignKey("contacts.Contact",verbose_name=_("represented by"))
+    user = models.ForeignKey("auth.User",verbose_name=_("Coach"))
+    type = models.ForeignKey("dsbe.ContractType",verbose_name=_("Contract type"))
+    applies_from = models.DateField(blank=True,null=True,verbose_name=_("applies from"))
+    applies_until = models.DateField(blank=True,null=True,verbose_name=_("applies until"))
+    language = fields.LanguageField(default=default_language)
+    
+    def company_contact_choices(self,company):
+        return company.contact_set.all()
+    
+
+class Contracts(reports.Report):
+    model = Contract
+    
+class ContractsByPerson(Contracts):
+    fk_name = 'client'
+    column_names = 'company applies_from applies_until user type *'
+
+class ContractsByCompany(Contracts):
+    fk_name = 'company'
+    column_names = 'client applies_from applies_until user type *'
+
+class ContractsByType(Contracts):
+    fk_name = 'type'
+    column_names = "applies_from client company user *"
+    order_by = "applies_from"
