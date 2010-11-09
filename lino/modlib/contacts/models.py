@@ -253,10 +253,23 @@ class ContactTypes(reports.Report):
 class Contact(models.Model):
   
     person = models.ForeignKey('contacts.Person',verbose_name=_("person"))
-    company = models.ForeignKey('contacts.Company',verbose_name=_("company"))
+    company = models.ForeignKey('contacts.Company',blank=True,null=True,
+      verbose_name=_("company"))
     type = models.ForeignKey('contacts.ContactType',blank=True,null=True,
       verbose_name=_("contact type"))
 
+    def __unicode__(self):
+        if self.person_id is None:
+            return super(Contact,self).__unicode__()
+        if self.type is None:
+            return unicode(self.person)
+        return u"%s (%s)" % (self.person, self.type)
+        #~ return unicode(self.person)
+        #~ if self.company_id is not None:
+            #~ if self.person_id is not None:
+                #~ return u"%s (%s)" % (self.company, self.person)
+            #~ return unicode(self.company)
+        
 
 class ContactsByCompany(reports.Report):
     model = 'contacts.Contact'

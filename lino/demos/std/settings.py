@@ -32,7 +32,11 @@ USER_INTERFACES = [
   'lino.ui.extjs'
   ]
 DATA_DIR = join(PROJECT_DIR,"data")
-    
+APPY_PARAMS = dict(ooPort=8100)
+try:
+    import uno
+except ImportError:
+    APPY_PARAMS.update(pythonWithUnoPath=r'C:\PROGRA~1\OPENOF~1.ORG\program\python.exe')
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG

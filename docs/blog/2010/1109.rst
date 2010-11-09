@@ -1,5 +1,6 @@
-20101109
-========
+20101109 First success with :class:`lino.utils.printable.AppyPdfBuildMethod`
+============================================================================
+
 
 http://appyframework.org/podRenderingTemplates.html
 
@@ -42,7 +43,7 @@ Jetzt müssen wir den OOo-Server starten (oder kann es sein, dass er ihn automat
 Laut http://udk.openoffice.org/python/python-bridge.html kann man ihn manuell wie folgt starten::
 
 
-  lsaffre@lino:~$ soffice "-accept=socket,host=localhost,port=2002;urp;"
+  lsaffre@lino:~$ soffice "-accept=socket,host=localhost,port=8100;urp;"
   javaldx: Could not find a Java Runtime Environment!
   Failed to open display
   lsaffre@lino:~$ /usr/lib/openoffice/program/soffice.bin X11 error: Can't open display:
@@ -51,3 +52,43 @@ Laut http://udk.openoffice.org/python/python-bridge.html kann man ihn manuell wi
      (See "man X" resp. "man xhost" for details)
      
 Logisch, dass er keinen display findet. Mich stört das nicht. 
+
+Änderung am Rande:
+
+- In `lino.thanks_to` wurde appy.pod noch gar nicht erwähnt. Jetzt wohl.
+
+Upgrade Lino auf DSBE. Aber da ist nun folgendes Problem:
+
+- Bei :menuselection:`Kontakte --> Personen` kommt nichts, 
+  und in der JS-Console meldet er 
+  `Uncaught TypeError: Cannot read property 'id' of undefined`.
+
+Das hat aber Zeit. Zuerst will ich jetzt mal die Uno-Bridge auf 
+meiner Development-Version (unter Windows) ans laufen kriegen.
+Theoretisch ist die ja schon mit OOo dabei, aber benötigt ihre 
+eigene Python-Version, die mit OOo mitgeliefert wird. 
+(Was für ein Unding. Im OOo-Verzeichnis stehen tatsächlich zwei komplette Python-Versionen mit drin...)
+Aber zum Glück macht appy.pod mir die Sache scheinbar leicht:
+einfach nur einen Parameter `pythonWithUnoPath` im Renderer angeben.
+Also zunächst mal folgende Änderung:
+
+- Neuer Parameter :setting:`APPY_PARAMS`.
+  Dessen Standardwert wird in :mod:`lino.demos.std.settings` ermittelt und müsste 
+  theoretisch in allen mir bekannten Fällen reichen.
+
+Upps, ein kleiner Bug:
+
+- Ein Feld `build_method` gibt es ja jetzt sowohl in NoteType als auch in ContractType. 
+  Wird ererbt von PrintableType. 
+  Aber für beide Felder ist die Auswahlliste leer. 
+  
+Das lag an der Reihenfolge der Definitionen in :mod:`lino.utils.printable`. 
+Klasse PrintableType darf erst definiert werden, wenn die Liste der PrintMethods 
+gefüllt ist. 
+Neue Unterklassen AppyPdfBuildMethod und AppyRtfBuildMethod. 
+Mehrere kleine Änderungen, weil alle Appy-Build-Methoden ihre templates 
+aus dem gleichen Verzeichnis holen sollen.
+
+17 Uhr : erste Erfolge mit AppyPdfBuildMethod!
+
+Das manuelle Erfassen von Verträgen is noch umständlich...

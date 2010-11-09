@@ -1,0 +1,7 @@
+:label_align: top
+
+main =
+    id type language
+    company contact
+    applies_from applies_until
+    user

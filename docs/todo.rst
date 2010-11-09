@@ -9,6 +9,14 @@ for which I hope for help from other people.
 Short-term
 ----------
 
+- Verträge erfassen ist noch umständlich:
+
+  - Context menu mit den row actions wieder einbauen.
+  - Im context menu auf der Zelle eines foreign key sollte man in dessen Detail springen können.
+    Damit man Kontaktpersonen einer Firma eintragen kann.
+    
+- Im Hauptmenü schreibt er "Companys" statt "Companies".
+
 - Im Hauptmenü eine anklickbare Liste aller Verträge und eingescannten Dokumente dieses Benutzers anzeigen, 
   die demnächst ablaufen. 
   Auf Verträgen und eingescannten Dokumenten ein Ankreuzfeld "Erinnerung im Hauptmenü anzeigen", 
@@ -23,7 +31,10 @@ Short-term
   (Das hätte möglicherweise später als Folge, dass das Hauptmenü gar kein Pulldown-Menü mehr zu sein braucht, 
   sondern eine für Webseiten klassischere Ansicht benutzen.)
   
-- OOo-Server ans Laufen kriegen um .pdf-Dateien zu generieren.
+- OOo-Server und watch_tim automatisch nach reboot starten:
+
+  | http://www.debian-administration.org/articles/28
+  | http://girasoli.org/?p=120
 
 - WebDAV installieren und testen, wie das Bearbeiten von RTF- und ODT-Dokumenten in der Praxis läuft.
 
@@ -68,6 +79,11 @@ Medium-term
 - Fenstertitel ändern bzw. anzeigen, welche GC momentan aktiv ist.
 
 - Das Passfoto in dsbe.PersonDetail ist manchmal verzerrt oder noch nicht korrekt ausgeschnitten.
+
+- Was soll passieren wenn man Contract.company ändert, nachdem Contract.contact schon ausgefüllt ist?
+  Automatisch neuen Kontakt mit gleicher Person und Eigenschaft für die andere Firma anlegen?
+  ValidationError?
+  Am ehesten wäre: contact auf leer setzen.
 
 Long-term
 ---------

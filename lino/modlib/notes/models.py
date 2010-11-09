@@ -30,7 +30,7 @@ from lino.utils import printable
 from django.conf import settings
 #~ from lino import choices_method, simple_choices_method
 
-TEMPLATE_GROUP = 'notes'
+#~ TEMPLATE_GROUP = 'notes'
 
 #~ tools.requires_apps('auth','contenttypes','links')
 
@@ -63,7 +63,7 @@ class NoteType(printable.PrintableType):
 
 
 
-class Note(printable.Printable):
+class Note(printable.TypedPrintable):
         
     class Meta:
         verbose_name = _("note")
@@ -106,36 +106,12 @@ class Note(printable.Printable):
         if u is not None:
             self.user = u
         
-    #~ def get_build_method(self):
-        #~ if self.type is None:
-            #~ print 'get_build_method',self,'type is None'
-            #~ return None
-        #~ if not self.type.build_method:
-            #~ print 'get_build_method',self,' : type ', self.type, 'has no build_method'
-            #~ return None
-        #~ return mixins.get_build_method(self.type.build_method)
-        
-    def get_build_method(self):
-        if self.type is None:
-            return None
-        return self.type.build_method
-        
-    def get_print_templates(self,pm):
-        if self.type is None:
-            return printable.Printable.get_print_templates(self,pm)
-            #[self.filename_root() + pm.template_ext]
-        assert self.type.template.endswith(pm.template_ext)
-        return [ TEMPLATE_GROUP +'/'+self.type.template ]
-        
-    def get_print_language(self,pm):
-        return self.language
-
-
 
     
 class NoteTypes(reports.Report):
     model = 'notes.NoteType'
     #~ label = _("Note types")
+    column_names = 'name build_method template *'
     
 class Notes(reports.Report):
     model = 'notes.Note'

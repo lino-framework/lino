@@ -46,135 +46,13 @@ except ImportError:
     pyratemp = None
         
 import lino
+#~ from lino import reports
 from lino import actions
 from lino.tools import default_language
 
 
 bm_dict = {}
 bm_list = []
-
-
-
-def build_method_choices():
-    return [ (pm.name,pm.label) for pm in bm_list]
-
-    
-    
-def get_template_choices(group,bmname):
-    """
-    :param:bmname: the name of a build method.
-    """
-    pm = bm_dict.get(bmname,None)
-    #~ pm = get_build_method(build_method)
-    if pm is None:
-        raise Exception("%r : invalid print method name." % bmname)
-    #~ glob_spec = os.path.join(pm.templates_dir,'*'+pm.template_ext)
-    top = os.path.join(pm.templates_dir,default_language(),group)
-    l = []
-    for dirpath, dirs, files in os.walk(top):
-        for fn in files:
-            if fnmatch(fn,'*'+pm.template_ext):
-                if len(dirpath) > len(top):
-                    fn = os.path.join(dirpath[len(top)+1:],fn)
-                l.append(fn.decode(sys.getfilesystemencoding()))
-    if not l:
-        lino.log.warning("get_template_choices() : no matches for (%r,%r) in %s",group,bmname,top)
-    return l
-            
-    
-        
-
-class PrintAction(actions.RedirectAction):
-    """Note that this action should rather be called 
-    'Open a printable document' than 'Print'.
-    When Lino one day supports server-side printing, then we'll may have to rename 
-    this class.
-    """
-    name = 'print'
-    label = _('Print')
-    callable_from = None
-    needs_selection = True
-  
-    def get_target_url(self,elem):
-        pm = bm_dict.get(elem.get_build_method(),None)
-        if pm is None:
-            raise Exception("%r has no build_method (%r)" % (elem,self))
-        pm.build(elem)
-        return settings.MEDIA_URL + "/".join(pm.get_target_parts(elem))
-        
-    
-
-
-class PrintableType(models.Model):
-    class Meta:
-        abstract = True
-        
-    build_method = models.CharField(max_length=20,
-      verbose_name=_("Build method"),
-      choices=build_method_choices(),blank=True,null=True)
-    template = models.CharField(max_length=200,
-      verbose_name=_("Template"),
-      blank=True,null=True)
-    #~ build_method = models.CharField(max_length=20,choices=mixins.build_method_choices())
-    #~ template = models.CharField(max_length=200)
-        
-    def template_choices(cls,build_method):
-        #~ print cls, 'template_choices for method' ,build_method
-        return get_template_choices(TEMPLATE_GROUP,build_method)
-    template_choices.simple_values = True
-    template_choices = classmethod(template_choices)
-    
-class Printable(models.Model):
-    """
-    Mixin for Models whose instances can "print" (generate a document).
-    """
-    class Meta:
-        abstract = True
-
-
-    def filename_root(self):
-        return self._meta.app_label + '.' + self.__class__.__name__
-        
-    def get_print_language(self,pm):
-        return default_language()
-        
-    def get_print_templates(self,pm):
-        """Return a list of filenames of templates for the specified print method.
-        Note that for subclasses of :class:`SimpleBuildMethod` this list must either 
-        be empty (which means "this item is not printable") or contain a single 
-        element.
-        """
-        return [self.filename_root() + pm.template_ext]
-          
-    def get_last_modified_time(self):
-        """Return a model-specific timestamp that expresses when 
-        this model instance has been last updated. If 
-        
-        """
-        return None
-        
-    def must_rebuild_target(self,filename,pm):
-        """Default implementation to decide, when the target document already exists, 
-        whether it should be built again. The default implementation is to call
-        :meth:`get_last_modified_time` and 
-        """
-        last_modified = self.get_last_modified_time() 
-        if last_modified is None:
-            return True
-        mtime = os.path.getmtime(filename)
-        #~ st = os.stat(filename)
-        #~ mtime = st.st_mtime
-        mtime = datetime.datetime.fromtimestamp(mtime)
-        if mtime >= last_modified:
-            return False
-        return True
-      
-    def get_build_method(self):
-        ## e.g. lino.modlib.notes.Note overrides this
-        return 'rtf'
-        #~ return 'pisa'
-        #~ return 'pisa'
-        
 
 
 class BuildMethod:
@@ -196,6 +74,8 @@ class BuildMethod:
         if self.label is None:
             self.label = _(self.__class__.__name__)
         #~ self.templates_dir = os.path.join(settings.PROJECT_DIR,'templates',self.name)
+        #~ if self.templates_name is None:
+            #~ self.templates_name = self.name
         self.templates_dir = os.path.join(settings.PROJECT_DIR,'doctemplates',self.templates_name or self.name)
 
             
@@ -223,6 +103,7 @@ class BuildMethod:
             if not elem.must_rebuild_target(filename,self):
                 lino.log.debug("%s : %s -> %s is up to date",self,elem,filename)
                 return
+            lino.log.debug("%s : %s -> %s is obsolete",self,elem,filename)
             os.remove(filename)
         else:
             dirname = os.path.dirname(filename)
@@ -301,7 +182,7 @@ class SimpleBuildMethod(BuildMethod):
                 elem.__class__.__name__,tpls))
                 
         lang = elem.get_print_language(self)
-        tpl = os.path.join(self.templates_dir,lang,tpls[0])
+        tpl = os.path.normpath(os.path.join(self.templates_dir,lang,tpls[0]))
         self.simple_build(elem,tpl,target)
         
     def simple_build(self,elem,tpl,target):
@@ -325,8 +206,11 @@ class AppyBuildMethod(SimpleBuildMethod):
     def simple_build(self,elem,tpl,target):
         context = dict(instance=elem)
         from appy.pod.renderer import Renderer
-        renderer = Renderer(tpl, context, target)
+        renderer = Renderer(tpl, context, target,**settings.APPY_PARAMS)
+        lino.log.debug("appy.pod render %s -> %s",tpl,target)
         renderer.run()
+
+
 
 class AppyPdfBuildMethod(AppyBuildMethod):
     """
@@ -396,4 +280,170 @@ if pyratemp:
     register_build_method(RtfBuildMethod())
 register_build_method(LatexBuildMethod())
 
+#~ print "%d build methods:" % len(bm_list)
+#~ for bm in bm_list:
+    #~ print bm
 
+
+def build_method_choices():
+    return [ (pm.name,pm.label) for pm in bm_list]
+
+    
+    
+def get_template_choices(group,bmname):
+    """
+    :param:bmname: the name of a build method.
+    """
+    pm = bm_dict.get(bmname,None)
+    #~ pm = get_build_method(build_method)
+    if pm is None:
+        raise Exception("%r : invalid print method name." % bmname)
+    #~ glob_spec = os.path.join(pm.templates_dir,'*'+pm.template_ext)
+    top = os.path.join(pm.templates_dir,default_language(),group)
+    l = []
+    for dirpath, dirs, files in os.walk(top):
+        for fn in files:
+            if fnmatch(fn,'*'+pm.template_ext):
+                if len(dirpath) > len(top):
+                    fn = os.path.join(dirpath[len(top)+1:],fn)
+                l.append(fn.decode(sys.getfilesystemencoding()))
+    if not l:
+        lino.log.warning("get_template_choices() : no matches for (%r,%r) in %s",group,bmname,top)
+    return l
+            
+    
+        
+
+class PrintAction(actions.RedirectAction):
+    """Note that this action should rather be called 
+    'Open a printable document' than 'Print'.
+    When Lino one day supports server-side printing, then we'll may have to rename 
+    this class.
+    """
+    name = 'print'
+    label = _('Print')
+    callable_from = None
+    needs_selection = True
+  
+    def get_target_url(self,elem):
+        pm = bm_dict.get(elem.get_build_method(),None)
+        if pm is None:
+            raise Exception("%r has no build_method (%r)" % (elem,self))
+        pm.build(elem)
+        return settings.MEDIA_URL + "/".join(pm.get_target_parts(elem))
+        
+    
+
+
+class PrintableType(models.Model):
+    """
+    Default value for `templates_group` is the model's `app_label`.
+    """
+    templates_group = None
+    
+    class Meta:
+        abstract = True
+        
+    build_method = models.CharField(max_length=20,
+      verbose_name=_("Build method"),
+      choices=build_method_choices(),blank=True,null=True)
+    template = models.CharField(max_length=200,
+      verbose_name=_("Template"),
+      blank=True,null=True)
+    #~ build_method = models.CharField(max_length=20,choices=mixins.build_method_choices())
+    #~ template = models.CharField(max_length=200)
+    
+    def get_templates_group(self):
+        return self.templates_group or self._meta.app_label
+        
+    def template_choices(cls,build_method):
+        #~ print cls, 'template_choices for method' ,build_method
+        #~ bm = bm_dict[build_method]
+        return get_template_choices(cls.get_templates_group(),build_method)
+        #~ return get_template_choices(TEMPLATE_GROUP,build_method)
+    template_choices.simple_values = True
+    template_choices = classmethod(template_choices)
+    
+class Printable(models.Model):
+    """
+    Mixin for Models whose instances can "print" (generate a document).
+    """
+    class Meta:
+        abstract = True
+
+
+    def filename_root(self):
+        return self._meta.app_label + '.' + self.__class__.__name__
+        
+    def get_print_language(self,pm):
+        return default_language()
+        
+    def get_print_templates(self,pm):
+        """Return a list of filenames of templates for the specified print method.
+        Note that for subclasses of :class:`SimpleBuildMethod` this list must either 
+        be empty (which means "this item is not printable") or contain a single 
+        element.
+        """
+        return [self.filename_root() + pm.template_ext]
+          
+    def get_last_modified_time(self):
+        """Return a model-specific timestamp that expresses when 
+        this model instance has been last updated. 
+        Default is to return None which means that existing target 
+        files never get overwritten.
+        
+        """
+        return None
+        
+    def must_rebuild_target(self,filename,pm):
+        """When the target document already exists, 
+        return True if it should be built again (overriding the existing file. 
+        The default implementation is to call :meth:`get_last_modified_time` 
+        and return True if it is newer than the timestamp of the file.
+        """
+        last_modified = self.get_last_modified_time()
+        if last_modified is None:
+            return False
+        mtime = os.path.getmtime(filename)
+        #~ st = os.stat(filename)
+        #~ mtime = st.st_mtime
+        mtime = datetime.datetime.fromtimestamp(mtime)
+        if mtime >= last_modified:
+            return False
+        return True
+      
+    def get_build_method(self):
+        # TypedPrintable  overrides this
+        #~ return 'rtf'
+        return 'pisa'
+        #~ return 'pisa'
+        
+
+class TypedPrintable(Printable):
+    """
+    A TypedPrintable model must define itself a field `type` which is a ForeignKey 
+    to a Model that implements PrintableType.
+    """
+  
+    class Meta:
+        abstract = True
+        
+    def get_build_method(self):
+        if self.type is None:
+            return super(TypedPrintable,self).get_build_method()
+        return self.type.build_method
+        
+    def get_print_templates(self,pm):
+        if self.type is None:
+            return super(TypedPrintable,self).get_print_templates(self,pm)
+            #[self.filename_root() + pm.template_ext]
+        assert self.type.template.endswith(pm.template_ext)
+        #~ return [ TEMPLATE_GROUP +'/'+self.type.template ]
+        return [ self.type.get_templates_group() +'/'+self.type.template ]
+        
+    def get_print_language(self,pm):
+        return self.language
+
+
+#~ class PrintableTypes(reports.Report):
+    #~ column_names = 'name build_method template *'

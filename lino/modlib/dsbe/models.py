@@ -612,6 +612,7 @@ class CoachingsByPerson(Coachings):
 # CONTRACT TYPES 
 #
 class ContractType(printable.PrintableType):
+    templates_group = 'contracts'
     class Meta:
         verbose_name = _("contract type")
         verbose_name_plural = _('contract types')
@@ -623,25 +624,35 @@ class ContractType(printable.PrintableType):
 
 class ContractTypes(reports.Report):
     model = ContractType
+    column_names = 'name build_method template *'
     
 #
 # CONTRACTS
 #
-class Contract(printable.Printable):
+class Contract(printable.TypedPrintable):
     class Meta:
         verbose_name = _("contract")
         verbose_name_plural = _('contracts')
+        
     client = models.ForeignKey("contacts.Person",verbose_name=_("Client"))
     company = models.ForeignKey("contacts.Company",verbose_name=_("Company"))
-    contact = models.ForeignKey("contacts.Contact",verbose_name=_("represented by"))
+    contact = models.ForeignKey("contacts.Contact",blank=True,null=True,
+      verbose_name=_("represented by"))
     user = models.ForeignKey("auth.User",verbose_name=_("Coach"))
     type = models.ForeignKey("dsbe.ContractType",verbose_name=_("Contract type"))
     applies_from = models.DateField(blank=True,null=True,verbose_name=_("applies from"))
     applies_until = models.DateField(blank=True,null=True,verbose_name=_("applies until"))
     language = fields.LanguageField(default=default_language)
     
-    def company_contact_choices(self,company):
-        return company.contact_set.all()
+    @classmethod
+    def contact_choices(cls,company):
+        if company is not None:
+            return company.contact_set.all()
+        return []
+        #~ print 'Contract.contact_choices for', company
+        #~ choices = company.contact_set.all()
+        #~ print 'Contract.contact_choices returns', choices
+        #~ return choices
     
 
 class Contracts(reports.Report):

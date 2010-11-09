@@ -6,8 +6,10 @@ syntax: glob
 *~
 *.dpyc
 *.log
+*.zip
 build
 dist
+*\SciTE.session
 
 lino\demos\*\media\cache
 lino\demos\*\data
