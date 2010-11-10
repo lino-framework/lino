@@ -132,8 +132,8 @@ def objects():
     yield noteType((u"Anwesenheitsbescheinigung"),build_method='rtf',template=u'Anwesenheitsbescheinigung.rtf')
     
     contractType = Instantiator('dsbe.ContractType',"name").build
-    yield contractType(u"Konvention 60§7",build_method='rtf',template=u'Konvention Sozialökonomie.rtf')
-    yield contractType(u"VSE Ausbildung")
+    yield contractType(u"Konvention 60§7",build_method='appypdf',template=u'Konvention Sozialökonomie.odt')
+    yield contractType(u"VSE Ausbildung",build_method='appy',template=u'Konvention Sozialökonomie.odt')
     yield contractType(u"VSE Arbeitssuche")
     yield contractType(u"VSE Integration")
     yield contractType(u"VSE Lehre")
@@ -193,9 +193,9 @@ def objects():
     yield excltype(u"ONEM-Auflagen nicht erfüllt")
     
     linkType = Instantiator('links.LinkType',"name").build
-    yield studyType(u"Personalausweis")
-    yield studyType(u"Aufenthaltserlaubnis")
-    yield studyType(u"Arbeitserlaubnis")
-    yield studyType(u"Vertrag")
+    yield linkType(u"Personalausweis")
+    yield linkType(u"Aufenthaltserlaubnis")
+    yield linkType(u"Arbeitserlaubnis")
+    yield linkType(u"Vertrag")
     
     

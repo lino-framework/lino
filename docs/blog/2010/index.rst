@@ -194,6 +194,7 @@ As long as I am the only Lino developer, I'll write it mostly in German.
   |br|
   08
   :doc:`09 <1109>`
+  :doc:`10 <1110>`
   
 
 .. |Dec| replace::  **December**

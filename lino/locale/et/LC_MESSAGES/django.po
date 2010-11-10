@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-18 18:53+0100\n"
+"POT-Creation-Date: 2010-11-10 14:50+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -78,6 +78,11 @@ msgstr ""
 msgid "Invalid value %(value). Must be one of (%(values)s)"
 msgstr ""
 
+#: .\lino_site.py:148
+#, python-format
+msgid "Cannot delete %(self)s because %(count)d %(refs)s refer to it."
+msgstr ""
+
 #: .\models.py:33
 msgid "The company that runs this site"
 msgstr ""
@@ -94,7 +99,7 @@ msgstr ""
 msgid "~Site"
 msgstr ""
 
-#: .\reports.py:380
+#: .\reports.py:369
 #, python-format
 msgid "User %(user)s cannot view %(report)s."
 msgstr ""
@@ -119,7 +124,7 @@ msgstr ""
 msgid "~Configure"
 msgstr ""
 
-#: .\demos\dsbe\lino_settings.py:55 .\demos\std\lino_settings.py:43
+#: .\demos\dsbe\lino_settings.py:58 .\demos\std\lino_settings.py:43
 msgid "E~xplorer"
 msgstr ""
 
@@ -127,52 +132,58 @@ msgstr ""
 msgid "~Projects"
 msgstr ""
 
-#: .\ui\extjs\ext_elems.py:508
+#: .\ui\extjs\ext_elems.py:513
 #, python-format
 msgid "Select a %s..."
 msgstr ""
 
-#: .\ui\extjs\ext_store.py:72
+#: .\ui\extjs\ext_store.py:77
 #, python-format
 msgid "Existing primary key value %r may not be modified."
 msgstr ""
 
-#: .\ui\extjs\ext_store.py:255
+#: .\ui\extjs\ext_store.py:290
 #, python-format
 msgid "%r (invalid choice)"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:409
+#: .\ui\extjs\ext_ui.py:439
 msgid "Console"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:513
+#: .\ui\extjs\ext_ui.py:543
 #, python-format
 msgid "Welcome on Lino server %(title)r, user %(user)s"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:540
+#: .\ui\extjs\ext_ui.py:578
 #, python-format
-msgid ""
-"There was a problem while saving your data:\n"
-"%s"
+msgid "%s has been saved."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:549 .\ui\extjs\ext_ui.py:572
+#: .\ui\extjs\ext_ui.py:587 .\ui\extjs\ext_ui.py:610
 #, python-format
 msgid "User %(user)s cannot configure %(report)s."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:739
+#: .\ui\extjs\ext_ui.py:799
 #, python-format
 msgid "Insert into %s..."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:843
+#: .\ui\extjs\ext_ui.py:905
 #, python-format
 msgid "Choices for %s"
 msgstr ""
 
-#: .\utils\mixins.py:79
+#: .\utils\printable.py:324
 msgid "Print"
+msgstr ""
+
+#: .\utils\printable.py:348
+msgid "Build method"
+msgstr ""
+
+#: .\utils\printable.py:351
+msgid "Template"
 msgstr ""

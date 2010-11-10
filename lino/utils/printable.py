@@ -326,7 +326,10 @@ class PrintAction(actions.RedirectAction):
     needs_selection = True
   
     def get_target_url(self,elem):
-        pm = bm_dict.get(elem.get_build_method(),None)
+        bmname = elem.get_build_method()
+        if not bmname:
+            return None
+        pm = bm_dict.get(bmname,None)
         if pm is None:
             raise Exception("%r has no build_method (%r)" % (elem,self))
         pm.build(elem)

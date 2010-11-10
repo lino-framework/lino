@@ -1,0 +1,25 @@
+20101110
+========
+
+- Opened new ticket :doc:`/tickets/14`
+
+- Deutsche Übersetzungen aktualisiert. Da waren inzwischen viele Löcher entstanden.
+
+- Das Kontextmenü in der Grid ist wieder da.
+  Ich habe etwas Zeit gebraucht um zu kapieren, dass ich im Event-Handler nicht 
+  `grid.getView().focusCell(row,col);` machen muss, sondern 
+  `grid.getSelectionModel().select(row,col)`.
+
+- Lino wird spätestens am 1. Januar von saffre-rumma *.ee* nach saffre-rumma *.net* umziehen.
+
+- In einer Grid sind Zellen eines foreign key jetzt anklickbar 
+  (öffnen ein neues Browserfenster mit dem Detail des referenzierten Objekts).
+  Damit man z.B. Kontaktpersonen einer Firma eintragen kann, 
+  wenn man den Vertrag schon begonnen hat einzugeben.
+    
+- Neues abstract model :class:`lino.utils.mixins.AutoUser`.
+  Enthält nun zentralisiert den Code, der bisher doppelt in 
+  :class:`lino.modlib.links.Link` und :class:`lino.modlib.notes.Note` war, 
+  und der jetzt auch in :class:`lino.modlib.dsbe.Contract` ist (ein Feld `user`, das beim Erstellen eines Records automatisch mit dem betreffenden Benutzer gefüllt wird).
+  
+- Kleine bugfixes in dsbe.fixtures.initial_data

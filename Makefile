@@ -1,7 +1,7 @@
 DJANGO_ADMIN = python l:\\snapshots\\django\\django\\bin\\django-admin.py
 LINO_ROOT := /cygdrive/t/hgwork/lino/lino
 #~ MODULES = system
-MODULES = countries contacts notes
+MODULES = countries contacts notes sales finan links dsbe igen 
 
 #LANGUAGES = de fr nl et
 #INPUT_FILES = lino\\actions.py lino\\ui\\extjs\\ext_ui.py lino\\modlib\\fields.py lino\\modlib\\system\\models.py
@@ -16,13 +16,13 @@ help:
 
 mm:
 	cd $(LINO_ROOT) && $(DJANGO_ADMIN) makemessages -i 'modlib*' -i 'test_apps*' -s -a
-	@for MOD in $(MODULES); \
+	for MOD in $(MODULES); \
   do \
     cd $(LINO_ROOT)/modlib/$$MOD && $(DJANGO_ADMIN) makemessages -s -a; \
   done
   
 unused:  
-	@for LANG in $(LANGUAGES); \
+	for LANG in $(LANGUAGES); \
   do \
     xgettext --from-code UTF-8 -d django -p lino\\modlib\\system\\locale\\$$LANG\\LC_MESSAGES $(INPUT_FILES); \
   done

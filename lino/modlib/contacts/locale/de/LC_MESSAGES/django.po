@@ -3,94 +3,141 @@
 # This file is distributed under the same license as the PACKAGE package.
 # Luc Saffre <luc.saffre@gmx.net>, 2010.
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: lino.modlib.contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-18 18:53+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"POT-Creation-Date: 2010-11-10 15:32+0000\n"
+"PO-Revision-Date: 2010-11-10 17:32+0200\n"
+"Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
+"Language-Team: ds <luc.saffre@gmail.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: .\models.py:52
+#: .\models.py:54
 msgid "Name"
 msgstr "Name"
 
-#: .\models.py:53
+#: .\models.py:55
 msgid "Street"
 msgstr "Straße"
 
-#: .\models.py:54
+#: .\models.py:56
 msgid "No."
 msgstr "Nr."
 
-#: .\models.py:55
+#: .\models.py:57
 msgid "Box"
 msgstr "Box"
 
-#: .\models.py:58
+#: .\models.py:62
 msgid "Country"
 msgstr "Land"
 
 #: .\models.py:66
+msgid "City"
+msgstr "Stadt"
+
+#: .\models.py:70
+msgid "Zip code"
+msgstr "Postleitzahl"
+
+#: .\models.py:71
+msgid "Region"
+msgstr "Region"
+
+#: .\models.py:75
 msgid "E-Mail"
 msgstr "E-Mail"
 
-#: .\models.py:67
+#: .\models.py:76
 msgid "URL"
 msgstr "URL"
 
-#: .\models.py:68
+#: .\models.py:77
 msgid "Phone"
 msgstr "Telefon"
 
-#: .\models.py:69
+#: .\models.py:78
 msgid "GSM"
 msgstr "GSM"
 
-#: .\models.py:70
+#: .\models.py:79
 msgid "Fax"
 msgstr "Fax"
 
-#: .\models.py:136
+#: .\models.py:91
+msgid "Address"
+msgstr "Adresse"
+
+#: .\models.py:148
+#: .\models.py:264
+msgid "person"
+msgstr "Person"
+
+#: .\models.py:149
+msgid "persons"
+msgstr "Personen"
+
+#: .\models.py:152
 msgid "First name"
 msgstr "Vorname"
 
-#: .\models.py:137
+#: .\models.py:154
 msgid "Last name"
 msgstr "Familienname"
 
-#: .\models.py:138
+#: .\models.py:156
 msgid "Title"
 msgstr "Anrede"
 
-#: .\models.py:157
-msgid "Persons"
-msgstr "Personen"
+#: .\models.py:193
+msgid "company type"
+msgstr "Firmenart"
 
-#: .\models.py:170
+#: .\models.py:194
+msgid "company types"
+msgstr "Firmenarten"
+
+#: .\models.py:196
 msgid "Abbreviation"
 msgstr "Abkürzung"
 
-#: .\models.py:171
+#: .\models.py:197
+#: .\models.py:249
 msgid "Designation"
 msgstr "Bezeichnung"
 
-#: .\models.py:177
-#, fuzzy
-msgid "Company types"
-msgstr "Organisationen"
-
-#: .\models.py:187
-#, fuzzy
+#: .\models.py:221
 msgid "Company type"
-msgstr "Organisationen"
+msgstr "Firmenart"
 
-#: .\models.py:199
-msgid "Companies"
-msgstr "Organisationen"
+#: .\models.py:245
+#: .\models.py:268
+msgid "contact type"
+msgstr "Eigenschaft"
+
+#: .\models.py:246
+msgid "contact types"
+msgstr "Eigenschaften"
+
+#: .\models.py:261
+msgid "contact"
+msgstr "Kontaktperson"
+
+#: .\models.py:262
+msgid "contacts"
+msgstr "Kontaktpersonen"
+
+#: .\models.py:266
+msgid "company"
+msgstr "Firma"
+
+#: .\models.py:289
+msgid "Contact for"
+msgstr "Kontaktperson für"
+
+#~ msgid "Companies"
+#~ msgstr "Organisationen"

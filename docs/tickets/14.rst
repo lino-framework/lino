@@ -1,0 +1,33 @@
+#14 : inheriting verbose_name from abstract Model
+=================================================
+I'd like to have the following class definitions:
+
+1. In :mod:`lino.modlib.contacts.models`::
+
+    from django.db import models
+    from django.utils.translation import ugettext_lazy as _
+      
+    class Company(models.Model):
+        class Meta:
+            app_name = 'contacts'
+            abstract=True
+            verbose_name_plural = _('Companies')
+            verbose_name = _('Company')
+      
+      
+2. In :mod:`lino.modlib.dsbe.models` (:mod:`lino.modlib.igen.models`) I'd like to not 
+   worry about `verbose_name`, `verbose_name_plural` and `abstract`::
+
+    from lino.modlib.contacts import models as contacts
+    
+    class Company(contacts.Company):
+        pass
+
+
+And this should work if I understood 
+`the docs <http://docs.djangoproject.com/en/dev/topics/db/models/#meta-inheritance>`_ 
+correctly.
+
+It seems that Django also clears the `verbose_name_plural` meta option of abstract models
+
+See :doc:`/blog/2010/1110`

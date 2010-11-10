@@ -1064,7 +1064,10 @@ class ExtUI(base.UI):
         return v
 
 
-    def get_action_url(self,action,fmt=None,**kw):
+    def get_actor_url(self,actor,*args,**kw):
+        return self.build_url("api",actor.app_label,actor._actor_name,*args,**kw)
+        
+    def unused_get_action_url(self,action,fmt=None,**kw):
         #~ if isinstance(action,properties.PropertiesAction):
             #~ action = properties.PropValuesByOwner().default_action
         #~ if isinstance(action,reports.SlaveGridAction):

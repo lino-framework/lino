@@ -9,28 +9,15 @@ for which I hope for help from other people.
 Short-term
 ----------
 
-- Verträge erfassen ist noch umständlich:
-
-  - Context menu mit den row actions wieder einbauen.
-  - Im context menu auf der Zelle eines foreign key sollte man in dessen Detail springen können.
-    Damit man Kontaktpersonen einer Firma eintragen kann.
-    
-- Im Hauptmenü schreibt er "Companys" statt "Companies".
+- RtfPrintMethod geht nicht immer: 
+  http://127.0.0.1:8000/api/dsbe/ContractsByPerson/2?mt=14&mk=16&fmt=print 
+  sagt "ValueError: 'allowed_path' has to be a directory."
 
 - Im Hauptmenü eine anklickbare Liste aller Verträge und eingescannten Dokumente dieses Benutzers anzeigen, 
   die demnächst ablaufen. 
   Auf Verträgen und eingescannten Dokumenten ein Ankreuzfeld "Erinnerung im Hauptmenü anzeigen", 
   um Einträge manuell abschalten zu können.
 
-- Hauptmenü nicht erreichbar, wenn ein Fenster offen ist. 
-  Dafür ein bequemer Button, um ein weiteres Browserfenster mit Lino zu öffnen.
-  Weil die Benutzer sonst irgendwann einen Stack overflow kriegen, 
-  weil sie sich nicht dessen bewusst sind, 
-  dass ihre Fenster offen bleiben.
-  
-  (Das hätte möglicherweise später als Folge, dass das Hauptmenü gar kein Pulldown-Menü mehr zu sein braucht, 
-  sondern eine für Webseiten klassischere Ansicht benutzen.)
-  
 - OOo-Server und watch_tim automatisch nach reboot starten:
 
   | http://www.debian-administration.org/articles/28
@@ -46,6 +33,12 @@ Short-term
 
 - "Insert as copy"
 
+- Wie kann ich die Test-Templates für Notizen in den code repository rein kriegen?
+  Er soll sie dann auch unabhängig von der Sprache finden. 
+  Vielleicht werde ich doctemplates in die config-directories verschieben 
+  und mein System von config-Dateien erweitern, dass es auch Unterverzeichnisse verträgt.
+  Siehe :doc:`/blog/2010/1029`.
+  
 Undecided
 ---------
 
@@ -66,6 +59,14 @@ Undecided
 Medium-term
 -----------
 
+- Hauptmenü nicht anzeigen, wenn ein Fenster offen ist. 
+  Stattdessen ein bequemer Button, um ein weiteres Browserfenster mit Lino zu öffnen.
+  Weil die Benutzer sonst irgendwann einen Stack overflow kriegen, 
+  weil sie sich nicht dessen bewusst sind, 
+  dass ihre Fenster offen bleiben.
+  (Das hätte möglicherweise später als Folge, dass das Hauptmenü gar kein Pulldown-Menü mehr zu sein braucht, 
+  sondern eine für Webseiten klassischere Ansicht benutzen.)
+  
 - Man kann z.B. noch nicht nach Personen suchen, die ein bestimmtes Studium haben.
 
 - Einheitliches Interface um Reihenfolge zu verändern (Journals, DocItems, LinksByOwner,...). Erster Schritt: Abstract model "Ordered" mit einem Feld `pos` und zwei Actions "move up" und "move down".
@@ -101,10 +102,6 @@ Long-term
   sondern allgemein einem Projekt zugewiesen.
   Momentan entspricht sozusagen automatisch jede Person einem einzigen Projekt.
   
-- Sollen wir Nachrichten und Erinnerungen 
-  (z.B. Links, deren valid_until in den kommenden Tagen fällig ist)
-  in der :xfile:`welcome.html` anzeigen?
-  
 - Das `params={'base_params':{'mk':jnl.pk}}` in der :xfile:`lino_settings.py` 
   in :mod:`lino.demos.igen`
   entspricht natürlich nicht dem Designprinzip, dass das Anwendungsmenü unabhängig 
@@ -112,12 +109,6 @@ Long-term
   stattdessen muss dort `master_id=jnl.pk` stehen, und beim Generieren des 
   Menübefehls muss also ein ReportRequest instanziert werden, oder 
   vielleicht nur `Report.get_master_kw(master_instance)` rufen.
-  
-- Wie kann ich die Test-Templates für Notizen in den code repository rein kriegen?
-  Er soll sie dann auch unabhängig von der Sprache finden. 
-  Vielleicht werde ich doctemplates in die config-directories verschieben 
-  und mein System von config-Dateien erweitern, dass es auch Unterverzeichnisse verträgt.
-  Siehe :doc:`/blog/2010/1029`.
   
 - (:mod:`lino.modlib.dsbe` : 
   Wie soll ich es machen, dass der Benutzer beim Auswählen der Krankenkasse einer Person 
@@ -339,7 +330,8 @@ Long-term
     
   Lino could use this to have an automatic refresh of each window that displays data. Maybe rather only one central event manager because if any data gets changed, basically all open windows may need a refresh.
 
-
+- lino.modlib.dsbe und lino.modlib.igen sind ja eigentlich keine 
+  normalen "Django applications", sondern Endmodule für Lino... das ist noch unklar.
 
 Documentation
 -------------

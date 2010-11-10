@@ -1,0 +1,71 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-11-10 14:50+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: .\models.py:33
+msgid "link type"
+msgstr ""
+
+#: .\models.py:34
+msgid "link types"
+msgstr ""
+
+#: .\models.py:36 .\models.py:57
+msgid "Name"
+msgstr ""
+
+#: .\models.py:44
+msgid "link"
+msgstr ""
+
+#: .\models.py:45
+msgid "links"
+msgstr ""
+
+#: .\models.py:47
+msgid "User"
+msgstr ""
+
+#: .\models.py:50
+msgid "Link type"
+msgstr ""
+
+#: .\models.py:51
+msgid "Date"
+msgstr ""
+
+#: .\models.py:53
+msgid "Owner"
+msgstr ""
+
+#: .\models.py:60
+msgid "valid until"
+msgstr ""
+
+#: .\models.py:86
+msgid "My links"
+msgstr ""
+
+#: .\models.py:92
+msgid "Links"
+msgstr ""
+
+#: .\models.py:105
+#, python-format
+msgid "Links by %(model)s %(owner)s"
+msgstr ""

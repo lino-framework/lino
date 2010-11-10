@@ -1,0 +1,555 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-11-10 14:50+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: .\models.py:60
+msgid "single"
+msgstr ""
+
+#: .\models.py:61
+msgid "married"
+msgstr ""
+
+#: .\models.py:62
+msgid "divorced"
+msgstr ""
+
+#: .\models.py:63
+msgid "widowed"
+msgstr ""
+
+#: .\models.py:69
+msgid "Motorcycles"
+msgstr ""
+
+#: .\models.py:70
+msgid "Car"
+msgstr ""
+
+#: .\models.py:71
+msgid "Lorry"
+msgstr ""
+
+#: .\models.py:72
+msgid "Lorry with trailer"
+msgstr ""
+
+#: .\models.py:73
+msgid "Bus"
+msgstr ""
+
+#: .\models.py:77
+msgid "Registry of citizens"
+msgstr ""
+
+#: .\models.py:78
+msgid "Registry of foreigners"
+msgstr ""
+
+#: .\models.py:79
+msgid "Waiting for registry"
+msgstr ""
+
+#: .\models.py:90
+msgid "Partner #"
+msgstr ""
+
+#: .\models.py:93
+msgid "is active"
+msgstr ""
+
+#: .\models.py:97
+msgid "Activity"
+msgstr ""
+
+#: .\models.py:101
+msgid "Bank account 1"
+msgstr ""
+
+#: .\models.py:104
+msgid "Bank account 2"
+msgstr ""
+
+#: .\models.py:134
+msgid "person"
+msgstr ""
+
+#: .\models.py:135
+msgid "persons"
+msgstr ""
+
+#: .\models.py:155
+msgid "Gesdos ID"
+msgstr ""
+
+#: .\models.py:157
+msgid "receives social help"
+msgstr ""
+
+#: .\models.py:158
+msgid "is senior"
+msgstr ""
+
+#: .\models.py:162
+msgid "User"
+msgstr ""
+
+#: .\models.py:165
+msgid "Sex"
+msgstr ""
+
+#: .\models.py:166
+msgid "Male"
+msgstr ""
+
+#: .\models.py:166
+msgid "Female"
+msgstr ""
+
+#: .\models.py:169
+msgid "Birth date"
+msgstr ""
+
+#: .\models.py:172
+msgid "not exact"
+msgstr ""
+
+#: .\models.py:178
+msgid "Birth country"
+msgstr ""
+
+#: .\models.py:181
+msgid "Civil state"
+msgstr ""
+
+#: .\models.py:183
+msgid "National ID"
+msgstr ""
+
+#: .\models.py:186
+msgid "Health insurance"
+msgstr ""
+
+#: .\models.py:188
+msgid "Pharmacy"
+msgstr ""
+
+#: .\models.py:193
+msgid "Nationality"
+msgstr ""
+
+#: .\models.py:197
+msgid "eID card number"
+msgstr ""
+
+#: .\models.py:200
+msgid "ID card valid from"
+msgstr ""
+
+#: .\models.py:203 .\models.py:561
+msgid "until"
+msgstr ""
+
+#: .\models.py:207
+msgid "Driving license"
+msgstr ""
+
+#: .\models.py:209
+msgid "ready to work in shifted time"
+msgstr ""
+
+#: .\models.py:210
+msgid "ready to work on week-end"
+msgstr ""
+
+#: .\models.py:211
+msgid "has own car"
+msgstr ""
+
+#: .\models.py:213
+msgid "Clark driving license"
+msgstr ""
+
+#: .\models.py:215
+msgid "Head of a family"
+msgstr ""
+
+#: .\models.py:218
+msgid "IT knowledge"
+msgstr ""
+
+#: .\models.py:220
+msgid "Residence permit valid until"
+msgstr ""
+
+#: .\models.py:222
+msgid "Residence type"
+msgstr ""
+
+#: .\models.py:227
+msgid "Unemployed since"
+msgstr ""
+
+#: .\models.py:229
+msgid "Needs work permit"
+msgstr ""
+
+#: .\models.py:230
+msgid "Work permit valid until"
+msgstr ""
+
+#: .\models.py:231
+msgid "suspended until"
+msgstr ""
+
+#: .\models.py:234
+msgid "Physical handicap"
+msgstr ""
+
+#: .\models.py:235
+msgid "Mental handicap"
+msgstr ""
+
+#: .\models.py:236
+msgid "Psychological handicap"
+msgstr ""
+
+#: .\models.py:237
+msgid "Health problems"
+msgstr ""
+
+#: .\models.py:238
+msgid "Juristic problems"
+msgstr ""
+
+#: .\models.py:239
+msgid "Dependency problems"
+msgstr ""
+
+#: .\models.py:240
+msgid "Lack of social competence"
+msgstr ""
+
+#: .\models.py:241
+msgid "Lack of motivation"
+msgstr ""
+
+#: .\models.py:244
+msgid "Unavailable until"
+msgstr ""
+
+#: .\models.py:245
+msgid "reason"
+msgstr ""
+
+#: .\models.py:247
+msgid "Fulltime only"
+msgstr ""
+
+#: .\models.py:248
+msgid "Part-time only"
+msgstr ""
+
+#: .\models.py:249
+msgid "Young children"
+msgstr ""
+
+#: .\models.py:252
+msgid "Native language"
+msgstr ""
+
+#: .\models.py:253
+msgid "Migration"
+msgstr ""
+
+#: .\models.py:286
+msgid "Illiterate"
+msgstr ""
+
+#: .\models.py:295
+msgid "not filled in"
+msgstr ""
+
+#: .\models.py:306
+msgid "Overview"
+msgstr ""
+
+#: .\models.py:366
+msgid "company"
+msgstr ""
+
+#: .\models.py:367
+msgid "companies"
+msgstr ""
+
+#: .\models.py:395
+msgid "Designation"
+msgstr ""
+
+#: .\models.py:398
+msgid "study type"
+msgstr ""
+
+#: .\models.py:399
+msgid "study types"
+msgstr ""
+
+#: .\models.py:433
+msgid "study or experience"
+msgstr ""
+
+#: .\models.py:434
+msgid "Studies & experiences"
+msgstr ""
+
+#: .\models.py:435
+msgid "Person"
+msgstr ""
+
+#: .\models.py:436
+msgid "Study type"
+msgstr ""
+
+#: .\models.py:437
+msgid "Study content"
+msgstr ""
+
+#: .\models.py:440
+msgid "started"
+msgstr ""
+
+#: .\models.py:441
+msgid "stopped"
+msgstr ""
+
+#: .\models.py:442
+msgid "Success"
+msgstr ""
+
+#: .\models.py:443
+msgid "Country"
+msgstr ""
+
+#: .\models.py:445
+msgid "Language"
+msgstr ""
+
+#: .\models.py:447
+msgid "School"
+msgstr ""
+
+#: .\models.py:450
+msgid "Remarks"
+msgstr ""
+
+#: .\models.py:459
+msgid "Studies"
+msgstr ""
+
+#: .\models.py:469
+msgid "language knowledge"
+msgstr ""
+
+#: .\models.py:470
+msgid "language knowledges"
+msgstr ""
+
+#: .\models.py:475
+msgid "spoken"
+msgstr ""
+
+#: .\models.py:476
+msgid "written"
+msgstr ""
+
+#: .\models.py:480
+#, python-format
+msgid "%s (s/w)"
+msgstr ""
+
+#: .\models.py:482
+#, python-format
+msgid "%s (s)"
+msgstr ""
+
+#: .\models.py:484
+#, python-format
+msgid "%s (w)"
+msgstr ""
+
+#: .\models.py:515
+msgid "activity"
+msgstr ""
+
+#: .\models.py:516
+msgid "activities"
+msgstr ""
+
+#: .\models.py:518
+msgid "Appears in Listing 104"
+msgstr ""
+
+#: .\models.py:538
+msgid "exclusion type"
+msgstr ""
+
+#: .\models.py:539
+msgid "exclusion types"
+msgstr ""
+
+#: .\models.py:555
+msgid "exclusion"
+msgstr ""
+
+#: .\models.py:556
+msgid "exclusions"
+msgstr ""
+
+#: .\models.py:559
+msgid "Reason"
+msgstr ""
+
+#: .\models.py:560
+msgid "from"
+msgstr ""
+
+#: .\models.py:562 .\models.py:606
+msgid "Remark"
+msgstr ""
+
+#: .\models.py:584
+msgid "coaching type"
+msgstr ""
+
+#: .\models.py:585
+msgid "coaching types"
+msgstr ""
+
+#: .\models.py:601
+msgid "coaching"
+msgstr ""
+
+#: .\models.py:602
+msgid "coachings"
+msgstr ""
+
+#: .\models.py:603 .\models.py:643
+msgid "Client"
+msgstr ""
+
+#: .\models.py:604 .\models.py:647
+msgid "Coach"
+msgstr ""
+
+#: .\models.py:605
+msgid "Coaching type"
+msgstr ""
+
+#: .\models.py:615
+msgid "Coaches"
+msgstr ""
+
+#: .\models.py:623
+msgid "contract type"
+msgstr ""
+
+#: .\models.py:624
+msgid "contract types"
+msgstr ""
+
+#: .\models.py:640
+msgid "contract"
+msgstr ""
+
+#: .\models.py:641
+msgid "contracts"
+msgstr ""
+
+#: .\models.py:644
+msgid "Company"
+msgstr ""
+
+#: .\models.py:646
+msgid "represented by"
+msgstr ""
+
+#: .\models.py:648
+msgid "Contract type"
+msgstr ""
+
+#: .\models.py:649
+msgid "applies from"
+msgstr ""
+
+#: .\models.py:650
+msgid "applies until"
+msgstr ""
+
+#: .\templates\404.html.py:4 .\templates\404.html.py:8
+msgid "Page not found"
+msgstr ""
+
+#: .\templates\404.html.py:10
+msgid "We're sorry, but the requested page could not be found."
+msgstr ""
+
+#: .\templates\500.html.py:4 .\templates\base.html.py:52
+msgid "Home"
+msgstr ""
+
+#: .\templates\500.html.py:4
+msgid "Server error"
+msgstr ""
+
+#: .\templates\500.html.py:6
+msgid "Server error (500)"
+msgstr ""
+
+#: .\templates\500.html.py:9
+msgid "Server Error <em>(500)</em>"
+msgstr ""
+
+#: .\templates\500.html.py:10
+msgid ""
+"There's been an error. It's been reported to the site administrators via e-"
+"mail and should be fixed shortly. Thanks for your patience."
+msgstr ""
+
+#: .\templates\base.html.py:25
+msgid "Welcome,"
+msgstr ""
+
+#: .\templates\base.html.py:30
+msgid "Documentation"
+msgstr ""
+
+#: .\templates\base.html.py:38
+msgid "Change password"
+msgstr ""
+
+#: .\templates\base.html.py:45
+msgid "Log out"
+msgstr ""
+
+#: .\templates\base_site.html.py:4
+msgid "Django site admin"
+msgstr ""
+
+#: .\templates\base_site.html.py:7
+msgid "Django administration"
+msgstr ""

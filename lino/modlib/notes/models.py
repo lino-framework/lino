@@ -26,7 +26,8 @@ from lino.tools import default_language
 from lino import reports
 #~ from lino import layouts
 from lino.utils import perms
-from lino.utils import printable
+#~ from lino.utils import printable
+from lino.utils import mixins
 from django.conf import settings
 #~ from lino import choices_method, simple_choices_method
 
@@ -34,7 +35,7 @@ from django.conf import settings
 
 #~ tools.requires_apps('auth','contenttypes','links')
 
-class NoteType(printable.PrintableType):
+class NoteType(mixins.PrintableType):
     class Meta:
         verbose_name = _("note type")
         verbose_name_plural = _("note types")
@@ -63,13 +64,12 @@ class NoteType(printable.PrintableType):
 
 
 
-class Note(printable.TypedPrintable):
+class Note(mixins.TypedPrintable,mixins.AutoUser):
         
     class Meta:
         verbose_name = _("note")
         verbose_name_plural = _("notes")
         
-    user = models.ForeignKey("auth.User",blank=True,null=True)
     #~ date = fields.MyDateField()
     date = models.DateField(verbose_name=_('Date'),default=datetime.date.today)
     #~ owner_type = models.ForeignKey(ContentType,blank=True,null=True)
@@ -100,11 +100,6 @@ class Note(printable.TypedPrintable):
         if self.subject:
             return self.subject + " " + s
         return s
-        
-    def on_create(self,req):
-        u = req.get_user()
-        if u is not None:
-            self.user = u
         
 
     

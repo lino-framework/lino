@@ -112,6 +112,13 @@ class GridColumn(Component):
         if isinstance(editor,FieldElement):
             if isinstance(editor.field,models.AutoField):
                 kw.update(renderer=js_code('Lino.id_renderer'))
+            elif isinstance(editor.field,models.ForeignKey):
+                rpt = editor.field.rel.to._lino_model_report
+                a = rpt.get_action('detail')
+                if a is not None:
+                    kw.update(renderer=js_code("Lino.fk_renderer('%s','%s')" % (
+                      editor.field.name + 'Hidden',
+                      editor.lh.rh.ui.get_actor_url(rpt))))
             kw.update(editable=editor.editable)
             if editor.editable:
                 kw.update(editor=editor)
@@ -510,7 +517,7 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
     def get_field_options(self,**kw):
         kw = ComplexRemoteComboFieldElement.get_field_options(self,**kw)
         kw.update(pageSize=self.report.page_length)
-        kw.update(emptyText=_('Select a %s...') % self.report.model.__name__)
+        kw.update(emptyText=_('Select a %s...') % self.report.model._meta.verbose_name)
         return kw
 
 
@@ -994,9 +1001,10 @@ class MainPanel(jsgen.Variable):
     declare_type = jsgen.DECLARE_INLINE
     refers_to_ww = True
   
-    def __init__(self):
-        self.keys = None
-        self.buttons = None
+    #~ def __init__(self):
+        #~ pass
+        #~ self.keys = None
+        #~ self.buttons = None
         #~ self.cmenu = None
         #~ self.props_button = None
         
@@ -1034,7 +1042,7 @@ class GridMainPanel(GridElement,MainPanel):
     #~ value_template = "new Lino.GridPanel(%s)"
     def __init__(self,lh,name,vertical,*columns,**kw):
         'ignore the "vertical" arg'
-        MainPanel.__init__(self)
+        #~ MainPanel.__init__(self)
         GridElement.__init__(self,lh,name,lh.rh.report,*columns,**kw)
         #lino.log.debug("GridMainPanel.__init__() %s",self.name)
         
@@ -1051,7 +1059,7 @@ class DetailMainPanel(Panel,MainPanel):
     def __init__(self,lh,name,vertical,*elements,**kw):
         #~ self.rh = lh.datalink
         self.report = lh.rh.report
-        MainPanel.__init__(self)
+        #~ MainPanel.__init__(self)
         #~ DataElementMixin.__init__(self,lh.link)
         kw.update(autoScroll=True)
         #~ kw.update(height=800, autoScroll=True)

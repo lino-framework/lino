@@ -594,29 +594,43 @@ Ext.BLANK_IMAGE_URL = '/media/extjs/resources/images/default/s.gif'; // settings
 
 // used as Ext.grid.Column.renderer for id columns in order to hide the special id value -99999
 Lino.id_renderer = function(value, metaData, record, rowIndex, colIndex, store) {
-  //~ if (value == -99999) return '';
-  //~ console.log(rowIndex,colIndex,record,metaData);
   if (record.phantom) return '';
   return value;
+}
+
+Lino.fk_renderer = function(fkname,url) {
+  return function(value, metaData, record, rowIndex, colIndex, store) {
+    console.log('Lino.fk_renderer',fkname,rowIndex,colIndex,record,metaData,store);
+    if (record.phantom) return '';
+    return '<a href="'+url+'/'+String(record.data[fkname])+'?fmt=detail" target="_blank" onclick="Lino.on_fk_click">' + value + '</a>';
+  }
+}
+
+Lino.on_fk_click = function() {
+  console.log('Lino.on_fk_click',arguments);
 }
 
 Lino.build_buttons = function(panel,actions) {
   if (actions) {
     var buttons = Array(actions.length);
+    var cmenu = Array(actions.length);
     for (var i=0; i < actions.length; i++) { 
       //~ console.log("build_bbar",btn.text,":",actions[i]);
       //~ if (actions[i].handler)
           //~ actions[i].handler = actions[i].handler.createCallback(panel);
       buttons[i] = new Ext.Toolbar.Button(actions[i]);
-      if (actions[i].panel_btn_handler)
+      cmenu[i] = actions[i]
+      if (actions[i].panel_btn_handler) {
           buttons[i].on('click',actions[i].panel_btn_handler.createCallback(panel,buttons[i]));
+          cmenu[i].handler = actions[i].panel_btn_handler.createCallback(panel,cmenu[i]);
+      }
       //~ var btn = {
         //~ text: actions[i].label
       //~ };
       //~ btn.handler = actions[i].handler.createCallback(scope);
       //~ buttons[i] = new Ext.Button(btn);
     }
-    return buttons
+    return {bbar:buttons, cmenu:new Ext.menu.Menu(cmenu)};
   }
 }
 
@@ -789,7 +803,8 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     //~ console.log('FormPanel.constructor() 1',config)
     //~ Ext.applyIf(config,{base_params:{}});
     //~ console.log('FormPanel.constructor() 2',config)
-    config.bbar = Lino.build_buttons(this,config.ls_bbar_actions);
+    Ext.apply(config,Lino.build_buttons(this,config.ls_bbar_actions));
+    //~ config.bbar = Lino.build_buttons(this,config.ls_bbar_actions);
     if (config.has_navigator) {
       config.tbar = this.tbar_items().concat([
         this.first = new Ext.Toolbar.Button({
@@ -1118,7 +1133,9 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
       store: config.store, 
       items: this.tbar_items()
     });
-    config.bbar = Lino.build_buttons(this,config.ls_bbar_actions);
+    Ext.apply(config,Lino.build_buttons(this,config.ls_bbar_actions));
+    //~ config.bbar, this.cmenu = Lino.build_buttons(this,config.ls_bbar_actions);
+    //~ this.cmenu = new Ext.menu.Menu({items: config.bbar});
     delete config.ls_bbar_actions
     
     var menu = [];
@@ -1131,13 +1148,13 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     for (k in config.ls_grid_configs) {
       menu.push({text:config.ls_grid_configs[k].label,handler:set_gc(k),scope:this})
     }
+    config.bbar = config.bbar.concat(['->']);
     if(menu.length > 1) {
       config.bbar = config.bbar.concat([
         {text:'View',menu: menu,tooltip:"Select another view of this report"}
       ]);
     }
     config.bbar = config.bbar.concat([
-      '->',
       //~ {text:'GC',handler:this.manage_grid_configs,qtip:"Manage Grid Configurations",scope:this},
       {text:'Save GC',handler:this.save_grid_config,qtip:"Save Grid Configuration",scope:this}
     ]);
@@ -1421,7 +1438,8 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     Lino.GridPanel.superclass.initComponent.call(this);
     this.on('afteredit', this.on_afteredit);
     this.on('beforeedit', this.on_beforeedit);
-    // this.main_grid.on('cellcontextmenu', Lino.cell_context_menu, this);
+    this.on('cellcontextmenu', Lino.cell_context_menu, this);
+    //~ this.on('contextmenu', Lino.grid_context_menu, this);
     this.on('resize', function(cmp,aw,ah,rw,rh) {
         cmp.getTopToolbar().pageSize = cmp.calculatePageSize(this,aw,ah,rw,rh) || 10;
         cmp.refresh();
@@ -1528,14 +1546,22 @@ Lino.MainPanelMixin = {
 Ext.override(Lino.GridPanel,Lino.MainPanelMixin);
 Ext.override(Lino.FormPanel,Lino.MainPanelMixin);
 
+//~ Lino.grid_context_menu = function(e) {
+  //~ console.log('contextmenu',arguments);
+//~ }
+
 Lino.cell_context_menu = function(grid,row,col,e) {
-  // console.log('contextmenu',grid,row,col,e);
+  console.log('cellcontextmenu',grid,row,col,e);
   e.stopEvent();
-  grid.getView().focusRow(row);
-  if(!this.cmenu.el){this.cmenu.render(); }
+  //~ grid.getView().focusCell(row,col);
+  grid.getSelectionModel().select(row,col);
+  //~ console.log(grid.store.getAt(row));
+  //~ grid.getView().focusRow(row);
+  //~ return;
+  if(!grid.cmenu.el){grid.cmenu.render(); }
   var xy = e.getXY();
-  xy[1] -= this.cmenu.el.getHeight();
-  this.cmenu.showAt(xy);
+  xy[1] -= grid.cmenu.el.getHeight();
+  grid.cmenu.showAt(xy);
 }
 
 

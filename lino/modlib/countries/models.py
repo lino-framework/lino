@@ -23,18 +23,20 @@ class Country(models.Model):
     """
     Implements the :class:`countries.Country` convention.
     """
+    
+    class Meta:
+        verbose_name = _("country")
+        verbose_name_plural = _("countries")
+        
     name = models.CharField(max_length=200)
     isocode = models.CharField(max_length=4,primary_key=True)
     short_code = models.CharField(max_length=4,blank=True)
-    
-    class Meta:
-        verbose_name_plural = _("Countries")
     
     def __unicode__(self):
         return self.name
         
 class Countries(reports.Report):
-    label = _("Countries")
+    #~ label = _("Countries")
     model = 'countries.Country'
     order_by = "isocode"
     column_names = "isocode name short_code"
@@ -52,13 +54,14 @@ class City(models.Model):
     zip_code = models.CharField(max_length=8,blank=True)
     
     class Meta:
-        verbose_name_plural = _("Cities")
+        verbose_name = _("city")
+        verbose_name_plural = _("cities")
     
     def __unicode__(self):
         return self.name
         
 class Cities(reports.Report):
-    label = _("Cities")
+    #~ label = _("Cities")
     model = 'countries.City'
     order_by = "country name"
     column_names = "country name zip_code"

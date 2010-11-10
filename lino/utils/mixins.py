@@ -12,7 +12,21 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 from django.db import models
+from lino.utils.printable import Printable, PrintableType, TypedPrintable
 
+class AutoUser(models.Model):
+  
+    class Meta:
+        abstract = True
+        
+    user = models.ForeignKey("auth.User") # ,blank=True,null=True)
+    
+    def on_create(self,req):
+        u = req.get_user()
+        if u is not None:
+            self.user = u
+        
+    
 class MultiTableBase(models.Model):
   
     """

@@ -20,21 +20,32 @@ from django.contrib.contenttypes import generic
 from django.utils.translation import ugettext_lazy as _
 
 from lino import fields
-from lino import tools
+#~ from lino import tools
 from lino import reports
+from lino.utils import mixins
 #~ from lino import layouts
 
-tools.requires_apps('auth','contenttypes')
+#~ tools.requires_apps('auth','contenttypes')
 
 class LinkType(models.Model):
     "Implements :class:`links.LinkType`."
+    
+    class Meta:
+        verbose_name = _("link type")
+        verbose_name_plural = _("link types")
+        
     name = models.CharField(max_length=200,verbose_name=_('Name'))
     def __unicode__(self):
         return self.name
     
-class Link(models.Model):
+class Link(mixins.AutoUser):
     "Implements :class:`links.Link`."
-    user = models.ForeignKey("auth.User",verbose_name=_('User'))
+    
+    class Meta:
+        verbose_name = _("link")
+        verbose_name_plural = _("links")
+    
+    #~ user = models.ForeignKey("auth.User",verbose_name=_('User'))
     type = models.ForeignKey("links.LinkType",
       blank=True,null=True,
       verbose_name=_('Link type'))
@@ -50,10 +61,10 @@ class Link(models.Model):
         verbose_name=_("valid until"))
         
     
-    def on_create(self,req):
-        u = req.get_user()
-        if u is not None:
-            self.user = u
+    #~ def on_create(self,req):
+        #~ u = req.get_user()
+        #~ if u is not None:
+            #~ self.user = u
             
     def __unicode__(self):
         s = self.name or self.url or u""
@@ -73,13 +84,14 @@ class Links(reports.Report):
     order_by = "id"
 
 class MyLinks(Links):
+    label = _("My links")
     fk_name = 'user'
     column_names = "name url date *"
     order_by = 'name'
 
 class LinksByOwner(Links):
     button_label = _("Links")
-    label = _("Links by owner")
+    #~ label = _("Links by owner")
     fk_name = 'owner'
     column_names = "url date name user *"
     order_by = "date"

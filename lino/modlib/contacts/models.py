@@ -58,15 +58,17 @@ class Addressable(models.Model):
     addr1 = models.CharField(max_length=200,blank=True)
     #addr2 = models.CharField(max_length=200,blank=True)
     
-    country = models.ForeignKey('countries.Country',blank=True,null=True,verbose_name=_("Country"))
+    country = models.ForeignKey('countries.Country',blank=True,null=True,
+      verbose_name=_("Country"))
     "See :meth:`contacts.Contact.country`"
     
-    city = models.ForeignKey('countries.City',blank=True,null=True)
+    city = models.ForeignKey('countries.City',blank=True,null=True,
+        verbose_name=_('City'))
     "See :meth:`contacts.Contact.city`"
     
     #city = models.CharField(max_length=200,blank=True)
-    zip_code = models.CharField(max_length=10,blank=True)
-    region = models.CharField(max_length=200,blank=True)
+    zip_code = models.CharField(_("Zip code"),max_length=10,blank=True)
+    region = models.CharField(_("Region"),max_length=200,blank=True)
     #~ language = models.ForeignKey('countries.Language',default=default_language)
     language = fields.LanguageField(default=default_language)
     
@@ -146,9 +148,12 @@ class Person(Addressable):
         verbose_name = _("person")
         verbose_name_plural = _("persons")
 
-    first_name = models.CharField(max_length=200,blank=True,verbose_name=_('First name'))
-    last_name = models.CharField(max_length=200,blank=True,verbose_name=_('Last name'))
-    title = models.CharField(max_length=200,blank=True,verbose_name=_('Title'))
+    first_name = models.CharField(max_length=200,blank=True,
+      verbose_name=_('First name'))
+    last_name = models.CharField(max_length=200,blank=True,
+      verbose_name=_('Last name'))
+    title = models.CharField(max_length=200,blank=True,
+      verbose_name=_('Title'))
         
     
     #~ def save(self,*args,**kw):
@@ -205,15 +210,15 @@ class CompanyTypes(reports.Report):
 class Company(Addressable):
     """
     Implements the :class:`contacts.Company` convention.
+    See also :doc:`/tickets/14`.
     """
     class Meta:
         abstract = True
         app_label = 'contacts'
-        verbose_name = _("company")
-        verbose_name_plural = _("companies")
     
     vat_id = models.CharField(max_length=200,blank=True)
-    type = models.ForeignKey('contacts.CompanyType',blank=True,null=True,verbose_name=_("Company type"))
+    type = models.ForeignKey('contacts.CompanyType',blank=True,null=True,
+      verbose_name=_("Company type"))
     """Pointer to this company's :class:`CompanyType`. 
     """
     
@@ -252,6 +257,10 @@ class ContactTypes(reports.Report):
 
 class Contact(models.Model):
   
+    class Meta:
+        verbose_name = _("contact")
+        verbose_name_plural = _("contacts")
+        
     person = models.ForeignKey('contacts.Person',verbose_name=_("person"))
     company = models.ForeignKey('contacts.Company',blank=True,null=True,
       verbose_name=_("company"))
@@ -269,14 +278,14 @@ class Contact(models.Model):
             #~ if self.person_id is not None:
                 #~ return u"%s (%s)" % (self.company, self.person)
             #~ return unicode(self.company)
-        
 
 class ContactsByCompany(reports.Report):
     model = 'contacts.Contact'
     fk_name = 'company'
     column_names = 'person type *'
-    
+
 class ContactsByPerson(reports.Report):
+    label = _("Contact for")
     model = 'contacts.Contact'
     fk_name = 'person'
     column_names = 'company type *'

@@ -45,7 +45,8 @@ import lino
 from lino import reports
 #~ from lino import layouts
 from lino.utils import perms
-from lino.utils import printable
+#~ from lino.utils import printable
+from lino.utils import mixins
 from lino import fields
 from lino.modlib.contacts import models as contacts
 from lino.modlib.notes import models as notes
@@ -118,17 +119,21 @@ class Partner(models.Model):
         
 #~ class Person(Contact):
 
-class Person(Partner,contacts.Person,printable.Printable):
+class Person(Partner,contacts.Person,mixins.Printable):
     """
     Implements :class:`contacts.Person`, 
     but cannot inherit from :mod:`lino.modlib.contacts.models.Person`
     (see :doc:`/tickets/7`).
     
     This is also Printable just to demonstrate that not only Notes are printables.
+    
+    Inner class Meta is necessary because of :doc:`/tickets/14`.
     """
     
-    class Meta:
-        app_label = 'contacts'
+    class Meta(contacts.Person.Meta):
+        #~ app_label = 'contacts'
+        verbose_name = _("person")
+        verbose_name_plural = _("persons")
         
     #~ first_name = models.CharField(max_length=200,blank=True,verbose_name=_('First name'))
     #~ last_name = models.CharField(max_length=200,blank=True,verbose_name=_('Last name'))
@@ -166,9 +171,9 @@ class Person(Partner,contacts.Person,printable.Printable):
     birth_date_circa = models.BooleanField(
         default=False,
         verbose_name=_("not exact"))
-    birth_place = models.CharField(max_length=200,
-        blank=True,null=True,
-        verbose_name=("Birth place"))
+    birth_place = models.CharField(_("Birth place"),
+        max_length=200,
+        blank=True,null=True)
     birth_country = models.ForeignKey("countries.Country",
         blank=True,null=True,
         verbose_name=_("Birth country"),related_name='by_birth_place')
@@ -346,21 +351,23 @@ class PersonsByCity(Persons):
     #~ pass
               
 #~ class Company(Contact,contacts.Company):
-class Company(Partner,contacts.Addressable,):
+#~ class Company(Partner,contacts.Addressable,):
+class Company(Partner,contacts.Company):
   
     """
     Implements :class:`contacts.Company`, 
     but cannot inherit from :mod:`lino.modlib.contacts.models.Company`
     (see :doc:`/tickets/7`).
+    
+    Inner class Meta is necessary because of :doc:`/tickets/14`.
     """
     
-    class Meta:
-        app_label = 'contacts'
-    vat_id = models.CharField(max_length=200,blank=True)
-    type = models.ForeignKey('contacts.CompanyType',blank=True,null=True,verbose_name=_("Company type"))
-    #~ tim_nr = models.CharField(max_length=10,blank=True,null=True,unique=True,
-        #~ verbose_name=_("TIM ID"))
-    # PAR->Allo geht nach Person.title oder Company.prefix
+    class Meta(contacts.Company.Meta):
+        #~ app_label = 'contacts'
+        verbose_name = _("company")
+        verbose_name_plural = _("companies")
+    #~ vat_id = models.CharField(max_length=200,blank=True)
+    #~ type = models.ForeignKey('contacts.CompanyType',blank=True,null=True,verbose_name=_("Company type"))
     prefix = models.CharField(max_length=200,blank=True) 
     
     
@@ -611,7 +618,7 @@ class CoachingsByPerson(Coachings):
 #
 # CONTRACT TYPES 
 #
-class ContractType(printable.PrintableType):
+class ContractType(mixins.PrintableType):
     templates_group = 'contracts'
     class Meta:
         verbose_name = _("contract type")
@@ -629,7 +636,7 @@ class ContractTypes(reports.Report):
 #
 # CONTRACTS
 #
-class Contract(printable.TypedPrintable):
+class Contract(mixins.TypedPrintable,mixins.AutoUser):
     class Meta:
         verbose_name = _("contract")
         verbose_name_plural = _('contracts')
@@ -638,7 +645,7 @@ class Contract(printable.TypedPrintable):
     company = models.ForeignKey("contacts.Company",verbose_name=_("Company"))
     contact = models.ForeignKey("contacts.Contact",blank=True,null=True,
       verbose_name=_("represented by"))
-    user = models.ForeignKey("auth.User",verbose_name=_("Coach"))
+    #~ user = models.ForeignKey("auth.User",verbose_name=_("Coach"))
     type = models.ForeignKey("dsbe.ContractType",verbose_name=_("Contract type"))
     applies_from = models.DateField(blank=True,null=True,verbose_name=_("applies from"))
     applies_until = models.DateField(blank=True,null=True,verbose_name=_("applies until"))

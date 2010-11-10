@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-18 18:53+0100\n"
-"PO-Revision-Date: 2010-10-18 20:56+0200\n"
+"POT-Creation-Date: 2010-11-10 14:50+0000\n"
+"PO-Revision-Date: 2010-11-10 06:16+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -22,15 +22,14 @@ msgstr "Nichts ausgewählt, nichts zu tun."
 
 #: .\actions.py:150
 msgid "Detail"
-msgstr ""
+msgstr "Detail"
 
 #: .\actions.py:153
 #, python-format
 msgid "%s (Detail)"
-msgstr ""
+msgstr "%s (Detail)"
 
-#: .\actions.py:164
-#: .\actions.py:207
+#: .\actions.py:164 .\actions.py:207
 msgid "Insert"
 msgstr "Einfügen"
 
@@ -49,7 +48,7 @@ msgstr "Speichern"
 
 #: .\actions.py:220
 msgid "Image"
-msgstr ""
+msgstr "Bild"
 
 #: .\fields.py:43
 msgid "Language"
@@ -79,6 +78,11 @@ msgstr "sehr gut"
 msgid "Invalid value %(value). Must be one of (%(values)s)"
 msgstr ""
 
+#: .\lino_site.py:148
+#, python-format
+msgid "Cannot delete %(self)s because %(count)d %(refs)s refer to it."
+msgstr "Kann %(self)s nicht löschen weil %(count)d %(refs)s darauf verweisen."
+
 #: .\models.py:33
 msgid "The company that runs this site"
 msgstr "Firma, die diese Anwendung  betreibt"
@@ -87,16 +91,15 @@ msgstr "Firma, die diese Anwendung  betreibt"
 msgid "The next automatic id for Person or Company"
 msgstr "Nächste automatische ID für Partner"
 
-#: .\models.py:40
-#: .\models.py:89
+#: .\models.py:40 .\models.py:89
 msgid "Site Configuration"
 msgstr "Anwendungsparameter"
 
 #: .\models.py:86
 msgid "~Site"
-msgstr ""
+msgstr "~Site"
 
-#: .\reports.py:380
+#: .\reports.py:369
 #, python-format
 msgid "User %(user)s cannot view %(report)s."
 msgstr "Benutzer  %(user)s hat kein Recht,  %(report)s zu sehen."
@@ -109,77 +112,78 @@ msgstr "Ja"
 msgid "No"
 msgstr "Nein"
 
-#: .\demos\dsbe\lino_settings.py:27
-#: .\demos\std\lino_settings.py:23
+#: .\demos\dsbe\lino_settings.py:27 .\demos\std\lino_settings.py:23
 msgid "~Contacts"
 msgstr "~Kontakte"
 
 #: .\demos\dsbe\lino_settings.py:32
 msgid "~Notes"
-msgstr ""
+msgstr "~Notizen"
 
-#: .\demos\dsbe\lino_settings.py:36
-#: .\demos\std\lino_settings.py:31
+#: .\demos\dsbe\lino_settings.py:36 .\demos\std\lino_settings.py:31
 msgid "~Configure"
-msgstr ""
+msgstr "~Konfigurierung"
 
-#: .\demos\dsbe\lino_settings.py:55
-#: .\demos\std\lino_settings.py:43
+#: .\demos\dsbe\lino_settings.py:58 .\demos\std\lino_settings.py:43
 msgid "E~xplorer"
 msgstr ""
 
 #: .\demos\std\lino_settings.py:27
 msgid "~Projects"
-msgstr ""
+msgstr "~Projekte"
 
-#: .\ui\extjs\ext_elems.py:508
+#: .\ui\extjs\ext_elems.py:513
 #, python-format
 msgid "Select a %s..."
-msgstr ""
+msgstr "%s auswählen..."
 
-#: .\ui\extjs\ext_store.py:72
+#: .\ui\extjs\ext_store.py:77
 #, python-format
 msgid "Existing primary key value %r may not be modified."
-msgstr ""
+msgstr "Existierender ID-Wert %r darf nicht verändert werden."
 
-#: .\ui\extjs\ext_store.py:255
+#: .\ui\extjs\ext_store.py:290
 #, python-format
 msgid "%r (invalid choice)"
-msgstr ""
+msgstr "%r (ungültige Auswahl)"
 
-#: .\ui\extjs\ext_ui.py:409
+#: .\ui\extjs\ext_ui.py:439
 msgid "Console"
 msgstr "Konsole"
 
-#: .\ui\extjs\ext_ui.py:513
+#: .\ui\extjs\ext_ui.py:543
 #, python-format
 msgid "Welcome on Lino server %(title)r, user %(user)s"
 msgstr "Willkommen auf dem Lino-server %(title)r, %(user)s"
 
-#: .\ui\extjs\ext_ui.py:540
+#: .\ui\extjs\ext_ui.py:578
 #, python-format
-msgid ""
-"There was a problem while saving your data:\n"
-"%s"
-msgstr ""
+msgid "%s has been saved."
+msgstr "%s wurde gespeichert."
 
-#: .\ui\extjs\ext_ui.py:549
-#: .\ui\extjs\ext_ui.py:572
+#: .\ui\extjs\ext_ui.py:587 .\ui\extjs\ext_ui.py:610
 #, python-format
 msgid "User %(user)s cannot configure %(report)s."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:739
+#: .\ui\extjs\ext_ui.py:799
 #, python-format
 msgid "Insert into %s..."
-msgstr ""
+msgstr "Einfügen nach %s..."
 
-#: .\ui\extjs\ext_ui.py:843
+#: .\ui\extjs\ext_ui.py:905
 #, python-format
 msgid "Choices for %s"
-msgstr ""
+msgstr "Auswahlmöglichkeiten für %s"
 
-#: .\utils\mixins.py:79
+#: .\utils\printable.py:324
 msgid "Print"
 msgstr "Drucken"
 
+#: .\utils\printable.py:348
+msgid "Build method"
+msgstr "Konstruktionsmethode"
+
+#: .\utils\printable.py:351
+msgid "Template"
+msgstr "Vorlage"
