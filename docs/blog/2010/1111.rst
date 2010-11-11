@@ -20,7 +20,7 @@ aber sie funktioniert.
 Und ist anklickbar. 
 
   
-Intern formuliert hat das einige Konsequenzen:
+Intern bertrachtet hat das einige Neuerungen gebracht:
 
 - Notizen, Verweise und Verträge sind jetzt Unterklassen von 
   :class:`lino.utils.mixins.Reminder`, die das gemeinsame Interface enthält. 
@@ -31,9 +31,8 @@ Intern formuliert hat das einige Konsequenzen:
 
 - Lino benutzt jetzt Cheetah als Template Engine für die :xfile:`welcome.html`, 
   und die :xfile:`welcome.html` wird jetzt in den config-Verzeichnissen gesucht 
-  (statt wie bisher in Djangos `templates`-Verzeichnissen).
-  
-Sorry, aber die template engine von Django ist einfach zu beschränkt!
+  (statt wie bisher in Djangos `templates`-Verzeichnissen).  
+  Sorry, aber die template engine von Django ist einfach zu beschränkt!
 
 Djangos *Such-System* für Templates könnte noch interessant sein,
 das kann man laut `Dokumentation 
@@ -45,3 +44,4 @@ Wahrscheinlich ist mein Suchsystem langsamer als das von Django,
 aber Performance (beim einmaligen Finden der Datei) 
 ist zumindest für die :xfile:`welcome.html` egal. 
 
+7.35 Uhr Check-in.
