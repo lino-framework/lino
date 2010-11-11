@@ -31,6 +31,8 @@ auth = models.get_app('auth')
 Person = resolve_model('contacts.Person')
 Company = resolve_model('contacts.Company')
 Contact = resolve_model('contacts.Contact')
+Contract = resolve_model('dsbe.Contract')
+Note = resolve_model('notes.Note')
 
 person = Instantiator(Person).build
 company = Instantiator(Company).build
@@ -129,6 +131,7 @@ def objects():
     langk = Instantiator('dsbe.LanguageKnowledge').build
 
     user = auth.User.objects.get(username='user')
+    root = auth.User.objects.get(username='root')
     
     #~ prj = project(name="Testprojekt",company=oshz)
     #~ yield prj 
@@ -138,9 +141,9 @@ def objects():
     #~ yield prj 
     #~ yield note(user=user,project=prj,date=i2d(20091007),subject="Anschauen",company=oshz)
     
-    yield note(user=user,date=i2d(20091006),subject="Programmierung",owner=cpas)
+    yield note(user=root,date=i2d(20091006),subject="Programmierung",owner=cpas)
     yield note(user=user,date=i2d(20091007),subject="Testen",owner=cpas)
-    yield note(user=user,date=i2d(20100517),subject="Programmierung",owner=cpas)
+    yield note(user=root,date=i2d(20100517),subject="Programmierung",owner=cpas)
     yield note(user=user,date=i2d(20100518),subject="Testen",owner=cpas)
         
     yield study(person=luc,type=schule,content=abi,started='197409',stopped='198606')
@@ -161,6 +164,15 @@ def objects():
     
     
     contract = Instantiator('dsbe.Contract','type applies_from applies_until company contact',
-      user=user,client=hans).build
+      user=root,client=hans).build
     yield contract(1,i2d(20090518),i2d(20090517),rcycle,rcycle_dir)
     yield contract(1,i2d(20100518),i2d(20100517),bisa,bisa_dir)
+
+    def f(rmd,d):
+        rmd.reminder_date = d
+        rmd.reminder_text = 'demo reminder'
+        rmd.save()
+        
+    for rmd in Note.objects.all(): f(rmd,i2d(20101110))
+    for rmd in Contract.objects.all(): f(rmd,i2d(20101111))
+        

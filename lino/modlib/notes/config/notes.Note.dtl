@@ -4,6 +4,7 @@
 main =
     date type  user language
     subject
+    reminder_date reminder_text
     owner
     body:80x5 
 

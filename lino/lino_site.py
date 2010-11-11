@@ -59,7 +59,7 @@ from lino import reports, actions
 from lino.utils import perms
 from lino.utils import menus
 from lino.core import actors
-from lino.core.coretools import app_labels, data_elems
+from lino.core.coretools import app_labels, data_elems, get_unbound_meth
 
 from lino.tools import resolve_model, resolve_field, get_app, model_label, get_field, find_config_files
 from lino.reports import DetailLayout
@@ -90,7 +90,6 @@ def discover():
     for model in models.get_models():
     
         model._lino_detail_layouts = []
-        
         """
         Naming conventions for :xfile:`*.dtl` files are:
         
@@ -111,6 +110,22 @@ def discover():
             s = open(fn).read()
             dtl = DetailLayout(s,cd,filename)
             model._lino_detail_layouts.append(dtl)
+            
+        if get_unbound_meth(model,'summary_row') is None:
+        #~ if not hasattr(model,'summary_row'):
+            if len(model._lino_detail_layouts):
+                def f(obj,ui,rr,**kw):
+                    return u'<a href="%s" target="_blank">%s</a>' % (
+                      ui.get_detail_url(obj,fmt='detail'),
+                      #~ rr.get_request_url(str(obj.pk),fmt='detail'),
+                      unicode(obj))
+            else:
+                def f(obj,ui,rr,**kw):
+                    return unicode(obj)
+            model.summary_row = f
+            #~ print '20101111 installed summary_row for ', model
+        
+            
             
         for f, m in model._meta.get_fields_with_model():
             if isinstance(f,models.ForeignKey):

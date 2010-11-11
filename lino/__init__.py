@@ -143,7 +143,7 @@ if len(log.handlers) == 0:
             h.setLevel(logging.DEBUG)
             log.addHandler(h)
         
-NOT_FOUND_MSG = '(not found)'
+NOT_FOUND_MSG = '(not installed)'
 
 def using():
     """

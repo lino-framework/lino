@@ -57,6 +57,38 @@ from lino.core.coretools import get_slave, get_model_report, data_elems, get_dat
 #~ from lino.modlib import field_choices
 
 
+
+
+
+
+def summary(ui,rr,separator=', ',max_items=5,**kw):
+    """
+    Returns this report as a unicode string.
+    
+    :param max_items: don't include more than the specified number of items.
+    """
+    #~ if format is None:
+        #~ def format(rr,obj):
+            #~ return unicode(obj)
+    s = u''
+    n = 0
+    for i in rr:
+        if n :
+            s += separator
+        n += 1
+        s += i.summary_row(ui,rr,**kw)
+        if n >= max_items:
+            s += separator + '...'
+            return s
+    return s
+
+#~ def default_summary_row(obj,rr):
+    #~ return u'<a href="%s" target="_blank">%s</a>' % (rr.get_request_url(str(obj.pk),fmt='detail'),unicode(obj))
+    #~ return u'<span onClick="foo">%s</span>' % (ui.get_actor_url(self,str(obj.pk)),unicode(obj))
+    #~ return u'<a href="#" onclick="Lino.foo">%s</a>' % unicode(obj)
+        
+
+
 def base_attrs(cl):
     #~ if cl is Report or len(cl.__bases__) == 0:
         #~ return
@@ -244,11 +276,11 @@ class ReportHandle(datalinks.DataLink,base.Handle):
         #~ actors.ActorHandle.__init__(self,report)
         datalinks.DataLink.__init__(self,ui)
         base.Handle.__init__(self,ui)
-        self.list_layout = LayoutHandle(self,ListLayout('main = '+self.report.column_names))
         if self.report.model is not None:
+            self.list_layout = LayoutHandle(self,ListLayout('main = '+self.report.column_names))
             self.content_type = ContentType.objects.get_for_model(self.report.model).pk
-        self.data_elems = report.data_elems
-        self.get_data_elem = report.get_data_elem
+            self.data_elems = report.data_elems
+            self.get_data_elem = report.get_data_elem
         
   
     def __str__(self):
@@ -473,7 +505,11 @@ class ReportActionRequest(actions.ActionRequest): # was ReportRequest
     def get_request_url(self,*args,**kw):
         return self.ui.get_request_url(self,*args,**kw)
 
-        
+
+#~ class IterActionRequest(actions.ActionRequest)
+    #~ def __init__(self,ui,iter,action):
+        #~ self.iter = iter
+        #~ actions.ActionRequest.__init__(self,ui,action)
 
 
 class Report(actors.Actor): #,base.Handled):
@@ -760,9 +796,10 @@ class Report(actors.Actor): #,base.Handled):
         
     def get_queryset(self):
         """
+        Return an iterable over the items processed by this report.
         Override this to use e.g. select_related().
+        Or for example :class:`lino.utils.mixins.RemindesrByUser` (returns a list).
         """
-        #~ return self.model.objects.select_related()
         return self.model.objects.all()
       
     def get_request_queryset(self,rr):
@@ -798,41 +835,14 @@ class Report(actors.Actor): #,base.Handled):
         if order_by:
             qs = qs.order_by(*order_by.split())
         return qs
-        
 
-    def as_string(self,rr,format=None,separator=', ',max_items=5):
-        """
-        Returns this report as a unicode string.
-        
-        :param max_items: don't include more than the specified number of items.
-        """
-        if format is None:
-            def format(rr,obj):
-                return unicode(obj)
-        s = u''
-        n = 0
-        for i in rr:
-            if n :
-                s += separator
-            n += 1
-            s += format(rr,i)
-            if n >= max_items:
-                s += separator + '...'
-                return s
-        return s
-        
-    def summary_row(self,rr,obj):
-        return u'<a href="%s" target="_blank">%s</a>' % (rr.get_request_url(str(obj.pk),fmt='detail'),unicode(obj))
-        #~ return u'<span onClick="foo">%s</span>' % (ui.get_actor_url(self,str(obj.pk)),unicode(obj))
-        #~ return u'<a href="#" onclick="Lino.foo">%s</a>' % unicode(obj)
-        
     def slave_as_summary_meth(self,ui,row_separator):
         """
-        Creates and returns the method to be used by when :attr:`Report.show_slave_grid` is `False`.
+        Creates and returns the method to be used when :attr:`Report.show_slave_grid` is `False`.
         """
         def meth(master):
             rr = self.request(ui,master_instance=master)
-            s = self.as_string(rr,self.summary_row,row_separator)
+            s = summary(ui,rr,row_separator)
             #~ s = ', '.join([fmt(r) for r in rr])
             #~ print 'reports.py 20101017', s
             return s

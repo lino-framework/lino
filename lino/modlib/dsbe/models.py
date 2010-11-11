@@ -636,7 +636,7 @@ class ContractTypes(reports.Report):
 #
 # CONTRACTS
 #
-class Contract(mixins.TypedPrintable,mixins.AutoUser):
+class Contract(mixins.TypedPrintable,mixins.Reminder):
     class Meta:
         verbose_name = _("contract")
         verbose_name_plural = _('contracts')
@@ -661,6 +661,9 @@ class Contract(mixins.TypedPrintable,mixins.AutoUser):
         #~ print 'Contract.contact_choices returns', choices
         #~ return choices
     
+    def __unicode__(self):
+        msg = _("Contract # %(pk)d (%(client)s/%(company)s)")
+        return msg % dict(pk=self.pk, client=self.client, company=self.company)
 
 class Contracts(reports.Report):
     model = Contract

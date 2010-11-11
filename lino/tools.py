@@ -31,7 +31,7 @@ LOCAL_CONFIG_DIR = None
 
 class ConfigDir:
     """
-    A configuration directory is a directories that may contain configuration files.
+    A configuration directory is a directory that may contain configuration files.
     
     """
     def __init__(self,name,can_write):
@@ -50,6 +50,13 @@ for app_name in settings.INSTALLED_APPS:
             config_dirs.append(ConfigDir(dirname,False))
     LOCAL_CONFIG_DIR = ConfigDir(os.path.join(settings.PROJECT_DIR,'config'),True)
     config_dirs.append(LOCAL_CONFIG_DIR)
+
+def find_config_file(fn):
+    for cd in config_dirs:
+        ffn = os.path.join(cd.name,fn)
+        if os.path.exists(ffn):
+            return ffn
+
 
 def find_config_files(pattern):
     """Returns a dict of filename -> config_dir entries for 

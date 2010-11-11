@@ -9,14 +9,15 @@ for which I hope for help from other people.
 Short-term
 ----------
 
+- Formatierung der :xfile:`welcome.html` lässt zu wünschen übrig.
+
+- URLField muss im Detail anklickbar sein. Und vielleicht auch in der Grid.
+
+- Im Detail eines Links eventuell dessen Vorschau.
+
 - RtfPrintMethod geht nicht immer: 
   http://127.0.0.1:8000/api/dsbe/ContractsByPerson/2?mt=14&mk=16&fmt=print 
   sagt "ValueError: 'allowed_path' has to be a directory."
-
-- Im Hauptmenü eine anklickbare Liste aller Verträge und eingescannten Dokumente dieses Benutzers anzeigen, 
-  die demnächst ablaufen. 
-  Auf Verträgen und eingescannten Dokumenten ein Ankreuzfeld "Erinnerung im Hauptmenü anzeigen", 
-  um Einträge manuell abschalten zu können.
 
 - OOo-Server und watch_tim automatisch nach reboot starten:
 

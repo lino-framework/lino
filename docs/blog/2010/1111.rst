@@ -1,0 +1,47 @@
+20101111
+========
+
+Ein weiterer Punkt kann aus der To-do-Liste raus:
+
+- Im Hauptmenü eine anklickbare Liste aller Verträge und eingescannten Dokumente dieses Benutzers anzeigen, 
+  die demnächst ablaufen. 
+  Auf Verträgen und eingescannten Dokumenten ein Ankreuzfeld "Erinnerung im Hauptmenü anzeigen", 
+  um Einträge manuell abschalten zu können.
+
+Die Implementierung ist ein bisschen anders als vorgesehen: 
+
+- Notizen, Verweise und Verträge haben jetzt zwei neue Felder
+  reminder_date und reminder_text. Wenn reminder_date ausgefüllt ist 
+  und nicht in der Zukunft liegt, wird dieser Eintrag im Hauptmenü angezeigt. 
+  
+Die Liste entspricht ästhetisch noch nicht ganz meinem Geschmack 
+(``<li>`` wird nicht als Bullet angezeigt und ich fürchte, dass das am css von ExtJS liegt), 
+aber sie funktioniert. 
+Und ist anklickbar. 
+
+  
+Intern formuliert hat das einige Konsequenzen:
+
+- Notizen, Verweise und Verträge sind jetzt Unterklassen von 
+  :class:`lino.utils.mixins.Reminder`, die das gemeinsame Interface enthält. 
+
+- lino.reports.Report.as_string habe ich nach lino.reports.summary umbenannt. 
+  :func:`lino.lino_site.discover` installiert jetzt in jedes Modell eine Methode 
+  `summary_row`, wenn sie nicht schon existiert.
+
+- Lino benutzt jetzt Cheetah als Template Engine für die :xfile:`welcome.html`, 
+  und die :xfile:`welcome.html` wird jetzt in den config-Verzeichnissen gesucht 
+  (statt wie bisher in Djangos `templates`-Verzeichnissen).
+  
+Sorry, aber die template engine von Django ist einfach zu beschränkt!
+
+Djangos *Such-System* für Templates könnte noch interessant sein,
+das kann man laut `Dokumentation 
+<http://docs.djangoproject.com/en/dev/ref/templates/api/#using-an-alternative-template-language>`_
+ja scheinbar sogar in Verbindung mit Cheetah benutzen.
+Aber auf meine config-Verzeichnisse umzusteigen war weniger Arbeit als die Doku zu 
+verstehen und zu implementieren.
+Wahrscheinlich ist mein Suchsystem langsamer als das von Django, 
+aber Performance (beim einmaligen Finden der Datei) 
+ist zumindest für die :xfile:`welcome.html` egal. 
+

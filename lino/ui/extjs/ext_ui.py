@@ -39,6 +39,9 @@ from django.utils import simplejson as json
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
+#~ import Cheetah
+from Cheetah.Template import Template as CheetahTemplate
+
 import lino
 from lino.utils import ucsv
 from lino.utils import printable
@@ -52,6 +55,7 @@ from lino.ui import base
 from lino.core import actors
 #~ from lino.core import action_requests
 from lino.utils import menus
+from lino.tools import find_config_file
 #~ from lino.utils import build_url
 from lino.utils import jsgen
 from lino.utils.jsgen import py2js, js_code, id2js
@@ -188,7 +192,12 @@ class ExtUI(base.UI):
             #~ lino.log.warning("window_configs_file %s not found",self.window_configs_file)
             
         base.UI.__init__(self,site) # will create a.window_wrapper for all actions
-        self.welcome_template = get_template('welcome.html')
+        
+        #~ self.welcome_template = get_template('welcome.html')
+        
+        fn = find_config_file('welcome.html')
+        self.welcome_template = CheetahTemplate(file(fn).read())
+        
         self.build_site_js()
         
     def create_layout_element(self,lh,panelclass,name,**kw):
@@ -407,15 +416,19 @@ class ExtUI(base.UI):
         
 
     def html_page(self,request,on_ready=[],**kw):
-        c = RequestContext(request,dict(site=self.site,lino=lino))
-        
+        #~ c = RequestContext(request,dict(site=self.site,lino=lino))
+        self.welcome_template.ui = self
+        self.welcome_template.user = request.user
+        self.welcome_template.site = self.site
+        self.welcome_template.lino = lino
         #~ main=ext_elems.ExtPanel(
         main=dict(
           id="main_area",
           xtype='container',
           region="center",
           layout='fit',
-          html=self.welcome_template.render(c),
+          #~ html=self.welcome_template.render(c),
+          html=unicode(self.welcome_template),
           #~ html=self.site.index_html.encode('ascii','xmlcharrefreplace'),
         )
         #~ if not on_ready:
@@ -991,6 +1004,10 @@ class ExtUI(base.UI):
     def get_request_url(self,rr,*args,**kw):
         kw = self.request2kw(rr,**kw)
         return self.build_url('api',rr.report.app_label,rr.report._actor_name,*args,**kw)
+        
+    def get_detail_url(self,obj,*args,**kw):
+        rpt = obj.__class__._lino_model_report
+        return self.build_url('api',rpt.app_label,rpt._actor_name,str(obj.pk),*args,**kw)
       
     def unused_get_report_url(self,rh,master_instance=None,
             submit=False,grid_afteredit=False,grid_action=None,run=False,csv=False,**kw):
@@ -1108,6 +1125,8 @@ class ExtUI(base.UI):
           
         if isinstance(h,reports.ReportHandle):
             lino.log.debug('ExtUI.setup_handle() %s',h.report)
+            if h.report.model is None:
+                return
             #~ h.choosers = chooser.get_choosers_for_model(h.report.model,chooser.FormChooser)
             #~ h.report.add_action(ext_windows.SaveWindowConfig(h.report))
             h.store = ext_store.Store(h)

@@ -38,7 +38,7 @@ class LinkType(models.Model):
     def __unicode__(self):
         return self.name
     
-class Link(mixins.AutoUser):
+class Link(mixins.Reminder):
     "Implements :class:`links.Link`."
     
     class Meta:
@@ -56,9 +56,9 @@ class Link(mixins.AutoUser):
     url = models.URLField(verify_exists=False)
     name = models.CharField(max_length=200,blank=True,null=True,
         verbose_name=_('Name'))
-    valid_until = models.DateField(
-        blank=True,null=True,
-        verbose_name=_("valid until"))
+    #~ valid_until = models.DateField(
+        #~ blank=True,null=True,
+        #~ verbose_name=_("valid until"))
         
     
     #~ def on_create(self,req):
@@ -72,6 +72,11 @@ class Link(mixins.AutoUser):
             s = unicode(self.type) + ' ' + s
         return s
         
+    def unused_summary_row(self,ui,rr):
+        if self.url:
+            return u'<a href="%s" target="_blank">%s</a>' % (self.url,unicode(self))
+        return unicode(self)
+    
 
 class LinkTypes(reports.Report):
     model = 'links.LinkType'
@@ -97,10 +102,10 @@ class LinksByOwner(Links):
     order_by = "date"
     show_slave_grid = False
     
-    def summary_row(self,rr,obj):
-        if obj.url:
-            return u'<a href="%s" target="_blank">%s</a>' % (obj.url,unicode(obj))
-        return reports.Report.summary_row(self,rr,obj)
+    #~ def summary_row(self,rr,obj):
+        #~ if obj.url:
+            #~ return u'<a href="%s" target="_blank">%s</a>' % (obj.url,unicode(obj))
+        #~ return reports.Report.summary_row(self,rr,obj)
     
     def get_title(self,rr):
         return _("Links by %(model)s %(owner)s") % dict(

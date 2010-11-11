@@ -23,3 +23,5 @@
   und der jetzt auch in :class:`lino.modlib.dsbe.Contract` ist (ein Feld `user`, das beim Erstellen eines Records automatisch mit dem betreffenden Benutzer gefüllt wird).
   
 - Kleine bugfixes in dsbe.fixtures.initial_data
+
+- check-in

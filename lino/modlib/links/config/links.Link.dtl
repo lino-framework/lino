@@ -1,4 +1,5 @@
 main = 
     url
     name
-    user date owner
+    date owner
+    user reminder_date reminder_text

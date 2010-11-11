@@ -64,7 +64,7 @@ class NoteType(mixins.PrintableType):
 
 
 
-class Note(mixins.TypedPrintable,mixins.AutoUser):
+class Note(mixins.TypedPrintable,mixins.Reminder):
         
     class Meta:
         verbose_name = _("note")
