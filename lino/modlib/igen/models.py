@@ -57,6 +57,7 @@ operations::
 
 from lino import reports
 from lino.modlib.contacts import models as contacts
+from lino.modlib.notes import models as notes
 
 class Person(contacts.Person):
     # only difference: not abstract
@@ -69,3 +70,7 @@ class Company(contacts.Company):
     class Meta:
         app_label = 'contacts'
     
+class Note(notes.Note):
+     class Meta:
+        app_label = 'notes'
+ 

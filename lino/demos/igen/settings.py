@@ -54,7 +54,7 @@ INSTALLED_APPS = (
     'lino.modlib.ledger',
     'lino.modlib.sales',
     'lino.modlib.finan',
-    'lino.modlib.properties',
+    #~ 'lino.modlib.properties',
 )
 
 
