@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-10 14:50+0000\n"
+"POT-Creation-Date: 2010-11-11 11:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -78,7 +78,7 @@ msgstr ""
 msgid "Invalid value %(value). Must be one of (%(values)s)"
 msgstr ""
 
-#: .\lino_site.py:148
+#: .\lino_site.py:163
 #, python-format
 msgid "Cannot delete %(self)s because %(count)d %(refs)s refer to it."
 msgstr ""
@@ -99,7 +99,7 @@ msgstr ""
 msgid "~Site"
 msgstr ""
 
-#: .\reports.py:369
+#: .\reports.py:401
 #, python-format
 msgid "User %(user)s cannot view %(report)s."
 msgstr ""
@@ -132,7 +132,7 @@ msgstr ""
 msgid "~Projects"
 msgstr ""
 
-#: .\ui\extjs\ext_elems.py:513
+#: .\ui\extjs\ext_elems.py:520
 #, python-format
 msgid "Select a %s..."
 msgstr ""
@@ -147,43 +147,55 @@ msgstr ""
 msgid "%r (invalid choice)"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:439
+#: .\ui\extjs\ext_ui.py:452
 msgid "Console"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:543
+#: .\ui\extjs\ext_ui.py:556
 #, python-format
 msgid "Welcome on Lino server %(title)r, user %(user)s"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:578
+#: .\ui\extjs\ext_ui.py:591
 #, python-format
 msgid "%s has been saved."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:587 .\ui\extjs\ext_ui.py:610
+#: .\ui\extjs\ext_ui.py:600 .\ui\extjs\ext_ui.py:623
 #, python-format
 msgid "User %(user)s cannot configure %(report)s."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:799
+#: .\ui\extjs\ext_ui.py:812
 #, python-format
 msgid "Insert into %s..."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:905
+#: .\ui\extjs\ext_ui.py:918
 #, python-format
 msgid "Choices for %s"
+msgstr ""
+
+#: .\utils\mixins.py:28
+msgid "user"
+msgstr ""
+
+#: .\utils\mixins.py:41
+msgid "Reminder date"
+msgstr ""
+
+#: .\utils\mixins.py:43
+msgid "Reminder text"
 msgstr ""
 
 #: .\utils\printable.py:324
 msgid "Print"
 msgstr ""
 
-#: .\utils\printable.py:348
+#: .\utils\printable.py:351
 msgid "Build method"
 msgstr ""
 
-#: .\utils\printable.py:351
+#: .\utils\printable.py:354
 msgid "Template"
 msgstr ""

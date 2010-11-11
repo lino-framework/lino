@@ -15,6 +15,8 @@ import cgi
 import datetime
 
 from django.db import models
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes import generic
 from django.utils.translation import ugettext_lazy as _
 
 from lino import reports
@@ -25,7 +27,7 @@ class AutoUser(models.Model):
     class Meta:
         abstract = True
         
-    user = models.ForeignKey("auth.User") # ,blank=True,null=True)
+    user = models.ForeignKey("auth.User",verbose_name=_("user")) # ,blank=True,null=True)
     
     def on_create(self,req):
         u = req.get_user()
@@ -116,3 +118,25 @@ class MultiTableBase(models.Model):
         related_name = model.__name__.lower()
         return getattr(self,related_name)
         
+class Owned(models.Model):
+  
+    owner_type = models.ForeignKey(ContentType,verbose_name=_('Owner type'))
+    owner_id = models.PositiveIntegerField(verbose_name=_('Owner'))
+    owner = generic.GenericForeignKey('owner_type', 'owner_id')
+    
+    def owner_id_choices(self,owner_type):
+      #~ ct = ContentType.objects.get(pk=owner_type)
+      return owner_type.model_class().objects.all()
+    owner_id_choices.instance_values = True
+    owner_id_choices = classmethod(owner_id_choices)
+        
+    def get_owner_id_display(self,value):
+        return unicode(self.owner_type.get_object_for_this_type(pk=value))
+            
+
+class PartnerDocument(models.Model):
+    class Meta:
+        abstract = True
+    person = models.ForeignKey("contacts.Person",blank=True,null=True,verbose_name=_("Person"))
+    company = models.ForeignKey("contacts.Company",blank=True,null=True,verbose_name=_("Company"))
+

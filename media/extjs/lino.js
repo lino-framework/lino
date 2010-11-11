@@ -19,6 +19,16 @@ Lino.on_tab_activate = function(item) {
   if (item.rendered) item.doLayout();
 }
 
+Lino.URLField = Ext.extend(Ext.form.TriggerField,{
+  triggerClass : 'x-form-search-trigger',
+  vtype: 'url',
+  onTriggerClick : function() {
+    //~ console.log('Lino.URLField.onTriggerClick',this.value)
+    //~ document.location = this.value;
+    window.open(this.getValue(),'_blank');
+  }
+});
+
 Lino.VBorderPanel = Ext.extend(Ext.Panel,{
     constructor : function(config) {
       config.layout = 'border';

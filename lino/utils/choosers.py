@@ -14,7 +14,7 @@
 from django.db import models
 from lino.utils.instantiator import make_converter
 #~ from lino import reports
-from lino.core.coretools import get_data_elem
+from lino.core.coretools import get_data_elem, get_unbound_meth
 import lino
   
 
@@ -37,6 +37,7 @@ class Chooser(BaseChooser):
         #~ self.field = model._meta.get_field(fldname)
         self.meth = meth
         self.simple_values = getattr(meth,'simple_values',False)
+        self.instance_values = getattr(meth,'instance_values',False)
         self.context_params = meth.func_code.co_varnames[1:meth.func_code.co_argcount]
         #~ print '20100724c', meth, self.context_params 
         #~ lino.log.warning("20100527 %s %s",self.context_params,meth)
@@ -58,6 +59,11 @@ class Chooser(BaseChooser):
                     self.converters.append(cv)
         except models.FieldDoesNotExist,e:
             print e
+            
+        #~ m = get_unbound_meth(model,field.name + "_display")
+        #~ if m is not None:
+            #~ self.display_meth
+        
             
     def get_data_elem(self,name):
         for vf in self.model._meta.virtual_fields:
@@ -82,7 +88,9 @@ class Chooser(BaseChooser):
     def get_text_for_value(self,value,obj):
         #~ raise NotImplementedError
         #~ assert not self.simple_values
-        raise NotImplementedError("%s : Cannot get text for value %r" % (self.meth,value))
+        m = getattr(obj,"get_" + self.field.name + "_display")
+        return m(value)
+        #~ raise NotImplementedError("%s : Cannot get text for value %r" % (self.meth,value))
         
 
 def discover():
@@ -92,7 +100,7 @@ def discover():
         #~ n = 0
         for field in model._meta.fields:
             methname = field.name + "_choices"
-            m = getattr(model,methname,None)
+            m = get_unbound_meth(model,methname)
             if m is not None:
                 #~ n += 1
                 setattr(field,'_lino_chooser',Chooser(model,field,m))

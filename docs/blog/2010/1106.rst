@@ -5,8 +5,7 @@
 
 - Und hier noch eine Revolution in der DB-Struktur: 
   Renamed contacts.Contact to contacts.Addressable.
-  This probably also solves :doc:`/tickets/7`.
-  Todo: adapt documentation.
+  This also solves *en passant* :doc:`/tickets/closed/7`.
   New models Contact und ContactType (Manager, Director, Secretary, ...)
   A "contact" now means a person in a company (Kontaktperson).
   ContactsByCompany, ContactsByPerson

@@ -889,22 +889,28 @@ class ExtUI(base.UI):
         quick_search = request.GET.get(ext_requests.URL_PARAM_FILTER,None)
         if quick_search is not None:
             qs = reports.add_quick_search_filter(qs,quick_search)
-        if isinstance(field,models.ForeignKey):
-            def row2dict(obj,d):
-                d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
-                d[ext_requests.CHOICES_VALUE_FIELD] = obj.pk # getattr(obj,'pk')
-                return d
-        elif chooser:
+        if chooser:
             if chooser.simple_values:
                 def row2dict(obj,d):
                     #~ d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
                     d[ext_requests.CHOICES_VALUE_FIELD] = unicode(obj)
+                    return d
+            elif chooser.instance_values:
+                # same code as for ForeignKey
+                def row2dict(obj,d):
+                    d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
+                    d[ext_requests.CHOICES_VALUE_FIELD] = obj.pk # getattr(obj,'pk')
                     return d
             else:
                 def row2dict(obj,d):
                     d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj[1])
                     d[ext_requests.CHOICES_VALUE_FIELD] = obj[0]
                     return d
+        elif isinstance(field,models.ForeignKey):
+            def row2dict(obj,d):
+                d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
+                d[ext_requests.CHOICES_VALUE_FIELD] = obj.pk # getattr(obj,'pk')
+                return d
         else:
             def row2dict(obj,d):
                 if type(obj) is list or type(obj) is tuple:

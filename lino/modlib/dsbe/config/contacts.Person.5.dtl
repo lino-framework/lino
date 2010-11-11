@@ -2,6 +2,5 @@
 :label_align: top
 
 main = 
-    #dsbe.StudiesByPerson
-    notes.NotesByOwner 
-    dsbe.ContractsByPerson links.LinksByOwner
+    notes.NotesByPerson links.LinksByPerson
+    dsbe.ContractsByPerson 

@@ -2,3 +2,4 @@ main =
     url
     name
     date user reminder_date reminder_text
+    person company

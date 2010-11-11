@@ -17,8 +17,8 @@ import datetime
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
+#~ from django.contrib.contenttypes.models import ContentType
+#~ from django.contrib.contenttypes import generic
 from django.db import IntegrityError
 
 from lino import fields, tools
@@ -67,6 +67,7 @@ class NoteType(mixins.PrintableType):
 class Note(mixins.TypedPrintable,mixins.Reminder):
         
     class Meta:
+        abstract = True
         verbose_name = _("note")
         verbose_name_plural = _("notes")
         
@@ -77,12 +78,12 @@ class Note(mixins.TypedPrintable,mixins.Reminder):
     #~ owner = generic.GenericForeignKey('owner_type', 'owner_id')
     type = models.ForeignKey(NoteType,blank=True,null=True,verbose_name=_('Note type'))
     #,on_delete=RESTRICT)
-    subject = models.CharField(max_length=200,blank=True,null=True)
-    body = models.TextField(blank=True)
+    subject = models.CharField(_("Subject"),max_length=200,blank=True,null=True)
+    body = models.TextField(_("Body"),blank=True)
     
-    owner_type = models.ForeignKey(ContentType)
-    owner_id = models.PositiveIntegerField(verbose_name=_('Owner'))
-    owner = generic.GenericForeignKey('owner_type', 'owner_id')
+    #~ owner_type = models.ForeignKey(ContentType,verbose_name=_('Owner type'))
+    #~ owner_id = models.PositiveIntegerField(verbose_name=_('Owner'))
+    #~ owner = generic.GenericForeignKey('owner_type', 'owner_id')
     
     #~ project = models.ForeignKey("projects.Project",blank=True,null=True)
     #~ person = models.ForeignKey("contacts.Person",blank=True,null=True)
@@ -134,17 +135,10 @@ class MyNotes(Notes):
     #~ column_names = "date subject user *"
     #~ order_by = "date"
   
-class NotesByOwner(Notes):
-    fk_name = 'owner'
-    column_names = "date subject user *"
-    order_by = "date"
-    #~ label = _("Notes by person")
-  
-#~ class NotesByCompany(Notes):
-    #~ fk_name = 'company'
+#~ class NotesByOwner(Notes):
+    #~ fk_name = 'owner'
     #~ column_names = "date subject user *"
     #~ order_by = "date"
-    #~ label = _("Notes by person")
   
 class NotesByType(Notes):
     fk_name = 'type'

@@ -204,7 +204,7 @@ class AppyBuildMethod(SimpleBuildMethod):
     templates_name = 'appy' # subclasses use the same templates directory
     
     def simple_build(self,elem,tpl,target):
-        context = dict(instance=elem)
+        context = dict(self=elem)
         from appy.pod.renderer import Renderer
         renderer = Renderer(tpl, context, target,**settings.APPY_PARAMS)
         lino.log.debug("appy.pod render %s -> %s",tpl,target)

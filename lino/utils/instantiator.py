@@ -66,7 +66,7 @@ class ForeignKeyConverter(Converter):
         if value is not None:
             model = self.field.rel.to
             if not isinstance(value,model):
-                if model is ContentType:
+                if False and model is ContentType:
                     value = ContentType.objects.get_for_model(resolve_model(value))
                 else:
                     lookup_kw = {self.lookup_field: value}

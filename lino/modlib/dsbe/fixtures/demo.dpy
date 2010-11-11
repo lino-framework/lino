@@ -13,13 +13,34 @@
 ## along with Lino-DSBE; if not, see <http://www.gnu.org/licenses/>.
 
 
+import decimal
+from dateutil.relativedelta import relativedelta
+ONE_DAY = relativedelta(days=1)
+
+from django.db import models
 from django.contrib.contenttypes.models import ContentType
-from lino.utils.instantiator import Instantiator, i2d
-from lino.tools import resolve_model
 from django.utils.translation import ugettext as _
 
 
-from django.db import models
+from lino.utils.instantiator import Instantiator, i2d
+from lino.tools import resolve_model
+
+from django.contrib.auth import models as auth
+
+
+
+
+DEMO_LINKS = [
+  dict(name="Lino website",url="http://lino.saffre-rumma.ee"),
+  dict(name="Django website",url="http://www.djangoproject.com"),
+  dict(name="ExtJS website",url="http://www.sencha.com"),
+  dict(name="Python website",url="http://www.python.org"),
+  dict(name="Google",url="http://www.google.com"),
+]
+ROW_COUNTER = 0
+MAX_LINKS_PER_OWNER = 4
+DATE = i2d(20061014)
+    
 
 
 auth = models.get_app('auth')
@@ -33,6 +54,8 @@ Company = resolve_model('contacts.Company')
 Contact = resolve_model('contacts.Contact')
 Contract = resolve_model('dsbe.Contract')
 Note = resolve_model('notes.Note')
+User = resolve_model('auth.User')
+    
 
 person = Instantiator(Person).build
 company = Instantiator(Company).build
@@ -61,6 +84,9 @@ City = resolve_model('countries.City')
 StudyType = resolve_model('dsbe.StudyType')
 Country = resolve_model('countries.Country')
 #~ StudyContent = resolve_model('dsbe.StudyContent')
+
+
+
 
 def objects():
     
@@ -141,10 +167,11 @@ def objects():
     #~ yield prj 
     #~ yield note(user=user,project=prj,date=i2d(20091007),subject="Anschauen",company=oshz)
     
-    yield note(user=root,date=i2d(20091006),subject="Programmierung",owner=cpas)
-    yield note(user=user,date=i2d(20091007),subject="Testen",owner=cpas)
-    yield note(user=root,date=i2d(20100517),subject="Programmierung",owner=cpas)
-    yield note(user=user,date=i2d(20100518),subject="Testen",owner=cpas)
+    yield note(user=root,date=i2d(20091006),subject="Programmierung",company=cpas)
+    yield note(user=user,date=i2d(20091007),subject="Testen",company=cpas)
+    yield note(user=root,date=i2d(20100517),subject="Programmierung",company=cpas)
+    yield note(user=user,date=i2d(20100518),subject="Testen",company=cpas)
+    
         
     yield study(person=luc,type=schule,content=abi,started='197409',stopped='198606')
     yield study(person=gerd,type=schule,content=abi,started='197409',stopped='198606')
@@ -164,7 +191,7 @@ def objects():
     
     
     contract = Instantiator('dsbe.Contract','type applies_from applies_until company contact',
-      user=root,client=hans).build
+      user=root,person=hans).build
     yield contract(1,i2d(20090518),i2d(20090517),rcycle,rcycle_dir)
     yield contract(1,i2d(20100518),i2d(20100517),bisa,bisa_dir)
 
@@ -175,4 +202,33 @@ def objects():
         
     for rmd in Note.objects.all(): f(rmd,i2d(20101110))
     for rmd in Contract.objects.all(): f(rmd,i2d(20101111))
-        
+      
+      
+      
+    
+    link = Instantiator('links.Link').build
+    
+    users = User.objects.all()
+    
+    
+    def demo_links(**kw):
+        global ROW_COUNTER
+        global DATE
+        for x in range(1 + (ROW_COUNTER % MAX_LINKS_PER_OWNER)):
+            kw.update(date=DATE)
+            kw.update(DEMO_LINKS[ROW_COUNTER % len(DEMO_LINKS)])
+            kw.update(user=users[ROW_COUNTER % users.count()])
+            DATE += ONE_DAY
+            ROW_COUNTER += 1
+            yield link(**kw)
+      
+    for obj in Person.objects.all():
+        for x in demo_links(person=obj):
+            yield x
+            
+    for obj in Company.objects.all():
+        for x in demo_links(company=obj):
+            yield x
+            
+    
+    

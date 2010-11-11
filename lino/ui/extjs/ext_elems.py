@@ -542,6 +542,17 @@ class DateFieldElement(FieldElement):
         kw.update(format=self.lh.rh.report.date_format)
         return kw
     
+class URLFieldElement(CharFieldElement):
+    sortable = True
+    preferred_width = 40
+    value_template = "new Lino.URLField(%s)"
+    
+    #~ def get_field_options(self,**kw):
+        #~ kw = FieldElement.get_field_options(self,**kw)
+        #~ kw.update(vtype='url') #,vtypeText=
+        #~ return kw
+        
+    
 class IntegerFieldElement(FieldElement):
     filter_type = 'numeric'
     xtype = 'numberfield'
@@ -1203,6 +1214,8 @@ class FormPanel(jsgen.Component):
 
 _field2elem = (
     (fields.HtmlBox, HtmlBoxElement),
+    (models.URLField, URLFieldElement),
+    (models.EmailField, CharFieldElement),
     (models.TextField, TextFieldElement),
     (models.CharField, CharFieldElement),
     (models.DateField, DateFieldElement),
@@ -1212,8 +1225,6 @@ _field2elem = (
     (models.ManyToManyField, M2mGridElement),
     (models.ForeignKey, ForeignKeyElement),
     (models.AutoField, IntegerFieldElement),
-    (models.EmailField, CharFieldElement),
-    #~ (properties.Property, PropertyElement),
 )
     
 

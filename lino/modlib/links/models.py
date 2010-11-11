@@ -15,8 +15,8 @@
 import datetime
 
 from django.db import models
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
+#~ from django.contrib.contenttypes.models import ContentType
+#~ from django.contrib.contenttypes import generic
 from django.utils.translation import ugettext_lazy as _
 
 from lino import fields
@@ -37,34 +37,26 @@ class LinkType(models.Model):
     name = models.CharField(max_length=200,verbose_name=_('Name'))
     def __unicode__(self):
         return self.name
-    
+
+
+
+
 class Link(mixins.Reminder):
     "Implements :class:`links.Link`."
     
     class Meta:
+        abstract = True
         verbose_name = _("link")
         verbose_name_plural = _("links")
     
-    #~ user = models.ForeignKey("auth.User",verbose_name=_('User'))
     type = models.ForeignKey("links.LinkType",
       blank=True,null=True,
       verbose_name=_('Link type'))
-    date = models.DateTimeField(verbose_name=_('Date'),default=datetime.date.today) 
-    owner_type = models.ForeignKey(ContentType)
-    owner_id = models.PositiveIntegerField(verbose_name=_('Owner'))
-    owner = generic.GenericForeignKey('owner_type', 'owner_id')
+    date = models.DateTimeField(_('Date'),
+      default=datetime.date.today) 
     url = models.URLField(verify_exists=False)
     name = models.CharField(max_length=200,blank=True,null=True,
         verbose_name=_('Name'))
-    #~ valid_until = models.DateField(
-        #~ blank=True,null=True,
-        #~ verbose_name=_("valid until"))
-        
-    
-    #~ def on_create(self,req):
-        #~ u = req.get_user()
-        #~ if u is not None:
-            #~ self.user = u
             
     def __unicode__(self):
         s = self.name or self.url or u""
@@ -72,11 +64,6 @@ class Link(mixins.Reminder):
             s = unicode(self.type) + ' ' + s
         return s
         
-    def unused_summary_row(self,ui,rr):
-        if self.url:
-            return u'<a href="%s" target="_blank">%s</a>' % (self.url,unicode(self))
-        return unicode(self)
-    
 
 class LinkTypes(reports.Report):
     model = 'links.LinkType'
@@ -94,18 +81,12 @@ class MyLinks(Links):
     column_names = "name url date *"
     order_by = 'name'
 
-class LinksByOwner(Links):
-    button_label = _("Links")
-    #~ label = _("Links by owner")
-    fk_name = 'owner'
+class LinksByOwnerBase(Links):
+    #~ button_label = _("Links")
+    #~ fk_name = 'owner'
     column_names = "url date name user *"
-    order_by = "date"
+    #~ order_by = "date"
     show_slave_grid = False
-    
-    #~ def summary_row(self,rr,obj):
-        #~ if obj.url:
-            #~ return u'<a href="%s" target="_blank">%s</a>' % (obj.url,unicode(obj))
-        #~ return reports.Report.summary_row(self,rr,obj)
     
     def get_title(self,rr):
         return _("Links by %(model)s %(owner)s") % dict(

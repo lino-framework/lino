@@ -1,7 +1,7 @@
 :label_align: top
 
 main =
-    id type language
+    id type person language 
     company contact
     applies_from applies_until
     user reminder_date reminder_text

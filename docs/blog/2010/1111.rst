@@ -1,6 +1,9 @@
 20101111
 ========
 
+Reminders
+---------
+
 Ein weiterer Punkt kann aus der To-do-Liste raus:
 
 - Im Hauptmenü eine anklickbare Liste aller Verträge und eingescannten Dokumente dieses Benutzers anzeigen, 
@@ -38,6 +41,7 @@ Djangos *Such-System* für Templates könnte noch interessant sein,
 das kann man laut `Dokumentation 
 <http://docs.djangoproject.com/en/dev/ref/templates/api/#using-an-alternative-template-language>`_
 ja scheinbar sogar in Verbindung mit Cheetah benutzen.
+(Siehe auch http://code.google.com/p/django-cheetahtemplate.)
 Aber auf meine config-Verzeichnisse umzusteigen war weniger Arbeit als die Doku zu 
 verstehen und zu implementieren.
 Wahrscheinlich ist mein Suchsystem langsamer als das von Django, 
@@ -45,3 +49,66 @@ aber Performance (beim einmaligen Finden der Datei)
 ist zumindest für die :xfile:`welcome.html` egal. 
 
 7.35 Uhr Check-in.
+
+Clickable URLField
+------------------
+
+11.30 Uhr weiter mit dem folgenden Punkt aus der to-Do-Liste:
+
+- URLField muss im Detail anklickbar sein. Und vielleicht auch in der Grid.
+
+`Jorge Ramon <http://www.packtpub.com/article/load-validate-submit-forms-ext-js-3.0-part2>`_ 
+hat mich auf den Trick mit vtype='url' gebracht. Aber das ist nicht eigentlich das was ich will.
+
+Nach etwas Surferei komme ich zu dem Schluss, dass ich mir wohl am besten mein eigenes 
+Feld Lino.URLField mache::
+
+    Lino.URLField = Ext.extend(Ext.form.TriggerField,{
+      triggerClass : 'x-form-search-trigger',
+      vtype: 'url',
+      onTriggerClick : function() {
+        window.open(this.getValue(),'_blank');
+      }
+    });
+
+`Ext.form.TriggerField` ist die gemeinsame Basisklasse von ComboBox und DateField.
+Die jss-Klasse `x-form-search-trigger` sorgt dafür, dass das Bild im Trigger-Button eine Lupe ist.
+Das ist zufriedenstellend.
+Zumindest in einer Form.
+
+
+ComboBox for id part of GenericForeignKey
+-----------------------------------------
+
+- Im Detail von Notizen und Links sieht man zwei Felder "Besitzerart" und "Besitzer". 
+  Letzteres müsste ebenfalls eine (kontext-sensitive) Combobox sein.
+
+Das war nicht einfach. Aber es funktioniert jetzt für Links schon fast. 
+Besitzer wird jetzt angezeigt, und man kann eine Auswahlliste aufklappen.
+Aber Speichern geht noch nicht...
+
+`Chooser.get_text_for_value` ist jetzt implementiert: 
+die schaut jetzt nach einer Methode `get_FOO_display
+<http://docs.djangoproject.com/en/dev/ref/models/instances/#django.db.models.Model.get_FOO_display>`_.
+
+Ich breche dieses Ticket ab, 
+denn mir ist aufgefallen, 
+dass das Selbstbefriedigung war: 
+im DSBE ist es gar nicht nötig, dass man Notizen "egal was" zuordnen kann. 
+Lieber statt dessen zwei Foreign Keys `person` und `company` und basta. 
+Dann ist das user interface intuitiver.
+Übrigens hat die mangelhafte Übersetzung von Owner ("Besitzer") mich darauf gebracht...
+
+Das ist eine gute Prüfungsarbeit für das Feature "wiederverwertbare Modelle":
+links.Link und notes.Note sind jetzt `abstract`. 
+Dadurch kann (und muss) man sie in der Anwendung noch erweitern.
+dsbe erweitert sie mit `lino.utils.mixins.PartnerDocument` (also zwei Felder `person` und `company`).
+Man könnte auch einfach nur ein `pass` reinschreiben, 
+wenn man Notizen und Links nur pro Benutzer und Art braucht.
+Oder (wenn die Comboboxen mal klappen) benutzt man `lino.utils.mixins.Owned`.
+Und noch später vielleicht auch mal ein Modul `tags`, mit dem man dann eine Notiz 
+beliebig vielen anderen Objekten zuweisen kann...
+
+17.50 Uhr: Die Prüfungsarbeit scheint erfolgreich abgeschlossen. 
+
+Checkin.

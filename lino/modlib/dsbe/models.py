@@ -121,9 +121,7 @@ class Partner(models.Model):
 
 class Person(Partner,contacts.Person,mixins.Printable):
     """
-    Implements :class:`contacts.Person`, 
-    but cannot inherit from :mod:`lino.modlib.contacts.models.Person`
-    (see :doc:`/tickets/7`).
+    Implements :class:`contacts.Person`.
     
     This is also Printable just to demonstrate that not only Notes are printables.
     
@@ -355,9 +353,7 @@ class PersonsByCity(Persons):
 class Company(Partner,contacts.Company):
   
     """
-    Implements :class:`contacts.Company`, 
-    but cannot inherit from :mod:`lino.modlib.contacts.models.Company`
-    (see :doc:`/tickets/7`).
+    Implements :class:`contacts.Company`.
     
     Inner class Meta is necessary because of :doc:`/tickets/14`.
     """
@@ -632,17 +628,16 @@ class ContractType(mixins.PrintableType):
 class ContractTypes(reports.Report):
     model = ContractType
     column_names = 'name build_method template *'
-    
+
+
 #
 # CONTRACTS
 #
-class Contract(mixins.TypedPrintable,mixins.Reminder):
+class Contract(mixins.TypedPrintable,mixins.Reminder,mixins.PartnerDocument):
     class Meta:
         verbose_name = _("contract")
         verbose_name_plural = _('contracts')
         
-    client = models.ForeignKey("contacts.Person",verbose_name=_("Client"))
-    company = models.ForeignKey("contacts.Company",verbose_name=_("Company"))
     contact = models.ForeignKey("contacts.Contact",blank=True,null=True,
       verbose_name=_("represented by"))
     #~ user = models.ForeignKey("auth.User",verbose_name=_("Coach"))
@@ -662,21 +657,57 @@ class Contract(mixins.TypedPrintable,mixins.Reminder):
         #~ return choices
     
     def __unicode__(self):
-        msg = _("Contract # %(pk)d (%(client)s/%(company)s)")
-        return msg % dict(pk=self.pk, client=self.client, company=self.company)
+        msg = _("Contract # %(pk)d (%(person)s/%(company)s)")
+        return msg % dict(pk=self.pk, person=self.person, company=self.company)
 
 class Contracts(reports.Report):
     model = Contract
     
 class ContractsByPerson(Contracts):
-    fk_name = 'client'
+    fk_name = 'person'
     column_names = 'company applies_from applies_until user type *'
 
 class ContractsByCompany(Contracts):
     fk_name = 'company'
-    column_names = 'client applies_from applies_until user type *'
+    column_names = 'person applies_from applies_until user type *'
 
 class ContractsByType(Contracts):
     fk_name = 'type'
-    column_names = "applies_from client company user *"
+    column_names = "applies_from person company user *"
     order_by = "applies_from"
+
+
+#
+# NOTES
+#
+class Note(notes.Note,mixins.PartnerDocument):
+    class Meta:
+        app_label = 'notes'
+
+class NotesByPerson(notes.Notes):
+    fk_name = 'person'
+    column_names = "date subject user company *"
+    order_by = "date"
+  
+class NotesByCompany(notes.Notes):
+    fk_name = 'company'
+    column_names = "date subject user person *"
+    order_by = "date"
+  
+#
+# LINKS
+#
+class Link(links.Link,mixins.PartnerDocument):
+    class Meta:
+        app_label = 'links'
+
+class LinksByPerson(links.LinksByOwnerBase):
+    fk_name = 'person'
+    column_names = "name url user date company *"
+    order_by = "date"
+  
+class LinksByCompany(links.LinksByOwnerBase):
+    fk_name = 'company'
+    column_names = "name url user date person *"
+    order_by = "date"
+  

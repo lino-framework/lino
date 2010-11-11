@@ -9,11 +9,12 @@ for which I hope for help from other people.
 Short-term
 ----------
 
-- Formatierung der :xfile:`welcome.html` lässt zu wünschen übrig.
+- Formatierung der :xfile:`welcome.html` lässt zu wünschen übrig.  
 
-- URLField muss im Detail anklickbar sein. Und vielleicht auch in der Grid.
+- Im Hauptmenü könnten zwei Befehle :menuselection:`Help --> User Manual` 
+  und :menuselection:`Help --> About` kommen, dann hätten wir den ganzen Platz für Erinnerungen.
 
-- Im Detail eines Links eventuell dessen Vorschau.
+- Im Detail eines Links wäre dessen Vorschau interessant.
 
 - RtfPrintMethod geht nicht immer: 
   http://127.0.0.1:8000/api/dsbe/ContractsByPerson/2?mt=14&mk=16&fmt=print 
@@ -42,6 +43,13 @@ Short-term
   
 Undecided
 ---------
+
+- Ein ``<a href="..." target="blank">`` öffnet zumindest in Chrome kein neues Fenster, 
+  sondern einen neuen Tab im gleichen Fenster. 
+  Idem für `window.open('URL','_blank')`.
+  Ich weiß nicht, wie man das abstellen kann, aber hier immerhin ein Workaround: 
+  wenn man den Titel des 
+  Browser-Tabs aus dem Browserfenster raus zieht, dann öffnet er ein neues Fenster.
 
 - Momentan wird der Synchronisierungs-Prozess (watch_tim) nach einem Server-Restart nicht automatisch neu gestartet. 
   Ich habe nämlich lediglich in `/usr/local/django/myproject` eine Datei namens `watch_tim` mit folgendem Inhalt::
