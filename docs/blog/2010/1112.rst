@@ -4,14 +4,18 @@
 Eigentlich wollte ich schnell :doc:`/releases/20101112` 
 auf DSBE und Tups installieren... 
 aber da gibt es eine Überraschung: 
-das lang ersehnte LOGGING ist jetzt in Django drin! 
-Das Dumme daran::
+das lang ersehnte 
+`LOGGING 
+<http://docs.djangoproject.com/en/dev/topics/logging/>`_
+ist jetzt in Django drin! 
 
-:doc:`/tickets/15`
-  
+Das Dumme daran: ich habe einen halben Tag mit 
+:doc:`/tickets/closed/15` 
+verbracht.  
 Zuerst dachte ich, dass mein eigener Logger `lino.log` dran Schuld ist, 
 der damit irgendwie in Konflikt gerät. 
-Das war eigentlich zu erwarten.
-Also zuerst mal auf das Django-System konvertieren.
-Aber nein, das war's gar nicht (ich bereue trotzdem nicht, auf den Django-Logger umgestiegen zu sein).
+Also habe ich Lino zuerst mal auf das Django-System konvertiert.
+Aber das war's gar nicht, schuld war die Python-UNO-Bridge.
+
+
 

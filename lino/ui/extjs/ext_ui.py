@@ -57,7 +57,7 @@ from lino.ui import base
 from lino.core import actors
 #~ from lino.core import action_requests
 from lino.utils import menus
-from lino.tools import find_config_file
+from lino.utils.config import find_config_file
 #~ from lino.utils import build_url
 from lino.utils import jsgen
 from lino.utils.jsgen import py2js, js_code, id2js
@@ -196,6 +196,10 @@ class ExtUI(base.UI):
         base.UI.__init__(self,site) # will create a.window_wrapper for all actions
         
         #~ self.welcome_template = get_template('welcome.html')
+        
+        #~ from django.template.loader import find_template
+        #~ source, origin = find_template('welcome.html')
+        #~ print source, origin
         
         fn = find_config_file('welcome.html')
         self.welcome_template = CheetahTemplate(file(fn).read())

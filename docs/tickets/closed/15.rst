@@ -1,6 +1,27 @@
 #15 : python-uno and logging
 ============================
 
+The Debian package `python-uno` 
+clashes with the Python 2.7 standard ``logging.dictConfig`` 
+module.[#f1]_
+
+The workaround is to use either fileConfig or plain Python 
+code for your logger configuration.
+
+Lino's default logging config uses plain Python code 
+and is defined in :mod:`lino.demos.std.settings`::
+
+  LOGGING_CONFIG = 'lino.utils.log.configure'
+  LOGGING = None
+
+So Django will call :func:`lino.utils.log.configure`.
+You may of course override these settings. 
+Just be aware that Lino needs the OpenOffice.org 
+UNO bridge. 
+
+
+
+
 Django Revision 14540, Python 2.5.2 on stable Debian Lenny.
 
 .. literalinclude:: 15.py
@@ -23,24 +44,11 @@ Without the ``import uno`` it works::
   $ python 15.py
   Hello world
 
-This is because the Debian package `python-uno` 
-clashes with the Python 2.7 ``logging.dictConfig`` 
-module.[#f1]_
-
-The workaround is to use either fileConfig or plain Python 
-code for your logger configuration.
-For Lino I do it with the following code in :xfile:`settings.py`::
-
-  LOGGING_CONFIG = 'lino.utils.log.configure'
-  LOGGING = None
-
-This will call :func:`lino.utils.log.configure`.
-
 .. rubric:: Footnotes
 
 .. [#f1] At least I deduce this from the following observations. 
-I added some ``print`` statements into 
-:file:`/var/snapshots/django/django/utils/dictconfig.py`::
+  I added some ``print`` statements into 
+  :file:`/var/snapshots/django/django/utils/dictconfig.py`::
 
     def resolve(self, s):
         """
@@ -68,7 +76,7 @@ I added some ``print`` statements into
             raise v
 
 
-... which produced output like this::
+  ... which produced output like this::
 
     20101112 resolve 'logging.StreamHandler'
     20101112 import 'logging' <bound method DictConfigurator._uno_import of <django.utils.dictconfig.DictConfigurator object

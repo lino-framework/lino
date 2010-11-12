@@ -12,13 +12,19 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-See also :doc:`/tickets/15`
+See also :doc:`/tickets/closed/15`
 """
 
 import sys
 import logging
 
+from django.utils.log import AdminEmailHandler
+
 def configure(config):
+    logger = logging.getLogger('django')
+    h = AdminEmailHandler()
+    h.setLevel(logging.ERROR)
+    
     logger = logging.getLogger('lino')
         
     logger.setLevel(logging.DEBUG)
@@ -28,6 +34,7 @@ def configure(config):
     fmt = logging.Formatter(fmt='%(message)s')
     h.setFormatter(fmt)
     logger.addHandler(h)
+    
     
     if sys.platform == 'win32':
         LOGFILE = 'lino.log'

@@ -64,7 +64,8 @@ from lino.utils import menus
 from lino.core import actors
 from lino.core.coretools import app_labels, data_elems, get_unbound_meth
 
-from lino.tools import resolve_model, resolve_field, get_app, model_label, get_field, find_config_files
+from lino.tools import resolve_model, resolve_field, get_app, model_label, get_field
+from lino.utils.config import find_config_files
 from lino.reports import DetailLayout
 
 ## The following not only logs diagnostic information, it also has an 

@@ -11,7 +11,13 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-# Django settings file
+"""
+This defines Lino default settings. You include this (directly or indirectly) 
+into your local :xfile:`settings.py` using::
+
+  from lino.demos.std.settings import *
+
+"""
 
 import os
 import sys
@@ -103,8 +109,8 @@ SECRET_KEY = 'cqt^18t(Fb#14a@s%mbtdif+ih8fscpf8l9aw+0ivo2!3c(c%&'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.load_template_source',
-    'django.template.loaders.app_directories.load_template_source',
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
 #     'django.template.loaders.eggs.load_template_source',
 )
 
@@ -123,10 +129,10 @@ MIDDLEWARE_CLASSES = (
 
 
 if not BYPASS_PERMS:
-    if sys.platform == 'win32':
-        MIDDLEWARE_CLASSES = (
-            'lino.utils.simulate_remote.SimulateRemoteUserMiddleware',
-        ) + MIDDLEWARE_CLASSES 
+    #~ if sys.platform == 'win32':
+        #~ MIDDLEWARE_CLASSES = (
+            #~ 'lino.utils.simulate_remote.SimulateRemoteUserMiddleware',
+        #~ ) + MIDDLEWARE_CLASSES 
         
     MIDDLEWARE_CLASSES += (
       'django.contrib.auth.middleware.RemoteUserMiddleware',

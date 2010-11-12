@@ -17,18 +17,18 @@
 Simulate HTTP authentication  when working with the development server 
 (`manage.py runserver`). This middleware simply reads the :envvar:`REMOTE_USER` 
 environment variable (of the process running the development server) 
-and inserts this to every request.
-`.META['REMOTE_USER']`.
+and inserts this to every request's `META['REMOTE_USER']`.
 
 To use this, insert it to your MIDDLEWARE_CLASSES somewhere before 
 'django.contrib.auth.middleware.RemoteUserMiddleware'::
 
-    if sys.platform == 'win32':
-        MIDDLEWARE_CLASSES = (
-            'lino.utils.simulate_remote.SimulateRemoteUserMiddleware',
-        ) + MIDDLEWARE_CLASSES 
+    from lino.demos.std.settings import *
+    MIDDLEWARE_CLASSES = (
+        'lino.utils.simulate_remote.SimulateRemoteUserMiddleware',
+    ) + MIDDLEWARE_CLASSES 
         
-Be careful to not inadvertently include this to your :setting:`MIDDLEWARE_CLASSES` on a production server since it will override the HTTP authentication.
+Be careful to not inadvertently include this to your :setting:`MIDDLEWARE_CLASSES` 
+on a production server since it will override the HTTP authentication.
 
 See also http://docs.djangoproject.com/en/dev/howto/auth-remote-user/
 
@@ -40,8 +40,10 @@ import os
 
 class SimulateRemoteUserMiddleware(object):
     def process_request(self, request):
-        x = os.environ.get('REMOTE_USER')
-        if x:
-            request.META['REMOTE_USER'] = x
+        #~ x = os.environ.get('REMOTE_USER')
+        x = os.environ.get('REMOTE_USER','test')
+        request.META['REMOTE_USER'] = x
+        #~ if x:
+            #~ request.META['REMOTE_USER'] = x
             #~ print "WARNING: Treating all requests as coming from authenticated user %s" % x
 
