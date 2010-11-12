@@ -1,15 +1,17 @@
 20101112
 ========
 
-Eigentlich wollte ich schnell :doc:`/releases/20101112` 
-auf DSBE und Tups installieren... 
-aber da gibt es eine Überraschung: 
+Eigentlich wollte ich *mal schnell* :doc:`/releases/20101112` 
+auf DSBE und Tups installieren...
+aber daraus ist ein ganzer Tag geworden.
+
+Erste Überraschung: 
 das lang ersehnte 
 `LOGGING 
 <http://docs.djangoproject.com/en/dev/topics/logging/>`_
 ist jetzt in Django drin! 
-
-Das Dumme daran: ich habe einen halben Tag mit 
+Das Dumme daran: 
+ich habe einen halben Tag mit 
 :doc:`/tickets/closed/15` 
 verbracht.  
 Zuerst dachte ich, dass mein eigener Logger `lino.log` dran Schuld ist, 
@@ -17,5 +19,100 @@ der damit irgendwie in Konflikt gerät.
 Also habe ich Lino zuerst mal auf das Django-System konvertiert.
 Aber das war's gar nicht, schuld war die Python-UNO-Bridge.
 
+Auch holt er die :xfile:`welcome.html` jetzt aus einem config-Verzeichnis. 
+Bisher musste die obligatorisch im lokalen config dir stehen. 
+Das ist aber momentan gar nicht nötig, weil sie ihren Zweck auch 
+ohne lokale Anpassungen erfüllt. 
+
+Ich habe mal probiert, ob ich mein selbstgebasteltes System mit den config_dirs 
+durch das Template-Loading-System von Django ersetzen kann. 
+Aber ich glaube, daraus wird nichts. Meine config_dirs machen ja 
+erstens den Unterschied zwischen beschreibbaren Verzeichnissen und 
+solchen, die es nicht sind.
+Und Django ist einfach nicht dafür designt, mir eine Datei zu finden 
+ohne sie dann gleich auch als Template einlesen zu wollen.
+Das ist doof.
+Im Gegensatz zu Django braucht Lino (zumindest momentan) keine Flexibilität 
+über ein TEMPLATES_DIRS und TEMPLATES_LOADERS.
+
+Schön wäre freilich noch, wenn ich das doctemplates-Verzeichnis auch 
+in die config_dirs rein bekäme.
+
+17.30 Uhr. Das Release ist drauf. Aber jetzt habe ich noch folgendes Problem. 
+:menuselection`Kontakte --> Firmen` funktioniert,
+:menuselection`Kontakte --> Personen` nicht. Und in der Console kommt dann::
 
 
+  Uncaught TypeError: Cannot read property 'id' of undefined
+  Ext.grid.ColumnModel.Ext.extend.setConfig        :8080/media/extjs/ext-all.js:11
+  Ext.grid.ColumnModel.Ext.extend.constructor      :8080/media/extjs/ext-all.js:11
+  Ext.grid.GridPanel.Ext.extend.initComponent     :8080/media/extjs/ext-all.js:11
+  Ext.grid.EditorGridPanel.Ext.extend.initComponent   :8080/media/extjs/ext-all.js:11
+  Lino.GridPanel.Ext.extend.initComponent            :8080/media/lino/extjs/lino.js:1448
+  Ext.Component                                     :8080/media/extjs/ext-all.js:7
+  Ext.apply.extend.K        :8080/media/extjs/adapter/ext/ext-base.js:7
+  Ext.apply.extend.K        :8080/media/extjs/adapter/ext/ext-base.js:7
+  Ext.apply.extend.K        :8080/media/extjs/adapter/ext/ext-base.js:7
+  Ext.apply.extend.K        :8080/media/extjs/adapter/ext/ext-base.js:7
+  Ext.apply.extend.K        :8080/media/extjs/adapter/ext/ext-base.js:7
+  Lino.GridPanel.Ext.extend.constructor             :8080/media/lino/extjs/lino.js:1178
+  Lino.contacts.Persons.grid                          :8080/media/cache/js/site.js:1259
+  viewport.Ext.Viewport.items.items.menu.items.handler                         :8080/:1
+  h.Event.fire                                           :8080/media/extjs/ext-all.js:7
+  h.Observable.fireEvent                                 :8080/media/extjs/ext-all.js:7
+  Ext.menu.BaseItem.Ext.extend.onClick                  :8080/media/extjs/ext-all.js:11
+  Ext.menu.Menu.Ext.extend.onClick                      :8080/media/extjs/ext-all.js:11
+  K                                                      :8080/media/extjs/ext-all.js:7
+
+
+21 Uhr:
+Grund war eine lokale Grid-Konfigurationsdatei, die jetzt nicht mehr gültig war. 
+Das ist noch ein Problem: GC-Dateien sollten es doch eigentlich vertragen, 
+wenn mal ein paar neue Felder in den Report hinzu kommen.
+
+Nächstes Problem::
+
+  mod_wsgi (pid=16976): Exception occurred processing WSGI script '/usr/local/django/dsbe_eupen/apache/lino.wsgi'.
+  Traceback (most recent call last):
+  File "/var/snapshots/django/django/core/handlers/wsgi.py", line 265, in __call__
+    response = self.get_response(request)
+  File "/var/snapshots/django/django/core/handlers/base.py", line 160, in get_response
+    response = self.handle_uncaught_exception(request, resolver, sys.exc_info())
+  File "/var/snapshots/django/django/core/handlers/base.py", line 109, in get_response
+    response = callback(request, *callback_args, **callback_kwargs)
+  File "/var/snapshots/lino/lino/ui/extjs/ext_ui.py", line 836, in api_element_view
+    target = a.get_target_url(elem)
+  File "/var/snapshots/lino/lino/utils/printable.py", line 337, in get_target_url
+    pm.build(elem)
+  File "/var/snapshots/lino/lino/utils/printable.py", line 188, in build
+    self.simple_build(elem,tpl,target)
+  File "/var/snapshots/lino/lino/utils/printable.py", line 211, in simple_build
+    renderer = Renderer(tpl, context, target,**settings.APPY_PARAMS)
+  File "/var/snapshots/appy-0.5.5/appy/pod/renderer.py", line 130, in __init__
+    self.templateZip = zipfile.ZipFile(template)
+  File "/usr/lib/python2.5/zipfile.py", line 339, in __init__
+    self.fp = open(file, modeDict[mode])
+  UnicodeEncodeError: 'ascii' codec can't encode character u'\\xf6' in position 77: ordinal not in range(128)
+
+Die betreffende Datei heißt "Konvention Sozialökonomie.odt", aber wenn ich sie mir in 
+der Linux-Shell anschaue, steht dort::
+
+  Konvention Sozial?konomie.odt
+  
+Das ist wahrscheinlich einfach nur beim Zippen ein Missverständnis passiert
+(denn ich habe diese Dateien, 
+die nicht öffentlich sind, auf Armand erstellt und getestet, und dann 
+eingepackt um sie hochzuladen).
+Die einfachste Lösung ist: bis auf weiteres dürfen keine 
+Dateienamen mit Umlauten verwendet werden.
+
+Dann das nächste Problem::
+
+  [Fri Nov 12 20:32:21 2010] PodError: An error occurred during the conversion. 
+  Could not connect to OpenOffice on port 8100. 
+  UNO (OpenOffice API) says: Connector : couldn't connect to socket (Success).
+
+Das heißt wahrscheinlich, dass der OOo-Server nicht läuft.
+Aber jetzt ist erst mal Wochenende.
+Immerhin: beinahe hätte ich die erste Vorlage für Verträge 
+in Eupen ans Laufen gebracht!

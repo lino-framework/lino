@@ -132,8 +132,8 @@ def objects():
     yield noteType((u"Anwesenheitsbescheinigung"),build_method='rtf',template=u'Anwesenheitsbescheinigung.rtf')
     
     contractType = Instantiator('dsbe.ContractType',"name").build
-    yield contractType(u"Konvention 60§7",build_method='appypdf',template=u'Konvention Sozialökonomie.odt')
-    yield contractType(u"VSE Ausbildung",build_method='appy',template=u'Konvention Sozialökonomie.odt')
+    yield contractType(u"Konvention 60§7",build_method='appypdf',template=u'Konvention Sozialoekonomie.odt')
+    yield contractType(u"VSE Ausbildung",build_method='appy',template=u'Konvention Sozialoekonomie.odt')
     yield contractType(u"VSE Arbeitssuche")
     yield contractType(u"VSE Integration")
     yield contractType(u"VSE Lehre")

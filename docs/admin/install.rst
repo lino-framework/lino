@@ -50,11 +50,14 @@ I also installed
 into `/var/snapshots/`::
 
   wget http://www.sencha.com/deploy/ext-3.3.0.zip
-  unzip ext-3.2.1.zip
-  rm ext-3.2.1.zip
+  unzip ext-3.3.0.zip
+  rm ext-3.3.0.zip
 
   wget http://launchpad.net/appy/0.5/0.5.5/+download/appy0.5.5.zip  
   unzip appy0.5.5.zip -d appy-0.5.5
+  
+  wget http://launchpad.net/appy/0.6/0.6.0/+download/appy0.6.0.zip
+  unzip appy0.6.0.zip -d appy-0.6.0
   
   wget http://pypi.python.org/packages/source/p/pisa/pisa-3.0.32.zip
   unzip pisa-3.0.32.zip

@@ -9,6 +9,8 @@ for which I hope for help from other people.
 Short-term
 ----------
 
+- inintdb_tim setzt die Namen der Personen nicht
+
 - Formatierung der :xfile:`welcome.html` lässt zu wünschen übrig.  
 
 - Mit :kbd:`[F2]` sollte die Zeile einer Grid bearbeiten können.
@@ -47,7 +49,7 @@ Short-term
   Er soll sie dann auch unabhängig von der Sprache finden. 
   Vielleicht werde ich doctemplates in die config-directories verschieben 
   und mein System von config-Dateien erweitern, dass es auch Unterverzeichnisse verträgt.
-  Siehe :doc:`/blog/2010/1029`.
+  Siehe :doc:`/blog/2010/1029`, :doc:`/blog/2010/1112`.
   
 Undecided
 ---------
