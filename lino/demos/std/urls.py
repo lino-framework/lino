@@ -11,6 +11,9 @@
 ## You should have received a copy of the GNU General Public License
 ## along with TimTools; if not, see <http://www.gnu.org/licenses/>.
 
+import logging
+logger = logging.getLogger(__name__)
+
 import os
 import sys
 from django.conf import settings
@@ -38,7 +41,7 @@ if sys.platform == 'win32':
     #~ print 'LINO_MEDIA=',LINO_MEDIA
     
     if not os.path.exists(EXTJS_ROOT):
-        lino.log.warning("EXTJS_ROOT %s does not exist",EXTJS_ROOT)
+        logger.warning("EXTJS_ROOT %s does not exist",EXTJS_ROOT)
         
     prefix = settings.MEDIA_URL[1:]
     assert prefix.endswith('/')

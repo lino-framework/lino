@@ -57,7 +57,7 @@ class UI:
         # instantiate all ReportHandles already at server startup.
         # TODO: in fact this is currently called only when a first request comes in,
         #       because Django does not yet provide a `server_startup` signal.
-        #~ lino.log.debug('Instantiating %s...' % self)
+        #~ logger.debug('Instantiating %s...' % self)
         #~ from lino import reports
         #~ for rpt in reports.master_reports + reports.slave_reports:
             #~ rpt.get_handle(self)

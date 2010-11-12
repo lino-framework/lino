@@ -11,6 +11,9 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+import logging
+logger = logging.getLogger(__name__)
+
 from django.db import models
 
 import lino
@@ -66,7 +69,7 @@ def resolve_actor(actor,app_label):
 def register_actor(a):
     old = actors_dict.get(a.actor_id,None)
     if old is not None:
-        #~ lino.log.debug("register_actor %s : %r replaced by %r",a.actor_id,old.__class__,a.__class__)
+        #~ logger.debug("register_actor %s : %r replaced by %r",a.actor_id,old.__class__,a.__class__)
         actors_list.remove(old)
     actors_dict[a.actor_id] = a
     actors_list.append(a)
@@ -85,21 +88,21 @@ def discover():
     assert actors_list is None
     actors_dict = {}
     actors_list = []
-    #~ lino.log.debug("actors.discover() : instantiating %d actors",len(actor_classes))
+    #~ logger.debug("actors.discover() : instantiating %d actors",len(actor_classes))
     for cls in actor_classes:
         if not cls.__name__.startswith('unused_'):
             register_actor(cls())
     actor_classes = None
     
-    #~ lino.log.debug("actors.discover() : setup %d actors",len(actors_list))
+    #~ logger.debug("actors.discover() : setup %d actors",len(actors_list))
     #~ for a in actors_list:
         #~ a.setup()
         
-    #~ lino.log.debug("actors.discover() done")
+    #~ logger.debug("actors.discover() done")
         #~ a = cls()
         #~ old = actors_dict.get(a.actor_id,None)
         #~ if old is not None:
-            #~ lino.log.debug("Actor %s : %r replaced by %r",a.actor_id,old.__class__,a.__class__)
+            #~ logger.debug("Actor %s : %r replaced by %r",a.actor_id,old.__class__,a.__class__)
         #~ actors_dict[a.actor_id] = a
     #~ for a in actors_dict.values():
         #~ a.setup()
@@ -110,16 +113,16 @@ class ActorMetaClass(type):
         #~ if not classDict.has_key('app_label'):
             #~ classDict['app_label'] = cls.__module__.split('.')[-2]
         cls = type.__new__(meta, classname, bases, classDict)
-        #lino.log.debug("actor(%s)", cls)
+        #logger.debug("actor(%s)", cls)
         if classname not in ('Report','Action','HandledActor','Actor','Command',
               'Layout','ListLayout','DetailLayout','FormLayout',
               'ModelLayout'):
             #~ actors_dict[cls.actor_id] = cls
             if actor_classes is None:
-                #~ lino.log.debug("%s definition was after discover",cls)
+                #~ logger.debug("%s definition was after discover",cls)
                 pass
             else:
-                #~ lino.log.debug("Found actor %s.",cls)
+                #~ logger.debug("Found actor %s.",cls)
                 actor_classes.append(cls)
         return cls
 
@@ -164,7 +167,7 @@ class Actor(Handled):
         self._actions_dict = {}
         Handled.__init__(self)
 
-        #~ lino.log.debug("Actor.__init__() %s",self)
+        #~ logger.debug("Actor.__init__() %s",self)
 
     def get_label(self):
         #~ if self.label is None:
@@ -200,14 +203,14 @@ class Actor(Handled):
             if True: # severe error handling
                 raise Exception("%s.setup() called recursively" % self.actor_id)
             else:
-                lino.log.warning("%s.setup() called recursively" % self.actor_id)
+                logger.warning("%s.setup() called recursively" % self.actor_id)
                 return False
-        #~ lino.log.debug("Actor.setup() %s", self)
+        #~ logger.debug("Actor.setup() %s", self)
         self._setup_doing = True
         self.do_setup()
         self._setup_doing = False
         self._setup_done = True
-        #~ lino.log.debug("Report.setup() done: %s", self.actor_id)
+        #~ logger.debug("Report.setup() done: %s", self.actor_id)
         return True
         
     def do_setup(self):
@@ -222,7 +225,7 @@ class Actor(Handled):
             
     def add_action(self,a):
         if self._actions_dict.has_key(a.name):
-            lino.log.warning("%s action %r : %s overridden by %s",self,a.name,self._actions_dict[a.name],a)
+            logger.warning("%s action %r : %s overridden by %s",self,a.name,self._actions_dict[a.name],a)
         self._actions_dict[a.name] = a
             
     def get_action(self,name):

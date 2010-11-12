@@ -19,6 +19,8 @@ Mandatory argument is the path to your TIM data directory.
 
 """
 
+import logging
+logger = logging.getLogger(__name__)
 
 import os
 import sys
@@ -125,9 +127,9 @@ def country2kw(row,kw):
             city = City(zip_code=zip_code,name=zip_code,country=country)
             city.save()
             kw.update(city=city)
-            #~ lino.log.warning("%s-%s : %s",row['PAYS'],row['CP'],e)
+            #~ logger.warning("%s-%s : %s",row['PAYS'],row['CP'],e)
         except City.MultipleObjectsReturned,e:
-            lino.log.warning("%s-%s : %s",row['PAYS'],row['CP'],e)
+            logger.warning("%s-%s : %s",row['PAYS'],row['CP'],e)
       
 def pxs2person(row,person):
   
@@ -150,17 +152,17 @@ def pxs2person(row,person):
         try:
             person.health_insurance = Company.objects.get(pk=ADR_id(row['IDMUT']))
         except ValueError,e:
-            lino.log.warning(u"%s : invalid health_insurance %r",person,row['IDMUT'])
+            logger.warning(u"%s : invalid health_insurance %r",person,row['IDMUT'])
         except Company.DoesNotExist,e:
-            lino.log.warning(u"%s : health_insurance %s not found",person,row['IDMUT'])
+            logger.warning(u"%s : health_insurance %s not found",person,row['IDMUT'])
   
     if row['APOTHEKE']:
         try:
             person.pharmacy = Company.objects.get(pk=int(row['APOTHEKE']))
         except ValueError,e:
-            lino.log.warning(u"%s : invalid pharmacy %r",person,row['APOTHEKE'])
+            logger.warning(u"%s : invalid pharmacy %r",person,row['APOTHEKE'])
         except Company.DoesNotExist,e:
-            lino.log.warning(u"%s : pharmacy %s not found",person,row['APOTHEKE'])
+            logger.warning(u"%s : pharmacy %s not found",person,row['APOTHEKE'])
             
     nat = row['NATIONALIT']
     if nat:
@@ -183,20 +185,20 @@ def pxs2person(row,person):
 def load_dbf(dbpath,tableName,load):
     fn = os.path.join(dbpath,'%s.DBF' % tableName)
     f = dbfreader.DBFFile(fn,codepage="cp850")
-    lino.log.info("Loading %d records from %s...",len(f),fn)
+    logger.info("Loading %d records from %s...",len(f),fn)
     f.open()
     for dbfrow in f:
         i = load(dbfrow)
         if i is not None:
             try:
                 i.save()
-                #~ lino.log.debug("%s has been saved",i)
+                #~ logger.debug("%s has been saved",i)
             except ValidationError,e:
-                lino.log.warning("Failed to save row %s from %s : %s",obj2str(i),dbfrow,e)
-                lino.log.exception(e)
+                logger.warning("Failed to save row %s from %s : %s",obj2str(i),dbfrow,e)
+                logger.exception(e)
             except IntegrityError,e:
-                lino.log.warning("Failed to save row %s from %s : %s",obj2str(i),dbfrow,e)
-                lino.log.exception(e)
+                logger.warning("Failed to save row %s from %s : %s",obj2str(i),dbfrow,e)
+                logger.exception(e)
     f.close()
 
     
@@ -398,5 +400,5 @@ class Command(BaseCommand):
         #~ lino_site.initdb()
         #~ for o in tim_fixture_objects():
             #~ o.save()
-        #~ lino.log.info('lino_site.fill() done. Starting load_tim_data()...')
+        #~ logger.info('lino_site.fill() done. Starting load_tim_data()...')
         load_tim_data(args[0])

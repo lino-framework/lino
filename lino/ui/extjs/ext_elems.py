@@ -73,7 +73,7 @@ def before_row_edit(panel):
         elif isinstance(e,FieldElement):
             chooser = choosers.get_for_field(e.field)
             if chooser:
-                #~ lino.log.debug("20100615 %s.%s has chooser", self.lh.layout, e.field.name)
+                #~ logger.debug("20100615 %s.%s has chooser", self.lh.layout, e.field.name)
                 for f in chooser.context_fields:
                     l.append("%s.setContextValue(%r,record.data[%r]);" % (
                         e.ext_name,f.name,ext_requests.form_field_name(f)))
@@ -213,7 +213,7 @@ class LayoutElement(VisibleComponent):
     refers_to_ww = False
     
     def __init__(self,lh,name,**kw):
-        #lino.log.debug("LayoutElement.__init__(%r,%r)", lh.layout,name)
+        #logger.debug("LayoutElement.__init__(%r,%r)", lh.layout,name)
         #self.parent = parent
         #~ name = lh.layout._actor_name + '_' + name
         VisibleComponent.__init__(self,name,**kw)
@@ -1055,7 +1055,7 @@ class GridMainPanel(GridElement,MainPanel):
         'ignore the "vertical" arg'
         #~ MainPanel.__init__(self)
         GridElement.__init__(self,lh,name,lh.rh.report,*columns,**kw)
-        #lino.log.debug("GridMainPanel.__init__() %s",self.name)
+        #logger.debug("GridMainPanel.__init__() %s",self.name)
         
 
 
@@ -1190,7 +1190,7 @@ class FormPanel(jsgen.Component):
         for e in field_elems:
             chooser = choosers.get_for_field(e.field)
             if chooser:
-                #~ lino.log.debug("20100615 %s.%s has chooser", self.lh.layout, e.field.name)
+                #~ logger.debug("20100615 %s.%s has chooser", self.lh.layout, e.field.name)
                 for f in chooser.context_fields:
                     for el in elems_by_field.get(f.name,[]):
                         #~ if main.has_field(f):

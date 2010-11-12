@@ -11,6 +11,9 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+import logging
+logger = logging.getLogger(__name__)
+
 from django.contrib.auth import models as auth
 from django.contrib.sessions import models as sessions
 from django.contrib.contenttypes import models as contenttypes
@@ -20,7 +23,7 @@ from django.utils.encoding import force_unicode
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-import lino
+#~ import lino
 from lino import reports
 #~ from lino import layouts
 from lino.core import actors
@@ -50,7 +53,7 @@ def get_site_config():
     try:
         return SiteConfig.objects.get(pk=1)
     except SiteConfig.DoesNotExist:
-        lino.log.info("Creating SiteConfig record")
+        logger.info("Creating SiteConfig record")
         sc = SiteConfig(pk=1)
         from lino.lino_site import lino_site
         lino_site.init_site_config(sc)

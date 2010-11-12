@@ -11,6 +11,8 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+import logging
+logger = logging.getLogger(__name__)
 
 
 import os
@@ -104,7 +106,7 @@ def json_response(x):
     #s = simplejson.dumps(kw,default=unicode)
     #return HttpResponse(s, mimetype='text/html')
     s = py2js(x)
-    #lino.log.debug("json_response() -> %r", s)
+    #logger.debug("json_response() -> %r", s)
     return HttpResponse(s, mimetype='text/html')
     
 def error_response(e,message_prefix=''):
@@ -183,13 +185,13 @@ class ExtUI(base.UI):
         jsgen.register_converter(self.py2js_converter)
         #~ self.window_configs = {}
         #~ if os.path.exists(self.window_configs_file):
-            #~ lino.log.info("Loading %s...",self.window_configs_file)
+            #~ logger.info("Loading %s...",self.window_configs_file)
             #~ wc = pickle.load(open(self.window_configs_file,"rU"))
-            #~ #lino.log.debug("  -> %r",wc)
+            #~ #logger.debug("  -> %r",wc)
             #~ if type(wc) is dict:
                 #~ self.window_configs = wc
         #~ else:
-            #~ lino.log.warning("window_configs_file %s not found",self.window_configs_file)
+            #~ logger.warning("window_configs_file %s not found",self.window_configs_file)
             
         base.UI.__init__(self,site) # will create a.window_wrapper for all actions
         
@@ -343,7 +345,7 @@ class ExtUI(base.UI):
         #~ f = open(self.window_configs_file,'wb')
         #~ pickle.dump(self.window_configs,f)
         #~ f.close()
-        #~ lino.log.debug("save_window_config(%r) -> %s",wc,a)
+        #~ logger.debug("save_window_config(%r) -> %s",wc,a)
         #~ self.build_site_js()
         #~ lh = actors.get_actor(name).get_handle(self)
         #~ if lh is not None:
@@ -353,7 +355,7 @@ class ExtUI(base.UI):
     #~ def load_window_config(self,action,**kw):
         #~ wc = self.window_configs.get(str(action),None)
         #~ if wc is not None:
-            #~ lino.log.debug("load_window_config(%r) -> %s",str(action),wc)
+            #~ logger.debug("load_window_config(%r) -> %s",str(action),wc)
             #~ for n in ('x','y','width','height'):
                 #~ if wc.get(n,0) is None:
                     #~ del wc[n]
@@ -583,7 +585,7 @@ class ExtUI(base.UI):
             elem.save(**kw2save)
         except IntegrityError,e:
             #~ print unicode(elem)
-            lino.log.exception(e)
+            logger.exception(e)
             return error_response(e) # ,_("There was a problem while saving your data : "))
             #~ return json_response_kw(success=False,
                   #~ msg=_("There was a problem while saving your data:\n%s") % e)
@@ -726,7 +728,7 @@ class ExtUI(base.UI):
                             v = meth(row)
                         else:
                             v = fld.value_to_string(row)
-                        #lino.log.debug("20100202 %r.%s is %r",row,fld.name,v)
+                        #logger.debug("20100202 %r.%s is %r",row,fld.name,v)
                         values.append(v)
                     w.writerow(values)
                 return response
@@ -735,7 +737,7 @@ class ExtUI(base.UI):
                 rows = [ ar.row2list(row) for row in ar.queryset ]
                 #~ rows = [ ar.row2dict(row) for row in ar.queryset ]
                 total_count = ar.total_count
-                #lino.log.debug('%s.render_to_dict() total_count=%d extra=%d',self,total_count,self.extra)
+                #logger.debug('%s.render_to_dict() total_count=%d extra=%d',self,total_count,self.extra)
                 # add extra blank row(s):
                 #~ for i in range(0,ar.extra):
                 if ar.extra:
@@ -850,7 +852,7 @@ class ExtUI(base.UI):
         #~ for app_label in site.
         fn = os.path.join(settings.MEDIA_ROOT,*self.site_js_parts()) 
         #~ fn = r'c:\temp\dsbe.js'
-        lino.log.info("Generating %s ...", fn)
+        logger.info("Generating %s ...", fn)
         f = open(fn,'w')
         f.write("""// site.js --- generated %s by Lino version %s.\n""" % (time.ctime(),lino.__version__))
         f.write("LANGUAGE_CHOICES = %s;\n" % py2js(list(LANGUAGE_CHOICES)))
@@ -980,7 +982,7 @@ class ExtUI(base.UI):
                     return json_response_kw(success=True,
                           message="%s has been saved" % instance)
                 except Exception,e:
-                    lino.log.exception(e)
+                    logger.exception(e)
                     #traceback.format_exc(e)
                     return error_response(e) #,_("There was a problem while saving your data : "))
                     #~ return error_response(e)
@@ -1017,7 +1019,7 @@ class ExtUI(base.UI):
       
     def unused_get_report_url(self,rh,master_instance=None,
             submit=False,grid_afteredit=False,grid_action=None,run=False,csv=False,**kw):
-        #~ lino.log.debug("get_report_url(%s)", [rh.name,master_instance,
+        #~ logger.debug("get_report_url(%s)", [rh.name,master_instance,
             #~ simple_list,submit,grid_afteredit,action,kw])
         if grid_afteredit:
             url = "/grid_afteredit/"
@@ -1130,7 +1132,7 @@ class ExtUI(base.UI):
             #~ h._main = ext_elems.TabPanel([l.get_handle(self) for l in h.layouts])
           
         if isinstance(h,reports.ReportHandle):
-            lino.log.debug('ExtUI.setup_handle() %s',h.report)
+            logger.debug('ExtUI.setup_handle() %s',h.report)
             if h.report.model is None:
                 return
             #~ h.choosers = chooser.get_choosers_for_model(h.report.model,chooser.FormChooser)

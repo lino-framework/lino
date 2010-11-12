@@ -16,6 +16,9 @@ Defines the `Store` class and its fields
 
 """
 
+import logging
+logger = logging.getLogger(__name__)
+
 from dateutil import parser as dateparser
 
 from django.db import models
@@ -60,7 +63,7 @@ class StoreField(object):
             try:
                 d[self.field.name] = self.field.value_from_object(obj)
             except ValueError,e:
-                lino.log.exception(e)
+                logger.exception(e)
 
     def form2obj(self,instance,post_data):
         v = post_data.get(self.field.name,None)
@@ -79,7 +82,7 @@ class StoreField(object):
         #~ try:
             #~ setattr(instance,self.field.name,v)
         #~ except exceptions.ValidationError,e:
-            #~ lino.log.exception("%s = %r : %s",self.field.name,v,e)
+            #~ logger.exception("%s = %r : %s",self.field.name,v,e)
             #~ raise 
 
 class DisabledFieldsStoreField(StoreField):
@@ -190,7 +193,7 @@ class MethodStoreField(StoreField):
         return [self.value_from_object(request,obj)]
         
     def obj2dict(self,request,obj,d):
-        #~ lino.log.debug('MethodStoreField.obj2dict() %s',self.field.name)
+        #~ logger.debug('MethodStoreField.obj2dict() %s',self.field.name)
         d[self.field.name] = self.value_from_object(request,obj)
         
     def get_from_form(self,instance,post_data):
@@ -204,7 +207,7 @@ class MethodStoreField(StoreField):
   
     #~ def obj2dict(self,request,obj,d):
         #~ meth = getattr(obj,self.field.name)
-        #~ #lino.log.debug('MethodStoreField.obj2dict() %s',self.field.name)
+        #~ #logger.debug('MethodStoreField.obj2dict() %s',self.field.name)
         #~ d[self.field.name] = self.slave_report.()
 
 class OneToOneStoreField(StoreField):

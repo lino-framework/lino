@@ -11,6 +11,9 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+import logging
+logger = logging.getLogger(__name__)
+
 import decimal
 import datetime
 from dateutil import parser as dateparser
@@ -18,7 +21,7 @@ from dateutil import parser as dateparser
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 
-import lino
+#~ import lino
 from lino.tools import resolve_model
 
 
@@ -148,7 +151,7 @@ class Instantiator:
             #~ print "foo", f.name
 
     def build(self,*values,**kw):
-        # lino.log.debug("Instantiator.build(%s,%r,%r)",self.model_class._meta.db_table,values,kw)
+        # logger.debug("Instantiator.build(%s,%r,%r)",self.model_class._meta.db_table,values,kw)
         i = 0
         kw['_m2m'] = {}
         for v in values:

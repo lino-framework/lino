@@ -11,11 +11,11 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-from django.utils.datastructures import SortedDict
-from django.utils.translation import ugettext as _
+#~ from django.utils.datastructures import SortedDict
+#~ from django.utils.translation import ugettext as _
 
-import lino
-from lino import actions
+#~ import lino
+#~ from lino import actions
 
                 
 class DataLink:
@@ -36,7 +36,7 @@ class DataLink:
         #~ for frm in actor._forms.values():
             #~ self.form_handles[frm._actor_name] = frm.get_handle(self)
             
-        #~ lino.log.debug("%s handle : %s",form,self.elements.keys())
+        #~ logger.debug("%s handle : %s",form,self.elements.keys())
         
     #~ def get_form_handle(self,name):
         #~ return self.form_handles[name]
@@ -71,11 +71,11 @@ class DataLink:
         
 
 
-class RowLink:
+#~ class RowLink:
   
-    def get_from_form(self,post_data):
-        raise NotImplementedError()
+    #~ def get_from_form(self,post_data):
+        #~ raise NotImplementedError()
         
-    def update(self,**kw):
-        raise NotImplementedError()
+    #~ def update(self,**kw):
+        #~ raise NotImplementedError()
       

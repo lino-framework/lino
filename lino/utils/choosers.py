@@ -11,15 +11,14 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+import logging
+logger = logging.getLogger(__name__)
+
 from django.db import models
 from lino.utils.instantiator import make_converter
 #~ from lino import reports
 from lino.core.coretools import get_data_elem, get_unbound_meth
 import lino
-  
-
-
-
 
 class BaseChooser:
     def __init__(self,field):
@@ -40,7 +39,7 @@ class Chooser(BaseChooser):
         self.instance_values = getattr(meth,'instance_values',False)
         self.context_params = meth.func_code.co_varnames[1:meth.func_code.co_argcount]
         #~ print '20100724c', meth, self.context_params 
-        #~ lino.log.warning("20100527 %s %s",self.context_params,meth)
+        #~ logger.warning("20100527 %s %s",self.context_params,meth)
         self.context_values = []
         self.context_fields = []
         for name in self.context_params:
@@ -94,8 +93,8 @@ class Chooser(BaseChooser):
         
 
 def discover():
-    lino.log.info("Discovering choosers...")
-    #~ lino.log.debug("Instantiate model reports...")
+    logger.info("Discovering choosers...")
+    #~ logger.debug("Instantiate model reports...")
     for model in models.get_models():
         #~ n = 0
         for field in model._meta.fields:
@@ -104,10 +103,10 @@ def discover():
             if m is not None:
                 #~ n += 1
                 setattr(field,'_lino_chooser',Chooser(model,field,m))
-                #~ lino.log.info("Chooser for %s.%s",model,field.name)
+                #~ logger.info("Chooser for %s.%s",model,field.name)
             #~ else:
-                #~ lino.log.info("No chooser for %s.%s",model,field.name)
-        #~ lino.log.debug("Discovered %d choosers in model %s.",n,model)
+                #~ logger.info("No chooser for %s.%s",model,field.name)
+        #~ logger.debug("Discovered %d choosers in model %s.",n,model)
 
 def get_for_field(fld):
     return getattr(fld,'_lino_chooser',None)

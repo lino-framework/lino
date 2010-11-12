@@ -16,8 +16,8 @@ from django.db import models
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
-import lino
-#~ lino.log.debug(__file__+' : started')
+#~ import lino
+#~ logger.debug(__file__+' : started')
 
 from lino import reports
 from lino.utils import perms

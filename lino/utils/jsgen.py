@@ -40,6 +40,9 @@ Another example...
 
 """
 
+import logging
+logger = logging.getLogger(__name__)
+
 import types
 import datetime
 import decimal
@@ -96,7 +99,7 @@ def declare_vars(v):
             #~ print "20100527 Ignoring", v.__class__, v
 
 def py2js(v):
-    #~ lino.log.debug("py2js(%r)",v)
+    #~ logger.debug("py2js(%r)",v)
     for cv in CONVERTERS:
         v = cv(v)
         
@@ -174,7 +177,7 @@ class LinoJSONEncoder(DjangoJSONEncoder):
 
 
 def py2js(v,**kw):
-    # lino.log.debug("py2js(%r,%r)",v,kw)
+    # logger.debug("py2js(%r,%r)",v,kw)
     if isinstance(v,Variable):
         return v.as_ext(**kw)
     assert len(kw) == 0, "py2js() : value %r not allowed with keyword parameters" % v

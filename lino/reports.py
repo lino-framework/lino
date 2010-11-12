@@ -11,6 +11,8 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+import logging
+logger = logging.getLogger(__name__)
 
 import os
 import traceback
@@ -179,10 +181,10 @@ def register_report(rpt):
         for attr in base_attrs(rpt.__class__):
             myattrs.discard(attr)
         if len(myattrs):
-            lino.log.warning("%s defines new attribute(s) %s", rpt.__class__, ",".join(myattrs))
+            logger.warning("%s defines new attribute(s) %s", rpt.__class__, ",".join(myattrs))
     
     if rpt.model is None:
-        #~ lino.log.debug("%s is an abstract report", rpt)
+        #~ logger.debug("%s is an abstract report", rpt)
         return
         
     #~ rptname_choices.append((rpt.actor_id, rpt.get_label()))
@@ -191,13 +193,13 @@ def register_report(rpt):
     if rpt.master is None:
         master_reports.append(rpt)
         if rpt.use_as_default_report:
-            #~ lino.log.debug("register %s : model_report for %s", rpt.actor_id, model_label(rpt.model))
+            #~ logger.debug("register %s : model_report for %s", rpt.actor_id, model_label(rpt.model))
             rpt.model._lino_model_report = rpt
         else:
-            #~ lino.log.debug("register %s: not used as model_report",rpt.actor_id)
+            #~ logger.debug("register %s: not used as model_report",rpt.actor_id)
             pass
     elif rpt.master is ContentType:
-        #~ lino.log.debug("register %s : generic slave for %r", rpt.actor_id, rpt.fk_name)
+        #~ logger.debug("register %s : generic slave for %r", rpt.actor_id, rpt.fk_name)
         generic_slaves[rpt.actor_id] = rpt
     else:
         slave_reports.append(rpt)
@@ -216,13 +218,13 @@ def discover():
 
     """
               
-    lino.log.info("Analyzing Reports...")
-    #~ lino.log.debug("Register Report actors...")
+    logger.info("Analyzing Reports...")
+    #~ logger.debug("Register Report actors...")
     for rpt in actors.actors_list:
         if isinstance(rpt,Report) and rpt.__class__ is not Report:
             register_report(rpt)
             
-    #~ lino.log.debug("Instantiate model reports...")
+    #~ logger.debug("Instantiate model reports...")
     for model in models.get_models():
         rpt = getattr(model,'_lino_model_report',None)
         if rpt is None:
@@ -231,26 +233,26 @@ def discover():
             model._lino_model_report = rpt
             
             
-    #~ lino.log.debug("Analyze %d slave reports...",len(slave_reports))
+    #~ logger.debug("Analyze %d slave reports...",len(slave_reports))
     for rpt in slave_reports:
         slaves = getattr(rpt.master,"_lino_slaves",None)
         if slaves is None:
             slaves = {}
             rpt.master._lino_slaves = slaves
         slaves[rpt.actor_id] = rpt
-        #~ lino.log.debug("%s: slave for %s",rpt.actor_id, rpt.master.__name__)
-    #~ lino.log.debug("Assigned %d slave reports to their master.",len(slave_reports))
+        #~ logger.debug("%s: slave for %s",rpt.actor_id, rpt.master.__name__)
+    #~ logger.debug("Assigned %d slave reports to their master.",len(slave_reports))
         
-    #~ lino.log.debug("Setup model reports...")
+    #~ logger.debug("Setup model reports...")
     #~ for model in models.get_models():
         #~ model._lino_model_report.setup()
         
-    #~ lino.log.debug("Instantiate property editors...")
+    #~ logger.debug("Instantiate property editors...")
     #~ for model in models.get_models():
         #~ pw = ext_elems.PropertiesWindow(model)
         #~ model._lino_properties_window = pw
             
-    #~ lino.log.debug("reports.setup() done")
+    #~ logger.debug("reports.setup() done")
 
 
 class StaticText:
@@ -269,7 +271,7 @@ class ReportHandle(datalinks.DataLink,base.Handle):
   
     
     def __init__(self,ui,report):
-        #lino.log.debug('ReportHandle.__init__(%s)',rd)
+        #logger.debug('ReportHandle.__init__(%s)',rd)
         assert isinstance(report,Report)
         self.report = report
         self._layouts = None
@@ -439,7 +441,7 @@ class ReportActionRequest(actions.ActionRequest): # was ReportRequest
         self.report.setup_request(self)
         self.queryset = self.get_queryset()
         #~ self.setup_queryset()
-        #~ lino.log.debug(unicode(self))
+        #~ logger.debug(unicode(self))
         # get_queryset() may return a list
         if isinstance(self.queryset,models.query.QuerySet):
             self.total_count = self.queryset.count()
@@ -476,7 +478,7 @@ class ReportActionRequest(actions.ActionRequest): # was ReportRequest
         
     def create_instance(self,**kw):
         kw.update(self.master_kw)
-        #lino.log.debug('%s.create_instance(%r)',self,kw)
+        #logger.debug('%s.create_instance(%r)',self,kw)
         return self.report.create_instance(self,**kw)
         
     def get_user(self):
@@ -626,7 +628,7 @@ class Report(actors.Actor): #,base.Handled):
             if self.label is None:
                 self.label = capfirst(self.model._meta.verbose_name_plural)
             
-        #~ lino.log.debug("Report.__init__() %s", self)
+        #~ logger.debug("Report.__init__() %s", self)
         actors.Actor.__init__(self)
         #~ base.Handled.__init__(self)
         
@@ -656,7 +658,7 @@ class Report(actors.Actor): #,base.Handled):
                     assert not m2m
                     master = fk.rel.to
                 except models.FieldDoesNotExist,e:
-                    #~ lino.log.debug("FieldDoesNotExist in %r._meta.get_field_by_name(%r)",self.model,self.fk_name)
+                    #~ logger.debug("FieldDoesNotExist in %r._meta.get_field_by_name(%r)",self.model,self.fk_name)
                     master = None
                     for vf in self.model._meta.virtual_fields:
                         if vf.name == self.fk_name:
@@ -670,7 +672,7 @@ class Report(actors.Actor): #,base.Handled):
         else:
             assert self.master is None
         #~ elif self.master:
-            #~ lino.log.warning("DEPRECATED: replace %s.master by fk_name" % self.actor_id)
+            #~ logger.warning("DEPRECATED: replace %s.master by fk_name" % self.actor_id)
             #~ #assert isinstance(self.master,object), "%s.master is a %r" % (self.name,self.master)
             #~ assert issubclass(self.master,models.Model), "%s.master is a %r" % (self.actor_id,self.master)
             #~ self.fk = _get_foreign_key(self.master,self.model) #,self.fk_name)
@@ -692,7 +694,7 @@ class Report(actors.Actor): #,base.Handled):
       
         filename = self.get_grid_config_file()
         if os.path.exists(filename):
-            lino.log.info("Loading %s...",filename)
+            logger.info("Loading %s...",filename)
             execfile(filename,dict(self=self))
             #~ self.grid_configs = pickle.load(open(filename,"rU"))
         else:
@@ -735,7 +737,7 @@ class Report(actors.Actor): #,base.Handled):
             
     #~ def load_detail(self,cd,filename):
         #~ fn = os.path.join(cd.name,filename)
-        #~ lino.log.info("Loading %s...",fn)
+        #~ logger.info("Loading %s...",fn)
         #~ s = open(fn).read()
         #~ dtl = DetailLayout(s,cd,filename)
         #~ self.detail_layouts = list(self.detail_layouts) # disconnect from base class
@@ -748,7 +750,7 @@ class Report(actors.Actor): #,base.Handled):
         
     def save_config(self):
         filename = self.get_grid_config_file()
-        lino.log.info("save_config() -> %s",filename)
+        logger.info("save_config() -> %s",filename)
         f = open(filename,'w')
         f.write("# Generated file. Delete it to restore factory settings.\n")
         f.write('self.grid_configs = %s\n' % pprint.pformat(self.grid_configs))
@@ -853,7 +855,7 @@ class Report(actors.Actor): #,base.Handled):
         pass
         
     def get_master_kw(self,master_instance,**kw):
-        #lino.log.debug('%s.get_master_kw(%r) master=%r',self,kw,self.master)
+        #logger.debug('%s.get_master_kw(%r) master=%r',self,kw,self.master)
         if self.master is None:
             assert master_instance is None, "Report %s doesn't accept a master" % self.actor_id
         elif self.master is ContentType:
@@ -941,7 +943,7 @@ class Report(actors.Actor): #,base.Handled):
         
         
 def report_factory(model):
-    lino.log.debug('report_factory(%s) -> app_label=%r',model.__name__,model._meta.app_label)
+    logger.debug('report_factory(%s) -> app_label=%r',model.__name__,model._meta.app_label)
     cls = type(model.__name__+"Report",(Report,),dict(model=model,app_label=model._meta.app_label))
     return actors.register_actor(cls())
 
@@ -1021,7 +1023,7 @@ class BaseLayout:
                 print self.cd, "is not writable", self.filename
                 self.cd = LOCAL_CONFIG_DIR
             fn = os.path.join(self.cd.name,self.filename)
-            lino.log.info("Layout.save_config() -> %s",fn)
+            logger.info("Layout.save_config() -> %s",fn)
             f = open(fn,'w')
             f.write(self._desc)
             f.close()
@@ -1054,7 +1056,7 @@ class LayoutHandle:
     
     def __init__(self,rh,layout):
       
-        # lino.log.debug('LayoutHandle.__init__(%s,%s,%d)',link,layout,index)
+        # logger.debug('LayoutHandle.__init__(%s,%s,%d)',link,layout,index)
         assert isinstance(layout,BaseLayout)
         #assert isinstance(link,reports.ReportHandle)
         #~ base.Handle.__init__(self,ui)
@@ -1134,7 +1136,7 @@ class LayoutHandle:
     def write_debug_info(self):
         if self.layout.filename and self.layout.write_debug_info:
             filename = "%s.debug.html" % self.layout.filename
-            lino.log.info("Writing %s..." % filename)
+            logger.info("Writing %s..." % filename)
             f = codecs.open(filename,"w",encoding='utf-8')
             f.write('''<html><body><table border="1">''')
             f.write(u"\n".join(self._main.debug_lines()))
@@ -1152,7 +1154,7 @@ class LayoutHandle:
   
   
     def desc2elem(self,panelclass,desc_name,desc,**kw):
-        #lino.log.debug("desc2elem(panelclass,%r,%r)",desc_name,desc)
+        #logger.debug("desc2elem(panelclass,%r,%r)",desc_name,desc)
         #assert desc != 'Countries_choices2'
         if '*' in desc:
             explicit_specs = set()
@@ -1167,7 +1169,7 @@ class LayoutHandle:
                     and (de.name != self.rh.report.fk_name) \
                 ])
             desc = desc.replace('*',wildcard_fields)
-            #lino.log.debug('desc -> %r',desc)
+            #logger.debug('desc -> %r',desc)
         if "\n" in desc:
             elems = []
             i = 0
@@ -1204,7 +1206,7 @@ class LayoutHandle:
             return panelclass(self,desc_name,False,*elems,**kw)
             
     def create_element(self,panelclass,desc_name):
-        #lino.log.debug("create_element(panelclass,%r)", desc_name)
+        #logger.debug("create_element(panelclass,%r)", desc_name)
         name,kw = self.splitdesc(desc_name)
         e = self.rh.ui.create_layout_element(self,panelclass,name,**kw)
         #~ for child in e.walk():

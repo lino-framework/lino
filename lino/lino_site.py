@@ -26,6 +26,9 @@ Then it analyzes the models and finds the corresponding Reports and Layouts.
 
 """
 
+import logging
+logger = logging.getLogger(__name__)
+
 import os
 import sys
 #~ import imp
@@ -69,23 +72,23 @@ from lino.reports import DetailLayout
 ## be populated. This must be done before calling actors.discover().
 
 apps = app_labels()
-lino.log.debug("%d applications: %s.", len(apps),", ".join(apps))
+logger.debug("%d applications: %s.", len(apps),", ".join(apps))
 models_list = models.get_models() # populates django.db.models.loading.cache 
 
 if settings.MODEL_DEBUG:
-    lino.log.debug("%d MODELS:",len(models_list))
+    logger.debug("%d MODELS:",len(models_list))
     i = 0
     for model in models_list:
         i += 1
-        lino.log.debug("  %2d: %s.%s -> %r",i,model._meta.app_label,model._meta.object_name,model)
-        lino.log.debug("      data_elems : %s",' '.join([de.name for de in data_elems(model)]))
+        logger.debug("  %2d: %s.%s -> %r",i,model._meta.app_label,model._meta.object_name,model)
+        logger.debug("      data_elems : %s",' '.join([de.name for de in data_elems(model)]))
 
 from lino.utils import choosers
 
 
 def discover():
     
-    lino.log.info("Analyzing Models...")
+    logger.info("Analyzing Models...")
     ddhdict = {}
     for model in models.get_models():
     
@@ -106,7 +109,7 @@ def discover():
         dtl_files.sort(fcmp)
         for filename,cd in dtl_files:
             fn = os.path.join(cd.name,filename)
-            lino.log.info("Loading %s...",fn)
+            logger.info("Loading %s...",fn)
             s = open(fn).read()
             dtl = DetailLayout(s,cd,filename)
             model._lino_detail_layouts.append(dtl)
@@ -136,7 +139,7 @@ def discover():
                 
     for model,ddh in ddhdict.items():
         if not hasattr(model,'disable_delete'):
-            lino.log.debug("install %s.disable_delete(%s)",
+            logger.debug("install %s.disable_delete(%s)",
               model.__name__,ddh)
             model.disable_delete = ddh.handler()
 
@@ -190,7 +193,7 @@ class LinoSite:
         if self._setup_done:
             return
         if self._setting_up:
-            #~ lino.log.warning("LinoSite.setup() called recursively.")
+            #~ logger.warning("LinoSite.setup() called recursively.")
             #~ return 
             raise Exception("LinoSite.setup() called recursively.")
         self._setting_up = True
@@ -213,28 +216,28 @@ class LinoSite:
                 #~ a.setup()
 
         if settings.MODEL_DEBUG:
-            lino.log.debug("ACTORS:")
+            logger.debug("ACTORS:")
             for k in sorted(actors.actors_dict.keys()):
                 a = actors.actors_dict[k]
-                #~ lino.log.debug("%s -> %r",k,a.__class__)
-                lino.log.debug("%s -> %r",k,a.debug_summary())
+                #~ logger.debug("%s -> %r",k,a.__class__)
+                logger.debug("%s -> %r",k,a.debug_summary())
                   
           
         if hasattr(settings,'LINO_SETTINGS'):
-            lino.log.info("Reading %s ...", settings.LINO_SETTINGS)
+            logger.info("Reading %s ...", settings.LINO_SETTINGS)
             execfile(settings.LINO_SETTINGS,dict(lino=self))
         else:
-            lino.log.warning("settings.LINO_SETTINGS entry is missing")
+            logger.warning("settings.LINO_SETTINGS entry is missing")
             
-        lino.log.info(lino.welcome_text())
-        #~ lino.log.info("This is Lino version %s." % lino.__version__)
+        logger.info(lino.welcome_text())
+        #~ logger.info("This is Lino version %s." % lino.__version__)
         #~ using = ', '.join(["%s %s" % (n,v) for n,v,u in lino.using()])
-        #~ lino.log.info("Using %s" % using)
-        #~ lino.log.info("Lino Site %r is ready.", self.title)
+        #~ logger.info("Using %s" % using)
+        #~ logger.info("Lino Site %r is ready.", self.title)
           
         uis = []
         for ui in settings.USER_INTERFACES:
-            lino.log.info("Starting user interface %s",ui)
+            logger.info("Starting user interface %s",ui)
             ui_module = import_module(ui)
             #~ self.ui = ui_module.ui
             #~ self.ui.setup_site(self)
@@ -310,11 +313,11 @@ class LinoSite:
         sites = reports.get_app('sites')
         
         options = dict(interactive=False)
-        lino.log.info("lino_site.initdb(%r)", fixtures)
+        logger.info("lino_site.initdb(%r)", fixtures)
         if not syscon.confirm("Gonna reset database(s) %s.\nAre you sure?" 
             % settings.DATABASES):
             return
-        lino.log.info("reset")
+        logger.info("reset")
         if False: # settings.DATABASE_ENGINE == 'sqlite3':
             if settings.DATABASE_NAME != ':memory:':
                 if os.path.exists(settings.DATABASE_NAME):
@@ -322,7 +325,7 @@ class LinoSite:
         else:
             call_command('reset',*app_labels(),**options)
         #call_command('reset','songs','auth',interactive=False)
-        lino.log.info("syncdb")
+        logger.info("syncdb")
         call_command('syncdb',**options)
         #call_command('flush',interactive=False)
         #~ auth.User.objects.create_superuser('root','luc.saffre@gmx.net','1234')
@@ -331,10 +334,10 @@ class LinoSite:
         # 20100804 don't remember why this was used:
         #~ sites.Site(id=2,domain=self.domain,name=self.title).save()
         
-        lino.log.info("loaddata %s",' '.join(fixtures))
+        logger.info("loaddata %s",' '.join(fixtures))
         call_command('loaddata',*fixtures)
         #~ for fix in fixtures:
-            #~ lino.log.info("loaddata %s",fix)
+            #~ logger.info("loaddata %s",fix)
             #~ call_command('loaddata',fix)
         #self.setup()
         
@@ -344,7 +347,7 @@ class LinoSite:
   
 
 lino_site = LinoSite()
-#~ lino.log.debug("lino.lino_site has been instantiated")
+#~ logger.debug("lino.lino_site has been instantiated")
 #'get_urls','fill','context'
 
 initdb = lino_site.initdb

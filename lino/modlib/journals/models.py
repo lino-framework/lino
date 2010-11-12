@@ -23,6 +23,9 @@ See lino.testapps.journals for more documentation.
 
 """
 
+import logging
+logger = logging.getLogger(__name__)
+
 import os
 #import logging ; logger = logging.getLogger('lino.apps.journals')
 
@@ -229,7 +232,7 @@ class Journaled(mixins.MultiTableBase):
         return r
         
     def after_save(self):
-        #lino.log.info("Saved document %s",self)
+        #logger.info("Saved document %s",self)
         pass
         
     def delete(self):

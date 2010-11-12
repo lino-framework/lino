@@ -24,12 +24,15 @@ send_invoices() then "sends" the signed invoices:
     or directly via e-mail to the customer.
 """
 
+import logging
+logger = logging.getLogger(__name__)
+
 import os
 import datetime
 
 from timtools.console import syscon
 
-import lino
+#~ import lino
 from lino import reports
 
 from lino.modlib.sales import models as sales
@@ -41,7 +44,7 @@ def make_invoices(make_until=None):
     #~ print rpt.as_text()
     
     q = [o for o in sales.Order.objects.pending(make_until)]
-    lino.log.debug("make_invoices(make_until=%s)",make_until)
+    logger.debug("make_invoices(make_until=%s)",make_until)
     made = []
     for o in q:
         i = o.make_invoice(make_until)

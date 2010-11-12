@@ -260,13 +260,23 @@ Currently there is also an unelegant thing to do by hand::
 
   chgrp www-data /usr/local/django/myproject/data/myproject.db
   chmod -R g+w /usr/local/django/myproject
+  
+  
 
-Updating your Lino to the newest version
-----------------------------------------
+How to install updates
+----------------------
 
-::
+Updating Lino::
 
   cd /var/snapshots/lino
   hg pull -u
 
 
+Updating Django::
+
+  cd /var/snapshots/django & svn update
+  
+To run the Django test suite::  
+  
+  cd /var/snapshots/djangotests
+  python runtests.py --settings=test_sqlite

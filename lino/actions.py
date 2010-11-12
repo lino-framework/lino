@@ -11,6 +11,9 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+import logging
+logger = logging.getLogger(__name__)
+
 import traceback
 from django.utils.translation import ugettext as _
 from django.utils.encoding import force_unicode
@@ -308,8 +311,8 @@ class ActionRequest:
         if msg:
             return dict(notify_msg=msg,success=False)
             #~ return ActionResponse(notify_msg=msg,success=False)
-        lino.log.debug('ActionRequest %s.%s',self.ah,self.action.name)
-        #~ lino.log.debug('ActionRequest._start() %s.%s(%r)',self.ah,self.action.name,self.params)
+        logger.debug('ActionRequest %s.%s',self.ah,self.action.name)
+        #~ logger.debug('ActionRequest._start() %s.%s(%r)',self.ah,self.action.name,self.params)
         #~ self.response = ActionResponse()
         try:
             #~ self.ui.run_action(self)
@@ -402,4 +405,4 @@ class ActionRequest:
 
 
 
-lino.log.debug(__file__+' : done')
+#~ logger.debug(__file__+' : done')

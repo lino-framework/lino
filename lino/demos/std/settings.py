@@ -203,3 +203,13 @@ LOGIN_REDIRECT_URL = "/"
 EMAIL_HOST = "mail.example.com"
 #EMAIL_PORT = ""
 
+LOGGING = dict(
+  version = 1,
+  disable_existing_loggers = True,
+  formatters = dict(
+      lino = dict(
+          format = '%(asctime)s %(levelname)s %(module)s : %(message)s',
+          datefmt = '%Y%m-%d %H:%M:%S',
+      )
+  )
+)

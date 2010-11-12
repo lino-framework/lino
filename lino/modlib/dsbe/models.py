@@ -39,8 +39,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.utils.encoding import force_unicode 
 
-import lino
-#~ lino.log.debug(__file__+' : started')
+#~ import lino
+#~ logger.debug(__file__+' : started')
 
 from lino import reports
 #~ from lino import layouts

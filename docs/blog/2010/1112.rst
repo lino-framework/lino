@@ -1,4 +1,71 @@
 20101112
 ========
 
-- Released :doc:`/releases/20101112`.
+Eigentlich wollte ich schnell :doc:`/releases/20101112` 
+auf DSBE und Tups installieren... 
+aber da gibt es eine Überraschung: 
+das lang ersehnte LOGGING ist jetzt in Django drin! 
+Das Dumme daran::
+
+  
+  lsaffre@lino:/usr/local/django/dsbe_eupen$ python manage.py shell
+  Traceback (most recent call last):
+    File "manage.py", line 11, in <module>
+      execute_manager(settings)
+    File "/var/snapshots/django/django/core/management/__init__.py", line 438, in execute_manager
+      utility.execute()
+    File "/var/snapshots/django/django/core/management/__init__.py", line 379, in execute
+      self.fetch_command(subcommand).run_from_argv(self.argv)
+    File "/var/snapshots/django/django/core/management/__init__.py", line 252, in fetch_command
+      app_name = get_commands()[subcommand]
+    File "/var/snapshots/django/django/core/management/__init__.py", line 101, in get_commands
+      apps = settings.INSTALLED_APPS
+    File "/var/snapshots/django/django/utils/functional.py", line 276, in __getattr__
+      self._setup()
+    File "/var/snapshots/django/django/conf/__init__.py", line 41, in _setup
+      self._wrapped = Settings(settings_module)
+    File "/var/snapshots/django/django/conf/__init__.py", line 126, in __init__
+      logging_config_func(self.LOGGING)
+    File "/var/snapshots/django/django/utils/dictconfig.py", line 553, in dictConfig
+      dictConfigClass(config).configure()
+    File "/var/snapshots/django/django/utils/dictconfig.py", line 352, in configure
+      '%r: %s' % (name, e))
+  ValueError: Unable to configure handler 'mail_admins': __import__() argument 1 must be string, not DictConfigurator  
+  
+
+Das Problem tritt allerdings nur in Eupen auf, nicht auf Tups und nicht auf Armand.
+Auf allen drei Rechnern ist Django Revision 14540 und Python 2.5.2
+
+Wenn ich in :file:`/var/snapshots/django/django/utils/dictconfig.py` den `try...except`-Block 
+um Zeile 352 rauskommentiere, wird die Meldung aufschlussreicher::
+
+  Traceback (most recent call last):
+    File "manage.py", line 11, in <module>
+      execute_manager(settings)
+    File "/var/snapshots/django/django/core/management/__init__.py", line 438, in execute_manager
+      utility.execute()
+    File "/var/snapshots/django/django/core/management/__init__.py", line 379, in execute
+      self.fetch_command(subcommand).run_from_argv(self.argv)
+    File "/var/snapshots/django/django/core/management/__init__.py", line 252, in fetch_command
+      app_name = get_commands()[subcommand]
+    File "/var/snapshots/django/django/core/management/__init__.py", line 101, in get_commands
+      apps = settings.INSTALLED_APPS
+    File "/var/snapshots/django/django/utils/functional.py", line 276, in __getattr__
+      self._setup()
+    File "/var/snapshots/django/django/conf/__init__.py", line 41, in _setup
+      self._wrapped = Settings(settings_module)
+    File "/var/snapshots/django/django/conf/__init__.py", line 126, in __init__
+      logging_config_func(self.LOGGING)
+    File "/var/snapshots/django/django/utils/dictconfig.py", line 553, in dictConfig
+      dictConfigClass(config).configure()
+    File "/var/snapshots/django/django/utils/dictconfig.py", line 347, in configure
+      handler = self.configure_handler(handlers[name])
+    File "/var/snapshots/django/django/utils/dictconfig.py", line 474, in configure_handler
+      klass = self.resolve(config.pop('class'))
+    File "/var/snapshots/django/django/utils/dictconfig.py", line 165, in resolve
+      found = self.importer(used)
+    File "/usr/lib/python2.5/site-packages/uno.py", line 262, in _uno_import
+      return _g_delegatee( name, *optargs )
+  TypeError: __import__() argument 1 must be string, not DictConfigurator
+
+

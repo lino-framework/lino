@@ -15,12 +15,15 @@
 Documentation: see lino.test_apps.properties.models.py
 """
 
+#~ import logging
+#~ logger = logging.getLogger(__name__)
+
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.utils.translation import ugettext_lazy as _
-import lino
-#~ lino.log.debug(__file__+' : started')
+#~ import lino
+#~ logger.debug(__file__+' : started')
 from lino import reports
 #~ from lino import layouts
 from lino import actions
@@ -115,7 +118,7 @@ class Property(models.Model):
     def properties_for_model(cls,model):
         #~ print 'properties_for_model', model
         ct = ContentType.objects.get_for_model(model)
-        #~ lino.log.debug('Property.properties_for_model() %s %s',model,ct)
+        #~ logger.debug('Property.properties_for_model() %s %s',model,ct)
         #~ return cls.objects.filter(only_for__in=(ct,None))
         q = models.Q(only_for__exact=None) | models.Q(only_for=ct)
         return cls.objects.filter(q)
@@ -325,4 +328,4 @@ def set_value_for(owner,**kw):
             raise Exception("There's no property named %r" % k)
         p.set_value_for(owner,v)
         
-#~ lino.log.debug(__file__+' : done')
+#~ logger.debug(__file__+' : done')

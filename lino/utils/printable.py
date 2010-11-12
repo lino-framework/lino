@@ -15,6 +15,8 @@
 See :doc:`/admin/printable`
 
 """
+import logging
+logger = logging.getLogger(__name__)
 
 import os
 import sys
@@ -101,9 +103,9 @@ class BuildMethod:
             
         if os.path.exists(filename):
             if not elem.must_rebuild_target(filename,self):
-                lino.log.debug("%s : %s -> %s is up to date",self,elem,filename)
+                logger.debug("%s : %s -> %s is up to date",self,elem,filename)
                 return
-            lino.log.debug("%s : %s -> %s is obsolete",self,elem,filename)
+            logger.debug("%s : %s -> %s is obsolete",self,elem,filename)
             os.remove(filename)
         else:
             dirname = os.path.dirname(filename)
@@ -112,14 +114,14 @@ class BuildMethod:
                     raise Exception("Please create yourself directory %s" % dirname)
                 else:
                     os.makedirs(dirname)
-        lino.log.debug("%s : %s -> %s", self,elem,filename)
+        logger.debug("%s : %s -> %s", self,elem,filename)
         return filename
         
     def get_template(self,elem):
         tpls = elem.get_print_templates(self)
         if len(tpls) == 0:
             raise Exception("No templates defined for %r" % elem)
-        #~ lino.log.debug('make_pisa_html %s',tpls)
+        #~ logger.debug('make_pisa_html %s',tpls)
         try:
             return select_template(tpls)
         except TemplateDoesNotExist,e:
@@ -207,7 +209,7 @@ class AppyBuildMethod(SimpleBuildMethod):
         context = dict(self=elem)
         from appy.pod.renderer import Renderer
         renderer = Renderer(tpl, context, target,**settings.APPY_PARAMS)
-        lino.log.debug("appy.pod render %s -> %s",tpl,target)
+        logger.debug("appy.pod render %s -> %s",tpl,target)
         renderer.run()
 
 
@@ -308,7 +310,7 @@ def get_template_choices(group,bmname):
                     fn = os.path.join(dirpath[len(top)+1:],fn)
                 l.append(fn.decode(sys.getfilesystemencoding()))
     if not l:
-        lino.log.warning("get_template_choices() : no matches for (%r,%r) in %s",group,bmname,top)
+        logger.warning("get_template_choices() : no matches for (%r,%r) in %s",group,bmname,top)
     return l
             
     
