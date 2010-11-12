@@ -11,6 +11,14 @@ Short-term
 
 - Formatierung der :xfile:`welcome.html` lässt zu wünschen übrig.  
 
+- Mit :kbd:`[F2]` sollte die Zeile einer Grid bearbeiten können.
+
+- Im Kontextmenü sollten auch Aktionen erscheinen, die spezifisch 
+  für das Feld (die Kolonne) sind. 
+  
+- Button, um eine zuvor generierte printable Datei wieder zu löschen, 
+  damit sie neu generiert wird.  Dieser Button sollte aber nur im Kontextmenü erscheinen.
+
 - Im Hauptmenü könnten zwei Befehle :menuselection:`Help --> User Manual` 
   und :menuselection:`Help --> About` kommen, dann hätten wir den ganzen Platz für Erinnerungen.
 
