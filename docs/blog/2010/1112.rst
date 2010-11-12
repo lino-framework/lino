@@ -6,37 +6,12 @@ auf DSBE und Tups installieren...
 aber da gibt es eine Überraschung: 
 das lang ersehnte LOGGING ist jetzt in Django drin! 
 Das Dumme daran::
-  
-  lsaffre@lino:/usr/local/django/dsbe_eupen$ python manage.py shell
-  Traceback (most recent call last):
-    File "manage.py", line 11, in <module>
-      execute_manager(settings)
-    File "/var/snapshots/django/django/core/management/__init__.py", line 438, in execute_manager
-      utility.execute()
-    File "/var/snapshots/django/django/core/management/__init__.py", line 379, in execute
-      self.fetch_command(subcommand).run_from_argv(self.argv)
-    File "/var/snapshots/django/django/core/management/__init__.py", line 252, in fetch_command
-      app_name = get_commands()[subcommand]
-    File "/var/snapshots/django/django/core/management/__init__.py", line 101, in get_commands
-      apps = settings.INSTALLED_APPS
-    File "/var/snapshots/django/django/utils/functional.py", line 276, in __getattr__
-      self._setup()
-    File "/var/snapshots/django/django/conf/__init__.py", line 41, in _setup
-      self._wrapped = Settings(settings_module)
-    File "/var/snapshots/django/django/conf/__init__.py", line 126, in __init__
-      logging_config_func(self.LOGGING)
-    File "/var/snapshots/django/django/utils/dictconfig.py", line 553, in dictConfig
-      dictConfigClass(config).configure()
-    File "/var/snapshots/django/django/utils/dictconfig.py", line 352, in configure
-      '%r: %s' % (name, e))
-  ValueError: Unable to configure handler 'mail_admins': __import__() argument 1 must be string, not DictConfigurator  
-  
 
-Das Problem tritt interessanterweise nur in Eupen auf, nicht auf Tups und nicht auf Armand.
-Auf allen drei Rechnern ist Django Revision 14540 und Python 2.5.2
-
-Ursache des Problems war offensichtlich mein eigener Logger `lino.log`, 
+:doc:`/tickets/15`
+  
+Zuerst dachte ich, dass mein eigener Logger `lino.log` dran Schuld ist, 
 der damit irgendwie in Konflikt gerät. 
 Das war eigentlich zu erwarten.
-Das Beste ist, dass ich gleich auf das Django-System konvertiere.
+Also zuerst mal auf das Django-System konvertieren.
+Aber nein, das war's gar nicht (ich bereue trotzdem nicht, auf den Django-Logger umgestiegen zu sein).
 

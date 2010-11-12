@@ -1,5 +1,6 @@
 #14 : inheriting verbose_name from abstract Model
 =================================================
+
 I'd like to have the following class definitions:
 
 1. In :mod:`lino.modlib.contacts.models`::

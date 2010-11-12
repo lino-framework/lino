@@ -1,0 +1,110 @@
+#15 : python-uno and logging
+============================
+
+Django Revision 14540, Python 2.5.2 on stable Debian Lenny.
+
+.. literalinclude:: 15.py
+   :linenos:  
+  
+Executing this file gives a traceback::
+
+  $ python 15.py
+  Traceback (most recent call last):
+    File "15.py", line 29, in <module>
+      dictConfig(LOGGING)
+    File "/var/snapshots/django_src/django/utils/dictconfig.py", line 553, in dictConfig
+      dictConfigClass(config).configure()
+    File "/var/snapshots/django_src/django/utils/dictconfig.py", line 352, in configure
+      '%r: %s' % (name, e))
+  ValueError: Unable to configure handler 'console': __import__() argument 1 must be string, not DictConfigurator
+
+Without the ``import uno`` it works::
+
+  $ python 15.py
+  Hello world
+
+This is because the Debian package `python-uno` 
+clashes with the Python 2.7 ``logging.dictConfig`` 
+module.[#f1]_
+
+The workaround is to use either fileConfig or plain Python 
+code for your logger configuration.
+For Lino I do it with the following code in :xfile:`settings.py`::
+
+  LOGGING_CONFIG = 'lino.utils.log.configure'
+  LOGGING = None
+
+This will call :func:`lino.utils.log.configure`.
+
+.. rubric:: Footnotes
+
+.. [#f1] At least I deduce this from the following observations. 
+I added some ``print`` statements into 
+:file:`/var/snapshots/django/django/utils/dictconfig.py`::
+
+    def resolve(self, s):
+        """
+        Resolve strings to objects using standard import and attribute
+        syntax.
+        """
+        name = s.split('.')
+        used = name.pop(0)
+        #print 20101112, 'resolve',repr(s)
+        try:
+            #print 20101112, 'import',repr(used), self.importer
+            found = self.importer(used)
+            for frag in name:
+                used += '.' + frag
+                try:
+                    found = getattr(found, frag)
+                except AttributeError:
+                    self.importer(used)
+                    found = getattr(found, frag)
+            return found
+        except ImportError:
+            e, tb = sys.exc_info()[1:]
+            v = ValueError('Cannot resolve %r: %s' % (s, e))
+            v.__cause__, v.__traceback__ = e, tb
+            raise v
+
+
+... which produced output like this::
+
+    20101112 resolve 'logging.StreamHandler'
+    20101112 import 'logging' <bound method DictConfigurator._uno_import of <django.utils.dictconfig.DictConfigurator object
+     at 0x2b26ef602c50>>
+    Traceback (most recent call last):
+      File "/var/snapshots/django/django/utils/dictconfig.py", line 351, in configure
+        handler = self.configure_handler(handlers[name])
+      File "/var/snapshots/django/django/utils/dictconfig.py", line 480, in configure_handler
+        klass = self.resolve(config.pop('class'))
+      File "/var/snapshots/django/django/utils/dictconfig.py", line 167, in resolve
+        found = self.importer(used)
+      File "/usr/lib/python2.5/site-packages/uno.py", line 262, in _uno_import
+        return _g_delegatee( name, *optargs )
+    TypeError: __import__() argument 1 must be string, not DictConfigurator
+    Traceback (most recent call last):
+      File "manage.py", line 11, in <module>
+        execute_manager(settings)
+      File "/var/snapshots/django/django/core/management/__init__.py", line 438, in execute_manager
+        utility.execute()
+      File "/var/snapshots/django/django/core/management/__init__.py", line 379, in execute
+        self.fetch_command(subcommand).run_from_argv(self.argv)
+      File "/var/snapshots/django/django/core/management/__init__.py", line 252, in fetch_command
+        app_name = get_commands()[subcommand]
+      File "/var/snapshots/django/django/core/management/__init__.py", line 101, in get_commands
+        apps = settings.INSTALLED_APPS
+      File "/var/snapshots/django/django/utils/functional.py", line 276, in __getattr__
+        self._setup()
+      File "/var/snapshots/django/django/conf/__init__.py", line 41, in _setup
+        self._wrapped = Settings(settings_module)
+      File "/var/snapshots/django/django/conf/__init__.py", line 126, in __init__
+        logging_config_func(self.LOGGING)
+      File "/var/snapshots/django/django/utils/dictconfig.py", line 559, in dictConfig
+        dictConfigClass(config).configure()
+      File "/var/snapshots/django/django/utils/dictconfig.py", line 358, in configure
+        '%r: %s' % (name, e))
+    ValueError: Unable to configure handler 'console': __import__() argument 1 must be string, not DictConfigurator
+
+
+
