@@ -20,10 +20,10 @@ See :doc:`/admin/install` on how to use it.
 import sys
 import logging
 
-__version__ = "0.8.11"
+__version__ = "0.8.12"
 """
 Lino version number. 
-The latest released version is :doc:`/releases/20101027`.
+The latest released version is :doc:`/releases/20101112`.
 """
 
 __author__ = "Luc Saffre <luc.saffre@gmx.net>"
@@ -158,9 +158,17 @@ def using():
     import django
     yield ("Django",django.get_version(),"http://www.djangoproject.com")
     
-    import reportlab
-    yield ("ReportLab Toolkit",reportlab.Version, "http://www.reportlab.org/rl_toolkit.html")
-               
+    import dateutil
+    version = getattr(dateutil,'__version__','')
+    yield ("python-dateutil",version,"http://labix.org/python-dateutil")
+    
+    try:
+        import Cheetah
+        version = Cheetah.Version 
+    except ImportError:
+        version = NOT_FOUND_MSG
+    yield ("Cheetah",version ,"http://cheetahtemplate.org/")
+
     import yaml
     version = getattr(yaml,'__version__','')
     yield ("PyYaml",version,"http://pyyaml.org/")
@@ -169,10 +177,6 @@ def using():
     version = getattr(pyratemp,'__version__','')
     yield ("pyratemp",version,"http://www.simple-is-better.org/template/pyratemp.html")
     
-    import dateutil
-    version = getattr(dateutil,'__version__','')
-    yield ("python-dateutil",version,"http://labix.org/python-dateutil")
-    
     try:
         import ho.pisa as pisa
         version = getattr(pisa,'__version__','')
@@ -180,19 +184,15 @@ def using():
     except ImportError:
         pass
 
+    import reportlab
+    yield ("ReportLab Toolkit",reportlab.Version, "http://www.reportlab.org/rl_toolkit.html")
+               
     try:
         import appy
         from appy import version
         yield ("appy.pod",version.verbose ,"http://appyframework.org/pod.html")
     except ImportError:
         pass
-
-    try:
-        import uno
-        version = getattr(uno,'__version__','')
-    except ImportError:
-        version = NOT_FOUND_MSG
-    yield ("Python-UNO",version ,"http://udk.openoffice.org/python/python-bridge.html")
 
 
 def welcome_text():

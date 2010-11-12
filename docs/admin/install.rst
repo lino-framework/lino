@@ -13,16 +13,21 @@ You'll maybe need the following Debian packages installed:
 
  * Packages needed to download Lino and Django::
  
-      aptitude install mercurial subversion unzip
+      mercurial subversion unzip
 
  * Packages needed by Lino to work::
  
-    aptitude install python-dateutil python-reportlab \
-      python-yaml python-imaging python-html5lib
+      python-dateutil 
+      python-reportlab 
+      python-yaml 
+      python-imaging 
+      python-html5lib
+      python-uno
+      python-cheetah
 
  * Packages needed by Django to run in Apache2::
 
-    aptitude install apache2 apache2-doc apache2-mpm-prefork \
+    apache2 apache2-doc apache2-mpm-prefork \
       apache2-utils libexpat1 ssl-cert libapache2-mod-wsgi
       
 
