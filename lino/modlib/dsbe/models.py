@@ -511,7 +511,7 @@ class Activity(models.Model):
     class Meta:
         verbose_name = _("activity")
         verbose_name_plural = _("activities")
-    name = models.CharField(max_length=20)
+    name = models.CharField(max_length=80)
     lst104 = models.BooleanField(verbose_name=_("Appears in Listing 104"))
     
     def __unicode__(self):
