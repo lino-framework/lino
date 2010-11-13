@@ -9,6 +9,14 @@ for which I hope for help from other people.
 Short-term
 ----------
 
+- In Theux gibt es eine Straße namens "rue des 600 Franchimontois", 
+  die von 
+  :func:`lino.modlib.contacts.utils.street2kw` 
+  nicht korrekt interpretiert wird wird.
+  
+- Lokale Konvertierungsfunktion für initdb_tim, um gewisse Benutzer zu 
+  ignorieren oder Daten zu korrigieren.
+
 - Formatierung der :xfile:`welcome.html` lässt zu wünschen übrig.  
 
 - Mit :kbd:`[F2]` sollte die Zeile einer Grid bearbeiten können.

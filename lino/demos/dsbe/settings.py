@@ -15,6 +15,13 @@ import lino
 
 from lino.demos.std.settings import *
 
+def LOCAL_TIM2LINO(alias,obj):
+    """Hook for local special treatment on instances that have been imported from TIM.
+    """
+    if alias == 'USR':
+        if obj.username == "write": return None
+    return obj
+    
 def DSBE_IS_IMPORTED_PARTNER(obj):
     "`obj` is either a Person or a Company"
     #~ return obj.id is not None and (obj.id < 200000 or obj.id > 299999)

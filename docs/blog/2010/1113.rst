@@ -2,10 +2,19 @@
 ========
 
 - Kleiner Bugfix : initdb_tim setzte die Namen der Personen nicht.
+  Weniger kleine Nebenwirkung: 
   Jetzt werden die Daten auch in initdb_tim validiert. 
-  Nebenwirkung: Benutzer mit ungültiger E-Mail-Adresse legt er nicht an.
+  Da waren noch einige unbemerkte Bugs.
+  Der Haken: 
+  Einige Benutzer werden jetzt nicht importiert, 
+  weil sie eine ungültige E-Mail-Adresse haben
 
 - Neues Feld `lino.utils.mixins.Printable.must_build` und Button "Clear Cache". 
   Der meldet zwar lediglich "Sorry, not implemented.", aber immerhin ist er jetzt da.
 
 - BuildMethods, die editierbare Dokumente erzeugen, tun das jetzt nach /media/webdav statt /media/cache
+
+Release mit mehreren Check-ins.
+
+- Neue Funktion :setting:`LOCAL_TIM2LINO`.
+

@@ -70,6 +70,8 @@ class Controller:
         for k,v in d.items():
             if data.has_key(v):
                 setattr(obj,k,data[v])
+        obj = settings.LOCAL_TIM2LINO(self.__class__.__name__,obj)
+        obj.full_clean()
                 
     def POST(self,**kw):
         obj = self.model()

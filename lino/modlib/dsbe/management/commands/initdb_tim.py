@@ -60,8 +60,8 @@ def store(kw,**d):
         if v:
             kw[k] = v
 
-def convert_username(name):
-    return name.lower()
+#~ def convert_username(name):
+    #~ return name.lower()
   
 def convert_sex(v):
     if v in ('W','F'): return 'F'
@@ -190,48 +190,20 @@ def load_dbf(dbpath,tableName,load):
     for dbfrow in f:
         i = load(dbfrow)
         if i is not None:
-            try:
-                i.full_clean()
-                i.save()
-                #~ logger.debug("%s has been saved",i)
-            except ValidationError,e:
-                logger.warning("Failed to save row %s from %s : %s",obj2str(i),dbfrow,e)
-                logger.exception(e)
-            except IntegrityError,e:
-                logger.warning("Failed to save row %s from %s : %s",obj2str(i),dbfrow,e)
-                logger.exception(e)
+            i = settings.LOCAL_TIM2LINO(tableName,i)
+            if i is not None:
+                try:
+                    i.full_clean()
+                    i.save()
+                    #~ logger.debug("%s has been saved",i)
+                except ValidationError,e:
+                    logger.warning("Failed to save row %s from %s : %s",obj2str(i),dbfrow,e)
+                    logger.exception(e)
+                except IntegrityError,e:
+                    logger.warning("Failed to save row %s from %s : %s",obj2str(i),dbfrow,e)
+                    logger.exception(e)
     f.close()
 
-    
-def unused_tim_fixture_objects():
-    noteType = Instantiator('notes.NoteType','name build_method template').build
-    yield noteType((u"Auswertungsbogen allgemein"),'appy',u'Auswertungsbogen_allgemein.odt')
-    yield noteType((u"Anwesenheitsbescheinigung"),'appy',u'Anwesenheitsbescheinigung.odt')
-    yield noteType((u"Beschluss"),'appy',u'Beschluss.odt')
-    yield noteType((u"Konvention"),'appy',u'Konvention.odt')
-    yield noteType((u"Brief"),'appy',u'Brief.odt')
-    yield noteType((u"Vorladung"),'appy',u'Vorladung.odt')
-    yield noteType((u"VSE Lehre"),'appy',u'VSE Lehre.odt')
-    yield noteType((u"VSE Ausbildung"),'appy',u'VSE Ausbildung.odt')
-    yield noteType((u"VSE Cardijn"),'appy',u'VSE Cardijn.odt')
-    yield noteType((u"VSE Work & Job"),'appy',u'VSE Work & Job.odt')
-    yield noteType((u"VSE Vollzeitstudium"),'appy',u'VSE Vollzeitstudium.odt')
-    yield noteType((u"VSE Arbeitssuche"),'appy',u'VSE Arbeitssuche.odt')
-    yield noteType((u"VSE Sprachkurs"),'appy',u'VSE Sprachkurs.odt')
-    yield noteType((u"Vertrag 60-7"),'appy',u'Vertrag 60-7.odt')
-    yield noteType((u"Übergabeblatt"),'appy',u'Übergabeblatt.odt')
-    yield noteType((u"Neuantrag"),'appy',u'Neuantrag.odt')
-    yield noteType((u"Antragsformular"),'appy',u'Antragsformular.odt')
-    yield noteType((u"Recht auf Anhörung"),'appy',u'Recht auf Anhörung.odt')
-    yield noteType((u"Erstgespräch"),'appy',u'Erstgespräch.odt')
-    yield noteType((u"Abschlussbericht"),'appy',u'Abschlussbericht.odt')
-    yield noteType((u"Notiz"),'appy','notes.Note.odt')
-    yield noteType((u"Default"),'pisa','notes.Note.pisa.html')
-    yield noteType((u"Externes Dokument"))
-    
-    excltype = Instantiator('dsbe.ExclusionType','name').build
-    yield excltype(u"Termin nicht eingehalten")
-    yield excltype(u"ONEM-Auflagen nicht erfüllt")
     
   
 def load_tim_data(dbpath):
@@ -243,7 +215,7 @@ def load_tim_data(dbpath):
         now = datetime.datetime.now()
         if row['EMAIL']:
             user = auth.User(
-                username=convert_username(row['USERID']), 
+                username=row['USERID'].lower(), 
                 email=row['EMAIL'],
                 first_name=d['first_name'],
                 last_name=d['last_name'],
