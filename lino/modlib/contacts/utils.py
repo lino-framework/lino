@@ -49,6 +49,10 @@ Examples:
 >>> street2kw(u"Auf'm Bach 3 A")
 {'street_box': u'A', 'street': u"Auf'm Bach", 'street_no': u'3'}
 
+>>> street2kw(u"rue des 600 Franchimontois 1")
+{'street_box': u'', 'street': u'rue des 600 Franchimontois', 'street_no': u'1'}
+
+
 """
 
 import re
@@ -79,7 +83,8 @@ def name2kw(s,**kw):
     return kw
     
 def street2kw(s,**kw):
-    m = re.match(r"(\D+)\s*(\d+)\s*(\w*)", s)
+    #~ m = re.match(r"(\D+),?\s*(\d+)\s*(\w*)", s)
+    m = re.match(r"(.+),?\s+(\d+)\s*(\D*)$", s)
     if m:
         kw['street'] = m.group(1).strip()
         kw['street_no'] = m.group(2).strip()

@@ -18,3 +18,8 @@ Release mit mehreren Check-ins.
 
 - Neue Funktion :setting:`LOCAL_TIM2LINO`.
 
+- Eine neue lokale Fixture `initial_data.dpy` erstellt Benutzer, die nicht in TIM sind.
+  Damit die geladen wird, steht in der lokalen :xfile:`settings.py`::
+  
+    FIXTURE_DIRS = [join(PROJECT_DIR,"fixtures")]
+  
