@@ -1,7 +1,9 @@
 20101113
 ========
 
-- Kleiner Bugfix : inintdb_tim setzt die Namen der Personen nicht
+- Kleiner Bugfix : initdb_tim setzte die Namen der Personen nicht.
+  Jetzt werden die Daten auch in initdb_tim validiert. 
+  Nebenwirkung: Benutzer mit ungültiger E-Mail-Adresse legt er nicht an.
 
 - Neues Feld `lino.utils.mixins.Printable.must_build` und Button "Clear Cache". 
   Der meldet zwar lediglich "Sorry, not implemented.", aber immerhin ist er jetzt da.

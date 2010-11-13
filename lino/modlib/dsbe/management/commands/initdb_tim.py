@@ -286,7 +286,7 @@ def load_tim_data(dbpath):
             return 
         kw = dict(
           zip_code=row['CP'] or '',
-          name=row['NOM'] or '',
+          name=row['NOM'] or row['CP'],
           country=country,
           )
         return City(**kw)
