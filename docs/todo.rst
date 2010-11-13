@@ -9,11 +9,6 @@ for which I hope for help from other people.
 Short-term
 ----------
 
-- In Theux gibt es eine Straße namens "rue des 600 Franchimontois", 
-  die von 
-  :func:`lino.modlib.contacts.utils.street2kw` 
-  nicht korrekt interpretiert wird wird.
-  
 - Lokale Konvertierungsfunktion für initdb_tim, um gewisse Benutzer zu 
   ignorieren oder Daten zu korrigieren.
 

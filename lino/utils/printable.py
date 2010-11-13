@@ -99,7 +99,7 @@ class BuildMethod:
         """Return the target filename if a document needs to be built,
         otherwise return ``None``.
         """
-        if not elem.must_rebuild:
+        if not elem.must_build:
             return 
         filename = self.get_target_name(elem)
         if not filename:

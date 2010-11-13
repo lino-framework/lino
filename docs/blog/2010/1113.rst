@@ -23,3 +23,10 @@ Release mit mehreren Check-ins.
   
     FIXTURE_DIRS = [join(PROJECT_DIR,"fixtures")]
   
+  
+- Die Straße namens "rue des 600 Franchimontois" in Theux wir jetzt von 
+  :func:`lino.modlib.contacts.utils.street2kw` 
+  korrekt interpretiert.
+  
+Release in Eupen.  
+
