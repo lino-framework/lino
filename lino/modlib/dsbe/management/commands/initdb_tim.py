@@ -152,17 +152,17 @@ def pxs2person(row,person):
         try:
             person.health_insurance = Company.objects.get(pk=ADR_id(row['IDMUT']))
         except ValueError,e:
-            logger.warning(u"%s : invalid health_insurance %r",person,row['IDMUT'])
+            logger.warning(u"%s : invalid health_insurance %r",obj2str(person),row['IDMUT'])
         except Company.DoesNotExist,e:
-            logger.warning(u"%s : health_insurance %s not found",person,row['IDMUT'])
+            logger.warning(u"%s : health_insurance %s not found",obj2str(person),row['IDMUT'])
   
     if row['APOTHEKE']:
         try:
             person.pharmacy = Company.objects.get(pk=int(row['APOTHEKE']))
         except ValueError,e:
-            logger.warning(u"%s : invalid pharmacy %r",person,row['APOTHEKE'])
+            logger.warning(u"%s : invalid pharmacy %r",obj2str(person),row['APOTHEKE'])
         except Company.DoesNotExist,e:
-            logger.warning(u"%s : pharmacy %s not found",person,row['APOTHEKE'])
+            logger.warning(u"%s : pharmacy %s not found",obj2str(person),row['APOTHEKE'])
             
     nat = row['NATIONALIT']
     if nat:
@@ -197,10 +197,10 @@ def load_dbf(dbpath,tableName,load):
                     i.save()
                     #~ logger.debug("%s has been saved",i)
                 except ValidationError,e:
-                    logger.warning("Failed to save row %s from %s : %s",obj2str(i),dbfrow,e)
+                    logger.warning("Failed to save %s from %s : %s",obj2str(i),dbfrow,e)
                     logger.exception(e)
                 except IntegrityError,e:
-                    logger.warning("Failed to save row %s from %s : %s",obj2str(i),dbfrow,e)
+                    logger.warning("Failed to save %s from %s : %s",obj2str(i),dbfrow,e)
                     logger.exception(e)
     f.close()
 
