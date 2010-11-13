@@ -45,11 +45,11 @@ PAGE_DOWN = Hotkey(keycode=34)
 INSERT = Hotkey(keycode=44)
 DELETE = Hotkey(keycode=46)
     
-class ActionEvent(Exception):
-    pass
+#~ class ActionEvent(Exception):
+    #~ pass
     
-class ValidationError(Exception):
-    pass
+#~ class ValidationError(Exception):
+    #~ pass
     
 #~ class MustConfirm(ActionEvent):
     #~ pass
@@ -70,12 +70,12 @@ class Action: # (base.Handled):
     #~ handle_class = ActionHandle
     #~ action_type = '?'
     opens_a_slave = False
-    response_format = 'act' # ext_requests.FMT_RUN
+    #~ response_format = 'act' # ext_requests.FMT_RUN
     label = None
     name = None
     key = None
-    needs_selection = False
-    needs_validation = False
+    #~ needs_selection = False
+    #~ needs_validation = False
     #~ grid_button = True
     #~ hidden = False
     #~ show_in_detail = True
@@ -109,21 +109,14 @@ class Action: # (base.Handled):
         
         
 
-class RowsAction(Action):
-    needs_selection = False
-    needs_validation = False
-    def before_run(self,ar):
-        if self.needs_selection and len(ar.selected_rows) == 0:
-            return _("No selection. Nothing to do.")
-            
-            
 
 class WindowAction(Action):
+    pass
     #~ client_side = False
     #~ response_format = 'act' # ext_requests.FMT_RUN
 
-    def run_action(self,ar):
-        ar.show_action_window(self) 
+    #~ def run_action(self,ar):
+        #~ ar.show_action_window(self) 
         
                 
 class OpenWindowAction(WindowAction):
@@ -148,7 +141,7 @@ class GridEdit(OpenWindowAction):
 class ShowDetailAction(OpenWindowAction):
     callable_from = (GridEdit,)
     #~ show_in_detail = False
-    needs_selection = True
+    #~ needs_selection = True
     name = 'detail'
     label = _("Detail")
     
@@ -166,7 +159,7 @@ class InsertRow(OpenWindowAction):
     name = 'insert'
     label = _("Insert")
     key = INSERT # (ctrl=True)
-    needs_selection = False
+    #~ needs_selection = False
     
     def get_list_title(self,rh):
         return _("Insert into %s") % force_unicode(rh.get_title(None))
@@ -191,9 +184,20 @@ class SlaveGridAction(ToggleWindowAction):
         ToggleWindowAction.__init__(self,actor)
         
         
-class DeleteSelected(RowsAction):
+class RowAction(Action):
     callable_from = (GridEdit,ShowDetailAction)
-    needs_selection = True
+    #~ needs_selection = False
+    #~ needs_validation = False
+    #~ def before_run(self,ar):
+        #~ if self.needs_selection and len(ar.selected_rows) == 0:
+            #~ return _("No selection. Nothing to do.")
+            
+            
+class UpdateRowAction(RowAction):
+    pass
+    
+class DeleteSelected(RowAction):
+    #~ needs_selection = True
     label = _("Delete")
     #~ name = 'delete'
     key = DELETE # (ctrl=True)
@@ -218,7 +222,7 @@ class RedirectAction(Action):
         
         
 class ImageAction(RedirectAction):
-    needs_selection = True
+    #~ needs_selection = True
     name = 'image'
     label = _('Image')
     callable_from = tuple()
@@ -282,127 +286,25 @@ class unused_ActionResponse:
           js_code=self.js_code,
         )
 
-class ActionRequest:
-    """
-    An ActionRequest will be created for every request.
+#~ class ActionRequest:
+    #~ """
+    #~ An ActionRequest will be created for every request.
     
-    """
-    selected_rows = []
+    #~ """
+    #~ selected_rows = []
     
-    def __init__(self,ui,action):
-    #~ def __init__(self,ah,action):
-        if ui is not None: assert ui.create_meth_element is not None
-        assert isinstance(action,Action), "%s : %r is not an Action." % (self,action)
-        #~ self.ah = ah # actor handle
-        self.action = action # ah.actor.get_action(action_name)
-        #~ self.actor = ah.actor
-        self.ui = ui
-        #~ self.ui = ah.ui
-        #~ self.response = dict(
-          #~ success = True, # for Ext.form.Action.Submit
-          #~ errors = None, # for Ext.form.Action.Submit
-        #~ )
+    #~ def __init__(self,ui,action):
+        #~ if ui is not None: assert ui.create_meth_element is not None
+        #~ assert isinstance(action,Action), "%s : %r is not an Action." % (self,action)
+        #~ self.action = action # ah.actor.get_action(action_name)
+        #~ self.ui = ui
         
-    def __str__(self):
-        return 'ActionRequest `%s.%s`' % (self.action.actor,self.action)
+    #~ def __str__(self):
+        #~ return 'ActionRequest `%s.%s`' % (self.action.actor,self.action)
         
-    def unused_run(self):
-        msg = self.action.before_run(self)
-        if msg:
-            return dict(notify_msg=msg,success=False)
-            #~ return ActionResponse(notify_msg=msg,success=False)
-        logger.debug('ActionRequest %s.%s',self.ah,self.action.name)
-        #~ logger.debug('ActionRequest._start() %s.%s(%r)',self.ah,self.action.name,self.params)
-        #~ self.response = ActionResponse()
-        try:
-            #~ self.ui.run_action(self)
-            self.action.run_action(self)
-        except Exception,e:
-            self.exception(e)
-        return self.response
+    #~ def get_user(self):
+        #~ raise NotImplementedError()
         
-    """
-    API used during `Action.run_action()`.
-    """
+    #~ def show_action_window(self,action):
+        #~ return self.ui.show_action_window(self,action)
         
-    def get_user(self):
-        raise NotImplementedError()
-        
-        
-    ## message methods to be used in yield statements
-    
-        
-    def unused_close_caller(self):
-        self.response.update(close_caller = True)
-        return self
-        
-    def unused_refresh_caller(self):
-        self.response.update(refresh_caller = True)
-        return self
-        
-    def unused_refresh_menu(self):
-        self.response.update(refresh_menu = True)
-        return self
-        
-    #~ def show_report(self,rh):
-        #~ return self.ui.show_report(self,rh)
-        
-    def show_action_window(self,action):
-        return self.ui.show_action_window(self,action)
-        
-    #~ def show_detail(self):
-        #~ return self.ui.show_detail(self)
-        
-    #~ def show_properties(self,lh):
-        #~ return self.ui.show_properties(self)
-        
-    def unused_show_detail(self,row):
-        assert self.ah.detail_link is not None
-        self.ah.detail_link.row = row
-        return self.ui.show_detail(self,row)
-        
-    def unused_show_window(self,js):
-        #~ assert js.strip().startswith('function')
-        #~ self.response.show_window = py2js(js)
-        self.response.show_window = js
-        return self
-        
-    def unused_show_modal_window(self,js):
-        self.response.show_modal_window = js
-        return self
-        
-    def unused_redirect(self,url):
-        self.response.update(redirect = url)
-        return self
-        
-    def unused_confirm(self,msg,**kw):
-        self.response.update(confirm_msg = msg)
-        return self
-        
-    def unused_alert(self,msg,**kw):
-        self.response.update(alert_msg = msg)
-        return self
-
-    def unused_exception(self,e):
-        self.response.update(success = False)
-        self.response.update(alert_msg = unicode(e))
-        traceback.print_exc(e)
-        return self
-
-    def unused_notify(self,msg):
-        self.response.update(notify_msg = msg)
-        return self
-
-    #~ def cancel(self,msg=None):
-        #~ if msg is not None:
-              #~ self.notify(msg)
-        #~ return self.close_caller().over()
-        
-    #~ def ok(self,msg=None):
-        #~ if msg is not None:
-              #~ self.notify(msg)
-        #~ return self.close_caller().over()
-
-
-
-#~ logger.debug(__file__+' : done')

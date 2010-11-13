@@ -3,7 +3,7 @@
 
 main =
     date type  user language
-    subject
+    subject must_build
     reminder_date reminder_text
     person company
     body:80x5 

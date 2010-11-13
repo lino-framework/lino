@@ -23,6 +23,6 @@ def objects():
   
     noteType = Instantiator('notes.NoteType',"name").build
     # TODO: move the following to modlib.notes.fixtures
-    yield noteType((u"Test (odt)"),build_method='appy',template='test.odt')
+    yield noteType((u"Test (odt)"),build_method='appyodt',template='test.odt')
     yield noteType((u"Test (rtf)"),build_method='rtf',template='test.rtf')
    

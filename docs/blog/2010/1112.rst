@@ -114,5 +114,9 @@ Dann das nächste Problem::
 
 Das heißt wahrscheinlich, dass der OOo-Server nicht läuft.
 Aber jetzt ist erst mal Wochenende.
+
+`Check-in <http://code.google.com/p/lino/source/detail?r=855791b5e90d7e5c4eeeea9fbce6210165ff3f51>`_ 
+und `hg tag v0.8.12`.
+
 Immerhin: beinahe hätte ich die erste Vorlage für Verträge 
 in Eupen ans Laufen gebracht!

@@ -71,6 +71,7 @@ class BuildMethod:
     #~ button_label = None
     label = None
     templates_name = None
+    cache_name = 'cache'
     
     def __init__(self):
         if self.label is None:
@@ -83,9 +84,10 @@ class BuildMethod:
             
     def __unicode__(self):
         return unicode(self.label)
+        
             
     def get_target_parts(self,elem):
-        return ['cache', self.name, elem.filename_root() + '-' + str(elem.pk) + self.target_ext]
+        return [self.cache_name, self.name, elem.filename_root() + '-' + str(elem.pk) + self.target_ext]
         
     def get_target_name(self,elem):
         return os.path.join(settings.MEDIA_ROOT,*self.get_target_parts(elem))
@@ -97,15 +99,16 @@ class BuildMethod:
         """Return the target filename if a document needs to be built,
         otherwise return ``None``.
         """
+        if not elem.must_rebuild:
+            return 
         filename = self.get_target_name(elem)
         if not filename:
             return
-            
         if os.path.exists(filename):
-            if not elem.must_rebuild_target(filename,self):
-                logger.debug("%s : %s -> %s is up to date",self,elem,filename)
-                return
-            logger.debug("%s : %s -> %s is obsolete",self,elem,filename)
+            #~ if not elem.must_rebuild_target(filename,self):
+                #~ logger.debug("%s : %s -> %s is up to date",self,elem,filename)
+                #~ return
+            logger.debug("%s %s -> overwrite existing %s.",self,elem,filename)
             os.remove(filename)
         else:
             dirname = os.path.dirname(filename)
@@ -199,9 +202,6 @@ class AppyBuildMethod(SimpleBuildMethod):
     
     http://appyframework.org/podRenderingTemplates.html
     """
-    name = 'appy'
-    target_ext = '.odt'
-    #~ button_label = _("ODT")
     template_ext = '.odt'  
     templates_name = 'appy' # subclasses use the same templates directory
     
@@ -212,7 +212,10 @@ class AppyBuildMethod(SimpleBuildMethod):
         logger.debug("appy.pod render %s -> %s",tpl,target)
         renderer.run()
 
-
+class AppyOdtBuildMethod(AppyBuildMethod):
+    name = 'appyodt'
+    target_ext = '.odt'
+    cache_name = 'webdav'
 
 class AppyPdfBuildMethod(AppyBuildMethod):
     """
@@ -226,10 +229,10 @@ class AppyRtfBuildMethod(AppyBuildMethod):
   
     """
     Generates .rtf files from .odt templates.
-    
     """
     name = 'appyrtf'
     target_ext = '.rtf'
+    cache_name = 'webdav'
 
 
         
@@ -254,6 +257,7 @@ class RtfBuildMethod(SimpleBuildMethod):
     #~ button_label = _("RTF")
     target_ext = '.rtf'
     template_ext = '.rtf'  
+    cache_name = 'webdav'
     
     def simple_build(self,elem,tpl,target):
         context = dict(instance=elem)
@@ -274,7 +278,7 @@ def register_build_method(pm):
 if pisa:
     register_build_method(PisaBuildMethod())
 if appy:
-    register_build_method(AppyBuildMethod())
+    register_build_method(AppyOdtBuildMethod())
     register_build_method(AppyPdfBuildMethod())
     register_build_method(AppyRtfBuildMethod())
     
@@ -319,13 +323,12 @@ def get_template_choices(group,bmname):
 class PrintAction(actions.RedirectAction):
     """Note that this action should rather be called 
     'Open a printable document' than 'Print'.
-    When Lino one day supports server-side printing, then we'll may have to rename 
-    this class.
+    For the user they are synonyms as long as Lino doesn't support server-side printing.
     """
     name = 'print'
     label = _('Print')
     callable_from = None
-    needs_selection = True
+    #~ needs_selection = True
   
     def get_target_url(self,elem):
         bmname = elem.get_build_method()
@@ -338,7 +341,10 @@ class PrintAction(actions.RedirectAction):
         return settings.MEDIA_URL + "/".join(pm.get_target_parts(elem))
         
     
-
+class ClearCacheAction(actions.UpdateRowAction):
+    name = 'clear'
+    label = _('Clear cache')
+    
 
 class PrintableType(models.Model):
     """
@@ -371,11 +377,19 @@ class PrintableType(models.Model):
     
 class Printable(models.Model):
     """
-    Mixin for Models whose instances can "print" (generate a document).
+    Mixin for Models whose instances can "print" (generate a printable document).
     """
+    
+    must_build = models.BooleanField(_("must build"),default=True)
+    
     class Meta:
         abstract = True
-
+        
+    @classmethod
+    def setup_report(cls,rpt):
+        rpt.add_action(PrintAction(rpt))
+        rpt.add_action(ClearCacheAction(rpt))
+        #~ super(Printable,cls).setup_report(rpt)
 
     def filename_root(self):
         return self._meta.app_label + '.' + self.__class__.__name__
@@ -391,7 +405,7 @@ class Printable(models.Model):
         """
         return [self.filename_root() + pm.template_ext]
           
-    def get_last_modified_time(self):
+    def unused_get_last_modified_time(self):
         """Return a model-specific timestamp that expresses when 
         this model instance has been last updated. 
         Default is to return None which means that existing target 
@@ -400,7 +414,7 @@ class Printable(models.Model):
         """
         return None
         
-    def must_rebuild_target(self,filename,pm):
+    def unused_must_rebuild_target(self,filename,pm):
         """When the target document already exists, 
         return True if it should be built again (overriding the existing file. 
         The default implementation is to call :meth:`get_last_modified_time` 

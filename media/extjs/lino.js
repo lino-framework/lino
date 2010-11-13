@@ -760,6 +760,7 @@ Lino.show_insert_handler = function(action) {
 
 Lino.submit_detail = function(panel,btn) {
   var rec = panel.get_current_record();
+  console.log('todo: Lino.submit_detail and Lino.submit_insert send also action name from btn',btn)
   if (rec) {
     //~ console.log('Save handler: this=',this);
     panel.form.submit({
@@ -776,6 +777,10 @@ Lino.submit_detail = function(panel,btn) {
   } else Lino.notify("Sorry, no current record.");
 };
 
+
+Lino.update_row_action = function(panel,btn) {
+  Lino.notify("Sorry, not implemented.");
+};
 
 Lino.submit_insert = function(panel,btn) {
   panel.form.submit({

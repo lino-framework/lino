@@ -362,7 +362,7 @@ class InvalidRequest(Exception):
     pass
 
 
-class ReportActionRequest(actions.ActionRequest): # was ReportRequest
+class ReportActionRequest:
     limit = None
     offset = None
     master_instance = None
@@ -370,21 +370,23 @@ class ReportActionRequest(actions.ActionRequest): # was ReportRequest
     instance = None
     extra = None
     layout = None
+    selected_rows = []
     
-    def __init__(self,ui, report,action):
+    def __init__(self,ui,report,action):
     #~ def __init__(self,rh,action):
         #~ assert isinstance(rh,ReportHandle)
         assert ui.create_meth_element is not None
         #~ if ui is not None: assert ui.create_meth_element is not None
         self.report = report
         self.ah = report.get_handle(ui)
-        #~ self.ui = ui
+        self.ui = ui
         # Subclasses (e.g. BaseViewReportRequest) may set `master` before calling ReportRequest.__init__()
         if self.master is None:
             self.master = report.master
         #~ actions.ActionRequest.__init__(self,rpt,action,ui)
-        actions.ActionRequest.__init__(self,ui,action)
+        #~ actions.ActionRequest.__init__(self,ui,action)
         #~ self.rh = self.ah
+        self.action = action
       
     def __str__(self):
         return self.__class__.__name__ + '(' + self.report.actor_id + ",%r,...)" % self.master_instance
@@ -465,6 +467,7 @@ class ReportActionRequest(actions.ActionRequest): # was ReportRequest
             self.limit = limit
             
         self.page_length = self.report.page_length
+        
         
     def get_queryset(self):
         # overridden by ChoicesReportRequest
@@ -634,8 +637,7 @@ class Report(actors.Actor): #,base.Handled):
         #~ base.Handled.__init__(self)
         
         if self.model is not None:
-            self.actions = self.actions + [ actions.DeleteSelected ] #, InsertRow ]
-            
+          
             if self.disable_delete is None:
                 m = getattr(self.model,'disable_delete',None)
                 if m:
@@ -644,10 +646,6 @@ class Report(actors.Actor): #,base.Handled):
                     self.__class__.disable_delete = disable_delete
                     #~ print 20101104, self, 'install disable_delete from',self.model.__name__
                 
-            m = getattr(self.model,'setup_report',None)
-            if m:
-                m(self)
-        
         
         if self.fk_name:
             if self.model is not None:
@@ -701,23 +699,15 @@ class Report(actors.Actor): #,base.Handled):
         else:
             self.grid_configs = {}
             
-        alist = [ ac(self) for ac in self.actions ]
+        #~ alist = [ ac(self) for ac in self.actions ]
+        alist = []
           
         if self.model is not None:
+          
                 
-            #~ self.list_layout = layouts.list_layout_factory(self)
-            #~ self.detail_layouts = layouts.get_detail_layouts_for_report(self)
-            #~ self.detail_layouts = 
-              
-            if hasattr(self.model,'get_image_url'):
-                alist.append(actions.ImageAction(self))
-                
-            if issubclass(self.model,printable.Printable):
-                alist.append(printable.PrintAction(self))
-                #~ print 20100517, mixins.pm_list
-                #~ for pm in mixins.pm_list:
-                    #~ if pm.button_label:
-                        #~ actions.append(mixins.PrintAction(self,pm))
+            #~ if issubclass(self.model,printable.Printable):
+                #~ alist.append(printable.PrintAction(self))
+                #~ alist.append(printable.ClearCacheAction(self))
                     
             if hasattr(self.model,'_lino_slaves'):
                 self._slaves = self.model._lino_slaves.values()
@@ -730,12 +720,26 @@ class Report(actors.Actor): #,base.Handled):
                 alist.append(actions.InsertRow(self))
                 alist.append(actions.SubmitInsert(self))
                     
+            alist.append(actions.DeleteSelected(self))
+            
+                
+            #~ self.list_layout = layouts.list_layout_factory(self)
+            #~ self.detail_layouts = layouts.get_detail_layouts_for_report(self)
+            #~ self.detail_layouts = 
+              
+            if hasattr(self.model,'get_image_url'):
+                alist.append(actions.ImageAction(self))
         alist.append(self.default_action)
         self.set_actions(alist)
                 
         if self.button_label is None:
             self.button_label = self.label
             
+        if self.model is not None:
+            m = getattr(self.model,'setup_report',None)
+            if m:
+                m(self)
+        
     #~ def load_detail(self,cd,filename):
         #~ fn = os.path.join(cd.name,filename)
         #~ logger.info("Loading %s...",fn)
@@ -767,10 +771,10 @@ class Report(actors.Actor): #,base.Handled):
             #~ return '%s detail_layouts=%s' % (self.__class__,[l.__class__ for l in self.detail_layouts])
         #~ return self.__class__
         
-    def add_actions(self,*args):
-        """Used in Model.setup_report() to specify actions for each report on
-        this model."""
-        self.actions += args
+    #~ def add_actions(self,*args):
+        #~ """Used in Model.setup_report() to specify actions for each report on
+        #~ this model."""
+        #~ self.actions += args
         #~ for a in more_actions:
             #~ self._actions.append(a)
         

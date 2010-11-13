@@ -191,6 +191,7 @@ def load_dbf(dbpath,tableName,load):
         i = load(dbfrow)
         if i is not None:
             try:
+                i.full_clean()
                 i.save()
                 #~ logger.debug("%s has been saved",i)
             except ValidationError,e:

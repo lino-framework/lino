@@ -3,6 +3,6 @@
 main =
     id type person language 
     company contact
-    applies_from applies_until
+    applies_from applies_until must_build
     user reminder_date reminder_text
 

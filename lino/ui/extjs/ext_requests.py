@@ -164,7 +164,8 @@ class ViewReportRequest(reports.ReportActionRequest):
             
         kw.update(user=request.user)
         
-        if self.action.needs_selection:
+        if isinstance(self.action, actions.RowAction):
+        #~ if self.action.needs_selection:
             kw.update(selected_rows = [
               self.ah.actor.model.objects.get(pk=pk) 
               for pk in request.REQUEST.getlist(POST_PARAM_SELECTED)])

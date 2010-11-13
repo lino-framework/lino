@@ -143,7 +143,7 @@ class Actor(Handled):
     _actor_name = None
     title = None
     label = None
-    actions = []
+    #~ actions = []
     default_action = None
     actor_id = None
 
@@ -218,7 +218,7 @@ class Actor(Handled):
         
         
     def set_actions(self,actions):
-        self._actions_list = actions
+        self._actions_list = []
         self._actions_dict = {}
         for a in actions:
             self.add_action(a)
@@ -227,6 +227,7 @@ class Actor(Handled):
         if self._actions_dict.has_key(a.name):
             logger.warning("%s action %r : %s overridden by %s",self,a.name,self._actions_dict[a.name],a)
         self._actions_dict[a.name] = a
+        self._actions_list.append(a)
             
     def get_action(self,name):
         return self._actions_dict.get(name,None)

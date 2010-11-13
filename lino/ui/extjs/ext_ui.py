@@ -804,6 +804,7 @@ class ExtUI(base.UI):
             
         if request.method == 'PUT':
             data = http.QueryDict(request.raw_post_data)
+            #~ fmt = data.get('fmt',None)
             return self.form2obj_and_save(ah,data,elem,force_update=True)
             
         ar = ext_requests.ViewReportRequest(request,ah,ah.report.default_action)
@@ -1118,6 +1119,7 @@ class ExtUI(base.UI):
     def action_window_wrapper(self,a,h):
         #~ if isinstance(a,printable.PrintAction): return ext_windows.DownloadRenderer(self,a)
         if isinstance(a,actions.DeleteSelected): return ext_windows.DeleteRenderer(self,a)
+        #~ if isinstance(a,actions.UpdateRowAction): return ext_windows.UpdateRowRenderer(self,a)
           
         if isinstance(a,actions.GridEdit):
             return ext_windows.GridMasterWrapper(h,a)
@@ -1155,6 +1157,8 @@ class ExtUI(base.UI):
             kw.update(panel_btn_handler=js_code('Lino.submit_detail'))
         elif isinstance(a,actions.SubmitInsert):
             kw.update(panel_btn_handler=js_code('Lino.submit_insert'))
+        elif isinstance(a,actions.UpdateRowAction):
+            kw.update(panel_btn_handler=js_code('Lino.update_row_action'))
         elif isinstance(a,actions.ShowDetailAction):
             kw.update(panel_btn_handler=js_code('Lino.show_detail_handler(Lino.%s)' % a))
         elif isinstance(a,actions.InsertRow):

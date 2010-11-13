@@ -1,0 +1,9 @@
+20101113
+========
+
+- Kleiner Bugfix : inintdb_tim setzt die Namen der Personen nicht
+
+- Neues Feld `lino.utils.mixins.Printable.must_build` und Button "Clear Cache". 
+  Der meldet zwar lediglich "Sorry, not implemented.", aber immerhin ist er jetzt da.
+
+- BuildMethods, die editierbare Dokumente erzeugen, tun das jetzt nach /media/webdav statt /media/cache

@@ -9,8 +9,6 @@ for which I hope for help from other people.
 Short-term
 ----------
 
-- inintdb_tim setzt die Namen der Personen nicht
-
 - Formatierung der :xfile:`welcome.html` lässt zu wünschen übrig.  
 
 - Mit :kbd:`[F2]` sollte die Zeile einer Grid bearbeiten können.
