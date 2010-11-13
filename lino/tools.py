@@ -90,10 +90,14 @@ def model_label(model):
     
     
 def obj2str(i):
+    if i.pk is not None:
+        return "%s %s (%s)" % (i.__class__.__name__,i,i.pk)
     names = [fld.name for (fld,model) in i._meta.get_fields_with_model()]
     s = ','.join(["%s=%r" % (n, getattr(i,n)) for n in names])
     #~ print i, i._meta.get_all_field_names()
     #~ s = ','.join(["%s=%r" % (n, getattr(i,n)) for n in i._meta.get_all_field_names()])
     return "%s(%s)" % (i.__class__.__name__,s)
 
+
+    
    
