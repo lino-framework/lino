@@ -257,7 +257,7 @@ def load_tim_data(dbpath):
         kw = dict(
           id=row['IDPRF'],
           name=row['LIBELL'] or '',
-          lst104=row['LST104'] or False,
+          lst104=(row['LST104'] in ('X','x')),
           )
         return Activity(**kw)
     load_dbf(dbpath,'PRF',load)

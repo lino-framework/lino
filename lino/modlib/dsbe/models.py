@@ -512,7 +512,7 @@ class Activity(models.Model):
         verbose_name = _("activity")
         verbose_name_plural = _("activities")
     name = models.CharField(max_length=80)
-    lst104 = models.BooleanField(_("Appears in Listing 104"),default=True)
+    lst104 = models.BooleanField(_("Appears in Listing 104"))
     
     def __unicode__(self):
         return unicode(self.name)
