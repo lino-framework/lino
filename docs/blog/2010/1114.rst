@@ -1,0 +1,84 @@
+20101114
+========
+
+Morgens. 
+
+Ich schätze mal, dass es am besten ist, die neueste Version von OOo zu installieren. 
+Dann brauche ich mich um die X-Probleme nicht zu kümmern. 
+
+Jetzt natürlich zuerst die Frage: Open- oder LibreOffice?
+Antwort scheint mir klar: LibreOffice.
+
+::
+
+  aptitude purge python-uno
+  http://download.documentfoundation.org/libreoffice/testing/3.3.0-beta2/deb/x86_64/LibO_3.3.0_beta2_Linux_x86-64_install-deb_en-US.tar.gz
+  tar -xvzf LibO_3.3.0_beta2_Linux_x86-64_install-deb_en-US.tar.gz
+  cd en-US/DEBS 
+  sudo dpkg -i *.deb
+  sudo dpkg -i desktop-integration/libreoffice3.3-debian-menus_3.3-1_all.deb
+  
+
+Und jetzt kann ich (vielleicht) den Server wie folgt starten::
+
+  sudo libreoffice "-accept=socket,host=localhost,port=8100;urp;StarOffice.ServiceManager" -nologo -headless -nofirststartwizard
+  
+Er sagt dann zwar noch `javaldx: Could not find a Java Runtime Environment!`, aber scheint ansonsten zu laufen.
+
+Weil die Python-UNO-Bridge jetzt nicht installiert ist (``python -m uno`` geht nicht), 
+muss ich in der lokalen :xfile:`settings.py` hinzufügen::
+
+  APPY_PARAMS.update(pythonWithUnoPath='/usr/bin/libreoffice')    
+
+Fehlermeldung auf dem error log von Apache::
+
+    File "/var/snapshots/django/django/core/handlers/wsgi.py", line 265, in __call__
+      response = self.get_response(request)
+    File "/var/snapshots/django/django/core/handlers/base.py", line 160, in get_response
+      response = self.handle_uncaught_exception(request, resolver, sys.exc_info())
+    File "/var/snapshots/django/django/core/handlers/base.py", line 109, in get_response
+      response = callback(request, *callback_args, **callback_kwargs)
+    File "/var/snapshots/lino/lino/ui/extjs/ext_ui.py", line 837, in api_element_view
+      target = a.get_target_url(elem)
+    File "/var/snapshots/lino/lino/utils/printable.py", line 340, in get_target_url
+      pm.build(elem)
+    File "/var/snapshots/lino/lino/utils/printable.py", line 191, in build
+      self.simple_build(elem,tpl,target)
+    File "/var/snapshots/lino/lino/utils/printable.py", line 213, in simple_build
+      renderer.run()
+    File "/var/snapshots/appy-0.5.5/appy/pod/renderer.py", line 307, in run
+      self.finalize()
+    File "/var/snapshots/appy-0.5.5/appy/pod/renderer.py", line 431, in finalize
+      raise PodError(CONVERT_ERROR % output)
+  PodError: An error occurred during the conversion. \
+  [Java framework] Error in function createSettingsDocument (elements.cxx).
+  javaldx failed!
+
+
+Also die Meldung `javaldx: Could not find a Java Runtime Environment!` 
+von vorhin war doch nicht so unwichtig.
+
+Aha, es gibt ein Package namens `default-jre-headless`. Das probieren wir::
+
+  # aptitude install default-jre-headless
+  
+Wobei er wiederum eine ganze Serie von anderen Paketen installiert::
+
+  The following NEW packages will be installed:
+    default-jre-headless fastjar{a} gcj-4.3-base{a} gij-4.3{a} hicolor-icon-theme{a} java-common{a}
+    java-gcj-compat{a} java-gcj-compat-headless{a} libasound2{a} libatk1.0-0{a} libatk1.0-data{a} libbcel-java{a}
+    libcairo2{a} libcups2{a} libdatrie0{a} libdirectfb-1.0-0{a} libgcj-bc{a} libgcj-common{a} libgcj9-0{a}
+    libgcj9-0-awt{a} libgcj9-jar{a} libglib2.0-0{a} libglib2.0-data{a} libgtk2.0-0{a} libgtk2.0-bin{a}
+    libgtk2.0-common{a} liblog4j1.2-java{a} liblog4j1.2-java-gcj{a} libmx4j-java{a} libpango1.0-0{a}
+    libpango1.0-common{a} libregexp-java{a} libsysfs2{a} libthai-data{a} libthai0{a} libtiff4{a} libts-0.0-0{a}
+    libxcb-render-util0{a} libxcb-render0{a} libxcomposite1{a}
+  0 packages upgraded, 40 newly installed, 0 to remove and 1 not upgraded.
+  Need to get 25.7MB/38.2MB of archives. After unpacking 105MB will be used.
+  
+Aber das bringt keinen Unterschied. Auch das Gleiche mit `default-jre` und zuletzt sogar `sun-java6-jre`. 
+Nachdem `sun-java6-jre` installiert ist, kommt beim Hochfahren des Servers nicht mehr die 
+Warnung `javaldx: Could not find a Java Runtime Environment!` 
+Aber auch dann, sobald er versucht, eine .pdf-Datei zu machen:: 
+    
+  PodError: An error occurred during the conversion. 
+  [Java framework] Error in function createSettingsDocument (elements.cxx).

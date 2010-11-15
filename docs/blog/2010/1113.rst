@@ -30,3 +30,23 @@ Release mit mehreren Check-ins.
   
 Release in Eupen.  
 
+
+Abends
+
+Jetzt funktioniert scheinbar alles so weit in Eupen, außer dass der OOo-Server nicht läuft.
+Also muss ich mal surfen...
+
+http://appyframework.org/podRenderingTemplates.html schreibt immerhin, 
+dass ich auch X installieren muss, aber ist ansonsten eher zurückhaltend.
+
+`Hier <http://wiki.alfresco.com/wiki/Running_OpenOffice_From_Terminal>`_ das scheint richtig.
+Debian Lenny hat noch nicht OOo version 2.3, also:
+
+::
+
+  $ sudo aptitude install xvfb
+  $ /usr/X11R6/bin/Xvfb :1 -screen 0 1024x768x24 -fbdir /usr/src
+  
+Und... es funktioniert überhaupt nicht. Muss ich jetzt erst noch X lernen?! 
+Oder soll ich lieber eine neuere OOo-Version finden?
+Aber jetzt ist erst mal Feierabend.

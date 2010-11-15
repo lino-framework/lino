@@ -336,7 +336,7 @@ class PrintAction(actions.RedirectAction):
             return None
         pm = bm_dict.get(bmname,None)
         if pm is None:
-            raise Exception("%r has no build_method (%r)" % (elem,self))
+            raise Exception("Build method %r doesn't exist. Requested by %r." % (bmname,elem))
         pm.build(elem)
         return settings.MEDIA_URL + "/".join(pm.get_target_parts(elem))
         

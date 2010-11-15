@@ -43,6 +43,7 @@ try:
     import uno
 except ImportError:
     APPY_PARAMS.update(pythonWithUnoPath=r'C:\PROGRA~1\OPENOF~1.ORG\program\python.exe')
+    #~ APPY_PARAMS.update(pythonWithUnoPath='/usr/bin/libreoffice')
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG

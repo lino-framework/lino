@@ -27,6 +27,9 @@ import logging
 logger = logging.getLogger('lino')
 
 from django.core.management.base import BaseCommand, CommandError
+from lino.utils.daemonextension import DaemonCommand
+from django.conf import settings
+
 
 from django.db.utils import DatabaseError
 # OperationalError
@@ -353,11 +356,29 @@ def main(data_dir):
         watch(data_dir)
         time.sleep(1)
 
-class Command(BaseCommand):
+#~ class Command(BaseCommand):
+    #~ args = '<path_to_tim_changelog>'
+    #~ help = 'Starts an observer service that propagates changes of your TIM data into Lino'
+
+    #~ def handle(self, *args, **options):
+        #~ if len(args) != 1:
+            #~ raise CommandError('Please specify the path to your TIM changelog directory')
+        #~ main(args[0])
+
+
+
+class Command(DaemonCommand):
+  
     args = '<path_to_tim_changelog>'
     help = 'Starts an observer service that propagates changes of your TIM data into Lino'
-
-    def handle(self, *args, **options):
+    
+    stdout = os.path.join(settings.DIRNAME, "log/watch_tim.out")
+    stderr = os.path.join(settings.DIRNAME, "log/watch_tim.err")
+    pidfile = os.path.join(settings.DIRNAME, "pid/watch_tim.pid")
+    
+    def handle_daemon(self, *args, **options):
         if len(args) != 1:
             raise CommandError('Please specify the path to your TIM changelog directory')
         main(args[0])
+
+
