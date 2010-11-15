@@ -1,0 +1,13 @@
+20101115
+========
+
+I downloaded Sean Creeley's `daemonextension <https://gist.github.com/125559>`_ 
+module which made it easy to turn :mod:`watch_tim <lino.modlib.dsbe.management.commands.watch_tim>` 
+into a well-behaved daemon.
+I added this recipe to `lino.utils.daemonextension` (copyright notice remains unchanged).
+daemonextension needs two other Python modules to be installed:
+`python-daeon <http://pypi.python.org/pypi/python-daemon>`_
+and `lockfile <http://pypi.python.org/pypi/lockfile/0.7>`_.
+Modified :doc:`/admin/install`.
+If one of these modules is not installed (or on a Windows machine), wathc_tim 
+will simply run as before and remain in the terminal.

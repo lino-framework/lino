@@ -70,6 +70,13 @@ South::
   
   hg clone http://bitbucket.org/andrewgodwin/south/
   
+To run `watch_tim` as a daemon::
+
+  wget http://pypi.python.org/packages/source/p/python-daemon/python-daemon-1.5.5.tar.gz
+  tar -xvzf python-daemon-1.5.5.tar.gz
+  
+  wget http://smontanaro.dyndns.org/python/lockfile-0.7.tar.gz
+  tar -xvzf lockfile-0.7.tar.gz
 
 
 Set up your Python path
@@ -89,6 +96,8 @@ might look in our example::
   /var/snapshots/appy-0.5.5
   /var/snapshots/pyratemp-0.2.0
   /var/snapshots/south
+  /var/snapshots/python-daemon-1.5.5
+  /var/snapshots/lockfile-0.7
   /usr/local/django  
 
 To see which directories are on your Python path::
