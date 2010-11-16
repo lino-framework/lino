@@ -90,10 +90,13 @@ More reading about this topic:
   describes almost exactly what I found out myself... 
   except that the script there (Vic Vijayakumar & Federico Ch. Tomasczik) uses a PID file 
   and has no `restart` option while Florent Guillaume's script uses 
-  `ps axw` (BSD syntax) which works on both linux and Mac OS X, and has a restart option.
+  `ps axw` (BSD syntax) which works on both linux and Mac OS X, and has a `restart` 
+  option.
 
 - `OpenOffice Converter Installation instructions 
   <http://code.google.com/p/openmeetings/wiki/OpenOfficeConverter>`_
+
+
 
 On Debian Lenny, OOo is < 2.3, so it seems to me that installing manually 
 a recent copy is at least okay.
