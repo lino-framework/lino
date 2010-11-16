@@ -308,7 +308,7 @@ class Person(Partner,contacts.Person):
     
 
 
-PERSON_TIM_FIELDS = [get_field(Person,n) for n in 
+PERSON_TIM_FIELDS = reports.fields_list(Person,
     '''name first_name last_name title 
     zip_code city country street street_no street_box 
     birth_date sex birth_place user language 
@@ -317,7 +317,7 @@ PERSON_TIM_FIELDS = [get_field(Person,n) for n in
     national_id health_insurance pharmacy 
     bank_account1 bank_account2 
     gesdos_id activity 
-    is_cpas is_senior is_active nationality'''.split()]
+    is_cpas is_senior is_active nationality''')
 
 class Persons(contacts.Persons):
     can_view = perms.is_authenticated
@@ -368,11 +368,11 @@ class Company(Partner,contacts.Company):
     prefix = models.CharField(max_length=200,blank=True) 
     
     
-COMPANY_TIM_FIELDS = [get_field(Company,n) for n in 
+COMPANY_TIM_FIELDS = reports.fields_list(Company,
     '''name zip_code city country street 
     street_no street_box language 
     phone gsm fax email 
-    bank_account1 bank_account2 activity'''.split()]
+    bank_account1 bank_account2 activity''')
   
 class Companies(contacts.Companies):
     app_label = 'contacts'
@@ -631,8 +631,6 @@ class ContractTypes(reports.Report):
     column_names = 'name build_method template *'
 
 
-CONTRACT_PRINTABLE_FIELDS = tuple('person company contact type applies_from applies_until language'.split())
-
 #
 # CONTRACTS
 #
@@ -649,8 +647,8 @@ class Contract(mixins.TypedPrintable,mixins.Reminder,mixins.PartnerDocument):
     applies_until = models.DateField(blank=True,null=True,verbose_name=_("applies until"))
     language = fields.LanguageField(default=default_language)
     
-    def disabled_fields(self,request,obj):
-        if obj.must_build:
+    def disabled_fields(self,request):
+        if self.must_build:
             return []
         return CONTRACT_PRINTABLE_FIELDS
         
@@ -667,6 +665,10 @@ class Contract(mixins.TypedPrintable,mixins.Reminder,mixins.PartnerDocument):
     def __unicode__(self):
         msg = _("Contract # %(pk)d (%(person)s/%(company)s)")
         return msg % dict(pk=self.pk, person=self.person, company=self.company)
+
+CONTRACT_PRINTABLE_FIELDS = reports.fields_list(Contract,
+  'person company contact type applies_from applies_until language')
+
 
 class Contracts(reports.Report):
     model = Contract

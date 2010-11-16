@@ -62,6 +62,8 @@ from lino.core.coretools import get_slave, get_model_report, data_elems, get_dat
 
 
 
+def fields_list(model,field_names):
+    return tuple([get_field(model,n) for n in field_names.split()])
 
 
 def summary(ui,rr,separator=', ',max_items=5,**kw):
@@ -516,6 +518,12 @@ class ReportActionRequest:
     #~ def __init__(self,ui,iter,action):
         #~ self.iter = iter
         #~ actions.ActionRequest.__init__(self,ui,action)
+        
+def model2report(m):
+    def f(self,request,obj):
+        return m(obj,request)
+        #~ return getattr(obj,name)(request)
+    return f
 
 
 class Report(actors.Actor): #,base.Handled):
@@ -638,12 +646,19 @@ class Report(actors.Actor): #,base.Handled):
         
         if self.model is not None:
           
-            if self.disable_delete is None:
-                m = getattr(self.model,'disable_delete',None)
-                if m:
-                    def disable_delete(self,request,obj):
-                        return obj.disable_delete(request)
-                    self.__class__.disable_delete = disable_delete
+            for name in ('disabled_fields','disable_delete'):
+                if getattr(self,name) is None:
+                    m = getattr(self.model,name,None)
+                    if m is not None:
+                        logger.info('Install model method %s.%s to %s',self.model.__name__,name,self)
+                        setattr(self.__class__,name,model2report(m))
+                        
+            #~ if self.disable_delete is None:
+                #~ m = getattr(self.model,'disable_delete',None)
+                #~ if m:
+                    #~ def disable_delete(self,request,obj):
+                        #~ return obj.disable_delete(request)
+                    #~ self.__class__.disable_delete = disable_delete
                     #~ print 20101104, self, 'install disable_delete from',self.model.__name__
                 
         

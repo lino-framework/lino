@@ -9,6 +9,10 @@ for which I hope for help from other people.
 Before version 1.0
 ------------------
 
+- After printing or saving, the calling grid or detail should  
+  get refreshed, because printing usually will set the must_build flag,
+  and every change in general may modify disabled_fields.
+
 - Auch `watch_tim` automatisch nach reboot starten.
   Irgendwie müssen ungefähr die folgenden Befehle in der :file:`/etc/init.d` 
   gerufen werden::

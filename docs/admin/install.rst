@@ -70,7 +70,7 @@ South::
   
   hg clone http://bitbucket.org/andrewgodwin/south/
   
-To run `watch_tim` as a daemon::
+If you need to run `watch_tim` as a daemon::
 
   wget http://pypi.python.org/packages/source/p/python-daemon/python-daemon-1.5.5.tar.gz
   tar -xvzf python-daemon-1.5.5.tar.gz

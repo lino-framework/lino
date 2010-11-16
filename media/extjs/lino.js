@@ -433,30 +433,6 @@ Lino.report_window_button = function(ww,handler) {
 }
 
 
-Lino.unused_show_download = function (caller,fmt) {
-    //~ console.log(caller.get_selected());
-    var url = caller.ww.config.url_data; // ls_url;
-    var l = caller.get_selected();
-    if (l.length == 0) Lino.notify('No selection.');
-    console.log('show_download',caller,l)
-    for (var i = 0; i < l.length; i++) 
-        window.open(url + '/' + String(l[i].id) + '?fmt='+fmt)
-    //~ caller.get_selected().forEach(function(pk) {
-      //~ console.log(pk);
-      //~ window.open(url+pk+'.pdf');
-    //~ })
-}
-
-//~ Lino.save_gc_handler = function(panel) {
-  //~ return function() {
-    //~ console.log('TODO: save_gc_handler',panel,panel.ls_data_url);
-    //~ wc = ww.get_window_config();
-    //~ console.log('save_wc_handler',ww,{url:ww.config.url_action,params:wc,method:'POST'});
-    //~ Lino.do_action(ww,{url:ww.config.url_action,params:wc,method:'POST'});
-    //~ Lino.do_action(ww,{url:'/grid_configs/'+ww.config.permalink_name,params:wc,method:'PUT'});
-  //~ }
-//~ };
-
 
 
 Lino.delete_selected = function(caller) {
@@ -610,7 +586,7 @@ Lino.id_renderer = function(value, metaData, record, rowIndex, colIndex, store) 
 
 Lino.fk_renderer = function(fkname,url) {
   return function(value, metaData, record, rowIndex, colIndex, store) {
-    console.log('Lino.fk_renderer',fkname,rowIndex,colIndex,record,metaData,store);
+    //~ console.log('Lino.fk_renderer',fkname,rowIndex,colIndex,record,metaData,store);
     if (record.phantom) return '';
     return '<a href="'+url+'/'+String(record.data[fkname])+'?fmt=detail" target="_blank" onclick="Lino.on_fk_click">' + value + '</a>';
   }
@@ -716,8 +692,8 @@ Lino.show_download_handler = function(fmt) {
     Lino.do_on_current_record(panel,function(rec) {
       //~ console.log(panel);
       var url = panel.get_record_url(rec.id);
-      var p = {fmt: fmt};
-      Ext.apply(p,panel.get_base_params());
+      var p = Ext.apply({},panel.get_base_params());
+      p['fmt'] = fmt;
       url += "?" + Ext.urlEncode(p);
       //~ console.log(url);
       window.open(url);
@@ -1077,8 +1053,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     if (params) Ext.apply(config,params);
     //~ Ext.applyIf(config,{base_params:{}});
     //~ this.ww = ww;
-    var bp = { fmt:'json' };
-    Ext.apply(bp,ww.config.base_params);
+    var bp = Ext.apply({ fmt:'json' },ww.config.base_params);
     
     //~ function on_proxy_load( proxy, transactionObject, callbackOptions ) {
       //~ console.log('on_proxy_load',transactionObject)
@@ -1869,9 +1844,10 @@ Ext.override(Lino.WindowWrapper,{
     return this.main_item.get_selected();
   },
   get_permalink : function() {
-    var p = this.main_item.get_base_params() || {};
-    console.log('get_permalink',p,this.get_permalink_params());
+    //~ var p = this.main_item.get_base_params() || {};
+    var p = Ext.apply({},this.main_item.get_base_params());
     Ext.apply(p,this.get_permalink_params());
+    //~ console.log('get_permalink',p,this.get_permalink_params());
     return this.get_permalink_url() + "?" + Ext.urlEncode(p);
   },
   get_master_params : function() {

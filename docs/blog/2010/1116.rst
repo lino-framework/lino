@@ -30,7 +30,7 @@ binary and include it to the Lino repository as :srcref:`/bash/oood`
 Some more readings:
 
 - `Manage Linux init or startup scripts
-  <http://www.debianadmin.com/manage-linux-init-or-startup-scripts.html>`.
+  <http://www.debianadmin.com/manage-linux-init-or-startup-scripts.html>`_.
 - `Making scripts run at boot time with Debian <http://www.debian-administration.org/articles/28>`_
   
 Now finally here is how to do it::
@@ -69,9 +69,34 @@ Miscellaneous changes
   when calling "print" from Detail view, the `fmt:print` parameter was 
   stored as base parameter, causing subsequent navigation buttons to fail.
 
+- Updated release 0.8.12 in Eupen and marked repository as `hg tag -f v0.8.12`.
 
-From the Grid:
-/api/dsbe/ContractsByPerson/1?mt=14&mk=16&fmt=print
+- A first known (and now fixed) bug in the above release ist that the following new feature 
+  didn't yet work at all:
+  "Contracts are now mostly read-only when they have been printed (`Contract.disabled_fields`).
+  The flag `must_build` ist set to False after the first build (`PrintAction.get_target_url`)."
+  
+  Now it works basically, but the calling grid or detail view doesn't 
+  get refreshed after printing or saving, so it won't have the correct must_build 
+  flag and disabled_fields.
 
-From Detail window:
-/api/dsbe/ContractsByPerson/1?mt=30&mk=1&fmt=print
+OpenOffice server startup script continued
+------------------------------------------
+
+More reading about this topic:
+
+- `Install Openoffice headless as a service in Ubuntu
+  <http://www.openvpms.org/documentation/install-openoffice-headless-service-ubuntu>`_ 
+  describes almost exactly what I found out myself... 
+  except that the script there (Vic Vijayakumar & Federico Ch. Tomasczik) uses a PID file 
+  and has no `restart` option while Florent Guillaume's script uses 
+  `ps axw` (BSD syntax) which works on both linux and Mac OS X, and has a restart option.
+
+- `OpenOffice Converter Installation instructions 
+  <http://code.google.com/p/openmeetings/wiki/OpenOfficeConverter>`_
+
+On Debian Lenny, OOo is < 2.3, so it seems to me that installing manually 
+a recent copy is at least okay.
+
+I think I'd better wait a few months before writing documentation about all this, 
+since things are moving there. LibreOffice 

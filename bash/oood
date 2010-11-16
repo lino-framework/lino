@@ -1,9 +1,10 @@
 #!/bin/sh
 #
-# OpenOffice.org 2.3+ server-mode startup script
+# OpenOffice.org (2.3+) headless server startup script
 #
 # (C) Copyright 2010 Luc Saffre 
-# (based on http://svn.nuxeo.org/nuxeo/tools/ooo/oooctl, 
+# (based on http://svn.nuxeo.org/nuxeo/tools/ooo/oooctl
+#  and http://code.google.com/p/openmeetings/wiki/OpenOfficeConverter
 #  see also :doc:`/tickets/16`)
 #
 # This file is part of the Lino project.
@@ -21,23 +22,31 @@
 PORT=8100
 HOST=127.0.0.1
 SOFFICE=/usr/bin/soffice
+PIDFILE=/var/run/openoffice-server.pid
+
+set -e
 
 start() {
+    if [ -f $PIDFILE ]; then
+      echo "OpenOffice headless server has already started."
+      sleep 5
+      exit
+    fi
     echo "Starting OpenOffice.org server"
     $SOFFICE "-accept=socket,host=$HOST,port=$PORT;urp;StarOffice.ServiceManager" -nologo -headless -nofirststartwizard >/dev/null 2>&1 &
+    touch $PIDFILE
     echo "Done."
 }
 
 stop() {
-    echo "Stopping OpenOffice.org server..."
-    # Note: ps axw (BSD syntax) works on both linux and Mac OS X
-    OOPID=`ps axw | awk '/soffice\ -headless/ {print $1}'`
-    if [ -n "$OOPID" ]; then
-        kill $OOPID
-        sleep 1 # Wait for it to die and release its port
-        echo "Done."
-    else
-        echo "Nothing to stop." >&2
+    if [ -f $PIDFILE ]; then
+      echo "Stopping OpenOffice headless server."
+      killall -9 soffice && killall -9 soffice.bin
+      rm -f $PIDFILE
+      exit
+    fi
+      echo "Openoffice headless server is not running."
+      exit
     fi
 }
 
@@ -55,5 +64,7 @@ case "$1" in
         ;;
     *)
         echo "usage: `basename $0` (start|stop|restart|help)"
+        exit 1
         ;;
 esac
+exit 0
