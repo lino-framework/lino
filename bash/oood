@@ -5,7 +5,7 @@
 # (C) Copyright 2010 Luc Saffre 
 # (based on http://svn.nuxeo.org/nuxeo/tools/ooo/oooctl
 #  and http://code.google.com/p/openmeetings/wiki/OpenOfficeConverter
-#  see also :doc:`/tickets/16`)
+#  See also :doc:`/tickets/16`)
 #
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify 
@@ -30,7 +30,7 @@ start() {
     if [ -f $PIDFILE ]; then
       echo "OpenOffice headless server has already started."
       sleep 5
-      exit
+      return 1
     fi
     echo "Starting OpenOffice.org server"
     $SOFFICE "-accept=socket,host=$HOST,port=$PORT;urp;StarOffice.ServiceManager" -nologo -headless -nofirststartwizard >/dev/null 2>&1 &
@@ -43,10 +43,10 @@ stop() {
       echo "Stopping OpenOffice headless server."
       killall -9 soffice && killall -9 soffice.bin
       rm -f $PIDFILE
-      exit
+      return 0
     fi
     echo "Openoffice headless server is not running."
-    exit
+    return 1
 }
 
 
@@ -59,7 +59,7 @@ case "$1" in
         ;;
     restart)
         stop
-        start
+        [ "$?" == 0 ] && start
         ;;
     *)
         echo "usage: `basename $0` (start|stop|restart|help)"
