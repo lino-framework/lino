@@ -87,19 +87,58 @@ More reading about this topic:
 
 - `Install Openoffice headless as a service in Ubuntu
   <http://www.openvpms.org/documentation/install-openoffice-headless-service-ubuntu>`_ 
-  describes almost exactly what I found out myself... 
-  except that the script there (Vic Vijayakumar & Federico Ch. Tomasczik) uses a PID file 
-  and has no `restart` option while Florent Guillaume's script uses 
-  `ps axw` (BSD syntax) which works on both linux and Mac OS X, and has a `restart` 
-  option.
-
+  describes almost exactly what I found out myself this morning...
+  
 - `OpenOffice Converter Installation instructions 
   <http://code.google.com/p/openmeetings/wiki/OpenOfficeConverter>`_
 
+The script by Vic Vijayakumar & Federico Ch. Tomasczik 
+uses a (pseudo) PID file 
+but has no `restart` option,
+while Florent Guillaume's script uses 
+another method (``ps axw``)
+but has a `restart` option.
 
+I noticed that 
+the ``ps axw`` method  didn't work for me, 
+made more tests and modifications to :srcref:`/bash/oood`.
+This script is still not optimal: we should make it LSB-compliant.
 
 On Debian Lenny, OOo is < 2.3, so it seems to me that installing manually 
 a recent copy is at least okay.
 
-I think I'd better wait a few months before writing documentation about all this, 
-since things are moving there. LibreOffice 
+I'll better wait a bit before writing documentation about all this, 
+since things are moving there (LibreOffice is coming, Debian will make new releases,...)
+
+
+Miscellaneous
+-------------
+
+- I changed the method for finding primary key of previous/next records 
+  used in :func:`lino.ui.ext_ui.elem2rec_detailed` to fill out navinfo.
+  TODO: check whether performance is better on reports with over thousand records.
+
+- bugfix: user and CoachesByPerson where missing. 
+  dsbe.Person has now a 6th Detail layout.
+  
+- bugfix: the combobox for city didn't work.
+  choosers on ForeignKey fields now have 
+  automatically instance_values set to True,
+  
+- bugfix: Lino ignored an explicit width for an image (e.g. ``image:12``) 
+  in .dtl files.
+  
+- Picture distortion problem is maybe solved. 
+  Introduced new `LayoutElement.hflex` which is False for PictureElements. 
+
+- extra row should be really empty. 
+  but grid columns with an xtype of datecolumn or booleancolumn override my renderer.
+  maybe the server should return a really empty extra row?
+  No, much easier: in :xfile:`lino.css` I define font color as white intead of italic::
+  
+    .lino-phantom-row td {
+	/* font-style: italic; */
+	color:white;
+    }
+
+- Detail window now has a Refresh button.  

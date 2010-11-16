@@ -128,6 +128,9 @@ def elem2rec_detailed(ar,rh,elem,**rec):
     first and last record relativ to this record in this report. 
     This can be relatively expensive for records that are towards 
     the end of the report.
+    See :doc:`/blog/2010/0716`,
+    :doc:`/blog/2010/0721`,
+    :doc:`/blog/2010/1116`.
     """
     rec = elem2rec1(ar,rh,elem,**rec)
     rec.update(id=elem.pk)
@@ -142,27 +145,42 @@ def elem2rec_detailed(ar,rh,elem,**rec):
         #~ ar = ext_requests.ViewReportRequest(request,rh,rh.report.default_action)
         recno = 0
         if ar.total_count > 0:
-            first = ar.queryset[0]
-            last = ar.queryset.reverse()[0]
-            if first is not None: first = first.pk
-            if last is not None: last = last.pk
-            if ar.total_count > 200:
-                #~ TODO: check performance
-                pass
-            g = enumerate(ar.queryset) # a generator
-            try:
-                while True:
-                    index, item = g.next()
-                    if item == elem:
-                        if index > 0:
-                            prev = ar.queryset[index-1]
-                        recno = index + 1
-                        index,next = g.next()
-                        break
-            except StopIteration:
-                pass
-            if prev is not None: prev = prev.pk
-            if next is not None: next = next.pk
+            if True:
+                id_list = list(ar.queryset.values_list('pk',flat=True))
+                assert len(id_list) == ar.total_count, \
+                    "len(id_list) is %d while ar.total_count is %d" % (len(id_list),ar.total_count)
+                first = id_list[0]
+                last = id_list[-1]
+                i = id_list.index(elem.pk)
+                recno = i + 1
+                if i > 0:
+                    #~ prev = ar.queryset[i-1]
+                    prev = id_list[i-1]
+                if i < ar.total_count - 1:
+                    #~ next = ar.queryset[i+1]
+                    next = id_list[i+1]
+            else:
+                first = ar.queryset[0]
+                last = ar.queryset.reverse()[0]
+                if ar.total_count > 200:
+                    #~ TODO: check performance
+                    pass
+                g = enumerate(ar.queryset) # a generator
+                try:
+                    while True:
+                        index, item = g.next()
+                        if item == elem:
+                            if index > 0:
+                                prev = ar.queryset[index-1]
+                            recno = index + 1
+                            index,next = g.next()
+                            break
+                except StopIteration:
+                    pass
+                if first is not None: first = first.pk
+                if last is not None: last = last.pk
+                if prev is not None: prev = prev.pk
+                if next is not None: next = next.pk
         rec.update(navinfo=dict(
             first=first,prev=prev,next=next,last=last,recno=recno,
             message="Row %d of %d" % (recno,ar.total_count)))
@@ -217,7 +235,7 @@ class ExtUI(base.UI):
         if de is None:
             a = lh.rh.report.get_action(name)
             if isinstance(a,actions.ImageAction):
-                return ext_elems.PictureElement(lh,name,a)
+                return ext_elems.PictureElement(lh,name,a,**kw)
           
         #~ if isinstance(de,properties.Property):
             #~ return self.create_prop_element(lh,de,**kw)
@@ -1158,7 +1176,7 @@ class ExtUI(base.UI):
         elif isinstance(a,actions.SubmitInsert):
             kw.update(panel_btn_handler=js_code('Lino.submit_insert'))
         elif isinstance(a,actions.UpdateRowAction):
-            kw.update(panel_btn_handler=js_code('Lino.update_row_action'))
+            kw.update(panel_btn_handler=js_code('Lino.update_row_handler(%r)' % a.name))
         elif isinstance(a,actions.ShowDetailAction):
             kw.update(panel_btn_handler=js_code('Lino.show_detail_handler(Lino.%s)' % a))
         elif isinstance(a,actions.InsertRow):

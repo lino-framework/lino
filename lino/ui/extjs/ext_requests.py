@@ -50,7 +50,7 @@ URL_PARAM_CHOICES_PK = "ck"
 
 POST_PARAM_SELECTED = 'selected'
 
-FMT_RUN = 'act'
+#~ FMT_RUN = 'act'
 #~ FMT_JSON = 'json'
 
 def form_field_name(f):

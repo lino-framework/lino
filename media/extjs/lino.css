@@ -24,7 +24,8 @@ http://stackoverflow.com/questions/2106104/word-wrap-grid-cells-in-ext-js
 	color: blue; 
 }*/
 .lino-phantom-row td {
-	font-style: italic; 
+	/* font-style: italic; */
+	color:white;
 }
 
 /* 

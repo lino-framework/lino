@@ -30,13 +30,16 @@ class ChoicesChooser(BaseChooser):
         self.simple_values = type(field.choices[0])
   
 class Chooser(BaseChooser):
+    simple_values = False
+    instance_values = True
     def __init__(self,model,field,meth):
         BaseChooser.__init__(self,field)
         self.model = model
         #~ self.field = model._meta.get_field(fldname)
         self.meth = meth
-        self.simple_values = getattr(meth,'simple_values',False)
-        self.instance_values = getattr(meth,'instance_values',False)
+        if not isinstance(field,models.ForeignKey):
+            self.simple_values = getattr(meth,'simple_values',False)        
+            self.instance_values = getattr(meth,'instance_values',False)
         self.context_params = meth.func_code.co_varnames[1:meth.func_code.co_argcount]
         #~ print '20100724c', meth, self.context_params 
         #~ logger.warning("20100527 %s %s",self.context_params,meth)

@@ -259,13 +259,25 @@ The expected output is something like this::
 
 Read :ref:`django/DjangoPatches` for more details.
 
+
+
 Install OpenOffice.org server startup script
 --------------------------------------------
 
+See also :doc:`/blog/2010/1116`. But basically:
+
+- Install a headless version > 2.3 of openoffice or libreoffice
+
+- Install the startup script::
+
     # cp /var/snapshots/lino/bash/oood /etc/init.d
+    # nano /etc/init.d/oood
+  
+  Check whether everything is correct, then::
+
     # chmod 755 /etc/init.d/oood
     # update-rc.d oood defaults
-
+    
 
 Create a demo database
 ----------------------

@@ -13,4 +13,4 @@ box2 =
   
 main = 
   box1     box2
-  dsbe.ExclusionsByPerson image
+  dsbe.ExclusionsByPerson

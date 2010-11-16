@@ -1,0 +1,23 @@
+:label: Person 2
+:label_align: top
+
+main = 
+  box5 flags:20 image:12
+  remarks:30 coaching:30 
+
+
+box5 =
+  url:30
+  bank_account1
+  bank_account2
+  activity 
+
+coaching =
+  user
+  dsbe.CoachingsByPerson
+
+flags =
+  is_active 
+  is_cpas 
+  is_senior 
+  #is_minor

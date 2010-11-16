@@ -1,12 +1,22 @@
 Coming
 ======
 
-Changes
--------
+New features
+------------
 
+- Detail window now has a Refresh button.  
 
 Bugs fixed
 ----------
+
+- Standard values on a phantom row are no longer visible.  (:doc:`/blog/2010/1116`)
+
+- Coachings and user were missing in a Person's detail.  (:doc:`/blog/2010/1116`)
+
+- performance of previous/next buttons in Detail view of 
+  reports with over thousand records might be better. (:doc:`/blog/2010/1116`)
+
+- problem of distorted pictures might be solved (:doc:`/blog/2010/1116`)
 
 
 Upgrade instructions
@@ -26,3 +36,4 @@ Upgrade instructions
 - Restart Apache::
 
     sudo /etc/init.d/apache2 restart
+

@@ -110,15 +110,25 @@ class GridColumn(Component):
             kw.update(filter=dict(type=editor.filter_type))
         #~ if isinstance(editor,FieldElement) and editor.field.primary_key:
         if isinstance(editor,FieldElement):
+            rend = None
             if isinstance(editor.field,models.AutoField):
-                kw.update(renderer=js_code('Lino.id_renderer'))
+                rend = 'Lino.id_renderer'
+                #~ kw.update(renderer=js_code('Lino.id_renderer'))
             elif isinstance(editor.field,models.ForeignKey):
+                # FK fields are clickable if their target has a detail view
                 rpt = editor.field.rel.to._lino_model_report
                 a = rpt.get_action('detail')
                 if a is not None:
-                    kw.update(renderer=js_code("Lino.fk_renderer('%s','%s')" % (
+                    rend = "Lino.fk_renderer('%s','%s')" % (
                       editor.field.name + 'Hidden',
-                      editor.lh.rh.ui.get_actor_url(rpt))))
+                      editor.lh.rh.ui.get_actor_url(rpt))
+                    #~ kw.update(renderer=js_code("Lino.fk_renderer('%s','%s')" % (
+                      #~ editor.field.name + 'Hidden',
+                      #~ editor.lh.rh.ui.get_actor_url(rpt))))
+            #~ if not rend:
+                #~ rend = 'Lino.default_renderer'
+            if rend:
+                kw.update(renderer=js_code(rend))
             kw.update(editable=editor.editable)
             if editor.editable:
                 kw.update(editor=editor)
@@ -142,6 +152,7 @@ class ExtPanel(Component): # todo: rename this to Panel, and Panel to PanelEleme
         
 class VisibleComponent(Component):
     vflex = False
+    hflex = True
     width = None
     height = None
     preferred_width = 10
@@ -283,7 +294,9 @@ class PictureElement(LayoutElement):
     declare_type = jsgen.DECLARE_VAR
     #~ declare_type = jsgen.DECLARE_INLINE
     value_template = "new Ext.BoxComponent(%s)"
-    vflex = True
+    vflex = False
+    hflex = False
+    #~ vflex = True
     
     def __init__(self,lh,name,action,**kw):
         #~ print 20100730, name
@@ -296,11 +309,16 @@ class PictureElement(LayoutElement):
         #~ kw.update(autoEl=dict(tag='img',onclick="Lino.img_onclick(this)" ))
         #~ kw.update(onclick=js_code('"Lino.img_onclick()"'))
         #~ kw.update(cls='ext-el-mask')
-        kw.update(style=dict(width='100px',height='150px',cursor='pointer'))
+        #~ kw.update(style=dict(width='100px',cursor='pointer'))
+        #~ kw.update(style=dict(width='100px',height='150px',cursor='pointer'))
         kw.update(plugins=js_code('Lino.PictureBoxPlugin'))
         #~ kw.update(plugins=js_code('new Lino.PictureBoxPlugin(caller)'))
         #~ kw.update(listeners=dict(click=js_code('Lino.img_onclick')))
         LayoutElement.__init__(self,lh,name,**kw)
+        #~ print "PictureElement", self.width, self.preferred_width
+        self.update(style=dict(
+          width='%dpx' % ((self.width or self.preferred_width)*10), # assume 1 char ~ 10px
+          cursor='pointer'))
         
 
         
@@ -828,7 +846,7 @@ class Panel(Container):
             else:
                 d.update(layout='hbox',autoHeight=True) # 20101028
                 #~ d.update(layout='hbox')
-                d.update(layoutConfig=dict(align='stretchmax'))
+                #~ 20101116 d.update(layoutConfig=dict(align='stretchmax'))
                 #~ if stretch : # 20100912
                     #~ d.update(layoutConfig=dict(align='stretch'))
                 #~ else:
@@ -853,9 +871,10 @@ class Panel(Container):
             if not self.vflex: # 20101028
                 d.update(autoHeight=True)
             for e in self.elements:
-                w = e.width or e.preferred_width
-                #~ e.value.update(columnWidth=float(w)/self.preferred_width) # 20100615
-                e.value.update(flex=int(w*100/self.preferred_width))
+                if e.hflex:
+                    w = e.width or e.preferred_width
+                    #~ e.value.update(columnWidth=float(w)/self.preferred_width) # 20100615
+                    e.value.update(flex=int(w*100/self.preferred_width))
                 
             #~ wrappers = []
             #~ for e in self.elements:

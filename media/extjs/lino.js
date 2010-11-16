@@ -584,6 +584,11 @@ Lino.id_renderer = function(value, metaData, record, rowIndex, colIndex, store) 
   return value;
 }
 
+Lino.default_renderer = function(value, metaData, record, rowIndex, colIndex, store) {
+  if (record.phantom) return '';
+  return value;
+}
+
 Lino.fk_renderer = function(fkname,url) {
   return function(value, metaData, record, rowIndex, colIndex, store) {
     //~ console.log('Lino.fk_renderer',fkname,rowIndex,colIndex,record,metaData,store);
@@ -710,12 +715,6 @@ Lino.show_download_handler = function(fmt) {
 Lino.show_detail_handler = function(action) {
   return function(panel,btn) {
     Lino.do_on_current_record(panel,function(rec) {
-      //~ action(panel,{record_id:master.id,base_params:panel.ww.config.base_params});
-      //~ var bp = panel.ww.get_master_params();
-      //~ var bp = panel.ww.get_base_params();
-      //~ var bp = panel.getStore().baseParams;
-      //~ var bp = panel.ww.config.base_params;
-      //~ console.log('show_detail_handler()',panel.get_base_params());
       action(panel,{record_id:rec.id,base_params:panel.get_base_params()});
     });
   }
@@ -730,6 +729,12 @@ Lino.show_insert_handler = function(action) {
     //~ console.log('20101025 insert_handler',bp)
     action(panel,{record_id:-99999,base_params:bp});
     //~ action(panel,{record_id:-99999,base_params:panel.get_base_params()});
+  }
+};
+
+Lino.update_row_handler = function(action_name) {
+  return function(panel,btn) {
+    Lino.notify("Sorry, " + action_name + " is not implemented.");
   }
 };
 
@@ -753,10 +758,6 @@ Lino.submit_detail = function(panel,btn) {
   } else Lino.notify("Sorry, no current record.");
 };
 
-
-Lino.update_row_action = function(panel,btn) {
-  Lino.notify("Sorry, not implemented.");
-};
 
 Lino.submit_insert = function(panel,btn) {
   panel.form.submit({
@@ -810,6 +811,10 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
         this.displayItem = new Ext.Toolbar.TextItem({})
       ]);
     }
+    //~ console.log(20101117,this.ww.refresh);
+    config.tbar = this.tbar_items().concat([
+      {text:'Refresh',handler:this.refresh,iconCls: 'x-tbar-loading',qtip:"Reload current record",scope:this}
+    ]);
     config.bbar = config.bbar.concat([
       '->',
       {text:'Layout Editor',handler:this.edit_detail_config,qtip:"Edit Detail Layout",scope:this}
@@ -843,6 +848,9 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
       return url;
   },
   
+  refresh : function() { 
+    this.goto_record_id(this.current_record.id);
+  },
   goto_record_id : function(record_id) {
     console.log('Lino.FormPanel.goto_record_id()',record_id);
     Lino.notify(); 
@@ -1878,7 +1886,10 @@ Ext.override(Lino.WindowWrapper,{
       return {fmt:'grid'};
   },
   on_render : function() {},
-  refresh : function() {},
+  //~ refresh : function() { },
+  refresh : function() { 
+    this.main_item.refresh();
+  },
   
   hide : function() { this.window.hide() },
   get_window_config : function() { return {} }
@@ -1887,11 +1898,7 @@ Ext.override(Lino.WindowWrapper,{
 
 
 
-Lino.GridMixin = {
-  refresh : function() { 
-    this.main_item.refresh();
-  }
-};
+Lino.GridMixin = {};
 
 Lino.GridMasterWrapper = Ext.extend(Lino.WindowWrapper,Lino.GridMixin);
 Lino.GridMasterWrapper.override({

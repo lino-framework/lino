@@ -1,42 +1,23 @@
-:label: General
+:label: Contact
 :label_align: top
 
 main = 
-  intro_box
-  address_box 
-  # remarks:30 coaching:30 
+  box1 box2
   overview contacts.ContactsByPerson
 
-intro_box = box1 box2
-address_box = box3 box4 box5 flags:20
 
 
-box1 = last_name first_name:15 title:10
-box2 = id language
-box3 = 
+box1 = 
+  last_name first_name:15 title:10
   country region
   city zip_code:10
   street:25 street_no street_box
   addr1:40
 
-box4 = 
+box2 = 
+  id:12 language
   email:30 
   phone 
   fax
   gsm
 
-box5 =
-  url:30
-  bank_account1
-  bank_account2
-  activity 
-
-coaching =
-  user
-  dsbe.CoachingsByPerson
-
-flags =
-  is_active 
-  is_cpas 
-  is_senior 
-  #is_minor
