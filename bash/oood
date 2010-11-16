@@ -45,9 +45,8 @@ stop() {
       rm -f $PIDFILE
       exit
     fi
-      echo "Openoffice headless server is not running."
-      exit
-    fi
+    echo "Openoffice headless server is not running."
+    exit
 }
 
 
