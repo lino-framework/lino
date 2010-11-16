@@ -6,35 +6,21 @@ See also :doc:`/tickets/index` which is a list of tickets
 for which I hope for help from other people.
 
 
-Short-term
-----------
+Before version 1.0
+------------------
 
-- Lokale Konvertierungsfunktion für initdb_tim, um gewisse Benutzer zu 
-  ignorieren oder Daten zu korrigieren.
-
-- Formatierung der :xfile:`welcome.html` lässt zu wünschen übrig.  
-
-- Mit :kbd:`[F2]` sollte die Zeile einer Grid bearbeiten können.
-
-- Im Kontextmenü sollten auch Aktionen erscheinen, die spezifisch 
-  für das Feld (die Kolonne) sind. 
+- Auch `watch_tim` automatisch nach reboot starten.
+  Irgendwie müssen ungefähr die folgenden Befehle in der :file:`/etc/init.d` 
+  gerufen werden::
   
-- Button, um eine zuvor generierte printable Datei wieder zu löschen, 
-  damit sie neu generiert wird.  Dieser Button sollte aber nur im Kontextmenü erscheinen.
+    /usr/local/django/myproject/watch_tim
 
-- Im Hauptmenü könnten zwei Befehle :menuselection:`Help --> User Manual` 
-  und :menuselection:`Help --> About` kommen, dann hätten wir den ganzen Platz für Erinnerungen.
-
-- Im Detail eines Links wäre dessen Vorschau interessant.
-
-- RtfPrintMethod geht nicht immer: 
-  http://127.0.0.1:8000/api/dsbe/ContractsByPerson/2?mt=14&mk=16&fmt=print 
-  sagt "ValueError: 'allowed_path' has to be a directory."
-
-- OOo-Server und watch_tim automatisch nach reboot starten:
-
+  Siehe auch:
+  
   | http://www.debian-administration.org/articles/28
   | http://girasoli.org/?p=120
+  | `How to LSBize an Init Script <http://wiki.debian.org/LSBInitScripts>`_
+
 
 - WebDAV installieren und testen, wie das Bearbeiten von RTF- und ODT-Dokumenten in der Praxis läuft.
 
@@ -52,8 +38,33 @@ Short-term
   und mein System von config-Dateien erweitern, dass es auch Unterverzeichnisse verträgt.
   Siehe :doc:`/blog/2010/1029`, :doc:`/blog/2010/1112`.
   
-Undecided
----------
+Waiting for feedback
+--------------------
+
+- Um eine zuvor generierte druckbare Datei wieder zu löschen 
+  (damit sie neu generiert wird), 
+  muss man momentan "einfach" das Ankreuzfeld "must build" anschalten (und speichern).
+  Reicht das? Oder brauchen wir einen eigenen Button "Clear chache", 
+  der vielleicht nur im Kontextmenü erscheinen sollte.
+
+- do we need a general button "Printer-friendly view"?
+
+- Formatierung der :xfile:`welcome.html` lässt zu wünschen übrig.  
+
+- Mit :kbd:`[F2]` sollte die Zeile einer Grid bearbeiten können.
+
+- Im Kontextmenü sollten auch Aktionen erscheinen, die spezifisch 
+  für das Feld (die Kolonne) sind. 
+  
+- Im Hauptmenü könnten zwei Befehle :menuselection:`Help --> User Manual` 
+  und :menuselection:`Help --> About` kommen, dann hätten wir den ganzen 
+  Platz für Erinnerungen.
+
+- Im Detail eines Links wäre dessen Vorschau interessant.
+
+- RtfPrintMethod geht nicht immer: 
+  http://127.0.0.1:8000/api/dsbe/ContractsByPerson/2?mt=14&mk=16&fmt=print 
+  sagt "ValueError: 'allowed_path' has to be a directory."
 
 - Ein ``<a href="..." target="blank">`` öffnet zumindest in Chrome kein neues Fenster, 
   sondern einen neuen Tab im gleichen Fenster. 
@@ -62,22 +73,11 @@ Undecided
   wenn man den Titel des 
   Browser-Tabs aus dem Browserfenster raus zieht, dann öffnet er ein neues Fenster.
 
-- Momentan wird der Synchronisierungs-Prozess (watch_tim) nach einem Server-Restart nicht automatisch neu gestartet. 
-  Ich habe nämlich lediglich in `/usr/local/django/myproject` eine Datei namens `watch_tim` mit folgendem Inhalt::
-
-    nohup python manage.py watch_tim \  
-      /mnt/server/TIM/CPAS/changelog > \
-      /var/log/lino/watch_tim.log
-      
-  Und diese Datei starte ich manuell nach einem Release. 
-  :command:`nohup` sorgt dafür, dass der Prozess nicht beendet wird, wenn ich mich auslogge. 
-  Aber stattdessen muss natürlich ein Skript in der :file:`/etc/init.d` gemacht werden.
-
 - Wenn man z.B. in Companies.insert manuell eine ID eingibt, 
   dann ignoriert der Server die und vergibt trotzdem seine automatische nächste ID.
 
-Medium-term
------------
+After version 1.0
+-----------------
 
 - Hauptmenü nicht anzeigen, wenn ein Fenster offen ist. 
   Stattdessen ein bequemer Button, um ein weiteres Browserfenster mit Lino zu öffnen.
@@ -352,6 +352,10 @@ Long-term
 
 - lino.modlib.dsbe und lino.modlib.igen sind ja eigentlich keine 
   normalen "Django applications", sondern Endmodule für Lino... das ist noch unklar.
+  
+- :doc:`/tickets/16`
+
+- Mehr über Nuxeo lesen: http://doc.nuxeo.org/5.3/books/nuxeo-book/html/index.html
 
 Documentation
 -------------

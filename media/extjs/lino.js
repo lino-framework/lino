@@ -716,10 +716,10 @@ Lino.show_download_handler = function(fmt) {
     Lino.do_on_current_record(panel,function(rec) {
       //~ console.log(panel);
       var url = panel.get_record_url(rec.id);
-      var p = panel.ww.get_master_params();
-      p['fmt'] = fmt;
+      var p = {fmt: fmt};
+      Ext.apply(p,panel.get_base_params());
       url += "?" + Ext.urlEncode(p);
-      console.log(url);
+      //~ console.log(url);
       window.open(url);
       //~ var l = caller.get_selected();
       //~ if (l.length == 0) Lino.notify('No selection.');

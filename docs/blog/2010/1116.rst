@@ -1,0 +1,77 @@
+20101116
+========
+
+OpenOffice server startup script
+--------------------------------
+
+A Google search about "OpenOffice server daemon" led me to some interesting readings:
+
+- http://sourceforge.net/projects/oodaemon/ : 
+  (September 2009)
+  "Open Office Server Daemon based on older daemon written in python (oood). 
+  Open Office is unstable as a server (memory leaks, not multithreaded, ...), 
+  this daemon makes it working in long-term without having to 
+  change anything in your code."
+  (`readme <http://oodaemon.sourceforge.net/README.html>`)
+  
+- `Chapter 46 of the Nuxeo Reference Guide 
+  <http://doc.nuxeo.org/5.3/books/nuxeo-book/html/admin-openoffice.html>`_
+  is a good documentation of the topic.
+  It mentions and refers to an `oooctl control script 
+  <http://svn.nuxeo.org/nuxeo/tools/ooo/oooctl>`_ included with Nuxeo.
+
+
+However this script is for OOo before 2.3 (still uses Xvfb).
+I removed the Xvfb parts and also the automagic search for the SOFFICE 
+binary and include it to the Lino repository as :srcref:`/bash/oood`
+(TODO: But what about the copyright notice?)
+
+  
+Some more readings:
+
+- `Manage Linux init or startup scripts
+  <http://www.debianadmin.com/manage-linux-init-or-startup-scripts.html>`.
+- `Making scripts run at boot time with Debian <http://www.debian-administration.org/articles/28>`_
+  
+Now finally here is how to do it::
+
+    # cp /var/snapshots/lino/bash/oood /etc/init.d
+    # chmod 755 /etc/init.d/oood
+    # update-rc.d oood defaults
+    update-rc.d: warning: /etc/init.d/oood missing LSB information
+    update-rc.d: see <http://wiki.debian.org/LSBInitScripts>
+     Adding system startup for /etc/init.d/oood ...
+       /etc/rc0.d/K20oood -> ../init.d/oood
+       /etc/rc1.d/K20oood -> ../init.d/oood
+       /etc/rc6.d/K20oood -> ../init.d/oood
+       /etc/rc2.d/S20oood -> ../init.d/oood
+       /etc/rc3.d/S20oood -> ../init.d/oood
+       /etc/rc4.d/S20oood -> ../init.d/oood
+       /etc/rc5.d/S20oood -> ../init.d/oood
+
+Added these instructions to :doc:`/admin/install`.
+
+(TODO: `How to LSBize an Init Script <http://wiki.debian.org/LSBInitScripts>`_)
+
+Miscellaneous changes
+---------------------
+
+- trying to print contract #1 produced 
+  "Exception: Build method u'appypdf' doesn't exist.". 
+  This was because appy.pod couldn't be imported after upgrade to 0.6.0.
+  :func:`lino.thanks_to` now displays appy.pod also when not installed.
+
+- bug fixed: 
+  Print Button in Detail view of a slave report didn't set the correct mk. 
+  For example in ContractsByPerson it used the primary key of the current Contract.
+  
+- bug fixed: 
+  when calling "print" from Detail view, the `fmt:print` parameter was 
+  stored as base parameter, causing subsequent navigation buttons to fail.
+
+
+From the Grid:
+/api/dsbe/ContractsByPerson/1?mt=14&mk=16&fmt=print
+
+From Detail window:
+/api/dsbe/ContractsByPerson/1?mt=30&mk=1&fmt=print

@@ -1,6 +1,11 @@
 20101115
 ========
 
+watch_tim now as a daemon
+-------------------------
+
+How to run a Django management command as a daemon?
+That was easy.
 I downloaded Sean Creeley's `daemonextension <https://gist.github.com/125559>`_ 
 module which made it easy to turn :mod:`watch_tim <lino.modlib.dsbe.management.commands.watch_tim>` 
 into a well-behaved daemon.
@@ -9,5 +14,41 @@ daemonextension needs two other Python modules to be installed:
 `python-daeon <http://pypi.python.org/pypi/python-daemon>`_
 and `lockfile <http://pypi.python.org/pypi/lockfile/0.7>`_.
 Modified :doc:`/admin/install`.
-If one of these modules is not installed (or on a Windows machine), wathc_tim 
-will simply run as before and remain in the terminal.
+Under Windows (or if one of these modules is not installed), 
+watch_tim  will simply run as a normal process in the terminal.
+
+
+Launching OOo server
+--------------------
+
+Also mit LibreOffice funktioniert appy.pod zumindest auf Anhieb nicht.
+Versuchen wir zunächst mal, ob es mit einer neueren Version von OOo 
+(die ich manuell installieren muss) funktioniert. 
+
+Also nochmal ungefähr das Gleiche wie :doc:`gestern <1114>`::
+  
+  wget http://download.services.openoffice.org/files/localized/de/3.2.1/OOo_3.2.1_Linux_x86-64_install-deb_de.tar.gz
+  tar -xvzf OOo_3.2.1_Linux_x86-64_install-deb_de.tar.gz
+  cd OOO320_m18_native_packed-1_de.9502/DEBS
+  sudo dpkg -i desktop-integration/libreoffice3.3-debian-menus_3.3-1_all.deb
+  
+Dann den Server starten::
+  
+  sudo soffice "-accept=socket,host=localhost,port=8100;urp;StarOffice.ServiceManager" -nologo -headless -nofirststartwizard  
+
+Und nach einigen weiteren kleinen Problemchen... klappt es!
+
+TODO: Jetzt muss ich noch rausfinden, wie ich die beiden folgenden Befehle in einem Startup-Skript starte::
+
+    /usr/local/django/myproject/watch_tim
+    soffice "-accept=socket,host=localhost,port=8100;urp;StarOffice.ServiceManager" -nologo -headless -nofirststartwizard 
+  
+  
+Miscellaneous
+-------------
+
+- Person is no longer Printable, because this will rather confuse the users.
+  Once there will be a general button "Printer-friendly view".
+  
+- Contracts are now mostly read-only when they have been printed (`Contract.disabled_fields`).
+  The flag `must_build` ist set to False after the first build (`PrintAction.get_target_url`).

@@ -29,6 +29,16 @@ Weil die Python-UNO-Bridge jetzt nicht installiert ist (``python -m uno`` geht n
 muss ich in der lokalen :xfile:`settings.py` hinzufügen::
 
   APPY_PARAMS.update(pythonWithUnoPath='/usr/bin/libreoffice')    
+  
+.. note:: Nachtrag 20101115
+
+  Das obige hätte heißen müssen::
+
+    APPY_PARAMS.update(pythonWithUnoPath='/etc/libreoffice3/program/python')    
+  
+  Also mit LibreOffice hätte es wahrscheinlich auch schon geklappt.
+   
+
 
 Fehlermeldung auf dem error log von Apache::
 
@@ -82,3 +92,6 @@ Aber auch dann, sobald er versucht, eine .pdf-Datei zu machen::
     
   PodError: An error occurred during the conversion. 
   [Java framework] Error in function createSettingsDocument (elements.cxx).
+  
+  
+  

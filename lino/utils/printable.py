@@ -338,6 +338,8 @@ class PrintAction(actions.RedirectAction):
         if pm is None:
             raise Exception("Build method %r doesn't exist. Requested by %r." % (bmname,elem))
         pm.build(elem)
+        elem.must_build = False
+        elem.save()
         return settings.MEDIA_URL + "/".join(pm.get_target_parts(elem))
         
     
@@ -388,7 +390,7 @@ class Printable(models.Model):
     @classmethod
     def setup_report(cls,rpt):
         rpt.add_action(PrintAction(rpt))
-        rpt.add_action(ClearCacheAction(rpt))
+        #~ rpt.add_action(ClearCacheAction(rpt))
         #~ super(Printable,cls).setup_report(rpt)
 
     def filename_root(self):

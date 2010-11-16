@@ -259,9 +259,16 @@ The expected output is something like this::
 
 Read :ref:`django/DjangoPatches` for more details.
 
+Install OpenOffice.org server startup script
+--------------------------------------------
 
-Create the demo database
-------------------------
+    # cp /var/snapshots/lino/bash/oood /etc/init.d
+    # chmod 755 /etc/init.d/oood
+    # update-rc.d oood defaults
+
+
+Create a demo database
+----------------------
 
 Go to your `/usr/local/django/myproject` directory and run::
 

@@ -119,7 +119,8 @@ class Partner(models.Model):
         
 #~ class Person(Contact):
 
-class Person(Partner,contacts.Person,mixins.Printable):
+class Person(Partner,contacts.Person):
+#~ class Person(Partner,contacts.Person,mixins.Printable):
     """
     Implements :class:`contacts.Person`.
     
@@ -630,6 +631,8 @@ class ContractTypes(reports.Report):
     column_names = 'name build_method template *'
 
 
+CONTRACT_PRINTABLE_FIELDS = tuple('person company contact type applies_from applies_until language'.split())
+
 #
 # CONTRACTS
 #
@@ -646,6 +649,11 @@ class Contract(mixins.TypedPrintable,mixins.Reminder,mixins.PartnerDocument):
     applies_until = models.DateField(blank=True,null=True,verbose_name=_("applies until"))
     language = fields.LanguageField(default=default_language)
     
+    def disabled_fields(self,request,obj):
+        if obj.must_build:
+            return []
+        return CONTRACT_PRINTABLE_FIELDS
+        
     @classmethod
     def contact_choices(cls,company):
         if company is not None:

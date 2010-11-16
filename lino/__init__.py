@@ -108,11 +108,12 @@ def using():
     yield ("ReportLab Toolkit",reportlab.Version, "http://www.reportlab.org/rl_toolkit.html")
                
     try:
-        import appy
+        #~ import appy
         from appy import version
-        yield ("appy.pod",version.verbose ,"http://appyframework.org/pod.html")
+        version = version.verbose
     except ImportError:
-        pass
+        version = NOT_FOUND_MSG
+    yield ("appy.pod",version ,"http://appyframework.org/pod.html")
 
 
 def welcome_text():

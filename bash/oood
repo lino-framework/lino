@@ -1,0 +1,59 @@
+#!/bin/sh
+#
+# OpenOffice.org 2.3+ server-mode startup script
+#
+# (C) Copyright 2010 Luc Saffre 
+# (based on http://svn.nuxeo.org/nuxeo/tools/ooo/oooctl, 
+#  see also :doc:`/tickets/16`)
+#
+# This file is part of the Lino project.
+# Lino is free software; you can redistribute it and/or modify 
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# Lino is distributed in the hope that it will be useful, 
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Lino; if not, see <http://www.gnu.org/licenses/>.
+
+PORT=8100
+HOST=127.0.0.1
+SOFFICE=/usr/bin/soffice
+
+start() {
+    echo "Starting OpenOffice.org server"
+    $SOFFICE "-accept=socket,host=$HOST,port=$PORT;urp;StarOffice.ServiceManager" -nologo -headless -nofirststartwizard >/dev/null 2>&1 &
+    echo "Done."
+}
+
+stop() {
+    echo "Stopping OpenOffice.org server..."
+    # Note: ps axw (BSD syntax) works on both linux and Mac OS X
+    OOPID=`ps axw | awk '/soffice\ -headless/ {print $1}'`
+    if [ -n "$OOPID" ]; then
+        kill $OOPID
+        sleep 1 # Wait for it to die and release its port
+        echo "Done."
+    else
+        echo "Nothing to stop." >&2
+    fi
+}
+
+
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    restart)
+        stop
+        start
+        ;;
+    *)
+        echo "usage: `basename $0` (start|stop|restart|help)"
+        ;;
+esac

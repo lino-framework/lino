@@ -44,6 +44,8 @@ try:
 except ImportError:
     APPY_PARAMS.update(pythonWithUnoPath=r'C:\PROGRA~1\OPENOF~1.ORG\program\python.exe')
     #~ APPY_PARAMS.update(pythonWithUnoPath='/usr/bin/libreoffice')
+    #~ APPY_PARAMS.update(pythonWithUnoPath='/etc/openoffice.org3/program/python')
+    
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
