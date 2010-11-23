@@ -22,7 +22,7 @@ from django.utils.translation import ugettext_lazy as _
 from lino import fields
 #~ from lino import tools
 from lino import reports
-from lino.utils import mixins
+from lino import mixins
 #~ from lino import layouts
 
 #~ tools.requires_apps('auth','contenttypes')
@@ -88,10 +88,10 @@ class LinksByOwnerBase(Links):
     #~ order_by = "date"
     show_slave_grid = False
     
-    def get_title(self,rr):
-        return _("Links by %(model)s %(owner)s") % dict(
-          model=rr.master_instance._meta.verbose_name,
-          owner=rr.master_instance)
+    #~ def get_title(self,rr):
+        #~ return _("Links by %(model)s %(owner)s") % dict(
+          #~ model=rr.master_instance._meta.verbose_name,
+          #~ owner=rr.master_instance)
     
   
 #~ def links_by_owner(owner):

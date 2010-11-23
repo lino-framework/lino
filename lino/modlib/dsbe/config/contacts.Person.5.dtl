@@ -3,4 +3,4 @@
 
 main = 
     notes.NotesByPerson links.LinksByPerson
-    dsbe.ContractsByPerson 
+    dsbe.ContractsByPerson uploads.UploadsByPerson

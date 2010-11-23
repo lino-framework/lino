@@ -1,0 +1,136 @@
+20101118
+========
+
+File uploads
+------------
+
+Yesterday I started to learn about how Django and ExtJS handle file uploads.
+
+| extjs/examples/form/file-upload.html
+| http://docs.djangoproject.com/en/dev/topics/http/file-uploads/
+| http://docs.djangoproject.com/en/dev/topics/files/
+| http://docs.djangoproject.com/en/dev/ref/files/file/
+| http://docs.djangoproject.com/en/dev/ref/models/fields/#filefield
+
+
+Turned :mod:`lino.utils.mixins` into a package :mod:`lino.mixins`.
+Started the new modules 
+:mod:`lino.mixins.uploadable`
+which defines one abstract model `Uploadable`.
+Started :mod:`lino.modlib.uploads` which defines 
+a model `Upload`.
+
+About the Lino modules hierarchy
+--------------------------------
+
+All this is not yet stable-
+:mod:`lino.mixins.printable` 
+might as well move to `lino.modlib.printables`.
+The deciding question is: does a functionality
+deserve to get a Django application label?
+For 'printable' I have the feeling "no", 
+for "uploads" I'd rather say "yes".
+
+For example, the report UploadsByPerson and UploadsByCompany 
+will be used by every Lino application that decides to 
+implement Uploads as a PartnerDocument.
+
+Is it true that Django doesn't allow models 
+
+- to override a non-abstract model 
+  inherit from it *without creating multi-table inheritance* ?
+
+- to remove fields from their base model?
+
+
+Exploring Django's FileFields and FieldFiles
+--------------------------------------------
+
+Django's `FileField` means that a partial filename 
+is stored in the database in a VARCHAR field. 
+
+`FileField.path` returns the complete path 
+(settings.MEDIA_ROOT + partial filename)
+
+`FileField.url` returns the URL 
+(settings.MEDIA_URL `FileField.name`).
+
+The constructor has a mandatory parameter `upload_to` which may be a string 
+(possibly containing date format specifiers) or a callable. 
+This string is used to generate the partial filename.
+
+When `upload_to` is not a callable, it is used only in `get_directory_name`::
+
+    def get_directory_name(self):
+        return os.path.normpath(force_unicode(datetime.datetime.now().strftime(smart_str(self.upload_to))))
+        
+when it is a callable, then it simply replaces `get_directory_name`. 
+
+`get_directory_name` is used only in `FieldFile.generate_filename`::
+
+    def generate_filename(self, instance, filename):
+        return os.path.join(self.get_directory_name(), self.get_filename(filename))
+
+which in turn is used only in :meth:`FieldFile.save`::
+
+    def save(self, name, content, save=True):
+        name = self.field.generate_filename(self.instance, name)
+        self.name = self.storage.save(name, content)
+        
+When `upload_to` is a callable, then it simply 
+replaces the `generate_filename` method.
+
+        
+
+Uploadable files in Lino
+------------------------
+
+Here is how Lino (currently) handles uploaded files.
+
+New attribute :meth:`lino.reports.Report.handle_uploaded_files`.
+
+Here is the `handle_uploaded_files` current code of 
+:class:`lino.mixins.uploadable.Uploadable` 
+(inherited by :class:`lino.modlib.uploads.models.Upload`)::
+
+    def handle_uploaded_files(self,request):
+        uf = request.FILES['file'] # an UploadedFile instance
+        self.size = uf.size
+        self.mimetype = uf.content_type
+        # Django magics: 
+        self.file = uf.name     # assign a string
+        ff = self.file          # get back a FileField instance !
+        ff.save(uf.name,uf,save=False)
+        # print "Wrote file ", ff.path
+
+This method is called from 
+:meth:`lino.ui.extjs.ext_ui.ExtUI.form2obj_and_save` 
+after storing the normal form data::
+
+    def form2obj_and_save(self,request,rh,data,elem,**kw2save):
+        # store normal form data
+        try:
+            rh.store.form2obj(data,elem)
+        except exceptions.ValidationError,e:
+           return error_response(e)
+           
+        # store uploaded files
+        if rh.report.handle_uploaded_files is not None:
+            rh.report.handle_uploaded_files(request,elem)
+            
+
+TODO:
+
+- Lino.submit_detail doesn't send mk and mt when in a slave report.
+
+- possibility to show a previously uploaded file.
+  Maybe I need a new widget for FileField: 
+  if the field's current value is empty, it shows an upload button;
+  if it is non-empty, it shows the filename and a link that opens this file.
+  In case of Upload the value is always empty in an insert window 
+  and always non-empty in a detail window. But the most flexible 
+  would be to not rely on this.
+  Most straightforward would be a TwinTrigger button.
+  Maybe also a "delete uploaded file" button, though this should 
+  be diabled if another Upload instance refers to the same file.
+

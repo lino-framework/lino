@@ -32,6 +32,8 @@ m.add_action('contacts.Persons')
 m = lino.add_menu("notes",_("~Notes"),can_view=perms.is_authenticated)
 #~ m.add_action('projects.Projects')
 m.add_action('notes.MyNotes')
+m.add_action('uploads.MyUploads')
+m.add_action('dsbe.MyContracts')
 
 m = lino.add_menu("config",_("~Configure"),
   can_view=perms.is_staff)
@@ -63,6 +65,7 @@ m.add_action('notes.Notes')
 m.add_action('links.Links')
 m.add_action('dsbe.Exclusions')
 m.add_action('dsbe.Contracts')
+m.add_action('uploads.Uploads')
 #~ m.add_action('links.Links')
 m.add_action('contenttypes.ContentTypes')
 

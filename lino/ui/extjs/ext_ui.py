@@ -491,6 +491,9 @@ class ExtUI(base.UI):
         if settings.USE_GRIDFILTERS:
             yield '<link rel="stylesheet" type="text/css" href="%sextjs/examples/ux/gridfilters/css/GridFilters.css" />' % settings.MEDIA_URL 
             yield '<link rel="stylesheet" type="text/css" href="%sextjs/examples/ux/gridfilters/css/RangeMenu.css" />' % settings.MEDIA_URL 
+            
+        yield '<link rel="stylesheet" type="text/css" href="%sextjs/examples/ux/fileuploadfield/css/fileuploadfield.css" />' % settings.MEDIA_URL 
+        
         yield '<link rel="stylesheet" type="text/css" href="%slino/extjs/lino.css">' % settings.MEDIA_URL
          
         #~ yield '<!-- ** Javascript ** -->'
@@ -529,7 +532,8 @@ class ExtUI(base.UI):
             yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/filter/ListFilter.js"></script>' % settings.MEDIA_URL
             yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/filter/NumericFilter.js"></script>' % settings.MEDIA_URL
             yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/filter/BooleanFilter.js"></script>' % settings.MEDIA_URL
-             
+            
+        yield '<script type="text/javascript" src="%sextjs/examples/ux/fileuploadfield/FileUploadField.js"></script>' % settings.MEDIA_URL
 
         #~ yield '<!-- overrides to library -->'
         yield '<script type="text/javascript" src="%slino/extjs/lino.js"></script>' % settings.MEDIA_URL
@@ -585,13 +589,15 @@ class ExtUI(base.UI):
         #~ return HttpResponse(s, mimetype='text/html')
 
     def form2obj_and_save(self,rh,data,elem,**kw2save):
-        #~ print '20101024', elem.card_valid_from
+        #~ print '20101122', data
+        
+        # store normal form data (POST or PUT)
         try:
             rh.store.form2obj(data,elem)
         except exceptions.ValidationError,e:
            return error_response(e)
            #~ return error_response(e,_("There was a problem while validating your data : "))
-            
+           
         if hasattr(elem,'before_save'): # see :doc:`/blog/2010/0804`
             elem.before_save()
         #~ print '20101024a', elem.card_valid_from
@@ -697,6 +703,9 @@ class ExtUI(base.UI):
             #~ ar = ext_requests.ViewReportRequest(request,rh,rh.report.list_action)
             ar = ext_requests.ViewReportRequest(request,rh,rh.report.default_action)
             instance = ar.create_instance()
+            # store uploaded files
+            if rh.report.handle_uploaded_files is not None:
+                rh.report.handle_uploaded_files(request,instance)
             return self.form2obj_and_save(rh,request.POST,instance,force_insert=True)
             
             #~ rh.store.form2obj(request.POST,instance)
@@ -861,7 +870,8 @@ class ExtUI(base.UI):
                 
             raise Http404("%s has no action %r" % (ah.report,fmt))
               
-        raise Http404("Method %r not supported for elements of %s" % (request.method,ah.report))
+        return error_response("Method %r not supported for elements of %s" % (request.method,ah.report))
+        #~ raise Http404("Method %r not supported for elements of %s" % (request.method,ah.report))
         
         
         
@@ -879,6 +889,7 @@ class ExtUI(base.UI):
         f = open(fn,'w')
         f.write("""// site.js --- generated %s by Lino version %s.\n""" % (time.ctime(),lino.__version__))
         f.write("LANGUAGE_CHOICES = %s;\n" % py2js(list(LANGUAGE_CHOICES)))
+        f.write("MEDIA_URL = %r;\n" % settings.MEDIA_URL)
         for rpt in reports.master_reports + reports.slave_reports + reports.generic_slaves.values():
             rh = rpt.get_handle(self) # make sure that setup_handle is called (which adds the window_wrapper)
             f.write("Ext.namespace('Lino.%s')\n" % rpt)
@@ -1069,28 +1080,6 @@ class ExtUI(base.UI):
         return url
         
         
-        
-    #~ def show_report(self,ar,rh,**kw):
-        #~ ar.show_window(rh.window_wrapper.js_render)
-
-    #~ def show_detail(self,ar):
-        #~ ar.show_window(ar.action.window_wrapper.js_render)
-
-    #~ def show_action_window(self,ar,action):
-        #~ ar.response.update(js_code = action.window_wrapper.js_render)
-        #~ ar.show_window(action.window_wrapper.js_render)
-
-    #~ def show_properties(self,ar,**kw):
-        #~ ar.show_window(ar.rh.properties.window_wrapper.js_render)
-        
-        
-    #~ def view_form(self,dlg,**kw):
-        #~ "called from ViewForm.run_in_dlg()"
-        #~ frm = dlg.actor
-        #~ fh = self.get_form_handle(frm)
-        #~ yield dlg.show_window(fh.window_wrapper.js_render).over()
-        
-        
     def py2js_converter(self,v):
         if v is LANGUAGE_CHOICES:
             return js_code('LANGUAGE_CHOICES')
@@ -1114,24 +1103,6 @@ class ExtUI(base.UI):
 
     def get_actor_url(self,actor,*args,**kw):
         return self.build_url("api",actor.app_label,actor._actor_name,*args,**kw)
-        
-    def unused_get_action_url(self,action,fmt=None,**kw):
-        #~ if isinstance(action,properties.PropertiesAction):
-            #~ action = properties.PropValuesByOwner().default_action
-        #~ if isinstance(action,reports.SlaveGridAction):
-            #~ action = action.slave.default_action
-            #~ return build_url("/api",action.actor.app_label,action.actor._actor_name,action.name,**kw)
-        if fmt:
-            name = action.name+'.'+fmt
-        else:
-            name = action.name
-        return self.build_url("api",action.actor.app_label,action.actor._actor_name,name,**kw)
-        #~ url = "/action/" + a.app_label + "/" + a._actor_name 
-        #~ if len(kw):
-            #~ url += "?" + urlencode(kw)
-        #~ return url
-        
-        
         
         
     def action_window_wrapper(self,a,h):

@@ -115,6 +115,7 @@ def get_for_field(fld):
     return getattr(fld,'_lino_chooser',None)
 
 def uses_simple_values(fld):
+    "used by :class:`lino.ui.extjs.ext_store.Store`"
     if isinstance(fld,models.ForeignKey):
         return False
     ch = get_for_field(fld)

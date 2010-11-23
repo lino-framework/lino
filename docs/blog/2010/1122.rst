@@ -1,0 +1,49 @@
+20101122
+========
+
+
+During the week-end I probably found a suitable solution for the 
+"possibility to show a previously uploaded file." 
+Simply by clicking on the TextField (which is not editable).
+
+TODO: 
+
+- The same trick might be used for URLField (instead of a TwinTrigger)
+
+- A request to `/api/` will sometimes return JSON, sometimes HTML.
+  When an AJAX action expects JSON and gets a HTML 404 response, 
+  the JSON parser may behave unexpectedly. 
+  No ideas yet on how to optimize this...
+
+
+Now there's still this problem:
+
+- Lino.submit_detail uses POST instead of PUT 
+  when submitting a form with `filesUpload=true`.
+  
+This is because file uploads work only with method POST. 
+ExtJS accordingly forces a POST although I specify PUT.
+Consequence: when modifying an existing upload 
+there may not be any ``<input type="file">``!
+So the "probably suitable solution" wasn't yet suitable...
+
+FileFieldElement must generate a :js:class:`Lino.Filefield` 
+when in an Insert form, and something similar to an URLField 
+when in a Detail form. Currently there is only one LayoutHandle 
+used for both detail and insert views. 
+A FileFieldElement doesn't even know wheter it is in 
+a Detail or in an Insert form.
+
+The solution for this appearently hard problem was simple: the decision 
+is done in :xfile`lino.js`::
+
+  Lino.file_field_handler = function(ww,config) {
+    if (ww instanceof Lino.DetailWrapper) {
+        return new Lino.FileField(config);
+    }else{
+        ww.fileUpload = true;
+        return new Ext.ux.form.FileUploadField(config);
+    }
+  }
+
+

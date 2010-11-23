@@ -27,8 +27,9 @@ Subpackages
     lino.test_apps
     lino.ui
     lino.utils
-    lino.utils.printable
     lino.utils.sqllog
+    lino.mixins
+    lino.mixins.printable
     lino.demos
 
 

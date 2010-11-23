@@ -1,0 +1,11 @@
+:label_align: top
+
+main =
+    file #user
+    description 
+    person company
+    reminder_date reminder_text
+    modified created
+    # show_date show_time 
+    # show_date time timestamp
+    

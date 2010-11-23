@@ -25,7 +25,6 @@ import lino
 from lino import reports
 #~ from lino import layouts
 from lino.utils import perms
-#~ from lino.utils import mixins
 
 from lino import fields
 from lino.modlib.contacts.utils import join_words

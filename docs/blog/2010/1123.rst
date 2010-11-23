@@ -1,0 +1,22 @@
+20101123
+========
+
+Noch kleine Bugfixes:
+
+- Im Detail waren die Navigator-Buttons abhanden gekommen
+  (das war ein Bug in :js:func:`Lino.FormPanel.constructor`).
+
+- `MultiValueDictKeyError: "Key 'file' not found in <MultiValueDict: {}>"` kam, 
+  weil ich :extjs:`Ext.form.BasicForm` `fileUpload` nicht gesetzt hatte. 
+  
+- Neue Reports MyUploads und MyContracts. Neuer mixin `ByUser`.
+
+- Leere Foreign Keys wurden in Grids als ein anklickbares "null"  angezeigt. 
+  Lino.fk_renderer
+  
+- `reminder_text` has now a selection list. 
+  This list is currently statically defined 
+  in :data:`lino.mixins.reminder.REMINDER_TEXT_CHOICES` 
+  which is definitively not the definitive place.
+
+  

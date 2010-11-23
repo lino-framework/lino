@@ -9,10 +9,27 @@ for which I hope for help from other people.
 Before version 1.0
 ------------------
 
+- ui.get_detail_url() gibt eine URL, die den betreffenden Record öffnet. 
+  Wird benutzt, um in der `welcome.html` die Reminder eines Vertrags oder eines Uploads anklickbar zu machen.
+  In diesem Detail sollten jedoch keine Navigations-Buttons sein, 
+  denn die beziehen sich ja dann auf den selten benutzten Model-Report Contracts bzw. Uploads, 
+  der die Records aller Benutzer und Personen durchblättert.
+
+- MyUploads müsste eigentlich nach `modified` sortiert sein. Ist er aber nicht.
+  Idem für MyContracts. Kann es sein, dass order_by insgesamt nicht funktioniert?
+
+- The main window also needs a `Refresh` button. 
+  Maybe should be automatically refreshed when it was hidden by another window and becomes visible again.
+  
+- Make doctemplates editable using webdav. 
+  New button "edit template" on PrintableType.
+
+- How to import/render BIC:IBAN account numbers?
+
 - After printing or saving, the calling grid or detail should  
   get refreshed, because printing usually will set the must_build flag,
   and every change in general may modify disabled_fields.
-
+  
 - Auch `watch_tim` automatisch nach reboot starten.
   Irgendwie müssen ungefähr die folgenden Befehle in der :file:`/etc/init.d` 
   gerufen werden::
@@ -36,14 +53,11 @@ Before version 1.0
 
 - "Insert as copy"
 
-- Wie kann ich die Test-Templates für Notizen in den code repository rein kriegen?
-  Er soll sie dann auch unabhängig von der Sprache finden. 
-  Vielleicht werde ich doctemplates in die config-directories verschieben 
-  und mein System von config-Dateien erweitern, dass es auch Unterverzeichnisse verträgt.
-  Siehe :doc:`/blog/2010/1029`, :doc:`/blog/2010/1112`.
-  
 Waiting for feedback
 --------------------
+
+- Make it configurable (site-wide, per user,...)
+  whether external links should open a new window or not.
 
 - Um eine zuvor generierte druckbare Datei wieder zu löschen 
   (damit sie neu generiert wird), 
@@ -83,6 +97,12 @@ Waiting for feedback
 After version 1.0
 -----------------
 
+- Wie kann ich die Test-Templates für Notizen in den code repository rein kriegen?
+  Er soll sie dann auch unabhängig von der Sprache finden. 
+  Vielleicht werde ich doctemplates in die config-directories verschieben 
+  und mein System von config-Dateien erweitern, dass es auch Unterverzeichnisse verträgt.
+  Siehe :doc:`/blog/2010/1029`, :doc:`/blog/2010/1112`.
+  
 - Hauptmenü nicht anzeigen, wenn ein Fenster offen ist. 
   Stattdessen ein bequemer Button, um ein weiteres Browserfenster mit Lino zu öffnen.
   Weil die Benutzer sonst irgendwann einen Stack overflow kriegen, 

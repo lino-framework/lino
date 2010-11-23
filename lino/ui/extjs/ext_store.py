@@ -53,17 +53,14 @@ class StoreField(object):
     def parse_form_value(self,v):
         return self.field.to_python(v)
         
+    def value_from_object(self,request,obj):
+        return self.field.value_from_object(obj)
+        
     def obj2list(self,request,obj):
-        return [self.field.value_from_object(obj)]
+        return [self.value_from_object(request,obj)]
         
     def obj2dict(self,request,obj,d):
-        if True:
-            d[self.field.name] = self.field.value_from_object(obj)
-        else:
-            try:
-                d[self.field.name] = self.field.value_from_object(obj)
-            except ValueError,e:
-                logger.exception(e)
+        d[self.field.name] = self.value_from_object(request,obj)
 
     def form2obj(self,instance,post_data):
         v = post_data.get(self.field.name,None)
@@ -73,7 +70,7 @@ class StoreField(object):
             #~ # e.g. id field may be empty
             #~ v = None
         v = self.parse_form_value(v)
-        if self.field.primary_key and instance.pk:
+        if self.field.primary_key and instance.pk is not None:
             if instance.pk == v:
                 return
             raise exceptions.ValidationError({
@@ -183,6 +180,12 @@ class DateStoreField(StoreField):
         return v
 
 
+class FileFieldStoreField(StoreField):
+  
+    def value_from_object(self,request,obj):
+        ff = self.field.value_from_object(obj)
+        return ff.name
+        
 class MethodStoreField(StoreField):
   
     def value_from_object(self,request,obj):
@@ -362,11 +365,12 @@ class Store:
         #~ for df in list_fields | detail_fields: # set union
         for df in fields: 
             sf = self.create_field(df)
-            self.fields.append(sf)
-            if df in list_fields:
-                self.list_fields.append(sf)
-            if df in detail_fields:
-                self.detail_fields.append(sf)
+            if sf:
+                self.fields.append(sf)
+                if df in list_fields:
+                    self.list_fields.append(sf)
+                if df in detail_fields:
+                    self.detail_fields.append(sf)
             
         #~ fields = list(fields)
         #~ self.pk_index = fields.index(self.pk)
@@ -415,6 +419,8 @@ class Store:
             return MethodStoreField(fld)
         #~ if isinstance(fld,fields.HtmlBox):
             #~ ...
+        if isinstance(fld,models.FileField):
+            return FileFieldStoreField(fld)
         if isinstance(fld,models.ManyToManyField):
             return StoreField(fld)
         if isinstance(fld,models.OneToOneField):
@@ -454,7 +460,8 @@ class Store:
         for f in self.fields:
             try:
                 f.form2obj(instance,form_values)
-            except exceptions.ValidationError,e:
+            #~ except exceptions.ValidationError,e:
+            except Exception,e:
                 raise exceptions.ValidationError({f.field.name:e})
         #~ for p in properties.Property.properties_for_model(instance.__class__):
             #~ p.form2obj(instance,form_values)
@@ -474,45 +481,3 @@ class Store:
         return d
 
             
-    def unused_ext_options(self):
-        d = Component.ext_options(self)
-        #self.report.setup()
-        #data_layout = self.report.layouts[self.layout_index]
-        d.update(storeId=self.ext_name)
-        d.update(remoteSort=True)
-        #~ if self.report.master is None:
-            #~ d.update(autoLoad=True)
-        #~ else:
-            #~ d.update(autoLoad=False)
-        #url = self.report.get_absolute_url(json=True,mode=self.mode)
-        #url = self.get_absolute_url(json=True)
-        #self.report.setup()
-        url = "/".join(("/api",self.rh.report.app_label,self.rh.report._actor_name+'.json'))
-        proxy = dict(url=url,method='GET')
-        d.update(proxy=js_code(
-          "new Ext.data.HttpProxy(%s)" % py2js(proxy)
-        ))
-        # a JsonStore without explicit proxy sometimes used method POST
-        # d.update(url=self.rr.get_absolute_url(json=True))
-        # d.update(method='GET')
-        d.update(totalProperty='count')
-        d.update(root='rows')
-        d.update(id=self.pk.name)
-        d.update(fields=[js_code(f.as_js()) for f in self.fields])
-        d.update(listeners=dict(exception=js_code("Lino.on_store_exception")))
-        return d
-        
-    def unused_js_after_body(self):
-        for ln in Component.js_after_body(self):
-            yield ln
-        if self.report.master is None:
-            yield "%s.load();" % self.as_ext()
-        else:
-            yield "if (caller) {"
-            yield "caller.main_grid.add_row_listener("
-            yield "  function(sm,rowIndex,record) { Lino.load_master(%s,caller,record)})" % self.as_ext()
-            yield "Lino.load_master(%s,caller,caller.get_current_record());" % self.as_ext()
-            yield "} else %s.load();" % self.as_ext()
-            
-            
-        

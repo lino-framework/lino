@@ -12,6 +12,7 @@ dist
 *\SciTE.session
 
 lino\demos\*\media\cache
+lino\demos\*\media\uploads
 lino\demos\*\data
 lino\demos\*\doctemplates
 lino\demos\*\*.bat

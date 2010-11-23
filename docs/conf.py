@@ -259,7 +259,9 @@ extlinks = {
   'djangoticket': ('http://code.djangoproject.com/ticket/%s', 'Django ticket #'),
 }
     
-#~ intersphinx_mapping = {'dsbe': ('http://dsbe.saffre-rumma.ee', 'http://dsbe.saffre-rumma.ee/objects.inv')}
+#~ intersphinx_mapping = {
+  #~ 'django': ('http://docs.djangoproject.com', 'http://docs.djangoproject.com/en/dev/objects.inv')
+#~ }
 
 
 autosummary_generate = True

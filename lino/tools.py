@@ -18,7 +18,7 @@ from django.utils.importlib import import_module
 
 def default_language():
     """
-    Returns the default language of this website,
+    Returns the default language of this website
     as defined by :setting:`LANGUAGE_CODE` in your :xfile:`settings.py`.
     """
     #~ from django.conf import settings
@@ -89,8 +89,8 @@ def model_label(model):
     
     
     
-def obj2str(i):
-    if i.pk is not None:
+def obj2str(i,force_detailed=False):
+    if not force_detailed and i.pk is not None:
         return "%s %s (%s)" % (i.__class__.__name__,i,i.pk)
     names = [fld.name for (fld,model) in i._meta.get_fields_with_model()]
     s = ','.join(["%s=%r" % (n, getattr(i,n)) for n in names])

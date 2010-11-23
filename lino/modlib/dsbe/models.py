@@ -46,11 +46,12 @@ from lino import reports
 #~ from lino import layouts
 from lino.utils import perms
 #~ from lino.utils import printable
-from lino.utils import mixins
+from lino import mixins
 from lino import fields
 from lino.modlib.contacts import models as contacts
 from lino.modlib.notes import models as notes
 from lino.modlib.links import models as links
+from lino.modlib.uploads import models as uploads
 from lino.models import get_site_config
 from lino.tools import get_field
 from lino.tools import default_language
@@ -685,6 +686,14 @@ class ContractsByType(Contracts):
     fk_name = 'type'
     column_names = "applies_from person company user *"
     order_by = "applies_from"
+
+class MyContracts(mixins.ByUser,Contracts):
+    column_names = "applies_from person company *"
+    label = _("My contracts")
+    #~ order_by = "reminder_date"
+    #~ column_names = "reminder_date person company *"
+    order_by = "applies_from"
+    #~ filter = dict(reminder_date__isnull=False)
 
 
 #

@@ -185,12 +185,12 @@ class BaseDetailWrapper(MasterWrapper):
             self.tabbed = False
             lh = details[0]
             #~ lh.label = None
-            main = ext_elems.FormPanel(rh,action,lh._main)
+            main = ext_elems.FormPanel(rh,action,lh._main,method=self.method)
             WindowWrapper.__init__(self,action,rh.ui,lh,main,**kw)        
         else:
             self.tabbed = True
             tabs = [lh._main for lh in details]
-            main = ext_elems.FormPanel(rh,action,ext_elems.TabPanel(tabs))
+            main = ext_elems.FormPanel(rh,action,ext_elems.TabPanel(tabs),method=self.method)
             WindowWrapper.__init__(self,action,rh.ui,None,main,**kw) 
             
         
@@ -206,10 +206,12 @@ class BaseDetailWrapper(MasterWrapper):
         
         
 class DetailWrapper(BaseDetailWrapper):
+    method = 'PUT'
     pass
   
   
 class InsertWrapper(BaseDetailWrapper):
+    method = 'POST'
     def get_config(self):
         d = BaseDetailWrapper.get_config(self)
         d.update(record_id=-99999);

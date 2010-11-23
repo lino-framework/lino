@@ -67,6 +67,7 @@ INSTALLED_APPS = (
   #~ 'lino.modlib.projects',
   'lino.modlib.notes',
   'lino.modlib.links',
+  'lino.modlib.uploads',
   #'dsbe.modlib.contacts',
   #'dsbe.modlib.projects',
   'lino.modlib.dsbe',

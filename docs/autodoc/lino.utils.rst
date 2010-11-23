@@ -87,14 +87,6 @@ The :mod:`menus` Module
     :undoc-members:
     :show-inheritance:
 
-The :mod:`mixins` Module
-------------------------
-
-.. automodule:: lino.utils.mixins
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 The :mod:`perms` Module
 -----------------------
 

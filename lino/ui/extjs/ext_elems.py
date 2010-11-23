@@ -471,6 +471,22 @@ class CharFieldElement(FieldElement):
         kw.update(maxLength=self.field.max_length)
         return kw
         
+class FileFieldElement(CharFieldElement):
+    #~ xtype = 'fileuploadfield'
+    #~ value_template = "new Lino.FileField(%s)"
+    value_template = "Lino.file_field_handler(ww,%s)"
+    #~ value_template = "%s"
+    
+    #~ def __init__(self,lh,*args,**kw):
+        #~ CharFieldElement.__init__(self,lh,*args,**kw)
+        #~ lh.has_upload = True
+        
+    #~ def get_field_options(self,**kw):
+        #~ kw = CharFieldElement.get_field_options(self,**kw)
+        #~ kw.update(emptyText=_('Select a document to upload...'))
+        #~ # kw.update(buttonCfg=dict(iconCls='upload-icon'))
+        #~ return kw
+    
 class ComboFieldElement(FieldElement):
     #~ value_template = "new Ext.form.ComboBox(%s)"        
     sortable = True
@@ -540,11 +556,18 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
 
 
 
+class TimeFieldElement(FieldElement):
+    xtype = 'timefield'
+    data_type = 'time' # for store column
+    sortable = True
+    preferred_width = 8
+    filter_type = 'time'
+  
 class DateFieldElement(FieldElement):
     xtype = 'datefield'
     data_type = 'date' # for store column
     sortable = True
-    preferred_width = 8 
+    preferred_width = 8
     filter_type = 'date'
     # todo: DateFieldElement.preferred_width should be computed from Report.date_format
     #~ grid_column_template = "new Ext.grid.DateColumn(%s)"
@@ -1148,12 +1171,15 @@ class DetailMainPanel(Panel,MainPanel):
 class TabPanel(jsgen.Component):
 #~ class TabPanel(jsgen.Value):
     value_template = "new Ext.TabPanel(%s)"
+
         
     def __init__(self,tabs,**kw):
         self.active_children = []
         for t in tabs:
             self.active_children += t.active_children
             t.update(listeners=dict(activate=js_code("Lino.on_tab_activate")))
+            #~ if t.has_upload:
+                #~ self.has_upload = True
       
         self.tabs = tabs
         kw.update(
@@ -1193,7 +1219,7 @@ class FormPanel(jsgen.Component):
         )
         if not isinstance(action,actions.InsertRow):
             kw.update(has_navigator=rh.report.has_navigator)
-        
+            
         on_render = []
         elems_by_field = {}
         field_elems = []
@@ -1207,6 +1233,8 @@ class FormPanel(jsgen.Component):
                 l.append(e)
             
         for e in field_elems:
+            #~ if isinstance(e,FileFieldElement):
+                #~ kw.update(fileUpload=True)
             chooser = choosers.get_for_field(e.field)
             if chooser:
                 #~ logger.debug("20100615 %s.%s has chooser", self.lh.layout, e.field.name)
@@ -1234,10 +1262,12 @@ class FormPanel(jsgen.Component):
 _field2elem = (
     (fields.HtmlBox, HtmlBoxElement),
     (models.URLField, URLFieldElement),
+    (models.FileField, FileFieldElement),
     (models.EmailField, CharFieldElement),
     (models.TextField, TextFieldElement),
     (models.CharField, CharFieldElement),
     (models.DateField, DateFieldElement),
+    #~ (models.TimeField, TimeFieldElement),
     (models.IntegerField, IntegerFieldElement),
     (models.DecimalField, DecimalFieldElement),
     (models.BooleanField, BooleanFieldElement),

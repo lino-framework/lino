@@ -338,11 +338,6 @@ class ReportHandle(datalinks.DataLink,base.Handle):
         return self.report.details
         #~ return self.layouts[1:]
           
-    #~ def get_title(self,rr):
-        #~ return self.report.get_title(rr)
-        
-    #~ def request(self,**kw):
-        #~ return self.ui.get_report_ar(self,**kw)
         
     #~ def request(self,*args,**kw):
         #~ ar = ReportActionRequest(self.ui,self.report.list_action)
@@ -604,21 +599,33 @@ class Report(actors.Actor): #,base.Handled):
     Will be filled during :meth:`lino.reports.Report.do_setup`. 
     """
     
-    disabled_fields = None 
+    disabled_fields = None
     """
-    If not None, must be a method that accepts two arguments `request` and `obj` 
-    and returns a list of field names that should not be editable for the specified `obj`.
-    See usage example in :class::`dsbe.models.Persons` and :doc:`/blog/2010/0804`.
+    Return a list of field names that should not be editable 
+    for the specified `obj` and `request`.
+    
+    If defined in the Report, this must be a method that accepts two arguments `request` and `obj`::
+    
+      def disabled_fields(self,request,obj):
+          ...
+          return []
+    
+    If not defined in a subclass, the report will look whether it's model has a `disabled_fields` 
+    method expecting a single argument `request` and install a wrapper to this model method.
+    See also :doc:`/tickets/closed/2`.
     """
     
     disable_delete = None
     """
-    If not None, this must be a method that accepts two arguments `request` and `obj` 
-    and returns either `None` if this `obj` *is allowed* to be deleted by `request`,
+    Return either `None` if this `obj` *is allowed* to be deleted by `request`,
     or a string with a message explaining why, if not.
-    If this is None, the report will 
-    look whether it's Model has a `disable_delete` method.
-    See also :doc:`/tickets/closed/2`.
+    
+    Same remarks as for :attr:`disabled_fields`.
+    """
+    
+    handle_uploaded_files = None
+    """
+    Same remarks as for :attr:`disabled_fields`.
     """
     
     has_navigator = True
@@ -646,11 +653,11 @@ class Report(actors.Actor): #,base.Handled):
         
         if self.model is not None:
           
-            for name in ('disabled_fields','disable_delete'):
+            for name in ('disabled_fields','disable_delete','handle_uploaded_files'):
                 if getattr(self,name) is None:
                     m = getattr(self.model,name,None)
                     if m is not None:
-                        logger.info('Install model method %s.%s to %s',self.model.__name__,name,self)
+                        logger.debug('Install model method %s.%s to %s',self.model.__name__,name,self)
                         setattr(self.__class__,name,model2report(m))
                         
             #~ if self.disable_delete is None:
@@ -807,20 +814,21 @@ class Report(actors.Actor): #,base.Handled):
         Return the title of this Report for the given request `rr`.
         Override this if your Report's title should mention for example filter conditions.
         """
-        #~ if self.title is None:
-            #~ return self.label
-        title = self.title or self.label
         assert rr is not None
         #~ if rr is not None and self.master is not None:
         if self.master is not None:
-            title += ": " + unicode(rr.master_instance)
-        return title
+            return _("%(details)s by %(model)s %(master)s") % dict(
+              model=self.master._meta.verbose_name,
+              #~ model=rr.master_instance._meta.verbose_name,
+              details=self.model._meta.verbose_name_plural,
+              master=rr.master_instance)
+        return self.title or self.label
         
     def get_queryset(self):
         """
         Return an iterable over the items processed by this report.
-        Override this to use e.g. select_related().
-        Or for example :class:`lino.utils.mixins.RemindesrByUser` (returns a list).
+        Override this to use e.g. select_related()
+        or to return a list.
         """
         return self.model.objects.all()
       

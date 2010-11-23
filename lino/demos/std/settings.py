@@ -90,8 +90,8 @@ USE_I18N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-# Used by FileSystemStorage
-# Lino generates the :xfile:`site.js` there
+# Used by FileSystemStorage.
+# Lino generates the :xfile:`site.js` there.
 if sys.platform == 'win32': # development server
     MEDIA_ROOT = abspath(join(PROJECT_DIR,'media'))
 else:

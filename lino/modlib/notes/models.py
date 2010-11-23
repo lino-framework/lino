@@ -27,7 +27,7 @@ from lino import reports
 #~ from lino import layouts
 from lino.utils import perms
 #~ from lino.utils import printable
-from lino.utils import mixins
+from lino import mixins
 from django.conf import settings
 #~ from lino import choices_method, simple_choices_method
 
@@ -116,19 +116,17 @@ class Notes(reports.Report):
     #~ label = _("Notes")
 
 
-class MyNotes(Notes):
-    fk_name = 'user'
+class MyNotes(mixins.ByUser,Notes):
+    #~ fk_name = 'user'
     column_names = "date subject *"
     hide_columns = "body"
-    can_view = perms.is_authenticated
+    #~ can_view = perms.is_authenticated
     label = _("My notes")
     order_by = "date"
     
-    def setup_request(self,req):
-        #print 20091211, "MyNotes.setup_request"
-        if req.master_instance is None:
-            req.master_instance = req.get_user()
-            #print req.master_instance
+    #~ def setup_request(self,req):
+        #~ if req.master_instance is None:
+            #~ req.master_instance = req.get_user()
 
 #~ class NotesByProject(Notes):
     #~ fk_name = 'project'
