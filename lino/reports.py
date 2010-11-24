@@ -46,7 +46,7 @@ import lino
 #~ from lino import layouts
 from lino import actions
 from lino.utils import perms, menus
-from lino.utils import printable
+#~ from lino.utils import printable
 from lino.core import datalinks
 from lino.core import boolean_texts
 from lino.core import actors
@@ -762,14 +762,6 @@ class Report(actors.Actor): #,base.Handled):
             if m:
                 m(self)
         
-    #~ def load_detail(self,cd,filename):
-        #~ fn = os.path.join(cd.name,filename)
-        #~ logger.info("Loading %s...",fn)
-        #~ s = open(fn).read()
-        #~ dtl = DetailLayout(s,cd,filename)
-        #~ self.detail_layouts = list(self.detail_layouts) # disconnect from base class
-        #~ self.detail_layouts.append(dtl)
-        
 
     def get_grid_config_file(self):
         filename = str(self) + ".py"
@@ -777,28 +769,13 @@ class Report(actors.Actor): #,base.Handled):
         
     def save_config(self):
         filename = self.get_grid_config_file()
-        logger.info("save_config() -> %s",filename)
         f = open(filename,'w')
         f.write("# Generated file. Delete it to restore factory settings.\n")
         f.write('self.grid_configs = %s\n' % pprint.pformat(self.grid_configs))
         f.close()
+        return "Grid Config has been saved to %s" % filename
         
-        #~ f.write('self.reset_details()\n')
-        #~ for dtl in self.detail_layouts:
-            #~ kw = ','.join(['%s=%r' % (k,force_unicode(v)) for k,v in dtl._kw.items()])
-            #~ f.write('self.add_detail(%s,%s)\n' % (pprint.pformat(dtl._desc),kw))
             
-    #~ def debug_summary(self):
-        #~ if self.model is not None:
-            #~ return '%s detail_layouts=%s' % (self.__class__,[l.__class__ for l in self.detail_layouts])
-        #~ return self.__class__
-        
-    #~ def add_actions(self,*args):
-        #~ """Used in Model.setup_report() to specify actions for each report on
-        #~ this model."""
-        #~ self.actions += args
-        #~ for a in more_actions:
-            #~ self._actions.append(a)
         
     def data_elems(self):
         for de in data_elems(self.model): yield de

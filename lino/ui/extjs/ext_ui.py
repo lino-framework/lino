@@ -99,7 +99,9 @@ def parse_int(s,default=None):
     if s is None: return None
     return int(s)
 
-def json_response_kw(**kw):
+def json_response_kw(msg=None,**kw):
+    if msg:
+        kw.update(message=msg)
     return json_response(kw)
     
 def json_response(x):
@@ -107,10 +109,11 @@ def json_response(x):
     #return HttpResponse(s, mimetype='text/html')
     s = py2js(x)
     #logger.debug("json_response() -> %r", s)
-    return HttpResponse(s, mimetype='text/html')
+    return HttpResponse(s, mimetype='text/json')
+    #~ return HttpResponse(s, mimetype='text/html')
     
-def error_response(e,message_prefix=''):
-    kw = dict(success=False)
+def error_response(e,message_prefix='',**kw):
+    kw.update(success=False)
     if hasattr(e, 'message_dict'):
         kw.update(errors=e.message_dict)
     kw.update(message=message_prefix+unicode(e))
@@ -651,7 +654,8 @@ class ExtUI(base.UI):
         rpt = actors.get_actor2(app_label,actor)
         if not rpt.can_config.passes(request.user):
             msg = _("User %(user)s cannot configure %(report)s.") % dict(user=request.user,report=rpt)
-            return http.HttpResponseForbidden(msg)
+            return error_response(msg)
+            #~ return http.HttpResponseForbidden(msg)
         if request.method == 'PUT':
             PUT = http.QueryDict(request.raw_post_data)
             gc = dict(
@@ -674,9 +678,10 @@ class ExtUI(base.UI):
             gc.update(label=PUT.get('label',name))
             
             rpt.grid_configs[name] = gc
-            rpt.save_config()
+            msg = rpt.save_config()
             self.build_site_js()            
-            return json_response_kw(success=True)
+            return self.success_response(msg)
+            #~ return json_response_kw(success=True)
             
         raise NotImplementedError
         
@@ -826,7 +831,6 @@ class ExtUI(base.UI):
                 msg = "Failed to delete %s." % element_name(elem)
                 return error_response(msg)
                 #~ raise Http404(msg)
-              
             return HttpResponseDeleted()
             
         if request.method == 'PUT':
@@ -863,8 +867,17 @@ class ExtUI(base.UI):
                 if isinstance(a,actions.RedirectAction):
                     target = a.get_target_url(elem)
                     if target is None:
-                        raise Http404("%s could not build %r" % (a,elem))
+                        raise Http404("%s failed for %r" % (a,elem))
                     return http.HttpResponseRedirect(target)
+                    
+                if isinstance(a,actions.RowAction):
+                    try:
+                        return a.run(self,elem)
+                    except Exception,e:
+                        msg = "Action %s failed for %s: " % (a,element_name(elem))
+                        logger.info(msg)
+                        logger.exception(e)
+                        return error_response(e,msg)
                   
                 raise NotImplementedError("Action %s is not implemented)" % a)
                 
@@ -874,6 +887,13 @@ class ExtUI(base.UI):
         #~ raise Http404("Method %r not supported for elements of %s" % (request.method,ah.report))
         
         
+    def error_response(self,*args,**kw):
+        kw.update(success=False)
+        return error_response(*args,**kw)
+        
+    def success_response(self,*args,**kw):
+        kw.update(success=True)
+        return json_response_kw(*args,**kw)
         
     def site_js_parts(self):
     #~ def js_cache_name(self):
@@ -1027,9 +1047,6 @@ class ExtUI(base.UI):
         return json_response(d)
         
 
-    def unused_get_actor_url(self,rpt,*args,**kw):
-        return self.build_url("api",rpt.app_label,rpt._actor_name,*args,**kw)
-
     def get_choices_url(self,fke,**kw):
         return self.build_url("choices",
             fke.lh.rh.report.app_label,
@@ -1051,35 +1068,6 @@ class ExtUI(base.UI):
         rpt = obj.__class__._lino_model_report
         return self.build_url('api',rpt.app_label,rpt._actor_name,str(obj.pk),*args,**kw)
       
-    def unused_get_report_url(self,rh,master_instance=None,
-            submit=False,grid_afteredit=False,grid_action=None,run=False,csv=False,**kw):
-        #~ logger.debug("get_report_url(%s)", [rh.name,master_instance,
-            #~ simple_list,submit,grid_afteredit,action,kw])
-        if grid_afteredit:
-            url = "/grid_afteredit/"
-        elif submit:
-            url = "/submit/"
-        elif grid_action:
-            url = "/grid_action/"
-        elif run:
-            url = "/action/"
-        elif csv:
-            url = "/csv/"
-        else:
-            #~ url = "/list/"
-            url = "/api/"
-        url += rh.report.app_label + "/" + rh.report._actor_name
-        if grid_action:
-            url += "/" + grid_action
-        if master_instance is not None:
-            kw[ext_requests.URL_PARAM_MASTER_PK] = master_instance.pk
-            mt = ContentType.objects.get_for_model(master_instance.__class__).pk
-            kw[ext_requests.URL_PARAM_MASTER_TYPE] = mt
-        if len(kw):
-            url += "?" + urlencode(kw)
-        return url
-        
-        
     def py2js_converter(self,v):
         if v is LANGUAGE_CHOICES:
             return js_code('LANGUAGE_CHOICES')
@@ -1106,8 +1094,7 @@ class ExtUI(base.UI):
         
         
     def action_window_wrapper(self,a,h):
-        #~ if isinstance(a,printable.PrintAction): return ext_windows.DownloadRenderer(self,a)
-        if isinstance(a,actions.DeleteSelected): return ext_windows.DeleteRenderer(self,a)
+        #~ if isinstance(a,actions.DeleteSelected): return ext_windows.DeleteRenderer(self,a)
         #~ if isinstance(a,actions.UpdateRowAction): return ext_windows.UpdateRowRenderer(self,a)
           
         if isinstance(a,actions.GridEdit):
@@ -1118,9 +1105,6 @@ class ExtUI(base.UI):
             
         if isinstance(a,actions.ShowDetailAction):
             return ext_windows.DetailWrapper(h,a)
-
-        
-        
         
     def setup_handle(self,h):
         #~ if isinstance(h,layouts.TabPanelHandle):
@@ -1137,7 +1121,6 @@ class ExtUI(base.UI):
             for a in h.get_actions():
                 a.window_wrapper = self.action_window_wrapper(a,h)
                 
-            
     def source_dir(self):
         return os.path.abspath(os.path.dirname(__file__))
         
@@ -1146,14 +1129,18 @@ class ExtUI(base.UI):
             kw.update(panel_btn_handler=js_code('Lino.submit_detail'))
         elif isinstance(a,actions.SubmitInsert):
             kw.update(panel_btn_handler=js_code('Lino.submit_insert'))
-        elif isinstance(a,actions.UpdateRowAction):
-            kw.update(panel_btn_handler=js_code('Lino.update_row_handler(%r)' % a.name))
+        #~ elif isinstance(a,actions.UpdateRowAction):
+            #~ kw.update(panel_btn_handler=js_code('Lino.update_row_handler(%r)' % a.name))
         elif isinstance(a,actions.ShowDetailAction):
             kw.update(panel_btn_handler=js_code('Lino.show_detail_handler(Lino.%s)' % a))
         elif isinstance(a,actions.InsertRow):
             kw.update(panel_btn_handler=js_code("Lino.show_insert_handler(Lino.%s)" % a))
-        elif isinstance(a,actions.RedirectAction):
-            kw.update(panel_btn_handler=js_code("Lino.show_download_handler(%r)" % a.name))
+        elif isinstance(a,actions.DeleteSelected):
+            kw.update(panel_btn_handler=js_code("Lino.delete_selected" % a))
+        #~ elif isinstance(a,actions.RedirectAction):
+            #~ kw.update(panel_btn_handler=js_code("Lino.show_download_handler(%r)" % a.name))
+        elif isinstance(a,actions.RowAction):
+            kw.update(panel_btn_handler=js_code("Lino.row_action_handler(%r)" % a.name))
         else:
             kw.update(panel_btn_handler=js_code("Lino.%s" % a))
         kw.update(

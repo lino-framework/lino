@@ -1,0 +1,40 @@
+20101124
+========
+
+The action framework gets adult
+-------------------------------
+
+This was a challenging one:
+
+- After printing or saving, the calling grid or detail should  
+  get refreshed, because printing usually will set the must_build flag,
+  and every change in general may modify `disabled_fields`.
+  
+The "clear cache" button now also works. 
+
+ExtUI now calls `RowAction.run()` for these Actions. 
+Currently only for RowAction, but this might be generalized (later).
+That's finally the missing piece in Lino's actions framework.
+
+"Edit Template" button for Printables
+-------------------------------------
+
+- Make doctemplates editable using webdav. 
+  New button "edit template" on PrintableType or Printable.
+  Instructions in :doc:`/admin/install`.
+
+The doctemplates directory (which until now was in 
+``settings.PROJET_DIR + "/doctemplates"``) 
+is now expected to be in 
+``settings.MEDIA_ROOT + "/webdav/doctemplates"``. 
+
+Removed bottom toolbar from grid
+--------------------------------
+
+In a Detail with slave grids there were too many buttons.
+As a first suggestion for fixing this, I removed the bottom toolbar completely.
+The row actions of a grid are now only in context menu of each row. 
+The "Save GC" button has become a tool of the window 
+and can be used only when the record is in its own window.
+TODO: doubleclick should open the detail, and F2 should start editing the cell.
+

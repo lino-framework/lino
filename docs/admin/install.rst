@@ -184,28 +184,34 @@ You'll also need to configure Apache to do HTTP authentication: :doc:`ApacheHttp
 Static files
 ------------
 
-Lino uses 4 sets of static files:
+Lino uses the following types of static files:
 
-================= =========================================== ============================================
-Prefix            Description                                 location                
-================= =========================================== ============================================
-/media/extjs/     ExtJS library                               /var/snapshots/ext-3.2.1/ 
-/media/lino/      lino.js and lino.css                        /var/snapshots/lino/lino/ui/extjs/media/
-/media/cache/     files generated and served by 
-                  lino.modlib.documents                       /var/snapshots/lino/lino/demos/dsbe/media/ 
-/media/beid/      image files for dsbe.models.PersonDetail    ... 
-================= =========================================== ============================================
+=========================== =========================================== ============================================
+Prefix                      Description                                 location                
+=========================== =========================================== ============================================
+/media/extjs/               ExtJS library                               /var/snapshots/ext-3.2.1/ 
+/media/lino/                lino.js and lino.css                        /var/snapshots/lino/lino/ui/extjs/media/
+/media/cache/               files generated and served by 
+                            lino.modlib.documents                       /var/snapshots/lino/lino/demos/dsbe/media/ 
+/media/beid/                image files for dsbe.models.PersonDetail    ... 
+/media/upload/              Uploaded files                              
+/media/webdav/              User-editable files 
+/media/webdav/doctemplates  local doctemplates directory
+=========================== =========================================== ============================================
 
 The prefixes are currently not configurable.
 
-For the development server, these mappings are done automatically in `urls.py`. 
+The development server does these mappings automatically in `urls.py`. 
 
 On a production server you'll probably add an ``Alias /media/ /usr/local/django/myproject/media/`` 
 directive in your Apache config, and then use symbolic links in :file:`/usr/local/django/myproject/media/`::
 
   mkdir /usr/local/django/myproject/media
   cd /usr/local/django/myproject/media
-  mkdir pdf_cache
+  mkdir cache
+  mkdir upload
+  mkdir webdav
+  mkdir webdav/doctemplates
   ln -s /var/snapshots/lino/lino/ui/extjs/media lino
   ln -s /var/snapshots/ext-3.2.1 extjs
 

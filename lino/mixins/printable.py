@@ -79,7 +79,12 @@ class BuildMethod:
         #~ self.templates_dir = os.path.join(settings.PROJECT_DIR,'templates',self.name)
         #~ if self.templates_name is None:
             #~ self.templates_name = self.name
-        self.templates_dir = os.path.join(settings.PROJECT_DIR,'doctemplates',self.templates_name or self.name)
+        #~ self.templates_dir = os.path.join(settings.PROJECT_DIR,'doctemplates',self.templates_name or self.name)
+        if self.templates_name is None:
+            self.templates_name = self.name
+        self.templates_dir = os.path.join(settings.MEDIA_ROOT,'webdav','doctemplates',self.templates_name)
+        self.templates_url = '/'.join((settings.MEDIA_URL,'webdav','doctemplates',self.templates_name))
+        
 
             
     def __unicode__(self):
@@ -130,6 +135,8 @@ class BuildMethod:
         except TemplateDoesNotExist,e:
             raise Exception("No template found for %s (%s)" % (tpls,e))
 
+    def get_template_url(self,elem):
+        raise NotImplementedError
         
     def render_template(self,elem,tpl): # ,MEDIA_URL=settings.MEDIA_URL):
         context = dict(
@@ -173,21 +180,29 @@ class PisaBuildMethod(BuildMethod):
 
 class SimpleBuildMethod(BuildMethod):
   
-    def build(self,elem):
-        target = self.before_build(elem)
-        if not target:
-            return
-            
+    def get_template(self,elem):
         tpls = elem.get_print_templates(self)
-        if not tpls:
-            return
+        #~ if not tpls:
+            #~ return
         if len(tpls) != 1:
             raise Exception(
               "%s.get_print_templates() must return exactly 1 template (got %r)" % (
                 elem.__class__.__name__,tpls))
-                
+        return tpls[0]
+        
+    def get_template_url(self,elem):
+        tpl = self.get_template(elem)
         lang = elem.get_print_language(self)
-        tpl = os.path.normpath(os.path.join(self.templates_dir,lang,tpls[0]))
+        return '/'.join((self.templates_url,lang,tpl))
+        
+    def build(self,elem):
+        target = self.before_build(elem)
+        if not target:
+            return
+        tpl = self.get_template(elem)
+        lang = elem.get_print_language(self)
+        tpl = os.path.normpath(os.path.join(self.templates_dir,lang,tpl))
+        
         self.simple_build(elem,tpl,target)
         
     def simple_build(self,elem,tpl,target):
@@ -318,9 +333,18 @@ def get_template_choices(group,bmname):
     return l
             
     
+def get_build_method(elem):
+    bmname = elem.get_build_method()
+    if not bmname:
+        raise Exception("%s has no build method" % elem)
+    bm = bm_dict.get(bmname,None)
+    if bm is None:
+        raise Exception("Build method %r doesn't exist. Requested by %r." % (bmname,elem))
+    return bm
         
 
-class PrintAction(actions.RedirectAction):
+#~ class PrintAction(actions.RedirectAction):
+class PrintAction(actions.RowAction):
     """Note that this action should rather be called 
     'Open a printable document' than 'Print'.
     For the user they are synonyms as long as Lino doesn't support server-side printing.
@@ -329,24 +353,39 @@ class PrintAction(actions.RedirectAction):
     label = _('Print')
     callable_from = None
     #~ needs_selection = True
-  
-    def get_target_url(self,elem):
-        bmname = elem.get_build_method()
-        if not bmname:
-            return None
-        pm = bm_dict.get(bmname,None)
-        if pm is None:
-            raise Exception("Build method %r doesn't exist. Requested by %r." % (bmname,elem))
-        pm.build(elem)
-        elem.must_build = False
-        elem.save()
-        return settings.MEDIA_URL + "/".join(pm.get_target_parts(elem))
-        
     
-class ClearCacheAction(actions.UpdateRowAction):
+    def run(self,ui,elem,**kw):
+        bm = get_build_method(elem)
+        if elem.must_build:
+            bm.build(elem)
+            elem.must_build = False
+            elem.save()
+            kw.update(refresh=True)
+            kw.update(message="%s printable has been build." % elem)
+        else:
+            kw.update(message="Reused %s printable from cache." % elem)
+        target = settings.MEDIA_URL + "/".join(bm.get_target_parts(elem))
+        return ui.success_response(open_url=target,**kw)
+      
+    
+class EditTemplateAction(actions.RowAction):
+    name = 'tpledit'
+    label = _('Edit template')
+    
+    def run(self,ui,elem,**kw):
+        bm = get_build_method(elem)
+        target = bm.get_template_url(elem)
+        return ui.success_response(open_url=target,**kw)
+    
+class ClearCacheAction(actions.RowAction):
+#~ class ClearCacheAction(actions.UpdateRowAction):
     name = 'clear'
     label = _('Clear cache')
     
+    def run(self,ui,elem):
+        elem.must_build = True
+        elem.save()
+        return ui.success_response("%s printable cache has been cleared." % elem,refresh=True)
 
 class PrintableType(models.Model):
     """
@@ -382,7 +421,7 @@ class Printable(models.Model):
     Mixin for Models whose instances can "print" (generate a printable document).
     """
     
-    must_build = models.BooleanField(_("must build"),default=True)
+    must_build = models.BooleanField(_("must build"),default=True,editable=False)
     
     class Meta:
         abstract = True
@@ -391,6 +430,7 @@ class Printable(models.Model):
     def setup_report(cls,rpt):
         rpt.add_action(PrintAction(rpt))
         rpt.add_action(ClearCacheAction(rpt))
+        rpt.add_action(EditTemplateAction(rpt))
         #~ super(Printable,cls).setup_report(rpt)
 
     def filename_root(self):

@@ -13,6 +13,7 @@ dist
 
 lino\demos\*\media\cache
 lino\demos\*\media\uploads
+lino\demos\*\media\webdav
 lino\demos\*\data
 lino\demos\*\doctemplates
 lino\demos\*\*.bat

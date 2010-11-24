@@ -1,6 +1,8 @@
 20101123
 ========
 
+Die Uploads sind jetzt in etwa fertig
+
 Noch kleine Bugfixes:
 
 - Im Detail waren die Navigator-Buttons abhanden gekommen
@@ -12,7 +14,7 @@ Noch kleine Bugfixes:
 - Neue Reports MyUploads und MyContracts. Neuer mixin `ByUser`.
 
 - Leere Foreign Keys wurden in Grids als ein anklickbares "null"  angezeigt. 
-  Lino.fk_renderer
+  Darum kümmer sich jetzt :js:func:`Lino.fk_renderer`.
   
 - `reminder_text` has now a selection list. 
   This list is currently statically defined 

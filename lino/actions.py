@@ -222,11 +222,17 @@ class RedirectAction(Action):
         
         
 class ImageAction(RedirectAction):
+#~ class ImageAction(RowAction):
     #~ needs_selection = True
     name = 'image'
-    label = _('Image')
+    #~ label = _('Image')
     callable_from = tuple()
     #~ mimetype = 'image'
+    
+    #~ def run(self,ui,elem,**kw):
+        #~ target = settings.MEDIA_URL + elem.get_image_url(self)
+        #~ return ui.success_response(open_url=target,**kw)
+    
     
     def get_target_url(self,elem):
         #~ return settings.MEDIA_URL + "/".join(elem.get_image_url(self))

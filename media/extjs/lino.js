@@ -51,217 +51,6 @@ Lino.file_field_handler = function(ww,config) {
       //~ return new Lino.FileField(config);
   }
 }
-Lino.unused_FileField = Ext.extend(Ext.ux.form.FileUploadField,{
-    emptyText:'Select a document to upload...',
-    //~ onTriggerClick : function() {
-      //~ console.log('Lino.URLField.onTriggerClick',this.value)
-      //~ document.location = this.value;
-      //~ window.open(this.getValue(),'_blank');
-    //~ },
-    onTextClick : function() {
-      //~ console.log('Lino.FileField.onTextClick',arguments);
-      //~ document.location = this.value;
-      //~ console.log(MEDIA_URL + this.getValue());
-      //~ document.location = MEDIA_URL + this.getValue();
-      if (this.getValue()) window.open(MEDIA_URL + this.getValue(),'_blank');
-    },
-    style: {cursor:'pointer'},
-    onRender : function(ct, position){
-        Lino.FileField.superclass.onRender.call(this, ct, position);
-        this.el.on('click',this.onTextClick);
-        this.el.cursor='pointer'
-    }
-});
-
-/**
- * This is a modified copy of fileuploadfield, extended
-   to provide a second button that shows the (previously) uploaded file.
- */
-Lino.unused_FileField = Ext.extend(Ext.form.TextField,{
-    //~ triggerClass : 'x-form-search-trigger',
-    //~ vtype: 'url',
-    onTextClick : function() {
-      //~ console.log('Lino.FileField.onTextClick',arguments);
-      //~ document.location = this.value;
-      //~ console.log(MEDIA_URL + this.getValue());
-      //~ document.location = MEDIA_URL + this.getValue();
-      window.open(MEDIA_URL + this.getValue(),'_blank');
-    },
-  
-    /**
-     * @cfg {String} buttonText The button text to display on the upload button (defaults to
-     * 'Browse...').  Note that if you supply a value for {@link #buttonCfg}, the buttonCfg.text
-     * value will be used instead if available.
-     */
-    buttonText: 'Browse...',
-    /**
-     * @cfg {Boolean} buttonOnly True to display the file upload field as a button with no visible
-     * text field (defaults to false).  If true, all inherited TextField members will still be available.
-     */
-    buttonOnly: false,
-    /**
-     * @cfg {Number} buttonOffset The number of pixels of space reserved between the button and the text field
-     * (defaults to 3).  Note that this only applies if {@link #buttonOnly} = false.
-     */
-    buttonOffset: 3,
-    /**
-     * @cfg {Object} buttonCfg A standard {@link Ext.Button} config object.
-     */
-
-    // private
-    readOnly: true,
-
-    /**
-     * @hide
-     * @method autoSize
-     */
-    autoSize: Ext.emptyFn,
-
-    // private
-    initComponent: function(){
-        Lino.FileField.superclass.initComponent.call(this);
-
-        this.addEvents(
-            /**
-             * @event fileselected
-             * Fires when the underlying file input field's value has changed from the user
-             * selecting a new file from the system file selection dialog.
-             * @param {Ext.ux.form.FileUploadField} this
-             * @param {String} value The file value returned by the underlying file input field
-             */
-            'fileselected'
-        );
-    },
-
-    // private
-    onRender : function(ct, position){
-        Lino.FileField.superclass.onRender.call(this, ct, position);
-
-        this.wrap = this.el.wrap({cls:'x-form-field-wrap x-form-file-wrap'});
-        this.el.addClass('x-form-file-text');
-        this.el.dom.removeAttribute('name');
-        this.el.on('click',this.onTextClick);
-        this.createFileInput();
-
-        var btnCfg = Ext.applyIf(this.buttonCfg || {}, {
-            text: this.buttonText
-        });
-        this.button = new Ext.Button(Ext.apply(btnCfg, {
-            renderTo: this.wrap,
-            //~ width: 20, height: 20,
-            cls: 'x-form-file-btn' + (btnCfg.iconCls ? ' x-btn-icon' : '')
-        }));
-        // ls 20101121
-        //~ this.button2 = new Ext.Button( {
-            //~ renderTo: this.wrap,
-            //~ text: 'Show',
-            //~ width: 20, height: 20,
-            //~ cls: 'x-form-file-btn' + (btnCfg.iconCls ? ' x-btn-icon' : '')
-        //~ });
-        //~ this.hbox = new Ext.Container({layout:'hbox',layoutConfig: {align:'stretchmax'}, height:150, items:[this.button,this.button2],renderTo: this.wrap});
-
-        if(this.buttonOnly){
-            this.el.hide();
-            this.wrap.setWidth(this.button.getEl().getWidth());
-        }
-
-        this.bindListeners();
-        this.resizeEl = this.positionEl = this.wrap;
-    },
-    
-    bindListeners: function(){
-        this.fileInput.on({
-            scope: this,
-            mouseenter: function() {
-                this.button.addClass(['x-btn-over','x-btn-focus'])
-            },
-            mouseleave: function(){
-                this.button.removeClass(['x-btn-over','x-btn-focus','x-btn-click'])
-            },
-            mousedown: function(){
-                this.button.addClass('x-btn-click')
-            },
-            mouseup: function(){
-                this.button.removeClass(['x-btn-over','x-btn-focus','x-btn-click'])
-            },
-            change: function(){
-                var v = this.fileInput.dom.value;
-                this.setValue(v);
-                this.fireEvent('fileselected', this, v);    
-            }
-        }); 
-    },
-    
-    createFileInput : function() {
-        this.fileInput = this.wrap.createChild({
-            id: this.getFileInputId(),
-            name: this.name||this.getId(),
-            cls: 'x-form-file',
-            tag: 'input',
-            type: 'file',
-            size: 1
-        });
-    },
-    
-    reset : function(){
-        this.fileInput.remove();
-        this.createFileInput();
-        this.bindListeners();
-        Lino.FileField.superclass.reset.call(this);
-    },
-
-    // private
-    getFileInputId: function(){
-        return this.id + '-file';
-    },
-
-    // private
-    onResize : function(w, h){
-        Lino.FileField.superclass.onResize.call(this, w, h);
-
-        this.wrap.setWidth(w);
-
-        if(!this.buttonOnly){
-            var w = this.wrap.getWidth() - this.button.getEl().getWidth() - this.buttonOffset;
-            this.el.setWidth(w);
-        }
-    },
-
-    // private
-    onDestroy: function(){
-        Lino.FileField.superclass.onDestroy.call(this);
-        Ext.destroy(this.fileInput, this.button, this.wrap);
-    },
-    
-    onDisable: function(){
-        Lino.FileField.superclass.onDisable.call(this);
-        this.doDisable(true);
-    },
-    
-    onEnable: function(){
-        Lino.FileField.superclass.onEnable.call(this);
-        this.doDisable(false);
-
-    },
-    
-    // private
-    doDisable: function(disabled){
-        this.fileInput.dom.disabled = disabled;
-        this.button.setDisabled(disabled);
-    },
-
-
-    // private
-    preFocus : Ext.emptyFn,
-
-    // private
-    alignErrorIcon : function(){
-        this.errorIcon.alignTo(this.wrap, 'tl-tr', [2, 0]);
-    }
-   
-  
-});
-
 
 Lino.VBorderPanel = Ext.extend(Ext.Panel,{
     constructor : function(config) {
@@ -313,188 +102,6 @@ Lino.VBorderPanel = Ext.extend(Ext.Panel,{
         Lino.VBorderPanel.superclass.onBodyResize.call(this, w, h);
     }
 });
-
-
-/*
-The following two overrides are from
-http://www.sencha.com/forum/showthread.php?98165-vbox-layout-with-two-grids-grid-collapse-does-not-stretch-non-collapsed-grid&p=463266  
-
-Ext.override(Ext.layout.BoxLayout, {
-    getVisibleItems: function(ct) {
-        var ct  = ct || this.container,
-            t   = ct.getLayoutTarget(),
-            cti = ct.items.items,
-            len = cti.length,
-            i, c, items = [];
-
-        for (i = 0; i < len; i++) {
-            if((c = cti[i]).rendered && this.isValidParent(c, t) && c.hidden !== true){ // no collapsed check
-                items.push(c);
-            }
-        }
-
-        return items;
-    }
-});
-
-Ext.override(Ext.layout.VBoxLayout, {
-    calculateChildBoxes: function(visibleItems, targetSize) {
-        var visibleCount = visibleItems.length,
-
-            padding      = this.padding,
-            topOffset    = padding.top,
-            leftOffset   = padding.left,
-            paddingVert  = topOffset  + padding.bottom,
-            paddingHoriz = leftOffset + padding.right,
-
-            width        = targetSize.width - this.scrollOffset,
-            height       = targetSize.height,
-            availWidth   = Math.max(0, width - paddingHoriz),
-
-            isStart      = this.pack == 'start',
-            isCenter     = this.pack == 'center',
-            isEnd        = this.pack == 'end',
-
-            nonFlexHeight= 0,
-            maxWidth     = 0,
-            totalFlex    = 0,
-
-            //used to cache the calculated size and position values for each child item
-            boxes        = [],
-
-            //used in the for loops below, just declared here for brevity
-            child, childWidth, childHeight, childSize, childMargins, canLayout, i, calcs, flexedHeight, horizMargins, stretchWidth;
-
-            //gather the total flex of all flexed items and the width taken up by fixed width items
-            for (i = 0; i < visibleCount; i++) {
-                child = visibleItems[i];
-                childHeight = child.collapsed ? child.getHeight() : child.height;
-                childWidth  = child.width;
-                canLayout   = !child.hasLayout && Ext.isFunction(child.doLayout);
-
-
-                // Static height (numeric) requires no calcs
-                if (!Ext.isNumber(childHeight)) {
-
-                    // flex and not 'auto' height
-                    if (child.flex && !childHeight) {
-                        totalFlex += child.flex;
-
-                    // Not flexed or 'auto' height or undefined height
-                    } else {
-                        //Render and layout sub-containers without a flex or width defined, as otherwise we
-                        //don't know how wide the sub-container should be and cannot calculate flexed widths
-                        if (!childHeight && canLayout) {
-                            child.doLayout();
-                        }
-
-                        childSize = child.getSize();
-                        childWidth = childSize.width;
-                        childHeight = childSize.height;
-                    }
-                }
-
-                childMargins = child.margins;
-
-                nonFlexHeight += (childHeight || 0) + childMargins.top + childMargins.bottom;
-
-                // Max width for align - force layout of non-layed out subcontainers without a numeric width
-                if (!Ext.isNumber(childWidth)) {
-                    if (canLayout) {
-                        child.doLayout();
-                    }
-                    childWidth = child.getWidth();
-                }
-
-                maxWidth = Math.max(maxWidth, childWidth + childMargins.left + childMargins.right);
-
-                //cache the size of each child component
-                boxes.push({
-                    component: child,
-                    height   : childHeight || undefined,
-                    width    : childWidth || undefined
-                });
-            }
-
-            //the height available to the flexed items
-            var availableHeight = Math.max(0, (height - nonFlexHeight - paddingVert));
-
-            if (isCenter) {
-                topOffset += availableHeight / 2;
-            } else if (isEnd) {
-                topOffset += availableHeight;
-            }
-
-            //temporary variables used in the flex height calculations below
-            var remainingHeight = availableHeight,
-                remainingFlex   = totalFlex;
-
-            //calculate the height of each flexed item, and the left + top positions of every item
-            for (i = 0; i < visibleCount; i++) {
-                child = visibleItems[i];
-                calcs = boxes[i];
-
-                childMargins = child.margins;
-                horizMargins = childMargins.left + childMargins.right;
-
-                topOffset   += childMargins.top;
-
-                if (isStart && child.flex && !child.collapsed && !child.height) {
-                    flexedHeight     = Math.ceil((child.flex / remainingFlex) * remainingHeight);
-                    remainingHeight -= flexedHeight;
-                    remainingFlex   -= child.flex;
-
-                    calcs.height = flexedHeight;
-                    calcs.dirtySize = true;
-                }
-
-                calcs.left = leftOffset + childMargins.left;
-                calcs.top  = topOffset;
-
-                switch (this.align) {
-                    case 'stretch':
-                        stretchWidth = availWidth - horizMargins;
-                        calcs.width  = stretchWidth.constrain(child.minWidth || 0, child.maxWidth || 1000000);
-                        calcs.dirtySize = true;
-                        break;
-                    case 'stretchmax':
-                        stretchWidth = maxWidth - horizMargins;
-                        calcs.width  = stretchWidth.constrain(child.minWidth || 0, child.maxWidth || 1000000);
-                        calcs.dirtySize = true;
-                        break;
-                    case 'center':
-                        var diff = availWidth - calcs.width - horizMargins;
-                        if (diff > 0) {
-                            calcs.left = leftOffset + horizMargins + (diff / 2);
-                        }
-                }
-
-                topOffset += calcs.height + childMargins.bottom;
-            }
-
-        return {
-            boxes: boxes,
-            meta : {
-                maxWidth: maxWidth
-            }
-        };
-    }
-});
-
-
-Lino.collapse_handler = function(ct) {
-  return function onExpandCollapse(c) {
-  //      Horrible Ext 2.* collapse handling has to be defeated...
-      console.log(20100912);
-      if (c.queuedBodySize) {
-          delete c.queuedBodySize.width;
-          delete c.queuedBodySize.height;
-      }
-      ct.doLayout();
-  }
-};
-
-*/
 
 
 /*
@@ -701,17 +308,19 @@ Lino.delete_selected = function(caller) {
   });
 };
 
-Lino.action_handler = function (on_success) {
+Lino.action_handler = function (panel,on_success) {
   return function (response) {
     if (response.responseText) {
       var result = Ext.decode(response.responseText);
       //~ console.log('Lino.do_action()',action.name,'result is',result);
-      if (result.success) on_success(result);
+      if (on_success && result.success) on_success(result);
       if (result.alert_msg) Ext.MessageBox.alert('Alert',result.alert_msg);
       if (result.message) Lino.notify(result.message);
+      if (result.refresh) panel.refresh();
+      if (result.open_url) window.open(result.open_url);
     }
   }
-}
+};
 
 Lino.do_action = function(caller,action) {
   action.success = function(response) {
@@ -841,20 +450,12 @@ Lino.build_buttons = function(panel,actions) {
     var buttons = Array(actions.length);
     var cmenu = Array(actions.length);
     for (var i=0; i < actions.length; i++) { 
-      //~ console.log("build_bbar",btn.text,":",actions[i]);
-      //~ if (actions[i].handler)
-          //~ actions[i].handler = actions[i].handler.createCallback(panel);
       buttons[i] = new Ext.Toolbar.Button(actions[i]);
       cmenu[i] = actions[i]
       if (actions[i].panel_btn_handler) {
           buttons[i].on('click',actions[i].panel_btn_handler.createCallback(panel,buttons[i]));
           cmenu[i].handler = actions[i].panel_btn_handler.createCallback(panel,cmenu[i]);
       }
-      //~ var btn = {
-        //~ text: actions[i].label
-      //~ };
-      //~ btn.handler = actions[i].handler.createCallback(scope);
-      //~ buttons[i] = new Ext.Button(btn);
     }
     return {bbar:buttons, cmenu:new Ext.menu.Menu(cmenu)};
   }
@@ -877,35 +478,6 @@ Lino.do_when_visible = function(cmp,todo) {
       
       Lino.do_when_visible.defer(100,this,[cmp,todo]);
       
-      //~ var ve = cmp.getVisibilityEl();
-      //~ console.log(cmp,'-> cmp is rendered but not visible: forward to visibilityEl', ve);
-      //~ ve.on('click',todo)
-      
-      //~ ve.on('show',function(){console.log('show',cmp)})
-      //~ if (ve == cmp) {
-        //~ console.log(cmp,'visibilityEl is same as cmp: and now?');
-        //~ return
-      //~ }
-      //~ if (ve === undefined) {
-        //~ console.log(cmp,'visibilityEl is undefined: and now?');
-        //~ return
-      //~ }
-      //~ return Lino.do_when_visible(ve,todo)
-      //~ cmp.on('show',function(){console.log('show',cmp)})
-      //~ cmp.on('added',function(){console.log('added',cmp)})
-      //~ cmp.on('afterrender',function(){console.log('afterrender',cmp)})
-      //~ cmp.on('beforestatesave',function(){console.log('beforestatesave',cmp)})
-      //~ cmp.on('enable',function(){console.log('enable',cmp)})
-      //~ cmp.on('hide',function(){console.log('hide',cmp)})
-      //~ cmp.on('render',function(){console.log('render',cmp)})
-      //~ cmp.getVisibilityEl().on('show',todo,cmp,{single:true});
-      //~ if (cmp.hidden) {
-        //~ console.log('Lino.do_when_visible() later (on show)',cmp,todo);
-        //~ cmp.on('show',todo,cmp,{single:true});
-      //~ } else {
-        //~ console.log('Lino.do_when_visible() later (on activate)',cmp,todo);
-        //~ cmp.on('activate',todo,cmp,{single:true});
-      //~ }
     } else {
       //~ console.log(cmp.title,'-> on render');
       cmp.on('afterrender',todo,cmp,{single:true});
@@ -927,22 +499,21 @@ Lino.do_on_current_record = function(panel,fn) {
   return fn(rec);
 };
 
-Lino.show_download_handler = function(fmt) {
+Lino.row_action_handler = function(fmt) {
   return function(panel,btn) {
     Lino.do_on_current_record(panel,function(rec) {
       //~ console.log(panel);
       var url = panel.get_record_url(rec.id);
       var p = Ext.apply({},panel.get_base_params());
       p['fmt'] = fmt;
-      url += "?" + Ext.urlEncode(p);
-      //~ console.log(url);
-      window.open(url);
-      //~ var l = caller.get_selected();
-      //~ if (l.length == 0) Lino.notify('No selection.');
-      //~ console.log('show_download',caller,l)
-      //~ for (var i = 0; i < l.length; i++) 
-          //~ window.open(url + '/' + String(l[i].id) + '?fmt='+fmt)
-      //~ }
+      //~ url += "?" + Ext.urlEncode(p);
+      //~ window.open(url);
+      Ext.Ajax.request({
+        method: 'GET',
+        url: url,
+        params: p,
+        success: Lino.action_handler(panel,function(result){})
+      });
     });
   }
 };
@@ -967,11 +538,11 @@ Lino.show_insert_handler = function(action) {
   }
 };
 
-Lino.update_row_handler = function(action_name) {
-  return function(panel,btn) {
-    Lino.notify("Sorry, " + action_name + " is not implemented.");
-  }
-};
+//~ Lino.update_row_handler = function(action_name) {
+  //~ return function(panel,btn) {
+    //~ Lino.notify("Sorry, " + action_name + " is not implemented.");
+  //~ }
+//~ };
 
 
 Lino.submit_detail = function(panel,btn) {
@@ -1032,7 +603,9 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     //~ console.log('FormPanel.constructor() 1',config)
     //~ Ext.applyIf(config,{base_params:{}});
     //~ console.log('FormPanel.constructor() 2',config)
-    Ext.apply(config,Lino.build_buttons(this,config.ls_bbar_actions));
+    var actions = Lino.build_buttons(this,config.ls_bbar_actions);
+    config.bbar = actions.bbar;
+    //~ Ext.apply(config,Lino.build_buttons(this,config.ls_bbar_actions));
     //~ config.bbar = Lino.build_buttons(this,config.ls_bbar_actions);
     config.tbar = this.tbar_items();
     if (config.has_navigator) {
@@ -1092,8 +665,8 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     this.goto_record_id(this.current_record.id);
   },
   goto_record_id : function(record_id) {
-    console.log('Lino.FormPanel.goto_record_id()',record_id);
-    Lino.notify(); 
+    //~ console.log('Lino.FormPanel.goto_record_id()',record_id);
+    //~ Lino.notify(); 
     var this_ = this;
     Ext.Ajax.request({ 
       waitMsg: 'Loading record...',
@@ -1192,10 +765,10 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
       var params = {desc: editor.getValue()};
       Ext.apply(params,active_tab);
       var a = { 
-        params:params, 
-        method:'PUT',
-        url:'/detail_config'+_this.ls_url,
-        success: Lino.action_handler( function(result) {
+        params: params, 
+        method: 'PUT',
+        url: '/detail_config'+_this.ls_url,
+        success: Lino.action_handler( _this, function(result) {
           win.close();
           document.location = _this.ww.get_permalink();
         })
@@ -1247,21 +820,27 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   },
   load_picture_to : function(cmp,record) {
     //~ console.log('FormPanel.load_picture_to()',record);
+    var doit = function(src) {
+        var f = function() {
+          //~ console.log('Lino.load_picture()',src);
+          cmp.el.dom.src = src;
+        };
+        Lino.do_when_visible(cmp,f);
+    }
     if (record)
-      var src = this.get_record_url(record.id) + "?fmt=image"
+      //~ Ext.Ajax.request({
+        //~ url: this.get_record_url(record.id),
+        //~ params: {fmt:'image'},
+        //~ success: function(result) {
+          //~ var response = Ext.jsondecode
+          //~ doit(response.open_url)
+        //~ }
+      //~ });
+      //~ var src = this.get_record_url(record.id) + "?fmt=image"
+      doit(this.get_record_url(record.id) + "?fmt=image");
       //~ var src = '/api'+this.ww.main_item.ls_url + "/" + record.id + "?fmt=image"
     else
-      var src = 'empty.jpg';
-    var f = function() {
-      //~ console.log('Lino.load_picture()',src);
-      cmp.el.dom.src = src;
-      //~ this.el.dom.onclick = 'Lino.img_onclick(src)';
-      //~ this.el.dom.onclick = 'window.open(src)';
-      //~ cmp.el.on('click',function() {window.open(src)});
-      
-    };
-    Lino.do_when_visible(cmp,f);
-    //~ f();
+      doit('empty.jpg');
   }
 });
 
@@ -1366,15 +945,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     };
     delete config.ls_quick_edit
     
-    config.tbar = new Ext.PagingToolbar({ 
-      prependButtons: true, pageSize: 10, displayInfo: true, 
-      store: config.store, 
-      items: this.tbar_items()
-    });
-    Ext.apply(config,Lino.build_buttons(this,config.ls_bbar_actions));
-    //~ config.bbar, this.cmenu = Lino.build_buttons(this,config.ls_bbar_actions);
-    //~ this.cmenu = new Ext.menu.Menu({items: config.bbar});
-    delete config.ls_bbar_actions
+    var tbar = this.tbar_items()
     
     var menu = [];
     var set_gc = function(name) {
@@ -1386,16 +957,38 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     for (k in config.ls_grid_configs) {
       menu.push({text:config.ls_grid_configs[k].label,handler:set_gc(k),scope:this})
     }
-    config.bbar = config.bbar.concat(['->']);
     if(menu.length > 1) {
-      config.bbar = config.bbar.concat([
+      tbar = tbar.concat([
         {text:'View',menu: menu,tooltip:"Select another view of this report"}
       ]);
     }
-    config.bbar = config.bbar.concat([
+    
+    config.tbar = new Ext.PagingToolbar({ 
+      prependButtons: true, pageSize: 10, displayInfo: true, 
+      store: config.store, 
+      items: tbar
+    });
+    var actions = Lino.build_buttons(this,config.ls_bbar_actions);
+    config.cmenu = actions.cmenu;
+    
+    //~ Ext.apply(config,Lino.build_buttons(this,config.ls_bbar_actions));
+    //~ config.bbar, this.cmenu = Lino.build_buttons(this,config.ls_bbar_actions);
+    //~ this.cmenu = new Ext.menu.Menu({items: config.bbar});
+    delete config.ls_bbar_actions
+    
+    //~ config.bbar = config.bbar.concat(['->']);
+    //~ if(menu.length > 1) {
+      //~ config.bbar = config.bbar.concat([
+        //~ {text:'View',menu: menu,tooltip:"Select another view of this report"}
+      //~ ]);
+    //~ }
+    //~ config.bbar = config.bbar.concat([
+    //~ if (config.tools === undefined) config.tools = [];
+    //~ config.tools = config.tools.concat([
       //~ {text:'GC',handler:this.manage_grid_configs,qtip:"Manage Grid Configurations",scope:this},
-      {text:'Save GC',handler:this.save_grid_config,qtip:"Save Grid Configuration",scope:this}
-    ]);
+      //~ {handler:this.save_grid_config,qtip:"Save Grid Configuration",scope:this, id:"save"}
+      //~ {text:'Save GC',handler:this.save_grid_config,qtip:"Save Grid Configuration",scope:this}
+    //~ ]);
     
     config.plugins = [new Lino.GridFilters()];
     
@@ -1592,8 +1185,14 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
   save_grid_config : function () {
     //~ console.log('TODO: save_grid_config',this);
     //~ p.column_widths = Ext.pluck(this.colModel.columns,'width');
-    var a = { params:this.get_current_grid_config(), method:'PUT',url:'/grid_config'+this.ls_url};
-    Lino.do_action(this,a);
+    var a = { 
+      params:this.get_current_grid_config(), 
+      method:'PUT',
+      url:'/grid_config'+this.ls_url,
+      success: Lino.action_handler(this)
+    };
+    Ext.Ajax.request(a);
+    //~ Lino.do_action(this,a);
   },
   
   on_beforeedit : function(e) {
@@ -1635,7 +1234,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     //~ Ext.apply(p,this.ww.config.base_params);
     //~ Ext.apply(p,this.store.baseParams);
     var self = this;
-    var on_success = Lino.action_handler( function(result) {
+    var on_success = Lino.action_handler( this, function(result) {
       self.getStore().commitChanges(); // get rid of the red triangles
       self.getStore().reload();        // reload our datastore.
     });
@@ -2134,12 +1733,21 @@ Lino.GridMasterWrapper.override({
   setup : function() {
     //~ this.main_item.store.proxy.on('load',
     //~ console.log('GridMasterWrapper.setup');
+    
     this.main_item.store.on('load', function() {
         //~ console.log('GridMasterWrapper load',this.main_item.store.reader.arrayData);
         this.window.setTitle(this.main_item.store.reader.arrayData.title);
       }, this
     );
+    //~ if (this.main_item.tools === undefined) this.main_item.tools = [];
+    this.window_config.tools = [
+      //~ {text:'GC',handler:this.manage_grid_configs,qtip:"Manage Grid Configurations",scope:this},
+      {handler:this.main_item.save_grid_config,qtip:"Save Grid Configuration",scope:this.main_item, id:"save"}
+      //~ {text:'Save GC',handler:this.save_grid_config,qtip:"Save Grid Configuration",scope:this}
+    ].concat(this.window_config.tools);
+    
     Lino.WindowWrapper.prototype.setup.call(this);
+    
   },
   add_row_listener : function(fn,scope) {
     // this.main_grid.add_row_listener(fn,scope);

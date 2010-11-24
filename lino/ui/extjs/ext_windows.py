@@ -47,22 +47,8 @@ class ActionRenderer(object):
         
     def js_render(self):
         yield "function(caller) { return new Lino.%s(caller,%s);}" % (self.__class__.__name__,py2js(self.config))
-    
-class DownloadRenderer(ActionRenderer):
-  
-    def unused_js_render(self):
-        #~ url = '/'.join(('/api',self.action.actor.app_label,self.action.actor._actor_name))+'/'
-        yield "function(caller) { Lino.show_download(caller,%r);}" % self.action.name
-        #~ yield "function(caller) { return new Lino.show_download(caller,%r);}" % self.action.name
-        
-        #~ yield "function(caller) { "
-        #~ yield "  var l = caller.get_selected();"
-        #~ yield "  if (l.length == 0) Lino.notify('No selection.');"
-        #~ yield "  for (var i = 0; i < l.length; i++) "
-        #~ yield "    window.open(%r+l[i].id+'?fmt=%s');" % (url,self.action.name)
-        #~ yield "}" 
 
-class DeleteRenderer(ActionRenderer):
+class unused_DeleteRenderer(ActionRenderer):
   
     def js_render(self):
         yield "function(caller) { Lino.delete_selected(caller); }"

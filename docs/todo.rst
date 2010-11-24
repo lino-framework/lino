@@ -9,27 +9,18 @@ for which I hope for help from other people.
 Before version 1.0
 ------------------
 
-- ui.get_detail_url() gibt eine URL, die den betreffenden Record öffnet. 
-  Wird benutzt, um in der `welcome.html` die Reminder eines Vertrags oder eines Uploads anklickbar zu machen.
-  In diesem Detail sollten jedoch keine Navigations-Buttons sein, 
-  denn die beziehen sich ja dann auf den selten benutzten Model-Report Contracts bzw. Uploads, 
-  der die Records aller Benutzer und Personen durchblättert.
+- Externe Links (Lesezeichen) notieren können, indem man sie von einem anderen Browserfenster 
+  per drag & drop auf die HtmlBox zieht.   
+  :doc:`/tickets/8` 
 
 - MyUploads müsste eigentlich nach `modified` sortiert sein. Ist er aber nicht.
-  Idem für MyContracts. Kann es sein, dass order_by insgesamt nicht funktioniert?
+  Idem für MyContracts. 
 
 - The main window also needs a `Refresh` button. 
-  Maybe should be automatically refreshed when it was hidden by another window and becomes visible again.
+  Or better: should be automatically refreshed when it was hidden by another window and becomes visible again.
   
-- Make doctemplates editable using webdav. 
-  New button "edit template" on PrintableType.
+- How to import and/or render BIC:IBAN account numbers?
 
-- How to import/render BIC:IBAN account numbers?
-
-- After printing or saving, the calling grid or detail should  
-  get refreshed, because printing usually will set the must_build flag,
-  and every change in general may modify disabled_fields.
-  
 - Auch `watch_tim` automatisch nach reboot starten.
   Irgendwie müssen ungefähr die folgenden Befehle in der :file:`/etc/init.d` 
   gerufen werden::
@@ -47,14 +38,17 @@ Before version 1.0
 
 - Dokumentvorlagen machen
 
-- Externe Links (Lesezeichen) notieren können, indem man sie von einem anderen Browserfenster 
-  per drag & drop auf die HtmlBox zieht.   
-  :doc:`/tickets/8` 
-
 - "Insert as copy"
 
 Waiting for feedback
 --------------------
+
+- doubleclick in a grid should open the detail, and F2 should start editing the cell.
+
+- It is not possible to select multiple rows when using CellSelectionModel 
+  (which is the default and which cannot be changed).
+  Maybe add a button to switch between the two selection models?
+  Caution: delete_selected currently probably works only with a CellSelectionModel.
 
 - Make it configurable (site-wide, per user,...)
   whether external links should open a new window or not.
@@ -93,6 +87,12 @@ Waiting for feedback
 
 - Wenn man z.B. in Companies.insert manuell eine ID eingibt, 
   dann ignoriert der Server die und vergibt trotzdem seine automatische nächste ID.
+
+- ui.get_detail_url() gibt eine URL, die den betreffenden Record öffnet. 
+  Wird benutzt, um in der `welcome.html` die Reminder eines Vertrags oder eines Uploads anklickbar zu machen.
+  In diesem Detail sollten jedoch keine Navigations-Buttons sein, 
+  denn die beziehen sich ja dann auf den selten benutzten Model-Report Contracts bzw. Uploads, 
+  der die Records aller Benutzer und Personen durchblättert.
 
 After version 1.0
 -----------------
@@ -380,6 +380,10 @@ Long-term
 - :doc:`/tickets/16`
 
 - Mehr über Nuxeo lesen: http://doc.nuxeo.org/5.3/books/nuxeo-book/html/index.html
+
+- Use :meth:`Action.run` in general, not only for RowAction. 
+  See :doc:`/blog/2010/1124`
+
 
 Documentation
 -------------

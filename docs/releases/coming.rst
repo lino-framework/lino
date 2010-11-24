@@ -4,7 +4,14 @@ Coming
 New features
 ------------
 
-- Detail window now has a Refresh button.  
+- Detail windows now have a Refresh button. 
+
+- New module "Uploads". (See :doc:`/blog/2010/1122`)
+
+- New buttons "Clear cache" and "Edit template" on printables. (See :doc:`/blog/2010/1124`)
+
+- Grid no longer has a bottom toolbar. row actions accessible only through context menu. 
+  "Save GC" button now as a window tool button. (See :doc:`/blog/2010/1124`)
 
 Bugs fixed
 ----------
@@ -26,6 +33,14 @@ Upgrade instructions
 
     cd /var/snapshots/lino
     hg pull -u
+    
+- Move the doctemplates directory (which until now was in 
+  ``settings.PROJET_DIR + "/doctemplates"``) 
+  to 
+  ``settings.MEDIA_ROOT + "/webdav/doctemplates"``. 
+  (See :doc:`/blog/2010/1124`)
+
+    
   
 - The usual things in your local directory::
 
