@@ -260,7 +260,15 @@ class ExtUI(base.UI):
                     return e
                     #~ return ext_elems.GridElementBox(lh,e)
                 else:
-                    field = fields.HtmlBox(verbose_name=de.label,drop_zone="FooBar")
+                    o = dict(drop_zone="FooBar")
+                    a = de.get_action('insert')
+                    if a is not None:
+                        kw.update(ls_bbar_actions=[
+                        #~ o.update(bbar=[
+                          self.a2btn(a),
+                          #~ dict(text="Add",panel_btn_handler=js_code("Lino.show_insert_handler(Lino.%s)" % a))
+                          ])
+                    field = fields.HtmlBox(verbose_name=de.label,**o)
                     field.name = de._actor_name
                     field._return_type_for_method = de.slave_as_summary_meth(self,'<br>')
                     lh.add_store_field(field)
@@ -302,6 +310,9 @@ class ExtUI(base.UI):
         #print "[Warning]", msg
         raise KeyError(msg)
         
+    def href_to(self,obj):
+        return '<a href="%s" target="_blank">%s</a>' % (self.get_detail_url(obj,fmt='detail'),unicode(obj))
+
     #~ def create_button_element(self,name,action,**kw):
         #~ e = self.ui.ButtonElement(self,name,action,**kw)
         #~ self._buttons.append(e)

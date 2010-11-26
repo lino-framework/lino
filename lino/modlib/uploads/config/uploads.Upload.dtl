@@ -2,7 +2,7 @@
 
 main =
     file #user
-    description 
+    type description 
     person company
     reminder_date reminder_text
     modified created

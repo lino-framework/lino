@@ -1,7 +1,7 @@
 DJANGO_ADMIN = python l:\\snapshots\\django\\django\\bin\\django-admin.py
 LINO_ROOT := /cygdrive/t/hgwork/lino/lino
 #~ MODULES = system
-MODULES = countries contacts notes sales finan links dsbe igen 
+MODULES = countries contacts notes sales finan links uploads dsbe igen 
 
 #LANGUAGES = de fr nl et
 #INPUT_FILES = lino\\actions.py lino\\ui\\extjs\\ext_ui.py lino\\modlib\\fields.py lino\\modlib\\system\\models.py

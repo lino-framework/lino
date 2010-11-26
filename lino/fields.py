@@ -145,6 +145,7 @@ class HtmlBox:
     choices = None
     blank = True
     drop_zone = None
+    #~ bbar = None
     def __init__(self,verbose_name=None,**kw):
         self.verbose_name = verbose_name
         for k,v in kw.items():

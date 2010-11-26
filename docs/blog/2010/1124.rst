@@ -38,3 +38,7 @@ The "Save GC" button has become a tool of the window
 and can be used only when the record is in its own window.
 TODO: doubleclick should open the detail, and F2 should start editing the cell.
 
+
+`Check-in <http://code.google.com/p/lino/source/detail?r=4db25420bab3035b1b30303baff0b1803ecb8d9f>`_. 
+(Most basic things seem to work. 
+Most urgent issue is now the drag&drop functionality.)

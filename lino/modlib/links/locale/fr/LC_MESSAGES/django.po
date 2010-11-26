@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-11 11:16+0000\n"
+"POT-Creation-Date: 2010-11-25 08:25+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,39 +29,22 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-#: .\models.py:45
+#: .\models.py:49
 msgid "link"
 msgstr ""
 
-#: .\models.py:46
+#: .\models.py:50
 msgid "links"
 msgstr ""
 
-#: .\models.py:51
+#: .\models.py:54
 msgid "Link type"
 msgstr ""
 
-#: .\models.py:52
+#: .\models.py:55
 msgid "Date"
 msgstr ""
 
-#: .\models.py:54
-msgid "Owner type"
-msgstr ""
-
-#: .\models.py:55
-msgid "Owner"
-msgstr ""
-
-#: .\models.py:93
+#: .\models.py:79
 msgid "My links"
-msgstr ""
-
-#: .\models.py:99
-msgid "Links"
-msgstr ""
-
-#: .\models.py:112
-#, python-format
-msgid "Links by %(model)s %(owner)s"
 msgstr ""

@@ -26,9 +26,41 @@ from lino import reports
 from lino.utils import perms
 from lino import mixins
 
+class UploadType(models.Model):
+    
+    class Meta:
+        verbose_name = _("upload type")
+        verbose_name_plural = _("upload types")
+        
+    name = models.CharField(max_length=200,verbose_name=_('Name'))
+    
+    def __unicode__(self):
+        return self.name
+        
+class UploadTypes(reports.Report):
+    model = 'uploads.UploadType'
+    column_names = "name *"
+    order_by = "name"
+    
+        
+  
 class Upload(mixins.Uploadable,mixins.PartnerDocument,mixins.Reminder):
-    pass
+    type = models.ForeignKey("uploads.UploadType",
+      blank=True,null=True)
+      #~ verbose_name=_('upload type'))
 
+    def __unicode__(self):
+        if self.description:
+            s = self.description
+        else:
+            s = self.file.name
+            i = s.rfind('/')
+            if i != -1:
+                s = s[i+1:]
+        if self.type:
+            s = unicode(self.type) + ' ' + s
+        return s
+        
 class Uploads(reports.Report):
     model = Upload
     order_by = "modified"
@@ -38,6 +70,11 @@ class Uploads(reports.Report):
 class UploadsByPerson(Uploads):
     fk_name = 'person'
     column_names = "file user company created modified"
+    show_slave_grid = False
+    
+class UploadsByCompany(Uploads):
+    fk_name = 'company'
+    column_names = "file user person created modified"
     show_slave_grid = False
     
     

@@ -421,7 +421,8 @@ class HtmlBoxElement(FieldElement):
     declare_type = jsgen.DECLARE_VAR
     #~ declare_type = jsgen.DECLARE_INLINE
     #~ value_template = "new Ext.BoxComponent(%s)"
-    value_template = "new Ext.Panel(%s)"
+    value_template = "new Lino.HtmlBoxPanel(ww,%s)"
+    #~ value_template = "new Ext.Panel(%s)"
     preferred_height = 5
     vflex = True
     filter_type = 'string'
@@ -439,6 +440,8 @@ class HtmlBoxElement(FieldElement):
         kw.update(items=js_code("new Ext.BoxComponent()"))
         if self.label:
             kw.update(title=unicode(self.label))
+        #~ if self.field.bbar is not None:
+            #~ kw.update(ls_bbar_actions=self.field.bbar)
         return kw
         
         

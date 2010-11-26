@@ -33,6 +33,8 @@
 
 """
 
+import cgi
+
 from django.db import models
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
@@ -664,9 +666,27 @@ class Contract(mixins.TypedPrintable,mixins.Reminder,mixins.PartnerDocument):
         #~ return choices
     
     def __unicode__(self):
-        msg = _("Contract # %(pk)d (%(person)s/%(company)s)")
-        return msg % dict(pk=self.pk, person=self.person, company=self.company)
-
+        msg = _("Contract # %d")
+        #~ msg = _("Contract # %(pk)d (%(person)s/%(company)s)")
+        #~ return msg % dict(pk=self.pk, person=self.person, company=self.company)
+        return msg % self.pk
+        
+    def summary_row(self,ui,rr,**kw):
+        s = ''
+        if self.reminder_text:
+            s += '<b>' + cgi.escape(self.reminder_text) + '</b> '
+        s += ui.href_to(self)
+        if self.person:
+            if self.company:
+                s += "(" + ui.href_to(self.person) + "/" + ui.href_to(self.company) + ")"
+            else:
+                s += "(" + ui.href_to(self.person) + ")"
+        elif self.company:
+            s += "(" + ui.href_to(self.company) + ")"
+        return s
+        
+        
+        
 CONTRACT_PRINTABLE_FIELDS = reports.fields_list(Contract,
   'person company contact type applies_from applies_until language')
 

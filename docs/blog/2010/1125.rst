@@ -1,0 +1,15 @@
+20101125
+========
+
+- New model :class:`lino.modlib.uploads.models.UploadType`.
+
+- The summary panel of a report (Links, Uploads,...) 
+  now has an "Insert" button which is a shortcut to InsertRow.
+  
+- Contract.summary_row (used when displaying the contract as a reminder in :xfile:`welcome.html`) now provides clickable links 
+  to the person and the company
+  
+- Updated german translations. 
+
+
+Check-in

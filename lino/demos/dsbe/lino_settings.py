@@ -56,6 +56,7 @@ m.add_action('dsbe.Activities')
 m.add_action('dsbe.ExclusionTypes')
 m.add_action('dsbe.CoachingTypes')
 m.add_action('links.LinkTypes')
+m.add_action('uploads.UploadTypes')
 
 m = lino.add_menu("explorer",_("E~xplorer"),
   can_view=perms.is_staff)

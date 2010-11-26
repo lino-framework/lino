@@ -193,9 +193,15 @@ def objects():
     yield excltype(u"ONEM-Auflagen nicht erfüllt")
     
     linkType = Instantiator('links.LinkType',"name").build
-    yield linkType(u"Personalausweis")
-    yield linkType(u"Aufenthaltserlaubnis")
-    yield linkType(u"Arbeitserlaubnis")
-    yield linkType(u"Vertrag")
+    yield linkType(u"Private Website")
+    yield linkType(u"Firmen-Website")
+    yield linkType(u"Facebook-Profil")
+    yield linkType(u"Sonstige")
+    
+    uploadType = Instantiator('uploads.UploadType',"name").build
+    yield uploadType(u"Personalausweis")
+    yield uploadType(u"Aufenthaltserlaubnis")
+    yield uploadType(u"Arbeitserlaubnis")
+    yield uploadType(u"Vertrag")
     
     

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-11 11:16+0000\n"
+"POT-Creation-Date: 2010-11-25 08:25+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -33,38 +33,30 @@ msgstr ""
 msgid "Remark"
 msgstr ""
 
-#: .\models.py:70
+#: .\models.py:71
 msgid "note"
 msgstr ""
 
-#: .\models.py:71
+#: .\models.py:72
 msgid "notes"
 msgstr ""
 
-#: .\models.py:74
+#: .\models.py:75
 msgid "Date"
 msgstr ""
 
-#: .\models.py:78
+#: .\models.py:79
 msgid "Note type"
 msgstr ""
 
-#: .\models.py:80
+#: .\models.py:81
 msgid "Subject"
 msgstr ""
 
-#: .\models.py:81
+#: .\models.py:82
 msgid "Body"
 msgstr ""
 
-#: .\models.py:83
-msgid "Owner type"
-msgstr ""
-
-#: .\models.py:84
-msgid "Owner"
-msgstr ""
-
-#: .\models.py:123
+#: .\models.py:124
 msgid "My notes"
 msgstr ""

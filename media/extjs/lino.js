@@ -260,9 +260,9 @@ Lino.report_window_button = function(ww,handler) {
     qtip:'Show report in own window', 
     id:"up",
     handler: function(event,toolEl,panel, tc) {
-      console.log('report_window_button',panel);
+      //~ console.log('report_window_button',panel);
       var bp = ww.get_master_params();
-      console.log('report_window_button',bp)
+      //~ console.log('report_window_button',bp)
       //~ action(panel,{record_id:-99999,base_params:bp});
       
       //~ var bp = panel.ww.get_master_params();
@@ -595,6 +595,32 @@ if (Ext.ux.grid !== undefined) {
     });
 };
 
+Lino.HtmlBoxPanel = Ext.extend(Ext.Panel,{
+  constructor : function(ww,config,params){
+    this.ww = ww;
+    if (params) Ext.apply(config,params);
+    var actions = Lino.build_buttons(this,config.ls_bbar_actions);
+    if (actions) config.bbar = actions.bbar;
+    Lino.HtmlBoxPanel.superclass.constructor.call(this, config);
+  },
+  on_master_changed : function() {
+    var todo = function() {
+      //~ var src = caller.config.url_data + "/" + record.id + ".jpg"
+      //~ var p = this.ww.get_master_params();
+      //~ for (k in p) this.getStore().setBaseParam(k,p[k]);
+      this.set_base_params(this.ww.get_master_params());
+      console.log('exec Lino.HtmlBoxPanel.on_master_changed()',this.get_base_params());
+    };
+    Lino.do_when_visible(this,todo.createDelegate(this));
+  },
+  get_base_params : function() {
+    return this.base_params;
+  },
+  set_base_params : function(p) {
+    this.base_params = p;
+  }
+});
+
 Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   constructor : function(ww,config,params){
     this.ww = ww;
@@ -813,10 +839,11 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
       var el = box.getEl();
       if (el) {
         el.update(record.data[cmp.name]);
-        console.log('Lino.FormPanel.load_htmlbox_to()',cmp.name,el);
+        //~ console.log('Lino.FormPanel.load_htmlbox_to()',cmp.name,el);
       }
       
     });
+    cmp.on_master_changed();
   },
   load_picture_to : function(cmp,record) {
     //~ console.log('FormPanel.load_picture_to()',record);
@@ -843,11 +870,6 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
       doit('empty.jpg');
   }
 });
-
-Lino.foo = function () {
-  console.log(arguments);
-}
-
 
 
 Lino.getRowClass = function(record, rowIndex, rowParams, store) {

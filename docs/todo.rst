@@ -1,7 +1,7 @@
 To-do list
 ==========
 
-This document is in German because it is rather for internal use. 
+This document is partly in German because it is rather for internal use. 
 See also :doc:`/tickets/index` which is a list of tickets 
 for which I hope for help from other people.
 
@@ -9,16 +9,16 @@ for which I hope for help from other people.
 Before version 1.0
 ------------------
 
-- Externe Links (Lesezeichen) notieren können, indem man sie von einem anderen Browserfenster 
-  per drag & drop auf die HtmlBox zieht.   
-  :doc:`/tickets/8` 
+- Logging
 
-- MyUploads müsste eigentlich nach `modified` sortiert sein. Ist er aber nicht.
-  Idem für MyContracts. 
+- "Console messages"
 
 - The main window also needs a `Refresh` button. 
   Or better: should be automatically refreshed when it was hidden by another window and becomes visible again.
   
+- MyUploads müsste eigentlich nach `modified` sortiert sein. Ist er aber nicht.
+  Idem für MyContracts. 
+
 - How to import and/or render BIC:IBAN account numbers?
 
 - Auch `watch_tim` automatisch nach reboot starten.
@@ -39,6 +39,10 @@ Before version 1.0
 - Dokumentvorlagen machen
 
 - "Insert as copy"
+
+- Externe Links (Lesezeichen) notieren können, indem man sie von einem anderen Browserfenster 
+  per drag & drop auf die HtmlBox zieht.   
+  :doc:`/tickets/8` 
 
 Waiting for feedback
 --------------------

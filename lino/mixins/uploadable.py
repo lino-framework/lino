@@ -40,7 +40,7 @@ class Uploadable(models.Model):
     mimetype = models.CharField(_("MIME type"),max_length=64, editable=False)
     created = models.DateTimeField(_("Created"),auto_now_add=True, editable=False)
     modified = models.DateTimeField(_("Modified"),auto_now=True, editable=False)
-    description = models.CharField(_("Description"),max_length=200)
+    description = models.CharField(_("Description"),max_length=200,blank=True,null=True)
     
     #~ def show_date(self):
         #~ if self.timestamp:
@@ -55,7 +55,7 @@ class Uploadable(models.Model):
     #~ show_time.return_type = models.CharField(_("Time"),max_length=8)
     
     def __unicode__(self):
-        return self.file.name
+        return self.description or self.file.name
 
     def handle_uploaded_files(self,request):
         #~ from django.core.files.base import ContentFile
