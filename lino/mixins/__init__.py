@@ -92,6 +92,47 @@ class PartnerDocument(models.Model):
     company = models.ForeignKey("contacts.Company",blank=True,null=True,verbose_name=_("Company"))
 
 
+
+
+class DiffingMixin(object):
+    """
+    Unmodified copy of http://djangosnippets.org/snippets/1683/
+    
+    Used by :mod:`lino.utils.dblogger`.
+    """
+    def __init__(self, *args, **kwargs):
+        super(DiffingMixin, self).__init__(*args, **kwargs)
+        self._original_state = dict(self.__dict__)
+        
+    def save(self, *args, **kwargs):
+        state = dict(self.__dict__)
+        del state['_original_state']
+        self._original_state = state
+        super(DiffingMixin, self).save()
+    def is_dirty(self):
+        missing = object()
+        result = {}
+        for key, value in self._original_state.iteritems():
+            if value != self.__dict__.get(key, missing):
+                return True
+        return False
+    def changed_columns(self):
+        missing = object()
+        result = {}
+        for key, value in self._original_state.iteritems():
+            if value != self.__dict__.get(key, missing):
+                result[key] = {'old':value, 'new':self.__dict__.get(key, missing)}
+        return result
+
+
+
+
+
+
+
+
+
+
 from lino.mixins.reminder import Reminder
 from lino.mixins.printable import Printable, PrintableType, TypedPrintable
 from lino.mixins.uploadable import Uploadable

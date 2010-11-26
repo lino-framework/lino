@@ -11,6 +11,17 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+
+The :mod:`lino.utils.choosers` extends the possibilities 
+for defining choices for fields of a Django model.
+
+- Context-sensitive choices
+- Non-limiting choices 
+  (specify a pick list of suggestions but leave the possibility to manually enter different values)
+
+"""
+
 import logging
 logger = logging.getLogger(__name__)
 

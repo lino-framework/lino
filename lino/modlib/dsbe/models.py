@@ -34,6 +34,7 @@
 """
 
 import cgi
+import datetime
 
 from django.db import models
 from django.utils.safestring import mark_safe
@@ -84,7 +85,7 @@ RESIDENCE_TYPE_CHOICES = (
 )
 
 
-class Partner(models.Model):
+class Partner(mixins.DiffingMixin,models.Model):
     """
     """
     class Meta:
@@ -393,8 +394,8 @@ class Companies(contacts.Companies):
 # STUDY TYPE
 #
 class StudyType(models.Model):
-    name = models.CharField(max_length=200,verbose_name=_("Designation"))
-    #~ text = models.TextField(blank=True,null=True,verbose_name=_("Description"))
+    name = models.CharField(_("Designation"),max_length=200)
+    #~ text = models.TextField(_("Description"),blank=True,null=True)
     class Meta:
         verbose_name = _("study type")
         verbose_name_plural = _("study types")
@@ -637,7 +638,7 @@ class ContractTypes(reports.Report):
 #
 # CONTRACTS
 #
-class Contract(mixins.TypedPrintable,mixins.Reminder,mixins.PartnerDocument):
+class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,mixins.PartnerDocument):
     class Meta:
         verbose_name = _("contract")
         verbose_name_plural = _('contracts')
@@ -645,10 +646,55 @@ class Contract(mixins.TypedPrintable,mixins.Reminder,mixins.PartnerDocument):
     contact = models.ForeignKey("contacts.Contact",blank=True,null=True,
       verbose_name=_("represented by"))
     #~ user = models.ForeignKey("auth.User",verbose_name=_("Coach"))
-    type = models.ForeignKey("dsbe.ContractType",verbose_name=_("Contract type"))
+    type = models.ForeignKey("dsbe.ContractType",verbose_name=_("contract type"))
+    language = fields.LanguageField(default=default_language)
+    
     applies_from = models.DateField(blank=True,null=True,verbose_name=_("applies from"))
     applies_until = models.DateField(blank=True,null=True,verbose_name=_("applies until"))
-    language = fields.LanguageField(default=default_language)
+    date_decided = models.DateField(blank=True,null=True,verbose_name=_("date decided"))
+    date_issued = models.DateField(blank=True,null=True,verbose_name=_("date issued"))
+    duration = models.IntegerField(_("duration (days)"),blank=True,null=True)
+    
+    regime = models.CharField(_("regime"),max_length=200,blank=True,null=True)
+    schedule = models.CharField(_("schedule"),max_length=200,blank=True,null=True)
+    hourly_rate = models.CharField(_("hourly rate"),max_length=200,blank=True,null=True)
+    
+    reference_person = models.CharField(_("reference person"),max_length=200,blank=True,null=True)
+    
+    responsibilities = models.TextField(_("responsibilities"),blank=True,null=True)
+    
+    def duration_choices(self):
+        return [ 312, 468, 624 ]
+        #~ return [ 0, 25, 50, 100 ]
+    duration_choices.simple_values = True
+    duration_choices = classmethod(duration_choices)
+    
+    def regime_choices(self):
+        return [ 
+        u"20 Stunden",
+        u"35 Stunden",
+        u"38 Stunden",
+        ]
+    regime_choices.simple_values = True
+    regime_choices = classmethod(regime_choices)
+    
+    def schedule_choices(self):
+        return [ 
+        u"5-Tage-Woche",
+        u"Montag, Mittwoch, Freitag",
+        u"Individuell",
+        ]
+    schedule_choices.simple_values = True
+    schedule_choices = classmethod(schedule_choices)
+    
+    def hourly_rate_choices(self):
+        return [ 
+        u"10€",
+        u"10%",
+        u"50%",
+        ]
+    hourly_rate_choices.simple_values = True
+    hourly_rate_choices = classmethod(hourly_rate_choices)
     
     def disabled_fields(self,request):
         if self.must_build:
@@ -685,10 +731,42 @@ class Contract(mixins.TypedPrintable,mixins.Reminder,mixins.PartnerDocument):
             s += "(" + ui.href_to(self.company) + ")"
         return s
         
-        
+    def dsbe_person(self):
+        try:
+            return self.person.coaching_set.get(type__name__exact='DSBE').coach        
+        except Exception,e:
+            return self.person.user or self.user
+            
+    def full_clean(self):
+        if self.person.birth_date is None:
+            return 
+      
+        if self.applies_from is None:
+            return 
+            #~ self.applies_from = datetime.date.today()
+            
+        def duration(refdate):
+            delta = refdate - self.person.birth_date
+            age = delta.days / 365
+            if age < 36:
+                return 312
+            elif age < 50:
+                return 468
+            else:
+                return 624
+      
+        if self.duration is None:
+            if self.applies_until:
+                self.duration = duration(self.applies_until)
+            else:
+                self.duration = duration(self.applies_from)
+                self.applies_until = self.applies_from + datetime.timedelta(days=self.duration)
         
 CONTRACT_PRINTABLE_FIELDS = reports.fields_list(Contract,
-  'person company contact type applies_from applies_until language')
+  'person company contact type '
+  'applies_from applies_until duration '
+  'language schedule regime hourly_rate reference_person '
+  'date_decided date_issued responsibilities')
 
 
 class Contracts(reports.Report):

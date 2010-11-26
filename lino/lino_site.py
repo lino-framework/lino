@@ -60,6 +60,7 @@ import lino
         
 from lino import reports, actions
 from lino.utils import perms
+from lino.utils import dblogger
 from lino.utils import menus
 from lino.core import actors
 from lino.core.coretools import app_labels, data_elems, get_unbound_meth
@@ -234,7 +235,6 @@ class LinoSite:
         #~ logger.info("This is Lino version %s." % lino.__version__)
         #~ using = ', '.join(["%s %s" % (n,v) for n,v,u in lino.using()])
         #~ logger.info("Using %s" % using)
-        #~ logger.info("Lino Site %r is ready.", self.title)
           
         uis = []
         for ui in settings.USER_INTERFACES:
@@ -248,6 +248,9 @@ class LinoSite:
         
         self._setup_done = True
         self._setting_up = False
+        
+        dblogger.log("Lino Site %r started.", self.title)
+        dblogger.log(lino.welcome_text())
         
         
     def add_menu(self,*args,**kw):

@@ -28,6 +28,8 @@ Subpackages
     lino.ui
     lino.utils
     lino.utils.sqllog
+    lino.utils.log
+    lino.utils.dblogger
     lino.mixins
     lino.mixins.printable
     lino.demos

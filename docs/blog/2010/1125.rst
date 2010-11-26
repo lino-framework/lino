@@ -12,4 +12,4 @@
 - Updated german translations. 
 
 
-Check-in
+The above work is checked in `here <http://code.google.com/p/lino/source/detail?r=770e79c338496440ada8717794e6998f01559b09>`_ 

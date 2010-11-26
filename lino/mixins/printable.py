@@ -26,8 +26,8 @@ import glob
 from fnmatch import fnmatch
 
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
 from django.template.loader import render_to_string, get_template, select_template, Context, TemplateDoesNotExist
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 
@@ -222,7 +222,14 @@ class AppyBuildMethod(SimpleBuildMethod):
     
     def simple_build(self,elem,tpl,target):
         context = dict(self=elem)
+        lang = str(elem.get_print_language(self))
         from appy.pod.renderer import Renderer
+        #~ import locale
+        #~ ls = (lang,settings.LANGUAGE_CODE[3:])
+        #~ ls = 'de-DE' # de_DE
+        #~ print ls
+        #~ locale.setlocale(locale.LC_ALL,ls)
+        #~ Error: unsupported locale setting
         renderer = Renderer(tpl, context, target,**settings.APPY_PARAMS)
         logger.debug("appy.pod render %s -> %s",tpl,target)
         renderer.run()

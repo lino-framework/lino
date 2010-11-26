@@ -19,6 +19,7 @@ Defines the `Store` class and its fields
 import logging
 logger = logging.getLogger(__name__)
 
+import datetime
 from dateutil import parser as dateparser
 
 from django.db import models
@@ -51,6 +52,8 @@ class StoreField(object):
         return py2js(self.options)
         
     def parse_form_value(self,v):
+        #~ if self.field.blank and v == '':
+            #~ return None
         return self.field.to_python(v)
         
     def value_from_object(self,request,obj):
@@ -66,9 +69,9 @@ class StoreField(object):
         v = post_data.get(self.field.name,None)
         if v is None:
             return
-        #~ if v == '': # and self.field.null:
-            #~ # e.g. id field may be empty
-            #~ v = None
+        if v == '': # and self.field.blank:
+            # e.g. id field may be empty
+            v = None
         v = self.parse_form_value(v)
         if self.field.primary_key and instance.pk is not None:
             if instance.pk == v:
@@ -162,18 +165,11 @@ class DateStoreField(StoreField):
         kw['type'] = 'date'
         StoreField.__init__(self,field,**kw)
         
-    def unused_obj2dict(self,request,obj,d): # date conversion done by py2js
-        value = getattr(obj,self.field.name)
-        if value is not None:
-            value = value.strftime(self.date_format)
-            #~ value = value.ctime() # strftime('%Y-%m-%d')
-            #print value
-            d[self.field.name] = value
-            
     def parse_form_value(self,v):
         #~ print '20101024 DateStoreField 1', v
         if v:
             v = dateparser.parse(v,fuzzy=True)
+            v = datetime.date(v.year,v.month,v.day)
         else:
             v = None
         #~ print '20101024 DateStoreField 2', v

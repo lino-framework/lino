@@ -12,6 +12,13 @@ New features
 
 - Grid no longer has a bottom toolbar. row actions accessible only through context menu. 
   "Save GC" button now as a window tool button. (See :doc:`/blog/2010/1124`)
+  
+- database changes logging
+
+- Ich habe die besprochenen neuen Felder in `dsbe.Contracts` größtenteils 
+  fertig und auch ein bisschen mit appy.pod gespielt. War alles sehr erfreulich.
+
+
 
 Bugs fixed
 ----------
@@ -24,6 +31,9 @@ Bugs fixed
   reports with over thousand records might be better. (:doc:`/blog/2010/1116`)
 
 - problem of distorted pictures might be solved (:doc:`/blog/2010/1116`)
+
+- Lino should now start to send an email to the admins for every error.
+
 
 
 Upgrade instructions

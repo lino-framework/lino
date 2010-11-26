@@ -12,18 +12,43 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
+
+Default logging configuration shipped with Lino.
+
+To use it, define the following in your :xfile:`settings.py`::
+
+  LOGGING_CONFIG = 'lino.utils.log.configure'
+  LOGGING = None
+
 See also :doc:`/tickets/closed/15`
 """
 
+import os
 import sys
 import logging
 
 from django.utils.log import AdminEmailHandler
 
+def file_handler(filename):
+
+    if hasattr(logging,'RotatingFileHandler'):
+        h = logging.RotatingFileHandler(filename,maxBytes=10000,backupCount=5)
+    else:
+        h = logging.FileHandler(filename)
+    fmt = logging.Formatter(
+        fmt='%(asctime)s %(levelname)s %(module)s : %(message)s',
+        datefmt='%Y%m-%d %H:%M:%S'
+        )
+    h.setFormatter(fmt)
+    return h
+
+
 def configure(config):
+    
     logger = logging.getLogger('django')
     h = AdminEmailHandler()
     h.setLevel(logging.ERROR)
+    logger.addHandler(h)
     
     logger = logging.getLogger('lino')
         
@@ -35,20 +60,22 @@ def configure(config):
     h.setFormatter(fmt)
     logger.addHandler(h)
     
+    #~ from django.conf import settings
+    #~ log_dir = os.path.join(settings.PROJECT_DIR,'log')
     
     if sys.platform == 'win32':
-        LOGFILE = 'lino.log'
+        log_dir = 'log'
     else:
-        LOGFILE = '/var/log/lino/lino.log'
-    if hasattr(logging,'RotatingFileHandler'):
-        h = logging.RotatingFileHandler(LOGFILE,maxBytes=10000,backupCount=5)
-    else:
-        h = logging.FileHandler(LOGFILE)
-    fmt = logging.Formatter(
-        fmt='%(asctime)s %(levelname)s %(module)s : %(message)s',
-        datefmt='%Y%m-%d %H:%M:%S'
-        )
-    h.setLevel(logging.DEBUG)
-    h.setFormatter(fmt)
-    logger.addHandler(h)
+        log_dir = '/var/log/lino'
+        
+    if os.path.isdir(log_dir):
+        h = file_handler(os.path.join(log_dir,'system.log'))
+        h.setLevel(logging.DEBUG)
+        logger.addHandler(h)
+        
+        dblogger = logging.getLogger('db')
+        assert dblogger != logger
+        dblogger.setLevel(logging.INFO)
+        dblogger.addHandler(file_handler(os.path.join(log_dir,'db.log')))
+    
     

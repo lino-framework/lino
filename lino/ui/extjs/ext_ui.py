@@ -15,6 +15,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+
+
 import os
 import cgi
 import time
@@ -45,6 +47,7 @@ from django.contrib.contenttypes import generic
 from Cheetah.Template import Template as CheetahTemplate
 
 import lino
+from lino.utils import dblogger
 from lino.utils import ucsv
 from lino.utils import printable
 from lino.utils import choosers
@@ -74,6 +77,7 @@ from django.conf.urls.defaults import patterns, url, include
 from lino.core.coretools import app_labels
 
 from lino.fields import LANGUAGE_CHOICES
+from lino.tools import obj2str
 
 #~ from lino.ui.extjs.ext_windows import WindowConfig # 20100316 backwards-compat window_confics.pck 
 
@@ -88,8 +92,8 @@ def prepare_label(mi):
         #label=label[:n] + '<u>' + label[n] + '</u>' + label[n+1:]
     return label
         
-def element_name(elem):
-    return u"%s (#%s in %s.%s)" % (elem,elem.pk,elem._meta.app_label,elem.__class__.__name__)
+#~ def element_name(elem):
+    #~ return u"%s (#%s in %s.%s)" % (elem,elem.pk,elem._meta.app_label,elem.__class__.__name__)
 
 
 def parse_bool(s):
@@ -602,7 +606,7 @@ class ExtUI(base.UI):
         #~ s = py2js(lino_site.get_menu(request))
         #~ return HttpResponse(s, mimetype='text/html')
 
-    def form2obj_and_save(self,rh,data,elem,**kw2save):
+    def form2obj_and_save(self,request,rh,data,elem,**kw2save):
         #~ print '20101122', data
         
         # store normal form data (POST or PUT)
@@ -611,7 +615,9 @@ class ExtUI(base.UI):
         except exceptions.ValidationError,e:
            return error_response(e)
            #~ return error_response(e,_("There was a problem while validating your data : "))
-           
+        
+        dblogger.log_changes(request,elem)
+            
         if hasattr(elem,'before_save'): # see :doc:`/blog/2010/0804`
             elem.before_save()
         #~ print '20101024a', elem.card_valid_from
@@ -631,8 +637,10 @@ class ExtUI(base.UI):
             return error_response(e) # ,_("There was a problem while saving your data : "))
             #~ return json_response_kw(success=False,
                   #~ msg=_("There was a problem while saving your data:\n%s") % e)
-        return json_response_kw(success=True,
-              message=_("%s has been saved.") % element_name(elem))
+                  
+        return self.success_response(_("%s has been saved.") % obj2str(elem),refresh=True)
+        #~ return self.success_response(_("%s has been saved.") % element_name(elem))
+        #~ return json_response_kw(success=True,message=msg)
               #~ message=_("%(name)s has been saved (%(model)s.%(pk)s)") % 
                 #~ dict(name=unicode(elem),model=elem._meta.verbose_name,pk=elem.pk))
 
@@ -722,7 +730,7 @@ class ExtUI(base.UI):
             # store uploaded files
             if rh.report.handle_uploaded_files is not None:
                 rh.report.handle_uploaded_files(request,instance)
-            return self.form2obj_and_save(rh,request.POST,instance,force_insert=True)
+            return self.form2obj_and_save(request,rh,request.POST,instance,force_insert=True)
             
             #~ rh.store.form2obj(request.POST,instance)
             #~ if hasattr(instance,'before_save'): # see :doc:`/blog/2010/0804`
@@ -839,7 +847,8 @@ class ExtUI(base.UI):
             try:
                 elem.delete()
             except Exception,e:
-                msg = "Failed to delete %s." % element_name(elem)
+                msg = _("Failed to delete %(record)s : %(error)s.") % dict(record=obj2str(elem),error=e)
+                #~ msg = "Failed to delete %s." % element_name(elem)
                 return error_response(msg)
                 #~ raise Http404(msg)
             return HttpResponseDeleted()
@@ -847,7 +856,7 @@ class ExtUI(base.UI):
         if request.method == 'PUT':
             data = http.QueryDict(request.raw_post_data)
             #~ fmt = data.get('fmt',None)
-            return self.form2obj_and_save(ah,data,elem,force_update=True)
+            return self.form2obj_and_save(request,ah,data,elem,force_update=True)
             
         ar = ext_requests.ViewReportRequest(request,ah,ah.report.default_action)
         if pk == '-99999':
@@ -885,7 +894,10 @@ class ExtUI(base.UI):
                     try:
                         return a.run(self,elem)
                     except Exception,e:
-                        msg = "Action %s failed for %s: " % (a,element_name(elem))
+                        msg = _("Action %(action)s failed for %(record)s: %(error)s" % dict(
+                            action=a,
+                            record=obj2str(elem),
+                            error=e))
                         logger.info(msg)
                         logger.exception(e)
                         return error_response(e,msg)

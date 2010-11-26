@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-25 08:24+0000\n"
+"POT-Creation-Date: 2010-11-26 15:54+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -71,7 +71,7 @@ msgstr ""
 msgid "Invalid value %(value). Must be one of (%(values)s)"
 msgstr ""
 
-#: .\lino_site.py:167
+#: .\lino_site.py:168
 #, python-format
 msgid "Cannot delete %(self)s because %(count)d %(refs)s refer to it."
 msgstr ""
@@ -150,27 +150,27 @@ msgstr ""
 msgid "Company"
 msgstr ""
 
-#: .\mixins\printable.py:353
+#: .\mixins\printable.py:360
 msgid "Print"
 msgstr ""
 
-#: .\mixins\printable.py:373
+#: .\mixins\printable.py:380
 msgid "Edit template"
 msgstr ""
 
-#: .\mixins\printable.py:383
+#: .\mixins\printable.py:390
 msgid "Clear cache"
 msgstr ""
 
-#: .\mixins\printable.py:400
+#: .\mixins\printable.py:407
 msgid "Build method"
 msgstr ""
 
-#: .\mixins\printable.py:403
+#: .\mixins\printable.py:410
 msgid "Template"
 msgstr ""
 
-#: .\mixins\printable.py:424
+#: .\mixins\printable.py:431
 msgid "must build"
 msgstr ""
 
@@ -223,41 +223,51 @@ msgstr ""
 msgid "Select a %s..."
 msgstr ""
 
-#: .\ui\extjs\ext_store.py:77
+#: .\ui\extjs\ext_store.py:80
 #, python-format
 msgid "Existing primary key value %r may not be modified."
 msgstr ""
 
-#: .\ui\extjs\ext_store.py:296
+#: .\ui\extjs\ext_store.py:292
 #, python-format
 msgid "%r (invalid choice)"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:490
+#: .\ui\extjs\ext_ui.py:494
 msgid "Console"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:598
+#: .\ui\extjs\ext_ui.py:602
 #, python-format
 msgid "Welcome on Lino server %(title)r, user %(user)s"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:635
+#: .\ui\extjs\ext_ui.py:641
 #, python-format
 msgid "%s has been saved."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:644 .\ui\extjs\ext_ui.py:667
+#: .\ui\extjs\ext_ui.py:652 .\ui\extjs\ext_ui.py:675
 #, python-format
 msgid "User %(user)s cannot configure %(report)s."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:861
+#: .\ui\extjs\ext_ui.py:850
+#, python-format
+msgid "Failed to delete %(record)s : %(error)s."
+msgstr ""
+
+#: .\ui\extjs\ext_ui.py:870
 #, python-format
 msgid "Insert into %s..."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:991
+#: .\ui\extjs\ext_ui.py:897
+#, python-format
+msgid "Action %(action)s failed for %(record)s: %(error)s"
+msgstr ""
+
+#: .\ui\extjs\ext_ui.py:1003
 #, python-format
 msgid "Choices for %s"
 msgstr ""

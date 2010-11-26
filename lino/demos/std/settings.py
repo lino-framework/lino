@@ -26,6 +26,7 @@ from os.path import join, abspath, dirname, normpath
 import lino
 
 # Lino specific settings
+DBLOGGER = 'db'
 USE_FIREBUG = True
 USE_GRIDFILTERS = True
 MODEL_DEBUG = True

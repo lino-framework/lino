@@ -208,6 +208,7 @@ As long as I am the only Lino developer, I'll write it mostly in German.
   :doc:`23 <1123>`
   :doc:`24 <1124>`
   :doc:`25 <1125>`
+  :doc:`26 <1126>`
   
   
 

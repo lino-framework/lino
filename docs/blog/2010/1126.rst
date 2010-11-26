@@ -1,0 +1,41 @@
+20101126
+========
+
+Logging database changes
+------------------------
+
+There are 2 different usages for 
+the Python `logging` module: 
+
+- the "system logger" is needed when analyzing a 
+  problem with the application. This is what we have 
+  been using until now.
+
+- An optional "database logger" should provide useful 
+  long-term information about changes in the database. 
+  We might want a detailed log about 
+  which user modified which field...
+
+- Changes:
+
+  - New module :mod:`lino.utils.dblogger`
+
+  - Modifications in :mod:`lino.utils.log`. 
+    There was among others a stupid bug for the AdminEmailHandler.
+
+
+Changes in :mod:`lino.modlib.dsbe.models`
+-----------------------------------------
+
+Ich habe die besprochenen neuen Felder in `dsbe.Contracts` größtenteils 
+fertig und auch ein bisschen mit appy.pod gespielt. War alles sehr erfreulich.
+
+Das automatische Ausfüllen von Contract.duration laut person.birth_date 
+hat bestimmt noch Bugs.
+
+Allgemeine Änderungen: 
+
+- Submitdetail fordert jetzt ein refresh an
+- Datumsfelder wurden als datetime statt date gespeichert.
+- Integer-Feld konnte man nicht auf None setzen.
+

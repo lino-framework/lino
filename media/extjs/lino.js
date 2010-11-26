@@ -557,6 +557,7 @@ Lino.submit_detail = function(panel,btn) {
       params: panel.get_base_params(), 
       success: function(form, action) {
         Lino.notify(action.result.message);
+        if (action.result.refresh) panel.refresh();
         //~ this.caller.refresh();
       },
       failure: Lino.on_submit_failure,

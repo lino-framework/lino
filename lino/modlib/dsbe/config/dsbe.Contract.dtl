@@ -2,7 +2,13 @@
 
 main =
     id type person language 
-    company contact
-    applies_from applies_until must_build
     user reminder_date reminder_text
+    company contact
+    applies_from applies_until duration 
+    regime:20 schedule:30 hourly_rate:10
+    reference_person date_decided date_issued 
+    responsibilities
+    
+    
+    
 

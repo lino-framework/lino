@@ -9,8 +9,6 @@ for which I hope for help from other people.
 Before version 1.0
 ------------------
 
-- Logging
-
 - "Console messages"
 
 - The main window also needs a `Refresh` button. 
@@ -219,8 +217,6 @@ Long-term
 - Feldgruppen. Z.B. bei den 3 Feldern für Arbeitserlaubnis (:attr:`dsbe.models.Person.work_permit`) in DSBE wäre es interessant, 
   dass das Label "Arbeitserlaubnis" einmal über der Gruppe steht und in den Labels der einzelnen Felder nicht wiederholt wird.
 
-- Comboboxen auf Integerfeldern funktionieren nicht. Zeigen NaN als Text an.
-
 - Der JS-Code, der ein Detail-Fenster definiert, wird in der :xfile:`site.js` 
   für jeden Report zweimal generiert (detail und insert).
   Ein einziges Mal für alle Reports würde reichen.
@@ -387,6 +383,15 @@ Long-term
 
 - Use :meth:`Action.run` in general, not only for RowAction. 
   See :doc:`/blog/2010/1124`
+  
+- Check whether the approach at http://djangosnippets.org/snippets/14/ 
+  is easier than south
+  
+- Wenn man im Detail speichert, wird anschließend immer ein Refresh gemacht. 
+  Das ist bisher nur bei dsbe.Contract nötig, und statt ein Refresh anzufordern, 
+  könnte er auch gleich den aktualisierten Record zurückgeben...
+  Da ist also Spielraum zum Optimieren.
+  
 
 
 Documentation

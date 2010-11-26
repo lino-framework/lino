@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-25 08:24+0000\n"
+"POT-Creation-Date: 2010-11-26 15:54+0000\n"
 "PO-Revision-Date: 2010-11-25 10:27+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
@@ -25,8 +25,7 @@ msgstr "Detail"
 msgid "%s (Detail)"
 msgstr "%s (Detail)"
 
-#: .\actions.py:160
-#: .\actions.py:214
+#: .\actions.py:160 .\actions.py:214
 msgid "Insert"
 msgstr "Einfügen"
 
@@ -71,7 +70,7 @@ msgstr "sehr gut"
 msgid "Invalid value %(value). Must be one of (%(values)s)"
 msgstr ""
 
-#: .\lino_site.py:167
+#: .\lino_site.py:168
 #, python-format
 msgid "Cannot delete %(self)s because %(count)d %(refs)s refer to it."
 msgstr "Kann %(self)s nicht löschen weil %(count)d %(refs)s darauf verweisen."
@@ -84,8 +83,7 @@ msgstr "Firma, die diese Anwendung  betreibt"
 msgid "The next automatic id for Person or Company"
 msgstr "Nächste automatische ID für Partner"
 
-#: .\models.py:43
-#: .\models.py:92
+#: .\models.py:43 .\models.py:92
 msgid "Site Configuration"
 msgstr "Anwendungsparameter"
 
@@ -111,8 +109,7 @@ msgstr "Ja"
 msgid "No"
 msgstr "Nein"
 
-#: .\demos\dsbe\lino_settings.py:27
-#: .\demos\std\lino_settings.py:23
+#: .\demos\dsbe\lino_settings.py:27 .\demos\std\lino_settings.py:23
 msgid "~Contacts"
 msgstr "~Kontakte"
 
@@ -120,13 +117,11 @@ msgstr "~Kontakte"
 msgid "~Notes"
 msgstr "~Notizen"
 
-#: .\demos\dsbe\lino_settings.py:38
-#: .\demos\std\lino_settings.py:31
+#: .\demos\dsbe\lino_settings.py:38 .\demos\std\lino_settings.py:31
 msgid "~Configure"
 msgstr "~Konfigurierung"
 
-#: .\demos\dsbe\lino_settings.py:61
-#: .\demos\std\lino_settings.py:43
+#: .\demos\dsbe\lino_settings.py:61 .\demos\std\lino_settings.py:43
 msgid "E~xplorer"
 msgstr ""
 
@@ -154,27 +149,27 @@ msgstr ""
 msgid "Company"
 msgstr "Firma"
 
-#: .\mixins\printable.py:353
+#: .\mixins\printable.py:360
 msgid "Print"
 msgstr "Drucken"
 
-#: .\mixins\printable.py:373
+#: .\mixins\printable.py:380
 msgid "Edit template"
 msgstr "Vorlage bearbeiten"
 
-#: .\mixins\printable.py:383
+#: .\mixins\printable.py:390
 msgid "Clear cache"
 msgstr "Cache löschen"
 
-#: .\mixins\printable.py:400
+#: .\mixins\printable.py:407
 msgid "Build method"
 msgstr "Konstruktionsmethode"
 
-#: .\mixins\printable.py:403
+#: .\mixins\printable.py:410
 msgid "Template"
 msgstr "Vorlage"
 
-#: .\mixins\printable.py:424
+#: .\mixins\printable.py:431
 msgid "must build"
 msgstr "muss generiert werden"
 
@@ -227,42 +222,51 @@ msgstr "Beschreibung"
 msgid "Select a %s..."
 msgstr "%s auswählen..."
 
-#: .\ui\extjs\ext_store.py:77
+#: .\ui\extjs\ext_store.py:80
 #, python-format
 msgid "Existing primary key value %r may not be modified."
 msgstr "Existierender ID-Wert %r darf nicht verändert werden."
 
-#: .\ui\extjs\ext_store.py:296
+#: .\ui\extjs\ext_store.py:292
 #, python-format
 msgid "%r (invalid choice)"
 msgstr "%r (ungültige Auswahl)"
 
-#: .\ui\extjs\ext_ui.py:490
+#: .\ui\extjs\ext_ui.py:494
 msgid "Console"
 msgstr "Konsole"
 
-#: .\ui\extjs\ext_ui.py:598
+#: .\ui\extjs\ext_ui.py:602
 #, python-format
 msgid "Welcome on Lino server %(title)r, user %(user)s"
 msgstr "Willkommen auf dem Lino-server %(title)r, %(user)s"
 
-#: .\ui\extjs\ext_ui.py:635
+#: .\ui\extjs\ext_ui.py:641
 #, python-format
 msgid "%s has been saved."
 msgstr "%s wurde gespeichert."
 
-#: .\ui\extjs\ext_ui.py:644
-#: .\ui\extjs\ext_ui.py:667
+#: .\ui\extjs\ext_ui.py:652 .\ui\extjs\ext_ui.py:675
 #, python-format
 msgid "User %(user)s cannot configure %(report)s."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:861
+#: .\ui\extjs\ext_ui.py:850
+#, python-format
+msgid "Failed to delete %(record)s : %(error)s."
+msgstr ""
+
+#: .\ui\extjs\ext_ui.py:870
 #, python-format
 msgid "Insert into %s..."
 msgstr "Einfügen nach %s..."
 
-#: .\ui\extjs\ext_ui.py:991
+#: .\ui\extjs\ext_ui.py:897
+#, python-format
+msgid "Action %(action)s failed for %(record)s: %(error)s"
+msgstr ""
+
+#: .\ui\extjs\ext_ui.py:1003
 #, python-format
 msgid "Choices for %s"
 msgstr "Auswahlmöglichkeiten für %s"
