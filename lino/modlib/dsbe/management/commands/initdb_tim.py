@@ -362,8 +362,8 @@ class Command(BaseCommand):
             
         options.update(interactive=False)
         
-        dblogger.log("Lino initdb_tim started on database %s." % dbname)
-        dblogger.log(lino.welcome_text())
+        dblogger.info("Lino initdb_tim started on database %s." % dbname)
+        dblogger.info(lino.welcome_text())
             
         apps = app_labels()
         call_command('reset',*apps,**options)
@@ -386,4 +386,4 @@ class Command(BaseCommand):
         #~ logger.info('lino_site.fill() done. Starting load_tim_data()...')
         load_tim_data(args[0])
         
-        dblogger.log("Lino initdb_tim done on database %s." % dbname)
+        dblogger.info("Lino initdb_tim done on database %s." % dbname)

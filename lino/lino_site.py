@@ -249,8 +249,8 @@ class LinoSite:
         self._setup_done = True
         self._setting_up = False
         
-        dblogger.log("Lino Site %r started.", self.title)
-        dblogger.log(lino.welcome_text())
+        dblogger.info("Lino Site %r started.", self.title)
+        dblogger.info(lino.welcome_text())
         
         
     def add_menu(self,*args,**kw):
