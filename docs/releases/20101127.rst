@@ -4,20 +4,19 @@ Version 0.8.13
 New features
 ------------
 
-- Detail windows now have a Refresh button. 
-
-- New module "Uploads". (See :doc:`/blog/2010/1122`)
-
-- New buttons "Clear cache" and "Edit template" on printables. (See :doc:`/blog/2010/1124`)
-
 - Grid no longer has a bottom toolbar. row actions accessible only through context menu. 
   "Save GC" button now as a window tool button. (See :doc:`/blog/2010/1124`)
   
-- database changes logging
+- New module "Uploads". (See :doc:`/blog/2010/1122`)
 
 - Ich habe die besprochenen neuen Felder in `dsbe.Contracts` größtenteils 
   fertig und auch ein bisschen mit appy.pod gespielt. War alles sehr erfreulich.
 
+- New buttons "Clear cache" and "Edit template" on printables. (See :doc:`/blog/2010/1124`)
+
+- database changes logging
+
+- Detail windows now have a Refresh button. 
 
 
 Bugs fixed

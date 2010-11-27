@@ -653,7 +653,7 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,mixins.
     applies_until = models.DateField(blank=True,null=True,verbose_name=_("applies until"))
     date_decided = models.DateField(blank=True,null=True,verbose_name=_("date decided"))
     date_issued = models.DateField(blank=True,null=True,verbose_name=_("date issued"))
-    duration = models.IntegerField(_("duration (days)"),blank=True,null=True)
+    duration = models.IntegerField(_("duration (days)"),blank=True,null=True,default=None)
     
     regime = models.CharField(_("regime"),max_length=200,blank=True,null=True)
     schedule = models.CharField(_("schedule"),max_length=200,blank=True,null=True)

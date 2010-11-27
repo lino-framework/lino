@@ -9,6 +9,17 @@ for which I hope for help from other people.
 Before version 1.0
 ------------------
 
+- Bug when entering date fields. Ich hatte `applies_from` in einem Vertrag 
+  mit Hilfe des Kalenders auf 3. Januar 2010 gesetzt und gespeichert:
+
+    201011-27 06:57:28 INFO dblogger : Contract #1 (Vertrag Nr. 1) modified by lsaffre : applies_from : None --> 2011-03-01
+    
+  Danach das Feld duration von 0 auf leer gesetzt::
+  
+    201011-27 06:58:42 INFO dblogger : Contract #1 (Vertrag Nr. 1) modified by lsaffre :
+    duration : 0 --> None
+    applies_from : 2011-03-01 --> 2011-01-03
+
 - "Console messages"
 
 - The main window also needs a `Refresh` button. 
@@ -19,7 +30,7 @@ Before version 1.0
 
 - How to import and/or render BIC:IBAN account numbers?
 
-- Auch `watch_tim` automatisch nach reboot starten.
+- `watch_tim` automatisch nach reboot starten.
   Irgendwie müssen ungefähr die folgenden Befehle in der :file:`/etc/init.d` 
   gerufen werden::
   
@@ -30,6 +41,8 @@ Before version 1.0
   | http://www.debian-administration.org/articles/28
   | http://girasoli.org/?p=120
   | `How to LSBize an Init Script <http://wiki.debian.org/LSBInitScripts>`_
+  
+  Das Loggen von watch_tim geht scheinbar noch nicht so richtig.  
 
 
 - WebDAV installieren und testen, wie das Bearbeiten von RTF- und ODT-Dokumenten in der Praxis läuft.

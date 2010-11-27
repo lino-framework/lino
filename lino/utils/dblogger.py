@@ -78,7 +78,7 @@ if settings.DBLOGFILE:
             if len(changes) == 1:
                 changes = changes[0]
             else:
-                changes = '\n' + ('\n'.join(changes))
+                changes = '\n- ' + ('\n- '.join(changes))
             msg = "%s modified by %s : %s" % (
                 obj2str(elem),
                 request.user,
