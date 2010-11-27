@@ -17,15 +17,14 @@
 
 This module contains utilities for logging changes in a 
 Django database.
-
-If looks for a logger named ``'db'``. 
-If such a logger didn't yet exist, we do a default configuration.
-
-    
 Since logging of database changes will inevitably cause some extra work, 
-this feature should be optional per site and per model.
+this feature is optional per site and per model.
 
-New setting :setting:`DBLOGFILE`.
+It looks for a logger named ``'db'``. 
+If such a logger didn't yet exist, we do a default configuration.
+   
+
+This uses the setting :setting:`DBLOGFILE`.
 
 .. setting:: DBLOGFILE
 

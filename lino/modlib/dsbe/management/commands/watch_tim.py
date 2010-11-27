@@ -25,8 +25,8 @@ import codecs
 import time
 import datetime
 
-import logging
-logger = logging.getLogger('lino')
+#~ import logging
+#~ logger = logging.getLogger('lino')
 
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
@@ -39,6 +39,7 @@ from lino.tools import resolve_model
 from lino.modlib.contacts.utils import name2kw, street2kw, join_words
 
 from lino.utils import confirm
+from lino.utils import dblogger
 
 from lino.modlib.dsbe.management.commands.initdb_tim import convert_sex, ADR_id, country2kw, pxs2person, is_company
 
@@ -81,27 +82,27 @@ class Controller:
         obj = self.model()
         self.applydata(obj,kw['data'])
         obj.save()
-        logger.debug("%s:%s : POST %s",kw['alias'],kw['id'],kw['data'])
+        dblogger.debug("%s:%s : POST %s",kw['alias'],kw['id'],kw['data'])
         
     def DELETE(self,**kw):
         obj = self.get_object(kw)
         if obj is None:
-            logger.debug("%s:%s : DELETE failed (does not exist)",kw['alias'],kw['id'])
+            dblogger.debug("%s:%s : DELETE failed (does not exist)",kw['alias'],kw['id'])
             return
         obj.delete()
-        logger.debug("%s:%s : DELETE ok",kw['alias'],kw['id'])
+        dblogger.debug("%s:%s : DELETE ok",kw['alias'],kw['id'])
                     
     def PUT(self,**kw):
         obj = self.get_object(kw)
         if obj is None:
-            logger.debug("%s:%s : PUT becomes POST",kw['alias'],kw['id'])
+            dblogger.debug("%s:%s : PUT becomes POST",kw['alias'],kw['id'])
             kw['method'] = 'POST'
             return self.POST(**kw)
         if self.PUT_special(obj,**kw):
             return 
         self.applydata(obj,kw['data'])
         obj.save()
-        logger.debug("%s:%s : PUT %s",kw['alias'],kw['id'],kw['data'])
+        dblogger.debug("%s:%s : PUT %s",kw['alias'],kw['id'],kw['data'])
         
     def PUT_special(self,obj,**kw):
         pass
@@ -180,12 +181,12 @@ class PAR(Controller):
         #~ if vat_id:
         if is_company(kw['data']):
             if obj.__class__ is Person:
-                logger.debug("%s:%s : Person becomes Company",kw['alias'],kw['id'])
+                dblogger.debug("%s:%s : Person becomes Company",kw['alias'],kw['id'])
                 self.swapclass(obj,Company,kw['data'])
                 return True
         else:
             if obj.__class__ is Company:
-                logger.debug("%s:%s : Company becomes Person",kw['alias'],kw['id'])
+                dblogger.debug("%s:%s : Company becomes Person",kw['alias'],kw['id'])
                 self.swapclass(obj,Person,kw['data'])
                 return True
             
@@ -198,7 +199,7 @@ class PAR(Controller):
             obj = Person()
         self.applydata(obj,kw['data'])
         obj.save()
-        logger.debug("%s:%s : POST %s",kw['alias'],kw['id'],kw['data'])
+        dblogger.debug("%s:%s : POST %s",kw['alias'],kw['id'],kw['data'])
             
 
 class PXS(PAR):
@@ -328,7 +329,7 @@ def watch(data_dir):
         except Exception,e:
             #~ logger.debug("Could not rename %s to %s",infile,watching)
             return
-    logger.info("Processing file %s",watching)
+    dblogger.info("Processing file %s",watching)
     fd_watching = codecs.open(watching,'r',encoding='cp850')
     fd_failed = codecs.open(failed,'a',encoding='cp850')
     #~ log = open(os.path.join(data_dir,'changelog.done.log'),'a')
@@ -340,13 +341,13 @@ def watch(data_dir):
         except Exception,e:
             fd_failed.write("// %s %r\n%s\n\n" % (time.strftime("%Y-%m-%d %H:%M:%S"),e,ln))
             #~ fd_failed.write(ln+'\n')
-            logger.warning("%s:%d: %r", watching,i,e)
-            logger.exception(e)
+            dblogger.warning("%s:%d: %r", watching,i,e)
+            dblogger.exception(e)
             #~ raise
     fd_watching.close()
     fd_failed.close()
     os.remove(watching)
-    logger.info("%d changes have been processed.",i)
+    dblogger.info("%d changes have been processed.",i)
     #~ log.close()
         
 
@@ -354,7 +355,7 @@ def main(*args,**options):
     if len(args) != 1:
         raise CommandError('Please specify the path to your TIM changelog directory')
     data_dir = args[0]
-    logger.info("Watching %s ...",data_dir)
+    dblogger.info("Watching %s ...",data_dir)
     last_warning = None
     while True:
         watch(data_dir)
