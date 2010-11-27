@@ -385,4 +385,5 @@ class Command(BaseCommand):
             #~ o.save()
         #~ logger.info('lino_site.fill() done. Starting load_tim_data()...')
         load_tim_data(args[0])
+        
         dblogger.log("Lino initdb_tim done on database %s." % dbname)

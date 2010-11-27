@@ -26,7 +26,7 @@ See also :doc:`/tickets/closed/15`
 import os
 import sys
 import logging
-from logging import RotatingFileHandler
+from logging.handlers import RotatingFileHandler
 
 from django.utils.log import AdminEmailHandler
 
