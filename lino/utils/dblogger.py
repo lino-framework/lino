@@ -18,33 +18,24 @@
 This module contains utilities for logging changes in a 
 Django database.
 
-It doesn't configure any logger. 
-This is done either by yourself, 
-or in Lino's default configuration 
-:mod:`lino.demos.std.settings`
-and 
-:func:`lino.utils.log.configure`
+If looks for a logger named ``'db'``. 
+If such a logger didn't yet exist, we do a default configuration.
 
     
 Since logging of database changes will inevitably cause some extra work, 
 this feature should be optional per site and per model.
 
-New module :mod:`lino.utils.dblogger`
-New setting :setting:`DBLOGGER`.
+New setting :setting:`DBLOGFILE`.
 
-.. setting:: DBLOGGER
+.. setting:: DBLOGFILE
 
-  Set this either to a logger name string or ``None``.
-  Used by lino.utils.dblogger.
+  The full path of the changelog file.
+  If this is ``None``, database changelogs are disabled.
+  If this is ``'auto'``, the file will be named 
+  :xfile:`db.log` in a :file:`log` subdir of your :setting:`PROJECT_DIR`.
 
-These two usages should have different loggers. 
-
-On a development server, 
-system logger should output `info` level messages to screen 
-and `debug` messages to a file (`system.log`).
-On a production server there should be no screen messages.
-
-The database logger should log to a file `db.log`
+  Default value ``'auto'`` is defined in 
+  :mod:`lino.demos.std.settings`.
 
 
 
@@ -53,21 +44,37 @@ The database logger should log to a file `db.log`
 
 """
 
-import logging
 from django.conf import settings
-from lino import mixins
-from lino.tools import obj2str
 
-if settings.DBLOGGER:
+if settings.DBLOGFILE:
+  
+    import os
+    import logging
+    from logging.handlers import RotatingFileHandler
+    from lino import mixins
+    from lino.tools import obj2str
+    from lino.utils.log import file_handler
+    
     logger = logging.getLogger('db')
-    log = logger.info
+    #~ log = logger.info
     info = logger.info
     warning = logger.warning
     exception = logger.exception
+    error = logger.error
     debug = logger.debug
     
+    filename = settings.DBLOGFILE
+    if filename.lower() == 'auto':
+        filename = os.path.join(settings.PROJECT_DIR,'log','db.log')
+    
+    if len(logger.handlers) == 0:
+        logger.setLevel(logging.INFO)
+        logger.addHandler(file_handler(filename)
+        
+      
+    
     def log_changes(request,elem):
-        if logger and isinstance(elem,mixins.DiffingMixin):
+        if isinstance(elem,mixins.DiffingMixin):
             changes = []
             for k,v in elem.changed_columns().items():
                 changes.append("%s : %s --> %s" % (k,v['old'],v['new']))
@@ -82,10 +89,11 @@ if settings.DBLOGGER:
             logger.info(msg)
 
 else:
-    def log(*args,**kw): pass
+    #~ def log(*args,**kw): pass
     def info(*args,**kw): pass
     def warning(*args,**kw): pass
     def exception(*args,**kw): pass
+    def error(*args,**kw): pass
     def debug(*args,**kw): pass
     def log_changes(request,elem): pass
 

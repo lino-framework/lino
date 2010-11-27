@@ -75,9 +75,9 @@ def configure(config):
         h.setLevel(logging.DEBUG)
         logger.addHandler(h)
         
-        dblogger = logging.getLogger('db')
-        assert dblogger != logger
-        dblogger.setLevel(logging.INFO)
-        dblogger.addHandler(file_handler(os.path.join(log_dir,'db.log')))
+        #~ dblogger = logging.getLogger('db')
+        #~ assert dblogger != logger
+        #~ dblogger.setLevel(logging.INFO)
+        #~ dblogger.addHandler(file_handler(os.path.join(log_dir,'db.log')))
     
     
