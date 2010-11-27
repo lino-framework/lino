@@ -39,3 +39,6 @@ Allgemeine Änderungen:
 - Datumsfelder wurden als datetime statt date gespeichert.
 - Integer-Feld konnte man nicht auf None setzen.
 
+
+The above work is checked in 
+`here <http://code.google.com/p/lino/source/detail?r=46ecd1ec43436a964f77e91a794f2ab0553d9252>`_.

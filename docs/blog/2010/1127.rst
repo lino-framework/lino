@@ -1,0 +1,5 @@
+20101127
+========
+
+- Release :doc:`/releases/20101127` 
+  in Eupen
