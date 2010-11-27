@@ -26,15 +26,17 @@ See also :doc:`/tickets/closed/15`
 import os
 import sys
 import logging
+from logging import RotatingFileHandler
 
 from django.utils.log import AdminEmailHandler
 
 def file_handler(filename):
 
-    if hasattr(logging,'RotatingFileHandler'):
-        h = logging.RotatingFileHandler(filename,maxBytes=10000,backupCount=5)
-    else:
-        h = logging.FileHandler(filename)
+    h = RotatingFileHandler(filename,maxBytes=100000,backupCount=5,encoding='utf-8')
+    #~ if hasattr(logging,'RotatingFileHandler'):
+        #~ h = logging.RotatingFileHandler(filename,maxBytes=10000,backupCount=5)
+    #~ else:
+        #~ h = logging.FileHandler(filename)
     fmt = logging.Formatter(
         fmt='%(asctime)s %(levelname)s %(module)s : %(message)s',
         datefmt='%Y%m-%d %H:%M:%S'

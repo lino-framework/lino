@@ -48,8 +48,12 @@ Upgrade instructions
   ``settings.PROJET_DIR + "/doctemplates"``) 
   to 
   ``settings.MEDIA_ROOT + "/webdav/doctemplates"``. 
-  (See :doc:`/blog/2010/1124`)
-
+  This should be something like::
+  
+      cd /usr/local/django/myproject
+      mv doctemplates /usr/local/lino/media/webdav
+      
+  See :doc:`/blog/2010/1124`.
     
   
 - The usual things in your local directory::

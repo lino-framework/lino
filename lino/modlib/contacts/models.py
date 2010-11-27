@@ -71,7 +71,7 @@ class Addressable(models.Model):
     #~ language = models.ForeignKey('countries.Language',default=default_language)
     language = fields.LanguageField(default=default_language)
     
-    email = models.EmailField(blank=True,verbose_name=_('E-Mail'))
+    email = models.EmailField(_('E-Mail'),blank=True,null=True)
     url = models.URLField(blank=True,verbose_name=_('URL'))
     phone = models.CharField(max_length=200,blank=True,verbose_name=_('Phone'))
     gsm = models.CharField(max_length=200,blank=True,verbose_name=_('GSM'))

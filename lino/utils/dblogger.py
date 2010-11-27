@@ -61,6 +61,10 @@ from lino.tools import obj2str
 if settings.DBLOGGER:
     logger = logging.getLogger('db')
     log = logger.info
+    info = logger.info
+    warning = logger.warning
+    exception = logger.exception
+    debug = logger.debug
     
     def log_changes(request,elem):
         if logger and isinstance(elem,mixins.DiffingMixin):
@@ -79,5 +83,9 @@ if settings.DBLOGGER:
 
 else:
     def log(*args,**kw): pass
+    def info(*args,**kw): pass
+    def warning(*args,**kw): pass
+    def exception(*args,**kw): pass
+    def debug(*args,**kw): pass
     def log_changes(request,elem): pass
 

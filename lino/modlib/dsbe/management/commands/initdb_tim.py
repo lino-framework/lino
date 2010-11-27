@@ -131,7 +131,7 @@ def country2kw(row,kw):
             kw.update(city=city)
             #~ logger.warning("%s-%s : %s",row['PAYS'],row['CP'],e)
         except City.MultipleObjectsReturned,e:
-            logger.warning("%s-%s : %s",row['PAYS'],row['CP'],e)
+            dblogger.warning("%s-%s : %s",row['PAYS'],row['CP'],e)
       
 def pxs2person(row,person):
   
@@ -154,17 +154,17 @@ def pxs2person(row,person):
         try:
             person.health_insurance = Company.objects.get(pk=ADR_id(row['IDMUT']))
         except ValueError,e:
-            logger.warning(u"%s : invalid health_insurance %r",obj2str(person),row['IDMUT'])
+            dblogger.warning(u"%s : invalid health_insurance %r",obj2str(person),row['IDMUT'])
         except Company.DoesNotExist,e:
-            logger.warning(u"%s : health_insurance %s not found",obj2str(person),row['IDMUT'])
+            dblogger.warning(u"%s : health_insurance %s not found",obj2str(person),row['IDMUT'])
   
     if row['APOTHEKE']:
         try:
             person.pharmacy = Company.objects.get(pk=int(row['APOTHEKE']))
         except ValueError,e:
-            logger.warning(u"%s : invalid pharmacy %r",obj2str(person),row['APOTHEKE'])
+            dblogger.warning(u"%s : invalid pharmacy %r",obj2str(person),row['APOTHEKE'])
         except Company.DoesNotExist,e:
-            logger.warning(u"%s : pharmacy %s not found",obj2str(person),row['APOTHEKE'])
+            dblogger.warning(u"%s : pharmacy %s not found",obj2str(person),row['APOTHEKE'])
             
     nat = row['NATIONALIT']
     if nat:
@@ -199,11 +199,11 @@ def load_dbf(dbpath,tableName,load):
                     i.save()
                     #~ logger.debug("%s has been saved",i)
                 except ValidationError,e:
-                    logger.warning("Failed to save %s from %s : %s",obj2str(i),dbfrow,e)
-                    logger.exception(e)
+                    dblogger.warning("Failed to save %s from %s : %s",obj2str(i),dbfrow,e)
+                    dblogger.exception(e)
                 except IntegrityError,e:
-                    logger.warning("Failed to save %s from %s : %s",obj2str(i),dbfrow,e)
-                    logger.exception(e)
+                    dblogger.warning("Failed to save %s from %s : %s",obj2str(i),dbfrow,e)
+                    dblogger.exception(e)
     f.close()
 
     
@@ -385,3 +385,4 @@ class Command(BaseCommand):
             #~ o.save()
         #~ logger.info('lino_site.fill() done. Starting load_tim_data()...')
         load_tim_data(args[0])
+        dblogger.log("Lino initdb_tim done on database %s." % dbname)
