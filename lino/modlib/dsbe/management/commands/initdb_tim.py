@@ -36,6 +36,7 @@ from django.core.management.base import BaseCommand, CommandError
 
 from lino import lino_site
 from lino.utils import dbfreader
+from lino.utils import dblogger
 #~ from lino import diag
 
 from lino.modlib.contacts.utils import name2kw, street2kw, join_words
@@ -45,6 +46,7 @@ from lino.tools import resolve_model, obj2str
 import lino
 
 from lino.utils import confirm, iif
+from lino.core.coretools import app_labels
 
 
 Activity = resolve_model('dsbe.Activity')
@@ -354,16 +356,24 @@ class Command(BaseCommand):
         if len(args) != 1:
             raise CommandError('Please specify the path to your TIM data directory')
             
-            
         dbname = settings.DATABASES['default']['NAME']
         if not confirm("Gonna reset your database (%s).\nAre you sure (y/n) ?" % dbname):
             raise CommandError("User abort.")
             
-        call_command('reset',
-          'contacts','dsbe','countries','auth','notes','countries','links',
-          interactive=False)
+        options.update(interactive=False)
         
-        call_command('syncdb',interactive=False)
+        dblogger.log("Lino initdb_tim started on database %s." % dbname)
+        dblogger.log(lino.welcome_text())
+            
+        apps = app_labels()
+        call_command('reset',*apps,**options)
+        
+        #~ call_command('reset',
+          #~ 'contacts','dsbe','countries','auth','notes',
+          #~ 'countries','links','uploads',
+          #~ interactive=False)
+        
+        call_command('syncdb',**options)
             
         #~ NoteType = resolve_model('notes.NoteType')
         #~ n = NoteType.objects.all().count()

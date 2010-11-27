@@ -18,9 +18,10 @@ from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 
+import lino
 from lino.core.coretools import app_labels
-
 from lino.utils import *
+from lino.utils import dblogger
 
 class Command(BaseCommand):
     help = """Performs a database reset and loads the specified fixtures.
@@ -38,6 +39,8 @@ class Command(BaseCommand):
         if options.get('interactive'):
             if not confirm("Gonna reset your database (%s).\nAre you sure (y/n) ?" % dbname):
                 raise CommandError("User abort.")
+        dblogger.log("Lino initdb started on database %s." % dbname)
+        dblogger.log(lino.welcome_text())
         options.update(interactive=False)
         apps = app_labels()
         call_command('reset',*apps,**options)
