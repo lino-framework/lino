@@ -63,14 +63,12 @@ if settings.DBLOGFILE:
     error = logger.error
     debug = logger.debug
     
-    filename = settings.DBLOGFILE
-    if filename.lower() == 'auto':
-        filename = os.path.join(settings.PROJECT_DIR,'log','db.log')
-    
     if len(logger.handlers) == 0:
+        filename = settings.DBLOGFILE
+        if filename.lower() == 'auto':
+            filename = os.path.join(settings.PROJECT_DIR,'log','db.log')
         logger.setLevel(logging.INFO)
-        logger.addHandler(file_handler(filename)
-        
+        logger.addHandler(file_handler(filename))
       
     
     def log_changes(request,elem):
