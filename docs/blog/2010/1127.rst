@@ -12,6 +12,7 @@ TODO:
   klicke, wird das Dokument zwar generiert, 
   und über http://localhost:8080/media/cache/appypdf/dsbe.Contract-1.pdf 
   kann man es auch sehen, aber er öffnet es nicht automatisch.
+  (Lag an den Browsereinstellungen: das gilt für den Browser als Pop-up-Fenster.)
   
 - locale wird nicht gesetzt (Daten sind in Englisch)
   (fixed :doc:`/blog/2010/1129`)
