@@ -894,10 +894,10 @@ class ExtUI(base.UI):
                     try:
                         return a.run(self,elem)
                     except Exception,e:
-                        msg = _(u"Action %(action)s failed for %(record)s: %(error)s" % dict(
+                        msg = _("Action %(action)s failed for %(record)s: %(error)s") % dict(
                             action=a,
                             record=obj2str(elem),
-                            error=e))
+                            error=e)
                         logger.info(msg)
                         logger.exception(e)
                         return error_response(e,msg)

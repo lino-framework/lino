@@ -1,3 +1,36 @@
 20101130
 ========
 
+Dann hier noch was, das nicht auf dem Developtment Server passiert::
+
+    Traceback (most recent call last):
+      File "/var/snapshots/django/django/core/handlers/wsgi.py", line 265, in __call__
+        response = self.get_response(request)
+      File "/var/snapshots/django/django/core/handlers/base.py", line 160, in get_response
+        response = self.handle_uncaught_exception(request, resolver, sys.exc_info())
+      File "/var/snapshots/django/django/core/handlers/base.py", line 109, in get_response
+        response = callback(request, *callback_args, **callback_kwargs)
+      File "/var/snapshots/lino/lino/ui/extjs/ext_ui.py", line 900, in api_element_view
+        error=e))
+      File "/var/snapshots/django/django/utils/translation/__init__.py", line 62, in ugettext
+        return _trans.ugettext(message)
+      File "/var/snapshots/django/django/utils/translation/trans_real.py", line 283, in ugettext
+        return do_translate(message, 'ugettext')
+      File "/var/snapshots/django/django/utils/translation/trans_real.py", line 269, in do_translate
+        result = getattr(t, translation_function)(eol_message)
+      File "/usr/lib/python2.5/gettext.py", line 404, in ugettext
+        return unicode(message)
+    UnicodeDecodeError: 'ascii' codec can't decode byte 0xe9 in position 96: ordinal not in range(128)
+    
+Der Fehler war in der Tat in Zeile 900::
+    
+    try:
+        return a.run(self,elem)
+    except Exception,e:
+        msg = _("Action %(action)s failed for %(record)s: %(error)s" % dict(
+            action=a,
+            record=obj2str(elem),
+            error=e))
+        logger.info(msg)
+        logger.exception(e)
+        return error_response(e,msg)
