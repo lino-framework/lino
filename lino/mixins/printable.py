@@ -208,6 +208,22 @@ class SimpleBuildMethod(BuildMethod):
     def simple_build(self,elem,tpl,target):
         raise NotImplementedError
         
+def lang2locale(lang,country):
+    """
+    http://www.gossamer-threads.com/lists/python/bugs/721929
+    http://msdn.microsoft.com/en-us/library/hzz3tw78
+    """
+    if sys.platform == 'win32': # development server
+        if lang == 'fr':
+            if country == 'BE': return 'french-belgian'
+            return 'french'
+        if lang == 'de':
+            if country == 'BE': return 'german-belgian'
+            return 'german'
+        raise NotImplementedError("lang2locale(%r,%r)" % (lang,country))
+    else:
+        return lang+'_'+country
+        
 class AppyBuildMethod(SimpleBuildMethod):
   
     """
@@ -224,14 +240,14 @@ class AppyBuildMethod(SimpleBuildMethod):
         context = dict(self=elem)
         lang = str(elem.get_print_language(self))
         from appy.pod.renderer import Renderer
-        #~ import locale
-        #~ ls = (lang,settings.LANGUAGE_CODE[3:])
+        import locale
+        ls = lang2locale(lang,settings.LANGUAGE_CODE[3:])
         #~ ls = 'de-DE' # de_DE
         #~ print ls
-        #~ locale.setlocale(locale.LC_ALL,ls)
+        logger.debug("appy.pod render %s -> %s using locale=%r",tpl,target,ls)
+        locale.setlocale(locale.LC_ALL,ls)
         #~ Error: unsupported locale setting
         renderer = Renderer(tpl, context, target,**settings.APPY_PARAMS)
-        logger.debug("appy.pod render %s -> %s",tpl,target)
         renderer.run()
 
 class AppyOdtBuildMethod(AppyBuildMethod):

@@ -31,8 +31,13 @@ from logging.handlers import RotatingFileHandler
 from django.utils.log import AdminEmailHandler
 
 def file_handler(filename):
-
-    h = RotatingFileHandler(filename,maxBytes=100000,backupCount=5,encoding='utf-8')
+    """
+    See also :doc:`/blog/2010/1129`
+    """
+    if sys.platform == 'win32': 
+        h = logging.FileHandler(filename)
+    else:
+        h = RotatingFileHandler(filename,maxBytes=10000,backupCount=5,encoding='utf-8')
     #~ if hasattr(logging,'RotatingFileHandler'):
         #~ h = logging.RotatingFileHandler(filename,maxBytes=10000,backupCount=5)
     #~ else:

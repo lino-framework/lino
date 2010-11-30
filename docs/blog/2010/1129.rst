@@ -1,0 +1,33 @@
+20101129
+========
+
+Montagabend. Heute war keine Zeit für Lino. 
+Aber schauen wir uns vor dem Schlafengehen noch schnell folgendes Problem an:
+
+- locale wird nicht gesetzt (Daten sind in Englisch)
+
+Aha, hier das könnte helfen:
+
+  | http://www.gossamer-threads.com/lists/python/bugs/721929
+  | http://msdn.microsoft.com/en-us/library/hzz3tw78
+
+Also unter Windows haben wir ganz andere Strings für setlocale...
+Deshalb jetzt neue Funktion :func:`lino.mixins.printable.lang2locale`.
+Auf dem Development server funktioniert es jetzt.
+
+Zwischendurch: Tiens, was isn das:: 
+
+  Traceback (most recent call last):
+    File "C:\Python25\lib\logging\handlers.py", line 73, in emit
+      if self.shouldRollover(record):
+    File "C:\Python25\lib\logging\handlers.py", line 147, in shouldRollover
+      self.stream.seek(0, 2)  #due to non-posix-compliant Windows feature
+  ValueError: I/O operation on closed file
+  
+Aha (http://bugs.python.org/issue4749), 
+meine log-Datei auf dem Developement-Server muss scheinbar erstmals rotiert werden, 
+und das scheint unter Windows unter Umständen nicht zu funktionieren.
+
+Fazit: ich ändere :func:`lino.utils.log.file_handler` so dass er RotatingFileHandler 
+nur benutzt, 
+wenn er nicht unter win32 läuft. Ist ja dann sowieso nur der Development Server.

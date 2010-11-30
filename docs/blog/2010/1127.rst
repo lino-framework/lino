@@ -2,7 +2,19 @@
 ========
 
 - Release :doc:`/releases/20101127` in Eupen.
-  Tests dblogger und Optimierungen. 
+  Tests und Optimierungen in `dblogger`.
   initdb_tim loggt jetzt nur noch nach dblogger.
-  Das Loggen von watch_tim geht scheinbar noch nicht so richtig.
+  Das Loggen von watch_tim geht scheinbar allgemein noch nicht so richtig.
 
+TODO:
+
+- (Nur auf dem Produktionsserver) wenn ich auf einem Vertrag "Drucken" 
+  klicke, wird das Dokument zwar generiert, 
+  und über http://localhost:8080/media/cache/appypdf/dsbe.Contract-1.pdf 
+  kann man es auch sehen, aber er öffnet es nicht automatisch.
+  
+- locale wird nicht gesetzt (Daten sind in Englisch)
+  (fixed :doc:`/blog/2010/1129`)
+
+- webdav scheint nicht aktiv: wenn man "Vorlage bearbeiten" klickt, 
+  schlägt der Browser Dateidownload vor.
