@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 import os
 import traceback
 import codecs
+#~ import datetime
 #import logging ; logger = logging.getLogger('lino.reports')
 #~ import cPickle as pickle
 import pprint
@@ -36,7 +37,7 @@ from django.forms.models import _get_foreign_key
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 
-from dateutil import parser as dateparser
+#~ from dateutil import parser as dateparser
 
 from django.http import HttpResponse
 from django.utils.safestring import mark_safe
@@ -60,6 +61,12 @@ from lino.core.coretools import get_slave, get_model_report, data_elems, get_dat
 #~ from lino.modlib import field_choices
 
 
+def parse_js_date(s,name):
+    #~ v = dateparser.parse(s)
+    #~ v = dateparser.parse(s,fuzzy=True)
+    return lino.PARSE_DATE(s)
+    #~ print "parse_js_date %s : %r -> %s" % (name,s,v)
+    #~ return v
 
 
 def fields_list(model,field_names):
@@ -148,7 +155,7 @@ def add_gridfilters(qs,gridfilters):
         elif flttype == 'boolean':
             kw[field.name+"__equals"] = flt['value']
         elif flttype == 'date':
-            v = dateparser.parse(flt['value'],fuzzy=True)
+            v = parse_js_date(flt['value'],field.name)
             cmp = str(flt['comparison'])
             if cmp == 'eq': cmp = 'exact'
             kw[field.name+"__"+cmp] = v
@@ -563,7 +570,7 @@ class Report(actors.Actor): #,base.Handled):
     #~ page_layout = None # (layouts.PageLayout ,)
     #~ row_layout_class = None
     
-    date_format = 'd.m.Y'
+    date_format = lino.DATE_FORMAT_EXTJS
     boolean_texts = boolean_texts
     
     can_view = perms.always

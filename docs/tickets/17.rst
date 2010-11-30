@@ -1,0 +1,47 @@
+#17 : UnicodeDecodeError
+========================
+
+If I run the following on Debian stable (Python 2.5)::
+
+    locale.setlocale(locale.LC_ALL,'fr_BE')
+    try:
+        open('nonexisting_file')
+    except Exception,e:
+        print e
+        
+Then I get the following result::
+
+    lsaffre@lino:~$ python tmp.py
+    [Errno 2] Aucun fichier ou r▒pertoire de ce type: 'nonexisting_file'
+
+There should be written "répertoire", not "r▒pertoire". 
+
+When I replace the line ``print e`` by ``print unicode(e)`` 
+(or if I otherwise try to convert `e` to a unicode string), 
+then I get::
+
+  UnicodeDecodeError: 'ascii' codec can't decode byte 0xe9 in position 28: ordinal not in range(128)
+
+To reproduce this, you must have some french locale installed. 
+It probably doesn't need to be the Belgian version `fr_BE`.
+
+Kleine Änderung damit es plattformunabhängig auch unter Windows läuft::
+
+  import locale
+  from lino.utils import lc2locale
+
+  for lang in 'fr','de':
+      locale.setlocale(locale.LC_ALL,lc2locale(lang,'BE'))
+      try:
+          open('nonexisting_file')
+      except Exception,e:
+          print e
+
+Aber unter Windows (zumindest XP Home) werde die Meldungen 
+gar nicht übersetzt und folglich tritt das Problem nicht auf::
+
+    C:\temp>python tmp.py
+    [Errno 2] No such file or directory: 'nonexisting_file'
+    [Errno 2] No such file or directory: 'nonexisting_file'
+    
+    

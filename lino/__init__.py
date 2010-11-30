@@ -18,6 +18,7 @@ See :doc:`/admin/install` on how to use it.
 """
 
 import sys
+import datetime
 
 __version__ = "0.8.13"
 """
@@ -131,3 +132,13 @@ def welcome_html():
 #~ from lino.utils.choosers import choices_method, simple_choices_method
 #~ from lino.reports import Report
 #~ from lino.layouts import DetailLayout
+
+
+DATE_FORMAT_STRFTIME = '%d.%m.%Y'
+DATE_FORMAT_EXTJS = 'd.m.Y'
+def PARSE_DATE(s):
+    """Convert a string formatted as above to a datetime.date instance.
+    See :doc:`/blog/2010/1130`.
+    """
+    ymd = reversed(map(int,s.split('.')))
+    return datetime.date(*ymd)

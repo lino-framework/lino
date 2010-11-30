@@ -28,7 +28,7 @@ import lino
 # Lino specific settings
 #~ DBLOGGER = 'db'
 DBLOGFILE = 'auto'
-USE_FIREBUG = True
+USE_FIREBUG = False
 USE_GRIDFILTERS = True
 MODEL_DEBUG = True
 PROJECT_DIR = normpath(dirname(__file__))

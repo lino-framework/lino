@@ -212,6 +212,7 @@ As long as I am the only Lino developer, I'll write it mostly in German.
   :doc:`27 <1127>`
   |br|
   :doc:`29 <1129>`
+  :doc:`30 <1130>`
   
   
 

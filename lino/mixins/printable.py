@@ -21,6 +21,7 @@ logger = logging.getLogger(__name__)
 import os
 import sys
 import logging
+import locale
 import cStringIO
 import glob
 from fnmatch import fnmatch
@@ -53,8 +54,58 @@ from lino import actions
 from lino.tools import default_language
 
 
+
+LANG = None
+
+LONG_DATE_FMT = {
+  None: '%A, %d. %B %Y',
+  'de': '%A, %d. %B %Y',
+  'fr': '%A %d %B %Y',
+  'et': '%A, %d. %B %Y.a.',
+}
+
+SHORT_DATE_FMT = {
+  None: '%y-%m-%d',
+  'de': '%d.%m.%Y',
+  'et': '%d.%m.%Y',
+  'fr': '%d/%m/%Y',
+}
+
+
+   
+
+
+
 bm_dict = {}
 bm_list = []
+
+from lino.utils import lc2locale
+
+def dtos(d):
+    return d.strftime(SHORT_DATE_FMT[LANG])
+
+def dtosl(d):
+    return d.strftime(LONG_DATE_FMT[LANG])
+    
+def setlang(lang):
+    global LANG
+    LANG = lang
+    if lang is None:
+        locale.setlocale(locale.LC_ALL,'')
+    else:
+        country = settings.LANGUAGE_CODE[3:]
+        locale.setlocale(locale.LC_ALL,lc2locale(lang,country))
+    
+        #~ save_ls = locale.getlocale()
+        #~ ls = lc2locale(lang,country)
+        #~ ls = 'de-DE' # de_DE
+        #~ print ls
+        #~ logger.debug("appy.pod render %s -> %s using locale=%r",tpl,target,ls)
+        #~ locale.setlocale(locale.LC_ALL,'')
+    
+    
+
+    
 
 
 class BuildMethod:
@@ -125,6 +176,11 @@ class BuildMethod:
         logger.debug("%s : %s -> %s", self,elem,filename)
         return filename
         
+    def get_template_url(self,elem):
+        raise NotImplementedError
+        
+class DjangoBuildMethod(BuildMethod):
+
     def get_template(self,elem):
         tpls = elem.get_print_templates(self)
         if len(tpls) == 0:
@@ -133,11 +189,8 @@ class BuildMethod:
         try:
             return select_template(tpls)
         except TemplateDoesNotExist,e:
-            raise Exception("No template found for %s (%s)" % (tpls,e))
+            raise Exception("No template found for %s (%s)" % (e,tpls))
 
-    def get_template_url(self,elem):
-        raise NotImplementedError
-        
     def render_template(self,elem,tpl): # ,MEDIA_URL=settings.MEDIA_URL):
         context = dict(
           instance=elem,
@@ -146,9 +199,7 @@ class BuildMethod:
         )
         return tpl.render(Context(context))
         
-
-
-class PisaBuildMethod(BuildMethod):
+class PisaBuildMethod(DjangoBuildMethod):
     """
     Generates .pdf files from .html templates.
     """
@@ -177,10 +228,9 @@ class PisaBuildMethod(BuildMethod):
             raise Exception("pisa.pisaDocument.err is %r" % pdf.err)
         
 
-
 class SimpleBuildMethod(BuildMethod):
   
-    def get_template(self,elem):
+    def get_template_leaf(self,elem):
         tpls = elem.get_print_templates(self)
         #~ if not tpls:
             #~ return
@@ -188,41 +238,29 @@ class SimpleBuildMethod(BuildMethod):
             raise Exception(
               "%s.get_print_templates() must return exactly 1 template (got %r)" % (
                 elem.__class__.__name__,tpls))
-        return tpls[0]
+        tpl_leaf = tpls[0]
+        lang = elem.get_print_language(self)
+        if lang != default_language():
+            tplfile = os.path.normpath(os.path.join(self.templates_dir,tpl_leaf))
+            if not os.path.exists(tplfile):
+                lang = default_language()
+                #~ tpl = os.path.normpath(os.path.join(self.templates_dir,default_language(),tpl_leaf))
+        return lang + '/' + tpl_leaf
         
     def get_template_url(self,elem):
-        tpl = self.get_template(elem)
-        lang = elem.get_print_language(self)
-        return '/'.join((self.templates_url,lang,tpl))
+        tpl = self.get_template_leaf(elem)
+        return self.templates_url + '/' + tpl
         
     def build(self,elem):
         target = self.before_build(elem)
         if not target:
             return
-        tpl = self.get_template(elem)
-        lang = elem.get_print_language(self)
-        tpl = os.path.normpath(os.path.join(self.templates_dir,lang,tpl))
-        
-        self.simple_build(elem,tpl,target)
+        tpl_leaf = self.get_template_leaf(elem)
+        tplfile = os.path.normpath(os.path.join(self.templates_dir,tpl_leaf))
+        self.simple_build(elem,tplfile,target)
         
     def simple_build(self,elem,tpl,target):
         raise NotImplementedError
-        
-def lang2locale(lang,country):
-    """
-    http://www.gossamer-threads.com/lists/python/bugs/721929
-    http://msdn.microsoft.com/en-us/library/hzz3tw78
-    """
-    if sys.platform == 'win32': # development server
-        if lang == 'fr':
-            if country == 'BE': return 'french-belgian'
-            return 'french'
-        if lang == 'de':
-            if country == 'BE': return 'german-belgian'
-            return 'german'
-        raise NotImplementedError("lang2locale(%r,%r)" % (lang,country))
-    else:
-        return lang+'_'+country
         
 class AppyBuildMethod(SimpleBuildMethod):
   
@@ -237,18 +275,17 @@ class AppyBuildMethod(SimpleBuildMethod):
     templates_name = 'appy' # subclasses use the same templates directory
     
     def simple_build(self,elem,tpl,target):
-        context = dict(self=elem)
+        context = dict(self=elem,dtos=dtos,dtosl=dtosl)
         lang = str(elem.get_print_language(self))
         from appy.pod.renderer import Renderer
-        import locale
-        ls = lang2locale(lang,settings.LANGUAGE_CODE[3:])
-        #~ ls = 'de-DE' # de_DE
-        #~ print ls
-        logger.debug("appy.pod render %s -> %s using locale=%r",tpl,target,ls)
-        locale.setlocale(locale.LC_ALL,ls)
+        logger.debug("appy.pod render %s -> %s using language %r",tpl,target,lang)
+        savelang = LANG
+        setlang(lang)
+        #~ locale.setlocale(locale.LC_ALL,ls)
         #~ Error: unsupported locale setting
         renderer = Renderer(tpl, context, target,**settings.APPY_PARAMS)
         renderer.run()
+        setlang(savelang)
 
 class AppyOdtBuildMethod(AppyBuildMethod):
     name = 'appyodt'

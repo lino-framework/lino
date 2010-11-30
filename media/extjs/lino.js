@@ -1013,7 +1013,17 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
       //~ {text:'Save GC',handler:this.save_grid_config,qtip:"Save Grid Configuration",scope:this}
     //~ ]);
     
+    //~ this.row_editor = new Ext.ux.grid.RowEditor();
+    //~ config.plugins = [this.row_editor,new Lino.GridFilters()];
+    
     config.plugins = [new Lino.GridFilters()];
+    
+    //~ this.row_editor.on({
+      //~ scope: this,
+      //~ afteredit: function(roweditor, changes, record, rowIndex) {
+        //~ console.log(arguments);
+      //~ }
+    //~ });
     
     //~ config.colModel = new ext.grid.columnModel({defaultSortable:true,
       //~ columns:this.apply_grid_config(config.gc_name,config.ls_grid_configs,config.ls_columns)});
@@ -1244,7 +1254,46 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     e.row - The grid row index
     e.column - The grid column index
     */
-    var p = e.record.data;
+    var p = {};
+    //~ console.log('20101130 modified: ',e.record.modified);
+    //~ console.log('20101130 value: ',e.value);
+    //~ var p = e.record.getChanges();
+    //~ console.log('20101130 getChanges: ',e.record.getChanges());
+    for(k in e.record.getChanges()) {
+        var v = e.record.get(k);
+    //~ for(k in e.record.modified) {
+        //~ console.log('20101130',k,'=',v);
+        //~ var cm = e.grid.getColumnModel();
+        //~ var di = cm.getDataIndex(k);
+        var f = e.record.fields.get(k);
+        //~ console.log('20101130 f = ',f);
+        //~ var v = e.record.get(di);
+        if (f.type.type == 'date') {
+            p[k] = Ext.util.Format.date(v, f.dateFormat);
+        }else{
+            p[k] = v;
+        }
+        //~ var i = cm.findColumnIndex(k);
+        //~ var r = cm.getRenderer(i);
+        //~ var editor = cm.getCellEditor(i,e.row);
+        //~ var col = e.grid.getColumnModel().getColumnById(k);
+        //~ console.log('20101130 r = ',r(v));
+        //~ var f = e.record.fields[k];
+        //~ console.log('20101130 f = ',f);
+        //~ console.log('20101130 editor = ',editor);
+        //~ p[k] = f.getValue();
+        //~ p[k] = r(v);
+    }
+    //~ console.log('20101130 p:',p);
+    //~ var cm = e.grid.getColumnModel();
+    //~ var di = cm.getDataIndex(e.column);
+    //~ var f = e.record.fields.get(di);
+    //~ console.log('20101130 f = ',f);
+    //~ if (f.type.type == 'date') e.record.set(di,Ext.util.Format.date(e.value, f.dateFormat));
+    
+    
+    //~ var p = e.record.data;
+    
     // var p = {};
     //~ p['grid_afteredit_colname'] = e.field;
     //~ p[e.field] = e.value;
@@ -1278,18 +1327,6 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
       });
     }
     Ext.Ajax.request(req);
-    //~ if (e.record.phantom) {
-      //~ Lino.do_action(this,{
-        //~ method:'POST',url: '/api'+this.ls_url,
-        //~ params:p,
-        //~ after_success:on_success})
-    //~ } else {
-      //~ Lino.do_action(this,{
-        //~ method:'PUT',
-        //~ url: '/api'+this.ls_url+'/'+e.record.id, 
-        //~ params:p, 
-        //~ after_success:on_success});
-    //~ }
   },
 
   initComponent : function(){

@@ -1,7 +1,10 @@
 20101130
 ========
 
-Dann hier noch was, das nicht auf dem Developtment Server passiert::
+UnicodeDecodeError
+------------------
+
+Dann hier noch ein UnicodeDecodeError, der nicht auf dem Developtment Server passiert::
 
     Traceback (most recent call last):
       File "/var/snapshots/django/django/core/handlers/wsgi.py", line 265, in __call__
@@ -22,7 +25,7 @@ Dann hier noch was, das nicht auf dem Developtment Server passiert::
         return unicode(message)
     UnicodeDecodeError: 'ascii' codec can't decode byte 0xe9 in position 96: ordinal not in range(128)
     
-Der Fehler war in der Tat in Zeile 900::
+Der Fehler tritt auf in Zeile 900::
     
     try:
         return a.run(self,elem)
@@ -34,3 +37,152 @@ Der Fehler war in der Tat in Zeile 900::
         logger.info(msg)
         logger.exception(e)
         return error_response(e,msg)
+
+
+   File "/usr/lib/python2.5/zipfile.py", line 339, in __init__
+     self.fp = open(file, modeDict[mode])
+ IOError: [Errno 2] Aucun fichier ou r\xe9pertoire de ce type: u'/usr/local/lino.../fr/contracts/Konvention.odt'
+ 
+Hier ein kleines Skript, das den Fehler reproduziert::
+
+    import locale
+
+    for locale_setting in 'fr_BE','de_BE':
+        locale.setlocale(locale.LC_ALL,locale_setting)
+        try:
+            open('nonexisting_file')
+        except Exception,e:
+            print e
+ 
+Wenn ich das ausführe, kommt folgendes::
+
+    lsaffre@lino:~$ python tmp.py
+    [Errno 2] Aucun fichier ou r▒pertoire de ce type: 'nonexisting_file'
+    [Errno 2] Datei oder Verzeichnis nicht gefunden: 'nonexisting_file'
+
+Da steht wohlbemerkt nicht "répertoire", sondern "r▒pertoire". 
+Bis auf weiteres nehme ich an, dass das ein Bug in Python sein könnte.
+Das kommt nach :doc:`/tickets/17`.
+
+Der Auslöser der Fehlermeldung war ein Bug in Lino 
+(er suchte nach dem Template im fr-Verzeichnis obwohl es dort kein Template gibt), 
+der ist jetzt behoben und folglich kann
+:doc:`/tickets/17` zur Zeit warten.
+
+
+Localized templates in `appy.pod`
+---------------------------------
+
+Lino now sets Python's `locale.setlocale` to the document's language 
+while rendering an appy.pod template.
+So now I can render a `datetime.date` object using the following expression::
+
+  self.date_decided.strftime('%A, %d. %B %Y')
+  
+In a German document this will render a String of type 
+"Sonntag, 28. November 2010", in French it 
+gives "dimanche, 28. novembre 2010".
+
+Unfortunately that's only almost correct;  
+in French there must be no dot after the day's number.
+
+I tried the following::
+
+  def datefmt(d):
+      return d.strftime(locale.nl_langinfo(locale.D_FMT))
+
+But `nl_langinfo` is not available on all systems.
+
+So now I have my own little localization database extension 
+in :mod:`lino.mixins.printable`...
+
+
+Fuzzy side effects on date fields
+---------------------------------
+
+Worked on the following bug report:
+
+- Ich hatte `applies_from` in einem Vertrag 
+  mit Hilfe des Kalenders auf 3. Januar 2010 gesetzt und gespeichert:
+
+    201011-27 06:57:28 INFO dblogger : Contract #1 (Vertrag Nr. 1) modified by lsaffre : applies_from : None --> 2011-03-01
+    
+  Danach das Feld duration von 0 auf leer gesetzt::
+  
+    201011-27 06:58:42 INFO dblogger : Contract #1 (Vertrag Nr. 1) modified by lsaffre :
+    duration : 0 --> None
+    applies_from : 2011-03-01 --> 2011-01-03
+
+It's because a detail form submits the value as ``'03.01.2010'`` 
+  while the grid submits ``'2010-01-03T00:00:00'``.
+  
+In der Grid sind DatenFelder als Ext.grid.DateColumn definiert. Auszug aus dem ExtJS-Code::
+
+  Ext.grid.DateColumn = Ext.extend(Ext.grid.Column, {
+      
+      format : 'm/d/Y',
+      constructor: function(cfg){
+          Ext.grid.DateColumn.superclass.constructor.call(this, cfg);
+          this.renderer = Ext.util.Format.dateRenderer(this.format);
+      }
+  });
+
+
+Konfigurationsparameter der Kolonne::
+
+  { xtype: "datecolumn", format: "d.m.Y", editable: true, 
+    filter: { type: "date" }, 
+    editor: last_login38 } 
+    
+Und der Editor (`last_login38`) ist mit `xtype='datefield'` definiert::
+
+  last_login38 : { xtype: "datefield", format: "d.m.Y",... }
+  
+Aber das alles wird in `Ext.form.BasicForm.submit` gar nicht benutzt, der AJAX-Request schickt 
+einfach die rohen text-Werte der Felder ab.
+Eigentlich ist es das ja auch was ich will: Datenfelder sollen gefälligst im von mir gewählten 
+Format submittet werden, und nicht mit als browserspezifische Strings.
+
+Also eigentlich ist es meine `Lino.GridPanel.on_afteredit`, das ich ändern muss! 
+Und dann brauche ich den fuzzy dateparser gar nicht mehr.
+
+Statt meine `Lino.GridPanel.on_afteredit` zu ändern (das ist nämlich gar nicht so einfach) 
+könnte ich auch mal schauen, ob der ux.grid.RowEditor nicht sowieso viel besser wäre:
+http://edspencer.net/2009/09/using-the-extjs-row-editor.html
+
+Ja, das ging leichter als ich gedacht hatte... 
+nur: auch der RowEditor verwendet nicht das im DateField Format, um Datumsfelder abzuschicken.
+
+Den RowEditor muss ich mir merken falls das irgendweann mal interessant wird, 
+aber bis auf weiteres bleibe ich wenn möglich lieber noch bei der "primitiven" Methode, 
+jede Zelle einzeln zu submitten. 
+
+Der Tipp 
+`Using date fields in the Ext.grid.GridPanel and 
+Ext.grid.EditorGridPanel <http://www.facebook.com/note.php?note_id=127838923898744>`_
+von Eugen Hartmann hat mir geholfen zu verstehen, wo das fehlende Puzzlestück war: 
+Auch die Felder eines Stores haben auch ein Attribut `dateFormat`! 
+Das wird von ExtJS nur beim Laden des Stores benutzt.
+Danke für den Artikel, Eugen. 
+Aber dass du am Ende in deinem afteredit-Handling das Datum einfach als formatierten 
+String im Record speicherst, das ist imho nicht richtig. 
+Ich konvertiere die Daten erst beim Abschicken::
+
+    var p = {};
+    for(k in e.record.getChanges()) {
+        var v = e.record.get(k);
+        var f = e.record.fields.get(k);
+        if (f.type.type == 'date') {
+            p[k] = Ext.util.Format.date(v, f.dateFormat);
+        }else{
+            p[k] = v;
+        }
+    }
+
+17.40 Uhr, der Bug ist endlich behoben. Den fuzzy dateparser benutze ich momentan gar nicht. 
+Allerdings darf man reports.Report.date_format momentan nicht verändern, 
+das muss vorläufig auf ``'d.m.Y'`` stehen bleiben, denn ich habe noch keinen Konvertierer, 
+der dieses Format (in der ExtJS-Syntax) ins Format von strftime konvertiert.
+
+17.55 Uhr: oder besser gesagt: wenn man das Datumsformat ändern will, muss man es an drei stellen 
+ändern, die jetzt immerhin alle untereinander im Modul :mod:`lino` zentralisiert sind.

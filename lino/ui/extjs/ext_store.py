@@ -20,7 +20,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 import datetime
-from dateutil import parser as dateparser
+#~ from dateutil import parser as dateparser
 
 from django.db import models
 from django.core import exceptions
@@ -161,15 +161,18 @@ class AutoStoreField(StoreField):
 class DateStoreField(StoreField):
   
     def __init__(self,field,date_format,**kw):
-        self.date_format = date_format
+    #~ def __init__(self,field,**kw):
+        #~ self.date_format = date_format
         kw['type'] = 'date'
+        kw['dateFormat'] = date_format # 'Y-m-d'
         StoreField.__init__(self,field,**kw)
         
     def parse_form_value(self,v):
         #~ print '20101024 DateStoreField 1', v
         if v:
-            v = dateparser.parse(v,fuzzy=True)
-            v = datetime.date(v.year,v.month,v.day)
+            v = reports.parse_js_date(v,self.field.name)
+            #~ v = dateparser.parse(v,fuzzy=True)
+            #~ ? v = datetime.date(v.year,v.month,v.day)
         else:
             v = None
         #~ print '20101024 DateStoreField 2', v

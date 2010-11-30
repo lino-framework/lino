@@ -127,7 +127,10 @@ def py2js(v):
     if isinstance(v, (int, long, decimal.Decimal)):
         return str(v)
     if isinstance(v, datetime.date):
-        return 'new Date(%d,%d,%d)' % (v.year,v.month-1,v.day)
+        #~ return 'new Date(%d,%d,%d)' % (v.year,v.month-1,v.day)
+        return repr(v.strftime(lino.DATE_FORMAT_STRFTIME))
+        #~ return repr('%d.%d.%d' % (v.day,v.month,v.year))
+        #~ return repr(str(v))
 
     if isinstance(v, float):
         return repr(v)

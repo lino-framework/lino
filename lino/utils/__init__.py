@@ -35,6 +35,8 @@
 
 """
 
+import sys
+import locale
 
 def constrain(value,lowest,highest):
     return min(highest,max(value,lowest))
@@ -51,10 +53,30 @@ def confirm(prompt=None):
 def iif(l,y,f): 
     if l: return y 
     return f
-    
-    
-    
-   
+
+
+#~ def lang2locale(lang,country):
+def lc2locale(lang,country):
+    """
+    Convert a combination of `lang` and `country` codes to 
+    a platform-dependant locale setting to be used for 
+    :func:`locale.setlocale`.
+    Thanks to 
+    http://www.gossamer-threads.com/lists/python/bugs/721929
+    and
+    http://msdn.microsoft.com/en-us/library/hzz3tw78
+    """
+    if sys.platform == 'win32': # development server
+        if lang == 'fr':
+            if country == 'BE': return 'french-belgian'
+            return 'french'
+        if lang == 'de':
+            if country == 'BE': return 'german-belgian'
+            return 'german'
+        raise NotImplementedError("lc2locale(%r,%r)" % (lang,country))
+    else:
+        return lang+'_'+country
+        
 
 def _test():
     import doctest
