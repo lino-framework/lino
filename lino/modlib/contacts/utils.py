@@ -58,8 +58,8 @@ Examples:
 import re
 
 
-name_prefixes1 = ("HET", "'T",'VAN','DER', 'TER','VON','OF', "DE", "DU", "EL", "AL")
-name_prefixes2 = ("VAN DEN","VAN DE","IN HET", "VON DER","DE LA")
+name_prefixes1 = ("HET", "'T",'VAN','DER', 'TER','VOM','VON','OF', "DE", "DU", "EL", "AL")
+name_prefixes2 = ("VAN DEN","VAN DER","VAN DE","IN HET", "VON DER","DE LA")
 
 def name2kw(s,**kw):
     a = s.split()

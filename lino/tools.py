@@ -90,7 +90,8 @@ def model_label(model):
     
     
 def obj2str(i,force_detailed=False):
-    if not force_detailed and i.pk is not None:
+    #~ if not force_detailed and i.pk is not None:
+    if not force_detailed:
         return "%s #%s (%s)" % (i.__class__.__name__,i.pk,i)
     names = [fld.name for (fld,model) in i._meta.get_fields_with_model()]
     s = ','.join(["%s=%r" % (n, getattr(i,n)) for n in names])

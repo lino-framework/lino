@@ -646,7 +646,7 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,mixins.
     contact = models.ForeignKey("contacts.Contact",blank=True,null=True,
       verbose_name=_("represented by"))
     #~ user = models.ForeignKey("auth.User",verbose_name=_("Coach"))
-    type = models.ForeignKey("dsbe.ContractType",verbose_name=_("contract type"))
+    type = models.ForeignKey("dsbe.ContractType",verbose_name=_("contract type"),blank=True)
     language = fields.LanguageField(default=default_language)
     
     applies_from = models.DateField(blank=True,null=True,verbose_name=_("applies from"))
@@ -712,7 +712,7 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,mixins.
         #~ return choices
     
     def __unicode__(self):
-        msg = _("Contract # %d")
+        msg = _("Contract # %s")
         #~ msg = _("Contract # %(pk)d (%(person)s/%(company)s)")
         #~ return msg % dict(pk=self.pk, person=self.person, company=self.company)
         return msg % self.pk
@@ -738,29 +738,27 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,mixins.
             return self.person.user or self.user
             
     def full_clean(self):
-        if self.person.birth_date is None:
-            return 
-      
-        if self.applies_from is None:
-            return 
-            #~ self.applies_from = datetime.date.today()
-            
-        def duration(refdate):
-            delta = refdate - self.person.birth_date
-            age = delta.days / 365
-            if age < 36:
-                return 312
-            elif age < 50:
-                return 468
-            else:
-                return 624
-      
-        if self.duration is None:
-            if self.applies_until:
-                self.duration = duration(self.applies_until)
-            else:
-                self.duration = duration(self.applies_from)
-                self.applies_until = self.applies_from + datetime.timedelta(days=self.duration)
+        if self.person and self.person.birth_date and self.applies_from:
+            def duration(refdate):
+                delta = refdate - self.person.birth_date
+                age = delta.days / 365
+                if age < 36:
+                    return 312
+                elif age < 50:
+                    return 468
+                else:
+                    return 624
+          
+            if self.duration is None:
+                if self.applies_until:
+                    self.duration = duration(self.applies_until)
+                else:
+                    self.duration = duration(self.applies_from)
+                    self.applies_until = self.applies_from + datetime.timedelta(days=self.duration)
+        if self.type_id is None \
+            and self.company is not None \
+            and self.company.type is not None:
+            self.type = self.company.type.contract_type
         
 CONTRACT_PRINTABLE_FIELDS = reports.fields_list(Contract,
   'person company contact type '
@@ -828,3 +826,12 @@ class LinksByCompany(links.LinksByOwnerBase):
     column_names = "name url user date person *"
     order_by = "date"
   
+
+"""
+http://osdir.com/ml/django-users/2009-11/msg00696.html
+"""
+from lino.modlib.contacts.models import CompanyType
+CompanyType.add_to_class('contract_type',
+    models.ForeignKey("dsbe.ContractType",
+        blank=True,null=True,
+        verbose_name=_("contract type")))

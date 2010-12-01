@@ -485,7 +485,8 @@ class ReportActionRequest:
         return self.queryset.__len__()
         
     def create_instance(self,**kw):
-        kw.update(self.master_kw)
+        if self.master_kw:
+            kw.update(self.master_kw)
         #logger.debug('%s.create_instance(%r)',self,kw)
         return self.report.create_instance(self,**kw)
         

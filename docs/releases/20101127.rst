@@ -1,20 +1,26 @@
 Version 0.8.13
 ==============
 
+Released 27.11.-01.12.2010
+
 New features
 ------------
+
+- Ich habe die besprochenen neuen Felder in `dsbe.Contracts` größtenteils 
+  fertig und auch ein bisschen mit appy.pod gespielt. War alles sehr erfreulich.
+
+- Man kann jetzt pro Firmenart eine Vertragsart angeben, die Lino dann par défaut 
+  in neuen Verträgen mit dieser Firma einträgt.
+
+- New buttons "Clear cache" and "Edit template" on printables. (See :doc:`/blog/2010/1124`)
 
 - Grid no longer has a bottom toolbar. row actions accessible only through context menu. 
   "Save GC" button now as a window tool button. (See :doc:`/blog/2010/1124`)
   
 - New module "Uploads". (See :doc:`/blog/2010/1122`)
 
-- Ich habe die besprochenen neuen Felder in `dsbe.Contracts` größtenteils 
-  fertig und auch ein bisschen mit appy.pod gespielt. War alles sehr erfreulich.
-
-- New buttons "Clear cache" and "Edit template" on printables. (See :doc:`/blog/2010/1124`)
-
-- database changes logging
+- database changes logging. Änderungen in den Daten an sich werden jetzt in 
+  einer separaten Datei :file:`/var/log/lino/db.log` geloggt.
 
 - Detail windows now have a Refresh button. 
 

@@ -69,8 +69,9 @@ class StoreField(object):
         v = post_data.get(self.field.name,None)
         if v is None:
             return
-        if v == '': # and self.field.blank:
+        if v == '' and self.field.null:
             # e.g. id field may be empty
+            # but don't do this for charfields with blank=True (and not null=True)
             v = None
         v = self.parse_form_value(v)
         if self.field.primary_key and instance.pk is not None:
@@ -263,14 +264,19 @@ class ComboStoreField(StoreField):
             return
         if v in ('','undefined'): 
             v = None
+        if v is not None:
+            v = self.parse_form_value(v)
         if v is None:
             if not self.field.blank:
                 raise exceptions.ValidationError("field may not be empty")
                 #~ raise exceptions.ValidationError({self.field.name: "field may not be empty"})
                 #~ print "20101021 cannot set empty value for", self.field.name
                 #~ return # 20101021
-        else:
-            v = self.parse_form_value(v)
+            if not self.field.null:
+                """field is blank but will be set by full_clean. 
+                Django refuses to explicitly assign None to a non-nullable field.
+                """
+                return
         setattr(instance,self.field.name,v)
 
     def obj2list(self,request,obj):

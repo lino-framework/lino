@@ -191,9 +191,9 @@ class CompanyType(models.Model):
     class Meta:
         verbose_name = _("company type")
         verbose_name_plural = _("company types")
-    #~ id = models.CharField(max_length=10,primary_key=True)
     abbr = models.CharField(max_length=30,verbose_name=_("Abbreviation"))
     name = models.CharField(max_length=200,verbose_name=_("Designation"))
+    
     def __unicode__(self):
         return self.name
         
@@ -203,6 +203,7 @@ class CompanyType(models.Model):
         
 class CompanyTypes(reports.Report):
     model = 'contacts.CompanyType'
+    column_names = 'name *'
     #~ label = _("Company types")
         
   

@@ -490,6 +490,7 @@ class ExtUI(base.UI):
             #~ xtype="panel",
             split=True,
             collapsible=True,
+            collapsed=True,
             autoScroll=True,
             title=_("Console"),
             id="konsole",
@@ -635,7 +636,7 @@ class ExtUI(base.UI):
             elem.save(**kw2save)
         except IntegrityError,e:
             #~ print unicode(elem)
-            logger.exception(e)
+            #~ logger.exception(e)
             return error_response(e) # ,_("There was a problem while saving your data : "))
             #~ return json_response_kw(success=False,
                   #~ msg=_("There was a problem while saving your data:\n%s") % e)

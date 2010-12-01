@@ -39,8 +39,8 @@ class Command(BaseCommand):
         if options.get('interactive'):
             if not confirm("Gonna reset your database (%s).\nAre you sure (y/n) ?" % dbname):
                 raise CommandError("User abort.")
-        dblogger.log("Lino initdb started on database %s." % dbname)
-        dblogger.log(lino.welcome_text())
+        dblogger.info("Lino initdb started on database %s." % dbname)
+        dblogger.info(lino.welcome_text())
         options.update(interactive=False)
         apps = app_labels()
         call_command('reset',*apps,**options)

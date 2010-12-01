@@ -202,10 +202,10 @@ function PseudoConsole() {
 if (typeof(console) == 'undefined') console = new PseudoConsole();
 
 Lino.notify = function(msg) {
-  if (msg == undefined) msg = '';
-  console.log(msg);
+  if (msg == undefined) msg = ''; else console.log(msg);
   //~ Ext.getCmp('konsole').update(msg);
-  Ext.getCmp('konsole').update(msg.replace(/\n/g,'<br/>'));
+  Ext.getCmp('konsole').setTitle(msg.replace(/\n/g,'<br/>'));
+  //~ Ext.getCmp('konsole').update(msg.replace(/\n/g,'<br/>'));
 };
 
 Lino.show_about = function() {
@@ -226,6 +226,7 @@ Lino.on_submit_success = function(form, action) {
 };
 
 Lino.on_submit_failure = function(form, action) {
+    Lino.notify();
     switch (action.failureType) {
         case Ext.form.Action.CLIENT_INVALID:
             Ext.Msg.alert('Failure', 'Form fields may not be submitted with invalid values');
@@ -234,7 +235,7 @@ Lino.on_submit_failure = function(form, action) {
             Ext.Msg.alert('Failure', 'Ajax communication failed');
             break;
         case Ext.form.Action.SERVER_INVALID:
-           Ext.Msg.alert('Failure', action.result.message);
+            Ext.Msg.alert('Failure', action.result.message);
    }
 };
 
@@ -549,6 +550,7 @@ Lino.submit_detail = function(panel,btn) {
   var rec = panel.get_current_record();
   console.log('todo: Lino.submit_detail and Lino.submit_insert send also action name from btn',btn,panel.get_base_params())
   if (rec) {
+    Lino.notify('submit');
     //~ console.log('Save handler: this=',this);
     panel.form.submit({
       url:'/api'+panel.ls_url + '/' + rec.id,
@@ -568,6 +570,7 @@ Lino.submit_detail = function(panel,btn) {
 
 
 Lino.submit_insert = function(panel,btn) {
+  Lino.notify('submit');
   panel.form.submit({
     url:'/api'+panel.ls_url,
     method: 'POST',

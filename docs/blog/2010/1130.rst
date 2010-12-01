@@ -139,9 +139,10 @@ Und der Editor (`last_login38`) ist mit `xtype='datefield'` definiert::
   last_login38 : { xtype: "datefield", format: "d.m.Y",... }
   
 Aber das alles wird in `Ext.form.BasicForm.submit` gar nicht benutzt, der AJAX-Request schickt 
-einfach die rohen text-Werte der Felder ab.
+einfach die Strings, die in den DateField-Elementen stehen ab.
+
 Eigentlich ist es das ja auch was ich will: Datenfelder sollen gefälligst im von mir gewählten 
-Format submittet werden, und nicht mit als browserspezifische Strings.
+Format submittet werden, und nicht mit browserspezifischen Strings.
 
 Also eigentlich ist es meine `Lino.GridPanel.on_afteredit`, das ich ändern muss! 
 Und dann brauche ich den fuzzy dateparser gar nicht mehr.
@@ -186,3 +187,30 @@ der dieses Format (in der ExtJS-Syntax) ins Format von strftime konvertiert.
 
 17.55 Uhr: oder besser gesagt: wenn man das Datumsformat ändern will, muss man es an drei stellen 
 ändern, die jetzt immerhin alle untereinander im Modul :mod:`lino` zentralisiert sind.
+
+
+Check-in und nochmal ein update der Version 0.8.13 in Eupen.
+
+Noch Änderungen:
+
+- :func:`lino.modlib.contacts.utils.name2kw` erkannte diverse  Namenspräfixe noch nicht ('van der', 'vom', 'von'
+
+- Neues Feld `CompanyType.contract_type`. Das wird erstmals 
+  dynamisch in eine bestehende Klasse eingepflanzt. 
+  Die Technik kannte ich noch nicht. Funktioniert!
+  Cool!
+
+- Feld Company.type war noch nicht sichtbar.
+
+- Aber Contract.type wird jetzt noch nicht automatisch ausgefüllt, 
+  weil Django sich weigert, den Vertrag ohne ausgefüllte Vertragsart anzunehmen.
+  (wenn CompanyType.contract_type ausgefüllt ist).
+  
+- bug fized: "IntegrityError: contacts_company.street may not be NULL"
+
+- Contract.type wurde noch nicht automatisch ausgefüllt 
+  (wenn CompanyType.contract_type ausgefüllt ist), 
+  weil man mit Django ein non-nullable field nicht auf None setzen darf.
+
+
+01.12.10 4 Uhr : Check-in und nochmal ein update der Version 0.8.13 in Eupen.

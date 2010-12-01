@@ -9,17 +9,6 @@ for which I hope for help from other people.
 Before version 1.0
 ------------------
 
-- Bug when entering date fields. Ich hatte `applies_from` in einem Vertrag 
-  mit Hilfe des Kalenders auf 3. Januar 2010 gesetzt und gespeichert:
-
-    201011-27 06:57:28 INFO dblogger : Contract #1 (Vertrag Nr. 1) modified by lsaffre : applies_from : None --> 2011-03-01
-    
-  Danach das Feld duration von 0 auf leer gesetzt::
-  
-    201011-27 06:58:42 INFO dblogger : Contract #1 (Vertrag Nr. 1) modified by lsaffre :
-    duration : 0 --> None
-    applies_from : 2011-03-01 --> 2011-01-03
-
 - "Console messages"
 
 - The main window also needs a `Refresh` button. 
@@ -58,6 +47,9 @@ Before version 1.0
 Waiting for feedback
 --------------------
 
+- wenn man in einem Vertrag eine Angabe ändert und dann "Drucken" klickt, dann wird die 
+  Änderung irritierenderweise nicht gespeichert.
+  
 - doubleclick in a grid should open the detail, and F2 should start editing the cell.
 
 - It is not possible to select multiple rows when using CellSelectionModel 
