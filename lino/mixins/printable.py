@@ -491,7 +491,7 @@ class Printable(models.Model):
     def setup_report(cls,rpt):
         rpt.add_action(PrintAction(rpt))
         rpt.add_action(ClearCacheAction(rpt))
-        rpt.add_action(EditTemplateAction(rpt))
+        #~ rpt.add_action(EditTemplateAction(rpt))
         #~ super(Printable,cls).setup_report(rpt)
 
     def filename_root(self):

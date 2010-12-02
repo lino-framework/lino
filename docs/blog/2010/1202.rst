@@ -5,13 +5,21 @@
 WebDAV - Diagnosen und Tests
 ----------------------------
 
-#. Mehrere kleine Zwischenreleases "Version 0.8.13+". 
-   :js:func:`Lino.action_handler` zeigt jetzt den Link, der geöffnet wird in der Meldungszeile.
+Mehrere kleine Zwischenreleases "Version 0.8.13+":
+
+#. :js:func:`Lino.action_handler` zeigt jetzt den Link, der geöffnet wird in der Meldungszeile.
 
 #. Die Meldungszeile funktioniert übrigens noch nicht so toll: man muss sie aufklappen, 
    damit der Titel angezeigt wird.
+   
+#. Auswahlliste für `ContractType.template` funktionierte nicht. Der Server machte dann::
 
-#. WebDAV an sich scheint zu funktionieren:
+    File "/var/snapshots/lino/lino/mixins/printable.py", line 474, in template_choices
+      return get_template_choices(cls.get_templates_group(),build_method)
+    TypeError: unbound method get_templates_group() must be called with ContractType instance as first argument (got nothing instead)
+
+
+WebDAV an sich scheint zu funktionieren:
 
    .. code-block:: bash
 
@@ -24,3 +32,14 @@ WebDAV - Diagnosen und Tests
               Konvention Sozialoekonomie.odt      49240  Nov 26 18:57
       dav:/media/webdav/doctemplates/appy/de/contracts/> exit
       Connection to 'localhost' closed.
+      
+Also liegt es scheinbar tatsächlich "nur" an den Browsereinstellungen bzw. der Tatsache, 
+dass man zuerst eine Verbindung zum WebDAV-Server herstellen muss. 
+Das geht z.B. mit Total Commander (und dessen WebDAV-Plugin) ganz leicht.
+      
+Fazit: der Button "Vorlage bearbeiten" kommt vorläufig wieder raus,
+denn ein Systemverwalter kann die Vorlagen sowieso leichter über 
+Total Commander verwalten.
+Falls Endbenutzer irgendwann mal wirklich von Lino generierte Dokumente manuell 
+bearbeiten müssen, sehen wir weiter, wie wir einen Button für diese Dokumente ans Laufen kriegen.
+      
