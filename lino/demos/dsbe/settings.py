@@ -15,18 +15,6 @@ import lino
 
 from lino.demos.std.settings import *
 
-def LOCAL_TIM2LINO(alias,obj):
-    """Hook for local special treatment on instances that have been imported from TIM.
-    """
-    if alias == 'USR':
-        if obj.username == "write": return None
-    return obj
-    
-def DSBE_IS_IMPORTED_PARTNER(obj):
-    "`obj` is either a Person or a Company"
-    #~ return obj.id is not None and (obj.id < 200000 or obj.id > 299999)
-    return obj.id is not None and (obj.id > 10 and obj.id < 21)
-              
 PROJECT_DIR = abspath(dirname(__file__))
 DATA_DIR = join(PROJECT_DIR,"data")
 LINO_SETTINGS = join(PROJECT_DIR,"lino_settings.py")

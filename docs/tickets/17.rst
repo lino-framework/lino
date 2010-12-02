@@ -93,3 +93,13 @@ Ich würde das in Django wie folgt ändern::
   type(s)
   unicode(s)
 
+En attendant ist der einfachste Workaround, dass ich Strings, die per ``%s`` 
+eine Model-Instanz eingefügt bekommen sollen, selber als Unicode definiere. 
+Also::
+
+  s = "Example (%s)" % i
+  
+ersetzen durch::
+
+  s = u"Example (%s)" % i
+

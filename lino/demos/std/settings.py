@@ -40,6 +40,7 @@ USER_INTERFACES = [
   'lino.ui.extjs'
   ]
 DATA_DIR = join(PROJECT_DIR,"data")
+
 APPY_PARAMS = dict(ooPort=8100)
 try:
     import uno
@@ -47,6 +48,24 @@ except ImportError:
     APPY_PARAMS.update(pythonWithUnoPath=r'C:\PROGRA~1\OPENOF~1.ORG\program\python.exe')
     #~ APPY_PARAMS.update(pythonWithUnoPath='/usr/bin/libreoffice')
     #~ APPY_PARAMS.update(pythonWithUnoPath='/etc/openoffice.org3/program/python')
+
+
+def TIM2LINO_LOCAL(alias,obj):
+    """Hook for local special treatment on instances that have been imported from TIM.
+    """
+    return obj
+    
+def TIM2LINO_USERNAME(userid):
+    if userid == "WRITE": return None
+    return userid.lower()
+    
+    
+def TIM2LINO_IS_IMPORTED_PARTNER(obj):
+    "`obj` is either a Person or a Company"
+    #~ return obj.id is not None and (obj.id < 200000 or obj.id > 299999)
+    return False
+    #~ return obj.id is not None and (obj.id > 10 and obj.id < 21)
+              
     
 
 DEBUG = True

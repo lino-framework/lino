@@ -96,8 +96,7 @@ def ADR_id(cIdAdr):
     except ValueError,e:
         return None
 
-      
-      
+     
 def country2kw(row,kw):
     # for both PAR and ADR
     
@@ -192,7 +191,7 @@ def load_dbf(dbpath,tableName,load):
     for dbfrow in f:
         i = load(dbfrow)
         if i is not None:
-            i = settings.LOCAL_TIM2LINO(tableName,i)
+            i = settings.TIM2LINO_LOCAL(tableName,i)
             if i is not None:
                 try:
                     i.full_clean()
@@ -213,18 +212,23 @@ def load_tim_data(dbpath):
     from django.contrib.auth import models as auth
     def load(row):
         #~ auth.User.objects.create_user(row['USERID'],row['EMAIL'] or '','')
+        if not row['EMAIL']:
+            return
+        username = settings.TIM2LINO_USERNAME(row['USERID'])
+        if username is None:
+            return
         d = name2kw(row['NAME'])
         now = datetime.datetime.now()
-        if row['EMAIL']:
-            user = auth.User(
-                username=row['USERID'].lower(), 
-                email=row['EMAIL'],
-                first_name=d['first_name'],
-                last_name=d['last_name'],
-                is_staff=False,is_active=True, is_superuser=False, 
-                last_login=now,date_joined=now)
-            user.set_password('temp')
-            return user
+        user = auth.User(
+            username=username, 
+            #~ username=row['USERID'].lower(), 
+            email=row['EMAIL'],
+            first_name=d['first_name'],
+            last_name=d['last_name'],
+            is_staff=False,is_active=True, is_superuser=False, 
+            last_login=now,date_joined=now)
+        user.set_password('temp')
+        return user
     load_dbf(dbpath,'USR',load)
     
     def load(row):
@@ -312,10 +316,12 @@ def load_tim_data(dbpath):
               title=row['ALLO'],
             )
             if row['IDUSR']:
-                try:
-                    kw.update(user=auth.User.objects.get(username=row['IDUSR']))
-                except auth.User.DoesNotExist,e:
-                    kw.update(user=auth.User(username=row['IDUSR']))
+                username = settings.TIM2LINO_USERNAME(row['IDUSR'])
+                if username is not None:
+                    try:
+                        kw.update(user=auth.User.objects.get(username=username))
+                    except auth.User.DoesNotExist,e:
+                        dblogger.warning("PAR:%s PAR->IdUsr %r (converted to %r) doesn't exist!",row['IDPAR'],row['IDUSR'],username)
         activity = row['PROF']
         if activity:
             try:

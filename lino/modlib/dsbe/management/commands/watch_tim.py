@@ -40,8 +40,10 @@ from lino.modlib.contacts.utils import name2kw, street2kw, join_words
 
 from lino.utils import confirm
 from lino.utils import dblogger
+from lino.tools import obj2str
 
-from lino.modlib.dsbe.management.commands.initdb_tim import convert_sex, ADR_id, country2kw, pxs2person, is_company
+from lino.modlib.dsbe.management.commands.initdb_tim import convert_sex, \
+    ADR_id, country2kw, pxs2person, is_company
 
 Country = resolve_model('countries.Country')
 City = resolve_model('countries.City')
@@ -75,7 +77,7 @@ class Controller:
         for k,v in d.items():
             if data.has_key(v):
                 setattr(obj,k,data[v])
-        obj = settings.LOCAL_TIM2LINO(self.__class__.__name__,obj)
+        obj = settings.TIM2LINO_LOCAL(self.__class__.__name__,obj)
         obj.full_clean()
                 
     def POST(self,**kw):
@@ -146,6 +148,13 @@ class PAR(Controller):
         if obj.__class__ is Person:
             d.update(title='ALLO')
             d.update(gesdos_id='NB1')
+            if data.has_key('IDUSR'):  
+                username = settings.TIM2LINO_USERNAME(data['IDUSR'])
+                if username is not None:
+                    try:
+                        obj.user = auth.User.objects.get(username=username)
+                    except auth.User.DoesNotExist,e:
+                        dblogger.warning(u"%s : PAR->IdUsr %r (converted to %r) doesn't exist!",obj2str(obj),data['IDUSR'],username)
             if data.has_key('FIRME'):  
                 for k,v in name2kw(data['FIRME']).items():
                     setattr(obj,k,v)

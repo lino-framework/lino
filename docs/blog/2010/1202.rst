@@ -5,20 +5,6 @@
 WebDAV - Diagnosen und Tests
 ----------------------------
 
-Mehrere kleine Zwischenreleases "Version 0.8.13+":
-
-#. :js:func:`Lino.action_handler` zeigt jetzt den Link, der geöffnet wird in der Meldungszeile.
-
-#. Die Meldungszeile funktioniert übrigens noch nicht so toll: man muss sie aufklappen, 
-   damit der Titel angezeigt wird.
-   
-#. Auswahlliste für `ContractType.template` funktionierte nicht. Der Server machte dann::
-
-    File "/var/snapshots/lino/lino/mixins/printable.py", line 474, in template_choices
-      return get_template_choices(cls.get_templates_group(),build_method)
-    TypeError: unbound method get_templates_group() must be called with ContractType instance as first argument (got nothing instead)
-
-
 WebDAV an sich scheint zu funktionieren:
 
    .. code-block:: bash
@@ -42,4 +28,37 @@ denn ein Systemverwalter kann die Vorlagen sowieso leichter über
 Total Commander verwalten.
 Falls Endbenutzer irgendwann mal wirklich von Lino generierte Dokumente manuell 
 bearbeiten müssen, sehen wir weiter, wie wir einen Button für diese Dokumente ans Laufen kriegen.
+
+
+
       
+Bugfixes und kleine Änderungen
+------------------------------
+
+Mehrere kleine Zwischenreleases "Version 0.8.13+" auf `dsbe_eupen` 
+mit folgenden Änderungen:
+
+#. :js:func:`Lino.action_handler` zeigt jetzt den Link, der geöffnet wird in der Meldungszeile.
+
+#. Die Meldungszeile funktioniert übrigens noch nicht so toll: man muss sie aufklappen, 
+   damit der Titel angezeigt wird.
+   
+#. Auswahlliste für `ContractType.template` funktionierte nicht. Der Server machte dann::
+
+    File "/var/snapshots/lino/lino/mixins/printable.py", line 474, in template_choices
+      return get_template_choices(cls.get_templates_group(),build_method)
+    TypeError: unbound method get_templates_group() must be called with ContractType instance as first argument (got nothing instead)
+    
+#. :func:`lino.tools.obj2str` war betroffen durch das in :doc:`/tickets/17` 
+   beschriebene Problem.
+
+
+#. Um Benutzernamen lokal zu customisieren, muss das neue Setting :setting:`TIM2LINO_USERNAME` 
+   benutzt werden (nicht mehr wie bisher :setting:`LOCAL_TIM2LINO`).
+   
+   Neue Namen für bisherige Settings:
+   
+   | LOCAL_TIM2LINO -> TIM2LINO_LOCAL
+   | DSBE_IS_IMPORTED_PARTNER -> TIM2LINO_IS_IMPORTED_PARTNER 
+   
+   
