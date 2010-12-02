@@ -465,8 +465,9 @@ class PrintableType(models.Model):
     #~ build_method = models.CharField(max_length=20,choices=mixins.build_method_choices())
     #~ template = models.CharField(max_length=200)
     
-    def get_templates_group(self):
-        return self.templates_group or self._meta.app_label
+    @classmethod
+    def get_templates_group(cls):
+        return cls.templates_group or cls._meta.app_label
         
     def template_choices(cls,build_method):
         #~ print cls, 'template_choices for method' ,build_method

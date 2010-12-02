@@ -1,4 +1,26 @@
 20101202
 ========
 
-#. :js:func:`Lino.action_handler` 
+
+WebDAV - Diagnosen und Tests
+----------------------------
+
+#. Mehrere kleine Zwischenreleases "Version 0.8.13+". 
+   :js:func:`Lino.action_handler` zeigt jetzt den Link, der geöffnet wird in der Meldungszeile.
+
+#. Die Meldungszeile funktioniert übrigens noch nicht so toll: man muss sie aufklappen, 
+   damit der Titel angezeigt wird.
+
+#. WebDAV an sich scheint zu funktionieren:
+
+   .. code-block:: bash
+
+      $ cadaver http://localhost/media/webdav/doctemplates/appy/de/contracts
+      Authentication required for Gesicherte WebDAV-Zone on server 'localhost':
+      Username: user
+      Password:
+      dav:/media/webdav/doctemplates/appy/de/contracts/> ls
+      Listing collection `/media/webdav/doctemplates/appy/de/contracts/': succeeded.
+              Konvention Sozialoekonomie.odt      49240  Nov 26 18:57
+      dav:/media/webdav/doctemplates/appy/de/contracts/> exit
+      Connection to 'localhost' closed.
