@@ -2,6 +2,6 @@
 :label_align: top
 
 main = 
-  notes.NotesByCompany links.LinksByCompany
+  notes.NotesByCompany:60 links.LinksByCompany:20
   dsbe.ContractsByCompany 
 

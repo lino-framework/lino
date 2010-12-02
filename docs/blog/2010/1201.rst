@@ -1,0 +1,23 @@
+20101201
+========
+
+Worked on:
+
+#. WebDAV installieren und testen, wie das Bearbeiten von ODT-Dokumenten in der Praxis läuft.
+
+Changes:
+
+#. Die Felder `card_number` und `card_valid_*` waren noch nicht disabled für importierte Partner. 
+   Das lag daran, dass diese Felder doppelt waren. 
+   TODO: Warnung, wenn so was vorkommt. 
+   Beim Rausholen habe ich dann auch nochmal kleine Änderungen am Layout der Detail-Fenster 
+   vorgenommen.
+   Vorschlag: im Tab "Profile 2" die Felder "auch Schichtarbeit" und "auch am WE" 
+   ersetzen durch ihr Gegenteil ("keine Schichtarbeit" und "nicht am WE"), damit alle 
+   Checkboxen in der oberen Hälfe Hindernisse sind.
+   
+#. Studien & Erfahrungen haben jetzt ein Detail-Fenster (und somit einen Insert-Befehl im Kontextmenü).
+
+#. Beim Erstellen eines neuen Uploads (submit_insert) kam ein 505.
+   Upload.insert machte versehentlich noch zwei ``print``-Statements die unter mod_wsgi 
+   natürlich nicht erlaubt sind.

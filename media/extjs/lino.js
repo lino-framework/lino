@@ -318,7 +318,11 @@ Lino.action_handler = function (panel,on_success) {
       if (result.alert_msg) Ext.MessageBox.alert('Alert',result.alert_msg);
       if (result.message) Lino.notify(result.message);
       if (result.refresh) panel.refresh();
-      if (result.open_url) window.open(result.open_url);
+      if (result.open_url) {
+          if (!result.message)
+              Lino.notify('Open new window <a href="'+result.open_url+'" target="_blank">'+result.open_url+'</a>');
+          window.open(result.open_url);
+      }
     }
   }
 };

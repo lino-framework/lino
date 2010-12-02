@@ -1,8 +1,10 @@
 Configure Apache for HTTP authentication
 ========================================
 
-Here is how I configured Apache using basic HTTP authentication for the demo sites. 
-In a production site you'll of course use more secure authentication methods.
+Here is how I configured Apache using basic HTTP authentication 
+for the demo sites. 
+In a production site you'll probably use more secure 
+authentication methods.
 My source was http://httpd.apache.org/docs/2.0/howto/auth.html.
 
 Create a local directory for the flatfile user database::
@@ -34,17 +36,6 @@ Then, in your Apache config file (:file:`/etc/apache2/sites-available/default`):
   </Directory>
 
 
-To allow WebDAV, add another `<Directory>` directive::
-  
-  <Directory /usr/local/django/myproject/media/webdav/>
-     DAV On
-     ForceType text/plain
-     AuthType Basic
-     AuthName "Lino/DSBE demo"
-     AuthUserFile /usr/local/django/myproject/htpasswd/passwords
-     AuthGroupFile /usr/local/django/myproject/htpasswd/groups
-     <LimitExcept GET>
-     Require group dav
-     </LimitExcept>
-  </Directory>
+Did you know? To watch all log files at once, you can do::
 
+  sudo tail -f /var/log/lino/system.log /var/log/lino/db.log /var/log/apache2/error.log /var/log/apache2/access.log

@@ -1,0 +1,13 @@
+:label_align: top
+
+main =
+    person
+    type     content
+  
+    started  stopped   success
+    country language   school
+    remarks
+
+
+    
+

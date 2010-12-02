@@ -39,6 +39,8 @@ Bugs fixed
 
 - Lino should now start to send an email to the admins for every error.
 
+- Die "Konsole" zum Anzeigen von Meldungen nimmt jetzt weniger unnützen Platz 
+  (ist jetzt immer collapsed und die Meldungen werden im Title angezeigt).
 
 
 Upgrade instructions

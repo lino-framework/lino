@@ -896,6 +896,7 @@ class Panel(Container):
         if d['layout'] == 'hbox':
             if not self.vflex: # 20101028
                 d.update(autoHeight=True)
+                d.update(layoutConfig=dict(align='stretchmax'))
             for e in self.elements:
                 if e.hflex:
                     w = e.width or e.preferred_width

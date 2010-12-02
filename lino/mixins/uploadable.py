@@ -83,8 +83,8 @@ class Uploadable(models.Model):
         # now yields a FieldFile instance that has been created from `uf`.
         # see Django FileDescriptor.__get__()
         
-        print "Wrote file ", ff.path
-        print obj2str(self,True)
+        logger.log("Wrote uploaded file %s", ff.path)
+        #~ print obj2str(self,True)
         
         #~ raise NotImplementedError
         

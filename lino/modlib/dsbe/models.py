@@ -690,8 +690,10 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,mixins.
     def hourly_rate_choices(self):
         return [ 
         u"10€",
-        u"10%",
+        u"0%",
+        u"25%",
         u"50%",
+        u"100%",
         ]
     hourly_rate_choices.simple_values = True
     hourly_rate_choices = classmethod(hourly_rate_choices)

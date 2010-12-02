@@ -212,5 +212,8 @@ Noch Änderungen:
   (wenn CompanyType.contract_type ausgefüllt ist), 
   weil man mit Django ein non-nullable field nicht auf None setzen darf.
 
+- Die "Konsole" zum Anzeigen von Meldungen nimmt jetzt weniger unnützen Platz 
+  (ist jetzt immer collapsed und die Meldungen werden im Title angezeigt).
+
 
 01.12.10 4 Uhr : Check-in und nochmal ein update der Version 0.8.13 in Eupen.

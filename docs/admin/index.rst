@@ -6,6 +6,7 @@ Administrator's Manual
 
    install
    ApacheHttpAuth
+   apache_webdav
    printable
    ConfigureNotesTemplates
    tim2lino
