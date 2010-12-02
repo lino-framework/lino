@@ -134,7 +134,7 @@ class BuildMethod:
         if self.templates_name is None:
             self.templates_name = self.name
         self.templates_dir = os.path.join(settings.MEDIA_ROOT,'webdav','doctemplates',self.templates_name)
-        self.templates_url = '/'.join((settings.MEDIA_URL,'webdav','doctemplates',self.templates_name))
+        self.templates_url = settings.MEDIA_URL + '/'.join(('webdav','doctemplates',self.templates_name))
         
 
             
