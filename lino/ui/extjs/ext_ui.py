@@ -32,6 +32,7 @@ from django.http import HttpResponse, Http404
 from django import http
 from django.core import exceptions
 from django.utils import functional
+from django.utils.encoding import force_unicode 
 
 from django.template.loader import get_template
 from django.template import RequestContext

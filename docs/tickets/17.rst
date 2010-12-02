@@ -3,6 +3,7 @@
 
 If I run the following on Debian stable (Python 2.5)::
 
+    import locale
     locale.setlocale(locale.LC_ALL,'fr_BE')
     try:
         open('nonexisting_file')
@@ -25,23 +26,70 @@ then I get::
 To reproduce this, you must have some french locale installed. 
 It probably doesn't need to be the Belgian version `fr_BE`.
 
-Kleine Änderung damit es plattformunabhängig auch unter Windows läuft::
 
-  import locale
-  from lino.utils import lc2locale
-
-  for lang in 'fr','de':
-      locale.setlocale(locale.LC_ALL,lc2locale(lang,'BE'))
-      try:
-          open('nonexisting_file')
-      except Exception,e:
-          print e
-
-Aber unter Windows (zumindest XP Home) werde die Meldungen 
-gar nicht übersetzt und folglich tritt das Problem nicht auf::
-
-    C:\temp>python tmp.py
-    [Errno 2] No such file or directory: 'nonexisting_file'
-    [Errno 2] No such file or directory: 'nonexisting_file'
+Hier noch eine Beobachtung. Das Folgende funktioniert fehlerfrei::
     
+  >>> us = u'Art.60 § 7'
+  >>> s = "Example (%s)" % us
+  >>> print s
+  Example (Art.60 § 7)
+
+
+Das funktioniert, weil der (normale) String ``s`` durch 
+die Operation mit ``%`` in einen Unicode-String 
+konvertiert wird, wenn der an ``%s`` eingefügter Stelle 
+ein Unicode-String ist (das ist im Kapitel 
+`5.6.2. String Formatting Operations 
+<http://docs.python.org/library/stdtypes.html#string-formatting-operations>`_
+der Python-Dokumentation in der Bemerkung 6 dokumentiert.
+
+Dieser Trick funktioniert aber nicht mit Django's Model-Instanzen, 
+wenn deren ``__unicode__`` Zeichen enthält, die nicht in den 128 ersten Zeichen 
+des ASCII-Satz enthalten sind. Der folgende Code bewirkt deshalb 
+einen UnicodeDecodeError::
+
+    from django.utils.encoding import force_unicode
+    class Model:
+        def __str__(self):
+            if hasattr(self, '__unicode__'):
+                return force_unicode(self).encode('utf-8')
+            return '%s object' % self.__class__.__name__
+            
+        def __unicode__(self):
+            return u'Art.60 § 7'
+
+    us = Model()
+    s = "Example (%s)" % us
+    type(s)
+    unicode(s)
     
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+    UnicodeDecodeError: 'ascii' codec can't decode byte 0xc2 in position 16: ordinal not in range(128)    
+
+Die Python-Doku zu 
+`object.__str__() <http://docs.python.org/reference/datamodel.html?highlight=__str__#object.__str__>`_ 
+besagt lediglich "The return value must be a string object."
+
+Das Problem ist, dass Djangos `Model.__str__` keinen reinen ASCII-String zurück gibt, 
+sondern einen UTF-8-codierten basestring, der also ggf. auch Zeichen über 128 
+enthalten kann.
+
+Ich würde das in Django wie folgt ändern::
+
+  import sys
+  from django.utils.encoding import force_unicode
+  class Model:
+      def __str__(self):
+          if hasattr(self, '__unicode__'):
+              return force_unicode(self).encode(sys.getdefaultencoding(),'replace')
+          return '%s object' % self.__class__.__name__
+          
+      def __unicode__(self):
+          return u'Art.60 § 7'
+
+  i = Model()
+  s = "Example (%s)" % i
+  type(s)
+  unicode(s)
+
