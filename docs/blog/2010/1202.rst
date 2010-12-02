@@ -52,8 +52,9 @@ mit folgenden Änderungen:
 #. :func:`lino.tools.obj2str` war betroffen durch das in :doc:`/tickets/17` 
    beschriebene Problem.
 
+#. Feld `Person.user` wurd nicht korrekt importiert. 
 
-#. Um Benutzernamen lokal zu customisieren, muss das neue Setting :setting:`TIM2LINO_USERNAME` 
+   Um Benutzernamen lokal zu customisieren, muss das neue Setting :setting:`TIM2LINO_USERNAME` 
    benutzt werden (nicht mehr wie bisher :setting:`LOCAL_TIM2LINO`).
    
    Neue Namen für bisherige Settings:
@@ -61,4 +62,5 @@ mit folgenden Änderungen:
    | LOCAL_TIM2LINO -> TIM2LINO_LOCAL
    | DSBE_IS_IMPORTED_PARTNER -> TIM2LINO_IS_IMPORTED_PARTNER 
    
+#. Das Hauptfenster ist jetzt intern als Window mit einer Ext.ux.StatusBar aufgebaut.
    

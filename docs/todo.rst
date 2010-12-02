@@ -9,8 +9,7 @@ for which I hope for help from other people.
 Before version 1.0
 ------------------
 
-#. Feld `Person.user` wird noch nicht importiert. 
-   Dazu muss LOCAL_TIM2LINO umfunktioniert werden in eine TIM2LINO_USERNAME o.ä.
+#. Meldungen anzeigen in "Konsole".
 
 #. Stundensatz: wo speichern? Manueller Wert möglich?
    Noch ein neues separates Feld für Rückerstattung?

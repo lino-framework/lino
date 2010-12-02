@@ -204,7 +204,12 @@ if (typeof(console) == 'undefined') console = new PseudoConsole();
 Lino.notify = function(msg) {
   if (msg == undefined) msg = ''; else console.log(msg);
   //~ Ext.getCmp('konsole').update(msg);
-  Ext.getCmp('konsole').setTitle(msg.replace(/\n/g,'<br/>'));
+  Lino.status_bar.setStatus({
+    text: msg,
+    iconCls: 'ok-icon'
+    //~ clear: true // auto-clear after a set interval
+  });
+  //~ Ext.getCmp('konsole').setTitle(msg.replace(/\n/g,'<br/>'));
   //~ Ext.getCmp('konsole').update(msg.replace(/\n/g,'<br/>'));
 };
 

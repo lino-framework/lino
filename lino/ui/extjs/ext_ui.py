@@ -68,7 +68,7 @@ from lino.utils.jsgen import py2js, js_code, id2js
 from . import ext_elems
 from . import ext_store
 from . import ext_windows
-from . import ext_viewport
+#~ from . import ext_viewport
 from . import ext_requests
 #from lino.modlib.properties.models import Property
 #~ from lino.modlib.properties import models as properties
@@ -480,25 +480,6 @@ class ExtUI(base.UI):
                 #~ py2js(self.site.index_html.encode('ascii','xmlcharrefreplace'))]
             #~ main.update(items=dict(layout='fit',html=self.site.index_html.encode('ascii','xmlcharrefreplace')))
         #~ main.update(id='main_area',region='center')
-        comps = [
-          #~ ext_elems.Toolbar(
-          dict(xtype='toolbar',
-            items=self.site.get_site_menu(request.user),
-            region='north',height=29),
-          main,
-          #~ jsgen.Component("konsole",
-          dict(
-            #~ xtype="panel",
-            split=True,
-            collapsible=True,
-            collapsed=True,
-            autoScroll=True,
-            title=_("Console"),
-            id="konsole",
-            #~ html=_('Console started'),
-            height=100,
-            region="south")
-        ]  
         yield '<html><head>'
         yield '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />'
         #~ title = kw.get('title',None)
@@ -510,6 +491,7 @@ class ExtUI(base.UI):
         #~ yield '<!-- overrides to base library -->'
         if settings.USE_GRIDFILTERS:
             #~ yield '<link rel="stylesheet" type="text/css" href="%sextjs/examples/ux/css/RowEditor.css" />' % settings.MEDIA_URL 
+            yield '<link rel="stylesheet" type="text/css" href="%sextjs/examples/ux/statusbar/css/statusbar.css" />' % settings.MEDIA_URL 
             yield '<link rel="stylesheet" type="text/css" href="%sextjs/examples/ux/gridfilters/css/GridFilters.css" />' % settings.MEDIA_URL 
             yield '<link rel="stylesheet" type="text/css" href="%sextjs/examples/ux/gridfilters/css/RangeMenu.css" />' % settings.MEDIA_URL 
             
@@ -545,6 +527,7 @@ class ExtUI(base.UI):
 
         if settings.USE_GRIDFILTERS:
             #~ yield '<script type="text/javascript" src="%sextjs/examples/ux/RowEditor.js"></script>' % settings.MEDIA_URL
+            yield '<script type="text/javascript" src="%sextjs/examples/ux/statusbar/StatusBar.js"></script>' % settings.MEDIA_URL
             yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/menu/RangeMenu.js"></script>' % settings.MEDIA_URL
             yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/menu/ListMenu.js"></script>' % settings.MEDIA_URL
             yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/GridFilters.js"></script>' % settings.MEDIA_URL
@@ -567,11 +550,48 @@ class ExtUI(base.UI):
 
         yield 'Ext.onReady(function(){'
         #~ yield "console.time('onReady');"
-        yield "Ext.BLANK_IMAGE_URL = '%sextjs/resources/images/default/s.gif';" % settings.MEDIA_URL
-        for ln in jsgen.declare_vars(comps):
-            yield '  ' + ln
+        
+          
+        if True:
             
-        yield '  var viewport = new Ext.Viewport({layout:"border",items:%s});' % py2js(comps)
+            win = dict(
+              layout='fit',
+              #~ maximized=True,
+              items=main,
+              #~ closable=False,
+              bbar=dict(xtype='toolbar',items=js_code('Lino.status_bar')),
+              #~ title=self.site.title,
+              tbar=self.site.get_site_menu(request.user),
+            )
+            
+            for ln in jsgen.declare_vars(win):
+                yield ln
+            yield '  new Ext.Viewport({layout:"fit",items:%s}).render("body");' % py2js(win)
+        else:
+          
+            comps = [
+              #~ ext_elems.Toolbar(
+              dict(xtype='toolbar',
+                items=self.site.get_site_menu(request.user),
+                region='north',height=29),
+              main,
+              #~ jsgen.Component("konsole",
+              dict(
+                #~ xtype="panel",
+                split=True,
+                collapsible=True,
+                collapsed=True,
+                autoScroll=True,
+                title=_("Console"),
+                id="konsole",
+                #~ html=_('Console started'),
+                height=100,
+                region="south")
+            ]  
+            for ln in jsgen.declare_vars(comps):
+                yield '  ' + ln
+            yield '  var viewport = new Ext.Viewport({layout:"border",items:%s});' % py2js(comps)
+            
         yield '  Ext.QuickTips.init();'
         
         for ln in on_ready:
@@ -579,12 +599,19 @@ class ExtUI(base.UI):
         
         #~ yield "console.timeEnd('onReady');"
         yield "}); // end of onReady()"
-        yield "</script></head><body>"
+        yield '</script></head><body id="body">'
         #~ yield '<div id="tbar"/>'
         #~ yield '<div id="main"/>'
         #~ yield '<div id="bbar"/>'
-        yield '<div id="konsole"></div>'
+        #~ yield '<div id="konsole"></div>'
         yield "</body></html>"
+        
+    def site_js_lines(self):
+        yield """// site.js --- generated %s by Lino version %s.""" % (time.ctime(),lino.__version__)
+        yield "Ext.BLANK_IMAGE_URL = '%sextjs/resources/images/default/s.gif';" % settings.MEDIA_URL
+        yield "LANGUAGE_CHOICES = %s;" % py2js(list(LANGUAGE_CHOICES))
+        yield "MEDIA_URL = %r;" % settings.MEDIA_URL
+        yield "Lino.status_bar = new Ext.ux.StatusBar({defaultText:'Lino version %s.'});" % lino.__version__
         
             
 
@@ -934,9 +961,8 @@ class ExtUI(base.UI):
         #~ fn = r'c:\temp\dsbe.js'
         logger.info("Generating %s ...", fn)
         f = open(fn,'w')
-        f.write("""// site.js --- generated %s by Lino version %s.\n""" % (time.ctime(),lino.__version__))
-        f.write("LANGUAGE_CHOICES = %s;\n" % py2js(list(LANGUAGE_CHOICES)))
-        f.write("MEDIA_URL = %r;\n" % settings.MEDIA_URL)
+        for ln in self.site_js_lines():
+            f.write(ln+'\n')
         for rpt in reports.master_reports + reports.slave_reports + reports.generic_slaves.values():
             rh = rpt.get_handle(self) # make sure that setup_handle is called (which adds the window_wrapper)
             f.write("Ext.namespace('Lino.%s')\n" % rpt)

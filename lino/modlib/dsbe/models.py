@@ -334,7 +334,7 @@ class Persons(contacts.Persons):
 
     
     def disabled_fields(self,request,obj):
-        if settings.DSBE_IS_IMPORTED_PARTNER(obj):
+        if settings.TIM2LINO_IS_IMPORTED_PARTNER(obj):
             return PERSON_TIM_FIELDS
         return []
         
@@ -382,7 +382,7 @@ class Companies(contacts.Companies):
     app_label = 'contacts'
     
     def disabled_fields(self,request,obj):
-        if settings.DSBE_IS_IMPORTED_PARTNER(obj):
+        if settings.TIM2LINO_IS_IMPORTED_PARTNER(obj):
             return COMPANY_TIM_FIELDS
         return []
     
