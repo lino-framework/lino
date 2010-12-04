@@ -58,3 +58,5 @@ Die sind jetzt in Deutsch, Französisch oder Englisch.
 Beim Umschalten zwischen Sprachen ist allerdings noch ein Bug.
 Und dass die Auswahltexte hard-codiert sind, 
 ist wahrscheinlich nicht die definitive Lösung. Eher was mit config-Dateien.
+
+Check-in wegen Feierabend.
