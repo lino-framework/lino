@@ -571,6 +571,8 @@ class Report(actors.Actor): #,base.Handled):
     #~ page_layout = None # (layouts.PageLayout ,)
     #~ row_layout_class = None
     
+    cell_edit = True # use ExtJS CellSelectionModel (False to use ExtJS RowSelectionModel)
+    
     date_format = lino.DATE_FORMAT_EXTJS
     boolean_texts = boolean_texts
     

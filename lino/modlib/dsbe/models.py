@@ -61,6 +61,49 @@ from lino.tools import default_language
 
 #~ from lino.modlib.fields import KNOWLEDGE_CHOICES # for makemessages
 
+SCHEDULE_CHOICES = {
+    'de':[ 
+        u"5-Tage-Woche",
+        u"Montag, Mittwoch, Freitag",
+        u"Individuell",
+        ],
+    'fr':[ 
+        u"5 jours/semaine",
+        u"lundi,mercredi,vendredi",
+        u"individuel",
+        ],
+    'en':[
+        u"5 days/week",
+        u"Monday, Wednesday, Friday",
+        u"Individual",
+        ]
+}
+
+REGIME_CHOICES = {
+    'de':[ 
+        u"20 Stunden/Woche",
+        u"35 Stunden/Woche",
+        u"38 Stunden/Woche",
+        ],
+    'fr':[ 
+        u"20 heures/semaine",
+        u"35 heures/semaine",
+        u"38 heures/semaine",
+        ],
+    'en':[
+        u"20 hours/week",
+        u"35 hours/week",
+        u"38 hours/week",
+        ]
+}
+
+def language_choices(language,choices):
+    l = choices.get(language,None)
+    if l is None:
+        l = choices.get(default_language())
+    return l
+
+
 CIVIL_STATE_CHOICES = [
   ('1', _("single")   ),
   ('2', _("married")  ),
@@ -326,6 +369,7 @@ PERSON_TIM_FIELDS = reports.fields_list(Person,
 class Persons(contacts.Persons):
     can_view = perms.is_authenticated
     app_label = 'contacts'
+    #~ cell_edit = False
     #~ page_layouts = (PersonDetail,)
     #~ column_names = "name city dsbe.LanguageKnowledgesByPerson *"
     #~ column_names = "name city dsbe.LanguageKnowledgesByPerson *"
@@ -669,21 +713,13 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,mixins.
     duration_choices.simple_values = True
     duration_choices = classmethod(duration_choices)
     
-    def regime_choices(self):
-        return [ 
-        u"20 Stunden",
-        u"35 Stunden",
-        u"38 Stunden",
-        ]
+    def regime_choices(self,language):
+        return language_choices(language,REGIME_CHOICES)
     regime_choices.simple_values = True
     regime_choices = classmethod(regime_choices)
     
-    def schedule_choices(self):
-        return [ 
-        u"5-Tage-Woche",
-        u"Montag, Mittwoch, Freitag",
-        u"Individuell",
-        ]
+    def schedule_choices(self,language):
+        return language_choices(language,SCHEDULE_CHOICES)
     schedule_choices.simple_values = True
     schedule_choices = classmethod(schedule_choices)
     

@@ -105,6 +105,162 @@ Lino.VBorderPanel = Ext.extend(Ext.Panel,{
 
 
 /*
+  modifications to the standard behaviour of a CellSelectionModel:
+  
+*/
+Ext.override(Ext.grid.CellSelectionModel, {
+
+    handleKeyDown : function(e){
+        /* removed because F2 wouldn't pass
+        if(!e.isNavKeyPress()){
+            return;
+        }
+        */
+        
+        var k = e.getKey(),
+            g = this.grid,
+            s = this.selection,
+            sm = this,
+            walk = function(row, col, step){
+                return g.walkCells(
+                    row,
+                    col,
+                    step,
+                    g.isEditor && g.editing ? sm.acceptsNav : sm.isSelectable, 
+                    sm
+                );
+            },
+            cell, newCell, r, c, ae;
+
+        switch(k){
+            case e.ESC:
+            case e.PAGE_UP:
+            case e.PAGE_DOWN:
+                
+                break;
+            default:
+                
+                // e.stopEvent(); // removed because Browser keys like Alt-Home, Ctrl-R wouldn't work
+                break;
+        }
+
+        if(!s){
+            cell = walk(0, 0, 1); 
+            if(cell){
+                this.select(cell[0], cell[1]);
+            }
+            return;
+        }
+
+        cell = s.cell;  
+        r = cell[0];    
+        c = cell[1];    
+        
+        switch(k){
+            case e.TAB:
+                if(e.shiftKey){
+                    newCell = walk(r, c - 1, -1);
+                }else{
+                    newCell = walk(r, c + 1, 1);
+                }
+                break;
+            case e.HOME:
+                if (!e.hasModifier()){
+                    newCell = [r, 0];
+                    //~ console.log('home',newCell);
+                    break;
+                }else if(e.ctrlKey){
+                    var t = g.getTopToolbar();
+                    var activePage = Math.ceil((t.cursor + t.pageSize) / t.pageSize);
+                    if (activePage > 1) {
+                        e.stopEvent();
+                        t.moveFirst();
+                        return;
+                    }
+                    newCell = [0, c];
+                    break;
+                }
+            case e.END:
+                c = g.colModel.getColumnCount()-1;
+                if (!e.hasModifier()) {
+                    newCell = [r, c];
+                    //~ console.log('end',newCell);
+                    break;
+                }else if(e.ctrlKey){
+                    var t = g.getTopToolbar();
+                    var d = t.getPageData();
+                    if (d.activePage < d.pages) {
+                        e.stopEvent();
+                        var self = this;
+                        t.on('change',function(tb,pageData) {
+                            var r = g.store.getCount()-2;
+                            self.select(r, c);
+                            console.log('change',r,c);
+                        },this,{single:true});
+                        t.moveLast();
+                        return;
+                    } else {
+                        newCell = [g.store.getCount()-1, c];
+                        console.log('ctrl-end',newCell);
+                        break;
+                    }
+                }
+            case e.DOWN:
+                newCell = walk(r + 1, c, 1);
+                break;
+            case e.UP:
+                newCell = walk(r - 1, c, -1);
+                break;
+            case e.RIGHT:
+                newCell = walk(r, c + 1, 1);
+                break;
+            case e.LEFT:
+                newCell = walk(r, c - 1, -1);
+                break;
+            case e.F2:
+                if (!e.hasModifier()) {
+                    if (g.isEditor && !g.editing) {
+                        g.startEditing(r, c);
+                        e.stopEvent();
+                        return;
+                    }
+                    break;
+                }
+            case e.ENTER:
+                e.stopEvent();
+                g.show_detail(r,c);
+                //~ if (g.isEditor && !g.editing) {
+                    //~ g.startEditing(r, c);
+                    //~ return;
+                //~ }
+                break;
+        }
+
+        if(newCell){
+        
+            e.stopEvent();
+            
+            r = newCell[0];
+            c = newCell[1];
+
+            this.select(r, c); 
+
+            if(g.isEditor && g.editing){ 
+                ae = g.activeEditor;
+                if(ae && ae.field.triggerBlur){
+                    
+                    ae.field.triggerBlur();
+                }
+                g.startEditing(r, c);
+            }
+        }
+    }
+
+
+});
+
+ 
+/*
 Based on feature request developed in http://extjs.net/forum/showthread.php?t=75751
 */
 Ext.override(Ext.form.ComboBox, {
@@ -206,8 +362,8 @@ Lino.notify = function(msg) {
   //~ Ext.getCmp('konsole').update(msg);
   Lino.status_bar.setStatus({
     text: msg,
-    iconCls: 'ok-icon'
-    //~ clear: true // auto-clear after a set interval
+    iconCls: 'ok-icon',
+    clear: true // auto-clear after a set interval
   });
   //~ Ext.getCmp('konsole').setTitle(msg.replace(/\n/g,'<br/>'));
   //~ Ext.getCmp('konsole').update(msg.replace(/\n/g,'<br/>'));
@@ -706,6 +862,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   goto_record_id : function(record_id) {
     //~ console.log('Lino.FormPanel.goto_record_id()',record_id);
     //~ Lino.notify(); 
+    //~ Lino.notify('FormPanel.goto_record_id');
     var this_ = this;
     Ext.Ajax.request({ 
       waitMsg: 'Loading record...',
@@ -898,6 +1055,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
   clicksToEdit:2,
   enableColLock: false,
   autoHeight: false,
+  //~ loadMask: true,
   viewConfig: {
           //autoScroll:true,
           //autoFill:true,
@@ -953,26 +1111,26 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
       config.selModel = new Ext.grid.CellSelectionModel()
       this.get_selected = function() {
         //~ console.log(this.getSelectionModel().selection);
-        if (this.getSelectionModel().selection)
-            return [ this.getSelectionModel().selection.record ];
+        if (this.selModel.selection)
+            return [ this.selModel.selection.record ];
         return [this.store.getAt(0)];
       };
       this.get_current_record = function() { 
         if (this.getSelectionModel().selection) 
-          return this.getSelectionModel().selection.record;
+          return this.selModel.selection.record;
         return this.store.getAt(0);
       };
     } else { 
       config.selModel = new Ext.grid.RowSelectionModel() 
       this.get_selected = function() {
-        var sels = this.getSelectionModel().getSelections();
+        var sels = this.selModel.getSelections();
         if (sels.length == 0) sels = [this.store.getAt(0)];
         return sels
         //~ var sels = this.getSelectionModel().getSelections();
         //~ return Ext.pluck(sels,'id');
       };
       this.get_current_record = function() { 
-        var rec = this.getSelectionModel().getSelected();
+        var rec = this.selModel.getSelected();
         if (rec == undefined) rec = this.store.getAt(0);
         return rec
 
@@ -1043,8 +1201,21 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     
     Lino.GridPanel.superclass.constructor.call(this, config);
     
-    
     this.on('beforeedit',function(e) { this.before_row_edit(e.record)},this);
+  },
+  
+  onCellDblClick : function(g, row, col){
+      //~ this.startEditing(row, col);
+      g.show_detail(row,col);
+  },
+
+  show_detail : function(r,c) {
+      if (this.ls_detail_handler) {
+          Lino.notify('show detail');
+          Lino.show_detail_handler(this.ls_detail_handler)(this);
+      }else{
+        this.startEditing(r,c);
+      }
   },
   
   get_record_url : function(record_id) {
@@ -1355,13 +1526,6 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
       }, this, {delay:500});
   },
 
-  unused_search_keypress : function(field, e) {
-    if(e.getKey() == e.RETURN) {
-      //~ console.log('keypress',field.getValue(),store)
-      this.main_grid.getStore().setBaseParam('query',field.getValue()); // URL_PARAM_FILTER
-      this.main_grid.getStore().load({params: { start: 0, limit: this.getTopToolbar().pageSize }});
-    }
-  },
   afterRender : function() {
     Lino.GridPanel.superclass.afterRender.call(this);
     // this.getView().mainBody.focus();
@@ -1383,6 +1547,8 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     });
   },
   refresh : function() { 
+    //~ Lino.notify('Lino.GridPanel.refresh');
+    //~ Lino.notify('Lino.GridPanel.refresh '+this.store.proxy.url);
     this.store.load({params:{limit:this.getTopToolbar().pageSize,start:this.getTopToolbar().cursor}});
   },
   after_delete : function() {
@@ -1644,6 +1810,7 @@ Lino.WindowWrapperBase = {
     //~ 20101021 this.main_item.set_base_params(this.base_params);
     //~ Ext.apply(this.window,{renderTo: 'main_area'});
     
+    
     Ext.apply(this.window_config,{items: this.main_item});
     
     if (this.config.active_tab) {
@@ -1688,8 +1855,10 @@ Lino.WindowWrapperBase = {
   },
   show : function() {
       //~ console.time('WindowWrapper.show()');
+      //~ Lino.load_mask.show();
       this.setup();
       this.window.show();
+      //~ Lino.load_mask.hide();
   },
   close : function() { 
       this.window.close();
@@ -1805,10 +1974,16 @@ Lino.GridMasterWrapper.override({
   setup : function() {
     //~ this.main_item.store.proxy.on('load',
     //~ console.log('GridMasterWrapper.setup');
-    
+    var grid = this.main_item;
     this.main_item.store.on('load', function() {
         //~ console.log('GridMasterWrapper load',this.main_item.store.reader.arrayData);
-        this.window.setTitle(this.main_item.store.reader.arrayData.title);
+        this.window.setTitle(grid.store.reader.arrayData.title);
+        if(grid.selModel.getSelectedCell){         
+            grid.selModel.select(0,0);
+        }else{
+            grid.selModel.selectFirstRow();
+            grid.getView().focusEl.focus();
+        }
       }, this
     );
     //~ if (this.main_item.tools === undefined) this.main_item.tools = [];

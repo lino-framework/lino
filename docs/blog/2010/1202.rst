@@ -40,9 +40,6 @@ mit folgenden Änderungen:
 
 #. :js:func:`Lino.action_handler` zeigt jetzt den Link, der geöffnet wird in der Meldungszeile.
 
-#. Die Meldungszeile funktioniert übrigens noch nicht so toll: man muss sie aufklappen, 
-   damit der Titel angezeigt wird.
-   
 #. Auswahlliste für `ContractType.template` funktionierte nicht. Der Server machte dann::
 
     File "/var/snapshots/lino/lino/mixins/printable.py", line 474, in template_choices
@@ -52,7 +49,7 @@ mit folgenden Änderungen:
 #. :func:`lino.tools.obj2str` war betroffen durch das in :doc:`/tickets/17` 
    beschriebene Problem.
 
-#. Feld `Person.user` wurd nicht korrekt importiert. 
+#. Feld `Person.user` wurde nicht korrekt importiert. Behoben.
 
    Um Benutzernamen lokal zu customisieren, muss das neue Setting :setting:`TIM2LINO_USERNAME` 
    benutzt werden (nicht mehr wie bisher :setting:`LOCAL_TIM2LINO`).
@@ -62,5 +59,11 @@ mit folgenden Änderungen:
    | LOCAL_TIM2LINO -> TIM2LINO_LOCAL
    | DSBE_IS_IMPORTED_PARTNER -> TIM2LINO_IS_IMPORTED_PARTNER 
    
-#. Das Hauptfenster ist jetzt intern als Window mit einer Ext.ux.StatusBar aufgebaut.
+#. Die Meldungszeile funktionierte noch nicht so toll: man musste sie aufklappen, 
+   damit die Meldungen angezeigt werden...
+   Jetzt ist das Hauptfenster intern als Window mit einer Ext.ux.StatusBar aufgebaut.
    
+   
+   
+(Letztes Release um 23.45 Uhr...)
+

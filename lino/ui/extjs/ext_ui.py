@@ -551,6 +551,7 @@ class ExtUI(base.UI):
         yield 'Ext.onReady(function(){'
         #~ yield "console.time('onReady');"
         
+        #~ yield "Lino.load_mask = new Ext.LoadMask(Ext.getBody(), {msg:'Immer mit der Ruhe...'});"
           
         if True:
             
@@ -1186,6 +1187,7 @@ class ExtUI(base.UI):
         #~ elif isinstance(a,actions.UpdateRowAction):
             #~ kw.update(panel_btn_handler=js_code('Lino.update_row_handler(%r)' % a.name))
         elif isinstance(a,actions.ShowDetailAction):
+            #~ kw.update(panel_btn_handler=js_code('Lino.show_detail_handler()'))
             kw.update(panel_btn_handler=js_code('Lino.show_detail_handler(Lino.%s)' % a))
         elif isinstance(a,actions.InsertRow):
             kw.update(panel_btn_handler=js_code("Lino.show_insert_handler(Lino.%s)" % a))

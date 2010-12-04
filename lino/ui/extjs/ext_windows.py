@@ -108,7 +108,7 @@ class MasterWrapper(WindowWrapper):
         yield "function(caller,params) { "
         #~ yield "  Ext.getCmp('main_area').el.setStyle({cursor:'wait'});"
         #~ yield "Lino.notify();"
-        if settings.USE_FIREBUG:
+        if False and settings.USE_FIREBUG:
             yield "  console.time('%s');" % self.action
             #~ yield "  console.log('ext_windows',20100930,params);"
         yield "  var ww = new Lino.%s(caller,%s,params);" % (
@@ -131,7 +131,7 @@ class MasterWrapper(WindowWrapper):
             yield "%s.store.proxy.on('load',function(){console.log('MasterWrapper load 2',%s.store.reader.arrayData)});" % (
                 self.main.as_ext(), self.main.as_ext())
         yield "  ww.show();"
-        if settings.USE_FIREBUG:
+        if False and settings.USE_FIREBUG:
             yield "  console.timeEnd('%s');" % self.action
         yield "}"
         

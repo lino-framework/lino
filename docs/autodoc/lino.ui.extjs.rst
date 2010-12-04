@@ -30,14 +30,6 @@ The :mod:`ext_ui` Module
     :undoc-members:
     :show-inheritance:
 
-The :mod:`ext_viewport` Module
-------------------------------
-
-.. automodule:: lino.ui.extjs.ext_viewport
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 The :mod:`ext_windows` Module
 -----------------------------
 

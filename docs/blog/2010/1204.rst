@@ -1,0 +1,60 @@
+20101204
+========
+
+Bedienung per Tastatur
+----------------------
+
+Nach dem Öffnen einer Tabelle ist hat jetzt die erste Zelle den Fokus.
+
+Mehrere Records auf einmal löschen können: 
+geht noch nicht.
+Eine Grid in ExtJS kann zeilenweise oder zellenweise funktionieren 
+(`selModel` can be a `CellSelectionModel` or a `RowSelectionModel`)
+`CellSelectionModel` kann leider nur eine Zelle auf einmal markieren.
+Und ich glaube es wäre nicht trivial, einen Button zum Hin- und 
+Herschalten zwischen beiden Auswahlmodellen anzubieten.
+Am besten wäre m.E., das CellSelectionModel von ExtJs zu erweitern, 
+so dass es mehrere Zellen markieren kann.
+Ravikanth Kolli beschreibt in 
+`Multi cell selection in a row in a grid in gxt <http://ravikolli.blogspot.com/2009/03/multi-cell-selection-in-row-in-grid-in.html>`_
+etwas in diese Richtung. Aber er möchte mehrere Zellen *einer gleichen Zeile* markeiren können.
+Ich dagegen will die Möglichkeit anbieten, mehrere *Zeilen* zu markieren.
+Also eine ganze Serie von Zeilen auf einmal löschen geht 
+nur in Reports, deren `cell_edit` auf ``False`` steht.
+Und deren gibt es in der Praxis momentan keine.
+
+Ich habe mich jetzt in des Teufels Küche vorgewagt 
+und überschreibe `Ext.grid.CellSelectionModel.handleKeyDown`.
+Dadurch könnten jetzt einige fiese Nebenwirkungen kommen.
+als Gegenleistung kann man schöne Sachen machen:
+Doppelklick und Enter auf einer Zelle startet jetzt nicht mehr den Editor, sondern öffnet das Detail-Fenster.
+Um zu bearbeiten, muss man F2 drücken (das steht leider noch nicht im Kontextmenü).
+Schade ist auch, dass er auf Doppelklick nur relativ langsam reagiert.
+`Ein Lino.notify()` nützt da auch nichts, denn die gute neue `Lino.status_bar` wird erst aktualisiert, 
+wenn das Detail-Fenster gerendert wurde (und die Wartezeit vorbei ist).
+Action.waitMsg
+
+In einer Grid sind jetzt folgende Tasten aktiv:
+
+  =========== ===============================================
+  Enter       Detail anzeigen
+  F2          Zelle bearbeiten
+  End         in letzte Kolonne springen
+  Home        in erste Kolonne springen
+  Ctrl+End    in letzte Kolonne auf letztem Record springen
+  Ctrl+Home   in erste Kolonne auf erstem Record springen
+  Ctrl+PgUp   vorige Bildschirmseite laden
+  Ctrl+PgDn   nächste Bildschirmseite laden
+  =========== ===============================================
+
+Die beiden letzten waren übrigens vorher schon... wusste nur keiner.
+
+Insgesamt ist der Feedback noch nicht zackig genug.
+
+Arbeitsregime und Stundenplan
+-----------------------------
+
+Die sind jetzt in Deutsch, Französisch oder Englisch.
+Beim Umschalten zwischen Sprachen ist allerdings noch ein Bug.
+Und dass die Auswahltexte hard-codiert sind, 
+ist wahrscheinlich nicht die definitive Lösung. Eher was mit config-Dateien.

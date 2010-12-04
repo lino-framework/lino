@@ -9,24 +9,24 @@ for which I hope for help from other people.
 Before version 1.0
 ------------------
 
-#. Meldungen anzeigen in "Konsole".
+#. Ext.LoadMask kennenlernen:
+   http://www.sencha.com/forum/showthread.php?64420-how-to-show-a-wait-message-while-calling-store-load
 
-#. Stundensatz: wo speichern? Manueller Wert möglich?
-   Noch ein neues separates Feld für Rückerstattung?
-
-#. Arbeitsregime und Stundenplan sind bisher nur in Deutsch.
-
-#. WebDAV installieren und testen, wie das Bearbeiten von ODT-Dokumenten in der Praxis läuft.
-
-#. Dokumentvorlagen weiter
-
-#. Doppelklick in einer Grid sollte das Detail-Fenster öffnen. 
-
-#. Mit :kbd:`[F2]` sollte die Zeile einer Grid bearbeiten können.
+#. Arbeitsregime und Stundenplan: 
+   Nach Ändern der Sprache ändert sich nicht immer die Auswahlliste.
+   
+#. nach dem Löschen eines Vertrags verschwindet dieser erst aus 
+   der Grid wenn man ein Refresh macht. 
+   Refresh wird nicht automatisch gemacht.
 
 #. Button "Insert" : wenn man das Insert-Fenster bestätigt und keine Fehlermeldung kommt, 
    wird das Fenster geschlossen. Aber wenn man das von der Grid aus tut, 
    wird auch die Grid geschlossen.
+
+#. Stundensatz: wo speichern? Manueller Wert möglich?
+   Noch ein neues separates Feld für Rückerstattung?
+
+#. Dokumentvorlagen weiter
 
 #. "Insert as copy"
 
@@ -42,10 +42,15 @@ Before version 1.0
     | http://girasoli.org/?p=120
     | `How to LSBize an Init Script <http://wiki.debian.org/LSBInitScripts>`_
   
-   Das Loggen von watch_tim geht scheinbar noch nicht so richtig.  
+#. Das Loggen von watch_tim geht noch nicht so richtig.  
 
 Waiting for feedback
 --------------------
+
+#. Arbeitsregime und Stundenplan: 
+   Texte in Konfigurationsdateien auslagern
+
+#. Allgemein Feedback-Meldungen in der Statusbar verbessern.
 
 #. Vorschlag: im Tab "Profile 2" die Felder "auch Schichtarbeit" und "auch am WE" 
    ersetzen durch ihr Gegenteil ("keine Schichtarbeit" und "nicht am WE"), damit alle 
@@ -174,14 +179,21 @@ Long-term
    Wie soll ich es machen, dass der Benutzer beim Auswählen der Krankenkasse einer Person 
    nicht alle Firmen, sondern nur die Krankenkassen angezeigt bekommt? 
    Etwa ein eigenes Feld `Company.is_health_insurance`?
+   Oder auf den Berufscode filtern?
 
-#. Die Buttons der tbar sollten mit Icons versehen werden. Für manche Funktionen (Insert,Delete) gibt es vielleicht schon Icons aus der ExtJS.
+#. Die Buttons der tbar sollten mit Icons versehen werden. 
+   Für manche Funktionen (Insert,Delete) gibt es vielleicht 
+   schon Icons aus der ExtJS.
 
 #. Abfragen mit komplexen Bedingungen zur Suche nach Personen
 
-#. Die Zeilenhöhe einer Grid muss einen sinnvollen Maximalwert kriegen. In Explorer / Notes hat man momentan den Eindruck, dass es nur eine Zeile gibt; in Wirklichkeit ist der Memo-Text der ersten Zeile so lang, dass die Zeilenhöhe größer als das Fenster ist.
+#. Die Zeilenhöhe einer Grid muss einen sinnvollen Maximalwert kriegen. 
+   In Explorer / Notes hat man momentan den Eindruck, dass es nur eine 
+   Zeile gibt; in Wirklichkeit ist der Memo-Text der ersten Zeile so lang, 
+   dass die Zeilenhöhe größer als das Fenster ist.
 
-#. Hinter das QuickFilter-Feld muss ein Button, um den Filter zu aktivieren. Dass man einfach nur TAB drücken muss ist nicht intuitiv.
+#. Hinter das QuickFilter-Feld muss ein Button, um den Filter zu aktivieren. 
+   Dass man einfach nur TAB drücken muss ist nicht intuitiv.
 
 #. Benutzbarkeit per Tastatur verbessern (issue 11, issue 64) 
 
@@ -407,6 +419,8 @@ Long-term
   
 #. Warnung, wenn das gleiche Feld mehrmals in einem Detail vorkommt.
    Oder besser: diesen Fall zulassen.
+   
+#. http://code.google.com/p/extjs-public/   
 
 
 Documentation

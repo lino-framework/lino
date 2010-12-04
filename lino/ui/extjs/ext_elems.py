@@ -1022,8 +1022,14 @@ class GridElement(Container):
         #~ kw.update(ls_filters=[e.get_filter_options() for e in self.elements if e.filter_type])
         kw.update(ls_id_property=rh.store.pk.name)
         kw.update(pk_index=rh.store.pk_index)
-        kw.update(ls_quick_edit=True)
+        kw.update(ls_quick_edit=rh.report.cell_edit)
         kw.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rh.get_actions(rh.report.default_action)])
+        a = rh.get_action('detail')
+        if a:
+            kw.update(ls_detail_handler=js_code("Lino.%s" % a))
+        a = rh.get_action('insert')
+        if a:
+            kw.update(ls_insert_handler=js_code("Lino.%s" % a))
         kw.update(ls_grid_configs=self.report.grid_configs)
         kw.update(gc_name=DEFAULT_GC_NAME)
         #~ gc = self.report.grid_configs.get('',None)
@@ -1098,7 +1104,7 @@ class unused_WrappingMainPanel(MainPanel):
 class GridMainPanel(GridElement,MainPanel):
     #~ value_template = "new Lino.GridPanel(%s)"
     def __init__(self,lh,name,vertical,*columns,**kw):
-        'ignore the "vertical" arg'
+        """ignore the "vertical" arg"""
         #~ MainPanel.__init__(self)
         GridElement.__init__(self,lh,name,lh.rh.report,*columns,**kw)
         #logger.debug("GridMainPanel.__init__() %s",self.name)
