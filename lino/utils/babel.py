@@ -25,6 +25,7 @@ Wird z.B. wie folgt aufgerufen::
 import logging
 logger = logging.getLogger(__name__)
 
+import sys
 import locale
 
 from django.db import models
