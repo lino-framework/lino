@@ -25,8 +25,8 @@ import codecs
 import time
 import datetime
 
-#~ import logging
-#~ logger = logging.getLogger('lino')
+import logging
+logger = logging.getLogger(__name__)
 
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
@@ -364,6 +364,7 @@ def main(*args,**options):
     if len(args) != 1:
         raise CommandError('Please specify the path to your TIM changelog directory')
     data_dir = args[0]
+    logger.info("Started tim_watch on %s ...",data_dir)
     dblogger.info("Watching %s ...",data_dir)
     last_warning = None
     while True:
