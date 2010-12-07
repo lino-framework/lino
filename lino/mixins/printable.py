@@ -53,6 +53,7 @@ import lino
 from lino import actions
 
 from lino.utils.babel import default_language, dtos, dtosl, setlang, getattr_lang
+from lino.utils import babel 
 
 
 bm_dict = {}
@@ -232,7 +233,7 @@ class AppyBuildMethod(SimpleBuildMethod):
         lang = str(elem.get_print_language(self))
         from appy.pod.renderer import Renderer
         logger.debug("appy.pod render %s -> %s using language %r",tpl,target,lang)
-        savelang = LANG
+        savelang = babel.LANG
         setlang(lang)
         #~ locale.setlocale(locale.LC_ALL,ls)
         #~ Error: unsupported locale setting
