@@ -52,7 +52,7 @@ import lino
 #~ from lino import reports
 from lino import actions
 
-from lino.utils.babel import default_language, dtos, dtosl, setlang
+from lino.utils.babel import default_language, dtos, dtosl, setlang, getattr_lang
 
 
 bm_dict = {}
