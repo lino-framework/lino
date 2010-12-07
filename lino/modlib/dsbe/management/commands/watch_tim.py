@@ -366,36 +366,36 @@ def main(*args,**options):
     data_dir = args[0]
     logger.info("Started tim_watch on %s ...",data_dir)
     dblogger.info("Watching %s ...",data_dir)
-    last_warning = None
+    #~ last_warning = None
     while True:
         watch(data_dir)
         time.sleep(1)
 
-try:
+#~ try:
   
-    from lino.utils.daemonextension import DaemonCommand
+    #~ from lino.utils.daemonextension import DaemonCommand
     
-    class Command(DaemonCommand):
+    #~ class Command(DaemonCommand):
       
-        args = '<path_to_tim_changelog>'
-        help = 'Starts an observer service that propagates changes of your TIM data into Lino'
+        #~ args = '<path_to_tim_changelog>'
+        #~ help = 'Starts an observer service that propagates changes of your TIM data into Lino'
         
-        stdout = os.path.join(settings.PROJECT_DIR, "log/watch_tim.out")
-        stderr = os.path.join(settings.PROJECT_DIR, "log/watch_tim.err")
-        pidfile = os.path.join(settings.PROJECT_DIR, "pid/watch_tim.pid")
+        #~ stdout = os.path.join(settings.PROJECT_DIR, "log/watch_tim.out")
+        #~ stderr = os.path.join(settings.PROJECT_DIR, "log/watch_tim.err")
+        #~ pidfile = os.path.join(settings.PROJECT_DIR, "pid/watch_tim.pid")
         
-        def handle_daemon(self, *args, **options):
-            main(*args,**options)
+        #~ def handle_daemon(self, *args, **options):
+            #~ main(*args,**options)
 
 
-except ImportError:
+#~ except ImportError:
   
-    class Command(BaseCommand):
-        args = '<path_to_tim_changelog>'
-        help = 'Starts an observer service that propagates changes of your TIM data into Lino'
+class Command(BaseCommand):
+    args = '<path_to_tim_changelog>'
+    help = 'Starts an observer service that propagates changes of your TIM data into Lino'
 
-        def handle(self, *args, **options):
-            main(*args,**options)
+    def handle(self, *args, **options):
+        main(*args,**options)
 
 
 
