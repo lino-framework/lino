@@ -114,9 +114,11 @@ since things are moving there (LibreOffice is coming, Debian will make new relea
 Miscellaneous
 -------------
 
+
 - I changed the method for finding primary key of previous/next records 
-  used in :func:`lino.ui.ext_ui.elem2rec_detailed` to fill out navinfo.
-  TODO: check whether performance is better on reports with over thousand records.
+  (needed to fill out navinfo)
+  in :func:`elem2rec_detailed <lino.ui.extjs.ext_ui.elem2rec_detailed>` 
+  Later this turned out to be *much* quicker on reports with over thousand records.
 
 - bugfix: user and CoachesByPerson where missing. 
   dsbe.Person has now a 6th Detail layout.

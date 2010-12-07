@@ -131,8 +131,31 @@ def objects():
     yield noteType((u"Auswertungsbogen allgemein"),build_method='rtf',template=u'Auswertungsbogen_allgemein.rtf')
     yield noteType((u"Anwesenheitsbescheinigung"),build_method='rtf',template=u'Anwesenheitsbescheinigung.rtf')
     
+    contractType = Instantiator('dsbe.ContractType',"ref",
+        build_method='appypdf',
+        template=u'art60-7.odt').build
+    yield contractType('art60-7a',
+      **babel_values('name',
+          de=u"Konvention Art.60§7 Sozialökonomie",
+          fr=u'Convention art.60§7 économie sociale'))
+    yield contractType('art60-7b',
+      **babel_values('name',
+          de=u"Konvention Art.60§7 Sozialökonomie - majoré",
+          fr=u'Convention art.60§7 économie sociale - majoré'))
+    yield contractType('art60-7c',
+      **babel_values('name',
+          de=u"Konvention Art.60§7 mit Rückerstattung",
+          fr=u'Convention art.60§7 avec remboursement'))
+    yield contractType('art60-7d',
+      **babel_values('name',
+          de=u"Konvention Art.60§7 mit Rückerstattung Schule",
+          fr=u'Convention art.60§7 avec remboursement école'))
+    yield contractType('art60-7e',
+      **babel_values('name',
+          de=u"Konvention Art.60§7 Stadt Eupen",
+          fr=u"Convention art.60§7 ville d'Eupen"))
+    
     contractType = Instantiator('dsbe.ContractType',"name").build
-    yield contractType(u"Konvention 60§7",build_method='appypdf',template=u'Konvention Sozialoekonomie.odt')
     yield contractType(u"VSE Ausbildung",build_method='appyodt',template=u'Konvention Sozialoekonomie.odt')
     yield contractType(u"VSE Arbeitssuche")
     yield contractType(u"VSE Integration")

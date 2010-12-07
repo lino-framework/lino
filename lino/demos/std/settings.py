@@ -41,6 +41,8 @@ USER_INTERFACES = [
   ]
 DATA_DIR = join(PROJECT_DIR,"data")
 
+BABEL_LANGS = []
+
 APPY_PARAMS = dict(ooPort=8100)
 try:
     import uno

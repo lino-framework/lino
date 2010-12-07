@@ -22,6 +22,7 @@ die in enger Zusammenarbeit mit dem ÖSHZ Eupen entwickelt wurde.
 .. toctree::
   :maxdepth: 2
 
+  models
   tim2lino
   funktionale_beschreibung
 

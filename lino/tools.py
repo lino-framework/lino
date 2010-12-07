@@ -16,15 +16,6 @@ from django.conf import settings
 from django.db import models
 from django.utils.importlib import import_module
 
-def default_language():
-    """
-    Returns the default language of this website
-    as defined by :setting:`LANGUAGE_CODE` in your :xfile:`settings.py`.
-    """
-    #~ from django.conf import settings
-    return settings.LANGUAGE_CODE[:2]
-    
-
 def get_app(app_label):
     """
     This is called in models modules instead of "from x.y import models as y"

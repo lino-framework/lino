@@ -22,7 +22,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.db import IntegrityError
 
 from lino import fields, tools
-from lino.tools import default_language
+from lino.utils.babel import default_language
 from lino import reports
 #~ from lino import layouts
 from lino.utils import perms

@@ -51,62 +51,12 @@ except ImportError:
 import lino
 #~ from lino import reports
 from lino import actions
-from lino.tools import default_language
 
-
-
-LANG = None
-
-LONG_DATE_FMT = {
-  None: '%A, %d. %B %Y',
-  'de': '%A, %d. %B %Y',
-  'fr': '%A %d %B %Y',
-  'et': '%A, %d. %B %Y.a.',
-}
-
-SHORT_DATE_FMT = {
-  None: '%y-%m-%d',
-  'de': '%d.%m.%Y',
-  'et': '%d.%m.%Y',
-  'fr': '%d/%m/%Y',
-}
-
-
-   
-
+from lino.utils.babel import default_language
 
 
 bm_dict = {}
 bm_list = []
-
-from lino.utils import lc2locale
-
-def dtos(d):
-    return d.strftime(SHORT_DATE_FMT[LANG])
-
-def dtosl(d):
-    return d.strftime(LONG_DATE_FMT[LANG])
-    
-def setlang(lang):
-    global LANG
-    LANG = lang
-    if lang is None:
-        locale.setlocale(locale.LC_ALL,'')
-    else:
-        country = settings.LANGUAGE_CODE[3:]
-        locale.setlocale(locale.LC_ALL,lc2locale(lang,country))
-    
-        #~ save_ls = locale.getlocale()
-        #~ ls = lc2locale(lang,country)
-        #~ ls = 'de-DE' # de_DE
-        #~ print ls
-        #~ logger.debug("appy.pod render %s -> %s using locale=%r",tpl,target,ls)
-        #~ locale.setlocale(locale.LC_ALL,'')
-    
-    
-
-    
-
 
 class BuildMethod:
     """
@@ -275,7 +225,10 @@ class AppyBuildMethod(SimpleBuildMethod):
     templates_name = 'appy' # subclasses use the same templates directory
     
     def simple_build(self,elem,tpl,target):
-        context = dict(self=elem,dtos=dtos,dtosl=dtosl)
+        context = dict(self=elem,
+            dtos=dtos,dtosl=dtosl,
+            getattr_lang=getattr_lang,
+            )
         lang = str(elem.get_print_language(self))
         from appy.pod.renderer import Renderer
         logger.debug("appy.pod render %s -> %s using language %r",tpl,target,lang)

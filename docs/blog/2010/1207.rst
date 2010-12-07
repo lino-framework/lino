@@ -1,0 +1,107 @@
+20101207
+========
+
+Setting quickfilter in a Detail window
+--------------------------------------
+
+Folgender Fehler trat auf, wenn man in einem Detail-Fenster einen quick filter setzte, 
+der den aktuellen Record unsichtbar machte::
+
+     File "/var/snapshots/lino/lino/ui/extjs/ext_ui.py", line 162, in elem2rec_detailed
+       i = id_list.index(elem.pk)
+     ValueError: list.index(x): x not in list
+     
+Richtig, den Fall hatte ich im :doc:`neuen Algotrithmus </blog/2010/1116>` 
+in :func:`elem2rec_detailed <lino.ui.extjs.ext_ui.elem2rec_detailed>` 
+noch nicht bedacht.
+
+Was muss der Server dann eigentlich tun?
+Das hatten wir doch schonmal beschlossen, oder?
+Richtig: der Client (:js:func:`Lino.FormPanel.goto_record_id` in der :xfile:`lino.js`) 
+testet das wie folgt::
+
+    if (rec.navinfo && rec.navinfo.recno == 0) {
+        /* 
+          recno 0 means "the requested pk exists but is not contained in the requested queryset".
+          This can happen after search_change on a detail.
+        */
+
+Jetzt gibt auch der neue Algorithmus `recno=0` zurück, wenn der Fall auftritt.
+
+
+Fehler beim Einfügen eines neuen Vertrags
+-----------------------------------------
+
+Wenn man Vertragsart nicht ausfüllte (und die Firmenart keine 
+:attr:`Standard-Vertragsart <dsbe.CompanyType>` hatte),
+dann kam keine Fehlermeldung in der Statuszeile, sondern ein 
+Alert-Fenster "Failur: Ajax communication failed".
+Auf dem Server war nämlich inzwischen folgendes passiert::
+
+ Traceback (most recent call last): 1 SVN-14540, python-dateuti
+   File "/var/snapshots/django/django/core/handlers/wsgi.py", line 265, in __call__ 2010] [error] Starting user interface lino.ui.extjs
+     response = self.get_response(request)
+   File "/var/snapshots/django/django/core/handlers/base.py", line 160, in get_response0] [error] /var/snapshots/django/django/core/context_processors.py:27: DeprecationWarning: The c
+     response = self.handle_uncaught_exception(request, resolver, sys.exc_info())d.
+   File "/var/snapshots/django/django/core/handlers/base.py", line 109, in get_responseog
+     response = callback(request, *callback_args, **callback_kwargs)
+   File "/var/snapshots/lino/lino/ui/extjs/ext_ui.py", line 764, in api_list_view
+     return self.form2obj_and_save(request,rh,request.POST,instance,force_insert=True)
+   File "/var/snapshots/lino/lino/ui/extjs/ext_ui.py", line 656, in form2obj_and_save
+     elem.full_clean()
+   File "/var/snapshots/lino/lino/modlib/dsbe/models.py", line 763, in full_clean
+     self.type = self.company.type.contract_type
+   File "/var/snapshots/django/django/db/models/fields/related.py", line 316, in __set__
+     (instance._meta.object_name, self.field.name))
+ ValueError: Cannot assign None: "Contract.type" does not allow null values.
+
+Richtig, da war noch ein Bug. Behoben.
+
+
+Babel fields
+------------
+
+- New module `lino.utils.babel`.
+  The following fields are now "babel fields":
+  | :attr:`dsbe.ContractType.name`
+  | :attr:`contacts.ContactType.name`
+  | :attr:`contacts.CompanyType.name` and :attr:`contacts.CompanyType.abbr`
+    
+  Updated the fixtures for these cases.
+    
+Beobachtung am Rande. Erste Implementierung war::
+
+    def add_lang_field(model,name,*args,**kw):
+        f = getattr(model,name)
+        ...
+        model.add_to_class(name + '_' + lang,newfield)
+        
+Aber::
+
+    Exception occurred:
+      File "t:\hgwork\lino\lino\modlib\dsbe\models.py", line 884, in add_lang_field
+        f = getattr(model,name)
+    AttributeError: type object 'ContractType' has no attribute 'name'
+  
+  
+Das fand ich komisch, denn folgendes funktioniert::
+
+    class A(object):
+        a = 'foo'
+    f = getattr(A,'a')
+    print f
+    
+Das liegt aber daran, dass Django-Modelle eine `__metaclass__` definieren, 
+die in der Klasse einiges umkrempelt. Also statt `getattr(model,name)`  
+muss man `f = model._meta.get_field()` machen. 
+
+Miscllaneous
+------------
+
+- New field `dsbe.ContractType.ref`.
+
+- Contactable.address now returns only the address, not the name.
+
+- moved default_language from lino.tools to lino.utils.babel
+
+- 

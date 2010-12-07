@@ -24,6 +24,9 @@ import time
 import cPickle as pickle
 from urllib import urlencode
 
+#~ import Cheetah
+from Cheetah.Template import Template as CheetahTemplate
+
 from django import http
 from django.db import models
 from django.db import IntegrityError
@@ -37,43 +40,33 @@ from django.utils.encoding import force_unicode
 from django.template.loader import get_template
 from django.template import RequestContext
 
-
 from django.utils.translation import ugettext as _
 from django.utils import simplejson as json
 
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
+from django.conf.urls.defaults import patterns, url, include
 
-#~ import Cheetah
-from Cheetah.Template import Template as CheetahTemplate
 
 import lino
-from lino.utils import dblogger
-from lino.utils import ucsv
-from lino.utils import printable
-from lino.utils import choosers
-from lino import actions #, layouts #, commands
-from lino import reports
-from lino import fields
-from lino.ui import base
-#~ from lino import diag
-#~ from lino import forms
-from lino.core import actors
-#~ from lino.core import action_requests
-from lino.utils import menus
-from lino.utils.config import find_config_file
-#~ from lino.utils import build_url
-from lino.utils import jsgen
-from lino.utils.jsgen import py2js, js_code, id2js
 from . import ext_elems
 from . import ext_store
 from . import ext_windows
 #~ from . import ext_viewport
 from . import ext_requests
-#from lino.modlib.properties.models import Property
-#~ from lino.modlib.properties import models as properties
-
-from django.conf.urls.defaults import patterns, url, include
+from lino import actions #, layouts #, commands
+from lino import reports
+from lino import fields
+from lino.ui import base
+from lino.core import actors
+from lino.utils import dblogger
+from lino.utils import ucsv
+from lino.utils import choosers
+from lino.utils import menus
+from lino.utils.config import find_config_file
+from lino.utils import jsgen
+from lino.utils.jsgen import py2js, js_code, id2js
+from lino.mixins import printable
 
 from lino.core.coretools import app_labels
 
@@ -128,17 +121,24 @@ def error_response(e,message_prefix='',**kw):
 def elem2rec1(ar,rh,elem,**rec):
     rec.update(data=rh.store.row2dict(ar,elem))
     return rec
-      
+
+
 def elem2rec_detailed(ar,rh,elem,**rec):
     """
     Adds additional information for this record, used only by detail views.
+    
     The "navigation information" is a set of pointers to the next, previous, 
     first and last record relativ to this record in this report. 
-    This can be relatively expensive for records that are towards 
-    the end of the report.
+    (This information can be relatively expensive for records that are towards 
+    the end of the report. 
     See :doc:`/blog/2010/0716`,
     :doc:`/blog/2010/0721`,
-    :doc:`/blog/2010/1116`.
+    :doc:`/blog/2010/1116`,
+    :doc:`/blog/2010/1207`.)
+    
+    recno 0 means "the requested element exists but is not contained in the requested queryset".
+    This can happen after changing the quick filter (search_change) of a detail view.
+    
     """
     rec = elem2rec1(ar,rh,elem,**rec)
     rec.update(id=elem.pk)
@@ -154,19 +154,24 @@ def elem2rec_detailed(ar,rh,elem,**rec):
         recno = 0
         if ar.total_count > 0:
             if True:
+                # this algorithm is clearly quicker on reports with a few thousand Persons
                 id_list = list(ar.queryset.values_list('pk',flat=True))
                 assert len(id_list) == ar.total_count, \
                     "len(id_list) is %d while ar.total_count is %d" % (len(id_list),ar.total_count)
                 first = id_list[0]
                 last = id_list[-1]
-                i = id_list.index(elem.pk)
-                recno = i + 1
-                if i > 0:
-                    #~ prev = ar.queryset[i-1]
-                    prev = id_list[i-1]
-                if i < ar.total_count - 1:
-                    #~ next = ar.queryset[i+1]
-                    next = id_list[i+1]
+                try:
+                    i = id_list.index(elem.pk)
+                except ValueError:
+                    pass
+                else:
+                    recno = i + 1
+                    if i > 0:
+                        #~ prev = ar.queryset[i-1]
+                        prev = id_list[i-1]
+                    if i < ar.total_count - 1:
+                        #~ next = ar.queryset[i+1]
+                        next = id_list[i+1]
             else:
                 first = ar.queryset[0]
                 last = ar.queryset.reverse()[0]
@@ -191,7 +196,7 @@ def elem2rec_detailed(ar,rh,elem,**rec):
                 if next is not None: next = next.pk
         rec.update(navinfo=dict(
             first=first,prev=prev,next=next,last=last,recno=recno,
-            message="Row %d of %d" % (recno,ar.total_count)))
+            message=_("Row %(rowid)d of %(rowcount)d") % dict(rowid=recno,rowcount=ar.total_count)))
     return rec
             
     
@@ -886,11 +891,14 @@ class ExtUI(base.UI):
             return HttpResponseDeleted()
             
         if request.method == 'PUT':
+            if elem is None:
+                return eror.message('Tried to PUT on element -99999')
             data = http.QueryDict(request.raw_post_data)
             #~ fmt = data.get('fmt',None)
             return self.form2obj_and_save(request,ah,data,elem,force_update=True)
             
         ar = ext_requests.ViewReportRequest(request,ah,ah.report.default_action)
+        
         if pk == '-99999':
             elem = ar.create_instance()
             

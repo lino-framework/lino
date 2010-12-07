@@ -28,8 +28,7 @@ from lino.utils import perms
 
 from lino import fields
 from lino.modlib.contacts.utils import join_words
-
-from lino.tools import default_language
+from lino.utils.babel import add_babel_field, default_language, babelattr
 
 
     
@@ -84,36 +83,40 @@ class Addressable(models.Model):
     def __unicode__(self):
         return self.name
         
-    def address(self):
+    def recipient_lines(self):
+        yield self.name
+        
+    def address(self,linesep="\n<br/>"):
         "Implements :meth:`contacts.Contact.address`"
-        return self.as_address(', ')
-    address.return_type = models.TextField(verbose_name=_("Address"))
+        return linesep.join(self.address_lines()) # ', ')
+    address.return_type = models.TextField(_("Address"))
     
         
-    def as_address(self,linesep="\n<br/>"):
-        lines = [self.name]
-        if self.street:
-            lines.append(join_words(self.street,self.street_no,self.street_box))
+    def address_lines(self,linesep="\n<br/>"):
+        #~ lines = []
+        #~ lines = [self.name]
         if self.addr1:
-            lines.append(self.addr1)
+            yield self.addr1
+        if self.street:
+            yield join_words(self.street,self.street_no,self.street_box)
         #lines = [self.name,street,self.addr1,self.addr2]
         if self.region: # format used in Estonia
             if self.city:
-                lines.append(unicode(self.city))
+                yield unicode(self.city)
             s = join_words(self.zip_code,self.region)
         else: 
             s = join_words(self.zip_code,self.city)
         if s:
-            lines.append(s)
+            yield s 
         foreigner = True # False
         #~ if self.id == 1:
             #~ foreigner = False
         #~ else:
             #~ foreigner = (self.country != self.objects.get(pk=1).country)
         if foreigner and self.country: # (if self.country != sender's country)
-            lines.append(unicode(self.country))
+            yield unicode(self.country)
         #~ logger.debug('%s : as_address() -> %r',self,lines)
-        return mark_safe(linesep.join(lines))
+        #~ return mark_safe(linesep.join(lines))
         
     @classmethod
     def city_choices(cls,country):
@@ -160,10 +163,17 @@ class Person(Addressable):
         #~ r = super(Person,self).save(*args,**kw)
         #~ return r
         
+    def recipient_lines(self):
+        if self.title:
+            yield self.title
+        l = filter(lambda x:x,[self.first_name,self.last_name])
+        yield  " ".join(l)
+        
     def full_clean(self,*args,**kw):
     #~ def before_save(self):
         #~ if not self.name:
-        l = filter(lambda x:x,[self.last_name,self.first_name,self.title])
+        #~ l = filter(lambda x:x,[self.last_name,self.first_name,self.title])
+        l = filter(lambda x:x,[self.last_name,self.first_name])
         self.name = " ".join(l)
         super(Person,self).full_clean(*args,**kw)
 
@@ -183,6 +193,7 @@ class PersonsByCountry(Persons):
     fk_name = 'country'
     order_by = "city addr1"
     column_names = "city addr1 name language"
+    
 
 class CompanyType(models.Model):
     """
@@ -191,22 +202,21 @@ class CompanyType(models.Model):
     class Meta:
         verbose_name = _("company type")
         verbose_name_plural = _("company types")
-    abbr = models.CharField(max_length=30,verbose_name=_("Abbreviation"))
-    name = models.CharField(max_length=200,verbose_name=_("Designation"))
+    name = models.CharField(_("Designation"),max_length=200)
+    abbr = models.CharField(_("Abbreviation"),max_length=30,blank=True)
     
     def __unicode__(self):
         return self.name
         
-    #~ def disable_delete(self,request):
-        #~ if self.company_set.count() > 0:
-            #~ return _("Must delete all Company objects before deleting CompanyType")
+add_babel_field(CompanyType,'abbr')
+add_babel_field(CompanyType,'name')
         
 class CompanyTypes(reports.Report):
     model = 'contacts.CompanyType'
     column_names = 'name *'
     #~ label = _("Company types")
         
-  
+
 class Company(Addressable):
     """
     Implements the :class:`contacts.Company` convention.
@@ -250,6 +260,8 @@ class ContactType(models.Model):
     
     def __unicode__(self):
         return self.name
+
+add_babel_field(ContactType,'name')
 
 class ContactTypes(reports.Report):
     model = 'contacts.ContactType'

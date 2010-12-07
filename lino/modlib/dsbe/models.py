@@ -28,7 +28,8 @@
   (each with an optional :class:`ExclusionType`).
 
   For each :class:`Person` we keep a record of her :class:`LanguageKnowledge`.
-
+  
+  
   ...
 
 """
@@ -37,9 +38,9 @@ import cgi
 import datetime
 
 from django.db import models
+from django.conf import settings
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
-from django.conf import settings
 from django.utils.encoding import force_unicode 
 
 #~ import lino
@@ -57,7 +58,7 @@ from lino.modlib.links import models as links
 from lino.modlib.uploads import models as uploads
 from lino.models import get_site_config
 from lino.tools import get_field
-from lino.tools import default_language
+from lino.utils.babel import add_babel_field, default_language
 
 #~ from lino.modlib.fields import KNOWLEDGE_CHOICES # for makemessages
 
@@ -669,10 +670,13 @@ class ContractType(mixins.PrintableType):
         verbose_name = _("contract type")
         verbose_name_plural = _('contract types')
         
-    name = models.CharField(max_length=200)
+    ref = models.CharField(_("reference"),max_length=20,blank=True)
+    name = models.CharField(_("contract title"),max_length=200)
     
     def __unicode__(self):
         return unicode(self.name)
+        
+add_babel_field(ContractType,'name')
 
 class ContractTypes(reports.Report):
     model = ContractType
@@ -795,7 +799,8 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,mixins.
                     self.applies_until = self.applies_from + datetime.timedelta(days=self.duration)
         if self.type_id is None \
             and self.company is not None \
-            and self.company.type is not None:
+            and self.company.type is not None \
+            and self.company.type.contract_type is not None:
             self.type = self.company.type.contract_type
         
 CONTRACT_PRINTABLE_FIELDS = reports.fields_list(Contract,
@@ -873,3 +878,4 @@ CompanyType.add_to_class('contract_type',
     models.ForeignKey("dsbe.ContractType",
         blank=True,null=True,
         verbose_name=_("contract type")))
+

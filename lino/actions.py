@@ -45,26 +45,6 @@ PAGE_DOWN = Hotkey(keycode=34)
 INSERT = Hotkey(keycode=44)
 DELETE = Hotkey(keycode=46)
     
-#~ class ActionEvent(Exception):
-    #~ pass
-    
-#~ class ValidationError(Exception):
-    #~ pass
-    
-#~ class MustConfirm(ActionEvent):
-    #~ pass
-
-#~ class ActionHandle:
-    #~ def __init__(self,ui,action):
-        #~ assert isinstance(action,Action)
-        #~ self.ui = ui
-        #~ self.action = action
-        
-    #~ def setup(self):
-        #~ if self.ui is not None:
-            #~ self.ui.setup_action(self)
-        
-    
     
 class Action: # (base.Handled):
     #~ handle_class = ActionHandle
@@ -238,79 +218,3 @@ class ImageAction(RedirectAction):
         #~ return settings.MEDIA_URL + "/".join(elem.get_image_url(self))
         return settings.MEDIA_URL + elem.get_image_url(self)
       
-        
-    
-#~ class Cancel(Action):
-    #~ label = _("Cancel")
-    #~ name = 'cancel'
-    #~ key = ESCAPE 
-    
-    #~ def run_in_dlg(self,dlg):
-        #~ yield dlg.close_caller().over()
-
-#~ class OK(Action):
-    #~ needs_validation = True
-    #~ label = _("OK")
-    #~ name = "ok"
-    #~ key = RETURN
-
-    #~ def run_in_dlg(self,dlg):
-        #~ yield dlg.close_caller().over()
-
-
-
-class unused_ActionResponse:
-    redirect = None
-    alert_msg = None
-    confirm_msg = None
-    notify_msg = None
-    refresh_menu = False
-    refresh_caller = False
-    close_caller = False
-    #~ show_window = None
-    js_code = None
-    success = True # for Ext.form.Action.Submit
-    errors = None # for Ext.form.Action.Submit
-    
-    def __init__(self,**kw):
-        for k,v in kw.items():
-            assert hasattr(self,k)
-            setattr(self,k,v)
-              
-    
-    def as_dict(self):
-        return dict(
-          success=self.success,
-          redirect=self.redirect,
-          alert_msg=self.alert_msg,
-          notify_msg=self.notify_msg,
-          confirm_msg=self.confirm_msg,
-          refresh_menu=self.refresh_menu,
-          refresh_caller=self.refresh_caller,
-          close_caller=self.close_caller,
-          #~ show_window=self.show_window,
-          js_code=self.js_code,
-        )
-
-#~ class ActionRequest:
-    #~ """
-    #~ An ActionRequest will be created for every request.
-    
-    #~ """
-    #~ selected_rows = []
-    
-    #~ def __init__(self,ui,action):
-        #~ if ui is not None: assert ui.create_meth_element is not None
-        #~ assert isinstance(action,Action), "%s : %r is not an Action." % (self,action)
-        #~ self.action = action # ah.actor.get_action(action_name)
-        #~ self.ui = ui
-        
-    #~ def __str__(self):
-        #~ return 'ActionRequest `%s.%s`' % (self.action.actor,self.action)
-        
-    #~ def get_user(self):
-        #~ raise NotImplementedError()
-        
-    #~ def show_action_window(self,action):
-        #~ return self.ui.show_action_window(self,action)
-        

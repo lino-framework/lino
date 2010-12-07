@@ -128,11 +128,6 @@ class DiffingMixin(object):
 
 
 
-
-
-
-
-
 from lino.mixins.reminder import Reminder
 from lino.mixins.printable import Printable, PrintableType, TypedPrintable
 from lino.mixins.uploadable import Uploadable
