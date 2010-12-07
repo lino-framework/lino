@@ -21,7 +21,6 @@ logger = logging.getLogger(__name__)
 import os
 import sys
 import logging
-import locale
 import cStringIO
 import glob
 from fnmatch import fnmatch
