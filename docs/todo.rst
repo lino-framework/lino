@@ -9,12 +9,21 @@ for which I hope for help from other people.
 Before version 1.0
 ------------------
 
-#. Ext.LoadMask kennenlernen:
-   http://www.sencha.com/forum/showthread.php?64420-how-to-show-a-wait-message-while-calling-store-load
+#. Für Benutzer Vor- und Nachnamen (nicht den Benutzernamen) drucken.
 
-#. Arbeitsregime und Stundenplan: 
-   Nach Ändern der Sprache ändert sich nicht immer die Auswahlliste.
-   
+#. Liste der Personen sollte zunächst mal nur "meine" Personen anzeigen.
+   Evtl. mehrere Menübefehle.
+
+#. Noch ein neues separates Feld für Prozentsatz Rückerstattung
+
+#. Stundensatz: Standardwert für neue Verträge muss pro Firma festgelegt werden.
+   Also wahrscheinlich einfach ein neues Feld Company.hourly_rate.
+
+#. "Active fields" : wenn die sich ändern, macht der Client ein GET für diesen Record, 
+   wobei er aber auch alle anderen geänderten und noch nicht gespeicherten Felder mit 
+   übergibt. Der Server macht darauf dann full_clean aber speichert nicht ab, sondern 
+   gibt das nur zurück. So kann ich serverseitige field-level validation machen.
+
 #. nach dem Löschen eines Vertrags verschwindet dieser erst aus 
    der Grid wenn man ein Refresh macht. 
    Refresh wird nicht automatisch gemacht.
@@ -22,10 +31,17 @@ Before version 1.0
 #. Button "Insert" : wenn man das Insert-Fenster bestätigt und keine Fehlermeldung kommt, 
    wird das Fenster geschlossen. Aber wenn man das von der Grid aus tut, 
    wird auch die Grid geschlossen.
+   
+#. Wenn man ClearCacheAction macht und das Dokument neu druckt, 
+   dauert es eine Zeit, bis der Cache des Browsers kapiert, 
+   dass die URL neu angefragt werden muss.
 
-#. Stundensatz: wo speichern? Manueller Wert möglich?
-   Noch ein neues separates Feld für Rückerstattung?
+#. Ext.LoadMask kennenlernen:
+   http://www.sencha.com/forum/showthread.php?64420-how-to-show-a-wait-message-while-calling-store-load
 
+#. Arbeitsregime und Stundenplan: 
+   Nach Ändern der Sprache ändert sich nicht immer die Auswahlliste.
+   
 #. Dokumentvorlagen weiter
 
 #. "Insert as copy"
