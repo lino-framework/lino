@@ -1859,6 +1859,9 @@ Lino.WindowWrapperBase = {
       this.window.show();
       //~ Lino.load_mask.hide();
   },
+  refresh : function() { 
+    this.main_item.refresh();
+  },
   close : function() { 
       this.window.close();
       if (this.caller) this.caller.refresh();
