@@ -744,7 +744,6 @@ Lino.submit_insert = function(panel,btn) {
     success: function(form, action) {
       Lino.notify(action.result.message);
       panel.ww.close();
-      if (panel.ww.caller) panel.ww.caller.refresh();
       //~ this.caller.refresh();
     },
     failure: Lino.on_submit_failure,
@@ -1862,6 +1861,7 @@ Lino.WindowWrapperBase = {
   },
   close : function() { 
       this.window.close();
+      if (this.caller) this.caller.refresh();
   }
 };
 
