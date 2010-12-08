@@ -1,17 +1,28 @@
 Version 0.8.14
 ==============
 
+Released :doc:`/blog/2010/1207`.
+
 New features
 ------------
 
-- Babel fields
+- Babel-Felder (Konfiguration Vertragsarten, Konfiguration Eigenschaften)
 - Contact.address
 - ContractType.ref
+
+- Doppelklick oder ENTER öffnet jetzt das Detail-Fenster.
+  Um eine Zelle in der Grid zu bearbeiten, muss man jetzt F2 drücken.
+  Siehe :doc:`/blog/2010/1204`.
+  
+- Unsere Dokumentvorlage heißt jetzt art60-7.odt statt bisher 
+  "Konvention Sozialoekonomie.odt"
+
+
 
 Bugs fixed
 ----------
 
-- Probleme nach Insert sind *vielleicht* behoben.
+- Probleme nach Insert sind (vielleicht) behoben.
 
 
 Upgrade instructions
@@ -20,7 +31,6 @@ Upgrade instructions
 - doctemplates: "Konvention Sozialoekonomie.odt" umbenennen nach "art60-7.odt"
 
 - Add `BABEL_LANGS = ['fr']` to :xfile:`settings.py`
-  
 
 - Upgrade your copy of the Lino sources::
 

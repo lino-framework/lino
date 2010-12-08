@@ -57,15 +57,15 @@ Auf dem Server war nämlich inzwischen folgendes passiert::
 
 Richtig, da war noch ein Bug. Behoben.
 
-
 Babel fields
 ------------
 
 - New module `lino.utils.babel`.
   The following fields are now "babel fields":
-  | :attr:`dsbe.ContractType.name`
-  | :attr:`contacts.ContactType.name`
-  | :attr:`contacts.CompanyType.name` and :attr:`contacts.CompanyType.abbr`
+  
+   | :attr:`dsbe.ContractType.name`
+   | :attr:`contacts.ContactType.name`
+   | :attr:`contacts.CompanyType.name` and :attr:`contacts.CompanyType.abbr`
     
   Updated the fixtures for these cases.
     
@@ -95,8 +95,8 @@ Das liegt aber daran, dass Django-Modelle eine `__metaclass__` definieren,
 die in der Klasse einiges umkrempelt. Also statt `getattr(model,name)`  
 muss man `f = model._meta.get_field()` machen. 
 
-Miscllaneous
-------------
+Miscellaneous
+-------------
 
 - New field `dsbe.ContractType.ref`.
 
@@ -104,4 +104,4 @@ Miscllaneous
 
 - moved default_language from lino.tools to lino.utils.babel
 
-- 
+- Released :doc:`/releases/20101207` in Eupen.

@@ -32,6 +32,9 @@ Subpackages
     lino.utils.dblogger
     lino.mixins
     lino.mixins.printable
+    lino.mixins.uploadable
+    lino.mixins.addressable
+    lino.mixins.reminder
     lino.demos
 
 

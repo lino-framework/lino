@@ -226,8 +226,9 @@ class AppyBuildMethod(SimpleBuildMethod):
     
     def simple_build(self,elem,tpl,target):
         context = dict(self=elem,
-            dtos=dtos,dtosl=dtosl,
-            getattr_lang=getattr_lang,
+            dtos=dtos,
+            dtosl=dtosl,
+            tr=getattr_lang,
             )
         lang = str(elem.get_print_language(self))
         from appy.pod.renderer import Renderer

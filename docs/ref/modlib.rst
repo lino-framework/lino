@@ -42,36 +42,19 @@ The ``contacts`` application label
 
 Depends on :mod:`countries`.
 
-A :class:`Contact` is anything that may be contacted using a postal or email address or phone numbers. 
+:class:`Person` is for physical persons,
+:class:`Company` for companies, organisations and any kind, non-formal groups that are 
+:class:`addressable <lino.mixins.addressable.Addressable>`.
 
-:class:`Contact` is the abstract base class 
-for :class:`Person` (physical persons) 
-and :class:`Company` (companies, organisations of any kind, non-formal groups of persons). 
+A :class:`Contact` is a :class:`Person` (physical persons) 
+that has a certain role :class:`ContactType` 
+in a certain :class:`Company`. 
   
-:attr:`Company.type` is a pointer to this 
-company's :class:`CompanyType`. 
-:class:`CompanyTypes`
-  
+:attr:`Company.type` is a pointer to this company's :class:`CompanyType`.
 
 .. class:: Contact
 
   Abstract base class for :class:`Company` and :class:`Person`.
-  Anything that has contact information (postal address, email, phone,...).
-
-  .. attribute:: country
-  
-      A pointer to :class:`countries.Country`. The country where this contact is located.
-    
-  .. attribute:: city
-  
-      A pointer to :class:`countries.City`. The city where this contact is located.
-      The list of choices for this field is context-sensitive, it depends on the :attr:`country`.
-    
-  .. method:: address
-  
-      The plain text postal address, layd out according to the local rules in 
-      this Contact's :country. 
-      Virtual field. 
 
 .. class:: Person
 
@@ -92,9 +75,35 @@ company's :class:`CompanyType`.
   :class:`dsbe <lino.modlib.dsbe.models.Company>`
   and :class:`igen <lino.modlib.igen.models.Company>`
 
+.. class:: ContactType
+
+  .. attribute:: name
+  
+    the string displayed in comboboxes when selecting a ContactType.
+    Also used at "in seiner Eigenschaft als ..." in document templates for contracts.
+  
+  .. attribute:: name_fr
+  
+    The optional french version of :attr:`name`.
+    See :doc:`/topics/babel`.
+  
 .. class:: CompanyType
 
   Implemented in :class:`lino.modlib.contacts.models.CompanyType`
+  
+  .. attribute:: abbr
+  
+    The usual abbreviation. Used to build default string representation.
+    
+  .. attribute:: name
+  
+    Used to build default string representation.
+  
+  .. attribute:: contract_type
+    
+      Only :doc:`/dsbe/index`.
+      
+      The default ContractType to apply on contracts with a company of this CompanyType.
 
 
 

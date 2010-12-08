@@ -13,24 +13,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-**Overview**
-
-  A :class:`Contact` is either a :class:`Person` or a :class:`Company`.
-
-  The :class:`Activity` of a :class:`Person` or :class:`Company` 
-  indicates in what professional area they are active.
-
-  :class:`Coaching` is when a :class:`auth.User` has been designated responsible 
-  for a :class:`Person`. There may be more than one responsible user per person, 
-  each one having a different :class:`CoachingType`.
-
-  For each :class:`Person` we keep a record of :class:`Exclusions <Exclusion>` 
-  (each with an optional :class:`ExclusionType`).
-
-  For each :class:`Person` we keep a record of her :class:`LanguageKnowledge`.
-  
-  
-  ...
+See :doc:`/dsbe/models`
 
 """
 

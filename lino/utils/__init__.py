@@ -54,6 +54,14 @@ def iif(l,y,f):
     if l: return y 
     return f
 
+def join_words(*words):
+    """
+    removes any None. calls unicode on each.
+    """
+    #~ words = filter(lambda x:x,words)
+    return ' '.join([unicode(x) for x in words if x])
+      
+
 
 
 def _test():

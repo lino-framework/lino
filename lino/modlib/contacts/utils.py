@@ -11,6 +11,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+
 """
 
 http://en.wikipedia.org/wiki/Dutch_name
@@ -57,6 +58,11 @@ Examples:
 
 import re
 
+from django.utils.translation import ugettext_lazy as _
+from django.db import models
+from django.conf import settings
+
+from lino.utils import join_words
 
 name_prefixes1 = ("HET", "'T",'VAN','DER', 'TER','VOM','VON','OF', "DE", "DU", "EL", "AL")
 name_prefixes2 = ("VAN DEN","VAN DER","VAN DE","IN HET", "VON DER","DE LA")
@@ -93,22 +99,6 @@ def street2kw(s,**kw):
         kw['street'] = s
     return kw
     
-    #~ a = s.split()
-    #~ if len(a) == 1:
-        #~ kw['street'] = a[0]
-    #~ else:
-        #~ tail = a.pop()
-        #~ if tail.isdigit():
-            #~ kw['street'] = join_words(*a)
-            
-
-def join_words(*words):
-    """
-    removes any None. calls unicode on each.
-    """
-    words = filter(lambda x:x,words)
-    return ' '.join([unicode(x) for x in words])
-      
 
 
 def _test():
@@ -117,4 +107,7 @@ def _test():
 
 if __name__ == "__main__":
     _test()
+
+
+
 

@@ -2,20 +2,41 @@ Tabellenreferenz
 ================
 
 
+================================= =============================== ========================
+Modell                            Deutsch                         Français
+================================= =============================== ========================
+:class:`dsbe.Contract`            Vertrag                         Contrat
+:class:`dsbe.ContractType`        Vertragsart                     Type de contrat
+:class:`contacts.ContactType`     Eigenschaft                     rôle
+:class:`contacts.Company`         Firma (Betrieb, Organisation)   Organisation
+:class:`contacts.Person`          Person                          Personne
+:class:`contacts.CompanyType`     Firmenart                       Type d'organisation
+================================= =============================== ========================
+
+
+**Overview**
+
+  A :class:`Contact` is either a :class:`Person` or a :class:`Company`.
+
+  The :class:`Activity` of a :class:`Person` or :class:`Company` 
+  indicates in what professional area they are active.
+
+  :class:`Coaching` is when a :class:`auth.User` has been designated responsible 
+  for a :class:`Person`. There may be more than one responsible user per person, 
+  each one having a different :class:`CoachingType`.
+
+  For each :class:`Person` we have a list of :class:`Exclusions <Exclusion>` 
+  (each with an optional :class:`ExclusionType`).
+
+  For each :class:`Person` we keep a record of her :class:`LanguageKnowledge`.
+  
+  
+  ...
+
+
 
 
 .. module:: dsbe
-
-========================== =============================== ========================
-Modell                     Deutsch                         Français
-========================== =============================== ========================
-:class:`Contract`          Vertrag                         Contrat
-:class:`ContractType`      Vertragsart                     Type de contrat
-:class:`ContactType`       Eigenschaft                     rôle
-:class:`Company`           Firma (Betrieb, Organisation)   Organisation
-:class:`Person`            Person                          Personne
-:class:`CompanyType`       Firmenart                       Type d'organisation
-========================== =============================== ========================
 
 
 .. class:: ContractType
@@ -36,26 +57,3 @@ Modell                     Deutsch                         Français
     The optional french version of :attr:`name`.
     See :doc:`/topics/babel`.
     
-    
-.. class:: ContactType
-
-  .. attribute:: name
-  
-    the string displayed in comboboxes when selecting a ContactType.
-    Also used at "in seiner Eigenschaft als ..." in document templates for contracts.
-  
-  .. attribute:: name_fr
-  
-    The optional french version of :attr:`name`.
-    See :doc:`/topics/babel`.
-  
-.. class:: CompanyType
-
-  .. attribute:: name
-  
-    the string displayed in comboboxes when selecting a CompanyType.
-  
-  .. attribute:: contract_type
-    
-      The default ContractType to apply on contracts with a company of this CompanyType.
-
