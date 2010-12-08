@@ -104,4 +104,8 @@ Miscellaneous
 
 - moved default_language from lino.tools to lino.utils.babel
 
-- Released :doc:`/releases/20101207` in Eupen.
+- In mixins.uploadable kam ein Traceback 
+  `NameError: global name 'logger' is not defined`
+
+
+Released :doc:`/releases/20101207` in Eupen.
