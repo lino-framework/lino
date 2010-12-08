@@ -91,7 +91,8 @@ class CompanyType(models.Model):
     abbr = models.CharField(_("Abbreviation"),max_length=30,blank=True)
     
     def __unicode__(self):
-        return self.name
+        #~ return self.name
+        return babelattr(self,'name')
         
 add_babel_field(CompanyType,'abbr')
 add_babel_field(CompanyType,'name')
@@ -144,7 +145,8 @@ class ContactType(models.Model):
     name = models.CharField(max_length=200,verbose_name=_("Designation"))
     
     def __unicode__(self):
-        return self.name
+        #~ return self.name
+        return babelattr(self,'name')
 
 add_babel_field(ContactType,'name')
 
