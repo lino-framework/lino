@@ -134,7 +134,7 @@ def getattr_lang(obj,name,*args):
     See also :doc:`/blog/2010/1207`.
     
     """
-    if LANG != default_language():
+    if LANG is not None and LANG != default_language():
         v = getattr(obj,name+"_"+LANG,None)
         if v:
             return v
