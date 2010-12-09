@@ -64,7 +64,12 @@ def configure(config):
         
     logger.setLevel(logging.DEBUG)
     
-    if sys.stdout.isatty():
+    #~ from django.conf import settings
+    #~ log_dir = os.path.join(settings.PROJECT_DIR,'log')
+    
+    #~ if sys.stdout.isatty():
+    if sys.platform == 'win32':
+      
         h = logging.StreamHandler()
         #~ h.setLevel(logging.DEBUG)
         h.setLevel(logging.INFO)
@@ -72,10 +77,6 @@ def configure(config):
         h.setFormatter(fmt)
         logger.addHandler(h)
     
-    #~ from django.conf import settings
-    #~ log_dir = os.path.join(settings.PROJECT_DIR,'log')
-    
-    if sys.platform == 'win32':
         log_dir = 'log'
     else:
         log_dir = '/var/log/lino'
