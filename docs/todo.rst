@@ -25,16 +25,6 @@ Before version 1.0
 #. Liste der Personen sollte zunächst mal nur "meine" Personen anzeigen.
    Evtl. mehrere Menübefehle.
 
-#. TIM-Partner mit ungültiger E-Mail-Adresse werden überhaupt nicht importiert. 
-   Stattdessen sollte nur ihre E-Mail-Adresse leer sein.
-
-#. `watch_tim` meldet `AttributeError 'datetime.date' object has no attribute 'read'`
-
-#. Noch ein neues separates Feld für Prozentsatz Rückerstattung
-
-#. Stundensatz: Standardwert für neue Verträge muss pro Firma festgelegt werden.
-   Also wahrscheinlich einfach ein neues Feld Company.hourly_rate.
-
 #. "Active fields" : wenn die sich ändern, macht der Client ein GET für diesen Record, 
    wobei er aber auch alle anderen geänderten und noch nicht gespeicherten Felder mit 
    übergibt. Der Server macht darauf dann full_clean aber speichert nicht ab, sondern 

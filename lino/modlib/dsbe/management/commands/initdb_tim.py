@@ -175,13 +175,29 @@ def pxs2person(row,person):
         person.nationality=country
             
     if row['GEBDAT']:
-        person.birth_date = dateparser.parse(row['GEBDAT'])
+        if isinstance(row['GEBDAT'],basestring):
+            person.birth_date = dateparser.parse(row['GEBDAT'])
+        else:
+            person.birth_date = row['GEBDAT']
     if row['VALID1']:
         person.card_valid_from = dateparser.parse(row['VALID1'])
     if row['VALID2']:
         person.card_valid_until = dateparser.parse(row['VALID2'])
         
         
+def try_full_clean(i):
+    while True:
+        try:
+            i.full_clean()
+        except ValidationError,e:
+            if not hasattr(e, 'message_dict'):
+                raise
+            for k in e.message_dict.keys():
+                fld = i._meta.get_field(k)
+                v = getattr(i,k)
+                setattr(i,k,fld.default)
+                dblogger.warning("%s : ignoring value %r for %s : %s",obj2str(i),v,k,e)
+        return
     
 def load_dbf(dbpath,tableName,load):
     fn = os.path.join(dbpath,'%s.DBF' % tableName)
@@ -193,14 +209,14 @@ def load_dbf(dbpath,tableName,load):
         if i is not None:
             i = settings.TIM2LINO_LOCAL(tableName,i)
             if i is not None:
+              
+                try_full_clean(i)
+                    
                 try:
-                    i.full_clean()
                     i.save()
-                    #~ logger.debug("%s has been saved",i)
-                except ValidationError,e:
-                    dblogger.warning("Failed to save %s from %s : %s",obj2str(i),dbfrow,e)
-                    dblogger.exception(e)
-                except IntegrityError,e:
+                    #~ dblogger.debug("%s has been saved",i)
+                except Exception,e:
+                #~ except IntegrityError,e:
                     dblogger.warning("Failed to save %s from %s : %s",obj2str(i),dbfrow,e)
                     dblogger.exception(e)
     f.close()

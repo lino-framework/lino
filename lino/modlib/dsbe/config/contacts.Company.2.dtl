@@ -2,6 +2,7 @@
 :label_align: top
 
 main = 
+  hourly_rate
   notes.NotesByCompany:60 links.LinksByCompany:20
   dsbe.ContractsByCompany 
 

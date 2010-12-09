@@ -689,6 +689,7 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,mixins.
     regime = models.CharField(_("regime"),max_length=200,blank=True,null=True)
     schedule = models.CharField(_("schedule"),max_length=200,blank=True,null=True)
     hourly_rate = models.CharField(_("hourly rate"),max_length=200,blank=True,null=True)
+    refund_rate = models.CharField(_("refund rate"),max_length=200,blank=True,null=True)
     
     reference_person = models.CharField(_("reference person"),max_length=200,blank=True,null=True)
     
@@ -710,16 +711,15 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,mixins.
     schedule_choices.simple_values = True
     schedule_choices = classmethod(schedule_choices)
     
-    def hourly_rate_choices(self):
+    def refund_rate_choices(self):
         return [ 
-        u"10€",
         u"0%",
         u"25%",
         u"50%",
         u"100%",
         ]
-    hourly_rate_choices.simple_values = True
-    hourly_rate_choices = classmethod(hourly_rate_choices)
+    refund_rate_choices.simple_values = True
+    refund_rate_choices = classmethod(refund_rate_choices)
     
     def disabled_fields(self,request):
         if self.must_build:
@@ -763,6 +763,7 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,mixins.
             return self.person.user or self.user
             
     def full_clean(self):
+      
         if self.person and self.person.birth_date and self.applies_from:
             def duration(refdate):
                 delta = refdate - self.person.birth_date
@@ -780,11 +781,16 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,mixins.
                 else:
                     self.duration = duration(self.applies_from)
                     self.applies_until = self.applies_from + datetime.timedelta(days=self.duration)
-        if self.type_id is None \
-            and self.company is not None \
-            and self.company.type is not None \
-            and self.company.type.contract_type is not None:
-            self.type = self.company.type.contract_type
+                    
+        if self.company is not None:
+          
+            if self.hourly_rate is None:
+                self.hourly_rate = self.company.hourly_rate
+                
+            if self.type_id is None \
+                and self.company.type is not None \
+                and self.company.type.contract_type is not None:
+                self.type = self.company.type.contract_type
         
 CONTRACT_PRINTABLE_FIELDS = reports.fields_list(Contract,
   'person company contact type '

@@ -20,5 +20,5 @@ address_box = box3 box4
 bottom_box = remarks contacts.ContactsByCompany
 
 intro_box = 
-    name id language
+    name id language 
     vat_id:12 activity:30 type

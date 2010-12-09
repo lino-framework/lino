@@ -1,6 +1,8 @@
 20101209
 ========
 
+Erste Sitzung
+
 #. Die Lösung für Ticket :doc:`/tickets/18` war einfach: ich darf nicht **application/json** 
    als content type angeben, sondern muss **text/html** sagen. 
    Obschon das ja eigentlich falsch ist. 
@@ -18,3 +20,17 @@
    einen Record verändert.
    Neue Funktionen `log_created` und `log_deleted` in :mod:`lino.utils.dblogger`.
   
+#. Check-in.
+
+Zweite Sitzung
+
+#. Neues Feld Contract.refund_rate für Prozentsatz Rückerstattung.
+
+#. Neues Feld Company.hourly_rate, das einen Standardwert für 
+   Contract.hourly_rate enthält.
+
+#. TIM-Partner mit ungültiger E-Mail-Adresse werden überhaupt nicht importiert. 
+   Stattdessen sollte nur ihre E-Mail-Adresse leer sein.
+
+#. `watch_tim` meldet `AttributeError 'datetime.date' object has no attribute 'read'`
+
