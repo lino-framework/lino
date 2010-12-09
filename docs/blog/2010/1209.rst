@@ -22,14 +22,14 @@ Erste Sitzung
   
 #. Check-in.
 
-Zweite Sitzung
+Zweite Sitzung. Folgende Punkte sind jetzt behoben:
 
 #. Neues Feld Contract.refund_rate für Prozentsatz Rückerstattung.
 
 #. Neues Feld Company.hourly_rate, das einen Standardwert für 
-   Contract.hourly_rate enthält.
+   Contract.hourly_rate enthalten kann.
 
-#. TIM-Partner mit ungültiger E-Mail-Adresse werden überhaupt nicht importiert. 
+#. TIM-Partner mit ungültiger E-Mail-Adresse wurden überhaupt nicht importiert. 
    Stattdessen sollte nur ihre E-Mail-Adresse leer sein.
 
 #. `watch_tim` meldet `AttributeError 'datetime.date' object has no attribute 'read'`

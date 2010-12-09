@@ -53,14 +53,17 @@ Examples:
 >>> street2kw(u"rue des 600 Franchimontois 1")
 {'street_box': u'', 'street': u'rue des 600 Franchimontois', 'street_no': u'1'}
 
+>>> street2kw(u"(Referenzadr.)")
+{'street': u'(Referenzadr.)'}
+
 
 """
 
 import re
 
 from django.utils.translation import ugettext_lazy as _
-from django.db import models
-from django.conf import settings
+#~ from django.db import models
+#~ from django.conf import settings
 
 from lino.utils import join_words
 
