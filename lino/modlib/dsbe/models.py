@@ -398,6 +398,7 @@ class Company(Partner,contacts.Company):
     #~ vat_id = models.CharField(max_length=200,blank=True)
     #~ type = models.ForeignKey('contacts.CompanyType',blank=True,null=True,verbose_name=_("Company type"))
     prefix = models.CharField(max_length=200,blank=True) 
+    hourly_rate = models.CharField(_("hourly rate"),max_length=200,blank=True,null=True)
     
     
 COMPANY_TIM_FIELDS = reports.fields_list(Company,
