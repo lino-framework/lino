@@ -42,16 +42,20 @@ Zweite Sitzung. Folgende Punkte sind jetzt behoben:
 Zwischenrelease 0.8.14+ in Eupen mit den bisher behobenen Punkten.
 
 
-Dritte Sitzung. Zwei Bugs weniger:
+Dritte Sitzung. 
 
-- `NameError: global name 'auth' is not defined` und 
-  `AttributeError: 'datetime.date' object has no attribute 'read'`
-  in :mod:`watch_tim <lino.modlib.dsbe.management.commands.watch_tim>`.
+#. Zwei Bugs weniger: `NameError: global name 'auth' is not defined` und 
+   `AttributeError: 'datetime.date' object has no attribute 'read'`
+   in :mod:`watch_tim <lino.modlib.dsbe.management.commands.watch_tim>`.
 
-- Nach submit_insert zeigt er jetzt den neuen Record im Detail an.
+#. Endlich: Nach submit_insert zeigt er jetzt den neuen Record im Detail an.
 
-- Beim Importieren der USR aus TIM wurden Vor- und Nachname verwechselt.
-  :func:`lino.modlib.contacts.utils.name2kw` war noch gar nicht für "normale" 
-  Anordnung "Vorname Nachname" vorgesehen und hat jetzt einen neuen Parameter 
-  `last_name_first`. Wenn der `False` ist, funktioniert sie mit
+#. Noch ein Bug weniger und ein Feature mehr:
+   Beim Importieren der USR aus TIM wurden Vor- und Nachname verwechselt.
+   :func:`lino.modlib.contacts.utils.name2kw` war zum Parsen von Strings im 
+   Format "Nachname Vorname" konzipiert und noch gar nicht für die "normale" 
+   Anordnung "Vorname Nachname" vorgesehen. Hat jetzt einen neuen Parameter 
+   `last_name_first`. 
+   Sie Doku und test cases in :mod:`lino.modlib.contacts.utils`
 
+#. Released :doc:`/releases/20101209` in Eupen.

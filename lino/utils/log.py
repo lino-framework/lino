@@ -67,15 +67,18 @@ def configure(config):
     #~ from django.conf import settings
     #~ log_dir = os.path.join(settings.PROJECT_DIR,'log')
     
-    #~ if sys.stdout.isatty():
-    if sys.platform == 'win32':
-        h = logging.StreamHandler()
-        #~ h.setLevel(logging.DEBUG)
-        h.setLevel(logging.INFO)
-        fmt = logging.Formatter(fmt='%(message)s')
-        h.setFormatter(fmt)
-        logger.addHandler(h)
+    try:
+        if sys.stdout.isatty():
+            h = logging.StreamHandler()
+            #~ h.setLevel(logging.DEBUG)
+            h.setLevel(logging.INFO)
+            fmt = logging.Formatter(fmt='%(message)s')
+            h.setFormatter(fmt)
+            logger.addHandler(h)
+    except IOError:
+        pass
     
+    if sys.platform == 'win32':
         log_dir = 'log'
     else:
         log_dir = '/var/log/lino'
