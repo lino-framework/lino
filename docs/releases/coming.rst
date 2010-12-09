@@ -13,11 +13,6 @@ Bugs fixed
 Upgrade instructions
 --------------------
 
-- doctemplates: "Konvention Sozialoekonomie.odt" umbenennen nach "art60-7.odt"
-
-- Add `BABEL_LANGS = ['fr']` to :xfile:`settings.py`
-  
-
 - Upgrade your copy of the Lino sources::
 
     cd /var/snapshots/lino

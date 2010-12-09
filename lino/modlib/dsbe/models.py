@@ -398,7 +398,7 @@ class Company(Partner,contacts.Company):
     #~ vat_id = models.CharField(max_length=200,blank=True)
     #~ type = models.ForeignKey('contacts.CompanyType',blank=True,null=True,verbose_name=_("Company type"))
     prefix = models.CharField(max_length=200,blank=True) 
-    hourly_rate = models.CharField(_("hourly rate"),max_length=200,blank=True,null=True)
+    hourly_rate = fields.PriceField(_("hourly rate"),blank=True,null=True)
     
     
 COMPANY_TIM_FIELDS = reports.fields_list(Company,
@@ -689,7 +689,7 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,mixins.
     
     regime = models.CharField(_("regime"),max_length=200,blank=True,null=True)
     schedule = models.CharField(_("schedule"),max_length=200,blank=True,null=True)
-    hourly_rate = models.CharField(_("hourly rate"),max_length=200,blank=True,null=True)
+    hourly_rate =     hourly_rate = fields.PriceField(_("hourly rate"),blank=True,null=True)
     refund_rate = models.CharField(_("refund rate"),max_length=200,blank=True,null=True)
     
     reference_person = models.CharField(_("reference person"),max_length=200,blank=True,null=True)

@@ -1260,6 +1260,10 @@ class FormPanel(jsgen.Component):
             kw.update(listeners=dict(render=js_code('function(){%s}' % '\n'.join(on_render))))
         kw.update(before_row_edit=before_row_edit(main))
         
+        a = rh.get_action('detail')
+        if a:
+            kw.update(ls_detail_handler=js_code("Lino.%s" % a))
+        
         kw.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rh.get_actions(action)])
         kw.update(ls_url=rh.ui.build_url(rh.report.app_label,rh.report._actor_name))
         jsgen.Component.__init__(self,'form_panel',**kw)

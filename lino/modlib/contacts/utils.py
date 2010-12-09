@@ -22,14 +22,31 @@ Examples:
 
 >>> name2kw("Saffre Luc")
 {'first_name': 'Luc', 'last_name': 'Saffre'}
-
+>>> name2kw("Rilke Rainer Maria")
+{'first_name': 'Rainer Maria', 'last_name': 'Rilke'}
 >>> name2kw("Van Rompuy Herman")
 {'first_name': 'Herman', 'last_name': 'Van Rompuy'}
-
 >>> name2kw("'T Jampens Jan")
 {'first_name': 'Jan', 'last_name': "'T Jampens"}
 >>> name2kw("Van den Bossche Marc Antoine Bernard")
 {'first_name': 'Marc Antoine Bernard', 'last_name': 'Van den Bossche'}
+
+
+
+>>> name2kw("Luc Saffre",False)
+{'first_name': 'Luc', 'last_name': 'Saffre'}
+>>> name2kw("Rainer Maria Rilke",False)
+{'first_name': 'Rainer Maria', 'last_name': 'Rilke'}
+>>> name2kw("Herman Van Rompuy",False)
+{'first_name': 'Herman', 'last_name': 'Van Rompuy'}
+>>> name2kw("Jan 'T Jampens",False)
+{'first_name': 'Jan', 'last_name': "'T Jampens"}
+>>> name2kw("Marc Antoine Bernard Van den Bossche",False)
+{'first_name': 'Marc Antoine Bernard', 'last_name': 'Van den Bossche'}
+
+
+
+
 
 >>> street2kw(u"Limburger Weg")
 {'street': u'Limburger Weg'}
@@ -53,9 +70,6 @@ Examples:
 >>> street2kw(u"rue des 600 Franchimontois 1")
 {'street_box': u'', 'street': u'rue des 600 Franchimontois', 'street_no': u'1'}
 
->>> street2kw(u"(Referenzadr.)")
-{'street': u'(Referenzadr.)'}
-
 
 """
 
@@ -70,25 +84,47 @@ from lino.utils import join_words
 name_prefixes1 = ("HET", "'T",'VAN','DER', 'TER','VOM','VON','OF', "DE", "DU", "EL", "AL")
 name_prefixes2 = ("VAN DEN","VAN DER","VAN DE","IN HET", "VON DER","DE LA")
 
-def name2kw(s,**kw):
-    a = s.split()
+def name2kw(s,last_name_first=True):
+    kw = {}
+    a = s.strip().split()
     if len(a) == 1:
-        kw['last_name'] = a[0]
+        return dict(last_name=a[0])
     elif len(a) == 2:
-        kw['last_name'] = a[0]
-        kw['first_name'] = a[1]
-    else:
-        # name consisting of more than 3 words
-        a01 = a[0] + ' ' + a[1]
-        if a01.upper() in name_prefixes2:
-            kw['last_name'] = a01 + ' ' + a[2]
-            kw['first_name'] = ' '.join(a[3:])
-        elif a[0].upper() in name_prefixes1:
-            kw['last_name'] = a[0] + ' ' + a[1]
-            kw['first_name'] = ' '.join(a[2:])
+        if last_name_first:
+            return dict(last_name=a[0],first_name= a[1])
         else:
-            kw['last_name'] = a[0] 
-            kw['first_name'] = ' '.join(a[1:])
+            return dict(last_name=a[1],first_name= a[0])
+    else:
+        # string consisting of more than 3 words
+        if last_name_first:
+            a01 = a[0] + ' ' + a[1]
+            if a01.upper() in name_prefixes2:
+                return dict(
+                  last_name = a01 + ' ' + a[2],
+                  first_name = ' '.join(a[3:]))
+            elif a[0].upper() in name_prefixes1:
+                return dict(
+                    last_name = a[0] + ' ' + a[1],
+                    first_name = ' '.join(a[2:]))
+            else:
+                return dict(last_name = a[0],
+                    first_name = ' '.join(a[1:]))
+        else:
+            if len(a) >= 4:
+                pc = a[-3] + ' ' + a[-2] # prefix2 candidate
+                if pc.upper() in name_prefixes2:
+                    return dict(
+                        last_name = pc + ' ' + a[-1],
+                        first_name = ' '.join(a[:-3]))
+            pc = a[-2] # prefix candidate
+            if pc.upper() in name_prefixes1:
+                return dict(
+                    last_name = pc + ' ' + a[-1],
+                    first_name = ' '.join(a[:-2]))
+        return dict(
+            last_name = a[-1],
+            first_name = ' '.join(a[:-1]))
+            
     return kw
     
 def street2kw(s,**kw):

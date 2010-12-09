@@ -689,6 +689,7 @@ class ExtUI(base.UI):
         
         if is_new:
             dblogger.log_created(request,elem)
+            return self.success_response(_("%s has been created.") % obj2str(elem),record_id=elem.pk)
             
         return self.success_response(_("%s has been saved.") % obj2str(elem))
         #~ return self.success_response(_("%s has been saved.") % obj2str(elem),**kw2resp)

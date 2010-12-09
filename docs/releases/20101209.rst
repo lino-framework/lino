@@ -1,0 +1,45 @@
+Version 0.8.15
+==============
+
+Released :doc:`/blog/2010/1209`.
+
+New features
+------------
+
+#. Nach submit_insert zeigt er jetzt den neuen Record im Detail an.
+   Generell werden Fenster jetzt aktualisiert, wenn das 
+   darüberliegende Fenster geschlossen wird. 
+
+#. Neues Feld Contract.refund_rate für Prozentsatz Rückerstattung.
+   Neues Feld Company.hourly_rate, das einen Standardwert für 
+   Contract.hourly_rate enthalten kann.
+
+
+Bugs fixed
+----------
+
+#. Insert in Uploads müsste jetzt funktionieren.
+
+#. Bugs bei der Datensynchronisierung aus TIM behoben.
+
+#. Logging verbessert.
+
+Upgrade instructions
+--------------------
+
+- Upgrade your copy of the Lino sources::
+
+    cd /var/snapshots/lino
+    hg pull -u
+    
+  
+- The usual things in your local directory::
+
+    cd /usr/local/django/myproject
+    python manage.py initdb_tim
+    python manage.py make_staff
+  
+- Restart Apache::
+
+    sudo /etc/init.d/apache2 restart
+

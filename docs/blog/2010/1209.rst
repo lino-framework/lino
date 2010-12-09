@@ -13,6 +13,11 @@ Erste Sitzung
 #. Die Standard-Logger-Konfiguration (:mod:`lino.utils.log`) testet jetzt, 
    ob `sys.stdout` ein Terminal ist. 
    Damit diese Meldungen nicht mehr im `error.log` von Apache erscheinen. 
+   Upps, neee: `sys.stdout.isatty()` ist nicht erlaubt unter mod_wsgi 
+   (sh. 
+   `Application Issues <http://code.google.com/p/modwsgi/wiki/ApplicationIssues>`_ und
+   `Debugging Techniques <http://code.google.com/p/modwsgi/wiki/DebuggingTechniques>`_).
+   Also teste ich auf `sys.platform`.
   
 #. "Wenn ich eine Firma lösche, dann sehe ich das nicht in der :xfile:`db.log`."
    In der Tat. Der Fall wurde noch gar nicht an den dblogger geschickt.
@@ -35,3 +40,18 @@ Zweite Sitzung. Folgende Punkte sind jetzt behoben:
 #. `watch_tim` meldet `AttributeError 'datetime.date' object has no attribute 'read'`
 
 Zwischenrelease 0.8.14+ in Eupen mit den bisher behobenen Punkten.
+
+
+Dritte Sitzung. Zwei Bugs weniger:
+
+- `NameError: global name 'auth' is not defined` und 
+  `AttributeError: 'datetime.date' object has no attribute 'read'`
+  in :mod:`watch_tim <lino.modlib.dsbe.management.commands.watch_tim>`.
+
+- Nach submit_insert zeigt er jetzt den neuen Record im Detail an.
+
+- Beim Importieren der USR aus TIM wurden Vor- und Nachname verwechselt.
+  :func:`lino.modlib.contacts.utils.name2kw` war noch gar nicht für "normale" 
+  Anordnung "Vorname Nachname" vorgesehen und hat jetzt einen neuen Parameter 
+  `last_name_first`. Wenn der `False` ist, funktioniert sie mit
+

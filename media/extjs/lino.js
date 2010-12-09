@@ -228,7 +228,8 @@ Ext.override(Ext.grid.CellSelectionModel, {
                 }
             case e.ENTER:
                 e.stopEvent();
-                g.show_detail(r,c);
+                g.onCellDblClick(r,c);
+                //~ g.show_detail(r,c);
                 //~ if (g.isEditor && !g.editing) {
                     //~ g.startEditing(r, c);
                     //~ return;
@@ -745,7 +746,13 @@ Lino.submit_insert = function(panel,btn) {
     success: function(form, action) {
       Lino.notify(action.result.message);
       panel.ww.close();
-      //~ this.caller.refresh();
+      if (panel.ww.caller) {
+          console.log(panel.ww.caller);
+          panel.ww.caller.ls_detail_handler(panel.ww.caller,{
+            record_id:action.result.record_id,
+            base_params:panel.ww.caller.get_base_params()});
+          //~ Lino.show_detail_handler(panel.ww.caller.ls_detail_handler)(panel.ww.caller);
+      }
     },
     failure: Lino.on_submit_failure,
     clientValidation: true
@@ -1209,13 +1216,8 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
   },
   
   onCellDblClick : function(g, row, col){
-      //~ this.startEditing(row, col);
-      g.show_detail(row,col);
-  },
-
-  show_detail : function(r,c) {
       if (this.ls_detail_handler) {
-          Lino.notify('show detail');
+          //~ Lino.notify('show detail');
           Lino.show_detail_handler(this.ls_detail_handler)(this);
       }else{
         this.startEditing(r,c);

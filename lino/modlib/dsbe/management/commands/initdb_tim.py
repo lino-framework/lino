@@ -86,6 +86,12 @@ def is_company(data):
         return True
     return False
     
+def store_date(row,obj,rowattr,objattr):
+    v = row[rowattr]
+    if v:
+        if isinstance(v,basestring):
+            v = dateparser.parse(v)
+        setattr(obj,objattr,v)
       
       
 def ADR_id(cIdAdr):
@@ -173,17 +179,11 @@ def pxs2person(row,person):
             country = Country(isocode=nat,name=nat,short_code=nat)
             country.save()
         person.nationality=country
-            
-    if row['GEBDAT']:
-        if isinstance(row['GEBDAT'],basestring):
-            person.birth_date = dateparser.parse(row['GEBDAT'])
-        else:
-            person.birth_date = row['GEBDAT']
-    if row['VALID1']:
-        person.card_valid_from = dateparser.parse(row['VALID1'])
-    if row['VALID2']:
-        person.card_valid_until = dateparser.parse(row['VALID2'])
         
+    store_date(row,person,'GEBDAT','birth_date')
+    store_date(row,person,'VALID1','valid_from')
+    store_date(row,person,'VALID2','valid_until')
+            
         
 def try_full_clean(i):
     while True:
@@ -233,7 +233,7 @@ def load_tim_data(dbpath):
         username = settings.TIM2LINO_USERNAME(row['USERID'])
         if username is None:
             return
-        d = name2kw(row['NAME'])
+        d = name2kw(row['NAME'],False)
         now = datetime.datetime.now()
         user = auth.User(
             username=username, 

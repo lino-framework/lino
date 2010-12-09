@@ -69,7 +69,6 @@ def configure(config):
     
     #~ if sys.stdout.isatty():
     if sys.platform == 'win32':
-      
         h = logging.StreamHandler()
         #~ h.setLevel(logging.DEBUG)
         h.setLevel(logging.INFO)
