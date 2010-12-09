@@ -1,0 +1,42 @@
+20101208
+========
+
+Jetzt will ich mal folgendes Problem angehen:
+
+#. Einfügen Upload: er wird jetzt gespeichert, aber danach wird das Insert-Fenster nicht 
+   geschlossen, sondern stattdessen kommt ein Speichern-Dialog des Browsers 
+   "You have chosen to open **UploadsByPerson** which is a text/json" 
+   Firebug meldet auch noch in der Console:
+
+     uncaught exception: [Exception... "Component returned failure code: 0xc1f30001 (NS_ERROR_NOT_INITIALIZED)
+     [nsIMIMEInfo.primaryExtension]" nsresult: "0xc1f30001 (NS_ERROR_NOT_INITIALIZED)" location: "JS frame ::
+     chrome://dotnetassistant/content/contenttype.js :: anonymous :: line 44" data: no]
+   
+
+Das sind möglicherweise mehrere Probleme zugleich...
+
+Welchen Mimetype für eine JSON-Antwort? bisher war `text/json`, 
+aber laut 
+http://stackoverflow.com/questions/477816/the-right-json-content-type 
+sollte es besser `application/json` sein.
+
+Irgendwie kommt Djangos `HttpResponse` scheinbar manchmal zu dem Schluss, dass der JSON-String, 
+den ich ihr gebe (`{ message: "Upload #5 (dnsconfig2_2.jpg) wurde gespeichert.", success: true }`) 
+nochmal in ein `<pre style="word-wrap: break-word; white-space: pre-wrap;">...</pre>` 
+eingepackt werden muss. 
+
+Sieht aus als würde `Ext.data.Connection` im Fall von file uploads irgendwas 
+am request verändern, was dazu führt dass der Browser so reagiert.
+Genau: `Ext.data.Connection` verändert im Fall von file uploads sogar sehr 
+viel am request: da wird eine eigene Methode `doFormUpload` aufgerufen, 
+die irgendwann auch `form.submit()` abfeuert, wobei `form` ein :extjs:`Ext.Element` ist.
+
+`Hier 
+<http://stackoverflow.com/questions/1743818/json-results-prompting-save-as-dialog-in-browser-instead-of-being-processed-a>`_ 
+hat jemand wahrscheinlich das gleiche Problem wie ich.
+Und eine Antwort lautet "Typically you're not going to return Json to the user's 
+browser directly through a normal form submittal... ".
+
+Oh je, Problem noch lange nicht gelöst! Und jetzt muss ich Feierabend machen...
+Das wird Ticket :doc:`/tickets/18`
+

@@ -1,0 +1,42 @@
+#18 : responding JSON to a form with file uploads
+=================================================
+
+
+Die ursprüngliche Fehlermeldung war wie folgt:
+
+#. Einfügen Upload: er wird jetzt gespeichert, aber danach wird das Insert-Fenster nicht 
+   geschlossen, sondern stattdessen kommt ein Speichern-Dialog des Browsers 
+   "You have chosen to open **UploadsByPerson** which is a text/json" 
+   FireBug meldet auch noch in der Console:
+
+     uncaught exception: [Exception... "Component returned failure code: 0xc1f30001 (NS_ERROR_NOT_INITIALIZED)
+     [nsIMIMEInfo.primaryExtension]" nsresult: "0xc1f30001 (NS_ERROR_NOT_INITIALIZED)" location: "JS frame ::
+     chrome://dotnetassistant/content/contenttype.js :: anonymous :: line 44" data: no]
+   
+
+See also :doc:`/blog/2010/1208` and :doc:`/blog/2010/1209`
+
+The documentation for 
+:extjs:`Ext.form.FormPanel` 
+and
+:extjs:`Ext.form.BasicForm` 
+is clear:
+
+- By default, Ext Forms are submitted through Ajax, using Ext.form.Action. To enable normal browser submission of the BasicForm contained in this FormPanel, see the `standardSubmit` option.
+
+- standardSubmit : If set to true, standard HTML form submits are used instead of XHR (Ajax) style form submissions. Defaults to false.
+
+  Note: When using `standardSubmit`, the options to submit are ignored because Ext's Ajax infrastracture is bypassed. To pass extra parameters (e.g. baseParams and params), utilize hidden fields to submit extra data
+  
+  
+- **File uploads** are not performed using Ajax submission, that is they are not performed using XMLHttpRequests. Instead the form is submitted in the standard manner with the DOM `<form>` element temporarily modified to have its target set to refer to a dynamically generated, hidden `<iframe>` which is inserted into the document but removed after the return data has been gathered.
+
+  The server response is parsed by the browser to create the document for the IFRAME. If the server is using JSON to send the return object, then the **Content-Type** header must be set to **"text/html"** in order to tell the browser to insert the text unchanged into the document body.
+
+  **Characters which are significant to an HTML parser must be sent as HTML entities, so encode "<" as "&lt;", "&" as "&amp;" etc.**
+
+  The response text is retrieved from the document, and a fake XMLHttpRequest object is created containing a `responseText` property in order to conform to the requirements of event handlers and callbacks.
+
+  Be aware that file upload packets are sent with the content type `multipart/form` and some server technologies (notably JEE) may require some custom processing in order to retrieve parameter names and parameter values from the packet content.  
+  
+  

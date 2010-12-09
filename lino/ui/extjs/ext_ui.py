@@ -14,9 +14,6 @@
 import logging
 logger = logging.getLogger(__name__)
 
-
-
-
 import os
 import cgi
 import time
@@ -106,8 +103,13 @@ def json_response(x):
     #s = simplejson.dumps(kw,default=unicode)
     #return HttpResponse(s, mimetype='text/html')
     s = py2js(x)
-    #logger.debug("json_response() -> %r", s)
-    return HttpResponse(s, mimetype='text/json')
+    #~ logger.debug("json_response() -> %r", s)
+    # http://dev.sencha.com/deploy/dev/docs/source/BasicForm.html#cfg-Ext.form.BasicForm-fileUpload
+    return HttpResponse(s, content_type='text/html')
+    return HttpResponse(s, content_type='text/json')
+    #~ r = HttpResponse(s, content_type='application/json')
+    # see also http://stackoverflow.com/questions/477816/the-right-json-content-type
+    #~ return r
     #~ return HttpResponse(s, mimetype='text/html')
     
 def error_response(e,message_prefix='',**kw):
@@ -643,8 +645,8 @@ class ExtUI(base.UI):
         #~ s = py2js(lino_site.get_menu(request))
         #~ return HttpResponse(s, mimetype='text/html')
 
-    def form2obj_and_save(self,request,rh,data,elem,**kw2save):
-        #~ print '20101122', data
+    def form2obj_and_save(self,request,rh,data,elem,is_new): # **kw2save):
+        #~ logger.debug('form2obj_and_save %r', data)
         
         # store normal form data (POST or PUT)
         try:
@@ -653,7 +655,8 @@ class ExtUI(base.UI):
            return error_response(e)
            #~ return error_response(e,_("There was a problem while validating your data : "))
         
-        dblogger.log_changes(request,elem)
+        if not is_new:
+            dblogger.log_changes(request,elem)
             
         if hasattr(elem,'before_save'): # see :doc:`/blog/2010/0804`
             elem.before_save()
@@ -666,6 +669,15 @@ class ExtUI(base.UI):
             
         #~ print '20101024b', elem.card_valid_from
 
+        kw2save = {}
+        #~ kw2resp = {}
+        if is_new:
+            kw2save.update(force_insert=True)
+            #~ kw2resp.update(close=True)
+        else:
+            kw2save.update(force_update=True)
+            #~ kw2resp.update(refresh=True)
+            
         try:
             elem.save(**kw2save)
         except IntegrityError,e:
@@ -674,12 +686,12 @@ class ExtUI(base.UI):
             return error_response(e) # ,_("There was a problem while saving your data : "))
             #~ return json_response_kw(success=False,
                   #~ msg=_("There was a problem while saving your data:\n%s") % e)
-                  
-        return self.success_response(_("%s has been saved.") % obj2str(elem),refresh=True)
-        #~ return self.success_response(_("%s has been saved.") % element_name(elem))
-        #~ return json_response_kw(success=True,message=msg)
-              #~ message=_("%(name)s has been saved (%(model)s.%(pk)s)") % 
-                #~ dict(name=unicode(elem),model=elem._meta.verbose_name,pk=elem.pk))
+        
+        if is_new:
+            dblogger.log_created(request,elem)
+            
+        return self.success_response(_("%s has been saved.") % obj2str(elem))
+        #~ return self.success_response(_("%s has been saved.") % obj2str(elem),**kw2resp)
 
 
         
@@ -764,21 +776,11 @@ class ExtUI(base.UI):
             #~ ar = ext_requests.ViewReportRequest(request,rh,rh.report.list_action)
             ar = ext_requests.ViewReportRequest(request,rh,rh.report.default_action)
             instance = ar.create_instance()
-            # store uploaded files
+            # store uploaded files. 
+            # html forms cannot send files with PUT or GET, only with POST
             if rh.report.handle_uploaded_files is not None:
                 rh.report.handle_uploaded_files(request,instance)
-            return self.form2obj_and_save(request,rh,request.POST,instance,force_insert=True)
-            
-            #~ rh.store.form2obj(request.POST,instance)
-            #~ if hasattr(instance,'before_save'): # see :doc:`/blog/2010/0804`
-                #~ instance.before_save()
-            #~ try:
-                #~ instance.full_clean()
-            #~ except exceptions.ValidationError, e:
-                #~ return json_response_kw(success=False,msg="Failed to save %s : %s" % (instance,e))
-            #~ instance.save(force_insert=True)
-            #~ return json_response_kw(success=True,msg="%s has been created" % instance)
-            
+            return self.form2obj_and_save(request,rh,request.POST,instance,True)
             
         if request.method == 'GET':
             fmt = request.GET.get('fmt',None)
@@ -881,9 +883,13 @@ class ExtUI(base.UI):
                 msg = rpt.disable_delete(request,elem)
                 if msg is not None:
                     return error_response(msg)
+                    
+            dblogger.log_deleted(request,elem)
+            
             try:
                 elem.delete()
             except Exception,e:
+                dblogger.exception(e)
                 msg = _("Failed to delete %(record)s : %(error)s.") % dict(record=obj2str(elem),error=e)
                 #~ msg = "Failed to delete %s." % element_name(elem)
                 return error_response(msg)
@@ -895,7 +901,7 @@ class ExtUI(base.UI):
                 return eror.message('Tried to PUT on element -99999')
             data = http.QueryDict(request.raw_post_data)
             #~ fmt = data.get('fmt',None)
-            return self.form2obj_and_save(request,ah,data,elem,force_update=True)
+            return self.form2obj_and_save(request,ah,data,elem,False) # force_update=True)
             
         ar = ext_requests.ViewReportRequest(request,ah,ah.report.default_action)
         

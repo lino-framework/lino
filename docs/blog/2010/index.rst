@@ -225,6 +225,8 @@ As long as I am the only Lino developer, I'll write it mostly in German.
   |br|
   06
   :doc:`07 <1207>`
+  :doc:`08 <1208>`
+  :doc:`09 <1209>`
 
 ===== ===== =====
 |Jan| |Feb| |Mar|

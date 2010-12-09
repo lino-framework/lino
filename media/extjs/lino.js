@@ -713,7 +713,7 @@ Lino.show_insert_handler = function(action) {
 
 Lino.submit_detail = function(panel,btn) {
   var rec = panel.get_current_record();
-  console.log('todo: Lino.submit_detail and Lino.submit_insert send also action name from btn',btn,panel.get_base_params())
+  //~ console.log('todo: Lino.submit_detail and Lino.submit_insert send also action name from btn',btn,panel.get_base_params())
   if (rec) {
     Lino.notify('submit');
     //~ console.log('Save handler: this=',this);
@@ -724,7 +724,8 @@ Lino.submit_detail = function(panel,btn) {
       params: panel.get_base_params(), 
       success: function(form, action) {
         Lino.notify(action.result.message);
-        if (action.result.refresh) panel.refresh();
+        panel.refresh();
+        //~ if (action.result.refresh) panel.refresh();
         //~ this.caller.refresh();
       },
       failure: Lino.on_submit_failure,
@@ -772,12 +773,15 @@ Lino.HtmlBoxPanel = Ext.extend(Ext.Panel,{
     Lino.HtmlBoxPanel.superclass.constructor.call(this, config);
   },
   on_master_changed : function() {
+    this.refresh();
+  },
+  refresh : function() {
     var todo = function() {
       //~ var src = caller.config.url_data + "/" + record.id + ".jpg"
       //~ var p = this.ww.get_master_params();
       //~ for (k in p) this.getStore().setBaseParam(k,p[k]);
       this.set_base_params(this.ww.get_master_params());
-      console.log('exec Lino.HtmlBoxPanel.on_master_changed()',this.get_base_params());
+      //~ console.log('exec Lino.HtmlBoxPanel.on_master_changed()',this.get_base_params());
     };
     Lino.do_when_visible(this,todo.createDelegate(this));
   },
@@ -841,7 +845,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   },
   after_delete : function() {
     this.ww.close();
-    if (this.ww.caller) this.ww.caller.refresh();
+    //~ if (this.ww.caller) this.ww.caller.refresh();
   },
   moveFirst : function() {this.goto_record_id(this.current_record.navinfo.first)},
   movePrev : function() {this.goto_record_id(this.current_record.navinfo.prev)},
@@ -858,6 +862,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   refresh : function() { 
     this.goto_record_id(this.current_record.id);
   },
+  
   goto_record_id : function(record_id) {
     //~ console.log('Lino.FormPanel.goto_record_id()',record_id);
     //~ Lino.notify(); 
@@ -1864,7 +1869,10 @@ Lino.WindowWrapperBase = {
   },
   close : function() { 
       this.window.close();
-      if (this.caller) this.caller.refresh();
+      if (this.caller) {
+        //~ console.log(20101209, this.caller);
+        this.caller.refresh();
+      }
   }
 };
 

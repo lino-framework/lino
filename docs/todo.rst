@@ -9,10 +9,26 @@ for which I hope for help from other people.
 Before version 1.0
 ------------------
 
-#. Für Benutzer Vor- und Nachnamen (nicht den Benutzernamen) drucken.
+#. "Wenn ich auf einem Detailfenster einer Firma eine neue Firma erstelle
+   und "Einfügen" klicke, dann sollte ich danach auf dem Detailfenster
+   des neuen Records stehen."
+  
+#. Wenn man das Insert-Fenster bestätigt, wird das Fenster geschlossen. 
+   Aber wenn man das von der Grid aus tut, wird auch die Grid geschlossen.
+   
+#. Nach dem Löschen eines Vertrags verschwindet dieser erst aus 
+   der Grid wenn man ein Refresh macht. 
+   Refresh wird nicht automatisch gemacht.
+
+#. Dokumentvorlage: Für Benutzer Vor- und Nachnamen (nicht den Benutzernamen) drucken.
 
 #. Liste der Personen sollte zunächst mal nur "meine" Personen anzeigen.
    Evtl. mehrere Menübefehle.
+
+#. TIM-Partner mit ungültiger E-Mail-Adresse werden überhaupt nicht importiert. 
+   Stattdessen sollte nur ihre E-Mail-Adresse leer sein.
+
+#. `watch_tim` meldet `AttributeError 'datetime.date' object has no attribute 'read'`
 
 #. Noch ein neues separates Feld für Prozentsatz Rückerstattung
 
@@ -24,14 +40,6 @@ Before version 1.0
    übergibt. Der Server macht darauf dann full_clean aber speichert nicht ab, sondern 
    gibt das nur zurück. So kann ich serverseitige field-level validation machen.
 
-#. nach dem Löschen eines Vertrags verschwindet dieser erst aus 
-   der Grid wenn man ein Refresh macht. 
-   Refresh wird nicht automatisch gemacht.
-
-#. Button "Insert" : wenn man das Insert-Fenster bestätigt und keine Fehlermeldung kommt, 
-   wird das Fenster geschlossen. Aber wenn man das von der Grid aus tut, 
-   wird auch die Grid geschlossen.
-   
 #. Wenn man ClearCacheAction macht und das Dokument neu druckt, 
    dauert es eine Zeit, bis der Cache des Browsers kapiert, 
    dass die URL neu angefragt werden muss.
@@ -42,8 +50,6 @@ Before version 1.0
 #. Arbeitsregime und Stundenplan: 
    Nach Ändern der Sprache ändert sich nicht immer die Auswahlliste.
    
-#. Dokumentvorlagen weiter
-
 #. "Insert as copy"
 
 #. `watch_tim` automatisch nach reboot starten.
@@ -58,7 +64,6 @@ Before version 1.0
     | http://girasoli.org/?p=120
     | `How to LSBize an Init Script <http://wiki.debian.org/LSBInitScripts>`_
   
-#. Das Loggen von watch_tim geht noch nicht so richtig.  
 
 Waiting for feedback
 --------------------
@@ -437,6 +442,12 @@ Long-term
    Oder besser: diesen Fall zulassen.
    
 #. http://code.google.com/p/extjs-public/   
+
+#. Soll :mod:`<make_staff> lino.management.commands.make_staff` 
+   (auch) über das Web-Interface zur Verfügung stehen?
+   Aber ich denke der Befehl muss bleiben, denn jemand der nicht staff ist, 
+   darf sich par définition nicht selber in diesen Status versetzen können.
+
 
 
 Documentation

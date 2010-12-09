@@ -51,7 +51,10 @@ def file_handler(filename):
 
 
 def configure(config):
-    
+    """
+    This function will be called by Django when you have your
+    :setting:`LOGGING_CONFIG` set to ``'lino.utils.log.configure'``.
+    """
     logger = logging.getLogger('django')
     h = AdminEmailHandler()
     h.setLevel(logging.ERROR)
@@ -61,11 +64,13 @@ def configure(config):
         
     logger.setLevel(logging.DEBUG)
     
-    h = logging.StreamHandler()
-    h.setLevel(logging.INFO)
-    fmt = logging.Formatter(fmt='%(message)s')
-    h.setFormatter(fmt)
-    logger.addHandler(h)
+    if sys.stdout.isatty():
+        h = logging.StreamHandler()
+        #~ h.setLevel(logging.DEBUG)
+        h.setLevel(logging.INFO)
+        fmt = logging.Formatter(fmt='%(message)s')
+        h.setFormatter(fmt)
+        logger.addHandler(h)
     
     #~ from django.conf import settings
     #~ log_dir = os.path.join(settings.PROJECT_DIR,'log')

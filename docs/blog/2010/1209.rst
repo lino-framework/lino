@@ -1,0 +1,20 @@
+20101209
+========
+
+#. Die Lösung für Ticket :doc:`/tickets/18` war einfach: ich darf nicht **application/json** 
+   als content type angeben, sondern muss **text/html** sagen. 
+   Obschon das ja eigentlich falsch ist. 
+   Aber weil es nicht ganz einfach ist, Formulare mit file uploads per Ajax abzuschicken,
+   muss ExtJS da ziemlich tricksen, und der Trick funktioniert nur wenn der Server 
+   seine JSON-Antwort als **text/html** deklariert.
+
+#. Die Standard-Logger-Konfiguration (:mod:`lino.utils.log`) testet jetzt, 
+   ob `sys.stdout` ein Terminal ist. 
+   Damit diese Meldungen nicht mehr im `error.log` von Apache erscheinen. 
+  
+#. "Wenn ich eine Firma lösche, dann sehe ich das nicht in der :xfile:`db.log`."
+   In der Tat. Der Fall wurde noch gar nicht an den dblogger geschickt.
+   Außerdem sahen neu erstellte Records (create) genau so aus als hätte man 
+   einen Record verändert.
+   Neue Funktionen `log_created` und `log_deleted` in :mod:`lino.utils.dblogger`.
+  

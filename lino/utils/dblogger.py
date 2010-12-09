@@ -70,6 +70,12 @@ if settings.DBLOGFILE:
         logger.addHandler(file_handler(filename))
       
     
+    def log_created(request,elem):
+        logger.info("%s created by %s.",obj2str(elem),request.user)
+        
+    def log_deleted(request,elem):
+        logger.info("%s deleted by %s.",obj2str(elem),request.user)
+        
     def log_changes(request,elem):
         if isinstance(elem,mixins.DiffingMixin):
             changes = []
@@ -93,4 +99,5 @@ else:
     def error(*args,**kw): pass
     def debug(*args,**kw): pass
     def log_changes(request,elem): pass
-
+    def log_deleted(request,elem): pass
+    def log_created(request,elem): pass
