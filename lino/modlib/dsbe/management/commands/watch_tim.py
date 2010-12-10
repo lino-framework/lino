@@ -29,6 +29,12 @@ import logging
 logger = logging.getLogger(__name__)
 
 from django.core.management.base import BaseCommand, CommandError
+
+try:
+    from lino.utils.daemonextension import DaemonCommand
+except ImportError:
+    DaemonCommand = BaseCommand
+
 from django.conf import settings
 
 
@@ -372,31 +378,17 @@ def main(*args,**options):
         watch(data_dir)
         time.sleep(1)
 
-try:
+class Command(DaemonCommand):
   
-    from lino.utils.daemonextension import DaemonCommand
+    args = '<path_to_tim_changelog>'
+    help = 'Starts an observer service that propagates changes of your TIM data into Lino'
     
-    class Command(DaemonCommand):
-      
-        args = '<path_to_tim_changelog>'
-        help = 'Starts an observer service that propagates changes of your TIM data into Lino'
-        
-        #~ stdout = os.path.join(settings.PROJECT_DIR, "watch_tim","stdout.log")
-        #~ stderr = os.path.join(settings.PROJECT_DIR, "watch_tim","error.log")
-        pidfile = os.path.join(settings.PROJECT_DIR, "watch_tim","pid")
-        
-        def handle_daemon(self, *args, **options):
-            main(*args,**options)
-
-
-except ImportError:
-  
-    class Command(BaseCommand):
-        args = '<path_to_tim_changelog>'
-        help = 'Starts an observer service that propagates changes of your TIM data into Lino'
-
-        def handle(self, *args, **options):
-            main(*args,**options)
+    #~ stdout = os.path.join(settings.PROJECT_DIR, "watch_tim","stdout.log")
+    #~ stderr = os.path.join(settings.PROJECT_DIR, "watch_tim","error.log")
+    #~ pidfile = os.path.join(settings.PROJECT_DIR, "watch_tim","pid")
+    
+    def handle_daemon(self, *args, **options):
+        main(*args,**options)
 
 
 

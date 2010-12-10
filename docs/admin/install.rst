@@ -226,6 +226,10 @@ You'll probably need to do something like this afterwards::
 
 ``chmod g+s`` sets the SGID to ensure that when a new file is created in the directory it will inherit the group of the directory.
 
+Maybe also::
+
+  $ chmod a+x /usr/local/django/myproject/manage.py
+
 Maybe you'll also add `umask 002` to your `/etc/apache2/envvars`. 
 For example if `lino.log` doesn't exist and Lino creates it, you may want it to be writable by group.
 

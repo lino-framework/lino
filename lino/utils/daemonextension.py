@@ -25,7 +25,7 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 POSSIBILITY OF SUCH DAMAGE.
 
-Modified by Luc Saffre :
+Modifications by Luc Saffre :
 
 - fixed: Overriding default values in a subclass didn't work for most options.
   :doc:`/blog/2010/1210`
