@@ -35,7 +35,7 @@ from django.conf import settings
 from django.db.utils import DatabaseError
 # OperationalError
 from django.utils import simplejson
-from django.contrib.auth.models import models as auth
+from django.contrib.auth import models as auth
 from lino.tools import resolve_model
 from lino.modlib.contacts.utils import name2kw, street2kw, join_words
 
