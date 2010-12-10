@@ -25,6 +25,9 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 POSSIBILITY OF SUCH DAMAGE.
 
+Modified by Luc Saffre :
+- get
+
 =============
 DaemonCommand
 =============
@@ -99,7 +102,7 @@ class DaemonCommand(BaseCommand):
         make_option('--prevent_core', action='store', dest='prevent_core', default=True,
             help='If true, prevents the generation of core files, in order to avoid \
             leaking sensitive information from daemons run as `root`.'),
-        make_option('--stdin', action='store', dest='stdin', 
+        make_option('--stdin', action='store', dest='stdin',
             help='Standard In'),
         make_option('--stdout', action='store', dest='stdout',
             help='Standard Out'),
@@ -120,13 +123,32 @@ class DaemonCommand(BaseCommand):
     uid = None
     gid = None    
     
-    
+    def create_parser(self, *args,**kw):
+        p = super(DaemonCommand, self).create_parser(*args, **kw)
+        p.set_defaults(
+            chroot_directory = self.chroot_directory,
+            working_directory = self.working_directory,
+            umask = self.umask,
+            detach_process = self.detach_process,
+            prevent_core = self.prevent_core,
+            stdin = self.stdin,
+            stdout = self.stdout,
+            stderr = self.stderr,
+            pidfile = self.pidfile,
+            uid = self.uid,
+            gid = self.gid)
+        return p
+
+
     def get_option_value(self, options, name, expected=None):
-        value = options.get(name)
-        if value == expected:
-            value = getattr(self, name)
-        print name, ' ', value
-        return value
+        return options.get(name) # ,getattr(self,name))    
+        
+    #~ def get_option_value(self, options, name, expected=None):
+        #~ value = options.get(name)
+        #~ if value == expected:
+            #~ value = getattr(self, name)
+        #~ print name, ' ', value
+        #~ return value
     
     def handle(self, *args, **options):
         """
@@ -138,6 +160,9 @@ class DaemonCommand(BaseCommand):
                 --stdout=/var/log/cb/links.out --stderr=/var/log/cb/links.err
         
         """
+        
+        print options
+        
         context = daemon.DaemonContext()
         
         context.chroot_directory = self.get_option_value(options, 'chroot_directory')
