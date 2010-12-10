@@ -26,7 +26,9 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 
 Modified by Luc Saffre :
-- get
+
+- fixed: Overriding default values in a subclass didn't work for most options.
+  :doc:`/blog/2010/1210`
 
 =============
 DaemonCommand
@@ -161,7 +163,7 @@ class DaemonCommand(BaseCommand):
         
         """
         
-        print options
+        #~ print options
         
         context = daemon.DaemonContext()
         

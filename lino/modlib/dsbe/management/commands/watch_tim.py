@@ -381,8 +381,8 @@ try:
         args = '<path_to_tim_changelog>'
         help = 'Starts an observer service that propagates changes of your TIM data into Lino'
         
-        stdout = os.path.join(settings.PROJECT_DIR, "watch_tim","stdout.log")
-        stderr = os.path.join(settings.PROJECT_DIR, "watch_tim","error.log")
+        #~ stdout = os.path.join(settings.PROJECT_DIR, "watch_tim","stdout.log")
+        #~ stderr = os.path.join(settings.PROJECT_DIR, "watch_tim","error.log")
         pidfile = os.path.join(settings.PROJECT_DIR, "watch_tim","pid")
         
         def handle_daemon(self, *args, **options):
