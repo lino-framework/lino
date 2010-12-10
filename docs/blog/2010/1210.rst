@@ -2,4 +2,88 @@
 ========
 
 
-#. Neues Script-Template /bash/watch_tim
+Heute habe ich mich den ganzen Tag amüsiert, `watch_tim` als *startup script* zu installieren. Dazu muss es ein Dämon sein, was ja dank Sean Creeleys :mod:`lino.utils.daemonextension` theoretisch ein Kinderspiel ist. Dort war allerdings ein kleiner Bug: wenn man die Defaultwerte in einer Unterklasse als Klassenvariablen definierte, hatte das keine Wirkung. Dann war da eine Shebang-Zeile, die mit CR/LF statt LF beendet wurde. 
+Sowieso habe ich nebenbei `einige neue Subtilitäten <http://tldp.org/LDP/Bash-Beginners-Guide/html/sect_02_03.html>`_ über Bash-Skripts kennengelernt. 
+Außerdem brauchte ich eine ganze Zeit um das *command line interface* von `start-stop-daemon` zu durchschauen und einzusehen, dass er die zweite Option `--pidfile`, die eigentlich an meinen `watch_tim` gehen sollte, für sich selbst einverleibt. 
+`Hier <http://home.coming.dk/index.php/2009/12/18/having-fun-with-start-stop-daemon-and-quoting>`_ hatte jemand ein ähnliches Problem (aber leider nicht genau das gleiche).
+Momentan habe ich deshalb das Ganze auf zwei Skripts verteilt:
+
+Erstens eine lokale `/usr/local/django/myproject/watch_tim`::
+
+  #!/bin/bash
+  MYPROJECT=myproject
+  DJANGO_SETTINGS_MODULE=$MYPROJECT.settings
+  PID="/var/run/watch_tim.pid"
+  python /usr/local/django/$MYPROJECT/manage.py watch_tim --pidfile $PID /path/to/TIM/changelog
+
+
+Und zweitens ein `/etc/init.d/watch_tim`::
+
+  #!/bin/bash
+  PID="/var/run/watch_tim.pid"
+  EXEC="/usr/local/django/myproject/watch_tim"
+
+  set -e
+
+  start() {
+      # echo "Starting watch_tim daemon"
+      if start-stop-daemon --start --verbose --pidfile $PID --exec $EXEC -- $EXEC_OPTS; then
+          echo "Done."
+          return 0
+      else
+          echo "Failed."
+          return 1
+      fi
+  }
+
+  stop() {
+      # echo "Stopping watch_tim daemon."
+      if start-stop-daemon --stop --verbose --pidfile $PID; then
+          echo "Done."
+          return 0
+      else
+          echo "Failed."
+          return 1
+      fi
+  }
+
+  case "$1" in
+      start)
+          start
+          ;;
+      stop)
+          stop
+          ;;
+      restart)
+          stop
+          [ "$?" == 0 ] && start
+          ;;
+      *)
+          echo "usage: `basename $0` (start|stop|restart|help)"
+          exit 1
+          ;;
+  esac
+  exit 0
+
+
+Doof bei dieser Lösung ist, dass ich den Namen der PID-Datei an zwei verschiedenen Stellen stehen habe... Aber damit startet und stoppt er jetzt immerhin... nur leider schreibt er keine Logdateien. Im `error.log` steht stattdessen::
+
+  Started tim_watch on /mnt/oeshz_home_server/ANWPROG/TIM/CPAS/changelog ...
+  Traceback (most recent call last):
+    File "/usr/lib/python2.5/logging/handlers.py", line 73, in emit
+      if self.shouldRollover(record):
+    File "/usr/lib/python2.5/logging/handlers.py", line 147, in shouldRollover
+      self.stream.seek(0, 2)  #due to non-posix-compliant Windows feature
+  IOError: [Errno 9] Bad file descriptor
+  Traceback (most recent call last):
+    File "/usr/lib/python2.5/logging/handlers.py", line 73, in emit
+      if self.shouldRollover(record):
+    File "/usr/lib/python2.5/logging/handlers.py", line 147, in shouldRollover
+      self.stream.seek(0, 2)  #due to non-posix-compliant Windows feature
+  IOError: [Errno 9] Bad file descriptor
+
+Ben Finney liefert die Erklärung dafür:
+http://mail.python.org/pipermail/python-list/2010-April/1241575.html
+
+Demzufolge wäre die Lösung: ich muss :mod:`lino.utils.daemonextension` noch weiter an Lino anpassen und ihm sagen, dass er die *handles* meiner Lino-Logger (logger und dblogger) vor dem bei Dämonen üblichen Totschießen bewahren soll (indem ich `daemon.DaemonContext()` mit `files_preserve` aufrufe).
+Deshalb das neue Attribut :class:`lino.utils.daemonextension.DaemonCommand.preserve_files` .

@@ -72,13 +72,37 @@ call::
     
 """
 
-from django.core.management.base import BaseCommand
+import logging
 from optparse import make_option
+from django.core.management.base import BaseCommand
 
-import daemon
-from daemon import pidlockfile
+def preserve_logger_files(*loggers):
+  
+    """
+    http://mail.python.org/pipermail/python-list/2010-April/1241406.html
+    """
+    l = []
+    for logger in loggers:
+        for h in logger.handlers:
+            if isinstance(h,logging.StreamHandler):
+                l.append(h.stream.fileno())
+    return l
 
-class DaemonCommand(BaseCommand):
+try:
+    import daemon
+    from daemon import pidlockfile
+
+except ImportError:
+  
+  class DaemonCommand(BaseCommand):
+    """On Systems that don't support daemons, we just emulate.
+    """
+    def handle(self, *args, **options):
+        self.handle_daemon(*args, **options)
+
+else:
+  
+  class DaemonCommand(BaseCommand):
         
     option_list = BaseCommand.option_list + (
         make_option('--chroot_directory', action='store', dest='chroot_directory',
@@ -124,6 +148,7 @@ class DaemonCommand(BaseCommand):
     pidfile = None
     uid = None
     gid = None    
+    preserve_files = None
     
     def create_parser(self, *args,**kw):
         p = super(DaemonCommand, self).create_parser(*args, **kw)
@@ -172,6 +197,7 @@ class DaemonCommand(BaseCommand):
         context.umask = self.get_option_value(options, 'umask', 0)
         context.detach_process = self.get_option_value(options, 'detach_process')
         context.prevent_core = self.get_option_value(options, 'prevent_core', True)
+        context.files_preserve = self.preserve_files
         
         #Get file objects
         stdin =  self.get_option_value(options, 'stdin')
