@@ -9,13 +9,6 @@ for which I hope for help from other people.
 Before version 1.0
 ------------------
 
-#. "Wenn ich auf einem Detailfenster einer Firma eine neue Firma erstelle
-   und "Einfügen" klicke, dann sollte ich danach auf dem Detailfenster
-   des neuen Records stehen."
-  
-#. Wenn man das Insert-Fenster bestätigt, wird das Fenster geschlossen. 
-   Aber wenn man das von der Grid aus tut, wird auch die Grid geschlossen.
-   
 #. Nach dem Löschen eines Vertrags verschwindet dieser erst aus 
    der Grid wenn man ein Refresh macht. 
    Refresh wird nicht automatisch gemacht.
@@ -437,6 +430,10 @@ Long-term
    (auch) über das Web-Interface zur Verfügung stehen?
    Aber ich denke der Befehl muss bleiben, denn jemand der nicht staff ist, 
    darf sich par définition nicht selber in diesen Status versetzen können.
+
+#. Wenn man z.B. watch_tim oder initdb_tim manuell startet und der 
+   ein log-rotate durchführt, dann haben die neu erstellten Dateien 
+   anschließend nicht www-data als owner. Resultat: internal server error!
 
 
 

@@ -1,0 +1,70 @@
+#!/bin/sh
+#
+# watch_tim daemon startup script
+#
+# (C) Copyright 2010 Luc Saffre 
+#
+# This file is part of the Lino project.
+# Lino is free software; you can redistribute it and/or modify 
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# Lino is distributed in the hope that it will be useful, 
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Lino; if not, see <http://www.gnu.org/licenses/>.
+
+PORT=8100
+HOST=127.0.0.1
+EXEC=/usr/local/django/myproject/watch_tim /path/to/TIM/changelog
+PIDFILE=/var/run/watch_tim.pid
+
+set -e
+
+start() {
+    if [ -f $PIDFILE ]; then
+      echo "watch_tim daemon has already started."
+      sleep 5
+      return 1
+    fi
+    echo "Starting watch_tim daemon server"
+    if start-stop-daemon --start --quiet --oknodo --pidfile $PIDFILE --exec $EXEC; then
+        echo "Done."
+        return 0
+    else
+        echo "Failed."
+        return 1
+    fi    
+}
+
+stop() {
+    echo "Stopping watch_tim daemon."
+    if start-stop-daemon --stop --quiet --oknodo --pidfile $PIDFILE; then
+        echo "Done."
+        return 0
+    else
+        echo "Failed."
+        return 1
+    fi    
+}
+
+
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    restart)
+        stop
+        [ "$?" == 0 ] && start
+        ;;
+    *)
+        echo "usage: `basename $0` (start|stop|restart|help)"
+        exit 1
+        ;;
+esac
+exit 0

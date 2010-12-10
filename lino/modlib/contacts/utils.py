@@ -12,11 +12,23 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 
-"""
 
-http://en.wikipedia.org/wiki/Dutch_name
-http://www.myheritage.com/support-post-130501/dutch-belgium-german-french-surnames-with-prefix-such-as-van?lang=RU
+import re
 
+from django.utils.translation import ugettext_lazy as _
+#~ from django.db import models
+#~ from django.conf import settings
+
+from lino.utils import join_words
+
+name_prefixes1 = ("HET", "'T",'VAN','DER', 'TER','VOM','VON','OF', "DE", "DU", "EL", "AL")
+name_prefixes2 = ("VAN DEN","VAN DER","VAN DE","IN HET", "VON DER","DE LA")
+
+def name2kw(s,last_name_first=True):
+    """
+Split a string that contains both last_name and first_name.
+The caller must indicate whether the string contains 
+last_name first (e.g. Saffre Luc) or first_name first (e.g. Luc Saffre)
 
 Examples:
 
@@ -46,45 +58,15 @@ Examples:
 
 
 
+Bibliography:
+
+#. http://en.wikipedia.org/wiki/Dutch_name
+#. http://www.myheritage.com/support-post-130501/dutch-belgium-german-french-surnames-with-prefix-such-as-van
 
 
->>> street2kw(u"Limburger Weg")
-{'street': u'Limburger Weg'}
->>> street2kw(u"Loten 3")
-{'street_box': u'', 'street': u'Loten', 'street_no': u'3'}
->>> street2kw(u"Loten 3A")
-{'street_box': u'A', 'street': u'Loten', 'street_no': u'3'}
-
->>> street2kw(u"In den Loten 3A")
-{'street_box': u'A', 'street': u'In den Loten', 'street_no': u'3'}
-
->>> street2kw(u"Auf'm Bach")
-{'street': u"Auf'm Bach"}
->>> street2kw(u"Auf'm Bach 3")
-{'street_box': u'', 'street': u"Auf'm Bach", 'street_no': u'3'}
->>> street2kw(u"Auf'm Bach 3a")
-{'street_box': u'a', 'street': u"Auf'm Bach", 'street_no': u'3'}
->>> street2kw(u"Auf'm Bach 3 A")
-{'street_box': u'A', 'street': u"Auf'm Bach", 'street_no': u'3'}
-
->>> street2kw(u"rue des 600 Franchimontois 1")
-{'street_box': u'', 'street': u'rue des 600 Franchimontois', 'street_no': u'1'}
 
 
-"""
-
-import re
-
-from django.utils.translation import ugettext_lazy as _
-#~ from django.db import models
-#~ from django.conf import settings
-
-from lino.utils import join_words
-
-name_prefixes1 = ("HET", "'T",'VAN','DER', 'TER','VOM','VON','OF', "DE", "DU", "EL", "AL")
-name_prefixes2 = ("VAN DEN","VAN DER","VAN DE","IN HET", "VON DER","DE LA")
-
-def name2kw(s,last_name_first=True):
+    """
     kw = {}
     a = s.strip().split()
     if len(a) == 1:
@@ -128,6 +110,34 @@ def name2kw(s,last_name_first=True):
     return kw
     
 def street2kw(s,**kw):
+    """
+Parse a string to extract the fields street, street_no and street_box.
+
+Examples:
+    
+>>> street2kw(u"Limburger Weg")
+{'street': u'Limburger Weg'}
+>>> street2kw(u"Loten 3")
+{'street_box': u'', 'street': u'Loten', 'street_no': u'3'}
+>>> street2kw(u"Loten 3A")
+{'street_box': u'A', 'street': u'Loten', 'street_no': u'3'}
+
+>>> street2kw(u"In den Loten 3A")
+{'street_box': u'A', 'street': u'In den Loten', 'street_no': u'3'}
+
+>>> street2kw(u"Auf'm Bach")
+{'street': u"Auf'm Bach"}
+>>> street2kw(u"Auf'm Bach 3")
+{'street_box': u'', 'street': u"Auf'm Bach", 'street_no': u'3'}
+>>> street2kw(u"Auf'm Bach 3a")
+{'street_box': u'a', 'street': u"Auf'm Bach", 'street_no': u'3'}
+>>> street2kw(u"Auf'm Bach 3 A")
+{'street_box': u'A', 'street': u"Auf'm Bach", 'street_no': u'3'}
+
+>>> street2kw(u"rue des 600 Franchimontois 1")
+{'street_box': u'', 'street': u'rue des 600 Franchimontois', 'street_no': u'1'}
+    
+    """
     #~ m = re.match(r"(\D+),?\s*(\d+)\s*(\w*)", s)
     m = re.match(r"(.+),?\s+(\d+)\s*(\D*)$", s)
     if m:

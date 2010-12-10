@@ -2,6 +2,7 @@
 ========
 
 Erste Sitzung
+-------------
 
 #. Die Lösung für Ticket :doc:`/tickets/18` war einfach: ich darf nicht **application/json** 
    als content type angeben, sondern muss **text/html** sagen. 
@@ -27,7 +28,10 @@ Erste Sitzung
   
 #. Check-in.
 
-Zweite Sitzung. Folgende Punkte sind jetzt behoben:
+Zweite Sitzung 
+--------------
+
+Folgende Punkte sind jetzt behoben:
 
 #. Neues Feld Contract.refund_rate für Prozentsatz Rückerstattung.
 
@@ -42,7 +46,8 @@ Zweite Sitzung. Folgende Punkte sind jetzt behoben:
 Zwischenrelease 0.8.14+ in Eupen mit den bisher behobenen Punkten.
 
 
-Dritte Sitzung. 
+Dritte Sitzung
+--------------
 
 #. Zwei Bugs weniger: `NameError: global name 'auth' is not defined` und 
    `AttributeError: 'datetime.date' object has no attribute 'read'`

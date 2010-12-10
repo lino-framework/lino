@@ -54,6 +54,14 @@ def configure(config):
     """
     This function will be called by Django when you have your
     :setting:`LOGGING_CONFIG` set to ``'lino.utils.log.configure'``.
+    
+    Yes, the `mod_wsgi documentation <http://code.google.com/p/modwsgi/wiki/ApplicationIssues>`_ 
+    says "note that code should ideally not be making assumptions about the environment it is 
+    executing in, eg., whether it is running in an interactive mode, by asking whether 
+    standard output is a tty. In other words, calling 'isatty()' will cause a similar error 
+    with mod_wsgi. If such code is a library module, the code should be providing a way to 
+    specifically flag that it is a non interactive application and not use magic to 
+    determine whether that is the case or not.", but ...
     """
     logger = logging.getLogger('django')
     h = AdminEmailHandler()

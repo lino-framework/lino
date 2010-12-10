@@ -1,0 +1,5 @@
+20101210
+========
+
+
+#. Neues Script-Template /bash/watch_tim
