@@ -296,18 +296,41 @@ See also :doc:`/blog/2010/1116`. But basically:
 `watch_tim` daemon
 ==================
 
-See also :doc:`/blog/2010/1210`. But basically:
+See also 
+:doc:`/blog/2010/1210` and 
+:doc:`/blog/2010/1211`, but basically:
+
+Create a directory 
+:file:`/usr/local/django/myproject/watch_tim` 
+and a :file:`/usr/local/django/myproject/watch_tim/run` 
+with something like::
+  
+  #!/bin/bash
+  MYPROJECT="myproject"
+  PROJECT_DIR="/usr/local/django/$MYPROJECT"
+  PID="$PROJECT_DIR/watch_tim/pid"
+  DJANGO_SETTINGS_MODULE=$MYPROJECT.settings
+  python $PROJECT_DIR/manage.py watch_tim --pidfile $PID /path/to/TIM/changelog
+  
+Don't forget to do ``chmod 755 watch_tim/run``.
+
+Then as root::
 
   # cp /var/snapshots/lino/bash/watch_tim /etc/init.d
-  # nano /etc/init.d/watch_tim
-  
-Check whether everything is correct, then::
-
   # chmod 755 /etc/init.d/watch_tim
+  # nano /etc/init.d/watch_tim
+
+In this file you must edit at least the content of variable `MYPROJECT`.
+Check manually whether the script works correctly::
+
+  # /etc/init.d/watch_tim start
+  # /etc/init.d/watch_tim stop
+  # /etc/init.d/watch_tim restart
+
+And finally::
+
   # update-rc.d watch_tim defaults
-    
-    
-    
+
 
 Create a demo database
 ----------------------
@@ -315,7 +338,6 @@ Create a demo database
 Go to your `/usr/local/django/myproject` directory and run::
 
   python manage.py initdb demo
-  python manage.py runserver
 
 Currently there is also an unelegant thing to do by hand::
 
