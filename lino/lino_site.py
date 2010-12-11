@@ -70,25 +70,25 @@ from lino.utils.config import find_config_files
 from lino.reports import DetailLayout
 from lino.utils import choosers
 
+## The following causes django.db.models.loading.cache to 
+## be populated. This must be done before calling actors.discover() 
+## or resolve_model().
 
-def discover():
-    
-    ## The following not only logs diagnostic information, it also has an 
-    ## important side effect: it causes django.db.models.loading.cache to 
-    ## be populated. This must be done before calling actors.discover().
+models_list = models.get_models() # populates django.db.models.loading.cache 
 
+if settings.MODEL_DEBUG:
     apps = app_labels()
     logger.debug("%d applications: %s.", len(apps),", ".join(apps))
-    models_list = models.get_models() # populates django.db.models.loading.cache 
+    logger.debug("%d MODELS:",len(models_list))
+    i = 0
+    for model in models_list:
+        i += 1
+        logger.debug("  %2d: %s.%s -> %r",i,model._meta.app_label,model._meta.object_name,model)
+        logger.debug("      data_elems : %s",' '.join([de.name for de in data_elems(model)]))
+    logger.info("Analyzing Models...")
+    
 
-    if settings.MODEL_DEBUG:
-        logger.debug("%d MODELS:",len(models_list))
-        i = 0
-        for model in models_list:
-            i += 1
-            logger.debug("  %2d: %s.%s -> %r",i,model._meta.app_label,model._meta.object_name,model)
-            logger.debug("      data_elems : %s",' '.join([de.name for de in data_elems(model)]))
-        logger.info("Analyzing Models...")
+def discover():
     
     ddhdict = {}
     for model in models.get_models():
@@ -230,7 +230,7 @@ class LinoSite:
         else:
             logger.warning("settings.LINO_SETTINGS entry is missing")
             
-        logger.info(lino.welcome_text())
+        #~ logger.info(lino.welcome_text())
         #~ logger.info("This is Lino version %s." % lino.__version__)
         #~ using = ', '.join(["%s %s" % (n,v) for n,v,u in lino.using()])
         #~ logger.info("Using %s" % using)
