@@ -77,9 +77,8 @@ from optparse import make_option
 from django.core.management.base import BaseCommand
 
 def preserve_logger_files(*loggers):
-  
     """
-    http://mail.python.org/pipermail/python-list/2010-April/1241406.html
+    Thanks to http://mail.python.org/pipermail/python-list/2010-April/1241406.html
     """
     l = []
     for logger in loggers:
@@ -148,7 +147,7 @@ else:
     pidfile = None
     uid = None
     gid = None    
-    preserve_files = None
+    preserve_loggers = None
     
     def create_parser(self, *args,**kw):
         p = super(DaemonCommand, self).create_parser(*args, **kw)
@@ -197,7 +196,8 @@ else:
         context.umask = self.get_option_value(options, 'umask', 0)
         context.detach_process = self.get_option_value(options, 'detach_process')
         context.prevent_core = self.get_option_value(options, 'prevent_core', True)
-        context.files_preserve = self.preserve_files
+        if self.preserve_loggers:
+            context.files_preserve = preserve_logger_files(self.preserve_loggers)
         
         #Get file objects
         stdin =  self.get_option_value(options, 'stdin')

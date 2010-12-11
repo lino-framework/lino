@@ -1,10 +1,12 @@
+===============
 Installing Lino
 ===============
 
 This page is work in progress.
 Don't hesitate to contact me if you get stucked.
 
-WARNING: Don't apply the instructions on this page without understanding what you are doing!
+WARNING: Don't apply the instructions on this page 
+without understanding what you are doing!
 
 Software prerequisites
 ----------------------
@@ -271,8 +273,11 @@ Read :ref:`django/DjangoPatches` for more details.
 
 
 
-Install OpenOffice.org server startup script
---------------------------------------------
+Installing startup scripts 
+--------------------------
+
+OpenOffice.org server 
+=====================
 
 See also :doc:`/blog/2010/1116`. But basically:
 
@@ -287,6 +292,21 @@ See also :doc:`/blog/2010/1116`. But basically:
 
     # chmod 755 /etc/init.d/oood
     # update-rc.d oood defaults
+
+`watch_tim` daemon
+==================
+
+See also :doc:`/blog/2010/1210`. But basically:
+
+  # cp /var/snapshots/lino/bash/watch_tim /etc/init.d
+  # nano /etc/init.d/watch_tim
+  
+Check whether everything is correct, then::
+
+  # chmod 755 /etc/init.d/watch_tim
+  # update-rc.d watch_tim defaults
+    
+    
     
 
 Create a demo database

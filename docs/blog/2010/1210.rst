@@ -27,7 +27,7 @@ Und zweitens ein `/etc/init.d/watch_tim`::
 
   start() {
       # echo "Starting watch_tim daemon"
-      if start-stop-daemon --start --verbose --pidfile $PID --exec $EXEC -- $EXEC_OPTS; then
+      if start-stop-daemon --start --verbose --pidfile $PID --exec $EXEC ; then
           echo "Done."
           return 0
       else
@@ -85,5 +85,7 @@ Doof bei dieser Lösung ist, dass ich den Namen der PID-Datei an zwei verschiede
 Ben Finney liefert die Erklärung dafür:
 http://mail.python.org/pipermail/python-list/2010-April/1241575.html
 
-Demzufolge wäre die Lösung: ich muss :mod:`lino.utils.daemonextension` noch weiter an Lino anpassen und ihm sagen, dass er die *handles* meiner Lino-Logger (logger und dblogger) vor dem bei Dämonen üblichen Totschießen bewahren soll (indem ich `daemon.DaemonContext()` mit `files_preserve` aufrufe).
+23 Uhr: Demzufolge wäre die Lösung: ich muss :mod:`lino.utils.daemonextension` noch weiter an Lino anpassen und ihm sagen, dass er die *handles* meiner Lino-Logger (logger und dblogger) vor dem bei Dämonen üblichen Totschießen bewahren soll (indem ich `daemon.DaemonContext()` mit `files_preserve` aufrufe).
 Deshalb das neue Attribut :class:`lino.utils.daemonextension.DaemonCommand.preserve_files` .
+Scheint zu klappen.
+Check-in und Wochenende.

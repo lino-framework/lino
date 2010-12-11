@@ -1,0 +1,30 @@
+20102011
+========
+
+Also ein Problem in der :srcref:`/bash/watch_tim` ist, 
+dass ich den Namen der PID-Datei an zwei verschiedenen 
+Stellen stehen haben muss. 
+
+Ich habe versucht, stattdessen die Option `--exec $EXEC` 
+von `start-stop-daemon` zu nutzen, um den Prozess 
+wiederzufinden.
+Das geht nicht, weil in der Prozesstabelle 
+nicht der Name des Skripts steht, 
+sondern der letzte darin gestartete Befehl steht 
+(`python /usr/local/django/dsbe_eupen/manage.py watch_tim /path/to/TIM/changelog`)
+
+Ich könnte fürs Matching die Option `--name watch_tim` benutzen, 
+aber das kommt mir ziemlich ungenau vor. 
+Wenn zwei ähnliche Installationen auf einem Server laufen, 
+würde er beide beenden...
+
+Ich könnte den Namen der PID-Datei im Lino-Code definieren 
+und in beiden Skripts wie folgt ermitteln::
+
+  set DJANGO_SETTINGS_MODULE="myproject.settings"
+  PIDFILE=`python -c 'from lino.modlib.dsbe.management.commands.watch_tim import Command; print Command.pidfile'`
+  
+Aber dann hätte ich Angst, dass zukünftige Systemverwalter 
+von Lino-Benutzern mich verfluchen (womöglich erst wenn 
+ich schon tot bin und nichts mehr an meinen Entscheidungen 
+ändern kann...)

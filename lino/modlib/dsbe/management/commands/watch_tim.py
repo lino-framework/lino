@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 
 from django.core.management.base import BaseCommand, CommandError
 
-from lino.utils.daemonextension import DaemonCommand, preserve_logger_files
+from lino.utils.daemonextension import DaemonCommand
 
 from django.conf import settings
 
@@ -380,11 +380,14 @@ class Command(DaemonCommand):
     args = '<path_to_tim_changelog>'
     help = 'Starts an observer service that propagates changes of your TIM data into Lino'
     
-    stdout = '/var/log/lino/watch_tim.log' # stdout = os.path.join(settings.PROJECT_DIR, "watch_tim","stdout.log")
-    stderr = '/var/log/lino/watch_tim.errors.log' # os.path.join(settings.PROJECT_DIR, "watch_tim","errors.log")
+    #~ stdout = '/var/log/lino/watch_tim.log' 
+    #~ stdout = os.path.join(settings.PROJECT_DIR, "watch_tim","stdout.log")
+    #~ stderr = '/var/log/lino/watch_tim.errors.log' 
+    #~ os.path.join(settings.PROJECT_DIR, "watch_tim","errors.log")
     #~ pidfile = os.path.join(settings.PROJECT_DIR, "watch_tim","pid")
-    pidfile = '/var/run/watch_tim.pid' # os.path.j    
-    preserve_files = preserve_logger_files(logger,dblogger)
+    #~ pidfile = '/var/run/watch_tim.pid' # os.path.j    
+    
+    preserve_loggers = (logger,dblogger)
     
     def handle_daemon(self, *args, **options):
         main(*args,**options)
