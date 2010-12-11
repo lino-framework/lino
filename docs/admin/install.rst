@@ -314,7 +314,8 @@ with something like::
   
 Don't forget to do ``chmod 755 watch_tim/run``.
 
-Then as root::
+Then, as root, copy Lino's startup template :srcref:`/bash/watch_tim` 
+to your :file:`/etc/init.d` directory and edit the copy::
 
   # cp /var/snapshots/lino/bash/watch_tim /etc/init.d
   # chmod 755 /etc/init.d/watch_tim

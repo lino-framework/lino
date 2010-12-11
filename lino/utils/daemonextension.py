@@ -76,7 +76,7 @@ import logging
 from optparse import make_option
 from django.core.management.base import BaseCommand
 
-def preserve_logger_files(*loggers):
+def preserve_logger_files(loggers):
     """
     Thanks to http://mail.python.org/pipermail/python-list/2010-April/1241406.html
     """
