@@ -74,6 +74,9 @@ from lino.utils import choosers
 ## be populated. This must be done before calling actors.discover() 
 ## or resolve_model().
 
+
+logger.info(lino.welcome_text())
+
 models_list = models.get_models() # populates django.db.models.loading.cache 
 
 if settings.MODEL_DEBUG:
