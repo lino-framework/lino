@@ -1,9 +1,17 @@
 20102011
 ========
 
-Also ein Problem in der :srcref:`/bash/watch_tim` ist, 
-dass ich den Namen der PID-Datei an zwei verschiedenen 
-Stellen stehen haben muss. 
+Eigentlich wollte ich nur schnell dokumentieren 
+(:doc:`/admin/install`),
+aber dabei hatte ich noch einige Ideen.
+Jetzt bin ich einigermaßen zufrieden mit dem Startup-Skript 
+von `watch_tim`.
+Hier noch meine Gedanken während der letzten Optimierungen.
+
+Also ein Problem in der :srcref:`/bash/watch_tim` 
+ist weiterhin, 
+dass ich den Namen der PID-Datei außerdem nochmal in der 
+lokalen watch_tim stehen haben muss. 
 
 Ich habe versucht, stattdessen die Option `--exec $EXEC` 
 von `start-stop-daemon` zu nutzen, um den Prozess 
@@ -28,3 +36,9 @@ Aber dann hätte ich Angst, dass zukünftige Systemverwalter
 von Lino-Benutzern mich verfluchen (womöglich erst wenn 
 ich schon tot bin und nichts mehr an meinen Entscheidungen 
 ändern kann...)
+Deshalb ist übrigens 
+mein Bugfix in der :mod:`lino.utils.daemonextension` 
+jetzt nicht mehr wichtig.
+
+Also gut, vorläufig lassen wir den Namen der PID-Datei 
+in beiden Scripts definiert.

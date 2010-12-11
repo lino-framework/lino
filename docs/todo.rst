@@ -35,17 +35,6 @@ Before version 1.0
    
 #. "Insert as copy"
 
-#. `watch_tim` automatisch nach reboot starten.
-   Irgendwie müssen ungefähr die folgenden Befehle in der :file:`/etc/init.d` 
-   gerufen werden::
-  
-     /usr/local/django/myproject/watch_tim
-
-   Siehe auch:
-  
-    | http://www.debian-administration.org/articles/28
-    | http://girasoli.org/?p=120
-    | `How to LSBize an Init Script <http://wiki.debian.org/LSBInitScripts>`_
   
 
 Waiting for feedback
@@ -53,8 +42,6 @@ Waiting for feedback
 
 #. Arbeitsregime und Stundenplan: 
    Texte in Konfigurationsdateien auslagern
-
-#. Allgemein Feedback-Meldungen in der Statusbar verbessern.
 
 #. Vorschlag: im Tab "Profile 2" die Felder "auch Schichtarbeit" und "auch am WE" 
    ersetzen durch ihr Gegenteil ("keine Schichtarbeit" und "nicht am WE"), damit alle 
@@ -434,6 +421,8 @@ Long-term
 #. Wenn man z.B. watch_tim oder initdb_tim manuell startet und der 
    ein log-rotate durchführt, dann haben die neu erstellten Dateien 
    anschließend nicht www-data als owner. Resultat: internal server error!
+
+#.  `How to LSBize an Init Script <http://wiki.debian.org/LSBInitScripts>`_
 
 
 
