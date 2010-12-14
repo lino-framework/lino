@@ -80,7 +80,7 @@ from django.core.management.base import BaseCommand
 
 def get_handlers(logger):
     while logger:
-        for hdlr in logger.handlers:
+        for h in logger.handlers:
             yield h
         if not logger.propagate:
             logger = None    #break out
