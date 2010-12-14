@@ -61,7 +61,7 @@ if settings.DBLOGFILE:
     exception = logger.exception
     error = logger.error
     debug = logger.debug
-    handlers = logger.handlers
+    #~ handlers = logger.handlers
     
     if len(logger.handlers) == 0:
         filename = settings.DBLOGFILE
@@ -102,6 +102,7 @@ else:
     def log_changes(request,elem): pass
     def log_deleted(request,elem): pass
     def log_created(request,elem): pass
-    handlers = []
+    #~ handlers = []
+    logger = None
 
 

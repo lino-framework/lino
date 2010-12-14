@@ -796,7 +796,7 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,mixins.
 CONTRACT_PRINTABLE_FIELDS = reports.fields_list(Contract,
   'person company contact type '
   'applies_from applies_until duration '
-  'language schedule regime hourly_rate reference_person '
+  'language schedule regime hourly_rate refund_rate reference_person '
   'date_decided date_issued responsibilities')
 
 

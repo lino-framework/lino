@@ -9,19 +9,34 @@ for which I hope for help from other people.
 Before version 1.0
 ------------------
 
+#.  cannot insert in contacts by company
+
+#.  watch_tim startet nicht
+
+#.  slave report in a detail remains empty in some cases.
+    e.g. ContractsByCompany. 
+    Scheinbar nur wenn dieser Benutzer gerade einen Vertrag erstellt hat. 
+    Nicht wenn ich Permalink oder open in own window
+
+#. TypeError: Cannot convert Decimal("350") to Decimal wenn er `Company.hourly_rate` 
+   in erinen Vertrag übernimmt.
+
 #. Nach dem Löschen eines Vertrags verschwindet dieser erst aus 
    der Grid wenn man ein Refresh macht. 
    Refresh wird nicht automatisch gemacht.
 
-#. Dokumentvorlage: Für Benutzer Vor- und Nachnamen (nicht den Benutzernamen) drucken.
-
 #. Liste der Personen sollte zunächst mal nur "meine" Personen anzeigen.
    Evtl. mehrere Menübefehle.
 
-#. "Active fields" : wenn die sich ändern, macht der Client ein GET für diesen Record, 
-   wobei er aber auch alle anderen geänderten und noch nicht gespeicherten Felder mit 
-   übergibt. Der Server macht darauf dann full_clean aber speichert nicht ab, sondern 
-   gibt das nur zurück. So kann ich serverseitige field-level validation machen.
+#.  "Active fields" : wenn die sich ändern, macht der Client ein GET für diesen Record, 
+    wobei er aber auch alle anderen geänderten und noch nicht gespeicherten Felder mit 
+    übergibt. Der Server macht darauf dann full_clean aber speichert nicht ab, sondern 
+    gibt das nur zurück. So kann ich serverseitige field-level validation machen. 
+    Auch für disabled_field wäre das wichtig: je nach Vertragsart soll Feld Contract.refund_rate 
+    disabled sein (und das soll sich nicht erst nach dem submit ändern).
+    Implementierung vielleicht mit Methoden `on_FIELD_change`, deren 
+    Parameter ähnlich wie choosers analysiert werden.
+    GET /api/contacts/Persons/17?fmt=json&query=foo
 
 #. Wenn man ClearCacheAction macht und das Dokument neu druckt, 
    dauert es eine Zeit, bis der Cache des Browsers kapiert, 

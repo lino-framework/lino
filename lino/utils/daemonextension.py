@@ -27,8 +27,10 @@ POSSIBILITY OF SUCH DAMAGE.
 
 Modifications by Luc Saffre :
 
-- fixed: Overriding default values in a subclass didn't work for most options.
+- fixed: Overriding default values in a subclass didn't work.
   :doc:`/blog/2010/1210`
+  
+- added `preserve_loggers` class variable
 
 =============
 DaemonCommand
@@ -76,13 +78,23 @@ import logging
 from optparse import make_option
 from django.core.management.base import BaseCommand
 
+def get_handlers(logger):
+    while logger:
+        for hdlr in logger.handlers:
+            yield h
+        if not logger.propagate:
+            logger = None    #break out
+        else:
+            logger = logger.parent
+
+
 def preserve_logger_files(loggers):
     """
     Thanks to http://mail.python.org/pipermail/python-list/2010-April/1241406.html
     """
     l = []
     for logger in loggers:
-        for h in logger.handlers:
+        for h in get_handlers(logger):
             if isinstance(h,logging.StreamHandler):
                 l.append(h.stream.fileno())
     return l

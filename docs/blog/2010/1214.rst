@@ -1,0 +1,18 @@
+20101214
+========
+
+#.  Contract.hourly_rate wird jetzt `disabled` wenn der 
+    Vertrag ausgedruckt ist.
+    
+#.  Mit `watch_tim` stimmt etwas noch nicht. Keinerlei Fehlermeldung, 
+    ``ps -aux`` zeigt ihn an, aber tun tut er nichts 
+    (`changelog.json` bleibt unverarbeitet).
+    Lediglich ein welcom_text() in der `/var/log/lino/system.log` wird angezeigt.
+    
+    Ein Bug war jedenfalls, dass er nur `logger.handlers` durchsuchte, 
+    nicht aber ererbte Handler aus den parents der Logger fand. 
+    Dieser Bug ist jetzt behoben.
+    Das erklärt aber nicht, weshalb er 
+    
+    
+    

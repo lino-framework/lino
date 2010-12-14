@@ -387,7 +387,7 @@ class Command(DaemonCommand):
     #~ pidfile = os.path.join(settings.PROJECT_DIR, "watch_tim","pid")
     #~ pidfile = '/var/run/watch_tim.pid' # os.path.j    
     
-    preserve_loggers = (logger,dblogger)
+    preserve_loggers = (logger,dblogger.logger)
     
     def handle_daemon(self, *args, **options):
         main(*args,**options)
