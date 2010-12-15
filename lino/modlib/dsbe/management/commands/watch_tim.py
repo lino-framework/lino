@@ -17,6 +17,11 @@ Starts a daemon that
 watches the specified directory for a file :xfile:`changelog.json` 
 to appear.
 
+See also 
+:doc:`/blog/2010/1210`
+:doc:`/blog/2010/1211`
+:doc:`/blog/2010/1214`
+
 """
 
 import os
@@ -30,7 +35,7 @@ logger = logging.getLogger(__name__)
 
 from django.core.management.base import BaseCommand, CommandError
 
-from lino.utils.daemonextension import DaemonCommand
+from lino.utils.daemoncommand import DaemonCommand
 
 from django.conf import settings
 
@@ -393,4 +398,7 @@ class Command(DaemonCommand):
         main(*args,**options)
 
 
-
+    def handle(self, *args, **options):
+        logger.info("handle(%r,%r)",args,options)
+        dblogger.info("handle(%r,%r)",args,options)
+        return DaemonCommand.handle(self,*args,**options)

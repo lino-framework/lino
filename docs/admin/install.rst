@@ -296,9 +296,9 @@ See also :doc:`/blog/2010/1116`. But basically:
 `watch_tim` daemon
 ==================
 
-See also 
-:doc:`/blog/2010/1210` and 
-:doc:`/blog/2010/1211`, but basically:
+This is only for :term:`TIM` users who use Lino in parallel with TIM. 
+`watch_tim` keeps an individually configured set of data in sync with 
+the TIM data.
 
 Create a directory 
 :file:`/usr/local/django/myproject/watch_tim` 
@@ -331,6 +331,9 @@ Check manually whether the script works correctly::
 And finally::
 
   # update-rc.d watch_tim defaults
+  
+In case of problems, see also 
+:mod:`lino.modlib.dsbe.management.commands.watch_tim`  
 
 
 Create a demo database

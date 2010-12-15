@@ -4,15 +4,25 @@
 #.  Contract.hourly_rate wird jetzt `disabled` wenn der 
     Vertrag ausgedruckt ist.
     
-#.  Mit `watch_tim` stimmt etwas noch nicht. Keinerlei Fehlermeldung, 
+#.  Mit `watch_tim` stimmt was noch nicht. 
+    Er startet ohne Fehlermeldung, 
     ``ps -aux`` zeigt ihn an, aber tun tut er nichts 
-    (`changelog.json` bleibt unverarbeitet).
+    (`changelog.json` bleibt unverarbeitet) 
+    und loggen tut er auch nichts..
     Lediglich ein welcom_text() in der `/var/log/lino/system.log` wird angezeigt.
     
     Ein Bug war jedenfalls, dass er nur `logger.handlers` durchsuchte, 
     nicht aber ererbte Handler aus den parents der Logger fand. 
     Dieser Bug ist jetzt behoben.
-    Das erklärt aber nicht, weshalb er 
+    Das erklärt aber nicht, weshalb er nichts tut.
     
+    Nicolas half mir dann über Nacht, die Erklärung zu finden: 
+    Le problème était (imho) qu'il y avait
+    un fichier `pid.lock` traînant dans le répertoire `watch_tim`. Et comme
+    mon daemon ne spécifie pas de timeout, il attent dans ce cas
+    indéfiniment et sans se plaindre nulle part que ce fichier `pid.lock`
+    soit libéré[1_]. En changeant le nom du pidfile tu avais contourné ce
+    problème. J'ai maintenant remis le nom `pid` et cela fonctionne également.
+
     
-    
+.. _1: http://packages.python.org/lockfile/lockfile.html#lockfile.FileLock.acquire

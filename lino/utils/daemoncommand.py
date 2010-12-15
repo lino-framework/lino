@@ -30,7 +30,9 @@ Modifications by Luc Saffre :
 - fixed: Overriding default values in a subclass didn't work.
   :doc:`/blog/2010/1210`
   
-- added `preserve_loggers` class variable
+- added `DaemonCommand.preserve_loggers` class variable 
+  and :func:`get_handlers` and :func:`get_logger_files`.
+  :doc:`/blog/2010/1214`
 
 =============
 DaemonCommand
@@ -88,7 +90,7 @@ def get_handlers(logger):
             logger = logger.parent
 
 
-def preserve_logger_files(loggers):
+def get_logger_files(loggers):
     """
     Thanks to http://mail.python.org/pipermail/python-list/2010-April/1241406.html
     """
@@ -209,7 +211,7 @@ else:
         context.detach_process = self.get_option_value(options, 'detach_process')
         context.prevent_core = self.get_option_value(options, 'prevent_core', True)
         if self.preserve_loggers:
-            context.files_preserve = preserve_logger_files(self.preserve_loggers)
+            context.files_preserve = get_logger_files(self.preserve_loggers)
         
         #Get file objects
         stdin =  self.get_option_value(options, 'stdin')
