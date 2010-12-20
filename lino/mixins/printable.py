@@ -53,6 +53,7 @@ from lino import actions
 
 from lino.utils.babel import default_language, dtos, dtosl, setlang, getattr_lang
 from lino.utils import babel 
+from lino.utils.choosers import chooser
 
 
 bm_dict = {}
@@ -419,17 +420,19 @@ class PrintableType(models.Model):
     #~ build_method = models.CharField(max_length=20,choices=mixins.build_method_choices())
     #~ template = models.CharField(max_length=200)
     
-    @classmethod
+    #~ @classmethod
+    @chooser()
     def get_templates_group(cls):
         return cls.templates_group or cls._meta.app_label
         
+    @chooser(simple_values=True)
     def template_choices(cls,build_method):
         #~ print cls, 'template_choices for method' ,build_method
         #~ bm = bm_dict[build_method]
         return get_template_choices(cls.get_templates_group(),build_method)
         #~ return get_template_choices(TEMPLATE_GROUP,build_method)
-    template_choices.simple_values = True
-    template_choices = classmethod(template_choices)
+    #~ template_choices.simple_values = True
+    #~ template_choices = classmethod(template_choices)
     
 class Printable(models.Model):
     """

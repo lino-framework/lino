@@ -450,14 +450,16 @@ class TextFieldElement(FieldElement):
     filter_type = 'string'
     vflex = True
     value_template = "new Ext.form.TextArea(%s)"
-    #~ value_template = "new Ext.form.HtmlEditor(%s)"
     xtype = None
-    #~ xtype = 'htmleditor'
     #width = 60
     preferred_width = 60
     #~ preferred_height = 1
     #collapsible = True
 
+class HtmlTextFieldElement(TextFieldElement):
+    pass
+    #~ value_template = "new Ext.form.HtmlEditor(%s)"
+    #~ # xtype = 'htmleditor'
         
 class CharFieldElement(FieldElement):
     filter_type = 'string'
@@ -1278,6 +1280,7 @@ _field2elem = (
     (models.URLField, URLFieldElement),
     (models.FileField, FileFieldElement),
     (models.EmailField, CharFieldElement),
+    (fields.HtmlTextField, HtmlTextFieldElement),
     (models.TextField, TextFieldElement),
     (models.CharField, CharFieldElement),
     (models.DateField, DateFieldElement),

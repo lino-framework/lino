@@ -369,6 +369,10 @@ Lino.notify = function(msg) {
   //~ Ext.getCmp('konsole').setTitle(msg.replace(/\n/g,'<br/>'));
   //~ Ext.getCmp('konsole').update(msg.replace(/\n/g,'<br/>'));
 };
+Lino.alert = function(msg) {
+  //~ if (msg == undefined) msg = ''; else console.log(msg);
+  Ext.MessageBox.alert('Notify',msg);
+};
 
 Lino.show_about = function() {
   new Ext.Window({
@@ -450,7 +454,7 @@ Lino.delete_selected = function(caller) {
   };
   if (recs.length == 1) {
       if (recs[0].disable_delete) {
-        Lino.notify(recs[0].disable_delete);
+        Lino.alert(recs[0].disable_delete);
         return;
       }
   };
@@ -1220,7 +1224,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
           //~ Lino.notify('show detail');
           Lino.show_detail_handler(this.ls_detail_handler)(this);
       }else{
-        this.startEditing(r,c);
+        this.startEditing(row,col);
       }
   },
   

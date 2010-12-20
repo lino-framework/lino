@@ -17,6 +17,7 @@ import datetime
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from lino.mixins import AutoUser
+from lino.utils.choosers import chooser
 
 from lino import reports
 
@@ -48,10 +49,11 @@ class Reminder(AutoUser):
           unicode(self))
         return s
         
+    @chooser(simple_values=True)
     def reminder_text_choices(self):
         return REMINDER_TEXT_CHOICES
-    reminder_text_choices.simple_values = True
-    reminder_text_choices = classmethod(reminder_text_choices)
+    #~ reminder_text_choices.simple_values = True
+    #~ reminder_text_choices = classmethod(reminder_text_choices)
 
 def reminders_summary(ui,user,*args,**kw):
     s= ''

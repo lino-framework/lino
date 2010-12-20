@@ -1,0 +1,58 @@
+20101215
+========
+
+#.  Lino erlaubte es, importierte Partner zu löschen. 
+    `disable_delete` for Companies and Persons now says
+    "Cannot delete companies and persons imported from TIM" if that's the case.
+    
+#.  Wenn Lino das Löschen eines Records verweigert (`disable_delete`), 
+    dann kommt die entsprechende Meldung jetzt in einem alert-Fenster 
+    statt lediglich in der Statuszeile.
+    
+#. `Addressable.remarks` von importierten Partnern war nicht disabled.
+  
+#.  `watch_tim`: Die folgende Fehlermeldung war nicht sehr sinnvoll, weil man nicht wusste, 
+    um welchen Record es da ging::
+
+      201012-15 09:19:30 WARNING watch_tim : /path/to/tim/changelog/changelog.watching.json:1: \
+        ValidationError({'email': [u'Enter a valid e-mail address.']})
+      201012-15 09:19:30 ERROR watch_tim : {'email': [u'Enter a valid e-mail address.']}
+      Traceback (most recent call last):
+        File "/var/snapshots/lino/lino/modlib/dsbe/management/commands/watch_tim.py", line 358, in watch
+          process_line(i,ln)
+        File "/var/snapshots/lino/lino/modlib/dsbe/management/commands/watch_tim.py", line 321, in process_line
+          m(**kw)
+        File "/var/snapshots/lino/lino/modlib/dsbe/management/commands/watch_tim.py", line 114, in PUT
+          self.applydata(obj,kw['data'])
+        File "/var/snapshots/lino/lino/modlib/dsbe/management/commands/watch_tim.py", line 173, in applydata
+          Controller.applydata(self,obj,data,**d)
+        File "/var/snapshots/lino/lino/modlib/dsbe/management/commands/watch_tim.py", line 90, in applydata
+          obj.full_clean()
+        File "/var/snapshots/lino/lino/modlib/contacts/models.py", line 63, in full_clean
+          super(Person,self).full_clean(*args,**kw)
+        File "/var/snapshots/django/django/db/models/base.py", line 817, in full_clean
+          raise ValidationError(errors)
+      ValidationError: {'email': [u'Enter a valid e-mail address.']}
+      
+    Stattdessen kommt jetzt eine Warnung im Stil 
+    "Validation failed for ... : ValidationError: {'email': [u'Enter a valid e-mail address.']}"
+      
+      
+#.  `watch_tim`: Die unbegründeten Warnungen 
+    "WARNING watch_tim : Person #22476 (Name) : PAR->IdUsr u'' (converted to u'') doesn't exist!"      
+    und
+    "ValueError: Cannot assign "u''": "Company.country" must be a "Country" instance."
+    müssten jetzt nicht mehr kommen.
+    
+#.  Bug fixed: cannot insert in contacts by company
+
+#.  :func:`lino.modlbi.contacts.utils.street2kw` parst eine Adresse im 
+    Stil "Neustr. 1 (Referenzadr.)" jetzt ebenfalls korrekt ("(Referenzadr.)" 
+    kommt nach addr2).
+
+    
+#.  im Tab "Profile 2" wurden die Felder "auch Schichtarbeit" und "auch
+    am WE"  ersetzt durch ihr Gegenteil ("keine Schichtarbeit" und "nicht
+    am WE"), damit alle Checkboxen in der oberen Hälfe "Hindernisse" sind.
+
+    

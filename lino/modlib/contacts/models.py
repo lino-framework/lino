@@ -76,8 +76,8 @@ class Persons(Addressables):
 
 class PersonsByCountry(Persons):
     fk_name = 'country'
-    order_by = "city addr1"
-    column_names = "city addr1 name language"
+    order_by = 'city street street_no street_box addr2'
+    column_names = "city street street_no street_box addr2 name language"
     
 
 class CompanyType(models.Model):

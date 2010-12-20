@@ -19,11 +19,12 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
 
 from south.modelsinspector import add_introspection_rules
-add_introspection_rules([], ["^lino\.modlib\.fields\.KnowledgeField"])
-add_introspection_rules([], ["^lino\.modlib\.fields\.PercentageField"])
-add_introspection_rules([], ["^lino\.modlib\.fields\.MyDateField"])
-add_introspection_rules([], ["^lino\.modlib\.fields\.MonthField"])
-add_introspection_rules([], ["^lino\.modlib\.fields\.QuantityField"])
+add_introspection_rules([], ["^lino\.fields\.KnowledgeField"])
+add_introspection_rules([], ["^lino\.fields\.PercentageField"])
+add_introspection_rules([], ["^lino\.fields\.MyDateField"])
+add_introspection_rules([], ["^lino\.fields\.MonthField"])
+add_introspection_rules([], ["^lino\.fields\.QuantityField"])
+add_introspection_rules([], ["^lino\.fields\.HtmlTextField"])
 
 
 LANGUAGE_CHOICES = [ (k,_(v)) for k,v in settings.LANGUAGES ]
@@ -65,6 +66,9 @@ def unused_validate_knowledge(cls,value):
         values=', '.join(KNOWLEDGE_CHOICES_VALID)))
     
 #~ class KnowledgeField(models.SmallIntegerField):
+class HtmlTextField(models.TextField):
+    pass
+    
 class KnowledgeField(models.CharField):
     def __init__(self, *args, **kw):
         defaults = dict(

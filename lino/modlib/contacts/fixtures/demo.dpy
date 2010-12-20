@@ -32,6 +32,7 @@ def objects():
     yield city('Tallinn','EE')
     yield city(u'Pärnu','EE')
     yield city(u'Tartu','EE')
+    yield city(u'Ääsmäe','EE')
     
     yield city(u'Aachen','DE')
     yield city(u'Köln','DE')
@@ -138,6 +139,15 @@ def objects():
     yield person(u'Hedi',     u'Radermacher')
     yield person(u'Inge',     u'Radermacher')
     yield person(u'Jean',     u'Radermacher')
+    
+    # special challenges for alphabetic ordering
+    yield person(u'Elio',     u'di Rupo')
+    yield person(u'Leonardo', u'da Vinci')
+    yield person(u'Herman',   u'van Veen')
+    yield person(u'Rein',   u'Õunapuu')
+    
+    yield person(u'Otto',   u'Östges')
+    yield person(u'Erna',   u'Ärgerlich')
     
     
     person = Instantiator('contacts.Person',country='BE',language='fr',city=City.objects.get(name__exact=u'Angleur')).build

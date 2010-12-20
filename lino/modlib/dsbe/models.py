@@ -42,8 +42,10 @@ from lino.modlib.uploads import models as uploads
 from lino.models import get_site_config
 from lino.tools import get_field
 from lino.utils.babel import add_babel_field, default_language
+from lino.utils.choosers import chooser
 
 #~ from lino.modlib.fields import KNOWLEDGE_CHOICES # for makemessages
+
 
 SCHEDULE_CHOICES = {
     'de':[ 
@@ -78,6 +80,32 @@ REGIME_CHOICES = {
         u"20 hours/week",
         u"35 hours/week",
         u"38 hours/week",
+        u"38 hours/week",
+        ]
+}
+
+AID_RATE_CHOICES = {
+    'de':[ 
+        u'Alleinlebende Person',
+        u'Zusammenlebende Person',
+        u'Person mit Familie zu Lasten',
+        ],
+    'fr':[ 
+        ],
+    'en':[
+        ]
+}
+
+AID_NATURE_CHOICES = {
+    'de':[ 
+              u'Eingliederungseinkommen',
+              u'Sozialhilfe', 
+              u'Ausgleich zum Eingliederungseinkommen', 
+              u'Ausgleich zur Sozialhilfe' 
+        ],
+    'fr':[ 
+        ],
+    'en':[
         ]
 }
 
@@ -110,6 +138,8 @@ RESIDENCE_TYPE_CHOICES = (
   (2  , _("Registry of foreigners") ), # Fremdenregister        Registre des étrangers      vreemdelingenregister 
   (3  , _("Waiting for registry")   ), # Warteregister
 )
+
+
 
 
 class Partner(mixins.DiffingMixin,models.Model):
@@ -148,6 +178,13 @@ class Partner(mixins.DiffingMixin,models.Model):
                 sc.next_partner_id += 1
                 sc.save()
         
+    def disable_delete(self,request):
+        if settings.TIM2LINO_IS_IMPORTED_PARTNER(self):
+            return _("Cannot delete companies and persons imported from TIM")
+          
+
+
+
 #~ class Person(Contact):
 
 class Person(Partner,contacts.Person):
@@ -168,6 +205,11 @@ class Person(Partner,contacts.Person):
     #~ first_name = models.CharField(max_length=200,blank=True,verbose_name=_('First name'))
     #~ last_name = models.CharField(max_length=200,blank=True,verbose_name=_('Last name'))
     #~ title = models.CharField(max_length=200,blank=True,verbose_name=_('Title'))
+        
+    def disabled_fields(self,request):
+        if settings.TIM2LINO_IS_IMPORTED_PARTNER(self):
+            return PERSON_TIM_FIELDS
+        return []
         
     def get_queryset(self):
         return self.model.objects.select_related('country','city','user','nationality')
@@ -237,8 +279,8 @@ class Person(Partner,contacts.Person):
     driving_license = models.CharField(max_length=4,blank=True,null=True,
         verbose_name=_("Driving license"),choices=DRIVING_LICENSE_CHOICES)
     
-    accepts_shift = models.BooleanField(verbose_name=_("ready to work in shifted time"))
-    accepts_we = models.BooleanField(verbose_name=_("ready to work on week-end"))
+    no_shift = models.BooleanField(verbose_name=_("no shift work"))
+    no_weekend = models.BooleanField(verbose_name=_("no work on week-end"))
     has_own_car = models.BooleanField(verbose_name=_("has own car"))
     #~ can_truck = models.BooleanField(verbose_name=_("Truck driving license"))
     can_clark = models.BooleanField(verbose_name=_("Clark driving license"))
@@ -337,10 +379,8 @@ class Person(Partner,contacts.Person):
     overview.return_type = fields.HtmlBox(verbose_name=_("Overview"))
     
     
-
-
 PERSON_TIM_FIELDS = reports.fields_list(Person,
-    '''name first_name last_name title 
+    '''name first_name last_name title remarks
     zip_code city country street street_no street_box 
     birth_date sex birth_place user language 
     phone gsm fax email 
@@ -349,6 +389,9 @@ PERSON_TIM_FIELDS = reports.fields_list(Person,
     bank_account1 bank_account2 
     gesdos_id activity 
     is_cpas is_senior is_active nationality''')
+
+
+
 
 class Persons(contacts.Persons):
     can_view = perms.is_authenticated
@@ -359,24 +402,21 @@ class Persons(contacts.Persons):
     #~ column_names = "name city dsbe.LanguageKnowledgesByPerson *"
     #~ column_names = "name city links.LinksByOwner language_knowledge"
     #~ column_names = "name city dsbe.LanguageKnowledgesByPerson" # dsbe.StudiesByPerson dsbe.ExclusionsByPerson"
+    extra = dict(select=dict(sort_name='lower(last_name||first_name)'))
+    order_by = 'sort_name'
 
     
-    def disabled_fields(self,request,obj):
-        if settings.TIM2LINO_IS_IMPORTED_PARTNER(obj):
-            return PERSON_TIM_FIELDS
-        return []
-        
 class PersonsByNationality(Persons):
     app_label = 'contacts'
     fk_name = 'nationality'
     order_by = "city name"
-    column_names = "city addr1 name country language *"
+    column_names = "city street street_no street_box addr2 name country language *"
     
 class PersonsByCity(Persons):
     app_label = 'contacts'
     fk_name = 'city'
-    order_by = 'addr1 street street_no street_box'
-    column_names = "addr1 street street_no street_box name language *"
+    order_by = 'street street_no street_box addr2'
+    column_names = "street street_no street_box addr2 name language *"
 
 #~ class Persons2(contacts.Persons):
     #~ pass
@@ -400,20 +440,21 @@ class Company(Partner,contacts.Company):
     prefix = models.CharField(max_length=200,blank=True) 
     hourly_rate = fields.PriceField(_("hourly rate"),blank=True,null=True)
     
+    def disabled_fields(self,request):
+        if settings.TIM2LINO_IS_IMPORTED_PARTNER(self):
+            return COMPANY_TIM_FIELDS
+        return []
     
 COMPANY_TIM_FIELDS = reports.fields_list(Company,
-    '''name zip_code city country street 
-    street_no street_box language 
+    '''name remarks
+    zip_code city country street street_no street_box 
+    language 
     phone gsm fax email 
     bank_account1 bank_account2 activity''')
   
+    
 class Companies(contacts.Companies):
     app_label = 'contacts'
-    
-    def disabled_fields(self,request,obj):
-        if settings.TIM2LINO_IS_IMPORTED_PARTNER(obj):
-            return COMPANY_TIM_FIELDS
-        return []
     
 #~ from lino.modlib.contacts.models import Companies
 
@@ -666,6 +707,25 @@ class ContractTypes(reports.Report):
     model = ContractType
     column_names = 'name build_method template *'
 
+#
+# EXAMINATION POLICIES
+#
+class ExamPolicy(models.Model):
+    class Meta:
+        verbose_name = _("examination policy")
+        verbose_name_plural = _('examination policies')
+        
+    name = models.CharField(_("contract title"),max_length=200)
+    
+    def __unicode__(self):
+        return unicode(self.name)
+        
+add_babel_field(ExamPolicy,'name')
+
+class ExamPolicies(reports.Report):
+    model = ExamPolicy
+    column_names = 'name *'
+
 
 #
 # CONTRACTS
@@ -687,47 +747,82 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,mixins.
     date_issued = models.DateField(blank=True,null=True,verbose_name=_("date issued"))
     duration = models.IntegerField(_("duration (days)"),blank=True,null=True,default=None)
     
+    
     regime = models.CharField(_("regime"),max_length=200,blank=True,null=True)
     schedule = models.CharField(_("schedule"),max_length=200,blank=True,null=True)
-    hourly_rate =     hourly_rate = fields.PriceField(_("hourly rate"),blank=True,null=True)
-    refund_rate = models.CharField(_("refund rate"),max_length=200,blank=True,null=True)
+    hourly_rate = fields.PriceField(_("hourly rate"),blank=True,null=True)
+    refund_rate = models.CharField(_("refund rate"),max_length=200,
+        blank=True,null=True)
     
-    reference_person = models.CharField(_("reference person"),max_length=200,blank=True,null=True)
+    reference_person = models.CharField(_("reference person"),max_length=200,
+        blank=True,null=True)
     
     responsibilities = models.TextField(_("responsibilities"),blank=True,null=True)
     
-    def duration_choices(self):
+    stages = fields.HtmlTextField(_("stages"),blank=True,null=True)
+    duties_asd = fields.HtmlTextField(_("duties ASD"),blank=True,null=True)
+    duties_dsbe = fields.HtmlTextField(_("duties DSBE"),blank=True,null=True)
+    duties_company = fields.HtmlTextField(_("duties company"),blank=True,null=True)
+    
+    user_asd = models.ForeignKey("auth.User",verbose_name=_("ASD user"),
+        related_name='contracts_asd',blank=True,null=True) 
+    
+    #~ exam_freq = models.IntegerField(_("exam every X months"),blank=True,null=True,default=None)
+    exam_policy = models.ForeignKey("dsbe.examPolicy",blank=True,null=True)
+    
+    aid_nature = models.CharField(_("aid nature"),max_length=100,blank=True)
+    aid_rate = models.CharField(_("aid rate"),max_length=100,blank=True)
+    
+    @chooser(simple_values=True)
+    def duration_choices(cls):
         return [ 312, 468, 624 ]
         #~ return [ 0, 25, 50, 100 ]
-    duration_choices.simple_values = True
-    duration_choices = classmethod(duration_choices)
+    #~ duration_choices.simple_values = True
+    #~ duration_choices = classmethod(duration_choices)
     
-    def regime_choices(self,language):
+    @chooser(simple_values=True)
+    def regime_choices(cls,language):
         return language_choices(language,REGIME_CHOICES)
-    regime_choices.simple_values = True
-    regime_choices = classmethod(regime_choices)
+    #~ regime_choices.simple_values = True
+    #~ regime_choices = classmethod(regime_choices)
     
-    def schedule_choices(self,language):
+    @chooser(simple_values=True)
+    def schedule_choices(cls,language):
         return language_choices(language,SCHEDULE_CHOICES)
-    schedule_choices.simple_values = True
-    schedule_choices = classmethod(schedule_choices)
+    #~ schedule_choices.simple_values = True
+    #~ schedule_choices = classmethod(schedule_choices)
     
-    def refund_rate_choices(self):
+    @chooser(simple_values=True)
+    def refund_rate_choices(cls):
         return [ 
         u"0%",
         u"25%",
         u"50%",
         u"100%",
         ]
-    refund_rate_choices.simple_values = True
-    refund_rate_choices = classmethod(refund_rate_choices)
+    #~ refund_rate_choices.simple_values = True
+    #~ refund_rate_choices = classmethod(refund_rate_choices)
+    
+    @chooser(simple_values=True)
+    def aid_rate_choices(cls,language):
+        return language_choices(language,AID_RATE_CHOICES)
+        
+    @chooser(simple_values=True)
+    def aid_nature_choices(cls,language):
+        return language_choices(language,AID_NATURE_CHOICES)
+    
+    #~ @chooser(simple_values=True)
+    #~ def exam_policy_choices(cls,language):
+        #~ return ExamPolicy.objects.all()
+    
     
     def disabled_fields(self,request):
         if self.must_build:
             return []
         return CONTRACT_PRINTABLE_FIELDS
         
-    @classmethod
+    #~ @classmethod
+    @chooser()
     def contact_choices(cls,company):
         if company is not None:
             return company.contact_set.all()

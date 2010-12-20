@@ -7,8 +7,8 @@ main =
   
 
 box1 = 
-  accepts_shift
-  accepts_we
+  no_shift
+  no_weekend
   fulltime_only
   parttime_only
 

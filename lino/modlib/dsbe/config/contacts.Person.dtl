@@ -12,7 +12,7 @@ box1 =
   country region
   city zip_code:10
   street:25 street_no street_box
-  addr1:40
+  addr2:40
 
 box2 = 
   id:12 language

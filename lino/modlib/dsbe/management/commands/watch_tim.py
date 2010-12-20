@@ -87,7 +87,10 @@ class Controller:
             if data.has_key(v):
                 setattr(obj,k,data[v])
         obj = settings.TIM2LINO_LOCAL(self.__class__.__name__,obj)
-        obj.full_clean()
+        try:
+            obj.full_clean()
+        except ValidationError,e:
+            dblogger.warning("Validation failed for %s : %s",obj2str(obj),e)
                 
     def POST(self,**kw):
         obj = self.model()
@@ -159,11 +162,15 @@ class PAR(Controller):
             d.update(gesdos_id='NB1')
             if data.has_key('IDUSR'):  
                 username = settings.TIM2LINO_USERNAME(data['IDUSR'])
-                if username is not None:
+                if username:
                     try:
                         obj.user = auth.User.objects.get(username=username)
                     except auth.User.DoesNotExist,e:
-                        dblogger.warning(u"%s : PAR->IdUsr %r (converted to %r) doesn't exist!",obj2str(obj),data['IDUSR'],username)
+                        dblogger.warning(
+                          u"%s : PAR->IdUsr %r (converted to %r) doesn't exist!",
+                          obj2str(obj),data['IDUSR'],username)
+                else:
+                    obj.user = None
             if data.has_key('FIRME'):  
                 for k,v in name2kw(data['FIRME']).items():
                     setattr(obj,k,v)
@@ -398,7 +405,7 @@ class Command(DaemonCommand):
         main(*args,**options)
 
 
-    def handle(self, *args, **options):
-        logger.info("handle(%r,%r)",args,options)
-        dblogger.info("handle(%r,%r)",args,options)
-        return DaemonCommand.handle(self,*args,**options)
+    #~ def handle(self, *args, **options):
+        #~ logger.info("handle(%r,%r)",args,options)
+        #~ dblogger.info("handle(%r,%r)",args,options)
+        #~ return DaemonCommand.handle(self,*args,**options)

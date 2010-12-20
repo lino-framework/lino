@@ -1,0 +1,45 @@
+20101216
+========
+
+#.  "Die alphabetische Sortierreihenfolge ist menschlich gesehen 
+    nicht ganz logisch. z.B. ein "brand eins Verlag" kommt hinter 
+    "_ÖSHZ" und vor "da Paixao". Ich denke aber, dass ein 
+    "normaler" Mensch, den eher in der Ecke der "Brandenbergs" 
+    suchen würde. Ähnliches gilt für die "Östges", die sich 
+    momentan am Ende wiederfinden."
+
+Die `Doku von Django 
+<http://docs.djangoproject.com/en/dev/ref/models/querysets/>`_ 
+sagt dazu:
+There's no way to specify whether ordering should be case sensitive. 
+With respect to case-sensitivity, Django will order results   
+however your database backend normally orders them.
+
+Scott Barnham beschreibt 
+einen Trick, wie er 
+`case-insensitive ordering 
+<http://scottbarnham.com/blog/2007/11/20/case-insensitive-ordering-with-django-and-postgresql/>`_
+mit Hilfe von `QuerySet.extra()
+<http://docs.djangoproject.com/en/dev/ref/models/querysets/#extra>`_ hinkriegt.
+
+http://en.wikibooks.org/wiki/SQL_Dialects_Reference/Functions_and_expressions/String_functions
+
+Ich muss also erstmal in 
+:class:`lino.reports.Report` 
+meinen bisherigen Parameter 
+`extra` umbenennen nach `create_rows`.
+
+
+
+Und jetzt :attr:`lino.reports.Report.extra`, den 
+ich `dsbe.Persons` wie folgt benutze::
+
+  class Persons(contacts.Persons):
+      ...
+      extra = dict(select=dict(sort_name='lower(last_name||first_name)'))
+      order_by = 'sort_name'
+
+Voilà! Das klappt. Freilich logischerweise nur Groß- und Kleinbuchstaben. 
+Umlaute sind weiterhin ganz am Ende.
+
+TODO: google for "sqlite locale sort order"

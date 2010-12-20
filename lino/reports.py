@@ -372,9 +372,10 @@ class ReportActionRequest:
     master_instance = None
     master = None
     instance = None
+    create_rows = None
     extra = None
     layout = None
-    selected_rows = []
+    #~ selected_rows = []
     
     def __init__(self,ui,report,action):
     #~ def __init__(self,rh,action):
@@ -401,10 +402,12 @@ class ReportActionRequest:
             #~ master_id=None,
             offset=None,limit=None,
             layout=None,user=None,
-            extra=None,quick_search=None,
+            create_rows=None,
+            quick_search=None,
             gridfilters=None,
             order_by=None,
-            selected_rows=None,
+            extra=None,
+            #~ selected_rows=None,
             **kw):
         if user is not None and not self.report.can_view.passes(user):
             msg = _("User %(user)s cannot view %(report)s.") % dict(user=user,report=self.report)
@@ -413,8 +416,9 @@ class ReportActionRequest:
         self.quick_search = quick_search
         self.gridfilters = gridfilters
         self.order_by = order_by
-        if selected_rows is not None:
-            self.selected_rows = selected_rows
+        self.extra = extra
+        #~ if selected_rows is not None:
+            #~ self.selected_rows = selected_rows
         
         if master is None:
             master = self.report.master
@@ -430,15 +434,15 @@ class ReportActionRequest:
             
         self.master_kw = self.report.get_master_kw(master_instance)
         self.master_instance = master_instance
-        if self.extra is None:
-            if extra is None:
+        if self.create_rows is None:
+            if create_rows is None:
                 if self.master_kw is None:
-                    extra = 0
+                    create_rows = 0
                 elif self.user is not None and self.report.can_add.passes(self.user):
-                    extra = 1
+                    create_rows = 1
                 else:
-                    extra = 0
-            self.extra = extra
+                    create_rows = 0
+            self.create_rows = create_rows
         if self.ui is not None:
             if layout is None:
                 layout = self.ah._layouts[self.report.default_layout]
@@ -545,6 +549,21 @@ class Report(actors.Actor): #,base.Handled):
     model = None
     use_as_default_report = True
     order_by = None
+    
+    extra = None
+    """
+    Examples::
+    
+      extra = dict(select=dict(lower_name='lower(name)'))
+      # (or if you prefer:) 
+      # extra = {'select':{'lower_name':'lower(name)'}}
+      order_by = 'lower_name'
+    
+    List of SQL functions and which RDBMS supports them:
+    http://en.wikibooks.org/wiki/SQL_Dialects_Reference/Functions_and_expressions/String_functions
+    
+    """
+    
     filter = None
     exclude = None
     title = None
@@ -848,6 +867,9 @@ class Report(actors.Actor): #,base.Handled):
             qs = add_quick_search_filter(qs,rr.quick_search)
         if rr.gridfilters is not None:
             qs = add_gridfilters(qs,rr.gridfilters)
+        extra = rr.extra or self.extra
+        if extra is not None:
+            qs = qs.extra(**extra)
         order_by = rr.order_by or self.order_by
         if order_by:
             qs = qs.order_by(*order_by.split())

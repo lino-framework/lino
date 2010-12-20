@@ -19,6 +19,7 @@ from lino import reports
 from lino import fields
 from lino.utils import join_words
 from lino.utils.babel import add_babel_field, default_language, babelattr
+from lino.utils.choosers import chooser
     
 
 class Addressable(models.Model):
@@ -51,7 +52,7 @@ Anything that has contact information (postal address, email, phone,...).
     street = models.CharField(_("Street"),max_length=200,blank=True)
     street_no = models.CharField(_("No."),max_length=10,blank=True)
     street_box = models.CharField(_("Box"),max_length=10,blank=True)
-    addr1 = models.CharField(max_length=200,blank=True)
+    addr2 = models.CharField(_("Additional address line"),max_length=200,blank=True)
     #addr2 = models.CharField(max_length=200,blank=True)
     
     country = models.ForeignKey('countries.Country',blank=True,null=True,
@@ -69,14 +70,14 @@ Anything that has contact information (postal address, email, phone,...).
     language = fields.LanguageField(default=default_language)
     
     email = models.EmailField(_('E-Mail'),blank=True,null=True)
-    url = models.URLField(blank=True,verbose_name=_('URL'))
-    phone = models.CharField(max_length=200,blank=True,verbose_name=_('Phone'))
-    gsm = models.CharField(max_length=200,blank=True,verbose_name=_('GSM'))
-    fax = models.CharField(max_length=200,blank=True,verbose_name=_('Fax'))
+    url = models.URLField(_('URL'),blank=True)
+    phone = models.CharField(_('Phone'),max_length=200,blank=True)
+    gsm = models.CharField(_('GSM'),max_length=200,blank=True)
+    fax = models.CharField(_('Fax'),max_length=200,blank=True)
     #image = models.ImageField(blank=True,null=True,
     # upload_to=".")
     
-    remarks = models.TextField(blank=True,null=True)
+    remarks = models.TextField(_("Remarks"),blank=True,null=True)
     
     def __unicode__(self):
         return self.name
@@ -116,7 +117,8 @@ Anything that has contact information (postal address, email, phone,...).
         #~ logger.debug('%s : as_address() -> %r',self,lines)
         #~ return mark_safe(linesep.join(lines))
         
-    @classmethod
+    #~ @classmethod
+    @chooser()
     def city_choices(cls,country):
         #print "city_choices", repr(recipient)
         #recipient = self.objects.get(pk=pk)

@@ -23,6 +23,10 @@
     indéfiniment et sans se plaindre nulle part que ce fichier `pid.lock`
     soit libéré[1_]. En changeant le nom du pidfile tu avais contourné ce
     problème. J'ai maintenant remis le nom `pid` et cela fonctionne également.
-
     
 .. _1: http://packages.python.org/lockfile/lockfile.html#lockfile.FileLock.acquire
+
+#.  renamed :mod:`lino.utils.daemonextension` 
+    to :mod:`lino.utils.daemoncommand`
+
+#:  Release in Eupen.

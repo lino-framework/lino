@@ -24,9 +24,9 @@ from django.utils.translation import ugettext as _
 
 from lino.utils.instantiator import Instantiator, i2d
 from lino.tools import resolve_model
+from lino.utils.babel import babel_values, default_language
 
 from django.contrib.auth import models as auth
-
 
 
 
@@ -60,6 +60,7 @@ User = resolve_model('auth.User')
 person = Instantiator(Person).build
 company = Instantiator(Company).build
 contact = Instantiator(Contact).build
+exam_policy = Instantiator('dsbe.ExamPolicy').build
 
 #char_pv = Instantiator('properties.CharPropValue').build
 #CharPropValue = resolve_model('properties.CharPropValue')
@@ -230,5 +231,4 @@ def objects():
         for x in demo_links(company=obj):
             yield x
             
-    
     

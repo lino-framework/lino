@@ -113,7 +113,7 @@ def country2kw(row,kw):
         except Country.DoesNotExist:
             country = Country(isocode=country,name=country,short_code=country)
             country.save()
-    kw.update(country=country)
+        kw.update(country=country)
     
     store(kw,
       phone=row['TEL'],

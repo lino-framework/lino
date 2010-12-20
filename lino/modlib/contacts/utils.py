@@ -1,3 +1,4 @@
+#coding: UTF-8
 ## Copyright 2010 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
@@ -136,6 +137,9 @@ Examples:
 
 >>> street2kw(u"rue des 600 Franchimontois 1")
 {'street_box': u'', 'street': u'rue des 600 Franchimontois', 'street_no': u'1'}
+
+>>> street2kw(u"Neustr. 1 (Referenzadr.)")
+{'addr2': u'(Referenzadr.)', 'street': u'Neustr.', 'street_no': u'1'}
     
     """
     #~ m = re.match(r"(\D+),?\s*(\d+)\s*(\w*)", s)
@@ -143,7 +147,11 @@ Examples:
     if m:
         kw['street'] = m.group(1).strip()
         kw['street_no'] = m.group(2).strip()
-        kw['street_box'] = m.group(3).strip()
+        street_box = m.group(3).strip()
+        if len(street_box) > 5:
+            kw['addr2'] = street_box
+        else:
+            kw['street_box'] = street_box
     else:
         kw['street'] = s
     return kw

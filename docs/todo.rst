@@ -9,9 +9,23 @@ for which I hope for help from other people.
 Before version 1.0
 ------------------
 
-#.  cannot insert in contacts by company
+#.  HTML-Editoren haben noch Probleme (Layout und Performance) und sind deshalb 
+    momentan deaktiviert.
+    
+#.  Auswahllisten FR für aid_nature und aid_rate sind noch leer    
 
-#.  watch_tim startet nicht
+#.  Auswahlliste exam_policy wird auch in französischen Verträgen deutsch angezeigt.
+
+#.  Die 4 Text-Editoren im Reiter "VSE" überlappen sich teilweise.
+
+#.  Wenn man z.B. auf Next oder Prev klickt und vorher nicht gespeichert hat, 
+    dann sind alle Änderungen futsch.
+
+#.  Vorbelegung Contract.user_asd = Person.user (wenn es ein anderer als Contract.user ist).
+
+#.  Übersetzungen
+
+#.  Textbausteine
 
 #.  slave report in a detail remains empty in some cases.
     e.g. ContractsByCompany. 
@@ -19,14 +33,14 @@ Before version 1.0
     Nicht wenn ich Permalink oder open in own window
 
 #. TypeError: Cannot convert Decimal("350") to Decimal wenn er `Company.hourly_rate` 
-   in erinen Vertrag übernimmt.
+   in einen Vertrag übernimmt.
 
 #. Nach dem Löschen eines Vertrags verschwindet dieser erst aus 
    der Grid wenn man ein Refresh macht. 
    Refresh wird nicht automatisch gemacht.
 
 #. Liste der Personen sollte zunächst mal nur "meine" Personen anzeigen.
-   Evtl. mehrere Menübefehle.
+   Evtl. neue Menübefehle "Meine Personen" und "Meine Coachings".
 
 #.  "Active fields" : wenn die sich ändern, macht der Client ein GET für diesen Record, 
     wobei er aber auch alle anderen geänderten und noch nicht gespeicherten Felder mit 
@@ -37,10 +51,6 @@ Before version 1.0
     Implementierung vielleicht mit Methoden `on_FIELD_change`, deren 
     Parameter ähnlich wie choosers analysiert werden.
     GET /api/contacts/Persons/17?fmt=json&query=foo
-
-#. Wenn man ClearCacheAction macht und das Dokument neu druckt, 
-   dauert es eine Zeit, bis der Cache des Browsers kapiert, 
-   dass die URL neu angefragt werden muss.
 
 #. Ext.LoadMask kennenlernen:
    http://www.sencha.com/forum/showthread.php?64420-how-to-show-a-wait-message-while-calling-store-load
@@ -55,12 +65,12 @@ Before version 1.0
 Waiting for feedback
 --------------------
 
+#. Wenn man ClearCacheAction macht und das Dokument neu druckt, 
+   dauert es eine Zeit, bis der Cache des Browsers kapiert, 
+   dass die URL neu angefragt werden muss.
+
 #. Arbeitsregime und Stundenplan: 
    Texte in Konfigurationsdateien auslagern
-
-#. Vorschlag: im Tab "Profile 2" die Felder "auch Schichtarbeit" und "auch am WE" 
-   ersetzen durch ihr Gegenteil ("keine Schichtarbeit" und "nicht am WE"), damit alle 
-   Checkboxen in der oberen Hälfe Hindernisse sind.
 
 #. Externe Links (Lesezeichen) notieren können, indem man sie von einem anderen Browserfenster 
    per drag & drop auf die HtmlBox zieht.   
@@ -111,7 +121,7 @@ After version 1.0
    der die Records aller Benutzer und Personen durchblättert.
 
 #. It is not possible to select multiple rows when using CellSelectionModel 
-   (which is the default and which cannot be changed).
+   (which is Lino's default and which cannot be changed for the moment).
    Maybe add a button to switch between the two selection models?
    Caution: delete_selected currently probably works only with a CellSelectionModel.
 
@@ -122,40 +132,37 @@ After version 1.0
 
 #. Formatierung der :xfile:`welcome.html` lässt zu wünschen übrig.  
 
-#. Wenn man die Konsole aufklappt, könnten dort die letzten par Meldungen angezeigt werden...
-
 #. Wie kann ich die Test-Templates für Notizen in den code repository rein kriegen?
    Er soll sie dann auch unabhängig von der Sprache finden. 
    Vielleicht werde ich doctemplates in die config-directories verschieben 
    und mein System von config-Dateien erweitern, dass es auch Unterverzeichnisse verträgt.
    Siehe :doc:`/blog/2010/1029`, :doc:`/blog/2010/1112`.
   
-#. Hauptmenü nicht anzeigen, wenn ein Fenster offen ist. 
-   Stattdessen ein bequemer Button, um ein weiteres Browserfenster mit Lino zu öffnen.
-   Weil die Benutzer sonst irgendwann einen Stack overflow kriegen, 
-   weil sie sich nicht dessen bewusst sind, 
-   dass ihre Fenster offen bleiben.
-   (Das hätte möglicherweise später als Folge, dass das Hauptmenü gar kein Pulldown-Menü mehr zu sein braucht, 
-   sondern eine für Webseiten klassischere Ansicht benutzen.)
+#.  Hauptmenü nicht anzeigen, wenn ein Fenster offen ist. 
+    Stattdessen ein bequemer Button, um ein weiteres Browserfenster mit Lino zu öffnen.
+    Weil die Benutzer sonst irgendwann einen Stack overflow kriegen, 
+    weil sie sich nicht dessen bewusst sind, 
+    dass ihre Fenster offen bleiben.
+    (Das hätte möglicherweise später als Folge, dass das Hauptmenü gar kein Pulldown-Menü mehr zu sein braucht, 
+    sondern eine für Webseiten klassischere Ansicht benutzen.)
   
-#. Man kann z.B. noch nicht nach Personen suchen, die ein bestimmtes Studium haben.
+#.  Man kann z.B. noch nicht nach Personen suchen, die ein bestimmtes Studium haben.
 
-#. Einheitliches Interface um Reihenfolge zu verändern (Journals, DocItems, LinksByOwner,...). Erster Schritt: Abstract model "Ordered" mit einem Feld `pos` und zwei Actions "move up" und "move down".
+#.  Einheitliches Interface um Reihenfolge zu verändern (Journals, DocItems, LinksByOwner,...). 
+    Erster Schritt: Abstract model "Ordered" mit einem Feld `pos` und zwei Actions "move up" und "move down".
 
-#. Eingabe im Detail eines SalesDocument funktioniert noch nicht: 
-   Wenn man ein 
-   Produkt auswählt, antwortet der Server 
-   `{'unit_price': ValidationError([u'This value must be a decimal number.'])}` 
-   statt den Stückpreis selber auszufüllen.
+#.  Eingabe im Detail eines SalesDocument funktioniert noch nicht: 
+    Wenn man ein 
+    Produkt auswählt, antwortet der Server 
+    `{'unit_price': ValidationError([u'This value must be a decimal number.'])}` 
+    statt den Stückpreis selber auszufüllen.
   
-#. Fenstertitel ändern bzw. anzeigen, welche GC momentan aktiv ist.
+#.  Fenstertitel ändern bzw. anzeigen, welche GC momentan aktiv ist.
 
-#. Das Passfoto in dsbe.PersonDetail ist manchmal verzerrt oder noch nicht korrekt ausgeschnitten.
-
-#. Was soll passieren wenn man Contract.company ändert, nachdem Contract.contact schon ausgefüllt ist?
-   Automatisch neuen Kontakt mit gleicher Person und Eigenschaft für die andere Firma anlegen?
-   ValidationError?
-   Am ehesten wäre: contact auf leer setzen.
+#.  Was soll passieren wenn man Contract.company ändert, nachdem Contract.contact schon ausgefüllt ist?
+    Automatisch neuen Kontakt mit gleicher Person und Eigenschaft für die andere Firma anlegen?
+    ValidationError?
+    Am ehesten wäre: contact auf leer setzen.
 
 Long-term
 ---------
@@ -439,7 +446,7 @@ Long-term
 
 #.  `How to LSBize an Init Script <http://wiki.debian.org/LSBInitScripts>`_
 
-
+#.  http://de.wikipedia.org/wiki/Xming
 
 Documentation
 -------------

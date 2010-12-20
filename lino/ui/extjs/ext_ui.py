@@ -835,7 +835,7 @@ class ExtUI(base.UI):
                 #logger.debug('%s.render_to_dict() total_count=%d extra=%d',self,total_count,self.extra)
                 # add extra blank row(s):
                 #~ for i in range(0,ar.extra):
-                if ar.extra:
+                if ar.create_rows:
                     row = ar.create_instance()
                     d = ar.row2list(row)
                     #~ d = ar.row2dict(row)

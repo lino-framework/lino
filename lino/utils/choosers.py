@@ -51,8 +51,10 @@ class Chooser(BaseChooser):
         if not isinstance(field,models.ForeignKey):
             self.simple_values = getattr(meth,'simple_values',False)        
             self.instance_values = getattr(meth,'instance_values',False)
-        self.context_params = meth.func_code.co_varnames[1:meth.func_code.co_argcount]
-        #~ print '20100724c', meth, self.context_params 
+        #~ self.context_params = meth.func_code.co_varnames[1:meth.func_code.co_argcount]
+        self.context_params = meth.context_params
+        #~ self.context_params = meth.func_code.co_varnames[:meth.func_code.co_argcount]
+        #~ print '20100724', meth, self.context_params
         #~ logger.warning("20100527 %s %s",self.context_params,meth)
         self.context_values = []
         self.context_fields = []
@@ -88,6 +90,7 @@ class Chooser(BaseChooser):
         args = []
         for varname in self.context_params:
             args.append(context.get(varname,None))
+        #~ print args
         return self.meth(*args)
       
     def get_request_choices(self,request):
@@ -174,3 +177,17 @@ class simple_choices_method(choices_method):
         #~ choices_method.__init__(self,fn)
         
 """
+
+
+def chooser(**options):
+    def chooser_decorator(fn):
+        def wrapped(*args):
+            #~ print 20101220, args
+            return fn(*args)
+        wrapped.context_params = fn.func_code.co_varnames[1:fn.func_code.co_argcount]
+        for k,v in options.items():
+            setattr(wrapped,k,v)
+        return classmethod(wrapped)
+    return chooser_decorator
+    
+
