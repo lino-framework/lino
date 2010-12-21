@@ -62,22 +62,23 @@ def get_site_config():
 
 class Permissions(reports.Report):
     model = auth.Permission
-    order_by = 'content_type__app_label codename'
+    order_by = 'content_type__app_label codename'.split()
   
 class Users(reports.Report):
     model = auth.User
-    order_by = "username"
-    display_field = 'username'
+    #~ order_by = "last_name first_name".split()
+    order_by = ["username"]
+    #~ display_field = 'username'
     column_names = 'username first_name last_name is_active id is_superuser is_staff last_login'
 
 class Groups(reports.Report):
     model = auth.Group
-    order_by = "name"
-    display_field = 'name'
+    order_by = ["name"]
+    #~ display_field = 'name'
 
 class Sessions(reports.Report):
     model = sessions.Session
-    display_field = 'session_key'
+    #~ display_field = 'session_key'
 
 
 class ContentTypes(reports.Report):

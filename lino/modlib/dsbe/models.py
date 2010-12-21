@@ -41,7 +41,7 @@ from lino.modlib.links import models as links
 from lino.modlib.uploads import models as uploads
 from lino.models import get_site_config
 from lino.tools import get_field
-from lino.utils.babel import add_babel_field, default_language
+from lino.utils.babel import add_babel_field, default_language, babelattr
 from lino.utils.choosers import chooser
 
 #~ from lino.modlib.fields import KNOWLEDGE_CHOICES # for makemessages
@@ -451,7 +451,7 @@ class Company(Partner,contacts.Company):
 COMPANY_TIM_FIELDS = reports.fields_list(Company,
     '''name remarks
     zip_code city country street street_no street_box 
-    language 
+    language vat_id
     phone gsm fax email 
     bank_account1 bank_account2 activity''')
   
@@ -702,7 +702,7 @@ class ContractType(mixins.PrintableType):
     name = models.CharField(_("contract title"),max_length=200)
     
     def __unicode__(self):
-        return unicode(self.name)
+        return unicode(babelattr(self,'name'))
         
 add_babel_field(ContractType,'name')
 
@@ -718,10 +718,12 @@ class ExamPolicy(models.Model):
         verbose_name = _("examination policy")
         verbose_name_plural = _('examination policies')
         
-    name = models.CharField(_("contract title"),max_length=200)
+    name = models.CharField(_("designation"),max_length=200)
     
     def __unicode__(self):
-        return unicode(self.name)
+        return unicode(babelattr(self,'name'))
+    #~ def __unicode__(self):
+        #~ return unicode(self.name)
         
 add_babel_field(ExamPolicy,'name')
 
@@ -852,12 +854,22 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,mixins.
         except Exception,e:
             return self.person.user or self.user
             
+    def on_person_changed(self,request):
+        if self.person is not None:
+            if self.person.user == self.user:
+                self.user_asd = None
+            else:
+                self.user_asd = self.person.user
+                
+    def on_create(self,request):
+        self.on_person_changed(request)
+      
     def full_clean(self):
       
         if self.person is not None:
-            if not self.user_asd:
-                if self.person.user != self.user:
-                    self.user_asd = self.person.user
+            #~ if not self.user_asd:
+                #~ if self.person.user != self.user:
+                    #~ self.user_asd = self.person.user
             if self.person.birth_date and self.applies_from:
                 def duration(refdate):
                     delta = refdate - self.person.birth_date

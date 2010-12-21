@@ -63,3 +63,18 @@ Done:
 #.  Upgrade ExtJS (to 3.3.1) and Django (to rev. 14995) in Eupen.
 
 #.  Neue Methode :meth:`Person.get_full_name`
+
+(Release)
+
+#.  `__unicode__` in ContractType und ExamPolicy benutzen 
+    jetzt `babelattr(self,'name')`.
+    Mal sehen, ob das funktioniert.
+    
+#.  `Report.order_by` muss jetzt eine Liste von Feldnamen sein und nicht mehr ein 
+    space-separated string. Sonst ist das zu irritierend für Leute, die Django 
+    kennen.
+
+#.  Wenn man `Contract.user_asd` auf leer setzte, dann setzte Lino erneut den 
+    Standardwert (nämlich `self.person.user`) dort ein. 
+    Jetzt macht er das nur noch in `on_create`.
+    Eigentlich müsste er es auch noch machen, wenn `self.person` verändert wurde.

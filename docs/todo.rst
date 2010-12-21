@@ -9,21 +9,7 @@ for which I hope for help from other people.
 Before version 1.0
 ------------------
 
-#.  HTML-Editoren haben noch Probleme (Layout und Performance) und sind deshalb 
-    momentan deaktiviert.
-    Die 4 Text-Editoren im Reiter "VSE" überlappen sich teilweise.
-
-#.  Übersetzungen
-
-#.  Textbausteine
-
-#.  slave report in a detail remains empty in some cases.
-    e.g. ContractsByCompany. 
-    Scheinbar nur wenn dieser Benutzer gerade einen Vertrag erstellt hat. 
-    Nicht wenn ich Permalink oder open in own window
-
-#.  Liste der Personen sollte zunächst mal nur "meine" Personen anzeigen.
-    Evtl. neue Menübefehle "Meine Personen" und "Meine Coachings".
+#.  Submit on each change
 
 #.  Wenn man z.B. auf Next oder Prev klickt und vorher nicht gespeichert hat, 
     dann sind alle Änderungen futsch.
@@ -38,6 +24,23 @@ Before version 1.0
     Parameter ähnlich wie choosers analysiert werden.
     GET /api/contacts/Persons/17?fmt=json&query=foo
 
+#.  HTML-Editoren haben noch Probleme (Layout und Performance) und sind deshalb 
+    momentan deaktiviert.
+    Alternativ reicht vielleicht eine robuste Markup-Sprache, 
+    denn wir wollen ja eigentlich "nur" die Möglichkeit, 
+    mehrere Absätze und Aufzählungen eingeben zu können.
+    Die 4 Text-Editoren im Reiter "VSE" überlappen sich teilweise.
+
+#.  Textbausteine
+
+#.  slave report in a detail remains empty in some cases.
+    e.g. ContractsByCompany. 
+    Scheinbar nur wenn dieser Benutzer gerade einen Vertrag erstellt hat. 
+    Nicht wenn ich Permalink oder open in own window
+
+#.  Liste der Personen sollte zunächst mal nur "meine" Personen anzeigen.
+    Evtl. neue Menübefehle "Meine Personen" und "Meine Coachings".
+
 #.  Auswahlliste exam_policy wird auch in französischen Verträgen deutsch angezeigt.
 
 #. Ext.LoadMask kennenlernen:
@@ -48,9 +51,6 @@ Before version 1.0
    
 #. "Insert as copy"
 
-#.  Chrome 10 hat scheinbar ein Problem mit ExtJS:
-    http://www.google.com/support/forum/p/Chrome/thread?tid=5d3cce9457a1ebb1&hl=en    
-    
 #. Sortierung: Entweder Ticket :doc:`/tickets/19` lösen, oder (noch besser) 
    auf Datenbank-Ebene lokalisierte Sortierung einstellen.
 
@@ -448,6 +448,9 @@ Long-term
 
 #.  http://de.wikipedia.org/wiki/Xming
 
+#.  Chrome 10 hat scheinbar ein Problem mit ExtJS:
+    http://www.google.com/support/forum/p/Chrome/thread?tid=5d3cce9457a1ebb1&hl=en    
+    
 Documentation
 -------------
 

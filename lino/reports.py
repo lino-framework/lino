@@ -582,7 +582,7 @@ class Report(actors.Actor): #,base.Handled):
     help_url = None
     #master_instance = None
     page_length = 10
-    display_field = '__unicode__'
+    #~ display_field = '__unicode__'
     #date_format = 'Y-m-d'
     #date_format = '%d.%m.%y'
     
@@ -891,7 +891,8 @@ class Report(actors.Actor): #,base.Handled):
             qs = qs.extra(**extra)
         order_by = rr.order_by or self.order_by
         if order_by:
-            qs = qs.order_by(*order_by.split())
+            assert not isinstance(order_by,basestring)
+            qs = qs.order_by(*order_by)
         return qs
 
     def slave_as_summary_meth(self,ui,row_separator):
@@ -943,7 +944,7 @@ class Report(actors.Actor): #,base.Handled):
         #~ self.on_create(instance,req)
         
         """
-        Used e.b. by modlib.notes.Note.on_create().
+        Used e.g. by modlib.notes.Note.on_create().
         on_create gets the request as argument.
         Didn't yet find out how to do that using a standard Django signal 
         """
