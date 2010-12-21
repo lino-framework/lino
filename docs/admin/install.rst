@@ -51,9 +51,9 @@ I also installed
 :term:`pyratemp`, :term:`Pisa` and :term:`appy_pod` 
 into `/var/snapshots/`::
 
-  wget http://www.sencha.com/deploy/ext-3.3.0.zip
-  unzip ext-3.3.0.zip
-  rm ext-3.3.0.zip
+  wget http://extjs.cachefly.net/ext-3.3.1.zip
+  unzip ext-3.3.1.zip
+  rm ext-3.3.1.zip
 
   wget http://launchpad.net/appy/0.5/0.5.5/+download/appy0.5.5.zip  
   unzip appy0.5.5.zip -d appy-0.5.5

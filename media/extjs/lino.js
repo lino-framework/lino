@@ -751,7 +751,7 @@ Lino.submit_insert = function(panel,btn) {
       Lino.notify(action.result.message);
       panel.ww.close();
       if (panel.ww.caller) {
-          console.log(panel.ww.caller);
+          //~ console.log(panel.ww.caller);
           panel.ww.caller.ls_detail_handler(panel.ww.caller,{
             record_id:action.result.record_id,
             base_params:panel.ww.caller.get_base_params()});

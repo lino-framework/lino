@@ -23,17 +23,41 @@ Done:
     
 #.  Auswahllisten FR für aid_nature und aid_rate waren noch leer    
 
+#.  Development release in Eupen mit den obigen Änderungen.
 
-aptitude install sqlite3
-aptitude remove sqlite
-aptitude install python-pysqlite2
+#.  Außerdem habe ich auf dem Server in Eupen folgendes gemacht::
 
-http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=494987
-http://www.sqlite.org/faq.html#q18
-http://www.sqlite.org/c3ref/create_collation.html
-
-To do:    
+      aptitude install sqlite3
+      aptitude remove sqlite
+      aptitude install python-pysqlite2
+      
+#.  `Uncaught TypeError: Cannot read property 'id' of undefined` 
+    wenn man :menuselection:`Kontakte --> Firmen` wählt. 
+    Das lag daran, dass es eine lokale contacts.Companies.py gab, 
+    die noch das alte Feld `addr1` enthielt, das ja inzwischen `addr2` heißt.
+    In so einem Fall sollte natürlich eine Fehlermeldung kommen 
+    statt mich eine halbe Stunde lag suchen zu lassen.
     
-#.  TypeError: Cannot convert Decimal("350") to Decimal wenn er `Company.hourly_rate` 
-    in einen Vertrag übernimmt.
+    Wenn ich schon daran arbeite, ändere ich auch das Format von py nach yaml. 
+    Wie ging das nochmal? Richtig::
+    
+      >>> import yaml
+      >>> d = dict(a=1,b=[1,2,3],c=None)
+      >>> yaml.dump(d)
+      'a: 1\nb: [1, 2, 3]\nc: null\n'
+      >>>
+      
+    15.08 Uhr. Voilà, die `.py`-Dateien im `DATA_DIR` können jetzt gelöscht werden.
+    Stattdessen benutzt er jetzt `.rpt`-Dateien, die im YAML-Format geschrieben sind.
+    Ich schätze mal, dass die leichter zu bearbeiten sind.
 
+#. Die folgenden beiden Probleme sind momentan nicht reproduzierbar:
+
+  #.  TypeError: Cannot convert Decimal("350") to Decimal wenn er `Company.hourly_rate` 
+      in einen Vertrag übernimmt.
+
+  #.  Nach dem Löschen eines Vertrags verschwindet dieser erst aus 
+      der Grid wenn man ein Refresh macht. 
+      Refresh wird nicht automatisch gemacht.
+
+    

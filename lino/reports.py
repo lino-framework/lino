@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 import os
 import traceback
 import codecs
+import yaml
 #~ import datetime
 #import logging ; logger = logging.getLogger('lino.reports')
 #~ import cPickle as pickle
@@ -739,13 +740,28 @@ class Report(actors.Actor): #,base.Handled):
         
     def column_choices(self):
         return [ de.name for de in self.data_elems() ]
+          
+    def validate_gc(self,d):
+        if not d.has_key('grid_configs'):
+            raise Exception("grid_configs is missing")
+        for name,gc in d['grid_configs'].items():
+            if len(gc['columns']) != len(gc['widths']):
+                raise Exception("len(gc['columns']) != len(gc['widths'])")
+            for colname in gc['columns']:
+                f = self.get_data_elem(colname)
+                if f is None:
+                    raise Exception("unknown data element %r" % colname)
       
     def do_setup(self):
       
         filename = self.get_grid_config_file()
         if os.path.exists(filename):
             logger.info("Loading %s...",filename)
-            execfile(filename,dict(self=self))
+            d = yaml.load(codecs.open(filename,encoding='utf-8').read())
+            if d is not None:
+                self.validate_gc(d)
+                self.grid_configs = d['grid_configs']
+            #~ execfile(filename,dict(self=self))
             #~ self.grid_configs = pickle.load(open(filename,"rU"))
         else:
             self.grid_configs = {}
@@ -793,14 +809,17 @@ class Report(actors.Actor): #,base.Handled):
         
 
     def get_grid_config_file(self):
-        filename = str(self) + ".py"
+        #~ filename = str(self) + ".py"
+        filename = str(self) + ".rpt"
         return os.path.join(settings.DATA_DIR,filename)
         
     def save_config(self):
         filename = self.get_grid_config_file()
         f = open(filename,'w')
         f.write("# Generated file. Delete it to restore factory settings.\n")
-        f.write('self.grid_configs = %s\n' % pprint.pformat(self.grid_configs))
+        d = dict(grid_configs=self.grid_configs)
+        f.write(yaml.dump(d))
+        #~ f.write('self.grid_configs = %s\n' % pprint.pformat(self.grid_configs))
         f.close()
         return "Grid Config has been saved to %s" % filename
         

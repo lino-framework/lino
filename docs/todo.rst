@@ -28,15 +28,8 @@ Before version 1.0
     Scheinbar nur wenn dieser Benutzer gerade einen Vertrag erstellt hat. 
     Nicht wenn ich Permalink oder open in own window
 
-#. TypeError: Cannot convert Decimal("350") to Decimal wenn er `Company.hourly_rate` 
-   in einen Vertrag übernimmt.
-
-#. Nach dem Löschen eines Vertrags verschwindet dieser erst aus 
-   der Grid wenn man ein Refresh macht. 
-   Refresh wird nicht automatisch gemacht.
-
-#. Liste der Personen sollte zunächst mal nur "meine" Personen anzeigen.
-   Evtl. neue Menübefehle "Meine Personen" und "Meine Coachings".
+#.  Liste der Personen sollte zunächst mal nur "meine" Personen anzeigen.
+    Evtl. neue Menübefehle "Meine Personen" und "Meine Coachings".
 
 #.  "Active fields" : wenn die sich ändern, macht der Client ein GET für diesen Record, 
     wobei er aber auch alle anderen geänderten und noch nicht gespeicherten Felder mit 
@@ -97,6 +90,11 @@ Waiting for feedback
 
 #. Wenn man z.B. in Companies.insert manuell eine ID eingibt, 
    dann ignoriert der Server die und vergibt trotzdem seine automatische nächste ID.
+
+#.  Wenn man mehrere Ansichten in einer GC hat und eine davon irgendwelche Kolonnen 
+    versteckt, dann werden diese Kolonnen nicht wieder sichtbar, wenn man auf eine 
+    andere Ansicht zurück wechselt.
+    
 
 After version 1.0
 -----------------

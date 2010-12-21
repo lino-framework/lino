@@ -94,8 +94,8 @@ Anything that has contact information (postal address, email, phone,...).
     def address_lines(self,linesep="\n<br/>"):
         #~ lines = []
         #~ lines = [self.name]
-        if self.addr1:
-            yield self.addr1
+        if self.addr2:
+            yield self.addr2
         if self.street:
             yield join_words(self.street,self.street_no,self.street_box)
         #lines = [self.name,street,self.addr1,self.addr2]
