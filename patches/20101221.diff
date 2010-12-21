@@ -1,0 +1,40 @@
+Index: tests/modeltests/lookup/tests.py
+===================================================================
+--- tests/modeltests/lookup/tests.py	(revision 14540)
++++ tests/modeltests/lookup/tests.py	(working copy)
+@@ -252,6 +252,35 @@
+             transform=identity)
+         self.assertRaises(TypeError, Article.objects.values_list, 'id', 'headline', flat=True)
+ 
++        # See http://lino.saffre-rumma.net/tickets/19.html
++        qs = Article.objects.extra(select={'id_plus_one': 'id+1'}).order_by('id_plus_one')
++        print qs.query.extra_select # output: {'id_plus_one': (u'id+1', [])}
++        self.assertQuerysetEqual(qs,
++          [
++            self.a1,
++            self.a2,
++            self.a3,
++            self.a4,
++            self.a5,
++            self.a6,
++            self.a7
++          ],
++          transform=identity)
++        qs = qs.values_list('id')
++        print qs.query.extra_select # output: {}
++        self.assertQuerysetEqual(
++            qs,
++            [
++                [self.a1.id],
++                [self.a2.id],
++                [self.a3.id],
++                [self.a4.id],
++                [self.a5.id],
++                [self.a6.id],
++                [self.a7.id]
++            ],
++            transform=identity)
++            
+     def test_get_next_previous_by(self):
+         # Every DateField and DateTimeField creates get_next_by_FOO() and
+         # get_previous_by_FOO() methods. In the case of identical date values,

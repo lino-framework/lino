@@ -1,0 +1,24 @@
+20101221
+========
+
+Done:
+
+#.  Vorbelegung Contract.user_asd = Person.user (wenn es ein anderer als Contract.user ist).
+
+To do:
+
+#.  Upps, wenn man ins Detail einer Person gehen will, macht der Server 
+    "FieldError: Cannot resolve keyword 'sort_name' into field. Choices are: ..."
+    scheinbar hat `QuerySet.values_list('pk',flat=True)` ein Problem damit, 
+    dass ich auf einer virtuellen (mit `extra` erzeugten) Kolonne sortiere.
+    Aber laut http://www.djangoproject.com/documentation/models/lookup/
+    müsste das kein Problem sein.
+    
+    :doc:`/tickets/19`
+    
+#.  Chrome 10 hat scheinbar ein Problem mit ExtJS:
+    http://www.google.com/support/forum/p/Chrome/thread?tid=5d3cce9457a1ebb1&hl=en    
+    
+#.  TypeError: Cannot convert Decimal("350") to Decimal wenn er `Company.hourly_rate` 
+    in einen Vertrag übernimmt.
+

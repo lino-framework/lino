@@ -767,7 +767,6 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,mixins.
     user_asd = models.ForeignKey("auth.User",verbose_name=_("ASD user"),
         related_name='contracts_asd',blank=True,null=True) 
     
-    #~ exam_freq = models.IntegerField(_("exam every X months"),blank=True,null=True,default=None)
     exam_policy = models.ForeignKey("dsbe.examPolicy",blank=True,null=True)
     
     aid_nature = models.CharField(_("aid nature"),max_length=100,blank=True)
@@ -777,20 +776,14 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,mixins.
     def duration_choices(cls):
         return [ 312, 468, 624 ]
         #~ return [ 0, 25, 50, 100 ]
-    #~ duration_choices.simple_values = True
-    #~ duration_choices = classmethod(duration_choices)
     
     @chooser(simple_values=True)
     def regime_choices(cls,language):
         return language_choices(language,REGIME_CHOICES)
-    #~ regime_choices.simple_values = True
-    #~ regime_choices = classmethod(regime_choices)
     
     @chooser(simple_values=True)
     def schedule_choices(cls,language):
         return language_choices(language,SCHEDULE_CHOICES)
-    #~ schedule_choices.simple_values = True
-    #~ schedule_choices = classmethod(schedule_choices)
     
     @chooser(simple_values=True)
     def refund_rate_choices(cls):
@@ -800,8 +793,6 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,mixins.
         u"50%",
         u"100%",
         ]
-    #~ refund_rate_choices.simple_values = True
-    #~ refund_rate_choices = classmethod(refund_rate_choices)
     
     @chooser(simple_values=True)
     def aid_rate_choices(cls,language):
@@ -821,7 +812,6 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,mixins.
             return []
         return CONTRACT_PRINTABLE_FIELDS
         
-    #~ @classmethod
     @chooser()
     def contact_choices(cls,company):
         if company is not None:
@@ -860,23 +850,27 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,mixins.
             
     def full_clean(self):
       
-        if self.person and self.person.birth_date and self.applies_from:
-            def duration(refdate):
-                delta = refdate - self.person.birth_date
-                age = delta.days / 365
-                if age < 36:
-                    return 312
-                elif age < 50:
-                    return 468
-                else:
-                    return 624
-          
-            if self.duration is None:
-                if self.applies_until:
-                    self.duration = duration(self.applies_until)
-                else:
-                    self.duration = duration(self.applies_from)
-                    self.applies_until = self.applies_from + datetime.timedelta(days=self.duration)
+        if self.person is not None:
+            if not self.user_asd:
+                if self.person.user != self.user:
+                    self.user_asd = self.person.user
+            if self.person.birth_date and self.applies_from:
+                def duration(refdate):
+                    delta = refdate - self.person.birth_date
+                    age = delta.days / 365
+                    if age < 36:
+                        return 312
+                    elif age < 50:
+                        return 468
+                    else:
+                        return 624
+              
+                if self.duration is None:
+                    if self.applies_until:
+                        self.duration = duration(self.applies_until)
+                    else:
+                        self.duration = duration(self.applies_from)
+                        self.applies_until = self.applies_from + datetime.timedelta(days=self.duration)
                     
         if self.company is not None:
           
@@ -902,6 +896,7 @@ class ContractsByPerson(Contracts):
     fk_name = 'person'
     column_names = 'company applies_from applies_until user type *'
 
+        
 class ContractsByCompany(Contracts):
     fk_name = 'company'
     column_names = 'person applies_from applies_until user type *'

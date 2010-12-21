@@ -23,10 +23,13 @@
       
 
 - Neues Feld :class:`lino.fields.HtmlTextField` ist genau wie ein `django.db.models.TextField`, 
-  außer dass lino.ui.extjs dafür ein HtmlEditor statt des normalen TextArea erzeugt.
+  außer dass lino.ui.extjs dafür einen HtmlEditor statt des normalen TextArea erzeugt.
   
 - Jetzt wo ich im Contract noch zwei weitere Felder mit Choosern habe, 
   habe ich mich mal drangegeben, dass man die Chooser mit Dekorator-Syntax 
-  definieren kann. _choices-Methode müssen jetzt mit ``@choosers`` deklariert 
+  definieren kann. _choices-Methoden müssen jetzt immer mit ``@choosers`` deklariert 
   werden (:func:`lino.utils.choosers.chooser`).
   Thanks to http://stackoverflow.com/questions/739654/understanding-python-decorators
+  
+  
+Zwischenrelease in Eupen, damit an den Dokumentvorlagen gearbeitet werden kann.

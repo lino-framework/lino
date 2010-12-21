@@ -21,8 +21,6 @@ Before version 1.0
 #.  Wenn man z.B. auf Next oder Prev klickt und vorher nicht gespeichert hat, 
     dann sind alle Änderungen futsch.
 
-#.  Vorbelegung Contract.user_asd = Person.user (wenn es ein anderer als Contract.user ist).
-
 #.  Übersetzungen
 
 #.  Textbausteine
@@ -100,6 +98,11 @@ Waiting for feedback
 
 After version 1.0
 -----------------
+
+#. Dublettenkontrolle. Nach Duplikaten suchen vor Erstellen einer neuen Person.
+   Erstellen einer neuen Person muss verweigert werden, wenn 
+   Name und Vorname identisch sind **außer** wenn beide ein unleeres Geburtsdatum 
+   haben (und nicht das gleiche).
 
 #. Im Detail eines Links wäre dessen Vorschau interessant.
 
@@ -205,14 +208,12 @@ Long-term
    Zeile gibt; in Wirklichkeit ist der Memo-Text der ersten Zeile so lang, 
    dass die Zeilenhöhe größer als das Fenster ist.
 
-#. Hinter das QuickFilter-Feld muss ein Button, um den Filter zu aktivieren. 
+#. Hinter das QuickFilter-Feld sollte ein Button, um den Filter zu aktivieren. 
    Dass man einfach nur TAB drücken muss ist nicht intuitiv.
 
 #. Benutzbarkeit per Tastatur verbessern (issue 11, issue 64) 
 
 #. Sehen können, nach welcher Kolonne eine Grid sortiert ist.
-
-#. Nach Duplikaten suchen vor Erstellen einer neuen Person (issue 85)
 
 #. Prüfen, ob die neuen ExtJS-Features für Lino interessant sind:
 

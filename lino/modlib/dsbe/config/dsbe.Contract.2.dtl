@@ -3,7 +3,7 @@
 
 
 main =
-    user_asd aid_nature aid_rate exam_policy
+    aid_nature aid_rate exam_policy
     stages        
     duties_asd
     duties_dsbe

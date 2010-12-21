@@ -1,0 +1,73 @@
+#19 : values_list() and order_by() on extra column
+--------------------------------------------------
+
+When I have a QuerySet ordered by a column defined using `QuerySet.extra()`, 
+then `values_list()` fails. For example, the following QuerySet is okay::
+
+   qs = Article.objects.extra(select={'id_plus_one': 'id+1'}).order_by('id_plus_one')
+   
+but I cannot do a `values_list()` on it.
+
+To explore this problem, I added 
+in :file:`django/tests/modeltests/lookup/tests.py` 
+another test case::
+
+        # See http://lino.saffre-rumma.net/tickets/19.html
+        qs = Article.objects.extra(select={'id_plus_one': 'id+1'}).order_by('id_plus_one')
+        print qs.query.extra_select # output: {'id_plus_one': (u'id+1', [])}
+        self.assertQuerysetEqual(qs,
+          [
+            self.a1,
+            self.a2,
+            self.a3,
+            self.a4,
+            self.a5,
+            self.a6,
+            self.a7
+          ],
+          transform=identity)
+        qs = qs.values_list('id')
+        print qs.query.extra_select # output: {}
+        self.assertQuerysetEqual(
+            qs,
+            [
+                [self.a1.id],
+                [self.a2.id],
+                [self.a3.id],
+                [self.a4.id],
+                [self.a5.id],
+                [self.a6.id],
+                [self.a7.id]
+            ],
+            transform=identity)
+            
+
+Then I get::
+
+  ERROR: test_values_list (modeltests.lookup.tests.LookupTests)
+  ----------------------------------------------------------------------
+  Traceback (most recent call last):
+    File "L:\snapshots\django\tests\modeltests\lookup\tests.py", line 347, in test_values_list
+      transform=identity)
+    File "l:\snapshots\django\django\test\testcases.py", line 526, in assertQuerysetEqual
+      return self.assertEqual(map(transform, qs), values)
+    File "l:\snapshots\django\django\db\models\query.py", line 84, in __len__
+      self._result_cache.extend(list(self._iter))
+    File "l:\snapshots\django\django\db\models\query.py", line 953, in iterator
+      for row in self.query.get_compiler(self.db).results_iter():
+    File "l:\snapshots\django\django\db\models\sql\compiler.py", line 680, in results_iter
+      for rows in self.execute_sql(MULTI):
+    File "l:\snapshots\django\django\db\models\sql\compiler.py", line 725, in execute_sql
+      sql, params = self.as_sql()
+    File "l:\snapshots\django\django\db\models\sql\compiler.py", line 60, in as_sql
+      ordering, ordering_group_by = self.get_ordering()
+    File "l:\snapshots\django\django\db\models\sql\compiler.py", line 349, in get_ordering
+      self.query.model._meta, default_order=asc):
+    File "l:\snapshots\django\django\db\models\sql\compiler.py", line 378, in find_ordering_name
+      opts, alias, False)
+    File "l:\snapshots\django\django\db\models\sql\query.py", line 1215, in setup_joins
+      "Choices are: %s" % (name, ", ".join(names)))
+  FieldError: Cannot resolve keyword 'id_plus_one' into field. Choices are: author, headline, id, pub_date, tag
+
+
+AFAICS the problem comes because `qs.query.extra_select` is empty on the `ValuesListQuerySet`.
