@@ -862,6 +862,7 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,mixins.
                 self.user_asd = self.person.user
                 
     def on_create(self,request):
+        super(Contract,self).on_create(request)
         self.on_person_changed(request)
       
     def full_clean(self):
