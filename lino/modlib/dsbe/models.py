@@ -855,8 +855,8 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,mixins.
             return self.person.user or self.user
             
     def on_person_changed(self,request):
-        if self.person is not None:
-            if self.person.user is None or self.person.user == self.user:
+        if self.person_id is not None:
+            if self.person.user_id is None or self.person.user_id == self.user_id:
                 self.user_asd = None
             else:
                 self.user_asd = self.person.user
