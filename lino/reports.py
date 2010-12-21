@@ -556,8 +556,8 @@ class Report(actors.Actor): #,base.Handled):
     
       extra = dict(select=dict(lower_name='lower(name)'))
       # (or if you prefer:) 
-      # extra = {'select':{'lower_name':'lower(name)'}}
-      order_by = 'lower_name'
+      # extra = {'select':{'lower_name':'lower(name)'},'order_by'=['lower_name']}
+      
     
     List of SQL functions and which RDBMS supports them:
     http://en.wikibooks.org/wiki/SQL_Dialects_Reference/Functions_and_expressions/String_functions

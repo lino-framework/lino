@@ -91,6 +91,9 @@ AID_RATE_CHOICES = {
         u'Person mit Familie zu Lasten',
         ],
     'fr':[ 
+        u'Personne isolée',
+        u'Personne cohabitante',
+        u'Personne qui cohabite avec une famille à sa charge',
         ],
     'en':[
         ]
@@ -98,12 +101,16 @@ AID_RATE_CHOICES = {
 
 AID_NATURE_CHOICES = {
     'de':[ 
-              u'Eingliederungseinkommen',
-              u'Sozialhilfe', 
-              u'Ausgleich zum Eingliederungseinkommen', 
-              u'Ausgleich zur Sozialhilfe' 
+        u'Eingliederungseinkommen',
+        u'Sozialhilfe', 
+        u'Ausgleich zum Eingliederungseinkommen', 
+        u'Ausgleich zur Sozialhilfe' 
         ],
     'fr':[ 
+        u"Revenu d'intégration sociale",
+        u"Aide sociale",
+        u"Complément au revenu d'intégration sociale",
+        u"Complément à l'aide sociale",
         ],
     'en':[
         ]
@@ -396,14 +403,10 @@ PERSON_TIM_FIELDS = reports.fields_list(Person,
 class Persons(contacts.Persons):
     can_view = perms.is_authenticated
     app_label = 'contacts'
-    #~ cell_edit = False
-    #~ page_layouts = (PersonDetail,)
-    #~ column_names = "name city dsbe.LanguageKnowledgesByPerson *"
-    #~ column_names = "name city dsbe.LanguageKnowledgesByPerson *"
-    #~ column_names = "name city links.LinksByOwner language_knowledge"
-    #~ column_names = "name city dsbe.LanguageKnowledgesByPerson" # dsbe.StudiesByPerson dsbe.ExclusionsByPerson"
-    extra = dict(select=dict(sort_name='lower(last_name||first_name)'))
-    order_by = 'sort_name'
+    #~ extra = dict(
+      #~ select=dict(sort_name='lower(last_name||first_name)'),
+      #~ order_by=['sort_name'])
+    #~ order_by = None # clear the default value from contacts.Persons.order_by since we use extra order_by
 
     
 class PersonsByNationality(Persons):

@@ -12,8 +12,6 @@ Before version 1.0
 #.  HTML-Editoren haben noch Probleme (Layout und Performance) und sind deshalb 
     momentan deaktiviert.
     
-#.  Auswahllisten FR für aid_nature und aid_rate sind noch leer    
-
 #.  Auswahlliste exam_policy wird auch in französischen Verträgen deutsch angezeigt.
 
 #.  Die 4 Text-Editoren im Reiter "VSE" überlappen sich teilweise.
@@ -58,7 +56,11 @@ Before version 1.0
    
 #. "Insert as copy"
 
-  
+#.  Chrome 10 hat scheinbar ein Problem mit ExtJS:
+    http://www.google.com/support/forum/p/Chrome/thread?tid=5d3cce9457a1ebb1&hl=en    
+    
+#. Sortierung: Entweder Ticket :doc:`/tickets/19` lösen, oder (noch besser) 
+   auf Datenbank-Ebene lokalisierte Sortierung einstellen.
 
 Waiting for feedback
 --------------------

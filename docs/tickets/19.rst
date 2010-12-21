@@ -1,48 +1,52 @@
-#19 : values_list() and order_by() on extra column
---------------------------------------------------
+#19 : `values_list()` fails on queryset ordered by extra column
+===============================================================
 
-When I have a QuerySet ordered by a column defined using `QuerySet.extra()`, 
-then `values_list()` fails. For example, the following QuerySet is okay::
+`values_list()` returns an uncomplete QuerySet when called on a 
+QuerySet that is ordered by a column defined using 
+`QuerySet.extra() <http://docs.djangoproject.com/en/dev/ref/models/querysets/#extra>`_.
 
-   qs = Article.objects.extra(select={'id_plus_one': 'id+1'}).order_by('id_plus_one')
-   
-but I cannot do a `values_list()` on it.
+For example, the following QuerySet works as expected::
 
-To explore this problem, I added 
-in :file:`django/tests/modeltests/lookup/tests.py` 
-another test case::
+  qs = Article.objects.extra(select={'id_plus_one': 'id+1'},order_by=['id_plus_one'])
+  
+but when I execute a `values_list('id')` on this, I'll get a 
+`FieldError: Cannot resolve keyword 'id_plus_one' into field`.
 
-        # See http://lino.saffre-rumma.net/tickets/19.html
-        qs = Article.objects.extra(select={'id_plus_one': 'id+1'}).order_by('id_plus_one')
-        print qs.query.extra_select # output: {'id_plus_one': (u'id+1', [])}
-        self.assertQuerysetEqual(qs,
-          [
-            self.a1,
-            self.a2,
-            self.a3,
-            self.a4,
-            self.a5,
-            self.a6,
-            self.a7
-          ],
-          transform=identity)
-        qs = qs.values_list('id')
-        print qs.query.extra_select # output: {}
-        self.assertQuerysetEqual(
-            qs,
-            [
-                [self.a1.id],
-                [self.a2.id],
-                [self.a3.id],
-                [self.a4.id],
-                [self.a5.id],
-                [self.a6.id],
-                [self.a7.id]
-            ],
-            transform=identity)
+To show this problem, I added 
+a test case to :file:`django/tests/modeltests/lookup/tests.py`::
+
+  # See http://lino.saffre-rumma.net/tickets/19.html
+  qs = Article.objects.extra(select={'id_plus_one': 'id+1'}).order_by('id_plus_one')
+  print qs.query.extra_select # output: {'id_plus_one': (u'id+1', [])}
+  self.assertQuerysetEqual(qs,
+    [
+      self.a1,
+      self.a2,
+      self.a3,
+      self.a4,
+      self.a5,
+      self.a6,
+      self.a7
+    ],
+    transform=identity)
+  qs = qs.values_list('id')
+  print qs.query.extra_select # output: {}
+  self.assertQuerysetEqual(
+      qs,
+      [
+          [self.a1.id],
+          [self.a2.id],
+          [self.a3.id],
+          [self.a4.id],
+          [self.a5.id],
+          [self.a6.id],
+          [self.a7.id]
+      ],
+      transform=identity)
             
+:srcref:`Here </patches/20101221.diff>` is a diff file for this code (against Django 14995).
 
-Then I get::
+Running the lookup tests with this patch will say::
 
   ERROR: test_values_list (modeltests.lookup.tests.LookupTests)
   ----------------------------------------------------------------------
@@ -69,5 +73,12 @@ Then I get::
       "Choices are: %s" % (name, ", ".join(names)))
   FieldError: Cannot resolve keyword 'id_plus_one' into field. Choices are: author, headline, id, pub_date, tag
 
+AFAICS `qs.query.extra_select` on the `ValuesListQuerySet` should *not* be empty.
 
-AFAICS the problem comes because `qs.query.extra_select` is empty on the `ValuesListQuerySet`.
+
+History
+-------
+
+- :doc:`/blog/2010/1221` first noted the problem.
+  Submitted :djangoticket:`14930`.
+

@@ -3,21 +3,36 @@
 
 Done:
 
-#.  Vorbelegung Contract.user_asd = Person.user (wenn es ein anderer als Contract.user ist).
+#.  Vorbelegung `Contract.user_asd` von `Person.user` 
+    (zumindest wenn `Person.user` ein anderer als `Contract.user` ist).
 
-To do:
-
-#.  Upps, wenn man ins Detail einer Person gehen will, macht der Server 
+#.  Upps, wenn man ins Detail einer Person gehen will, machte der Server 
     "FieldError: Cannot resolve keyword 'sort_name' into field. Choices are: ..."
     scheinbar hat `QuerySet.values_list('pk',flat=True)` ein Problem damit, 
     dass ich auf einer virtuellen (mit `extra` erzeugten) Kolonne sortiere.
     Aber laut http://www.djangoproject.com/documentation/models/lookup/
-    müsste das kein Problem sein.
+    müsste das doch kein Problem sein?
+    Ein Fehler war: 
+    wenn ich auf einer extra-Kolonne sortieren will, dann darf ich nicht 
+    das normale `order_by` benutzen, sondern das muss ich 
+    in `extra(order_by=['foo']` deklarieren.
+    Aber das reicht noch nicht: siehe Ticket :doc:`/tickets/19`.
+    En attendant habe ich die Sortierung von Personen wieder auf den 
+    Standardwert (ASCII) gesetzt, also Kleinbuchstaben kommen wieder 
+    hinter den Großbuchstaben.
     
-    :doc:`/tickets/19`
-    
-#.  Chrome 10 hat scheinbar ein Problem mit ExtJS:
-    http://www.google.com/support/forum/p/Chrome/thread?tid=5d3cce9457a1ebb1&hl=en    
+#.  Auswahllisten FR für aid_nature und aid_rate waren noch leer    
+
+
+aptitude install sqlite3
+aptitude remove sqlite
+aptitude install python-pysqlite2
+
+http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=494987
+http://www.sqlite.org/faq.html#q18
+http://www.sqlite.org/c3ref/create_collation.html
+
+To do:    
     
 #.  TypeError: Cannot convert Decimal("350") to Decimal wenn er `Company.hourly_rate` 
     in einen Vertrag übernimmt.
