@@ -767,10 +767,11 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,mixins.
     duties_dsbe = fields.HtmlTextField(_("duties DSBE"),blank=True,null=True)
     duties_company = fields.HtmlTextField(_("duties company"),blank=True,null=True)
     
-    user_asd = models.ForeignKey("auth.User",verbose_name=_("ASD user"),
+    user_asd = models.ForeignKey("auth.User",verbose_name=_("responsible (ASD)"),
         related_name='contracts_asd',blank=True,null=True) 
     
-    exam_policy = models.ForeignKey("dsbe.examPolicy",blank=True,null=True)
+    exam_policy = models.ForeignKey("dsbe.ExamPolicy",blank=True,null=True,
+        verbose_name=_("examination policy"))
     
     aid_nature = models.CharField(_("aid nature"),max_length=100,blank=True)
     aid_rate = models.CharField(_("aid rate"),max_length=100,blank=True)
@@ -889,6 +890,8 @@ CONTRACT_PRINTABLE_FIELDS = reports.fields_list(Contract,
   'person company contact type '
   'applies_from applies_until duration '
   'language schedule regime hourly_rate refund_rate reference_person '
+  'stages duties_dsbe duties_company duties_asd '
+  'user user_asd aid_nature aid_rate exam_policy '
   'date_decided date_issued responsibilities')
 
 
@@ -957,8 +960,14 @@ class LinksByCompany(links.LinksByOwnerBase):
 http://osdir.com/ml/django-users/2009-11/msg00696.html
 """
 from lino.modlib.contacts.models import CompanyType
+
 CompanyType.add_to_class('contract_type',
     models.ForeignKey("dsbe.ContractType",
         blank=True,null=True,
         verbose_name=_("contract type")))
 
+"""
+here's how to override the default verbose_name of a field
+"""
+from lino.tools import resolve_field
+resolve_field('dsbe.Contract.user').verbose_name=_("responsible (DSBE)")

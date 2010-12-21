@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-26 15:54+0000\n"
+"POT-Creation-Date: 2010-12-21 14:49+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,61 +17,61 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n>1;\n"
 
-#: .\actions.py:146
+#: .\actions.py:126
 msgid "Detail"
 msgstr ""
 
-#: .\actions.py:149
+#: .\actions.py:129
 #, python-format
 msgid "%s (Detail)"
 msgstr ""
 
-#: .\actions.py:160 .\actions.py:214
+#: .\actions.py:140 .\actions.py:194
 msgid "Insert"
 msgstr ""
 
-#: .\actions.py:165
+#: .\actions.py:145
 #, python-format
 msgid "Insert into %s"
 msgstr ""
 
-#: .\actions.py:201
+#: .\actions.py:181
 msgid "Delete"
 msgstr ""
 
-#: .\actions.py:209
+#: .\actions.py:189
 msgid "Save"
 msgstr ""
 
-#: .\fields.py:43
+#: .\fields.py:44
 msgid "Language"
 msgstr ""
 
-#: .\fields.py:52
+#: .\fields.py:53
 msgid "not at all"
 msgstr ""
 
-#: .\fields.py:53
+#: .\fields.py:54
 msgid "a bit"
 msgstr ""
 
-#: .\fields.py:54
+#: .\fields.py:55
 msgid "moderate"
 msgstr ""
 
-#: .\fields.py:55
+#: .\fields.py:56
 msgid "quite well"
 msgstr ""
 
-#: .\fields.py:56
+#: .\fields.py:57
 msgid "very well"
 msgstr ""
 
-#: .\fields.py:63
+#: .\fields.py:64
 msgid "Invalid value %(value). Must be one of (%(values)s)"
 msgstr ""
 
-#: .\lino_site.py:168
+#: .\lino_site.py:170
 #, python-format
 msgid "Cannot delete %(self)s because %(count)d %(refs)s refer to it."
 msgstr ""
@@ -92,12 +92,12 @@ msgstr ""
 msgid "~Site"
 msgstr ""
 
-#: .\reports.py:403
+#: .\reports.py:414
 #, python-format
 msgid "User %(user)s cannot view %(report)s."
 msgstr ""
 
-#: .\reports.py:797
+#: .\reports.py:845
 #, python-format
 msgid "%(details)s by %(model)s %(master)s"
 msgstr ""
@@ -122,7 +122,7 @@ msgstr ""
 msgid "~Configure"
 msgstr ""
 
-#: .\demos\dsbe\lino_settings.py:61 .\demos\std\lino_settings.py:43
+#: .\demos\dsbe\lino_settings.py:62 .\demos\std\lino_settings.py:43
 msgid "E~xplorer"
 msgstr ""
 
@@ -150,124 +150,198 @@ msgstr ""
 msgid "Company"
 msgstr ""
 
-#: .\mixins\printable.py:360
+#: .\mixins\addressable.py:51
+msgid "Name"
+msgstr ""
+
+#: .\mixins\addressable.py:52
+msgid "Street"
+msgstr ""
+
+#: .\mixins\addressable.py:53
+msgid "No."
+msgstr ""
+
+#: .\mixins\addressable.py:54
+msgid "Box"
+msgstr ""
+
+#: .\mixins\addressable.py:55
+msgid "Additional address line"
+msgstr ""
+
+#: .\mixins\addressable.py:59
+msgid "Country"
+msgstr ""
+
+#: .\mixins\addressable.py:63
+msgid "City"
+msgstr ""
+
+#: .\mixins\addressable.py:67
+msgid "Zip code"
+msgstr ""
+
+#: .\mixins\addressable.py:68
+msgid "Region"
+msgstr ""
+
+#: .\mixins\addressable.py:72
+msgid "E-Mail"
+msgstr ""
+
+#: .\mixins\addressable.py:73
+msgid "URL"
+msgstr ""
+
+#: .\mixins\addressable.py:74
+msgid "Phone"
+msgstr ""
+
+#: .\mixins\addressable.py:75
+msgid "GSM"
+msgstr ""
+
+#: .\mixins\addressable.py:76
+msgid "Fax"
+msgstr ""
+
+#: .\mixins\addressable.py:80
+msgid "Remarks"
+msgstr ""
+
+#: .\mixins\addressable.py:91
+msgid "Address"
+msgstr ""
+
+#: .\mixins\printable.py:368
 msgid "Print"
 msgstr ""
 
-#: .\mixins\printable.py:380
+#: .\mixins\printable.py:388
 msgid "Edit template"
 msgstr ""
 
-#: .\mixins\printable.py:390
+#: .\mixins\printable.py:398
 msgid "Clear cache"
 msgstr ""
 
-#: .\mixins\printable.py:407
+#: .\mixins\printable.py:415
 msgid "Build method"
 msgstr ""
 
-#: .\mixins\printable.py:410
+#: .\mixins\printable.py:418
 msgid "Template"
 msgstr ""
 
-#: .\mixins\printable.py:431
+#: .\mixins\printable.py:442
 msgid "must build"
 msgstr ""
 
-#: .\mixins\reminder.py:24
+#: .\mixins\reminder.py:25
 msgid "test"
 msgstr ""
 
-#: .\mixins\reminder.py:25
+#: .\mixins\reminder.py:26
 msgid "must check"
 msgstr ""
 
-#: .\mixins\reminder.py:33
+#: .\mixins\reminder.py:34
 msgid "Reminder date"
 msgstr ""
 
-#: .\mixins\reminder.py:35
+#: .\mixins\reminder.py:36
 msgid "Reminder text"
 msgstr ""
 
-#: .\mixins\uploadable.py:34
+#: .\mixins\uploadable.py:36
 msgid "upload"
 msgstr ""
 
-#: .\mixins\uploadable.py:35
+#: .\mixins\uploadable.py:37
 msgid "uploads"
 msgstr ""
 
-#: .\mixins\uploadable.py:37
+#: .\mixins\uploadable.py:39
 msgid "File"
 msgstr ""
 
-#: .\mixins\uploadable.py:40
+#: .\mixins\uploadable.py:42
 msgid "MIME type"
 msgstr ""
 
-#: .\mixins\uploadable.py:41
+#: .\mixins\uploadable.py:43
 msgid "Created"
 msgstr ""
 
-#: .\mixins\uploadable.py:42
+#: .\mixins\uploadable.py:44
 msgid "Modified"
 msgstr ""
 
-#: .\mixins\uploadable.py:43
+#: .\mixins\uploadable.py:45
 msgid "Description"
 msgstr ""
 
-#: .\ui\extjs\ext_elems.py:557
+#: .\ui\extjs\ext_elems.py:559
 #, python-format
 msgid "Select a %s..."
 msgstr ""
 
-#: .\ui\extjs\ext_store.py:80
+#: .\ui\extjs\ext_store.py:81
 #, python-format
 msgid "Existing primary key value %r may not be modified."
 msgstr ""
 
-#: .\ui\extjs\ext_store.py:292
+#: .\ui\extjs\ext_store.py:301
 #, python-format
 msgid "%r (invalid choice)"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:494
-msgid "Console"
+#: .\ui\extjs\ext_ui.py:201
+#, python-format
+msgid "Row %(rowid)d of %(rowcount)d"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:602
-#, python-format
-msgid "Welcome on Lino server %(title)r, user %(user)s"
+#: .\ui\extjs\ext_ui.py:593
+msgid "Console"
 msgstr ""
 
 #: .\ui\extjs\ext_ui.py:641
 #, python-format
+msgid "Welcome on Lino server %(title)r, user %(user)s"
+msgstr ""
+
+#: .\ui\extjs\ext_ui.py:692
+#, python-format
+msgid "%s has been created."
+msgstr ""
+
+#: .\ui\extjs\ext_ui.py:694
+#, python-format
 msgid "%s has been saved."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:652 .\ui\extjs\ext_ui.py:675
+#: .\ui\extjs\ext_ui.py:702 .\ui\extjs\ext_ui.py:725
 #, python-format
 msgid "User %(user)s cannot configure %(report)s."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:850
+#: .\ui\extjs\ext_ui.py:894
 #, python-format
 msgid "Failed to delete %(record)s : %(error)s."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:870
+#: .\ui\extjs\ext_ui.py:917
 #, python-format
 msgid "Insert into %s..."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:897
+#: .\ui\extjs\ext_ui.py:944
 #, python-format
 msgid "Action %(action)s failed for %(record)s: %(error)s"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:1003
+#: .\ui\extjs\ext_ui.py:1050
 #, python-format
 msgid "Choices for %s"
 msgstr ""

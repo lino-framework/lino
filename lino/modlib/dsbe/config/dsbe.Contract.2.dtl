@@ -1,13 +1,8 @@
-:label: VSE
+:label: Art.60-7
 :label_align: top
 
 
 main =
-    aid_nature aid_rate exam_policy
-    stages        
-    duties_asd
-    duties_dsbe
-    duties_company
-    
-    
-
+    regime:20 schedule:30 hourly_rate:10 refund_rate:10
+    reference_person 
+    responsibilities

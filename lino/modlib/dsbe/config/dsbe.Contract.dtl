@@ -6,9 +6,7 @@ main =
     type person:30 language:10 
     user_asd user reminder_date reminder_text
     applies_from applies_until duration 
-    regime:20 schedule:30 hourly_rate:10 refund_rate:10
-    reference_person date_decided date_issued 
-    responsibilities
+    date_decided date_issued 
     
     
     

@@ -60,4 +60,6 @@ Done:
       der Grid wenn man ein Refresh macht. 
       Refresh wird nicht automatisch gemacht.
 
-    
+#.  Upgrade ExtJS (to 3.3.1) and Django (to rev. 14995) in Eupen.
+
+#.  Neue Methode :meth:`Person.get_full_name`

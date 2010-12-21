@@ -1,0 +1,13 @@
+:label: VSE
+:label_align: top
+
+
+main =
+    aid_nature aid_rate exam_policy
+    stages        
+    duties_asd
+    duties_dsbe
+    duties_company
+    
+    
+

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-26 15:54+0000\n"
+"POT-Creation-Date: 2010-12-21 14:49+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,122 +16,66 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: .\models.py:53
-msgid "Name"
-msgstr ""
-
-#: .\models.py:54
-msgid "Street"
-msgstr ""
-
-#: .\models.py:55
-msgid "No."
-msgstr ""
-
-#: .\models.py:56
-msgid "Box"
-msgstr ""
-
-#: .\models.py:61
-msgid "Country"
-msgstr ""
-
-#: .\models.py:65
-msgid "City"
-msgstr ""
-
-#: .\models.py:69
-msgid "Zip code"
-msgstr ""
-
-#: .\models.py:70
-msgid "Region"
-msgstr ""
-
-#: .\models.py:74
-msgid "E-Mail"
-msgstr ""
-
-#: .\models.py:75
-msgid "URL"
-msgstr ""
-
-#: .\models.py:76
-msgid "Phone"
-msgstr ""
-
-#: .\models.py:77
-msgid "GSM"
-msgstr ""
-
-#: .\models.py:78
-msgid "Fax"
-msgstr ""
-
-#: .\models.py:90
-msgid "Address"
-msgstr ""
-
-#: .\models.py:147 .\models.py:263
+#: .\models.py:40 .\models.py:166
 msgid "person"
 msgstr ""
 
-#: .\models.py:148
+#: .\models.py:41
 msgid "persons"
 msgstr ""
 
-#: .\models.py:151
+#: .\models.py:44
 msgid "First name"
 msgstr ""
 
-#: .\models.py:153
+#: .\models.py:46
 msgid "Last name"
 msgstr ""
 
-#: .\models.py:155
+#: .\models.py:48
 msgid "Title"
 msgstr ""
 
-#: .\models.py:192
+#: .\models.py:91
 msgid "company type"
 msgstr ""
 
-#: .\models.py:193
+#: .\models.py:92
 msgid "company types"
 msgstr ""
 
-#: .\models.py:195
-msgid "Abbreviation"
-msgstr ""
-
-#: .\models.py:196 .\models.py:248
+#: .\models.py:93 .\models.py:148
 msgid "Designation"
 msgstr ""
 
-#: .\models.py:220
+#: .\models.py:94
+msgid "Abbreviation"
+msgstr ""
+
+#: .\models.py:120
 msgid "Company type"
 msgstr ""
 
-#: .\models.py:244 .\models.py:267
+#: .\models.py:144 .\models.py:170
 msgid "contact type"
 msgstr ""
 
-#: .\models.py:245
+#: .\models.py:145
 msgid "contact types"
 msgstr ""
 
-#: .\models.py:260
+#: .\models.py:163
 msgid "contact"
 msgstr ""
 
-#: .\models.py:261
+#: .\models.py:164
 msgid "contacts"
 msgstr ""
 
-#: .\models.py:265
+#: .\models.py:168
 msgid "company"
 msgstr ""
 
-#: .\models.py:287
+#: .\models.py:190
 msgid "Contact for"
 msgstr ""

@@ -47,6 +47,9 @@ class Person(Addressable):
     title = models.CharField(max_length=200,blank=True,
       verbose_name=_('Title'))
         
+    def get_full_name(self):
+        "Returns the first_name plus the last_name, with a space in between."
+        return u'%s %s' % (self.first_name, self.last_name)
     
     def recipient_lines(self):
         if self.title:

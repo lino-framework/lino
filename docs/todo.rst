@@ -11,13 +11,7 @@ Before version 1.0
 
 #.  HTML-Editoren haben noch Probleme (Layout und Performance) und sind deshalb 
     momentan deaktiviert.
-    
-#.  Auswahlliste exam_policy wird auch in französischen Verträgen deutsch angezeigt.
-
-#.  Die 4 Text-Editoren im Reiter "VSE" überlappen sich teilweise.
-
-#.  Wenn man z.B. auf Next oder Prev klickt und vorher nicht gespeichert hat, 
-    dann sind alle Änderungen futsch.
+    Die 4 Text-Editoren im Reiter "VSE" überlappen sich teilweise.
 
 #.  Übersetzungen
 
@@ -31,6 +25,9 @@ Before version 1.0
 #.  Liste der Personen sollte zunächst mal nur "meine" Personen anzeigen.
     Evtl. neue Menübefehle "Meine Personen" und "Meine Coachings".
 
+#.  Wenn man z.B. auf Next oder Prev klickt und vorher nicht gespeichert hat, 
+    dann sind alle Änderungen futsch.
+
 #.  "Active fields" : wenn die sich ändern, macht der Client ein GET für diesen Record, 
     wobei er aber auch alle anderen geänderten und noch nicht gespeicherten Felder mit 
     übergibt. Der Server macht darauf dann full_clean aber speichert nicht ab, sondern 
@@ -40,6 +37,8 @@ Before version 1.0
     Implementierung vielleicht mit Methoden `on_FIELD_change`, deren 
     Parameter ähnlich wie choosers analysiert werden.
     GET /api/contacts/Persons/17?fmt=json&query=foo
+
+#.  Auswahlliste exam_policy wird auch in französischen Verträgen deutsch angezeigt.
 
 #. Ext.LoadMask kennenlernen:
    http://www.sencha.com/forum/showthread.php?64420-how-to-show-a-wait-message-while-calling-store-load
