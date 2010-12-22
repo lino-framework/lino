@@ -51,8 +51,11 @@ Before version 1.0
    
 #. "Insert as copy"
 
-#. Sortierung: Entweder Ticket :doc:`/tickets/19` lösen, oder (noch besser) 
-   auf Datenbank-Ebene lokalisierte Sortierung einstellen.
+#.  Sortierung: Entweder Ticket :doc:`/tickets/19` lösen, oder (noch besser) 
+    auf Datenbank-Ebene lokalisierte Sortierung einstellen.
+   
+#.  In Auswahllisten einer ComboBox für Benutzer sollten die Einträge 
+    alphabetisch sortiert sein.
 
 Waiting for feedback
 --------------------

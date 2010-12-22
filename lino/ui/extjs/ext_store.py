@@ -444,23 +444,11 @@ class Store:
             kw.update(type='int')
         if isinstance(fld,models.IntegerField):
             kw.update(type='int')
-        #~ if fld.choices:
-            #~ return ChoicesStoreField(fld,**kw)
-        #~ ch = choosers.get_for_field(fld)
-        #~ if ch.simple_values:
-            #~ return StoreField(fld,**kw)
-        #~ else:
-            #~ return ChooserStoreField(fld,**kw)
         if choosers.uses_simple_values(fld):
             return StoreField(fld,**kw)
         else:
             return ComboStoreField(fld,**kw)
-        #~ if choosers.get_for_field(fld) is not None:
-            #~ return ChooserStoreField(fld,**kw)
-        #~ else:
-            #~ return StoreField(fld,**kw)
 
-      
     def form2obj(self,form_values,instance):
         for f in self.fields:
             try:
@@ -468,8 +456,6 @@ class Store:
             #~ except exceptions.ValidationError,e:
             except Exception,e:
                 raise exceptions.ValidationError({f.field.name:e})
-        #~ for p in properties.Property.properties_for_model(instance.__class__):
-            #~ p.form2obj(instance,form_values)
             
     def row2list(self,request,row):
         l = []
@@ -481,7 +467,6 @@ class Store:
     def row2dict(self,request,row):
         d = {}
         for f in self.detail_fields:
-            #~ if not f.field.primary_key:
             f.obj2dict(request,row,d)
         return d
 

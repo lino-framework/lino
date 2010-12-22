@@ -35,12 +35,6 @@ EXT_CHAR_HEIGHT = 22
 DEFAULT_GC_NAME = 'std'
 
 
-def unused_varname_field(f):
-    if hasattr(f,'model'):
-        return f.model.__name__ + '_' + f.name + '_field'
-    else: # e.g. Field instances used as return_type for methods
-        return f.name + '_field'
-        
 def a2btn(a):
     return dict(
       opens_a_slave=a.opens_a_slave,

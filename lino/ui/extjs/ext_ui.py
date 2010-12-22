@@ -20,6 +20,7 @@ import time
 #import traceback
 import cPickle as pickle
 from urllib import urlencode
+import codecs
 
 #~ import Cheetah
 from Cheetah.Template import Template as CheetahTemplate
@@ -215,6 +216,7 @@ class ExtUI(base.UI):
     #~ USE_WINDOWS = False  # If you change this, then change also Lino.USE_WINDOWS in lino.js
 
     def __init__(self,site):
+        self.reserved_names = [getattr(ext_requests,n) for n in ext_requests.URL_PARAMS]
         jsgen.register_converter(self.py2js_converter)
         #~ self.window_configs = {}
         #~ if os.path.exists(self.window_configs_file):
@@ -235,9 +237,9 @@ class ExtUI(base.UI):
         #~ print source, origin
         
         fn = find_config_file('welcome.html')
+        logger.info("Using welcome template %s",fn)
         self.welcome_template = CheetahTemplate(file(fn).read())
-        
-        self.build_site_js()
+        self.build_lino_js()
         
     def create_layout_element(self,lh,panelclass,name,**kw):
         
@@ -394,7 +396,7 @@ class ExtUI(base.UI):
         #~ pickle.dump(self.window_configs,f)
         #~ f.close()
         #~ logger.debug("save_window_config(%r) -> %s",wc,a)
-        #~ self.build_site_js()
+        #~ self.build_lino_js()
         #~ lh = actors.get_actor(name).get_handle(self)
         #~ if lh is not None:
             #~ lh.window_wrapper.try_apply_window_config(wc)
@@ -548,9 +550,9 @@ class ExtUI(base.UI):
         yield '<script type="text/javascript" src="%sextjs/examples/ux/fileuploadfield/FileUploadField.js"></script>' % settings.MEDIA_URL
 
         #~ yield '<!-- overrides to library -->'
-        yield '<script type="text/javascript" src="%slino/extjs/lino.js"></script>' % settings.MEDIA_URL
+        #~ yield '<script type="text/javascript" src="%slino/extjs/lino.js"></script>' % settings.MEDIA_URL
         yield '<script type="text/javascript" src="%s"></script>' % (
-            settings.MEDIA_URL + "/".join(self.site_js_parts()))
+            settings.MEDIA_URL + "/".join(self.lino_js_parts()))
 
         #~ yield '<!-- page specific -->'
         yield '<script type="text/javascript">'
@@ -614,8 +616,8 @@ class ExtUI(base.UI):
         #~ yield '<div id="konsole"></div>'
         yield "</body></html>"
         
-    def site_js_lines(self):
-        yield """// site.js --- generated %s by Lino version %s.""" % (time.ctime(),lino.__version__)
+    def lino_js_lines(self):
+        yield """// lino.js --- generated %s by Lino version %s.""" % (time.ctime(),lino.__version__)
         yield "Ext.BLANK_IMAGE_URL = '%sextjs/resources/images/default/s.gif';" % settings.MEDIA_URL
         yield "LANGUAGE_CHOICES = %s;" % py2js(list(LANGUAGE_CHOICES))
         yield "MEDIA_URL = %r;" % settings.MEDIA_URL
@@ -715,7 +717,7 @@ class ExtUI(base.UI):
                 rh.update_detail(tab,desc)
             except Exception,e:
                 return json_response_kw(success=False,message=unicode(e))
-            self.build_site_js()
+            self.build_lino_js()
             return json_response_kw(success=True)
             #detail_layout
       
@@ -748,7 +750,7 @@ class ExtUI(base.UI):
             
             rpt.grid_configs[name] = gc
             msg = rpt.save_config()
-            self.build_site_js()            
+            self.build_lino_js()            
             return self.success_response(msg)
             #~ return json_response_kw(success=True)
             
@@ -965,19 +967,31 @@ class ExtUI(base.UI):
         kw.update(success=True)
         return json_response_kw(*args,**kw)
         
-    def site_js_parts(self):
+    def lino_js_parts(self):
     #~ def js_cache_name(self):
-        return ('cache','js','site.js')
+        #~ return ('cache','js','site.js')
+        return ('cache','js','lino.js')
         
-    def build_site_js(self):
-        """Generate the :xfile:`site.js`.
+    def build_lino_js(self):
+        """Generate the :xfile:`lino.js`.
         """
         #~ for app_label in site.
-        fn = os.path.join(settings.MEDIA_ROOT,*self.site_js_parts()) 
+        fn = os.path.join(settings.MEDIA_ROOT,*self.lino_js_parts()) 
         #~ fn = r'c:\temp\dsbe.js'
         logger.info("Generating %s ...", fn)
-        f = open(fn,'w')
-        for ln in self.site_js_lines():
+        f = codecs.open(fn,'w',encoding='utf-8')
+        
+        libname = os.path.join(os.path.dirname(__file__),'linolib.js')
+        tpl = CheetahTemplate(codecs.open(libname,encoding='utf-8').read())
+        tpl.ui = self
+        #~ tpl.user = request.user
+        tpl.site = self.site
+        tpl.lino = lino
+        for k in ext_requests.URL_PARAMS:
+            setattr(tpl,k,getattr(ext_requests,k))
+        f.write(unicode(tpl)+'\n')
+        
+        for ln in self.lino_js_lines():
             f.write(ln+'\n')
         for rpt in reports.master_reports + reports.slave_reports + reports.generic_slaves.values():
             rh = rpt.get_handle(self) # make sure that setup_handle is called (which adds the window_wrapper)
@@ -1190,6 +1204,12 @@ class ExtUI(base.UI):
                     
             for a in h.get_actions():
                 a.window_wrapper = self.action_window_wrapper(a,h)
+                
+            for de in h.data_elems():
+                if de.name in self.reserved_names:
+                    raise Exception(
+                      "%s defines %r but that is a reserved name in lino.ui.extjs" % (
+                      h.report,de.name))
                 
     def source_dir(self):
         return os.path.abspath(os.path.dirname(__file__))

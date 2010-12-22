@@ -45,10 +45,32 @@ The pk of the master instance.
 """
 
 # URL_PARAM_MASTER_GRID = 'mg'
+URL_PARAM_GRIDFILTER = 'filter'
 URL_PARAM_FILTER = 'query'
-URL_PARAM_CHOICES_PK = "ck"
+"""
+A string entered in the quick search field or in the text field of a combobox.
+"""
 
-POST_PARAM_SELECTED = 'selected'
+URL_PARAM_SORT = 'sort'
+URL_PARAM_SORTDIR = 'dir'
+URL_PARAM_START = 'start'
+URL_PARAM_LIMIT = 'limit'
+#~ TEST = 'name'
+
+URL_PARAMS = [
+  'URL_PARAM_MASTER_TYPE',
+  'URL_PARAM_MASTER_PK',
+  'URL_PARAM_GRIDFILTER',
+  'URL_PARAM_FILTER',
+  'URL_PARAM_SORT',
+  'URL_PARAM_SORTDIR',
+  'URL_PARAM_START',
+  'URL_PARAM_LIMIT',
+  #~ 'TEST',
+]
+
+#~ URL_PARAM_CHOICES_PK = "ck"
+#~ URL_PARAM_SELECTED = 'selected'
 
 #~ FMT_RUN = 'act'
 #~ FMT_JSON = 'json'
@@ -130,7 +152,7 @@ class ViewReportRequest(reports.ReportActionRequest):
             #~ print '20100212', self #, kw['master_instance']
         #~ print '20100406b', self.report,kw
         
-        filter = request.REQUEST.get('filter',None)
+        filter = request.REQUEST.get(URL_PARAM_GRIDFILTER,None)
         if filter is not None:
             filter = json.loads(filter)
             kw['gridfilters'] = [dict2kw(flt) for flt in filter]
@@ -139,23 +161,24 @@ class ViewReportRequest(reports.ReportActionRequest):
         quick_search = request.REQUEST.get(URL_PARAM_FILTER,None)
         if quick_search:
             kw.update(quick_search=quick_search)
-        offset = request.REQUEST.get('start',None)
+        offset = request.REQUEST.get(URL_PARAM_START,None)
         if offset:
             kw.update(offset=int(offset))
-        limit = request.REQUEST.get('limit',None)
+        limit = request.REQUEST.get(URL_PARAM_LIMIT,None)
         if limit:
             kw.update(limit=int(limit))
         #~ else:
             #~ kw.update(limit=self.report.page_length)
             
-        sort = request.REQUEST.get('sort',None)
+        
+        sort = request.REQUEST.get(URL_PARAM_SORT,None)
         if sort:
             self.sort_column = sort
-            sort_dir = request.REQUEST.get('dir','ASC')
+            sort_dir = request.REQUEST.get(URL_PARAM_SORTDIR,'ASC')
             if sort_dir == 'DESC':
                 sort = '-'+sort
                 self.sort_direction = 'DESC'
-            kw.update(order_by=sort)
+            kw.update(order_by=[sort])
         
         #~ layout = request.REQUEST.get('layout',None)
         #~ if layout:
@@ -164,16 +187,13 @@ class ViewReportRequest(reports.ReportActionRequest):
             
         kw.update(user=request.user)
         
+        """
+        See :doc:`/2010/1222`
         if isinstance(self.action, actions.RowAction):
-        #~ if self.action.needs_selection:
             kw.update(selected_rows = [
               self.ah.actor.model.objects.get(pk=pk) 
-              for pk in request.REQUEST.getlist(POST_PARAM_SELECTED)])
-            #~ selected = request.REQUEST.get(POST_PARAM_SELECTED,None)
-            #~ if selected:
-                #~ kw.update(selected_rows = [
-                  #~ self.ah.actor.model.objects.get(pk=pk) for pk in selected.split(',') if pk])
-        
+              for pk in request.REQUEST.getlist(URL_PARAM_SELECTED)])
+        """
         return kw
       
         

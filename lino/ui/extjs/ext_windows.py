@@ -48,56 +48,22 @@ class ActionRenderer(object):
     def js_render(self):
         yield "function(caller) { return new Lino.%s(caller,%s);}" % (self.__class__.__name__,py2js(self.config))
 
-class unused_DeleteRenderer(ActionRenderer):
-  
-    def js_render(self):
-        yield "function(caller) { Lino.delete_selected(caller); }"
-
 class WindowWrapper(ActionRenderer):
-  
-    #~ window_config_type = None
-    
+   
     def __init__(self,action,ui,lh,main,**kw):
         ActionRenderer.__init__(self,ui,action)
-        #~ assert self.window_config_type is not None, "%s.window_config_type is None" % self.__class__
         self.main = main
-        #~ self.permalink_name = str(action).replace('.','/')
-        #~ self.permalink_name = str(action)
         self.lh = lh # may be None
         self.bbar_buttons = []
         self.config = self.get_config()
-        #~ if ui.USE_WINDOWS:
-            #~ self.main.update(autoHeight=True,height=None,width=None)
-        
         
     def __str__(self):
         return self.ext_name + "(" + self.__class__.__name__ + ")"
         
     def get_config(self,**d):
         d.update(permalink_name=str(self.action))
-        #~ wc = lh2win(self.lh)
-        #~ wc = self.ui.load_window_config(self.action,**wc)
-        #~ d.update(permalink_name=self.permalink_name)
-        #~ d.update(wc=wc)
-        #~ url = '/ui/' + '/'.join((self.action.actor.app_label,self.action.actor._actor_name,self.action.name))
-        #~ d.update(url_action=url) # ,ext_requests.FMT_JSON))
-        #~ d.update(handler=js_code("Lino.%s" % self.action)) 
-        #~ d.update(ls_data_url=self.ui.get_actor_url(self.action.actor))
         return d
         
-def unused_lh2win(lh,**kw):
-    #~ kw.update(height=300)
-    #~ kw.update(width=400)
-    if lh is not None:
-        #~ kw.update(title=lh.get_title(None))
-        #~ if lh.height is not None:
-            #~ kw.update(height=lh.height*EXT_CHAR_HEIGHT + 7*EXT_CHAR_HEIGHT)
-        #~ if lh.width is not None:
-            #~ kw.update(width=lh.width*EXT_CHAR_WIDTH + 10*EXT_CHAR_WIDTH)
-        if lh.start_focus is not None:
-            kw.update(defaultButton=lh.start_focus.name)
-    return kw
-  
 
 class MasterWrapper(WindowWrapper):
   
@@ -193,7 +159,6 @@ class BaseDetailWrapper(MasterWrapper):
         
 class DetailWrapper(BaseDetailWrapper):
     method = 'PUT'
-    pass
   
   
 class InsertWrapper(BaseDetailWrapper):

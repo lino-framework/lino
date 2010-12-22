@@ -3,3 +3,36 @@
 
 - Upps, da waren noch einige `Report.order_by` nicht angepasst...
   Jetzt testet er das beim Server-Startup.
+  
+- Code-Update in Eupen.  
+
+- Upps, Kolonnen sortieren funktionierte nicht mehr.
+  Wenn man z.B. nach Kolonne "street" sortieren will, meldet er
+  "FieldError: Cannot resolve keyword u's' into field."
+  Lag ebenfalls noch an meinem `Report.order_by`, 
+  der jetzt eine Liste sein muss.
+  Behoben.
+  
+- `ext_requests.URL_PARAM_SELECTED` scheint nicht benutzt zu werden, 
+  deshalb habe ich einige Zeilen in ext_requests deaktiviert. 
+  Ich muss in diesen Parametern aufräumen, denn diese Namen 
+  dürfen demnächst nicht mehr als Feldnamen benutzt werden 
+  (wenn ich auch beim GET eines Records eventuelle schon erfasste 
+  Felder angeben will).
+
+- Super. Ganz *en passant* noch mal ne kleine Revolution: 
+  Die bisherigen Dateien :xfile:`site.js` und :xfile:`lino.js` sind jetzt 
+  nur noch eine einzige Datei namens :xfile:`lino.js` (die wie die bisherige :xfile:`site.js` 
+  beim Server-Start in den Cache generiert wird).
+  Die bisherige :xfile:`lino.js` steht jetzt in 
+  :srcref:`/lino/ui/extjs/linolib.js`, und der einzige Unterschied ist, 
+  dass sie jetzt mit Cheetah geparst wird.
+  Grund für diese Neuerung war, dass ich die `ext_requests.URL_PARAMS` 
+  auch dort verwenden will. Denn ich seh schon kommen, dass ein paar von 
+  denen umbenannt werden müssen.
+  
+  LinoSite prüft das jetzt auch beim Hochfahren und meldet 
+  (falls jemand auf die Idee kommen sollte, in einem seiner 
+  Modelle z.B. ein Feld namens `query` zu definieren) 
+  `Exception: %report_name% defines 'query' but that is 
+  a reserved name in lino.ui.extjs`. 

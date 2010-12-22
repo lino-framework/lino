@@ -68,7 +68,6 @@ class Users(reports.Report):
     model = auth.User
     #~ order_by = "last_name first_name".split()
     order_by = ["username"]
-    #~ display_field = 'username'
     column_names = 'username first_name last_name is_active id is_superuser is_staff last_login'
 
 class Groups(reports.Report):

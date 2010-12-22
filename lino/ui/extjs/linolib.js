@@ -12,6 +12,8 @@
  You should have received a copy of the GNU General Public License
  along with Lino; if not, see <http://www.gnu.org/licenses/>.
 */
+// test: $site.title
+
 Ext.namespace('Lino');
 
 Lino.on_tab_activate = function(item) {
@@ -953,7 +955,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   },
   search_change : function(field,oldValue,newValue) {
     //~ console.log('FormPanel.search_change()');
-    this.ww.config.base_params['query'] = field.getValue(); // URL_PARAM_FILTER
+    this.ww.config.base_params['$URL_PARAM_FILTER'] = field.getValue(); // URL_PARAM_FILTER
     this.goto_record_id(this.current_record.id);
     //~ this.moveFirst();
   },
@@ -1246,7 +1248,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
   
   search_change : function(field,oldValue,newValue) {
     //~ console.log('search_change',field.getValue(),oldValue,newValue)
-    this.store.setBaseParam('query',field.getValue()); // URL_PARAM_FILTER
+    this.store.setBaseParam('$URL_PARAM_FILTER',field.getValue()); // URL_PARAM_FILTER
     this.store.load({params: { start: 0, limit: this.getTopToolbar().pageSize }});
   },
   
@@ -1792,7 +1794,7 @@ Lino.RemoteComboFieldElement = Ext.extend(Lino.ComboBox,{
   //~ forceSelection:false,
   minChars: 2, // default 4 is to much
   queryDelay: 300, // default 500 is maybe slow
-  queryParam: 'query', // ext_requests.URL_PARAM_FILTER)
+  queryParam: '$URL_PARAM_FILTER', 
   typeAhead: true,
   selectOnFocus: true, // select any existing text in the field immediately on focus.
   resizable: true
@@ -1946,13 +1948,13 @@ Ext.override(Lino.WindowWrapper,{
   },
   get_master_params : function() {
     var p = {}
-    p['mt'] = this.config.content_type; // ext_requests.URL_PARAM_MASTER_TYPE
+    p['$URL_PARAM_MASTER_TYPE'] = this.config.content_type; 
     rec = this.get_current_record()
     if (rec) {
       if (rec.phantom) {
-          p['mk'] = undefined; // ext_requests.URL_PARAM_MASTER_PK
+          p['$URL_PARAM_MASTER_PK'] = undefined; 
       }else{
-          p['mk'] = rec.id; // ext_requests.URL_PARAM_MASTER_PK
+          p['$URL_PARAM_MASTER_PK'] = rec.id; 
       }
     } else {
       p['mk'] = undefined;
