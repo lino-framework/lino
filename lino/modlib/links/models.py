@@ -68,18 +68,18 @@ class Link(mixins.Reminder):
 class LinkTypes(reports.Report):
     model = 'links.LinkType'
     column_names = "name *"
-    order_by = "name"
+    order_by = ["name"]
     
 class Links(reports.Report):
     model = 'links.Link'
     column_names = "id date user url name *"
-    order_by = "id"
+    order_by = ["id"]
 
 class MyLinks(Links):
     label = _("My links")
     fk_name = 'user'
     column_names = "name url date *"
-    order_by = 'name'
+    order_by = ['name']
 
 class LinksByOwnerBase(Links):
     #~ button_label = _("Links")

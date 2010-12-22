@@ -731,6 +731,19 @@ class Report(actors.Actor): #,base.Handled):
         self.default_action = self.default_action_class(self)
         #~ self.list_action = ListAction(self)
         
+        if self.order_by is not None:
+            if not isinstance(self.order_by,(list,tuple)):
+                raise Exception("%s.order_by is %r (must be a list or tuple)" % (self,self.order_by))
+            if False: 
+              # good idea, but doesn't yet work for foreign fields, 
+              # e.g. order_by = ['content_type__app_label']
+              for fieldname in self.order_by:
+                  try:
+                      fk, remote, direct, m2m = self.model._meta.get_field_by_name(fieldname)
+                      assert direct
+                      assert not m2m
+                  except models.FieldDoesNotExist,e:
+                      raise Exception("Unknown fieldname %r in %s.order_by" % (fieldname,self))
         
         
     @classmethod
@@ -891,7 +904,6 @@ class Report(actors.Actor): #,base.Handled):
             qs = qs.extra(**extra)
         order_by = rr.order_by or self.order_by
         if order_by:
-            assert not isinstance(order_by,basestring)
             qs = qs.order_by(*order_by)
         return qs
 

@@ -38,7 +38,7 @@ class Country(models.Model):
 class Countries(reports.Report):
     #~ label = _("Countries")
     model = 'countries.Country'
-    order_by = "isocode"
+    order_by = ["isocode"]
     column_names = "isocode name short_code"
     
     
@@ -63,7 +63,7 @@ class City(models.Model):
 class Cities(reports.Report):
     #~ label = _("Cities")
     model = 'countries.City'
-    order_by = "country name"
+    order_by = "country name".split()
     column_names = "country name zip_code"
     
 class CitiesByCountry(Cities):

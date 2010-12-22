@@ -194,13 +194,12 @@ class DocItems(reports.Report):
     column_names = "document pos:3 "\
                   "date account company person remark debit credit" 
     model = DocItem
-    order_by = "pos"
+    order_by = ["pos"]
 
 class ItemsByDocument(DocItems):
     column_names = "pos:3 date account company person remark debit credit" 
     #master = BankStatement
     fk_name = 'document'
-    order_by = "pos"
     
 BankStatement.content = ItemsByDocument
 

@@ -412,13 +412,13 @@ class Persons(contacts.Persons):
 class PersonsByNationality(Persons):
     app_label = 'contacts'
     fk_name = 'nationality'
-    order_by = "city name"
+    order_by = "city name".split()
     column_names = "city street street_no street_box addr2 name country language *"
     
 class PersonsByCity(Persons):
     app_label = 'contacts'
     fk_name = 'city'
-    order_by = 'street street_no street_box addr2'
+    order_by = 'street street_no street_box addr2'.split()
     column_names = "street street_no street_box addr2 name language *"
 
 #~ class Persons2(contacts.Persons):
@@ -478,7 +478,7 @@ class StudyType(models.Model):
 class StudyTypes(reports.Report):
     #~ label = _('Study types')
     model = StudyType
-    order_by = "name"
+    order_by = ["name"]
 
 #
 # STUDY CONTENT
@@ -532,7 +532,7 @@ class StudiesByPerson(reports.Report):
     fk_name = 'person'
     #~ label = _("Studies & experiences")
     button_label = _("Studies")
-    order_by = "started"
+    order_by = ["started"]
     
     
 #
@@ -923,14 +923,14 @@ class ContractsByCompany(Contracts):
 class ContractsByType(Contracts):
     fk_name = 'type'
     column_names = "applies_from person company user *"
-    order_by = "applies_from"
+    order_by = ["applies_from"]
 
 class MyContracts(mixins.ByUser,Contracts):
     column_names = "applies_from person company *"
     label = _("My contracts")
     #~ order_by = "reminder_date"
     #~ column_names = "reminder_date person company *"
-    order_by = "applies_from"
+    order_by = ["applies_from"]
     #~ filter = dict(reminder_date__isnull=False)
 
 
@@ -944,12 +944,12 @@ class Note(notes.Note,mixins.PartnerDocument):
 class NotesByPerson(notes.Notes):
     fk_name = 'person'
     column_names = "date subject user company *"
-    order_by = "date"
+    order_by = ["date"]
   
 class NotesByCompany(notes.Notes):
     fk_name = 'company'
     column_names = "date subject user person *"
-    order_by = "date"
+    order_by = ["date"]
   
 #
 # LINKS
@@ -961,12 +961,12 @@ class Link(links.Link,mixins.PartnerDocument):
 class LinksByPerson(links.LinksByOwnerBase):
     fk_name = 'person'
     column_names = "name url user date company *"
-    order_by = "date"
+    order_by = ["date"]
   
 class LinksByCompany(links.LinksByOwnerBase):
     fk_name = 'company'
     column_names = "name url user date person *"
-    order_by = "date"
+    order_by = ["date"]
   
 
 """

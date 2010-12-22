@@ -112,7 +112,7 @@ class NoteTypes(reports.Report):
 class Notes(reports.Report):
     model = 'notes.Note'
     column_names = "id date user subject * body"
-    order_by = "id"
+    order_by = ["id"]
     #~ label = _("Notes")
 
 
@@ -122,7 +122,7 @@ class MyNotes(mixins.ByUser,Notes):
     hide_columns = "body"
     #~ can_view = perms.is_authenticated
     label = _("My notes")
-    order_by = "date"
+    order_by = ["date"]
     
     #~ def setup_request(self,req):
         #~ if req.master_instance is None:
@@ -141,7 +141,7 @@ class MyNotes(mixins.ByUser,Notes):
 class NotesByType(Notes):
     fk_name = 'type'
     column_names = "date user subject *"
-    order_by = "date"
+    order_by = ["date"]
     #~ label = _("Notes by person")
   
   

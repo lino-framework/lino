@@ -74,12 +74,12 @@ class Persons(Addressables):
     #~ label = _("Persons")
     #~ column_names = "first_name last_name title country id name *"
     can_delete = True
-    order_by = "last_name first_name id"
+    order_by = "last_name first_name id".split()
     #can_view = perms.is_authenticated
 
 class PersonsByCountry(Persons):
     fk_name = 'country'
-    order_by = 'city street street_no street_box addr2'
+    order_by = 'city street street_no street_box addr2'.split()
     column_names = "city street street_no street_box addr2 name language"
     
 
@@ -126,14 +126,14 @@ class Companies(Addressables):
     #~ label = _("Companies")
     #~ column_names = "name country city id address *"
     model = 'contacts.Company'
-    order_by = "name"
+    order_by = ["name"]
     
     
     
 class CompaniesByCountry(Companies):
     fk_name = 'country'
     column_names = "city street street_no name language *"
-    order_by = "city street street_no"
+    order_by = "city street street_no".split()
     
 
 class ContactType(models.Model):

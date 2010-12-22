@@ -318,12 +318,12 @@ class Sendable(models.Model):
 
 class Journals(reports.Report):
     model = Journal
-    order_by = "pos"
+    order_by = ["pos"]
     column_names = "id name doctype force_sequence *"
     
     
 class DocumentsByJournal(reports.Report):
-    order_by = "number"
+    order_by =  ["number"]
     fk_name = 'journal' # see django issue 10808
     
     def get_title(self,renderer):
@@ -334,7 +334,7 @@ class DocumentsByJournal(reports.Report):
     
     
 class unused_DocumentsByJournal(reports.Report):
-    order_by = "number"
+    order_by = ["number"]
     #master = Journal
     fk_name = 'journal' # see django issue 10808
     

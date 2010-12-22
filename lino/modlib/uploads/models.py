@@ -40,7 +40,7 @@ class UploadType(models.Model):
 class UploadTypes(reports.Report):
     model = 'uploads.UploadType'
     column_names = "name *"
-    order_by = "name"
+    order_by = ["name"]
     
         
   
@@ -63,7 +63,7 @@ class Upload(mixins.Uploadable,mixins.PartnerDocument,mixins.Reminder):
         
 class Uploads(reports.Report):
     model = Upload
-    order_by = "modified"
+    order_by = ["modified"]
     column_names = "file user created modified *"
     
 
@@ -81,4 +81,4 @@ class UploadsByCompany(Uploads):
 class MyUploads(mixins.ByUser,Uploads):
     column_names = "file user company created modified"
     label = _("My uploads")
-    order_by = "modified"
+    order_by = ["modified"]
