@@ -36,3 +36,17 @@
   Modelle z.B. ein Feld namens `query` zu definieren) 
   `Exception: %report_name% defines 'query' but that is 
   a reserved name in lino.ui.extjs`. 
+
+
+Der folgende Punkt ist gelöst:
+
+- Wenn man z.B. auf Next oder Prev klickt und vorher nicht gespeichert hat, 
+  dann sind alle Änderungen futsch.
+  
+Ich benutze dazu jetzt :extjs:`Ext.form.BasicForm`.`isDirty()` 
+und `trackResetOnLoad = true`.
+
+Das mit dem "submit on each change" kann ich uns wahrscheinlich sparen.
+Ein AJAX-Call sollte nur stattfinden, wenn ein Feld mit `on_FIELD_change` 
+verändert wurde. Das ist technisch ähnlich wie für die Chooser.
+

@@ -12,7 +12,7 @@
  You should have received a copy of the GNU General Public License
  along with Lino; if not, see <http://www.gnu.org/licenses/>.
 */
-// test: $site.title
+// test: $site.title ($lino.welcome_text())
 
 Ext.namespace('Lino');
 
@@ -376,6 +376,16 @@ Lino.alert = function(msg) {
   Ext.MessageBox.alert('Notify',msg);
 };
 
+Lino.confirm = function(msg,onok) {
+  var config = {title:'Confimation',};
+  config.buttons = Ext.MessageBox.YESNOCANCEL;
+  config.msg = msg;
+  config.fn = function(buttonId,text,opt) {
+    if (buttonId == "ok") onok()
+  }
+  Ext.MessageBox.show(config);
+};
+
 Lino.show_about = function() {
   new Ext.Window({
     width: 400, height: 400,
@@ -526,8 +536,8 @@ Lino.do_action = function(caller,action) {
   Ext.Ajax.request(action);
 };
 
-Lino.submit_form = function (caller,url,pkname,must_validate) {
-  // still used for submit button in DetailSlaveWrapper
+Lino.unused_submit_form = function (caller,url,pkname,must_validate) {
+  // still used for submit button in DetailSlaveWrapper?
   if (must_validate && !caller.config.main_panel.form.isValid()) {
       Lino.notify("One or more fields contain invalid data.");
       return;
@@ -718,7 +728,7 @@ Lino.show_insert_handler = function(action) {
 //~ };
 
 
-Lino.submit_detail = function(panel,btn) {
+Lino.submit_detail = function(panel,btn,after) {
   var rec = panel.get_current_record();
   //~ console.log('todo: Lino.submit_detail and Lino.submit_insert send also action name from btn',btn,panel.get_base_params())
   if (rec) {
@@ -731,9 +741,7 @@ Lino.submit_detail = function(panel,btn) {
       params: panel.get_base_params(), 
       success: function(form, action) {
         Lino.notify(action.result.message);
-        panel.refresh();
-        //~ if (action.result.refresh) panel.refresh();
-        //~ this.caller.refresh();
+        if (after) after(); else panel.refresh();
       },
       failure: Lino.on_submit_failure,
       clientValidation: true
@@ -807,6 +815,7 @@ Lino.HtmlBoxPanel = Ext.extend(Ext.Panel,{
 });
 
 Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
+  //~ trackResetOnLoad : true,
   constructor : function(ww,config,params){
     this.ww = ww;
     if (params) Ext.apply(config,params);
@@ -846,6 +855,8 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     this.before_row_edit = config.before_row_edit.createDelegate(this);
     
     Lino.FormPanel.superclass.constructor.call(this, config);
+    //~ console.log(20101222,this.form.trackResetOnLoad);
+    this.form.trackResetOnLoad = true;
     //~ 20101025 Ext.applyIf(this,{base_params:{}});
     //~ this.base_params = config.base_params;
     //~ console.log(20100930,this.base_params);
@@ -876,39 +887,62 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     this.goto_record_id(this.current_record.id);
   },
   
+  do_when_clean : function(todo) {
+    var this_ = this;
+    if (this.form.isDirty()) {
+        var config = {title:'Confimation',};
+        config.buttons = Ext.MessageBox.YESNOCANCEL;
+        config.msg = "Save changes to current record ?";
+        config.fn = function(buttonId,text,opt) {
+          //~ console.log('do_when_clean',buttonId)
+          if (buttonId == "yes") {
+              Lino.submit_detail(this_,undefined,todo);
+          } else if (buttonId == "no") { 
+            todo();
+          }
+        }
+        Ext.MessageBox.show(config);
+    }else{
+      todo();
+    }
+  },
+  
   goto_record_id : function(record_id) {
     //~ console.log('Lino.FormPanel.goto_record_id()',record_id);
     //~ Lino.notify(); 
     //~ Lino.notify('FormPanel.goto_record_id');
     var this_ = this;
-    Ext.Ajax.request({ 
-      waitMsg: 'Loading record...',
-      method: 'GET',
-      //~ params: this.ww.config.base_params,
-      params: this.ww.config.base_params,
-      url: this.get_record_url(record_id),
-      //~ url:'/api'+this.ls_url + '/' + record_id,
-      //~ params: {query: this.search_field.getValue()},
-      success: function(response) {   
-        // todo: convert to Lino.action_handler.... but result 
-        if (response.responseText) {
-          var rec = Ext.decode(response.responseText);
-          //~ console.log('goto_record_id success',rec);
-          if (rec.navinfo && rec.navinfo.recno == 0) {
-              /* 
-                recno 0 means "the requested pk exists but is not contained in the requested queryset".
-                This can happen after search_change on a detail.
-              */
-              this_.goto_record_id(rec.navinfo.first);
-          } else {
-              this_.set_current_record(rec);
-              //~ this_.window.setTitle(rec.title);
+    this.do_when_clean(function() {
+      Ext.Ajax.request({ 
+        waitMsg: 'Loading record...',
+        method: 'GET',
+        //~ params: this.ww.config.base_params,
+        params: this_.ww.config.base_params,
+        url: this_.get_record_url(record_id),
+        //~ url:'/api'+this.ls_url + '/' + record_id,
+        //~ params: {query: this.search_field.getValue()},
+        success: function(response) {   
+          // todo: convert to Lino.action_handler.... but result 
+          if (response.responseText) {
+            var rec = Ext.decode(response.responseText);
+            //~ console.log('goto_record_id success',rec);
+            if (rec.navinfo && rec.navinfo.recno == 0) {
+                /* 
+                  recno 0 means "the requested pk exists but is not contained in the requested queryset".
+                  This can happen e.g. after search_change on a detail.
+                */
+                this_.goto_record_id(rec.navinfo.first);
+            } else {
+                this_.set_current_record(rec);
+                //~ this_.window.setTitle(rec.title);
+            }
           }
-        }
-      },
-      failure: Lino.ajax_error_handler
-    });
+        },
+        failure: Lino.ajax_error_handler
+      });
+    })
   },
+  
   set_current_record : function(record) {
     this.current_record = record;
     //~ console.log('Lino.FormPanel.set_current_record',record);

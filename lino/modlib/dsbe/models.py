@@ -765,6 +765,7 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,mixins.
     responsibilities = models.TextField(_("responsibilities"),blank=True,null=True)
     
     stages = fields.HtmlTextField(_("stages"),blank=True,null=True)
+    goals = fields.HtmlTextField(_("goals"),blank=True,null=True)
     duties_asd = fields.HtmlTextField(_("duties ASD"),blank=True,null=True)
     duties_dsbe = fields.HtmlTextField(_("duties DSBE"),blank=True,null=True)
     duties_company = fields.HtmlTextField(_("duties company"),blank=True,null=True)

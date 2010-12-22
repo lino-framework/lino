@@ -155,15 +155,26 @@ def objects():
           de=u"Konvention Art.60§7 Stadt Eupen",
           fr=u"Convention art.60§7 ville d'Eupen"))
     
-    contractType = Instantiator('dsbe.ContractType',"name").build
-    yield contractType(u"VSE Ausbildung",build_method='appyodt',template=u'Konvention Sozialoekonomie.odt')
-    yield contractType(u"VSE Arbeitssuche")
-    yield contractType(u"VSE Integration")
-    yield contractType(u"VSE Lehre")
-    yield contractType(u"VSE Cardijn")
-    yield contractType(u"VSE Work & Job")
-    yield contractType(u"VSE Vollzeitstudium")
-    yield contractType(u"VSE Sprachkurs")
+    contractType = Instantiator('dsbe.ContractType',"ref",
+      build_method='appypdf',template=u'vse.odt').build
+    yield contractType("vsea",**babel_values('name',
+          de=u"VSE Ausbildung",
+          fr=u""))
+    yield contractType("vseb",**babel_values('name',
+          de=u"VSE Arbeitssuche",
+          fr=u""))
+    yield contractType("vsec",**babel_values('name',
+          de=u"VSE Lehre",
+          fr=u""))
+    yield contractType("vsed",**babel_values('name',
+          de=u"VSE Vollzeitstudium",
+          fr=u""))
+    yield contractType("vsee",**babel_values('name',
+          de=u"VSE Sprachkurs",
+          fr=u""))
+    #~ yield contractType(u"VSE Integration")
+    #~ yield contractType(u"VSE Cardijn")
+    #~ yield contractType(u"VSE Work & Job")
     
     #~ projectType = Instantiator('projects.ProjectType',"name").build
     #~ yield projectType(u"VSE Ausbildung")

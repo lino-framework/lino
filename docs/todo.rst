@@ -9,34 +9,34 @@ for which I hope for help from other people.
 Before version 1.0
 ------------------
 
-#.  Submit on each change
-
-#.  Wenn man z.B. auf Next oder Prev klickt und vorher nicht gespeichert hat, 
-    dann sind alle Änderungen futsch.
-
 #.  "Active fields" : wenn die sich ändern, macht der Client ein GET für diesen Record, 
     wobei er aber auch alle anderen geänderten und noch nicht gespeicherten Felder mit 
     übergibt. Der Server macht darauf dann full_clean aber speichert nicht ab, sondern 
     gibt das nur zurück. So kann ich serverseitige field-level validation machen. 
-    Auch für disabled_field wäre das wichtig: je nach Vertragsart soll Feld Contract.refund_rate 
+    Auch für `disabled_fields` wäre das wichtig: je nach Vertragsart soll Feld Contract.refund_rate 
     disabled sein (und das soll sich nicht erst nach dem submit ändern).
     Implementierung vielleicht mit Methoden `on_FIELD_change`, deren 
     Parameter ähnlich wie choosers analysiert werden.
     GET /api/contacts/Persons/17?fmt=json&query=foo
 
 #.  HTML-Editoren haben noch Probleme (Layout und Performance) und sind deshalb 
-    momentan deaktiviert.
-    Alternativ reicht vielleicht eine robuste Markup-Sprache, 
+    momentan deaktiviert. Allerdings haben auch die 4 normalen Text-Editoren 
+    im Reiter "VSE" noch ein kleines Layout-Problem (setzen sich über das Label 
+    des darunterliegenden Editors).
+    
+    Statt der HTML-Editoren benutzen wir wahrscheinlich eher 
+    eine Markup-Sprache, 
     denn wir wollen ja eigentlich "nur" die Möglichkeit, 
     mehrere Absätze und Aufzählungen eingeben zu können.
-    Die 4 Text-Editoren im Reiter "VSE" überlappen sich teilweise.
 
-#.  Textbausteine
+#.  Textbausteine (im Text-Editor F1 drücken können)
 
 #.  slave report in a detail remains empty in some cases.
     e.g. ContractsByCompany. 
     Scheinbar nur wenn dieser Benutzer gerade einen Vertrag erstellt hat. 
-    Nicht wenn ich Permalink oder open in own window
+    Der Fehler verschwindet wenn ich Permalink oder open in own window.
+    Möglicherweise einfach nur ein caching-Problem.
+    
 
 #.  Liste der Personen sollte zunächst mal nur "meine" Personen anzeigen.
     Evtl. neue Menübefehle "Meine Personen" und "Meine Coachings".
