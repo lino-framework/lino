@@ -54,6 +54,7 @@ from lino import actions
 from lino.utils.babel import default_language, dtos, dtosl, setlang, getattr_lang
 from lino.utils import babel 
 from lino.utils.choosers import chooser
+from lino.utils.restify import restify
 
 
 bm_dict = {}
@@ -226,10 +227,12 @@ class AppyBuildMethod(SimpleBuildMethod):
     templates_name = 'appy' # subclasses use the same templates directory
     
     def simple_build(self,elem,tpl,target):
+        renderer = None
         context = dict(self=elem,
             dtos=dtos,
             dtosl=dtosl,
             tr=getattr_lang,
+            restify=restify,
             )
         lang = str(elem.get_print_language(self))
         from appy.pod.renderer import Renderer
@@ -239,8 +242,15 @@ class AppyBuildMethod(SimpleBuildMethod):
         #~ locale.setlocale(locale.LC_ALL,ls)
         #~ Error: unsupported locale setting
         renderer = Renderer(tpl, context, target,**settings.APPY_PARAMS)
+        #~ def debug_restify(s,*args,**kw):
+            #~ print s
+            #~ print "--->"
+            #~ print renderer.renderXhtml(s)
+            #~ return restify(s,*args,**kw)
+        #~ renderer.context.update(restify=debug_restify)
         renderer.run()
         setlang(savelang)
+        
 
 class AppyOdtBuildMethod(AppyBuildMethod):
     name = 'appyodt'

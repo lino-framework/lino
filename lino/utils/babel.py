@@ -12,13 +12,26 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
+Support for multilingual database content.
 
-Funktion `add_babel_field`
-um das Definieren von Babel-Feldern zu erleichtern.
-Wird z.B. wie folgt aufgerufen::
+This includes defintion of *babel fields* in your Django Models 
+as well as methods to access these fields transparently. 
 
-    add_babel_field(ContractType,'name')
+Requires a
+variable :setting:`BABEL_LANGS` in your Django :xfile:`settings.py` 
+which is a list of language strings, for example::
+
+  BABEL_LANGS = ['fr']
+
+
+Example::
+
+  class Foo(models.Model):
+      name = models.CharField(_("Foo"), max_length=200)
+
+  add_babel_field(Foo,'name')
   
+
 
 """
 
@@ -86,9 +99,11 @@ def lc2locale(lang,country):
 
 
 def dtos(d):
+    if d is None: return ''
     return d.strftime(SHORT_DATE_FMT[LANG])
 
 def dtosl(d):
+    if d is None: return ''
     return d.strftime(LONG_DATE_FMT[LANG])
     
 def setlang(lang):
@@ -143,6 +158,12 @@ def getattr_lang(obj,name,*args):
 babelattr = getattr_lang
     
 def add_babel_field(model,name,*args,**kw):
+    """
+Declares a previously defined field as babel field.
+This will add a variable number of clones of the base field, 
+one for each language of your :setting:`BABEL_LANGS`.
+
+    """
 #~ def add_lang_field(model,name,lang,*args,**kw):
     f = model._meta.get_field(name)
     #~ if not f.blank:

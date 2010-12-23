@@ -144,41 +144,6 @@ def uses_simple_values(fld):
     #~ return get_for_field()
 
 
-"""
-Thanks to Bruce Eckel for his good explanations in
-http://www.artima.com/weblogs/viewpost.jsp?thread=240845
-
-but i didn't yet get it to work
-
-#~ class choices_method(object):
-    #~ def __init__(self,simple_values=False):
-        #~ self.simple_values = simple_values
-        
-    #~ def __call__(self,fn):
-        #~ setattr(fn,'simple_values',self.simple_values)
-        #~ return classmethod(fn)
-        
-class choices_method(object):
-    simple_values = False
-    def __init__(self,fn):
-        #~ print fn
-        #~ self.fn = classmethod(fn) # TypeError: 'classmethod' object is not callable
-        self.fn = fn
-        self.func_code = fn.func_code
-        
-    def __call__(self,**kw):
-        #~ print "20100724b", __file__
-        return self.fn(**kw)
-        
-class simple_choices_method(choices_method):
-    simple_values = True
-    #~ def __init__(self,fn):
-        #~ setattr(fn,'simple_values',True)
-        #~ choices_method.__init__(self,fn)
-        
-"""
-
-
 def chooser(**options):
     def chooser_decorator(fn):
         def wrapped(*args):

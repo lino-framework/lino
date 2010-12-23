@@ -1,4 +1,63 @@
 20101223
 ========
 
-- Release in Eupen. Noch Übersetzungen. Layout Verträge (Reiter "VSE")
+Release in Eupen
+----------------
+
+Noch Übersetzungen. Layout Verträge (Reiter "VSE")
+
+
+Formatierte Texte
+-----------------
+
+Also es geht um die mehrzeiligen Textfelder 
+`stages`, `goals`, `duties_dsbe` usw. eines Vertrags.
+Die enthalten momentan unformatierten Text.
+Der wird bei Verwendung 
+von :class:`lino.mixins.printables.AppyBuildMethod`
+als ein einziger Absatz gerendert. Selbst wenn dort z.B. eine Leerzeile drin ist.
+Das ist nicht ideal.
+Mit dem HTML-Editor von ExtJS wäre das leicht gelöst,
+aber der erweist sich als recht schwerfällig.
+Besser scheint es uns, dass wir Markup benutzen für die mehrzeiligen Textfelder.
+Zunächst etwas Lektüre:
+
+- `how to insert line-breaks in python expressions
+  <https://answers.launchpad.net/appy/+question/134701>`_
+
+- `Inserting arbitrary content: the from clause
+  <http://appyframework.org/podWritingAdvancedTemplates.html>`_
+    
+Also neues Modul :mod:`lino.utils.restify`.
+
+In Eupen::
+
+  $ sudo aptitude install python-docutils
+  $ python -c 'import docutils; print docutils.__version__'    
+  0.5
+
+In einer Dokumentvorlage kann man nun theoretisch folgendes machen::
+
+  do text 
+  from xhtml(restify(self.goals))
+
+
+Problem: appy.pod macht zwar keine Fehlermeldung, aber der Inhalt 
+von `self.goals` wird nicht gerendert.
+Damit will ich Gaëtan mal belästigen:
+https://answers.launchpad.net/appy/+question/138830
+
+Bugfix am Rande: `dtos` und `dtosl` in :mod:`lino.utils.babel` 
+(beide Funktionen werden in den
+:class:`AppyBuildMethod <lino.mixins.printables.AppyBuildMethod>` benutzt) machten 
+einen Fehler wenn sie den Wert `None` bekamen. Jetzt geben sie 
+dann einen leeren String zurück.
+
+
+Diverse
+-------
+
+#.  In Auswahllisten einer ComboBox für Benutzer sollten die Einträge 
+    alphabetisch sortiert sein.
+    
+#.  In SubmitDetail und SubmitInsert waren noch ein paar Bugs seit gestern.

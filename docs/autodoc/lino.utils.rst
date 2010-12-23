@@ -7,10 +7,10 @@
     :show-inheritance:
 
 
-The :mod:`appy_pod` Module
---------------------------
+The :mod:`babel` Module
+-----------------------
 
-.. automodule:: lino.utils.appy_pod
+.. automodule:: lino.utils.babel
     :members:
     :undoc-members:
     :show-inheritance:
@@ -99,6 +99,14 @@ The :mod:`requests` Module
 --------------------------
 
 .. automodule:: lino.utils.requests
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+The :mod:`restify` Module
+-------------------------
+
+.. automodule:: lino.utils.restify
     :members:
     :undoc-members:
     :show-inheritance:

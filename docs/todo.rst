@@ -43,20 +43,17 @@ Before version 1.0
 
 #.  Auswahlliste exam_policy wird auch in französischen Verträgen deutsch angezeigt.
 
-#. Ext.LoadMask kennenlernen:
-   http://www.sencha.com/forum/showthread.php?64420-how-to-show-a-wait-message-while-calling-store-load
+#.  Ext.LoadMask kennenlernen:
+    http://www.sencha.com/forum/showthread.php?64420-how-to-show-a-wait-message-while-calling-store-load
 
-#. Arbeitsregime und Stundenplan: 
-   Nach Ändern der Sprache ändert sich nicht immer die Auswahlliste.
+#.  Arbeitsregime und Stundenplan: 
+    Nach Ändern der Sprache ändert sich nicht immer die Auswahlliste.
    
 #. "Insert as copy"
 
 #.  Sortierung: Entweder Ticket :doc:`/tickets/19` lösen, oder (noch besser) 
     auf Datenbank-Ebene lokalisierte Sortierung einstellen.
    
-#.  In Auswahllisten einer ComboBox für Benutzer sollten die Einträge 
-    alphabetisch sortiert sein.
-
 Waiting for feedback
 --------------------
 

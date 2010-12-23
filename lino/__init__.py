@@ -90,6 +90,13 @@ def using():
         version = NOT_FOUND_MSG
     yield ("Cheetah",version ,"http://cheetahtemplate.org/")
 
+    try:
+        import docutils
+        version = docutils.__version__
+    except ImportError:
+        version = NOT_FOUND_MSG
+    yield ("docutils",version ,"http://docutils.sourceforge.net/")
+
     import yaml
     version = getattr(yaml,'__version__','')
     yield ("PyYaml",version,"http://pyyaml.org/")

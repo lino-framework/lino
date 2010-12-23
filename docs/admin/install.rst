@@ -24,8 +24,9 @@ You'll maybe need the following Debian packages installed:
       python-yaml 
       python-imaging 
       python-html5lib
-      python-uno
+      # python-uno
       python-cheetah
+      python-docutils
 
  * Packages needed by Django to run in Apache2::
 

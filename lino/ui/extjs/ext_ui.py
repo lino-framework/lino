@@ -1010,7 +1010,7 @@ class ExtUI(base.UI):
         
     def choices_view(self,request,app_label=None,rptname=None,fldname=None,**kw):
         rpt = actors.get_actor2(app_label,rptname)
-        rh = rpt.get_handle(self)
+        #~ rh = rpt.get_handle(self)
         field = rpt.model._meta.get_field(fldname)
         chooser = choosers.get_for_field(field)
         if chooser:
@@ -1019,7 +1019,9 @@ class ExtUI(base.UI):
         elif field.choices:
             qs = field.choices
         elif isinstance(field,models.ForeignKey):
-            qs = field.rel.to.objects.all()
+            qs = field.rel.to._lino_model_report.request(self).get_queryset()
+            #~ qs = get_default_qs(field.rel.to)
+            #~ qs = field.rel.to.objects.all()
         else:
             raise Http404("No choices for %s" % fldname)
         #~ for k,v in request.GET.items():
@@ -1216,9 +1218,13 @@ class ExtUI(base.UI):
         
     def a2btn(self,a,**kw):
         if isinstance(a,actions.SubmitDetail):
-            kw.update(panel_btn_handler=js_code('Lino.submit_detail'))
+            #~ kw.update(panel_btn_handler=js_code('Lino.submit_detail'))
+            kw.update(handler=js_code('function() {ww.save()}'))
+            #~ kw.update(handler=js_code('ww.save'),scope=js_code('ww'))
         elif isinstance(a,actions.SubmitInsert):
-            kw.update(panel_btn_handler=js_code('Lino.submit_insert'))
+            kw.update(handler=js_code('function() {ww.save()}'))
+            #~ kw.update(handler=js_code('ww.save'),scope=js_code('ww'))
+            #~ kw.update(panel_btn_handler=js_code('Lino.submit_insert'))
         #~ elif isinstance(a,actions.UpdateRowAction):
             #~ kw.update(panel_btn_handler=js_code('Lino.update_row_handler(%r)' % a.name))
         elif isinstance(a,actions.ShowDetailAction):
