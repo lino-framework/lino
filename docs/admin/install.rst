@@ -166,7 +166,7 @@ And in your Apache config file::
     CustomLog /var/log/apache2/myproject.access.log combined
     #ServerSignature On
 
-    Alias /media/ /usr/local/lino/media/
+    Alias /media/ /usr/local/django/myproject/media/
     <Location /media/>
        SetHandler none
     </Location>

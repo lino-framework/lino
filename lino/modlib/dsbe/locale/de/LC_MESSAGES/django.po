@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Lino-DSBE\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-12-21 14:49+0000\n"
-"PO-Revision-Date: 2010-12-21 16:54+0200\n"
+"POT-Creation-Date: 2010-12-23 04:24+0000\n"
+"PO-Revision-Date: 2010-12-23 06:16+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -168,8 +168,7 @@ msgstr "eID-Kartennummer"
 msgid "ID card valid from"
 msgstr "ID-Karte gültig von"
 
-#: .\models.py:283
-#: .\models.py:636
+#: .\models.py:283 .\models.py:636
 msgid "until"
 msgstr "bis"
 
@@ -305,8 +304,7 @@ msgstr "Firma"
 msgid "companies"
 msgstr "Firmen"
 
-#: .\models.py:444
-#: .\models.py:756
+#: .\models.py:444 .\models.py:758
 msgid "hourly rate"
 msgstr "Stundensatz"
 
@@ -441,8 +439,7 @@ msgstr "Grund"
 msgid "from"
 msgstr "von"
 
-#: .\models.py:637
-#: .\models.py:681
+#: .\models.py:637 .\models.py:681
 msgid "Remark"
 msgstr "Bemerkung"
 
@@ -478,9 +475,7 @@ msgstr "Begleitungsart"
 msgid "Coaches"
 msgstr "Begleiter"
 
-#: .\models.py:698
-#: .\models.py:744
-#: .\models.py:966
+#: .\models.py:698 .\models.py:746 .\models.py:981
 msgid "contract type"
 msgstr "Vertragsart"
 
@@ -493,11 +488,10 @@ msgid "reference"
 msgstr "Referenz"
 
 #: .\models.py:702
-#: .\models.py:721
 msgid "contract title"
 msgstr "Vertragstitel"
 
-#: .\models.py:718
+#: .\models.py:718 .\models.py:777
 msgid "examination policy"
 msgstr "Auswertungsstrategie"
 
@@ -505,101 +499,108 @@ msgstr "Auswertungsstrategie"
 msgid "examination policies"
 msgstr "Auswertungsstrategien"
 
-#: .\models.py:738
+#: .\models.py:721
+msgid "designation"
+msgstr "Bezeichnung"
+
+#: .\models.py:740
 msgid "contract"
 msgstr "Vertrag"
 
-#: .\models.py:739
+#: .\models.py:741
 msgid "contracts"
 msgstr "Verträge"
 
-#: .\models.py:742
+#: .\models.py:744
 msgid "represented by"
 msgstr "Vertreten durch"
 
-#: .\models.py:747
+#: .\models.py:749
 msgid "applies from"
 msgstr "Laufzeit von"
 
-#: .\models.py:748
+#: .\models.py:750
 msgid "applies until"
 msgstr "Laufzeit bis"
 
-#: .\models.py:749
+#: .\models.py:751
 msgid "date decided"
 msgstr "Beschlossen am"
 
-#: .\models.py:750
+#: .\models.py:752
 msgid "date issued"
 msgstr "Ausgestellt am"
 
-#: .\models.py:751
+#: .\models.py:753
 msgid "duration (days)"
 msgstr "Dauer (Arbeitstage)"
 
-#: .\models.py:754
+#: .\models.py:756
 msgid "regime"
 msgstr "Regime"
 
-#: .\models.py:755
+#: .\models.py:757
 msgid "schedule"
 msgstr "Stundenplan"
 
-#: .\models.py:757
+#: .\models.py:759
 msgid "refund rate"
 msgstr "Rückzahlung"
 
-#: .\models.py:760
+#: .\models.py:762
 msgid "reference person"
 msgstr "Referenzperson"
 
-#: .\models.py:763
+#: .\models.py:765
 msgid "responsibilities"
 msgstr "Aufgabenbereich"
 
-#: .\models.py:765
+#: .\models.py:767
 msgid "stages"
 msgstr "Etappen"
 
-#: .\models.py:766
+#: .\models.py:768
+msgid "goals"
+msgstr "Zielsetzungen"
+
+#: .\models.py:769
 msgid "duties ASD"
 msgstr "Verpflichtungen ASD"
 
-#: .\models.py:767
+#: .\models.py:770
 msgid "duties DSBE"
 msgstr "Verpflichtungen DSBE"
 
-#: .\models.py:768
+#: .\models.py:771
 msgid "duties company"
 msgstr "Verpflichtungen Firma"
 
-#: .\models.py:770
+#: .\models.py:773
 msgid "responsible (ASD)"
 msgstr "Verantwortlicher (ASD)"
 
-#: .\models.py:775
+#: .\models.py:779
 msgid "aid nature"
 msgstr "Art der Hilfe"
 
-#: .\models.py:776
+#: .\models.py:780
 msgid "aid rate"
 msgstr "Satz"
 
-#: .\models.py:829
+#: .\models.py:833
 #, python-format
 msgid "Contract # %s"
 msgstr "Vertrag Nr. %s"
 
-#: .\models.py:916
+#: .\models.py:931
 msgid "My contracts"
 msgstr "Meine Verträge"
 
-#: .\models.py:972
+#: .\models.py:987
 msgid "responsible (DSBE)"
 msgstr "Verantwortlicher (DSBE)"
 
-#: .\templates\404.html.py:4
-#: .\templates\404.html.py:8
+#: .\templates\404.html.py:4 .\templates\404.html.py:8
 msgid "Page not found"
 msgstr "Seite nicht gefunden"
 
@@ -607,8 +608,7 @@ msgstr "Seite nicht gefunden"
 msgid "We're sorry, but the requested page could not be found."
 msgstr "Tut uns Leid, aber die angefragte Seite konnte nicht gefunden werden."
 
-#: .\templates\500.html.py:4
-#: .\templates\base.html.py:52
+#: .\templates\500.html.py:4 .\templates\base.html.py:52
 msgid "Home"
 msgstr "Anfang"
 
@@ -625,7 +625,9 @@ msgid "Server Error <em>(500)</em>"
 msgstr ""
 
 #: .\templates\500.html.py:10
-msgid "There's been an error. It's been reported to the site administrators via e-mail and should be fixed shortly. Thanks for your patience."
+msgid ""
+"There's been an error. It's been reported to the site administrators via e-"
+"mail and should be fixed shortly. Thanks for your patience."
 msgstr ""
 
 #: .\templates\base.html.py:25

@@ -115,7 +115,7 @@ class Company(Addressable):
         abstract = True
         app_label = 'contacts'
     
-    vat_id = models.CharField(max_length=200,blank=True)
+    vat_id = models.CharField(_("VAT id"),max_length=200,blank=True)
     type = models.ForeignKey('contacts.CompanyType',blank=True,null=True,
       verbose_name=_("Company type"))
     """Pointer to this company's :class:`CompanyType`. 

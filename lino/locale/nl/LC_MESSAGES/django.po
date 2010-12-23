@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-12-21 14:49+0000\n"
+"POT-Creation-Date: 2010-12-23 04:24+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -97,7 +97,7 @@ msgstr ""
 msgid "User %(user)s cannot view %(report)s."
 msgstr ""
 
-#: .\reports.py:845
+#: .\reports.py:858
 #, python-format
 msgid "%(details)s by %(model)s %(master)s"
 msgstr ""
@@ -282,7 +282,7 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: .\ui\extjs\ext_elems.py:559
+#: .\ui\extjs\ext_elems.py:553
 #, python-format
 msgid "Select a %s..."
 msgstr ""
@@ -297,51 +297,51 @@ msgstr ""
 msgid "%r (invalid choice)"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:201
+#: .\ui\extjs\ext_ui.py:202
 #, python-format
 msgid "Row %(rowid)d of %(rowcount)d"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:593
+#: .\ui\extjs\ext_ui.py:595
 msgid "Console"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:641
+#: .\ui\extjs\ext_ui.py:643
 #, python-format
 msgid "Welcome on Lino server %(title)r, user %(user)s"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:692
+#: .\ui\extjs\ext_ui.py:694
 #, python-format
 msgid "%s has been created."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:694
+#: .\ui\extjs\ext_ui.py:696
 #, python-format
 msgid "%s has been saved."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:702 .\ui\extjs\ext_ui.py:725
+#: .\ui\extjs\ext_ui.py:704 .\ui\extjs\ext_ui.py:727
 #, python-format
 msgid "User %(user)s cannot configure %(report)s."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:894
+#: .\ui\extjs\ext_ui.py:896
 #, python-format
 msgid "Failed to delete %(record)s : %(error)s."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:917
+#: .\ui\extjs\ext_ui.py:919
 #, python-format
 msgid "Insert into %s..."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:944
+#: .\ui\extjs\ext_ui.py:946
 #, python-format
 msgid "Action %(action)s failed for %(record)s: %(error)s"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:1050
+#: .\ui\extjs\ext_ui.py:1064
 #, python-format
 msgid "Choices for %s"
 msgstr ""

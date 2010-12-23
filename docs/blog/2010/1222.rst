@@ -50,3 +50,5 @@ Das mit dem "submit on each change" kann ich uns wahrscheinlich sparen.
 Ein AJAX-Call sollte nur stattfinden, wenn ein Feld mit `on_FIELD_change` 
 verändert wurde. Das ist technisch ähnlich wie für die Chooser.
 
+- Code-Update in Eupen.  
+

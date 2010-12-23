@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-12-21 14:49+0000\n"
+"POT-Creation-Date: 2010-12-23 04:24+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -305,7 +305,7 @@ msgstr ""
 msgid "companies"
 msgstr ""
 
-#: .\models.py:444 .\models.py:756
+#: .\models.py:444 .\models.py:758
 msgid "hourly rate"
 msgstr ""
 
@@ -476,7 +476,7 @@ msgstr ""
 msgid "Coaches"
 msgstr ""
 
-#: .\models.py:698 .\models.py:744 .\models.py:966
+#: .\models.py:698 .\models.py:746 .\models.py:981
 msgid "contract type"
 msgstr ""
 
@@ -488,11 +488,11 @@ msgstr ""
 msgid "reference"
 msgstr ""
 
-#: .\models.py:702 .\models.py:721
+#: .\models.py:702
 msgid "contract title"
 msgstr ""
 
-#: .\models.py:718
+#: .\models.py:718 .\models.py:777
 msgid "examination policy"
 msgstr ""
 
@@ -500,96 +500,104 @@ msgstr ""
 msgid "examination policies"
 msgstr ""
 
-#: .\models.py:738
+#: .\models.py:721
+msgid "designation"
+msgstr ""
+
+#: .\models.py:740
 msgid "contract"
 msgstr ""
 
-#: .\models.py:739
+#: .\models.py:741
 msgid "contracts"
 msgstr ""
 
-#: .\models.py:742
+#: .\models.py:744
 msgid "represented by"
 msgstr ""
 
-#: .\models.py:747
+#: .\models.py:749
 msgid "applies from"
 msgstr ""
 
-#: .\models.py:748
+#: .\models.py:750
 msgid "applies until"
 msgstr ""
 
-#: .\models.py:749
+#: .\models.py:751
 msgid "date decided"
 msgstr ""
 
-#: .\models.py:750
+#: .\models.py:752
 msgid "date issued"
 msgstr ""
 
-#: .\models.py:751
+#: .\models.py:753
 msgid "duration (days)"
 msgstr ""
 
-#: .\models.py:754
+#: .\models.py:756
 msgid "regime"
 msgstr ""
 
-#: .\models.py:755
+#: .\models.py:757
 msgid "schedule"
 msgstr ""
 
-#: .\models.py:757
+#: .\models.py:759
 msgid "refund rate"
 msgstr ""
 
-#: .\models.py:760
+#: .\models.py:762
 msgid "reference person"
 msgstr ""
 
-#: .\models.py:763
+#: .\models.py:765
 msgid "responsibilities"
 msgstr ""
 
-#: .\models.py:765
+#: .\models.py:767
 msgid "stages"
 msgstr ""
 
-#: .\models.py:766
+#: .\models.py:768
+msgid "goals"
+msgstr ""
+
+#: .\models.py:769
 msgid "duties ASD"
 msgstr ""
 
-#: .\models.py:767
+#: .\models.py:770
 msgid "duties DSBE"
 msgstr ""
 
-#: .\models.py:768
+#: .\models.py:771
 msgid "duties company"
 msgstr ""
 
-#: .\models.py:770
+#: .\models.py:773
 msgid "responsible (ASD)"
 msgstr ""
 
-#: .\models.py:775
+#: .\models.py:779
 msgid "aid nature"
 msgstr ""
 
-#: .\models.py:776
+#: .\models.py:780
 msgid "aid rate"
 msgstr ""
 
-#: .\models.py:829
+#: .\models.py:833
 #, python-format
 msgid "Contract # %s"
 msgstr ""
 
-#: .\models.py:916
+#: .\models.py:931
 msgid "My contracts"
 msgstr ""
 
-#: .\models.py:972
+#: .\models.py:987
 msgid "responsible (DSBE)"
 msgstr ""
 
