@@ -1,13 +1,14 @@
 About Lino
 ==========
 
-Lino is a framework for writing enterprise-level database applications, 
-using :term:`Django's <Django>` database model and application server behind the scenes,
-and the :term:`ExtJS` Javascript library to provide a modern user interface.
+Lino is a framework for creating enterprise-level database applications, 
+using :term:`Django's <Django>` database model and application server. 
+Lino replaces Django's `admin` module, using 
+the :term:`ExtJS` Javascript library to provide a desktop-application 
+style user interface.
 
 One of Lino's design goals is to keep a maximum of application 
 logic independant of your choice of user interface.
-
 Lino currently provides only one user interface (:mod:`lino.ui.extjs`),
 but we can imagine to write other interfaces in the future 
 (simple HTML, curses, Qt, ...).
@@ -27,7 +28,7 @@ History
 
 Luc Saffre, the author of Lino, is also the author of :term:`TIM`, 
 a DOS-based framework for writing database applications for small enterprises. 
-TIM is over 15 years old, but Luc lives from maintaining 
+TIM is over 15 years old, but Luc continues to live from maintaining 
 it and giving support to its users. 
 
 TIM users have relatively wide-spread profiles, 

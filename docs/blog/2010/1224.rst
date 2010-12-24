@@ -12,7 +12,10 @@ mit Lino zu arbeiten und sich auf ihn zu verlassen.
 Bis nächste Woche sollen lediglich noch Bugs behoben werden.
 
 Und ich denke, dass wir uns das leisten können.
-Lino ist benutzbar,
-der erste Release-Kandidat für Version 1.0  ist da!
+**Lino ist benutzbar,
+der erste Release-Kandidat für Version 1.0 ist da!**
 
 :doc:`/releases/20101224` läuft seit heute in Eupen.
+
+Siehe auch :doc:`/todo`.
+

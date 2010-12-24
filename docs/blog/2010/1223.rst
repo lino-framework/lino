@@ -65,3 +65,7 @@ Diverse
     alphabetisch sortiert sein.
     
 #.  In SubmitDetail und SubmitInsert waren noch ein paar Bugs seit gestern.
+
+#.  Gerd hat einen ersten Vorschlag für ein Logo von Lino entworfen:
+
+.. image:: /.static/logo-gerd.jpg

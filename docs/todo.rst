@@ -6,10 +6,47 @@ See also :doc:`/tickets/index` which is a list of tickets
 for which I hope for help from other people.
 
 
-Before version 1.0
-------------------
+Version 1.0
+-----------
 
-#.  initdb_tim setzt `SiteConfig.next_partner_id` nicht korrekt.
+#.  Formatierte Texte. Zumindest Aufzählungen und mehrere Absätze sollten 
+    möglich sein.
+
+#.  `initdb_tim` setzt `SiteConfig.next_partner_id` nicht korrekt.
+    Workaround: manuell setzen falls nochmal initdb_tim laufen gelassen wird.
+
+#.  Wenn man ClearCacheAction macht und das Dokument neu druckt, 
+    dauert es eine Zeit, bis der Cache des Browsers kapiert, 
+    dass die URL neu angefragt werden muss.
+
+#.  slave report in a detail remains empty in some cases.
+    e.g. ContractsByCompany. 
+    Scheinbar nur wenn dieser Benutzer gerade einen Vertrag erstellt hat. 
+    Der Fehler verschwindet wenn ich Permalink oder open in own window.
+    Möglicherweise einfach nur ein caching-Problem.
+    
+#.  Insert as copy (Kopie erstellen). 
+    Oder genauer gesagt denke ich momentan eher an zwei Buttons "Export" 
+    und "Import". Mit "Export" lässt man den aktuellen Record in eine 
+    lokale Datei abspeichern (Format z.B. json oder xml), und mit "Import" 
+    überschreibt man den aktuellen Record durch die Daten aus einer 
+    hochzuladenden Datei.
+
+Waiting for feedback
+--------------------
+
+#.  Auswahlliste `Contract.exam_policy` (Auswertungsstrategie) 
+    wird auch in französischen Verträgen deutsch angezeigt.
+    Das ist nicht schlimm und vielleicht sogar erwünscht.
+
+#.  Arbeitsregime und Stundenplan: 
+    Nach Ändern der Sprache ändert sich nicht immer die Auswahlliste.
+    Vielleicht sollten diese Felder auch wie 
+    die Auswertungsstrategie als ForeignKeys 
+    (ohne die Möglichkeit von manuellen Eingaben) implementiert werden.
+   
+#.  Liste der Personen sollte zunächst mal nur "meine" Personen anzeigen.
+    Evtl. neue Menübefehle "Meine Personen" und "Meine Coachings".
 
 #.  Server-side field-level validation.
     Beim Start sucht Lino in den Modellen nach Methoden `on_FIELD_change`, 
@@ -27,37 +64,11 @@ Before version 1.0
     
 #.  Textbausteine (im Text-Editor F1 drücken können)
 
-#.  slave report in a detail remains empty in some cases.
-    e.g. ContractsByCompany. 
-    Scheinbar nur wenn dieser Benutzer gerade einen Vertrag erstellt hat. 
-    Der Fehler verschwindet wenn ich Permalink oder open in own window.
-    Möglicherweise einfach nur ein caching-Problem.
-    
-#.  Liste der Personen sollte zunächst mal nur "meine" Personen anzeigen.
-    Evtl. neue Menübefehle "Meine Personen" und "Meine Coachings".
-
-#.  Auswahlliste exam_policy wird auch in französischen Verträgen deutsch angezeigt.
-
-#.  Ext.LoadMask nutzen:
-    http://www.sencha.com/forum/showthread.php?64420-how-to-show-a-wait-message-while-calling-store-load
-
-#.  Arbeitsregime und Stundenplan: 
-    Nach Ändern der Sprache ändert sich nicht immer die Auswahlliste.
-   
-#.  Insert as copy (Kopie erstellen). 
-    Oder genauer gesagt denke ich momentan eher an zwei Buttons "Copy to clipboard" 
-    und "Create from clipboard". Ins clipboard käme eine textuelle Repräsentation des Record.
-    http://www.dynamic-tools.net/toolbox/copyToClipboard/
-
 #.  Sortierung: Entweder Ticket :doc:`/tickets/19` lösen, oder (noch besser) 
     auf Datenbank-Ebene lokalisierte Sortierung einstellen.
    
-Waiting for feedback
---------------------
-
-#. Wenn man ClearCacheAction macht und das Dokument neu druckt, 
-   dauert es eine Zeit, bis der Cache des Browsers kapiert, 
-   dass die URL neu angefragt werden muss.
+#.  Ext.LoadMask nutzen:
+    http://www.sencha.com/forum/showthread.php?64420-how-to-show-a-wait-message-while-calling-store-load
 
 #. Arbeitsregime und Stundenplan: 
    Texte in Konfigurationsdateien auslagern
