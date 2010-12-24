@@ -34,7 +34,7 @@ import lino
 from lino import reports
 #~ from lino.modlib.documents import models as documents
 from lino.utils import mixins
-from lino.utils.printable import Printable
+#~ from lino.mixins import Printable
 
 
 class DocumentError(Exception):
