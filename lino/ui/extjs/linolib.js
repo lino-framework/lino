@@ -16,53 +16,6 @@
 
 Ext.namespace('Lino');
 
-
-
-// http://www.dynamic-tools.net/toolbox/copyToClipboard/
-function copyToClipboard(s)
-{
-	if( window.clipboardData && window.clipboardData.setData )
-	{
-    alert("copyToClipboard 1");
-		window.clipboardData.setData("Text", s);
-	}
-	else
-	{
-    alert("copyToClipboard 1");
-		// You have to sign the code to enable this or allow the action in about:config by changing
-		user_pref("signed.applets.codebase_principal_support", true);
-		netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect');
-
-		var clip Components.classes['@mozilla.org/widget/clipboard;[[[[1]]]]'].createInstance(Components.interfaces.nsIClipboard);
-		if (!clip) return;
-
-		// create a transferable
-		var trans = Components.classes['@mozilla.org/widget/transferable;[[[[1]]]]'].createInstance(Components.interfaces.nsITransferable);
-		if (!trans) return;
-
-		// specify the data we wish to handle. Plaintext in this case.
-		trans.addDataFlavor('text/unicode');
-
-		// To get the data from the transferable we need two new objects
-		var str = new Object();
-		var len = new Object();
-
-		var str = Components.classes["@mozilla.org/supports-string;[[[[1]]]]"].createInstance(Components.interfaces.nsISupportsString);
-
-		var copytext=meintext;
-
-		str.data=copytext;
-
-		trans.setTransferData("text/unicode",str,copytext.length*[[[[2]]]]);
-
-		var clipid=Components.interfaces.nsIClipboard;
-
-		if (!clip) return false;
-
-		clip.setData(trans,null,clipid.kGlobalClipboard);	   
-	}
-}
-
 Lino.on_tab_activate = function(item) {
   //~ console.log('activate',item); 
   if (item.rendered) item.doLayout();
@@ -1631,7 +1584,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     };
     Lino.do_when_visible(this,todo.createDelegate(this));
   }
-  });
+});
   
 
 Lino.MainPanelMixin = {
@@ -1646,8 +1599,7 @@ Lino.MainPanelMixin = {
           //~ listeners: { keypress: this.search_keypress }, 
           //~ id: "seachString" 
         }), 
-        { scope:this, text: "csv", handler: function() { window.open('/api'+this.ls_url+'?fmt=csv') } }, 
-        { scope:this, text: "Copy", handler: function() { copyToClipboard("Coucou") } } 
+        { scope:this, text: "csv", handler: function() { window.open('/api'+this.ls_url+'?fmt=csv') } }
       ];
   }
 };
