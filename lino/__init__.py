@@ -20,10 +20,10 @@ See :doc:`/admin/install` on how to use it.
 import sys
 import datetime
 
-__version__ = "0.8.15"
+__version__ = "1.0 RC 1"
 """
 Lino version number. 
-The latest released version is :doc:`/releases/20101209`.
+The latest released version is :doc:`/releases/20101224`.
 """
 
 __author__ = "Luc Saffre <luc.saffre@gmx.net>"

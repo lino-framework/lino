@@ -1,0 +1,18 @@
+20101224
+========
+
+Heiligabend, 5 Uhr morgens.
+
+Laut Terminplan ist jetzt ein *feature freeze* fällig, 
+damit wir bis nächsten Freitag eine 
+stabil funktionierende Version haben.
+Nächsten Freitag ist Generalprobe der ersten Benutzerschulung,
+danach zwei Schulungseinheiten, und ab 10. Januar fangen die Leute an, 
+mit Lino zu arbeiten und sich auf ihn zu verlassen.
+Bis nächste Woche sollen lediglich noch Bugs behoben werden.
+
+Und ich denke, dass wir uns das leisten können.
+Lino ist benutzbar,
+der erste Release-Kandidat für Version 1.0  ist da!
+
+:doc:`/releases/20101224` läuft seit heute in Eupen.

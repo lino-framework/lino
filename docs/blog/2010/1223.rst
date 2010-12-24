@@ -20,6 +20,10 @@ Das ist nicht ideal.
 Mit dem HTML-Editor von ExtJS wäre das leicht gelöst,
 aber der erweist sich als recht schwerfällig.
 Besser scheint es uns, dass wir Markup benutzen für die mehrzeiligen Textfelder.
+Denn wir wollen ja eigentlich "nur" die Möglichkeit, 
+mehrere Absätze und Aufzählungen eingeben zu können.
+
+
 Zunächst etwas Lektüre:
 
 - `how to insert line-breaks in python expressions
