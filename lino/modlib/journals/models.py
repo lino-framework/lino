@@ -33,7 +33,7 @@ from django.db import models
 import lino
 from lino import reports
 #~ from lino.modlib.documents import models as documents
-from lino.utils import mixins
+from lino import mixins
 #~ from lino.mixins import Printable
 
 
