@@ -2,7 +2,7 @@ Why GPL?
 ========
 
 Lino is published under the `GPL <http://en.wikipedia.org/wiki/GNU_General_Public_License>`_
-because we want to make sure that our voluntary will always 
+because we want to make sure that our voluntary work will always 
 belong to the general public and never be controlled 
 by some proprietary organisation.
 

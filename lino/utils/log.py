@@ -52,25 +52,45 @@ def file_handler(filename):
 
 def configure(config):
     """
-    This function will be called by Django when you have your
+    This provides a simplistic logging configuration for out-of-the-box usage.
+    It will be called by Django when you have your
     :setting:`LOGGING_CONFIG` set to ``'lino.utils.log.configure'``.
+    If you use it, then your :setting:`LOGGING` setting must be a dictionary 
+    with the following keys:
     
-    Yes, the `mod_wsgi documentation <http://code.google.com/p/modwsgi/wiki/ApplicationIssues>`_ 
-    says "note that code should ideally not be making assumptions about the environment it is 
+    :param:logfile:  the full path of the lino `system.log` file.
+                     If absent or `None`, there will be no `system.log` file
+                     
+    :param:level:    the verbosity level of both console and logfile messages 
+                     console messages will never be more verbose than INFO
+    
+    Example::
+    
+      LOGGING_CONFIG = 'lino.utils.log.configure'
+      LOGGING = dict(filename='/var/log/lino/system.log',level='INFO')
+    
+    Note that the `mod_wsgi documentation 
+    <http://code.google.com/p/modwsgi/wiki/ApplicationIssues>`_ 
+    says "code should ideally not be making assumptions about the environment it is 
     executing in, eg., whether it is running in an interactive mode, by asking whether 
     standard output is a tty. In other words, calling 'isatty()' will cause a similar error 
     with mod_wsgi. If such code is a library module, the code should be providing a way to 
     specifically flag that it is a non interactive application and not use magic to 
-    determine whether that is the case or not.", but ...
+    determine whether that is the case or not.".
+    
     """
-    logger = logging.getLogger('django')
+    #~ print 20101225, config
+    logfile = config.get('filename',None)
+    level = getattr(logging,config.get('level','notset').upper())
+    
+    djangoLogger = logging.getLogger('django')
     h = AdminEmailHandler()
     h.setLevel(logging.ERROR)
-    logger.addHandler(h)
+    djangoLogger.addHandler(h)
     
-    logger = logging.getLogger('lino')
+    linoLogger = logging.getLogger('lino')
         
-    logger.setLevel(logging.DEBUG)
+    linoLogger.setLevel(level)
     
     #~ from django.conf import settings
     #~ log_dir = os.path.join(settings.PROJECT_DIR,'log')
@@ -82,19 +102,16 @@ def configure(config):
             h.setLevel(logging.INFO)
             fmt = logging.Formatter(fmt='%(message)s')
             h.setFormatter(fmt)
-            logger.addHandler(h)
+            linoLogger.addHandler(h)
     except IOError:
+        # happens under mod_wsgi
         pass
-    
-    if sys.platform == 'win32':
-        log_dir = 'log'
-    else:
-        log_dir = '/var/log/lino'
         
-    if os.path.isdir(log_dir):
-        h = file_handler(os.path.join(log_dir,'system.log'))
-        h.setLevel(logging.DEBUG)
-        logger.addHandler(h)
+    if logfile is not None:
+        h = file_handler(logfile)
+        h.setLevel(level)
+        linoLogger.addHandler(h)
+        djangoLogger.addHandler(h)
         
         #~ dblogger = logging.getLogger('db')
         #~ assert dblogger != logger

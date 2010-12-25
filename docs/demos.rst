@@ -24,7 +24,7 @@ Demos are currently available on only one server, located in Estonia behind a sl
 Note also that :term:`ExtJS` has performance problems when using Firefox with FireBug enabled.
 We currently recommend Google Chrome for being the fastest browser.
 So don't expect too much performance. 
-We are looking forward to other people who agree to provide a Lino demo on their server.
+We are looking forward to other people who agree to host a Lino demo on their server.
 
 `DSBE <http://dsbe-demo.saffre-rumma.net>`__
   A tool for social assistants that  

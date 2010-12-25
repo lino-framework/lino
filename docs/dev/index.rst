@@ -13,7 +13,7 @@ This is the theory.
 Because we don't yet have carefully selected examples, 
 we suggest here that you look at the code of the :mod:`lino.modlib.contacts` 
 module which should be relatively self-explanatory.
-For example :srcref:`/lino/lino/modlib/contacts/models`
+For example :srcref:`/lino/lino/modlib/contacts/models.py`
 
 Your Reports are subclasses of :class:`lino.reports.Report`, and they 
 must be defined in your application's 'models' module because Lino 'discovers' 
@@ -23,7 +23,7 @@ You will also define Layouts for your detail forms.
 
 A Layout describes an entry form in a GUI-independent way.
 Users see them as Tabs of a Detail window (whose main component is a 
-`FormPanel <http://www.extjs.com/deploy/dev/examples/form/xml-form.html>`)
+`FormPanel <http://www.extjs.com/deploy/dev/examples/form/xml-form.html>`_)
 
 Instead of having each application register its models to the admin site, 
 you write a main menu for your site that uses your Reports. 
