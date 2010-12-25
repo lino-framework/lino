@@ -14,7 +14,7 @@ Na dann mal los. Dokumentation steht auf
 
 Ich muss vor allem ``aptitude install libapache2-mod-wsgi`` machen und dann ein paar Kleinigkeiten ändern, die ich gar nicht erst hier, sondern gleich in :doc:`/admin/install` notiert habe. Endlich habe ich auch mal die seit langem wartende Änderung gemacht, dass jedes Projekt sein lokales Django Project Directory kriegt statt wie bisher direkt auf die demo-Verzeichnisse im source repository zuzugreifen. Auch die Datenbank (sqlite) ist jetzt in `/usr/local/django/dsbe-demo`. Das media-Verzeichnis steht momentan noch in `/usr/local/lino`.
 
-Auf `dsbe-demo <http://dsbe-demo.saffre-rumma.ee/>`__ klappt es schon (der ist allerdings sehr sehr langsam).
+Auf `dsbe-demo <http://dsbe-demo.saffre-rumma.net/>`__ klappt es schon (der ist allerdings sehr sehr langsam).
 
 When Django says `ImproperlyConfigured`...
 ------------------------------------------

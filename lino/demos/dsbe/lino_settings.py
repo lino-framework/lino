@@ -2,9 +2,9 @@
 from django.utils.translation import ugettext_lazy as _
 
 #lino_site.help_url = "http://code.google.com/p/lino/wiki/IgenUserManual"
-lino.help_url = "http://lino.saffre-rumma.ee/dsbe/index.html"
+lino.help_url = "http://lino.saffre-rumma.net/dsbe/index.html"
 lino.title = "DSBE/Lino demo"
-lino.domain = "dsbe.saffre-rumma.ee"
+lino.domain = "dsbe.saffre-rumma.net"
 lino.index_html = u"""
 Willkommen auf dem ersten Prototypen von Lino-DSBE.
 """

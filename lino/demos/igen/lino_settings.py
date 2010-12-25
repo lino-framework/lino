@@ -1,5 +1,5 @@
 #lino_site.help_url = "http://code.google.com/p/lino/wiki/IgenUserManual"
-lino.help_url = "http://lino.saffre-rumma.ee/igen/index.html"
+lino.help_url = "http://lino.saffre-rumma.net/igen/index.html"
 lino.title = "iGen demo"
 lino.index_html = """
 Welcome to iGen, the first Lino application.

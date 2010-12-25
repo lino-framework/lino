@@ -69,7 +69,7 @@ class PaymentTerm(models.Model):
 
 class PaymentTerms(reports.Report):
     model = PaymentTerm
-    order_by = "id"
+    order_by = ["id"]
     can_view = perms.is_staff
     #~ def can_view(self,request):
       #~ return request.user.is_staff
@@ -114,7 +114,7 @@ class InvoicingMode(models.Model):
         
 class InvoicingModes(reports.Report):
     model = 'sales.InvoicingMode'
-    order_by = "id"
+    order_by = ["id"]
     can_view = perms.is_staff
     
     
@@ -129,7 +129,7 @@ class ShippingMode(models.Model):
         
 class ShippingModes(reports.Report):
     model = ShippingMode
-    order_by = "id"
+    order_by = ["id"]
     can_view = perms.is_staff
     #~ def can_view(self,request):
       #~ return request.user.is_staff
@@ -199,7 +199,7 @@ class Customers(reports.Report):
     column_names = "name payment_term vat_exempt item_vat company person"
     can_delete = True
     model = Customer
-    order_by = "name"
+    order_by = ["name"]
     #can_view = perms.is_authenticated
 
 
@@ -594,7 +594,7 @@ class SalesDocuments(reports.Report):
 
 class Orders(SalesDocuments):
     model = Order
-    order_by = "number"
+    order_by = ["number"]
     can_view = perms.is_authenticated
     
     #~ def inlines(self):
@@ -603,7 +603,7 @@ class Orders(SalesDocuments):
         #~ return d
     
 class OrdersByJournal(Orders):
-    order_by = "number"
+    order_by = ["number"]
     #master = journals.Journal
     fk_name = 'journal' # see django issue 10808
     column_names = "number:4 creation_date customer:20 imode " \
@@ -624,11 +624,11 @@ class PendingOrders(Orders):
     
 class Invoices(SalesDocuments):
     model = Invoice
-    order_by = "id"
+    order_by = ["id"]
     can_view = perms.is_staff
     
 class InvoicesByJournal(Invoices):
-    order_by = "number"
+    order_by = ["number"]
     fk_name = 'journal' # see django issue 10808
     #master = journals.Journal
     column_names = "number:4 creation_date due_date " \
@@ -676,7 +676,7 @@ class InvoicesByOrder(SalesDocuments):
     model = Invoice
     #master = Order
     fk_name = "order"
-    order_by = "number"
+    order_by = ["number"]
     column_names = "number creation_date your_ref total_excl total_vat shipping_mode payment_term due_date subject sales_remark vat_exempt item_vat "
 
     
@@ -693,7 +693,7 @@ class ItemsByDocument(reports.Report):
     model = DocItem
     #master = SalesDocument
     fk_name = 'document'
-    order_by = "pos"
+    order_by = ["pos"]
     
 
 
@@ -712,7 +712,7 @@ class DocumentsByCustomer(SalesDocuments):
                   "total_incl total_excl total_vat"
     #master = 'contacts.Partner'
     fk_name = 'customer'
-    order_by = "creation_date"
+    order_by = ["creation_date"]
 
     def get_title(self,renderer):
         return "Documents by customer"

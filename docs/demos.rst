@@ -26,13 +26,13 @@ We currently recommend Google Chrome for being the fastest browser.
 So don't expect too much performance. 
 We are looking forward to other people who agree to provide a Lino demo on their server.
 
-`DSBE <http://dsbe-demo.saffre-rumma.ee>`__
+`DSBE <http://dsbe-demo.saffre-rumma.net>`__
   A tool for social assistants that  
   help receivers of public aid to 
   find a suitable job or education.
   :doc:`More about Lino DSBE </dsbe/index>`
 
-`iGen <http://igen-demo.saffre-rumma.ee>`__ 
+`iGen <http://igen-demo.saffre-rumma.net>`__ 
   An accounting tool focussed on     
   sales (invoices and customer       
   payments), and especially on       

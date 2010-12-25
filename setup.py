@@ -8,7 +8,7 @@ setup(name='lino',
       author='Luc Saffre',
       author_email='luc.saffre@gmail.com',
       requires=['django'],
-      url="http://lino.saffre-rumma.ee",
+      url="http://lino.saffre-rumma.net",
       classifiers="""\
 Development Status :: 2 - Pre-Alpha
 Environment :: Web Environment

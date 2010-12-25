@@ -364,7 +364,7 @@ class Contacts(DbApplication):
     #author="Luc Saffre"
     mainFormClass=ContactsMainForm
     #dbname="contacts"
-    url="http://lino.saffre-rumma.ee/contacts.html"
+    url="http://lino.saffre-rumma.net/contacts.html"
     description="""A Lino demo application to manage your contacts.
     """
     

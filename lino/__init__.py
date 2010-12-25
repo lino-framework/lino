@@ -28,7 +28,7 @@ The latest released version is :doc:`/releases/20101224`.
 
 __author__ = "Luc Saffre <luc.saffre@gmx.net>"
 
-__url__ = "http://lino.saffre-rumma.ee"
+__url__ = "http://lino.saffre-rumma.net"
 #~ __url__ = "http://code.google.com/p/lino/"
 
 __copyright__ = """\

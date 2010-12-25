@@ -8,7 +8,7 @@ iGen is a web application for writing invoices to customers and
 managing their payments. 
 
 You may use the demo site 
-http://igen-demo.saffre-rumma.ee/
+http://igen-demo.saffre-rumma.net/
 as a sandbox.
 
 The demo database contains fictive data. 

@@ -45,7 +45,7 @@ class Product(models.Model):
         
 class ProductCats(reports.Report):
     model = ProductCat
-    order_by = "id"
+    order_by = ["id"]
     can_view = perms.is_staff
 
 #~ class ProductDetail(layouts.DetailLayout):
@@ -63,5 +63,5 @@ class ProductCats(reports.Report):
 
 class Products(reports.Report):
     model = Product
-    order_by = "id"
+    order_by = ["id"]
     column_names = "id:3 name description:30x1 cat vatExempt price:6"

@@ -96,7 +96,7 @@ Andererseits sieht es aus als ob der Server-Prozess die Datenbank ziemlich lange
 Außerdem kann ich von einem ``manage.py shell`` aus sehr wohl auf die Datenbank zugreifen und darin verändern, während der Serverprozess läuft::
   
     $ python manage.py shell
-    Lino-DSBE 0.1.4 <http://dsbe.saffre-rumma.ee>
+    Lino-DSBE 0.1.4 <http://dsbe.saffre-rumma.net>
     Lino 0.8.5 <http://code.google.com/p/lino/>
     Django 1.3 pre-alpha SVN-13818 <http://www.djangoproject.com>
     Python 2.5.2 <http://www.python.org/>
