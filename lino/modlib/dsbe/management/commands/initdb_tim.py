@@ -48,6 +48,7 @@ import lino
 from lino.utils import confirm, iif
 from lino.core.coretools import app_labels
 
+from lino.core import site # needed to trigger site setup
 
 Activity = resolve_model('dsbe.Activity')
 Country = resolve_model('countries.Country')

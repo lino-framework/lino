@@ -206,7 +206,8 @@ class Site:
         
         
     def get_urls(self):
-        self.setup()
+        #~ self.setup()
+        assert self._setup_done
         #~ self.setup_ui()
         if len(self.uis) == 1:
             return self.uis[0].get_urls()
@@ -220,7 +221,8 @@ class Site:
         #~ return self.ui.get_urls()
         
     def get_site_menu(self,user):
-        self.setup()
+        #~ self.setup()
+        assert self._setup_done
         return self._menu.menu_request(user)
         
     def add_program_menu(self):

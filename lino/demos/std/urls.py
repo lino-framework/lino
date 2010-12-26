@@ -23,7 +23,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import urls as auth_urls
 from django.utils import importlib
 
-import lino
+#~ import lino
 #~ from lino import lino_site
 #~ from lino.site import get_lino_site
 
@@ -41,9 +41,11 @@ urlpatterns = patterns('',
     #~ cl = getattr(m, clname)
     #~ site = cl()
     
+import lino
+from lino.core.site import get_urls
 
 urlpatterns += patterns('',
-    (r'', include(settings.LINO_SITE.get_urls())),
+    (r'', include(get_urls())),
 )
 
 if sys.platform == 'win32':
