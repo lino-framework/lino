@@ -1229,9 +1229,10 @@ class ExtUI(base.UI):
             #~ kw.update(panel_btn_handler=js_code('Lino.update_row_handler(%r)' % a.name))
         elif isinstance(a,actions.ShowDetailAction):
             #~ kw.update(panel_btn_handler=js_code('Lino.show_detail_handler()'))
-            kw.update(panel_btn_handler=js_code('Lino.show_detail_handler(Lino.%s)' % a))
+            kw.update(panel_btn_handler=js_code('function(panel){Lino.show_detail(panel)}'))
         elif isinstance(a,actions.InsertRow):
-            kw.update(panel_btn_handler=js_code("Lino.show_insert_handler(Lino.%s)" % a))
+            kw.update(panel_btn_handler=js_code('function(panel){Lino.show_insert(panel)}'))
+            #~ kw.update(panel_btn_handler=js_code("Lino.show_insert_handler(Lino.%s)" % a))
         elif isinstance(a,actions.DeleteSelected):
             kw.update(panel_btn_handler=js_code("Lino.delete_selected" % a))
         #~ elif isinstance(a,actions.RedirectAction):

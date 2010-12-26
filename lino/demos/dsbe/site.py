@@ -10,7 +10,7 @@ from lino.site import Site as Base
 
 class Site(Base):
   
-    title = "DSBE/Lino demo"
+    title = "Another Lino/DSBE site"
     domain = "dsbe.saffre-rumma.net"
     help_url = "http://lino.saffre-rumma.net/dsbe/index.html"
     

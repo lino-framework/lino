@@ -191,7 +191,8 @@ class SubmitDetail(Action):
     
 class SubmitInsert(Action):
     #~ name = 'submit'
-    label = _("Insert")
+    label = _("Save")
+    #~ label = _("Insert")
     callable_from = (InsertRow,)
     
                 

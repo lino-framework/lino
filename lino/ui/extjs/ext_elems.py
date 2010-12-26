@@ -991,6 +991,14 @@ class GridElement(Container):
         self.preferred_width = constrain(w,10,120)
         #~ kw.update(boxMinWidth=500)
         self.columns = columns
+        
+        a = rpt.get_action('detail')
+        if a:
+            kw.update(ls_detail_handler=js_code("Lino.%s" % a))
+        a = rpt.get_action('insert')
+        if a:
+            kw.update(ls_insert_handler=js_code("Lino.%s" % a))
+        
         Container.__init__(self,lh,name,**kw)
         self.active_children = columns
         assert not kw.has_key('before_row_edit')
@@ -1020,12 +1028,6 @@ class GridElement(Container):
         kw.update(pk_index=rh.store.pk_index)
         kw.update(ls_quick_edit=rh.report.cell_edit)
         kw.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rh.get_actions(rh.report.default_action)])
-        a = rh.get_action('detail')
-        if a:
-            kw.update(ls_detail_handler=js_code("Lino.%s" % a))
-        a = rh.get_action('insert')
-        if a:
-            kw.update(ls_insert_handler=js_code("Lino.%s" % a))
         kw.update(ls_grid_configs=self.report.grid_configs)
         kw.update(gc_name=DEFAULT_GC_NAME)
         #~ gc = self.report.grid_configs.get('',None)
@@ -1256,12 +1258,16 @@ class FormPanel(jsgen.Component):
             kw.update(listeners=dict(render=js_code('function(){%s}' % '\n'.join(on_render))))
         kw.update(before_row_edit=before_row_edit(main))
         
-        a = rh.get_action('detail')
+        rpt = rh.report
+        a = rpt.get_action('detail')
         if a:
             kw.update(ls_detail_handler=js_code("Lino.%s" % a))
+        a = rpt.get_action('insert')
+        if a:
+            kw.update(ls_insert_handler=js_code("Lino.%s" % a))
         
-        kw.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rh.get_actions(action)])
-        kw.update(ls_url=rh.ui.build_url(rh.report.app_label,rh.report._actor_name))
+        kw.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rpt.get_actions(action)])
+        kw.update(ls_url=rh.ui.build_url(rpt.app_label,rpt._actor_name))
         jsgen.Component.__init__(self,'form_panel',**kw)
         
     def has_field(self,f):

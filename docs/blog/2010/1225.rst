@@ -8,6 +8,23 @@
 - Wie installiert man ein favicon?
   http://www.codekoala.com/blog/2008/setup-faviconico-django/
   
-- Statt LINO_SETTINGS gibt es jetzt LINO_SITE. 
-  Das ist der Name der Klasse. 
-  Die wird weiterhin erst in urls.py instanziert.  
+  Hilfreich auch
+  http://www.html-kit.com/favicon/validator/
+  
+- Statt :setting:`LINO_SETTINGS` haben wir jetzt :setting:`LINO_SITE`, 
+  und statt einer eventuellen lokalen `lino_settings.py` 
+  setzt man :setting:`LINO_SITE` auf ``'myproject.site.Site'`` 
+  und in :file:`/usr/local/django/myproject` eine Datei :xfile:`site.py` 
+  mit z.B. folgendem Inhalt::
+  
+    from lino.demos.dsbe.site import Site as Base
+    class Site(Base):
+        title = "My Lino project"
+  
+  Der Lino-Site wird weiterhin erst in `urls.py` instanziert, 
+  wenn der erste Request reinkommt. 
+
+- Doppelklick auf einem Phantom-Record bedeutet jetzt "Einfügen".
+
+- `InsertSubmit` hatte "Einfügen" als Label. Das war irritierend. 
+  Heißt jetzt "Speichern".

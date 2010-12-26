@@ -39,10 +39,10 @@ Subpackages
 
 
 
-:mod:`lino.lino_site`
+:mod:`lino.site`
 ---------------------
 
-.. automodule:: lino.lino_site
+.. automodule:: lino.site
     :members:
     :show-inheritance:
     

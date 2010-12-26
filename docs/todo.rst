@@ -9,8 +9,18 @@ for which I hope for help from other people.
 Version 1.0
 -----------
 
-#.  Double click on a phantom record might insert a new record. 
-    currently it says "Action not available on phantom record."
+#.  slave report in a detail remains empty in some cases.
+    Beispiel:
+    Detail einer Person. Reiter "Notes" "Insert" in "Verträge". 
+    Vertrag ausfüllen (mindestens Vertragsart) und Speichern.
+    Detail-Fenster des Vertrags schließen.
+    ContractsByCompany bleibt leer auch wenn man dort auf "Refresh" klickt.
+    Der Fehler verschwindet wenn ich Permalink oder open in own window.
+    n.b. auf dem development server passiert das nicht. 
+    
+#.  Wenn man ClearCacheAction macht und das Dokument neu druckt, 
+    dauert es eine Zeit, bis der Cache des Browsers kapiert, 
+    dass die URL neu angefragt werden muss.
 
 #.  Formatierte Texte. Zumindest Aufzählungen und mehrere Absätze sollten 
     möglich sein.
@@ -18,16 +28,6 @@ Version 1.0
 #.  `initdb_tim` setzt `SiteConfig.next_partner_id` nicht korrekt.
     Workaround: manuell setzen falls nochmal initdb_tim laufen gelassen wird.
 
-#.  Wenn man ClearCacheAction macht und das Dokument neu druckt, 
-    dauert es eine Zeit, bis der Cache des Browsers kapiert, 
-    dass die URL neu angefragt werden muss.
-
-#.  slave report in a detail remains empty in some cases.
-    e.g. ContractsByCompany. 
-    Scheinbar nur wenn dieser Benutzer gerade einen Vertrag erstellt hat. 
-    Der Fehler verschwindet wenn ich Permalink oder open in own window.
-    Möglicherweise einfach nur ein caching-Problem.
-    
 #.  Insert as copy (Kopie erstellen). 
     Oder genauer gesagt denke ich momentan eher an zwei Buttons "Export" 
     und "Import". Mit "Export" lässt man den aktuellen Record in eine 

@@ -28,10 +28,11 @@ import lino
 
 urlpatterns = patterns('',
     (r'^favicon\.ico$', 'django.views.generic.simple.redirect_to', 
-        {'url': os.path.join(settings.MEDIA_ROOT,'favicon.ico')})
+        {'url': settings.MEDIA_URL + 'lino/favicon.ico'})
 )
 
 if settings.LINO_SITE:
+    logger.info('Initialize Lino Site %s',settings.LINO_SITE)
     modname,clname = settings.LINO_SITE.rsplit('.', 1)
     m = importlib.import_module(modname)
     cl = getattr(m, clname)

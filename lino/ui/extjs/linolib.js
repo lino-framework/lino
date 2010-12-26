@@ -645,14 +645,18 @@ Lino.do_when_visible = function(cmp,todo) {
   
 };    
 
-Lino.do_on_current_record = function(panel,fn) {
+Lino.do_on_current_record = function(panel,fn,phantom_fn) {
   var rec = panel.get_current_record();
   if (rec == undefined) {
     Lino.notify("There's no selected record.");
     return;
   }
   if (rec.phantom) {
-    Lino.notify("Action not available on phantom record.");
+    if (phantom_fn) {
+      phantom_fn(panel);
+    } else {
+      Lino.notify("Action not available on phantom record.");
+    }
     return;
   }
   return fn(rec);
@@ -677,24 +681,20 @@ Lino.row_action_handler = function(fmt) {
   }
 };
 
-Lino.show_detail_handler = function(action) {
-  return function(panel,btn) {
-    Lino.do_on_current_record(panel,function(rec) {
-      action(panel,{record_id:rec.id,base_params:panel.get_base_params()});
-    });
-  }
+Lino.show_detail = function(panel,btn) {
+  Lino.do_on_current_record(panel,
+    function(rec) {
+      panel.ls_detail_handler(panel,{record_id:rec.id,base_params:panel.get_base_params()});
+    },
+    Lino.show_insert
+    //~ function() { panel.ls_insert_handler(panel) }
+  );
 };
 
-Lino.show_insert_handler = function(action) {
-  return function(panel,btn) {
-    //~ if (panel.getStore !== undefined)
-      //~ var bp = panel.getStore().baseParams;
-    //~ else
-    var bp = panel.get_base_params();
-    //~ console.log('20101025 insert_handler',bp)
-    action(panel,{record_id:-99999,base_params:bp});
-    //~ action(panel,{record_id:-99999,base_params:panel.get_base_params()});
-  }
+Lino.show_insert = function(panel,btn) {
+  var bp = panel.get_base_params();
+  //~ console.log('20101025 insert_handler',bp)
+  panel.ls_insert_handler(panel,{record_id:-99999,base_params:bp});
 };
 
 //~ Lino.update_row_handler = function(action_name) {
@@ -1198,7 +1198,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
   onCellDblClick : function(g, row, col){
       if (this.ls_detail_handler) {
           //~ Lino.notify('show detail');
-          Lino.show_detail_handler(this.ls_detail_handler)(this);
+          Lino.show_detail(this);
       }else{
         this.startEditing(row,col);
       }
