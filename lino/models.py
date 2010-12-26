@@ -14,6 +14,7 @@
 import logging
 logger = logging.getLogger(__name__)
 
+from django.conf import settings
 from django.contrib.auth import models as auth
 from django.contrib.sessions import models as sessions
 from django.contrib.contenttypes import models as contenttypes
@@ -55,8 +56,9 @@ def get_site_config():
     except SiteConfig.DoesNotExist:
         logger.info("Creating SiteConfig record")
         sc = SiteConfig(pk=1)
-        from lino.lino_site import lino_site
-        lino_site.init_site_config(sc)
+        #~ from lino.lino_site import lino_site
+        #~ lino_site.init_site_config(sc)
+        settings.LINO_SITE.init_site_config(sc)
         sc.save()
         return sc
 

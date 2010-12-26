@@ -12,18 +12,25 @@
   http://www.html-kit.com/favicon/validator/
   
 - Statt :setting:`LINO_SETTINGS` haben wir jetzt :setting:`LINO_SITE`, 
-  und statt einer eventuellen lokalen `lino_settings.py` 
-  setzt man :setting:`LINO_SITE` auf ``'myproject.site.Site'`` 
-  und in :file:`/usr/local/django/myproject` eine Datei :xfile:`site.py` 
-  mit z.B. folgendem Inhalt::
+  und statt einer eventuellen lokalen `lino_settings.py` hat man
+  eine Datei :xfile:`site.py` mit z.B. folgendem Inhalt::
   
     from lino.demos.dsbe.site import Site as Base
     class Site(Base):
         title = "My Lino project"
   
-  Der Lino-Site wird weiterhin erst in `urls.py` instanziert, 
-  wenn der erste Request reinkommt. 
-
+  In der :xfile:`settings.py` schreibt man dann::
+  
+    from myproject.site import Site
+    LINO_SITE = Site()
+    
+  Der Name :xfile:`site.py` ist diskutabel, weil es ein gleichnamiges 
+  Standardmodul gibt. 
+  
+  Die Basisklasse für Lino-sites steht jetzt in `lino.Site` 
+  und ist somit jetzt auch instanzierbar während 
+  :xfile:`settings.py` geladen wird.
+  
 - Doppelklick auf einem Phantom-Record bedeutet jetzt "Einfügen".
 
 - `InsertSubmit` hatte "Einfügen" als Label. Das war irritierend. 
