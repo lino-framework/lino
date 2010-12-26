@@ -1,0 +1,13 @@
+20101225
+========
+
+- Install :doc:`/releases/20101224` auf :term:`Tups`.
+  Änderungen in :func:`lino.utils.log.configure` weil sonst beide Demos 
+  in die gleiche :xfile:`system.log` schreiben wollten.
+
+- Wie installiert man ein favicon?
+  http://www.codekoala.com/blog/2008/setup-faviconico-django/
+  
+- Statt LINO_SETTINGS gibt es jetzt LINO_SITE. 
+  Das ist der Name der Klasse. 
+  Die wird weiterhin erst in urls.py instanziert.  

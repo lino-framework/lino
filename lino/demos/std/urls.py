@@ -21,13 +21,24 @@ from django.conf.urls.defaults import *
 from django.contrib import databrowse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import urls as auth_urls
+from django.utils import importlib
 
 import lino
-from lino import lino_site
+#~ from lino import lino_site
 
 urlpatterns = patterns('',
-    (r'', include(lino_site.get_urls())),
+    (r'^favicon\.ico$', 'django.views.generic.simple.redirect_to', 
+        {'url': os.path.join(settings.MEDIA_ROOT,'favicon.ico')})
 )
+
+if settings.LINO_SITE:
+    modname,clname = settings.LINO_SITE.rsplit('.', 1)
+    m = importlib.import_module(modname)
+    cl = getattr(m, clname)
+    site = cl()
+    urlpatterns += patterns('',
+        (r'', include(site.get_urls())),
+    )
 
 if sys.platform == 'win32':
 

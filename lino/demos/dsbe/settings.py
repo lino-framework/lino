@@ -17,7 +17,9 @@ from lino.demos.std.settings import *
 
 PROJECT_DIR = abspath(dirname(__file__))
 DATA_DIR = join(PROJECT_DIR,"data")
-LINO_SETTINGS = join(PROJECT_DIR,"lino_settings.py")
+#~ LINO_SETTINGS = join(PROJECT_DIR,"lino_settings.py")
+LINO_SITE = 'lino.demos.dsbe.site.Site'
+
 MEDIA_ROOT = join(PROJECT_DIR,'media')
 
 DATABASES = {

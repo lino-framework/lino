@@ -9,6 +9,9 @@ for which I hope for help from other people.
 Version 1.0
 -----------
 
+#.  Double click on a phantom record might insert a new record. 
+    currently it says "Action not available on phantom record."
+
 #.  Formatierte Texte. Zumindest Aufzählungen und mehrere Absätze sollten 
     möglich sein.
 

@@ -177,7 +177,7 @@ class DisableDeleteHandler():
         return disable_delete
 
 
-class LinoSite:
+class Site:
     help_url = "http://code.google.com/p/lino"
     index_html = "This is the main page."
     title = "Unnamed LinoSite"
@@ -186,12 +186,15 @@ class LinoSite:
     def __init__(self):
         
         #self.django_settings = settings
-        self.init_site_config = lambda sc: sc
+        #~ self.init_site_config = lambda sc: sc
         self._menu = menus.Menu("","Main Menu")
         self._setting_up = False
         self._setup_done = False
         self.root_path = '/lino/'
         self._response = None
+        
+    def init_site_config(self,sc):
+        pass
         
     def setup(self):
         if self._setup_done:
@@ -227,16 +230,13 @@ class LinoSite:
                 logger.debug("%s -> %r",k,a.debug_summary())
                   
           
-        if hasattr(settings,'LINO_SETTINGS'):
-            logger.info("Reading %s ...", settings.LINO_SETTINGS)
-            execfile(settings.LINO_SETTINGS,dict(lino=self))
-        else:
-            logger.warning("settings.LINO_SETTINGS entry is missing")
-            
-        #~ logger.info(lino.welcome_text())
-        #~ logger.info("This is Lino version %s." % lino.__version__)
-        #~ using = ', '.join(["%s %s" % (n,v) for n,v,u in lino.using()])
-        #~ logger.info("Using %s" % using)
+        self.setup_main_menu()
+        
+        #~ if hasattr(settings,'LINO_SETTINGS'):
+            #~ logger.info("Reading %s ...", settings.LINO_SETTINGS)
+            #~ execfile(settings.LINO_SETTINGS,dict(lino=self))
+        #~ else:
+            #~ logger.warning("settings.LINO_SETTINGS entry is missing")
           
         uis = []
         for ui in settings.USER_INTERFACES:
@@ -255,6 +255,9 @@ class LinoSite:
         dblogger.info(lino.welcome_text())
         
         
+    def setup_main_menu(self):
+        raise NotImplementedError
+          
     def add_menu(self,*args,**kw):
         return self._menu.add_menu(*args,**kw)
        
@@ -352,12 +355,13 @@ class LinoSite:
   
   
 
-lino_site = LinoSite()
+#~ lino_site = LinoSite()
 #~ logger.debug("lino.lino_site has been instantiated")
 #'get_urls','fill','context'
 
-initdb = lino_site.initdb
-context = lino_site.context
-get_urls = lino_site.get_urls
-get_site_menu = lino_site.get_site_menu
-setup = lino_site.setup
+#~ initdb = lino_site.initdb
+#~ context = lino_site.context
+#~ get_urls = lino_site.get_urls
+#~ get_site_menu = lino_site.get_site_menu
+#~ setup = lino_site.setup
+

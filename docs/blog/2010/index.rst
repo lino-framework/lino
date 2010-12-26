@@ -240,6 +240,7 @@ As long as I am the only Lino developer, I'll write it mostly in German.
   :doc:`22 <1222>`
   :doc:`23 <1223>`
   :doc:`24 <1224>`
+  :doc:`25 <1225>`
 
 ===== ===== =====
 |Jan| |Feb| |Mar|

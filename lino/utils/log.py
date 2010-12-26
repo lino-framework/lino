@@ -58,10 +58,10 @@ def configure(config):
     If you use it, then your :setting:`LOGGING` setting must be a dictionary 
     with the following keys:
     
-    :param:logfile:  the full path of the lino `system.log` file.
+    :param logfile:  the full path of the lino `system.log` file.
                      If absent or `None`, there will be no `system.log` file
                      
-    :param:level:    the verbosity level of both console and logfile messages 
+    :param level:    the verbosity level of both console and logfile messages 
                      console messages will never be more verbose than INFO
     
     Example::
