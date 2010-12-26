@@ -34,7 +34,7 @@ from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from django.core.management.base import BaseCommand, CommandError
 
-from lino import lino_site
+#~ from lino import lino_site
 from lino.utils import dbfreader
 from lino.utils import dblogger
 #~ from lino import diag

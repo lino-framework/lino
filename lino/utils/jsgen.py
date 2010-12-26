@@ -168,7 +168,7 @@ class LinoJSONEncoder(DjangoJSONEncoder):
             return dict(text=o.label,menu=dict(items=o.items))
             
         if isinstance(o,menus.MenuItem):
-            from lino.lino_site import lino_site
+            # from lino.lino_site import lino_site
             # todo: convert
             # url = lino_site.ui.get_action_url(o.actor)
             #handler = "function(btn,evt){Lino.do_action(undefined,%r,%r,{})}" % (url,id2js(o.actor.actor_id))

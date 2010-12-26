@@ -637,13 +637,13 @@ class ExtUI(base.UI):
 
 
     def menu_view(self,request):
-        from lino.lino_site import lino_site
+        #~ from lino.lino_site import lino_site
         #~ from lino import lino_site
         return json_response_kw(success=True,
           message=(_("Welcome on Lino server %(title)r, user %(user)s") % dict(
-            title=lino_site.title,
+            title=settings.LINO_SITE.title,
             user=request.user)),
-          load_menu=lino_site.get_site_menu(request.user))
+          load_menu=settings.LINO_SITE.get_site_menu(request.user))
         #~ s = py2js(lino_site.get_menu(request))
         #~ return HttpResponse(s, mimetype='text/html')
 
