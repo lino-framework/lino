@@ -21,7 +21,7 @@ import yaml
 #~ import datetime
 #import logging ; logger = logging.getLogger('lino.reports')
 #~ import cPickle as pickle
-import pprint
+#~ import pprint
 
 from django.conf import settings
 from django.utils.translation import ugettext as _
@@ -49,8 +49,8 @@ import lino
 from lino import actions
 from lino.utils import perms, menus
 #~ from lino.utils import printable
-from lino.core import datalinks
-from lino.core import boolean_texts
+#~ from lino.core import datalinks
+#~ from lino.core import boolean_texts
 from lino.core import actors
 #~ from lino.core import action_requests
 from lino.ui import base
@@ -278,7 +278,8 @@ class DataView:
         self.xtemplate = tpl
 
 
-class ReportHandle(datalinks.DataLink,base.Handle): 
+class ReportHandle(base.Handle): 
+#~ class ReportHandle(datalinks.DataLink,base.Handle): 
   
     
     def __init__(self,ui,report):
@@ -287,7 +288,8 @@ class ReportHandle(datalinks.DataLink,base.Handle):
         self.report = report
         self._layouts = None
         #~ actors.ActorHandle.__init__(self,report)
-        datalinks.DataLink.__init__(self,ui)
+        #~ datalinks.DataLink.__init__(self,ui)
+        #~ self.ui = ui
         base.Handle.__init__(self,ui)
         if self.report.model is not None:
             self.list_layout = LayoutHandle(self,ListLayout('main = '+self.report.column_names))
@@ -594,7 +596,8 @@ class Report(actors.Actor): #,base.Handled):
     cell_edit = True # use ExtJS CellSelectionModel (False to use ExtJS RowSelectionModel)
     
     date_format = lino.DATE_FORMAT_EXTJS
-    boolean_texts = boolean_texts
+    #~ boolean_texts = boolean_texts
+    boolean_texts = boolean_texts = (_('Yes'),_('No'),' ')
     
     can_view = perms.always
     can_add = perms.is_authenticated

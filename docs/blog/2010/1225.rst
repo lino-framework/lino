@@ -28,3 +28,21 @@
 
 - `InsertSubmit` hatte "Einfügen" als Label. Das war irritierend. 
   Heißt jetzt "Speichern".
+  
+- Upgrade in Eupen.
+
+- Die folgenden Problem ist nicht (mehr) reproduzierbar:
+
+  - slave report in a detail remains empty in some cases.
+    Beispiel:
+    Detail einer Person. Reiter "Notes" "Insert" in "Verträge". 
+    Vertrag ausfüllen (mindestens Vertragsart) und Speichern.
+    Detail-Fenster des Vertrags schließen.
+    ContractsByCompany bleibt leer auch wenn man dort auf "Refresh" klickt.
+    Der Fehler verschwindet wenn ich Permalink oder open in own window.
+      
+
+  - Wenn man ClearCacheAction macht und das Dokument neu druckt, 
+    dauert es eine Zeit, bis der Cache des Browsers kapiert, 
+    dass die URL neu angefragt werden muss.
+

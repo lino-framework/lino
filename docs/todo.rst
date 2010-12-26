@@ -9,19 +9,6 @@ for which I hope for help from other people.
 Version 1.0
 -----------
 
-#.  slave report in a detail remains empty in some cases.
-    Beispiel:
-    Detail einer Person. Reiter "Notes" "Insert" in "Verträge". 
-    Vertrag ausfüllen (mindestens Vertragsart) und Speichern.
-    Detail-Fenster des Vertrags schließen.
-    ContractsByCompany bleibt leer auch wenn man dort auf "Refresh" klickt.
-    Der Fehler verschwindet wenn ich Permalink oder open in own window.
-    n.b. auf dem development server passiert das nicht. 
-    
-#.  Wenn man ClearCacheAction macht und das Dokument neu druckt, 
-    dauert es eine Zeit, bis der Cache des Browsers kapiert, 
-    dass die URL neu angefragt werden muss.
-
 #.  Formatierte Texte. Zumindest Aufzählungen und mehrere Absätze sollten 
     möglich sein.
 

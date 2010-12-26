@@ -20,6 +20,8 @@ Subpackages
 .. toctree::
 
     lino.reports
+    lino.site
+    lino.tools
     lino.fields
     lino.actions
     lino.core
@@ -36,26 +38,6 @@ Subpackages
     lino.mixins.addressable
     lino.mixins.reminder
     lino.demos
-
-
-
-:mod:`lino.site`
----------------------
-
-.. automodule:: lino.site
-    :members:
-    :show-inheritance:
-    
-    
-
-:mod:`lino.tools`
------------------
-
-.. automodule:: lino.tools
-    :members:
-    :show-inheritance:
-
-    
 
 
 

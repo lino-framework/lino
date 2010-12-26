@@ -25,21 +25,26 @@ from django.utils import importlib
 
 import lino
 #~ from lino import lino_site
+#~ from lino.site import get_lino_site
 
 urlpatterns = patterns('',
     (r'^favicon\.ico$', 'django.views.generic.simple.redirect_to', 
         {'url': settings.MEDIA_URL + 'lino/favicon.ico'})
 )
 
-if settings.LINO_SITE:
-    logger.info('Initialize Lino Site %s',settings.LINO_SITE)
-    modname,clname = settings.LINO_SITE.rsplit('.', 1)
-    m = importlib.import_module(modname)
-    cl = getattr(m, clname)
-    site = cl()
-    urlpatterns += patterns('',
-        (r'', include(site.get_urls())),
-    )
+#~ site = get_lino_site()
+
+#~ if settings.LINO_SITE:
+    #~ logger.info('Initialize Lino Site %s',settings.LINO_SITE)
+    #~ modname,clname = settings.LINO_SITE.rsplit('.', 1)
+    #~ m = importlib.import_module(modname)
+    #~ cl = getattr(m, clname)
+    #~ site = cl()
+    
+
+urlpatterns += patterns('',
+    (r'', include(settings.LINO_SITE.get_urls())),
+)
 
 if sys.platform == 'win32':
 

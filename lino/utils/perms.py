@@ -25,27 +25,21 @@ class always(Condition):
 class is_staff(Condition):        
     @staticmethod
     def passes(user):
-        #print "requests.is_staff()", request.user.is_staff
-        #~ if user is None: return True
         return user.is_staff
         
 class is_authenticated(Condition):
     @staticmethod
     def passes(user):
-        #print request.user, request.user.is_authenticated
-        #~ if user is None: return True
         return user.is_authenticated()
 
 class is_anonymous(Condition):
     @staticmethod
     def passes(user):
-        #~ if user is None: return True
         return not user.is_authenticated()
         
         
-from django.conf import settings
+#~ from django.conf import settings
 
-if settings.BYPASS_PERMS:
-    is_authenticated.passes = staticmethod(always.passes)
-    is_staff.passes = staticmethod(always.passes)
-
+#~ if settings.BYPASS_PERMS:
+    #~ is_authenticated = always
+    #~ is_staff = always

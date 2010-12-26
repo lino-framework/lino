@@ -149,3 +149,90 @@ def PARSE_DATE(s):
     """
     ymd = reversed(map(int,s.split('.')))
     return datetime.date(*ymd)
+
+
+
+
+
+
+
+class Site:
+    help_url = "http://code.google.com/p/lino"
+    index_html = "This is the main page."
+    title = "Another Lino Site"
+    domain = "www.example.com"
+    
+    def __init__(self):
+        #self.django_settings = settings
+        #~ self.init_site_config = lambda sc: sc
+        self._setting_up = False
+        self._setup_done = False
+        self.root_path = '/lino/'
+        self._response = None
+        
+    def setup_main_menu(self):
+        raise NotImplementedError
+          
+    def init_site_config(self,sc):
+        pass
+        
+    def setup(self):
+        from lino.site import setup_site
+        setup_site(self)
+        
+    def add_menu(self,*args,**kw):
+        return self._menu.add_menu(*args,**kw)
+
+    def context(self,request,**kw):
+        d = dict(
+          main_menu = menus.MenuRenderer(self._menu,request),
+          root_path = self.root_path,
+          lino = self,
+          settings = settings,
+          debug = True,
+          #skin = self.skin,
+          request = request
+        )
+        d.update(kw)
+        return d
+        
+    def select_ui_view(self,request):
+        html = '<html><body>'
+        html += 'Please select a user interface: <ul>'
+        for ui in self.uis:
+            html += '<li><a href="%s">%s</a></li>' % (ui.name,ui.verbose_name)
+        html += '</ul></body></html>'
+        return HttpResponse(html)
+        
+        
+    def get_urls(self):
+        self.setup()
+        #~ self.setup_ui()
+        if len(self.uis) == 1:
+            return self.uis[0].get_urls()
+        urlpatterns = patterns('',
+            ('^$', self.select_ui_view))
+        for ui in self.uis:
+            urlpatterns += patterns('',
+                (ui.name, include(ui.get_urls())),
+            )
+        return urlpatterns
+        #~ return self.ui.get_urls()
+        
+    def get_site_menu(self,user):
+        self.setup()
+        return self._menu.menu_request(user)
+        
+    def add_program_menu(self):
+        return
+        m = self.add_menu("app","~Application",)
+        #~ m.add_item(url="/accounts/login/",label="Login",can_view=perms.is_anonymous)
+        #~ m.add_item(url="/accounts/logout/",label="Logout",can_view=perms.is_authenticated)
+        #m.add_item(system.Login(),can_view=perms.is_anonymous)
+        #m.add_item(system.Logout(),can_view=perms.is_authenticated)
+        
+      
+
+
+
+

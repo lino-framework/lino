@@ -85,8 +85,8 @@ class ContentTypes(reports.Report):
 
 
 
-def add_site_menu(lino):
-    m = lino.add_menu("site",_("~Site"))
+def add_site_menu(site):
+    m = site.add_menu("site",_("~Site"))
     #~ m.add_action('system.SiteConfigs',can_view=perms.is_staff,params=dict(pk=1))
     m.add_action('lino.SiteConfigs.detail',
       label=_('Site Configuration'),

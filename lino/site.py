@@ -35,7 +35,7 @@ import sys
 
 from django.conf import settings
 from django.utils.importlib import import_module
-
+from django.utils.functional import LazyObject
 from django.db import models
 #from django.shortcuts import render_to_response 
 #from django.contrib.auth.models import User
@@ -175,193 +175,66 @@ class DisableDeleteHandler():
             return None
         
         return disable_delete
-
-
-class Site:
-    help_url = "http://code.google.com/p/lino"
-    index_html = "This is the main page."
-    title = "Unnamed LinoSite"
-    domain = "www.example.com"
-    
-    def __init__(self):
         
-        #self.django_settings = settings
-        #~ self.init_site_config = lambda sc: sc
-        self._menu = menus.Menu("","Main Menu")
-        self._setting_up = False
-        self._setup_done = False
-        self.root_path = '/lino/'
-        self._response = None
+#~ class LazySite(LazyObject):
+    #~ def _setup(self):
+        #~ self._wrapped = Settings(settings_module)
         
-    def init_site_config(self,sc):
-        pass
-        
-    def setup(self):
-        if self._setup_done:
-            return
-        if self._setting_up:
-            #~ logger.warning("LinoSite.setup() called recursively.")
-            #~ return 
-            raise Exception("LinoSite.setup() called recursively.")
-        self._setting_up = True
-        
-        
-        
-        discover()
-        
-        actors.discover()
-        
-        reports.discover()
-        
-        choosers.discover()
-
-        for a in actors.actors_list:
-            #~ if isinstance(a,layouts.DetailLayout):
-                a.setup()
-        #~ for a in actors.actors_list:
-            #~ if not isinstance(a,layouts.DetailLayout):
-                #~ a.setup()
-
-        if settings.MODEL_DEBUG:
-            logger.debug("ACTORS:")
-            for k in sorted(actors.actors_dict.keys()):
-                a = actors.actors_dict[k]
-                #~ logger.debug("%s -> %r",k,a.__class__)
-                logger.debug("%s -> %r",k,a.debug_summary())
-                  
-          
-        self.setup_main_menu()
-        
-        #~ if hasattr(settings,'LINO_SETTINGS'):
-            #~ logger.info("Reading %s ...", settings.LINO_SETTINGS)
-            #~ execfile(settings.LINO_SETTINGS,dict(lino=self))
-        #~ else:
-            #~ logger.warning("settings.LINO_SETTINGS entry is missing")
-          
-        uis = []
-        for ui in settings.USER_INTERFACES:
-            logger.info("Starting user interface %s",ui)
-            ui_module = import_module(ui)
-            #~ self.ui = ui_module.ui
-            #~ self.ui.setup_site(self)
-            #~ ui_module.ui.setup_site(self)
-            uis.append(ui_module.get_ui(self))
-        self.uis = uis
-        
-        self._setup_done = True
-        self._setting_up = False
-        
-        dblogger.info("Lino Site %r started.", self.title)
-        dblogger.info(lino.welcome_text())
-        
-        
-    def setup_main_menu(self):
-        raise NotImplementedError
-          
-    def add_menu(self,*args,**kw):
-        return self._menu.add_menu(*args,**kw)
-       
-
-    def context(self,request,**kw):
-        d = dict(
-          main_menu = menus.MenuRenderer(self._menu,request),
-          root_path = self.root_path,
-          lino = self,
-          settings = settings,
-          debug = True,
-          #skin = self.skin,
-          request = request
-        )
-        d.update(kw)
-        return d
-        
-    def select_ui_view(self,request):
-        html = '<html><body>'
-        html += 'Please select a user interface: <ul>'
-        for ui in self.uis:
-            html += '<li><a href="%s">%s</a></li>' % (ui.name,ui.verbose_name)
-        html += '</ul></body></html>'
-        return HttpResponse(html)
-        
-        
-    def get_urls(self):
-        self.setup()
-        #~ self.setup_ui()
-        if len(self.uis) == 1:
-            return self.uis[0].get_urls()
-        urlpatterns = patterns('',
-            ('^$', self.select_ui_view))
-        for ui in self.uis:
-            urlpatterns += patterns('',
-                (ui.name, include(ui.get_urls())),
-            )
-        return urlpatterns
-        #~ return self.ui.get_urls()
-        
-    def add_program_menu(self):
+def setup_site(self):
+    if self._setup_done:
         return
-        m = self.add_menu("app","~Application",)
-        #~ m.add_item(url="/accounts/login/",label="Login",can_view=perms.is_anonymous)
-        #~ m.add_item(url="/accounts/logout/",label="Logout",can_view=perms.is_authenticated)
-        #m.add_item(system.Login(),can_view=perms.is_anonymous)
-        #m.add_item(system.Logout(),can_view=perms.is_authenticated)
-        
-    def get_site_menu(self,user):
-        self.setup()
-        return self._menu.menu_request(user)
-        
+    if self._setting_up:
+        #~ logger.warning("LinoSite.setup() called recursively.")
+        #~ return 
+        raise Exception("LinoSite.setup() called recursively.")
+    self._setting_up = True
+    
+    discover()
+    
+    actors.discover()
+    
+    reports.discover()
+    
+    choosers.discover()
+
+    for a in actors.actors_list:
+        #~ if isinstance(a,layouts.DetailLayout):
+            a.setup()
+    #~ for a in actors.actors_list:
+        #~ if not isinstance(a,layouts.DetailLayout):
+            #~ a.setup()
+
+    if settings.MODEL_DEBUG:
+        logger.debug("ACTORS:")
+        for k in sorted(actors.actors_dict.keys()):
+            a = actors.actors_dict[k]
+            #~ logger.debug("%s -> %r",k,a.__class__)
+            logger.debug("%s -> %r",k,a.debug_summary())
+              
       
-    def initdb(self,fixtures=[]):
+    self._menu = menus.Menu("","Main Menu")
+    
+    self.setup_main_menu()
+    
+    #~ if hasattr(settings,'LINO_SETTINGS'):
+        #~ logger.info("Reading %s ...", settings.LINO_SETTINGS)
+        #~ execfile(settings.LINO_SETTINGS,dict(lino=self))
+    #~ else:
+        #~ logger.warning("settings.LINO_SETTINGS entry is missing")
       
-        #~ self.setup()
+    uis = []
+    for ui in settings.USER_INTERFACES:
+        logger.info("Starting user interface %s",ui)
+        ui_module = import_module(ui)
+        #~ self.ui = ui_module.ui
+        #~ self.ui.setup_site(self)
+        #~ ui_module.ui.setup_site(self)
+        uis.append(ui_module.get_ui(self))
+    self.uis = uis
         
-        from django.core.management import call_command
-        from timtools.console import syscon
-        from lino import reports
+    self._setup_done = True
+    self._setting_up = False
+    
+    dblogger.info("Lino Site %r started.", self.title)
+    dblogger.info(lino.welcome_text())
         
-        sites = reports.get_app('sites')
-        
-        options = dict(interactive=False)
-        logger.info("lino_site.initdb(%r)", fixtures)
-        if not syscon.confirm("Gonna reset database(s) %s.\nAre you sure?" 
-            % settings.DATABASES):
-            return
-        logger.info("reset")
-        if False: # settings.DATABASE_ENGINE == 'sqlite3':
-            if settings.DATABASE_NAME != ':memory:':
-                if os.path.exists(settings.DATABASE_NAME):
-                    os.remove(settings.DATABASE_NAME)
-        else:
-            call_command('reset',*app_labels(),**options)
-        #call_command('reset','songs','auth',interactive=False)
-        logger.info("syncdb")
-        call_command('syncdb',**options)
-        #call_command('flush',interactive=False)
-        #~ auth.User.objects.create_superuser('root','luc.saffre@gmx.net','1234')
-        #~ auth.User.objects.create_user('user','luc.saffre@gmx.net','1234')
-        
-        # 20100804 don't remember why this was used:
-        #~ sites.Site(id=2,domain=self.domain,name=self.title).save()
-        
-        logger.info("loaddata %s",' '.join(fixtures))
-        call_command('loaddata',*fixtures)
-        #~ for fix in fixtures:
-            #~ logger.info("loaddata %s",fix)
-            #~ call_command('loaddata',fix)
-        #self.setup()
-        
-            
-
-  
-  
-
-#~ lino_site = LinoSite()
-#~ logger.debug("lino.lino_site has been instantiated")
-#'get_urls','fill','context'
-
-#~ initdb = lino_site.initdb
-#~ context = lino_site.context
-#~ get_urls = lino_site.get_urls
-#~ get_site_menu = lino_site.get_site_menu
-#~ setup = lino_site.setup
-
