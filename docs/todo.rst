@@ -9,11 +9,6 @@ for which I hope for help from other people.
 Version 1.0
 -----------
 
-
-#.  momentan macht er auch für watch_tim eine lino.js, was erstens
-    unnütz und zweitens vielleicht sogar stört. Für watch_tim reicht
-    es, dass lino.site importiert wird. 
-
 #.  Formatierte Texte. Zumindest Aufzählungen und mehrere Absätze 
     sollten möglich sein.
 
@@ -24,8 +19,36 @@ Version 1.0
     überschreibt man den aktuellen Record durch die Daten aus einer 
     hochzuladenden Datei.
 
-Waiting for feedback
---------------------
+Version 1.1
+-----------
+
+#.  Textbausteine (im Text-Editor F1 drücken können)
+
+#.  Dublettenkontrolle. Nach Duplikaten suchen vor Erstellen einer neuen Person.
+    Erstellen einer neuen Person muss verweigert werden, wenn 
+    Name und Vorname identisch sind **außer** wenn beide ein unleeres Geburtsdatum 
+    haben (und nicht das gleiche).
+
+#.  Sortierung: Entweder Ticket :doc:`/tickets/19` lösen, oder (noch besser) 
+    auf Datenbank-Ebene lokalisierte Sortierung einstellen.
+   
+#.  Wenn man in einem Vertrag eine Angabe ändert und dann "Drucken" klickt, dann wird die 
+    Änderung irritierenderweise nicht gespeichert.
+  
+#.  Im Hauptmenü könnten zwei Befehle :menuselection:`Help --> User Manual` 
+    und :menuselection:`Help --> About` kommen, dann hätten wir den ganzen 
+    Platz für Erinnerungen.
+
+#.  Wenn man z.B. in Companies.insert manuell eine ID eingibt, 
+    dann ignoriert der Server die und vergibt trotzdem seine automatische nächste ID.
+
+#.  Wenn man mehrere Ansichten in einer GC hat und eine davon irgendwelche Kolonnen 
+    versteckt, dann werden diese Kolonnen nicht wieder sichtbar, wenn man auf eine 
+    andere Ansicht zurück wechselt.
+    
+
+After version 1.1
+-----------------
 
 #.  Auswahlliste `Contract.exam_policy` (Auswertungsstrategie) 
     wird auch in französischen Verträgen deutsch angezeigt.
@@ -54,56 +77,28 @@ Waiting for feedback
 #.  HTML-Editoren haben noch Probleme (Layout und Performance) und sind deshalb 
     momentan deaktiviert. 
     
-#.  Textbausteine (im Text-Editor F1 drücken können)
-
-#.  Sortierung: Entweder Ticket :doc:`/tickets/19` lösen, oder (noch besser) 
-    auf Datenbank-Ebene lokalisierte Sortierung einstellen.
-   
 #.  Ext.LoadMask nutzen:
     http://www.sencha.com/forum/showthread.php?64420-how-to-show-a-wait-message-while-calling-store-load
 
-#. Arbeitsregime und Stundenplan: 
-   Texte in Konfigurationsdateien auslagern
+#.  Arbeitsregime und Stundenplan: 
+    Texte in Konfigurationsdateien auslagern
 
-#. Externe Links (Lesezeichen) notieren können, indem man sie von einem anderen Browserfenster 
-   per drag & drop auf die HtmlBox zieht.   
-   :doc:`/tickets/8` 
+#.  Externe Links (Lesezeichen) notieren können, indem man sie von einem anderen Browserfenster 
+    per drag & drop auf die HtmlBox zieht.   
+    :doc:`/tickets/8` 
 
-#. How to import, render & edit BIC:IBAN account numbers?
+#.  How to import, render & edit BIC:IBAN account numbers?
 
-#. The main window also needs a `Refresh` button. 
-   Or better: should be automatically refreshed when it was hidden by another 
-   window and becomes visible again.
+#.  The main window also needs a `Refresh` button. 
+    Or better: should be automatically refreshed when it was hidden by another 
+    window and becomes visible again.
   
-#. MyUploads müsste eigentlich nach `modified` sortiert sein. Ist er aber nicht.
-   Idem für MyContracts. 
+#.  MyUploads müsste eigentlich nach `modified` sortiert sein. Ist er aber nicht.
+    Idem für MyContracts. 
 
-#. wenn man in einem Vertrag eine Angabe ändert und dann "Drucken" klickt, dann wird die 
-   Änderung irritierenderweise nicht gespeichert.
+#.  Im Kontextmenü sollten auch Aktionen erscheinen, die spezifisch 
+    für das Feld (die Kolonne) sind. 
   
-#. Im Kontextmenü sollten auch Aktionen erscheinen, die spezifisch 
-   für das Feld (die Kolonne) sind. 
-  
-#. Im Hauptmenü könnten zwei Befehle :menuselection:`Help --> User Manual` 
-   und :menuselection:`Help --> About` kommen, dann hätten wir den ganzen 
-   Platz für Erinnerungen.
-
-#. Wenn man z.B. in Companies.insert manuell eine ID eingibt, 
-   dann ignoriert der Server die und vergibt trotzdem seine automatische nächste ID.
-
-#.  Wenn man mehrere Ansichten in einer GC hat und eine davon irgendwelche Kolonnen 
-    versteckt, dann werden diese Kolonnen nicht wieder sichtbar, wenn man auf eine 
-    andere Ansicht zurück wechselt.
-    
-
-After version 1.0
------------------
-
-#. Dublettenkontrolle. Nach Duplikaten suchen vor Erstellen einer neuen Person.
-   Erstellen einer neuen Person muss verweigert werden, wenn 
-   Name und Vorname identisch sind **außer** wenn beide ein unleeres Geburtsdatum 
-   haben (und nicht das gleiche).
-
 #. Im Detail eines Links wäre dessen Vorschau interessant.
 
 #. RtfPrintMethod geht nicht immer: 

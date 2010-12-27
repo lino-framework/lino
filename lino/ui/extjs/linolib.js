@@ -197,13 +197,13 @@ Ext.override(Ext.grid.CellSelectionModel, {
                         t.on('change',function(tb,pageData) {
                             var r = g.store.getCount()-2;
                             self.select(r, c);
-                            console.log('change',r,c);
+                            //~ console.log('change',r,c);
                         },this,{single:true});
                         t.moveLast();
                         return;
                     } else {
                         newCell = [g.store.getCount()-1, c];
-                        console.log('ctrl-end',newCell);
+                        //~ console.log('ctrl-end',newCell);
                         break;
                     }
                 }
@@ -224,6 +224,24 @@ Ext.override(Ext.grid.CellSelectionModel, {
                     if (g.isEditor && !g.editing) {
                         g.startEditing(r, c);
                         e.stopEvent();
+                        return;
+                    }
+                    break;
+                }
+            case e.INSERT:
+                if (!e.hasModifier()) {
+                    if (g.ls_insert_handler && !g.editing) {
+                        e.stopEvent();
+                        Lino.show_insert(g);
+                        return;
+                    }
+                    break;
+                }
+            case e.DELETE:
+                if (!e.hasModifier()) {
+                    if (!g.editing) {
+                        e.stopEvent();
+                        Lino.delete_selected(g);
                         return;
                     }
                     break;
@@ -527,26 +545,27 @@ Lino.do_action = function(caller,action) {
   Ext.Ajax.request(action);
 };
 
-Lino.gup = function( name )
-{
-  // Thanks to http://www.netlobo.com/url_query_string_javascript.html
-  name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
-  var regexS = "[\\?&]"+name+"=([^&#]*)";
-  var regex = new RegExp( regexS );
-  var results = regex.exec( window.location.href );
-  if( results == null )
-    return "";
-  else
-    return results[1];
-};
+//~ Lino.gup = function( name )
+//~ {
+  //~ // Thanks to http://www.netlobo.com/url_query_string_javascript.html
+  //~ name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+  //~ var regexS = "[\\?&]"+name+"=([^&#]*)";
+  //~ var regex = new RegExp( regexS );
+  //~ var results = regex.exec( window.location.href );
+  //~ if( results == null )
+    //~ return "";
+  //~ else
+    //~ return results[1];
+//~ };
 
-Lino.refresh_handler = function (ww) {
-  return function() { 
+//~ Lino.refresh_handler = function (ww) {
+  //~ return function() { 
       //~ console.log('refresh',ww);
-      ww.main_item.doLayout(false,true);
+      //~ ww.main_item.doLayout(false,true);
       //~ ww.main_item.syncSize();
-  }
-};
+  //~ }
+//~ };
+
 Lino.tools_close_handler = function (ww) {
   return function() { 
       ww.close();
@@ -695,6 +714,16 @@ Lino.show_insert = function(panel,btn) {
   var bp = panel.get_base_params();
   //~ console.log('20101025 insert_handler',bp)
   panel.ls_insert_handler(panel,{record_id:-99999,base_params:bp});
+};
+
+Lino.show_insert_duplicate = function(panel,btn) {
+  Lino.do_on_current_record(panel,
+    function(rec) {
+      var newRec = {};
+      Ext.apply(newRec,rec);
+      newRec.id = -99999;
+      panel.ls_insert_handler(panel,{data_record:rec,base_params:panel.get_base_params()});
+    });
 };
 
 //~ Lino.update_row_handler = function(action_name) {
@@ -1825,14 +1854,13 @@ Lino.WindowWrapperBase = {
     //~ }
     
     if (this.config.data_record) {
-      //~ console.log('Lino.WindowWrapper with data_record',this.config.data_record);
+      console.log('Lino.WindowWrapper with data_record',this.config.data_record);
       //~ this.main_item.on_master_changed.defer(2000,this.main_item,[config.data_record]);
       //~ Lino.do_when_visible(this.main_item,function(){this.on_master_changed(config.data_record)});
       //~ this.main_item.on('afterrender',function(){this.main_item.on_master_changed(config.data_record)},this,{single:true});
       this.main_item.set_current_record(this.config.data_record);
       //~ return;
-    }
-    if (this.config.record_id !== undefined) { // may be 0 
+    } else if (this.config.record_id !== undefined) { // may be 0 
       //~ console.log('Lino.WindowWrapper with record_id',this.config.record_id);
       this.main_item.goto_record_id(this.config.record_id);
     }
@@ -1880,6 +1908,7 @@ Lino.WindowWrapper = function(caller,config,params) {
   this.window_config = {
     layout: "fit", 
     maximized: true, renderTo: 'main_area', constrain: true,
+    //~ maximizable: true, 
     //~ autoHeight: true,
     title: this.config.title,
     //~ items: this.main_item, 

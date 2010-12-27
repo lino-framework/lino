@@ -53,7 +53,6 @@ from django.conf.urls.defaults import patterns, url, include
 #auth = models.get_app('auth')
 from django.contrib.auth import models as auth
 
-
 from django.utils.safestring import mark_safe
 
 import lino
@@ -70,29 +69,28 @@ from lino.utils.config import find_config_files
 from lino.reports import DetailLayout
 from lino.utils import choosers
 
-## The following causes django.db.models.loading.cache to 
-## be populated. This must be done before calling actors.discover() 
-## or resolve_model().
-
-
 logger.info(lino.welcome_text())
-
-models_list = models.get_models() # populates django.db.models.loading.cache 
-
-if settings.MODEL_DEBUG:
-    apps = app_labels()
-    logger.debug("%d applications: %s.", len(apps),", ".join(apps))
-    logger.debug("%d MODELS:",len(models_list))
-    i = 0
-    for model in models_list:
-        i += 1
-        logger.debug("  %2d: %s.%s -> %r",i,model._meta.app_label,model._meta.object_name,model)
-        logger.debug("      data_elems : %s",' '.join([de.name for de in data_elems(model)]))
-    logger.info("Analyzing Models...")
-    
 
 def discover():
     
+    ## The following causes django.db.models.loading.cache to 
+    ## be populated. This must be done before calling actors.discover() 
+    ## or resolve_model().
+
+    models_list = models.get_models() # trigger django.db.models.loading.cache._populate()
+
+    if settings.MODEL_DEBUG:
+        apps = app_labels()
+        logger.debug("%d applications: %s.", len(apps),", ".join(apps))
+        logger.debug("%d MODELS:",len(models_list))
+        i = 0
+        for model in models_list:
+            i += 1
+            logger.debug("  %2d: %s.%s -> %r",i,model._meta.app_label,model._meta.object_name,model)
+            logger.debug("      data_elems : %s",' '.join([de.name for de in data_elems(model)]))
+        logger.info("Analyzing Models...")
+        
+
     ddhdict = {}
     for model in models.get_models():
     

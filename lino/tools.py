@@ -16,6 +16,7 @@ from django.conf import settings
 from django.db import models
 from django.utils.importlib import import_module
 
+
 def get_app(app_label):
     """
     This is called in models modules instead of "from x.y import models as y"
@@ -32,8 +33,10 @@ def get_app(app_label):
       
 
 
-def resolve_model(model_spec,app_label=None,who=None):
+def resolve_model(model_spec,app_label=None):
     # Same logic as in django.db.models.fields.related.add_lazy_relation()
+    #~ from lino import site # needed to trigger site setup
+    models.get_apps() # trigger django.db.models.loading.cache._populate()
     if isinstance(model_spec,basestring):
         try:
             app_label, model_name = model_spec.split(".")
@@ -46,8 +49,8 @@ def resolve_model(model_spec,app_label=None,who=None):
         model = model_spec
     if not isinstance(model,type) or not issubclass(model,models.Model):
         raise Exception(
-            "resolve_model(%r,app_label=%r,who=%r) found %r" % (
-            model_spec,app_label,who,model))
+            "resolve_model(%r,app_label=%r) found %r" % (
+            model_spec,app_label,model))
     return model
     
 def get_field(model,name):

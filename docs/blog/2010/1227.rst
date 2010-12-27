@@ -1,0 +1,10 @@
+20101227
+========
+
+- Tasten Insert und Delete funktionieren jetzt in einer Grid.
+
+- Neuer Button "Duplicate". 
+  Funktioniert, aber noch nicht sehr gut. 
+  Es fehlt noch ein Fenstertitel. 
+  Und der neue Record hat anfangs scheinbar die id des kopierten Records. 
+  Die wird allerdings ignoriert wenn man speichert.

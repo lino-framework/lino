@@ -144,6 +144,11 @@ class InsertRow(OpenWindowAction):
     def get_list_title(self,rh):
         return _("Insert into %s") % force_unicode(rh.get_title(None))
   
+class DuplicateRow(OpenWindowAction):
+    callable_from = (GridEdit,ShowDetailAction)
+    name = 'duplicate'
+    label = _("Duplicate")
+
 class unused_SlaveDetailAction(ToggleWindowAction):
     name = 'detail'
     def __init__(self,actor,layout):

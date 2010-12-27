@@ -673,7 +673,7 @@ class Report(actors.Actor): #,base.Handled):
                 self.model = self.base_queryset.model
             # raise Exception(self.__class__)
         else:
-            self.model = resolve_model(self.model,self.app_label,self)
+            self.model = resolve_model(self.model,self.app_label)
             
         if self.model is not None:
             self.app_label = self.model._meta.app_label
@@ -801,6 +801,7 @@ class Report(actors.Actor): #,base.Handled):
                 alist.append(actions.ShowDetailAction(self))
                 alist.append(actions.SubmitDetail(self))
                 alist.append(actions.InsertRow(self))
+                alist.append(actions.DuplicateRow(self))
                 alist.append(actions.SubmitInsert(self))
                     
             alist.append(actions.DeleteSelected(self))

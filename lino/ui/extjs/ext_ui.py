@@ -1233,6 +1233,8 @@ class ExtUI(base.UI):
         elif isinstance(a,actions.InsertRow):
             kw.update(panel_btn_handler=js_code('function(panel){Lino.show_insert(panel)}'))
             #~ kw.update(panel_btn_handler=js_code("Lino.show_insert_handler(Lino.%s)" % a))
+        elif isinstance(a,actions.DuplicateRow):
+            kw.update(panel_btn_handler=js_code('function(panel){Lino.show_insert_duplicate(panel)}'))
         elif isinstance(a,actions.DeleteSelected):
             kw.update(panel_btn_handler=js_code("Lino.delete_selected" % a))
         #~ elif isinstance(a,actions.RedirectAction):
