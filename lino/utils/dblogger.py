@@ -66,7 +66,7 @@ if settings.DBLOGFILE:
     if len(logger.handlers) == 0:
         filename = settings.DBLOGFILE
         if filename.lower() == 'auto':
-            filename = os.path.join(settings.PROJECT_DIR,'log','db.log')
+            filename = os.path.join(settings.DATA_DIR,'db.log')
         logger.setLevel(logging.INFO)
         logger.addHandler(file_handler(filename))
       

@@ -30,7 +30,7 @@ class ProjectType(models.Model):
 
 class ProjectTypes(reports.Report):
     model = ProjectType
-    order_by = "name"
+    order_by = ["name"]
 
 #
 # PROJECT
@@ -58,7 +58,7 @@ class Project(models.Model):
 
 class Projects(reports.Report):
     model = 'projects.Project'
-    order_by = "name"
+    order_by = ["name"]
     button_label = _("Projects")
 #~ Projects.add_detail(label=_("Detail"),label_align = reports.LABEL_ALIGN_TOP,
 #~ desc="""

@@ -33,7 +33,8 @@ USE_GRIDFILTERS = True
 MODEL_DEBUG = True
 PROJECT_DIR = normpath(dirname(__file__))
 #~ LINO_SETTINGS = join(PROJECT_DIR,"lino_settings.py")
-#~ LINO_SITE = None
+from lino import Site
+LINO_SITE = Site()
 #~ BYPASS_PERMS = True 
 BYPASS_PERMS = False
 USER_INTERFACES = [
@@ -196,11 +197,11 @@ INSTALLED_APPS = [
   #~ 'django.contrib.databrowse',
   
   'lino',
-  'lino.modlib.countries',
-  'lino.modlib.contacts',
-  'lino.modlib.products',
-  'lino.modlib.projects',
-  'lino.modlib.notes',
+  #~ 'lino.modlib.countries',
+  #~ 'lino.modlib.contacts',
+  #~ 'lino.modlib.products',
+  #~ 'lino.modlib.projects',
+  #~ 'lino.modlib.notes',
   
   #~ 'lino.modlib.journals',
   #~ 'lino.modlib.sales',
@@ -208,8 +209,8 @@ INSTALLED_APPS = [
   #~ 'lino.modlib.finan',
   
   #~ 'lino.modlib.properties',
-  'lino.modlib.links',
-  'lino.modlib.dsbe',
+  #~ 'lino.modlib.links',
+  #~ 'lino.modlib.dsbe',
   #~ 'lino.modlib.igen',
   #~ 'south', # http://south.aeracode.org
 ]

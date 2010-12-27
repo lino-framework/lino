@@ -53,3 +53,9 @@
     dauert es eine Zeit, bis der Cache des Browsers kapiert, 
     dass die URL neu angefragt werden muss.
 
+26.12. um 21 Uhr. Noch ein Punkt gelöst:
+
+- `initdb_tim` setzte `SiteConfig.next_partner_id` nicht korrekt.
+
+- Upgrade in Eupen.
+

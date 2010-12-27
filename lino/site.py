@@ -138,6 +138,7 @@ def discover():
             if isinstance(f,models.ForeignKey):
                 #~ print 20101104, model,f.rel.to
                 if not ddhdict.has_key(f.rel.to):
+                    assert issubclass(f.rel.to,models.Model), "%s.%s is %r (not a Model instance)" % (model,f.name,f.rel.to)
                     ddhdict[f.rel.to] = DisableDeleteHandler(model)
                 ddhdict[f.rel.to].add_fk(model,f)
                 

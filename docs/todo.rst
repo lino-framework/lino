@@ -9,11 +9,13 @@ for which I hope for help from other people.
 Version 1.0
 -----------
 
-#.  Formatierte Texte. Zumindest Aufzählungen und mehrere Absätze sollten 
-    möglich sein.
 
-#.  `initdb_tim` setzt `SiteConfig.next_partner_id` nicht korrekt.
-    Workaround: manuell setzen falls nochmal initdb_tim laufen gelassen wird.
+#.  momentan macht er auch für watch_tim eine lino.js, was erstens
+    unnütz und zweitens vielleicht sogar stört. Für watch_tim reicht
+    es, dass lino.site importiert wird. 
+
+#.  Formatierte Texte. Zumindest Aufzählungen und mehrere Absätze 
+    sollten möglich sein.
 
 #.  Insert as copy (Kopie erstellen). 
     Oder genauer gesagt denke ich momentan eher an zwei Buttons "Export" 

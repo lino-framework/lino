@@ -1,3 +1,4 @@
 @echo off
-set DJANGO_SETTINGS_MODULE=lino.demos.std.settings
+REM ~ set DJANGO_SETTINGS_MODULE=lino.demos.dsbe.settings
+set DJANGO_SETTINGS_MODULE=dsbe.settings
 make html upload

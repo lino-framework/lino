@@ -22,11 +22,3 @@ The :mod:`coretools` Module
     :undoc-members:
     :show-inheritance:
 
-The :mod:`datalinks` Module
----------------------------
-
-.. automodule:: lino.core.datalinks
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
