@@ -1,0 +1,26 @@
+20101229
+========
+
+- Neuer Report MyPersons ("Meine Kunden") soll alle Personen, 
+  die von diesem Mitarbeiter "betreut" werden. D.h.::
+
+    Person.user == user 
+    or 
+    Person.coachings_set.filter(user__exact=user).count() > 0
+    
+  oder so ähnlich... da muss ich offenbar erst mal ein bisschen lesen über
+  `Making queries 
+  <http://docs.djangoproject.com/en/dev/topics/db/queries/>`_
+  und   
+  `Aggregation
+  <http://docs.djangoproject.com/en/dev/topics/db/aggregation/>`_
+  
+  und zuletzt stelle ich fest, dass das vielleicht gar nicht so einfach ist.
+  http://stackoverflow.com/questions/1850744/django-annotate-query-set-with-a-count-on-subquery
+  
+  Einfacher ist es, die Datenbank umzustrukturieren:
+  Statt `Person.user` und einer Untertabelle `CoachingsByPerson` mach ich zwei Felder 
+  coach1 und coach2.
+  
+  
+  

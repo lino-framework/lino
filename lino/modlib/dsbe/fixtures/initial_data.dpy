@@ -235,11 +235,11 @@ def objects():
     #~ yield license('D',u"Bus")
     
     
-    coachingType = Instantiator('dsbe.CoachingType',"name").build
-    yield coachingType(u"DSBE")
-    yield coachingType(u"Schuldnerberatung")
-    yield coachingType(u"Energieberatung")
-    yield coachingType(u"allgemeiner Sozialdienst")
+    #~ coachingType = Instantiator('dsbe.CoachingType',"name").build
+    #~ yield coachingType(u"DSBE")
+    #~ yield coachingType(u"Schuldnerberatung")
+    #~ yield coachingType(u"Energieberatung")
+    #~ yield coachingType(u"allgemeiner Sozialdienst")
     
     
     excltype = Instantiator('dsbe.ExclusionType','name').build

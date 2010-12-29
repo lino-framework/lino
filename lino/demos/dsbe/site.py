@@ -52,6 +52,7 @@ class Site(Base):
         m.add_action('notes.MyNotes')
         m.add_action('uploads.MyUploads')
         m.add_action('dsbe.MyContracts')
+        m.add_action('dsbe.MyPersons')
 
         m = self.add_menu("config",_("~Configure"),
           can_view=perms.is_staff)
@@ -73,7 +74,7 @@ class Site(Base):
         m.add_action('dsbe.Activities')
         m.add_action('dsbe.ExclusionTypes')
         m.add_action('dsbe.ExamPolicies')
-        m.add_action('dsbe.CoachingTypes')
+        #~ m.add_action('dsbe.CoachingTypes')
         m.add_action('links.LinkTypes')
         m.add_action('uploads.UploadTypes')
 

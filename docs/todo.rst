@@ -9,6 +9,8 @@ for which I hope for help from other people.
 Version 1.0
 -----------
 
+#.  Insert in HtmlBox funktioniert nicht. "Object has no ls_insert_handler"
+
 #.  Formatierte Texte. Zumindest Aufzählungen und mehrere Absätze 
     sollten möglich sein.
 
@@ -22,6 +24,13 @@ Version 1.0
 Version 1.1
 -----------
 
+#.  Minify :xfile:`lino.js`
+    http://en.wikipedia.org/wiki/Minification_(programming)
+
+#.  Der JS-Code, der ein Detail-Fenster definiert, wird in der :xfile:`lino.js` 
+    für jeden Report zweimal generiert (detail und insert).
+    Ein einziges Mal für alle Reports würde reichen.
+  
 #.  Textbausteine (im Text-Editor F1 drücken können)
 
 #.  Dublettenkontrolle. Nach Duplikaten suchen vor Erstellen einer neuen Person.
@@ -251,15 +260,6 @@ Long-term
 #. Feldgruppen. Z.B. bei den 3 Feldern für Arbeitserlaubnis (:attr:`dsbe.models.Person.work_permit`) in DSBE wäre es interessant, 
    dass das Label "Arbeitserlaubnis" einmal über der Gruppe steht und in den Labels der einzelnen Felder nicht wiederholt wird.
 
-#. Der JS-Code, der ein Detail-Fenster definiert, wird in der :xfile:`site.js` 
-   für jeden Report zweimal generiert (detail und insert).
-   Ein einziges Mal für alle Reports würde reichen.
-  
-#. :xfile:`site.js` und :xfile:`lino.js` sollten eigentlich eine einzige Datei sein. 
-   Also die :file:`lino.js` muss templatisiert werden (wobei z.B. die dortigen Meldungen 
-   auch endlich übersetzbar würden), und am Ende würde das Template dann 
-   das Äquivalent von :meth:`lino.ui.extjs.ext_ui.ExtUI.build_site_js` aufrufen.
-  
   
 #. Layout-Editor: 
 

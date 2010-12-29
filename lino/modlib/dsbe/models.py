@@ -21,6 +21,7 @@ import cgi
 import datetime
 
 from django.db import models
+#~ from django.db.models import Q
 from django.conf import settings
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
@@ -219,7 +220,7 @@ class Person(Partner,contacts.Person):
         return []
         
     def get_queryset(self):
-        return self.model.objects.select_related('country','city','user','nationality')
+        return self.model.objects.select_related('country','city','coach1','coach2','nationality')
         
     #~ def full_clean(self,*args,**kw):
         #~ l = filter(lambda x:x,[self.last_name,self.first_name,self.title])
@@ -238,8 +239,10 @@ class Person(Partner,contacts.Person):
     is_senior = models.BooleanField(verbose_name=_("is senior"))
     #~ is_minor = models.BooleanField(verbose_name=_("is minor"))
     
-    user = models.ForeignKey("auth.User",blank=True,null=True,
-        verbose_name=_("User"))
+    coach1 = models.ForeignKey("auth.User",blank=True,null=True,
+        verbose_name=_("Coach 1"),related_name='coached1')
+    coach2 = models.ForeignKey("auth.User",blank=True,null=True,
+        verbose_name=_("Coach 2"),related_name='coached2')
         
     sex = models.CharField(max_length=1,blank=True,null=True,
         verbose_name=_("Sex"),
@@ -389,7 +392,7 @@ class Person(Partner,contacts.Person):
 PERSON_TIM_FIELDS = reports.fields_list(Person,
     '''name first_name last_name title remarks
     zip_code city country street street_no street_box 
-    birth_date sex birth_place user language 
+    birth_date sex birth_place coach1 language 
     phone gsm fax email 
     card_number card_valid_from card_valid_until
     national_id health_insurance pharmacy 
@@ -421,8 +424,22 @@ class PersonsByCity(Persons):
     order_by = 'street street_no street_box addr2'.split()
     column_names = "street street_no street_box addr2 name language *"
 
-#~ class Persons2(contacts.Persons):
-    #~ pass
+class MyPersons(Persons):
+  
+    #~ def get_queryset(self):
+    def get_request_queryset(self,rr):
+        q1 = models.Q(coach1__exact=rr.user)
+        q2 = models.Q(coach2__exact=rr.user)
+        #~ q2 = Q(coached__gt=0)
+        #~ q2 = Q(dsbe_coach__exact=user)
+        #~ q2 = Q(dsbe_coaches__contains=user)
+        #~ q2 = Q(coaching_set__user__exact=user)
+        #~ return Person.objects.annotate(dsbe_ccoach=Count('coaching_set__user__exact')).filter(q1|q2)
+        return Person.objects.filter(q1|q2)
+    #~ Person.user == user 
+    #~ or 
+    #~ Person.coachings_set.filter(user__exact=user).count() > 0        
+    
               
 #~ class Company(Contact,contacts.Company):
 #~ class Company(Partner,contacts.Addressable,):
@@ -654,40 +671,39 @@ class ExclusionsByPerson(Exclusions):
 #
 # COACHING TYPES 
 #
-class CoachingType(models.Model):
-    class Meta:
-        verbose_name = _("coaching type")
-        verbose_name_plural = _('coaching types')
+#~ class CoachingType(models.Model):
+    #~ class Meta:
+        #~ verbose_name = _("coaching type")
+        #~ verbose_name_plural = _('coaching types')
         
-    name = models.CharField(max_length=200)
+    #~ name = models.CharField(max_length=200)
     
-    def __unicode__(self):
-        return unicode(self.name)
+    #~ def __unicode__(self):
+        #~ return unicode(self.name)
 
-class CoachingTypes(reports.Report):
-    model = CoachingType
-    #~ label = _('Coaching Types')
+#~ class CoachingTypes(reports.Report):
+    #~ model = CoachingType
     
 #
 # COACHINGS
 #
-class Coaching(models.Model):
-    class Meta:
-        verbose_name = _("coaching")
-        verbose_name_plural = _('coachings')
-    person = models.ForeignKey("contacts.Person",verbose_name=_("Client"))
-    coach = models.ForeignKey("auth.User",verbose_name=_("Coach"))
-    type = models.ForeignKey("dsbe.CoachingType",verbose_name=_("Coaching type"))
-    remark = models.CharField(max_length=200,blank=False,verbose_name=_("Remark"))
+#~ class Coaching(models.Model):
+    #~ class Meta:
+        #~ verbose_name = _("coaching")
+        #~ verbose_name_plural = _('coachings')
+    #~ person = models.ForeignKey("contacts.Person",verbose_name=_("Client"))
+    #~ coach = models.ForeignKey("auth.User",verbose_name=_("Coach"))
+    #~ type = models.ForeignKey("dsbe.CoachingType",verbose_name=_("Coaching type"))
+    #~ remark = models.CharField(max_length=200,blank=False,verbose_name=_("Remark"))
     
 
-class Coachings(reports.Report):
-    model = Coaching
+#~ class Coachings(reports.Report):
+    #~ model = Coaching
     
-class CoachingsByPerson(Coachings):
-    fk_name = 'person'
-    column_names = 'coach type remark *'
-    label = _('Coaches')
+#~ class CoachingsByPerson(Coachings):
+    #~ fk_name = 'person'
+    #~ column_names = 'coach type remark *'
+    #~ label = _('Coaches')
 
 #
 # CONTRACT TYPES 
@@ -850,17 +866,22 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,mixins.
         return s
         
     def dsbe_person(self):
-        try:
-            return self.person.coaching_set.get(type__name__exact='DSBE').coach        
-        except Exception,e:
-            return self.person.user or self.user
+        if self.person_id is not None:
+            if self.person.coach2_id is not None:
+                return self.person.coach2_id
+            return self.person.coach1 or self.user
+            
+        #~ try:
+            #~ return self.person.coaching_set.get(type__name__exact='DSBE').coach        
+        #~ except Exception,e:
+            #~ return self.person.user or self.user
             
     def on_person_changed(self,request):
         if self.person_id is not None:
-            if self.person.user_id is None or self.person.user_id == self.user_id:
+            if self.person.coach1_id is None or self.person.coach1_id == self.user_id:
                 self.user_asd = None
             else:
-                self.user_asd = self.person.user
+                self.user_asd = self.person.coach1
                 
     def on_create(self,request):
         super(Contract,self).on_create(request)

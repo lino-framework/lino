@@ -170,7 +170,8 @@ class PAR(Controller):
                           u"%s : PAR->IdUsr %r (converted to %r) doesn't exist!",
                           obj2str(obj),data['IDUSR'],username)
                 else:
-                    obj.user = None
+                    obj.coach1 = None
+                    #~ obj.user = None
             if data.has_key('FIRME'):  
                 for k,v in name2kw(data['FIRME']).items():
                     setattr(obj,k,v)

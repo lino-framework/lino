@@ -334,7 +334,8 @@ def load_tim_data(dbpath):
                 username = settings.TIM2LINO_USERNAME(row['IDUSR'])
                 if username is not None:
                     try:
-                        kw.update(user=auth.User.objects.get(username=username))
+                        kw.update(coach1=auth.User.objects.get(username=username))
+                        #~ kw.update(user=auth.User.objects.get(username=username))
                     except auth.User.DoesNotExist,e:
                         dblogger.warning("PAR:%s PAR->IdUsr %r (converted to %r) doesn't exist!",row['IDPAR'],row['IDUSR'],username)
         activity = row['PROF']

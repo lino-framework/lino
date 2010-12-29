@@ -13,8 +13,12 @@ box5 =
   activity 
 
 coaching =
-  user
-  dsbe.CoachingsByPerson
+  coach1
+  coach2
+
+# coaching =
+#  user
+#  dsbe.CoachingsByPerson
 
 flags =
   is_active 
