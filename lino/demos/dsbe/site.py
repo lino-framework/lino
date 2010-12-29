@@ -52,7 +52,7 @@ class Site(Base):
         m.add_action('notes.MyNotes')
         m.add_action('uploads.MyUploads')
         m.add_action('dsbe.MyContracts')
-        m.add_action('dsbe.MyPersons')
+        m.add_action('contacts.MyPersons')
 
         m = self.add_menu("config",_("~Configure"),
           can_view=perms.is_staff)

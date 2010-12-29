@@ -16,9 +16,9 @@ coaching =
   coach1
   coach2
 
-# coaching =
-#  user
-#  dsbe.CoachingsByPerson
+## coaching =
+##  user
+##  dsbe.CoachingsByPerson
 
 flags =
   is_active 
