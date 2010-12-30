@@ -425,7 +425,7 @@ class PersonsByCity(Persons):
     column_names = "street street_no street_box addr2 name language *"
 
 class MyPersons(Persons):
-  
+    label = _("My coached Persons")
     #~ def get_queryset(self):
     def get_request_queryset(self,rr):
         q1 = models.Q(coach1__exact=rr.user)
