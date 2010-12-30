@@ -277,6 +277,7 @@ class ExtUI(base.UI):
                     o = dict(drop_zone="FooBar")
                     a = de.get_action('insert')
                     if a is not None:
+                        kw.update(ls_insert_handler=js_code("Lino.%s" % a))
                         kw.update(ls_bbar_actions=[
                         #~ o.update(bbar=[
                           self.a2btn(a),

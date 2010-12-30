@@ -15,12 +15,16 @@
   `Aggregation
   <http://docs.djangoproject.com/en/dev/topics/db/aggregation/>`_
   
-  und zuletzt stelle ich fest, dass das vielleicht gar nicht so einfach ist.
+  und zuletzt stelle ich fest, dass das vielleicht gar nicht so einfach ist:
   http://stackoverflow.com/questions/1850744/django-annotate-query-set-with-a-count-on-subquery
   
   Einfacher ist es, die Datenbank umzustrukturieren:
   Statt `Person.user` und einer Untertabelle `CoachingsByPerson` mach ich zwei Felder 
-  coach1 und coach2.
+  Person.coach1 und Person.coach2. Nicht sehr relational, aber dafür sehr intuitiv...
   
+- Bugfix : Insert-Button in Uploads und Links einer Person (HtmlBox eines Slave-Reports 
+  mit `show_slave_grid = False`) funktioniert jetzt wieder.
   
+- Bugfix : Wenn man in Kolonne Persons.user
+  einen Filter setzte, kam auf dem Server "Cannot resolve 'name' into field".
   

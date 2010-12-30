@@ -146,7 +146,10 @@ def add_gridfilters(qs,gridfilters):
             if isinstance(field,models.CharField):
                 kw[field.name+"__contains"] =  flt['value']
             elif isinstance(field,models.ForeignKey):
-                kw[field.name+"__name__contains"] = flt['value']
+                search_field = getattr(field.rel.to,'grid_search_field',None)
+                if search_field is None:
+                    search_field = 'name'
+                kw[field.name + "__%s__contains" % search_field] = flt['value']
             else:
                 raise NotImplementedError(repr(flt))
         elif flttype == 'numeric':

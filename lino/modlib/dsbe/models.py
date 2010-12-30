@@ -1006,3 +1006,7 @@ here's how to override the default verbose_name of a field
 """
 from lino.tools import resolve_field
 resolve_field('dsbe.Contract.user').verbose_name=_("responsible (DSBE)")
+
+from lino.tools import resolve_model
+User = resolve_model('auth.User')
+User.grid_search_field = 'username'
