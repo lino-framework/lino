@@ -3,13 +3,14 @@
 
 - `Russell Keith-Magee <http://cecinestpasun.com/about/>`_ 
   has worked on :djangoticket:`14390` (my :doc:`/tickets/19/`).
-  He closed it because it were due to a Python bug (which I'll try to confirm).
-  I won't pay too much enery to this ticket since it is anyway just a partly 
+  He closed it because it were due to a Python bug 
+  (which I'll try to confirm when I have some spare time).
+  But I won't pay too much energy to this ticket since it 
+  is anyway just a partly 
   solution to the localized sorting problem.
   
-  MySQL
-  http://docstore.mik.ua/orelly/weblinux2/mysql/ch03_07.htm
-  
+  A better solution seems to be possible:
+  http://efreedom.com/Question/1-3763838/Sort-Order-SQLite3-Umlauts
   
 - Release 1.0 RC 2 with new :class:`lino.utils.dpy.Serializer` 
   and no change yet to the db structure.
@@ -19,12 +20,31 @@
   `:meth:`lino.utils.dpy.Serializer.value2string` didn't
   handle :class:`django.db.models.fields.NOT_PROVIDED` correctly.
 
-- Das gleiche ImproperlyConfigured wie das vom :doc:`/blog/2010/0913`
-  hat mir nochmal 2 Stunden Sucherei beschert.
-  Ich musste ein `chmod g+w` der Datenbank-Datei sowie der `db.log` machen, 
-  weil die bei meinen manuellen Arbeiten zur Migration von mir selber neu 
-  erstellt worden waren. 
-  Damit das hoffentlich nicht mehr passiert,
-  habe ich in der :xfile:`/etc/profile` mal die `umask <http://en.wikipedia.org/wiki/Umask>`_ von 
+- Das gleiche Problem wie das ImproperlyConfigured vom :doc:`/blog/2010/0913`
+  hat mir heute nochmal 2 Stunden Sucherei beschert.
+  Bei meinen manuellen Arbeiten zur Migration 
+  waren die Datenbank-Datei (und auch die `db.log`), 
+  neu erstellt worden und waren jetzt nicht mehr beschreibbar 
+  für Gruppenmitglieder.
+  Lösung war dann einfach: `chmod g+w` der betreffenden Dateien.
+  Übrigens: das `ImproperlyConfigured` kommt nicht immer, 
+  wenn die Datenbank unbeschreibbar ist. 
+  Ich glaube, es kommt nur dann, wenn außerdem noch keine 
+  Session existiert.
+    
+- Dass ich nach einer Migration manuell ein `chmod g+w` verschiedener 
+  Dateien machen muss, ist freilich auch nicht elegant. 
+  Deshalb   habe ich in der :xfile:`/etc/profile` mal die 
+  `umask <http://en.wikipedia.org/wiki/Umask>`_ von 
   022 auf 002 gesetzt (leave new files writable to group).
+  Mal testen ob es klappt::
   
+    touch data/t
+    ls -l data/t
+    -rw-rw-r-- 1 lsaffre  www-data       0 2011-01-01 23:12 t
+    
+  Funktioniert also... 
+  Nur leider scheint es zumindest für die db-Datei nichts zu nützen.
+  Kann es sein, dass Django selber das `writeable by group` abschaltet?
+  
+    

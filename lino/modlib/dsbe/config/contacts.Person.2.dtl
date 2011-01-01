@@ -15,5 +15,6 @@ box1 =
 
 box2 =
   gesdos_id
+  aid_type
   health_insurance 
   pharmacy

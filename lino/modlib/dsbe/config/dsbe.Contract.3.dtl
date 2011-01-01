@@ -3,7 +3,7 @@
 
 
 main =
-    aid_nature aid_rate exam_policy
+    exam_policy
     stages        goals
     duties_asd    duties_dsbe   
     duties_company

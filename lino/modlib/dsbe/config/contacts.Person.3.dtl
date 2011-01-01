@@ -3,7 +3,7 @@
 
 box1 = 
   unavailable_until:15 unavailable_why:30
-  unemployed_since work_permit_suspended_until 
+  unemployed_since work_permit_suspended_until
   
 box2 =
   residence_type:20 residence_permit_until:20

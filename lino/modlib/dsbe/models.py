@@ -85,37 +85,37 @@ REGIME_CHOICES = {
         ]
 }
 
-AID_RATE_CHOICES = {
-    'de':[ 
-        u'Alleinlebende Person',
-        u'Zusammenlebende Person',
-        u'Person mit Familie zu Lasten',
-        ],
-    'fr':[ 
-        u'Personne isolée',
-        u'Personne cohabitante',
-        u'Personne qui cohabite avec une famille à sa charge',
-        ],
-    'en':[
-        ]
-}
+#~ AID_RATE_CHOICES = {
+    #~ 'de':[ 
+        #~ u'Alleinlebende Person',
+        #~ u'Zusammenlebende Person',
+        #~ u'Person mit Familie zu Lasten',
+        #~ ],
+    #~ 'fr':[ 
+        #~ u'Personne isolée',
+        #~ u'Personne cohabitante',
+        #~ u'Personne qui cohabite avec une famille à sa charge',
+        #~ ],
+    #~ 'en':[
+        #~ ]
+#~ }
 
-AID_NATURE_CHOICES = {
-    'de':[ 
-        u'Eingliederungseinkommen',
-        u'Sozialhilfe', 
-        u'Ausgleich zum Eingliederungseinkommen', 
-        u'Ausgleich zur Sozialhilfe' 
-        ],
-    'fr':[ 
-        u"Revenu d'intégration sociale",
-        u"Aide sociale",
-        u"Complément au revenu d'intégration sociale",
-        u"Complément à l'aide sociale",
-        ],
-    'en':[
-        ]
-}
+#~ AID_NATURE_CHOICES = {
+    #~ 'de':[ 
+        #~ u'Eingliederungseinkommen',
+        #~ u'Sozialhilfe', 
+        #~ u'Ausgleich zum Eingliederungseinkommen', 
+        #~ u'Ausgleich zur Sozialhilfe' 
+        #~ ],
+    #~ 'fr':[ 
+        #~ u"Revenu d'intégration sociale",
+        #~ u"Aide sociale",
+        #~ u"Complément au revenu d'intégration sociale",
+        #~ u"Complément à l'aide sociale",
+        #~ ],
+    #~ 'en':[
+        #~ ]
+#~ }
 
 def language_choices(language,choices):
     l = choices.get(language,None)
@@ -314,6 +314,8 @@ class Person(Partner,contacts.Person):
     needs_work_permit = models.BooleanField(verbose_name=_("Needs work permit"))
     work_permit_valid_until = models.DateField(blank=True,null=True,verbose_name=_("Work permit valid until"))
     work_permit_suspended_until = models.DateField(blank=True,null=True,verbose_name=_("suspended until"))
+    aid_type = models.ForeignKey("dsbe.AidType",blank=True,null=True,
+        verbose_name=_("aid type"))
     
     
     physical_handicap = models.BooleanField(verbose_name=_("Physical handicap"))
@@ -751,6 +753,25 @@ class ExamPolicies(reports.Report):
     model = ExamPolicy
     column_names = 'name *'
 
+#
+# AID TYPES
+#
+class AidType(models.Model):
+    class Meta:
+        verbose_name = _("aid type")
+        verbose_name_plural = _('aid types')
+        
+    name = models.CharField(_("designation"),max_length=200)
+    
+    def __unicode__(self):
+        return unicode(babelattr(self,'name'))
+        
+add_babel_field(AidType,'name')
+
+class AidTypes(reports.Report):
+    model = AidType
+    column_names = 'name *'
+
 
 #
 # CONTRACTS
@@ -796,8 +817,8 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,mixins.
     exam_policy = models.ForeignKey("dsbe.ExamPolicy",blank=True,null=True,
         verbose_name=_("examination policy"))
     
-    aid_nature = models.CharField(_("aid nature"),max_length=100,blank=True)
-    aid_rate = models.CharField(_("aid rate"),max_length=100,blank=True)
+    #~ aid_nature = models.CharField(_("aid nature"),max_length=100,blank=True)
+    #~ aid_rate = models.CharField(_("aid rate"),max_length=100,blank=True)
     
     @chooser(simple_values=True)
     def duration_choices(cls):
@@ -821,13 +842,13 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,mixins.
         u"100%",
         ]
     
-    @chooser(simple_values=True)
-    def aid_rate_choices(cls,language):
-        return language_choices(language,AID_RATE_CHOICES)
+    #~ @chooser(simple_values=True)
+    #~ def aid_rate_choices(cls,language):
+        #~ return language_choices(language,AID_RATE_CHOICES)
         
-    @chooser(simple_values=True)
-    def aid_nature_choices(cls,language):
-        return language_choices(language,AID_NATURE_CHOICES)
+    #~ @chooser(simple_values=True)
+    #~ def aid_nature_choices(cls,language):
+        #~ return language_choices(language,AID_NATURE_CHOICES)
     
     #~ @chooser(simple_values=True)
     #~ def exam_policy_choices(cls,language):
@@ -930,7 +951,7 @@ CONTRACT_PRINTABLE_FIELDS = reports.fields_list(Contract,
   'applies_from applies_until duration '
   'language schedule regime hourly_rate refund_rate reference_person '
   'stages duties_dsbe duties_company duties_asd '
-  'user user_asd aid_nature aid_rate exam_policy '
+  'user user_asd exam_policy '
   'date_decided date_issued responsibilities')
 
 
@@ -1014,3 +1035,52 @@ resolve_field('dsbe.Contract.user').verbose_name=_("responsible (DSBE)")
 from lino.tools import resolve_model
 User = resolve_model('auth.User')
 User.grid_search_field = 'username'
+
+
+"""
+Here is how to install case-insensitive sorting in sqlite.
+
+Thanks to 
+- http://efreedom.com/Question/1-3763838/Sort-Order-SQLite3-Umlauts
+- http://docs.python.org/library/sqlite3.html#sqlite3.Connection.create_collation
+- http://www.sqlite.org/lang_createindex.html
+"""
+from django.db.backends.sqlite3.base import DatabaseWrapper
+from django.db.backends.signals import connection_created
+
+def german(s):
+  
+    s = s.decode('utf-8').lower()
+    
+    s = s.replace(u'ä',u'a')
+    s = s.replace(u'à',u'a')
+    s = s.replace(u'â',u'a')
+    
+    s = s.replace(u'ç',u'c')
+    
+    s = s.replace(u'é',u'e')
+    s = s.replace(u'è',u'e')
+    s = s.replace(u'ê',u'e')
+    s = s.replace(u'ë',u'e')
+    
+    s = s.replace(u'ö',u'o')
+    s = s.replace(u'õ',u'o')
+    s = s.replace(u'ô',u'o')
+    
+    s = s.replace(u'ß',u'ss')
+    
+    s = s.replace(u'ù',u'u')
+    s = s.replace(u'ü',u'u')
+    s = s.replace(u'û',u'u')
+    
+    return s
+    
+def stricmp(str1, str2):
+    return cmp(german(str1),german(str2))
+    
+def my_callback(sender,**kw):
+    if sender is DatabaseWrapper:
+        db = kw['connection']
+        db.connection.create_collation('BINARY', stricmp)
+
+connection_created.connect(my_callback)
