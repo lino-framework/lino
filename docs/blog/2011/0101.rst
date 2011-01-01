@@ -25,6 +25,6 @@
   weil die bei meinen manuellen Arbeiten zur Migration von mir selber neu 
   erstellt worden waren. 
   Damit das hoffentlich nicht mehr passiert,
-  habe ich in der :xfile:`/etc/profile` mal die `umask` von 
-  022 auf 002 gesetzt (files created by a user are writable to group).
+  habe ich in der :xfile:`/etc/profile` mal die `umask <http://en.wikipedia.org/wiki/Umask>`_ von 
+  022 auf 002 gesetzt (leave new files writable to group).
   
