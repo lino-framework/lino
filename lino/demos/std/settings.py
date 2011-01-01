@@ -157,11 +157,6 @@ MIDDLEWARE_CLASSES = (
 
 
 if not BYPASS_PERMS:
-    #~ if sys.platform == 'win32':
-        #~ MIDDLEWARE_CLASSES = (
-            #~ 'lino.utils.simulate_remote.SimulateRemoteUserMiddleware',
-        #~ ) + MIDDLEWARE_CLASSES 
-        
     MIDDLEWARE_CLASSES += (
       'django.contrib.auth.middleware.RemoteUserMiddleware',
     )

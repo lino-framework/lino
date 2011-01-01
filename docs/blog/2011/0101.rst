@@ -18,3 +18,13 @@
   `u'django.db.models.fields.NOT_PROVIDED'.
   `:meth:`lino.utils.dpy.Serializer.value2string` didn't
   handle :class:`django.db.models.fields.NOT_PROVIDED` correctly.
+
+- Das gleiche ImproperlyConfigured wie das vom :doc:`/blog/2010/0913`
+  hat mir nochmal 2 Stunden Sucherei beschert.
+  Ich musste ein `chmod g+w` der Datenbank-Datei sowie der `db.log` machen, 
+  weil die bei meinen manuellen Arbeiten zur Migration von mir selber neu 
+  erstellt worden waren. 
+  Damit das hoffentlich nicht mehr passiert,
+  habe ich in der :xfile:`/etc/profile` mal die `umask` von 
+  022 auf 002 gesetzt (files created by a user are writable to group).
+  

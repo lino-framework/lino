@@ -238,7 +238,7 @@ class Person(Partner,contacts.Person):
     is_cpas = models.BooleanField(verbose_name=_("receives social help"))
     is_senior = models.BooleanField(verbose_name=_("is senior"))
     #~ is_minor = models.BooleanField(verbose_name=_("is minor"))
-    #~ is_dsbe = models.BooleanField(verbose_name=_("is coached"),default=True)
+    is_dsbe = models.BooleanField(verbose_name=_("is coached"),default=True)
     #~ "Indicates whether this is coached."
     
     coach1 = models.ForeignKey("auth.User",blank=True,null=True,
