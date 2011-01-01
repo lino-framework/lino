@@ -1,0 +1,20 @@
+20101230
+========
+
+- Felder Person.gsm und Company.gsm werden jetzt nicht mehr importiert. 
+  In TIM gibt es nämlich ein GSM-Feld nur in der ADR (nicht in der PAR). 
+  ADR->GSM ignorieren wir einfach. 
+  In der ADR sind sowieso nur die Apotheken, die kaum gepflegt sind.
+  
+- Erstmals benutzen wir South, um die Änderungen in der Datenbankstruktur zu 
+  migrieren, ohne initdb_tim zu brauchen.
+  Fuschzettel zu South: :doc:`/topics/south`
+  Zuerst mal nur eine kleine Änderung:
+  Neues Feld Person.is_dsbe 
+  
+  Problem: South (d.h. `manage.py schemamigration --auto contacts`)  
+  generiert dann eine Migration für app_label "contacts"
+  im Verzeichnis :file:`/lino/modlib/contacts/migrations`.
+  Das ist aber eine Änderung in der DSBE-Version von Contacts-Tabellen.
+  
+  

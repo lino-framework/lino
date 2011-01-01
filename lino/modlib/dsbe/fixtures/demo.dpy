@@ -22,7 +22,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext as _
 
 
-from lino.utils.instantiator import Instantiator, i2d
+from lino.utils import i2d
+from lino.utils.instantiator import Instantiator
 from lino.tools import resolve_model
 from lino.utils.babel import babel_values, default_language
 
@@ -31,7 +32,7 @@ from django.contrib.auth import models as auth
 
 
 DEMO_LINKS = [
-  dict(name="Lino website",url="http://lino.saffre-rumma.ee"),
+  dict(name="Lino website",url="http://lino.saffre-rumma.net"),
   dict(name="Django website",url="http://www.djangoproject.com"),
   dict(name="ExtJS website",url="http://www.sencha.com"),
   dict(name="Python website",url="http://www.python.org"),

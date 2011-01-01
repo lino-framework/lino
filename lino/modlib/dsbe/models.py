@@ -206,7 +206,7 @@ class Person(Partner,contacts.Person):
     """
     
     class Meta(contacts.Person.Meta):
-        #~ app_label = 'contacts'
+        app_label = 'contacts'
         verbose_name = _("person")
         verbose_name_plural = _("persons")
         
@@ -238,6 +238,9 @@ class Person(Partner,contacts.Person):
     is_cpas = models.BooleanField(verbose_name=_("receives social help"))
     is_senior = models.BooleanField(verbose_name=_("is senior"))
     #~ is_minor = models.BooleanField(verbose_name=_("is minor"))
+    if False:
+        is_dsbe = models.BooleanField(verbose_name=_("is coached"),default=True)
+        "Indicates whether this is coached."
     
     coach1 = models.ForeignKey("auth.User",blank=True,null=True,
         verbose_name=_("Coach 1"),related_name='coached1')
@@ -393,7 +396,7 @@ PERSON_TIM_FIELDS = reports.fields_list(Person,
     '''name first_name last_name title remarks
     zip_code city country street street_no street_box 
     birth_date sex birth_place coach1 language 
-    phone gsm fax email 
+    phone fax email 
     card_number card_valid_from card_valid_until
     national_id health_insurance pharmacy 
     bank_account1 bank_account2 
@@ -413,19 +416,20 @@ class Persons(contacts.Persons):
 
     
 class PersonsByNationality(Persons):
-    app_label = 'contacts'
+    #~ app_label = 'contacts'
     fk_name = 'nationality'
     order_by = "city name".split()
     column_names = "city street street_no street_box addr2 name country language *"
     
 class PersonsByCity(Persons):
-    app_label = 'contacts'
+    #~ app_label = 'contacts'
     fk_name = 'city'
     order_by = 'street street_no street_box addr2'.split()
     column_names = "street street_no street_box addr2 name language *"
 
 class MyPersons(Persons):
     label = _("My coached Persons")
+    order_by = ['last_name','first_name']
     #~ def get_queryset(self):
     def get_request_queryset(self,rr):
         q1 = models.Q(coach1__exact=rr.user)
@@ -452,7 +456,7 @@ class Company(Partner,contacts.Company):
     """
     
     class Meta(contacts.Company.Meta):
-        #~ app_label = 'contacts'
+        app_label = 'contacts'
         verbose_name = _("company")
         verbose_name_plural = _("companies")
     #~ vat_id = models.CharField(max_length=200,blank=True)
@@ -469,12 +473,13 @@ COMPANY_TIM_FIELDS = reports.fields_list(Company,
     '''name remarks
     zip_code city country street street_no street_box 
     language vat_id
-    phone gsm fax email 
+    phone fax email 
     bank_account1 bank_account2 activity''')
   
     
 class Companies(contacts.Companies):
     app_label = 'contacts'
+    #~ pass
     
 #~ from lino.modlib.contacts.models import Companies
 
@@ -889,7 +894,7 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,mixins.
       
     def full_clean(self):
       
-        if self.person is not None:
+        if self.person_id is not None:
             #~ if not self.user_asd:
                 #~ if self.person.user != self.user:
                     #~ self.user_asd = self.person.user

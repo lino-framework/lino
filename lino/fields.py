@@ -19,6 +19,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
 
 from south.modelsinspector import add_introspection_rules
+add_introspection_rules([], ["^lino\.fields\.LanguageField"])
+add_introspection_rules([], ["^lino\.fields\.PriceField"])
 add_introspection_rules([], ["^lino\.fields\.KnowledgeField"])
 add_introspection_rules([], ["^lino\.fields\.PercentageField"])
 add_introspection_rules([], ["^lino\.fields\.MyDateField"])

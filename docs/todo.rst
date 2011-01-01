@@ -9,8 +9,6 @@ for which I hope for help from other people.
 Version 1.0
 -----------
 
-#.  Insert in HtmlBox funktioniert nicht. "Object has no ls_insert_handler"
-
 #.  Formatierte Texte. Zumindest Aufzählungen und mehrere Absätze 
     sollten möglich sein.
 

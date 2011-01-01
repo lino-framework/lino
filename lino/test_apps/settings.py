@@ -145,8 +145,8 @@ INSTALLED_APPS = (
 
 
 SERIALIZATION_MODULES = {
-     "data" : "lino.utils.dataserializer",
-     "dpy" : "lino.utils.dpyserializer",
+     #~ "data" : "lino.utils.dataserializer",
+     "dpy" : "lino.utils.dpy",
 }
 
 #print "done", __file__

@@ -292,7 +292,7 @@ def load_tim_data(dbpath):
                 d = dict(id=pk)
                 d.update(street2kw(join_words(row['RUE'],row['RUENUM'],row['RUEBTE'])))
                 d.update(name=row['NAME'])
-                store(d,gsm=row['GSM'])
+                #~ 20101230 store(d,gsm=row['GSM'])
                 country2kw(row,d)
                 return Company(**d)
     load_dbf(dbpath,'ADR',load)

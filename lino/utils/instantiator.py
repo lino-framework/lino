@@ -24,12 +24,8 @@ from django.contrib.contenttypes.models import ContentType
 #~ import lino
 from lino.tools import resolve_model
 
-
-def i2d(i):
-    d = dateparser.parse(str(i))
-    d = datetime.date(d.year,d.month,d.day)
-    #print i, "->", v
-    return d
+from lino.utils import i2d # for backward compatibility of .dpy fixtures
+    
 
 class DataError(Exception):
     pass

@@ -82,3 +82,4 @@ History
 - :doc:`/blog/2010/1221` first noted the problem.
   Submitted :djangoticket:`14930`.
 
+- :doc:`/blog/2010/1221` 

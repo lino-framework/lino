@@ -1,0 +1,15 @@
+20110101
+========
+
+- `Russell Keith-Magee <http://cecinestpasun.com/about/>`_ 
+  has worked on :djangoticket:`14390` (my :doc:`/tickets/19/`).
+  He closed it because it were due to a Python bug (which I'll try to confirm).
+  I won't pay too much enery to this ticket since it is anyway just a partly 
+  solution to the localized sorting problem.
+  
+  MySQL
+  http://docstore.mik.ua/orelly/weblinux2/mysql/ch03_07.htm
+  
+  
+- Release 1.0 RC 2 with new :class:`lino.utils.dpy.Serializer` 
+  and no change yet to the db structure.

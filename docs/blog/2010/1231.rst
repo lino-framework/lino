@@ -1,0 +1,46 @@
+20101231
+========
+
+So. Nach einigem Grübeln und Studieren müsste 
+Linos erste Datenmigration jetzt klappen.
+
+Unerwartetes Problem :doc:`gestern <1230>` war, 
+dass South die Migration für das neue Feld Person.is_dsbe 
+ins Verzeichnis von `lino.modlib.contacts` schreibt, weil er 
+sich auf das `app_label` des Models basiert.
+Ich wäre ja einverstanden, wenn ich das mit ein wenig Handarbeit 
+korrigieren könnte. Aber meine Versuche in diese Richtung funktionierten nur fast: 
+ich kenne South nicht gut genug und müsste mein Problem 
+erstmal auf der Mailingliste beschreiben. Aber das ist nicht evident.
+
+Leichter war es, den Serializer in :mod:`lino.utils.dpy` zu schreiben, 
+der mir ein Dump der Datenbank im dpy-Format erlaubt.
+Das ist ein vollkommen anderer Ansatz. 
+Wenn ich ein Upgrade mit Änderungen in der DB-Struktur habe, 
+sieht die Installationsanweisung wie folgt aus:
+
+#.  Make a backup of your database
+
+#.  Stop the running Lino processes::
+
+      sudo /etc/init.d/apache2 stop
+      sudo /etc/init.d/watch_tim stop
+  
+#.  Dump your data to a temporary local fixture::
+  
+      cd /usr/local/django/myproject
+      python manage.py dumpdata --format dpy > fixtures/tmp.dpy
+    
+#.  Upgrade Lino::
+
+      cd /var/snapshots/lino ; hg pull -u
+    
+#.  Depending on the changes it may be necessary to manually 
+    edit the tmp.dpy file.
+
+#.  Create an empty DB and fill it from the dump::
+
+      initdb_tim tmp
+
+Ein evindenter Nachteil ist, dass bei großen Datenbanken mein System langsamer 
+sein dürfte, weil ich alle Daten erst rausschreibe und dann wieder einlese.

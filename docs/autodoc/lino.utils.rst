@@ -23,14 +23,6 @@ The :mod:`choosers` Module
     :undoc-members:
     :show-inheritance:
 
-The :mod:`dataserializer` Module
---------------------------------
-
-.. automodule:: lino.utils.dataserializer
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 The :mod:`dbfreader` Module
 ---------------------------
 
@@ -39,10 +31,10 @@ The :mod:`dbfreader` Module
     :undoc-members:
     :show-inheritance:
 
-The :mod:`dpyserializer` Module
--------------------------------
+The :mod:`dpy` Module
+---------------------
 
-.. automodule:: lino.utils.dpyserializer
+.. automodule:: lino.utils.dpy
     :members:
     :undoc-members:
     :show-inheritance:

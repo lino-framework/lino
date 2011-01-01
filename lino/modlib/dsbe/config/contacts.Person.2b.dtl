@@ -24,4 +24,5 @@ flags =
   is_active 
   is_cpas 
   is_senior 
+  is_dsbe 
   #is_minor

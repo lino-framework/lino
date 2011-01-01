@@ -1,4 +1,5 @@
-﻿## Copyright 2009-2010 Luc Saffre
+﻿#coding: UTF-8
+## Copyright 2009-2010 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -26,7 +27,7 @@ contactType = Instantiator('contacts.ContactType',"name").build
 # thanks to http://belgium.angloinfo.com/countries/belgium/businesses.asp
 
 COMPANY_TYPES_FORMAT = 'en nl fr de'
-COMPANY_TYPES_TEXT = """
+COMPANY_TYPES_TEXT = u"""
 Public Limited Company    | NV (Naamloze Vennootschap)   | SA (Société Anonyme) |  AG (Aktiengesellschaft)
 Limited Liability Company | BVBA (Besloten Vennootschap met Beperkte Aansprakelijkheid)  | SPRL (Société Privée à Responsabilité Limitée) | PGmbH (Private Gesellschaft mit beschränkter Haft)
 One-person Private Limited Company | EBVBA (Eenpersoons Beslotenvennootschap met Beperkte Aansprakelijkheid) | SPRLU (Société d'Une Personne à Responsabilité Limitée) |

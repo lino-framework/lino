@@ -35,7 +35,7 @@ def file_handler(filename):
     See also :doc:`/blog/2010/1129`
     """
     if sys.platform == 'win32': 
-        h = logging.FileHandler(filename)
+        h = logging.FileHandler(filename,encoding='utf-8')
     else:
         h = RotatingFileHandler(filename,maxBytes=100000,backupCount=5,encoding='utf-8')
     #~ if hasattr(logging,'RotatingFileHandler'):

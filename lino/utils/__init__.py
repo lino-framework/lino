@@ -37,6 +37,8 @@
 
 import sys
 import locale
+import datetime
+from dateutil import parser as dateparser
 
 def constrain(value,lowest,highest):
     return min(highest,max(value,lowest))
@@ -61,6 +63,12 @@ def join_words(*words):
     #~ words = filter(lambda x:x,words)
     return ' '.join([unicode(x) for x in words if x])
       
+
+def i2d(i):
+    d = dateparser.parse(str(i))
+    d = datetime.date(d.year,d.month,d.day)
+    #print i, "->", v
+    return d
 
 
 
