@@ -15,3 +15,7 @@
   (`c3cd59a976 <http://code.google.com/p/lino/source/detail?r=c3cd59a976917c9f6dcb77ccd5bceb983b07d787>`_) 
   with new :class:`lino.utils.dpy.Serializer` 
   and no change yet to the db structure.
+
+
+
+django.db.models.fields.NOT_PROVIDED

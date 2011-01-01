@@ -62,7 +62,7 @@ INSTALLED_APPS = (
   #'dsbe.modlib.contacts',
   #'dsbe.modlib.projects',
   'lino.modlib.dsbe',
-  'south', # http://south.aeracode.org
+  #~ 'south', # http://south.aeracode.org
 )
 
 # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".

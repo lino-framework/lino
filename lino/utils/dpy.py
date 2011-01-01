@@ -23,6 +23,7 @@ import imp
 
 
 from django.db import models
+from django.db.models.fields import NOT_PROVIDED
 from django.core.serializers import base
 from django.core.exceptions import ValidationError
 from django.contrib.contenttypes.models import ContentType
@@ -54,7 +55,7 @@ class Serializer(base.Serializer):
         self.use_natural_keys = options.get("use_natural_keys", False)
 
         self.stream.write('# -*- coding: UTF-8 -*-\n\n')
-        self.stream.write('from lino.utils.dpy import i2d\n')
+        self.stream.write('from lino.utils import i2d\n')
         self.stream.write('from lino.tools import resolve_model\n')
         #~ model = queryset.model
         for model in models.get_models():
@@ -138,30 +139,30 @@ class Serializer(base.Serializer):
         return sorted      
     
 
-    def start_serialization(self):
-        self._current = None
-        self.objects = []
+    #~ def start_serialization(self):
+        #~ self._current = None
+        #~ self.objects = []
 
-    def end_serialization(self):
-        pass
+    #~ def end_serialization(self):
+        #~ pass
 
-    def start_object(self, obj):
-        self._current = {}
+    #~ def start_object(self, obj):
+        #~ self._current = {}
 
-    def end_object(self, obj):
-        self.objects.append({
-            "model"  : smart_unicode(obj._meta),
-            "pk"     : smart_unicode(obj._get_pk_val(), strings_only=True),
-            "fields" : self._current
-        })
-        self._current = None
+    #~ def end_object(self, obj):
+        #~ self.objects.append({
+            #~ "model"  : smart_unicode(obj._meta),
+            #~ "pk"     : smart_unicode(obj._get_pk_val(), strings_only=True),
+            #~ "fields" : self._current
+        #~ })
+        #~ self._current = None
 
     def value2string(self, obj, field):
         value = field._get_val_from_obj(obj)
         # Protected types (i.e., primitives like None, numbers, dates,
         # and Decimals) are passed through as is. All other values are
         # converted to string first.
-        if value is None:
+        if value is None or value is NOT_PROVIDED:
             return 'None'
         if isinstance(field,models.DateField):
             #~ return 'i2d(%d)' % d2i(value)
