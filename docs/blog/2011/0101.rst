@@ -14,5 +14,7 @@
 - Release 1.0 RC 2 with new :class:`lino.utils.dpy.Serializer` 
   and no change yet to the db structure.
   
-- Bugfix: :meth:`lino.utils.dpy.Serializer.value2string` didn't
+- Da waren ein paar Personen, deren Feld Person.email stand auf 
+  `u'django.db.models.fields.NOT_PROVIDED'.
+  `:meth:`lino.utils.dpy.Serializer.value2string` didn't
   handle :class:`django.db.models.fields.NOT_PROVIDED` correctly.

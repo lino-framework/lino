@@ -20,6 +20,7 @@ exec serializer.
 from StringIO import StringIO
 import os
 import imp
+from decimal import Decimal
 
 
 from django.db import models
@@ -162,16 +163,17 @@ class Serializer(base.Serializer):
         # Protected types (i.e., primitives like None, numbers, dates,
         # and Decimals) are passed through as is. All other values are
         # converted to string first.
-        if value is None or value is NOT_PROVIDED:
+        if value is None:
+        #~ if value is None or value is NOT_PROVIDED:
             return 'None'
         if isinstance(field,models.DateField):
-            #~ return 'i2d(%d)' % d2i(value)
             d = value
             return 'i2d(%4d%02d%02d)' % (d.year,d.month,d.day)
-        if is_protected_type(value):
-            return unicode(value)
-        else:
-            return repr(field.value_to_string(obj))
+        if isinstance(value,(float,Decimal)):
+            return repr(str(value))
+        if isinstance(value,(int,long)):
+            return str(value)
+        return repr(field.value_to_string(obj))
 
     def handle_fk_field(self, obj, field):
         related = getattr(obj, field.name)
