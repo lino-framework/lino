@@ -11,5 +11,7 @@
   http://docstore.mik.ua/orelly/weblinux2/mysql/ch03_07.htm
   
   
-- Release 1.0 RC 2 with new :class:`lino.utils.dpy.Serializer` 
+- Release 1.0 RC 2 
+  (`c3cd59a976 <http://code.google.com/p/lino/source/detail?r=c3cd59a976917c9f6dcb77ccd5bceb983b07d787>`_) 
+  with new :class:`lino.utils.dpy.Serializer` 
   and no change yet to the db structure.
