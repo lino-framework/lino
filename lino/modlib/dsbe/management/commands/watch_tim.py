@@ -345,20 +345,23 @@ def process_line(i,ln):
     
   
 def watch(data_dir):
+  
     infile = os.path.join(data_dir,'changelog.json')
+    if not os.path.exists(infile):
+        #~ print "Nothing to do."
+        return
+        
     watching = os.path.join(data_dir,'changelog.watching.json')
-    failed = os.path.join(data_dir,'changelog.failed.json')
     if not os.path.exists(watching):
-        if not os.path.exists(infile):
-            #~ print "Nothing to do."
-            return
         try:
             os.rename(infile,watching)
         except Exception,e:
-            #~ logger.debug("Could not rename %s to %s",infile,watching)
+            logger.debug("Could not rename %s to %s",infile,watching)
             return
     dblogger.info("Processing file %s",watching)
     fd_watching = codecs.open(watching,'r',encoding='cp850')
+    
+    failed = os.path.join(data_dir,'changelog.failed.json')
     fd_failed = codecs.open(failed,'a',encoding='cp850')
     #~ log = open(os.path.join(data_dir,'changelog.done.log'),'a')
     i = 0
