@@ -366,7 +366,7 @@ def watch(data_dir):
     fd_failed = codecs.open(failed,'a',encoding='cp850')
     #~ log = open(os.path.join(data_dir,'changelog.done.log'),'a')
     i = 0
-    for ln in fd_watching:
+    for ln in fd_watching.readlines():
         i += 1
         try:
             process_line(i,ln)
