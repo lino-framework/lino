@@ -1,0 +1,58 @@
+20100103
+========
+
+- Man kann jetzt :meth:`lino.dsbe.contacts.models.Person.get_image_url()` aufrufen 
+  und bekommt eine komplette URL zum Passfoto der Person.
+  
+- In MyPersons funktionierte Sortierung und Filter nicht, weil `get_request_queryset` 
+  nicht die Base-Methode aufrief.
+  
+- Umstieg von sqlite nach mysql::  
+  
+    $ sudo aptitude install mysql-server python-mysqldb
+    
+    $ mysql -u root -p 
+    mysql> create database myproject collate latin1_german1_ci;
+    mysql> create user 'django'@'localhost' identified by 'pwd';
+    mysql> grant all on myproject.* to django with grant option;
+    mysql> quit;
+    
+    $ cd /usr/local/django/myproject
+    $ python manage.py dumpdata --format dpy > fixtures/d20110103.dpy
+    
+    $ nano settings.py
+    
+    
+    DATABASES = {
+    #      'default': {
+    #          'ENGINE': 'django.db.backends.sqlite3',
+    #          'NAME': join(DATA_DIR,'myproject.db')
+    #      },
+          'default': {
+              'ENGINE': 'django.db.backends.mysql',
+              'NAME': 'myproject',
+              'USER' : 'django',
+              'HOST' : 'localhost',
+              'PASSWORD' : 'pwd'
+          },
+      }    
+    
+    
+    $ python manage.py  initdb d20110103 
+    
+- Neue Felder in Person:
+  - obstacles : Bemerkung Hindernisse 
+  - job_agents : Interim-Firmen
+  - income_ag 
+  - income_wg    
+  - income_kg  
+  - income_rente
+  - income_misc 
+
+- Neue Felder started, stopped, title und remarks in contacts.ContactType.
+  Dadurch kann man diese Tabelle zum Erfassen von Berufserfahrungen nehmen.
+
+- Neue Tabelle JobWish
+
+- Neue Tabellen SkillType und Skill 
+

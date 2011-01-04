@@ -1,6 +1,14 @@
-:label: Notes
+:label: Profile 1
 :label_align: top
 
+box1 = 
+  unavailable_until:15 unavailable_why:30
+  unemployed_since work_permit_suspended_until
+  
+box2 =
+  residence_type:20 residence_permit_until:20
+  needs_work_permit work_permit_valid_until  
+  
 main = 
-    notes.NotesByPerson:60 links.LinksByPerson:20
-    dsbe.ContractsByPerson:60 uploads.UploadsByPerson:20
+  box1     box2
+  dsbe.ExclusionsByPerson 

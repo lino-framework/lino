@@ -17,6 +17,8 @@ As long as I am the only Lino developer, I'll write it mostly in German.
   :doc:`31 <../2010/1231>`
   :doc:`01 <0101>` 
   |br| 
+  :doc:`03 <0103>` 
+  :doc:`04 <0104>` 
   |br| 
   |br|  	
 

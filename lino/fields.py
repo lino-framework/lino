@@ -22,6 +22,7 @@ from south.modelsinspector import add_introspection_rules
 add_introspection_rules([], ["^lino\.fields\.LanguageField"])
 add_introspection_rules([], ["^lino\.fields\.PriceField"])
 add_introspection_rules([], ["^lino\.fields\.KnowledgeField"])
+add_introspection_rules([], ["^lino\.fields\.StrengthField"])
 add_introspection_rules([], ["^lino\.fields\.PercentageField"])
 add_introspection_rules([], ["^lino\.fields\.MyDateField"])
 add_introspection_rules([], ["^lino\.fields\.MonthField"])
@@ -50,6 +51,14 @@ class LanguageField(models.CharField):
             )
         defaults.update(kw)
         models.CharField.__init__(self,*args, **defaults)
+
+STRENGTH_CHOICES = (
+  ('0' , _("certainly not")),     # bloß nicht
+  ('1' , _("rather not")),        # eher nicht
+  ('2' , _("normally")),          # 
+  ('3' , _("quite much")),        # gerne
+  ('4' , _("very much")),         # sehr gerne
+)
 
 KNOWLEDGE_CHOICES = (
   ('0', _("not at all")), # - gar nicht
@@ -83,6 +92,22 @@ class KnowledgeField(models.CharField):
         defaults.update(kw)
         #~ models.SmallIntegerField.__init__(self,*args, **defaults)
         models.CharField.__init__(self,*args, **defaults)
+    
+#~ class StrengthField(models.SmallIntegerField):
+class StrengthField(models.CharField):
+    def __init__(self, *args, **kw):
+        defaults = dict(
+            choices=STRENGTH_CHOICES,
+            default='2',
+            max_length=1,
+            #~ blank=True,null=True,
+            #~ validators=[validate_knowledge],
+            #~ limit_to_choices=True,
+            )
+        defaults.update(kw)
+        #~ models.SmallIntegerField.__init__(self,*args, **defaults)
+        models.CharField.__init__(self,*args, **defaults)
+        #~ models.IntegerField.__init__(self,*args, **defaults)
     
         
   

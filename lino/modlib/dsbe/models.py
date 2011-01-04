@@ -316,6 +316,12 @@ class Person(Partner,contacts.Person):
     work_permit_suspended_until = models.DateField(blank=True,null=True,verbose_name=_("suspended until"))
     aid_type = models.ForeignKey("dsbe.AidType",blank=True,null=True,
         verbose_name=_("aid type"))
+        
+    income_ag = models.BooleanField(verbose_name=_("Arbeitslosengeld"))
+    income_wg = models.BooleanField(verbose_name=_("Wartegeld"))
+    income_kg = models.BooleanField(verbose_name=_("Krankengeld"))
+    income_rente = models.BooleanField(verbose_name=_("Rente"))
+    income_misc = models.BooleanField(verbose_name=_("Andere"))
     
     
     physical_handicap = models.BooleanField(verbose_name=_("Physical handicap"))
@@ -329,7 +335,8 @@ class Person(Partner,contacts.Person):
     
     #~ unavailable = models.BooleanField(verbose_name=_("Unavailable"))
     unavailable_until = models.DateField(blank=True,null=True,verbose_name=_("Unavailable until"))
-    unavailable_why = models.CharField(max_length=100,blank=True,null=True,verbose_name=_("reason"))
+    unavailable_why = models.CharField(max_length=100,blank=True,null=True,
+        verbose_name=_("reason"))
     
     fulltime_only = models.BooleanField(verbose_name=_("Fulltime only"))
     parttime_only = models.BooleanField(verbose_name=_("Part-time only"))
@@ -339,29 +346,18 @@ class Person(Partner,contacts.Person):
         verbose_name=_("Native language"))
     migration = models.BooleanField(verbose_name=_("Migration"))
     
-        
+    obstacles = models.TextField(_("Obstacles"),blank=True,null=True)
+    skills = models.TextField(_("Skills"),blank=True,null=True)
+    job_agents = models.TextField(max_length=100,
+        blank=True,null=True,
+        verbose_name=_("Job agents"))
     
-    #~ def picture(self):
-        #~ if self.national_id:
-            #~ return "/images/" + self.national_id + ".jpg"
-    #~ picture.return_type = models.ImageField() # fields.DataView('<img src=/>')
-    
-    #~ def get_target_parts(self,pm):
-        #~ if isinstance(pm,mixins.PicturePrintMethod):
-            #~ if self.card_number:
-                #~ return [ "beid", self.card_number+".jpg" ]
-            #~ return [ "pictures", "contacts.Person.jpg" ]
-        #~ return mixins.Printable.get_target_parts(self,pm)
-        
-    def get_image_url(self,action):
+
+    def get_image_url(self):
         if self.card_number:
-            return "beid/"+ self.card_number+".jpg"
-        return "pictures/contacts.Person.jpg"
-        
+            return settings.MEDIA_URL + "beid/"+ self.card_number+".jpg"
+        return settings.MEDIA_URL + "pictures/contacts.Person.jpg"
     
-    #~ def image_url(self):
-        #~ if self.card_number:
-            #~ return "/media/beid/" + self.card_number + ".jpg"
             
     def is_illiterate(self):
         if self.languageknowledge_set.count() == 0:
@@ -433,6 +429,7 @@ class MyPersons(Persons):
     order_by = ['last_name','first_name']
     #~ def get_queryset(self):
     def get_request_queryset(self,rr):
+        qs = super(MyPersons,self).get_request_queryset(rr)
         q1 = models.Q(coach1__exact=rr.user)
         q2 = models.Q(coach2__exact=rr.user)
         #~ q2 = Q(coached__gt=0)
@@ -440,7 +437,7 @@ class MyPersons(Persons):
         #~ q2 = Q(dsbe_coaches__contains=user)
         #~ q2 = Q(coaching_set__user__exact=user)
         #~ return Person.objects.annotate(dsbe_ccoach=Count('coaching_set__user__exact')).filter(q1|q2)
-        return Person.objects.filter(q1|q2)
+        return qs.filter(q1|q2)
     #~ Person.user == user 
     #~ or 
     #~ Person.coachings_set.filter(user__exact=user).count() > 0        
@@ -504,6 +501,22 @@ class StudyTypes(reports.Report):
     order_by = ["name"]
 
 #
+# JOB TYPE
+#
+#~ class JobType(models.Model):
+    #~ name = models.CharField(_("Designation"),max_length=200)
+    text = models.TextField(_("Description"),blank=True,null=True)
+    #~ class Meta:
+        #~ verbose_name = _("job type")
+        #~ verbose_name_plural = _("job types")
+    #~ def __unicode__(self):
+        #~ return self.name
+
+#~ class JobTypes(reports.Report):
+    #~ model = JobType
+    #~ order_by = ["name"]
+
+#
 # STUDY CONTENT
 #
 #~ class StudyContent(models.Model):
@@ -535,8 +548,10 @@ class Study(models.Model):
     content = models.CharField(max_length=200,blank=True,null=True,verbose_name=_("Study content"))
     #~ content = models.ForeignKey(StudyContent,blank=True,null=True,verbose_name=_("Study content"))
   
-    started = fields.MonthField(blank=True,null=True,verbose_name=_("started"))
-    stopped = fields.MonthField(blank=True,null=True,verbose_name=_("stopped"))
+    started = models.DateField(blank=True,null=True,verbose_name=_("started"))
+    stopped = models.DateField(blank=True,null=True,verbose_name=_("stopped"))
+    #~ started = fields.MonthField(blank=True,null=True,verbose_name=_("started"))
+    #~ stopped = fields.MonthField(blank=True,null=True,verbose_name=_("stopped"))
     success = models.BooleanField(verbose_name=_("Success"),default=True)
     country = models.ForeignKey("countries.Country",blank=True,null=True,verbose_name=_("Country"))
     #~ language = models.ForeignKey("countries.Language",blank=True,null=True,verbose_name=_("Language"))
@@ -592,18 +607,85 @@ class LanguageKnowledgesByPerson(reports.Report):
     column_names = "language spoken written"
   
 #
-# DRIVING LICENSE
+# Skills
 #
-#~ class DrivingLicense(models.Model):
-    #~ id = models.CharField(max_length=4,primary_key=True,verbose_name=_("Code"))
-    #~ name = models.CharField(max_length=40)
+
+class SkillType(models.Model):
+    class Meta:
+        verbose_name = _("Skill type")
+        verbose_name_plural = _("Skill types")
+    name = models.CharField(max_length=200,verbose_name=_("Designation"))
+    
+    def __unicode__(self):
+        return babelattr(self,'name')
+
+add_babel_field(SkillType,'name')
+
+class SkillTypes(reports.Report):
+    model = SkillType
+
+
+
+class Skill(models.Model):
+    class Meta:
+        verbose_name = _("Skill")
+        verbose_name_plural = _("Skills")
+        
+    person = models.ForeignKey("contacts.Person")
+    type = models.ForeignKey(SkillType,blank=True,null=True,
+      verbose_name=_("skill type"))
+    #~ type = models.ForeignKey("dsbe.JobType")
+    strength = fields.StrengthField(verbose_name=_("strength"))
+    
+class SkillsByPerson(reports.Report):
+    model = Skill
+    fk_name = 'person'
+    column_names = "type strength"
+    
+#
+# JOB WISHES 
+#
+
+class JobWish(models.Model):
+    class Meta:
+        verbose_name = _("job wish")
+        verbose_name_plural = _("job wishes")
+        
+    person = models.ForeignKey("contacts.Person")
+    type = models.ForeignKey('contacts.ContactType',blank=True,null=True,
+      verbose_name=_("contact type"))
+    #~ type = models.ForeignKey("dsbe.JobType")
+    strength = fields.StrengthField(verbose_name=_("strength"))
+    
+class JobWishesByPerson(reports.Report):
+    model = JobWish
+    fk_name = 'person'
+    column_names = "type strength"
+    
+    
+#~ class JobExperience(models.Model):
+    #~ class Meta:
+        #~ verbose_name = _("job experience")
+        #~ verbose_name_plural = _("job experiences")
+    #~ person = models.ForeignKey("contacts.Person",verbose_name=_("Person"))
+    #~ company = models.ForeignKey("contacts.Company",verbose_name=_("Company"))
+    #~ type = models.ForeignKey(JobType,verbose_name=_("job type"))
+    #~ title = models.CharField(max_length=200,blank=True,null=True,verbose_name=_("job title"))
+  
+    #~ started = models.DateField(blank=True,null=True,verbose_name=_("started"))
+    #~ stopped = models.DateField(blank=True,null=True,verbose_name=_("stopped"))
+    
+    #~ remarks = models.TextField(blank=True,null=True,verbose_name=_("Remarks"))
     
     #~ def __unicode__(self):
-        #~ return u'%s (%s)' % (self.id,self.name)
-
-#~ class DrivingLicenses(reports.Report):
-    #~ model = DrivingLicense
-    #~ label = _('Driving licenses')
+        #~ return unicode(self.type)
+  
+#~ class JobExperiencesByPerson(reports.Report):
+    #~ model = JobExperience
+    #~ fk_name = 'person'
+    #~ order_by = ["started"]
+    
+  
 
 #
 # ACTIVITIY (Berufscode)
@@ -1014,9 +1096,16 @@ class LinksByCompany(links.LinksByOwnerBase):
     fk_name = 'company'
     column_names = "name url user date person *"
     order_by = ["date"]
+    
+    
+class PersonSearch(mixins.Printable):
+    pass
+    
   
 
 """
+Here we add a new field `contract_type` to the 
+standard model CompanyType.
 http://osdir.com/ml/django-users/2009-11/msg00696.html
 """
 from lino.modlib.contacts.models import CompanyType
@@ -1027,18 +1116,22 @@ CompanyType.add_to_class('contract_type',
         verbose_name=_("contract type")))
 
 """
-here's how to override the default verbose_name of a field
+Here's how to override the default verbose_name of a field
 """
 from lino.tools import resolve_field
 resolve_field('dsbe.Contract.user').verbose_name=_("responsible (DSBE)")
 
+"""
+...
+"""
 from lino.tools import resolve_model
 User = resolve_model('auth.User')
 User.grid_search_field = 'username'
 
 
 """
-Here is how to install case-insensitive sorting in sqlite.
+Here is how we install case-insensitive sorting in sqlite3.
+Note that this caused noticeable performance degradation...
 
 Thanks to 
 - http://efreedom.com/Question/1-3763838/Sort-Order-SQLite3-Umlauts
@@ -1048,7 +1141,7 @@ Thanks to
 from django.db.backends.sqlite3.base import DatabaseWrapper
 from django.db.backends.signals import connection_created
 
-def german(s):
+def belgian(s):
   
     s = s.decode('utf-8').lower()
     
@@ -1076,7 +1169,7 @@ def german(s):
     return s
     
 def stricmp(str1, str2):
-    return cmp(german(str1),german(str2))
+    return cmp(belgian(str1),belgian(str2))
     
 def my_callback(sender,**kw):
     if sender is DatabaseWrapper:

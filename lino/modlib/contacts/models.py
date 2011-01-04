@@ -168,6 +168,13 @@ class Contact(models.Model):
       verbose_name=_("company"))
     type = models.ForeignKey('contacts.ContactType',blank=True,null=True,
       verbose_name=_("contact type"))
+      
+    title = models.CharField(max_length=200,blank=True,null=True,verbose_name=_("job title"))
+  
+    started = models.DateField(blank=True,null=True,verbose_name=_("started"))
+    stopped = models.DateField(blank=True,null=True,verbose_name=_("stopped"))
+    
+    remarks = models.TextField(blank=True,null=True,verbose_name=_("Remarks"))
 
     def __unicode__(self):
         if self.person_id is None:

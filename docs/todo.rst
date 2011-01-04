@@ -9,6 +9,14 @@ for which I hope for help from other people.
 Version 1.0
 -----------
 
+#.  In MyPersons funktioniert qucksearch nicht. Wird vom Server ignoriert.
+
+#.  Bei Doppelklick auf dem phantom-Record einer Slavegrid zum 
+    Erstellen eines Records werden master_params scheinbar 
+    nicht übergeben.
+
+#.  Person.image sollte eine URL um Passbild zurückgeben.
+
 #.  Formatierte Texte. Zumindest Aufzählungen und mehrere Absätze 
     sollten möglich sein.
 
@@ -18,6 +26,10 @@ Version 1.0
     lokale Datei abspeichern (Format z.B. json oder xml), und mit "Import" 
     überschreibt man den aktuellen Record durch die Daten aus einer 
     hochzuladenden Datei.
+    
+#.  Modell "PersonSearch" (sex, language, age_range,...) 
+    und Report PersonsBySearch.
+
 
 Version 1.1
 -----------
@@ -56,6 +68,14 @@ Version 1.1
 
 After version 1.1
 -----------------
+
+#.  Idee: Module umstrukturieren:
+
+    | lino.dsbe.models : Contract usw.
+    | lino.dsbe.contacts.models : Person, Company,...
+    
+    also nicht mehr mit einem manuellen `app_label` arbeiten. 
+    Kann sein, dass South dann funktioniert.
 
 #.  Auswahlliste `Contract.exam_policy` (Auswertungsstrategie) 
     wird auch in französischen Verträgen deutsch angezeigt.

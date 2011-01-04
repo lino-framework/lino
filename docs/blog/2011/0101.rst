@@ -12,6 +12,9 @@
   A better solution seems to be possible:
   http://efreedom.com/Question/1-3763838/Sort-Order-SQLite3-Umlauts
   
+  And this is now done by connecting to the connection_created 
+  signal in :mod:`lino.modlib.dsbe.models`.
+  
 - Release 1.0 RC 2 with new :class:`lino.utils.dpy.Serializer` 
   and no change yet to the db structure.
   
@@ -47,4 +50,12 @@
   Nur leider scheint es zumindest für die db-Datei nichts zu nützen.
   Kann es sein, dass Django selber das `writeable by group` abschaltet?
   
-    
+- Eine zweite Datenmigration am gleichen Tag: 
+  Felder Contract.aid_rate und Contract.aid_nature ersetzt durch 
+  Person.aid_type (und neue Tabelle AidTypes).
+  Diesmal musste ich die tmp.dpy leicht anpassen:
+  die beiden Argumente aid_rate und aid_nature müssen von 
+  create_contacts_person() 
+  zwar empfangen werden dann aber ignoriert (nicht weitergeleitet) werden.
+  
+- Übersetzungen aktualisiert.  

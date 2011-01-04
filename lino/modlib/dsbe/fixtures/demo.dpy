@@ -175,8 +175,8 @@ def objects():
     yield note(user=user,date=i2d(20100518),subject="Testen",company=cpas)
     
         
-    yield study(person=luc,type=schule,content=abi,started='197409',stopped='198606')
-    yield study(person=gerd,type=schule,content=abi,started='197409',stopped='198606')
+    yield study(person=luc,type=schule,content=abi,started='19740901',stopped='19860630')
+    yield study(person=gerd,type=schule,content=abi,started='19740901',stopped='19860630')
 
     yield langk(person=luc,language='de',written='4',spoken='4')
     yield langk(person=gerd,language='de',written='4',spoken='4')

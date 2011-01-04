@@ -1,14 +1,28 @@
-:label: Profile 1
+:label: Person 2
 :label_align: top
 
-box1 = 
-  unavailable_until:15 unavailable_why:30
-  unemployed_since work_permit_suspended_until
-  
-box2 =
-  residence_type:20 residence_permit_until:20
-  needs_work_permit work_permit_valid_until  
-  
 main = 
-  box1     box2
-  dsbe.ExclusionsByPerson
+  box5 flags:20 image:12
+  remarks:30 coaching:30 
+
+
+box5 =
+  url:30
+  bank_account1
+  bank_account2
+  activity 
+
+coaching =
+  coach1
+  coach2
+
+## coaching =
+##  user
+##  dsbe.CoachingsByPerson
+
+flags =
+  is_active 
+  is_cpas 
+  is_senior 
+  is_dsbe 
+  #is_minor
