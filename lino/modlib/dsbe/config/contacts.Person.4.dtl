@@ -1,0 +1,12 @@
+:label: Skills
+:label_align: top
+
+box5 = 
+  driving_license 
+  has_own_car
+  can_clark
+  it_knowledge    
+
+main = 
+  box5 skills
+  dsbe.JobWishesByPerson dsbe.SkillsByPerson
