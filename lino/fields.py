@@ -119,13 +119,15 @@ class PercentageField(models.SmallIntegerField):
         defaults.update(kw)
         models.SmallIntegerField.__init__(self,*args, **defaults)
   
-class MonthField(models.CharField):
+#~ class MonthField(models.CharField):
+class MonthField(models.DateField):
     def __init__(self, *args, **kw):
-        defaults = dict(
-            max_length=10,
-            )
-        defaults.update(kw)
-        models.CharField.__init__(self,*args, **defaults)
+        #~ defaults = dict(
+            #~ max_length=10,
+            #~ )
+        #~ defaults.update(kw)
+        #~ models.CharField.__init__(self,*args, **defaults)
+        models.DateField.__init__(self,*args, **kw)
   
 class PriceField(models.DecimalField):
     def __init__(self, *args, **kwargs):

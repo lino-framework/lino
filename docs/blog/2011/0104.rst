@@ -9,3 +9,9 @@
    do text
    from
    document(at=self.person.get_image_path(),anchor="as-char")
+   
+   
+- Es gibt noch einige Bugs in `watch_tim`.
+
+- In contacts.Contact sind title, started, stopped und remarks wieder raus. 
+  Neue eigene Tabelle JobExperiences für Berufserfahrungen.

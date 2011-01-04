@@ -582,6 +582,14 @@ class DateFieldElement(FieldElement):
         kw.update(format=self.lh.rh.report.date_format)
         return kw
     
+class MonthFieldElement(DateFieldElement):
+    def get_field_options(self,**kw):
+        kw = DateFieldElement.get_field_options(self,**kw)
+        kw.update(format='m/Y')
+        kw.update(plugins='monthPickerPlugin')
+        return kw
+        
+    
 class URLFieldElement(CharFieldElement):
     sortable = True
     preferred_width = 40
@@ -1283,6 +1291,7 @@ _field2elem = (
     (fields.HtmlTextField, HtmlTextFieldElement),
     (models.TextField, TextFieldElement),
     (models.CharField, CharFieldElement),
+    (fields.MonthField, MonthFieldElement),
     (models.DateField, DateFieldElement),
     #~ (models.TimeField, TimeFieldElement),
     (models.IntegerField, IntegerFieldElement),

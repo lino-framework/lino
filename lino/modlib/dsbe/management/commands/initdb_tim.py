@@ -105,6 +105,15 @@ def ADR_id(cIdAdr):
 def country2kw(row,kw):
     # for both PAR and ADR
     
+    if row.has_key('PROF'):
+        activity = row['PROF']
+        if activity:
+            try:
+                activity = Activity.objects.get(pk=activity)
+            except Activity.DoesNotExist:
+                activity = Activity(id=activity,name=activity)
+        kw.update(activity=activity)
+        
     country = row['PAYS']
     if country:
         try:
@@ -300,11 +309,8 @@ def load_tim_data(dbpath):
     
     
     def load(row):
-        #~ if row['IDPRT'] != 'S':
-            #~ return
         kw = {}
         kw.update(street2kw(join_words(row['RUE'],row['RUENUM'],row['RUEBTE'])))
-        #~ store(kw,tim_nr=row['IDPAR'])
         store(kw,id=int(row['IDPAR']))
         
         if is_company(row):
@@ -338,18 +344,11 @@ def load_tim_data(dbpath):
                         #~ kw.update(user=auth.User.objects.get(username=username))
                     except auth.User.DoesNotExist,e:
                         dblogger.warning("PAR:%s PAR->IdUsr %r (converted to %r) doesn't exist!",row['IDPAR'],row['IDUSR'],username)
-        activity = row['PROF']
-        if activity:
-            try:
-                activity = Activity.objects.get(pk=activity)
-            except Activity.DoesNotExist:
-                activity = Activity(id=activity,name=activity)
         language = isolang(row['LANGUE'])
         #~ if language:
             #~ language = Language.objects.get(pk=language)
         store(kw,
             language=language,
-            activity=activity,
             remarks=row['MEMO'],
         )
         

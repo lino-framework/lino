@@ -9,4 +9,4 @@ box5 =
 
 main = 
   box5 skills
-  dsbe.JobWishesByPerson dsbe.SkillsByPerson
+  dsbe.JobExperiencesByPerson dsbe.SkillsByPerson

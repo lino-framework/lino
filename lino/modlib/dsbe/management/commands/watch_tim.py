@@ -123,7 +123,7 @@ class Controller:
     def PUT_special(self,obj,**kw):
         pass
         
-def ADR_applydata(obj,data,**d):        
+def ADR_applydata(obj,data,**d):
     d.update(
         street='RUE',
         street_box='RUEBTE',
@@ -135,17 +135,6 @@ def ADR_applydata(obj,data,**d):
     country2kw(data,kw)
     for k,v in kw.items():
         setattr(obj,k,v)
-        
-    #~ if d.has_key('PAYS'):
-        #~ try:
-            #~ obj.country = Country.objects.get(short_code__exact=data['PAYS'])
-        #~ except Country.DoesNotExist,e:
-            #~ pass
-    #~ if d.has_key('CP'):
-        #~ try:
-            #~ obj.city = City.objects.get(short_code__exact=data['PAYS'])
-        #~ except Country.DoesNotExist,e:
-            #~ pass
                 
 class PAR(Controller):
   

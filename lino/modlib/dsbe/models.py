@@ -511,22 +511,6 @@ class StudyTypes(reports.Report):
     order_by = ["name"]
 
 #
-# JOB TYPE
-#
-#~ class JobType(models.Model):
-    #~ name = models.CharField(_("Designation"),max_length=200)
-    text = models.TextField(_("Description"),blank=True,null=True)
-    #~ class Meta:
-        #~ verbose_name = _("job type")
-        #~ verbose_name_plural = _("job types")
-    #~ def __unicode__(self):
-        #~ return self.name
-
-#~ class JobTypes(reports.Report):
-    #~ model = JobType
-    #~ order_by = ["name"]
-
-#
 # STUDY CONTENT
 #
 #~ class StudyContent(models.Model):
@@ -558,12 +542,16 @@ class Study(models.Model):
     content = models.CharField(max_length=200,blank=True,null=True,verbose_name=_("Study content"))
     #~ content = models.ForeignKey(StudyContent,blank=True,null=True,verbose_name=_("Study content"))
   
-    started = models.DateField(blank=True,null=True,verbose_name=_("started"))
-    stopped = models.DateField(blank=True,null=True,verbose_name=_("stopped"))
+    started = fields.MonthField(_("started"),blank=True,null=True)
+    stopped = fields.MonthField(_("stopped"),blank=True,null=True)
+    #~ started = models.DateField(blank=True,null=True,verbose_name=_("started"))
+    #~ stopped = models.DateField(blank=True,null=True,verbose_name=_("stopped"))
     #~ started = fields.MonthField(blank=True,null=True,verbose_name=_("started"))
     #~ stopped = fields.MonthField(blank=True,null=True,verbose_name=_("stopped"))
-    success = models.BooleanField(verbose_name=_("Success"),default=True)
+    success = models.BooleanField(verbose_name=_("Success"),default=False)
     country = models.ForeignKey("countries.Country",blank=True,null=True,verbose_name=_("Country"))
+    city = models.ForeignKey('countries.City',blank=True,null=True,
+        verbose_name=_('City'))
     #~ language = models.ForeignKey("countries.Language",blank=True,null=True,verbose_name=_("Language"))
     language = fields.LanguageField(blank=True,null=True,verbose_name=_("Language"))
     
@@ -575,6 +563,12 @@ class Study(models.Model):
     def __unicode__(self):
         return unicode(self.type)
   
+    @chooser()
+    def city_choices(cls,country):
+        if country is not None:
+            return country.city_set.order_by('name')
+        return cls.city.field.rel.to.objects.order_by('name')
+        
 class StudiesByPerson(reports.Report):
     model = Study
     fk_name = 'person'
@@ -653,47 +647,58 @@ class SkillsByPerson(reports.Report):
     column_names = "type strength"
     
 #
-# JOB WISHES 
+# JOBS
 #
 
-class JobWish(models.Model):
-    class Meta:
-        verbose_name = _("job wish")
-        verbose_name_plural = _("job wishes")
-        
-    person = models.ForeignKey("contacts.Person")
-    type = models.ForeignKey('contacts.ContactType',blank=True,null=True,
-      verbose_name=_("contact type"))
-    #~ type = models.ForeignKey("dsbe.JobType")
-    strength = fields.StrengthField(verbose_name=_("strength"))
-    
-class JobWishesByPerson(reports.Report):
-    model = JobWish
-    fk_name = 'person'
-    column_names = "type strength"
-    
-    
-#~ class JobExperience(models.Model):
+#~ class JobType(models.Model):
+    #~ name = models.CharField(_("Designation"),max_length=200)
     #~ class Meta:
-        #~ verbose_name = _("job experience")
-        #~ verbose_name_plural = _("job experiences")
-    #~ person = models.ForeignKey("contacts.Person",verbose_name=_("Person"))
-    #~ company = models.ForeignKey("contacts.Company",verbose_name=_("Company"))
-    #~ type = models.ForeignKey(JobType,verbose_name=_("job type"))
-    #~ title = models.CharField(max_length=200,blank=True,null=True,verbose_name=_("job title"))
-  
-    #~ started = models.DateField(blank=True,null=True,verbose_name=_("started"))
-    #~ stopped = models.DateField(blank=True,null=True,verbose_name=_("stopped"))
-    
-    #~ remarks = models.TextField(blank=True,null=True,verbose_name=_("Remarks"))
-    
+        #~ verbose_name = _("job type")
+        #~ verbose_name_plural = _("job types")
     #~ def __unicode__(self):
-        #~ return unicode(self.type)
-  
-#~ class JobExperiencesByPerson(reports.Report):
-    #~ model = JobExperience
+        #~ return self.name
+
+#~ class JobTypes(reports.Report):
+    #~ model = JobType
+    #~ order_by = ["name"]
+
+#~ class JobWish(models.Model):
+    #~ class Meta:
+        #~ verbose_name = _("job wish")
+        #~ verbose_name_plural = _("job wishes")
+        
+    #~ person = models.ForeignKey("contacts.Person")
+    #~ type = models.ForeignKey('contacts.ContactType',blank=True,null=True,
+      #~ verbose_name=_("contact type"))
+    #~ strength = fields.StrengthField(verbose_name=_("strength"))
+    
+#~ class JobWishesByPerson(reports.Report):
+    #~ model = JobWish
     #~ fk_name = 'person'
-    #~ order_by = ["started"]
+    #~ column_names = "type strength"
+    
+    
+class JobExperience(models.Model):
+    class Meta:
+        verbose_name = _("job experience")
+        verbose_name_plural = _("job experiences")
+    person = models.ForeignKey("contacts.Person",verbose_name=_("Person"))
+    company = models.ForeignKey("contacts.Company",verbose_name=_("Company"))
+    #~ type = models.ForeignKey(JobType,verbose_name=_("job type"))
+    title = models.CharField(max_length=200,verbose_name=_("job title"))
+  
+    started = fields.MonthField(_("started"),blank=True,null=True)
+    stopped = fields.MonthField(_("stopped"),blank=True,null=True)
+    
+    remarks = models.TextField(blank=True,null=True,verbose_name=_("Remarks"))
+    
+    def __unicode__(self):
+        return unicode(self.title)
+  
+class JobExperiencesByPerson(reports.Report):
+    model = JobExperience
+    fk_name = 'person'
+    order_by = ["started"]
     
   
 
