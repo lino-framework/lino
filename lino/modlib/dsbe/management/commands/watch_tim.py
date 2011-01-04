@@ -34,6 +34,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 from django.core.management.base import BaseCommand, CommandError
+from django.core.exceptions import ValidationError
+
 
 from lino.utils.daemoncommand import DaemonCommand
 
