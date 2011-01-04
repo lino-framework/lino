@@ -318,6 +318,7 @@ controllers = dict(
   )
 
 def process_line(i,ln):
+    dblogger.info("process_line(%r,%r)",i,ln)
     d = simplejson.loads(ln,object_hook=json2py)
     kw = {}
     for k,v in d.items():
@@ -392,9 +393,9 @@ def main(*args,**options):
     while True:
         try:
             watch(data_dir)
-            time.sleep(1)
         except Exception,e:
             dblogger.exception(e)
+        time.sleep(1)
 
 class Command(DaemonCommand):
   
