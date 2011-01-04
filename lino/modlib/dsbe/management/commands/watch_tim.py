@@ -385,8 +385,11 @@ def main(*args,**options):
     dblogger.info("Watching %s ...",data_dir)
     #~ last_warning = None
     while True:
-        watch(data_dir)
-        time.sleep(1)
+        try:
+            watch(data_dir)
+            time.sleep(1)
+        except Exception,e:
+            dblogger.exception(e)
 
 class Command(DaemonCommand):
   

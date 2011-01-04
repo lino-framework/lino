@@ -212,5 +212,6 @@ class ImageAction(RedirectAction):
     callable_from = tuple()
     
     def get_target_url(self,elem):
+        #~ return settings.MEDIA_URL + "/".join(elem.get_image_parts())
         return elem.get_image_url()
       

@@ -1,0 +1,11 @@
+20110104
+========
+
+- Erfreulich: die Performance nach Umstieg auf MySQL ist deutlich besser.
+
+- Neue :meth:`lino.dsbe.contacts.models.Person.get_image_path`.
+  Also laut http://appyframework.org/podWritingAdvancedTemplates.html müsste das Folgende nun klappen::
+
+   do text
+   from
+   document(at=self.person.get_image_path(),anchor="as-char")

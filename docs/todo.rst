@@ -9,13 +9,16 @@ for which I hope for help from other people.
 Version 1.0
 -----------
 
-#.  In MyPersons funktioniert qucksearch nicht. Wird vom Server ignoriert.
+#.  Auf einer gefilterten Liste von Personen sind die SlaveQueries vfälschlicherweise ebenfalls gefiltert. 
+    Weil er den Master param "query" mit übergibt.
+    "http://lino/api/contacts/ContactsByCompany?_dc=1294125630839&fmt=json&query=Besch&mt=15&mk=84282".
+
+
+#.  Seit Umstieg auf MySQL ist die Schnellsuche case-sensitive.
 
 #.  Bei Doppelklick auf dem phantom-Record einer Slavegrid zum 
     Erstellen eines Records werden master_params scheinbar 
     nicht übergeben.
-
-#.  Person.image sollte eine URL um Passbild zurückgeben.
 
 #.  Formatierte Texte. Zumindest Aufzählungen und mehrere Absätze 
     sollten möglich sein.

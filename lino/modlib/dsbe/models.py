@@ -354,9 +354,19 @@ class Person(Partner,contacts.Person):
     
 
     def get_image_url(self):
+        return settings.MEDIA_URL + "/".join(self.get_image_parts())
+    def get_image_path(self):
+        return os.path.join(settings.MEDIA_ROOT,*self.get_image_parts())
+        
+    #~ def get_image_url(self):
+        #~ if self.card_number:
+            #~ return settings.MEDIA_URL + "beid/"+ self.card_number+".jpg"
+        #~ return settings.MEDIA_URL + "pictures/contacts.Person.jpg"
+    
+    def get_image_parts(self):
         if self.card_number:
-            return settings.MEDIA_URL + "beid/"+ self.card_number+".jpg"
-        return settings.MEDIA_URL + "pictures/contacts.Person.jpg"
+            return ("beid",self.card_number+".jpg")
+        return ("pictures","contacts.Person.jpg")
     
             
     def is_illiterate(self):
