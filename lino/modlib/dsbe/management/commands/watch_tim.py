@@ -79,7 +79,7 @@ def json2py(dct):
             #~ kw[k] = data[n]
 
 
-CONTACT_FIELDS = '''id name street street_no street_box addr1 
+CONTACT_FIELDS = '''id name street street_no street_box addr2 
 country city zip_code region language email url phone gsm remarks'''.split()
 
 
