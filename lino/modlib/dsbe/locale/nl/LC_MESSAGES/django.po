@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-01 23:45+0000\n"
+"POT-Creation-Date: 2011-01-05 01:54+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -177,7 +177,7 @@ msgstr ""
 msgid "ID card valid from"
 msgstr ""
 
-#: .\models.py:288 .\models.py:659
+#: .\models.py:288 .\models.py:750
 msgid "until"
 msgstr ""
 
@@ -233,83 +233,115 @@ msgstr ""
 msgid "suspended until"
 msgstr ""
 
-#: .\models.py:318 .\models.py:761
+#: .\models.py:318 .\models.py:852
 msgid "aid type"
 msgstr ""
 
+#: .\models.py:320
+msgid "Arbeitslosengeld"
+msgstr ""
+
 #: .\models.py:321
-msgid "Physical handicap"
+msgid "Wartegeld"
 msgstr ""
 
 #: .\models.py:322
-msgid "Mental handicap"
+msgid "Krankengeld"
 msgstr ""
 
 #: .\models.py:323
-msgid "Psychological handicap"
+msgid "Rente"
 msgstr ""
 
 #: .\models.py:324
-msgid "Health problems"
-msgstr ""
-
-#: .\models.py:325
-msgid "Juristic problems"
-msgstr ""
-
-#: .\models.py:326
-msgid "Dependency problems"
+msgid "Andere"
 msgstr ""
 
 #: .\models.py:327
-msgid "Lack of social competence"
+msgid "Physical handicap"
 msgstr ""
 
 #: .\models.py:328
-msgid "Lack of motivation"
+msgid "Mental handicap"
+msgstr ""
+
+#: .\models.py:329
+msgid "Psychological handicap"
+msgstr ""
+
+#: .\models.py:330
+msgid "Health problems"
 msgstr ""
 
 #: .\models.py:331
-msgid "Unavailable until"
+msgid "Juristic problems"
 msgstr ""
 
 #: .\models.py:332
-msgid "reason"
+msgid "Dependency problems"
+msgstr ""
+
+#: .\models.py:333
+msgid "Lack of social competence"
 msgstr ""
 
 #: .\models.py:334
-msgid "Fulltime only"
+msgid "Lack of motivation"
 msgstr ""
 
-#: .\models.py:335
-msgid "Part-time only"
-msgstr ""
-
-#: .\models.py:336
-msgid "Young children"
+#: .\models.py:337
+msgid "Unavailable until"
 msgstr ""
 
 #: .\models.py:339
+msgid "reason"
+msgstr ""
+
+#: .\models.py:341
+msgid "Fulltime only"
+msgstr ""
+
+#: .\models.py:342
+msgid "Part-time only"
+msgstr ""
+
+#: .\models.py:343
+msgid "Young children"
+msgstr ""
+
+#: .\models.py:346
 msgid "Native language"
 msgstr ""
 
-#: .\models.py:340
+#: .\models.py:347
 msgid "Migration"
+msgstr ""
+
+#: .\models.py:349
+msgid "Obstacles"
+msgstr ""
+
+#: .\models.py:350 .\models.py:630
+msgid "Skills"
+msgstr ""
+
+#: .\models.py:353
+msgid "Job agents"
 msgstr ""
 
 #: .\models.py:373
 msgid "Illiterate"
 msgstr ""
 
-#: .\models.py:382
+#: .\models.py:381
 msgid "not filled in"
 msgstr ""
 
-#: .\models.py:393
+#: .\models.py:392
 msgid "Overview"
 msgstr ""
 
-#: .\models.py:432
+#: .\models.py:431
 msgid "My coached Persons"
 msgstr ""
 
@@ -321,11 +353,11 @@ msgstr ""
 msgid "companies"
 msgstr ""
 
-#: .\models.py:466 .\models.py:799
+#: .\models.py:466 .\models.py:890
 msgid "hourly rate"
 msgstr ""
 
-#: .\models.py:493
+#: .\models.py:493 .\models.py:614
 msgid "Designation"
 msgstr ""
 
@@ -345,7 +377,7 @@ msgstr ""
 msgid "Studies & experiences"
 msgstr ""
 
-#: .\models.py:533
+#: .\models.py:533 .\models.py:679
 msgid "Person"
 msgstr ""
 
@@ -357,227 +389,267 @@ msgstr ""
 msgid "Study content"
 msgstr ""
 
-#: .\models.py:538
+#: .\models.py:538 .\models.py:684
 msgid "started"
 msgstr ""
 
-#: .\models.py:539
+#: .\models.py:539 .\models.py:685
 msgid "stopped"
 msgstr ""
 
-#: .\models.py:540
+#: .\models.py:544
 msgid "Success"
 msgstr ""
 
-#: .\models.py:541
+#: .\models.py:545
 msgid "Country"
 msgstr ""
 
-#: .\models.py:543
+#: .\models.py:547
+msgid "City"
+msgstr ""
+
+#: .\models.py:549
 msgid "Language"
 msgstr ""
 
-#: .\models.py:545
+#: .\models.py:551
 msgid "School"
 msgstr ""
 
-#: .\models.py:548
+#: .\models.py:554 .\models.py:687
 msgid "Remarks"
 msgstr ""
 
-#: .\models.py:557
+#: .\models.py:569
 msgid "Studies"
 msgstr ""
 
-#: .\models.py:567
+#: .\models.py:579
 msgid "language knowledge"
 msgstr ""
 
-#: .\models.py:568
+#: .\models.py:580
 msgid "language knowledges"
 msgstr ""
 
-#: .\models.py:573
+#: .\models.py:585
 msgid "spoken"
 msgstr ""
 
-#: .\models.py:574
+#: .\models.py:586
 msgid "written"
 msgstr ""
 
-#: .\models.py:578
+#: .\models.py:590
 #, python-format
 msgid "%s (s/w)"
 msgstr ""
 
-#: .\models.py:580
+#: .\models.py:592
 #, python-format
 msgid "%s (s)"
 msgstr ""
 
-#: .\models.py:582
+#: .\models.py:594
 #, python-format
 msgid "%s (w)"
 msgstr ""
 
+#: .\models.py:612
+msgid "Skill type"
+msgstr ""
+
 #: .\models.py:613
-msgid "activity"
+msgid "Skill types"
 msgstr ""
 
-#: .\models.py:614
-msgid "activities"
+#: .\models.py:629
+msgid "Skill"
 msgstr ""
 
-#: .\models.py:616
-msgid "Appears in Listing 104"
+#: .\models.py:634
+msgid "skill type"
 msgstr ""
 
 #: .\models.py:636
+msgid "strength"
+msgstr ""
+
+#: .\models.py:677
+msgid "job experience"
+msgstr ""
+
+#: .\models.py:678
+msgid "job experiences"
+msgstr ""
+
+#: .\models.py:680
+msgid "Company"
+msgstr ""
+
+#: .\models.py:682
+msgid "job title"
+msgstr ""
+
+#: .\models.py:704
+msgid "activity"
+msgstr ""
+
+#: .\models.py:705
+msgid "activities"
+msgstr ""
+
+#: .\models.py:707
+msgid "Appears in Listing 104"
+msgstr ""
+
+#: .\models.py:727
 msgid "exclusion type"
 msgstr ""
 
-#: .\models.py:637
+#: .\models.py:728
 msgid "exclusion types"
 msgstr ""
 
-#: .\models.py:653
+#: .\models.py:744
 msgid "exclusion"
 msgstr ""
 
-#: .\models.py:654
+#: .\models.py:745
 msgid "exclusions"
 msgstr ""
 
-#: .\models.py:657
+#: .\models.py:748
 msgid "Reason"
 msgstr ""
 
-#: .\models.py:658
+#: .\models.py:749
 msgid "from"
 msgstr ""
 
-#: .\models.py:660
+#: .\models.py:751
 msgid "Remark"
 msgstr ""
 
-#: .\models.py:720 .\models.py:787 .\models.py:1027
+#: .\models.py:811 .\models.py:878 .\models.py:1125
 msgid "contract type"
 msgstr ""
 
-#: .\models.py:721
+#: .\models.py:812
 msgid "contract types"
 msgstr ""
 
-#: .\models.py:723
+#: .\models.py:814
 msgid "reference"
 msgstr ""
 
-#: .\models.py:724
+#: .\models.py:815
 msgid "contract title"
 msgstr ""
 
-#: .\models.py:740 .\models.py:818
+#: .\models.py:831 .\models.py:909
 msgid "examination policy"
 msgstr ""
 
-#: .\models.py:741
+#: .\models.py:832
 msgid "examination policies"
 msgstr ""
 
-#: .\models.py:743 .\models.py:764
+#: .\models.py:834 .\models.py:855
 msgid "designation"
 msgstr ""
 
-#: .\models.py:762
+#: .\models.py:853
 msgid "aid types"
 msgstr ""
 
-#: .\models.py:781
+#: .\models.py:872
 msgid "contract"
 msgstr ""
 
-#: .\models.py:782
+#: .\models.py:873
 msgid "contracts"
 msgstr ""
 
-#: .\models.py:785
+#: .\models.py:876
 msgid "represented by"
 msgstr ""
 
-#: .\models.py:790
+#: .\models.py:881
 msgid "applies from"
 msgstr ""
 
-#: .\models.py:791
+#: .\models.py:882
 msgid "applies until"
 msgstr ""
 
-#: .\models.py:792
+#: .\models.py:883
 msgid "date decided"
 msgstr ""
 
-#: .\models.py:793
+#: .\models.py:884
 msgid "date issued"
 msgstr ""
 
-#: .\models.py:794
+#: .\models.py:885
 msgid "duration (days)"
 msgstr ""
 
-#: .\models.py:797
+#: .\models.py:888
 msgid "regime"
 msgstr ""
 
-#: .\models.py:798
+#: .\models.py:889
 msgid "schedule"
 msgstr ""
 
-#: .\models.py:800
+#: .\models.py:891
 msgid "refund rate"
 msgstr ""
 
-#: .\models.py:803
+#: .\models.py:894
 msgid "reference person"
 msgstr ""
 
-#: .\models.py:806
+#: .\models.py:897
 msgid "responsibilities"
 msgstr ""
 
-#: .\models.py:808
+#: .\models.py:899
 msgid "stages"
 msgstr ""
 
-#: .\models.py:809
+#: .\models.py:900
 msgid "goals"
 msgstr ""
 
-#: .\models.py:810
+#: .\models.py:901
 msgid "duties ASD"
 msgstr ""
 
-#: .\models.py:811
+#: .\models.py:902
 msgid "duties DSBE"
 msgstr ""
 
-#: .\models.py:812
+#: .\models.py:903
 msgid "duties company"
 msgstr ""
 
-#: .\models.py:814
+#: .\models.py:905
 msgid "responsible (ASD)"
 msgstr ""
 
-#: .\models.py:874
+#: .\models.py:965
 #, python-format
 msgid "Contract # %s"
 msgstr ""
 
-#: .\models.py:977
+#: .\models.py:1068
 msgid "My contracts"
 msgstr ""
 
-#: .\models.py:1033
+#: .\models.py:1131
 msgid "responsible (DSBE)"
 msgstr ""
 

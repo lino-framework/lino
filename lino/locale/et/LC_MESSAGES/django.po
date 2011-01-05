@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-01 23:44+0000\n"
+"POT-Creation-Date: 2011-01-05 01:53+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -46,31 +46,51 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
-#: .\fields.py:46
+#: .\fields.py:47
 msgid "Language"
 msgstr ""
 
-#: .\fields.py:55
-msgid "not at all"
-msgstr ""
-
 #: .\fields.py:56
-msgid "a bit"
+msgid "certainly not"
 msgstr ""
 
 #: .\fields.py:57
-msgid "moderate"
+msgid "rather not"
 msgstr ""
 
 #: .\fields.py:58
-msgid "quite well"
+msgid "normally"
 msgstr ""
 
 #: .\fields.py:59
-msgid "very well"
+msgid "quite much"
+msgstr ""
+
+#: .\fields.py:60
+msgid "very much"
+msgstr ""
+
+#: .\fields.py:64
+msgid "not at all"
+msgstr ""
+
+#: .\fields.py:65
+msgid "a bit"
 msgstr ""
 
 #: .\fields.py:66
+msgid "moderate"
+msgstr ""
+
+#: .\fields.py:67
+msgid "quite well"
+msgstr ""
+
+#: .\fields.py:68
+msgid "very well"
+msgstr ""
+
+#: .\fields.py:75
 msgid "Invalid value %(value). Must be one of (%(values)s)"
 msgstr ""
 
@@ -108,7 +128,7 @@ msgstr ""
 msgid "%(details)s by %(model)s %(master)s"
 msgstr ""
 
-#: .\site.py:169
+#: .\site.py:170
 #, python-format
 msgid "Cannot delete %(self)s because %(count)d %(refs)s refer to it."
 msgstr ""
@@ -127,7 +147,7 @@ msgstr ""
 msgid "~Configure"
 msgstr ""
 
-#: .\demos\dsbe\lino_settings.py:62 .\demos\dsbe\site.py:82
+#: .\demos\dsbe\lino_settings.py:62 .\demos\dsbe\site.py:84
 #: .\demos\std\lino_settings.py:43
 msgid "E~xplorer"
 msgstr ""
@@ -288,7 +308,7 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: .\ui\extjs\ext_elems.py:553
+#: .\ui\extjs\ext_elems.py:560
 #, python-format
 msgid "Select a %s..."
 msgstr ""

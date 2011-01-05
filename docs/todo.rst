@@ -9,23 +9,18 @@ for which I hope for help from other people.
 Version 1.0
 -----------
 
-#.  Auf einer gefilterten Liste von Personen sind die SlaveQueries vfälschlicherweise ebenfalls gefiltert. 
-    Weil er den Master param "query" mit übergibt.
-    "http://lino/api/contacts/ContactsByCompany?_dc=1294125630839&fmt=json&query=Besch&mt=15&mk=84282".
+#.  Auf einem gefilterten Detail von Personen sind die 
+    SlaveQueries manchmal fälschlicherweise ebenfalls gefiltert. 
+    Weil er "query" als master_param speichert und mit übergibt.
 
-
-#.  Seit Umstieg auf MySQL ist die Schnellsuche case-sensitive.
-
-#.  Bei Doppelklick auf dem phantom-Record einer Slavegrid zum 
-    Erstellen eines Records werden master_params scheinbar 
-    nicht übergeben.
+#.  Im `search_field` funktionieren die Tasten HOME und END nicht.
 
 #.  Formatierte Texte. Zumindest Aufzählungen und mehrere Absätze 
     sollten möglich sein.
 
-#.  Insert as copy (Kopie erstellen). 
-    Oder genauer gesagt denke ich momentan eher an zwei Buttons "Export" 
-    und "Import". Mit "Export" lässt man den aktuellen Record in eine 
+#.  DuplicateRow / Insert as copy (Kopie erstellen). 
+    Evtl. stattdessen zwei Buttons "Export" und "Import". 
+    Mit "Export" lässt man den aktuellen Record in eine 
     lokale Datei abspeichern (Format z.B. json oder xml), und mit "Import" 
     überschreibt man den aktuellen Record durch die Daten aus einer 
     hochzuladenden Datei.

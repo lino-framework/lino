@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-01 23:44+0000\n"
+"POT-Creation-Date: 2011-01-05 01:54+0000\n"
 "PO-Revision-Date: 2010-12-23 06:32+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: ds <luc.saffre@gmail.com>\n"
@@ -80,7 +80,7 @@ msgstr "Kontaktpersonen"
 msgid "company"
 msgstr "Firma"
 
-#: .\models.py:190
+#: .\models.py:197
 msgid "Contact for"
 msgstr "Kontaktperson für"
 

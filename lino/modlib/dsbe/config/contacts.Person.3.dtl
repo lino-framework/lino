@@ -2,7 +2,7 @@
 :label_align: top
 
 main = 
-  box5 flags:20 image:12
+  box5 image:12 flags:20 
   remarks:30 coaching:30 
 
 

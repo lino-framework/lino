@@ -32,6 +32,7 @@ logger = logging.getLogger(__name__)
 import os
 import sys
 #~ import imp
+import codecs
 
 from django.conf import settings
 from django.utils.importlib import import_module
@@ -112,7 +113,7 @@ def discover():
         for filename,cd in dtl_files:
             fn = os.path.join(cd.name,filename)
             logger.info("Loading %s...",fn)
-            s = open(fn).read()
+            s = codecs.open(fn,encoding='utf-8').read()
             dtl = DetailLayout(s,cd,filename)
             model._lino_detail_layouts.append(dtl)
             

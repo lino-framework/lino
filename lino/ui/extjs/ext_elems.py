@@ -449,6 +449,13 @@ class TextFieldElement(FieldElement):
     preferred_width = 60
     #~ preferred_height = 1
     #collapsible = True
+    
+    #~ def __init__(self,*args,**kw):
+        #~ kw.update(defaultAutoCreate = dict(
+            #~ tag="textarea",
+            #~ autocomplete="off"
+        #~ ))
+        #~ FieldElement.__init__(self,*args,**kw)
 
 class HtmlTextFieldElement(TextFieldElement):
     pass

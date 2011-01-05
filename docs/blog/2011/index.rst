@@ -19,6 +19,7 @@ As long as I am the only Lino developer, I'll write it mostly in German.
   |br| 
   :doc:`03 <0103>` 
   :doc:`04 <0104>` 
+  :doc:`05 <0105>` 
   |br| 
   |br|  	
 

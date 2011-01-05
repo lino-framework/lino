@@ -193,7 +193,7 @@ Ext.override(Ext.grid.CellSelectionModel, {
             return;
         }
         */
-        
+        //~ console.log('handleKeyDown',e)
         var k = e.getKey(),
             g = this.grid,
             s = this.selection,
@@ -242,45 +242,49 @@ Ext.override(Ext.grid.CellSelectionModel, {
                 }
                 break;
             case e.HOME:
-                if (!e.hasModifier()){
-                    newCell = [r, 0];
-                    //~ console.log('home',newCell);
-                    break;
-                }else if(e.ctrlKey){
-                    var t = g.getTopToolbar();
-                    var activePage = Math.ceil((t.cursor + t.pageSize) / t.pageSize);
-                    if (activePage > 1) {
-                        e.stopEvent();
-                        t.moveFirst();
-                        return;
-                    }
-                    newCell = [0, c];
-                    break;
+                if (! (g.isEditor && g.editing)) {
+                  if (!e.hasModifier()){
+                      newCell = [r, 0];
+                      //~ console.log('home',newCell);
+                      break;
+                  }else if(e.ctrlKey){
+                      var t = g.getTopToolbar();
+                      var activePage = Math.ceil((t.cursor + t.pageSize) / t.pageSize);
+                      if (activePage > 1) {
+                          e.stopEvent();
+                          t.moveFirst();
+                          return;
+                      }
+                      newCell = [0, c];
+                      break;
+                  }
                 }
             case e.END:
-                c = g.colModel.getColumnCount()-1;
-                if (!e.hasModifier()) {
-                    newCell = [r, c];
-                    //~ console.log('end',newCell);
-                    break;
-                }else if(e.ctrlKey){
-                    var t = g.getTopToolbar();
-                    var d = t.getPageData();
-                    if (d.activePage < d.pages) {
-                        e.stopEvent();
-                        var self = this;
-                        t.on('change',function(tb,pageData) {
-                            var r = g.store.getCount()-2;
-                            self.select(r, c);
-                            //~ console.log('change',r,c);
-                        },this,{single:true});
-                        t.moveLast();
-                        return;
-                    } else {
-                        newCell = [g.store.getCount()-1, c];
-                        //~ console.log('ctrl-end',newCell);
-                        break;
-                    }
+                if (! (g.isEditor && g.editing)) {
+                  c = g.colModel.getColumnCount()-1;
+                  if (!e.hasModifier()) {
+                      newCell = [r, c];
+                      //~ console.log('end',newCell);
+                      break;
+                  }else if(e.ctrlKey){
+                      var t = g.getTopToolbar();
+                      var d = t.getPageData();
+                      if (d.activePage < d.pages) {
+                          e.stopEvent();
+                          var self = this;
+                          t.on('change',function(tb,pageData) {
+                              var r = g.store.getCount()-2;
+                              self.select(r, c);
+                              //~ console.log('change',r,c);
+                          },this,{single:true});
+                          t.moveLast();
+                          return;
+                      } else {
+                          newCell = [g.store.getCount()-1, c];
+                          //~ console.log('ctrl-end',newCell);
+                          break;
+                      }
+                  }
                 }
             case e.DOWN:
                 newCell = walk(r + 1, c, 1);
@@ -525,11 +529,6 @@ Lino.report_window_button = function(ww,handler) {
     handler: function(event,toolEl,panel, tc) {
       //~ console.log('report_window_button',panel);
       var bp = ww.get_master_params();
-      //~ console.log('report_window_button',bp)
-      //~ action(panel,{record_id:-99999,base_params:bp});
-      
-      //~ var bp = panel.ww.get_master_params();
-      //~ handler(panel,{base_params:bp});
       panel.ww = ww; // for HtmlBox. see blog/2010/1022
       handler(panel,{base_params:bp});
     }
@@ -1033,7 +1032,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   },
   search_change : function(field,oldValue,newValue) {
     //~ console.log('FormPanel.search_change()');
-    this.ww.config.base_params['$URL_PARAM_FILTER'] = field.getValue(); // URL_PARAM_FILTER
+    this.ww.config.base_params['$URL_PARAM_FILTER'] = field.getValue(); 
     this.goto_record_id(this.current_record.id);
     //~ this.moveFirst();
   },
@@ -1326,7 +1325,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
   
   search_change : function(field,oldValue,newValue) {
     //~ console.log('search_change',field.getValue(),oldValue,newValue)
-    this.store.setBaseParam('$URL_PARAM_FILTER',field.getValue()); // URL_PARAM_FILTER
+    this.store.setBaseParam('$URL_PARAM_FILTER',field.getValue()); 
     this.store.load({params: { start: 0, limit: this.getTopToolbar().pageSize }});
   },
   

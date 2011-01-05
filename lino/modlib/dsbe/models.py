@@ -317,57 +317,51 @@ class Person(Partner,contacts.Person):
     aid_type = models.ForeignKey("dsbe.AidType",blank=True,null=True,
         verbose_name=_("aid type"))
         
-    income_ag = models.BooleanField(verbose_name=_("Arbeitslosengeld"))
-    income_wg = models.BooleanField(verbose_name=_("Wartegeld"))
-    income_kg = models.BooleanField(verbose_name=_("Krankengeld"))
+    income_ag    = models.BooleanField(verbose_name=_("Arbeitslosengeld"))
+    income_wg    = models.BooleanField(verbose_name=_("Wartegeld"))
+    income_kg    = models.BooleanField(verbose_name=_("Krankengeld"))
     income_rente = models.BooleanField(verbose_name=_("Rente"))
-    income_misc = models.BooleanField(verbose_name=_("Andere"))
+    income_misc  = models.BooleanField(verbose_name=_("Andere"))
     
     
-    physical_handicap = models.BooleanField(verbose_name=_("Physical handicap"))
-    mental_handicap = models.BooleanField(verbose_name=_("Mental handicap"))
-    psycho_handicap = models.BooleanField(verbose_name=_("Psychological handicap"))
-    health_problems = models.BooleanField(verbose_name=_("Health problems"))
-    juristic_problems = models.BooleanField(verbose_name=_("Juristic problems"))
-    dependency_problems = models.BooleanField(verbose_name=_("Dependency problems"))
-    social_competence = models.BooleanField(verbose_name=_("Lack of social competence"))
-    motivation_lack = models.BooleanField(verbose_name=_("Lack of motivation"))
+    physical_handicap = models.BooleanField(_("Physical handicap"))
+    mental_handicap = models.BooleanField(_("Mental handicap"))
+    psycho_handicap = models.BooleanField(_("Psychological handicap"))
+    health_problems = models.BooleanField(_("Health problems"))
+    juristic_problems = models.BooleanField(_("Juristic problems"))
+    dependency_problems = models.BooleanField(_("Dependency problems"))
+    social_competence = models.BooleanField(_("Lack of social competence"))
+    motivation_lack = models.BooleanField(_("Lack of motivation"))
     
     #~ unavailable = models.BooleanField(verbose_name=_("Unavailable"))
     unavailable_until = models.DateField(blank=True,null=True,verbose_name=_("Unavailable until"))
     unavailable_why = models.CharField(max_length=100,blank=True,null=True,
         verbose_name=_("reason"))
     
-    fulltime_only = models.BooleanField(verbose_name=_("Fulltime only"))
-    parttime_only = models.BooleanField(verbose_name=_("Part-time only"))
-    young_children = models.BooleanField(verbose_name=_("Young children"))
+    fulltime_only = models.BooleanField(_("Fulltime only"))
+    parttime_only = models.BooleanField(_("Part-time only"))
+    young_children = models.BooleanField(_("Young children"))
     native_language = models.CharField(max_length=100,
         blank=True,null=True,
         verbose_name=_("Native language"))
-    migration = models.BooleanField(verbose_name=_("Migration"))
+    migration = models.BooleanField(_("Migration"))
     
     obstacles = models.TextField(_("Obstacles"),blank=True,null=True)
     skills = models.TextField(_("Skills"),blank=True,null=True)
-    job_agents = models.TextField(max_length=100,
+    job_agents = models.CharField(max_length=100,
         blank=True,null=True,
         verbose_name=_("Job agents"))
     
 
+    def get_image_parts(self):
+        if self.card_number:
+            return ("beid",self.card_number+".jpg")
+        return ("pictures","contacts.Person.jpg")
     def get_image_url(self):
         return settings.MEDIA_URL + "/".join(self.get_image_parts())
     def get_image_path(self):
         return os.path.join(settings.MEDIA_ROOT,*self.get_image_parts())
         
-    #~ def get_image_url(self):
-        #~ if self.card_number:
-            #~ return settings.MEDIA_URL + "beid/"+ self.card_number+".jpg"
-        #~ return settings.MEDIA_URL + "pictures/contacts.Person.jpg"
-    
-    def get_image_parts(self):
-        if self.card_number:
-            return ("beid",self.card_number+".jpg")
-        return ("pictures","contacts.Person.jpg")
-    
             
     def is_illiterate(self):
         if self.languageknowledge_set.count() == 0:
@@ -376,10 +370,9 @@ class Person(Partner,contacts.Person):
             if lk.written > 0:
                 return False
         return True
-    is_illiterate.return_type = models.BooleanField(verbose_name=_("Illiterate"))
+    is_illiterate.return_type = models.BooleanField(_("Illiterate"))
     
     def overview(self):
-        
         def qsfmt(qs):
             s = qs.model._meta.verbose_name_plural + ': '
             if qs.count():
@@ -396,7 +389,7 @@ class Person(Partner,contacts.Person):
         #~ from django.utils.translation import string_concat
         #~ lines.append('</div>')
         return '<br/>'.join(lines)
-    overview.return_type = fields.HtmlBox(verbose_name=_("Overview"))
+    overview.return_type = fields.HtmlBox(_("Overview"))
     
     
 PERSON_TIM_FIELDS = reports.fields_list(Person,
@@ -409,7 +402,6 @@ PERSON_TIM_FIELDS = reports.fields_list(Person,
     bank_account1 bank_account2 
     gesdos_id activity 
     is_cpas is_senior is_active nationality''')
-
 
 
 
@@ -435,6 +427,7 @@ class PersonsByCity(Persons):
     column_names = "street street_no street_box addr2 name language *"
 
 class MyPersons(Persons):
+    use_as_default_report = False
     label = _("My coached Persons")
     order_by = ['last_name','first_name']
     #~ def get_queryset(self):
@@ -627,6 +620,7 @@ add_babel_field(SkillType,'name')
 
 class SkillTypes(reports.Report):
     model = SkillType
+    order_by = ['name']
 
 
 

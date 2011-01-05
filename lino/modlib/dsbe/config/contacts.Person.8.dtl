@@ -1,0 +1,7 @@
+:label: Ausbildung & Erfahrungen
+:label_align: top
+
+
+main = 
+  dsbe.StudiesByPerson 
+  dsbe.JobExperiencesByPerson 

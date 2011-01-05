@@ -120,7 +120,7 @@ def add_quick_search_filter(qs,search_text):
     q = models.Q()
     for field in qs.model._meta.fields:
         if isinstance(field,models.CharField):
-            kw = {field.name+"__contains": search_text}
+            kw = {field.name+"__icontains": search_text}
             q = q | models.Q(**kw)
     return qs.filter(q)
     
@@ -804,7 +804,7 @@ class Report(actors.Actor): #,base.Handled):
                 alist.append(actions.ShowDetailAction(self))
                 alist.append(actions.SubmitDetail(self))
                 alist.append(actions.InsertRow(self))
-                alist.append(actions.DuplicateRow(self))
+                #~ alist.append(actions.DuplicateRow(self))
                 alist.append(actions.SubmitInsert(self))
                     
             alist.append(actions.DeleteSelected(self))
@@ -1096,11 +1096,11 @@ class BaseLayout:
     def save_config(self):
         if self.filename:
             if not self.cd.can_write:
-                print self.cd, "is not writable", self.filename
+                #~ print self.cd, "is not writable", self.filename
                 self.cd = LOCAL_CONFIG_DIR
             fn = os.path.join(self.cd.name,self.filename)
             logger.info("Layout.save_config() -> %s",fn)
-            f = open(fn,'w')
+            f = codecs.open(fn,'w',encoding='utf-8')
             f.write(self._desc)
             f.close()
             

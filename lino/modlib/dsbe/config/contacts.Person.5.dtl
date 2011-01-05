@@ -1,4 +1,4 @@
-:label: Profile 1
+:label: Arbeitssuche
 :label_align: top
 
 box1 = 
@@ -10,5 +10,7 @@ box2 =
   needs_work_permit work_permit_valid_until  
   
 main = 
-  box1     box2
+  box1  box2
+  job_agents
   dsbe.ExclusionsByPerson 
+  

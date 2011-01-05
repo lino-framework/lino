@@ -1,0 +1,6 @@
+20110105
+========
+
+#.  Noch einige neue Felder und Tabellen...
+#.  Behoben: Seit Umstieg auf MySQL ist die Schnellsuche case-sensitive.
+

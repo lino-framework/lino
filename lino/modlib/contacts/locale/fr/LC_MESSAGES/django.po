@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-01 23:44+0000\n"
+"POT-Creation-Date: 2011-01-05 01:54+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -90,7 +90,7 @@ msgstr "Sociétés"
 msgid "company"
 msgstr "Sociétés"
 
-#: .\models.py:190
+#: .\models.py:197
 #, fuzzy
 msgid "Contact for"
 msgstr "Sociétés"

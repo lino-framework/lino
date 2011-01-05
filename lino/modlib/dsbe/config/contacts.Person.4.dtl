@@ -1,4 +1,4 @@
-:label: Skills
+:label: Fähigkeiten
 :label_align: top
 
 box5 = 
@@ -8,5 +8,5 @@ box5 =
   it_knowledge    
 
 main = 
-  box5 skills
-  dsbe.JobExperiencesByPerson dsbe.SkillsByPerson
+  box5 skills 
+  dsbe.SkillsByPerson 
