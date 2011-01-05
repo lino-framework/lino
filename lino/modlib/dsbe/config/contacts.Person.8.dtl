@@ -1,7 +1,7 @@
-:label: Ausbildung & Erfahrungen
+:label: Sonstige
 :label_align: top
 
-
 main = 
-  dsbe.StudiesByPerson 
-  dsbe.JobExperiencesByPerson 
+  remarks:30 
+  contacts.ContactsByPerson:20
+

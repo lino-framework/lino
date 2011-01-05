@@ -46,32 +46,21 @@ INSERT = Hotkey(keycode=44)
 DELETE = Hotkey(keycode=46)
     
     
-class Action: # (base.Handled):
-    #~ handle_class = ActionHandle
-    #~ action_type = '?'
+class Action: 
     opens_a_slave = False
-    #~ response_format = 'act' # ext_requests.FMT_RUN
     label = None
     name = None
     key = None
-    #~ needs_selection = False
-    #~ needs_validation = False
-    #~ grid_button = True
-    #~ hidden = False
-    #~ show_in_detail = True
-    #~ show_in_list = True
-    #~ client_side = False
     callable_from = None
     
-    def __init__(self,actor):
-    #~ def __init__(self,ah):
-        #~ self.ah = ah # actor handle of the actor who offers this action
+    def __init__(self,actor,name=None,label=None):
         self.actor = actor # actor who offers this action
-        if self.name is None:
-            self.name = self.__class__.__name__ # label
-        if self.label is None:
-            self.label = self.name #self.__class__.__name__
-        
+        if name is None:
+            name = self.name or self.__class__.__name__ 
+        self.name = name 
+        if label is None:
+            label = self.label or self.name 
+        self.label = label
         assert self.callable_from is None or isinstance(self.callable_from,(tuple,type)), "%s" % self
         
     def __str__(self):
@@ -79,15 +68,6 @@ class Action: # (base.Handled):
         
     def get_list_title(self,rh):
         return rh.get_title(None)
-        
-    #~ def run_action(self,act):
-        #~ raise NotImplementedError
-        
-    #~ def before_run(self,act):
-        #~ pass
-        
-        
-        
 
 
 class WindowAction(Action):

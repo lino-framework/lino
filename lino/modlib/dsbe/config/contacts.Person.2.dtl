@@ -1,23 +1,28 @@
-:label: Person
+:label: ÖSHZ
 :label_align: top
 
 main = 
-  box1:40 box2:20
-  uploads.UploadsByPerson:20
+  box1:40 income:20 
+  uploads.UploadsByPerson:20 flags
 
 box1 = 
-  sex:8 birth_date birth_date_circa     
-  
-  birth_country birth_place  native_language 
   civil_state nationality:15 national_id:15 
   card_number:10 card_valid_from card_valid_until:10
-  gesdos_id health_insurance 
+  gesdos_id:15 health_insurance:40
   #pharmacy
+  is_dsbe coach1 coach2
+  bank_account1 bank_account2
   
-box2 = 
+income = 
     aid_type
     income_ag    
     income_wg    income_kg    
     income_rente  income_misc  
 
+
+flags =
+  is_active 
+  is_cpas 
+  is_senior 
+  #is_minor
   

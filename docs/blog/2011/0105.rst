@@ -4,3 +4,13 @@
 #.  Noch einige neue Felder und Tabellen...
 #.  Behoben: Seit Umstieg auf MySQL ist die Schnellsuche case-sensitive.
 
+release
+
+#. DirectPrintAction
+
+#. watch_tim meldete::
+
+    201101-05 08:44:38 WARNING watch_tim : Validation failed for Person #22497 : 
+      {'activity': [u"Model activity with pk u'00' does not exist."]}
+      
+  Wahrscheinlich behoben (nicht existierender Berufscode wuurde erstellt aber nicht gespeichert).

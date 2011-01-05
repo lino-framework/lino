@@ -3,7 +3,7 @@
 
 main = 
   box1 box2
-  overview contacts.ContactsByPerson
+  box3 image:12 overview 
 
 
 
@@ -15,7 +15,10 @@ box1 =
 
 box2 = 
   id:12 language
-  email:30 
+  email:20 url:20
   phone fax
   gsm
 
+box3 =
+  sex:8 birth_date birth_date_circa     
+  birth_country birth_place  native_language 

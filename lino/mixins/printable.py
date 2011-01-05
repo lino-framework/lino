@@ -93,48 +93,22 @@ class BuildMethod:
     def __unicode__(self):
         return unicode(self.label)
         
-            
-    def get_target_parts(self,elem):
-        return [self.cache_name, self.name, elem.filename_root() + '-' + str(elem.pk) + self.target_ext]
+    def get_target_parts(self,action,elem):
+        return [self.cache_name, self.name, action.filename_root(elem) + '-' + str(elem.pk) + self.target_ext]
         
-    def get_target_name(self,elem):
-        return os.path.join(settings.MEDIA_ROOT,*self.get_target_parts(elem))
+    def get_target_name(self,action,elem):
+        return os.path.join(settings.MEDIA_ROOT,*self.get_target_parts(action,elem))
         
-    def build(self,elem):
+    def build(self,action,elem):
         raise NotImplementedError
         
-    def before_build(self,elem):
-        """Return the target filename if a document needs to be built,
-        otherwise return ``None``.
-        """
-        if not elem.must_build:
-            return 
-        filename = self.get_target_name(elem)
-        if not filename:
-            return
-        if os.path.exists(filename):
-            #~ if not elem.must_rebuild_target(filename,self):
-                #~ logger.debug("%s : %s -> %s is up to date",self,elem,filename)
-                #~ return
-            logger.debug("%s %s -> overwrite existing %s.",self,elem,filename)
-            os.remove(filename)
-        else:
-            dirname = os.path.dirname(filename)
-            if not os.path.isdir(dirname):
-                if True:
-                    raise Exception("Please create yourself directory %s" % dirname)
-                else:
-                    os.makedirs(dirname)
-        logger.debug("%s : %s -> %s", self,elem,filename)
-        return filename
-        
-    def get_template_url(self,elem):
+    def get_template_url(self,action,elem):
         raise NotImplementedError
         
 class DjangoBuildMethod(BuildMethod):
 
-    def get_template(self,elem):
-        tpls = elem.get_print_templates(self)
+    def get_template(self,action,elem):
+        tpls = action.get_print_templates(self,elem)
         if len(tpls) == 0:
             raise Exception("No templates defined for %r" % elem)
         #~ logger.debug('make_pisa_html %s',tpls)
@@ -160,9 +134,9 @@ class PisaBuildMethod(DjangoBuildMethod):
     #~ button_label = _("PDF")
     template_ext = '.pisa.html'  
     
-    def build(self,elem):
+    def build(self,action,elem):
         tpl = self.get_template(elem) 
-        filename = self.before_build(elem)
+        filename = action.before_build(self,elem)
         if filename is None:
             return
         html = self.render_template(elem,tpl) # ,MEDIA_URL=url)
@@ -182,8 +156,8 @@ class PisaBuildMethod(DjangoBuildMethod):
 
 class SimpleBuildMethod(BuildMethod):
   
-    def get_template_leaf(self,elem):
-        tpls = elem.get_print_templates(self)
+    def get_template_leaf(self,action,elem):
+        tpls = action.get_print_templates(self,elem)
         #~ if not tpls:
             #~ return
         if len(tpls) != 1:
@@ -199,15 +173,15 @@ class SimpleBuildMethod(BuildMethod):
                 #~ tpl = os.path.normpath(os.path.join(self.templates_dir,default_language(),tpl_leaf))
         return lang + '/' + tpl_leaf
         
-    def get_template_url(self,elem):
-        tpl = self.get_template_leaf(elem)
+    def get_template_url(self,action,elem):
+        tpl = self.get_template_leaf(action,elem)
         return self.templates_url + '/' + tpl
         
-    def build(self,elem):
-        target = self.before_build(elem)
+    def build(self,action,elem):
+        target = action.before_build(self,elem)
         if not target:
             return
-        tpl_leaf = self.get_template_leaf(elem)
+        tpl_leaf = self.get_template_leaf(action,elem)
         tplfile = os.path.normpath(os.path.join(self.templates_dir,tpl_leaf))
         self.simple_build(elem,tplfile,target)
         
@@ -369,7 +343,33 @@ def get_build_method(elem):
         
 
 #~ class PrintAction(actions.RedirectAction):
-class PrintAction(actions.RowAction):
+class BasePrintAction(actions.RowAction):
+  
+    def before_build(self,bm,elem):
+        """Return the target filename if a document needs to be built,
+        otherwise return ``None``.
+        """
+        filename = bm.get_target_name(self,elem)
+        if not filename:
+            return
+        if os.path.exists(filename):
+            #~ if not elem.must_rebuild_target(filename,self):
+                #~ logger.debug("%s : %s -> %s is up to date",self,elem,filename)
+                #~ return
+            logger.debug("%s %s -> overwrite existing %s.",bm,elem,filename)
+            os.remove(filename)
+        else:
+            dirname = os.path.dirname(filename)
+            if not os.path.isdir(dirname):
+                if True:
+                    raise Exception("Please create yourself directory %s" % dirname)
+                else:
+                    os.makedirs(dirname)
+        logger.debug("%s : %s -> %s", bm,elem,filename)
+        return filename
+        
+        
+class PrintAction(BasePrintAction):
     """Note that this action should rather be called 
     'Open a printable document' than 'Print'.
     For the user they are synonyms as long as Lino doesn't support server-side printing.
@@ -379,19 +379,48 @@ class PrintAction(actions.RowAction):
     callable_from = None
     #~ needs_selection = True
     
+    def before_build(self,bm,elem):
+        if not elem.must_build:
+            return
+        return BasePrintAction.before_build(self,bm,elem)
+            
+    def get_print_templates(self,bm,elem):
+        return elem.get_print_templates(bm,self)
+        
+    def filename_root(self,elem):
+        return elem._meta.app_label + '.' + elem.__class__.__name__
+        
     def run(self,ui,elem,**kw):
         bm = get_build_method(elem)
         if elem.must_build:
-            bm.build(elem)
+            bm.build(self,elem)
             elem.must_build = False
             elem.save()
             kw.update(refresh=True)
-            kw.update(message="%s printable has been build." % elem)
+            kw.update(message="%s printable has been built." % elem)
         else:
             kw.update(message="Reused %s printable from cache." % elem)
-        target = settings.MEDIA_URL + "/".join(bm.get_target_parts(elem))
+        target = settings.MEDIA_URL + "/".join(bm.get_target_parts(self,elem))
         return ui.success_response(open_url=target,**kw)
       
+class DirectPrintAction(BasePrintAction):
+    def __init__(self,rpt,name,label,bmname,tplname):
+        BasePrintAction.__init__(self,rpt,name,label)
+        self.bm =  bm_dict.get(bmname)
+        self.tplname = tplname
+        assert tplname.endswith(self.bm.template_ext)
+        
+    def get_print_templates(self,bm,elem):
+        assert bm is self.bm
+        return [ self.tplname ]
+        
+    def filename_root(self,elem):
+        return self.actor.model._meta.app_label + '.' + self.actor.model.__name__
+        
+    def run(self,ui,elem,**kw):
+        self.bm.build(self,elem)
+        target = settings.MEDIA_URL + "/".join(self.bm.get_target_parts(self,elem))
+        return ui.success_response(open_url=target,**kw)
     
 class EditTemplateAction(actions.RowAction):
     name = 'tpledit'
@@ -399,7 +428,7 @@ class EditTemplateAction(actions.RowAction):
     
     def run(self,ui,elem,**kw):
         bm = get_build_method(elem)
-        target = bm.get_template_url(elem)
+        target = bm.get_template_url(self,elem)
         return ui.success_response(open_url=target,**kw)
     
 class ClearCacheAction(actions.RowAction):
@@ -461,19 +490,16 @@ class Printable(models.Model):
         #~ rpt.add_action(EditTemplateAction(rpt))
         #~ super(Printable,cls).setup_report(rpt)
 
-    def filename_root(self):
-        return self._meta.app_label + '.' + self.__class__.__name__
-        
     def get_print_language(self,pm):
         return default_language()
         
-    def get_print_templates(self,pm):
-        """Return a list of filenames of templates for the specified print method.
+    def get_print_templates(self,bm,action):
+        """Return a list of filenames of templates for the specified build method.
         Returning an empty list means that this item is not printable. 
         For subclasses of :class:`SimpleBuildMethod` the returned list 
         may not contain more than 1 element.
         """
-        return [self.filename_root() + pm.template_ext]
+        return [ action.filename_root(self) + bm.template_ext ]
           
     def unused_get_last_modified_time(self):
         """Return a model-specific timestamp that expresses when 
@@ -522,15 +548,14 @@ class TypedPrintable(Printable):
             return super(TypedPrintable,self).get_build_method()
         return self.type.build_method
         
-    def get_print_templates(self,pm):
+    def get_print_templates(self,bm,action):
         if self.type is None:
-            return super(TypedPrintable,self).get_print_templates(self,pm)
-            #[self.filename_root() + pm.template_ext]
-        assert self.type.template.endswith(pm.template_ext)
+            return super(TypedPrintable,self).get_print_templates(self,bm,action)
+        assert self.type.template.endswith(bm.template_ext)
         #~ return [ TEMPLATE_GROUP +'/'+self.type.template ]
-        return [ self.type.get_templates_group() +'/'+self.type.template ]
+        return [ self.type.get_templates_group() + '/' + self.type.template ]
         
-    def get_print_language(self,pm):
+    def get_print_language(self,bm):
         return self.language
 
 

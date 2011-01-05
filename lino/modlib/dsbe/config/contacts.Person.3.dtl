@@ -1,28 +1,8 @@
-:label: Person 2
+:label: Ausbildung/Erfahrungen
 :label_align: top
 
+
 main = 
-  box5 image:12 flags:20 
-  remarks:30 coaching:30 
+  dsbe.StudiesByPerson 
+  dsbe.JobExperiencesByPerson:60 
 
-
-box5 =
-  url:30
-  bank_account1
-  bank_account2
-  activity 
-
-coaching =
-  coach1
-  coach2
-
-## coaching =
-##  user
-##  dsbe.CoachingsByPerson
-
-flags =
-  is_active 
-  is_cpas 
-  is_senior 
-  is_dsbe 
-  #is_minor

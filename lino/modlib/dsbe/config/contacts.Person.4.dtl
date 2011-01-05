@@ -1,12 +1,17 @@
 :label: Fähigkeiten
 :label_align: top
 
-box5 = 
+main = 
+  box1 box2
+  dsbe.SkillsByPerson 
+  
+box2 = 
+  skills 
+  activity 
+
+box1 = 
   driving_license 
   has_own_car
   can_clark
   it_knowledge    
 
-main = 
-  box5 skills 
-  dsbe.SkillsByPerson 

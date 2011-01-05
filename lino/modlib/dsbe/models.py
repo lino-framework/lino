@@ -44,6 +44,7 @@ from lino.models import get_site_config
 from lino.tools import get_field
 from lino.utils.babel import add_babel_field, default_language, babelattr
 from lino.utils.choosers import chooser
+from lino.mixins.printable import DirectPrintAction
 
 #~ from lino.modlib.fields import KNOWLEDGE_CHOICES # for makemessages
 
@@ -353,6 +354,16 @@ class Person(Partner,contacts.Person):
         verbose_name=_("Job agents"))
     
 
+    @classmethod
+    def setup_report(model,rpt):
+        rpt.add_action(DirectPrintAction(rpt,'auskblatt',_("Auskunftsblatt"),'appyodt','persons/auskunftsblatt.odt'))
+        rpt.add_action(DirectPrintAction(rpt,'eid',_("eID-Inhalt"),'appypdf','persons/eid-content.odt'))
+        rpt.add_action(DirectPrintAction(rpt,'cv',_("Curiculum vitae"),'appypdf','persons/cv.odt'))
+        
+    def get_print_language(self,pm):
+        "Used by DirectPrintAction"
+        return self.language
+        
     def get_image_parts(self):
         if self.card_number:
             return ("beid",self.card_number+".jpg")
@@ -528,8 +539,8 @@ class StudyTypes(reports.Report):
 
 class Study(models.Model):
     class Meta:
-        verbose_name = _("study or experience")
-        verbose_name_plural = _("Studies & experiences")
+        verbose_name = _("study or education")
+        verbose_name_plural = _("Studies & education")
     person = models.ForeignKey("contacts.Person",verbose_name=_("Person"))
     type = models.ForeignKey(StudyType,verbose_name=_("Study type"))
     content = models.CharField(max_length=200,blank=True,null=True,verbose_name=_("Study content"))
@@ -542,7 +553,8 @@ class Study(models.Model):
     #~ started = fields.MonthField(blank=True,null=True,verbose_name=_("started"))
     #~ stopped = fields.MonthField(blank=True,null=True,verbose_name=_("stopped"))
     success = models.BooleanField(verbose_name=_("Success"),default=False)
-    country = models.ForeignKey("countries.Country",blank=True,null=True,verbose_name=_("Country"))
+    country = models.ForeignKey("countries.Country",blank=True,null=True,
+        verbose_name=_("Country"))
     city = models.ForeignKey('countries.City',blank=True,null=True,
         verbose_name=_('City'))
     #~ language = models.ForeignKey("countries.Language",blank=True,null=True,verbose_name=_("Language"))
