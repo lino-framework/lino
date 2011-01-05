@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Lino-DSBE\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-01-05 01:54+0000\n"
-"PO-Revision-Date: 2011-01-05 02:56+0100\n"
+"PO-Revision-Date: 2011-01-05 03:15+0100\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -215,7 +215,7 @@ msgstr "Auf.Erl. gültig bis"
 
 #: .\models.py:307
 msgid "Residence type"
-msgstr "Art Auf.Erl."
+msgstr "Register"
 
 #: .\models.py:312
 msgid "Unemployed since"

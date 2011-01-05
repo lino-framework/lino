@@ -469,9 +469,9 @@ class Printable(models.Model):
         
     def get_print_templates(self,pm):
         """Return a list of filenames of templates for the specified print method.
-        Note that for subclasses of :class:`SimpleBuildMethod` this list must either 
-        be empty (which means "this item is not printable") or contain a single 
-        element.
+        Returning an empty list means that this item is not printable. 
+        For subclasses of :class:`SimpleBuildMethod` the returned list 
+        may not contain more than 1 element.
         """
         return [self.filename_root() + pm.template_ext]
           
