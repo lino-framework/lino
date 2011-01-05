@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-05 07:01+0000\n"
+"POT-Creation-Date: 2011-01-05 11:52+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,33 +16,33 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: .\actions.py:126
+#: .\actions.py:106
 msgid "Detail"
 msgstr ""
 
-#: .\actions.py:129
+#: .\actions.py:109
 #, python-format
 msgid "%s (Detail)"
 msgstr ""
 
-#: .\actions.py:140
+#: .\actions.py:120
 msgid "Insert"
 msgstr ""
 
-#: .\actions.py:145
+#: .\actions.py:125
 #, python-format
 msgid "Insert into %s"
 msgstr ""
 
-#: .\actions.py:150
+#: .\actions.py:130
 msgid "Duplicate"
 msgstr ""
 
-#: .\actions.py:186
+#: .\actions.py:166
 msgid "Delete"
 msgstr ""
 
-#: .\actions.py:194 .\actions.py:199
+#: .\actions.py:174 .\actions.py:179
 msgid "Save"
 msgstr ""
 
@@ -244,23 +244,23 @@ msgstr ""
 msgid "Print"
 msgstr ""
 
-#: .\mixins\printable.py:398
+#: .\mixins\printable.py:427
 msgid "Edit template"
 msgstr ""
 
-#: .\mixins\printable.py:408
+#: .\mixins\printable.py:437
 msgid "Clear cache"
 msgstr ""
 
-#: .\mixins\printable.py:425
+#: .\mixins\printable.py:454
 msgid "Build method"
 msgstr ""
 
-#: .\mixins\printable.py:428
+#: .\mixins\printable.py:457
 msgid "Template"
 msgstr ""
 
-#: .\mixins\printable.py:452
+#: .\mixins\printable.py:481
 msgid "must build"
 msgstr ""
 

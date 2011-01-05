@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-05 07:01+0000\n"
+"POT-Creation-Date: 2011-01-05 11:52+0000\n"
 "PO-Revision-Date: 2011-01-02 00:45+0100\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
@@ -16,33 +16,33 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: .\actions.py:126
+#: .\actions.py:106
 msgid "Detail"
 msgstr "Detail"
 
-#: .\actions.py:129
+#: .\actions.py:109
 #, python-format
 msgid "%s (Detail)"
 msgstr "%s (Detail)"
 
-#: .\actions.py:140
+#: .\actions.py:120
 msgid "Insert"
 msgstr "Einfügen"
 
-#: .\actions.py:145
+#: .\actions.py:125
 #, python-format
 msgid "Insert into %s"
 msgstr "Einfügen in %s"
 
-#: .\actions.py:150
+#: .\actions.py:130
 msgid "Duplicate"
 msgstr "Duplizieren"
 
-#: .\actions.py:186
+#: .\actions.py:166
 msgid "Delete"
 msgstr "Löschen"
 
-#: .\actions.py:194 .\actions.py:199
+#: .\actions.py:174 .\actions.py:179
 msgid "Save"
 msgstr "Speichern"
 
@@ -245,23 +245,23 @@ msgstr "Adresse"
 msgid "Print"
 msgstr "Drucken"
 
-#: .\mixins\printable.py:398
+#: .\mixins\printable.py:427
 msgid "Edit template"
 msgstr "Vorlage bearbeiten"
 
-#: .\mixins\printable.py:408
+#: .\mixins\printable.py:437
 msgid "Clear cache"
 msgstr "Cache löschen"
 
-#: .\mixins\printable.py:425
+#: .\mixins\printable.py:454
 msgid "Build method"
 msgstr "Konstruktionsmethode"
 
-#: .\mixins\printable.py:428
+#: .\mixins\printable.py:457
 msgid "Template"
 msgstr "Vorlage"
 
-#: .\mixins\printable.py:452
+#: .\mixins\printable.py:481
 msgid "must build"
 msgstr "muss generiert werden"
 

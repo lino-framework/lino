@@ -381,7 +381,14 @@ class Person(Partner,contacts.Person):
             if lk.written > 0:
                 return False
         return True
-    is_illiterate.return_type = models.BooleanField(_("Illiterate"))
+    is_illiterate.return_type = models.BooleanField(_("Illiterate"),editable=False,blank=True)
+    
+    def age(self):
+        if self.birth_date:
+            dd = datetime.date.today()-self.birth_date
+            return _("%d years") % (dd.days / 365)
+        return u'unknown'
+    age.return_type = models.CharField(_("Age"),max_length=10,editable=False,blank=True)
     
     def overview(self):
         def qsfmt(qs):

@@ -20,5 +20,5 @@ box2 =
   gsm
 
 box3 =
-  sex:8 birth_date birth_date_circa     
+  sex:8 birth_date birth_date_circa age
   birth_country birth_place  native_language 

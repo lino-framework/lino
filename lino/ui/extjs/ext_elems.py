@@ -398,6 +398,7 @@ class FieldElement(LayoutElement):
         if not self.field.blank:
             kw.update(allowBlank=False)
         if not self.editable:
+            kw.update(disabled=True)
             kw.update(readOnly=True)
         #~ http://www.rowlands-bcs.com/extjs/tips/tooltips-form-fields
         #~ if self.field.__doc__:
