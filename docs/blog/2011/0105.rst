@@ -16,6 +16,6 @@ release
   Wahrscheinlich behoben (nicht existierender Berufscode wuurde erstellt aber nicht gespeichert).
   
   
-#. Nocmal Änderungen:
+#. Nochmal Änderungen:
 
   Feld Person.driving_license raus

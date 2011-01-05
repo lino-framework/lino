@@ -682,7 +682,9 @@ class Skill(models.Model):
       verbose_name=_("skill type"))
     #~ type = models.ForeignKey("dsbe.JobType")
     strength = fields.StrengthField(verbose_name=_("strength"))
-    remark = models.CharField(max_length=200,verbose_name=_("Remark"))
+    remark = models.CharField(max_length=200,
+        blank=True,null=True,
+        verbose_name=_("Remark"))
     
 class SkillsByPerson(reports.Report):
     model = Skill

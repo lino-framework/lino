@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-01-05 11:52+0000\n"
-"PO-Revision-Date: 2011-01-02 00:45+0100\n"
+"PO-Revision-Date: 2011-01-05 17:03+0100\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -42,7 +42,8 @@ msgstr "Duplizieren"
 msgid "Delete"
 msgstr "Löschen"
 
-#: .\actions.py:174 .\actions.py:179
+#: .\actions.py:174
+#: .\actions.py:179
 msgid "Save"
 msgstr "Speichern"
 
@@ -52,24 +53,23 @@ msgstr "Sprache"
 
 #: .\fields.py:56
 msgid "certainly not"
-msgstr ""
+msgstr "bloß nicht"
 
 #: .\fields.py:57
 msgid "rather not"
-msgstr ""
+msgstr "eher nicht"
 
 #: .\fields.py:58
 msgid "normally"
-msgstr ""
+msgstr "normal"
 
 #: .\fields.py:59
-#, fuzzy
 msgid "quite much"
 msgstr "ziemlich gut"
 
 #: .\fields.py:60
 msgid "very much"
-msgstr ""
+msgstr "sehr"
 
 #: .\fields.py:64
 msgid "not at all"
@@ -103,7 +103,8 @@ msgstr "Firma, die diese Anwendung  betreibt"
 msgid "The next automatic id for Person or Company"
 msgstr "Nächste automatische ID für Partner"
 
-#: .\models.py:44 .\models.py:94
+#: .\models.py:44
+#: .\models.py:94
 msgid "Site Configuration"
 msgstr "Anwendungsparameter"
 
@@ -134,21 +135,25 @@ msgstr ""
 msgid "Cannot delete %(self)s because %(count)d %(refs)s refer to it."
 msgstr "Kann %(self)s nicht löschen weil %(count)d %(refs)s darauf verweisen."
 
-#: .\demos\dsbe\lino_settings.py:27 .\demos\dsbe\site.py:45
+#: .\demos\dsbe\lino_settings.py:27
+#: .\demos\dsbe\site.py:45
 #: .\demos\std\lino_settings.py:23
 msgid "~Contacts"
 msgstr "~Kontakte"
 
-#: .\demos\dsbe\lino_settings.py:32 .\demos\dsbe\site.py:50
+#: .\demos\dsbe\lino_settings.py:32
+#: .\demos\dsbe\site.py:50
 msgid "~Notes"
 msgstr "~Notizen"
 
-#: .\demos\dsbe\lino_settings.py:38 .\demos\dsbe\site.py:57
+#: .\demos\dsbe\lino_settings.py:38
+#: .\demos\dsbe\site.py:57
 #: .\demos\std\lino_settings.py:31
 msgid "~Configure"
 msgstr "~Konfigurierung"
 
-#: .\demos\dsbe\lino_settings.py:62 .\demos\dsbe\site.py:84
+#: .\demos\dsbe\lino_settings.py:62
+#: .\demos\dsbe\site.py:84
 #: .\demos\std\lino_settings.py:43
 msgid "E~xplorer"
 msgstr ""
@@ -191,7 +196,7 @@ msgstr "Nr."
 
 #: .\mixins\addressable.py:54
 msgid "Box"
-msgstr ""
+msgstr "Fach"
 
 #: .\mixins\addressable.py:55
 msgid "Additional address line"
@@ -348,7 +353,8 @@ msgstr "%s wurde erstellt."
 msgid "%s has been saved."
 msgstr "%s wurde gespeichert."
 
-#: .\ui\extjs\ext_ui.py:705 .\ui\extjs\ext_ui.py:728
+#: .\ui\extjs\ext_ui.py:705
+#: .\ui\extjs\ext_ui.py:728
 #, python-format
 msgid "User %(user)s cannot configure %(report)s."
 msgstr ""
