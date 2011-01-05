@@ -14,3 +14,8 @@ release
       {'activity': [u"Model activity with pk u'00' does not exist."]}
       
   Wahrscheinlich behoben (nicht existierender Berufscode wuurde erstellt aber nicht gespeichert).
+  
+  
+#. Nocmal Änderungen:
+
+  Feld Person.driving_license raus

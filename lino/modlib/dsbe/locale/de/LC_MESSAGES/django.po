@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Lino-DSBE\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-01-05 11:52+0000\n"
-"PO-Revision-Date: 2011-01-05 03:15+0100\n"
+"PO-Revision-Date: 2011-01-05 14:12+0100\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -176,7 +176,8 @@ msgstr "eID-Kartennummer"
 msgid "ID card valid from"
 msgstr "ID-Karte gültig von"
 
-#: .\models.py:289 .\models.py:762
+#: .\models.py:289
+#: .\models.py:762
 msgid "until"
 msgstr "bis"
 
@@ -232,7 +233,8 @@ msgstr "Arb.Erl. gültig bis"
 msgid "suspended until"
 msgstr "Wartezeit bis"
 
-#: .\models.py:319 .\models.py:864
+#: .\models.py:319
+#: .\models.py:864
 msgid "aid type"
 msgstr "Sozialhilfeart"
 
@@ -258,15 +260,15 @@ msgstr ""
 
 #: .\models.py:328
 msgid "Physical handicap"
-msgstr "Körperliche Behinderung"
+msgstr "Körperliche Einschränkung"
 
 #: .\models.py:329
 msgid "Mental handicap"
-msgstr "Geistige Behinderung"
+msgstr "Geistige Einschränkung"
 
 #: .\models.py:330
 msgid "Psychological handicap"
-msgstr "Psychologische Hemmnisse"
+msgstr "Psychische Einschränkung"
 
 #: .\models.py:331
 msgid "Health problems"
@@ -320,7 +322,8 @@ msgstr "Ausländer"
 msgid "Obstacles"
 msgstr "Hindernisse"
 
-#: .\models.py:351 .\models.py:642
+#: .\models.py:351
+#: .\models.py:642
 msgid "Skills"
 msgstr "Fähigkeiten"
 
@@ -364,49 +367,52 @@ msgstr "Firma"
 msgid "companies"
 msgstr "Firmen"
 
-#: .\models.py:477 .\models.py:902
+#: .\models.py:477
+#: .\models.py:902
 msgid "hourly rate"
 msgstr "Stundensatz"
 
-#: .\models.py:504 .\models.py:626
+#: .\models.py:504
+#: .\models.py:626
 msgid "Designation"
 msgstr "Bezeichnung"
 
 #: .\models.py:507
 msgid "study type"
-msgstr "Studienart"
+msgstr "Ausbildungsart"
 
 #: .\models.py:508
 msgid "study types"
-msgstr "Studienarten"
+msgstr "Ausbildungsarten"
 
 #: .\models.py:542
-#, fuzzy
 msgid "study or education"
-msgstr "Studien & Erfahrungen"
+msgstr "Audbildung"
 
 #: .\models.py:543
-#, fuzzy
 msgid "Studies & education"
-msgstr "Studien & Erfahrungen"
+msgstr "Ausbildung"
 
-#: .\models.py:544 .\models.py:691
+#: .\models.py:544
+#: .\models.py:691
 msgid "Person"
 msgstr "Person"
 
 #: .\models.py:545
 msgid "Study type"
-msgstr "Studienart"
+msgstr "Ausbildungsart"
 
 #: .\models.py:546
 msgid "Study content"
-msgstr "Studieninhalt"
+msgstr "Ausbildungsinhalt"
 
-#: .\models.py:549 .\models.py:696
+#: .\models.py:549
+#: .\models.py:696
 msgid "started"
 msgstr "begonnen"
 
-#: .\models.py:550 .\models.py:697
+#: .\models.py:550
+#: .\models.py:697
 msgid "stopped"
 msgstr "beendet"
 
@@ -430,7 +436,8 @@ msgstr "Sprache"
 msgid "School"
 msgstr "Schule"
 
-#: .\models.py:566 .\models.py:699
+#: .\models.py:566
+#: .\models.py:699
 msgid "Remarks"
 msgstr "Bemerkungen"
 
@@ -519,7 +526,7 @@ msgstr "Listing 104"
 
 #: .\models.py:739
 msgid "exclusion type"
-msgstr "AG-Sperrgründe"
+msgstr "AG-Sperrgrund"
 
 #: .\models.py:740
 msgid "exclusion types"
@@ -545,7 +552,9 @@ msgstr "von"
 msgid "Remark"
 msgstr "Bemerkung"
 
-#: .\models.py:823 .\models.py:890 .\models.py:1137
+#: .\models.py:823
+#: .\models.py:890
+#: .\models.py:1137
 msgid "contract type"
 msgstr "Vertragsart"
 
@@ -561,7 +570,8 @@ msgstr "Referenz"
 msgid "contract title"
 msgstr "Vertragstitel"
 
-#: .\models.py:843 .\models.py:921
+#: .\models.py:843
+#: .\models.py:921
 msgid "examination policy"
 msgstr "Auswertungsstrategie"
 
@@ -569,7 +579,8 @@ msgstr "Auswertungsstrategie"
 msgid "examination policies"
 msgstr "Auswertungsstrategien"
 
-#: .\models.py:846 .\models.py:867
+#: .\models.py:846
+#: .\models.py:867
 msgid "designation"
 msgstr "Bezeichnung"
 
@@ -666,7 +677,8 @@ msgstr "Meine Verträge"
 msgid "responsible (DSBE)"
 msgstr "Verantwortlicher (DSBE)"
 
-#: .\templates\404.html.py:4 .\templates\404.html.py:8
+#: .\templates\404.html.py:4
+#: .\templates\404.html.py:8
 msgid "Page not found"
 msgstr "Seite nicht gefunden"
 
@@ -674,7 +686,8 @@ msgstr "Seite nicht gefunden"
 msgid "We're sorry, but the requested page could not be found."
 msgstr "Tut uns Leid, aber die angefragte Seite konnte nicht gefunden werden."
 
-#: .\templates\500.html.py:4 .\templates\base.html.py:52
+#: .\templates\500.html.py:4
+#: .\templates\base.html.py:52
 msgid "Home"
 msgstr "Anfang"
 
@@ -691,9 +704,7 @@ msgid "Server Error <em>(500)</em>"
 msgstr ""
 
 #: .\templates\500.html.py:10
-msgid ""
-"There's been an error. It's been reported to the site administrators via e-"
-"mail and should be fixed shortly. Thanks for your patience."
+msgid "There's been an error. It's been reported to the site administrators via e-mail and should be fixed shortly. Thanks for your patience."
 msgstr ""
 
 #: .\templates\base.html.py:25

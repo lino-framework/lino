@@ -36,8 +36,13 @@ class Reminder(AutoUser):
     reminder_text = models.CharField(_("Reminder text"),
       max_length=200,blank=True,null=True)
       
+    @classmethod
+    def get_reminders(model,date,user):
+        for obj in model.objects.filter(
+            user__exact=user,reminder_date__lte=date).order_by('reminder_date'):
+            yield ReminderEntry(obj,obj.reminder_date,obj.reminder_text,fmt='detail')
     
-    def summary_row(self,ui,rr,**kw):
+    def unused_summary_row(self,ui,rr,**kw):
         #~ s = u'<b>%s</b> :'
         #~ s = cgi.escape(self.reminder_date.isoformat()) + ": "
         s = ''
@@ -54,25 +59,49 @@ class Reminder(AutoUser):
         return REMINDER_TEXT_CHOICES
     #~ reminder_text_choices.simple_values = True
     #~ reminder_text_choices = classmethod(reminder_text_choices)
+    
+class ReminderEntry:
+    def __init__(self,target,date,text,**target_kw):
+        self.date = date
+        self.target = target
+        self.target_kw = target_kw
+        self.text = text
+        self._lino_model_report = target._lino_model_report
+        self.pk = target.pk
+        self.__unicode__ = target.__unicode__
+        
+    def summary_row(self,ui,rr,**kw):
+        s = ''
+        if self.text:
+            s += '<b>' + cgi.escape(self.text) + '</b> '
+        s += '<a href="%s" target="_blank">%s</a>' % (
+          ui.get_detail_url(self,**self.target_kw),
+          unicode(self.target))
+        return s
 
 def reminders_summary(ui,user,*args,**kw):
     s= ''
     date = datetime.date.today()
     days = {}
     objects = []
-    def add(obj):
-        day = days.get(obj.reminder_date,None)
+    def add(rem):
+        day = days.get(rem.date,None)
         if day is None:
-            day = [obj]
-            days[obj.reminder_date] = day
+            day = [rem]
+            days[rem.date] = day
         else:
-            day.append(obj)
+            day.append(rem)
         
     for model in models.get_models():
-        if issubclass(model,Reminder):
-            for obj in model.objects.filter(
-                user__exact=user,reminder_date__lte=date).order_by('reminder_date'):
-                add(obj)
+        #~ if issubclass(model,Reminder):
+            #~ for obj in model.objects.filter(
+                #~ user__exact=user,reminder_date__lte=date).order_by('reminder_date'):
+                #~ ReminderEntry(obj,obj,
+                #~ add(obj)
+        if hasattr(model,'get_reminders'):
+            for rem in model.get_reminders(date,user):
+                add(rem)
+
     sorted_days = days.keys()
     sorted_days.sort()
     for day in sorted_days:

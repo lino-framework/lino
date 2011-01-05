@@ -1152,12 +1152,19 @@ class ExtUI(base.UI):
         return self.build_url('api',rr.report.app_label,rr.report._actor_name,*args,**kw)
         
     def get_detail_url(self,obj,*args,**kw):
-        rpt = obj.__class__._lino_model_report
+        #~ rpt = obj.__class__._lino_model_report
+        rpt = obj._lino_model_report
         return self.build_url('api',rpt.app_label,rpt._actor_name,str(obj.pk),*args,**kw)
       
     def py2js_converter(self,v):
         if v is LANGUAGE_CHOICES:
             return js_code('LANGUAGE_CHOICES')
+        if isinstance(v,reports.ReportActionRequest):
+            if v.total_count == 0:
+                return [dict(text="Upload",handler=js_code('Lino.%s' % v.report.get_action('insert')))]
+                #~ return '<a href="foo">create</a>'
+            return [dict(text="Show",handler=js_code('Lino.%s' % v.report.get_action('detail')))]
+            #~ return '<a href="%s">%s</a>' % (self.get_detail_url(v[0],fmt='detail'),force_unicode(v[0]))
         if isinstance(v,Exception):
             return unicode(v)
         if isinstance(v,menus.Menu):

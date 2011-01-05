@@ -819,6 +819,15 @@ if (Ext.ux.grid !== undefined) {
     });
 };
 
+Lino.ButtonField = Ext.extend(Ext.form.TextField,{
+  editable : false,
+  constructor : function(ww,config,params){
+    this.ww = ww;
+    if (params) Ext.apply(config,params);
+    Lino.ButtonField.superclass.constructor.call(this, config);
+  },
+});
+
 Lino.HtmlBoxPanel = Ext.extend(Ext.Panel,{
   constructor : function(ww,config,params){
     this.ww = ww;
@@ -1090,6 +1099,22 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     console.log(a);
     Ext.Ajax.request(a);
     win.show();
+  },
+  load_buttons_to : function(cmp,record) {
+    console.log('Lino.load_buttons_to()',cmp,record);
+    Lino.do_when_visible(cmp,function() {
+      var buttons = record.data[cmp.name]; // a list of button configs
+      var el = cmp.getEl();
+      for (i in buttons) {
+          buttons[i] = new Ext.Button(buttons[i])
+      };
+      console.log('load_buttons_to',buttons);
+      if (el) {
+        el.update(buttons);
+      }
+      
+    });
+    //~ cmp.on_master_changed();
   },
   load_htmlbox_to : function(cmp,record) {
     //~ console.log('Lino.load_htmlbox_to()',cmp,record);

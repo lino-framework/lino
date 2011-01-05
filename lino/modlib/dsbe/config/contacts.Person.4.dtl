@@ -2,16 +2,18 @@
 :label_align: top
 
 main = 
-  box1 box2
-  dsbe.SkillsByPerson 
+  box1 box2 dsbe.SkillsByPerson 
+  dsbe.LanguageKnowledgesByPerson skills 
   
 box2 = 
-  skills 
-  activity 
+  driving_license_until
+  it_knowledge
 
 box1 = 
-  driving_license 
   has_own_car
+  can_car
+  can_truck
+  can_bus
   can_clark
-  it_knowledge    
+  
 

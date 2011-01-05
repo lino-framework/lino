@@ -61,6 +61,8 @@ def before_row_edit(panel):
             l.append("%s.on_master_changed();" % e.as_ext())
         elif isinstance(e,PictureElement):
             l.append("this.load_picture_to(%s,record);" % e.as_ext())
+        elif isinstance(e,ShowOrCreateElement):
+            l.append("this.load_buttons_to(%s,record);" % e.as_ext())
         elif isinstance(e,HtmlBoxElement):
             #~ l.append("%s.items.get(0).getEl().update(record.data.%s);" % (e.as_ext(),e.field.name))
             l.append("this.load_htmlbox_to(%s,record);" % e.as_ext())
@@ -411,13 +413,9 @@ class FieldElement(LayoutElement):
         return kw
     
 class HtmlBoxElement(FieldElement):
-#~ class HtmlBoxElement(LayoutElement):
     ext_suffix = "_htmlbox"
     declare_type = jsgen.DECLARE_VAR
-    #~ declare_type = jsgen.DECLARE_INLINE
-    #~ value_template = "new Ext.BoxComponent(%s)"
     value_template = "new Lino.HtmlBoxPanel(ww,%s)"
-    #~ value_template = "new Ext.Panel(%s)"
     preferred_height = 5
     vflex = True
     filter_type = 'string'
@@ -439,6 +437,16 @@ class HtmlBoxElement(FieldElement):
             #~ kw.update(ls_bbar_actions=self.field.bbar)
         return kw
         
+class ShowOrCreateElement(FieldElement):
+    ext_suffix = "_bbox"
+    declare_type = jsgen.DECLARE_VAR
+    value_template = "new Lino.ButtonField(ww,%s)"
+    #~ preferred_height = 5
+    #~ vflex = True
+    #~ filter_type = 'string'
+    refers_to_ww = True
+    
+    
         
 class TextFieldElement(FieldElement):
     #~ xtype = 'textarea'
@@ -1292,6 +1300,7 @@ class FormPanel(jsgen.Component):
 
 
 _field2elem = (
+    (fields.ShowOrCreateButton, ShowOrCreateElement),
     (fields.HtmlBox, HtmlBoxElement),
     (models.URLField, URLFieldElement),
     (models.FileField, FileFieldElement),

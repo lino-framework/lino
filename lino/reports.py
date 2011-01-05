@@ -295,7 +295,8 @@ class ReportHandle(base.Handle):
         #~ self.ui = ui
         base.Handle.__init__(self,ui)
         if self.report.model is not None:
-            self.list_layout = LayoutHandle(self,ListLayout('main = '+self.report.column_names))
+            if ui is not None:
+                self.list_layout = LayoutHandle(self,ListLayout('main = '+self.report.column_names))
             self.content_type = ContentType.objects.get_for_model(self.report.model).pk
             self.data_elems = report.data_elems
             self.get_data_elem = report.get_data_elem
@@ -386,7 +387,7 @@ class ReportActionRequest:
     def __init__(self,ui,report,action):
     #~ def __init__(self,rh,action):
         #~ assert isinstance(rh,ReportHandle)
-        assert ui.create_meth_element is not None
+        #~ assert ui.create_meth_element is not None
         #~ if ui is not None: assert ui.create_meth_element is not None
         self.report = report
         self.ah = report.get_handle(ui)
@@ -490,6 +491,9 @@ class ReportActionRequest:
         
     def __iter__(self):
         return self.queryset.__iter__()
+        
+    def __getitem__(self,*args):
+        return self.queryset.__getitem__(*args)
         
     def __len__(self):
         return self.queryset.__len__()

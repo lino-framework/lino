@@ -40,11 +40,13 @@ from lino.modlib.contacts import models as contacts
 from lino.modlib.notes import models as notes
 from lino.modlib.links import models as links
 from lino.modlib.uploads import models as uploads
+#~ from lino.modlib.uploads.models import UploadsByPerson
 from lino.models import get_site_config
 from lino.tools import get_field
 from lino.utils.babel import add_babel_field, default_language, babelattr
 from lino.utils.choosers import chooser
 from lino.mixins.printable import DirectPrintAction
+from lino.mixins.reminder import ReminderEntry
 
 #~ from lino.modlib.fields import KNOWLEDGE_CHOICES # for makemessages
 
@@ -134,13 +136,13 @@ CIVIL_STATE_CHOICES = [
 
 # http://en.wikipedia.org/wiki/European_driving_licence
 
-DRIVING_LICENSE_CHOICES = (
-  ('A'  , _("Motorcycles") ),
-  ('B'  , _("Car") ), # Auto
-  ('C'  , _("Lorry") ),
-  ('CE' , _("Lorry with trailer") ), 
-  ('D'  , _("Bus") ), 
-)
+#~ DRIVING_LICENSE_CHOICES = (
+  #~ ('A'  , _("Motorcycles") ),
+  #~ ('B'  , _("Car") ), # Auto
+  #~ ('C'  , _("Lorry") ),
+  #~ ('CE' , _("Lorry with trailer") ), 
+  #~ ('D'  , _("Bus") ), 
+#~ )
 
 RESIDENCE_TYPE_CHOICES = (
   (1  , _("Registry of citizens")   ), # Bevölkerungsregister   registre de la population
@@ -289,16 +291,21 @@ class Person(Partner,contacts.Person):
         verbose_name=_("until"))
     #~ driving_license = models.ForeignKey("dsbe.DrivingLicense",blank=True,null=True,
         #~ verbose_name=_("Driving license"))
-    driving_license = models.CharField(max_length=4,blank=True,null=True,
-        verbose_name=_("Driving license"),choices=DRIVING_LICENSE_CHOICES)
+    #~ driving_license = models.CharField(max_length=4,blank=True,null=True,
+        #~ verbose_name=_("Driving license"),choices=DRIVING_LICENSE_CHOICES)
     
     no_shift = models.BooleanField(verbose_name=_("no shift work"))
     no_weekend = models.BooleanField(verbose_name=_("no work on week-end"))
-    has_own_car = models.BooleanField(verbose_name=_("has own car"))
-    #~ can_truck = models.BooleanField(verbose_name=_("Truck driving license"))
-    can_clark = models.BooleanField(verbose_name=_("Clark driving license"))
-    #~ can_bus = models.BooleanField(verbose_name=_("Bus driving license"))
     has_family = models.BooleanField(verbose_name=_("Head of a family"))
+    
+    
+    has_own_car = models.BooleanField(verbose_name=_("has own car"))
+    can_car = models.BooleanField(verbose_name=_("Car driving license"))
+    can_truck = models.BooleanField(verbose_name=_("Truck driving license"))
+    can_clark = models.BooleanField(verbose_name=_("Clark driving license"))
+    can_bus = models.BooleanField(verbose_name=_("Bus driving license"))
+    
+    driving_license_until = models.DateField(_("Driving license valid until"),blank=True,null=True)
     
     it_knowledge = fields.KnowledgeField(blank=True,null=True,
         verbose_name=_("IT knowledge"))
@@ -334,7 +341,6 @@ class Person(Partner,contacts.Person):
     social_competence = models.BooleanField(_("Lack of social competence"))
     motivation_lack = models.BooleanField(_("Lack of motivation"))
     
-    #~ unavailable = models.BooleanField(verbose_name=_("Unavailable"))
     unavailable_until = models.DateField(blank=True,null=True,verbose_name=_("Unavailable until"))
     unavailable_why = models.CharField(max_length=100,blank=True,null=True,
         verbose_name=_("reason"))
@@ -364,6 +370,20 @@ class Person(Partner,contacts.Person):
         "Used by DirectPrintAction"
         return self.language
         
+    @classmethod
+    def get_reminders(model,date,user):
+        q = models.Q(coach1__exact=user) | models.Q(coach2__exact=user)
+        for obj in model.objects.filter(q,
+              driving_license_until__lte=date+datetime.timedelta(days=14)).order_by('driving_license_until'):
+            yield ReminderEntry(obj,obj.driving_license_until,_("driving license expires in 14 days"),fmt='detail',tab=3)
+        for obj in model.objects.filter(q,
+              residence_permit_until__lte=date+datetime.timedelta(days=60)).order_by('residence_permit_until'):
+            yield ReminderEntry(obj,obj.residence_permit_until,_("residence permit expires in 60 days"),fmt='detail',tab=4)
+        for obj in model.objects.filter(q,
+              work_permit_valid_until__lte=date+datetime.timedelta(days=40)).order_by('work_permit_valid_until'):
+            yield ReminderEntry(obj,obj.work_permit_valid_until,_("work permit expires in 40 days"),fmt='detail',tab=4)
+      
+        
     def get_image_parts(self):
         if self.card_number:
             return ("beid",self.card_number+".jpg")
@@ -381,7 +401,7 @@ class Person(Partner,contacts.Person):
             if lk.written > 0:
                 return False
         return True
-    is_illiterate.return_type = models.BooleanField(_("Illiterate"),editable=False,blank=True)
+    is_illiterate.return_type = models.BooleanField(_("Illiterate"),editable=False)
     
     def age(self):
         if self.birth_date:
@@ -408,6 +428,15 @@ class Person(Partner,contacts.Person):
         #~ lines.append('</div>')
         return '<br/>'.join(lines)
     overview.return_type = fields.HtmlBox(_("Overview"))
+    
+    
+    def residence_permit(self):
+        return uploads.UploadsByPerson().request(master_instance=self,type__exact=2)
+    residence_permit.return_type = fields.ShowOrCreateButton(_("Residence permit"))
+    
+    def driving_license(self):
+        return uploads.UploadsByPerson().request(master_instance=self,type__exact=5)
+    driving_license.return_type = fields.ShowOrCreateButton(_("driving license"))
     
     
 PERSON_TIM_FIELDS = reports.fields_list(Person,
@@ -653,6 +682,7 @@ class Skill(models.Model):
       verbose_name=_("skill type"))
     #~ type = models.ForeignKey("dsbe.JobType")
     strength = fields.StrengthField(verbose_name=_("strength"))
+    remark = models.CharField(max_length=200,verbose_name=_("Remark"))
     
 class SkillsByPerson(reports.Report):
     model = Skill

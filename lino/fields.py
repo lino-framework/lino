@@ -172,7 +172,6 @@ class QuantityField(models.DecimalField):
         fld.widget.attrs['style'] = "text-align:right;"
         return fld
         
-
 class HtmlBox:
     editable = False
     choices = None
@@ -184,4 +183,8 @@ class HtmlBox:
         for k,v in kw.items():
             assert hasattr(self,k)
             setattr(self,k,v)
+        
+class ShowOrCreateButton(HtmlBox):
+    pass
+    
         
