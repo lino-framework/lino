@@ -54,25 +54,25 @@ def objects():
     yield city(u'Nancy','FR')
     yield city(u'Marseille','FR')
     
-    company = Instantiator('contacts.Company',"name zip_code city:name street street_no",country='EE',language='et').build
+    company = Instantiator('contacts.Company',"name zip_code city:name street street_no",country='EE').build
     yield company(u'Rumma & Ko OÜ','10115','Tallinn',u'Tartu mnt','71')
     
-    company = Instantiator('contacts.Company',"name zip_code city:name street street_no",country='BE',language='de').build
+    company = Instantiator('contacts.Company',"name zip_code city:name street street_no",country='BE').build
     yield company(u'Bäckerei Ausdemwald', '4700', 'Eupen',  u'Vervierser Straße','45')
     yield company(u'Bäckerei Mießen',     '4700', 'Eupen',  u'Gospert','103')
     yield company(u'Bäckerei Schmitz',    '4700', 'Eupen',  u'Aachener Straße','53')
     yield company(u'Garage Mergelsberg',  '4720', 'Kelmis', u'Kasinostraße','13')
     
-    company = Instantiator('contacts.Company',"name zip_code city:name street street_no",country='NL',language='nl').build
+    company = Instantiator('contacts.Company',"name zip_code city:name street street_no",country='NL').build
     yield company(u'Donderweer BV','4816 AR','Breda', 'Edisonstraat','12')
     yield company(u'Van Achter NV','4836 LG','Breda', 'Hazeldonk','2')
     
-    company = Instantiator('contacts.Company',"name zip_code city:name street street_no",country='DE',language='de').build
+    company = Instantiator('contacts.Company',"name zip_code city:name street street_no",country='DE').build
     yield company(u'Hans Flott & Co','22453','Hamburg',u'Niendorfer Weg','532')
     yield company(u'Bernd Brechts Bücherladen','80333',u'München',u'Brienner Straße','18')
     yield company(u'Reinhards Baumschule','12487 ',u'Berlin',u'Segelfliegerdamm','123')
     
-    company = Instantiator('contacts.Company',"name zip_code city:name street street_no",country='FR',language='fr').build
+    company = Instantiator('contacts.Company',"name zip_code city:name street street_no",country='FR').build
     yield company(u'Moulin Rouge','75018','Paris',u'Boulevard de Clichy','82')
     yield company(u'Auto École Verte','54000 ','Nancy',u'rue de Mon Désert','12')
     
@@ -80,12 +80,12 @@ def objects():
     vigala = City.objects.get(name__exact='Vigala')
     #~ tallinn = City.objects.get(name__exact='Tallinn')
     person = Instantiator('contacts.Person',"first_name last_name",
-                country='EE',language='et',city=vigala,zip_code='78003').build
+                country='EE',city=vigala,zip_code='78003').build
     yield person(u'Luc',  u'Saffre')
     
     eupen = City.objects.get(name__exact='Eupen')
     person = Instantiator('contacts.Person',"first_name last_name",
-                country='BE',language='de',city=eupen,zip_code='4700').build
+                country='BE',city=eupen,zip_code='4700').build
     yield person(u'Andreas',  u'Arens')
     yield person(u'Annette',  u'Arens')
     yield person(u'Hans',     u'Altenberg')
@@ -150,11 +150,11 @@ def objects():
     yield person(u'Erna',   u'Ärgerlich')
     
     
-    person = Instantiator('contacts.Person',country='BE',language='fr',city=City.objects.get(name__exact=u'Angleur')).build
+    person = Instantiator('contacts.Person',country='BE',city=City.objects.get(name__exact=u'Angleur')).build
     yield person(first_name=u'Bernard',last_name=u'Bodard',title='Dr.')
     yield person(first_name=u'Jean',last_name=u'Dupont')
     
-    person = Instantiator('contacts.Person',country='BE',language='nl',city=City.objects.get(name__exact=u'Oostende')).build
+    person = Instantiator('contacts.Person',country='BE',city=City.objects.get(name__exact=u'Oostende')).build
     yield person(first_name=u'Mark',last_name=u'Martelaer')
     yield person(first_name=u'Rik',last_name=u'Radermecker')
     yield person(first_name=u'Marie-Louise',last_name=u'Vandenmeulenbos')

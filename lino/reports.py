@@ -406,7 +406,7 @@ class ReportActionRequest:
     def setup(self,
             master=None,
             master_instance=None,
-            #~ master_id=None,
+            master_id=None,
             offset=None,limit=None,
             layout=None,user=None,
             create_rows=None,
@@ -435,9 +435,9 @@ class ReportActionRequest:
         kw.update(self.report.params)
         self.params = kw
         
-        #~ if master_id is not None:
-            #~ assert master_instance is None
-            #~ master_instance = self.master.get(pk=master_pk)
+        if master_id is not None:
+            assert master_instance is None
+            master_instance = self.master.get(pk=master_id)
             
         self.master_kw = self.report.get_master_kw(master_instance)
         self.master_instance = master_instance
@@ -1049,6 +1049,7 @@ class BaseLayout:
     label = None
     has_frame = False # True
     label_align = LABEL_ALIGN_TOP
+    hideCheckBoxLabels = True
     #label_align = LABEL_ALIGN_LEFT
     default_button = None
     collapsible_elements  = {}
@@ -1251,6 +1252,7 @@ class LayoutHandle:
             desc = desc.replace('*',wildcard_fields)
             #logger.debug('desc -> %r',desc)
         if "\n" in desc:
+            # it's a vertical box
             elems = []
             i = 0
             for x in desc.splitlines():
@@ -1267,6 +1269,7 @@ class LayoutHandle:
             #return self.vbox_class(self,name,*elems,**kw)
             return panelclass(self,desc_name,True,*elems,**kw)
         else:
+            # it's a horizontal box
             elems = []
             for x in desc.split():
                 if not x.startswith("#"):

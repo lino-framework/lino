@@ -658,9 +658,16 @@ class BooleanFieldElement(FieldElement):
     #~ def __init__(self,*args,**kw):
         #~ FieldElement.__init__(self,*args,**kw)
         
+    def set_parent(self,parent):
+        FieldElement.set_parent(self,parent)
+        #~ if isinstance(parent,Panel) and parent.hideCheckBoxLabels:
+        if parent.hideCheckBoxLabels:
+            self.update(hideLabel=True)
+            
     def get_field_options(self,**kw):
         kw = FieldElement.get_field_options(self,**kw)
         del kw['fieldLabel']
+        #~ kw.update(hideLabel=True)
         kw.update(boxLabel=self.label)
         return kw
         
@@ -688,6 +695,7 @@ class Container(LayoutElement):
     is_fieldset = False
     #~ xtype = 'container'
     value_template = "new Ext.Container(%s)"
+    #~ hideCheckBoxLabels = True
     
     #declare_type = jsgen.DECLARE_INLINE
     #declare_type = jsgen.DECLARE_THIS
@@ -698,6 +706,7 @@ class Container(LayoutElement):
     def __init__(self,lh,name,*elements,**kw):
         self.has_frame = lh.layout.has_frame
         self.labelAlign = lh.layout.label_align
+        self.hideCheckBoxLabels = lh.layout.hideCheckBoxLabels
         self.active_children = []
         self.elements = elements
         if elements:
@@ -713,14 +722,21 @@ class Container(LayoutElement):
                 elif isinstance(e,Panel):
                     self.active_children += e.active_children
                     #~ self.has_fields = True
-                    
             kw.update(items=elements)
                 
         LayoutElement.__init__(self,lh,name,**kw)
         
-        if lh.layout.__class__.__name__ == 'CompanyDetail':
-            print 20100919, self.__class__.__name__, name, ':', str(elements)
+        #~ if lh.layout.__class__.__name__ == 'CompanyDetail':
+            #~ print 20100919, self.__class__.__name__, name, ':', str(elements)
         
+        #~ onlyCheckBoxes = True
+        #~ for e in self.walk():
+            #~ if not isinstance(e,BooleanFieldElement):
+                #~ onlyCheckBoxes = False
+        #~ if onlyCheckBoxes:
+            #~ for e in self.walk():
+                #~ e.update(hideLabel=True)
+                #~ print 'hideLabel:', e,
         
     def subvars(self):
         return self.elements

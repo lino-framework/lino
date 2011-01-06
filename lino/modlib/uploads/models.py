@@ -43,11 +43,20 @@ class UploadTypes(reports.Report):
     order_by = ["name"]
     
         
+DELAY_CHOICES = [
+  ('D', _("days")),
+  ('W', _("weeks")),
+  ('M', _("months")),
+  ('Y', _("years")),
+]
   
 class Upload(mixins.Uploadable,mixins.PartnerDocument,mixins.Reminder):
     type = models.ForeignKey("uploads.UploadType",
       blank=True,null=True)
       #~ verbose_name=_('upload type'))
+    delay_value = models.IntegerField(_("Delay"),default=0)
+    delay_unit = models.CharField(_("Unit"),max_length=1,default='D',choices=DELAY_CHOICES)
+      
 
     def __unicode__(self):
         if self.description:

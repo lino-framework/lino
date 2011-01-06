@@ -3,12 +3,15 @@
 
 - Durch die neue Feldart CreateOrShowButton können jetzt folgende DB-Änderungen:
 
-  - residence_permit_until 
+  - residence_permit_until,
     driving_license_until 
     und 
-    work_permit_valid_until raus
+    work_permit_valid_until 
+    raus
     
-- Wieso erlaubt Django das Folgende::
+  
+    
+- Hier was Lustiges, das ich heute gelernt habe::
     
     >>> p = Person.objects.all()[0]
     >>> p
@@ -20,7 +23,33 @@
   Tut er aber nicht. 
   Das hat seine Logik, aber ich wusste es nicht.
     
-- Todo nachmittags:
-  - neues Feld Reminder.delay_value und delay_unit
-  - Neues Feed Person. Kontaktperson ADG
+- Neue Felder Upload.delay_value und Upload.delay_unit
+
+- Menü `Notizen` heißt jetzt `Mein Menü`
+
+- Neue Tabelle PersonGroup und Feld `is_dsbe` ersetzt durch `group`.
+  MyPersons filtert jetzt auch auf `group__isnull=False`
   
+  Neuer Report `MyPersonsByGroup`
+  
+- :class:`lino.utils.instantiator.ForeignKeyConverter` konvertiert 
+  jetzt leere strings nach None. Bisher kam ein Traceback, 
+  wenn man City auswählen wollte und Land leer hatte.
+
+- JobExperience.company : freier Text.
+
+- Checkboxen konnte man zwar einschalten, aber nicht ausschalten.
+  Das lag daran, dass `input type checkbox` in einer HTML-Form *nicht* 
+  submitted wird, wenn die checkbox abgeschaltet ist.
+  Das neue Klassenattribut :attr:`lino.ui.extjs.ext_store.StoreField.form2obj_default` 
+  ist dazu da.
+
+- Checkboxen haben ihr Attribut `hideLabel` jetzt auf `True` 
+  und nehmen jetzt nicht mehr unnötig viel Platz.
+
+TODO:
+
+- Neues Feld "Kontaktperson ADG" in Person. Site.
+  
+- Länder importieren
+

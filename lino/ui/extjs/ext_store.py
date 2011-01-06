@@ -37,6 +37,9 @@ from lino.utils import choosers
 
 class StoreField(object):
   
+    form2obj_default = None
+    "because checkboxes are not submitted when they are off"
+    
     list_values_count = 1
     "Necessary to compute :attr:`Store.pk_index`."
     
@@ -66,7 +69,7 @@ class StoreField(object):
         d[self.field.name] = self.value_from_object(request,obj)
 
     def form2obj(self,instance,post_data):
-        v = post_data.get(self.field.name,None)
+        v = post_data.get(self.field.name,self.form2obj_default)
         if v is None:
             return
         if v == '' and self.field.null:
@@ -128,6 +131,9 @@ class DisabledFieldsStoreField(StoreField):
         #~ instance[self.field.name] = v
   
 class BooleanStoreField(StoreField):
+  
+    form2obj_default = 'off'
+    
     def __init__(self,field,**kw):
         kw['type'] = 'boolean'
         StoreField.__init__(self,field,**kw)
@@ -137,8 +143,9 @@ class BooleanStoreField(StoreField):
             return True
         if v in ('false','off'):
             return False
-        return None
-        
+        raise Exception("Got invalid form value %r for %s" % (v,self.field.name))
+
+
 class AutoStoreField(StoreField):
     def __init__(self,field,**kw):
         kw['type'] = 'int'

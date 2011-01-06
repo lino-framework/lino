@@ -19,6 +19,8 @@ class Site(Base):
     domain = "dsbe.saffre-rumma.net"
     help_url = "http://lino.saffre-rumma.net/dsbe/index.html"
     
+    job_office_id = None
+    
     def init_site_config(self,sc):
         #~ print 20100908, "lino_settings.py init_site_config"
         sc.next_partner_id = 200000
@@ -26,12 +28,15 @@ class Site(Base):
     def setup_main_menu(self):
   
         from django.utils.translation import ugettext_lazy as _
+        #~ from django.utils.encoding import force_unicode
+
         #~ from lino.site import LinoSite
 
         #~ from django.db import models
         from lino.utils import perms
 
         from lino import models as system
+        from lino.modlib.dsbe import models as dsbe
         
         self.index_html = u"""
         Willkommen auf dem ersten Prototypen von Lino-DSBE.
@@ -47,18 +52,22 @@ class Site(Base):
         m.add_action('contacts.Persons')
         #~ m.add_action('contacts.Persons2')
 
-        m = self.add_menu("notes",_("~Notes"),can_view=perms.is_authenticated)
+        m = self.add_menu("my",_("~My menu"),can_view=perms.is_authenticated)
         #~ m.add_action('projects.Projects')
         m.add_action('notes.MyNotes')
         m.add_action('uploads.MyUploads')
         m.add_action('dsbe.MyContracts')
         m.add_action('contacts.MyPersons')
+        for pg in dsbe.PersonGroup.objects.all():
+            m.add_action('contacts.MyPersonsByGroup',label=pg.name,
+            params=dict(master_id=pg.pk))
 
         m = self.add_menu("config",_("~Configure"),
           can_view=perms.is_staff)
         #~ m.add_action('projects.ProjectTypes')
         m.add_action('notes.NoteTypes')
         m.add_action('dsbe.ContractTypes')
+        m.add_action('dsbe.PersonGroups')
         m.add_action('contacts.CompanyTypes')
         m.add_action('contacts.ContactTypes')
         m.add_action('dsbe.SkillTypes')

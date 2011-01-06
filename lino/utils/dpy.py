@@ -218,7 +218,7 @@ class FakeDeserializedObject(base.DeserializedObject):
         self.object = obj
 
     def save(self, *args,**kw):
-        #~ print 'dpyserializer',self.object
+        #~ print 'dpy.py',self.object
         if True:
             try:
                 self.object.full_clean()

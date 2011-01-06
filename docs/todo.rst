@@ -9,17 +9,30 @@ for which I hope for help from other people.
 Version 1.0
 -----------
 
-#.  Partnernummer im Titel anzeigen. Nur im Titel? 
-    Oder generell immer mit __unicode__?
-    
+#.  Liste "Meine Personen" : nur `is_dsbe`
+
+#.  Dialekt der csv-Datei bestimmen können (Excel oder OOo)
+
+#.  Komplette Länderliste importieren
+
+#.  Manche Links öffnen einen neuen Tab: irritiert
+
+#.  Liste der offenen Fenster. Einfachste Form wäre ein Dropdown, 
+    so dass man leicht von hier nach dort springen kann. 
+    Oder als vertikale Reiter.
+
+#.  cv.odt testen mit appyodt statt appypdf
+
 #.  Reminder haben bisher reminder_date und reminder_text. 
     reminder_date : Fällig am
-    reminder_before_value
-    reminder_before_unit
     
-    Da fehlt noch ein Feld "X Tage vorher"
-
-#.  Dokumentvorlagen weitert
+    Da fehlt noch ein Feld "X Tage vorher" reminder_delay.
+    Am besten ein TimeDelaField wie in 
+    http://djangosnippets.org/snippets/1060/
+    
+    Und ein Feld `ok`
+    
+#.  Dokumentvorlagen weiter
 
 #.  Auf einem gefilterten Detail von Personen sind die 
     SlaveQueries manchmal fälschlicherweise ebenfalls gefiltert. 

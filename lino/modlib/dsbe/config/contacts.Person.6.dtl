@@ -27,6 +27,6 @@ box3 =
 box4 = 
   has_family
   young_children
-  migration
+  #migration
   is_illiterate
 

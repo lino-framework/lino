@@ -54,7 +54,20 @@ def default_language():
     #~ from django.conf import settings
     return settings.LANGUAGE_CODE[:2]
     
+def lang_name(code):
+    for lng in settings.LANGUAGES:
+        if lng[0] == code:
+            return lng[1]
+    raise ValueError("No code %r in settings.LANGUAGES" % code)
+    
+BABEL_CHOICES = [
+  (default_language(),lang_name(default_language()))
+] + [ 
+  (lng,lang_name(lng)) for lng in settings.BABEL_LANGS 
+]
 
+  
+#~ print __file__, BABEL_CHOICES  
 
 LANG = None
 

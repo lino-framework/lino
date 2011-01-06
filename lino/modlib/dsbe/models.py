@@ -242,8 +242,10 @@ class Person(Partner,contacts.Person):
     is_cpas = models.BooleanField(verbose_name=_("receives social help"))
     is_senior = models.BooleanField(verbose_name=_("is senior"))
     #~ is_minor = models.BooleanField(verbose_name=_("is minor"))
-    is_dsbe = models.BooleanField(verbose_name=_("is coached"),default=False)
-    #~ "Indicates whether this is coached."
+    group = models.ForeignKey("dsbe.PersonGroup",blank=True,null=True,
+        verbose_name=_("Group"))
+    #~ is_dsbe = models.BooleanField(verbose_name=_("is coached"),default=False)
+    "Indicates whether this Person is coached."
     
     coach1 = models.ForeignKey("auth.User",blank=True,null=True,
         verbose_name=_("Coach 1"),related_name='coached1')
@@ -319,7 +321,8 @@ class Person(Partner,contacts.Person):
         max_length=1,
         #~ limit_to_choices=True,
         )
-    unemployed_since = models.DateField(blank=True,null=True,verbose_name=_("Unemployed since"))
+    in_belgium_since = models.DateField(_("Lives in Belgium since"),blank=True,null=True)
+    unemployed_since = models.DateField(_("Seeking work since"),blank=True,null=True)
     #~ work_permit_exempt = models.BooleanField(verbose_name=_("Work permit exemption"))
     needs_residence_permit = models.BooleanField(verbose_name=_("Needs residence permit"))
     needs_work_permit = models.BooleanField(verbose_name=_("Needs work permit"))
@@ -351,10 +354,14 @@ class Person(Partner,contacts.Person):
     fulltime_only = models.BooleanField(_("Fulltime only"))
     parttime_only = models.BooleanField(_("Part-time only"))
     young_children = models.BooleanField(_("Young children"))
-    native_language = models.CharField(max_length=100,
-        blank=True,null=True,
-        verbose_name=_("Native language"))
-    migration = models.BooleanField(_("Migration"))
+    native_language = fields.LanguageField(
+      verbose_name=_("Native language"),
+      blank=True,null=True)
+    #~ native_language = models.CharField(max_length=100,
+        #~ blank=True,null=True,
+        #~ verbose_name=_("Native language"))
+    #~ migration = models.BooleanField(_("Migration"))
+    is_seeking = models.BooleanField(_("is seeking work"))
     
     obstacles = models.TextField(_("Obstacles"),blank=True,null=True)
     skills = models.TextField(_("Skills"),blank=True,null=True)
@@ -362,15 +369,28 @@ class Person(Partner,contacts.Person):
         blank=True,null=True,
         verbose_name=_("Job agents"))
     
+    job_office_contact = models.ForeignKey("contacts.Contact",blank=True,null=True,
+      verbose_name=_("job office contact"),related_name='persons_job_office')
+      
+    @chooser()
+    def job_office_contact_choices(cls):
+        pk = settings.LINO_SITE.job_office_id
+        if pk is not None:
+            jo = Company.objects.get(pk=pk)
+            return jo.contact_set.all()
+        return []
+
 
     @classmethod
     def setup_report(model,rpt):
         rpt.add_action(DirectPrintAction(rpt,'auskblatt',_("Auskunftsblatt"),'appyodt','persons/auskunftsblatt.odt'))
         rpt.add_action(DirectPrintAction(rpt,'eid',_("eID-Inhalt"),'appypdf','persons/eid-content.odt'))
-        rpt.add_action(DirectPrintAction(rpt,'cv',_("Curiculum vitae"),'appypdf','persons/cv.odt'))
+        rpt.add_action(DirectPrintAction(rpt,'cv',_("Curiculum vitae"),'appyodt','persons/cv.odt'))
         
     def __unicode__(self):
         return u"%s (%s)" % (self.name,self.pk)
+        
+    full_name = property(contacts.Person.get_full_name)
         
     def get_print_language(self,pm):
         "Used by DirectPrintAction"
@@ -497,16 +517,19 @@ class MyPersons(Persons):
         qs = super(MyPersons,self).get_request_queryset(rr)
         q1 = models.Q(coach1__exact=rr.user)
         q2 = models.Q(coach2__exact=rr.user)
+        q3 = models.Q(group__isnull=False)
         #~ q2 = Q(coached__gt=0)
         #~ q2 = Q(dsbe_coach__exact=user)
         #~ q2 = Q(dsbe_coaches__contains=user)
         #~ q2 = Q(coaching_set__user__exact=user)
         #~ return Person.objects.annotate(dsbe_ccoach=Count('coaching_set__user__exact')).filter(q1|q2)
-        return qs.filter(q1|q2)
+        return qs.filter(q1|q2|q3)
     #~ Person.user == user 
     #~ or 
     #~ Person.coachings_set.filter(user__exact=user).count() > 0        
-    
+
+class MyPersonsByGroup(MyPersons):
+    fk_name = 'group'
               
 #~ class Company(Contact,contacts.Company):
 #~ class Company(Partner,contacts.Addressable,):
@@ -546,6 +569,21 @@ class Companies(contacts.Companies):
     
 #~ from lino.modlib.contacts.models import Companies
 
+#
+# PERSON GROUP
+#
+class PersonGroup(models.Model):
+    name = models.CharField(_("Designation"),max_length=200)
+    #~ text = models.TextField(_("Description"),blank=True,null=True)
+    class Meta:
+        verbose_name = _("person group")
+        verbose_name_plural = _("person groups")
+    def __unicode__(self):
+        return self.name
+
+class PersonGroups(reports.Report):
+    model = PersonGroup
+    order_by = ["name"]
 
     
 #
@@ -743,9 +781,13 @@ class JobExperience(models.Model):
         verbose_name = _("job experience")
         verbose_name_plural = _("job experiences")
     person = models.ForeignKey("contacts.Person",verbose_name=_("Person"))
-    company = models.ForeignKey("contacts.Company",verbose_name=_("Company"))
+    #~ company = models.ForeignKey("contacts.Company",verbose_name=_("Company"))
+    company = models.CharField(max_length=200,verbose_name=_("company"))
     #~ type = models.ForeignKey(JobType,verbose_name=_("job type"))
     title = models.CharField(max_length=200,verbose_name=_("job title"))
+    country = models.ForeignKey("countries.Country",
+        blank=True,null=True,
+        verbose_name=_("Country"))
   
     started = fields.MonthField(_("started"),blank=True,null=True)
     stopped = fields.MonthField(_("stopped"),blank=True,null=True)
@@ -928,6 +970,7 @@ add_babel_field(AidType,'name')
 class AidTypes(reports.Report):
     model = AidType
     column_names = 'name *'
+
 
 
 #

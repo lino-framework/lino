@@ -47,7 +47,6 @@ class LanguageField(models.CharField):
             verbose_name=_("Language"),
             choices=LANGUAGE_CHOICES,
             max_length=2,
-            #~ limit_to_choices=True,
             )
         defaults.update(kw)
         models.CharField.__init__(self,*args, **defaults)

@@ -62,7 +62,7 @@ class DecimalConverter(Converter):
 class ForeignKeyConverter(Converter):
     def convert(self,**kw):
         value = kw.get(self.field.name)
-        if value is not None:
+        if value is not None and value != '':
             model = self.field.rel.to
             if not isinstance(value,model):
                 if False and model is ContentType:

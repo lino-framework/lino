@@ -18,7 +18,7 @@ from django.utils.translation import ugettext_lazy as _
 from lino import reports
 from lino import fields
 from lino.utils import join_words
-from lino.utils.babel import add_babel_field, default_language, babelattr
+from lino.utils.babel import add_babel_field, default_language, babelattr, BABEL_CHOICES
 from lino.utils.choosers import chooser
     
 
@@ -67,7 +67,7 @@ Anything that has contact information (postal address, email, phone,...).
     zip_code = models.CharField(_("Zip code"),max_length=10,blank=True)
     region = models.CharField(_("Region"),max_length=200,blank=True)
     #~ language = models.ForeignKey('countries.Language',default=default_language)
-    language = fields.LanguageField(default=default_language)
+    language = fields.LanguageField(default=default_language,choices=BABEL_CHOICES)
     
     email = models.EmailField(_('E-Mail'),blank=True,null=True)
     url = models.URLField(_('URL'),blank=True)
