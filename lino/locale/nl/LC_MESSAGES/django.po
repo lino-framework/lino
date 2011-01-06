@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-06 09:07+0000\n"
+"POT-Creation-Date: 2011-01-06 18:40+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -51,47 +51,47 @@ msgstr ""
 msgid "Language"
 msgstr ""
 
-#: .\fields.py:56
+#: .\fields.py:55
 msgid "certainly not"
 msgstr ""
 
-#: .\fields.py:57
+#: .\fields.py:56
 msgid "rather not"
 msgstr ""
 
-#: .\fields.py:58
+#: .\fields.py:57
 msgid "normally"
 msgstr ""
 
-#: .\fields.py:59
+#: .\fields.py:58
 msgid "quite much"
 msgstr ""
 
-#: .\fields.py:60
+#: .\fields.py:59
 msgid "very much"
 msgstr ""
 
-#: .\fields.py:64
+#: .\fields.py:63
 msgid "not at all"
 msgstr ""
 
-#: .\fields.py:65
+#: .\fields.py:64
 msgid "a bit"
 msgstr ""
 
-#: .\fields.py:66
+#: .\fields.py:65
 msgid "moderate"
 msgstr ""
 
-#: .\fields.py:67
+#: .\fields.py:66
 msgid "quite well"
 msgstr ""
 
-#: .\fields.py:68
+#: .\fields.py:67
 msgid "very well"
 msgstr ""
 
-#: .\fields.py:75
+#: .\fields.py:74
 msgid "Invalid value %(value). Must be one of (%(values)s)"
 msgstr ""
 
@@ -134,23 +134,27 @@ msgstr ""
 msgid "Cannot delete %(self)s because %(count)d %(refs)s refer to it."
 msgstr ""
 
-#: .\demos\dsbe\lino_settings.py:27 .\demos\dsbe\site.py:45
+#: .\demos\dsbe\lino_settings.py:27 .\demos\dsbe\site.py:50
 #: .\demos\std\lino_settings.py:23
 msgid "~Contacts"
 msgstr ""
 
-#: .\demos\dsbe\lino_settings.py:32 .\demos\dsbe\site.py:50
+#: .\demos\dsbe\lino_settings.py:32
 msgid "~Notes"
 msgstr ""
 
-#: .\demos\dsbe\lino_settings.py:38 .\demos\dsbe\site.py:57
+#: .\demos\dsbe\lino_settings.py:38 .\demos\dsbe\site.py:65
 #: .\demos\std\lino_settings.py:31
 msgid "~Configure"
 msgstr ""
 
-#: .\demos\dsbe\lino_settings.py:62 .\demos\dsbe\site.py:84
+#: .\demos\dsbe\lino_settings.py:62 .\demos\dsbe\site.py:93
 #: .\demos\std\lino_settings.py:43
 msgid "E~xplorer"
+msgstr ""
+
+#: .\demos\dsbe\site.py:55
+msgid "~My menu"
 msgstr ""
 
 #: .\demos\std\lino_settings.py:27
@@ -314,12 +318,12 @@ msgstr ""
 msgid "Select a %s..."
 msgstr ""
 
-#: .\ui\extjs\ext_store.py:81
+#: .\ui\extjs\ext_store.py:84
 #, python-format
 msgid "Existing primary key value %r may not be modified."
 msgstr ""
 
-#: .\ui\extjs\ext_store.py:301
+#: .\ui\extjs\ext_store.py:308
 #, python-format
 msgid "%r (invalid choice)"
 msgstr ""

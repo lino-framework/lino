@@ -35,6 +35,8 @@
 - :class:`lino.utils.instantiator.ForeignKeyConverter` konvertiert 
   jetzt leere strings nach None. Bisher kam ein Traceback, 
   wenn man City auswählen wollte und Land leer hatte.
+  
+- Person.migration raus  
 
 - JobExperience.company : freier Text.
 
@@ -47,9 +49,9 @@
 - Checkboxen haben ihr Attribut `hideLabel` jetzt auf `True` 
   und nehmen jetzt nicht mehr unnötig viel Platz.
 
-TODO:
-
 - Neues Feld "Kontaktperson ADG" in Person. Site.
   
+TODO:
+
 - Länder importieren
 

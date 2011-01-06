@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-06 09:07+0000\n"
-"PO-Revision-Date: 2011-01-05 17:03+0100\n"
+"POT-Creation-Date: 2011-01-06 18:40+0000\n"
+"PO-Revision-Date: 2011-01-06 22:52+0100\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -42,7 +42,8 @@ msgstr "Duplizieren"
 msgid "Delete"
 msgstr "Löschen"
 
-#: .\actions.py:174 .\actions.py:179
+#: .\actions.py:174
+#: .\actions.py:179
 msgid "Save"
 msgstr "Speichern"
 
@@ -50,47 +51,47 @@ msgstr "Speichern"
 msgid "Language"
 msgstr "Sprache"
 
-#: .\fields.py:56
+#: .\fields.py:55
 msgid "certainly not"
 msgstr "bloß nicht"
 
-#: .\fields.py:57
+#: .\fields.py:56
 msgid "rather not"
 msgstr "eher nicht"
 
-#: .\fields.py:58
+#: .\fields.py:57
 msgid "normally"
 msgstr "normal"
 
-#: .\fields.py:59
+#: .\fields.py:58
 msgid "quite much"
 msgstr "ziemlich gut"
 
-#: .\fields.py:60
+#: .\fields.py:59
 msgid "very much"
 msgstr "sehr"
 
-#: .\fields.py:64
+#: .\fields.py:63
 msgid "not at all"
 msgstr "gar nicht"
 
-#: .\fields.py:65
+#: .\fields.py:64
 msgid "a bit"
 msgstr "ein bisschen"
 
-#: .\fields.py:66
+#: .\fields.py:65
 msgid "moderate"
 msgstr "mittelmäßig"
 
-#: .\fields.py:67
+#: .\fields.py:66
 msgid "quite well"
 msgstr "ziemlich gut"
 
-#: .\fields.py:68
+#: .\fields.py:67
 msgid "very well"
 msgstr "sehr gut"
 
-#: .\fields.py:75
+#: .\fields.py:74
 msgid "Invalid value %(value). Must be one of (%(values)s)"
 msgstr ""
 
@@ -102,7 +103,8 @@ msgstr "Firma, die diese Anwendung  betreibt"
 msgid "The next automatic id for Person or Company"
 msgstr "Nächste automatische ID für Partner"
 
-#: .\models.py:44 .\models.py:94
+#: .\models.py:44
+#: .\models.py:94
 msgid "Site Configuration"
 msgstr "Anwendungsparameter"
 
@@ -133,24 +135,31 @@ msgstr ""
 msgid "Cannot delete %(self)s because %(count)d %(refs)s refer to it."
 msgstr "Kann %(self)s nicht löschen weil %(count)d %(refs)s darauf verweisen."
 
-#: .\demos\dsbe\lino_settings.py:27 .\demos\dsbe\site.py:45
+#: .\demos\dsbe\lino_settings.py:27
+#: .\demos\dsbe\site.py:50
 #: .\demos\std\lino_settings.py:23
 msgid "~Contacts"
 msgstr "~Kontakte"
 
-#: .\demos\dsbe\lino_settings.py:32 .\demos\dsbe\site.py:50
+#: .\demos\dsbe\lino_settings.py:32
 msgid "~Notes"
 msgstr "~Notizen"
 
-#: .\demos\dsbe\lino_settings.py:38 .\demos\dsbe\site.py:57
+#: .\demos\dsbe\lino_settings.py:38
+#: .\demos\dsbe\site.py:65
 #: .\demos\std\lino_settings.py:31
 msgid "~Configure"
 msgstr "~Konfigurierung"
 
-#: .\demos\dsbe\lino_settings.py:62 .\demos\dsbe\site.py:84
+#: .\demos\dsbe\lino_settings.py:62
+#: .\demos\dsbe\site.py:93
 #: .\demos\std\lino_settings.py:43
 msgid "E~xplorer"
 msgstr ""
+
+#: .\demos\dsbe\site.py:55
+msgid "~My menu"
+msgstr "~Mein Menü"
 
 #: .\demos\std\lino_settings.py:27
 msgid "~Projects"
@@ -313,12 +322,12 @@ msgstr "Beschreibung"
 msgid "Select a %s..."
 msgstr "%s auswählen..."
 
-#: .\ui\extjs\ext_store.py:81
+#: .\ui\extjs\ext_store.py:84
 #, python-format
 msgid "Existing primary key value %r may not be modified."
 msgstr "Existierender ID-Wert %r darf nicht verändert werden."
 
-#: .\ui\extjs\ext_store.py:301
+#: .\ui\extjs\ext_store.py:308
 #, python-format
 msgid "%r (invalid choice)"
 msgstr "%r (ungültige Auswahl)"
@@ -347,7 +356,8 @@ msgstr "%s wurde erstellt."
 msgid "%s has been saved."
 msgstr "%s wurde gespeichert."
 
-#: .\ui\extjs\ext_ui.py:705 .\ui\extjs\ext_ui.py:728
+#: .\ui\extjs\ext_ui.py:705
+#: .\ui\extjs\ext_ui.py:728
 #, python-format
 msgid "User %(user)s cannot configure %(report)s."
 msgstr ""
