@@ -2,6 +2,6 @@
 :label_align: top
 
 main = 
-  activity residence_permit
+  activity
   remarks contacts.ContactsByPerson:20
 

@@ -6,7 +6,7 @@ main =
   dsbe.LanguageKnowledgesByPerson skills 
   
 box2 = 
-  driving_license_until
+  driving_license
   it_knowledge
 
 box1 = 

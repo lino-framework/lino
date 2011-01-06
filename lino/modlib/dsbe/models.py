@@ -300,17 +300,18 @@ class Person(Partner,contacts.Person):
     
     
     has_own_car = models.BooleanField(verbose_name=_("has own car"))
+    
     can_car = models.BooleanField(verbose_name=_("Car driving license"))
     can_truck = models.BooleanField(verbose_name=_("Truck driving license"))
     can_clark = models.BooleanField(verbose_name=_("Clark driving license"))
     can_bus = models.BooleanField(verbose_name=_("Bus driving license"))
     
-    driving_license_until = models.DateField(_("Driving license valid until"),blank=True,null=True)
+    #~ driving_license_until = models.DateField(_("Driving license valid until"),blank=True,null=True)
     
     it_knowledge = fields.KnowledgeField(blank=True,null=True,
         verbose_name=_("IT knowledge"))
         
-    residence_permit_until = models.DateField(blank=True,null=True,verbose_name=_("Residence permit valid until"))
+    #~ residence_permit_until = models.DateField(blank=True,null=True,verbose_name=_("Residence permit valid until"))
     residence_type = models.SmallIntegerField(blank=True,null=True,
         verbose_name=_("Residence type"),
         choices=RESIDENCE_TYPE_CHOICES,
@@ -319,8 +320,9 @@ class Person(Partner,contacts.Person):
         )
     unemployed_since = models.DateField(blank=True,null=True,verbose_name=_("Unemployed since"))
     #~ work_permit_exempt = models.BooleanField(verbose_name=_("Work permit exemption"))
+    needs_residence_permit = models.BooleanField(verbose_name=_("Needs residence permit"))
     needs_work_permit = models.BooleanField(verbose_name=_("Needs work permit"))
-    work_permit_valid_until = models.DateField(blank=True,null=True,verbose_name=_("Work permit valid until"))
+    #~ work_permit_valid_until = models.DateField(blank=True,null=True,verbose_name=_("Work permit valid until"))
     work_permit_suspended_until = models.DateField(blank=True,null=True,verbose_name=_("suspended until"))
     aid_type = models.ForeignKey("dsbe.AidType",blank=True,null=True,
         verbose_name=_("aid type"))
@@ -371,7 +373,7 @@ class Person(Partner,contacts.Person):
         return self.language
         
     @classmethod
-    def get_reminders(model,date,user):
+    def unused_get_reminders(model,date,user):
         q = models.Q(coach1__exact=user) | models.Q(coach2__exact=user)
         for obj in model.objects.filter(q,
               driving_license_until__lte=date+datetime.timedelta(days=14)).order_by('driving_license_until'):
@@ -429,6 +431,10 @@ class Person(Partner,contacts.Person):
         return '<br/>'.join(lines)
     overview.return_type = fields.HtmlBox(_("Overview"))
     
+    
+    def work_permit(self):
+        return uploads.UploadsByPerson().request(master_instance=self,type__exact=3)
+    work_permit.return_type = fields.ShowOrCreateButton(_("Work permit"))
     
     def residence_permit(self):
         return uploads.UploadsByPerson().request(master_instance=self,type__exact=2)

@@ -1,0 +1,9 @@
+20110106
+========
+
+- Durch die neue Feldart CreateOrShowButton können jetzt folgende DB-Änderungen:
+
+  - residence_permit_until 
+    driving_license_until 
+    und 
+    work_permit_valid_until raus

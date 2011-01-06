@@ -61,8 +61,8 @@ def before_row_edit(panel):
             l.append("%s.on_master_changed();" % e.as_ext())
         elif isinstance(e,PictureElement):
             l.append("this.load_picture_to(%s,record);" % e.as_ext())
-        elif isinstance(e,ShowOrCreateElement):
-            l.append("this.load_buttons_to(%s,record);" % e.as_ext())
+        #~ elif isinstance(e,ShowOrCreateElement):
+            #~ l.append("this.load_buttons_to(%s,record);" % e.as_ext())
         elif isinstance(e,HtmlBoxElement):
             #~ l.append("%s.items.get(0).getEl().update(record.data.%s);" % (e.as_ext(),e.field.name))
             l.append("this.load_htmlbox_to(%s,record);" % e.as_ext())
@@ -438,13 +438,14 @@ class HtmlBoxElement(FieldElement):
         return kw
         
 class ShowOrCreateElement(FieldElement):
-    ext_suffix = "_bbox"
+    ext_suffix = "_disp"
     declare_type = jsgen.DECLARE_VAR
-    value_template = "new Lino.ButtonField(ww,%s)"
+    value_template = "new Ext.form.DisplayField(%s)"
+    #~ value_template = "new Lino.ButtonField(ww,%s)"
     #~ preferred_height = 5
     #~ vflex = True
     #~ filter_type = 'string'
-    refers_to_ww = True
+    #~ refers_to_ww = True
     
     
         

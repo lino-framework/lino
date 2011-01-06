@@ -1161,10 +1161,14 @@ class ExtUI(base.UI):
             return js_code('LANGUAGE_CHOICES')
         if isinstance(v,reports.ReportActionRequest):
             if v.total_count == 0:
-                return [dict(text="Upload",handler=js_code('Lino.%s' % v.report.get_action('insert')))]
-                #~ return '<a href="foo">create</a>'
-            return [dict(text="Show",handler=js_code('Lino.%s' % v.report.get_action('detail')))]
-            #~ return '<a href="%s">%s</a>' % (self.get_detail_url(v[0],fmt='detail'),force_unicode(v[0]))
+                #~ return [dict(text="Upload",handler=js_code('Lino.%s' % v.report.get_action('insert')))]
+                return '<a href="oops">upload</a>'
+            #~ return [dict(text="Show",handler=js_code('Lino.%s' % v.report.get_action('detail')))]
+            #~ s = unicode(v[0]) + ':'
+            s = ''
+            s += ' [<a href="%s">show</a>]' % (settings.MEDIA_URL + v[0].file.name)
+            s += ' [<a href="%s">edit</a>]' % (self.get_detail_url(v[0],fmt='detail'))
+            return s
         if isinstance(v,Exception):
             return unicode(v)
         if isinstance(v,menus.Menu):
