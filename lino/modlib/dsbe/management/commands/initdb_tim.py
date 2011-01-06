@@ -190,8 +190,8 @@ def pxs2person(row,person):
         person.nationality=country
         
     store_date(row,person,'GEBDAT','birth_date')
-    store_date(row,person,'VALID1','valid_from')
-    store_date(row,person,'VALID2','valid_until')
+    store_date(row,person,'VALID1','card_valid_from')
+    store_date(row,person,'VALID2','card_valid_until')
             
         
 def try_full_clean(i):
