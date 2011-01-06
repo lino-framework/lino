@@ -7,3 +7,16 @@
     driving_license_until 
     und 
     work_permit_valid_until raus
+    
+- Wieso erlaubt Django das Folgende::
+    
+    >>> p = Person.objects.all()[0]
+    >>> p
+    <Person: Saffre Luc>
+    >>> p.foo = "bar"
+    >>> p.save()
+    
+  Ich hätte gedacht, dass er dann einen FieldNotFound wirft. 
+  Tut er aber nicht. 
+  Das hat seine Logik, aber ich wusste es nicht.
+    

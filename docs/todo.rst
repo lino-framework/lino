@@ -9,6 +9,18 @@ for which I hope for help from other people.
 Version 1.0
 -----------
 
+#.  Partnernummer im Titel anzeigen. Nur im Titel? 
+    Oder generell immer mit __unicode__?
+    
+#.  Reminder haben bisher reminder_date und reminder_text. 
+    reminder_date : Fällig am
+    reminder_before_value
+    reminder_before_unit
+    
+    Da fehlt noch ein Feld "X Tage vorher"
+
+#.  Dokumentvorlagen weitert
+
 #.  Auf einem gefilterten Detail von Personen sind die 
     SlaveQueries manchmal fälschlicherweise ebenfalls gefiltert. 
     Weil er "query" als master_param speichert und mit übergibt.
@@ -28,6 +40,7 @@ Version 1.0
 #.  Modell "PersonSearch" (sex, language, age_range,...) 
     und Report PersonsBySearch.
 
+#.  DisplayField für Alter benutzen
 
 Version 1.1
 -----------

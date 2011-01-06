@@ -132,6 +132,7 @@ CIVIL_STATE_CHOICES = [
   ('2', _("married")  ),
   ('3', _("divorced") ),
   ('4', _("widowed")  ),
+  ('5', _("separated")  ), # Getrennt von Tisch und Bett / 
 ]
 
 # http://en.wikipedia.org/wiki/European_driving_licence
@@ -145,7 +146,7 @@ CIVIL_STATE_CHOICES = [
 #~ )
 
 RESIDENCE_TYPE_CHOICES = (
-  (1  , _("Registry of citizens")   ), # Bevölkerungsregister   registre de la population
+  (1  , _("Registry of citizens")   ), # Bevölkerungsregister registre de la population
   (2  , _("Registry of foreigners") ), # Fremdenregister        Registre des étrangers      vreemdelingenregister 
   (3  , _("Waiting for registry")   ), # Warteregister
 )
@@ -373,17 +374,22 @@ class Person(Partner,contacts.Person):
         return self.language
         
     @classmethod
-    def unused_get_reminders(model,date,user):
+    def get_reminders(model,date,user):
         q = models.Q(coach1__exact=user) | models.Q(coach2__exact=user)
+        delay = 30
         for obj in model.objects.filter(q,
-              driving_license_until__lte=date+datetime.timedelta(days=14)).order_by('driving_license_until'):
-            yield ReminderEntry(obj,obj.driving_license_until,_("driving license expires in 14 days"),fmt='detail',tab=3)
-        for obj in model.objects.filter(q,
-              residence_permit_until__lte=date+datetime.timedelta(days=60)).order_by('residence_permit_until'):
-            yield ReminderEntry(obj,obj.residence_permit_until,_("residence permit expires in 60 days"),fmt='detail',tab=4)
-        for obj in model.objects.filter(q,
-              work_permit_valid_until__lte=date+datetime.timedelta(days=40)).order_by('work_permit_valid_until'):
-            yield ReminderEntry(obj,obj.work_permit_valid_until,_("work permit expires in 40 days"),fmt='detail',tab=4)
+              card_valid_until__lte=date+datetime.timedelta(days=delay)).order_by('card_valid_until'):
+            yield ReminderEntry(obj,obj.card_valid_until,_("eID card expires in %d days") % delay,fmt='detail',tab=3)
+            #~ todo... delay=(value, unit)
+        #~ for obj in model.objects.filter(q,
+              #~ driving_license_until__lte=date+datetime.timedelta(days=14)).order_by('driving_license_until'):
+            #~ yield ReminderEntry(obj,obj.driving_license_until,_("driving license expires in 14 days"),fmt='detail',tab=3)
+        #~ for obj in model.objects.filter(q,
+              #~ residence_permit_until__lte=date+datetime.timedelta(days=60)).order_by('residence_permit_until'):
+            #~ yield ReminderEntry(obj,obj.residence_permit_until,_("residence permit expires in 60 days"),fmt='detail',tab=4)
+        #~ for obj in model.objects.filter(q,
+              #~ work_permit_valid_until__lte=date+datetime.timedelta(days=40)).order_by('work_permit_valid_until'):
+            #~ yield ReminderEntry(obj,obj.work_permit_valid_until,_("work permit expires in 40 days"),fmt='detail',tab=4)
       
         
     def get_image_parts(self):

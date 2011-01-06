@@ -151,11 +151,11 @@ class PAR(Controller):
         if obj.__class__ is Person:
             d.update(title='ALLO')
             d.update(gesdos_id='NB1')
-            if data.has_key('IDUSR'):  
+            if data.has_key('IDUSR'):
                 username = settings.TIM2LINO_USERNAME(data['IDUSR'])
                 if username:
                     try:
-                        obj.user = auth.User.objects.get(username=username)
+                        obj.coach1 = auth.User.objects.get(username=username)
                     except auth.User.DoesNotExist,e:
                         dblogger.warning(
                           u"%s : PAR->IdUsr %r (converted to %r) doesn't exist!",
@@ -208,8 +208,6 @@ class PAR(Controller):
                 return True
             
     def POST(self,**kw):
-        #~ vat_id = kw['data'].get('NOTVA',None)
-        #~ if vat_id:
         if is_company(kw['data']):
             obj = Company()
         else:
@@ -307,7 +305,7 @@ controllers = dict(
   )
 
 def process_line(i,ln):
-    dblogger.info("process_line(%r,%r)",i,ln)
+    #~ dblogger.info("process_line(%r,%r)",i,ln)
     d = simplejson.loads(ln,object_hook=json2py)
     kw = {}
     for k,v in d.items():
@@ -319,19 +317,6 @@ def process_line(i,ln):
         #~ return
     m = getattr(ctrl,kw['method'])
     m(**kw)
-    #~ n = 0
-    #~ while True:
-        #~ try:
-            #~ m(**kw)
-            #~ return
-        #~ except Exception,e:
-            #~ n += 1
-            #~ if n > 9:
-                #~ raise
-            #~ logger.warning("Got %r (will retry %d)",e,n)
-            #~ time.sleep(1)
-        
-    #~ ctrl.process(**kw)
     
   
 def watch(data_dir):
