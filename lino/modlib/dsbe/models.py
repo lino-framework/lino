@@ -369,6 +369,9 @@ class Person(Partner,contacts.Person):
         rpt.add_action(DirectPrintAction(rpt,'eid',_("eID-Inhalt"),'appypdf','persons/eid-content.odt'))
         rpt.add_action(DirectPrintAction(rpt,'cv',_("Curiculum vitae"),'appypdf','persons/cv.odt'))
         
+    def __unicode__(self):
+        return u"%s (%s)" % (self.name,self.pk)
+        
     def get_print_language(self,pm):
         "Used by DirectPrintAction"
         return self.language
@@ -415,7 +418,7 @@ class Person(Partner,contacts.Person):
         if self.birth_date:
             dd = datetime.date.today()-self.birth_date
             return _("%d years") % (dd.days / 365)
-        return u'unknown'
+        return _('unknown')
     age.return_type = models.CharField(_("Age"),max_length=10,editable=False,blank=True)
     
     def overview(self):

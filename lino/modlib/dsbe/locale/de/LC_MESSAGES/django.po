@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Lino-DSBE\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-01-06 09:07+0000\n"
-"PO-Revision-Date: 2011-01-06 10:10+0100\n"
+"PO-Revision-Date: 2011-01-06 11:02+0100\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -138,7 +138,7 @@ msgstr "Zivilstand"
 
 #: .\models.py:272
 msgid "National ID"
-msgstr "Nat.reg.nummer"
+msgstr "NR-Nummer"
 
 #: .\models.py:275
 msgid "Health insurance"
@@ -207,7 +207,7 @@ msgstr "Register"
 
 #: .\models.py:322
 msgid "Unemployed since"
-msgstr "Arbeitslos seit"
+msgstr "Arbeitssuchend seit"
 
 #: .\models.py:324
 msgid "Needs residence permit"
@@ -317,7 +317,7 @@ msgstr "Fähigkeiten"
 
 #: .\models.py:363
 msgid "Job agents"
-msgstr "Arbeitsvermittler"
+msgstr "Interim-Agenturen"
 
 #: .\models.py:368
 msgid "Auskunftsblatt"

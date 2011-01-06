@@ -6,9 +6,7 @@ main =
   uploads.UploadsByPerson
 
 box1 = 
-  civil_state residence_type:20 
-  nationality:15 national_id:15 
-  card_number:10 card_valid_from card_valid_until:10
+  residence_type:20 
   gesdos_id:15 health_insurance:40
   #pharmacy
   is_dsbe coach1 coach2

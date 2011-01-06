@@ -20,3 +20,7 @@
   Tut er aber nicht. 
   Das hat seine Logik, aber ich wusste es nicht.
     
+- Todo nachmittags:
+  - neues Feld Reminder.delay_value und delay_unit
+  - Neues Feed Person. Kontaktperson ADG
+  
