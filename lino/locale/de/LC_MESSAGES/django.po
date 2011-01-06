@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-05 11:52+0000\n"
+"POT-Creation-Date: 2011-01-06 07:00+0000\n"
 "PO-Revision-Date: 2011-01-05 17:03+0100\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
@@ -42,8 +42,7 @@ msgstr "Duplizieren"
 msgid "Delete"
 msgstr "Löschen"
 
-#: .\actions.py:174
-#: .\actions.py:179
+#: .\actions.py:174 .\actions.py:179
 msgid "Save"
 msgstr "Speichern"
 
@@ -103,8 +102,7 @@ msgstr "Firma, die diese Anwendung  betreibt"
 msgid "The next automatic id for Person or Company"
 msgstr "Nächste automatische ID für Partner"
 
-#: .\models.py:44
-#: .\models.py:94
+#: .\models.py:44 .\models.py:94
 msgid "Site Configuration"
 msgstr "Anwendungsparameter"
 
@@ -112,20 +110,20 @@ msgstr "Anwendungsparameter"
 msgid "~Site"
 msgstr "~Site"
 
-#: .\reports.py:419
+#: .\reports.py:420
 #, python-format
 msgid "User %(user)s cannot view %(report)s."
 msgstr "Benutzer  %(user)s hat kein Recht,  %(report)s zu sehen."
 
-#: .\reports.py:603
+#: .\reports.py:607
 msgid "Yes"
 msgstr "Ja"
 
-#: .\reports.py:603
+#: .\reports.py:607
 msgid "No"
 msgstr "Nein"
 
-#: .\reports.py:865
+#: .\reports.py:869
 #, python-format
 msgid "%(details)s by %(model)s %(master)s"
 msgstr ""
@@ -135,25 +133,21 @@ msgstr ""
 msgid "Cannot delete %(self)s because %(count)d %(refs)s refer to it."
 msgstr "Kann %(self)s nicht löschen weil %(count)d %(refs)s darauf verweisen."
 
-#: .\demos\dsbe\lino_settings.py:27
-#: .\demos\dsbe\site.py:45
+#: .\demos\dsbe\lino_settings.py:27 .\demos\dsbe\site.py:45
 #: .\demos\std\lino_settings.py:23
 msgid "~Contacts"
 msgstr "~Kontakte"
 
-#: .\demos\dsbe\lino_settings.py:32
-#: .\demos\dsbe\site.py:50
+#: .\demos\dsbe\lino_settings.py:32 .\demos\dsbe\site.py:50
 msgid "~Notes"
 msgstr "~Notizen"
 
-#: .\demos\dsbe\lino_settings.py:38
-#: .\demos\dsbe\site.py:57
+#: .\demos\dsbe\lino_settings.py:38 .\demos\dsbe\site.py:57
 #: .\demos\std\lino_settings.py:31
 msgid "~Configure"
 msgstr "~Konfigurierung"
 
-#: .\demos\dsbe\lino_settings.py:62
-#: .\demos\dsbe\site.py:84
+#: .\demos\dsbe\lino_settings.py:62 .\demos\dsbe\site.py:84
 #: .\demos\std\lino_settings.py:43
 msgid "E~xplorer"
 msgstr ""
@@ -314,7 +308,7 @@ msgstr "Bearbeitet"
 msgid "Description"
 msgstr "Beschreibung"
 
-#: .\ui\extjs\ext_elems.py:560
+#: .\ui\extjs\ext_elems.py:570
 #, python-format
 msgid "Select a %s..."
 msgstr "%s auswählen..."
@@ -353,8 +347,7 @@ msgstr "%s wurde erstellt."
 msgid "%s has been saved."
 msgstr "%s wurde gespeichert."
 
-#: .\ui\extjs\ext_ui.py:705
-#: .\ui\extjs\ext_ui.py:728
+#: .\ui\extjs\ext_ui.py:705 .\ui\extjs\ext_ui.py:728
 #, python-format
 msgid "User %(user)s cannot configure %(report)s."
 msgstr ""

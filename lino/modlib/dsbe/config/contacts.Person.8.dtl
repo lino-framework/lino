@@ -3,5 +3,6 @@
 
 main = 
   activity
+  is_active is_cpas is_senior #is_minor
   remarks contacts.ContactsByPerson:20
 

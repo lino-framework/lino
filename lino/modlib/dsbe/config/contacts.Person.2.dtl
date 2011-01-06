@@ -2,11 +2,12 @@
 :label_align: top
 
 main = 
-  box1:40 income:20 
-  uploads.UploadsByPerson:20 flags
+  box1:40 income:20  
+  uploads.UploadsByPerson
 
 box1 = 
-  civil_state nationality:15 national_id:15 
+  civil_state residence_type:20 
+  nationality:15 national_id:15 
   card_number:10 card_valid_from card_valid_until:10
   gesdos_id:15 health_insurance:40
   #pharmacy
@@ -14,15 +15,10 @@ box1 =
   bank_account1 bank_account2
   
 income = 
-    aid_type
-    income_ag    
-    income_wg    income_kg    
-    income_rente  income_misc  
+  aid_type   
+  income_ag  income_wg    
+  income_kg   income_rente  
+  income_misc  
+    
 
-
-flags =
-  is_active 
-  is_cpas 
-  is_senior 
-  #is_minor
   

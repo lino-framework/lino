@@ -6,7 +6,6 @@ box1 =
   unemployed_since work_permit_suspended_until
   
 box2 =
-  residence_type:20 
   needs_residence_permit residence_permit:20
   needs_work_permit work_permit  
   
