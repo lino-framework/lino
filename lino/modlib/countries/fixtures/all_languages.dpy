@@ -543,7 +543,7 @@ Zuñi-Sprache zun
 
 
 # copied from http://fr.wikipedia.org/wiki/Liste_des_codes_ISO_639-1
-french = """
+french = u"""
 aa	aar	aar	Afar	Afaraf	Afar	
 ab	abk	abk	Abkhaze	Аҧсуа	Abkhazian	
 ae	ave	ave	Avestique	Avesta	Avestan	
