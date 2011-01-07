@@ -56,11 +56,8 @@ into `/var/snapshots/`::
   unzip ext-3.3.1.zip
   rm ext-3.3.1.zip
 
-  wget http://launchpad.net/appy/0.5/0.5.5/+download/appy0.5.5.zip  
-  unzip appy0.5.5.zip -d appy-0.5.5
-  
-  wget http://launchpad.net/appy/0.6/0.6.0/+download/appy0.6.0.zip
-  unzip appy0.6.0.zip -d appy-0.6.0
+  wget http://launchpad.net/appy/0.6/0.6.1/+download/appy0.6.1.zip
+  unzip appy0.6.1.zip -d appy-0.6.1
   
   wget http://pypi.python.org/packages/source/p/pisa/pisa-3.0.32.zip
   unzip pisa-3.0.32.zip
@@ -96,7 +93,7 @@ might look in our example::
   /var/snapshots/lino
   /var/snapshots/django
   /var/snapshots/pisa-3.0.32
-  /var/snapshots/appy-0.5.5
+  /var/snapshots/appy-0.6.1
   /var/snapshots/pyratemp-0.2.0
   /var/snapshots/south
   /var/snapshots/python-daemon-1.5.5

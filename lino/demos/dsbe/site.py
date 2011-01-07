@@ -20,6 +20,9 @@ class Site(Base):
     help_url = "http://lino.saffre-rumma.net/dsbe/index.html"
     
     job_office_id = None
+    """
+    The id of a Company whose contact persons will be choices for Person.job_office_contact
+    """
     
     def init_site_config(self,sc):
         #~ print 20100908, "lino_settings.py init_site_config"
@@ -72,7 +75,7 @@ class Site(Base):
         m.add_action('contacts.ContactTypes')
         m.add_action('dsbe.SkillTypes')
         #~ m.add_action('properties.Properties')
-        #~ m.add_action('countries.Languages')
+        m.add_action('countries.Languages')
         m.add_action('countries.Countries')
         m.add_action('countries.Cities')
         m.add_action('auth.Permissions')

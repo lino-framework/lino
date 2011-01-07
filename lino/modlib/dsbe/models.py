@@ -17,6 +17,7 @@ See :doc:`/dsbe/models`
 
 """
 
+import os
 import cgi
 import datetime
 
@@ -354,9 +355,12 @@ class Person(Partner,contacts.Person):
     fulltime_only = models.BooleanField(_("Fulltime only"))
     parttime_only = models.BooleanField(_("Part-time only"))
     young_children = models.BooleanField(_("Young children"))
-    native_language = fields.LanguageField(
+    native_language = models.ForeignKey('countries.Language',
       verbose_name=_("Native language"),
       blank=True,null=True)
+    #~ native_language = fields.LanguageField(
+      #~ verbose_name=_("Native language"),
+      #~ blank=True,null=True)
     #~ native_language = models.CharField(max_length=100,
         #~ blank=True,null=True,
         #~ verbose_name=_("Native language"))
@@ -646,8 +650,8 @@ class Study(models.Model):
         verbose_name=_("Country"))
     city = models.ForeignKey('countries.City',blank=True,null=True,
         verbose_name=_('City'))
-    #~ language = models.ForeignKey("countries.Language",blank=True,null=True,verbose_name=_("Language"))
-    language = fields.LanguageField(blank=True,null=True,verbose_name=_("Language"))
+    language = models.ForeignKey("countries.Language",blank=True,null=True,verbose_name=_("Language"))
+    #~ language = fields.LanguageField(blank=True,null=True,verbose_name=_("Language"))
     
     school = models.CharField(max_length=200,blank=True,null=True,verbose_name=_("School"))
     #~ school = models.ForeignKey("contacts.Company",blank=True,null=True,verbose_name=_("School"))
@@ -681,8 +685,9 @@ class LanguageKnowledge(models.Model):
         verbose_name_plural = _("language knowledges")
         
     person = models.ForeignKey("contacts.Person")
+    language = models.ForeignKey("countries.Language",verbose_name=_("Language"))
     #~ language = models.ForeignKey("countries.Language")
-    language = fields.LanguageField()
+    #~ language = fields.LanguageField()
     spoken = fields.KnowledgeField(verbose_name=_("spoken"))
     written = fields.KnowledgeField(verbose_name=_("written"))
     

@@ -1,0 +1,23 @@
+20110107
+========
+
+Hier noch ein Traceback::
+
+   Traceback (most recent call last):
+     File "/var/snapshots/django/django/core/handlers/wsgi.py", line 265, in __call__
+       response = self.get_response(request)
+     File "/var/snapshots/django/django/core/handlers/base.py", line 162, in get_response
+       response = self.handle_uncaught_exception(request, resolver, sys.exc_info())
+     File "/var/snapshots/django/django/core/handlers/base.py", line 111, in get_response
+       response = callback(request, *callback_args, **callback_kw,args)
+     File "/var/snapshots/lino/lino/ui/extjs/ext_ui.py", line 1018, in choices_view
+       qs = chooser.get_request_choices(request)
+     File "/var/snapshots/lino/lino/utils/choosers.py", line 102, in get_request_choices
+       return self.get_choices(**kw)
+     File "/var/snapshots/lino/lino/utils/choosers.py", line 94, in get_choices
+       return self.meth(*args)
+     File "/var/snapshots/lino/lino/utils/choosers.py", line 151, in wrapped
+       return fn(*args)
+     File "/var/snapshots/lino/lino/modlib/dsbe/models.py", line 664, in city_choices
+       return country.city_set.order_by('name')
+   AttributeError: 'unicode' object has no attribute 'city_set'

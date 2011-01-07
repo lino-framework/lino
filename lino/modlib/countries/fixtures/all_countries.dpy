@@ -1,3 +1,12 @@
+#coding: utf-8
+
+import os
+import logging
+logger = logging.getLogger('lino')
+
+from lino.utils.babel import babel_values, DEFAULT_LANGUAGE
+from lino.modlib.countries.models import Country
+
 # http://www.davros.org/misc/iso3166.html
 # slightly modified
 
@@ -244,7 +253,7 @@ ZW 	ZWE 	716 	 	Zimbabwe (was Southern Rhodesia)
 """
 
 TABLE2 = """
-BQAQ 	ATB 	000	British Antarctic Territory
+BQAQ 	ATB 	000 British Antarctic Territory
 BUMM 	BUR 	104 Burma, Socialist Republic of the Union of
 BYAA 	BYS 	112 Byelorussian SSR Soviet Socialist Republic
 CTKI 	CTE 	128 Canton & Enderbury Islands
@@ -252,7 +261,6 @@ CSHH 	CSK 	200 Czechoslovakia, Czechoslovak Socialist Republic
 DYBJ 	DHY 	204 Dahomey
 NQAQ 	ATN 	216 Dronning Maud Land
 TPTL 	TMP 	626 East Timor (was Portuguese Timor)
-FX 	  FXX 	249 France, Metropolitan
 AIDJ 	AFI 	262 French Afars and Issas
 FQHH 	ATF 	000 French Southern and Antarctic Territories (now split between AQ and TF)
 DDDE 	DDR 	278 German Democratic Republic
@@ -263,26 +271,83 @@ NTHH 	NTZ 	536 Neutral Zone (formerly between Saudi Arabia & Iraq)
 NHVU 	NHB 	548 New Hebrides
 PCHH 	PCI 	582 Pacific Islands (trust territory) (divided into FM, MH, MP, and PW)
 PZPA 	PCZ 	000 Panama Canal Zone
-SKIN 	SKM   000	Sikkim
+SKIN 	SKM 	000 Sikkim
 RHZW 	RHO 	716 Southern Rhodesia
-EH  	ESH 	732 Spanish Sahara (now Western Sahara)
 PUUM 	PUS 	849 US Miscellaneous Pacific Islands
 SUHH 	SUN 	810 USSR, Union of Soviet Socialist Republics
 HVBF 	HVO 	854 Upper Volta, Republic of
 VDVN 	VDR 	000 Viet-Nam, Democratic Republic of
 WKUM 	WAK 	872 Wake Island
 YDYE 	YMD 	720 Yemen, Democratic, People's Democratic Republic of
-YU  	YUG 	890 Yugoslavia, Socialist Federal Republic of
 YUCS 	YUG 	891 Yugoslavia, Federal Republic of
 ZRCD 	ZAR 	180 Zaire, Republic of
 """
 
-from lino.utils.instantiator import Instantiator, i2d
-country = Instantiator('countries.Country','isocode name').build
+unused = """
+FX 	  FXX 	249 France, Metropolitan
+EH  	ESH 	732 Spanish Sahara (now Western Sahara)
+YU  	YUG 	890 Yugoslavia, Socialist Federal Republic of
+"""
 
-def objects():
+#~ from lino.utils.instantiator import Instantiator, i2d
+#~ country = Instantiator('countries.Country','isocode name').build
+
+COUNTRIES = {}
+
+if False:
     for ln in TABLE1.splitlines() + TABLE2.splitlines():
         ln = ln.strip()
         if ln:
+            COUNTRIES[code1] = dict(en=name)
             code1, code2, code3, name = ln.split(None,3)
-            yield country(code1,name)
+            #~ yield country(code1,name)
+            #~ yield Country()
+        
+        
+"""
+http://countrylist.net/        
+"""
+from lino.utils import ucsv
+
+fn = os.path.join(os.path.dirname(__file__),'CountrysNF.csv')
+r = ucsv.UnicodeReader(open(fn),delimiter=';')
+n = 0
+for rec in r:
+    n += 1
+    if len(rec) != 11:
+        logger.warning("Ignored line %d (len(%r) is %d)",n,rec,len(rec))
+    else:
+        iso2 = rec[5]
+        iso3 = rec[6]
+        de = rec[2]
+        en = rec[3]
+        if iso2:
+            if COUNTRIES.has_key(iso2):
+                logger.debug("Ignored duplicate country %r",iso2)
+            else:
+                COUNTRIES[iso2]=dict(en=en,de=de,iso3=iso3)
+
+for ln in TABLE2.splitlines():
+    ln = ln.strip()
+    if ln:
+        code1, code2, code3, name = ln.split(None,3)
+        if COUNTRIES.has_key(code1):
+            logger.debug("Ignored duplicate country %r",code1)
+        else:
+            COUNTRIES[code1] = dict(en=name,de=name)
+
+
+def objects():
+            
+    n = 0
+    for code,kw in COUNTRIES.items():
+        iso3 = kw.get('iso3','')
+        kw = babel_values('name',**kw)
+        if kw['name']:
+            kw.update(iso3=iso3)
+            n += 1
+            yield Country(isocode=code,**kw)
+        else:
+            logger.debug("%r : no name for default babel language %s",code,DEFAULT_LANGUAGE)
+    logger.info("Installed %d countries",n)
+            

@@ -92,8 +92,8 @@ Country = resolve_model('countries.Country')
 
 def objects():
     
-    country = Instantiator('countries.Country',"isocode name").build
-    yield country('SUHH',"Soviet Union")
+    #~ country = Instantiator('countries.Country',"isocode name").build
+    #~ yield country('SUHH',"Soviet Union")
     
     eupen = City.objects.get(name__exact='Eupen')
     kettenis = City.objects.get(name__exact='Kettenis')
@@ -178,17 +178,17 @@ def objects():
     yield study(person=luc,type=schule,content=abi,started='19740901',stopped='19860630')
     yield study(person=gerd,type=schule,content=abi,started='19740901',stopped='19860630')
 
-    yield langk(person=luc,language='de',written='4',spoken='4')
-    yield langk(person=gerd,language='de',written='4',spoken='4')
+    yield langk(person=luc,language='ger',written='4',spoken='4')
+    yield langk(person=gerd,language='ger',written='4',spoken='4')
     
-    yield langk(person=luc,language='fr',written='4',spoken='3')
-    yield langk(person=gerd,language='fr',written='4',spoken='3')
+    yield langk(person=luc,language='fre',written='4',spoken='3')
+    yield langk(person=gerd,language='fre',written='4',spoken='3')
     
-    yield langk(person=luc,language='en',written='4',spoken='3')
-    yield langk(person=gerd,language='en',written='4',spoken='3')
+    yield langk(person=luc,language='eng',written='4',spoken='3')
+    yield langk(person=gerd,language='eng',written='4',spoken='3')
     
-    yield langk(person=luc,language='et',written='3',spoken='3')
-    yield langk(person=gerd,language='nl',written='3',spoken='3')
+    yield langk(person=luc,language='est',written='3',spoken='3')
+    yield langk(person=gerd,language='dut',written='3',spoken='3')
     
     
     

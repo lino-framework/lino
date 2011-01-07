@@ -162,6 +162,13 @@ class Site:
     title = "Another Lino Site"
     domain = "www.example.com"
     
+    csv_params = dict()
+    """
+    Site-wide default parameters CSV generation.
+    See http://docs.python.org/library/csv.html#csv-fmt-params
+    """
+    
+    
     def __init__(self):
         #self.django_settings = settings
         #~ self.init_site_config = lambda sc: sc

@@ -18,6 +18,27 @@ from lino import reports
 #~ from lino import layouts
 from django.utils.translation import ugettext as _
 
+from lino.utils.babel import add_babel_field, babelattr
+
+
+class Language(models.Model):
+    class Meta:
+        verbose_name = _("language")
+        verbose_name_plural = _("languages")
+    id = models.CharField(max_length=3,primary_key=True)
+    name = models.CharField(max_length=200,verbose_name=_("Designation"))
+    iso2 = models.CharField(max_length=2,blank=True,null=True)
+    
+    def __unicode__(self):
+        return babelattr(self,'name')
+
+add_babel_field(Language,'name')
+
+class Languages(reports.Report):
+    model = Language
+
+
+
 
 class Country(models.Model):
     """
@@ -28,18 +49,22 @@ class Country(models.Model):
         verbose_name = _("country")
         verbose_name_plural = _("countries")
         
-    name = models.CharField(max_length=200)
     isocode = models.CharField(max_length=4,primary_key=True)
+    name = models.CharField(max_length=200)
     short_code = models.CharField(max_length=4,blank=True)
+    iso3 = models.CharField(max_length=3,blank=True)
     
     def __unicode__(self):
-        return self.name
+        return babelattr(self,'name')
+        #~ return self.name
+
+add_babel_field(Country,'name')
         
 class Countries(reports.Report):
     #~ label = _("Countries")
     model = 'countries.Country'
     order_by = ["isocode"]
-    column_names = "isocode name short_code"
+    column_names = "isocode name *"
     
     
 FREQUENT_COUNTRIES = ['BE','NL','DE', 'FR', 'LU']

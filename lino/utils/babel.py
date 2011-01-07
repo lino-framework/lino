@@ -46,13 +46,16 @@ from django.conf import settings
 
 #~ from lino.tools import default_language
 
+DEFAULT_LANGUAGE = settings.LANGUAGE_CODE[:2]
+
 def default_language():
     """
     Returns the default language of this website
     as defined by :setting:`LANGUAGE_CODE` in your :xfile:`settings.py`.
     """
     #~ from django.conf import settings
-    return settings.LANGUAGE_CODE[:2]
+    #~ return settings.LANGUAGE_CODE[:2]
+    return DEFAULT_LANGUAGE
     
 def lang_name(code):
     for lng in settings.LANGUAGES:
@@ -185,6 +188,7 @@ one for each language of your :setting:`BABEL_LANGS`.
         kw.update(max_length=f.max_length)
     for lang in settings.BABEL_LANGS:
         kw.update(verbose_name=f.verbose_name + ' ('+lang+')')
+        kw.update(blank=True,null=True)
         newfield = f.__class__(*args,**kw)
         model.add_to_class(name + '_' + lang,newfield)
 

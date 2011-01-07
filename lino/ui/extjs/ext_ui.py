@@ -809,7 +809,7 @@ class ExtUI(base.UI):
             if fmt == 'csv':
                 response = HttpResponse(mimetype='text/csv')
                 response['Content-Disposition'] = 'attachment; filename=tmp.csv'
-                w = ucsv.UnicodeWriter(response)
+                w = ucsv.UnicodeWriter(response,**settings.LINO_SITE.csv_params)
                 names = [] # fld.name for fld in self.fields]
                 fields = []
                 for e in ar.ah.list_layout._main.columns:
