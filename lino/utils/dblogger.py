@@ -67,8 +67,8 @@ if settings.DBLOGFILE:
         filename = settings.DBLOGFILE
         if filename.lower() == 'auto':
             filename = os.path.join(settings.DATA_DIR,'db.log')
-        logger.setLevel(logging.INFO)
         logger.addHandler(file_handler(filename))
+        settings.LINO_SITE.setup_dblogger(logger)
       
     
     def log_created(request,elem):

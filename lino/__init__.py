@@ -19,6 +19,7 @@ See :doc:`/admin/install` on how to use it.
 
 import sys
 import datetime
+import logging
 
 __version__ = "1.0 RC 2"
 """
@@ -240,6 +241,13 @@ class Site:
         #m.add_item(system.Login(),can_view=perms.is_anonymous)
         #m.add_item(system.Logout(),can_view=perms.is_authenticated)
         
+    def setup_dblogger(self,logger):
+        """
+        Called when settings.DBLOGFILE is not empty *and* a logger 'db' 
+        hasn't been configured manually.
+        See :mod:`lino.utils.dblogger`
+        """
+        logger.setLevel(logging.INFO)
       
 
 

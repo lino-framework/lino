@@ -47,4 +47,5 @@
   
 - `street_box` wurde beum Synchronisieren aus TIM vergessen.
   
-  
+- Neue funktion :meth:`lino.Site.setup_dblogger`. 
+  Dadurch kann man nun den loglevel des dbloggers lokal verändern.
