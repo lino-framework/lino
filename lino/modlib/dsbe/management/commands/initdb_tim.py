@@ -154,10 +154,10 @@ def pxs2person(row,person):
     kw = {}
     store(kw,
       card_number=row['CARDNUMBER'],
-      card_type=row['CARDTYPE'],      # 20110110
-      card_issuer=row['CARDISSUER'],      # 20110110
-      noble_condition=row['NOBLEECOND'],      # 20110110
-      birth_place=row['BIRTHPLACE'],
+      card_type=row.get('CARDTYPE',''),      # 20110110
+      card_issuer=row.get('CARDISSUER',''),      # 20110110
+      noble_condition=row.get('NOBLEECOND',''),      # 20110110
+      birth_place=row.get('BIRTHPLACE',''),
       sex=convert_sex(row['SEXE'])
     )
     for k,v in kw.items():
