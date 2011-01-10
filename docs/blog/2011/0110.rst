@@ -38,8 +38,13 @@
       =============== ==========
 
 - Statt eines Klassenattributs `job_office` im LinoSite 
-  mach ich ein FK-Feld `job_office` in SiteConfig. 
+  habe ich jetzt ein FK-Feld `job_office` in SiteConfig. 
   Dieser Parameter ist wie `site_company` auf der Grenze zwischen 
   statischen und dynamischen Konfigurationsparametern.
   Eindeutig dynamisch ist bisher eigentlich nur `next_partner_id`.
+  Aber `job_office` und `site_company` sind übers UI leichter 
+  einzugeben.
+  
+- `street_box` wurde beum Synchronisieren aus TIM vergessen.
+  
   

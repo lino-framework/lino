@@ -93,22 +93,6 @@ class Serializer(base.Serializer):
             self.stream.write('    yield create_%s(%s)\n' % (
                 obj._meta.db_table,
                 ','.join([self.value2string(obj,f) for f in fields])))
-            #~ self.start_object(obj)
-            #~ for field in obj._meta.local_fields:
-                #~ if field.serialize:
-                    #~ if field.rel is None:
-                        #~ if self.selected_fields is None or field.attname in self.selected_fields:
-                            #~ self.handle_field(obj, field)
-                    #~ else:
-                        #~ if self.selected_fields is None or field.attname[:-3] in self.selected_fields:
-                            #~ self.handle_fk_field(obj, field)
-            #~ for field in obj._meta.many_to_many:
-                #~ if field.serialize:
-                    #~ if self.selected_fields is None or field.attname in self.selected_fields:
-                        #~ self.handle_m2m_field(obj, field)
-            #~ self.end_object(obj)
-        #~ self.end_serialization()
-        #~ return self.getvalue()
         self.stream.write('\n\ndef objects():\n')
         all_models = self.sort_models(all_models)
         for model in all_models:
@@ -204,11 +188,6 @@ class Serializer(base.Serializer):
 
 
 
-
-
-
-
-
 class FakeDeserializedObject(base.DeserializedObject):
     """
     Imitates DeserializedObject required by loaddata,
@@ -228,9 +207,6 @@ class FakeDeserializedObject(base.DeserializedObject):
         dblogger.info("Deserialized %s has been saved" % obj2str(self.object))
 
 
-#~ class Serializer:
-    #~ internal_use_only = False
-    
 def Deserializer(fp, **options):
     """
     """

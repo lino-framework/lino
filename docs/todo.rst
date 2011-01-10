@@ -9,7 +9,8 @@ for which I hope for help from other people.
 Version 1.0
 -----------
 
-#.  tim2lino card_chip
+#.  Lästig ist, dass nach dem Bearbeiten einer Zelle der Focus auf die 
+    erste Zeile zurück springt.
 
 #.  Dialekt der csv-Datei bestimmen können (Excel oder OOo). Encoding.
 

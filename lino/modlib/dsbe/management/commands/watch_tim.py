@@ -123,15 +123,15 @@ class Controller:
     def PUT_special(self,obj,**kw):
         pass
         
-def ADR_applydata(obj,data,**d):
-    d.update(
+def ADR_applydata(obj,data,**kw):
+    kw.update(
         street='RUE',
         street_box='RUEBTE',
         phone='TEL',
     )
-    if data.has_key('RUENUM'):
-        obj.street_no = data['RUENUM'].strip()
-    kw = {}
+    #~ if data.has_key('RUENUM'):
+        #~ obj.street_no = data['RUENUM'].strip()
+    #~ kw = {}
     country2kw(data,kw)
     for k,v in kw.items():
         setattr(obj,k,v)

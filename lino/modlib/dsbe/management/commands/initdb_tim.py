@@ -129,6 +129,8 @@ def country2kw(row,kw):
       fax=row['FAX'],
       email=row['EMAIL'],
       )
+      
+    kw.update(street2kw(join_words(row['RUE'],row['RUENUM'],row['RUEBTE'])))
     
     zip_code = row['CP']
     if zip_code:
@@ -303,7 +305,6 @@ def load_tim_data(dbpath):
             pk = ADR_id(row['IDMUT'])
             if pk:
                 d = dict(id=pk)
-                d.update(street2kw(join_words(row['RUE'],row['RUENUM'],row['RUEBTE'])))
                 d.update(name=row['NAME'])
                 #~ 20101230 store(d,gsm=row['GSM'])
                 country2kw(row,d)
@@ -314,7 +315,7 @@ def load_tim_data(dbpath):
     
     def load(row):
         kw = {}
-        kw.update(street2kw(join_words(row['RUE'],row['RUENUM'],row['RUEBTE'])))
+        #~ kw.update(street2kw(join_words(row['RUE'],row['RUENUM'],row['RUEBTE'])))
         store(kw,id=int(row['IDPAR']))
         
         if is_company(row):

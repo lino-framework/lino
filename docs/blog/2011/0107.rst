@@ -2,7 +2,7 @@
 ========
 
 Zum Erfassen von Muttersprache, Sprachkenntnisse und der Sprache eines Studiums reicht 
-uns die Liste der Sprachen, in die Django übersetzt wurde, möglicherweise nicht. 
+uns Djangos `settings.LANGUAGES` möglicherweise nicht. 
 Also eine neue Tabelle :class:`lino.modlib.countries.Language`
 
 Hier noch ein Traceback::
@@ -75,20 +75,20 @@ da eine erste redundant dependency haben
 Person.job_office_contact verweist auf einen Contact, 
 und der wiederum auf Person.
 
-def contacts_contact_objects():
-    yield create_contacts_contact(1,200001,84282,1)
-    yield create_contacts_contact(3,22314,None,None)
-    yield create_contacts_contact(4,200005,85844,None)
-    yield create_contacts_contact(5,200006,85844,None)
+::
 
+  def contacts_contact_objects():
+      yield create_contacts_contact(1,200001,84282,1)
+      yield create_contacts_contact(3,22314,None,None)
+      yield create_contacts_contact(4,200005,85844,None)
+      yield create_contacts_contact(5,200006,85844,None)
 
-def contacts_person_objects():
-def contacts_person_objects2():
-    yield create_contacts_person(u'Anton Ausdemwald',u'',u'',u'',u'',None,None,u'',u'',u'de',None,u'',u
-    yield create_contacts_person(u'Andreas Arens',u'',u'',u'',u'',None,None,u'',u'',u'de',None,u'',u'',u
+  def contacts_person_objects2():
+      yield create_contacts_person(u'Anton Ausdemwald',u'',u'',u'',u'',None,None,u'',u'',u'de',None,u'',u
+      yield create_contacts_person(u'Andreas Arens',u'',u'',u'',u'',None,None,u'',u'',u'de',None,u'',u'',u
 
-
-  for o in contacts_person_objects2(): yield o
-  for o in contacts_contact_objects(): yield o
-  for o in contacts_person_objects(): yield o
+  def objects():
+    for o in contacts_person_objects2(): yield o
+    for o in contacts_contact_objects(): yield o
+    for o in contacts_person_objects(): yield o
 
