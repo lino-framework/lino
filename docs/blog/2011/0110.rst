@@ -1,0 +1,45 @@
+20110110
+========
+
+- `Person.clean` prüft jetzt auf "Circular reference".
+  Sonst kommt irgendwann mal ein Schlaumeier auf die Idee, 
+  einer Kontaktperson des ADG sich selbst als Kontaktperson einzutragen.
+  `demo.dpy` tries to create a circular reference and tests whether it fails::
+  
+    from django.core.exceptions import ValidationError
+    # a circular reference: bernard is contact for company adg and also has himself as `job_office_contact`
+    bernard = Person.objects.get(name__exact="Bodard Bernard")
+    adg = company(name=u"Arbeitsamt der D.G.",city=eupen,country='BE')
+    yield adg
+    adg_dir = contact(company=adg,person=bernard,type=1)
+    yield adg_dir
+    try:
+      bernard.job_office_contact = adg_dir
+      bernard.clean()
+      #~ bernard.save()
+    except ValidationError:
+        pass
+    else:
+        raise Exception("Expected ValidationError")
+      
+  Vielleicht müsste lino.dsbe eher ein neues Modell CoachedPerson(contacts.Person) 
+  definieren. Dann hätten "normale" Kontaktpersonen gar nicht die vielen Felder 
+  des DSBE.
+  Dazu wäre ein Feld Person.type nötig.
+
+- Noch drei neue Felder in Person::
+
+      =============== ==========
+      Lino            TIM
+      =============== ==========
+      card_type       CARDTYPE
+      card_issuer     CARDISSUER
+      noble_condition NOBLEECOND
+      =============== ==========
+
+- Statt eines Klassenattributs `job_office` im LinoSite 
+  mach ich ein FK-Feld `job_office` in SiteConfig. 
+  Dieser Parameter ist wie `site_company` auf der Grenze zwischen 
+  statischen und dynamischen Konfigurationsparametern.
+  Eindeutig dynamisch ist bisher eigentlich nur `next_partner_id`.
+  

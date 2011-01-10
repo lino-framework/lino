@@ -9,11 +9,9 @@ for which I hope for help from other people.
 Version 1.0
 -----------
 
-#.  Liste "Meine Personen" : nur `is_dsbe`
+#.  tim2lino card_chip
 
-#.  Dialekt der csv-Datei bestimmen können (Excel oder OOo)
-
-#.  Komplette Länderliste importieren
+#.  Dialekt der csv-Datei bestimmen können (Excel oder OOo). Encoding.
 
 #.  Manche Links öffnen einen neuen Tab: irritiert
 
@@ -106,6 +104,13 @@ Version 1.1
 After version 1.1
 -----------------
 
+#.  Idee: Vielleicht müsste contacts.Person doch nicht abstract sein, und
+    lino.dsbe stattdessen ein neues Modell CoachedPerson(contacts.Person) 
+    definieren. 
+    Dann hätten "normale" Kontaktpersonen von Firmen gar 
+    nicht die vielen Felder des DSBE.
+    Dazu wäre ein Feld Person.type nötig.
+  
 #.  Idee: Module umstrukturieren:
 
     | lino.dsbe.models : Contract usw.

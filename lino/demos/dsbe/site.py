@@ -19,11 +19,6 @@ class Site(Base):
     domain = "dsbe.saffre-rumma.net"
     help_url = "http://lino.saffre-rumma.net/dsbe/index.html"
     
-    job_office_id = None
-    """
-    The id of a Company whose contact persons will be choices for Person.job_office_contact
-    """
-    
     def init_site_config(self,sc):
         #~ print 20100908, "lino_settings.py init_site_config"
         sc.next_partner_id = 200000

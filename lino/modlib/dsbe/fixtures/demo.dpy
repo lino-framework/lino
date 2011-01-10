@@ -144,6 +144,23 @@ def objects():
         birth_place="Moskau", birth_country='SUHH')
     yield tatjana
     
+    from django.core.exceptions import ValidationError
+    # a circular reference: bernard is contact for company adg and also has himself as `job_office_contact`
+    bernard = Person.objects.get(name__exact="Bodard Bernard")
+    adg = company(name=u"Arbeitsamt der D.G.",city=eupen,country='BE')
+    yield adg
+    adg_dir = contact(company=adg,person=bernard,type=1)
+    yield adg_dir
+    try:
+      bernard.job_office_contact = adg_dir
+      bernard.clean()
+      #~ bernard.save()
+    except ValidationError:
+        pass
+    else:
+        raise Exception("Expected ValidationError")
+      
+    
     
     
     #~ oshz = Company.objects.get(name=u"ÖSHZ Eupen")

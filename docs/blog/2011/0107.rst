@@ -1,6 +1,10 @@
 20110107
 ========
 
+Zum Erfassen von Muttersprache, Sprachkenntnisse und der Sprache eines Studiums reicht 
+uns die Liste der Sprachen, in die Django übersetzt wurde, möglicherweise nicht. 
+Also eine neue Tabelle :class:`lino.modlib.countries.Language`
+
 Hier noch ein Traceback::
 
    Traceback (most recent call last):
@@ -21,3 +25,70 @@ Hier noch ein Traceback::
      File "/var/snapshots/lino/lino/modlib/dsbe/models.py", line 664, in city_choices
        return country.city_set.order_by('name')
    AttributeError: 'unicode' object has no attribute 'city_set'
+
+
+Und noch was::
+
+  /var/snapshots/django/django/db/backends/mysql/base.py:86: Warning: Incorrect string value: '\xC4\x81l\xC4\xAB' for column 'name' at row 1
+    return self.cursor.execute(query, args)
+  /var/snapshots/django/django/db/backends/mysql/base.py:86: Warning: Incorrect string value: '\xC4\xAB' for column 'name' at row 1
+    return self.cursor.execute(query, args)
+  /var/snapshots/django/django/db/backends/mysql/base.py:86: Warning: Incorrect string value: '\xC4\x81' for column 'name' at row 1
+    return self.cursor.execute(query, args)
+  /var/snapshots/django/django/db/backends/mysql/base.py:86: Warning: Incorrect string value: '\xC4\x81t\xC4\xAB-...' for column 'name' at row 1
+    return self.cursor.execute(query, args)
+  /var/snapshots/django/django/db/backends/mysql/base.py:86: Warning: Incorrect string value: '\xC4\x81r\xC4\xAB' for column 'name' at row 1
+    return self.cursor.execute(query, args)
+  /var/snapshots/django/django/db/backends/mysql/base.py:86: Warning: Incorrect string value: '\xC4\x81ori ...' for column 'name_fr' at row 1
+    return self.cursor.execute(query, args)
+  /var/snapshots/django/django/db/backends/mysql/base.py:86: Warning: Incorrect string value: '\xC4\x81rw\xC4\x81...' for column 'name' at row 1
+    return self.cursor.execute(query, args)
+  /var/snapshots/django/django/db/backends/mysql/base.py:86: Warning: Incorrect string value: '\xC4\x81jast...' for column 'name' at row 1
+    return self.cursor.execute(query, args)
+  Installed 365 languages
+  
+Die heutige Datenkonvertierung war etwas interessanter.
+
+So ging der Befehl::
+
+  python manage.py initdb all_countries all_languages d20110107  
+  
+Dabei kam anfangs::
+  
+  Problem installing fixture '/usr/local/django/dsbe_eupen/fixtures/d20110107.dpy': Traceback (most recent call last):
+    File "/var/snapshots/django/django/core/management/commands/loaddata.py", line 174, in handle
+      obj.save(using=using)
+    File "/var/snapshots/lino/lino/utils/dpy.py", line 226, in save
+      raise Exception("Cannot save %s : %s" % (obj2str(self.object),e))
+    File "/var/snapshots/lino/lino/tools.py", line 93, in obj2str
+      return u"%s #%s (%s)" % (i.__class__.__name__,i.pk,i)
+    File "/var/snapshots/lino/lino/modlib/contacts/models.py", line 184, in __unicode__
+      return u"%s (%s)" % (self.person, self.type)
+    File "/var/snapshots/django/django/db/models/fields/related.py", line 304, in __get__
+      rel_obj = QuerySet(self.field.rel.to).using(db).get(**params)
+    File "/var/snapshots/django/django/db/models/query.py", line 349, in get
+      % self.model._meta.object_name)
+  DoesNotExist: Person matching query does not exist.
+  
+Da musste ich manuell die Reihenfolge ändern, weil wir 
+da eine erste redundant dependency haben
+Person.job_office_contact verweist auf einen Contact, 
+und der wiederum auf Person.
+
+def contacts_contact_objects():
+    yield create_contacts_contact(1,200001,84282,1)
+    yield create_contacts_contact(3,22314,None,None)
+    yield create_contacts_contact(4,200005,85844,None)
+    yield create_contacts_contact(5,200006,85844,None)
+
+
+def contacts_person_objects():
+def contacts_person_objects2():
+    yield create_contacts_person(u'Anton Ausdemwald',u'',u'',u'',u'',None,None,u'',u'',u'de',None,u'',u
+    yield create_contacts_person(u'Andreas Arens',u'',u'',u'',u'',None,None,u'',u'',u'de',None,u'',u'',u
+
+
+  for o in contacts_person_objects2(): yield o
+  for o in contacts_contact_objects(): yield o
+  for o in contacts_person_objects(): yield o
+

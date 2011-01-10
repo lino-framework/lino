@@ -11,8 +11,9 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-import logging
-logger = logging.getLogger(__name__)
+#~ import logging
+#~ logger = logging.getLogger(__name__)
+from lino.utils import dblogger
 
 from django.conf import settings
 from django.contrib.auth import models as auth
@@ -54,7 +55,7 @@ def get_site_config():
     try:
         return SiteConfig.objects.get(pk=1)
     except SiteConfig.DoesNotExist:
-        logger.info("Creating SiteConfig record")
+        dblogger.info("Creating SiteConfig record")
         sc = SiteConfig(pk=1)
         #~ from lino.lino_site import lino_site
         #~ lino_site.init_site_config(sc)

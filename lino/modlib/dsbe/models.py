@@ -24,6 +24,7 @@ import datetime
 from django.db import models
 #~ from django.db.models import Q
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_unicode 
@@ -44,6 +45,7 @@ from lino.modlib.uploads import models as uploads
 #~ from lino.modlib.uploads.models import UploadsByPerson
 from lino.models import get_site_config
 from lino.tools import get_field
+from lino.tools import resolve_field
 from lino.utils.babel import add_babel_field, default_language, babelattr
 from lino.utils.choosers import chooser
 from lino.mixins.printable import DirectPrintAction
@@ -198,10 +200,7 @@ class Partner(mixins.DiffingMixin,models.Model):
 
 
 
-#~ class Person(Contact):
-
 class Person(Partner,contacts.Person):
-#~ class Person(Partner,contacts.Person,mixins.Printable):
     """
     Implements :class:`contacts.Person`.
     
@@ -293,6 +292,13 @@ class Person(Partner,contacts.Person):
     card_valid_until = models.DateField(
         blank=True,null=True,
         verbose_name=_("until"))
+        
+    card_type = models.CharField(max_length=20,blank=True,null=True,
+        verbose_name=_("eID card type"))
+    card_issuer = models.CharField(max_length=50,blank=True,null=True,
+        verbose_name=_("eID card issuer"))
+    noble_condition = models.CharField(max_length=50,blank=True,null=True,
+        verbose_name=_("noble condition"))
     #~ driving_license = models.ForeignKey("dsbe.DrivingLicense",blank=True,null=True,
         #~ verbose_name=_("Driving license"))
     #~ driving_license = models.CharField(max_length=4,blank=True,null=True,
@@ -373,15 +379,20 @@ class Person(Partner,contacts.Person):
         blank=True,null=True,
         verbose_name=_("Job agents"))
     
-    job_office_contact = models.ForeignKey("contacts.Contact",blank=True,null=True,
-      verbose_name=_("job office contact"),related_name='persons_job_office')
+    job_office_contact = models.ForeignKey("contacts.Contact",
+      blank=True,null=True,
+      verbose_name=_("Contact person at local job office"),
+      related_name='persons_job_office')
       
     @chooser()
     def job_office_contact_choices(cls):
-        pk = settings.LINO_SITE.job_office_id
-        if pk is not None:
-            jo = Company.objects.get(pk=pk)
-            return jo.contact_set.all()
+        sc = get_site_config()
+        if sc.job_office is not None:
+        #~ pk = settings.LINO_SITE.job_office_id
+        #~ if pk is not None:
+            #~ jo = Company.objects.get(pk=pk)
+            #~ return jo.contact_set.all()
+            return sc.job_office.contact_set.all()
         return []
 
 
@@ -393,6 +404,13 @@ class Person(Partner,contacts.Person):
         
     def __unicode__(self):
         return u"%s (%s)" % (self.name,self.pk)
+        
+    def clean(self):
+        if self.job_office_contact:
+            #~ print "Person.clean()", self
+            if self.job_office_contact.person == self:
+                raise ValidationError(_("Circular reference"))
+        super(Person,self).clean()
         
     full_name = property(contacts.Person.get_full_name)
         
@@ -1232,16 +1250,27 @@ standard model CompanyType.
 http://osdir.com/ml/django-users/2009-11/msg00696.html
 """
 from lino.modlib.contacts.models import CompanyType
-
 CompanyType.add_to_class('contract_type',
     models.ForeignKey("dsbe.ContractType",
         blank=True,null=True,
         verbose_name=_("contract type")))
+"""
+Same for SiteConfig
+"""
+from lino.models import SiteConfig
+SiteConfig.add_to_class('job_office',
+    models.ForeignKey("contacts.Company",
+        blank=True,null=True,
+        verbose_name=_("Local job office"),
+        related_name='job_office_sites',
+        ))
+resolve_field('lino.SiteConfig.job_office').__doc__ = """
+The Company whose contact persons will be choices for `Person.job_office_contact`.
+"""
 
 """
 Here's how to override the default verbose_name of a field
 """
-from lino.tools import resolve_field
 resolve_field('dsbe.Contract.user').verbose_name=_("responsible (DSBE)")
 
 """
