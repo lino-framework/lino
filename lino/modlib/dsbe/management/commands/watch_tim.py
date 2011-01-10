@@ -125,11 +125,11 @@ class Controller:
         pass
         
 def ADR_applydata(obj,data,**kw):
-    kw.update(
-        street='RUE',
-        street_box='RUEBTE',
-        phone='TEL',
-    )
+    #~ kw.update(
+        #~ street='RUE',
+        #~ street_box='RUEBTE',
+        #~ phone='TEL',
+    #~ )
     #~ if data.has_key('RUENUM'):
         #~ obj.street_no = data['RUENUM'].strip()
     #~ kw = {}
