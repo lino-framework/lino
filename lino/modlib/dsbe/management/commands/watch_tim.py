@@ -98,7 +98,7 @@ class Controller:
         obj = self.model()
         self.applydata(obj,kw['data'])
         obj.save()
-        dblogger.debug("%s:%s : POST %s",kw['alias'],kw['id'],kw['data'])
+        dblogger.debug("%s:%s (%s) : POST %s",kw['alias'],kw['id'],obj,kw['data'])
         
     def DELETE(self,**kw):
         obj = self.get_object(kw)
@@ -106,7 +106,7 @@ class Controller:
             dblogger.debug("%s:%s : DELETE failed (does not exist)",kw['alias'],kw['id'])
             return
         obj.delete()
-        dblogger.debug("%s:%s : DELETE ok",kw['alias'],kw['id'])
+        dblogger.debug("%s:%s (%s) : DELETE ok",kw['alias'],kw['id'],obj)
                     
     def PUT(self,**kw):
         obj = self.get_object(kw)
@@ -118,7 +118,8 @@ class Controller:
             return 
         self.applydata(obj,kw['data'])
         obj.save()
-        dblogger.debug("%s:%s : PUT %s",kw['alias'],kw['id'],kw['data'])
+        #~ dblogger.debug("%s:%s : PUT %s",kw['alias'],kw['id'],kw['data'])
+        dblogger.debug("%s:%s (%s) : PUT %s",kw['alias'],kw['id'],obj,kw['data'])
         
     def PUT_special(self,obj,**kw):
         pass
@@ -198,12 +199,12 @@ class PAR(Controller):
         #~ if vat_id:
         if is_company(kw['data']):
             if obj.__class__ is Person:
-                dblogger.debug("%s:%s : Person becomes Company",kw['alias'],kw['id'])
+                dblogger.debug("%s:%s (%s) : Person becomes Company",kw['alias'],kw['id'],obj)
                 self.swapclass(obj,Company,kw['data'])
                 return True
         else:
             if obj.__class__ is Company:
-                dblogger.debug("%s:%s : Company becomes Person",kw['alias'],kw['id'])
+                dblogger.debug("%s:%s (%s) : Company becomes Person",kw['alias'],kw['id'],obj)
                 self.swapclass(obj,Person,kw['data'])
                 return True
             
@@ -214,7 +215,7 @@ class PAR(Controller):
             obj = Person()
         self.applydata(obj,kw['data'])
         obj.save()
-        dblogger.debug("%s:%s : POST %s",kw['alias'],kw['id'],kw['data'])
+        dblogger.debug("%s:%s (%s): POST %s",kw['alias'],kw['id'],obj,kw['data'])
             
 
 class PXS(PAR):
