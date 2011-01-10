@@ -717,21 +717,21 @@ Lino.do_when_visible = function(cmp,todo) {
   //~ if (cmp.el && cmp.el.dom) 
   if (cmp.isVisible()) { 
     // 'visible' means 'rendered and not hidden'
-    //~ console.log('Lino.do_when_visible() now',cmp.title,todo);
+    //~ console.log(cmp.title,'-> cmp is visible now');
     todo(); 
   } else { 
     //~ console.log('Lino.do_when_visible() must defer because not isVisible()',todo,cmp);
     //~ todo.defer(1000);
     if (cmp.rendered) {
       //~ console.log(cmp,'-> cmp is rendered but not visible: and now?');
-      //~ console.log(cmp.title,'-> cmp is rendered but not visible: wait a second...');
+      //~ console.log(cmp.title,'-> cmp is rendered but not visible: try again in a moment...');
       //~ var fn = function() {Lino.do_when_visible(cmp,todo)};
       //~ fn.defer(100);
       
       Lino.do_when_visible.defer(100,this,[cmp,todo]);
       
     } else {
-      //~ console.log(cmp.title,'-> on render');
+      //~ console.log(cmp.title,'-> after render');
       cmp.on('afterrender',todo,cmp,{single:true});
     }
   }
@@ -761,6 +761,7 @@ Lino.row_action_handler = function(fmt) {
       //~ console.log(panel);
       var url = panel.get_record_url(rec.id);
       var p = Ext.apply({},panel.get_base_params());
+      //~ var p = Ext.apply({},panel.get_master_params());
       p['fmt'] = fmt;
       //~ url += "?" + Ext.urlEncode(p);
       //~ window.open(url);
@@ -855,29 +856,55 @@ Lino.HtmlBoxPanel = Ext.extend(Ext.Panel,{
     if (actions) config.bbar = actions.bbar;
     Lino.HtmlBoxPanel.superclass.constructor.call(this, config);
   },
-  on_master_changed : function() {
-    this.refresh();
-  },
+  //~ on_master_changed : function() {
+    //~ this.refresh();
+  //~ },
   refresh : function() {
+    var record = this.ww.get_current_record();
+    //~ console.log('HtmlBox.refresh()',this.title,record,record.title);
+    var box = this.items.get(0);
     var todo = function() {
-      //~ var src = caller.config.url_data + "/" + record.id + ".jpg"
-      //~ var p = this.ww.get_master_params();
-      //~ for (k in p) this.getStore().setBaseParam(k,p[k]);
+      //~ this.set_base_params(this.ww.get_base_params());
       this.set_base_params(this.ww.get_master_params());
-      //~ console.log('exec Lino.HtmlBoxPanel.on_master_changed()',this.get_base_params());
+      var el = box.getEl();
+      if (el) {
+        el.update(record.data[this.name]);
+        //~ console.log('HtmlBox.refresh()',this.name);
+      //~ } else {
+        //~ console.log('HtmlBox.refresh() failed for',this.name);
+      }
     };
-    Lino.do_when_visible(this,todo.createDelegate(this));
+    //~ Lino.do_when_visible(this,todo.createDelegate(this));
+    Lino.do_when_visible(box,todo.createDelegate(this));
   },
   get_base_params : function() {
+    // needed for insert action
     return this.base_params;
   },
   set_base_params : function(p) {
     this.base_params = p;
+  },
+  unused_load_htmlbox_record : function(record) {
+    var box = this.items.get(0);
+    var _this = this;
+    Lino.do_when_visible(box,function() {
+      //~ Lino.notify(record.data[cmp.name]);
+      var el = box.getEl();
+      if (el) {
+        el.update(record.data[_this.name]);
+        //~ console.log('Lino.FormPanel.load_htmlbox_to()',cmp.name,el);
+      }
+      
+    });
+    //~ cmp.on_master_changed();
+    this.refresh();
   }
 });
 
 Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   //~ trackResetOnLoad : true,
+  //~ query_params : {},
+  quick_search_text : '',
   constructor : function(ww,config,params){
     this.ww = ww;
     if (params) Ext.apply(config,params);
@@ -951,7 +978,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   },
   
   refresh : function() { 
-    console.log('Lino.FormPanel.refresh()',this);
+    //~ console.log('Lino.FormPanel.refresh()',this);
     if (this.current_record) {
         this.load_record_id(this.current_record.id);
     } else {
@@ -989,10 +1016,14 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   
   load_record_id : function(record_id) {
     var this_ = this;
+    var p = {};
+    Ext.apply(p,this.ww.config.base_params);
+    p['$URL_PARAM_FILTER'] = this.quick_search_text;
+    //~ Ext.apply(p,this.query_params);
     Ext.Ajax.request({ 
       waitMsg: 'Loading record...',
       method: 'GET',
-      params: this_.ww.config.base_params,
+      params: p,
       url: this_.get_record_url(record_id),
       success: function(response) {   
         // todo: convert to Lino.action_handler.... but result 
@@ -1060,7 +1091,8 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   },
   search_change : function(field,oldValue,newValue) {
     //~ console.log('FormPanel.search_change()');
-    this.ww.config.base_params['$URL_PARAM_FILTER'] = field.getValue(); 
+    //~ this.ww.config.base_params['$URL_PARAM_FILTER'] = field.getValue(); 
+    this.quick_search_text = field.getValue(); 
     this.goto_record_id(this.current_record.id);
     //~ this.moveFirst();
   },
@@ -1140,24 +1172,6 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     //~ });
     //~ cmp.on_master_changed();
   //~ },
-  load_htmlbox_to : function(cmp,record) {
-    //~ console.log('Lino.load_htmlbox_to()',cmp,record);
-    //~ Lino.do_when_visible(cmp,function() {
-      //~ var el = cmp.items.get(0).getEl();
-      //~ if (el) el.update(record.data[cmp.name])
-    //~ });
-    var box = cmp.items.get(0);
-    Lino.do_when_visible(box,function() {
-      //~ Lino.notify(record.data[cmp.name]);
-      var el = box.getEl();
-      if (el) {
-        el.update(record.data[cmp.name]);
-        //~ console.log('Lino.FormPanel.load_htmlbox_to()',cmp.name,el);
-      }
-      
-    });
-    cmp.on_master_changed();
-  },
   load_picture_to : function(cmp,record) {
     //~ console.log('FormPanel.load_picture_to()',record);
     var doit = function(src) {
@@ -1195,6 +1209,7 @@ Lino.getRowClass = function(record, rowIndex, rowParams, store) {
 }
     
 Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
+  quick_search_text : '',
   clicksToEdit:2,
   enableColLock: false,
   autoHeight: false,
@@ -1374,8 +1389,13 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
   
   search_change : function(field,oldValue,newValue) {
     //~ console.log('search_change',field.getValue(),oldValue,newValue)
-    this.store.setBaseParam('$URL_PARAM_FILTER',field.getValue()); 
-    this.store.load({params: { start: 0, limit: this.getTopToolbar().pageSize }});
+    //~ this.store.setBaseParam('$URL_PARAM_FILTER',field.getValue()); 
+    this.quick_search_text = field.getValue();
+    this.store.load({params: { 
+      start: 0, 
+      limit: this.getTopToolbar().pageSize,
+      query: this.quick_search_text
+      }});
   },
   
   apply_grid_config : function(name,grid_configs,rpt_columns) {
@@ -1687,7 +1707,11 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
   refresh : function() { 
     //~ Lino.notify('Lino.GridPanel.refresh');
     //~ Lino.notify('Lino.GridPanel.refresh '+this.store.proxy.url);
-    this.store.load({params:{limit:this.getTopToolbar().pageSize,start:this.getTopToolbar().cursor}});
+    this.store.load({params:{
+      limit:this.getTopToolbar().pageSize,
+      start:this.getTopToolbar().cursor,
+      $URL_PARAM_FILTER: this.quick_search_text
+      }});
   },
   after_delete : function() {
     this.refresh();
@@ -2003,8 +2027,15 @@ Lino.WindowWrapperBase = {
   close : function() { 
       this.window.close();
       if (this.caller) {
-        //~ console.log(20101209, this.caller);
-        this.caller.refresh();
+        if (this.caller.ww) {
+            //~ console.log('20110110 gonna refresh ww:', this.caller.ww);
+            this.caller.ww.refresh();
+        } else {
+            //~ console.log('20110110 refresh caller (no ww):', this.caller);
+            this.caller.refresh();
+        }
+      //~ } else {
+        //~ console.log('20110110 cannot refresh: no caller:', this);
       }
   }
 };
@@ -2206,6 +2237,7 @@ Lino.InsertWrapper = Ext.extend(Lino.WindowWrapper, {
   save : function(after) {
     console.log('InsertWrapper.save()',this);
     var panel = this.main_item;
+    var _this = this;
     panel.form.submit({
       url:'/api'+panel.ls_url,
       method: 'POST',
@@ -2213,13 +2245,18 @@ Lino.InsertWrapper = Ext.extend(Lino.WindowWrapper, {
       scope: panel,
       success: function(form, action) {
         Lino.notify(action.result.message);
-        panel.ww.close();
-        if (panel.ww.caller) {
+        _this.close();
+        if (_this.caller) {
+          if (_this.caller.ls_detail_handler) {
             //~ console.log(panel.ww.caller);
-            panel.ww.caller.ls_detail_handler(panel.ww.caller,{
+            _this.caller.ls_detail_handler(_this.caller,{
               record_id:action.result.record_id,
-              base_params:panel.ww.caller.get_base_params()});
+              base_params:_this.caller.get_base_params()});
             //~ Lino.show_detail_handler(panel.ww.caller.ls_detail_handler)(panel.ww.caller);
+          //~ } else {
+            // htmlbox doesn't have a detailwrapper
+            //~ _this.caller.refresh();
+          }
         }
       },
       failure: Lino.on_submit_failure,

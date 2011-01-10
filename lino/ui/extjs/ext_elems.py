@@ -65,7 +65,10 @@ def before_row_edit(panel):
             #~ l.append("this.load_buttons_to(%s,record);" % e.as_ext())
         elif isinstance(e,HtmlBoxElement):
             #~ l.append("%s.items.get(0).getEl().update(record.data.%s);" % (e.as_ext(),e.field.name))
-            l.append("this.load_htmlbox_to(%s,record);" % e.as_ext())
+            #~ l.append("%s.load_htmlbox_record(record);" % e.as_ext())
+            #~ l.append("%s.on_master_changed();" % e.as_ext())
+            l.append("%s.refresh();" % e.as_ext())
+            #~ l.append("this.load_htmlbox_to(%s,record);" % e.as_ext())
         elif isinstance(e,FieldElement):
             chooser = choosers.get_for_field(e.field)
             if chooser:

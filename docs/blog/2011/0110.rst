@@ -45,7 +45,13 @@
   Aber `job_office` und `site_company` sind übers UI leichter 
   einzugeben.
   
-- `street_box` wurde beum Synchronisieren aus TIM vergessen.
+- `street_box` wurde beim Synchronisieren aus TIM vergessen.
   
-- Neue funktion :meth:`lino.Site.setup_dblogger`. 
+- Neue Funktion :meth:`lino.Site.setup_dblogger`.
   Dadurch kann man nun den loglevel des dbloggers lokal verändern.
+  
+- Auf der Suche nach dem "Cache-Bug". 
+  master params sind die Parameter, die ein slave dieses Panels als base params übernehmen soll.
+  master- und baseparams dürfen immer nur mk und mt sein. 
+  Der Fehler ist scheinbar, dass ich 'query' auch da rein speichere. 
+  Für 'query' brauche ich eine weitere variable query_params.

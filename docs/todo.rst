@@ -57,6 +57,8 @@ Version 1.0
 Version 1.1
 -----------
 
+#.  Man kann momentan keine Filter "not empty" und "empty" setzen.
+
 #.  CompositeFields nutzen:
     http://dev.sencha.com/deploy/dev/examples/form/composite-field.html
     
