@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Lino-DSBE\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-01-14 06:58+0000\n"
-"PO-Revision-Date: 2011-01-14 09:14+0200\n"
+"PO-Revision-Date: 2011-01-14 09:29+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -180,7 +180,7 @@ msgstr "eID-Karte ausgestellt durch"
 
 #: .\models.py:308
 msgid "noble condition"
-msgstr ""
+msgstr "Adelstitel"
 
 #: .\models.py:314
 msgid "no shift work"
@@ -342,7 +342,7 @@ msgstr "Interim-Agenturen"
 
 #: .\models.py:391
 msgid "Contact person at local job office"
-msgstr ""
+msgstr "Kontaktperson ADG"
 
 #: .\models.py:408
 msgid "Auskunftsblatt"
