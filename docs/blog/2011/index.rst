@@ -24,6 +24,8 @@ As long as I am the only Lino developer, I'll write it mostly in German.
   :doc:`07 <0107>`   
   |br| 
   :doc:`10 <0110>` 
+  11 12 13
+  :doc:`14 <0114>` 
   |br|  	
 
 

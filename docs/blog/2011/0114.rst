@@ -1,0 +1,8 @@
+20110114
+========
+
+- Die Felder delay_value und delay_unit sind jetzt in reminder, 
+  nicht mehr nur in uploads. 
+  Also jetzt auch für Notizen und Verträge.
+  
+- Neue Felder `dsbe.Person.coached_from` und `coached_until`.

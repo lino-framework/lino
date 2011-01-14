@@ -26,15 +26,28 @@ REMINDER_TEXT_CHOICES = [
   _("must check"),
 ]
 
+DELAY_TYPE_CHOICES = [
+  ('D', _("days")),
+  ('W', _("weeks")),
+  ('M', _("months")),
+  ('Y', _("years")),
+]
+  
+
+
 class Reminder(AutoUser):
   
     class Meta:
         abstract = True
         
-    reminder_date = models.DateField(_("Reminder date"),
+    reminder_date = models.DateField(_("Due date"),
       blank=True,null=True)
     reminder_text = models.CharField(_("Reminder text"),
       max_length=200,blank=True,null=True)
+    delay_value = models.IntegerField(_("Reminder delay"),default=0)
+    delay_type = models.CharField(_("Delay type"),
+        max_length=1,default='D',choices=DELAY_TYPE_CHOICES)
+      
       
     @classmethod
     def get_reminders(model,date,user):

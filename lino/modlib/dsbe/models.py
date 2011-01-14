@@ -247,6 +247,13 @@ class Person(Partner,contacts.Person):
     #~ is_dsbe = models.BooleanField(verbose_name=_("is coached"),default=False)
     "Indicates whether this Person is coached."
     
+    coached_from = models.DateField(
+        blank=True,null=True,
+        verbose_name=_("Coached from"))
+    coached_until = models.DateField(
+        blank=True,null=True,
+        verbose_name=_("until"))
+    
     coach1 = models.ForeignKey("auth.User",blank=True,null=True,
         verbose_name=_("Coach 1"),related_name='coached1')
     coach2 = models.ForeignKey("auth.User",blank=True,null=True,

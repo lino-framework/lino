@@ -4,7 +4,7 @@ main =
     file #user
     type description 
     person company
-    reminder_date reminder_text
+    reminder_date reminder_text delay_value delay_type
     modified created
     # show_date show_time 
     # show_date time timestamp

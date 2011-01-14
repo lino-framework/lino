@@ -1,6 +1,9 @@
 20110110
 ========
 
+a) job_office, Synchronisierung
+-------------------------------
+
 - `Person.clean` prüft jetzt auf "Circular reference".
   Sonst kommt irgendwann mal ein Schlaumeier auf die Idee, 
   einer Kontaktperson des ADG sich selbst als Kontaktperson einzutragen.
@@ -50,8 +53,15 @@
 - Neue Funktion :meth:`lino.Site.setup_dblogger`.
   Dadurch kann man nun den loglevel des dbloggers lokal verändern.
   
+b) Cache-Bug
+------------
+  
 - Auf der Suche nach dem "Cache-Bug". 
   master params sind die Parameter, die ein slave dieses Panels als base params übernehmen soll.
   master- und baseparams dürfen immer nur mk und mt sein. 
   Der Fehler ist scheinbar, dass ich 'query' auch da rein speichere. 
   Für 'query' brauche ich eine weitere variable query_params.
+  Bug behoben. Da waren im Anschluss noch einige Nebenwirkungen mit dem refresh.
+  Aber jetzt scheint alles zu klappen.
+  
+  
