@@ -2,8 +2,9 @@
 ========
 
 
-- Die Felder delay_value und delay_unit sind jetzt in reminder, 
-  nicht mehr nur in uploads. 
+- Die Felder delay_value und delay_type sind jetzt in reminder, 
+  nicht mehr nur in uploads.models.Upload. 
   Also jetzt auch für Notizen und Verträge.
+  Und `delay_unit` heißt jetzt `delay_type`. 
   
 - Neue Felder `dsbe.Person.coached_from` und `coached_until`.

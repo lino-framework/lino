@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-06 18:40+0000\n"
-"PO-Revision-Date: 2011-01-06 22:52+0100\n"
+"POT-Creation-Date: 2011-01-14 06:57+0000\n"
+"PO-Revision-Date: 2011-01-14 09:12+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -95,20 +95,20 @@ msgstr "sehr gut"
 msgid "Invalid value %(value). Must be one of (%(values)s)"
 msgstr ""
 
-#: .\models.py:37
+#: .\models.py:38
 msgid "The company that runs this site"
 msgstr "Firma, die diese Anwendung  betreibt"
 
-#: .\models.py:40
+#: .\models.py:41
 msgid "The next automatic id for Person or Company"
 msgstr "Nächste automatische ID für Partner"
 
-#: .\models.py:44
-#: .\models.py:94
+#: .\models.py:45
+#: .\models.py:95
 msgid "Site Configuration"
 msgstr "Anwendungsparameter"
 
-#: .\models.py:91
+#: .\models.py:92
 msgid "~Site"
 msgstr "~Site"
 
@@ -136,7 +136,7 @@ msgid "Cannot delete %(self)s because %(count)d %(refs)s refer to it."
 msgstr "Kann %(self)s nicht löschen weil %(count)d %(refs)s darauf verweisen."
 
 #: .\demos\dsbe\lino_settings.py:27
-#: .\demos\dsbe\site.py:50
+#: .\demos\dsbe\site.py:48
 #: .\demos\std\lino_settings.py:23
 msgid "~Contacts"
 msgstr "~Kontakte"
@@ -146,18 +146,18 @@ msgid "~Notes"
 msgstr "~Notizen"
 
 #: .\demos\dsbe\lino_settings.py:38
-#: .\demos\dsbe\site.py:65
+#: .\demos\dsbe\site.py:63
 #: .\demos\std\lino_settings.py:31
 msgid "~Configure"
 msgstr "~Konfigurierung"
 
 #: .\demos\dsbe\lino_settings.py:62
-#: .\demos\dsbe\site.py:93
+#: .\demos\dsbe\site.py:91
 #: .\demos\std\lino_settings.py:43
 msgid "E~xplorer"
 msgstr ""
 
-#: .\demos\dsbe\site.py:55
+#: .\demos\dsbe\site.py:53
 msgid "~My menu"
 msgstr "~Mein Menü"
 
@@ -281,13 +281,37 @@ msgstr "Versuch"
 msgid "must check"
 msgstr "muss überprüft werden"
 
-#: .\mixins\reminder.py:34
-msgid "Reminder date"
-msgstr "Erinnern am"
+#: .\mixins\reminder.py:30
+msgid "days"
+msgstr "Tage"
 
-#: .\mixins\reminder.py:36
+#: .\mixins\reminder.py:31
+msgid "weeks"
+msgstr "Wochen"
+
+#: .\mixins\reminder.py:32
+msgid "months"
+msgstr "Monate"
+
+#: .\mixins\reminder.py:33
+msgid "years"
+msgstr "Jahre"
+
+#: .\mixins\reminder.py:43
+msgid "Due date"
+msgstr "Fällig am"
+
+#: .\mixins\reminder.py:45
 msgid "Reminder text"
 msgstr "Erinnerungstext"
+
+#: .\mixins\reminder.py:47
+msgid "Reminder delay"
+msgstr "Erinnerungsfrist"
+
+#: .\mixins\reminder.py:48
+msgid "Delay type"
+msgstr "Erinnerungsfrist"
 
 #: .\mixins\uploadable.py:36
 msgid "upload"
@@ -317,7 +341,7 @@ msgstr "Bearbeitet"
 msgid "Description"
 msgstr "Beschreibung"
 
-#: .\ui\extjs\ext_elems.py:570
+#: .\ui\extjs\ext_elems.py:573
 #, python-format
 msgid "Select a %s..."
 msgstr "%s auswählen..."

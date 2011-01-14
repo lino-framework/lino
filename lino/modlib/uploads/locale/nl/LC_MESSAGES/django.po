@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-06 18:40+0000\n"
+"POT-Creation-Date: 2011-01-14 06:58+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,30 +29,6 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-#: .\models.py:47
-msgid "days"
-msgstr ""
-
-#: .\models.py:48
-msgid "weeks"
-msgstr ""
-
-#: .\models.py:49
-msgid "months"
-msgstr ""
-
-#: .\models.py:50
-msgid "years"
-msgstr ""
-
-#: .\models.py:57
-msgid "Delay"
-msgstr ""
-
-#: .\models.py:58
-msgid "Unit"
-msgstr ""
-
-#: .\models.py:92
+#: .\models.py:82
 msgid "My uploads"
 msgstr ""

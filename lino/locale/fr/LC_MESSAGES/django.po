@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-06 18:40+0000\n"
+"POT-Creation-Date: 2011-01-14 06:57+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -95,19 +95,19 @@ msgstr ""
 msgid "Invalid value %(value). Must be one of (%(values)s)"
 msgstr ""
 
-#: .\models.py:37
+#: .\models.py:38
 msgid "The company that runs this site"
 msgstr ""
 
-#: .\models.py:40
+#: .\models.py:41
 msgid "The next automatic id for Person or Company"
 msgstr ""
 
-#: .\models.py:44 .\models.py:94
+#: .\models.py:45 .\models.py:95
 msgid "Site Configuration"
 msgstr ""
 
-#: .\models.py:91
+#: .\models.py:92
 msgid "~Site"
 msgstr ""
 
@@ -134,7 +134,7 @@ msgstr ""
 msgid "Cannot delete %(self)s because %(count)d %(refs)s refer to it."
 msgstr ""
 
-#: .\demos\dsbe\lino_settings.py:27 .\demos\dsbe\site.py:50
+#: .\demos\dsbe\lino_settings.py:27 .\demos\dsbe\site.py:48
 #: .\demos\std\lino_settings.py:23
 msgid "~Contacts"
 msgstr ""
@@ -143,17 +143,17 @@ msgstr ""
 msgid "~Notes"
 msgstr ""
 
-#: .\demos\dsbe\lino_settings.py:38 .\demos\dsbe\site.py:65
+#: .\demos\dsbe\lino_settings.py:38 .\demos\dsbe\site.py:63
 #: .\demos\std\lino_settings.py:31
 msgid "~Configure"
 msgstr ""
 
-#: .\demos\dsbe\lino_settings.py:62 .\demos\dsbe\site.py:93
+#: .\demos\dsbe\lino_settings.py:62 .\demos\dsbe\site.py:91
 #: .\demos\std\lino_settings.py:43
 msgid "E~xplorer"
 msgstr ""
 
-#: .\demos\dsbe\site.py:55
+#: .\demos\dsbe\site.py:53
 msgid "~My menu"
 msgstr ""
 
@@ -277,12 +277,36 @@ msgstr ""
 msgid "must check"
 msgstr ""
 
-#: .\mixins\reminder.py:34
-msgid "Reminder date"
+#: .\mixins\reminder.py:30
+msgid "days"
 msgstr ""
 
-#: .\mixins\reminder.py:36
+#: .\mixins\reminder.py:31
+msgid "weeks"
+msgstr ""
+
+#: .\mixins\reminder.py:32
+msgid "months"
+msgstr ""
+
+#: .\mixins\reminder.py:33
+msgid "years"
+msgstr ""
+
+#: .\mixins\reminder.py:43
+msgid "Due date"
+msgstr ""
+
+#: .\mixins\reminder.py:45
 msgid "Reminder text"
+msgstr ""
+
+#: .\mixins\reminder.py:47
+msgid "Reminder delay"
+msgstr ""
+
+#: .\mixins\reminder.py:48
+msgid "Delay type"
 msgstr ""
 
 #: .\mixins\uploadable.py:36
@@ -313,7 +337,7 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: .\ui\extjs\ext_elems.py:570
+#: .\ui\extjs\ext_elems.py:573
 #, python-format
 msgid "Select a %s..."
 msgstr ""
