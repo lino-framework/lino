@@ -263,7 +263,8 @@ class FakeDeserializedObject(base.DeserializedObject):
             return true
         try:
             obj.full_clean()
-        except ValidationError,e:
+        except Exception,e:
+        #~ except ValidationError,e:
             dblogger.debug("Deferred %s.%s : %s ",obj.__class__.__name__,obj.pk,e)
             return False
         try:
