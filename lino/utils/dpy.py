@@ -264,7 +264,6 @@ class FakeDeserializedObject(base.DeserializedObject):
         try:
             obj.full_clean()
         except ValidationError,e:
-            save_later.append(obj)
             dblogger.debug("Deferred %s : %s ",obj2str(obj),e)
             return False
         try:
@@ -272,7 +271,6 @@ class FakeDeserializedObject(base.DeserializedObject):
             dblogger.debug("Deserialized %s has been saved" % obj2str(obj))
             return True
         except Exception,e:
-            save_later.append(obj)
             dblogger.debug("Deferred %s : %s ",obj2str(obj),e)
             return False
       
