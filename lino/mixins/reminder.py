@@ -32,6 +32,19 @@ DELAY_TYPE_CHOICES = [
   ('M', _("months")),
   ('Y', _("years")),
 ]
+
+def time_delta(delay_type,delay_value):
+    if delay_type == 'D':
+        return datetime.timedelta(days=delay_value)
+    if delay_type == 'W':
+        return datetime.timedelta(days=delay_value*7)
+    if delay_type == 'M':
+        return datetime.timedelta(days=delay_value*30)
+        #~ return datetime.timedelta(months=delay_value)
+    if delay_type == 'Y':
+        return datetime.timedelta(days=delay_value*365)
+        #~ return datetime.timedelta(years=delay_value)
+
   
 
 
@@ -50,10 +63,19 @@ class Reminder(AutoUser):
       
       
     @classmethod
-    def get_reminders(model,date,user):
-        for obj in model.objects.filter(
-            user__exact=user,reminder_date__lte=date).order_by('reminder_date'):
-            yield ReminderEntry(obj,obj.reminder_date,obj.reminder_text,fmt='detail')
+    def get_reminders(model,today,user):
+        #~ print "get_reminders()"
+        #~ for obj in model.objects.filter(
+            #~ user__exact=user,reminder_date__lte=pivot).order_by('reminder_date'):
+        for obj in model.objects.filter(user__exact=user,
+              reminder_date__isnull=False).order_by('reminder_date'):
+            pivot = today + time_delta(obj.delay_type,obj.delay_value)
+            #~ print obj, pivot
+            if obj.reminder_date <= pivot:
+                msg = obj.reminder_text
+                if not msg:
+                    msg = _('due date reached')
+                yield ReminderEntry(obj,obj.reminder_date,msg,fmt='detail')
     
     def unused_summary_row(self,ui,rr,**kw):
         #~ s = u'<b>%s</b> :'

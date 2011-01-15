@@ -15,7 +15,7 @@ Personen
 
 Die begleiteten Personen werden in einer Datenbank erfasst, 
 die automatisch aus TIM importiert wird. 
-Die importierte Angaben können in Lino nicht bearbeitet werden 
+Die importierten Angaben können in Lino nicht bearbeitet werden 
 (werden am Bildschirm blau dargestellt).
 
 Zusätzlich zu den aus TIM importierten Angaben über eine Person 
@@ -25,7 +25,6 @@ werden weitere Angaben erfasst:
    - Erfahrungen (Beruf, Schule, Ausbildung, Sonstige)
    - Hindernisse bei Arbeitssuche
    
-
 **Übung** Jemand hat die falsche Telefonnummer oder Adresse.
 Partner in TIM bearbeiten. 
 In Lino auf "Refresh" klicken.
@@ -78,10 +77,90 @@ Wie findet ihr deren Telefonnumer?
 Nach welchen Regeln sollen wir ggf. entscheiden, 
 ob eine Person in TIM oder nur in Lino erfasst werden soll?
 
+
+Meine Leute finden
+------------------
+
+- :menuselection:`Mein Menü --> von mir begleitete Personen`
+
+Damit eine Person in dieser Liste erscheint, muss
+
+(1) ich als (mindestens) einer der beiden Begleiter angegeben sein
+(2) das heutige Tagesdatum in den Begleitungszeitraum fallen
+
+Der Begleitungszeitraum definiert sich wie folgt ausgehend von 
+den Feldern "Begleitet seit" und "Begleitet bis":
+
+- beide Felder leer : wird nicht begleitet
+- "seit" leer und "bis" ausgefüllt : wird/wurde begleitet bis zum
+  angegebenen Datum (Anfangsdatum unbekannt)
+- "seit" ausgefüllt und "bis" leer : wird seit dem angegebenen 
+  Datum ad eternum begleitet.
+- beide Felder ausgefüllt : wir begleitet mit voraussichtlichem 
+  Enddatum.
+
+Verträge
+--------
+
+Verträge können wie folgt eingesehen / gesucht / erfasst werden:
+
+- Im Reiter "Notizen" einer Person stehen alle Verträge, 
+  die für diese Person erfasst wurden.
+- Im Reiter "Notizen" einer Firma stehen alle Verträge, 
+  die mit dieser Firma erfasst wurden.
+- In :menuselection:`Mein Menü --> Meine Verträge` stehen alle Verträge, 
+  deren Autor ich bin (d.h. deren Feld "Benutzer (DSBE)" mich enthält).
+  
+  
+
+Erinnerungen
+------------
+
+Im Hauptmenü zeigt Lino automatisch "Erinnerungen" an.
+
+Das geplante Feature, dass man Erinnerungen per Mausklick
+als "gelesen" markieren kann, ist momentan noch nicht gemacht.
+Kann sein, dass die Präsentierung demnächst viel luxuriöser in 
+Form eines Kalenders kommt. 
+
+Uploads, Links, Notizen und Verträge haben ein Feld "Fällig am".
+Wenn dieses Feld ausgefüllt ist, wird aus diesem Upload (Link, Notiz oder 
+Vertrag) eine Erinnerung.
+
+Optional kann man zusätzlich das Datum der Erinnerung nach vorne 
+verschieben.
+Um z.B. 2 Monate vor dem Fälligkeitsdatum erinnert zu werden, trägt 
+man in "Frist (Wert)" 2 ein und setzt "Frist (Art)" auf "Monat".
+
+Bei Uploads (eingescannten Dokumenten), die nur bis zu einem 
+bestimmten Datum gültig sind, trägt man in "Fällig am" das 
+tatsächliche datum "Gültig-bis" des Originaldokuments ein und 
+benutzt die Frist, um die Erinnerung zeitig genug erscheinen zu 
+lassen. 
+
+
+Folgende Datumsfelder in den direkten Personenstammdaten führen 
+(wenn sie ausgefüllt sind) zu automatischen Erinnerungen:
+
+===================== ========= ====================================
+Datumsfeld            Frist     Erinnerungstext
+===================== ========= ====================================
+Nicht verfügbar bis   30 Tage   Person wieder verfügbar ab x
+Wartezeit bis         30 Tage   Wartezeit Arbeitssuche endet am x
+Begleitet bis         30 Tage   Begleitung endet am x
+ID-Karte gültig bis   30 Tage   ID-Karte gültig bis x
+===================== ========= ====================================
+
+
+
+
+
 Kandidatensuche
 ---------------
 
 **Übung**: 
 Mitarbeiter sieht Stellenangebot und fragt Lino, 
 welche potentiellen Kandidaten in der Datenbank sind.
+
+
 

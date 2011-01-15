@@ -2,9 +2,9 @@
 :label_align: top
 
 main =
-    id company contact
-    type person:30 language:10 
-    user_asd user reminder_date reminder_text
+    id:8 company:20 contact:20 language:8
+    type person:25 user:15 user_asd:15
+    reminder_date:10 delay_value:5 delay_type:10 reminder_text:30
     applies_from applies_until duration 
     date_decided date_issued 
     

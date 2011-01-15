@@ -1,7 +1,10 @@
 20110115
 ========
 
-Zwei Bugs behoben:
+Version 1.0.2 : drei Bugs weniger
+---------------------------------
+
+Noch drei Bugs weniger:
 
 #.  Ich habe gerade versucht, ein neues Land einzugeben: 
     AZ - Aserbaidschan Dabei kommt folgender Fehler: 
@@ -17,7 +20,44 @@ Zwei Bugs behoben:
     und macht dann je nach Bedarf ein POST oder ein PUT.
     Im dblogger (wenn dessen Level DEBUG ist) erscheint dann 
     eine Meldung "POST becomes PUT".
-    Außerdem wurde ein "softly invalid record" (full_clean wirft 
-    `ValidationError`, aber die Datenbank hat nichts auszusetzen) 
-    in manchen Fällen dennoch gespeichert.
-    Daher kamen die leeren Records.
+    
+#.  Außerdem speicherte watch_tim einen "softly invalid record" 
+    (full_clean wirft `ValidationError`, aber die Datenbank 
+    hat nichts auszusetzen) in manchen Fällen dennoch ab.
+
+
+Check-in "20110115" und Release Version 1.0.2 in Eupen.
+
+
+Neues Modul "Kurse"
+-------------------
+
+Beim letzten Workshop hatten wir folgende Änderung beschlossen: 
+In der Tabelle Sprachkenntnisse (Sprache, Wort, Schrift) 
+kommt eine neue Kolonne "braucht Kurs" mit einfachem Ja/Nein-Feld, 
+und im Reiter "Hindernisse" muss das Feld "Analphabet" 
+manuell bearbeitbar sein (momentan ist es ein virtuelles Feld, dieses Feature verschwindet ganz). 
+Aus diesen Angaben kann Lino dann z.B. eine Liste von Kandidaten 
+für Sprachkurse liefern.
+
+Ich bin aber noch nicht zufrieden mit dieser Lösung...
+
+Erinnerungen & Meine Leute
+--------------------------
+
+- Die Liste "von mir begleitete Personen" berücksichtigt jetzt den 
+  Begleitungszeitraum (zeigt nur Personen an, die dort mindestens ein Datum 
+  ausgefüllt haben).
+  
+- Erinnerungen müssten jetzt ungefähr so funktionieren, wie wir uns das gedacht
+  haben. 
+  
+Siehe Dokumentation in :doc:`/dsbe/intro`.
+
+
+dpy-Deserializer now handles dependencies
+-----------------------------------------
+
+loaddata
+
+

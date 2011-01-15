@@ -44,6 +44,7 @@ SUFFIX = '.dpy'
 class Serializer(base.Serializer):
     """
     Serializes a QuerySet to a dpy stream.
+    Usage: ``dumpdata --format dpy``
     """
 
     internal_use_only = False
@@ -188,7 +189,7 @@ class Serializer(base.Serializer):
 
 
 
-class FakeDeserializedObject(base.DeserializedObject):
+class unused_FakeDeserializedObject(base.DeserializedObject):
     """
     Imitates DeserializedObject required by loaddata,
     but this time we *don't want* to bypass pre_save/save methods.
@@ -207,6 +208,102 @@ class FakeDeserializedObject(base.DeserializedObject):
         dblogger.info("Deserialized %s has been saved" % obj2str(self.object))
 
 
+def unused_Deserializer(fp, **options):
+    """
+    """
+    if isinstance(fp, basestring):
+        raise NotImplementedError
+    parts = os.path.split(fp.name)
+    fqname = parts[-1]
+    assert fqname.endswith(SUFFIX)
+    fqname = fqname[:-4]
+    #print fqname
+    desc = (SUFFIX,'r',imp.PY_SOURCE)
+    module = imp.load_module(fqname, fp, fp.name, desc)
+    #m = __import__(filename)
+    try_again = []
+    for instance in module.objects():
+        if instance is not None:
+            yield FakeDeserializedObject(instance)
+
+
+class FakeDeserializedObject(base.DeserializedObject):
+    """
+    Imitates DeserializedObject required by loaddata,
+    but this time we *don't want* to bypass pre_save/save methods.
+    """
+    
+    object = None # required by loaddata
+    
+    def __init__(self, objects):
+        self.objects = objects
+        #~ self.save_later = []
+
+    def save(self, *args,**kw):
+        #~ print 'dpy.py',self.object
+        save_later = []
+        for obj in self.objects():
+            if not self.try_save(obj,*args,**kw):
+                save_later.append(obj)
+                
+        hope = True
+        while hope and save_later:
+            try_again = save_later
+            save_later = []
+            hope = False
+            for obj in try_again:
+                if not self.try_save(obj,*args,**kw):
+                    if save_later.append(obj):
+                        hope = True
+        if save_later:
+            dblogger.warning("Abandoned with %d unsaved instances.",len(save_later))
+                
+    def try_save(self,obj,*args,**kw):
+        if obj is None:
+            return true
+        try:
+            obj.full_clean()
+        except ValidationError,e:
+            save_later.append(obj)
+            dblogger.debug("Deferred %s : %s ",obj2str(obj),e)
+            return False
+        try:
+            obj.save(*args,**kw)
+            dblogger.debug("Deserialized %s has been saved" % obj2str(obj))
+            return True
+        except Exception,e:
+            save_later.append(obj)
+            dblogger.debug("Deferred %s : %s ",obj2str(obj),e)
+            return False
+      
+    def unused_save_some(self,*args,**kw):
+        #~ save_later = []
+        retval = False
+        self.must_save += self.save_later
+        for obj in self.must_save:
+            if obj is not None:
+                try:
+                    obj.full_clean()
+                except ValidationError,e:
+                    save_later.append(obj)
+                    dblogger.debug("Deferred %s : %s ",obj2str(obj),e)
+                    continue
+                    #~ raise Exception("Cannot save %s : %s" % (obj2str(obj),e))
+                try:
+                    obj.save(*args,**kw)
+                    retval = True
+                    dblogger.debug("Deserialized %s has been saved" % obj2str(obj))
+                except Exception,e:
+                    save_later.append(obj)
+                    dblogger.debug("Deferred %s : %s ",obj2str(obj),e)
+                    continue
+        self.must_save = save_later
+        return retval
+                
+        
+              
+
+
 def Deserializer(fp, **options):
     """
     """
@@ -220,8 +317,6 @@ def Deserializer(fp, **options):
     desc = (SUFFIX,'r',imp.PY_SOURCE)
     module = imp.load_module(fqname, fp, fp.name, desc)
     #m = __import__(filename)
-    for instance in module.objects():
-        if instance is not None:
-            yield FakeDeserializedObject(instance)
+    yield FakeDeserializedObject(module.objects)
 
 

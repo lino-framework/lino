@@ -426,12 +426,31 @@ class Person(Partner,contacts.Person):
         return self.language
         
     @classmethod
-    def get_reminders(model,date,user):
+    def get_reminders(model,today,user):
         q = models.Q(coach1__exact=user) | models.Q(coach2__exact=user)
-        delay = 30
-        for obj in model.objects.filter(q,
-              card_valid_until__lte=date+datetime.timedelta(days=delay)).order_by('card_valid_until'):
-            yield ReminderEntry(obj,obj.card_valid_until,_("eID card expires in %d days") % delay,fmt='detail',tab=3)
+        
+        def find_them(fieldname,today,d,msg,**linkkw):
+            filterkw = { fieldname+'__lte' : today + d }
+            for obj in model.objects.filter(q,**filterkw).order_by(fieldname):
+                yield ReminderEntry(obj,getattr(obj,fieldname),msg,**linkkw)
+            
+        #~ delay = 30
+        #~ for obj in model.objects.filter(q,
+              #~ card_valid_until__lte=date+datetime.timedelta(days=delay)).order_by('card_valid_until'):
+            #~ yield ReminderEntry(obj,obj.card_valid_until,_("eID card expires in %d days") % delay,fmt='detail',tab=3)
+        for o in find_them('card_valid_until', today, datetime.timedelta(days=30),
+            _("eID card expires"),fmt='detail',tab=0):
+            yield o
+        for o in find_them('unavailable_until', today, datetime.timedelta(days=30),
+            _("becomes available again"),fmt='detail',tab=1):
+            yield o
+        for o in find_them('work_permit_suspended_until', today, datetime.timedelta(days=30),
+              _("work permit suspension ends"),fmt='detail',tab=1):
+            yield o
+        for o in find_them('coached_until', today, datetime.timedelta(days=30),
+            _("coaching ends"),fmt='detail',tab=1):
+            yield o
+            
             #~ todo... delay=(value, unit)
         #~ for obj in model.objects.filter(q,
               #~ driving_license_until__lte=date+datetime.timedelta(days=14)).order_by('driving_license_until'):
@@ -543,16 +562,19 @@ class MyPersons(Persons):
     order_by = ['last_name','first_name']
     #~ def get_queryset(self):
     def get_request_queryset(self,rr):
+        today = datetime.date.today()
         qs = super(MyPersons,self).get_request_queryset(rr)
-        q1 = models.Q(coach1__exact=rr.user)
-        q2 = models.Q(coach2__exact=rr.user)
-        q3 = models.Q(group__isnull=False)
+        Q = models.Q
+        q1 = Q(coach1__exact=rr.user) | Q(coach2__exact=rr.user)
+        #~ q3 = Q(group__isnull=False)
+        #~ q3 = Q(coached_from__isnull=False) | Q(coached_until__isnull=False)
+        q2 = Q(coached_from__isnull=False) | Q(coached_until__isnull=False,coached_until__gte=today)
         #~ q2 = Q(coached__gt=0)
         #~ q2 = Q(dsbe_coach__exact=user)
         #~ q2 = Q(dsbe_coaches__contains=user)
         #~ q2 = Q(coaching_set__user__exact=user)
         #~ return Person.objects.annotate(dsbe_ccoach=Count('coaching_set__user__exact')).filter(q1|q2)
-        return qs.filter(q1|q2|q3)
+        return qs.filter(q1,q2)
     #~ Person.user == user 
     #~ or 
     #~ Person.coachings_set.filter(user__exact=user).count() > 0        

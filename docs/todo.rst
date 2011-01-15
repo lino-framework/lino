@@ -9,6 +9,47 @@ for which I hope for help from other people.
 Version 1.0
 -----------
 
+#.  Der shortcut "upload" funktioniert noch nicht.
+
+#.  MyPersons : nicht die Person.group ist nötig, sondern 
+    der Datumsbereich `Person.coached_from` / `Person.coached_until` 
+    muss aktiv sein.
+    
+    from django.db.models import F
+    due_date
+    
+#.  is_illiterate : soll kein virtuelles, sondern ein normales Feld 
+    sein. Diesem Feld bedeutet "braucht Alfabetisierungs-Kurs" 
+    und könnte komplett unnütz werden, wenn wir eine neue Serie 
+    von Tabellen "Kursgesuche" machen:
+    
+      class CourseProvider(models.Model):
+        "Kursanbieter (Kap, Oikos, Lupe, ...) "
+        name
+        
+      class CourseContent(models.Model):
+        "Kursinhalte (FR, DE, EN, Alfa)"
+        ref
+        name
+        
+      class Course(models.Model):
+        title
+        start_date
+        provider
+        content
+        remarks
+        
+      class CourseRequest(models.Model,mixins.Reminder):
+        "Kursanfragen : Person X sucht einen Kurs mit Inhalt Y"
+        person
+        content (FK to CourseContent)
+        date_submitted
+        provider # None means "any provider"
+        course # when not None: means that the request is satisfied and the Person participated to this course
+        satisfied : StrengthField
+        remarks
+        
+
 #.  Dialekt der csv-Datei bestimmen können (Excel oder OOo). Encoding.
 
 #.  Formatierte Texte. Zumindest Aufzählungen und mehrere Absätze 
@@ -18,6 +59,9 @@ Version 1.0
 
 Version 1.1
 -----------
+
+#.  Wenn man die Rückfrage nach "Delete" mit Enter beatnwortet, 
+    wird die Grid nicht aktualisiert...
 
 #.  Liste der offenen Fenster. Einfachste Form wäre ein Dropdown, 
     so dass man leicht von hier nach dort springen kann. 
@@ -189,7 +233,9 @@ After version 1.1
 
 #. do we need a general button "Printer-friendly view"?
 
-#. Formatierung der :xfile:`welcome.html` lässt zu wünschen übrig.  
+#.  Formatierung der :xfile:`welcome.html` lässt zu wünschen übrig.  
+    Evtl. stattdessen einen kompletten Kalender:
+    http://www.sencha.com/blog/2010/09/08/ext-js-3-3-calendar-component/
 
 #. Wie kann ich die Test-Templates für Notizen in den code repository rein kriegen?
    Er soll sie dann auch unabhängig von der Sprache finden. 
