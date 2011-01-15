@@ -1,0 +1,23 @@
+20110115
+========
+
+Zwei Bugs behoben:
+
+#.  Ich habe gerade versucht, ein neues Land einzugeben: 
+    AZ - Aserbaidschan Dabei kommt folgender Fehler: 
+    {'isocode': ValidationError({'isocode': u"Existierender ID-Wert '' 
+    darf nicht verändert werden."})}
+
+#.  Wenn ein neuer PXS erstellt wird, schreibt TIM (logischerweise) 
+    ein POST in die Changelog. watch_tim machte daraufhin ohne 
+    zu überlegen einen neuen Record. Bei POST und PUT verlässt 
+    watch_tim sich jetzt prinzipiell nie auf die Aussage von TIM, 
+    sondern einzig auf die primary key. Also er schaut immer nach, 
+    ob so ein Record in der Lino-Datenbank existiert oder nicht 
+    und macht dann je nach Bedarf ein POST oder ein PUT.
+    Im dblogger (wenn dessen Level DEBUG ist) erscheint dann 
+    eine Meldung "POST becomes PUT".
+    Außerdem wurde ein "softly invalid record" (full_clean wirft 
+    `ValidationError`, aber die Datenbank hat nichts auszusetzen) 
+    in manchen Fällen dennoch gespeichert.
+    Daher kamen die leeren Records.

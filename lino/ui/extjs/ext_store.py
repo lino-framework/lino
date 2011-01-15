@@ -68,7 +68,7 @@ class StoreField(object):
     def obj2dict(self,request,obj,d):
         d[self.field.name] = self.value_from_object(request,obj)
 
-    def form2obj(self,instance,post_data):
+    def form2obj(self,instance,post_data,is_new):
         v = post_data.get(self.field.name,self.form2obj_default)
         if v is None:
             return
@@ -77,7 +77,7 @@ class StoreField(object):
             # but don't do this for charfields with blank=True (and not null=True)
             v = None
         v = self.parse_form_value(v)
-        if self.field.primary_key and instance.pk is not None:
+        if not is_new and self.field.primary_key and instance.pk is not None:
             if instance.pk == v:
                 return
             raise exceptions.ValidationError({
@@ -113,7 +113,7 @@ class DisabledFieldsStoreField(StoreField):
     def obj2dict(self,request,obj,d):
         d.update(disabled_fields=self.value_from_object(request,obj))
 
-    def form2obj(self,instance,post_data):
+    def form2obj(self,instance,post_data,is_new):
         pass
 
         
@@ -151,7 +151,7 @@ class AutoStoreField(StoreField):
         kw['type'] = 'int'
         StoreField.__init__(self,field,**kw)
   
-    def form2obj(self,instance,post_data):
+    def form2obj(self,instance,post_data,is_new):
         pass
         
     #~ def form2obj(self,instance,post_data):
@@ -209,7 +209,7 @@ class MethodStoreField(StoreField):
     def get_from_form(self,instance,post_data):
         pass
         
-    def form2obj(self,instance,post_data):
+    def form2obj(self,instance,post_data,is_new):
         pass
         #raise Exception("Cannot update a virtual field")
 
@@ -222,7 +222,7 @@ class MethodStoreField(StoreField):
 
 class OneToOneStoreField(StoreField):
         
-    def form2obj(self,instance,post_data):
+    def form2obj(self,instance,post_data,is_new):
         #v = values.get(self.field.name,None)
         v = post_data.get(self.field.name,None)
         if v == '' and self.field.null:
@@ -264,7 +264,7 @@ class ComboStoreField(StoreField):
         s += "," + repr(self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
         return s 
         
-    def form2obj(self,instance,post_data):
+    def form2obj(self,instance,post_data,is_new):
         assert not self.field.primary_key
         v = post_data.get(self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX,None)
         if v is None:
@@ -456,10 +456,10 @@ class Store:
         else:
             return ComboStoreField(fld,**kw)
 
-    def form2obj(self,form_values,instance):
+    def form2obj(self,form_values,instance,is_new):
         for f in self.fields:
             try:
-                f.form2obj(instance,form_values)
+                f.form2obj(instance,form_values,is_new)
             #~ except exceptions.ValidationError,e:
             except Exception,e:
                 raise exceptions.ValidationError({f.field.name:e})

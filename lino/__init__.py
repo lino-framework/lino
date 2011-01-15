@@ -21,10 +21,12 @@ import sys
 import datetime
 import logging
 
-__version__ = "1.0.1"
+__version__ = "1.0.2"
 """
 Lino version number. 
-The latest released version is :doc:`/releases/20101224`.
+The latest documented release is :doc:`/releases/20101224`,
+but the "documented releases" feature is currently not really 
+needed and thus not used.
 """
 
 __author__ = "Luc Saffre <luc.saffre@gmx.net>"

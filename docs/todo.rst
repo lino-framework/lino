@@ -9,38 +9,25 @@ for which I hope for help from other people.
 Version 1.0
 -----------
 
-#.  Lästig ist, dass nach dem Bearbeiten einer Zelle der Focus auf die 
-    erste Zeile zurück springt.
-
 #.  Dialekt der csv-Datei bestimmen können (Excel oder OOo). Encoding.
 
-#.  Manche Links öffnen einen neuen Tab: irritiert
+#.  Formatierte Texte. Zumindest Aufzählungen und mehrere Absätze 
+    sollten möglich sein.
+
+#.  DisplayField für Alter benutzen
+
+Version 1.1
+-----------
 
 #.  Liste der offenen Fenster. Einfachste Form wäre ein Dropdown, 
     so dass man leicht von hier nach dort springen kann. 
     Oder als vertikale Reiter.
+    Manche Links öffnen einen neuen Tab: irritiert
 
-#.  cv.odt testen mit appyodt statt appypdf
-
-#.  Reminder haben bisher reminder_date und reminder_text. 
-    reminder_date : Fällig am
+#.  Reminders als "gelesen" markeiren können.
     
-    Da fehlt noch ein Feld "X Tage vorher" reminder_delay.
-    Am besten ein TimeDelaField wie in 
-    http://djangosnippets.org/snippets/1060/
-    
-    Und ein Feld `ok`
-    
-#.  Dokumentvorlagen weiter
-
-#.  Auf einem gefilterten Detail von Personen sind die 
-    SlaveQueries manchmal fälschlicherweise ebenfalls gefiltert. 
-    Weil er "query" als master_param speichert und mit übergibt.
-
 #.  Im `search_field` funktionieren die Tasten HOME und END nicht.
-
-#.  Formatierte Texte. Zumindest Aufzählungen und mehrere Absätze 
-    sollten möglich sein.
+    Oder genauer gesagt werden die von der Grid abgefangen und verarbeitet.
 
 #.  DuplicateRow / Insert as copy (Kopie erstellen). 
     Evtl. stattdessen zwei Buttons "Export" und "Import". 
@@ -52,10 +39,8 @@ Version 1.0
 #.  Modell "PersonSearch" (sex, language, age_range,...) 
     und Report PersonsBySearch.
 
-#.  DisplayField für Alter benutzen
-
-Version 1.1
------------
+#.  Lästig ist, dass nach dem Bearbeiten einer Zelle der Focus auf die 
+    erste Zeile zurück springt.
 
 #.  Man kann momentan keine Filter "not empty" und "empty" setzen.
 
@@ -103,6 +88,10 @@ Version 1.1
     versteckt, dann werden diese Kolonnen nicht wieder sichtbar, wenn man auf eine 
     andere Ansicht zurück wechselt.
     
+#.  Reminders arbeiten momentan mit zwei Feldern delay_value und delay_type.
+    Schöner wäre ein TimeDelaField wie in 
+    http://djangosnippets.org/snippets/1060/
+
 
 After version 1.1
 -----------------

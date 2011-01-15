@@ -89,17 +89,14 @@ class Controller:
             if data.has_key(v):
                 setattr(obj,k,data[v])
         obj = settings.TIM2LINO_LOCAL(self.__class__.__name__,obj)
+        
+    def validate_and_save(self,obj):
         try:
             obj.full_clean()
+            obj.save()
         except ValidationError,e:
             dblogger.warning("Validation failed for %s : %s",obj2str(obj),e)
                 
-    def POST(self,**kw):
-        obj = self.model()
-        self.applydata(obj,kw['data'])
-        obj.save()
-        dblogger.debug("%s:%s (%s) : POST %s",kw['alias'],kw['id'],obj,kw['data'])
-        
     def DELETE(self,**kw):
         obj = self.get_object(kw)
         if obj is None:
@@ -108,6 +105,17 @@ class Controller:
         obj.delete()
         dblogger.debug("%s:%s (%s) : DELETE ok",kw['alias'],kw['id'],obj)
                     
+    def POST(self,**kw):
+        obj = self.get_object(kw)
+        if obj is None:
+            obj = self.model()
+        else:
+            dblogger.debug("%s:%s : POST becomes PUT",kw['alias'],kw['id'])
+        self.applydata(obj,kw['data'])
+        self.validate_and_save(obj)
+        #~ obj.save()
+        dblogger.debug("%s:%s (%s) : POST %s",kw['alias'],kw['id'],obj,kw['data'])
+        
     def PUT(self,**kw):
         obj = self.get_object(kw)
         if obj is None:
@@ -117,7 +125,8 @@ class Controller:
         if self.PUT_special(obj,**kw):
             return 
         self.applydata(obj,kw['data'])
-        obj.save()
+        self.validate_and_save(obj)
+        #~ obj.save()
         #~ dblogger.debug("%s:%s : PUT %s",kw['alias'],kw['id'],kw['data'])
         dblogger.debug("%s:%s (%s) : PUT %s",kw['alias'],kw['id'],obj,kw['data'])
         
@@ -181,7 +190,8 @@ class PAR(Controller):
                 kw[n] = v
         newobj = new_class(**kw)
         self.applydata(newobj,data)
-        newobj.save()
+        self.validate_and_save(newobj)
+        #~ newobj.save()
         obj.delete()
         
     def get_object(self,kw):
@@ -214,7 +224,8 @@ class PAR(Controller):
         else:
             obj = Person()
         self.applydata(obj,kw['data'])
-        obj.save()
+        self.validate_and_save(obj)
+        #~ obj.save()
         dblogger.debug("%s:%s (%s): POST %s",kw['alias'],kw['id'],obj,kw['data'])
             
 
@@ -226,7 +237,6 @@ class PXS(PAR):
             birth_date='GEBDAT',
         )
         Controller.applydata(self,obj,data,**d)
-        
         pxs2person(data,obj)
         
         
