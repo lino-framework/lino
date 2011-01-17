@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-17 04:25+0000\n"
-"PO-Revision-Date: 2011-01-17 06:21+0200\n"
+"POT-Creation-Date: 2011-01-17 05:47+0000\n"
+"PO-Revision-Date: 2011-01-17 07:49+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -42,7 +42,8 @@ msgstr "Duplizieren"
 msgid "Delete"
 msgstr "Löschen"
 
-#: .\actions.py:174 .\actions.py:179
+#: .\actions.py:174
+#: .\actions.py:179
 msgid "Save"
 msgstr "Speichern"
 
@@ -102,7 +103,8 @@ msgstr "Firma, die diese Anwendung  betreibt"
 msgid "The next automatic id for Person or Company"
 msgstr "Nächste automatische ID für Partner"
 
-#: .\models.py:45 .\models.py:95
+#: .\models.py:45
+#: .\models.py:95
 msgid "Site Configuration"
 msgstr "Anwendungsparameter"
 
@@ -126,14 +128,15 @@ msgstr "Nein"
 #: .\reports.py:870
 #, python-format
 msgid "%(details)s by %(model)s %(master)s"
-msgstr ""
+msgstr "%(details)s pro %(model)s %(master)s"
 
 #: .\site.py:170
 #, python-format
 msgid "Cannot delete %(self)s because %(count)d %(refs)s refer to it."
 msgstr "Kann %(self)s nicht löschen weil %(count)d %(refs)s darauf verweisen."
 
-#: .\demos\dsbe\lino_settings.py:27 .\demos\dsbe\site.py:48
+#: .\demos\dsbe\lino_settings.py:27
+#: .\demos\dsbe\site.py:48
 #: .\demos\std\lino_settings.py:23
 msgid "~Contacts"
 msgstr "~Kontakte"
@@ -142,12 +145,14 @@ msgstr "~Kontakte"
 msgid "~Notes"
 msgstr "~Notizen"
 
-#: .\demos\dsbe\lino_settings.py:38 .\demos\dsbe\site.py:68
+#: .\demos\dsbe\lino_settings.py:38
+#: .\demos\dsbe\site.py:68
 #: .\demos\std\lino_settings.py:31
 msgid "~Configure"
 msgstr "~Konfigurierung"
 
-#: .\demos\dsbe\lino_settings.py:62 .\demos\dsbe\site.py:97
+#: .\demos\dsbe\lino_settings.py:62
+#: .\demos\dsbe\site.py:97
 #: .\demos\std\lino_settings.py:43
 msgid "E~xplorer"
 msgstr ""
@@ -305,12 +310,12 @@ msgid "Reminder text"
 msgstr "Erinnerungstext"
 
 #: .\mixins\reminder.py:60
-msgid "Reminder delay"
-msgstr "Erinnerungsfrist"
+msgid "Delay (value)"
+msgstr "Frist (Wert)"
 
 #: .\mixins\reminder.py:61
-msgid "Delay type"
-msgstr "Erinnerungsfrist"
+msgid "Delay (unit)"
+msgstr "Frist (Einheit)"
 
 #: .\mixins\reminder.py:77
 msgid "due date reached"
@@ -383,7 +388,8 @@ msgstr "%s wurde erstellt."
 msgid "%s has been saved."
 msgstr "%s wurde gespeichert."
 
-#: .\ui\extjs\ext_ui.py:705 .\ui\extjs\ext_ui.py:728
+#: .\ui\extjs\ext_ui.py:705
+#: .\ui\extjs\ext_ui.py:728
 #, python-format
 msgid "User %(user)s cannot configure %(report)s."
 msgstr ""
@@ -407,6 +413,9 @@ msgstr ""
 #, python-format
 msgid "Choices for %s"
 msgstr "Auswahlmöglichkeiten für %s"
+
+#~ msgid "Reminder delay"
+#~ msgstr "Erinnerungsfrist"
 
 #~ msgid "No selection. Nothing to do."
 #~ msgstr "Nichts ausgewählt, nichts zu tun."

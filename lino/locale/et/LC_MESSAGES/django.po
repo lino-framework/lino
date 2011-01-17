@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-17 04:25+0000\n"
+"POT-Creation-Date: 2011-01-17 05:47+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -305,11 +305,11 @@ msgid "Reminder text"
 msgstr ""
 
 #: .\mixins\reminder.py:60
-msgid "Reminder delay"
+msgid "Delay (value)"
 msgstr ""
 
 #: .\mixins\reminder.py:61
-msgid "Delay type"
+msgid "Delay (unit)"
 msgstr ""
 
 #: .\mixins\reminder.py:77

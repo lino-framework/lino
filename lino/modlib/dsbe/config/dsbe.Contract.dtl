@@ -7,6 +7,7 @@ main =
     reminder_date:10 delay_value:5 delay_type:10 reminder_text:30
     applies_from applies_until duration 
     date_decided date_issued 
+    date_ended ending
     
     
     

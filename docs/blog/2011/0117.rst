@@ -8,3 +8,4 @@
 - Neue Tabelle ContractEndings (Vertragsbeendigungen) und zwei neue Felder 
   `ending` und `date_ended` in Contract.
     
+- Release :doc:`/releases/20110117` in Eupen.

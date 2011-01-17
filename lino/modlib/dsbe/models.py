@@ -1309,6 +1309,7 @@ class LinksByCompany(links.LinksByOwnerBase):
 CourseProvider = Company
 
 class CourseProviders(Companies):
+    use_as_default_report = False
     #~ app_label = 'dsbe'
     label = _("Course providers")
     model = CourseProvider

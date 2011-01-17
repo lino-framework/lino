@@ -17,6 +17,13 @@ Version 1.0.2 (17.01.2011)
       
 - Erinnerungen müssten jetzt ungefähr so funktionieren, wie wir uns das gedacht
   haben. Siehe Dokumentation (Sektion "Erinnerungen" in :doc:`/dsbe/intro`).
+  
+- Verträge haben jetzt zwei neue Felder "Beendet am" und "Beendigungsgrund", 
+  die zum Erstellen der jährlichen Statistiken dienen.
+  Die Liste der Beendigungsgründe steht im Hauptmenü unter 
+  :menuselection:`Konfigurierung --> Vertragsbeendigungen`, und diese solltet ihr 
+  gemeinsam anschauen und bearbeiten. 
+
 
 - Das Feld "Analphabet" im Reiter "Hindernisse" ist jetzt manuell bearbeitbar.
 
@@ -47,3 +54,7 @@ Version 1.0.2 (17.01.2011)
     gebt ihr nur den Kursinhalt ein (DE, FR, Alpha).
     Wenn die Person tatsächlich an einem Kurs teilnimmt, wird das Feld "Kurs" ausgefüllt.
   
+Bekannte Probleme
+-----------------
+
+- Auswahlliste Firma eines Vertrags zeigt versehentlich nur Kursanbieter.

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-17 04:26+0000\n"
+"POT-Creation-Date: 2011-01-17 05:48+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -433,7 +433,7 @@ msgstr ""
 msgid "hourly rate"
 msgstr ""
 
-#: .\models.py:604 .\models.py:1348
+#: .\models.py:604 .\models.py:1349
 msgid "Course provider"
 msgstr ""
 
@@ -469,7 +469,7 @@ msgstr "Études & expériences"
 msgid "Studies & education"
 msgstr "Études & expériences"
 
-#: .\models.py:686 .\models.py:837 .\models.py:1372
+#: .\models.py:686 .\models.py:837 .\models.py:1373
 msgid "Person"
 msgstr ""
 
@@ -578,7 +578,7 @@ msgstr "Études"
 msgid "strength"
 msgstr ""
 
-#: .\models.py:794 .\models.py:913 .\models.py:1357 .\models.py:1400
+#: .\models.py:794 .\models.py:913 .\models.py:1358 .\models.py:1401
 msgid "Remark"
 msgstr ""
 
@@ -632,7 +632,7 @@ msgstr ""
 msgid "from"
 msgstr ""
 
-#: .\models.py:973 .\models.py:1058 .\models.py:1450
+#: .\models.py:973 .\models.py:1058 .\models.py:1451
 msgid "contract type"
 msgstr ""
 
@@ -762,68 +762,68 @@ msgstr ""
 msgid "My contracts"
 msgstr ""
 
-#: .\models.py:1313
+#: .\models.py:1314
 msgid "Course providers"
 msgstr ""
 
-#: .\models.py:1326
+#: .\models.py:1327
 msgid "Course Content"
 msgstr ""
 
-#: .\models.py:1327
+#: .\models.py:1328
 msgid "Course Contents"
 msgstr ""
 
-#: .\models.py:1331 .\models.py:1344
+#: .\models.py:1332 .\models.py:1345
 msgid "Name"
 msgstr ""
 
-#: .\models.py:1340
+#: .\models.py:1341
 msgid "Course"
 msgstr ""
 
-#: .\models.py:1341
+#: .\models.py:1342
 msgid "Courses"
 msgstr ""
 
-#: .\models.py:1346 .\models.py:1353 .\models.py:1374
+#: .\models.py:1347 .\models.py:1354 .\models.py:1375
 msgid "Course content"
 msgstr ""
 
-#: .\models.py:1352
+#: .\models.py:1353
 msgid "start date"
 msgstr ""
 
-#: .\models.py:1368 .\models.py:1369
+#: .\models.py:1369 .\models.py:1370
 msgid "Course Requests"
 msgstr ""
 
-#: .\models.py:1375
+#: .\models.py:1376
 msgid "date submitted"
 msgstr ""
 
-#: .\models.py:1391
+#: .\models.py:1392
 msgid "Course found"
 msgstr ""
 
-#: .\models.py:1396
+#: .\models.py:1397
 msgid "Satisfied"
 msgstr ""
 
-#: .\models.py:1423
+#: .\models.py:1424
 msgid "Participants"
 msgstr ""
 
-#: .\models.py:1428
+#: .\models.py:1429
 #, fuzzy
 msgid "Candidates"
 msgstr "Études"
 
-#: .\models.py:1458
+#: .\models.py:1459
 msgid "Local job office"
 msgstr ""
 
-#: .\models.py:1468
+#: .\models.py:1469
 msgid "responsible (DSBE)"
 msgstr ""
 
