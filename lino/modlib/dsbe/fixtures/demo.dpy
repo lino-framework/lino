@@ -250,3 +250,16 @@ def objects():
             yield x
             
     
+
+    from lino.modlib.dsbe.models import Course, CourseContent, CourseRequest
+    oikos = company(name=u"Oikos",city=eupen,country='BE',is_courseprovider=True)
+    kap = company(name=u"KAP",city=eupen,country='BE',is_courseprovider=True)
+    yield oikos    
+    
+    yield CourseContent(id=1,name=u"Deutsch")
+    yield CourseContent(id=2,name=u"Französisch")
+    
+    course = Instantiator('dsbe.Course').build
+    yield course(provider=oikos,title=u"Deutsch für Anfänger",content=1,start_date=i2d(20110110))
+    yield course(provider=kap,title=u"Deutsch fur Anfanger",content=1,start_date=i2d(20110117))
+    yield course(provider=kap,title=u"Français pour débutants",content=2,start_date=i2d(20110124))

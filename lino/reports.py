@@ -384,7 +384,7 @@ class ReportActionRequest:
     layout = None
     #~ selected_rows = []
     
-    def __init__(self,ui,report,action):
+    def __init__(self,ui,report,action,**kw):
     #~ def __init__(self,rh,action):
         #~ assert isinstance(rh,ReportHandle)
         #~ assert ui.create_meth_element is not None
@@ -399,6 +399,7 @@ class ReportActionRequest:
         #~ actions.ActionRequest.__init__(self,ui,action)
         #~ self.rh = self.ah
         self.action = action
+        #~ self._setup(**kw)
       
     def __str__(self):
         return self.__class__.__name__ + '(' + self.report.actor_id + ",%r,...)" % self.master_instance

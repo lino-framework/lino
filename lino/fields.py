@@ -97,9 +97,8 @@ class StrengthField(models.CharField):
     def __init__(self, *args, **kw):
         defaults = dict(
             choices=STRENGTH_CHOICES,
-            default='2',
             max_length=1,
-            #~ blank=True,null=True,
+            blank=True,null=True,
             #~ validators=[validate_knowledge],
             #~ limit_to_choices=True,
             )

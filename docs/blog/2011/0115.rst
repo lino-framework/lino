@@ -1,8 +1,8 @@
 20110115
 ========
 
-Version 1.0.2 : drei Bugs weniger
----------------------------------
+Drei Bugs weniger
+-----------------
 
 Noch drei Bugs weniger:
 
@@ -26,7 +26,7 @@ Noch drei Bugs weniger:
     hat nichts auszusetzen) in manchen Fällen dennoch ab.
 
 
-Check-in "20110115" und Release Version 1.0.2 in Eupen.
+Check-in "20110115" und Release in Eupen.
 
 
 Neues Modul "Kurse"
@@ -58,6 +58,7 @@ Siehe Dokumentation in :doc:`/dsbe/intro`.
 dpy-Deserializer now handles dependencies
 -----------------------------------------
 
+Vor dem Einlesen eines dpy-Dumps bruache ich jetzt nicht mehr manuell die Abhängigkeiten aufzulösen (Contacts können erst erstellt werden, wenn die Person existiert ist, Personen mit job_agent_contact aber erst nachdem dieser Contact existiert. Vom Prinzip her habe ich die einfachere aber langsamere Strategie gewählt: was nicht gespeichert werden kann, wird in einer nächsten Runde nochmal probiert. Und notfalls nochmal und nochmal, und erst wenn sich nichts mehr verändert (was z.B. bei circulare references passieren könnte) gibt er auf. 
 
-20110115b
+Check-in 20110115b und Test auf den Daten in Eupen. Funktioniert. Sehr viel länger als vorher scheint es nicht zu dauern.
 

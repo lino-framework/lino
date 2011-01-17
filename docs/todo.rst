@@ -23,32 +23,6 @@ Version 1.0
     und könnte komplett unnütz werden, wenn wir eine neue Serie 
     von Tabellen "Kursgesuche" machen:
     
-      class CourseProvider(models.Model):
-        "Kursanbieter (Kap, Oikos, Lupe, ...) "
-        name
-        
-      class CourseContent(models.Model):
-        "Kursinhalte (FR, DE, EN, Alfa)"
-        ref
-        name
-        
-      class Course(models.Model):
-        title
-        start_date
-        provider
-        content
-        remarks
-        
-      class CourseRequest(models.Model,mixins.Reminder):
-        "Kursanfragen : Person X sucht einen Kurs mit Inhalt Y"
-        person
-        content (FK to CourseContent)
-        date_submitted
-        provider # None means "any provider"
-        course # when not None: means that the request is satisfied and the Person participated to this course
-        satisfied : StrengthField
-        remarks
-        
 
 #.  Dialekt der csv-Datei bestimmen können (Excel oder OOo). Encoding.
 

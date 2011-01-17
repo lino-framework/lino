@@ -60,6 +60,11 @@ class Site(Base):
             m.add_action('contacts.MyPersonsByGroup',label=pg.name,
             params=dict(master_id=pg.pk))
 
+        m = self.add_menu("courses",_("~Courses"),can_view=perms.is_authenticated)
+        m.add_action('contacts.CourseProviders')
+        m.add_action('dsbe.CourseContents')
+        m.add_action('dsbe.Courses')
+        
         m = self.add_menu("config",_("~Configure"),
           can_view=perms.is_staff)
         #~ m.add_action('projects.ProjectTypes')
@@ -82,6 +87,7 @@ class Site(Base):
         m.add_action('dsbe.Activities')
         m.add_action('dsbe.ExclusionTypes')
         m.add_action('dsbe.AidTypes')
+        m.add_action('dsbe.ContractEndings')
         #~ m.add_action('dsbe.JobTypes')
         m.add_action('dsbe.ExamPolicies')
         #~ m.add_action('dsbe.CoachingTypes')
@@ -97,7 +103,7 @@ class Site(Base):
         m.add_action('dsbe.Exclusions')
         m.add_action('dsbe.Contracts')
         m.add_action('uploads.Uploads')
-        #~ m.add_action('links.Links')
+        m.add_action('dsbe.CourseRequests')
         m.add_action('contenttypes.ContentTypes')
 
         system.add_site_menu(self)

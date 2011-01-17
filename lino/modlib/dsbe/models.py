@@ -371,6 +371,7 @@ class Person(Partner,contacts.Person):
     native_language = models.ForeignKey('countries.Language',
       verbose_name=_("Native language"),
       blank=True,null=True)
+    is_illiterate = models.BooleanField(_("Illiterate"))
     #~ native_language = fields.LanguageField(
       #~ verbose_name=_("Native language"),
       #~ blank=True,null=True)
@@ -381,7 +382,7 @@ class Person(Partner,contacts.Person):
     is_seeking = models.BooleanField(_("is seeking work"))
     
     obstacles = models.TextField(_("Obstacles"),blank=True,null=True)
-    skills = models.TextField(_("Skills"),blank=True,null=True)
+    skills = models.TextField(_("Other skills"),blank=True,null=True)
     job_agents = models.CharField(max_length=100,
         blank=True,null=True,
         verbose_name=_("Job agents"))
@@ -473,14 +474,14 @@ class Person(Partner,contacts.Person):
         return os.path.join(settings.MEDIA_ROOT,*self.get_image_parts())
         
             
-    def is_illiterate(self):
-        if self.languageknowledge_set.count() == 0:
-            return False
-        for lk in self.languageknowledge_set.all():
-            if lk.written > 0:
-                return False
-        return True
-    is_illiterate.return_type = models.BooleanField(_("Illiterate"),editable=False)
+    #~ def is_illiterate(self):
+        #~ if self.languageknowledge_set.count() == 0:
+            #~ return False
+        #~ for lk in self.languageknowledge_set.all():
+            #~ if lk.written > 0:
+                #~ return False
+        #~ return True
+    #~ is_illiterate.return_type = models.BooleanField(_("Illiterate"),editable=False)
     
     def age(self):
         if self.birth_date:
@@ -600,6 +601,7 @@ class Company(Partner,contacts.Company):
     #~ type = models.ForeignKey('contacts.CompanyType',blank=True,null=True,verbose_name=_("Company type"))
     prefix = models.CharField(max_length=200,blank=True) 
     hourly_rate = fields.PriceField(_("hourly rate"),blank=True,null=True)
+    is_courseprovider = models.BooleanField(_("Course provider")) 
     
     def disabled_fields(self,request):
         if settings.TIM2LINO_IS_IMPORTED_PARTNER(self):
@@ -1003,6 +1005,23 @@ add_babel_field(ExamPolicy,'name')
 class ExamPolicies(reports.Report):
     model = ExamPolicy
     column_names = 'name *'
+#
+# CONTRACT ENDINGS
+#
+class ContractEnding(models.Model):
+    class Meta:
+        verbose_name = _("Contract ending")
+        verbose_name_plural = _('Contract endings')
+        
+    name = models.CharField(_("designation"),max_length=200)
+    
+    def __unicode__(self):
+        return unicode(self.name)
+        
+class ContractEndings(reports.Report):
+    model = ContractEnding
+    column_names = 'name *'
+
 
 #
 # AID TYPES
@@ -1039,8 +1058,8 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,mixins.
     type = models.ForeignKey("dsbe.ContractType",verbose_name=_("contract type"),blank=True)
     language = fields.LanguageField(default=default_language)
     
-    applies_from = models.DateField(blank=True,null=True,verbose_name=_("applies from"))
-    applies_until = models.DateField(blank=True,null=True,verbose_name=_("applies until"))
+    applies_from = models.DateField(_("applies from"),blank=True,null=True,)
+    applies_until = models.DateField(_("applies until"),blank=True,null=True)
     date_decided = models.DateField(blank=True,null=True,verbose_name=_("date decided"))
     date_issued = models.DateField(blank=True,null=True,verbose_name=_("date issued"))
     duration = models.IntegerField(_("duration (days)"),blank=True,null=True,default=None)
@@ -1068,6 +1087,10 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,mixins.
     
     exam_policy = models.ForeignKey("dsbe.ExamPolicy",blank=True,null=True,
         verbose_name=_("examination policy"))
+        
+    ending = models.ForeignKey("dsbe.ContractEnding",blank=True,null=True,
+        verbose_name=_("Contract ending"))
+    date_ended = models.DateField(blank=True,null=True,verbose_name=_("date ended"))
     
     #~ aid_nature = models.CharField(_("aid nature"),max_length=100,blank=True)
     #~ aid_rate = models.CharField(_("aid rate"),max_length=100,blank=True)
@@ -1267,7 +1290,149 @@ class LinksByCompany(links.LinksByOwnerBase):
     column_names = "name url user date person *"
     order_by = ["date"]
     
+
+#
+# COURSES
+#
+
+
+#~ class CourseProvider(models.Model):
+#~ class CourseProvider(Company):
+    #~ """Kursanbieter (KAP, Oikos, Lupe, ...) 
+    #~ """
+    #~ class Meta:
+        #~ app_label = 'dsbe'
+    #~ name = models.CharField(max_length=200,
+          #~ verbose_name=_("Name"))
+    #~ company = models.ForeignKey("contacts.Company",blank=True,null=True,verbose_name=_("Company"))
     
+CourseProvider = Company
+
+class CourseProviders(Companies):
+    #~ app_label = 'dsbe'
+    label = _("Course providers")
+    model = CourseProvider
+    filter = dict(is_courseprovider__exact=True)
+    
+    def create_instance(self,req,**kw):
+        instance = super(CourseProviders,self).create_instance(req,**kw)
+        instance.is_courseprovider = True
+        return instance
+  
+class CourseContent(models.Model):
+    "Kursinhalte (FR, DE, EN, Alfa)"
+    
+    class Meta:
+        verbose_name = _("Course Content")
+        verbose_name_plural = _('Course Contents')
+        
+    name = models.CharField(max_length=200,
+          blank=True,null=True,
+          verbose_name=_("Name"))
+          
+    def __unicode__(self):
+        return unicode(self.name)
+        
+  
+class Course(models.Model):
+  
+    class Meta:
+        verbose_name = _("Course")
+        verbose_name_plural = _('Courses')
+        
+    title = models.CharField(max_length=200,
+        verbose_name=_("Name"))
+    content = models.ForeignKey("dsbe.CourseContent",
+        verbose_name=_("Course content"))
+    provider = models.ForeignKey(CourseProvider,
+        verbose_name=_("Course provider"))
+    @chooser()
+    def provider_choices(cls):
+        return CourseProviders.request().queryset
+    start_date = models.DateField(_("start date"),blank=True,null=True)
+    content = models.ForeignKey("dsbe.CourseContent",verbose_name=_("Course content"))
+  
+    remark = models.CharField(max_length=200,
+        blank=True,null=True,
+        verbose_name=_("Remark"))
+        
+    def __unicode__(self):
+        if self.start_date is None:
+            return u'%s %s' % (self.title,self.provider)
+        return u'%s %s %s' % (self.title,self.start_date,self.provider)
+  
+#~ class CourseRequest(mixins.Reminder):
+class CourseRequest(models.Model):
+    "Kursanfragen : Person X sucht einen Kurs mit Inhalt Y"
+    class Meta:
+        verbose_name = _("Course Requests")
+        verbose_name_plural = _('Course Requests')
+        
+    person = models.ForeignKey("contacts.Person",
+        verbose_name=_("Person"))
+    content = models.ForeignKey("dsbe.CourseContent",
+        verbose_name=_("Course content"))
+    date_submitted = models.DateField(_("date submitted"),auto_now_add=True)
+    
+    #~ """Empty means 'any provider'
+    #~ """
+    #~ provider = models.ForeignKey(CourseProvider,blank=True,null=True,
+        #~ verbose_name=_("Course provider"))
+        
+    #~ @chooser()
+    #~ def provider_choices(cls):
+        #~ return CourseProviders.request().queryset
+        
+    """
+    when not empty,
+    means that the request is satisfied and the Person participated to this course
+    """
+    course = models.ForeignKey("dsbe.Course",blank=True,null=True,
+        verbose_name=_("Course found"))
+        
+    """
+    The person's feedback about how satisfied she was.
+    """
+    satisfied = fields.StrengthField(verbose_name=_("Satisfied"),blank=True,null=True)
+    
+    remark = models.CharField(max_length=200,
+        blank=True,null=True,
+        verbose_name=_("Remark"))
+        
+class Courses(reports.Report):
+    model = Course
+    order_by = ['start_date']
+
+class CourseContents(reports.Report):
+    model = CourseContent
+    order_by = ['name']
+
+class CoursesByProvider(Courses):
+    fk_name = 'provider'
+
+class CourseRequests(reports.Report):
+    model = CourseRequest
+    order_by = ['date_submitted']
+
+class CourseRequestsByPerson(CourseRequests):
+    fk_name = 'person'
+    column_names = '* id'
+
+class RequestsByCourse(CourseRequests):
+    fk_name = 'course'
+    label = _("Participants")
+    can_add = perms.never
+
+class CandidatesByCourse(CourseRequests):
+    fk_name = 'course'
+    label = _("Candidates")
+    can_add = perms.never
+    
+    
+
+#
+# SEARCH
+#
 class PersonSearch(mixins.Printable):
     pass
     

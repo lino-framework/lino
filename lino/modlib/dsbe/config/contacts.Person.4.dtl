@@ -3,7 +3,11 @@
 
 main = 
   box1 box2 dsbe.SkillsByPerson 
-  dsbe.LanguageKnowledgesByPerson skills 
+  box3 skills 
+
+box3 =
+  dsbe.LanguageKnowledgesByPerson  
+  dsbe.CourseRequestsByPerson  
   
 box2 = 
   driving_license

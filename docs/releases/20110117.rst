@@ -1,0 +1,49 @@
+Version 1.0.2 (17.01.2011)
+==========================
+
+
+- Die Liste "von mir begleitete Personen" berücksichtigt jetzt den 
+  Begleitungszeitraum (zeigt nur Personen an, deren Begleitungszeitraum 
+  "aktiv" ist). Der Begleitungszeitraum definiert sich wie besprochen 
+  ausgehend von den Feldern "Begleitet seit" und "Begleitet bis":
+
+    - beide Felder leer : wird nicht begleitet
+    - "seit" leer und "bis" ausgefüllt : wird/wurde begleitet bis zum
+      angegebenen Datum (Anfangsdatum unbekannt)
+    - "seit" ausgefüllt und "bis" leer : wird seit dem angegebenen 
+      Datum ad eternum begleitet.
+    - beide Felder ausgefüllt : wir begleitet mit voraussichtlichem 
+      Enddatum.
+      
+- Erinnerungen müssten jetzt ungefähr so funktionieren, wie wir uns das gedacht
+  haben. Siehe Dokumentation (Sektion "Erinnerungen" in :doc:`/dsbe/intro`).
+
+- Das Feld "Analphabet" im Reiter "Hindernisse" ist jetzt manuell bearbeitbar.
+
+- Neues Modul "Sprachkurse".
+  Das ist jetzt doch noch ein bisschen anders geworden als beim letzten Workshop beschlossen.
+  Bitte ausprobieren und mir dann Feedback geben.
+  
+  - Kursanbieter werden als Firmen erfasst und kriegen unten in ihrem Detail 
+    (im Reiter "Allgemein" unter der Bemerkung) das neue Feld "Kursanbieter" angekreuzt. 
+    
+  - :menuselection:`Kurse --> Kursanbieter` : 
+    Liste der Firmen, die das Feld "Kursanbieter" angekreuzt haben.
+    
+  - :menuselection:`Kurse --> Kursinhalte` : 
+    hier solltet ihr nur nach Absprache mit Gerd oder mir was ändern.
+    
+  - :menuselection:`Kurse --> Kurse` : 
+    hier solltet ihr jeden einzelnen Kurs erfassen, der irgendwo stattfindet 
+    (und für den ihr Kandidaten zu vermitteln plant).
+    Im Fall von Kurs-Serien müsst ihr für jede Gruppe hier einen neuen Kurs eintragen.
+    Im Detail eines Kurses gibt es zwei Tabellen "Teilnehmer" und "Kandidaten".
+    Letztere (Kandidaten) funktioniert noch nicht. 
+  
+  - Im Reiter "Fähigkeiten" einer Person gibt es jetzt unter den Sprachkenntnissen 
+    eine neue Tabelle "Kursanfragen". Dort solltet ihr eintragen, wenn eine Person 
+    einen Sprachkurs besuchen will/muss.
+    Solange es sich lediglich um eine Anfrage handelt, 
+    gebt ihr nur den Kursinhalt ein (DE, FR, Alpha).
+    Wenn die Person tatsächlich an einem Kurs teilnimmt, wird das Feld "Kurs" ausgefüllt.
+  

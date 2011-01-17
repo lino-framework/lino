@@ -1,0 +1,10 @@
+20110117
+========
+
+- Neues Modul "Courses" mit Modellen Course, CourseContent, CourseProvider und CourseRequest
+
+- Das Feld "Analphabet" im Reiter "Hindernisse" ist jetzt manuell bearbeitbar.
+
+- Neue Tabelle ContractEndings (Vertragsbeendigungen) und zwei neue Felder 
+  `ending` und `date_ended` in Contract.
+    

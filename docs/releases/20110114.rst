@@ -1,0 +1,17 @@
+Version 1.0.1 (14.01.2011)
+==========================
+
+Für heute Morgen neben ein paar Übersetzungen erstmal nur eine kleine
+Neuerung: Im Reiter "Status" habt ihr jetzt zwei neue Felder "Begleitet
+seit" und "bis", in denen ihr wie besprochen für begleitete Personen das
+Beginn- und/oder Enddatum eingebt.
+
+Wenn mindestens eines dieser Felder ausgefüllt ist (und "bis", falls
+ausgefüllt, in Zukunft liegt), erscheint diese Person automatisch in
+eurer Liste der begleiteten Personen. (Allerdings funktioniert diese
+Liste momentan noch nicht, wird aber bald kommen).
+
+
+
+
+
