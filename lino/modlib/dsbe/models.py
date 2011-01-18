@@ -46,7 +46,7 @@ from lino.modlib.uploads import models as uploads
 from lino.models import get_site_config
 from lino.tools import get_field
 from lino.tools import resolve_field
-from lino.utils.babel import add_babel_field, default_language, babelattr
+from lino.utils.babel import add_babel_field, default_language, babelattr, babeldict_getitem
 from lino.utils.choosers import chooser
 from lino.mixins.printable import DirectPrintAction
 from lino.mixins.reminder import ReminderEntry
@@ -154,6 +154,53 @@ RESIDENCE_TYPE_CHOICES = (
   (3  , _("Waiting for registry")   ), # Warteregister
 )
 
+BEID_CARD_TYPES = {
+  '1' : dict(en=u"Belgian citizen"),
+  '6' : dict(en=u"Kids card (< 12 year)"),
+  '8' : dict(en=u"Habilitation",fr=u"Habilitation",nl=u"Machtiging"),
+  '11' : dict(
+        en=u"Foreigner card type A",
+        nl=u"Bewijs van inschrijving in het vreemdelingenregister - Tijdelijk verblijf",
+        fr=u"Certificat d'inscription au registre des étrangers - Séjour temporaire",
+        de=u"Bescheinigung der Eintragung im Ausländerregister - Vorübergehender Aufenthalt",
+      ),
+  '12' : dict(
+        en=u"Foreigner card type B",
+        nl=u"Bewijs van inschrijving in het vreemdelingenregister",
+        fr=u"Certificat d'inscription au registre des étrangers",
+        de=u"Bescheinigung der Eintragung im Ausländerregister",
+      ),
+  '13' : dict(
+        en=u"Foreigner card type C",
+        nl=u"Identiteitskaart voor vreemdeling",
+        fr=u"Carte d'identité d'étranger",
+        de=u"Personalausweis für Ausländer",
+      ),
+  '14' : dict(
+        en=u"Foreigner card type D",
+        nl=u"EG - langdurig ingezetene",
+        fr=u"Résident de longue durée - CE",
+        de=u"Daueraufenthalt - EG",
+      ),
+  '15' : dict(
+        en=u"Foreigner card type E",
+        nl=u"Verklaring van inschrijving",
+        fr=u"Attestation d’enregistrement",
+        de=u"Anmeldebescheinigung",
+      ),
+  '16' : dict(
+        en=u"Foreigner card type E+",
+      ),
+  '17' : dict(
+        en=u"Foreigner card type F",
+        nl=u"Verblijfskaart van een familielid van een burger van de Unie",
+        fr=u"Carte de séjour de membre de la famille d’un citoyen de l’Union",
+        de=u"Aufenthaltskarte für Familienangehörige eines Unionsbürgers",
+      ),
+  '18' : dict(
+        en=u"Foreigner card type F+",
+      ),
+}
 
 
 
@@ -421,6 +468,14 @@ class Person(Partner,contacts.Person):
         super(Person,self).clean()
         
     full_name = property(contacts.Person.get_full_name)
+    
+    def card_type_text(self):
+        if self.card_type:
+            s = babeldict_getitem(BEID_CARD_TYPES,self.card_type)
+            if s:
+                return s
+        return self.card_type
+    card_type_text.return_type = fields.DisplayField(_("eID card type"))
         
     def get_print_language(self,pm):
         "Used by DirectPrintAction"
@@ -488,7 +543,8 @@ class Person(Partner,contacts.Person):
             dd = datetime.date.today()-self.birth_date
             return _("%d years") % (dd.days / 365)
         return _('unknown')
-    age.return_type = models.CharField(_("Age"),max_length=10,editable=False,blank=True)
+    age.return_type = fields.DisplayField(_("Age"))
+    #~ age.return_type = models.CharField(_("Age"),max_length=10,editable=False,blank=True)
     
     def overview(self):
         def qsfmt(qs):

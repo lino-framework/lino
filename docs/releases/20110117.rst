@@ -1,6 +1,7 @@
 Version 1.0.2 (17.01.2011)
 ==========================
 
+- Das Feld "Analphabet" im Reiter "Hindernisse" ist jetzt manuell bearbeitbar.
 
 - Die Liste "von mir begleitete Personen" berücksichtigt jetzt den 
   Begleitungszeitraum (zeigt nur Personen an, deren Begleitungszeitraum 
@@ -20,15 +21,18 @@ Version 1.0.2 (17.01.2011)
   
 - Verträge haben jetzt zwei neue Felder "Beendet am" und "Beendigungsgrund", 
   die zum Erstellen der jährlichen Statistiken dienen.
+  
   Die Liste der Beendigungsgründe steht im Hauptmenü unter 
   :menuselection:`Konfigurierung --> Vertragsbeendigungen`, und diese solltet ihr 
-  gemeinsam anschauen und bearbeiten. 
-
-
-- Das Feld "Analphabet" im Reiter "Hindernisse" ist jetzt manuell bearbeitbar.
+  gemeinsam anschauen und bearbeiten.
+  
+  Ich schlage vor, dass ihr unter "Meine Verträge" mal eine Serie von 
+  abgeschlossenen Verträgen des vergangenen Jahres eingebt 
+  und mir Bescheid sagt, ob euch das alles logisch, verständlich und komplett vorkommt.
 
 - Neues Modul "Sprachkurse".
-  Das ist jetzt doch noch ein bisschen anders geworden als beim letzten Workshop beschlossen.
+  Das ist jetzt doch noch ein bisschen anders geworden als bei unserem 
+  Workshop vom 11.01. beschlossen.
   Bitte ausprobieren und mir dann Feedback geben.
   
   - Kursanbieter werden als Firmen erfasst und kriegen unten in ihrem Detail 
@@ -54,7 +58,3 @@ Version 1.0.2 (17.01.2011)
     gebt ihr nur den Kursinhalt ein (DE, FR, Alpha).
     Wenn die Person tatsächlich an einem Kurs teilnimmt, wird das Feld "Kurs" ausgefüllt.
   
-Bekannte Probleme
------------------
-
-- Auswahlliste Firma eines Vertrags zeigt versehentlich nur Kursanbieter.

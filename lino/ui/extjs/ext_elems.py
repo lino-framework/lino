@@ -85,8 +85,6 @@ def before_row_edit(panel):
     return js_code('function(record){%s}' % ('\n'.join(l)))
 
 
-
-
 class GridColumn(Component):
     #~ declare_type = jsgen.DECLARE_VAR
     declare_type = jsgen.DECLARE_INLINE
@@ -440,7 +438,8 @@ class HtmlBoxElement(FieldElement):
             #~ kw.update(ls_bbar_actions=self.field.bbar)
         return kw
         
-class ShowOrCreateElement(FieldElement):
+class DisplayElement(FieldElement):
+#~ class ShowOrCreateElement(FieldElement):
     ext_suffix = "_disp"
     declare_type = jsgen.DECLARE_VAR
     value_template = "new Ext.form.DisplayField(%s)"
@@ -1320,8 +1319,10 @@ class FormPanel(jsgen.Component):
 
 
 _field2elem = (
-    (fields.ShowOrCreateButton, ShowOrCreateElement),
     (fields.HtmlBox, HtmlBoxElement),
+    (fields.DisplayField, DisplayElement),
+    #~ (fields.ShowOrCreateButton, DisplayElement),
+    #~ (fields.ShowOrCreateButton, ShowOrCreateElement),
     (models.URLField, URLFieldElement),
     (models.FileField, FileFieldElement),
     (models.EmailField, CharFieldElement),

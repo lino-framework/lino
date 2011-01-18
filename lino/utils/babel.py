@@ -201,3 +201,15 @@ def babel_values(name,**kw):
             d[name+'_'+lang] = v
     return d
 
+def babeldict_getitem(d,k):
+    v = d.get(k,None)
+    if v is not None:
+        assert type(v) is dict
+        lng = LANG or DEFAULT_LANGUAGE
+        if lng == DEFAULT_LANGUAGE:
+            return v.get(lng)
+        x = v.get(lng,None)
+        if x is None:
+            x = v.get(DEFAULT_LANGUAGE)
+        return x
+        

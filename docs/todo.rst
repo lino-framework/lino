@@ -11,20 +11,27 @@ Version 1.0
 
 #.  Der shortcut "upload" funktioniert noch nicht.
 
-#.  MyPersons : nicht die Person.group ist nötig, sondern 
-    der Datumsbereich `Person.coached_from` / `Person.coached_until` 
-    muss aktiv sein.
-    
-    from django.db.models import F
-    due_date
-    
-#.  is_illiterate : soll kein virtuelles, sondern ein normales Feld 
-    sein. Diesem Feld bedeutet "braucht Alfabetisierungs-Kurs" 
-    und könnte komplett unnütz werden, wenn wir eine neue Serie 
-    von Tabellen "Kursgesuche" machen:
-    
+#.  Save GC funktioniert nicht.
 
-#.  Dialekt der csv-Datei bestimmen können (Excel oder OOo). Encoding.
+#.  Excel erkennt das encoding der csv-Datei nicht als UTF-8.
+
+#.  Wenn ich einen Suchbegriff in die Schnellsuche eintrage, kann ich
+    nicht (mehr) in den gefilterten Seiten blättern. Beim ersten Wechsel 
+    auf die nächste Seite wird der Filter entfernt. 
+    
+#.  Bei "Kurse - Teilnehmer" ist keine direkte Eingabe möglich.    
+
+    Hier darf man ja nicht einfach neue Records einfügen, 
+    sondern die "Teilnehmer" erscheinen hier automatisch, 
+    wenn man einer bestehenden Anfrage einen Kurs zuweist.
+
+    Mein Plan ist, dass in der unteren Liste (Kandidaten) 
+    die Personen angezeigt werden, die eine offene Kursanfrage 
+    haben und inhaltlich für diesen Kurs in Frage kämen. 
+    Und per Mausklick müsste man sie dann aus der Kandidaten- 
+    in die Teilnehmerliste transferieren können und umgekehrt.
+
+#.  Grid-Konfigurationsdateien sollten pro Benutzer speicherbar sein.
 
 #.  Formatierte Texte. Zumindest Aufzählungen und mehrere Absätze 
     sollten möglich sein.
@@ -33,6 +40,12 @@ Version 1.0
 
 Version 1.1
 -----------
+
+#.  Die Titel der Reiter (.dtl-Dateien) sind momentan noch nicht 
+    internationalisiert, stehen also in den Konfigurationsdateien 
+    in hardkodiertem Deutsch drin. 
+    Also bis zur ersten Lino-Demo in FR oder NL muss ich mir dazu
+    noch was einfallen lassen. 
 
 #.  Wenn man die Rückfrage nach "Delete" mit Enter beatnwortet, 
     wird die Grid nicht aktualisiert...
