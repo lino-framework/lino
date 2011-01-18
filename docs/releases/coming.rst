@@ -12,19 +12,29 @@ Bugs fixed
 Upgrade instructions
 --------------------
 
-- Upgrade your copy of the Lino sources::
-
-    cd /var/snapshots/lino
-    hg pull -u
-    
-  
-- The usual things in your local directory::
+- Go to your local directory::
 
     cd /usr/local/django/myproject
-    python manage.py initdb_tim
-    python manage.py make_staff
+    
+- Stop application services::
+
+    ./stop
+    
+- Update the source code::
+
+    ./pull
+    
+- When a data migration is necessary::
+
+    python manage.py dumpdata --format dpy > fixtures/dYYYMMDD.dpy
+    nano fixtures/dYYYMMDD.dpy
+    
+  Now edit the file (to be documented...), then reset the 
+  database and reload the dump::
+    
+    python manage.py initdb dYYYMMDD
+    
+  Restart application server (Apache) and `watch_tim`::
+    
+    ./start
   
-- Restart Apache::
-
-    sudo /etc/init.d/apache2 restart
-
