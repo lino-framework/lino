@@ -4,10 +4,6 @@ Coming
 New features
 ------------
 
-- Erster Reiter im Detail von Firmen heißt jetzt "Allgemein" statt "General"
-- Person.card_type_text()
-- Feld `Alter` sieht jetzt nicht mehr editierbar aus.
-
 
 Bugs fixed
 ----------

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-17 05:48+0000\n"
+"POT-Creation-Date: 2011-01-18 19:54+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -143,12 +143,12 @@ msgstr ""
 msgid "~Notes"
 msgstr ""
 
-#: .\demos\dsbe\lino_settings.py:38 .\demos\dsbe\site.py:68
+#: .\demos\dsbe\lino_settings.py:38 .\demos\dsbe\site.py:69
 #: .\demos\std\lino_settings.py:31
 msgid "~Configure"
 msgstr ""
 
-#: .\demos\dsbe\lino_settings.py:62 .\demos\dsbe\site.py:97
+#: .\demos\dsbe\lino_settings.py:62 .\demos\dsbe\site.py:98
 #: .\demos\std\lino_settings.py:43
 msgid "E~xplorer"
 msgstr ""
@@ -345,7 +345,7 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: .\ui\extjs\ext_elems.py:573
+#: .\ui\extjs\ext_elems.py:572
 #, python-format
 msgid "Select a %s..."
 msgstr ""

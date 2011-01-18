@@ -29,6 +29,7 @@ As long as I am the only Lino developer, I'll write it mostly in German.
   :doc:`15 <0115>` 
   |br|  	
   :doc:`17 <0117>` 
+  :doc:`18 <0118>` 
 
 
 .. |Feb| replace:: **February**

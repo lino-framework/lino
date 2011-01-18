@@ -61,9 +61,10 @@ class Site(Base):
             params=dict(master_id=pg.pk))
 
         m = self.add_menu("courses",_("~Courses"),can_view=perms.is_authenticated)
+        m.add_action('dsbe.Courses')
         m.add_action('contacts.CourseProviders')
         m.add_action('dsbe.CourseContents')
-        m.add_action('dsbe.Courses')
+        m.add_action('dsbe.CourseEndings')
         
         m = self.add_menu("config",_("~Configure"),
           can_view=perms.is_staff)

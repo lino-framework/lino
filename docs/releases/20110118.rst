@@ -1,0 +1,17 @@
+Version 1.0.3 (18.01.2011)
+==========================
+
+- Erster Reiter im Detail von Firmen heißt jetzt "Allgemein" statt "General"
+
+- Person.card_type_text()
+
+- Feld `Alter` sieht jetzt nicht mehr editierbar aus.
+
+- Neue Felder `noble_condition` und `card_type_text` im Detail von Personen (Reiter 1)
+
+- Neue Tabelle `Kursbeendigungen`. 
+  Kursanfragen haben jetzt nicht mehr ein Feld `satisfied` mit hardkodierter 
+  Auswahlliste, sondern ein FK-Feld "Beendigung", dessen Werte aus dieser 
+  konfigurierbaren Tabelle stammen. 
+  Außerdem ein weiteres neues Datumsfeld "beendet am".
+

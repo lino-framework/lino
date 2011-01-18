@@ -1,0 +1,19 @@
+20110118
+========
+
+  
+
+- `Person.card_type_text()`
+
+- Die neue Klasse :class:`lino.fields.DisaplayField` wird als `return_type` für `age` und `Person.card_type_text`
+
+- Feld `Alter` (`Person.age()`) benutzt jetzt ebenfalls ein DisplayField
+
+- Felder `noble_condition` und `card_type_text` jetzt sichtbar 
+  im Detail von Personen (Reiter 1)
+
+- Field CourseRequest.satisfied replaced by date_ended and ending. 
+  New Model CourseEnding. 
+  New menu command :menuselection:`Configurations --> Course Endings`
+  
+- Release :doc:`/releases/20110117` in Eupen.  

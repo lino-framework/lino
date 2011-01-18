@@ -36,8 +36,6 @@ Version 1.0
 #.  Formatierte Texte. Zumindest Aufzählungen und mehrere Absätze 
     sollten möglich sein.
 
-#.  DisplayField für Alter benutzen
-
 Version 1.1
 -----------
 

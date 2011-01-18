@@ -453,9 +453,9 @@ class Person(Partner,contacts.Person):
 
     @classmethod
     def setup_report(model,rpt):
-        rpt.add_action(DirectPrintAction(rpt,'auskblatt',_("Auskunftsblatt"),'appyodt','persons/auskunftsblatt.odt'))
+        rpt.add_action(DirectPrintAction(rpt,'auskblatt',_("Auskunftsblatt"),'appypdf','persons/auskunftsblatt.odt'))
         rpt.add_action(DirectPrintAction(rpt,'eid',_("eID-Inhalt"),'appypdf','persons/eid-content.odt'))
-        rpt.add_action(DirectPrintAction(rpt,'cv',_("Curiculum vitae"),'appyodt','persons/cv.odt'))
+        rpt.add_action(DirectPrintAction(rpt,'cv',_("Curiculum vitae"),'appypdf','persons/cv.odt'))
         
     def __unicode__(self):
         return u"%s (%s)" % (self.name,self.pk)
@@ -1061,13 +1061,14 @@ add_babel_field(ExamPolicy,'name')
 class ExamPolicies(reports.Report):
     model = ExamPolicy
     column_names = 'name *'
+
 #
 # CONTRACT ENDINGS
 #
 class ContractEnding(models.Model):
     class Meta:
-        verbose_name = _("Contract ending")
-        verbose_name_plural = _('Contract endings')
+        verbose_name = _("Contract Ending")
+        verbose_name_plural = _('Contract Endings')
         
     name = models.CharField(_("designation"),max_length=200)
     
@@ -1077,6 +1078,25 @@ class ContractEnding(models.Model):
 class ContractEndings(reports.Report):
     model = ContractEnding
     column_names = 'name *'
+    order_by = ['name']
+
+#
+# COURSE ENDINGS
+#
+class CourseEnding(models.Model):
+    class Meta:
+        verbose_name = _("Course Ending")
+        verbose_name_plural = _('Course Endings')
+        
+    name = models.CharField(_("designation"),max_length=200)
+    
+    def __unicode__(self):
+        return unicode(self.name)
+        
+class CourseEndings(reports.Report):
+    model = CourseEnding
+    column_names = 'name *'
+    order_by = ['name']
 
 
 #
@@ -1145,7 +1165,7 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,mixins.
         verbose_name=_("examination policy"))
         
     ending = models.ForeignKey("dsbe.ContractEnding",blank=True,null=True,
-        verbose_name=_("Contract ending"))
+        verbose_name=_("Ending"))
     date_ended = models.DateField(blank=True,null=True,verbose_name=_("date ended"))
     
     #~ aid_nature = models.CharField(_("aid nature"),max_length=100,blank=True)
@@ -1447,14 +1467,24 @@ class CourseRequest(models.Model):
     course = models.ForeignKey("dsbe.Course",blank=True,null=True,
         verbose_name=_("Course found"))
         
-    """
-    The person's feedback about how satisfied she was.
-    """
-    satisfied = fields.StrengthField(verbose_name=_("Satisfied"),blank=True,null=True)
+    #~ """
+    #~ The person's feedback about how satisfied she was.
+    #~ """
+    #~ satisfied = fields.StrengthField(verbose_name=_("Satisfied"),blank=True,null=True)
     
     remark = models.CharField(max_length=200,
         blank=True,null=True,
         verbose_name=_("Remark"))
+        
+    """Effective end of the course.
+    """
+    date_ended = models.DateField(blank=True,null=True,verbose_name=_("date ended"))
+    
+    """Person's feedback about this course.
+    """
+    ending = models.ForeignKey("dsbe.CourseEnding",blank=True,null=True,
+        verbose_name=_("Ending"))
+        
         
 class Courses(reports.Report):
     model = Course
