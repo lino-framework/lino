@@ -1,0 +1,13 @@
+Version 1.0.4 (20.01.2011)
+==========================
+
+Zwei eher unscheinbare Neuerungen, für die ich zwei Tage Arbeit hatte:
+
+- Bug behoben: 
+  "Wenn ich einen Suchbegriff in die Schnellsuche eintrage, kann ich
+  nicht (mehr) in den gefilterten Seiten blättern. Beim ersten Wechsel 
+  auf die nächste Seite wird der Filter entfernt."
+
+- Der Upload-Button für die Felder Führerschein, Aufenthalts- und Arbeitsgenehmigung 
+  funktioniert jetzt im Prinzip (bis auf ein paar Details).
+

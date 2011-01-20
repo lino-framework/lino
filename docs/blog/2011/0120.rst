@@ -40,7 +40,8 @@ müssen jetzt einen zweiten Parameter `rr`  (den ReportRequest, der sie aufruft)
 empfangen. 
 Denn :meth:`quick_upload_buttons` braucht die Information, welcher Benutzer danach fragt.
 
-Hier ist jetzt das onclick-Event des Pseudobottons für "Upload"::
+Das onclick-Event des Buttons für "Upload" auf einer Aufenthaltserlaubtnis 
+sieht dann jetzt wie folgt aus::
 
   Lino.uploads.UploadsByPerson.insert(undefined, {
     data_record: {
@@ -65,8 +66,16 @@ Hier ist jetzt das onclick-Event des Pseudobottons für "Upload"::
     }
   })
 
-das müsste theoretisch klappen, aber wenn man drauf klickt, sagt der Browser::
-  
-  Uncaught SyntaxError: Unexpected token ILLEGAL  
+Zu beachten ist, dass man in der lokalen `site.py` diese drei quick-upload-Felder 
+konfigurieren muss::
 
 
+    def setup_main_menu(self):
+
+        Base.setup_main_menu(self)
+
+        from lino.modlib.uploads.models import UploadType
+
+        self.upload_work_permit_type = UploadType.objects.get(pk=3)
+        self.upload_residence_permit_type = UploadType.objects.get(pk=2)
+        self.upload_diving_licence_type = UploadType.objects.get(pk=5)
