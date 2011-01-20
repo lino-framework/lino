@@ -185,6 +185,3 @@ class DisplayField:
 class HtmlBox(DisplayField):
     pass
     
-class ShowOrCreateButton(DisplayField):
-    pass
-

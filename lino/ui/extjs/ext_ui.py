@@ -336,6 +336,7 @@ class ExtUI(base.UI):
     def create_meth_element(self,lh,name,meth,rt,**kw):
         rt.name = name
         rt._return_type_for_method = meth
+        assert meth.func_code.co_argcount == 2, (name, meth.func_code.co_varnames)
         #~ kw.update(editable=False)
         e = self.create_field_element(lh,rt,**kw)
         #~ if lh.rh.report.actor_id == 'contacts.Persons':
@@ -1140,7 +1141,18 @@ class ExtUI(base.UI):
             fke.lh.rh.report._actor_name,
             fke.field.name,**kw)
         
+    #~ def request2js(self,rr,**kw):
+        #~ if rr.known_values:
+            #~ kw.update(known_values=rr.known_values)
+        #~ return kw
+        
     def request2kw(self,rr,**kw):
+        #~ if rr.known_values is not None:
+            #~ for k,v in rr.known_values.items():
+            #~ kw.update(rr.known_values)
+            #~ # kw[ext_requests.URL_KNOWN_VALUES] = rr.known_values
+        if rr.quick_search:
+            kw[ext_requests.URL_PARAM_FILTER] = rr.quick_search
         if rr.master_instance is not None:
             kw[ext_requests.URL_PARAM_MASTER_PK] = rr.master_instance.pk
             mt = ContentType.objects.get_for_model(rr.master_instance.__class__).pk
@@ -1155,20 +1167,33 @@ class ExtUI(base.UI):
         #~ rpt = obj.__class__._lino_model_report
         rpt = obj._lino_model_report
         return self.build_url('api',rpt.app_label,rpt._actor_name,str(obj.pk),*args,**kw)
+        
+    def quick_upload_buttons(self,rr):
+        if rr.total_count == 0:
+            #~ return [dict(text="Upload",handler=js_code('Lino.%s' % rr.report.get_action('insert')))]
+            a = rr.report.get_action('insert')
+            if a:
+                #~ params = dict(base_params=self.request2kw(v))
+                rec = rr.create_instance()
+                params = dict(data_record=elem2rec1(rr,rr.ah,rec))
+                #~ params = dict(data_record=elem2rec_detailed(rr,rr.ah,rec))
+                onclick = 'Lino.%s(undefined,%s)' % (a,py2js(params))
+                print 20110120, onclick
+                onclick = cgi.escape(onclick)
+                onclick = onclick.replace('"','&quot;')
+                return '[<a onclick="%s">%s</a>]' % (onclick,_("Upload"))
+        assert rr.total_count == 1
+        #~ return [dict(text="Show",handler=js_code('Lino.%s' % v.report.get_action('detail')))]
+        #~ s = unicode(v[0]) + ':'
+        s = ''
+        s += ' [<a href="%s" target="_blank">show</a>]' % (settings.MEDIA_URL + rr[0].file.name)
+        s += ' [<a href="%s" target="_blank">edit</a>]' % (self.get_detail_url(rr[0],fmt='detail'))
+        return s
+        
       
     def py2js_converter(self,v):
         if v is LANGUAGE_CHOICES:
             return js_code('LANGUAGE_CHOICES')
-        if isinstance(v,reports.ReportActionRequest):
-            if v.total_count == 0:
-                #~ return [dict(text="Upload",handler=js_code('Lino.%s' % v.report.get_action('insert')))]
-                return '<a href="oops">upload</a>'
-            #~ return [dict(text="Show",handler=js_code('Lino.%s' % v.report.get_action('detail')))]
-            #~ s = unicode(v[0]) + ':'
-            s = ''
-            s += ' [<a href="%s">show</a>]' % (settings.MEDIA_URL + v[0].file.name)
-            s += ' [<a href="%s">edit</a>]' % (self.get_detail_url(v[0],fmt='detail'))
-            return s
         if isinstance(v,Exception):
             return unicode(v)
         if isinstance(v,menus.Menu):
@@ -1203,7 +1228,7 @@ class ExtUI(base.UI):
             
         if isinstance(a,actions.ShowDetailAction):
             return ext_windows.DetailWrapper(h,a)
-        
+            
     def setup_handle(self,h):
         #~ if isinstance(h,layouts.TabPanelHandle):
             #~ h._main = ext_elems.TabPanel([l.get_handle(self) for l in h.layouts])

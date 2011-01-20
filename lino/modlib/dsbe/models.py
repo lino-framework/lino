@@ -469,7 +469,7 @@ class Person(Partner,contacts.Person):
         
     full_name = property(contacts.Person.get_full_name)
     
-    def card_type_text(self):
+    def card_type_text(self,request):
         if self.card_type:
             s = babeldict_getitem(BEID_CARD_TYPES,self.card_type)
             if s:
@@ -538,7 +538,7 @@ class Person(Partner,contacts.Person):
         #~ return True
     #~ is_illiterate.return_type = models.BooleanField(_("Illiterate"),editable=False)
     
-    def age(self):
+    def age(self,request):
         if self.birth_date:
             dd = datetime.date.today()-self.birth_date
             return _("%d years") % (dd.days / 365)
@@ -546,7 +546,7 @@ class Person(Partner,contacts.Person):
     age.return_type = fields.DisplayField(_("Age"))
     #~ age.return_type = models.CharField(_("Age"),max_length=10,editable=False,blank=True)
     
-    def overview(self):
+    def overview(self,request):
         def qsfmt(qs):
             s = qs.model._meta.verbose_name_plural + ': '
             if qs.count():
@@ -565,18 +565,28 @@ class Person(Partner,contacts.Person):
         return '<br/>'.join(lines)
     overview.return_type = fields.HtmlBox(_("Overview"))
     
+    def work_permit(self,rr):
+        #~ return uploads.UploadsByPerson().request(master_instance=self,type__exact=3)
+        rrr = rr.spawn_request(uploads.UploadsByPerson(),master_instance=self,
+            known_values=dict(type=settings.LINO_SITE.upload_work_permit_type))
+        return rr.ui.quick_upload_buttons(rrr)
+    work_permit.return_type = fields.DisplayField(_("Work permit"))
     
-    def work_permit(self):
-        return uploads.UploadsByPerson().request(master_instance=self,type__exact=3)
-    work_permit.return_type = fields.ShowOrCreateButton(_("Work permit"))
+    def residence_permit(self,rr):
+        #~ return uploads.UploadsByPerson().request(master_instance=self,type__exact=2)
+        rrr = rr.spawn_request(uploads.UploadsByPerson(),master_instance=self,
+            known_values=dict(type=settings.LINO_SITE.upload_residence_permit_type))
+        return rr.ui.quick_upload_buttons(rrr)
+    residence_permit.return_type = fields.DisplayField(_("Residence permit"))
     
-    def residence_permit(self):
-        return uploads.UploadsByPerson().request(master_instance=self,type__exact=2)
-    residence_permit.return_type = fields.ShowOrCreateButton(_("Residence permit"))
-    
-    def driving_license(self):
-        return uploads.UploadsByPerson().request(master_instance=self,type__exact=5)
-    driving_license.return_type = fields.ShowOrCreateButton(_("driving license"))
+    def driving_license(self,rr):
+        rrr = rr.spawn_request(uploads.UploadsByPerson(),
+            master_instance=self,
+            known_values=dict(type=settings.LINO_SITE.upload_diving_licence_type))
+        return rr.ui.quick_upload_buttons(rrr)
+        #~ return uploads.UploadsByPerson().request(master_instance=self,type__exact=5)
+    #~ driving_license.return_type = fields.ShowOrCreateButton(_("driving license"))
+    driving_license.return_type = fields.DisplayField(_("driving license"))
     
     
 PERSON_TIM_FIELDS = reports.fields_list(Person,

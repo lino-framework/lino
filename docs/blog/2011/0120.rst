@@ -1,0 +1,72 @@
+20110120 ShowOrCreateButton
+===========================
+
+Also der Schnellhochladeknopf  (quick upload button) 
+für Führerschein, Aufenthalts- und Arbeitsgenehmigung.
+Das ist ein DisplayField, dessen Funktion 
+die recht spezielle Methode
+:meth:`quick_upload_buttons` benutzt.
+
+:meth:`quick_upload_buttons` 
+rendert einen ReportRequest als eine Serie von Buttons. 
+Wenn der ReportRequest leer ist, ein Button "Upload", 
+ansonsten zwei Buttons "Show" und "Edit".
+
+"Show" und "Edit" funktionierten schon seit Längerem.
+
+Der Upload-Knopf ist komplexer.
+Dazu musste ich zuerst noch das Konzept der "known values" 
+eines Requests erfinden. Beobachtung am Rande::
+
+  >>> from lino.modlib.uploads.models import Upload
+  >>> Upload.objects.filter(type=3)
+  [<Upload: Arbeitserlaubnis 1.pdf>]
+  >>> Upload.objects.filter(type__exact=3)
+  [<Upload: Arbeitserlaubnis 1.pdf>]
+  >>> a = Upload(type=3)
+  Traceback (most recent call last):
+    File "<console>", line 1, in <module>
+    File "l:\snapshots\django\django\db\models\base.py", line 351, in __init__
+      setattr(self, field.name, rel_obj)
+    File "l:\snapshots\django\django\db\models\fields\related.py", line 320, in __set__
+      self.field.name, self.field.rel.to._meta.object_name))
+  ValueError: Cannot assign "3": "Upload.type" must be a "UploadType" instance.
+
+
+
+Auch musste ich in der API ändern: 
+Methoden von virtuellen Feldern (also die mit dem `return_type`) 
+müssen jetzt einen zweiten Parameter `rr`  (den ReportRequest, der sie aufruft) 
+empfangen. 
+Denn :meth:`quick_upload_buttons` braucht die Information, welcher Benutzer danach fragt.
+
+Hier ist jetzt das onclick-Event des Pseudobottons für "Upload"::
+
+  Lino.uploads.UploadsByPerson.insert(undefined, {
+    data_record: {
+        data: {
+            delay_value: 0,
+            description: null,
+            created: null,
+            reminder_date: null,
+            company: null,
+            modified: null,
+            typeHidden: 2,
+            personHidden: 115,
+            companyHidden: null,
+            person: "Altenberg Hans (115)",
+            delay_type: "Tage",
+            delay_typeHidden: "D",
+            file: "",
+            reminder_text: null,
+            type: "Aufenthaltserlaubnis",
+            id: null
+        }
+    }
+  })
+
+das müsste theoretisch klappen, aber wenn man drauf klickt, sagt der Browser::
+  
+  Uncaught SyntaxError: Unexpected token ILLEGAL  
+
+

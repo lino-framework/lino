@@ -384,7 +384,7 @@ class ReportActionRequest:
     layout = None
     #~ selected_rows = []
     
-    def __init__(self,ui,report,action,**kw):
+    def __init__(self,ui,report,action):
     #~ def __init__(self,rh,action):
         #~ assert isinstance(rh,ReportHandle)
         #~ assert ui.create_meth_element is not None
@@ -415,6 +415,7 @@ class ReportActionRequest:
             gridfilters=None,
             order_by=None,
             extra=None,
+            known_values=None,
             #~ selected_rows=None,
             **kw):
         if user is not None and not self.report.can_view.passes(user):
@@ -425,6 +426,8 @@ class ReportActionRequest:
         self.gridfilters = gridfilters
         self.order_by = order_by
         self.extra = extra
+        self.known_values = known_values
+
         #~ if selected_rows is not None:
             #~ self.selected_rows = selected_rows
         
@@ -503,10 +506,18 @@ class ReportActionRequest:
         if self.master_kw:
             kw.update(self.master_kw)
         #logger.debug('%s.create_instance(%r)',self,kw)
-        return self.report.create_instance(self,**kw)
+        if self.known_values is not None:
+            kw.update(self.known_values)
+        obj = self.report.create_instance(self,**kw)
+        #~ if self.known_values is not None:
+            #~ self.ah.store.form2obj(self.known_values,obj,True)
+            #~ for k,v in self.known_values:
+                #~ field = self.model._meta.get_field(k) ...hier
+                #~ kw[k] = v
+        return obj
         
     def get_user(self):
-        raise NotImplementedError
+        return None
         
     def get_title(self):
         return self.report.get_title(self)
@@ -903,6 +914,16 @@ class Report(actors.Actor): #,base.Handled):
 
         if self.filter:
             qs = qs.filter(**self.filter)
+            
+        if rr.known_values:
+            d = {}
+            for k,v in rr.known_values.items():
+                if v is None:
+                    d[k+"__isnull"] = True
+                else:
+                    d[k+"__exact"] = v
+                qs = qs.filter(**d)
+                
         if self.exclude:
             qs = qs.exclude(**self.exclude)
               
@@ -923,7 +944,7 @@ class Report(actors.Actor): #,base.Handled):
         """
         Creates and returns the method to be used when :attr:`Report.show_slave_grid` is `False`.
         """
-        def meth(master):
+        def meth(master,request):
             rr = self.request(ui,master_instance=master)
             s = summary(ui,rr,row_separator)
             #~ s = ', '.join([fmt(r) for r in rr])

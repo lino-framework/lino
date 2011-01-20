@@ -197,7 +197,9 @@ class MethodStoreField(StoreField):
   
     def value_from_object(self,request,obj):
         unbound_meth = self.field._return_type_for_method
-        return unbound_meth(obj)
+        assert unbound_meth.func_code.co_argcount == 2, (self.field.name, unbound_meth.func_code.co_varnames)
+        #~ print self.field.name
+        return unbound_meth(obj,request)
         
     def obj2list(self,request,obj):
         return [self.value_from_object(request,obj)]
@@ -465,6 +467,7 @@ class Store:
                 raise exceptions.ValidationError({f.field.name:e})
             
     def row2list(self,request,row):
+        assert isinstance(request,reports.ReportActionRequest)
         l = []
         for fld in self.list_fields:
             l += fld.obj2list(request,row)
@@ -472,6 +475,7 @@ class Store:
       
 
     def row2dict(self,request,row):
+        assert isinstance(request,reports.ReportActionRequest)
         d = {}
         for f in self.detail_fields:
             f.obj2dict(request,row,d)

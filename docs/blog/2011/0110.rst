@@ -30,14 +30,14 @@ a) job_office, Synchronisierung
   des DSBE.
   Dazu wäre ein Feld Person.type nötig.
 
-- Noch drei neue Felder in Person::
+- Noch drei neue Felder in Person:
 
       =============== ==========
       Lino            TIM
       =============== ==========
       card_type       CARDTYPE
       card_issuer     CARDISSUER
-      noble_condition NOBLEECOND
+      noble_condition NOBLECOND
       =============== ==========
 
 - Statt eines Klassenattributs `job_office` im LinoSite 

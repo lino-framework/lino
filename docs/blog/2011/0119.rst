@@ -1,0 +1,67 @@
+20110119
+========
+
+#.  Die Felder `Adelstitel` und `eID-Karte ausgestellt durch` sind jetzt 
+    ebenfalls in Reiter 1 von Personen sichtbar.
+
+#.  Der sogenannte Cache-Bug (sh. :doc:`/blog/2011/0110`) ist doch noch 
+    da, aber in anderer Form:
+
+      Wenn ich einen Suchbegriff in die Schnellsuche eintrage, kann ich
+      nicht (mehr) in den gefilterten Seiten blättern. Beim ersten Wechsel 
+      auf die nächste Seite wird der Filter entfernt. 
+      Das kommt, weil 'query' jetzt nicht mehr in den baseParams 
+      der Grid ist 
+    
+    Also nochmal:
+
+    Das Konzept "base params" habe ich von ExtJS übernommen und damit 
+    sind die Parameter gemeint, die ein Store von einem reload zum anderen 
+    beibehält. get_base_params() sollte das nicht ändern, 
+    sondern in GridPanel nur ein thin Wrapper sein 
+    und für FormPanel das gleiche Konzept implementieren.
+    
+    Mit "master params" meine ich die beiden Parameter mt und mk, die 
+    ein slave query nötig hat um seinen master zu identifizieren. 
+    get_master_params() gibt mk und mt des aktuellen Records zurück
+    und wird gebraucht um einen Slave an seinen Master zu binden.
+    
+    Ein slave report hat in seinen base_params die master params 
+    seines callers, die (für ihn) dann auch base params i.e.S. werden.
+    
+    In diesem Denksystem fehlt scheinbar noch was, oder 
+    zumindest ist der Name get_master_params offenbar irreführend.
+    
+    Der Suchtext muss jedenfalls auch in den base params stehen, 
+    damit die Navigatorfunktion erhalten bleibt.
+    
+    Irgendwo hole ich mir beim Erstellen eines Slave-Reports 
+    fälschlicherweise die base params statt der master params.
+    
+    Nach anderthalb Stunden Sucherei ist der Schuldige gefunden: 
+    `Lino.GridPanel.constructor` machte folgendes, um die base 
+    params der Grid zu setzen::
+    
+      var bp = Ext.apply({ fmt:'json' },ww.config.base_params);
+      
+    Das darf sie aber nur fürs main item tun. Ungefähr so::
+    
+        var bp = { fmt:'json' }
+        if (ww.main_item == this) {  
+            // this gridpanel is the main component
+            Ext.apply(bp,ww.config.base_params);    
+        }
+        
+#.  En passant: 
+    
+    - Der Schnellsuch-Text wurde nicht mehr im permalink gespeichert. 
+      Behoben. 
+    
+    - Außerdem wird jetzt erstmals der Schnellsuch-Text aus dem Permalink 
+      in das entsprechende Eingabefeld übernommen.
+      
+      
+Die restlichen 4 Stunden des Tages habe ich mit dem Schnellhochladeknopf  
+quick upload button) für Führerschein, Aufenthalts- und Arbeitsgenehmigung 
+verbracht. Siehe :doc:`0120`.
+

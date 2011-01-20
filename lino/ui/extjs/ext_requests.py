@@ -119,6 +119,11 @@ class ViewReportRequest(reports.ReportActionRequest):
         kw = self.parse_req(request,rh,**kw)
         self.setup(*args,**kw)
         
+    def spawn_request(self,rpt,**kw):
+        rh = rpt.get_handle(self.ui)
+        return ViewReportRequest(self.request,rh,rpt.default_action,**kw)
+        
+        
     def parse_req(self,request,rh,**kw):
         #~ gc_name = request.REQUEST.get('gc',None)
         #~ if gc_name:
@@ -217,19 +222,12 @@ class ViewReportRequest(reports.ReportActionRequest):
         return self.report.get_absolute_url(**kw)
 
     def row2list(self,row):
-        return self.store.row2list(self.request,row)
-        #~ l = []
-        #~ for fld in self.store.fields:
-            #~ l += fld.obj2list(self.request,row,d)
-        #~ return l
+        #~ return self.store.row2list(self.request,row)
+        return self.store.row2list(self,row)
       
     def row2dict(self,row):
-        return self.store.row2dict(self.request,row)
-        #~ d = {}
-        #~ request = self.request
-        #~ for fld in self.store.fields:
-            #~ fld.obj2dict(request,row,d)
-        #~ return d
+        #~ return self.store.row2dict(self.request,row)
+        return self.store.row2dict(self,row)
  
 
 #~ class ViewActionRequest(actions.ActionRequest):

@@ -1321,8 +1321,6 @@ class FormPanel(jsgen.Component):
 _field2elem = (
     (fields.HtmlBox, HtmlBoxElement),
     (fields.DisplayField, DisplayElement),
-    #~ (fields.ShowOrCreateButton, DisplayElement),
-    #~ (fields.ShowOrCreateButton, ShowOrCreateElement),
     (models.URLField, URLFieldElement),
     (models.FileField, FileFieldElement),
     (models.EmailField, CharFieldElement),

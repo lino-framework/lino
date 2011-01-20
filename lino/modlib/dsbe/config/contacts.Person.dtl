@@ -22,6 +22,6 @@ box2 =
 
 box3 =
   sex:8 birth_date birth_date_circa age civil_state 
-  birth_country birth_place  native_language 
-  nationality:15 national_id:15 card_number:15 card_valid_from:15 card_valid_until:10
+  birth_country birth_place  native_language noble_condition 
+  nationality:15 national_id:15 card_number:15 card_valid_from:15 card_valid_until:10 card_issuer
   card_type_text

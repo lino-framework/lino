@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2010 Luc Saffre
+ Copyright 2009-2011 Luc Saffre
  This file is part of the Lino project.
  Lino is free software; you can redistribute it and/or modify 
  it under the terms of the GNU General Public License as published by
@@ -778,7 +778,9 @@ Lino.row_action_handler = function(fmt) {
 Lino.show_detail = function(panel,btn) {
   Lino.do_on_current_record(panel,
     function(rec) {
-      panel.ls_detail_handler(panel,{record_id:rec.id,base_params:panel.get_base_params()});
+      panel.ls_detail_handler(panel,{
+        record_id:rec.id,base_params:panel.get_base_params()
+      });
     },
     Lino.show_insert
     //~ function() { panel.ls_insert_handler(panel) }
@@ -884,6 +886,9 @@ Lino.HtmlBoxPanel = Ext.extend(Ext.Panel,{
   set_base_params : function(p) {
     this.base_params = p;
   },
+  set_base_param : function(k,v) {
+    this.base_params[k] = v;
+  },
   unused_load_htmlbox_record : function(record) {
     var box = this.items.get(0);
     var _this = this;
@@ -904,7 +909,7 @@ Lino.HtmlBoxPanel = Ext.extend(Ext.Panel,{
 Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   //~ trackResetOnLoad : true,
   //~ query_params : {},
-  quick_search_text : '',
+  //~ 20110119b quick_search_text : '',
   constructor : function(ww,config,params){
     this.ww = ww;
     if (params) Ext.apply(config,params);
@@ -960,6 +965,9 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   },
   set_base_params : function(p) {
     this.ww.config.base_params = p;
+  },
+  set_base_param : function(k,v) {
+    this.ww.config.base_params[k] = v;
   },
   after_delete : function() {
     this.ww.close();
@@ -1018,7 +1026,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     var this_ = this;
     var p = {};
     Ext.apply(p,this.ww.config.base_params);
-    p['$URL_PARAM_FILTER'] = this.quick_search_text;
+    //~ 20110119b p['$URL_PARAM_FILTER'] = this.quick_search_text;
     //~ Ext.apply(p,this.query_params);
     Ext.Ajax.request({ 
       waitMsg: 'Loading record...',
@@ -1089,10 +1097,10 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     //~ console.log('20100531 Lino.DetailMixin.on_load_master_record',this.main_form);
     this.before_row_edit(record);
   },
-  search_change : function(field,oldValue,newValue) {
+  unused_search_change : function(field,oldValue,newValue) {
     //~ console.log('FormPanel.search_change()');
-    //~ this.ww.config.base_params['$URL_PARAM_FILTER'] = field.getValue(); 
-    this.quick_search_text = field.getValue(); 
+    this.ww.config.base_params['$URL_PARAM_FILTER'] = field.getValue(); //~ 20110119b 
+    //~ 20110119b this.quick_search_text = field.getValue(); 
     this.goto_record_id(this.current_record.id);
     //~ this.moveFirst();
   },
@@ -1209,7 +1217,7 @@ Lino.getRowClass = function(record, rowIndex, rowParams, store) {
 }
     
 Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
-  quick_search_text : '',
+  //~ quick_search_text : '',
   clicksToEdit:2,
   enableColLock: false,
   autoHeight: false,
@@ -1231,7 +1239,11 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     if (params) Ext.apply(config,params);
     //~ Ext.applyIf(config,{base_params:{}});
     //~ this.ww = ww;
-    var bp = Ext.apply({ fmt:'json' },ww.config.base_params);
+    var bp = { fmt:'json' }
+    if (ww.main_item == this) { 
+        // this gridpanel is the main component
+        Ext.apply(bp,ww.config.base_params);    
+    }
     
     //~ function on_proxy_load( proxy, transactionObject, callbackOptions ) {
       //~ console.log('on_proxy_load',transactionObject)
@@ -1242,6 +1254,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
       //~ listeners: {load:on_proxy_load} 
     });
     //~ config.store = new Ext.data.JsonStore({ 
+    //~ console.log('20110119 constructor',config.title,bp);
     config.store = new Ext.data.ArrayStore({ 
       listeners: { exception: Lino.on_store_exception }, 
       //~ proxy: new Ext.data.HttpProxy({ url: config.ls_data_url+'?fmt=json', method: "GET" }), remoteSort: true, 
@@ -1386,16 +1399,21 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     //~ console.log('GridPanel.set_base_params',p)
     for (k in p) this.store.setBaseParam(k,p[k]);
   },
+  set_base_param : function(k,v) {
+    this.store.setBaseParam(k,v);
+  },
   
-  search_change : function(field,oldValue,newValue) {
+  unused_search_change : function(field,oldValue,newValue) {
     //~ console.log('search_change',field.getValue(),oldValue,newValue)
-    //~ this.store.setBaseParam('$URL_PARAM_FILTER',field.getValue()); 
-    this.quick_search_text = field.getValue();
-    this.store.load({params: { 
-      start: 0, 
-      limit: this.getTopToolbar().pageSize,
-      query: this.quick_search_text
-      }});
+    //~ 20110119
+    //~ 20110119b this.quick_search_text = field.getValue();
+    this.store.setBaseParam('$URL_PARAM_FILTER',field.getValue()); 
+    this.refresh();
+    //~ this.store.load({params: { 
+      //~ start: 0, 
+      //~ limit: this.getTopToolbar().pageSize,
+      //~ query: this.quick_search_text
+      //~ }});
   },
   
   apply_grid_config : function(name,grid_configs,rpt_columns) {
@@ -1710,7 +1728,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     this.store.load({params:{
       limit:this.getTopToolbar().pageSize,
       start:this.getTopToolbar().cursor,
-      $URL_PARAM_FILTER: this.quick_search_text
+      //~ 20110119 $URL_PARAM_FILTER: this.quick_search_text
       }});
   },
   after_delete : function() {
@@ -1751,11 +1769,11 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     //~ cmp = this;
     //~ console.log('Lino.GridPanel.on_master_changed()',this.title);
     var todo = function() {
-      //~ console.log('exec Lino.GridPanel.on_master_changed()',this.title);
       //~ var src = caller.config.url_data + "/" + record.id + ".jpg"
-      //~ var p = this.ww.get_master_params();
+      var p = this.ww.get_master_params();
       //~ for (k in p) this.getStore().setBaseParam(k,p[k]);
-      this.set_base_params(this.ww.get_master_params());
+      //~ console.log('Lino.GridPanel.on_master_changed()',this.title,p);
+      this.set_base_params(p);
       this.getStore().load(); 
     };
     Lino.do_when_visible(this,todo.createDelegate(this));
@@ -1768,8 +1786,8 @@ Lino.MainPanelMixin = {
       return [ 
         this.search_field = new Ext.form.TextField({ 
           fieldLabel: "Search", 
-          listeners: { scope:this, change:this.search_change }
-          //~ value: this.get_base_params().query
+          listeners: { scope:this.ww, change:this.ww.search_change },
+          //~ value: text
           //~ scope:this, 
           //~ enableKeyEvents: true, 
           //~ listeners: { keypress: this.search_keypress }, 
@@ -1983,7 +2001,12 @@ Lino.WindowWrapperBase = {
     if (this.config.base_params !== undefined) { // may be 0 
       //~ console.log('Lino.WindowWrapper with base_params',this.config.base_params);
       this.main_item.set_base_params(this.config.base_params);
+      if (this.config.base_params.query) 
+          this.main_item.search_field.setValue(this.config.base_params.query);
     }
+    
+
+    
   
     this.window = new Ext.Window(this.window_config);
     var main_area = Ext.getCmp('main_area')
@@ -2001,7 +2024,7 @@ Lino.WindowWrapperBase = {
     //~ }
     
     if (this.config.data_record) {
-      console.log('Lino.WindowWrapper with data_record',this.config.data_record);
+      //~ console.log('Lino.WindowWrapper with data_record',this.config.data_record);
       //~ this.main_item.on_master_changed.defer(2000,this.main_item,[config.data_record]);
       //~ Lino.do_when_visible(this.main_item,function(){this.on_master_changed(config.data_record)});
       //~ this.main_item.on('afterrender',function(){this.main_item.on_master_changed(config.data_record)},this,{single:true});
@@ -2020,6 +2043,11 @@ Lino.WindowWrapperBase = {
       this.setup();
       this.window.show();
       //~ Lino.load_mask.hide();
+  },
+  search_change : function(field,oldValue,newValue) {
+    //~ console.log('search_change',field.getValue(),oldValue,newValue)
+    this.main_item.set_base_param('$URL_PARAM_FILTER',field.getValue()); 
+    this.main_item.refresh();
   },
   refresh : function() { 
     this.main_item.refresh();

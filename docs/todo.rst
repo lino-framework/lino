@@ -6,19 +6,16 @@ See also :doc:`/tickets/index` which is a list of tickets
 for which I hope for help from other people.
 
 
-Version 1.0
+Version 1.1
 -----------
 
 #.  Der shortcut "upload" funktioniert noch nicht.
 
-#.  Save GC funktioniert nicht.
+#.  Save GC funktioniert nicht. Oder --besser gesagt-- 
+    wird erst aktiv nach dem nächster Server-Restart.
 
 #.  Excel erkennt das encoding der csv-Datei nicht als UTF-8.
 
-#.  Wenn ich einen Suchbegriff in die Schnellsuche eintrage, kann ich
-    nicht (mehr) in den gefilterten Seiten blättern. Beim ersten Wechsel 
-    auf die nächste Seite wird der Filter entfernt. 
-    
 #.  Bei "Kurse - Teilnehmer" ist keine direkte Eingabe möglich.    
 
     Hier darf man ja nicht einfach neue Records einfügen, 
@@ -36,7 +33,7 @@ Version 1.0
 #.  Formatierte Texte. Zumindest Aufzählungen und mehrere Absätze 
     sollten möglich sein.
 
-Version 1.1
+Version 1.2
 -----------
 
 #.  Die Titel der Reiter (.dtl-Dateien) sind momentan noch nicht 

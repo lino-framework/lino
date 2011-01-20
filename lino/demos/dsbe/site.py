@@ -108,4 +108,10 @@ class Site(Base):
         m.add_action('contenttypes.ContentTypes')
 
         system.add_site_menu(self)
+        
+        from lino.modlib.uploads.models import UploadType
 
+        self.upload_work_permit_type = UploadType.objects.get(pk=3)
+        self.upload_residence_permit_type = UploadType.objects.get(pk=2)
+        self.upload_diving_licence_type = None # UploadType.objects.get(pk=5)
+    
