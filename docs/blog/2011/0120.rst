@@ -76,6 +76,13 @@ konfigurieren muss::
 
         from lino.modlib.uploads.models import UploadType
 
-        self.upload_work_permit_type = UploadType.objects.get(pk=3)
-        self.upload_residence_permit_type = UploadType.objects.get(pk=2)
-        self.upload_diving_licence_type = UploadType.objects.get(pk=5)
+        self.work_permit_upload_type = UploadType.objects.get(pk=3)
+        self.residence_permit_upload_type = UploadType.objects.get(pk=2)
+        self.diving_licence_upload_type = UploadType.objects.get(pk=5)
+        
+        
+N.B.: Das virtuelle Feld `driving_license` heißt jetzt `driving_licence`.
+In Amerika schreiben sie "license" mit "s", hier in Europa mit "c".
+Nicht dass Lino sich auf Europa beschränken will, aber in Amerika sagt man 
+scheinbar eher "driver's license" als "driving license".
+        

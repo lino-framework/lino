@@ -10,7 +10,7 @@ box3 =
   dsbe.CourseRequestsByPerson  
   
 box2 = 
-  driving_license
+  driving_licence
   it_knowledge
 
 box1 = 

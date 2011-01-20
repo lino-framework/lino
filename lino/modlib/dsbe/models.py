@@ -365,10 +365,10 @@ class Person(Partner,contacts.Person):
     
     has_own_car = models.BooleanField(verbose_name=_("has own car"))
     
-    can_car = models.BooleanField(verbose_name=_("Car driving license"))
-    can_truck = models.BooleanField(verbose_name=_("Truck driving license"))
-    can_clark = models.BooleanField(verbose_name=_("Clark driving license"))
-    can_bus = models.BooleanField(verbose_name=_("Bus driving license"))
+    can_car = models.BooleanField(verbose_name=_("Car driving licence"))
+    can_truck = models.BooleanField(verbose_name=_("Truck driving licence"))
+    can_clark = models.BooleanField(verbose_name=_("Clark driving licence"))
+    can_bus = models.BooleanField(verbose_name=_("Bus driving licence"))
     
     #~ driving_license_until = models.DateField(_("Driving license valid until"),blank=True,null=True)
     
@@ -579,7 +579,7 @@ class Person(Partner,contacts.Person):
         return rr.ui.quick_upload_buttons(r)
     work_permit.return_type = fields.DisplayField(_("Work permit"))
     
-    def driving_license(self,rr):
+    def driving_licence(self,rr):
         kv = dict(type=settings.LINO_SITE.driving_licence_upload_type)
         r = rr.spawn_request(uploads.UploadsByPerson(),master_instance=self,known_values=kv)
         return rr.ui.quick_upload_buttons(r)
@@ -588,8 +588,8 @@ class Person(Partner,contacts.Person):
             #~ known_values=dict(type=settings.LINO_SITE.upload_driving_licence_type))
         #~ return rr.ui.quick_upload_buttons(rrr)
         #~ return uploads.UploadsByPerson().request(master_instance=self,type__exact=5)
-    #~ driving_license.return_type = fields.ShowOrCreateButton(_("driving license"))
-    driving_license.return_type = fields.DisplayField(_("driving license"))
+    #~ driving_licence.return_type = fields.ShowOrCreateButton(_("driving licence"))
+    driving_licence.return_type = fields.DisplayField(_("driving licence"))
     
     
 PERSON_TIM_FIELDS = reports.fields_list(Person,
