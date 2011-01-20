@@ -582,7 +582,7 @@ class Person(Partner,contacts.Person):
     def driving_license(self,rr):
         rrr = rr.spawn_request(uploads.UploadsByPerson(),
             master_instance=self,
-            known_values=dict(type=settings.LINO_SITE.upload_diving_licence_type))
+            known_values=dict(type=settings.LINO_SITE.upload_driving_licence_type))
         return rr.ui.quick_upload_buttons(rrr)
         #~ return uploads.UploadsByPerson().request(master_instance=self,type__exact=5)
     #~ driving_license.return_type = fields.ShowOrCreateButton(_("driving license"))
