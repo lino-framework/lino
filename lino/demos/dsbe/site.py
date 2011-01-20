@@ -19,6 +19,11 @@ class Site(Base):
     domain = "dsbe.saffre-rumma.net"
     help_url = "http://lino.saffre-rumma.net/dsbe/index.html"
     
+    residence_permit_upload_type = None
+    work_permit_upload_type = None
+    driving_licence_upload_type = None 
+    
+    
     def init_site_config(self,sc):
         #~ print 20100908, "lino_settings.py init_site_config"
         sc.next_partner_id = 200000
@@ -109,9 +114,4 @@ class Site(Base):
 
         system.add_site_menu(self)
         
-        from lino.modlib.uploads.models import UploadType
 
-        self.upload_work_permit_type = UploadType.objects.get(pk=3)
-        self.upload_residence_permit_type = UploadType.objects.get(pk=2)
-        self.upload_driving_licence_type = None # UploadType.objects.get(pk=5)
-    

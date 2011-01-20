@@ -409,7 +409,8 @@ class ReportActionRequest:
             master_instance=None,
             master_id=None,
             offset=None,limit=None,
-            layout=None,user=None,
+            layout=None,
+            user=None,
             create_rows=None,
             quick_search=None,
             gridfilters=None,
@@ -517,7 +518,7 @@ class ReportActionRequest:
         return obj
         
     def get_user(self):
-        return None
+        return self.user
         
     def get_title(self):
         return self.report.get_title(self)

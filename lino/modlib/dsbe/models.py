@@ -565,25 +565,28 @@ class Person(Partner,contacts.Person):
         return '<br/>'.join(lines)
     overview.return_type = fields.HtmlBox(_("Overview"))
     
-    def work_permit(self,rr):
-        #~ return uploads.UploadsByPerson().request(master_instance=self,type__exact=3)
-        rrr = rr.spawn_request(uploads.UploadsByPerson(),master_instance=self,
-            known_values=dict(type=settings.LINO_SITE.upload_work_permit_type))
-        return rr.ui.quick_upload_buttons(rrr)
-    work_permit.return_type = fields.DisplayField(_("Work permit"))
-    
     def residence_permit(self,rr):
-        #~ return uploads.UploadsByPerson().request(master_instance=self,type__exact=2)
-        rrr = rr.spawn_request(uploads.UploadsByPerson(),master_instance=self,
-            known_values=dict(type=settings.LINO_SITE.upload_residence_permit_type))
-        return rr.ui.quick_upload_buttons(rrr)
+        kv = dict(type=settings.LINO_SITE.residence_permit_upload_type)
+        r = rr.spawn_request(uploads.UploadsByPerson(),master_instance=self,known_values=kv)
+        return rr.ui.quick_upload_buttons(r)
+        #~ rrr = uploads.UploadsByPerson().request(rr.ui,master_instance=self,known_values=kv)
+        #~ return rr.ui.quick_upload_buttons(rrr)
     residence_permit.return_type = fields.DisplayField(_("Residence permit"))
     
+    def work_permit(self,rr):
+        kv = dict(type=settings.LINO_SITE.work_permit_upload_type)
+        r = rr.spawn_request(uploads.UploadsByPerson(),master_instance=self,known_values=kv)
+        return rr.ui.quick_upload_buttons(r)
+    work_permit.return_type = fields.DisplayField(_("Work permit"))
+    
     def driving_license(self,rr):
-        rrr = rr.spawn_request(uploads.UploadsByPerson(),
-            master_instance=self,
-            known_values=dict(type=settings.LINO_SITE.upload_driving_licence_type))
-        return rr.ui.quick_upload_buttons(rrr)
+        kv = dict(type=settings.LINO_SITE.driving_license_upload_type)
+        r = rr.spawn_request(uploads.UploadsByPerson(),master_instance=self,known_values=kv)
+        return rr.ui.quick_upload_buttons(r)
+        #~ rrr = rr.spawn_request(uploads.UploadsByPerson(),
+            #~ master_instance=self,
+            #~ known_values=dict(type=settings.LINO_SITE.upload_driving_licence_type))
+        #~ return rr.ui.quick_upload_buttons(rrr)
         #~ return uploads.UploadsByPerson().request(master_instance=self,type__exact=5)
     #~ driving_license.return_type = fields.ShowOrCreateButton(_("driving license"))
     driving_license.return_type = fields.DisplayField(_("driving license"))

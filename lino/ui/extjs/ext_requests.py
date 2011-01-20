@@ -116,13 +116,17 @@ class ViewReportRequest(reports.ReportActionRequest):
         self.ah = rh
         self.request = request
         self.store = rh.store
-        kw = self.parse_req(request,rh,**kw)
+        if request is None:
+            self.user = None
+        else:
+            kw = self.parse_req(request,rh,**kw)
         self.setup(*args,**kw)
+        
         
     def spawn_request(self,rpt,**kw):
         rh = rpt.get_handle(self.ui)
-        return ViewReportRequest(self.request,rh,rpt.default_action,**kw)
-        
+        kw.update(user=self.user)
+        return ViewReportRequest(None,rh,rpt.default_action,**kw)
         
     def parse_req(self,request,rh,**kw):
         #~ gc_name = request.REQUEST.get('gc',None)
@@ -190,7 +194,8 @@ class ViewReportRequest(reports.ReportActionRequest):
             #~ kw.update(layout=int(layout))
             #~ kw.update(layout=rh.layouts[int(layout)])
             
-        kw.update(user=request.user)
+        kw.update(user=authenticated_user(request.user))
+        #~ kw.update(user=request.user)
         
         """
         See :doc:`/2010/1222`
@@ -203,7 +208,7 @@ class ViewReportRequest(reports.ReportActionRequest):
       
         
     def get_user(self):
-        return authenticated_user(self.request.user)
+        return self.user
 
     
     def unused_get_absolute_url(self,**kw):
