@@ -580,7 +580,7 @@ class Person(Partner,contacts.Person):
     work_permit.return_type = fields.DisplayField(_("Work permit"))
     
     def driving_license(self,rr):
-        kv = dict(type=settings.LINO_SITE.driving_license_upload_type)
+        kv = dict(type=settings.LINO_SITE.driving_licence_upload_type)
         r = rr.spawn_request(uploads.UploadsByPerson(),master_instance=self,known_values=kv)
         return rr.ui.quick_upload_buttons(r)
         #~ rrr = rr.spawn_request(uploads.UploadsByPerson(),
