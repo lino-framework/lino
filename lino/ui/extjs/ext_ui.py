@@ -1178,10 +1178,11 @@ class ExtUI(base.UI):
                 params = dict(data_record=elem2rec1(rr,rr.ah,rec))
                 #~ params = dict(data_record=elem2rec_detailed(rr,rr.ah,rec))
                 onclick = 'Lino.%s(undefined,%s)' % (a,py2js(params))
-                print 20110120, onclick
+                #~ print 20110120, onclick
                 onclick = cgi.escape(onclick)
                 onclick = onclick.replace('"','&quot;')
-                return '[<a onclick="%s">%s</a>]' % (onclick,_("Upload"))
+                return '<input type="button" onclick="%s" value=" %s ">' % (onclick,_("Upload"))
+                #~ return '[<a href="#" onclick="%s">%s</a>]' % (onclick,_("Upload"))
         assert rr.total_count == 1
         #~ return [dict(text="Show",handler=js_code('Lino.%s' % v.report.get_action('detail')))]
         #~ s = unicode(v[0]) + ':'
