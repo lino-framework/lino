@@ -29,7 +29,8 @@ import sys
 import codecs
 import time
 import datetime
-import signal
+#~ import signal
+import atexit
 
 import logging
 logger = logging.getLogger(__name__)
@@ -377,11 +378,12 @@ def main(*args,**options):
     logger.info(msg,data_dir)
     dblogger.info(msg,data_dir)
         
-    def on_SIGTERM(signum,frame):
+    def goodbye():
         msg = "Stopped watching %s ..."
         logger.info(msg,data_dir)
         dblogger.info(msg,data_dir)
-    signal.signal(signal.SIGTERM,on_SIGTERM)
+    #~ signal.signal(signal.SIGTERM,on_SIGTERM)
+    atexit.register(goodbye)
     
     #~ last_warning = None
     while True:
