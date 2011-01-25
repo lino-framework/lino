@@ -238,7 +238,7 @@ else:
         gid = self.get_option_value(options, 'gid')
         if gid is not None:
             context.gid = uid
-        
+            
         context.open()        
         
         self.handle_daemon(*args, **options)

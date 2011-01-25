@@ -9,7 +9,11 @@ for which I hope for help from other people.
 Version 1.1
 -----------
 
-#.  Der shortcut "upload" funktioniert noch nicht.
+#.  Decide some relatively stable Django version to use,
+    because simply getting the latest snapshot each time 
+    is a bit dangerous on a production server.
+
+#.  Verify whether watch_tim is thread safe.
 
 #.  Save GC funktioniert nicht. Oder --besser gesagt-- 
     wird erst aktiv nach dem nächster Server-Restart.

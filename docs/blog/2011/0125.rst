@@ -1,0 +1,4 @@
+20110125
+========
+
+- watch_tim schreibt jetzt in den dblogger, wenn er SIGTERM bekommt.

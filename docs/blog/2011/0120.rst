@@ -86,3 +86,6 @@ In Amerika schreiben sie "license" mit "s", hier in Europa mit "c".
 Nicht dass Lino sich auf Europa beschränken will, aber in Amerika sagt man 
 scheinbar eher "driver's license" als "driving license".
         
+        
+Release :doc:`/releases/20110120` in Eupen.  
+        

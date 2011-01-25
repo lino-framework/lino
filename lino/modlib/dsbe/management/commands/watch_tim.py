@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2010 Luc Saffre
+## Copyright 2010-2011 Luc Saffre
 ## This file is part of the Lino-DSBE project.
 ## Lino-DSBE is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@ import sys
 import codecs
 import time
 import datetime
+import signal
 
 import logging
 logger = logging.getLogger(__name__)
@@ -374,6 +375,11 @@ def main(*args,**options):
     data_dir = args[0]
     logger.info("Started tim_watch on %s ...",data_dir)
     dblogger.info("Watching %s ...",data_dir)
+        
+    def on_SIGTERM(signum,frame):
+        dblogger.info("Stopped watching %s ...",data_dir)
+    signal.signal(SIGTERM,on_SIGTERM)
+    
     #~ last_warning = None
     while True:
         try:
