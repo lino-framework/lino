@@ -379,7 +379,7 @@ def main(*args,**options):
     dblogger.info(msg,data_dir)
         
     def goodbye():
-        msg = "Stopped watching %s ..."
+        msg = "Stopped tim_watch on %s ..."
         logger.info(msg,data_dir)
         dblogger.info(msg,data_dir)
     #~ signal.signal(signal.SIGTERM,on_SIGTERM)
