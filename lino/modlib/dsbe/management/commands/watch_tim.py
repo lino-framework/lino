@@ -373,12 +373,15 @@ def main(*args,**options):
     if len(args) != 1:
         raise CommandError('Please specify the path to your TIM changelog directory')
     data_dir = args[0]
-    logger.info("Started tim_watch on %s ...",data_dir)
-    dblogger.info("Watching %s ...",data_dir)
+    msg = "Started tim_watch on %s ..."
+    logger.info(msg,data_dir)
+    dblogger.info(msg,data_dir)
         
     def on_SIGTERM(signum,frame):
-        dblogger.info("Stopped watching %s ...",data_dir)
-    signal.signal(SIGTERM,on_SIGTERM)
+        msg = "Stopped watching %s ..."
+        logger.info(msg,data_dir)
+        dblogger.info(msg,data_dir)
+    signal.signal(signal.SIGTERM,on_SIGTERM)
     
     #~ last_warning = None
     while True:
