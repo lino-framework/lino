@@ -1,10 +1,12 @@
 20110126
 ========
 
-- Wenn :mod:`lino.utils.daemoncommand` gesagt bekommt, 
-  dass eine pidfile erstellen soll, 
-  und wenn so eine pidfile bereits existiert 
-  (was z.B. nach einem Server-Crash der Fall ist), 
+- watch_tim.
+  When :mod:`lino.utils.daemoncommand` has been told to 
+  create a pidfile, and when that pidfile already exists
+  (e.g. after a server crash, or when the previous watch_tim 
+  process has been terminated using `kill -9`), 
+  the the new daemon waited 
   dann wartete der Prozess bisher geduldig *ad eternam*, 
   dass die Datei verschwinden möge.
   Was sie natürlich nur tat, wenn der Systemverwalter 
@@ -14,6 +16,9 @@
   `Timeout 
   <http://packages.python.org/lockfile/lockfile.html#lockfile.FileLock.acquire>`_
   von 1 Sekunde.
+  
+  We are one step further
+  One problem remains.
   
   
 

@@ -250,7 +250,7 @@ else:
         pidfile = self.get_option_value(options, 'pidfile')
         if pidfile is not None:
             #~ context.pidfile=pidlockfile.PIDLockFile(pidfile)
-            context.pidfile=pidlockfile.TimeoutPIDLockFile(pidfile,1)
+            context.pidfile=pidlockfile.TimeoutPIDLockFile(pidfile,0)
         
         uid = self.get_option_value(options, 'uid')
         if uid is not None:
