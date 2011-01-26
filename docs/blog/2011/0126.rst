@@ -1,0 +1,20 @@
+20110126
+========
+
+- Wenn :mod:`lino.utils.daemoncommand` gesagt bekommt, 
+  dass eine pidfile erstellen soll, 
+  und wenn so eine pidfile bereits existiert 
+  (was z.B. nach einem Server-Crash der Fall ist), 
+  dann wartete der Prozess bisher geduldig *ad eternam*, 
+  dass die Datei verschwinden möge.
+  Was sie natürlich nur tat, wenn der Systemverwalter 
+  sie manuell löschte.
+  Damit letzter das Problem mitgeteilt bekommt, 
+  setzen wir einen 
+  `Timeout 
+  <http://packages.python.org/lockfile/lockfile.html#lockfile.FileLock.acquire>`_
+  von 1 Sekunde.
+  
+  
+
+

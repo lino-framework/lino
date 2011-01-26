@@ -33,6 +33,12 @@ Modifications by Luc Saffre :
 - added `DaemonCommand.preserve_loggers` class variable 
   and :func:`get_handlers` and :func:`get_logger_files`.
   :doc:`/blog/2010/1214`
+  
+- when a pidfile is specified, DaemonCommand now uses a 1 second 
+  `timeout
+  <http://packages.python.org/lockfile/lockfile.html#lockfile.FileLock.acquire>`_
+  and raises LockTimeout instead of waiting patiently forever.
+  See :doc:`/blog/2011/0126`
 
 =============
 DaemonCommand
@@ -43,7 +49,7 @@ Django Management Command for starting a daemon.
 Use
 ===
 
-Simple use of daemon command::
+ Simple use of daemon command::
 
     from daemonextension import DaemonCommand
     from django.conf import settings
@@ -92,6 +98,7 @@ def get_handlers(logger):
 
 def get_logger_files(loggers):
     """
+    Return a list of the file handles used by the specified loggers.
     Thanks to http://mail.python.org/pipermail/python-list/2010-April/1241406.html
     """
     l = []
@@ -108,7 +115,7 @@ try:
 except ImportError:
   
   class DaemonCommand(BaseCommand):
-    """On Systems that don't support daemons, we just emulate.
+    """On systems that don't support daemons, we just emulate.
     """
     def handle(self, *args, **options):
         self.handle_daemon(*args, **options)
@@ -116,6 +123,14 @@ except ImportError:
 else:
   
   class DaemonCommand(BaseCommand):
+    
+    """
+    If you have an existing Django management command, 
+    just rename it's `handle` method to `handle_daemon`
+    and inherit from this instead 
+    of 
+    :class:`django.core.management.base.BaseCommand`.
+    """
         
     option_list = BaseCommand.option_list + (
         make_option('--chroot_directory', action='store', dest='chroot_directory',
@@ -161,6 +176,11 @@ else:
     pidfile = None
     uid = None
     gid = None    
+    
+    """
+    If not None, this should be a list of loggers (:class:`logging.Logger` instances) 
+    whose file handles should not get closed.
+    """
     preserve_loggers = None
     
     def create_parser(self, *args,**kw):
@@ -229,7 +249,8 @@ else:
         #Make pid lock file
         pidfile = self.get_option_value(options, 'pidfile')
         if pidfile is not None:
-            context.pidfile=pidlockfile.PIDLockFile(pidfile)
+            #~ context.pidfile=pidlockfile.PIDLockFile(pidfile)
+            context.pidfile=pidlockfile.TimeoutPIDLockFile(pidfile,aquire_timeout=1)
         
         uid = self.get_option_value(options, 'uid')
         if uid is not None:

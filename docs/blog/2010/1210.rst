@@ -2,7 +2,7 @@
 ========
 
 
-Heute habe ich mich den ganzen Tag amüsiert, `watch_tim` als *startup script* zu installieren. Dazu muss es ein Dämon sein, was ja dank Sean Creeleys :mod:`lino.utils.daemonextension` theoretisch ein Kinderspiel ist. Dort war allerdings ein kleiner Bug: wenn man die Defaultwerte in einer Unterklasse als Klassenvariablen definierte, hatte das keine Wirkung. Dann war da eine Shebang-Zeile, die mit CR/LF statt LF beendet wurde. 
+Heute habe ich mich den ganzen Tag amüsiert, `watch_tim` als *startup script* zu installieren. Dazu muss es ein Dämon sein, was ja dank Sean Creeleys :mod:`lino.utils.daemoncommand` theoretisch ein Kinderspiel ist. Dort war allerdings ein kleiner Bug: wenn man die Defaultwerte in einer Unterklasse als Klassenvariablen definierte, hatte das keine Wirkung. Dann war da eine Shebang-Zeile, die mit CR/LF statt LF beendet wurde. 
 Sowieso habe ich nebenbei `einige neue Subtilitäten <http://tldp.org/LDP/Bash-Beginners-Guide/html/sect_02_03.html>`_ über Bash-Skripts kennengelernt. 
 Außerdem brauchte ich eine ganze Zeit um das *command line interface* von `start-stop-daemon` zu durchschauen und einzusehen, dass er die zweite Option `--pidfile`, die eigentlich an meinen `watch_tim` gehen sollte, für sich selbst einverleibt. 
 `Hier <http://home.coming.dk/index.php/2009/12/18/having-fun-with-start-stop-daemon-and-quoting>`_ hatte jemand ein ähnliches Problem (aber leider nicht genau das gleiche).
@@ -85,7 +85,7 @@ Doof bei dieser Lösung ist, dass ich den Namen der PID-Datei an zwei verschiede
 Ben Finney liefert die Erklärung dafür:
 http://mail.python.org/pipermail/python-list/2010-April/1241575.html
 
-23 Uhr: Demzufolge wäre die Lösung: ich muss :mod:`lino.utils.daemonextension` noch weiter an Lino anpassen und ihm sagen, dass er die *handles* meiner Lino-Logger (logger und dblogger) vor dem bei Dämonen üblichen Totschießen bewahren soll (indem ich `daemon.DaemonContext()` mit `files_preserve` aufrufe).
-Deshalb das neue Attribut :class:`lino.utils.daemonextension.DaemonCommand.preserve_files` .
+23 Uhr: Demzufolge wäre die Lösung: ich muss :mod:`lino.utils.daemoncommand` noch weiter an Lino anpassen und ihm sagen, dass er die *handles* meiner Lino-Logger (logger und dblogger) vor dem bei Dämonen üblichen Totschießen bewahren soll (indem ich `daemon.DaemonContext()` mit `files_preserve` aufrufe).
+Deshalb das neue Attribut :class:`lino.utils.daemoncommand.DaemonCommand.preserve_loggers` .
 Scheint zu klappen.
 Check-in und Wochenende.

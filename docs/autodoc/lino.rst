@@ -32,6 +32,7 @@ Subpackages
     lino.utils.sqllog
     lino.utils.log
     lino.utils.dblogger
+    lino.utils.daemoncommand
     lino.mixins
     lino.mixins.printable
     lino.mixins.uploadable
