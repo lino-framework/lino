@@ -13,7 +13,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-See :doc:`/dsbe/models`
+See also :doc:`/dsbe/models`
 
 """
 
@@ -37,6 +37,7 @@ from lino import reports
 from lino.utils import perms
 #~ from lino.utils import printable
 from lino import mixins
+from lino import actions
 from lino import fields
 from lino.modlib.contacts import models as contacts
 from lino.modlib.notes import models as notes
@@ -1097,6 +1098,11 @@ class ContractEndings(reports.Report):
 # COURSE ENDINGS
 #
 class CourseEnding(models.Model):
+    u"""
+    Eine Kursbeendigung ist eine *Art und Weise, wie eine Kursanfrage beendet wurde*.
+    Später können wir dann Statistiken machen, wieviele Anfragen auf welche Art und 
+    Weise beendet wurden.
+    """
     class Meta:
         verbose_name = _("Course Ending")
         verbose_name_plural = _('Course Endings')
@@ -1398,19 +1404,25 @@ class LinksByCompany(links.LinksByOwnerBase):
 CourseProvider = Company
 
 class CourseProviders(Companies):
+    """
+    List of Companies that have `Company.is_courseprovider` activated.
+    """
     use_as_default_report = False
     #~ app_label = 'dsbe'
     label = _("Course providers")
     model = CourseProvider
-    filter = dict(is_courseprovider__exact=True)
+    known_values = dict(is_courseprovider=True)
+    #~ filter = dict(is_courseprovider__exact=True)
     
-    def create_instance(self,req,**kw):
-        instance = super(CourseProviders,self).create_instance(req,**kw)
-        instance.is_courseprovider = True
-        return instance
+    #~ def create_instance(self,req,**kw):
+        #~ instance = super(CourseProviders,self).create_instance(req,**kw)
+        #~ instance.is_courseprovider = True
+        #~ return instance
   
 class CourseContent(models.Model):
-    "Kursinhalte (FR, DE, EN, Alfa)"
+    u"""
+    Ein Kursinhalt (z.B. "Französisch", "Deutsch", "Alphabétisation",...)
+    """
     
     class Meta:
         verbose_name = _("Course Content")
@@ -1419,50 +1431,107 @@ class CourseContent(models.Model):
     name = models.CharField(max_length=200,
           blank=True,null=True,
           verbose_name=_("Name"))
+    u"""
+    Bezeichnung des Kursinhalts (nach Konvention des DSBE).
+    """
           
     def __unicode__(self):
         return unicode(self.name)
         
   
 class Course(models.Model):
-  
+    """
+    Ein konkreter Kurs, der an einem bestimmten Datum beginnt 
+    und bei einem bestimmten 
+    :class:`Kursanbieter <CourseProvider>` stattfindet
+    (und für den ihr Kandidaten zu vermitteln plant).
+    """
     class Meta:
         verbose_name = _("Course")
         verbose_name_plural = _('Courses')
         
     title = models.CharField(max_length=200,
         verbose_name=_("Name"))
+    u"""
+    Der Titel des Kurses. Maximal 200 Zeichen.
+    """
+    
     content = models.ForeignKey("dsbe.CourseContent",
         verbose_name=_("Course content"))
+    """
+    Der Inhalt des Kurses (ein :class:`lino.modlib.dsbe.models.CourseContent`)
+    """
+    
     provider = models.ForeignKey(CourseProvider,
         verbose_name=_("Course provider"))
+    """
+    Der Kursanbieter (eine :class:`lino.modlib.dsbe.models.Company`)
+    """
+    
     @chooser()
     def provider_choices(cls):
         return CourseProviders.request().queryset
+        
     start_date = models.DateField(_("start date"),blank=True,null=True)
-    content = models.ForeignKey("dsbe.CourseContent",verbose_name=_("Course content"))
+    """
+    Datum, wann der Kurs beginnt. 
+    """
+    
+    #~ content = models.ForeignKey("dsbe.CourseContent",verbose_name=_("Course content"))
   
     remark = models.CharField(max_length=200,
         blank=True,null=True,
         verbose_name=_("Remark"))
+    u"""
+    Bemerkung über diesen konkreten Kurs. Maximal 200 Zeichen.
+    """
         
     def __unicode__(self):
         if self.start_date is None:
             return u'%s %s' % (self.title,self.provider)
         return u'%s %s %s' % (self.title,self.start_date,self.provider)
   
+    @classmethod
+    def setup_report(model,rpt):
+        rpt.add_action(DirectPrintAction(rpt,'candidates',_("List of candidates"),'appypdf','courses/candidates.odt'))
+        rpt.add_action(DirectPrintAction(rpt,'participants',_("List of participants"),'appypdf','courses/participants.odt'))
+        
+    def participants(self):
+        u"""
+        Liste von :class:`lino.modlib.dsbe.models.CourseRequest`-Instanzen, 
+        die in diesem Kurs eingetragen sind. 
+        """
+        return ParticipantsByCourse().request(master_instance=self)
+        
+    def candidates(self):
+        u"""
+        Liste von :class:`lino.modlib.dsbe.models.CourseRequest`-Instanzen, 
+        die noch in keinem Kurs eingetragen sind, aber für diesen Kurs in Frage 
+        kommen. 
+        """
+        return CandidatesByCourse().request(master_instance=self)
+        
+        
 #~ class CourseRequest(mixins.Reminder):
 class CourseRequest(models.Model):
-    "Kursanfragen : Person X sucht einen Kurs mit Inhalt Y"
+    u"""
+    A Course Request is created when a certain Person expresses her 
+    wish to participate in a Course with a certain CourseContent.
+    """
     class Meta:
         verbose_name = _("Course Requests")
         verbose_name_plural = _('Course Requests')
         
     person = models.ForeignKey("contacts.Person",
         verbose_name=_("Person"))
+    u"Die Person (ein Objekt vom Typ :class:`lino.modlib.dsbe.models.Person`.)"
+    
     content = models.ForeignKey("dsbe.CourseContent",
         verbose_name=_("Course content"))
+    u"Der gewünschte Kursinhalt (ein Objekt vom Typ :class:`lino.modlib.dsbe.models.CourseConent`.)"
+    
     date_submitted = models.DateField(_("date submitted"),auto_now_add=True)
+    u"Das Datum, an dem die Anfrage erstellt wurde."
     
     #~ """Empty means 'any provider'
     #~ """
@@ -1473,12 +1542,13 @@ class CourseRequest(models.Model):
     #~ def provider_choices(cls):
         #~ return CourseProviders.request().queryset
         
-    """
-    when not empty,
-    means that the request is satisfied and the Person participated to this course
-    """
     course = models.ForeignKey("dsbe.Course",blank=True,null=True,
         verbose_name=_("Course found"))
+    u"""
+    Der Kurs, durch den diese Anfrage befriedigt wurde 
+    (ein Objekt vom Typ :class:`lino.modlib.dsbe.models.Course`).
+    So lange dieses Feld leer ist, gilt die Anfrage als offen.
+    """
         
     #~ """
     #~ The person's feedback about how satisfied she was.
@@ -1488,16 +1558,23 @@ class CourseRequest(models.Model):
     remark = models.CharField(max_length=200,
         blank=True,null=True,
         verbose_name=_("Remark"))
+    u"""
+    Bemerkung zu dieser konkreten Kursanfrage oder -teilnahme.
+    """
         
-    """Effective end of the course.
-    """
     date_ended = models.DateField(blank=True,null=True,verbose_name=_("date ended"))
-    
-    """Person's feedback about this course.
+    u"""
+    Datum der effektives Beendigung dieser Kursteilname.
     """
+    
     ending = models.ForeignKey("dsbe.CourseEnding",blank=True,null=True,
         verbose_name=_("Ending"))
-        
+    u"""
+    Die Art der Beendigung 
+    (ein Objekt vom Typ :class:`lino.modlib.dsbe.models.CourseEnding`.)
+    Das wird benutzt für spätere Statistiken.
+    """
+    
         
 class Courses(reports.Report):
     model = Course
@@ -1520,15 +1597,53 @@ class CourseRequestsByPerson(CourseRequests):
 
 class RequestsByCourse(CourseRequests):
     fk_name = 'course'
+  
+    def create_instance(self,req,**kw):
+        obj = super(RequestsByCourse,self).create_instance(req,**kw)
+        obj.content = obj.course.content
+        return obj
+    
+class ParticipantsByCourse(RequestsByCourse):
     label = _("Participants")
-    can_add = perms.never
+    column_names = 'person remark date_ended ending'
+    
+    def setup_actions(self):
+        class Unregister(actions.RowAction):
+            label = _("Unregister")
+            def run(self,rr,elem):
+                course = elem.course
+                elem.course = None
+                elem.save()
+                return rr.ui.success_response(refresh_all=True,
+                  message=_("%(person)s has been unregistered from %(course)s") % dict(person=elem.person,course=course))
+        self.add_action(Unregister(self))
 
-class CandidatesByCourse(CourseRequests):
-    fk_name = 'course'
+class CandidatesByCourse(RequestsByCourse):
     label = _("Candidates")
-    can_add = perms.never
+    column_names = 'person remark content date_submitted'
+    #~ can_add = perms.never
     
+    def get_request_queryset(self,rr):
+        return self.model.objects.filter(course__isnull=True,
+            content__exact=rr.master_instance.content)
     
+    def setup_actions(self):
+        class Register(actions.RowAction):
+            label = _("Register")
+            def run(self,rr,elem):
+                elem.course = rr.master_instance
+                elem.save()
+                return rr.ui.success_response(refresh_all=True,
+                  message=_("%(person)s has been registered to %(course)s") % dict(
+                      person=elem.person,course=elem.course))
+        self.add_action(Register(self))
+    
+    def create_instance(self,req,**kw):
+        """Manually clear the `course` field.
+        """
+        obj = super(CandidatesByCourse,self).create_instance(req,**kw)
+        obj.course = None
+        return obj
 
 #
 # SEARCH

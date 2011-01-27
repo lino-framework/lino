@@ -3,32 +3,22 @@
 
 Solved in :doc:`/releases/20101027`.
 
-Lino requires Apache to be configured with
+Before this, Lino required Apache to be configured with
 
 ::
 
     WSGIDaemonProcess example.com threads=15
 
-and not with 
+and not with
 
 ::
+
     WSGIDaemonProcess example.com processes=2 threads=15
 
-This is appearently not an urgent problem:
-
-- For most sites you would get away with single process, so you 
-  can drop 'processes=4' and let it default to running a single daemon 
-  process and probably not see any difference given that also using 
-  multithreading.   
-  [#f1]_
-  
-The problem when Lino is running in multiple processes appears quickly: 
-the columns of most grids are mixed up. 
-
-The reason was be that I used Python `sets` when filling the field lists 
+When Lino was running in multiple processes,
+the problem was visible because 
+columns of most grids were mixed up. 
+The reason for that was that I used Python `sets` when filling the field lists 
 (fields, list_fields, detail_fields) of :class:`lino.ui.extjs.ext_store.Store`. 
 Each process then resulted in its own column order.
   
-.. rubric:: Footnotes  
-
-.. [#f1] http://groups.google.com/group/modwsgi/browse_thread/thread/e33565e5cb4e2f2e

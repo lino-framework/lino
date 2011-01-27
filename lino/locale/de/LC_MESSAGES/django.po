@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-18 19:53+0000\n"
+"POT-Creation-Date: 2011-01-27 14:45+0000\n"
 "PO-Revision-Date: 2011-01-17 07:49+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
@@ -110,20 +110,20 @@ msgstr "Anwendungsparameter"
 msgid "~Site"
 msgstr "~Site"
 
-#: .\reports.py:421
+#: .\reports.py:424
 #, python-format
 msgid "User %(user)s cannot view %(report)s."
 msgstr "Benutzer  %(user)s hat kein Recht,  %(report)s zu sehen."
 
-#: .\reports.py:608
+#: .\reports.py:621
 msgid "Yes"
 msgstr "Ja"
 
-#: .\reports.py:608
+#: .\reports.py:621
 msgid "No"
 msgstr "Nein"
 
-#: .\reports.py:870
+#: .\reports.py:898
 #, python-format
 msgid "%(details)s by %(model)s %(master)s"
 msgstr "%(details)s pro %(model)s %(master)s"
@@ -133,7 +133,7 @@ msgstr "%(details)s pro %(model)s %(master)s"
 msgid "Cannot delete %(self)s because %(count)d %(refs)s refer to it."
 msgstr "Kann %(self)s nicht löschen weil %(count)d %(refs)s darauf verweisen."
 
-#: .\demos\dsbe\lino_settings.py:27 .\demos\dsbe\site.py:48
+#: .\demos\dsbe\lino_settings.py:27 .\demos\dsbe\site.py:53
 #: .\demos\std\lino_settings.py:23
 msgid "~Contacts"
 msgstr "~Kontakte"
@@ -142,21 +142,21 @@ msgstr "~Kontakte"
 msgid "~Notes"
 msgstr "~Notizen"
 
-#: .\demos\dsbe\lino_settings.py:38 .\demos\dsbe\site.py:69
+#: .\demos\dsbe\lino_settings.py:38 .\demos\dsbe\site.py:74
 #: .\demos\std\lino_settings.py:31
 msgid "~Configure"
 msgstr "~Konfigurierung"
 
-#: .\demos\dsbe\lino_settings.py:62 .\demos\dsbe\site.py:98
+#: .\demos\dsbe\lino_settings.py:62 .\demos\dsbe\site.py:103
 #: .\demos\std\lino_settings.py:43
 msgid "E~xplorer"
 msgstr ""
 
-#: .\demos\dsbe\site.py:53
+#: .\demos\dsbe\site.py:58
 msgid "~My menu"
 msgstr "~Mein Menü"
 
-#: .\demos\dsbe\site.py:63
+#: .\demos\dsbe\site.py:68
 msgid "~Courses"
 msgstr "~Kurse"
 
@@ -344,7 +344,7 @@ msgstr "Bearbeitet"
 msgid "Description"
 msgstr "Beschreibung"
 
-#: .\ui\extjs\ext_elems.py:572
+#: .\ui\extjs\ext_elems.py:555
 #, python-format
 msgid "Select a %s..."
 msgstr "%s auswählen..."
@@ -354,59 +354,64 @@ msgstr "%s auswählen..."
 msgid "Existing primary key value %r may not be modified."
 msgstr "Existierender ID-Wert %r darf nicht verändert werden."
 
-#: .\ui\extjs\ext_store.py:308
+#: .\ui\extjs\ext_store.py:310
 #, python-format
 msgid "%r (invalid choice)"
 msgstr "%r (ungültige Auswahl)"
 
-#: .\ui\extjs\ext_ui.py:202
+#: .\ui\extjs\ext_ui.py:203
 #, python-format
 msgid "Row %(rowid)d of %(rowcount)d"
 msgstr "Record  %(rowid)d von %(rowcount)d"
 
-#: .\ui\extjs\ext_ui.py:596
+#: .\ui\extjs\ext_ui.py:601
 msgid "Console"
 msgstr "Konsole"
 
-#: .\ui\extjs\ext_ui.py:644
+#: .\ui\extjs\ext_ui.py:649
 #, python-format
 msgid "Welcome on Lino server %(title)r, user %(user)s"
 msgstr "Willkommen auf dem Lino-server %(title)r, %(user)s"
 
-#: .\ui\extjs\ext_ui.py:695
+#: .\ui\extjs\ext_ui.py:700
 #, python-format
 msgid "%s has been created."
 msgstr "%s wurde erstellt."
 
-#: .\ui\extjs\ext_ui.py:697
+#: .\ui\extjs\ext_ui.py:702
 #, python-format
 msgid "%s has been saved."
 msgstr "%s wurde gespeichert."
 
-#: .\ui\extjs\ext_ui.py:705 .\ui\extjs\ext_ui.py:728
+#: .\ui\extjs\ext_ui.py:710 .\ui\extjs\ext_ui.py:733
 #, python-format
 msgid "User %(user)s cannot configure %(report)s."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:897
+#: .\ui\extjs\ext_ui.py:902
 #, python-format
 msgid "Failed to delete %(record)s : %(error)s."
 msgstr "Fehler beim Löschen von %(record)s : %(error)s."
 
-#: .\ui\extjs\ext_ui.py:920
+#: .\ui\extjs\ext_ui.py:925
 #, python-format
 msgid "Insert into %s..."
 msgstr "Einfügen nach %s..."
 
-#: .\ui\extjs\ext_ui.py:947
+#: .\ui\extjs\ext_ui.py:953
 #, python-format
 msgid "Action %(action)s failed for %(record)s: %(error)s"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:1067
+#: .\ui\extjs\ext_ui.py:1073
 #, python-format
 msgid "Choices for %s"
 msgstr "Auswahlmöglichkeiten für %s"
+
+#: .\ui\extjs\ext_ui.py:1184
+#, fuzzy
+msgid "Upload"
+msgstr "Upload"
 
 #~ msgid "Reminder delay"
 #~ msgstr "Erinnerungsfrist"

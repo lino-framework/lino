@@ -49,7 +49,8 @@ APPY_PARAMS = dict(ooPort=8100)
 try:
     import uno
 except ImportError:
-    APPY_PARAMS.update(pythonWithUnoPath=r'C:\PROGRA~1\OPENOF~1.ORG\program\python.exe')
+    APPY_PARAMS.update(pythonWithUnoPath=r'C:\PROGRA~1\LIBREO~1\program\python.exe')
+    #~ APPY_PARAMS.update(pythonWithUnoPath=r'C:\PROGRA~1\OPENOF~1.ORG\program\python.exe')
     #~ APPY_PARAMS.update(pythonWithUnoPath='/usr/bin/libreoffice')
     #~ APPY_PARAMS.update(pythonWithUnoPath='/etc/openoffice.org3/program/python')
 

@@ -117,7 +117,8 @@ def error_response(e,message_prefix='',**kw):
     kw.update(success=False)
     if hasattr(e, 'message_dict'):
         kw.update(errors=e.message_dict)
-    kw.update(message=message_prefix+unicode(e))
+    kw.update(alert_msg=message_prefix+unicode(e))
+    #~ kw.update(message=message_prefix+unicode(e))
     return json_response(kw)
     
 
@@ -253,6 +254,12 @@ class ExtUI(base.UI):
             a = lh.rh.report.get_action(name)
             if isinstance(a,actions.ImageAction):
                 return ext_elems.PictureElement(lh,name,a,**kw)
+
+            #~ de = getattr(lh.rh.report,name,None)
+            #~ if de is not None and callable(de):
+                #~ label = getattr(de,'button_label',None)
+                #~ if label is not None:
+                    #~ return ext_elems.ButtonElement(lh,name,de,label,**kw)
           
         #~ if isinstance(de,properties.Property):
             #~ return self.create_prop_element(lh,de,**kw)
@@ -301,6 +308,7 @@ class ExtUI(base.UI):
             rt = getattr(de,'return_type',None)
             if rt is not None:
                 return self.create_meth_element(lh,name,de,rt,**kw)
+                #~ return self.create_button_element(lh,name,de,label,**kw)
         #~ if isinstance(de,forms.Input):
             #~ e = ext_elems.InputElement(lh,de,**kw)
             #~ if not lh.start_focus:
@@ -328,11 +336,7 @@ class ExtUI(base.UI):
     def href_to(self,obj):
         return '<a href="%s" target="_blank">%s</a>' % (self.get_detail_url(obj,fmt='detail'),unicode(obj))
 
-    #~ def create_button_element(self,name,action,**kw):
-        #~ e = self.ui.ButtonElement(self,name,action,**kw)
-        #~ self._buttons.append(e)
-        #~ return e
-        
+
     def create_meth_element(self,lh,name,meth,rt,**kw):
         rt.name = name
         rt._return_type_for_method = meth
@@ -943,7 +947,8 @@ class ExtUI(base.UI):
                     
                 if isinstance(a,actions.RowAction):
                     try:
-                        return a.run(self,elem)
+                        return a.run(ar,elem)
+                        #~ return a.run(self,elem)
                     except Exception,e:
                         msg = _("Action %(action)s failed for %(record)s: %(error)s") % dict(
                             action=a,
@@ -1141,11 +1146,6 @@ class ExtUI(base.UI):
             fke.lh.rh.report._actor_name,
             fke.field.name,**kw)
         
-    #~ def request2js(self,rr,**kw):
-        #~ if rr.known_values:
-            #~ kw.update(known_values=rr.known_values)
-        #~ return kw
-        
     def request2kw(self,rr,**kw):
         #~ if rr.known_values is not None:
             #~ for k,v in rr.known_values.items():
@@ -1286,6 +1286,3 @@ class ExtUI(base.UI):
         )
         return kw
         
-#~ ui = ExtUI()
-
-#~ jsgen.register_converter(ui.py2js_converter)

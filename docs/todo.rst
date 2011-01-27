@@ -9,34 +9,36 @@ for which I hope for help from other people.
 Version 1.1
 -----------
 
+#.  Save GC funktioniert nicht. Oder --besser gesagt-- 
+    wird erst aktiv nach dem nächsten Server-Restart.
+
+#.  Excel erkennt das encoding der csv-Datei nicht als UTF-8.
+
+#.  Formatierte Texte in Verträgen drucken können.
+    Zumindest Aufzählungen und mehrere Absätze 
+    sollten möglich sein.
+
+#.  Liste der offenen Fenster. Einfachste Form wäre ein Dropdown, 
+    so dass man leicht von hier nach dort springen kann. 
+    Oder als vertikale Reiter.
+    Manche Links öffnen einen neuen Tab: irritiert
+
+#.  Modell "PersonSearch" (sex, language, age_range,...) 
+    und Report PersonsBySearch.
+    
+#.  :doc:`tickets/20`.
+
+Version 1.2
+-----------
+
 #.  Decide some relatively stable Django version to use,
     because simply getting the latest snapshot each time 
     is a bit dangerous on a production server.
 
-#.  Save GC funktioniert nicht. Oder --besser gesagt-- 
-    wird erst aktiv nach dem nächster Server-Restart.
-
-#.  Excel erkennt das encoding der csv-Datei nicht als UTF-8.
-
-#.  Bei "Kurse - Teilnehmer" ist keine direkte Eingabe möglich.    
-
-    Hier darf man ja nicht einfach neue Records einfügen, 
-    sondern die "Teilnehmer" erscheinen hier automatisch, 
-    wenn man einer bestehenden Anfrage einen Kurs zuweist.
-
-    Mein Plan ist, dass in der unteren Liste (Kandidaten) 
-    die Personen angezeigt werden, die eine offene Kursanfrage 
-    haben und inhaltlich für diesen Kurs in Frage kämen. 
-    Und per Mausklick müsste man sie dann aus der Kandidaten- 
-    in die Teilnehmerliste transferieren können und umgekehrt.
-
 #.  Grid-Konfigurationsdateien sollten pro Benutzer speicherbar sein.
 
-#.  Formatierte Texte. Zumindest Aufzählungen und mehrere Absätze 
-    sollten möglich sein.
-
-Version 1.2
------------
+#.  DELETE auf einer Zeile in Teilnehmer oder Kandidaten funktioniert. 
+    Aber dort soll man nicht löschen können.
 
 #.  Die Titel der Reiter (.dtl-Dateien) sind momentan noch nicht 
     internationalisiert, stehen also in den Konfigurationsdateien 
@@ -47,12 +49,7 @@ Version 1.2
 #.  Wenn man die Rückfrage nach "Delete" mit Enter beatnwortet, 
     wird die Grid nicht aktualisiert...
 
-#.  Liste der offenen Fenster. Einfachste Form wäre ein Dropdown, 
-    so dass man leicht von hier nach dort springen kann. 
-    Oder als vertikale Reiter.
-    Manche Links öffnen einen neuen Tab: irritiert
-
-#.  Reminders als "gelesen" markeiren können.
+#.  Reminders als "gelesen" markieren können.
     
 #.  Im `search_field` funktionieren die Tasten HOME und END nicht.
     Oder genauer gesagt werden die von der Grid abgefangen und verarbeitet.
@@ -64,9 +61,6 @@ Version 1.2
     überschreibt man den aktuellen Record durch die Daten aus einer 
     hochzuladenden Datei.
     
-#.  Modell "PersonSearch" (sex, language, age_range,...) 
-    und Report PersonsBySearch.
-
 #.  Lästig ist, dass nach dem Bearbeiten einer Zelle der Focus auf die 
     erste Zeile zurück springt.
 
@@ -99,9 +93,6 @@ Version 1.2
     Name und Vorname identisch sind **außer** wenn beide ein unleeres Geburtsdatum 
     haben (und nicht das gleiche).
 
-#.  Sortierung: Entweder Ticket :doc:`/tickets/19` lösen, oder (noch besser) 
-    auf Datenbank-Ebene lokalisierte Sortierung einstellen.
-   
 #.  Wenn man in einem Vertrag eine Angabe ändert und dann "Drucken" klickt, dann wird die 
     Änderung irritierenderweise nicht gespeichert.
   
@@ -121,7 +112,7 @@ Version 1.2
     http://djangosnippets.org/snippets/1060/
 
 
-After version 1.1
+After version 1.2
 -----------------
 
 #.  Idee: Vielleicht müsste contacts.Person doch nicht abstract sein, und

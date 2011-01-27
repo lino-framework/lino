@@ -1,0 +1,20 @@
+20110127
+========
+
+Kursteilnehmer und -kandidaten
+------------------------------
+
+Heute habe ich eine hoffentlich zufriedenstellende Lösung 
+für folgenden Punkt gefunden:
+
+    Kursteilnehmer erfassen ist noch nicht ganz benutzerfreundlich, 
+    eigentlich soll man den Kurs im Feld "Kurs gefunden" 
+    gar nicht auswählen müssen, denn Lino weiß ja, um welchen Kurs es geht.
+    Statt des Feldes "Kurs gefunden" sollte eher auf jeder Zeile ein 
+    Button "Einschreiben" hinkommen. Wenn man darauf klickt, 
+    kommt die Anfrage (ohne weitere Bestätigung) von der unteren in die obere Liste.
+    Momentan muss man auch noch selber auf den Refresh-Button in 
+    der Teilnehmerliste klicken, damit die Einschreibung sichtbar wird.
+
+
+Release :doc:`/releases/20110127` in Eupen.  

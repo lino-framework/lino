@@ -1,0 +1,47 @@
+Version 1.0.5 (27.01.2011)
+==========================
+
+Änderungen:
+
+#.  Wichtigste Änderung ist, dass man im Detail-Fenster eines 
+    Kurses jetzt relativ benutzerfreundlich Teilnehmer ein- 
+    und austragen kann:
+    
+    In der unteren Liste (Kandidaten) 
+    stehen die Leute, die einen Sprachkurs mit diesem Inhalt
+    suchen. Dort kann man auf einzelnen Zeilen mit rechtem 
+    Mausklick "Eintragen" wählen. Dadurch wird die Person 
+    von der Kandidaten- in die Teilnehmerliste verschoben.
+    
+    In der Teilnehmerliste kann man analog "Austragen" 
+    wählen um zu sagen, dass diese Person doch nicht teilnimmt.
+    
+    Man kann auch Leute in einen Sprachkurs eintragen, die noch gar 
+    keine Anfrage hatten. 
+    Wenn man die dann wieder austrägt, bleibt wohl die Anfrage 
+    bestehen.
+    Anfragen **löschen** (also vergessen, dass eine Person 
+    für einen Sprachkurs in Frage kommt) kann man hier nicht, 
+    dazu muss man aufs Detail der Person gehen.
+    
+    Ich habe auch eine Dokumentation :doc:`/dsbe/kurse` begonnen 
+    (Kommentare und v.a. Textfragmente willkommen).
+
+#.  Auf einem Kurs gibt es zwei Druckaktionen 
+    "Kandidatenlite" und "Teilnehmerliste". damit die funktionieren, 
+    müssen noch die entsprechenden Vorlagen erstellt werden:
+    
+    - courses/participants.odt
+    - courses/candidates.odt
+    
+    In diesen Vorlagen steht in der Variable `self` der Kurs, der ausgedruckt wird, 
+    als Objekt vom Typ :class:`Course <lino.modlib.dsbe.models.Course>` zur Verfügung 
+    (siehe dort für 
+    detaillierte Doku).
+    
+    
+#.  Wenn eine Aktion misslingt, kommt jetzt die Fehlermeldung 
+    nicht mehr unten in der Statuszeile 
+    (wo sie außerdem nach einigen Sekunden wieder verschwand), 
+    sondern als "Message Box", die man bestätigen muss.
+    

@@ -185,3 +185,5 @@ class DisplayField:
 class HtmlBox(DisplayField):
     pass
     
+#~ class QuickAction(DisplayField):
+    #~ pass

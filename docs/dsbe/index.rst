@@ -26,4 +26,5 @@ die in enger Zusammenarbeit mit dem ÖSHZ Eupen entwickelt wurde.
   tim2lino
   funktionale_beschreibung
   intro
+  kurse
 

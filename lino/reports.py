@@ -47,6 +47,7 @@ from django.utils.safestring import mark_safe
 import lino
 #~ from lino import layouts
 from lino import actions
+from lino import actions
 from lino.utils import perms, menus
 #~ from lino.utils import printable
 #~ from lino.core import datalinks
@@ -427,7 +428,7 @@ class ReportActionRequest:
         self.gridfilters = gridfilters
         self.order_by = order_by
         self.extra = extra
-        self.known_values = known_values
+        self.known_values = known_values or self.report.known_values
 
         #~ if selected_rows is not None:
             #~ self.selected_rows = selected_rows
@@ -631,6 +632,11 @@ class Report(actors.Actor): #,base.Handled):
     default_layout = 0
     
     typo_check = True
+    """
+    True means that Lino shoud issue a warning if a subclass 
+    defines any attribute that did not exist in the base class.
+    Usually such a warning means that there is something wrong.
+    """
     url = None
     
     #~ use_layouts = True
@@ -638,6 +644,16 @@ class Report(actors.Actor): #,base.Handled):
     button_label = None
     
     #~ detail_layouts = []
+    
+    known_values = None
+    """
+    If not None, this specifies a dict of `filename` -> `value` pairs
+    that define "known values".
+    Requests will automatically filtered to show only existing records 
+    with those values.
+    New instances created in this reports will automatically have 
+    these values set.
+    """
     
     show_slave_grid = True
     """
@@ -803,7 +819,6 @@ class Report(actors.Actor): #,base.Handled):
             self.grid_configs = {}
             
         #~ alist = [ ac(self) for ac in self.actions ]
-        alist = []
           
         if self.model is not None:
           
@@ -817,24 +832,8 @@ class Report(actors.Actor): #,base.Handled):
             else:
                 self._slaves = []
                 
-            if len(self.model._lino_detail_layouts) > 0:
-                alist.append(actions.ShowDetailAction(self))
-                alist.append(actions.SubmitDetail(self))
-                alist.append(actions.InsertRow(self))
-                #~ alist.append(actions.DuplicateRow(self))
-                alist.append(actions.SubmitInsert(self))
-                    
-            alist.append(actions.DeleteSelected(self))
-            
-                
-            #~ self.list_layout = layouts.list_layout_factory(self)
-            #~ self.detail_layouts = layouts.get_detail_layouts_for_report(self)
-            #~ self.detail_layouts = 
-              
-            if hasattr(self.model,'get_image_url'):
-                alist.append(actions.ImageAction(self))
-        alist.append(self.default_action)
-        self.set_actions(alist)
+        self.setup_actions()
+        self.add_action(self.default_action)
                 
         if self.button_label is None:
             self.button_label = self.label
@@ -844,7 +843,24 @@ class Report(actors.Actor): #,base.Handled):
             if m:
                 m(self)
         
-
+    def setup_actions(self):
+        alist = []
+        if self.model is not None:
+            if len(self.model._lino_detail_layouts) > 0:
+                alist.append(actions.ShowDetailAction(self))
+                alist.append(actions.SubmitDetail(self))
+                alist.append(actions.InsertRow(self))
+                #~ alist.append(actions.DuplicateRow(self))
+                alist.append(actions.SubmitInsert(self))
+                    
+            alist.append(actions.DeleteSelected(self))
+            
+            if hasattr(self.model,'get_image_url'):
+                alist.append(actions.ImageAction(self))
+                
+        #~ alist.append(self.default_action)
+        self.set_actions(alist)
+        
     def get_grid_config_file(self):
         #~ filename = str(self) + ".py"
         filename = str(self) + ".rpt"

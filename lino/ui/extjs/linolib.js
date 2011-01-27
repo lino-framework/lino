@@ -578,7 +578,11 @@ Lino.action_handler = function (panel,on_success) {
       if (on_success && result.success) on_success(result);
       if (result.alert_msg) Ext.MessageBox.alert('Alert',result.alert_msg);
       if (result.message) Lino.notify(result.message);
-      if (result.refresh) panel.refresh();
+      if (result.refresh_all) {
+          panel.ww.main_item.refresh();
+      } else {
+          if (result.refresh) panel.refresh();
+      }
       if (result.open_url) {
           if (!result.message)
               Lino.notify('Open new window <a href="'+result.open_url+'" target="_blank">'+result.open_url+'</a>');
@@ -678,6 +682,11 @@ Lino.id_renderer = function(value, metaData, record, rowIndex, colIndex, store) 
   //~ if (record.phantom) return '';
   return value;
 }
+
+//~ Lino.cell_button_renderer = function(value, metaData, record, rowIndex, colIndex, store) {
+  //~ return '<input type="button" onclick="alert(value)" value=" ? ">' ;
+//~ }
+
 
 //~ Lino.default_renderer = function(value, metaData, record, rowIndex, colIndex, store) {
   //~ if (record.phantom) return '';

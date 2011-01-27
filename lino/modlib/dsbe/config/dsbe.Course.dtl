@@ -6,5 +6,5 @@ main =
     content
     start_date 
     remark
-    dsbe.RequestsByCourse
+    dsbe.ParticipantsByCourse
     dsbe.CandidatesByCourse

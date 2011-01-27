@@ -63,6 +63,7 @@ def before_row_edit(panel):
             l.append("this.load_picture_to(%s,record);" % e.as_ext())
         #~ elif isinstance(e,ShowOrCreateElement):
             #~ l.append("this.load_buttons_to(%s,record);" % e.as_ext())
+        #~ elif isinstance(e,DisplayElement):
         elif isinstance(e,HtmlBoxElement):
             #~ l.append("%s.items.get(0).getEl().update(record.data.%s);" % (e.as_ext(),e.field.name))
             #~ l.append("%s.load_htmlbox_record(record);" % e.as_ext())
@@ -86,10 +87,7 @@ def before_row_edit(panel):
 
 
 class GridColumn(Component):
-    #~ declare_type = jsgen.DECLARE_VAR
     declare_type = jsgen.DECLARE_INLINE
-    #~ ext_suffix = "_col"
-    #~ value_template = "new Ext.grid.Column(%s)"
     
     def __init__(self,index,editor,**kw):
         """editor may be a Panel for columns on a GenericForeignKey
@@ -99,9 +97,9 @@ class GridColumn(Component):
             #~ "%s.%s is a %r (expected FieldElement instance)" % (cm.grid.report,editor.name,editor)
         self.editor = editor
         #~ self.value_template = editor.grid_column_template
-        kw.update(self.editor.get_column_options())
         kw.update(sortable=True)
         kw.update(colIndex=index)
+        kw.update(self.editor.get_column_options())
         kw.update(hidden=editor.hidden)
         if settings.USE_GRIDFILTERS and editor.filter_type:
             kw.update(filter=dict(type=editor.filter_type))
@@ -318,6 +316,28 @@ class PictureElement(LayoutElement):
           cursor='pointer'))
         
 
+class unused_ButtonElement(LayoutElement):
+    value_template = "new Ext.Component(%s)"
+    
+    def __init__(self,lh,name,meth,label,**kw):
+        self.label = label
+        self.meth = meth
+        #~ onclick='alert("oops")'
+        #~ kw.update(html='<input type="button" onclick="%s" value=" %s ">' % (onclick,label))
+        LayoutElement.__init__(self,lh,name,**kw)
+    
+    def get_column_options(self,**kw):
+        #~ kw.update(dataIndex=self.field.name)
+        #~ if self.label is None:
+            #~ kw.update(header=self.field.name)
+        #~ else:
+        kw.update(header=unicode(self.label))
+        kw.update(editable=False)
+        kw.update(sortable=False)
+        rend = 'Lino.cell_button_renderer'
+        kw.update(renderer=js_code(rend))
+        return kw    
+                
         
 
 class StaticTextElement(LayoutElement):
@@ -412,43 +432,6 @@ class FieldElement(LayoutElement):
         kw = LayoutElement.ext_options(self,**kw)
         kw.update(self.get_field_options())
         return kw
-    
-class HtmlBoxElement(FieldElement):
-    ext_suffix = "_htmlbox"
-    declare_type = jsgen.DECLARE_VAR
-    value_template = "new Lino.HtmlBoxPanel(ww,%s)"
-    preferred_height = 5
-    vflex = True
-    filter_type = 'string'
-    refers_to_ww = True
-    
-    #~ def __init__(self,lh,name,action,**kw):
-        #~ kw.update(plugins=js_code('Lino.HtmlBoxPlugin'))
-        #~ LayoutElement.__init__(self,lh,name,**kw)
-        
-    def get_field_options(self,**kw):
-        kw.update(name=self.field.name)
-        kw.update(layout='fit')
-        if self.field.drop_zone: # testing with drop_zone 'FooBar'
-            kw.update(listeners=dict(render=js_code('initialize%sDropZone' % self.field.drop_zone)))
-        kw.update(items=js_code("new Ext.BoxComponent()"))
-        if self.label:
-            kw.update(title=unicode(self.label))
-        #~ if self.field.bbar is not None:
-            #~ kw.update(ls_bbar_actions=self.field.bbar)
-        return kw
-        
-class DisplayElement(FieldElement):
-#~ class ShowOrCreateElement(FieldElement):
-    ext_suffix = "_disp"
-    declare_type = jsgen.DECLARE_VAR
-    value_template = "new Ext.form.DisplayField(%s)"
-    #~ value_template = "new Lino.ButtonField(ww,%s)"
-    #~ preferred_height = 5
-    #~ vflex = True
-    #~ filter_type = 'string'
-    #~ refers_to_ww = True
-    
     
         
 class TextFieldElement(FieldElement):
@@ -689,6 +672,49 @@ class BooleanFieldElement(FieldElement):
         instance[self.field.name] = values.get(self.field.name,False)
 
 
+class DisplayElement(FieldElement):
+#~ class ShowOrCreateElement(FieldElement):
+    ext_suffix = "_disp"
+    declare_type = jsgen.DECLARE_VAR
+    value_template = "new Ext.form.DisplayField(%s)"
+    #~ value_template = "new Lino.ButtonField(ww,%s)"
+    #~ preferred_height = 5
+    #~ vflex = True
+    #~ filter_type = 'string'
+    #~ refers_to_ww = True
+    
+#~ class QuickActionElement(DisplayElement):
+    #~ pass
+    #~ ext_suffix = "_quick"
+    #~ value_template = "new Lino.QuickAction(ww,%s)"
+    
+  
+  
+class HtmlBoxElement(DisplayElement):
+    ext_suffix = "_htmlbox"
+    #~ declare_type = jsgen.DECLARE_VAR
+    value_template = "new Lino.HtmlBoxPanel(ww,%s)"
+    preferred_height = 5
+    vflex = True
+    filter_type = 'string'
+    refers_to_ww = True
+    
+    #~ def __init__(self,lh,name,action,**kw):
+        #~ kw.update(plugins=js_code('Lino.HtmlBoxPlugin'))
+        #~ LayoutElement.__init__(self,lh,name,**kw)
+        
+    def get_field_options(self,**kw):
+        kw.update(name=self.field.name)
+        kw.update(layout='fit')
+        if self.field.drop_zone: # testing with drop_zone 'FooBar'
+            kw.update(listeners=dict(render=js_code('initialize%sDropZone' % self.field.drop_zone)))
+        kw.update(items=js_code("new Ext.BoxComponent()"))
+        if self.label:
+            kw.update(title=unicode(self.label))
+        #~ if self.field.bbar is not None:
+            #~ kw.update(ls_bbar_actions=self.field.bbar)
+        return kw
+        
 
 
 class Container(LayoutElement):
@@ -1320,6 +1346,7 @@ class FormPanel(jsgen.Component):
 
 _field2elem = (
     (fields.HtmlBox, HtmlBoxElement),
+    #~ (fields.QuickAction, QuickActionElement),
     (fields.DisplayField, DisplayElement),
     (models.URLField, URLFieldElement),
     (models.FileField, FileFieldElement),

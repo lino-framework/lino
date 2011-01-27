@@ -390,7 +390,7 @@ class PrintAction(BasePrintAction):
     def filename_root(self,elem):
         return elem._meta.app_label + '.' + elem.__class__.__name__
         
-    def run(self,ui,elem,**kw):
+    def run(self,rr,elem,**kw):
         bm = get_build_method(elem)
         if elem.must_build:
             bm.build(self,elem)
@@ -401,7 +401,7 @@ class PrintAction(BasePrintAction):
         else:
             kw.update(message="Reused %s printable from cache." % elem)
         target = settings.MEDIA_URL + "/".join(bm.get_target_parts(self,elem))
-        return ui.success_response(open_url=target,**kw)
+        return rr.ui.success_response(open_url=target,**kw)
       
 class DirectPrintAction(BasePrintAction):
     def __init__(self,rpt,name,label,bmname,tplname):
@@ -417,29 +417,29 @@ class DirectPrintAction(BasePrintAction):
     def filename_root(self,elem):
         return self.actor.model._meta.app_label + '.' + self.actor.model.__name__
         
-    def run(self,ui,elem,**kw):
+    def run(self,rr,elem,**kw):
         self.bm.build(self,elem)
         target = settings.MEDIA_URL + "/".join(self.bm.get_target_parts(self,elem))
-        return ui.success_response(open_url=target,**kw)
+        return rr.ui.success_response(open_url=target,**kw)
     
 class EditTemplateAction(actions.RowAction):
     name = 'tpledit'
     label = _('Edit template')
     
-    def run(self,ui,elem,**kw):
+    def run(self,rr,elem,**kw):
         bm = get_build_method(elem)
         target = bm.get_template_url(self,elem)
-        return ui.success_response(open_url=target,**kw)
+        return rr.ui.success_response(open_url=target,**kw)
     
 class ClearCacheAction(actions.RowAction):
 #~ class ClearCacheAction(actions.UpdateRowAction):
     name = 'clear'
     label = _('Clear cache')
     
-    def run(self,ui,elem):
+    def run(self,rr,elem):
         elem.must_build = True
         elem.save()
-        return ui.success_response("%s printable cache has been cleared." % elem,refresh=True)
+        return rr.ui.success_response("%s printable cache has been cleared." % elem,refresh=True)
 
 class PrintableType(models.Model):
     """

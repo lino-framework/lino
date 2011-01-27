@@ -1,0 +1,44 @@
+#20 (memory exhausted by Apache)
+================================
+
+Last Friday there was a strange phenomen 
+which caused the Lino server to crash due 
+to exhausted memory.
+
+Apache's `error.log`:
+
+Jeudi matin 20/01/2011 javais fait un release de Lino. Les dernières
+lignes de jeudi m'indiquaient que cela fonctionne::
+
+  [Thu Jan 20 07:43:45 2011] [notice] Apache/2.2.9 (Debian) DAV/2 mod_wsgi/2.5 Python/2.5.2 configured -- resuming normal operations
+  [Thu Jan 20 07:43:50 2011] [info] mod_wsgi (pid=24061): Create interpreter 'lino.my-project.com:8080|'.
+  [Thu Jan 20 07:43:50 2011] [info] [client 12.123.12.123] mod_wsgi (pid=24061, process='my-project.com', \
+    application='lino.my-project.com:8080|'): Loading WSGI script '/usr/local/django/dsbe_eupen/apache/lino.wsgi'.
+
+Ensuite il n'y a rien pendant toute une journée (ce qui est possible, en
+tout cas moi je n'ai plus rien fait après le release), 
+
+And then, on Friday morning at 6 (long before any user enters the office) 
+suddenly the server starts to spawn threads::
+
+  [Fri Jan 21 05:56:08 2011] [info] mod_wsgi (pid=28315): Attach interpreter ''.
+  [Fri Jan 21 05:56:08 2011] [info] mod_wsgi (pid=28315): Enable monitor thread in process 'my-project.com'.
+  [Fri Jan 21 05:56:08 2011] [info] mod_wsgi (pid=28315): Enable deadlock thread in process 'my-project.com'.
+  ...
+  
+This sequence of 3 lines repeats then about 2000 (two thousand) times during 2 hours.
+
+See also:
+
+- :doc:`/tickets/closed/10`
+- :doc:`/tickets/closed/9`
+- :doc:`/admin/install`
+
+- For most sites you would get away with single process, so you 
+  can drop 'processes=4' and let it default to running a single daemon 
+  process and probably not see any difference given that also using 
+  multithreading. 
+  (`[1] <http://groups.google.com/group/modwsgi/browse_thread/thread/e33565e5cb4e2f2e>`_)
+  
+- `How to use Django with Apache and mod_wsgi
+  <http://docs.djangoproject.com/en/dev/howto/deployment/modwsgi/>`_

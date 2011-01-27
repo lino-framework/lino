@@ -34,11 +34,11 @@ Modifications by Luc Saffre :
   and :func:`get_handlers` and :func:`get_logger_files`.
   :doc:`/blog/2010/1214`
   
-- when a pidfile is specified, DaemonCommand now uses a 1 second 
-  `timeout
-  <http://packages.python.org/lockfile/lockfile.html#lockfile.FileLock.acquire>`_
-  and raises LockTimeout instead of waiting patiently forever.
+- when a pidfile is specified and a file of that name already exists, 
+  DaemonCommand now no longer waits forever but raises a LockTimeout 
   See :doc:`/blog/2011/0126`
+  and http://packages.python.org/lockfile/lockfile.html#lockfile.FileLock.acquire.
+  
 
 =============
 DaemonCommand

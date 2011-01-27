@@ -1,25 +1,82 @@
 20110126
 ========
 
-- watch_tim.
-  When :mod:`lino.utils.daemoncommand` has been told to 
-  create a pidfile, and when that pidfile already exists
-  (e.g. after a server crash, or when the previous watch_tim 
-  process has been terminated using `kill -9`), 
-  the the new daemon waited 
-  dann wartete der Prozess bisher geduldig *ad eternam*, 
-  dass die Datei verschwinden möge.
-  Was sie natürlich nur tat, wenn der Systemverwalter 
-  sie manuell löschte.
-  Damit letzter das Problem mitgeteilt bekommt, 
-  setzen wir einen 
-  `Timeout 
-  <http://packages.python.org/lockfile/lockfile.html#lockfile.FileLock.acquire>`_
-  von 1 Sekunde.
+watch_tim's behaviour after a server crash
+------------------------------------------
+
+when :mod:`lino.utils.daemoncommand` has been told to 
+create a pidfile, and when that pidfile already existed
+(e.g. after a server crash, or when the previous watch_tim 
+process has been terminated using `kill -9`), 
+then the new daemon waited forever without complaining.
+and the system administrator wondered why it was not doing 
+its work because there was no error message nowhere.
+Now it raises a `lockfile.AlreadyLocked` error.
+
+Note that `start-stop-daemon` doesn't considered this situation
+as a startup error but as runtime error,   
+That's why calling ``sudo /etc/init.d/watch_tim start``, 
+a second time still says::
+
+  Starting /usr/local/django/dsbe_eupen/watch_tim/run...
+  Done.  
   
-  We are one step further
-  One problem remains.
-  
-  
+The error message appears only in :xfile:`watch_tim/error.log`
+(specified using `--stderr`).
+But at least the process terminates, so that a `ps aux` 
+doesn't show it.
+
+
+known values
+------------
+
+Man kann jetzt auch schon im Report ein
+:attr:`lino.reports.Report.known_values`
+definieren. Der gilt dann als Standardwert für alle Requests.
+Wird benutzt für :class:`lino.modlib.dsbe.models.CourseProviders`.
+
+
+CandidatesByCourse
+------------------
+
+#.  Bei "Kurse - Teilnehmer" ist keine direkte Eingabe möglich.    
+
+    Hier darf man ja nicht einfach neue Records einfügen, 
+    sondern die "Teilnehmer" erscheinen hier automatisch, 
+    wenn man einer bestehenden Anfrage einen Kurs zuweist.
+
+    Mein Plan ist, dass in der unteren Liste (Kandidaten) 
+    die Personen angezeigt werden, die eine offene Kursanfrage 
+    haben und inhaltlich für diesen Kurs in Frage kämen. 
+    Und per Mausklick müsste man sie dann aus der Kandidaten- 
+    in die Teilnehmerliste transferieren können und umgekehrt.
+
+Dieser Slave-Report soll ja alle Course Requests anzeigen, die für einen 
+bestimmten Kurs *in Frage kommen*, also 
+die (1) unbefriedigt sind (deren `course` leer ist) und 
+(2) deren Kursinhalt dem des angebotenen Kurses entspricht.
+
+Nichts einfacher als das::
+
+    def get_request_queryset(self,rr):
+        return self.model.objects.filter(course__isnull=True,
+            content__exact=rr.master_instance.content)
+
+Jetzt kann man also Personen in einen Kurs einschreiben, 
+indem man im Detail eines Kurses in der Kandidaten-Liste das Feld "Kurs gefunden" 
+ausfüllt.
+Sobald man in der Kandidaten-Anfrage den "Kurs gefunden" ausgefüllt hat, 
+verschwindet die Anfrage aus der Kandidatenliste, um in der Teilnehmerliste 
+zu erscheinen. 
+
+TODO: 
+Das ist noch nicht ganz benutzerfreundlich. 
+Eigentlich soll man den Kurs im Feld "Kurs gefunden" 
+gar nicht auswählen müssen, denn Lino weiß ja, um welchen Kurs es geht.
+Statt des Feldes "Kurs gefunden" sollte eher auf jeder Zeile ein 
+Button "Einschreiben" hinkommen. Wenn man darauf klickt, 
+kommt die Anfrage (ohne weitere Bestätigung) von der unteren in die obere Liste.
+Momentan muss man auch noch selber auf den Refresh-Button in 
+der Teilnehmerliste klicken, damit die Einschreibung sichtbar wird.
 
 

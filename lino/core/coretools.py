@@ -1,4 +1,4 @@
-## Copyright 2009-2010 Luc Saffre
+## Copyright 2009-2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -51,6 +51,8 @@ def get_unbound_meth(cl,name):
             return meth
             
 def data_elems(model):
+    """Yields names that can be used as column_names of a Report.
+    """
     meta = model._meta
     #~ for f in meta.fields: yield f.name
     #~ for f in meta.many_to_many: yield f.name
