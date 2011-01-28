@@ -2,9 +2,9 @@
 :label_align: top
 
 main = 
-  box1 box2 box3 box4
-  obstacles
-
+  # box1 box2 box3 box4
+  dsbe.SkillsByPerson1 dsbe.SkillsByPerson2 dsbe.SkillsByPerson3 
+  skills obstacles
 
 box1 = 
   no_shift

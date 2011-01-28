@@ -52,38 +52,22 @@ def py2html(obj,name):
 def before_row_edit(panel):
     l = []
     #~ l.append("console.log('before_row_edit',record);")
-    #~ for e in panel.walk():
-    #~ if isinstance(panel,TabPanel):
-        #~ print panel, panel.active_children
     for e in panel.active_children:
-        #~ if e is not panel and isinstance(e,GridElement):
         if isinstance(e,GridElement):
             l.append("%s.on_master_changed();" % e.as_ext())
         elif isinstance(e,PictureElement):
             l.append("this.load_picture_to(%s,record);" % e.as_ext())
-        #~ elif isinstance(e,ShowOrCreateElement):
-            #~ l.append("this.load_buttons_to(%s,record);" % e.as_ext())
-        #~ elif isinstance(e,DisplayElement):
         elif isinstance(e,HtmlBoxElement):
-            #~ l.append("%s.items.get(0).getEl().update(record.data.%s);" % (e.as_ext(),e.field.name))
-            #~ l.append("%s.load_htmlbox_record(record);" % e.as_ext())
-            #~ l.append("%s.on_master_changed();" % e.as_ext())
             l.append("%s.refresh();" % e.as_ext())
-            #~ l.append("this.load_htmlbox_to(%s,record);" % e.as_ext())
         elif isinstance(e,FieldElement):
             chooser = choosers.get_for_field(e.field)
             if chooser:
                 #~ logger.debug("20100615 %s.%s has chooser", self.lh.layout, e.field.name)
                 for f in chooser.context_fields:
+                    #~ l.append("console.log('20110128 before_row_edit',record.data);")
                     l.append("%s.setContextValue(%r,record.data[%r]);" % (
                         e.ext_name,f.name,ext_requests.form_field_name(f)))
-                    #~ see 20101010
-                    #~ if panel.has_field(f):
-                        #~ l.append("%s.setContextValue(%r,record.data[%r]);" % (
-                            #~ e.ext_name,f.name,ext_requests.form_field_name(f)))
-                    #~ elif True: # f.name = panel.fk_name:
-                        #~ l.append("%s.setContextValue(%r,this.ww.get_current_record().id)" % (e.ext_name,f.name))
-    return js_code('function(record){%s}' % ('\n'.join(l)))
+    return js_code('function(record){\n  %s\n}' % ('\n  '.join(l)))
 
 
 class GridColumn(Component):

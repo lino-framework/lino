@@ -437,7 +437,7 @@ Ext.override(Ext.form.ComboBox, {
         return p;
     },
     setContextValue : function(name,value) {
-      //~ console.log('setContextValue',this,this.name,':',name,'=',value);
+      console.log('setContextValue',this,this.name,':',name,'=',value);
       //~ if (this.contextValues === undefined) {
           //~ this.contextValues = Array(); // this.contextParams.length);
       //~ }

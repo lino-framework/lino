@@ -47,7 +47,7 @@ from lino.modlib.uploads import models as uploads
 from lino.models import get_site_config
 from lino.tools import get_field
 from lino.tools import resolve_field
-from lino.utils.babel import add_babel_field, default_language, babelattr, babeldict_getitem
+from lino.utils.babel import add_babel_field, DEFAULT_LANGUAGE, babelattr, babeldict_getitem
 from lino.utils.choosers import chooser
 from lino.mixins.printable import DirectPrintAction
 from lino.mixins.reminder import ReminderEntry
@@ -127,7 +127,7 @@ REGIME_CHOICES = {
 def language_choices(language,choices):
     l = choices.get(language,None)
     if l is None:
-        l = choices.get(default_language())
+        l = choices.get(DEFAULT_LANGUAGE)
     return l
 
 
@@ -835,21 +835,15 @@ class LanguageKnowledgesByPerson(reports.Report):
 # Skills
 #
 
-class SkillType(models.Model):
-    class Meta:
-        verbose_name = _("Skill type")
-        verbose_name_plural = _("Skill types")
-    name = models.CharField(max_length=200,verbose_name=_("Designation"))
-    
-    def __unicode__(self):
-        return babelattr(self,'name')
-
-add_babel_field(SkillType,'name')
-
-class SkillTypes(reports.Report):
-    model = SkillType
-    order_by = ['name']
-
+SKILL_TYPES = {
+    '1' : dict(en='Skills'      ,de='Fachkompetenzen'),
+    '2' : dict(en='Soft skills' ,de='Sozialkompetenzen'),
+    '3' : dict(en='Obstacles'   ,de='Hindernisse'),
+}
+SKILL_TYPE_CHOICES = [ (k, v[DEFAULT_LANGUAGE]) for k,v in SKILL_TYPES.items()]
+def f(a,b): 
+  return cmp(a[0],b[0])
+SKILL_TYPE_CHOICES.sort(f)
 
 
 class Skill(models.Model):
@@ -857,19 +851,98 @@ class Skill(models.Model):
         verbose_name = _("Skill")
         verbose_name_plural = _("Skills")
         
-    person = models.ForeignKey("contacts.Person")
-    type = models.ForeignKey(SkillType,blank=True,null=True,
-      verbose_name=_("skill type"))
-    #~ type = models.ForeignKey("dsbe.JobType")
+    type = models.CharField(max_length=1,
+        verbose_name=_("Skill type"),
+        choices=SKILL_TYPE_CHOICES)
+    
+    name = models.CharField(max_length=200,verbose_name=_("Designation"))
+    
+    def __unicode__(self):
+        return babelattr(self,'name')
+
+add_babel_field(Skill,'name')
+
+class Skills(reports.Report):
+    model = Skill
+    order_by = ['name']
+    #~ column_names = "id name"
+    
+class Skills1(Skills):    
+    known_values = dict(type='1')
+    label = babeldict_getitem(SKILL_TYPES,'1')
+class Skills2(Skills):    
+    known_values = dict(type='2')
+    label = babeldict_getitem(SKILL_TYPES,'2')
+class Skills3(Skills):    
+    known_values = dict(type='3')
+    label = babeldict_getitem(SKILL_TYPES,'3')
+
+
+class SkillOccurence(models.Model):
+    """
+    Abstract base class for :class:`OwnedSkill` and :class:`SearchedSkill`.
+    """
+    
+    class Meta:
+        abstract = True
+        
+    type = models.CharField(max_length=1,
+        verbose_name=_("Skill type"),
+        choices=SKILL_TYPE_CHOICES)
+    #~ type = models.SmallIntegerField(_("Skill type"),
+        #~ choices=SKILL_TYPE_CHOICES,
+        #~ max_length=1)
+    skill = models.ForeignKey("dsbe.Skill",verbose_name=_("Skill"))
     strength = fields.StrengthField(verbose_name=_("strength"))
+    
+    @chooser()
+    def skill_choices(cls,type):
+        if type is None:
+            return []
+        return Skill.objects.filter(type=type).order_by('name')
+        
+    def save(self,*args,**kw):
+        self.type = self.skill.type
+        r = super(SkillOccurence,self).save(*args,**kw)
+        return r
+        
+    def __unicode__(self):
+        if self.skill_id is None:
+            return u"Undefined %s" % self.type
+        return u'%s.%s=%s ' % (self.type,self.skill,self.strength)
+    
+class OwnedSkill(SkillOccurence):
+    class Meta:
+        verbose_name = _("Owned Skill")
+        verbose_name_plural = _("Owned Skills")
+        
+    person = models.ForeignKey("contacts.Person")
     remark = models.CharField(max_length=200,
         blank=True,null=True,
         verbose_name=_("Remark"))
     
 class SkillsByPerson(reports.Report):
-    model = Skill
+    model = OwnedSkill
     fk_name = 'person'
-    column_names = "type strength"
+    column_names = "skill strength type" 
+    """
+    type must be in the store, but should not be visible. 
+    needed to set context of skill combobox.
+    """
+    hide_columns = ['type']
+    
+class SkillsByPerson1(SkillsByPerson):
+    known_values = dict(type='1')
+    label = babeldict_getitem(SKILL_TYPES,'1')
+    
+class SkillsByPerson2(SkillsByPerson):
+    known_values = dict(type='2')
+    label = babeldict_getitem(SKILL_TYPES,'2')
+
+class SkillsByPerson3(SkillsByPerson):
+    known_values = dict(type='3')
+    label = babeldict_getitem(SKILL_TYPES,'3')
+
     
 #
 # JOBS
@@ -1154,7 +1227,7 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,mixins.
       verbose_name=_("represented by"))
     #~ user = models.ForeignKey("auth.User",verbose_name=_("Coach"))
     type = models.ForeignKey("dsbe.ContractType",verbose_name=_("contract type"),blank=True)
-    language = fields.LanguageField(default=default_language)
+    language = fields.LanguageField(default=DEFAULT_LANGUAGE)
     
     applies_from = models.DateField(_("applies from"),blank=True,null=True,)
     applies_until = models.DateField(_("applies until"),blank=True,null=True)
@@ -1667,10 +1740,8 @@ class SearchedLanguageKnowledge(models.Model):
     spoken = fields.KnowledgeField(verbose_name=_("spoken"))
     written = fields.KnowledgeField(verbose_name=_("written"))
 
-class SearchedSkill(models.Model):
+class SearchedSkill(SkillOccurence):
     search = models.ForeignKey(PersonSearch)
-    type = models.ForeignKey("dsbe.SkillType",verbose_name=_("Skill"))
-    strength = fields.StrengthField(verbose_name=_("strength"))
     
     
 class LanguageKnowledgesBySearch(reports.Report):
@@ -1742,10 +1813,10 @@ class PersonsBySearch(reports.Report):
         if rskills: # required skills
             ids = set()
             for rsk in rskills:
-                fkw = dict(type__exact=rsk.type) # filter keywords
+                fkw = dict(skill__exact=rsk.skill) # filter keywords
                 if rsk.strength is not None:
                     fkw.update(strength__gte=rsk.strength)
-                q = Skill.objects.filter(**fkw)
+                q = OwnedSkill.objects.filter(**fkw)
                 ids.update(q.values_list('person__id',flat=True))
             required_id_sets.append(ids)
           

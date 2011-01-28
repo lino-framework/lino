@@ -68,7 +68,7 @@ from lino.mixins import printable
 
 from lino.core.coretools import app_labels
 
-from lino.fields import LANGUAGE_CHOICES
+from lino.fields import LANGUAGE_CHOICES, STRENGTH_CHOICES
 from lino.tools import obj2str
 
 #~ from lino.ui.extjs.ext_windows import WindowConfig # 20100316 backwards-compat window_confics.pck 
@@ -626,6 +626,7 @@ class ExtUI(base.UI):
         yield """// lino.js --- generated %s by Lino version %s.""" % (time.ctime(),lino.__version__)
         yield "Ext.BLANK_IMAGE_URL = '%sextjs/resources/images/default/s.gif';" % settings.MEDIA_URL
         yield "LANGUAGE_CHOICES = %s;" % py2js(list(LANGUAGE_CHOICES))
+        yield "STRENGTH_CHOICES = %s;" % py2js(list(STRENGTH_CHOICES))
         yield "MEDIA_URL = %r;" % settings.MEDIA_URL
         yield "Lino.status_bar = new Ext.ux.StatusBar({defaultText:'Lino version %s.'});" % lino.__version__
         
@@ -1195,6 +1196,8 @@ class ExtUI(base.UI):
     def py2js_converter(self,v):
         if v is LANGUAGE_CHOICES:
             return js_code('LANGUAGE_CHOICES')
+        if v is STRENGTH_CHOICES:
+            return js_code('STRENGTH_CHOICES')
         if isinstance(v,Exception):
             return unicode(v)
         if isinstance(v,menus.Menu):

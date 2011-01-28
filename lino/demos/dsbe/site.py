@@ -1,4 +1,4 @@
-## Copyright 2009-2010 Luc Saffre
+## Copyright 2009-2011 Luc Saffre
 ## This file is part of the TimTools project.
 ## TimTools is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -23,7 +23,6 @@ class Site(Base):
     work_permit_upload_type = None
     driving_licence_upload_type = None 
     
-    
     def init_site_config(self,sc):
         #~ print 20100908, "lino_settings.py init_site_config"
         sc.next_partner_id = 200000
@@ -31,11 +30,6 @@ class Site(Base):
     def setup_main_menu(self):
   
         from django.utils.translation import ugettext_lazy as _
-        #~ from django.utils.encoding import force_unicode
-
-        #~ from lino.site import LinoSite
-
-        #~ from django.db import models
         from lino.utils import perms
 
         from lino import models as system
@@ -79,7 +73,12 @@ class Site(Base):
         m.add_action('dsbe.PersonGroups')
         m.add_action('contacts.CompanyTypes')
         m.add_action('contacts.ContactTypes')
-        m.add_action('dsbe.SkillTypes')
+        m.add_action('dsbe.Skills1')
+        m.add_action('dsbe.Skills2')
+        m.add_action('dsbe.Skills3')
+        #~ m.add_action('dsbe.Skills',known_values=dict(type=1))
+        #~ m.add_action('dsbe.Skills',known_values=dict(type=2))
+        #~ m.add_action('dsbe.Skills',known_values=dict(type=3))
         #~ m.add_action('properties.Properties')
         m.add_action('countries.Languages')
         m.add_action('countries.Countries')

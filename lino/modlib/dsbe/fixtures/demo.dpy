@@ -275,38 +275,67 @@ def objects():
     yield course(provider=kap,title=u"Deutsch fur Anfanger",content=1,start_date=i2d(20110117))
     yield course(provider=kap,title=u"Français pour débutants",content=2,start_date=i2d(20110124))
 
-    skillType = Instantiator('dsbe.SkillType').build
-    yield skillType(**babel_values('name',
+    skill = Instantiator('dsbe.Skill',type='1').build
+    yield skill(**babel_values('name',
           de=u"Bäcker",
           fr=u"Pâtisseur",
           en=u"Baker",
           ))
-    yield skillType(**babel_values('name',
+    yield skill(**babel_values('name',
           de=u"Gärtner",
           fr=u"Jardinier",
           en=u"Gardener",
           ))
-    yield skillType(**babel_values('name',
+    yield skill(**babel_values('name',
           de=u"Jäger",
           fr=u"Chasseur",
           en=u"Hunter",
           ))
-    yield skillType(**babel_values('name',
+    yield skill(**babel_values('name',
           de=u"Koch",
           fr=u"Cuisinier",
           en=u"Cook",
           ))
           
-    skill = Instantiator('dsbe.Skill','person:name type strength').build
+    skill = Instantiator('dsbe.Skill',type='2').build
+    yield skill(**babel_values('name',
+          de=u"Gehorsam",
+          fr=u"Obéissant",
+          en=u"Obedient",
+          ))
+    yield skill(**babel_values('name',
+          de=u"Führungsfähigkeit",
+          fr=u"Leader",
+          en=u"Leader",
+          ))
+          
+    skill = Instantiator('dsbe.Skill',type='3').build
+    yield skill(**babel_values('name',
+          de=u"nicht am Wochenende",
+          fr=u"pas le week-end",
+          en=u"no work on weekend",
+          ))
+    yield skill(**babel_values('name',
+          de=u"keine Schichtarbeit",
+          fr=u"pas de travail posté",
+          en=u"no shift work",
+          ))
+    yield skill(**babel_values('name',
+          de=u"Personen zu Lasten",
+          fr=u"Personnes à charge",
+          en=u"Head of a family",
+          ))
+          
+    skill = Instantiator('dsbe.OwnedSkill','person:name skill strength').build
     yield skill("Ausdemwald Alfons",1,'4')
     yield skill("Bastiaensen Laurent",1,'4')
     yield skill("Eierschal Emil",1,'4')
 
     langk = Instantiator('dsbe.LanguageKnowledge','person:name language written spoken').build
     yield langk(u"Ausdemwald Alfons",'est','1','1')
-    yield langk(u"Ausdemwald Alfons",'deu','4','3')
-    yield langk(u"Bastiaensen Laurent",'deu','4','3')
-    yield langk(u"Bastiaensen Laurent",'fra','4','3')
-    yield langk(u"Eierschal Emil",'deu','4','3')
-    yield langk(u"Ärgerlich Erna",'deu','4','4')
+    yield langk(u"Ausdemwald Alfons",'ger','4','3')
+    yield langk(u"Bastiaensen Laurent",'ger','4','3')
+    yield langk(u"Bastiaensen Laurent",'fre','4','3')
+    yield langk(u"Eierschal Emil",'ger','4','3')
+    yield langk(u"Ärgerlich Erna",'ger','4','4')
     

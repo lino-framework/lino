@@ -78,6 +78,9 @@ class Chooser(BaseChooser):
         #~ m = get_unbound_meth(model,field.name + "_display")
         #~ if m is not None:
             #~ self.display_meth
+            
+    def __str__(self):
+        return "Chooser(%s.%s,%s)" % (self.model.__name__,self.field.name,self.context_params)
         
             
     def get_data_elem(self,name):
@@ -119,8 +122,9 @@ def discover():
             m = get_unbound_meth(model,methname)
             if m is not None:
                 #~ n += 1
-                setattr(field,'_lino_chooser',Chooser(model,field,m))
-                #~ logger.info("Chooser for %s.%s",model,field.name)
+                ch = Chooser(model,field,m)
+                setattr(field,'_lino_chooser',ch)
+                logger.debug("Installed %s",ch)
             #~ else:
                 #~ logger.info("No chooser for %s.%s",model,field.name)
         #~ logger.debug("Discovered %d choosers in model %s.",n,model)

@@ -34,10 +34,11 @@ Version 1.0.5 (27.01.2011)
     - courses/participants.odt
     - courses/candidates.odt
     
-    In diesen Vorlagen steht in der Variable `self` der Kurs, der ausgedruckt wird, 
-    als Objekt vom Typ :class:`Course <lino.modlib.dsbe.models.Course>` zur Verfügung 
-    (siehe dort für 
-    detaillierte Doku).
+    In diesen Vorlagen steht der Kurs, der ausgedruckt wird, 
+    in der Variable `self` als Objekt vom Typ 
+    :class:`Course <lino.modlib.dsbe.models.Course>`.
+    (Siehe Link für detaillierte Dokumentation).
+    
     
     
 #.  Wenn eine Aktion misslingt, kommt jetzt die Fehlermeldung 

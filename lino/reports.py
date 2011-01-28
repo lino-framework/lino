@@ -508,7 +508,7 @@ class ReportActionRequest:
         if self.master_kw:
             kw.update(self.master_kw)
         #logger.debug('%s.create_instance(%r)',self,kw)
-        if self.known_values is not None:
+        if self.known_values:
             kw.update(self.known_values)
         obj = self.report.create_instance(self,**kw)
         #~ if self.known_values is not None:
@@ -593,11 +593,6 @@ class Report(actors.Actor): #,base.Handled):
     title = None
     column_names = '*'
     hide_columns = None
-    #~ hide_fields = None
-    #label = None
-    #~ param_form = ReportParameterForm
-    #default_filter = ''
-    #name = None
     form_class = None
     master = None
     
@@ -610,16 +605,11 @@ class Report(actors.Actor): #,base.Handled):
     help_url = None
     #master_instance = None
     page_length = 10
-    #~ display_field = '__unicode__'
-    #date_format = 'Y-m-d'
-    #date_format = '%d.%m.%y'
     
-    #~ detail_layouts = None
-    
-    #~ page_layout = None # (layouts.PageLayout ,)
-    #~ row_layout_class = None
-    
-    cell_edit = True # use ExtJS CellSelectionModel (False to use ExtJS RowSelectionModel)
+    cell_edit = True 
+    """
+    `True` to use ExtJS CellSelectionModel, `False` to use RowSelectionModel.
+    """
     
     date_format = lino.DATE_FORMAT_EXTJS
     #~ boolean_texts = boolean_texts
@@ -650,21 +640,20 @@ class Report(actors.Actor): #,base.Handled):
     
     #~ detail_layouts = []
     
-    known_values = None
+    known_values = {}
     """
-    If not None, this specifies a dict of `filename` -> `value` pairs
-    that define "known values".
-    Requests will automatically filtered to show only existing records 
+    A dict of `fieldname` -> `value` pairs that specify "known values".
+    Requests will automatically be filtered to show only existing records 
     with those values.
-    New instances created in this reports will automatically have 
+    New instances created in this Report will automatically have 
     these values set.
     """
     
     show_slave_grid = True
     """
     How to display this report when it is a slave in a Detail. 
-    Usually a slave report is rendered as a grid. 
-    If `show_slave_grid` is ``False``, show only a summary.
+    `True` (default) to render as a grid. 
+    `False` to render as a HtmlBoxPanel with a summary.
     Example: :class:`links.LinksByOwner`
     """
     
@@ -1011,11 +1000,12 @@ class Report(actors.Actor): #,base.Handled):
         """
         Used e.g. by modlib.notes.Note.on_create().
         on_create gets the request as argument.
-        Didn't yet find out how to do that using a standard Django signal 
+        Didn't yet find out how to do that using a standard Django signal.
         """
         m = getattr(instance,'on_create',None)
         if m:
             m(req)
+        print 20110128, instance
         return instance
         
     def getLabel(self):
@@ -1252,7 +1242,6 @@ class LayoutHandle:
     #~ def get_absolute_url(self,**kw):
         #~ return self.datalink.get_absolute_url(layout=self.index,**kw)
         
-        
     def add_hidden_field(self,field):
         return HiddenField(self,field)
         
@@ -1289,6 +1278,7 @@ class LayoutHandle:
                 de.name for de in self.rh.report.data_elems() \
                   if (de.name not in explicit_specs) \
                     and (de.name not in self.hide_elements) \
+                    and (de.name not in self.rh.report.known_values.keys()) \
                     and (de.name != self.rh.report.fk_name) \
                 ])
             desc = desc.replace('*',wildcard_fields)
