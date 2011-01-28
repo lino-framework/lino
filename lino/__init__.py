@@ -33,7 +33,7 @@ __url__ = "http://lino.saffre-rumma.net"
 #~ __url__ = "http://code.google.com/p/lino/"
 
 __copyright__ = """\
-Copyright (c) 2002-2010 Luc Saffre.
+Copyright (c) 2002-2011 Luc Saffre.
 This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""

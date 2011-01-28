@@ -14,9 +14,10 @@ but we can imagine to write other interfaces in the future
 (simple HTML, curses, Qt, ...).
 For the moment we are just satisfied with ExtJS.
 
-Lino has no users yet, but we are currently working on getting 
-it started on a site in Belgium. 
-We hope for success until the end of 2010.
+Lino is yet in early development state, but a first Lino application 
+has started 
+in January 2011
+to be used by real humans on real data.
 
 Don't hesitate to contact the author:
 

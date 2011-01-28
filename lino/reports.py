@@ -248,14 +248,14 @@ def discover():
             model._lino_model_report = rpt
             
             
-    #~ logger.debug("Analyze %d slave reports...",len(slave_reports))
+    logger.debug("Analyze %d slave reports...",len(slave_reports))
     for rpt in slave_reports:
         slaves = getattr(rpt.master,"_lino_slaves",None)
         if slaves is None:
             slaves = {}
             rpt.master._lino_slaves = slaves
         slaves[rpt.actor_id] = rpt
-        #~ logger.debug("%s: slave for %s",rpt.actor_id, rpt.master.__name__)
+        logger.debug("%s: slave for %s",rpt.actor_id, rpt.master.__name__)
     #~ logger.debug("Assigned %d slave reports to their master.",len(slave_reports))
         
     #~ logger.debug("Setup model reports...")
@@ -443,7 +443,7 @@ class ReportActionRequest:
         
         if master_id is not None:
             assert master_instance is None
-            master_instance = self.master.get(pk=master_id)
+            master_instance = self.master.objects.get(pk=master_id)
             
         self.master_kw = self.report.get_master_kw(master_instance)
         self.master_instance = master_instance
@@ -600,8 +600,13 @@ class Report(actors.Actor): #,base.Handled):
     #name = None
     form_class = None
     master = None
-    #~ slaves = None
+    
     fk_name = None
+    """
+    The name of the ForeignKey field of this report's model that points to it's master.
+    Setting this will turn the report into a slave report.
+    """
+    
     help_url = None
     #master_instance = None
     page_length = 10
@@ -712,7 +717,8 @@ class Report(actors.Actor): #,base.Handled):
             self.model = resolve_model(self.model,self.app_label)
             
         if self.model is not None:
-            self.app_label = self.model._meta.app_label
+            if self.app_label is None:
+                self.app_label = self.model._meta.app_label
             if self.label is None:
                 self.label = capfirst(self.model._meta.verbose_name_plural)
             
@@ -759,13 +765,8 @@ class Report(actors.Actor): #,base.Handled):
                         self,self.fk_name,self.model.__name__))
                 self.master = master
                 self.fk = fk
-        else:
-            assert self.master is None
-        #~ elif self.master:
-            #~ logger.warning("DEPRECATED: replace %s.master by fk_name" % self.actor_id)
-            #~ #assert isinstance(self.master,object), "%s.master is a %r" % (self.name,self.master)
-            #~ assert issubclass(self.master,models.Model), "%s.master is a %r" % (self.actor_id,self.master)
-            #~ self.fk = _get_foreign_key(self.master,self.model) #,self.fk_name)
+        #~ else:
+            #~ assert self.master is None
         
         self.default_action = self.default_action_class(self)
         #~ self.list_action = ListAction(self)
@@ -985,7 +986,7 @@ class Report(actors.Actor): #,base.Handled):
                 ct = ContentType.objects.get_for_model(master_instance.__class__)
                 kw[self.fk.ct_field] = ct
                 kw[self.fk.fk_field] = master_instance.pk
-        else:
+        elif self.fk_name is not None:
             if master_instance is None:
                 if not self.fk.null:
                     return # cannot add rows to this report
@@ -996,6 +997,8 @@ class Report(actors.Actor): #,base.Handled):
                 raise Exception("%r is not a %s" % (master_instance,self.master.__name__))
             else:
                 kw[self.fk.name] = master_instance
+        #~ else:
+            #~ kw['master'] = master_instance
         return kw
         
     #~ def on_create(self,instance,request):

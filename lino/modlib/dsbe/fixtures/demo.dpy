@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2008-2010 Luc Saffre
+## Copyright 2008-2011 Luc Saffre
 ## This file is part of the Lino-DSBE project.
 ## Lino-DSBE is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -126,22 +126,26 @@ def objects():
     luc.birth_place = 'Eupen'
     luc.birth_country = be
     luc.save()
-    yield person(first_name="Ly",last_name="Rumma",
+    ly = person(first_name="Ly",last_name="Rumma",
       city=vigala,country='EE',card_number='123',birth_country=ee,
-      birth_date=i2d(19680101),birth_date_circa=True)
-    yield person(first_name="Mari",last_name="Saffre",
-      city=vigala,country='EE',card_number='124',birth_country=ee,birth_date=i2d(20020405))
-    yield person(first_name="Iiris",last_name="Saffre",
-      city=vigala,country='EE',card_number='125',birth_country=ee,birth_date=i2d(20080324))
+      birth_date=i2d(19680101),birth_date_circa=True,sex='F')
+    yield ly
+    mari = person(first_name="Mari",last_name="Saffre",
+      city=vigala,country='EE',card_number='124',birth_country=ee,birth_date=i2d(20020405),sex='F')
+    yield mari
+    iiris = person(first_name="Iiris",last_name="Saffre",
+      city=vigala,country='EE',card_number='125',birth_country=ee,birth_date=i2d(20080324),sex='F')
+    yield iiris
     
-    gerd = person(first_name="Gerd",last_name="Xhonneux",city=kettenis,name="Xhonneux Gerd",country='BE')
+    gerd = person(first_name="Gerd",last_name="Xhonneux",city=kettenis,name="Xhonneux Gerd",country='BE',sex='M')
     yield gerd
     yield contact(company=cpas,person=gerd,type=4)
     
     
     tatjana = person(first_name=u"Татьяна",last_name=u"Казеннова",# name="Казеннова Татьяна",
         city=kettenis,country='BE', 
-        birth_place="Moskau", birth_country='SUHH')
+        birth_place="Moskau", birth_country='SUHH',
+        sex='F')
     yield tatjana
     
     from django.core.exceptions import ValidationError
@@ -197,16 +201,23 @@ def objects():
 
     yield langk(person=luc,language='ger',written='4',spoken='4')
     yield langk(person=gerd,language='ger',written='4',spoken='4')
+    yield langk(person=mari,language='ger',written='2',spoken='4')
+    yield langk(person=iiris,language='ger',written='0',spoken='4')
+    yield langk(person=ly,language='ger',written='2',spoken='1')
     
     yield langk(person=luc,language='fre',written='4',spoken='3')
     yield langk(person=gerd,language='fre',written='4',spoken='3')
     
     yield langk(person=luc,language='eng',written='4',spoken='3')
     yield langk(person=gerd,language='eng',written='4',spoken='3')
+    yield langk(person=ly,language='eng',written='3',spoken='3')
     
-    yield langk(person=luc,language='est',written='3',spoken='3')
     yield langk(person=gerd,language='dut',written='3',spoken='3')
     
+    yield langk(person=luc,language='est',written='3',spoken='3')
+    yield langk(person=ly,language='est',written='4',spoken='4')
+    yield langk(person=mari,language='est',written='3',spoken='4')
+    yield langk(person=iiris,language='est',written='0',spoken='3')
     
     
     contract = Instantiator('dsbe.Contract','type applies_from applies_until company contact',
@@ -263,3 +274,39 @@ def objects():
     yield course(provider=oikos,title=u"Deutsch für Anfänger",content=1,start_date=i2d(20110110))
     yield course(provider=kap,title=u"Deutsch fur Anfanger",content=1,start_date=i2d(20110117))
     yield course(provider=kap,title=u"Français pour débutants",content=2,start_date=i2d(20110124))
+
+    skillType = Instantiator('dsbe.SkillType').build
+    yield skillType(**babel_values('name',
+          de=u"Bäcker",
+          fr=u"Pâtisseur",
+          en=u"Baker",
+          ))
+    yield skillType(**babel_values('name',
+          de=u"Gärtner",
+          fr=u"Jardinier",
+          en=u"Gardener",
+          ))
+    yield skillType(**babel_values('name',
+          de=u"Jäger",
+          fr=u"Chasseur",
+          en=u"Hunter",
+          ))
+    yield skillType(**babel_values('name',
+          de=u"Koch",
+          fr=u"Cuisinier",
+          en=u"Cook",
+          ))
+          
+    skill = Instantiator('dsbe.Skill','person:name type strength').build
+    yield skill("Ausdemwald Alfons",1,'4')
+    yield skill("Bastiaensen Laurent",1,'4')
+    yield skill("Eierschal Emil",1,'4')
+
+    langk = Instantiator('dsbe.LanguageKnowledge','person:name language written spoken').build
+    yield langk(u"Ausdemwald Alfons",'est','1','1')
+    yield langk(u"Ausdemwald Alfons",'deu','4','3')
+    yield langk(u"Bastiaensen Laurent",'deu','4','3')
+    yield langk(u"Bastiaensen Laurent",'fra','4','3')
+    yield langk(u"Eierschal Emil",'deu','4','3')
+    yield langk(u"Ärgerlich Erna",'deu','4','4')
+    

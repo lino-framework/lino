@@ -1,0 +1,46 @@
+20110128
+========
+
+Person Searches
+---------------
+
+Neues Model PersonSearch für erweiterte Personensuche. 
+Insbesondere der Slave-Report 
+:class:`PersonsBySearch <lino.modlib.dsbe.models.PersonsBySearch>`
+war technisch noch eine Herausforderung, weil es erstmals ein 
+Slave-Report ohne `fk_name` ist.
+
+Das *proof of concept* funktionierte nach nur einer Stunde!
+
+Der Code zum Aufbau des SQL-Querys ist in der Methode
+:meth:`get_request_queryset <lino.modlib.dsbe.models.PersonsBySearch.get_request_queryset>`,
+und ist schon jetzt  recht komplex.
+Um Personen zu finden, die bestimmte Sprachkenntnisse oder Fähikeiten haben, 
+habe ich ein bisschen überlegen müssen wie das Query aufzubauen ist. 
+
+Ein erster Versuch funktionierte zwar, aber war noch suboptimal::
+
+    required_lk = [lk for lk in search.searchedlanguageknowledge_set.all()]
+    if required_lk:
+        l = []
+        for p in qs:
+            for rlk in required_lk:
+                try:
+                    plk = p.languageknowledge_set.get(language__exact=rlk.language)
+                    l.append(p)
+                except LanguageKnowledge.DoesNotExist:
+                    pass
+        return l
+
+  Also statt eines QuerySets gibt er eine einfache Liste zurück, wenn man in 
+  "Required language knowledges"
+  eine (oder mehrere) Sprachen angibt.
+  Ich wüsste nämlich (noch) nicht, wie ich diese Bedingung als Django-Query 
+  formulieren könnte...
+  Das Problem wenn ich eine Liste zurück gebe ist, dass dann das Sortieren und 
+  die Kolonnenfilter nicht mehr funktionieren.
+
+Um zu sehen, wie ich's jetzt mache, siehe
+:meth:`source code <lino.modlib.dsbe.models.PersonsBySearch.get_request_queryset>`.
+Die Schönheit dieses Codes haben wir übrigens nicht Lino, 
+sondern Python und Django zu verdanken.

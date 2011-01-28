@@ -1,0 +1,8 @@
+:label: 
+:label_align: top
+
+main =
+    id:8 title
+    aged_from aged_to sex
+    dsbe.LanguageKnowledgesBySearch dsbe.SkillsBySearch
+    dsbe.PersonsBySearch

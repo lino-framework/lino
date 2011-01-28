@@ -9,6 +9,12 @@ for which I hope for help from other people.
 Version 1.1
 -----------
 
+#.  Wenn man auf einen FK klickt, sollte er kein neues Browserfenster 
+    öffnen, sondern lediglich ein neues Fenster.
+    
+#.  Das Hauptmenü könnte insgesamt per Permalink arbeiten.
+    Dadurch würden automatisch alle Fenster geschlossen.
+    
 #.  Save GC funktioniert nicht. Oder --besser gesagt-- 
     wird erst aktiv nach dem nächsten Server-Restart.
 
@@ -23,9 +29,6 @@ Version 1.1
     Oder als vertikale Reiter.
     Manche Links öffnen einen neuen Tab: irritiert
 
-#.  Modell "PersonSearch" (sex, language, age_range,...) 
-    und Report PersonsBySearch.
-    
 #.  :doc:`tickets/20`.
 
 Version 1.2

@@ -53,7 +53,7 @@ class Site(Base):
         m = self.add_menu("contacts",_("~Contacts"))
         m.add_action('contacts.Companies')
         m.add_action('contacts.Persons')
-        #~ m.add_action('contacts.Persons2')
+        m.add_action('dsbe.PersonSearches')
 
         m = self.add_menu("my",_("~My menu"),can_view=perms.is_authenticated)
         #~ m.add_action('projects.Projects')

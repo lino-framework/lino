@@ -17,4 +17,5 @@ für folgenden Punkt gefunden:
     der Teilnehmerliste klicken, damit die Einschreibung sichtbar wird.
 
 
-Release :doc:`/releases/20110127` in Eupen.  
+Released :doc:`/releases/20110127` in Eupen.  
+

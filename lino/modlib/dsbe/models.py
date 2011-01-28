@@ -139,6 +139,9 @@ CIVIL_STATE_CHOICES = [
   ('5', _("separated")  ), # Getrennt von Tisch und Bett / 
 ]
 
+SEX_CHOICES = (('M',_('Male')),('F',_('Female')))
+
+
 # http://en.wikipedia.org/wiki/European_driving_licence
 
 #~ DRIVING_LICENSE_CHOICES = (
@@ -309,7 +312,7 @@ class Person(Partner,contacts.Person):
         
     sex = models.CharField(max_length=1,blank=True,null=True,
         verbose_name=_("Sex"),
-        choices=(('M',_('Male')),('F',_('Female')))) 
+        choices=SEX_CHOICES) 
     birth_date = models.DateField(
         blank=True,null=True,
         verbose_name=_("Birth date"))
@@ -1649,9 +1652,114 @@ class CandidatesByCourse(RequestsByCourse):
 # SEARCH
 #
 class PersonSearch(mixins.Printable):
-    pass
+    title = models.CharField(max_length=200,verbose_name=_("Search Title"))
+    aged_from = models.IntegerField(_("Aged from"),
+        blank=True,null=True)
+    aged_to = models.IntegerField(_("Aged to"),
+        blank=True,null=True)
+    sex = models.CharField(max_length=1,blank=True,null=True,
+        verbose_name=_("Sex"),
+        choices=SEX_CHOICES) 
     
+class SearchedLanguageKnowledge(models.Model):
+    search = models.ForeignKey(PersonSearch)
+    language = models.ForeignKey("countries.Language",verbose_name=_("Language"))
+    spoken = fields.KnowledgeField(verbose_name=_("spoken"))
+    written = fields.KnowledgeField(verbose_name=_("written"))
+
+class SearchedSkill(models.Model):
+    search = models.ForeignKey(PersonSearch)
+    type = models.ForeignKey("dsbe.SkillType",verbose_name=_("Skill"))
+    strength = fields.StrengthField(verbose_name=_("strength"))
+    
+    
+class LanguageKnowledgesBySearch(reports.Report):
+    label = _("Searched language knowledges")
+    fk_name = 'search'
+    model = SearchedLanguageKnowledge
+
+class SkillsBySearch(reports.Report):
+    label = _("Searched skills")
+    fk_name = 'search'
+    model = SearchedSkill
+
+class PersonSearches(reports.Report):
+    model = PersonSearch
+    
+class PersonsBySearch(reports.Report):
+    """
+    This is the slave report of a PersonSearch that shows the 
+    Persons matching the search criteria. 
+    
+    Note that this is a slave report without a :attr:`fk_name <lino.reports.Report.fk_name>`.
+    """
   
+    model = Person
+    master = PersonSearch
+    app_label = 'dsbe'
+    label = _("Found persons")
+    
+    def get_request_queryset(self,rr):
+        """
+        Here is the code that builds the query. It can be quite complex.
+        See :srcref:`/lino/modlib/dsbe/models.py` (search this file for "PersonsBySearch").
+        """
+        search = rr.master_instance
+        if search is None:
+            return []
+        kw = {}
+        qs = self.model.objects.order_by('name')
+        today = datetime.date.today()
+        if search.sex:
+            qs = qs.filter(sex__exact=search.sex)
+        if search.aged_from:
+            q1 = models.Q(birth_date__isnull=True)
+            q2 = models.Q(birth_date__gte=today-datetime.timedelta(days=search.aged_from*365))
+            qs = qs.filter(q1|q2)
+        if search.aged_to:
+            q1 = models.Q(birth_date__isnull=True)
+            q2 = models.Q(birth_date__lte=today-datetime.timedelta(days=search.aged_to*365))
+            qs = qs.filter(q1|q2)
+            
+          
+        required_id_sets = []
+        
+        required_lk = [lk for lk in search.searchedlanguageknowledge_set.all()]
+        if required_lk:
+            # language requirements are OR'ed
+            ids = set()
+            for rlk in required_lk:
+                fkw = dict(language__exact=rlk.language)
+                if rlk.spoken is not None:
+                    fkw.update(spoken__gte=rlk.spoken)
+                if rlk.written is not None:
+                    fkw.update(written__gte=rlk.written)
+                q = LanguageKnowledge.objects.filter(**fkw)
+                ids.update(q.values_list('person__id',flat=True))
+            required_id_sets.append(ids)
+            
+        rskills = [x for x in search.searchedskill_set.all()]
+        if rskills: # required skills
+            ids = set()
+            for rsk in rskills:
+                fkw = dict(type__exact=rsk.type) # filter keywords
+                if rsk.strength is not None:
+                    fkw.update(strength__gte=rsk.strength)
+                q = Skill.objects.filter(**fkw)
+                ids.update(q.values_list('person__id',flat=True))
+            required_id_sets.append(ids)
+          
+            
+        if required_id_sets:
+            s = set(required_id_sets[0])
+            for i in required_id_sets[1:]:
+                s.intersection_update(i)
+                # keep only elements found in both s and i.
+            qs = qs.filter(id__in=s)
+              
+        return qs
+    
+    
 
 """
 Here we add a new field `contract_type` to the 
