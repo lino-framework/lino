@@ -1830,13 +1830,15 @@ class PersonsBySearch(reports.Report):
         if search.sex:
             qs = qs.filter(sex__exact=search.sex)
         if search.aged_from:
-            q1 = models.Q(birth_date__isnull=True)
-            q2 = models.Q(birth_date__gte=today-datetime.timedelta(days=search.aged_from*365))
-            qs = qs.filter(q1|q2)
+            #~ q1 = models.Q(birth_date__isnull=True)
+            #~ q2 = models.Q(birth_date__gte=today-datetime.timedelta(days=search.aged_from*365))
+            #~ qs = qs.filter(q1|q2)
+            qs = qs.filter(birth_date__lte=today-datetime.timedelta(days=search.aged_from*365))
         if search.aged_to:
-            q1 = models.Q(birth_date__isnull=True)
-            q2 = models.Q(birth_date__lte=today-datetime.timedelta(days=search.aged_to*365))
-            qs = qs.filter(q1|q2)
+            #~ q1 = models.Q(birth_date__isnull=True)
+            #~ q2 = models.Q(birth_date__lte=today-datetime.timedelta(days=search.aged_to*365))
+            #~ qs = qs.filter(q1|q2)
+            qs = qs.filter(birth_date__gte=today-datetime.timedelta(days=search.aged_to*365))
             
           
         required_id_sets = []
@@ -1855,14 +1857,14 @@ class PersonsBySearch(reports.Report):
                 ids.update(q.values_list('person__id',flat=True))
             required_id_sets.append(ids)
             
-        rskills = [x for x in search.searchedskill_set.all()]
-        if rskills: # required skills
+        rprops = [x for x in search.requiredskill_set.all()]
+        if rprops: # required properties
             ids = set()
-            for rsk in rskills:
-                fkw = dict(skill__exact=rsk.skill) # filter keywords
-                if rsk.strength is not None:
-                    fkw.update(strength__gte=rsk.strength)
-                q = OwnedSkill.objects.filter(**fkw)
+            for rp in rprops:
+                fkw = dict(property__exact=rp.property) # filter keywords
+                if rp.value:
+                    fkw.update(value__gte=rp.value)
+                q = PersonProperty.objects.filter(**fkw)
                 ids.update(q.values_list('person__id',flat=True))
             required_id_sets.append(ids)
           
