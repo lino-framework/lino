@@ -196,6 +196,9 @@ class PropGroups(reports.Report):
 
 class PropTypes(reports.Report):
     model = PropType
+
+class PropChoices(reports.Report):
+    model = PropChoice
     
 class Properties(reports.Report):
     model = Property
@@ -205,6 +208,12 @@ class Properties(reports.Report):
 class PropsByGroup(Properties):
     fk_name = 'group'
 
+class PropsByType(Properties):
+    fk_name = 'type'
+
+class ChoicesByType(PropChoices):
+    fk_name = 'type'
+    
 
 #~ class PropsByGroup(reports.Report):
     #~ model = Property

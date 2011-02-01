@@ -1,0 +1,7 @@
+:label: 
+:label_align: top
+
+main = 
+  id group type 
+  name name_fr
+  properties.PersonPropsByProp

@@ -1,0 +1,6 @@
+:label: 
+:label_align: top
+
+main = 
+  id name 
+  properties.ChoicesByType

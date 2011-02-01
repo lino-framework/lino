@@ -4,7 +4,15 @@ Version 1.1.0 (01.02.2011)
 Sprung zur Version 1.1 wegen des neuen Moduls "Eigenschaften".
 
 #.  Die vielen Ankreuzfelder im Reiter "Hindernisse" sind ersetzt durch eine Tabelle 
-    von konfigurierbaren Hindernissen. Eigenschaften 
+    von konfigurierbaren Hindernissen. 
+    Konfigurierung: Statt bisher einer Tabelle von Fähigkeiten haben wir jetzt:
+    - Eigenschaftsgruppen (Fachkompotenzen, Sozialkompetenzen und Hindernisse)
+    - Für jede Eigenschaftsgruppe einen Menübefehl für diese Eigenschaften
+    - Eigenschaftstypen (momentan nur zwei Typen "Bewertung" und "Vorhanden oder nicht")
+    - Pro Eigenschaftstyp kann man eine Liste von Auswahlwerten definieren.
+    
+    Personen #21683 und #200007 hatten Fähigkeiten definiert, 
+    die ich aber nicht übernommen hatte.
 
 #.  Änderungen im Hauptmenü:
 

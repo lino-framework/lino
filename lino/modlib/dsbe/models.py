@@ -857,6 +857,19 @@ class PropsByPerson(reports.Report):
     hidden_columns = frozenset(['group'])
     
     
+class PersonPropsByProp(reports.Report):
+    model = PersonProperty
+    fk_name = 'property'
+    column_names = "person value remark *"
+    hidden_columns = frozenset(['group'])
+    
+#~ class PersonPropsByType(reports.Report):
+    #~ model = PersonProperty
+    #~ fk_name = 'type'
+    #~ column_names = "person property value remark *"
+    #~ hidden_columns = frozenset(['group'])
+    
+    
 class SkillsByPerson(PropsByPerson):
     def setup_actions(self):
         pg = settings.LINO_SITE.config.propgroup_skills
