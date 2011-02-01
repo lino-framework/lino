@@ -3,8 +3,7 @@
 
 main = 
   # box1 box2 box3 box4
-  dsbe.SkillsByPerson1 dsbe.SkillsByPerson2 dsbe.SkillsByPerson3 
-  skills obstacles
+  properties.ObstaclesByPerson obstacles
 
 box1 = 
   no_shift

@@ -256,7 +256,8 @@ class FakeDeserializedObject(base.DeserializedObject):
                     if save_later.append(obj):
                         hope = True
         if save_later:
-            dblogger.warning("Abandoned with %d unsaved instances.",len(save_later))
+            dblogger.warning("Abandoning with %d unsaved instances.",len(save_later))
+            raise Exception("Abandoned with %d unsaved instances. See dblog for details." % len(save_later))
                 
     def try_save(self,obj,*args,**kw):
         if obj is None:

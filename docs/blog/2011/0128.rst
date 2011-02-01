@@ -70,20 +70,27 @@ folgende Änderungen im Datenmodel angebracht sind:
     einzelne Hindernis aus der Auswahlliste raussuchen.
     - Evtl. Tipparbeit bei der Datenmigration
 
+
+Diese Änderungen haben dann eine kleine Entwicklungslawine ausgelöst.
+Eine erste Lösung sah wie folgt aus 
+(aber das alles habe ich am WE nochmal 
+umgekrempelt, Praktiker lesen also jetzt :doc:`hier <0131>` weiter.
+Für Historiker hier noch der Stand meiner Ideen von heute abend:
+
 #.  Wenn wir schon dabei sind:
 
     Skill wird umbenannt nach OwnedSkill,
     SkillType nach Skill,
     
-    und dann kriegen wir ein neues Konzept von "skill type", 
+#.  und dann kriegen wir ein neues Konzept von "skill type", 
     die aber keine dynamisch konfigurierbare Liste sind, 
     sondern im Code definiert werden:
     
-    = =========== ====================
-    1 Skills      Fachkompetenzen
-    2 Soft skills Sozialkompetenzen
-    3 Obstacles   Hindernisse
-    = =========== ====================
+      == =========== ====================
+       1 Skills      Fachkompetenzen
+       2 Soft skills Sozialkompetenzen
+       3 Obstacles   Hindernisse
+      == =========== ====================
     
     Die bisherigen "Fähigkeiten & Hindernisse" kommen also in diese Liste 
     von skill types, wobei wir die Fähigkeiten gleich unterteilen in Fach- und 
@@ -101,13 +108,13 @@ folgende Änderungen im Datenmodel angebracht sind:
     weil dann auch die .dtl-Dateien und das Menü angepasst werden müssen.
     
     
+#.  TODO:
+
+    - Skill types lokal (im LinoSite) konfigurierbar machen
+    - class SkillType?
+    - Untermenü
+    - "Eigenschaften" -> "Kontaktarten"
+    - Skills -> Eigenschaften
+    - Auswahlmöglichkeiten konfigurierbar (statt StrengthField)
+
     
-TODO:
-
-- Skill types lokal (im LinoSite) konfigurierbar machen
-- class SkillType?
-- Untermenü
-- "Eigenschaften" -> "Kontaktarten"
-- Skills -> Eigenschaften
-- Auswahlmöglichkeiten konfigurierbar (statt StrengthField)
-

@@ -329,7 +329,7 @@ class ExtUI(base.UI):
                 #~ if isinstance(value,layouts.PropertyGrid):
                     #~ return ext_elems.PropertyGridElement(lh,name,value)
                 raise KeyError("Cannot handle value %r in %s.%s." % (value,lh.layout._actor_name,name))
-        msg = "Unknown element %r referred in layout %s" % (name,lh.layout)
+        msg = "Unknown element %r referred in layout %s of %s" % (name,lh.layout,lh.rh.report)
         #print "[Warning]", msg
         raise KeyError(msg)
         
@@ -739,7 +739,8 @@ class ExtUI(base.UI):
             gc = dict(
               widths=[int(x) for x in PUT.getlist('widths')],
               columns=[str(x) for x in PUT.getlist('columns')],
-              hidden_cols=[str(x) for x in PUT.getlist('hidden_cols')],
+              hiddens=[int(x) for x in PUT.getlist('hiddens')],
+              #~ hidden_cols=[str(x) for x in PUT.getlist('hidden_cols')],
             )
             
             filter = PUT.get('filter',None)
@@ -794,7 +795,10 @@ class ExtUI(base.UI):
             
         if request.method == 'GET':
             fmt = request.GET.get('fmt',None)
-            a = rpt.get_action(fmt)
+            if fmt is None:
+                a = rpt.default_action
+            else:
+                a = rpt.get_action(fmt) 
             if a is not None:
                 kw = {}
                 ar = ext_requests.ViewReportRequest(request,rh,a)
@@ -1160,15 +1164,6 @@ class ExtUI(base.UI):
             kw[ext_requests.URL_PARAM_MASTER_TYPE] = mt
         return kw
         
-    def get_request_url(self,rr,*args,**kw):
-        kw = self.request2kw(rr,**kw)
-        return self.build_url('api',rr.report.app_label,rr.report._actor_name,*args,**kw)
-        
-    def get_detail_url(self,obj,*args,**kw):
-        #~ rpt = obj.__class__._lino_model_report
-        rpt = obj._lino_model_report
-        return self.build_url('api',rpt.app_label,rpt._actor_name,str(obj.pk),*args,**kw)
-        
     def quick_upload_buttons(self,rr):
         if rr.total_count == 0:
             #~ return [dict(text="Upload",handler=js_code('Lino.%s' % rr.report.get_action('insert')))]
@@ -1207,17 +1202,41 @@ class ExtUI(base.UI):
                 #return py2js(kw)
             return dict(text=prepare_label(v),menu=dict(items=v.items))
         if isinstance(v,menus.MenuItem):
-            #~ handler = "function(btn,evt){Lino.do_action(undefined,%r,%r,{})}" % (v.actor.get_url(lino_site.ui),id2js(v.actor.actor_id))
-            #~ url = build_url("/ui",v.action.actor.app_label,v.action.actor._actor_name,v.action.name)
-            #~ handler = "function(btn,evt){Lino.do_action(undefined,{url:%r})}" % url
-            #~ handler = "function(btn,evt){new Lino.%s().show()}" % v.action
+            if v.href is not None:
+                return dict(text=prepare_label(v),href=v.href)
+            if True: 
+                """
+                20110129. In this case, the main menu uses permalinks instead of opening new windows each time.
+                """
+                if v.request is not None:
+                    url = self.get_request_url(v.request)
+                elif v.instance is not None:
+                    url = self.get_detail_url(v.instance,fmt='detail')
+                else:
+                    url = self.get_action_url(v.action)
+                    #~ url = self.build_url('api',v.action.actor.app_label,v.action.actor._actor_name,fmt=v.action.name)
+                return dict(text=prepare_label(v),href=url)
             handler = "function(btn,evt){Lino.%s(undefined,%s)}" % (v.action,py2js(v.params))
             return dict(text=prepare_label(v),handler=js_code(handler))
         return v
+        
 
-
+    def get_action_url(self,action,*args,**kw):
+        if not action is action.actor.default_action:
+            kw.update(fmt=action.name)
+        return self.build_url("api",action.actor.app_label,action.actor._actor_name,*args,**kw)
+            
     def get_actor_url(self,actor,*args,**kw):
         return self.build_url("api",actor.app_label,actor._actor_name,*args,**kw)
+        
+    def get_request_url(self,rr,*args,**kw):
+        kw = self.request2kw(rr,**kw)
+        return self.build_url('api',rr.report.app_label,rr.report._actor_name,*args,**kw)
+        
+    def get_detail_url(self,obj,*args,**kw):
+        #~ rpt = obj.__class__._lino_model_report
+        rpt = obj._lino_model_report
+        return self.build_url('api',rpt.app_label,rpt._actor_name,str(obj.pk),*args,**kw)
         
         
     def action_window_wrapper(self,a,h):

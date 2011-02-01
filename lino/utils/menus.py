@@ -29,8 +29,12 @@ class MenuItem:
   
     HOTKEY_MARKER = '~'
     
-    def __init__(self,parent,action,name=None,label=None,doc=None,enabled=True,
-                 can_view=None,hotkey=None,params={}):
+    def __init__(self,parent,action,
+                 name=None,label=None,doc=None,enabled=True,
+                 can_view=None,hotkey=None,params={},
+                 request=None,
+                 instance=None,
+                 href=None):
         p = parent
         l = []
         while p is not None:
@@ -41,6 +45,9 @@ class MenuItem:
         self.parent = parent
         self.action = action
         self.params = params
+        self.href = href
+        self.request = request
+        self.instance = instance
         
         if action is not None:
             if name is None:
@@ -134,8 +141,18 @@ class Menu(MenuItem):
 
     #~ def add_item(self,**kw):
         #~ return self._add_item(Action(self,**kw))
-
+        
+    def add_request_action(self,rr,**kw):
+        kw.update(request=rr)
+        return self._add_item(MenuItem(self,rr.action,**kw))
+        
+    def add_instance_action(self,obj,**kw):
+        kw.update(instance=obj)
+        return self._add_item(MenuItem(self,None,**kw))
     
+    def add_item(self,name,label,**kw):
+        return self._add_item(MenuItem(self,None,name,label,**kw))
+        
     def add_menu(self,name,label,**kw):
         return self._add_item(Menu(name,label,self,**kw))
         
@@ -206,9 +223,14 @@ class Menu(MenuItem):
             m = copy.copy(self)
             items = []
             for i in m.items:
-                r = i.menu_request(user)
-                if r is not None:
-                    items.append(r)
+                meth = getattr(i,'menu_request',None)
+                if meth is None:
+                    items.append(i)
+                else:
+                    r = meth(user)
+                    #~ r = i.menu_request(user)
+                    if r is not None:
+                        items.append(r)
             m.items = items
             return m
 

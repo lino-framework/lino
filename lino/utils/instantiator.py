@@ -163,10 +163,11 @@ class Instantiator:
             kw = c.convert(**kw)
         m2m = kw.pop("_m2m")
         instance = self.model(**kw)
-        #~ instance.full_clean()
-        #~ instance.save()
-        for k,v in m2m.items():
-            queryset = getattr(instance,k)
-            queryset.add(*v)
+        if m2m:
+            instance.full_clean()
+            instance.save()
+            for k,v in m2m.items():
+                queryset = getattr(instance,k)
+                queryset.add(*v)
         return instance
   

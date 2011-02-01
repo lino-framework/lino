@@ -364,11 +364,15 @@ Ext.override(Ext.grid.CellSelectionModel, {
 Based on feature request developed in http://extjs.net/forum/showthread.php?t=75751
 */
 Ext.override(Ext.form.ComboBox, {
-    contextParams : {}, 
+    //~ contextParams : {}, 
     // contextParams : array of names of variables to add to query
     // contextValues : array of values of variables to add to query
     // queryContext : null, 
     // contextParam : null, 
+    initComponent : function(){
+        this.contextParams = {};
+        Ext.form.ComboBox.superclass.initComponent.call(this);
+    },
     setValue : function(v,record){
         //~ if(this.name == 'country') console.log('20100531 country ComboBox.setValue()',v,record);
         var text = v;
@@ -437,7 +441,7 @@ Ext.override(Ext.form.ComboBox, {
         return p;
     },
     setContextValue : function(name,value) {
-      console.log('setContextValue',this,this.name,':',name,'=',value);
+      //~ console.log('setContextValue',this,this.name,':',name,'=',value);
       //~ if (this.contextValues === undefined) {
           //~ this.contextValues = Array(); // this.contextParams.length);
       //~ }
@@ -1324,7 +1328,8 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     var set_gc = function(name) {
       return function() {
         //~ console.log('set_gc() 20100812');
-        this.getColumnModel().setConfig(this.apply_grid_config(name,this.ls_grid_configs,this.ls_columns));
+        this.getColumnModel().setConfig(
+            this.apply_grid_config(name,this.ls_grid_configs,this.ls_columns));
       }
     }
     for (k in config.ls_grid_configs) {
@@ -1444,6 +1449,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
       for (var i = 0; i < gc.columns.length; i++) {
         if (col.dataIndex == gc.columns[i]) {
           col.width = gc.widths[i];
+          col.hidden = gc.hiddens[i];
           columns[i] = col;
           break;
         }
@@ -1456,18 +1462,18 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
       //~ columns[i].width = gc.widths[i];
     //~ }
     
-    if (gc.hidden_cols) {
-      for (var i = 0; i < gc.hidden_cols.length; i++) {
-        var hc = gc.hidden_cols[i];
-        for (var j = 0; j < columns.length;j++) {
-          var col = columns[j];
-          if (col.dataIndex == hc) {
-            col.hidden = true;
-            break
-          }
-        }
-      }
-    }
+    //~ if (gc.hidden_cols) {
+      //~ for (var i = 0; i < gc.hidden_cols.length; i++) {
+        //~ var hc = gc.hidden_cols[i];
+        //~ for (var j = 0; j < columns.length;j++) {
+          //~ var col = columns[j];
+          //~ if (col.dataIndex == hc) {
+            //~ col.hidden = true;
+            //~ break
+          //~ }
+        //~ }
+      //~ }
+    //~ }
     if (gc.filters) {
       //~ console.log(20100811,'config.ls_filters',config.ls_filters);
       //~ console.log(20100811,'config.ls_grid_config.filters',config.ls_grid_config.filters);
@@ -1499,10 +1505,11 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
   get_current_grid_config : function () {
     var cm = this.getColumnModel();
     var widths = Array(cm.config.length);
+    var hiddens = Array(cm.config.length);
     //~ var hiddens = Array(cm.config.length);
     var columns = Array(cm.config.length);
     //~ var columns = Array(cm.config.length);
-    var hidden_cols = [];
+    //~ var hidden_cols = [];
     //~ var filters = this.filters.getFilterValues();
     var p = this.filters.buildQuery(this.filters.getFilterData())
     for (var i = 0; i < cm.config.length; i++) {
@@ -1510,10 +1517,12 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
       columns[i] = col.dataIndex;
       //~ hiddens[i] = col.hidden;
       widths[i] = col.width;
-      if (col.hidden) hidden_cols.push(col.dataIndex);
+      hiddens[i] = col.hidden;
+      //~ if (col.hidden) hidden_cols.push(col.dataIndex);
     }
     //~ p['hidden_cols'] = hidden_cols;
     p['widths'] = widths;
+    p['hiddens'] = hiddens;
     p['columns'] = columns;
     p['name'] = this.gc_name;
     var gc = this.ls_grid_configs[this.gc_name];
@@ -1522,13 +1531,13 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     else 
       p['label'] = gc.label
     //~ p['name'] = this.ls_grid_config ? this.ls_grid_config.name : '';
-    if (hidden_cols.length > 0) p['hidden_cols'] = hidden_cols;
+    //~ if (hidden_cols.length > 0) p['hidden_cols'] = hidden_cols;
     //~ if (filters.length > 0) p['filters'] = filters;
     //~ console.log('20100810 save_grid_config',p);
     return p;
   },
   
-  manage_grid_configs : function() {
+  unused_manage_grid_configs : function() {
     var data = [];
     for (k in this.ls_grid_configs) {
       var v = this.ls_grid_configs[k];
@@ -1568,7 +1577,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     win.show();
   },
   
-  edit_grid_config : function(name) {
+  unused_edit_grid_config : function(name) {
     gc = this.ls_grid_configs[name];
     var win = new Ext.Window({
       title:'Edit Grid Config',layout:'vbox', 

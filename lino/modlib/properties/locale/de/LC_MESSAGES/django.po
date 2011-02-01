@@ -1,0 +1,87 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-02-01 05:06+0000\n"
+"PO-Revision-Date: 2011-02-01 07:09+0200\n"
+"Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+#: .\models.py:68
+#: .\models.py:90
+#: .\models.py:123
+msgid "Property Type"
+msgstr "Eigenschaftsart"
+
+#: .\models.py:69
+msgid "Property Types"
+msgstr "Eigenschaftsarten"
+
+#: .\models.py:71
+#: .\models.py:92
+#: .\models.py:108
+#: .\models.py:121
+msgid "Designation"
+msgstr "Beschreibung"
+
+#: .\models.py:72
+#: .\models.py:73
+msgid "Limit to choices"
+msgstr "Beschränken auf Auswahl"
+
+#: .\models.py:87
+msgid "Property Choice"
+msgstr "Eigenschaftswert"
+
+#: .\models.py:88
+msgid "Property Choices"
+msgstr "Eigenschaftswerte"
+
+#: .\models.py:91
+#: .\models.py:144
+msgid "Value"
+msgstr "Wert"
+
+#: .\models.py:105
+#: .\models.py:122
+msgid "Property Group"
+msgstr "Eigenschaftsgruppe"
+
+#: .\models.py:106
+msgid "Property Groups"
+msgstr "Eigenschaftsgruppen"
+
+#: .\models.py:118
+#: .\models.py:143
+msgid "Property"
+msgstr "Eigenschaft"
+
+#: .\models.py:119
+msgid "Properties"
+msgstr "Eigenschaften"
+
+#: .\models.py:142
+msgid "Property group"
+msgstr "Eigenschaftsgruppe"
+
+#: .\models.py:224
+msgid "Skills Property Group"
+msgstr "Eigenschaftsgruppe \"Fachkompetenzen\""
+
+#: .\models.py:230
+msgid "Soft Skills Property Group"
+msgstr "Eigenschaftsgruppe \"Sozialkompetenzen\""
+
+#: .\models.py:236
+msgid "Obstacles Property Group"
+msgstr "Eigenschaftsgruppe \"Hindernisse\""
+

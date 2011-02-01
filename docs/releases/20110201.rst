@@ -1,0 +1,24 @@
+Version 1.1.0 (01.02.2011)
+==========================
+
+Sprung zur Version 1.1 wegen des neuen Moduls "Eigenschaften".
+
+#.  Die vielen Ankreuzfelder im Reiter "Hindernisse" sind ersetzt durch eine Tabelle 
+    von konfigurierbaren Hindernissen. Eigenschaften 
+
+#.  Änderungen im Hauptmenü:
+
+    - Das Menü `Konfigurierung` ist jetzt strukturiert und unterhalb von `Site`, 
+      weil es unübersichtlich wurde. 
+      Ich habe mal einen schnellen Vorschlag gemacht, 
+      an dem sich ebstimmt noch was ändern wird.
+      Feedback willkommen.
+    
+    - Ich habe es jetzt zum Probieren mal so gemacht, dass das Hauptmenü 
+      über Permalinks funktioniert. Das hat vor allem zur Folge, dass alle 
+      offenen Fenster geschlossen werden, wenn man aus dem Hauptmenü einen 
+      Befehl wählt. 
+    
+    - Außerdem gibt es jetzt einen Button "Anfang", mit dem man in den 
+        Anfangsbildschirm (mit den Erinnerungen) zurückgelangt.
+

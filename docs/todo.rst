@@ -6,8 +6,14 @@ See also :doc:`/tickets/index` which is a list of tickets
 for which I hope for help from other people.
 
 
-Version 1.1
------------
+Version 1.1 (der Ei-Editor ist wieder da)
+-----------------------------------------
+
+#.  TypeError: unbound method disable_delete() must be called with Property instance as first argument (got PersonProperty i
+nstance instead)
+
+Version 1.2 (alle todos vom 11.01. fertig)
+------------------------------------------
 
 #.  Wenn man auf einen FK klickt, sollte er kein neues Browserfenster 
     öffnen, sondern lediglich ein neues Fenster.
@@ -31,7 +37,7 @@ Version 1.1
 
 #.  :doc:`tickets/20`.
 
-Version 1.2
+Version 1.3
 -----------
 
 #.  Decide some relatively stable Django version to use,

@@ -1,0 +1,7 @@
+:label: Fähigkeiten
+:label_align: top
+
+main =
+  properties.SkillsByPerson properties.SoftSkillsByPerson skills
+  properties.ObstaclesByPerson obstacles
+

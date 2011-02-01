@@ -2,3 +2,4 @@ main =
     site_company
     next_partner_id
     job_office
+    propgroup_skills propgroup_softskills propgroup_obstacles

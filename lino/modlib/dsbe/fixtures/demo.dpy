@@ -18,6 +18,7 @@ from dateutil.relativedelta import relativedelta
 ONE_DAY = relativedelta(days=1)
 
 from django.db import models
+#~ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext as _
 
@@ -26,6 +27,7 @@ from lino.utils import i2d
 from lino.utils.instantiator import Instantiator
 from lino.tools import resolve_model
 from lino.utils.babel import babel_values, default_language
+from lino.models import update_site_config
 
 from django.contrib.auth import models as auth
 
@@ -85,6 +87,7 @@ exam_policy = Instantiator('dsbe.ExamPolicy').build
 City = resolve_model('countries.City')
 StudyType = resolve_model('dsbe.StudyType')
 Country = resolve_model('countries.Country')
+Property = resolve_model('properties.Property')
 #~ StudyContent = resolve_model('dsbe.StudyContent')
 
 
@@ -152,6 +155,7 @@ def objects():
     # a circular reference: bernard is contact for company adg and also has himself as `job_office_contact`
     bernard = Person.objects.get(name__exact="Bodard Bernard")
     adg = company(name=u"Arbeitsamt der D.G.",city=eupen,country='BE')
+    update_site_config(job_office=adg)
     yield adg
     adg_dir = contact(company=adg,person=bernard,type=1)
     yield adg_dir
@@ -264,8 +268,9 @@ def objects():
 
     from lino.modlib.dsbe.models import Course, CourseContent, CourseRequest
     oikos = company(name=u"Oikos",city=eupen,country='BE',is_courseprovider=True)
+    yield oikos
     kap = company(name=u"KAP",city=eupen,country='BE',is_courseprovider=True)
-    yield oikos    
+    yield kap
     
     yield CourseContent(id=1,name=u"Deutsch")
     yield CourseContent(id=2,name=u"Französisch")
@@ -274,63 +279,16 @@ def objects():
     yield course(provider=oikos,title=u"Deutsch für Anfänger",content=1,start_date=i2d(20110110))
     yield course(provider=kap,title=u"Deutsch fur Anfanger",content=1,start_date=i2d(20110117))
     yield course(provider=kap,title=u"Français pour débutants",content=2,start_date=i2d(20110124))
+    
+    #~ baker = Properties.objects.get(pk=1)
+    #~ baker.save()
+    #~ yield baker
 
-    skill = Instantiator('dsbe.Skill',type='1').build
-    yield skill(**babel_values('name',
-          de=u"Bäcker",
-          fr=u"Pâtisseur",
-          en=u"Baker",
-          ))
-    yield skill(**babel_values('name',
-          de=u"Gärtner",
-          fr=u"Jardinier",
-          en=u"Gardener",
-          ))
-    yield skill(**babel_values('name',
-          de=u"Jäger",
-          fr=u"Chasseur",
-          en=u"Hunter",
-          ))
-    yield skill(**babel_values('name',
-          de=u"Koch",
-          fr=u"Cuisinier",
-          en=u"Cook",
-          ))
-          
-    skill = Instantiator('dsbe.Skill',type='2').build
-    yield skill(**babel_values('name',
-          de=u"Gehorsam",
-          fr=u"Obéissant",
-          en=u"Obedient",
-          ))
-    yield skill(**babel_values('name',
-          de=u"Führungsfähigkeit",
-          fr=u"Leader",
-          en=u"Leader",
-          ))
-          
-    skill = Instantiator('dsbe.Skill',type='3').build
-    yield skill(**babel_values('name',
-          de=u"nicht am Wochenende",
-          fr=u"pas le week-end",
-          en=u"no work on weekend",
-          ))
-    yield skill(**babel_values('name',
-          de=u"keine Schichtarbeit",
-          fr=u"pas de travail posté",
-          en=u"no shift work",
-          ))
-    yield skill(**babel_values('name',
-          de=u"Personen zu Lasten",
-          fr=u"Personnes à charge",
-          en=u"Head of a family",
-          ))
-          
-    skill = Instantiator('dsbe.OwnedSkill','person:name skill strength').build
-    yield skill("Ausdemwald Alfons",1,'4')
-    yield skill("Bastiaensen Laurent",1,'4')
-    yield skill("Eierschal Emil",1,'4')
-
+    skill = Instantiator('properties.PersonProperty','person property value').build
+    for p in Person.objects.all():
+        for prop in Property.objects.all():
+            yield skill(p,prop,'')
+            
     langk = Instantiator('dsbe.LanguageKnowledge','person:name language written spoken').build
     yield langk(u"Ausdemwald Alfons",'est','1','1')
     yield langk(u"Ausdemwald Alfons",'ger','4','3')

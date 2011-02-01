@@ -63,6 +63,12 @@ def get_site_config():
         sc.save()
         return sc
 
+def update_site_config(**kw):
+    sc = get_site_config()
+    for k,v in kw.items():
+        setattr(sc,k,v)
+    sc.save()
+
 class Permissions(reports.Report):
     model = auth.Permission
     order_by = 'content_type__app_label codename'.split()
@@ -91,7 +97,9 @@ class ContentTypes(reports.Report):
 def add_site_menu(site):
     m = site.add_menu("site",_("~Site"))
     #~ m.add_action('system.SiteConfigs',can_view=perms.is_staff,params=dict(pk=1))
-    m.add_action('lino.SiteConfigs.detail',
-      label=_('Site Configuration'),
-      can_view=perms.is_staff,
-      params=dict(record_id=1))
+    m.add_instance_action(site.config,label=_('Site Configuration'),can_view=perms.is_staff)
+    return m
+    #~ m.add_action('lino.SiteConfigs.detail',
+      #~ label=_('Site Configuration'),
+      #~ can_view=perms.is_staff,
+      #~ params=dict(record_id=1))

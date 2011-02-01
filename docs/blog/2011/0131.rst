@@ -1,0 +1,17 @@
+20110131
+========
+
+
+Das komplett neugeschriebene Modul :mod:`lino.modlib.properties` funktioniert. 
+Es ersetzt die bisherigen Tabellen Skill & Co.
+Die Methode von "halbdynamischen Definitionen" von Freitag ist bis auf weiteres nicht nötig.
+
+
+Änderungen en passant:
+
+#.  Details in der Konfigurierung des Hauptmenüs. 
+    Hier ist vieles noch nicht definitiv; sehr uneleganter Code. 
+    Bevor ich das dokumentiere, will ich mir was leichter erklärbares einfallen lassen.
+
+#.  In Linos Erweiterung der ComboBox war ein Bug. Die Variable `contextParams` muss in `initComponent` 
+    gesetzt werden, nicht als Klassenvariable. Sonst haben alle Comboboxen eine gemeinsame Variable setContextValue

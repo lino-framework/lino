@@ -21,10 +21,10 @@ import sys
 import datetime
 import logging
 
-__version__ = "1.0.5"
+__version__ = "1.1.0"
 """
 Lino version number. 
-The latest documented release is :doc:`/releases/20110127`.
+The latest documented release is :doc:`/releases/20110201`.
 """
 
 __author__ = "Luc Saffre <luc.saffre@gmx.net>"
@@ -169,6 +169,11 @@ class Site:
     See http://docs.python.org/library/csv.html#csv-fmt-params
     """
     
+    propvalue_max_length = 200
+    """
+    Used by :mod:`lino.modlib.properties`.
+    """
+    
     
     def __init__(self):
         #self.django_settings = settings
@@ -177,6 +182,9 @@ class Site:
         self._setup_done = False
         self.root_path = '/lino/'
         self._response = None
+        # ImportError: Settings cannot be imported, because environment variable DJANGO_SETTINGS_MODULE is undefined.
+        #~ from lino.models import get_site_config
+        #~ self.config = get_site_config()
         
     def setup_main_menu(self):
         raise NotImplementedError
@@ -185,8 +193,13 @@ class Site:
         pass
         
     def setup(self):
+      
+        from lino.models import get_site_config
+        self.config = get_site_config()
+        
         from lino.site import setup_site
         setup_site(self)
+
         
     def add_menu(self,*args,**kw):
         return self._menu.add_menu(*args,**kw)

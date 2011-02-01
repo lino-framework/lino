@@ -4,5 +4,5 @@
 main =
     id:8 title
     aged_from aged_to sex
-    dsbe.LanguageKnowledgesBySearch dsbe.SkillsBySearch
+    dsbe.LanguageKnowledgesBySearch properties.WantedSkillsBySearch properties.UnwantedSkillsBySearch
     dsbe.PersonsBySearch

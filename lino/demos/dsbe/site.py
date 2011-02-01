@@ -12,6 +12,8 @@
 ## along with TimTools; if not, see <http://www.gnu.org/licenses/>.
 
 from lino import Site as Base
+from lino.utils.jsgen import js_code
+
 
 class Site(Base):
   
@@ -39,10 +41,10 @@ class Site(Base):
         Willkommen auf dem ersten Prototypen von Lino-DSBE.
         """
 
-        self.index_html += """<ul>"""
+        #~ self.index_html += """<ul>"""
         #~ lino.index_html += """<li><a href="#" onclick="Lino.goto_permalink()">permalink with open windows</a></li>"""
-        self.index_html += """<li><a href="%s">User manual</a></li>""" % self.help_url
-        self.index_html += """</ul>"""
+        #~ self.index_html += """<li><a href="%s">User manual</a></li>""" % self.help_url
+        #~ self.index_html += """</ul>"""
 
         m = self.add_menu("contacts",_("~Contacts"))
         m.add_action('contacts.Companies')
@@ -65,41 +67,52 @@ class Site(Base):
         m.add_action('dsbe.CourseContents')
         m.add_action('dsbe.CourseEndings')
         
-        m = self.add_menu("config",_("~Configure"),
-          can_view=perms.is_staff)
+        sitemenu = system.add_site_menu(self)
+        
+        m = sitemenu.add_menu("config",_("~Configure"),can_view=perms.is_authenticated)
+        mm = m.add_menu("manager",_("~Manager"),can_view=perms.is_authenticated)
+        ma = m.add_menu("admin",_("Local Site ~Administrator"),can_view=perms.is_staff)
+        me = m.add_menu("expert",_("~Expert"),can_view=perms.is_staff)
+        
         #~ m.add_action('projects.ProjectTypes')
-        m.add_action('notes.NoteTypes')
-        m.add_action('dsbe.ContractTypes')
-        m.add_action('dsbe.PersonGroups')
-        m.add_action('contacts.CompanyTypes')
-        m.add_action('contacts.ContactTypes')
-        m.add_action('dsbe.Skills1')
-        m.add_action('dsbe.Skills2')
-        m.add_action('dsbe.Skills3')
-        #~ m.add_action('dsbe.Skills',known_values=dict(type=1))
-        #~ m.add_action('dsbe.Skills',known_values=dict(type=2))
-        #~ m.add_action('dsbe.Skills',known_values=dict(type=3))
-        #~ m.add_action('properties.Properties')
-        m.add_action('countries.Languages')
-        m.add_action('countries.Countries')
-        m.add_action('countries.Cities')
-        m.add_action('auth.Permissions')
-        m.add_action('auth.Users')
-        m.add_action('auth.Groups')
+        ma.add_action('notes.NoteTypes')
+        ma.add_action('dsbe.ContractTypes')
+        mm.add_action('dsbe.PersonGroups')
+        ma.add_action('contacts.CompanyTypes')
+        ma.add_action('contacts.ContactTypes')
+        
+        from lino.modlib.properties import models as properties
+        
+        me.add_action('properties.PropGroups')
+        me.add_action('properties.PropTypes')
+        for pg in properties.PropGroup.objects.all():
+            mm.add_request_action(properties.PropsByGroup().request(master_instance=pg),label=pg.name)
+        
+        ma.add_action('properties.PropsByGroup')
+        #~ ma.add_action('dsbe.Skills1')
+        #~ ma.add_action('dsbe.Skills2')
+        #~ ma.add_action('dsbe.Skills3')
+        me.add_action('countries.Languages')
+        mm.add_action('countries.Countries')
+        mm.add_action('countries.Cities')
+        me.add_action('auth.Permissions')
+        ma.add_action('auth.Users')
+        me.add_action('auth.Groups')
         #~ m.add_action('dsbe.DrivingLicenses')
-        m.add_action('dsbe.StudyTypes')
+        mm.add_action('dsbe.StudyTypes')
         #~ m.add_action('dsbe.StudyContents')
-        m.add_action('dsbe.Activities')
-        m.add_action('dsbe.ExclusionTypes')
-        m.add_action('dsbe.AidTypes')
-        m.add_action('dsbe.ContractEndings')
+        mm.add_action('dsbe.Activities')
+        mm.add_action('dsbe.ExclusionTypes')
+        mm.add_action('dsbe.AidTypes')
+        mm.add_action('dsbe.ContractEndings')
         #~ m.add_action('dsbe.JobTypes')
-        m.add_action('dsbe.ExamPolicies')
+        mm.add_action('dsbe.ExamPolicies')
         #~ m.add_action('dsbe.CoachingTypes')
-        m.add_action('links.LinkTypes')
-        m.add_action('uploads.UploadTypes')
+        mm.add_action('links.LinkTypes')
+        mm.add_action('uploads.UploadTypes')
+        m.add_action('properties.Properties')
 
-        m = self.add_menu("explorer",_("E~xplorer"),
+        m = sitemenu.add_menu("explorer",_("E~xplorer"),
           can_view=perms.is_staff)
         #m.add_action('properties.PropChoices')
         #~ m.add_action('properties.PropValues')
@@ -111,6 +124,14 @@ class Site(Base):
         m.add_action('dsbe.CourseRequests')
         m.add_action('contenttypes.ContentTypes')
 
-        system.add_site_menu(self)
         
+        m = self.add_menu("help",_("~Help"))
+        m.add_item('userman',_("~User Manual"),href='http://lino.saffre-rumma.net/dsbe/index.html')
+
+        #~ m.add_item('home',_("~Home"),href='/')
+        #~ self._menu.add_item('home',_("~Home"),href='/')
+        #~ self._menu.items.append(dict(text=_("~Home"),href='/'))
+        #~ self._menu.items.append(dict(xtype='menuseparator'))
+        self._menu.items.append(dict(xtype='button',text=_("Home"),handler=js_code("function() {window.location='/';}")))
+        #~ self._menu.items.append(dict(xtype='menuitem',html='<a href="/">%s</a>' % _("~Home")))
 

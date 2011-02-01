@@ -297,7 +297,9 @@ class ReportHandle(base.Handle):
         base.Handle.__init__(self,ui)
         if self.report.model is not None:
             if ui is not None:
-                self.list_layout = LayoutHandle(self,ListLayout('main = '+self.report.column_names))
+                self.list_layout = LayoutHandle(self,
+                    ListLayout('main = '+self.report.column_names),
+                    hidden_elements=self.report.hidden_columns)
             self.content_type = ContentType.objects.get_for_model(self.report.model).pk
             self.data_elems = report.data_elems
             self.get_data_elem = report.get_data_elem
@@ -592,7 +594,8 @@ class Report(actors.Actor): #,base.Handled):
     exclude = None
     title = None
     column_names = '*'
-    hide_columns = None
+    #~ hide_columns = None
+    hidden_columns = frozenset()
     form_class = None
     master = None
     
@@ -632,22 +635,23 @@ class Report(actors.Actor): #,base.Handled):
     defines any attribute that did not exist in the base class.
     Usually such a warning means that there is something wrong.
     """
-    url = None
+    
+    #~ url = None
+    
+    known_values = {}
+    """
+    Return s dict of `fieldname` -> `value` pairs that specify "known values".
+    Requests will automatically be filtered to show only existing records 
+    with those values.
+    New instances created in this Report will automatically have 
+    these values set.
+    """
     
     #~ use_layouts = True
     
     button_label = None
     
     #~ detail_layouts = []
-    
-    known_values = {}
-    """
-    A dict of `fieldname` -> `value` pairs that specify "known values".
-    Requests will automatically be filtered to show only existing records 
-    with those values.
-    New instances created in this Report will automatically have 
-    these values set.
-    """
     
     show_slave_grid = True
     """
@@ -794,6 +798,7 @@ class Report(actors.Actor): #,base.Handled):
                 if f is None:
                     raise Exception("unknown data element %r" % colname)
       
+    
     def do_setup(self):
       
         filename = self.get_grid_config_file()
@@ -1005,11 +1010,11 @@ class Report(actors.Actor): #,base.Handled):
         m = getattr(instance,'on_create',None)
         if m:
             m(req)
-        print 20110128, instance
+        #~ print 20110128, instance
         return instance
         
-    def getLabel(self):
-        return self.label
+    #~ def get_label(self):
+        #~ return self.label
         
     #~ def __str__(self):
         #~ return rc_name(self.__class__)
@@ -1127,8 +1132,8 @@ class BaseLayout:
                         raise Exception('Duplicate element definition')
                     setattr(self,attrname,a[1].strip())
           
-    def get_hidden_elements(self,lh):
-        return set()
+    #~ def get_hidden_elements(self,lh):
+        #~ return set()
         
     def save_config(self):
         if self.filename:
@@ -1167,7 +1172,7 @@ class LayoutHandle:
     """
     start_focus = None
     
-    def __init__(self,rh,layout):
+    def __init__(self,rh,layout,hidden_elements=frozenset()):
       
         # logger.debug('LayoutHandle.__init__(%s,%s,%d)',link,layout,index)
         assert isinstance(layout,BaseLayout)
@@ -1184,7 +1189,7 @@ class LayoutHandle:
         #~ self._submit_fields = []
         #~ self.slave_grids = []
         self._buttons = []
-        self.hide_elements = layout.get_hidden_elements(self)
+        self.hidden_elements = hidden_elements # layout.get_hidden_elements(self)
         self.main_class = rh.ui.main_panel_class(layout)
         
         if layout.main is not None:
@@ -1235,9 +1240,9 @@ class LayoutHandle:
             s += "(%s)" % self._main
         return s
         
-    def setup_element(self,e):
-        if e.name in self.hide_elements:
-            self.hidden = True
+    #~ def setup_element(self,e):
+        #~ if e.name in self.hidden_elements:
+            #~ e.hidden = True
             
     #~ def get_absolute_url(self,**kw):
         #~ return self.datalink.get_absolute_url(layout=self.index,**kw)
@@ -1277,8 +1282,8 @@ class LayoutHandle:
             wildcard_fields = self.layout.join_str.join([
                 de.name for de in self.rh.report.data_elems() \
                   if (de.name not in explicit_specs) \
-                    and (de.name not in self.hide_elements) \
-                    and (de.name not in self.rh.report.known_values.keys()) \
+                    #~ and (de.name not in self.hidden_elements) \
+                    #~ and (de.name not in self.rh.report.known_values.keys()) \
                     and (de.name != self.rh.report.fk_name) \
                 ])
             desc = desc.replace('*',wildcard_fields)
@@ -1324,6 +1329,8 @@ class LayoutHandle:
         #logger.debug("create_element(panelclass,%r)", desc_name)
         name,kw = self.splitdesc(desc_name)
         e = self.rh.ui.create_layout_element(self,panelclass,name,**kw)
+        if name in self.hidden_elements:
+            e.hidden = True
         #~ for child in e.walk():
             #~ self._submit_fields += child.submit_fields()
         return e

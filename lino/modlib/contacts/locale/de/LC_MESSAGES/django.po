@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-27 14:45+0000\n"
-"PO-Revision-Date: 2010-12-23 06:32+0200\n"
+"POT-Creation-Date: 2011-02-01 05:06+0000\n"
+"PO-Revision-Date: 2011-01-30 21:43+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: ds <luc.saffre@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -62,11 +62,11 @@ msgstr "Firmenart"
 
 #: .\models.py:144 .\models.py:170
 msgid "contact type"
-msgstr "Eigenschaft"
+msgstr "Kontaktart"
 
 #: .\models.py:145
 msgid "contact types"
-msgstr "Eigenschaften"
+msgstr "Kontaktarten"
 
 #: .\models.py:163
 msgid "contact"

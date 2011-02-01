@@ -61,6 +61,7 @@ import lino
 from lino import reports, actions
 from lino.utils import perms
 from lino.utils import dblogger
+#~ from lino.utils import babel
 from lino.utils import menus
 from lino.core import actors
 from lino.core.coretools import app_labels, data_elems, get_unbound_meth
@@ -196,6 +197,8 @@ def setup_site(self):
     reports.discover()
     
     choosers.discover()
+    
+    #~ babel.discover() # would have to be called before model setup
 
     for a in actors.actors_list:
         #~ if isinstance(a,layouts.DetailLayout):

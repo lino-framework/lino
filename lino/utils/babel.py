@@ -213,3 +213,16 @@ def babeldict_getitem(d,k):
             x = v.get(DEFAULT_LANGUAGE)
         return x
         
+        
+def discover():
+    """This would have to be called *during* and not after model setup.
+    """
+    logger.debug("Discovering babel fields...")
+    for model in models.get_models():
+        babel_fields = getattr(model,'babel_fields',None)
+        if babel_fields:
+            for name in babel_fields:
+                add_babel_field(model,name)
+                
+                
+                

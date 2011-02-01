@@ -210,7 +210,7 @@ class LayoutElement(VisibleComponent):
         self.lh = lh
         #~ if lh is not None:
         assert isinstance(lh,reports.LayoutHandle)
-        lh.setup_element(self)
+        #~ lh.setup_element(self)
 
     def submit_fields(self):
         return []

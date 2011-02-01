@@ -53,7 +53,7 @@ INSTALLED_APPS = (
   'lino',
   'lino.modlib.countries',
   #~ 'lino.modlib.documents',
-  #~ 'lino.modlib.properties',
+  'lino.modlib.properties',
   'lino.modlib.contacts',
   #~ 'lino.modlib.projects',
   'lino.modlib.notes',

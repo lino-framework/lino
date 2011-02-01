@@ -814,6 +814,8 @@ class LanguageKnowledge(models.Model):
     written = fields.KnowledgeField(verbose_name=_("written"))
     
     def __unicode__(self):
+        if self.language_id is None:
+            return ''
         if self.spoken > '1' and self.written > '1':
             return _(u"%s (s/w)") % self.language
         elif self.spoken > '1':
@@ -830,151 +832,165 @@ class LanguageKnowledgesByPerson(reports.Report):
     #~ label = _("Language knowledge")
     #~ button_label = _("Languages")
     column_names = "language spoken written"
-  
-#
-# Skills
-#
 
-SKILL_TYPES = {
-    '1' : dict(en='Skills'      ,de='Fachkompetenzen'),
-    '2' : dict(en='Soft skills' ,de='Sozialkompetenzen'),
-    '3' : dict(en='Obstacles'   ,de='Hindernisse'),
-}
-SKILL_TYPE_CHOICES = [ (k, v[DEFAULT_LANGUAGE]) for k,v in SKILL_TYPES.items()]
-def f(a,b): 
-  return cmp(a[0],b[0])
-SKILL_TYPE_CHOICES.sort(f)
+# 
+# PROPERTIES
+# 
 
+from lino.modlib.properties import models as properties
 
-class Skill(models.Model):
+class PersonProperty(properties.PropertyOccurence):
     class Meta:
-        verbose_name = _("Skill")
-        verbose_name_plural = _("Skills")
-        
-    type = models.CharField(max_length=1,
-        verbose_name=_("Skill type"),
-        choices=SKILL_TYPE_CHOICES)
-    
-    name = models.CharField(max_length=200,verbose_name=_("Designation"))
-    
-    def __unicode__(self):
-        return babelattr(self,'name')
-
-add_babel_field(Skill,'name')
-
-class Skills(reports.Report):
-    model = Skill
-    order_by = ['name']
-    #~ column_names = "id name"
-    
-class Skills1(Skills):    
-    known_values = dict(type='1')
-    label = babeldict_getitem(SKILL_TYPES,'1')
-class Skills2(Skills):    
-    known_values = dict(type='2')
-    label = babeldict_getitem(SKILL_TYPES,'2')
-class Skills3(Skills):    
-    known_values = dict(type='3')
-    label = babeldict_getitem(SKILL_TYPES,'3')
-
-
-class SkillOccurence(models.Model):
-    """
-    Abstract base class for :class:`OwnedSkill` and :class:`SearchedSkill`.
-    """
-    
-    class Meta:
-        abstract = True
-        
-    type = models.CharField(max_length=1,
-        verbose_name=_("Skill type"),
-        choices=SKILL_TYPE_CHOICES)
-    #~ type = models.SmallIntegerField(_("Skill type"),
-        #~ choices=SKILL_TYPE_CHOICES,
-        #~ max_length=1)
-    skill = models.ForeignKey("dsbe.Skill",verbose_name=_("Skill"))
-    strength = fields.StrengthField(verbose_name=_("strength"))
-    
-    @chooser()
-    def skill_choices(cls,type):
-        if type is None:
-            return []
-        return Skill.objects.filter(type=type).order_by('name')
-        
-    def save(self,*args,**kw):
-        self.type = self.skill.type
-        r = super(SkillOccurence,self).save(*args,**kw)
-        return r
-        
-    def __unicode__(self):
-        if self.skill_id is None:
-            return u"Undefined %s" % self.type
-        return u'%s.%s=%s ' % (self.type,self.skill,self.strength)
-    
-class OwnedSkill(SkillOccurence):
-    class Meta:
-        verbose_name = _("Owned Skill")
-        verbose_name_plural = _("Owned Skills")
+        app_label = 'properties'
+        verbose_name = _("Property")
+        verbose_name_plural = _("Properties")
         
     person = models.ForeignKey("contacts.Person")
     remark = models.CharField(max_length=200,
         blank=True,null=True,
         verbose_name=_("Remark"))
-    
-class SkillsByPerson(reports.Report):
-    model = OwnedSkill
+  
+class PropsByPerson(reports.Report):
+    model = PersonProperty
     fk_name = 'person'
-    column_names = "skill strength type" 
-    """
-    type must be in the store, but should not be visible. 
-    needed to set context of skill combobox.
-    """
-    hide_columns = ['type']
+    column_names = "property value remark *"
+    hidden_columns = frozenset(['group'])
     
-class SkillsByPerson1(SkillsByPerson):
-    known_values = dict(type='1')
-    label = babeldict_getitem(SKILL_TYPES,'1')
     
-class SkillsByPerson2(SkillsByPerson):
-    known_values = dict(type='2')
-    label = babeldict_getitem(SKILL_TYPES,'2')
+class SkillsByPerson(PropsByPerson):
+    def setup_actions(self):
+        pg = settings.LINO_SITE.config.propgroup_skills
+        #~ pg = get_site_config().propgroup_skills
+        self.known_values = dict(group=pg)
+        self.label = babelattr(pg,'name')
+        PropsByPerson.setup_actions(self)
+        
+class SoftSkillsByPerson(PropsByPerson):
+    def setup_actions(self):
+        pg = get_site_config().propgroup_softskills
+        self.known_values = dict(group=pg)
+        self.label = babelattr(pg,'name')
+        PropsByPerson.setup_actions(self)
+        
+class ObstaclesByPerson(PropsByPerson):
+    def setup_actions(self):
+        pg = get_site_config().propgroup_obstacles
+        self.known_values = dict(group=pg)
+        self.label = babelattr(pg,'name')
+        PropsByPerson.setup_actions(self)
 
-class SkillsByPerson3(SkillsByPerson):
-    known_values = dict(type='3')
-    label = babeldict_getitem(SKILL_TYPES,'3')
+#
+# Skills
+#
+
+#~ SKILL_TYPES = {
+    #~ '1' : dict(en='Skills'      ,de='Fachkompetenzen'),
+    #~ '2' : dict(en='Soft skills' ,de='Sozialkompetenzen'),
+    #~ '3' : dict(en='Obstacles'   ,de='Hindernisse'),
+#~ }
+#~ SKILL_TYPE_CHOICES = [ (k, v[DEFAULT_LANGUAGE]) for k,v in SKILL_TYPES.items()]
+#~ def f(a,b): 
+  #~ return cmp(a[0],b[0])
+#~ SKILL_TYPE_CHOICES.sort(f)
+
+
+#~ class Skill(models.Model):
+    #~ class Meta:
+        #~ verbose_name = _("Skill")
+        #~ verbose_name_plural = _("Skills")
+        
+    #~ type = models.CharField(max_length=1,
+        #~ verbose_name=_("Skill type"),
+        #~ choices=SKILL_TYPE_CHOICES)
+    
+    #~ name = models.CharField(max_length=200,verbose_name=_("Designation"))
+    
+    #~ def __unicode__(self):
+        #~ return babelattr(self,'name')
+
+#~ add_babel_field(Skill,'name')
+
+#~ class Skills(reports.Report):
+    #~ model = Skill
+    #~ order_by = ['name']
+    
+#~ class Skills1(Skills):    
+    #~ known_values = dict(type='1')
+    #~ label = babeldict_getitem(SKILL_TYPES,'1')
+#~ class Skills2(Skills):    
+    #~ known_values = dict(type='2')
+    #~ label = babeldict_getitem(SKILL_TYPES,'2')
+#~ class Skills3(Skills):    
+    #~ known_values = dict(type='3')
+    #~ label = babeldict_getitem(SKILL_TYPES,'3')
+
+
+#~ class SkillOccurence(models.Model):
+    #~ """
+    #~ Abstract base class for :class:`OwnedSkill` and :class:`SearchedSkill`.
+    #~ """
+    
+    #~ class Meta:
+        #~ abstract = True
+        
+    #~ type = models.CharField(max_length=1,
+        #~ verbose_name=_("Skill type"),
+        #~ choices=SKILL_TYPE_CHOICES)
+    #~ skill = models.ForeignKey("dsbe.Skill",verbose_name=_("Skill"))
+    #~ strength = fields.StrengthField(verbose_name=_("strength"))
+    
+    #~ @chooser()
+    #~ def skill_choices(cls,type):
+        #~ if type is None:
+            #~ return []
+        #~ return Skill.objects.filter(type=type).order_by('name')
+        
+    #~ def save(self,*args,**kw):
+        #~ self.type = self.skill.type
+        #~ r = super(SkillOccurence,self).save(*args,**kw)
+        #~ return r
+        
+    #~ def __unicode__(self):
+        #~ if self.skill_id is None:
+            #~ return u"Undefined %s" % self.type
+        #~ return u'%s.%s=%s ' % (self.type,self.skill,self.strength)
+    
+#~ class OwnedSkill(SkillOccurence):
+    #~ class Meta:
+        #~ verbose_name = _("Owned Skill")
+        #~ verbose_name_plural = _("Owned Skills")
+        
+    #~ person = models.ForeignKey("contacts.Person")
+    #~ remark = models.CharField(max_length=200,
+        #~ blank=True,null=True,
+        #~ verbose_name=_("Remark"))
+    
+#~ class SkillsByPerson(reports.Report):
+    #~ model = OwnedSkill
+    #~ fk_name = 'person'
+    #~ column_names = "skill strength type" 
+    #~ """
+    #~ type must be in the store, but should not be visible. 
+    #~ needed to set context of skill combobox.
+    #~ """
+    #~ hide_columns = ['type']
+    
+#~ class SkillsByPerson1(SkillsByPerson):
+    #~ known_values = dict(type='1')
+    #~ label = babeldict_getitem(SKILL_TYPES,'1')
+    
+#~ class SkillsByPerson2(SkillsByPerson):
+    #~ known_values = dict(type='2')
+    #~ label = babeldict_getitem(SKILL_TYPES,'2')
+
+#~ class SkillsByPerson3(SkillsByPerson):
+    #~ known_values = dict(type='3')
+    #~ label = babeldict_getitem(SKILL_TYPES,'3')
 
     
 #
 # JOBS
 #
-
-#~ class JobType(models.Model):
-    #~ name = models.CharField(_("Designation"),max_length=200)
-    #~ class Meta:
-        #~ verbose_name = _("job type")
-        #~ verbose_name_plural = _("job types")
-    #~ def __unicode__(self):
-        #~ return self.name
-
-#~ class JobTypes(reports.Report):
-    #~ model = JobType
-    #~ order_by = ["name"]
-
-#~ class JobWish(models.Model):
-    #~ class Meta:
-        #~ verbose_name = _("job wish")
-        #~ verbose_name_plural = _("job wishes")
-        
-    #~ person = models.ForeignKey("contacts.Person")
-    #~ type = models.ForeignKey('contacts.ContactType',blank=True,null=True,
-      #~ verbose_name=_("contact type"))
-    #~ strength = fields.StrengthField(verbose_name=_("strength"))
-    
-#~ class JobWishesByPerson(reports.Report):
-    #~ model = JobWish
-    #~ fk_name = 'person'
-    #~ column_names = "type strength"
-    
     
 class JobExperience(models.Model):
     class Meta:
@@ -1740,7 +1756,19 @@ class SearchedLanguageKnowledge(models.Model):
     spoken = fields.KnowledgeField(verbose_name=_("spoken"))
     written = fields.KnowledgeField(verbose_name=_("written"))
 
-class SearchedSkill(SkillOccurence):
+class RequiredSkill(properties.PropertyOccurence):
+    class Meta:
+        app_label = 'properties'
+        verbose_name = _("Required skill")
+        verbose_name_plural = _("Required skills")
+        
+    search = models.ForeignKey(PersonSearch)
+    
+class UnwantedSkill(properties.PropertyOccurence):
+    class Meta:
+        app_label = 'properties'
+        verbose_name = _("Unwanted skill")
+        verbose_name_plural = _("Unwanted skills")
     search = models.ForeignKey(PersonSearch)
     
     
@@ -1749,10 +1777,15 @@ class LanguageKnowledgesBySearch(reports.Report):
     fk_name = 'search'
     model = SearchedLanguageKnowledge
 
-class SkillsBySearch(reports.Report):
-    label = _("Searched skills")
+class WantedSkillsBySearch(reports.Report):
+    label = _("Wanted skills")
     fk_name = 'search'
-    model = SearchedSkill
+    model = RequiredSkill
+
+class UnwantedSkillsBySearch(reports.Report):
+    label = _("Unwanted skills")
+    fk_name = 'search'
+    model = UnwantedSkill
 
 class PersonSearches(reports.Report):
     model = PersonSearch
@@ -1856,6 +1889,7 @@ resolve_field('lino.SiteConfig.job_office').__doc__ = """
 The Company whose contact persons will be choices for `Person.job_office_contact`.
 """
 
+
 """
 Here's how to override the default verbose_name of a field
 """
@@ -1878,7 +1912,6 @@ Thanks to
 - http://docs.python.org/library/sqlite3.html#sqlite3.Connection.create_collation
 - http://www.sqlite.org/lang_createindex.html
 """
-from django.db.backends.sqlite3.base import DatabaseWrapper
 from django.db.backends.signals import connection_created
 
 def belgian(s):
@@ -1912,6 +1945,7 @@ def stricmp(str1, str2):
     return cmp(belgian(str1),belgian(str2))
     
 def my_callback(sender,**kw):
+    from django.db.backends.sqlite3.base import DatabaseWrapper
     if sender is DatabaseWrapper:
         db = kw['connection']
         db.connection.create_collation('BINARY', stricmp)
