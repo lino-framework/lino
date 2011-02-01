@@ -47,7 +47,6 @@ from django.utils.safestring import mark_safe
 import lino
 #~ from lino import layouts
 from lino import actions
-from lino import actions
 from lino.utils import perms, menus
 #~ from lino.utils import printable
 #~ from lino.core import datalinks
@@ -280,6 +279,102 @@ class StaticText:
 class DataView:
     def __init__(self,tpl):
         self.xtemplate = tpl
+        
+        
+class ReportAction(actions.Action):
+  
+    def __init__(self,report,*args,**kw):
+        self.actor = report # actor who offers this action
+        super(ReportAction,self).__init__(*args,**kw)
+        
+    def request(self,ui=None,**kw):
+        ar = ReportActionRequest(ui,self.actor,self)
+        #~ ar = ReportActionRequest(ui,self.list_action)
+        ar.setup(**kw)
+        return ar
+        #~ return self.get_handle(ui).request(**kw)
+      
+        #~ return self.actor.request(self,*args,**kw)
+        
+    def get_list_title(self,rh):
+        return rh.get_title(None)
+        
+    def __str__(self):
+        return str(self.actor)+'.'+self.name
+
+
+class GridEdit(ReportAction,actions.OpenWindowAction):
+  
+    callable_from = tuple()
+    name = 'grid'
+    
+    def __init__(self,rpt):
+        self.label = rpt.button_label or rpt.label
+        ReportAction.__init__(self,rpt)
+
+
+class ShowDetailAction(ReportAction,actions.OpenWindowAction):
+    callable_from = (GridEdit,)
+    #~ show_in_detail = False
+    #~ needs_selection = True
+    name = 'detail'
+    label = _("Detail")
+    
+    def get_elem_title(self,elem):
+        return _("%s (Detail)")  % unicode(elem)
+    
+    #~ def __init__(self,rpt,layout):
+        #~ self.layout = layout
+        #~ self.label = layout.label
+        #~ self.name = layout._actor_name
+        #~ actions.OpenWindowAction.__init__(self,rpt)
+        
+class InsertRow(ReportAction,actions.OpenWindowAction):
+    callable_from = (GridEdit,ShowDetailAction)
+    name = 'insert'
+    label = _("Insert")
+    key = actions.INSERT # (ctrl=True)
+    #~ needs_selection = False
+    
+    def get_list_title(self,rh):
+        return _("Insert into %s") % force_unicode(rh.get_title(None))
+  
+class DuplicateRow(ReportAction,actions.OpenWindowAction):
+    callable_from = (GridEdit,ShowDetailAction)
+    name = 'duplicate'
+    label = _("Duplicate")
+
+class RowAction(actions.Action):
+    callable_from = (GridEdit,ShowDetailAction)
+    #~ needs_selection = False
+    #~ needs_validation = False
+    #~ def before_run(self,ar):
+        #~ if self.needs_selection and len(ar.selected_rows) == 0:
+            #~ return _("No selection. Nothing to do.")
+            
+            
+class UpdateRowAction(RowAction):
+    pass
+    
+class DeleteSelected(RowAction):
+    #~ needs_selection = True
+    label = _("Delete")
+    #~ name = 'delete'
+    key = actions.DELETE # (ctrl=True)
+    #~ client_side = True
+    
+        
+class SubmitDetail(actions.Action):
+    #~ name = 'submit'
+    label = _("Save")
+    callable_from = (ShowDetailAction,)
+    
+class SubmitInsert(actions.Action):
+    #~ name = 'submit'
+    label = _("Save")
+    #~ label = _("Insert")
+    callable_from = (InsertRow,)
+        
 
 
 class ReportHandle(base.Handle): 
@@ -563,7 +658,7 @@ class Report(actors.Actor): #,base.Handled):
     """
     Reports are a central concept in Lino and deserve more than one sentence of documentation.
     """
-    default_action_class = actions.GridEdit
+    default_action_class = GridEdit
     _handle_class = ReportHandle
     #~ _handle_selector = base.UI
     params = {}
@@ -791,28 +886,33 @@ class Report(actors.Actor): #,base.Handled):
         if not d.has_key('grid_configs'):
             raise Exception("grid_configs is missing")
         for name,gc in d['grid_configs'].items():
-            if len(gc['columns']) != len(gc['widths']):
-                raise Exception("len(gc['columns']) != len(gc['widths'])")
+            col_count = len(gc['columns'])
+            widths = gc.setdefault('widths',[])
+            hiddens = gc.setdefault('hiddens',[])
+            if widths and col_count != len(widths):
+                raise Exception("%d columns, but %d widths" % (col_count,len(widths)))
+            if hiddens and col_count != len(hiddens):
+                raise Exception("%d columns, but %d hiddens" % (col_count,len(hiddens)))
             for colname in gc['columns']:
                 f = self.get_data_elem(colname)
                 if f is None:
-                    raise Exception("unknown data element %r" % colname)
+                    raise Exception("Unknown data element %r" % colname)
       
     
     def do_setup(self):
       
         filename = self.get_grid_config_file()
+        self.grid_configs = {}
         if os.path.exists(filename):
             logger.info("Loading %s...",filename)
-            d = yaml.load(codecs.open(filename,encoding='utf-8').read())
-            if d is not None:
-                self.validate_gc(d)
-                self.grid_configs = d['grid_configs']
-            #~ execfile(filename,dict(self=self))
-            #~ self.grid_configs = pickle.load(open(filename,"rU"))
-        else:
-            self.grid_configs = {}
-            
+            try:
+                d = yaml.load(codecs.open(filename,encoding='utf-8').read())
+                if d is not None:
+                    self.validate_gc(d)
+                    self.grid_configs = d['grid_configs']
+            except Exception,e:
+                logger.warning("Exception while loading %s : %s",filename,e)
+                logger.exception(e)
         #~ alist = [ ac(self) for ac in self.actions ]
           
         if self.model is not None:
@@ -842,16 +942,16 @@ class Report(actors.Actor): #,base.Handled):
         alist = []
         if self.model is not None:
             if len(self.model._lino_detail_layouts) > 0:
-                alist.append(actions.ShowDetailAction(self))
-                alist.append(actions.SubmitDetail(self))
-                alist.append(actions.InsertRow(self))
+                alist.append(ShowDetailAction(self))
+                alist.append(SubmitDetail())
+                alist.append(InsertRow(self))
                 #~ alist.append(actions.DuplicateRow(self))
-                alist.append(actions.SubmitInsert(self))
+                alist.append(SubmitInsert())
                     
-            alist.append(actions.DeleteSelected(self))
+            alist.append(DeleteSelected())
             
             if hasattr(self.model,'get_image_url'):
-                alist.append(actions.ImageAction(self))
+                alist.append(actions.ImageAction())
                 
         #~ alist.append(self.default_action)
         self.set_actions(alist)
@@ -1043,11 +1143,8 @@ class Report(actors.Actor): #,base.Handled):
     @classmethod
     def request(cls,ui=None,**kw):
         self = cls()
-        ar = ReportActionRequest(ui,self,self.default_action)
-        #~ ar = ReportActionRequest(ui,self.list_action)
-        ar.setup(**kw)
-        return ar
-        #~ return self.get_handle(ui).request(**kw)
+        return self.default_action.request(ui,**kw)
+        
 
     def row2dict(self,row,d):
         """

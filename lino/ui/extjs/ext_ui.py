@@ -804,7 +804,7 @@ class ExtUI(base.UI):
                 ar = ext_requests.ViewReportRequest(request,rh,a)
                 params = dict(base_params=self.request2kw(ar))
 
-                if isinstance(a,actions.InsertRow):
+                if isinstance(a,reports.InsertRow):
                     elem = ar.create_instance()
                     rec = elem2rec1(ar,rh,elem,title=ar.get_title())
                     rec.update(phantom=True)
@@ -950,7 +950,7 @@ class ExtUI(base.UI):
                         raise Http404("%s failed for %r" % (a,elem))
                     return http.HttpResponseRedirect(target)
                     
-                if isinstance(a,actions.RowAction):
+                if isinstance(a,reports.RowAction):
                     try:
                         return a.run(ar,elem)
                         #~ return a.run(self,elem)
@@ -1216,6 +1216,7 @@ class ExtUI(base.UI):
                     url = self.get_action_url(v.action)
                     #~ url = self.build_url('api',v.action.actor.app_label,v.action.actor._actor_name,fmt=v.action.name)
                 return dict(text=prepare_label(v),href=url)
+            # no longer supported:
             handler = "function(btn,evt){Lino.%s(undefined,%s)}" % (v.action,py2js(v.params))
             return dict(text=prepare_label(v),handler=js_code(handler))
         return v
@@ -1243,13 +1244,13 @@ class ExtUI(base.UI):
         #~ if isinstance(a,actions.DeleteSelected): return ext_windows.DeleteRenderer(self,a)
         #~ if isinstance(a,actions.UpdateRowAction): return ext_windows.UpdateRowRenderer(self,a)
           
-        if isinstance(a,actions.GridEdit):
+        if isinstance(a,reports.GridEdit):
             return ext_windows.GridMasterWrapper(h,a)
             
-        if isinstance(a,actions.InsertRow):
+        if isinstance(a,reports.InsertRow):
             return ext_windows.InsertWrapper(h,a)
             
-        if isinstance(a,actions.ShowDetailAction):
+        if isinstance(a,reports.ShowDetailAction):
             return ext_windows.DetailWrapper(h,a)
             
     def setup_handle(self,h):
@@ -1277,29 +1278,29 @@ class ExtUI(base.UI):
         return os.path.abspath(os.path.dirname(__file__))
         
     def a2btn(self,a,**kw):
-        if isinstance(a,actions.SubmitDetail):
+        if isinstance(a,reports.SubmitDetail):
             #~ kw.update(panel_btn_handler=js_code('Lino.submit_detail'))
             kw.update(handler=js_code('function() {ww.save()}'))
             #~ kw.update(handler=js_code('ww.save'),scope=js_code('ww'))
-        elif isinstance(a,actions.SubmitInsert):
+        elif isinstance(a,reports.SubmitInsert):
             kw.update(handler=js_code('function() {ww.save()}'))
             #~ kw.update(handler=js_code('ww.save'),scope=js_code('ww'))
             #~ kw.update(panel_btn_handler=js_code('Lino.submit_insert'))
         #~ elif isinstance(a,actions.UpdateRowAction):
             #~ kw.update(panel_btn_handler=js_code('Lino.update_row_handler(%r)' % a.name))
-        elif isinstance(a,actions.ShowDetailAction):
+        elif isinstance(a,reports.ShowDetailAction):
             #~ kw.update(panel_btn_handler=js_code('Lino.show_detail_handler()'))
             kw.update(panel_btn_handler=js_code('function(panel){Lino.show_detail(panel)}'))
-        elif isinstance(a,actions.InsertRow):
+        elif isinstance(a,reports.InsertRow):
             kw.update(panel_btn_handler=js_code('function(panel){Lino.show_insert(panel)}'))
             #~ kw.update(panel_btn_handler=js_code("Lino.show_insert_handler(Lino.%s)" % a))
-        elif isinstance(a,actions.DuplicateRow):
+        elif isinstance(a,reports.DuplicateRow):
             kw.update(panel_btn_handler=js_code('function(panel){Lino.show_insert_duplicate(panel)}'))
-        elif isinstance(a,actions.DeleteSelected):
+        elif isinstance(a,reports.DeleteSelected):
             kw.update(panel_btn_handler=js_code("Lino.delete_selected" % a))
         #~ elif isinstance(a,actions.RedirectAction):
             #~ kw.update(panel_btn_handler=js_code("Lino.show_download_handler(%r)" % a.name))
-        elif isinstance(a,actions.RowAction):
+        elif isinstance(a,reports.RowAction):
             kw.update(panel_btn_handler=js_code("Lino.row_action_handler(%r)" % a.name))
         else:
             kw.update(panel_btn_handler=js_code("Lino.%s" % a))

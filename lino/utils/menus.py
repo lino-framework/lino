@@ -31,7 +31,7 @@ class MenuItem:
     
     def __init__(self,parent,action,
                  name=None,label=None,doc=None,enabled=True,
-                 can_view=None,hotkey=None,params={},
+                 can_view=None,hotkey=None,params=None,
                  request=None,
                  instance=None,
                  href=None):
@@ -43,8 +43,14 @@ class MenuItem:
             l.append(p)
             p = p.parent
         self.parent = parent
+        
         self.action = action
-        self.params = params
+        if params is not None:
+            assert request is None
+            assert action is not None
+            request = action.request(**params)
+            
+        #~ self.params = params
         self.href = href
         self.request = request
         self.instance = instance

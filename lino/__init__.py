@@ -157,9 +157,9 @@ def PARSE_DATE(s):
 
 
 
-class Site:
+class Site(object):
     help_url = "http://code.google.com/p/lino"
-    index_html = "This is the main page."
+    #~ index_html = "This is the main page."
     title = "Another Lino Site"
     domain = "www.example.com"
     
@@ -192,13 +192,13 @@ class Site:
     def init_site_config(self,sc):
         pass
         
-    def setup(self):
+    #~ def setup(self):
       
-        from lino.models import get_site_config
-        self.config = get_site_config()
+        #~ from lino.models import get_site_config
+        #~ self.config = get_site_config()
         
-        from lino.site import setup_site
-        setup_site(self)
+        #~ from lino.site import setup_site
+        #~ setup_site(self)
 
         
     def add_menu(self,*args,**kw):

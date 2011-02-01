@@ -9,11 +9,12 @@ for which I hope for help from other people.
 Version 1.1 (der Ei-Editor ist wieder da)
 -----------------------------------------
 
-#.  TypeError: unbound method disable_delete() must be called with Property instance as first argument (got PersonProperty i
-nstance instead)
+#.  Suchlisten drucken können
 
 Version 1.2 (alle todos vom 11.01. fertig)
 ------------------------------------------
+
+#.  In Suchliste anzeigen, wann er am suchen ist und ein Button "Suche abbrechen".
 
 #.  Wenn man auf einen FK klickt, sollte er kein neues Browserfenster 
     öffnen, sondern lediglich ein neues Fenster.

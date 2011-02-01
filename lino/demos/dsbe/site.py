@@ -14,7 +14,6 @@
 from lino import Site as Base
 from lino.utils.jsgen import js_code
 
-
 class Site(Base):
   
     title = "Another Lino/DSBE site"
@@ -36,20 +35,11 @@ class Site(Base):
 
         from lino import models as system
         from lino.modlib.dsbe import models as dsbe
-        
-        self.index_html = u"""
-        Willkommen auf dem ersten Prototypen von Lino-DSBE.
-        """
-
-        #~ self.index_html += """<ul>"""
-        #~ lino.index_html += """<li><a href="#" onclick="Lino.goto_permalink()">permalink with open windows</a></li>"""
-        #~ self.index_html += """<li><a href="%s">User manual</a></li>""" % self.help_url
-        #~ self.index_html += """</ul>"""
 
         m = self.add_menu("contacts",_("~Contacts"))
         m.add_action('contacts.Companies')
         m.add_action('contacts.Persons')
-        m.add_action('dsbe.PersonSearches')
+        m.add_action('dsbe.MySearches')
 
         m = self.add_menu("my",_("~My menu"),can_view=perms.is_authenticated)
         #~ m.add_action('projects.Projects')
@@ -59,7 +49,10 @@ class Site(Base):
         m.add_action('contacts.MyPersons')
         for pg in dsbe.PersonGroup.objects.all():
             m.add_action('contacts.MyPersonsByGroup',label=pg.name,
-            params=dict(master_id=pg.pk))
+                params=dict(master_instance=pg))
+            #~ m.add_action('contacts.MyPersonsByGroup',label=pg.name,
+            #~ params=dict(master_id=pg.pk))
+            #~ m.add_request_action(contacts.MyPersonsByGroup().request(master_instance=pg),label=pg.name)
 
         m = self.add_menu("courses",_("~Courses"),can_view=perms.is_authenticated)
         m.add_action('dsbe.Courses')
@@ -86,7 +79,8 @@ class Site(Base):
         me.add_action('properties.PropGroups')
         me.add_action('properties.PropTypes')
         for pg in properties.PropGroup.objects.all():
-            mm.add_request_action(properties.PropsByGroup().request(master_instance=pg),label=pg.name)
+            #~ mm.add_request_action(properties.PropsByGroup().request(master_instance=pg),label=pg.name)
+            mm.add_action('properties.PropsByGroup',params=dict(master_instance=pg),label=pg.name)
         
         ma.add_action('properties.PropsByGroup')
         #~ ma.add_action('dsbe.Skills1')
@@ -123,10 +117,12 @@ class Site(Base):
         m.add_action('uploads.Uploads')
         m.add_action('dsbe.CourseRequests')
         m.add_action('contenttypes.ContentTypes')
+        m.add_action('dsbe.PersonSearches')
 
         
         m = self.add_menu("help",_("~Help"))
-        m.add_item('userman',_("~User Manual"),href='http://lino.saffre-rumma.net/dsbe/index.html')
+        m.add_item('userman',_("~User Manual"),
+            href='http://lino.saffre-rumma.net/dsbe/index.html')
 
         #~ m.add_item('home',_("~Home"),href='/')
         #~ self._menu.add_item('home',_("~Home"),href='/')

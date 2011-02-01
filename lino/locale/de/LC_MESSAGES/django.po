@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-02-01 05:05+0000\n"
-"PO-Revision-Date: 2011-01-17 07:49+0200\n"
+"PO-Revision-Date: 2011-02-01 15:09+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -42,7 +42,8 @@ msgstr "Duplizieren"
 msgid "Delete"
 msgstr "Löschen"
 
-#: .\actions.py:174 .\actions.py:179
+#: .\actions.py:174
+#: .\actions.py:179
 msgid "Save"
 msgstr "Speichern"
 
@@ -92,7 +93,7 @@ msgstr "sehr gut"
 
 #: .\fields.py:74
 msgid "Invalid value %(value). Must be one of (%(values)s)"
-msgstr ""
+msgstr "Ungültiger Wert %(value). Erlaubte Werte sind (%(values)s)"
 
 #: .\models.py:38
 msgid "The company that runs this site"
@@ -102,7 +103,8 @@ msgstr "Firma, die diese Anwendung  betreibt"
 msgid "The next automatic id for Person or Company"
 msgstr "Nächste automatische ID für Partner"
 
-#: .\models.py:45 .\models.py:100
+#: .\models.py:45
+#: .\models.py:100
 msgid "Site Configuration"
 msgstr "Anwendungsparameter"
 
@@ -133,7 +135,8 @@ msgstr "%(details)s pro %(model)s %(master)s"
 msgid "Cannot delete %(self)s because %(count)d %(refs)s refer to it."
 msgstr "Kann %(self)s nicht löschen weil %(count)d %(refs)s darauf verweisen."
 
-#: .\demos\dsbe\lino_settings.py:27 .\demos\dsbe\site.py:49
+#: .\demos\dsbe\lino_settings.py:27
+#: .\demos\dsbe\site.py:49
 #: .\demos\std\lino_settings.py:23
 msgid "~Contacts"
 msgstr "~Kontakte"
@@ -142,12 +145,14 @@ msgstr "~Kontakte"
 msgid "~Notes"
 msgstr "~Notizen"
 
-#: .\demos\dsbe\lino_settings.py:38 .\demos\dsbe\site.py:72
+#: .\demos\dsbe\lino_settings.py:38
+#: .\demos\dsbe\site.py:72
 #: .\demos\std\lino_settings.py:31
 msgid "~Configure"
 msgstr "~Konfigurierung"
 
-#: .\demos\dsbe\lino_settings.py:62 .\demos\dsbe\site.py:115
+#: .\demos\dsbe\lino_settings.py:62
+#: .\demos\dsbe\site.py:115
 #: .\demos\std\lino_settings.py:43
 msgid "E~xplorer"
 msgstr ""
@@ -161,9 +166,8 @@ msgid "~Courses"
 msgstr "~Kurse"
 
 #: .\demos\dsbe\site.py:73
-#, fuzzy
 msgid "~Manager"
-msgstr "Sprache"
+msgstr "~Dienstleiter"
 
 #: .\demos\dsbe\site.py:74
 msgid "Local Site ~Administrator"
@@ -175,15 +179,15 @@ msgstr ""
 
 #: .\demos\dsbe\site.py:128
 msgid "~Help"
-msgstr ""
+msgstr "~Hilfe"
 
 #: .\demos\dsbe\site.py:129
 msgid "~User Manual"
-msgstr ""
+msgstr "~Benutzerhandbuch"
 
 #: .\demos\dsbe\site.py:135
 msgid "Home"
-msgstr ""
+msgstr "Startseite"
 
 #: .\demos\std\lino_settings.py:27
 msgid "~Projects"
@@ -339,7 +343,7 @@ msgstr "Frist (Einheit)"
 
 #: .\mixins\reminder.py:77
 msgid "due date reached"
-msgstr "Fälligkietsdatum erreicht"
+msgstr "Fälligkeitsdatum erreicht"
 
 #: .\mixins\uploadable.py:36
 msgid "upload"
@@ -408,7 +412,8 @@ msgstr "%s wurde erstellt."
 msgid "%s has been saved."
 msgstr "%s wurde gespeichert."
 
-#: .\ui\extjs\ext_ui.py:711 .\ui\extjs\ext_ui.py:734
+#: .\ui\extjs\ext_ui.py:711
+#: .\ui\extjs\ext_ui.py:734
 #, python-format
 msgid "User %(user)s cannot configure %(report)s."
 msgstr ""

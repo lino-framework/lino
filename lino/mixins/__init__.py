@@ -55,7 +55,8 @@ class AutoUser(models.Model):
         if u is not None:
             self.user = u
         
-class ByUser(object):
+#~ class ByUser(object):
+class ByUser(reports.Report):
     fk_name = 'user'
     can_view = perms.is_authenticated
     

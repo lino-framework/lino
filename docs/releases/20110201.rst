@@ -4,7 +4,8 @@ Version 1.1.0 (01.02.2011)
 Sprung zur Version 1.1 wegen des neuen Moduls "Eigenschaften".
 
 #.  Die vielen Ankreuzfelder im Reiter "Hindernisse" sind ersetzt durch eine Tabelle 
-    von konfigurierbaren Hindernissen. 
+    von konfigurierbaren Hindernissen.
+    Benutzung müsste eigentlich intuitiv sein.
     Konfigurierung: Statt bisher einer Tabelle von Fähigkeiten haben wir jetzt:
     - Eigenschaftsgruppen (Fachkompotenzen, Sozialkompetenzen und Hindernisse)
     - Für jede Eigenschaftsgruppe einen Menübefehl für diese Eigenschaften
@@ -13,6 +14,20 @@ Sprung zur Version 1.1 wegen des neuen Moduls "Eigenschaften".
     
     Personen #21683 und #200007 hatten Fähigkeiten definiert, 
     die ich aber nicht übernommen hatte.
+
+#.  Erweiterte Personensuche funktioniert. 
+    :menuselection:`Kontakte --> Person search`. 
+    Hier kann man nun suchen nach bisher folgenden Kriterien:
+    Alter, Geschlecht, Sprachkenntnisse, Fähigkeiten, Hindernisse.
+    Zum Beispiel habt ihr 787 Personen im Alter von 20 bis 30 Jahren.
+    
+    Jede Suche ist ein Record in einer Tabelle und wird wie andere Datenobjekte 
+    erstellt, gespeichert, gelöscht.
+    
+    - Beschriftungen sind noch nicht übersetzt
+    - Benutzung ist noch nicht intuitiv. 
+    - Jeder Benutzer sollte seine eigenen Suchen haben
+    
 
 #.  Änderungen im Hauptmenü:
 

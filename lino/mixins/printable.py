@@ -48,8 +48,8 @@ except ImportError:
     pyratemp = None
         
 import lino
-#~ from lino import reports
-from lino import actions
+from lino import reports
+#~ from lino import actions
 
 from lino.utils.babel import default_language, dtos, dtosl, setlang, getattr_lang
 from lino.utils import babel 
@@ -343,7 +343,7 @@ def get_build_method(elem):
         
 
 #~ class PrintAction(actions.RedirectAction):
-class BasePrintAction(actions.RowAction):
+class BasePrintAction(reports.RowAction):
   
     def before_build(self,bm,elem):
         """Return the target filename if a document needs to be built,
@@ -404,8 +404,9 @@ class PrintAction(BasePrintAction):
         return rr.ui.success_response(open_url=target,**kw)
       
 class DirectPrintAction(BasePrintAction):
-    def __init__(self,rpt,name,label,bmname,tplname):
-        BasePrintAction.__init__(self,rpt,name,label)
+    #~ def __init__(self,rpt,name,label,bmname,tplname):
+    def __init__(self,name,label,bmname,tplname):
+        BasePrintAction.__init__(self,name,label)
         self.bm =  bm_dict.get(bmname)
         self.tplname = tplname
         assert tplname.endswith(self.bm.template_ext)
@@ -415,14 +416,15 @@ class DirectPrintAction(BasePrintAction):
         return [ self.tplname ]
         
     def filename_root(self,elem):
-        return self.actor.model._meta.app_label + '.' + self.actor.model.__name__
+        return elem._meta.app_label + '.' + elem.__class__.__name__
+        #~ return self.actor.model._meta.app_label + '.' + self.actor.model.__name__
         
     def run(self,rr,elem,**kw):
         self.bm.build(self,elem)
         target = settings.MEDIA_URL + "/".join(self.bm.get_target_parts(self,elem))
         return rr.ui.success_response(open_url=target,**kw)
     
-class EditTemplateAction(actions.RowAction):
+class EditTemplateAction(reports.RowAction):
     name = 'tpledit'
     label = _('Edit template')
     
@@ -431,7 +433,7 @@ class EditTemplateAction(actions.RowAction):
         target = bm.get_template_url(self,elem)
         return rr.ui.success_response(open_url=target,**kw)
     
-class ClearCacheAction(actions.RowAction):
+class ClearCacheAction(reports.RowAction):
 #~ class ClearCacheAction(actions.UpdateRowAction):
     name = 'clear'
     label = _('Clear cache')
@@ -485,8 +487,8 @@ class Printable(models.Model):
         
     @classmethod
     def setup_report(cls,rpt):
-        rpt.add_action(PrintAction(rpt))
-        rpt.add_action(ClearCacheAction(rpt))
+        rpt.add_action(PrintAction())
+        rpt.add_action(ClearCacheAction())
         #~ rpt.add_action(EditTemplateAction(rpt))
         #~ super(Printable,cls).setup_report(rpt)
 

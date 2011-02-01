@@ -2,7 +2,7 @@
 :label_align: top
 
 main =
-    id:8 title
-    aged_from aged_to sex
-    dsbe.LanguageKnowledgesBySearch properties.WantedSkillsBySearch properties.UnwantedSkillsBySearch
+    id:8 title 
+    only_my_persons aged_from aged_to sex 
+    dsbe.LanguageKnowledgesBySearch properties.WantedPropsBySearch properties.UnwantedPropsBySearch
     dsbe.PersonsBySearch

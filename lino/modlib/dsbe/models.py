@@ -457,9 +457,9 @@ class Person(Partner,contacts.Person):
 
     @classmethod
     def setup_report(model,rpt):
-        rpt.add_action(DirectPrintAction(rpt,'auskblatt',_("Auskunftsblatt"),'appypdf','persons/auskunftsblatt.odt'))
-        rpt.add_action(DirectPrintAction(rpt,'eid',_("eID-Inhalt"),'appypdf','persons/eid-content.odt'))
-        rpt.add_action(DirectPrintAction(rpt,'cv',_("Curiculum vitae"),'appypdf','persons/cv.odt'))
+        rpt.add_action(DirectPrintAction('auskblatt',_("Auskunftsblatt"),'appypdf','persons/auskunftsblatt.odt'))
+        rpt.add_action(DirectPrintAction('eid',_("eID-Inhalt"),'appypdf','persons/eid-content.odt'))
+        rpt.add_action(DirectPrintAction('cv',_("Curiculum vitae"),'appypdf','persons/cv.odt'))
         
     def __unicode__(self):
         return u"%s (%s)" % (self.name,self.pk)
@@ -629,6 +629,14 @@ class PersonsByCity(Persons):
     fk_name = 'city'
     order_by = 'street street_no street_box addr2'.split()
     column_names = "street street_no street_box addr2 name language *"
+    
+def only_coached_persons(qs):
+    today = datetime.date.today()
+    return qs.filter(models.Q(coached_from__isnull=False) | 
+        models.Q(coached_until__isnull=False,coached_until__gte=today))
+  
+def only_my_persons(qs,user):
+    return qs.filter(models.Q(coach1__exact=user) | models.Q(coach2__exact=user))
 
 class MyPersons(Persons):
     use_as_default_report = False
@@ -636,22 +644,13 @@ class MyPersons(Persons):
     order_by = ['last_name','first_name']
     #~ def get_queryset(self):
     def get_request_queryset(self,rr):
-        today = datetime.date.today()
         qs = super(MyPersons,self).get_request_queryset(rr)
-        Q = models.Q
-        q1 = Q(coach1__exact=rr.user) | Q(coach2__exact=rr.user)
-        #~ q3 = Q(group__isnull=False)
-        #~ q3 = Q(coached_from__isnull=False) | Q(coached_until__isnull=False)
-        q2 = Q(coached_from__isnull=False) | Q(coached_until__isnull=False,coached_until__gte=today)
-        #~ q2 = Q(coached__gt=0)
-        #~ q2 = Q(dsbe_coach__exact=user)
-        #~ q2 = Q(dsbe_coaches__contains=user)
-        #~ q2 = Q(coaching_set__user__exact=user)
-        #~ return Person.objects.annotate(dsbe_ccoach=Count('coaching_set__user__exact')).filter(q1|q2)
-        return qs.filter(q1,q2)
-    #~ Person.user == user 
-    #~ or 
-    #~ Person.coachings_set.filter(user__exact=user).count() > 0        
+        return only_coached_persons(only_my_persons(qs,user))
+        #~ today = datetime.date.today()
+        #~ Q = models.Q
+        #~ q1 = Q(coach1__exact=rr.user) | Q(coach2__exact=rr.user)
+        #~ q2 = Q(coached_from__isnull=False) | Q(coached_until__isnull=False,coached_until__gte=today)
+        #~ return qs.filter(q1,q2)
 
 class MyPersonsByGroup(MyPersons):
     fk_name = 'group'
@@ -891,115 +890,6 @@ class ObstaclesByPerson(PropsByPerson):
         self.known_values = dict(group=pg)
         self.label = babelattr(pg,'name')
         PropsByPerson.setup_actions(self)
-
-#
-# Skills
-#
-
-#~ SKILL_TYPES = {
-    #~ '1' : dict(en='Skills'      ,de='Fachkompetenzen'),
-    #~ '2' : dict(en='Soft skills' ,de='Sozialkompetenzen'),
-    #~ '3' : dict(en='Obstacles'   ,de='Hindernisse'),
-#~ }
-#~ SKILL_TYPE_CHOICES = [ (k, v[DEFAULT_LANGUAGE]) for k,v in SKILL_TYPES.items()]
-#~ def f(a,b): 
-  #~ return cmp(a[0],b[0])
-#~ SKILL_TYPE_CHOICES.sort(f)
-
-
-#~ class Skill(models.Model):
-    #~ class Meta:
-        #~ verbose_name = _("Skill")
-        #~ verbose_name_plural = _("Skills")
-        
-    #~ type = models.CharField(max_length=1,
-        #~ verbose_name=_("Skill type"),
-        #~ choices=SKILL_TYPE_CHOICES)
-    
-    #~ name = models.CharField(max_length=200,verbose_name=_("Designation"))
-    
-    #~ def __unicode__(self):
-        #~ return babelattr(self,'name')
-
-#~ add_babel_field(Skill,'name')
-
-#~ class Skills(reports.Report):
-    #~ model = Skill
-    #~ order_by = ['name']
-    
-#~ class Skills1(Skills):    
-    #~ known_values = dict(type='1')
-    #~ label = babeldict_getitem(SKILL_TYPES,'1')
-#~ class Skills2(Skills):    
-    #~ known_values = dict(type='2')
-    #~ label = babeldict_getitem(SKILL_TYPES,'2')
-#~ class Skills3(Skills):    
-    #~ known_values = dict(type='3')
-    #~ label = babeldict_getitem(SKILL_TYPES,'3')
-
-
-#~ class SkillOccurence(models.Model):
-    #~ """
-    #~ Abstract base class for :class:`OwnedSkill` and :class:`SearchedSkill`.
-    #~ """
-    
-    #~ class Meta:
-        #~ abstract = True
-        
-    #~ type = models.CharField(max_length=1,
-        #~ verbose_name=_("Skill type"),
-        #~ choices=SKILL_TYPE_CHOICES)
-    #~ skill = models.ForeignKey("dsbe.Skill",verbose_name=_("Skill"))
-    #~ strength = fields.StrengthField(verbose_name=_("strength"))
-    
-    #~ @chooser()
-    #~ def skill_choices(cls,type):
-        #~ if type is None:
-            #~ return []
-        #~ return Skill.objects.filter(type=type).order_by('name')
-        
-    #~ def save(self,*args,**kw):
-        #~ self.type = self.skill.type
-        #~ r = super(SkillOccurence,self).save(*args,**kw)
-        #~ return r
-        
-    #~ def __unicode__(self):
-        #~ if self.skill_id is None:
-            #~ return u"Undefined %s" % self.type
-        #~ return u'%s.%s=%s ' % (self.type,self.skill,self.strength)
-    
-#~ class OwnedSkill(SkillOccurence):
-    #~ class Meta:
-        #~ verbose_name = _("Owned Skill")
-        #~ verbose_name_plural = _("Owned Skills")
-        
-    #~ person = models.ForeignKey("contacts.Person")
-    #~ remark = models.CharField(max_length=200,
-        #~ blank=True,null=True,
-        #~ verbose_name=_("Remark"))
-    
-#~ class SkillsByPerson(reports.Report):
-    #~ model = OwnedSkill
-    #~ fk_name = 'person'
-    #~ column_names = "skill strength type" 
-    #~ """
-    #~ type must be in the store, but should not be visible. 
-    #~ needed to set context of skill combobox.
-    #~ """
-    #~ hide_columns = ['type']
-    
-#~ class SkillsByPerson1(SkillsByPerson):
-    #~ known_values = dict(type='1')
-    #~ label = babeldict_getitem(SKILL_TYPES,'1')
-    
-#~ class SkillsByPerson2(SkillsByPerson):
-    #~ known_values = dict(type='2')
-    #~ label = babeldict_getitem(SKILL_TYPES,'2')
-
-#~ class SkillsByPerson3(SkillsByPerson):
-    #~ known_values = dict(type='3')
-    #~ label = babeldict_getitem(SKILL_TYPES,'3')
-
     
 #
 # JOBS
@@ -1598,8 +1488,8 @@ class Course(models.Model):
   
     @classmethod
     def setup_report(model,rpt):
-        rpt.add_action(DirectPrintAction(rpt,'candidates',_("List of candidates"),'appypdf','courses/candidates.odt'))
-        rpt.add_action(DirectPrintAction(rpt,'participants',_("List of participants"),'appypdf','courses/participants.odt'))
+        rpt.add_action(DirectPrintAction('candidates',_("List of candidates"),'appypdf','courses/candidates.odt'))
+        rpt.add_action(DirectPrintAction('participants',_("List of participants"),'appypdf','courses/participants.odt'))
         
     def participants(self):
         u"""
@@ -1713,7 +1603,7 @@ class ParticipantsByCourse(RequestsByCourse):
     column_names = 'person remark date_ended ending'
     
     def setup_actions(self):
-        class Unregister(actions.RowAction):
+        class Unregister(reports.RowAction):
             label = _("Unregister")
             def run(self,rr,elem):
                 course = elem.course
@@ -1721,7 +1611,7 @@ class ParticipantsByCourse(RequestsByCourse):
                 elem.save()
                 return rr.ui.success_response(refresh_all=True,
                   message=_("%(person)s has been unregistered from %(course)s") % dict(person=elem.person,course=course))
-        self.add_action(Unregister(self))
+        self.add_action(Unregister())
 
 class CandidatesByCourse(RequestsByCourse):
     label = _("Candidates")
@@ -1733,7 +1623,7 @@ class CandidatesByCourse(RequestsByCourse):
             content__exact=rr.master_instance.content)
     
     def setup_actions(self):
-        class Register(actions.RowAction):
+        class Register(reports.RowAction):
             label = _("Register")
             def run(self,rr,elem):
                 elem.course = rr.master_instance
@@ -1741,7 +1631,7 @@ class CandidatesByCourse(RequestsByCourse):
                 return rr.ui.success_response(refresh_all=True,
                   message=_("%(person)s has been registered to %(course)s") % dict(
                       person=elem.person,course=elem.course))
-        self.add_action(Register(self))
+        self.add_action(Register())
     
     def create_instance(self,req,**kw):
         """Manually clear the `course` field.
@@ -1753,7 +1643,11 @@ class CandidatesByCourse(RequestsByCourse):
 #
 # SEARCH
 #
-class PersonSearch(mixins.Printable):
+class PersonSearch(mixins.AutoUser):
+    class Meta:
+        verbose_name = _("Person Search")
+        verbose_name_plural = _('Person Searches')
+        
     title = models.CharField(max_length=200,verbose_name=_("Search Title"))
     aged_from = models.IntegerField(_("Aged from"),
         blank=True,null=True)
@@ -1762,41 +1656,60 @@ class PersonSearch(mixins.Printable):
     sex = models.CharField(max_length=1,blank=True,null=True,
         verbose_name=_("Sex"),
         choices=SEX_CHOICES) 
+        
+    only_my_persons = models.BooleanField(verbose_name=_("Only my persons"),default=True)
     
-class SearchedLanguageKnowledge(models.Model):
+    def result(self):
+        for p in PersonsBySearch().request(master_instance=self):
+            yield p
+        
+    def __unicode__(self):
+        return self._meta.verbose_name + ' "%s"' % (self.title or _("Unnamed"))
+        
+    def get_print_language(self,pm):
+        return DEFAULT_LANGUAGE
+        
+    @classmethod
+    def setup_report(model,rpt):
+        rpt.add_action(DirectPrintAction('suchliste',_("Drucken"),'appypdf','persons/suchliste.odt'))
+        
+class MySearches(mixins.ByUser):
+    model = PersonSearch
+    
+class WantedLanguageKnowledge(models.Model):
     search = models.ForeignKey(PersonSearch)
     language = models.ForeignKey("countries.Language",verbose_name=_("Language"))
     spoken = fields.KnowledgeField(verbose_name=_("spoken"))
     written = fields.KnowledgeField(verbose_name=_("written"))
 
-class RequiredSkill(properties.PropertyOccurence):
+class WantedSkill(properties.PropertyOccurence):
     class Meta:
         app_label = 'properties'
-        verbose_name = _("Required skill")
-        verbose_name_plural = _("Required skills")
+        verbose_name = _("Wanted property")
+        verbose_name_plural = _("Wanted properties")
         
     search = models.ForeignKey(PersonSearch)
     
 class UnwantedSkill(properties.PropertyOccurence):
     class Meta:
         app_label = 'properties'
-        verbose_name = _("Unwanted skill")
-        verbose_name_plural = _("Unwanted skills")
+        verbose_name = _("Unwanted property")
+        verbose_name_plural = _("Unwanted properties")
     search = models.ForeignKey(PersonSearch)
     
     
 class LanguageKnowledgesBySearch(reports.Report):
-    label = _("Searched language knowledges")
+    label = _("Wanted language knowledges")
     fk_name = 'search'
-    model = SearchedLanguageKnowledge
+    model = WantedLanguageKnowledge
 
-class WantedSkillsBySearch(reports.Report):
-    label = _("Wanted skills")
+class WantedPropsBySearch(reports.Report):
+    label = _("Wanted properties")
     fk_name = 'search'
-    model = RequiredSkill
+    model = WantedSkill
 
-class UnwantedSkillsBySearch(reports.Report):
-    label = _("Unwanted skills")
+class UnwantedPropsBySearch(reports.Report):
+    label = _("Unwanted properties")
     fk_name = 'search'
     model = UnwantedSkill
 
@@ -1840,10 +1753,12 @@ class PersonsBySearch(reports.Report):
             #~ qs = qs.filter(q1|q2)
             qs = qs.filter(birth_date__gte=today-datetime.timedelta(days=search.aged_to*365))
             
+        if search.only_my_persons:
+            qs = only_coached_persons(only_my_persons(qs,search.user))
           
         required_id_sets = []
         
-        required_lk = [lk for lk in search.searchedlanguageknowledge_set.all()]
+        required_lk = [lk for lk in search.wantedlanguageknowledge_set.all()]
         if required_lk:
             # language requirements are OR'ed
             ids = set()
@@ -1857,7 +1772,7 @@ class PersonsBySearch(reports.Report):
                 ids.update(q.values_list('person__id',flat=True))
             required_id_sets.append(ids)
             
-        rprops = [x for x in search.requiredskill_set.all()]
+        rprops = [x for x in search.wantedskill_set.all()]
         if rprops: # required properties
             ids = set()
             for rp in rprops:
