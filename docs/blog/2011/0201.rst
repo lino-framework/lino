@@ -1,7 +1,9 @@
 20110201
 ========
 
-- Übersetzungen :mod:`lino.modlib.properties`.
+#.  Übersetzungen :mod:`lino.modlib.properties`.
 
-- Release 1.1.0 in Eupen.
+#.  Release :doc:`/releases/20110201` in Eupen.
+
+#.  Nachmittags diverse kleine Bugfixes und Änderungen
 

@@ -1824,7 +1824,7 @@ Ext.override(Lino.FormPanel,Lino.MainPanelMixin);
 //~ }
 
 Lino.cell_context_menu = function(grid,row,col,e) {
-  console.log('cellcontextmenu',grid,row,col,e);
+  //~ console.log('cellcontextmenu',grid,row,col,e);
   e.stopEvent();
   //~ grid.getView().focusCell(row,col);
   grid.getSelectionModel().select(row,col);

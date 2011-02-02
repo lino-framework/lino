@@ -1,0 +1,8 @@
+Version 1.1.1 (02.02.2011)
+==========================
+
+Verbessert eine Serie von kleinen Bugs in :doc:`20110201`
+
+Bekannte Probleme:
+
+-  Nach Erstellen einer Suchliste funktioniert Refresh nicht.

@@ -457,9 +457,9 @@ class Person(Partner,contacts.Person):
 
     @classmethod
     def setup_report(model,rpt):
-        rpt.add_action(DirectPrintAction('auskblatt',_("Auskunftsblatt"),'appypdf','persons/auskunftsblatt.odt'))
-        rpt.add_action(DirectPrintAction('eid',_("eID-Inhalt"),'appypdf','persons/eid-content.odt'))
-        rpt.add_action(DirectPrintAction('cv',_("Curiculum vitae"),'appypdf','persons/cv.odt'))
+        rpt.add_action(DirectPrintAction('auskblatt',_("Auskunftsblatt"),'persons/auskunftsblatt.odt'))
+        rpt.add_action(DirectPrintAction('eid',_("eID-Inhalt"),'persons/eid-content.odt'))
+        rpt.add_action(DirectPrintAction('cv',_("Curiculum vitae"),'persons/cv.odt'))
         
     def __unicode__(self):
         return u"%s (%s)" % (self.name,self.pk)
@@ -1488,8 +1488,8 @@ class Course(models.Model):
   
     @classmethod
     def setup_report(model,rpt):
-        rpt.add_action(DirectPrintAction('candidates',_("List of candidates"),'appypdf','courses/candidates.odt'))
-        rpt.add_action(DirectPrintAction('participants',_("List of participants"),'appypdf','courses/participants.odt'))
+        rpt.add_action(DirectPrintAction('candidates',_("List of candidates"),'courses/candidates.odt'))
+        rpt.add_action(DirectPrintAction('participants',_("List of participants"),'courses/participants.odt'))
         
     def participants(self):
         u"""
@@ -1671,7 +1671,7 @@ class PersonSearch(mixins.AutoUser):
         
     @classmethod
     def setup_report(model,rpt):
-        rpt.add_action(DirectPrintAction('suchliste',_("Drucken"),'appypdf','persons/suchliste.odt'))
+        rpt.add_action(DirectPrintAction('suchliste',_("Drucken"),'persons/suchliste.odt'))
         
 class MySearches(mixins.ByUser):
     model = PersonSearch
@@ -1728,6 +1728,9 @@ class PersonsBySearch(reports.Report):
     master = PersonSearch
     app_label = 'dsbe'
     label = _("Found persons")
+    
+    can_add = perms.never
+    can_change = perms.never
     
     def get_request_queryset(self,rr):
         """

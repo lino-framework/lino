@@ -21,10 +21,10 @@ import sys
 import datetime
 import logging
 
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 """
 Lino version number. 
-The latest documented release is :doc:`/releases/20110201`.
+The latest documented release is :doc:`/releases/20110202`.
 """
 
 __author__ = "Luc Saffre <luc.saffre@gmx.net>"
@@ -162,6 +162,9 @@ class Site(object):
     #~ index_html = "This is the main page."
     title = "Another Lino Site"
     domain = "www.example.com"
+    
+    #~ preferred_build_method = 'pisa'
+    preferred_build_method = 'appypdf'
     
     csv_params = dict()
     """

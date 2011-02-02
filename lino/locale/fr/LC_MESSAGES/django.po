@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-01 05:05+0000\n"
+"POT-Creation-Date: 2011-02-02 00:48+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,36 +16,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n>1;\n"
-
-#: .\actions.py:106
-msgid "Detail"
-msgstr ""
-
-#: .\actions.py:109
-#, python-format
-msgid "%s (Detail)"
-msgstr ""
-
-#: .\actions.py:120
-msgid "Insert"
-msgstr ""
-
-#: .\actions.py:125
-#, python-format
-msgid "Insert into %s"
-msgstr ""
-
-#: .\actions.py:130
-msgid "Duplicate"
-msgstr ""
-
-#: .\actions.py:166
-msgid "Delete"
-msgstr ""
-
-#: .\actions.py:174 .\actions.py:179
-msgid "Save"
-msgstr ""
 
 #: .\fields.py:47
 msgid "Language"
@@ -111,30 +81,60 @@ msgstr ""
 msgid "~Site"
 msgstr ""
 
-#: .\reports.py:426
+#: .\reports.py:321
+msgid "Detail"
+msgstr ""
+
+#: .\reports.py:324
+#, python-format
+msgid "%s (Detail)"
+msgstr ""
+
+#: .\reports.py:335
+msgid "Insert"
+msgstr ""
+
+#: .\reports.py:340
+#, python-format
+msgid "Insert into %s"
+msgstr ""
+
+#: .\reports.py:345
+msgid "Duplicate"
+msgstr ""
+
+#: .\reports.py:361
+msgid "Delete"
+msgstr ""
+
+#: .\reports.py:369 .\reports.py:374
+msgid "Save"
+msgstr ""
+
+#: .\reports.py:521
 #, python-format
 msgid "User %(user)s cannot view %(report)s."
 msgstr ""
 
-#: .\reports.py:619
+#: .\reports.py:714
 msgid "Yes"
 msgstr ""
 
-#: .\reports.py:619
+#: .\reports.py:714
 msgid "No"
 msgstr ""
 
-#: .\reports.py:893
+#: .\reports.py:993
 #, python-format
 msgid "%(details)s by %(model)s %(master)s"
 msgstr ""
 
-#: .\site.py:171
+#: .\core\kernel.py:157
 #, python-format
 msgid "Cannot delete %(self)s because %(count)d %(refs)s refer to it."
 msgstr ""
 
-#: .\demos\dsbe\lino_settings.py:27 .\demos\dsbe\site.py:49
+#: .\demos\dsbe\lino_settings.py:27 .\demos\dsbe\site.py:39
 #: .\demos\std\lino_settings.py:23
 msgid "~Contacts"
 msgstr ""
@@ -143,45 +143,45 @@ msgstr ""
 msgid "~Notes"
 msgstr ""
 
-#: .\demos\dsbe\lino_settings.py:38 .\demos\dsbe\site.py:72
+#: .\demos\dsbe\lino_settings.py:38 .\demos\dsbe\site.py:65
 #: .\demos\std\lino_settings.py:31
 msgid "~Configure"
 msgstr ""
 
-#: .\demos\dsbe\lino_settings.py:62 .\demos\dsbe\site.py:115
+#: .\demos\dsbe\lino_settings.py:62 .\demos\dsbe\site.py:109
 #: .\demos\std\lino_settings.py:43
 msgid "E~xplorer"
 msgstr ""
 
-#: .\demos\dsbe\site.py:54
+#: .\demos\dsbe\site.py:44
 msgid "~My menu"
 msgstr ""
 
-#: .\demos\dsbe\site.py:64
+#: .\demos\dsbe\site.py:57
 msgid "~Courses"
 msgstr ""
 
-#: .\demos\dsbe\site.py:73
+#: .\demos\dsbe\site.py:66
 msgid "~Manager"
 msgstr ""
 
-#: .\demos\dsbe\site.py:74
+#: .\demos\dsbe\site.py:67
 msgid "Local Site ~Administrator"
 msgstr ""
 
-#: .\demos\dsbe\site.py:75
+#: .\demos\dsbe\site.py:68
 msgid "~Expert"
 msgstr ""
 
-#: .\demos\dsbe\site.py:128
+#: .\demos\dsbe\site.py:123
 msgid "~Help"
 msgstr ""
 
-#: .\demos\dsbe\site.py:129
+#: .\demos\dsbe\site.py:124
 msgid "~User Manual"
 msgstr ""
 
-#: .\demos\dsbe\site.py:135
+#: .\demos\dsbe\site.py:131
 msgid "Home"
 msgstr ""
 
@@ -193,19 +193,19 @@ msgstr ""
 msgid "user"
 msgstr ""
 
-#: .\mixins\__init__.py:72
+#: .\mixins\__init__.py:73
 msgid "Owner type"
 msgstr ""
 
-#: .\mixins\__init__.py:73
+#: .\mixins\__init__.py:74
 msgid "Owner"
 msgstr ""
 
-#: .\mixins\__init__.py:91
+#: .\mixins\__init__.py:92
 msgid "Person"
 msgstr ""
 
-#: .\mixins\__init__.py:92
+#: .\mixins\__init__.py:93
 msgid "Company"
 msgstr ""
 
@@ -277,23 +277,23 @@ msgstr ""
 msgid "Print"
 msgstr ""
 
-#: .\mixins\printable.py:427
+#: .\mixins\printable.py:429
 msgid "Edit template"
 msgstr ""
 
-#: .\mixins\printable.py:437
+#: .\mixins\printable.py:439
 msgid "Clear cache"
 msgstr ""
 
-#: .\mixins\printable.py:454
+#: .\mixins\printable.py:456
 msgid "Build method"
 msgstr ""
 
-#: .\mixins\printable.py:457
+#: .\mixins\printable.py:459
 msgid "Template"
 msgstr ""
 
-#: .\mixins\printable.py:481
+#: .\mixins\printable.py:483
 msgid "must build"
 msgstr ""
 

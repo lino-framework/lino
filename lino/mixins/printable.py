@@ -405,9 +405,9 @@ class PrintAction(BasePrintAction):
       
 class DirectPrintAction(BasePrintAction):
     #~ def __init__(self,rpt,name,label,bmname,tplname):
-    def __init__(self,name,label,bmname,tplname):
+    def __init__(self,name,label,tplname,build_method=None):
         BasePrintAction.__init__(self,name,label)
-        self.bm =  bm_dict.get(bmname)
+        self.bm =  bm_dict.get(build_method or settings.LINO_SITE.preferred_build_method)
         self.tplname = tplname
         assert tplname.endswith(self.bm.template_ext)
         
@@ -532,7 +532,7 @@ class Printable(models.Model):
     def get_build_method(self):
         # TypedPrintable  overrides this
         #~ return 'rtf'
-        return 'pisa'
+        return settings.LINO_SITE.preferred_build_method 
         #~ return 'pisa'
         
 

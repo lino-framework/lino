@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-01 05:06+0000\n"
+"POT-Creation-Date: 2011-02-02 00:48+0000\n"
 "PO-Revision-Date: 2011-02-01 07:09+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,9 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: .\models.py:68
-#: .\models.py:90
-#: .\models.py:123
+#: .\models.py:68 .\models.py:90 .\models.py:123
 msgid "Property Type"
 msgstr "Eigenschaftsart"
 
@@ -26,15 +24,11 @@ msgstr "Eigenschaftsart"
 msgid "Property Types"
 msgstr "Eigenschaftsarten"
 
-#: .\models.py:71
-#: .\models.py:92
-#: .\models.py:108
-#: .\models.py:121
+#: .\models.py:71 .\models.py:92 .\models.py:108 .\models.py:121
 msgid "Designation"
 msgstr "Beschreibung"
 
-#: .\models.py:72
-#: .\models.py:73
+#: .\models.py:72 .\models.py:73
 msgid "Limit to choices"
 msgstr "Beschränken auf Auswahl"
 
@@ -46,13 +40,11 @@ msgstr "Eigenschaftswert"
 msgid "Property Choices"
 msgstr "Eigenschaftswerte"
 
-#: .\models.py:91
-#: .\models.py:144
+#: .\models.py:91 .\models.py:144
 msgid "Value"
 msgstr "Wert"
 
-#: .\models.py:105
-#: .\models.py:122
+#: .\models.py:105 .\models.py:122
 msgid "Property Group"
 msgstr "Eigenschaftsgruppe"
 
@@ -60,8 +52,7 @@ msgstr "Eigenschaftsgruppe"
 msgid "Property Groups"
 msgstr "Eigenschaftsgruppen"
 
-#: .\models.py:118
-#: .\models.py:143
+#: .\models.py:118 .\models.py:143
 msgid "Property"
 msgstr "Eigenschaft"
 
@@ -73,15 +64,14 @@ msgstr "Eigenschaften"
 msgid "Property group"
 msgstr "Eigenschaftsgruppe"
 
-#: .\models.py:224
+#: .\models.py:233
 msgid "Skills Property Group"
 msgstr "Eigenschaftsgruppe \"Fachkompetenzen\""
 
-#: .\models.py:230
+#: .\models.py:239
 msgid "Soft Skills Property Group"
 msgstr "Eigenschaftsgruppe \"Sozialkompetenzen\""
 
-#: .\models.py:236
+#: .\models.py:245
 msgid "Obstacles Property Group"
 msgstr "Eigenschaftsgruppe \"Hindernisse\""
-

@@ -9,7 +9,16 @@ for which I hope for help from other people.
 Version 1.1 (der Ei-Editor ist wieder da)
 -----------------------------------------
 
+#.  Wenn man in Personen-Suchlisten das Fenster "Einfügen" bestätigt, 
+    dann funktioniert das Refresh nicht. Eigentlich müsste er dann
+  
 #.  Suchlisten drucken können
+
+#.  Momentan ist es nicht möglich, "mal eben" eine Suche zu machen, 
+    die dann nicht gespeichert wird.
+    Stört das?
+    Deshalb ist momentan übrigens der Titel einer Suchliste ein 
+    obligatorisches Feld.
 
 Version 1.2 (alle todos vom 11.01. fertig)
 ------------------------------------------
@@ -40,6 +49,12 @@ Version 1.2 (alle todos vom 11.01. fertig)
 
 Version 1.3
 -----------
+
+#.  Alle Unterklassen von `lino.mixins.ByUser` benutzen ja :meth:`setup_request`.
+    Im Fall eines UI-losen Requests (insbesondere der, den das MenuItem macht) 
+    sollte das aber nicht stattfinden. 
+    Der Permalink sollte den Benutzer nicht enthalten.
+    http://127.0.0.1:8000/api/dsbe/MySearches
 
 #.  Decide some relatively stable Django version to use,
     because simply getting the latest snapshot each time 
