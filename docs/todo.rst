@@ -9,6 +9,9 @@ for which I hope for help from other people.
 Short-term
 ----------
 
+#.  Auf einer neuen Zeile in einer Grid stören die Fehlermeldungen per
+    Alert.  (z.B. Eingabe ChoiceType)
+    
 #.  Wenn man in Personen-Suchlisten das Fenster "Einfügen" bestätigt, 
     dann funktioniert das Refresh nicht. 
     Eigentlich müsste er die neu erstellte Suche im Detail anzeigen.
@@ -22,32 +25,27 @@ Short-term
     Deshalb ist momentan übrigens der Titel einer Suchliste ein 
     obligatorisches Feld.
 
+#.  :doc:`tickets/20`.
+
 Version 1.2 (alle todos vom 11.01. fertig)
 ------------------------------------------
 
+#.  Wenn man in einem Vertrag eine Angabe ändert und dann "Drucken" klickt, dann wird die 
+    Änderung irritierenderweise nicht gespeichert.
+  
 #.  In Suchliste anzeigen, wann er am suchen ist und ein Button "Suche abbrechen".
 
-#.  Wenn man auf einen FK klickt, sollte er kein neues Browserfenster 
+#.  Wenn man auf einen ForeignKey klickt, sollte er kein neues Browserfenster 
     öffnen, sondern lediglich ein neues Fenster.
     
-#.  Das Hauptmenü könnte insgesamt per Permalink arbeiten.
-    Dadurch würden automatisch alle Fenster geschlossen.
-    
-#.  Save GC funktioniert nicht. Oder --besser gesagt-- 
-    wird erst aktiv nach dem nächsten Server-Restart.
+#.  Gridkonfigurationen speichern funktioniert nicht. 
+    Oder --besser gesagt-- wird erst aktiv nach dem nächsten Server-Restart.
 
 #.  Excel erkennt das encoding der csv-Datei nicht als UTF-8.
 
 #.  Formatierte Texte in Verträgen drucken können.
     Zumindest Aufzählungen und mehrere Absätze 
     sollten möglich sein.
-
-#.  Liste der offenen Fenster. Einfachste Form wäre ein Dropdown, 
-    so dass man leicht von hier nach dort springen kann. 
-    Oder als vertikale Reiter.
-    Manche Links öffnen einen neuen Tab: irritiert
-
-#.  :doc:`tickets/20`.
 
 Version 1.3
 -----------
@@ -73,8 +71,10 @@ Version 1.3
     Also bis zur ersten Lino-Demo in FR oder NL muss ich mir dazu
     noch was einfallen lassen. 
 
-#.  Wenn man die Rückfrage nach "Delete" mit Enter beatnwortet, 
-    wird die Grid nicht aktualisiert...
+#.  Wenn man die Rückfrage nach "Delete" zu schnell beantwortet, 
+    wird die Grid nicht aktualisiert. 
+    Der Fehler funktioniert nicht immer. 
+    Ich warte auf weitere Beobachtungen.
 
 #.  Reminders als "gelesen" markieren können.
     
@@ -106,13 +106,13 @@ Version 1.3
       box1:
         field3 field4
 
-#.  Minify :xfile:`lino.js`
-    http://en.wikipedia.org/wiki/Minification_(programming)
-
 #.  Der JS-Code, der ein Detail-Fenster definiert, wird in der :xfile:`lino.js` 
     für jeden Report zweimal generiert (detail und insert).
     Ein einziges Mal für alle Reports würde reichen.
   
+#.  Minify :xfile:`lino.js`
+    http://en.wikipedia.org/wiki/Minification_(programming)
+
 #.  Textbausteine (im Text-Editor F1 drücken können)
 
 #.  Dublettenkontrolle. Nach Duplikaten suchen vor Erstellen einer neuen Person.
@@ -120,9 +120,6 @@ Version 1.3
     Name und Vorname identisch sind **außer** wenn beide ein unleeres Geburtsdatum 
     haben (und nicht das gleiche).
 
-#.  Wenn man in einem Vertrag eine Angabe ändert und dann "Drucken" klickt, dann wird die 
-    Änderung irritierenderweise nicht gespeichert.
-  
 #.  Im Hauptmenü könnten zwei Befehle :menuselection:`Help --> User Manual` 
     und :menuselection:`Help --> About` kommen, dann hätten wir den ganzen 
     Platz für Erinnerungen.
@@ -130,17 +127,13 @@ Version 1.3
 #.  Wenn man z.B. in Companies.insert manuell eine ID eingibt, 
     dann ignoriert der Server die und vergibt trotzdem seine automatische nächste ID.
 
-#.  Wenn man mehrere Ansichten in einer GC hat und eine davon irgendwelche Kolonnen 
-    versteckt, dann werden diese Kolonnen nicht wieder sichtbar, wenn man auf eine 
-    andere Ansicht zurück wechselt.
-    
 #.  Reminders arbeiten momentan mit zwei Feldern delay_value und delay_type.
     Schöner wäre ein TimeDelaField wie in 
     http://djangosnippets.org/snippets/1060/
 
 
-After version 1.2
------------------
+Later
+-----
 
 #.  Idee: Vielleicht müsste contacts.Person doch nicht abstract sein, und
     lino.dsbe stattdessen ein neues Modell CoachedPerson(contacts.Person) 

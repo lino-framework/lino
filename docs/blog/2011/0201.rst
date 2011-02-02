@@ -1,6 +1,10 @@
 20110201
 ========
 
+#.  Wenn man mehrere Ansichten in einer GC hat und eine davon irgendwelche Kolonnen 
+    versteckt, dann wurden diese Kolonnen nicht wieder sichtbar, wenn man auf eine 
+    andere Ansicht zurück wechselt. Behoben.
+
 #.  Übersetzungen :mod:`lino.modlib.properties`.
 
 #.  Release :doc:`/releases/20110201` in Eupen.

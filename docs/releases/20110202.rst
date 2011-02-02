@@ -1,7 +1,10 @@
 Version 1.1.1 (02.02.2011)
 ==========================
 
-Verbessert eine Serie von kleinen Bugs in :doc:`20110201`
+Verbessert eine Serie von kleinen Bugs in :doc:`20110201`.
+
+Insbesondere kann man eine Suchliste jetzt ausdrucken 
+(ich habe eine rüdimentäre Vorlage `persons/suchliste.odt` gemacht).
 
 Bekannte Probleme:
 

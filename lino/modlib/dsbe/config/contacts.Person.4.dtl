@@ -2,7 +2,7 @@
 :label_align: top
 
 main = 
-  box12 dsbe.LanguageKnowledgesByPerson 
+  dsbe.LanguageKnowledgesByPerson 
   dsbe.CourseRequestsByPerson  
   # skills obstacles
   

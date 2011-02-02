@@ -24,8 +24,8 @@ suche1 =
   unavailable_until:15 unavailable_why:30
   
 suche2 =
-  needs_residence_permit residence_permit
-  needs_work_permit work_permit  
+  needs_residence_permit needs_work_permit 
+  residence_permit work_permit  driving_licence
   
 suche = 
   suche1:40  suche2:40
