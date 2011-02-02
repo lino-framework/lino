@@ -1,9 +1,15 @@
 #20 (memory exhausted by Apache)
 ================================
 
-Last Friday there was a strange phenomen 
-which caused the Lino server to crash due 
-to exhausted memory.
+On Friday 21/01/11 there was a strange phenomen 
+which caused the Lino server to exhaust its memory.
+
+Status:
+currently testing whether `MaxClients 100` in Apache config helps.
+
+
+Details
+-------
 
 Apache's `error.log`:
 

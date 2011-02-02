@@ -6,14 +6,16 @@ See also :doc:`/tickets/index` which is a list of tickets
 for which I hope for help from other people.
 
 
-Version 1.1 (der Ei-Editor ist wieder da)
------------------------------------------
+Short-term
+----------
 
 #.  Wenn man in Personen-Suchlisten das Fenster "Einfügen" bestätigt, 
-    dann funktioniert das Refresh nicht. Eigentlich müsste er dann
+    dann funktioniert das Refresh nicht. 
+    Eigentlich müsste er die neu erstellte Suche im Detail anzeigen.
+    Stattdessen zeigt er sie nicht einmal in der Grid an.
+    Da kommt ein TypeError im JS.
+    (Ein einfacher Klick auf Refresh reicht dann)
   
-#.  Suchlisten drucken können
-
 #.  Momentan ist es nicht möglich, "mal eben" eine Suche zu machen, 
     die dann nicht gespeichert wird.
     Stört das?

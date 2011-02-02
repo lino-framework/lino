@@ -645,7 +645,7 @@ class MyPersons(Persons):
     #~ def get_queryset(self):
     def get_request_queryset(self,rr):
         qs = super(MyPersons,self).get_request_queryset(rr)
-        return only_coached_persons(only_my_persons(qs,user))
+        return only_coached_persons(only_my_persons(qs,rr.user))
         #~ today = datetime.date.today()
         #~ Q = models.Q
         #~ q1 = Q(coach1__exact=rr.user) | Q(coach2__exact=rr.user)
