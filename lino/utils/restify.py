@@ -2,7 +2,9 @@
 """
 Just a copy & paste of the :mod:`docutils.examples` module (as instructed there).
 
-:func:`restify` is just an alias for :func:`html_body`.
+:func:`restify` is an alias for :func:`html_body`.
+
+:func:`latex_body` deduced from :func:`html_body`
 
 """
 
@@ -69,27 +71,56 @@ def html_body(input_string, source_path=None, destination_path=None,
 
 restify = html_body
 
+def latex_parts(input_string, source_path=None, destination_path=None,
+               input_encoding='unicode', doctitle=1, initial_header_level=1):
+    overrides = {'input_encoding': input_encoding,
+                 'doctitle_xform': doctitle,
+                 'initial_header_level': initial_header_level}
+    parts = core.publish_parts(
+        source=input_string, source_path=source_path,
+        destination_path=destination_path,
+        writer_name='latex2e', settings_overrides=overrides)
+    return parts
+
+def latex_body(input_string, source_path=None, destination_path=None,
+              input_encoding='unicode', output_encoding='unicode',
+              doctitle=1, initial_header_level=1):
+    parts = latex_parts(
+        input_string=input_string, source_path=source_path,
+        destination_path=destination_path,
+        input_encoding=input_encoding, doctitle=doctitle,
+        initial_header_level=initial_header_level)
+    print parts.keys()
+    fragment = parts['body']
+    if output_encoding != 'unicode':
+        fragment = fragment.encode(output_encoding)
+    return fragment
+
 
 if __name__ == '__main__':
     test = u"""
 Test example of reST__ document
-containg non-ascii latin-1 chars:
-Ä Ë Ï Ö Ü 
-ä ë ï ö ü ÿ
-à è ì ò ù 
-á é í ó ú
-ã õ ñ 
-ç ß 
+containg non-ascii latin-1 chars::
+
+  Ä Ë Ï Ö Ü 
+  ä ë ï ö ü ÿ
+  à è ì ò ù 
+  á é í ó ú
+  ã õ ñ 
+  ç ß 
 
 __ http://docutils.sf.net/rst.html
 
-- item 1
-- item 2
-- item 3
+A list:
+
+  - item 1
+  - item 2
+  - item 3
+
 
 """
     print restify(test)
-    #~ print reSTify(test,output_encoding='latin-1') 
+    #~ print latex_body(test)
 
 
 

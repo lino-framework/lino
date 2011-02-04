@@ -27,6 +27,11 @@ Short-term
 
 #.  :doc:`tickets/20`.
 
+#.  Die Ankreuzfelder Arbeitslosengeld, Wartegeld, Krankengeld 
+    usw. könnten vielleicht auch Eigenschaften werden 
+    (in einer eigenen Gruppe "Einnahmen" natürlich)
+    
+    
 Version 1.2 (alle todos vom 11.01. fertig)
 ------------------------------------------
 

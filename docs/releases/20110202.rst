@@ -2,9 +2,14 @@ Version 1.1.1 (02.02.2011)
 ==========================
 
 Verbessert eine Serie von kleinen Bugs in :doc:`20110201`.
+Zum Beispiel
 
-Insbesondere kann man eine Suchliste jetzt ausdrucken 
-(ich habe eine rüdimentäre Vorlage `persons/suchliste.odt` gemacht).
+- Man kann eine Suchliste jetzt ausdrucken 
+  (ich habe eine rüdimentäre Vorlage `persons/suchliste.odt` gemacht).
+  
+- "Führerschein" und "Eigenes Auto"  gelten jetzt als Fachkompetenzen.
+
+- Der Upload/Schnellansicht-Button für Führerschein steht jetzt im Reiter "Status"
 
 Bekannte Probleme:
 
