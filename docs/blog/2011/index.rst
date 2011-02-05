@@ -2,7 +2,7 @@
 ====
 
 Here is my diary about what I'm doing on Lino. 
-As long as I am the only Lino developer, I'll write it mostly in German.
+As long as nobody protests, I'll save some time by writing in German.
 
 .. |br| raw:: html
 

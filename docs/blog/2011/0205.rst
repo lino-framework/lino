@@ -36,7 +36,7 @@ In der :xfile:`lino.js` sieht es momentan so aus::
     ww.show();
   }
 
-Das müsste stattdessen so aussehen:
+Das müsste stattdessen so aussehen::
 
   Lino.contacts.Persons.FormPanel = Ext.extend(Lino.FormPanel,{
     constructor : function(ww,config) {
@@ -68,15 +68,12 @@ Das müsste stattdessen so aussehen:
 
 
 Gedacht, getan: nach knapp anderthalb Stunden ist die :xfile:`lino.js` 
-von 2.791.466 Bytes (13.394 Zeilen) 
-auf 1.754.633 Bytes (8.956 Zeilen)
-geschrumpft. 
+von 2.791.466 auf 1.754.633 Bytes geschrumpft. 
 Mit genau der gleichen Funktionalität.
-Also ein Megabyte unnützer Code wurde da 
+**Also ein Megabyte unnützer Code** wurde da 
 generiert und bei jedem neuen Seitenaufruf verschickt!
 
-
-Und da ich gerade so schön in Form bin, 
+Und da ich scheinbar so gut in Form bin, 
 schau ich mir auch noch folgenden Bug mal an:
 
 #.  Wenn man in Personen-Suchlisten, Personen (und an einigen anderen Stellen) 
@@ -86,6 +83,8 @@ schau ich mir auch noch folgenden Bug mal an:
     Da kommt ein TypeError im JS.
     (Ein einfacher Klick auf Refresh reicht dann)
 
+Tatsächlich, die zwei Tage Zwangspause haben gut getan, 
+auch dieser Punkt war schnell erledigt.
 Das war, weil ich in Lino.ComboBox die initComponent() falsch definiert hatte. 
 Da wurde die Originalversion überhaupt nicht mehr aufgerufen.
 Und später versuchte dann einen Store zu entbinden, der 
