@@ -46,6 +46,9 @@ As long as I am the only Lino developer, I'll write it mostly in German.
   31
   :doc:`01 <0201>` 
   :doc:`02 <0202>` 
+  03
+  04
+  :doc:`05 <0205>` 
   |br| 
   |br| 
   |br|  	

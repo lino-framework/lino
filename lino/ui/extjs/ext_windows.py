@@ -46,7 +46,9 @@ class ActionRenderer(object):
         pass
         
     def js_render(self):
-        yield "function(caller) { return new Lino.%s(caller,%s);}" % (self.__class__.__name__,py2js(self.config))
+        yield "Lino.%s = function(caller) { " % self.action
+        yield "    return new Lino.%s(caller,%s);}" % (
+            self.__class__.__name__,py2js(self.config))
 
 class WindowWrapper(ActionRenderer):
    
@@ -61,7 +63,7 @@ class WindowWrapper(ActionRenderer):
         return self.ext_name + "(" + self.__class__.__name__ + ")"
         
     def get_config(self,**d):
-        d.update(permalink_name=str(self.action))
+        #~ d.update(permalink_name=str(self.action))
         return d
         
 
@@ -71,7 +73,8 @@ class MasterWrapper(WindowWrapper):
         WindowWrapper.__init__(self,action,lh.rh.ui,lh,lh._main,**kw)
         
     def js_render(self):
-        yield "function(caller,params) { "
+        yield "Lino.%s = function(caller,params) { " % self.action
+        #~ yield "function(caller,params) { "
         #~ yield "  Ext.getCmp('main_area').el.setStyle({cursor:'wait'});"
         #~ yield "Lino.notify();"
         if False and settings.USE_FIREBUG:
@@ -79,23 +82,13 @@ class MasterWrapper(WindowWrapper):
             #~ yield "  console.log('ext_windows',20100930,params);"
         yield "  var ww = new Lino.%s(caller,%s,params);" % (
             self.__class__.__name__,py2js(self.config))
-            
+        
+        #~ yield "  ww.main_item = %s;" % self.main.as_ext()
+        
         for ln in jsgen.declare_vars(self.main):
             yield '  '+ln
         yield "  ww.main_item = %s;" % self.main.as_ext()
             
-        if False:
-            for e in self.main.walk():
-                if e.refers_to_ww:
-                #~ if e is not self.main and (
-                    #~ isinstance(e,ext_elems.GridElement) or isinstance(e,ext_elems.HtmlBoxElement)):
-                    yield "  %s.ww = ww;" % e.ext_name
-                    #~ if e.collapsible:
-                        #~ yield "  %s.on('expand',Lino.collapse_handler(%s))" % (e.ext_name,e.parent.ext_name)
-                        #~ yield "  %s.on('collapse',Lino.collapse_handler(%s))" % (e.ext_name,e.parent.ext_name)
-        if False and isinstance(self.main,ext_elems.GridMainPanel):
-            yield "%s.store.proxy.on('load',function(){console.log('MasterWrapper load 2',%s.store.reader.arrayData)});" % (
-                self.main.as_ext(), self.main.as_ext())
         yield "  ww.show();"
         if False and settings.USE_FIREBUG:
             yield "  console.timeEnd('%s');" % self.action
@@ -160,6 +153,28 @@ class BaseDetailWrapper(MasterWrapper):
 class DetailWrapper(BaseDetailWrapper):
     method = 'PUT'
   
+    def js_render_formpanel(self):
+        yield "Lino.%s.FormPanel = Ext.extend(Lino.FormPanel,{" % self.main.rh.report
+        yield "  constructor : function(ww,config) {"
+        for ln in jsgen.declare_vars(self.main.main):
+            yield '  '+ln
+        yield "  config.items = %s;" % self.main.main.as_ext()
+        if self.main.listeners:
+            yield "  config.listeners = %s;" % py2js(self.main.listeners)
+        yield "  config.before_row_edit = %s;" % py2js(self.main.before_row_edit)
+        yield "  Lino.contacts.Persons.FormPanel.superclass.constructor.call(this, ww,config);"
+        yield "  }"
+        yield "});"
+        yield ""
+        
+
+    def js_render(self):
+        assert isinstance(self.main,ext_elems.FormPanel)
+        for ln in self.js_render_formpanel():
+            yield ln
+        for ln in MasterWrapper.js_render(self):
+            yield ln
+
   
 class InsertWrapper(BaseDetailWrapper):
     method = 'POST'

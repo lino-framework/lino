@@ -1011,7 +1011,7 @@ class ExtUI(base.UI):
             for a in rpt.get_actions():
                 if a.window_wrapper is not None:
                     #~ print a, "..."
-                    f.write('Lino.%s = ' % a )
+                    #~ f.write('Lino.%s = ' % a )
                     for ln in a.window_wrapper.js_render():
                         f.write(ln + "\n")
                     f.write("\n")

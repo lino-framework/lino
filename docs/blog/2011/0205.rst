@@ -1,0 +1,93 @@
+20110206
+========
+
+Samstag Nacht. Kurz vorm Einschlafen bekam ich die Idee, 
+dass der folgende Punkt doch eigentlich recht einfach machbar sein müsste:
+
+#.  Der JS-Code, der ein Detail-Fenster definiert, wird in der :xfile:`lino.js` 
+    für jeden Report zweimal generiert (detail und insert).
+    Ein einziges Mal für alle Reports würde reichen.
+  
+Also aufstehen und mal nachschauen.
+In der :xfile:`lino.js` sieht es momentan so aus::
+
+  Lino.contacts.Persons.detail = function(caller,params) { 
+    var ww = new Lino.DetailWrapper(caller,{ 
+        fk_name: null, 
+        url_data: "/api/contacts/Persons", 
+        content_type: 22, name: "detail" 
+      },params);
+    var last_name1712 = new Ext.form.TextField(...);
+    ...
+    var main_panel1905 = new Ext.Panel(...);
+    var form_panel1906 = new Lino.FormPanel(ww,{ 
+        ls_url: "/contacts/Persons", 
+        ls_bbar_actions: [ ... ], 
+        has_navigator: true, 
+        items: new Ext.TabPanel({ items: [ main_panel1905 ...  ], ... }), 
+        listeners: { ... }, 
+        before_row_edit: function(record){...}, 
+        ls_detail_handler: Lino.contacts.Persons.detail, 
+        layout: "fit", 
+        method: "PUT", 
+        ls_insert_handler: Lino.contacts.Persons.insert 
+    });
+    ww.main_item = form_panel1906;
+    ww.show();
+  }
+
+Das müsste stattdessen so aussehen:
+
+  Lino.contacts.Persons.FormPanel = Ext.extend(Lino.FormPanel,{
+    constructor : function(ww,config) {
+        var last_name1712 = new Ext.form.TextField(...);
+        ...
+        var main_panel1905 = new Ext.Panel(...);
+        Lino.contacts.Persons.FormPanel.superclass.constructor.call(this, ww,config);
+    }
+  })
+  Lino.contacts.Persons.detail = function(caller,params) { 
+    var ww = new Lino.DetailWrapper(caller,{ 
+        fk_name: null, 
+        url_data: "/api/contacts/Persons", 
+        content_type: 22, name: "detail" 
+      },params);
+    ww.main_item = new Lino.contacts.Persons.FormPanel(ww,{ 
+        ls_url: "/contacts/Persons", 
+        ls_bbar_actions: [ ... ], 
+        has_navigator: true, 
+        items: new Ext.TabPanel({ items: [ main_panel1905 ...  ], ... }), 
+        listeners: { ... }, 
+        before_row_edit: function(record){...}, 
+        ls_detail_handler: Lino.contacts.Persons.detail, 
+        layout: "fit", 
+        method: "PUT", 
+        ls_insert_handler: Lino.contacts.Persons.insert 
+    });
+    ww.show();
+
+
+Gedacht, getan: nach knapp anderthalb Stunden ist die :xfile:`lino.js` 
+von 2.791.466 Bytes (13.394 Zeilen) 
+auf 1.754.633 Bytes (8.956 Zeilen)
+geschrumpft. 
+Mit genau der gleichen Funktionalität.
+Also ein Megabyte unnützer Code wurde da 
+generiert und bei jedem neuen Seitenaufruf verschickt!
+
+
+Und da ich gerade so schön in Form bin, 
+schau ich mir auch noch folgenden Bug mal an:
+
+#.  Wenn man in Personen-Suchlisten, Personen (und an einigen anderen Stellen) 
+    das Fenster "Einfügen" bestätigt, dann funktioniert das Refresh nicht. 
+    Eigentlich müsste er die neu erstellte Suche im Detail anzeigen.
+    Stattdessen zeigt er sie nicht einmal in der Grid an.
+    Da kommt ein TypeError im JS.
+    (Ein einfacher Klick auf Refresh reicht dann)
+
+Das war, weil ich in Lino.ComboBox die initComponent() falsch definiert hatte. 
+Da wurde die Originalversion überhaupt nicht mehr aufgerufen.
+Und später versuchte dann einen Store zu entbinden, der 
+noch nicht in einen ArrayStore konvertiert worden war.
+

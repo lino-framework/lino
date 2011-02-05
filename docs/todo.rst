@@ -12,13 +12,6 @@ Short-term
 #.  Auf einer neuen Zeile in einer Grid stören die Fehlermeldungen per
     Alert.  (z.B. Eingabe ChoiceType)
     
-#.  Wenn man in Personen-Suchlisten das Fenster "Einfügen" bestätigt, 
-    dann funktioniert das Refresh nicht. 
-    Eigentlich müsste er die neu erstellte Suche im Detail anzeigen.
-    Stattdessen zeigt er sie nicht einmal in der Grid an.
-    Da kommt ein TypeError im JS.
-    (Ein einfacher Klick auf Refresh reicht dann)
-  
 #.  Momentan ist es nicht möglich, "mal eben" eine Suche zu machen, 
     die dann nicht gespeichert wird.
     Stört das?
@@ -111,10 +104,6 @@ Version 1.3
       box1:
         field3 field4
 
-#.  Der JS-Code, der ein Detail-Fenster definiert, wird in der :xfile:`lino.js` 
-    für jeden Report zweimal generiert (detail und insert).
-    Ein einziges Mal für alle Reports würde reichen.
-  
 #.  Minify :xfile:`lino.js`
     http://en.wikipedia.org/wiki/Minification_(programming)
 

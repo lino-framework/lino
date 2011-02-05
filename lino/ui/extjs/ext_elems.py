@@ -67,8 +67,8 @@ def before_row_edit(panel):
                     #~ l.append("console.log('20110128 before_row_edit',record.data);")
                     l.append("%s.setContextValue(%r,record.data[%r]);" % (
                         e.ext_name,f.name,ext_requests.form_field_name(f)))
-    return js_code('function(record){\n  %s\n}' % ('\n  '.join(l)))
-
+    #~ return js_code('function(record){\n  %s\n}' % ('\n  '.join(l)))
+    return js_code('function(record){ %s }' % (' '.join(l)))
 
 class GridColumn(Component):
     declare_type = jsgen.DECLARE_INLINE
@@ -1265,15 +1265,16 @@ class TabPanel(jsgen.Component):
 
 
 class FormPanel(jsgen.Component):
-#~ class FormPanel(VisibleComponent):
     declare_type = jsgen.DECLARE_VAR
-    value_template = "new Lino.FormPanel(ww,%s)"
-    #~ value_template = "new Ext.form.FormPanel(%s)"
+    #~ value_template = "new Lino.FormPanel(ww,%s)"
+    listeners = None
     
     def __init__(self,rh,action,main,**kw):
+        self.rh = rh
+        self.value_template = "new Lino.%s.FormPanel(ww,%%s)" % self.rh.report
         self.main = main
         kw.update(
-          items=main,
+          #~ items=main,
           #~ autoScroll=True,
           #~ autoHeight=True,
           layout='fit',
@@ -1308,8 +1309,10 @@ class FormPanel(jsgen.Component):
         
         if on_render:
             assert not kw.has_key('listeners')
-            kw.update(listeners=dict(render=js_code('function(){%s}' % '\n'.join(on_render))))
-        kw.update(before_row_edit=before_row_edit(main))
+            #~ kw.update(listeners=dict(render=js_code('function(){%s}' % '\n'.join(on_render))))
+            self.listeners=dict(render=js_code('function(){%s}' % '\n'.join(on_render)))
+        #~ kw.update(before_row_edit=before_row_edit(main))
+        self.before_row_edit=before_row_edit(main)
         
         rpt = rh.report
         a = rpt.get_action('detail')

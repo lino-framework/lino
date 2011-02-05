@@ -369,10 +369,12 @@ Ext.override(Ext.form.ComboBox, {
     // contextValues : array of values of variables to add to query
     // queryContext : null, 
     // contextParam : null, 
-    initComponent : function(){
+    initComponent : Ext.form.ComboBox.prototype.initComponent.createSequence(function() {
+    //~ initComponent : function(){
         this.contextParams = {};
-        Ext.form.ComboBox.superclass.initComponent.call(this);
-    },
+        //~ Ext.form.ComboBox.initComponent(this);
+        //~ Ext.form.ComboBox.superclass.initComponent.call(this);
+    }),
     setValue : function(v,record){
         //~ if(this.name == 'country') console.log('20100531 country ComboBox.setValue()',v,record);
         var text = v;
