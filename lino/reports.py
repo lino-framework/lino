@@ -796,6 +796,8 @@ class Report(actors.Actor): #,base.Handled):
     This option is False in :class:`lino.SiteConfigs`.
     """
     
+    detail_action = None
+    
     def __init__(self):
         if self.model is None:
             if self.base_queryset is not None:
@@ -942,7 +944,8 @@ class Report(actors.Actor): #,base.Handled):
         alist = []
         if self.model is not None:
             if len(self.model._lino_detail_layouts) > 0:
-                alist.append(ShowDetailAction(self))
+                self.detail_action = ShowDetailAction(self)
+                alist.append(self.detail_action)
                 alist.append(SubmitDetail())
                 alist.append(InsertRow(self))
                 #~ alist.append(actions.DuplicateRow(self))

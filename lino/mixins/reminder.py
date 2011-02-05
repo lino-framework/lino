@@ -76,19 +76,7 @@ class Reminder(AutoUser):
                 if not msg:
                     msg = _('due date reached')
                 yield ReminderEntry(obj,obj.reminder_date,msg,fmt='detail')
-    
-    def unused_summary_row(self,ui,rr,**kw):
-        #~ s = u'<b>%s</b> :'
-        #~ s = cgi.escape(self.reminder_date.isoformat()) + ": "
-        s = ''
-        if self.reminder_text:
-            s += '<b>' + cgi.escape(self.reminder_text) + '</b> '
-        s += '<a href="%s" target="_blank">%s</a>' % (
-          ui.get_detail_url(self,fmt='detail'),
-          #~ rr.get_request_url(str(obj.pk),fmt='detail'),
-          unicode(self))
-        return s
-        
+
     @chooser(simple_values=True)
     def reminder_text_choices(self):
         return REMINDER_TEXT_CHOICES
@@ -106,13 +94,18 @@ class ReminderEntry:
         self.__unicode__ = target.__unicode__
         
     def summary_row(self,ui,rr,**kw):
-        s = ''
+        a = self.target.__class__._lino_model_report.detail_action
+        params = dict(record_id=self.target.pk)
+        s = ui.action_href(a,unicode(self.target),**params)
         if self.text:
-            s += '<b>' + cgi.escape(self.text) + '</b> '
-        s += '<a href="%s" target="_blank">%s</a>' % (
-          ui.get_detail_url(self,**self.target_kw),
-          unicode(self.target))
+            #~ s += ' <b>' + cgi.escape(self.text) + '</b> '
+            s += ' (' + cgi.escape(self.text) + ')'
         return s
+
+        #~ s += '<a href="%s" target="_blank">%s</a>' % (
+          #~ ui.get_detail_url(self,**self.target_kw),
+          #~ unicode(self.target))
+        #~ return s
 
 def reminders_summary(ui,user,*args,**kw):
     s= ''
@@ -155,7 +148,3 @@ def reminders_summary(ui,user,*args,**kw):
     
   
   
-def unused_reminders_summary(ui,user,*args,**kw):
-    #~ m = RemindersByUser().slave_as_summary_meth(ui,row_separator)
-    return reports.summary(ui,reminders(user),*args,**kw)
-    #~ return m(user)

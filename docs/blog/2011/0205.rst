@@ -1,6 +1,9 @@
 20110206
 ========
 
+:xfile:`lino.js` 1 MB kleiner
+-----------------------------
+
 Samstag Nacht. Kurz vorm Einschlafen bekam ich die Idee, 
 dass der folgende Punkt doch eigentlich recht einfach machbar sein müsste:
 
@@ -73,6 +76,9 @@ Mit genau der gleichen Funktionalität.
 **Also ein Megabyte unnützer Code** wurde da 
 generiert und bei jedem neuen Seitenaufruf verschickt!
 
+Refresh nach Einfügen
+---------------------
+
 Und da ich scheinbar so gut in Form bin, 
 schau ich mir auch noch folgenden Bug mal an:
 
@@ -90,3 +96,31 @@ Da wurde die Originalversion überhaupt nicht mehr aufgerufen.
 Und später versuchte dann einen Store zu entbinden, der 
 noch nicht in einen ArrayStore konvertiert worden war.
 
+
+Clickable ForeignKeys
+---------------------
+
+Ratespiel: wer findet den Fehler im folgenden Code?
+Ich habe mindestens eine Viertelstunde gebraucht...
+
+::
+
+  Lino.fk_renderer = function(fkname,handler) {
+    return function(value, metaData, record, rowIndex, colIndex, store) {
+      if (record.phantom) return '';
+      if (value)
+          var s = '<a href="#" onclick="' ;
+          s += handler + '(undefined,{record_id:' + Ext.encode(record.data[fkname]) + '})">';
+          s += value + '</a>';
+          return s
+      return '';
+    }
+  }
+
+Jedenfalls hat Lino jetzt ein irritierendes Verhalten weniger:
+Wenn man in einer Grid auf einen ForeignKey klickt, 
+um das referenzierte Objekt im Detail zu sehen,
+öffnet er jetzt nicht mehr ein neues Browserfenster, sondern ein Ext.Window.
+(Das onclick-Event dieses href ruft den detail-Handler auf dem referenzierten Element.)
+
+Idem für die klickbaren Links in den Erinnerungen im Anfangsbildschirm.

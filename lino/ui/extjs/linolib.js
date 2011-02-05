@@ -699,18 +699,25 @@ Lino.id_renderer = function(value, metaData, record, rowIndex, colIndex, store) 
   //~ return value;
 //~ }
 
-Lino.fk_renderer = function(fkname,url) {
+Lino.fk_renderer = function(fkname,handler) {
+  //~ console.log('Lino.fk_renderer handler=',handler);
   return function(value, metaData, record, rowIndex, colIndex, store) {
     //~ console.log('Lino.fk_renderer',fkname,rowIndex,colIndex,record,metaData,store);
     if (record.phantom) return '';
-    if (value) return '<a href="'+url+'/'+String(record.data[fkname])+'?fmt=detail" target="_blank" onclick="Lino.on_fk_click">' + value + '</a>';
+    //~ if (value) 
+        //~ return '<a href="' + url + '/' + String(record.data[fkname])\
+          //~ + '?fmt=detail" target="_blank" onclick="Lino.on_fk_click">' + value + '</a>';
+    if (value) {
+        var s = '<a href="#" onclick="' ;
+        s += handler + '(undefined,{record_id:\'' + String(record.data[fkname]) + '\'})">';
+        s += value + '</a>';
+        //~ console.log('Lino.fk_renderer',value,'-->',s);
+        return s
+    }
     return '';
   }
 }
 
-Lino.on_fk_click = function() {
-  console.log('Lino.on_fk_click',arguments);
-}
 
 Lino.build_buttons = function(panel,actions) {
   if (actions) {

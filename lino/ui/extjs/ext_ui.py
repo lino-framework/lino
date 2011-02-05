@@ -1164,6 +1164,17 @@ class ExtUI(base.UI):
             kw[ext_requests.URL_PARAM_MASTER_TYPE] = mt
         return kw
         
+    def action_href(self,a,label=None,**params):
+        if label is None:
+            label = a.button_label
+        onclick = 'Lino.%s(undefined,%s)' % (a,py2js(params))
+        #~ print 20110120, onclick
+        onclick = cgi.escape(onclick)
+        onclick = onclick.replace('"','&quot;')
+        #~ return '<input type="button" onclick="%s" value=" %s ">' % (onclick,label)
+        return '[<a href="#" onclick="%s">%s</a>]' % (onclick,label)
+        
+        
     def quick_upload_buttons(self,rr):
         if rr.total_count == 0:
             #~ return [dict(text="Upload",handler=js_code('Lino.%s' % rr.report.get_action('insert')))]
@@ -1173,18 +1184,15 @@ class ExtUI(base.UI):
                 rec = rr.create_instance()
                 params = dict(data_record=elem2rec1(rr,rr.ah,rec))
                 #~ params = dict(data_record=elem2rec_detailed(rr,rr.ah,rec))
-                onclick = 'Lino.%s(undefined,%s)' % (a,py2js(params))
-                #~ print 20110120, onclick
-                onclick = cgi.escape(onclick)
-                onclick = onclick.replace('"','&quot;')
-                return '<input type="button" onclick="%s" value=" %s ">' % (onclick,_("Upload"))
-                #~ return '[<a href="#" onclick="%s">%s</a>]' % (onclick,_("Upload"))
+                return self.action_href(a,_("Upload"),**params)
         assert rr.total_count == 1
         #~ return [dict(text="Show",handler=js_code('Lino.%s' % v.report.get_action('detail')))]
         #~ s = unicode(v[0]) + ':'
         s = ''
         s += ' [<a href="%s" target="_blank">show</a>]' % (settings.MEDIA_URL + rr[0].file.name)
-        s += ' [<a href="%s" target="_blank">edit</a>]' % (self.get_detail_url(rr[0],fmt='detail'))
+        #~ s += ' [<a href="%s" target="_blank">edit</a>]' % (self.get_detail_url(rr[0],fmt='detail'))
+        params = dict(data_record=elem2rec1(rr,rr.ah,rr[0]))
+        s += ' ' + self.acton_href(rr.ah.detail_action,_("Edit"),**params)
         return s
         
       

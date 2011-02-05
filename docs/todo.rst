@@ -9,7 +9,7 @@ for which I hope for help from other people.
 Short-term
 ----------
 
-#.  Auf einer neuen Zeile in einer Grid stören die Fehlermeldungen per
+#.  Auf einer neuen Zeile einer Grid stören die Fehlermeldungen per
     Alert.  (z.B. Eingabe ChoiceType)
     
 #.  Momentan ist es nicht möglich, "mal eben" eine Suche zu machen, 

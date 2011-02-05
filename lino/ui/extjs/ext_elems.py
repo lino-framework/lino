@@ -96,14 +96,15 @@ class GridColumn(Component):
             elif isinstance(editor.field,models.ForeignKey):
                 # FK fields are clickable if their target has a detail view
                 rpt = editor.field.rel.to._lino_model_report
-                a = rpt.get_action('detail')
-                if a is not None:
-                    rend = "Lino.fk_renderer('%s','%s')" % (
+                if rpt.detail_action is not None:
+                #~ a = rpt.get_action('detail')
+                #~ if a is not None:
+                    rend = "Lino.fk_renderer('%s','Lino.%s')" % (
                       editor.field.name + 'Hidden',
-                      editor.lh.rh.ui.get_actor_url(rpt))
-                    #~ kw.update(renderer=js_code("Lino.fk_renderer('%s','%s')" % (
+                      rpt.detail_action)
+                    #~ rend = "Lino.fk_renderer('%s','%s')" % (
                       #~ editor.field.name + 'Hidden',
-                      #~ editor.lh.rh.ui.get_actor_url(rpt))))
+                      #~ editor.lh.rh.ui.get_actor_url(rpt))
             #~ if not rend:
                 #~ rend = 'Lino.default_renderer'
             if rend:
