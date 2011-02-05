@@ -708,7 +708,8 @@ Lino.fk_renderer = function(fkname,handler) {
         //~ return '<a href="' + url + '/' + String(record.data[fkname])\
           //~ + '?fmt=detail" target="_blank" onclick="Lino.on_fk_click">' + value + '</a>';
     if (value) {
-        var s = '<a href="#" onclick="' ;
+        //~ var s = '<a href="#" onclick="' ;
+        var s = '<a href="javascript:' ;
         s += handler + '(undefined,{record_id:\'' + String(record.data[fkname]) + '\'})">';
         s += value + '</a>';
         //~ console.log('Lino.fk_renderer',value,'-->',s);

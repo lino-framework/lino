@@ -124,3 +124,21 @@ um das referenzierte Objekt im Detail zu sehen,
 (Das onclick-Event dieses href ruft den detail-Handler auf dem referenzierten Element.)
 
 Idem für die klickbaren Links in den Erinnerungen im Anfangsbildschirm.
+
+`href=javascript:` statt `onclick=`
+-----------------------------------
+
+Gerade sehe ich zufällig, dass ich statt 
+
+::
+
+  <a href="#" onclick="foo()"> 
+  
+auch sagen könnte::
+
+  <a href="javascript:foo()"> 
+  
+Das will ich auch!
+Denn dann kriege ich den JS-Code in der Statuszeile angezeigt, 
+wenn ich mit der Maus über den Link fahre.
+

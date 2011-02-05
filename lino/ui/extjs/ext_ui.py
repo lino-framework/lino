@@ -1172,7 +1172,8 @@ class ExtUI(base.UI):
         onclick = cgi.escape(onclick)
         onclick = onclick.replace('"','&quot;')
         #~ return '<input type="button" onclick="%s" value=" %s ">' % (onclick,label)
-        return '[<a href="#" onclick="%s">%s</a>]' % (onclick,label)
+        #~ return '[<a href="#" onclick="%s">%s</a>]' % (onclick,label)
+        return '[<a href="javascript:%s">%s</a>]' % (onclick,label)
         
         
     def quick_upload_buttons(self,rr):
