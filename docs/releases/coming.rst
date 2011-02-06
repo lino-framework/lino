@@ -38,17 +38,5 @@ Upgrade instructions
 
     ./pull
     
-- When a data migration is necessary::
+- When a data migration is necessary, see :doc:`/admin/datamig`
 
-    python manage.py dumpdata --format dpy > fixtures/dYYYMMDD.dpy
-    nano fixtures/dYYYMMDD.dpy
-    
-  Now edit the file (to be documented...), then reset the 
-  database and reload the dump::
-    
-    python manage.py initdb dYYYMMDD
-    
-  Restart application server (Apache) and `watch_tim`::
-    
-    ./start
-  
