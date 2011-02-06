@@ -1460,6 +1460,10 @@ class Course(models.Model):
         rpt.add_action(DirectPrintAction('candidates',_("List of candidates"),'courses/candidates.odt'))
         rpt.add_action(DirectPrintAction('participants',_("List of participants"),'courses/participants.odt'))
         
+    def get_print_language(self,pm):
+        "Used by DirectPrintAction"
+        return DEFAULT_LANGUAGE
+        
     def participants(self):
         u"""
         Liste von :class:`lino.modlib.dsbe.models.CourseRequest`-Instanzen, 

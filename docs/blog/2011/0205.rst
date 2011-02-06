@@ -162,7 +162,7 @@ Konfiguration gespeichert wird.
 Remove obsolete database fields
 -------------------------------
 
-Hier schon mal eine Liste der Datenfelder, die demnächst raus können::
+Hier schon mal eine Liste der Datenfelder, die mit dem kommenden Release rausfliegen::
 
   no_shift           
   no_weekend         

@@ -14,3 +14,4 @@ Der ist jetzt gemacht, sowohl für
 als auch für
 .gc (:class:`lino.reports.GridConfig`).
 
+Release 1.1.2 in Eupen, mit noch ein paar kleinen Tippfehler-Bugs.
