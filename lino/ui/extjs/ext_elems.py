@@ -32,7 +32,8 @@ from . import ext_requests
 EXT_CHAR_WIDTH = 9
 EXT_CHAR_HEIGHT = 22
 
-DEFAULT_GC_NAME = 'std'
+#~ DEFAULT_GC_NAME = 'std'
+DEFAULT_GC_NAME = 0
 
 
 def a2btn(a):
@@ -1082,7 +1083,7 @@ class GridElement(Container):
         kw.update(pk_index=rh.store.pk_index)
         kw.update(ls_quick_edit=rh.report.cell_edit)
         kw.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rh.get_actions(rh.report.default_action)])
-        kw.update(ls_grid_configs=self.report.grid_configs)
+        kw.update(ls_grid_configs=[gc.data for gc in self.report.grid_configs])
         kw.update(gc_name=DEFAULT_GC_NAME)
         #~ gc = self.report.grid_configs.get('',None)
         #~ if gc is not None:

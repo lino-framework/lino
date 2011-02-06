@@ -100,6 +100,11 @@ noch nicht in einen ArrayStore konvertiert worden war.
 Clickable ForeignKeys
 ---------------------
 
+Jetzt kommt dieser Punkt dran:
+
+#.  Wenn man auf einen ForeignKey klickt, sollte er kein neues Browserfenster 
+    öffnen, sondern lediglich ein neues Fenster.
+    
 Ratespiel: wer findet den Fehler im folgenden Code?
 Ich habe mindestens eine Viertelstunde gebraucht...
 
@@ -134,11 +139,81 @@ Gerade sehe ich zufällig, dass ich statt
 
   <a href="#" onclick="foo()"> 
   
-auch sagen könnte::
+auch sagen kann::
 
   <a href="javascript:foo()"> 
   
-Das will ich auch!
-Denn dann kriege ich den JS-Code in der Statuszeile angezeigt, 
-wenn ich mit der Maus über den Link fahre.
+Das mach ich, denn 
+dann kriegt der Bentuzer den JS-Code in der Statuszeile angezeigt, 
+wenn er mit der Maus über den Link fährt.
+
+Saving Grid Configs
+-------------------
+
+Der folgende Punkt ist jetzt wahrscheinlich behoben:
+
+#.  Gridkonfigurationen speichern funktioniert nicht. 
+    Oder --besser gesagt-- wird erst aktiv nach dem nächsten Server-Restart.
+
+Ich logge jetzt außerdem in der :xfile:`system.log`, wenn eine 
+Konfiguration gespeichert wird.
+
+
+Remove obsolete database fields
+-------------------------------
+
+Hier schon mal eine Liste der Datenfelder, die demnächst raus können::
+
+  no_shift           
+  no_weekend         
+  has_family         
+  has_own_car        
+  can_car            
+  can_truck          
+  can_clark          
+  can_bus            
+  it_knowledge       
+  physical_handicap  
+  mental_handicap    
+  psycho_handicap    
+  health_problems    
+  juristic_problems  
+  dependency_problems
+  social_competence  
+  motivation_lack    
+  fulltime_only      
+  parttime_only      
+  young_children     
+  is_illiterate      
+  
+:meth:`lino.repotrs.Report.validate_grid_config` ignoriert jetzt Kolonnennamen, 
+die nicht existieren, und konvertiert die .rpt-Datei automatisch.
+
+
+New format for grid configurations
+----------------------------------
+
+Abends habe ich mich dann noch an folgenden Punkt gemacht:
+
+#. Grid configs 
+
+  #. sollten in den config dirs stehen und nicht im DATA_DIR
+  #. sollten vielleicht besser YAML statt .py sein.  
+
+
+Das bisherige Format mit allen GCs in einer einzigen .rpt-Datei war nicht gut. 
+Stattdessen mach ichs jetzt wie mit den .dtl-Dateien: pro GC eine Datei.
+Dateinamen werden wie .dtl-Dateien alphabetischer Reihenfolge eingelesen.
+Dieser Code ist für beide gleich und sitzt jetzt ebenfalls in :mod:`lino.modlib.config`. 
+GCs haben keinen Namen mehr (an manchen Stellen heißt die betreffende Variable noch "name", 
+obschon es ein integer ist), und die Standard-GC ist nicht mehr 'default' 
+sondern 0 (und hat als Label "Standard", was aber erst zum Zuge kommt wenn man mehr 
+als eine Ansicht hat)
+
+Release 1.1.2
+-------------
+
+:doc:`/releases/20110205` ist jetzt bereit und eingecheckt, aber noch nicht in 
+Eupen installiert.
+
 

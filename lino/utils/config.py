@@ -1,4 +1,4 @@
-## Copyright 2009-2010 Luc Saffre
+## Copyright 2009-2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -18,8 +18,12 @@ subdir.
 
 """
 
+import logging
+logger = logging.getLogger(__name__)
+
 import os
 import sys
+import codecs
 
 from fnmatch import fnmatch
 
@@ -36,6 +40,8 @@ class ConfigDir:
         self.can_write = can_write
     def __str__(self):
         return "ConfigDir %s" % self.name
+        
+        
       
 
 # similar logic as in django.template.loaders.app_directories
@@ -87,3 +93,53 @@ def find_config_files(pattern):
         #~ else:
             #~ print 'find_config_files() not a directory:', dirname
     return files
+
+def load_config_files(pattern,loader):
+    files = find_config_files(pattern).items()
+    def fcmp(a,b):
+        return cmp(a[0][:-4],b[0][:-4])
+    files.sort(fcmp)
+    for filename,cd in files:
+        fn = os.path.join(cd.name,filename)
+        logger.info("Loading %s...",fn)
+        s = codecs.open(fn,encoding='utf-8').read()
+        loader(s,cd,filename)
+
+class Configured(object):
+  
+    #~ filename = None
+    #~ cd = None # ConfigDir
+    
+    def __init__(self,filename=None,cd=None):
+        if filename is not None:
+            assert not os.sep in filename
+            if cd is None:
+                cd = LOCAL_CONFIG_DIR
+        self.filename = filename
+        self.cd = cd
+
+    def save_config(self):
+        if not self.filename:
+            return 'Cannot save unnamed %s' % self
+            
+        if not self.cd.can_write:
+            #~ print self.cd, "is not writable", self.filename
+            self.cd = LOCAL_CONFIG_DIR
+        fn = os.path.join(self.cd.name,self.filename)
+        f = codecs.open(fn,'w',encoding='utf-8')
+        self.write_content(f)
+        f.close()
+        msg = "%s has been saved to %s" % (self.__class__.__name__,fn)
+        logger.info(msg)
+        return msg
+            
+    def write_content(self,f):
+        raise NotImplementedError
+        
+    def __str__(self):
+        if self.filename:
+            return u"%s (from %s)" % (self.filename,self.cd.name)
+        return "Dynamic " + super(Configured,self).__str__()
+        # "%s(%r)" % (self.__class__.__name__,self._desc)
+        
+

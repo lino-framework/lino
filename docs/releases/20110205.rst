@@ -1,0 +1,34 @@
+Version 1.1.2 (05.02.2011)
+==========================
+
+Folgende Punkte sind jetzt behoben:
+
+#.  Wenn man auf einen ForeignKey klickt, kommt jetzt kein neues 
+    Browserfenster (bzw. Browser-Tab) mehr, sondern ein neues ExtJS-Fenster.
+
+#.  :xfile:`lino.js` 1 MB kleiner.
+    Der JS-Code, der ein Detail-Fenster definiert, wurde in der :xfile:`lino.js` 
+    für jeden Report zweimal generiert (detail und insert).
+  
+#.  Die Datenfelder der Angaben, die jetzt als Eigenschaften implementiert 
+    sind (Hindernisse, Führerschein,...) sind jetzt aus der Datenbank 
+    rausgeholt. 
+
+#.  Wenn man in Personen-Suchlisten, Personen (und an einigen anderen Stellen) 
+    das Fenster "Einfügen" bestätigte, dann funktionierte das Refresh nicht. 
+
+#.  Gridkonfigurationen speichern funktioniert jetzt. 
+    Ich habe das System intern nochmal teilweise revidiert:
+    Eventuell bestehende .rpt-Dateien im :setting:`DATA_DIR` können gelöscht werden,
+    stattdessen schreibt er jetzt .gc-Dateien ins lokale config directory.
+    Statt einer .rpt pro Report (mit evtl. mehreren Ansichten) 
+    hat er jetzt eine .gc pro Ansicht. 
+    Man kann also neue Ansichten erstellen, indem man eine der gc-Dateien kopiert. 
+    Ähnliches System wie mit den .dtl-Dateien.
+    
+    Vorsicht, es gibt einen Pitfall:
+    Wenn die Konfiguration einer Grid verändert wurde und man 
+    aus Versehen auf einen Kolonnentitel klickt, dann wird die Grid 
+    sortiert und neu geladen, und alle ungespeicherte Konfiguration ist futsch.
+
+

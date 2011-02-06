@@ -1335,15 +1335,16 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     var tbar = this.tbar_items()
     
     var menu = [];
-    var set_gc = function(name) {
+    var set_gc = function(index) {
       return function() {
         //~ console.log('set_gc() 20100812');
         this.getColumnModel().setConfig(
-            this.apply_grid_config(name,this.ls_grid_configs,this.ls_columns));
+            this.apply_grid_config(index,this.ls_grid_configs,this.ls_columns));
       }
     }
-    for (k in config.ls_grid_configs) {
-      menu.push({text:config.ls_grid_configs[k].label,handler:set_gc(k),scope:this})
+    for (var i = 0; i < config.ls_grid_configs.length;i++) {
+      var gc = config.ls_grid_configs[i];
+      menu.push({text:gc.label,handler:set_gc(i),scope:this})
     }
     if(menu.length > 1) {
       tbar = tbar.concat([
@@ -1440,11 +1441,11 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
       //~ }});
   },
   
-  apply_grid_config : function(name,grid_configs,rpt_columns) {
+  apply_grid_config : function(index,grid_configs,rpt_columns) {
     //~ var rpt_columns = this.ls_columns;
-    var gc = grid_configs[name];    
+    var gc = grid_configs[index];    
     //~ console.log('apply_grid_config() 20100812',name,gc);
-    this.gc_name = name;
+    this.gc_name = index;
     if (gc == undefined) {
       return rpt_columns;
       //~ config.columns = config.ls_columns;
@@ -1535,14 +1536,9 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     p['hiddens'] = hiddens;
     p['columns'] = columns;
     p['name'] = this.gc_name;
-    var gc = this.ls_grid_configs[this.gc_name];
-    if (gc == undefined) 
-      p['label'] = this.gc_name;
-    else 
-      p['label'] = gc.label
-    //~ p['name'] = this.ls_grid_config ? this.ls_grid_config.name : '';
-    //~ if (hidden_cols.length > 0) p['hidden_cols'] = hidden_cols;
-    //~ if (filters.length > 0) p['filters'] = filters;
+    //~ var gc = this.ls_grid_configs[this.gc_name];
+    //~ if (gc !== undefined) 
+        //~ p['label'] = gc.label
     //~ console.log('20100810 save_grid_config',p);
     return p;
   },

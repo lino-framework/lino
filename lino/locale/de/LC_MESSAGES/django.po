@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-02 00:47+0000\n"
+"POT-Creation-Date: 2011-02-06 04:47+0000\n"
 "PO-Revision-Date: 2011-02-01 15:09+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
@@ -123,12 +123,12 @@ msgstr "Ja"
 msgid "No"
 msgstr "Nein"
 
-#: .\reports.py:993
+#: .\reports.py:969
 #, python-format
 msgid "%(details)s by %(model)s %(master)s"
 msgstr "%(details)s pro %(model)s %(master)s"
 
-#: .\core\kernel.py:157
+#: .\core\kernel.py:153
 #, python-format
 msgid "Cannot delete %(self)s because %(count)d %(refs)s refer to it."
 msgstr "Kann %(self)s nicht löschen weil %(count)d %(refs)s darauf verweisen."
@@ -368,7 +368,7 @@ msgstr "Bearbeitet"
 msgid "Description"
 msgstr "Beschreibung"
 
-#: .\ui\extjs\ext_elems.py:539
+#: .\ui\extjs\ext_elems.py:541
 #, python-format
 msgid "Select a %s..."
 msgstr "%s auswählen..."
@@ -412,30 +412,34 @@ msgstr "%s wurde gespeichert."
 msgid "User %(user)s cannot configure %(report)s."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:907
+#: .\ui\extjs\ext_ui.py:906
 #, python-format
 msgid "Failed to delete %(record)s : %(error)s."
 msgstr "Fehler beim Löschen von %(record)s : %(error)s."
 
-#: .\ui\extjs\ext_ui.py:930
+#: .\ui\extjs\ext_ui.py:929
 #, python-format
 msgid "Insert into %s..."
 msgstr "Einfügen nach %s..."
 
-#: .\ui\extjs\ext_ui.py:958
+#: .\ui\extjs\ext_ui.py:957
 #, python-format
 msgid "Action %(action)s failed for %(record)s: %(error)s"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:1078
+#: .\ui\extjs\ext_ui.py:1077
 #, python-format
 msgid "Choices for %s"
 msgstr "Auswahlmöglichkeiten für %s"
 
-#: .\ui\extjs\ext_ui.py:1180
+#: .\ui\extjs\ext_ui.py:1187
 #, fuzzy
 msgid "Upload"
 msgstr "Upload"
+
+#: .\ui\extjs\ext_ui.py:1195
+msgid "Edit"
+msgstr ""
 
 #~ msgid "Reminder delay"
 #~ msgstr "Erinnerungsfrist"

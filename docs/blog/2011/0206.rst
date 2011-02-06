@@ -1,0 +1,16 @@
+20110206
+========
+
+Beim Aufwachen hatte ich die Idee für den folgenden Punkt:
+
+#.  Die Titel der Reiter (.dtl-Dateien) sind momentan noch nicht 
+    internationalisiert, stehen also in den Konfigurationsdateien 
+    in hardkodiertem Deutsch drin. 
+    Also bis zur ersten Lino-Demo in FR oder NL muss ich mir dazu
+    noch was einfallen lassen.
+
+Der ist jetzt gemacht, sowohl für 
+.dtl (:class:`lino.reports.BaseLayout`)
+als auch für
+.gc (:class:`lino.reports.GridConfig`).
+

@@ -739,7 +739,7 @@ class ExtUI(base.UI):
             gc = dict(
               widths=[int(x) for x in PUT.getlist('widths')],
               columns=[str(x) for x in PUT.getlist('columns')],
-              hiddens=[int(x) for x in PUT.getlist('hiddens')],
+              hiddens=[(x == 'true') for x in PUT.getlist('hiddens')],
               #~ hidden_cols=[str(x) for x in PUT.getlist('hidden_cols')],
             )
             
@@ -752,12 +752,11 @@ class ExtUI(base.UI):
             if name is None:
                 name = ext_elems.DEFAULT_GC_NAME                 
             else:
-                name = str(name)
+                name = int(name)
                 
-            gc.update(label=PUT.get('label',name))
-            
-            rpt.grid_configs[name] = gc
-            msg = rpt.save_config()
+            gc.update(label=PUT.get('label',"Standard"))
+            msg = rpt.save_grid_config(name,gc)
+            #~ logger.info(msg)
             self.build_lino_js()            
             return self.success_response(msg)
             #~ return json_response_kw(success=True)
@@ -858,7 +857,7 @@ class ExtUI(base.UI):
                 return json_response_kw(count=total_count,
                   rows=rows,
                   title=unicode(ar.get_title()),
-                  gc_choices=rpt.grid_configs)
+                  gc_choices=[gc.data for gc in rpt.grid_configs])
 
 
         raise Http404("Method %s not supported for container %s" % (request.method,rh))

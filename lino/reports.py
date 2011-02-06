@@ -48,7 +48,7 @@ import lino
 #~ from lino import layouts
 from lino import actions
 from lino.utils import perms, menus
-#~ from lino.utils import printable
+from lino.utils.config import load_config_files, Configured
 #~ from lino.core import datalinks
 #~ from lino.core import boolean_texts
 from lino.core import actors
@@ -56,7 +56,7 @@ from lino.core import actors
 from lino.ui import base
 
 from lino.tools import resolve_model, resolve_field, get_app, model_label, get_field
-from lino.utils.config import find_config_files, LOCAL_CONFIG_DIR
+#~ from lino.utils.config import LOCAL_CONFIG_DIR
 from lino.core.coretools import get_slave, get_model_report, data_elems, get_data_elem
 
 #~ from lino.modlib import field_choices
@@ -756,7 +756,7 @@ class Report(actors.Actor): #,base.Handled):
     Example: :class:`links.LinksByOwner`
     """
     
-    grid_configs = {}
+    grid_configs = []
     """
     Will be filled during :meth:`lino.reports.Report.do_setup`. 
     """
@@ -825,15 +825,6 @@ class Report(actors.Actor): #,base.Handled):
                         logger.debug('Install model method %s.%s to %s',self.model.__name__,name,self)
                         setattr(self.__class__,name,model2report(m))
                         
-            #~ if self.disable_delete is None:
-                #~ m = getattr(self.model,'disable_delete',None)
-                #~ if m:
-                    #~ def disable_delete(self,request,obj):
-                        #~ return obj.disable_delete(request)
-                    #~ self.__class__.disable_delete = disable_delete
-                    #~ print 20101104, self, 'install disable_delete from',self.model.__name__
-                
-        
         if self.fk_name:
             if self.model is not None:
                 #~ assert self.model is not None, "%s has .fk_name but .model is None" % self
@@ -884,46 +875,36 @@ class Report(actors.Actor): #,base.Handled):
     def column_choices(self):
         return [ de.name for de in self.data_elems() ]
           
-    def validate_gc(self,d):
-        if not d.has_key('grid_configs'):
-            raise Exception("grid_configs is missing")
-        for name,gc in d['grid_configs'].items():
-            col_count = len(gc['columns'])
-            widths = gc.setdefault('widths',[])
-            hiddens = gc.setdefault('hiddens',[])
-            if widths and col_count != len(widths):
-                raise Exception("%d columns, but %d widths" % (col_count,len(widths)))
-            if hiddens and col_count != len(hiddens):
-                raise Exception("%d columns, but %d hiddens" % (col_count,len(hiddens)))
-            for colname in gc['columns']:
-                f = self.get_data_elem(colname)
-                if f is None:
-                    raise Exception("Unknown data element %r" % colname)
-      
     
     def do_setup(self):
       
-        filename = self.get_grid_config_file()
-        self.grid_configs = {}
-        if os.path.exists(filename):
-            logger.info("Loading %s...",filename)
-            try:
-                d = yaml.load(codecs.open(filename,encoding='utf-8').read())
-                if d is not None:
-                    self.validate_gc(d)
-                    self.grid_configs = d['grid_configs']
-            except Exception,e:
-                logger.warning("Exception while loading %s : %s",filename,e)
-                logger.exception(e)
-        #~ alist = [ ac(self) for ac in self.actions ]
+        #~ filename = self.get_grid_config_file()
+        self.grid_configs = []
+        
+        def loader(content,cd,filename):
+            data = yaml.load(content)
+            gc = GridConfig(self,data,filename,cd)
+            self.grid_configs.append(gc)
+            
+        load_config_files('%s.*gc' % self,loader)
+            
+        
+        #~ if os.path.exists(filename):
+            #~ logger.info("Loading %s...",filename)
+            #~ try:
+                #~ d = yaml.load(codecs.open(filename,encoding='utf-8').read())
+                #~ if d is not None:
+                    #~ must_save = self.validate_grid_config(d)
+                    #~ self.grid_configs = d['grid_configs']
+                    #~ if must_save:
+                        #~ msg = self.save_grid_config()
+                        #~ logger.debug(msg)
+            #~ except Exception,e:
+                #~ logger.warning("Exception while loading %s : %s",filename,e)
+                #~ logger.exception(e)
           
         if self.model is not None:
-          
                 
-            #~ if issubclass(self.model,printable.Printable):
-                #~ alist.append(printable.PrintAction(self))
-                #~ alist.append(printable.ClearCacheAction(self))
-                    
             if hasattr(self.model,'_lino_slaves'):
                 self._slaves = self.model._lino_slaves.values()
             else:
@@ -959,20 +940,12 @@ class Report(actors.Actor): #,base.Handled):
         #~ alist.append(self.default_action)
         self.set_actions(alist)
         
-    def get_grid_config_file(self):
+    def unused_get_grid_config_file(self):
         #~ filename = str(self) + ".py"
         filename = str(self) + ".rpt"
         return os.path.join(settings.DATA_DIR,filename)
         
-    def save_config(self):
-        filename = self.get_grid_config_file()
-        f = open(filename,'w')
-        f.write("# Generated file. Delete it to restore factory settings.\n")
-        d = dict(grid_configs=self.grid_configs)
-        f.write(yaml.dump(d))
-        #~ f.write('self.grid_configs = %s\n' % pprint.pformat(self.grid_configs))
-        f.close()
-        return "Grid Config has been saved to %s" % filename
+      
         
             
         
@@ -1158,6 +1131,23 @@ class Report(actors.Actor): #,base.Handled):
             d[n] = getattr(row,n)
         return d
         
+    def save_grid_config(self,index,data):
+        if len(self.grid_configs) == 0:
+            gc = GridConfig(self,data,'%s.gc' % self)
+            self.grid_configs.append(gc)
+        else:
+            gc = self.grid_configs[index]
+        gc.data = data
+        gc.validate()
+        #~ self.grid_configs[index] = gc
+        return gc.save_config()
+        #~ filename = self.get_grid_config_file(gc)
+        #~ f = open(filename,'w')
+        #~ f.write("# Generated file. Delete it to restore default configuration.\n")
+        #~ d = dict(grid_configs=self.grid_configs)
+        #~ f.write(yaml.dump(d))
+        #~ f.close()
+        #~ return "Grid Config has been saved to %s" % filename
         
 def report_factory(model):
     logger.debug('report_factory(%s) -> app_label=%r',model.__name__,model._meta.app_label)
@@ -1182,7 +1172,70 @@ LABEL_ALIGN_TOP = 'top'
 LABEL_ALIGN_LEFT = 'left'
 LABEL_ALIGN_RIGHT = 'right'
 
-class BaseLayout:
+
+class GridConfig(Configured):
+  
+    def __init__(self,report,data,*args,**kw):
+        self.report = report
+        self.data = data
+        self.label_en = data.get('label')
+        self.data.update(label=_(self.label_en))
+        must_save = self.validate()
+        if must_save:
+            msg = self.save_config()
+            #~ msg = self.save_grid_config()
+            logger.debug(msg)
+        super(GridConfig,self).__init__(*args,**kw)
+  
+    def write_content(self,f):
+        self.data.update(label=self.label_en)
+        f.write(yaml.dump(self.data))
+        self.data.update(label=_(self.label_en))
+        
+    def validate(self):
+        """
+        Removes unknown columns
+        """
+        must_save = False
+        gc = self.data
+        columns = gc['columns']
+        col_count = len(columns)
+        widths = gc.get('widths',None)
+        hiddens = gc.get('hiddens',None)
+        if widths is None:
+            widths = [None for x in columns]
+            gc.update(widths=widths)
+        elif col_count != len(widths):
+            raise Exception("%d columns, but %d widths" % (col_count,len(widths)))
+        if hiddens is None:
+            hiddens = [False for x in columns]
+            gc.update(hiddens=hiddens)
+        elif col_count != len(hiddens):
+            raise Exception("%d columns, but %d hiddens" % (col_count,len(hiddens)))
+            
+        valid_columns = []
+        valid_widths = []
+        valid_hiddens = []
+        for i,colname in enumerate(gc['columns']):
+            f = self.report.get_data_elem(colname)
+            if f is None:
+                logger.debug("Removed unknown column %d (%r). Must save.",i,colname)
+                must_save = True
+            else:
+                valid_columns.append(colname)
+                valid_widths.append(widths[i])
+                valid_hiddens.append(hiddens[i])
+        gc.update(widths=valid_widths)
+        gc.update(hiddens=valid_hiddens)
+        gc.update(columns=valid_columns)
+        return must_save
+            
+    def write_content(self,f):
+        f.write(yaml.dump(self.data))
+        
+        
+        
+class BaseLayout(Configured):
     label = None
     has_frame = False # True
     label_align = LABEL_ALIGN_TOP
@@ -1190,22 +1243,12 @@ class BaseLayout:
     #label_align = LABEL_ALIGN_LEFT
     default_button = None
     collapsible_elements  = {}
-    filename = None
-    cd = None # ConfigDir
     write_debug_info = False
     
-    def __init__(self,desc,cd=None,filename=None):
-        if filename is not None:
-            assert not os.sep in filename
+    def __init__(self,desc,*args,**kw):
         #~ self.label = label
         self._desc = desc
-        self.filename = filename
-        self.cd = cd
-        #~ self._kw = kw
-        #~ for k,v in kw.items():
-            #~ if not hasattr(self,k):
-                #~ raise Exception("Unexpected keyword argument %s=%r" % (k,v))
-            #~ setattr(self,k,v)
+        super(BaseLayout,self).__init__(*args,**kw)
             
         attrname = None
         for ln in desc.splitlines():
@@ -1231,26 +1274,13 @@ class BaseLayout:
                     if hasattr(self,attrname):
                         raise Exception('Duplicate element definition')
                     setattr(self,attrname,a[1].strip())
+        if self.label:
+            self.label = _(self.label)
           
-    #~ def get_hidden_elements(self,lh):
-        #~ return set()
         
-    def save_config(self):
-        if self.filename:
-            if not self.cd.can_write:
-                #~ print self.cd, "is not writable", self.filename
-                self.cd = LOCAL_CONFIG_DIR
-            fn = os.path.join(self.cd.name,self.filename)
-            logger.info("Layout.save_config() -> %s",fn)
-            f = codecs.open(fn,'w',encoding='utf-8')
-            f.write(self._desc)
-            f.close()
+    def write_content(self,f):
+        f.write(self._desc)
             
-    def __str__(self):
-        if self.filename:
-            return u"%s (from %s)" % (self.filename,self.cd.name)
-        return "%s(%r)" % (self.__class__.__name__,self._desc)
-        
 class ListLayout(BaseLayout):
     #~ label = _("List")
     show_labels = False
@@ -1306,7 +1336,7 @@ class LayoutHandle:
         #~ self.height = self.layout.height or self._main.height
         self.width = self._main.width
         self.height = self._main.height
-        if True:
+        if False:
             self.write_debug_info()
         
         #~ self.default_button = None

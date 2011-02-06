@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-02 00:48+0000\n"
+"POT-Creation-Date: 2011-02-06 04:47+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -124,12 +124,12 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-#: .\reports.py:993
+#: .\reports.py:969
 #, python-format
 msgid "%(details)s by %(model)s %(master)s"
 msgstr ""
 
-#: .\core\kernel.py:157
+#: .\core\kernel.py:153
 #, python-format
 msgid "Cannot delete %(self)s because %(count)d %(refs)s refer to it."
 msgstr ""
@@ -369,7 +369,7 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: .\ui\extjs\ext_elems.py:539
+#: .\ui\extjs\ext_elems.py:541
 #, python-format
 msgid "Select a %s..."
 msgstr ""
@@ -413,26 +413,30 @@ msgstr ""
 msgid "User %(user)s cannot configure %(report)s."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:907
+#: .\ui\extjs\ext_ui.py:906
 #, python-format
 msgid "Failed to delete %(record)s : %(error)s."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:930
+#: .\ui\extjs\ext_ui.py:929
 #, python-format
 msgid "Insert into %s..."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:958
+#: .\ui\extjs\ext_ui.py:957
 #, python-format
 msgid "Action %(action)s failed for %(record)s: %(error)s"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:1078
+#: .\ui\extjs\ext_ui.py:1077
 #, python-format
 msgid "Choices for %s"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:1180
+#: .\ui\extjs\ext_ui.py:1187
 msgid "Upload"
+msgstr ""
+
+#: .\ui\extjs\ext_ui.py:1195
+msgid "Edit"
 msgstr ""

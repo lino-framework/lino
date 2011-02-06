@@ -52,7 +52,7 @@ from lino.core import actors
 from lino.core.coretools import app_labels, data_elems, get_unbound_meth
 
 from lino.tools import resolve_model, resolve_field, get_app, model_label, get_field
-from lino.utils.config import find_config_files
+from lino.utils.config import load_config_files
 from lino.reports import DetailLayout
 from lino.utils import choosers
 
@@ -93,16 +93,12 @@ def analyze_models():
         The `sort()` below must remove the filename extension (".dtl") 
         because otherwise the frist Detail would come last.
         """
-        dtl_files = find_config_files('%s.%s.*dtl' % (model._meta.app_label,model.__name__)).items()
-        def fcmp(a,b):
-            return cmp(a[0][:-4],b[0][:-4])
-        dtl_files.sort(fcmp)
-        for filename,cd in dtl_files:
-            fn = os.path.join(cd.name,filename)
-            logger.info("Loading %s...",fn)
-            s = codecs.open(fn,encoding='utf-8').read()
-            dtl = DetailLayout(s,cd,filename)
+            
+        def loader(content,cd,filename):
+            dtl = DetailLayout(content,filename,cd)
             model._lino_detail_layouts.append(dtl)
+            
+        load_config_files('%s.%s.*dtl' % (model._meta.app_label,model.__name__),loader)
             
         if get_unbound_meth(model,'summary_row') is None:
         #~ if not hasattr(model,'summary_row'):

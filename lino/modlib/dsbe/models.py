@@ -54,6 +54,18 @@ from lino.mixins.reminder import ReminderEntry
 
 #~ from lino.modlib.fields import KNOWLEDGE_CHOICES # for makemessages
 
+CONFIG_NAMES = [
+  _("Status"),
+  _("Person"),
+  _("Education"), # Ausbildung/Erfahrungen
+  _("Languages"), # Sprachen
+  _("Properties"), # Eigenschaften
+  _("Skills"), # Fähigkeiten
+  _("Obstacles"), # Hindernisse
+  _("Notes"), # Notizen
+  _("Miscellaneous"), # Sonstiges
+]
+del CONFIG_NAMES # this was just for gettext to find them
 
 SCHEDULE_CHOICES = {
     'de':[ 
@@ -362,24 +374,28 @@ class Person(Partner,contacts.Person):
     #~ driving_license = models.CharField(max_length=4,blank=True,null=True,
         #~ verbose_name=_("Driving license"),choices=DRIVING_LICENSE_CHOICES)
     
-    no_shift = models.BooleanField(verbose_name=_("no shift work"))
-    no_weekend = models.BooleanField(verbose_name=_("no work on week-end"))
-    has_family = models.BooleanField(verbose_name=_("Head of a family"))
-    
-    
-    has_own_car = models.BooleanField(verbose_name=_("has own car"))
-    
-    can_car = models.BooleanField(verbose_name=_("Car driving licence"))
-    can_truck = models.BooleanField(verbose_name=_("Truck driving licence"))
-    can_clark = models.BooleanField(verbose_name=_("Clark driving licence"))
-    can_bus = models.BooleanField(verbose_name=_("Bus driving licence"))
-    
-    #~ driving_license_until = models.DateField(_("Driving license valid until"),blank=True,null=True)
-    
-    it_knowledge = fields.KnowledgeField(blank=True,null=True,
-        verbose_name=_("IT knowledge"))
+    #~ no_shift            = models.BooleanField(verbose_name=_("no shift work"))
+    #~ no_weekend          = models.BooleanField(verbose_name=_("no work on week-end"))
+    #~ has_family          = models.BooleanField(verbose_name=_("Head of a family"))
+    #~ has_own_car         = models.BooleanField(verbose_name=_("has own car"))
+    #~ can_car             = models.BooleanField(verbose_name=_("Car driving licence"))
+    #~ can_truck           = models.BooleanField(verbose_name=_("Truck driving licence"))
+    #~ can_clark           = models.BooleanField(verbose_name=_("Clark driving licence"))
+    #~ can_bus             = models.BooleanField(verbose_name=_("Bus driving licence"))
+    #~ it_knowledge        = fields.KnowledgeField(blank=True,null=True,verbose_name=_("IT knowledge"))
+    #~ physical_handicap   = models.BooleanField(_("Physical handicap"))
+    #~ mental_handicap     = models.BooleanField(_("Mental handicap"))
+    #~ psycho_handicap     = models.BooleanField(_("Psychological handicap"))
+    #~ health_problems     = models.BooleanField(_("Health problems"))
+    #~ juristic_problems   = models.BooleanField(_("Juristic problems"))
+    #~ dependency_problems = models.BooleanField(_("Dependency problems"))
+    #~ social_competence   = models.BooleanField(_("Lack of social competence"))
+    #~ motivation_lack     = models.BooleanField(_("Lack of motivation"))
+    #~ fulltime_only       = models.BooleanField(_("Fulltime only"))
+    #~ parttime_only       = models.BooleanField(_("Part-time only"))
+    #~ young_children      = models.BooleanField(_("Young children"))
+    #~ is_illiterate       = models.BooleanField(_("Illiterate"))
         
-    #~ residence_permit_until = models.DateField(blank=True,null=True,verbose_name=_("Residence permit valid until"))
     residence_type = models.SmallIntegerField(blank=True,null=True,
         verbose_name=_("Residence type"),
         choices=RESIDENCE_TYPE_CHOICES,
@@ -402,36 +418,15 @@ class Person(Partner,contacts.Person):
     income_rente = models.BooleanField(verbose_name=_("Rente"))
     income_misc  = models.BooleanField(verbose_name=_("Andere"))
     
-    
-    physical_handicap = models.BooleanField(_("Physical handicap"))
-    mental_handicap = models.BooleanField(_("Mental handicap"))
-    psycho_handicap = models.BooleanField(_("Psychological handicap"))
-    health_problems = models.BooleanField(_("Health problems"))
-    juristic_problems = models.BooleanField(_("Juristic problems"))
-    dependency_problems = models.BooleanField(_("Dependency problems"))
-    social_competence = models.BooleanField(_("Lack of social competence"))
-    motivation_lack = models.BooleanField(_("Lack of motivation"))
-    
+    is_seeking = models.BooleanField(_("is seeking work"))
     unavailable_until = models.DateField(blank=True,null=True,verbose_name=_("Unavailable until"))
     unavailable_why = models.CharField(max_length=100,blank=True,null=True,
         verbose_name=_("reason"))
     
-    fulltime_only = models.BooleanField(_("Fulltime only"))
-    parttime_only = models.BooleanField(_("Part-time only"))
-    young_children = models.BooleanField(_("Young children"))
     native_language = models.ForeignKey('countries.Language',
       verbose_name=_("Native language"),
       blank=True,null=True)
-    is_illiterate = models.BooleanField(_("Illiterate"))
-    #~ native_language = fields.LanguageField(
-      #~ verbose_name=_("Native language"),
-      #~ blank=True,null=True)
-    #~ native_language = models.CharField(max_length=100,
-        #~ blank=True,null=True,
-        #~ verbose_name=_("Native language"))
-    #~ migration = models.BooleanField(_("Migration"))
-    is_seeking = models.BooleanField(_("is seeking work"))
-    
+      
     obstacles = models.TextField(_("Obstacles"),blank=True,null=True)
     skills = models.TextField(_("Other skills"),blank=True,null=True)
     job_agents = models.CharField(max_length=100,
@@ -510,17 +505,6 @@ class Person(Partner,contacts.Person):
         for o in find_them('coached_until', today, datetime.timedelta(days=30),
             _("coaching ends"),fmt='detail',tab=1):
             yield o
-            
-            #~ todo... delay=(value, unit)
-        #~ for obj in model.objects.filter(q,
-              #~ driving_license_until__lte=date+datetime.timedelta(days=14)).order_by('driving_license_until'):
-            #~ yield ReminderEntry(obj,obj.driving_license_until,_("driving license expires in 14 days"),fmt='detail',tab=3)
-        #~ for obj in model.objects.filter(q,
-              #~ residence_permit_until__lte=date+datetime.timedelta(days=60)).order_by('residence_permit_until'):
-            #~ yield ReminderEntry(obj,obj.residence_permit_until,_("residence permit expires in 60 days"),fmt='detail',tab=4)
-        #~ for obj in model.objects.filter(q,
-              #~ work_permit_valid_until__lte=date+datetime.timedelta(days=40)).order_by('work_permit_valid_until'):
-            #~ yield ReminderEntry(obj,obj.work_permit_valid_until,_("work permit expires in 40 days"),fmt='detail',tab=4)
       
         
     def get_image_parts(self):
@@ -533,15 +517,6 @@ class Person(Partner,contacts.Person):
         return os.path.join(settings.MEDIA_ROOT,*self.get_image_parts())
         
             
-    #~ def is_illiterate(self):
-        #~ if self.languageknowledge_set.count() == 0:
-            #~ return False
-        #~ for lk in self.languageknowledge_set.all():
-            #~ if lk.written > 0:
-                #~ return False
-        #~ return True
-    #~ is_illiterate.return_type = models.BooleanField(_("Illiterate"),editable=False)
-    
     def age(self,request):
         if self.birth_date:
             dd = datetime.date.today()-self.birth_date
@@ -587,12 +562,6 @@ class Person(Partner,contacts.Person):
         kv = dict(type=settings.LINO_SITE.driving_licence_upload_type)
         r = rr.spawn_request(uploads.UploadsByPerson(),master_instance=self,known_values=kv)
         return rr.ui.quick_upload_buttons(r)
-        #~ rrr = rr.spawn_request(uploads.UploadsByPerson(),
-            #~ master_instance=self,
-            #~ known_values=dict(type=settings.LINO_SITE.upload_driving_licence_type))
-        #~ return rr.ui.quick_upload_buttons(rrr)
-        #~ return uploads.UploadsByPerson().request(master_instance=self,type__exact=5)
-    #~ driving_licence.return_type = fields.ShowOrCreateButton(_("driving licence"))
     driving_licence.return_type = fields.DisplayField(_("driving licence"))
     
     

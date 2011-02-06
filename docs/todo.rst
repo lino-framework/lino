@@ -9,6 +9,14 @@ for which I hope for help from other people.
 Short-term
 ----------
 
+#.  save_grid_config könnte nachfragen bevor er die GC abspeichert.
+
+#.  Wenn die Konfiguration einer Grid verändert wurde und man 
+    aus Versehen auf einen Kolonnentitel klickt, dann wird die Grid 
+    sortiert und neu geladen, und alle ungespeicherte Konfiguration ist futsch.
+    Vor dem Sortieren nachfragen "Änderungen in GC speichern ?".
+    Diese Frage wohl nur für Benutzer, die GCs auch speichern dürfen.
+
 #.  Auf einer neuen Zeile einer Grid stören die Fehlermeldungen per
     Alert.  (z.B. Eingabe ChoiceType)
     
@@ -24,6 +32,8 @@ Short-term
     usw. könnten vielleicht auch Eigenschaften werden 
     (in einer eigenen Gruppe "Einnahmen" natürlich)
     
+#.  Textbausteine (im Text-Editor F1 drücken können)
+
     
 Version 1.2 (alle todos vom 11.01. fertig)
 ------------------------------------------
@@ -33,12 +43,6 @@ Version 1.2 (alle todos vom 11.01. fertig)
   
 #.  In Suchliste anzeigen, wann er am suchen ist und ein Button "Suche abbrechen".
 
-#.  Wenn man auf einen ForeignKey klickt, sollte er kein neues Browserfenster 
-    öffnen, sondern lediglich ein neues Fenster.
-    
-#.  Gridkonfigurationen speichern funktioniert nicht. 
-    Oder --besser gesagt-- wird erst aktiv nach dem nächsten Server-Restart.
-
 #.  Excel erkennt das encoding der csv-Datei nicht als UTF-8.
 
 #.  Formatierte Texte in Verträgen drucken können.
@@ -47,12 +51,6 @@ Version 1.2 (alle todos vom 11.01. fertig)
 
 Version 1.3
 -----------
-
-#.  Alle Unterklassen von `lino.mixins.ByUser` benutzen ja :meth:`setup_request`.
-    Im Fall eines UI-losen Requests (insbesondere der, den das MenuItem macht) 
-    sollte das aber nicht stattfinden. 
-    Der Permalink sollte den Benutzer nicht enthalten.
-    http://127.0.0.1:8000/api/dsbe/MySearches
 
 #.  Decide some relatively stable Django version to use,
     because simply getting the latest snapshot each time 
@@ -67,7 +65,7 @@ Version 1.3
     internationalisiert, stehen also in den Konfigurationsdateien 
     in hardkodiertem Deutsch drin. 
     Also bis zur ersten Lino-Demo in FR oder NL muss ich mir dazu
-    noch was einfallen lassen. 
+    noch was einfallen lassen.
 
 #.  Wenn man die Rückfrage nach "Delete" zu schnell beantwortet, 
     wird die Grid nicht aktualisiert. 
@@ -106,8 +104,6 @@ Version 1.3
 
 #.  Minify :xfile:`lino.js`
     http://en.wikipedia.org/wiki/Minification_(programming)
-
-#.  Textbausteine (im Text-Editor F1 drücken können)
 
 #.  Dublettenkontrolle. Nach Duplikaten suchen vor Erstellen einer neuen Person.
     Erstellen einer neuen Person muss verweigert werden, wenn 
@@ -413,11 +409,6 @@ Long-term
   #. sollten im Detail-Fenster einen Button neben sich haben, 
      mit dem man per permalink auf die foreign row springen kann.
   
-#. Grid configs 
-
-  #. sollten in den config dirs stehen und nicht im DATA_DIR
-  #. sollten vielleicht besser YAML statt .py sein.  
-
 #. Wenn ich einen Slave-Report sowohl in der Grid als auch in einem Detail als Element benutze, 
    dann verursacht das einen Konflikt im ext_store.Store, weil er zwei virtuelle fields.HtmlBox-Felder 
    mit dem gleichen Namen erzeugt, die sich nur durch den row_separator unterscheiden.
@@ -425,10 +416,6 @@ Long-term
   
 #. Für :class:`lino.utils.printable.LatexBuildMethod` müsste mal ohne viel Aufwand 
    ein kleines Beispiel implementiert werden.
-  
-#. Benutzermeldungen "wurde gespeichert" & Co bleiben manchmal auch 
-   nach der nächsten Aktion noch in der Console stehen.
-   Ich muss vielleicht konsequent immer Lino.action_handler benutzen.
   
 #. Sollten Links hierarchisiert werden können? 
    Das hieße ein Feld :attr:`links.Link.parent` und ein TreePenel.
@@ -458,8 +445,6 @@ Long-term
 
 #. Verändern der Reihenfolge per DnD in :class:`links.LinksByOwner`.
     
-#. Is there a better implementation for :func:`lino.ui.extjs.ext_ui.elem2rec_detailed`?
-
 #. Wir brauchen in :class:`notes.Note` noch eine Methode `type_choices` und 
    in :class:`notes.NoteType` ein Feld `only_for_owner_model`, das die Auswahlliste 
    für Notizart ggf. auf bestimmte Arten von Owner beschränkt.
