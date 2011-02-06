@@ -1192,7 +1192,7 @@ class ExtUI(base.UI):
         s += ' [<a href="%s" target="_blank">show</a>]' % (settings.MEDIA_URL + rr[0].file.name)
         #~ s += ' [<a href="%s" target="_blank">edit</a>]' % (self.get_detail_url(rr[0],fmt='detail'))
         params = dict(data_record=elem2rec1(rr,rr.ah,rr[0]))
-        s += ' ' + self.action_href(rr.ah.detail_action,_("Edit"),**params)
+        s += ' ' + self.action_href(rr.ah.report.detail_action,_("Edit"),**params)
         return s
         
       
