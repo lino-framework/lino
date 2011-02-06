@@ -1568,7 +1568,8 @@ class RequestsByCourse(CourseRequests):
   
     def create_instance(self,req,**kw):
         obj = super(RequestsByCourse,self).create_instance(req,**kw)
-        obj.content = obj.course.content
+        if obj.course is not None:
+            obj.content = obj.course.content
         return obj
     
 class ParticipantsByCourse(RequestsByCourse):
@@ -1592,6 +1593,8 @@ class CandidatesByCourse(RequestsByCourse):
     #~ can_add = perms.never
     
     def get_request_queryset(self,rr):
+        if rr.master_instance is None:
+            return []
         return self.model.objects.filter(course__isnull=True,
             content__exact=rr.master_instance.content)
     

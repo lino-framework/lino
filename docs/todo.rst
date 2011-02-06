@@ -21,7 +21,7 @@ Short-term
     Alert.  (z.B. Eingabe ChoiceType)
     
 #.  Momentan ist es nicht möglich, "mal eben" eine Suche zu machen, 
-    die dann nicht gespeichert wird.
+    die **nicht** gespeichert wird.
     Stört das?
     Deshalb ist momentan übrigens der Titel einer Suchliste ein 
     obligatorisches Feld.
@@ -51,6 +51,18 @@ Version 1.2 (alle todos vom 11.01. fertig)
 
 Version 1.3
 -----------
+
+#.  Die Konfigurationsparameter 
+    `residence_permit_upload_type`, 
+    `work_permit_upload_type` und 
+    `driving_licence_upload_type`, 
+    die momentan als Klassenattribute 
+    in :class:`lino.demos.dsbe.site.Site`
+    implementiert sind, sollten 
+    ebenfalls zu Feldern in der SiteConfig konvertiert werden.
+    Aber Vorsicht, denn wenn die verändert werden muss 
+    vielleicht die :xfile:`lino.js` 
+    neu generiert werden.
 
 #.  Decide some relatively stable Django version to use,
     because simply getting the latest snapshot each time 

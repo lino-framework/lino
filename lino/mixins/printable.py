@@ -1,4 +1,4 @@
-## Copyright 2009-2010 Luc Saffre
+## Copyright 2009-2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -210,7 +210,7 @@ class AppyBuildMethod(SimpleBuildMethod):
             )
         lang = str(elem.get_print_language(self))
         from appy.pod.renderer import Renderer
-        logger.debug("appy.pod render %s -> %s using language %r",tpl,target,lang)
+        logger.debug(u"appy.pod render %s -> %s using language %r",tpl,target,lang)
         savelang = babel.LANG
         setlang(lang)
         #~ locale.setlocale(locale.LC_ALL,ls)
@@ -356,7 +356,7 @@ class BasePrintAction(reports.RowAction):
             #~ if not elem.must_rebuild_target(filename,self):
                 #~ logger.debug("%s : %s -> %s is up to date",self,elem,filename)
                 #~ return
-            logger.debug("%s %s -> overwrite existing %s.",bm,elem,filename)
+            logger.debug(u"%s %s -> overwrite existing %s.",bm,elem,filename)
             os.remove(filename)
         else:
             dirname = os.path.dirname(filename)
@@ -365,7 +365,7 @@ class BasePrintAction(reports.RowAction):
                     raise Exception("Please create yourself directory %s" % dirname)
                 else:
                     os.makedirs(dirname)
-        logger.debug("%s : %s -> %s", bm,elem,filename)
+        logger.debug(u"%s : %s -> %s", bm,elem,filename)
         return filename
         
         
@@ -407,12 +407,12 @@ class DirectPrintAction(BasePrintAction):
     #~ def __init__(self,rpt,name,label,bmname,tplname):
     def __init__(self,name,label,tplname,build_method=None):
         BasePrintAction.__init__(self,name,label)
-        self.bm =  bm_dict.get(build_method or settings.LINO_SITE.preferred_build_method)
+        #~ self.bm =  bm_dict.get(build_method or settings.LINO_SITE.preferred_build_method)
+        self.build_method = build_method
         self.tplname = tplname
-        assert tplname.endswith(self.bm.template_ext)
         
     def get_print_templates(self,bm,elem):
-        assert bm is self.bm
+        #~ assert bm is self.bm
         return [ self.tplname ]
         
     def filename_root(self,elem):
@@ -420,8 +420,11 @@ class DirectPrintAction(BasePrintAction):
         #~ return self.actor.model._meta.app_label + '.' + self.actor.model.__name__
         
     def run(self,rr,elem,**kw):
-        self.bm.build(self,elem)
-        target = settings.MEDIA_URL + "/".join(self.bm.get_target_parts(self,elem))
+        bm =  bm_dict.get(self.build_method or settings.LINO_SITE.config.default_build_method)
+        if not self.tplname.endswith(bm.template_ext):
+            raise Exception("Invalid template for build method %s" % bm)
+        bm.build(self,elem)
+        target = settings.MEDIA_URL + "/".join(bm.get_target_parts(self,elem))
         return rr.ui.success_response(open_url=target,**kw)
     
 class EditTemplateAction(reports.RowAction):
@@ -454,10 +457,10 @@ class PrintableType(models.Model):
         
     build_method = models.CharField(max_length=20,
       verbose_name=_("Build method"),
-      choices=build_method_choices(),blank=True,null=True)
+      choices=build_method_choices(),blank=True)
     template = models.CharField(max_length=200,
       verbose_name=_("Template"),
-      blank=True,null=True)
+      blank=True)
     #~ build_method = models.CharField(max_length=20,choices=mixins.build_method_choices())
     #~ template = models.CharField(max_length=200)
     
@@ -532,7 +535,8 @@ class Printable(models.Model):
     def get_build_method(self):
         # TypedPrintable  overrides this
         #~ return 'rtf'
-        return settings.LINO_SITE.preferred_build_method 
+        return settings.LINO_SITE.config.default_build_method 
+        #~ return settings.LINO_SITE.preferred_build_method 
         #~ return 'pisa'
         
 

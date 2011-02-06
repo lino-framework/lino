@@ -31,4 +31,15 @@ Folgende Punkte sind jetzt behoben:
     aus Versehen auf einen Kolonnentitel klickt, dann wird die Grid 
     sortiert und neu geladen, und alle ungespeicherte Konfiguration ist futsch.
 
-
+#.  Der Konfigurationsparameter `preferred_build_method`, 
+    der bisher als (lokal überschreibbares) 
+    Klassenattribut in :class:`lino.demos.dsbe.site.Site`
+    implementiert war, ist jetzt stattdessen ein 
+    Datenbankfeld
+    :attr:`lino.models.SiteConfig.default_build_method`.
+    
+    Dadurch kann man jetzt ohne Server-Restart mal schnell zwischen 
+    appypdf und appyodt 
+    hin und her schalten zum Debuggen von Templates.
+    Siehe (https://answers.launchpad.net/appy/+question/144327)
+    

@@ -164,7 +164,7 @@ class Site(object):
     domain = "www.example.com"
     
     #~ preferred_build_method = 'pisa'
-    preferred_build_method = 'appypdf'
+    #~ preferred_build_method = 'appypdf'
     
     csv_params = dict()
     """

@@ -15,3 +15,17 @@ als auch für
 .gc (:class:`lino.reports.GridConfig`).
 
 Release 1.1.2 in Eupen, mit noch ein paar kleinen Tippfehler-Bugs.
+
+Noch ein Nachtrag zur :doc:`/releases/20110205`:
+
+-   Der Konfigurationsparameter `preferred_build_method`, 
+    der bisher als (lokal überschreibbares) 
+    Klassenattribut in :class:`lino.demos.dsbe.site.Site`
+    implementiert war, ist jetzt stattdessen ein 
+    Datenbankfeld
+    :attr:`lino.models.SiteConfig.default_build_method`.
+    
+    Damit man ohne Server-Restart mal schnell zwischen appypdf und appyodt 
+    hin und her schalten kann zum Debuggen von Templates.
+    Siehe (https://answers.launchpad.net/appy/+question/144327)
+    

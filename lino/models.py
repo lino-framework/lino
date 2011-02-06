@@ -1,4 +1,4 @@
-## Copyright 2009-2010 Luc Saffre
+## Copyright 2009-2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@ from lino import reports
 #~ from lino import layouts
 from lino.core import actors
 #~ from lino import commands
+from lino.mixins import printable
 from lino.utils import perms
 #~ from lino import choices_method, simple_choices_method
 
@@ -39,6 +40,12 @@ class SiteConfig(models.Model):
     next_partner_id = models.IntegerField(
         default=1,
         verbose_name=_("The next automatic id for Person or Company"))
+        
+    default_build_method = models.CharField(max_length=20,
+      verbose_name=_("Default build method"),
+      default='latex',
+      choices=printable.build_method_choices(),blank=True)
+        
     # base_currency 
     
     def __unicode__(self):

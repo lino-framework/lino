@@ -1,5 +1,5 @@
 main = 
-    site_company
+    site_company default_build_method
     next_partner_id
     job_office
     propgroup_skills propgroup_softskills propgroup_obstacles
