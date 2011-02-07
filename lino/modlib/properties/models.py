@@ -175,7 +175,8 @@ class PropertyOccurence(models.Model):
         
         
     def full_clean(self):
-        self.group = self.property.group
+        if self.property_id is not None:
+            self.group = self.property.group
         super(PropertyOccurence,self).full_clean()
         #~ if self.group != self.property.group:
             #~ raise ValidationError()
