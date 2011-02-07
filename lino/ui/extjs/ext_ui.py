@@ -998,6 +998,7 @@ class ExtUI(base.UI):
         #~ tpl.user = request.user
         tpl.site = self.site
         tpl.lino = lino
+        tpl.ext_requests = ext_requests
         for k in ext_requests.URL_PARAMS:
             setattr(tpl,k,getattr(ext_requests,k))
         f.write(unicode(tpl)+'\n')

@@ -17,9 +17,6 @@ Short-term
     Vor dem Sortieren nachfragen "Änderungen in GC speichern ?".
     Diese Frage wohl nur für Benutzer, die GCs auch speichern dürfen.
 
-#.  Auf einer neuen Zeile einer Grid stören die Fehlermeldungen per
-    Alert.  (z.B. Eingabe ChoiceType)
-    
 #.  Momentan ist es nicht möglich, "mal eben" eine Suche zu machen, 
     die **nicht** gespeichert wird.
     Stört das?

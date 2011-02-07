@@ -52,7 +52,7 @@ def py2html(obj,name):
     
 def before_row_edit(panel):
     l = []
-    #~ l.append("console.log('before_row_edit',record);")
+    l.append("console.log('before_row_edit',record);")
     for e in panel.active_children:
         if isinstance(e,GridElement):
             l.append("%s.on_master_changed();" % e.as_ext())

@@ -1,7 +1,27 @@
 20110207
 ========
 
-Montagmorgen, 4.30 Uhr.
-Upps, da fehlte noch eine Kleinigkeit, 
-bevor man die SiteConfig wirklich dynamisch verändern kann.
+4.30 Uhr
+--------
 
+Upps, da fehlte noch eine Kleinigkeit, 
+um die `Default build method` wirklich dynamisch verändern zu können:
+:meth:`SiteConfig.save` ruft jetzt :meth:`LinoSite.configure`.
+
+In einem Rutsch habe ich jetzt die vielen Dateien `site.py` 
+in die jeweiligen :xfile:`settings.py` integriert.
+
+Und dann noch ein bisher ungemeldeter Bug weniger:  
+in Personensuche konnte man in
+"Gesuchte Eigenschaften" 
+und "Unerwünschte Eigenschaften" 
+noch nichts eingeben.
+Behoben durch die neue Zeile::
+
+  e.record.data[e.field+'$ext_requests.CHOICES_HIDDEN_SUFFIX'] = e.value;
+  
+In einem ist nun auch dieser Punkt behoben:
+
+#.  Auf einer neuen Zeile einer Grid störten die Fehlermeldungen per
+    Alert.  (z.B. Eingabe ChoiceType)
+    

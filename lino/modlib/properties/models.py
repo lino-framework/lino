@@ -140,7 +140,8 @@ class PropertyOccurence(models.Model):
         abstract = True
         
     group = models.ForeignKey(PropGroup,verbose_name=_("Property group"))
-    property = models.ForeignKey(Property,verbose_name=_("Property"))
+    property = models.ForeignKey(Property,verbose_name=_("Property")) # ,blank=True,null=True)
+    # property must be nullable?
     value = models.CharField(_("Value"),max_length=settings.LINO_SITE.propvalue_max_length,blank=True)
     
     def get_text(self):

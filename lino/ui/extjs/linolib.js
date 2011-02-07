@@ -576,13 +576,19 @@ Lino.delete_selected = function(caller) {
   });
 };
 
-Lino.action_handler = function (panel,on_success) {
+Lino.action_handler = function (panel,on_success,gridmode) {
   return function (response) {
     if (response.responseText) {
       var result = Ext.decode(response.responseText);
       //~ console.log('Lino.do_action()',action.name,'result is',result);
       if (on_success && result.success) on_success(result);
-      if (result.alert_msg) Ext.MessageBox.alert('Alert',result.alert_msg);
+      if (result.alert_msg) {
+        if (gridmode) {
+          Lino.notify(result.alert_msg);
+        } else {
+          Ext.MessageBox.alert('Alert',result.alert_msg);
+        }
+      };
       if (result.message) Lino.notify(result.message);
       if (result.refresh_all) {
           panel.ww.main_item.refresh();
@@ -1642,6 +1648,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     //~ console.log('20101130 value: ',e.value);
     //~ var p = e.record.getChanges();
     //~ console.log('20101130 getChanges: ',e.record.getChanges());
+    //~ this.before_row_edit(e.record);
     for(k in e.record.getChanges()) {
         var v = e.record.get(k);
     //~ for(k in e.record.modified) {
@@ -1682,7 +1689,10 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     //~ p[e.field] = e.value;
     //~ console.log('20100723 GridPanel.on_afteredit()',e);
     // add value used by ForeignKeyStoreField CHOICES_HIDDEN_SUFFIX
-    p[e.field+'Hidden'] = e.value;
+    // not sure whether this is still needed:
+    p[e.field+'$ext_requests.CHOICES_HIDDEN_SUFFIX'] = e.value;
+    // this one is needed so that this field can serve as choice context:
+    e.record.data[e.field+'$ext_requests.CHOICES_HIDDEN_SUFFIX'] = e.value;
     // p[pk] = e.record.data[pk];
     // console.log("grid_afteredit:",e.field,'=',e.value);
     Ext.apply(p,this.get_base_params()); // needed for POST, ignored for PUT
@@ -1692,7 +1702,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     var on_success = Lino.action_handler( this, function(result) {
       self.getStore().commitChanges(); // get rid of the red triangles
       self.getStore().reload();        // reload our datastore.
-    });
+    },true);
     var req = {
         waitMsg: 'Saving your data...',
         success: on_success,
