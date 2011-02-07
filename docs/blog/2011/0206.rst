@@ -26,6 +26,7 @@ Noch ein Nachtrag zur :doc:`/releases/20110205`:
     :attr:`lino.models.SiteConfig.default_build_method`.
     
     Damit man ohne Server-Restart mal schnell zwischen appypdf und appyodt 
-    hin und her schalten kann zum Debuggen von Templates.
-    Siehe (https://answers.launchpad.net/appy/+question/144327)
+    hin und her schalten kann zum 
+    `Debuggen von Templates.
+    <https://answers.launchpad.net/appy/+question/144327>`_.
     

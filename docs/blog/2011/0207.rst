@@ -1,0 +1,7 @@
+20110207
+========
+
+Montagmorgen, 4.30 Uhr.
+Upps, da fehlte noch eine Kleinigkeit, 
+bevor man die SiteConfig wirklich dynamisch verändern kann.
+

@@ -171,7 +171,7 @@ def setup_site(self):
         raise Exception("LinoSite.setup() called recursively.")
     self._setting_up = True
     
-    self.config = get_site_config()
+    self.configure(get_site_config())
   
     analyze_models()
     

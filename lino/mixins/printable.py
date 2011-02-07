@@ -422,7 +422,7 @@ class DirectPrintAction(BasePrintAction):
     def run(self,rr,elem,**kw):
         bm =  bm_dict.get(self.build_method or settings.LINO_SITE.config.default_build_method)
         if not self.tplname.endswith(bm.template_ext):
-            raise Exception("Invalid template for build method %s" % bm)
+            raise Exception("Invalid template for build method %r" % bm.name)
         bm.build(self,elem)
         target = settings.MEDIA_URL + "/".join(bm.get_target_parts(self,elem))
         return rr.ui.success_response(open_url=target,**kw)

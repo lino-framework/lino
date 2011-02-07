@@ -117,7 +117,7 @@ def error_response(e,message_prefix='',**kw):
     kw.update(success=False)
     if hasattr(e, 'message_dict'):
         kw.update(errors=e.message_dict)
-    kw.update(alert_msg=message_prefix+unicode(e))
+    kw.update(alert_msg=cgi.escape(message_prefix+unicode(e)))
     #~ kw.update(message=message_prefix+unicode(e))
     return json_response(kw)
     

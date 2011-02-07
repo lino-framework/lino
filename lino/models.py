@@ -46,8 +46,14 @@ class SiteConfig(models.Model):
       default='latex',
       choices=printable.build_method_choices(),blank=True)
         
-    # base_currency 
-    
+    def save(self,*args,**kw):
+        #~ from lino.lino_site import lino_site
+        #~ lino_site.init_site_config(sc)
+        settings.LINO_SITE.configure(self)
+        #~ settings.LINO_SITE.configure(self)
+        r = super(SiteConfig,self).save(*args,**kw)
+        return r
+   
     def __unicode__(self):
         return force_unicode(_("Site Configuration"))
 
@@ -64,9 +70,6 @@ def get_site_config():
     except SiteConfig.DoesNotExist:
         dblogger.info("Creating SiteConfig record")
         sc = SiteConfig(pk=1)
-        #~ from lino.lino_site import lino_site
-        #~ lino_site.init_site_config(sc)
-        settings.LINO_SITE.init_site_config(sc)
         sc.save()
         return sc
 

@@ -154,10 +154,16 @@ def PARSE_DATE(s):
 
 
 
-
-
-
-class Site(object):
+class LinoSite(object):
+    """
+    LinoSite base class.
+    LinoSite classes are defined and instantiated in Django settings files.
+    
+    |This class is subclassed by :mod:`lino.demos.std.settings`,
+    |which is subclassed by :mod:`lino.demos.dsbe.settings`
+    |which is probably subclassed by your local :xfile:`settings.py`
+    
+    """
     help_url = "http://code.google.com/p/lino"
     #~ index_html = "This is the main page."
     title = "Another Lino Site"
@@ -193,7 +199,11 @@ class Site(object):
         raise NotImplementedError
           
     def init_site_config(self,sc):
+        #~ self.config = sc
         pass
+        
+    def configure(self,sc):
+        self.config = sc
         
     #~ def setup(self):
       
@@ -249,9 +259,9 @@ class Site(object):
         assert self._setup_done
         return self._menu.menu_request(user)
         
-    def add_program_menu(self):
-        return
-        m = self.add_menu("app","~Application",)
+    #~ def add_program_menu(self):
+        #~ return
+        #~ m = self.add_menu("app","~Application",)
         #~ m.add_item(url="/accounts/login/",label="Login",can_view=perms.is_anonymous)
         #~ m.add_item(url="/accounts/logout/",label="Logout",can_view=perms.is_authenticated)
         #m.add_item(system.Login(),can_view=perms.is_anonymous)

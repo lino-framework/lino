@@ -49,7 +49,9 @@ As long as nobody protests, I'll save some time by writing in German.
   03
   04
   :doc:`05 <0205>` 
+  :doc:`06 <0206>` 
   |br| 
+  :doc:`07 <0207>` 
   |br| 
   |br|  	
 

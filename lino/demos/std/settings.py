@@ -25,7 +25,9 @@ from tempfile import gettempdir
 from os.path import join, abspath, dirname, normpath
 import lino
 
-# Lino specific settings
+from lino import LinoSite
+LINO_SITE = LinoSite()
+
 #~ DBLOGGER = 'db'
 DBLOGFILE = 'auto'
 USE_FIREBUG = False
@@ -33,8 +35,6 @@ USE_GRIDFILTERS = True
 MODEL_DEBUG = True
 PROJECT_DIR = normpath(dirname(__file__))
 #~ LINO_SETTINGS = join(PROJECT_DIR,"lino_settings.py")
-from lino import Site
-LINO_SITE = Site()
 #~ BYPASS_PERMS = True 
 BYPASS_PERMS = False
 USER_INTERFACES = [

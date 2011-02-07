@@ -1860,3 +1860,6 @@ def my_callback(sender,**kw):
         db.connection.create_collation('BINARY', stricmp)
 
 connection_created.connect(my_callback)
+
+
+
