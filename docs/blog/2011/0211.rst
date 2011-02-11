@@ -186,3 +186,143 @@ Und noch ein Punkt behoben:
     Änderung irritierenderweise nicht gespeichert.
   
 Check-in 20110211c wegen Feierabend.
+
+
+Debian dist-upgrade from lenny to squeeze
+-----------------------------------------
+
+::
+
+  Unable to migrate to dependency-based boot system
+
+  Tests have determined that problems in the boot system exist which prevent migration to dependency-based boot
+  sequencing:
+
+  insserv: warning: script 'K20oood' missing LSB tags and overrides, insserv: warning: script 'K20watch_tim'
+  missing LSB tags and overrides, insserv: warning: script 'oood' missing LSB tags and overrides, insserv:
+  warning: script 'watch_tim' missing LSB tags and overrides,
+
+  If the reported problem is a local modification, it needs to be fixed manually. If it's a bug in the package, it
+  should be reported to the BTS and fixed in the package. See
+  http://wiki.debian.org/LSBInitScripts/DependencyBasedBoot for more information about how to fix the problems
+  preventing migration.
+
+  To reattempt the migration process after the problems have been fixed, run "dpkg-reconfigure sysv-rc".
+
+Ich schätze, dass ich meine beiden init.d-Scripts mal deinstallieren und dann wieder neu installieren muss.
+
+
+
+::
+
+  Reboot needed after this upgrade
+
+  You are currently upgrading udev using an incompatible kernel version. A compatible version is installed or
+  being installed on the system, but you need to reboot using this new kernel as soon as the upgrade is complete.
+
+  Without a reboot with this new kernel version, the system may become UNUSABLE.
+
+  OK
+
+
+::
+
+  The new Linux kernel version provides different drivers for some PATA (IDE) controllers. The names of some hard
+  disk, CD-ROM, and tape devices may change.
+
+  It is now recommended to identify disk devices in configuration files by label or UUID (unique identifier)
+  rather than by device name, which will work with both old and new kernel versions.
+
+  If you choose to not update the system configuration automatically, you must update device IDs yourself before
+  the next system reboot or the system may become unbootable.
+
+  Update disk device IDs in system configuration?
+
+  Yes
+
+::
+
+  Boot loader configuration check needed
+
+  The boot loader configuration for this system was not recognized. These settings in the configuration may need
+  to be updated:
+
+   * The root device ID passed as a kernel parameter;
+   * The boot device ID used to install and update the boot loader.
+
+
+  You should generally identify these devices by UUID or label. However, on MIPS systems the root device must be
+  identified by name.
+  
+
+
+::
+
+  Configuration file `/etc/modprobe.d/blacklist.conf'
+   ==> File on system created by you or by a script.
+   ==> File also in package provided by package maintainer.
+     What would you like to do about it ?  Your options are:
+      Y or I  : install the package maintainer's version
+      N or O  : keep your currently-installed version
+        D     : show the differences between the versions
+        Z     : start a shell to examine the situation
+   The default action is to keep your current version.
+  *** blacklist.conf (Y/I/N/O/D/Z) [default=N] ?
+  
+  
+::
+
+  Configuration file `/etc/apache2/envvars'
+   ==> Modified (by you or by a script) since installation.
+   ==> Package distributor has shipped an updated version.
+     What would you like to do about it ?  Your options are:
+      Y or I  : install the package maintainer's version
+      N or O  : keep your currently-installed version
+        D     : show the differences between the versions
+        Z     : start a shell to examine the situation
+   The default action is to keep your current version.
+  *** envvars (Y/I/N/O/D/Z) [default=N] ?
+
+::
+
+  Configuration file `/etc/apache2/sites-available/default'
+   ==> Modified (by you or by a script) since installation.
+   ==> Package distributor has shipped an updated version.
+     What would you like to do about it ?  Your options are:
+      Y or I  : install the package maintainer's version
+      N or O  : keep your currently-installed version
+        D     : show the differences between the versions
+        Z     : start a shell to examine the situation
+   The default action is to keep your current version.
+  *** default (Y/I/N/O/D/Z) [default=N] ?
+
+::
+
+  Starting web server: apache2(2)No such file or directory: apache2: could not open error log file /etc/apache2/${APACHE_L
+  OG_DIR}/error.log.
+  Unable to open logs
+  Action 'start' failed.
+  The Apache error log may have more information.
+  
+
+::
+
+  Setting up update-inetd (4.38+nmu1) ...
+  ERROR 1577 (HY000) at line 1: Cannot proceed because system tables used by Event Scheduler were found damaged at server
+  start
+
+
+
+::
+
+  lino:/usr/local/lib/python2.6# /etc/init.d/apache2 start
+  Starting web server: apache2(2)No such file or directory: apache2: could not open error log file /etc/apache2/${APACHE_LOG_DIR}/error.log.
+  Unable to open logs
+  Action 'start' failed.
+  The Apache error log may have more information.
+   failed!
+   
+   
+Lösung: von   
+http://ubuntuforums.org/showthread.php?t=1639623   
+habe ich mir eine Originalversion der `/etc/apache2/envvars` kopiert.
