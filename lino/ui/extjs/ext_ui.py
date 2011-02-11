@@ -826,30 +826,20 @@ class ExtUI(base.UI):
             ar = ext_requests.ViewReportRequest(request,rh,rh.report.default_action)
             
             if fmt == 'csv':
-                response = HttpResponse(mimetype='text/csv')
-                response = HttpResponse(content_type='text/csv;charset=utf-8')
-                response['Content-Disposition'] = 'attachment; filename=%s.csv' % ar.report
+                #~ response = HttpResponse(mimetype='text/csv')
+                charset = settings.LINO_SITE.csv_params.get('encoding','utf-8')
+                response = HttpResponse(content_type='text/csv;charset="%s"' % charset)
+                if False:
+                    response['Content-Disposition'] = 'attachment; filename="%s.csv"' % ar.report
+                else:
+                    #~ response = HttpResponse(content_type='application/csv')
+                    response['Content-Disposition'] = 'inline; filename="%s.csv"' % ar.report
+                  
                 #~ response['Content-Disposition'] = 'attachment; filename=%s.csv' % ar.get_base_filename()
                 w = ucsv.UnicodeWriter(response,**settings.LINO_SITE.csv_params)
-                names = [] # fld.name for fld in self.fields]
-                fields = []
-                for e in ar.ah.list_layout._main.columns:
-                #~ for col in ar.ah.list_layout._main.column_model.columns:
-                    names.append(e.field.name)
-                    fields.append(e.field)
-                w.writerow(names)
+                w.writerow(ar.ah.store.column_names())
                 for row in ar.queryset:
-                    values = []
-                    for fld in fields:
-                        # uh, this is tricky...
-                        meth = getattr(fld,'_return_type_for_method',None)
-                        if meth is not None:
-                            v = meth(row)
-                        else:
-                            v = fld.value_to_string(row)
-                        #logger.debug("20100202 %r.%s is %r",row,fld.name,v)
-                        values.append(v)
-                    w.writerow(values)
+                    w.writerow([unicode(v) for v in ar.row2list(row)])
                 return response
                 
             if fmt == 'json':

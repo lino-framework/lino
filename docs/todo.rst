@@ -9,6 +9,8 @@ for which I hope for help from other people.
 Short-term
 ----------
 
+#.  Uncaught TypeError: Cannot read property 'data' of undefined
+
 #.  :doc:`tickets/20`.
 
 #.  Die Ankreuzfelder Arbeitslosengeld, Wartegeld, Krankengeld 
@@ -20,11 +22,6 @@ Short-term
     
 Version 1.2 (alle todos vom 11.01. fertig)
 ------------------------------------------
-
-#.  In Suchliste anzeigen, wann er am suchen ist.
-
-#.  Ext.LoadMask nutzen:
-    http://www.sencha.com/forum/showthread.php?64420-how-to-show-a-wait-message-while-calling-store-load
 
 
 #.  Wenn man in einem Vertrag eine Angabe ändert 
@@ -386,6 +383,10 @@ Long-term
    Falls ein Template in der Sprache der Notiz nicht existiert 
    (z.B. weil die Vorlage noch nicht übersetzt wurde oder multilingual ist), 
    nimmt er die Standard-Vorlage aus der Hauptsprache.
+   
+#.  `lino.reports.Report.page_length` (Anzahl Records pro Seite) könnte evtl. 
+    in die GC mit reinkommen.
+   
 
 #. Generic Foreign Keys: 
 
@@ -401,10 +402,6 @@ Long-term
    ForeignKey fields with `on_delete=RESTRICT`.
    See :doc:`/tickets/closed/2`
 
-#. Main-Grids könnten mit `autoHeight=true` arbeiten. Dadurch würde der zweite Ajax-call unnötig.
-   autoHeight resizes the height to show all records. 
-   `limit` (Anzahl Records pro Seite) müsste dann freilich in die GC mit reinkommen.
-  
 #. ReportRequest und/oder ViewReportRequest sind (glaube ich) ein Fall für 
    `Django-Middleware <http://docs.djangoproject.com/en/dev/topics/http/middleware/>`_.
   

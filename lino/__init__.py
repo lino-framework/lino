@@ -159,9 +159,9 @@ class LinoSite(object):
     LinoSite base class.
     LinoSite classes are defined and instantiated in Django settings files.
     
-    | This class is subclassed by :mod:`lino.demos.std.settings`,
-    | which is subclassed by :mod:`lino.demos.dsbe.settings`
-    | which is probably subclassed by your local :xfile:`settings.py`
+    This class is subclassed by :mod:`lino.demos.std.settings`,
+    which is subclassed by :mod:`lino.demos.dsbe.settings`
+    which is probably subclassed by your local :xfile:`settings.py`
     
     """
     help_url = "http://code.google.com/p/lino"
@@ -175,13 +175,22 @@ class LinoSite(object):
     csv_params = dict()
     """
     Site-wide default parameters for CSV generation.
-    This dictionary will be forwarded to Python `csv.writer()
-    <http://docs.python.org/library/csv.html#csv.writer>`_,
-    and especially the 
-    `Dialects and Formatting Parameters
-    <http://docs.python.org/library/csv.html#csv-fmt-params>`_ 
-    section 
-    explains the allowed values.
+    This must be a dictionary that will be used 
+    as keyword parameters to Python `csv.writer()
+    <http://docs.python.org/library/csv.html#csv.writer>`_
+    
+    Possible keys include:
+    
+    - encoding : 
+      the charset to use when responding to a CSV request.
+      See 
+      http://docs.python.org/library/codecs.html#standard-encodings
+      for a list of available values.
+      
+    - many more allowed keys are explained in
+      `Dialects and Formatting Parameters
+      <http://docs.python.org/library/csv.html#csv-fmt-params>`_.
+    
     """
     
     propvalue_max_length = 200

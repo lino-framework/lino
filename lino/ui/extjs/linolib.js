@@ -1290,6 +1290,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
       listeners: { exception: Lino.on_store_exception }, 
       //~ proxy: new Ext.data.HttpProxy({ url: config.ls_data_url+'?fmt=json', method: "GET" }), remoteSort: true, 
       proxy: proxy, 
+      //~ autoLoad: true,
       idIndex: config.pk_index,
       remoteSort: true, 
       baseParams: bp, 
@@ -1356,15 +1357,29 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     }
     if(menu.length > 1) {
       tbar = tbar.concat([
-        {text:'View',menu: menu,tooltip:"Select another view of this report"}
+        { text:"$_('View')",
+          menu: menu,
+          tooltip:"$_('Select another view of this report')"
+        }
       ]);
     }
     
     config.tbar = new Ext.PagingToolbar({ 
-      prependButtons: true, pageSize: 10, displayInfo: true, 
       store: config.store, 
+      prependButtons: true, 
+      pageSize: config.page_length, 
+      displayInfo: true, 
+      beforePageText: "$_('Page')",
+      afterPageText: "$_('of {0}')",
+      displayMsg: "$_('Displaying {0} - {1} of {2}')",
+      firstText: "$_('First page')",
+      lastText: "$_('Last page')",
+      prevText: "$_('Previous page')",
+      nextText: "$_('Next page')",
       items: tbar
     });
+    delete config.page_length
+    
     var actions = Lino.build_buttons(this,config.ls_bbar_actions);
     config.cmenu = actions.cmenu;
     
@@ -1732,10 +1747,11 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     this.on('beforeedit', this.on_beforeedit);
     this.on('cellcontextmenu', Lino.cell_context_menu, this);
     //~ this.on('contextmenu', Lino.grid_context_menu, this);
-    this.on('resize', function(cmp,aw,ah,rw,rh) {
-        cmp.getTopToolbar().pageSize = cmp.calculatePageSize(this,aw,ah,rw,rh) || 10;
-        cmp.refresh();
-      }, this, {delay:500});
+    
+    //~ this.on('resize', function(cmp,aw,ah,rw,rh) {
+        //~ cmp.getTopToolbar().pageSize = cmp.calculatePageSize(this,aw,ah,rw,rh) || 10;
+        //~ cmp.refresh();
+      //~ }, this, {delay:500});
   },
 
   afterRender : function() {
@@ -1833,7 +1849,14 @@ Lino.MainPanelMixin = {
           //~ listeners: { keypress: this.search_keypress }, 
           //~ id: "seachString" 
         }), 
-        { scope:this, text: "csv", handler: function() { window.open('/api'+this.ls_url+'?fmt=csv') } }
+        { scope:this, 
+          text: "csv", 
+          handler: function() { 
+            var p = Ext.apply({},this.get_base_params());
+            p['fmt'] = 'csv';
+            //~ url += "?" + Ext.urlEncode(p);
+            window.open('/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
+          } }
       ];
   }
 };
@@ -1960,7 +1983,8 @@ Lino.chooser_handler = function(combo,name) {
 
 
 Lino.ComboBox = Ext.extend(Ext.form.ComboBox,{
-  triggerAction: 'all',
+  //~ triggerAction: 'all',
+  autoSelect: false,
   submitValue: true,
   displayField: 'text', // ext_requests.CHOICES_TEXT_FIELD
   valueField: 'value' // ext_requests.CHOICES_VALUE_FIELD
@@ -1998,12 +2022,11 @@ Lino.ComplexRemoteComboStore = Ext.extend(Ext.data.JsonStore,{
 
 Lino.RemoteComboFieldElement = Ext.extend(Lino.ComboBox,{
   mode: 'remote',
-  //~ typeAhead: true,
   //~ forceSelection:false,
   minChars: 2, // default 4 is to much
   queryDelay: 300, // default 500 is maybe slow
   queryParam: '$URL_PARAM_FILTER', 
-  typeAhead: true,
+  //~ typeAhead: true,
   selectOnFocus: true, // select any existing text in the field immediately on focus.
   resizable: true
 });
@@ -2082,6 +2105,7 @@ Lino.WindowWrapperBase = {
       //~ Lino.load_mask.show();
       this.setup();
       this.window.show();
+      this.refresh();
       //~ Lino.load_mask.hide();
   },
   search_change : function(field,oldValue,newValue) {

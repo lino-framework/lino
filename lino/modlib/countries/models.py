@@ -23,8 +23,8 @@ from lino.utils.babel import add_babel_field, babelattr
 
 class Language(models.Model):
     class Meta:
-        verbose_name = _("language")
-        verbose_name_plural = _("languages")
+        verbose_name = _("Language")
+        verbose_name_plural = _("Languages")
     id = models.CharField(max_length=3,primary_key=True)
     name = models.CharField(max_length=200,verbose_name=_("Designation"))
     iso2 = models.CharField(max_length=2,blank=True,null=True)

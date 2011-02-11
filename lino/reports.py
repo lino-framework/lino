@@ -707,7 +707,11 @@ class Report(actors.Actor): #,base.Handled):
     
     help_url = None
     #master_instance = None
-    page_length = 10
+    
+    page_length = 30
+    """
+    Number of rows to display per page.
+    """
     
     cell_edit = True 
     """

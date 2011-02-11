@@ -54,6 +54,9 @@ class StoreField(object):
     def as_js(self):
         return py2js(self.options)
         
+    def column_names(self):
+        yield self.options['name']
+        
     def parse_form_value(self,v):
         #~ if self.field.blank and v == '':
             #~ return None
@@ -266,6 +269,10 @@ class ComboStoreField(StoreField):
         s += "," + repr(self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
         return s 
         
+    def column_names(self):
+        yield self.options['name']
+        yield self.options['name'] + ext_requests.CHOICES_HIDDEN_SUFFIX
+        
     def form2obj(self,instance,post_data,is_new):
         assert not self.field.primary_key
         v = post_data.get(self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX,None)
@@ -473,6 +480,12 @@ class Store:
             l += fld.obj2list(request,row)
         return l
       
+    def column_names(self):
+        l = []
+        for fld in self.list_fields:
+            l += fld.column_names()
+        return l
+        
 
     def row2dict(self,request,row):
         assert isinstance(request,reports.ReportActionRequest)

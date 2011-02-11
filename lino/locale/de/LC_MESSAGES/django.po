@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-11 03:26+0000\n"
-"PO-Revision-Date: 2011-02-11 05:27+0200\n"
+"POT-Creation-Date: 2011-02-11 11:44+0000\n"
+"PO-Revision-Date: 2011-02-11 13:45+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -121,15 +121,15 @@ msgstr "Speichern"
 msgid "User %(user)s cannot view %(report)s."
 msgstr "Benutzer  %(user)s hat kein Recht,  %(report)s zu sehen."
 
-#: .\reports.py:719
+#: .\reports.py:723
 msgid "Yes"
 msgstr "Ja"
 
-#: .\reports.py:719
+#: .\reports.py:723
 msgid "No"
 msgstr "Nein"
 
-#: .\reports.py:974
+#: .\reports.py:978
 #, python-format
 msgid "%(details)s by %(model)s %(master)s"
 msgstr "%(details)s pro %(model)s %(master)s"
@@ -378,26 +378,62 @@ msgid "Description"
 msgstr "Beschreibung"
 
 #: .\ui\extjs\dummy_messages.py:3
+msgid "Next page"
+msgstr "Nächste Seite"
+
+#: .\ui\extjs\dummy_messages.py:4
 msgid "Last"
 msgstr "Letzte Seite"
 
-#: .\ui\extjs\dummy_messages.py:4
+#: .\ui\extjs\dummy_messages.py:5
+msgid "Previous page"
+msgstr "Vorige Seite"
+
+#: .\ui\extjs\dummy_messages.py:6
 msgid "Please wait..."
 msgstr "Bitte warten..."
 
-#: .\ui\extjs\dummy_messages.py:5
+#: .\ui\extjs\dummy_messages.py:7
 msgid "Next"
 msgstr "Nächste Seite"
 
-#: .\ui\extjs\dummy_messages.py:6
-msgid "Reload current record"
-msgstr ""
+#: .\ui\extjs\dummy_messages.py:8
+msgid "Last page"
+msgstr "Letzte Seite"
 
-#: .\ui\extjs\dummy_messages.py:7
+#: .\ui\extjs\dummy_messages.py:9
+msgid "First page"
+msgstr "Erste Seite"
+
+#: .\ui\extjs\dummy_messages.py:10
+msgid "Reload current record"
+msgstr "Aktuellen Record neu laden"
+
+#: .\ui\extjs\dummy_messages.py:11
+msgid "Select another view of this report"
+msgstr "Andere Ansicht dieses Berichts auswählen"
+
+#: .\ui\extjs\dummy_messages.py:12
+msgid "of {0}"
+msgstr "von {0}"
+
+#: .\ui\extjs\dummy_messages.py:13
+msgid "View"
+msgstr "Ansicht"
+
+#: .\ui\extjs\dummy_messages.py:14
+msgid "Displaying {0} - {1} of {2}"
+msgstr "Records {0} bis {1} von {2}"
+
+#: .\ui\extjs\dummy_messages.py:15
+msgid "Page"
+msgstr "Seite"
+
+#: .\ui\extjs\dummy_messages.py:16
 msgid "First"
 msgstr "Erste Seite"
 
-#: .\ui\extjs\dummy_messages.py:8
+#: .\ui\extjs\dummy_messages.py:17
 msgid "Previous"
 msgstr "Vorige Seite"
 
@@ -416,62 +452,61 @@ msgstr "Existierender ID-Wert %r darf nicht verändert werden."
 msgid "%r (invalid choice)"
 msgstr "%r (ungültige Auswahl)"
 
-#: .\ui\extjs\ext_ui.py:208
+#: .\ui\extjs\ext_ui.py:213
 #, python-format
 msgid "Row %(rowid)d of %(rowcount)d"
 msgstr "Record  %(rowid)d von %(rowcount)d"
 
-#: .\ui\extjs\ext_ui.py:606
+#: .\ui\extjs\ext_ui.py:611
 msgid "Console"
 msgstr "Konsole"
 
-#: .\ui\extjs\ext_ui.py:655
+#: .\ui\extjs\ext_ui.py:660
 #, python-format
 msgid "Welcome on Lino server %(title)r, user %(user)s"
 msgstr "Willkommen auf dem Lino-server %(title)r, %(user)s"
 
-#: .\ui\extjs\ext_ui.py:706
+#: .\ui\extjs\ext_ui.py:711
 #, python-format
 msgid "%s has been created."
 msgstr "%s wurde erstellt."
 
-#: .\ui\extjs\ext_ui.py:708
+#: .\ui\extjs\ext_ui.py:713
 #, python-format
 msgid "%s has been saved."
 msgstr "%s wurde gespeichert."
 
-#: .\ui\extjs\ext_ui.py:716
-#: .\ui\extjs\ext_ui.py:739
+#: .\ui\extjs\ext_ui.py:721
+#: .\ui\extjs\ext_ui.py:744
 #, python-format
 msgid "User %(user)s cannot configure %(report)s."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:913
+#: .\ui\extjs\ext_ui.py:918
 #, python-format
 msgid "Failed to delete %(record)s : %(error)s."
 msgstr "Fehler beim Löschen von %(record)s : %(error)s."
 
-#: .\ui\extjs\ext_ui.py:936
+#: .\ui\extjs\ext_ui.py:941
 #, python-format
 msgid "Insert into %s..."
 msgstr "Einfügen nach %s..."
 
-#: .\ui\extjs\ext_ui.py:964
+#: .\ui\extjs\ext_ui.py:969
 #, python-format
 msgid "Action %(action)s failed for %(record)s: %(error)s"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:1108
+#: .\ui\extjs\ext_ui.py:1111
 #, python-format
 msgid "Choices for %s"
 msgstr "Auswahlmöglichkeiten für %s"
 
-#: .\ui\extjs\ext_ui.py:1218
-#, fuzzy
+#: .\ui\extjs\ext_ui.py:1221
 msgid "Upload"
 msgstr "Upload"
 
-#: .\ui\extjs\ext_ui.py:1226
+#: .\ui\extjs\ext_ui.py:1229
 msgid "Edit"
 msgstr ""
 
@@ -480,6 +515,3 @@ msgstr ""
 
 #~ msgid "No selection. Nothing to do."
 #~ msgstr "Nichts ausgewählt, nichts zu tun."
-
-#~ msgid "Image"
-#~ msgstr "Bild"

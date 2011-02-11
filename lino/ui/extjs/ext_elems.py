@@ -1046,7 +1046,8 @@ class GridElement(Container):
         self.preferred_width = constrain(w,10,120)
         #~ kw.update(boxMinWidth=500)
         self.columns = columns
-        
+        kw.update(page_length=self.report.page_length)
+
         a = rpt.get_action('detail')
         if a:
             kw.update(ls_detail_handler=js_code("Lino.%s" % a))

@@ -1,11 +1,20 @@
 20110211
 ========
 
-- Alle GridPanels benutzen jetzt ein Ext.LoadMask.
-  Das ist für langsame Grids wichtig, aber erzeugt andererseits 
-  verwirrendes Flimmern am Bildschirm.
+Release in Eupen
+----------------
+
+- Alle GridPanels benutzen jetzt ein Ext.LoadMask, das die Grid
+  durch einen Hinweis "Bitte warten..." verdeckt, solange sie am laden
+  ist.
+  
+  Das ist einerseits eine wichtige Info, 
+  aber sorgt andererseits für relativ viel "Action" am Bildschirm.
+  
   Besser wäre vielleicht ein einziges LoadMask für alle Grids...
-  Oder einfach nur ein unauffälliges Purzelmännchen?
+  Oder einfach nur ein unauffälliges "Purzelmännchen", z.B. dass der
+  Refresh-Button des FormPanels inactive bleibt solange nicht alle
+  Grids geladen sind.
 
 - Ich habe begonnen, die :xfile:`lino.js` zu übersetzen. 
   Dazu benutze ich einen Trick, den ich ganz allein erfunden habe:
@@ -20,7 +29,6 @@
   
   generiere ich die dort verwendeten `_`-Aufrufe in eine 
   Datei :file:`lino.ui.extjs.dummy_messages.py`.
-  
   TODO: 
   Das ist eigentlich nur auf dem Development Server sinnvoll.
   
@@ -37,3 +45,101 @@
   und zweitens verkleinert er die :xfile:`lino.js` nur von 
   1.680.892 auf 1.456.788 Bytes.
   Ich hatte mehr erhofft...
+
+
+Also die beiden folgenden Punkte betrachte ich bis auf Weiteres 
+als abgeschlossen:
+
+#.  In Suchliste anzeigen, wann er am Suchen ist.
+
+#.  Ext.LoadMask nutzen:
+    http://www.sencha.com/forum/showthread.php?64420-how-to-show-a-wait-message-while-calling-store-load
+
+
+Comboboxen jetzt ohne typeAhead
+-------------------------------
+
+Hier noch ein Punkt behoben:
+
+#.  Comboboxen : wenn man z.B. beim Auswählen der Muttersprache 
+    einer Person langsam d, e, u tippte, dann kamen verwirrende Effekte.
+
+Das kam durch den Konfigurationsparameter `typeAhead` des :extjs:`Ext.PagingToolbar`.
+
+Keine doppelten AJAX-Calls mehr
+-------------------------------
+
+Und auch der folgende Punkt ist m.E. jetzt fertig:
+
+#. Main-Grids könnten mit `autoHeight=true` arbeiten. Dadurch würde der zweite Ajax-call unnötig.
+   autoHeight resizes the height to show all records. 
+
+Ich benutze nicht wie damals geplant `autoHeight=true` 
+(in einem Ext.Window macht das wenig Sinn), 
+sondern setze `lino.reports.Report.page_length` auf 30, 
+das ist wahrscheinlich das Maximum, das auf eine Bildschirmseite passt.
+Und wenn die 30 Records nicht draufpassen, 
+macht die Grid einen vertikalen Scrollbar.
+Und in :js:meth:`Lino.WindowWrapper.show` ruft er jetzt ein refresh()
+(das war bisher nicht nötig, weil wir das resize-Event abfragten, 
+was wir jetzt nicht mehr tun).
+
+Scheint benutzbar.
+Keine doppelten AJAX-Calls mehr!
+
+Bemerkung: kann auch sein, dass :js:meth:`Lino.gridPanel.calculatePageSize` 
+lediglich besser integriert hätte werden müssen. 
+Er setzte GridPanel.pageSize auf False wenn die Grid noch nicht gerendert war... 
+das war ja wohl auch nicht toll.
+
+
+CSV-Export
+----------
+
+- Wenn man CSV eines Slave-Reports anfragte, war die Datei immer leer.
+  Behoben.
+
+- Von ForeignKey-Feldern wurde nur die ID exportiert. Behoben.
+
+Aber das Encoding-Problem.
+
+
+
+Laut http://forum.de.selfhtml.org/archiv/2008/3/t168392/
+kommt unser encoding-Problem der CSV-Datei daher, 
+dass CSV-Dateien nun mal keine Möglichkeit vorsehen, 
+die verwendete Kodierung anzugeben.
+
+Kann man in Excel vielleicht irgendwie einstellen, 
+dass er bei CSV-Dateien UTF-8 als Encoding vorsehen soll?
+
+Ich kann alternativ die Dateien freilich mit einem "excelfreundlichen" 
+charset exportieren, indem ich das pro Site konfigurierbar mache.
+
+Kleine Änderung in `api_list_view`, damit er als charset 
+im Content-Type-Header das encoding aus
+:attr:`lino.LinoSite.csv_params` holt. 
+Möglich, dass das nicht nötig ist, aber zur Sicherheit.
+
+
+In der lokalen :class:`lino.LinoSite` 
+(die in der :xfile:`settings.py` definiert wird) kann man 
+nun einfach mal rumspielen mit verschiedenen encodings::
+    
+    csv_params = dict(delimiter=',',encoding='FOO')
+    
+Wobei ich für ``FOO`` die folgenden Werte (in dieser Reihenfolge) 
+ausprobieren möchte::
+
+    utf_8_sig  
+    utf_16
+    utf_16_le
+    utf_16_be
+    iso-8859-1
+    cp1252
+
+Nach jeder Änderung muss man allerdings den Server neu starten.
+
+Unter 
+http://docs.python.org/library/codecs.html#standard-encodings
+gibt es weitere Infos zu den möglichen Kodierungen.
