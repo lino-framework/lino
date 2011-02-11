@@ -1,8 +1,8 @@
 20110211
 ========
 
-Release in Eupen
-----------------
+Bitte warten...
+---------------
 
 - Alle GridPanels benutzen jetzt ein Ext.LoadMask, das die Grid
   durch einen Hinweis "Bitte warten..." verdeckt, solange sie am laden
@@ -17,7 +17,7 @@ Release in Eupen
   Grids geladen sind.
 
 - Ich habe begonnen, die :xfile:`lino.js` zu übersetzen. 
-  Dazu benutze ich einen Trick, den ich ganz allein erfunden habe:
+  Dazu benutze ich einen Trick, den ich ganz allein erfunden habe::
   
     LINOLIB_MESSAGES = set()
     tpl = CheetahTemplate(...)
@@ -54,7 +54,12 @@ als abgeschlossen:
 
 #.  Ext.LoadMask nutzen:
     http://www.sencha.com/forum/showthread.php?64420-how-to-show-a-wait-message-while-calling-store-load
+    
 
+Check-in 20110211
+-----------------
+
+Zwecks Zwischenrelease in Eupen
 
 Comboboxen jetzt ohne typeAhead
 -------------------------------
@@ -65,6 +70,13 @@ Hier noch ein Punkt behoben:
     einer Person langsam d, e, u tippte, dann kamen verwirrende Effekte.
 
 Das kam durch den Konfigurationsparameter `typeAhead` des :extjs:`Ext.PagingToolbar`.
+
+Übersetzungen in der :xfile:`lino.js`
+-------------------------------------
+
+Eine weitere Serie von Textfragmenten in der :xfile:`lino.js`
+ist jetzt ebenfalls ins Deutsche übersetzt. 
+Das ist seit heute morgen möglich.
 
 Keine doppelten AJAX-Calls mehr
 -------------------------------
@@ -80,14 +92,14 @@ sondern setze `lino.reports.Report.page_length` auf 30,
 das ist wahrscheinlich das Maximum, das auf eine Bildschirmseite passt.
 Und wenn die 30 Records nicht draufpassen, 
 macht die Grid einen vertikalen Scrollbar.
-Und in :js:meth:`Lino.WindowWrapper.show` ruft er jetzt ein refresh()
+Und in :js:func:`Lino.WindowWrapper.show` ruft er jetzt ein refresh()
 (das war bisher nicht nötig, weil wir das resize-Event abfragten, 
 was wir jetzt nicht mehr tun).
 
 Scheint benutzbar.
 Keine doppelten AJAX-Calls mehr!
 
-Bemerkung: kann auch sein, dass :js:meth:`Lino.gridPanel.calculatePageSize` 
+Bemerkung: kann auch sein, dass :js:func:`Lino.gridPanel.calculatePageSize` 
 lediglich besser integriert hätte werden müssen. 
 Er setzte GridPanel.pageSize auf False wenn die Grid noch nicht gerendert war... 
 das war ja wohl auch nicht toll.
@@ -143,3 +155,36 @@ Nach jeder Änderung muss man allerdings den Server neu starten.
 Unter 
 http://docs.python.org/library/codecs.html#standard-encodings
 gibt es weitere Infos zu den möglichen Kodierungen.
+
+
+Check-in 20110211b
+------------------
+
+Zwischenrelease in Eupen um den CSV-Export zu testen.
+
+
+Upgrading to Python 2.7
+-----------------------
+
+Sphinx Version 1.0.7 no longer runs on Python 2.5.
+And a new stable Debian (Squeeze) has been released. 
+So there is no more reason to remain stucked with Python 2.5
+
+A first consequence is that I removed the call to 
+:func:`locale.setlocale()` 
+in 
+:func:`lino.utils.babel.setlang`.
+Because it caused an "unsupported locale" error.
+And because setlocale() is not thread-safe on most systems.
+At because least for babel it is not necessary. 
+
+
+Save changes before printing
+----------------------------
+
+Und noch ein Punkt behoben:
+
+#.  Wenn man in einem Vertrag eine Angabe ändert 
+    und dann "Drucken" klickt, dann wird die 
+    Änderung irritierenderweise nicht gespeichert.
+  

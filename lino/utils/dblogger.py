@@ -1,4 +1,4 @@
-## Copyright 2010 Luc Saffre
+## Copyright 2010-2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -82,7 +82,9 @@ if settings.DBLOGFILE:
             changes = []
             for k,v in elem.changed_columns().items():
                 changes.append("%s : %s --> %s" % (k,v['old'],v['new']))
-            if len(changes) == 1:
+            if len(changes) == 0:
+                changes = '(no changes)'
+            elif len(changes) == 1:
                 changes = changes[0]
             else:
                 changes = '\n- ' + ('\n- '.join(changes))

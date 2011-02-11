@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-11 11:44+0000\n"
-"PO-Revision-Date: 2011-02-11 13:45+0200\n"
+"POT-Creation-Date: 2011-02-11 15:48+0000\n"
+"PO-Revision-Date: 2011-02-11 17:49+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -382,58 +382,66 @@ msgid "Next page"
 msgstr "Nächste Seite"
 
 #: .\ui\extjs\dummy_messages.py:4
+msgid "Confirmation"
+msgstr "Bestätigung"
+
+#: .\ui\extjs\dummy_messages.py:5
 msgid "Last"
 msgstr "Letzte Seite"
 
-#: .\ui\extjs\dummy_messages.py:5
+#: .\ui\extjs\dummy_messages.py:6
 msgid "Previous page"
 msgstr "Vorige Seite"
 
-#: .\ui\extjs\dummy_messages.py:6
-msgid "Please wait..."
-msgstr "Bitte warten..."
-
 #: .\ui\extjs\dummy_messages.py:7
-msgid "Next"
-msgstr "Nächste Seite"
-
-#: .\ui\extjs\dummy_messages.py:8
-msgid "Last page"
-msgstr "Letzte Seite"
-
-#: .\ui\extjs\dummy_messages.py:9
-msgid "First page"
-msgstr "Erste Seite"
-
-#: .\ui\extjs\dummy_messages.py:10
-msgid "Reload current record"
-msgstr "Aktuellen Record neu laden"
-
-#: .\ui\extjs\dummy_messages.py:11
-msgid "Select another view of this report"
-msgstr "Andere Ansicht dieses Berichts auswählen"
-
-#: .\ui\extjs\dummy_messages.py:12
 msgid "of {0}"
 msgstr "von {0}"
 
+#: .\ui\extjs\dummy_messages.py:8
+msgid "Please wait..."
+msgstr "Bitte warten..."
+
+#: .\ui\extjs\dummy_messages.py:9
+msgid "Next"
+msgstr "Nächste Seite"
+
+#: .\ui\extjs\dummy_messages.py:10
+msgid "Last page"
+msgstr "Letzte Seite"
+
+#: .\ui\extjs\dummy_messages.py:11
+msgid "First page"
+msgstr "Erste Seite"
+
+#: .\ui\extjs\dummy_messages.py:12
+msgid "Reload current record"
+msgstr "Aktuellen Record neu laden"
+
 #: .\ui\extjs\dummy_messages.py:13
-msgid "View"
-msgstr "Ansicht"
+msgid "Select another view of this report"
+msgstr "Andere Ansicht dieses Berichts auswählen"
 
 #: .\ui\extjs\dummy_messages.py:14
-msgid "Displaying {0} - {1} of {2}"
-msgstr "Records {0} bis {1} von {2}"
+msgid "Save changes to current record ?"
+msgstr "Änderungen speichern?"
 
 #: .\ui\extjs\dummy_messages.py:15
-msgid "Page"
-msgstr "Seite"
+msgid "View"
+msgstr "Ansicht"
 
 #: .\ui\extjs\dummy_messages.py:16
 msgid "First"
 msgstr "Erste Seite"
 
 #: .\ui\extjs\dummy_messages.py:17
+msgid "Displaying {0} - {1} of {2}"
+msgstr "Records {0} bis {1} von {2}"
+
+#: .\ui\extjs\dummy_messages.py:18
+msgid "Page"
+msgstr "Seite"
+
+#: .\ui\extjs\dummy_messages.py:19
 msgid "Previous"
 msgstr "Vorige Seite"
 
@@ -442,12 +450,12 @@ msgstr "Vorige Seite"
 msgid "Select a %s..."
 msgstr "%s auswählen..."
 
-#: .\ui\extjs\ext_store.py:84
+#: .\ui\extjs\ext_store.py:87
 #, python-format
 msgid "Existing primary key value %r may not be modified."
 msgstr "Existierender ID-Wert %r darf nicht verändert werden."
 
-#: .\ui\extjs\ext_store.py:310
+#: .\ui\extjs\ext_store.py:317
 #, python-format
 msgid "%r (invalid choice)"
 msgstr "%r (ungültige Auswahl)"
@@ -482,31 +490,31 @@ msgstr "%s wurde gespeichert."
 msgid "User %(user)s cannot configure %(report)s."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:918
+#: .\ui\extjs\ext_ui.py:908
 #, python-format
 msgid "Failed to delete %(record)s : %(error)s."
 msgstr "Fehler beim Löschen von %(record)s : %(error)s."
 
-#: .\ui\extjs\ext_ui.py:941
+#: .\ui\extjs\ext_ui.py:931
 #, python-format
 msgid "Insert into %s..."
 msgstr "Einfügen nach %s..."
 
-#: .\ui\extjs\ext_ui.py:969
+#: .\ui\extjs\ext_ui.py:959
 #, python-format
 msgid "Action %(action)s failed for %(record)s: %(error)s"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:1111
+#: .\ui\extjs\ext_ui.py:1101
 #, python-format
 msgid "Choices for %s"
 msgstr "Auswahlmöglichkeiten für %s"
 
-#: .\ui\extjs\ext_ui.py:1221
+#: .\ui\extjs\ext_ui.py:1211
 msgid "Upload"
 msgstr "Upload"
 
-#: .\ui\extjs\ext_ui.py:1229
+#: .\ui\extjs\ext_ui.py:1219
 msgid "Edit"
 msgstr ""
 

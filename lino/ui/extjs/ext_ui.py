@@ -1324,6 +1324,7 @@ class ExtUI(base.UI):
             #~ kw.update(panel_btn_handler=js_code('Lino.show_detail_handler()'))
             kw.update(panel_btn_handler=js_code('function(panel){Lino.show_detail(panel)}'))
         elif isinstance(a,reports.InsertRow):
+            kw.update(must_save=True)
             kw.update(panel_btn_handler=js_code('function(panel){Lino.show_insert(panel)}'))
             #~ kw.update(panel_btn_handler=js_code("Lino.show_insert_handler(Lino.%s)" % a))
         elif isinstance(a,reports.DuplicateRow):
@@ -1333,6 +1334,7 @@ class ExtUI(base.UI):
         #~ elif isinstance(a,actions.RedirectAction):
             #~ kw.update(panel_btn_handler=js_code("Lino.show_download_handler(%r)" % a.name))
         elif isinstance(a,reports.RowAction):
+            kw.update(must_save=True)
             kw.update(panel_btn_handler=js_code("Lino.row_action_handler(%r)" % a.name))
         else:
             kw.update(panel_btn_handler=js_code("Lino.%s" % a))

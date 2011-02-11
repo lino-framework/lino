@@ -734,7 +734,12 @@ Lino.build_buttons = function(panel,actions) {
       buttons[i] = new Ext.Toolbar.Button(actions[i]);
       cmenu[i] = actions[i]
       if (actions[i].panel_btn_handler) {
-          buttons[i].on('click',actions[i].panel_btn_handler.createCallback(panel,buttons[i]));
+          var h = actions[i].panel_btn_handler.createCallback(panel,buttons[i]);
+          if (actions[i].must_save) {
+              buttons[i].on('click',function() { panel.do_when_clean(h) });
+          } else {
+              buttons[i].on('click',h);
+          }
           cmenu[i].handler = actions[i].panel_btn_handler.createCallback(panel,cmenu[i]);
       }
     }
@@ -890,7 +895,8 @@ Lino.HtmlBoxPanel = Ext.extend(Ext.Panel,{
   //~ on_master_changed : function() {
     //~ this.refresh();
   //~ },
-  refresh : function() {
+  do_when_clean : function(todo) { todo() },
+  refresh : function(after) {
     var record = this.ww.get_current_record();
     //~ console.log('HtmlBox.refresh()',this.title,record,record.title);
     var box = this.items.get(0);
@@ -1016,21 +1022,21 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
       return url;
   },
   
-  refresh : function() { 
+  refresh : function(after) { 
     //~ console.log('Lino.FormPanel.refresh()',this);
     if (this.current_record) {
-        this.load_record_id(this.current_record.id);
+        this.load_record_id(this.current_record.id,after);
     } else {
-        this.set_current_record(undefined);
+        this.set_current_record(undefined,after);
     }
   },
   
   do_when_clean : function(todo) {
     var this_ = this;
     if (this.form.isDirty()) {
-        var config = {title:'Confirmation',};
+        var config = {title:"$_('Confirmation')",};
         config.buttons = Ext.MessageBox.YESNOCANCEL;
-        config.msg = "Save changes to current record ?";
+        config.msg = "$_('Save changes to current record ?')";
         config.fn = function(buttonId,text,opt) {
           console.log('do_when_clean',buttonId)
           if (buttonId == "yes") {
@@ -1042,6 +1048,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
         }
         Ext.MessageBox.show(config);
     }else{
+      console.log('do_when_clean : now!')
       todo();
     }
   },
@@ -1053,7 +1060,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     this.do_when_clean(this.load_record_id.createDelegate(this,[record_id]));
   },
   
-  load_record_id : function(record_id) {
+  load_record_id : function(record_id,after) {
     var this_ = this;
     var p = {};
     Ext.apply(p,this.ww.config.base_params);
@@ -1076,7 +1083,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
               */
               this_.goto_record_id(rec.navinfo.first);
           } else {
-              this_.set_current_record(rec);
+              this_.set_current_record(rec,after);
           }
         }
       },
@@ -1084,7 +1091,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     });
   },
   
-  set_current_record : function(record) {
+  set_current_record : function(record,after) {
     this.current_record = record;
     //~ console.log('Lino.FormPanel.set_current_record',record);
     //~ this.config.main_panel.form.load(record);    
@@ -1127,6 +1134,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     }
     //~ console.log('20100531 Lino.DetailMixin.on_load_master_record',this.main_form);
     this.before_row_edit(record);
+    if (after) after();
   },
   unused_search_change : function(field,oldValue,newValue) {
     //~ console.log('FormPanel.search_change()');
@@ -1422,6 +1430,8 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     
     this.on('beforeedit',function(e) { this.before_row_edit(e.record)},this);
   },
+  
+  do_when_clean : function(todo) { todo() },
   
   onCellDblClick : function(g, row, col){
       if (this.ls_detail_handler) {
@@ -1778,14 +1788,18 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
       scope: this
     });
   },
-  refresh : function() { 
+  refresh : function(after) { 
     //~ Lino.notify('Lino.GridPanel.refresh');
     //~ Lino.notify('Lino.GridPanel.refresh '+this.store.proxy.url);
-    this.store.load({params:{
-      limit:this.getTopToolbar().pageSize,
-      start:this.getTopToolbar().cursor,
-      //~ 20110119 $URL_PARAM_FILTER: this.quick_search_text
-      }});
+    var p = { params:{
+        limit:this.getTopToolbar().pageSize,
+        start:this.getTopToolbar().cursor
+        //~ 20110119 $URL_PARAM_FILTER: this.quick_search_text
+    } }
+    if (after) {
+        p.callback = function(r,options,success) {if(success) after()};
+      }
+    this.store.load(p);
   },
   after_delete : function() {
     this.refresh();
@@ -1983,7 +1997,7 @@ Lino.chooser_handler = function(combo,name) {
 
 
 Lino.ComboBox = Ext.extend(Ext.form.ComboBox,{
-  //~ triggerAction: 'all',
+  triggerAction: 'all',
   autoSelect: false,
   submitValue: true,
   displayField: 'text', // ext_requests.CHOICES_TEXT_FIELD
@@ -2113,8 +2127,8 @@ Lino.WindowWrapperBase = {
     this.main_item.set_base_param('$URL_PARAM_FILTER',field.getValue()); 
     this.main_item.refresh();
   },
-  refresh : function() { 
-    this.main_item.refresh();
+  refresh : function(after) { 
+    this.main_item.refresh(after);
   },
   close : function() { 
       this.window.close();
@@ -2224,8 +2238,8 @@ Ext.override(Lino.WindowWrapper,{
   },
   on_render : function() {},
   //~ refresh : function() { },
-  refresh : function() { 
-    this.main_item.refresh();
+  refresh : function(after) { 
+    this.main_item.refresh(after);
   },
   
   hide : function() { this.window.hide() },
@@ -2304,7 +2318,8 @@ Lino.DetailWrapper = Ext.extend(Lino.WindowWrapper, {
           params: panel.get_base_params(), 
           success: function(form, action) {
             Lino.notify(action.result.message);
-            if (after) after(); else panel.refresh();
+            panel.refresh(after);
+            //~ if (after) after(); else panel.refresh();
           },
           failure: Lino.on_submit_failure,
           clientValidation: true

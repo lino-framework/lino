@@ -23,19 +23,14 @@ Short-term
 Version 1.2 (alle todos vom 11.01. fertig)
 ------------------------------------------
 
-
-#.  Wenn man in einem Vertrag eine Angabe ändert 
-    und dann "Drucken" klickt, dann wird die 
-    Änderung irritierenderweise nicht gespeichert.
-  
-#.  In Suchliste ein Button "Suche abbrechen".
-
 #.  Formatierte Texte in Verträgen drucken können.
     Zumindest Aufzählungen und mehrere Absätze 
     sollten möglich sein.
 
 Version 1.3
 -----------
+
+#.  Ist (z.B. in Suchliste) ein Button "Suche abbrechen" nötig?
 
 #.  Momentan ist es nicht möglich, "mal eben" eine Suche zu machen, 
     die **nicht** gespeichert wird.

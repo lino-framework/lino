@@ -267,7 +267,7 @@ The expected output is something like this::
   (Stripping trailing CRs from patch.)
   patching file tests/modeltests/model_inheritance/models.py
 
-Read :ref:`django/DjangoPatches` for more details.
+Read :doc:`/django/DjangoPatches` for more details.
 
 
 

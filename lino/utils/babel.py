@@ -125,11 +125,16 @@ def dtosl(d):
 def setlang(lang):
     global LANG
     LANG = lang
-    if lang is None:
-        locale.setlocale(locale.LC_ALL,'')
-    else:
-        country = settings.LANGUAGE_CODE[3:]
-        locale.setlocale(locale.LC_ALL,lc2locale(lang,country))
+    if False:
+        """
+        setlocale() is not thread-safe on most systems.
+        At least for babel it is not necessary. 
+        """
+        if lang is None:
+            locale.setlocale(locale.LC_ALL,'')
+        else:
+            country = settings.LANGUAGE_CODE[3:]
+            locale.setlocale(locale.LC_ALL,lc2locale(lang,country))
     
         #~ save_ls = locale.getlocale()
         #~ ls = lc2locale(lang,country)
