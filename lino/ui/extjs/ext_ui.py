@@ -1028,8 +1028,8 @@ class ExtUI(base.UI):
         f.write(jscompress(js))
         f.close()
         logger.info("Wrote %s ...", fn)
-        
-        self.generate_dummy_messages(LINOLIB_MESSAGES)
+        if settings.DEBUG:
+            self.generate_dummy_messages(LINOLIB_MESSAGES)
         
     def generate_dummy_messages(self,LINOLIB_MESSAGES):
         fn = os.path.join(os.path.dirname(__file__),'dummy_messages.py')

@@ -156,10 +156,7 @@ Unter
 http://docs.python.org/library/codecs.html#standard-encodings
 gibt es weitere Infos zu den möglichen Kodierungen.
 
-
-Check-in 20110211b
-------------------
-
+Check-in 20110211b zwecks eventuellem 
 Zwischenrelease in Eupen um den CSV-Export zu testen.
 
 
@@ -188,3 +185,4 @@ Und noch ein Punkt behoben:
     und dann "Drucken" klickt, dann wird die 
     Änderung irritierenderweise nicht gespeichert.
   
+Check-in 20110211c wegen Feierabend.
