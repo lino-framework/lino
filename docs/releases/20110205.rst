@@ -1,4 +1,4 @@
-Version 1.1.2 (05.02.2011)
+Version 1.1.2 (07.02.2011)
 ==========================
 
 Folgende Punkte sind jetzt behoben:
@@ -40,8 +40,19 @@ Folgende Punkte sind jetzt behoben:
     
     Dadurch kann man jetzt ohne Server-Restart mal schnell zwischen 
     appypdf und appyodt 
-    hin und her schalten kann zum 
-    `Debuggen von Templates.
-    <https://answers.launchpad.net/appy/+question/144327>`_.
+    hin und her schalten, was zum 
+    `Debuggen von Templates
+    <https://answers.launchpad.net/appy/+question/144327>`_
+    nützlich ist:
+    in
+    :menuselection:`Site --> Anwendungsparameter`
+    setzt man `Default build method` auf "AppyOdtBuildMethod" (Speichern nicht vergessen) 
+    und bearbeitet die Vorlage.
+    Falls die Vorlage Fehler enthält, sind die Fehlermeldungen im generierten odt-Dokument einsehbar.
+    Wenn dann alles fehlerfrei läuft, schaltet man 
+    `Default build method` auf "AppyPdfBuildMethod" zurück.
     
-    
+#.  In Personensuche konnte man in
+    "Gesuchte Eigenschaften" 
+    und "Unerwünschte Eigenschaften" 
+    noch nichts eingeben. Behoben.

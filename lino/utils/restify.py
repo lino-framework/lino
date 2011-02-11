@@ -90,7 +90,7 @@ def latex_body(input_string, source_path=None, destination_path=None,
         destination_path=destination_path,
         input_encoding=input_encoding, doctitle=doctitle,
         initial_header_level=initial_header_level)
-    print parts.keys()
+    #~ print parts.keys()
     fragment = parts['body']
     if output_encoding != 'unicode':
         fragment = fragment.encode(output_encoding)

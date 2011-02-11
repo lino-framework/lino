@@ -1,0 +1,39 @@
+20110211
+========
+
+- Alle GridPanels benutzen jetzt ein Ext.LoadMask.
+  Das ist für langsame Grids wichtig, aber erzeugt andererseits 
+  verwirrendes Flimmern am Bildschirm.
+  Besser wäre vielleicht ein einziges LoadMask für alle Grids...
+  Oder einfach nur ein unauffälliges Purzelmännchen?
+
+- Ich habe begonnen, die :xfile:`lino.js` zu übersetzen. 
+  Dazu benutze ich einen Trick, den ich ganz allein erfunden habe:
+  
+    LINOLIB_MESSAGES = set()
+    tpl = CheetahTemplate(...)
+    def mytranslate(s):
+        LINOLIB_MESSAGES.add(s)
+        return _(s)
+    tpl._ = mytranslate
+  
+  
+  generiere ich die dort verwendeten `_`-Aufrufe in eine 
+  Datei :file:`lino.ui.extjs.dummy_messages.py`.
+  
+  TODO: 
+  Das ist eigentlich nur auf dem Development Server sinnvoll.
+  
+  
+- Neues Modul :mod:`lino.utils.jscompressor`. 
+  Das ist ein JS-Kompressor, den Michael Palmer 2006 als Recipe auf 
+  http://code.activestate.com/recipes/496882/
+  gepostet hat.
+  
+  Funktioniert.
+  
+  Aber ist erstens langsam (was nicht sehr schlimm ist, 
+  weil das nur einmal nach den Server-Restart läuft), 
+  und zweitens verkleinert er die :xfile:`lino.js` nur von 
+  1.680.892 auf 1.456.788 Bytes.
+  Ich hatte mehr erhofft...

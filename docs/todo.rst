@@ -9,20 +9,6 @@ for which I hope for help from other people.
 Short-term
 ----------
 
-#.  save_grid_config könnte nachfragen bevor er die GC abspeichert.
-
-#.  Wenn die Konfiguration einer Grid verändert wurde und man 
-    aus Versehen auf einen Kolonnentitel klickt, dann wird die Grid 
-    sortiert und neu geladen, und alle ungespeicherte Konfiguration ist futsch.
-    Vor dem Sortieren nachfragen "Änderungen in GC speichern ?".
-    Diese Frage wohl nur für Benutzer, die GCs auch speichern dürfen.
-
-#.  Momentan ist es nicht möglich, "mal eben" eine Suche zu machen, 
-    die **nicht** gespeichert wird.
-    Stört das?
-    Deshalb ist momentan übrigens der Titel einer Suchliste ein 
-    obligatorisches Feld.
-
 #.  :doc:`tickets/20`.
 
 #.  Die Ankreuzfelder Arbeitslosengeld, Wartegeld, Krankengeld 
@@ -35,12 +21,17 @@ Short-term
 Version 1.2 (alle todos vom 11.01. fertig)
 ------------------------------------------
 
-#.  Wenn man in einem Vertrag eine Angabe ändert und dann "Drucken" klickt, dann wird die 
+#.  In Suchliste anzeigen, wann er am suchen ist.
+
+#.  Ext.LoadMask nutzen:
+    http://www.sencha.com/forum/showthread.php?64420-how-to-show-a-wait-message-while-calling-store-load
+
+
+#.  Wenn man in einem Vertrag eine Angabe ändert 
+    und dann "Drucken" klickt, dann wird die 
     Änderung irritierenderweise nicht gespeichert.
   
-#.  In Suchliste anzeigen, wann er am suchen ist und ein Button "Suche abbrechen".
-
-#.  Excel erkennt das encoding der csv-Datei nicht als UTF-8.
+#.  In Suchliste ein Button "Suche abbrechen".
 
 #.  Formatierte Texte in Verträgen drucken können.
     Zumindest Aufzählungen und mehrere Absätze 
@@ -48,6 +39,20 @@ Version 1.2 (alle todos vom 11.01. fertig)
 
 Version 1.3
 -----------
+
+#.  Momentan ist es nicht möglich, "mal eben" eine Suche zu machen, 
+    die **nicht** gespeichert wird.
+    Stört das?
+    Deshalb ist momentan übrigens der Titel einer Suchliste ein 
+    obligatorisches Feld.
+
+#.  Wenn die Konfiguration einer Grid verändert wurde und man 
+    aus Versehen auf einen Kolonnentitel klickt, dann wird die Grid 
+    sortiert und neu geladen, und alle ungespeicherte Konfiguration ist futsch.
+    Vor dem Sortieren nachfragen "Änderungen in GC speichern ?".
+    Diese Frage wohl nur für Benutzer, die GCs auch speichern dürfen.
+
+#.  save_grid_config könnte nachfragen bevor er die GC abspeichert.
 
 #.  Die Konfigurationsparameter 
     `residence_permit_upload_type`, 
@@ -67,7 +72,7 @@ Version 1.3
 
 #.  Grid-Konfigurationsdateien sollten pro Benutzer speicherbar sein.
 
-#.  DELETE auf einer Zeile in Teilnehmer oder Kandidaten funktioniert. 
+#.  DELETE (per Taste) auf einer Zeile in Teilnehmer oder Kandidaten funktioniert. 
     Aber dort soll man nicht löschen können.
 
 #.  Die Titel der Reiter (.dtl-Dateien) sind momentan noch nicht 
@@ -176,9 +181,6 @@ Later
 #.  HTML-Editoren haben noch Probleme (Layout und Performance) und sind deshalb 
     momentan deaktiviert. 
     
-#.  Ext.LoadMask nutzen:
-    http://www.sencha.com/forum/showthread.php?64420-how-to-show-a-wait-message-while-calling-store-load
-
 #.  Arbeitsregime und Stundenplan: 
     Texte in Konfigurationsdateien auslagern
 

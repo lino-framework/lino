@@ -595,6 +595,11 @@ class ReportActionRequest:
     def __iter__(self):
         return self.queryset.__iter__()
         
+    def get_base_filename(self):
+        return str(self.report)
+        #~ s = self.get_title()
+        #~ return s.encode('us-ascii','replace')
+        
     def __getitem__(self,*args):
         return self.queryset.__getitem__(*args)
         

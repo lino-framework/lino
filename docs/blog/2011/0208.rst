@@ -1,0 +1,15 @@
+20110208
+========
+
+Excel erkannte das encoding der csv-Datei nicht als UTF-8.
+
+Kann sein, dass es lediglich an der fehlenden charset-Angabe 
+im Content-Type meiner Response lag.
+
+In einem mache ich es jetzt auch so, dass er nicht mehr immer 
+nur "tmp.csv" als Dateiname vorschlägt, sondern den Namen des Reports.
+
+    response = HttpResponse(content_type='text/csv;charset=utf-8')
+    response['Content-Disposition'] = 'attachment; filename=%s.csv' % ar.report
+
+

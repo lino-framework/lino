@@ -954,32 +954,34 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     if (config.has_navigator) {
       config.tbar = config.tbar.concat([
         this.first = new Ext.Toolbar.Button({
-          tooltip:"First",disabled:true,handler:this.moveFirst,scope:this,iconCls:'x-tbar-page-first'}),
+          tooltip:"$_('First')",disabled:true,handler:this.moveFirst,scope:this,iconCls:'x-tbar-page-first'}),
         this.prev = new Ext.Toolbar.Button({
-          tooltip:"Previous",disabled:true,handler:this.movePrev,scope:this,iconCls:'x-tbar-page-prev'}),
+          tooltip:"$_('Previous')",disabled:true,handler:this.movePrev,scope:this,iconCls:'x-tbar-page-prev'}),
         this.next = new Ext.Toolbar.Button({
-          tooltip:"Next",disabled:true,handler:this.moveNext,scope:this,iconCls:'x-tbar-page-next'}),
+          tooltip:"$_('Next')",disabled:true,handler:this.moveNext,scope:this,iconCls:'x-tbar-page-next'}),
         this.last = new Ext.Toolbar.Button({
-          tooltip:"Last",disabled:true,handler:this.moveLast,scope:this,iconCls:'x-tbar-page-last'})
+          tooltip:"$_('Last')",disabled:true,handler:this.moveLast,scope:this,iconCls:'x-tbar-page-last'})
       ]);
     }
     //~ console.log(20101117,this.ww.refresh);
     config.tbar = config.tbar.concat([
       {
-        text:'Refresh',
+        //~ text:'Refresh',
         handler:function(){ this.do_when_clean(this.refresh.createDelegate(this)) },
         iconCls: 'x-tbar-loading',
-        qtip:"Reload current record",
+        tooltip:"$_('Reload current record')",
         scope:this}
     ]);
     config.tbar = config.tbar.concat([
         '->',
         this.displayItem = new Ext.Toolbar.TextItem({})
     ]);
+    //~ if (config.can_config) {
     config.bbar = config.bbar.concat([
       '->',
       {text:'Layout Editor',handler:this.edit_detail_config,qtip:"Edit Detail Layout",scope:this}
     ])
+    //~ }
     this.before_row_edit = config.before_row_edit.createDelegate(this);
     
     Lino.FormPanel.superclass.constructor.call(this, config);
@@ -1743,6 +1745,10 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     // if (this.getView().getRows().length > 0) {
     //  this.getView().focusRow(1);
     // }
+    this.my_load_mask = new Ext.LoadMask(this.getEl(), {
+        msg:'$_("Please wait...")',
+        store:this.store});
+      
     var tbar = this.getTopToolbar();
     // tbar.on('change',function() {this.getView().focusRow(1);},this);
     // tbar.on('change',function() {this.getSelectionModel().selectFirstRow();this.getView().mainBody.focus();},this);

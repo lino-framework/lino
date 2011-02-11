@@ -6,7 +6,9 @@
 
 Upps, da fehlte noch eine Kleinigkeit, 
 um die `Default build method` wirklich dynamisch verändern zu können:
-:meth:`SiteConfig.save` ruft jetzt :meth:`LinoSite.configure`.
+:meth:`lino.models.SiteConfig.save` 
+ruft jetzt 
+:meth:`lino.LinoSite.configure`.
 
 In einem Rutsch habe ich jetzt die vielen Dateien `site.py` 
 in die jeweiligen :xfile:`settings.py` integriert.
@@ -16,11 +18,12 @@ in Personensuche konnte man in
 "Gesuchte Eigenschaften" 
 und "Unerwünschte Eigenschaften" 
 noch nichts eingeben.
-Behoben durch die neue Zeile::
+Behoben durch die neue Zeile in :meth:`Lino.Grid.on_afteredit`::
 
   e.record.data[e.field+'$ext_requests.CHOICES_HIDDEN_SUFFIX'] = e.value;
   
-In einem ist nun auch dieser Punkt behoben:
+Dabei habe ich dann auch noch schnell diesen Punkt behoben (der u.A. auch beim 
+Eingeben von gesuchten Eigenschaften auftrat:
 
 #.  Auf einer neuen Zeile einer Grid störten die Fehlermeldungen per
     Alert.  (z.B. Eingabe ChoiceType)

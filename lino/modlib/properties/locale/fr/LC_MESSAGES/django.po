@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-06 04:48+0000\n"
+"POT-Creation-Date: 2011-02-11 03:27+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -41,7 +41,7 @@ msgstr ""
 msgid "Property Choices"
 msgstr ""
 
-#: .\models.py:91 .\models.py:144
+#: .\models.py:91 .\models.py:145
 msgid "Value"
 msgstr ""
 
@@ -65,14 +65,14 @@ msgstr ""
 msgid "Property group"
 msgstr ""
 
-#: .\models.py:233
+#: .\models.py:235
 msgid "Skills Property Group"
 msgstr ""
 
-#: .\models.py:239
+#: .\models.py:241
 msgid "Soft Skills Property Group"
 msgstr ""
 
-#: .\models.py:245
+#: .\models.py:247
 msgid "Obstacles Property Group"
 msgstr ""
