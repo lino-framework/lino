@@ -1,0 +1,10 @@
+20110214
+========
+
+#.  Die beiden Felder 
+    :attr:`noble_condition <lino.modlib.dsbe.models.Person.noble_condition>` 
+    und     
+    :attr:`card_issuer <lino.modlib.dsbe.models.Person.card_issuer>` 
+    von der eID waren nicht readonly.
+
+#.  Zwischenrelease in Eupen.

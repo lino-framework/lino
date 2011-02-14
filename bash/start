@@ -1,0 +1,3 @@
+#!/bin/bash
+sudo /etc/init.d/watch_tim start
+[ "$?" == 0 ] && sudo /etc/init.d/apache2 start

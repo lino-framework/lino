@@ -1,0 +1,2 @@
+#!/bin/bash
+cd /var/snapshots/lino && hg tip >> /var/log/lino/pull.log && hg pull -u

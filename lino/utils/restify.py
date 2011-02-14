@@ -65,7 +65,7 @@ def html_body(input_string, source_path=None, destination_path=None,
     fragment = parts['html_body']
     if output_encoding != 'unicode':
         fragment = fragment.encode(output_encoding)
-    #~ print 20101223, fragment
+    #~ print __file__, repr(fragment)
     return fragment
 
 

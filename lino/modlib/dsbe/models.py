@@ -365,10 +365,18 @@ class Person(Partner,contacts.Person):
         
     card_type = models.CharField(max_length=20,blank=True,null=True,
         verbose_name=_("eID card type"))
-    card_issuer = models.CharField(max_length=50,blank=True,null=True,
+    "The type of the electronic ID card. Imported from TIM."
+    
+    card_issuer = models.CharField(max_length=50,
+        blank=True,null=True,
         verbose_name=_("eID card issuer"))
+    "The administration who issued this ID card. Imported from TIM."
+    
     noble_condition = models.CharField(max_length=50,blank=True,null=True,
         verbose_name=_("noble condition"))
+    "The eventual noble condition of this person. Imported from TIM."
+        
+        
     #~ driving_license = models.ForeignKey("dsbe.DrivingLicense",blank=True,null=True,
         #~ verbose_name=_("Driving license"))
     #~ driving_license = models.CharField(max_length=4,blank=True,null=True,
@@ -571,6 +579,7 @@ PERSON_TIM_FIELDS = reports.fields_list(Person,
     birth_date sex birth_place coach1 language 
     phone fax email 
     card_number card_valid_from card_valid_until
+    noble_condition card_issuer
     national_id health_insurance pharmacy 
     bank_account1 bank_account2 
     gesdos_id activity 

@@ -1,0 +1,6 @@
+20110212
+========
+
+#.  Upps, in Lino.build_buttons war ein Bug. 
+    In den row actions funktionierte quasi nichts. 
+    Behoben.

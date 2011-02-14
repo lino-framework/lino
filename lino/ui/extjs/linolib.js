@@ -736,7 +736,8 @@ Lino.build_buttons = function(panel,actions) {
       if (actions[i].panel_btn_handler) {
           var h = actions[i].panel_btn_handler.createCallback(panel,buttons[i]);
           if (actions[i].must_save) {
-              buttons[i].on('click',function() { panel.do_when_clean(h) });
+              //~ buttons[i].on('click',function() { panel.do_when_clean(h) });
+              buttons[i].on('click',panel.do_when_clean.createDelegate(panel,[h]));
           } else {
               buttons[i].on('click',h);
           }

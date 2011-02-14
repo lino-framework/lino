@@ -1,0 +1,9 @@
+#!/bin/bash
+DPYFILE=`date +fixtures/d%Y%m%d$1.dpy`
+echo $DPYFILE
+if [ -f $DPYFILE ]
+then
+  echo "Sorry, there is already a file $DPYFILE. Delete it yourself if you dare."
+  exit -1
+fi
+python manage.py dumpdata --format dpy > $DPYFILE

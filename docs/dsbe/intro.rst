@@ -1,6 +1,11 @@
 Einführung
 ==========
 
+Lino/DSBE ist eine Softwareanwendung für die Mitarbeiter des Dienstes für sozial-berufliche Eingliederung 
+(DSBE, `Service d'insertion socio-professionnelle <http://public.guidesocial.be/associations/services-insertion-socio-professionnelle-isp-1556.html>`_), 
+die in enger Zusammenarbeit mit dem ÖSHZ Eupen entwickelt wurde.
+
+
 Das folgende Dokument ist als Wegweiser für die 
 Benutzer während der ersten Woche mit Lino gedacht.
 

@@ -17,21 +17,25 @@ You'll maybe need the following Debian packages installed:
  
       mercurial subversion unzip
 
- * Packages needed by Lino to work::
- 
-      python-dateutil 
-      python-reportlab 
-      python-yaml 
-      python-imaging 
-      python-html5lib
-      # python-uno
-      python-cheetah
-      python-docutils
-
- * Packages needed by Django to run in Apache2::
+ * Packages needed by Django applications to run in Apache2::
 
     apache2 apache2-doc apache2-mpm-prefork \
       apache2-utils libexpat1 ssl-cert libapache2-mod-wsgi
+      
+ * Packages needed by Lino to work::
+ 
+      python-dateutil 
+      python-yaml 
+      python-cheetah
+      python-docutils
+      python-reportlab 
+      python-imaging 
+      python-html5lib
+      python-uno
+
+ * If you need to run `watch_tim` as a daemon::
+ 
+      python-daemon
       
 
 Download
@@ -56,8 +60,13 @@ into `/var/snapshots/`::
   unzip ext-3.3.1.zip
   rm ext-3.3.1.zip
 
-  wget http://launchpad.net/appy/0.6/0.6.1/+download/appy0.6.1.zip
-  unzip appy0.6.1.zip -d appy-0.6.1
+  wget http://launchpad.net/appy/0.6/0.6.1/+download/appy0.6.2.zip
+  unzip appy0.6.2.zip -d appy-0.6.2
+  
+
+.. 
+
+ The following instructions are currently obsolete::
   
   wget http://pypi.python.org/packages/source/p/pisa/pisa-3.0.32.zip
   unzip pisa-3.0.32.zip
@@ -66,11 +75,7 @@ into `/var/snapshots/`::
   wget http://www.simple-is-better.org/template/pyratemp-0.2.0.tgz
   tar -xvzf pyratemp-0.2.0.tgz
   
-South::  
-  
   hg clone http://bitbucket.org/andrewgodwin/south/
-  
-If you need to run `watch_tim` as a daemon::
 
   wget http://pypi.python.org/packages/source/p/python-daemon/python-daemon-1.5.5.tar.gz
   tar -xvzf python-daemon-1.5.5.tar.gz
@@ -87,18 +92,25 @@ path configuration file :file:`local.pth`
 to a directory that's already on your 
 `Python's path <http://www.python.org/doc/current/install/index.html>`_. 
 
-Here is how :file:`/usr/local/lib/python2.5/site-packages/local.pth` 
+Here is how 
+:file:`/usr/local/lib/python2.5/site-packages/local.pth` (Debian Lenny)
+:file:`/usr/local/lib/python2.6/dist-packages/local.pth` (Debian Squeeze)
 might look in our example::
 
   /var/snapshots/lino
   /var/snapshots/django
-  /var/snapshots/pisa-3.0.32
   /var/snapshots/appy-0.6.1
-  /var/snapshots/pyratemp-0.2.0
-  /var/snapshots/south
-  /var/snapshots/python-daemon-1.5.5
-  /var/snapshots/lockfile-0.7
   /usr/local/django  
+  
+.. 
+
+  The following lines are probably no longer used::
+
+    /var/snapshots/pisa-3.0.32
+    /var/snapshots/pyratemp-0.2.0
+    /var/snapshots/south
+    /var/snapshots/python-daemon-1.5.5
+    /var/snapshots/lockfile-0.7
 
 To see which directories are on your Python path::
 
@@ -130,6 +142,18 @@ For example::
           'NAME': join(DATA_DIR,'myproject.db')
       }
   }
+  
+Copy the following bash scripts to 
+your Django project directory:
+
+  ============================= =========================================
+  :srcref:`start </bash/start>` Manually start all local Lino services
+  :srcref:`stop </bash/stop>`   Manually stop all local Lino services
+  :srcref:`dump </bash/dump>`   Write a dpy dump of your database
+  :srcref:`pull </bash/pull>`   Update local copy of Lino sources 
+  ============================= =========================================
+
+  
   
   
 Set up Apache and `mod_wsgi`
@@ -273,6 +297,9 @@ Read :doc:`/django/DjangoPatches` for more details.
 
 Installing startup scripts 
 --------------------------
+
+:srcref:`oood </bash/oood>`  Start/Stop OpenOffice (LibreOffice) in server mode
+:srcref:`watch_tim </bash/watch_tim>`  Start/Stop `watch_tim` daemon
 
 OpenOffice.org server 
 =====================

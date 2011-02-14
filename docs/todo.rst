@@ -9,14 +9,34 @@ for which I hope for help from other people.
 Short-term
 ----------
 
+#.  Zur Zeit scheint es so, dass das Auskunftsblatt eher überflüssig
+wird.
+
+#.  Grid Ausbildung etc. sind zur Zeit chronologisch sortiert. Das ist
+auch gut so, aber bei der Eingabe extrem störend. Hmm, wie könnten wir
+das lösen?
+
+#.  Grid Berufserfahrungen: Anzeige erst wenn Bezeichnung auch
+eingegeben: verwirrend
+
+#.  Wenn im Vollbildmodus einer Person nur Änderungen in einer Grid
+gemacht wurden und dann auf "Speichern" geklickt wird, kommt die
+Mitteilung "Failure". Technisch ist das zwar logisch, aber für die
+Benutzer könnte die Mitteilung vielleicht aussagekräftiger sein.
+
+#.  Wie kann die Wertigkeit einer Sprache im Template des Lebenslaufs
+interpretiert werden?
+
+#.  Was heißt "Muss generiert werden" bei den Notizen?
+
+#.  Bei den Verträgen ist der Titel des Reiters "General" noch nicht
+übersetzt.
+
+
 #.  Uncaught TypeError: Cannot read property 'data' of undefined
 
 #.  :doc:`tickets/20`.
 
-#.  Die Ankreuzfelder Arbeitslosengeld, Wartegeld, Krankengeld 
-    usw. könnten vielleicht auch Eigenschaften werden 
-    (in einer eigenen Gruppe "Einnahmen" natürlich)
-    
 #.  Textbausteine (im Text-Editor F1 drücken können)
 
     
