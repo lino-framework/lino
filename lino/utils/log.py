@@ -81,6 +81,7 @@ def configure(config):
     """
     #~ print 20101225, config
     logfile = config.get('filename',None)
+    #~ dblogfile = config.get('dblogfile',None)
     level = getattr(logging,config.get('level','notset').upper())
     
     djangoLogger = logging.getLogger('django')
@@ -92,15 +93,12 @@ def configure(config):
         
     linoLogger.setLevel(level)
     
-    #~ from django.conf import settings
-    #~ log_dir = os.path.join(settings.PROJECT_DIR,'log')
-    
     try:
         if sys.stdout.isatty():
             h = logging.StreamHandler()
-            #~ h.setLevel(logging.DEBUG)
+            #~ h.setLevel(level)
             h.setLevel(logging.INFO)
-            fmt = logging.Formatter(fmt='%(message)s')
+            fmt = logging.Formatter(fmt='%(levelname)s %(message)s')
             h.setFormatter(fmt)
             linoLogger.addHandler(h)
     except IOError:
@@ -112,10 +110,16 @@ def configure(config):
         h.setLevel(level)
         linoLogger.addHandler(h)
         djangoLogger.addHandler(h)
+        #~ print __file__, level, logfile
         
         #~ dblogger = logging.getLogger('db')
         #~ assert dblogger != logger
         #~ dblogger.setLevel(logging.INFO)
         #~ dblogger.addHandler(file_handler(os.path.join(log_dir,'db.log')))
     
-    
+    #~ if dblogfile is not None:
+        #~ dblogger = logging.getLogger('lino.db')
+        #~ # if dblogfile.lower() == 'auto':
+            #~ # dblogfile = os.path.join(settings.DATA_DIR,'db.log')
+        #~ dblogger.addHandler(file_handler(dblogfile))
+        #~ settings.LINO_SITE.setup_dblogger(dblogger)

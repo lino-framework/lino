@@ -18,16 +18,16 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
 
-from south.modelsinspector import add_introspection_rules
-add_introspection_rules([], ["^lino\.fields\.LanguageField"])
-add_introspection_rules([], ["^lino\.fields\.PriceField"])
-add_introspection_rules([], ["^lino\.fields\.KnowledgeField"])
-add_introspection_rules([], ["^lino\.fields\.StrengthField"])
-add_introspection_rules([], ["^lino\.fields\.PercentageField"])
-add_introspection_rules([], ["^lino\.fields\.MyDateField"])
-add_introspection_rules([], ["^lino\.fields\.MonthField"])
-add_introspection_rules([], ["^lino\.fields\.QuantityField"])
-add_introspection_rules([], ["^lino\.fields\.HtmlTextField"])
+#~ from south.modelsinspector import add_introspection_rules
+#~ add_introspection_rules([], ["^lino\.fields\.LanguageField"])
+#~ add_introspection_rules([], ["^lino\.fields\.PriceField"])
+#~ add_introspection_rules([], ["^lino\.fields\.KnowledgeField"])
+#~ add_introspection_rules([], ["^lino\.fields\.StrengthField"])
+#~ add_introspection_rules([], ["^lino\.fields\.PercentageField"])
+#~ add_introspection_rules([], ["^lino\.fields\.MyDateField"])
+#~ add_introspection_rules([], ["^lino\.fields\.MonthField"])
+#~ add_introspection_rules([], ["^lino\.fields\.QuantityField"])
+#~ add_introspection_rules([], ["^lino\.fields\.HtmlTextField"])
 
 
 LANGUAGE_CHOICES = [ (k,_(v)) for k,v in settings.LANGUAGES ]
@@ -66,6 +66,11 @@ KNOWLEDGE_CHOICES = (
   ('3', _("quite well")), #  - gut
   ('4', _("very well")), #  - sehr gut
 )
+
+def knowledge_text(v):
+    for k in KNOWLEDGE_CHOICES:
+        if k[0] == v : return k[1]
+    return None
 
 #~ KNOWLEDGE_CHOICES_VALID = [x[0] for x in KNOWLEDGE_CHOICES]
   

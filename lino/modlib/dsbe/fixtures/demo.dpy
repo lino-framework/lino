@@ -297,3 +297,11 @@ def objects():
     yield langk(u"Eierschal Emil",'ger','4','3')
     yield langk(u"Ärgerlich Erna",'ger','4','4')
     
+    for p in Person.objects.all():
+        if p.zip_code == '4700':
+            p.is_cpas = True
+            p.is_active = True
+            p.native_language_id = 'ger'
+            p.birth_country_id = 'BE'
+            p.nationality_id = 'BE'
+            p.save()

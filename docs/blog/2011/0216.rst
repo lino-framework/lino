@@ -1,0 +1,96 @@
+20110216
+========
+
+Änderungen speichern
+--------------------
+
+Puh! Der Bug mit dem falschen "Änderungen speichern" ist raus.
+Merke: die `value` und `originalValue` eines leeren Feldes sind leere Strings
+und nicht, wie ich annahm, `null` oder `undefined`.
+ExtJS ist in diesem Bereich sehr komplex. 
+Hier einige Notizen, die ich während der Suche gemacht habe.
+
+
+`Form.reset()` ruft auf jedem Feld dessen Methode `reset()` auf, 
+die normalerweise folgendes macht::
+
+    reset : function(){
+        this.setValue(this.originalValue);
+        this.clearInvalid();
+    }
+
+:extjs:`Ext.form.Field` hat eine private Methode `initValue`, die 
+lediglich aus `afterRender` gerufen wird::
+
+    initValue : function(){
+        if(this.value !== undefined){
+            this.setValue(this.value);
+        }else if(!Ext.isEmpty(this.el.dom.value) && this.el.dom.value != this.emptyText){
+            this.setValue(this.el.dom.value);
+        }
+        this.originalValue = this.getValue();
+    }
+
+Vor allem setzt diese Funktion `this.originalValue` auf `this.getValue()`.
+
+Aber vorher tut sie noch was Rätselhaftes:
+wenn das Feld die Konfigurationsvariable `value` definiert hat, 
+oder wenn das DOM-Element einen Wert enthält 
+(weil das Feld aus einer bestehenden HTML-Form definiert wurde (?)),
+dann wird dort auch `this.setValue()` gerufen.
+
+In `Ext.form.Checkbox` wird diese Sonderbehandlung übrigens nicht gemacht::
+
+    initValue : function() {
+        this.originalValue = this.getValue();
+    },
+
+
+In einer `Ext.form.ComboBox` tut sie noch was mehr::
+
+    initValue : function(){
+        Ext.form.ComboBox.superclass.initValue.call(this);
+        if(this.hiddenField){
+            this.hiddenField.value =
+                Ext.value(Ext.isDefined(this.hiddenValue) ? this.hiddenValue : this.value, '');
+        }
+    },
+
+
+
+Was tut `getValue` eigentlich?
+Interessant::
+
+    getValue : function(){
+        if(!this.rendered) {
+            return this.value;
+        }
+        var v = this.el.getValue();
+        if(v === this.emptyText || v === undefined){
+            v = '';
+        }
+        return v;
+    },
+
+In einer `Ext.form.ComboBox` mit `valueField` tut sie allerdings::
+
+    getValue : function(){
+        if(this.valueField){
+            return Ext.isDefined(this.value) ? this.value : '';
+        }else{
+            return Ext.form.ComboBox.superclass.getValue.call(this);
+        }
+    }
+    
+wobei `Ext.isDefined` wie folgt definiert ist::
+
+        isDefined : function(v){
+            return typeof v !== 'undefined';
+        },
+ 
+
+Kleinkram
+---------
+
+#.  :mod:`lino.utils.dpy ` schreibt jetzt die Lino-Version als Kommentar 
+    in die .dpy-Datei rein.

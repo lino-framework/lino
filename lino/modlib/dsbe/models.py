@@ -724,6 +724,21 @@ class StudyTypes(reports.Report):
 #~ class StudyContentsByType(StudyContents):
     #~ fk_name = 'type'
 
+
+class HistoryByPerson(reports.Report):
+    def create_instance(self,req,**kw):
+        obj = super(HistoryByPerson,self).create_instance(req,**kw)
+        if obj.person is not None:
+            previous_exps = self.model.objects.filter(person=obj.person).order_by('started')
+            if previous_exps.count() > 0:
+                exp = previous_exps[previous_exps.count()-1]
+                if exp.stopped:
+                    obj.started = exp.stopped
+                else:
+                    obj.started = exp.started
+        return obj
+    
+
 #
 # Study
 #
@@ -766,7 +781,8 @@ class Study(models.Model):
             return country.city_set.order_by('name')
         return cls.city.field.rel.to.objects.order_by('name')
         
-class StudiesByPerson(reports.Report):
+class StudiesByPerson(HistoryByPerson):
+    "List of studies for a known person."
     model = Study
     fk_name = 'person'
     #~ label = _("Studies & experiences")
@@ -881,7 +897,7 @@ class JobExperience(models.Model):
     #~ company = models.ForeignKey("contacts.Company",verbose_name=_("Company"))
     company = models.CharField(max_length=200,verbose_name=_("company"))
     #~ type = models.ForeignKey(JobType,verbose_name=_("job type"))
-    title = models.CharField(max_length=200,verbose_name=_("job title"))
+    title = models.CharField(max_length=200,verbose_name=_("job title"),blank=True)
     country = models.ForeignKey("countries.Country",
         blank=True,null=True,
         verbose_name=_("Country"))
@@ -894,7 +910,8 @@ class JobExperience(models.Model):
     def __unicode__(self):
         return unicode(self.title)
   
-class JobExperiencesByPerson(reports.Report):
+class JobExperiencesByPerson(HistoryByPerson):
+    "List of job experiences for a known person"
     model = JobExperience
     fk_name = 'person'
     order_by = ["started"]

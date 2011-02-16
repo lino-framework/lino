@@ -49,6 +49,7 @@ except ImportError:
         
 import lino
 from lino import reports
+from lino import fields
 #~ from lino import actions
 
 from lino.utils.babel import default_language, dtos, dtosl, setlang, getattr_lang
@@ -207,6 +208,7 @@ class AppyBuildMethod(SimpleBuildMethod):
             dtosl=dtosl,
             tr=getattr_lang,
             restify=restify,
+            knowledge_text=fields.knowledge_text,
             )
         lang = str(elem.get_print_language(self))
         from appy.pod.renderer import Renderer

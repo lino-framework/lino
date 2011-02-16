@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2009-2010 Luc Saffre
+## Copyright 2009-2011 Luc Saffre
 ## This file is part of the TimTools project.
 ## TimTools is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by

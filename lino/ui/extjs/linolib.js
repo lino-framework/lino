@@ -360,103 +360,6 @@ Ext.override(Ext.grid.CellSelectionModel, {
 });
 
  
-/*
-Based on feature request developed in http://extjs.net/forum/showthread.php?t=75751
-*/
-Ext.override(Ext.form.ComboBox, {
-    //~ contextParams : {}, 
-    // contextParams : array of names of variables to add to query
-    // contextValues : array of values of variables to add to query
-    // queryContext : null, 
-    // contextParam : null, 
-    initComponent : Ext.form.ComboBox.prototype.initComponent.createSequence(function() {
-    //~ initComponent : function(){
-        this.contextParams = {};
-        //~ Ext.form.ComboBox.initComponent(this);
-        //~ Ext.form.ComboBox.superclass.initComponent.call(this);
-    }),
-    setValue : function(v,record){
-        //~ if(this.name == 'country') console.log('20100531 country ComboBox.setValue()',v,record);
-        var text = v;
-        if(this.valueField){
-          if(v === null) { 
-              // console.log(this.name,'.setValue',v,'no lookup needed, value is null');
-              v = null;
-          } else if (record != undefined) {
-            text = record.data[this.name];
-            //~ console.log(this.name,'.setValue',v,'got text ',this.name,' from record ',record);
-          } else {
-            // if(this.mode == 'remote' && !Ext.isDefined(this.store.totalLength)){
-            if(this.mode == 'remote' && ( this.lastQuery === null || (!Ext.isDefined(this.store.totalLength)))){
-                // console.log(this.name,'.setValue',v,'must wait for load');
-                this.store.on('load', this.setValue.createDelegate(this, arguments), null, {single: true});
-                if(this.store.lastOptions === null || this.lastQuery === null){
-                    var params;
-                    if(this.valueParam){
-                        params = {};
-                        params[this.valueParam] = v;
-                    }else{
-                        var q = this.allQuery;
-                        this.lastQuery = q;
-                        this.store.setBaseParam(this.queryParam, q);
-                        params = this.getParams(q);
-                    }
-                    // console.log(this.name,'.setValue',v,' : call load() with params ',params);
-                    this.store.load({params: params});
-                }else{
-                    // console.log(this.name,'.setValue',v,' : but store is loading',this.store.lastOptions);
-                }
-                return;
-            }else{
-                // console.log(this.name,'.setValue',v,' : store is loaded, lastQuery is "',this.lastQuery,'"');
-            }
-            var r = this.findRecord(this.valueField, v);
-            if(r){
-                text = r.data[this.displayField];
-            }else if(this.valueNotFoundText !== undefined){
-                text = this.valueNotFoundText;
-            }
-          }
-        }
-        this.lastSelectionText = text;
-        if(this.hiddenField){
-            this.hiddenField.value = v;
-        }
-        Ext.form.ComboBox.superclass.setValue.call(this, text);
-        this.value = v;
-    },
-    getParams : function(q){
-        // p = Ext.form.ComboBox.superclass.getParams.call(this, q);
-        // causes "Ext.form.ComboBox.superclass.getParams is undefined"
-        var p = {};
-        //p[this.queryParam] = q;
-        if(this.pageSize){
-            p.start = 0;
-            p.limit = this.pageSize;
-        }
-        // now my code:
-        if(this.contextParams) Ext.apply(p,this.contextParams);
-        //~ if(this.contextParams && this.contextValues) {
-          //~ for(i = 0; i <= this.contextParams.length; i++)
-            //~ p[this.contextParams[i]] = this.contextValues[i];
-        //~ }
-        return p;
-    },
-    setContextValue : function(name,value) {
-      //~ console.log('setContextValue',this,this.name,':',name,'=',value);
-      //~ if (this.contextValues === undefined) {
-          //~ this.contextValues = Array(); // this.contextParams.length);
-      //~ }
-      if (this.contextParams[name] != value) {
-        //~ console.log('setContextValue 1',this.contextParams);
-        this.contextParams[name] = value;
-        this.lastQuery = null;
-        //~ console.log('setContextValue 2',this.contextParams);
-      }
-    }
-});
-
-
 
 function PseudoConsole() {
     this.log = function() {};
@@ -705,7 +608,7 @@ Lino.id_renderer = function(value, metaData, record, rowIndex, colIndex, store) 
   //~ return value;
 //~ }
 
-Lino.fk_renderer = function(fkname,handler) {
+Lino.fk_renderer = function(fkname,handlername) {
   //~ console.log('Lino.fk_renderer handler=',handler);
   return function(value, metaData, record, rowIndex, colIndex, store) {
     //~ console.log('Lino.fk_renderer',fkname,rowIndex,colIndex,record,metaData,store);
@@ -716,7 +619,7 @@ Lino.fk_renderer = function(fkname,handler) {
     if (value) {
         //~ var s = '<a href="#" onclick="' ;
         var s = '<a href="javascript:' ;
-        s += handler + '(undefined,{record_id:\'' + String(record.data[fkname]) + '\'})">';
+        s += handlername + '(undefined,{record_id:\'' + String(record.data[fkname]) + '\'})">';
         s += value + '</a>';
         //~ console.log('Lino.fk_renderer',value,'-->',s);
         return s
@@ -773,6 +676,8 @@ Lino.do_when_visible = function(cmp,todo) {
   
 };    
 
+/*
+*/
 Lino.do_on_current_record = function(panel,fn,phantom_fn) {
   var rec = panel.get_current_record();
   if (rec == undefined) {
@@ -783,7 +688,7 @@ Lino.do_on_current_record = function(panel,fn,phantom_fn) {
     if (phantom_fn) {
       phantom_fn(panel);
     } else {
-      Lino.notify("Action not available on phantom record.");
+      Lino.notify("$_('Action not available on phantom record.')");
     }
     return;
   }
@@ -813,12 +718,18 @@ Lino.row_action_handler = function(fmt) {
 Lino.show_detail = function(panel,btn) {
   Lino.do_on_current_record(panel,
     function(rec) {
+      //~ panel.loadMask.show();
+      //~ panel.my_load_mask.show();
+      //~ alert('foo');
+      //~ panel.ww.window.getEl().mask('Bitte nochmal warten','x-mask-loading');
+      //~ panel.disable();
       panel.ls_detail_handler(panel,{
         record_id:rec.id,base_params:panel.get_base_params()
       });
+      //~ panel.my_load_mask.hide();
+      //~ panel.loadMask.hide();
     },
     Lino.show_insert
-    //~ function() { panel.ls_insert_handler(panel) }
   );
 };
 
@@ -906,7 +817,7 @@ Lino.HtmlBoxPanel = Ext.extend(Ext.Panel,{
       this.set_base_params(this.ww.get_master_params());
       var el = box.getEl();
       if (el) {
-        el.update(record.data[this.name]);
+        el.update(record ? record.data[this.name] : '');
         //~ console.log('HtmlBox.refresh()',this.name);
       //~ } else {
         //~ console.log('HtmlBox.refresh() failed for',this.name);
@@ -990,10 +901,13 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     ])
     //~ }
     this.before_row_edit = config.before_row_edit.createDelegate(this);
+      
+    config.trackResetOnLoad = true;
     
     Lino.FormPanel.superclass.constructor.call(this, config);
     //~ console.log(20101222,this.form.trackResetOnLoad);
-    this.form.trackResetOnLoad = true;
+    //~ this.form.trackResetOnLoad = true;
+      
     //~ 20101025 Ext.applyIf(this,{base_params:{}});
     //~ this.base_params = config.base_params;
     //~ console.log(20100930,this.base_params);
@@ -1094,7 +1008,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   
   set_current_record : function(record,after) {
     this.current_record = record;
-    //~ console.log('Lino.FormPanel.set_current_record',record);
+    console.log('Lino.FormPanel.set_current_record',record);
     //~ this.config.main_panel.form.load(record);    
     if (record) {
       this.enable();
@@ -1242,7 +1156,8 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
       doit(this.get_record_url(record.id) + "?fmt=image");
       //~ var src = '/api'+this.ww.main_item.ls_url + "/" + record.id + "?fmt=image"
     else
-      doit('empty.jpg');
+      //~ doit('empty.jpg');
+      doit(Ext.BLANK_IMAGE_URL);
   }
 });
 
@@ -1273,6 +1188,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
           //~ enableRowBody: true,
           emptyText:"Nix gefunden!"
         },
+  loadMask: {msg:'$_("Please wait...")'},
   
   constructor : function(ww,config,params){
     this.ww = ww;
@@ -1772,9 +1688,9 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     // if (this.getView().getRows().length > 0) {
     //  this.getView().focusRow(1);
     // }
-    this.my_load_mask = new Ext.LoadMask(this.getEl(), {
-        msg:'$_("Please wait...")',
-        store:this.store});
+    //~ this.my_load_mask = new Ext.LoadMask(this.getEl(), {
+        //~ msg:'$_("Please wait...")',
+        //~ store:this.store});
       
     var tbar = this.getTopToolbar();
     // tbar.on('change',function() {this.getView().focusRow(1);},this);
@@ -2001,8 +1917,107 @@ Lino.ComboBox = Ext.extend(Ext.form.ComboBox,{
   triggerAction: 'all',
   autoSelect: false,
   submitValue: true,
-  displayField: 'text', // ext_requests.CHOICES_TEXT_FIELD
-  valueField: 'value' // ext_requests.CHOICES_VALUE_FIELD
+  displayField: '$ext_requests.CHOICES_TEXT_FIELD', // 'text', 
+  valueField: '$ext_requests.CHOICES_VALUE_FIELD', // 'value',
+  
+  //~ initComponent : Ext.form.ComboBox.prototype.initComponent.createSequence(function() {
+  initComponent : function(){
+      this.contextParams = {};
+      //~ Ext.form.ComboBox.initComponent(this);
+      Lino.ComboBox.superclass.initComponent.call(this);
+  },
+  setValue : function(v,record){
+      /*
+      Based on feature request developed in http://extjs.net/forum/showthread.php?t=75751
+      */
+      /* `record` is used to get the text corresponding to this value */
+      //~ if(this.name == 'birth_country') 
+        //~ console.log(this.name,'.setValue(', v ,') this=', this,'record=',record);
+      var text = v;
+      if(this.valueField){
+        if(v == null || v == '') { 
+            //~ if (this.name == 'birth_country') 
+                //~ console.log(this.name,'.setValue',v,'no lookup needed, value is empty');
+            //~ v = undefined;
+            v = '';
+        } else if (Ext.isDefined(record)) {
+          text = record.data[this.name];
+          //~ if (this.name == 'birth_country') 
+            //~ console.log(this.name,'.setValue',v,'got text ',text,' from record ',record);
+        } else {
+          // if(this.mode == 'remote' && !Ext.isDefined(this.store.totalLength)){
+          if(this.mode == 'remote' && ( this.lastQuery === null || (!Ext.isDefined(this.store.totalLength)))){
+              //~ if (this.name == 'birth_country') console.log(this.name,'.setValue',v,'store not yet loaded');
+              this.store.on('load', this.setValue.createDelegate(this, arguments), null, {single: true});
+              if(this.store.lastOptions === null || this.lastQuery === null){
+                  var params;
+                  if(this.valueParam){
+                      params = {};
+                      params[this.valueParam] = v;
+                  }else{
+                      var q = this.allQuery;
+                      this.lastQuery = q;
+                      this.store.setBaseParam(this.queryParam, q);
+                      params = this.getParams(q);
+                  }
+                  //~ if (this.name == 'birth_country') 
+                    //~ console.log(this.name,'.setValue',v,' : call load() with params ',params);
+                  this.store.load({params: params});
+              //~ }else{
+                  //~ if (this.name == 'birth_country') 
+                    //~ console.log(this.name,'.setValue',v,' : but store is loading',this.store.lastOptions);
+              }
+              return;
+          //~ }else{
+              //~ if (this.name == 'birth_country') 
+                //~ console.log(this.name,'.setValue',v,' : store is loaded, lastQuery is "',this.lastQuery,'"');
+          }
+          var r = this.findRecord(this.valueField, v);
+          if(r){
+              text = r.data[this.displayField];
+          }else if(this.valueNotFoundText !== undefined){
+              text = this.valueNotFoundText;
+          }
+        }
+      }
+      this.lastSelectionText = text;
+      if(this.hiddenField){
+          //~ this.hiddenField.originalValue = v;
+          this.hiddenField.value = v;
+      }
+      Ext.form.ComboBox.superclass.setValue.call(this, text);
+      this.value = v; // needed for grid.afteredit
+  },
+  
+  getParams : function(q){
+    // p = Ext.form.ComboBox.superclass.getParams.call(this, q);
+    // causes "Ext.form.ComboBox.superclass.getParams is undefined"
+    var p = {};
+    //p[this.queryParam] = q;
+    if(this.pageSize){
+        p.start = 0;
+        p.limit = this.pageSize;
+    }
+    // now my code:
+    if(this.contextParams) Ext.apply(p,this.contextParams);
+    //~ if(this.contextParams && this.contextValues) {
+      //~ for(i = 0; i <= this.contextParams.length; i++)
+        //~ p[this.contextParams[i]] = this.contextValues[i];
+    //~ }
+    return p;
+  },
+  setContextValue : function(name,value) {
+    //~ console.log('setContextValue',this,this.name,':',name,'=',value);
+    //~ if (this.contextValues === undefined) {
+        //~ this.contextValues = Array(); // this.contextParams.length);
+    //~ }
+    if (this.contextParams[name] != value) {
+      //~ console.log('setContextValue 1',this.contextParams);
+      this.contextParams[name] = value;
+      this.lastQuery = null;
+      //~ console.log('setContextValue 2',this.contextParams);
+    }
+  }
 });
 
 Lino.ChoicesFieldElement = Ext.extend(Lino.ComboBox,{
@@ -2102,14 +2117,14 @@ Lino.WindowWrapperBase = {
     //~ }
     
     if (this.config.data_record) {
-      //~ console.log('Lino.WindowWrapper with data_record',this.config.data_record);
+      console.log('Lino.WindowWrapper with data_record',this.config.data_record);
       //~ this.main_item.on_master_changed.defer(2000,this.main_item,[config.data_record]);
       //~ Lino.do_when_visible(this.main_item,function(){this.on_master_changed(config.data_record)});
       //~ this.main_item.on('afterrender',function(){this.main_item.on_master_changed(config.data_record)},this,{single:true});
       this.main_item.set_current_record(this.config.data_record);
       //~ return;
     } else if (this.config.record_id !== undefined) { // may be 0 
-      //~ console.log('Lino.WindowWrapper with record_id',this.config.record_id);
+      console.log('Lino.WindowWrapper with record_id',this.config.record_id);
       this.main_item.goto_record_id(this.config.record_id);
     }
     
@@ -2420,12 +2435,19 @@ Lino.InsertWrapper = Ext.extend(Lino.WindowWrapper, {
 
 Ext.override(Ext.form.BasicForm,{
     loadRecord : function(record){
+        /* Forward record to field.setValue(). 
+        Lino never uses an array record here, so we can ignore this case. 
+        */
+        console.log('20110214e loadRecord',record.data)
         var field, id;
         for(id in record.data){
             if(!Ext.isFunction(record.data[id]) && (field = this.findField(id))){
                 field.setValue(record.data[id],record);
                 if(this.trackResetOnLoad){
                     field.originalValue = field.getValue();
+                    //~ if (field.hiddenField) {
+                      //~ field.hiddenField.originalValue = field.hiddenField.value;
+                    //~ }
                 }
             }
         }

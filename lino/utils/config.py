@@ -101,7 +101,7 @@ def load_config_files(pattern,loader):
     files.sort(fcmp)
     for filename,cd in files:
         fn = os.path.join(cd.name,filename)
-        logger.info("Loading %s...",fn)
+        logger.debug("Loading %s...",fn)
         s = codecs.open(fn,encoding='utf-8').read()
         loader(s,cd,filename)
 

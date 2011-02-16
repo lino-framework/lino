@@ -67,7 +67,7 @@ from lino.utils import jsgen
 from lino.utils.jsgen import py2js, js_code, id2js
 
 from lino.utils.jscompressor import JSCompressor
-if True:
+if False:
     jscompress = JSCompressor().compress
 else:    
     def jscompress(s): return s
@@ -1290,7 +1290,7 @@ class ExtUI(base.UI):
             #~ h._main = ext_elems.TabPanel([l.get_handle(self) for l in h.layouts])
           
         if isinstance(h,reports.ReportHandle):
-            logger.debug('ExtUI.setup_handle() %s',h.report)
+            #~ logger.debug('ExtUI.setup_handle() %s',h.report)
             if h.report.model is None:
                 return
             #~ h.choosers = chooser.get_choosers_for_model(h.report.model,chooser.FormChooser)
@@ -1321,8 +1321,9 @@ class ExtUI(base.UI):
         #~ elif isinstance(a,actions.UpdateRowAction):
             #~ kw.update(panel_btn_handler=js_code('Lino.update_row_handler(%r)' % a.name))
         elif isinstance(a,reports.ShowDetailAction):
+            kw.update(panel_btn_handler=js_code('Lino.show_detail_handler'))
             #~ kw.update(panel_btn_handler=js_code('Lino.show_detail_handler()'))
-            kw.update(panel_btn_handler=js_code('function(panel){Lino.show_detail(panel)}'))
+            #~ kw.update(panel_btn_handler=js_code('function(panel){Lino.show_detail(panel)}'))
         elif isinstance(a,reports.InsertRow):
             kw.update(must_save=True)
             kw.update(panel_btn_handler=js_code('function(panel){Lino.show_insert(panel)}'))

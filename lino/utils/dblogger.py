@@ -43,68 +43,105 @@ This uses the setting :setting:`DBLOGFILE`.
 
 """
 
-from django.conf import settings
+import logging
+from lino import mixins
+from lino.tools import obj2str
 
-if settings.DBLOGFILE:
+logger = logging.getLogger(__name__)
+
+info = logger.info
+warning = logger.warning
+exception = logger.exception
+error = logger.error
+debug = logger.debug
+
+def log_created(request,elem):
+    logger.info("%s created by %s.",obj2str(elem),request.user)
+    
+def log_deleted(request,elem):
+    logger.info("%s deleted by %s.",obj2str(elem),request.user)
+    
+def log_changes(request,elem):
+    if isinstance(elem,mixins.DiffingMixin):
+        changes = []
+        for k,v in elem.changed_columns().items():
+            changes.append("%s : %s --> %s" % (k,v['old'],v['new']))
+        if len(changes) == 0:
+            changes = '(no changes)'
+        #~ elif len(changes) == 1:
+            #~ changes = changes[0]
+        else:
+            changes = '\n- ' + ('\n- '.join(changes))
+        msg = "%s modified by %s : %s" % (
+            obj2str(elem),
+            request.user,
+            changes)
+        #~ print msg
+        logger.info(msg)
+
+
+#~ from django.conf import settings
+
+#~ if settings.DBLOGFILE:
   
-    import os
-    import logging
-    from logging.handlers import RotatingFileHandler
-    from lino import mixins
-    from lino.tools import obj2str
-    from lino.utils.log import file_handler
+    #~ import os
+    #~ import logging
+    #~ from logging.handlers import RotatingFileHandler
+    #~ from lino import mixins
+    #~ from lino.tools import obj2str
+    #~ from lino.utils.log import file_handler
     
-    logger = logging.getLogger('db')
-    #~ log = logger.info
-    info = logger.info
-    warning = logger.warning
-    exception = logger.exception
-    error = logger.error
-    debug = logger.debug
-    #~ handlers = logger.handlers
+    #~ logger = logging.getLogger('lino.db')
+    #~ # log = logger.info
+    #~ info = logger.info
+    #~ warning = logger.warning
+    #~ exception = logger.exception
+    #~ error = logger.error
+    #~ debug = logger.debug
+    #~ # handlers = logger.handlers
     
-    if len(logger.handlers) == 0:
-        filename = settings.DBLOGFILE
-        if filename.lower() == 'auto':
-            filename = os.path.join(settings.DATA_DIR,'db.log')
-        logger.addHandler(file_handler(filename))
-        settings.LINO_SITE.setup_dblogger(logger)
+    #~ if len(logger.handlers) == 0:
+        #~ filename = settings.DBLOGFILE
+        #~ if filename.lower() == 'auto':
+            #~ filename = os.path.join(settings.DATA_DIR,'db.log')
+        #~ logger.addHandler(file_handler(filename))
+        #~ settings.LINO_SITE.setup_dblogger(logger)
       
     
-    def log_created(request,elem):
-        logger.info("%s created by %s.",obj2str(elem),request.user)
+    #~ def log_created(request,elem):
+        #~ logger.info("%s created by %s.",obj2str(elem),request.user)
         
-    def log_deleted(request,elem):
-        logger.info("%s deleted by %s.",obj2str(elem),request.user)
+    #~ def log_deleted(request,elem):
+        #~ logger.info("%s deleted by %s.",obj2str(elem),request.user)
         
-    def log_changes(request,elem):
-        if isinstance(elem,mixins.DiffingMixin):
-            changes = []
-            for k,v in elem.changed_columns().items():
-                changes.append("%s : %s --> %s" % (k,v['old'],v['new']))
-            if len(changes) == 0:
-                changes = '(no changes)'
-            elif len(changes) == 1:
-                changes = changes[0]
-            else:
-                changes = '\n- ' + ('\n- '.join(changes))
-            msg = "%s modified by %s : %s" % (
-                obj2str(elem),
-                request.user,
-                changes)
-            logger.info(msg)
+    #~ def log_changes(request,elem):
+        #~ if isinstance(elem,mixins.DiffingMixin):
+            #~ changes = []
+            #~ for k,v in elem.changed_columns().items():
+                #~ changes.append("%s : %s --> %s" % (k,v['old'],v['new']))
+            #~ if len(changes) == 0:
+                #~ changes = '(no changes)'
+            #~ # elif len(changes) == 1:
+                #~ # changes = changes[0]
+            #~ else:
+                #~ changes = '\n- ' + ('\n- '.join(changes))
+            #~ msg = "%s modified by %s : %s" % (
+                #~ obj2str(elem),
+                #~ request.user,
+                #~ changes)
+            #~ logger.info(msg)
 
-else:
-    #~ def log(*args,**kw): pass
-    def info(*args,**kw): pass
-    def warning(*args,**kw): pass
-    def exception(*args,**kw): pass
-    def error(*args,**kw): pass
-    def debug(*args,**kw): pass
-    def log_changes(request,elem): pass
-    def log_deleted(request,elem): pass
-    def log_created(request,elem): pass
-    #~ handlers = []
-    logger = None
+#~ else:
+    #~ # def log(*args,**kw): pass
+    #~ def info(*args,**kw): pass
+    #~ def warning(*args,**kw): pass
+    #~ def exception(*args,**kw): pass
+    #~ def error(*args,**kw): pass
+    #~ def debug(*args,**kw): pass
+    #~ def log_changes(request,elem): pass
+    #~ def log_deleted(request,elem): pass
+    #~ def log_created(request,elem): pass
+    #~ # handlers = []
+    #~ logger = None
 
 

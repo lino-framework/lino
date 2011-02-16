@@ -66,7 +66,7 @@ def before_row_edit(panel):
                 #~ logger.debug("20100615 %s.%s has chooser", self.lh.layout, e.field.name)
                 for f in chooser.context_fields:
                     #~ l.append("console.log('20110128 before_row_edit',record.data);")
-                    l.append("%s.setContextValue(%r,record.data[%r]);" % (
+                    l.append("%s.setContextValue(%r,record ? record.data[%r] : undefined);" % (
                         e.ext_name,f.name,ext_requests.form_field_name(f)))
     #~ return js_code('function(record){\n  %s\n}' % ('\n  '.join(l)))
     return js_code('function(record){ %s }' % (' '.join(l)))

@@ -32,6 +32,7 @@ from django.contrib.auth.models import Permission
 from django.contrib.sessions.models import Session
 from django.utils.encoding import smart_unicode, is_protected_type
 
+import lino
 from lino.tools import obj2str
 from lino.utils import dblogger
 
@@ -57,6 +58,7 @@ class Serializer(base.Serializer):
         self.use_natural_keys = options.get("use_natural_keys", False)
 
         self.stream.write('# -*- coding: UTF-8 -*-\n\n')
+        self.stream.write('# Created using Lino version %s\n' % lino.__version__)
         self.stream.write('from lino.utils import i2d\n')
         self.stream.write('from lino.tools import resolve_model\n')
         #~ model = queryset.model

@@ -1,6 +1,8 @@
 20110214
 ========
 
+#.  Anpassungen :doc:`/admin/install` an Debian Squeeze
+
 #.  Die beiden Felder 
     :attr:`noble_condition <lino.modlib.dsbe.models.Person.noble_condition>` 
     und     
@@ -8,3 +10,73 @@
     von der eID waren nicht readonly.
 
 #.  Zwischenrelease in Eupen.
+
+Ein Bug in Lino
+---------------
+
+In der momentanen Version ist offenbar ein Bug, der gefährlich aussieht.
+Wenn man im Detail einer Person rumblättert, kommt manchmal die Frage
+"Änderungen speichern?", obwohl man nichts verändert hat. 
+Wenn man darauf Ja geantwortet, werden manchmal auch tatsächlich Daten geändert. 
+Zum Beispiel::
+
+  INFO Person #16 (Altenberg Hans (16)) modified by root :
+  - is_cpas : True --> False
+  - is_active : True --> False
+  
+Sieht nach was Subtilem aus.  
+
+#.  dblogger ist jetzt nur noch ein Wrapper zum Systemlogger (also in die :xfile:`system.log`).
+    Kann nämlich sein, dass diese Trennung von system.log und db.log 
+    lediglich eine Schnapsidee von mir war.
+    Erster Eindruck: genau, eine Schnapsidee. 
+    Jetzt kann ich auf dem Development Server Einträge im dblogger direkt am Bildschirm sehen,
+    Konfiguration wird klarer,
+    und falls das jemand irgendwann mal will, kann er ja manuell einen logger 
+    ``lino.utils.dblogger`` definieren und da noch zusätzliche Handler einbauen.
+    
+    
+#.  Ein paar eher unscheinbare Bugs behoben, 
+    die zu JavaScript-Fehlermeldungen führten::
+    
+    - (empty.jpg) Failed to load resource: the server responded with a status of 404 (NOT FOUND)
+      
+    - Vor dem Anzeigen eines Records im Detail kam in der JS-Konsole eine Warnung
+      `Uncaught TypeError: Cannot read property 'data' of undefined`
+
+    Aber unser Bug ist immer noch da.
+      
+      
+#.  (Nach 4 Stunden Debugging) 
+    Wir kommen der Sache näher, denn ich habe ihn jetzt 
+    zumindest ungefähr lokalisiert: meine ComboBox.setValue() 
+    setzt die originalValue nicht korrekt.
+    Dadurch dünkt sich die Combobox später dirty.
+    Der Fehler war schon immer da, fällt aber erst auf seit 
+    Lino bei jeder Gelegenheit fragt "Änderungen speichern".
+    
+    Aber jetzt muss ich erst mal Feierabend machen.
+
+Markup-formatierte Memofelder drucken
+-------------------------------------
+    
+appy.pod 0.6.3 löst das Problem
+`Insérer du markup (reStructuredText) 
+<https://answers.launchpad.net/appy/+question/138830>`_,
+also kann man jetzt theoretisch 
+per Markup (reStructuredText) formatierte Textfragmente in Memofeldern machen.
+    
+Zum Beispiel in 
+:attr:`lino.modlib.dsbe.models.Contract.responsibilities` kommt in der Dokumentvorlage
+anstelle des bisherigen Befehls `self.responsibilities` (im "track changes"-Modus)
+ein leerer Absatz (evtl. mit Absatzformatierung, z.B. linker/rechter Einzug)
+mit folgender Notiz::
+
+  do text
+  from xhtml(restify(self.responsibilities))
+      
+Erste Versuche zeigen allerdings, dass da noch einige Dinge nicht funktionieren. 
+Offenbar muss ich noch Stylezuweisungen o.ä. korrekt konfigurieren...
+    
+
+    

@@ -5,12 +5,8 @@ This document is partly in German because it is rather for internal use.
 See also :doc:`/tickets/index` which is a list of tickets 
 for which I hope for help from other people.
 
-
-Short-term
-----------
-
-#.  Zur Zeit scheint es so, dass das Auskunftsblatt eher überflüssig
-wird.
+recently fixed (to be confirmed)
+--------------------------------
 
 #.  Grid Ausbildung etc. sind zur Zeit chronologisch sortiert. Das ist
 auch gut so, aber bei der Eingabe extrem störend. Hmm, wie könnten wir
@@ -18,6 +14,18 @@ das lösen?
 
 #.  Grid Berufserfahrungen: Anzeige erst wenn Bezeichnung auch
 eingegeben: verwirrend
+
+
+
+Short-term
+----------
+
+#.  Wenn man in einer Grid das Detail eines Records aufruft, 
+    dann erscheint kein "Bitte warten" bis das Fenster erscheint.
+    Und bei Personen dauert das mehrere Sekunden.
+    
+#.  Zur Zeit scheint es so, dass das Auskunftsblatt eher 
+    überflüssig wird.
 
 #.  Wenn im Vollbildmodus einer Person nur Änderungen in einer Grid
 gemacht wurden und dann auf "Speichern" geklickt wird, kommt die
@@ -32,8 +40,6 @@ interpretiert werden?
 #.  Bei den Verträgen ist der Titel des Reiters "General" noch nicht
 übersetzt.
 
-
-#.  Uncaught TypeError: Cannot read property 'data' of undefined
 
 #.  :doc:`tickets/20`.
 
@@ -524,16 +530,16 @@ Long-term
 #. Warnung, wenn das gleiche Feld mehrmals in einem Detail vorkommt.
    Oder besser: diesen Fall zulassen.
    
-#. http://code.google.com/p/extjs-public/   
+#.  http://code.google.com/p/extjs-public/   
 
-#. Soll :mod:`<make_staff> lino.management.commands.make_staff` 
-   (auch) über das Web-Interface zur Verfügung stehen?
-   Aber ich denke der Befehl muss bleiben, denn jemand der nicht staff ist, 
-   darf sich par définition nicht selber in diesen Status versetzen können.
+#.  Soll :mod:`<make_staff> lino.management.commands.make_staff` 
+    (auch) über das Web-Interface zur Verfügung stehen?
+    Aber ich denke der Befehl muss bleiben, denn jemand der nicht staff ist, 
+    darf sich par définition nicht selber in diesen Status versetzen können.
 
-#. Wenn man z.B. watch_tim oder initdb_tim manuell startet und der 
-   ein log-rotate durchführt, dann haben die neu erstellten Dateien 
-   anschließend nicht www-data als owner. Resultat: internal server error!
+#.  Wenn man z.B. watch_tim oder initdb_tim manuell startet und der 
+    ein log-rotate durchführt, dann haben die neu erstellten Dateien 
+    anschließend nicht www-data als owner. Resultat: internal server error!
 
 #.  `How to LSBize an Init Script <http://wiki.debian.org/LSBInitScripts>`_
 
@@ -545,10 +551,14 @@ Long-term
 Documentation
 -------------
 
-#. Wenn ich in der INSTALLED_APPS von lino.demos.std.settings auch die igen-Module reintue, dann 
-   kriege ich::
+#.  Anpassungen :doc:`/admin/install` an Debian Squeeze.
+    OpenOffice bzw. LibreOffice braucht jetzt wahrscheinlich 
+    nicht mehr manuell installiert zu werden.
+
+#.  Wenn ich in der INSTALLED_APPS von lino.demos.std.settings 
+    auch die igen-Module reintue, dann kriege ich::
   
      ref\python\lino.modlib.dsbe.rst:17: (WARNING/2) autodoc can't import/find module 'lino.modlib.dsbe.models', 
      it reported error: "resolve_model('contacts.Company',app_label='contacts',who=None) found None"
 
-#. ``make doctest`` nutzbar machen. Siehe :doc:`/blog/2010/1024`
+#.  ``make doctest`` nutzbar machen. Siehe :doc:`/blog/2010/1024`

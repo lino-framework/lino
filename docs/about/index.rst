@@ -38,18 +38,19 @@ to the government agency with 30 users and hundreds of documents per day.
 
 Luc has been working on writing a successor for TIM since the early 1990s. He has done and dropped projects in C++, PHP and Java. Since August 2004 he's doing this using Python. In March 2009 he discovered :term:`Django` whose database model and application server concepts seem ideal for Lino. In August 2009 he started to use the ExtJS Javascript framework.
 
+
+Lino explained to Django users
+------------------------------
+
 When Luc discovered Django in the end of 2008, he was quickly seized by
-the clear design and mature implementation. "The ORM and database model based on *applications* is simply genial.
-The way of how this is integrated into a web application server system: genial."
+the clear design and mature implementation. Some of his statements:
+"The ORM and database model based on *applications* is simply genial.
+The way of how this is integrated into a web application server system: genial.
 But one thing disturbed me: the 
 `admin application <http://docs.djangoproject.com/en/dev/ref/contrib/admin/#ref-contrib-admin>`_  
 has obviously not been designed to write complete database applications.
 That's why I started to write Lino.
 Lino is an alternative for Django's :mod:`django.contrib.admin` module."
-
-
-Lino explained to Django users
-------------------------------
 
 Lino sites are normal Django sites, but 
 your :setting:`INSTALLED_APPS` will 
@@ -64,8 +65,6 @@ default settings by starting your :xfile:`settings.py` with::
   from lino.demos.std.settings import *
   
 You also don't need to write any :file:`.html` templates when using Lino.
-
-
 
 
 
