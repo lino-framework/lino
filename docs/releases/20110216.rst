@@ -23,3 +23,6 @@ Version 1.1.3 (16.02.2011)
       
 #.  Der Ausdruck `knowledge_text(row.spoken)` in einer Dokumentvorlage
     gibt jetzt die (deutsche) Bezeichnung des Kenntnisgrades zurück.
+    Das ist aber nur eine provisorische Lösung. :doc:`Irgendwann <20110216>` 
+    wird `row.spoken` 
+    automatisch als Text in der richtigen Sprache gerendert werden.

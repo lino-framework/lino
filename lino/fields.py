@@ -59,18 +59,53 @@ STRENGTH_CHOICES = (
   ('4' , _("very much")),         # sehr gerne
 )
 
-KNOWLEDGE_CHOICES = (
-  ('0', _("not at all")), # - gar nicht
-  ('1', _("a bit")), #  - ein bisschen
-  ('2', _("moderate")), #  - mittelmäßig
-  ('3', _("quite well")), #  - gut
-  ('4', _("very well")), #  - sehr gut
-)
+#~ KNOWLEDGE_CHOICES = (
+  #~ ('0', _("not at all")), # - gar nicht
+  #~ ('1', _("a bit")), #  - ein bisschen
+  #~ ('2', _("moderate")), #  - mittelmäßig
+  #~ ('3', _("quite well")), #  - gut
+  #~ ('4', _("very well")), #  - sehr gut
+#~ )
 
-def knowledge_text(v):
-    for k in KNOWLEDGE_CHOICES:
-        if k[0] == v : return k[1]
-    return None
+#~ def knowledge_text(v):
+    #~ for k in KNOWLEDGE_CHOICES:
+        #~ if k[0] == v : return k[1]
+    #~ return None
+    
+from lino.utils import babel    
+    
+class Knowledge(babel.BabelText):
+    pass
+    
+    
+#~ KNOWLEDGE_CHOICES = (
+  #~ ('0', Knowledge(en=u"not at all",de=u"gar nicht",   fr=u"pas du tout")),
+  #~ ('1', Knowledge(en=u"a bit",     de=u"ein bisschen",fr=u"un peu")),
+  #~ ('2', Knowledge(en=u"moderate",  de=u"mittelmäßig", fr=u"moyennement")),
+  #~ ('3', Knowledge(en=u"quite well",de=u"gut",         fr=u"bien")),
+  #~ ('4', Knowledge(en=u"very well", de=u"gut",         fr=u"très bien")),
+#~ )
+
+#~ KNOWLEDGE_DICT = {}
+#~ for k in KNOWLEDGE_CHOICES:
+    #~ KNOWLEDGE_DICT[k[0]] = k[1]
+
+#~ KNOWLEDGE_CHOICES = [(k[0],unicode(k[1])) for k in KNOWLEDGE_CHOICES]
+
+KNOWLEDGE_LIST = [
+  Knowledge('0',en=u"not at all",de=u"gar nicht",   fr=u"pas du tout"),
+  Knowledge('1',en=u"a bit",     de=u"ein bisschen",fr=u"un peu"),
+  Knowledge('2',en=u"moderate",  de=u"mittelmäßig", fr=u"moyennement"),
+  Knowledge('3',en=u"quite well",de=u"gut",         fr=u"bien"),
+  Knowledge('4',en=u"very well", de=u"gut",         fr=u"très bien"),
+]
+
+KNOWLEDGE_DICT = {}
+for k in KNOWLEDGE_LIST:
+    KNOWLEDGE_DICT[k.pk] = k
+
+KNOWLEDGE_CHOICES = [ (k,unicode(k)) for k in KNOWLEDGE_LIST]
+
 
 #~ KNOWLEDGE_CHOICES_VALID = [x[0] for x in KNOWLEDGE_CHOICES]
   
@@ -85,6 +120,26 @@ class HtmlTextField(models.TextField):
     pass
     
 class KnowledgeField(models.CharField):
+    """
+    A char field that can take one of the 
+    :class:`lino.utils.babel.BabelText` values 
+    "not at all", "a bit", "moderate", "quite well" and "very well" 
+    which are stored in the database as '0' to '4',
+    
+    
+    
+    
+    
+    representing the words
+    
+    
+    
+    `lino.modlib.dsbe.models.Languageknowledge.spoken` 
+    `lino.modlib.dsbe.models.Languageknowledge.written` 
+    """
+  
+    __metaclass__ = models.SubfieldBase
+    
     def __init__(self, *args, **kw):
         defaults = dict(
             choices=KNOWLEDGE_CHOICES,
@@ -96,6 +151,27 @@ class KnowledgeField(models.CharField):
         defaults.update(kw)
         #~ models.SmallIntegerField.__init__(self,*args, **defaults)
         models.CharField.__init__(self,*args, **defaults)
+        
+    def get_internal_type(self):
+        return "CharField"
+        
+    def to_python(self, value):
+        if isinstance(value, Knowledge):
+            return value        
+        return KNOWLEDGE_DICT.get(value)
+        
+    def get_prep_value(self, value):
+        if value:
+            return value.pk
+        return None
+        
+    def value_to_string(self, obj):
+        value = self._get_val_from_obj(obj)
+        return self.get_db_prep_value(value)
+        
+        
+    #~ def save_form_data(self, instance, data):
+        #~ setattr(instance, self.name, data)
     
 #~ class StrengthField(models.SmallIntegerField):
 class StrengthField(models.CharField):

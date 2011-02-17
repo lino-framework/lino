@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Lino-DSBE\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-11 15:48+0000\n"
+"POT-Creation-Date: 2011-02-17 15:47+0000\n"
 "PO-Revision-Date: 2011-02-06 06:49+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
@@ -15,42 +15,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-
-#: .\models.py:58
-msgid "Status"
-msgstr "Status"
-
-#: .\models.py:59 .\models.py:727 .\models.py:871 .\models.py:1494
-msgid "Person"
-msgstr "Person"
-
-#: .\models.py:60
-msgid "Education"
-msgstr "Ausbildung"
-
-#: .\models.py:61
-msgid "Languages"
-msgstr "Sprachen"
-
-#: .\models.py:62 .\models.py:814
-msgid "Properties"
-msgstr "Eigenschaften"
-
-#: .\models.py:63
-msgid "Skills"
-msgstr "Fähigkeiten"
-
-#: .\models.py:64 .\models.py:430
-msgid "Obstacles"
-msgstr "Hindernisse"
-
-#: .\models.py:65
-msgid "Notes"
-msgstr "Notizen"
-
-#: .\models.py:66
-msgid "Miscellaneous"
-msgstr "Sonstiges"
 
 #: .\models.py:147
 msgid "single"
@@ -144,7 +108,7 @@ msgstr "Gruppe"
 msgid "Coached from"
 msgstr "Begleitet seit"
 
-#: .\models.py:318 .\models.py:364 .\models.py:946
+#: .\models.py:318 .\models.py:364 .\models.py:972
 msgid "until"
 msgstr "bis"
 
@@ -156,7 +120,7 @@ msgstr "Begleiter 1"
 msgid "Coach 2"
 msgstr "Begleiter 2"
 
-#: .\models.py:326 .\models.py:1633
+#: .\models.py:326 .\models.py:1659
 msgid "Sex"
 msgstr "Geschlecht"
 
@@ -204,618 +168,630 @@ msgstr "eID-Kartennummer"
 msgid "ID card valid from"
 msgstr "ID-Karte gültig von"
 
-#: .\models.py:367 .\models.py:477
+#: .\models.py:367 .\models.py:485
 msgid "eID card type"
 msgstr "eID-Kartenart"
 
-#: .\models.py:369
+#: .\models.py:372
 msgid "eID card issuer"
 msgstr "eID-Karte ausgestellt durch"
 
-#: .\models.py:371
+#: .\models.py:376
 msgid "noble condition"
 msgstr "Adelstitel"
 
-#: .\models.py:400
+#: .\models.py:408
 msgid "Residence type"
 msgstr "Register"
 
-#: .\models.py:405
+#: .\models.py:413
 msgid "Lives in Belgium since"
 msgstr "Lebt in Belgien seit"
 
-#: .\models.py:406
+#: .\models.py:414
 msgid "Seeking work since"
 msgstr "eingetragen seit"
 
-#: .\models.py:408
+#: .\models.py:416
 msgid "Needs residence permit"
 msgstr "Braucht Aufenthaltserlaubnis"
 
-#: .\models.py:409
+#: .\models.py:417
 msgid "Needs work permit"
 msgstr "Braucht Arb.Erl."
 
-#: .\models.py:411
+#: .\models.py:419
 msgid "suspended until"
 msgstr "Wartezeit bis"
 
-#: .\models.py:413 .\models.py:1090
+#: .\models.py:421 .\models.py:1116
 msgid "aid type"
 msgstr "Sozialhilfeart"
 
-#: .\models.py:415
+#: .\models.py:423
 msgid "Arbeitslosengeld"
 msgstr ""
 
-#: .\models.py:416
+#: .\models.py:424
 msgid "Wartegeld"
 msgstr "Wartegeld"
 
-#: .\models.py:417
+#: .\models.py:425
 msgid "Krankengeld"
 msgstr ""
 
-#: .\models.py:418
+#: .\models.py:426
 msgid "Rente"
 msgstr ""
 
-#: .\models.py:419
+#: .\models.py:427
 msgid "Andere"
 msgstr ""
 
-#: .\models.py:421
+#: .\models.py:429
 msgid "is seeking work"
 msgstr "Arbeit suchend"
 
-#: .\models.py:422
+#: .\models.py:430
 msgid "Unavailable until"
 msgstr "Nicht verfügbar bis"
 
-#: .\models.py:424
+#: .\models.py:432
 msgid "reason"
 msgstr "Grund"
 
-#: .\models.py:427
+#: .\models.py:435
 msgid "Native language"
 msgstr "Muttersprache"
 
-#: .\models.py:431
+#: .\models.py:438
+msgid "Obstacles"
+msgstr "Hindernisse"
+
+#: .\models.py:439
 msgid "Other skills"
 msgstr "Sonstige Fähikeiten"
 
-#: .\models.py:434
+#: .\models.py:442
 msgid "Job agents"
 msgstr "Interim-Agenturen"
 
-#: .\models.py:438
+#: .\models.py:446
 msgid "Contact person at local job office"
 msgstr "Kontaktperson ADG"
 
-#: .\models.py:455
+#: .\models.py:463
 msgid "Auskunftsblatt"
 msgstr ""
 
-#: .\models.py:456
+#: .\models.py:464
 msgid "eID-Inhalt"
 msgstr ""
 
-#: .\models.py:457
+#: .\models.py:465
 msgid "Curiculum vitae"
 msgstr "Lebenslauf"
 
-#: .\models.py:466
+#: .\models.py:474
 msgid "Circular reference"
 msgstr "Redundanter RÜckbezug"
 
-#: .\models.py:497
+#: .\models.py:505
 msgid "eID card expires"
 msgstr "eID-Karte läuft aus"
 
-#: .\models.py:500
+#: .\models.py:508
 msgid "becomes available again"
 msgstr "ist wieder verfügbar"
 
-#: .\models.py:503
+#: .\models.py:511
 msgid "work permit suspension ends"
 msgstr "Arbeitslosen-Wartezeit endet"
 
-#: .\models.py:506
+#: .\models.py:514
 msgid "coaching ends"
 msgstr "Begleitung endet"
 
-#: .\models.py:523
+#: .\models.py:531
 #, python-format
 msgid "%d years"
 msgstr "%d Jahre"
 
-#: .\models.py:524
+#: .\models.py:532
 msgid "unknown"
 msgstr "unbekannt"
 
-#: .\models.py:525
+#: .\models.py:533
 msgid "Age"
 msgstr "Alter"
 
-#: .\models.py:534
+#: .\models.py:542
 msgid "not filled in"
 msgstr "nicht ausgefüllt"
 
-#: .\models.py:545
+#: .\models.py:553
 msgid "Overview"
 msgstr "Übersicht"
 
-#: .\models.py:553
+#: .\models.py:561
 msgid "Residence permit"
 msgstr "Aufenthaltserlaubnis"
 
-#: .\models.py:559
+#: .\models.py:567
 msgid "Work permit"
 msgstr "Arbeitserlaubnis"
 
-#: .\models.py:565
+#: .\models.py:573
 msgid "driving licence"
 msgstr "Führerschein"
 
-#: .\models.py:612
+#: .\models.py:621
 msgid "My coached Persons"
 msgstr "Meine Leute"
 
-#: .\models.py:639 .\models.py:873
+#: .\models.py:648 .\models.py:898
 msgid "company"
 msgstr "Firma"
 
-#: .\models.py:640
+#: .\models.py:649
 msgid "companies"
 msgstr "Firmen"
 
-#: .\models.py:644 .\models.py:1129
+#: .\models.py:653 .\models.py:1155
 msgid "hourly rate"
 msgstr "Stundensatz"
 
-#: .\models.py:645 .\models.py:1430
+#: .\models.py:654 .\models.py:1456
 msgid "Course provider"
 msgstr "Kursanbieter"
 
-#: .\models.py:670 .\models.py:687
+#: .\models.py:679 .\models.py:696
 msgid "Designation"
 msgstr "Bezeichnung"
 
-#: .\models.py:673
+#: .\models.py:682
 msgid "person group"
 msgstr "Personengruppe"
 
-#: .\models.py:674
+#: .\models.py:683
 msgid "person groups"
 msgstr "Personengruppen"
 
-#: .\models.py:690
+#: .\models.py:699
 msgid "study type"
 msgstr "Ausbildungsart"
 
-#: .\models.py:691
+#: .\models.py:700
 msgid "study types"
 msgstr "Ausbildungsarten"
 
-#: .\models.py:725
+#: .\models.py:749
 msgid "study or education"
 msgstr "Audbildung"
 
-#: .\models.py:726
+#: .\models.py:750
 msgid "Studies & education"
 msgstr "Ausbildung"
 
-#: .\models.py:728
+#: .\models.py:751 .\models.py:896 .\models.py:1520
+msgid "Person"
+msgstr "Person"
+
+#: .\models.py:752
 msgid "Study type"
 msgstr "Ausbildungsart"
 
-#: .\models.py:729
+#: .\models.py:753
 msgid "Study content"
 msgstr "Ausbildungsinhalt"
 
-#: .\models.py:732 .\models.py:880
+#: .\models.py:756 .\models.py:905
 msgid "started"
 msgstr "begonnen"
 
-#: .\models.py:733 .\models.py:881
+#: .\models.py:757 .\models.py:906
 msgid "stopped"
 msgstr "beendet"
 
-#: .\models.py:738
+#: .\models.py:762
 msgid "Success"
 msgstr "Abschluss"
 
-#: .\models.py:740 .\models.py:878
+#: .\models.py:764 .\models.py:903
 msgid "Country"
 msgstr "Land"
 
-#: .\models.py:742
+#: .\models.py:766
 msgid "City"
 msgstr "Stadt"
 
-#: .\models.py:743 .\models.py:778 .\models.py:1657
+#: .\models.py:767 .\models.py:803 .\models.py:1683
 msgid "Language"
 msgstr "Sprache"
 
-#: .\models.py:746
+#: .\models.py:770
 msgid "School"
 msgstr "Schule"
 
-#: .\models.py:749 .\models.py:883
+#: .\models.py:773 .\models.py:908
 msgid "Remarks"
 msgstr "Bemerkungen"
 
-#: .\models.py:764
+#: .\models.py:789
 msgid "Studies"
 msgstr "Studien"
 
-#: .\models.py:774
+#: .\models.py:799
 msgid "language knowledge"
 msgstr "Sprachkenntnis"
 
-#: .\models.py:775
+#: .\models.py:800
 msgid "language knowledges"
 msgstr "Sprachkenntnisse"
 
-#: .\models.py:781 .\models.py:1658
+#: .\models.py:806 .\models.py:1684
 msgid "spoken"
 msgstr "Wort"
 
-#: .\models.py:782 .\models.py:1659
+#: .\models.py:807 .\models.py:1685
 msgid "written"
 msgstr "Schrift"
 
-#: .\models.py:788
+#: .\models.py:813
 #, python-format
 msgid "%s (s/w)"
 msgstr "%s (W/S)"
 
-#: .\models.py:790
+#: .\models.py:815
 #, python-format
 msgid "%s (s)"
 msgstr "%s (W)"
 
-#: .\models.py:792
+#: .\models.py:817
 #, python-format
 msgid "%s (w)"
 msgstr "%s (S)"
 
-#: .\models.py:813
+#: .\models.py:838
 msgid "Property"
 msgstr "Eigenschaft"
 
-#: .\models.py:819 .\models.py:947 .\models.py:1448 .\models.py:1528
+#: .\models.py:839
+msgid "Properties"
+msgstr "Eigenschaften"
+
+#: .\models.py:844 .\models.py:973 .\models.py:1474 .\models.py:1554
 msgid "Remark"
 msgstr "Bemerkung"
 
-#: .\models.py:869
+#: .\models.py:894
 msgid "job experience"
 msgstr "Berufserfahrung"
 
-#: .\models.py:870
+#: .\models.py:895
 msgid "job experiences"
 msgstr "Berufserfahrung"
 
-#: .\models.py:875
+#: .\models.py:900
 msgid "job title"
 msgstr "Bezeichnung"
 
-#: .\models.py:900
+#: .\models.py:926
 msgid "activity"
 msgstr "Beruf"
 
-#: .\models.py:901
+#: .\models.py:927
 msgid "activities"
 msgstr "Berufe"
 
-#: .\models.py:903
+#: .\models.py:929
 msgid "Appears in Listing 104"
 msgstr "Listing 104"
 
-#: .\models.py:923
+#: .\models.py:949
 msgid "exclusion type"
 msgstr "AG-Sperrgrund"
 
-#: .\models.py:924
+#: .\models.py:950
 msgid "exclusion types"
 msgstr "AG-Sperrgründe"
 
-#: .\models.py:940
+#: .\models.py:966
 msgid "exclusion"
 msgstr "AG-Sperre"
 
-#: .\models.py:941
+#: .\models.py:967
 msgid "exclusions"
 msgstr "AG-Sperren"
 
-#: .\models.py:944
+#: .\models.py:970
 msgid "Reason"
 msgstr "Grund"
 
-#: .\models.py:945
+#: .\models.py:971
 msgid "from"
 msgstr "von"
 
-#: .\models.py:1007 .\models.py:1117 .\models.py:1786
+#: .\models.py:1033 .\models.py:1143 .\models.py:1812
 msgid "contract type"
 msgstr "Vertragsart"
 
-#: .\models.py:1008
+#: .\models.py:1034
 msgid "contract types"
 msgstr "Vertragsarten"
 
-#: .\models.py:1010
+#: .\models.py:1036
 msgid "reference"
 msgstr "Referenz"
 
-#: .\models.py:1011
+#: .\models.py:1037
 msgid "contract title"
 msgstr "Vertragstitel"
 
-#: .\models.py:1027 .\models.py:1148
+#: .\models.py:1053 .\models.py:1174
 msgid "examination policy"
 msgstr "Auswertungsstrategie"
 
-#: .\models.py:1028
+#: .\models.py:1054
 msgid "examination policies"
 msgstr "Auswertungsstrategien"
 
-#: .\models.py:1030 .\models.py:1051 .\models.py:1074 .\models.py:1093
+#: .\models.py:1056 .\models.py:1077 .\models.py:1100 .\models.py:1119
 msgid "designation"
 msgstr "Bezeichnung"
 
-#: .\models.py:1048
+#: .\models.py:1074
 msgid "Contract Ending"
 msgstr "Vertragsbeendigung"
 
-#: .\models.py:1049
+#: .\models.py:1075
 msgid "Contract Endings"
 msgstr "Vertragsbeendigungen"
 
-#: .\models.py:1071
+#: .\models.py:1097
 msgid "Course Ending"
 msgstr "Kursbeendigung"
 
-#: .\models.py:1072
+#: .\models.py:1098
 msgid "Course Endings"
 msgstr "Kursbeendigungen"
 
-#: .\models.py:1091
+#: .\models.py:1117
 msgid "aid types"
 msgstr "Sozialhilfearten"
 
-#: .\models.py:1111
+#: .\models.py:1137
 msgid "contract"
 msgstr "Vertrag"
 
-#: .\models.py:1112
+#: .\models.py:1138
 msgid "contracts"
 msgstr "Verträge"
 
-#: .\models.py:1115
+#: .\models.py:1141
 msgid "represented by"
 msgstr "Vertreten durch"
 
-#: .\models.py:1120
+#: .\models.py:1146
 msgid "applies from"
 msgstr "Laufzeit von"
 
-#: .\models.py:1121
+#: .\models.py:1147
 msgid "applies until"
 msgstr "Laufzeit bis"
 
-#: .\models.py:1122
+#: .\models.py:1148
 msgid "date decided"
 msgstr "Beschlossen am"
 
-#: .\models.py:1123
+#: .\models.py:1149
 msgid "date issued"
 msgstr "Ausgestellt am"
 
-#: .\models.py:1124
+#: .\models.py:1150
 msgid "duration (days)"
 msgstr "Dauer (Arbeitstage)"
 
-#: .\models.py:1127
+#: .\models.py:1153
 msgid "regime"
 msgstr "Regime"
 
-#: .\models.py:1128
+#: .\models.py:1154
 msgid "schedule"
 msgstr "Stundenplan"
 
-#: .\models.py:1130
+#: .\models.py:1156
 msgid "refund rate"
 msgstr "Rückzahlung"
 
-#: .\models.py:1133
+#: .\models.py:1159
 msgid "reference person"
 msgstr "Referenzperson"
 
-#: .\models.py:1136
+#: .\models.py:1162
 msgid "responsibilities"
 msgstr "Aufgabenbereich"
 
-#: .\models.py:1138
+#: .\models.py:1164
 msgid "stages"
 msgstr "Etappen"
 
-#: .\models.py:1139
+#: .\models.py:1165
 msgid "goals"
 msgstr "Zielsetzungen"
 
-#: .\models.py:1140
+#: .\models.py:1166
 msgid "duties ASD"
 msgstr "Verpflichtungen ASD"
 
-#: .\models.py:1141
+#: .\models.py:1167
 msgid "duties DSBE"
 msgstr "Verpflichtungen DSBE"
 
-#: .\models.py:1142
+#: .\models.py:1168
 msgid "duties company"
 msgstr "Verpflichtungen Firma"
 
-#: .\models.py:1144
+#: .\models.py:1170
 msgid "responsible (ASD)"
 msgstr "Verantwortlicher (ASD)"
 
-#: .\models.py:1151 .\models.py:1539
+#: .\models.py:1177 .\models.py:1565
 msgid "Ending"
 msgstr "Beendigung"
 
-#: .\models.py:1152 .\models.py:1533
+#: .\models.py:1178 .\models.py:1559
 msgid "date ended"
 msgstr "Beendet am"
 
-#: .\models.py:1208
+#: .\models.py:1234
 #, python-format
 msgid "Contract # %s"
 msgstr "Vertrag Nr. %s"
 
-#: .\models.py:1311
+#: .\models.py:1337
 msgid "My contracts"
 msgstr "Meine Verträge"
 
-#: .\models.py:1376
+#: .\models.py:1402
 msgid "Course providers"
 msgstr "Kursanbieter"
 
-#: .\models.py:1392
+#: .\models.py:1418
 msgid "Course Content"
 msgstr "Kursinhalt"
 
-#: .\models.py:1393
+#: .\models.py:1419
 msgid "Course Contents"
 msgstr "Kursinhalte"
 
-#: .\models.py:1397 .\models.py:1418
+#: .\models.py:1423 .\models.py:1444
 msgid "Name"
 msgstr ""
 
-#: .\models.py:1414
+#: .\models.py:1440
 msgid "Course"
 msgstr "Kurs"
 
-#: .\models.py:1415
+#: .\models.py:1441
 msgid "Courses"
 msgstr "Kurse"
 
-#: .\models.py:1424 .\models.py:1498
+#: .\models.py:1450 .\models.py:1524
 msgid "Course content"
 msgstr "Kursinhalt"
 
-#: .\models.py:1439
+#: .\models.py:1465
 msgid "start date"
 msgstr "beginnt am"
 
-#: .\models.py:1460
+#: .\models.py:1486
 msgid "List of candidates"
 msgstr "Kandidatenliste"
 
-#: .\models.py:1461
+#: .\models.py:1487
 msgid "List of participants"
 msgstr "Teilnehmerliste"
 
-#: .\models.py:1490 .\models.py:1491
+#: .\models.py:1516 .\models.py:1517
 msgid "Course Requests"
 msgstr "Kursanfragen"
 
-#: .\models.py:1501
+#: .\models.py:1527
 msgid "date submitted"
 msgstr "eingereicht am "
 
-#: .\models.py:1514
+#: .\models.py:1540
 msgid "Course found"
 msgstr "Kurs gefunden"
 
-#: .\models.py:1576
+#: .\models.py:1602
 msgid "Participants"
 msgstr "Teilnehmer"
 
-#: .\models.py:1581
+#: .\models.py:1607
 msgid "Unregister"
 msgstr "Austragen"
 
-#: .\models.py:1587
+#: .\models.py:1613
 #, python-format
 msgid "%(person)s has been unregistered from %(course)s"
 msgstr "%(person)s wurde ausgetragen aus %(course)s"
 
-#: .\models.py:1591
+#: .\models.py:1617
 msgid "Candidates"
 msgstr "Kandidaten"
 
-#: .\models.py:1603
+#: .\models.py:1629
 msgid "Register"
 msgstr "Eintragen"
 
-#: .\models.py:1608
+#: .\models.py:1634
 #, python-format
 msgid "%(person)s has been registered to %(course)s"
 msgstr "%(person)s wurde eingetragen zum Kurs %(course)s"
 
-#: .\models.py:1624
+#: .\models.py:1650
 msgid "Person Search"
 msgstr "Personensuche"
 
-#: .\models.py:1625
+#: .\models.py:1651
 msgid "Person Searches"
 msgstr "Personensuchen"
 
-#: .\models.py:1627
+#: .\models.py:1653
 msgid "Search Title"
 msgstr "Titel Suchliste"
 
-#: .\models.py:1628
+#: .\models.py:1654
 msgid "Aged from"
 msgstr "Alter von"
 
-#: .\models.py:1630
+#: .\models.py:1656
 msgid "Aged to"
 msgstr "Alter bis"
 
-#: .\models.py:1636
+#: .\models.py:1662
 msgid "Only my persons"
 msgstr "nur meine Leute"
 
-#: .\models.py:1643
+#: .\models.py:1669
 msgid "Unnamed"
 msgstr "Unbenannt"
 
-#: .\models.py:1650
+#: .\models.py:1676
 msgid "Drucken"
 msgstr ""
 
-#: .\models.py:1664
+#: .\models.py:1690
 msgid "Wanted property"
 msgstr "Gesuchte Eigenschaft"
 
-#: .\models.py:1665 .\models.py:1683
+#: .\models.py:1691 .\models.py:1709
 msgid "Wanted properties"
 msgstr "Gesuchte Eigenschaften"
 
-#: .\models.py:1672
+#: .\models.py:1698
 msgid "Unwanted property"
 msgstr "Unerwünschte Eigenschaft"
 
-#: .\models.py:1673 .\models.py:1688
+#: .\models.py:1699 .\models.py:1714
 msgid "Unwanted properties"
 msgstr "Unerwünschte Eigenschaften"
 
-#: .\models.py:1678
+#: .\models.py:1704
 msgid "Wanted language knowledges"
 msgstr "Erwünschte Sprachkenntnisse"
 
-#: .\models.py:1706
+#: .\models.py:1732
 msgid "Found persons"
 msgstr "Gefundene Personen"
 
-#: .\models.py:1794
+#: .\models.py:1820
 msgid "Local job office"
 msgstr "Lokales Arbeitsamt"
 
-#: .\models.py:1805
+#: .\models.py:1831
 msgid "responsible (DSBE)"
 msgstr "Verantwortlicher (DSBE)"
 
@@ -872,6 +848,24 @@ msgstr ""
 #: .\templates\base_site.html.py:7
 msgid "Django administration"
 msgstr "Django-Verwaltung"
+
+#~ msgid "Status"
+#~ msgstr "Status"
+
+#~ msgid "Education"
+#~ msgstr "Ausbildung"
+
+#~ msgid "Languages"
+#~ msgstr "Sprachen"
+
+#~ msgid "Skills"
+#~ msgstr "Fähigkeiten"
+
+#~ msgid "Notes"
+#~ msgstr "Notizen"
+
+#~ msgid "Miscellaneous"
+#~ msgstr "Sonstiges"
 
 #~ msgid "no shift work"
 #~ msgstr "keine Schichtarbeit"

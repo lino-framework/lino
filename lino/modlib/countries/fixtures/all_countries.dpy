@@ -1,14 +1,22 @@
 #coding: utf-8
 
-import os
-import logging
-logger = logging.getLogger('lino')
+"""
 
+This is originally based on 
+http://www.davros.org/misc/iso3166.html
+
+See also http://www.iso.org/iso/country_codes.htm
+
+"""
+
+import os
+#~ import logging
+#~ logger = logging.getLogger('lino')
+
+from lino.utils import dblogger as logger
 from lino.utils.babel import babel_values, DEFAULT_LANGUAGE
 from lino.modlib.countries.models import Country
 
-# http://www.davros.org/misc/iso3166.html
-# slightly modified
 
 TABLE1 = """
 AF 	AFG 	004 		Afghanistan

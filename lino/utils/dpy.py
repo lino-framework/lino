@@ -26,7 +26,7 @@ from decimal import Decimal
 from django.db import models
 from django.db.models.fields import NOT_PROVIDED
 from django.core.serializers import base
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import Permission
 from django.contrib.sessions.models import Session
@@ -39,8 +39,6 @@ from lino.utils import dblogger
 #~ from lino.utils.instantiator import d2i
 
 SUFFIX = '.dpy'
-
-
 
 class Serializer(base.Serializer):
     """
@@ -266,7 +264,8 @@ class FakeDeserializedObject(base.DeserializedObject):
             return true
         try:
             obj.full_clean()
-        except Exception,e:
+        #~ except Exception,e:
+        except (ObjectDoesNotExist,ValidationError),e:
         #~ except ValidationError,e:
             dblogger.debug("Deferred %s.%s : %s ",obj.__class__.__name__,obj.pk,e)
             return False
@@ -278,30 +277,6 @@ class FakeDeserializedObject(base.DeserializedObject):
             dblogger.debug("Deferred %s.%s : %s ",obj.__class__.__name__,obj.pk,e)
             return False
       
-    def unused_save_some(self,*args,**kw):
-        #~ save_later = []
-        retval = False
-        self.must_save += self.save_later
-        for obj in self.must_save:
-            if obj is not None:
-                try:
-                    obj.full_clean()
-                except ValidationError,e:
-                    save_later.append(obj)
-                    dblogger.debug("Deferred %s : %s ",obj2str(obj),e)
-                    continue
-                    #~ raise Exception("Cannot save %s : %s" % (obj2str(obj),e))
-                try:
-                    obj.save(*args,**kw)
-                    retval = True
-                    dblogger.debug("Deserialized %s has been saved" % obj2str(obj))
-                except Exception,e:
-                    save_later.append(obj)
-                    dblogger.debug("Deferred %s : %s ",obj2str(obj),e)
-                    continue
-        self.must_save = save_later
-        return retval
-                
         
               
 

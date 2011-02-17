@@ -208,7 +208,7 @@ class AppyBuildMethod(SimpleBuildMethod):
             dtosl=dtosl,
             tr=getattr_lang,
             restify=restify,
-            knowledge_text=fields.knowledge_text,
+            #~ knowledge_text=fields.knowledge_text,
             )
         lang = str(elem.get_print_language(self))
         from appy.pod.renderer import Renderer

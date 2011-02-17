@@ -1,0 +1,24 @@
+20110217
+========
+
+#.  Die provisorische Lösung aus :doc:`/releases/20110216` 
+    (`knowledge_text(row.spoken)` in einer Dokumentvorlage 
+    für :class:`lino.utils.printable.AppyBuildMethod`)
+    ist jetzt wieder raus, denn Werte eines 
+    :class:`lino.fields.KnowledgeField`
+    werden nun automatisch als Text gedruckt, der 
+    außerdem in der Sprache des Partners ist.
+    
+    Neue Klasse :class:`lino.utils.babel.BabelText`.
+    
+#.  Bei den Verträgen war der Titel des Reiters "General" noch nicht
+    übersetzt.
+
+    Ich habe jetzt erstmals ein (theoretisch) vollständiges System 
+    um die Bezeichnungen der Tabs eines Detailfensters zu übersetzen.
+    
+    Die :xfile:`dummy_messages.py` steht jetzt nicht mehr 
+    im Quellverzeichnis von :mod:`lino.ui.extjs`, 
+    sondern in dem von :mod:`lino`.
+    Und wird nicht mehr vom ExtUI generiert, sondern vom Kernel.
+

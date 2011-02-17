@@ -8,13 +8,129 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-11 15:48+0000\n"
+"POT-Creation-Date: 2011-02-17 15:47+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+#: .\dummy_messages.py:3
+msgid "Next page"
+msgstr ""
+
+#: .\dummy_messages.py:4
+msgid "Please wait..."
+msgstr ""
+
+#: .\dummy_messages.py:5
+msgid "Action not available on phantom record."
+msgstr ""
+
+#: .\dummy_messages.py:6 .\reports.py:344
+msgid "Detail"
+msgstr ""
+
+#: .\dummy_messages.py:7
+msgid "Next"
+msgstr ""
+
+#: .\dummy_messages.py:8
+msgid "Languages"
+msgstr ""
+
+#: .\dummy_messages.py:9
+msgid "Reload current record"
+msgstr ""
+
+#: .\dummy_messages.py:10
+msgid "Save changes to current record ?"
+msgstr ""
+
+#: .\dummy_messages.py:11
+msgid "Status"
+msgstr ""
+
+#: .\dummy_messages.py:12
+msgid "Confirmation"
+msgstr ""
+
+#: .\dummy_messages.py:13
+msgid "Miscellaneous"
+msgstr ""
+
+#: .\dummy_messages.py:14
+msgid "Previous page"
+msgstr ""
+
+#: .\dummy_messages.py:15
+msgid "First"
+msgstr ""
+
+#: .\dummy_messages.py:16
+msgid "Displaying {0} - {1} of {2}"
+msgstr ""
+
+#: .\dummy_messages.py:17
+msgid "Properties"
+msgstr ""
+
+#: .\dummy_messages.py:18
+msgid "Last"
+msgstr ""
+
+#: .\dummy_messages.py:19
+msgid "Notes"
+msgstr ""
+
+#: .\dummy_messages.py:20
+msgid "Last page"
+msgstr ""
+
+#: .\dummy_messages.py:21 .\mixins\__init__.py:92
+msgid "Person"
+msgstr ""
+
+#: .\dummy_messages.py:22
+msgid "of {0}"
+msgstr ""
+
+#: .\dummy_messages.py:23
+msgid "Art.60-7"
+msgstr ""
+
+#: .\dummy_messages.py:24
+msgid "Page"
+msgstr ""
+
+#: .\dummy_messages.py:25
+msgid "View"
+msgstr ""
+
+#: .\dummy_messages.py:26
+msgid "General"
+msgstr ""
+
+#: .\dummy_messages.py:27
+msgid "First page"
+msgstr ""
+
+#: .\dummy_messages.py:28
+msgid "Select another view of this report"
+msgstr ""
+
+#: .\dummy_messages.py:29
+msgid "VSE"
+msgstr ""
+
+#: .\dummy_messages.py:30
+msgid "Education"
+msgstr ""
+
+#: .\dummy_messages.py:31
+msgid "Previous"
+msgstr ""
 
 #: .\fields.py:47
 msgid "Language"
@@ -40,27 +156,7 @@ msgstr ""
 msgid "very much"
 msgstr ""
 
-#: .\fields.py:63
-msgid "not at all"
-msgstr ""
-
-#: .\fields.py:64
-msgid "a bit"
-msgstr ""
-
-#: .\fields.py:65
-msgid "moderate"
-msgstr ""
-
-#: .\fields.py:66
-msgid "quite well"
-msgstr ""
-
-#: .\fields.py:67
-msgid "very well"
-msgstr ""
-
-#: .\fields.py:74
+#: .\fields.py:114
 msgid "Invalid value %(value). Must be one of (%(values)s)"
 msgstr ""
 
@@ -84,55 +180,51 @@ msgstr ""
 msgid "~Site"
 msgstr ""
 
-#: .\reports.py:321
-msgid "Detail"
-msgstr ""
-
-#: .\reports.py:324
+#: .\reports.py:347
 #, python-format
 msgid "%s (Detail)"
 msgstr ""
 
-#: .\reports.py:335
+#: .\reports.py:358
 msgid "Insert"
 msgstr ""
 
-#: .\reports.py:340
+#: .\reports.py:363
 #, python-format
 msgid "Insert into %s"
 msgstr ""
 
-#: .\reports.py:345
+#: .\reports.py:368
 msgid "Duplicate"
 msgstr ""
 
-#: .\reports.py:361
+#: .\reports.py:384
 msgid "Delete"
 msgstr ""
 
-#: .\reports.py:369 .\reports.py:374
+#: .\reports.py:392 .\reports.py:397
 msgid "Save"
 msgstr ""
 
-#: .\reports.py:521
+#: .\reports.py:544
 #, python-format
 msgid "User %(user)s cannot view %(report)s."
 msgstr ""
 
-#: .\reports.py:723
+#: .\reports.py:746
 msgid "Yes"
 msgstr ""
 
-#: .\reports.py:723
+#: .\reports.py:746
 msgid "No"
 msgstr ""
 
-#: .\reports.py:978
+#: .\reports.py:1001
 #, python-format
 msgid "%(details)s by %(model)s %(master)s"
 msgstr ""
 
-#: .\core\kernel.py:153
+#: .\core\kernel.py:143
 #, python-format
 msgid "Cannot delete %(self)s because %(count)d %(refs)s refer to it."
 msgstr ""
@@ -204,10 +296,6 @@ msgstr ""
 msgid "Owner"
 msgstr ""
 
-#: .\mixins\__init__.py:92
-msgid "Person"
-msgstr ""
-
 #: .\mixins\__init__.py:93
 msgid "Company"
 msgstr ""
@@ -276,27 +364,27 @@ msgstr ""
 msgid "Address"
 msgstr ""
 
-#: .\mixins\printable.py:378
+#: .\mixins\printable.py:380
 msgid "Print"
 msgstr ""
 
-#: .\mixins\printable.py:432
+#: .\mixins\printable.py:434
 msgid "Edit template"
 msgstr ""
 
-#: .\mixins\printable.py:442
+#: .\mixins\printable.py:444
 msgid "Clear cache"
 msgstr ""
 
-#: .\mixins\printable.py:459
+#: .\mixins\printable.py:461
 msgid "Build method"
 msgstr ""
 
-#: .\mixins\printable.py:462
+#: .\mixins\printable.py:464
 msgid "Template"
 msgstr ""
 
-#: .\mixins\printable.py:486
+#: .\mixins\printable.py:488
 msgid "must build"
 msgstr ""
 
@@ -372,74 +460,6 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: .\ui\extjs\dummy_messages.py:3
-msgid "Next page"
-msgstr ""
-
-#: .\ui\extjs\dummy_messages.py:4
-msgid "Confirmation"
-msgstr ""
-
-#: .\ui\extjs\dummy_messages.py:5
-msgid "Last"
-msgstr ""
-
-#: .\ui\extjs\dummy_messages.py:6
-msgid "Previous page"
-msgstr ""
-
-#: .\ui\extjs\dummy_messages.py:7
-msgid "of {0}"
-msgstr ""
-
-#: .\ui\extjs\dummy_messages.py:8
-msgid "Please wait..."
-msgstr ""
-
-#: .\ui\extjs\dummy_messages.py:9
-msgid "Next"
-msgstr ""
-
-#: .\ui\extjs\dummy_messages.py:10
-msgid "Last page"
-msgstr ""
-
-#: .\ui\extjs\dummy_messages.py:11
-msgid "First page"
-msgstr ""
-
-#: .\ui\extjs\dummy_messages.py:12
-msgid "Reload current record"
-msgstr ""
-
-#: .\ui\extjs\dummy_messages.py:13
-msgid "Select another view of this report"
-msgstr ""
-
-#: .\ui\extjs\dummy_messages.py:14
-msgid "Save changes to current record ?"
-msgstr ""
-
-#: .\ui\extjs\dummy_messages.py:15
-msgid "View"
-msgstr ""
-
-#: .\ui\extjs\dummy_messages.py:16
-msgid "First"
-msgstr ""
-
-#: .\ui\extjs\dummy_messages.py:17
-msgid "Displaying {0} - {1} of {2}"
-msgstr ""
-
-#: .\ui\extjs\dummy_messages.py:18
-msgid "Page"
-msgstr ""
-
-#: .\ui\extjs\dummy_messages.py:19
-msgid "Previous"
-msgstr ""
-
 #: .\ui\extjs\ext_elems.py:541
 #, python-format
 msgid "Select a %s..."
@@ -455,59 +475,59 @@ msgstr ""
 msgid "%r (invalid choice)"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:213
+#: .\ui\extjs\ext_ui.py:214
 #, python-format
 msgid "Row %(rowid)d of %(rowcount)d"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:611
+#: .\ui\extjs\ext_ui.py:612
 msgid "Console"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:660
+#: .\ui\extjs\ext_ui.py:662
 #, python-format
 msgid "Welcome on Lino server %(title)r, user %(user)s"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:711
+#: .\ui\extjs\ext_ui.py:713
 #, python-format
 msgid "%s has been created."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:713
+#: .\ui\extjs\ext_ui.py:715
 #, python-format
 msgid "%s has been saved."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:721 .\ui\extjs\ext_ui.py:744
+#: .\ui\extjs\ext_ui.py:723 .\ui\extjs\ext_ui.py:746
 #, python-format
 msgid "User %(user)s cannot configure %(report)s."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:908
+#: .\ui\extjs\ext_ui.py:910
 #, python-format
 msgid "Failed to delete %(record)s : %(error)s."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:931
+#: .\ui\extjs\ext_ui.py:933
 #, python-format
 msgid "Insert into %s..."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:959
+#: .\ui\extjs\ext_ui.py:961
 #, python-format
 msgid "Action %(action)s failed for %(record)s: %(error)s"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:1101
+#: .\ui\extjs\ext_ui.py:1098
 #, python-format
 msgid "Choices for %s"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:1211
+#: .\ui\extjs\ext_ui.py:1208
 msgid "Upload"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:1219
+#: .\ui\extjs\ext_ui.py:1216
 msgid "Edit"
 msgstr ""

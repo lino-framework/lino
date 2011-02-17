@@ -83,16 +83,6 @@ def analyze_models():
     for model in models.get_models():
     
         model._lino_detail_layouts = []
-        """
-        Naming conventions for :xfile:`*.dtl` files are:
-        
-        - the first detail is called appname.Model.dtl
-        - If there are more Details, then they are called 
-          appname.Model.2.dtl, appname.Model.3.dtl etc.
-        
-        The `sort()` below must remove the filename extension (".dtl") 
-        because otherwise the frist Detail would come last.
-        """
             
         def loader(content,cd,filename):
             dtl = DetailLayout(content,filename,cd)
@@ -212,6 +202,9 @@ def setup_site(self):
         #~ ui_module.ui.setup_site(self)
         uis.append(ui_module.get_ui(self))
     self.uis = uis
+    
+    if settings.DEBUG:
+        reports.generate_dummy_messages()
         
     self._setup_done = True
     self._setting_up = False

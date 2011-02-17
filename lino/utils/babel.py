@@ -1,4 +1,4 @@
-## Copyright 2009-2010 Luc Saffre
+## Copyright 2009-2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -22,6 +22,10 @@ variable :setting:`BABEL_LANGS` in your Django :xfile:`settings.py`
 which is a list of language strings, for example::
 
   BABEL_LANGS = ['fr']
+  
+This list may be empty. 
+It expresses the *additional* languages and should *not* contain 
+the site's default language (specified by :setting:`LANGUAGE_CODE`).
 
 
 Example::
@@ -210,16 +214,19 @@ def babeldict_getitem(d,k):
     v = d.get(k,None)
     if v is not None:
         assert type(v) is dict
-        lng = LANG or DEFAULT_LANGUAGE
-        if lng == DEFAULT_LANGUAGE:
-            return v.get(lng)
-        x = v.get(lng,None)
-        if x is None:
-            x = v.get(DEFAULT_LANGUAGE)
-        return x
+        return babel_get(v)
+        
+def babel_get(v):
+    lng = LANG or DEFAULT_LANGUAGE
+    if lng == DEFAULT_LANGUAGE:
+        return v.get(lng)
+    x = v.get(lng,None)
+    if x is None:
+        x = v.get(DEFAULT_LANGUAGE)
+    return x
         
         
-def discover():
+def unused_discover():
     """This would have to be called *during* and not after model setup.
     """
     logger.debug("Discovering babel fields...")
@@ -230,4 +237,25 @@ def discover():
                 add_babel_field(model,name)
                 
                 
+                
+class BabelText(object):
+    """
+    A constant value whose unicode representation 
+    depends on the current babel language at runtime.
+    Used by :class:`lino.fields.KnowledgeField`.
+
+    """
+    def __init__(self,pk,**texts):
+        self.pk = pk
+        self.texts = texts
+        
+    def __len__(self):
+        return len(self.pk)
+        
+    def __str__(self):
+        return "%s (%s:%s)" % (self.texts[DEFAULT_LANGUAGE],self.__class__.__name__,self.pk)
+        
+    def __unicode__(self):
+        return unicode(babel_get(self.texts))
+
                 

@@ -79,7 +79,9 @@ def latex_parts(input_string, source_path=None, destination_path=None,
     parts = core.publish_parts(
         source=input_string, source_path=source_path,
         destination_path=destination_path,
-        writer_name='latex2e', settings_overrides=overrides)
+        #~ writer_name='latex2e', 
+        writer_name='newlatex2e', 
+        settings_overrides=overrides)
     return parts
 
 def latex_body(input_string, source_path=None, destination_path=None,
@@ -95,6 +97,55 @@ def latex_body(input_string, source_path=None, destination_path=None,
     if output_encoding != 'unicode':
         fragment = fragment.encode(output_encoding)
     return fragment
+    
+def rst2latex(input_string, 
+              source_path=None, 
+              input_encoding='unicode',
+              doctitle=1, 
+              initial_header_level=1):
+    """
+    returns a dict containing the following keys::
+    
+      'body', 
+      'latex_preamble', 
+      'head_prefix', 
+      'requirements', 
+      'encoding', 
+      'abstract', 
+      'title', 
+      'fallbacks', 
+      'stylesheet', 
+      'version', 
+      'body_pre_docinfo', 
+      'dedication', 
+      'subtitle', 
+      'whole', 
+      'docinfo', 
+      'pdfsetup'
+
+    """
+    overrides = {'input_encoding': input_encoding,
+                 'doctitle_xform': doctitle,
+                 'initial_header_level': initial_header_level}
+    #~ doc = core.publish_doctree(source=input_string, 
+                #~ source_path=source_path,
+                #~ 'input_encoding': input_encoding)
+    
+    parts = core.publish_parts(source=input_string, 
+        source_path=source_path,
+        #~ writer_name='latex2e', 
+        writer_name='latex2e', 
+        settings_overrides=overrides)
+    return parts
+    #~ print parts.keys()
+    #~ f = file('tmp.txt','w')
+    #~ f.write(repr(parts.keys())+'\n\n')
+    #~ f.write(repr(parts))
+    #~ f.close()
+    #~ return parts['body']
+    
+    
+  
 
 
 if __name__ == '__main__':

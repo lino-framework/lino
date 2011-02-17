@@ -95,6 +95,16 @@ def find_config_files(pattern):
     return files
 
 def load_config_files(pattern,loader):
+    """
+    Naming conventions for :xfile:`*.dtl` files are:
+    
+    - the first detail is called appname.Model.dtl
+    - If there are more Details, then they are called 
+      appname.Model.2.dtl, appname.Model.3.dtl etc.
+    
+    The `sort()` below must remove the filename extension (".dtl") 
+    because otherwise the frist Detail would come last.
+    """
     files = find_config_files(pattern).items()
     def fcmp(a,b):
         return cmp(a[0][:-4],b[0][:-4])

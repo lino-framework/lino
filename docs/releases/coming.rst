@@ -1,12 +1,16 @@
 Coming
 ======
 
-#.  Der "Änderungen-Speichern ?"-Bug ist behoben.
-#.  Die beiden Felder 
-    :attr:`noble_condition <lino.modlib.dsbe.models.Person.noble_condition>` 
-    und     
-    :attr:`card_issuer <lino.modlib.dsbe.models.Person.card_issuer>` 
-    sind jetzt readonly (bei importierten Personen).
+#.  Die provisorische Lösung aus :doc:`20110216` 
+    (`knowledge_text(row.spoken)` in einer Dokumentvorlage 
+    für :class:`lino.utils.printable.AppyBuildMethod`)
+    ist jetzt wieder raus, denn Werte eines 
+    :class:`lino.fields.KnowledgeField`
+    werden nun automatisch als Text gedruckt, der 
+    außerdem in der Sprache des Partners ist.
+    
+#.  Ich habe jetzt erstmals ein (theoretisch) vollständiges System 
+    um die Bezeichnungen der Tabs eines Detailfensters zu übersetzen.
 
 
 Upgrade instructions

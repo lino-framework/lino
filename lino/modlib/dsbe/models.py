@@ -1,4 +1,4 @@
-#coding: UTF-8
+# -*- coding: UTF-8 -*-
 ## Copyright 2008-2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
@@ -54,18 +54,18 @@ from lino.mixins.reminder import ReminderEntry
 
 #~ from lino.modlib.fields import KNOWLEDGE_CHOICES # for makemessages
 
-CONFIG_NAMES = [
-  _("Status"),
-  _("Person"),
-  _("Education"), # Ausbildung/Erfahrungen
-  _("Languages"), # Sprachen
-  _("Properties"), # Eigenschaften
-  _("Skills"), # Fähigkeiten
-  _("Obstacles"), # Hindernisse
-  _("Notes"), # Notizen
-  _("Miscellaneous"), # Sonstiges
-]
-del CONFIG_NAMES # this was just for gettext to find them
+#~ CONFIG_NAMES = [
+  #~ _("Status"),
+  #~ _("Person"),
+  #~ _("Education"), # Ausbildung/Erfahrungen
+  #~ _("Languages"), # Sprachen
+  #~ _("Properties"), # Eigenschaften
+  #~ _("Skills"), # Fähigkeiten
+  #~ _("Obstacles"), # Hindernisse
+  #~ _("Notes"), # Notizen
+  #~ _("Miscellaneous"), # Sonstiges
+#~ ]
+#~ del CONFIG_NAMES # this was just for gettext to find them
 
 SCHEDULE_CHOICES = {
     'de':[ 

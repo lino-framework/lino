@@ -15,10 +15,15 @@ das lösen?
 #.  Grid Berufserfahrungen: Anzeige erst wenn Bezeichnung auch
 eingegeben: verwirrend
 
+#.  Wie kann die Wertigkeit einer Sprache im Template des Lebenslaufs
+    interpretiert werden?
+
 
 
 Short-term
 ----------
+
+#.  PropertyType mit den automatischen (hardkodierten) Werten eines KnowledgeField.
 
 #.  Wenn man in einer Grid das Detail eines Records aufruft, 
     dann erscheint kein "Bitte warten" bis das Fenster erscheint.
@@ -28,18 +33,10 @@ Short-term
     überflüssig wird.
 
 #.  Wenn im Vollbildmodus einer Person nur Änderungen in einer Grid
-gemacht wurden und dann auf "Speichern" geklickt wird, kommt die
-Mitteilung "Failure". Technisch ist das zwar logisch, aber für die
-Benutzer könnte die Mitteilung vielleicht aussagekräftiger sein.
-
-#.  Wie kann die Wertigkeit einer Sprache im Template des Lebenslaufs
-interpretiert werden?
+    gemacht wurden und dann auf "Speichern" geklickt wird, kommt die
+    Mitteilung "Failure".
 
 #.  Was heißt "Muss generiert werden" bei den Notizen?
-
-#.  Bei den Verträgen ist der Titel des Reiters "General" noch nicht
-übersetzt.
-
 
 #.  :doc:`tickets/20`.
 

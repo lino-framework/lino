@@ -92,5 +92,10 @@ wobei `Ext.isDefined` wie folgt definiert ist::
 Kleinkram
 ---------
 
-#.  :mod:`lino.utils.dpy ` schreibt jetzt die Lino-Version als Kommentar 
+#.  :mod:`lino.utils.dpy` schreibt jetzt die Lino-Version als Kommentar 
     in die .dpy-Datei rein.
+
+#.  Diverse Punkte aus der Todo-Liste, sie Release-Notizen.
+    
+
+Release :doc:`/releases/20110216` in Eupen.
