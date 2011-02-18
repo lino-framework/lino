@@ -713,20 +713,20 @@ Lino.row_action_handler = function(fmt) {
 Lino.show_detail = function(panel,btn) {
   Lino.do_on_current_record(panel,
     function(rec) {
-      //~ panel.loadMask.show();
+      panel.loadMask.show();
       //~ panel.my_load_mask.show();
       //~ alert('foo');
       //~ panel.ww.window.showMask('Bitte nochmal warten');
       //~ panel.ww.window.getEl().mask('Bitte nochmal warten','x-mask-loading');
-      panel.el.mask('Bitte nochmal warten','x-mask-loading');
+      //~ panel.el.mask('Bitte nochmal warten','x-mask-loading');
       //~ panel.disable();
       panel.ls_detail_handler(panel,{
         record_id:rec.id,base_params:panel.get_base_params()
       });
       //~ panel.my_load_mask.hide();
-      //~ panel.loadMask.hide();
+      panel.loadMask.hide();
       //~ panel.ww.window.hideMask();
-      panel.el.unmask();
+      //~ panel.el.unmask();
     },
     Lino.show_insert
   );

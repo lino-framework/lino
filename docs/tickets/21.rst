@@ -1,38 +1,39 @@
 #21 : LoadMask for Detail windows
 =================================
 
-When I doubleclick a  row in a Grid, Lino opens this record's Detail window.
-The problem is that I didn't yet find a way to display a loadMask during this time.
-And complex Windows (for example :class:`lino.modlib.dsbe.models.Person` 
-has a huge FormPanel as their main component) take some time to render, and 
-the user is there for several seconds without knowing what's going on.
 
-Here is the code where I think it should happen 
-(the commented lines are things that I tried already without success)::
+When I doubleclick a  row in a Grid, Lino opens a Detail window for this row.
+The problem is that I didn't yet find a way to display a loadMask while 
+this window is being built.
+And complex windows take some time to render.
+And the user is there for several seconds without knowing what's going on.
+
+(For example :class:`lino.modlib.dsbe.models.Person` has a huge FormPanel as main component) 
+
+Here is the code where I think it should happen. 
+``Lino.show_detail`` is called by a double click on a GridPanel.
+
+::
 
   Lino.show_detail = function(panel,btn) {
     Lino.do_on_current_record(panel,
       function(rec) {
+        panel.loadMask.show();
         //~ alert('foo');
-        //~ panel.loadMask.show();
-        //~ panel.my_load_mask.show();
-        //~ panel.ww.window.showMask('Bitte nochmal warten');
-        //~ panel.ww.window.getEl().mask('Bitte nochmal warten','x-mask-loading');
-        //~ panel.disable();
         panel.ls_detail_handler(panel,{
           record_id:rec.id,base_params:panel.get_base_params()
         });
-        //~ panel.my_load_mask.hide();
-        //~ panel.loadMask.hide();
-        //~ panel.ww.window.hideMask();
+        panel.loadMask.hide();
       },
       Lino.show_insert
     );
   };
   
-Explanations: `panel.ls_detail_handler` is the "detail handler" 
-configured for this Grid. Detail handlers create an :extjs:`Ext.Window` and call `show()` 
-on it::
+``panel.ls_detail_handler`` is the "detail handler" 
+configured for this Grid. 
+Detail handlers are simple functions that basicalle create 
+an :extjs:`Ext.Window` and call `show()` on it. 
+Here is a simplified example of a detail handler::
 
   Lino.contacts.Persons.detail = function(caller,params) { 
     var ww = new Lino.DetailWrapper(caller,...);
@@ -42,10 +43,20 @@ on it::
   }
 
 
-Here was somebody who appearently had the same problem:
+
+Somebody named end-user 
+appearently had the same problem in the following thread:
 http://www.sencha.com/forum/showthread.php?26816
-Unfortunately the answers in that thread didn't help me.
+But this thread is 3 years old, 
+and unfortunately the answers didn't help me.
 
-http://www.sencha.com/forum/showthread.php?26816-loadMask-a-panel-before-the-panel-is-rendered
 
+Interesting observation: 
+the loadMask *does* get activated correctly
+when I insert a line ``alert('foo')`` before calling the detail handler.
+
+
+History:
+
+- :doc:`/blog/2011/0218` started this document
 

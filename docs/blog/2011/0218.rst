@@ -3,4 +3,17 @@
 
 #.  Release :doc:`/releases/20110218` in Eupen.
 
-#.  Worked on :doc:`/tickets/21`.
+#.  Ich wurstle am Ticket :doc:`/tickets/21`.
+    Das ist lästig, weil ich da voraussichtlich einen showcase schreiben muss.
+    
+    In diesem Zusammenhang habe ich bemerkt, dass die URLs meiner :doc:`/tickets/index` 
+    besser konstant bleiben sollten. 
+    Also nicht in ein Unterverzeichnis "closed" verschieben 
+    (und dann bewusst alle Referenzen auf dieses Ticket ändern müssen).
+    Stattdessen markiere ich sie jetzt als abgeschlossen, 
+    indem ich ein `[closed]` im Titel hinzufüge.
+    
+    Außerdem habe ich einen Trick gefunden, um die Liste korrekt sortiert zu haben.
+    In meiner Freude darüber habe ich das gleich den 
+    `sphinx-developer <http://groups.google.com/group/sphinx-dev/browse_thread/thread/5873815242fdc506>`
+    erzählt.

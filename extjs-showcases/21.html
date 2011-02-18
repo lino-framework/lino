@@ -1,0 +1,104 @@
+<html><head>
+<!--
+:doc:`/tickets/21`
+
+-->
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title id="title">Lino Ticket #21</title>
+<!-- ** CSS ** -->
+<!-- base library -->
+<link rel="stylesheet" type="text/css" href="http://dev.sencha.com/deploy/dev/resources/css/ext-all.css" />
+<!-- overrides to base library -->
+<!-- ** Javascript ** -->
+<!-- ExtJS library: base/adapter -->
+<script type="text/javascript" src="http://dev.sencha.com/deploy/dev/adapter/ext/ext-base.js"></script>
+<!-- ExtJS library: all widgets -->
+<script type="text/javascript" src="http://dev.sencha.com/deploy/dev/ext-all-debug.js"></script>
+
+<script type="text/javascript">
+
+Ext.BLANK_IMAGE_URL = '../../resources/images/default/s.gif';
+
+// taken from http://www.devcheater.com/
+function sleep(milliSeconds){
+  var startTime = new Date().getTime(); // get the current time
+  while (new Date().getTime() < startTime + milliSeconds); // hog cpu
+}
+
+// taken from http://examples.extjs.eu/
+ExampleGrid = Ext.extend(Ext.grid.EditorGridPanel, {
+  initComponent:function() {
+  var config = {
+    store: new Ext.data.SimpleStore({
+      id:0
+      ,fields:[
+        {name: 'company'}
+        ,{name: 'price', type: 'float'}
+        ,{name: 'change', type: 'float'}
+        ,{name: 'pctChange', type: 'float'}
+        ,{name: 'lastChange', type: 'date', dateFormat: 'n/j h:ia'}
+        ,{name: 'industry'}
+        ,{name: 'desc'}
+      ]
+      ,data:[
+        ['3m Co',71.72,0.02,0.03,'8/1 12:00am', 'Manufacturing'],
+        ['Alcoa Inc',29.01,0.42,1.47,'9/1 12:00am', 'Manufacturing'],
+        ['Altria Group Inc',83.81,0.28,0.34,'10/1 12:00am', 'Manufacturing'],
+        ['American Express Company',52.55,0.01,0.02,'9/1 10:00am', 'Finance'],
+        ['Walt Disney Company (The) (Holding Company)',29.89,0.24,0.81,'9/1 12:00am', 'Services']
+        ]
+      }
+    )
+    ,columns:[
+      {id:'company',header: "Company", width: 80, sortable: true, dataIndex: 'company'}
+      ,{header: "Price",               width: 40, sortable: true, renderer: Ext.util.Format.usMoney, dataIndex: 'price'}
+      ,{header: "Change",              width: 40, sortable: true, dataIndex: 'change'}
+      ,{header: "% Change",            width: 40, sortable: true, dataIndex: 'pctChange'}
+      ,{header: "Last Updated",        width: 40, sortable: true, renderer: Ext.util.Format.dateRenderer('m/d/Y'), dataIndex: 'lastChange'}
+    ]
+    ,viewConfig:{forceFit:true}
+  }; 
+  Ext.apply(this, Ext.apply(this.initialConfig, config));
+  ExampleGrid.superclass.initComponent.apply(this, arguments);
+} 
+});
+
+
+function show_detail(grid) {
+  var win = new Ext.Window({ 
+    layout: "fit", width: 400, height:400,
+    title: "Detail", 
+    items: new Ext.FormPanel({ 
+      layout: 'fit', 
+      items: [ new ExampleGrid() ]
+    })
+  });
+  // emulate a complex form that needs some time for rendering:
+  sleep(1000); 
+  win.show()
+}
+
+function onDoubleClick(grid) {
+  grid.loadMask.show();  
+  //~ alert("Foo");
+  show_detail(grid);
+  grid.loadMask.hide();
+}
+
+Ext.onReady(function() {
+    
+  var win = new Ext.Window({ 
+    layout: "fit", 
+    maximized: true, 
+    title: "Lino Ticket #21",
+    items: new ExampleGrid({ 
+      loadMask: {msg:'Please wait...'},
+      listeners: {rowdblclick:onDoubleClick}
+    })
+  });
+  win.show()
+  
+});
+</script>
+</head><body>
+</body></html>
