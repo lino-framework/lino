@@ -17,7 +17,7 @@
 
 <script type="text/javascript">
 
-Ext.BLANK_IMAGE_URL = '../../resources/images/default/s.gif';
+Ext.BLANK_IMAGE_URL = 'http://dev.sencha.com/deploy/dev/resources/images/default/s.gif';
 
 // taken from http://www.devcheater.com/
 function sleep(milliSeconds){
@@ -70,7 +70,9 @@ function show_detail(grid) {
     title: "Detail", 
     items: new Ext.FormPanel({ 
       layout: 'fit', 
-      items: [ new ExampleGrid() ]
+      items: new Ext.form.DisplayField({
+        html:"This is a detail window which took 2 seconds to render."
+      })
     })
   });
   // emulate a complex form that needs some time for rendering:
@@ -78,23 +80,38 @@ function show_detail(grid) {
   win.show()
 }
 
+var do_alert = new Ext.form.Checkbox({boxLabel:'show alert box before opening detail',value:false,width:"20em"});
+
 function onDoubleClick(grid) {
   grid.loadMask.show();  
-  //~ alert("Foo");
+  if (do_alert.getValue()) 
+    alert("This alert box is (currently) needed for the loadMask to become visible. Who knows why?");
   show_detail(grid);
   grid.loadMask.hide();
 }
 
 Ext.onReady(function() {
-    
   var win = new Ext.Window({ 
-    layout: "fit", 
+    layout: "vbox", layoutConfig: {align:'stretch'},
     maximized: true, 
     title: "Lino Ticket #21",
-    items: new ExampleGrid({ 
-      loadMask: {msg:'Please wait...'},
-      listeners: {rowdblclick:onDoubleClick}
-    })
+    items: [
+      { 
+        xtype: 'panel', layout:'hbox', layoutConfig: {align:'stretch'}, minHeight:100,
+        items: [
+            new Ext.form.DisplayField({flex:1, html:"Double-click on any row to open a detail window. "+
+            '<br>The detail window takes 2 seconds to render, so the grid should be masked during this time.'+
+            '<br>Unfortunately this works only if I show an alert box before opening detail.'+
+            '<br>More explanations are <a href="http://lino.saffre-rumma.net/tickets/21.html">here</a>'}),
+            do_alert
+          ]
+      },
+      new ExampleGrid({ 
+        flex: 1,
+        loadMask: {msg:'Please wait...'},
+        listeners: {rowdblclick:onDoubleClick}
+      })
+    ]
   });
   win.show()
   
