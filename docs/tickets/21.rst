@@ -58,10 +58,12 @@ when I insert a line ``alert('foo')`` before calling the detail handler.
 
 I wrote a showcase an posted the following question to ExtJS forum:
 
+  loadMask doesn't show while rendering a Window
+
   I have a Grid that opens a Detail window when the user doubleclicks a row.
   Since complex Detail windows take some time to render, 
   I'd like to activate the loadMask of the Grid during this time.
-  
+
   Here is a showcase that demonstrates how I think this should be done.
   But (and this is my problem) the loadMask becomes visible only when I open an alert box 
   before calling the detail window.
