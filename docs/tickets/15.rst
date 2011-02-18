@@ -1,5 +1,5 @@
-#15 [closed]: python-uno and logging
-====================================
+#15 : [closed] python-uno and logging
+=====================================
 
 The Debian package `python-uno` 
 clashes with the Python 2.7 standard ``logging.dictConfig`` 

@@ -1,4 +1,4 @@
-#20 (memory exhausted by Apache)
+#20 : memory exhausted by Apache
 ================================
 
 On Friday 21/01/11 there was a strange phenomen 
@@ -6,6 +6,8 @@ which caused the Lino server to exhaust its memory.
 
 Status:
 currently testing whether `MaxClients 100` in Apache config helps.
+Also added more RAM to the server.
+The problem didn't yet occur again.
 
 
 Details

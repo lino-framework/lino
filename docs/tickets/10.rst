@@ -1,4 +1,4 @@
-#10 [closed] : Lino doesn't like multiple processes
+#10 : [closed] Lino doesn't like multiple processes
 ===================================================
 
 Solved in :doc:`/releases/20101027`.

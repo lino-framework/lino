@@ -1,4 +1,4 @@
-#9 [closed] : mod_wsgi restarts Lino on each request
+#9 : [closed] mod_wsgi restarts Lino on each request
 ====================================================
 
 Lino Server restarts on every web request, wich makes the application *very* slow.
