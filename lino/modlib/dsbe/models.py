@@ -43,6 +43,7 @@ from lino.modlib.contacts import models as contacts
 from lino.modlib.notes import models as notes
 from lino.modlib.links import models as links
 from lino.modlib.uploads import models as uploads
+from lino.modlib.properties.utils import KnowledgeField #, StrengthField
 #~ from lino.modlib.uploads.models import UploadsByPerson
 from lino.models import get_site_config
 from lino.tools import get_field
@@ -803,8 +804,8 @@ class LanguageKnowledge(models.Model):
     language = models.ForeignKey("countries.Language",verbose_name=_("Language"))
     #~ language = models.ForeignKey("countries.Language")
     #~ language = fields.LanguageField()
-    spoken = fields.KnowledgeField(verbose_name=_("spoken"))
-    written = fields.KnowledgeField(verbose_name=_("written"))
+    spoken = KnowledgeField(verbose_name=_("spoken"))
+    written = KnowledgeField(verbose_name=_("written"))
     
     def __unicode__(self):
         if self.language_id is None:
@@ -1547,7 +1548,7 @@ class CourseRequest(models.Model):
     #~ """
     #~ The person's feedback about how satisfied she was.
     #~ """
-    #~ satisfied = fields.StrengthField(verbose_name=_("Satisfied"),blank=True,null=True)
+    #~ satisfied = StrengthField(verbose_name=_("Satisfied"),blank=True,null=True)
     
     remark = models.CharField(max_length=200,
         blank=True,null=True,
@@ -1681,8 +1682,8 @@ class MySearches(mixins.ByUser):
 class WantedLanguageKnowledge(models.Model):
     search = models.ForeignKey(PersonSearch)
     language = models.ForeignKey("countries.Language",verbose_name=_("Language"))
-    spoken = fields.KnowledgeField(verbose_name=_("spoken"))
-    written = fields.KnowledgeField(verbose_name=_("written"))
+    spoken = KnowledgeField(verbose_name=_("spoken"))
+    written = KnowledgeField(verbose_name=_("written"))
 
 class WantedSkill(properties.PropertyOccurence):
     class Meta:

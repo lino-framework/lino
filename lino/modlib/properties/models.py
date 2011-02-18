@@ -1,4 +1,4 @@
-#coding: UTF-8
+# -*- coding: UTF-8 -*-
 ## Copyright 2008-2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
@@ -13,7 +13,14 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-See also :doc:`/dsbe/models`
+
+Todo:
+
+Property.type should not be a ForeignKey to PropType, 
+but a simple reference to a PropertyType instance.
+There should be a list of PropertyType objects, 
+some of them not stored (like YesNo and 
+and only 
 
 """
 
@@ -38,7 +45,7 @@ from lino.utils import perms
 #~ from lino.utils import printable
 from lino import mixins
 from lino import actions
-from lino import fields
+#~ from lino import fields
 from lino.modlib.contacts import models as contacts
 from lino.modlib.notes import models as notes
 from lino.modlib.links import models as links
@@ -52,7 +59,10 @@ from lino.utils.choosers import chooser
 from lino.mixins.printable import DirectPrintAction
 from lino.mixins.reminder import ReminderEntry
 
-#~ from lino.modlib.fields import KNOWLEDGE_CHOICES # for makemessages
+from lino.modlib.properties.utils import get_choicelist, choicelist_choices
+
+
+    
 
 class PropType(models.Model):
     """
@@ -69,12 +79,31 @@ class PropType(models.Model):
         verbose_name_plural = _("Property Types")
         
     name = models.CharField(max_length=200,verbose_name=_("Designation"))
+    
+    choicelist = models.CharField(
+        max_length=50, blank=True,
+        verbose_name=_("Choices List"),
+        choices=choicelist_choices())
+    
     limit_to_choices = models.BooleanField(_("Limit to choices"))
-    multiple_choices = models.BooleanField(_("Limit to choices"))
+    """
+    not yet supported
+    """
+    
+    multiple_choices = models.BooleanField(_("Multiple choices"))
+    """
+    not yet supported
+    """
     
     def __unicode__(self):
         return babelattr(self,'name')
         
+    def choices_for(self,property):
+        if self.choicelist:
+            return get_choicelist(self.choicelist).get_choices()
+        return [(pc.value, pc.text) for pc in 
+            PropChoice.objects.filter(type=self).order_by('value')]
+            
 add_babel_field(PropType,'name')
 
 class PropChoice(models.Model):
@@ -130,10 +159,13 @@ add_babel_field(Property,'name')
 class PropertyOccurence(models.Model):
     """
     A Property Occurence is when a Property occurs, possibly having a certain value.
-    Abstract base class for .
-    :class:`lino.modlib.dsbe.models.PersonProperty` 
-    :class:`lino.modlib.dsbe.models.WantedProperty`, 
-    :class:`lino.modlib.dsbe.models.AvoidedProperty`,...
+    
+    Abstract base class for 
+    | :class:`lino.modlib.dsbe.models.PersonProperty`,
+    | :class:`lino.modlib.dsbe.models.WantedProperty`, 
+    | :class:`lino.modlib.dsbe.models.AvoidedProperty`,
+    | ...
+    
     """
     
     class Meta:
@@ -159,8 +191,9 @@ class PropertyOccurence(models.Model):
     def value_choices(cls,property):
         if property is None:
             return []
-        return [(pc.value, pc.text) for pc in 
-            PropChoice.objects.filter(type=property.type).order_by('value')]
+        return property.type.choices_for(property)
+        #~ return [(pc.value, pc.text) for pc in 
+            #~ PropChoice.objects.filter(type=property.type).order_by('value')]
             
     def get_value_display(self,value):
         if not value or self.property_id is None:

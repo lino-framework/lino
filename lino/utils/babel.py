@@ -202,13 +202,27 @@ one for each language of your :setting:`BABEL_LANGS`.
         model.add_to_class(name + '_' + lang,newfield)
 
 
-def babel_values(name,**kw):
+def kw2field(name,**kw):
+    """
+    kw2names
+    """
     d = { name : kw.get(default_language())}
     for lang in settings.BABEL_LANGS:
         v = kw.get(lang,None)
         if v is not None:
             d[name+'_'+lang] = v
     return d
+babel_values = kw2field
+
+
+def field2kw(obj,name):
+    d = { default_language() : getattr(obj,name) }
+    for lang in settings.BABEL_LANGS:
+        v = getattr(obj,name+'_'+lang)
+        if v:
+            d[lang] = v
+    return d
+  
 
 def babeldict_getitem(d,k):
     v = d.get(k,None)
@@ -239,6 +253,14 @@ def unused_discover():
                 
                 
 class BabelText(object):
+    def __init__(self,**texts):
+        self.texts = texts
+
+    def __unicode__(self):
+        return unicode(babel_get(self.texts))
+        
+
+class BabelValue(BabelText):
     """
     A constant value whose unicode representation 
     depends on the current babel language at runtime.
@@ -247,7 +269,7 @@ class BabelText(object):
     """
     def __init__(self,pk,**texts):
         self.pk = pk
-        self.texts = texts
+        BabelText.__init__(self,**texts)
         
     def __len__(self):
         return len(self.pk)
@@ -255,7 +277,4 @@ class BabelText(object):
     def __str__(self):
         return "%s (%s:%s)" % (self.texts[DEFAULT_LANGUAGE],self.__class__.__name__,self.pk)
         
-    def __unicode__(self):
-        return unicode(babel_get(self.texts))
-
                 

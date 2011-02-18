@@ -30,21 +30,26 @@ from lino.utils.instantiator import make_converter
 #~ from lino import reports
 from lino.core.coretools import get_data_elem, get_unbound_meth
 import lino
+#~ from lino import fields
 
 class BaseChooser:
+    pass
+  
+class FieldChooser(BaseChooser):
     def __init__(self,field):
         self.field = field
         
-class ChoicesChooser(BaseChooser):
+class ChoicesChooser(FieldChooser):
     def __init__(self,field):
-        BaseChooser.__init__(self,field)
+        FieldChooser.__init__(self,field)
         self.simple_values = type(field.choices[0])
   
-class Chooser(BaseChooser):
+class Chooser(FieldChooser):
+    #~ stored_name = None
     simple_values = False
     instance_values = True
     def __init__(self,model,field,meth):
-        BaseChooser.__init__(self,field)
+        FieldChooser.__init__(self,field)
         self.model = model
         #~ self.field = model._meta.get_field(fldname)
         self.meth = meth
@@ -124,6 +129,8 @@ def discover():
                 #~ n += 1
                 ch = Chooser(model,field,m)
                 setattr(field,'_lino_chooser',ch)
+                #~ if ch.stored_name is not None:
+                    #~ register_stored_chooser(ch)
                 logger.debug("Installed %s",ch)
             #~ else:
                 #~ logger.info("No chooser for %s.%s",model,field.name)

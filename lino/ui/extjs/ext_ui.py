@@ -77,7 +77,13 @@ from lino.mixins import printable
 
 from lino.core.coretools import app_labels
 
-from lino.fields import LANGUAGE_CHOICES, STRENGTH_CHOICES, KNOWLEDGE_CHOICES
+from lino.fields import LANGUAGE_CHOICES
+#~ from lino.modlib.properties.utils import STRENGTH_CHOICES, KNOWLEDGE_CHOICES
+
+from lino.modlib.properties.utils import STRENGTH_LIST, KNOWLEDGE_LIST
+STRENGTH_CHOICES = STRENGTH_LIST.get_choices()
+KNOWLEDGE_CHOICES = KNOWLEDGE_LIST.get_choices()
+
 from lino.tools import obj2str
 
 #~ from lino.ui.extjs.ext_windows import WindowConfig # 20100316 backwards-compat window_confics.pck 
