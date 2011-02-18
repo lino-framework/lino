@@ -13,7 +13,7 @@ auch gut so, aber bei der Eingabe extrem störend. Hmm, wie könnten wir
 das lösen?
 
 #.  Grid Berufserfahrungen: Anzeige erst wenn Bezeichnung auch
-eingegeben: verwirrend
+    eingegeben: verwirrend
 
 #.  Wie kann die Wertigkeit einer Sprache im Template des Lebenslaufs
     interpretiert werden?
@@ -23,7 +23,8 @@ eingegeben: verwirrend
 Short-term
 ----------
 
-#.  PropertyType mit den automatischen (hardkodierten) Werten eines KnowledgeField.
+#.  Wie kann man in der Dokumentvorlage cv.odt 
+    an Führerschein und Informatikkenntnisse rankommen?
 
 #.  Wenn man in einer Grid das Detail eines Records aufruft, 
     dann erscheint kein "Bitte warten" bis das Fenster erscheint.

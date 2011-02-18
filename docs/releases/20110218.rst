@@ -1,0 +1,50 @@
+Version 1.1.4 (18.02.2011)
+==========================
+
+#.  Die provisorische Lösung aus :doc:`20110216` 
+    (`knowledge_text(row.spoken)` in einer Dokumentvorlage 
+    für :class:`lino.utils.printable.AppyBuildMethod`)
+    ist jetzt wieder raus, denn Werte eines 
+    :class:`lino.fields.KnowledgeField`
+    werden nun automatisch als Text gedruckt, der 
+    außerdem in der Sprache des Partners ist.
+    
+    Die Druckvorlage cv.odt habe ich schon (zurück) angepasst, 
+    und bei Max Mustermann kommen diese Bewertungen nun schön 
+    in Französisch (weil ich seine Sprache auf FR gesetzt habe).
+    
+#.  Reitertitel "General" im Detail der Verträge ist jetzt ebenfalls deutsch.
+    Ich habe jetzt erstmals ein (theoretisch) vollständiges System 
+    um die Bezeichnungen der Tabs eines Detailfensters zu übersetzen.
+    
+#.  PropertyType "Bewertung" und die (hardkodierten) Werte eines 
+    KnowledgeField waren noch redundante Auswahllisten. 
+    Jetzt gibt es ein neues Feld `PropType.choicelist`. 
+    Wenn das ausgefüllt ist, braucht man keine Choices 
+    in der Datenbank einzugeben.
+    Momentan gibt es die hartkodierten (multilingualen) Auswahllisten
+    :class:`lino.modlib.properties.utils.HowWellDoYouKnow` und 
+    :class:`lino.modlib.properties.utils.HowMuchDoYouLike`.
+    Für den Eigenschaftstyp "Bewertung" habe ich dieses Feld jetzt 
+    auf `HowWellDoYouKnow` gesetzt und die Eigenschaftswerte gelöscht.
+    http://lino/api/properties/PropTypes
+
+
+
+Upgrade instructions
+--------------------
+
+- Go to your local directory::
+
+    cd /usr/local/django/myproject
+    
+- Stop application services::
+
+    ./stop
+    
+- Update the source code::
+
+    ./pull
+    
+- When a data migration is necessary, see :doc:`/admin/datamig`
+
