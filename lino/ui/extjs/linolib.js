@@ -328,11 +328,6 @@ Ext.override(Ext.grid.CellSelectionModel, {
             case e.ENTER:
                 e.stopEvent();
                 g.onCellDblClick(r,c);
-                //~ g.show_detail(r,c);
-                //~ if (g.isEditor && !g.editing) {
-                    //~ g.startEditing(r, c);
-                    //~ return;
-                //~ }
                 break;
         }
 
@@ -721,13 +716,17 @@ Lino.show_detail = function(panel,btn) {
       //~ panel.loadMask.show();
       //~ panel.my_load_mask.show();
       //~ alert('foo');
+      //~ panel.ww.window.showMask('Bitte nochmal warten');
       //~ panel.ww.window.getEl().mask('Bitte nochmal warten','x-mask-loading');
+      panel.el.mask('Bitte nochmal warten','x-mask-loading');
       //~ panel.disable();
       panel.ls_detail_handler(panel,{
         record_id:rec.id,base_params:panel.get_base_params()
       });
       //~ panel.my_load_mask.hide();
       //~ panel.loadMask.hide();
+      //~ panel.ww.window.hideMask();
+      panel.el.unmask();
     },
     Lino.show_insert
   );

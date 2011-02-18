@@ -1,5 +1,5 @@
-#3 : How to replace the content of a rendered component?
-========================================================
+#3 [closed] : How to replace the content of a rendered component?
+=================================================================
 
 Status:
   This ticket is closed.

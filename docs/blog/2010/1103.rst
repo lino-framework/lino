@@ -1,7 +1,7 @@
-20101103 -- worked on :doc:`/tickets/closed/2`
-==============================================
+20101103 -- worked on :doc:`/tickets/2`
+=======================================
 
-Weiter an :doc:`/tickets/closed/2`.
+Weiter an :doc:`/tickets/2`.
 
 Upps, da hatte ich mir `einen neueren Patch <http://code.djangoproject.com/ticket/7539#comment:58>`_ 
 gefragt, und jetzt ist der auch schon wieder veraltet::

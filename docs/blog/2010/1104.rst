@@ -2,7 +2,7 @@
 ========
 
 - Super! Das hätte ich gestern nicht gedacht:
-  :doc:`/tickets/closed/2` ist fertig und kann abgeschlossen werden!
+  :doc:`/tickets/2` ist fertig und kann abgeschlossen werden!
 
 - Statt :attr:`lino.reports.Report.label` benutze ich jetzt meistens `verbose_name_plural` des Django-Models.
 

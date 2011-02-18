@@ -39,7 +39,7 @@ Hier zum Abschied nochmal der Eintrag aus der To-do-Liste:
 
 - Im Detail der Personen sind manche Tabs anfangs nicht korrekt gelayoutet. 
   Dann muss man jeweils auf den Pin-Button oben rechts klicken (der die Seite mit Permalink neu öffnet) um das korrekte Layout sehen zu können. 
-  Condors Antwort in :doc:`/tickets/closed/1` 
+  Condors Antwort in :doc:`/tickets/1` 
   war leider nur die Lösung für den dort beschriebenen spezifischen Fall.
   Aber er hat mich auf eine Idee gebracht: die vbox-Layouts sind schuld am Problem. 
   Deshalb hatte ich ja auch VBorderPanel geschrieben, 

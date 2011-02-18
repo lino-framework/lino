@@ -200,8 +200,8 @@ Django docs on Apache and mod_wsgi:
   - http://docs.djangoproject.com/en/dev/howto/deployment/modwsgi/
   - http://code.djangoproject.com/wiki/django_apache_and_mod_wsgi
   - http://code.google.com/p/modwsgi/wiki/IntegrationWithDjango
-  - :doc:`/tickets/closed/9`
-  - :doc:`/tickets/closed/10`
+  - :doc:`/tickets/9`
+  - :doc:`/tickets/10`
 
 You'll also need to configure Apache to do HTTP authentication: :doc:`ApacheHttpAuth`.
 

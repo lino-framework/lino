@@ -1,5 +1,5 @@
-Django problems when using diamond inheritance
-==============================================
+#11 : Django problems when using diamond inheritance
+====================================================
 
 Some lino.modlib modules use diamond abtract model inheritance, 
 which is currently an 

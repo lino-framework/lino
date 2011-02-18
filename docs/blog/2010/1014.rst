@@ -12,7 +12,7 @@ Release :doc:`/releases/20101014` auf tups und im DSBE.
 
 :doc:`/admin/install` angepasst.
 
-N.B.: igen-demo funktioniert momentan nicht. Aber das kann warten (:doc:`/tickets/closed/6`).
+N.B.: igen-demo funktioniert momentan nicht. Aber das kann warten (:doc:`/tickets/6`).
 
 
 modlib.links reaktivieren

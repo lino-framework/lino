@@ -27,7 +27,6 @@ Version 1.1.4 (18.02.2011)
     :class:`lino.modlib.properties.utils.HowMuchDoYouLike`.
     Für den Eigenschaftstyp "Bewertung" habe ich dieses Feld jetzt 
     auf `HowWellDoYouKnow` gesetzt und die Eigenschaftswerte gelöscht.
-    http://lino/api/properties/PropTypes
 
 
 

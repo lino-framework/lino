@@ -9,8 +9,8 @@ recently fixed (to be confirmed)
 --------------------------------
 
 #.  Grid Ausbildung etc. sind zur Zeit chronologisch sortiert. Das ist
-auch gut so, aber bei der Eingabe extrem störend. Hmm, wie könnten wir
-das lösen?
+    auch gut so, aber bei der Eingabe extrem störend. Hmm, wie könnten wir
+    das lösen?
 
 #.  Grid Berufserfahrungen: Anzeige erst wenn Bezeichnung auch
     eingegeben: verwirrend
@@ -23,13 +23,18 @@ das lösen?
 Short-term
 ----------
 
+#.  Übersetzung PropertyType : nicht Eigenschaftsart, sondern 
+    Eigenschaftstyp oder Eigenschafts-Datentyp...
+    
 #.  Wie kann man in der Dokumentvorlage cv.odt 
     an Führerschein und Informatikkenntnisse rankommen?
 
 #.  Wenn man in einer Grid das Detail eines Records aufruft, 
     dann erscheint kein "Bitte warten" bis das Fenster erscheint.
     Und bei Personen dauert das mehrere Sekunden.
-    
+    :doc:`/tickets/21`.
+
+
 #.  Zur Zeit scheint es so, dass das Auskunftsblatt eher 
     überflüssig wird.
 
@@ -38,8 +43,6 @@ Short-term
     Mitteilung "Failure".
 
 #.  Was heißt "Muss generiert werden" bei den Notizen?
-
-#.  :doc:`tickets/20`.
 
 #.  Textbausteine (im Text-Editor F1 drücken können)
 
@@ -419,7 +422,7 @@ Long-term
 #. When :djangoticket:`7539` is available, we'll modify these automatic 
    `disable_delete` methods so that they act only for 
    ForeignKey fields with `on_delete=RESTRICT`.
-   See :doc:`/tickets/closed/2`
+   See :doc:`/tickets/2`
 
 #. ReportRequest und/oder ViewReportRequest sind (glaube ich) ein Fall für 
    `Django-Middleware <http://docs.djangoproject.com/en/dev/topics/http/middleware/>`_.

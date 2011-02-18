@@ -20,7 +20,7 @@ To use it, define the following in your :xfile:`settings.py`::
   LOGGING_CONFIG = 'lino.utils.log.configure'
   LOGGING = None
 
-See also :doc:`/tickets/closed/15`
+See also :doc:`/tickets/15`
 """
 
 import os

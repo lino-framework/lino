@@ -1,5 +1,5 @@
-#7 : Code of contacts.Person duplicated in dsbe.Person 
-======================================================
+#7 [closed]: Code of contacts.Person duplicated in dsbe.Person 
+==============================================================
 
 .. currentmodule:: lino.modlib.dsbe.models
 

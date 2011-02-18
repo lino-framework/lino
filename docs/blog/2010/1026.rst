@@ -8,7 +8,7 @@ Wrote showcase for :doc:`/tickets/8`.
 Posted the problem to the `ExtJS Help Forum
 <http://www.sencha.com/forum/showthread.php?113648-dropTarget-and-notifyDrop-don-t-get-called>`__.
   
-Did more testing and screenshots for :doc:`/tickets/closed/1`.
+Did more testing and screenshots for :doc:`/tickets/1`.
 Posted this as a bug in 
 `ExtJS Bugs Forum <http://www.sencha.com/forum/showthread.php?113652-Wrong-layout-in-Chrome-and-FF-when-tab-gets-activated&p=530101>`__
  
@@ -23,7 +23,7 @@ Im Laufe des Releases mehrere Check-ins, u.A. wegen folgender Fehler:
     
   - IE meldet die üblichen `Expected identifier, string or number` in der :xfile:`lino.js`.
     
-  - Versuche beim Diagnostizieren von Ticket :doc:`/tickets/closed/9`
+  - Versuche beim Diagnostizieren von Ticket :doc:`/tickets/9`
   
   - `DatabaseError: no such column: links_link.type_id` kam daher, 
     dass in 
@@ -35,7 +35,7 @@ Unsympatische Einstellung
 -------------------------
 
 Randbemerkung.
-Während meiner Suche zu :doc:`/tickets/closed/9` las ich 
+Während meiner Suche zu :doc:`/tickets/9` las ich 
 im Wiki von modwsgi einen Artikel 
 `Integration With Django 
 <http://code.google.com/p/modwsgi/wiki/IntegrationWithDjango>`_

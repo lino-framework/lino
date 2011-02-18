@@ -1,0 +1,51 @@
+#21 : LoadMask for Detail windows
+=================================
+
+When I doubleclick a  row in a Grid, Lino opens this record's Detail window.
+The problem is that I didn't yet find a way to display a loadMask during this time.
+And complex Windows (for example :class:`lino.modlib.dsbe.models.Person` 
+has a huge FormPanel as their main component) take some time to render, and 
+the user is there for several seconds without knowing what's going on.
+
+Here is the code where I think it should happen 
+(the commented lines are things that I tried already without success)::
+
+  Lino.show_detail = function(panel,btn) {
+    Lino.do_on_current_record(panel,
+      function(rec) {
+        //~ alert('foo');
+        //~ panel.loadMask.show();
+        //~ panel.my_load_mask.show();
+        //~ panel.ww.window.showMask('Bitte nochmal warten');
+        //~ panel.ww.window.getEl().mask('Bitte nochmal warten','x-mask-loading');
+        //~ panel.disable();
+        panel.ls_detail_handler(panel,{
+          record_id:rec.id,base_params:panel.get_base_params()
+        });
+        //~ panel.my_load_mask.hide();
+        //~ panel.loadMask.hide();
+        //~ panel.ww.window.hideMask();
+      },
+      Lino.show_insert
+    );
+  };
+  
+Explanations: `panel.ls_detail_handler` is the "detail handler" 
+configured for this Grid. Detail handlers create an :extjs:`Ext.Window` and call `show()` 
+on it::
+
+  Lino.contacts.Persons.detail = function(caller,params) { 
+    var ww = new Lino.DetailWrapper(caller,...);
+    var form_panel1607 = new Lino.contacts.Persons.FormPanel(...);
+    ww.main_item = form_panel1607;
+    ww.show();
+  }
+
+
+Here was somebody who appearently had the same problem:
+http://www.sencha.com/forum/showthread.php?26816
+Unfortunately the answers in that thread didn't help me.
+
+http://www.sencha.com/forum/showthread.php?26816-loadMask-a-panel-before-the-panel-is-rendered
+
+

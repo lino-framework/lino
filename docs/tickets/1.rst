@@ -1,5 +1,5 @@
-#1 : Wrong layout in Chrome and FF when tab gets activated
-==========================================================
+#1 [closed] : Wrong layout in Chrome and FF when tab gets activated
+===================================================================
 
 ExtJS Version 3.3.0.
 Tested with Google Chrome, Firefox and Internet Explorer.

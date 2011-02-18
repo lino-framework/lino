@@ -4,7 +4,7 @@
 Mir ist gerade aufgefallen, dass ich seit einem Monat bei jedem neuen :doc:`Blog-Eintrag </blog/2010/index>` die Jahreszahl im Dateinamen einmal zuviel tippe. Zum Beispiel gestern morgen noch hatte ich eine Datei :file:`/blog/2010/20100807.rst` erstellt. Ab heute nur noch :file:`/blog/2010/0807.rst`. Diese Praxis hatte ich :doc:`damals </blog/2010/0705>` ohne zu überlegen aus dem Google-WikiBlog übernommen...
 
 
-Und in :doc:`/tickets/closed/3` habe ich nun die Screenshots so konvertiert, 
+Und in :doc:`/tickets/3` habe ich nun die Screenshots so konvertiert, 
 dass Sphinx keine Warnung "Nonlocal image URI found" mehr macht. 
 Also Screenshots stehen jetzt unter :xfile:`/docs/` zusammen mit dem Dokument, 
 das sie benutzt. Meine Idee, die Screenshots unter :xfile:`/screenshots/` zu sammeln 

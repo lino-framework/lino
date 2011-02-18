@@ -12,7 +12,7 @@ das lang ersehnte
 ist jetzt in Django drin! 
 Das Dumme daran: 
 ich habe einen halben Tag mit 
-:doc:`/tickets/closed/15` 
+:doc:`/tickets/15` 
 verbracht.  
 Zuerst dachte ich, dass mein eigener Logger `lino.log` dran Schuld ist, 
 der damit irgendwie in Konflikt gerät. 

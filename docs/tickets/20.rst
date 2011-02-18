@@ -36,8 +36,8 @@ This sequence of 3 lines repeats then about 2000 (two thousand) times during 2 h
 
 See also:
 
-- :doc:`/tickets/closed/10`
-- :doc:`/tickets/closed/9`
+- :doc:`/tickets/10`
+- :doc:`/tickets/9`
 - :doc:`/admin/install`
 
 - For most sites you would get away with single process, so you 

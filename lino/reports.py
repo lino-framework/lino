@@ -806,7 +806,7 @@ class Report(actors.Actor): #,base.Handled):
     
     If not defined in a subclass, the report will look whether it's model has a `disabled_fields` 
     method expecting a single argument `request` and install a wrapper to this model method.
-    See also :doc:`/tickets/closed/2`.
+    See also :doc:`/tickets/2`.
     """
     
     disable_delete = None

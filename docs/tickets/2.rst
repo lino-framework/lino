@@ -1,5 +1,5 @@
-#2 : Deleting a NoteType will delete all Notes with that type (oops!)
-=====================================================================
+#2 [closed] : Deleting a NoteType will delete all Notes with that type (oops!)
+==============================================================================
 
 Solved by :meth:`lino.reports.Report.disable_delete` 
 and :func:`lino.lino_site.discover`.
