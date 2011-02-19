@@ -45,20 +45,21 @@ Here is a simplified example of a detail handler::
 
 
 Somebody named end-user 
-appearently had the same problem in the following thread:
-http://www.sencha.com/forum/showthread.php?26816
+appearently had the same problem in the thread
+`26816 <http://www.sencha.com/forum/showthread.php?26816>`_ 
+at ExtJS forum.
 But this thread is 3 years old, 
-and unfortunately the answers didn't help me.
-
+and unfortunately the answers don't really help me.
 
 Interesting observation: 
 the loadMask *does* get activated correctly
 when I insert a line ``alert('foo')`` before calling the detail handler.
 
+Then I wrote a showcase and 
+`posted <http://www.sencha.com/forum/showthread.php?124503>`_ 
+the following question to ExtJS forum:
 
-I wrote a showcase an posted the following question to ExtJS forum:
-
-  loadMask doesn't show while rendering a Window
+  **loadMask doesn't show while rendering a Window**
 
   I have a Grid that opens a Detail window when the user doubleclicks a row.
   Since complex Detail windows take some time to render, 

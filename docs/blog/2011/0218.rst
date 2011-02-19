@@ -1,19 +1,25 @@
 20110218
 ========
 
-#.  Release :doc:`/releases/20110218` in Eupen.
+- Release :doc:`/releases/20110218` in Eupen.
 
-#.  Ich wurstle am Ticket :doc:`/tickets/21`.
-    Das ist lästig, weil ich da voraussichtlich einen showcase schreiben muss.
-    
-    In diesem Zusammenhang habe ich bemerkt, dass die URLs meiner :doc:`/tickets/index` 
-    besser konstant bleiben sollten. 
-    Also nicht in ein Unterverzeichnis "closed" verschieben 
-    (und dann bewusst alle Referenzen auf dieses Ticket ändern müssen).
-    Stattdessen markiere ich sie jetzt als abgeschlossen, 
-    indem ich ein `[closed]` im Titel hinzufüge.
-    
-    Außerdem habe ich einen Trick gefunden, um die Liste korrekt sortiert zu haben.
-    In meiner Freude darüber habe ich das gleich den 
-    `sphinx-developer <http://groups.google.com/group/sphinx-dev/browse_thread/thread/5873815242fdc506>`
-    erzählt.
+- Wurstelei am Ticket :doc:`/tickets/21`.
+
+Ticket 21 ist lästig, weil ich dazu nochmal wieder einen Showcase schreiben muss.
+
+In diesem Zusammenhang habe ich bemerkt, dass die URLs meiner :doc:`/tickets/index` 
+besser konstant bleiben sollten. 
+Also nicht in ein Unterverzeichnis "closed" verschieben 
+(und dann bewusst alle Referenzen auf dieses Ticket ändern müssen).
+Stattdessen markiere ich sie jetzt als abgeschlossen, 
+indem ich ein `[closed]` im Titel hinzufüge.
+
+Außerdem habe ich einen Trick gefunden, um die Liste korrekt sortiert zu haben.
+In meiner Freude darüber habe ich das gleich den 
+`sphinx-developer <http://groups.google.com/group/sphinx-dev/browse_thread/thread/5873815242fdc506>`
+erzählt.
+
+22.30 Uhr : 
+Den ganzen heutigen Tag habe ich sozusagen gebraucht, um folgende Frage zu formulieren:
+http://www.sencha.com/forum/showthread.php?124503
+Jetzt gehe ich schlafen und hoffe, dass sich jemand im Forum für mein Problem interessiert...

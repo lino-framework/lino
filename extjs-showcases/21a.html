@@ -73,7 +73,12 @@ function show_detail(grid) {
       items: new Ext.form.DisplayField({
         html:"This is a detail window which took 2 seconds to render."
       })
-    })
+    }),
+    listeners: {
+        'afterrender': function(thisComponent) {
+              grid.loadMask.hide();
+        }
+    }
   });
   // emulate a complex form that needs some time for rendering:
   sleep(2000); 
@@ -87,7 +92,7 @@ function onDoubleClick(grid) {
   if (do_alert.getValue()) 
     alert("This alert box is (currently) needed for the loadMask to become visible. Who knows why?");
   show_detail(grid);
-  grid.loadMask.hide();
+  //~ grid.loadMask.hide();
 }
 
 Ext.onReady(function() {
