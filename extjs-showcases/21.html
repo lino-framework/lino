@@ -5,14 +5,8 @@
 -->
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title id="title">Lino Ticket #21</title>
-<!-- ** CSS ** -->
-<!-- base library -->
 <link rel="stylesheet" type="text/css" href="http://dev.sencha.com/deploy/dev/resources/css/ext-all.css" />
-<!-- overrides to base library -->
-<!-- ** Javascript ** -->
-<!-- ExtJS library: base/adapter -->
 <script type="text/javascript" src="http://dev.sencha.com/deploy/dev/adapter/ext/ext-base.js"></script>
-<!-- ExtJS library: all widgets -->
 <script type="text/javascript" src="http://dev.sencha.com/deploy/dev/ext-all-debug.js"></script>
 
 <script type="text/javascript">
@@ -75,14 +69,14 @@ function show_detail(grid) {
       })
     })
   });
-  // emulate a complex form that needs some time for rendering:
-  sleep(2000); 
+  sleep(2000); // emulate a form that needs time for rendering
   win.show()
 }
 
 var do_alert = new Ext.form.Checkbox({boxLabel:'show alert box before opening detail',value:false,width:"20em"});
 
 function onDoubleClick(grid) {
+  console.log(grid.loadMask);
   grid.loadMask.show();  
   if (do_alert.getValue()) 
     alert("This alert box is (currently) needed for the loadMask to become visible. Who knows why?");

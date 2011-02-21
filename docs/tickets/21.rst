@@ -77,6 +77,12 @@ the following question to ExtJS forum:
   http://code.google.com/p/lino/source/browse/extjs-showcases/21.html
 
 
+20110219
+--------
+
+Arthur suggested this:
+http://lino.googlecode.com/hg/extjs-showcases/21a.html
+
 
 
 
