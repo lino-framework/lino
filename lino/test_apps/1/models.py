@@ -1,6 +1,6 @@
 """
-Converting between MTI child/parent models
-------------------------------------------
+Multi-table inheritance: converting between child and parent
+============================================================
 
 .. currentmodule:: lino.utils.mti
 
@@ -12,13 +12,19 @@ This document explains my work on a topic also touched by
 Erik Stein's question 
 `Promote a Place to a Restaurant? 
 <http://groups.google.com/group/django-users/browse_thread/thread/3c9d7c97a8f01da0>`_
-at django-users (Oct 17, 2008).
+(17 Oct 2008)
+and ringemup's question
+`Multi-table Inheritance: How to add child to parent model?
+<http://www.mail-archive.com/django-users@googlegroups.com/msg110455.html>`_
+(04 Nov 2010)
+at django-users.
+
 I decided to make a break here 
 because I now hope for comments 
 before investing more time into this.
-It is possible that I have been reinventing a wheel,
-or that there is a better way to solve my 
-problem (:doc:`/tickets/22`).
+If you know (or imagine) 
+a better way to solve my 
+problem (:doc:`/tickets/22`), please let me know!
 
 Introduction
 ------------
@@ -298,6 +304,7 @@ Related documents
 - Django's documentation on
   `multi-table inheritance
   <http://docs.djangoproject.com/en/dev/topics/db/models/#multi-table-inheritance>`_,
+  
   
 - :djangoticket:`Child models overwrite data of Parent model
   <11618>`
