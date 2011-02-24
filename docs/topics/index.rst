@@ -6,4 +6,6 @@ Topics
    :glob:
    
    *
-
+   /django/index
+   /dev/index
+   /tests

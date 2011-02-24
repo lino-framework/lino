@@ -1,6 +1,6 @@
 """
-Metamorphose : converting between different MTI models
-------------------------------------------------------
+Converting between MTI child/parent models
+------------------------------------------
 
 .. currentmodule:: lino.utils.mti
 
@@ -10,9 +10,11 @@ Erik Stein's question
 <http://groups.google.com/group/django-users/browse_thread/thread/3c9d7c97a8f01da0>`_
 at django-users (Oct 17, 2008).
 
-My work is not finished because I hope to hear comments 
-of other people before I invest more time into this
-(after all there is danger that I have been reinventing the wheel!).
+This is not finished because I now hope for comments 
+of other people before I invest more time into this.
+It is possible that I have been reinventing a wheel,
+or that there is a better way to solve my 
+problem (:doc:`/tickets/22`).
 
 Comments and suggestions are welcome. 
     
@@ -29,24 +31,14 @@ in an application,
 then our users do encounter the problem 
 of needing to "promote a Place to a Restaurant",
 or "reduce a Restaurant to a simple Place".
-And especially when there is a lot of other related data, 
+At least from their point of view.
+Especially when there is a lot of other related data, 
 there should be a possibility to do this in a user-friendly way.
 
-I thought that "metamorphose" is a good name for this thing.
-
-- Django's documentation on
-  `multi-table inheritance
-  <http://docs.djangoproject.com/en/dev/topics/db/models/#multi-table-inheritance>`_,
-  
-- Source code:
-
-  - This document: :srcref:`/lino/lino/test_apps/1/models.py`.
-  - The :func:`convert` function itself: :srcref:`/lino/lino/utils/mti.py`.
   
 
 Let's go
 --------
-
 
 Create some data:
 
@@ -124,19 +116,20 @@ is similar:
 Pitfall
 -------
 
-There is a pitfall with :func:`convert`.
+There is a pitfall with :func:`convert`:
+it will invalidate the original model instance.
+The variable specified by the caller as first argument
+will refer to something that
+does not represent any existing record. 
 
-Calling :func:`lino.utils.mdi.convert` 
-will invalidate the original model instance.
-This means that the variable used by the caller 
-will refer to something does not represent any existing record. 
+Best practice is to call
 
-Best practice is to call::
+::
 
   obj = convert(obj,...)
   
-To make sure that your variable "obj" is thrown away.
-Here is an example of what happens if you don't.
+to make sure that your variable "obj" is thrown away.
+Here is an example of what happens if you don't:
 
 >>> obj = Place(id=3,name="Third")
 >>> obj.save()
@@ -148,29 +141,29 @@ Here is an example of what happens if you don't.
 Until now everything is fine. Just notice that we wrote
 ``convert(obj,...)``
 and not ``obj = convert(obj,...)``.
-
 The problem with this is that our variable `obj` 
 now refers to a model instance of a deleted object.
 
-If you continue to use this variable, you would get 
-unpredictable behaviour.
+If we'd let you continue to use this variable, 
+you would get unpredictable behaviour.
 To avoid further damage, :func:`convert` changes the 
-`__class__` attribute. 
-
->>> obj
-<lino.utils.mti.InvalidModelInstance object at ...>
+`__class__` attribute of your variable in order to make 
+it unusable:
 
 >>> obj.owners.add(Person.objects.get(pk=1))
 Traceback (most recent call last):
 ...
 AttributeError: 'InvalidModelInstance' object has no attribute 'owners'
+>>> obj
+<lino.utils.mti.InvalidModelInstance object at ...>
 
 
 Virtual fields
 --------------
 
 This section shows how :func:`convert` is being used by Lino's virtual 
-fields, and thus is Lino-specific
+fields, and thus is Lino-specific and even less definitive 
+than the rest of this document.
 
 After the above examples our database looks like this:
 
@@ -249,8 +242,8 @@ Traceback (most recent call last):
 ...
 DoesNotExist: Restaurant matching query does not exist.
 
-TODO: ForeignKey
-----------------
+TODO: related ForeignKeys 
+-------------------------
 
 There is some more work to do because 
 the current implementation of :func:`convert` forgets to 
@@ -278,14 +271,37 @@ Both the owner and the visits should remain.
 The owner has been taken over (because it is a ManyToManyField).
 
 But oops! The visits have been deleted! 
-The following should work, but doesn't 
+The following currently doesn't work:
 
->>> Visit.objects.all() # SKIP
-[<Visit: Say hello visit by Bert at Second>, <Visit: Hang around visit by Bert at Second>]
->>> second.visit_set.all() # SKIP
+>>> Visit.objects.all()
 [<Visit: Say hello visit by Bert at Second>, <Visit: Hang around visit by Bert at Second>]
 
 That's still to fix.
+
+(The source code of this document is 
+:srcref:`here </lino/test_apps/1/models.py>`,
+the :func:`convert` function itself: :srcref:`here </lino/utils/mti.py>`.)
+
+
+Related documents
+-----------------
+
+- Django's documentation on
+  `multi-table inheritance
+  <http://docs.djangoproject.com/en/dev/topics/db/models/#multi-table-inheritance>`_,
+  
+- :djangoticket:`Child models overwrite data of Parent model
+  <11618>`
+
+- :djangoticket:`Multi-table inheritance does not 
+  allow linking new instance of child model to existing parent model 
+  instance <7623>`
+  
+- Carl Meyer's `django-model-utils project <https://github.com/carljm/django-model-utils>`_
+  
+- `Figure out child type with Django MTI or specify type as field? <http://stackoverflow.com/questions/3990470/figure-out-child-type-with-django-mti-or-specify-type-as-field>`_
+  
+
 
 """
 

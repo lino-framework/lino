@@ -21,56 +21,6 @@ See detailed presentation in :mod:`lino.test_apps.1.models`.
 import logging
 logger = logging.getLogger(__name__)
 
-from django.db import models
-from lino.tools import resolve_model
-
-
-def unused_child_from_parent(model, *parents,**kw):
-    """
-    Probably obsolete. use :func:`convert` instead.
-    
-    Inspired by 
-    `Tom Tobin's patch suggestion 
-    <http://bazaar.launchpad.net/~theonion/django/makechild/revision/5060>`_
-    in 
-    :djangoticket:`7623`.
-    `icket 7623
-    <http://code.djangoproject.com/ticket/7623>`_
-    
-    Creates a new instance of `model` copying data from the given `parents` 
-    (which must be instances of a base class of model), updates 
-    it with the given kwargs, saves it to the database, and returns the 
-    created object.     
-    """
-    model_parents = tuple(model._meta.parents.keys())
-    if not model_parents:
-        raise ValueError("%r is not a child model; it has no parents" % model)
-    attrs = {}
-    for parent in parents:
-        if not isinstance(parent, model_parents):
-            raise ValueError("%r is not a parent instance of %r" % (parent, model))
-        for field in parent._meta.fields:
-            if field.name not in attrs:
-                attrs[field.name] = getattr(parent, field.name)
-
-        attrs[model._meta.parents[parent.__class__].name] = parent
-    attrs.update(kw)
-    return model(**attrs)
-
-#~ def remove_child(obj,fieldname,**attrs):
-    #~ for field in target_class._meta.get_fields_with_model():
-        #~ if field.name != fieldname and field.name not in attrs and hasattr(obj, field.name):
-            #~ attrs[field.name] = getattr(obj, field.name)
-            
-    #~ pk = obj.pk
-    #~ related_objects = []
-    #~ for r in target_class._meta.many_to_many:
-        #~ related_objects.append(r,getattr(obj,r.name))
-    #~ obj.delete()
-    #~ obj = 
-    #~ for r,q in related_objects:
-        #~ setattr(obj,r.name,q)
-    
 def convert(obj,target_class,**attrs):
     """
     Converts the database records for the given 
@@ -119,13 +69,69 @@ def convert(obj,target_class,**attrs):
         setattr(obj,k,v)
     obj.save()
     return obj
-        
+
+
+
+
+
+
+
+
+def unused_child_from_parent(model, *parents,**kw):
+    """
+    Probably obsolete. use :func:`convert` instead.
+    
+    Inspired by 
+    `Tom Tobin's patch suggestion 
+    <http://bazaar.launchpad.net/~theonion/django/makechild/revision/5060>`_
+    in 
+    :djangoticket:`7623`.
+    `icket 7623
+    <http://code.djangoproject.com/ticket/7623>`_
+    
+    Creates a new instance of `model` copying data from the given `parents` 
+    (which must be instances of a base class of model), updates 
+    it with the given kwargs, saves it to the database, and returns the 
+    created object.     
+    """
+    model_parents = tuple(model._meta.parents.keys())
+    if not model_parents:
+        raise ValueError("%r is not a child model; it has no parents" % model)
+    attrs = {}
+    for parent in parents:
+        if not isinstance(parent, model_parents):
+            raise ValueError("%r is not a parent instance of %r" % (parent, model))
+        for field in parent._meta.fields:
+            if field.name not in attrs:
+                attrs[field.name] = getattr(parent, field.name)
+
+        attrs[model._meta.parents[parent.__class__].name] = parent
+    attrs.update(kw)
+    return model(**attrs)
+
+#~ def remove_child(obj,fieldname,**attrs):
+    #~ for field in target_class._meta.get_fields_with_model():
+        #~ if field.name != fieldname and field.name not in attrs and hasattr(obj, field.name):
+            #~ attrs[field.name] = getattr(obj, field.name)
+            
+    #~ pk = obj.pk
+    #~ related_objects = []
+    #~ for r in target_class._meta.many_to_many:
+        #~ related_objects.append(r,getattr(obj,r.name))
+    #~ obj.delete()
+    #~ obj = 
+    #~ for r,q in related_objects:
+        #~ setattr(obj,r.name,q)
+    
+
       
+from django.db import models
+from lino.tools import resolve_model
 from lino.fields import VirtualField
 
 class EnableChild(VirtualField):
     """
-    Docuemted and tested in :mod:`lino.test_apps.2.models`
+    Docuemted and tested in :mod:`lino.test_apps.1.models`
     """
     def __init__(self,child_model,**kw):
         self.child_model = child_model

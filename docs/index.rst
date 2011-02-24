@@ -30,16 +30,13 @@ Some external links:
    about/index
    community
    blog/index
+   releases/index
    todo
+   tickets/index
    admin/index
    topics/index
-   django/index
-   tickets/index
-   tests
    ref/index
-   dev/index
    autodoc/lino
-   releases/index
    download
    demos
 

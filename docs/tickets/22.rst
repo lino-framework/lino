@@ -1,8 +1,58 @@
-#22 : How to implement metamorphism
-===================================
+#22 : How to implement MTI child/parent conversion
+==================================================
 
 On a site that uses Django's MTI, Lino should provide a 
-way to "metamorphose" existing data records into a 
+way to "metamorphose" or convert existing data records into a 
 more specialized child model, or back into a less 
 specialized parent model.
 
+For example, in Lino/DSBE, Company might be a concrete parent model
+for HealthInsurance, JobProvider, Pharmacy, CourseProvider.
+
+Murphy's law states that users *will* come with the problem that a Pharmacy or
+HealthInsurance starts to organize courses (thus becoming a CourseProvider),
+or that a pharmacy has been wrongly entered as a simple Company, 
+and of course they will discover this only after having entered 20 invoices 
+for this pharmacy ...
+
+The most intuitive and user-friedly way to solve such potential problems 
+seems to have then, in the detail window of a Company, 
+four checkboxes "is health provider", "is job provider", 
+"is pharmacy", "is course provider"
+(i.e. one checkbox for every possible child).
+
+When a user creates a CourseProvider #17 and then looks at the Company #17, 
+the checkbox is checked. 
+If the user then unchecks it and saves the form, 
+the CourseProvider record will be removed, 
+but the Company record remains.
+
+These checkboxes should probably be virtual fields.
+This means that there might be performance problems 
+because each of them will require an additional 
+database query. 
+Or at least subqueries like this::
+
+  SELECT 
+    Company.id, 
+    Company.name, 
+    ..., 
+    COUNT(SELECT id FROM Pharmacy WHERE id = Company.id),
+    COUNT(SELECT id FROM HealthInsurance WHERE id = Company.id),
+    ...
+  FROM Company
+  
+This might be doable using `QuerySet.extra() <http://docs.djangoproject.com/en/dev/ref/models/querysets/#extra>`_::
+  
+  QuerySet.extra(select={'is_pharmacy':'COUNT(SELECT id FROM Pharmacy WHERE id = Company.id)',...})
+  
+Implementing this behaviour using real fields would avoid the performance 
+problem, but raise the update problem.
+
+The preformance problem should remain within acceptable limits
+because Lino will include these checkboxes only in detail views, 
+not in grids.
+
+So for the moment we work on the virtual field implementation.
+
+See detailed presentation in :mod:`lino.test_apps.1.models`.
