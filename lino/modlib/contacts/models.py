@@ -200,3 +200,27 @@ class ContactsByPerson(reports.Report):
     column_names = 'company type *'
     
         
+
+
+from lino.models import SiteConfig
+#~ from lino.tools import resolve_field
+    
+field = models.ForeignKey("contacts.Company",
+        blank=True,null=True,
+        verbose_name=_("The company that runs this site"),
+        related_name='site_company_sites',
+        )
+field.__doc__ = """
+The Company to be used as sender in documents. Needs more documentation.
+"""
+SiteConfig.add_to_class('site_company',field)
+
+field = models.IntegerField(
+        default=1,
+        verbose_name=_("The next automatic id for Person or Company"),
+        )
+field.__doc__ = """
+The next automatic id for Person or Company. Needs more documentation.
+"""
+SiteConfig.add_to_class('next_partner_id',field)
+        

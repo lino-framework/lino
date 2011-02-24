@@ -69,6 +69,17 @@ def i2d(i):
     d = datetime.date(d.year,d.month,d.day)
     #print i, "->", v
     return d
+    
+def get_class_attr(cl,name):
+    meth = getattr(cl,name,None)
+    if meth is not None:
+        return meth
+    for b in cl.__bases__:
+        meth = getattr(b,name,None)
+        if meth is not None:
+            return meth
+            
+    
 
 
 

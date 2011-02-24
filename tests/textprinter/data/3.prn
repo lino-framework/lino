@@ -1,17 +1,0 @@
-c5
-python self.writeln("%d cpi (%d cpl):" % (self.cpi,self.cpl))
-python self.insertDebugRulers()
-c10
-python self.writeln("%d cpi (%d cpl):" % (self.cpi,self.cpl))
-python self.insertDebugRulers()
-c12
-python self.writeln("%d cpi (%d cpl):" % (self.cpi,self.cpl))
-python self.insertDebugRulers()
-c15
-python self.writeln("%d cpi (%d cpl):" % (self.cpi,self.cpl))
-python self.insertDebugRulers()
-c20
-python self.writeln("%d cpi (%d cpl):" % (self.cpi,self.cpl))
-python self.insertDebugRulers()
-
-

@@ -30,14 +30,17 @@ from logging.handlers import RotatingFileHandler
 
 from django.utils.log import AdminEmailHandler
 
-def file_handler(filename):
+def file_handler(filename,**kw):
     """
     See also :doc:`/blog/2010/1129`
     """
+    kw.setdefault('encoding','UTF-8')
     if sys.platform == 'win32': 
-        h = logging.FileHandler(filename,encoding='utf-8')
+        h = logging.FileHandler(filename,**kw)
     else:
-        h = RotatingFileHandler(filename,maxBytes=100000,backupCount=5,encoding='utf-8')
+        kw.setdefault('maxBytes',100000)
+        kw.setdefault('backupCount',5)
+        h = RotatingFileHandler(filename,**kw)
     #~ if hasattr(logging,'RotatingFileHandler'):
         #~ h = logging.RotatingFileHandler(filename,maxBytes=10000,backupCount=5)
     #~ else:
@@ -106,7 +109,10 @@ def configure(config):
         pass
         
     if logfile is not None:
-        h = file_handler(logfile)
+        kw = {}
+        if config.has_key('mode'):
+            kw.update(mode=config['mode'])
+        h = file_handler(logfile,**kw)
         h.setLevel(level)
         linoLogger.addHandler(h)
         djangoLogger.addHandler(h)

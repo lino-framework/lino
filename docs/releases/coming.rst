@@ -1,6 +1,7 @@
 Coming
 ======
 
+#.  Der Button "Auskunftsblatt" ist provisorisch raus.
 
 
 Upgrade instructions

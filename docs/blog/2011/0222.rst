@@ -1,0 +1,15 @@
+20110222
+========
+
+Weiter mit 
+dem 
+:doc:`gestern <0221>` begonnenen
+MTI-Support.
+
+Vor allem das neue Modul :mod:`lino.utils.mti`.
+
+Damit test_apps auch ohne eine app_label "contacts" laufen, 
+sind die Felder `site_company` und `next_partner_id` 
+jetzt nicht mehr in :class:`lino.models.SiteConfig` selber definiert, sondern 
+werden dort reingeimpft in :mod:`lino.modlib.contacts`.
+

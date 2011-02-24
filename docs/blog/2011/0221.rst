@@ -1,0 +1,75 @@
+20110221
+========
+
+Lino und multi-table inheritance
+--------------------------------
+
+.. currentmodule:: lino.modlib.dsbe.models
+
+Das Modell :class:`Kursanbieter <lino.modlib.dsbe.models.CourseProvider>`) 
+war bisher einfach nur ein Alias für :class:`Company`, 
+dortselbst gab es ein Feld `is_courseprovider`
+und der Report :class:`CourseProviders` arbeitete 
+mit einem Filter 
+(genauer gesagt mit :attr:`lino.reports.Report.known_values`),
+um nur die Firmen anzuzeigen, die dieses Feld eingeschaltet haben.
+Das geht gut, solange ich keine weiteren Felder in `CourseProvider` 
+brauche.
+
+Das Gleiche könnte ich auch für Apotheken und Krankenkassen machen.
+
+Ich würde aber gerne auch für Personen Djangos `multi-table inheritance`
+ausnutzen: `contacts.Person` wäre dann nicht mehr abstrakt, und 
+die DSBE-Erweiterungen (das bisherige Modell :class:`Person`) 
+würde ich umbenennen nach `CoachedPerson`, 
+das von Person via `multi-table inheritance` erbt.
+
+Ich möchte das rein prinzipiell, weil es Ressourcenverschwendung ist,
+wenn z.B. für die Ansprechpartner von Firmen 
+(die ja ebenfalls Personen sind) 
+auch Angaben wie Id-Karte, Passbild usw. angeboten werden.
+
+Im Lino/DSBE ist das nicht sonderlich tragisch, aber 
+es ist auch ein intuitives Gefühl: 
+mit Lino sollte man MTI machen können, 
+und das hier ist ein Fall für MTI,
+und ich mach das lieber jetzt als in einem Jahr, 
+wenn der DSBE Lino tagtächlich benutzt.
+
+Deshalb habe ich das probeweise
+nun mit den Kursanbietern per MTI gelöst.
+`CourseProvider` ist jetzt eine Unterklasse von Firmen (Company).
+
+Das ging auch auf Anhieb erfreulich reibungslos.
+
+Mit einem **Haken**:
+Man kann bestehende Firmen nicht ohne weiteres 
+zu Kursanbietern machen und vice-versa 
+(Kursanbieter aus der Kursanbieterliste rausholen, 
+ohne die Firma zu löschen).
+
+Wie löse ich das?
+
+Das User-Interface mit dem Ankreuzfeld `is_courseprovider` 
+in der allgemeinen Firmenliste finde ich gut. 
+Ich wüsste kein besseres.
+Ich muss also ein virtuelles Feld `is_courseprovider` machen,
+das beim PUT einer Company speziell ausgewertet wird:
+- wenn es leer ist und ein CourseProvider besteht, diesen löschen
+- wenn es angekreuzt ist und keiner besteht, diesen erstellen
+
+In 
+:mod:`lino.test_apps.1.models` 
+und :mod:`lino.test_apps.2.models` 
+teste ich, wie das prinzipiell geht.
+
+Außerdem muss ich jetzt schreibbare virtuelle Felder implementieren. 
+Wenn man `is_courseprovider` verändert, muss dann
+:meth:`lino.test_apps.1.models.Company.set_is_courseprovider`
+ausgeführt werden.
+
+Und ich muss aufpassen, dass dieses virtuelle Feld nicht 
+zu einem zusätzlichen Datenbank-Query führt. 
+Das bedeutet hoffentlich einfach nur, dass 
+ich `courseprovider` (das automatisch von Django generierte OneToOneField) 
+mit ins select_related reinsetzen muss.

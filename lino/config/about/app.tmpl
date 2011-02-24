@@ -1,0 +1,18 @@
+#extends AboutBase
+#def title
+#if len($args) == 0
+Applications overview
+#else
+Application $href($args[0])
+#end if
+#end def
+#def body
+
+#if len($args) == 0
+#from lino.core.coretools import app_labels
+<h2>$len($app_labels()) apps</h2>
+#for $app in $app_labels()
+$href($app)
+#end for
+#end if
+#end def

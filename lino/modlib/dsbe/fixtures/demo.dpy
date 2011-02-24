@@ -267,9 +267,16 @@ def objects():
     
 
     from lino.modlib.dsbe.models import Course, CourseContent, CourseRequest
-    oikos = company(name=u"Oikos",city=eupen,country='BE',is_courseprovider=True)
+    
+    courseprovider = Instantiator('dsbe.CourseProvider').build
+    #~ oikos = company(name=u"Oikos",city=eupen,country='BE',
+      #~ is_courseprovider=True)
+    oikos = courseprovider(name=u"Oikos",city=eupen,country='BE')
     yield oikos
-    kap = company(name=u"KAP",city=eupen,country='BE',is_courseprovider=True)
+    
+    #~ kap = company(name=u"KAP",city=eupen,country='BE',
+      #~ is_courseprovider=True)
+    kap = courseprovider(name=u"KAP",city=eupen,country='BE')
     yield kap
     
     yield CourseContent(id=1,name=u"Deutsch")

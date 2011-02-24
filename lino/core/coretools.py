@@ -17,6 +17,7 @@ from django.db.models import loading
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from lino.core import actors
+from lino.utils import get_class_attr
 
 def app_labels():
     return [a.__name__.split('.')[-2] for a in loading.get_apps()]
@@ -42,14 +43,8 @@ def get_model_report(model):
     return model._lino_model_report
 
 def get_unbound_meth(cl,name):
-    meth = getattr(cl,name,None)
-    if meth is not None:
-        return meth
-    for b in cl.__bases__:
-        meth = getattr(b,name,None)
-        if meth is not None:
-            return meth
-            
+    raise Exception("replaced by lino.utils.get_class_attr")
+    
 def data_elems(model):
     """Yields names that can be used as column_names of a Report.
     """
@@ -71,8 +66,8 @@ def get_data_elem(model,name):
         pass
     rpt = get_slave(model,name)
     if rpt is not None: return rpt
-    m = get_unbound_meth(model,name)
-    if m is not None: return m
+    v = get_class_attr(model,name)
+    if v is not None: return v
     
     for vf in model._meta.virtual_fields:
         if vf.name == name:

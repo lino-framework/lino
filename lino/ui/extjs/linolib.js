@@ -399,13 +399,13 @@ Lino.on_submit_failure = function(form, action) {
     Lino.notify();
     switch (action.failureType) {
         case Ext.form.Action.CLIENT_INVALID:
-            Ext.Msg.alert('Failure', 'Form fields may not be submitted with invalid values');
+            Ext.Msg.alert('Client-side failure', 'Form fields may not be submitted with invalid values');
             break;
         case Ext.form.Action.CONNECT_FAILURE:
-            Ext.Msg.alert('Failure', 'Ajax communication failed');
+            Ext.Msg.alert('Connection failure', 'Ajax communication failed');
             break;
         case Ext.form.Action.SERVER_INVALID:
-            Ext.Msg.alert('Failure', action.result.message);
+            Ext.Msg.alert('Server-side failure', action.result.message);
    }
 };
 
@@ -480,14 +480,14 @@ Lino.action_handler = function (panel,on_success,gridmode) {
       var result = Ext.decode(response.responseText);
       //~ console.log('Lino.do_action()',action.name,'result is',result);
       if (on_success && result.success) on_success(result);
-      if (result.alert_msg) {
-        if (gridmode) {
-          Lino.notify(result.alert_msg);
-        } else {
-          Ext.MessageBox.alert('Alert',result.alert_msg);
-        }
-      };
-      if (result.message) Lino.notify(result.message);
+      if (result.message) {
+          if (result.alert && ! gridmode) {
+              //~ Ext.MessageBox.alert('Alert',result.alert_msg);
+              Ext.MessageBox.alert('Alert',result.message);
+          } else {
+              Lino.notify(result.message);
+          }
+      }
       if (result.refresh_all) {
           panel.ww.main_item.refresh();
       } else {
@@ -509,8 +509,17 @@ Lino.do_action = function(caller,action) {
       var result = Ext.decode(response.responseText);
       //~ console.log('Lino.do_action()',action.name,'result is',result);
       if (result.success && action.after_success) action.after_success(result);
-      if (result.alert_msg) Ext.MessageBox.alert('Alert',result.alert_msg);
-      if (result.message) Lino.notify(result.message);
+      if (result.message) {
+          if (result.alert) {
+              //~ Ext.MessageBox.alert('Alert',result.alert_msg);
+              Ext.MessageBox.alert('Alert',result.message);
+          } else {
+              Lino.notify(result.message);
+          }
+      }
+      
+      //~ if (result.alert_msg) Ext.MessageBox.alert('Alert',result.alert_msg);
+      //~ if (result.message) Lino.notify(result.message);
       if (result.notify_msg) Lino.notify(result.notify_msg);
       if (result.js_code) { 
         //~ console.log('Lino.do_action()',action,'gonna call js_code in',result);

@@ -432,8 +432,9 @@ class ReportHandle(base.Handle):
         #~ self.default_action = self.report.default_action(self)
         self._layouts = [ self.list_layout ] 
         if self.report.model is not None:
-            self._layouts += [ LayoutHandle(self,dtl) for dtl in self.report.model._lino_detail_layouts ]
-
+            self._layouts += [ LayoutHandle(self,dtl) 
+                for dtl in self.report.detail_layouts ]
+              
     def submit_elems(self):
         return []
         
@@ -480,11 +481,13 @@ class ReportHandle(base.Handle):
         #~ return ar
         
     def update_detail(self,tab,desc):
-        old_dtl = self.report.model._lino_detail_layouts[tab]
+        old_dtl = self.report.detail_layouts[tab]
+        #~ old_dtl = self.report.model._lino_detail_layouts[tab]
         #~ old_dtl._kw.update(desc=desc)
         #~ old_dtl._desc=desc
         dtl = DetailLayout(desc,old_dtl.cd,old_dtl.filename)
-        self.report.model._lino_detail_layouts[tab] = dtl
+        self.report.detail_layouts[tab] = dtl
+        #~ self.report.model._lino_detail_layouts[tab] = dtl
         self._layouts[tab+1] = LayoutHandle(self,dtl)
         self.ui.setup_handle(self)
         #~ self.report.save_config()
@@ -748,7 +751,6 @@ class Report(actors.Actor): #,base.Handled):
     can_view = perms.always
     can_add = perms.is_authenticated
     can_change = perms.is_authenticated
-    #~ can_delete = perms.is_authenticated
     can_config = perms.is_staff
     
     show_prev_next = True
@@ -809,14 +811,6 @@ class Report(actors.Actor): #,base.Handled):
     See also :doc:`/tickets/2`.
     """
     
-    disable_delete = None
-    """
-    Return either `None` if this `obj` *is allowed* to be deleted by `request`,
-    or a string with a message explaining why, if not.
-    
-    Same remarks as for :attr:`disabled_fields`.
-    """
-    
     handle_uploaded_files = None
     """
     Same remarks as for :attr:`disabled_fields`.
@@ -850,7 +844,7 @@ class Report(actors.Actor): #,base.Handled):
         
         if self.model is not None:
           
-            for name in ('disabled_fields','disable_delete','handle_uploaded_files'):
+            for name in ('disabled_fields','handle_uploaded_files'):
                 if getattr(self,name) is None:
                     m = getattr(self.model,name,None)
                     if m is not None:
@@ -942,6 +936,7 @@ class Report(actors.Actor): #,base.Handled):
             else:
                 self._slaves = []
                 
+        self.setup_detail_layouts()
         self.setup_actions()
         self.add_action(self.default_action)
                 
@@ -953,10 +948,17 @@ class Report(actors.Actor): #,base.Handled):
             if m:
                 m(self)
         
+    def disable_delete(self,obj,request):
+        """
+        Return either `None` if the given `obj` *is allowed* to be deleted by `request`,
+        or a string with a message explaining why, if not.        
+        """
+        return self.model._lino_ddh.disable_delete(obj,request)
+        
     def setup_actions(self):
         alist = []
         if self.model is not None:
-            if len(self.model._lino_detail_layouts) > 0:
+            if len(self.detail_layouts) > 0:
                 self.detail_action = ShowDetailAction(self)
                 alist.append(self.detail_action)
                 alist.append(SubmitDetail())
@@ -978,6 +980,27 @@ class Report(actors.Actor): #,base.Handled):
         return os.path.join(settings.DATA_DIR,filename)
         
       
+    def setup_detail_layouts(self):
+        """
+        Yield all detail tabs for this report.
+        Each detail tab corresponds to a :xfile:`.dtl` file).
+        Detail tabs of inherited models come *first*.
+        Example: CouseProvider(Company) will yield first all 
+        tabs found for Company, then those for CourseProvider.
+        """
+        self.detail_layouts = []
+        if self.model is None:
+            return
+        for b in self.model.__bases__:
+            if issubclass(b,models.Model) and b is not models.Model:
+                #~ print 20110221, b, "is base of", self.model
+                for dtl in getattr(b,'_lino_detail_layouts',[]):
+                #~ for dtl in b._lino_detail_layouts:
+                    #~ print '20110221b'
+                    self.detail_layouts.append(dtl)
+        for dtl in self.model._lino_detail_layouts:
+            self.detail_layouts.append(dtl)
+
         
             
         

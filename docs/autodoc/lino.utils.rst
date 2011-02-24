@@ -111,10 +111,10 @@ The :mod:`simulate_remote` Module
     :undoc-members:
     :show-inheritance:
 
-The :mod:`ticket7623` Module
-----------------------------
+The :mod:`mti` Module
+---------------------
 
-.. automodule:: lino.utils.ticket7623
+.. automodule:: lino.utils.mti
     :members:
     :undoc-members:
     :show-inheritance:

@@ -52,8 +52,14 @@ for app in settings.INSTALLED_APPS:
     dirname = os.path.join(os.path.dirname(mod.__file__), 'config')
     if os.path.isdir(dirname):
         config_dirs.append(ConfigDir(dirname.decode(fs_encoding),False))
-LOCAL_CONFIG_DIR = ConfigDir(os.path.join(settings.PROJECT_DIR,'config'),True)
-config_dirs.append(LOCAL_CONFIG_DIR)
+
+dirname = os.path.join(settings.PROJECT_DIR,'config')
+if os.path.isdir(dirname):
+    LOCAL_CONFIG_DIR = ConfigDir(dirname,True)
+    config_dirs.append(LOCAL_CONFIG_DIR)
+else:
+    LOCAL_CONFIG_DIR = None
+
 config_dirs = tuple(config_dirs)
 
 
@@ -131,6 +137,8 @@ class Configured(object):
     def save_config(self):
         if not self.filename:
             return 'Cannot save unnamed %s' % self
+        if self.cd is None:
+            return "Cannot save because there is no LOCAL_CONFIG_DIR"
             
         if not self.cd.can_write:
             #~ print self.cd, "is not writable", self.filename
@@ -148,7 +156,7 @@ class Configured(object):
         
     def __str__(self):
         if self.filename:
-            return u"%s (from %s)" % (self.filename,self.cd.name)
+            return u"%s (from %s)" % (self.filename,self.cd)
         return "Dynamic " + super(Configured,self).__str__()
         # "%s(%r)" % (self.__class__.__name__,self._desc)
         

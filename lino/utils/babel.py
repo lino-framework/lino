@@ -126,19 +126,26 @@ def dtosl(d):
     if d is None: return ''
     return d.strftime(LONG_DATE_FMT[LANG])
     
+from django.utils import translation    
+    
 def setlang(lang):
     global LANG
     LANG = lang
-    if False:
-        """
-        setlocale() is not thread-safe on most systems.
-        At least for babel it is not necessary. 
-        """
-        if lang is None:
-            locale.setlocale(locale.LC_ALL,'')
-        else:
-            country = settings.LANGUAGE_CODE[3:]
-            locale.setlocale(locale.LC_ALL,lc2locale(lang,country))
+    """
+    Setting the locale is necessary in order to have :func:`dtosl` 
+    return month names in the correct language.
+    
+    Note that :func:`locale.setlocale` is not thread-safe on most systems.
+    http://www.velocityreviews.com/forums/t348372-setlocale-in-a-module-extension-library.html
+    http://www.velocityreviews.com/forums/t332047-setlocale-returns-error.html
+    """
+    if lang is None:
+        #~ locale.setlocale(locale.LC_ALL,'')
+        translation.deactivate()
+    else:
+        translation.activate(lang)
+        #~ country = settings.LANGUAGE_CODE[3:]
+        #~ locale.setlocale(locale.LC_ALL,lc2locale(lang,country))
     
         #~ save_ls = locale.getlocale()
         #~ ls = lc2locale(lang,country)

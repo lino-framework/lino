@@ -200,7 +200,7 @@ TEMPLATE_DIRS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = 'cqt^18t(Fb#14a@s%mbtdif+ih8fscpf8l9aw+0ivo2!3c(c%&'
+#~ SECRET_KEY = 'cqt^18t(Fb#14a@s%mbtdif+ih8fscpf8l9aw+0ivo2!3c(c%&'
 
 
 #~ __all__ = [x for x in dir() if x[0].isupper()]

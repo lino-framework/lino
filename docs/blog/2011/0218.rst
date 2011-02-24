@@ -15,8 +15,8 @@ Stattdessen markiere ich sie jetzt als abgeschlossen,
 indem ich ein `[closed]` im Titel hinzufüge.
 
 Außerdem habe ich einen Trick gefunden, um die Liste korrekt sortiert zu haben.
-In meiner Freude darüber habe ich das gleich den 
-`sphinx-developer <http://groups.google.com/group/sphinx-dev/browse_thread/thread/5873815242fdc506>`
+In meiner Freude darüber habe ich das gleich auf
+`sphinx-developer <http://groups.google.com/group/sphinx-dev/browse_thread/thread/5873815242fdc506>`_
 erzählt.
 
 22.30 Uhr : 

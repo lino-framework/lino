@@ -28,9 +28,10 @@ logger = logging.getLogger(__name__)
 from django.db import models
 from lino.utils.instantiator import make_converter
 #~ from lino import reports
-from lino.core.coretools import get_data_elem, get_unbound_meth
+from lino.core.coretools import get_data_elem # , get_unbound_meth
 import lino
 #~ from lino import fields
+from lino.utils import get_class_attr
 
 class BaseChooser:
     pass
@@ -124,7 +125,7 @@ def discover():
         #~ n = 0
         for field in model._meta.fields:
             methname = field.name + "_choices"
-            m = get_unbound_meth(model,methname)
+            m = get_class_attr(model,methname)
             if m is not None:
                 #~ n += 1
                 ch = Chooser(model,field,m)

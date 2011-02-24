@@ -1142,6 +1142,9 @@ class MainPanel(jsgen.Variable):
                 return ComplexRemoteComboFieldElement(lh,field,**kw)
         if field.choices:
             return ChoicesFieldElement(lh,field,**kw)
+            
+        if isinstance(field,fields.VirtualField):
+            field = field.return_type
         for cl,x in _field2elem:
             if isinstance(field,cl):
                 return x(lh,field,**kw)

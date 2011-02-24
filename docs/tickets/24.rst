@@ -1,0 +1,75 @@
+#24 [closed] : Cheetah not telling me what's wrong
+==================================================
+
+Problem
+-------
+
+I'm trying to use Cheetah to generate a "Django database inspector" 
+page, a detailed overview of the models used in this Django site.
+
+Here is the content of `about.html.tmpl`::
+
+  #errorCatcher ErrorCatcher  
+  <html>
+  <head>
+  <title>Django inspector</title>
+  </head>
+  <body>
+  <h1>$len(models.get_models())</h1>
+  <ol>
+  #for $m in $models.get_models()
+  <li>$m</li>
+  #end for
+  </ol>
+  </body>
+  </html>
+
+The template is very simple, but it contains a mistake.
+Here are the error messages::
+
+  [<class 'django.contrib.contenttypes.models.ContentType'>,...]
+  INFO Generating about.html from about.html.tmpl
+  Traceback (most recent call last):   
+    ...
+    File "c:\Python27\lib\site-packages\Cheetah\Template.py", line 1010, in __unicode__
+      return getattr(self, mainMethName)()
+    File "cheetah_DynamicallyCompiledCheetahTemplate_1298467559_39_23236.py", line 119, in respond
+    File "cheetah_DynamicallyCompiledCheetahTemplate_1298467559_39_23236.py", line 77, in __errorCatcher2
+    File "<string>", line 1, in <module>
+  NameError: name 'models' is not defined
+  
+  
+Here is the calling code (simplified excerpt from 
+:func:`lino.core.kernel.write_about`)::
+
+    from django.db import models
+    from Cheetah.Template import Template as CheetahTemplate
+
+    print [m for m in models.get_models()]
+    fn = find_config_file('about.html.tmpl')
+    logger.info("Generating about.html from %s",fn)
+    tpl = CheetahTemplate(file(fn).read(),namespaces=[locals(),globals()])
+    file('tmp.html','w').write(unicode(tpl).encode('utf-8'))
+  
+Questions:  
+  
+- what am i doing wrong? 
+- how can I get Cheetah to give me more information when such errors happen?
+
+  
+Solution
+--------
+
+- There was a ``$`` sign missing in the ``<h1>`` tag.
+
+  Wrong::
+
+    <h1>$len(models.get_models())</h1>
+    
+  Correct::
+  
+    <h1>$len($models.get_models())</h1>
+
+- How can I get Cheetah to give me more information when such errors happen?
+  For example by using precompiled templates.
+

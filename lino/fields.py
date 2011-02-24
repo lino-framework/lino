@@ -163,3 +163,54 @@ class HtmlBox(DisplayField):
     
 #~ class QuickAction(DisplayField):
     #~ pass
+    
+#~ from django.db.models.fields import Field
+
+class VirtualField: # (Field):
+    editable = False
+    
+    def __init__(self,return_type,get):
+        self.return_type = return_type # a Django Field instance
+        self.get = get
+        #~ self.set = set
+        #~ self.name = None
+        #~ Field.__init__(self)
+        for k in ('to_python choices save_form_data value_to_string'.split()):
+        #~ for k in ('get_internal_type','to_python'):
+            setattr(self,k,getattr(return_type,k))
+            
+    def set_value_in_object(self,obj,value,request=None):
+        """
+        Stores the specified `value` in the specified model instance `obj`.
+        
+        Note that any implementation must also return `obj`,
+        and callers must be ready to get another instance.
+        This special behaviour is needed to implement 
+        :class:`lino.utils.mti.EnableChild`.
+        """
+        raise NotImplementedError
+        
+    def lino_kernel_setup(self,model,name):
+        self.model = model
+        self.name = name
+        self.return_type.name = name
+        self.return_type.attname = name
+        
+    #~ def contribute_to_class(self, cls, name):
+        #~ "Called from lino.core.kernel.setup"
+        #~ self.name = name
+        #~ self.model = cls
+        
+    #~ def get_db_prep_save(self, value, connection):
+        #~ raise NotImplementedError
+    #~ def pre_save(self, model_instance, add):
+        #~ raise NotImplementedError
+        
+    def value_from_object(self,request,obj):
+        m = self.get
+        #~ assert m.func_code.co_argcount == 2, (self.name, m.func_code.co_varnames)
+        #~ print self.field.name
+        return m(obj,request)
+        
+    
+    

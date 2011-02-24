@@ -1,0 +1,19 @@
+Index: django/db/models/fields/__init__.py
+===================================================================
+--- django/db/models/fields/__init__.py (revision 14995)
++++ django/db/models/fields/__init__.py (working copy)
+@@ -504,12 +504,12 @@
+
+     def to_python(self, value):
+         if value in (True, False):
+-            # if value is 1 or 0 than it's equal to True or False, but we want
++            # if value is 1 or 0 then it's equal to True or False, but we want
+             # to return a true bool for semantic reasons.
+             return bool(value)
+-        if value in ('t', 'True', '1'):
++        if value in ('t', 'True', '1', 'on'):
+             return True
+-        if value in ('f', 'False', '0'):
++        if value in ('f', 'False', '0', 'off'):
+             return False
+         raise exceptions.ValidationError(self.error_messages['invalid'])

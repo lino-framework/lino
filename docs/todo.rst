@@ -5,38 +5,40 @@ This document is partly in German because it is rather for internal use.
 See also :doc:`/tickets/index` which is a list of tickets 
 for which I hope for help from other people.
 
-recently fixed (to be confirmed)
---------------------------------
-
-#.  Grid Ausbildung etc. sind zur Zeit chronologisch sortiert. Das ist
-    auch gut so, aber bei der Eingabe extrem störend. Hmm, wie könnten wir
-    das lösen?
-
-#.  Grid Berufserfahrungen: Anzeige erst wenn Bezeichnung auch
-    eingegeben: verwirrend
-
-#.  Wie kann die Wertigkeit einer Sprache im Template des Lebenslaufs
-    interpretiert werden?
-
-
 
 Short-term
 ----------
 
+#.  MTI-Support : in lino.dsbe für "normale" Personen nur die 
+    Standard-Kontaktangaben speichern, und die DSBE-spezifischen Felder 
+    in einer eigenen Tabelle. 
+    Virtuelles Ankreuzfeld, um eine Person zu einer CoachedPerson zu konvertieren und umgekehrt.
+    In einem kriegen wir dadurch auch schreibbare virtuelle Felder.
+    :doc:`/tickets/22` und :doc:`/tickets/23`.
+
+#.  `dtosl` funktioniert momentan nicht. Die funktionierte nur, 
+    als babel.setlang() auch locale.setlocale setzte.
+    Damit gab es aber Probleme (entweder weil setlocale nicht 
+    threadsafe ist, oder weil meine babel.lc2locale() in vielen 
+    Konfigurationen nicht funktioniert).
+    Auch benutzerspezifizierte Datumsformatierungen wie 
+    "row.started.strftime('%B %Y')" kommen in Englisch statt in der Sprache des Dokuments. 
+    Stattdessen sollte ich wahrscheinlich 
+    :func:`django.template.defaultfilters.date`
+    nutzen und mich auf 
+    `Djangos Formatsyntax <http://docs.djangoproject.com/en/dev/ref/templates/builtins/#date>`_
+    verlassen.
+
 #.  Übersetzung PropertyType : nicht Eigenschaftsart, sondern 
     Eigenschaftstyp oder Eigenschafts-Datentyp...
     
-#.  Wie kann man in der Dokumentvorlage cv.odt 
+#.  Wie kann man in der Dokumentvorlage `cv.odt`
     an Führerschein und Informatikkenntnisse rankommen?
 
 #.  Wenn man in einer Grid das Detail eines Records aufruft, 
     dann erscheint kein "Bitte warten" bis das Fenster erscheint.
     Und bei Personen dauert das mehrere Sekunden.
     :doc:`/tickets/21`.
-
-
-#.  Zur Zeit scheint es so, dass das Auskunftsblatt eher 
-    überflüssig wird.
 
 #.  Wenn im Vollbildmodus einer Person nur Änderungen in einer Grid
     gemacht wurden und dann auf "Speichern" geklickt wird, kommt die
@@ -549,6 +551,10 @@ Long-term
 #.  Chrome 10 hat scheinbar ein Problem mit ExtJS:
     http://www.google.com/support/forum/p/Chrome/thread?tid=5d3cce9457a1ebb1&hl=en    
     
+#.  :doc:`/tickets/25`
+
+#.  :doc:`/tickets/26`
+
 Documentation
 -------------
 

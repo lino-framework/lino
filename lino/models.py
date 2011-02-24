@@ -35,11 +35,12 @@ from lino.utils import perms
 #~ from lino import choices_method, simple_choices_method
 
 class SiteConfig(models.Model):
-    site_company = models.ForeignKey('contacts.Company',blank=True,null=True,
-        verbose_name=_("The company that runs this site"))
-    next_partner_id = models.IntegerField(
-        default=1,
-        verbose_name=_("The next automatic id for Person or Company"))
+    # moved to contacts.models:
+    #~ site_company = models.ForeignKey('contacts.Company',blank=True,null=True,
+        #~ verbose_name=_("The company that runs this site"))
+    #~ next_partner_id = models.IntegerField(
+        #~ default=1,
+        #~ verbose_name=_("The next automatic id for Person or Company"))
         
     default_build_method = models.CharField(max_length=20,
       verbose_name=_("Default build method"),

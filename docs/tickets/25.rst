@@ -1,0 +1,9 @@
+#25 : `makedoc` command
+=======================
+
+Idea: a Django management command that creates a series 
+of .rst files in a local directory, called the "site docs".
+
+This will be useful for 
+- debugging (e.g. it shows the content of each model's `_lino_ddh`)
+- reference documentation for the local site manager and end-users

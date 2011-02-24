@@ -50,6 +50,7 @@ from lino.tools import get_field
 from lino.tools import resolve_field
 from lino.utils.babel import add_babel_field, DEFAULT_LANGUAGE, babelattr, babeldict_getitem
 from lino.utils.choosers import chooser
+from lino.utils import mti
 from lino.mixins.printable import DirectPrintAction
 from lino.mixins.reminder import ReminderEntry
 
@@ -461,7 +462,10 @@ class Person(Partner,contacts.Person):
 
     @classmethod
     def setup_report(model,rpt):
+        u"""
         rpt.add_action(DirectPrintAction('auskblatt',_("Auskunftsblatt"),'persons/auskunftsblatt.odt'))
+        Zur Zeit scheint es so, dass das Auskunftsblatt eher überflüssig wird.
+        """
         rpt.add_action(DirectPrintAction('eid',_("eID-Inhalt"),'persons/eid-content.odt'))
         rpt.add_action(DirectPrintAction('cv',_("Curiculum vitae"),'persons/cv.odt'))
         
@@ -652,7 +656,8 @@ class Company(Partner,contacts.Company):
     #~ type = models.ForeignKey('contacts.CompanyType',blank=True,null=True,verbose_name=_("Company type"))
     prefix = models.CharField(max_length=200,blank=True) 
     hourly_rate = fields.PriceField(_("hourly rate"),blank=True,null=True)
-    is_courseprovider = models.BooleanField(_("Course provider")) 
+    #~ is_courseprovider = models.BooleanField(_("Course provider")) 
+    is_courseprovider = mti.EnableChild('dsbe.CourseProvider',verbose_name=_("Course provider"))
     
     def disabled_fields(self,request):
         if settings.TIM2LINO_IS_IMPORTED_PARTNER(self):
@@ -1383,16 +1388,16 @@ class LinksByCompany(links.LinksByOwnerBase):
 
 
 #~ class CourseProvider(models.Model):
-#~ class CourseProvider(Company):
-    #~ """Kursanbieter (KAP, Oikos, Lupe, ...) 
-    #~ """
-    #~ class Meta:
-        #~ app_label = 'dsbe'
+class CourseProvider(Company):
+    """Kursanbieter (KAP, Oikos, Lupe, ...) 
+    """
+    class Meta:
+        app_label = 'dsbe'
     #~ name = models.CharField(max_length=200,
           #~ verbose_name=_("Name"))
     #~ company = models.ForeignKey("contacts.Company",blank=True,null=True,verbose_name=_("Company"))
     
-CourseProvider = Company
+#~ CourseProvider = Company
 
 class CourseProviders(Companies):
     """
@@ -1402,7 +1407,7 @@ class CourseProviders(Companies):
     #~ app_label = 'dsbe'
     label = _("Course providers")
     model = CourseProvider
-    known_values = dict(is_courseprovider=True)
+    #~ known_values = dict(is_courseprovider=True)
     #~ filter = dict(is_courseprovider__exact=True)
     
     #~ def create_instance(self,req,**kw):
@@ -1815,15 +1820,15 @@ CompanyType.add_to_class('contract_type',
 Same for SiteConfig
 """
 from lino.models import SiteConfig
-SiteConfig.add_to_class('job_office',
-    models.ForeignKey("contacts.Company",
+field = models.ForeignKey("contacts.Company",
         blank=True,null=True,
         verbose_name=_("Local job office"),
         related_name='job_office_sites',
-        ))
-resolve_field('lino.SiteConfig.job_office').__doc__ = """
+        )
+field.__doc__ = """
 The Company whose contact persons will be choices for `Person.job_office_contact`.
 """
+SiteConfig.add_to_class('job_office',field)
 
 
 """

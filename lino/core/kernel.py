@@ -49,16 +49,25 @@ from lino.utils import dblogger
 #~ from lino.utils import babel
 from lino.utils import menus
 from lino.core import actors
-from lino.core.coretools import app_labels, data_elems, get_unbound_meth
+from lino.core.coretools import app_labels, data_elems # , get_unbound_meth
+from lino.utils import get_class_attr
 
 from lino.tools import resolve_model, resolve_field, get_app, model_label, get_field
-from lino.utils.config import load_config_files
+from lino.utils.config import load_config_files, find_config_file
 from lino.reports import DetailLayout
 from lino.utils import choosers
-
+from lino import fields
 from lino.models import get_site_config
 
 def analyze_models():
+    """
+    This is a part of a Lino site setup.
+    The Django Model definitions are done, now Lino analyzes them and does certain actions.
+    
+    - Load .dtl files and install them into `_lino_detail_layouts`
+    - Install a DisableDeleteHandler for each Model into  `_lino_ddh`
+    
+    """
     
     ## The following causes django.db.models.loading.cache to 
     ## be populated. This must be done before calling actors.discover() 
@@ -67,7 +76,7 @@ def analyze_models():
     models_list = models.get_models() # trigger django.db.models.loading.cache._populate()
 
     #~ if settings.MODEL_DEBUG:
-    if True:
+    if False:
         apps = app_labels()
         logger.debug("%d applications: %s.", len(apps),", ".join(apps))
         logger.debug("%d MODELS:",len(models_list))
@@ -79,10 +88,14 @@ def analyze_models():
         logger.info("Analyzing Models...")
         
 
-    ddhdict = {}
+    #~ ddhdict = {}
+    for model in models.get_models():
+        model._lino_ddh = DisableDeleteHandler(model)
+        
     for model in models.get_models():
     
         model._lino_detail_layouts = []
+        model._lino_ddh = DisableDeleteHandler(model)
             
         def loader(content,cd,filename):
             dtl = DetailLayout(content,filename,cd)
@@ -90,7 +103,8 @@ def analyze_models():
             
         load_config_files('%s.%s.*dtl' % (model._meta.app_label,model.__name__),loader)
             
-        if get_unbound_meth(model,'summary_row') is None:
+        #~ if get_unbound_meth(model,'summary_row') is None:
+        if get_class_attr(model,'summary_row') is None:
         #~ if not hasattr(model,'summary_row'):
             if len(model._lino_detail_layouts):
                 def f(obj,ui,rr,**kw):
@@ -104,21 +118,29 @@ def analyze_models():
             model.summary_row = f
             #~ print '20101111 installed summary_row for ', model
         
-            
+        #~ virts = []
+        for k,v in model.__dict__.items():
+            if isinstance(v,fields.VirtualField):
+                v.lino_kernel_setup(model,k)
+                #~ virts.append(v)
+        #~ model._lino_virtual_fields = virts
             
         for f, m in model._meta.get_fields_with_model():
             if isinstance(f,models.ForeignKey):
                 #~ print 20101104, model,f.rel.to
-                if not ddhdict.has_key(f.rel.to):
-                    assert issubclass(f.rel.to,models.Model), "%s.%s is %r (not a Model instance)" % (model,f.name,f.rel.to)
-                    ddhdict[f.rel.to] = DisableDeleteHandler(model)
-                ddhdict[f.rel.to].add_fk(model,f)
+                #~ if not ddhdict.has_key(f.rel.to):
+                    #~ assert issubclass(f.rel.to,models.Model), "%s.%s is %r (not a Model instance)" % (model,f.name,f.rel.to)
+                    #~ ddhdict[f.rel.to] = DisableDeleteHandler(model)
+                #~ ddhdict[f.rel.to].add_fk(model,f)
+                f.rel.to._lino_ddh.add_fk(model,f)
                 
-    for model,ddh in ddhdict.items():
-        if not hasattr(model,'disable_delete'):
-            logger.debug("install %s.disable_delete(%s)",
-              model.__name__,ddh)
-            model.disable_delete = ddh.handler()
+    #~ for model,ddh in ddhdict.items():
+        #~ logger.debug("install %s.disable_delete_handler(%s)",
+          #~ model.__name__,ddh)
+        #~ model.disable_delete_handler = ddh
+        
+from Cheetah.Template import Template as CheetahTemplate
+
 
 class DisableDeleteHandler():
     def __init__(self,model):
@@ -131,23 +153,25 @@ class DisableDeleteHandler():
     def __str__(self):
         return ','.join([m.__name__+'.'+fk.name for m,fk in self.fklist])
         
-    def handler(self):
-        def disable_delete(obj,request):
-            #~ print 20101104, "called %s.disable_delete(%s)" % (obj,self)
-            
-            for m,fk in self.fklist:
-                kw = {}
-                kw[fk.name] = obj
-                n = m.objects.filter(**kw).count()
-                if n:
-                    msg = _("Cannot delete %(self)s because %(count)d %(refs)s refer to it.") % dict(
-                      self=obj,count=n,
-                      refs=m._meta.verbose_name_plural or m._meta.verbose_name+'s')
-                    #~ print msg
-                    return msg
-            return None
+    def disable_delete(self,obj,request):
+        #~ print 20101104, "called %s.disable_delete(%s)" % (obj,self)
+        h = getattr(self.model,'disable_delete',None)
+        if h is not None:
+            msg = h(obj,request)
+            if msg is not None:
+                return msg
+        for m,fk in self.fklist:
+            kw = {}
+            kw[fk.name] = obj
+            n = m.objects.filter(**kw).count()
+            if n:
+                msg = _("Cannot delete %(self)s because %(count)d %(refs)s refer to it.") % dict(
+                  self=obj,count=n,
+                  refs=m._meta.verbose_name_plural or m._meta.verbose_name+'s')
+                #~ print msg
+                return msg
+        return None
         
-        return disable_delete
 
 def setup_site(self):
   

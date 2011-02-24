@@ -1,0 +1,101 @@
+20110224
+========
+
+Viele Ideen
+-----------
+
+Ich musste mal all meine Ideen sortieren und aufschreiben.
+:doc:`/tickets/22`
+und :doc:`/tickets/23` sind die eigentlich dringenden Tickets, 
+weil für die Demo am kommenden Freitag nützlich sein werden.
+
+:doc:`/tickets/24` kann ich bis auf weiteres abschließen und durch
+:doc:`/tickets/25` ersetzen, denn die site docs sollten einen 
+Produktionsserver nicht bei jedem Request belasten. 
+Auch nicht bei jedem Server-Restart, sondern ein management command reicht.
+Und wenn sie schon statisch generiert werden, dann ist es am effizientesten, 
+Sphinx dazu zu benutzen.
+Und :doc:`/tickets/26` (der Auslöser von #24 und #25) ist eigentlich eher belanglos.
+
+Beim Generieren der Doku hatte ich folgendes Problem::
+
+  T:\hgwork\lino\docs>python
+  Python 2.7.1 (r271:86832, Nov 27 2010, 18:30:46) [MSC v.1500 32 bit (Intel)] on win32
+  Type "help", "copyright", "credits" or "license" for more information.
+  >>> from lino.modlib.contacts import models
+  Traceback (most recent call last):
+    File "<stdin>", line 1, in <module>
+    File "t:\hgwork\lino\lino\modlib\contacts\models.py", line 214, in <module>
+      """
+    File "t:\hgwork\lino\lino\tools.py", line 70, in resolve_field
+      fld, remote_model, direct, m2m = model._meta.get_field_by_name(l[1])
+    File "l:\snapshots\django\django\db\models\options.py", line 297, in get_field_by_name
+      cache = self.init_name_map()
+    File "l:\snapshots\django\django\db\models\options.py", line 327, in init_name_map
+      for f, model in self.get_all_related_m2m_objects_with_model():
+    File "l:\snapshots\django\django\db\models\options.py", line 404, in get_all_related_m2m_objects_with_model
+      cache = self._fill_related_many_to_many_cache()
+    File "l:\snapshots\django\django\db\models\options.py", line 418, in _fill_related_many_to_many_cache
+      for klass in get_models():
+    File "l:\snapshots\django\django\db\models\loading.py", line 167, in get_models
+      self._populate()
+    File "l:\snapshots\django\django\db\models\loading.py", line 64, in _populate
+      self.load_app(app_name)
+    File "l:\snapshots\django\django\db\models\loading.py", line 78, in load_app
+      models = import_module('.models', app_name)
+    File "l:\snapshots\django\django\utils\importlib.py", line 35, in import_module
+      __import__(name)
+    File "t:\hgwork\lino\lino\modlib\properties\models.py", line 49, in <module>
+      from lino.modlib.contacts import models as contacts
+  ImportError: cannot import name models
+  
+Erklärung: 
+
+  :mod:`lino.modlib.contacts.models` verließ sich darauf, dass 
+  :mod:`lino.models`
+  schon von Django entdeckt worden war (discover).
+  Wenn autodoc ein einzelnes models-Modul importierte, 
+  funktionierte `resolve_field` nicht, weil die Ladereihenfolge 
+  dann "anormal" war. 
+  
+Metamorphosen
+-------------
+
+Weiter mit den eigentlich dringenden Tickets
+:doc:`/tickets/22`
+und :doc:`/tickets/23`.
+Also im Modul :mod:`lino.utils.mti` und :mod:`lino.test_apps.1.models`
+
+
+Erstens machte ich bisher in :class:`lino.ui.extjs.ext_store.BooleanStoreField` 
+folgendes::
+
+    def parse_form_value(self,v):
+        if v in ('true','on'):
+            return True
+        if v in ('false','off'):
+            return False
+        raise Exception("Got invalid form value %r for %s" % (v,self.field.name))
+        
+Das kommt m.E. daher, dass :extjs:`Ext.form.Checkbox` immer den String ``on``  
+bzw. ``off`` verwendet, um den Wert einer Checkbox zu submitten. Und 
+Django 
+:meth:`django.db.models.fields.BooleanField.to_python`
+erkennt nur `('t', 'True', '1')` bzw. `('f', 'False', '0')` 
+als gültige Werte an.
+Da ist aus meiner Sicht die beste Lösung, Django zu patchen mit 
+einem Patch: :srcref:`/patches(extjs_checkboxes.diff`
+
+Zweitens müssen die diversen Varianten von form2obj nun beachten, 
+dass unser neues virtuelles Feld `is_courseprovider` die model instance 
+möglicherweise durch eine neue ersetzt.
+:meth:`lino.ui.extjs.ext_store.Store.form2obj`
+:meth:`lino.ui.extjs.ext_store.StoreField.form2obj`
+:meth:`lino.ui.extjs.ext_ui.ExtUI.form2obj_and_save`
+
+Drittens funktioniert bisher lediglich die Übernahme der 
+`target_class._meta.many_to_many`.
+Aber alle anderen related objects sind da noch nicht bei.
+Das wird noch lustig.
+Die werden ja auch nicht unbedingt automatisch gelöscht, 
+(z.B. wenn on_delete=SET_NULL ist...).

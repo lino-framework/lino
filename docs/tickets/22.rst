@@ -1,0 +1,8 @@
+#22 : How to implement metamorphism
+===================================
+
+On a site that uses Django's MTI, Lino should provide a 
+way to "metamorphose" existing data records into a 
+more specialized child model, or back into a less 
+specialized parent model.
+

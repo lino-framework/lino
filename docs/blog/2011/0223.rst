@@ -1,0 +1,36 @@
+20110223
+========
+
+Ich bin noch immer mit dem MTI-Support dran.
+Wohlgemerkt: MTI ist durchaus möglich mit Lino.
+Das kleine Detail, mit dem ich mir diese Woche so viel Arbeit mache,
+ist eine Möglichkeit, 
+dass der Benutzer eine bestehende Person (:class:`Person`) zu 
+einer "begleiteten Person" (:class:`CoachedPerson`) *konvertieren* kann, 
+ohne alle Angaben neu eingeben zu müssen.
+
+Zwischendurch ein Bug: 
+Lino erlaubte es, eine Firma zu löschen, obwohl sie Kontaktpersonen hat.
+Das sollte doch eigentlich verboten sein?!
+Erklärung: 
+Weil :class:`lino.dsbe.models.Partner` eine eigene Methode `disable_delete`
+definiert hat, wurde der Standard-Algoritmus dort momentan nicht ausgeführt.
+
+Lösung: 
+Anpassungen im :class:`lino.core.kernel.DisableDeleteHandler`
+
+Aber ein Bug ist noch drin:
+:doc:`/tickets/26`
+
+Um den zu finden, habe ich begonnen, site docs zu generieren.
+Unter Verwendung von Cheetah
+(sh. u. a. :doc:`/tickets/24`).
+Zunächst statisch beim Server-Startup, dann dynamisch 
+mit :meth:`lino.ui.ext_ui.ExtUI.about_view`.
+Aber wenn ich Cheetahs template inheriting nutzen will, 
+muss ich scheinbar kompilierte Templates machen.
+Dazu wäre ein eigenes Package `lino.tmpl` nötig.
+Hmm...
+
+
+

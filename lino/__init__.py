@@ -21,7 +21,7 @@ import sys
 import datetime
 import logging
 
-__version__ = "1.1.4"
+__version__ = "1.1.5"
 """
 Lino version number. 
 The latest documented release is :doc:`/releases/20110218`.
@@ -214,7 +214,7 @@ class LinoSite(object):
         #~ self.config = get_site_config()
         
     def setup_main_menu(self):
-        raise NotImplementedError
+        pass
           
     def init_site_config(self,sc):
         #~ self.config = sc

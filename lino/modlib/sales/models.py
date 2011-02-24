@@ -36,7 +36,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 
 
-#from lino.utils.ticket7623 import child_from_parent
+#from lino.utils.mti import child_from_parent
 
 from lino import fields
         

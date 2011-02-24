@@ -1,6 +1,8 @@
 #21 : LoadMask for Detail windows
 =================================
 
+(This ticket is being discussed at
+http://www.sencha.com/forum/showthread.php?124503)
 
 When I doubleclick a  row in a Grid, Lino opens a Detail window for this row.
 The problem is that I didn't yet find a way to display a loadMask while 

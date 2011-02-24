@@ -1,0 +1,4 @@
+#26 : Lino erlaubt es, den job_agent zu löschen
+===============================================
+
+Mit dem DisableDeleteHandler stimmt irgendwas noch nicht.

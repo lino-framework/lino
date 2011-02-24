@@ -134,7 +134,9 @@ def error_response(e,message_prefix='',**kw):
     kw.update(success=False)
     if hasattr(e, 'message_dict'):
         kw.update(errors=e.message_dict)
-    kw.update(alert_msg=cgi.escape(message_prefix+unicode(e)))
+    #~ kw.update(alert_msg=cgi.escape(message_prefix+unicode(e)))
+    kw.update(alert=True)
+    kw.update(message=cgi.escape(message_prefix+unicode(e)))
     #~ kw.update(message=message_prefix+unicode(e))
     return json_response(kw)
     
@@ -164,8 +166,8 @@ def elem2rec_detailed(ar,rh,elem,**rec):
     rec = elem2rec1(ar,rh,elem,**rec)
     rec.update(id=elem.pk)
     rec.update(title=unicode(elem))
-    if rh.report.disable_delete:
-        rec.update(disable_delete=rh.report.disable_delete(ar.request,elem))
+    #~ if rh.report.disable_delete:
+    rec.update(disable_delete=rh.report.disable_delete(elem,ar.request))
     if rh.report.show_prev_next:
         first = None
         prev = None
@@ -321,6 +323,10 @@ class ExtUI(base.UI):
                 lh.add_store_field(field)
                 e = ext_elems.HtmlBoxElement(lh,field,**kw)
                 return e
+                
+        if isinstance(de,fields.VirtualField):
+            return self.create_vurt_element(lh,name,de,**kw)
+            
         if callable(de):
             rt = getattr(de,'return_type',None)
             if rt is not None:
@@ -354,6 +360,10 @@ class ExtUI(base.UI):
         return '<a href="%s" target="_blank">%s</a>' % (self.get_detail_url(obj,fmt='detail'),unicode(obj))
 
 
+    def create_vurt_element(self,lh,name,vf,**kw):
+        #~ assert vf.get.func_code.co_argcount == 2, (name, vf.get.func_code.co_varnames)
+        return self.create_field_element(lh,vf,**kw)
+        
     def create_meth_element(self,lh,name,meth,rt,**kw):
         rt.name = name
         rt._return_type_for_method = meth
@@ -443,6 +453,7 @@ class ExtUI(base.UI):
         urlpatterns += patterns('',
             (r'^$', self.index_view),
             (r'^menu$', self.menu_view),
+            (r'^about', self.about_view),
             #~ (r'^list/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.list_report_view),
             (r'^grid_action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<grid_action>\w+)$', self.json_report_view),
             #~ (r'^grid_afteredit/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.grid_afteredit_view),
@@ -488,6 +499,57 @@ class ExtUI(base.UI):
         #~ )
         
         return urlpatterns
+        
+    def about_view(self,request):
+        #~ fd = codecs.open('meta.rst','w',encoding='UTF-8')
+        name = request.path
+        if name.startswith('/'):
+            name = name[1:]
+        parts = name.split('/')
+        assert parts[0] == 'about'
+        if len(parts) == 1:
+            fn = 'index'
+            args = []
+        else:
+            fn = parts[1]
+            args = parts[2:]
+
+        name = 'about/' + fn + '.tmpl'
+        fn = find_config_file(name)
+        if fn is None:
+            raise Exception("No file %s found" % name)
+        #~ fn = find_config_file('about.html.tmpl')
+        def href(v):
+            if isinstance(v,string):
+                return '<a href="/about/app/%s">%s</a>' % (v,v)
+            if isinstance(v,models.Model):
+                return '<a href="/about/model/%s.%s">%s</a>' % (v.app_label,v.__name__,v.__name)
+            return escape(unicode(v))
+        logger.info("Generating about.html from %s",fn)
+        from cgi import escape
+        d = dict(
+          site=self.site,
+          href=href,
+          lino=lino,
+          models=models,
+          escape=escape,
+          request=request,
+          args=args,
+          #~ GET=request.GET,
+          app_labels=app_labels)
+        #~ d = dict(site=site)
+        #~ print 20110223, [m for m in models.get_models()]
+        tpl = CheetahTemplate(file(fn).read(),namespaces=[d])
+        #~ tpl = CheetahTemplate(file=fn,namespaces=[d])
+        #~ tpl = CheetahTemplate(file(fn).read(),namespaces=[locals(),globals()])
+        #~ tpl = CheetahTemplate(file=fn,namespaces=[locals(),globals()])
+        #~ tpl.compile()
+        #~ s = unicode(tpl)
+        #~ print s
+        #~ file('tmp.html','w').write(s.encode('utf-8'))
+        return HttpResponse(unicode(tpl))
+
+        
         
 
     def html_page(self,request,on_ready=[],**kw):
@@ -673,11 +735,11 @@ class ExtUI(base.UI):
         #~ return HttpResponse(s, mimetype='text/html')
 
     def form2obj_and_save(self,request,rh,data,elem,is_new): # **kw2save):
-        #~ logger.debug('form2obj_and_save %r', data)
+        logger.info('form2obj_and_save %r', data)
         
         # store normal form data (POST or PUT)
         try:
-            rh.store.form2obj(data,elem,is_new)
+            elem = rh.store.form2obj(data,elem,is_new)
         except exceptions.ValidationError,e:
            return error_response(e)
            #~ return error_response(e,_("There was a problem while validating your data : "))
@@ -730,7 +792,7 @@ class ExtUI(base.UI):
             return http.HttpResponseForbidden(msg)
         if request.method == 'GET':
             tab = int(request.GET.get('tab','0'))
-            return json_response_kw(success=True,tab=tab,desc=rpt.model._lino_detail_layouts[tab]._desc)
+            return json_response_kw(success=True,tab=tab,desc=rpt.detail_layouts[tab]._desc)
         if request.method == 'PUT':
             PUT = http.QueryDict(request.raw_post_data)
             tab = int(PUT.get('tab',0))
@@ -902,10 +964,10 @@ class ExtUI(base.UI):
                 raise Http404("%s %s does not exist." % (rpt,pk))
                 
         if request.method == 'DELETE':
-            if rpt.disable_delete is not None:
-                msg = rpt.disable_delete(request,elem)
-                if msg is not None:
-                    return error_response(msg)
+            #~ if rpt.disable_delete is not None:
+            msg = rpt.disable_delete(elem,request)
+            if msg is not None:
+                return error_response(msg)
                     
             dblogger.log_deleted(request,elem)
             
@@ -921,7 +983,7 @@ class ExtUI(base.UI):
             
         if request.method == 'PUT':
             if elem is None:
-                return eror.message('Tried to PUT on element -99999')
+                return error_message('Tried to PUT on element -99999')
             data = http.QueryDict(request.raw_post_data)
             #~ fmt = data.get('fmt',None)
             return self.form2obj_and_save(request,ah,data,elem,False) # force_update=True)
@@ -1000,7 +1062,12 @@ class ExtUI(base.UI):
         fn = os.path.join(settings.MEDIA_ROOT,*self.lino_js_parts()) 
         #~ fn = r'c:\temp\dsbe.js'
         
+        if not os.path.isdir(settings.MEDIA_ROOT):
+            logger.info("Directory '%s' (settings.MEDIA_ROOT) does not exist.", settings.MEDIA_ROOT)
+            return
+        
         logger.info("Generating %s ...", fn)
+        
         f = codecs.open(fn,'w',encoding='utf-8')
         
         libname = os.path.join(os.path.dirname(__file__),'linolib.js')

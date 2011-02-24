@@ -39,6 +39,5 @@ Subpackages
     lino.mixins.addressable
     lino.mixins.reminder
     lino.demos
-
-
+    lino.test_apps
 
