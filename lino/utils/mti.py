@@ -15,8 +15,6 @@
 A collection of tools for doing child/parent conversions (metamorphoses)
 for models that use Django's multi-table inheritance.
 
-See detailed presentation in :mod:`lino.test_apps.1.models`.
-
 """
 import logging
 logger = logging.getLogger(__name__)
@@ -34,6 +32,8 @@ def convert(obj,target_class,**attrs):
     will make the variable used by the caller refer to an invalid Model instance 
     object which does not represent any existing record. 
     
+    See detailed presentation in :mod:`lino.test_apps.1.models`.
+
     """
     for field in target_class._meta.fields:
         if field.name not in attrs and hasattr(obj, field.name):
@@ -55,12 +55,6 @@ def convert(obj,target_class,**attrs):
         def __str__(self):
             return "<%s object>" % self.__class__.__name__
     obj.__class__ = InvalidModelInstance
-    
-    #~ for n in ('save','__unicode__','delete','__getattr__'):
-        #~ def func(*args,**kw):
-            #~ raise Exception("Tried to call method %s on invalid object reference.")
-        #~ setattr(obj,n,func)
-        #~ obj.__dict__ = {}
     
     obj = target_class(**attrs)
     obj.save()
@@ -131,7 +125,7 @@ from lino.fields import VirtualField
 
 class EnableChild(VirtualField):
     """
-    Docuemted and tested in :mod:`lino.test_apps.1.models`
+    Documented and tested in :mod:`lino.test_apps.1.models`
     """
     def __init__(self,child_model,**kw):
         self.child_model = child_model

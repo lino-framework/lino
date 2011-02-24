@@ -167,6 +167,9 @@ class HtmlBox(DisplayField):
 #~ from django.db.models.fields import Field
 
 class VirtualField: # (Field):
+    """
+    Currently implemented only by :class:`lino.utils.mti.EnableChild`.    
+    """
     editable = False
     
     def __init__(self,return_type,get):
@@ -207,6 +210,11 @@ class VirtualField: # (Field):
         #~ raise NotImplementedError
         
     def value_from_object(self,request,obj):
+        """
+        Return the value of this field in the specified model instance `obj`.
+        `request` may be `None`, it's forwarded to the getter method who may 
+        decide to return values depending on it.
+        """
         m = self.get
         #~ assert m.func_code.co_argcount == 2, (self.name, m.func_code.co_varnames)
         #~ print self.field.name

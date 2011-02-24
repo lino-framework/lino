@@ -56,3 +56,4 @@ not in grids.
 So for the moment we work on the virtual field implementation.
 
 See detailed presentation in :mod:`lino.test_apps.1.models`.
+

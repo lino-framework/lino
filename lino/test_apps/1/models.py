@@ -4,41 +4,44 @@ Converting between MTI child/parent models
 
 .. currentmodule:: lino.utils.mti
 
+
+Request for comments
+--------------------
+    
 This document explains my work on a topic also touched by
 Erik Stein's question 
 `Promote a Place to a Restaurant? 
 <http://groups.google.com/group/django-users/browse_thread/thread/3c9d7c97a8f01da0>`_
 at django-users (Oct 17, 2008).
-
-This is not finished because I now hope for comments 
-of other people before I invest more time into this.
+I decided to make a break here 
+because I now hope for comments 
+before investing more time into this.
 It is possible that I have been reinventing a wheel,
 or that there is a better way to solve my 
 problem (:doc:`/tickets/22`).
 
-Comments and suggestions are welcome. 
-    
 Introduction
 ------------
 
 Malcolm's answer to Erik's questions was 
 "There's no concept of "promotion". Just create a new Restaurant object 
-with the requisite information.", and I basically agree with him.
+with the requisite information.".
 
-However, when we have models 
-like `Place` and `Restaurant` 
-in an application,
-then our users do encounter the problem 
-of needing to "promote a Place to a Restaurant",
+I basically agree with Malcolm.
+
+On the other hand my users *will* come and ask
+how to "promote a Place to a Restaurant",
 or "reduce a Restaurant to a simple Place".
-At least from their point of view.
 Especially when there is a lot of other related data, 
 there should be a possibility to do this in a user-friendly way.
-
-  
+See :doc:`/tickets/22` for some examples if you are not convinced.
 
 Let's go
 --------
+
+To see the data models used in the following examples,
+please look at the source code of this document at
+:srcref:`/lino/test_apps/1/models.py`.
 
 Create some data:
 
@@ -62,8 +65,9 @@ Here is our data:
 >>> Place.objects.all()
 [<Place: #1 (name=First,owners=Alfred,Bert)>]
 
-Now the user discovers that this Place isn't actually a Restaurant, 
+Now the user discovers that Place #1 isn't actually a Restaurant, 
 and would like to "remove it's Restaurant data" from the database.
+But the primary key and related objects should remain unchanged.
 
 The following might drop at mind, but doesn't work:
 
@@ -73,10 +77,14 @@ Traceback (most recent call last):
 ...
 ValueError: Cannot assign None: "Place.restaurant" does not allow null values.
 
-I wrote a function :func:`convert` that 
+I wrote a function :func:`convert` 
+(the source code 
+is :srcref:`here </lino/utils/mti.py>`)
+that 
 deletes the Restaurant instance after having 
 taken a copy of its data in memory, 
-excluding the fields that are specific to Restaurants,
+including related objects, 
+excluding things that are specific to Restaurants,
 then creates a new Place instance using that data.
 The primary key and related objects remain unchanged.
 The cooks will loose their job, but the owners remain.
@@ -84,13 +92,13 @@ The cooks will loose their job, but the owners remain.
 >>> from lino.utils.mti import convert
 >>> new_place = convert(r,Place)
 
-`convert()` returns a newly created instance of the specified 
+:func:`convert` returns a newly created instance of the specified 
 model:
 
 >>> new_place
 <Place: #1 (name=First,owners=Alfred,Bert)>
 
-The place now no longer exists as a restaurant:
+The Place now no longer exists as a Restaurant:
 
 >>> Restaurant.objects.get(pk=1)
 Traceback (most recent call last):
@@ -106,6 +114,10 @@ is similar:
 >>> obj.save()
 >>> obj
 <Place: #2 (name=Second,owners=Bert)>
+
+We just created a nice Place #2 with a single owner.
+Later this Place becomes a Restaurant and hires 2 cooks:
+
 >>> obj = convert(obj,Restaurant)
 >>> for i in 3,4:
 ...     obj.cooks.add(Person.objects.get(pk=i))
@@ -117,7 +129,8 @@ Pitfall
 -------
 
 There is a pitfall with :func:`convert`:
-it will invalidate the original model instance.
+it will invalidate the in-memory description of 
+the original model instance.
 The variable specified by the caller as first argument
 will refer to something that
 does not represent any existing record. 
@@ -278,10 +291,6 @@ The following currently doesn't work:
 
 That's still to fix.
 
-(The source code of this document is 
-:srcref:`here </lino/test_apps/1/models.py>`,
-the :func:`convert` function itself: :srcref:`here </lino/utils/mti.py>`.)
-
 
 Related documents
 -----------------
@@ -307,7 +316,7 @@ Related documents
 
 from django.db import models
 from lino.utils.mti import EnableChild
-    
+
 class Person(models.Model):
     name = models.CharField(max_length=50)
     def __unicode__(self):
@@ -321,24 +330,20 @@ class Place(models.Model):
         return "#%s (name=%s,owners=%s)" % (
             self.pk,self.name, 
             ','.join([unicode(o) for o in self.owners.all()]))
-            
+        
 class Restaurant(Place):  
     serves_hot_dogs = models.BooleanField()
     cooks = models.ManyToManyField(Person)
-    
     def __unicode__(self):
         return "#%d (name=%s,owners=%s,cooks=%s)" % (
             self.pk,self.name, 
             ','.join([unicode(o) for o in self.owners.all()]),
             ','.join([unicode(o) for o in self.cooks.all()]))
-    
+
 class Visit(models.Model):
     person = models.ForeignKey(Person)
     place = models.ForeignKey(Place)
     purpose = models.CharField(max_length=50)
-    
     def __unicode__(self):
         return "%s visit by %s at %s" % (
-          self.purpose, self.person, self.place.name
-        )
-    
+          self.purpose, self.person, self.place.name)
