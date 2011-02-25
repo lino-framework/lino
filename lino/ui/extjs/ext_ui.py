@@ -739,7 +739,7 @@ class ExtUI(base.UI):
         
         # store normal form data (POST or PUT)
         try:
-            elem = rh.store.form2obj(data,elem,is_new)
+            rh.store.form2obj(data,elem,is_new)
         except exceptions.ValidationError,e:
            return error_response(e)
            #~ return error_response(e,_("There was a problem while validating your data : "))

@@ -12,14 +12,86 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-A collection of tools for doing child/parent conversions (metamorphoses)
-for models that use Django's multi-table inheritance.
+A collection of tools for doing multi-table child/parent conversions 
+
+See detailed presentation in :mod:`lino.test_apps.1.models`.
 
 """
 import logging
 logger = logging.getLogger(__name__)
 
-def convert(obj,target_class,**attrs):
+
+
+from django.db.models.deletion import Collector
+from django.db import router
+
+class ChildCollector(Collector):
+    """
+    A Collector that does not delete the parents.
+    """
+  
+    def collect(self, objs, source=None, nullable=False, collect_related=True,
+        source_attr=None,collect_parents=True):
+
+        new_objs = self.add(objs, source, nullable)
+        if not new_objs:
+            return
+        model = new_objs[0].__class__
+
+        if collect_related:
+            #~ for m,related in model._meta.get_all_related_objects_with_model(include_hidden=True):
+            for related in model._meta.get_all_related_objects(include_hidden=True,local_only=True):
+                field = related.field
+                if related.model._meta.auto_created:
+                    self.add_batch(related.model, field, new_objs)
+                else:
+                    sub_objs = self.related_objects(related, new_objs)
+                    if not sub_objs:
+                        continue
+                    field.rel.on_delete(self, field, sub_objs, self.using)
+
+            # TODO This entire block is only needed as a special case to
+            # support cascade-deletes for GenericRelation. It should be
+            # removed/fixed when the ORM gains a proper abstraction for virtual
+            # or composite fields, and GFKs are reworked to fit into that.
+            for relation in model._meta.many_to_many:
+                if not relation.rel.through:
+                    sub_objs = relation.bulk_related_objects(new_objs, self.using)
+                    self.collect(sub_objs,
+                                 source=model,
+                                 source_attr=relation.rel.related_name,
+                                 nullable=True)
+  
+
+def delete_child(obj,child_model,using=None):
+    using = using or router.db_for_write(obj.__class__, instance=obj)
+    try:
+        child = child_model.objects.get(pk=obj.pk)
+    except child_model.DoesNotExist:
+        raise Exception("%s has no child in %s" % (obj,child_model.__name__))
+    logger.info("delete_child %s from %s",child_model.__name__,obj)
+    collector = ChildCollector(using=using)
+    collector.collect([child],source=obj.__class__,nullable=True,collect_parents=False)
+    collector.delete()
+    
+
+def insert_child(obj,child_model,**attrs):
+    assert child_model != obj.__class__
+    attrs["%s_ptr" % obj.__class__.__name__.lower()] = obj
+    for field in obj._meta.fields:
+        attrs[field.name] = getattr(obj, field.name)
+    logger.info("Promote %s to %s : attrs=%s",
+        obj.__class__.__name__,child_model.__name__,attrs)
+    new_obj = child_model(**attrs)
+    new_obj.save()
+    return new_obj
+
+reduce = delete_child
+promote = insert_child
+
+
+
+def convert_first_attempt(obj,target_class,**attrs):
     """
     Converts the database records for the given 
     model instance `obj` into an instance of `target_class`.
@@ -42,7 +114,7 @@ def convert(obj,target_class,**attrs):
     related_objects = {}
     for r in target_class._meta.many_to_many:
         if getattr(r,'through',None) is not None:
-            raise Exception("ManyToManyField.through not yet supported.")
+            raise Exception("ManyToManyField.through not supported.")
         if hasattr(obj,r.name):
             m = getattr(obj,r.name)
             related_objects[r.name] = [x for x in m.all()]
@@ -64,11 +136,81 @@ def convert(obj,target_class,**attrs):
     obj.save()
     return obj
 
+class InvalidModelInstance(object):
+    def __str__(self):
+        return "<%s object>" % self.__class__.__name__
+
+def convert_second_attempt(obj,target_class,**attrs):
+    """
+    Converts the database records for the given 
+    model instance `obj` into an instance of `target_class`.
+    All field values that are also in the target_class, 
+    including related objects, will be transferred.
+    `attrs` may specify additional values that will override existing data.
+    Returns the new instance which is already saved.
+    
+    Note that this
+    will make the variable used by the caller refer to an invalid Model instance 
+    object which does not represent any existing record. 
+    
+    See detailed presentation in :mod:`lino.test_apps.1.models`.
+
+    """
+    pk = obj.pk
+    related_objects = {}
+    assert target_class != obj.__class__
+    if issubclass(target_class,obj.__class__):
+        # convert parent to child (adding data) : "specialize", "promote"
+        attrs["%s_ptr" % obj.__class__.__name__.lower()] = obj
+        for field in obj._meta.fields:
+            attrs[field.name] = getattr(obj, field.name)
+        logger.info("specialize %s to %s : attrs=%s",
+          obj.__class__.__name__,target_class.__name__,
+          attrs)
+    elif issubclass(obj.__class__,target_class):
+        # convert child to parent (removing data) : "generalize", "reduce"
+        for field in target_class._meta.fields:
+            if field.name not in attrs and hasattr(obj, field.name):
+                attrs[field.name] = getattr(obj, field.name)
+        for r in target_class._meta.many_to_many:
+            if getattr(r,'through',None) is not None:
+                raise Exception("ManyToManyField.through not supported.")
+            if hasattr(obj,r.name):
+                m = getattr(obj,r.name)
+                related_objects[r.name] = [x for x in m.all()]
+        logger.info("generalize %s to %s : attrs=%s, related_objects=%s",
+          obj.__class__.__name__,target_class.__name__,
+          attrs,related_objects)
+        obj.delete()
+    else:
+        raise NotImplementedError
+    
+    new_obj = target_class(**attrs)
+    new_obj.save()
+    if related_objects:
+        for k,v in related_objects.items():
+            #~ logger.info('%s = %s', f.name,[x for x in m.all()])
+            setattr(new_obj,k,v)
+        new_obj.save()
+    obj.__class__ = InvalidModelInstance
+    return new_obj
 
 
 
 
 
+def unused_delete_child(obj,child_model):
+    from django.db import connection, transaction
+    cursor = connection.cursor()
+    # Data modifying operation - commit required
+    sql = "DELETE FROM %s WHERE %s = %s" % (
+      child_model._meta.db_table,
+      child_model._meta.pk.attname,
+      obj.pk)
+    logger.info("delete_child %s from %s : %s",child_model.__name__,obj,sql)
+    cursor.execute(sql)
+    transaction.commit_unless_managed()
+    
 
 
 def unused_child_from_parent(model, *parents,**kw):
@@ -138,18 +280,38 @@ class EnableChild(VirtualField):
     def has_child(self,obj,request=None):
         "Returns True if "
         try:
-            self.child_model.objects.get(pk=obj.pk)
+            getattr(obj,self.child_model.__name__.lower())
+            #~ self.child_model.objects.get(pk=obj.pk)
         except self.child_model.DoesNotExist:
             return False
         return True
 
     def set_value_in_object(self,obj,v,request=None):
-        if self.has_child(obj):
+        if self.has_child(obj,request):
             logger.debug('set_value_in_object : %s has child %s',
                 obj.__class__.__name__,self.child_model.__name__)
             # child exists, convert if it may not 
             if not v:
-                return convert(obj,self.model)
+                delete_child(obj,self.child_model)
+        else:
+            logger.debug('set_value_in_object : %s has no child %s',
+                obj.__class__.__name__,self.child_model.__name__)
+            if v:
+                # child doesn't exist. convert if it should
+                insert_child(obj,self.child_model)
+        # otherwise do nothing
+                
+    def old_set_value_in_object(self,obj,v,request=None):
+        try:
+            child = self.child_model.objects.get(pk=obj.pk)
+        except self.child_model.DoesNotExist:
+            child = None
+        if child is not None:
+            logger.debug('set_value_in_object : %s has child %s',
+                obj.__class__.__name__,self.child_model.__name__)
+            # child exists, convert if it may not 
+            if not v:
+                return convert(child,self.model)
         else:
             logger.debug('set_value_in_object : %s has no child %s',
                 obj.__class__.__name__,self.child_model.__name__)
@@ -159,34 +321,3 @@ class EnableChild(VirtualField):
         # otherwise do nothing
         return obj
                 
-    #~ def set_is_restaurant(self,v):
-        #~ if v:
-            #~ try:
-                #~ p = Restaurant.objects.get(pk=self.pk)
-                #~ self.restaurant = p
-            #~ except Restaurant.DoesNotExist:
-                #~ p = child_from_parent(Restaurant,self)
-                #~ p.save()
-                #~ self.restaurant = p
-            
-        #~ else:
-            #~ self.restaurant = None
-            
-    #~ def unused_get_is_restaurant(self):
-        #~ try:
-            #~ Restaurant.objects.get(pk=self.pk)
-        #~ except Restaurant.DoesNotExist:
-            #~ return False
-        #~ return True
-        
-    #~ def unused_set_is_restaurant(self,v):
-        #~ try:
-            #~ p = Restaurant.objects.get(pk=self.pk)
-            #~ if not v:
-                #~ p.companydelete()
-        #~ except Restaurant.DoesNotExist:
-            #~ if v:
-                #~ p = Restaurant(pk=self.pk)
-                #~ p = child_from_parent(Restaurant,self)
-                #~ p.save()
-

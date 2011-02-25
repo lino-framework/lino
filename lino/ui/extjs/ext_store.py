@@ -224,9 +224,10 @@ class MethodStoreField(StoreField):
 
 class VirtStoreField(StoreField):
   
-    def __init__(self,vf):
+    def __init__(self,vf,delegate):
         self.vf = vf
         StoreField.__init__(self,vf.return_type)
+        self.form2obj_default = delegate.form2obj_default
 
     #~ def parse_form_value(self,v):
         #~ return self.field.parse_form_value(v)
@@ -476,7 +477,8 @@ class Store:
         #~ if isinstance(fld,fields.HtmlBox):
             #~ ...
         if isinstance(fld,fields.VirtualField):
-            return VirtStoreField(fld)
+            delegate = self.create_field(fld.return_type)
+            return VirtStoreField(fld,delegate)
         if isinstance(fld,models.FileField):
             return FileFieldStoreField(fld)
         if isinstance(fld,models.ManyToManyField):
