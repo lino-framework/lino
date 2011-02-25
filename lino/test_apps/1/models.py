@@ -8,12 +8,9 @@ Multi-table inheritance: converting between child and parent
 This document presents the :mod:`lino.utils.mti` module, 
 a collection of tools for doing multi-table child/parent 
 conversions.
-
-If you know (or imagine) 
-a better way to solve the
-problem (:doc:`/tickets/22`) 
-that took me to write it, 
-please let me know!
+It is certainly not perfect, but works for me. 
+I wrote it mainly to solve my ticket :doc:`/tickets/22`.
+If you know (or imagine) a better solution, please let me know!
 
 Let's go
 --------
@@ -85,9 +82,8 @@ Later this Place becomes a Restaurant and hires 2 cooks:
 Virtual fields
 --------------
 
-This section shows how :func:`convert` is being used by Lino's virtual 
-fields, and thus is Lino-specific and even less definitive 
-than the rest of this document.
+This section shows how the :class:`EnableChild` virtual field is being 
+used by Lino, and thus is Lino-specific.
 
 After the above examples our database looks like this:
 
@@ -112,9 +108,9 @@ give ``False`` as you might expect.
 >>> obj.is_restaurant
 <lino.utils.mti.EnableChild instance at ...>
 
-This is not implemented because there currently 
-the need for it would be to make the following 
-examples more elegant.
+This is not implemented because the only 
+need for it would be to make the following 
+examples more elegant...
 
 Before using virtual fields, we must 
 trigger Lino site setup. 

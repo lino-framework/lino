@@ -1,0 +1,25 @@
+20110225
+========
+
+
+Noch bevor ich meine Frage zum Posten fertig hatte,
+hatte ich die prinzipielle Lösung für mein 
+Ticket :doc:`/tickets/22` selbst gefunden. 
+Die Formulierung der Frage hat mich allerdings ca. 25 
+Stunden gekostet...
+
+Ich habe auch noch mal ein Django-Ticket gemacht:
+:djangoticket:`BooleanField should work for ExtJS Checkboxes <15497>`.
+Falls die das wirklich tun sollten, kann meine 
+:meth:`lino.ui.extjs.ext_store.BooleanStoreField.parse_form_value` 
+komplett raus.
+  
+Mit "prinzipielle Lösung" meine natürlich: nur für mich und 
+nur bis auf weiteres.
+Weil es da um subtilen Kram geht, werde ich das neue Feature 
+im Lino/DSBE zunächst nur für die CourseProvider machen.
+Bevor ich es auf Apotheken, Krankenkassen und Personen ausweiten kann, 
+werde ich auch noch den watch_tim anpassen müssen.
+
+Jetzt bringe ich aber erst mal :mod:`lino.demos.igen` 
+wieder auf Vordermann.

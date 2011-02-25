@@ -144,12 +144,13 @@ class BooleanStoreField(StoreField):
         kw['type'] = 'boolean'
         StoreField.__init__(self,field,**kw)
         
-    #~ def parse_form_value(self,v):
-        #~ if v in ('true','on'):
-            #~ return True
-        #~ if v in ('false','off'):
-            #~ return False
-        #~ raise Exception("Got invalid form value %r for %s" % (v,self.field.name))
+    # as long as http://code.djangoproject.com/ticket/15497 is open
+    def parse_form_value(self,v):
+        if v in ('true','on'):
+            return True
+        if v in ('false','off'):
+            return False
+        raise Exception("Got invalid form value %r for %s" % (v,self.field.name))
 
 
 class AutoStoreField(StoreField):
@@ -161,15 +162,6 @@ class AutoStoreField(StoreField):
         #~ assert instance.pk
         return instance
         
-    #~ def form2obj(self,instance,post_data):
-        #~ v = post_data.get(self.field.name,None)
-        #~ if v is None:
-            #~ return
-        #~ if v in ('true','on'):
-            #~ v = True
-        #~ else:
-            #~ v = False
-        #~ setattr(instance,self.field.name,v)
         
         
 
@@ -228,6 +220,8 @@ class VirtStoreField(StoreField):
         self.vf = vf
         StoreField.__init__(self,vf.return_type)
         self.form2obj_default = delegate.form2obj_default
+        # as long as http://code.djangoproject.com/ticket/15497 is open
+        self.parse_form_value = delegate.parse_form_value
 
     #~ def parse_form_value(self,v):
         #~ return self.field.parse_form_value(v)
@@ -237,14 +231,14 @@ class VirtStoreField(StoreField):
         
     def obj2dict(self,request,obj,d):
         v = self.vf.value_from_object(request,obj)
-        logger.debug('VirtStoreField.obj2dict() %s = %s',self.field.name,v)
+        #~ logger.debug('VirtStoreField.obj2dict() %s = %s',self.field.name,v)
         d[self.field.name] = v
         
     def form2obj(self,obj,post_data,is_new):
-        logger.info("VirtStoreField.form2obj(%s)", post_data)
+        #~ logger.info("VirtStoreField.form2obj(%s)", post_data)
         obj = StoreField.form2obj(self,obj,post_data,is_new)
         v = getattr(obj,self.field.name)
-        logger.info("VirtStoreField.%s.form2obj(%s) --> %r", self.field.name, post_data, v)
+        #~ logger.info("VirtStoreField.%s.form2obj(%s) --> %r", self.field.name, post_data, v)
         return self.vf.set_value_in_object(obj,v)
         #~ return obj
 

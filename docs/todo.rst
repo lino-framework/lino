@@ -9,12 +9,16 @@ for which I hope for help from other people.
 Short-term
 ----------
 
+#.  Was ist aus meinem Ticket
+    :djangoticket:`BooleanField should work for ExtJS Checkboxes <15497>`
+    geworden?
+    Falls die das wirklich tun sollten, kann meine 
+    :meth:`lino.ui.extjs.ext_store.BooleanStoreField.parse_form_value` 
+    komplett raus.
+
 #.  MTI-Support : in lino.dsbe für "normale" Personen nur die 
     Standard-Kontaktangaben speichern, und die DSBE-spezifischen Felder 
     in einer eigenen Tabelle. 
-    Virtuelles Ankreuzfeld, um eine Person zu einer CoachedPerson zu konvertieren und umgekehrt.
-    In einem kriegen wir dadurch auch schreibbare virtuelle Felder.
-    :doc:`/tickets/22` und :doc:`/tickets/23`.
 
 #.  `dtosl` funktioniert momentan nicht. Die funktionierte nur, 
     als babel.setlang() auch locale.setlocale setzte.
