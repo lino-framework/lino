@@ -83,14 +83,19 @@ def generate_dummy_messages():
       
         
 
-
-
 def parse_js_date(s,name):
     #~ v = dateparser.parse(s)
     #~ v = dateparser.parse(s,fuzzy=True)
     return lino.PARSE_DATE(s)
     #~ print "parse_js_date %s : %r -> %s" % (name,s,v)
     #~ return v
+
+
+def inject_field(model,name,field,doc):
+    field.__doc__ = doc
+    model.add_to_class(name,field)
+    return field
+
 
 
 def fields_list(model,field_names):

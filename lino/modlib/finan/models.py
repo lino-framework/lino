@@ -1,4 +1,4 @@
-## Copyright 2008-2010 Luc Saffre
+## Copyright 2008-2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -30,7 +30,8 @@ from lino import fields
 from lino.tools import resolve_model
 
 contacts = reports.get_app('contacts')
-ledger = reports.get_app('ledger')
+#~ ledger = reports.get_app('ledger')
+from lino.modlib.ledger import models as ledger
 journals = reports.get_app('journals')
 
 Person = resolve_model('contacts.Person')
@@ -99,8 +100,9 @@ class BankStatement(ledger.Booked,models.Model):
         #logger.info("finan.BankStatement %r %r",self.balance1, sum_debit)
         self.balance2 = self.balance1 + sum_debit
         #jnl = self.get_journal()
-        acct = ledger.Account.objects.get(id=self.journal.account)
-        b = self.create_booking(account=acct)
+        #~ acct = ledger.Account.objects.get(id=self.journal.account)
+        #~ b = self.create_booking(account=acct)
+        b = self.create_booking(account=self.journal.account)
         if sum_debit > 0:
             b.debit = sum_debit
         else:
@@ -111,7 +113,7 @@ class BankStatement(ledger.Booked,models.Model):
         pos = self.docitem_set.count() + 1
         if account is not None:
             if not isinstance(account,ledger.Account):
-                account = ledger.Account.objects.get(pk=account)
+                account = ledger.Account.objects.get(match=account)
         if person is not None:
             if not isinstance(person,Person):
                 person = Person.objects.get(pk=person)

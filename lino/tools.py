@@ -86,6 +86,8 @@ def model_label(model):
 def obj2str(i,force_detailed=False):
     #~ if not force_detailed and i.pk is not None:
     assert isinstance(i,models.Model)
+    if i.pk is None:
+        force_detailed = True
     if not force_detailed:
         if i.pk is None:
             return u'(Unsaved %s instance)' % (i.__class__.__name__)

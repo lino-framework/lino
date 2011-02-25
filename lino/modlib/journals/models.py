@@ -1,4 +1,4 @@
-## Copyright 2009-2010 Luc Saffre
+## Copyright 2009-2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -72,8 +72,8 @@ class Journal(models.Model):
     name = models.CharField(max_length=100)
     doctype = models.IntegerField() #choices=DOCTYPE_CHOICES)
     force_sequence = models.BooleanField(default=False)
-    #account = models.ForeignKey(ledger.Account,blank=True,null=True)
-    account = models.CharField(max_length=6,blank=True)
+    account = models.ForeignKey('ledger.Account',blank=True,null=True)
+    #~ account = models.CharField(max_length=6,blank=True)
     pos = models.IntegerField()
     
     def get_doc_model(self):
@@ -167,7 +167,7 @@ class Journal(models.Model):
                   )
                   
 def JournalRef(**kw):
-    kw.update(null=True) # Django Ticket #12708
+    #~ kw.update(blank=True,null=True) # Django Ticket #12708
     return models.ForeignKey(Journal,**kw)
 
 def DocumentRef(**kw):

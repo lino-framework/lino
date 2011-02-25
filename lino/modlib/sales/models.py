@@ -1,4 +1,4 @@
-## Copyright 2008-2010 Luc Saffre
+## Copyright 2008-2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -45,7 +45,8 @@ from lino import actions
 from lino.utils import perms
 
 journals = models.get_app('journals')
-ledger = models.get_app('ledger')
+#~ ledger = models.get_app('ledger')
+from lino.modlib.ledger import models as ledger
 products = models.get_app('products')
 
 
@@ -261,7 +262,7 @@ class SalesDocument(journals.Journaled,journals.Sendable):
         return DocItem(**kw)
         #~ return self.docitem_set.create(**kw)
         
-    def total_incl(self):
+    def total_incl(self,request):
         return self.total_excl + self.total_vat
     total_incl.return_type = fields.PriceField()
     

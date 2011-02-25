@@ -770,7 +770,8 @@ class Study(models.Model):
         verbose_name=_("Country"))
     city = models.ForeignKey('countries.City',blank=True,null=True,
         verbose_name=_('City'))
-    language = models.ForeignKey("countries.Language",blank=True,null=True,verbose_name=_("Language"))
+    language = models.ForeignKey("countries.Language",
+        blank=True,null=True,verbose_name=_("Language"))
     #~ language = fields.LanguageField(blank=True,null=True,verbose_name=_("Language"))
     
     school = models.CharField(max_length=200,blank=True,null=True,verbose_name=_("School"))
@@ -1816,19 +1817,19 @@ CompanyType.add_to_class('contract_type',
     models.ForeignKey("dsbe.ContractType",
         blank=True,null=True,
         verbose_name=_("contract type")))
-"""
-Same for SiteConfig
-"""
+
+
 from lino.models import SiteConfig
-field = models.ForeignKey("contacts.Company",
+reports.inject_field(
+    SiteConfig,
+    'job_office',
+    models.ForeignKey("contacts.Company",
         blank=True,null=True,
         verbose_name=_("Local job office"),
-        related_name='job_office_sites',
-        )
-field.__doc__ = """
-The Company whose contact persons will be choices for `Person.job_office_contact`.
-"""
-SiteConfig.add_to_class('job_office',field)
+        related_name='job_office_sites'),
+    """The Company whose contact persons will be 
+    choices for `Person.job_office_contact`.
+    """)
 
 
 """

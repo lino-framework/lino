@@ -367,7 +367,9 @@ class ExtUI(base.UI):
     def create_meth_element(self,lh,name,meth,rt,**kw):
         rt.name = name
         rt._return_type_for_method = meth
-        assert meth.func_code.co_argcount == 2, (name, meth.func_code.co_varnames)
+        if meth.func_code.co_argcount != 2:
+            raise Exception("Method %s has %d arguments (must have 2)" % (meth,meth.func_code.co_argcount))
+            #~ , (name, meth.func_code.co_varnames)
         #~ kw.update(editable=False)
         e = self.create_field_element(lh,rt,**kw)
         #~ if lh.rh.report.actor_id == 'contacts.Persons':

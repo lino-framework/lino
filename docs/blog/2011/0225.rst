@@ -1,12 +1,15 @@
 20110225
 ========
 
+:mod:`lino.utils.mti` endlich fertig
+------------------------------------
 
 Noch bevor ich meine Frage zum Posten fertig hatte,
 hatte ich die prinzipielle Lösung für mein 
 Ticket :doc:`/tickets/22` selbst gefunden. 
-Die Formulierung der Frage hat mich allerdings ca. 25 
-Stunden gekostet...
+Die Formulierung dieser Frage hat mich 
+diese Woche allerdings ca. 25 
+Arbeitsstunden gekostet...
 
 Ich habe auch noch mal ein Django-Ticket gemacht:
 :djangoticket:`BooleanField should work for ExtJS Checkboxes <15497>`.
@@ -21,5 +24,79 @@ im Lino/DSBE zunächst nur für die CourseProvider machen.
 Bevor ich es auf Apotheken, Krankenkassen und Personen ausweiten kann, 
 werde ich auch noch den watch_tim anpassen müssen.
 
-Jetzt bringe ich aber erst mal :mod:`lino.demos.igen` 
+Jetzt bringe ich aber erst mal 
+:doc:`/dsbe/index`
 wieder auf Vordermann.
+
+Vorher ein `Checkin <http://code.google.com/p/lino/source/detail?r=07a1d8d59d86ca38c8ab474f9c8359ee20039bba>`_.
+
+:doc:`/igen/index` läuft wieder
+-------------------------------
+
+Da war natürlich einiges anzupassen, nachdem ich mich 
+jetzt monatelang nur um :doc:`/dsbe/index` gekümmert hatte.
+Unkomplette Liste dessen, was ich gemacht habe:
+
+#.  `lino.demos.*` umbenannt nach `lino.sites.*`
+
+#.  Traceback bei initdb_demo::
+
+      Traceback (most recent call last):
+        File "l:\snapshots\django\django\core\management\commands\loaddata.py", line 174, in handle
+          obj.save(using=using)
+        File "t:\hgwork\lino\lino\utils\dpy.py", line 260, in save
+          raise Exception("Abandoned with %d unsaved instances. See dblog for details." % len(save_later))
+      Exception: Abandoned with 341 unsaved instances. See dblog for details.
+      
+    Und in der system.log stand dann::
+      
+      DEBUG dpy : Deferred Language.xtw : 'ascii' codec can't decode byte 0xc3 in position 6: ordinal not in range(128) 
+      
+      
+    Ja, da wurde eine Datei nicht mit UTF-8 geöffnet. Ich verstehe nur nicht, 
+    weshalb das bei dsbe nie aufgetreten war...
+    
+    
+    
+#.  Und Ticket :doc:`/tickets/11` ist noch immer da.
+    Updated to revision 15648.
+    
+    Und oh je, sie haben in `tests/modeltests/model_inheritance` wieder Änderungen gemacht, 
+    die den Patch dort versagen lassen::
+    
+      L:\snapshots\django>patch -p0 < t:\hgwork\lino\patches\10808b-r14404.diff
+      (Stripping trailing CRs from patch.)
+      patching file django/db/models/base.py
+      Hunk #1 succeeded at 307 (offset 7 lines).
+      Hunk #2 succeeded at 360 (offset 7 lines).
+      (Stripping trailing CRs from patch.)
+      patching file django/forms/models.py
+      Hunk #1 succeeded at 759 (offset -37 lines).
+      (Stripping trailing CRs from patch.)
+      patching file tests/modeltests/model_inheritance/tests.py
+      Hunk #1 FAILED at 2.
+      Hunk #2 FAILED at 271.
+      2 out of 2 hunks FAILED -- saving rejects to file tests/modeltests/model_inheritance/tests.py.rej
+      (Stripping trailing CRs from patch.)
+      patching file tests/modeltests/model_inheritance/models.py
+      Hunk #1 FAILED at 143.
+      1 out of 1 hunk FAILED -- saving rejects to file tests/modeltests/model_inheritance/models.py.rej    
+    
+    Ist mir aber momentan egal. 
+    Im Grunde hat 
+    `mtredinnick <http://code.djangoproject.com/ticket/10808#comment:14>`_ 
+    ja Recht, wenn er sagt:
+    
+      It looks correct, but I want to think about if there's an MRO-related way to do this. Currently, the meta class 
+      doesn't store any mro information in the parents list, because we don't need it and usually just need to know if 
+      something exists somewhere in one parent. However, there are some cases where MRO-ordering is starting to become 
+      important, so it's time to revisit this. It's pretty hairy in there, so this isn't going to be a simple change 
+      (necessarily).
+    
+    
+#.  Noch mal wieder das gleiche Problem (angebliches ImproperlyConfigured) 
+    wie am :doc:`/blog/2010/0913`. 
+    Django mag schön stabil sein, aber leider sind seine Macken deshalb 
+    ebenfalls sehr stabil.
+
+

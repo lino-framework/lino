@@ -1,5 +1,5 @@
-#coding: utf8
-## Copyright 2009-2010 Luc Saffre
+# -*- coding: UTF-8 -*-
+## Copyright 2009-2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ def objects():
     city = Instantiator('countries.City','name country').build
     yield city('Vigala','EE')
     
-    company = Instantiator("contacts.Company",country='EE',language='et').build
+    company = Instantiator("contacts.Company",country='EE',language='est').build
     yield company(name=u'Minu Firma OÜ')
     yield company(name=u'Mets ja Puu OÜ')
     

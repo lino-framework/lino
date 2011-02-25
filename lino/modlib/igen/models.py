@@ -1,4 +1,4 @@
-## Copyright 2008-2010 Luc Saffre
+## Copyright 2008-2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -55,7 +55,12 @@ operations::
 
 """
 
+from django.db import models
+from django.utils.translation import ugettext_lazy as _
+
+
 from lino import reports
+from lino.models import SiteConfig
 from lino.modlib.contacts import models as contacts
 from lino.modlib.notes import models as notes
 
@@ -73,4 +78,26 @@ class Company(contacts.Company):
 class Note(notes.Note):
      class Meta:
         app_label = 'notes'
+ 
+ 
+reports.inject_field(
+    SiteConfig,
+    'sales_base_account',
+    models.ForeignKey("ledger.Account",
+        blank=True,null=True,
+        verbose_name=_("Sales base account"),
+        related_name='sales_base_sites'),
+    """The account where to book base amount of sales.
+    """)
+
+reports.inject_field(
+    SiteConfig,
+    'sales_vat_account',
+    models.ForeignKey("ledger.Account",
+        blank=True,null=True,
+        verbose_name=_("Sales VAT account"),
+        related_name='sales_vat_sites'),
+    """The account where to book VAT amount of sales.
+    """)
+
  

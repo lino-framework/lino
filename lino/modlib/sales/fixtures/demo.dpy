@@ -1,4 +1,4 @@
-#coding: utf-8
+# -*- coding: UTF-8 -*-
 ## Copyright 2008-2010 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
@@ -62,9 +62,9 @@ def objects():
     #ORD = journals.get_journal("ORD")
     #INV = journals.get_journal("INV")
     yield ORD
-    #~ INV = Invoice.create_journal("INV",\
-      #~ account=ledger.Account.objects.get(pk="4000"))
-    INV = sales.Invoice.create_journal("INV",account="4000",name="Invoices")
+    INV = sales.Invoice.create_journal("INV",\
+      account=ledger.Account.objects.get(match="4000"),name="Invoices")
+    #~ INV = sales.Invoice.create_journal("INV",account="4000",name="Invoices")
     yield INV
     
     

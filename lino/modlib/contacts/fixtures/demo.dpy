@@ -1,5 +1,5 @@
-#coding: utf8
-## Copyright 2009-2010 Luc Saffre
+# -*- coding: UTF-8 -*-
+## Copyright 2009-2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -14,6 +14,7 @@
 
 from lino.tools import resolve_model
 from lino.utils.instantiator import Instantiator
+from lino.utils.babel import default_language
 #from lino import reports
 #contacts = reports.get_app('contacts')
 
@@ -124,7 +125,7 @@ def objects():
     
     raeren = City.objects.get(name__exact='Raeren')
     person = Instantiator('contacts.Person',"first_name last_name",
-                country='BE',language='de',city=raeren,zip_code='4730').build
+                country='BE',language=default_language(),city=raeren,zip_code='4730').build
     yield person(u'Erich',    u'Emonts')
     yield person(u'Erwin',    u'Emontspool')
     yield person(u'Erna',     u'Emonts-Gast')

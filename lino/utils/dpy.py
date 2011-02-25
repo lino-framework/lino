@@ -43,7 +43,7 @@ SUFFIX = '.dpy'
 class Serializer(base.Serializer):
     """
     Serializes a QuerySet to a dpy stream.
-    Usage: ``dumpdata --format dpy``
+    Usage: ``manage.py dumpdata --format dpy``
     """
 
     internal_use_only = False
@@ -261,20 +261,35 @@ class FakeDeserializedObject(base.DeserializedObject):
                 
     def try_save(self,obj,*args,**kw):
         if obj is None:
-            return true
+            return True
+        #~ try:
+            #~ obj.full_clean()
+        #~ except (ObjectDoesNotExist,ValidationError),e:
+            #~ if obj.pk is None:
+                #~ dblogger.exception(e)
+                #~ raise Exception("Failed to validate %s. Abandoned." % obj2str(obj))
+            #~ dblogger.debug("Deferred %s : %s",obj2str(obj),e)
+            #~ return False
+        #~ try:
+            #~ obj.save(*args,**kw)
+            #~ dblogger.debug("Deserialized %s has been saved" % obj2str(obj))
+            #~ return True
+        #~ except Exception,e:
+            #~ if obj.pk is None:
+                #~ dblogger.exception(e)
+                #~ raise Exception("Failed to save %s. Abandoned." % obj2str(obj))
+            #~ dblogger.debug("Deferred %s : %s",obj2str(obj),e)
+            #~ return False
         try:
             obj.full_clean()
-        #~ except Exception,e:
-        except (ObjectDoesNotExist,ValidationError),e:
-        #~ except ValidationError,e:
-            dblogger.debug("Deferred %s.%s : %s ",obj.__class__.__name__,obj.pk,e)
-            return False
-        try:
             obj.save(*args,**kw)
             dblogger.debug("Deserialized %s has been saved" % obj2str(obj))
             return True
         except Exception,e:
-            dblogger.debug("Deferred %s.%s : %s ",obj.__class__.__name__,obj.pk,e)
+            if obj.pk is None:
+                dblogger.exception(e)
+                raise Exception("Failed to save %s. Abandoned." % obj2str(obj))
+            dblogger.debug("Deferred %s : %s",obj2str(obj),e)
             return False
       
         

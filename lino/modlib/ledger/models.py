@@ -1,4 +1,4 @@
-## Copyright 2008-2010 Luc Saffre
+## Copyright 2008-2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -32,13 +32,17 @@ Company = resolve_model('contacts.Company')
 
 
 class Account(models.Model):
-    id = models.CharField(max_length=8,primary_key=True)
-    name = models.CharField(max_length=200,blank=True)
+    #~ id = models.CharField(max_length=8,primary_key=True)
+    match = models.CharField(max_length=50,blank=True)
+    name = models.CharField(max_length=200)
     
     def __unicode__(self):
-        if len(self.name):
-            return self.name
-        return self.id
+        if self.match:
+            return "%s (%s)" % (self.match,self.name)
+        return self.name
+        #~ if self.name:
+            #~ return self.name
+        #~ return self.id
         #return super(Account,self).__unicode__()
 
 
@@ -106,25 +110,25 @@ class Booked(journals.Journaled):
         
         
 
-ACCOUNTS = dict(
-  #providers='4400',
-  #customers='4000',
-  sales_base='7000',
-  sales_vat='4510',
-)
+#~ ACCOUNTS = dict(
+  #~ #providers='4400',
+  #~ #customers='4000',
+  #~ sales_base='7000',
+  #~ sales_vat='4510',
+#~ )
 
-def set_accounts(**kw):
-    for k,v in kw.items():
-        if not ACCOUNTS.has_key(k):
-            raise RuntimeError("invalid account name %s" % k)
-        ACCOUNTS[k] = v
+#~ def set_accounts(**kw):
+    #~ for k,v in kw.items():
+        #~ if not ACCOUNTS.has_key(k):
+            #~ raise RuntimeError("invalid account name %s" % k)
+        #~ ACCOUNTS[k] = v
 
-def get_account(name):
-    x = ACCOUNTS[name]
-    a = Account.objects.get(pk=x)
-    if a is None:
-        raise ConfigurationError("No account %s defined" % x)
-    return a
+#~ def get_account(name):
+    #~ x = ACCOUNTS[name]
+    #~ a = Account.objects.get(pk=x)
+    #~ if a is None:
+        #~ raise ConfigurationError("No account %s defined" % x)
+    #~ return a
     
         
 class Booking(models.Model):
@@ -142,7 +146,7 @@ class Booking(models.Model):
     def __unicode__(self):
         return u"%s.%d" % (self.document,self.pos)
         
-    def document(self):
+    def document(self,request):
         return "%s-%s" % (self.journal,self.number)
     document.return_type = models.CharField(max_length=30)
     

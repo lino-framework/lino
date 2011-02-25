@@ -1,15 +1,15 @@
-:mod:`lino.demos`
+:mod:`lino.sites`
 =================
   
 
-.. automodule:: lino.demos.std
+.. automodule:: lino.sites.std
     :members:
     :undoc-members:
     :show-inheritance:
 
 
 
-.. automodule:: lino.demos.dsbe
+.. automodule:: lino.sites.dsbe
     :members:
     :undoc-members:
     :show-inheritance:

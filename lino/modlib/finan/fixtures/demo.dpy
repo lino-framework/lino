@@ -1,5 +1,5 @@
-#coding: utf8
-## Copyright 2009-2010 Luc Saffre
+# -*- coding: UTF-8 -*-
+## Copyright 2009-2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -33,15 +33,15 @@ finan = reports.get_app('finan')
 Company = resolve_model('contacts.Company')
 
 def objects():
-    #ba = ledger.Account.objects.get(pk="5500")
+    ba = ledger.Account.objects.get(match="5500")
     #BANK = journals.get_journal_by_docclass(finan.BankStatement)
     BANK = finan.BankStatement.create_journal(
-        "BANK",account='5500',name="FirstAndOnly Bank")
+        "BANK",account=ba,name="FirstAndOnly Bank")
     yield BANK
     
-    EL = ledger.Account.objects.get(pk='61202')
-    IN = ledger.Account.objects.get(pk='61211')
-    PR = ledger.Account.objects.get(pk='4400')
+    EL = ledger.Account.objects.get(match='61202')
+    IN = ledger.Account.objects.get(match='61211')
+    PR = ledger.Account.objects.get(match='4400')
     
     doc = BANK.create_document(
       date=i2d(20090501),

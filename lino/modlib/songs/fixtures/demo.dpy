@@ -81,9 +81,9 @@ choir = Instantiator(Choir,"name place singers:nickname").build
 
 def objects():
 
-    language = Instantiator(countries.Language,"id name").build
-    yield language('la','Latin')
-    yield language('he','Hebrew')
+    #~ language = Instantiator(countries.Language,"id name").build
+    #~ yield language('la','Latin')
+    #~ yield language('he','Hebrew')
     
     yield place('Tallinn',country="ee")
     yield place('Vigala',country="ee") # 2
