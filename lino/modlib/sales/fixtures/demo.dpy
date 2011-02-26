@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2008-2010 Luc Saffre
+## Copyright 2008-2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -23,7 +23,8 @@ from lino.tools import resolve_model
 
 Person = resolve_model('contacts.Person')
 Company = resolve_model('contacts.Company')
-Customer = resolve_model('sales.Customer')
+#~ Contact = resolve_model('contacts.Contact')
+#~ Customer = resolve_model('sales.Customer')
 
 #contacts = reports.get_app('contacts')
 products = reports.get_app('products')
@@ -48,28 +49,27 @@ def objects():
     yield shippingmode("ta","take away")
     yield shippingmode("rm","regular mail")
 
-    for company in Company.objects.all():
-        #~ print 'sales.fixtures.demo',company
-        yield Customer(company=company)
-    for person in Person.objects.all():
-        #~ print 'sales.fixtures.demo', person
-        yield Customer(person=person)
+    #~ for company in Company.objects.all():
+        #~ yield Customer(company=company)
+    #~ for person in Person.objects.all():
+        #~ yield Customer(person=person)
     
     #ORD = journals.get_journal_by_docclass(Order)
     #INV = journals.get_journal_by_docclass(Invoice)
         
-    ORD = sales.Order.create_journal("ORD",name="Orders")
+    ORD = sales.Order.create_journal("ORD",name="Orders",printed_name="Order # %d")
     #ORD = journals.get_journal("ORD")
     #INV = journals.get_journal("INV")
     yield ORD
     INV = sales.Invoice.create_journal("INV",\
-      account=ledger.Account.objects.get(match="4000"),name="Invoices")
+      account=ledger.Account.objects.get(match="4000"),
+      name="Invoices",printed_name="Invoice # %d")
     #~ INV = sales.Invoice.create_journal("INV",account="4000",name="Invoices")
     yield INV
     
     
-    yield imode('e','E','By e-mail',2,INV)
-    yield imode('p','P','By snail mail',10,INV)
+    yield imode('e','E','By e-mail',2,INV,template='order_invoice.odt',build_method='appyodt')
+    yield imode('p','P','By snail mail',10,INV,template='order_invoice.odt',build_method='appyodt')
         
     yield salesrule(imode='e',shipping_mode="ta",payment_term="7")
     
@@ -82,10 +82,10 @@ def objects():
     hosting = 5
     
     order = Instantiator(sales.Order,
-        "customer creation_date start_date cycle imode",
+        "company creation_date start_date cycle imode",
         payment_term="30",journal=ORD).build
     invoice = Instantiator(sales.Invoice,
-      "customer creation_date imode",
+      "company creation_date imode",
       payment_term="30",journal=INV).build
     
     o = order(1,"2008-09-23","2008-09-24","M","e",
@@ -94,7 +94,7 @@ def objects():
     yield o
 
     o = order(2,"2008-09-23","2008-09-24","M","e",
-        sales_remark="Customer 2 gets 50% discount")
+        sales_remark="Company 2 gets 50% discount")
     o.add_item(hosting,1,discount=50)
     yield o  
 
@@ -139,7 +139,7 @@ def objects():
     for i in range(10):
     #for i in range(29):
         o = order(
-            customer=i+1,creation_date=date(2009,6,1+i),
+            company=i+1,creation_date=date(2009,6,1+i),
             sales_remark="range demo #%d" % i)
         yield o
         yield o.add_item(5,1,unit_price=1.7*i)

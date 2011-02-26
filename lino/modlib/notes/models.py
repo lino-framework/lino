@@ -1,4 +1,4 @@
-## Copyright 2009-2010 Luc Saffre
+## Copyright 2009-2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -37,8 +37,8 @@ from django.conf import settings
 
 class NoteType(mixins.PrintableType):
     class Meta:
-        verbose_name = _("note type")
-        verbose_name_plural = _("note types")
+        verbose_name = _("Note Type")
+        verbose_name_plural = _("Note Types")
     name = models.CharField(max_length=200)
     important = models.BooleanField(verbose_name=_("important"),default=False)
     remark = models.TextField(verbose_name=_("Remark"),blank=True)
@@ -68,8 +68,8 @@ class Note(mixins.TypedPrintable,mixins.Reminder):
         
     class Meta:
         abstract = True
-        verbose_name = _("note")
-        verbose_name_plural = _("notes")
+        verbose_name = _("Note")
+        verbose_name_plural = _("Notes")
         
     #~ date = fields.MyDateField()
     date = models.DateField(verbose_name=_('Date'),default=datetime.date.today)

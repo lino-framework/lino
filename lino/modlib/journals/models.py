@@ -32,6 +32,7 @@ import os
 from django.db import models
 import lino
 from lino import reports
+from lino.utils.babel import add_babel_field, babelattr, BabelCharField
 #~ from lino.modlib.documents import models as documents
 from lino import mixins
 #~ from lino.mixins import Printable
@@ -75,6 +76,8 @@ class Journal(models.Model):
     account = models.ForeignKey('ledger.Account',blank=True,null=True)
     #~ account = models.CharField(max_length=6,blank=True)
     pos = models.IntegerField()
+    #~ printed_name = models.CharField(max_length=100,blank=True)
+    printed_name = BabelCharField(max_length=100,blank=True)
     
     def get_doc_model(self):
         #print self,DOCTYPE_CLASSES, self.doctype
@@ -82,11 +85,6 @@ class Journal(models.Model):
 
     def get_doc_report(self):
         return DOCTYPES[self.doctype][1]()
-
-    def unused_get_doc_report(self,**kw):
-        kw['master_instance'] = self
-        rptclass = DOCTYPES[self.doctype][1].spawn(self.id,master=self.__class__,params=kw)
-        return rptclass()
 
     def create_document(self,**kw):
         cl = self.get_doc_model()
@@ -110,40 +108,11 @@ class Journal(models.Model):
             return 1
         return number + 1
         
-    #~ def __init__(self,docclass,id,name=None):
-        #~ if JOURNALS.has_key(id):
-            #~ raise RuntimeError("Duplicate definition of journal %s" % id)
-        #~ assert id is not None
-        #~ assert len(id) > 0
-        #~ assert issubclass(docclass,AbstractDocument)
-        #~ self.id = id
-        #~ self.docclass = docclass
-        #~ if name is None:
-            #~ name = id
-        #~ self.name = name
-        #~ self.seq_num = len(JOURNALS)
-        #~ JOURNALS[id] = self
-        #print self.seq_num,":",self.id,self.__class__.__name__,self.docclass
-        
-    #~ def create_document(self,**kw):
-        #~ doc = self.docclass(journal=self.id,**kw)
-        #~ doc.save()
-        #~ return doc
-        
-    #~ def get_next_number(self):
-        #~ #cl = DOCTYPE_CLASSES[self.doctype]
-        #~ d = self.docclass.objects.filter(journal=self.id).aggregate(
-            #~ models.Max('number'))
-        #~ number = d['number__max']
-        #~ if number is None:
-            #~ return 1
-        #~ return number + 1
-        
     def __unicode__(self):
         return self.id
         
     def save(self,*args,**kw):
-        self.before_save()
+        #~ self.before_save()
         r = super(Journal,self).save(*args,**kw)
         self.after_save()
         return r
@@ -151,11 +120,12 @@ class Journal(models.Model):
     def after_save(self):
         pass
         
-    def before_save(self):
+    def full_clean(self,*args,**kw):
         if not self.name:
             self.name = self.id
         if not self.pos:
             self.pos = self.__class__.objects.all().count() + 1
+        super(Journal,self).full_clean(*args,**kw)
       
         
     def pre_delete_document(self,doc):
@@ -165,6 +135,8 @@ class Journal(models.Model):
                 raise DocumentError(
                   "%s is not the last document in journal" % unicode(doc)
                   )
+
+#~ add_babel_field(Journal,'printed_name')
                   
 def JournalRef(**kw):
     #~ kw.update(blank=True,null=True) # Django Ticket #12708
@@ -176,6 +148,7 @@ def DocumentRef(**kw):
 
 class Journaled(mixins.MultiTableBase):
     """
+    A Journaled is a numbered document in a Journal.
     A model that subclasses Journaled must provide 2 fields::
     
       journal = journals.JournalRef()
@@ -187,7 +160,7 @@ class Journaled(mixins.MultiTableBase):
         abstract = True
         
     journal = JournalRef()
-    number = DocumentRef()
+    number = DocumentRef(blank=True)
     
     @classmethod
     def create_journal(cls,id,**kw):
@@ -196,6 +169,7 @@ class Journaled(mixins.MultiTableBase):
         #jcl = self.journal._meta.rel.to.__class__
         #print jcl, " == ", cls.journal_class
         #jnl = cls.journal_class(cls,*args,**kw)
+        jnl.full_clean()
         jnl.save()
         return jnl
         
@@ -210,23 +184,22 @@ class Journaled(mixins.MultiTableBase):
             return "(Unsaved %s document (journal=%r,number=%r))" % (
               self.__class__,self.journal,self.number)
             #~ return "%s#%d (%d)" % (self.journal.id,self.number, self.id)
-        return "%s#%s (%d)" % (self.journal,self.number,self.id)
+        #~ return "%s#%s (%d)" % (self.journal,self.number,self.id)
+        return babelattr(self.journal,'printed_name') % self.number
         
     def full_clean(self,*args,**kw):
+        #~ logger.info('Journaled.full_clean')
         if self.number is None:
             self.number = self.journal.get_next_number()
+        #~ logger.info('Journaled.full_clean : number is %r',self.number)
         super(Journaled,self).full_clean(*args,**kw)
         
-    def before_save(self):
-        pass
-        #~ assert self.journal is not None
-        #~ assert JOURNALS.has_key(self.journal)
-        #jnl = self.get_journal()
-        #~ print 'Journaled.before_save', self.number
+    #~ def before_save(self):
+        #~ pass
         
     def save(self,*args,**kw):
         #~ print 'Journaled.save'
-        self.before_save()
+        #~ self.before_save()
         r = super(Journaled,self).save(*args,**kw)
         self.after_save()
         return r

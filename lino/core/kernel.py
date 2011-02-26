@@ -91,6 +91,11 @@ def analyze_models():
     #~ ddhdict = {}
     for model in models.get_models():
         model._lino_ddh = DisableDeleteHandler(model)
+        if hasattr(model,'before_save'): 
+            raise Exception(
+              "%s has a method before_save! see :doc:`/blog/2010/0804`, :doc:`/blog/2011/0226`" % 
+              model)
+        
         
     for model in models.get_models():
     

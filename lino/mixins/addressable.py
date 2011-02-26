@@ -18,7 +18,7 @@ from django.utils.translation import ugettext_lazy as _
 from lino import reports
 from lino import fields
 from lino.utils import join_words
-from lino.utils.babel import add_babel_field, default_language, babelattr, BABEL_CHOICES
+from lino.utils.babel import add_babel_field, DEFAULT_LANGUAGE, babelattr, BABEL_CHOICES
 from lino.utils.choosers import chooser
     
 
@@ -67,7 +67,7 @@ Anything that has contact information (postal address, email, phone,...).
     zip_code = models.CharField(_("Zip code"),max_length=10,blank=True)
     region = models.CharField(_("Region"),max_length=200,blank=True)
     #~ language = models.ForeignKey('countries.Language',default=default_language)
-    language = fields.LanguageField(default=default_language,choices=BABEL_CHOICES)
+    language = fields.LanguageField(default=DEFAULT_LANGUAGE,choices=BABEL_CHOICES)
     
     email = models.EmailField(_('E-Mail'),blank=True,null=True)
     url = models.URLField(_('URL'),blank=True)
@@ -139,4 +139,31 @@ class Addressables(reports.Report):
     def get_queryset(self):
         return self.model.objects.select_related('country','city')
   
+
+
+class ContactDocument(models.Model):
+    """
+    A document whose recipient is a :class:`Contact`.
+    """
+  
+    class Meta:
+        abstract = True
+        
+    person = models.ForeignKey("contacts.Person",blank=True,null=True,verbose_name=_("Person"))
+    company = models.ForeignKey("contacts.Company",blank=True,null=True,verbose_name=_("Company"))
+    contact = models.ForeignKey("contacts.Contact",blank=True,null=True,
+      verbose_name=_("represented by"))
+    language = fields.LanguageField(default=DEFAULT_LANGUAGE)
+
+    @chooser()
+    def contact_choices(cls,company):
+        if company is not None:
+            return company.contact_set.all()
+        return []
+        #~ print 'Contract.contact_choices for', company
+        #~ choices = company.contact_set.all()
+        #~ print 'Contract.contact_choices returns', choices
+        #~ return choices
+
+
 

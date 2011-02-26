@@ -27,7 +27,8 @@ from lino import reports
 from lino.utils import perms
 
 from lino import fields
-from lino.utils.babel import add_babel_field, default_language, babelattr
+from lino.utils.choosers import chooser
+from lino.utils.babel import add_babel_field, babelattr, DEFAULT_LANGUAGE
 from lino.mixins.addressable import Addressable, Addressables
 
 class Person(Addressable):
@@ -37,8 +38,8 @@ class Person(Addressable):
     class Meta:
         abstract = True
         app_label = 'contacts'
-        verbose_name = _("person")
-        verbose_name_plural = _("persons")
+        verbose_name = _("Person")
+        verbose_name_plural = _("Persons")
 
     first_name = models.CharField(max_length=200,blank=True,
       verbose_name=_('First name'))
@@ -114,6 +115,8 @@ class Company(Addressable):
     class Meta:
         abstract = True
         app_label = 'contacts'
+        verbose_name = _("Company")
+        verbose_name_plural = _("Companies")
     
     vat_id = models.CharField(_("VAT id"),max_length=200,blank=True)
     type = models.ForeignKey('contacts.CompanyType',blank=True,null=True,
@@ -200,7 +203,6 @@ class ContactsByPerson(reports.Report):
     column_names = 'company type *'
     
         
-
 
 from lino.models import SiteConfig
 #~ from lino.tools import resolve_field

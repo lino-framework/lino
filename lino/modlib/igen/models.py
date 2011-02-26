@@ -65,19 +65,26 @@ from lino.modlib.contacts import models as contacts
 from lino.modlib.notes import models as notes
 
 class Person(contacts.Person):
-    # only difference: not abstract
-    class Meta:
+    class Meta(contacts.Person.Meta):
         app_label = 'contacts'
+        # see :doc:`/tickets/14`
+        #~ verbose_name = _("Person")
+        #~ verbose_name_plural = _("Persons")
 
               
 class Company(contacts.Company):
-    # only difference: not abstract
-    class Meta:
+    class Meta(contacts.Company.Meta):
         app_label = 'contacts'
+        # see :doc:`/tickets/14`
+        #~ verbose_name = _("Company")
+        #~ verbose_name_plural = _("Companies")
     
 class Note(notes.Note):
      class Meta:
         app_label = 'notes'
+        # see :doc:`/tickets/14`
+        #~ verbose_name = _("Note")
+        #~ verbose_name_plural = _("Notes")
  
  
 reports.inject_field(

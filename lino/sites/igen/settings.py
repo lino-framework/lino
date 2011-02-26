@@ -71,7 +71,7 @@ class IgenSite(LinoSite):
         m = self.add_menu("contacts","~Contacts")
         m.add_action('contacts.Companies')
         m.add_action('contacts.Persons')
-        m.add_action('sales.Customers')
+        #~ m.add_action('sales.Customers')
 
         m = self.add_menu("prods","~Products")
         m.add_action('products.Products')

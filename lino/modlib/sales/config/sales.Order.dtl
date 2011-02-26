@@ -9,8 +9,8 @@ main =
 box1 = 
   journal number your_ref 
   creation_date 
-  customer 
-  ship_to
+  company contact person 
+  ## ship_to
   
 box2 = 
   imode

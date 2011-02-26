@@ -27,8 +27,10 @@ werde ich auch noch den watch_tim anpassen müssen.
 Jetzt bringe ich aber erst mal 
 :doc:`/dsbe/index`
 wieder auf Vordermann.
-
 Vorher ein `Checkin <http://code.google.com/p/lino/source/detail?r=07a1d8d59d86ca38c8ab474f9c8359ee20039bba>`_.
+Zuvor hatte ich eine ganze Reihe Checkins 
+gemacht, während ich an der Seite :mod:`lino.test_apps.1.models` 
+arbeitete.
 
 :doc:`/igen/index` läuft wieder
 -------------------------------
@@ -99,4 +101,15 @@ Unkomplette Liste dessen, was ich gemacht habe:
     Django mag schön stabil sein, aber leider sind seine Macken deshalb 
     ebenfalls sehr stabil.
 
+Checkin:
+
+    http://code.google.com/p/lino/source/detail?r=1921dc411f27b0e26521a1252c840803a71a3768
+    
+    
+Umkrempeleien
+-------------
+
+:class:`lino.mixins.PartnerDocument` heißt jetzt 
+:class:`lino.mixins.ContactDocument`,
+und hat außer bisher person und company auch contact und language.
 

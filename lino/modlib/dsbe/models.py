@@ -245,18 +245,20 @@ class Partner(mixins.DiffingMixin,models.Model):
     bank_account2 = models.CharField(max_length=40,blank=True,null=True,
         verbose_name=_("Bank account 2"))
         
-    def save(self,*args,**kw):
-        self.before_save()
-        r = super(Partner,self).save(*args,**kw)
-        return r
+    #~ def save(self,*args,**kw):
+        #~ self.before_save()
+        #~ r = super(Partner,self).save(*args,**kw)
+        #~ return r
         
-    def before_save(self):
+    #~ def before_save(self):
+    def full_clean(self,*args,**kw):
         if self.id is None:
             sc = get_site_config()
             if sc.next_partner_id is not None:
                 self.id = sc.next_partner_id
                 sc.next_partner_id += 1
                 sc.save()
+        super(Partner,self).full_clean(*args,**kw)
         
     def disable_delete(self,request):
         if settings.TIM2LINO_IS_IMPORTED_PARTNER(self):
@@ -650,8 +652,9 @@ class Company(Partner,contacts.Company):
     
     class Meta(contacts.Company.Meta):
         app_label = 'contacts'
-        verbose_name = _("company")
-        verbose_name_plural = _("companies")
+        #~ verbose_name = _("Company")
+        #~ verbose_name_plural = _("Companies")
+        
     #~ vat_id = models.CharField(max_length=200,blank=True)
     #~ type = models.ForeignKey('contacts.CompanyType',blank=True,null=True,verbose_name=_("Company type"))
     prefix = models.CharField(max_length=200,blank=True) 
@@ -1037,8 +1040,8 @@ class ExclusionsByPerson(Exclusions):
 class ContractType(mixins.PrintableType):
     templates_group = 'contracts'
     class Meta:
-        verbose_name = _("contract type")
-        verbose_name_plural = _('contract types')
+        verbose_name = _("Contract Type")
+        verbose_name_plural = _('Contract Types')
         
     ref = models.CharField(_("reference"),max_length=20,blank=True)
     name = models.CharField(_("contract title"),max_length=200)
@@ -1139,16 +1142,15 @@ class AidTypes(reports.Report):
 #
 # CONTRACTS
 #
-class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,mixins.PartnerDocument):
+class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,mixins.ContactDocument):
+    """
+    A Contract
+    """
     class Meta:
-        verbose_name = _("contract")
-        verbose_name_plural = _('contracts')
+        verbose_name = _("Contract")
+        verbose_name_plural = _('Contracts')
         
-    contact = models.ForeignKey("contacts.Contact",blank=True,null=True,
-      verbose_name=_("represented by"))
-    #~ user = models.ForeignKey("auth.User",verbose_name=_("Coach"))
     type = models.ForeignKey("dsbe.ContractType",verbose_name=_("contract type"),blank=True)
-    language = fields.LanguageField(default=DEFAULT_LANGUAGE)
     
     applies_from = models.DateField(_("applies from"),blank=True,null=True,)
     applies_until = models.DateField(_("applies until"),blank=True,null=True)
@@ -1209,33 +1211,12 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,mixins.
         u"100%",
         ]
     
-    #~ @chooser(simple_values=True)
-    #~ def aid_rate_choices(cls,language):
-        #~ return language_choices(language,AID_RATE_CHOICES)
-        
-    #~ @chooser(simple_values=True)
-    #~ def aid_nature_choices(cls,language):
-        #~ return language_choices(language,AID_NATURE_CHOICES)
-    
-    #~ @chooser(simple_values=True)
-    #~ def exam_policy_choices(cls,language):
-        #~ return ExamPolicy.objects.all()
-    
     
     def disabled_fields(self,request):
         if self.must_build:
             return []
         return CONTRACT_PRINTABLE_FIELDS
         
-    @chooser()
-    def contact_choices(cls,company):
-        if company is not None:
-            return company.contact_set.all()
-        return []
-        #~ print 'Contract.contact_choices for', company
-        #~ choices = company.contact_set.all()
-        #~ print 'Contract.contact_choices returns', choices
-        #~ return choices
     
     def __unicode__(self):
         msg = _("Contract # %s")

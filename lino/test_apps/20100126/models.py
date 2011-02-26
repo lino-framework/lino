@@ -63,6 +63,7 @@ class Journal(models.Model):
         cl = self.get_doc_model()
         kw.update(journal=self)
         doc = cl(**kw)
+        doc.full_clean()
         doc.save()
         return doc
         
@@ -113,18 +114,19 @@ class JournaledAbstractDocument(AbstractDocument):
               self.__class__,self.journal,self.number)
         return "%s#%s (%d)" % (self.journal,self.number,self.id)
         
-    def before_save(self):
+    def full_clean(self,*args,**kw):
         if self.number is None:
             self.number = self.journal.get_next_number()
+        super(JournaledAbstractDocument,self).full_clean(*args,**kw)
         
-    def save(self,*args,**kw):
-        self.before_save()
-        r = super(AbstractDocument,self).save(*args,**kw)
-        self.after_save()
-        return r
+    #~ def save(self,*args,**kw):
+        #~ self.before_save()
+        #~ r = super(AbstractDocument,self).save(*args,**kw)
+        #~ self.after_save()
+        #~ return r
         
-    def after_save(self):
-        pass
+    #~ def after_save(self):
+        #~ pass
     
     
 class LedgerDocument(JournaledAbstractDocument):
@@ -139,8 +141,8 @@ class SalesDocument(JournaledAbstractDocument):
     
     creation_date = models.DateField(auto_now=True) 
 
-    def before_save(self):
-        JournaledAbstractDocument.before_save(self)
+    #~ def before_save(self):
+        #~ JournaledAbstractDocument.before_save(self)
         # ...
         
 class Order(SalesDocument):
@@ -149,9 +151,9 @@ class Order(SalesDocument):
 class Invoice(LedgerDocument,SalesDocument):
     due_date = models.DateField("Payable until",blank=True,null=True)
     
-    def before_save(self):
+    #~ def before_save(self):
         # ...
-        super(Invoice,self).before_save()
+        #~ super(Invoice,self).before_save()
 
 #~ class Invoice(LedgerDocument):
     #~ due_date = models.DateField(auto_now=True) 

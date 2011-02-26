@@ -130,13 +130,17 @@ def json_response(x):
     #~ return r
     #~ return HttpResponse(s, mimetype='text/html')
     
-def error_response(e,message_prefix='',**kw):
+def error_response(e,message=None,**kw):
     kw.update(success=False)
-    if hasattr(e, 'message_dict'):
+    if hasattr(e,'message_dict'):
         kw.update(errors=e.message_dict)
     #~ kw.update(alert_msg=cgi.escape(message_prefix+unicode(e)))
     kw.update(alert=True)
-    kw.update(message=cgi.escape(message_prefix+unicode(e)))
+    
+    kw.update(message=message)
+    if message is None:
+        message = unicode(e)
+    kw.update(message=cgi.escape(message))
     #~ kw.update(message=message_prefix+unicode(e))
     return json_response(kw)
     
@@ -737,7 +741,9 @@ class ExtUI(base.UI):
         #~ return HttpResponse(s, mimetype='text/html')
 
     def form2obj_and_save(self,request,rh,data,elem,is_new): # **kw2save):
-        logger.info('form2obj_and_save %r', data)
+        """
+        """
+        #~ logger.info('form2obj_and_save %r', data)
         
         # store normal form data (POST or PUT)
         try:
@@ -745,12 +751,16 @@ class ExtUI(base.UI):
         except exceptions.ValidationError,e:
            return error_response(e)
            #~ return error_response(e,_("There was a problem while validating your data : "))
+        #~ logger.info('store.form2obj passed')
         
         if not is_new:
             dblogger.log_changes(request,elem)
             
-        if hasattr(elem,'before_save'): # see :doc:`/blog/2010/0804`
-            elem.before_save()
+        #~ if hasattr(elem,'before_save'): # see :doc:`/blog/2010/0804`, :doc:`/blog/2011/0226`
+            #~ elem.before_save()
+            
+        #~ logger.info('elem.before_save() passed')
+        
         #~ print '20101024a', elem.card_valid_from
         try:
             elem.full_clean()
@@ -758,6 +768,7 @@ class ExtUI(base.UI):
             return error_response(e) #,_("There was a problem while validating your data : "))
             #~ return json_response_kw(success=False,msg="Failed to save %s : %s" % (elem,e))
             
+        logger.info('elem.full_clean() passed')
         #~ print '20101024b', elem.card_valid_from
 
         kw2save = {}
@@ -814,7 +825,7 @@ class ExtUI(base.UI):
         rpt = actors.get_actor2(app_label,actor)
         if not rpt.can_config.passes(request.user):
             msg = _("User %(user)s cannot configure %(report)s.") % dict(user=request.user,report=rpt)
-            return error_response(msg)
+            return error_response(None,msg)
             #~ return http.HttpResponseForbidden(msg)
         if request.method == 'PUT':
             PUT = http.QueryDict(request.raw_post_data)
@@ -969,7 +980,7 @@ class ExtUI(base.UI):
             #~ if rpt.disable_delete is not None:
             msg = rpt.disable_delete(elem,request)
             if msg is not None:
-                return error_response(msg)
+                return error_response(Non,msg)
                     
             dblogger.log_deleted(request,elem)
             
@@ -979,7 +990,7 @@ class ExtUI(base.UI):
                 dblogger.exception(e)
                 msg = _("Failed to delete %(record)s : %(error)s.") % dict(record=obj2str(elem),error=e)
                 #~ msg = "Failed to delete %s." % element_name(elem)
-                return error_response(msg)
+                return error_response(Non,msg)
                 #~ raise Http404(msg)
             return HttpResponseDeleted()
             
@@ -1040,7 +1051,9 @@ class ExtUI(base.UI):
                 
             raise Http404("%s has no action %r" % (ah.report,fmt))
               
-        return error_response("Method %r not supported for elements of %s" % (request.method,ah.report))
+        return error_response(None,
+            "Method %r not supported for elements of %s." % (
+                request.method,ah.report))
         #~ raise Http404("Method %r not supported for elements of %s" % (request.method,ah.report))
         
         

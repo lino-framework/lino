@@ -466,13 +466,14 @@ class PrintableType(models.Model):
     #~ build_method = models.CharField(max_length=20,choices=mixins.build_method_choices())
     #~ template = models.CharField(max_length=200)
     
-    #~ @classmethod
-    @chooser()
+    @classmethod
     def get_templates_group(cls):
         return cls.templates_group or cls._meta.app_label
         
     @chooser(simple_values=True)
     def template_choices(cls,build_method):
+        if not build_method:
+            build_method = settings.LINO_SITE.config.default_build_method 
         #~ print cls, 'template_choices for method' ,build_method
         #~ bm = bm_dict[build_method]
         return get_template_choices(cls.get_templates_group(),build_method)
@@ -546,22 +547,33 @@ class TypedPrintable(Printable):
     """
     A TypedPrintable model must define itself a field `type` which is a ForeignKey 
     to a Model that implements PrintableType.
+    Alternatively (
     """
+    
   
     class Meta:
         abstract = True
         
+    def get_printable_type(self):
+        return self.type
+        
     def get_build_method(self):
-        if self.type is None:
+        ptype = self.get_printable_type()
+        if ptype is None:
             return super(TypedPrintable,self).get_build_method()
-        return self.type.build_method
+        if ptype.build_method:
+            return ptype.build_method
+        return settings.LINO_SITE.config.default_build_method 
         
     def get_print_templates(self,bm,action):
-        if self.type is None:
+        ptype = self.get_printable_type()
+        if ptype is None:
             return super(TypedPrintable,self).get_print_templates(self,bm,action)
-        assert self.type.template.endswith(bm.template_ext)
-        #~ return [ TEMPLATE_GROUP +'/'+self.type.template ]
-        return [ self.type.get_templates_group() + '/' + self.type.template ]
+        if not ptype.template.endswith(bm.template_ext):
+            raise Exception(
+              "Invalid template configured for %s \"%s\". Expected filename ending with '%s'." %
+              (ptype.__class__.__name__,ptype,bm.template_ext))
+        return [ ptype.get_templates_group() + '/' + ptype.template ]
         
     def get_print_language(self,bm):
         return self.language

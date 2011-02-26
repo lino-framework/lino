@@ -84,16 +84,6 @@ class Owned(models.Model):
         return unicode(self.owner_type.get_object_for_this_type(pk=value))
             
 
-class PartnerDocument(models.Model):
-  
-    class Meta:
-        abstract = True
-        
-    person = models.ForeignKey("contacts.Person",blank=True,null=True,verbose_name=_("Person"))
-    company = models.ForeignKey("contacts.Company",blank=True,null=True,verbose_name=_("Company"))
-
-
-
 
 class DiffingMixin(object):
     """
@@ -132,4 +122,5 @@ class DiffingMixin(object):
 from lino.mixins.reminder import Reminder
 from lino.mixins.printable import Printable, PrintableType, TypedPrintable
 from lino.mixins.uploadable import Uploadable
+from lino.mixins.addressable import ContactDocument
 

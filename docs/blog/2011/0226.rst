@@ -1,0 +1,45 @@
+20110226
+========
+
+Die Anpssungen in :doc:`/igen/index` gingen erstaunlich schnell.
+Es gab natürlich noch einige Verbesserungen:
+
+Beim manuellen Eingeben einer neuen Verkaufsrechnung (`sales.Invoice`) 
+kamen noch eine Serie von Problemen in :mod:`lino.ui.extjs.ext_store`:
+
+- IntegerField (Invoice.number) : muss er leer erlauben, und dann selber ausfüllen
+- OneToOneField.form2obj machte Dummheiten mit dem salesdocument_ptr
+
+Das mit dem :meth:`before_save` (sh. :doc:`/blog/2010/0804`) 
+scheint nun geregelt zu sein: alle Fälle habe ich durch 
+entsprechende :meth:`full_clean` auf diesen Modellen ersetzt.
+Die war auch zum Setzen der Dokumentnummer nötig.
+:func:`lino.core.kernel.analyze_models` macht jetzt bis auf weiteres 
+noch eine Exception für den Fall dass noch irgendwo 
+eine `before_save` rumhängt.
+
+Und cool: nebenbei habe ich doch noch eine elegantere Lösung für 
+mehrsprachige Datenbankfelder gefunden: :class:`lino.utils.babel.BabelCharField`.
+
+Statt wie bisher
+
+::
+
+  class Foo(models.Model):
+      name = models.CharField(_("Designation"),max_length=200)
+      def __unicode__(self):
+          return babelattr(self,'name')
+  add_babel_field(Foo,'name')
+  
+macht man jetzt einfach
+
+::
+
+  class Foo(models.Model):
+      name = babel.BabelCharField(_("Designation"),max_length=200)
+      def __unicode__(self):
+          return babel.babelattr(self,'name')
+        
+
+
+

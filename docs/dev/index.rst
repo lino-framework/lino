@@ -1,6 +1,22 @@
 Developing Lino applications
 ============================
 
+(This document is currently not well maintained. Don't read it!)
+
+Conventions
+-----------
+
+- I'll try to always set model names to uppercase.
+
+    verbose_name = _("Person")           # not _("person")
+    verbose_name_plural = _("Companies") # not _("companies")
+    verbose_name = _("Note Type")        # not _("Note type")
+  
+  
+
+Introduction
+------------
+
 Lino applications are basically normal Django applications, but 
 instead of writing `Admin` classes for your Django models, you write Reports 
 

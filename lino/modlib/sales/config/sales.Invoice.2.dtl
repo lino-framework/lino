@@ -1,10 +1,7 @@
-:label: Items
+:label: More
 :label_align: top
 
 main = 
-  sales.ItemsByDocument
-  totals
-
-
-totals =  
-  total_excl total_vat total_incl
+  journal number creation_date user sent_time
+  sales_remark:80 language
+  intro 

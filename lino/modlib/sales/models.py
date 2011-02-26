@@ -13,19 +13,11 @@
 
 
 """
->>> from lino.modlib.tools import resolve_model
->>> Person = resolve_model('contacts.Person')
->>> luc = Person(first_name="Luc",last_name="Saffre")
->>> luc.save()
->>> luc
-<Person: Saffre Luc>
->>> c = Customer(person=luc)
->>> c.save()
->>> c
-<Customer: Saffre Luc>
 
 """
 
+import logging
+logger = logging.getLogger(__name__)
 import datetime
 from dateutil.relativedelta import relativedelta
 ONE_DAY = relativedelta(days=1)
@@ -34,15 +26,15 @@ from django.db import models
 from django.contrib.auth import models as auth
 from django import forms
 from django.core.exceptions import ValidationError
-
-
-#from lino.utils.mti import child_from_parent
+from django.utils.translation import ugettext_lazy as _
 
 from lino import fields
         
 from lino import reports
 from lino import actions
+from lino import mixins
 from lino.utils import perms
+from lino.utils.babel import add_babel_field, babelattr
 
 journals = models.get_app('journals')
 #~ ledger = models.get_app('ledger')
@@ -90,7 +82,7 @@ class PaymentTerms(reports.Report):
   
 
 
-class InvoicingMode(models.Model):
+class InvoicingMode(mixins.PrintableType):
     CHANNEL_CHOICES = (
         ('P', 'Regular Mail'),
         ('E', 'E-Mail'),
@@ -100,6 +92,7 @@ class InvoicingMode(models.Model):
     #journal = models.ForeignKey(journals.Journal)
     name = models.CharField(max_length=200)
     price = fields.PriceField(blank=True,null=True)
+    "Additional fee charged when using this method."
     channel = models.CharField(max_length=1, 
                 choices=CHANNEL_CHOICES,help_text="""
     Method used to send the invoice. 
@@ -111,7 +104,10 @@ class InvoicingMode(models.Model):
     """)
     
     def __unicode__(self):
-        return self.name
+        return unicode(babelattr(self,'name'))
+        
+add_babel_field(InvoicingMode,'name')
+        
         
 class InvoicingModes(reports.Report):
     model = 'sales.InvoicingMode'
@@ -153,75 +149,54 @@ def get_sales_rule(doc):
             return r
             
 
-class Customer(models.Model):
+#~ class Customer(models.Model):
         
-    name = models.CharField(max_length=40)
-    company = models.ForeignKey('contacts.Company',blank=True,null=True)
-    person = models.ForeignKey('contacts.Person',blank=True,null=True)
+    #~ name = models.CharField(max_length=40)
+    #~ company = models.ForeignKey('contacts.Company',blank=True,null=True)
+    #~ person = models.ForeignKey('contacts.Person',blank=True,null=True)
     
-    payment_term = models.ForeignKey(PaymentTerm,blank=True,null=True)
-    vat_exempt = models.BooleanField(default=False)
-    item_vat = models.BooleanField(default=False)
+    #~ payment_term = models.ForeignKey(PaymentTerm,blank=True,null=True)
+    #~ vat_exempt = models.BooleanField(default=False)
+    #~ item_vat = models.BooleanField(default=False)
     
-    def __unicode__(self):
-        if self.name is None:
-            return u"Unsaved customer %s" % self.id
-        return self.name
+    #~ def __unicode__(self):
+        #~ if self.name is None:
+            #~ return u"Unsaved customer %s" % self.id
+        #~ return self.name
         
-    #~ def save(self,*args,**kw):
-        #~ print 'Customer.save', self
-        #~ self.before_save()
-        #~ return super(Customer,self).save(*args,**kw)
         
-    #~ def clean(self):
-    def full_clean(self,*args,**kw):
-    #~ def before_save(self):
-        #~ print 'Customer.before_save', self
-        if self.company_id is not None:
-            self.name = self.company.name
-        elif self.person_id is not None:
-            l = filter(lambda x:x,[self.person.last_name,self.person.first_name,self.person.title])
-            self.name = " ".join(l)
-        super(Customer,self).full_clean(*args,**kw)
+    #~ def full_clean(self,*args,**kw):
+        #~ if self.company_id is not None:
+            #~ self.name = self.company.name
+        #~ elif self.person_id is not None:
+            #~ l = filter(lambda x:x,[self.person.last_name,self.person.first_name,self.person.title])
+            #~ self.name = " ".join(l)
+        #~ super(Customer,self).full_clean(*args,**kw)
         
-    def as_address(self,*args,**kw):
-        recipient = self.company or self.person
-        return recipient.as_address(self,*args,**kw)
+    #~ def as_address(self,*args,**kw):
+        #~ recipient = self.company or self.person
+        #~ return recipient.as_address(self,*args,**kw)
     
-#~ class CustomerDetail(layouts.DetailLayout):
-    #~ datalink = 'sales.Customer'
-    #~ main = """
-           #~ company person
-           #~ payment_term 
-           #~ vat_exempt item_vat
-           #~ """
     
-class Customers(reports.Report):
-    column_names = "name payment_term vat_exempt item_vat company person"
-    can_delete = True
-    model = Customer
-    order_by = ["name"]
-    #can_view = perms.is_authenticated
+#~ class Customers(reports.Report):
+    #~ column_names = "name payment_term vat_exempt item_vat company person"
+    #~ can_delete = True
+    #~ model = Customer
+    #~ order_by = ["name"]
 
 
 
 
-
-class SalesDocument(journals.Journaled,journals.Sendable):
+class SalesDocument(
+      journals.Journaled,journals.Sendable,
+      mixins.ContactDocument,mixins.TypedPrintable):
     
-    #~ # for Journaled:
-    #~ journal = journals.JournalRef()
-    #~ number = journals.DocumentRef()
-    
-    #~ # for Sendable:
-    #~ sent_time = models.DateTimeField(blank=True,null=True)
-    
-    creation_date = fields.MyDateField() #auto_now_add=True)
-    customer = models.ForeignKey(Customer,
-        related_name="customer_%(class)s")
-    ship_to = models.ForeignKey(Customer,
-        blank=True,null=True,
-        related_name="shipTo_%(class)s")
+    creation_date = models.DateField(blank=True,auto_now_add=True)
+    #~ customer = models.ForeignKey(Customer,
+        #~ related_name="customer_%(class)s")
+    #~ ship_to = models.ForeignKey(Customer,
+        #~ blank=True,null=True,
+        #~ related_name="shipTo_%(class)s")
     your_ref = models.CharField(max_length=200,blank=True)
     imode = models.ForeignKey(InvoicingMode)
     shipping_mode = models.ForeignKey(ShippingMode,blank=True,null=True)
@@ -240,6 +215,14 @@ class SalesDocument(journals.Journaled,journals.Sendable):
     def can_send(self):
         "only signed documents can be sent"
         return self.user is not None
+        
+    def get_printable_type(self):
+        return self.imode
+        
+    def disabled_fields(self,request):
+        if self.must_build:
+            return []
+        return SALES_PRINTABLE_FIELDS
         
     #~ def save(self, *args, **kwargs):
         #~ self.before_save()
@@ -260,32 +243,31 @@ class SalesDocument(journals.Journaled,journals.Sendable):
         #print self,kw
         kw['document'] = self
         return DocItem(**kw)
-        #~ return self.docitem_set.create(**kw)
+        #~ return self.items.create(**kw)
         
-    def total_incl(self,request):
+    def total_incl(self,request=None):
         return self.total_excl + self.total_vat
     total_incl.return_type = fields.PriceField()
     
     def update_total(self):
-        if self.pk is not None:
-            total_excl = 0
-            total_vat = 0
-            for i in self.docitem_set.all():
-                if i.total is not None:
-                    total_excl += i.total
-                #~ if not i.product.vatExempt:
-                    #~ total_vat += i.total_excl() * 0.18
-            self.total_excl = total_excl
-            self.total_vat = total_vat
-            #~ if self.journal == "ORD":
-                #~ print "  done before_save:", self
+        if self.pk is None:
+            return
+        total_excl = 0
+        total_vat = 0
+        for i in self.items.all():
+            if i.total is not None:
+                total_excl += i.total
+            #~ if not i.product.vatExempt:
+                #~ total_vat += i.total_excl() * 0.18
+        self.total_excl = total_excl
+        self.total_vat = total_vat
+        #~ if self.journal == "ORD":
+            #~ print "  done before_save:", self
         
 
     def full_clean(self,*args,**kw):
-        #~ print 'SalesDocument.full_clean',self
-    #~ def before_save(self):
-        #~ if self.journal == "ORD":
-            #~ print "before_save:", self
+        #~ logger.info("SalesDocument.full_clean")
+        super(SalesDocument,self).full_clean(*args,**kw)
         r = get_sales_rule(self)
         if r is None:
             raise ValidationError("No sales rule for %s",self)
@@ -297,9 +279,12 @@ class SalesDocument(journals.Journaled,journals.Sendable):
         if self.shipping_mode is None:
             self.shipping_mode = r.shipping_mode
         self.update_total()
-        super(SalesDocument,self).full_clean(*args,**kw)
       
-        
+SALES_PRINTABLE_FIELDS = reports.fields_list(SalesDocument,
+  'person company contact imode payment_term '
+  'creation_date your_ref subject '
+  'language vat_exempt item_vat ')
+
 class OrderManager(models.Manager):
   
     def pending(self,make_until=None):
@@ -351,10 +336,15 @@ class Order(SalesDocument):
                 self.cycle,self))
         return datetime.date(date.year,date.month,date.day)
         
-    def before_save(self):
-        SalesDocument.before_save(self)
+    #~ def before_save(self):
+        #~ SalesDocument.before_save(self)
+        #~ if self.start_date is None:
+            #~ self.start_date = self.creation_date
+            
+    def full_clean(self,*args,**kw):
         if self.start_date is None:
             self.start_date = self.creation_date
+        super(Order,self).full_clean(*args,**kw)
             
     def make_invoice(self,make_until=None,simulate=False,today=None):
 
@@ -397,7 +387,7 @@ class Order(SalesDocument):
         cover_text = "Period %s to %s" % (cover_from,cover_until)
         #print cover_text
         items = []
-        for item in self.docitem_set.all():
+        for item in self.items.all():
             d = {}
             for fn in ('product','title','description',
                        'unit_price','qty'):
@@ -411,8 +401,8 @@ class Order(SalesDocument):
         invoice = self.imode.journal.create_document(
             creation_date=today,
             order=self,
-            customer=self.customer,
-            ship_to=self.ship_to,
+            person=self.person,company=self.company,contact=self.contact,
+            #~ ship_to=self.ship_to,
             imode=self.imode,
             payment_term=self.payment_term,
             shipping_mode=self.shipping_mode,
@@ -428,6 +418,7 @@ class Order(SalesDocument):
             i.save()
             #i = DocItem(document=invoice,**d)
             #i.save()
+        invoice.full_clean()
         invoice.save() # save again because totals have been updated
         self.covered_until = cover_until
         self.save()
@@ -446,14 +437,14 @@ class Invoice(ledger.Booked,SalesDocument):
     due_date = fields.MyDateField("Payable until",blank=True,null=True)
     order = models.ForeignKey('sales.Order',blank=True,null=True)
     
-    def before_save(self):
+    def full_clean(self,*args,**kw):
         if self.due_date is None:
             if self.payment_term is not None:
                 self.due_date = self.payment_term.get_due_date(
                     self.creation_date)
         #SalesDocument.before_save(self)
         #ledger.LedgerDocumentMixin.before_save(self)
-        super(Invoice,self).before_save()
+        super(Invoice,self).full_clean(*args,**kw)
 
 
     def collect_bookings(self):
@@ -470,7 +461,7 @@ class Invoice(ledger.Booked,SalesDocument):
 
 
 class DocItem(models.Model):
-    document = models.ForeignKey(SalesDocument) 
+    document = models.ForeignKey(SalesDocument,related_name='items') 
     pos = models.IntegerField("Position")
     
     product = models.ForeignKey(products.Product,blank=True,null=True)
@@ -501,7 +492,7 @@ class DocItem(models.Model):
         #print "before_save()", self
         if self.document.pk is not None:
             if self.pos is None:
-                self.pos = self.document.docitem_set.count() + 1
+                self.pos = self.document.items.count() + 1
             if self.product:
                 if not self.title:
                     self.title = self.product.name
@@ -513,7 +504,7 @@ class DocItem(models.Model):
             if self.unit_price is not None and self.qty is not None:
                 self.total = self.unit_price * self.qty
             #self.document.save() # update total in document
-            self.document.update_total()
+            #~ self.document.update_total()
         super(DocItem,self).full_clean(*args,**kw)
     #~ before_save.alters_data = True
 
@@ -607,7 +598,7 @@ class OrdersByJournal(Orders):
     order_by = ["number"]
     #master = journals.Journal
     fk_name = 'journal' # see django issue 10808
-    column_names = "number:4 creation_date customer:20 imode " \
+    column_names = "number:4 creation_date contact:20 imode " \
                   "sales_remark:20 subject:20 total_incl " \
                   "cycle start_date covered_until"
     
@@ -633,7 +624,7 @@ class InvoicesByJournal(Invoices):
     fk_name = 'journal' # see django issue 10808
     #master = journals.Journal
     column_names = "number:4 creation_date due_date " \
-                  "customer:10 " \
+                  "contact:10 " \
                   "total_incl order subject:10 sales_remark:10 " \
                   "ledger_remark:10 " \
                   "total_excl total_vat user "
@@ -655,7 +646,7 @@ class DocumentsToSign(Invoices):
     filter = dict(user__exact=None)
     can_add = perms.never
     column_names = "number:4 order creation_date " \
-                  "customer:10 imode " \
+                  "contact:10 imode " \
                   "subject:10 total_incl total_excl total_vat "
     #~ actions = Invoices.actions + [ SignAction() ]
     
@@ -675,10 +666,9 @@ class DocumentsToSign(Invoices):
   
 class InvoicesByOrder(SalesDocuments):
     model = Invoice
-    #master = Order
     fk_name = "order"
     order_by = ["number"]
-    column_names = "number creation_date your_ref total_excl total_vat shipping_mode payment_term due_date subject sales_remark vat_exempt item_vat "
+    column_names = "number creation_date your_ref total_excl *"
 
     
 #~ class ItemsByDocumentListLayout(layouts.ListLayout):
@@ -708,23 +698,44 @@ class ItemsByDocument(reports.Report):
 #~ contacts.Partners.register_page_layout(DocumentsByPartnerDetail)
             
 
-class DocumentsByCustomer(SalesDocuments):
+class SalesByCompany(SalesDocuments):
     column_names = "journal:4 number:4 creation_date:8 " \
-                  "total_incl total_excl total_vat"
-    #master = 'contacts.Partner'
-    fk_name = 'customer'
+                   "total_incl total_excl total_vat *"
     order_by = ["creation_date"]
+    fk_name = 'company'
 
-    def get_title(self,renderer):
-        return "Documents by customer"
-        #return unicode(renderer.master_instance) + " : documents by customer"
+class SalesByPerson(SalesDocuments):
+    column_names = "journal:4 number:4 creation_date:8 " \
+                   "total_incl total_excl total_vat *"
+    order_by = ["creation_date"]
+    fk_name = 'person'
+
         
 
 
-#~ class Customers(contacts.Contacts):
-    #~ model = Customer
-    #~ page_layouts = (PartnerPageLayout,DocumentsByCustomerTabLayout)
     
         
 journals.register_doctype(Order,OrdersByJournal)
 journals.register_doctype(Invoice,InvoicesByJournal)
+
+from lino.modlib.contacts.models import Contact
+reports.inject_field(
+    Contact,'payment_term',
+    models.ForeignKey(PaymentTerm,
+        blank=True,null=True,
+        verbose_name=_("payment term")),
+    """The default PaymentTerm for sales invoices to this Contact.
+    """)
+reports.inject_field(
+    Contact, 'vat_exempt',
+    models.BooleanField(default=False,
+        verbose_name=_("VAT exempt")),
+    """The default value for vat_exempt for sales invoices to this Contact.
+    """)
+reports.inject_field(
+    Contact, 'item_vat',
+    models.BooleanField(default=False,
+        verbose_name=_("item_vat")),
+    """The default value for item_vat for sales invoices to this Contact.
+    """)
+

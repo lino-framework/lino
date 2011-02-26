@@ -43,7 +43,7 @@ class ModelValidationError(Exception):
     #~ def __getitem__(self,i):
         #~ return self.errordict[i]
 
-class TomModel(models.Model):
+class UnusedTomModel(models.Model):
   
     model_form = None
     #quicksearch_fields = None

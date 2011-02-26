@@ -65,6 +65,9 @@ class Action(object):
         self.label = label
         assert self.callable_from is None or isinstance(self.callable_from,(tuple,type)), "%s" % self
         
+    def __unicode__(self):
+        return force_unicode(self.label)
+        
         
 class WindowAction(Action):
     pass

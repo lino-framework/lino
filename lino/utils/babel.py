@@ -70,7 +70,7 @@ def lang_name(code):
 BABEL_CHOICES = [
   (default_language(),lang_name(default_language()))
 ] + [ 
-  (lng,lang_name(lng)) for lng in settings.BABEL_LANGS 
+  (lng,lang_name(lng)) for lng in settings.BABEL_LANGS
 ]
 
   
@@ -126,7 +126,7 @@ def dtosl(d):
     if d is None: return ''
     return d.strftime(LONG_DATE_FMT[LANG])
     
-from django.utils import translation    
+from django.utils import translation
     
 def setlang(lang):
     global LANG
@@ -196,7 +196,6 @@ This will add a variable number of clones of the base field,
 one for each language of your :setting:`BABEL_LANGS`.
 
     """
-#~ def add_lang_field(model,name,lang,*args,**kw):
     f = model._meta.get_field(name)
     #~ if not f.blank:
     kw.update(blank=True)
@@ -207,6 +206,22 @@ one for each language of your :setting:`BABEL_LANGS`.
         kw.update(blank=True,null=True)
         newfield = f.__class__(*args,**kw)
         model.add_to_class(name + '_' + lang,newfield)
+        
+class BabelCharField(models.CharField):
+    """
+    Define a variable number of clones of the "master" field, 
+    one for each language of your :setting:`BABEL_LANGS`.
+    """
+        
+    def contribute_to_class(self, cls, name):
+        super(BabelCharField,self).contribute_to_class(cls, name)
+        kw = dict()
+        kw.update(max_length=self.max_length)
+        kw.update(blank=True,null=True)
+        for lang in settings.BABEL_LANGS:
+            kw.update(verbose_name=self.verbose_name + ' ('+lang+')')
+            newfield = models.CharField(**kw)
+            cls.add_to_class(self.name + '_' + lang,newfield)
 
 
 def kw2field(name,**kw):
@@ -248,7 +263,8 @@ def babel_get(v):
         
         
 def unused_discover():
-    """This would have to be called *during* and not after model setup.
+    """This would somehow have to be called 
+    *during* and not after model setup.
     """
     logger.debug("Discovering babel fields...")
     for model in models.get_models():

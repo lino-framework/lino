@@ -102,7 +102,7 @@ class Unit(TomModel):
                 self.add_entry(line.strip())
     #after_save.alters_data = True
     
-    def before_save(self):
+    def full_clean(self):
         if self.seq is not None:
             return
         if self.parent is None:
@@ -113,6 +113,7 @@ class Unit(TomModel):
         for u in siblings:
             seq=max(seq,u.seq)
         self.seq=seq+1
+        super(Unit,self).full_clean(*args,**kw)
 
 
     def validate_parent(self):

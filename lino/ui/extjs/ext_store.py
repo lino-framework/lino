@@ -1,4 +1,4 @@
-## Copyright 2009-2010 Luc Saffre
+## Copyright 2009-2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@ import datetime
 #~ from dateutil import parser as dateparser
 
 from django.db import models
+from django.db.models.fields import NOT_PROVIDED
 from django.core import exceptions
 from django.utils.translation import ugettext as _
 
@@ -58,11 +59,6 @@ class StoreField(object):
     def column_names(self):
         yield self.options['name']
         
-    def parse_form_value(self,v):
-        #~ if self.field.blank and v == '':
-            #~ return None
-        return self.field.to_python(v)
-        
     def value_from_object(self,request,obj):
         return self.field.value_from_object(obj)
         
@@ -72,18 +68,39 @@ class StoreField(object):
     def obj2dict(self,request,obj,d):
         d[self.field.name] = self.value_from_object(request,obj)
 
+    def parse_form_value(self,v):
+        #~ if v == '' and not self.field.empty_strings_allowed:
+            #~ return None
+        return self.field.to_python(v)
+        
+        
     def form2obj(self,instance,post_data,is_new):
+        """
+        Test cases:
+        - setting a CharField to ''
+        - sales.Invoice.number may be blank        
+        """
+        #~ v = post_data.get(self.field.name,NOT_PROVIDED)
         v = post_data.get(self.field.name,self.form2obj_default)
         if v is None:
-            return instance
-        if v == '' and self.field.null:
+            # means that the field wasn't part of the submitted form. don't touch it.
+            # except for checkboxes (who unfortunately are not submitted when clear)
+            # whose form2obj_default is False instead of None
+            return
+        if v == '' and not self.field.empty_strings_allowed:
+            # charfields have empty_strings_allowed
             # e.g. id field may be empty
-            # but don't do this for charfields with blank=True (and not null=True)
-            v = None
+            # but don't do this for 
+            if self.field.default is NOT_PROVIDED:
+                v = None
+            else:
+                v = self.field.default
+        #~ if v == '' and self.field.null:
+            #~ v = None
         v = self.parse_form_value(v)
         if not is_new and self.field.primary_key and instance.pk is not None:
             if instance.pk == v:
-                return instance
+                return
             raise exceptions.ValidationError({
               self.field.name:_("Existing primary key value %r may not be modified.") % instance.pk})
         setattr(instance,self.field.name,v)
@@ -92,7 +109,7 @@ class StoreField(object):
         #~ except exceptions.ValidationError,e:
             #~ logger.exception("%s = %r : %s",self.field.name,v,e)
             #~ raise 
-        return instance
+        return
 
 class DisabledFieldsStoreField(StoreField):
     """
@@ -119,8 +136,9 @@ class DisabledFieldsStoreField(StoreField):
         d.update(disabled_fields=self.value_from_object(request,obj))
 
     def form2obj(self,instance,post_data,is_new):
+        pass
         #~ raise NotImplementedError
-        return instance
+        #~ return instance
 
         
 #~ class PropertiesStoreField(StoreField):
@@ -159,8 +177,9 @@ class AutoStoreField(StoreField):
         StoreField.__init__(self,field,**kw)
   
     def form2obj(self,instance,post_data,is_new):
+        pass
         #~ assert instance.pk
-        return instance
+        #~ return instance
         
         
         
@@ -211,7 +230,8 @@ class MethodStoreField(StoreField):
         #~ pass
         
     def form2obj(self,instance,post_data,is_new):
-        return instance
+        pass
+        #~ return instance
         #raise Exception("Cannot update a virtual field")
 
 class VirtStoreField(StoreField):
@@ -239,7 +259,7 @@ class VirtStoreField(StoreField):
         obj = StoreField.form2obj(self,obj,post_data,is_new)
         v = getattr(obj,self.field.name)
         #~ logger.info("VirtStoreField.%s.form2obj(%s) --> %r", self.field.name, post_data, v)
-        return self.vf.set_value_in_object(obj,v)
+        self.vf.set_value_in_object(obj,v)
         #~ return obj
 
 
@@ -255,15 +275,16 @@ class VirtStoreField(StoreField):
 
 class OneToOneStoreField(StoreField):
         
-    def form2obj(self,instance,post_data,is_new):
+    def unused_form2obj(self,instance,post_data,is_new):
         #v = values.get(self.field.name,None)
         v = post_data.get(self.field.name,None)
+        logger.info("OneToOneStoreField %s = %r",self.field.name,v)
         if v == '' and self.field.null:
             v = None
         if v is not None:
             v = self.field.rel.to.objects.get(pk=v)
         setattr(instance,self.field.name,v)
-        return instance
+        #~ return instance
         
     #~ def get_from_form(self,instance,post_data):
         #~ #v = values.get(self.field.name,None)
@@ -305,8 +326,9 @@ class ComboStoreField(StoreField):
     def form2obj(self,instance,post_data,is_new):
         assert not self.field.primary_key
         v = post_data.get(self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX,None)
+        #~ logger.info("ComboStoreField.form2obj %s = %r", self.field.name,v)
         if v is None:
-            return instance
+            return 
         if v in ('','undefined'): 
             v = None
         if v is not None:
@@ -321,9 +343,9 @@ class ComboStoreField(StoreField):
                 """field is blank but will be set by full_clean. 
                 Django refuses to explicitly assign None to a non-nullable field.
                 """
-                return instance
+                return 
         setattr(instance,self.field.name,v)
-        return instance
+        #~ return instance
 
     def obj2list(self,request,obj):
         value,text = self.get_value_text(obj)
@@ -500,12 +522,15 @@ class Store:
 
     def form2obj(self,form_values,instance,is_new):
         for f in self.fields:
+            #~ logger.info("Store.form2obj %s", f.field.name)
             try:
-                instance = f.form2obj(instance,form_values,is_new)
-            #~ except exceptions.ValidationError,e:
-            except Exception,e:
+                f.form2obj(instance,form_values,is_new)
+            except exceptions.ValidationError,e:
                 raise exceptions.ValidationError({f.field.name:e})
-        return instance
+            except Exception,e:
+                logger.warning("%s : %s", f.field.name,e)
+                raise 
+        #~ return instance
             
     def row2list(self,request,row):
         assert isinstance(request,reports.ReportActionRequest)
