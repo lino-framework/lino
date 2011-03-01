@@ -1,5 +1,5 @@
-#coding: utf8
-## Copyright 2009 Luc Saffre
+# -*- coding: UTF-8 -*-
+## Copyright 2009-2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -17,26 +17,82 @@ from lino import reports
 products = reports.get_app('products')
 from lino.utils.instantiator import Instantiator
 
-productcat = Instantiator(products.ProductCat,"name").build
-product = Instantiator(products.Product,"name price cat description").build
+from lino.utils.babel import babel_values, default_language
+
+
+productcat = Instantiator('products.ProductCat').build
+product = Instantiator('products.Product',"price cat").build
 
 def objects():
         
-    furniture = productcat("Furniture") #1
+    furniture = productcat(id=1,**babel_values('name',
+        en="Furniture",et=u"Mööbel",de="Möbel",fr="Meubles"))
     yield furniture
     #print "foo", furniture.id, furniture
-    yield productcat("Hosting") #2
+    hosting = productcat(id=2,**babel_values('name',
+        en="Website Hosting",
+        et=u"Veebimajutus",
+        de="Website-Hosting",
+        fr=u"Hébergement de sites Internet"))
+    yield hosting 
     
         
-    yield product("Wooden table","199.99",1,"""\
+    yield product("199.99",1,description="""\
 This table is made of pure wood. 
 <br/>It has <b>four legs</b>.
 <br/>Designed to fit perfectly with <b>up to 6 wooden chairs</b>.
 <br/>Product of the year 2008.
-    """)
-    yield product("Wooden chair","99.99",1,"")
-    yield product("Metal table","129.99",1,"")
-    yield product("Metal chair","79.99",1,"")
-    hosting = product("Website hosting 1MB/month","3.99",2,"")
+    """,**babel_values('name',
+        en="Wooden table",
+        et=u"Laud puidust",
+        de="Tisch aus Holz",
+        fr=u"Table en bois") )
+    yield product("99.99",1,**babel_values('name',
+        en="Wooden chair",
+        et=u"Tool puidust",
+        de="Stuhl aus Holz",
+        fr=u"Chaise en bois"))
+    yield product("129.99",1,**babel_values('name',
+        en="Metal table",
+        et=u"Laud metallist",
+        de="Tisch aus Metall",
+        fr=u"Table en métal"))
+    yield product("79.99",1,**babel_values('name',
+        en="Metal chair",
+        et=u"Tool metallist",
+        de="Stuhl aus Metall",
+        fr=u"Chaise en métal"))
+    hosting = product("3.99",2,
+      **babel_values('name',
+        en="Website hosting 1MB/month",
+        et=u"Majutus 1MB/s",
+        de="Stuhl aus Metall",
+        fr=u"Chaise en métal"))
     yield hosting
+    yield product("30.00",2,
+      **babel_values('name',
+        en="IKT consultation & maintenance",
+        et=u"IKT konsultatsioonid & hooldustööd",
+        de="IKT Konsultierung & Unterhalt",
+        fr=u"Consultation & maintenance"))
+    yield product("35.00",2,
+      **babel_values('name',
+        en="Server software installation, configuration and administration",
+        et=u"Serveritarkvara installeerimine, seadistamine ja administreerimine",
+        de="Server software installation, configuration and administration",
+        fr=u"Server software installation, configuration and administration"))
+    
+    yield product("40.00",2,
+      **babel_values('name',
+        en="Programming",
+        et=u"Programmeerimistööd",
+        de="Programmierung",
+        fr=u"Programmation"))
+        
+    yield product("25.00",2,
+      **babel_values('name',
+        en="Image processing and website content maintenance",
+        et=u"Pilditöötlus ja kodulehtede sisuhaldustööd",
+        de="Programmierung",
+        fr=u"Programmation"))
     

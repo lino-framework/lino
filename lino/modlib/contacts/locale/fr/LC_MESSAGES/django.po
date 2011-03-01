@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-17 15:48+0000\n"
+"POT-Creation-Date: 2011-03-01 22:06+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,83 +17,105 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n>1;\n"
 
-#: .\models.py:40 .\models.py:166
-#, fuzzy
-msgid "person"
-msgstr "Personnes"
-
 #: .\models.py:41
 #, fuzzy
-msgid "persons"
+msgid "Person"
 msgstr "Personnes"
 
-#: .\models.py:44
+#: .\models.py:42
+#, fuzzy
+msgid "Persons"
+msgstr "Personnes"
+
+#: .\models.py:45
 msgid "First name"
 msgstr ""
 
-#: .\models.py:46
+#: .\models.py:47
 msgid "Last name"
 msgstr ""
 
-#: .\models.py:48
+#: .\models.py:49
 msgid "Title"
 msgstr ""
 
-#: .\models.py:91
+#: .\models.py:92
 #, fuzzy
 msgid "company type"
 msgstr "Sociétés"
 
-#: .\models.py:92
+#: .\models.py:93
 #, fuzzy
 msgid "company types"
 msgstr "Sociétés"
 
-#: .\models.py:93 .\models.py:148
+#: .\models.py:94 .\models.py:151
 msgid "Designation"
 msgstr ""
 
-#: .\models.py:94
+#: .\models.py:95
 msgid "Abbreviation"
 msgstr ""
 
 #: .\models.py:118
+#, fuzzy
+msgid "Company"
+msgstr "Sociétés"
+
+#: .\models.py:119
+msgid "Companies"
+msgstr "Sociétés"
+
+#: .\models.py:121
 msgid "VAT id"
 msgstr ""
 
-#: .\models.py:120
+#: .\models.py:123
 #, fuzzy
 msgid "Company type"
 msgstr "Sociétés"
 
-#: .\models.py:144 .\models.py:170
+#: .\models.py:147 .\models.py:173
 msgid "contact type"
 msgstr ""
 
-#: .\models.py:145
+#: .\models.py:148
 #, fuzzy
 msgid "contact types"
 msgstr "Sociétés"
 
-#: .\models.py:163
+#: .\models.py:166
 #, fuzzy
 msgid "contact"
 msgstr "Sociétés"
 
-#: .\models.py:164
+#: .\models.py:167
 #, fuzzy
 msgid "contacts"
 msgstr "Sociétés"
 
-#: .\models.py:168
+#: .\models.py:169
+#, fuzzy
+msgid "person"
+msgstr "Personnes"
+
+#: .\models.py:171
 #, fuzzy
 msgid "company"
 msgstr "Sociétés"
 
-#: .\models.py:197
+#: .\models.py:200
 #, fuzzy
 msgid "Contact for"
 msgstr "Sociétés"
+
+#: .\models.py:212
+msgid "The company that runs this site"
+msgstr ""
+
+#: .\models.py:222
+msgid "The next automatic id for Person or Company"
+msgstr ""
 
 #~ msgid "Street"
 #~ msgstr "Rue"
@@ -103,6 +125,3 @@ msgstr "Sociétés"
 
 #~ msgid "Box"
 #~ msgstr "boîte"
-
-#~ msgid "Companies"
-#~ msgstr "Sociétés"

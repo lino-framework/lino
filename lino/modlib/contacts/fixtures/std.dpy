@@ -112,7 +112,7 @@ def objects():
     for ct in COMPANY_TYPES:
         yield companyType(**ct)
         
-    yield contactType(**babel_values('name',en="Manager",fr=u'Gérant',de=u"Geschäftsführer"))
-    yield contactType(**babel_values('name',en="Director",fr=u'Directeur',de=u"Direktor"))
-    yield contactType(**babel_values('name',en="Secretary",fr=u'Sécrétaire',de=u"Sekretär"))
-    yield contactType(**babel_values('name',en="IT Manager",fr=u'Gérant informatique',de=u"EDV-Manager"))
+    yield contactType(**babel_values('name',en="Manager",fr=u'Gérant',de=u"Geschäftsführer",et=u"Manager"))
+    yield contactType(**babel_values('name',en="Director",fr=u'Directeur',de=u"Direktor",et=u"Direktor"))
+    yield contactType(**babel_values('name',en="Secretary",fr=u'Sécrétaire',de=u"Sekretär",et=u"Sekretär"))
+    yield contactType(**babel_values('name',en="IT Manager",fr=u'Gérant informatique',de=u"EDV-Manager",et=u"IT manager"))

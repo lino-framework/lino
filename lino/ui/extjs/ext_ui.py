@@ -730,6 +730,7 @@ class ExtUI(base.UI):
 
 
     def menu_view(self,request):
+        "used only by lino.modlib.dsbe.tests"
         #~ from lino.lino_site import lino_site
         #~ from lino import lino_site
         return json_response_kw(success=True,

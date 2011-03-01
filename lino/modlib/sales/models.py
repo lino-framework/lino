@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 ## Copyright 2008-2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
@@ -34,7 +35,8 @@ from lino import reports
 from lino import actions
 from lino import mixins
 from lino.utils import perms
-from lino.utils.babel import add_babel_field, babelattr
+from lino.utils import babel 
+#~ from lino.utils.babel import add_babel_field, babelattr
 
 journals = models.get_app('journals')
 #~ ledger = models.get_app('ledger')
@@ -44,7 +46,7 @@ products = models.get_app('products')
 
 class PaymentTerm(models.Model):
     id = models.CharField(max_length=10,primary_key=True)
-    name = models.CharField(max_length=200)
+    name = babel.BabelCharField(max_length=200)
     days = models.IntegerField(default=0)
     months = models.IntegerField(default=0)
     #proforma = models.BooleanField(default=False)
@@ -80,23 +82,31 @@ class PaymentTerms(reports.Report):
     #~ def from_parent(cls,*args,**kw):
         #~ return child_from_parent(cls,*args,**kw)
   
+from lino.utils.choicelists import ChoiceList  
+class Channel(ChoiceList):
+    label = _("Channel")
+add = Channel.add_item
+add('P',en=u"Paper",de=u"Papier", fr=u"Papier",et="Paber")
+add('E',en=u"E-mail",de=u"E-mail", fr=u"courrier électronique",et="e-mail")
 
 
 class InvoicingMode(mixins.PrintableType):
-    CHANNEL_CHOICES = (
-        ('P', 'Regular Mail'),
-        ('E', 'E-Mail'),
-    )
+    #~ CHANNEL_CHOICES = (
+        #~ ('P', 'Regular Mail'),
+        #~ ('E', 'E-Mail'),
+    #~ )
     id = models.CharField(max_length=3, primary_key=True)
     journal = journals.JournalRef()
     #journal = models.ForeignKey(journals.Journal)
-    name = models.CharField(max_length=200)
+    name = babel.BabelCharField(max_length=200)
     price = fields.PriceField(blank=True,null=True)
     "Additional fee charged when using this method."
-    channel = models.CharField(max_length=1, 
-                choices=CHANNEL_CHOICES,help_text="""
-    Method used to send the invoice. 
-                """)
+    channel = Channel.field(help_text="""
+        Method used to send the invoice.""")
+    #~ channel = models.CharField(max_length=1, 
+                #~ choices=CHANNEL_CHOICES,help_text="""
+    #~ Method used to send the invoice. 
+                #~ """)
     advance_days = models.IntegerField(default=0,
                    help_text="""
     Invoices must be sent out X days in advance so that the customer
@@ -104,9 +114,9 @@ class InvoicingMode(mixins.PrintableType):
     """)
     
     def __unicode__(self):
-        return unicode(babelattr(self,'name'))
+        return unicode(babel.babelattr(self,'name'))
         
-add_babel_field(InvoicingMode,'name')
+#~ add_babel_field(InvoicingMode,'name')
         
         
 class InvoicingModes(reports.Report):
@@ -118,7 +128,7 @@ class InvoicingModes(reports.Report):
     
 class ShippingMode(models.Model):
     id = models.CharField(max_length=10, primary_key=True)
-    name = models.CharField(max_length=200)
+    name = babel.BabelCharField(max_length=200)
     price = fields.PriceField(blank=True,null=True)
     
     def __unicode__(self):

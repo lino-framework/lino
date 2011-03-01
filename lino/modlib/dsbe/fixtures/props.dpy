@@ -31,10 +31,14 @@ def objects():
     skills = pgroup(**babel_values('name',**dict(en="Skills",de=u"Fachkompetenzen")))
     skills.save()
     yield skills
-    softskills = pgroup(**babel_values('name',**dict(en="Soft skills",de=u"Sozialkompetenzen")))
+    softskills = pgroup(**babel_values('name',**dict(
+        en="Soft skills",
+        de=u"Sozialkompetenzen",
+        fr=u"Compétences sociales")))
     softskills.save()
     yield softskills
-    obstacles = pgroup(**babel_values('name',**dict(en="Obstacles",de=u"Hindernisse")))
+    obstacles = pgroup(**babel_values('name',**dict(
+        en="Obstacles",de=u"Hindernisse",fr="Obstacles")))
     obstacles.save()
     yield obstacles
     

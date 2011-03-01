@@ -251,10 +251,25 @@ class BabelCharField(models.CharField):
         super(BabelCharField,self).contribute_to_class(cls, name)
         kw = dict()
         kw.update(max_length=self.max_length)
-        kw.update(blank=True,null=True)
+        kw.update(blank=True)
         for lang in BABEL_LANGS:
             kw.update(verbose_name=self.verbose_name + ' ('+lang+')')
             newfield = models.CharField(**kw)
+            cls.add_to_class(self.name + '_' + lang,newfield)
+
+class BabelTextField(models.TextField):
+    """
+    Define a variable number of clones of the "master" field, 
+    one for each language of your :setting:`BABEL_LANGS`.
+    """
+    def contribute_to_class(self, cls, name):
+        super(BabelTextField,self).contribute_to_class(cls, name)
+        kw = dict()
+        #~ kw.update(max_length=self.max_length)
+        kw.update(blank=True)
+        for lang in BABEL_LANGS:
+            kw.update(verbose_name=self.verbose_name + ' ('+lang+')')
+            newfield = models.TextField(**kw)
             cls.add_to_class(self.name + '_' + lang,newfield)
 
 

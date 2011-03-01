@@ -1,4 +1,4 @@
-## Copyright 2008-2010 Luc Saffre
+## Copyright 2008-2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -13,23 +13,41 @@
 
 
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
+
 from lino import fields
 #journals = models.get_app('journals')
 from lino import reports
 #~ from lino import layouts
 from lino.utils import perms
+from lino.utils import babel
 
 
 class ProductCat(models.Model):
-    name = models.CharField(max_length=200)
+    """
+    """
+    class Meta:
+        verbose_name = _("Product Category")
+        verbose_name_plural = _("Product Categories")
+
+    name = babel.BabelCharField(max_length=200)
     description = models.TextField(blank=True)
     def __unicode__(self):
         return self.name
 
+class ProductCats(reports.Report):
+    model = ProductCat
+    order_by = ["id"]
+    can_view = perms.is_staff
+
 class Product(models.Model):
+  
+    class Meta:
+        verbose_name = _("Product")
+        verbose_name_plural = _("Products")
     
-    name = models.CharField(max_length=200)
-    description = models.TextField(blank=True,null=True)
+    name = babel.BabelCharField(max_length=200)
+    description = babel.BabelTextField(blank=True,null=True)
     cat = models.ForeignKey(ProductCat,verbose_name="Category")
     vatExempt = models.BooleanField(default=False)
     price = fields.PriceField(blank=True,null=True)
@@ -39,29 +57,13 @@ class Product(models.Model):
     def __unicode__(self):
         return self.name
 
-##
-## report definitions
-##        
         
-class ProductCats(reports.Report):
-    model = ProductCat
-    order_by = ["id"]
-    can_view = perms.is_staff
-
-#~ class ProductDetail(layouts.DetailLayout):
-  
-    #~ datalink = 'products.Product'
-    
-    #~ main = """
-    #~ g1:60
-    #~ g2 g3:10
-    #~ """
-    
-    #~ g1 = "name \n description"
-    #~ g2 = "price \n cat"
-    #~ g3 = "id \n vatExempt"
 
 class Products(reports.Report):
     model = Product
     order_by = ["id"]
-    column_names = "id:3 name description:30x1 cat vatExempt price:6"
+    column_names = "id:3 name cat vatExempt price:6 *"
+    
+class ProductsByCategory(Products):
+    fk_name = 'cat'
+    

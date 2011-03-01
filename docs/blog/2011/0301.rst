@@ -1,15 +1,14 @@
 20110301
 ========
 
-Auch für den folgenden Punkt habe ich nun auch einen  
-:func:`Testcase <lino.modlib.dsbe.tests.test04>`
-geschrieben:
+Heute habe ich den ganzen Tag an folgender Frage gearbeitet:
 
 #.  Funktioniert lino.PARSE_DATE noch nach den Änderungen vom 
     :doc:`/blog/2011/0226`?
 
 Die Antwort lautet übrigens "Ja", und das hätte ich ohne 
 unit tests in 5 Minuten rausgefunden.
+
 Mit unit tests hat es den ganzen Tag gebraucht
 (was ich genauer bescheibe in :doc:`/tickets/27`).
 
@@ -17,7 +16,15 @@ Der Unterschied ist natürlich,
 dass dieser Fall in Zukunft nun jedesmal 
 mit einem einfachen :command:`manage.py test` laufen wird.
 
+Die neuen test cases sind
+:func:`lino.modlib.dsbe.tests.test04`
+und
+:func:`lino.modlib.dsbe.tests.test05`.
+
+Detail am Rande:
+
 - `lino.utils.jsgen.py2js` schrieb `datetime.date`-Werte als Strings 
    mit einfachen Anführungszeichen. ExtJS akzeptiert das, aber `json.loads` nicht. 
    Idem für die keys von dictionaries. 
    Die müssen für `json.loads` zwischen  Anführungszeichen stehen.
+

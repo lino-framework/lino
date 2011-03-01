@@ -92,7 +92,11 @@ class TestCase(DjangoTestCase):
         a JSON-encoded dictionary with the expected_keys.
         """
         #~ print "20110301 response is %r" % response.content
-        result = simplejson.loads(response.content)
+        try:
+            result = simplejson.loads(response.content)
+        except ValueError,e:
+            logger.warning("%s in %r",e,response.content)
+            raise 
         self.assertEqual(set(result.keys()),set(expected_keys.split()))
         return result
         

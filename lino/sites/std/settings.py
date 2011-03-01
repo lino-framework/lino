@@ -244,13 +244,13 @@ def language_choices(*args):
     See :doc:`/blog/2011/0226`.
     A subset of Django's LANGUAGES.
     """
-    _langs = (
-        ('en', gettext('English')),
-        ('de', gettext('German')),
-        ('fr', gettext('French')),
-        ('nl', gettext('Dutch')),
-        ('et', gettext('Estonian')),
+    _langs = dict(
+        en=gettext('English'),
+        de=gettext('German'),
+        fr=gettext('French'),
+        nl=gettext('Dutch'),
+        et=gettext('Estonian'),
     )
-    return [x for x in _langs if x[0] in args]
+    return [(x,_langs[x]) for x in args]
       
 LANGUAGES = language_choices('en','de','fr','nl','et')

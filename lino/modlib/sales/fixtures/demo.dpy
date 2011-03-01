@@ -78,8 +78,8 @@ def objects():
     #Person = resolve_model('contacts.Person')
     #company1 = Company.objects.get(name__startswith="Ausdemwald")
     #dubois = Person.objects.get(last_name__startswith="Dubois")
-    furniture = products.ProductCat.objects.get(name="Furniture")
-    hosting = 5
+    furniture = products.ProductCat.objects.get(pk=1) # name="Furniture")
+    hosting = products.Product.objects.get(pk=5)
     
     order = Instantiator(sales.Order,
         "company creation_date start_date cycle imode",

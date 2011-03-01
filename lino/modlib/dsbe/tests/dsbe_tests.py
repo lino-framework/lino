@@ -26,6 +26,10 @@ from lino.tools import resolve_model
 #Companies = resolve_model('contacts.Companies')
 from lino.utils.test import TestCase
 
+Person = resolve_model('contacts.Person')
+Property = resolve_model('properties.Property')
+PersonProperty = resolve_model('properties.PersonProperty')
+
 class DemoTest(TestCase):
     #~ fixtures = [ 'std','demo' ]
     fixtures = 'std few_countries few_languages props demo'.split()
@@ -33,13 +37,11 @@ class DemoTest(TestCase):
 def test01(self):
     """
     """
-    Person = resolve_model('contacts.Person')
     self.assertEquals(Person.objects.count(), 73)
     
     p = Person.objects.get(pk=15)
     self.assertEquals(unicode(p), "Arens Annette (15)")
     
-    self.assertEquals(unicode(p), "Arens Annette (15)")
     
         
 def test02(self):
@@ -304,4 +306,33 @@ def test05(self):
     self.assertEqual(result['data']['name'],'Belgienx')
 
 
-
+def test06(self):
+    """
+    Testing BabelValues
+    """
+    #~ from lino.modlib.dsbe.models import PersonProperty
+    from lino.utils import babel
+    annette = Person.objects.get(pk=15)
+    self.assertEquals(unicode(annette), "Arens Annette (15)")
+    
+    p = Property.objects.get(name="Gehorsam")
+    pp = PersonProperty.objects.get(person=annette,property__name="Gehorsam")
+    
+    self.assertEquals(unicode(p), u"Gehorsam")
+    self.assertEquals(unicode(pp), u"Sozialkompetenzen.Gehorsam=mittelmäßig")
+    
+    babel.set_language('fr')
+    
+    self.assertEquals(unicode(p), u"Obéissant")
+    self.assertEquals(unicode(pp), u"Compétences sociales.Obéissant=moyennement")
+    
+    babel.set_language(babel.DEFAULT_LANGUAGE)
+    
+def test07(self):
+    """
+    Testing whether all model reports work
+    """
+    response = self.client.get('/menu')
+    result = self.check_json_result(response,'success message load_menu')
+    self.assertEqual(result['load_menu']['name'],'...')
+test07.skip = "Doesn't work because simplejson.loads() doesn't parse functions"

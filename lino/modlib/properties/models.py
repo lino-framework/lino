@@ -61,7 +61,8 @@ from lino.mixins.printable import DirectPrintAction
 from lino.mixins.reminder import ReminderEntry
 
 from lino.utils.choicelists import get_choicelist, choicelist_choices
-    
+
+MULTIPLE_VALUES_SEP = ','
 
 class PropType(models.Model):
     """
@@ -105,6 +106,25 @@ class PropType(models.Model):
     @chooser()
     def default_value_choices(cls):
         return self.choices_for(None)
+        
+    def get_default_value_display(self,value):
+        return self.get_text_for_value(value)
+        
+    def get_text_for_value(self,value):
+        if not value:
+            return ''
+        if self.choicelist:
+            cl = get_choicelist(self.choicelist)
+            return cl.get_text_for_value(value)
+        l = []
+        for v in value.split(MULTIPLE_VALUES_SEP):
+            try:
+                pc = PropChoice.objects.get(value=v,type=self)
+                v = babelattr(pc,'text')
+            except PropChoice.DoesNotExist:
+                pass
+            l.append(v)
+        return ','.join(l)
         
     def __unicode__(self):
         return babel.babelattr(self,'name')
@@ -182,14 +202,18 @@ class PropertyOccurence(models.Model):
     class Meta:
         abstract = True
         
-    group = models.ForeignKey(PropGroup,verbose_name=_("Property group"))
-    property = models.ForeignKey(Property,verbose_name=_("Property")) # ,blank=True,null=True)
+    group = models.ForeignKey(PropGroup,
+        verbose_name=_("Property group"))
+    property = models.ForeignKey(Property,
+        verbose_name=_("Property")) # ,blank=True,null=True)
     # property must be nullable?
-    value = models.CharField(_("Value"),max_length=settings.LINO_SITE.propvalue_max_length,blank=True)
+    value = models.CharField(_("Value"),
+        max_length=settings.LINO_SITE.propvalue_max_length,
+        blank=True)
     
-    def get_text(self):
-        c = PropChoice.objects.get(type=self.property.type,value=self.value)
-        return babel.babelattr(c,'name')
+    #~ def get_text(self):
+        #~ c = PropChoice.objects.get(type=self.property.type,value=self.value)
+        #~ return babel.babelattr(c,'name')
     
     @chooser()
     def value_choices(cls,property):
@@ -205,36 +229,22 @@ class PropertyOccurence(models.Model):
         return Property.objects.filter(group=group).order_by('name')
         
     def get_value_display(self,value):
-        if not value or self.property_id is None:
-            return ''
-        if self.property.type.choicelist:
-            cl = get_choicelist(self.property.type.choicelist)
-            return cl.get_text_for_value(value)
-        l = []
-        for v in value.split(','):
-            try:
-                v = PropChoice.objects.get(value=v,type=self.property.type).text
-            except PropChoice.DoesNotExist:
-                pass
-            l.append(v)
-        return ','.join(l)
+        if self.property_id is None:
+            return value
+        return self.property.type.get_text_for_value(value)
         
         
     def full_clean(self):
         if self.property_id is not None:
             self.group = self.property.group
         super(PropertyOccurence,self).full_clean()
-        #~ if self.group != self.property.group:
-            #~ raise ValidationError()
-    #~ def save(self,*args,**kw):
-        #~ self.group = self.property.group
-        #~ r = super(PropertyOccurence,self).save(*args,**kw)
-        #~ return r
         
     def __unicode__(self):
         if self.property_id is None:
             return u"Undefined %s" % self.group
-        return u'%s.%s=%s ' % (self.group,self.property,self.value)
+        return u'%s.%s=%s' % (
+            self.group,self.property,
+            self.property.type.get_text_for_value(self.value))
     
 
 

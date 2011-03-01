@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-17 15:48+0000\n"
+"POT-Creation-Date: 2011-03-01 22:06+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,62 +17,74 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n>1;\n"
 
-#: .\models.py:68 .\models.py:90 .\models.py:123
+#: .\models.py:78 .\models.py:150 .\models.py:183
 msgid "Property Type"
 msgstr ""
 
-#: .\models.py:69
+#: .\models.py:79
 msgid "Property Types"
 msgstr ""
 
-#: .\models.py:71 .\models.py:92 .\models.py:108 .\models.py:121
+#: .\models.py:81 .\models.py:152 .\models.py:168 .\models.py:181
 msgid "Designation"
 msgstr ""
 
-#: .\models.py:72 .\models.py:73
-msgid "Limit to choices"
-msgstr ""
-
-#: .\models.py:87
-msgid "Property Choice"
+#: .\models.py:85
+msgid "Choices List"
 msgstr ""
 
 #: .\models.py:88
+msgid "default value"
+msgstr ""
+
+#: .\models.py:96
+msgid "Limit to choices"
+msgstr ""
+
+#: .\models.py:101
+msgid "Multiple choices"
+msgstr ""
+
+#: .\models.py:147
+msgid "Property Choice"
+msgstr ""
+
+#: .\models.py:148
 msgid "Property Choices"
 msgstr ""
 
-#: .\models.py:91 .\models.py:145
+#: .\models.py:151 .\models.py:210
 msgid "Value"
 msgstr ""
 
-#: .\models.py:105 .\models.py:122
+#: .\models.py:165 .\models.py:182
 msgid "Property Group"
 msgstr ""
 
-#: .\models.py:106
+#: .\models.py:166
 msgid "Property Groups"
 msgstr ""
 
-#: .\models.py:118 .\models.py:143
+#: .\models.py:178 .\models.py:208
 msgid "Property"
 msgstr ""
 
-#: .\models.py:119
+#: .\models.py:179
 msgid "Properties"
 msgstr ""
 
-#: .\models.py:142
+#: .\models.py:206
 msgid "Property group"
 msgstr ""
 
-#: .\models.py:235
+#: .\models.py:290
 msgid "Skills Property Group"
 msgstr ""
 
-#: .\models.py:241
+#: .\models.py:296
 msgid "Soft Skills Property Group"
 msgstr ""
 
-#: .\models.py:247
+#: .\models.py:302
 msgid "Obstacles Property Group"
 msgstr ""
