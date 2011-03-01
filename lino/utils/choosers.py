@@ -111,6 +111,9 @@ class Chooser(FieldChooser):
         return self.get_choices(**kw)
         
     def get_text_for_value(self,value,obj):
+        m = getattr(self.field,'get_text_for_value',None)
+        if m is not None:  # e.g. lino.utils.choicelist.ChoiceListField
+            return m(value)
         #~ raise NotImplementedError
         #~ assert not self.simple_values
         m = getattr(obj,"get_" + self.field.name + "_display")

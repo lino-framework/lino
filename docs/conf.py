@@ -266,3 +266,5 @@ extlinks = {
 
 
 autosummary_generate = True
+
+#~ nitpicky = True # use -n in Makefile instead

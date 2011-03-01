@@ -37,8 +37,7 @@ Templates are either **WYSIWYG** (.odt, .rtf) or **Markup** (.html, .tex).
 Build methods
 =============
 
-.. currentmodule:: lino.utils.printable
-
+.. currentmodule:: lino.mixins.printable
 
 Here is an overview of the build methods implemented (or planned) in Lino.
 
@@ -58,8 +57,6 @@ Here is an overview of the build methods implemented (or planned) in Lino.
   | :class:`LatexBuildMethod`   | .tex       | .pdf    |  Django/Jinja              |  pdfLaTeX                  |
   +-----------------------------+------------+---------+----------------------------+----------------------------+
   | :class:`PisaBuildMethod`    | .pisa.html | .pdf    |  Django/Jinja              |  :term:`Pisa`              |
-  +-----------------------------+------------+---------+----------------------------+----------------------------+
-  | :class:`RstBuildMethod`     | .rst       | .odt    |  Django/Jinja              |  :term:`odtwriter`         |
   +-----------------------------+------------+---------+----------------------------+----------------------------+
                                                                                              
 

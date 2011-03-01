@@ -1,0 +1,44 @@
+20110228
+========
+
+:mod:`lino.utils.choiceslists`
+------------------------------
+
+Bevor ich iGen mehrsprachiger mache, hatte ich noch ein paar 
+Eingebungen bzgl. der choicelists. 
+
+Das Modul heißt jetzt nicht mehr 
+:mod:`lino.modlib.properties.utils`,
+sondern :mod:`lino.utils.choiceslists` und könnte 
+(zusammen mit :mod:`lino.utils.babel`) 
+auf für Django-Anwendungen ohne Lino nützlich sein. 
+Vorher müsste ich es freilich dokumentieren...
+Carl Meyer hatte, glaube ich, etwas ähnliches gemacht, 
+und das Feature, dass man einem Auswahlwert zusätzlich auch noch mit dem Parameter `ref` 
+als Attribut abrufbar machen kann, habe ich von ihm bekommen.
+Sein Modul kam aber für uns nicht in Frage, weil es nicht mehrsprachig war.
+
+Testen von Django-Anwendungen
+-----------------------------
+
+Nach den obigen Änderungen war da ein kleiner Bug, 
+der vielleicht auch schon vorher drin war: wenn man den Wert einer Softskill bearbeitete, 
+(also einem Datentyp, der auf einer ChoicesList beruht), wurde anschließend nicht der Text, 
+sondern der rohe Wert angezeigt.
+
+Statt den Bug nun einfach so zu beheben, habe ich mal begonnen, seriöse Tests zu schreiben.
+Es stimmt, was ich vor Kurzem irgendwo las: 
+"use unit tests for writing tests, and doctest for writing docs".
+Unit Tests zu schreiben, nimmt viel Zeit (aber lohnt sich).
+Doctests zu schreiben, nicht *noch mehr* Zeit (und lohnt sich momentan noch nicht).
+
+Also drei neue Tests, die ab sofort
+nach einem Upgrade laufengelassen werden sollten
+(mit :command:`python manage.py test dsbe` )
+
+
+- :func:`lino.modlib.dsbe.tests.test01`
+- :func:`lino.modlib.dsbe.tests.test02`
+- :func:`lino.modlib.dsbe.tests.test03`
+
+

@@ -19,26 +19,12 @@ from django.utils.translation import ugettext as _
 from lino.utils.instantiator import Instantiator
 from lino.utils.babel import babel_values
 from lino.models import update_site_config
+from lino.modlib.properties.models import PropType
 
 
 def objects():
-
-    ptype = Instantiator('properties.PropType').build
-    
-    appraisal = ptype(**babel_values('name',**dict(en="Appraisal",de=u"Bewertung")))
-    #~ appraisal.save()
-    yield appraisal
-    
-    onoff = ptype(**babel_values('name',**dict(en="Present or not",de=u"Vorhanden oder nicht")))
-    #~ onoff.save()
-    yield onoff
-    
-    pchoice = Instantiator('properties.PropChoice','value',type=appraisal).build
-    #~ yield pchoice(**babel_values('name',**dict(en="not at all",de=u"gar nicht",fr=u"pas du tout")))
-    yield pchoice('1',**babel_values('text',**dict(en="a bit",de=u"ein bisschen",fr=u"un peu")))
-    yield pchoice('2',**babel_values('text',**dict(en="moderate",de=u"mittelmäßig",fr=u"moyennement")))
-    yield pchoice('3',**babel_values('text',**dict(en="quite well",de=u"gut",fr=u"bien")))
-    yield pchoice('4',**babel_values('text',**dict(en="very well",de=u"sehr gut",fr=u"très bien")))
+    onoff = PropType.objects.get(pk=1)  # created in std.dpy
+    appraisal = PropType.objects.get(pk=2) # created in std.dpy
     
     pgroup = Instantiator('properties.PropGroup').build
     

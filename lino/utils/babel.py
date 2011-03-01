@@ -47,10 +47,26 @@ import locale
 
 from django.db import models
 from django.conf import settings
+from django.template import defaultfilters
+from django.utils import translation
+from django.utils.translation import get_language
 
 #~ from lino.tools import default_language
 
 DEFAULT_LANGUAGE = settings.LANGUAGE_CODE[:2]
+"""
+The 2 first chars of :setting:`LANGUAGE_CODE`.
+"""
+
+assert DEFAULT_LANGUAGE in [x[0] for x in settings.LANGUAGES]
+  
+BABEL_LANGS = [x[0] for x in settings.LANGUAGES if x[0] != DEFAULT_LANGUAGE]
+  
+AVAILABLE_LANGUAGES = tuple([DEFAULT_LANGUAGE] + BABEL_LANGS)
+
+BABEL_LANGS = tuple(BABEL_LANGS)
+
+logger.info("Languages: %s ",AVAILABLE_LANGUAGES)
 
 def default_language():
     """
@@ -61,35 +77,50 @@ def default_language():
     #~ return settings.LANGUAGE_CODE[:2]
     return DEFAULT_LANGUAGE
     
-def lang_name(code):
-    for lng in settings.LANGUAGES:
-        if lng[0] == code:
-            return lng[1]
-    raise ValueError("No code %r in settings.LANGUAGES" % code)
+#~ def lang_name(code):
+    #~ for lng in settings.LANGUAGES:
+        #~ if lng[0] == code:
+            #~ return lng[1]
+    #~ raise ValueError("No code %r in settings.LANGUAGES" % code)
     
-BABEL_CHOICES = [
-  (default_language(),lang_name(default_language()))
-] + [ 
-  (lng,lang_name(lng)) for lng in settings.BABEL_LANGS
-]
+    
+#~ BABEL_CHOICES = [
+  #~ (default_language(),lang_name(default_language()))
+#~ ] + [ 
+  #~ (lng,lang_name(lng)) for lng in BABEL_LANGS
+#~ ]
 
   
 #~ print __file__, BABEL_CHOICES  
 
-LANG = None
+#~ LANG = None
+
+#~ LONG_DATE_FMT = {
+  #~ None: '%A, %d. %B %Y',
+  #~ 'de': '%A, %d. %B %Y',
+  #~ 'fr': '%A %d %B %Y',
+  #~ 'et': '%A, %d. %B %Y.a.',
+#~ }
+
+#~ SHORT_DATE_FMT = {
+  #~ None: '%y-%m-%d',
+  #~ 'de': '%d.%m.%Y',
+  #~ 'et': '%d.%m.%Y',
+  #~ 'fr': '%d/%m/%Y',
+#~ }
 
 LONG_DATE_FMT = {
-  None: '%A, %d. %B %Y',
-  'de': '%A, %d. %B %Y',
-  'fr': '%A %d %B %Y',
-  'et': '%A, %d. %B %Y.a.',
+  None: 'l, j F Y',
+  'de': 'l, j F Y',
+  'fr': 'l j F Y',
+  'et': 'l, j F Y.a.',
 }
 
 SHORT_DATE_FMT = {
-  None: '%y-%m-%d',
-  'de': '%d.%m.%Y',
-  'et': '%d.%m.%Y',
-  'fr': '%d/%m/%Y',
+  None: 'Y-m-d',
+  'de': 'd.m.Y',
+  'et': 'd.m.Y',
+  'fr': 'd/m/Y',
 }
 
 
@@ -117,20 +148,22 @@ def lc2locale(lang,country):
         return lang+'_'+country
         
 
-
 def dtos(d):
     if d is None: return ''
-    return d.strftime(SHORT_DATE_FMT[LANG])
+    return defaultfilters.date(d,SHORT_DATE_FMT[get_language()])
+    #~ return d.strftime(SHORT_DATE_FMT[LANG])
 
 def dtosl(d):
     if d is None: return ''
-    return d.strftime(LONG_DATE_FMT[LANG])
+    return defaultfilters.date(d,LONG_DATE_FMT[get_language()])
+    #~ return d.strftime(LONG_DATE_FMT[LANG])
     
-from django.utils import translation
+
     
-def setlang(lang):
-    global LANG
-    LANG = lang
+#~ def setlang(lang):
+def set_language(lang):
+    #~ global LANG
+    #~ LANG = lang
     """
     Setting the locale is necessary in order to have :func:`dtosl` 
     return month names in the correct language.
@@ -155,9 +188,9 @@ def setlang(lang):
         #~ locale.setlocale(locale.LC_ALL,'')
     
     
-def getattr_lang(obj,name,*args):
+def babelattr(obj,attrname,*args):
     """
-    return the value of the specified attribute `name` of `obj`,
+    return the value of the specified attribute `attrname` of `obj`,
     but if `obj` also has a multi-language version of that 
     attribute for the current language, then prefer this attribute's 
     value if it is not blank.
@@ -166,7 +199,7 @@ def getattr_lang(obj,name,*args):
 
     For example in a document template of a Contract you may now use the following expression::
 
-      getattr_lang(self.type,'name')
+      babelattr(self.type,'name')
 
     When generating a Contract in french (:attr:`dsbe.Contract.language` is ``fr``), 
     the expression will return :attr:`dsbe.ContractType.name_fr` if this field is not blank. 
@@ -181,13 +214,14 @@ def getattr_lang(obj,name,*args):
     See also :doc:`/blog/2010/1207`.
     
     """
+    LANG = translation.get_language()
     if LANG is not None and LANG != default_language():
-        v = getattr(obj,name+"_"+LANG,None)
+        v = getattr(obj,attrname+"_"+LANG,None)
         if v:
             return v
-    return getattr(obj,name,*args)
+    return getattr(obj,attrname,*args)
         
-babelattr = getattr_lang
+getattr_lang = babelattr
     
 def add_babel_field(model,name,*args,**kw):
     """
@@ -201,7 +235,7 @@ one for each language of your :setting:`BABEL_LANGS`.
     kw.update(blank=True)
     if isinstance(f,models.CharField):
         kw.update(max_length=f.max_length)
-    for lang in settings.BABEL_LANGS:
+    for lang in BABEL_LANGS:
         kw.update(verbose_name=f.verbose_name + ' ('+lang+')')
         kw.update(blank=True,null=True)
         newfield = f.__class__(*args,**kw)
@@ -218,7 +252,7 @@ class BabelCharField(models.CharField):
         kw = dict()
         kw.update(max_length=self.max_length)
         kw.update(blank=True,null=True)
-        for lang in settings.BABEL_LANGS:
+        for lang in BABEL_LANGS:
             kw.update(verbose_name=self.verbose_name + ' ('+lang+')')
             newfield = models.CharField(**kw)
             cls.add_to_class(self.name + '_' + lang,newfield)
@@ -229,7 +263,7 @@ def kw2field(name,**kw):
     kw2names
     """
     d = { name : kw.get(default_language())}
-    for lang in settings.BABEL_LANGS:
+    for lang in BABEL_LANGS:
         v = kw.get(lang,None)
         if v is not None:
             d[name+'_'+lang] = v
@@ -239,27 +273,30 @@ babel_values = kw2field
 
 def field2kw(obj,name):
     d = { default_language() : getattr(obj,name) }
-    for lang in settings.BABEL_LANGS:
+    for lang in BABEL_LANGS:
         v = getattr(obj,name+'_'+lang)
         if v:
             d[lang] = v
     return d
   
 
-def babeldict_getitem(d,k):
-    v = d.get(k,None)
-    if v is not None:
-        assert type(v) is dict
-        return babel_get(v)
-        
-def babel_get(v):
-    lng = LANG or DEFAULT_LANGUAGE
+def babelitem(**v):
+    lng = translation.get_language()
+    #~ lng = LANG or DEFAULT_LANGUAGE
     if lng == DEFAULT_LANGUAGE:
         return v.get(lng)
     x = v.get(lng,None)
     if x is None:
         x = v.get(DEFAULT_LANGUAGE)
     return x
+    
+# babel_get(v) = babelitem(**v)
+        
+def babeldict_getitem(d,k):
+    v = d.get(k,None)
+    if v is not None:
+        assert type(v) is dict
+        return babelitem(**v)
         
         
 def unused_discover():
@@ -280,24 +317,25 @@ class BabelText(object):
         self.texts = texts
 
     def __unicode__(self):
-        return unicode(babel_get(self.texts))
+        return unicode(babelitem(**self.texts))
         
 
-class BabelValue(BabelText):
+class BabelChoice(BabelText):
     """
     A constant value whose unicode representation 
     depends on the current babel language at runtime.
-    Used by :class:`lino.fields.KnowledgeField`.
+    Used by :class:`lino.utils.choicelists`.
 
     """
-    def __init__(self,pk,**texts):
-        self.pk = pk
+    def __init__(self,value,**texts):
+        self.value = value
         BabelText.__init__(self,**texts)
         
     def __len__(self):
-        return len(self.pk)
+        return len(self.value)
         
     def __str__(self):
-        return "%s (%s:%s)" % (self.texts[DEFAULT_LANGUAGE],self.__class__.__name__,self.pk)
+        return "%s (%s:%s)" % (self.texts[DEFAULT_LANGUAGE],
+          self.__class__.__name__,self.value)
         
                 

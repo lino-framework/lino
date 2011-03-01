@@ -1,0 +1,5 @@
+T:\hgwork\lino\docs\autodoc\lino.rst:11: WARNING: py:class reference target not found: object
+T:\hgwork\lino\docs\autodoc\lino.rst:16: WARNING: py:mod reference target not found: lino.demos.std.settings
+T:\hgwork\lino\docs\autodoc\lino.rst:16: WARNING: py:mod reference target not found: lino.demos.dsbe.settings
+T:\hgwork\lino\docs\autodoc\lino.rst:49: WARNING: py:mod reference target not found: lino.modlib.properties
+T:\hgwork\lino\docs\autodoc\lino.utils.test.rst:12: WARNING: py:class reference target not found: django.test.testcases.TestCase

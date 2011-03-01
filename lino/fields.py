@@ -30,7 +30,6 @@ from django.core.exceptions import ValidationError
 #~ add_introspection_rules([], ["^lino\.fields\.HtmlTextField"])
 
 from lino.utils import choosers
-from lino.modlib.properties import utils as properties
 
 LANGUAGE_CHOICES = [ (k,_(v)) for k,v in settings.LANGUAGES ]
 

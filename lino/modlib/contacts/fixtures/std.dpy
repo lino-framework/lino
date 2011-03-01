@@ -18,7 +18,7 @@ from django.conf import settings
 from django.utils.translation import ugettext as _
 
 from lino.utils.instantiator import Instantiator
-from lino.utils.babel import babel_values, default_language
+from lino.utils.babel import babel_values, DEFAULT_LANGUAGE, AVAILABLE_LANGUAGES
 
 
 companyType = Instantiator('contacts.CompanyType',"abbr name").build
@@ -59,7 +59,8 @@ def parse(s):
 LANGS = {}
 
 for i, lang in enumerate(COMPANY_TYPES_FORMAT.split()):
-    if lang == default_language() or (lang in settings.BABEL_LANGS):
+    if lang in AVAILABLE_LANGUAGES:
+    #~ if lang == default_language() or (lang in settings.BABEL_LANGS):
         LANGS[lang] = i
         
 #~ print LANGS        
@@ -72,7 +73,7 @@ for ln in COMPANY_TYPES_TEXT.splitlines():
         d = dict()
         for lang,i in LANGS.items():
             kw = parse(a[i])
-            if lang == default_language():
+            if lang == DEFAULT_LANGUAGE:
                 d.update(kw)
             else:
                 for k,v in kw.items():

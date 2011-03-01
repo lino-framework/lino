@@ -44,7 +44,7 @@ class SiteConfig(models.Model):
         
     default_build_method = models.CharField(max_length=20,
       verbose_name=_("Default build method"),
-      default='latex',
+      default='appyodt',
       choices=printable.build_method_choices(),blank=True)
         
     def save(self,*args,**kw):

@@ -7,22 +7,6 @@
     :show-inheritance:
 
 
-The :mod:`babel` Module
------------------------
-
-.. automodule:: lino.utils.babel
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-The :mod:`choosers` Module
---------------------------
-
-.. automodule:: lino.utils.choosers
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 The :mod:`dbfreader` Module
 ---------------------------
 

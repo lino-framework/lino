@@ -33,6 +33,10 @@ Subpackages
     lino.utils.log
     lino.utils.dblogger
     lino.utils.daemoncommand
+    lino.utils.choicelists
+    lino.utils.babel
+    lino.utils.choosers
+    lino.utils.test
     lino.mixins
     lino.mixins.printable
     lino.mixins.uploadable

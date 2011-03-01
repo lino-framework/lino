@@ -80,9 +80,9 @@ from lino.core.coretools import app_labels
 from lino.fields import LANGUAGE_CHOICES
 #~ from lino.modlib.properties.utils import STRENGTH_CHOICES, KNOWLEDGE_CHOICES
 
-from lino.modlib.properties.utils import STRENGTH_LIST, KNOWLEDGE_LIST
-STRENGTH_CHOICES = STRENGTH_LIST.get_choices()
-KNOWLEDGE_CHOICES = KNOWLEDGE_LIST.get_choices()
+from lino.utils.choicelists import DoYouLike, HowWell
+STRENGTH_CHOICES = DoYouLike.get_choices()
+KNOWLEDGE_CHOICES = HowWell.get_choices()
 
 from lino.tools import obj2str
 
@@ -744,6 +744,7 @@ class ExtUI(base.UI):
         """
         """
         #~ logger.info('form2obj_and_save %r', data)
+        #~ print 'form2obj_and_save %r' % data
         
         # store normal form data (POST or PUT)
         try:
@@ -768,7 +769,7 @@ class ExtUI(base.UI):
             return error_response(e) #,_("There was a problem while validating your data : "))
             #~ return json_response_kw(success=False,msg="Failed to save %s : %s" % (elem,e))
             
-        logger.info('elem.full_clean() passed')
+        #~ logger.info('elem.full_clean() passed')
         #~ print '20101024b', elem.card_valid_from
 
         kw2save = {}
@@ -997,7 +998,9 @@ class ExtUI(base.UI):
         if request.method == 'PUT':
             if elem is None:
                 return error_message('Tried to PUT on element -99999')
+            #~ print 20110301, request.raw_post_data
             data = http.QueryDict(request.raw_post_data)
+            #~ print 20110301, data
             #~ fmt = data.get('fmt',None)
             return self.form2obj_and_save(request,ah,data,elem,False) # force_update=True)
             
@@ -1309,8 +1312,9 @@ class ExtUI(base.UI):
             return js_code('STRENGTH_CHOICES')
         if v is KNOWLEDGE_CHOICES:
             return js_code('KNOWLEDGE_CHOICES')
-        if isinstance(v,babel.BabelText):
-            return v.pk
+        if isinstance(v,babel.BabelChoice):
+            #~ v = unicode(v)
+            return v.value
         if isinstance(v,Exception):
             return unicode(v)
         if isinstance(v,menus.Menu):

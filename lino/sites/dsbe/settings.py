@@ -13,7 +13,7 @@
 
 import lino
 
-from lino.demos.std.settings import *
+from lino.sites.std.settings import *
 
 from lino.utils.jsgen import js_code
 
@@ -189,6 +189,8 @@ INSTALLED_APPS = (
   'lino.modlib.dsbe',
   #~ 'south', # http://south.aeracode.org
 )
+
+LANGUAGES = language_choices('de','fr','nl','en')
 
 # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
 # Always use forward slashes, even on Windows.

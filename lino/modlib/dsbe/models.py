@@ -43,7 +43,8 @@ from lino.modlib.contacts import models as contacts
 from lino.modlib.notes import models as notes
 from lino.modlib.links import models as links
 from lino.modlib.uploads import models as uploads
-from lino.modlib.properties.utils import KnowledgeField #, StrengthField
+from lino.utils.choicelists import HowWell
+#~ from lino.modlib.properties.utils import KnowledgeField #, StrengthField
 #~ from lino.modlib.uploads.models import UploadsByPerson
 from lino.models import get_site_config
 from lino.tools import get_field
@@ -813,8 +814,8 @@ class LanguageKnowledge(models.Model):
     language = models.ForeignKey("countries.Language",verbose_name=_("Language"))
     #~ language = models.ForeignKey("countries.Language")
     #~ language = fields.LanguageField()
-    spoken = KnowledgeField(verbose_name=_("spoken"))
-    written = KnowledgeField(verbose_name=_("written"))
+    spoken = HowWell.field(verbose_name=_("spoken"))
+    written = HowWell.field(verbose_name=_("written"))
     
     def __unicode__(self):
         if self.language_id is None:
@@ -1669,8 +1670,8 @@ class MySearches(mixins.ByUser):
 class WantedLanguageKnowledge(models.Model):
     search = models.ForeignKey(PersonSearch)
     language = models.ForeignKey("countries.Language",verbose_name=_("Language"))
-    spoken = KnowledgeField(verbose_name=_("spoken"))
-    written = KnowledgeField(verbose_name=_("written"))
+    spoken = HowWell.field(verbose_name=_("spoken"))
+    written = HowWell.field(verbose_name=_("written"))
 
 class WantedSkill(properties.PropertyOccurence):
     class Meta:

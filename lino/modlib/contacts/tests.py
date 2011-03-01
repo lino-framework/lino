@@ -19,7 +19,7 @@ from django.test import TestCase
 #from lino.modlib.countries.models import Country
 from lino.modlib.contacts.models import Companies
 
-from lino.modlib.tools import resolve_model
+from lino.tools import resolve_model
 Person = resolve_model('contacts.Person')
 #Companies = resolve_model('contacts.Companies')
 

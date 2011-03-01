@@ -52,7 +52,6 @@ from lino import reports
 from lino import fields
 #~ from lino import actions
 
-from lino.utils.babel import default_language, dtos, dtosl, setlang, getattr_lang
 from lino.utils import babel 
 from lino.utils.choosers import chooser
 from lino.utils.restify import restify
@@ -167,10 +166,10 @@ class SimpleBuildMethod(BuildMethod):
                 elem.__class__.__name__,tpls))
         tpl_leaf = tpls[0]
         lang = elem.get_print_language(self)
-        if lang != default_language():
+        if lang != babel.DEFAULT_LANGUAGE:
             tplfile = os.path.normpath(os.path.join(self.templates_dir,tpl_leaf))
             if not os.path.exists(tplfile):
-                lang = default_language()
+                lang = babel.DEFAULT_LANGUAGE
                 #~ tpl = os.path.normpath(os.path.join(self.templates_dir,default_language(),tpl_leaf))
         return lang + '/' + tpl_leaf
         
@@ -204,17 +203,19 @@ class AppyBuildMethod(SimpleBuildMethod):
     def simple_build(self,elem,tpl,target):
         renderer = None
         context = dict(self=elem,
-            dtos=dtos,
-            dtosl=dtosl,
-            tr=getattr_lang,
+            dtos=babel.dtos,
+            dtosl=babel.dtosl,
+            babelattr=babel.babelattr,
+            babelitem=babel.babelitem,
+            tr=babel.babelitem,
             restify=restify,
             #~ knowledge_text=fields.knowledge_text,
             )
         lang = str(elem.get_print_language(self))
         from appy.pod.renderer import Renderer
         logger.debug(u"appy.pod render %s -> %s using language %r",tpl,target,lang)
-        savelang = babel.LANG
-        setlang(lang)
+        savelang = babel.get_language()
+        babel.set_language(lang)
         #~ locale.setlocale(locale.LC_ALL,ls)
         #~ Error: unsupported locale setting
         renderer = Renderer(tpl, context, target,**settings.APPY_PARAMS)
@@ -225,7 +226,7 @@ class AppyBuildMethod(SimpleBuildMethod):
             #~ return restify(s,*args,**kw)
         #~ renderer.context.update(restify=debug_restify)
         renderer.run()
-        setlang(savelang)
+        babel.set_language(savelang)
         
 
 class AppyOdtBuildMethod(AppyBuildMethod):
@@ -250,6 +251,14 @@ class AppyRtfBuildMethod(AppyBuildMethod):
     target_ext = '.rtf'
     cache_name = 'webdav'
 
+class AppyDocBuildMethod(AppyBuildMethod):
+  
+    """
+    Generates .doc files from .odt templates.
+    """
+    name = 'appydoc'
+    target_ext = '.doc'
+    cache_name = 'webdav'
 
         
 class LatexBuildMethod(BuildMethod):
@@ -321,7 +330,7 @@ def get_template_choices(group,bmname):
     if pm is None:
         raise Exception("%r : invalid print method name." % bmname)
     #~ glob_spec = os.path.join(pm.templates_dir,'*'+pm.template_ext)
-    top = os.path.join(pm.templates_dir,default_language(),group)
+    top = os.path.join(pm.templates_dir,babel.DEFAULT_LANGUAGE,group)
     l = []
     for dirpath, dirs, files in os.walk(top):
         for fn in files:
@@ -450,9 +459,13 @@ class ClearCacheAction(reports.RowAction):
 
 class PrintableType(models.Model):
     """
+    Base class for models that specify the :attr:`TypedPrintable.type`.
+    """
+    
+    templates_group = None
+    """
     Default value for `templates_group` is the model's `app_label`.
     """
-    templates_group = None
     
     class Meta:
         abstract = True
@@ -460,9 +473,21 @@ class PrintableType(models.Model):
     build_method = models.CharField(max_length=20,
       verbose_name=_("Build method"),
       choices=build_method_choices(),blank=True)
+    """
+    The name of the build method to be used.
+    The list of choices for this field is static, but depends on 
+    which additional packages are installed.
+    """
+    
     template = models.CharField(max_length=200,
       verbose_name=_("Template"),
       blank=True)
+    """
+    The name of the file to be used as template.
+    The list of choices for this field depend on the :attr:`build_method`.
+    Ending must correspond to the :attr:`build_method`.
+    """
+    
     #~ build_method = models.CharField(max_length=20,choices=mixins.build_method_choices())
     #~ template = models.CharField(max_length=200)
     
@@ -487,6 +512,9 @@ class Printable(models.Model):
     """
     
     must_build = models.BooleanField(_("must build"),default=True,editable=False)
+    """
+    For internal use. Users don't need to see this.
+    """
     
     class Meta:
         abstract = True
@@ -499,7 +527,7 @@ class Printable(models.Model):
         #~ super(Printable,cls).setup_report(rpt)
 
     def get_print_language(self,pm):
-        return default_language()
+        return babel.DEFAULT_LANGUAGE
         
     def get_print_templates(self,bm,action):
         """Return a list of filenames of templates for the specified build method.
@@ -546,10 +574,17 @@ class Printable(models.Model):
 class TypedPrintable(Printable):
     """
     A TypedPrintable model must define itself a field `type` which is a ForeignKey 
-    to a Model that implements PrintableType.
-    Alternatively (
+    to a Model that implements :class:`PrintableType`.
+    
+    Alternatively you can override :meth:`get_printable_type` 
+    if you want to name the field differently. An example of 
+    this is :attr:`lino.modlib.sales.models.SalesDocument.imode`.
     """
     
+    type = NotImplementedError
+    """
+    Override this by a ForeignKey field.
+    """
   
     class Meta:
         abstract = True

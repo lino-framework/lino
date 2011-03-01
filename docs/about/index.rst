@@ -50,7 +50,7 @@ But one thing disturbed me: the
 `admin application <http://docs.djangoproject.com/en/dev/ref/contrib/admin/#ref-contrib-admin>`_  
 has obviously not been designed to write complete database applications.
 That's why I started to write Lino.
-Lino is an alternative for Django's :mod:`django.contrib.admin` module."
+Lino is an alternative for Django's `django.contrib.admin` module."
 
 Lino sites are normal Django sites, but 
 your :setting:`INSTALLED_APPS` will 

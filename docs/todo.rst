@@ -9,29 +9,9 @@ for which I hope for help from other people.
 Short-term
 ----------
 
-#.  Was ist aus meinem Ticket
-    :djangoticket:`BooleanField should work for ExtJS Checkboxes <15497>`
-    geworden?
-    Falls die das wirklich tun sollten, kann meine 
-    :meth:`lino.ui.extjs.ext_store.BooleanStoreField.parse_form_value` 
-    komplett raus.
-
 #.  MTI-Support : in lino.dsbe für "normale" Personen nur die 
     Standard-Kontaktangaben speichern, und die DSBE-spezifischen Felder 
     in einer eigenen Tabelle. 
-
-#.  `dtosl` funktioniert momentan nicht. Die funktionierte nur, 
-    als babel.setlang() auch locale.setlocale setzte.
-    Damit gab es aber Probleme (entweder weil setlocale nicht 
-    threadsafe ist, oder weil meine babel.lc2locale() in vielen 
-    Konfigurationen nicht funktioniert).
-    Auch benutzerspezifizierte Datumsformatierungen wie 
-    "row.started.strftime('%B %Y')" kommen in Englisch statt in der Sprache des Dokuments. 
-    Stattdessen sollte ich wahrscheinlich 
-    :func:`django.template.defaultfilters.date`
-    nutzen und mich auf 
-    `Djangos Formatsyntax <http://docs.djangoproject.com/en/dev/ref/templates/builtins/#date>`_
-    verlassen.
 
 #.  Übersetzung PropertyType : nicht Eigenschaftsart, sondern 
     Eigenschaftstyp oder Eigenschafts-Datentyp...
@@ -558,6 +538,13 @@ Long-term
 #.  :doc:`/tickets/25`
 
 #.  :doc:`/tickets/26`
+
+#.  Was ist aus meinem Ticket
+    :djangoticket:`BooleanField should work for ExtJS Checkboxes <15497>`
+    geworden?
+    Falls die das wirklich tun sollten, kann meine 
+    :meth:`lino.ui.extjs.ext_store.BooleanStoreField.parse_form_value` 
+    komplett raus.
 
 Documentation
 -------------

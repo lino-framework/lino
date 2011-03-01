@@ -32,15 +32,15 @@ RTF funktioniert noch nicht, dazu müsste ich zunächst ein neues Templatesystem
 
 
 Der Lino-Server sucht die Vorlagedateien im Verzeichnis :file:`/usr/local/lino/templates/appy/de`
-(`de` weil das die :func:`Standardsprache <lino.modlib.tools.default_language>` des Lino-Sites ist,
+(`de` weil das die :attr:`Standardsprache <lino.utils.babel.DEFAULT_LANGUAGE>` des Lino-Sites ist,
 `/usr/local/lino` weil das in :setting:`DATA_DIR` als euer lokales Lino-Verzeichnis definiert ist).
 Das templates-Verzeichnis muss pro unterstützter Sprache ein entsprechendes Unterverzeichnis (`de`, `fr`, `en`,...) haben. 
-Die Sprache wird in :attr:`notes.NoteType.template` nicht gespeichert und erscheint auch nicht in der Auswahlliste. 
+Die Sprache wird in :attr:`lino.mixins.printable.PrintableType.template` nicht gespeichert und erscheint auch nicht in der Auswahlliste. 
 Dort werden immer die Templates der Hauptsprache angezeigt. 
 
 
 Um die Dateien auch von einem Windows-Rechner aus bearbeiten zu können, könnte
-`/usr/local/lino` ein Link nach (z.B.) `F:\\ANWPROG\\LINO` sein.
+`/usr/local/lino` ein Link nach (z.B.) :file:`F:\\ANWPROG\\LINO` sein.
 
 Die Vorlagedateien müssen ausgehend von den bestehenden Word-Dateien mit OpenOffice erstellt werden. 
 Die einzelnen Felder müssen dabei, wie bei appy_pod dokumentiert eingebunden werden:

@@ -12,7 +12,6 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino-DSBE; if not, see <http://www.gnu.org/licenses/>.
 
-
 import decimal
 from dateutil.relativedelta import relativedelta
 ONE_DAY = relativedelta(days=1)
@@ -27,11 +26,12 @@ from lino.utils import i2d
 from lino.utils.instantiator import Instantiator
 from lino.tools import resolve_model
 from lino.utils.babel import babel_values, default_language
+from lino.utils import dblogger
 from lino.models import update_site_config
 
 from django.contrib.auth import models as auth
 
-
+#~ dblogger.info('Loading')
 
 DEMO_LINKS = [
   dict(name="Lino website",url="http://lino.saffre-rumma.net"),
@@ -147,7 +147,7 @@ def objects():
     
     tatjana = person(first_name=u"Татьяна",last_name=u"Казеннова",# name="Казеннова Татьяна",
         city=kettenis,country='BE', 
-        birth_place="Moskau", birth_country='SUHH',
+        birth_place="Moskau", # birth_country='SUHH',
         sex='F')
     yield tatjana
     
@@ -291,12 +291,14 @@ def objects():
     #~ baker.save()
     #~ yield baker
 
-    skill = Instantiator('properties.PersonProperty','person property value').build
+    pp = Instantiator('properties.PersonProperty',
+        'person property value').build
     for p in Person.objects.all():
         for prop in Property.objects.all():
-            yield skill(p,prop,'')
+            yield pp(p,prop,prop.type.default_value)
             
-    langk = Instantiator('dsbe.LanguageKnowledge','person:name language written spoken').build
+    langk = Instantiator('dsbe.LanguageKnowledge',
+        'person:name language written spoken').build
     yield langk(u"Ausdemwald Alfons",'est','1','1')
     yield langk(u"Ausdemwald Alfons",'ger','4','3')
     yield langk(u"Bastiaensen Laurent",'ger','4','3')

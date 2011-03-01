@@ -121,14 +121,15 @@ def py2js(v):
     if isinstance(v,dict): # ) is types.DictType:
         #~ print 20100226, repr(v)
         return "{ %s }" % ", ".join([
-            "%s: %s" % (key2js(k),py2js(v)) for k,v in v.items()])
+            #~ "%s: %s" % (key2js(k),py2js(v)) for k,v in v.items()])
+            "%s: %s" % (py2js(k),py2js(v)) for k,v in v.items()])
     if isinstance(v,bool): # types.BooleanType:
         return str(v).lower()
     if isinstance(v, (int, long, decimal.Decimal)):
         return str(v)
     if isinstance(v, datetime.date):
         #~ return 'new Date(%d,%d,%d)' % (v.year,v.month-1,v.day)
-        return repr(v.strftime(lino.DATE_FORMAT_STRFTIME))
+        return '"%s"' % v.strftime(lino.DATE_FORMAT_STRFTIME)
         #~ return repr('%d.%d.%d' % (v.day,v.month,v.year))
         #~ return repr(str(v))
 

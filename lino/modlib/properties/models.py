@@ -42,6 +42,8 @@ from django.utils.encoding import force_unicode
 from lino import reports
 #~ from lino import layouts
 from lino.utils import perms
+from lino.utils import babel
+#~ from lino.utils.babel import babelattr
 #~ from lino.utils import printable
 from lino import mixins
 from lino import actions
@@ -54,14 +56,11 @@ from lino.modlib.uploads import models as uploads
 from lino.models import get_site_config
 from lino.tools import get_field
 from lino.tools import resolve_field
-from lino.utils.babel import add_babel_field, DEFAULT_LANGUAGE, babelattr, babeldict_getitem
 from lino.utils.choosers import chooser
 from lino.mixins.printable import DirectPrintAction
 from lino.mixins.reminder import ReminderEntry
 
-from lino.modlib.properties.utils import get_choicelist, choicelist_choices
-
-
+from lino.utils.choicelists import get_choicelist, choicelist_choices
     
 
 class PropType(models.Model):
@@ -78,13 +77,21 @@ class PropType(models.Model):
         verbose_name = _("Property Type")
         verbose_name_plural = _("Property Types")
         
-    name = models.CharField(max_length=200,verbose_name=_("Designation"))
+    name = babel.BabelCharField(max_length=200,verbose_name=_("Designation"))
     
     choicelist = models.CharField(
         max_length=50, blank=True,
         verbose_name=_("Choices List"),
         choices=choicelist_choices())
     
+    default_value = models.CharField(_("default value"),
+        max_length=settings.LINO_SITE.propvalue_max_length,
+        blank=True)
+    """
+    The default value to set when creating a :class:`PropertyOccurence`.
+    This is currently used only in some fixture...
+    """
+        
     limit_to_choices = models.BooleanField(_("Limit to choices"))
     """
     not yet supported
@@ -95,8 +102,12 @@ class PropType(models.Model):
     not yet supported
     """
     
+    @chooser()
+    def default_value_choices(cls):
+        return self.choices_for(None)
+        
     def __unicode__(self):
-        return babelattr(self,'name')
+        return babel.babelattr(self,'name')
         
     def choices_for(self,property):
         if self.choicelist:
@@ -104,7 +115,7 @@ class PropType(models.Model):
         return [(pc.value, pc.text) for pc in 
             PropChoice.objects.filter(type=self).order_by('value')]
             
-add_babel_field(PropType,'name')
+#~ add_babel_field(PropType,'name')
 
 class PropChoice(models.Model):
     """
@@ -118,11 +129,11 @@ class PropChoice(models.Model):
         
     type = models.ForeignKey(PropType,verbose_name=_("Property Type"))
     value = models.CharField(max_length=settings.LINO_SITE.propvalue_max_length,verbose_name=_("Value"))
-    text = models.CharField(max_length=200,verbose_name=_("Designation"))
+    text = babel.BabelCharField(max_length=200,verbose_name=_("Designation"))
     
     def __unicode__(self):
-        return babelattr(self,'text')
-add_babel_field(PropChoice,'text')
+        return babel.babelattr(self,'text')
+#~ add_babel_field(PropChoice,'text')
 
 class PropGroup(models.Model):
     """
@@ -134,12 +145,12 @@ class PropGroup(models.Model):
         verbose_name = _("Property Group")
         verbose_name_plural = _("Property Groups")
         
-    name = models.CharField(max_length=200,verbose_name=_("Designation"))
+    name = babel.BabelCharField(max_length=200,verbose_name=_("Designation"))
     
     def __unicode__(self):
-        return babelattr(self,'name')
+        return babel.babelattr(self,'name')
 
-add_babel_field(PropGroup,'name')
+#~ add_babel_field(PropGroup,'name')
 
 
 class Property(models.Model):
@@ -147,13 +158,13 @@ class Property(models.Model):
         verbose_name = _("Property")
         verbose_name_plural = _("Properties")
         
-    name = models.CharField(max_length=200,verbose_name=_("Designation"))
+    name = babel.BabelCharField(max_length=200,verbose_name=_("Designation"))
     group = models.ForeignKey(PropGroup,verbose_name=_("Property Group"))
     type = models.ForeignKey(PropType,verbose_name=_("Property Type"))
     
     def __unicode__(self):
-        return babelattr(self,'name')
-add_babel_field(Property,'name')
+        return babel.babelattr(self,'name')
+#~ add_babel_field(Property,'name')
 
 
 class PropertyOccurence(models.Model):
@@ -178,8 +189,14 @@ class PropertyOccurence(models.Model):
     
     def get_text(self):
         c = PropChoice.objects.get(type=self.property.type,value=self.value)
-        return babelattr(c,'name')
+        return babel.babelattr(c,'name')
     
+    @chooser()
+    def value_choices(cls,property):
+        if property is None:
+            return []
+        return property.type.choices_for(property)
+            
     @chooser()
     def property_choices(cls,group):
         #~ print group
@@ -187,17 +204,12 @@ class PropertyOccurence(models.Model):
             return []
         return Property.objects.filter(group=group).order_by('name')
         
-    @chooser()
-    def value_choices(cls,property):
-        if property is None:
-            return []
-        return property.type.choices_for(property)
-        #~ return [(pc.value, pc.text) for pc in 
-            #~ PropChoice.objects.filter(type=property.type).order_by('value')]
-            
     def get_value_display(self,value):
         if not value or self.property_id is None:
             return ''
+        if self.property.type.choicelist:
+            cl = get_choicelist(self.property.type.choicelist)
+            return cl.get_text_for_value(value)
         l = []
         for v in value.split(','):
             try:

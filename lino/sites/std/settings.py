@@ -43,7 +43,7 @@ USER_INTERFACES = [
   ]
 DATA_DIR = join(PROJECT_DIR,"data")
 
-BABEL_LANGS = []
+#~ BABEL_LANGS = []
 
 APPY_PARAMS = dict(ooPort=8100)
 try:
@@ -236,3 +236,21 @@ EMAIL_HOST = "mail.example.com"
 LOGGING_CONFIG = 'lino.utils.log.configure'
 LOGGING = dict(filename=None,level='INFO')
 
+
+gettext = lambda s: s
+
+def language_choices(*args):
+    """
+    See :doc:`/blog/2011/0226`.
+    A subset of Django's LANGUAGES.
+    """
+    _langs = (
+        ('en', gettext('English')),
+        ('de', gettext('German')),
+        ('fr', gettext('French')),
+        ('nl', gettext('Dutch')),
+        ('et', gettext('Estonian')),
+    )
+    return [x for x in _langs if x[0] in args]
+      
+LANGUAGES = language_choices('en','de','fr','nl','et')

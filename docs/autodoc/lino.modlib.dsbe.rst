@@ -41,3 +41,11 @@ Fixtures
 - initial_data
 
 - demo
+
+Tests
+-----
+
+.. automodule:: lino.modlib.dsbe.tests.dsbe_tests
+    :members:
+    :show-inheritance:
+

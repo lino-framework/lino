@@ -43,3 +43,31 @@ macht man jetzt einfach
 
 
 
+01.40 Uhr. 
+Ich habe Einschlafstörungen, weil der folgende Punkt noch behoben werden wollte:
+
+#.  `dtosl` funktioniert momentan nicht. Die funktionierte nur, 
+    als babel.setlang() auch locale.setlocale setzte.
+    Damit gab es aber Probleme (entweder weil setlocale nicht 
+    threadsafe ist, oder weil meine babel.lc2locale() in vielen 
+    Konfigurationen nicht funktioniert).
+    Auch benutzerspezifizierte Datumsformatierungen wie 
+    "row.started.strftime('%B %Y')" kommen in Englisch statt in der Sprache des Dokuments. 
+    Stattdessen sollte ich wahrscheinlich 
+    :func:`django.template.defaultfilters.date`
+    nutzen und mich auf 
+    `Djangos Formatsyntax <http://docs.djangoproject.com/en/dev/ref/templates/builtins/#date>`_
+    verlassen.
+
+Hat nur anderthalb Stunden gedauert. 
+
+Statt BABEL_LANGS zu setzen, muss man jetzt die 
+echte :setting:`LANGUAGES` 
+reduzieren 
+(unter Verwendung von :func:`lino.sites.std.settings.language_choices`). 
+
+Wenn man das nicht täte, hätte man eine Datenbank, 
+in der alle Babelfelder in hundertfacher Ausführung existierten
+(eine für jede von Djangos sprachen).
+
+Also nicht den Django-Defaultwert nehmen, sondern immer lokal setzen.

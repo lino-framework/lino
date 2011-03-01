@@ -7,6 +7,18 @@ Lino and the Django `settings.py` file
 
 This section describes Lino-specific entries of the Django :xfile:`settings.py`.
 
+.. setting:: LANGUAGE_CODE
+
+See http://docs.djangoproject.com/en/dev/ref/settings/#language-code
+
+.. setting:: ROOT_URLCONF
+
+See http://docs.djangoproject.com/en/dev/ref/settings/#language-code
+
+.. setting:: INSTALLED_APPS
+
+See Django documentation.
+
 .. setting:: USE_GRIDFILTERS
 
 If True, the generated JavaScript uses the :extjs:`Ext.ux.grid.GridFilters` extension.

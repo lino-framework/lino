@@ -1,4 +1,4 @@
-## Copyright 2010 Luc Saffre
+## Copyright 2010-2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -13,12 +13,13 @@
 
 
 from django.db import models
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 from lino import reports
 from lino import fields
 from lino.utils import join_words
-from lino.utils.babel import add_babel_field, DEFAULT_LANGUAGE, babelattr, BABEL_CHOICES
+from lino.utils.babel import add_babel_field, DEFAULT_LANGUAGE, babelattr
 from lino.utils.choosers import chooser
     
 
@@ -67,7 +68,7 @@ Anything that has contact information (postal address, email, phone,...).
     zip_code = models.CharField(_("Zip code"),max_length=10,blank=True)
     region = models.CharField(_("Region"),max_length=200,blank=True)
     #~ language = models.ForeignKey('countries.Language',default=default_language)
-    language = fields.LanguageField(default=DEFAULT_LANGUAGE,choices=BABEL_CHOICES)
+    language = fields.LanguageField(default=DEFAULT_LANGUAGE,choices=settings.LANGUAGES)
     
     email = models.EmailField(_('E-Mail'),blank=True,null=True)
     url = models.URLField(_('URL'),blank=True)
@@ -141,7 +142,17 @@ class Addressables(reports.Report):
   
 
 
-class ContactDocument(models.Model):
+class PartnerDocument(models.Model):
+    class Meta:
+        abstract = True
+        
+    person = models.ForeignKey("contacts.Person",
+        blank=True,null=True,
+        verbose_name=_("Person"))
+    company = models.ForeignKey("contacts.Company",
+        blank=True,null=True,verbose_name=_("Company"))
+        
+class ContactDocument(PartnerDocument):
     """
     A document whose recipient is a :class:`Contact`.
     """
@@ -149,9 +160,8 @@ class ContactDocument(models.Model):
     class Meta:
         abstract = True
         
-    person = models.ForeignKey("contacts.Person",blank=True,null=True,verbose_name=_("Person"))
-    company = models.ForeignKey("contacts.Company",blank=True,null=True,verbose_name=_("Company"))
-    contact = models.ForeignKey("contacts.Contact",blank=True,null=True,
+    contact = models.ForeignKey("contacts.Contact",
+      blank=True,null=True,
       verbose_name=_("represented by"))
     language = fields.LanguageField(default=DEFAULT_LANGUAGE)
 
