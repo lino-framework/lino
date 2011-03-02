@@ -64,7 +64,7 @@ def send_invoices():
         return
     print "%d documents to send: " % len(q) \
       + ", ".join(str(d) for d in q)
-    rasie Exception("TODO : send_invoices")
+    #~ raise Exception("TODO : send_invoices")
     #~ if not syscon.confirm("Send these documents?"):
         #~ return
     #~ for doc in q:
