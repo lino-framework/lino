@@ -41,7 +41,7 @@ import os
 class SimulateRemoteUserMiddleware(object):
     def process_request(self, request):
         #~ x = os.environ.get('REMOTE_USER')
-        x = os.environ.get('REMOTE_USER','test')
+        x = os.environ.get('REMOTE_USER','root')
         request.META['REMOTE_USER'] = x
         #~ if x:
             #~ request.META['REMOTE_USER'] = x

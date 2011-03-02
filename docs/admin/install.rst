@@ -130,6 +130,7 @@ Create mysql user
     mysql> create database myproject collate latin1_german1_ci;
     mysql> create user 'django'@'localhost' identified by 'pwd';
     mysql> grant all on myproject.* to django with grant option;
+    mysql> grant all on test_myproject.* to django with grant option;
     mysql> quit;
 
 
@@ -177,6 +178,26 @@ your Django project directory:
   ============================= =========================================
 
   
+Apply a patch for Django
+------------------------
+
+Lino needs Django ticket `#10808 <http://code.djangoproject.com/ticket/10808>`_
+to be fixed, here is how I do it::
+
+  $ cd /var/snapshots/django
+  $ patch -p0 < /var/snapshots/lino/patches/10808b-r14404.diff
+
+The expected output is something like this::
+
+  (Stripping trailing CRs from patch.)
+  patching file django/db/models/base.py
+  (Stripping trailing CRs from patch.)
+  patching file django/forms/models.py
+  (Stripping trailing CRs from patch.)
+  patching file tests/modeltests/model_inheritance/models.py
+
+Read :doc:`/django/DjangoPatches` for more details.
+
   
   
 Set up Apache and `mod_wsgi`
@@ -293,26 +314,6 @@ It may be useful to tidy up::
 
   $ find /var/snapshots/ -name '*.pyc' -delete
 
-
-Apply a patch for Django
-------------------------
-
-Lino needs Django ticket `#10808 <http://code.djangoproject.com/ticket/10808>`_
-to be fixed, here is how I do it::
-
-  $ cd /var/snapshots/django
-  $ patch -p0 < /var/snapshots/lino/patches/10808b-r14404.diff
-
-The expected output is something like this::
-
-  (Stripping trailing CRs from patch.)
-  patching file django/db/models/base.py
-  (Stripping trailing CRs from patch.)
-  patching file django/forms/models.py
-  (Stripping trailing CRs from patch.)
-  patching file tests/modeltests/model_inheritance/models.py
-
-Read :doc:`/django/DjangoPatches` for more details.
 
 
 
