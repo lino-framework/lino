@@ -211,7 +211,7 @@ def test04(self):
     
     ::
     
-    {
+      {
         "navinfo": {
             "last": 2,
             "recno": 1,
@@ -267,7 +267,7 @@ def test04(self):
         },
         "id": 1,
         "title": "Vertrag Nr. 1"
-    }
+      }
     """
     for value in ('01.03.2011','15.03.2011'):
         url ='/api/dsbe/Contracts/1'

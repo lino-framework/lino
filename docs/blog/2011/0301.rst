@@ -1,6 +1,10 @@
 20110301
 ========
 
+Tagsüber
+--------
+
+
 Heute habe ich den ganzen Tag an folgender Frage gearbeitet:
 
 #.  Funktioniert lino.PARSE_DATE noch nach den Änderungen vom 
@@ -17,14 +21,25 @@ dass dieser Fall in Zukunft nun jedesmal
 mit einem einfachen :command:`manage.py test` laufen wird.
 
 Die neuen test cases sind
-:func:`lino.modlib.dsbe.tests.test04`
+:func:`lino.modlib.dsbe.tests.dsbe_tests.test04`
 und
-:func:`lino.modlib.dsbe.tests.test05`.
+:func:`lino.modlib.dsbe.tests.dsbe_tests.test05`.
 
 Detail am Rande:
 
-- `lino.utils.jsgen.py2js` schrieb `datetime.date`-Werte als Strings 
-   mit einfachen Anführungszeichen. ExtJS akzeptiert das, aber `json.loads` nicht. 
-   Idem für die keys von dictionaries. 
-   Die müssen für `json.loads` zwischen  Anführungszeichen stehen.
+- `lino.utils.jsgen.py2js` schrieb `datetime.date`-Werte als Strings
+  mit einfachen Anführungszeichen. ExtJS akzeptiert das, aber `json.loads` nicht. 
+  Idem für die keys von dictionaries. 
+  Die müssen für `json.loads` zwischen  Anführungszeichen stehen.
 
+Check-in um 18.30 Uhr wegen wegen Feierabend.
+
+Abends
+------
+
+Nach Feierabend habe ich mich noch 2 Stunden lang amüsiert, 
+eine estnisch-englische Demo von iGen zu machen. 
+Anfangs auch noch einen Testcase in :func:`lino.modlib.dsbe.tests.dsbe_tests.test06`.
+Wird richtig schön.
+
+Check-in 20110301b um 24.30 Uhr und ab ins Bett.

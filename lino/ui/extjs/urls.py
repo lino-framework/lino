@@ -23,9 +23,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import urls as auth_urls
 from django.utils import importlib
 
-#~ import lino
-#~ from lino import lino_site
-#~ from lino.site import get_lino_site
 
 urlpatterns = patterns('',
     (r'^favicon\.ico$', 'django.views.generic.simple.redirect_to', 
@@ -42,10 +39,20 @@ urlpatterns = patterns('',
     #~ site = cl()
     
 import lino
-from lino.core.site import get_urls
+#~ from lino.core.site import get_urls
+
+settings.LINO_SITE.setup()
+
+from lino.ui.extjs.ext_ui import ExtUI
+
+ui = ExtUI(settings.LINO_SITE)
+
+#~ get_urls = ui.get_urls
+
+#~ get_urls = settings.LINO_SITE.get_urls
 
 urlpatterns += patterns('',
-    (r'', include(get_urls())),
+    (r'', include(ui.get_urls())),
 )
 
 if sys.platform == 'win32':

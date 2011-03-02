@@ -11,6 +11,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+raise "no longer used. use LINO_SITE.setup()"
 
 from django.conf import settings
 
@@ -18,6 +19,3 @@ from lino.core.kernel import setup_site
 
 setup_site(settings.LINO_SITE)
 
-#~ settings.LINO_SITE.setup()
-
-get_urls = settings.LINO_SITE.get_urls

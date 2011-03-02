@@ -223,13 +223,15 @@ class LinoSite(object):
     def configure(self,sc):
         self.config = sc
         
-    #~ def setup(self):
+    def setup(self):
       
         #~ from lino.models import get_site_config
         #~ self.config = get_site_config()
         
+        from lino.core.kernel import setup_site
         #~ from lino.site import setup_site
-        #~ setup_site(self)
+
+        setup_site(self)
 
         
     def add_menu(self,*args,**kw):
@@ -257,20 +259,17 @@ class LinoSite(object):
         return HttpResponse(html)
         
         
-    def get_urls(self):
-        #~ self.setup()
-        assert self._setup_done
-        #~ self.setup_ui()
-        if len(self.uis) == 1:
-            return self.uis[0].get_urls()
-        urlpatterns = patterns('',
-            ('^$', self.select_ui_view))
-        for ui in self.uis:
-            urlpatterns += patterns('',
-                (ui.name, include(ui.get_urls())),
-            )
-        return urlpatterns
-        #~ return self.ui.get_urls()
+    #~ def get_urls(self):
+        #~ assert self._setup_done
+        #~ if len(self.uis) == 1:
+            #~ return self.uis[0].get_urls()
+        #~ urlpatterns = patterns('',
+            #~ ('^$', self.select_ui_view))
+        #~ for ui in self.uis:
+            #~ urlpatterns += patterns('',
+                #~ (ui.name, include(ui.get_urls())),
+            #~ )
+        #~ return urlpatterns
         
     def get_site_menu(self,user):
         #~ self.setup()

@@ -1,2 +1,0 @@
-T:\hgwork\lino\docs\blog\2011\0301.rst:19: WARNING: py:func reference target not found: lino.modlib.dsbe.tests.test04
-T:\hgwork\lino\docs\blog\2011\0301.rst:19: WARNING: py:func reference target not found: lino.modlib.dsbe.tests.test05

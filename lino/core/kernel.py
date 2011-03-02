@@ -222,15 +222,12 @@ def setup_site(self):
     
     self.setup_main_menu()
     
-    uis = []
-    for ui in settings.USER_INTERFACES:
-        logger.info("Starting user interface %s",ui)
-        ui_module = import_module(ui)
-        #~ self.ui = ui_module.ui
-        #~ self.ui.setup_site(self)
-        #~ ui_module.ui.setup_site(self)
-        uis.append(ui_module.get_ui(self))
-    self.uis = uis
+    #~ uis = []
+    #~ for ui in settings.USER_INTERFACES:
+        #~ logger.info("Starting user interface %s",ui)
+        #~ ui_module = import_module(ui)
+        #~ uis.append(ui_module.get_ui(self))
+    #~ self.uis = uis
     
     if settings.DEBUG:
         reports.generate_dummy_messages()

@@ -172,7 +172,8 @@ if False:
     )
     
 
-ROOT_URLCONF = 'lino.demos.std.urls'
+#~ ROOT_URLCONF = 'lino.demos.std.urls'
+ROOT_URLCONF = 'lino.ui.extjs.urls'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
