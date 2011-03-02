@@ -303,15 +303,11 @@ def register_build_method(pm):
     bm_list.append(pm)
     
 
-if pisa:
-    register_build_method(PisaBuildMethod())
-if appy:
-    register_build_method(AppyOdtBuildMethod())
-    register_build_method(AppyPdfBuildMethod())
-    register_build_method(AppyRtfBuildMethod())
-    
-if pyratemp:
-    register_build_method(RtfBuildMethod())
+register_build_method(PisaBuildMethod())
+register_build_method(AppyOdtBuildMethod())
+register_build_method(AppyPdfBuildMethod())
+register_build_method(AppyRtfBuildMethod())   
+register_build_method(RtfBuildMethod())
 register_build_method(LatexBuildMethod())
 
 #~ print "%d build methods:" % len(bm_list)

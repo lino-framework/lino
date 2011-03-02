@@ -15,7 +15,7 @@ You'll maybe need the following Debian packages installed:
 
  * Packages needed to download Lino and Django::
  
-      mercurial subversion unzip
+      mercurial subversion unzip patch
 
  * Packages needed by Django applications to run in Apache2::
 
@@ -24,10 +24,8 @@ You'll maybe need the following Debian packages installed:
       
  * Packages needed by Lino to work::
  
-      python-dateutil 
-      python-yaml 
-      python-cheetah
-      python-docutils
+      python-dateutil python-yaml python-cheetah python-docutils
+      
       python-reportlab 
       python-imaging 
       python-html5lib
@@ -40,7 +38,7 @@ You'll maybe need the following Debian packages installed:
  * Some database frontend (choose one):
  
       python-pysqlite2
-      mysql-server
+      mysql-server python-mysqldb
       
 
 Download
@@ -104,7 +102,7 @@ might look in our example::
 
   /var/snapshots/lino
   /var/snapshots/django
-  /var/snapshots/appy-0.6.1
+  /var/snapshots/appy-0.6.3
   /usr/local/django  
   
 .. 
@@ -120,6 +118,19 @@ might look in our example::
 To see which directories are on your Python path::
 
   python -c "import sys; print sys.path"
+
+
+Create mysql user
+-----------------
+
+::
+    $ sudo aptitude install mysql-server python-mysqldb
+    
+    $ mysql -u root -p 
+    mysql> create database myproject collate latin1_german1_ci;
+    mysql> create user 'django'@'localhost' identified by 'pwd';
+    mysql> grant all on myproject.* to django with grant option;
+    mysql> quit;
 
 
 Create local Django project
@@ -139,12 +150,19 @@ imports settings from one of the Lino demos.
 For example::
 
   from os.path import join
-  from lino.demos.dsbe.settings import *
+  from lino.sites.dsbe.settings import *
   DATA_DIR = '/usr/local/django/myproject'
   DATABASES = {
+      # 'default': {
+      #     'ENGINE': 'django.db.backends.sqlite3',
+      #     'NAME': join(DATA_DIR,'myproject.db')
+      # }
       'default': {
-          'ENGINE': 'django.db.backends.sqlite3',
-          'NAME': join(DATA_DIR,'myproject.db')
+          'ENGINE': 'django.db.backends.mysql',
+          'NAME': 'myproject',
+          'USER' : 'django',
+          'HOST' : 'localhost',
+          'PASSWORD' : 'password'
       }
   }
   
@@ -241,8 +259,8 @@ directive in your Apache config, and then use symbolic links in :file:`/usr/loca
   mkdir upload
   mkdir webdav
   mkdir webdav/doctemplates
-  ln -s /var/snapshots/lino/lino/ui/extjs/media lino
-  ln -s /var/snapshots/ext-3.2.1 extjs
+  ln -s /var/snapshots/lino/media lino
+  ln -s /var/snapshots/ext-3.3.1 extjs
 
 
 User permissions
@@ -279,13 +297,11 @@ It may be useful to tidy up::
 Apply a patch for Django
 ------------------------
 
-(This is probably no longer necessary)
-
 Lino needs Django ticket `#10808 <http://code.djangoproject.com/ticket/10808>`_
 to be fixed, here is how I do it::
 
   $ cd /var/snapshots/django
-  $ patch -p0 < /var/snapshots/lino/patch/10808b.diff
+  $ patch -p0 < /var/snapshots/lino/patches/10808b-r14404.diff
 
 The expected output is something like this::
 
