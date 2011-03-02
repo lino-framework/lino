@@ -229,6 +229,9 @@ def setup_site(self):
         #~ uis.append(ui_module.get_ui(self))
     #~ self.uis = uis
     
+    #~ from lino.models import get_site_config
+    #~ self.config = get_site_config()
+    
     if settings.DEBUG:
         reports.generate_dummy_messages()
         

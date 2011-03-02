@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-01 22:10+0000\n"
+"POT-Creation-Date: 2011-03-02 19:29+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,108 +17,36 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n>1;\n"
 
-#: .\dummy_messages.py:3
-msgid "Next page"
-msgstr ""
-
-#: .\dummy_messages.py:4
-msgid "Please wait..."
-msgstr ""
-
-#: .\dummy_messages.py:5
-msgid "Action not available on phantom record."
-msgstr ""
-
-#: .\dummy_messages.py:6 .\reports.py:349
+#: .\dummy_messages.py:3 .\reports.py:349
 msgid "Detail"
 msgstr ""
 
+#: .\dummy_messages.py:4
+msgid "Items"
+msgstr ""
+
+#: .\dummy_messages.py:5
+msgid "Notes"
+msgstr ""
+
+#: .\dummy_messages.py:6
+msgid "Sales"
+msgstr ""
+
 #: .\dummy_messages.py:7
-msgid "Next"
+msgid "General"
 msgstr ""
 
 #: .\dummy_messages.py:8
-msgid "Reload current record"
+msgid "Contact"
 msgstr ""
 
 #: .\dummy_messages.py:9
-msgid "Save changes to current record ?"
+msgid "Emitted invoices"
 msgstr ""
 
 #: .\dummy_messages.py:10
 msgid "More"
-msgstr ""
-
-#: .\dummy_messages.py:11
-msgid "Confirmation"
-msgstr ""
-
-#: .\dummy_messages.py:12
-msgid "Previous page"
-msgstr ""
-
-#: .\dummy_messages.py:13
-msgid "Select another view of this report"
-msgstr ""
-
-#: .\dummy_messages.py:14
-msgid "Emitted invoices"
-msgstr ""
-
-#: .\dummy_messages.py:15
-msgid "First"
-msgstr ""
-
-#: .\dummy_messages.py:16
-msgid "Displaying {0} - {1} of {2}"
-msgstr ""
-
-#: .\dummy_messages.py:17
-msgid "Last"
-msgstr ""
-
-#: .\dummy_messages.py:18
-msgid "Items"
-msgstr ""
-
-#: .\dummy_messages.py:19
-msgid "Notes"
-msgstr ""
-
-#: .\dummy_messages.py:20
-msgid "Last page"
-msgstr ""
-
-#: .\dummy_messages.py:21
-msgid "of {0}"
-msgstr ""
-
-#: .\dummy_messages.py:22
-msgid "Page"
-msgstr ""
-
-#: .\dummy_messages.py:23
-msgid "View"
-msgstr ""
-
-#: .\dummy_messages.py:24
-msgid "Sales"
-msgstr ""
-
-#: .\dummy_messages.py:25
-msgid "General"
-msgstr ""
-
-#: .\dummy_messages.py:26
-msgid "First page"
-msgstr ""
-
-#: .\dummy_messages.py:27
-msgid "Contact"
-msgstr ""
-
-#: .\dummy_messages.py:28
-msgid "Previous"
 msgstr ""
 
 #: .\fields.py:48
@@ -133,11 +61,11 @@ msgstr ""
 msgid "Default build method"
 msgstr ""
 
-#: .\models.py:59 .\models.py:111
+#: .\models.py:59 .\models.py:108
 msgid "Site Configuration"
 msgstr ""
 
-#: .\models.py:109
+#: .\models.py:106
 msgid "~Site"
 msgstr ""
 
@@ -202,103 +130,27 @@ msgstr ""
 msgid "Owner"
 msgstr ""
 
-#: .\mixins\addressable.py:52
-msgid "Name"
-msgstr ""
-
-#: .\mixins\addressable.py:53
-msgid "Street"
-msgstr ""
-
-#: .\mixins\addressable.py:54
-msgid "No."
-msgstr ""
-
-#: .\mixins\addressable.py:55
-msgid "Box"
-msgstr ""
-
-#: .\mixins\addressable.py:56
-msgid "Additional address line"
-msgstr ""
-
-#: .\mixins\addressable.py:60
-msgid "Country"
-msgstr ""
-
-#: .\mixins\addressable.py:64
-msgid "City"
-msgstr ""
-
-#: .\mixins\addressable.py:68
-msgid "Zip code"
-msgstr ""
-
-#: .\mixins\addressable.py:69
-msgid "Region"
-msgstr ""
-
-#: .\mixins\addressable.py:73
-msgid "E-Mail"
-msgstr ""
-
-#: .\mixins\addressable.py:74
-msgid "URL"
-msgstr ""
-
-#: .\mixins\addressable.py:75
-msgid "Phone"
-msgstr ""
-
-#: .\mixins\addressable.py:76
-msgid "GSM"
-msgstr ""
-
-#: .\mixins\addressable.py:77
-msgid "Fax"
-msgstr ""
-
-#: .\mixins\addressable.py:81
-msgid "Remarks"
-msgstr ""
-
-#: .\mixins\addressable.py:92
-msgid "Address"
-msgstr ""
-
-#: .\mixins\addressable.py:151
-msgid "Person"
-msgstr ""
-
-#: .\mixins\addressable.py:153
-msgid "Company"
-msgstr ""
-
-#: .\mixins\addressable.py:165
-msgid "represented by"
-msgstr ""
-
-#: .\mixins\printable.py:389
+#: .\mixins\printable.py:392
 msgid "Print"
 msgstr ""
 
-#: .\mixins\printable.py:443
+#: .\mixins\printable.py:446
 msgid "Edit template"
 msgstr ""
 
-#: .\mixins\printable.py:453
+#: .\mixins\printable.py:456
 msgid "Clear cache"
 msgstr ""
 
-#: .\mixins\printable.py:474
+#: .\mixins\printable.py:477
 msgid "Build method"
 msgstr ""
 
-#: .\mixins\printable.py:483
+#: .\mixins\printable.py:486
 msgid "Template"
 msgstr ""
 
-#: .\mixins\printable.py:514
+#: .\mixins\printable.py:517
 msgid "must build"
 msgstr ""
 
@@ -422,23 +274,23 @@ msgstr ""
 msgid "~Projects"
 msgstr ""
 
-#: .\sites\std\settings.py:248
+#: .\sites\std\settings.py:250
 msgid "English"
 msgstr ""
 
-#: .\sites\std\settings.py:249
+#: .\sites\std\settings.py:251
 msgid "German"
 msgstr ""
 
-#: .\sites\std\settings.py:250
+#: .\sites\std\settings.py:252
 msgid "French"
 msgstr ""
 
-#: .\sites\std\settings.py:251
+#: .\sites\std\settings.py:253
 msgid "Dutch"
 msgstr ""
 
-#: .\sites\std\settings.py:252
+#: .\sites\std\settings.py:254
 msgid "Estonian"
 msgstr ""
 

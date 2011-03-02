@@ -20,8 +20,8 @@ from django.utils.importlib import import_module
 def get_app(app_label):
     """
     This is called in models modules instead of "from x.y import models as y"
-    It is probably quicker than `loading.get_app()`.
-    It doesn't work during loading.appcache._populate().
+    It is probably quicker than `django.db.loading.get_app()`.
+    May not be called during loading.appcache._populate().
     Didn't test how they compare in multi-threading cases.
     
     """
@@ -30,7 +30,7 @@ def get_app(app_label):
             return import_module('.models', app_name)
     #~ if not emptyOK:
     raise ImportError("No application labeled %r." % app_label)
-      
+resolve_app = get_app      
 
 
 def resolve_model(model_spec,app_label=None):

@@ -96,9 +96,9 @@ class DsbeSite(LinoSite):
         me.add_action('countries.Languages')
         mm.add_action('countries.Countries')
         mm.add_action('countries.Cities')
-        me.add_action('auth.Permissions')
+        #~ me.add_action('auth.Permissions')
         ma.add_action('auth.Users')
-        me.add_action('auth.Groups')
+        #~ me.add_action('auth.Groups')
         #~ m.add_action('dsbe.DrivingLicenses')
         mm.add_action('dsbe.StudyTypes')
         #~ m.add_action('dsbe.StudyContents')
@@ -169,7 +169,8 @@ LANGUAGE_CODE = 'de-BE'
 SITE_ID = 1 # see also fill.py
 
 INSTALLED_APPS = (
-  'django.contrib.auth',
+  #~ 'django.contrib.auth',
+  'lino.modlib.auth',
   'django.contrib.contenttypes',
   'django.contrib.sessions',
   'django.contrib.sites',

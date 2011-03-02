@@ -24,7 +24,7 @@ from dateutil.relativedelta import relativedelta
 ONE_DAY = relativedelta(days=1)
 
 from django.db import models
-from django.contrib.auth import models as auth
+#~ from django.contrib.auth import models as auth
 from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
@@ -38,10 +38,37 @@ from lino.utils import perms
 from lino.utils import babel 
 #~ from lino.utils.babel import add_babel_field, babelattr
 
-journals = models.get_app('journals')
+from lino.tools import resolve_app
+
+journals = resolve_app('journals')
+#~ journals = models.get_app('journals')
+auth = resolve_app('auth')
 #~ ledger = models.get_app('ledger')
 from lino.modlib.ledger import models as ledger
-products = models.get_app('products')
+#~ products = models.get_app('products')
+#~ ledger = resolve_app('ledger')
+products = resolve_app('products')
+contacts = resolve_app('contacts')
+#~ from lino.modlib.contacts import models as contacts
+
+
+dummy_messages = [
+  _("Recipient"),
+  _("Date"),
+  _("Your reference"),
+  _("Product"),
+  _("Title"),
+  _("Description"),
+  _("Unit price"),
+  _("Quantity"),
+  _("Total"),
+  _("excl. VAT"),
+  _("incl. VAT"),
+  _("Invoicing mode"),
+  _("Shipping mode"),
+]
+del dummy_messages
+
 
 
 class PaymentTerm(models.Model):
@@ -199,7 +226,7 @@ def get_sales_rule(doc):
 
 class SalesDocument(
       journals.Journaled,journals.Sendable,
-      mixins.ContactDocument,mixins.TypedPrintable):
+      contacts.ContactDocument,mixins.TypedPrintable):
     
     creation_date = models.DateField(blank=True,auto_now_add=True)
     #~ customer = models.ForeignKey(Customer,

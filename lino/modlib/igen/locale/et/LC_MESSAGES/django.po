@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-01 22:06+0000\n"
+"POT-Creation-Date: 2011-03-02 19:29+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,30 +17,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: .\models.py:26
-msgid "Language"
+#: .\models.py:95
+msgid "Sales base account"
 msgstr ""
 
-#: .\models.py:27
-msgid "Languages"
-msgstr ""
-
-#: .\models.py:29
-msgid "Designation"
-msgstr ""
-
-#: .\models.py:49
-msgid "country"
-msgstr ""
-
-#: .\models.py:50
-msgid "countries"
-msgstr ""
-
-#: .\models.py:82
-msgid "city"
-msgstr ""
-
-#: .\models.py:83
-msgid "cities"
+#: .\models.py:105
+msgid "Sales VAT account"
 msgstr ""

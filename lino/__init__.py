@@ -225,9 +225,6 @@ class LinoSite(object):
         
     def setup(self):
       
-        #~ from lino.models import get_site_config
-        #~ self.config = get_site_config()
-        
         from lino.core.kernel import setup_site
         #~ from lino.site import setup_site
 

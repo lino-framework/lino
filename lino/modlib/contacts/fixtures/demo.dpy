@@ -21,20 +21,6 @@ from lino.utils.babel import default_language
 
 def objects():
     city = Instantiator('countries.City','name country').build
-    yield city('Eupen','BE')
-    yield city('Kelmis','BE')
-    yield city('Kettenis','BE')
-    yield city('Raeren','BE')
-    yield city('Angleur','BE')
-    yield city(u'Brüssel','BE')
-    
-    yield city('Oostende','BE')
-    yield city('Vigala','EE')
-    yield city('Tallinn','EE')
-    yield city(u'Pärnu','EE')
-    yield city(u'Tartu','EE')
-    yield city(u'Ääsmäe','EE')
-    
     yield city(u'Aachen','DE')
     yield city(u'Köln','DE')
     yield city(u'Berlin','DE')
@@ -81,7 +67,9 @@ def objects():
     vigala = City.objects.get(name__exact='Vigala')
     #~ tallinn = City.objects.get(name__exact='Tallinn')
     person = Instantiator('contacts.Person',"first_name last_name",
-                country='EE',city=vigala,zip_code='78003').build
+                country='EE',street='Uus', street_no='1',
+                addr2=u'Vana-Vigala küla',
+                city=vigala,zip_code='78003').build
     yield person(u'Luc',  u'Saffre')
     
     eupen = City.objects.get(name__exact='Eupen')

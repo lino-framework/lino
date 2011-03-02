@@ -13,63 +13,41 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 
-from django.test import TestCase
+from lino.utils.test import TestCase
 #from lino.igen import models
 #from lino.modlib.contacts.models import Contact, Companies
 #from lino.modlib.countries.models import Country
 from lino.modlib.contacts.models import Companies
 
-from lino.tools import resolve_model
+from lino.tools import resolve_model,resolve_app
 Person = resolve_model('contacts.Person')
+contacts = resolve_app('contacts')
 #Companies = resolve_model('contacts.Companies')
+from lino.utils.instantiator import Instantiator
 
-class DemoTest(TestCase):
-    fixtures = [ 'demo' ]
+class StdTest(TestCase):
+    fixtures = [ 'std', 'few_countries', 'ee', 'be', 'demo', 'demo_ee']
+    
+person = Instantiator('contacts.Person').build
+company = Instantiator('contacts.Company').build
         
-    def test01(self):
-        self.assertEquals(Person.objects.count(), 16)
-        luc = Person.objects.get(id=2)
-        print repr(luc)
-        self.assertEquals(unicode(luc), 'Luc Saffre')
-        self.assertEquals(luc.as_address("\n"), u'''\
-Mr. Luc Saffre
-Rummajaani talu
+def test01(self):
+    """
+    Tests some basic funtionality.
+    """
+    luc = Person.objects.get(first_name__exact='Luc',last_name__exact='Saffre')
+    self.assertEquals(luc.address(), u'''\
+Luc Saffre
+Uus 1
 Vana-Vigala küla
-Vigala vald
-78003 Raplamaa''')
-
-    def test02(self):
-        """A simple query. Select all contacts whose lastName contains an 'a', ordered by lastName.
-        """
-        
-        s = "\n".join([unicode(c) 
-          for c in Person.objects.filter(
-            lastName__contains="a").order_by("lastName")])
-        #print "\n"+s
-        self.assertEquals(s,u"""\
-Andreas Arens
-Bernard Bodard
-Emil Eierschal
-Jérôme Jeanémart
-Karl Kask
-Luc Saffre""")
-
-    def test05(self):
-        s = Companies().as_text(
-          column_widths=dict(companyName=20,country=12))
-        #print "\n"+s
-        self.assertEquals(s.split(),u"""
-Companies
-=========
-companyName         |country     |title         |firstName     |lastName
---------------------+------------+--------------+--------------+--------------
-Bernd Brecht        |Germany     |Herr          |Bernd         |Brecht
-Bäckerei Ausdemwald |Belgium     |Herrn         |Alfons        |Ausdemwald
-Donderweer bv       |Netherlands |              |              |
-Hans Flott & Co     |Germany     |Frau          |Lisa          |Lahm
-Mets ja Puu OÜ      |Estonia     |              |Tõnu          |Tamme
-Minu Firma OÜ       |Estonia     |              |              |
-""".split(),"Companies().as_text() has changed in demo")
-        
+78003 Vigala
+Estonia''')
+    self.assertEquals(luc.address_location(), u'''\
+Uus 1
+Vana-Vigala küla
+78003 Vigala
+Estonia''')
+    
+    
         
         

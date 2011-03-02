@@ -37,6 +37,11 @@ You'll maybe need the following Debian packages installed:
  
       python-daemon
       
+ * Some database frontend (choose one):
+ 
+      python-pysqlite2
+      mysql-server
+      
 
 Download
 --------

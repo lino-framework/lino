@@ -201,6 +201,8 @@ class AppyBuildMethod(SimpleBuildMethod):
     templates_name = 'appy' # subclasses use the same templates directory
     
     def simple_build(self,elem,tpl,target):
+        from lino.models import get_site_config
+        from appy.pod.renderer import Renderer
         renderer = None
         context = dict(self=elem,
             dtos=babel.dtos,
@@ -209,11 +211,12 @@ class AppyBuildMethod(SimpleBuildMethod):
             babelitem=babel.babelitem,
             tr=babel.babelitem,
             restify=restify,
+            site_config = get_site_config(),
+            _ = _,
             #~ knowledge_text=fields.knowledge_text,
             )
         lang = str(elem.get_print_language(self))
-        from appy.pod.renderer import Renderer
-        logger.debug(u"appy.pod render %s -> %s using language %r",tpl,target,lang)
+        logger.info(u"appy.pod render %s -> %s (language=%r,params=%s",tpl,target,lang,settings.APPY_PARAMS)
         savelang = babel.get_language()
         babel.set_language(lang)
         #~ locale.setlocale(locale.LC_ALL,ls)
@@ -367,7 +370,7 @@ class BasePrintAction(reports.RowAction):
             #~ if not elem.must_rebuild_target(filename,self):
                 #~ logger.debug("%s : %s -> %s is up to date",self,elem,filename)
                 #~ return
-            logger.debug(u"%s %s -> overwrite existing %s.",bm,elem,filename)
+            logger.info(u"%s %s -> overwrite existing %s.",bm,elem,filename)
             os.remove(filename)
         else:
             dirname = os.path.dirname(filename)

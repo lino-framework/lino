@@ -1,0 +1,86 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: lino.modlib.sales\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-03-02 19:29+0000\n"
+"PO-Revision-Date: 2011-03-02 21:33+0200\n"
+"Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
+"Language-Team: et <et>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: .\models.py:56
+msgid "Recipient"
+msgstr "Saaja"
+
+#: .\models.py:57
+msgid "Date"
+msgstr "Kuupäev"
+
+#: .\models.py:58
+msgid "Your reference"
+msgstr ""
+
+#: .\models.py:59
+msgid "Product"
+msgstr ""
+
+#: .\models.py:60
+msgid "Title"
+msgstr "Pealkiri"
+
+#: .\models.py:61
+msgid "Description"
+msgstr "Nimetus"
+
+#: .\models.py:62
+msgid "Unit price"
+msgstr "Tükihind"
+
+#: .\models.py:63
+msgid "Quantity"
+msgstr "Kogus"
+
+#: .\models.py:64
+msgid "Total"
+msgstr "Kokku"
+
+#: .\models.py:65
+msgid "excl. VAT"
+msgstr "km-ta"
+
+#: .\models.py:66
+msgid "incl. VAT"
+msgstr "km-ga"
+
+#: .\models.py:67
+msgid "Invoicing mode"
+msgstr "Arve koostamise viis"
+
+#: .\models.py:68
+msgid "Shipping mode"
+msgstr "Kättetoimatamise viis"
+
+#: .\models.py:114
+msgid "Channel"
+msgstr ""
+
+#: .\models.py:763
+msgid "payment term"
+msgstr "Tasumistingimused"
+
+#: .\models.py:769
+msgid "VAT exempt"
+msgstr ""
+
+#: .\models.py:775
+msgid "item_vat"
+msgstr ""
+

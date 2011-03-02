@@ -1,8 +1,53 @@
 20110302
 ========
 
-6.30 Uhr. Lino lässt mich nicht mehr schlafen. 
-Spontane Idee zur allgemeinen Struktur.
+Wahre Schönhiet kommt von innen
+-------------------------------
+
+6.30 Uhr. Lino lässt mich nicht mehr schlafen:
+spontane Idee zur allgemeinen Struktur.
+Siehe die Änderungen in 20110302a_.
+Für den Benutzer ändert sich überhaupt nichts, aber Lino ist 
+"von innen" mal wieder ein Stück schöner geworden.
+
+
+.. _20110302a:
+  http://code.google.com/p/lino/source/detail?r=c8280114ee5b28d6d768e5b4a30608f8ee445042
+
+Das ist ein schönes Beispiel von etwas, das ich "Knotenlösung" 
+nennen würde. Die Beziehung zwischen dem LinoSite und dem User 
+Interface war bisher unlogisch: es funktionierte, aber war 
+verworren. Eine Software wie Lino ist teilweise immer wie ein 
+verworrenes Tau, das der Programmierer zu einem ordentlichen 
+Bündel aufrollen will. Und immer, wenn ein Teil des Knäuels 
+entwirrt, ein Problem sich in Wohlgefallen auflöst... 
+dann freut man sich.
+
+Modul :mod:`lino.modlib.auth`
+-----------------------------
+
+Die beiden Lino-Anwendungen verwenden jetzt nicht mehr das Modul `django.contrib.auth`, 
+sondern Linos version :mod:`lino.modlib.auth`, die eine auf eigentliche Benutzertabelle 
+reduzierte Kopie des Originals ist. Also Message, Group und Permission sind rausgeholt.
+
+Addressen
+---------
+
+Ich habe mal ein bisschen gesurft:
+ | http://www.columbia.edu/kermit/postal.html
+ | http://pe.usps.com/cpim/ftp/pubs/pub28/pub28.pdf
+ | http://www.bitboost.com/ref/international-address-formats.html
+ 
+Irgendwann wird Lino die landesspezifische Formatierung von Adressen 
+unterstützen müssen.
+Hat aber noch Zeit.
+
+Nach dem Release 
+Sorry, das Ganze ist noch nicht 100% stabil.
+`address` gibt jetzt (wieder) die komplette Adresse inkl. Anrede und Name zurück.
+Eine Adresse besteht aus zwei Hauptteilen: 
+(1) die Personenbestimmung (Anrede, Name, ggf. Eigenschaft) 
+und (2) die Ortsbestimmung (`addr1`(z.B. "Quartum Center"), Straße, addr2 (z.B. "Vana-Vigala küla"), Stadt, Land)
 
 
 

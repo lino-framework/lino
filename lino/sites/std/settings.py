@@ -186,7 +186,8 @@ TEMPLATE_DIRS = (
 #print "baz", __file__
 
 INSTALLED_APPS = [
-  'django.contrib.auth',
+  #~ 'django.contrib.auth',
+  'lino.modlib.auth',
   'django.contrib.contenttypes',
   'django.contrib.sessions',
   'django.contrib.sites',

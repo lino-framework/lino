@@ -1,5 +1,5 @@
 #coding: utf8
-## Copyright 2010 Luc Saffre
+## Copyright 2010-2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-from lino.modlib.tools import resolve_model
+from lino.tools import resolve_model
 from lino.utils.instantiator import Instantiator
 
 # copied from http://www.charline.be/info/codepost/cpost.htm

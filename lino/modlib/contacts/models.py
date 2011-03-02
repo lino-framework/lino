@@ -16,6 +16,7 @@ import datetime
 from dateutil.relativedelta import relativedelta
 
 from django.db import models
+from django.conf import settings
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
@@ -27,32 +28,176 @@ from lino import reports
 from lino.utils import perms
 
 from lino import fields
+from lino.utils import join_words
 from lino.utils.choosers import chooser
-from lino.utils.babel import add_babel_field, babelattr, DEFAULT_LANGUAGE
-from lino.mixins.addressable import Addressable, Addressables
+from lino.utils.babel import babelattr
+from lino.utils import babel 
+#~ from lino.mixins.addressable import Addressable, Addressables
+from lino.models import get_site_config
+
+
+class Addressable(models.Model):
+    """
+    Abstract base class for anything that has contact information (postal address, email, phone,...).
+    
+    """
+  
+    class Meta:
+        abstract = True
+  
+    name = models.CharField(max_length=200,verbose_name=_('Name'))
+    addr1 = models.CharField(_("Address line before street"),max_length=200,blank=True)
+    "Address line before street"
+    
+    street = models.CharField(_("Street"),max_length=200,blank=True)
+    "Name of street. Without house number."
+    
+    street_no = models.CharField(_("No."),max_length=10,blank=True)
+    "House number"
+    
+    street_box = models.CharField(_("Box"),max_length=10,blank=True)
+    "Text to print after :attr:`steet_no` on the same line"
+    
+    addr2 = models.CharField(_("Address line after street"),max_length=200,blank=True)
+    "Address line to print below street line"
+    
+    country = models.ForeignKey('countries.Country',blank=True,null=True,
+      verbose_name=_("Country"))
+    "The country where this contact is located."
+    
+    city = models.ForeignKey('countries.City',blank=True,null=True,
+        verbose_name=_('City'))
+    """
+    The city where this contact is located.
+    The list of choices for this field is context-sensitive, it depends on the :attr:`country`.
+    """
+    
+    #city = models.CharField(max_length=200,blank=True)
+    zip_code = models.CharField(_("Zip code"),max_length=10,blank=True)
+    region = models.CharField(_("Region"),max_length=200,blank=True)
+    #~ language = models.ForeignKey('countries.Language',default=default_language)
+    language = fields.LanguageField(default=babel.DEFAULT_LANGUAGE,choices=settings.LANGUAGES)
+    
+    email = models.EmailField(_('E-Mail'),blank=True,null=True)
+    url = models.URLField(_('URL'),blank=True)
+    phone = models.CharField(_('Phone'),max_length=200,blank=True)
+    gsm = models.CharField(_('GSM'),max_length=200,blank=True)
+    fax = models.CharField(_('Fax'),max_length=200,blank=True)
+    #image = models.ImageField(blank=True,null=True,
+    # upload_to=".")
+    
+    remarks = models.TextField(_("Remarks"),blank=True,null=True)
+    
+    def __unicode__(self):
+        return self.name
+        
+    #~ @classmethod
+    @chooser()
+    def city_choices(cls,country):
+        #print "city_choices", repr(recipient)
+        #recipient = self.objects.get(pk=pk)
+        if country is not None:
+        #if recipient and recipient.country:
+            return country.city_set.order_by('name')
+        return cls.city.field.rel.to.objects.order_by('name')
+        #return countries.City.oiesByCountry().get_queryset(master_instance=recipient.country)
+        #return dict(country__in=(recipient.country,))
+        
+
+    def address_person_lines(self):
+    #~ def recipient_lines(self):
+        yield self.name
+        
+        
+    def address_location_lines(self):
+        #~ lines = []
+        #~ lines = [self.name]
+        if self.addr1:
+            yield self.addr1
+        if self.street:
+            yield join_words(self.street,self.street_no,self.street_box)
+        if self.addr2:
+            yield self.addr2
+        #lines = [self.name,street,self.addr1,self.addr2]
+        if self.region: # format used in Estonia
+            if self.city:
+                yield unicode(self.city)
+            s = join_words(self.zip_code,self.region)
+        else: 
+            s = join_words(self.zip_code,self.city)
+        if s:
+            yield s 
+        #~ foreigner = True # False
+        #~ if self.id == 1:
+            #~ foreigner = False
+        #~ else:
+            #~ foreigner = (self.country != self.objects.get(pk=1).country)
+        sc = get_site_config()
+        if not sc.site_company or self.country != sc.site_company.country: 
+            # (if self.country != sender's country)
+            yield unicode(self.country)
+            
+        #~ logger.debug('%s : as_address() -> %r',self,lines)
+        
+    def address_lines(self):
+        for ln in self.address_person_lines() : yield ln
+        for ln in self.address_location_lines() : yield ln
+          
+    #~ def address(self,linesep="\n<br/>"):
+    def address(self,linesep="\n"):
+        """
+        The plain text full postal address (person and location). 
+        Lines are separated by `linesep`.
+        """
+        #~ return linesep.join(self.address_lines())
+        return linesep.join(list(self.address_person_lines()) + list(self.address_location_lines()))
+    address.return_type = models.TextField(_("Address"))
+    
+    def address_location(self,linesep="\n"):
+        """
+        The plain text postal address location part. 
+        Lines are separated by `linesep`.
+        """
+        return linesep.join(self.address_location_lines())
+    
+
+
+
+class Addressables(reports.Report):
+    column_names = "name * id" 
+    def get_queryset(self):
+        return self.model.objects.select_related('country','city')
+  
+
 
 class Person(Addressable):
     """
-    Implements the :class:`contacts.Person` convention.
+    Base class for models that represent a physical person. 
     """
     class Meta:
         abstract = True
-        app_label = 'contacts'
+        #~ app_label = 'contacts'
         verbose_name = _("Person")
         verbose_name_plural = _("Persons")
 
     first_name = models.CharField(max_length=200,blank=True,
       verbose_name=_('First name'))
+    "Space-separated list of all first names."
+    
     last_name = models.CharField(max_length=200,blank=True,
       verbose_name=_('Last name'))
+    "Last name (family name)."
+    
     title = models.CharField(max_length=200,blank=True,
       verbose_name=_('Title'))
+    "Text to print as part of the first address line in front of first_name."
         
     def get_full_name(self):
         "Returns the first_name plus the last_name, with a space in between."
         return u'%s %s' % (self.first_name, self.last_name)
+    full_name = property(get_full_name)
     
-    def recipient_lines(self):
+    def address_person_lines(self):
         if self.title:
             yield self.title
         l = filter(lambda x:x,[self.first_name,self.last_name])
@@ -84,22 +229,80 @@ class PersonsByCountry(Persons):
     column_names = "city street street_no street_box addr2 name language"
     
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+class PartnerDocument(models.Model):
+    class Meta:
+        abstract = True
+        
+    person = models.ForeignKey("contacts.Person",
+        blank=True,null=True,
+        verbose_name=_("Person"))
+    company = models.ForeignKey("contacts.Company",
+        blank=True,null=True,verbose_name=_("Company"))
+        
+
+class ContactDocument(PartnerDocument):
+    """
+    A document whose recipient is a :class:`Contact`.
+    """
+  
+    class Meta:
+        abstract = True
+        
+    contact = models.ForeignKey("contacts.Contact",
+      blank=True,null=True,
+      verbose_name=_("represented by"))
+    language = fields.LanguageField(default=babel.DEFAULT_LANGUAGE)
+
+    @chooser()
+    def contact_choices(cls,company):
+        if company is not None:
+            return company.contact_set.all()
+        return []
+        #~ print 'Contract.contact_choices for', company
+        #~ choices = company.contact_set.all()
+        #~ print 'Contract.contact_choices returns', choices
+        #~ return choices
+
+    def get_recipient(self):
+        if self.contact:
+            return self.contact
+        if self.company:
+            return self.company
+        return self.person
+    recipient = property(get_recipient)
+
+
+
+
 class CompanyType(models.Model):
     """
     Implements the :class:`contacts.CompanyType` convention.
     """
+    
     class Meta:
         verbose_name = _("company type")
         verbose_name_plural = _("company types")
-    name = models.CharField(_("Designation"),max_length=200)
-    abbr = models.CharField(_("Abbreviation"),max_length=30,blank=True)
+        
+    name = babel.BabelCharField(_("Designation"),max_length=200)
+    abbr = babel.BabelCharField(_("Abbreviation"),max_length=30,blank=True)
     
     def __unicode__(self):
         #~ return self.name
         return babelattr(self,'name')
         
-add_babel_field(CompanyType,'abbr')
-add_babel_field(CompanyType,'name')
         
 class CompanyTypes(reports.Report):
     model = 'contacts.CompanyType'
@@ -119,6 +322,9 @@ class Company(Addressable):
         verbose_name_plural = _("Companies")
     
     vat_id = models.CharField(_("VAT id"),max_length=200,blank=True)
+    """The national VAT identification number.
+    """
+    
     type = models.ForeignKey('contacts.CompanyType',blank=True,null=True,
       verbose_name=_("Company type"))
     """Pointer to this company's :class:`CompanyType`. 
@@ -148,19 +354,23 @@ class ContactType(models.Model):
         verbose_name_plural = _("contact types")
     #~ id = models.CharField(max_length=10,primary_key=True)
     #~ abbr = models.CharField(max_length=30,verbose_name=_("Abbreviation"))
-    name = models.CharField(max_length=200,verbose_name=_("Designation"))
+    name = babel.BabelCharField(max_length=200,verbose_name=_("Designation"))
     
     def __unicode__(self):
         #~ return self.name
         return babelattr(self,'name')
 
-add_babel_field(ContactType,'name')
+#~ add_babel_field(ContactType,'name')
 
 class ContactTypes(reports.Report):
     model = 'contacts.ContactType'
 
 
 class Contact(models.Model):
+    """
+    Represents a :class:`Person` having a (more or less known) 
+    role in a :class:`Company`.
+    """
   
     class Meta:
         verbose_name = _("contact")
@@ -171,13 +381,6 @@ class Contact(models.Model):
       verbose_name=_("company"))
     type = models.ForeignKey('contacts.ContactType',blank=True,null=True,
       verbose_name=_("contact type"))
-      
-    #~ title = models.CharField(max_length=200,blank=True,null=True,verbose_name=_("job title"))
-  
-    #~ started = models.DateField(blank=True,null=True,verbose_name=_("started"))
-    #~ stopped = models.DateField(blank=True,null=True,verbose_name=_("stopped"))
-    
-    #~ remarks = models.TextField(blank=True,null=True,verbose_name=_("Remarks"))
 
     def __unicode__(self):
         if self.person_id is None:
@@ -190,6 +393,18 @@ class Contact(models.Model):
             #~ if self.person_id is not None:
                 #~ return u"%s (%s)" % (self.company, self.person)
             #~ return unicode(self.company)
+            
+    def address_lines(self):
+        for ln in self.person.address_person_lines():
+            yield ln
+        if self.company:
+            for ln in self.company.address_person_lines():
+                yield ln
+            for ln in self.company.address_location_lines():
+                yield ln
+        else:
+            for ln in self.person.address_location_lines():
+                yield ln
 
 class ContactsByCompany(reports.Report):
     model = 'contacts.Contact'

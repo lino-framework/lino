@@ -114,9 +114,9 @@ class IgenSite(LinoSite):
         #m.add_action(contacts.Countries())
         m.add_action('contenttypes.ContentTypes')
         #m = self.add_menu("system","~System")
-        m.add_action('auth.Permissions')
+        #~ m.add_action('auth.Permissions')
         m.add_action('auth.Users')
-        m.add_action('auth.Groups')
+        #~ m.add_action('auth.Groups')
         #m.can_view = perms.is_staff
 
         system.add_site_menu(self)
@@ -140,7 +140,8 @@ SITE_ID = 1 # see also fill.py
 
 
 INSTALLED_APPS = (
-    'django.contrib.auth',
+    #~ 'django.contrib.auth',
+    'lino.modlib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',

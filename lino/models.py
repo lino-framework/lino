@@ -16,8 +16,8 @@
 from lino.utils import dblogger
 
 from django.conf import settings
-from django.contrib.auth import models as auth
-from django.contrib.sessions import models as sessions
+#~ from django.contrib.auth import models as auth
+#~ from django.contrib.sessions import models as sessions
 from django.contrib.contenttypes import models as contenttypes
 from django.utils.encoding import force_unicode 
 
@@ -80,24 +80,21 @@ def update_site_config(**kw):
         setattr(sc,k,v)
     sc.save()
 
-class Permissions(reports.Report):
-    model = auth.Permission
-    order_by = 'content_type__app_label codename'.split()
+#~ class Permissions(reports.Report):
+    #~ model = auth.Permission
+    #~ order_by = 'content_type__app_label codename'.split()
   
-class Users(reports.Report):
-    model = auth.User
-    #~ order_by = "last_name first_name".split()
-    order_by = ["username"]
-    column_names = 'username first_name last_name is_active id is_superuser is_staff last_login'
+#~ class Users(reports.Report):
+    #~ model = auth.User
+    #~ order_by = ["username"]
+    #~ column_names = 'username first_name last_name is_active id is_superuser is_staff last_login'
 
-class Groups(reports.Report):
-    model = auth.Group
-    order_by = ["name"]
-    #~ display_field = 'name'
+#~ class Groups(reports.Report):
+    #~ model = auth.Group
+    #~ order_by = ["name"]
 
-class Sessions(reports.Report):
-    model = sessions.Session
-    #~ display_field = 'session_key'
+#~ class Sessions(reports.Report):
+    #~ model = sessions.Session
 
 
 class ContentTypes(reports.Report):

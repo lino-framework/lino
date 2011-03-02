@@ -3,14 +3,25 @@ Coming
 
 #.  Der Button "Auskunftsblatt" ist provisorisch raus.
 
-#.  Database migration needed because:
-    - New field :attr:`lino.modlib.properties.PropType.default_value`
+Nach dem Upgrade
+----------------
+
+#.  In bestehenden Dokumentvorlagen (betroffen sind nur die beiden Verträge) 
+    muss "address" durch "address_location" ersetzt werden.
+    Siehe :doc:`/blog/2011/0302`
+
+#. In your templates, replace `tr()` by `babelattr()`.
+   ``tr`` is now an alias for :func:`lino.utils.babel.babelitem`.
+
 
 Upgrade instructions
 --------------------
 
-- In your templates, change calls to `tr()` by `babelattr()`.
-  tr is now an alias for babelitem.
+- Database migration needed because:
+
+    - New field :attr:`lino.modlib.properties.PropType.default_value`
+    - :class:`lino.utils.babel.BabelCharField` was nullable by mistake
+    - New Field :attr:`lino.mixins.addressable.Adressable.addr1`
 
 - changes in your local :xfile:`settings.py`
 
