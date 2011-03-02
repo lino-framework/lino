@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 import os
 import datetime
 
-from timtools.console import syscon
+#~ from timtools.console import syscon
 
 #~ import lino
 from lino import reports
@@ -64,8 +64,9 @@ def send_invoices():
         return
     print "%d documents to send: " % len(q) \
       + ", ".join(str(d) for d in q)
-    if not syscon.confirm("Send these documents?"):
-        return
-    for doc in q:
-        doc.send()
+    rasie Exception("TODO : send_invoices")
+    #~ if not syscon.confirm("Send these documents?"):
+        #~ return
+    #~ for doc in q:
+        #~ doc.send()
 
