@@ -49,8 +49,10 @@ class Command(BaseCommand):
         if logLevel > logging.DEBUG:
             dblogger.logger.setLevel(logging.DEBUG)
         
-        if dblogger.logger.level > logging.DEBUG:
-            raise CommandError("Must set logger level to DEBUG")
+        if dblogger.logger.level == logging.DEBUG:
+            raise CommandError(
+              "Must set logger level to DEBUG (current value is %s)" % \
+              dblogger.logger.level)
         dblogger.info("Lino initdb started on database %s." % dbname)
         dblogger.info(lino.welcome_text())
         options.update(interactive=False)
