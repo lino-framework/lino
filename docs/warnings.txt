@@ -1,15 +1,42 @@
 T:\hgwork\lino\docs\autodoc\lino.mixins.addressable.rst:4: (WARNING/2) autodoc can't import/find module 'lino.mixins.addressable', it reported error: "exceptions must be old-style classes or derived from BaseException, not str", please check your spelling and sys.path
-T:\hgwork\lino\docs\autodoc\lino.modlib.dsbe.rst:16: (WARNING/2) autodoc can't import/find module 'lino.modlib.dsbe.models', it reported error: "'module' object has no attribute 'PartnerDocument'", please check your spelling and sys.path
-T:\hgwork\lino\docs\autodoc\lino.modlib.dsbe.rst:26: (WARNING/2) autodoc can't import/find module 'lino.modlib.dsbe.management.commands.initdb_tim', it reported error: "'module' object has no attribute 'PartnerDocument'", please check your spelling and sys.path
-T:\hgwork\lino\docs\autodoc\lino.modlib.dsbe.rst:33: (WARNING/2) autodoc can't import/find module 'lino.modlib.dsbe.management.commands.watch_tim', it reported error: "'module' object has no attribute 'PartnerDocument'", please check your spelling and sys.path
-T:\hgwork\lino\docs\autodoc\lino.modlib.dsbe.rst:48: (WARNING/2) autodoc can't import/find module 'lino.modlib.dsbe.tests.dsbe_tests', it reported error: "'module' object has no attribute 'PartnerDocument'", please check your spelling and sys.path
 T:\hgwork\lino\docs\autodoc\lino.site.rst:4: (WARNING/2) autodoc can't import/find module 'lino.site', it reported error: "No module named site", please check your spelling and sys.path
 T:\hgwork\lino\docs\autodoc\lino.rst:11: WARNING: py:class reference target not found: object
 T:\hgwork\lino\docs\autodoc\lino.rst:16: WARNING: py:mod reference target not found: lino.demos.std.settings
 T:\hgwork\lino\docs\autodoc\lino.rst:16: WARNING: py:mod reference target not found: lino.demos.dsbe.settings
 T:\hgwork\lino\docs\autodoc\lino.rst:49: WARNING: py:mod reference target not found: lino.modlib.properties
 T:\hgwork\lino\docs\autodoc\lino.mixins.addressable.rst:1: WARNING: py:mod reference target not found: lino.mixins.addressable
+T:\hgwork\lino\docs\autodoc\lino.modlib.dsbe.rst:10: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.modlib.dsbe.rst:18: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.modlib.dsbe.rst:36: WARNING: py:class reference target not found: lino.mixins.reminder.Reminder
+T:\hgwork\lino\docs\autodoc\lino.modlib.dsbe.rst:44: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.modlib.dsbe.rst:60: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.modlib.dsbe.rst:125: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.modlib.dsbe.rst:140: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.modlib.dsbe.rst:159: WARNING: py:class reference target not found: lino.modlib.dsbe.models.Companies
+T:\hgwork\lino\docs\autodoc\lino.modlib.dsbe.rst:172: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.modlib.dsbe.rst:181: WARNING: py:class reference target not found: lino.modlib.dsbe.models.CourseConent
+T:\hgwork\lino\docs\autodoc\lino.modlib.dsbe.rst:230: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.modlib.dsbe.rst:238: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.modlib.dsbe.rst:246: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.modlib.dsbe.rst:254: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.modlib.dsbe.rst:262: WARNING: py:class reference target not found: lino.modlib.dsbe.models.HistoryByPerson
+T:\hgwork\lino\docs\autodoc\lino.modlib.dsbe.rst:275: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.modlib.dsbe.rst:283: WARNING: py:class reference target not found: lino.modlib.links.models.Link
+T:\hgwork\lino\docs\autodoc\lino.modlib.dsbe.rst:283: WARNING: py:class reference target not found: lino.modlib.contacts.models.PartnerDocument
+T:\hgwork\lino\docs\autodoc\lino.modlib.dsbe.rst:291: WARNING: py:class reference target not found: lino.modlib.notes.models.Note
+T:\hgwork\lino\docs\autodoc\lino.modlib.dsbe.rst:291: WARNING: py:class reference target not found: lino.modlib.contacts.models.PartnerDocument
+T:\hgwork\lino\docs\autodoc\lino.modlib.dsbe.rst:299: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.modlib.dsbe.rst:307: WARNING: py:class reference target not found: dsbe.Activity
+T:\hgwork\lino\docs\autodoc\lino.modlib.dsbe.rst:378: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.modlib.dsbe.rst:386: WARNING: py:class reference target not found: lino.modlib.properties.models.PropertyOccurence
+T:\hgwork\lino\docs\autodoc\lino.modlib.dsbe.rst:430: WARNING: py:class reference target not found: lino.modlib.dsbe.models.HistoryByPerson
+T:\hgwork\lino\docs\autodoc\lino.modlib.dsbe.rst:443: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.modlib.dsbe.rst:451: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.modlib.dsbe.rst:459: WARNING: py:class reference target not found: lino.modlib.properties.models.PropertyOccurence
+T:\hgwork\lino\docs\autodoc\lino.modlib.dsbe.rst:467: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.modlib.dsbe.rst:475: WARNING: py:class reference target not found: lino.modlib.properties.models.PropertyOccurence
+T:\hgwork\lino\docs\autodoc\lino.modlib.dsbe.rst:4: WARNING: xfile reference target not found: changelog.json
 T:\hgwork\lino\docs\autodoc\lino.site.rst:1: WARNING: py:mod reference target not found: lino.site
-T:\hgwork\lino\docs\releases\20110303.rst:13: WARNING: py:func reference target not found: lino.utils.babel.babelitem
-T:\hgwork\lino\docs\releases\20110303.rst:22: WARNING: py:attr reference target not found: lino.modlib.properties.PropType.default_value
-T:\hgwork\lino\docs\releases\20110303.rst:24: WARNING: py:attr reference target not found: lino.mixins.addressable.Adressable.addr1
+T:\hgwork\lino\docs\releases\20110303.rst:67: WARNING: py:attr reference target not found: lino.modlib.properties.PropType.default_value
+T:\hgwork\lino\docs\releases\20110303.rst:69: WARNING: py:attr reference target not found: lino.mixins.addressable.Adressable.addr1
+T:\hgwork\lino\docs\releases\20110303.rst:101: WARNING: py:func reference target not found: lino.utils.babel.babelitem

@@ -77,9 +77,9 @@ See also :doc:`/admin/datamig` for general info.
   
     def create_contacts_company(name,...,hourly_rate,is_courseprovider):
         if is_courseprovider:
-            cl = Company
-        else:
             cl = CourseProvider
+        else:
+            cl = Company
         return cl(name=name,...,hourly_rate=hourly_rate)
 
 - Models auth.Permission, auth.Group and auth.Message no longer exist. 

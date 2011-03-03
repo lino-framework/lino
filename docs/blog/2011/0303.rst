@@ -4,6 +4,6 @@
 6.20 Uhr. Cool: Babel-Felder werden jetzt automatisch expandiert. 
 Also (zumindest deswegen) sind keine lokalen .dtl-Dateien mehr nötig.
 
-8 Uhr. :doc:`/releases/20110303` released and installed in Pärnu.
+8 Uhr. Release :doc:`/releases/20110303` and upgrade in Pärnu.
 
-10 Uhr. :doc:`/releases/20110303` installed in Eupen.
+10 Uhr. Upgrade to 1.0.6 in Eupen.

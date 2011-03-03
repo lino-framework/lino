@@ -40,7 +40,6 @@ Subpackages
     lino.mixins
     lino.mixins.printable
     lino.mixins.uploadable
-    lino.mixins.addressable
     lino.mixins.reminder
     lino.sites
     lino.test_apps
