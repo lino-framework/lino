@@ -41,18 +41,18 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
             
+        if dblogger.logger.level != logging.DEBUG:
+            raise CommandError(
+              "Must set logger level to DEBUG (current value is %s)" % \
+              dblogger.logger.level)
         dbname = settings.DATABASES['default']['NAME']
         if options.get('interactive'):
             if not confirm("Gonna reset your database (%s).\nAre you sure (y/n) ?" % dbname):
                 raise CommandError("User abort.")
-        logLevel = dblogger.logger.level
-        if logLevel > logging.DEBUG:
-            dblogger.logger.setLevel(logging.DEBUG)
+        #~ logLevel = dblogger.logger.level
+        #~ if logLevel > logging.DEBUG:
+            #~ dblogger.logger.setLevel(logging.DEBUG)
         
-        if dblogger.logger.level == logging.DEBUG:
-            raise CommandError(
-              "Must set logger level to DEBUG (current value is %s)" % \
-              dblogger.logger.level)
         dblogger.info("Lino initdb started on database %s." % dbname)
         dblogger.info(lino.welcome_text())
         options.update(interactive=False)
