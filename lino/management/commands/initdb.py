@@ -12,6 +12,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with TimTools; if not, see <http://www.gnu.org/licenses/>.
 
+import logging
 from optparse import make_option 
 
 from django.conf import settings
