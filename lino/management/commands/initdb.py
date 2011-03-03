@@ -24,8 +24,11 @@ from lino.utils import *
 from lino.utils import dblogger
 
 class Command(BaseCommand):
-    help = """Performs a database reset and loads the specified fixtures.
-`initdb` is a combination of the commands `reset`, `syncdb` and `loaddata`."""
+    help = """Performs a database reset and loads the 
+    specified fixtures for all applications.  
+    It is is a combination of the commands 
+    `reset`, `syncdb` and `loaddata`."""
+    
     args = "fixture [fixture ...]"
     
     option_list = BaseCommand.option_list + (
@@ -39,9 +42,9 @@ class Command(BaseCommand):
         if options.get('interactive'):
             if not confirm("Gonna reset your database (%s).\nAre you sure (y/n) ?" % dbname):
                 raise CommandError("User abort.")
-        logLevel = dblogger.getLevel()
+        logLevel = dblogger.logger.level
         if logLevel > logging.DEBUG:
-            dblogger.setLevel(logging.DEBUG)
+            dblogger.logger.setLevel(logging.DEBUG)
         dblogger.info("Lino initdb started on database %s." % dbname)
         dblogger.info(lino.welcome_text())
         options.update(interactive=False)
@@ -50,5 +53,5 @@ class Command(BaseCommand):
         call_command('syncdb',**options)
         call_command('loaddata',*args,**options)
         if logLevel > logging.DEBUG:
-            dblogger.setLevel(logLevel)
+            dblogger.logger.setLevel(logLevel)
             
