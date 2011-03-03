@@ -38,3 +38,7 @@ Glossary
     
   initdb_tim
     See :mod:`lino.modlib.dsbe.management.commands.initdb_tim`
+
+  loaddata
+    one of Django's standard management commands.
+    See `Django docs <http://docs.djangoproject.com/en/dev/ref/django-admin/#loaddata-fixture-fixture>`_

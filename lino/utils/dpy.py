@@ -289,7 +289,7 @@ class FakeDeserializedObject(base.DeserializedObject):
             if obj.pk is None:
                 dblogger.exception(e)
                 raise Exception("Failed to save %s. Abandoned." % obj2str(obj))
-            dblogger.debug("Deferred %s : %s",obj2str(obj),e)
+            dblogger.info("Deferred %s : %s",obj2str(obj),e)
             return False
       
         

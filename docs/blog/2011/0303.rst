@@ -39,8 +39,9 @@ auch folgende Überraschung::
   
 Also `lino.tools.obj2str` ist jetzt ein bisschen narrensicherer.
 
-Und dann noch ein Detail. Wenn was nicht klappt, dann machte 
-:term:`initdb`
+Und hier noch eine Überraschung. 
+Wenn beim :term:`loaddata` irgendwas nicht klappt, dann macht
+:term:`initdb` ja eine Warnung im Stil::
 
   WARNING Abandoning with 49 unsaved instances.
   Problem installing fixture '/usr/local/django/dsbe_eupen/fixtures/d20110303u.dpy': Traceback (most recent call last):
@@ -49,3 +50,39 @@ Und dann noch ein Detail. Wenn was nicht klappt, dann machte
     File "/var/snapshots/lino/lino/utils/dpy.py", line 260, in save
       raise Exception("Abandoned with %d unsaved instances. See dblog for details." % len(save_later))
   Exception: Abandoned with 49 unsaved instances. See dblog for details.
+
+Also man muss die :xfile:`system.log` konsultieren um zu sehen, 
+welches denn diese 49 Records waren. 
+Dumm ist dann nur, wenn in der lokalen :setting:`LOGGING` 
+etwas anderes als ``level='DEBUG'`` stand. 
+Dann sieht man nämlich die Debug-Meldungen nicht.
+
+Zunächst habe ich daraufhin über eine halbe Stunde gewurstelt, 
+damit :term:`initdb` folgenden Test macht, 
+um mich vor meiner eigenen Dummheit zu schützen::
+
+    if not dblogger.logger.isEnabledFor(logging.DEBUG):
+        raise CommandError("System logger must be enabled for DEBUG")
+        
+Man kann dort nicht einfach nur auf `dblogger.logger.level` schauen, 
+weil die praktisch immer 0 (``UNSET``) ist. Und es hat auch keinen Zweck, 
+mit `dblogger.logger.setLevel` den level dort zu heben, weil ja schon 
+der root logger die Meldungen rausfängt.
+
+Danach fiel mir noch ein, dass es eigentlich logischer ist,
+außerdem in :class:`lino.utils.dpy.FakeDeserializedObject` die 
+"Deferred"-Meldungen mit `info` statt `debug` zu machen. 
+Und den Test in :term:`initdb` entschärfe ich dann: er braucht 
+nicht auf DEBUG zu stehen, wohl aber auf INFO.
+
+
+  201103-03 10:51:13 DEBUG dpy : Deferred PropType #1 (Bewertung) : 
+  {'choicelist': [u"Value u'HowWellDoYouKnow' is not a valid choice."]}
+
+Also noch folgende Änderung in der .dpy-Datei::
+
+  def create_properties_proptype(id,name,choicelist,limit_to_choices,multiple_choices,name_fr):
+      if choicelist == 'HowWellDoYouKnow':
+          choicelist = 'HowWell'
+      return PropType(id=id,name=name,choicelist=choicelist,limit_to_choices=limit_to_choices,multiple_choices=
+    

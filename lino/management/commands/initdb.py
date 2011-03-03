@@ -40,9 +40,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
             
-        #~ if dblogger.logger.level != logging.DEBUG:
-        if not dblogger.logger.isEnabledFor(logging.DEBUG):
-            raise CommandError("System logger must be enabled for DEBUG")
+        if not dblogger.logger.isEnabledFor(logging.INFO):
+            raise CommandError("System logger must be enabled for INFO")
         dbname = settings.DATABASES['default']['NAME']
         if options.get('interactive'):
             if not confirm("Gonna reset your database (%s).\nAre you sure (y/n) ?" % dbname):
