@@ -120,7 +120,7 @@ class PropType(models.Model):
         for v in value.split(MULTIPLE_VALUES_SEP):
             try:
                 pc = PropChoice.objects.get(value=v,type=self)
-                v = babelattr(pc,'text')
+                v = babel.babelattr(pc,'text')
             except PropChoice.DoesNotExist:
                 pass
             l.append(v)

@@ -82,6 +82,7 @@ nicht auf DEBUG zu stehen, wohl aber auf INFO.
 Also noch folgende Änderung in der .dpy-Datei::
 
   def create_properties_proptype(id,name,choicelist,limit_to_choices,multiple_choices,name_fr):
+      if name_fr is None: name_fr = ''
       if choicelist == 'HowWellDoYouKnow':
           choicelist = 'HowWell'
       return PropType(id=id,name=name,choicelist=choicelist,limit_to_choices=limit_to_choices,multiple_choices=
