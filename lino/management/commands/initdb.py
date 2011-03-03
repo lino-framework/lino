@@ -44,7 +44,7 @@ class Command(BaseCommand):
         if dblogger.logger.level != logging.DEBUG:
             raise CommandError(
               "Must set logger level to DEBUG (current value is %s)" % \
-              dblogger.logger.level)
+              logging.getLevelName(dblogger.logger.level))
         dbname = settings.DATABASES['default']['NAME']
         if options.get('interactive'):
             if not confirm("Gonna reset your database (%s).\nAre you sure (y/n) ?" % dbname):

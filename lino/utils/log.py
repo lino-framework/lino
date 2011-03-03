@@ -113,7 +113,7 @@ def configure(config):
         if config.has_key('mode'):
             kw.update(mode=config['mode'])
         h = file_handler(logfile,**kw)
-        h.setLevel(level)
+        #~ h.setLevel(level)
         linoLogger.addHandler(h)
         djangoLogger.addHandler(h)
         #~ print __file__, level, logfile
