@@ -42,12 +42,22 @@ Irgendwann wird Lino die landesspezifische Formatierung von Adressen
 unterstützen müssen.
 Hat aber noch Zeit.
 
-Nach dem Release 
+Nach dem Release muss
+in bestehenden Dokumentvorlagen 
+"address" durch "address_location" ersetzt werden.
 Sorry, das Ganze ist noch nicht 100% stabil.
+
 `address` gibt jetzt (wieder) die komplette Adresse inkl. Anrede und Name zurück.
 Eine Adresse besteht aus zwei Hauptteilen: 
 (1) die Personenbestimmung (Anrede, Name, ggf. Eigenschaft) 
 und (2) die Ortsbestimmung (`addr1`(z.B. "Quartum Center"), Straße, addr2 (z.B. "Vana-Vigala küla"), Stadt, Land)
 
 
+Erstinstallation in Pärnu
+-------------------------
 
+Der nächste Lino kommt:
+heute abend habe ich (übrigens in nur zweieinhalb Stunden) eine neue Lino-Demo 
+auf einem virtuellen Debian-Server installiert.
+Noch ist der Server nicht öffentlich, aber vielleicht bald.
+Das würde dann die erste *brauchbare* Lino-Demo sein.

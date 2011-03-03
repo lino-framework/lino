@@ -545,6 +545,9 @@ Long-term
     Falls die das wirklich tun sollten, kann meine 
     :meth:`lino.ui.extjs.ext_store.BooleanStoreField.parse_form_value` 
     komplett raus.
+    
+#.  Man kann es momentan nicht verhindern, dass ein Babel-Feld expandiert wird.
+    
 
 Documentation
 -------------

@@ -1,0 +1,7 @@
+:label: Detail
+:label_align: top
+
+main = 
+    name
+    products.ProductsByCategory
+    

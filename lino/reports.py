@@ -37,6 +37,7 @@ from django.forms.models import modelform_factory
 from django.forms.models import _get_foreign_key
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes import generic
 
 #~ from dateutil import parser as dateparser
 
@@ -406,8 +407,6 @@ class SubmitInsert(actions.Action):
 
 
 class ReportHandle(base.Handle): 
-#~ class ReportHandle(datalinks.DataLink,base.Handle): 
-  
     
     def __init__(self,ui,report):
         #logger.debug('ReportHandle.__init__(%s)',rd)
@@ -1013,7 +1012,11 @@ class Report(actors.Actor): #,base.Handled):
         for de in data_elems(self.model): yield de
           
     def get_data_elem(self,name):
-        return get_data_elem(self.model,name)
+        de = get_data_elem(self.model,name)
+        if de is not None: 
+            return de
+        return self.get_action(name)
+        
         
     def get_details(self):
         return self.details
@@ -1315,7 +1318,7 @@ class BaseLayout(Configured):
             if ln and not ln.lstrip().startswith('## '):
                 if ln[0].isspace():
                     if attrname is None:
-                        raise LayoutError('attrname is None')
+                        raise LayoutError('Unexpected indentation.')
                     v = getattr(self,attrname) + '\n' + ln.strip()
                     setattr(self,attrname,v) 
                 elif ln.startswith(':'):
@@ -1332,7 +1335,7 @@ class BaseLayout(Configured):
                         raise LayoutError('"=" expected in %r' % ln)
                     attrname = a[0].strip()
                     if hasattr(self,attrname):
-                        raise Exception('Duplicate element definition')
+                        raise Exception('Duplicate element definition %r' % attrname)
                     setattr(self,attrname,a[1].strip())
         if self.label:
             add_dummy_message(self.label)
@@ -1379,7 +1382,7 @@ class LayoutHandle:
         #~ self._elems_by_field = {}
         #~ self._submit_fields = []
         #~ self.slave_grids = []
-        self._buttons = []
+        #~ self._buttons = []
         self.hidden_elements = hidden_elements # layout.get_hidden_elements(self)
         self.main_class = rh.ui.main_panel_class(layout)
         
@@ -1505,9 +1508,12 @@ class LayoutHandle:
                     20100214 dsbe.PersonDetail hatte 2 MainPanels, 
                     weil PageLayout kein einzeiliges (horizontales) `main` vertrug
                     """
-                    #~ e = self.create_element(panelclass,x) 
                     e = self.create_element(self.rh.ui.Panel,x)
-                    if e:
+                    if e is None:
+                        pass
+                    elif isinstance(e,list):
+                        elems += e
+                    else:
                         elems.append(e)
             if len(elems) == 0:
                 return None
@@ -1520,10 +1526,9 @@ class LayoutHandle:
         #logger.debug("create_element(panelclass,%r)", desc_name)
         name,kw = self.splitdesc(desc_name)
         e = self.rh.ui.create_layout_element(self,panelclass,name,**kw)
+        # todo: cannot hide babelfields
         if name in self.hidden_elements:
             e.hidden = True
-        #~ for child in e.walk():
-            #~ self._submit_fields += child.submit_fields()
         return e
         
     def splitdesc(self,picture):

@@ -267,31 +267,34 @@ class ExtUI(base.UI):
         
     def create_layout_element(self,lh,panelclass,name,**kw):
         
-        if name == "_":
-            return ext_elems.Spacer(lh,name,**kw)
+        #~ if name == "_":
+            #~ return ext_elems.Spacer(lh,name,**kw)
             
         de = lh.rh.report.get_data_elem(name)
-        #~ de = reports.get_data_elem(lh.layout.datalink,name)
-        
-        if de is None:
-            a = lh.rh.report.get_action(name)
-            if isinstance(a,actions.ImageAction):
-                return ext_elems.PictureElement(lh,name,a,**kw)
+        #~ if de is None:
+            #~ raise Exception("no data element %s in %s" % (name,lh.rh.report))
+            
+        #~ if isinstance(de,list):
+            #~ for i in de:
+                #~ return lh.desc2elem(panelclass,name,de.ct_field + ' ' + de.fk_field,**kw)
+            
+        if isinstance(de,actions.ImageAction):
+            return ext_elems.PictureElement(lh,name,de,**kw)
 
-            #~ de = getattr(lh.rh.report,name,None)
-            #~ if de is not None and callable(de):
-                #~ label = getattr(de,'button_label',None)
-                #~ if label is not None:
-                    #~ return ext_elems.ButtonElement(lh,name,de,label,**kw)
-          
-        #~ if isinstance(de,properties.Property):
-            #~ return self.create_prop_element(lh,de,**kw)
         if isinstance(de,models.Field):
+            if isinstance(de,(babel.BabelCharField,babel.BabelTextField)):
+                if len(babel.BABEL_LANGS) > 0:
+                    elems = [ self.create_field_element(lh,de,**kw) ]
+                    for lang in babel.BABEL_LANGS:
+                        bf = lh.rh.report.get_data_elem(name+'_'+lang)
+                        elems.append(self.create_field_element(lh,bf,**kw))
+                    return elems
             return self.create_field_element(lh,de,**kw)
         if isinstance(de,generic.GenericForeignKey):
             # create a horizontal panel with 2 comboboxes
             return lh.desc2elem(panelclass,name,de.ct_field + ' ' + de.fk_field,**kw)
             #~ return ext_elems.VirtualFieldElement(lh,name,de,**kw)
+            
         if isinstance(de,reports.Report):
             if isinstance(lh.layout,reports.DetailLayout):
                 kw.update(tools=[
@@ -309,9 +312,7 @@ class ExtUI(base.UI):
                     if a is not None:
                         kw.update(ls_insert_handler=js_code("Lino.%s" % a))
                         kw.update(ls_bbar_actions=[
-                        #~ o.update(bbar=[
                           self.a2btn(a),
-                          #~ dict(text="Add",panel_btn_handler=js_code("Lino.show_insert_handler(Lino.%s)" % a))
                           ])
                     field = fields.HtmlBox(verbose_name=de.label,**o)
                     field.name = de._actor_name
@@ -335,12 +336,7 @@ class ExtUI(base.UI):
             rt = getattr(de,'return_type',None)
             if rt is not None:
                 return self.create_meth_element(lh,name,de,rt,**kw)
-                #~ return self.create_button_element(lh,name,de,label,**kw)
-        #~ if isinstance(de,forms.Input):
-            #~ e = ext_elems.InputElement(lh,de,**kw)
-            #~ if not lh.start_focus:
-                #~ lh.start_focus = e
-            #~ return e
+                
         if not name in ('__str__','__unicode__','name','label'):
             value = getattr(lh.layout,name,None)
             if value is not None:
@@ -357,7 +353,6 @@ class ExtUI(base.UI):
                     #~ return ext_elems.PropertyGridElement(lh,name,value)
                 raise KeyError("Cannot handle value %r in %s.%s." % (value,lh.layout._actor_name,name))
         msg = "Unknown element %r referred in layout %s of %s" % (name,lh.layout,lh.rh.report)
-        #print "[Warning]", msg
         raise KeyError(msg)
         
     def href_to(self,obj):

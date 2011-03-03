@@ -37,16 +37,34 @@ def objects():
     yield hosting 
     
         
-    yield product("199.99",1,description="""\
+    kw = babel_values('name',
+          en="Wooden table",
+          et=u"Laud puidust",
+          de="Tisch aus Holz",
+          fr=u"Table en bois")
+    kw.update(babel_values('description',
+          en="""\
 This table is made of pure wood. 
-<br/>It has <b>four legs</b>.
-<br/>Designed to fit perfectly with <b>up to 6 wooden chairs</b>.
-<br/>Product of the year 2008.
-    """,**babel_values('name',
-        en="Wooden table",
-        et=u"Laud puidust",
-        de="Tisch aus Holz",
-        fr=u"Table en bois") )
+It has **four legs**.
+Designed to fit perfectly with **up to 6 wooden chairs**.
+Product of the year 2008.""",
+          et=u"""\
+See laud on tehtud ehtsast puust.
+Sellel on **neli jalga**.
+Disainitud sobida kokku **kuni 6 puidust tooliga**.
+Product of the year 2008.""",
+          de=u"""\
+Dieser Tisch ist aus echtem Holz.
+Er hat **vier Beine**.
+Passt perfekt zusammen mit **bis zu 6 Stühlen aus Holz**.
+Produkt des Jahres 2008.""",
+          fr=u"""\
+Cette table est en bois authentique.
+Elle a **quatre jambes**.
+Conçue pour mettre jusqu'à **6 chaises en bois**.
+Produit de l'année 2008.""",
+          ))
+    yield product("199.99",1,**kw)
     yield product("99.99",1,**babel_values('name',
         en="Wooden chair",
         et=u"Tool puidust",

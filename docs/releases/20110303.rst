@@ -1,5 +1,5 @@
-Coming
-======
+Version 1.1.5 (03.03.2011)
+==========================
 
 #.  (DSBE) Der Button "Auskunftsblatt" ist provisorisch raus.
 
