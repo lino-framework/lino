@@ -87,3 +87,63 @@ Also noch folgende Änderung in der .dpy-Datei::
           choicelist = 'HowWell'
       return PropType(id=id,name=name,choicelist=choicelist,limit_to_choices=limit_to_choices,multiple_choices=
     
+Das Resultat ist jetzt richtig schön. Weil die Deferred-Meldungen 
+nun INFO sind, werden sie live am Bildschirm angezeigt::
+
+  INFO Deferred PersonProperty #1 (Fachkompetenzen.Führerschein=Klasse B) : {'person': [u'Model person with pk 200007 does not exist.']}
+  INFO Deferred PersonProperty #2 (Hindernisse.Motivationsmangel=) : {'person': [u'Model person with pk 200007 does not exist.']}
+  INFO Deferred PersonProperty #3 (Fachkompetenzen.Clark-Führerschein=) : {'person': [u'Model person with pk 22406 does not exist.']}
+  INFO Deferred PersonProperty #4 (Fachkompetenzen.Führerschein=Klasse B) : {'person': [u'Model person with pk 22406 does not exist.']}
+  INFO Deferred PersonProperty #5 (Hindernisse.Juristische Probleme=) : {'person': [u'Model person with pk 22406 does not exist.']}
+  INFO Deferred PersonProperty #6 (Hindernisse.Gesundheitliche Einschränkung=) : {'person': [u'Model person with pk 22315 does not exist.']}
+  INFO Deferred PersonProperty #8 (Sozialkompetenzen.Führungsfähigkeit=gut) : {'person': [u'Model person with pk 200007 does not exist.']}
+  INFO Deferred PersonProperty #9 (Fachkompetenzen.Clark-Führerschein=) : {'person': [u'Model person with pk 200007 does not exist.']}
+  INFO Deferred PersonProperty #10 (Fachkompetenzen.Verkäufer=) : {'person': [u'Model person with pk 200007 does not exist.']}
+  INFO Deferred PersonProperty #11 (Hindernisse.Suchtprobleme=) : {'person': [u'Model person with pk 200007 does not exist.']}
+  INFO Deferred PersonProperty #12 (Hindernisse.Geistige Einschränkung=) : {'person': [u'Model person with pk 200007 does not exist.']}
+  INFO Deferred PersonProperty #13 (Fachkompetenzen.Führerschein=) : {'person': [u'Model person with pk 22315 does not exist.']}
+  INFO Deferred Unprintable Contact(pk=1,error=Person matching query does not exist. : {'person': [u'Model person with pk 200001 does not exist.']}
+  INFO Deferred Unprintable Contact(pk=3,error=Person matching query does not exist. : {'person': [u'Model person with pk 22314 does not exist.']}
+  INFO Deferred Unprintable Contact(pk=4,error=Person matching query does not exist. : {'person': [u'Model person with pk 200005 does not exist.']}
+  INFO Deferred Unprintable Contact(pk=5,error=Person matching query does not exist. : {'person': [u'Model person with pk 200006 does not exist.']}
+
+Und diese Meldungen sind *normal*. Sie kommen daher, dass diese 
+Records erst in der zweiten Runde gespeichert werden können.
+
+Noch eine Überraschung, nachdem die Daten zurückgeladen sind: 
+:term:`watch_tim` lässt sich nicht stoppen.
+
+:command:`ps aux | grep watch_tim` meldet::
+
+  root      3042  0.0  2.4  87216 25200 ?        S    Feb18   0:27 python /usr/local/django/dsbe_eupen/manage.py watch_tim
+
+Hatte ich etwa vergessen, ihn zu stoppen? Nochmal::
+
+  lsaffre@lino:/usr/local/django/dsbe_eupen$ ./stop
+  Stopped process in pidfile '/usr/local/django/dsbe_eupen/watch_tim/pid' (pid 3042).
+  Done.
+  Stopping web server: apache2.
+
+Aber :command:`ps aux | grep watch_tim` meldet anschließend noch 
+immer genau das Gleiche.
+
+Auch :command:`/etc/init.d/apache2 stop` meldet keinen Fehler, 
+wenn der Server gar nicht lief. Oder noch genauer: das Folgende 
+kann ich so lange spielen wie ich will::
+
+  $ sudo /etc/init.d/apache2 stop && echo $?
+  Stopping web server: apache2.
+  0
+  $ sudo /etc/init.d/apache2 stop && echo $?
+  Stopping web server: apache2.
+  0
+  $ sudo /etc/init.d/apache2 stop && echo $?
+  Stopping web server: apache2.
+  0
+
+Das verstehe ich nicht so ganz.
+
+Jetzt sehe ich wohl, dass :term:`watch_tim` 
+noch nicht angepasst worden war an die Änderung vom :doc:`0214` 
+(:mod:`lino.utils.dblogger` jetzt nur noch ein Wrapper 
+zur :xfile:`system.log`).

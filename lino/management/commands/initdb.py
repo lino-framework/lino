@@ -50,7 +50,7 @@ class Command(BaseCommand):
         #~ if logLevel > logging.DEBUG:
             #~ dblogger.logger.setLevel(logging.DEBUG)
         
-        dblogger.info("Lino initdb started on database %s." % dbname)
+        dblogger.info("Lino initdb %s started on database %s.", args, dbname)
         dblogger.info(lino.welcome_text())
         options.update(interactive=False)
         apps = app_labels()
@@ -59,4 +59,4 @@ class Command(BaseCommand):
         call_command('loaddata',*args,**options)
         #~ if logLevel > logging.DEBUG:
             #~ dblogger.logger.setLevel(logLevel)
-            
+        dblogger.info("Lino initdb done %s on database %s.", args, dbname)

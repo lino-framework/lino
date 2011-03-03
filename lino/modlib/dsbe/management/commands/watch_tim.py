@@ -32,8 +32,8 @@ import datetime
 #~ import signal
 import atexit
 
-import logging
-logger = logging.getLogger(__name__)
+#~ import logging
+#~ logger = logging.getLogger(__name__)
 
 from django.core.management.base import BaseCommand, CommandError
 from django.core.exceptions import ValidationError
@@ -344,7 +344,7 @@ def watch(data_dir):
         try:
             os.rename(infile,watching)
         except Exception,e:
-            logger.debug("Could not rename %s to %s",infile,watching)
+            dblogger.debug("Could not rename %s to %s",infile,watching)
             return
     dblogger.info("Processing file %s",watching)
     fd_watching = codecs.open(watching,'r',encoding='cp850')
@@ -375,12 +375,12 @@ def main(*args,**options):
         raise CommandError('Please specify the path to your TIM changelog directory')
     data_dir = args[0]
     msg = "Started tim_watch on %s ..."
-    logger.info(msg,data_dir)
+    #~ logger.info(msg,data_dir)
     dblogger.info(msg,data_dir)
         
     def goodbye():
-        msg = "Stopped tim_watch on %s ..."
-        logger.info(msg,data_dir)
+        msg = "Stopped watch_tim on %s ..."
+        #~ logger.info(msg,data_dir)
         dblogger.info(msg,data_dir)
     #~ signal.signal(signal.SIGTERM,on_SIGTERM)
     atexit.register(goodbye)
@@ -405,7 +405,8 @@ class Command(DaemonCommand):
     #~ pidfile = os.path.join(settings.PROJECT_DIR, "watch_tim","pid")
     #~ pidfile = '/var/run/watch_tim.pid' # os.path.j    
     
-    preserve_loggers = (logger,dblogger.logger)
+    #~ preserve_loggers = (logger,dblogger.logger)
+    preserve_loggers = [dblogger.logger]
     
     def handle_daemon(self, *args, **options):
         main(*args,**options)
