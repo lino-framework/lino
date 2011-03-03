@@ -29,7 +29,6 @@ class Command(BaseCommand):
     specified fixtures for all applications.  
     It is is a combination of the commands 
     `reset`, `syncdb` and `loaddata`.
-    It sets the system logger level temporarily to DEBUG.
     """
     
     args = "fixture [fixture ...]"
@@ -41,10 +40,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
             
-        if dblogger.logger.level != logging.DEBUG:
-            raise CommandError(
-              "Must set logger level to DEBUG (current value is %s)" % \
-              logging.getLevelName(dblogger.logger.level))
+        #~ if dblogger.logger.level != logging.DEBUG:
+        if not dblogger.logger.isEnabledFor(logging.DEBUG):
+            raise CommandError("System logger must be enabled for DEBUG")
         dbname = settings.DATABASES['default']['NAME']
         if options.get('interactive'):
             if not confirm("Gonna reset your database (%s).\nAre you sure (y/n) ?" % dbname):
