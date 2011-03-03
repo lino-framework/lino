@@ -89,6 +89,8 @@ Ext.ux.MonthPickerPlugin = function() {
 
 Ext.preg('monthPickerPlugin', Ext.ux.MonthPickerPlugin);  
 
+
+
 Ext.namespace('Lino');
 
 Lino.on_tab_activate = function(item) {
@@ -741,6 +743,16 @@ Lino.show_detail = function(panel,btn) {
   );
 };
 
+Lino.show_fk_detail = function(combo,e,handler) {
+    //~ console.log(combo,e,handler);
+    pk = combo.getValue();
+    if (pk) {
+        handler(undefined,{record_id: pk})
+      } else {
+        Lino.notify("$_('Cannot show detail for empty foreign key.')");
+      }
+};
+
 Lino.show_insert = function(panel,btn) {
   var bp = panel.get_base_params();
   //~ console.log('20101025 insert_handler',bp)
@@ -961,7 +973,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
         config.buttons = Ext.MessageBox.YESNOCANCEL;
         config.msg = "$_('Save changes to current record ?')";
         config.fn = function(buttonId,text,opt) {
-          console.log('do_when_clean',buttonId)
+          //~ console.log('do_when_clean',buttonId)
           if (buttonId == "yes") {
               //~ Lino.submit_detail(this_,undefined,todo);
               this_.ww.save(todo);
@@ -971,7 +983,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
         }
         Ext.MessageBox.show(config);
     }else{
-      console.log('do_when_clean : now!')
+      //~ console.log('do_when_clean : now!')
       todo();
     }
   },
@@ -1016,7 +1028,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   
   set_current_record : function(record,after) {
     this.current_record = record;
-    console.log('Lino.FormPanel.set_current_record',record);
+    //~ console.log('Lino.FormPanel.set_current_record',record);
     //~ this.config.main_panel.form.load(record);    
     if (record) {
       this.enable();
@@ -2069,6 +2081,32 @@ Lino.RemoteComboFieldElement = Ext.extend(Lino.ComboBox,{
   resizable: true
 });
 
+/*
+Thanks to Animal for posting the basic idea:
+http://www.sencha.com/forum/showthread.php?15842-2.0-SOLVED-Combobox-twintrigger-clear&p=76130&viewfull=1#post76130
+
+*/
+Lino.TwinCombo = Ext.extend(Lino.RemoteComboFieldElement,{
+    trigger2Class : 'x-form-search-trigger',
+    initComponent : function() {
+        //~ Lino.TwinCombo.superclass.initComponent.call(this);
+        Lino.ComboBox.prototype.initComponent.call(this);
+        Ext.form.TwinTriggerField.prototype.initComponent.call(this);
+    },
+    onTrigger2Click : function() {
+        //~ console.log('onTrigger2Click',this,arguments);
+    }
+  });
+//~ Lino.TwinCombo.prototype.initComponent = Ext.form.TwinTriggerField.prototype.initComponent;
+Lino.TwinCombo.prototype.getTrigger = Ext.form.TwinTriggerField.prototype.getTrigger;
+Lino.TwinCombo.prototype.initTrigger = Ext.form.TwinTriggerField.prototype.initTrigger;
+Lino.TwinCombo.prototype.onTrigger1Click = Ext.form.ComboBox.prototype.onTriggerClick;
+//~ Lino.TwinCombo.prototype.onTrigger2Click = function() {
+    //~ console.log('onTrigger2Click',arguments);
+//~ };
+
+
+
 Lino.SimpleRemoteComboFieldElement = Ext.extend(Lino.RemoteComboFieldElement,{
   displayField: 'value', 
   valueField: null
@@ -2125,14 +2163,14 @@ Lino.WindowWrapperBase = {
     //~ }
     
     if (this.config.data_record) {
-      console.log('Lino.WindowWrapper with data_record',this.config.data_record);
+      //~ console.log('Lino.WindowWrapper with data_record',this.config.data_record);
       //~ this.main_item.on_master_changed.defer(2000,this.main_item,[config.data_record]);
       //~ Lino.do_when_visible(this.main_item,function(){this.on_master_changed(config.data_record)});
       //~ this.main_item.on('afterrender',function(){this.main_item.on_master_changed(config.data_record)},this,{single:true});
       this.main_item.set_current_record(this.config.data_record);
       //~ return;
     } else if (this.config.record_id !== undefined) { // may be 0 
-      console.log('Lino.WindowWrapper with record_id',this.config.record_id);
+      //~ console.log('Lino.WindowWrapper with record_id',this.config.record_id);
       this.main_item.goto_record_id(this.config.record_id);
     }
     
@@ -2446,7 +2484,7 @@ Ext.override(Ext.form.BasicForm,{
         /* Forward record to field.setValue(). 
         Lino never uses an array record here, so we can ignore this case. 
         */
-        console.log('20110214e loadRecord',record.data)
+        //~ console.log('20110214e loadRecord',record.data)
         var field, id;
         for(id in record.data){
             if(!Ext.isFunction(record.data[id]) && (field = this.findField(id))){

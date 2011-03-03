@@ -1,5 +1,7 @@
 20110125
 ========
 
-- watch_tim verabschiedet sich jetzt im dblogger, wenn er SIGTERM bekommt.
+- :term:`watch_tim` verabschiedet sich jetzt im dblogger, 
+  wenn er SIGTERM bekommt. Unter Verwendung von 
+  :command:`atexit`.
   

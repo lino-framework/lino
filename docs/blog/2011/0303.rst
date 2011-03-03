@@ -4,17 +4,16 @@
 Vorbereitungen Demo in Pärnu
 ----------------------------
 
-
 6.20 Uhr. Cool: Babel-Felder werden jetzt automatisch expandiert. 
 Also (zumindest deswegen) sind keine lokalen .dtl-Dateien mehr nötig.
 
-8 Uhr. Release :doc:`/releases/20110303` and upgrade in Pärnu.
+8 Uhr. Release :doc:`/releases/20110303` and Upgrade in Pärnu.
 
-Upgrade nach 1.0.6 in Eupen
+Upgrade nach 1.1.6 in Eupen
 ---------------------------
 
 10 Uhr. Ich nutze den Altweiberdonnerstag aus, um auch in Eupen 
-den Lino auf 1.0.6 zu heben. 
+den Lino auf 1.1.6 zu heben. 
 
 Abgesehen von den erwarteten 
 Anpassungen im .dpy-Dump hatte ich 
@@ -75,18 +74,22 @@ außerdem in :class:`lino.utils.dpy.FakeDeserializedObject` die
 Und den Test in :term:`initdb` entschärfe ich dann: er braucht 
 nicht auf DEBUG zu stehen, wohl aber auf INFO.
 
+Hier ist nun auch der Schuldige::
 
   201103-03 10:51:13 DEBUG dpy : Deferred PropType #1 (Bewertung) : 
   {'choicelist': [u"Value u'HowWellDoYouKnow' is not a valid choice."]}
 
-Also noch folgende Änderung in der .dpy-Datei::
+Logisch, da waren also noch ein paar Details in der .dpy-Datei zu beachten::
 
   def create_properties_proptype(id,name,choicelist,limit_to_choices,multiple_choices,name_fr):
       if name_fr is None: name_fr = ''
       if choicelist == 'HowWellDoYouKnow':
           choicelist = 'HowWell'
       return PropType(id=id,name=name,choicelist=choicelist,limit_to_choices=limit_to_choices,multiple_choices=
-    
+
+(Wenn irgendwann mal mehr Linos in der Welt rumlaufen, muss ich solche 
+Upgrades natürlich automatisiseren: :doc:`/tickets/28`.
+
 Das Resultat ist jetzt richtig schön. Weil die Deferred-Meldungen 
 nun INFO sind, werden sie live am Bildschirm angezeigt::
 
@@ -107,8 +110,11 @@ nun INFO sind, werden sie live am Bildschirm angezeigt::
   INFO Deferred Unprintable Contact(pk=4,error=Person matching query does not exist. : {'person': [u'Model person with pk 200005 does not exist.']}
   INFO Deferred Unprintable Contact(pk=5,error=Person matching query does not exist. : {'person': [u'Model person with pk 200006 does not exist.']}
 
-Und diese Meldungen sind *normal*. Sie kommen daher, dass diese 
+Und *diese* Meldungen hier sind ja normal. Sie kommen daher, dass diese 
 Records erst in der zweiten Runde gespeichert werden können.
+
+Unsterblicher Dämon ?
+---------------------
 
 Noch eine Überraschung, nachdem die Daten zurückgeladen sind: 
 :term:`watch_tim` lässt sich nicht stoppen.
@@ -141,9 +147,44 @@ kann ich so lange spielen wie ich will::
   Stopping web server: apache2.
   0
 
-Das verstehe ich nicht so ganz.
+Das verstehe ich nicht...
 
 Jetzt sehe ich wohl, dass :term:`watch_tim` 
 noch nicht angepasst worden war an die Änderung vom :doc:`0214` 
 (:mod:`lino.utils.dblogger` jetzt nur noch ein Wrapper 
 zur :xfile:`system.log`).
+Aber ich sehe auf Anhieb nicht, was das damit zu tun haben 
+sollte.
+
+Aha, hier ist was:
+der Auslöser scheint mal wieder das Mount zum Novell-Dateiserver 
+zu sein. Auch das Folgende funktioniert nicht::
+
+  $ ls -l /mnt/oeshz_home_server
+  ls: reading directory /mnt/oeshz_home_server: Input/output error
+  total 0
+  
+
+Mit anderen Worten: :command:`reboot` und bis auf weiteres *ad acta* damit. 
+Alaaf!
+
+
+TwinTriggerField for ForeignKeys
+--------------------------------
+
+Cool: ForeignKeys, die auf ein Modell verweisen, das ein Detail hat, 
+haben jetzt einen weiteren Trigger-Button: der erste ist der normale 
+Button zum Öffnen der Auswahlliste, und daneben ist ein Button 
+(der mit der Lupe), mit dem man direkt ins Detail des ausgewählten 
+Records springen kann.
+
+
+Dank eines Tipps von Animal aus dem Jahre 2007 
+`im ExtJS-Forum <http://www.sencha.com/forum/showthread.php?15842-2.0-SOLVED-Combobox-twintrigger-clear&p=76130&viewfull=1#post76130>`_
+war der erste Schritt ein Kinderspiel.
+Lino.TwinCombo ist eine Kombination von ComboBox und TwinTriggerField.
+Anschließend kamen noch zwei Lino-spezifische Subtilitäten hinzu.
+Sie Änderungen 
+in 
+:srcref:`lino/ui/extjs/ext_elems.py`
+und :srcref:`lino\ui\extjs\linolib.js`

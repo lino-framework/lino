@@ -52,7 +52,7 @@ def py2html(obj,name):
     
 def before_row_edit(panel):
     l = []
-    l.append("console.log('before_row_edit',record);")
+    #~ l.append("console.log('before_row_edit',record);")
     for e in panel.active_children:
         if isinstance(e,GridElement):
             l.append("%s.on_master_changed();" % e.as_ext())
@@ -525,11 +525,17 @@ class ComplexRemoteComboFieldElement(RemoteComboFieldElement):
         
 class ForeignKeyElement(ComplexRemoteComboFieldElement):
     
-    def __init__(self,*args,**kw):
-        FieldElement.__init__(self,*args,**kw)
+    def __init__(self,lh,field,**kw):
+    #~ def __init__(self,*args,**kw):
         #~ print 20100903,repr(self.field.rel.to)
         #~ assert issubclass(self.field.rel.to,models.Model), "%r is not a model" % self.field.rel.to
-        self.report = reports.get_model_report(self.field.rel.to)
+        self.report = reports.get_model_report(field.rel.to)
+        a = self.report.detail_action
+        if a is not None:
+            self.value_template = "new Lino.TwinCombo(%s)"
+            kw.update(onTrigger2Click=js_code(
+              "function(e){ Lino.show_fk_detail(this,e,Lino.%s)}" % a))
+        FieldElement.__init__(self,lh,field,**kw)
       
     def submit_fields(self):
         return [self.field.name,self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX]
@@ -1139,7 +1145,10 @@ class MainPanel(jsgen.Variable):
             if ch.simple_values:
                 return SimpleRemoteComboFieldElement(lh,field,**kw)
             else:
-                return ComplexRemoteComboFieldElement(lh,field,**kw)
+                if isinstance(field,models.ForeignKey):
+                    return ForeignKeyElement(lh,field,**kw)
+                else:
+                    return ComplexRemoteComboFieldElement(lh,field,**kw)
         if field.choices:
             return ChoicesFieldElement(lh,field,**kw)
             
@@ -1311,7 +1320,9 @@ class FormPanel(jsgen.Component):
                         #~ if main.has_field(f):
                         #~ varname = varname_field(f)
                         #~ on_render.append("%s.on('change',Lino.chooser_handler(%s,%r));" % (varname,e.ext_name,f.name))
-                        on_render.append("%s.on('change',Lino.chooser_handler(%s,%r));" % (el.ext_name,e.ext_name,f.name))
+                        on_render.append(
+                            "%s.on('change',Lino.chooser_handler(%s,%r));" % (
+                            el.ext_name,e.ext_name,f.name))
         
         if on_render:
             assert not kw.has_key('listeners')

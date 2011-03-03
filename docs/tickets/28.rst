@@ -1,0 +1,15 @@
+# 28 : Automated data migrations
+--------------------------------
+
+Siehe auch :doc:``/blog/2011/0303`.
+
+Grundidee: 
+`dpy.Serializer` 
+muss hinter die verschiedenen Abschnitte der "Präambel" 
+nicht in die .dpy-Datei schreiben, sondern nur ein 
+Import-Statement::
+
+  DUMPED_VERSION = '1.0.5'
+  from lino.sites.dsbe.migrate.v1_1_5 import *
+  from lino.sites.dsbe.migrate.v1_1_6 import *
+

@@ -489,7 +489,8 @@ class Person(Partner,contacts.Person):
             s = babeldict_getitem(BEID_CARD_TYPES,self.card_type)
             if s:
                 return s
-        return self.card_type
+            return _("Unknown card type %s") % self.card_type
+        return _("Not specified") # self.card_type
     card_type_text.return_type = fields.DisplayField(_("eID card type"))
         
     def get_print_language(self,pm):
