@@ -25,6 +25,7 @@ from django.conf import settings
 from lino import reports
 from lino.utils import perms
 from lino import mixins
+from lino.modlib.contacts import models as contacts
 
 class UploadType(models.Model):
     
@@ -43,7 +44,7 @@ class UploadTypes(reports.Report):
     order_by = ["name"]
     
         
-class Upload(mixins.Uploadable,mixins.PartnerDocument,mixins.Reminder):
+class Upload(mixins.Uploadable,contacts.PartnerDocument,mixins.Reminder):
     type = models.ForeignKey("uploads.UploadType",
       blank=True,null=True)
       #~ verbose_name=_('upload type'))

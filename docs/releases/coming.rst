@@ -1,59 +1,13 @@
 Coming
 ======
 
-#.  (DSBE) Der Button "Auskunftsblatt" ist provisorisch raus.
-
-Nach dem Upgrade
-----------------
-
-#.  (DSBE) In bestehenden Dokumentvorlagen (betroffen sind nur die beiden Verträge) 
-    muss "address" durch "address_location" ersetzt werden.
-    Siehe :doc:`/blog/2011/0302`
-
-#. (DSBE) In your templates, replace `tr()` by `babelattr()`.
-   ``tr`` is now an alias for :func:`lino.utils.babel.babelitem`.
-
 
 Upgrade instructions
 --------------------
 
 - Database migration needed because:
 
-    - New field :attr:`lino.modlib.properties.PropType.default_value`
-    - :class:`lino.utils.babel.BabelCharField` was nullable by mistake
-    - New Field :attr:`lino.mixins.addressable.Adressable.addr1`
-
-- changes in your local :xfile:`settings.py`
-
-  - Replace the line
-
-    ::
-
-      from lino.demos.dsbe.settings import *
-    
-    by
-    
-    ::
-    
-      from lino.sites.dsbe.settings import *
-      
-  - Replace the settings
-  
-    ::
-      
-      LANGUAGE_CODE = "de"
-      BABEL_LANGS = ['fr','en']
-      
-    by
-      
-    ::
-      
-      LANGUAGE_CODE = "de"
-      LANGUAGES = language_choices('de','fr','en')
-
-    
-  
-
+    - 
 
 - Go to your local directory::
 

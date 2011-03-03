@@ -1,27 +1,10 @@
-Version 1.1.5 (03.03.2011)
+Version 1.1.6 (03.03.2011)
 ==========================
 
 #.  (DSBE) Der Button "Auskunftsblatt" ist provisorisch raus.
 
-Nach dem Upgrade
-----------------
-
-#.  (DSBE) In bestehenden Dokumentvorlagen (betroffen sind nur die beiden Verträge) 
-    muss "address" durch "address_location" ersetzt werden.
-    Siehe :doc:`/blog/2011/0302`
-
-#. (DSBE) In your templates, replace `tr()` by `babelattr()`.
-   ``tr`` is now an alias for :func:`lino.utils.babel.babelitem`.
-
-
 Upgrade instructions
 --------------------
-
-- Database migration needed because:
-
-    - New field :attr:`lino.modlib.properties.PropType.default_value`
-    - :class:`lino.utils.babel.BabelCharField` was nullable by mistake
-    - New Field :attr:`lino.mixins.addressable.Adressable.addr1`
 
 - changes in your local :xfile:`settings.py`
 
@@ -73,6 +56,59 @@ Upgrade instructions
   That's just because we didn't yet find time to maintain them.
   We're working on it.
 
+Database changes
+----------------
+
+
+Database migration needed because of the following changes.
+See also :doc:`/admin/datamig` for general info.
+
+
+- New field :attr:`lino.modlib.properties.PropType.default_value`
+- :class:`lino.utils.babel.BabelCharField` was nullable by mistake
+- New Field :attr:`lino.mixins.addressable.Adressable.addr1`
+
+- Field contacts.Company.is_courseprovider is now virtual.
+  In your .dpy dump, add one new line::
+
+    CourseProvider = resolve_model("dsbe.CourseProvider")
     
-- When a data migration is necessary, see :doc:`/admin/datamig`
+  and change `create_contacts_company` as follows::
+  
+    def create_contacts_company(name,...,hourly_rate,is_courseprovider):
+        if is_courseprovider:
+            cl = Company
+        else:
+            cl = CourseProvider
+        return cl(name=name,...,hourly_rate=hourly_rate)
+
+- Models auth.Permission, auth.Group and auth.Message no longer exist. 
+  If there happen to be data in those tables, it can be dropped.
+  Uncomment the following lines in the .dpy dump::
+
+  #Permission = resolve_model("auth.Permission")
+  #Group = resolve_model("auth.Group")
+  #Message = resolve_model("auth.Message")
+  
+
+Nach dem Upgrade
+----------------
+
+#.  (DSBE) In bestehenden Dokumentvorlagen (betroffen sind nur die beiden Verträge) 
+    muss "address" durch "address_location" ersetzt werden.
+    Siehe :doc:`/blog/2011/0302`
+
+#. (DSBE) In your templates, replace `tr()` by `babelattr()`.
+   ``tr`` is now an alias for :func:`lino.utils.babel.babelitem`.
+
+
+
+
+
+
+
+
+
+
+
 

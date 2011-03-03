@@ -1143,7 +1143,7 @@ class AidTypes(reports.Report):
 #
 # CONTRACTS
 #
-class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,mixins.ContactDocument):
+class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,contacts.ContactDocument):
     """
     A Contract
     """
@@ -1333,7 +1333,7 @@ class MyContracts(mixins.ByUser,Contracts):
 #
 # NOTES
 #
-class Note(notes.Note,mixins.PartnerDocument):
+class Note(notes.Note,contacts.PartnerDocument):
     class Meta:
         app_label = 'notes'
 
@@ -1350,7 +1350,7 @@ class NotesByCompany(notes.Notes):
 #
 # LINKS
 #
-class Link(links.Link,mixins.PartnerDocument):
+class Link(links.Link,contacts.PartnerDocument):
     class Meta:
         app_label = 'links'
 

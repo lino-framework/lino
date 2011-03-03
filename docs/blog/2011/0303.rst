@@ -1,7 +1,9 @@
 20110303
 ========
 
-6.20 Uhr : cool! Babel-Felder werden jetzt automatisch expandiert. 
+6.20 Uhr. Cool: Babel-Felder werden jetzt automatisch expandiert. 
 Also (zumindest deswegen) sind keine lokalen .dtl-Dateien mehr nötig.
 
-Released :doc:`/releases/20110303` and installed in Pärnu.
+8 Uhr. :doc:`/releases/20110303` released and installed in Pärnu.
+
+10 Uhr. :doc:`/releases/20110303` installed in Eupen.
