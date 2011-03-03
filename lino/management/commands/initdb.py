@@ -28,7 +28,9 @@ class Command(BaseCommand):
     help = """Performs a database reset and loads the 
     specified fixtures for all applications.  
     It is is a combination of the commands 
-    `reset`, `syncdb` and `loaddata`."""
+    `reset`, `syncdb` and `loaddata`.
+    It sets the system logger level temporarily to DEBUG.
+    """
     
     args = "fixture [fixture ...]"
     
@@ -46,6 +48,9 @@ class Command(BaseCommand):
         logLevel = dblogger.logger.level
         if logLevel > logging.DEBUG:
             dblogger.logger.setLevel(logging.DEBUG)
+        
+        if dblogger.logger.level > logging.DEBUG:
+            raise CommandError("Must set logger level to DEBUG")
         dblogger.info("Lino initdb started on database %s." % dbname)
         dblogger.info(lino.welcome_text())
         options.update(interactive=False)
@@ -53,6 +58,6 @@ class Command(BaseCommand):
         call_command('reset',*apps,**options)
         call_command('syncdb',**options)
         call_command('loaddata',*args,**options)
-        if logLevel > logging.DEBUG:
-            dblogger.logger.setLevel(logLevel)
+        #~ if logLevel > logging.DEBUG:
+            #~ dblogger.logger.setLevel(logLevel)
             
