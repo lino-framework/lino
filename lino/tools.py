@@ -84,6 +84,10 @@ def model_label(model):
     
     
 def obj2str(i,force_detailed=False):
+    """
+    Returns a usable string representation of a model instance, 
+    even in some edge cases
+    """
     #~ if not force_detailed and i.pk is not None:
     assert isinstance(i,models.Model)
     if i.pk is None:

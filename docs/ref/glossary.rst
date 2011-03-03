@@ -4,6 +4,7 @@ Glossary
 
 
 .. glossary::
+  :sorted:
 
   Tups
      The machine that is serving the `saffre-rumma.net` domain.
@@ -31,4 +32,9 @@ Glossary
       
   disabled fields
     Fields that the user cannot edit (read-only fields). 
+  
+  initdb
+    See :mod:`lino.management.commands.initdb`
     
+  initdb_tim
+    See :mod:`lino.modlib.dsbe.management.commands.initdb_tim`

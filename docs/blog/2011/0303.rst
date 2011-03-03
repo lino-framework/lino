@@ -1,9 +1,51 @@
 20110303
 ========
 
+Vorbereitungen Demo in Pärnu
+----------------------------
+
+
 6.20 Uhr. Cool: Babel-Felder werden jetzt automatisch expandiert. 
 Also (zumindest deswegen) sind keine lokalen .dtl-Dateien mehr nötig.
 
 8 Uhr. Release :doc:`/releases/20110303` and upgrade in Pärnu.
 
-10 Uhr. Upgrade to 1.0.6 in Eupen.
+Upgrade nach 1.0.6 in Eupen
+---------------------------
+
+10 Uhr. Ich nutze den Altweiberdonnerstag aus, um auch in Eupen 
+den Lino auf 1.0.6 zu heben. 
+
+Abgesehen von den erwarteten 
+Anpassungen im .dpy-Dump hatte ich 
+auch folgende Überraschung::
+
+  Problem installing fixture '/usr/local/django/dsbe_eupen/fixtures/d20110303u.dpy': Traceback (most recent call last):
+    File "/var/snapshots/django/django/core/management/commands/loaddata.py", line 174, in handle
+      obj.save(using=using)
+    File "/var/snapshots/lino/lino/utils/dpy.py", line 246, in save
+      if not self.try_save(obj,*args,**kw):
+    File "/var/snapshots/lino/lino/utils/dpy.py", line 292, in try_save
+      dblogger.debug("Deferred %s : %s",obj2str(obj),e)
+    File "/var/snapshots/lino/lino/tools.py", line 95, in obj2str
+      return u"%s #%s (%s)" % (i.__class__.__name__,i.pk,i)
+    File "/var/snapshots/lino/lino/modlib/properties/models.py", line 246, in __unicode__
+      self.group,self.property,
+    File "/var/snapshots/django/django/db/models/fields/related.py", line 304, in __get__
+      rel_obj = QuerySet(self.field.rel.to).using(db).get(**params)
+    File "/var/snapshots/django/django/db/models/query.py", line 349, in get
+      % self.model._meta.object_name)
+  DoesNotExist: PropGroup matching query does not exist.
+  
+Also `lino.tools.obj2str` ist jetzt ein bisschen narrensicherer.
+
+Und dann noch ein Detail. Wenn was nicht klappt, dann machte 
+:term:`initdb`
+
+  WARNING Abandoning with 49 unsaved instances.
+  Problem installing fixture '/usr/local/django/dsbe_eupen/fixtures/d20110303u.dpy': Traceback (most recent call last):
+    File "/var/snapshots/django/django/core/management/commands/loaddata.py", line 174, in handle
+      obj.save(using=using)
+    File "/var/snapshots/lino/lino/utils/dpy.py", line 260, in save
+      raise Exception("Abandoned with %d unsaved instances. See dblog for details." % len(save_later))
+  Exception: Abandoned with 49 unsaved instances. See dblog for details.

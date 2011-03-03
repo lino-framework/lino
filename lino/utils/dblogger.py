@@ -54,6 +54,8 @@ warning = logger.warning
 exception = logger.exception
 error = logger.error
 debug = logger.debug
+getLevel = logger.getLevel
+setLevel = logger.setLevel
 
 def log_created(request,elem):
     logger.info("%s created by %s.",obj2str(elem),request.user)

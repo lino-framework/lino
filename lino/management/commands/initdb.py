@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2009-2010 Luc Saffre
+## Copyright 2009-2011 Luc Saffre
 ## This file is part of the TimTools project.
 ## TimTools is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -39,6 +39,9 @@ class Command(BaseCommand):
         if options.get('interactive'):
             if not confirm("Gonna reset your database (%s).\nAre you sure (y/n) ?" % dbname):
                 raise CommandError("User abort.")
+        logLevel = dblogger.getLevel()
+        if logLevel > logging.DEBUG:
+            dblogger.setLevel(logging.DEBUG)
         dblogger.info("Lino initdb started on database %s." % dbname)
         dblogger.info(lino.welcome_text())
         options.update(interactive=False)
@@ -46,4 +49,6 @@ class Command(BaseCommand):
         call_command('reset',*apps,**options)
         call_command('syncdb',**options)
         call_command('loaddata',*args,**options)
+        if logLevel > logging.DEBUG:
+            dblogger.setLevel(logLevel)
             
