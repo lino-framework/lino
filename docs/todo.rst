@@ -9,9 +9,13 @@ for which I hope for help from other people.
 Short-term
 ----------
 
-#.  MTI-Support : in lino.dsbe für "normale" Personen nur die 
-    Standard-Kontaktangaben speichern, und die DSBE-spezifischen Felder 
-    in einer eigenen Tabelle. 
+#.  Was mach ich mit django.contrib.auth? 
+    Importieren oder weiter ersetzen?
+    Die momentane Situation ist nur halb, weil ich immer noch die 
+    django.contrib.auth.middleware benutze.
+    So weit ich sehen kann, wird Lino immer ein RESTful Server sein.
+    Da sind Sessions eigentlich gar nicht nötig.
+    http://stackoverflow.com/questions/2502842/way-to-maintain-a-session-in-a-rest-application    
 
 #.  Übersetzung PropertyType : nicht Eigenschaftsart, sondern 
     Eigenschaftstyp oder Eigenschafts-Datentyp...
@@ -42,6 +46,10 @@ Version 1.2 (alle todos vom 11.01. fertig)
 
 Version 1.3
 -----------
+
+#.  MTI-Support : in lino.dsbe für "normale" Personen nur die 
+    Standard-Kontaktangaben speichern, und die DSBE-spezifischen Felder 
+    in einer eigenen Tabelle. 
 
 #.  Ist (z.B. in Suchliste) ein Button "Suche abbrechen" nötig?
 

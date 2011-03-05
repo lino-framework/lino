@@ -32,6 +32,8 @@ def get_app(app_label):
     raise ImportError("No application labeled %r." % app_label)
 resolve_app = get_app      
 
+def get_models_for(app_label):
+    a = models.get_app(app_label)
 
 def resolve_model(model_spec,app_label=None):
     # Same logic as in django.db.models.fields.related.add_lazy_relation()

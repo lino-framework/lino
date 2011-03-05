@@ -25,23 +25,174 @@ from tempfile import gettempdir
 from os.path import join, abspath, dirname, normpath
 import lino
 
-from lino import LinoSite
-LINO_SITE = LinoSite()
+
+class LinoSite(object):
+    """
+    LinoSite base class.
+    LinoSite classes are defined and instantiated in Django settings files.
+    
+    This class is first defined in :mod:`lino.demos.std.settings`,
+    then subclassed by :mod:`lino.sites.mysite.settings`
+    which is probably subclassed by your local :xfile:`settings.py`
+    
+    """
+    help_url = "http://code.google.com/p/lino"
+    #~ index_html = "This is the main page."
+    title = "Another Lino Site"
+    domain = "www.example.com"
+    
+    #~ preferred_build_method = 'pisa'
+    #~ preferred_build_method = 'appypdf'
+    
+    csv_params = dict()
+    """
+    Site-wide default parameters for CSV generation.
+    This must be a dictionary that will be used 
+    as keyword parameters to Python `csv.writer()
+    <http://docs.python.org/library/csv.html#csv.writer>`_
+    
+    Possible keys include:
+    
+    - encoding : 
+      the charset to use when responding to a CSV request.
+      See 
+      http://docs.python.org/library/codecs.html#standard-encodings
+      for a list of available values.
+      
+    - many more allowed keys are explained in
+      `Dialects and Formatting Parameters
+      <http://docs.python.org/library/csv.html#csv-fmt-params>`_.
+    
+    """
+    
+    propvalue_max_length = 200
+    """
+    Used by :mod:`lino.modlib.properties`.
+    """
+    
+    source_dir = os.path.dirname(__file__)
+    
+    def __init__(self,project_file):
+        #self.django_settings = settings
+        #~ self.init_site_config = lambda sc: sc
+        self.project_dir = normpath(dirname(project_file))
+        self.dummy_messages = set()
+        self._setting_up = False
+        self._setup_done = False
+        self.root_path = '/lino/'
+        self._response = None
+        self.source_name = os.path.split(self.source_dir)[-1]
+        #~ # find the first base class that is defined in the Lino source tree
+        #~ # this is to find out the source_name and the source_dir
+        #~ for cl in self.__class__.__mro__:
+            #~ if cl.__module__.startswith('lino.sites.'):
+                #~ self.source_dir = os.path.dirname(__file__)
+                #~ self.source_name = self.source_dir
+                #~ os.path.split(_source_dir,
+              
+            
+        # ImportError: Settings cannot be imported, because environment variable DJANGO_SETTINGS_MODULE is undefined.
+        #~ from lino.models import get_site_config
+        #~ self.config = get_site_config()
+        
+
+    def add_dummy_message(self,s):
+        self.dummy_messages.add(s)
+            
+        
+        
+    def setup_main_menu(self):
+        pass
+          
+    def init_site_config(self,sc):
+        #~ self.config = sc
+        pass
+        
+    def configure(self,sc):
+        self.config = sc
+        
+    def setup(self):
+      
+        from lino.core.kernel import setup_site
+        #~ from lino.site import setup_site
+
+        setup_site(self)
+
+        
+    def add_menu(self,*args,**kw):
+        return self._menu.add_menu(*args,**kw)
+
+    def context(self,request,**kw):
+        d = dict(
+          main_menu = menus.MenuRenderer(self._menu,request),
+          root_path = self.root_path,
+          lino = self,
+          settings = settings,
+          debug = True,
+          #skin = self.skin,
+          request = request
+        )
+        d.update(kw)
+        return d
+        
+    def select_ui_view(self,request):
+        html = '<html><body>'
+        html += 'Please select a user interface: <ul>'
+        for ui in self.uis:
+            html += '<li><a href="%s">%s</a></li>' % (ui.name,ui.verbose_name)
+        html += '</ul></body></html>'
+        return HttpResponse(html)
+        
+        
+    #~ def get_urls(self):
+        #~ assert self._setup_done
+        #~ if len(self.uis) == 1:
+            #~ return self.uis[0].get_urls()
+        #~ urlpatterns = patterns('',
+            #~ ('^$', self.select_ui_view))
+        #~ for ui in self.uis:
+            #~ urlpatterns += patterns('',
+                #~ (ui.name, include(ui.get_urls())),
+            #~ )
+        #~ return urlpatterns
+        
+    def get_site_menu(self,user):
+        #~ self.setup()
+        assert self._setup_done
+        return self._menu.menu_request(user)
+        
+    #~ def add_program_menu(self):
+        #~ return
+        #~ m = self.add_menu("app","~Application",)
+        #~ m.add_item(url="/accounts/login/",label="Login",can_view=perms.is_anonymous)
+        #~ m.add_item(url="/accounts/logout/",label="Logout",can_view=perms.is_authenticated)
+        #m.add_item(system.Login(),can_view=perms.is_anonymous)
+        #m.add_item(system.Logout(),can_view=perms.is_authenticated)
+        
+    def setup_dblogger(self,logger):
+        """
+        Called when settings.DBLOGFILE is not empty *and* a logger 'db' 
+        hasn't been configured manually.
+        See :mod:`lino.utils.dblogger`
+        """
+        logger.setLevel(logging.INFO)
+      
+
+
+LINO_SITE = LinoSite(__file__)
 
 #~ DBLOGGER = 'db'
 DBLOGFILE = 'auto'
 USE_FIREBUG = False
 USE_GRIDFILTERS = True
 MODEL_DEBUG = True
-PROJECT_DIR = normpath(dirname(__file__))
-#~ LINO_SETTINGS = join(PROJECT_DIR,"lino_settings.py")
-#~ BYPASS_PERMS = True 
+#~ PROJECT_DIR = normpath(dirname(__file__))
 BYPASS_PERMS = False
 USER_INTERFACES = [
   #~ 'lino.ui.extjsu',
   'lino.ui.extjs'
   ]
-DATA_DIR = join(PROJECT_DIR,"data")
+#~ DATA_DIR = join(LINO_SITE.project_dir,"data")
 
 #~ BABEL_LANGS = []
 
@@ -89,7 +240,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': join(DATA_DIR,'demo.db')
+        'NAME': join(LINO_SITE.project_dir,'demo.db')
         #~ 'NAME': ':memory:'
     }
 }
@@ -118,10 +269,12 @@ USE_I18N = True
 # Example: "/home/media/media.lawrence.com/"
 # Used by FileSystemStorage.
 # Lino generates the :xfile:`site.js` there.
-if sys.platform == 'win32': # development server
-    MEDIA_ROOT = abspath(join(PROJECT_DIR,'media'))
-else:
-    MEDIA_ROOT = abspath(join(DATA_DIR,'media'))
+#~ if sys.platform == 'win32': # development server
+    #~ MEDIA_ROOT = abspath(join(PROJECT_DIR,'media'))
+#~ else:
+    #~ MEDIA_ROOT = abspath(join(DATA_DIR,'media'))
+
+MEDIA_ROOT = abspath(join(LINO_SITE.project_dir,'media'))
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
@@ -179,8 +332,8 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-      join(abspath(DATA_DIR),'templates'),
-      join(abspath(PROJECT_DIR),'templates'),
+      #~ join(abspath(DATA_DIR),'templates'),
+      join(abspath(LINO_SITE.project_dir),'templates'),
       join(abspath(dirname(lino.__file__)),'templates'),
 )
 #print "baz", __file__
@@ -256,3 +409,6 @@ def language_choices(*args):
     return [(x,_langs[x]) for x in args]
       
 LANGUAGES = language_choices('en','de','fr','nl','et')
+
+
+

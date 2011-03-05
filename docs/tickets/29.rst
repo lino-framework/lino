@@ -1,0 +1,8 @@
+# 29 : How to document several Django apps in one Sphinx tree
+=============================================================
+
+When generating Sphinx documentation for Lino, we hit against 
+one of Django's oddities: it is not possible to import a 
+Python module that itself imports Django without having 
+the DJANGO_SETTINGS_MODULE set.
+

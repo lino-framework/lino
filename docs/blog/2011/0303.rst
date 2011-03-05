@@ -168,6 +168,8 @@ zu sein. Auch das Folgende funktioniert nicht::
 Mit anderen Worten: :command:`reboot` und bis auf weiteres *ad acta* damit. 
 Alaaf!
 
+(Check-in-Serie "20110303c")
+
 
 TwinTriggerField for ForeignKeys
 --------------------------------
@@ -178,13 +180,31 @@ Button zum Öffnen der Auswahlliste, und daneben ist ein Button
 (der mit der Lupe), mit dem man direkt ins Detail des ausgewählten 
 Records springen kann.
 
+Vorher:
+
+.. image:: 0303a.jpg
+    :scale: 70
+
+Nachher:
+
+.. image:: 0303b.jpg
+    :scale: 70
+    
+.. currentmodule:: lino.modlib.sales.models
 
 Dank eines Tipps von Animal aus dem Jahre 2007 
 `im ExtJS-Forum <http://www.sencha.com/forum/showthread.php?15842-2.0-SOLVED-Combobox-twintrigger-clear&p=76130&viewfull=1#post76130>`_
 war der erste Schritt ein Kinderspiel.
 Lino.TwinCombo ist eine Kombination von ComboBox und TwinTriggerField.
 Anschließend kamen noch zwei Lino-spezifische Subtilitäten hinzu.
-Sie Änderungen 
-in 
+Zum Beispiel haben die Felder `imode`, `shipping_mode` und `payment_term`
+im obigen Beispiel keinen solchen Zusatzknopf (obwohl das auch ForeignKeys 
+sind), weil diese Modelle 
+(:class:`ShippingMode`, :class:`InvoicingMode` und :class:`PayementTerm`)
+kein Detail-Fenster definiert haben.
+
+(Siehe Änderungen im Check-in 
+`20110303d <http://code.google.com/p/lino/source/detail?r=fb8f47627b9c6907bd731fb6e635013745fceb93>`_,
+Dateien
 :srcref:`lino/ui/extjs/ext_elems.py`
-und :srcref:`lino\ui\extjs\linolib.js`
+und :srcref:`lino\ui\extjs\linolib.js`)

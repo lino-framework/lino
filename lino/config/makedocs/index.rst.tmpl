@@ -1,0 +1,8 @@
+$header(1,$settings.LINO_SITE.title)
+$h1($settings.LINO_SITE.title)
+
+.. toctree::
+
+#for $app in $app_labels()
+    $app
+#end for

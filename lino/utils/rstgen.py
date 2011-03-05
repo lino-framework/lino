@@ -13,6 +13,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+import cStringIO as StringIO
 
 class Column(object):
     def __init__(self,index,header,width=None):
@@ -29,12 +30,20 @@ def html2rst(s):
     s = s.replace('<b>','**')
     s = s.replace('</b>','**')
     return s
-    
+
 def write_header(fd,level,s):
     def writeln(s=''):
         fd.write(s+'\n')
+    _write_header(writeln,level,s)
+    
+def header(level,text):
+    result = StringIO.StringIO()
+    def writeln(s=''):
+        result.write(s + '\n')
+    _write_header(writeln,level,text)
+    return result.getvalue()
         
-    #~ writeln()
+def _write_header(writeln,level,s):
     if level == 1:
         writeln('=' * len(s))
     elif level == 2:
@@ -51,6 +60,7 @@ def write_header(fd,level,s):
     else:
         raise Exception("Invalid level %d" % level)
     writeln()
+    
 
 class SimpleTable(object):
     def __init__(self,headers):
@@ -76,4 +86,21 @@ class SimpleTable(object):
         for row in rows:
             writeln(self.format_row(row))
         writeln(' '.join([('=' * c.width) for c in self.cols]))
+
+def table(headers,rows):
+    t = SimpleTable(headers)
+    fd = StringIO.StringIO()
+    t.write(fd,rows)
+    return fd.getvalue()
     
+    
+def py2rst(v):
+    from django.db import models 
+    if issubclass(v,models.Model):
+        headers = ("name","verbose name","type","help text")
+        rows = [
+          (f.name,f.verbose_name,f.__class__.__name__,f.help_text)
+          for f in v._meta.fields
+        ]
+        return table(headers,rows)
+    return unicode(v)

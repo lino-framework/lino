@@ -1,0 +1,25 @@
+20110304
+========
+
+Ich habe mit 
+:term:`makedocs` begonnen.
+Ich hoffe, dass daraus die Lösung wird für das 
+Generieren von Dokumentation mit mehreren Django-Anwednungen 
+zugleich (:doc:`/tickets/29`).
+
+Aha, die Felder eines Models haben keinen Docstring (Attribut `__doc__`).
+Sphinx `autodoc` benutzt offenbar einen Trick, um die dennoch zu finden:
+
+  For module data members and class attributes, documentation can either 
+  be put into a special-formatted comment before the attribute definition, 
+  or in a docstring after the definition. This means that in the following 
+  class definition, both attributes can be autodocumented::
+
+    class Foo:
+        """Docstring for class Foo."""
+
+        #: Doc comment for attribute Foo.bar.
+        bar = 1
+
+        baz = 2
+        """Docstring for attribute Foo.baz."""

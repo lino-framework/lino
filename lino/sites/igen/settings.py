@@ -17,7 +17,9 @@ from os.path import join,dirname, normpath, abspath
 from tempfile import gettempdir
 from lino.sites.std.settings import *
 
-class IgenSite(LinoSite):
+class LinoSite(LinoSite):
+  
+    source_dir = os.path.dirname(__file__)
   
     title = "Another Lino/DSBE site"
     domain = "igen-demo.saffre-rumma.net"
@@ -31,13 +33,12 @@ class IgenSite(LinoSite):
     #~ sales_base_account = None # '7000',
     #~ sales_vat_account = None # '4510',
     
-    def init_site_config(self,sc):
-        super(IgenSite,self).init_site_config(sc)
-        #~ print 20100908, "lino_settings.py init_site_config"
-        sc.next_partner_id = 200000
+    #~ def init_site_config(self,sc):
+        #~ super(IgenSite,self).init_site_config(sc)
+        #~ sc.next_partner_id = 200000
 
     def configure(self,sc):
-        super(IgenSite,self).configure(sc)
+        super(LinoSite,self).configure(sc)
         
     def setup_main_menu(self):
   
@@ -121,12 +122,12 @@ class IgenSite(LinoSite):
 
         system.add_site_menu(self)
 
-LINO_SITE = IgenSite()
+LINO_SITE = LinoSite(__file__)
 
-PROJECT_DIR = abspath(dirname(__file__))
-DATA_DIR = join(PROJECT_DIR,"data")
+#~ PROJECT_DIR = abspath(dirname(__file__))
+#~ DATA_DIR = join(PROJECT_DIR,"data")
 #~ LINO_SETTINGS = join(PROJECT_DIR,"lino_settings.py")
-MEDIA_ROOT = join(PROJECT_DIR,'media')
+MEDIA_ROOT = join(LINO_SITE.project_dir,'media')
 TIME_ZONE = 'Europe/Tallinn'
 
 # Language code for this installation. All choices can be found here:
@@ -159,7 +160,7 @@ INSTALLED_APPS = (
     'lino.modlib.ledger',
     'lino.modlib.sales',
     'lino.modlib.finan',
-    'lino.modlib.igen',
+    'lino.sites.igen',
     #~ 'lino.modlib.properties',
 )
 
@@ -168,8 +169,8 @@ INSTALLED_APPS = (
 # Always use forward slashes, even on Windows.
 # Don't forget to use absolute paths, not relative paths.
 TEMPLATE_DIRS = (
-      join(abspath(DATA_DIR),'templates'),
-      join(abspath(PROJECT_DIR),'templates'),
+      #~ join(abspath(DATA_DIR),'templates'),
+      join(abspath(LINO_SITE.project_dir),'templates'),
       join(abspath(dirname(lino.__file__)),'templates'),
 )
 
@@ -179,7 +180,7 @@ SECRET_KEY = 'cqt^18t(Fb#14a@s%mbtdif+ih8fscpf8l9aw+0ivo2!3c(c%&'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': join(DATA_DIR,'igen_demo.db')
+        'NAME': join(LINO_SITE.project_dir,'igen_demo.db')
         #~ 'NAME': ':memory:'
     }
 }

@@ -72,6 +72,13 @@ del dummy_messages
 
 
 class PaymentTerm(models.Model):
+    """Represents a convention on how an Invoice should be paid. 
+    """
+    
+    class Meta:
+        verbose_name = _("Payment Term")
+        verbose_name_plural = _("Payment Terms")
+        
     id = models.CharField(max_length=10,primary_key=True)
     name = babel.BabelCharField(max_length=200)
     days = models.IntegerField(default=0)
@@ -118,6 +125,11 @@ add('E',en=u"E-mail",de=u"E-mail", fr=u"courrier électronique",et="e-mail")
 
 
 class InvoicingMode(mixins.PrintableType):
+    """Represents a method of issuing/sending invoices.
+    """
+    class Meta:
+        verbose_name = _("Invoicing Mode")
+        verbose_name_plural = _("Invoicing Modes")
     #~ CHANNEL_CHOICES = (
         #~ ('P', 'Regular Mail'),
         #~ ('E', 'E-Mail'),
@@ -162,6 +174,12 @@ class ShippingMode(models.Model):
         return self.name
         
 class ShippingModes(reports.Report):
+    """Represents a possible method of how the items described in a SalesDocument 
+    are to be transferred from us to our customer.
+    """
+    class Meta:
+        verbose_name = _("Shipping Mode")
+        verbose_name_plural = _("Shipping Modes")
     model = ShippingMode
     order_by = ["id"]
     can_view = perms.is_staff
@@ -171,6 +189,11 @@ class ShippingModes(reports.Report):
 
 
 class SalesRule(models.Model):
+    """Represents a group of default values for certain parameters of a SalesDocument.
+    """
+    class Meta:
+        verbose_name = _("Sales Rule")
+        verbose_name_plural = _("Sales Rules")
     #journal = models.ForeignKey(journals.Journal,blank=True,null=True)
     journal = journals.JournalRef(blank=True,null=True)
     imode = models.ForeignKey(InvoicingMode,blank=True,null=True)
@@ -227,6 +250,8 @@ def get_sales_rule(doc):
 class SalesDocument(
       journals.Journaled,journals.Sendable,
       contacts.ContactDocument,mixins.TypedPrintable):
+    """Common base class for :class:`Order` and :class:`Invoice`.
+    """
     
     creation_date = models.DateField(blank=True,auto_now_add=True)
     #~ customer = models.ForeignKey(Customer,

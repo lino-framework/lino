@@ -24,7 +24,6 @@ Subpackages
     lino.fields
     lino.actions
     lino.core
-    lino.modlib
     lino.test_apps
     lino.ui
     lino.utils

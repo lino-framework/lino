@@ -10,6 +10,7 @@ box1 =
   journal number your_ref 
   creation_date 
   company contact person 
+  language
   ## ship_to
   
 box2 = 

@@ -234,7 +234,6 @@ class ExtUI(base.UI):
     _response = None
     name = 'extjs'
     verbose_name = "ExtJS with Windows"
-    #~ window_configs_file = os.path.join(settings.PROJECT_DIR,'window_configs.pck')
     Panel = ext_elems.Panel
     
     #~ USE_WINDOWS = False  # If you change this, then change also Lino.USE_WINDOWS in lino.js
@@ -454,7 +453,7 @@ class ExtUI(base.UI):
         urlpatterns += patterns('',
             (r'^$', self.index_view),
             (r'^menu$', self.menu_view),
-            (r'^about', self.about_view),
+            #~ (r'^about', self.about_view),
             #~ (r'^list/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.list_report_view),
             (r'^grid_action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<grid_action>\w+)$', self.json_report_view),
             #~ (r'^grid_afteredit/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.grid_afteredit_view),
@@ -501,7 +500,7 @@ class ExtUI(base.UI):
         
         return urlpatterns
         
-    def about_view(self,request):
+    def unused_about_view(self,request):
         #~ fd = codecs.open('meta.rst','w',encoding='UTF-8')
         name = request.path
         if name.startswith('/'):
@@ -1089,7 +1088,7 @@ class ExtUI(base.UI):
         tpl.ui = self
             
         def mytranslate(s):
-            reports.add_dummy_message(s)
+            settings.LINO_SITE.add_dummy_message(s)
             return _(s)
         tpl._ = mytranslate
         #~ tpl.user = request.user

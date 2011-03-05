@@ -266,7 +266,7 @@ def objects():
             
     
 
-    from lino.modlib.dsbe.models import Course, CourseContent, CourseRequest
+    #~ from lino.sites.dsbe.models import Course, CourseContent, CourseRequest
     
     courseprovider = Instantiator('dsbe.CourseProvider').build
     #~ oikos = company(name=u"Oikos",city=eupen,country='BE',
@@ -279,6 +279,7 @@ def objects():
     kap = courseprovider(name=u"KAP",city=eupen,country='BE')
     yield kap
     
+    CourseContent = resolve_model('dsbe.CourseContent')
     yield CourseContent(id=1,name=u"Deutsch")
     yield CourseContent(id=2,name=u"Französisch")
     

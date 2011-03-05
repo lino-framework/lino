@@ -1,5 +1,68 @@
-T:\hgwork\lino\docs\blog\2011\0303.rst:53: WARNING: xfile reference target not found: system.log
-T:\hgwork\lino\docs\blog\2011\0303.rst:53: WARNING: setting reference target not found: LOGGING
-T:\hgwork\lino\docs\blog\2011\0303.rst:119: WARNING: term not in glossary: watch_tim
-T:\hgwork\lino\docs\blog\2011\0303.rst:152: WARNING: term not in glossary: watch_tim
-T:\hgwork\lino\docs\blog\2011\0303.rst:152: WARNING: xfile reference target not found: system.log
+T:\hgwork\lino\docs\autodoc\lino.modlib.sales.rst:13: (WARNING/2) autodoc can't import/find module 'lino.modlib.sales.models', it reported error: "No application labeled 'journals'.", please check your spelling and sys.path
+T:\hgwork\lino\docs\igen\ref\contacts.rst:17: WARNING: duplicate object description of contacts.CompanyType, other instance in T:\hgwork\lino\docs\ref\modlib.rst, use :noindex: for one of them
+T:\hgwork\lino\docs\igen\ref\contacts.rst:39: WARNING: duplicate object description of contacts.ContactType, other instance in T:\hgwork\lino\docs\ref\modlib.rst, use :noindex: for one of them
+T:\hgwork\lino\docs\igen\ref\contacts.rst:58: WARNING: duplicate object description of contacts.Contact, other instance in T:\hgwork\lino\docs\ref\modlib.rst, use :noindex: for one of them
+T:\hgwork\lino\docs\igen\ref\contacts.rst:80: WARNING: duplicate object description of contacts.Person, other instance in T:\hgwork\lino\docs\ref\modlib.rst, use :noindex: for one of them
+T:\hgwork\lino\docs\igen\ref\contacts.rst:116: WARNING: duplicate object description of contacts.Company, other instance in T:\hgwork\lino\docs\ref\modlib.rst, use :noindex: for one of them
+T:\hgwork\lino\docs\igen\ref\countries.rst:37: WARNING: duplicate object description of countries.Country, other instance in T:\hgwork\lino\docs\ref\modlib.rst, use :noindex: for one of them
+T:\hgwork\lino\docs\igen\ref\countries.rst:58: WARNING: duplicate object description of countries.City, other instance in T:\hgwork\lino\docs\ref\modlib.rst, use :noindex: for one of them
+T:\hgwork\lino\docs\igen\ref\sales.rst:42: (ERROR/3) Malformed table.
+Text in column margin at line offset 10.
+
+============ ============ =============== =================================================================================================================
+name         verbose name type            help text
+============ ============ =============== =================================================================================================================
+build_method Build method CharField
+template     Template     CharField
+id           id           CharField
+journal      journal      ForeignKey
+name         name         BabelCharField
+price        price        PriceField
+channel      channel      ChoiceListField
+        Method used to send the invoice.
+advance_days advance days IntegerField
+    Invoices must be sent out X days in advance so that the customer
+    has a chance to pay them in time.
+
+name_et      name (et)    CharField
+name_de      name (de)    CharField
+============ ============ =============== =================================================================================================================
+T:\hgwork\lino\docs\igen\ref\sales.rst:148: (ERROR/3) Malformed table.
+Text in column margin at line offset 28.
+
+================= ================= ============= ===============================================================================
+name              verbose name      type          help text
+================= ================= ============= ===============================================================================
+id                ID                AutoField
+must_build        must build        BooleanField
+person            Person            ForeignKey
+company           Company           ForeignKey
+contact           represented by    ForeignKey
+language          Language          LanguageField
+journal           journal           ForeignKey
+number            number            IntegerField
+sent_time         sent time         DateTimeField
+creation_date     creation date     DateField
+your_ref          your ref          CharField
+imode             imode             ForeignKey
+shipping_mode     shipping mode     ForeignKey
+payment_term      payment term      ForeignKey
+sales_remark      Remark for sales  CharField
+subject           Subject line      CharField
+vat_exempt        vat exempt        BooleanField
+item_vat          item vat          BooleanField
+total_excl        total excl        PriceField
+total_vat         total vat         PriceField
+intro             Introductive Text TextField
+user              user              ForeignKey
+salesdocument_ptr salesdocument ptr OneToOneField
+cycle             cycle             CharField
+start_date        start date        MyDateField   Beginning of payable period.
+      Set to blank if no bill should be generated
+covered_until     covered until     MyDateField
+================= ================= ============= ===============================================================================
+T:\hgwork\lino\docs\autodoc\lino.modlib.rst:: WARNING: document isn't included in any toctree
+T:\hgwork\lino\docs\autodoc\lino.rst:11: WARNING: py:class reference target not found: object
+T:\hgwork\lino\docs\autodoc\lino.rst:16: WARNING: py:mod reference target not found: lino.demos.std.settings
+T:\hgwork\lino\docs\autodoc\lino.rst:16: WARNING: py:mod reference target not found: lino.demos.dsbe.settings
+T:\hgwork\lino\docs\autodoc\lino.rst:49: WARNING: py:mod reference target not found: lino.modlib.properties

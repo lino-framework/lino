@@ -1,0 +1,22 @@
+20110305
+========
+
+Eine vermeintliche Kleinigkeit löste eine Lawine aus:
+"Seit dem Update sind einige Reiter nicht (mehr) in Deutsch."
+
+Tilt! (daran hatte ich bisher noch gar nicht gedacht)
+die :xfile:`dummy_messages.py` mit den Übersetzungstexten 
+aus .dtl-Dateien und Dokumentvorlagen darf natürlich nicht nach 
+:file:`lino/` kommen, sondern muss nach :file:`lino/sites/dsbe/`.
+
+Das hängt zusammen mit einem weiteren Problem 
+(das mir gestern einen Demo-Effekt beschert hat):
+Es gibt momentan zwei Verzeichnisse `dsbe` bzw. `igen`: 
+lino.sites.igen und lino.modlib.igen.
+
+Änderungen:
+
+- ``LINO_SITE = LinoSite(__file__)`` statt bisher ``LINO_SITE = LinoSite()``.
+  
+- ``settings.PROJECT_DIR`` ersetzen durch ``settings.LINO_SITE.project_dir``
+

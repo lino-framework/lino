@@ -42,3 +42,9 @@ Glossary
   loaddata
     one of Django's standard management commands.
     See `Django docs <http://docs.djangoproject.com/en/dev/ref/django-admin/#loaddata-fixture-fixture>`_
+    
+  makedocs
+    A Lino-specific Django management command that 
+    writes a Sphinx documentation tree about the models 
+    installed on this site.
+    :mod:`lino.management.commands.makedocs`

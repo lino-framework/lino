@@ -11,15 +11,18 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+import os
 import lino
 
 from lino.sites.std.settings import *
 
 from lino.utils.jsgen import js_code
 
-class DsbeSite(LinoSite):
-  
-    title = "Another Lino/DSBE site"
+#~ BaeLinoSite = LinoSite
+
+class LinoSite(LinoSite):
+    source_dir = os.path.dirname(__file__)
+    title = "Lino/DSBE"
     domain = "dsbe.saffre-rumma.net"
     help_url = "http://lino.saffre-rumma.net/dsbe/index.html"
     
@@ -27,13 +30,13 @@ class DsbeSite(LinoSite):
     work_permit_upload_type = None
     driving_licence_upload_type = None 
     
-    def init_site_config(self,sc):
-        super(DsbeSite,self).init_site_config(sc)
-        #~ print 20100908, "lino_settings.py init_site_config"
-        sc.next_partner_id = 200000
+    #~ def init_site_config(self,sc):
+        #~ super(LinoSite,self).init_site_config(sc)
+        #~ sc.next_partner_id = 200000
+        #~ print 20110305, self.__class__
 
     def configure(self,sc):
-        super(DsbeSite,self).configure(sc)
+        super(LinoSite,self).configure(sc)
         
     def setup_main_menu(self):
   
@@ -41,7 +44,7 @@ class DsbeSite(LinoSite):
         from lino.utils import perms
 
         from lino import models as system
-        from lino.modlib.dsbe import models as dsbe
+        from lino.sites.dsbe import models as dsbe
 
         m = self.add_menu("contacts",_("~Contacts"))
         m.add_action('contacts.Companies')
@@ -139,19 +142,20 @@ class DsbeSite(LinoSite):
         #~ self._menu.items.append(dict(xtype='menuitem',html='<a href="/">%s</a>' % _("~Home")))
 
 
-LINO_SITE = DsbeSite()
+LINO_SITE = LinoSite(__file__)
 
 
-PROJECT_DIR = abspath(dirname(__file__))
-DATA_DIR = join(PROJECT_DIR,"data")
+#~ PROJECT_DIR = abspath(dirname(__file__))
+#~ DATA_DIR = join(PROJECT_DIR,"data")
 #~ LINO_SETTINGS = join(PROJECT_DIR,"lino_settings.py")
 
-MEDIA_ROOT = join(PROJECT_DIR,'media')
+MEDIA_ROOT = join(LINO_SITE.project_dir,'media')
+#~ MEDIA_ROOT = join(PROJECT_DIR,'media')
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': join(DATA_DIR,'dsbe_demo.db')
+        'NAME': join(LINO_SITE.project_dir,'dsbe_demo.db')
         #~ 'NAME': ':memory:'
     }
 }
@@ -187,7 +191,7 @@ INSTALLED_APPS = (
   'lino.modlib.uploads',
   #'dsbe.modlib.contacts',
   #'dsbe.modlib.projects',
-  'lino.modlib.dsbe',
+  'lino.sites.dsbe',
   #~ 'south', # http://south.aeracode.org
 )
 
@@ -197,8 +201,8 @@ LANGUAGES = language_choices('de','fr','nl','en')
 # Always use forward slashes, even on Windows.
 # Don't forget to use absolute paths, not relative paths.
 TEMPLATE_DIRS = (
-      join(abspath(DATA_DIR),'templates'),
-      join(abspath(PROJECT_DIR),'templates'),
+      #~ join(abspath(DATA_DIR),'templates'),
+      join(abspath(LINO_SITE.project_dir),'templates'),
       join(abspath(dirname(lino.__file__)),'templates'),
 )
 

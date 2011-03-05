@@ -1,0 +1,17 @@
+$header(1,$app_label)
+
+.. currentmodule:: $app_label
+
+File: $app.__file__
+:srcref:`$app.__file__`
+
+#for $model in $models
+$(header(2,"Model :class:`"+model.__name__+"`"))
+.. class:: $model.__name__
+
+Defined in :srcref:`$('/'.join(model.__module__.split('.'))+'.py')`
+  
+$py2rst($model)
+    
+#end for
+
