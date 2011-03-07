@@ -13,18 +13,17 @@ This is a stripped copy of `django.contrib.auth`.
 
 
 
+.. contents:: Table of Contents
+
+
 
 .. index::
    pair: model; Permission
-   single: field;id
-   single: field;name
-   single: field;content_type
-   single: field;codename
 
 .. _igen.auth.Permission:
 
 --------------------
-Model ``Permission``
+Model **Permission**
 --------------------
 
 
@@ -54,17 +53,75 @@ codename     CharField  codename
     
 Defined in :srcref:`/django/contrib/auth/models.py`
 
+.. index::
+   single: field;id
+   
+.. _igen.auth.Permission.id:
+
+Field **Permission.id**
+=======================
+
+
+
+
+
+Type: AutoField
+
+   
+.. index::
+   single: field;name
+   
+.. _igen.auth.Permission.name:
+
+Field **Permission.name**
+=========================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;content_type
+   
+.. _igen.auth.Permission.content_type:
+
+Field **Permission.content_type**
+=================================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;codename
+   
+.. _igen.auth.Permission.codename:
+
+Field **Permission.codename**
+=============================
+
+
+
+
+
+Type: CharField
+
+   
+
 
 .. index::
    pair: model; Group_permissions
-   single: field;id
-   single: field;group
-   single: field;permission
 
 .. _igen.auth.Group_permissions:
 
 ---------------------------
-Model ``Group_permissions``
+Model **Group_permissions**
 ---------------------------
 
 
@@ -82,16 +139,60 @@ permission ForeignKey permission
     
 Defined in :srcref:`/django/contrib/auth/models.py`
 
+.. index::
+   single: field;id
+   
+.. _igen.auth.Group_permissions.id:
+
+Field **Group_permissions.id**
+==============================
+
+
+
+
+
+Type: AutoField
+
+   
+.. index::
+   single: field;group
+   
+.. _igen.auth.Group_permissions.group:
+
+Field **Group_permissions.group**
+=================================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;permission
+   
+.. _igen.auth.Group_permissions.permission:
+
+Field **Group_permissions.permission**
+======================================
+
+
+
+
+
+Type: ForeignKey
+
+   
+
 
 .. index::
    pair: model; Group
-   single: field;id
-   single: field;name
 
 .. _igen.auth.Group:
 
 ---------------
-Model ``Group``
+Model **Group**
 ---------------
 
 
@@ -113,17 +214,45 @@ name CharField name
     
 Defined in :srcref:`/django/contrib/auth/models.py`
 
+.. index::
+   single: field;id
+   
+.. _igen.auth.Group.id:
+
+Field **Group.id**
+==================
+
+
+
+
+
+Type: AutoField
+
+   
+.. index::
+   single: field;name
+   
+.. _igen.auth.Group.name:
+
+Field **Group.name**
+====================
+
+
+
+
+
+Type: CharField
+
+   
+
 
 .. index::
    pair: model; User_user_permissions
-   single: field;id
-   single: field;user
-   single: field;permission
 
 .. _igen.auth.User_user_permissions:
 
 -------------------------------
-Model ``User_user_permissions``
+Model **User_user_permissions**
 -------------------------------
 
 
@@ -141,17 +270,60 @@ permission ForeignKey permission
     
 Defined in :srcref:`/django/contrib/auth/models.py`
 
+.. index::
+   single: field;id
+   
+.. _igen.auth.User_user_permissions.id:
+
+Field **User_user_permissions.id**
+==================================
+
+
+
+
+
+Type: AutoField
+
+   
+.. index::
+   single: field;user
+   
+.. _igen.auth.User_user_permissions.user:
+
+Field **User_user_permissions.user**
+====================================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;permission
+   
+.. _igen.auth.User_user_permissions.permission:
+
+Field **User_user_permissions.permission**
+==========================================
+
+
+
+
+
+Type: ForeignKey
+
+   
+
 
 .. index::
    pair: model; User_groups
-   single: field;id
-   single: field;user
-   single: field;group
 
 .. _igen.auth.User_groups:
 
 ---------------------
-Model ``User_groups``
+Model **User_groups**
 ---------------------
 
 
@@ -169,34 +341,69 @@ group ForeignKey group
     
 Defined in :srcref:`/django/contrib/auth/models.py`
 
+.. index::
+   single: field;id
+   
+.. _igen.auth.User_groups.id:
+
+Field **User_groups.id**
+========================
+
+
+
+
+
+Type: AutoField
+
+   
+.. index::
+   single: field;user
+   
+.. _igen.auth.User_groups.user:
+
+Field **User_groups.user**
+==========================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;group
+   
+.. _igen.auth.User_groups.group:
+
+Field **User_groups.group**
+===========================
+
+
+
+
+
+Type: ForeignKey
+
+   
+
 
 .. index::
    pair: model; User
-   single: field;id
-   single: field;username
-   single: field;first_name
-   single: field;last_name
-   single: field;email
-   single: field;password
-   single: field;is_staff
-   single: field;is_active
-   single: field;is_superuser
-   single: field;last_login
-   single: field;date_joined
 
 .. _igen.auth.User:
 
 --------------
-Model ``User``
+Model **User**
 --------------
 
 
 
 
-    Users within the Django authentication system are represented by this model.
+Users within the Django authentication system are represented by this model.
 
-    Username and password are required. Other fields are optional.
-    
+Username and password are required. Other fields are optional.
+
   
 ============ ============= ================
 name         type          verbose name    
@@ -217,29 +424,192 @@ date_joined  DateTimeField date joined
     
 Defined in :srcref:`/django/contrib/auth/models.py`
 
+.. index::
+   single: field;id
+   
+.. _igen.auth.User.id:
+
+Field **User.id**
+=================
+
+
+
+
+
+Type: AutoField
+
+   
+.. index::
+   single: field;username
+   
+.. _igen.auth.User.username:
+
+Field **User.username**
+=======================
+
+
+
+Required. 30 characters or fewer. Letters, numbers and @/./+/-/_ characters
+
+Type: CharField
+
+   
+.. index::
+   single: field;first_name
+   
+.. _igen.auth.User.first_name:
+
+Field **User.first_name**
+=========================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;last_name
+   
+.. _igen.auth.User.last_name:
+
+Field **User.last_name**
+========================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;email
+   
+.. _igen.auth.User.email:
+
+Field **User.email**
+====================
+
+
+
+
+
+Type: EmailField
+
+   
+.. index::
+   single: field;password
+   
+.. _igen.auth.User.password:
+
+Field **User.password**
+=======================
+
+
+
+Use '[algo]$[salt]$[hexdigest]' or use the <a href="password/">change password form</a>.
+
+Type: CharField
+
+   
+.. index::
+   single: field;is_staff
+   
+.. _igen.auth.User.is_staff:
+
+Field **User.is_staff**
+=======================
+
+
+
+Designates whether the user can log into this admin site.
+
+Type: BooleanField
+
+   
+.. index::
+   single: field;is_active
+   
+.. _igen.auth.User.is_active:
+
+Field **User.is_active**
+========================
+
+
+
+Designates whether this user should be treated as active. Unselect this instead of deleting accounts.
+
+Type: BooleanField
+
+   
+.. index::
+   single: field;is_superuser
+   
+.. _igen.auth.User.is_superuser:
+
+Field **User.is_superuser**
+===========================
+
+
+
+Designates that this user has all permissions without explicitly assigning them.
+
+Type: BooleanField
+
+   
+.. index::
+   single: field;last_login
+   
+.. _igen.auth.User.last_login:
+
+Field **User.last_login**
+=========================
+
+
+
+
+
+Type: DateTimeField
+
+   
+.. index::
+   single: field;date_joined
+   
+.. _igen.auth.User.date_joined:
+
+Field **User.date_joined**
+==========================
+
+
+
+
+
+Type: DateTimeField
+
+   
+
 
 .. index::
    pair: model; Message
-   single: field;id
-   single: field;user
-   single: field;message
 
 .. _igen.auth.Message:
 
 -----------------
-Model ``Message``
+Model **Message**
 -----------------
 
 
 
 
-    The message system is a lightweight way to queue messages for given
-    users. A message is associated with a User instance (so it is only
-    applicable for registered users). There's no concept of expiration or
-    timestamps. Messages are created by the Django admin after successful
-    actions. For example, "The poll Foo was created successfully." is a
-    message.
-    
+The message system is a lightweight way to queue messages for given
+users. A message is associated with a User instance (so it is only
+applicable for registered users). There's no concept of expiration or
+timestamps. Messages are created by the Django admin after successful
+actions. For example, "The poll Foo was created successfully." is a
+message.
+
   
 ======= ========== ===============
 name    type       verbose name   
@@ -251,5 +621,51 @@ message TextField  message
 
     
 Defined in :srcref:`/django/contrib/auth/models.py`
+
+.. index::
+   single: field;id
+   
+.. _igen.auth.Message.id:
+
+Field **Message.id**
+====================
+
+
+
+
+
+Type: AutoField
+
+   
+.. index::
+   single: field;user
+   
+.. _igen.auth.Message.user:
+
+Field **Message.user**
+======================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;message
+   
+.. _igen.auth.Message.message:
+
+Field **Message.message**
+=========================
+
+
+
+
+
+Type: TextField
+
+   
 
 

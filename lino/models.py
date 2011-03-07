@@ -48,10 +48,7 @@ class SiteConfig(models.Model):
       choices=printable.build_method_choices(),blank=True)
         
     def save(self,*args,**kw):
-        #~ from lino.lino_site import lino_site
-        #~ lino_site.init_site_config(sc)
-        settings.LINO_SITE.configure(self)
-        #~ settings.LINO_SITE.configure(self)
+        settings.LINO.configure(self)
         r = super(SiteConfig,self).save(*args,**kw)
         return r
    

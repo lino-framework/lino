@@ -4,20 +4,48 @@ Multi-table inheritance: converting between child and parent
 
 .. currentmodule:: lino.utils.mti
 
-
 This document presents the :mod:`lino.utils.mti` module, 
 a collection of tools for doing multi-table child/parent 
 conversions.
+
 It is certainly not perfect, but works for me. 
 I wrote it mainly to solve my ticket :doc:`/tickets/22`.
-If you know (or imagine) a better solution, please let me know!
+If you find any bugs, please let me know.
+
+This article is part of Lino's tests suite,
+it's source code is at 
+:srcref:`/lino/test_apps/1/models.py`.
+
 
 Let's go
 --------
 
-To see the data models used in the following examples,
-please look at the source code of this document at
-:srcref:`/lino/test_apps/1/models.py`.
+
+For this example we use the following models::
+
+  class Person(models.Model):
+      name = models.CharField(max_length=50)
+      def __unicode__(self):
+          return self.name
+
+  class Place(models.Model):  
+      name = models.CharField(max_length=50)
+      owners = models.ManyToManyField(Person)
+      is_restaurant = EnableChild('Restaurant',verbose_name="is a restaurant")
+      def __unicode__(self):
+          return "#%s (name=%s,owners=%s)" % (
+              self.pk,self.name, 
+              ','.join([unicode(o) for o in self.owners.all()]))
+          
+  class Restaurant(Place):  
+      serves_hot_dogs = models.BooleanField()
+      cooks = models.ManyToManyField(Person)
+      def __unicode__(self):
+          return "#%d (name=%s,owners=%s,cooks=%s)" % (
+              self.pk,self.name, 
+              ','.join([unicode(o) for o in self.owners.all()]),
+              ','.join([unicode(o) for o in self.cooks.all()]))
+
 
 Create some data:
 
@@ -112,11 +140,15 @@ This is not implemented because the only
 need for it would be to make the following 
 examples more elegant...
 
-Before using virtual fields, we must 
-trigger Lino site setup. 
+Before using virtual fields, we must setup 
+the Lino application. 
+In a Django project this is usually done 
+when the web server gets a first request and 
+imports it's  :setting:`ROOT_URLCONF`.
 This is needed to discover virtual fields:
 
->>> from lino.core import site 
+>>> from django.conf import settings
+>>> settings.LINO.setup()
 
 To access the values "stored" in virtual fields,
 we must behave like a lino.ui would do, 
@@ -172,6 +204,28 @@ Now we can see this place again as a Restaurant
 
 Related ForeignKeys 
 -------------------
+
+In order to demonstrate what happens when there are ForeignKeys, 
+we add two more models::
+
+  class Visit(models.Model):
+      person = models.ForeignKey(Person)
+      place = models.ForeignKey(Place)
+      purpose = models.CharField(max_length=50)
+      def __unicode__(self):
+          return "%s visit by %s at %s" % (
+            self.purpose, self.person, self.place.name)
+
+  class Meal(models.Model):
+      person = models.ForeignKey(Person)
+      restaurant = models.ForeignKey(Restaurant)
+      what = models.CharField(max_length=50)
+      def __unicode__(self):
+          return "%s eats %s at %s" % (
+            self.person, self.what, self.restaurant.name)
+
+
+
 
 Bert, the owner of Restaurant #2 does two visits:
 
@@ -276,3 +330,4 @@ class Meal(models.Model):
     def __unicode__(self):
         return "%s eats %s at %s" % (
           self.person, self.what, self.restaurant.name)
+

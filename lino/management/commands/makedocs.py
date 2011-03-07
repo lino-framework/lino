@@ -32,7 +32,7 @@ from django.db.models import loading
 #~ from lino.core import actors
 #~ from lino.utils import get_class_attr
 
-
+import re
 import lino
 from lino.core.coretools import app_labels
 from lino.utils import confirm
@@ -44,6 +44,32 @@ from lino.utils import babel
 curry = lambda func, *args, **kw:\
             lambda *p, **n:\
                  func(*args + p, **dict(kw.items() + n.items()))
+                 
+# Copied from doctest:
+
+# This regular expression finds the indentation of every non-blank
+# line in a string.
+_INDENT_RE = re.compile('^([ ]*)(?=\S)', re.MULTILINE)
+
+def min_indent(s):
+    "Return the minimum indentation of any non-blank line in `s`"
+    indents = [len(indent) for indent in _INDENT_RE.findall(s)]
+    if len(indents) > 0:
+        return min(indents)
+    else:
+        return 0
+        
+def doc2rst(s):
+    if s is None:
+        return s
+    s = s.expandtabs()
+    # If all lines begin with the same indentation, then strip it.
+    mi = min_indent(s)
+    if mi > 0:
+        s = '\n'.join([l[mi:] for l in s.split('\n')])
+    return s
+
+
 
 def model_overview(model):
     headers = ["name","type"]
@@ -147,7 +173,8 @@ class Command(BaseCommand):
           header=rstgen.header,
           h1=curry(rstgen.header,1),
           table=rstgen.table,
-          py2rst=rstgen.py2rst,
+          doc=doc2rst,
+          #~ py2rst=rstgen.py2rst,
           model_overview=model_overview,
           app_labels=app_labels)
         #~ d = dict(site=site)

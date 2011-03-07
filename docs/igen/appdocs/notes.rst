@@ -10,20 +10,17 @@ Defined in :srcref:`/lino/modlib/notes/models.py`
 
 
 
+.. contents:: Table of Contents
+
+
 
 .. index::
    pair: model; NoteType
-   single: field;id
-   single: field;build_method
-   single: field;template
-   single: field;name
-   single: field;important
-   single: field;remark
 
 .. _igen.notes.NoteType:
 
 ------------------
-Model ``NoteType``
+Model **NoteType**
 ------------------
 
 
@@ -44,26 +41,105 @@ remark       TextField    Remark (Bemerkung)
     
 Defined in :srcref:`/lino/modlib/notes/models.py`
 
+.. index::
+   single: field;id
+   
+.. _igen.notes.NoteType.id:
+
+Field **NoteType.id**
+=====================
+
+
+
+
+
+Type: AutoField
+
+   
+.. index::
+   single: field;build_method
+   
+.. _igen.notes.NoteType.build_method:
+
+Field **NoteType.build_method**
+===============================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;template
+   
+.. _igen.notes.NoteType.template:
+
+Field **NoteType.template**
+===========================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;name
+   
+.. _igen.notes.NoteType.name:
+
+Field **NoteType.name**
+=======================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;important
+   
+.. _igen.notes.NoteType.important:
+
+Field **NoteType.important**
+============================
+
+
+
+
+
+Type: BooleanField
+
+   
+.. index::
+   single: field;remark
+   
+.. _igen.notes.NoteType.remark:
+
+Field **NoteType.remark**
+=========================
+
+
+
+
+
+Type: TextField
+
+   
+
 
 .. index::
    pair: model; Note
-   single: field;id
-   single: field;user
-   single: field;reminder_date
-   single: field;reminder_text
-   single: field;delay_value
-   single: field;delay_type
-   single: field;must_build
-   single: field;date
-   single: field;type
-   single: field;subject
-   single: field;body
-   single: field;language
 
 .. _igen.notes.Note:
 
 --------------
-Model ``Note``
+Model **Note**
 --------------
 
 
@@ -89,5 +165,186 @@ language      LanguageField Language (Sprache)
 
     
 Defined in :srcref:`/lino/sites/igen/models.py`
+
+.. index::
+   single: field;id
+   
+.. _igen.notes.Note.id:
+
+Field **Note.id**
+=================
+
+
+
+
+
+Type: AutoField
+
+   
+.. index::
+   single: field;user
+   
+.. _igen.notes.Note.user:
+
+Field **Note.user**
+===================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;reminder_date
+   
+.. _igen.notes.Note.reminder_date:
+
+Field **Note.reminder_date**
+============================
+
+
+
+
+
+Type: DateField
+
+   
+.. index::
+   single: field;reminder_text
+   
+.. _igen.notes.Note.reminder_text:
+
+Field **Note.reminder_text**
+============================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;delay_value
+   
+.. _igen.notes.Note.delay_value:
+
+Field **Note.delay_value**
+==========================
+
+
+
+
+
+Type: IntegerField
+
+   
+.. index::
+   single: field;delay_type
+   
+.. _igen.notes.Note.delay_type:
+
+Field **Note.delay_type**
+=========================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;must_build
+   
+.. _igen.notes.Note.must_build:
+
+Field **Note.must_build**
+=========================
+
+
+
+
+
+Type: BooleanField
+
+   
+.. index::
+   single: field;date
+   
+.. _igen.notes.Note.date:
+
+Field **Note.date**
+===================
+
+
+
+
+
+Type: DateField
+
+   
+.. index::
+   single: field;type
+   
+.. _igen.notes.Note.type:
+
+Field **Note.type**
+===================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;subject
+   
+.. _igen.notes.Note.subject:
+
+Field **Note.subject**
+======================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;body
+   
+.. _igen.notes.Note.body:
+
+Field **Note.body**
+===================
+
+
+
+
+
+Type: TextField
+
+   
+.. index::
+   single: field;language
+   
+.. _igen.notes.Note.language:
+
+Field **Note.language**
+=======================
+
+
+
+
+
+Type: LanguageField
+
+   
 
 

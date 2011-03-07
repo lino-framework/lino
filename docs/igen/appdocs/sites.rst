@@ -10,17 +10,17 @@ Defined in :srcref:`/django/contrib/sites/models.py`
 
 
 
+.. contents:: Table of Contents
+
+
 
 .. index::
    pair: model; Site
-   single: field;id
-   single: field;domain
-   single: field;name
 
 .. _igen.sites.Site:
 
 --------------
-Model ``Site``
+Model **Site**
 --------------
 
 
@@ -37,5 +37,51 @@ name   CharField display name (Anzeigename,nom à afficher,weergavenaam,hüüdni
 
     
 Defined in :srcref:`/django/contrib/sites/models.py`
+
+.. index::
+   single: field;id
+   
+.. _igen.sites.Site.id:
+
+Field **Site.id**
+=================
+
+
+
+
+
+Type: AutoField
+
+   
+.. index::
+   single: field;domain
+   
+.. _igen.sites.Site.domain:
+
+Field **Site.domain**
+=====================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;name
+   
+.. _igen.sites.Site.name:
+
+Field **Site.name**
+===================
+
+
+
+
+
+Type: CharField
+
+   
 
 

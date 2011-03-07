@@ -95,13 +95,13 @@ def table(headers,rows):
     return fd.getvalue()
     
     
-def py2rst(v):
-    from django.db import models 
-    if issubclass(v,models.Model):
-        headers = ("name","verbose name","type","help text")
-        rows = [
-          (f.name,f.verbose_name,f.__class__.__name__,f.help_text)
-          for f in v._meta.fields
-        ]
-        return table(headers,rows)
-    return unicode(v)
+#~ def py2rst(v):
+    #~ from django.db import models 
+    #~ if issubclass(v,models.Model):
+        #~ headers = ("name","verbose name","type","help text")
+        #~ rows = [
+          #~ (f.name,f.verbose_name,f.__class__.__name__,f.help_text)
+          #~ for f in v._meta.fields
+        #~ ]
+        #~ return table(headers,rows)
+    #~ return unicode(v)

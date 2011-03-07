@@ -13,6 +13,7 @@ um auf Modelle zu verweisen:
 
 - :ref:`dsbe.contacts.Person`
 - :ref:`igen.contacts.Person`
+- :ref:`igen.contacts.Person.street`
 - :class:`lino.modlib.contacts.models.Person`
 
 Die Dokumentation muss sich jetzt freilich noch von der 
@@ -45,7 +46,7 @@ In :setting:`INSTALLED_APPS` z.B. sind natürlich auch
 unter Lino weiterhin *Module* enthalten (also das, 
 was Django "applications" nennt. 
 Und das eventuelle Attribut `app_label` 
-in der :lcass:`Meta` kann ich auch nicht umbenennen.
+in der :class:`Meta` kann ich auch nicht umbenennen.
 
 Ich steh dann als frech da gegenüber der etablierten Autorität.
 Aber so bin ich ja. 

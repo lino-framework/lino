@@ -19,25 +19,17 @@ See lino.testapps.journals for more documentation.
 
 
 
+.. contents:: Table of Contents
+
+
 
 .. index::
    pair: model; Journal
-   single: field;id
-   single: field;name
-   single: field;doctype
-   single: field;force_sequence
-   single: field;account
-   single: field;pos
-   single: field;printed_name
-   single: field;printed_name_de
-   single: field;printed_name_fr
-   single: field;printed_name_nl
-   single: field;printed_name_et
 
 .. _igen.journals.Journal:
 
 -----------------
-Model ``Journal``
+Model **Journal**
 -----------------
 
 
@@ -62,5 +54,171 @@ printed_name_et CharField      printed name (et)
 
     
 Defined in :srcref:`/lino/modlib/journals/models.py`
+
+.. index::
+   single: field;id
+   
+.. _igen.journals.Journal.id:
+
+Field **Journal.id**
+====================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;name
+   
+.. _igen.journals.Journal.name:
+
+Field **Journal.name**
+======================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;doctype
+   
+.. _igen.journals.Journal.doctype:
+
+Field **Journal.doctype**
+=========================
+
+
+
+
+
+Type: IntegerField
+
+   
+.. index::
+   single: field;force_sequence
+   
+.. _igen.journals.Journal.force_sequence:
+
+Field **Journal.force_sequence**
+================================
+
+
+
+
+
+Type: BooleanField
+
+   
+.. index::
+   single: field;account
+   
+.. _igen.journals.Journal.account:
+
+Field **Journal.account**
+=========================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;pos
+   
+.. _igen.journals.Journal.pos:
+
+Field **Journal.pos**
+=====================
+
+
+
+
+
+Type: IntegerField
+
+   
+.. index::
+   single: field;printed_name
+   
+.. _igen.journals.Journal.printed_name:
+
+Field **Journal.printed_name**
+==============================
+
+
+
+
+
+Type: BabelCharField
+
+   
+.. index::
+   single: field;printed_name_de
+   
+.. _igen.journals.Journal.printed_name_de:
+
+Field **Journal.printed_name_de**
+=================================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;printed_name_fr
+   
+.. _igen.journals.Journal.printed_name_fr:
+
+Field **Journal.printed_name_fr**
+=================================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;printed_name_nl
+   
+.. _igen.journals.Journal.printed_name_nl:
+
+Field **Journal.printed_name_nl**
+=================================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;printed_name_et
+   
+.. _igen.journals.Journal.printed_name_et:
+
+Field **Journal.printed_name_et**
+=================================
+
+
+
+
+
+Type: CharField
+
+   
 
 

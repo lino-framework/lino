@@ -4,25 +4,40 @@ $header(1,$app_label)
 
 Defined in :srcref:`/${'/'.join($app.__name__.split('.'))+'.py'}`
 
-$app.__doc__
+${doc($app.__doc__)}
+
+.. contents:: Table of Contents
+
 
 #for $model in $models
 
 .. index::
    pair: model; $model.__name__
-#for $field in $model._meta.fields
-   single: field;$(field.name)
-#end for
 
 .. _$(settings.LINO.source_name).${app_label}.${model.__name__}:
 
-$(header(2,"Model ``"+model.__name__+"``"))
+$(header(2,"Model **"+model.__name__+"**"))
 
-$model.__doc__
+${doc($model.__doc__)}
   
 $model_overview($model)
     
 Defined in :srcref:`/$('/'.join(model.__module__.split('.'))+'.py')`
+
+#for $field in $model._meta.fields
+.. index::
+   single: field;${field.name}
+   
+.. _$(settings.LINO.source_name).${app_label}.${model.__name__}.${field.name}:
+
+$(header(3,"Field **"+$model.__name__+"."+$field.name+"**"))
+
+$field.help_text
+
+Type: $field.__class__.__name__
+
+   
+#end for
 
 #end for
 

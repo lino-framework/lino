@@ -10,18 +10,17 @@ Defined in :srcref:`/django/contrib/contenttypes/models.py`
 
 
 
+.. contents:: Table of Contents
+
+
 
 .. index::
    pair: model; ContentType
-   single: field;id
-   single: field;name
-   single: field;app_label
-   single: field;model
 
 .. _dsbe.contenttypes.ContentType:
 
 ---------------------
-Model ``ContentType``
+Model **ContentType**
 ---------------------
 
 
@@ -39,5 +38,66 @@ model     CharField python model class name (Python Modell-Klassenname,nom de la
 
     
 Defined in :srcref:`/django/contrib/contenttypes/models.py`
+
+.. index::
+   single: field;id
+   
+.. _dsbe.contenttypes.ContentType.id:
+
+Field **ContentType.id**
+========================
+
+
+
+
+
+Type: AutoField
+
+   
+.. index::
+   single: field;name
+   
+.. _dsbe.contenttypes.ContentType.name:
+
+Field **ContentType.name**
+==========================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;app_label
+   
+.. _dsbe.contenttypes.ContentType.app_label:
+
+Field **ContentType.app_label**
+===============================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;model
+   
+.. _dsbe.contenttypes.ContentType.model:
+
+Field **ContentType.model**
+===========================
+
+
+
+
+
+Type: CharField
+
+   
 
 

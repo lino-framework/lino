@@ -12,22 +12,17 @@ Defined in :srcref:`/lino/modlib/sales/models.py`
 
 
 
+.. contents:: Table of Contents
+
+
 
 .. index::
    pair: model; PaymentTerm
-   single: field;id
-   single: field;name
-   single: field;days
-   single: field;months
-   single: field;name_de
-   single: field;name_fr
-   single: field;name_nl
-   single: field;name_et
 
 .. _igen.sales.PaymentTerm:
 
 ---------------------
-Model ``PaymentTerm``
+Model **PaymentTerm**
 ---------------------
 
 
@@ -51,26 +46,135 @@ name_et CharField      name (et)
     
 Defined in :srcref:`/lino/modlib/sales/models.py`
 
+.. index::
+   single: field;id
+   
+.. _igen.sales.PaymentTerm.id:
+
+Field **PaymentTerm.id**
+========================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;name
+   
+.. _igen.sales.PaymentTerm.name:
+
+Field **PaymentTerm.name**
+==========================
+
+
+
+
+
+Type: BabelCharField
+
+   
+.. index::
+   single: field;days
+   
+.. _igen.sales.PaymentTerm.days:
+
+Field **PaymentTerm.days**
+==========================
+
+
+
+
+
+Type: IntegerField
+
+   
+.. index::
+   single: field;months
+   
+.. _igen.sales.PaymentTerm.months:
+
+Field **PaymentTerm.months**
+============================
+
+
+
+
+
+Type: IntegerField
+
+   
+.. index::
+   single: field;name_de
+   
+.. _igen.sales.PaymentTerm.name_de:
+
+Field **PaymentTerm.name_de**
+=============================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;name_fr
+   
+.. _igen.sales.PaymentTerm.name_fr:
+
+Field **PaymentTerm.name_fr**
+=============================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;name_nl
+   
+.. _igen.sales.PaymentTerm.name_nl:
+
+Field **PaymentTerm.name_nl**
+=============================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;name_et
+   
+.. _igen.sales.PaymentTerm.name_et:
+
+Field **PaymentTerm.name_et**
+=============================
+
+
+
+
+
+Type: CharField
+
+   
+
 
 .. index::
    pair: model; InvoicingMode
-   single: field;build_method
-   single: field;template
-   single: field;id
-   single: field;journal
-   single: field;name
-   single: field;price
-   single: field;channel
-   single: field;advance_days
-   single: field;name_de
-   single: field;name_fr
-   single: field;name_nl
-   single: field;name_et
 
 .. _igen.sales.InvoicingMode:
 
 -----------------------
-Model ``InvoicingMode``
+Model **InvoicingMode**
 -----------------------
 
 
@@ -98,21 +202,199 @@ name_et      CharField       name (et)
     
 Defined in :srcref:`/lino/modlib/sales/models.py`
 
+.. index::
+   single: field;build_method
+   
+.. _igen.sales.InvoicingMode.build_method:
+
+Field **InvoicingMode.build_method**
+====================================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;template
+   
+.. _igen.sales.InvoicingMode.template:
+
+Field **InvoicingMode.template**
+================================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;id
+   
+.. _igen.sales.InvoicingMode.id:
+
+Field **InvoicingMode.id**
+==========================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;journal
+   
+.. _igen.sales.InvoicingMode.journal:
+
+Field **InvoicingMode.journal**
+===============================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;name
+   
+.. _igen.sales.InvoicingMode.name:
+
+Field **InvoicingMode.name**
+============================
+
+
+
+
+
+Type: BabelCharField
+
+   
+.. index::
+   single: field;price
+   
+.. _igen.sales.InvoicingMode.price:
+
+Field **InvoicingMode.price**
+=============================
+
+
+
+
+
+Type: PriceField
+
+   
+.. index::
+   single: field;channel
+   
+.. _igen.sales.InvoicingMode.channel:
+
+Field **InvoicingMode.channel**
+===============================
+
+
+
+
+        Method used to send the invoice.
+
+Type: ChoiceListField
+
+   
+.. index::
+   single: field;advance_days
+   
+.. _igen.sales.InvoicingMode.advance_days:
+
+Field **InvoicingMode.advance_days**
+====================================
+
+
+
+
+    Invoices must be sent out X days in advance so that the customer
+    has a chance to pay them in time. 
+    
+
+Type: IntegerField
+
+   
+.. index::
+   single: field;name_de
+   
+.. _igen.sales.InvoicingMode.name_de:
+
+Field **InvoicingMode.name_de**
+===============================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;name_fr
+   
+.. _igen.sales.InvoicingMode.name_fr:
+
+Field **InvoicingMode.name_fr**
+===============================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;name_nl
+   
+.. _igen.sales.InvoicingMode.name_nl:
+
+Field **InvoicingMode.name_nl**
+===============================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;name_et
+   
+.. _igen.sales.InvoicingMode.name_et:
+
+Field **InvoicingMode.name_et**
+===============================
+
+
+
+
+
+Type: CharField
+
+   
+
 
 .. index::
    pair: model; ShippingMode
-   single: field;id
-   single: field;name
-   single: field;price
-   single: field;name_de
-   single: field;name_fr
-   single: field;name_nl
-   single: field;name_et
 
 .. _igen.sales.ShippingMode:
 
 ----------------------
-Model ``ShippingMode``
+Model **ShippingMode**
 ----------------------
 
 
@@ -134,19 +416,120 @@ name_et CharField      name (et)
     
 Defined in :srcref:`/lino/modlib/sales/models.py`
 
+.. index::
+   single: field;id
+   
+.. _igen.sales.ShippingMode.id:
+
+Field **ShippingMode.id**
+=========================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;name
+   
+.. _igen.sales.ShippingMode.name:
+
+Field **ShippingMode.name**
+===========================
+
+
+
+
+
+Type: BabelCharField
+
+   
+.. index::
+   single: field;price
+   
+.. _igen.sales.ShippingMode.price:
+
+Field **ShippingMode.price**
+============================
+
+
+
+
+
+Type: PriceField
+
+   
+.. index::
+   single: field;name_de
+   
+.. _igen.sales.ShippingMode.name_de:
+
+Field **ShippingMode.name_de**
+==============================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;name_fr
+   
+.. _igen.sales.ShippingMode.name_fr:
+
+Field **ShippingMode.name_fr**
+==============================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;name_nl
+   
+.. _igen.sales.ShippingMode.name_nl:
+
+Field **ShippingMode.name_nl**
+==============================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;name_et
+   
+.. _igen.sales.ShippingMode.name_et:
+
+Field **ShippingMode.name_et**
+==============================
+
+
+
+
+
+Type: CharField
+
+   
+
 
 .. index::
    pair: model; SalesRule
-   single: field;id
-   single: field;journal
-   single: field;imode
-   single: field;shipping_mode
-   single: field;payment_term
 
 .. _igen.sales.SalesRule:
 
 -------------------
-Model ``SalesRule``
+Model **SalesRule**
 -------------------
 
 
@@ -167,36 +550,90 @@ payment_term  ForeignKey payment term (Tasumistingimused)
     
 Defined in :srcref:`/lino/modlib/sales/models.py`
 
+.. index::
+   single: field;id
+   
+.. _igen.sales.SalesRule.id:
+
+Field **SalesRule.id**
+======================
+
+
+
+
+
+Type: AutoField
+
+   
+.. index::
+   single: field;journal
+   
+.. _igen.sales.SalesRule.journal:
+
+Field **SalesRule.journal**
+===========================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;imode
+   
+.. _igen.sales.SalesRule.imode:
+
+Field **SalesRule.imode**
+=========================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;shipping_mode
+   
+.. _igen.sales.SalesRule.shipping_mode:
+
+Field **SalesRule.shipping_mode**
+=================================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;payment_term
+   
+.. _igen.sales.SalesRule.payment_term:
+
+Field **SalesRule.payment_term**
+================================
+
+
+
+
+
+Type: ForeignKey
+
+   
+
 
 .. index::
    pair: model; SalesDocument
-   single: field;id
-   single: field;must_build
-   single: field;person
-   single: field;company
-   single: field;contact
-   single: field;language
-   single: field;journal
-   single: field;number
-   single: field;sent_time
-   single: field;creation_date
-   single: field;your_ref
-   single: field;imode
-   single: field;shipping_mode
-   single: field;payment_term
-   single: field;sales_remark
-   single: field;subject
-   single: field;vat_exempt
-   single: field;item_vat
-   single: field;total_excl
-   single: field;total_vat
-   single: field;intro
-   single: field;user
 
 .. _igen.sales.SalesDocument:
 
 -----------------------
-Model ``SalesDocument``
+Model **SalesDocument**
 -----------------------
 
 
@@ -234,40 +671,345 @@ user          ForeignKey    user (Benutzer)
     
 Defined in :srcref:`/lino/modlib/sales/models.py`
 
+.. index::
+   single: field;id
+   
+.. _igen.sales.SalesDocument.id:
+
+Field **SalesDocument.id**
+==========================
+
+
+
+
+
+Type: AutoField
+
+   
+.. index::
+   single: field;must_build
+   
+.. _igen.sales.SalesDocument.must_build:
+
+Field **SalesDocument.must_build**
+==================================
+
+
+
+
+
+Type: BooleanField
+
+   
+.. index::
+   single: field;person
+   
+.. _igen.sales.SalesDocument.person:
+
+Field **SalesDocument.person**
+==============================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;company
+   
+.. _igen.sales.SalesDocument.company:
+
+Field **SalesDocument.company**
+===============================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;contact
+   
+.. _igen.sales.SalesDocument.contact:
+
+Field **SalesDocument.contact**
+===============================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;language
+   
+.. _igen.sales.SalesDocument.language:
+
+Field **SalesDocument.language**
+================================
+
+
+
+
+
+Type: LanguageField
+
+   
+.. index::
+   single: field;journal
+   
+.. _igen.sales.SalesDocument.journal:
+
+Field **SalesDocument.journal**
+===============================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;number
+   
+.. _igen.sales.SalesDocument.number:
+
+Field **SalesDocument.number**
+==============================
+
+
+
+
+
+Type: IntegerField
+
+   
+.. index::
+   single: field;sent_time
+   
+.. _igen.sales.SalesDocument.sent_time:
+
+Field **SalesDocument.sent_time**
+=================================
+
+
+
+
+
+Type: DateTimeField
+
+   
+.. index::
+   single: field;creation_date
+   
+.. _igen.sales.SalesDocument.creation_date:
+
+Field **SalesDocument.creation_date**
+=====================================
+
+
+
+
+
+Type: DateField
+
+   
+.. index::
+   single: field;your_ref
+   
+.. _igen.sales.SalesDocument.your_ref:
+
+Field **SalesDocument.your_ref**
+================================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;imode
+   
+.. _igen.sales.SalesDocument.imode:
+
+Field **SalesDocument.imode**
+=============================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;shipping_mode
+   
+.. _igen.sales.SalesDocument.shipping_mode:
+
+Field **SalesDocument.shipping_mode**
+=====================================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;payment_term
+   
+.. _igen.sales.SalesDocument.payment_term:
+
+Field **SalesDocument.payment_term**
+====================================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;sales_remark
+   
+.. _igen.sales.SalesDocument.sales_remark:
+
+Field **SalesDocument.sales_remark**
+====================================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;subject
+   
+.. _igen.sales.SalesDocument.subject:
+
+Field **SalesDocument.subject**
+===============================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;vat_exempt
+   
+.. _igen.sales.SalesDocument.vat_exempt:
+
+Field **SalesDocument.vat_exempt**
+==================================
+
+
+
+
+
+Type: BooleanField
+
+   
+.. index::
+   single: field;item_vat
+   
+.. _igen.sales.SalesDocument.item_vat:
+
+Field **SalesDocument.item_vat**
+================================
+
+
+
+
+
+Type: BooleanField
+
+   
+.. index::
+   single: field;total_excl
+   
+.. _igen.sales.SalesDocument.total_excl:
+
+Field **SalesDocument.total_excl**
+==================================
+
+
+
+
+
+Type: PriceField
+
+   
+.. index::
+   single: field;total_vat
+   
+.. _igen.sales.SalesDocument.total_vat:
+
+Field **SalesDocument.total_vat**
+=================================
+
+
+
+
+
+Type: PriceField
+
+   
+.. index::
+   single: field;intro
+   
+.. _igen.sales.SalesDocument.intro:
+
+Field **SalesDocument.intro**
+=============================
+
+
+
+
+
+Type: TextField
+
+   
+.. index::
+   single: field;user
+   
+.. _igen.sales.SalesDocument.user:
+
+Field **SalesDocument.user**
+============================
+
+
+
+
+
+Type: ForeignKey
+
+   
+
 
 .. index::
    pair: model; Order
-   single: field;id
-   single: field;must_build
-   single: field;person
-   single: field;company
-   single: field;contact
-   single: field;language
-   single: field;journal
-   single: field;number
-   single: field;sent_time
-   single: field;creation_date
-   single: field;your_ref
-   single: field;imode
-   single: field;shipping_mode
-   single: field;payment_term
-   single: field;sales_remark
-   single: field;subject
-   single: field;vat_exempt
-   single: field;item_vat
-   single: field;total_excl
-   single: field;total_vat
-   single: field;intro
-   single: field;user
-   single: field;salesdocument_ptr
-   single: field;cycle
-   single: field;start_date
-   single: field;covered_until
 
 .. _igen.sales.Order:
 
 ---------------
-Model ``Order``
+Model **Order**
 ---------------
 
 
@@ -308,44 +1050,406 @@ covered_until     MyDateField   covered until
     
 Defined in :srcref:`/lino/modlib/sales/models.py`
 
+.. index::
+   single: field;id
+   
+.. _igen.sales.Order.id:
+
+Field **Order.id**
+==================
+
+
+
+
+
+Type: AutoField
+
+   
+.. index::
+   single: field;must_build
+   
+.. _igen.sales.Order.must_build:
+
+Field **Order.must_build**
+==========================
+
+
+
+
+
+Type: BooleanField
+
+   
+.. index::
+   single: field;person
+   
+.. _igen.sales.Order.person:
+
+Field **Order.person**
+======================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;company
+   
+.. _igen.sales.Order.company:
+
+Field **Order.company**
+=======================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;contact
+   
+.. _igen.sales.Order.contact:
+
+Field **Order.contact**
+=======================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;language
+   
+.. _igen.sales.Order.language:
+
+Field **Order.language**
+========================
+
+
+
+
+
+Type: LanguageField
+
+   
+.. index::
+   single: field;journal
+   
+.. _igen.sales.Order.journal:
+
+Field **Order.journal**
+=======================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;number
+   
+.. _igen.sales.Order.number:
+
+Field **Order.number**
+======================
+
+
+
+
+
+Type: IntegerField
+
+   
+.. index::
+   single: field;sent_time
+   
+.. _igen.sales.Order.sent_time:
+
+Field **Order.sent_time**
+=========================
+
+
+
+
+
+Type: DateTimeField
+
+   
+.. index::
+   single: field;creation_date
+   
+.. _igen.sales.Order.creation_date:
+
+Field **Order.creation_date**
+=============================
+
+
+
+
+
+Type: DateField
+
+   
+.. index::
+   single: field;your_ref
+   
+.. _igen.sales.Order.your_ref:
+
+Field **Order.your_ref**
+========================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;imode
+   
+.. _igen.sales.Order.imode:
+
+Field **Order.imode**
+=====================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;shipping_mode
+   
+.. _igen.sales.Order.shipping_mode:
+
+Field **Order.shipping_mode**
+=============================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;payment_term
+   
+.. _igen.sales.Order.payment_term:
+
+Field **Order.payment_term**
+============================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;sales_remark
+   
+.. _igen.sales.Order.sales_remark:
+
+Field **Order.sales_remark**
+============================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;subject
+   
+.. _igen.sales.Order.subject:
+
+Field **Order.subject**
+=======================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;vat_exempt
+   
+.. _igen.sales.Order.vat_exempt:
+
+Field **Order.vat_exempt**
+==========================
+
+
+
+
+
+Type: BooleanField
+
+   
+.. index::
+   single: field;item_vat
+   
+.. _igen.sales.Order.item_vat:
+
+Field **Order.item_vat**
+========================
+
+
+
+
+
+Type: BooleanField
+
+   
+.. index::
+   single: field;total_excl
+   
+.. _igen.sales.Order.total_excl:
+
+Field **Order.total_excl**
+==========================
+
+
+
+
+
+Type: PriceField
+
+   
+.. index::
+   single: field;total_vat
+   
+.. _igen.sales.Order.total_vat:
+
+Field **Order.total_vat**
+=========================
+
+
+
+
+
+Type: PriceField
+
+   
+.. index::
+   single: field;intro
+   
+.. _igen.sales.Order.intro:
+
+Field **Order.intro**
+=====================
+
+
+
+
+
+Type: TextField
+
+   
+.. index::
+   single: field;user
+   
+.. _igen.sales.Order.user:
+
+Field **Order.user**
+====================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;salesdocument_ptr
+   
+.. _igen.sales.Order.salesdocument_ptr:
+
+Field **Order.salesdocument_ptr**
+=================================
+
+
+
+
+
+Type: OneToOneField
+
+   
+.. index::
+   single: field;cycle
+   
+.. _igen.sales.Order.cycle:
+
+Field **Order.cycle**
+=====================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;start_date
+   
+.. _igen.sales.Order.start_date:
+
+Field **Order.start_date**
+==========================
+
+
+
+Beginning of payable period. 
+      Set to blank if no bill should be generated
+
+Type: MyDateField
+
+   
+.. index::
+   single: field;covered_until
+   
+.. _igen.sales.Order.covered_until:
+
+Field **Order.covered_until**
+=============================
+
+
+
+
+
+Type: MyDateField
+
+   
+
 
 .. index::
    pair: model; Invoice
-   single: field;id
-   single: field;must_build
-   single: field;person
-   single: field;company
-   single: field;contact
-   single: field;language
-   single: field;journal
-   single: field;number
-   single: field;sent_time
-   single: field;creation_date
-   single: field;your_ref
-   single: field;imode
-   single: field;shipping_mode
-   single: field;payment_term
-   single: field;sales_remark
-   single: field;subject
-   single: field;vat_exempt
-   single: field;item_vat
-   single: field;total_excl
-   single: field;total_vat
-   single: field;intro
-   single: field;user
-   single: field;salesdocument_ptr
-   single: field;journal
-   single: field;number
-   single: field;value_date
-   single: field;ledger_remark
-   single: field;booked
-   single: field;due_date
-   single: field;order
 
 .. _igen.sales.Invoice:
 
 -----------------
-Model ``Invoice``
+Model **Invoice**
 -----------------
 
 
@@ -390,24 +1494,465 @@ order             ForeignKey    order
     
 Defined in :srcref:`/lino/modlib/sales/models.py`
 
+.. index::
+   single: field;id
+   
+.. _igen.sales.Invoice.id:
+
+Field **Invoice.id**
+====================
+
+
+
+
+
+Type: AutoField
+
+   
+.. index::
+   single: field;must_build
+   
+.. _igen.sales.Invoice.must_build:
+
+Field **Invoice.must_build**
+============================
+
+
+
+
+
+Type: BooleanField
+
+   
+.. index::
+   single: field;person
+   
+.. _igen.sales.Invoice.person:
+
+Field **Invoice.person**
+========================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;company
+   
+.. _igen.sales.Invoice.company:
+
+Field **Invoice.company**
+=========================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;contact
+   
+.. _igen.sales.Invoice.contact:
+
+Field **Invoice.contact**
+=========================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;language
+   
+.. _igen.sales.Invoice.language:
+
+Field **Invoice.language**
+==========================
+
+
+
+
+
+Type: LanguageField
+
+   
+.. index::
+   single: field;journal
+   
+.. _igen.sales.Invoice.journal:
+
+Field **Invoice.journal**
+=========================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;number
+   
+.. _igen.sales.Invoice.number:
+
+Field **Invoice.number**
+========================
+
+
+
+
+
+Type: IntegerField
+
+   
+.. index::
+   single: field;sent_time
+   
+.. _igen.sales.Invoice.sent_time:
+
+Field **Invoice.sent_time**
+===========================
+
+
+
+
+
+Type: DateTimeField
+
+   
+.. index::
+   single: field;creation_date
+   
+.. _igen.sales.Invoice.creation_date:
+
+Field **Invoice.creation_date**
+===============================
+
+
+
+
+
+Type: DateField
+
+   
+.. index::
+   single: field;your_ref
+   
+.. _igen.sales.Invoice.your_ref:
+
+Field **Invoice.your_ref**
+==========================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;imode
+   
+.. _igen.sales.Invoice.imode:
+
+Field **Invoice.imode**
+=======================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;shipping_mode
+   
+.. _igen.sales.Invoice.shipping_mode:
+
+Field **Invoice.shipping_mode**
+===============================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;payment_term
+   
+.. _igen.sales.Invoice.payment_term:
+
+Field **Invoice.payment_term**
+==============================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;sales_remark
+   
+.. _igen.sales.Invoice.sales_remark:
+
+Field **Invoice.sales_remark**
+==============================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;subject
+   
+.. _igen.sales.Invoice.subject:
+
+Field **Invoice.subject**
+=========================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;vat_exempt
+   
+.. _igen.sales.Invoice.vat_exempt:
+
+Field **Invoice.vat_exempt**
+============================
+
+
+
+
+
+Type: BooleanField
+
+   
+.. index::
+   single: field;item_vat
+   
+.. _igen.sales.Invoice.item_vat:
+
+Field **Invoice.item_vat**
+==========================
+
+
+
+
+
+Type: BooleanField
+
+   
+.. index::
+   single: field;total_excl
+   
+.. _igen.sales.Invoice.total_excl:
+
+Field **Invoice.total_excl**
+============================
+
+
+
+
+
+Type: PriceField
+
+   
+.. index::
+   single: field;total_vat
+   
+.. _igen.sales.Invoice.total_vat:
+
+Field **Invoice.total_vat**
+===========================
+
+
+
+
+
+Type: PriceField
+
+   
+.. index::
+   single: field;intro
+   
+.. _igen.sales.Invoice.intro:
+
+Field **Invoice.intro**
+=======================
+
+
+
+
+
+Type: TextField
+
+   
+.. index::
+   single: field;user
+   
+.. _igen.sales.Invoice.user:
+
+Field **Invoice.user**
+======================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;salesdocument_ptr
+   
+.. _igen.sales.Invoice.salesdocument_ptr:
+
+Field **Invoice.salesdocument_ptr**
+===================================
+
+
+
+
+
+Type: OneToOneField
+
+   
+.. index::
+   single: field;journal
+   
+.. _igen.sales.Invoice.journal:
+
+Field **Invoice.journal**
+=========================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;number
+   
+.. _igen.sales.Invoice.number:
+
+Field **Invoice.number**
+========================
+
+
+
+
+
+Type: IntegerField
+
+   
+.. index::
+   single: field;value_date
+   
+.. _igen.sales.Invoice.value_date:
+
+Field **Invoice.value_date**
+============================
+
+
+
+
+
+Type: DateField
+
+   
+.. index::
+   single: field;ledger_remark
+   
+.. _igen.sales.Invoice.ledger_remark:
+
+Field **Invoice.ledger_remark**
+===============================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;booked
+   
+.. _igen.sales.Invoice.booked:
+
+Field **Invoice.booked**
+========================
+
+
+
+
+
+Type: BooleanField
+
+   
+.. index::
+   single: field;due_date
+   
+.. _igen.sales.Invoice.due_date:
+
+Field **Invoice.due_date**
+==========================
+
+
+
+
+
+Type: MyDateField
+
+   
+.. index::
+   single: field;order
+   
+.. _igen.sales.Invoice.order:
+
+Field **Invoice.order**
+=======================
+
+
+
+
+
+Type: ForeignKey
+
+   
+
 
 .. index::
    pair: model; DocItem
-   single: field;id
-   single: field;document
-   single: field;pos
-   single: field;product
-   single: field;title
-   single: field;description
-   single: field;discount
-   single: field;unit_price
-   single: field;qty
-   single: field;total
 
 .. _igen.sales.DocItem:
 
 -----------------
-Model ``DocItem``
+Model **DocItem**
 -----------------
 
 
@@ -431,5 +1976,156 @@ total       PriceField    total
 
     
 Defined in :srcref:`/lino/modlib/sales/models.py`
+
+.. index::
+   single: field;id
+   
+.. _igen.sales.DocItem.id:
+
+Field **DocItem.id**
+====================
+
+
+
+
+
+Type: AutoField
+
+   
+.. index::
+   single: field;document
+   
+.. _igen.sales.DocItem.document:
+
+Field **DocItem.document**
+==========================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;pos
+   
+.. _igen.sales.DocItem.pos:
+
+Field **DocItem.pos**
+=====================
+
+
+
+
+
+Type: IntegerField
+
+   
+.. index::
+   single: field;product
+   
+.. _igen.sales.DocItem.product:
+
+Field **DocItem.product**
+=========================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;title
+   
+.. _igen.sales.DocItem.title:
+
+Field **DocItem.title**
+=======================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;description
+   
+.. _igen.sales.DocItem.description:
+
+Field **DocItem.description**
+=============================
+
+
+
+
+
+Type: TextField
+
+   
+.. index::
+   single: field;discount
+   
+.. _igen.sales.DocItem.discount:
+
+Field **DocItem.discount**
+==========================
+
+
+
+
+
+Type: IntegerField
+
+   
+.. index::
+   single: field;unit_price
+   
+.. _igen.sales.DocItem.unit_price:
+
+Field **DocItem.unit_price**
+============================
+
+
+
+
+
+Type: PriceField
+
+   
+.. index::
+   single: field;qty
+   
+.. _igen.sales.DocItem.qty:
+
+Field **DocItem.qty**
+=====================
+
+
+
+
+
+Type: QuantityField
+
+   
+.. index::
+   single: field;total
+   
+.. _igen.sales.DocItem.total:
+
+Field **DocItem.total**
+=======================
+
+
+
+
+
+Type: PriceField
+
+   
 
 

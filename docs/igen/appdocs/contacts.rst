@@ -15,32 +15,24 @@ It defines tables like `Person` and `Company`
 
 
 
+.. contents:: Table of Contents
+
+
 
 .. index::
    pair: model; CompanyType
-   single: field;id
-   single: field;name
-   single: field;abbr
-   single: field;name_de
-   single: field;name_fr
-   single: field;name_nl
-   single: field;name_et
-   single: field;abbr_de
-   single: field;abbr_fr
-   single: field;abbr_nl
-   single: field;abbr_et
 
 .. _igen.contacts.CompanyType:
 
 ---------------------
-Model ``CompanyType``
+Model **CompanyType**
 ---------------------
 
 
 
 
-    Implements the :class:`contacts.CompanyType` convention.
-    
+Implements the :class:`contacts.CompanyType` convention.
+
   
 ======= ============== =================================
 name    type           verbose name                     
@@ -61,27 +53,187 @@ abbr_et CharField      Abbreviation (et)
     
 Defined in :srcref:`/lino/modlib/contacts/models.py`
 
+.. index::
+   single: field;id
+   
+.. _igen.contacts.CompanyType.id:
+
+Field **CompanyType.id**
+========================
+
+
+
+
+
+Type: AutoField
+
+   
+.. index::
+   single: field;name
+   
+.. _igen.contacts.CompanyType.name:
+
+Field **CompanyType.name**
+==========================
+
+
+
+
+
+Type: BabelCharField
+
+   
+.. index::
+   single: field;abbr
+   
+.. _igen.contacts.CompanyType.abbr:
+
+Field **CompanyType.abbr**
+==========================
+
+
+
+
+
+Type: BabelCharField
+
+   
+.. index::
+   single: field;name_de
+   
+.. _igen.contacts.CompanyType.name_de:
+
+Field **CompanyType.name_de**
+=============================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;name_fr
+   
+.. _igen.contacts.CompanyType.name_fr:
+
+Field **CompanyType.name_fr**
+=============================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;name_nl
+   
+.. _igen.contacts.CompanyType.name_nl:
+
+Field **CompanyType.name_nl**
+=============================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;name_et
+   
+.. _igen.contacts.CompanyType.name_et:
+
+Field **CompanyType.name_et**
+=============================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;abbr_de
+   
+.. _igen.contacts.CompanyType.abbr_de:
+
+Field **CompanyType.abbr_de**
+=============================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;abbr_fr
+   
+.. _igen.contacts.CompanyType.abbr_fr:
+
+Field **CompanyType.abbr_fr**
+=============================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;abbr_nl
+   
+.. _igen.contacts.CompanyType.abbr_nl:
+
+Field **CompanyType.abbr_nl**
+=============================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;abbr_et
+   
+.. _igen.contacts.CompanyType.abbr_et:
+
+Field **CompanyType.abbr_et**
+=============================
+
+
+
+
+
+Type: CharField
+
+   
+
 
 .. index::
    pair: model; ContactType
-   single: field;id
-   single: field;name
-   single: field;name_de
-   single: field;name_fr
-   single: field;name_nl
-   single: field;name_et
 
 .. _igen.contacts.ContactType:
 
 ---------------------
-Model ``ContactType``
+Model **ContactType**
 ---------------------
 
 
 
 
-    Implements the :class:`contacts.ContactType` convention.
-    
+Implements the :class:`contacts.ContactType` convention.
+
   
 ======= ============== =================================
 name    type           verbose name                     
@@ -97,29 +249,113 @@ name_et CharField      Designation (et)
     
 Defined in :srcref:`/lino/modlib/contacts/models.py`
 
+.. index::
+   single: field;id
+   
+.. _igen.contacts.ContactType.id:
+
+Field **ContactType.id**
+========================
+
+
+
+
+
+Type: AutoField
+
+   
+.. index::
+   single: field;name
+   
+.. _igen.contacts.ContactType.name:
+
+Field **ContactType.name**
+==========================
+
+
+
+
+
+Type: BabelCharField
+
+   
+.. index::
+   single: field;name_de
+   
+.. _igen.contacts.ContactType.name_de:
+
+Field **ContactType.name_de**
+=============================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;name_fr
+   
+.. _igen.contacts.ContactType.name_fr:
+
+Field **ContactType.name_fr**
+=============================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;name_nl
+   
+.. _igen.contacts.ContactType.name_nl:
+
+Field **ContactType.name_nl**
+=============================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;name_et
+   
+.. _igen.contacts.ContactType.name_et:
+
+Field **ContactType.name_et**
+=============================
+
+
+
+
+
+Type: CharField
+
+   
+
 
 .. index::
    pair: model; Contact
-   single: field;id
-   single: field;person
-   single: field;company
-   single: field;type
-   single: field;payment_term
-   single: field;vat_exempt
-   single: field;item_vat
 
 .. _igen.contacts.Contact:
 
 -----------------
-Model ``Contact``
+Model **Contact**
 -----------------
 
 
 
 
-    Represents a :class:`Person` having a (more or less known) 
-    role in a :class:`Company`.
-    
+Represents a :class:`Person` having a (more or less known) 
+role in a :class:`Company`.
+
   
 ============ ============ ======================================
 name         type         verbose name                          
@@ -136,35 +372,120 @@ item_vat     BooleanField item_vat
     
 Defined in :srcref:`/lino/modlib/contacts/models.py`
 
+.. index::
+   single: field;id
+   
+.. _igen.contacts.Contact.id:
+
+Field **Contact.id**
+====================
+
+
+
+
+
+Type: AutoField
+
+   
+.. index::
+   single: field;person
+   
+.. _igen.contacts.Contact.person:
+
+Field **Contact.person**
+========================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;company
+   
+.. _igen.contacts.Contact.company:
+
+Field **Contact.company**
+=========================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;type
+   
+.. _igen.contacts.Contact.type:
+
+Field **Contact.type**
+======================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;payment_term
+   
+.. _igen.contacts.Contact.payment_term:
+
+Field **Contact.payment_term**
+==============================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;vat_exempt
+   
+.. _igen.contacts.Contact.vat_exempt:
+
+Field **Contact.vat_exempt**
+============================
+
+
+
+
+
+Type: BooleanField
+
+   
+.. index::
+   single: field;item_vat
+   
+.. _igen.contacts.Contact.item_vat:
+
+Field **Contact.item_vat**
+==========================
+
+
+
+
+
+Type: BooleanField
+
+   
+
 
 .. index::
    pair: model; Person
-   single: field;id
-   single: field;name
-   single: field;addr1
-   single: field;street
-   single: field;street_no
-   single: field;street_box
-   single: field;addr2
-   single: field;country
-   single: field;city
-   single: field;zip_code
-   single: field;region
-   single: field;language
-   single: field;email
-   single: field;url
-   single: field;phone
-   single: field;gsm
-   single: field;fax
-   single: field;remarks
-   single: field;first_name
-   single: field;last_name
-   single: field;title
 
 .. _igen.contacts.Person:
 
 ----------------
-Model ``Person``
+Model **Person**
 ----------------
 
 
@@ -200,34 +521,334 @@ title      CharField     Title (Anrede,Pealkiri)
     
 Defined in :srcref:`/lino/sites/igen/models.py`
 
+.. index::
+   single: field;id
+   
+.. _igen.contacts.Person.id:
+
+Field **Person.id**
+===================
+
+
+
+
+
+Type: AutoField
+
+   
+.. index::
+   single: field;name
+   
+.. _igen.contacts.Person.name:
+
+Field **Person.name**
+=====================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;addr1
+   
+.. _igen.contacts.Person.addr1:
+
+Field **Person.addr1**
+======================
+
+
+
+Address line before street
+
+Type: CharField
+
+   
+.. index::
+   single: field;street
+   
+.. _igen.contacts.Person.street:
+
+Field **Person.street**
+=======================
+
+
+
+Name of street. Without house number.
+
+Type: CharField
+
+   
+.. index::
+   single: field;street_no
+   
+.. _igen.contacts.Person.street_no:
+
+Field **Person.street_no**
+==========================
+
+
+
+House number
+
+Type: CharField
+
+   
+.. index::
+   single: field;street_box
+   
+.. _igen.contacts.Person.street_box:
+
+Field **Person.street_box**
+===========================
+
+
+
+Text to print after :attr:`steet_no` on the same line
+
+Type: CharField
+
+   
+.. index::
+   single: field;addr2
+   
+.. _igen.contacts.Person.addr2:
+
+Field **Person.addr2**
+======================
+
+
+
+Address line to print below street line
+
+Type: CharField
+
+   
+.. index::
+   single: field;country
+   
+.. _igen.contacts.Person.country:
+
+Field **Person.country**
+========================
+
+
+
+The country where this contact is located.
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;city
+   
+.. _igen.contacts.Person.city:
+
+Field **Person.city**
+=====================
+
+
+
+
+        The city where this contact is located.
+        The list of choices for this field is context-sensitive
+        and depends on the :attr:`country`.
+        
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;zip_code
+   
+.. _igen.contacts.Person.zip_code:
+
+Field **Person.zip_code**
+=========================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;region
+   
+.. _igen.contacts.Person.region:
+
+Field **Person.region**
+=======================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;language
+   
+.. _igen.contacts.Person.language:
+
+Field **Person.language**
+=========================
+
+
+
+
+
+Type: LanguageField
+
+   
+.. index::
+   single: field;email
+   
+.. _igen.contacts.Person.email:
+
+Field **Person.email**
+======================
+
+
+
+
+
+Type: EmailField
+
+   
+.. index::
+   single: field;url
+   
+.. _igen.contacts.Person.url:
+
+Field **Person.url**
+====================
+
+
+
+
+
+Type: URLField
+
+   
+.. index::
+   single: field;phone
+   
+.. _igen.contacts.Person.phone:
+
+Field **Person.phone**
+======================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;gsm
+   
+.. _igen.contacts.Person.gsm:
+
+Field **Person.gsm**
+====================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;fax
+   
+.. _igen.contacts.Person.fax:
+
+Field **Person.fax**
+====================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;remarks
+   
+.. _igen.contacts.Person.remarks:
+
+Field **Person.remarks**
+========================
+
+
+
+
+
+Type: TextField
+
+   
+.. index::
+   single: field;first_name
+   
+.. _igen.contacts.Person.first_name:
+
+Field **Person.first_name**
+===========================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;last_name
+   
+.. _igen.contacts.Person.last_name:
+
+Field **Person.last_name**
+==========================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;title
+   
+.. _igen.contacts.Person.title:
+
+Field **Person.title**
+======================
+
+
+
+
+
+Type: CharField
+
+   
+
 
 .. index::
    pair: model; Company
-   single: field;id
-   single: field;name
-   single: field;addr1
-   single: field;street
-   single: field;street_no
-   single: field;street_box
-   single: field;addr2
-   single: field;country
-   single: field;city
-   single: field;zip_code
-   single: field;region
-   single: field;language
-   single: field;email
-   single: field;url
-   single: field;phone
-   single: field;gsm
-   single: field;fax
-   single: field;remarks
-   single: field;vat_id
-   single: field;type
 
 .. _igen.contacts.Company:
 
 -----------------
-Model ``Company``
+Model **Company**
 -----------------
 
 
@@ -261,5 +882,310 @@ type       ForeignKey    Company type (Firmenart,Firmaliik)
 
     
 Defined in :srcref:`/lino/sites/igen/models.py`
+
+.. index::
+   single: field;id
+   
+.. _igen.contacts.Company.id:
+
+Field **Company.id**
+====================
+
+
+
+
+
+Type: AutoField
+
+   
+.. index::
+   single: field;name
+   
+.. _igen.contacts.Company.name:
+
+Field **Company.name**
+======================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;addr1
+   
+.. _igen.contacts.Company.addr1:
+
+Field **Company.addr1**
+=======================
+
+
+
+Address line before street
+
+Type: CharField
+
+   
+.. index::
+   single: field;street
+   
+.. _igen.contacts.Company.street:
+
+Field **Company.street**
+========================
+
+
+
+Name of street. Without house number.
+
+Type: CharField
+
+   
+.. index::
+   single: field;street_no
+   
+.. _igen.contacts.Company.street_no:
+
+Field **Company.street_no**
+===========================
+
+
+
+House number
+
+Type: CharField
+
+   
+.. index::
+   single: field;street_box
+   
+.. _igen.contacts.Company.street_box:
+
+Field **Company.street_box**
+============================
+
+
+
+Text to print after :attr:`steet_no` on the same line
+
+Type: CharField
+
+   
+.. index::
+   single: field;addr2
+   
+.. _igen.contacts.Company.addr2:
+
+Field **Company.addr2**
+=======================
+
+
+
+Address line to print below street line
+
+Type: CharField
+
+   
+.. index::
+   single: field;country
+   
+.. _igen.contacts.Company.country:
+
+Field **Company.country**
+=========================
+
+
+
+The country where this contact is located.
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;city
+   
+.. _igen.contacts.Company.city:
+
+Field **Company.city**
+======================
+
+
+
+
+        The city where this contact is located.
+        The list of choices for this field is context-sensitive
+        and depends on the :attr:`country`.
+        
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;zip_code
+   
+.. _igen.contacts.Company.zip_code:
+
+Field **Company.zip_code**
+==========================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;region
+   
+.. _igen.contacts.Company.region:
+
+Field **Company.region**
+========================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;language
+   
+.. _igen.contacts.Company.language:
+
+Field **Company.language**
+==========================
+
+
+
+
+
+Type: LanguageField
+
+   
+.. index::
+   single: field;email
+   
+.. _igen.contacts.Company.email:
+
+Field **Company.email**
+=======================
+
+
+
+
+
+Type: EmailField
+
+   
+.. index::
+   single: field;url
+   
+.. _igen.contacts.Company.url:
+
+Field **Company.url**
+=====================
+
+
+
+
+
+Type: URLField
+
+   
+.. index::
+   single: field;phone
+   
+.. _igen.contacts.Company.phone:
+
+Field **Company.phone**
+=======================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;gsm
+   
+.. _igen.contacts.Company.gsm:
+
+Field **Company.gsm**
+=====================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;fax
+   
+.. _igen.contacts.Company.fax:
+
+Field **Company.fax**
+=====================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;remarks
+   
+.. _igen.contacts.Company.remarks:
+
+Field **Company.remarks**
+=========================
+
+
+
+
+
+Type: TextField
+
+   
+.. index::
+   single: field;vat_id
+   
+.. _igen.contacts.Company.vat_id:
+
+Field **Company.vat_id**
+========================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;type
+   
+.. _igen.contacts.Company.type:
+
+Field **Company.type**
+======================
+
+
+
+
+
+Type: ForeignKey
+
+   
 
 

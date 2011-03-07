@@ -1,21 +1,2 @@
 T:\hgwork\lino\docs\autodoc\lino.modlib.rst:13: (WARNING/2) toctree contains reference to nonexisting document u'autodoc/lino.modlib.sales'
-T:\hgwork\lino\docs\blog\2011\0307.rst:42: (ERROR/3) Unknown interpreted text role "lcass".
-T:\hgwork\lino\docs\igen\appdocs\igen.rst:47: (WARNING/2) Literal block ends without a blank line; unexpected unindent.
-T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:41: WARNING: py:class reference target not found: contacts.CompanyType
-T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:80: WARNING: py:class reference target not found: contacts.ContactType
-T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:113: WARNING: py:class reference target not found: Person
-T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:113: WARNING: py:class reference target not found: Company
-T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:331: WARNING: py:class reference target not found: contacts.Company
-T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:67: WARNING: py:class reference target not found: countries.Country
-T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:102: WARNING: py:class reference target not found: countries.City
-T:\hgwork\lino\docs\dsbe\appdocs\dsbe.rst:642: WARNING: py:class reference target not found: CourseProvider
-T:\hgwork\lino\docs\dsbe\appdocs\links.rst:27: WARNING: py:class reference target not found: links.LinkType
-T:\hgwork\lino\docs\dsbe\appdocs\properties.rst:91: WARNING: py:attr reference target not found: PropValue.value
-T:\hgwork\lino\docs\igen\appdocs\contacts.rst:42: WARNING: py:class reference target not found: contacts.CompanyType
-T:\hgwork\lino\docs\igen\appdocs\contacts.rst:83: WARNING: py:class reference target not found: contacts.ContactType
-T:\hgwork\lino\docs\igen\appdocs\contacts.rst:120: WARNING: py:class reference target not found: Person
-T:\hgwork\lino\docs\igen\appdocs\contacts.rst:120: WARNING: py:class reference target not found: Company
-T:\hgwork\lino\docs\igen\appdocs\countries.rst:70: WARNING: py:class reference target not found: countries.Country
-T:\hgwork\lino\docs\igen\appdocs\countries.rst:106: WARNING: py:class reference target not found: countries.City
-T:\hgwork\lino\docs\igen\appdocs\sales.rst:204: WARNING: py:class reference target not found: Order
-T:\hgwork\lino\docs\igen\appdocs\sales.rst:204: WARNING: py:class reference target not found: Invoice
+T:\hgwork\lino\docs\autodoc\lino.test_apps.1.rst:2: WARNING: py:mod reference target not found: lino.test_apps.1

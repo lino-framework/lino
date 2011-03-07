@@ -10,20 +10,17 @@ Defined in :srcref:`/lino/models.py`
 
 
 
+.. contents:: Table of Contents
+
+
 
 .. index::
    pair: model; SiteConfig
-   single: field;id
-   single: field;default_build_method
-   single: field;site_company
-   single: field;next_partner_id
-   single: field;sales_base_account
-   single: field;sales_vat_account
 
 .. _igen.lino.SiteConfig:
 
 --------------------
-Model ``SiteConfig``
+Model **SiteConfig**
 --------------------
 
 
@@ -43,5 +40,96 @@ sales_vat_account    ForeignKey   Sales VAT account
 
     
 Defined in :srcref:`/lino/models.py`
+
+.. index::
+   single: field;id
+   
+.. _igen.lino.SiteConfig.id:
+
+Field **SiteConfig.id**
+=======================
+
+
+
+
+
+Type: AutoField
+
+   
+.. index::
+   single: field;default_build_method
+   
+.. _igen.lino.SiteConfig.default_build_method:
+
+Field **SiteConfig.default_build_method**
+=========================================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;site_company
+   
+.. _igen.lino.SiteConfig.site_company:
+
+Field **SiteConfig.site_company**
+=================================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;next_partner_id
+   
+.. _igen.lino.SiteConfig.next_partner_id:
+
+Field **SiteConfig.next_partner_id**
+====================================
+
+
+
+
+
+Type: IntegerField
+
+   
+.. index::
+   single: field;sales_base_account
+   
+.. _igen.lino.SiteConfig.sales_base_account:
+
+Field **SiteConfig.sales_base_account**
+=======================================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;sales_vat_account
+   
+.. _igen.lino.SiteConfig.sales_vat_account:
+
+Field **SiteConfig.sales_vat_account**
+======================================
+
+
+
+
+
+Type: ForeignKey
+
+   
 
 
