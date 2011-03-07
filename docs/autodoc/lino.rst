@@ -41,4 +41,5 @@ Subpackages
     lino.mixins.reminder
     lino.sites
     lino.test_apps
+    lino.modlib
 

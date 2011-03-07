@@ -13,7 +13,8 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-import cStringIO as StringIO
+#~ import cStringIO as StringIO
+import StringIO 
 
 class Column(object):
     def __init__(self,index,header,width=None):

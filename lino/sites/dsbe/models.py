@@ -270,17 +270,14 @@ class Partner(mixins.DiffingMixin,models.Model):
 
 class Person(Partner,contacts.Person):
     """
-    Implements :class:`contacts.Person`.
+    Represents a physical person.
     
-    This is also Printable just to demonstrate that not only Notes are printables.
-    
-    Inner class Meta is necessary because of :doc:`/tickets/14`.
     """
     
     class Meta(contacts.Person.Meta):
         app_label = 'contacts'
-        verbose_name = _("person")
-        verbose_name_plural = _("persons")
+        verbose_name = _("person") # :doc:`/tickets/14`
+        verbose_name_plural = _("persons") # :doc:`/tickets/14`
         
     #~ first_name = models.CharField(max_length=200,blank=True,verbose_name=_('First name'))
     #~ last_name = models.CharField(max_length=200,blank=True,verbose_name=_('Last name'))

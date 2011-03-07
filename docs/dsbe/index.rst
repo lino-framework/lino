@@ -20,4 +20,5 @@ The rest of this documentation is currently only in German since the the pilot c
   models
   tim2lino
   funktionale_beschreibung
+  appdocs/index
 

@@ -53,7 +53,7 @@ for app in settings.INSTALLED_APPS:
     if os.path.isdir(dirname):
         config_dirs.append(ConfigDir(dirname.decode(fs_encoding),False))
 
-dirname = os.path.join(settings.LINO_SITE.project_dir,'config')
+dirname = os.path.join(settings.LINO.project_dir,'config')
 if os.path.isdir(dirname):
     LOCAL_CONFIG_DIR = ConfigDir(dirname,True)
     config_dirs.append(LOCAL_CONFIG_DIR)

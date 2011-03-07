@@ -18,9 +18,9 @@ from lino.sites.std.settings import *
 
 from lino.utils.jsgen import js_code
 
-#~ BaeLinoSite = LinoSite
 
-class LinoSite(LinoSite):
+#~ class LinoSite(LinoSite):
+class Lino(Lino):
     source_dir = os.path.dirname(__file__)
     title = "Lino/DSBE"
     domain = "dsbe.saffre-rumma.net"
@@ -36,7 +36,7 @@ class LinoSite(LinoSite):
         #~ print 20110305, self.__class__
 
     def configure(self,sc):
-        super(LinoSite,self).configure(sc)
+        super(Lino,self).configure(sc)
         
     def setup_main_menu(self):
   
@@ -142,20 +142,20 @@ class LinoSite(LinoSite):
         #~ self._menu.items.append(dict(xtype='menuitem',html='<a href="/">%s</a>' % _("~Home")))
 
 
-LINO_SITE = LinoSite(__file__)
+LINO = Lino(__file__)
 
 
 #~ PROJECT_DIR = abspath(dirname(__file__))
 #~ DATA_DIR = join(PROJECT_DIR,"data")
 #~ LINO_SETTINGS = join(PROJECT_DIR,"lino_settings.py")
 
-MEDIA_ROOT = join(LINO_SITE.project_dir,'media')
+MEDIA_ROOT = join(LINO.project_dir,'media')
 #~ MEDIA_ROOT = join(PROJECT_DIR,'media')
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': join(LINO_SITE.project_dir,'dsbe_demo.db')
+        'NAME': join(LINO.project_dir,'dsbe_demo.db')
         #~ 'NAME': ':memory:'
     }
 }
@@ -196,13 +196,14 @@ INSTALLED_APPS = (
 )
 
 LANGUAGES = language_choices('de','fr','nl','en')
+#~ LANGUAGES = language_choices('de','fr','en')
 
 # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
 # Always use forward slashes, even on Windows.
 # Don't forget to use absolute paths, not relative paths.
 TEMPLATE_DIRS = (
       #~ join(abspath(DATA_DIR),'templates'),
-      join(abspath(LINO_SITE.project_dir),'templates'),
+      join(abspath(LINO.project_dir),'templates'),
       join(abspath(dirname(lino.__file__)),'templates'),
 )
 

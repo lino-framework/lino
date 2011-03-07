@@ -15,7 +15,6 @@
 import logging
 logger = logging.getLogger(__name__)
 
-#~ import functional
 import os
 from optparse import make_option 
 
@@ -23,6 +22,8 @@ from Cheetah.Template import Template as CheetahTemplate
 
 from django.db import models
 from django.conf import settings
+from django.utils.translation import ugettext as _
+from django.utils.encoding import force_unicode 
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 from django.db.models import loading
@@ -34,15 +35,55 @@ from django.db.models import loading
 
 import lino
 from lino.core.coretools import app_labels
-#~ from lino.utils import *
+from lino.utils import confirm
 from lino.utils.config import find_config_file
 from lino.utils import rstgen 
+from lino.utils import babel
 
 # http://snippets.dzone.com/posts/show/2375
 curry = lambda func, *args, **kw:\
             lambda *p, **n:\
                  func(*args + p, **dict(kw.items() + n.items()))
 
+def model_overview(model):
+    headers = ["name","type"]
+    #~ formatters = [
+      #~ lambda f: f.name,
+      #~ lambda f: f.__class__.__name__,
+    #~ ]
+    headers.append("verbose name")
+    #~ for lng in babel.AVAILABLE_LANGUAGES:
+        #~ headers.append("verbose name (" + lng + ")")
+    #~ headers.append("help text")
+    #~ formatters.append(lambda f: f.help_text)
+    def verbose_name(f):
+        babel.set_language('en')
+        label_en = force_unicode(_(f.verbose_name))
+        babel_labels = []
+        for lng in babel.AVAILABLE_LANGUAGES:
+            if lng != 'en':
+                babel.set_language(lng)
+                label = force_unicode(_(f.verbose_name))
+                if label != label_en:
+                    babel_labels.append(label)
+        if babel_labels:
+            label_en += " (%s)" % ",".join(babel_labels)
+        return label_en
+        
+    def rowfmt(f):
+        cells = [
+          f.name,
+          f.__class__.__name__,
+          verbose_name(f)
+        ]
+        #~ for lng in babel.AVAILABLE_LANGUAGES:
+            #~ babel.set_language(lng)
+            #~ cells.append(force_unicode(_(f.verbose_name)))
+        #~ cells.append(f.help_text)
+        return cells
+    rows = [ rowfmt(f) for f in model._meta.fields ]
+    return rstgen.table(headers,rows)
+  
 
 class Command(BaseCommand):
     help = """Writes a Sphinx documentation tree about models on this Site.
@@ -51,18 +92,24 @@ class Command(BaseCommand):
     args = "output_dir"
     
     option_list = BaseCommand.option_list + (
-        make_option('--noinput', action='store_false', dest='interactive', default=True,
+        make_option('--noinput', action='store_false', 
+            dest='interactive', default=True,
             help='Do not prompt for input of any kind.'),
+        make_option('--overwrite', action='store_true', 
+            dest='overwrite', default=False,
+            help='Overwrite existing files.'),
     ) 
     
     #~ def handle(self, *args, **options):
-    def handle(self, output_dir, **options):
-        #~ if len(args) != 1:
-            #~ raise CommandError("Requires exactly 1 argument")
+    def handle(self, *args, **options):
+        if len(args) != 1:
+            raise CommandError("No output_dir specified.")
             
-        #~ self.output_dir = os.path.abspath(args[0])
-        self.output_dir = os.path.abspath(output_dir)
+        self.output_dir = os.path.abspath(args[0])
+        #~ self.overwrite
+        #~ self.output_dir = os.path.abspath(output_dir)
         self.generated_count = 0
+        self.options = options
         
         logger.info("Running Lino autodoc to %s.", self.output_dir)
             
@@ -87,9 +134,10 @@ class Command(BaseCommand):
             
         fn = os.path.join(self.output_dir,fn)
         
-        #~ if os.path.exists(fn):
-            #~ logger.info("Skipping %s because file exists.",fn)
-            #~ return 
+        if os.path.exists(fn) and not self.options.get('overwrite'):
+            if not confirm("Overwrite existing file %s (y/n) ?" % fn):
+                logger.info("Skipping %s because file exists.",fn)
+                return 
         
         logger.info("Generating %s from %s",fn,tplname)
         context.update(
@@ -100,6 +148,7 @@ class Command(BaseCommand):
           h1=curry(rstgen.header,1),
           table=rstgen.table,
           py2rst=rstgen.py2rst,
+          model_overview=model_overview,
           app_labels=app_labels)
         #~ d = dict(site=site)
         #~ print 20110223, [m for m in models.get_models()]

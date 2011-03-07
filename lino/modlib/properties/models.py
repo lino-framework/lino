@@ -86,7 +86,7 @@ class PropType(models.Model):
         choices=choicelist_choices())
     
     default_value = models.CharField(_("default value"),
-        max_length=settings.LINO_SITE.propvalue_max_length,
+        max_length=settings.LINO.propvalue_max_length,
         blank=True)
     """
     The default value to set when creating a :class:`PropertyOccurence`.
@@ -148,7 +148,7 @@ class PropChoice(models.Model):
         verbose_name_plural = _("Property Choices")
         
     type = models.ForeignKey(PropType,verbose_name=_("Property Type"))
-    value = models.CharField(max_length=settings.LINO_SITE.propvalue_max_length,verbose_name=_("Value"))
+    value = models.CharField(max_length=settings.LINO.propvalue_max_length,verbose_name=_("Value"))
     text = babel.BabelCharField(max_length=200,verbose_name=_("Designation"))
     
     def __unicode__(self):
@@ -208,7 +208,7 @@ class PropertyOccurence(models.Model):
         verbose_name=_("Property")) # ,blank=True,null=True)
     # property must be nullable?
     value = models.CharField(_("Value"),
-        max_length=settings.LINO_SITE.propvalue_max_length,
+        max_length=settings.LINO.propvalue_max_length,
         blank=True)
     
     #~ def get_text(self):

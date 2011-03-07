@@ -1,13 +1,18 @@
 20110305
 ========
 
+Wohin mit den dummy_messages?
+-----------------------------
+
 Eine vermeintliche Kleinigkeit löste eine Lawine aus:
 "Seit dem Update sind einige Reiter nicht (mehr) in Deutsch."
 
 Tilt! (daran hatte ich bisher noch gar nicht gedacht)
 die :xfile:`dummy_messages.py` mit den Übersetzungstexten 
-aus .dtl-Dateien und Dokumentvorlagen darf natürlich nicht nach 
-:file:`lino/` kommen, sondern muss nach :file:`lino/sites/dsbe/`.
+aus .dtl-Dateien und :xfile:`linolin.js` darf natürlich nicht nach 
+:file:`lino/` kommen, sondern muss nach 
+:file:`lino/sites/dsbe/` bzw.
+:file:`lino/sites/igen/`.
 
 Das hängt zusammen mit einem weiteren Problem 
 (das mir gestern einen Demo-Effekt beschert hat):
@@ -15,6 +20,15 @@ Es gibt momentan zwei Verzeichnisse `dsbe` bzw. `igen`:
 lino.sites.igen und lino.modlib.igen.
 
 Änderungen:
+
+- merged 
+  lino.modlib.dsbe to lino.sites.dsbe
+  and
+  lino.modlib.igen to lino.sites.igen.
+  
+  Note that these are both a "Django application" (to be used in :setting:`INSTALLED_APPS`) 
+  and a "Django project" (containing a :xfile:`settings.py` and a :xfile:`manage.py`).
+  It is possible to run them directly from the source tree.
 
 - ``LINO_SITE = LinoSite(__file__)`` statt bisher ``LINO_SITE = LinoSite()``.
   

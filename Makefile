@@ -1,5 +1,6 @@
 DJANGO_ADMIN = python l:\\snapshots\\django\\django\\bin\\django-admin.py
-LINO_ROOT := /cygdrive/t/hgwork/lino/lino
+LINO_ROOT := /cygdrive/t/hgwork/lino
+LINO_ROOT := `cygpath -m $(LINO_ROOT)`
 #~ MODULES = system
 MODULES = products dsbe properties contacts countries notes sales finan links uploads igen 
 
@@ -15,28 +16,19 @@ help:
 
 
 mm:
-	cd $(LINO_ROOT) && $(DJANGO_ADMIN) makemessages -i 'modlib*' -i 'test_apps*' -s -a
+	cd $(LINO_ROOT)/lino && $(DJANGO_ADMIN) makemessages -i 'modlib*' -i 'test_apps*' -s -a
 	for MOD in $(MODULES); \
   do \
-    cd $(LINO_ROOT)/modlib/$$MOD && $(DJANGO_ADMIN) makemessages -s -a; \
+    cd $(LINO_ROOT)/lino/modlib/$$MOD && $(DJANGO_ADMIN) makemessages -s -a; \
   done
   
-unused:  
-	for LANG in $(LANGUAGES); \
-  do \
-    xgettext --from-code UTF-8 -d django -p lino\\modlib\\system\\locale\\$$LANG\\LC_MESSAGES $(INPUT_FILES); \
-  done
-
-
 
 cm:  
-	cd $(LINO_ROOT) && $(DJANGO_ADMIN) compilemessages 
+	cd $(LINO_ROOT)/lino && $(DJANGO_ADMIN) compilemessages 
 	@for MOD in $(MODULES); \
   do \
-    cd $(LINO_ROOT)/modlib/$$MOD && $(DJANGO_ADMIN) compilemessages; \
+    cd $(LINO_ROOT)/lino/modlib/$$MOD && $(DJANGO_ADMIN) compilemessages; \
   done
   
-unused2:  
-	cd $(LINO_ROOT)/lino/modlib/system && $(DJANGO_ADMIN) compilemessages
         
 

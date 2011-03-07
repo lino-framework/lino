@@ -26,10 +26,11 @@ from os.path import join, abspath, dirname, normpath
 import lino
 
 
-class LinoSite(object):
+class Lino(object):
     """
-    LinoSite base class.
-    LinoSite classes are defined and instantiated in Django settings files.
+    Base class for the Lino Application instance stored in :setting:`LINO`.
+    
+    Lino classes are defined and instantiated in Django settings files.
     
     This class is first defined in :mod:`lino.demos.std.settings`,
     then subclassed by :mod:`lino.sites.mysite.settings`
@@ -38,7 +39,7 @@ class LinoSite(object):
     """
     help_url = "http://code.google.com/p/lino"
     #~ index_html = "This is the main page."
-    title = "Another Lino Site"
+    title = "Base Lino Application"
     domain = "www.example.com"
     
     #~ preferred_build_method = 'pisa'
@@ -179,7 +180,7 @@ class LinoSite(object):
       
 
 
-LINO_SITE = LinoSite(__file__)
+LINO = Lino(__file__)
 
 #~ DBLOGGER = 'db'
 DBLOGFILE = 'auto'
@@ -192,7 +193,7 @@ USER_INTERFACES = [
   #~ 'lino.ui.extjsu',
   'lino.ui.extjs'
   ]
-#~ DATA_DIR = join(LINO_SITE.project_dir,"data")
+#~ DATA_DIR = join(LINO.project_dir,"data")
 
 #~ BABEL_LANGS = []
 
@@ -240,7 +241,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': join(LINO_SITE.project_dir,'demo.db')
+        'NAME': join(LINO.project_dir,'demo.db')
         #~ 'NAME': ':memory:'
     }
 }
@@ -274,7 +275,7 @@ USE_I18N = True
 #~ else:
     #~ MEDIA_ROOT = abspath(join(DATA_DIR,'media'))
 
-MEDIA_ROOT = abspath(join(LINO_SITE.project_dir,'media'))
+MEDIA_ROOT = abspath(join(LINO.project_dir,'media'))
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
@@ -333,7 +334,7 @@ TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
       #~ join(abspath(DATA_DIR),'templates'),
-      join(abspath(LINO_SITE.project_dir),'templates'),
+      join(abspath(LINO.project_dir),'templates'),
       join(abspath(dirname(lino.__file__)),'templates'),
 )
 #print "baz", __file__

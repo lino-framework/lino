@@ -77,6 +77,8 @@ As long as nobody protests, I'll save some time by writing in German.
   :doc:`02 <0302>`
   :doc:`03 <0303>`
   |br| 
+  :doc:`07 <0307>`
+  |br| 
   |br| 
   |br|  	
    

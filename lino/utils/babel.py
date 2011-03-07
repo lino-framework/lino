@@ -12,28 +12,23 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Support for multilingual database content.
+Generic support for multilingual database content.
 
 This includes defintion of *babel fields* in your Django Models 
-as well as methods to access these fields transparently. 
+as well as methods to access these fields transparently.
 
-Requires a
-variable :setting:`BABEL_LANGS` in your Django :xfile:`settings.py` 
-which is a list of language strings, for example::
-
-  BABEL_LANGS = ['fr']
-  
-This list may be empty. 
-It expresses the *additional* languages and should *not* contain 
-the site's default language (specified by :setting:`LANGUAGE_CODE`).
-
+Babel Fields are normal CharFields or TextFields, except 
+that they have been automatically generated from a master field, 
+depending on your :setting:`LANGUAGE_CODE` 
+and :setting:`LANGUAGES` settings
 
 Example::
 
   class Foo(models.Model):
-      name = models.CharField(_("Foo"), max_length=200)
+      name = babel.BabelCharField(_("Foo"), max_length=200)
 
-  add_babel_field(Foo,'name')
+
+This module would deserve more documentation.
   
 
 
@@ -172,7 +167,7 @@ def set_language(lang):
     http://www.velocityreviews.com/forums/t348372-setlocale-in-a-module-extension-library.html
     http://www.velocityreviews.com/forums/t332047-setlocale-returns-error.html
     """
-    if lang is None:
+    if lang is None or lang is DEFAULT_LANGUAGE:
         #~ locale.setlocale(locale.LC_ALL,'')
         translation.deactivate()
     else:

@@ -24,7 +24,7 @@ PAPEROPT_letter = -D latex_paper_size=letter
 ALLSPHINXOPTS   = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS)
 
 
-.PHONY: help clean html show web pickle htmlhelp latex changes linkcheck autodoc
+.PHONY: help clean html show web pickle htmlhelp latex changes linkcheck makedocs
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
@@ -64,12 +64,6 @@ doctest:
 unused_html:        
 	set DJANGO_SETTINGS_MODULE=$(DJANGO_SETTINGS_MODULE); $(SPHINXBUILD) -b html -d $(CACHEDIR) $(ALLSPHINXOPTS) . $(BUILDDIR)
 
-unused_autodoc:
-	#~ $(AUTODOC) t:\\hgwork\\lino -d autodoc/lino -s rst -n Lino
-	$(AUTODOC) t:\\hgwork\\dsbe -d autodoc/dsbe -s rst -n Lino-DSBE
-	#~ $(AUTODOC) lino -d autodoc/lino -s rst -n Lino
-	#~ $(AUTODOC) dsbe -d autodoc/dsbe -s rst -n Lino-DSBE
-  
 
 pickle:
 	mkdir -p .build/pickle .build/doctrees
@@ -112,3 +106,8 @@ linkcheck:
 	@echo
 	@echo "Link check complete; look for any errors in the above output " \
 	      "or in .build/linkcheck/output.txt."
+
+makedocs:
+	python -m lino.sites.dsbe.manage makedocs --settings lino.sites.dsbe.settings --overwrite dsbe/appdocs
+	python -m lino.sites.igen.manage makedocs --settings lino.sites.igen.settings --overwrite igen/appdocs
+  

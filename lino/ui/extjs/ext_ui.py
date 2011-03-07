@@ -729,9 +729,9 @@ class ExtUI(base.UI):
         #~ from lino import lino_site
         return json_response_kw(success=True,
           message=(_("Welcome on Lino server %(title)r, user %(user)s") % dict(
-            title=settings.LINO_SITE.title,
+            title=settings.LINO.title,
             user=request.user)),
-          load_menu=settings.LINO_SITE.get_site_menu(request.user))
+          load_menu=settings.LINO.get_site_menu(request.user))
         #~ s = py2js(lino_site.get_menu(request))
         #~ return HttpResponse(s, mimetype='text/html')
 
@@ -906,7 +906,7 @@ class ExtUI(base.UI):
             
             if fmt == 'csv':
                 #~ response = HttpResponse(mimetype='text/csv')
-                charset = settings.LINO_SITE.csv_params.get('encoding','utf-8')
+                charset = settings.LINO.csv_params.get('encoding','utf-8')
                 response = HttpResponse(content_type='text/csv;charset="%s"' % charset)
                 if False:
                     response['Content-Disposition'] = 'attachment; filename="%s.csv"' % ar.report
@@ -915,7 +915,7 @@ class ExtUI(base.UI):
                     response['Content-Disposition'] = 'inline; filename="%s.csv"' % ar.report
                   
                 #~ response['Content-Disposition'] = 'attachment; filename=%s.csv' % ar.get_base_filename()
-                w = ucsv.UnicodeWriter(response,**settings.LINO_SITE.csv_params)
+                w = ucsv.UnicodeWriter(response,**settings.LINO.csv_params)
                 w.writerow(ar.ah.store.column_names())
                 for row in ar.queryset:
                     w.writerow([unicode(v) for v in ar.row2list(row)])
@@ -1088,7 +1088,7 @@ class ExtUI(base.UI):
         tpl.ui = self
             
         def mytranslate(s):
-            settings.LINO_SITE.add_dummy_message(s)
+            settings.LINO.add_dummy_message(s)
             return _(s)
         tpl._ = mytranslate
         #~ tpl.user = request.user

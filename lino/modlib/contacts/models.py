@@ -11,6 +11,12 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+This module deserves more documentation.
+
+It defines tables like `Person` and `Company`
+
+"""
 
 import datetime
 from dateutil.relativedelta import relativedelta
@@ -46,31 +52,35 @@ class Addressable(models.Model):
         abstract = True
   
     name = models.CharField(max_length=200,verbose_name=_('Name'))
-    addr1 = models.CharField(_("Address line before street"),max_length=200,blank=True)
-    "Address line before street"
+    addr1 = models.CharField(_("Address line before street"),
+        max_length=200,blank=True,
+        help_text="Address line before street")
     
-    street = models.CharField(_("Street"),max_length=200,blank=True)
-    "Name of street. Without house number."
+    street = models.CharField(_("Street"),max_length=200,blank=True,
+        help_text="Name of street. Without house number.")
     
-    street_no = models.CharField(_("No."),max_length=10,blank=True)
-    "House number"
+    street_no = models.CharField(_("No."),max_length=10,blank=True,
+        help_text="House number")
     
-    street_box = models.CharField(_("Box"),max_length=10,blank=True)
-    "Text to print after :attr:`steet_no` on the same line"
+    street_box = models.CharField(_("Box"),max_length=10,blank=True,
+        help_text="Text to print after :attr:`steet_no` on the same line")
     
-    addr2 = models.CharField(_("Address line after street"),max_length=200,blank=True)
-    "Address line to print below street line"
+    addr2 = models.CharField(_("Address line after street"),
+        max_length=200,blank=True,
+        help_text="Address line to print below street line")
     
-    country = models.ForeignKey('countries.Country',blank=True,null=True,
-      verbose_name=_("Country"))
-    "The country where this contact is located."
+    country = models.ForeignKey('countries.Country',
+        blank=True,null=True,
+        verbose_name=_("Country"),
+        help_text="The country where this contact is located.")
     
     city = models.ForeignKey('countries.City',blank=True,null=True,
-        verbose_name=_('City'))
-    """
-    The city where this contact is located.
-    The list of choices for this field is context-sensitive, it depends on the :attr:`country`.
-    """
+        verbose_name=_('City'),
+        help_text="""
+        The city where this contact is located.
+        The list of choices for this field is context-sensitive
+        and depends on the :attr:`country`.
+        """)
     
     #city = models.CharField(max_length=200,blank=True)
     zip_code = models.CharField(_("Zip code"),max_length=10,blank=True)

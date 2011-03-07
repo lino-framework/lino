@@ -15,5 +15,4 @@ Subpackages
     lino.modlib.countries
     lino.modlib.contacts
     lino.modlib.sales
-    lino.modlib.dsbe
 

@@ -2,16 +2,27 @@ $header(1,$app_label)
 
 .. currentmodule:: $app_label
 
-File: $app.__file__
-:srcref:`$app.__file__`
+Defined in :srcref:`/${'/'.join($app.__name__.split('.'))+'.py'}`
+
+$app.__doc__
 
 #for $model in $models
-$(header(2,"Model :class:`"+model.__name__+"`"))
-.. class:: $model.__name__
 
-Defined in :srcref:`$('/'.join(model.__module__.split('.'))+'.py')`
+.. index::
+   pair: model; $model.__name__
+#for $field in $model._meta.fields
+   single: field;$(field.name)
+#end for
+
+.. _$(settings.LINO.source_name).${app_label}.${model.__name__}:
+
+$(header(2,"Model ``"+model.__name__+"``"))
+
+$model.__doc__
   
-$py2rst($model)
+$model_overview($model)
     
+Defined in :srcref:`/$('/'.join(model.__module__.split('.'))+'.py')`
+
 #end for
 

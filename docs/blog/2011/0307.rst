@@ -1,0 +1,56 @@
+20110307
+========
+
+Am Wochenende habe ich mit :term:`makedocs` weitergemacht.
+Beim Generieren der Lino-Dokumentation hatte ich ja 
+schon immer das Problem, dass Lino mehrere Anwendungen 
+(Django projects) enthält, und `sphinx.ext.autodoc` 
+kriegt diese Module nur dokumentiert, wenn 
+DJANGO_SETTINGS_MODULE korrekt gesetzt ist.
+
+Jetzt habe ich (hoffentlich) endlich ein kohärentes System, 
+um auf Modelle zu verweisen:
+
+- :ref:`dsbe.contacts.Person`
+- :ref:`igen.contacts.Person`
+- :class:`lino.modlib.contacts.models.Person`
+
+Die Dokumentation muss sich jetzt freilich noch von der 
+Operation erholen, und :term:`makedocs` ist lange noch 
+nicht fertig. 
+Aber vom Prinzip her bin ich nun zuversichtlich.
+
+En passant kam es noch zu einen internen Beschluss, 
+der mir ebenfalls nicht leicht fiel: das, 
+was ich bisher als "Lino Site" bezeichnete, bezeichne ich
+jetzt als "Lino Application". 
+
+============= ===========
+vorher        nachher
+============= ===========
+LinoSite      Lino        
+LINO_SITE     LINO        
+lino.sites.*  lino.apps.*
+============= ===========
+
+Ich distanziere mich dadurch von der etwas eigenartigen 
+Django-Terminologie. 
+Django meint mit "Application" das, was ich ein "Modul" nenne.
+Und das, was ich unter "Application" vestehe, 
+nennt man in Django ein "Project".
+
+Es ist natürlich schade, dass Django und ich das 
+Wort "Application" jetzt unterschiedlich verstehen. 
+In :setting:`INSTALLED_APPS` z.B. sind natürlich auch 
+unter Lino weiterhin *Module* enthalten (also das, 
+was Django "applications" nennt. 
+Und das eventuelle Attribut `app_label` 
+in der :lcass:`Meta` kann ich auch nicht umbenennen.
+
+Ich steh dann als frech da gegenüber der etablierten Autorität.
+Aber so bin ich ja. 
+Ein "Lino Site" ist nun mal was anderes als eine "Lino Application".
+Lieber mach ich eine sichtbare Naht zwischen Lino und Django, 
+als dass Lino selber inkohärent ist.
+Mehr darüber muss ich dann bei Gelegenheit mal schreiben, 
+wenn Lino fertig ist...
