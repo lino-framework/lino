@@ -1,15 +1,21 @@
-:mod:`lino.sites`
-=================
+:mod:`lino.apps`
+================
   
 
-.. automodule:: lino.sites.std
+.. automodule:: lino.apps.std
     :members:
     :undoc-members:
     :show-inheritance:
 
 
 
-.. automodule:: lino.sites.dsbe
+.. automodule:: lino.apps.dsbe
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+.. automodule:: lino.apps.igen
     :members:
     :undoc-members:
     :show-inheritance:

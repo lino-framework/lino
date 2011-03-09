@@ -1,6 +1,9 @@
 20110307
 ========
 
+Was ist eine Anwendung?
+-----------------------
+
 Am Wochenende habe ich mit :term:`makedocs` weitergemacht.
 Beim Generieren der Lino-Dokumentation hatte ich ja 
 schon immer das Problem, dass Lino mehrere Anwendungen 
@@ -55,3 +58,36 @@ Lieber mach ich eine sichtbare Naht zwischen Lino und Django,
 als dass Lino selber inkohärent ist.
 Mehr darüber muss ich dann bei Gelegenheit mal schreiben, 
 wenn Lino fertig ist...
+
+
+Gettings started with Qooxdoo
+-----------------------------
+
+16.10 Uhr.
+Ebenfalls am Wochenende hatte ich das Tutorial auf Qooxdoo begonnen.
+Und jetzt habe ich es zu Ende absolviert. 
+Sehr gut geschrieben! Ein Bravo an den Autor!
+
+Warum ich das mache?
+Mein Plan ist, dass ich einige Tage lang probiere, ein 
+Qx-Interface für Lino zu schreiben. 
+Ich selbst bin zwar zufrieden mit ExtJS, aber Andres 
+in Pärnu ist so begeistert von Qx, dass er bei Lino 
+nur mitmachen würde, wenn der auch Qx statt ExtJS kann.
+Und vom Design her müsste das nicht schwierig sein.
+Und Lino stände dann nicht nur punkto Anwendungen auf auf zwei Beinen, 
+sondern auch beim Thema User Interface.
+
+Eine kleine Enttäuschung hatte ich gleich zu Beginn: ich hatte 
+geglaubt, dass eine Qx-Anwendung merklich schneller als ExtJS 
+sei. Aber auf den ersten Blick habe ich keinen merklichen 
+Unterschied festgestellt.
+
+Also einen ersten Überblick über Qooxdoo habe ich jetzt, 
+jetzt kommt der schwierigere Teil: wie kriege ich Qooxdoo 
+mit Lino verknüpft? 
+Ich weiß, dass mir dabei niemand helfen können wird, also schreibe ich momentan auch nicht mehr darüber.
+Aber haltet mir die Daumen, dass ich es schaffe :-)
+
+
+

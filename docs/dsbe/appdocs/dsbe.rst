@@ -6,7 +6,7 @@ dsbe
 
 .. currentmodule:: dsbe
 
-Defined in :srcref:`/lino/sites/dsbe/models.py`
+Defined in :srcref:`/lino/apps/dsbe/models.py`
 
 
 See also :doc:`/dsbe/models`
@@ -38,7 +38,7 @@ name CharField Designation (Beschreibung)
 ==== ========= ==========================
 
     
-Defined in :srcref:`/lino/sites/dsbe/models.py`
+Defined in :srcref:`/lino/apps/dsbe/models.py`
 
 .. index::
    single: field;id
@@ -93,7 +93,7 @@ name CharField Designation (Beschreibung)
 ==== ========= ==========================
 
     
-Defined in :srcref:`/lino/sites/dsbe/models.py`
+Defined in :srcref:`/lino/apps/dsbe/models.py`
 
 .. index::
    single: field;id
@@ -158,7 +158,7 @@ remarks  TextField    Remarks (Bemerkungen)
 ======== ============ =================================
 
     
-Defined in :srcref:`/lino/sites/dsbe/models.py`
+Defined in :srcref:`/lino/apps/dsbe/models.py`
 
 .. index::
    single: field;id
@@ -366,7 +366,7 @@ written  ChoiceListField written (Schrift)
 ======== =============== ==================
 
     
-Defined in :srcref:`/lino/sites/dsbe/models.py`
+Defined in :srcref:`/lino/apps/dsbe/models.py`
 
 .. index::
    single: field;id
@@ -472,7 +472,7 @@ remarks TextField  Remarks (Bemerkungen)
 ======= ========== =======================
 
     
-Defined in :srcref:`/lino/sites/dsbe/models.py`
+Defined in :srcref:`/lino/apps/dsbe/models.py`
 
 .. index::
    single: field;id
@@ -618,7 +618,7 @@ lst104 BooleanField Appears in Listing 104 (Listing 104)
 ====== ============ ====================================
 
     
-Defined in :srcref:`/lino/sites/dsbe/models.py`
+Defined in :srcref:`/lino/apps/dsbe/models.py`
 
 .. index::
    single: field;id
@@ -688,7 +688,7 @@ name CharField name
 ==== ========= ============
 
     
-Defined in :srcref:`/lino/sites/dsbe/models.py`
+Defined in :srcref:`/lino/apps/dsbe/models.py`
 
 .. index::
    single: field;id
@@ -747,7 +747,7 @@ remark         CharField  Remark (Bemerkung)
 ============== ========== ==================
 
     
-Defined in :srcref:`/lino/sites/dsbe/models.py`
+Defined in :srcref:`/lino/apps/dsbe/models.py`
 
 .. index::
    single: field;id
@@ -868,7 +868,7 @@ name_en      CharField contract title (en)
 ============ ========= ===================================
 
     
-Defined in :srcref:`/lino/sites/dsbe/models.py`
+Defined in :srcref:`/lino/apps/dsbe/models.py`
 
 .. index::
    single: field;id
@@ -1016,7 +1016,7 @@ name_en CharField designation (en)
 ======= ========= =========================
 
     
-Defined in :srcref:`/lino/sites/dsbe/models.py`
+Defined in :srcref:`/lino/apps/dsbe/models.py`
 
 .. index::
    single: field;id
@@ -1116,7 +1116,7 @@ name CharField designation (Bezeichnung)
 ==== ========= =========================
 
     
-Defined in :srcref:`/lino/sites/dsbe/models.py`
+Defined in :srcref:`/lino/apps/dsbe/models.py`
 
 .. index::
    single: field;id
@@ -1175,7 +1175,7 @@ name CharField designation (Bezeichnung)
 ==== ========= =========================
 
     
-Defined in :srcref:`/lino/sites/dsbe/models.py`
+Defined in :srcref:`/lino/apps/dsbe/models.py`
 
 .. index::
    single: field;id
@@ -1233,7 +1233,7 @@ name_en CharField designation (en)
 ======= ========= =========================
 
     
-Defined in :srcref:`/lino/sites/dsbe/models.py`
+Defined in :srcref:`/lino/apps/dsbe/models.py`
 
 .. index::
    single: field;id
@@ -1365,7 +1365,7 @@ date_ended       DateField     date ended (Beendet am)
 ================ ============= ============================================
 
     
-Defined in :srcref:`/lino/sites/dsbe/models.py`
+Defined in :srcref:`/lino/apps/dsbe/models.py`
 
 .. index::
    single: field;id
@@ -1896,7 +1896,7 @@ company_ptr   OneToOneField company ptr
 ============= ============= ============================
 
     
-Defined in :srcref:`/lino/sites/dsbe/models.py`
+Defined in :srcref:`/lino/apps/dsbe/models.py`
 
 .. index::
    single: field;name
@@ -2332,7 +2332,7 @@ name CharField Name
 ==== ========= ============
 
     
-Defined in :srcref:`/lino/sites/dsbe/models.py`
+Defined in :srcref:`/lino/apps/dsbe/models.py`
 
 .. index::
    single: field;id
@@ -2396,7 +2396,7 @@ remark     CharField  Remark (Bemerkung)
 ========== ========== ==============================
 
     
-Defined in :srcref:`/lino/sites/dsbe/models.py`
+Defined in :srcref:`/lino/apps/dsbe/models.py`
 
 .. index::
    single: field;id
@@ -2520,7 +2520,7 @@ ending         ForeignKey Ending (Beendigung)
 ============== ========== ================================
 
     
-Defined in :srcref:`/lino/sites/dsbe/models.py`
+Defined in :srcref:`/lino/apps/dsbe/models.py`
 
 .. index::
    single: field;id
@@ -2670,7 +2670,7 @@ only_my_persons BooleanField Only my persons (nur meine Leute)
 =============== ============ =================================
 
     
-Defined in :srcref:`/lino/sites/dsbe/models.py`
+Defined in :srcref:`/lino/apps/dsbe/models.py`
 
 .. index::
    single: field;id
@@ -2803,7 +2803,7 @@ written  ChoiceListField written (Schrift)
 ======== =============== ==================
 
     
-Defined in :srcref:`/lino/sites/dsbe/models.py`
+Defined in :srcref:`/lino/apps/dsbe/models.py`
 
 .. index::
    single: field;id

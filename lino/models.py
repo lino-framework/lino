@@ -66,7 +66,7 @@ def get_site_config():
     try:
         return SiteConfig.objects.get(pk=1)
     except SiteConfig.DoesNotExist:
-        dblogger.info("Creating SiteConfig record")
+        dblogger.debug("Creating SiteConfig record")
         sc = SiteConfig(pk=1)
         sc.save()
         return sc

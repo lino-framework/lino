@@ -1,15 +1,15 @@
-## Copyright 2009-2010 Luc Saffre
-## This file is part of the TimTools project.
-## TimTools is free software; you can redistribute it and/or modify
+## Copyright 2009-2011 Luc Saffre
+## This file is part of the Lino project.
+## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
 ## the Free Software Foundation; either version 3 of the License, or
 ## (at your option) any later version.
-## TimTools is distributed in the hope that it will be useful, 
+## Lino is distributed in the hope that it will be useful, 
 ## but WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
 ## GNU General Public License for more details.
 ## You should have received a copy of the GNU General Public License
-## along with TimTools; if not, see <http://www.gnu.org/licenses/>.
+## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 import logging
 logger = logging.getLogger(__name__)
@@ -29,27 +29,14 @@ urlpatterns = patterns('',
         {'url': settings.MEDIA_URL + 'lino/favicon.ico'})
 )
 
-#~ site = get_lino_site()
-
-#~ if settings.LINO_SITE:
-    #~ logger.info('Initialize Lino Site %s',settings.LINO_SITE)
-    #~ modname,clname = settings.LINO_SITE.rsplit('.', 1)
-    #~ m = importlib.import_module(modname)
-    #~ cl = getattr(m, clname)
-    #~ site = cl()
     
 import lino
-#~ from lino.core.site import get_urls
 
-settings.LINO_SITE.setup()
+settings.LINO.setup()
 
 from lino.ui.extjs.ext_ui import ExtUI
 
-ui = ExtUI(settings.LINO_SITE)
-
-#~ get_urls = ui.get_urls
-
-#~ get_urls = settings.LINO_SITE.get_urls
+ui = ExtUI(settings.LINO)
 
 urlpatterns += patterns('',
     (r'', include(ui.get_urls())),

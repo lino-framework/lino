@@ -6,7 +6,7 @@ igen
 
 .. currentmodule:: igen
 
-Defined in :srcref:`/lino/sites/igen/models.py`
+Defined in :srcref:`/lino/apps/igen/models.py`
 
 
 

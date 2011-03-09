@@ -29,7 +29,8 @@ from django.utils.translation import ugettext as _
 
 from lino.utils import jsgen 
 from lino.utils.jsgen import py2js, Component, id2js, js_code
-from . import ext_requests
+#~ from . import ext_requests
+from lino.ui import requests as ext_requests
 
 import lino
 from lino import reports

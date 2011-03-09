@@ -164,7 +164,7 @@ language      LanguageField Language (Sprache)
 ============= ============= ==================================
 
     
-Defined in :srcref:`/lino/sites/igen/models.py`
+Defined in :srcref:`/lino/apps/igen/models.py`
 
 .. index::
    single: field;id

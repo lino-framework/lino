@@ -49,10 +49,12 @@ from django.conf.urls.defaults import patterns, url, include
 
 import lino
 from . import ext_elems
-from . import ext_store
+#~ from . import ext_store
 from . import ext_windows
 #~ from . import ext_viewport
-from . import ext_requests
+#~ from . import ext_requests
+from lino.ui import requests as ext_requests
+from lino.ui import store as ext_store
 from lino import actions #, layouts #, commands
 from lino import reports
 from lino import fields

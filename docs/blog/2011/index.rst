@@ -78,6 +78,8 @@ As long as nobody protests, I'll save some time by writing in German.
   :doc:`03 <0303>`
   |br| 
   :doc:`07 <0307>`
+  :doc:`08 <0308>`
+  :doc:`09 <0309>`
   |br| 
   |br| 
   |br|  	

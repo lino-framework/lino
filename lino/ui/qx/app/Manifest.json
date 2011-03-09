@@ -1,0 +1,34 @@
+{
+  "info" : 
+  {
+    "name" : "lino",
+
+    "summary" : "Custom Application",
+    "description" : "This is a skeleton for a custom application with qooxdoo.",
+    
+    "homepage" : "http://lino.saffre-rumma.net/",
+
+    "license" : "GPL",
+    "authors" : 
+    [
+      {
+        "name" : "Luc Saffre",
+        "email" : "luc.saffre@gmx.net"
+      }
+    ],
+
+    "version" : "trunk",
+    "qooxdoo-versions": ["1.3"]
+  },
+  
+  "provides" : 
+  {
+    "namespace"   : "lino",
+    "encoding"    : "utf-8",
+    "class"       : "source/class",
+    "resource"    : "source/resource",
+    "translation" : "source/translation",
+    "type"        : "application"
+  }
+}
+

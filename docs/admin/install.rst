@@ -397,20 +397,3 @@ Currently there is also an unelegant thing to do by hand::
   
   
 
-How to install updates
-----------------------
-
-Updating Lino::
-
-  cd /var/snapshots/lino
-  hg pull -u
-
-
-Updating Django::
-
-  cd /var/snapshots/django & svn update
-  
-To run the Django test suite::  
-  
-  cd /var/snapshots/djangotests
-  python runtests.py --settings=test_sqlite

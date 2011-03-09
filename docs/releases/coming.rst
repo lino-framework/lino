@@ -1,32 +1,21 @@
 Coming
 ======
 
+New features
+------------
+
+
 
 Upgrade instructions
 --------------------
 
-- Database migration needed because:
+The following are technical instructions related to this 
+upgrade, designed to be executed by a Lino expert.
+For more general instructions on how to upgrade an existing 
+Lino site, see :doc:`/admin/upgrade`).
 
-    - 
+- In your local :xfile:`settings.py`, 
+  change ``from lino.sites.foo.settings import *`` to 
+  ``from lino.apps.foo.settings import *``
 
-- Go to your local directory::
-
-    cd /usr/local/django/myproject
-    
-- Stop application services::
-
-    ./stop
-    
-- Update the source code::
-
-    ./pull
-    python manage.py test dsbe
-    
-  Note: 
-  For some apps the tests are currently broken. 
-  That's just because we didn't yet find time to maintain them.
-  We're working on it.
-
-    
-- When a data migration is necessary, see :doc:`/admin/datamig`
 

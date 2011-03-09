@@ -27,7 +27,8 @@ from lino.utils import constrain
 from lino.utils import jsgen
 from lino.utils.jsgen import py2js, Variable, Component, id2js, js_code
 from lino.utils import choosers
-from . import ext_requests
+#~ from . import ext_requests
+from lino.ui import requests as ext_requests
 
 EXT_CHAR_WIDTH = 9
 EXT_CHAR_HEIGHT = 22

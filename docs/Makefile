@@ -108,6 +108,6 @@ linkcheck:
 	      "or in .build/linkcheck/output.txt."
 
 makedocs:
-	python -m lino.sites.dsbe.manage makedocs --settings lino.sites.dsbe.settings --overwrite dsbe/appdocs
-	python -m lino.sites.igen.manage makedocs --settings lino.sites.igen.settings --overwrite igen/appdocs
+	python -m lino.apps.dsbe.manage makedocs --settings lino.apps.dsbe.settings --overwrite dsbe/appdocs
+	python -m lino.apps.igen.manage makedocs --settings lino.apps.igen.settings --overwrite igen/appdocs
   

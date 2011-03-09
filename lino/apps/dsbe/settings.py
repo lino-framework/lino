@@ -14,7 +14,7 @@
 import os
 import lino
 
-from lino.sites.std.settings import *
+from lino.apps.std.settings import *
 
 from lino.utils.jsgen import js_code
 
@@ -44,7 +44,7 @@ class Lino(Lino):
         from lino.utils import perms
 
         from lino import models as system
-        from lino.sites.dsbe import models as dsbe
+        from lino.apps.dsbe import models as dsbe
 
         m = self.add_menu("contacts",_("~Contacts"))
         m.add_action('contacts.Companies')
@@ -191,7 +191,7 @@ INSTALLED_APPS = (
   'lino.modlib.uploads',
   #'dsbe.modlib.contacts',
   #'dsbe.modlib.projects',
-  'lino.sites.dsbe',
+  'lino.apps.dsbe',
   #~ 'south', # http://south.aeracode.org
 )
 

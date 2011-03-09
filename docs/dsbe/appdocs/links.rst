@@ -100,7 +100,7 @@ name          CharField     Name
 ============= ============= ===============================
 
     
-Defined in :srcref:`/lino/sites/dsbe/models.py`
+Defined in :srcref:`/lino/apps/dsbe/models.py`
 
 .. index::
    single: field;id

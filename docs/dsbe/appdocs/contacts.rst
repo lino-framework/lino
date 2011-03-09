@@ -490,7 +490,7 @@ job_office_contact          ForeignKey        Contact person at local job office
 =========================== ================= ======================================================
 
     
-Defined in :srcref:`/lino/sites/dsbe/models.py`
+Defined in :srcref:`/lino/apps/dsbe/models.py`
 
 .. index::
    single: field;name
@@ -1582,7 +1582,7 @@ hourly_rate   PriceField    hourly rate (Stundensatz)
 ============= ============= ============================
 
     
-Defined in :srcref:`/lino/sites/dsbe/models.py`
+Defined in :srcref:`/lino/apps/dsbe/models.py`
 
 .. index::
    single: field;name

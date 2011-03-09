@@ -605,7 +605,7 @@ remark   CharField  Remark (Bemerkung)
 ======== ========== ===================================
 
     
-Defined in :srcref:`/lino/sites/dsbe/models.py`
+Defined in :srcref:`/lino/apps/dsbe/models.py`
 
 .. index::
    single: field;id
@@ -723,7 +723,7 @@ search   ForeignKey search
 ======== ========== ===================================
 
     
-Defined in :srcref:`/lino/sites/dsbe/models.py`
+Defined in :srcref:`/lino/apps/dsbe/models.py`
 
 .. index::
    single: field;id
@@ -826,7 +826,7 @@ search   ForeignKey search
 ======== ========== ===================================
 
     
-Defined in :srcref:`/lino/sites/dsbe/models.py`
+Defined in :srcref:`/lino/apps/dsbe/models.py`
 
 .. index::
    single: field;id

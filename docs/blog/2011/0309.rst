@@ -1,0 +1,6 @@
+20110309
+========
+
+- Finished :doc:`yesterday's <0308>` blog entry.
+  New ticket :doc:`/tickets/30`.
+  

@@ -7,8 +7,8 @@ syntax: glob
 *.dpyc
 *.log
 *.zip
-build
 dist
+lino/ui/qx/app/build/resource
 *\SciTE.session
 
 lino\demos\*\media\cache

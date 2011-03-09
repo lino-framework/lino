@@ -15,7 +15,7 @@ import os
 import sys
 from os.path import join,dirname, normpath, abspath
 from tempfile import gettempdir
-from lino.sites.std.settings import *
+from lino.apps.std.settings import *
 
 class Lino(Lino):
   
@@ -160,7 +160,7 @@ INSTALLED_APPS = (
     'lino.modlib.ledger',
     'lino.modlib.sales',
     'lino.modlib.finan',
-    'lino.sites.igen',
+    'lino.apps.igen',
     #~ 'lino.modlib.properties',
 )
 

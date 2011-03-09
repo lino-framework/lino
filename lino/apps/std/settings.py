@@ -33,7 +33,7 @@ class Lino(object):
     Lino classes are defined and instantiated in Django settings files.
     
     This class is first defined in :mod:`lino.demos.std.settings`,
-    then subclassed by :mod:`lino.sites.mysite.settings`
+    then subclassed by :mod:`lino.apps.myapp.settings`
     which is probably subclassed by your local :xfile:`settings.py`
     
     """
@@ -86,7 +86,7 @@ class Lino(object):
         #~ # find the first base class that is defined in the Lino source tree
         #~ # this is to find out the source_name and the source_dir
         #~ for cl in self.__class__.__mro__:
-            #~ if cl.__module__.startswith('lino.sites.'):
+            #~ if cl.__module__.startswith('lino.apps.'):
                 #~ self.source_dir = os.path.dirname(__file__)
                 #~ self.source_name = self.source_dir
                 #~ os.path.split(_source_dir,

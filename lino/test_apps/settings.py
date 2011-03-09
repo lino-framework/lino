@@ -20,7 +20,7 @@ import os
 import sys
 from os.path import join,dirname, normpath, abspath
 
-from lino.sites.std.settings import *
+from lino.apps.std.settings import *
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG

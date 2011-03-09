@@ -14,13 +14,6 @@ The :mod:`ext_elems` Module
     :undoc-members:
     :show-inheritance:
 
-The :mod:`ext_requests` Module
-------------------------------
-
-.. automodule:: lino.ui.extjs.ext_requests
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 The :mod:`ext_ui` Module
 ------------------------
@@ -34,14 +27,6 @@ The :mod:`ext_windows` Module
 -----------------------------
 
 .. automodule:: lino.ui.extjs.ext_windows
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-The :mod:`ext_store` Module
----------------------------
-
-.. automodule:: lino.ui.extjs.ext_store
     :members:
     :undoc-members:
     :show-inheritance:

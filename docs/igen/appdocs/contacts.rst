@@ -519,7 +519,7 @@ title      CharField     Title (Anrede,Pealkiri)
 ========== ============= =========================================================
 
     
-Defined in :srcref:`/lino/sites/igen/models.py`
+Defined in :srcref:`/lino/apps/igen/models.py`
 
 .. index::
    single: field;id
@@ -881,7 +881,7 @@ type       ForeignKey    Company type (Firmenart,Firmaliik)
 ========== ============= =========================================================
 
     
-Defined in :srcref:`/lino/sites/igen/models.py`
+Defined in :srcref:`/lino/apps/igen/models.py`
 
 .. index::
    single: field;id
