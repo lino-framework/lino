@@ -142,9 +142,9 @@ SITE_ID = 1 # see also fill.py
 
 INSTALLED_APPS = (
     #~ 'django.contrib.auth',
-    'lino.modlib.auth',
+    'lino.modlib.users',
     'django.contrib.contenttypes',
-    'django.contrib.sessions',
+    #~ 'django.contrib.sessions',
     'django.contrib.sites',
     #~ 'django.contrib.markup',
     #'django.contrib.admin',

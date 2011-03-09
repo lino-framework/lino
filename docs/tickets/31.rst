@@ -1,0 +1,33 @@
+===============================================
+#31 : [RFC] The :mod:`lino.modlib.users` module
+===============================================
+
+Suggested readings before entering the discussion:
+
+- Documentation of my module :mod:`lino.modlib.users`
+- The `Other authentication sources
+  <http://docs.djangoproject.com/en/dev/topics/auth/#other-authentication-sources>`_
+  section in the Django docs.
+- `Authentication using REMOTE_USER
+  <http://docs.djangoproject.com/en/dev/howto/auth-remote-user/>`_
+
+Request for Comments
+--------------------
+
+Don't take the following statements as my definitive opinion.
+I formulated them in order to get your feedback and 
+help me to understand if I were missing something.
+
+- The :mod:`lino.modlib.users` module is useful
+  on Django sites with :doc:`/topics/http_auth`
+  where a central user management system is already 
+  running.
+
+- Django's :mod:`django.contrib.auth` module is overkill in 
+  such cases.
+  
+- Not only overkill, but also it's tests suite reports many 
+  failures for things that are not used in the above 
+  configuration.
+
+

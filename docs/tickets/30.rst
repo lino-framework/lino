@@ -13,8 +13,8 @@ The problem when trying to use the source version
 is that Qooxdoo 
 does a complex job when generating the JavaScript 
 code that is actually being used,
-and it probably hasn't been designed to generate code that will be 
-running somewhere else that on the machine on which it 
+and it probably hasn't been designed to generate "source" code that will be 
+running somewhere else than on the machine on which it 
 has been generated.
 
 Surfing for "Django Qooxdoo" didn't bring helpful
@@ -119,6 +119,7 @@ In :file:`config.json` I replaced
 by
 
 ::
+
     "QOOXDOO_PATH" : "/media/qx",
 
 

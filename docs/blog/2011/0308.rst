@@ -21,7 +21,7 @@ Step 1 : The Qooxdoo application "Lino"
 I started to write a standalone 
 Qooxdoo application called "Lino". 
 The code is here:
-:srcref:`/lino/lino/ui/qx/app`.
+:srcref:`/lino/ui/qx/app`.
 
 This application currently doesn't do very much:
 it just issues an AJAX call to request the main menu, 
@@ -56,7 +56,7 @@ See :doc:`/tickets/30`
 
    
 #.  On the development server I have in my 
-    :srcref:`urls.py </lino/lino/ui/qx/urls.py>`::
+    :srcref:`urls.py </lino/ui/qx/urls.py>`::
 
       if False and settings.DEBUG:
           # doesn't yet work.
@@ -101,15 +101,17 @@ See :doc:`/tickets/30`
 
 
 
-#.  In file :srcref:`/lino/lino/ui/qx/app/source/index.html`, 
+#.  In file :srcref:`/lino/ui/qx/app/source/index.html`, 
     I manually replaced the line
 
     ::
+    
       <script type="text/javascript" src="script/lino.js"></script>
 
     by
 
     ::
+    
       <script type="text/javascript" src="media/qx/script/lino.js"></script>
 
 

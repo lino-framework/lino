@@ -1,3 +1,3 @@
 T:\hgwork\lino\docs\autodoc\lino.modlib.rst:13: (WARNING/2) toctree contains reference to nonexisting document u'autodoc/lino.modlib.sales'
-T:\hgwork\lino\docs\tickets\30.rst:119: (WARNING/2) Literal block ends without a blank line; unexpected unindent.
 T:\hgwork\lino\docs\admin\upgrade.rst:: WARNING: document isn't included in any toctree
+T:\hgwork\lino\docs\tickets\31.rst:26: WARNING: py:mod reference target not found: django.contrib.auth

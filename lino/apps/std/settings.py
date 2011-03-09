@@ -302,16 +302,17 @@ Django and standard HTTP authentication.
 http://stackoverflow.com/questions/152248/can-i-use-http-basic-authentication-with-django
 """
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE_CLASSES = [
     'django.middleware.common.CommonMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    #~ 'django.contrib.sessions.middleware.SessionMiddleware',
+    #~ 'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'lino.modlib.users.middleware.RemoteUserMiddleware',
     'django.middleware.doc.XViewMiddleware',
     #'lino.utils.editing.EditingMiddleware',
-)
+]
 
 
-if not BYPASS_PERMS:
+if False: # not BYPASS_PERMS:
     MIDDLEWARE_CLASSES += (
       'django.contrib.auth.middleware.RemoteUserMiddleware',
     )
@@ -341,9 +342,9 @@ TEMPLATE_DIRS = (
 
 INSTALLED_APPS = [
   #~ 'django.contrib.auth',
-  'lino.modlib.auth',
+  'lino.modlib.users',
   'django.contrib.contenttypes',
-  'django.contrib.sessions',
+  #~ 'django.contrib.sessions',
   'django.contrib.sites',
   #~ 'django.contrib.markup',
   #~ 'django.contrib.databrowse',
