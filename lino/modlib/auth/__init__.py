@@ -13,7 +13,7 @@
 
 """
 
-Lino's :mod:`lino.modlib.users` is an alternative to Django's 
+Lino's :mod:`lino.modlib.auth` is an alternative to Django's 
 :mod:`django.contrib.auth` module when there is already 
 a central user management system (e.g. an LDAP server)
 running on a site and authentication granted by the web server.
@@ -28,7 +28,7 @@ Here's how to install this in your :xfile:`settings.py`::
   INSTALLED_APPS = [
     #~ 'django.contrib.sessions',
     #~ 'django.contrib.auth',
-    'lino.modlib.users',
+    'lino.modlib.auth',
     ...
   ]
 
@@ -36,7 +36,7 @@ Here's how to install this in your :xfile:`settings.py`::
       'django.middleware.common.CommonMiddleware',
       #~ 'django.contrib.sessions.middleware.SessionMiddleware',
       #~ 'django.contrib.auth.middleware.AuthenticationMiddleware',
-      'lino.modlib.users.middleware.RemoteUserMiddleware',
+      'lino.modlib.auth.middleware.RemoteUserMiddleware',
   ]
   
   AUTHENTICATION_BACKENDS = [

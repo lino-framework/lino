@@ -299,7 +299,8 @@ class ContactDocument(PartnerDocument):
 
 class CompanyType(models.Model):
     """
-    Implements the :class:`contacts.CompanyType` convention.
+    Represents a possible choice for the :class:`Company`.type
+    field.
     """
     
     class Meta:

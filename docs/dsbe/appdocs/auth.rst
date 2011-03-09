@@ -9,9 +9,6 @@ auth
 Defined in :srcref:`/lino/modlib/auth/models.py`
 
 
-This is a stripped copy of `django.contrib.auth`.
-
-
 
 .. contents:: Table of Contents
 

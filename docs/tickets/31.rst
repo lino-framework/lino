@@ -1,10 +1,10 @@
-===============================================
-#31 : [RFC] The :mod:`lino.modlib.users` module
-===============================================
+==============================================
+#31 : [RFC] The :mod:`lino.modlib.auth` module
+==============================================
 
 Suggested readings before entering the discussion:
 
-- Documentation of my module :mod:`lino.modlib.users`
+- Documentation of my module :mod:`lino.modlib.auth`
 - The `Other authentication sources
   <http://docs.djangoproject.com/en/dev/topics/auth/#other-authentication-sources>`_
   section in the Django docs.
@@ -18,7 +18,7 @@ Don't take the following statements as my definitive opinion.
 I formulated them in order to get your feedback and 
 help me to understand if I were missing something.
 
-- The :mod:`lino.modlib.users` module is useful
+- The :mod:`lino.modlib.auth` module is useful
   on Django sites with :doc:`/topics/http_auth`
   where a central user management system is already 
   running.

@@ -91,6 +91,8 @@ class User(models.Model):
 
 
 class Users(reports.Report):
+    """Shows the list of users on this site.
+    """
     model = User
     #~ order_by = "last_name first_name".split()
     order_by = ["username"]

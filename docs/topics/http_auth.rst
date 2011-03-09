@@ -10,3 +10,4 @@ but connects to the user management
 
 Lino does not need any sessions in such a configuration.
 
+See also :doc:`/tickets/31`

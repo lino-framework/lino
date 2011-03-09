@@ -15,31 +15,13 @@
 from lino.tools import resolve_model
 from lino.utils.instantiator import Instantiator
 from lino.utils.babel import default_language
+from lino.utils import dblogger
 #from lino import reports
 #contacts = reports.get_app('contacts')
 
 
 def objects():
-    city = Instantiator('countries.City','name country').build
-    yield city(u'Aachen','DE')
-    yield city(u'Köln','DE')
-    yield city(u'Berlin','DE')
-    yield city(u'Hamburg','DE')
-    yield city(u'München','DE')
-    
-    yield city(u'Maastricht','NL')
-    yield city(u'Amsterdam','NL')
-    yield city(u'Den Haag','NL')
-    yield city(u'Rotterdam','NL')
-    yield city(u'Utrecht','NL')
-    yield city(u'Breda','NL')
-    
-    yield city(u'Paris','FR')
-    yield city(u'Nice','FR')
-    yield city(u'Metz','FR')
-    yield city(u'Strasbourg','FR')
-    yield city(u'Nancy','FR')
-    yield city(u'Marseille','FR')
+    dblogger.info("Installing contacts demo fixture")
     
     company = Instantiator('contacts.Company',"name zip_code city:name street street_no",country='EE').build
     yield company(u'Rumma & Ko OÜ','10115','Tallinn',u'Tartu mnt','71')

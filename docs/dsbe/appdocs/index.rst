@@ -8,7 +8,6 @@ Lino/DSBE
 
     auth
     contenttypes
-    sessions
     sites
     lino
     countries

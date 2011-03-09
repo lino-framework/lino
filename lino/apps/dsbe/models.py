@@ -559,7 +559,7 @@ class Person(Partner,contacts.Person):
     overview.return_type = fields.HtmlBox(_("Overview"))
     
     def residence_permit(self,rr):
-        kv = dict(type=settings.LINO_SITE.residence_permit_upload_type)
+        kv = dict(type=settings.LINO.residence_permit_upload_type)
         r = rr.spawn_request(uploads.UploadsByPerson(),master_instance=self,known_values=kv)
         return rr.ui.quick_upload_buttons(r)
         #~ rrr = uploads.UploadsByPerson().request(rr.ui,master_instance=self,known_values=kv)
@@ -567,13 +567,13 @@ class Person(Partner,contacts.Person):
     residence_permit.return_type = fields.DisplayField(_("Residence permit"))
     
     def work_permit(self,rr):
-        kv = dict(type=settings.LINO_SITE.work_permit_upload_type)
+        kv = dict(type=settings.LINO.work_permit_upload_type)
         r = rr.spawn_request(uploads.UploadsByPerson(),master_instance=self,known_values=kv)
         return rr.ui.quick_upload_buttons(r)
     work_permit.return_type = fields.DisplayField(_("Work permit"))
     
     def driving_licence(self,rr):
-        kv = dict(type=settings.LINO_SITE.driving_licence_upload_type)
+        kv = dict(type=settings.LINO.driving_licence_upload_type)
         r = rr.spawn_request(uploads.UploadsByPerson(),master_instance=self,known_values=kv)
         return rr.ui.quick_upload_buttons(r)
     driving_licence.return_type = fields.DisplayField(_("driving licence"))
@@ -874,7 +874,7 @@ class PersonPropsByProp(reports.Report):
     
 class SkillsByPerson(PropsByPerson):
     def setup_actions(self):
-        pg = settings.LINO_SITE.config.propgroup_skills
+        pg = settings.LINO.config.propgroup_skills
         #~ pg = get_site_config().propgroup_skills
         self.known_values = dict(group=pg)
         self.label = babelattr(pg,'name')

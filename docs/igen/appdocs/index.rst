@@ -8,7 +8,6 @@ Lino/iGen
 
     auth
     contenttypes
-    sessions
     sites
     lino
     countries

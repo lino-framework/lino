@@ -18,4 +18,5 @@ Lino site, see :doc:`/admin/upgrade`).
   change ``from lino.sites.foo.settings import *`` to 
   ``from lino.apps.foo.settings import *``
 
-
+- Database migration needed due to changes in table `auth_user`.
+  See :doc:`/blog/2011/0309`

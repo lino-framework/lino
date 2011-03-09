@@ -3,11 +3,12 @@
 
 - Finished :doc:`yesterday's <0308>` blog entry.
   New ticket :doc:`/tickets/30`.
-  Commit.
+  Commit 20110309a.
 
-- I'd now consider :mod:`lino.modlib.users` 
+- I'd now consider :mod:`lino.modlib.auth` 
   as a valid alternative to :mod:`django.contrib.auth`.
-  Wrote new ticket :doc:`/tickets/31` to request 
-  for comments.
-  Commit.
+  Wrote new ticket :doc:`/tickets/31` to request for comments.
+  Commit 20110309b.
   
+- New ticket :doc:`/tickets/32`.
+

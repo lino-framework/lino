@@ -1,0 +1,40 @@
+#32 : loaddata and processing order of fixtures
+===============================================
+
+Running ``manage.py test`` for :doc:`/dsbe/index` fails, saying::
+  
+  INFO Languages: ('de', 'fr', 'en')
+  Creating test database for alias 'default'...
+  .....INFO Installing contacts demo fixture
+  Problem installing fixture 't:\hgwork\lino\lino\modlib\contacts\fixtures\demo.dpy': Traceback (most recent call last):
+    File "l:\snapshots\django\django\core\management\commands\loaddata.py", line 174, in handle
+      obj.save(using=using)
+    File "t:\hgwork\lino\lino\utils\dpy.py", line 245, in save
+      for obj in self.objects():
+    File "t:\hgwork\lino\lino\modlib\contacts\fixtures\demo.dpy", line 36, in objects
+      yield company(u'Donderweer BV','4816 AR','Breda', 'Edisonstraat','12')
+    File "t:\hgwork\lino\lino\utils\instantiator.py", line 163, in build
+      kw = c.convert(**kw)
+    File "t:\hgwork\lino\lino\utils\instantiator.py", line 76, in convert
+      model.__name__,lookup_kw,e))
+  DataError: City.objects.get(**{'name': 'Breda'}) : City matching query does not exist.
+
+  E.INFO Installing countries demo_cities fixture
+  INFO Installing contacts demo fixture  
+  
+This is because the `contacts.demo` fixture is executed 
+before `countries.few_cities`. Which is very strange because I 
+have the following test case::
+
+  class DemoTest(TestCase):
+      fixtures = 'std few_countries few_languages few_cities props demo'.split()
+
+But it's true: the documentation for Django's `loaddata
+<http://docs.djangoproject.com/en/dev/ref/django-admin/#loaddata-fixture-fixture>`_
+management command says clearly: "the order in which fixture files are 
+processed is undefined."
+  
+I opened Django ticket :djangoticket:`15578`. 
+Let's see what they say about it.
+
+

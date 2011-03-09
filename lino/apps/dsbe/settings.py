@@ -176,7 +176,7 @@ INSTALLED_APPS = (
   #~ 'django.contrib.auth',
   'lino.modlib.auth',
   'django.contrib.contenttypes',
-  'django.contrib.sessions',
+  #~ 'django.contrib.sessions',
   'django.contrib.sites',
   #~ 'django.contrib.markup',
   #~ 'lino.modlib.system',
