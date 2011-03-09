@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2009-2011 Luc Saffre
+## Copyright 2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 import os
+from os.path import join, dirname, abspath
 import cgi
 import time
 #import traceback
@@ -236,26 +237,11 @@ class UI(base.UI):
     def __init__(self,site):
         self.reserved_names = [getattr(ext_requests,n) for n in ext_requests.URL_PARAMS]
         jsgen.register_converter(self.py2js_converter)
-        #~ self.window_configs = {}
-        #~ if os.path.exists(self.window_configs_file):
-            #~ logger.info("Loading %s...",self.window_configs_file)
-            #~ wc = pickle.load(open(self.window_configs_file,"rU"))
-            #~ #logger.debug("  -> %r",wc)
-            #~ if type(wc) is dict:
-                #~ self.window_configs = wc
-        #~ else:
-            #~ logger.warning("window_configs_file %s not found",self.window_configs_file)
             
         base.UI.__init__(self,site) # will create a.window_wrapper for all actions
         
-        #~ self.welcome_template = get_template('welcome.html')
-        
-        #~ from django.template.loader import find_template
-        #~ source, origin = find_template('welcome.html')
-        #~ print source, origin
-        
-        fn = find_config_file('welcome.html')
-        logger.info("Using welcome template %s",fn)
+        fn = join(dirname(__file__),'index.html.tmpl')
+        logger.info("Loading index template %s",fn)
         self.welcome_template = CheetahTemplate(file(fn).read())
         #~ self.build_lino_js()
         
@@ -411,154 +397,14 @@ class UI(base.UI):
         
         
 
-    def html_page(self,request,on_ready=[],**kw):
+    def html_page(self,request,on_ready='',**kw):
         #~ c = RequestContext(request,dict(site=self.site,lino=lino))
         self.welcome_template.ui = self
         self.welcome_template.user = request.user
         self.welcome_template.site = self.site
         self.welcome_template.lino = lino
-        #~ main=ext_elems.ExtPanel(
-        main=dict(
-          id="main_area",
-          xtype='container',
-          region="center",
-          layout='fit',
-          #~ html=self.welcome_template.render(c),
-          html=unicode(self.welcome_template),
-          #~ html=self.site.index_html.encode('ascii','xmlcharrefreplace'),
-        )
-        #~ if not on_ready:
-            #~ on_ready = [
-              #~ 'new Lino.IndexWrapper({html:%s}).show();' % 
-                #~ py2js(self.site.index_html.encode('ascii','xmlcharrefreplace'))]
-            #~ main.update(items=dict(layout='fit',html=self.site.index_html.encode('ascii','xmlcharrefreplace')))
-        #~ main.update(id='main_area',region='center')
-        yield '<html><head>'
-        yield '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />'
-        #~ title = kw.get('title',None)
-        #~ if title:
-        yield '<title id="title">%s</title>' % self.site.title
-        #~ yield '<!-- ** CSS ** -->'
-        #~ yield '<!-- base library -->'
-        yield '<link rel="stylesheet" type="text/css" href="%sextjs/resources/css/ext-all.css" />' % settings.MEDIA_URL 
-        #~ yield '<!-- overrides to base library -->'
-        if settings.USE_GRIDFILTERS:
-            #~ yield '<link rel="stylesheet" type="text/css" href="%sextjs/examples/ux/css/RowEditor.css" />' % settings.MEDIA_URL 
-            yield '<link rel="stylesheet" type="text/css" href="%sextjs/examples/ux/statusbar/css/statusbar.css" />' % settings.MEDIA_URL 
-            yield '<link rel="stylesheet" type="text/css" href="%sextjs/examples/ux/gridfilters/css/GridFilters.css" />' % settings.MEDIA_URL 
-            yield '<link rel="stylesheet" type="text/css" href="%sextjs/examples/ux/gridfilters/css/RangeMenu.css" />' % settings.MEDIA_URL 
-            
-        yield '<link rel="stylesheet" type="text/css" href="%sextjs/examples/ux/fileuploadfield/css/fileuploadfield.css" />' % settings.MEDIA_URL 
-        
-        yield '<link rel="stylesheet" type="text/css" href="%slino/extjs/lino.css">' % settings.MEDIA_URL
-         
-        #~ yield '<!-- ** Javascript ** -->'
-        #~ yield '<!-- ExtJS library: base/adapter -->'
-        yield '<script type="text/javascript" src="%sextjs/adapter/ext/ext-base.js"></script>' % settings.MEDIA_URL 
-        if settings.DEBUG:
-            widget_library = 'ext-all-debug'
-        else:
-            widget_library = 'ext-all'
-        #~ yield '<!-- ExtJS library: all widgets -->'
-        yield '<script type="text/javascript" src="%sextjs/%s.js"></script>' % (settings.MEDIA_URL, widget_library)
-        #~ if True:
-            #~ yield '<style type="text/css">'
-            #~ # http://stackoverflow.com/questions/2106104/word-wrap-grid-cells-in-ext-js 
-            #~ yield '.x-grid3-cell-inner, .x-grid3-hd-inner {'
-            #~ yield '  white-space: normal;' # /* changed from nowrap */
-            #~ yield '}'
-            #~ yield '</style>'
-        if False:
-            yield '<style type="text/css">'
-            #~ yield '.x-item-disabled, .x-tree-node-disabled, .x-date-disabled {'
-            yield '.x-item-disabled {'
-            yield '  color: blue; opacity:.90;' 
-            yield '}'
-            yield '</style>'
-        if False:
-            yield '<script type="text/javascript" src="%sextjs/Exporter-all.js"></script>' % settings.MEDIA_URL 
-
-        if settings.USE_GRIDFILTERS:
-            #~ yield '<script type="text/javascript" src="%sextjs/examples/ux/RowEditor.js"></script>' % settings.MEDIA_URL
-            yield '<script type="text/javascript" src="%sextjs/examples/ux/statusbar/StatusBar.js"></script>' % settings.MEDIA_URL
-            yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/menu/RangeMenu.js"></script>' % settings.MEDIA_URL
-            yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/menu/ListMenu.js"></script>' % settings.MEDIA_URL
-            yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/GridFilters.js"></script>' % settings.MEDIA_URL
-            yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/filter/Filter.js"></script>' % settings.MEDIA_URL
-            yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/filter/StringFilter.js"></script>' % settings.MEDIA_URL
-            yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/filter/DateFilter.js"></script>' % settings.MEDIA_URL
-            yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/filter/ListFilter.js"></script>' % settings.MEDIA_URL
-            yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/filter/NumericFilter.js"></script>' % settings.MEDIA_URL
-            yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/filter/BooleanFilter.js"></script>' % settings.MEDIA_URL
-            
-        yield '<script type="text/javascript" src="%sextjs/examples/ux/fileuploadfield/FileUploadField.js"></script>' % settings.MEDIA_URL
-
-        #~ yield '<!-- overrides to library -->'
-        #~ yield '<script type="text/javascript" src="%slino/extjs/lino.js"></script>' % settings.MEDIA_URL
-        yield '<script type="text/javascript" src="%s"></script>' % (
-            settings.MEDIA_URL + "/".join(self.lino_js_parts()))
-
-        #~ yield '<!-- page specific -->'
-        yield '<script type="text/javascript">'
-
-        yield 'Ext.onReady(function(){'
-        #~ yield "console.time('onReady');"
-        
-        #~ yield "Lino.load_mask = new Ext.LoadMask(Ext.getBody(), {msg:'Immer mit der Ruhe...'});"
-          
-        if True:
-            
-            win = dict(
-              layout='fit',
-              #~ maximized=True,
-              items=main,
-              #~ closable=False,
-              bbar=dict(xtype='toolbar',items=js_code('Lino.status_bar')),
-              #~ title=self.site.title,
-              tbar=self.site.get_site_menu(request.user),
-            )
-            
-            for ln in jsgen.declare_vars(win):
-                yield ln
-            yield '  new Ext.Viewport({layout:"fit",items:%s}).render("body");' % py2js(win)
-        else:
-          
-            comps = [
-              #~ ext_elems.Toolbar(
-              dict(xtype='toolbar',
-                items=self.site.get_site_menu(request.user),
-                region='north',height=29),
-              main,
-              #~ jsgen.Component("konsole",
-              dict(
-                #~ xtype="panel",
-                split=True,
-                collapsible=True,
-                collapsed=True,
-                autoScroll=True,
-                title=_("Console"),
-                id="konsole",
-                #~ html=_('Console started'),
-                height=100,
-                region="south")
-            ]  
-            for ln in jsgen.declare_vars(comps):
-                yield '  ' + ln
-            yield '  var viewport = new Ext.Viewport({layout:"border",items:%s});' % py2js(comps)
-            
-        yield '  Ext.QuickTips.init();'
-        
-        for ln in on_ready:
-            yield ln
-        
-        #~ yield "console.timeEnd('onReady');"
-        yield "}); // end of onReady()"
-        yield '</script></head><body id="body">'
-        #~ yield '<div id="tbar"/>'
-        #~ yield '<div id="main"/>'
-        #~ yield '<div id="bbar"/>'
-        #~ yield '<div id="konsole"></div>'
-        yield "</body></html>"
+        self.welcome_template.on_ready = on_ready
+        return unicode(self.welcome_template)
         
     def lino_js_lines(self):
         yield """// lino.js --- generated %s by Lino version %s.""" % (time.ctime(),lino.__version__)
@@ -586,19 +432,26 @@ class UI(base.UI):
         #~ return http.HttpResponseRedirect(target)
         
         #~ QX_PATH = os.path.abspath(os.path.dirname(__file__))
-        if settings.DEBUG:
-            QXAPP_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__),'app','source'))
-        else:
-            QXAPP_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__),'app','build'))
-        fn = os.path.join(QXAPP_ROOT,"index.html")
-        return HttpResponse(file(fn).read())
+        menu = settings.LINO.get_site_menu(request.user)
+        on_ready = "app.loadMenu(%s);" % py2js(menu)
+        return HttpResponse(
+            self.html_page(request,
+                on_ready=on_ready))
+        
+        #~ if settings.DEBUG:
+            #~ QXAPP_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__),'app','source'))
+        #~ else:
+            #~ QXAPP_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__),'app','build'))
+        #~ fn = os.path.join(QXAPP_ROOT,"index.html")
+        #~ return HttpResponse(file(fn).read())
+        
         #~ return HttpResponse(self.html_page(request,**kw))
         #~ html = '\n'.join(self.html_page(request,main,konsole,**kw))
         #~ return HttpResponse(html)
 
 
     def menu_view(self,request):
-        "used by lino.modlib.dsbe.tests and by lino.ui.qx"
+        "used only by lino.modlib.dsbe.tests "
         #~ from lino.lino_site import lino_site
         #~ from lino import lino_site
         return json_response_kw(success=True,

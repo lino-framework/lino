@@ -29,5 +29,4 @@ help me to understand if I were missing something.
 - Not only overkill, but also it's tests suite reports many 
   failures for things that are not used in the above 
   configuration.
-
-
+  

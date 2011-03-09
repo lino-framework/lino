@@ -10,5 +10,21 @@
   Wrote new ticket :doc:`/tickets/31` to request for comments.
   Commit 20110309b.
   
+  So weit ich sehen kann, wird Lino immer ein RESTful Server sein.
+  Da sind Sessions eigentlich gar nicht nötig.
+  http://stackoverflow.com/questions/2502842/way-to-maintain-a-session-in-a-rest-application    
+  
+  
 - New ticket :doc:`/tickets/32`.
+  Commit `20110309c 
+  <http://code.google.com/p/lino/source/detail?r=66883edb9c0ad819a15aaa9341a1e53b769d539c>`_.
+  
 
+- Continued with :mod:`lino.ui.qx`.
+  index.html.tmpl
+  Commit `20110309d 
+  <>`_.
+  
+  todo next: react correctly to a 
+  GET http://127.0.0.1:8000/api/contacts/Companies
+  

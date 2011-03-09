@@ -301,6 +301,9 @@ class CompanyType(models.Model):
     """
     Represents a possible choice for the :class:`Company`.type
     field.
+    Implemented by 
+    :ref:`dsbe.contacts.CompanyType`
+    :ref:`igen.contacts.CompanyType`
     """
     
     class Meta:

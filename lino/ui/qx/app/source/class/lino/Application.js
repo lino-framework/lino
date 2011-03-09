@@ -146,15 +146,17 @@ qx.Class.define("lino.Application",
       //~ });
       
       //~ var req = new qx.io.remote.Request('http://127.0.0.1:8000/menu', "GET", "application/json");
-      var req = new qx.io.remote.Request('/menu', "GET", "application/json");
-      req.addListener("completed", this.onMenuCompleted, this);
-      //~ req.addListener("completed", function(e) {
-          //~ this.loadMenu(e.getContent())
-      //~ });
-      req.send();
+      if (on_ready) on_ready(this);
+      //~ var req = new qx.io.remote.Request('/menu', "GET", "application/json");
+      //~ req.addListener("completed", this.onMenuCompleted, this);
+      //~ req.send();
     },
     
-    onMenuCompleted : function(e) {
+    //~ onMenuCompleted : function(e) {
+        //~ this.loadMenu(e.getContent().load_menu);
+    //~ },
+    
+    loadMenu : function(items) {
       //~ console.log(e);
       //~ this.debug(e.getStatusCode());
     
@@ -165,16 +167,21 @@ qx.Class.define("lino.Application",
         right: 0
       });
       
-      var response = e.getContent();
-      console.log(response);
-      for (var i = 0; i < response.load_menu.length; i++) {
-          var mi = response.load_menu[i];
+      //~ console.log(response);
+      for (var i = 0; i < items.length; i++) {
+          var mi = items[i];
           if (mi.menu) {
               var mb = new qx.ui.toolbar.MenuButton(mi.text);
               toolBar.add(mb);
               var m = new qx.ui.menu.Menu();
               for (var j = 0; j < mi.menu.items.length; j++) {
-                  m.add(new qx.ui.menu.Button(mi.menu.items[j].text));
+                  var b = new qx.ui.menu.Button(mi.menu.items[j].text);
+                  b.href = mi.menu.items[j].href;
+                  b.addListener('execute',function(e){
+                      //~ console.log(e.getTarget()); 
+                      window.location=e.getTarget().href;
+                  });
+                  m.add(b); 
               }
               mb.setMenu(m);
           }

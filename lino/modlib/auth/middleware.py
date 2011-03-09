@@ -23,7 +23,7 @@ class RemoteUserMiddleware(object):
     
     This does the same as
     :class:`django.contrib.auth.middleware.RemoteUserMiddleware`, 
-    but in a simplified manner without using Sessions.
+    but in a simplified manner and without using Sessions.
     
     The header used is configurable and defaults to ``REMOTE_USER``.  Subclass
     this class and change the ``header`` attribute if you need to use a
