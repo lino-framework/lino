@@ -21,9 +21,10 @@
   
 
 - Continued with :mod:`lino.ui.qx`.
-  index.html.tmpl
+  Now using `index.html.tmpl` with `on_ready` function.
+  This avoids the second AJAX call to load the menu.
   Commit `20110309d 
-  <>`_.
+  <http://code.google.com/p/lino/source/detail?r=b333697a58d027adc3c0fcd1412a31a741fdb713>`_.
   
   todo next: react correctly to a 
   GET http://127.0.0.1:8000/api/contacts/Companies

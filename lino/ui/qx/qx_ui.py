@@ -155,7 +155,7 @@ def elem2rec_detailed(ar,rh,elem,**rec):
     Adds additional information for this record, used only by detail views.
     
     The "navigation information" is a set of pointers to the next, previous, 
-    first and last record relativ to this record in this report. 
+    first and last record relative to this record in this report. 
     (This information can be relatively expensive for records that are towards 
     the end of the report. 
     See :doc:`/blog/2010/0716`,
@@ -418,22 +418,9 @@ class UI(base.UI):
             
 
     def index_view(self, request,**kw):
-        #~ from lino.lino_site import lino_site
-        #~ kw.update(title=lino_site.title)
-        #~ mnu = py2js(lino_site.get_site_menu(request.user))
-        #~ print mnu
-        #~ tbar=ext_elems.Toolbar(items=lino_site.get_site_menu(request.user),region='north',height=29)# renderTo='tbar')
-        
-        #~ target = "/qx/app/source/index.html"
-        #~ if settings.DEBUG:
-            #~ target = "/media/qx/app/source/index.html"
-        #~ else:
-            #~ target = "/media/qx/app/build/index.html"
-        #~ return http.HttpResponseRedirect(target)
-        
-        #~ QX_PATH = os.path.abspath(os.path.dirname(__file__))
-        menu = settings.LINO.get_site_menu(request.user)
-        on_ready = "app.loadMenu(%s);" % py2js(menu)
+        #~ menu = settings.LINO.get_site_menu(request.user)
+        #~ on_ready = "app.loadMenu(%s);" % py2js(menu)
+        on_ready = ''
         return HttpResponse(
             self.html_page(request,
                 on_ready=on_ready))
@@ -625,7 +612,7 @@ class UI(base.UI):
                     rec.update(phantom=True)
                     params.update(data_record=rec)
 
-                kw.update(on_ready=['Lino.%s(undefined,%s);' % (a,py2js(params))])
+                kw.update(on_ready=['lino.%s(%s);' % (a,py2js(params))])
                 #~ print '20101024 on_ready', params
                 return HttpResponse(self.html_page(request,**kw))
                 
@@ -649,8 +636,8 @@ class UI(base.UI):
                 return response
                 
             if fmt == 'json':
-                rows = [ ar.row2list(row) for row in ar.queryset ]
-                #~ rows = [ ar.row2dict(row) for row in ar.queryset ]
+                #~ rows = [ ar.row2list(row) for row in ar.queryset ]
+                rows = [ ar.row2dict(row) for row in ar.queryset ]
                 total_count = ar.total_count
                 #logger.debug('%s.render_to_dict() total_count=%d extra=%d',self,total_count,self.extra)
                 # add extra blank row(s):
@@ -993,20 +980,10 @@ class UI(base.UI):
         if isinstance(v,menus.MenuItem):
             if v.href is not None:
                 return dict(text=prepare_label(v),href=v.href)
-            if True: 
-                """
-                20110129. In this case, the main menu uses permalinks instead of opening new windows each time.
-                """
-                if v.request is not None:
-                    url = self.get_request_url(v.request)
-                elif v.instance is not None:
-                    url = self.get_detail_url(v.instance,fmt='detail')
-                else:
-                    url = self.get_action_url(v.action)
-                    #~ url = self.build_url('api',v.action.actor.app_label,v.action.actor._actor_name,fmt=v.action.name)
-                return dict(text=prepare_label(v),href=url)
-            # no longer supported:
-            handler = "function(btn,evt){Lino.%s(undefined,%s)}" % (v.action,py2js(v.params))
+            def a2class(a):
+                return 'lino.CountriesCitiesTable'
+            params = {} # todo
+            handler = "function(){this.showWindow(%s,%s);}" % (a2class(v.action),py2js(params))
             return dict(text=prepare_label(v),handler=js_code(handler))
         return v
         

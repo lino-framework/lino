@@ -146,7 +146,8 @@ qx.Class.define("lino.Application",
       //~ });
       
       //~ var req = new qx.io.remote.Request('http://127.0.0.1:8000/menu', "GET", "application/json");
-      if (on_ready) on_ready(this);
+      //~ if (on_ready) on_ready(this);
+      this.setupMainMenu();
       //~ var req = new qx.io.remote.Request('/menu', "GET", "application/json");
       //~ req.addListener("completed", this.onMenuCompleted, this);
       //~ req.send();
@@ -155,6 +156,34 @@ qx.Class.define("lino.Application",
     //~ onMenuCompleted : function(e) {
         //~ this.loadMenu(e.getContent().load_menu);
     //~ },
+    
+    showWindow : function(win) {
+      //~ console.log('showWindow',cls);
+      //~ var win = new cls(this);
+      //~ win.__app = this;
+      win.open();
+      this.getRoot().add(win, {left: 50, top: 10});
+    },
+    
+    setupMainMenu : function() {
+      var toolBar = new qx.ui.toolbar.ToolBar();
+      this.getRoot().add(toolBar, {
+        left: 0,
+        top: 0,
+        right: 0
+      });
+      var mb = new qx.ui.toolbar.MenuButton("Countries");  toolBar.add(mb);
+      var m = new qx.ui.menu.Menu(); mb.setMenu(m);
+      
+      var b = new qx.ui.menu.Button("Cities");  m.add(b); 
+      b.addListener('execute',function() { 
+        this.showWindow(new lino.CountriesCitiesTable(this));
+      },this);
+      
+      var b = new qx.ui.menu.Button("Qooxdoo!");  m.add(b); 
+      b.addListener('execute',function() { window.location.href = 'http://qooxdoo.org'},this);
+      
+    },
     
     loadMenu : function(items) {
       //~ console.log(e);
@@ -175,12 +204,16 @@ qx.Class.define("lino.Application",
               toolBar.add(mb);
               var m = new qx.ui.menu.Menu();
               for (var j = 0; j < mi.menu.items.length; j++) {
-                  var b = new qx.ui.menu.Button(mi.menu.items[j].text);
-                  b.href = mi.menu.items[j].href;
-                  b.addListener('execute',function(e){
-                      //~ console.log(e.getTarget()); 
-                      window.location=e.getTarget().href;
-                  });
+                  var item = mi.menu.items[j];
+                  var b = new qx.ui.menu.Button(item.text);
+                  if (item.href) {
+                    b.href = item.href;
+                    b.addListener('execute',function(e){
+                        window.location=e.getTarget().href;
+                    });
+                  } else {
+                    b.addListener('execute',item.handler,this);
+                  }
                   m.add(b); 
               }
               mb.setMenu(m);
