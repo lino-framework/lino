@@ -49,10 +49,12 @@ from django.conf.urls.defaults import patterns, url, include
 
 
 import lino
+from lino.ui.qx import qx_elems as elems
 #~ from . import ext_elems
 #~ from . import ext_store
 #~ from . import ext_windows
 from lino.ui import requests as ext_requests
+from lino.ui import store as ext_store
 from lino import actions #, layouts #, commands
 from lino import reports
 from lino import fields
@@ -232,7 +234,7 @@ def elem2rec_detailed(ar,rh,elem,**rec):
 
 class UI(base.UI):
     _response = None
-    #~ Panel = ext_elems.Panel
+    Panel = elems.Panel
 
     def __init__(self,site):
         self.reserved_names = [getattr(ext_requests,n) for n in ext_requests.URL_PARAMS]
@@ -245,8 +247,136 @@ class UI(base.UI):
         self.welcome_template = CheetahTemplate(file(fn).read())
         #~ self.build_lino_js()
         
+        
     def create_layout_element(self,lh,panelclass,name,**kw):
-        return lh.rh.report.get_data_elem(name)
+        
+        #~ if name == "_":
+            #~ return elems.Spacer(lh,name,**kw)
+            
+        de = lh.rh.report.get_data_elem(name)
+        #~ if de is None:
+            #~ raise Exception("no data element %s in %s" % (name,lh.rh.report))
+            
+        #~ if isinstance(de,list):
+            #~ for i in de:
+                #~ return lh.desc2elem(panelclass,name,de.ct_field + ' ' + de.fk_field,**kw)
+            
+        if isinstance(de,actions.ImageAction):
+            return elems.PictureElement(lh,name,de,**kw)
+
+        if isinstance(de,models.Field):
+            if isinstance(de,(babel.BabelCharField,babel.BabelTextField)):
+                if len(babel.BABEL_LANGS) > 0:
+                    elems = [ self.create_field_element(lh,de,**kw) ]
+                    for lang in babel.BABEL_LANGS:
+                        bf = lh.rh.report.get_data_elem(name+'_'+lang)
+                        elems.append(self.create_field_element(lh,bf,**kw))
+                    return elems
+            return self.create_field_element(lh,de,**kw)
+        if isinstance(de,generic.GenericForeignKey):
+            # create a horizontal panel with 2 comboboxes
+            return lh.desc2elem(panelclass,name,de.ct_field + ' ' + de.fk_field,**kw)
+            #~ return elems.VirtualFieldElement(lh,name,de,**kw)
+            
+        if isinstance(de,reports.Report):
+            if isinstance(lh.layout,reports.DetailLayout):
+                kw.update(tools=[
+                  js_code("Lino.report_window_button(ww,Lino.%s)" % de.default_action)
+                ])
+                if de.show_slave_grid:
+                    e = elems.SlaveGridElement(lh,name,de,**kw)
+                    #~ e = elems.GridElement(lh,name,de.get_handle(self),**kw)
+                    #~ lh.slave_grids.append(e)
+                    return e
+                    #~ return elems.GridElementBox(lh,e)
+                else:
+                    o = dict(drop_zone="FooBar")
+                    a = de.get_action('insert')
+                    if a is not None:
+                        kw.update(ls_insert_handler=js_code("Lino.%s" % a))
+                        kw.update(ls_bbar_actions=[
+                          self.a2btn(a),
+                          ])
+                    field = fields.HtmlBox(verbose_name=de.label,**o)
+                    field.name = de._actor_name
+                    field._return_type_for_method = de.slave_as_summary_meth(self,'<br>')
+                    lh.add_store_field(field)
+                    e = elems.HtmlBoxElement(lh,field,**kw)
+                    return e
+            else:
+                #~ field = fields.TextField(verbose_name=de.label)
+                field = fields.HtmlBox(verbose_name=de.label)
+                field.name = de._actor_name
+                field._return_type_for_method = de.slave_as_summary_meth(self,', ')
+                lh.add_store_field(field)
+                e = elems.HtmlBoxElement(lh,field,**kw)
+                return e
+                
+        if isinstance(de,fields.VirtualField):
+            return self.create_vurt_element(lh,name,de,**kw)
+            
+        if callable(de):
+            rt = getattr(de,'return_type',None)
+            if rt is not None:
+                return self.create_meth_element(lh,name,de,rt,**kw)
+                
+        if not name in ('__str__','__unicode__','name','label'):
+            value = getattr(lh.layout,name,None)
+            if value is not None:
+                if isinstance(value,basestring):
+                    return lh.desc2elem(panelclass,name,value,**kw)
+                if isinstance(value,reports.StaticText):
+                    return elems.StaticTextElement(lh,name,value)
+                if isinstance(value,reports.DataView):
+                    return elems.DataViewElement(lh,name,value)
+                    #~ return elems.TemplateElement(lh,name,value)
+                if isinstance(value,printable.PicturePrintMethod):
+                    return elems.PictureElement(lh,name,value)
+                #~ if isinstance(value,layouts.PropertyGrid):
+                    #~ return elems.PropertyGridElement(lh,name,value)
+                raise KeyError("Cannot handle value %r in %s.%s." % (value,lh.layout._actor_name,name))
+        msg = "Unknown element %r referred in layout %s of %s" % (name,lh.layout,lh.rh.report)
+        raise KeyError(msg)
+        
+        
+    def create_vurt_element(self,lh,name,vf,**kw):
+        #~ assert vf.get.func_code.co_argcount == 2, (name, vf.get.func_code.co_varnames)
+        return self.create_field_element(lh,vf,**kw)
+        
+    def create_meth_element(self,lh,name,meth,rt,**kw):
+        rt.name = name
+        rt._return_type_for_method = meth
+        if meth.func_code.co_argcount != 2:
+            raise Exception("Method %s has %d arguments (must have 2)" % (meth,meth.func_code.co_argcount))
+            #~ , (name, meth.func_code.co_varnames)
+        #~ kw.update(editable=False)
+        e = self.create_field_element(lh,rt,**kw)
+        #~ if lh.rh.report.actor_id == 'contacts.Persons':
+            #~ print 'ext_ui.py create_meth_element',name,'-->',e
+        return e
+        #~ e = lh.main_class.field2elem(lh,return_type,**kw)
+        #~ assert e.field is not None,"e.field is None for %s.%s" % (lh.layout,name)
+        #~ lh._store_fields.append(e.field)
+        #~ return e
+            
+        #~ if rt is None:
+            #~ rt = models.TextField()
+            
+        #~ e = ext_elems.MethodElement(lh,name,meth,rt,**kw)
+        #~ assert e.field is not None,"e.field is None for %s.%s" % (lh.layout,name)
+        #~ lh._store_fields.append(e.field)
+        #~ return e
+          
+    def create_field_element(self,lh,field,**kw):
+        e = lh.main_class.field2elem(lh,field,**kw)
+        assert e.field is not None,"e.field is None for %s.%s" % (lh.layout,name)
+        lh.add_store_field(e.field)
+          #~ lh._store_fields.append(e.field)
+        return e
+        #return FieldElement(self,field,**kw)
+        
+        
+        
         
     def href_to(self,obj):
         return '<a href="%s" target="_blank">%s</a>' % (self.get_detail_url(obj,fmt='detail'),unicode(obj))
@@ -254,14 +384,10 @@ class UI(base.UI):
 
 
     def main_panel_class(self,layout):
-        if isinstance(layout,reports.ListLayout) : 
-            return ext_elems.GridMainPanel
-        #~ if isinstance(layout,layouts.TabLayout) : 
-            #~ return ext_elems.TabMainPanel
-        if isinstance(layout,reports.DetailLayout) : 
-            return ext_elems.DetailMainPanel
-        #~ if isinstance(layout,layouts.FormLayout) : 
-            #~ return ext_elems.FormMainPanel
+        if isinstance(layout,reports.ListLayout):
+            return elems.GridMainPanel
+        if isinstance(layout,reports.DetailLayout): 
+            return elems.DetailMainPanel
         raise Exception("No element class for layout %r" % layout)
             
 
@@ -406,16 +532,6 @@ class UI(base.UI):
         self.welcome_template.on_ready = on_ready
         return unicode(self.welcome_template)
         
-    def lino_js_lines(self):
-        yield """// lino.js --- generated %s by Lino version %s.""" % (time.ctime(),lino.__version__)
-        yield "Ext.BLANK_IMAGE_URL = '%sextjs/resources/images/default/s.gif';" % settings.MEDIA_URL
-        yield "LANGUAGE_CHOICES = %s;" % py2js(list(LANGUAGE_CHOICES))
-        yield "STRENGTH_CHOICES = %s;" % py2js(list(STRENGTH_CHOICES))
-        yield "KNOWLEDGE_CHOICES = %s;" % py2js(list(KNOWLEDGE_CHOICES))
-        yield "MEDIA_URL = %r;" % settings.MEDIA_URL
-        yield "Lino.status_bar = new Ext.ux.StatusBar({defaultText:'Lino version %s.'});" % lino.__version__
-        
-            
 
     def index_view(self, request,**kw):
         #~ menu = settings.LINO.get_site_menu(request.user)
@@ -553,7 +669,7 @@ class UI(base.UI):
             
             name = PUT.get('name',None)
             if name is None:
-                name = ext_elems.DEFAULT_GC_NAME                 
+                name = elems.DEFAULT_GC_NAME                 
             else:
                 name = int(name)
                 
@@ -636,8 +752,8 @@ class UI(base.UI):
                 return response
                 
             if fmt == 'json':
-                #~ rows = [ ar.row2list(row) for row in ar.queryset ]
-                rows = [ ar.row2dict(row) for row in ar.queryset ]
+                rows = [ ar.row2list(row) for row in ar.queryset ]
+                #~ rows = [ ar.row2dict(row) for row in ar.queryset ]
                 total_count = ar.total_count
                 #logger.debug('%s.render_to_dict() total_count=%d extra=%d',self,total_count,self.extra)
                 # add extra blank row(s):
@@ -1006,22 +1122,20 @@ class UI(base.UI):
         return self.build_url('api',rpt.app_label,rpt._actor_name,str(obj.pk),*args,**kw)
         
         
-    def action_window_wrapper(self,a,h):
-        #~ if isinstance(a,actions.DeleteSelected): return ext_windows.DeleteRenderer(self,a)
-        #~ if isinstance(a,actions.UpdateRowAction): return ext_windows.UpdateRowRenderer(self,a)
+    #~ def action_window_wrapper(self,a,h):
           
-        if isinstance(a,reports.GridEdit):
-            return ext_windows.GridMasterWrapper(h,a)
+        #~ if isinstance(a,reports.GridEdit):
+            #~ return ext_windows.GridMasterWrapper(h,a)
             
-        if isinstance(a,reports.InsertRow):
-            return ext_windows.InsertWrapper(h,a)
+        #~ if isinstance(a,reports.InsertRow):
+            #~ return ext_windows.InsertWrapper(h,a)
             
-        if isinstance(a,reports.ShowDetailAction):
-            return ext_windows.DetailWrapper(h,a)
+        #~ if isinstance(a,reports.ShowDetailAction):
+            #~ return ext_windows.DetailWrapper(h,a)
             
     def setup_handle(self,h):
         #~ if isinstance(h,layouts.TabPanelHandle):
-            #~ h._main = ext_elems.TabPanel([l.get_handle(self) for l in h.layouts])
+            #~ h._main = elems.TabPanel([l.get_handle(self) for l in h.layouts])
           
         if isinstance(h,reports.ReportHandle):
             #~ logger.debug('ExtUI.setup_handle() %s',h.report)
@@ -1031,8 +1145,8 @@ class UI(base.UI):
             #~ h.report.add_action(ext_windows.SaveWindowConfig(h.report))
             h.store = ext_store.Store(h)
                     
-            for a in h.get_actions():
-                a.window_wrapper = self.action_window_wrapper(a,h)
+            #~ for a in h.get_actions():
+                #~ a.window_wrapper = self.action_window_wrapper(a,h)
                 
             for de in h.data_elems():
                 if de.name in self.reserved_names:

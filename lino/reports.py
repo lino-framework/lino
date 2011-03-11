@@ -1368,6 +1368,7 @@ class LayoutHandle:
         if layout.main is not None:
         #~ if hasattr(layout,"main"):
             self._main = self.create_element(self.main_class,'main')
+            assert self._main is not None
         else:
             raise Exception("%s has no main" % self.layout)
             

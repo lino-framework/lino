@@ -1,0 +1,82 @@
+20110311
+========
+
+Viele Pläne...
+--------------
+
+Meine erste Woche mit Qooxdoo war vielversprechend.
+Ich habe das Gefühl, dass Qooxdoo ExtJS ersetzen wird, 
+aber für eine Entscheidung ist es noch zu früh, denn es gibt 
+noch viel zu tun, bevor das qx-UI benutzbar wird.
+Und erst wenn dann werden wir sehen, ob für den 
+Benutzer überhaupt Vorteile daraus entstehen...
+
+
+- makeui: nicht nur für qx, sondern auch für extjs. Der Befehl wird ui- und sprachenspezifische Dateien ins lokale media-Verzeichnis generieren und müsste nach jedem Upgrade (sowie nach jeder Änderung in der lokalen settings.py) laufen gelassen werden. lino.ui.extjs soll das dann (1) nicht mehr bei jedem Serverstart machen und (2) eine Version für jede Sprache. Momentan kommt das Ext-UI immer nur in der Hauptsprache des Sites. Für lino.ui.qx hat makeui noch mehr zu tun: er generiert eine komplette Qx-Anwendung (mindestens eine class-Datei für jeden Report: eine für die Grid und ggf. eine weitere für das Detail) und startet dann `generate.py`.
+
+- Idealerweise sollte ich eine einzige URL-API für beide UIs (extjs und qt) haben.
+  Sonst wird es psychologisch schwierig, die beiden parallel zu warten.
+  Andererseits ist das nicht einfach. Z.B. erwartet eine Grid in Qx (die dort übrigens "Table" heißt) die Daten obligatorisch als dicts und nicht als einfache lists. Schade, denn einfache Listen nehmen weniger Bandbreite. Auch muss ich die UI-Struktur noch überdenken, wenn ich das UI irgendwann als Preference pro User wählbar machen will...
+
+
+"Reports" oder "Views"?
+-----------------------
+
+Die Klassenbezeichnung "Report" in Lino (lino.reports.Report) 
+war ja damals ein Kompromiss. Eigentlich wollte ich es "View" nennen, 
+scheute aber vor einem Wortschatzkonflikt mit Django zurück, 
+wo das Wort "view" schon intensiv benutzt wird.
+Jetzt habe ich beim Surfen 
+(http://django-rest-framework.org/) 
+zufällig entdeckt, dass Django 
+was Neues hat: `Class-based views
+<http://docs.djangoproject.com/en/dev/topics/class-based-views/>`_.
+Die sind ganz ähnlich wie meine Reports.
+Also meine Klasse Report könnte ich vielleicht irgendwann 
+doch mal nach "View" umbenennen.
+
+Updated my local Django copy from revision 15648 to 15796
+
+
+lino.ui.qx weiter
+-----------------
+
+Neue Klasse `lino.ForeignKeyCellRenderer`. 
+
+
+Wenn ich z.B. folgendes TableModel habe::
+
+
+      tm.setColumns(
+        ["Land",'Name','PLZ','ID'],
+        ["country",'name','zip_code','id']
+      ); 
+      
+dann erwartet Qooxdoo (oder genauer gesagt 
+qx.ui.table.model.Abstract._onRowDataLoaded)
+eine Antwort im Stil::
+      
+      rows = [
+        {"country" : "BE", "name": "Eupen", "zip_code" : "4700", "id" : 1},
+        {"country" : "DE", "name": "Aachen", "zip_code" : "", "id" : 2},
+      ]
+
+
+Aber Lino antwortet bisher für ExtJS ja so::
+
+      rows = [
+        {"BE", "Eupen",  "4700", 1},
+        {"DE", "Aachen", "", 2},
+      ]
+
+Ich find das viel kürzer. Wozu in jeder Zeile jeden Attributnamen wiederholen?
+Da habe ich folgendes probiert::
+
+      tm.setColumns(
+        ["Land",'Name','PLZ','ID'],
+        [1,2,3,4]
+      ); 
+
+Aber das scheint nicht zu klappen. 
+Laut Doku muss man ja auch mit Strings als keys des Records arbeiten.
+Schade.

@@ -988,48 +988,11 @@ class Panel(Container):
                 if len(self.elements) == 3:
                     self.elements[1].update(region='south')
         
-
-            
-        
-    def ext_options(self,**d):
-        d = Container.ext_options(self,**d)
-        #~ if self.collapsible:
-            #~ d.update(xtype='panel')
-            #~ js = "function(cmp,aw,ah,rw,rh) { console.log('Panel.collapse',this,cmp,aw,ah,rw,rh); this.main_panel.doLayout(); }"
-            #~ d.update(listeners=dict(scope=js_code('this'),collapse=js_code(js),expand=js_code(js)))
-            #d.update(monitorResize=True)
-        #~ else:
-            #~ d.update(xtype='container')
-        #d.update(margins='0')
-        #d.update(style=dict(padding='0px'))
-        
-        #~ d.update(items=self.elements)
-        #l = [e.as_ext() for e in self.elements ]
-        #d.update(items=js_code("[\n  %s\n]" % (", ".join(l))))
-        #d.update(items=js_code("this.elements"))
-        
-        if self.is_fieldset:
-            d.update(labelWidth=self.label_width * EXT_CHAR_WIDTH)
-        if len(self.elements) > 1 and self.vertical:
-            #d.update(frame=self.has_frame)
-            d.update(frame=True)
-            d.update(bodyBorder=False)
-            d.update(border=False)
-            d.update(labelAlign=self.labelAlign)
-            #d.update(style=dict(padding='0px'),color='green')
-        else:
-            d.update(frame=False)
-            #d.update(bodyBorder=False)
-            d.update(border=False)
-            
-        return d
         
 
 class GridElement(Container): 
     declare_type = jsgen.DECLARE_VAR
-    #value_template = "new Ext.grid.EditorGridPanel(%s)"
-    #~ value_template = "new Ext.grid.GridPanel(%s)"
-    value_template = "new Lino.GridPanel(ww,%s)"
+    value_template = "new lino.TablePanel(ww,%s)"
     ext_suffix = "_grid"
     vflex = True
     xtype = None
@@ -1157,12 +1120,10 @@ class MainPanel(jsgen.Variable):
 
 
 class GridMainPanel(GridElement,MainPanel):
-    #~ value_template = "new Lino.GridPanel(%s)"
     def __init__(self,lh,name,vertical,*columns,**kw):
         """ignore the "vertical" arg"""
-        #~ MainPanel.__init__(self)
+        self.value_template = "new lino.%s(%%s)" % lh.rh.report
         GridElement.__init__(self,lh,name,lh.rh.report,*columns,**kw)
-        #logger.debug("GridMainPanel.__init__() %s",self.name)
         
 
 

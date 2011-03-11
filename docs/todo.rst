@@ -12,6 +12,9 @@ Short-term
 #.  Übersetzung PropertyType : nicht Eigenschaftsart, sondern 
     Eigenschaftstyp oder Eigenschafts-Datentyp...
     
+#.  An makedocs müsste ich bei Gelegenheit mal ein bisschen weiter machen. 
+    Das ist noch lange nicht fertig.
+    
 #.  Wie kann man in der Dokumentvorlage `cv.odt`
     an Führerschein und Informatikkenntnisse rankommen?
 
@@ -29,13 +32,10 @@ Short-term
 #.  Textbausteine (im Text-Editor F1 drücken können)
 
     
-Version 1.2 (alle todos vom 11.01. fertig)
-------------------------------------------
-
 #.  Formatierte Texte in Verträgen drucken können.
     Zumindest Aufzählungen und mehrere Absätze 
     sollten möglich sein.
-
+    
 Version 1.3
 -----------
 
@@ -547,6 +547,17 @@ Long-term
     
 #.  Man kann es momentan nicht verhindern, dass ein Babel-Feld expandiert wird.
     
+#.  Think about differences and common things between 
+    Lino's Report and Dango's new 
+    `Class-based views
+<http://docs.djangoproject.com/en/dev/topics/class-based-views/>`_ 
+    (Discovered :doc:`/blog/2011/0311`)
+
+#.  Check whether Lino should use
+    http://django-rest-framework.org/
+    instead of reinventing the wheel.
+    (Discovered :doc:`/blog/2011/0311`)
+
 
 Documentation
 -------------

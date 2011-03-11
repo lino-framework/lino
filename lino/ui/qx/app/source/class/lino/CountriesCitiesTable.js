@@ -21,19 +21,20 @@ qx.Class.define("lino.CountriesCitiesTable",
 {
   extend : lino.TableWindow,
   //~ construct : function() {
-    //~ console.log('lino.CountriesCitiesTable.construct()',arguments);
-    //~ this.base(arguments);
+    //~ this.base(arguments, this.caption);
   //~ },
+  
 
   members : {
-    caption : 'Städte',
+    //~ caption : 'Städte',
     content_type : 9,
     before_row_edit : function(record){}, 
-    createTableModel : function() {
-      var tm = new lino.RemoteTableModel('/countries/Cities');
+    createTable : function() {
+      var tm = new lino.RemoteTableModel(this,'/api/countries/Cities');
       tm.setColumns(
-        ["country",'name','zip_code','id'],
-        ["Land",'Name','PLZ','ID']
+        ["Land",'Name','PLZ','ID'],
+        [1,2,3,4]
+        //~ ["country",'name','zip_code','id']
       ); // columnNameArr, columnIdArr
       tm.setColumnSortable(0,true);
       tm.setColumnEditable(0,true);
@@ -44,6 +45,18 @@ qx.Class.define("lino.CountriesCitiesTable",
       // editor
       // hidden
       // lino.CountriesCitiesInsert
+      
+      //~ var custom = {
+        //~ tableColumnModel : function(obj) { 
+          //~ var cm = new qx.ui.table.columnmodel.Basic(obj);
+          //~ return cm;
+        //~ }
+      //~ };      
+      //~ var table = new qx.ui.table.Table(tm,custom);
+      var table = new qx.ui.table.Table(tm);
+      var cm = table.getTableColumnModel();
+      cm.setDataCellRenderer(0,new lino.ForeignKeyCellRenderer(0));
+      return table;
     },
     setupToolbar: function(bar)
     {
