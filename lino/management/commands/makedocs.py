@@ -137,7 +137,7 @@ class Command(BaseCommand):
         self.generated_count = 0
         self.options = options
         
-        logger.info("Running Lino autodoc to %s.", self.output_dir)
+        logger.info("Running Lino makedocs to %s.", self.output_dir)
             
         #~ fd = codecs.open(fn,'w',encoding='UTF-8')
         

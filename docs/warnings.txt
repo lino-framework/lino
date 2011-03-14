@@ -1,6 +1,35 @@
 T:\hgwork\lino\docs\autodoc\lino.modlib.rst:13: (WARNING/2) toctree contains reference to nonexisting document u'autodoc/lino.modlib.sales'
+T:\hgwork\lino\docs\igen\appdocs\igen.rst:47: (WARNING/2) Literal block ends without a blank line; unexpected unindent.
+T:\hgwork\lino\docs\igen\appdocs\sales.rst:1845: (WARNING/2) Duplicate explicit target name: "igen.sales.invoice.journal".
+T:\hgwork\lino\docs\igen\appdocs\sales.rst:1860: (WARNING/2) Duplicate explicit target name: "igen.sales.invoice.number".
 T:\hgwork\lino\docs\admin\upgrade.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\dsbe\appdocs\sessions.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\igen\appdocs\sessions.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\blog\2011\0309.rst:8: WARNING: py:mod reference target not found: django.contrib.auth
-T:\hgwork\lino\docs\blog\2011\0309.rst:23: WARNING: py:mod reference target not found: lino.ui.qx
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:34: WARNING: py:class reference target not found: Company
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:223: WARNING: py:class reference target not found: contacts.ContactType
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:328: WARNING: py:class reference target not found: Person
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:328: WARNING: py:class reference target not found: Company
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:569: WARNING: py:attr reference target not found: steet_no
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:615: WARNING: py:attr reference target not found: country
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:1552: WARNING: py:class reference target not found: contacts.Company
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:1661: WARNING: py:attr reference target not found: steet_no
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:1707: WARNING: py:attr reference target not found: country
+T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:148: WARNING: py:class reference target not found: countries.Country
+T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:285: WARNING: py:class reference target not found: countries.City
+T:\hgwork\lino\docs\dsbe\appdocs\dsbe.rst:1971: WARNING: py:attr reference target not found: steet_no
+T:\hgwork\lino\docs\dsbe\appdocs\dsbe.rst:2017: WARNING: py:attr reference target not found: country
+T:\hgwork\lino\docs\dsbe\appdocs\dsbe.rst:2381: WARNING: py:class reference target not found: CourseProvider
+T:\hgwork\lino\docs\dsbe\appdocs\links.rst:28: WARNING: py:class reference target not found: links.LinkType
+T:\hgwork\lino\docs\dsbe\appdocs\properties.rst:214: WARNING: py:attr reference target not found: PropValue.value
+T:\hgwork\lino\docs\igen\appdocs\contacts.rst:34: WARNING: py:class reference target not found: Company
+T:\hgwork\lino\docs\igen\appdocs\contacts.rst:239: WARNING: py:class reference target not found: contacts.ContactType
+T:\hgwork\lino\docs\igen\appdocs\contacts.rst:360: WARNING: py:class reference target not found: Person
+T:\hgwork\lino\docs\igen\appdocs\contacts.rst:360: WARNING: py:class reference target not found: Company
+T:\hgwork\lino\docs\igen\appdocs\contacts.rst:613: WARNING: py:attr reference target not found: steet_no
+T:\hgwork\lino\docs\igen\appdocs\contacts.rst:659: WARNING: py:attr reference target not found: country
+T:\hgwork\lino\docs\igen\appdocs\contacts.rst:975: WARNING: py:attr reference target not found: steet_no
+T:\hgwork\lino\docs\igen\appdocs\contacts.rst:1021: WARNING: py:attr reference target not found: country
+T:\hgwork\lino\docs\igen\appdocs\countries.rst:164: WARNING: py:class reference target not found: countries.Country
+T:\hgwork\lino\docs\igen\appdocs\countries.rst:317: WARNING: py:class reference target not found: countries.City
+T:\hgwork\lino\docs\igen\appdocs\sales.rst:641: WARNING: py:class reference target not found: Order
+T:\hgwork\lino\docs\igen\appdocs\sales.rst:641: WARNING: py:class reference target not found: Invoice

@@ -28,9 +28,9 @@ qx.Class.define("lino.ForeignKeyCellRenderer",
     __colIndex : null,
     // overridden
     _getContentHtml : function(cellInfo) {
-        console.log('fkr.createDataCellHtml',cellInfo);
+        //~ console.log('ForeignKeyCellRenderer',cellInfo);
         if (cellInfo.rowData) {
-            return qx.bom.String.escape(cellInfo.rowData[this.__colIndex-1]);
+            return qx.bom.String.escape(cellInfo.rowData[this.__colIndex]);
         }
         return "";
     }

@@ -8,9 +8,7 @@ Meine erste Woche mit Qooxdoo war vielversprechend.
 Ich habe das Gefühl, dass Qooxdoo ExtJS ersetzen wird, 
 aber für eine Entscheidung ist es noch zu früh, denn es gibt 
 noch viel zu tun, bevor das qx-UI benutzbar wird.
-Und erst wenn dann werden wir sehen, ob für den 
-Benutzer überhaupt Vorteile daraus entstehen...
-
+Und erst dann werden wir sehen, ob mein Gefühl stimmt... 
 
 - makeui: nicht nur für qx, sondern auch für extjs. Der Befehl wird ui- und sprachenspezifische Dateien ins lokale media-Verzeichnis generieren und müsste nach jedem Upgrade (sowie nach jeder Änderung in der lokalen settings.py) laufen gelassen werden. lino.ui.extjs soll das dann (1) nicht mehr bei jedem Serverstart machen und (2) eine Version für jede Sprache. Momentan kommt das Ext-UI immer nur in der Hauptsprache des Sites. Für lino.ui.qx hat makeui noch mehr zu tun: er generiert eine komplette Qx-Anwendung (mindestens eine class-Datei für jeden Report: eine für die Grid und ggf. eine weitere für das Detail) und startet dann `generate.py`.
 
@@ -80,3 +78,6 @@ Da habe ich folgendes probiert::
 Aber das scheint nicht zu klappen. 
 Laut Doku muss man ja auch mit Strings als keys des Records arbeiten.
 Schade.
+
+Nachtrag 20110314: Quatsch, das klappt sehr wohl. 
+Und Qooxdoo ist wirklich genial, dass es beide Methoden verträgt!

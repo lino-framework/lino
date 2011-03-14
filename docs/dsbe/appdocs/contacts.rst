@@ -31,7 +31,11 @@ Model **CompanyType**
 
 
 
-Implements the :class:`contacts.CompanyType` convention.
+Represents a possible choice for the :class:`Company`.type
+field.
+Implemented by 
+:ref:`dsbe.contacts.CompanyType`
+:ref:`igen.contacts.CompanyType`
 
   
 ============= ============== ===========================
