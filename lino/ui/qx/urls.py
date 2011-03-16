@@ -67,17 +67,17 @@ if sys.platform == 'win32':
     prefix = settings.MEDIA_URL[1:]
     assert prefix.endswith('/')
     
-    urlpatterns += patterns('django.views.static',
-    (r'^%sqxapp/(?P<path>.*)$' % prefix, 
-        'serve', {
-        'document_root': QXAPP_PATH,
-        # 'show_indexes': True 
-        }),)
+    #~ urlpatterns += patterns('django.views.static',
+    #~ (r'^%sqxapp/(?P<path>.*)$' % prefix, 
+        #~ 'serve', {
+        #~ 'document_root': QXAPP_PATH,
+        #~ }),)
         
     urlpatterns += patterns('django.views.static',
     (r'^%sqx/(?P<path>.*)$' % prefix, 
         'serve', {
-        'document_root': QX_PATH,
+        #~ 'document_root': QX_PATH,
+        'document_root': settings.QOOXDOO_PATH,
         # 'show_indexes': True 
         }),)
 

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2009-2011 Luc Saffre
+## Copyright 2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -15,9 +15,14 @@
 import logging
 logger = logging.getLogger(__name__)
 
+import sys
 import os
+from os.path import join, dirname
 from optparse import make_option 
 import codecs
+import subprocess
+import re
+from shutil import copytree, rmtree
 
 #~ from Cheetah.Template import Template as CheetahTemplate
 
@@ -33,7 +38,6 @@ from django.db.models import loading
 #~ from lino.core import actors
 #~ from lino.utils import get_class_attr
 
-import re
 import lino
 from lino import reports
 from lino.core.coretools import app_labels
@@ -44,56 +48,78 @@ from lino.utils import babel
 from lino.utils.menus import Menu, MenuItem
 from lino.utils.jsgen import py2js
 
-class Command(BaseCommand):
+from lino.management.commands.makedocs import GeneratingCommand, mkdir_if
+
+def a2class(a):
+    #~ return 'lino.%s' % a
+    return 'lino.%s_%s_%s' % (a.actor.app_label,a.actor._actor_name,a.name)
+
+class Command(GeneratingCommand):
     help = """Writes files (.js, .html, .css) for this Site.
     """
     
-    args = "output_dir"
-    
-    option_list = BaseCommand.option_list + (
-        make_option('--noinput', action='store_false', 
-            dest='interactive', default=True,
-            help='Do not prompt for input of any kind.'),
-        make_option('--overwrite', action='store_true', 
-            dest='overwrite', default=False,
-            help='Overwrite existing files.'),
-    ) 
-    
-    #~ def handle(self, *args, **options):
     def handle(self, *args, **options):
-        if len(args) != 1:
-            raise CommandError("No output_dir specified.")
+        super(Command,self).handle(*args, **options)
+        args = [ sys.executable ]
+        args.append(os.path.join(settings.QOOXDOO_PATH, 'tool', 'bin', 'generator.py'))
+        args.append('build')
+        os.chdir(join(self.output_dir,'qxapp'))
+        subprocess.call(args)
         
-        self.output_dir = os.path.abspath(args[0])
-        #~ self.overwrite
-        #~ self.output_dir = os.path.abspath(output_dir)
-        self.generated_count = 0
-        self.options = options
+    def generate_files(self):
         settings.LINO.setup()
-        #~ from lino.ui.qx.urls import ui
-        
-        logger.info("Running Lino makeui to %s.", self.output_dir)
-        self.generate('Application',application_lines(self))
-        for rpt in reports.master_reports + reports.slave_reports + reports.generic_slaves.values():
-            #~ rh = rpt.get_handle(ui) 
+        from lino.ui import qx
+        src = join(dirname(qx.__file__),'qxapp_init','source')
+        dest = join(self.output_dir,'qxapp','source')
+        if os.path.exists(dest):
+            rmtree(dest)
+        copytree(src,dest)
+        self.tmpl_dir = join(dirname(qx.__file__),'tmpl')
+        from lino.ui.qx.urls import ui
+        context = dict(a2class=a2class,py2js=py2js,
+          models=models,settings=settings)
+        for fn in ('config.json','generate.py','Manifest.json'):
+        #~ for fn in ('config.json',):
+            self.generate(fn+'.tmpl',
+            join(self.output_dir,'qxapp',fn),**context)
+            
+        self.generate_class_file('lino.Application','Application.js.tmpl',**context)
+        #~ self.generate('Application',application_lines(self))
+        for rpt in (reports.master_reports 
+          + reports.slave_reports 
+          + reports.generic_slaves.values()):
+            rh = rpt.get_handle(ui) 
             #~ js += "Ext.namespace('Lino.%s')\n" % rpt
             #~ f.write("Ext.namespace('Lino.%s')\n" % rpt)
+            context.update(rh=rh)
             for a in rpt.get_actions():
                 if isinstance(a,reports.GridEdit):
-                    self.generate(str(a),action_lines(self,a))
+                    context.update(action=a)
+                    self.generate_class_file(a2class(a),'XyzTableWindow.js.tmpl',**context)
+                    #~ self.generate(str(a),action_lines(self,a))
+        for d in (join(self.output_dir,'qxapp','source','translation'),
+                  join(self.output_dir,'qxapp','source','script'),
+                  join(self.output_dir,'qxapp','source','resource','lino')):
+            mkdir_if(d)            
+            
         
-        logger.info("Generated %s files",self.generated_count)
 
-    def generate(self,fn,lines):
-        fn = fn.replace('.',os.path.sep)
+
+    #~ def generate(self,fn,lines):
+    def generate_class_file(self,class_name,tpl,**kw):
+        assert class_name.startswith("lino."), class_name
+        #~ class_name = "lino." + class_name
+        fn = class_name.replace('.',os.path.sep)
         fn += '.js'
-        fn = os.path.join(self.output_dir,fn)
+        fn = os.path.join(self.output_dir,'qxapp','source','class',fn)
+        kw.update(class_name=class_name)
+        self.generate(tpl,fn,**kw)
         #~ os.makedirs(os.path.dirname(fn))
-        fd = codecs.open(fn,'w',encoding='UTF-8')
-        for ln in lines:
-            fd.write(ln + "\n")
-        fd.close()
-        self.generated_count += 1
+        #~ fd = codecs.open(fn,'w',encoding='UTF-8')
+        #~ for ln in lines:
+            #~ fd.write(ln + "\n")
+        #~ fd.close()
+        #~ self.generated_count += 1
         
 
         
@@ -160,62 +186,3 @@ def action_lines(self,action):
     
     yield """});"""
   
-def application_lines(self):
-    yield "/* generated by Lino makeui */"
-    yield "#asset(lino/*)"
-    yield """qx.Class.define("lino.Application","""
-    yield """\
-{
-  extend : qx.application.Standalone,
-  members :
-  {
-    main : function()
-    {
-      this.base(arguments);
-      if (qx.core.Variant.isSet("qx.debug", "on"))
-      {
-        qx.log.appender.Native;
-        qx.log.appender.Console;
-      }
-
-      /*
-      -------------------------------------------------------------------------
-        Below is your actual application code...
-      -------------------------------------------------------------------------
-      */
-      this.setupMainMenu();
-    },
-    showWindow : function(win) {
-      //~ console.log('showWindow',cls);
-      //~ var win = new cls(this);
-      //~ win.__app = this;
-      win.open();
-      this.getRoot().add(win, {left: 50, top: 10});
-    },
-    
-    setupMainMenu : function() {
-      var toolBar = new qx.ui.toolbar.ToolBar();
-      this.getRoot().add(toolBar, {
-        left: 0,
-        top: 0,
-        right: 0
-      });
-"""     
-    for m in settings.LINO._menu.items:
-        if isinstance(m,Menu):
-            yield """\
-      var mb = new qx.ui.toolbar.MenuButton(%s);  toolBar.add(mb);""" % py2js(m.label)
-            yield """\
-      var m = new qx.ui.menu.Menu(); mb.setMenu(m);"""
-            for mi in m.items:
-                yield """\
-      var b = new qx.ui.menu.Button(%s);  m.add(b);""" % py2js(mi.label)
-                yield """\
-      b.addListener('execute',function(){%s},this);""" % (item2js(mi))
-      
-    yield """\
-    }
-  }
-});
-"""
-

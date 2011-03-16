@@ -1,0 +1,104 @@
+{
+  "name"    : "lino",
+
+  "include" :
+  [
+    {
+      "path" : "${QOOXDOO_PATH}/tool/data/config/application.json"
+      //~ "path" : "L:/snapshots/qooxdoo/qooxdoo/tool/data/config/application.json"
+    }
+  ],
+
+  "export" :
+  [
+    "api",
+    "api-data",
+    "build",
+    "clean",
+    "distclean",
+    "fix",
+    "info",
+    "inspector",
+    "lint",
+    "migration",
+    "pretty",
+    "profiling",
+    "source",
+    "source-all",
+    "simulation-build",
+    "simulation-run",
+    "test",
+    "test-source",
+    "translation"
+  ],
+  
+  "default-job" : "source",
+  
+
+  "let" :
+  {
+    "MEDIA_URL"    : "/media/qxapp/",
+    // "MEDIA_URL"    : "",
+    "APPLICATION"  : "lino",
+    "QOOXDOO_PATH" : "L:/snapshots/qooxdoo/qooxdoo",
+    //~ "QOOXDOO_PATH" : "/media/qx",
+    //~ "QOOXDOO_PATH" : "S:/qooxdoo-1.3-sdk",
+    "QXTHEME"      : "lino.theme.Theme",
+    "API_EXCLUDE"  : ["qx.test.*", "${APPLICATION}.theme.*", "${APPLICATION}.test.*", "${APPLICATION}.simulation.*"],
+    "LOCALES"      : [ "en", "fr" ],
+    "CACHE"        : "${TMPDIR}/cache",
+    "ROOT"         : "."
+  }
+
+  // You only need to edit the remainder of this file, if you want to customize
+  // specific jobs, or add own job definitions.
+
+  , "jobs" :
+  {
+    // Uncomment the following entry to add a contrib or library to your
+    // project; make sure to adapt the path to the Manifest.json; if you are
+    // using a contrib: library, it will be downloaded into the path specified
+    // by the 'cache/downloads' config key
+    // "libraries" : 
+    // {
+    // "library" :
+    //   [
+    //     {
+    //       "manifest" : "contrib://SkeletonApplication/trunk/Manifest.json"
+    //     }
+    //   ]
+    // },
+
+    // If you want to tweak a job setting, see the following sample where
+    // the "format" feature of the "build-script" job is overridden.
+    // To see a list of available jobs, invoke 'generate.py x'.
+    "build-script" :
+    {
+      "compile-options" : 
+      {
+        "uris" : {
+          "script" : "${MEDIA_URL}script",
+          "resource" : "${MEDIA_URL}resource"
+        } 
+        // , "code" : {
+        //   "format" : false
+        // } 
+      }
+    },
+    "source-script" :
+    {
+      "compile-options" : 
+      {
+        "uris" : {
+          "script" : "${MEDIA_URL}script",
+          "resource" : "${MEDIA_URL}resource"
+        } 
+        // , "code" : {
+        //   "format" : false
+        // } 
+      }
+    }
+  }
+  /*
+  */
+}

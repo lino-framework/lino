@@ -267,11 +267,11 @@ class UI(base.UI):
         if isinstance(de,models.Field):
             if isinstance(de,(babel.BabelCharField,babel.BabelTextField)):
                 if len(babel.BABEL_LANGS) > 0:
-                    elems = [ self.create_field_element(lh,de,**kw) ]
+                    elements = [ self.create_field_element(lh,de,**kw) ]
                     for lang in babel.BABEL_LANGS:
                         bf = lh.rh.report.get_data_elem(name+'_'+lang)
-                        elems.append(self.create_field_element(lh,bf,**kw))
-                    return elems
+                        elements.append(self.create_field_element(lh,bf,**kw))
+                    return elements
             return self.create_field_element(lh,de,**kw)
         if isinstance(de,generic.GenericForeignKey):
             # create a horizontal panel with 2 comboboxes

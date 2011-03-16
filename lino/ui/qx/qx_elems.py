@@ -84,7 +84,8 @@ class GridColumn(Component):
         self.editor = editor
         #~ self.value_template = editor.grid_column_template
         kw.update(sortable=True)
-        kw.update(colIndex=index)
+        self.index = index
+        self.label = editor.label
         kw.update(self.editor.get_column_options())
         kw.update(hidden=editor.hidden)
         if settings.USE_GRIDFILTERS and editor.filter_type:
@@ -999,23 +1000,25 @@ class GridElement(Container):
     preferred_height = 5
     refers_to_ww = True
     
-    def __init__(self,lh,name,rpt,*columns,**kw):
+    def __init__(self,lh,name,rpt,*elements,**kw):
         """
         :param lh: the handle of the DetailLayout owning this grid
         :param rpt: the report being displayed
         """
         assert isinstance(rpt,reports.Report), "%r is not a Report!" % rpt
         self.report = rpt
-        if len(columns) == 0:
+        if len(elements) == 0:
             self.rh = rpt.get_handle(lh.rh.ui)
-            columns = self.rh.list_layout._main.columns
+            elements = self.rh.list_layout._main.elements
             #~ columns = self.rh.list_layout._main.elements
         w = 0
-        for e in columns:
+        for e in elements:
             w += (e.width or e.preferred_width)
         self.preferred_width = constrain(w,10,120)
         #~ kw.update(boxMinWidth=500)
-        self.columns = columns
+        #~ self.columns = elements
+        self.columns = [GridColumn(i,e) for i,e in enumerate(elements)]
+        
         kw.update(page_length=self.report.page_length)
 
         a = rpt.get_action('detail')
@@ -1025,8 +1028,8 @@ class GridElement(Container):
         if a:
             kw.update(ls_insert_handler=js_code("Lino.%s" % a))
         
-        Container.__init__(self,lh,name,**kw)
-        self.active_children = columns
+        Container.__init__(self,lh,name,*elements,**kw)
+        #~ self.active_children = columns
         assert not kw.has_key('before_row_edit')
         self.update(before_row_edit=before_row_edit(self))
         
@@ -1048,7 +1051,7 @@ class GridElement(Container):
         #~ d.update(ls_data_url=rh.ui.get_actor_url(self.report))
         kw.update(ls_url=rh.ui.build_url(self.report.app_label,self.report._actor_name))
         kw.update(ls_store_fields=[js_code(f.as_js()) for f in rh.store.list_fields])
-        kw.update(ls_columns=[GridColumn(i,e) for i,e in enumerate(self.columns)])
+        #~ kw.update(ls_columns=[GridColumn(i,e) for i,e in enumerate(self.columns)])
         #~ kw.update(ls_filters=[e.get_filter_options() for e in self.elements if e.filter_type])
         kw.update(ls_id_property=rh.store.pk.name)
         kw.update(pk_index=rh.store.pk_index)

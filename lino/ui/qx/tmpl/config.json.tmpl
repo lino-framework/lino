@@ -1,0 +1,112 @@
+#raw    
+{
+  "name"    : "lino",
+
+  "include" :
+  [
+    {
+      "path" : "${QOOXDOO_PATH}/tool/data/config/application.json"
+    }
+  ],
+
+  "export" :
+  [
+    "api",
+    "api-data",
+    "build",
+    "clean",
+    "distclean",
+    "fix",
+    "info",
+    "inspector",
+    "lint",
+    "migration",
+    "pretty",
+    "profiling",
+    "source",
+    "source-all",
+    "simulation-build",
+    "simulation-run",
+    "test",
+    "test-source",
+    "translation"
+  ],
+  
+  "default-job" : "source",
+  
+
+  "let" :
+  {
+    "MEDIA_URL"    : "/media/qxapp/",
+    // "MEDIA_URL"    : "",
+    "APPLICATION"  : "lino",
+#end raw    
+    "QOOXDOO_PATH" : "$settings.QOOXDOO_PATH",
+#raw    
+    "QXTHEME"      : "lino.theme.Theme",
+    "API_EXCLUDE"  : [
+      "qx.test.*", 
+      "${APPLICATION}.theme.*", 
+      "${APPLICATION}.test.*", 
+      "${APPLICATION}.simulation.*"
+    ],
+#end raw    
+    "LOCALES"      : $py2js([lng[0] for lng in $settings.LANGUAGES]),
+#raw    
+    "CACHE"        : "${TMPDIR}/cache",
+    "ROOT"         : "."
+  }
+
+  // You only need to edit the remainder of this file, if you want to customize
+  // specific jobs, or add own job definitions.
+
+  , "jobs" :
+  {
+    // Uncomment the following entry to add a contrib or library to your
+    // project; make sure to adapt the path to the Manifest.json; if you are
+    // using a contrib: library, it will be downloaded into the path specified
+    // by the 'cache/downloads' config key
+    // "libraries" : 
+    // {
+    // "library" :
+    //   [
+    //     {
+    //       "manifest" : "contrib://SkeletonApplication/trunk/Manifest.json"
+    //     }
+    //   ]
+    // },
+
+    // If you want to tweak a job setting, see the following sample where
+    // the "format" feature of the "build-script" job is overridden.
+    // To see a list of available jobs, invoke 'generate.py x'.
+    "build-script" :
+    {
+      "compile-options" : 
+      {
+        "uris" : {
+          "script" : "${MEDIA_URL}script",
+          "resource" : "${MEDIA_URL}resource"
+        } 
+        // , "code" : {
+        //   "format" : false
+        // } 
+      }
+    },
+    "source-script" :
+    {
+      "compile-options" : 
+      {
+        "uris" : {
+          "script" : "${MEDIA_URL}script",
+          "resource" : "${MEDIA_URL}resource"
+        } 
+        // , "code" : {
+        //   "format" : false
+        // } 
+      }
+    }
+  }
+  /*
+  */
+}
+#end raw    

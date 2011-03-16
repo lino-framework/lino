@@ -423,6 +423,9 @@ class ReportHandle(base.Handle):
             self._layouts += [ LayoutHandle(self,dtl) 
                 for dtl in self.report.detail_layouts ]
               
+    def get_actor_url(self,*args,**kw):
+        return self.ui.get_actor_url(self.report,*args,**kw)
+        
     def submit_elems(self):
         return []
         
@@ -441,6 +444,11 @@ class ReportHandle(base.Handle):
     def get_list_layout(self):
         self.setup_layouts()
         return self._layouts[0]
+        
+    def get_columns(self):
+        layout = self.get_list_layout()
+        #~ print 20110315, layout._main.columns
+        return layout._main.columns
         
     #~ def get_absolute_url(self,*args,**kw):
         #~ return self.ui.get_report_url(self,*args,**kw)

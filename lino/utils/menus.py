@@ -86,7 +86,7 @@ class MenuItem:
             k+"="+repr(v) for k,v in self.interesting()])
         return s+")"
     
-    def get_items(self):
+    def walk_items(self):
         yield self
         
     def interesting(self,**kw):
@@ -183,9 +183,10 @@ class Menu(MenuItem):
     def findItem(self,name):
         return self.items_dict[name]
 
-    def get_items(self):
+    def walk_items(self):
+        yield self
         for mi in self.items:
-            for i in mi.get_items():
+            for i in mi.walk_items():
                 yield i
         
     def unused_sort_items(self,front=None,back=None):

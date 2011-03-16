@@ -121,11 +121,11 @@ class Lino(object):
 
         
     def add_menu(self,*args,**kw):
-        return self._menu.add_menu(*args,**kw)
+        return self.main_menu.add_menu(*args,**kw)
 
     def context(self,request,**kw):
         d = dict(
-          main_menu = menus.MenuRenderer(self._menu,request),
+          main_menu = menus.MenuRenderer(self.main_menu,request),
           root_path = self.root_path,
           lino = self,
           settings = settings,
@@ -160,7 +160,7 @@ class Lino(object):
     def get_site_menu(self,user):
         #~ self.setup()
         assert self._setup_done
-        return self._menu.menu_request(user)
+        return self.main_menu.menu_request(user)
         
     #~ def add_program_menu(self):
         #~ return
@@ -327,7 +327,6 @@ if False:
     )
     
 
-#~ ROOT_URLCONF = 'lino.demos.std.urls'
 ROOT_URLCONF = 'lino.ui.extjs.urls'
 
 TEMPLATE_DIRS = (
@@ -411,6 +410,11 @@ def language_choices(*args):
     return [(x,_langs[x]) for x in args]
       
 LANGUAGES = language_choices('en','de','fr','nl','et')
+
+QOOXDOO_PATH = None
+"""
+Path to the Qooxdoo SDK. Used by :term:`makeui`
+"""
 
 
 

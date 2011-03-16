@@ -1342,7 +1342,8 @@ class ExtUI(base.UI):
         
 
     def get_action_url(self,action,*args,**kw):
-        if not action is action.actor.default_action:
+        #~ if not action is action.actor.default_action:
+        if action != action.actor.default_action:
             kw.update(fmt=action.name)
         return self.build_url("api",action.actor.app_label,action.actor._actor_name,*args,**kw)
             

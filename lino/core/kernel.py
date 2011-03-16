@@ -43,11 +43,11 @@ from django.utils.safestring import mark_safe
 
 import lino
         
+from lino.utils import menus
 from lino import reports, actions
 from lino.utils import perms
 from lino.utils import dblogger
 #~ from lino.utils import babel
-from lino.utils import menus
 from lino.core import actors
 from lino.core.coretools import app_labels, data_elems # , get_unbound_meth
 from lino.utils import get_class_attr
@@ -218,7 +218,7 @@ def setup_site(self):
             logger.debug("%s -> %r",k,a.debug_summary())
               
       
-    self._menu = menus.Menu("","Main Menu")
+    self.main_menu = menus.Menu("","Main Menu")
     
     self.setup_main_menu()
     

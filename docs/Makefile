@@ -107,7 +107,3 @@ linkcheck:
 	@echo "Link check complete; look for any errors in the above output " \
 	      "or in .build/linkcheck/output.txt."
 
-makedocs:
-	python -m lino.apps.dsbe.manage makedocs --settings lino.apps.dsbe.settings --overwrite dsbe/appdocs
-	python -m lino.apps.igen.manage makedocs --settings lino.apps.igen.settings --overwrite igen/appdocs
-  

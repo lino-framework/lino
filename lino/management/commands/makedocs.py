@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2009-2011 Luc Saffre
+## Copyright 2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -16,7 +16,10 @@ import logging
 logger = logging.getLogger(__name__)
 
 import os
+import errno
+import sys
 from optparse import make_option 
+from os.path import join
 
 from Cheetah.Template import Template as CheetahTemplate
 
@@ -39,6 +42,14 @@ from lino.utils import confirm
 from lino.utils.config import find_config_file
 from lino.utils import rstgen 
 from lino.utils import babel
+
+def mkdir_if(dirname):
+    try:
+        os.makedirs(dirname)
+    except OSError,e:
+        if e.errno != errno.EEXIST:
+            raise 
+            #~ raise CommandError("Could not create directory %s : %s" % (dirname,e))
 
 # http://snippets.dzone.com/posts/show/2375
 curry = lambda func, *args, **kw:\
@@ -111,10 +122,8 @@ def model_overview(model):
     return rstgen.table(headers,rows)
   
 
-class Command(BaseCommand):
-    help = """Writes a Sphinx documentation tree about models on this Site.
-    """
-    
+class GeneratingCommand(BaseCommand):
+    tmpl_dir = None
     args = "output_dir"
     
     option_list = BaseCommand.option_list + (
@@ -126,62 +135,85 @@ class Command(BaseCommand):
             help='Overwrite existing files.'),
     ) 
     
-    #~ def handle(self, *args, **options):
+    def create_parser(self, prog_name, subcommand):
+        self.subcommand = subcommand
+        return super(GeneratingCommand,self).create_parser(prog_name, subcommand)
+        
     def handle(self, *args, **options):
         if len(args) != 1:
             raise CommandError("No output_dir specified.")
             
         self.output_dir = os.path.abspath(args[0])
+        if not os.path.exists(self.output_dir):
+            raise CommandError("Specified output_dir %s does not exist." % self.output_dir)
         #~ self.overwrite
         #~ self.output_dir = os.path.abspath(output_dir)
         self.generated_count = 0
         self.options = options
         
-        logger.info("Running Lino makedocs to %s.", self.output_dir)
-            
-        #~ fd = codecs.open(fn,'w',encoding='UTF-8')
-        
-        self.generate('index.rst.tmpl','index.rst')
-        for a in loading.get_apps():
-            app_label = a.__name__.split('.')[-2]
-            self.generate('app.rst.tmpl','%s.rst' % app_label, 
-                app=a, 
-                app_label=app_label, 
-                models=models.get_models(a,include_auto_created=True),
-                )
+        logger.info("Running %s to %s.", self, self.output_dir)
+        self.generate_files()
         logger.info("Generated %s files",self.generated_count)
-            
+        
     def generate(self,tplname,fn,**context):
-
-        tplname = 'makedocs/' + tplname
+        if self.tmpl_dir:
+            tplname = join(self.tmpl_dir,tplname)
+        #~ tplname = self.subcommand + '/' + tplname
         tpl_filename = find_config_file(tplname)
         if tpl_filename is None:
             raise Exception("No file %s found" % tplname)
-            
-        fn = os.path.join(self.output_dir,fn)
+        if isinstance(tpl_filename,unicode):
+            tpl_filename = tpl_filename.encode(sys.getfilesystemencoding())
+        tpl_filename = os.path.abspath(tpl_filename)
+        fn = join(self.output_dir,fn)
         
-        if os.path.exists(fn) and not self.options.get('overwrite'):
-            if not confirm("Overwrite existing file %s (y/n) ?" % fn):
-                logger.info("Skipping %s because file exists.",fn)
-                return 
+        if os.path.exists(fn):
+            if not self.options.get('overwrite'):
+                if not confirm("Overwrite existing file %s (y/n) ?" % fn):
+                    logger.info("Skipping %s because file exists.",fn)
+                    return 
+        else:
+            mkdir_if(os.path.dirname(fn))
         
-        logger.info("Generating %s from %s",fn,tplname)
+        logger.info("Generating %s from %s",fn,tpl_filename)
         context.update(
           lino=lino,
           #~ models=models,
           settings=settings,
+          app_labels=app_labels)
+        #~ d = dict(site=site)
+        #~ print 20110223, [m for m in models.get_models()]
+        #~ print 20110315, context
+        tpl = CheetahTemplate(file=tpl_filename,namespaces=[context])
+        #~ tpl = CheetahTemplate(file(tpl_filename).read(),namespaces=[context])
+        s = unicode(tpl)
+        #~ print s
+        file(fn,'w').write(s.encode('utf-8'))
+        self.generated_count += 1
+        
+        
+class Command(GeneratingCommand):
+    help = """Writes a Sphinx documentation tree about models on this Site.
+    """
+    tmpl_dir = 'makedocs'
+    
+    def generate_files(self):
+            
+        context = dict(
           header=rstgen.header,
           h1=curry(rstgen.header,1),
           table=rstgen.table,
           doc=doc2rst,
           #~ py2rst=rstgen.py2rst,
           model_overview=model_overview,
-          app_labels=app_labels)
-        #~ d = dict(site=site)
-        #~ print 20110223, [m for m in models.get_models()]
-        tpl = CheetahTemplate(file(tpl_filename).read(),namespaces=[context])
-        s = unicode(tpl)
-        #~ print s
-        file(fn,'w').write(s.encode('utf-8'))
-        self.generated_count += 1
-        
+        )
+        self.generate('index.rst.tmpl','index.rst',**context)
+        for a in loading.get_apps():
+            app_label = a.__name__.split('.')[-2]
+            context.update(
+                app=a, 
+                app_label=app_label, 
+                models=models.get_models(a,include_auto_created=True)
+                )
+            self.generate('app.rst.tmpl','%s.rst' % app_label, **context)
+            

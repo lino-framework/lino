@@ -75,6 +75,8 @@ config_dirs = tuple(config_dirs)
     #~ config_dirs.append(LOCAL_CONFIG_DIR)
 
 def find_config_file(fn):
+    if os.path.isabs(fn):
+        return fn
     for cd in config_dirs:
         ffn = os.path.join(cd.name,fn)
         if os.path.exists(ffn):
