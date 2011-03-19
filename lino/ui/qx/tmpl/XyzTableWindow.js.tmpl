@@ -32,13 +32,16 @@ qx.Class.define("$class_name",
     before_row_edit : function(record){}, 
     createTable : function() {
       var tm = new lino.RemoteTableModel(this,'$(rh.get_actor_url())');
+      //~ tm.setColumns(
+        //~ $(py2js([col.label for col in $rh.get_columns()])),
+        //~ $(py2js([col.editor.list_index for col in $rh.get_columns()]))
+      //~ ); // columnNameArr, columnIdArr
       tm.setColumns(
-        $(py2js([col.label for col in $rh.get_columns()])),
-        $(py2js([col.index for col in $rh.get_columns()]))
-        //~ ["country",'name','zip_code','id']
+        $(py2js([col.name for col in $rh.get_columns()]))
       ); // columnNameArr, columnIdArr
-      tm.setColumnSortable(0,true);
-      tm.setColumnEditable(0,true);
+      //~ tm.setColumnSortable(0,true);
+      // $(py2js([col.editor.list_index for col in $rh.get_columns()]))
+      //~ tm.setColumnEditable(0,true);
       // todo:
       // filter ? 
       // width ?
@@ -56,11 +59,13 @@ qx.Class.define("$class_name",
       //~ var table = new qx.ui.table.Table(tm,custom);
       var table = new qx.ui.table.Table(tm);
       var cm = table.getTableColumnModel();
-      #for $col in $rh.get_columns()
-      #if isinstance($col,$models.ForeignKey)
-      cm.setDataCellRenderer($col.index,new lino.ForeignKeyCellRenderer($col.index));
-      #end if
-      #end for
+#for $col in $rh.get_columns()
+    #if isinstance($col.field,$models.ForeignKey)
+      cm.setDataCellRenderer($col.index,new lino.ForeignKeyCellRenderer($col.editor.list_index));
+    #elif isinstance($col.field,$models.BooleanField)
+      cm.setDataCellRenderer($col.index,new qx.ui.table.cellrenderer.Boolean());
+    #end if
+#end for
       return table;
     },
     setupToolbar: function(bar)

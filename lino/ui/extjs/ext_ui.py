@@ -49,12 +49,12 @@ from django.conf.urls.defaults import patterns, url, include
 
 import lino
 from . import ext_elems
-#~ from . import ext_store
+from . import ext_store
 from . import ext_windows
 #~ from . import ext_viewport
 #~ from . import ext_requests
 from lino.ui import requests as ext_requests
-from lino.ui import store as ext_store
+#~ from lino.ui import store as ext_store
 from lino import actions #, layouts #, commands
 from lino import reports
 from lino import fields
@@ -392,7 +392,6 @@ class ExtUI(base.UI):
         e = lh.main_class.field2elem(lh,field,**kw)
         assert e.field is not None,"e.field is None for %s.%s" % (lh.layout,name)
         lh.add_store_field(e.field)
-          #~ lh._store_fields.append(e.field)
         return e
         #return FieldElement(self,field,**kw)
         

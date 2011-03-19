@@ -558,6 +558,18 @@ Long-term
     instead of reinventing the wheel.
     (Discovered :doc:`/blog/2011/0311`)
 
+#.  Buttons sollten gleich nach einem Klick deaktiviert werden, 
+    bis die Aktion abgeschlossen ist.
+    Wenn man z.B. auf den Lebenslauf-Button doppelt klickt, versucht 
+    er zweimal kurz hintereinander das gleiche Dokument zu generieren. 
+    Beim zweiten Mal schlägt das dann logischerweise fehl. 
+    Er öffnet dann zwei Fenster, eines mit dem Lebenslauf und ein 
+    anderes mit der Fehlermeldung 
+    "Action Lebenslauf failed for Person #22315: I
+    need to use a temp folder
+    "/usr/local/django/dsbe_eupen/media/cache/appypdf/contacts.Person-22315.pdf.temp"
+    but this folder already exists."
+
 
 Documentation
 -------------

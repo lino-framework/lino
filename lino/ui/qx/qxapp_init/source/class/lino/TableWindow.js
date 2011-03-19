@@ -46,8 +46,9 @@ qx.Class.define("lino.TableWindow",
       this.set({
         width: 600,
         height: 400,
-        contentPadding : [ 0, 0, 0, 0 ]
-        //~ showClose: false,
+        contentPadding : [ 0, 0, 0, 0 ],
+        //~ allowClose: true
+        showClose: true
         //~ showMinimize: false
       });
       this.setLayout(new qx.ui.layout.VBox());

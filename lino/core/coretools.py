@@ -54,7 +54,8 @@ def data_elems(model):
     #~ for f in meta.virtual_fields: yield f.name
     for f in meta.fields: 
         if f.editable:
-            yield f
+            if not getattr(f,'_lino_babel_field',False):
+                yield f
     for f in meta.many_to_many: yield f
     for f in meta.virtual_fields: yield f
     # todo: for slave in self.report.slaves

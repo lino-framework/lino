@@ -55,7 +55,7 @@ if sys.platform == 'win32':
     #~ QX_PATH = os.path.abspath(os.path.dirname(__file__))
     #~ QXAPP_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__),'app','build'))
     #~ QX_PATH = "S:/qooxdoo-1.3-sdk"
-    QX_PATH = "L:/snapshots/qooxdoo/qooxdoo",
+    #~ QX_PATH = "L:/snapshots/qooxdoo/qooxdoo",
     #~ LINO_MEDIA = os.path.abspath(os.path.join(os.path.dirname(lino.__file__),'..','media'))
     #~ LINO_MEDIA = os.path.join(lino_site.lino_site.ui.source_dir(),'media')
     #~ print 'LINO_MEDIA=',LINO_MEDIA

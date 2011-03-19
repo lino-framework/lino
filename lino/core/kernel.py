@@ -218,7 +218,8 @@ def setup_site(self):
             logger.debug("%s -> %r",k,a.debug_summary())
               
       
-    self.main_menu = menus.Menu("","Main Menu")
+    self.main_menu = menus.Toolbar('main')
+    #~ self.main_menu = menus.Menu("","Main Menu")
     
     self.setup_main_menu()
     

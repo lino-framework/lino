@@ -21,14 +21,6 @@ The :mod:`base` Module
     :undoc-members:
     :show-inheritance:
 
-The :mod:`store` Module
------------------------
-
-.. automodule:: lino.ui.store
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 The :mod:`requests` Module
 --------------------------
 

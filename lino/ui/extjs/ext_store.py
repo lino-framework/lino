@@ -16,9 +16,6 @@ Defines the `Store` class and its fields
 
 """
 
-raise Exception("""No longer used. Split to extjs.ext_store and qx.qx_store
-""")
-
 import logging
 logger = logging.getLogger(__name__)
 

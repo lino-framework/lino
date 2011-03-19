@@ -1,0 +1,34 @@
+20110318
+========
+
+Oops, it's Friday and I didn't blog for a whole week...
+And next week I won't be able to work very much because 
+we're going to Saaremaa for holiday.
+
+But after having worked about 40 hours on the Qooxdoo 
+interface for Lino I can say:
+
+- Sorry, but I'm not yet far enough to show results.
+- But Qooxdoo is great, probably better than ExtJS, 
+  so I'll continue. 
+- It is the right time for taking the challenge
+  of writing a second user interface for Lino.
+  
+Concretely:  
+
+- The new `makeui` command works well. 
+  I'll document that later.
+  It generates local Qooxdoo source files, then runs 
+  Qooxdoo's `generate build` on them.
+  This takes only 30 seconds, 
+  so :doc:`/tickets/30` is less urgent.
+  
+- Concretely I'm currently hoping for help from the 
+  Qooxdoo forum:
+  `Qooxdoo Table remains empty
+  <http://sourceforge.net/mailarchive/message.php?msg_id=27221846>`_
+
+- When the "empty Table" problem 
+  is solved, I'll first write the Detail forms. 
+  Because that's the last big challenge.
+

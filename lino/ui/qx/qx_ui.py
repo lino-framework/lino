@@ -51,10 +51,11 @@ from django.conf.urls.defaults import patterns, url, include
 import lino
 from lino.ui.qx import qx_elems as elems
 #~ from . import ext_elems
-#~ from . import ext_store
+from . import qx_store
 #~ from . import ext_windows
 from lino.ui import requests as ext_requests
-from lino.ui import store as ext_store
+#~ from lino.ui import store as ext_store
+#~ from lino.ui.qx import ext_store
 from lino import actions #, layouts #, commands
 from lino import reports
 from lino import fields
@@ -126,7 +127,7 @@ def json_response(x):
     #~ logger.debug("json_response() -> %r", s)
     # http://dev.sencha.com/deploy/dev/docs/source/BasicForm.html#cfg-Ext.form.BasicForm-fileUpload
     return HttpResponse(s, content_type='text/html')
-    return HttpResponse(s, content_type='text/json')
+    #~ return HttpResponse(s, content_type='text/json')
     #~ r = HttpResponse(s, content_type='application/json')
     # see also http://stackoverflow.com/questions/477816/the-right-json-content-type
     #~ return r
@@ -300,7 +301,7 @@ class UI(base.UI):
                     field = fields.HtmlBox(verbose_name=de.label,**o)
                     field.name = de._actor_name
                     field._return_type_for_method = de.slave_as_summary_meth(self,'<br>')
-                    lh.add_store_field(field)
+                    #~ lh.add_store_field(field)
                     e = elems.HtmlBoxElement(lh,field,**kw)
                     return e
             else:
@@ -308,7 +309,7 @@ class UI(base.UI):
                 field = fields.HtmlBox(verbose_name=de.label)
                 field.name = de._actor_name
                 field._return_type_for_method = de.slave_as_summary_meth(self,', ')
-                lh.add_store_field(field)
+                #~ lh.add_store_field(field)
                 e = elems.HtmlBoxElement(lh,field,**kw)
                 return e
                 
@@ -370,7 +371,7 @@ class UI(base.UI):
     def create_field_element(self,lh,field,**kw):
         e = lh.main_class.field2elem(lh,field,**kw)
         assert e.field is not None,"e.field is None for %s.%s" % (lh.layout,name)
-        lh.add_store_field(e.field)
+        #~ lh.add_store_field(e.field)
           #~ lh._store_fields.append(e.field)
         return e
         #return FieldElement(self,field,**kw)
@@ -1143,7 +1144,7 @@ class UI(base.UI):
                 return
             #~ h.choosers = chooser.get_choosers_for_model(h.report.model,chooser.FormChooser)
             #~ h.report.add_action(ext_windows.SaveWindowConfig(h.report))
-            h.store = ext_store.Store(h)
+            h.store = qx_store.Store(h)
                     
             #~ for a in h.get_actions():
                 #~ a.window_wrapper = self.action_window_wrapper(a,h)
@@ -1151,7 +1152,7 @@ class UI(base.UI):
             for de in h.data_elems():
                 if de.name in self.reserved_names:
                     raise Exception(
-                      "%s defines %r but that is a reserved name in lino.ui.extjs" % (
+                      "%s defines %r but that is a reserved name in lino.ui.qx" % (
                       h.report,de.name))
                 
     def source_dir(self):

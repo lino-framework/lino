@@ -74,6 +74,7 @@ def before_row_edit(panel):
 
 class GridColumn(Component):
     declare_type = jsgen.DECLARE_INLINE
+    field = None
     
     def __init__(self,index,editor,**kw):
         """editor may be a Panel for columns on a GenericForeignKey
@@ -92,6 +93,7 @@ class GridColumn(Component):
             kw.update(filter=dict(type=editor.filter_type))
         #~ if isinstance(editor,FieldElement) and editor.field.primary_key:
         if isinstance(editor,FieldElement):
+            self.field = editor.field
             rend = None
             if isinstance(editor.field,models.AutoField):
                 rend = 'Lino.id_renderer'
@@ -121,7 +123,7 @@ class GridColumn(Component):
     
         #~ if self.editable:
             #~ editor = self.get_field_options()
-        
+            
         
 class Toolbar(Component):
     value_template = "new Ext.Toolbar(%s)"
@@ -194,6 +196,7 @@ class LayoutElement(VisibleComponent):
     data_type = None 
     filter_type = None
     parent = None # will be set by Container
+    field = None
     
     label = None
     label_width = 0 
@@ -1017,6 +1020,7 @@ class GridElement(Container):
         self.preferred_width = constrain(w,10,120)
         #~ kw.update(boxMinWidth=500)
         #~ self.columns = elements
+        #~ self.store = qx_store.Store(lh)
         self.columns = [GridColumn(i,e) for i,e in enumerate(elements)]
         
         kw.update(page_length=self.report.page_length)
@@ -1147,6 +1151,7 @@ class DetailMainPanel(Panel,MainPanel):
         #~ kw.update(height=800, autoScroll=True)
         Panel.__init__(self,lh,name,vertical,*elements,**kw)
         #lh.needs_store(self.rh)
+        
         
     def unused_get_datalink(self):
         return self.rh

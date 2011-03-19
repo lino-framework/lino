@@ -16,9 +16,6 @@ Defines the `Store` class and its fields
 
 """
 
-raise Exception("""No longer used. Split to extjs.ext_store and qx.qx_store
-""")
-
 import logging
 logger = logging.getLogger(__name__)
 
@@ -431,27 +428,13 @@ class Store:
         assert self.pk is not None, "Cannot make Store for %s because %s has no pk" % (
           self.report.actor_id,self.report.model)
           
-        fields = []
-        list_fields = self.collect_fields(fields,rh.get_list_layout())
-        detail_fields = self.collect_fields(fields,*rh.get_detail_layouts())
+          
+        sfdict = {} # maps field (data element) to StoreField
+        self.list_fields = self.collect_fields(sfdict,rh.get_list_layout())
+        self.detail_fields = self.collect_fields(sfdict,*rh.get_detail_layouts())
         
-        self.fields = []
-        self.list_fields = []
-        self.detail_fields = []
+        #~ self.fields = []
         
-        #~ for df in list_fields | detail_fields: # set union
-        for df in fields: 
-            sf = self.create_field(df)
-            if sf:
-                self.fields.append(sf)
-                if df in list_fields:
-                    self.list_fields.append(sf)
-                if df in detail_fields:
-                    self.detail_fields.append(sf)
-            
-        #~ fields = list(fields)
-        #~ self.pk_index = fields.index(self.pk)
-        #~ self.fields = [ self.create_field(fld) for fld in fields ]
         self.pk_index = 0
         for fld in self.list_fields:
             if fld.field == self.pk:
@@ -461,34 +444,30 @@ class Store:
             #~ print 'ext_store 20101017:\n', '\n'.join([str(f) for f in self.fields])
         if rh.report.disabled_fields:
             sf = DisabledFieldsStoreField(self)
-            self.fields.append(sf)
+            #~ self.fields.append(sf)
             self.list_fields.append(sf)
             self.detail_fields.append(sf)
-        #~ self.fields.append(PropertiesStoreField)
-        #~ self.fields_dict = dict([(f.field.name,f) for f in self.fields])
         
-        self.fields = tuple(self.fields)
+        #~ self.fields = tuple(self.fields)
         self.list_fields = tuple(self.list_fields)
         self.detail_fields = tuple(self.detail_fields)
         
           
-    def collect_fields(self,all_fields,*layouts):
-        #~ fields = set()
+    def collect_fields(self,sfdict,*layouts):
         fields = []
-        def add(f):
-            fields.append(f)
-            if f not in all_fields:
-                all_fields.append(f)
+        list_index = 0
         for layout in layouts:
-            for fld in layout._store_fields:
-                assert fld is not None
-                add(fld)
-                #~ fields.add(fld)
-        if not self.pk in fields:
-            #~ fields.add(self.pk)
-            add(self.pk)
+            for elem in layout.walk():
+                if elem.field is not None:
+                    sf = sfdict.get(elem.field,None)
+                    if sf is None:
+                        sf = self.create_field(elem.field)
+                        sfdict[elem.field] = sf
+                    elem.list_index = list_index
+                    list_index += sf.list_values_count
+                    fields.append(sf)
         return fields
-        
+      
     def create_field(self,fld):
         meth = getattr(fld,'_return_type_for_method',None)
         if meth is not None:
@@ -536,12 +515,19 @@ class Store:
                 raise 
         #~ return instance
             
-    def row2list(self,request,row):
+    def real_row2list(self,request,row):
         assert isinstance(request,reports.ReportActionRequest)
         l = []
         for fld in self.list_fields:
             l += fld.obj2list(request,row)
         return l
+      
+    def row2list(self,request,row):
+        assert isinstance(request,reports.ReportActionRequest)
+        d = {}
+        for f in self.list_fields:
+            f.obj2dict(request,row,d)
+        return d
       
     def column_names(self):
         l = []

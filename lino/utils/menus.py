@@ -68,6 +68,9 @@ class MenuItem:
         self.enabled = enabled
         self.hotkey = hotkey
         
+        if label:
+            #~ if "~" in label:
+            label = label.replace('~','')
         self.label = label
         
         self.can_view = can_view or perms.always
@@ -155,7 +158,7 @@ class Menu(MenuItem):
     def add_instance_action(self,obj,**kw):
         kw.update(instance=obj)
         return self._add_item(MenuItem(self,None,**kw))
-    
+   
     def add_item(self,name,label,**kw):
         return self._add_item(MenuItem(self,None,name,label,**kw))
         
@@ -241,7 +244,8 @@ class Menu(MenuItem):
             m.items = items
             return m
 
-
+class Toolbar(Menu):
+    pass
 
 
 #~ def menu_request(menu,request):

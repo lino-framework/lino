@@ -11,7 +11,7 @@
 /* ************************************************************************
 
 #asset(lino/*)
-#from lino.utils.menus import Menu, MenuItem
+#from lino.utils.menus import Menu, MenuItem, Toolbar
 
 ************************************************************************ */
 
@@ -167,14 +167,16 @@ qx.Class.define("lino.Application",
     },
     
     setupMainMenu : function() {
+    
+#for $mi in $settings.LINO.main_menu.walk_items()
+  #if isinstance($mi,Toolbar)
       var toolBar = new qx.ui.toolbar.ToolBar();
       this.getRoot().add(toolBar, {
         left: 0,
         top: 0,
         right: 0
       });
-#for $mi in $settings.LINO.main_menu.walk_items()
-  #if isinstance($mi,Menu)
+  #elif isinstance($mi,Menu)
       var mb = new qx.ui.toolbar.MenuButton("$mi.label");  toolBar.add(mb);
       var m = new qx.ui.menu.Menu(); mb.setMenu(m);
   #else
@@ -188,54 +190,8 @@ qx.Class.define("lino.Application",
       },this);
   #end if
 #end for
-    },
-    
-    loadMenu : function(items) {
-      //~ console.log(e);
-      //~ this.debug(e.getStatusCode());
-    
-      var toolBar = new qx.ui.toolbar.ToolBar();
-      this.getRoot().add(toolBar, {
-        left: 0,
-        top: 0,
-        right: 0
-      });
-      
-      //~ console.log(response);
-      for (var i = 0; i < items.length; i++) {
-          var mi = items[i];
-          if (mi.menu) {
-              var mb = new qx.ui.toolbar.MenuButton(mi.text);
-              toolBar.add(mb);
-              var m = new qx.ui.menu.Menu();
-              for (var j = 0; j < mi.menu.items.length; j++) {
-                  var item = mi.menu.items[j];
-                  var b = new qx.ui.menu.Button(item.text);
-                  if (item.href) {
-                    b.href = item.href;
-                    b.addListener('execute',function(e){
-                        window.location=e.getTarget().href;
-                    });
-                  } else {
-                    b.addListener('execute',item.handler,this);
-                  }
-                  m.add(b); 
-              }
-              mb.setMenu(m);
-          }
-      }
-      
-      //~ var m = new qx.ui.menu.Menu();
-      //~ var command = new qx.ui.core.Command("Control+P");
-      //~ command.addListener("execute", function() {
-        //~ this.debug("Persons");
-      //~ },this);
-      //~ m.add(new qx.ui.menu.Button("Persons", null, command));
-      //~ m.add(new qx.ui.menu.Separator());
-      //~ m.add(new qx.ui.menu.Button("Exit"));
-      //~ mb.setMenu(m);
-      
     }
+    
   }
 });
 

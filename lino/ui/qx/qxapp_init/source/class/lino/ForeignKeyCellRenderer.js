@@ -28,10 +28,11 @@ qx.Class.define("lino.ForeignKeyCellRenderer",
     __colIndex : null,
     // overridden
     _getContentHtml : function(cellInfo) {
-        //~ console.log('ForeignKeyCellRenderer',cellInfo);
         if (cellInfo.rowData) {
+            console.log('ForeignKeyCellRenderer',cellInfo,'->',cellInfo.rowData[this.__colIndex]);
             return qx.bom.String.escape(cellInfo.rowData[this.__colIndex]);
         }
+        //~ console.log('ForeignKeyCellRenderer empty: ',cellInfo.rowData);
         return "";
     }
   }

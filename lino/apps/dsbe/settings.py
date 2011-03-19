@@ -134,12 +134,10 @@ class Lino(Lino):
         m.add_item('userman',_("~User Manual"),
             href='http://lino.saffre-rumma.net/dsbe/index.html')
 
-        #~ m.add_item('home',_("~Home"),href='/')
-        #~ self._menu.add_item('home',_("~Home"),href='/')
-        #~ self._menu.items.append(dict(text=_("~Home"),href='/'))
-        #~ self._menu.items.append(dict(xtype='menuseparator'))
-        self._menu.items.append(dict(xtype='button',text=_("Home"),handler=js_code("function() {window.location='/';}")))
-        #~ self._menu.items.append(dict(xtype='menuitem',html='<a href="/">%s</a>' % _("~Home")))
+        #~ self.main_menu.add_item('home',_("~Home"),href='/')
+        self.main_menu.items.append(dict(
+          xtype='button',text=_("Home"),
+          handler=js_code("function() {window.location='/';}")))
 
 
 LINO = Lino(__file__)
