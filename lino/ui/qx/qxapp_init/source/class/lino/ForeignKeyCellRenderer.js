@@ -28,9 +28,13 @@ qx.Class.define("lino.ForeignKeyCellRenderer",
     __colIndex : null,
     // overridden
     _getContentHtml : function(cellInfo) {
+        this.debug('ForeignKeyCellRenderer',cellInfo);
+        //~ console.log('ForeignKeyCellRenderer',cellInfo);
         if (cellInfo.rowData) {
-            console.log('ForeignKeyCellRenderer',cellInfo,'->',cellInfo.rowData[this.__colIndex]);
-            return qx.bom.String.escape(cellInfo.rowData[this.__colIndex]);
+            //~ console.log('ForeignKeyCellRenderer',cellInfo,'->',cellInfo.rowData[this.__colIndex]);
+            var s = cellInfo.rowData[this.__colIndex];
+            if (s) return qx.bom.String.escape(s);
+            //~ return qx.bom.String.escape(s);
         }
         //~ console.log('ForeignKeyCellRenderer empty: ',cellInfo.rowData);
         return "";

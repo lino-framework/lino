@@ -515,14 +515,14 @@ class Store:
                 raise 
         #~ return instance
             
-    def real_row2list(self,request,row):
+    def row2list(self,request,row):
         assert isinstance(request,reports.ReportActionRequest)
         l = []
         for fld in self.list_fields:
             l += fld.obj2list(request,row)
         return l
       
-    def row2list(self,request,row):
+    def faked_row2list(self,request,row):
         assert isinstance(request,reports.ReportActionRequest)
         d = {}
         for f in self.list_fields:

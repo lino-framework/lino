@@ -1,0 +1,20 @@
+20110329
+========
+
+So. Nach einer Woche Zwangspause will ich mich jetzt 
+an die Detail-Forms geben.
+
+Lektüre:
+
+- Im Demo-Browser 
+  :menuselection:`showcase --> Form`,
+  :menuselection:`ui --> FormRenderer`,
+  :menuselection:`widget --> TabView` usw.
+- http://manual.qooxdoo.org/current/pages/gui_toolkit/ui_layouting.html
+
+
+Erstmal spalte ich `lino.AppWindow` aus dem bisherigen `lino.TableWindow` raus.
+Weil DetailWindow ebenfalls ein `lino.AppWindow` sein wird. 
+(Ich bin noch gar nicht sicher, ob AppWindow überhaupt nötig ist, 
+aber ich habe noch keine dokumentierte Methode gefunden, 
+wie man von einem Window aus die Application kriegt...)

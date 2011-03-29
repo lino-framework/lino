@@ -37,9 +37,10 @@
 
   "let" :
   {
-    "MEDIA_URL"    : "/media/qxapp/build/",
+    "MEDIA_URL"    : "/media/qxapp/source/",
     // "MEDIA_URL"    : "",
     "APPLICATION"  : "lino",
+    // "OPTIMIZE"  : [],
 #end raw    
     "QOOXDOO_PATH" : "$settings.QOOXDOO_PATH",
 #raw    
@@ -71,12 +72,11 @@
     //     }
     //   ]
     // },
-
-    // If you want to tweak a job setting, see the following sample where
-    // the "format" feature of the "build-script" job is overridden.
-    // To see a list of available jobs, invoke 'generate.py x'.
     "build-script" :
     {
+      //~ "variants" : {
+         //~ "=qx.debug" : [ "on" ]
+      //~ },
       "compile-options" : 
       {
         "uris" : {

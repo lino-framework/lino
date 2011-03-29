@@ -585,3 +585,7 @@ Documentation
      it reported error: "resolve_model('contacts.Company',app_label='contacts',who=None) found None"
 
 #.  ``make doctest`` nutzbar machen. Siehe :doc:`/blog/2010/1024`
+
+#.  Check whether 
+    `pydocweb <https://github.com/pv/pydocweb/tree/master/docweb>`_    
+    would be useful.

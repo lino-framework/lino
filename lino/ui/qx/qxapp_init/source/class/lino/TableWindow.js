@@ -1,32 +1,18 @@
 /* ************************************************************************
 
-   Copyright:
-
-   License:
-
-   Authors:
-
-************************************************************************ */
-
-/* ************************************************************************
-
 #asset(lino/*)
 
 ************************************************************************ */
 
-/**
- * This is the main application class of your custom application "lino"
- */
 qx.Class.define("lino.TableWindow",
 {
-  extend : qx.ui.window.Window,
+  extend : lino.AppWindow,
   //~ construct : function(app, caption) {
   construct : function(app) {
       //~ console.log('lino.TableWindow.construct()',this,app);
       this.base(arguments);
       //~ this.base(arguments, caption);
       //~ console.log('lino.TableWindow.construct.base ok');
-      this.__app = app;
       //~ var tm = this.createTableModel();
       //~ this.__table = new qx.ui.table.Table(tm);
       this.__table = this.createTable();
@@ -58,11 +44,7 @@ qx.Class.define("lino.TableWindow",
   },
           
   members : {
-      __app : null,
       __table : null,
-      showWindow : function(cls) { 
-        this.__app.showWindow(cls); 
-      },
       createTableModel : function() {
         throw new Error("createTableModel is abstract");
       },

@@ -1,9 +1,13 @@
-#33 : Qooxdoo Table remains empty
-=================================
+#33 [closed] : Qooxdoo Table remains empty
+==========================================
+
+(Question posted on 
+`qooxdoo-devel <http://sourceforge.net/mailarchive/message.php?msg_id=27221846>`_)
 
 Where is the bug? Here is another riddle which took me 
 already a whole workday and for which I hope that some 
 experienced Qx user will find the solution at a glance. 
+
 
 Using the code below, 
 I get a Table with the columnheaders and the correct number of 
@@ -162,4 +166,53 @@ As you can see, I also added some ``console.log`` calls to the Qooxdoo sources.
 I currently can use only the built version because the application 
 is running on a Django server and I didn't yet find a method to get 
 the source version running (see :doc:`30` for that).
+
+
+Solution
+--------
+
+There was an exception thrown during my self-written cell renderer. I
+didn't even include the code of this class because I didn't expect that
+kind of surprise (so I admit that you had no chance to find it). Here is
+the buggy code::
+
+ qx.Class.define("lino.ForeignKeyCellRenderer",
+ {
+  extend : qx.ui.table.cellrenderer.String,
+  construct : function(colIndex)
+  {
+    this.base(arguments);
+    this.__colIndex = colIndex;
+  },
+  members :
+  {
+    __colIndex : null,
+    _getContentHtml : function(cellInfo) {
+        if (cellInfo.rowData) {
+            var s = cellInfo.rowData[this.__colIndex];
+            return qx.bom.String.escape(s);   /** here it is **/
+        }
+        return "";
+    }
+  }
+ });
+
+The problem is that I call `qx.bom.String.escape` possibly with a null
+value. Changing the line
+
+::
+
+  return qx.bom.String.escape(s);   /** here it is **/
+
+into
+
+::
+
+  if (s) return qx.bom.String.escape(s);
+
+did solve my problem.
+
+And my new question is: how is it possible that I didn't get any
+notification of that exception? I guess it is because I use the built
+and not the source version? Is that correct?
 

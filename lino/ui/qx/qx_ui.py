@@ -530,6 +530,7 @@ class UI(base.UI):
         self.welcome_template.user = request.user
         self.welcome_template.site = self.site
         self.welcome_template.lino = lino
+        self.welcome_template.settings = settings
         self.welcome_template.on_ready = on_ready
         return unicode(self.welcome_template)
         

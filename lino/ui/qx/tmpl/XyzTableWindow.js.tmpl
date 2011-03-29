@@ -20,7 +20,7 @@
  */
 qx.Class.define("$class_name",
 {
-  caption: "Städte",
+  //~ caption: "Städte",
   extend : lino.TableWindow,
   //~ construct : function() {
     //~ this.base(arguments, this.caption);
@@ -31,13 +31,16 @@ qx.Class.define("$class_name",
     content_type : $(rh.content_type),
     before_row_edit : function(record){}, 
     createTable : function() {
-      var tm = new lino.RemoteTableModel(this,'$(rh.get_actor_url())');
+      var tm = new lino.RemoteTableModel(this,
+        '$(rh.get_actor_url())',
+        $(py2js([col.editor.list_index for col in $rh.get_columns()]))
+      );
       //~ tm.setColumns(
         //~ $(py2js([col.label for col in $rh.get_columns()])),
-        //~ $(py2js([col.editor.list_index for col in $rh.get_columns()]))
+        //~ $(py2js([col.name for col in $rh.get_columns()]))
       //~ ); // columnNameArr, columnIdArr
       tm.setColumns(
-        $(py2js([col.name for col in $rh.get_columns()]))
+        $(py2js([col.label for col in $rh.get_columns()]))
       ); // columnNameArr, columnIdArr
       //~ tm.setColumnSortable(0,true);
       // $(py2js([col.editor.list_index for col in $rh.get_columns()]))

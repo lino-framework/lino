@@ -14,10 +14,11 @@ qx.Class.define('lino.RemoteTableModel', {
 
   extend : qx.ui.table.model.Remote,
 
-  construct : function(window,url) {
+  construct : function(window,url,columnIds) {
     this.base(arguments);
     this.__url = url;
     this.__window = window;
+    this.setColumnIds(columnIds); 
   },
 
   members : {
@@ -48,7 +49,8 @@ qx.Class.define('lino.RemoteTableModel', {
       var url = this.__url + "?fmt=json&offset="+firstRow+"&limit="+(lastRow-firstRow);
       this.__call(url, function(e) {
         var response = e.getContent();
-        console.log('lino.RemoteTableModel._loadRowData() got',response);
+        this.debug('lino.RemoteTableModel._loadRowData() got',response);
+        //~ console.log('lino.RemoteTableModel._loadRowData() got',response);
         //~ this._onRowCountLoaded(parseInt(data));
         this._onRowDataLoaded(response.rows)
       });
