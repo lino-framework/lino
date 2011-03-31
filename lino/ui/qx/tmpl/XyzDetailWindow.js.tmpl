@@ -1,0 +1,40 @@
+#encoding UTF-8
+/* ************************************************************************
+
+#asset(lino/*)
+
+************************************************************************ */
+
+qx.Class.define("$class_name",
+{
+  extend : lino.DetailWindow,
+  //~ construct : function() {
+    //~ this.base(arguments, this.caption);
+  //~ },
+  
+
+  members : {
+    content_type : $(rh.content_type),
+    base_url : '$(rh.get_actor_url())',
+    before_row_edit : function(record){}, 
+    createMain : function() {
+      //~ var main = new qx.ui.container.Composite(new qx.ui.layout.HBox(20)).set({
+        //~ padding: 20
+      //~ })      
+#for $lh in $rh.get_detail_layouts()
+  #for ln in $jsgen.declare_vars(lh._main)
+      $ln
+  #end for
+#end for
+      return main;
+    },
+    setupToolbar: function(bar) {
+      var btn = new qx.ui.toolbar.Button('Detail');
+      btn.addListener('execute',function(){
+        //~ this.showWindow(lino.CountriesCitiesDetail);
+        alert("TODO : how to referencethe app? want to open new window...");
+      }, this);
+      bar.add(btn);
+    }
+  }
+});

@@ -243,9 +243,9 @@ class UI(base.UI):
             
         base.UI.__init__(self,site) # will create a.window_wrapper for all actions
         
-        fn = join(dirname(__file__),'index.html.tmpl')
+        fn = join(dirname(__file__),'tmpl','index.html.tmpl')
         logger.info("Loading index template %s",fn)
-        self.welcome_template = CheetahTemplate(file(fn).read())
+        self.index_template = CheetahTemplate(file(fn).read())
         #~ self.build_lino_js()
         
         
@@ -526,13 +526,13 @@ class UI(base.UI):
 
     def html_page(self,request,on_ready='',**kw):
         #~ c = RequestContext(request,dict(site=self.site,lino=lino))
-        self.welcome_template.ui = self
-        self.welcome_template.user = request.user
-        self.welcome_template.site = self.site
-        self.welcome_template.lino = lino
-        self.welcome_template.settings = settings
-        self.welcome_template.on_ready = on_ready
-        return unicode(self.welcome_template)
+        self.index_template.ui = self
+        self.index_template.user = request.user
+        self.index_template.site = self.site
+        self.index_template.lino = lino
+        self.index_template.settings = settings
+        self.index_template.on_ready = on_ready
+        return unicode(self.index_template)
         
 
     def index_view(self, request,**kw):

@@ -4,14 +4,14 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <title>Lino</title>
   <script type="text/javascript">
-#if $settings.DEBUG
+#if False and $settings.DEBUG
   qxvariants = {
       "qx.debug": "on"
   };
 #end if
   function on_ready(app) { $on_ready }
   </script>
-  <script type="text/javascript" src="/media/qxapp/build/script/lino.js"></script>
+  <script type="text/javascript" src="$(settings.LINO.qooxdoo_prefix)script/lino.js"></script>
 </head>
 <body></body>
 </html>

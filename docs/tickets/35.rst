@@ -1,0 +1,6 @@
+#35 : makeui also for ExtJS
+===========================
+
+:mod:`lino.ui.extjs` currently generates the :xfile:`lino.js` 
+on each server startup. That's not necessary, it's enough to 
+do that each time the :xfile:`settings.py` changes.

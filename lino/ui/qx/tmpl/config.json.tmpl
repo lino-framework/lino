@@ -37,11 +37,14 @@
 
   "let" :
   {
-    "MEDIA_URL"    : "/media/qxapp/source/",
+    // "MEDIA_URL"    : "/media/qooxdoo/lino_apps/igen/build/",
     // "MEDIA_URL"    : "",
     "APPLICATION"  : "lino",
-    // "OPTIMIZE"  : [],
 #end raw    
+    "MEDIA_URL"    : "$settings.LINO.qooxdoo_prefix",
+#if False and $settings.DEBUG
+    "OPTIMIZE"  : [],
+#end if
     "QOOXDOO_PATH" : "$settings.QOOXDOO_PATH",
 #raw    
     "QXTHEME"      : "lino.theme.Theme",
@@ -74,9 +77,13 @@
     // },
     "build-script" :
     {
-      //~ "variants" : {
-         //~ "=qx.debug" : [ "on" ]
-      //~ },
+#end raw    
+#if $settings.DEBUG and False
+      "variants" : {
+         "=qx.debug" : [ "on" ]
+      },
+#end if
+#raw    
       "compile-options" : 
       {
         "uris" : {
@@ -92,10 +99,10 @@
     {
       "compile-options" : 
       {
-        "uris" : {
-          "script" : "${MEDIA_URL}script",
-          "resource" : "${MEDIA_URL}resource"
-        } 
+        // "uris" : {
+        //   "script" : "${MEDIA_URL}script",
+        //   "resource" : "${MEDIA_URL}resource"
+        // } 
         // , "code" : {
         //   "format" : false
         // } 

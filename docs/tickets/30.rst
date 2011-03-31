@@ -22,9 +22,20 @@ results. A project
 `qooxdoo integration for Django <http://code.google.com/p/qxdjango/>`_
 was started and appearently dropped again in May 2009.
 
+The most useful document is
+`Running a Source Version from a Web Server <http://qooxdoo.org/documentation/general/snippets#running_a_source_version_from_a_web_server>`_ 
+which explains the problem.
+
 Related blog entries: 
 
 - :doc:`/blog/2011/0308`
+- :doc:`/blog/2011/0331`
+
+Current status: :doc:`/topics/qooxdoo`.
+
+
+
+
 
 
 

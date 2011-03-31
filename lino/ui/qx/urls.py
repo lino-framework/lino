@@ -74,7 +74,7 @@ if sys.platform == 'win32':
         #~ }),)
         
     urlpatterns += patterns('django.views.static',
-    (r'^%sqx/(?P<path>.*)$' % prefix, 
+    (r'^%sqooxdoo/(?P<path>.*)$' % prefix, 
         'serve', {
         #~ 'document_root': QX_PATH,
         'document_root': settings.QOOXDOO_PATH,

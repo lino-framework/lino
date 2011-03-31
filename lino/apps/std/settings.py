@@ -72,17 +72,21 @@ class Lino(object):
     """
     
     source_dir = os.path.dirname(__file__)
+    source_name = os.path.split(source_dir)[-1]
     
     def __init__(self,project_file):
         #self.django_settings = settings
         #~ self.init_site_config = lambda sc: sc
         self.project_dir = normpath(dirname(project_file))
+        self.project_name = os.path.split(self.project_dir)[-1]
+        self.qooxdoo_prefix = '/media/qooxdoo/lino_apps/' + self.project_name + '/build/'
         self.dummy_messages = set()
         self._setting_up = False
         self._setup_done = False
         self.root_path = '/lino/'
         self._response = None
-        self.source_name = os.path.split(self.source_dir)[-1]
+        
+        #~ self.source_name = os.path.split(self.source_dir)[-1]
         #~ # find the first base class that is defined in the Lino source tree
         #~ # this is to find out the source_name and the source_dir
         #~ for cl in self.__class__.__mro__:

@@ -1,0 +1,47 @@
+#34 : New Syntax for :term:`.dtl` files
+=======================================
+
+The format (or syntax) of :xfile:`.dtl` files
+currently does not allow to specify parameters 
+like title, label_align und hideCheckBoxLabels
+for panels other than the main panel.
+
+Besides this, the current syntax is implemented 
+using a self-written parser. Better would be to use some known data format. 
+For example yaml.
+
+For example, the following (fictive) detail layout...
+
+::
+
+  :label: Contact
+  :label_align: top
+
+  main = 
+    field1 field2
+    field3 box1
+    
+  box1 = 
+    field4 
+    field5 
+    field6
+
+
+... might be expressed in yaml as follows::
+  
+  main: 
+  - label: Contact
+  - label_align: top
+  - layout: |
+      field1 field2
+      field3 box1
+    
+  box1:
+  - label: First Box
+  - label_align: left
+  - layout: |
+      field4 
+      field5 
+      field6
+    
+  

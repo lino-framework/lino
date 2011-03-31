@@ -18,8 +18,8 @@ qx.Class.define("lino.AppWindow",
           
   members : {
       __app : null,
-      showWindow : function(cls) { 
-        this.__app.showWindow(cls); 
+      showWindow : function(win) { 
+        this.__app.showWindow(win); 
       }
   },
   events : {

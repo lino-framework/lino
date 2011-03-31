@@ -429,7 +429,7 @@ class TextFieldElement(FieldElement):
     #~ xtype = 'textarea'
     filter_type = 'string'
     vflex = True
-    value_template = "new Ext.form.TextArea(%s)"
+    value_template = "new qx.ui.form.TextField().set(%s)"
     xtype = None
     #width = 60
     preferred_width = 60
@@ -450,7 +450,7 @@ class HtmlTextFieldElement(TextFieldElement):
         
 class CharFieldElement(FieldElement):
     filter_type = 'string'
-    value_template = "new Ext.form.TextField(%s)"
+    value_template = "new qx.ui.form.TextField().set(%s)"
     sortable = True
     xtype = None
   
@@ -464,10 +464,8 @@ class CharFieldElement(FieldElement):
         return kw
         
 class FileFieldElement(CharFieldElement):
-    #~ xtype = 'fileuploadfield'
-    #~ value_template = "new Lino.FileField(%s)"
-    value_template = "Lino.file_field_handler(ww,%s)"
-    #~ value_template = "%s"
+    #~ value_template = "Lino.file_field_handler(ww,%s)"
+    value_template = "new qx.ui.basic.Atom().set(%s)"
     
     #~ def __init__(self,lh,*args,**kw):
         #~ CharFieldElement.__init__(self,lh,*args,**kw)
@@ -486,7 +484,9 @@ class ComboFieldElement(FieldElement):
     filter_type = 'string'
     
 class ChoicesFieldElement(ComboFieldElement):
-    value_template = "new Lino.ChoicesFieldElement(%s)"
+    #~ value_template = "new Lino.ChoicesFieldElement(%s)"
+    #~ value_template = "new qx.ui.form.ComboBox().set(%s)"
+    value_template = "new qx.ui.basic.Atom().set(%s)"
   
     def __init__(self,*args,**kw):
         FieldElement.__init__(self,*args,**kw)
@@ -500,7 +500,8 @@ class ChoicesFieldElement(ComboFieldElement):
         
 
 class RemoteComboFieldElement(ComboFieldElement):
-    value_template = "new Lino.RemoteComboFieldElement(%s)"
+    #~ value_template = "new Lino.RemoteComboFieldElement(%s)"
+    value_template = "new qx.ui.basic.Atom().set(%s)"
   
     def store_options(self,**kw):
         proxy = dict(url=self.lh.rh.ui.get_choices_url(self),method='GET')
@@ -516,7 +517,8 @@ class RemoteComboFieldElement(ComboFieldElement):
         return kw
         
 class SimpleRemoteComboFieldElement(RemoteComboFieldElement):
-    value_template = "new Lino.SimpleRemoteComboFieldElement(%s)"
+    #~ value_template = "new Lino.SimpleRemoteComboFieldElement(%s)"
+    value_template = "new qx.ui.basic.Atom().set(%s)"
     
   
 class ComplexRemoteComboFieldElement(RemoteComboFieldElement):
@@ -537,7 +539,8 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
         self.report = reports.get_model_report(field.rel.to)
         a = self.report.detail_action
         if a is not None:
-            self.value_template = "new Lino.TwinCombo(%s)"
+            #~ self.value_template = "new Lino.TwinCombo(%s)"
+            self.value_template = "new qx.ui.basic.Atom().set(%s)"
             kw.update(onTrigger2Click=js_code(
               "function(e){ Lino.show_fk_detail(this,e,Lino.%s)}" % a))
         FieldElement.__init__(self,lh,field,**kw)
@@ -592,7 +595,8 @@ class MonthFieldElement(DateFieldElement):
 class URLFieldElement(CharFieldElement):
     sortable = True
     preferred_width = 40
-    value_template = "new Lino.URLField(%s)"
+    #~ value_template = "new Lino.URLField(%s)"
+    value_template = "new qx.ui.basic.Atom().set(%s)"
     
     #~ def get_field_options(self,**kw):
         #~ kw = FieldElement.get_field_options(self,**kw)
@@ -601,11 +605,15 @@ class URLFieldElement(CharFieldElement):
         
     
 class IntegerFieldElement(FieldElement):
+    value_template = "new qx.ui.form.TextField().set(%s)"
     filter_type = 'numeric'
-    xtype = 'numberfield'
+    #~ xtype = 'numberfield'
     sortable = True
     preferred_width = 5
     data_type = 'int' 
+    def __init__(self,*args,**kw):
+        kw.update(textAlign='right')
+        FieldElement.__init__(self,*args,**kw)
 
 class DecimalFieldElement(FieldElement):
     filter_type = 'numeric'
@@ -633,7 +641,8 @@ class DecimalFieldElement(FieldElement):
 
 class BooleanFieldElement(FieldElement):
   
-    xtype = 'checkbox'
+    value_template = "new qx.ui.form.CheckBox().set(%s)"
+    #~ xtype = 'checkbox'
     data_type = 'boolean' 
     filter_type = 'boolean'
     #~ grid_column_template = "new Ext.grid.BooleanColumn(%s)"
@@ -673,7 +682,8 @@ class DisplayElement(FieldElement):
 #~ class ShowOrCreateElement(FieldElement):
     ext_suffix = "_disp"
     declare_type = jsgen.DECLARE_VAR
-    value_template = "new Ext.form.DisplayField(%s)"
+    #~ value_template = "new Ext.form.DisplayField(%s)"
+    value_template = "new qx.ui.basic.Atom().set(%s)"
     #~ value_template = "new Lino.ButtonField(ww,%s)"
     #~ preferred_height = 5
     #~ vflex = True
@@ -690,7 +700,8 @@ class DisplayElement(FieldElement):
 class HtmlBoxElement(DisplayElement):
     ext_suffix = "_htmlbox"
     #~ declare_type = jsgen.DECLARE_VAR
-    value_template = "new Lino.HtmlBoxPanel(ww,%s)"
+    #~ value_template = "new Lino.HtmlBoxPanel(ww,%s)"
+    value_template = "new qx.ui.basic.Atom().set(%s)"
     preferred_height = 5
     vflex = True
     filter_type = 'string'
@@ -719,7 +730,7 @@ class Container(LayoutElement):
     hpad = 1
     is_fieldset = False
     #~ xtype = 'container'
-    value_template = "new Ext.Container(%s)"
+    value_template = "new qx.ui.container.Composite().set(%s)"
     #~ hideCheckBoxLabels = True
     
     #declare_type = jsgen.DECLARE_INLINE
@@ -983,7 +994,7 @@ class Panel(Container):
             if vflex_count >= 2 and len(self.elements) <= 3:
             #~ if vflex_count >= 1 and len(self.elements) <= 3:
                 self.remove('layout','layoutConfig')
-                self.value_template = 'new Lino.VBorderPanel(%s)'
+                #~ self.value_template = 'new Lino.VBorderPanel(%s)'
                 for e in self.elements:
                     #~ if e.vflex: # """as long as there are bugs, make also non-vflex resizable"""
                     e.update(split=True)
@@ -996,7 +1007,8 @@ class Panel(Container):
 
 class GridElement(Container): 
     declare_type = jsgen.DECLARE_VAR
-    value_template = "new lino.TablePanel(ww,%s)"
+    #~ value_template = "new lino.TablePanel(ww,%s)"
+    value_template = "new qx.ui.basic.Atom().set(%s)"
     ext_suffix = "_grid"
     vflex = True
     xtype = None
@@ -1188,19 +1200,14 @@ class DetailMainPanel(Panel,MainPanel):
         #d.update(standardSubmit=True)
         return kw
         
-    @classmethod
-    def field2elem(cls,lh,field,**kw):
-        e = MainPanel.field2elem(lh,field,**kw)
-        if isinstance(e,HtmlBoxElement): return e
-        #~ if not e.value.has_key('fieldLabel'): return e
-        #~ if not e.label: return e
-        #~ po = dict(layout='form')
-        po = dict(layout='form',autoHeight=True) # 20101028
-        #~ if isinstance(e,TextFieldElement):
-            #~ po.update(anchor='100% 100%')
-        ct = Panel(lh,field.name+"_ct",True,e,**po)#,flex=0)
-        ct.field = field
-        return ct
+    #~ @classmethod
+    #~ def field2elem(cls,lh,field,**kw):
+        #~ e = MainPanel.field2elem(lh,field,**kw)
+        #~ if isinstance(e,HtmlBoxElement): return e
+        #~ po = dict(layout='form',autoHeight=True) # 20101028
+        #~ ct = Panel(lh,field.name+"_ct",True,e,**po)#,flex=0)
+        #~ ct.field = field
+        #~ return ct
 
 class TabPanel(jsgen.Component):
 #~ class TabPanel(jsgen.Value):

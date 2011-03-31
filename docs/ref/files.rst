@@ -1,6 +1,10 @@
 Files
 =====
 
+.. xfile:: .dtl
+
+Configuration file that describes the layout of (one tab of) a :term:`Detail Window`.
+
 .. xfile:: settings.py
 
 See http://docs.djangoproject.com/en/dev/intro/tutorial01/#creating-a-project

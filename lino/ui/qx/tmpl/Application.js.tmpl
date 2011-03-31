@@ -1,15 +1,5 @@
 /* ************************************************************************
 
-   Copyright:
-
-   License:
-
-   Authors:
-
-************************************************************************ */
-
-/* ************************************************************************
-
 #asset(lino/*)
 #from lino.utils.menus import Menu, MenuItem, Toolbar
 
@@ -44,7 +34,8 @@ qx.Class.define("lino.Application",
       this.base(arguments);
 
       // Enable logging in debug variant
-      if (qx.core.Variant.isSet("qx.debug", "on"))
+      if (qx.core.Environment.get("qx.debug", "on"))
+      //~ if (qx.core.Variant.isSet("qx.debug", "on"))
       {
         // support native logging capabilities, e.g. Firebug for Firefox
         qx.log.appender.Native;

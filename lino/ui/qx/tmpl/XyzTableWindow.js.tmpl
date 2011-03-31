@@ -1,16 +1,6 @@
 #encoding UTF-8
 /* ************************************************************************
 
-   Copyright:
-
-   License:
-
-   Authors:
-
-************************************************************************ */
-
-/* ************************************************************************
-
 #asset(lino/*)
 
 ************************************************************************ */
@@ -73,12 +63,16 @@ qx.Class.define("$class_name",
     },
     setupToolbar: function(bar)
     {
-      var btn = new qx.ui.toolbar.Button('Detail');
+#set $dtl = $rh.report.get_action('detail')
+#if $dtl      
+      var btn = new qx.ui.toolbar.Button($py2js($dtl.label));
       btn.addListener('execute',function(){
         //~ this.showWindow(lino.CountriesCitiesDetail);
-        alert("TODO : how to referencethe app? want to open new window...");
+        console.log("execute : $a2class($dtl)");
+        this.showWindow(new $a2class($dtl)());
       }, this);
       bar.add(btn);
+#end if      
     //~ "ls_bbar_actions": [ 
       //~ { "text": "Detail", "panel_btn_handler": Lino.show_detail_handler }, 
       //~ { "text": "Einf\u00fcgen", "must_save": true, "panel_btn_handler": function(panel){Lino.show_insert(panel)} }, 

@@ -110,16 +110,6 @@ Version 1.3
 #.  CompositeFields nutzen:
     http://dev.sencha.com/deploy/dev/examples/form/composite-field.html
     
-#.  Neue Syntax für .dtl-Dateien, damit man pro Panel 
-    Parameter wie title, label_align und hideCheckBoxLabels angeben kann.
-    Etwas im folgenden Stil::
-    
-      main(title=_("General")):
-        field1 field2
-        box1
-      box1:
-        field3 field4
-
 #.  Minify :xfile:`lino.js`
     http://en.wikipedia.org/wiki/Minification_(programming)
 

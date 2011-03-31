@@ -88,7 +88,10 @@ As long as nobody protests, I'll save some time by writing in German.
   |br| 
   21 22 23 24 25
   |br|  	
-  28 :doc:`29 <0329>`
+  28 
+  :doc:`29 <0329>`
+  :doc:`30 <0330>`
+  :doc:`31 <0331>`
    
 .. 
 

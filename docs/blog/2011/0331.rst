@@ -1,0 +1,58 @@
+20110331
+========
+
+Das User-Snippet 
+`Running a Source Version from a Web Server <http://qooxdoo.org/documentation/general/snippets#running_a_source_version_from_a_web_server>`_ 
+verrät den Trick, den ich schon ahnte:
+
+  Make sure the relative paths on the web server match those on your file 
+  system, e.g. if your app lives on the file system at 
+  :file:`/a/b/A/myapp`
+  and your qooxdoo installation is at 
+  :file:`/a/b/Z/qooxdoo-sdk`
+  and the server path to your app is 
+  :file:`/web/apps/myapp`
+  then make sure the server path to qooxdoo is 
+  :file:`/web/Z/qooxdoo-sdk`
+  so that relative references like 
+  :file:`../Z/qooxdoo-sdk` will work under 
+  the web server.
+
+/media/qxapp -> t:\data\luc\lino\igen\media\qxapp
+
+Wenn ich unter Linux entwickelte, könnte ich im lokalen `media`-Verzeichnis 
+einen symbolic link zum SDK-Verzeichnis machen. 
+Das ist die einzige akzeptable Lösung, 
+denn ich kann ja nicht für jede Lino-Anwendung, die ich entwickle, 
+eine Kopie des SDKs machen.
+Aber ich arbeite noch unter Windows XP. 
+`Junctions <http://technet.microsoft.com/de-de/sysinternals/bb896768.aspx>`_  
+wäre da beinahe das Richtige, aber leider habe ich FAT32 und nicht NTFS.
+
+Oh, aber da fällt mir auf: 
+ein anderer Weg wäre, dass ich makeui die qxapp 
+nicht ins lokale media-Verzeichnis 
+generieren lasse, 
+sondern in ein Verzeichnis im Qooxdoo SDK. 
+Als URLS benutze ich dann nicht `/media/qx/` 
+und `/media/qxapp`, 
+sondern `/qooxdoo` und `/qooxdoo/myapp/`.
+Einziger Nachteil ist, dass auf dem Apache dann ein 
+weiterer Alias für statische Dateien konfiguriert werden 
+muss.
+
+Nach einigen Stunden Wurstelei scheint das nun endlich zu gehen. 
+Ich fang mal an, das zu dokumentieren: 
+:doc:`/topics/qooxdoo`
+
+En passant habe ich meine Kopie von Qooxdoo aktualisiert: 
+Updated to revision 26451. 
+Hier die Dateien, in denen ich zum Debuggen 
+`console.log`-Anweisungen hinzugefügt hatte::
+
+  qooxdoo\framework\source\class\qx\ui\table\pane\Pane.js
+  qooxdoo\framework\source\class\qx\ui\table\model\Remote.js
+  qooxdoo\tool\pylib\generator\config\Config.py
+
+
+

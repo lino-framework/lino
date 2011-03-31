@@ -46,42 +46,56 @@ from lino.utils.config import find_config_file
 from lino.utils import rstgen 
 from lino.utils import babel
 from lino.utils.menus import Menu, MenuItem
-from lino.utils.jsgen import py2js
+#~ from lino.utils.jsgen import py2js
+from lino.utils import jsgen
 
 from lino.management.commands.makedocs import GeneratingCommand, mkdir_if
 
 def a2class(a):
     #~ return 'lino.%s' % a
     return 'lino.%s_%s_%s' % (a.actor.app_label,a.actor._actor_name,a.name)
+    
+QXAPP_PATH = os.path.join(settings.QOOXDOO_PATH,'lino_apps',settings.LINO.project_name)    
 
 class Command(GeneratingCommand):
     help = """Writes files (.js, .html, .css) for this Site.
     """
     
     def handle(self, *args, **options):
+        #~ options.update(output_dir=QXAPP_PATH)
+        if args:
+            print "Warning : ignored arguments", args
+        args = [QXAPP_PATH]
         super(Command,self).handle(*args, **options)
+        
         args = [ sys.executable ]
         args.append(os.path.join(settings.QOOXDOO_PATH, 'tool', 'bin', 'generator.py'))
+        args.append('source')
         args.append('build')
-        os.chdir(join(self.output_dir,'qxapp'))
+        os.chdir(self.output_dir)
         subprocess.call(args)
         
     def generate_files(self):
         settings.LINO.setup()
         from lino.ui import qx
         src = join(dirname(qx.__file__),'qxapp_init','source')
-        dest = join(self.output_dir,'qxapp','source')
+        dest = join(self.output_dir,'source')
+        #~ dest = join(self.output_dir,'qxapp','source')
         if os.path.exists(dest):
             rmtree(dest)
         copytree(src,dest)
         self.tmpl_dir = join(dirname(qx.__file__),'tmpl')
         from lino.ui.qx.urls import ui
-        context = dict(a2class=a2class,py2js=py2js,
+        context = dict(
+          py2js=jsgen.py2js,
+          jsgen=jsgen,
+          a2class=a2class,
           models=models,settings=settings)
         for fn in ('config.json','generate.py','Manifest.json'):
         #~ for fn in ('config.json',):
             self.generate(fn+'.tmpl',
-            join(self.output_dir,'qxapp',fn),**context)
+                join(self.output_dir,fn),**context)
+                #~ join(self.output_dir,'qxapp',fn),**context)
             
         self.generate_class_file('lino.Application','Application.js.tmpl',**context)
         #~ self.generate('Application',application_lines(self))
@@ -96,9 +110,14 @@ class Command(GeneratingCommand):
                 if isinstance(a,reports.GridEdit):
                     context.update(action=a)
                     self.generate_class_file(a2class(a),'XyzTableWindow.js.tmpl',**context)
-        for d in (join(self.output_dir,'qxapp','source','translation'),
-                  join(self.output_dir,'qxapp','source','script'),
-                  join(self.output_dir,'qxapp','source','resource','lino')):
+                if isinstance(a,reports.ShowDetailAction):
+                    context.update(action=a)
+                    self.generate_class_file(a2class(a),
+                        'XyzDetailWindow.js.tmpl',
+                        **context)
+        for d in (join(self.output_dir,'source','translation'),
+                  join(self.output_dir,'source','script'),
+                  join(self.output_dir,'source','resource','lino')):
             mkdir_if(d)            
             
         
@@ -110,7 +129,7 @@ class Command(GeneratingCommand):
         #~ class_name = "lino." + class_name
         fn = class_name.replace('.',os.path.sep)
         fn += '.js'
-        fn = os.path.join(self.output_dir,'qxapp','source','class',fn)
+        fn = os.path.join(self.output_dir,'source','class',fn)
         kw.update(class_name=class_name)
         self.generate(tpl,fn,**kw)
         #~ os.makedirs(os.path.dirname(fn))

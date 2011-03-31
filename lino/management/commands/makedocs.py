@@ -175,7 +175,8 @@ class GeneratingCommand(BaseCommand):
         else:
             mkdir_if(os.path.dirname(fn))
         
-        logger.info("Generating %s from %s",fn,tpl_filename)
+        logger.info("Generating %s",fn)
+        #~ logger.info("Generating %s from %s",fn,tpl_filename)
         context.update(
           lino=lino,
           #~ models=models,

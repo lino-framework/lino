@@ -1,0 +1,70 @@
+20110330
+========
+
+Die unausgesprochene offene Frage von gestern war: 
+welchen Layout-Manager benutzen? 
+
+Dazu ist mir über Nacht eine Idee gekommen: 
+statt eine Serie von verschachtelten v- und h-boxes 
+könnte ich ein Grid-Layout verwenden.
+
+Wenn wir zum Beispiel folgendes Layout hätten::
+
+  main = 
+    field1 field2
+    field3 box1
+    
+  box1 = 
+    field4 
+    field5 field6
+    
+Daraus müsste er eine Grid mit 3 Kolonnen und 3 Zeilen machen, 
+field2 und field4 müssten colspan=2 kriegen,
+und field3 müsste rowspan=2 kriegen.
+
+::
+    
+    +--------+--------+--------+
+    | field1 |     field2      |
+    +--------+-----------------+
+    |        |     field4      |
+    | field3 +--------+--------+
+    |        | field5 | field6 |
+    +--------+--------+--------+
+    
+Die Layout-Parameter der einzelnen Felder müssten sein::
+
+
+  field1 {row: 0, column: 0}
+  field2 {row: 0, column: 1, colspan:2}
+  field3 {row: 1, column: 0, rowspan:2}
+  field4 {row: 1, column: 1, colspan:2}
+  field5 {row: 2, column: 2}
+  field6 {row: 2, column: 3}
+      
+
+13.30 Uhr : Nein, die Idee mit dem Grid-Layout ist zwar gut, 
+aber dafür ist es noch zu früh. Das wäre jetzt viel Arbeit, 
+die ich dann später in ExtJS nachholen müsste. 
+Die kommt, wenn die beiden UIs wieder zusammengewachsen sind.
+Lieber jetzt erstmal eine "einfache" Implementierung mit 
+möglichst wenig neuem Code.
+
+Das Ziel ist unsere Datei :file:`XyzDetailWindow.js.tmpl`, 
+das Template für die einzelnen Klassen.
+Der erste Schritt, nämlich dass die Datei überhaupt generiert wird, 
+den hatte ich schon gestern gemacht.
+
+Für normale Widgets wie TextField oder CheckBox ist es einfach,
+aber für foreign keys und Felder mit einem `choices` hatte 
+ich in ExtJS ja eigene custom widgets wie 
+Lino.ChoicesFieldElement oder
+Lino.TwinCombo
+benutzt. 
+
+Also muss ich mich jetzt zunächst mal in dieses Thema reinknien:
+| http://manual.qooxdoo.org/current/pages/gui_toolkit/ui_develop.html
+| http://qooxdoo.org/documentation/general/custom_widget
+
+Als provisorischen Workaround kann ich auch `qx.ui.basic.Atom` nehmen.
+Damit ich mal wenigstens ein erstes DetailWindow mit eigenen Augen sehen kann.

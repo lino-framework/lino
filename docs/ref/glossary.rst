@@ -48,3 +48,9 @@ Glossary
     writes a Sphinx documentation tree about the models 
     installed on this site.
     :mod:`lino.management.commands.makedocs`
+
+  Detail Window
+    A window that displays data of a single record 
+    (possibly including slave records).
+    Used for viewing, editing or to insert new records.
+    
