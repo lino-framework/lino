@@ -417,7 +417,7 @@ class DirectPrintAction(BasePrintAction):
     #~ def __init__(self,rpt,name,label,bmname,tplname):
     def __init__(self,name,label,tplname,build_method=None):
         BasePrintAction.__init__(self,name,label)
-        #~ self.bm =  bm_dict.get(build_method or settings.LINO_SITE.preferred_build_method)
+        #~ self.bm =  bm_dict.get(build_method or settings.LINO.preferred_build_method)
         self.build_method = build_method
         self.tplname = tplname
         
@@ -430,7 +430,7 @@ class DirectPrintAction(BasePrintAction):
         #~ return self.actor.model._meta.app_label + '.' + self.actor.model.__name__
         
     def run(self,rr,elem,**kw):
-        bm =  bm_dict.get(self.build_method or settings.LINO_SITE.config.default_build_method)
+        bm =  bm_dict.get(self.build_method or settings.LINO.config.default_build_method)
         if not self.tplname.endswith(bm.template_ext):
             raise Exception("Invalid template for build method %r" % bm.name)
         bm.build(self,elem)
@@ -497,7 +497,7 @@ class PrintableType(models.Model):
     @chooser(simple_values=True)
     def template_choices(cls,build_method):
         if not build_method:
-            build_method = settings.LINO_SITE.config.default_build_method 
+            build_method = settings.LINO.config.default_build_method 
         #~ print cls, 'template_choices for method' ,build_method
         #~ bm = bm_dict[build_method]
         return get_template_choices(cls.get_templates_group(),build_method)
@@ -565,8 +565,8 @@ class Printable(models.Model):
     def get_build_method(self):
         # TypedPrintable  overrides this
         #~ return 'rtf'
-        return settings.LINO_SITE.config.default_build_method 
-        #~ return settings.LINO_SITE.preferred_build_method 
+        return settings.LINO.config.default_build_method 
+        #~ return settings.LINO.preferred_build_method 
         #~ return 'pisa'
         
 
@@ -597,7 +597,7 @@ class TypedPrintable(Printable):
             return super(TypedPrintable,self).get_build_method()
         if ptype.build_method:
             return ptype.build_method
-        return settings.LINO_SITE.config.default_build_method 
+        return settings.LINO.config.default_build_method 
         
     def get_print_templates(self,bm,action):
         ptype = self.get_printable_type()
