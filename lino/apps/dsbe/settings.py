@@ -23,7 +23,7 @@ from lino.utils.jsgen import js_code
 class Lino(Lino):
     source_dir = os.path.dirname(__file__)
     title = "Lino/DSBE"
-    domain = "dsbe.saffre-rumma.net"
+    #~ domain = "dsbe.saffre-rumma.net"
     help_url = "http://lino.saffre-rumma.net/dsbe/index.html"
     
     residence_permit_upload_type = None

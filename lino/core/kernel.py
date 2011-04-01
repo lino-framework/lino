@@ -179,6 +179,9 @@ class DisableDeleteHandler():
         
 
 def setup_site(self):
+    """
+    This takes the LinoSite instance (instantiated in your :xfile:`settings.py`)
+    """
   
     logger.info(lino.welcome_text())
 

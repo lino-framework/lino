@@ -103,16 +103,10 @@ class Lino(object):
 
     def add_dummy_message(self,s):
         self.dummy_messages.add(s)
-            
-        
-        
+
     def setup_main_menu(self):
         pass
-          
-    def init_site_config(self,sc):
-        #~ self.config = sc
-        pass
-        
+
     def configure(self,sc):
         self.config = sc
         

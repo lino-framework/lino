@@ -43,6 +43,11 @@ Glossary
     one of Django's standard management commands.
     See `Django docs <http://docs.djangoproject.com/en/dev/ref/django-admin/#loaddata-fixture-fixture>`_
     
+  makeui
+    A Lino-specific Django management command that 
+    writes local files needed for the user interface.
+    See :doc:`/topics/qooxdoo`.
+  
   makedocs
     A Lino-specific Django management command that 
     writes a Sphinx documentation tree about the models 

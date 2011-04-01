@@ -14,9 +14,3 @@ upgrade, designed to be executed by a Lino expert.
 For more general instructions on how to upgrade an existing 
 Lino site, see :doc:`/admin/upgrade`).
 
-- In your local :xfile:`settings.py`, 
-  change ``from lino.sites.foo.settings import *`` to 
-  ``from lino.apps.foo.settings import *``
-
-- Database migration needed due to changes in table `auth_user`.
-  See :doc:`/blog/2011/0309`

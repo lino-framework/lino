@@ -98,6 +98,7 @@ class Controller:
             obj.save()
         except ValidationError,e:
             dblogger.warning("Validation failed for %s : %s",obj2str(obj),e)
+            dblogger.exception(e)
                 
     def DELETE(self,**kw):
         obj = self.get_object(kw)
@@ -318,7 +319,7 @@ controllers = dict(
   )
 
 def process_line(i,ln):
-    #~ dblogger.info("process_line(%r,%r)",i,ln)
+    dblogger.debug("process_line(%r,%r)",i,ln)
     d = simplejson.loads(ln,object_hook=json2py)
     kw = {}
     for k,v in d.items():

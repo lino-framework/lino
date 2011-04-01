@@ -1,0 +1,14 @@
+20110401
+========
+
+In :term:`watch_tim` ist ein Bug aufgetreten, den wir jetzt jagen wollen.
+Allgemein kann man zu den Bugs im :term:`watch_tim` sagen: theoretisch müsste
+ich ein System bauen, um test cases sammeln zu können. Aber das wäre
+sehr viel Aufwand, und ich halte den in unserem Fall für unangemessen.
+Lieber optimiere ich das Logging, damit wir die Bugs, wenn sie
+auftreten, möglichst schmerzlos beseitigt kriegen.
+
+- :term:`watch_tim` loggt im Falle von `Validation failed for` 
+  jetzt den kompletten Traceback.
+  
+- Released :doc:`/releases/20110401` for deployment

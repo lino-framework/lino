@@ -18,8 +18,6 @@ verrät den Trick, den ich schon ahnte:
   :file:`../Z/qooxdoo-sdk` will work under 
   the web server.
 
-/media/qxapp -> t:\data\luc\lino\igen\media\qxapp
-
 Wenn ich unter Linux entwickelte, könnte ich im lokalen `media`-Verzeichnis 
 einen symbolic link zum SDK-Verzeichnis machen. 
 Das ist die einzige akzeptable Lösung, 
@@ -30,20 +28,16 @@ Aber ich arbeite noch unter Windows XP.
 wäre da beinahe das Richtige, aber leider habe ich FAT32 und nicht NTFS.
 
 Oh, aber da fällt mir auf: 
-ein anderer Weg wäre, dass ich makeui die qxapp 
+ein anderer Weg wäre, dass ich :term:`makeui` die qxapp 
 nicht ins lokale media-Verzeichnis 
 generieren lasse, 
 sondern in ein Verzeichnis im Qooxdoo SDK. 
-Als URLS benutze ich dann nicht `/media/qx/` 
-und `/media/qxapp`, 
-sondern `/qooxdoo` und `/qooxdoo/myapp/`.
-Einziger Nachteil ist, dass auf dem Apache dann ein 
-weiterer Alias für statische Dateien konfiguriert werden 
-muss.
-
-Nach einigen Stunden Wurstelei scheint das nun endlich zu gehen. 
-Ich fang mal an, das zu dokumentieren: 
-:doc:`/topics/qooxdoo`
+Damit das nicht mit dem Code von Qooxdoo Konflikt gerät, 
+kommen die alle unterhalb eines Verzeichnisses 
+:term:`lino_apps`.
+Es ist zwar nicht gerade höflich, ins Verzeichnis eines 
+anderen Softwarepakets reinzuschreiben, aber was will ich 
+machen...
 
 En passant habe ich meine Kopie von Qooxdoo aktualisiert: 
 Updated to revision 26451. 
@@ -54,5 +48,8 @@ Hier die Dateien, in denen ich zum Debuggen
   qooxdoo\framework\source\class\qx\ui\table\model\Remote.js
   qooxdoo\tool\pylib\generator\config\Config.py
 
-
+Nach einigen Stunden Wurstelei scheint das nun endlich zu gehen. 
+Ich fang mal an, das zu dokumentieren: 
+:doc:`/topics/qooxdoo`.
+Check-in 20110331 wegen Feierabend.
 
