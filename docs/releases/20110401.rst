@@ -22,3 +22,30 @@ Lino site, see :doc:`/admin/upgrade`).
 - Database migration needed due to changes in table `auth_user`.
   See :doc:`/blog/2011/0309`
 
+
+Possible issues
+---------------
+
+::
+
+  $ ./dump
+  fixtures/d20110401.dpy
+  /var/snapshots/lino/lino/utils/choicelists.py:171: DeprecationWarning: inner has been called without providing a connection argument.
+    return self.get_db_prep_value(value)
+    
+    
+::
+
+  $ ./pull
+  pulling from https://lino.googlecode.com/hg/
+  searching for changes
+  adding changesets
+  adding manifests
+  adding file changes
+  added 15 changesets with 498 changes to 309 files
+  warning: detected divergent renames of lino/ui/extjs/ext_store.py to:
+   lino/ui/qx/qx_store.py
+   lino/ui/store.py
+  241 files updated, 0 files merged, 80 files removed, 0 files unresolved    
+  
+Upgrade from Django 14995 to 15966

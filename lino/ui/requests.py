@@ -90,8 +90,8 @@ def dict2kw(d):
 
 
 def authenticated_user(user):
-    if user.is_anonymous():
-        return None
+    #~ if user.is_anonymous():
+        #~ return None
     return user
         
 #~ class ActionRequest(actions.ActionRequest):
