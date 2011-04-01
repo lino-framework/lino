@@ -109,11 +109,17 @@ def country2kw(row,kw):
         activity = row['PROF']
         if activity:
             try:
-                activity = Activity.objects.get(pk=activity)
-            except Activity.DoesNotExist:
-                activity = Activity(id=activity,name=activity)
-                activity.save(force_insert=True)
-            kw.update(activity=activity)
+                activity = int(activity)
+            except ValueError:
+                dblogger.debug("Ignored invalid value PROF = %r",activity)
+            else:
+                if activity:
+                    try:
+                        activity = Activity.objects.get(pk=activity)
+                    except Activity.DoesNotExist:
+                        activity = Activity(id=activity,name=unicode(activity))
+                        activity.save(force_insert=True)
+                    kw.update(activity=activity)
         
     country = row['PAYS']
     if country:
