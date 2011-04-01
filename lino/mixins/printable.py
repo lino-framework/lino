@@ -216,7 +216,8 @@ class AppyBuildMethod(SimpleBuildMethod):
             #~ knowledge_text=fields.knowledge_text,
             )
         lang = str(elem.get_print_language(self))
-        logger.info(u"appy.pod render %s -> %s (language=%r,params=%s",tpl,target,lang,settings.APPY_PARAMS)
+        logger.info(u"appy.pod render %s -> %s (language=%r,params=%s",
+            tpl,target,lang,settings.APPY_PARAMS)
         savelang = babel.get_language()
         babel.set_language(lang)
         #~ locale.setlocale(locale.LC_ALL,ls)

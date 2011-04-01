@@ -1,5 +1,7 @@
-#30 : Developing a Qooxdoo application for a Django server
-----------------------------------------------------------
+#30 [closed] : Developing a Qooxdoo application for a Django server
+-------------------------------------------------------------------
+
+This problem is now solved. See :doc:`/topics/qooxdoo`.
 
 When launching my Qooxdoo application from a Django server,
 I'd like to be able to switch 
@@ -7,7 +9,6 @@ between "source" and "build" versions of my application.
 
 Currently I need to do a :command:`generate.py source build` 
 each time I want to test a code change.
-
 
 The problem when trying to use the source version
 is that Qooxdoo 
@@ -30,13 +31,7 @@ Related blog entries:
 
 - :doc:`/blog/2011/0308`
 - :doc:`/blog/2011/0331`
-
-Current status: :doc:`/topics/qooxdoo`.
-
-
-
-
-
+- :doc:`/blog/2011/0401`
 
 
 Here are some fragments of the things I tried without success:

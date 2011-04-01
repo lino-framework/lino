@@ -60,8 +60,8 @@ Mehr darüber muss ich dann bei Gelegenheit mal schreiben,
 wenn Lino fertig ist...
 
 
-Gettings started with Qooxdoo
------------------------------
+Getting started with Qooxdoo
+----------------------------
 
 16.10 Uhr.
 Ebenfalls am Wochenende hatte ich das Tutorial auf Qooxdoo begonnen.

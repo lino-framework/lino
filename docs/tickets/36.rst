@@ -1,0 +1,15 @@
+#36 : AssertionError with Qooxdoo source version in Google Chrome
+=================================================================
+
+Ich habe ein Problem, das nur in Google Chrome, und auch dort nur in der Source-Version meiner Qooxdoo-Anwendung auftritt.
+
+
+.. image:: 36a.jpg
+   :scale: 50
+
+.. image:: 36b.jpg
+   :scale: 50
+
+
+Updated to revision 26542
+

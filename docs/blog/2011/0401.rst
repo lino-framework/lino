@@ -1,6 +1,9 @@
 20110401
 ========
 
+Lino 1.1.7
+----------
+
 In :term:`watch_tim` ist ein Bug aufgetreten, den wir jetzt jagen wollen.
 Allgemein kann man zu den Bugs im :term:`watch_tim` sagen: theoretisch müsste
 ich ein System bauen, um test cases sammeln zu können. Aber das wäre
@@ -11,5 +14,61 @@ auftreten, möglichst schmerzlos beseitigt kriegen.
 - :term:`watch_tim` loggt im Falle von `Validation failed for` 
   jetzt den kompletten Traceback.
   
-- Released :doc:`/releases/20110401` for deployment
+- Released :doc:`/releases/20110401`. 
+  Several minor bugs fixed during the upgrade in Eupen:
+
+  - :term:`watch_tim` erstellte bei Berufscode "00" jedesmal einen neuen 
+    Record (was nur halb funktionierte: der neue Record bekam nicht 0 
+    als id, sondern einen automatischen Wert). 
+    Bug behoben und erstmals eine lokale Datenreparatur, die die 
+    Berufe '00' löscht, die sich fälschlicherweise im Laufe der 
+    Zeit angesammelt hatten::
+    
+      python manage.py shell < 20110401.py
+      
+    Wobei in der `20110401.py` folgendes steht::
+      
+      from lino.apps.dsbe.models import Activity
+      q = Activity.objects.filter(name='00')
+      q.delete()
+    
+  - Wenn man versuchte, etwas auszudrucken, bekam man 
+    `'Lino' object has no attribute 'config'`. 
+    Das war noch eine späte Folge 
+    der Änderungen vom :doc:`/blog/2011/0307`.
+  
+
+Qooxdoo Wochenrückblick
+-----------------------
+
+Mir waren diese Woche nur ca. 7 Arbeitsstunden für die 
+Qooxdoo-Anpassung gegönnt. Demensprechend dürftig ist 
+das Resultat. 
+
+Immerhin habe ich mit den Detail-Fenstern begonnen, 
+und mir ist das Rahmengerüst nun einigermaßen klar. 
+Jetzt kommt "nur" noch die eher lästige
+Arbeit der eigentlichen Implementierung.
+Da ist noch viel zu tun (wenn ich :term:`makeui` 
+laufen lasse, bringt er eine ganze Latte von 
+Warnungen "Unknown global symbol referenced".
+Jedes einzelne Layout-Element muss natürlich jetzt 
+ganz anderen JS-Code generieren.
+Diese Arbeit ist besonders unangenehm, wenn man dabei 
+ständig unterbrochen wird. 
+
+Die meiste Zeit dieser 7 Stunden habe ich aber noch mit den 
+eher internen Tickets :doc:`30 </tickets/30>` und :doc:`36 </tickets/36>` 
+verbracht. 
+:doc:`#30 </tickets/30>` ist ja nun immerhin gelöst. 
+Leider ist die Source-Version wirklich sehr langsam, und zum Debuggen 
+hat sie mir zumindest für :doc:`#36 </tickets/36>` 
+bisher nichts gebracht.
+Heute habe ich zuletzt immerhin gemerkt, 
+dass :doc:`#36 </tickets/36>` 
+nur in Chrome auftritt und nicht in Firefox.
+Also werde ich das jetzt mal reifen lassen 
+und mich ab nächste Woche in die Implementierung stürzen.
+
+
 

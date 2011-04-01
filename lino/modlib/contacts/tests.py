@@ -26,7 +26,9 @@ contacts = resolve_app('contacts')
 from lino.utils.instantiator import Instantiator
 
 class StdTest(TestCase):
-    fixtures = [ 'std', 'few_countries', 'ee', 'be', 'demo', 'demo_ee']
+    #~ fixtures = [ 'std', 'few_countries', 'ee', 'be', 'demo', 'demo_ee']
+    fixtures = 'few_countries few_languages demo_cities std demo demo_ee'.split()
+    
     
 person = Instantiator('contacts.Person').build
 company = Instantiator('contacts.Company').build
