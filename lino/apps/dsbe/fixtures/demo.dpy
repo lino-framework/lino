@@ -58,6 +58,7 @@ Contact = resolve_model('contacts.Contact')
 Contract = resolve_model('dsbe.Contract')
 Note = resolve_model('notes.Note')
 User = resolve_model('auth.User')
+Country = resolve_model('countries.Country')
     
 
 person = Instantiator(Person).build
@@ -315,3 +316,12 @@ def objects():
             p.birth_country_id = 'BE'
             p.nationality_id = 'BE'
             p.save()
+
+    for short_code,isocode in (
+        ('B', 'BE'),
+        ('D', 'DE'),
+        ('F', 'FR'),
+      ):
+      c = Country.objects.get(pk=isocode)
+      c.short_code = short_code
+      c.save()

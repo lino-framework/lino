@@ -39,8 +39,6 @@ from django.core.management.base import BaseCommand, CommandError
 from django.core.exceptions import ValidationError
 
 
-from lino.utils.daemoncommand import DaemonCommand
-
 from django.conf import settings
 
 
@@ -48,6 +46,9 @@ from django.db.utils import DatabaseError
 # OperationalError
 from django.utils import simplejson
 from django.contrib.auth import models as auth
+
+import lino
+
 from lino.tools import resolve_model
 from lino.modlib.contacts.utils import name2kw, street2kw, join_words
 
@@ -55,7 +56,9 @@ from lino.utils import confirm
 from lino.utils import dblogger
 from lino.tools import obj2str
 
-from lino.modlib.dsbe.management.commands.initdb_tim import convert_sex, \
+from lino.utils.daemoncommand import DaemonCommand
+
+from lino.apps.dsbe.management.commands.initdb_tim import convert_sex, \
     ADR_id, country2kw, pxs2person, is_company
 
 Country = resolve_model('countries.Country')
@@ -385,14 +388,14 @@ def main(*args,**options):
     if len(args) != 1:
         raise CommandError('Please specify the path to your TIM changelog directory')
     data_dir = args[0]
-    msg = "Started tim_watch on %s ..."
+    msg = "Started watch_tim %s on %s ..."
     #~ logger.info(msg,data_dir)
-    dblogger.info(msg,data_dir)
+    dblogger.info(msg,lino.__version__,data_dir)
         
     def goodbye():
-        msg = "Stopped watch_tim on %s ..."
+        msg = "Stopped watch_tim %s on %s ..."
         #~ logger.info(msg,data_dir)
-        dblogger.info(msg,data_dir)
+        dblogger.info(msg,lino.__version__,data_dir)
     #~ signal.signal(signal.SIGTERM,on_SIGTERM)
     atexit.register(goodbye)
     

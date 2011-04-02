@@ -33,7 +33,8 @@ PersonProperty = resolve_model('properties.PersonProperty')
 class DemoTest(TestCase):
     #~ fixtures = [ 'std','demo' ]
     #~ fixtures = 'std few_countries few_languages few_cities props demo'.split()
-    fixtures = ['std', 'all_countries', 'few_cities', 'all_languages', 'props', 'demo']
+    fixtures = 'std all_countries few_cities all_languages props demo'.split()
+    
             
 def test01(self):
     """

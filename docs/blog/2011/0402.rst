@@ -15,7 +15,8 @@ Wenn ich die hätte, könnte ich vielleicht zumindest
 diese Art von Fehlern in einem unit test abdecken.
 
 Also in :meth:`Controller.validate_and_save` muss er die 
-Exception einfach weiterleiten (``raise`` ohne Argument).
+Exception weiterleiten (``raise`` ohne Argument) statt 
+sie wie bisher abzufangen.
 Warum dann überhaupt abfangen? Weil ich ein obj2str loggen 
 will, das hat ja auch schon oft geholfen um Bugs zu finden. 
 Neue Formulierung (in :func:`watch`)::
@@ -23,6 +24,10 @@ Neue Formulierung (in :func:`watch`)::
   dblogger.warning(
       "Exception '%s' while processing changelog line:\n%s", 
       e,ln)
+      
+Eine konkrete Folge ist, dass beim kleinsten ValidationError
+der ganze Record nicht gespeichert wird. 
+Also watch_tim wird strenger.
 
 non-serializing fixtures
 ------------------------
