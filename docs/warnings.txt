@@ -2,7 +2,4 @@ T:\hgwork\lino\docs\autodoc\lino.modlib.rst:13: (WARNING/2) toctree contains ref
 T:\hgwork\lino\docs\admin\upgrade.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\dsbe\appdocs\sessions.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\igen\appdocs\sessions.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\blog\2011\0401.rst:7: WARNING: term not in glossary: watch_tim
-T:\hgwork\lino\docs\blog\2011\0401.rst:7: WARNING: term not in glossary: watch_tim
-T:\hgwork\lino\docs\blog\2011\0401.rst:14: WARNING: term not in glossary: watch_tim
-T:\hgwork\lino\docs\blog\2011\0401.rst:20: WARNING: term not in glossary: watch_tim
+T:\hgwork\lino\docs\topics\dpy.rst:5: WARNING: xfile reference target not found: .dpy

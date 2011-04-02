@@ -1,0 +1,32 @@
+20110402
+========
+
+
+Logging in :term:`watch_tim`
+----------------------------
+
+.. currentmodule:: lino.apps.dsbe.management.commands.watch_tim
+
+Ich hatte noch eine Idee zum Logging in :term:`watch_tim`. 
+Ich brauche nicht nur den Traceback, sondern auch die 
+Originalzeile aus der changelog, 
+die den Fehler auslöste.
+Wenn ich die hätte, könnte ich vielleicht zumindest 
+diese Art von Fehlern in einem unit test abdecken.
+
+Also in :meth:`Controller.validate_and_save` muss er die 
+Exception einfach weiterleiten (``raise`` ohne Argument).
+Warum dann überhaupt abfangen? Weil ich ein obj2str loggen 
+will, das hat ja auch schon oft geholfen um Bugs zu finden. 
+Neue Formulierung (in :func:`watch`)::
+
+  dblogger.warning(
+      "Exception '%s' while processing changelog line:\n%s", 
+      e,ln)
+
+non-serializing fixtures
+------------------------
+
+Ich habe die Seite :doc:`/topics/dpy` begonnen
+und einen Kommentar 
+http://code.djangoproject.com/ticket/10664

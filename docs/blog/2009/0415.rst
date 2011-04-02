@@ -9,49 +9,5 @@ but my proposed solution doesn't require any Django patch.
 It uses the fact that Django lets you declare your own 
 Serializers.
 
-Here is my proposed solution:
+See :doc:`/topics/dpy` for an overview.
 
-- Install Lino (see :doc:`/admin/install`).
-  (Lino is my collection of Python modules---
-  poorly documented and partly in chaotic growth, but it should be easy to install it and throw it away again if you don't like it...)
-
-  If you install Lino, then you can see this in action in a command shell as follows::
-
-    cd /var/snapshots/lino/src/mysite/demo
-    python manage.py test igen
-    
-- In your :file:`settings.py`, add the following::
-
-    SERIALIZATION_MODULES = {
-        "dpy" : "lino.utils.dpyserializer",
-    }
-  
-  The code for dpyserializer is very simple:
-  :srcref:`/lino/utils/dpyserializer.py`
-  
-- Then write your fixtures as Python scripts with an 
-  extension `.dpy` instead of the usual `.py`.
-
-  Each .dpy file will be imported like a normal Python module. 
-  It can do what you want, but it must define a function `objects` 
-  which should return the list of model instances to be added.
-
-  Here is an example of a working .dpy:
-
-  :srcref:`src/lino/django/igen/fixtures/demo.dpy`
-
-- This particular example uses :class:`Instantiator`, 
-  which is defined here:
-
-  :srcref:`src/lino/django/utils/instantiator.py`
-
-Discussion:
-
-- I'm not sure about which file extension to use. 
-  Since I had to choose one, I took `.dpy`
-  That's of course not elegant but I guess that simply
-  naming them .py would conflict with the existing PythonSerializer.
-  
-- There's no way yet to *export* data. 
-  This serializer only works for loaddata, not for dumpdata.
-  

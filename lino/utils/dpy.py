@@ -13,7 +13,7 @@
 
 
 """
-exec serializer.
+See :doc:`/topics/dpy`
 
 """
 
@@ -35,8 +35,6 @@ from django.utils.encoding import smart_unicode, is_protected_type
 import lino
 from lino.tools import obj2str
 from lino.utils import dblogger
-
-#~ from lino.utils.instantiator import d2i
 
 SUFFIX = '.dpy'
 
@@ -188,45 +186,6 @@ class Serializer(base.Serializer):
 
 
 
-
-class unused_FakeDeserializedObject(base.DeserializedObject):
-    """
-    Imitates DeserializedObject required by loaddata,
-    but this time we *don't want* to bypass pre_save/save methods.
-    """
-    def __init__(self, obj):
-        self.object = obj
-
-    def save(self, *args,**kw):
-        #~ print 'dpy.py',self.object
-        if True:
-            try:
-                self.object.full_clean()
-            except ValidationError,e:
-                raise Exception("Cannot save %s : %s" % (obj2str(self.object),e))
-        self.object.save(*args,**kw)
-        dblogger.info("Deserialized %s has been saved" % obj2str(self.object))
-
-
-def unused_Deserializer(fp, **options):
-    """
-    """
-    if isinstance(fp, basestring):
-        raise NotImplementedError
-    parts = os.path.split(fp.name)
-    fqname = parts[-1]
-    assert fqname.endswith(SUFFIX)
-    fqname = fqname[:-4]
-    #print fqname
-    desc = (SUFFIX,'r',imp.PY_SOURCE)
-    module = imp.load_module(fqname, fp, fp.name, desc)
-    #m = __import__(filename)
-    try_again = []
-    for instance in module.objects():
-        if instance is not None:
-            yield FakeDeserializedObject(instance)
-
-
 class FakeDeserializedObject(base.DeserializedObject):
     """
     Imitates DeserializedObject required by loaddata,
@@ -298,6 +257,7 @@ class FakeDeserializedObject(base.DeserializedObject):
 
 def Deserializer(fp, **options):
     """
+    Used when ``manage.py loaddata`` encounters a .dpy fixture.
     """
     if isinstance(fp, basestring):
         raise NotImplementedError

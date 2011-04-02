@@ -93,6 +93,7 @@ As long as nobody protests, I'll save some time by writing in German.
   :doc:`30 <0330>`
   :doc:`31 <0331>`
   :doc:`01 <0401>`
+  :doc:`02 <0402>`
    
 .. 
 

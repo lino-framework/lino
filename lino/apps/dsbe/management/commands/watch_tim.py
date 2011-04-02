@@ -86,19 +86,25 @@ country city zip_code region language email url phone gsm remarks'''.split()
 
 
 class Controller:
+    "Deserves more documentation."
     def applydata(self,obj,data,**d):
+        "Deserves more documentation."
         for k,v in d.items():
             if data.has_key(v):
                 setattr(obj,k,data[v])
         obj = settings.TIM2LINO_LOCAL(self.__class__.__name__,obj)
         
     def validate_and_save(self,obj):
+        "Deserves more documentation."
         try:
             obj.full_clean()
             obj.save()
         except ValidationError,e:
+            # here we only log an obj2str() of the object 
+            # full traceback will be logged in watch() after process_line()
             dblogger.warning("Validation failed for %s : %s",obj2str(obj),e)
-            dblogger.exception(e)
+            raise
+            #~ dblogger.exception(e)
                 
     def DELETE(self,**kw):
         obj = self.get_object(kw)
@@ -334,7 +340,7 @@ def process_line(i,ln):
     
   
 def watch(data_dir):
-  
+    "Deserves more documentation."
     infile = os.path.join(data_dir,'changelog.json')
     if not os.path.exists(infile):
         #~ print "Nothing to do."
@@ -359,9 +365,13 @@ def watch(data_dir):
         try:
             process_line(i,ln)
         except Exception,e:
-            fd_failed.write("// %s %r\n%s\n\n" % (time.strftime("%Y-%m-%d %H:%M:%S"),e,ln))
+            fd_failed.write("// %s %r\n%s\n\n" % (
+                time.strftime("%Y-%m-%d %H:%M:%S"),e,ln))
             #~ fd_failed.write(ln+'\n')
-            dblogger.warning("%s:%d: %r", watching,i,e)
+            #~ dblogger.warning("%s:%d: %r\nin changelog line %s", watching,i,e,ln)
+            dblogger.warning(
+                "Exception '%s' while processing changelog line:\n%s", 
+                e,ln)
             dblogger.exception(e)
             #~ raise
     fd_watching.close()
