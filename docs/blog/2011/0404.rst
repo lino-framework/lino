@@ -12,5 +12,15 @@
   aber eine einzige Tabelle sind, bekamen wir dann beim POST des PXS 
   eine Fehlermeldung "Partner with this id already exists".
   
+- (Check-in und Update in Eupen)  
+  
 - Einige Übersetzungen hatten sich verlaufen (wahrscheinlich nach 
   den Änderungen vom :doc:`0307`). Behoben.
+
+- Das Feld "Apotheke" war in Lino gar nicht sichtbar. Ich habs jetzt unter Sonstiges hinzugefügt.
+
+- Und noch eine Serie von Bugs in :term:`watch_tim`: 
+  Änderungen in einer Krankenkasse (ADR) wurden nicht korrekt gehandhabt,
+  Außerdem ist PAR->KKasse möglicherweise noch nie richtig synchronisiert importiert worden, wenn man in einer Firma etwas änderte, kam {'name': [u'This field cannot be blank.']} und die Änderungen wurden nicht übernommen.
+
+- (Check-in und Update in Eupen)  
