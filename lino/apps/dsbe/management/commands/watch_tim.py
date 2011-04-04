@@ -251,6 +251,9 @@ class PXS(PAR):
         Controller.applydata(self,obj,data,**d)
         pxs2person(data,obj)
         
+    def POST(self,**kw):
+        self.PUT(**kw)
+        
         
 class PLZ(PAR):
   

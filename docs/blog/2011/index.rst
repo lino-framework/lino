@@ -99,6 +99,7 @@ As long as nobody protests, I'll save some time by writing in German.
 
 .. |Apr| replace::  **April**
   |br| 
+  :doc:`04 <0404>`
   |br| 
   |br| 
   |br|  	
