@@ -5,12 +5,12 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: lino.modlib.properties\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-02 19:29+0000\n"
-"PO-Revision-Date: 2011-02-01 07:09+0200\n"
+"POT-Creation-Date: 2011-04-04 14:45+0100\n"
+"PO-Revision-Date: 2011-04-04 16:40+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language-Team: de <luc.saffre@gmx.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -30,11 +30,11 @@ msgstr "Beschreibung"
 
 #: .\models.py:85
 msgid "Choices List"
-msgstr ""
+msgstr "Auswahliste"
 
 #: .\models.py:88
 msgid "default value"
-msgstr ""
+msgstr "Standardwert"
 
 #: .\models.py:96
 msgid "Limit to choices"
@@ -42,7 +42,7 @@ msgstr "Beschränken auf Auswahl"
 
 #: .\models.py:101
 msgid "Multiple choices"
-msgstr ""
+msgstr "Mehrfachauswahl"
 
 #: .\models.py:147
 msgid "Property Choice"

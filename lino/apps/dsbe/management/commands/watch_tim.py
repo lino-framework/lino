@@ -109,6 +109,9 @@ class Controller:
             raise
             #~ dblogger.exception(e)
                 
+    def get_object(self,kw):
+        raise NotImplementedError
+        
     def DELETE(self,**kw):
         obj = self.get_object(kw)
         if obj is None:
@@ -116,13 +119,20 @@ class Controller:
             return
         obj.delete()
         dblogger.debug("%s:%s (%s) : DELETE ok",kw['alias'],kw['id'],obj)
+        
+    def create_object(self,kw):
+        return self.model()
                     
     def POST(self,**kw):
         obj = self.get_object(kw)
         if obj is None:
-            obj = self.model()
+            obj = self.create_object(kw)
+            if obj is None:
+                dblogger.debug("%s:%s (%s) : ignored POST %s",
+                    kw['alias'],kw['id'],obj,kw['data'])
+                return
         else:
-            dblogger.debug("%s:%s : POST becomes PUT",kw['alias'],kw['id'])
+            dblogger.warning("%s:%s : POST becomes PUT",kw['alias'],kw['id'])
         self.applydata(obj,kw['data'])
         self.validate_and_save(obj)
         #~ obj.save()
@@ -185,12 +195,13 @@ class PAR(Controller):
                 else:
                     obj.coach1 = None
                     #~ obj.user = None
-            if data.has_key('FIRME'):  
+            if data.has_key('FIRME'):
                 for k,v in name2kw(data['FIRME']).items():
                     setattr(obj,k,v)
         if obj.__class__ is Company:
             d.update(prefix='ALLO')
             d.update(vat_id='NOTVA')
+            d.update(name='FIRME')
         Controller.applydata(self,obj,data,**d)
         
     def swapclass(self,obj,new_class,data):
@@ -252,6 +263,12 @@ class PXS(PAR):
         pxs2person(data,obj)
         
     def POST(self,**kw):
+        """
+        Denn TIM schreibt beim Erstellen eines neuen Partners logischerweise 
+        sowohl für PAR als auch für PXS ein POST. Weil die beiden in Lino 
+        aber eine einzige Tabelle sind, bekamen wir dann beim POST des PXS 
+        eine Fehlermeldung "Partner with this id already exists".
+        """
         self.PUT(**kw)
         
         
@@ -303,16 +320,30 @@ class NAT(Controller):
 
 
 class ADR(Controller):
-  
+    u"""
+    Aus ADR werden nur die Krankenkassen (d.h. ADR->IdMut nicht leer)
+    nach Lino übernommen, 
+    wobei `Company.id = 199000 + int(ADR->IdMut)`.
+    """
     model = Company
     
+    def create_object(self,kw):
+        "Returns None if ADR->IdMut is empty or invalid."
+        idmut = kw['data']['IDMUT']
+        if idmut:
+            pk = ADR_id(idmut)
+            if pk:
+                return Company(id=pk)
+      
     def get_object(self,kw):
         idmut = kw['data']['IDMUT']
         if idmut:
-            try:
-                return Company.objects.get(id__exact=ADR_id(idmut))
-            except Country.DoesNotExist:
-                pass
+            pk = ADR_id(idmut)
+            if pk:
+                try:
+                    return Company.objects.get(id__exact=pk)
+                except Company.DoesNotExist:
+                    pass
             
     def applydata(self,obj,data,**d):
         d.update(

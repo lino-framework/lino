@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.sales\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-02 19:29+0000\n"
+"POT-Creation-Date: 2011-04-04 14:45+0100\n"
 "PO-Revision-Date: 2011-03-02 21:33+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: et <et>\n"
@@ -68,19 +68,56 @@ msgstr "Arve koostamise viis"
 msgid "Shipping mode"
 msgstr "Kättetoimatamise viis"
 
-#: .\models.py:114
+#: .\models.py:79
+#, fuzzy
+msgid "Payment Term"
+msgstr "Tasumistingimused"
+
+#: .\models.py:80
+#, fuzzy
+msgid "Payment Terms"
+msgstr "Tasumistingimused"
+
+#: .\models.py:121
 msgid "Channel"
 msgstr ""
 
-#: .\models.py:763
+#: .\models.py:131
+#, fuzzy
+msgid "Invoicing Mode"
+msgstr "Arve koostamise viis"
+
+#: .\models.py:132
+#, fuzzy
+msgid "Invoicing Modes"
+msgstr "Arve koostamise viis"
+
+#: .\models.py:181
+#, fuzzy
+msgid "Shipping Mode"
+msgstr "Kättetoimatamise viis"
+
+#: .\models.py:182
+#, fuzzy
+msgid "Shipping Modes"
+msgstr "Kättetoimatamise viis"
+
+#: .\models.py:195
+msgid "Sales Rule"
+msgstr ""
+
+#: .\models.py:196
+msgid "Sales Rules"
+msgstr ""
+
+#: .\models.py:788
 msgid "payment term"
 msgstr "Tasumistingimused"
 
-#: .\models.py:769
+#: .\models.py:794
 msgid "VAT exempt"
 msgstr ""
 
-#: .\models.py:775
+#: .\models.py:800
 msgid "item_vat"
 msgstr ""
-

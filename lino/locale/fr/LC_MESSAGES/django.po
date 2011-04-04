@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-02 19:29+0000\n"
+"POT-Creation-Date: 2011-04-04 14:45+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,38 +16,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n>1;\n"
-
-#: .\dummy_messages.py:3 .\reports.py:349
-msgid "Detail"
-msgstr ""
-
-#: .\dummy_messages.py:4
-msgid "Items"
-msgstr ""
-
-#: .\dummy_messages.py:5
-msgid "Notes"
-msgstr ""
-
-#: .\dummy_messages.py:6
-msgid "Sales"
-msgstr ""
-
-#: .\dummy_messages.py:7
-msgid "General"
-msgstr ""
-
-#: .\dummy_messages.py:8
-msgid "Contact"
-msgstr ""
-
-#: .\dummy_messages.py:9
-msgid "Emitted invoices"
-msgstr ""
-
-#: .\dummy_messages.py:10
-msgid "More"
-msgstr ""
 
 #: .\fields.py:48
 msgid "Language"
@@ -61,54 +29,58 @@ msgstr ""
 msgid "Default build method"
 msgstr ""
 
-#: .\models.py:59 .\models.py:108
+#: .\models.py:56 .\models.py:105
 msgid "Site Configuration"
 msgstr ""
 
-#: .\models.py:106
+#: .\models.py:103
 msgid "~Site"
 msgstr ""
 
-#: .\reports.py:352
+#: .\reports.py:334
+msgid "Detail"
+msgstr ""
+
+#: .\reports.py:337
 #, python-format
 msgid "%s (Detail)"
 msgstr ""
 
-#: .\reports.py:363
+#: .\reports.py:348
 msgid "Insert"
 msgstr ""
 
-#: .\reports.py:368
+#: .\reports.py:353
 #, python-format
 msgid "Insert into %s"
 msgstr ""
 
-#: .\reports.py:373
+#: .\reports.py:358
 msgid "Duplicate"
 msgstr ""
 
-#: .\reports.py:389
+#: .\reports.py:374
 msgid "Delete"
 msgstr ""
 
-#: .\reports.py:397 .\reports.py:402
+#: .\reports.py:382 .\reports.py:387
 msgid "Save"
 msgstr ""
 
-#: .\reports.py:552
+#: .\reports.py:543
 #, python-format
 msgid "User %(user)s cannot view %(report)s."
 msgstr ""
 
-#: .\reports.py:754
+#: .\reports.py:745
 msgid "Yes"
 msgstr ""
 
-#: .\reports.py:754
+#: .\reports.py:745
 msgid "No"
 msgstr ""
 
-#: .\reports.py:1029
+#: .\reports.py:1019
 #, python-format
 msgid "%(details)s by %(model)s %(master)s"
 msgstr ""
@@ -130,27 +102,27 @@ msgstr ""
 msgid "Owner"
 msgstr ""
 
-#: .\mixins\printable.py:392
+#: .\mixins\printable.py:389
 msgid "Print"
 msgstr ""
 
-#: .\mixins\printable.py:446
+#: .\mixins\printable.py:443
 msgid "Edit template"
 msgstr ""
 
-#: .\mixins\printable.py:456
+#: .\mixins\printable.py:453
 msgid "Clear cache"
 msgstr ""
 
-#: .\mixins\printable.py:477
+#: .\mixins\printable.py:474
 msgid "Build method"
 msgstr ""
 
-#: .\mixins\printable.py:486
+#: .\mixins\printable.py:483
 msgid "Template"
 msgstr ""
 
-#: .\mixins\printable.py:517
+#: .\mixins\printable.py:514
 msgid "must build"
 msgstr ""
 
@@ -226,143 +198,76 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: .\sites\dsbe\settings.py:46 .\sites\std\lino_settings.py:23
-msgid "~Contacts"
-msgstr ""
-
-#: .\sites\dsbe\settings.py:51
-msgid "~My menu"
-msgstr ""
-
-#: .\sites\dsbe\settings.py:64
-msgid "~Courses"
-msgstr ""
-
-#: .\sites\dsbe\settings.py:72 .\sites\std\lino_settings.py:31
-msgid "~Configure"
-msgstr ""
-
-#: .\sites\dsbe\settings.py:73
-msgid "~Manager"
-msgstr ""
-
-#: .\sites\dsbe\settings.py:74
-msgid "Local Site ~Administrator"
-msgstr ""
-
-#: .\sites\dsbe\settings.py:75
-msgid "~Expert"
-msgstr ""
-
-#: .\sites\dsbe\settings.py:116 .\sites\std\lino_settings.py:43
-msgid "E~xplorer"
-msgstr ""
-
-#: .\sites\dsbe\settings.py:130
-msgid "~Help"
-msgstr ""
-
-#: .\sites\dsbe\settings.py:131
-msgid "~User Manual"
-msgstr ""
-
-#: .\sites\dsbe\settings.py:138
-msgid "Home"
-msgstr ""
-
-#: .\sites\std\lino_settings.py:27
-msgid "~Projects"
-msgstr ""
-
-#: .\sites\std\settings.py:250
-msgid "English"
-msgstr ""
-
-#: .\sites\std\settings.py:251
-msgid "German"
-msgstr ""
-
-#: .\sites\std\settings.py:252
-msgid "French"
-msgstr ""
-
-#: .\sites\std\settings.py:253
-msgid "Dutch"
-msgstr ""
-
-#: .\sites\std\settings.py:254
-msgid "Estonian"
-msgstr ""
-
-#: .\ui\extjs\ext_elems.py:541
-#, python-format
-msgid "Select a %s..."
-msgstr ""
-
-#: .\ui\extjs\ext_store.py:105
+#: .\ui\store.py:109 .\ui\extjs\ext_store.py:106 .\ui\qx\qx_store.py:106
 #, python-format
 msgid "Existing primary key value %r may not be modified."
 msgstr ""
 
-#: .\ui\extjs\ext_store.py:369
+#: .\ui\store.py:373 .\ui\extjs\ext_store.py:370 .\ui\qx\qx_store.py:370
 #, python-format
 msgid "%r (invalid choice)"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:226
+#: .\ui\extjs\ext_elems.py:548 .\ui\qx\qx_elems.py:555
+#, python-format
+msgid "Select a %s..."
+msgstr ""
+
+#: .\ui\extjs\ext_ui.py:228 .\ui\qx\qx_ui.py:229
 #, python-format
 msgid "Row %(rowid)d of %(rowcount)d"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:686
+#: .\ui\extjs\ext_ui.py:681
 msgid "Console"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:737
+#: .\ui\extjs\ext_ui.py:732 .\ui\qx\qx_ui.py:563
 #, python-format
 msgid "Welcome on Lino server %(title)r, user %(user)s"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:796
+#: .\ui\extjs\ext_ui.py:791 .\ui\qx\qx_ui.py:622
 #, python-format
 msgid "%s has been created."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:798
+#: .\ui\extjs\ext_ui.py:793 .\ui\qx\qx_ui.py:624
 #, python-format
 msgid "%s has been saved."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:806 .\ui\extjs\ext_ui.py:829
+#: .\ui\extjs\ext_ui.py:801 .\ui\extjs\ext_ui.py:824 .\ui\qx\qx_ui.py:632
+#: .\ui\qx\qx_ui.py:655
 #, python-format
 msgid "User %(user)s cannot configure %(report)s."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:993
+#: .\ui\extjs\ext_ui.py:988 .\ui\qx\qx_ui.py:819
 #, python-format
 msgid "Failed to delete %(record)s : %(error)s."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:1018
+#: .\ui\extjs\ext_ui.py:1013 .\ui\qx\qx_ui.py:844
 #, python-format
 msgid "Insert into %s..."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:1046
+#: .\ui\extjs\ext_ui.py:1041 .\ui\qx\qx_ui.py:872
 #, python-format
 msgid "Action %(action)s failed for %(record)s: %(error)s"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:1187
+#: .\ui\extjs\ext_ui.py:1182 .\ui\qx\qx_ui.py:958
 #, python-format
 msgid "Choices for %s"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:1297
+#: .\ui\extjs\ext_ui.py:1292 .\ui\qx\qx_ui.py:1068
 msgid "Upload"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:1305
+#: .\ui\extjs\ext_ui.py:1300 .\ui\qx\qx_ui.py:1076
 msgid "Edit"
 msgstr ""
 

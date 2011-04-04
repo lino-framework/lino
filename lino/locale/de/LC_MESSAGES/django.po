@@ -7,49 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-02 19:29+0000\n"
-"PO-Revision-Date: 2011-02-17 17:50+0200\n"
+"POT-Creation-Date: 2011-04-04 14:45+0100\n"
+"PO-Revision-Date: 2011-04-04 16:48+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-
-#: .\dummy_messages.py:3 .\reports.py:349
-msgid "Detail"
-msgstr "Detail"
-
-#: .\dummy_messages.py:4
-#, fuzzy
-msgid "Items"
-msgstr "Versuch"
-
-#: .\dummy_messages.py:5
-msgid "Notes"
-msgstr "Notizen"
-
-#: .\dummy_messages.py:6
-#, fuzzy
-msgid "Sales"
-msgstr "Speichern"
-
-#: .\dummy_messages.py:7
-msgid "General"
-msgstr "Allgemein"
-
-#: .\dummy_messages.py:8
-#, fuzzy
-msgid "Contact"
-msgstr "~Kontakte"
-
-#: .\dummy_messages.py:9
-msgid "Emitted invoices"
-msgstr ""
-
-#: .\dummy_messages.py:10
-msgid "More"
-msgstr ""
 
 #: .\fields.py:48
 msgid "Language"
@@ -63,54 +28,60 @@ msgstr "Ungültiger Wert %(value). Erlaubte Werte sind (%(values)s)"
 msgid "Default build method"
 msgstr "Standard-Konstruktionsmethode"
 
-#: .\models.py:59 .\models.py:108
+#: .\models.py:56
+#: .\models.py:105
 msgid "Site Configuration"
 msgstr "Anwendungsparameter"
 
-#: .\models.py:106
+#: .\models.py:103
 msgid "~Site"
 msgstr "~Site"
 
-#: .\reports.py:352
+#: .\reports.py:334
+msgid "Detail"
+msgstr "Detail"
+
+#: .\reports.py:337
 #, python-format
 msgid "%s (Detail)"
 msgstr "%s (Detail)"
 
-#: .\reports.py:363
+#: .\reports.py:348
 msgid "Insert"
 msgstr "Einfügen"
 
-#: .\reports.py:368
+#: .\reports.py:353
 #, python-format
 msgid "Insert into %s"
 msgstr "Einfügen in %s"
 
-#: .\reports.py:373
+#: .\reports.py:358
 msgid "Duplicate"
 msgstr "Duplizieren"
 
-#: .\reports.py:389
+#: .\reports.py:374
 msgid "Delete"
 msgstr "Löschen"
 
-#: .\reports.py:397 .\reports.py:402
+#: .\reports.py:382
+#: .\reports.py:387
 msgid "Save"
 msgstr "Speichern"
 
-#: .\reports.py:552
+#: .\reports.py:543
 #, python-format
 msgid "User %(user)s cannot view %(report)s."
 msgstr "Benutzer  %(user)s hat kein Recht,  %(report)s zu sehen."
 
-#: .\reports.py:754
+#: .\reports.py:745
 msgid "Yes"
 msgstr "Ja"
 
-#: .\reports.py:754
+#: .\reports.py:745
 msgid "No"
 msgstr "Nein"
 
-#: .\reports.py:1029
+#: .\reports.py:1019
 #, python-format
 msgid "%(details)s by %(model)s %(master)s"
 msgstr "%(details)s pro %(model)s %(master)s"
@@ -132,27 +103,27 @@ msgstr ""
 msgid "Owner"
 msgstr ""
 
-#: .\mixins\printable.py:392
+#: .\mixins\printable.py:389
 msgid "Print"
 msgstr "Drucken"
 
-#: .\mixins\printable.py:446
+#: .\mixins\printable.py:443
 msgid "Edit template"
 msgstr "Vorlage bearbeiten"
 
-#: .\mixins\printable.py:456
+#: .\mixins\printable.py:453
 msgid "Clear cache"
 msgstr "Cache löschen"
 
-#: .\mixins\printable.py:477
+#: .\mixins\printable.py:474
 msgid "Build method"
 msgstr "Konstruktionsmethode"
 
-#: .\mixins\printable.py:486
+#: .\mixins\printable.py:483
 msgid "Template"
 msgstr "Vorlage"
 
-#: .\mixins\printable.py:517
+#: .\mixins\printable.py:514
 msgid "must build"
 msgstr "muss generiert werden"
 
@@ -228,215 +199,354 @@ msgstr "Bearbeitet"
 msgid "Description"
 msgstr "Beschreibung"
 
-#: .\sites\dsbe\settings.py:46 .\sites\std\lino_settings.py:23
-msgid "~Contacts"
-msgstr "~Kontakte"
-
-#: .\sites\dsbe\settings.py:51
-msgid "~My menu"
-msgstr "~Mein Menü"
-
-#: .\sites\dsbe\settings.py:64
-msgid "~Courses"
-msgstr "~Kurse"
-
-#: .\sites\dsbe\settings.py:72 .\sites\std\lino_settings.py:31
-msgid "~Configure"
-msgstr "~Konfigurierung"
-
-#: .\sites\dsbe\settings.py:73
-msgid "~Manager"
-msgstr "~Dienstleiter"
-
-#: .\sites\dsbe\settings.py:74
-msgid "Local Site ~Administrator"
-msgstr ""
-
-#: .\sites\dsbe\settings.py:75
-msgid "~Expert"
-msgstr ""
-
-#: .\sites\dsbe\settings.py:116 .\sites\std\lino_settings.py:43
-msgid "E~xplorer"
-msgstr ""
-
-#: .\sites\dsbe\settings.py:130
-msgid "~Help"
-msgstr "~Hilfe"
-
-#: .\sites\dsbe\settings.py:131
-msgid "~User Manual"
-msgstr "~Benutzerhandbuch"
-
-#: .\sites\dsbe\settings.py:138
-msgid "Home"
-msgstr "Startseite"
-
-#: .\sites\std\lino_settings.py:27
-msgid "~Projects"
-msgstr "~Projekte"
-
-#: .\sites\std\settings.py:250
-msgid "English"
-msgstr ""
-
-#: .\sites\std\settings.py:251
-#, fuzzy
-msgid "German"
-msgstr "Allgemein"
-
-#: .\sites\std\settings.py:252
-msgid "French"
-msgstr ""
-
-#: .\sites\std\settings.py:253
-msgid "Dutch"
-msgstr ""
-
-#: .\sites\std\settings.py:254
-msgid "Estonian"
-msgstr ""
-
-#: .\ui\extjs\ext_elems.py:541
-#, python-format
-msgid "Select a %s..."
-msgstr "%s auswählen..."
-
-#: .\ui\extjs\ext_store.py:105
+#: .\ui\store.py:109
+#: .\ui\extjs\ext_store.py:106
+#: .\ui\qx\qx_store.py:106
 #, python-format
 msgid "Existing primary key value %r may not be modified."
 msgstr "Existierender ID-Wert %r darf nicht verändert werden."
 
-#: .\ui\extjs\ext_store.py:369
+#: .\ui\store.py:373
+#: .\ui\extjs\ext_store.py:370
+#: .\ui\qx\qx_store.py:370
 #, python-format
 msgid "%r (invalid choice)"
 msgstr "%r (ungültige Auswahl)"
 
-#: .\ui\extjs\ext_ui.py:226
+#: .\ui\extjs\ext_elems.py:548
+#: .\ui\qx\qx_elems.py:555
+#, python-format
+msgid "Select a %s..."
+msgstr "%s auswählen..."
+
+#: .\ui\extjs\ext_ui.py:228
+#: .\ui\qx\qx_ui.py:229
 #, python-format
 msgid "Row %(rowid)d of %(rowcount)d"
 msgstr "Record  %(rowid)d von %(rowcount)d"
 
-#: .\ui\extjs\ext_ui.py:686
+#: .\ui\extjs\ext_ui.py:681
 msgid "Console"
 msgstr "Konsole"
 
-#: .\ui\extjs\ext_ui.py:737
+#: .\ui\extjs\ext_ui.py:732
+#: .\ui\qx\qx_ui.py:563
 #, python-format
 msgid "Welcome on Lino server %(title)r, user %(user)s"
 msgstr "Willkommen auf dem Lino-server %(title)r, %(user)s"
 
-#: .\ui\extjs\ext_ui.py:796
+#: .\ui\extjs\ext_ui.py:791
+#: .\ui\qx\qx_ui.py:622
 #, python-format
 msgid "%s has been created."
 msgstr "%s wurde erstellt."
 
-#: .\ui\extjs\ext_ui.py:798
+#: .\ui\extjs\ext_ui.py:793
+#: .\ui\qx\qx_ui.py:624
 #, python-format
 msgid "%s has been saved."
 msgstr "%s wurde gespeichert."
 
-#: .\ui\extjs\ext_ui.py:806 .\ui\extjs\ext_ui.py:829
+#: .\ui\extjs\ext_ui.py:801
+#: .\ui\extjs\ext_ui.py:824
+#: .\ui\qx\qx_ui.py:632
+#: .\ui\qx\qx_ui.py:655
 #, python-format
 msgid "User %(user)s cannot configure %(report)s."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:993
+#: .\ui\extjs\ext_ui.py:988
+#: .\ui\qx\qx_ui.py:819
 #, python-format
 msgid "Failed to delete %(record)s : %(error)s."
 msgstr "Fehler beim Löschen von %(record)s : %(error)s."
 
-#: .\ui\extjs\ext_ui.py:1018
+#: .\ui\extjs\ext_ui.py:1013
+#: .\ui\qx\qx_ui.py:844
 #, python-format
 msgid "Insert into %s..."
 msgstr "Einfügen nach %s..."
 
-#: .\ui\extjs\ext_ui.py:1046
+#: .\ui\extjs\ext_ui.py:1041
+#: .\ui\qx\qx_ui.py:872
 #, python-format
 msgid "Action %(action)s failed for %(record)s: %(error)s"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:1187
+#: .\ui\extjs\ext_ui.py:1182
+#: .\ui\qx\qx_ui.py:958
 #, python-format
 msgid "Choices for %s"
 msgstr "Auswahlmöglichkeiten für %s"
 
-#: .\ui\extjs\ext_ui.py:1297
+#: .\ui\extjs\ext_ui.py:1292
+#: .\ui\qx\qx_ui.py:1068
 msgid "Upload"
 msgstr "Upload"
 
-#: .\ui\extjs\ext_ui.py:1305
+#: .\ui\extjs\ext_ui.py:1300
+#: .\ui\qx\qx_ui.py:1076
 msgid "Edit"
-msgstr ""
+msgstr "Bearbeiten"
 
 #: .\utils\choicelists.py:126
-#, fuzzy, python-format
+#, python-format
 msgid "%(value)r (invalid choice for %(list)s)"
-msgstr "%r (ungültige Auswahl)"
+msgstr "%(value)r (ungültige Auswahl für %(list)s)"
 
 #: .\utils\choicelists.py:187
-#, fuzzy
 msgid "certainly not...very much"
-msgstr "bloß nicht"
+msgstr "bloß nicht ... sehr gerne"
 
 #: .\utils\choicelists.py:208
-#, fuzzy
 msgid "not at all...very well"
-msgstr "gar nicht"
+msgstr "gar nicht ... sehr gut"
 
-#~ msgid "Next page"
-#~ msgstr "Nächste Seite"
+#~ msgid "Notes"
+#~ msgstr "Notizen"
 
-#~ msgid "Please wait..."
-#~ msgstr "Bitte warten..."
+#~ msgid "Miscellaneous"
+#~ msgstr "Sonstiges"
 
-#~ msgid "Action not available on phantom record."
-#~ msgstr "Aktion nicht verfügbar auf dem Phantom-Record."
+#~ msgid "General"
+#~ msgstr "Allgemein"
 
-#~ msgid "Next"
-#~ msgstr "Nächste Seite"
+#~ msgid "Languages"
+#~ msgstr "Sprachen"
 
-#~ msgid "Reload current record"
-#~ msgstr "Aktuellen Record neu laden"
+#~ msgid "Education"
+#~ msgstr "Ausbildung"
 
-#~ msgid "Save changes to current record ?"
-#~ msgstr "Änderungen speichern?"
+#~ msgid "Properties"
+#~ msgstr "Eigenschaften"
 
-#~ msgid "Confirmation"
-#~ msgstr "Bestätigung"
+#, fuzzy
+#~ msgid "single"
+#~ msgstr "Datei"
 
-#~ msgid "Previous page"
-#~ msgstr "Vorige Seite"
+#, fuzzy
+#~ msgid "separated"
+#~ msgstr "Erstellt"
 
-#~ msgid "Select another view of this report"
-#~ msgstr "Andere Ansicht dieses Berichts auswählen"
+#, fuzzy
+#~ msgid "Male"
+#~ msgstr "Speichern"
 
-#~ msgid "First"
+#, fuzzy
+#~ msgid "Female"
+#~ msgstr "Datei"
+
+#, fuzzy
+#~ msgid "Birth date"
 #~ msgstr "Erste Seite"
 
-#~ msgid "Displaying {0} - {1} of {2}"
-#~ msgstr "Records {0} bis {1} von {2}"
+#, fuzzy
+#~ msgid "not exact"
+#~ msgstr "~Kontakte"
 
-#~ msgid "Last"
-#~ msgstr "Letzte Seite"
-
-#~ msgid "Last page"
-#~ msgstr "Letzte Seite"
-
-#~ msgid "of {0}"
-#~ msgstr "von {0}"
-
-#~ msgid "Page"
-#~ msgstr "Seite"
-
-#~ msgid "View"
-#~ msgstr "Ansicht"
-
-#~ msgid "First page"
+#, fuzzy
+#~ msgid "Birth place"
 #~ msgstr "Erste Seite"
 
-#~ msgid "Previous"
-#~ msgstr "Vorige Seite"
+#, fuzzy
+#~ msgid "Birth country"
+#~ msgstr "Land"
+
+#, fuzzy
+#~ msgid "Andere"
+#~ msgstr "Adresse"
+
+#, fuzzy
+#~ msgid "Native language"
+#~ msgstr "Sprache"
+
+#, fuzzy
+#~ msgid "%d years"
+#~ msgstr "Jahre"
+
+#, fuzzy
+#~ msgid "Designation"
+#~ msgstr "Beschreibung"
+
+#~ msgid "Country"
+#~ msgstr "Land"
+
+#~ msgid "City"
+#~ msgstr "Stadt"
+
+#~ msgid "Remarks"
+#~ msgstr "Bemerkungen"
+
+#, fuzzy
+#~ msgid "Property"
+#~ msgstr "~Eigenschaften"
+
+#, fuzzy
+#~ msgid "Remark"
+#~ msgstr "Bemerkungen"
+
+#, fuzzy
+#~ msgid "company"
+#~ msgstr "Firma"
+
+#, fuzzy
+#~ msgid "Reason"
+#~ msgstr "Bemerkungen"
+
+#, fuzzy
+#~ msgid "Contract Type"
+#~ msgstr "~Kontakte"
+
+#, fuzzy
+#~ msgid "Contract Types"
+#~ msgstr "~Kontakte"
+
+#, fuzzy
+#~ msgid "designation"
+#~ msgstr "Beschreibung"
+
+#, fuzzy
+#~ msgid "Contract Ending"
+#~ msgstr "~Kontakte"
+
+#, fuzzy
+#~ msgid "Contract Endings"
+#~ msgstr "~Kontakte"
+
+#, fuzzy
+#~ msgid "Course Endings"
+#~ msgstr "~Kurse"
+
+#, fuzzy
+#~ msgid "Contract"
+#~ msgstr "~Kontakte"
+
+#, fuzzy
+#~ msgid "Contracts"
+#~ msgstr "~Kontakte"
+
+#, fuzzy
+#~ msgid "contract type"
+#~ msgstr "~Kontakte"
+
+#, fuzzy
+#~ msgid "date decided"
+#~ msgstr "Fälligkeitsdatum erreicht"
+
+#, fuzzy
+#~ msgid "stages"
+#~ msgstr "Letzte Seite"
+
+#, fuzzy
+#~ msgid "goals"
+#~ msgstr "Speichern"
+
+#, fuzzy
+#~ msgid "date ended"
+#~ msgstr "Fälligkeitsdatum erreicht"
+
+#, fuzzy
+#~ msgid "Contract # %s"
+#~ msgstr "~Kontakte"
+
+#, fuzzy
+#~ msgid "My contracts"
+#~ msgstr "~Kontakte"
+
+#, fuzzy
+#~ msgid "Course Contents"
+#~ msgstr "~Kurse"
+
+#, fuzzy
+#~ msgid "Course"
+#~ msgstr "~Kurse"
+
+#, fuzzy
+#~ msgid "Courses"
+#~ msgstr "~Kurse"
+
+#, fuzzy
+#~ msgid "Course Requests"
+#~ msgstr "~Kurse"
+
+#, fuzzy
+#~ msgid "Course found"
+#~ msgstr "~Kurse"
+
+#, fuzzy
+#~ msgid "Wanted properties"
+#~ msgstr "~Eigenschaften"
+
+#, fuzzy
+#~ msgid "Unwanted properties"
+#~ msgstr "~Eigenschaften"
+
+#~ msgid "~Contacts"
+#~ msgstr "~Kontakte"
+
+#~ msgid "~My menu"
+#~ msgstr "~Mein Menü"
+
+#~ msgid "~Courses"
+#~ msgstr "~Kurse"
+
+#~ msgid "~Configure"
+#~ msgstr "~Konfigurierung"
+
+#~ msgid "~Manager"
+#~ msgstr "~Dienstleiter"
+
+#~ msgid "~Help"
+#~ msgstr "~Hilfe"
+
+#~ msgid "~User Manual"
+#~ msgstr "~Benutzerhandbuch"
+
+#~ msgid "Home"
+#~ msgstr "Startseite"
+
+#, fuzzy
+#~ msgid "Items"
+#~ msgstr "Versuch"
+
+#, fuzzy
+#~ msgid "Sales"
+#~ msgstr "Speichern"
+
+#, fuzzy
+#~ msgid "Contact"
+#~ msgstr "~Kontakte"
+
+#~ msgid "~Projects"
+#~ msgstr "~Projekte"
+
+#, fuzzy
+#~ msgid "German"
+#~ msgstr "Allgemein"
+
+#, fuzzy
+#~ msgid "username"
+#~ msgstr "Benutzer"
+
+#, fuzzy
+#~ msgid "first name"
+#~ msgstr "Erste Seite"
+
+#, fuzzy
+#~ msgid "active"
+#~ msgstr "Speichern"
+
+#, fuzzy
+#~ msgid "date joined"
+#~ msgstr "Fälligkeitsdatum erreicht"
+
+#, fuzzy
+#~ msgid "User"
+#~ msgstr "Benutzer"
+
+#, fuzzy
+#~ msgid "Users"
+#~ msgstr "Benutzer"
 
 #~ msgid "Street"
 #~ msgstr "Straße"
@@ -447,53 +557,83 @@ msgstr "gar nicht"
 #~ msgid "Box"
 #~ msgstr "Fach"
 
-#~ msgid "Additional address line"
-#~ msgstr "Zusätzliche Adresszeile"
-
-#~ msgid "Country"
-#~ msgstr "Land"
-
-#~ msgid "City"
-#~ msgstr "Stadt"
-
 #~ msgid "Zip code"
 #~ msgstr "PLZ"
+
+#, fuzzy
+#~ msgid "Region"
+#~ msgstr "Bemerkungen"
+
+#, fuzzy
+#~ msgid "E-Mail"
+#~ msgstr "Speichern"
 
 #~ msgid "Phone"
 #~ msgstr "Telefon"
 
-#~ msgid "Remarks"
-#~ msgstr "Bemerkungen"
-
+#, fuzzy
 #~ msgid "Address"
 #~ msgstr "Adresse"
 
+#, fuzzy
+#~ msgid "Persons"
+#~ msgstr "Bemerkungen"
+
+#, fuzzy
+#~ msgid "First name"
+#~ msgstr "Erste Seite"
+
+#, fuzzy
+#~ msgid "Last name"
+#~ msgstr "Letzte Seite"
+
+#, fuzzy
+#~ msgid "Title"
+#~ msgstr "Datei"
+
+#, fuzzy
 #~ msgid "Company"
 #~ msgstr "Firma"
 
-#~ msgid "Languages"
-#~ msgstr "Sprachen"
+#, fuzzy
+#~ msgid "company type"
+#~ msgstr "Firma"
 
-#~ msgid "Miscellaneous"
-#~ msgstr "Sonstiges"
+#, fuzzy
+#~ msgid "company types"
+#~ msgstr "Firma"
 
-#~ msgid "Properties"
-#~ msgstr "~Eigenschaften"
+#, fuzzy
+#~ msgid "Abbreviation"
+#~ msgstr "Beschreibung"
 
-#~ msgid "Education"
-#~ msgstr "Ausbildung"
+#, fuzzy
+#~ msgid "Companies"
+#~ msgstr "Firma"
 
-#~ msgid "rather not"
-#~ msgstr "eher nicht"
+#, fuzzy
+#~ msgid "Company type"
+#~ msgstr "Firma"
 
-#~ msgid "normally"
-#~ msgstr "normal"
+#, fuzzy
+#~ msgid "contact type"
+#~ msgstr "~Kontakte"
 
-#~ msgid "quite much"
-#~ msgstr "ziemlich gut"
+#, fuzzy
+#~ msgid "contact types"
+#~ msgstr "~Kontakte"
 
-#~ msgid "very much"
-#~ msgstr "sehr"
+#, fuzzy
+#~ msgid "contact"
+#~ msgstr "~Kontakte"
+
+#, fuzzy
+#~ msgid "contacts"
+#~ msgstr "~Kontakte"
+
+#, fuzzy
+#~ msgid "Contact for"
+#~ msgstr "~Kontakte"
 
 #~ msgid "The company that runs this site"
 #~ msgstr "Firma, die diese Anwendung  betreibt"
@@ -501,23 +641,126 @@ msgstr "gar nicht"
 #~ msgid "The next automatic id for Person or Company"
 #~ msgstr "Nächste automatische ID für Partner"
 
-#~ msgid "~Notes"
-#~ msgstr "~Notizen"
+#, fuzzy
+#~ msgid "country"
+#~ msgstr "Land"
 
-#~ msgid "a bit"
-#~ msgstr "ein bisschen"
+#, fuzzy
+#~ msgid "countries"
+#~ msgstr "Land"
 
-#~ msgid "moderate"
-#~ msgstr "mittelmäßig"
+#, fuzzy
+#~ msgid "city"
+#~ msgstr "Stadt"
 
-#~ msgid "quite well"
-#~ msgstr "ziemlich gut"
+#, fuzzy
+#~ msgid "cities"
+#~ msgstr "Versuch"
 
-#~ msgid "very well"
-#~ msgstr "sehr gut"
+#, fuzzy
+#~ msgid "Date"
+#~ msgstr "Fällig am"
 
-#~ msgid "Reminder delay"
-#~ msgstr "Erinnerungsfrist"
+#, fuzzy
+#~ msgid "Note Type"
+#~ msgstr "~Kontakte"
 
-#~ msgid "No selection. Nothing to do."
-#~ msgstr "Nichts ausgewählt, nichts zu tun."
+#, fuzzy
+#~ msgid "Note Types"
+#~ msgstr "Notizen"
+
+#, fuzzy
+#~ msgid "Note"
+#~ msgstr "Notizen"
+
+#, fuzzy
+#~ msgid "Note type"
+#~ msgstr "~Kontakte"
+
+#, fuzzy
+#~ msgid "My notes"
+#~ msgstr "Notizen"
+
+#, fuzzy
+#~ msgid "Product"
+#~ msgstr "~Projekte"
+
+#, fuzzy
+#~ msgid "Products"
+#~ msgstr "~Projekte"
+
+#, fuzzy
+#~ msgid "Projects"
+#~ msgstr "~Projekte"
+
+#, fuzzy
+#~ msgid "Property Type"
+#~ msgstr "~Eigenschaften"
+
+#, fuzzy
+#~ msgid "Property Types"
+#~ msgstr "~Eigenschaften"
+
+#, fuzzy
+#~ msgid "Choices List"
+#~ msgstr "Auswahlmöglichkeiten für %s"
+
+#, fuzzy
+#~ msgid "default value"
+#~ msgstr "Frist (Wert)"
+
+#, fuzzy
+#~ msgid "Property Choice"
+#~ msgstr "~Eigenschaften"
+
+#, fuzzy
+#~ msgid "Property Choices"
+#~ msgstr "~Eigenschaften"
+
+#, fuzzy
+#~ msgid "Value"
+#~ msgstr "Speichern"
+
+#, fuzzy
+#~ msgid "Property Group"
+#~ msgstr "~Eigenschaften"
+
+#, fuzzy
+#~ msgid "Property Groups"
+#~ msgstr "~Eigenschaften"
+
+#, fuzzy
+#~ msgid "Property group"
+#~ msgstr "~Eigenschaften"
+
+#, fuzzy
+#~ msgid "Properties for %s"
+#~ msgstr "~Eigenschaften"
+
+#, fuzzy
+#~ msgid "Recipient"
+#~ msgstr "Beschreibung"
+
+#, fuzzy
+#~ msgid "Total"
+#~ msgstr "Speichern"
+
+#, fuzzy
+#~ msgid "Sales Rule"
+#~ msgstr "Speichern"
+
+#, fuzzy
+#~ msgid "Sales Rules"
+#~ msgstr "Speichern"
+
+#, fuzzy
+#~ msgid "upload type"
+#~ msgstr "Upload"
+
+#, fuzzy
+#~ msgid "upload types"
+#~ msgstr "Uploads"
+
+#, fuzzy
+#~ msgid "My uploads"
+#~ msgstr "Uploads"

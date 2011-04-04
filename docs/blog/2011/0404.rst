@@ -1,9 +1,8 @@
 20110404
 ========
 
-Noch Optimierungen in :term:`watch_tim`:
-
-- Der Controller für PXS macht jetzt::
+- Noch ein Bug in :term:`watch_tim`: der Controller für PXS macht 
+  jetzt::
 
     def POST(self,**kw):
         self.PUT(**kw)
@@ -11,6 +10,7 @@ Noch Optimierungen in :term:`watch_tim`:
   Denn TIM schreibt beim Erstellen eines neuen Partners logischerweise 
   sowohl für PAR als auch für PXS ein POST. Weil die beiden in Lino 
   aber eine einzige Tabelle sind, bekamen wir dann beim POST des PXS 
-  eine Fehlermeldung "Partner wird this # already exists".
+  eine Fehlermeldung "Partner with this id already exists".
   
-
+- Einige Übersetzungen hatten sich verlaufen (wahrscheinlich nach 
+  den Änderungen vom :doc:`0307`). Behoben.
