@@ -521,16 +521,21 @@ class Store:
         else:
             return ComboStoreField(fld,**kw)
 
-    def form2obj(self,form_values,instance,is_new):
+    def form2obj(self,request,form_values,instance,is_new):
+        if self.report.disabled_fields:
+            disabled_fields = set(self.report.disabled_fields(request,instance))
+        else:
+            disabled_fields = set()
         for f in self.fields:
-            #~ logger.info("Store.form2obj %s", f.field.name)
-            try:
-                f.form2obj(instance,form_values,is_new)
-            except exceptions.ValidationError,e:
-                raise exceptions.ValidationError({f.field.name:e})
-            except Exception,e:
-                logger.warning("%s : %s", f.field.name,e)
-                raise 
+            if not f in disabled_fields:
+                #~ logger.info("Store.form2obj %s", f.field.name)
+                try:
+                    f.form2obj(instance,form_values,is_new)
+                except exceptions.ValidationError,e:
+                    raise exceptions.ValidationError({f.field.name:e})
+                except Exception,e:
+                    logger.warning("%s : %s", f.field.name,e)
+                    raise 
         #~ return instance
             
     def row2list(self,request,row):

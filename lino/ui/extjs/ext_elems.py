@@ -84,6 +84,7 @@ class GridColumn(Component):
         self.editor = editor
         #~ self.value_template = editor.grid_column_template
         kw.update(sortable=True)
+        #~ kw.update(submitValue=False) # 20110406
         kw.update(colIndex=index)
         kw.update(self.editor.get_column_options())
         kw.update(hidden=editor.hidden)
@@ -367,8 +368,10 @@ class FieldElement(LayoutElement):
         assert field.name, Exception("field %r has no name!" % field)
         self.field = field
         self.editable = field.editable # and not field.primary_key
+        kw.update(label=unicode(field.verbose_name))
         #~ LayoutElement.__init__(self,lh,varname_field(field),label=unicode(field.verbose_name),**kw)
-        LayoutElement.__init__(self,lh,field.name,label=unicode(field.verbose_name),**kw)
+        #~ LayoutElement.__init__(self,lh,field.name,label=unicode(field.verbose_name),**kw)
+        LayoutElement.__init__(self,lh,field.name,**kw)
         
     #~ def get_filter_options(self,**kw):
         #~ if self.filter_type:
@@ -402,9 +405,14 @@ class FieldElement(LayoutElement):
     def get_field_options(self,**kw):
         if self.xtype:
             kw.update(xtype=self.xtype)
-        kw.update(name=self.field.name)
-        if self.label:
-            kw.update(fieldLabel=unicode(self.label))
+            
+        # When used as editor of an EditorGridPanel, don't set the name attribute
+        # because it is not needed for grids and might conflict with fields of a 
+        # surronding detail form. See ticket #38.
+        if not isinstance(self.lh.layout,reports.ListLayout):
+            kw.update(name=self.field.name)
+            if self.label:
+                kw.update(fieldLabel=unicode(self.label))
         if not self.field.blank:
             kw.update(allowBlank=False)
         if not self.editable:
@@ -644,7 +652,8 @@ class BooleanFieldElement(FieldElement):
             
     def get_field_options(self,**kw):
         kw = FieldElement.get_field_options(self,**kw)
-        del kw['fieldLabel']
+        if kw.has_key('fieldLabel'):
+            del kw['fieldLabel']
         #~ kw.update(hideLabel=True)
         kw.update(boxLabel=self.label)
         return kw

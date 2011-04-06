@@ -3,3 +3,4 @@ T:\hgwork\lino\docs\admin\upgrade.rst:: WARNING: document isn't included in any 
 T:\hgwork\lino\docs\dsbe\appdocs\sessions.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\igen\appdocs\sessions.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\blog\2011\0404.rst:4: WARNING: term not in glossary: watch_tim
+T:\hgwork\lino\docs\blog\2011\0404.rst:22: WARNING: term not in glossary: watch_tim

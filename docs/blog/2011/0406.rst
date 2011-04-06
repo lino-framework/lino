@@ -1,0 +1,36 @@
+20110406
+========
+
+Qooxdoo muss warten
+-------------------
+
+Es sieht nun leider ziemlich klar danach aus, dass :doc:`/tickets/37` 
+eine Weile lang warten muss. Weil ich zwei Anfragen von 
+Kunden vorliegen habe, denen das ExtJS-Interface genügt. 
+Eine oder gar zwei weitere Anwendungen halte ich momentan für 
+wichtiger als ein weiteres UI.
+
+Ein fieser Bug weniger im ExtJS-UI
+----------------------------------
+
+Die Problemmeldung war eher unscheinbar:
+  
+#.  Beim Drücken auf "Speichern" (Person) nach der Eingabe einer neuen
+    Sprache in "Sprachkenntnisse" kommt eine Fehlermitteilung Server-side
+    failure: {'language': [u"Wert u'fij' ist keine g\xfcltige Option."]}
+    
+Aber ich habe 3 Stunden danach gesucht! 
+Ticket :doc:`/tickets/38`.
+Der Bug ist wahrscheinlich schon immer dagewesen und fand immer dann statt, 
+wenn zwischen Slave und Master gleichnamige Felder existierten. Also 
+z.B. auch wenn man in 
+:menuselection:`Person-->Detail-->Sprachen-->Kursanfragen-->Bemerkung` 
+etwas geändert hatte. 
+
+Noch ein Bug
+------------
+
+Wenn eine Checkbox namens `foo` deaktiviert wurde, 
+dann wird beim SUBMIT der Form ja leider nicht `foo=off` 
+gesendet, sondern nichts. Das scheint irgendeinen 
+historischen Grund zu haben.

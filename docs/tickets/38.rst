@@ -1,0 +1,27 @@
+#38 [closed]: Grid Editor values being reused when surrounding form submitted
+=============================================================================
+
+I have a FormPanel on a master record which contains EditorGridPanels 
+(each of which contains a list of slave records).
+
+The FormPanel has a submit button which sends the form data 
+of the master record.
+
+When a cell in a GridPanel has been edited, the GridPanel's afteredit 
+event makes an Ajax request to submit it's value to the slave record.
+
+Now I get problems when slave and master records have fields with the same name.
+
+Ext.form.BasicForm.submit() calls Ext.Ajax.request() 
+with the `form` parameter being itself. 
+`Ext.Ajax.request()` then calls `Ext.lib.Ajax.serializeForm` to 
+automatically extract the field values from the DOM of the given form.
+
+But when a grid cell of a slave has previously been edited, then its Textfield 
+has been rendered and its <INPUT> tag is somewhere inside the DOM of the 
+master's <FORM>. So serializeForm() will also find the field values for these fields.
+
+The solution was to not give a `name` tag for these fields. 
+Because `Ext.lib.Ajax.serializeForm` will then ignore them, while EditorGridPanel 
+does not require any name tag on the INPUT element.
+

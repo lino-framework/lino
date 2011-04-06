@@ -1683,6 +1683,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
         url: '/api'+this.ls_url+'/'+e.record.id
       });
     }
+    //~ console.log('20110406 on_afteredit',req);
     Ext.Ajax.request(req);
   },
 
@@ -2366,13 +2367,14 @@ Lino.DetailWrapper = Ext.extend(Lino.WindowWrapper, {
     return p;
   },
   save : function(after) {
-      console.log('DetailWrapper.save()',this);
+      //~ console.log('DetailWrapper.save()',this);
       var panel = this.main_item;
       var rec = panel.get_current_record();
       //~ console.log('todo: Lino.submit_detail and Lino.submit_insert send also action name from btn',btn,panel.get_base_params())
       if (rec) {
         //~ Lino.notify('submit');
-        //~ console.log('Save handler: this=',this);
+        //~ console.log('20110406 DetailWindow.save: panel.get_base_params() = <',panel.get_base_params(),'>');
+        // 20110406
         panel.form.submit({
           url:'/api'+panel.ls_url + '/' + rec.id,
           method: 'PUT',
