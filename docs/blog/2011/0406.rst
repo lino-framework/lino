@@ -10,27 +10,57 @@ Kunden vorliegen habe, denen das ExtJS-Interface genügt.
 Eine oder gar zwei weitere Anwendungen halte ich momentan für 
 wichtiger als ein weiteres UI.
 
-Ein fieser Bug weniger im ExtJS-UI
-----------------------------------
-
-Die Problemmeldung war eher unscheinbar:
+Drei Bugs weniger im ExtJS-UI
+-----------------------------
   
 #.  Beim Drücken auf "Speichern" (Person) nach der Eingabe einer neuen
     Sprache in "Sprachkenntnisse" kommt eine Fehlermitteilung Server-side
     failure: {'language': [u"Wert u'fij' ist keine g\xfcltige Option."]}
     
-Aber ich habe 3 Stunden danach gesucht! 
-Ticket :doc:`/tickets/38`.
-Der Bug ist wahrscheinlich schon immer dagewesen und fand immer dann statt, 
-wenn zwischen Slave und Master gleichnamige Felder existierten. Also 
-z.B. auch wenn man in 
-:menuselection:`Person-->Detail-->Sprachen-->Kursanfragen-->Bemerkung` 
-etwas geändert hatte. 
+    Die Problemmeldung war eher unscheinbar, aber ich habe 3 Stunden danach gesucht! 
+    Ticket :doc:`/tickets/38`.
+    Der Bug ist wahrscheinlich schon immer dagewesen und fand immer dann statt, 
+    wenn in einem Slave und seinem Master gleichnamige Felder existierten. Also 
+    z.B. auch wenn man in
+    :menuselection:`Person-->Detail-->Sprachen-->Kursanfragen-->Bemerkung` 
+    etwas geändert hatte. 
 
-Noch ein Bug
-------------
 
-Wenn eine Checkbox namens `foo` deaktiviert wurde, 
-dann wird beim SUBMIT der Form ja leider nicht `foo=off` 
-gesendet, sondern nichts. Das scheint irgendeinen 
-historischen Grund zu haben.
+#.  Wenn man auf einem importierten Partner 'Speichern' klickte, dann wurden
+    alle inaktiven Checkboxen (disabled_fields) auf `False` gesetzt.
+    
+#.  Wenn man Kursanbieter ankreuzt, kam auf dem Server::    
+
+      Traceback (most recent call last):
+        File "l:\snapshots\django\django\core\servers\basehttp.py", line 283, in run
+          self.result = application(self.environ, self.start_response)
+        File "l:\snapshots\django\django\contrib\staticfiles\handlers.py", line 68, in __call__
+          return self.application(environ, start_response)
+        File "l:\snapshots\django\django\core\handlers\wsgi.py", line 273, in __call__
+          response = self.get_response(request)
+        File "l:\snapshots\django\django\core\handlers\base.py", line 169, in get_response
+          response = self.handle_uncaught_exception(request, resolver, sys.exc_info())
+        File "l:\snapshots\django\django\core\handlers\base.py", line 111, in get_response
+          response = callback(request, *callback_args, **callback_kwargs)
+        File "t:\hgwork\lino\lino\ui\extjs\ext_ui.py", line 1001, in api_element_view
+          return self.form2obj_and_save(request,ah,data,elem,False) # force_update=True)
+        File "t:\hgwork\lino\lino\ui\extjs\ext_ui.py", line 747, in form2obj_and_save
+          rh.store.form2obj(request,data,elem,is_new)
+        File "t:\hgwork\lino\lino\ui\extjs\ext_store.py", line 538, in form2obj
+          f.form2obj(instance,form_values,is_new)
+        File "t:\hgwork\lino\lino\ui\extjs\ext_store.py", line 264, in form2obj
+          v = getattr(obj,self.field.name)
+      AttributeError: 'NoneType' object has no attribute 'is_courseprovider'
+
+
+Aber ach, nachdem ich diese Bugs behoben hatte, sah ich, dass 
+es noch einen gibt: wenn man eine Firma speichert, dann wird is_active auf False 
+gesetzt, weil dieses Feld gar nicht im Detail angezeigt wird.
+Nee, jetzt ist Schluss! Das eigentliche Problem ist ja die 
+"Design Decision" von ExtJS, dass sie HTML-Formulare auf die historische 
+Art submitten.
+Um alle Probleme auf einmal zu lösen, sollte ich es wahrscheinlich 
+wie Daniel Haas machen:
+`How to submit Ext forms the right way
+<http://www.diloc.de/blog/2008/03/05/how-to-submit-ext-forms-the-right-way/>`_
+

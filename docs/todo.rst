@@ -9,8 +9,6 @@ for which I hope for help from other people.
 Short-term
 ----------
 
-
-
 #.  Übersetzung PropertyType : nicht Eigenschaftsart, sondern 
     Eigenschaftstyp oder Eigenschafts-Datentyp...
     

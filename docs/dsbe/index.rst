@@ -14,6 +14,7 @@ The rest of this documentation is currently only in German since the the pilot c
 .. toctree::
   :maxdepth: 2
 
+  testlauf
   todo_users
   intro
   kurse

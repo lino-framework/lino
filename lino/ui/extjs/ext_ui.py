@@ -619,6 +619,9 @@ class ExtUI(base.UI):
             yield '</style>'
         if False:
             yield '<script type="text/javascript" src="%sextjs/Exporter-all.js"></script>' % settings.MEDIA_URL 
+            
+        if False:
+            yield '<script type="text/javascript" src="%sextjs/examples/ux/CheckColumn.js"></script>' % settings.MEDIA_URL 
 
         if settings.USE_GRIDFILTERS:
             #~ yield '<script type="text/javascript" src="%sextjs/examples/ux/RowEditor.js"></script>' % settings.MEDIA_URL

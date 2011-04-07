@@ -102,6 +102,7 @@ As long as nobody protests, I'll save some time by writing in German.
   :doc:`04 <0404>`
   05
   :doc:`06 <0406>`
+  :doc:`07 <0407>`
   |br| 
   |br| 
   |br|  	

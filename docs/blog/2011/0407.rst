@@ -1,0 +1,41 @@
+20110407
+========
+
+Noch Fehlerjagd
+---------------
+
+
+Die Methode von Daniel Haas (sh. :doc:`gestern <0407>` brachte dann noch eine Reihe 
+von Nebenwirkungen (Combobox- und Date-Felder schickt sie ebenfalls "richtiger", 
+was ich aber nicht brauchen kann; sie schickt auch bei PUT via GET; file Uploads 
+kann sie nicht...).
+
+Aber JC Watsons Methode ist elegant und simpel:
+`A "fix" for unchecked checkbox submission  behaviour
+<http://www.sencha.com/forum/showthread.php?28449>`_,
+ich brauchte sie lediglich  für Ext 3 anzupassen.
+
+
+Noch ein Bug: Checkboxen in einer Grid sind nicht editierbar.
+Da gefällt mir als Lösung die CheckColumn von ExtJS, die ich 
+dank `dieses 
+Threads <http://www.sencha.com/forum/showthread.php?116082-SOLVED-Convert-BooleanColumn-to-CheckColumn-in-EditorGridPanel>`_
+gefunden habe.
+
+Ich habe sie aber in meine :xfile:`linolib.js` kopiert und dort erweitert:
+
+- in `render()` noch eine Zeile hinzugefügt habe, damit er auf phantom
+  records keine Checkbox anzeigt.
+- Die Originalversion von ExtJS feuerte kein afteredit-Event.
+- Nicht ein einfacher Klick, sondern ein Doppelklick löst das toggle aus.
+
+TODO:
+Ein kleines Problem ist noch da: in einer Grid, die auch ein Detail hat, 
+wird durch Doppelklick auf einer CheckColumn gleichzeitig auch das 
+Detail-Fenster geöffnet.
+
+Zwischenrelease
+---------------
+
+So, nun wo die schlimmsten Bugs raus sind, mach ich in Eupen ein Upgrade.
+Ich habe auch ein neues Dokument :doc:`/dsbe/testlauf` begonnen.

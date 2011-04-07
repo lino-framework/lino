@@ -74,6 +74,17 @@ class StoreField(object):
             #~ return None
         return self.field.to_python(v)
         
+    def extract_form_data(self,post_data):
+        return post_data.get(self.field.name,None)
+        #~ v = post_data.get(self.field.name,self.form2obj_default)
+        #~ if v is None:
+            #~ # means that the field wasn't part of the submitted form. don't touch it.
+            #~ # except for checkboxes (who unfortunately are not submitted when clear)
+            #~ # whose form2obj_default is False instead of None
+            #~ return
+    #~ v = post_data.get(self.field.name,NOT_PROVIDED)
+    #~ if v is NOT_PROVIDED:
+        #~ return
         
     def form2obj(self,instance,post_data,is_new):
         """
@@ -81,12 +92,9 @@ class StoreField(object):
         - setting a CharField to ''
         - sales.Invoice.number may be blank        
         """
-        #~ v = post_data.get(self.field.name,NOT_PROVIDED)
-        v = post_data.get(self.field.name,self.form2obj_default)
+        v = self.extract_form_data(post_data)
         if v is None:
             # means that the field wasn't part of the submitted form. don't touch it.
-            # except for checkboxes (who unfortunately are not submitted when clear)
-            # whose form2obj_default is False instead of None
             return
         if v == '' and not self.field.empty_strings_allowed:
             # charfields have empty_strings_allowed
@@ -96,9 +104,8 @@ class StoreField(object):
                 v = None
             else:
                 v = self.field.default
-        #~ if v == '' and self.field.null:
-            #~ v = None
-        v = self.parse_form_value(v)
+        else:
+            v = self.parse_form_value(v)
         if not is_new and self.field.primary_key and instance.pk is not None:
             if instance.pk == v:
                 return
@@ -116,6 +123,7 @@ class DisabledFieldsStoreField(StoreField):
     """
     See :doc:`/blog/2010/0803`
     """
+    field = None 
     def __init__(self,store):
         self.options = dict(name='disabled_fields')
         self.store = store
@@ -162,6 +170,13 @@ class BooleanStoreField(StoreField):
     def __init__(self,field,**kw):
         kw['type'] = 'boolean'
         StoreField.__init__(self,field,**kw)
+        
+    def unused_extract_form_data(self,post_data):
+        """
+        special handling for checkboxes who unfortunately are not submitted when clear
+        no longer needed after 20110407
+        """
+        return post_data.get(self.field.name,'off')
         
     # as long as http://code.djangoproject.com/ticket/15497 is open
     def parse_form_value(self,v):
@@ -257,8 +272,9 @@ class VirtStoreField(StoreField):
         
     def form2obj(self,obj,post_data,is_new):
         #~ logger.info("VirtStoreField.form2obj(%s)", post_data)
-        obj = StoreField.form2obj(self,obj,post_data,is_new)
-        v = getattr(obj,self.field.name)
+        v = self.extract_form_data(post_data)
+        #~ v = StoreField.form2obj(self,obj,post_data,is_new)
+        #~ v = getattr(obj,self.field.name)
         #~ logger.info("VirtStoreField.%s.form2obj(%s) --> %r", self.field.name, post_data, v)
         self.vf.set_value_in_object(obj,v)
         #~ return obj
@@ -526,8 +542,10 @@ class Store:
             disabled_fields = set(self.report.disabled_fields(request,instance))
         else:
             disabled_fields = set()
+        #~ print 20110406, disabled_fields
         for f in self.fields:
-            if not f in disabled_fields:
+            if not f.field in disabled_fields:
+            #~ if not isinstance(f,StoreField) or not f.field in disabled_fields:
                 #~ logger.info("Store.form2obj %s", f.field.name)
                 try:
                     f.form2obj(instance,form_values,is_new)

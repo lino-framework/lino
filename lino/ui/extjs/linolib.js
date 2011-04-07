@@ -89,9 +89,189 @@ Ext.ux.MonthPickerPlugin = function() {
 
 Ext.preg('monthPickerPlugin', Ext.ux.MonthPickerPlugin);  
 
+//~ /* 
+  //~ http://www.diloc.de/blog/2008/03/05/how-to-submit-ext-forms-the-right-way/
+//~ */
+//~ /**
+ //~ * This submit action is basically the same as the normal submit action,
+ //~ * only that it uses the fields getSubmitValue() to compose the values to submit,
+ //~ * instead of looping over the input-tags in the form-tag of the form.
+ //~ *
+ //~ * To use it, just use the OOSubmit-plugin on either a FormPanel or a BasicForm,
+ //~ * or explicitly call form.doAction('oosubmit');
+ //~ *
+ //~ * @param {Object} form
+ //~ * @param {Object} options
+ //~ */
+//~ Ext.ux.OOSubmitAction = function(form, options){
+    //~ Ext.ux.OOSubmitAction.superclass.constructor.call(this, form, options);
+//~ };
+
+//~ Ext.extend(Ext.ux.OOSubmitAction, Ext.form.Action.Submit, {
+    //~ /**
+    //~ * @cfg {boolean} clientValidation Determines whether a Form's fields are validated
+    //~ * in a final call to {@link Ext.form.BasicForm#isValid isValid} prior to submission.
+    //~ * Pass <tt>false</tt> in the Form's submit options to prevent this. If not defined, pre-submission field validation
+    //~ * is performed.
+    //~ */
+    //~ type : 'oosubmit',
+
+    //~ // private
+    //~ /**
+     //~ * This is nearly a copy of the original submit action run method
+     //~ */
+    //~ run : function(){
+        //~ var o = this.options;
+        //~ var method = this.getMethod();
+        //~ var isPost = method == 'POST';
+
+        //~ var params = this.options.params || {};
+        //~ if (isPost) Ext.applyIf(params, this.form.baseParams);
+
+        //~ //now add the form parameters
+        //~ this.form.items.each(function(field)
+        //~ {
+            //~ if (!field.disabled)
+            //~ {
+                //~ //check if the form item provides a specialized getSubmitValue() and use that if available
+                //~ if (typeof field.getSubmitValue == "function")
+                    //~ params[field.getName()] = field.getSubmitValue();
+                //~ else
+                    //~ params[field.getName()] = field.getValue();
+            //~ }
+        //~ });
+
+        //~ //convert params to get style if we are not post
+        //~ if (!isPost) params=Ext.urlEncode(params);
+
+        //~ if(o.clientValidation === false || this.form.isValid()){
+            //~ Ext.Ajax.request(Ext.apply(this.createCallback(o), {
+                //~ url:this.getUrl(!isPost),
+                //~ method: method,
+                //~ params:params, //add our values
+                //~ isUpload: this.form.fileUpload
+            //~ }));
+
+        //~ }else if (o.clientValidation !== false){ // client validation failed
+            //~ this.failureType = Ext.form.Action.CLIENT_INVALID;
+            //~ this.form.afterAction(this, false);
+        //~ }
+    //~ },
+
+//~ });
+//~ //add our action to the registry of known actions
+//~ Ext.form.Action.ACTION_TYPES['oosubmit'] = Ext.ux.OOSubmitAction;
+
+
+
+
+/**
+JC Watsons solution (adapted to ExtJS 3.3.1 by LS) is elegant and simple:
+`A "fix" for unchecked checkbox submission  behaviour
+<http://www.sencha.com/forum/showthread.php?28449>`_
+
+*/
+Ext.lib.Ajax.serializeForm = function(form) {
+    var fElements = form.elements || (document.forms[form] || Ext.getDom(form)).elements, 
+        hasSubmit = false, 
+        encoder = encodeURIComponent, 
+        name, 
+        data = '', 
+        type, 
+        hasValue;
+
+    Ext.each(fElements, function(element){
+        name = element.name;
+        type = element.type;
+
+        if (!element.disabled && name) {
+            if (/select-(one|multiple)/i.test(type)) {
+                Ext.each(element.options, function(opt){
+                    if (opt.selected) {
+                        hasValue = opt.hasAttribute ? opt.hasAttribute('value') : opt.getAttributeNode('value').specified;
+                        data += String.format("{0}={1}&", encoder(name), encoder(hasValue ? opt.value : opt.text));
+                    }
+                });
+            } else if (!(/file|undefined|reset|button/i.test(type))) {
+                //~ if (!(/radio|checkbox/i.test(type) && !element.checked) && !(type == 'submit' && hasSubmit)) {
+                if (!(type == 'submit' && hasSubmit)) {
+                    data += encoder(name) + '=' + encoder(element.value) + '&';
+                    hasSubmit = /submit/i.test(type);
+                }
+            }
+        }
+    });
+    return data.substr(0, data.length - 1);
+};
+
+
 
 
 Ext.namespace('Lino');
+
+/* 
+  Orinally copied from Ext JS Library 3.3.1
+  Modifications by Luc Saffre : 
+  - rendering of phantom records
+  - fire afteredit event
+  - react on dblclcik, not on single click
+
+ */
+Lino.CheckColumn = Ext.extend(Ext.grid.Column, {
+
+    processEvent : function(name, e, grid, rowIndex, colIndex){
+        //~ if (name == 'mousedown') {
+        if (name == 'dblclick') {
+            return this.toggleValue(grid, rowIndex, colIndex);
+        } else {
+            return Ext.grid.ActionColumn.superclass.processEvent.apply(this, arguments);
+        }
+    },
+    
+    toggleValue : function (grid,rowIndex,colIndex) {
+        var record = grid.store.getAt(rowIndex);
+        var dataIndex = grid.colModel.getDataIndex(colIndex);
+        var startValue = record.data[dataIndex];
+        var value = !startValue;
+        //~ record.set(this.dataIndex, value);
+        var e = {
+            grid: grid,
+            record: record,
+            field: dataIndex,
+            originalValue: startValue,
+            value: value,
+            row: rowIndex,
+            column: colIndex,
+            cancel:false
+        };
+        if(grid.fireEvent("validateedit", e) !== false && !e.cancel){
+            record.set(dataIndex, value);
+            delete e.cancel;
+            grid.fireEvent("afteredit", e);
+        }
+        return false; // Cancel event propagation
+    },
+
+    renderer : function(v, p, record){
+        if (record.phantom) return '';
+        p.css += ' x-grid3-check-col-td'; 
+        return String.format('<div class="x-grid3-check-col{0}">&#160;</div>', v ? '-on' : '');
+    },
+
+    // Deprecate use as a plugin. Remove in 4.0
+    // init: Ext.emptyFn
+});
+
+// register ptype. Deprecate. Remove in 4.0
+// Ext.preg('checkcolumn', Lino.CheckColumn);
+
+// backwards compat. Remove in 4.0
+// Ext.grid.CheckColumn = Lino.CheckColumn;
+
+// register Column xtype
+Ext.grid.Column.types.checkcolumn = Lino.CheckColumn;
+
+
 
 Lino.on_tab_activate = function(item) {
   //~ console.log('activate',item); 
@@ -925,6 +1105,15 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     config.trackResetOnLoad = true;
     
     Lino.FormPanel.superclass.constructor.call(this, config);
+      
+    // let oosubmit replace submit:
+    //~ this.form.oldSubmit=this.form.submit;
+    //~ this.form.submit = function(options)
+    //~ {
+          //~ this.doAction('oosubmit', options);
+          //~ return this;
+    //~ };
+      
     //~ console.log(20101222,this.form.trackResetOnLoad);
     //~ this.form.trackResetOnLoad = true;
       

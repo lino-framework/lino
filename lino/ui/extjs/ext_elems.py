@@ -81,12 +81,15 @@ class GridColumn(Component):
         #~ print 20100515, editor.name, editor.__class__
         #~ assert isinstance(editor,FieldElement), \
             #~ "%s.%s is a %r (expected FieldElement instance)" % (cm.grid.report,editor.name,editor)
+        #~ if isinstance(editor,BooleanFieldElement):
+            #~ self.editor = None
+        #~ else:
         self.editor = editor
         #~ self.value_template = editor.grid_column_template
         kw.update(sortable=True)
         #~ kw.update(submitValue=False) # 20110406
         kw.update(colIndex=index)
-        kw.update(self.editor.get_column_options())
+        kw.update(editor.get_column_options())
         kw.update(hidden=editor.hidden)
         if settings.USE_GRIDFILTERS and editor.filter_type:
             kw.update(filter=dict(type=editor.filter_type))
@@ -113,7 +116,8 @@ class GridColumn(Component):
             if rend:
                 kw.update(renderer=js_code(rend))
             kw.update(editable=editor.editable)
-            if editor.editable:
+            #~ if editor.editable:
+            if editor.editable and not isinstance(editor,BooleanFieldElement):
                 kw.update(editor=editor)
         else:
             kw.update(editable=False)
@@ -652,18 +656,20 @@ class BooleanFieldElement(FieldElement):
             
     def get_field_options(self,**kw):
         kw = FieldElement.get_field_options(self,**kw)
-        if kw.has_key('fieldLabel'):
-            del kw['fieldLabel']
-        #~ kw.update(hideLabel=True)
-        kw.update(boxLabel=self.label)
+        if not isinstance(self.lh.layout,reports.ListLayout):
+            if kw.has_key('fieldLabel'):
+                del kw['fieldLabel']
+            #~ kw.update(hideLabel=True)
+            kw.update(boxLabel=self.label)
         return kw
         
     def get_column_options(self,**kw):
         kw = FieldElement.get_column_options(self,**kw)
-        kw.update(xtype='booleancolumn')
-        kw.update(trueText=self.lh.rh.report.boolean_texts[0])
-        kw.update(falseText=self.lh.rh.report.boolean_texts[1])
-        kw.update(undefinedText=self.lh.rh.report.boolean_texts[2])
+        kw.update(xtype='checkcolumn')
+        #~ kw.update(xtype='booleancolumn')
+        #~ kw.update(trueText=self.lh.rh.report.boolean_texts[0])
+        #~ kw.update(falseText=self.lh.rh.report.boolean_texts[1])
+        #~ kw.update(undefinedText=self.lh.rh.report.boolean_texts[2])
         return kw
         
     def get_from_form(self,instance,values):

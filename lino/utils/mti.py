@@ -68,8 +68,8 @@ def delete_child(obj,child_model,using=None):
     try:
         child = child_model.objects.get(pk=obj.pk)
     except child_model.DoesNotExist:
-        raise Exception("%s has no child in %s" % (obj,child_model.__name__))
-    logger.info("delete_child %s from %s",child_model.__name__,obj)
+        raise Exception(u"%s has no child in %s" % (obj,child_model.__name__))
+    logger.info(u"Delete child %s from %s",child_model.__name__,obj)
     collector = ChildCollector(using=using)
     collector.collect([child],source=obj.__class__,nullable=True,collect_parents=False)
     collector.delete()
@@ -80,8 +80,10 @@ def insert_child(obj,child_model,**attrs):
     attrs["%s_ptr" % obj.__class__.__name__.lower()] = obj
     for field in obj._meta.fields:
         attrs[field.name] = getattr(obj, field.name)
-    logger.info("Promote %s to %s : attrs=%s",
-        obj.__class__.__name__,child_model.__name__,attrs)
+    #~ logger.info(u"Promote %s to %s : attrs=%s",
+        #~ obj.__class__.__name__,child_model.__name__,attrs)
+    logger.info(u"Promote %s to %s",
+        obj.__class__.__name__,child_model.__name__)
     new_obj = child_model(**attrs)
     new_obj.save()
     return new_obj
