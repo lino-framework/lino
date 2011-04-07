@@ -319,9 +319,9 @@ class Person(Partner,contacts.Person):
         blank=True,null=True,
         verbose_name=_("until"))
     
-    coach1 = models.ForeignKey("auth.User",blank=True,null=True,
+    coach1 = models.ForeignKey("users.User",blank=True,null=True,
         verbose_name=_("Coach 1"),related_name='coached1')
-    coach2 = models.ForeignKey("auth.User",blank=True,null=True,
+    coach2 = models.ForeignKey("users.User",blank=True,null=True,
         verbose_name=_("Coach 2"),related_name='coached2')
         
     sex = models.CharField(max_length=1,blank=True,null=True,
@@ -1175,7 +1175,7 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,contact
     duties_dsbe = fields.HtmlTextField(_("duties DSBE"),blank=True,null=True)
     duties_company = fields.HtmlTextField(_("duties company"),blank=True,null=True)
     
-    user_asd = models.ForeignKey("auth.User",verbose_name=_("responsible (ASD)"),
+    user_asd = models.ForeignKey("users.User",verbose_name=_("responsible (ASD)"),
         related_name='contracts_asd',blank=True,null=True) 
     
     exam_policy = models.ForeignKey("dsbe.ExamPolicy",blank=True,null=True,
@@ -1821,7 +1821,7 @@ resolve_field('dsbe.Contract.user').verbose_name=_("responsible (DSBE)")
 ...
 """
 from lino.tools import resolve_model
-User = resolve_model('auth.User')
+User = resolve_model('users.User')
 User.grid_search_field = 'username'
 
 

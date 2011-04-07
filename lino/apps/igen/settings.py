@@ -116,7 +116,8 @@ class Lino(Lino):
         m.add_action('contenttypes.ContentTypes')
         #m = self.add_menu("system","~System")
         #~ m.add_action('auth.Permissions')
-        m.add_action('auth.Users')
+        #~ m.add_action('auth.Users')
+        m.add_action('users.Users')
         #~ m.add_action('auth.Groups')
         #m.can_view = perms.is_staff
 
@@ -142,7 +143,7 @@ SITE_ID = 1 # see also fill.py
 
 INSTALLED_APPS = (
     #~ 'django.contrib.auth',
-    'lino.modlib.auth',
+    'lino.modlib.users',
     'django.contrib.contenttypes',
     #~ 'django.contrib.sessions',
     'django.contrib.sites',

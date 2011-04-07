@@ -1,0 +1,26 @@
+Version 1.1.8 (07.04.2011)
+==========================
+
+New features
+------------
+
+Bugfix release with several important bugfixes in 
+:mod:`lino.modlib.users`, :mod:`lino.ui.extjs` and :term:`watch_tim`
+
+  
+Upgrade instructions
+--------------------
+
+The following are technical instructions related to this 
+upgrade, designed to be executed by a Lino expert.
+For more general instructions on how to upgrade an existing 
+Lino site, see :doc:`/admin/upgrade`).
+
+- Database migration needed:
+  Table `users_user` replaces `auth_user`.
+  See :doc:`/blog/2011/0407`
+
+
+Possible issues
+---------------
+

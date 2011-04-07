@@ -28,7 +28,7 @@ from django.db.models.fields import NOT_PROVIDED
 from django.core.serializers import base
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.auth.models import Permission
+#~ from django.contrib.auth.models import Permission
 from django.contrib.sessions.models import Session
 from django.utils.encoding import smart_unicode, is_protected_type
 
@@ -80,9 +80,9 @@ class Serializer(base.Serializer):
         model = None
         all_models = []
         for obj in queryset:
-            if isinstance(obj,ContentType): continue
-            if isinstance(obj,Session): continue
-            if isinstance(obj,Permission): continue
+            #~ if isinstance(obj,ContentType): continue
+            #~ if isinstance(obj,Session): continue
+            #~ if isinstance(obj,Permission): continue
             if obj.__class__ != model:
                 model = obj.__class__
                 all_models.append(model)

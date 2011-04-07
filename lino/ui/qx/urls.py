@@ -19,8 +19,8 @@ import sys
 from django.conf import settings
 from django.conf.urls.defaults import *
 from django.contrib import databrowse
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import urls as auth_urls
+#~ from django.contrib.auth.decorators import login_required
+#~ from django.contrib.auth import urls as auth_urls
 from django.utils import importlib
 
 

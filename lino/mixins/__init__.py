@@ -48,7 +48,7 @@ class AutoUser(models.Model):
     class Meta:
         abstract = True
         
-    user = models.ForeignKey("auth.User",verbose_name=_("user")) # ,blank=True,null=True)
+    user = models.ForeignKey("users.User",verbose_name=_("user")) # ,blank=True,null=True)
     
     def on_create(self,req):
         u = req.get_user()

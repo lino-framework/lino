@@ -19,7 +19,7 @@ Defined in :srcref:`/lino/modlib/sales/models.py`
 .. index::
    pair: model; PaymentTerm
 
-.. _igen.sales.PaymentTerm:
+.. _std.sales.PaymentTerm:
 
 ---------------------
 Model **PaymentTerm**
@@ -49,7 +49,7 @@ Defined in :srcref:`/lino/modlib/sales/models.py`
 .. index::
    single: field;id
    
-.. _igen.sales.PaymentTerm.id:
+.. _std.sales.PaymentTerm.id:
 
 Field **PaymentTerm.id**
 ========================
@@ -64,7 +64,7 @@ Type: CharField
 .. index::
    single: field;name
    
-.. _igen.sales.PaymentTerm.name:
+.. _std.sales.PaymentTerm.name:
 
 Field **PaymentTerm.name**
 ==========================
@@ -79,7 +79,7 @@ Type: BabelCharField
 .. index::
    single: field;days
    
-.. _igen.sales.PaymentTerm.days:
+.. _std.sales.PaymentTerm.days:
 
 Field **PaymentTerm.days**
 ==========================
@@ -94,7 +94,7 @@ Type: IntegerField
 .. index::
    single: field;months
    
-.. _igen.sales.PaymentTerm.months:
+.. _std.sales.PaymentTerm.months:
 
 Field **PaymentTerm.months**
 ============================
@@ -109,7 +109,7 @@ Type: IntegerField
 .. index::
    single: field;name_de
    
-.. _igen.sales.PaymentTerm.name_de:
+.. _std.sales.PaymentTerm.name_de:
 
 Field **PaymentTerm.name_de**
 =============================
@@ -124,7 +124,7 @@ Type: CharField
 .. index::
    single: field;name_fr
    
-.. _igen.sales.PaymentTerm.name_fr:
+.. _std.sales.PaymentTerm.name_fr:
 
 Field **PaymentTerm.name_fr**
 =============================
@@ -139,7 +139,7 @@ Type: CharField
 .. index::
    single: field;name_nl
    
-.. _igen.sales.PaymentTerm.name_nl:
+.. _std.sales.PaymentTerm.name_nl:
 
 Field **PaymentTerm.name_nl**
 =============================
@@ -154,7 +154,7 @@ Type: CharField
 .. index::
    single: field;name_et
    
-.. _igen.sales.PaymentTerm.name_et:
+.. _std.sales.PaymentTerm.name_et:
 
 Field **PaymentTerm.name_et**
 =============================
@@ -171,7 +171,7 @@ Type: CharField
 .. index::
    pair: model; InvoicingMode
 
-.. _igen.sales.InvoicingMode:
+.. _std.sales.InvoicingMode:
 
 -----------------------
 Model **InvoicingMode**
@@ -205,7 +205,7 @@ Defined in :srcref:`/lino/modlib/sales/models.py`
 .. index::
    single: field;build_method
    
-.. _igen.sales.InvoicingMode.build_method:
+.. _std.sales.InvoicingMode.build_method:
 
 Field **InvoicingMode.build_method**
 ====================================
@@ -220,7 +220,7 @@ Type: CharField
 .. index::
    single: field;template
    
-.. _igen.sales.InvoicingMode.template:
+.. _std.sales.InvoicingMode.template:
 
 Field **InvoicingMode.template**
 ================================
@@ -235,7 +235,7 @@ Type: CharField
 .. index::
    single: field;id
    
-.. _igen.sales.InvoicingMode.id:
+.. _std.sales.InvoicingMode.id:
 
 Field **InvoicingMode.id**
 ==========================
@@ -250,7 +250,7 @@ Type: CharField
 .. index::
    single: field;journal
    
-.. _igen.sales.InvoicingMode.journal:
+.. _std.sales.InvoicingMode.journal:
 
 Field **InvoicingMode.journal**
 ===============================
@@ -265,7 +265,7 @@ Type: ForeignKey
 .. index::
    single: field;name
    
-.. _igen.sales.InvoicingMode.name:
+.. _std.sales.InvoicingMode.name:
 
 Field **InvoicingMode.name**
 ============================
@@ -280,7 +280,7 @@ Type: BabelCharField
 .. index::
    single: field;price
    
-.. _igen.sales.InvoicingMode.price:
+.. _std.sales.InvoicingMode.price:
 
 Field **InvoicingMode.price**
 =============================
@@ -295,7 +295,7 @@ Type: PriceField
 .. index::
    single: field;channel
    
-.. _igen.sales.InvoicingMode.channel:
+.. _std.sales.InvoicingMode.channel:
 
 Field **InvoicingMode.channel**
 ===============================
@@ -311,7 +311,7 @@ Type: ChoiceListField
 .. index::
    single: field;advance_days
    
-.. _igen.sales.InvoicingMode.advance_days:
+.. _std.sales.InvoicingMode.advance_days:
 
 Field **InvoicingMode.advance_days**
 ====================================
@@ -329,7 +329,7 @@ Type: IntegerField
 .. index::
    single: field;name_de
    
-.. _igen.sales.InvoicingMode.name_de:
+.. _std.sales.InvoicingMode.name_de:
 
 Field **InvoicingMode.name_de**
 ===============================
@@ -344,7 +344,7 @@ Type: CharField
 .. index::
    single: field;name_fr
    
-.. _igen.sales.InvoicingMode.name_fr:
+.. _std.sales.InvoicingMode.name_fr:
 
 Field **InvoicingMode.name_fr**
 ===============================
@@ -359,7 +359,7 @@ Type: CharField
 .. index::
    single: field;name_nl
    
-.. _igen.sales.InvoicingMode.name_nl:
+.. _std.sales.InvoicingMode.name_nl:
 
 Field **InvoicingMode.name_nl**
 ===============================
@@ -374,7 +374,7 @@ Type: CharField
 .. index::
    single: field;name_et
    
-.. _igen.sales.InvoicingMode.name_et:
+.. _std.sales.InvoicingMode.name_et:
 
 Field **InvoicingMode.name_et**
 ===============================
@@ -391,7 +391,7 @@ Type: CharField
 .. index::
    pair: model; ShippingMode
 
-.. _igen.sales.ShippingMode:
+.. _std.sales.ShippingMode:
 
 ----------------------
 Model **ShippingMode**
@@ -419,7 +419,7 @@ Defined in :srcref:`/lino/modlib/sales/models.py`
 .. index::
    single: field;id
    
-.. _igen.sales.ShippingMode.id:
+.. _std.sales.ShippingMode.id:
 
 Field **ShippingMode.id**
 =========================
@@ -434,7 +434,7 @@ Type: CharField
 .. index::
    single: field;name
    
-.. _igen.sales.ShippingMode.name:
+.. _std.sales.ShippingMode.name:
 
 Field **ShippingMode.name**
 ===========================
@@ -449,7 +449,7 @@ Type: BabelCharField
 .. index::
    single: field;price
    
-.. _igen.sales.ShippingMode.price:
+.. _std.sales.ShippingMode.price:
 
 Field **ShippingMode.price**
 ============================
@@ -464,7 +464,7 @@ Type: PriceField
 .. index::
    single: field;name_de
    
-.. _igen.sales.ShippingMode.name_de:
+.. _std.sales.ShippingMode.name_de:
 
 Field **ShippingMode.name_de**
 ==============================
@@ -479,7 +479,7 @@ Type: CharField
 .. index::
    single: field;name_fr
    
-.. _igen.sales.ShippingMode.name_fr:
+.. _std.sales.ShippingMode.name_fr:
 
 Field **ShippingMode.name_fr**
 ==============================
@@ -494,7 +494,7 @@ Type: CharField
 .. index::
    single: field;name_nl
    
-.. _igen.sales.ShippingMode.name_nl:
+.. _std.sales.ShippingMode.name_nl:
 
 Field **ShippingMode.name_nl**
 ==============================
@@ -509,7 +509,7 @@ Type: CharField
 .. index::
    single: field;name_et
    
-.. _igen.sales.ShippingMode.name_et:
+.. _std.sales.ShippingMode.name_et:
 
 Field **ShippingMode.name_et**
 ==============================
@@ -526,7 +526,7 @@ Type: CharField
 .. index::
    pair: model; SalesRule
 
-.. _igen.sales.SalesRule:
+.. _std.sales.SalesRule:
 
 -------------------
 Model **SalesRule**
@@ -553,7 +553,7 @@ Defined in :srcref:`/lino/modlib/sales/models.py`
 .. index::
    single: field;id
    
-.. _igen.sales.SalesRule.id:
+.. _std.sales.SalesRule.id:
 
 Field **SalesRule.id**
 ======================
@@ -568,7 +568,7 @@ Type: AutoField
 .. index::
    single: field;journal
    
-.. _igen.sales.SalesRule.journal:
+.. _std.sales.SalesRule.journal:
 
 Field **SalesRule.journal**
 ===========================
@@ -583,7 +583,7 @@ Type: ForeignKey
 .. index::
    single: field;imode
    
-.. _igen.sales.SalesRule.imode:
+.. _std.sales.SalesRule.imode:
 
 Field **SalesRule.imode**
 =========================
@@ -598,7 +598,7 @@ Type: ForeignKey
 .. index::
    single: field;shipping_mode
    
-.. _igen.sales.SalesRule.shipping_mode:
+.. _std.sales.SalesRule.shipping_mode:
 
 Field **SalesRule.shipping_mode**
 =================================
@@ -613,7 +613,7 @@ Type: ForeignKey
 .. index::
    single: field;payment_term
    
-.. _igen.sales.SalesRule.payment_term:
+.. _std.sales.SalesRule.payment_term:
 
 Field **SalesRule.payment_term**
 ================================
@@ -630,7 +630,7 @@ Type: ForeignKey
 .. index::
    pair: model; SalesDocument
 
-.. _igen.sales.SalesDocument:
+.. _std.sales.SalesDocument:
 
 -----------------------
 Model **SalesDocument**
@@ -674,7 +674,7 @@ Defined in :srcref:`/lino/modlib/sales/models.py`
 .. index::
    single: field;id
    
-.. _igen.sales.SalesDocument.id:
+.. _std.sales.SalesDocument.id:
 
 Field **SalesDocument.id**
 ==========================
@@ -689,7 +689,7 @@ Type: AutoField
 .. index::
    single: field;must_build
    
-.. _igen.sales.SalesDocument.must_build:
+.. _std.sales.SalesDocument.must_build:
 
 Field **SalesDocument.must_build**
 ==================================
@@ -704,7 +704,7 @@ Type: BooleanField
 .. index::
    single: field;person
    
-.. _igen.sales.SalesDocument.person:
+.. _std.sales.SalesDocument.person:
 
 Field **SalesDocument.person**
 ==============================
@@ -719,7 +719,7 @@ Type: ForeignKey
 .. index::
    single: field;company
    
-.. _igen.sales.SalesDocument.company:
+.. _std.sales.SalesDocument.company:
 
 Field **SalesDocument.company**
 ===============================
@@ -734,7 +734,7 @@ Type: ForeignKey
 .. index::
    single: field;contact
    
-.. _igen.sales.SalesDocument.contact:
+.. _std.sales.SalesDocument.contact:
 
 Field **SalesDocument.contact**
 ===============================
@@ -749,7 +749,7 @@ Type: ForeignKey
 .. index::
    single: field;language
    
-.. _igen.sales.SalesDocument.language:
+.. _std.sales.SalesDocument.language:
 
 Field **SalesDocument.language**
 ================================
@@ -764,7 +764,7 @@ Type: LanguageField
 .. index::
    single: field;journal
    
-.. _igen.sales.SalesDocument.journal:
+.. _std.sales.SalesDocument.journal:
 
 Field **SalesDocument.journal**
 ===============================
@@ -779,7 +779,7 @@ Type: ForeignKey
 .. index::
    single: field;number
    
-.. _igen.sales.SalesDocument.number:
+.. _std.sales.SalesDocument.number:
 
 Field **SalesDocument.number**
 ==============================
@@ -794,7 +794,7 @@ Type: IntegerField
 .. index::
    single: field;sent_time
    
-.. _igen.sales.SalesDocument.sent_time:
+.. _std.sales.SalesDocument.sent_time:
 
 Field **SalesDocument.sent_time**
 =================================
@@ -809,7 +809,7 @@ Type: DateTimeField
 .. index::
    single: field;creation_date
    
-.. _igen.sales.SalesDocument.creation_date:
+.. _std.sales.SalesDocument.creation_date:
 
 Field **SalesDocument.creation_date**
 =====================================
@@ -824,7 +824,7 @@ Type: DateField
 .. index::
    single: field;your_ref
    
-.. _igen.sales.SalesDocument.your_ref:
+.. _std.sales.SalesDocument.your_ref:
 
 Field **SalesDocument.your_ref**
 ================================
@@ -839,7 +839,7 @@ Type: CharField
 .. index::
    single: field;imode
    
-.. _igen.sales.SalesDocument.imode:
+.. _std.sales.SalesDocument.imode:
 
 Field **SalesDocument.imode**
 =============================
@@ -854,7 +854,7 @@ Type: ForeignKey
 .. index::
    single: field;shipping_mode
    
-.. _igen.sales.SalesDocument.shipping_mode:
+.. _std.sales.SalesDocument.shipping_mode:
 
 Field **SalesDocument.shipping_mode**
 =====================================
@@ -869,7 +869,7 @@ Type: ForeignKey
 .. index::
    single: field;payment_term
    
-.. _igen.sales.SalesDocument.payment_term:
+.. _std.sales.SalesDocument.payment_term:
 
 Field **SalesDocument.payment_term**
 ====================================
@@ -884,7 +884,7 @@ Type: ForeignKey
 .. index::
    single: field;sales_remark
    
-.. _igen.sales.SalesDocument.sales_remark:
+.. _std.sales.SalesDocument.sales_remark:
 
 Field **SalesDocument.sales_remark**
 ====================================
@@ -899,7 +899,7 @@ Type: CharField
 .. index::
    single: field;subject
    
-.. _igen.sales.SalesDocument.subject:
+.. _std.sales.SalesDocument.subject:
 
 Field **SalesDocument.subject**
 ===============================
@@ -914,7 +914,7 @@ Type: CharField
 .. index::
    single: field;vat_exempt
    
-.. _igen.sales.SalesDocument.vat_exempt:
+.. _std.sales.SalesDocument.vat_exempt:
 
 Field **SalesDocument.vat_exempt**
 ==================================
@@ -929,7 +929,7 @@ Type: BooleanField
 .. index::
    single: field;item_vat
    
-.. _igen.sales.SalesDocument.item_vat:
+.. _std.sales.SalesDocument.item_vat:
 
 Field **SalesDocument.item_vat**
 ================================
@@ -944,7 +944,7 @@ Type: BooleanField
 .. index::
    single: field;total_excl
    
-.. _igen.sales.SalesDocument.total_excl:
+.. _std.sales.SalesDocument.total_excl:
 
 Field **SalesDocument.total_excl**
 ==================================
@@ -959,7 +959,7 @@ Type: PriceField
 .. index::
    single: field;total_vat
    
-.. _igen.sales.SalesDocument.total_vat:
+.. _std.sales.SalesDocument.total_vat:
 
 Field **SalesDocument.total_vat**
 =================================
@@ -974,7 +974,7 @@ Type: PriceField
 .. index::
    single: field;intro
    
-.. _igen.sales.SalesDocument.intro:
+.. _std.sales.SalesDocument.intro:
 
 Field **SalesDocument.intro**
 =============================
@@ -989,7 +989,7 @@ Type: TextField
 .. index::
    single: field;user
    
-.. _igen.sales.SalesDocument.user:
+.. _std.sales.SalesDocument.user:
 
 Field **SalesDocument.user**
 ============================
@@ -1006,7 +1006,7 @@ Type: ForeignKey
 .. index::
    pair: model; Order
 
-.. _igen.sales.Order:
+.. _std.sales.Order:
 
 ---------------
 Model **Order**
@@ -1053,7 +1053,7 @@ Defined in :srcref:`/lino/modlib/sales/models.py`
 .. index::
    single: field;id
    
-.. _igen.sales.Order.id:
+.. _std.sales.Order.id:
 
 Field **Order.id**
 ==================
@@ -1068,7 +1068,7 @@ Type: AutoField
 .. index::
    single: field;must_build
    
-.. _igen.sales.Order.must_build:
+.. _std.sales.Order.must_build:
 
 Field **Order.must_build**
 ==========================
@@ -1083,7 +1083,7 @@ Type: BooleanField
 .. index::
    single: field;person
    
-.. _igen.sales.Order.person:
+.. _std.sales.Order.person:
 
 Field **Order.person**
 ======================
@@ -1098,7 +1098,7 @@ Type: ForeignKey
 .. index::
    single: field;company
    
-.. _igen.sales.Order.company:
+.. _std.sales.Order.company:
 
 Field **Order.company**
 =======================
@@ -1113,7 +1113,7 @@ Type: ForeignKey
 .. index::
    single: field;contact
    
-.. _igen.sales.Order.contact:
+.. _std.sales.Order.contact:
 
 Field **Order.contact**
 =======================
@@ -1128,7 +1128,7 @@ Type: ForeignKey
 .. index::
    single: field;language
    
-.. _igen.sales.Order.language:
+.. _std.sales.Order.language:
 
 Field **Order.language**
 ========================
@@ -1143,7 +1143,7 @@ Type: LanguageField
 .. index::
    single: field;journal
    
-.. _igen.sales.Order.journal:
+.. _std.sales.Order.journal:
 
 Field **Order.journal**
 =======================
@@ -1158,7 +1158,7 @@ Type: ForeignKey
 .. index::
    single: field;number
    
-.. _igen.sales.Order.number:
+.. _std.sales.Order.number:
 
 Field **Order.number**
 ======================
@@ -1173,7 +1173,7 @@ Type: IntegerField
 .. index::
    single: field;sent_time
    
-.. _igen.sales.Order.sent_time:
+.. _std.sales.Order.sent_time:
 
 Field **Order.sent_time**
 =========================
@@ -1188,7 +1188,7 @@ Type: DateTimeField
 .. index::
    single: field;creation_date
    
-.. _igen.sales.Order.creation_date:
+.. _std.sales.Order.creation_date:
 
 Field **Order.creation_date**
 =============================
@@ -1203,7 +1203,7 @@ Type: DateField
 .. index::
    single: field;your_ref
    
-.. _igen.sales.Order.your_ref:
+.. _std.sales.Order.your_ref:
 
 Field **Order.your_ref**
 ========================
@@ -1218,7 +1218,7 @@ Type: CharField
 .. index::
    single: field;imode
    
-.. _igen.sales.Order.imode:
+.. _std.sales.Order.imode:
 
 Field **Order.imode**
 =====================
@@ -1233,7 +1233,7 @@ Type: ForeignKey
 .. index::
    single: field;shipping_mode
    
-.. _igen.sales.Order.shipping_mode:
+.. _std.sales.Order.shipping_mode:
 
 Field **Order.shipping_mode**
 =============================
@@ -1248,7 +1248,7 @@ Type: ForeignKey
 .. index::
    single: field;payment_term
    
-.. _igen.sales.Order.payment_term:
+.. _std.sales.Order.payment_term:
 
 Field **Order.payment_term**
 ============================
@@ -1263,7 +1263,7 @@ Type: ForeignKey
 .. index::
    single: field;sales_remark
    
-.. _igen.sales.Order.sales_remark:
+.. _std.sales.Order.sales_remark:
 
 Field **Order.sales_remark**
 ============================
@@ -1278,7 +1278,7 @@ Type: CharField
 .. index::
    single: field;subject
    
-.. _igen.sales.Order.subject:
+.. _std.sales.Order.subject:
 
 Field **Order.subject**
 =======================
@@ -1293,7 +1293,7 @@ Type: CharField
 .. index::
    single: field;vat_exempt
    
-.. _igen.sales.Order.vat_exempt:
+.. _std.sales.Order.vat_exempt:
 
 Field **Order.vat_exempt**
 ==========================
@@ -1308,7 +1308,7 @@ Type: BooleanField
 .. index::
    single: field;item_vat
    
-.. _igen.sales.Order.item_vat:
+.. _std.sales.Order.item_vat:
 
 Field **Order.item_vat**
 ========================
@@ -1323,7 +1323,7 @@ Type: BooleanField
 .. index::
    single: field;total_excl
    
-.. _igen.sales.Order.total_excl:
+.. _std.sales.Order.total_excl:
 
 Field **Order.total_excl**
 ==========================
@@ -1338,7 +1338,7 @@ Type: PriceField
 .. index::
    single: field;total_vat
    
-.. _igen.sales.Order.total_vat:
+.. _std.sales.Order.total_vat:
 
 Field **Order.total_vat**
 =========================
@@ -1353,7 +1353,7 @@ Type: PriceField
 .. index::
    single: field;intro
    
-.. _igen.sales.Order.intro:
+.. _std.sales.Order.intro:
 
 Field **Order.intro**
 =====================
@@ -1368,7 +1368,7 @@ Type: TextField
 .. index::
    single: field;user
    
-.. _igen.sales.Order.user:
+.. _std.sales.Order.user:
 
 Field **Order.user**
 ====================
@@ -1383,7 +1383,7 @@ Type: ForeignKey
 .. index::
    single: field;salesdocument_ptr
    
-.. _igen.sales.Order.salesdocument_ptr:
+.. _std.sales.Order.salesdocument_ptr:
 
 Field **Order.salesdocument_ptr**
 =================================
@@ -1398,7 +1398,7 @@ Type: OneToOneField
 .. index::
    single: field;cycle
    
-.. _igen.sales.Order.cycle:
+.. _std.sales.Order.cycle:
 
 Field **Order.cycle**
 =====================
@@ -1413,7 +1413,7 @@ Type: CharField
 .. index::
    single: field;start_date
    
-.. _igen.sales.Order.start_date:
+.. _std.sales.Order.start_date:
 
 Field **Order.start_date**
 ==========================
@@ -1429,7 +1429,7 @@ Type: MyDateField
 .. index::
    single: field;covered_until
    
-.. _igen.sales.Order.covered_until:
+.. _std.sales.Order.covered_until:
 
 Field **Order.covered_until**
 =============================
@@ -1446,7 +1446,7 @@ Type: MyDateField
 .. index::
    pair: model; Invoice
 
-.. _igen.sales.Invoice:
+.. _std.sales.Invoice:
 
 -----------------
 Model **Invoice**
@@ -1497,7 +1497,7 @@ Defined in :srcref:`/lino/modlib/sales/models.py`
 .. index::
    single: field;id
    
-.. _igen.sales.Invoice.id:
+.. _std.sales.Invoice.id:
 
 Field **Invoice.id**
 ====================
@@ -1512,7 +1512,7 @@ Type: AutoField
 .. index::
    single: field;must_build
    
-.. _igen.sales.Invoice.must_build:
+.. _std.sales.Invoice.must_build:
 
 Field **Invoice.must_build**
 ============================
@@ -1527,7 +1527,7 @@ Type: BooleanField
 .. index::
    single: field;person
    
-.. _igen.sales.Invoice.person:
+.. _std.sales.Invoice.person:
 
 Field **Invoice.person**
 ========================
@@ -1542,7 +1542,7 @@ Type: ForeignKey
 .. index::
    single: field;company
    
-.. _igen.sales.Invoice.company:
+.. _std.sales.Invoice.company:
 
 Field **Invoice.company**
 =========================
@@ -1557,7 +1557,7 @@ Type: ForeignKey
 .. index::
    single: field;contact
    
-.. _igen.sales.Invoice.contact:
+.. _std.sales.Invoice.contact:
 
 Field **Invoice.contact**
 =========================
@@ -1572,7 +1572,7 @@ Type: ForeignKey
 .. index::
    single: field;language
    
-.. _igen.sales.Invoice.language:
+.. _std.sales.Invoice.language:
 
 Field **Invoice.language**
 ==========================
@@ -1587,7 +1587,7 @@ Type: LanguageField
 .. index::
    single: field;journal
    
-.. _igen.sales.Invoice.journal:
+.. _std.sales.Invoice.journal:
 
 Field **Invoice.journal**
 =========================
@@ -1602,7 +1602,7 @@ Type: ForeignKey
 .. index::
    single: field;number
    
-.. _igen.sales.Invoice.number:
+.. _std.sales.Invoice.number:
 
 Field **Invoice.number**
 ========================
@@ -1617,7 +1617,7 @@ Type: IntegerField
 .. index::
    single: field;sent_time
    
-.. _igen.sales.Invoice.sent_time:
+.. _std.sales.Invoice.sent_time:
 
 Field **Invoice.sent_time**
 ===========================
@@ -1632,7 +1632,7 @@ Type: DateTimeField
 .. index::
    single: field;creation_date
    
-.. _igen.sales.Invoice.creation_date:
+.. _std.sales.Invoice.creation_date:
 
 Field **Invoice.creation_date**
 ===============================
@@ -1647,7 +1647,7 @@ Type: DateField
 .. index::
    single: field;your_ref
    
-.. _igen.sales.Invoice.your_ref:
+.. _std.sales.Invoice.your_ref:
 
 Field **Invoice.your_ref**
 ==========================
@@ -1662,7 +1662,7 @@ Type: CharField
 .. index::
    single: field;imode
    
-.. _igen.sales.Invoice.imode:
+.. _std.sales.Invoice.imode:
 
 Field **Invoice.imode**
 =======================
@@ -1677,7 +1677,7 @@ Type: ForeignKey
 .. index::
    single: field;shipping_mode
    
-.. _igen.sales.Invoice.shipping_mode:
+.. _std.sales.Invoice.shipping_mode:
 
 Field **Invoice.shipping_mode**
 ===============================
@@ -1692,7 +1692,7 @@ Type: ForeignKey
 .. index::
    single: field;payment_term
    
-.. _igen.sales.Invoice.payment_term:
+.. _std.sales.Invoice.payment_term:
 
 Field **Invoice.payment_term**
 ==============================
@@ -1707,7 +1707,7 @@ Type: ForeignKey
 .. index::
    single: field;sales_remark
    
-.. _igen.sales.Invoice.sales_remark:
+.. _std.sales.Invoice.sales_remark:
 
 Field **Invoice.sales_remark**
 ==============================
@@ -1722,7 +1722,7 @@ Type: CharField
 .. index::
    single: field;subject
    
-.. _igen.sales.Invoice.subject:
+.. _std.sales.Invoice.subject:
 
 Field **Invoice.subject**
 =========================
@@ -1737,7 +1737,7 @@ Type: CharField
 .. index::
    single: field;vat_exempt
    
-.. _igen.sales.Invoice.vat_exempt:
+.. _std.sales.Invoice.vat_exempt:
 
 Field **Invoice.vat_exempt**
 ============================
@@ -1752,7 +1752,7 @@ Type: BooleanField
 .. index::
    single: field;item_vat
    
-.. _igen.sales.Invoice.item_vat:
+.. _std.sales.Invoice.item_vat:
 
 Field **Invoice.item_vat**
 ==========================
@@ -1767,7 +1767,7 @@ Type: BooleanField
 .. index::
    single: field;total_excl
    
-.. _igen.sales.Invoice.total_excl:
+.. _std.sales.Invoice.total_excl:
 
 Field **Invoice.total_excl**
 ============================
@@ -1782,7 +1782,7 @@ Type: PriceField
 .. index::
    single: field;total_vat
    
-.. _igen.sales.Invoice.total_vat:
+.. _std.sales.Invoice.total_vat:
 
 Field **Invoice.total_vat**
 ===========================
@@ -1797,7 +1797,7 @@ Type: PriceField
 .. index::
    single: field;intro
    
-.. _igen.sales.Invoice.intro:
+.. _std.sales.Invoice.intro:
 
 Field **Invoice.intro**
 =======================
@@ -1812,7 +1812,7 @@ Type: TextField
 .. index::
    single: field;user
    
-.. _igen.sales.Invoice.user:
+.. _std.sales.Invoice.user:
 
 Field **Invoice.user**
 ======================
@@ -1827,7 +1827,7 @@ Type: ForeignKey
 .. index::
    single: field;salesdocument_ptr
    
-.. _igen.sales.Invoice.salesdocument_ptr:
+.. _std.sales.Invoice.salesdocument_ptr:
 
 Field **Invoice.salesdocument_ptr**
 ===================================
@@ -1842,7 +1842,7 @@ Type: OneToOneField
 .. index::
    single: field;journal
    
-.. _igen.sales.Invoice.journal:
+.. _std.sales.Invoice.journal:
 
 Field **Invoice.journal**
 =========================
@@ -1857,7 +1857,7 @@ Type: ForeignKey
 .. index::
    single: field;number
    
-.. _igen.sales.Invoice.number:
+.. _std.sales.Invoice.number:
 
 Field **Invoice.number**
 ========================
@@ -1872,7 +1872,7 @@ Type: IntegerField
 .. index::
    single: field;value_date
    
-.. _igen.sales.Invoice.value_date:
+.. _std.sales.Invoice.value_date:
 
 Field **Invoice.value_date**
 ============================
@@ -1887,7 +1887,7 @@ Type: DateField
 .. index::
    single: field;ledger_remark
    
-.. _igen.sales.Invoice.ledger_remark:
+.. _std.sales.Invoice.ledger_remark:
 
 Field **Invoice.ledger_remark**
 ===============================
@@ -1902,7 +1902,7 @@ Type: CharField
 .. index::
    single: field;booked
    
-.. _igen.sales.Invoice.booked:
+.. _std.sales.Invoice.booked:
 
 Field **Invoice.booked**
 ========================
@@ -1917,7 +1917,7 @@ Type: BooleanField
 .. index::
    single: field;due_date
    
-.. _igen.sales.Invoice.due_date:
+.. _std.sales.Invoice.due_date:
 
 Field **Invoice.due_date**
 ==========================
@@ -1932,7 +1932,7 @@ Type: MyDateField
 .. index::
    single: field;order
    
-.. _igen.sales.Invoice.order:
+.. _std.sales.Invoice.order:
 
 Field **Invoice.order**
 =======================
@@ -1949,7 +1949,7 @@ Type: ForeignKey
 .. index::
    pair: model; DocItem
 
-.. _igen.sales.DocItem:
+.. _std.sales.DocItem:
 
 -----------------
 Model **DocItem**
@@ -1980,7 +1980,7 @@ Defined in :srcref:`/lino/modlib/sales/models.py`
 .. index::
    single: field;id
    
-.. _igen.sales.DocItem.id:
+.. _std.sales.DocItem.id:
 
 Field **DocItem.id**
 ====================
@@ -1995,7 +1995,7 @@ Type: AutoField
 .. index::
    single: field;document
    
-.. _igen.sales.DocItem.document:
+.. _std.sales.DocItem.document:
 
 Field **DocItem.document**
 ==========================
@@ -2010,7 +2010,7 @@ Type: ForeignKey
 .. index::
    single: field;pos
    
-.. _igen.sales.DocItem.pos:
+.. _std.sales.DocItem.pos:
 
 Field **DocItem.pos**
 =====================
@@ -2025,7 +2025,7 @@ Type: IntegerField
 .. index::
    single: field;product
    
-.. _igen.sales.DocItem.product:
+.. _std.sales.DocItem.product:
 
 Field **DocItem.product**
 =========================
@@ -2040,7 +2040,7 @@ Type: ForeignKey
 .. index::
    single: field;title
    
-.. _igen.sales.DocItem.title:
+.. _std.sales.DocItem.title:
 
 Field **DocItem.title**
 =======================
@@ -2055,7 +2055,7 @@ Type: CharField
 .. index::
    single: field;description
    
-.. _igen.sales.DocItem.description:
+.. _std.sales.DocItem.description:
 
 Field **DocItem.description**
 =============================
@@ -2070,7 +2070,7 @@ Type: TextField
 .. index::
    single: field;discount
    
-.. _igen.sales.DocItem.discount:
+.. _std.sales.DocItem.discount:
 
 Field **DocItem.discount**
 ==========================
@@ -2085,7 +2085,7 @@ Type: IntegerField
 .. index::
    single: field;unit_price
    
-.. _igen.sales.DocItem.unit_price:
+.. _std.sales.DocItem.unit_price:
 
 Field **DocItem.unit_price**
 ============================
@@ -2100,7 +2100,7 @@ Type: PriceField
 .. index::
    single: field;qty
    
-.. _igen.sales.DocItem.qty:
+.. _std.sales.DocItem.qty:
 
 Field **DocItem.qty**
 =====================
@@ -2115,7 +2115,7 @@ Type: QuantityField
 .. index::
    single: field;total
    
-.. _igen.sales.DocItem.total:
+.. _std.sales.DocItem.total:
 
 Field **DocItem.total**
 =======================

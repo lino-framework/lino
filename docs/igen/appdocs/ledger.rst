@@ -17,7 +17,7 @@ Defined in :srcref:`/lino/modlib/ledger/models.py`
 .. index::
    pair: model; Account
 
-.. _igen.ledger.Account:
+.. _std.ledger.Account:
 
 -----------------
 Model **Account**
@@ -41,7 +41,7 @@ Defined in :srcref:`/lino/modlib/ledger/models.py`
 .. index::
    single: field;id
    
-.. _igen.ledger.Account.id:
+.. _std.ledger.Account.id:
 
 Field **Account.id**
 ====================
@@ -56,7 +56,7 @@ Type: AutoField
 .. index::
    single: field;match
    
-.. _igen.ledger.Account.match:
+.. _std.ledger.Account.match:
 
 Field **Account.match**
 =======================
@@ -71,7 +71,7 @@ Type: CharField
 .. index::
    single: field;name
    
-.. _igen.ledger.Account.name:
+.. _std.ledger.Account.name:
 
 Field **Account.name**
 ======================
@@ -88,7 +88,7 @@ Type: CharField
 .. index::
    pair: model; Booking
 
-.. _igen.ledger.Booking:
+.. _std.ledger.Booking:
 
 -----------------
 Model **Booking**
@@ -119,7 +119,7 @@ Defined in :srcref:`/lino/modlib/ledger/models.py`
 .. index::
    single: field;id
    
-.. _igen.ledger.Booking.id:
+.. _std.ledger.Booking.id:
 
 Field **Booking.id**
 ====================
@@ -134,7 +134,7 @@ Type: AutoField
 .. index::
    single: field;journal
    
-.. _igen.ledger.Booking.journal:
+.. _std.ledger.Booking.journal:
 
 Field **Booking.journal**
 =========================
@@ -149,7 +149,7 @@ Type: ForeignKey
 .. index::
    single: field;number
    
-.. _igen.ledger.Booking.number:
+.. _std.ledger.Booking.number:
 
 Field **Booking.number**
 ========================
@@ -164,7 +164,7 @@ Type: IntegerField
 .. index::
    single: field;pos
    
-.. _igen.ledger.Booking.pos:
+.. _std.ledger.Booking.pos:
 
 Field **Booking.pos**
 =====================
@@ -179,7 +179,7 @@ Type: IntegerField
 .. index::
    single: field;date
    
-.. _igen.ledger.Booking.date:
+.. _std.ledger.Booking.date:
 
 Field **Booking.date**
 ======================
@@ -194,7 +194,7 @@ Type: DateField
 .. index::
    single: field;account
    
-.. _igen.ledger.Booking.account:
+.. _std.ledger.Booking.account:
 
 Field **Booking.account**
 =========================
@@ -209,7 +209,7 @@ Type: ForeignKey
 .. index::
    single: field;person
    
-.. _igen.ledger.Booking.person:
+.. _std.ledger.Booking.person:
 
 Field **Booking.person**
 ========================
@@ -224,7 +224,7 @@ Type: ForeignKey
 .. index::
    single: field;company
    
-.. _igen.ledger.Booking.company:
+.. _std.ledger.Booking.company:
 
 Field **Booking.company**
 =========================
@@ -239,7 +239,7 @@ Type: ForeignKey
 .. index::
    single: field;debit
    
-.. _igen.ledger.Booking.debit:
+.. _std.ledger.Booking.debit:
 
 Field **Booking.debit**
 =======================
@@ -254,7 +254,7 @@ Type: PriceField
 .. index::
    single: field;credit
    
-.. _igen.ledger.Booking.credit:
+.. _std.ledger.Booking.credit:
 
 Field **Booking.credit**
 ========================

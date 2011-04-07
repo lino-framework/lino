@@ -17,7 +17,7 @@ Defined in :srcref:`/lino/modlib/countries/models.py`
 .. index::
    pair: model; Language
 
-.. _dsbe.countries.Language:
+.. _std.countries.Language:
 
 ------------------
 Model **Language**
@@ -44,7 +44,7 @@ Defined in :srcref:`/lino/modlib/countries/models.py`
 .. index::
    single: field;id
    
-.. _dsbe.countries.Language.id:
+.. _std.countries.Language.id:
 
 Field **Language.id**
 =====================
@@ -59,7 +59,7 @@ Type: CharField
 .. index::
    single: field;name
    
-.. _dsbe.countries.Language.name:
+.. _std.countries.Language.name:
 
 Field **Language.name**
 =======================
@@ -74,7 +74,7 @@ Type: CharField
 .. index::
    single: field;iso2
    
-.. _dsbe.countries.Language.iso2:
+.. _std.countries.Language.iso2:
 
 Field **Language.iso2**
 =======================
@@ -89,7 +89,7 @@ Type: CharField
 .. index::
    single: field;name_fr
    
-.. _dsbe.countries.Language.name_fr:
+.. _std.countries.Language.name_fr:
 
 Field **Language.name_fr**
 ==========================
@@ -104,7 +104,7 @@ Type: CharField
 .. index::
    single: field;name_nl
    
-.. _dsbe.countries.Language.name_nl:
+.. _std.countries.Language.name_nl:
 
 Field **Language.name_nl**
 ==========================
@@ -119,7 +119,7 @@ Type: CharField
 .. index::
    single: field;name_en
    
-.. _dsbe.countries.Language.name_en:
+.. _std.countries.Language.name_en:
 
 Field **Language.name_en**
 ==========================
@@ -136,7 +136,7 @@ Type: CharField
 .. index::
    pair: model; Country
 
-.. _dsbe.countries.Country:
+.. _std.countries.Country:
 
 -----------------
 Model **Country**
@@ -166,7 +166,7 @@ Defined in :srcref:`/lino/modlib/countries/models.py`
 .. index::
    single: field;isocode
    
-.. _dsbe.countries.Country.isocode:
+.. _std.countries.Country.isocode:
 
 Field **Country.isocode**
 =========================
@@ -181,7 +181,7 @@ Type: CharField
 .. index::
    single: field;name
    
-.. _dsbe.countries.Country.name:
+.. _std.countries.Country.name:
 
 Field **Country.name**
 ======================
@@ -196,7 +196,7 @@ Type: CharField
 .. index::
    single: field;short_code
    
-.. _dsbe.countries.Country.short_code:
+.. _std.countries.Country.short_code:
 
 Field **Country.short_code**
 ============================
@@ -211,7 +211,7 @@ Type: CharField
 .. index::
    single: field;iso3
    
-.. _dsbe.countries.Country.iso3:
+.. _std.countries.Country.iso3:
 
 Field **Country.iso3**
 ======================
@@ -226,7 +226,7 @@ Type: CharField
 .. index::
    single: field;name_fr
    
-.. _dsbe.countries.Country.name_fr:
+.. _std.countries.Country.name_fr:
 
 Field **Country.name_fr**
 =========================
@@ -241,7 +241,7 @@ Type: CharField
 .. index::
    single: field;name_nl
    
-.. _dsbe.countries.Country.name_nl:
+.. _std.countries.Country.name_nl:
 
 Field **Country.name_nl**
 =========================
@@ -256,7 +256,7 @@ Type: CharField
 .. index::
    single: field;name_en
    
-.. _dsbe.countries.Country.name_en:
+.. _std.countries.Country.name_en:
 
 Field **Country.name_en**
 =========================
@@ -273,7 +273,7 @@ Type: CharField
 .. index::
    pair: model; City
 
-.. _dsbe.countries.City:
+.. _std.countries.City:
 
 --------------
 Model **City**
@@ -300,7 +300,7 @@ Defined in :srcref:`/lino/modlib/countries/models.py`
 .. index::
    single: field;id
    
-.. _dsbe.countries.City.id:
+.. _std.countries.City.id:
 
 Field **City.id**
 =================
@@ -315,7 +315,7 @@ Type: AutoField
 .. index::
    single: field;name
    
-.. _dsbe.countries.City.name:
+.. _std.countries.City.name:
 
 Field **City.name**
 ===================
@@ -330,7 +330,7 @@ Type: CharField
 .. index::
    single: field;country
    
-.. _dsbe.countries.City.country:
+.. _std.countries.City.country:
 
 Field **City.country**
 ======================
@@ -345,7 +345,7 @@ Type: ForeignKey
 .. index::
    single: field;zip_code
    
-.. _dsbe.countries.City.zip_code:
+.. _std.countries.City.zip_code:
 
 Field **City.zip_code**
 =======================

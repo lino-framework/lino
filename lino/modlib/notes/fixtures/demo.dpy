@@ -17,7 +17,8 @@ from django.utils.translation import ugettext as _
 from lino.utils.instantiator import Instantiator, i2d
 from lino.tools import resolve_model
 
-from django.contrib.auth import models as auth
+#~ from django.contrib.auth import models as auth
+from lino.modlib.users import models as auth
 
 def objects():
   

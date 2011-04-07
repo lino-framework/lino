@@ -15,7 +15,7 @@
 Middleware to be used on sites with :doc:`/topics/http_auth`.
 """
 
-from lino.modlib.auth.models import User
+from lino.modlib.users.models import User
 from lino.utils import dblogger
 
 class RemoteUserMiddleware(object):

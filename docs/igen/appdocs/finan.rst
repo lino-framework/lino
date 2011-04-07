@@ -17,7 +17,7 @@ Defined in :srcref:`/lino/modlib/finan/models.py`
 .. index::
    pair: model; BankStatement
 
-.. _igen.finan.BankStatement:
+.. _std.finan.BankStatement:
 
 -----------------------
 Model **BankStatement**
@@ -47,7 +47,7 @@ Defined in :srcref:`/lino/modlib/finan/models.py`
 .. index::
    single: field;id
    
-.. _igen.finan.BankStatement.id:
+.. _std.finan.BankStatement.id:
 
 Field **BankStatement.id**
 ==========================
@@ -62,7 +62,7 @@ Type: AutoField
 .. index::
    single: field;journal
    
-.. _igen.finan.BankStatement.journal:
+.. _std.finan.BankStatement.journal:
 
 Field **BankStatement.journal**
 ===============================
@@ -77,7 +77,7 @@ Type: ForeignKey
 .. index::
    single: field;number
    
-.. _igen.finan.BankStatement.number:
+.. _std.finan.BankStatement.number:
 
 Field **BankStatement.number**
 ==============================
@@ -92,7 +92,7 @@ Type: IntegerField
 .. index::
    single: field;value_date
    
-.. _igen.finan.BankStatement.value_date:
+.. _std.finan.BankStatement.value_date:
 
 Field **BankStatement.value_date**
 ==================================
@@ -107,7 +107,7 @@ Type: DateField
 .. index::
    single: field;ledger_remark
    
-.. _igen.finan.BankStatement.ledger_remark:
+.. _std.finan.BankStatement.ledger_remark:
 
 Field **BankStatement.ledger_remark**
 =====================================
@@ -122,7 +122,7 @@ Type: CharField
 .. index::
    single: field;booked
    
-.. _igen.finan.BankStatement.booked:
+.. _std.finan.BankStatement.booked:
 
 Field **BankStatement.booked**
 ==============================
@@ -137,7 +137,7 @@ Type: BooleanField
 .. index::
    single: field;date
    
-.. _igen.finan.BankStatement.date:
+.. _std.finan.BankStatement.date:
 
 Field **BankStatement.date**
 ============================
@@ -152,7 +152,7 @@ Type: MyDateField
 .. index::
    single: field;balance1
    
-.. _igen.finan.BankStatement.balance1:
+.. _std.finan.BankStatement.balance1:
 
 Field **BankStatement.balance1**
 ================================
@@ -167,7 +167,7 @@ Type: PriceField
 .. index::
    single: field;balance2
    
-.. _igen.finan.BankStatement.balance2:
+.. _std.finan.BankStatement.balance2:
 
 Field **BankStatement.balance2**
 ================================
@@ -184,7 +184,7 @@ Type: PriceField
 .. index::
    pair: model; DocItem
 
-.. _igen.finan.DocItem:
+.. _std.finan.DocItem:
 
 -----------------
 Model **DocItem**
@@ -215,7 +215,7 @@ Defined in :srcref:`/lino/modlib/finan/models.py`
 .. index::
    single: field;id
    
-.. _igen.finan.DocItem.id:
+.. _std.finan.DocItem.id:
 
 Field **DocItem.id**
 ====================
@@ -230,7 +230,7 @@ Type: AutoField
 .. index::
    single: field;document
    
-.. _igen.finan.DocItem.document:
+.. _std.finan.DocItem.document:
 
 Field **DocItem.document**
 ==========================
@@ -245,7 +245,7 @@ Type: ForeignKey
 .. index::
    single: field;pos
    
-.. _igen.finan.DocItem.pos:
+.. _std.finan.DocItem.pos:
 
 Field **DocItem.pos**
 =====================
@@ -260,7 +260,7 @@ Type: IntegerField
 .. index::
    single: field;date
    
-.. _igen.finan.DocItem.date:
+.. _std.finan.DocItem.date:
 
 Field **DocItem.date**
 ======================
@@ -275,7 +275,7 @@ Type: MyDateField
 .. index::
    single: field;debit
    
-.. _igen.finan.DocItem.debit:
+.. _std.finan.DocItem.debit:
 
 Field **DocItem.debit**
 =======================
@@ -290,7 +290,7 @@ Type: PriceField
 .. index::
    single: field;credit
    
-.. _igen.finan.DocItem.credit:
+.. _std.finan.DocItem.credit:
 
 Field **DocItem.credit**
 ========================
@@ -305,7 +305,7 @@ Type: PriceField
 .. index::
    single: field;remark
    
-.. _igen.finan.DocItem.remark:
+.. _std.finan.DocItem.remark:
 
 Field **DocItem.remark**
 ========================
@@ -320,7 +320,7 @@ Type: CharField
 .. index::
    single: field;account
    
-.. _igen.finan.DocItem.account:
+.. _std.finan.DocItem.account:
 
 Field **DocItem.account**
 =========================
@@ -335,7 +335,7 @@ Type: ForeignKey
 .. index::
    single: field;person
    
-.. _igen.finan.DocItem.person:
+.. _std.finan.DocItem.person:
 
 Field **DocItem.person**
 ========================
@@ -350,7 +350,7 @@ Type: ForeignKey
 .. index::
    single: field;company
    
-.. _igen.finan.DocItem.company:
+.. _std.finan.DocItem.company:
 
 Field **DocItem.company**
 =========================

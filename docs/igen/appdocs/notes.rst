@@ -17,7 +17,7 @@ Defined in :srcref:`/lino/modlib/notes/models.py`
 .. index::
    pair: model; NoteType
 
-.. _igen.notes.NoteType:
+.. _std.notes.NoteType:
 
 ------------------
 Model **NoteType**
@@ -44,7 +44,7 @@ Defined in :srcref:`/lino/modlib/notes/models.py`
 .. index::
    single: field;id
    
-.. _igen.notes.NoteType.id:
+.. _std.notes.NoteType.id:
 
 Field **NoteType.id**
 =====================
@@ -59,7 +59,7 @@ Type: AutoField
 .. index::
    single: field;build_method
    
-.. _igen.notes.NoteType.build_method:
+.. _std.notes.NoteType.build_method:
 
 Field **NoteType.build_method**
 ===============================
@@ -74,7 +74,7 @@ Type: CharField
 .. index::
    single: field;template
    
-.. _igen.notes.NoteType.template:
+.. _std.notes.NoteType.template:
 
 Field **NoteType.template**
 ===========================
@@ -89,7 +89,7 @@ Type: CharField
 .. index::
    single: field;name
    
-.. _igen.notes.NoteType.name:
+.. _std.notes.NoteType.name:
 
 Field **NoteType.name**
 =======================
@@ -104,7 +104,7 @@ Type: CharField
 .. index::
    single: field;important
    
-.. _igen.notes.NoteType.important:
+.. _std.notes.NoteType.important:
 
 Field **NoteType.important**
 ============================
@@ -119,7 +119,7 @@ Type: BooleanField
 .. index::
    single: field;remark
    
-.. _igen.notes.NoteType.remark:
+.. _std.notes.NoteType.remark:
 
 Field **NoteType.remark**
 =========================
@@ -136,7 +136,7 @@ Type: TextField
 .. index::
    pair: model; Note
 
-.. _igen.notes.Note:
+.. _std.notes.Note:
 
 --------------
 Model **Note**
@@ -169,7 +169,7 @@ Defined in :srcref:`/lino/apps/igen/models.py`
 .. index::
    single: field;id
    
-.. _igen.notes.Note.id:
+.. _std.notes.Note.id:
 
 Field **Note.id**
 =================
@@ -184,7 +184,7 @@ Type: AutoField
 .. index::
    single: field;user
    
-.. _igen.notes.Note.user:
+.. _std.notes.Note.user:
 
 Field **Note.user**
 ===================
@@ -199,7 +199,7 @@ Type: ForeignKey
 .. index::
    single: field;reminder_date
    
-.. _igen.notes.Note.reminder_date:
+.. _std.notes.Note.reminder_date:
 
 Field **Note.reminder_date**
 ============================
@@ -214,7 +214,7 @@ Type: DateField
 .. index::
    single: field;reminder_text
    
-.. _igen.notes.Note.reminder_text:
+.. _std.notes.Note.reminder_text:
 
 Field **Note.reminder_text**
 ============================
@@ -229,7 +229,7 @@ Type: CharField
 .. index::
    single: field;delay_value
    
-.. _igen.notes.Note.delay_value:
+.. _std.notes.Note.delay_value:
 
 Field **Note.delay_value**
 ==========================
@@ -244,7 +244,7 @@ Type: IntegerField
 .. index::
    single: field;delay_type
    
-.. _igen.notes.Note.delay_type:
+.. _std.notes.Note.delay_type:
 
 Field **Note.delay_type**
 =========================
@@ -259,7 +259,7 @@ Type: CharField
 .. index::
    single: field;must_build
    
-.. _igen.notes.Note.must_build:
+.. _std.notes.Note.must_build:
 
 Field **Note.must_build**
 =========================
@@ -274,7 +274,7 @@ Type: BooleanField
 .. index::
    single: field;date
    
-.. _igen.notes.Note.date:
+.. _std.notes.Note.date:
 
 Field **Note.date**
 ===================
@@ -289,7 +289,7 @@ Type: DateField
 .. index::
    single: field;type
    
-.. _igen.notes.Note.type:
+.. _std.notes.Note.type:
 
 Field **Note.type**
 ===================
@@ -304,7 +304,7 @@ Type: ForeignKey
 .. index::
    single: field;subject
    
-.. _igen.notes.Note.subject:
+.. _std.notes.Note.subject:
 
 Field **Note.subject**
 ======================
@@ -319,7 +319,7 @@ Type: CharField
 .. index::
    single: field;body
    
-.. _igen.notes.Note.body:
+.. _std.notes.Note.body:
 
 Field **Note.body**
 ===================
@@ -334,7 +334,7 @@ Type: TextField
 .. index::
    single: field;language
    
-.. _igen.notes.Note.language:
+.. _std.notes.Note.language:
 
 Field **Note.language**
 =======================

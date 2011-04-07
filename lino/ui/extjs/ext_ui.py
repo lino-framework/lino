@@ -144,6 +144,7 @@ def error_response(e,message=None,**kw):
         message = unicode(e)
     kw.update(message=cgi.escape(message))
     #~ kw.update(message=message_prefix+unicode(e))
+    dblogger.debug('error_response %s',kw)
     return json_response(kw)
     
 
@@ -749,7 +750,8 @@ class ExtUI(base.UI):
         try:
             rh.store.form2obj(request,data,elem,is_new)
         except exceptions.ValidationError,e:
-           return error_response(e)
+            #~ raise
+            return error_response(e)
            #~ return error_response(e,_("There was a problem while validating your data : "))
         #~ logger.info('store.form2obj passed')
         
@@ -765,6 +767,7 @@ class ExtUI(base.UI):
         try:
             elem.full_clean()
         except exceptions.ValidationError, e:
+            raise
             return error_response(e) #,_("There was a problem while validating your data : "))
             #~ return json_response_kw(success=False,msg="Failed to save %s : %s" % (elem,e))
             
@@ -980,7 +983,7 @@ class ExtUI(base.UI):
             #~ if rpt.disable_delete is not None:
             msg = rpt.disable_delete(elem,request)
             if msg is not None:
-                return error_response(Non,msg)
+                return error_response(None,msg)
                     
             dblogger.log_deleted(request,elem)
             
@@ -990,7 +993,7 @@ class ExtUI(base.UI):
                 dblogger.exception(e)
                 msg = _("Failed to delete %(record)s : %(error)s.") % dict(record=obj2str(elem),error=e)
                 #~ msg = "Failed to delete %s." % element_name(elem)
-                return error_response(Non,msg)
+                return error_response(None,msg)
                 #~ raise Http404(msg)
             return HttpResponseDeleted()
             

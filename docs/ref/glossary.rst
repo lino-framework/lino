@@ -59,3 +59,6 @@ Glossary
     (possibly including slave records).
     Used for viewing, editing or to insert new records.
     
+  GFK
+    Generic ForeignKey. This is a ForeignKey that can point to 
+    different tables.

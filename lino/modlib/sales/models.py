@@ -42,7 +42,8 @@ from lino.tools import resolve_app
 
 journals = resolve_app('journals')
 #~ journals = models.get_app('journals')
-auth = resolve_app('auth')
+#~ auth = resolve_app('auth')
+from lino.modlib.users import models as auth
 #~ ledger = models.get_app('ledger')
 from lino.modlib.ledger import models as ledger
 #~ products = models.get_app('products')

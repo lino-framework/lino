@@ -130,9 +130,9 @@ class GeneratingCommand(BaseCommand):
         make_option('--noinput', action='store_false', 
             dest='interactive', default=True,
             help='Do not prompt for input of any kind.'),
-        make_option('--overwrite', action='store_true', 
-            dest='overwrite', default=False,
-            help='Overwrite existing files.'),
+        #~ make_option('--overwrite', action='store_true', 
+            #~ dest='overwrite', default=False,
+            #~ help='Overwrite existing files.'),
     ) 
     
     def create_parser(self, prog_name, subcommand):
@@ -167,13 +167,15 @@ class GeneratingCommand(BaseCommand):
         tpl_filename = os.path.abspath(tpl_filename)
         fn = join(self.output_dir,fn)
         
-        if os.path.exists(fn):
-            if not self.options.get('overwrite'):
-                if not confirm("Overwrite existing file %s (y/n) ?" % fn):
-                    logger.info("Skipping %s because file exists.",fn)
-                    return 
-        else:
-            mkdir_if(os.path.dirname(fn))
+        #~ if os.path.exists(fn):
+            #~ if not self.options.get('overwrite'):
+                #~ if not confirm("Overwrite existing file %s (y/n) ?" % fn):
+                    #~ logger.info("Skipping %s because file exists.",fn)
+                    #~ return 
+        #~ else:
+            #~ mkdir_if(os.path.dirname(fn))
+            
+        mkdir_if(os.path.dirname(fn))
         
         logger.info("Generating %s",fn)
         #~ logger.info("Generating %s from %s",fn,tpl_filename)

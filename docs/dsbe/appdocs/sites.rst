@@ -17,7 +17,7 @@ Defined in :srcref:`/django/contrib/sites/models.py`
 .. index::
    pair: model; Site
 
-.. _dsbe.sites.Site:
+.. _std.sites.Site:
 
 --------------
 Model **Site**
@@ -41,7 +41,7 @@ Defined in :srcref:`/django/contrib/sites/models.py`
 .. index::
    single: field;id
    
-.. _dsbe.sites.Site.id:
+.. _std.sites.Site.id:
 
 Field **Site.id**
 =================
@@ -56,7 +56,7 @@ Type: AutoField
 .. index::
    single: field;domain
    
-.. _dsbe.sites.Site.domain:
+.. _std.sites.Site.domain:
 
 Field **Site.domain**
 =====================
@@ -71,7 +71,7 @@ Type: CharField
 .. index::
    single: field;name
    
-.. _dsbe.sites.Site.name:
+.. _std.sites.Site.name:
 
 Field **Site.name**
 ===================

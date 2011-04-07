@@ -27,7 +27,7 @@ and only
 .. index::
    pair: model; PropType
 
-.. _dsbe.properties.PropType:
+.. _std.properties.PropType:
 
 ------------------
 Model **PropType**
@@ -50,10 +50,10 @@ name             type           verbose name
 ================ ============== ==========================================
 id               AutoField      ID                                        
 name             BabelCharField Designation (Beschreibung)                
-choicelist       CharField      Choices List                              
-default_value    CharField      default value                             
+choicelist       CharField      Choices List (Auswahliste)                
+default_value    CharField      default value (Standardwert)              
 limit_to_choices BooleanField   Limit to choices (Beschränken auf Auswahl)
-multiple_choices BooleanField   Multiple choices                          
+multiple_choices BooleanField   Multiple choices (Mehrfachauswahl)        
 name_fr          CharField      Designation (fr)                          
 name_nl          CharField      Designation (nl)                          
 name_en          CharField      Designation (en)                          
@@ -65,7 +65,7 @@ Defined in :srcref:`/lino/modlib/properties/models.py`
 .. index::
    single: field;id
    
-.. _dsbe.properties.PropType.id:
+.. _std.properties.PropType.id:
 
 Field **PropType.id**
 =====================
@@ -80,7 +80,7 @@ Type: AutoField
 .. index::
    single: field;name
    
-.. _dsbe.properties.PropType.name:
+.. _std.properties.PropType.name:
 
 Field **PropType.name**
 =======================
@@ -95,7 +95,7 @@ Type: BabelCharField
 .. index::
    single: field;choicelist
    
-.. _dsbe.properties.PropType.choicelist:
+.. _std.properties.PropType.choicelist:
 
 Field **PropType.choicelist**
 =============================
@@ -110,7 +110,7 @@ Type: CharField
 .. index::
    single: field;default_value
    
-.. _dsbe.properties.PropType.default_value:
+.. _std.properties.PropType.default_value:
 
 Field **PropType.default_value**
 ================================
@@ -125,7 +125,7 @@ Type: CharField
 .. index::
    single: field;limit_to_choices
    
-.. _dsbe.properties.PropType.limit_to_choices:
+.. _std.properties.PropType.limit_to_choices:
 
 Field **PropType.limit_to_choices**
 ===================================
@@ -140,7 +140,7 @@ Type: BooleanField
 .. index::
    single: field;multiple_choices
    
-.. _dsbe.properties.PropType.multiple_choices:
+.. _std.properties.PropType.multiple_choices:
 
 Field **PropType.multiple_choices**
 ===================================
@@ -155,7 +155,7 @@ Type: BooleanField
 .. index::
    single: field;name_fr
    
-.. _dsbe.properties.PropType.name_fr:
+.. _std.properties.PropType.name_fr:
 
 Field **PropType.name_fr**
 ==========================
@@ -170,7 +170,7 @@ Type: CharField
 .. index::
    single: field;name_nl
    
-.. _dsbe.properties.PropType.name_nl:
+.. _std.properties.PropType.name_nl:
 
 Field **PropType.name_nl**
 ==========================
@@ -185,7 +185,7 @@ Type: CharField
 .. index::
    single: field;name_en
    
-.. _dsbe.properties.PropType.name_en:
+.. _std.properties.PropType.name_en:
 
 Field **PropType.name_en**
 ==========================
@@ -202,7 +202,7 @@ Type: CharField
 .. index::
    pair: model; PropChoice
 
-.. _dsbe.properties.PropChoice:
+.. _std.properties.PropChoice:
 
 --------------------
 Model **PropChoice**
@@ -234,7 +234,7 @@ Defined in :srcref:`/lino/modlib/properties/models.py`
 .. index::
    single: field;id
    
-.. _dsbe.properties.PropChoice.id:
+.. _std.properties.PropChoice.id:
 
 Field **PropChoice.id**
 =======================
@@ -249,7 +249,7 @@ Type: AutoField
 .. index::
    single: field;type
    
-.. _dsbe.properties.PropChoice.type:
+.. _std.properties.PropChoice.type:
 
 Field **PropChoice.type**
 =========================
@@ -264,7 +264,7 @@ Type: ForeignKey
 .. index::
    single: field;value
    
-.. _dsbe.properties.PropChoice.value:
+.. _std.properties.PropChoice.value:
 
 Field **PropChoice.value**
 ==========================
@@ -279,7 +279,7 @@ Type: CharField
 .. index::
    single: field;text
    
-.. _dsbe.properties.PropChoice.text:
+.. _std.properties.PropChoice.text:
 
 Field **PropChoice.text**
 =========================
@@ -294,7 +294,7 @@ Type: BabelCharField
 .. index::
    single: field;text_fr
    
-.. _dsbe.properties.PropChoice.text_fr:
+.. _std.properties.PropChoice.text_fr:
 
 Field **PropChoice.text_fr**
 ============================
@@ -309,7 +309,7 @@ Type: CharField
 .. index::
    single: field;text_nl
    
-.. _dsbe.properties.PropChoice.text_nl:
+.. _std.properties.PropChoice.text_nl:
 
 Field **PropChoice.text_nl**
 ============================
@@ -324,7 +324,7 @@ Type: CharField
 .. index::
    single: field;text_en
    
-.. _dsbe.properties.PropChoice.text_en:
+.. _std.properties.PropChoice.text_en:
 
 Field **PropChoice.text_en**
 ============================
@@ -341,7 +341,7 @@ Type: CharField
 .. index::
    pair: model; PropGroup
 
-.. _dsbe.properties.PropGroup:
+.. _std.properties.PropGroup:
 
 -------------------
 Model **PropGroup**
@@ -371,7 +371,7 @@ Defined in :srcref:`/lino/modlib/properties/models.py`
 .. index::
    single: field;id
    
-.. _dsbe.properties.PropGroup.id:
+.. _std.properties.PropGroup.id:
 
 Field **PropGroup.id**
 ======================
@@ -386,7 +386,7 @@ Type: AutoField
 .. index::
    single: field;name
    
-.. _dsbe.properties.PropGroup.name:
+.. _std.properties.PropGroup.name:
 
 Field **PropGroup.name**
 ========================
@@ -401,7 +401,7 @@ Type: BabelCharField
 .. index::
    single: field;name_fr
    
-.. _dsbe.properties.PropGroup.name_fr:
+.. _std.properties.PropGroup.name_fr:
 
 Field **PropGroup.name_fr**
 ===========================
@@ -416,7 +416,7 @@ Type: CharField
 .. index::
    single: field;name_nl
    
-.. _dsbe.properties.PropGroup.name_nl:
+.. _std.properties.PropGroup.name_nl:
 
 Field **PropGroup.name_nl**
 ===========================
@@ -431,7 +431,7 @@ Type: CharField
 .. index::
    single: field;name_en
    
-.. _dsbe.properties.PropGroup.name_en:
+.. _std.properties.PropGroup.name_en:
 
 Field **PropGroup.name_en**
 ===========================
@@ -448,7 +448,7 @@ Type: CharField
 .. index::
    pair: model; Property
 
-.. _dsbe.properties.Property:
+.. _std.properties.Property:
 
 ------------------
 Model **Property**
@@ -476,7 +476,7 @@ Defined in :srcref:`/lino/modlib/properties/models.py`
 .. index::
    single: field;id
    
-.. _dsbe.properties.Property.id:
+.. _std.properties.Property.id:
 
 Field **Property.id**
 =====================
@@ -491,7 +491,7 @@ Type: AutoField
 .. index::
    single: field;name
    
-.. _dsbe.properties.Property.name:
+.. _std.properties.Property.name:
 
 Field **Property.name**
 =======================
@@ -506,7 +506,7 @@ Type: BabelCharField
 .. index::
    single: field;group
    
-.. _dsbe.properties.Property.group:
+.. _std.properties.Property.group:
 
 Field **Property.group**
 ========================
@@ -521,7 +521,7 @@ Type: ForeignKey
 .. index::
    single: field;type
    
-.. _dsbe.properties.Property.type:
+.. _std.properties.Property.type:
 
 Field **Property.type**
 =======================
@@ -536,7 +536,7 @@ Type: ForeignKey
 .. index::
    single: field;name_fr
    
-.. _dsbe.properties.Property.name_fr:
+.. _std.properties.Property.name_fr:
 
 Field **Property.name_fr**
 ==========================
@@ -551,7 +551,7 @@ Type: CharField
 .. index::
    single: field;name_nl
    
-.. _dsbe.properties.Property.name_nl:
+.. _std.properties.Property.name_nl:
 
 Field **Property.name_nl**
 ==========================
@@ -566,7 +566,7 @@ Type: CharField
 .. index::
    single: field;name_en
    
-.. _dsbe.properties.Property.name_en:
+.. _std.properties.Property.name_en:
 
 Field **Property.name_en**
 ==========================
@@ -583,7 +583,7 @@ Type: CharField
 .. index::
    pair: model; PersonProperty
 
-.. _dsbe.properties.PersonProperty:
+.. _std.properties.PersonProperty:
 
 ------------------------
 Model **PersonProperty**
@@ -610,7 +610,7 @@ Defined in :srcref:`/lino/apps/dsbe/models.py`
 .. index::
    single: field;id
    
-.. _dsbe.properties.PersonProperty.id:
+.. _std.properties.PersonProperty.id:
 
 Field **PersonProperty.id**
 ===========================
@@ -625,7 +625,7 @@ Type: AutoField
 .. index::
    single: field;group
    
-.. _dsbe.properties.PersonProperty.group:
+.. _std.properties.PersonProperty.group:
 
 Field **PersonProperty.group**
 ==============================
@@ -640,7 +640,7 @@ Type: ForeignKey
 .. index::
    single: field;property
    
-.. _dsbe.properties.PersonProperty.property:
+.. _std.properties.PersonProperty.property:
 
 Field **PersonProperty.property**
 =================================
@@ -655,7 +655,7 @@ Type: ForeignKey
 .. index::
    single: field;value
    
-.. _dsbe.properties.PersonProperty.value:
+.. _std.properties.PersonProperty.value:
 
 Field **PersonProperty.value**
 ==============================
@@ -670,7 +670,7 @@ Type: CharField
 .. index::
    single: field;person
    
-.. _dsbe.properties.PersonProperty.person:
+.. _std.properties.PersonProperty.person:
 
 Field **PersonProperty.person**
 ===============================
@@ -685,7 +685,7 @@ Type: ForeignKey
 .. index::
    single: field;remark
    
-.. _dsbe.properties.PersonProperty.remark:
+.. _std.properties.PersonProperty.remark:
 
 Field **PersonProperty.remark**
 ===============================
@@ -702,7 +702,7 @@ Type: CharField
 .. index::
    pair: model; WantedSkill
 
-.. _dsbe.properties.WantedSkill:
+.. _std.properties.WantedSkill:
 
 ---------------------
 Model **WantedSkill**
@@ -728,7 +728,7 @@ Defined in :srcref:`/lino/apps/dsbe/models.py`
 .. index::
    single: field;id
    
-.. _dsbe.properties.WantedSkill.id:
+.. _std.properties.WantedSkill.id:
 
 Field **WantedSkill.id**
 ========================
@@ -743,7 +743,7 @@ Type: AutoField
 .. index::
    single: field;group
    
-.. _dsbe.properties.WantedSkill.group:
+.. _std.properties.WantedSkill.group:
 
 Field **WantedSkill.group**
 ===========================
@@ -758,7 +758,7 @@ Type: ForeignKey
 .. index::
    single: field;property
    
-.. _dsbe.properties.WantedSkill.property:
+.. _std.properties.WantedSkill.property:
 
 Field **WantedSkill.property**
 ==============================
@@ -773,7 +773,7 @@ Type: ForeignKey
 .. index::
    single: field;value
    
-.. _dsbe.properties.WantedSkill.value:
+.. _std.properties.WantedSkill.value:
 
 Field **WantedSkill.value**
 ===========================
@@ -788,7 +788,7 @@ Type: CharField
 .. index::
    single: field;search
    
-.. _dsbe.properties.WantedSkill.search:
+.. _std.properties.WantedSkill.search:
 
 Field **WantedSkill.search**
 ============================
@@ -805,7 +805,7 @@ Type: ForeignKey
 .. index::
    pair: model; UnwantedSkill
 
-.. _dsbe.properties.UnwantedSkill:
+.. _std.properties.UnwantedSkill:
 
 -----------------------
 Model **UnwantedSkill**
@@ -831,7 +831,7 @@ Defined in :srcref:`/lino/apps/dsbe/models.py`
 .. index::
    single: field;id
    
-.. _dsbe.properties.UnwantedSkill.id:
+.. _std.properties.UnwantedSkill.id:
 
 Field **UnwantedSkill.id**
 ==========================
@@ -846,7 +846,7 @@ Type: AutoField
 .. index::
    single: field;group
    
-.. _dsbe.properties.UnwantedSkill.group:
+.. _std.properties.UnwantedSkill.group:
 
 Field **UnwantedSkill.group**
 =============================
@@ -861,7 +861,7 @@ Type: ForeignKey
 .. index::
    single: field;property
    
-.. _dsbe.properties.UnwantedSkill.property:
+.. _std.properties.UnwantedSkill.property:
 
 Field **UnwantedSkill.property**
 ================================
@@ -876,7 +876,7 @@ Type: ForeignKey
 .. index::
    single: field;value
    
-.. _dsbe.properties.UnwantedSkill.value:
+.. _std.properties.UnwantedSkill.value:
 
 Field **UnwantedSkill.value**
 =============================
@@ -891,7 +891,7 @@ Type: CharField
 .. index::
    single: field;search
    
-.. _dsbe.properties.UnwantedSkill.search:
+.. _std.properties.UnwantedSkill.search:
 
 Field **UnwantedSkill.search**
 ==============================

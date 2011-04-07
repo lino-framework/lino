@@ -100,7 +100,8 @@ class Lino(Lino):
         mm.add_action('countries.Countries')
         mm.add_action('countries.Cities')
         #~ me.add_action('auth.Permissions')
-        ma.add_action('auth.Users')
+        #~ ma.add_action('auth.Users')
+        ma.add_action('users.Users')
         #~ me.add_action('auth.Groups')
         #~ m.add_action('dsbe.DrivingLicenses')
         mm.add_action('dsbe.StudyTypes')
@@ -172,7 +173,7 @@ SITE_ID = 1 # see also fill.py
 
 INSTALLED_APPS = (
   #~ 'django.contrib.auth',
-  'lino.modlib.auth',
+  'lino.modlib.users',
   'django.contrib.contenttypes',
   #~ 'django.contrib.sessions',
   'django.contrib.sites',

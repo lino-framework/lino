@@ -6,7 +6,7 @@ Lino/iGen
 
 .. toctree::
 
-    auth
+    users
     contenttypes
     sites
     lino

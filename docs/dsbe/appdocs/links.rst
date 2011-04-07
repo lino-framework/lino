@@ -17,7 +17,7 @@ Defined in :srcref:`/lino/modlib/links/models.py`
 .. index::
    pair: model; LinkType
 
-.. _dsbe.links.LinkType:
+.. _std.links.LinkType:
 
 ------------------
 Model **LinkType**
@@ -40,7 +40,7 @@ Defined in :srcref:`/lino/modlib/links/models.py`
 .. index::
    single: field;id
    
-.. _dsbe.links.LinkType.id:
+.. _std.links.LinkType.id:
 
 Field **LinkType.id**
 =====================
@@ -55,7 +55,7 @@ Type: AutoField
 .. index::
    single: field;name
    
-.. _dsbe.links.LinkType.name:
+.. _std.links.LinkType.name:
 
 Field **LinkType.name**
 =======================
@@ -72,7 +72,7 @@ Type: CharField
 .. index::
    pair: model; Link
 
-.. _dsbe.links.Link:
+.. _std.links.Link:
 
 --------------
 Model **Link**
@@ -105,7 +105,7 @@ Defined in :srcref:`/lino/apps/dsbe/models.py`
 .. index::
    single: field;id
    
-.. _dsbe.links.Link.id:
+.. _std.links.Link.id:
 
 Field **Link.id**
 =================
@@ -120,7 +120,7 @@ Type: AutoField
 .. index::
    single: field;user
    
-.. _dsbe.links.Link.user:
+.. _std.links.Link.user:
 
 Field **Link.user**
 ===================
@@ -135,7 +135,7 @@ Type: ForeignKey
 .. index::
    single: field;reminder_date
    
-.. _dsbe.links.Link.reminder_date:
+.. _std.links.Link.reminder_date:
 
 Field **Link.reminder_date**
 ============================
@@ -150,7 +150,7 @@ Type: DateField
 .. index::
    single: field;reminder_text
    
-.. _dsbe.links.Link.reminder_text:
+.. _std.links.Link.reminder_text:
 
 Field **Link.reminder_text**
 ============================
@@ -165,7 +165,7 @@ Type: CharField
 .. index::
    single: field;delay_value
    
-.. _dsbe.links.Link.delay_value:
+.. _std.links.Link.delay_value:
 
 Field **Link.delay_value**
 ==========================
@@ -180,7 +180,7 @@ Type: IntegerField
 .. index::
    single: field;delay_type
    
-.. _dsbe.links.Link.delay_type:
+.. _std.links.Link.delay_type:
 
 Field **Link.delay_type**
 =========================
@@ -195,7 +195,7 @@ Type: CharField
 .. index::
    single: field;person
    
-.. _dsbe.links.Link.person:
+.. _std.links.Link.person:
 
 Field **Link.person**
 =====================
@@ -210,7 +210,7 @@ Type: ForeignKey
 .. index::
    single: field;company
    
-.. _dsbe.links.Link.company:
+.. _std.links.Link.company:
 
 Field **Link.company**
 ======================
@@ -225,7 +225,7 @@ Type: ForeignKey
 .. index::
    single: field;type
    
-.. _dsbe.links.Link.type:
+.. _std.links.Link.type:
 
 Field **Link.type**
 ===================
@@ -240,7 +240,7 @@ Type: ForeignKey
 .. index::
    single: field;date
    
-.. _dsbe.links.Link.date:
+.. _std.links.Link.date:
 
 Field **Link.date**
 ===================
@@ -255,7 +255,7 @@ Type: DateTimeField
 .. index::
    single: field;url
    
-.. _dsbe.links.Link.url:
+.. _std.links.Link.url:
 
 Field **Link.url**
 ==================
@@ -270,7 +270,7 @@ Type: URLField
 .. index::
    single: field;name
    
-.. _dsbe.links.Link.name:
+.. _std.links.Link.name:
 
 Field **Link.name**
 ===================

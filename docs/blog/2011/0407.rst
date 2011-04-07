@@ -39,3 +39,37 @@ Zwischenrelease
 
 So, nun wo die schlimmsten Bugs raus sind, mach ich in Eupen ein Upgrade.
 Ich habe auch ein neues Dokument :doc:`/dsbe/testlauf` begonnen.
+
+
+`lino.modlib.auth` wird `lino.modlib.users`
+-------------------------------------------
+
+Hier ein Bug, der offenbar schon seit Wochen drin ist und noch von 
+niemandem bemerkt worden ist:
+
+#.  Man kann keine neuen Benutzer anlegen. 
+    Er sagt dann "password: Dieses Feld darf nicht leer sein". 
+    Dabei gibt es ja gar kein Passwort mehr in `lino.modlib.auth`.
+
+In der Tat: `django.contrib.auth` wird an bestimmten Stellen im Django-Code 
+importiert, dadurch kommen diese Models auch in den Model-Pool, und dort 
+überschreiben Sie dann das von mir in `lino.modlib.auth` definierte Modell für `User`. 
+Ohne Warnung...
+
+Also jetzt ist das app_label nicht mehr `auth`, sondern `users`. 
+Was im Grunde logischer ist, weil ich ja nicht Authentifizierung mache, 
+sondern lediglich eine Benutzertabelle.
+
+Das bedeutet aber auch, dass Djangos System mit dem `app_label` vielleicht gar 
+nicht nutzbar ist, um wiederverwertbare verknüpfbare Module zu schreiben.
+Und oh mein Gott, die Tests von `django.contrib.contentypes` 
+sind abhängig von `django.contrib.auth`. 
+Die Testsuite von contenttpyes müsste für gut darauf 
+testen, ob ein `app_label` names `auth` überhaupt installiert ist.
+
+Na ja, also meine Idee, das auth-Modul von Django zu ersetzen, 
+ist zwar mutig, aber vielleicht auch verrückt. 
+Wir werden sehen. Kommt Zeit, kommt Rat. 
+Zur Zeit funktioniert ``manage.py test`` jedenfalls mal wieder nicht.
+
+

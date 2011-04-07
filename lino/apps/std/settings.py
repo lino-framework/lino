@@ -304,7 +304,7 @@ MIDDLEWARE_CLASSES = [
     'django.middleware.common.CommonMiddleware',
     #~ 'django.contrib.sessions.middleware.SessionMiddleware',
     #~ 'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'lino.modlib.auth.middleware.RemoteUserMiddleware',
+    'lino.modlib.users.middleware.RemoteUserMiddleware',
     'django.middleware.doc.XViewMiddleware',
     #'lino.utils.editing.EditingMiddleware',
 ]
@@ -339,7 +339,7 @@ TEMPLATE_DIRS = (
 
 INSTALLED_APPS = [
   #~ 'django.contrib.auth',
-  'lino.modlib.auth',
+  'lino.modlib.users',
   'django.contrib.contenttypes',
   #~ 'django.contrib.sessions',
   'django.contrib.sites',
@@ -376,9 +376,9 @@ SERIALIZATION_MODULES = {
 
 #print "done", __file__
 
-TEMPLATE_CONTEXT_PROCESSORS = (
-  "django.core.context_processors.auth",
-)
+#~ TEMPLATE_CONTEXT_PROCESSORS = (
+  #~ "django.core.context_processors.auth",
+#~ )
 
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = "/"

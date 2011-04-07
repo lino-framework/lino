@@ -29,7 +29,8 @@ from lino.utils.babel import babel_values, default_language
 from lino.utils import dblogger
 from lino.models import update_site_config
 
-from django.contrib.auth import models as auth
+#~ from django.contrib.auth import models as auth
+from lino.modlib.users import models as auth
 
 #~ dblogger.info('Loading')
 
@@ -46,7 +47,7 @@ DATE = i2d(20061014)
     
 
 
-auth = models.get_app('auth')
+#~ auth = models.get_app('auth')
 #~ projects = models.get_app('projects')
 #~ contacts = models.get_app('contacts')
 #~ notes = models.get_app('notes')
@@ -57,7 +58,7 @@ Company = resolve_model('contacts.Company')
 Contact = resolve_model('contacts.Contact')
 Contract = resolve_model('dsbe.Contract')
 Note = resolve_model('notes.Note')
-User = resolve_model('auth.User')
+User = resolve_model('users.User')
 Country = resolve_model('countries.Country')
     
 

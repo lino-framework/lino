@@ -22,7 +22,7 @@ It defines tables like `Person` and `Company`
 .. index::
    pair: model; CompanyType
 
-.. _dsbe.contacts.CompanyType:
+.. _std.contacts.CompanyType:
 
 ---------------------
 Model **CompanyType**
@@ -59,7 +59,7 @@ Defined in :srcref:`/lino/modlib/contacts/models.py`
 .. index::
    single: field;id
    
-.. _dsbe.contacts.CompanyType.id:
+.. _std.contacts.CompanyType.id:
 
 Field **CompanyType.id**
 ========================
@@ -74,7 +74,7 @@ Type: AutoField
 .. index::
    single: field;name
    
-.. _dsbe.contacts.CompanyType.name:
+.. _std.contacts.CompanyType.name:
 
 Field **CompanyType.name**
 ==========================
@@ -89,7 +89,7 @@ Type: BabelCharField
 .. index::
    single: field;abbr
    
-.. _dsbe.contacts.CompanyType.abbr:
+.. _std.contacts.CompanyType.abbr:
 
 Field **CompanyType.abbr**
 ==========================
@@ -104,7 +104,7 @@ Type: BabelCharField
 .. index::
    single: field;name_fr
    
-.. _dsbe.contacts.CompanyType.name_fr:
+.. _std.contacts.CompanyType.name_fr:
 
 Field **CompanyType.name_fr**
 =============================
@@ -119,7 +119,7 @@ Type: CharField
 .. index::
    single: field;name_nl
    
-.. _dsbe.contacts.CompanyType.name_nl:
+.. _std.contacts.CompanyType.name_nl:
 
 Field **CompanyType.name_nl**
 =============================
@@ -134,7 +134,7 @@ Type: CharField
 .. index::
    single: field;name_en
    
-.. _dsbe.contacts.CompanyType.name_en:
+.. _std.contacts.CompanyType.name_en:
 
 Field **CompanyType.name_en**
 =============================
@@ -149,7 +149,7 @@ Type: CharField
 .. index::
    single: field;abbr_fr
    
-.. _dsbe.contacts.CompanyType.abbr_fr:
+.. _std.contacts.CompanyType.abbr_fr:
 
 Field **CompanyType.abbr_fr**
 =============================
@@ -164,7 +164,7 @@ Type: CharField
 .. index::
    single: field;abbr_nl
    
-.. _dsbe.contacts.CompanyType.abbr_nl:
+.. _std.contacts.CompanyType.abbr_nl:
 
 Field **CompanyType.abbr_nl**
 =============================
@@ -179,7 +179,7 @@ Type: CharField
 .. index::
    single: field;abbr_en
    
-.. _dsbe.contacts.CompanyType.abbr_en:
+.. _std.contacts.CompanyType.abbr_en:
 
 Field **CompanyType.abbr_en**
 =============================
@@ -194,7 +194,7 @@ Type: CharField
 .. index::
    single: field;contract_type
    
-.. _dsbe.contacts.CompanyType.contract_type:
+.. _std.contacts.CompanyType.contract_type:
 
 Field **CompanyType.contract_type**
 ===================================
@@ -211,7 +211,7 @@ Type: ForeignKey
 .. index::
    pair: model; ContactType
 
-.. _dsbe.contacts.ContactType:
+.. _std.contacts.ContactType:
 
 ---------------------
 Model **ContactType**
@@ -239,7 +239,7 @@ Defined in :srcref:`/lino/modlib/contacts/models.py`
 .. index::
    single: field;id
    
-.. _dsbe.contacts.ContactType.id:
+.. _std.contacts.ContactType.id:
 
 Field **ContactType.id**
 ========================
@@ -254,7 +254,7 @@ Type: AutoField
 .. index::
    single: field;name
    
-.. _dsbe.contacts.ContactType.name:
+.. _std.contacts.ContactType.name:
 
 Field **ContactType.name**
 ==========================
@@ -269,7 +269,7 @@ Type: BabelCharField
 .. index::
    single: field;name_fr
    
-.. _dsbe.contacts.ContactType.name_fr:
+.. _std.contacts.ContactType.name_fr:
 
 Field **ContactType.name_fr**
 =============================
@@ -284,7 +284,7 @@ Type: CharField
 .. index::
    single: field;name_nl
    
-.. _dsbe.contacts.ContactType.name_nl:
+.. _std.contacts.ContactType.name_nl:
 
 Field **ContactType.name_nl**
 =============================
@@ -299,7 +299,7 @@ Type: CharField
 .. index::
    single: field;name_en
    
-.. _dsbe.contacts.ContactType.name_en:
+.. _std.contacts.ContactType.name_en:
 
 Field **ContactType.name_en**
 =============================
@@ -316,7 +316,7 @@ Type: CharField
 .. index::
    pair: model; Contact
 
-.. _dsbe.contacts.Contact:
+.. _std.contacts.Contact:
 
 -----------------
 Model **Contact**
@@ -344,7 +344,7 @@ Defined in :srcref:`/lino/modlib/contacts/models.py`
 .. index::
    single: field;id
    
-.. _dsbe.contacts.Contact.id:
+.. _std.contacts.Contact.id:
 
 Field **Contact.id**
 ====================
@@ -359,7 +359,7 @@ Type: AutoField
 .. index::
    single: field;person
    
-.. _dsbe.contacts.Contact.person:
+.. _std.contacts.Contact.person:
 
 Field **Contact.person**
 ========================
@@ -374,7 +374,7 @@ Type: ForeignKey
 .. index::
    single: field;company
    
-.. _dsbe.contacts.Contact.company:
+.. _std.contacts.Contact.company:
 
 Field **Contact.company**
 =========================
@@ -389,7 +389,7 @@ Type: ForeignKey
 .. index::
    single: field;type
    
-.. _dsbe.contacts.Contact.type:
+.. _std.contacts.Contact.type:
 
 Field **Contact.type**
 ======================
@@ -406,7 +406,7 @@ Type: ForeignKey
 .. index::
    pair: model; Person
 
-.. _dsbe.contacts.Person:
+.. _std.contacts.Person:
 
 ----------------
 Model **Person**
@@ -499,7 +499,7 @@ Defined in :srcref:`/lino/apps/dsbe/models.py`
 .. index::
    single: field;name
    
-.. _dsbe.contacts.Person.name:
+.. _std.contacts.Person.name:
 
 Field **Person.name**
 =====================
@@ -514,7 +514,7 @@ Type: CharField
 .. index::
    single: field;addr1
    
-.. _dsbe.contacts.Person.addr1:
+.. _std.contacts.Person.addr1:
 
 Field **Person.addr1**
 ======================
@@ -529,7 +529,7 @@ Type: CharField
 .. index::
    single: field;street
    
-.. _dsbe.contacts.Person.street:
+.. _std.contacts.Person.street:
 
 Field **Person.street**
 =======================
@@ -544,7 +544,7 @@ Type: CharField
 .. index::
    single: field;street_no
    
-.. _dsbe.contacts.Person.street_no:
+.. _std.contacts.Person.street_no:
 
 Field **Person.street_no**
 ==========================
@@ -559,7 +559,7 @@ Type: CharField
 .. index::
    single: field;street_box
    
-.. _dsbe.contacts.Person.street_box:
+.. _std.contacts.Person.street_box:
 
 Field **Person.street_box**
 ===========================
@@ -574,7 +574,7 @@ Type: CharField
 .. index::
    single: field;addr2
    
-.. _dsbe.contacts.Person.addr2:
+.. _std.contacts.Person.addr2:
 
 Field **Person.addr2**
 ======================
@@ -589,7 +589,7 @@ Type: CharField
 .. index::
    single: field;country
    
-.. _dsbe.contacts.Person.country:
+.. _std.contacts.Person.country:
 
 Field **Person.country**
 ========================
@@ -604,7 +604,7 @@ Type: ForeignKey
 .. index::
    single: field;city
    
-.. _dsbe.contacts.Person.city:
+.. _std.contacts.Person.city:
 
 Field **Person.city**
 =====================
@@ -623,7 +623,7 @@ Type: ForeignKey
 .. index::
    single: field;zip_code
    
-.. _dsbe.contacts.Person.zip_code:
+.. _std.contacts.Person.zip_code:
 
 Field **Person.zip_code**
 =========================
@@ -638,7 +638,7 @@ Type: CharField
 .. index::
    single: field;region
    
-.. _dsbe.contacts.Person.region:
+.. _std.contacts.Person.region:
 
 Field **Person.region**
 =======================
@@ -653,7 +653,7 @@ Type: CharField
 .. index::
    single: field;language
    
-.. _dsbe.contacts.Person.language:
+.. _std.contacts.Person.language:
 
 Field **Person.language**
 =========================
@@ -668,7 +668,7 @@ Type: LanguageField
 .. index::
    single: field;email
    
-.. _dsbe.contacts.Person.email:
+.. _std.contacts.Person.email:
 
 Field **Person.email**
 ======================
@@ -683,7 +683,7 @@ Type: EmailField
 .. index::
    single: field;url
    
-.. _dsbe.contacts.Person.url:
+.. _std.contacts.Person.url:
 
 Field **Person.url**
 ====================
@@ -698,7 +698,7 @@ Type: URLField
 .. index::
    single: field;phone
    
-.. _dsbe.contacts.Person.phone:
+.. _std.contacts.Person.phone:
 
 Field **Person.phone**
 ======================
@@ -713,7 +713,7 @@ Type: CharField
 .. index::
    single: field;gsm
    
-.. _dsbe.contacts.Person.gsm:
+.. _std.contacts.Person.gsm:
 
 Field **Person.gsm**
 ====================
@@ -728,7 +728,7 @@ Type: CharField
 .. index::
    single: field;fax
    
-.. _dsbe.contacts.Person.fax:
+.. _std.contacts.Person.fax:
 
 Field **Person.fax**
 ====================
@@ -743,7 +743,7 @@ Type: CharField
 .. index::
    single: field;remarks
    
-.. _dsbe.contacts.Person.remarks:
+.. _std.contacts.Person.remarks:
 
 Field **Person.remarks**
 ========================
@@ -758,7 +758,7 @@ Type: TextField
 .. index::
    single: field;first_name
    
-.. _dsbe.contacts.Person.first_name:
+.. _std.contacts.Person.first_name:
 
 Field **Person.first_name**
 ===========================
@@ -773,7 +773,7 @@ Type: CharField
 .. index::
    single: field;last_name
    
-.. _dsbe.contacts.Person.last_name:
+.. _std.contacts.Person.last_name:
 
 Field **Person.last_name**
 ==========================
@@ -788,7 +788,7 @@ Type: CharField
 .. index::
    single: field;title
    
-.. _dsbe.contacts.Person.title:
+.. _std.contacts.Person.title:
 
 Field **Person.title**
 ======================
@@ -803,7 +803,7 @@ Type: CharField
 .. index::
    single: field;id
    
-.. _dsbe.contacts.Person.id:
+.. _std.contacts.Person.id:
 
 Field **Person.id**
 ===================
@@ -818,7 +818,7 @@ Type: AutoField
 .. index::
    single: field;is_active
    
-.. _dsbe.contacts.Person.is_active:
+.. _std.contacts.Person.is_active:
 
 Field **Person.is_active**
 ==========================
@@ -833,7 +833,7 @@ Type: BooleanField
 .. index::
    single: field;activity
    
-.. _dsbe.contacts.Person.activity:
+.. _std.contacts.Person.activity:
 
 Field **Person.activity**
 =========================
@@ -848,7 +848,7 @@ Type: ForeignKey
 .. index::
    single: field;bank_account1
    
-.. _dsbe.contacts.Person.bank_account1:
+.. _std.contacts.Person.bank_account1:
 
 Field **Person.bank_account1**
 ==============================
@@ -863,7 +863,7 @@ Type: CharField
 .. index::
    single: field;bank_account2
    
-.. _dsbe.contacts.Person.bank_account2:
+.. _std.contacts.Person.bank_account2:
 
 Field **Person.bank_account2**
 ==============================
@@ -878,7 +878,7 @@ Type: CharField
 .. index::
    single: field;gesdos_id
    
-.. _dsbe.contacts.Person.gesdos_id:
+.. _std.contacts.Person.gesdos_id:
 
 Field **Person.gesdos_id**
 ==========================
@@ -893,7 +893,7 @@ Type: CharField
 .. index::
    single: field;is_cpas
    
-.. _dsbe.contacts.Person.is_cpas:
+.. _std.contacts.Person.is_cpas:
 
 Field **Person.is_cpas**
 ========================
@@ -908,7 +908,7 @@ Type: BooleanField
 .. index::
    single: field;is_senior
    
-.. _dsbe.contacts.Person.is_senior:
+.. _std.contacts.Person.is_senior:
 
 Field **Person.is_senior**
 ==========================
@@ -923,7 +923,7 @@ Type: BooleanField
 .. index::
    single: field;group
    
-.. _dsbe.contacts.Person.group:
+.. _std.contacts.Person.group:
 
 Field **Person.group**
 ======================
@@ -938,7 +938,7 @@ Type: ForeignKey
 .. index::
    single: field;coached_from
    
-.. _dsbe.contacts.Person.coached_from:
+.. _std.contacts.Person.coached_from:
 
 Field **Person.coached_from**
 =============================
@@ -953,7 +953,7 @@ Type: DateField
 .. index::
    single: field;coached_until
    
-.. _dsbe.contacts.Person.coached_until:
+.. _std.contacts.Person.coached_until:
 
 Field **Person.coached_until**
 ==============================
@@ -968,7 +968,7 @@ Type: DateField
 .. index::
    single: field;coach1
    
-.. _dsbe.contacts.Person.coach1:
+.. _std.contacts.Person.coach1:
 
 Field **Person.coach1**
 =======================
@@ -983,7 +983,7 @@ Type: ForeignKey
 .. index::
    single: field;coach2
    
-.. _dsbe.contacts.Person.coach2:
+.. _std.contacts.Person.coach2:
 
 Field **Person.coach2**
 =======================
@@ -998,7 +998,7 @@ Type: ForeignKey
 .. index::
    single: field;sex
    
-.. _dsbe.contacts.Person.sex:
+.. _std.contacts.Person.sex:
 
 Field **Person.sex**
 ====================
@@ -1013,7 +1013,7 @@ Type: CharField
 .. index::
    single: field;birth_date
    
-.. _dsbe.contacts.Person.birth_date:
+.. _std.contacts.Person.birth_date:
 
 Field **Person.birth_date**
 ===========================
@@ -1028,7 +1028,7 @@ Type: DateField
 .. index::
    single: field;birth_date_circa
    
-.. _dsbe.contacts.Person.birth_date_circa:
+.. _std.contacts.Person.birth_date_circa:
 
 Field **Person.birth_date_circa**
 =================================
@@ -1043,7 +1043,7 @@ Type: BooleanField
 .. index::
    single: field;birth_place
    
-.. _dsbe.contacts.Person.birth_place:
+.. _std.contacts.Person.birth_place:
 
 Field **Person.birth_place**
 ============================
@@ -1058,7 +1058,7 @@ Type: CharField
 .. index::
    single: field;birth_country
    
-.. _dsbe.contacts.Person.birth_country:
+.. _std.contacts.Person.birth_country:
 
 Field **Person.birth_country**
 ==============================
@@ -1073,7 +1073,7 @@ Type: ForeignKey
 .. index::
    single: field;civil_state
    
-.. _dsbe.contacts.Person.civil_state:
+.. _std.contacts.Person.civil_state:
 
 Field **Person.civil_state**
 ============================
@@ -1088,7 +1088,7 @@ Type: CharField
 .. index::
    single: field;national_id
    
-.. _dsbe.contacts.Person.national_id:
+.. _std.contacts.Person.national_id:
 
 Field **Person.national_id**
 ============================
@@ -1103,7 +1103,7 @@ Type: CharField
 .. index::
    single: field;health_insurance
    
-.. _dsbe.contacts.Person.health_insurance:
+.. _std.contacts.Person.health_insurance:
 
 Field **Person.health_insurance**
 =================================
@@ -1118,7 +1118,7 @@ Type: ForeignKey
 .. index::
    single: field;pharmacy
    
-.. _dsbe.contacts.Person.pharmacy:
+.. _std.contacts.Person.pharmacy:
 
 Field **Person.pharmacy**
 =========================
@@ -1133,7 +1133,7 @@ Type: ForeignKey
 .. index::
    single: field;nationality
    
-.. _dsbe.contacts.Person.nationality:
+.. _std.contacts.Person.nationality:
 
 Field **Person.nationality**
 ============================
@@ -1148,7 +1148,7 @@ Type: ForeignKey
 .. index::
    single: field;card_number
    
-.. _dsbe.contacts.Person.card_number:
+.. _std.contacts.Person.card_number:
 
 Field **Person.card_number**
 ============================
@@ -1163,7 +1163,7 @@ Type: CharField
 .. index::
    single: field;card_valid_from
    
-.. _dsbe.contacts.Person.card_valid_from:
+.. _std.contacts.Person.card_valid_from:
 
 Field **Person.card_valid_from**
 ================================
@@ -1178,7 +1178,7 @@ Type: DateField
 .. index::
    single: field;card_valid_until
    
-.. _dsbe.contacts.Person.card_valid_until:
+.. _std.contacts.Person.card_valid_until:
 
 Field **Person.card_valid_until**
 =================================
@@ -1193,7 +1193,7 @@ Type: DateField
 .. index::
    single: field;card_type
    
-.. _dsbe.contacts.Person.card_type:
+.. _std.contacts.Person.card_type:
 
 Field **Person.card_type**
 ==========================
@@ -1208,7 +1208,7 @@ Type: CharField
 .. index::
    single: field;card_issuer
    
-.. _dsbe.contacts.Person.card_issuer:
+.. _std.contacts.Person.card_issuer:
 
 Field **Person.card_issuer**
 ============================
@@ -1223,7 +1223,7 @@ Type: CharField
 .. index::
    single: field;noble_condition
    
-.. _dsbe.contacts.Person.noble_condition:
+.. _std.contacts.Person.noble_condition:
 
 Field **Person.noble_condition**
 ================================
@@ -1238,7 +1238,7 @@ Type: CharField
 .. index::
    single: field;residence_type
    
-.. _dsbe.contacts.Person.residence_type:
+.. _std.contacts.Person.residence_type:
 
 Field **Person.residence_type**
 ===============================
@@ -1253,7 +1253,7 @@ Type: SmallIntegerField
 .. index::
    single: field;in_belgium_since
    
-.. _dsbe.contacts.Person.in_belgium_since:
+.. _std.contacts.Person.in_belgium_since:
 
 Field **Person.in_belgium_since**
 =================================
@@ -1268,7 +1268,7 @@ Type: DateField
 .. index::
    single: field;unemployed_since
    
-.. _dsbe.contacts.Person.unemployed_since:
+.. _std.contacts.Person.unemployed_since:
 
 Field **Person.unemployed_since**
 =================================
@@ -1283,7 +1283,7 @@ Type: DateField
 .. index::
    single: field;needs_residence_permit
    
-.. _dsbe.contacts.Person.needs_residence_permit:
+.. _std.contacts.Person.needs_residence_permit:
 
 Field **Person.needs_residence_permit**
 =======================================
@@ -1298,7 +1298,7 @@ Type: BooleanField
 .. index::
    single: field;needs_work_permit
    
-.. _dsbe.contacts.Person.needs_work_permit:
+.. _std.contacts.Person.needs_work_permit:
 
 Field **Person.needs_work_permit**
 ==================================
@@ -1313,7 +1313,7 @@ Type: BooleanField
 .. index::
    single: field;work_permit_suspended_until
    
-.. _dsbe.contacts.Person.work_permit_suspended_until:
+.. _std.contacts.Person.work_permit_suspended_until:
 
 Field **Person.work_permit_suspended_until**
 ============================================
@@ -1328,7 +1328,7 @@ Type: DateField
 .. index::
    single: field;aid_type
    
-.. _dsbe.contacts.Person.aid_type:
+.. _std.contacts.Person.aid_type:
 
 Field **Person.aid_type**
 =========================
@@ -1343,7 +1343,7 @@ Type: ForeignKey
 .. index::
    single: field;income_ag
    
-.. _dsbe.contacts.Person.income_ag:
+.. _std.contacts.Person.income_ag:
 
 Field **Person.income_ag**
 ==========================
@@ -1358,7 +1358,7 @@ Type: BooleanField
 .. index::
    single: field;income_wg
    
-.. _dsbe.contacts.Person.income_wg:
+.. _std.contacts.Person.income_wg:
 
 Field **Person.income_wg**
 ==========================
@@ -1373,7 +1373,7 @@ Type: BooleanField
 .. index::
    single: field;income_kg
    
-.. _dsbe.contacts.Person.income_kg:
+.. _std.contacts.Person.income_kg:
 
 Field **Person.income_kg**
 ==========================
@@ -1388,7 +1388,7 @@ Type: BooleanField
 .. index::
    single: field;income_rente
    
-.. _dsbe.contacts.Person.income_rente:
+.. _std.contacts.Person.income_rente:
 
 Field **Person.income_rente**
 =============================
@@ -1403,7 +1403,7 @@ Type: BooleanField
 .. index::
    single: field;income_misc
    
-.. _dsbe.contacts.Person.income_misc:
+.. _std.contacts.Person.income_misc:
 
 Field **Person.income_misc**
 ============================
@@ -1418,7 +1418,7 @@ Type: BooleanField
 .. index::
    single: field;is_seeking
    
-.. _dsbe.contacts.Person.is_seeking:
+.. _std.contacts.Person.is_seeking:
 
 Field **Person.is_seeking**
 ===========================
@@ -1433,7 +1433,7 @@ Type: BooleanField
 .. index::
    single: field;unavailable_until
    
-.. _dsbe.contacts.Person.unavailable_until:
+.. _std.contacts.Person.unavailable_until:
 
 Field **Person.unavailable_until**
 ==================================
@@ -1448,7 +1448,7 @@ Type: DateField
 .. index::
    single: field;unavailable_why
    
-.. _dsbe.contacts.Person.unavailable_why:
+.. _std.contacts.Person.unavailable_why:
 
 Field **Person.unavailable_why**
 ================================
@@ -1463,7 +1463,7 @@ Type: CharField
 .. index::
    single: field;native_language
    
-.. _dsbe.contacts.Person.native_language:
+.. _std.contacts.Person.native_language:
 
 Field **Person.native_language**
 ================================
@@ -1478,7 +1478,7 @@ Type: ForeignKey
 .. index::
    single: field;obstacles
    
-.. _dsbe.contacts.Person.obstacles:
+.. _std.contacts.Person.obstacles:
 
 Field **Person.obstacles**
 ==========================
@@ -1493,7 +1493,7 @@ Type: TextField
 .. index::
    single: field;skills
    
-.. _dsbe.contacts.Person.skills:
+.. _std.contacts.Person.skills:
 
 Field **Person.skills**
 =======================
@@ -1508,7 +1508,7 @@ Type: TextField
 .. index::
    single: field;job_agents
    
-.. _dsbe.contacts.Person.job_agents:
+.. _std.contacts.Person.job_agents:
 
 Field **Person.job_agents**
 ===========================
@@ -1523,7 +1523,7 @@ Type: CharField
 .. index::
    single: field;job_office_contact
    
-.. _dsbe.contacts.Person.job_office_contact:
+.. _std.contacts.Person.job_office_contact:
 
 Field **Person.job_office_contact**
 ===================================
@@ -1540,7 +1540,7 @@ Type: ForeignKey
 .. index::
    pair: model; Company
 
-.. _dsbe.contacts.Company:
+.. _std.contacts.Company:
 
 -----------------
 Model **Company**
@@ -1591,7 +1591,7 @@ Defined in :srcref:`/lino/apps/dsbe/models.py`
 .. index::
    single: field;name
    
-.. _dsbe.contacts.Company.name:
+.. _std.contacts.Company.name:
 
 Field **Company.name**
 ======================
@@ -1606,7 +1606,7 @@ Type: CharField
 .. index::
    single: field;addr1
    
-.. _dsbe.contacts.Company.addr1:
+.. _std.contacts.Company.addr1:
 
 Field **Company.addr1**
 =======================
@@ -1621,7 +1621,7 @@ Type: CharField
 .. index::
    single: field;street
    
-.. _dsbe.contacts.Company.street:
+.. _std.contacts.Company.street:
 
 Field **Company.street**
 ========================
@@ -1636,7 +1636,7 @@ Type: CharField
 .. index::
    single: field;street_no
    
-.. _dsbe.contacts.Company.street_no:
+.. _std.contacts.Company.street_no:
 
 Field **Company.street_no**
 ===========================
@@ -1651,7 +1651,7 @@ Type: CharField
 .. index::
    single: field;street_box
    
-.. _dsbe.contacts.Company.street_box:
+.. _std.contacts.Company.street_box:
 
 Field **Company.street_box**
 ============================
@@ -1666,7 +1666,7 @@ Type: CharField
 .. index::
    single: field;addr2
    
-.. _dsbe.contacts.Company.addr2:
+.. _std.contacts.Company.addr2:
 
 Field **Company.addr2**
 =======================
@@ -1681,7 +1681,7 @@ Type: CharField
 .. index::
    single: field;country
    
-.. _dsbe.contacts.Company.country:
+.. _std.contacts.Company.country:
 
 Field **Company.country**
 =========================
@@ -1696,7 +1696,7 @@ Type: ForeignKey
 .. index::
    single: field;city
    
-.. _dsbe.contacts.Company.city:
+.. _std.contacts.Company.city:
 
 Field **Company.city**
 ======================
@@ -1715,7 +1715,7 @@ Type: ForeignKey
 .. index::
    single: field;zip_code
    
-.. _dsbe.contacts.Company.zip_code:
+.. _std.contacts.Company.zip_code:
 
 Field **Company.zip_code**
 ==========================
@@ -1730,7 +1730,7 @@ Type: CharField
 .. index::
    single: field;region
    
-.. _dsbe.contacts.Company.region:
+.. _std.contacts.Company.region:
 
 Field **Company.region**
 ========================
@@ -1745,7 +1745,7 @@ Type: CharField
 .. index::
    single: field;language
    
-.. _dsbe.contacts.Company.language:
+.. _std.contacts.Company.language:
 
 Field **Company.language**
 ==========================
@@ -1760,7 +1760,7 @@ Type: LanguageField
 .. index::
    single: field;email
    
-.. _dsbe.contacts.Company.email:
+.. _std.contacts.Company.email:
 
 Field **Company.email**
 =======================
@@ -1775,7 +1775,7 @@ Type: EmailField
 .. index::
    single: field;url
    
-.. _dsbe.contacts.Company.url:
+.. _std.contacts.Company.url:
 
 Field **Company.url**
 =====================
@@ -1790,7 +1790,7 @@ Type: URLField
 .. index::
    single: field;phone
    
-.. _dsbe.contacts.Company.phone:
+.. _std.contacts.Company.phone:
 
 Field **Company.phone**
 =======================
@@ -1805,7 +1805,7 @@ Type: CharField
 .. index::
    single: field;gsm
    
-.. _dsbe.contacts.Company.gsm:
+.. _std.contacts.Company.gsm:
 
 Field **Company.gsm**
 =====================
@@ -1820,7 +1820,7 @@ Type: CharField
 .. index::
    single: field;fax
    
-.. _dsbe.contacts.Company.fax:
+.. _std.contacts.Company.fax:
 
 Field **Company.fax**
 =====================
@@ -1835,7 +1835,7 @@ Type: CharField
 .. index::
    single: field;remarks
    
-.. _dsbe.contacts.Company.remarks:
+.. _std.contacts.Company.remarks:
 
 Field **Company.remarks**
 =========================
@@ -1850,7 +1850,7 @@ Type: TextField
 .. index::
    single: field;vat_id
    
-.. _dsbe.contacts.Company.vat_id:
+.. _std.contacts.Company.vat_id:
 
 Field **Company.vat_id**
 ========================
@@ -1865,7 +1865,7 @@ Type: CharField
 .. index::
    single: field;type
    
-.. _dsbe.contacts.Company.type:
+.. _std.contacts.Company.type:
 
 Field **Company.type**
 ======================
@@ -1880,7 +1880,7 @@ Type: ForeignKey
 .. index::
    single: field;id
    
-.. _dsbe.contacts.Company.id:
+.. _std.contacts.Company.id:
 
 Field **Company.id**
 ====================
@@ -1895,7 +1895,7 @@ Type: AutoField
 .. index::
    single: field;is_active
    
-.. _dsbe.contacts.Company.is_active:
+.. _std.contacts.Company.is_active:
 
 Field **Company.is_active**
 ===========================
@@ -1910,7 +1910,7 @@ Type: BooleanField
 .. index::
    single: field;activity
    
-.. _dsbe.contacts.Company.activity:
+.. _std.contacts.Company.activity:
 
 Field **Company.activity**
 ==========================
@@ -1925,7 +1925,7 @@ Type: ForeignKey
 .. index::
    single: field;bank_account1
    
-.. _dsbe.contacts.Company.bank_account1:
+.. _std.contacts.Company.bank_account1:
 
 Field **Company.bank_account1**
 ===============================
@@ -1940,7 +1940,7 @@ Type: CharField
 .. index::
    single: field;bank_account2
    
-.. _dsbe.contacts.Company.bank_account2:
+.. _std.contacts.Company.bank_account2:
 
 Field **Company.bank_account2**
 ===============================
@@ -1955,7 +1955,7 @@ Type: CharField
 .. index::
    single: field;prefix
    
-.. _dsbe.contacts.Company.prefix:
+.. _std.contacts.Company.prefix:
 
 Field **Company.prefix**
 ========================
@@ -1970,7 +1970,7 @@ Type: CharField
 .. index::
    single: field;hourly_rate
    
-.. _dsbe.contacts.Company.hourly_rate:
+.. _std.contacts.Company.hourly_rate:
 
 Field **Company.hourly_rate**
 =============================

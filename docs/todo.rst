@@ -9,14 +9,30 @@ for which I hope for help from other people.
 Short-term
 ----------
 
+#.  Man kann keine neuen Benutzer anlegen. 
+    Er sagt dann "password: Dieses Feld darf nicht leer sein". 
+    Dabei gibt es ja gar kein Passwort mehr in `lino.modlib.auth`.
+
 #.  Ausbau der Personensuche mit 2 neuen Bedingungen:
 
       a) Begleitet durch den DSBE innerhalb einer einzugebenden Periode
       b) Auswahl des Begleiters1 und/oder Begleiters2
 
-#.  Uploads nicht nur pro Person, sondern auch pro Notiz/Ereignis, 
-    pro Kursanfrage und voraussichtlich in naher Zukunft auch noch 
-    an anderen Stellen. Also mit GFK arbeiten.
+#.  In einer Grid, die auch ein Detail hat, 
+    wird durch Doppelklick auf einer CheckColumn gleichzeitig auch das 
+    Detail-Fenster geöffnet. Das muss behoben werden, bevor ich mit 
+    den "allgemeinen Uploads" anfangen kann.
+
+#.  "Allgemeine Uploads": Uploads nicht nur pro Person, sondern auch 
+    pro Notiz/Ereignis, 
+    pro Kursanfrage ("Teilnehmer" bzw. "Kandidat") 
+    und voraussichtlich in naher Zukunft auch noch 
+    an anderen Stellen. Also mit :term:`GFK` arbeiten.
+    Dadurch werden auch Kursanfragen ein Detail kriegen (müssen), 
+    weil Lino noch kein Upload-Panel in Grids kann.
+    
+#.  "Unbekannte eID-Kartenart 1" : Wenn das Feld `Person.card_type` ausgefüllt ist, 
+    wird momentan nicht der dazugehörige Text angezeigt.
     
 #.  Hinter das QuickFilter-Feld sollte ein Button, um den Filter zu aktivieren. 
     Dass man einfach nur TAB drücken muss ist nicht intuitiv.

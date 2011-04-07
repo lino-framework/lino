@@ -22,7 +22,7 @@ It defines tables like `Person` and `Company`
 .. index::
    pair: model; CompanyType
 
-.. _igen.contacts.CompanyType:
+.. _std.contacts.CompanyType:
 
 ---------------------
 Model **CompanyType**
@@ -60,7 +60,7 @@ Defined in :srcref:`/lino/modlib/contacts/models.py`
 .. index::
    single: field;id
    
-.. _igen.contacts.CompanyType.id:
+.. _std.contacts.CompanyType.id:
 
 Field **CompanyType.id**
 ========================
@@ -75,7 +75,7 @@ Type: AutoField
 .. index::
    single: field;name
    
-.. _igen.contacts.CompanyType.name:
+.. _std.contacts.CompanyType.name:
 
 Field **CompanyType.name**
 ==========================
@@ -90,7 +90,7 @@ Type: BabelCharField
 .. index::
    single: field;abbr
    
-.. _igen.contacts.CompanyType.abbr:
+.. _std.contacts.CompanyType.abbr:
 
 Field **CompanyType.abbr**
 ==========================
@@ -105,7 +105,7 @@ Type: BabelCharField
 .. index::
    single: field;name_de
    
-.. _igen.contacts.CompanyType.name_de:
+.. _std.contacts.CompanyType.name_de:
 
 Field **CompanyType.name_de**
 =============================
@@ -120,7 +120,7 @@ Type: CharField
 .. index::
    single: field;name_fr
    
-.. _igen.contacts.CompanyType.name_fr:
+.. _std.contacts.CompanyType.name_fr:
 
 Field **CompanyType.name_fr**
 =============================
@@ -135,7 +135,7 @@ Type: CharField
 .. index::
    single: field;name_nl
    
-.. _igen.contacts.CompanyType.name_nl:
+.. _std.contacts.CompanyType.name_nl:
 
 Field **CompanyType.name_nl**
 =============================
@@ -150,7 +150,7 @@ Type: CharField
 .. index::
    single: field;name_et
    
-.. _igen.contacts.CompanyType.name_et:
+.. _std.contacts.CompanyType.name_et:
 
 Field **CompanyType.name_et**
 =============================
@@ -165,7 +165,7 @@ Type: CharField
 .. index::
    single: field;abbr_de
    
-.. _igen.contacts.CompanyType.abbr_de:
+.. _std.contacts.CompanyType.abbr_de:
 
 Field **CompanyType.abbr_de**
 =============================
@@ -180,7 +180,7 @@ Type: CharField
 .. index::
    single: field;abbr_fr
    
-.. _igen.contacts.CompanyType.abbr_fr:
+.. _std.contacts.CompanyType.abbr_fr:
 
 Field **CompanyType.abbr_fr**
 =============================
@@ -195,7 +195,7 @@ Type: CharField
 .. index::
    single: field;abbr_nl
    
-.. _igen.contacts.CompanyType.abbr_nl:
+.. _std.contacts.CompanyType.abbr_nl:
 
 Field **CompanyType.abbr_nl**
 =============================
@@ -210,7 +210,7 @@ Type: CharField
 .. index::
    single: field;abbr_et
    
-.. _igen.contacts.CompanyType.abbr_et:
+.. _std.contacts.CompanyType.abbr_et:
 
 Field **CompanyType.abbr_et**
 =============================
@@ -227,7 +227,7 @@ Type: CharField
 .. index::
    pair: model; ContactType
 
-.. _igen.contacts.ContactType:
+.. _std.contacts.ContactType:
 
 ---------------------
 Model **ContactType**
@@ -256,7 +256,7 @@ Defined in :srcref:`/lino/modlib/contacts/models.py`
 .. index::
    single: field;id
    
-.. _igen.contacts.ContactType.id:
+.. _std.contacts.ContactType.id:
 
 Field **ContactType.id**
 ========================
@@ -271,7 +271,7 @@ Type: AutoField
 .. index::
    single: field;name
    
-.. _igen.contacts.ContactType.name:
+.. _std.contacts.ContactType.name:
 
 Field **ContactType.name**
 ==========================
@@ -286,7 +286,7 @@ Type: BabelCharField
 .. index::
    single: field;name_de
    
-.. _igen.contacts.ContactType.name_de:
+.. _std.contacts.ContactType.name_de:
 
 Field **ContactType.name_de**
 =============================
@@ -301,7 +301,7 @@ Type: CharField
 .. index::
    single: field;name_fr
    
-.. _igen.contacts.ContactType.name_fr:
+.. _std.contacts.ContactType.name_fr:
 
 Field **ContactType.name_fr**
 =============================
@@ -316,7 +316,7 @@ Type: CharField
 .. index::
    single: field;name_nl
    
-.. _igen.contacts.ContactType.name_nl:
+.. _std.contacts.ContactType.name_nl:
 
 Field **ContactType.name_nl**
 =============================
@@ -331,7 +331,7 @@ Type: CharField
 .. index::
    single: field;name_et
    
-.. _igen.contacts.ContactType.name_et:
+.. _std.contacts.ContactType.name_et:
 
 Field **ContactType.name_et**
 =============================
@@ -348,7 +348,7 @@ Type: CharField
 .. index::
    pair: model; Contact
 
-.. _igen.contacts.Contact:
+.. _std.contacts.Contact:
 
 -----------------
 Model **Contact**
@@ -379,7 +379,7 @@ Defined in :srcref:`/lino/modlib/contacts/models.py`
 .. index::
    single: field;id
    
-.. _igen.contacts.Contact.id:
+.. _std.contacts.Contact.id:
 
 Field **Contact.id**
 ====================
@@ -394,7 +394,7 @@ Type: AutoField
 .. index::
    single: field;person
    
-.. _igen.contacts.Contact.person:
+.. _std.contacts.Contact.person:
 
 Field **Contact.person**
 ========================
@@ -409,7 +409,7 @@ Type: ForeignKey
 .. index::
    single: field;company
    
-.. _igen.contacts.Contact.company:
+.. _std.contacts.Contact.company:
 
 Field **Contact.company**
 =========================
@@ -424,7 +424,7 @@ Type: ForeignKey
 .. index::
    single: field;type
    
-.. _igen.contacts.Contact.type:
+.. _std.contacts.Contact.type:
 
 Field **Contact.type**
 ======================
@@ -439,7 +439,7 @@ Type: ForeignKey
 .. index::
    single: field;payment_term
    
-.. _igen.contacts.Contact.payment_term:
+.. _std.contacts.Contact.payment_term:
 
 Field **Contact.payment_term**
 ==============================
@@ -454,7 +454,7 @@ Type: ForeignKey
 .. index::
    single: field;vat_exempt
    
-.. _igen.contacts.Contact.vat_exempt:
+.. _std.contacts.Contact.vat_exempt:
 
 Field **Contact.vat_exempt**
 ============================
@@ -469,7 +469,7 @@ Type: BooleanField
 .. index::
    single: field;item_vat
    
-.. _igen.contacts.Contact.item_vat:
+.. _std.contacts.Contact.item_vat:
 
 Field **Contact.item_vat**
 ==========================
@@ -486,7 +486,7 @@ Type: BooleanField
 .. index::
    pair: model; Person
 
-.. _igen.contacts.Person:
+.. _std.contacts.Person:
 
 ----------------
 Model **Person**
@@ -528,7 +528,7 @@ Defined in :srcref:`/lino/apps/igen/models.py`
 .. index::
    single: field;id
    
-.. _igen.contacts.Person.id:
+.. _std.contacts.Person.id:
 
 Field **Person.id**
 ===================
@@ -543,7 +543,7 @@ Type: AutoField
 .. index::
    single: field;name
    
-.. _igen.contacts.Person.name:
+.. _std.contacts.Person.name:
 
 Field **Person.name**
 =====================
@@ -558,7 +558,7 @@ Type: CharField
 .. index::
    single: field;addr1
    
-.. _igen.contacts.Person.addr1:
+.. _std.contacts.Person.addr1:
 
 Field **Person.addr1**
 ======================
@@ -573,7 +573,7 @@ Type: CharField
 .. index::
    single: field;street
    
-.. _igen.contacts.Person.street:
+.. _std.contacts.Person.street:
 
 Field **Person.street**
 =======================
@@ -588,7 +588,7 @@ Type: CharField
 .. index::
    single: field;street_no
    
-.. _igen.contacts.Person.street_no:
+.. _std.contacts.Person.street_no:
 
 Field **Person.street_no**
 ==========================
@@ -603,7 +603,7 @@ Type: CharField
 .. index::
    single: field;street_box
    
-.. _igen.contacts.Person.street_box:
+.. _std.contacts.Person.street_box:
 
 Field **Person.street_box**
 ===========================
@@ -618,7 +618,7 @@ Type: CharField
 .. index::
    single: field;addr2
    
-.. _igen.contacts.Person.addr2:
+.. _std.contacts.Person.addr2:
 
 Field **Person.addr2**
 ======================
@@ -633,7 +633,7 @@ Type: CharField
 .. index::
    single: field;country
    
-.. _igen.contacts.Person.country:
+.. _std.contacts.Person.country:
 
 Field **Person.country**
 ========================
@@ -648,7 +648,7 @@ Type: ForeignKey
 .. index::
    single: field;city
    
-.. _igen.contacts.Person.city:
+.. _std.contacts.Person.city:
 
 Field **Person.city**
 =====================
@@ -667,7 +667,7 @@ Type: ForeignKey
 .. index::
    single: field;zip_code
    
-.. _igen.contacts.Person.zip_code:
+.. _std.contacts.Person.zip_code:
 
 Field **Person.zip_code**
 =========================
@@ -682,7 +682,7 @@ Type: CharField
 .. index::
    single: field;region
    
-.. _igen.contacts.Person.region:
+.. _std.contacts.Person.region:
 
 Field **Person.region**
 =======================
@@ -697,7 +697,7 @@ Type: CharField
 .. index::
    single: field;language
    
-.. _igen.contacts.Person.language:
+.. _std.contacts.Person.language:
 
 Field **Person.language**
 =========================
@@ -712,7 +712,7 @@ Type: LanguageField
 .. index::
    single: field;email
    
-.. _igen.contacts.Person.email:
+.. _std.contacts.Person.email:
 
 Field **Person.email**
 ======================
@@ -727,7 +727,7 @@ Type: EmailField
 .. index::
    single: field;url
    
-.. _igen.contacts.Person.url:
+.. _std.contacts.Person.url:
 
 Field **Person.url**
 ====================
@@ -742,7 +742,7 @@ Type: URLField
 .. index::
    single: field;phone
    
-.. _igen.contacts.Person.phone:
+.. _std.contacts.Person.phone:
 
 Field **Person.phone**
 ======================
@@ -757,7 +757,7 @@ Type: CharField
 .. index::
    single: field;gsm
    
-.. _igen.contacts.Person.gsm:
+.. _std.contacts.Person.gsm:
 
 Field **Person.gsm**
 ====================
@@ -772,7 +772,7 @@ Type: CharField
 .. index::
    single: field;fax
    
-.. _igen.contacts.Person.fax:
+.. _std.contacts.Person.fax:
 
 Field **Person.fax**
 ====================
@@ -787,7 +787,7 @@ Type: CharField
 .. index::
    single: field;remarks
    
-.. _igen.contacts.Person.remarks:
+.. _std.contacts.Person.remarks:
 
 Field **Person.remarks**
 ========================
@@ -802,7 +802,7 @@ Type: TextField
 .. index::
    single: field;first_name
    
-.. _igen.contacts.Person.first_name:
+.. _std.contacts.Person.first_name:
 
 Field **Person.first_name**
 ===========================
@@ -817,7 +817,7 @@ Type: CharField
 .. index::
    single: field;last_name
    
-.. _igen.contacts.Person.last_name:
+.. _std.contacts.Person.last_name:
 
 Field **Person.last_name**
 ==========================
@@ -832,7 +832,7 @@ Type: CharField
 .. index::
    single: field;title
    
-.. _igen.contacts.Person.title:
+.. _std.contacts.Person.title:
 
 Field **Person.title**
 ======================
@@ -849,7 +849,7 @@ Type: CharField
 .. index::
    pair: model; Company
 
-.. _igen.contacts.Company:
+.. _std.contacts.Company:
 
 -----------------
 Model **Company**
@@ -890,7 +890,7 @@ Defined in :srcref:`/lino/apps/igen/models.py`
 .. index::
    single: field;id
    
-.. _igen.contacts.Company.id:
+.. _std.contacts.Company.id:
 
 Field **Company.id**
 ====================
@@ -905,7 +905,7 @@ Type: AutoField
 .. index::
    single: field;name
    
-.. _igen.contacts.Company.name:
+.. _std.contacts.Company.name:
 
 Field **Company.name**
 ======================
@@ -920,7 +920,7 @@ Type: CharField
 .. index::
    single: field;addr1
    
-.. _igen.contacts.Company.addr1:
+.. _std.contacts.Company.addr1:
 
 Field **Company.addr1**
 =======================
@@ -935,7 +935,7 @@ Type: CharField
 .. index::
    single: field;street
    
-.. _igen.contacts.Company.street:
+.. _std.contacts.Company.street:
 
 Field **Company.street**
 ========================
@@ -950,7 +950,7 @@ Type: CharField
 .. index::
    single: field;street_no
    
-.. _igen.contacts.Company.street_no:
+.. _std.contacts.Company.street_no:
 
 Field **Company.street_no**
 ===========================
@@ -965,7 +965,7 @@ Type: CharField
 .. index::
    single: field;street_box
    
-.. _igen.contacts.Company.street_box:
+.. _std.contacts.Company.street_box:
 
 Field **Company.street_box**
 ============================
@@ -980,7 +980,7 @@ Type: CharField
 .. index::
    single: field;addr2
    
-.. _igen.contacts.Company.addr2:
+.. _std.contacts.Company.addr2:
 
 Field **Company.addr2**
 =======================
@@ -995,7 +995,7 @@ Type: CharField
 .. index::
    single: field;country
    
-.. _igen.contacts.Company.country:
+.. _std.contacts.Company.country:
 
 Field **Company.country**
 =========================
@@ -1010,7 +1010,7 @@ Type: ForeignKey
 .. index::
    single: field;city
    
-.. _igen.contacts.Company.city:
+.. _std.contacts.Company.city:
 
 Field **Company.city**
 ======================
@@ -1029,7 +1029,7 @@ Type: ForeignKey
 .. index::
    single: field;zip_code
    
-.. _igen.contacts.Company.zip_code:
+.. _std.contacts.Company.zip_code:
 
 Field **Company.zip_code**
 ==========================
@@ -1044,7 +1044,7 @@ Type: CharField
 .. index::
    single: field;region
    
-.. _igen.contacts.Company.region:
+.. _std.contacts.Company.region:
 
 Field **Company.region**
 ========================
@@ -1059,7 +1059,7 @@ Type: CharField
 .. index::
    single: field;language
    
-.. _igen.contacts.Company.language:
+.. _std.contacts.Company.language:
 
 Field **Company.language**
 ==========================
@@ -1074,7 +1074,7 @@ Type: LanguageField
 .. index::
    single: field;email
    
-.. _igen.contacts.Company.email:
+.. _std.contacts.Company.email:
 
 Field **Company.email**
 =======================
@@ -1089,7 +1089,7 @@ Type: EmailField
 .. index::
    single: field;url
    
-.. _igen.contacts.Company.url:
+.. _std.contacts.Company.url:
 
 Field **Company.url**
 =====================
@@ -1104,7 +1104,7 @@ Type: URLField
 .. index::
    single: field;phone
    
-.. _igen.contacts.Company.phone:
+.. _std.contacts.Company.phone:
 
 Field **Company.phone**
 =======================
@@ -1119,7 +1119,7 @@ Type: CharField
 .. index::
    single: field;gsm
    
-.. _igen.contacts.Company.gsm:
+.. _std.contacts.Company.gsm:
 
 Field **Company.gsm**
 =====================
@@ -1134,7 +1134,7 @@ Type: CharField
 .. index::
    single: field;fax
    
-.. _igen.contacts.Company.fax:
+.. _std.contacts.Company.fax:
 
 Field **Company.fax**
 =====================
@@ -1149,7 +1149,7 @@ Type: CharField
 .. index::
    single: field;remarks
    
-.. _igen.contacts.Company.remarks:
+.. _std.contacts.Company.remarks:
 
 Field **Company.remarks**
 =========================
@@ -1164,7 +1164,7 @@ Type: TextField
 .. index::
    single: field;vat_id
    
-.. _igen.contacts.Company.vat_id:
+.. _std.contacts.Company.vat_id:
 
 Field **Company.vat_id**
 ========================
@@ -1179,7 +1179,7 @@ Type: CharField
 .. index::
    single: field;type
    
-.. _igen.contacts.Company.type:
+.. _std.contacts.Company.type:
 
 Field **Company.type**
 ======================

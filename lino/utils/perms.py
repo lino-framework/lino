@@ -30,12 +30,14 @@ class is_staff(Condition):
 class is_authenticated(Condition):
     @staticmethod
     def passes(user):
-        return user.is_authenticated()
+        return user is not None
+        #~ return user.is_authenticated()
 
 class is_anonymous(Condition):
     @staticmethod
     def passes(user):
-        return not user.is_authenticated()
+        return user is None
+        #~ return not user.is_authenticated()
         
         
 #~ from django.conf import settings

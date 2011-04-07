@@ -45,7 +45,8 @@ from django.conf import settings
 from django.db.utils import DatabaseError
 # OperationalError
 from django.utils import simplejson
-from django.contrib.auth import models as auth
+#~ from django.contrib.auth import models as auth
+from lino.modlib.users import models as auth
 
 import lino
 
@@ -90,12 +91,17 @@ country city zip_code region language email url phone gsm remarks'''.split()
 
 class Controller:
     "Deserves more documentation."
-    def applydata(self,obj,data,**d):
-        "Deserves more documentation."
-        for k,v in d.items():
-            if data.has_key(v):
-                setattr(obj,k,data[v])
-        obj = settings.TIM2LINO_LOCAL(self.__class__.__name__,obj)
+    def applydata(self,obj,data,**mapper):
+        """
+        Stores values from `data` into `obj` using mapper.
+        `mapper` is a `dict` whose keys are Lino field names and whose values are TIM field names.
+        e.g. something like `dict(id='IDPAR',street='STREET')`.
+        Deserves more documentation.
+        """
+        for lino_name,tim_name in mapper.items():
+            if data.has_key(tim_name):
+                setattr(obj,lino_name,data[tim_name])
+        settings.TIM2LINO_LOCAL(self.__class__.__name__,obj)
         
     def validate_and_save(self,obj):
         "Deserves more documentation."
@@ -170,19 +176,19 @@ def ADR_applydata(obj,data,**kw):
                 
 class PAR(Controller):
   
-    def applydata(self,obj,data,**d):
-        d.update(
-            id='IDPAR',
+    def applydata(self,obj,data,**mapper):
+        mapper.update(
+            id='IDPAR', 
             remarks='MEMO',
             national_id='NB2',
             bank_account1='COMPTE1',
             bank_account2='COMPTE2',
         )
-        ADR_applydata(obj,data,**d)
+        ADR_applydata(obj,data) # ,**mapper)
         #~ kw.update(street2kw(join_words(data['RUE'],
         if obj.__class__ is Person:
-            d.update(title='ALLO')
-            d.update(gesdos_id='NB1')
+            mapper.update(title='ALLO')
+            mapper.update(gesdos_id='NB1')
             if data.has_key('IDUSR'):
                 username = settings.TIM2LINO_USERNAME(data['IDUSR'])
                 if username:
@@ -199,10 +205,10 @@ class PAR(Controller):
                 for k,v in name2kw(data['FIRME']).items():
                     setattr(obj,k,v)
         if obj.__class__ is Company:
-            d.update(prefix='ALLO')
-            d.update(vat_id='NOTVA')
-            d.update(name='FIRME')
-        Controller.applydata(self,obj,data,**d)
+            mapper.update(prefix='ALLO')
+            mapper.update(vat_id='NOTVA')
+            mapper.update(name='FIRME')
+        Controller.applydata(self,obj,data,**mapper)
         
     def swapclass(self,obj,new_class,data):
         kw = {}

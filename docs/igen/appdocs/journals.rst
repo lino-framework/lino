@@ -26,7 +26,7 @@ See lino.testapps.journals for more documentation.
 .. index::
    pair: model; Journal
 
-.. _igen.journals.Journal:
+.. _std.journals.Journal:
 
 -----------------
 Model **Journal**
@@ -58,7 +58,7 @@ Defined in :srcref:`/lino/modlib/journals/models.py`
 .. index::
    single: field;id
    
-.. _igen.journals.Journal.id:
+.. _std.journals.Journal.id:
 
 Field **Journal.id**
 ====================
@@ -73,7 +73,7 @@ Type: CharField
 .. index::
    single: field;name
    
-.. _igen.journals.Journal.name:
+.. _std.journals.Journal.name:
 
 Field **Journal.name**
 ======================
@@ -88,7 +88,7 @@ Type: CharField
 .. index::
    single: field;doctype
    
-.. _igen.journals.Journal.doctype:
+.. _std.journals.Journal.doctype:
 
 Field **Journal.doctype**
 =========================
@@ -103,7 +103,7 @@ Type: IntegerField
 .. index::
    single: field;force_sequence
    
-.. _igen.journals.Journal.force_sequence:
+.. _std.journals.Journal.force_sequence:
 
 Field **Journal.force_sequence**
 ================================
@@ -118,7 +118,7 @@ Type: BooleanField
 .. index::
    single: field;account
    
-.. _igen.journals.Journal.account:
+.. _std.journals.Journal.account:
 
 Field **Journal.account**
 =========================
@@ -133,7 +133,7 @@ Type: ForeignKey
 .. index::
    single: field;pos
    
-.. _igen.journals.Journal.pos:
+.. _std.journals.Journal.pos:
 
 Field **Journal.pos**
 =====================
@@ -148,7 +148,7 @@ Type: IntegerField
 .. index::
    single: field;printed_name
    
-.. _igen.journals.Journal.printed_name:
+.. _std.journals.Journal.printed_name:
 
 Field **Journal.printed_name**
 ==============================
@@ -163,7 +163,7 @@ Type: BabelCharField
 .. index::
    single: field;printed_name_de
    
-.. _igen.journals.Journal.printed_name_de:
+.. _std.journals.Journal.printed_name_de:
 
 Field **Journal.printed_name_de**
 =================================
@@ -178,7 +178,7 @@ Type: CharField
 .. index::
    single: field;printed_name_fr
    
-.. _igen.journals.Journal.printed_name_fr:
+.. _std.journals.Journal.printed_name_fr:
 
 Field **Journal.printed_name_fr**
 =================================
@@ -193,7 +193,7 @@ Type: CharField
 .. index::
    single: field;printed_name_nl
    
-.. _igen.journals.Journal.printed_name_nl:
+.. _std.journals.Journal.printed_name_nl:
 
 Field **Journal.printed_name_nl**
 =================================
@@ -208,7 +208,7 @@ Type: CharField
 .. index::
    single: field;printed_name_et
    
-.. _igen.journals.Journal.printed_name_et:
+.. _std.journals.Journal.printed_name_et:
 
 Field **Journal.printed_name_et**
 =================================

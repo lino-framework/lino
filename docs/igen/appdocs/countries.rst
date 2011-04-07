@@ -17,7 +17,7 @@ Defined in :srcref:`/lino/modlib/countries/models.py`
 .. index::
    pair: model; Language
 
-.. _igen.countries.Language:
+.. _std.countries.Language:
 
 ------------------
 Model **Language**
@@ -45,7 +45,7 @@ Defined in :srcref:`/lino/modlib/countries/models.py`
 .. index::
    single: field;id
    
-.. _igen.countries.Language.id:
+.. _std.countries.Language.id:
 
 Field **Language.id**
 =====================
@@ -60,7 +60,7 @@ Type: CharField
 .. index::
    single: field;name
    
-.. _igen.countries.Language.name:
+.. _std.countries.Language.name:
 
 Field **Language.name**
 =======================
@@ -75,7 +75,7 @@ Type: CharField
 .. index::
    single: field;iso2
    
-.. _igen.countries.Language.iso2:
+.. _std.countries.Language.iso2:
 
 Field **Language.iso2**
 =======================
@@ -90,7 +90,7 @@ Type: CharField
 .. index::
    single: field;name_de
    
-.. _igen.countries.Language.name_de:
+.. _std.countries.Language.name_de:
 
 Field **Language.name_de**
 ==========================
@@ -105,7 +105,7 @@ Type: CharField
 .. index::
    single: field;name_fr
    
-.. _igen.countries.Language.name_fr:
+.. _std.countries.Language.name_fr:
 
 Field **Language.name_fr**
 ==========================
@@ -120,7 +120,7 @@ Type: CharField
 .. index::
    single: field;name_nl
    
-.. _igen.countries.Language.name_nl:
+.. _std.countries.Language.name_nl:
 
 Field **Language.name_nl**
 ==========================
@@ -135,7 +135,7 @@ Type: CharField
 .. index::
    single: field;name_et
    
-.. _igen.countries.Language.name_et:
+.. _std.countries.Language.name_et:
 
 Field **Language.name_et**
 ==========================
@@ -152,7 +152,7 @@ Type: CharField
 .. index::
    pair: model; Country
 
-.. _igen.countries.Country:
+.. _std.countries.Country:
 
 -----------------
 Model **Country**
@@ -183,7 +183,7 @@ Defined in :srcref:`/lino/modlib/countries/models.py`
 .. index::
    single: field;isocode
    
-.. _igen.countries.Country.isocode:
+.. _std.countries.Country.isocode:
 
 Field **Country.isocode**
 =========================
@@ -198,7 +198,7 @@ Type: CharField
 .. index::
    single: field;name
    
-.. _igen.countries.Country.name:
+.. _std.countries.Country.name:
 
 Field **Country.name**
 ======================
@@ -213,7 +213,7 @@ Type: CharField
 .. index::
    single: field;short_code
    
-.. _igen.countries.Country.short_code:
+.. _std.countries.Country.short_code:
 
 Field **Country.short_code**
 ============================
@@ -228,7 +228,7 @@ Type: CharField
 .. index::
    single: field;iso3
    
-.. _igen.countries.Country.iso3:
+.. _std.countries.Country.iso3:
 
 Field **Country.iso3**
 ======================
@@ -243,7 +243,7 @@ Type: CharField
 .. index::
    single: field;name_de
    
-.. _igen.countries.Country.name_de:
+.. _std.countries.Country.name_de:
 
 Field **Country.name_de**
 =========================
@@ -258,7 +258,7 @@ Type: CharField
 .. index::
    single: field;name_fr
    
-.. _igen.countries.Country.name_fr:
+.. _std.countries.Country.name_fr:
 
 Field **Country.name_fr**
 =========================
@@ -273,7 +273,7 @@ Type: CharField
 .. index::
    single: field;name_nl
    
-.. _igen.countries.Country.name_nl:
+.. _std.countries.Country.name_nl:
 
 Field **Country.name_nl**
 =========================
@@ -288,7 +288,7 @@ Type: CharField
 .. index::
    single: field;name_et
    
-.. _igen.countries.Country.name_et:
+.. _std.countries.Country.name_et:
 
 Field **Country.name_et**
 =========================
@@ -305,7 +305,7 @@ Type: CharField
 .. index::
    pair: model; City
 
-.. _igen.countries.City:
+.. _std.countries.City:
 
 --------------
 Model **City**
@@ -332,7 +332,7 @@ Defined in :srcref:`/lino/modlib/countries/models.py`
 .. index::
    single: field;id
    
-.. _igen.countries.City.id:
+.. _std.countries.City.id:
 
 Field **City.id**
 =================
@@ -347,7 +347,7 @@ Type: AutoField
 .. index::
    single: field;name
    
-.. _igen.countries.City.name:
+.. _std.countries.City.name:
 
 Field **City.name**
 ===================
@@ -362,7 +362,7 @@ Type: CharField
 .. index::
    single: field;country
    
-.. _igen.countries.City.country:
+.. _std.countries.City.country:
 
 Field **City.country**
 ======================
@@ -377,7 +377,7 @@ Type: ForeignKey
 .. index::
    single: field;zip_code
    
-.. _igen.countries.City.zip_code:
+.. _std.countries.City.zip_code:
 
 Field **City.zip_code**
 =======================

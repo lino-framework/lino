@@ -17,7 +17,7 @@ Defined in :srcref:`/django/contrib/contenttypes/models.py`
 .. index::
    pair: model; ContentType
 
-.. _dsbe.contenttypes.ContentType:
+.. _std.contenttypes.ContentType:
 
 ---------------------
 Model **ContentType**
@@ -42,7 +42,7 @@ Defined in :srcref:`/django/contrib/contenttypes/models.py`
 .. index::
    single: field;id
    
-.. _dsbe.contenttypes.ContentType.id:
+.. _std.contenttypes.ContentType.id:
 
 Field **ContentType.id**
 ========================
@@ -57,7 +57,7 @@ Type: AutoField
 .. index::
    single: field;name
    
-.. _dsbe.contenttypes.ContentType.name:
+.. _std.contenttypes.ContentType.name:
 
 Field **ContentType.name**
 ==========================
@@ -72,7 +72,7 @@ Type: CharField
 .. index::
    single: field;app_label
    
-.. _dsbe.contenttypes.ContentType.app_label:
+.. _std.contenttypes.ContentType.app_label:
 
 Field **ContentType.app_label**
 ===============================
@@ -87,7 +87,7 @@ Type: CharField
 .. index::
    single: field;model
    
-.. _dsbe.contenttypes.ContentType.model:
+.. _std.contenttypes.ContentType.model:
 
 Field **ContentType.model**
 ===========================

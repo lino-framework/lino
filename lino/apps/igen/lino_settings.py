@@ -88,9 +88,9 @@ m.add_action('countries.Countries')
 #m.add_action(contacts.Countries())
 m.add_action('contenttypes.ContentTypes')
 #m = lino.add_menu("system","~System")
-m.add_action('auth.Permissions')
-m.add_action('auth.Users')
-m.add_action('auth.Groups')
+#~ m.add_action('auth.Permissions')
+m.add_action('users.Users')
+#~ m.add_action('auth.Groups')
 #m.can_view = perms.is_staff
 
 system.add_site_menu(lino)

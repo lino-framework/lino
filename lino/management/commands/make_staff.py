@@ -20,7 +20,8 @@ from lino.core.coretools import app_labels
 
 from lino.utils import *
 
-from django.contrib.auth import models as auth
+#~ from django.contrib.auth import models as auth
+from lino.modlib.users import models as auth
 
 class Column:
     def __init__(self,name,width,meth,type=None):

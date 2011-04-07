@@ -17,7 +17,7 @@ Defined in :srcref:`/lino/modlib/notes/models.py`
 .. index::
    pair: model; NoteType
 
-.. _dsbe.notes.NoteType:
+.. _std.notes.NoteType:
 
 ------------------
 Model **NoteType**
@@ -44,7 +44,7 @@ Defined in :srcref:`/lino/modlib/notes/models.py`
 .. index::
    single: field;id
    
-.. _dsbe.notes.NoteType.id:
+.. _std.notes.NoteType.id:
 
 Field **NoteType.id**
 =====================
@@ -59,7 +59,7 @@ Type: AutoField
 .. index::
    single: field;build_method
    
-.. _dsbe.notes.NoteType.build_method:
+.. _std.notes.NoteType.build_method:
 
 Field **NoteType.build_method**
 ===============================
@@ -74,7 +74,7 @@ Type: CharField
 .. index::
    single: field;template
    
-.. _dsbe.notes.NoteType.template:
+.. _std.notes.NoteType.template:
 
 Field **NoteType.template**
 ===========================
@@ -89,7 +89,7 @@ Type: CharField
 .. index::
    single: field;name
    
-.. _dsbe.notes.NoteType.name:
+.. _std.notes.NoteType.name:
 
 Field **NoteType.name**
 =======================
@@ -104,7 +104,7 @@ Type: CharField
 .. index::
    single: field;important
    
-.. _dsbe.notes.NoteType.important:
+.. _std.notes.NoteType.important:
 
 Field **NoteType.important**
 ============================
@@ -119,7 +119,7 @@ Type: BooleanField
 .. index::
    single: field;remark
    
-.. _dsbe.notes.NoteType.remark:
+.. _std.notes.NoteType.remark:
 
 Field **NoteType.remark**
 =========================
@@ -136,7 +136,7 @@ Type: TextField
 .. index::
    pair: model; Note
 
-.. _dsbe.notes.Note:
+.. _std.notes.Note:
 
 --------------
 Model **Note**
@@ -171,7 +171,7 @@ Defined in :srcref:`/lino/apps/dsbe/models.py`
 .. index::
    single: field;id
    
-.. _dsbe.notes.Note.id:
+.. _std.notes.Note.id:
 
 Field **Note.id**
 =================
@@ -186,7 +186,7 @@ Type: AutoField
 .. index::
    single: field;user
    
-.. _dsbe.notes.Note.user:
+.. _std.notes.Note.user:
 
 Field **Note.user**
 ===================
@@ -201,7 +201,7 @@ Type: ForeignKey
 .. index::
    single: field;reminder_date
    
-.. _dsbe.notes.Note.reminder_date:
+.. _std.notes.Note.reminder_date:
 
 Field **Note.reminder_date**
 ============================
@@ -216,7 +216,7 @@ Type: DateField
 .. index::
    single: field;reminder_text
    
-.. _dsbe.notes.Note.reminder_text:
+.. _std.notes.Note.reminder_text:
 
 Field **Note.reminder_text**
 ============================
@@ -231,7 +231,7 @@ Type: CharField
 .. index::
    single: field;delay_value
    
-.. _dsbe.notes.Note.delay_value:
+.. _std.notes.Note.delay_value:
 
 Field **Note.delay_value**
 ==========================
@@ -246,7 +246,7 @@ Type: IntegerField
 .. index::
    single: field;delay_type
    
-.. _dsbe.notes.Note.delay_type:
+.. _std.notes.Note.delay_type:
 
 Field **Note.delay_type**
 =========================
@@ -261,7 +261,7 @@ Type: CharField
 .. index::
    single: field;must_build
    
-.. _dsbe.notes.Note.must_build:
+.. _std.notes.Note.must_build:
 
 Field **Note.must_build**
 =========================
@@ -276,7 +276,7 @@ Type: BooleanField
 .. index::
    single: field;person
    
-.. _dsbe.notes.Note.person:
+.. _std.notes.Note.person:
 
 Field **Note.person**
 =====================
@@ -291,7 +291,7 @@ Type: ForeignKey
 .. index::
    single: field;company
    
-.. _dsbe.notes.Note.company:
+.. _std.notes.Note.company:
 
 Field **Note.company**
 ======================
@@ -306,7 +306,7 @@ Type: ForeignKey
 .. index::
    single: field;date
    
-.. _dsbe.notes.Note.date:
+.. _std.notes.Note.date:
 
 Field **Note.date**
 ===================
@@ -321,7 +321,7 @@ Type: DateField
 .. index::
    single: field;type
    
-.. _dsbe.notes.Note.type:
+.. _std.notes.Note.type:
 
 Field **Note.type**
 ===================
@@ -336,7 +336,7 @@ Type: ForeignKey
 .. index::
    single: field;subject
    
-.. _dsbe.notes.Note.subject:
+.. _std.notes.Note.subject:
 
 Field **Note.subject**
 ======================
@@ -351,7 +351,7 @@ Type: CharField
 .. index::
    single: field;body
    
-.. _dsbe.notes.Note.body:
+.. _std.notes.Note.body:
 
 Field **Note.body**
 ===================
@@ -366,7 +366,7 @@ Type: TextField
 .. index::
    single: field;language
    
-.. _dsbe.notes.Note.language:
+.. _std.notes.Note.language:
 
 Field **Note.language**
 =======================

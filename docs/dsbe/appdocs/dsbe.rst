@@ -20,7 +20,7 @@ See also :doc:`/dsbe/models`
 .. index::
    pair: model; PersonGroup
 
-.. _dsbe.dsbe.PersonGroup:
+.. _std.dsbe.PersonGroup:
 
 ---------------------
 Model **PersonGroup**
@@ -43,7 +43,7 @@ Defined in :srcref:`/lino/apps/dsbe/models.py`
 .. index::
    single: field;id
    
-.. _dsbe.dsbe.PersonGroup.id:
+.. _std.dsbe.PersonGroup.id:
 
 Field **PersonGroup.id**
 ========================
@@ -58,7 +58,7 @@ Type: AutoField
 .. index::
    single: field;name
    
-.. _dsbe.dsbe.PersonGroup.name:
+.. _std.dsbe.PersonGroup.name:
 
 Field **PersonGroup.name**
 ==========================
@@ -75,7 +75,7 @@ Type: CharField
 .. index::
    pair: model; StudyType
 
-.. _dsbe.dsbe.StudyType:
+.. _std.dsbe.StudyType:
 
 -------------------
 Model **StudyType**
@@ -98,7 +98,7 @@ Defined in :srcref:`/lino/apps/dsbe/models.py`
 .. index::
    single: field;id
    
-.. _dsbe.dsbe.StudyType.id:
+.. _std.dsbe.StudyType.id:
 
 Field **StudyType.id**
 ======================
@@ -113,7 +113,7 @@ Type: AutoField
 .. index::
    single: field;name
    
-.. _dsbe.dsbe.StudyType.name:
+.. _std.dsbe.StudyType.name:
 
 Field **StudyType.name**
 ========================
@@ -130,7 +130,7 @@ Type: CharField
 .. index::
    pair: model; Study
 
-.. _dsbe.dsbe.Study:
+.. _std.dsbe.Study:
 
 ---------------
 Model **Study**
@@ -163,7 +163,7 @@ Defined in :srcref:`/lino/apps/dsbe/models.py`
 .. index::
    single: field;id
    
-.. _dsbe.dsbe.Study.id:
+.. _std.dsbe.Study.id:
 
 Field **Study.id**
 ==================
@@ -178,7 +178,7 @@ Type: AutoField
 .. index::
    single: field;person
    
-.. _dsbe.dsbe.Study.person:
+.. _std.dsbe.Study.person:
 
 Field **Study.person**
 ======================
@@ -193,7 +193,7 @@ Type: ForeignKey
 .. index::
    single: field;type
    
-.. _dsbe.dsbe.Study.type:
+.. _std.dsbe.Study.type:
 
 Field **Study.type**
 ====================
@@ -208,7 +208,7 @@ Type: ForeignKey
 .. index::
    single: field;content
    
-.. _dsbe.dsbe.Study.content:
+.. _std.dsbe.Study.content:
 
 Field **Study.content**
 =======================
@@ -223,7 +223,7 @@ Type: CharField
 .. index::
    single: field;started
    
-.. _dsbe.dsbe.Study.started:
+.. _std.dsbe.Study.started:
 
 Field **Study.started**
 =======================
@@ -238,7 +238,7 @@ Type: MonthField
 .. index::
    single: field;stopped
    
-.. _dsbe.dsbe.Study.stopped:
+.. _std.dsbe.Study.stopped:
 
 Field **Study.stopped**
 =======================
@@ -253,7 +253,7 @@ Type: MonthField
 .. index::
    single: field;success
    
-.. _dsbe.dsbe.Study.success:
+.. _std.dsbe.Study.success:
 
 Field **Study.success**
 =======================
@@ -268,7 +268,7 @@ Type: BooleanField
 .. index::
    single: field;country
    
-.. _dsbe.dsbe.Study.country:
+.. _std.dsbe.Study.country:
 
 Field **Study.country**
 =======================
@@ -283,7 +283,7 @@ Type: ForeignKey
 .. index::
    single: field;city
    
-.. _dsbe.dsbe.Study.city:
+.. _std.dsbe.Study.city:
 
 Field **Study.city**
 ====================
@@ -298,7 +298,7 @@ Type: ForeignKey
 .. index::
    single: field;language
    
-.. _dsbe.dsbe.Study.language:
+.. _std.dsbe.Study.language:
 
 Field **Study.language**
 ========================
@@ -313,7 +313,7 @@ Type: ForeignKey
 .. index::
    single: field;school
    
-.. _dsbe.dsbe.Study.school:
+.. _std.dsbe.Study.school:
 
 Field **Study.school**
 ======================
@@ -328,7 +328,7 @@ Type: CharField
 .. index::
    single: field;remarks
    
-.. _dsbe.dsbe.Study.remarks:
+.. _std.dsbe.Study.remarks:
 
 Field **Study.remarks**
 =======================
@@ -345,7 +345,7 @@ Type: TextField
 .. index::
    pair: model; LanguageKnowledge
 
-.. _dsbe.dsbe.LanguageKnowledge:
+.. _std.dsbe.LanguageKnowledge:
 
 ---------------------------
 Model **LanguageKnowledge**
@@ -371,7 +371,7 @@ Defined in :srcref:`/lino/apps/dsbe/models.py`
 .. index::
    single: field;id
    
-.. _dsbe.dsbe.LanguageKnowledge.id:
+.. _std.dsbe.LanguageKnowledge.id:
 
 Field **LanguageKnowledge.id**
 ==============================
@@ -386,7 +386,7 @@ Type: AutoField
 .. index::
    single: field;person
    
-.. _dsbe.dsbe.LanguageKnowledge.person:
+.. _std.dsbe.LanguageKnowledge.person:
 
 Field **LanguageKnowledge.person**
 ==================================
@@ -401,7 +401,7 @@ Type: ForeignKey
 .. index::
    single: field;language
    
-.. _dsbe.dsbe.LanguageKnowledge.language:
+.. _std.dsbe.LanguageKnowledge.language:
 
 Field **LanguageKnowledge.language**
 ====================================
@@ -416,7 +416,7 @@ Type: ForeignKey
 .. index::
    single: field;spoken
    
-.. _dsbe.dsbe.LanguageKnowledge.spoken:
+.. _std.dsbe.LanguageKnowledge.spoken:
 
 Field **LanguageKnowledge.spoken**
 ==================================
@@ -431,7 +431,7 @@ Type: ChoiceListField
 .. index::
    single: field;written
    
-.. _dsbe.dsbe.LanguageKnowledge.written:
+.. _std.dsbe.LanguageKnowledge.written:
 
 Field **LanguageKnowledge.written**
 ===================================
@@ -448,7 +448,7 @@ Type: ChoiceListField
 .. index::
    pair: model; JobExperience
 
-.. _dsbe.dsbe.JobExperience:
+.. _std.dsbe.JobExperience:
 
 -----------------------
 Model **JobExperience**
@@ -477,7 +477,7 @@ Defined in :srcref:`/lino/apps/dsbe/models.py`
 .. index::
    single: field;id
    
-.. _dsbe.dsbe.JobExperience.id:
+.. _std.dsbe.JobExperience.id:
 
 Field **JobExperience.id**
 ==========================
@@ -492,7 +492,7 @@ Type: AutoField
 .. index::
    single: field;person
    
-.. _dsbe.dsbe.JobExperience.person:
+.. _std.dsbe.JobExperience.person:
 
 Field **JobExperience.person**
 ==============================
@@ -507,7 +507,7 @@ Type: ForeignKey
 .. index::
    single: field;company
    
-.. _dsbe.dsbe.JobExperience.company:
+.. _std.dsbe.JobExperience.company:
 
 Field **JobExperience.company**
 ===============================
@@ -522,7 +522,7 @@ Type: CharField
 .. index::
    single: field;title
    
-.. _dsbe.dsbe.JobExperience.title:
+.. _std.dsbe.JobExperience.title:
 
 Field **JobExperience.title**
 =============================
@@ -537,7 +537,7 @@ Type: CharField
 .. index::
    single: field;country
    
-.. _dsbe.dsbe.JobExperience.country:
+.. _std.dsbe.JobExperience.country:
 
 Field **JobExperience.country**
 ===============================
@@ -552,7 +552,7 @@ Type: ForeignKey
 .. index::
    single: field;started
    
-.. _dsbe.dsbe.JobExperience.started:
+.. _std.dsbe.JobExperience.started:
 
 Field **JobExperience.started**
 ===============================
@@ -567,7 +567,7 @@ Type: MonthField
 .. index::
    single: field;stopped
    
-.. _dsbe.dsbe.JobExperience.stopped:
+.. _std.dsbe.JobExperience.stopped:
 
 Field **JobExperience.stopped**
 ===============================
@@ -582,7 +582,7 @@ Type: MonthField
 .. index::
    single: field;remarks
    
-.. _dsbe.dsbe.JobExperience.remarks:
+.. _std.dsbe.JobExperience.remarks:
 
 Field **JobExperience.remarks**
 ===============================
@@ -599,7 +599,7 @@ Type: TextField
 .. index::
    pair: model; Activity
 
-.. _dsbe.dsbe.Activity:
+.. _std.dsbe.Activity:
 
 ------------------
 Model **Activity**
@@ -623,7 +623,7 @@ Defined in :srcref:`/lino/apps/dsbe/models.py`
 .. index::
    single: field;id
    
-.. _dsbe.dsbe.Activity.id:
+.. _std.dsbe.Activity.id:
 
 Field **Activity.id**
 =====================
@@ -638,7 +638,7 @@ Type: AutoField
 .. index::
    single: field;name
    
-.. _dsbe.dsbe.Activity.name:
+.. _std.dsbe.Activity.name:
 
 Field **Activity.name**
 =======================
@@ -653,7 +653,7 @@ Type: CharField
 .. index::
    single: field;lst104
    
-.. _dsbe.dsbe.Activity.lst104:
+.. _std.dsbe.Activity.lst104:
 
 Field **Activity.lst104**
 =========================
@@ -670,7 +670,7 @@ Type: BooleanField
 .. index::
    pair: model; ExclusionType
 
-.. _dsbe.dsbe.ExclusionType:
+.. _std.dsbe.ExclusionType:
 
 -----------------------
 Model **ExclusionType**
@@ -693,7 +693,7 @@ Defined in :srcref:`/lino/apps/dsbe/models.py`
 .. index::
    single: field;id
    
-.. _dsbe.dsbe.ExclusionType.id:
+.. _std.dsbe.ExclusionType.id:
 
 Field **ExclusionType.id**
 ==========================
@@ -708,7 +708,7 @@ Type: AutoField
 .. index::
    single: field;name
    
-.. _dsbe.dsbe.ExclusionType.name:
+.. _std.dsbe.ExclusionType.name:
 
 Field **ExclusionType.name**
 ============================
@@ -725,7 +725,7 @@ Type: CharField
 .. index::
    pair: model; Exclusion
 
-.. _dsbe.dsbe.Exclusion:
+.. _std.dsbe.Exclusion:
 
 -------------------
 Model **Exclusion**
@@ -752,7 +752,7 @@ Defined in :srcref:`/lino/apps/dsbe/models.py`
 .. index::
    single: field;id
    
-.. _dsbe.dsbe.Exclusion.id:
+.. _std.dsbe.Exclusion.id:
 
 Field **Exclusion.id**
 ======================
@@ -767,7 +767,7 @@ Type: AutoField
 .. index::
    single: field;person
    
-.. _dsbe.dsbe.Exclusion.person:
+.. _std.dsbe.Exclusion.person:
 
 Field **Exclusion.person**
 ==========================
@@ -782,7 +782,7 @@ Type: ForeignKey
 .. index::
    single: field;type
    
-.. _dsbe.dsbe.Exclusion.type:
+.. _std.dsbe.Exclusion.type:
 
 Field **Exclusion.type**
 ========================
@@ -797,7 +797,7 @@ Type: ForeignKey
 .. index::
    single: field;excluded_from
    
-.. _dsbe.dsbe.Exclusion.excluded_from:
+.. _std.dsbe.Exclusion.excluded_from:
 
 Field **Exclusion.excluded_from**
 =================================
@@ -812,7 +812,7 @@ Type: DateField
 .. index::
    single: field;excluded_until
    
-.. _dsbe.dsbe.Exclusion.excluded_until:
+.. _std.dsbe.Exclusion.excluded_until:
 
 Field **Exclusion.excluded_until**
 ==================================
@@ -827,7 +827,7 @@ Type: DateField
 .. index::
    single: field;remark
    
-.. _dsbe.dsbe.Exclusion.remark:
+.. _std.dsbe.Exclusion.remark:
 
 Field **Exclusion.remark**
 ==========================
@@ -844,7 +844,7 @@ Type: CharField
 .. index::
    pair: model; ContractType
 
-.. _dsbe.dsbe.ContractType:
+.. _std.dsbe.ContractType:
 
 ----------------------
 Model **ContractType**
@@ -873,7 +873,7 @@ Defined in :srcref:`/lino/apps/dsbe/models.py`
 .. index::
    single: field;id
    
-.. _dsbe.dsbe.ContractType.id:
+.. _std.dsbe.ContractType.id:
 
 Field **ContractType.id**
 =========================
@@ -888,7 +888,7 @@ Type: AutoField
 .. index::
    single: field;build_method
    
-.. _dsbe.dsbe.ContractType.build_method:
+.. _std.dsbe.ContractType.build_method:
 
 Field **ContractType.build_method**
 ===================================
@@ -903,7 +903,7 @@ Type: CharField
 .. index::
    single: field;template
    
-.. _dsbe.dsbe.ContractType.template:
+.. _std.dsbe.ContractType.template:
 
 Field **ContractType.template**
 ===============================
@@ -918,7 +918,7 @@ Type: CharField
 .. index::
    single: field;ref
    
-.. _dsbe.dsbe.ContractType.ref:
+.. _std.dsbe.ContractType.ref:
 
 Field **ContractType.ref**
 ==========================
@@ -933,7 +933,7 @@ Type: CharField
 .. index::
    single: field;name
    
-.. _dsbe.dsbe.ContractType.name:
+.. _std.dsbe.ContractType.name:
 
 Field **ContractType.name**
 ===========================
@@ -948,7 +948,7 @@ Type: CharField
 .. index::
    single: field;name_fr
    
-.. _dsbe.dsbe.ContractType.name_fr:
+.. _std.dsbe.ContractType.name_fr:
 
 Field **ContractType.name_fr**
 ==============================
@@ -963,7 +963,7 @@ Type: CharField
 .. index::
    single: field;name_nl
    
-.. _dsbe.dsbe.ContractType.name_nl:
+.. _std.dsbe.ContractType.name_nl:
 
 Field **ContractType.name_nl**
 ==============================
@@ -978,7 +978,7 @@ Type: CharField
 .. index::
    single: field;name_en
    
-.. _dsbe.dsbe.ContractType.name_en:
+.. _std.dsbe.ContractType.name_en:
 
 Field **ContractType.name_en**
 ==============================
@@ -995,7 +995,7 @@ Type: CharField
 .. index::
    pair: model; ExamPolicy
 
-.. _dsbe.dsbe.ExamPolicy:
+.. _std.dsbe.ExamPolicy:
 
 --------------------
 Model **ExamPolicy**
@@ -1021,7 +1021,7 @@ Defined in :srcref:`/lino/apps/dsbe/models.py`
 .. index::
    single: field;id
    
-.. _dsbe.dsbe.ExamPolicy.id:
+.. _std.dsbe.ExamPolicy.id:
 
 Field **ExamPolicy.id**
 =======================
@@ -1036,7 +1036,7 @@ Type: AutoField
 .. index::
    single: field;name
    
-.. _dsbe.dsbe.ExamPolicy.name:
+.. _std.dsbe.ExamPolicy.name:
 
 Field **ExamPolicy.name**
 =========================
@@ -1051,7 +1051,7 @@ Type: CharField
 .. index::
    single: field;name_fr
    
-.. _dsbe.dsbe.ExamPolicy.name_fr:
+.. _std.dsbe.ExamPolicy.name_fr:
 
 Field **ExamPolicy.name_fr**
 ============================
@@ -1066,7 +1066,7 @@ Type: CharField
 .. index::
    single: field;name_nl
    
-.. _dsbe.dsbe.ExamPolicy.name_nl:
+.. _std.dsbe.ExamPolicy.name_nl:
 
 Field **ExamPolicy.name_nl**
 ============================
@@ -1081,7 +1081,7 @@ Type: CharField
 .. index::
    single: field;name_en
    
-.. _dsbe.dsbe.ExamPolicy.name_en:
+.. _std.dsbe.ExamPolicy.name_en:
 
 Field **ExamPolicy.name_en**
 ============================
@@ -1098,7 +1098,7 @@ Type: CharField
 .. index::
    pair: model; ContractEnding
 
-.. _dsbe.dsbe.ContractEnding:
+.. _std.dsbe.ContractEnding:
 
 ------------------------
 Model **ContractEnding**
@@ -1121,7 +1121,7 @@ Defined in :srcref:`/lino/apps/dsbe/models.py`
 .. index::
    single: field;id
    
-.. _dsbe.dsbe.ContractEnding.id:
+.. _std.dsbe.ContractEnding.id:
 
 Field **ContractEnding.id**
 ===========================
@@ -1136,7 +1136,7 @@ Type: AutoField
 .. index::
    single: field;name
    
-.. _dsbe.dsbe.ContractEnding.name:
+.. _std.dsbe.ContractEnding.name:
 
 Field **ContractEnding.name**
 =============================
@@ -1153,7 +1153,7 @@ Type: CharField
 .. index::
    pair: model; CourseEnding
 
-.. _dsbe.dsbe.CourseEnding:
+.. _std.dsbe.CourseEnding:
 
 ----------------------
 Model **CourseEnding**
@@ -1180,7 +1180,7 @@ Defined in :srcref:`/lino/apps/dsbe/models.py`
 .. index::
    single: field;id
    
-.. _dsbe.dsbe.CourseEnding.id:
+.. _std.dsbe.CourseEnding.id:
 
 Field **CourseEnding.id**
 =========================
@@ -1195,7 +1195,7 @@ Type: AutoField
 .. index::
    single: field;name
    
-.. _dsbe.dsbe.CourseEnding.name:
+.. _std.dsbe.CourseEnding.name:
 
 Field **CourseEnding.name**
 ===========================
@@ -1212,7 +1212,7 @@ Type: CharField
 .. index::
    pair: model; AidType
 
-.. _dsbe.dsbe.AidType:
+.. _std.dsbe.AidType:
 
 -----------------
 Model **AidType**
@@ -1238,7 +1238,7 @@ Defined in :srcref:`/lino/apps/dsbe/models.py`
 .. index::
    single: field;id
    
-.. _dsbe.dsbe.AidType.id:
+.. _std.dsbe.AidType.id:
 
 Field **AidType.id**
 ====================
@@ -1253,7 +1253,7 @@ Type: AutoField
 .. index::
    single: field;name
    
-.. _dsbe.dsbe.AidType.name:
+.. _std.dsbe.AidType.name:
 
 Field **AidType.name**
 ======================
@@ -1268,7 +1268,7 @@ Type: CharField
 .. index::
    single: field;name_fr
    
-.. _dsbe.dsbe.AidType.name_fr:
+.. _std.dsbe.AidType.name_fr:
 
 Field **AidType.name_fr**
 =========================
@@ -1283,7 +1283,7 @@ Type: CharField
 .. index::
    single: field;name_nl
    
-.. _dsbe.dsbe.AidType.name_nl:
+.. _std.dsbe.AidType.name_nl:
 
 Field **AidType.name_nl**
 =========================
@@ -1298,7 +1298,7 @@ Type: CharField
 .. index::
    single: field;name_en
    
-.. _dsbe.dsbe.AidType.name_en:
+.. _std.dsbe.AidType.name_en:
 
 Field **AidType.name_en**
 =========================
@@ -1315,7 +1315,7 @@ Type: CharField
 .. index::
    pair: model; Contract
 
-.. _dsbe.dsbe.Contract:
+.. _std.dsbe.Contract:
 
 ------------------
 Model **Contract**
@@ -1370,7 +1370,7 @@ Defined in :srcref:`/lino/apps/dsbe/models.py`
 .. index::
    single: field;id
    
-.. _dsbe.dsbe.Contract.id:
+.. _std.dsbe.Contract.id:
 
 Field **Contract.id**
 =====================
@@ -1385,7 +1385,7 @@ Type: AutoField
 .. index::
    single: field;user
    
-.. _dsbe.dsbe.Contract.user:
+.. _std.dsbe.Contract.user:
 
 Field **Contract.user**
 =======================
@@ -1400,7 +1400,7 @@ Type: ForeignKey
 .. index::
    single: field;reminder_date
    
-.. _dsbe.dsbe.Contract.reminder_date:
+.. _std.dsbe.Contract.reminder_date:
 
 Field **Contract.reminder_date**
 ================================
@@ -1415,7 +1415,7 @@ Type: DateField
 .. index::
    single: field;reminder_text
    
-.. _dsbe.dsbe.Contract.reminder_text:
+.. _std.dsbe.Contract.reminder_text:
 
 Field **Contract.reminder_text**
 ================================
@@ -1430,7 +1430,7 @@ Type: CharField
 .. index::
    single: field;delay_value
    
-.. _dsbe.dsbe.Contract.delay_value:
+.. _std.dsbe.Contract.delay_value:
 
 Field **Contract.delay_value**
 ==============================
@@ -1445,7 +1445,7 @@ Type: IntegerField
 .. index::
    single: field;delay_type
    
-.. _dsbe.dsbe.Contract.delay_type:
+.. _std.dsbe.Contract.delay_type:
 
 Field **Contract.delay_type**
 =============================
@@ -1460,7 +1460,7 @@ Type: CharField
 .. index::
    single: field;must_build
    
-.. _dsbe.dsbe.Contract.must_build:
+.. _std.dsbe.Contract.must_build:
 
 Field **Contract.must_build**
 =============================
@@ -1475,7 +1475,7 @@ Type: BooleanField
 .. index::
    single: field;person
    
-.. _dsbe.dsbe.Contract.person:
+.. _std.dsbe.Contract.person:
 
 Field **Contract.person**
 =========================
@@ -1490,7 +1490,7 @@ Type: ForeignKey
 .. index::
    single: field;company
    
-.. _dsbe.dsbe.Contract.company:
+.. _std.dsbe.Contract.company:
 
 Field **Contract.company**
 ==========================
@@ -1505,7 +1505,7 @@ Type: ForeignKey
 .. index::
    single: field;contact
    
-.. _dsbe.dsbe.Contract.contact:
+.. _std.dsbe.Contract.contact:
 
 Field **Contract.contact**
 ==========================
@@ -1520,7 +1520,7 @@ Type: ForeignKey
 .. index::
    single: field;language
    
-.. _dsbe.dsbe.Contract.language:
+.. _std.dsbe.Contract.language:
 
 Field **Contract.language**
 ===========================
@@ -1535,7 +1535,7 @@ Type: LanguageField
 .. index::
    single: field;type
    
-.. _dsbe.dsbe.Contract.type:
+.. _std.dsbe.Contract.type:
 
 Field **Contract.type**
 =======================
@@ -1550,7 +1550,7 @@ Type: ForeignKey
 .. index::
    single: field;applies_from
    
-.. _dsbe.dsbe.Contract.applies_from:
+.. _std.dsbe.Contract.applies_from:
 
 Field **Contract.applies_from**
 ===============================
@@ -1565,7 +1565,7 @@ Type: DateField
 .. index::
    single: field;applies_until
    
-.. _dsbe.dsbe.Contract.applies_until:
+.. _std.dsbe.Contract.applies_until:
 
 Field **Contract.applies_until**
 ================================
@@ -1580,7 +1580,7 @@ Type: DateField
 .. index::
    single: field;date_decided
    
-.. _dsbe.dsbe.Contract.date_decided:
+.. _std.dsbe.Contract.date_decided:
 
 Field **Contract.date_decided**
 ===============================
@@ -1595,7 +1595,7 @@ Type: DateField
 .. index::
    single: field;date_issued
    
-.. _dsbe.dsbe.Contract.date_issued:
+.. _std.dsbe.Contract.date_issued:
 
 Field **Contract.date_issued**
 ==============================
@@ -1610,7 +1610,7 @@ Type: DateField
 .. index::
    single: field;duration
    
-.. _dsbe.dsbe.Contract.duration:
+.. _std.dsbe.Contract.duration:
 
 Field **Contract.duration**
 ===========================
@@ -1625,7 +1625,7 @@ Type: IntegerField
 .. index::
    single: field;regime
    
-.. _dsbe.dsbe.Contract.regime:
+.. _std.dsbe.Contract.regime:
 
 Field **Contract.regime**
 =========================
@@ -1640,7 +1640,7 @@ Type: CharField
 .. index::
    single: field;schedule
    
-.. _dsbe.dsbe.Contract.schedule:
+.. _std.dsbe.Contract.schedule:
 
 Field **Contract.schedule**
 ===========================
@@ -1655,7 +1655,7 @@ Type: CharField
 .. index::
    single: field;hourly_rate
    
-.. _dsbe.dsbe.Contract.hourly_rate:
+.. _std.dsbe.Contract.hourly_rate:
 
 Field **Contract.hourly_rate**
 ==============================
@@ -1670,7 +1670,7 @@ Type: PriceField
 .. index::
    single: field;refund_rate
    
-.. _dsbe.dsbe.Contract.refund_rate:
+.. _std.dsbe.Contract.refund_rate:
 
 Field **Contract.refund_rate**
 ==============================
@@ -1685,7 +1685,7 @@ Type: CharField
 .. index::
    single: field;reference_person
    
-.. _dsbe.dsbe.Contract.reference_person:
+.. _std.dsbe.Contract.reference_person:
 
 Field **Contract.reference_person**
 ===================================
@@ -1700,7 +1700,7 @@ Type: CharField
 .. index::
    single: field;responsibilities
    
-.. _dsbe.dsbe.Contract.responsibilities:
+.. _std.dsbe.Contract.responsibilities:
 
 Field **Contract.responsibilities**
 ===================================
@@ -1715,7 +1715,7 @@ Type: TextField
 .. index::
    single: field;stages
    
-.. _dsbe.dsbe.Contract.stages:
+.. _std.dsbe.Contract.stages:
 
 Field **Contract.stages**
 =========================
@@ -1730,7 +1730,7 @@ Type: HtmlTextField
 .. index::
    single: field;goals
    
-.. _dsbe.dsbe.Contract.goals:
+.. _std.dsbe.Contract.goals:
 
 Field **Contract.goals**
 ========================
@@ -1745,7 +1745,7 @@ Type: HtmlTextField
 .. index::
    single: field;duties_asd
    
-.. _dsbe.dsbe.Contract.duties_asd:
+.. _std.dsbe.Contract.duties_asd:
 
 Field **Contract.duties_asd**
 =============================
@@ -1760,7 +1760,7 @@ Type: HtmlTextField
 .. index::
    single: field;duties_dsbe
    
-.. _dsbe.dsbe.Contract.duties_dsbe:
+.. _std.dsbe.Contract.duties_dsbe:
 
 Field **Contract.duties_dsbe**
 ==============================
@@ -1775,7 +1775,7 @@ Type: HtmlTextField
 .. index::
    single: field;duties_company
    
-.. _dsbe.dsbe.Contract.duties_company:
+.. _std.dsbe.Contract.duties_company:
 
 Field **Contract.duties_company**
 =================================
@@ -1790,7 +1790,7 @@ Type: HtmlTextField
 .. index::
    single: field;user_asd
    
-.. _dsbe.dsbe.Contract.user_asd:
+.. _std.dsbe.Contract.user_asd:
 
 Field **Contract.user_asd**
 ===========================
@@ -1805,7 +1805,7 @@ Type: ForeignKey
 .. index::
    single: field;exam_policy
    
-.. _dsbe.dsbe.Contract.exam_policy:
+.. _std.dsbe.Contract.exam_policy:
 
 Field **Contract.exam_policy**
 ==============================
@@ -1820,7 +1820,7 @@ Type: ForeignKey
 .. index::
    single: field;ending
    
-.. _dsbe.dsbe.Contract.ending:
+.. _std.dsbe.Contract.ending:
 
 Field **Contract.ending**
 =========================
@@ -1835,7 +1835,7 @@ Type: ForeignKey
 .. index::
    single: field;date_ended
    
-.. _dsbe.dsbe.Contract.date_ended:
+.. _std.dsbe.Contract.date_ended:
 
 Field **Contract.date_ended**
 =============================
@@ -1852,7 +1852,7 @@ Type: DateField
 .. index::
    pair: model; CourseProvider
 
-.. _dsbe.dsbe.CourseProvider:
+.. _std.dsbe.CourseProvider:
 
 ------------------------
 Model **CourseProvider**
@@ -1901,7 +1901,7 @@ Defined in :srcref:`/lino/apps/dsbe/models.py`
 .. index::
    single: field;name
    
-.. _dsbe.dsbe.CourseProvider.name:
+.. _std.dsbe.CourseProvider.name:
 
 Field **CourseProvider.name**
 =============================
@@ -1916,7 +1916,7 @@ Type: CharField
 .. index::
    single: field;addr1
    
-.. _dsbe.dsbe.CourseProvider.addr1:
+.. _std.dsbe.CourseProvider.addr1:
 
 Field **CourseProvider.addr1**
 ==============================
@@ -1931,7 +1931,7 @@ Type: CharField
 .. index::
    single: field;street
    
-.. _dsbe.dsbe.CourseProvider.street:
+.. _std.dsbe.CourseProvider.street:
 
 Field **CourseProvider.street**
 ===============================
@@ -1946,7 +1946,7 @@ Type: CharField
 .. index::
    single: field;street_no
    
-.. _dsbe.dsbe.CourseProvider.street_no:
+.. _std.dsbe.CourseProvider.street_no:
 
 Field **CourseProvider.street_no**
 ==================================
@@ -1961,7 +1961,7 @@ Type: CharField
 .. index::
    single: field;street_box
    
-.. _dsbe.dsbe.CourseProvider.street_box:
+.. _std.dsbe.CourseProvider.street_box:
 
 Field **CourseProvider.street_box**
 ===================================
@@ -1976,7 +1976,7 @@ Type: CharField
 .. index::
    single: field;addr2
    
-.. _dsbe.dsbe.CourseProvider.addr2:
+.. _std.dsbe.CourseProvider.addr2:
 
 Field **CourseProvider.addr2**
 ==============================
@@ -1991,7 +1991,7 @@ Type: CharField
 .. index::
    single: field;country
    
-.. _dsbe.dsbe.CourseProvider.country:
+.. _std.dsbe.CourseProvider.country:
 
 Field **CourseProvider.country**
 ================================
@@ -2006,7 +2006,7 @@ Type: ForeignKey
 .. index::
    single: field;city
    
-.. _dsbe.dsbe.CourseProvider.city:
+.. _std.dsbe.CourseProvider.city:
 
 Field **CourseProvider.city**
 =============================
@@ -2025,7 +2025,7 @@ Type: ForeignKey
 .. index::
    single: field;zip_code
    
-.. _dsbe.dsbe.CourseProvider.zip_code:
+.. _std.dsbe.CourseProvider.zip_code:
 
 Field **CourseProvider.zip_code**
 =================================
@@ -2040,7 +2040,7 @@ Type: CharField
 .. index::
    single: field;region
    
-.. _dsbe.dsbe.CourseProvider.region:
+.. _std.dsbe.CourseProvider.region:
 
 Field **CourseProvider.region**
 ===============================
@@ -2055,7 +2055,7 @@ Type: CharField
 .. index::
    single: field;language
    
-.. _dsbe.dsbe.CourseProvider.language:
+.. _std.dsbe.CourseProvider.language:
 
 Field **CourseProvider.language**
 =================================
@@ -2070,7 +2070,7 @@ Type: LanguageField
 .. index::
    single: field;email
    
-.. _dsbe.dsbe.CourseProvider.email:
+.. _std.dsbe.CourseProvider.email:
 
 Field **CourseProvider.email**
 ==============================
@@ -2085,7 +2085,7 @@ Type: EmailField
 .. index::
    single: field;url
    
-.. _dsbe.dsbe.CourseProvider.url:
+.. _std.dsbe.CourseProvider.url:
 
 Field **CourseProvider.url**
 ============================
@@ -2100,7 +2100,7 @@ Type: URLField
 .. index::
    single: field;phone
    
-.. _dsbe.dsbe.CourseProvider.phone:
+.. _std.dsbe.CourseProvider.phone:
 
 Field **CourseProvider.phone**
 ==============================
@@ -2115,7 +2115,7 @@ Type: CharField
 .. index::
    single: field;gsm
    
-.. _dsbe.dsbe.CourseProvider.gsm:
+.. _std.dsbe.CourseProvider.gsm:
 
 Field **CourseProvider.gsm**
 ============================
@@ -2130,7 +2130,7 @@ Type: CharField
 .. index::
    single: field;fax
    
-.. _dsbe.dsbe.CourseProvider.fax:
+.. _std.dsbe.CourseProvider.fax:
 
 Field **CourseProvider.fax**
 ============================
@@ -2145,7 +2145,7 @@ Type: CharField
 .. index::
    single: field;remarks
    
-.. _dsbe.dsbe.CourseProvider.remarks:
+.. _std.dsbe.CourseProvider.remarks:
 
 Field **CourseProvider.remarks**
 ================================
@@ -2160,7 +2160,7 @@ Type: TextField
 .. index::
    single: field;vat_id
    
-.. _dsbe.dsbe.CourseProvider.vat_id:
+.. _std.dsbe.CourseProvider.vat_id:
 
 Field **CourseProvider.vat_id**
 ===============================
@@ -2175,7 +2175,7 @@ Type: CharField
 .. index::
    single: field;type
    
-.. _dsbe.dsbe.CourseProvider.type:
+.. _std.dsbe.CourseProvider.type:
 
 Field **CourseProvider.type**
 =============================
@@ -2190,7 +2190,7 @@ Type: ForeignKey
 .. index::
    single: field;id
    
-.. _dsbe.dsbe.CourseProvider.id:
+.. _std.dsbe.CourseProvider.id:
 
 Field **CourseProvider.id**
 ===========================
@@ -2205,7 +2205,7 @@ Type: AutoField
 .. index::
    single: field;is_active
    
-.. _dsbe.dsbe.CourseProvider.is_active:
+.. _std.dsbe.CourseProvider.is_active:
 
 Field **CourseProvider.is_active**
 ==================================
@@ -2220,7 +2220,7 @@ Type: BooleanField
 .. index::
    single: field;activity
    
-.. _dsbe.dsbe.CourseProvider.activity:
+.. _std.dsbe.CourseProvider.activity:
 
 Field **CourseProvider.activity**
 =================================
@@ -2235,7 +2235,7 @@ Type: ForeignKey
 .. index::
    single: field;bank_account1
    
-.. _dsbe.dsbe.CourseProvider.bank_account1:
+.. _std.dsbe.CourseProvider.bank_account1:
 
 Field **CourseProvider.bank_account1**
 ======================================
@@ -2250,7 +2250,7 @@ Type: CharField
 .. index::
    single: field;bank_account2
    
-.. _dsbe.dsbe.CourseProvider.bank_account2:
+.. _std.dsbe.CourseProvider.bank_account2:
 
 Field **CourseProvider.bank_account2**
 ======================================
@@ -2265,7 +2265,7 @@ Type: CharField
 .. index::
    single: field;prefix
    
-.. _dsbe.dsbe.CourseProvider.prefix:
+.. _std.dsbe.CourseProvider.prefix:
 
 Field **CourseProvider.prefix**
 ===============================
@@ -2280,7 +2280,7 @@ Type: CharField
 .. index::
    single: field;hourly_rate
    
-.. _dsbe.dsbe.CourseProvider.hourly_rate:
+.. _std.dsbe.CourseProvider.hourly_rate:
 
 Field **CourseProvider.hourly_rate**
 ====================================
@@ -2295,7 +2295,7 @@ Type: PriceField
 .. index::
    single: field;company_ptr
    
-.. _dsbe.dsbe.CourseProvider.company_ptr:
+.. _std.dsbe.CourseProvider.company_ptr:
 
 Field **CourseProvider.company_ptr**
 ====================================
@@ -2312,7 +2312,7 @@ Type: OneToOneField
 .. index::
    pair: model; CourseContent
 
-.. _dsbe.dsbe.CourseContent:
+.. _std.dsbe.CourseContent:
 
 -----------------------
 Model **CourseContent**
@@ -2337,7 +2337,7 @@ Defined in :srcref:`/lino/apps/dsbe/models.py`
 .. index::
    single: field;id
    
-.. _dsbe.dsbe.CourseContent.id:
+.. _std.dsbe.CourseContent.id:
 
 Field **CourseContent.id**
 ==========================
@@ -2352,7 +2352,7 @@ Type: AutoField
 .. index::
    single: field;name
    
-.. _dsbe.dsbe.CourseContent.name:
+.. _std.dsbe.CourseContent.name:
 
 Field **CourseContent.name**
 ============================
@@ -2369,7 +2369,7 @@ Type: CharField
 .. index::
    pair: model; Course
 
-.. _dsbe.dsbe.Course:
+.. _std.dsbe.Course:
 
 ----------------
 Model **Course**
@@ -2401,7 +2401,7 @@ Defined in :srcref:`/lino/apps/dsbe/models.py`
 .. index::
    single: field;id
    
-.. _dsbe.dsbe.Course.id:
+.. _std.dsbe.Course.id:
 
 Field **Course.id**
 ===================
@@ -2416,7 +2416,7 @@ Type: AutoField
 .. index::
    single: field;title
    
-.. _dsbe.dsbe.Course.title:
+.. _std.dsbe.Course.title:
 
 Field **Course.title**
 ======================
@@ -2431,7 +2431,7 @@ Type: CharField
 .. index::
    single: field;content
    
-.. _dsbe.dsbe.Course.content:
+.. _std.dsbe.Course.content:
 
 Field **Course.content**
 ========================
@@ -2446,7 +2446,7 @@ Type: ForeignKey
 .. index::
    single: field;provider
    
-.. _dsbe.dsbe.Course.provider:
+.. _std.dsbe.Course.provider:
 
 Field **Course.provider**
 =========================
@@ -2461,7 +2461,7 @@ Type: ForeignKey
 .. index::
    single: field;start_date
    
-.. _dsbe.dsbe.Course.start_date:
+.. _std.dsbe.Course.start_date:
 
 Field **Course.start_date**
 ===========================
@@ -2476,7 +2476,7 @@ Type: DateField
 .. index::
    single: field;remark
    
-.. _dsbe.dsbe.Course.remark:
+.. _std.dsbe.Course.remark:
 
 Field **Course.remark**
 =======================
@@ -2493,7 +2493,7 @@ Type: CharField
 .. index::
    pair: model; CourseRequest
 
-.. _dsbe.dsbe.CourseRequest:
+.. _std.dsbe.CourseRequest:
 
 -----------------------
 Model **CourseRequest**
@@ -2525,7 +2525,7 @@ Defined in :srcref:`/lino/apps/dsbe/models.py`
 .. index::
    single: field;id
    
-.. _dsbe.dsbe.CourseRequest.id:
+.. _std.dsbe.CourseRequest.id:
 
 Field **CourseRequest.id**
 ==========================
@@ -2540,7 +2540,7 @@ Type: AutoField
 .. index::
    single: field;person
    
-.. _dsbe.dsbe.CourseRequest.person:
+.. _std.dsbe.CourseRequest.person:
 
 Field **CourseRequest.person**
 ==============================
@@ -2555,7 +2555,7 @@ Type: ForeignKey
 .. index::
    single: field;content
    
-.. _dsbe.dsbe.CourseRequest.content:
+.. _std.dsbe.CourseRequest.content:
 
 Field **CourseRequest.content**
 ===============================
@@ -2570,7 +2570,7 @@ Type: ForeignKey
 .. index::
    single: field;date_submitted
    
-.. _dsbe.dsbe.CourseRequest.date_submitted:
+.. _std.dsbe.CourseRequest.date_submitted:
 
 Field **CourseRequest.date_submitted**
 ======================================
@@ -2585,7 +2585,7 @@ Type: DateField
 .. index::
    single: field;course
    
-.. _dsbe.dsbe.CourseRequest.course:
+.. _std.dsbe.CourseRequest.course:
 
 Field **CourseRequest.course**
 ==============================
@@ -2600,7 +2600,7 @@ Type: ForeignKey
 .. index::
    single: field;remark
    
-.. _dsbe.dsbe.CourseRequest.remark:
+.. _std.dsbe.CourseRequest.remark:
 
 Field **CourseRequest.remark**
 ==============================
@@ -2615,7 +2615,7 @@ Type: CharField
 .. index::
    single: field;date_ended
    
-.. _dsbe.dsbe.CourseRequest.date_ended:
+.. _std.dsbe.CourseRequest.date_ended:
 
 Field **CourseRequest.date_ended**
 ==================================
@@ -2630,7 +2630,7 @@ Type: DateField
 .. index::
    single: field;ending
    
-.. _dsbe.dsbe.CourseRequest.ending:
+.. _std.dsbe.CourseRequest.ending:
 
 Field **CourseRequest.ending**
 ==============================
@@ -2647,7 +2647,7 @@ Type: ForeignKey
 .. index::
    pair: model; PersonSearch
 
-.. _dsbe.dsbe.PersonSearch:
+.. _std.dsbe.PersonSearch:
 
 ----------------------
 Model **PersonSearch**
@@ -2675,7 +2675,7 @@ Defined in :srcref:`/lino/apps/dsbe/models.py`
 .. index::
    single: field;id
    
-.. _dsbe.dsbe.PersonSearch.id:
+.. _std.dsbe.PersonSearch.id:
 
 Field **PersonSearch.id**
 =========================
@@ -2690,7 +2690,7 @@ Type: AutoField
 .. index::
    single: field;user
    
-.. _dsbe.dsbe.PersonSearch.user:
+.. _std.dsbe.PersonSearch.user:
 
 Field **PersonSearch.user**
 ===========================
@@ -2705,7 +2705,7 @@ Type: ForeignKey
 .. index::
    single: field;title
    
-.. _dsbe.dsbe.PersonSearch.title:
+.. _std.dsbe.PersonSearch.title:
 
 Field **PersonSearch.title**
 ============================
@@ -2720,7 +2720,7 @@ Type: CharField
 .. index::
    single: field;aged_from
    
-.. _dsbe.dsbe.PersonSearch.aged_from:
+.. _std.dsbe.PersonSearch.aged_from:
 
 Field **PersonSearch.aged_from**
 ================================
@@ -2735,7 +2735,7 @@ Type: IntegerField
 .. index::
    single: field;aged_to
    
-.. _dsbe.dsbe.PersonSearch.aged_to:
+.. _std.dsbe.PersonSearch.aged_to:
 
 Field **PersonSearch.aged_to**
 ==============================
@@ -2750,7 +2750,7 @@ Type: IntegerField
 .. index::
    single: field;sex
    
-.. _dsbe.dsbe.PersonSearch.sex:
+.. _std.dsbe.PersonSearch.sex:
 
 Field **PersonSearch.sex**
 ==========================
@@ -2765,7 +2765,7 @@ Type: CharField
 .. index::
    single: field;only_my_persons
    
-.. _dsbe.dsbe.PersonSearch.only_my_persons:
+.. _std.dsbe.PersonSearch.only_my_persons:
 
 Field **PersonSearch.only_my_persons**
 ======================================
@@ -2782,7 +2782,7 @@ Type: BooleanField
 .. index::
    pair: model; WantedLanguageKnowledge
 
-.. _dsbe.dsbe.WantedLanguageKnowledge:
+.. _std.dsbe.WantedLanguageKnowledge:
 
 ---------------------------------
 Model **WantedLanguageKnowledge**
@@ -2808,7 +2808,7 @@ Defined in :srcref:`/lino/apps/dsbe/models.py`
 .. index::
    single: field;id
    
-.. _dsbe.dsbe.WantedLanguageKnowledge.id:
+.. _std.dsbe.WantedLanguageKnowledge.id:
 
 Field **WantedLanguageKnowledge.id**
 ====================================
@@ -2823,7 +2823,7 @@ Type: AutoField
 .. index::
    single: field;search
    
-.. _dsbe.dsbe.WantedLanguageKnowledge.search:
+.. _std.dsbe.WantedLanguageKnowledge.search:
 
 Field **WantedLanguageKnowledge.search**
 ========================================
@@ -2838,7 +2838,7 @@ Type: ForeignKey
 .. index::
    single: field;language
    
-.. _dsbe.dsbe.WantedLanguageKnowledge.language:
+.. _std.dsbe.WantedLanguageKnowledge.language:
 
 Field **WantedLanguageKnowledge.language**
 ==========================================
@@ -2853,7 +2853,7 @@ Type: ForeignKey
 .. index::
    single: field;spoken
    
-.. _dsbe.dsbe.WantedLanguageKnowledge.spoken:
+.. _std.dsbe.WantedLanguageKnowledge.spoken:
 
 Field **WantedLanguageKnowledge.spoken**
 ========================================
@@ -2868,7 +2868,7 @@ Type: ChoiceListField
 .. index::
    single: field;written
    
-.. _dsbe.dsbe.WantedLanguageKnowledge.written:
+.. _std.dsbe.WantedLanguageKnowledge.written:
 
 Field **WantedLanguageKnowledge.written**
 =========================================

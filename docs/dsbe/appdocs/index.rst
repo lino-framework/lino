@@ -6,7 +6,7 @@ Lino/DSBE
 
 .. toctree::
 
-    auth
+    users
     contenttypes
     sites
     lino

@@ -37,8 +37,3 @@ cm:
 	  cd $(LINO_ROOT)/lino/apps/$$i && $(DJANGO_ADMIN) compilemessages; \
 	done
   
-makedocs:
-	python -m lino.apps.dsbe.manage makedocs --settings lino.apps.dsbe.settings -o docs/dsbe/appdocs
-	python -m lino.apps.igen.manage makedocs --settings lino.apps.igen.settings -o docs/igen/appdocs
- 
-

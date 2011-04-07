@@ -35,7 +35,7 @@ from django import forms
 from django.conf.urls.defaults import patterns, url, include
 from django.forms.models import modelform_factory
 from django.forms.models import _get_foreign_key
-from django.contrib.auth.decorators import login_required
+#~ from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
