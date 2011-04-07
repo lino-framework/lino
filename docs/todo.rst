@@ -9,8 +9,30 @@ for which I hope for help from other people.
 Short-term
 ----------
 
+#.  Ausbau der Personensuche mit 2 neuen Bedingungen:
+
+      a) Begleitet durch den DSBE innerhalb einer einzugebenden Periode
+      b) Auswahl des Begleiters1 und/oder Begleiters2
+
+#.  Uploads nicht nur pro Person, sondern auch pro Notiz/Ereignis, 
+    pro Kursanfrage und voraussichtlich in naher Zukunft auch noch 
+    an anderen Stellen. Also mit GFK arbeiten.
+    
+#.  Hinter das QuickFilter-Feld sollte ein Button, um den Filter zu aktivieren. 
+    Dass man einfach nur TAB drücken muss ist nicht intuitiv.
+
+#.  Auswahllisten in FKs zu `languages.Language` und `countries.Country`: 
+    Einträge sollten alphabetisch sortiert sein.
+    
 #.  Übersetzung PropertyType : nicht Eigenschaftsart, sondern 
     Eigenschaftstyp oder Eigenschafts-Datentyp...
+    
+#.  Übersetzung "Notes" soll in DSBE nit "Notizen" 
+    sondern "Ereignisse/Notizen" sein.
+    
+#.  Bei den angezeigten Personen einer PersonSearch sind manche Felder noch nicht übersetzt.
+
+#.  Grid-Konfigurationsdateien sollten pro Benutzer speicherbar sein.
     
 #.  An makedocs müsste ich bei Gelegenheit mal ein bisschen weiter machen. 
     Das ist noch lange nicht fertig.
@@ -73,8 +95,6 @@ Version 1.3
 #.  Decide some relatively stable Django version to use,
     because simply getting the latest snapshot each time 
     is a bit dangerous on a production server.
-
-#.  Grid-Konfigurationsdateien sollten pro Benutzer speicherbar sein.
 
 #.  DELETE (per Taste) auf einer Zeile in Teilnehmer oder Kandidaten funktioniert. 
     Aber dort soll man nicht löschen können.
@@ -299,9 +319,6 @@ Long-term
    In Explorer / Notes hat man momentan den Eindruck, dass es nur eine 
    Zeile gibt; in Wirklichkeit ist der Memo-Text der ersten Zeile so lang, 
    dass die Zeilenhöhe größer als das Fenster ist.
-
-#. Hinter das QuickFilter-Feld sollte ein Button, um den Filter zu aktivieren. 
-   Dass man einfach nur TAB drücken muss ist nicht intuitiv.
 
 #. Benutzbarkeit per Tastatur verbessern (issue 11, issue 64) 
 
