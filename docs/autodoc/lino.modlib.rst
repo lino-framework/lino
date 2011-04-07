@@ -14,6 +14,6 @@ Subpackages
 
     lino.modlib.countries
     lino.modlib.contacts
-    lino.modlib.auth
+    lino.modlib.users
     lino.modlib.sales
 

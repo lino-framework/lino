@@ -73,3 +73,8 @@ Wir werden sehen. Kommt Zeit, kommt Rat.
 Zur Zeit funktioniert ``manage.py test`` jedenfalls mal wieder nicht.
 
 
+Release 1.1.8
+-------------
+
+Wegen obigem Bug mache ich ein Release in Eupen mit DB-Migration, 
+deshalb gönnen wir uns auch die nächste Versionsnummer.

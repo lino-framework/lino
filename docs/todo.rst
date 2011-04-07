@@ -9,10 +9,6 @@ for which I hope for help from other people.
 Short-term
 ----------
 
-#.  Man kann keine neuen Benutzer anlegen. 
-    Er sagt dann "password: Dieses Feld darf nicht leer sein". 
-    Dabei gibt es ja gar kein Passwort mehr in `lino.modlib.auth`.
-
 #.  Ausbau der Personensuche mit 2 neuen Bedingungen:
 
       a) Begleitet durch den DSBE innerhalb einer einzugebenden Periode
