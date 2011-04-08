@@ -493,6 +493,12 @@ class ComboFieldElement(FieldElement):
     xtype = None
     filter_type = 'string'
     
+    def get_field_options(self,**kw):
+        kw = FieldElement.get_field_options(self,**kw)
+        if not isinstance(self.lh.layout,reports.ListLayout):
+            kw.update(hiddenName=self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
+        return kw
+      
 class ChoicesFieldElement(ComboFieldElement):
     value_template = "new Lino.ChoicesFieldElement(%s)"
   
@@ -501,7 +507,7 @@ class ChoicesFieldElement(ComboFieldElement):
         self.preferred_width = 20
         
     def get_field_options(self,**kw):
-        kw = FieldElement.get_field_options(self,**kw)
+        kw = ComboFieldElement.get_field_options(self,**kw)
         kw.update(store=self.field.choices)
         kw.update(hiddenName=self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
         return kw
@@ -517,7 +523,7 @@ class RemoteComboFieldElement(ComboFieldElement):
         return kw
       
     def get_field_options(self,**kw):
-        kw = FieldElement.get_field_options(self,**kw)
+        kw = ComboFieldElement.get_field_options(self,**kw)
         sto = self.store_options()
         #print repr(sto)
         kw.update(store=js_code("new Lino.ComplexRemoteComboStore(%s)" % py2js(sto)))
@@ -530,7 +536,7 @@ class SimpleRemoteComboFieldElement(RemoteComboFieldElement):
 class ComplexRemoteComboFieldElement(RemoteComboFieldElement):
     #~ value_template = "new Lino.ComplexRemoteComboFieldElement(%s)"
         
-    def get_field_options(self,**kw):
+    def unused_get_field_options(self,**kw):
         kw = RemoteComboFieldElement.get_field_options(self,**kw)
         kw.update(hiddenName=self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
         return kw
@@ -555,7 +561,7 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
         
         
     def get_field_options(self,**kw):
-        kw = ComplexRemoteComboFieldElement.get_field_options(self,**kw)
+        kw = super(ForeignKeyElement,self).get_field_options(**kw)
         kw.update(pageSize=self.report.page_length)
         kw.update(emptyText=_('Select a %s...') % self.report.model._meta.verbose_name)
         return kw

@@ -9,3 +9,50 @@ Erweiterung Personensuche
       a) Begleitet durch den DSBE innerhalb einer einzugebenden Periode
       b) Auswahl des Begleiters1 und/oder Begleiters2
 
+Diese Änderungen sind noch in die :doc:`/releases/20110407` mit rein.
+
+
+Ticket #38 ist doch noch nicht fertig
+-------------------------------------
+
+Der folgende Bug ist in manchen Konfigurationen doch noch nicht raus:
+
+#.  Beim Drücken auf "Speichern" (Person) nach der Eingabe einer neuen
+    Sprache in "Sprachkenntnisse" kommt eine Fehlermitteilung Server-side
+    failure: {'language': [u"Wert u'fij' ist keine g\xfcltige Option."]}
+    
+Ticket :doc:`/tickets/38`
+
+Rätselhaft. Schauen wir uns das mal genau an. Zum Beispiel DSBE. 
+
+Wenn ich auf dem development server `initdb_demo` lade und dann per Permalink 
+auf Seite http://127.0.0.1:8000/api/contacts/Persons/14?fmt=detail&tab=3
+gehe und dort zuerst in :guilabel:`Sprachkenntnisse` eine Sprache ändere 
+(was sogleich gespeichert wird) und anschließend (unnützerweise) 
+noch auf :guilabel:`Speichern` klicke, dann meldet der Server::
+
+  INFO Person #14 (Arens Andreas (14)) modified by root : (no changes)
+  
+Was korrekt ist.
+
+Nun mach ich `python manage.py loaddata d20110407` (wobei d20110407 
+ein kompletter Dump mit Originaldaten ist, 5 MB groß). 
+Dann starte ich wieder den Server und gehe aufs Detail von Max Mustermann. 
+Dort mache ich das Gleiche wie eben bei Andreas Arens, und nun kommt::
+
+  INFO Person #200007 (Mustermann Max (200007)) modified by root :
+  - language : fr --> cze
+  
+Der Client hat im Form Data des PUT ein Feld `languageHidden:cze` geschickt.
+
+Tilt! Erklärung: 
+Im ersten Fall kam der Fehler nicht, weil Andreas Arens ein 
+importierter Partner ist und folglich sein Feld `language` disabled hat.
+Das `languageHidden:cze` schickte er dort auch, aber weil alles korrekt schien, 
+habe ich das nicht nachgeschaut.
+
+Und um den Bug tatsächlich zu beheben, musste ich dafür sorgen, 
+dass Comboboxen, die als Editor für Gridkolonnen dienen, nicht nur kein 
+`name` sondern auch kein `hiddenName` bekommen.
+Fertig. Check-in.
+

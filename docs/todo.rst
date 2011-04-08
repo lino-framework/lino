@@ -65,8 +65,11 @@ Short-term
     Zumindest Aufzählungen und mehrere Absätze 
     sollten möglich sein.
     
-Version 1.3
------------
+
+Later
+-----
+
+#.  igen : Partner.get_invoice_suggestions()
 
 #.  MTI auch für Personen anwenden: 
     in lino.dsbe für "normale" Personen nur die 
@@ -92,7 +95,7 @@ Version 1.3
     `work_permit_upload_type` und 
     `driving_licence_upload_type`, 
     die momentan als Klassenattribute 
-    in :class:`lino.demos.dsbe.site.Site`
+    in :class:`lino.apps.dsbe.settings.Lino`
     implementiert sind, sollten 
     ebenfalls zu Feldern in der SiteConfig konvertiert werden.
     Aber Vorsicht, denn wenn die verändert werden muss 
@@ -156,9 +159,6 @@ Version 1.3
     Schöner wäre ein TimeDelaField wie in 
     http://djangosnippets.org/snippets/1060/
 
-
-Later
------
 
 #.  Idee: Vielleicht müsste contacts.Person doch nicht abstract sein, und
     lino.dsbe stattdessen ein neues Modell CoachedPerson(contacts.Person) 

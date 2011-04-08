@@ -1,5 +1,7 @@
-#38 [closed]: Grid Editor values being reused when surrounding form submitted
-=============================================================================
+#38 [closed]: Fields of Slave GridEditor being submitted to master
+==================================================================
+
+Grid Editor values being reused when surrounding form submitted
 
 I have a FormPanel on a master record which contains EditorGridPanels 
 (each of which contains a list of slave records).
