@@ -1,0 +1,11 @@
+20110408
+========
+
+Erweiterung Personensuche
+-------------------------
+
+#.  Ausbau der Personensuche mit 2 neuen Bedingungen:
+
+      a) Begleitet durch den DSBE innerhalb einer einzugebenden Periode
+      b) Auswahl des Begleiters1 und/oder Begleiters2
+

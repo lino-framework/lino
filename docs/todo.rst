@@ -9,11 +9,6 @@ for which I hope for help from other people.
 Short-term
 ----------
 
-#.  Ausbau der Personensuche mit 2 neuen Bedingungen:
-
-      a) Begleitet durch den DSBE innerhalb einer einzugebenden Periode
-      b) Auswahl des Begleiters1 und/oder Begleiters2
-
 #.  In einer Grid, die auch ein Detail hat, 
     wird durch Doppelklick auf einer CheckColumn gleichzeitig auch das 
     Detail-Fenster geöffnet. Das muss behoben werden, bevor ich mit 

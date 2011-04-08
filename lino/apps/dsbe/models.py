@@ -614,10 +614,19 @@ class PersonsByCity(Persons):
     order_by = 'street street_no street_box addr2'.split()
     column_names = "street street_no street_box addr2 name language *"
     
-def only_coached_persons(qs):
-    today = datetime.date.today()
-    return qs.filter(models.Q(coached_from__isnull=False) | 
-        models.Q(coached_until__isnull=False,coached_until__gte=today))
+def only_coached_persons(qs,period_from,period_until=None):
+    #~ period_from = period_from or datetime.date.today()
+    period_until = period_until or period_from
+    #~ today = datetime.date.today()
+    if period_from is not None:
+        qs = qs.filter(coached_until__isnull=False,coached_until__gte=period_from)
+    if period_until is not None:
+        qs = qs.filter(coached_from__isnull=False,coached_from__lte=period_until)
+    return qs
+    #~ return qs.filter(
+        #~ models.Q(coached_from__isnull=False,coached_from__lte=period_until) | 
+        #~ models.Q(coached_until__isnull=False,coached_until__gte=period_from)
+        #~ )
   
 def only_my_persons(qs,user):
     return qs.filter(models.Q(coach1__exact=user) | models.Q(coach2__exact=user))
@@ -629,7 +638,7 @@ class MyPersons(Persons):
     #~ def get_queryset(self):
     def get_request_queryset(self,rr):
         qs = super(MyPersons,self).get_request_queryset(rr)
-        return only_coached_persons(only_my_persons(qs,rr.user))
+        return only_coached_persons(only_my_persons(qs,rr.user),datetime.date.today())
         #~ today = datetime.date.today()
         #~ Q = models.Q
         #~ q1 = Q(coach1__exact=rr.user) | Q(coach2__exact=rr.user)
@@ -1646,7 +1655,18 @@ class PersonSearch(mixins.AutoUser):
         verbose_name=_("Sex"),
         choices=SEX_CHOICES) 
         
-    only_my_persons = models.BooleanField(verbose_name=_("Only my persons"),default=True)
+    only_my_persons = models.BooleanField(verbose_name=_("Only my persons")) # ,default=True)
+    
+    coached_by = models.ForeignKey("users.User",
+        verbose_name=_("Coached by"),
+        related_name='persons_coached',
+        blank=True,null=True)
+    period_from = models.DateField(
+        blank=True,null=True,
+        verbose_name=_("Period from"))
+    period_until = models.DateField(
+        blank=True,null=True,
+        verbose_name=_("until"))
     
     def result(self):
         for p in PersonsBySearch().request(master_instance=self):
@@ -1746,7 +1766,12 @@ class PersonsBySearch(reports.Report):
             qs = qs.filter(birth_date__gte=today-datetime.timedelta(days=search.aged_to*365))
             
         if search.only_my_persons:
-            qs = only_coached_persons(only_my_persons(qs,search.user))
+            qs = only_my_persons(qs,search.user)
+        
+        if search.coached_by:
+            qs = only_my_persons(qs,search.coached_by)
+            
+        qs = only_coached_persons(qs,search.period_from,search.period_until)
           
         required_id_sets = []
         
