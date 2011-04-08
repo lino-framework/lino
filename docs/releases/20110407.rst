@@ -4,8 +4,14 @@ Version 1.1.8 (07.04.2011)
 New features
 ------------
 
-Bugfix release with several urgent bugfixes in 
-:mod:`lino.modlib.users`, :mod:`lino.ui.extjs` and :term:`watch_tim`.
+#.  Bugfix release with several urgent bugfixes (submit checkboxes, 
+    create new users).
+    
+#.  Ausbau der Personensuche mit 2 neuen Bedingungen:
+
+      a) Begleitet innerhalb einer einzugebenden Periode
+      b) Auswahl des Begleiters1 und/oder Begleiters2
+    
 
   
 Upgrade instructions
