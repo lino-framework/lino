@@ -618,10 +618,11 @@ def only_coached_persons(qs,period_from,period_until=None):
     #~ period_from = period_from or datetime.date.today()
     period_until = period_until or period_from
     #~ today = datetime.date.today()
+    Q = models.Q
     if period_from is not None:
-        qs = qs.filter(models.Q(coached_until__isnull=False,coached_until__gte=period_from))
+        qs = qs.filter(Q(coached_until__isnull=True)|Q(coached_until__gte=period_from))
     if period_until is not None:
-        qs = qs.filter(models.Q(coached_from__isnull=False,coached_from__lte=period_until))
+        qs = qs.filter(Q(coached_from__isnull=True)|Q(coached_from__lte=period_until))
     return qs
     #~ return qs.filter(
         #~ models.Q(coached_from__isnull=False,coached_from__lte=period_until) | 
