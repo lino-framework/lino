@@ -164,7 +164,8 @@ TIME_ZONE = 'Europe/Brussels'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'de-BE'
+LANGUAGE_CODE = 'de'
+#~ LANGUAGE_CODE = 'de-BE'
 #~ LANGUAGE_CODE = 'fr-BE'
 
 #~ ROOT_URLCONF = 'lino.demos.dsbe.urls'

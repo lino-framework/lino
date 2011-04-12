@@ -22,9 +22,6 @@ Short-term
     Dadurch werden auch Kursanfragen ein Detail kriegen (müssen), 
     weil Lino noch kein Upload-Panel in Grids kann.
     
-#.  "Unbekannte eID-Kartenart 1" : Wenn das Feld `Person.card_type` ausgefüllt ist, 
-    wird momentan nicht der dazugehörige Text angezeigt.
-    
 #.  Hinter das QuickFilter-Feld sollte ein Button, um den Filter zu aktivieren. 
     Dass man einfach nur TAB drücken muss ist nicht intuitiv.
 

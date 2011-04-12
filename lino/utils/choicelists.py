@@ -13,6 +13,25 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
+Utility for defining hard-coded multi-lingual choice lists.
+
+:class:`DoYouLike` and :class:`HowWell` 
+are "batteries included" usage examples.
+
+Example on how to use them in your model::
+
+  from django.db.models import Model
+  from lino.utils.choicelists import HowWell
+  
+  class KnownLanguage(Model):
+      spoken = HowWell.field(verbose_name=_("spoken"))
+      written = HowWell.field(verbose_name=_("written"))
+
+Every user-defined subclass of ChoiceList is also 
+automatically available as a property value in 
+:mod:`lino.modlib.properties`.
+
+
 """
 
 from django.db import models
@@ -56,7 +75,7 @@ class ChoiceListMeta(type):
 class ChoiceList(object):
     """
     Every subclass of ChoiceList will be automatically registered.
-    Define this if you class' name clashes with the name of an exiting ChoiceList.
+    Define this if your class's name clashes with the name of an exiting ChoiceList.
     """
     __metaclass__ = ChoiceListMeta
     items = []

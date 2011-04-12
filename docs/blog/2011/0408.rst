@@ -54,5 +54,23 @@ habe ich das nicht nachgeschaut.
 Und um den Bug tatsächlich zu beheben, musste ich dafür sorgen, 
 dass Comboboxen, die als Editor für Gridkolonnen dienen, nicht nur kein 
 `name` sondern auch kein `hiddenName` bekommen.
-Fertig. Check-in.
+Fertig. Check-in `20110408b <http://code.google.com/p/lino/source/detail?r=376f2277330e188ecc3f8dd67bab927f423ee54d>`_.
+
+
+Mehrsprachige hard-codierte Bezeichnungen
+-----------------------------------------
+
+Der folgende Bug ist behoben:
+
+#.  "Unbekannte eID-Kartenart 1" : Wenn das Feld `Person.card_type` ausgefüllt ist, 
+    wird momentan nicht der dazugehörige Text angezeigt.
+    
+Einerseits lag das nur daran, dass ich für Kartenart 1 nur eine englische 
+Bezeichnung hardcodiert hatte.
+
+Andererseits fiel mir dabei auf, dass :mod:`lino.utils.babel` es 
+möglicherweise noch nicht mag, wenn man einen komplexen 
+:setting:`LANGUAGE_CODE` 
+in der :xfile:`settings.py` eingibt. Also dort sollte stehen ``'de'``, 
+und nicht etwa ``'de-BE'``.
 

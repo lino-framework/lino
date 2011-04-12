@@ -174,8 +174,8 @@ RESIDENCE_TYPE_CHOICES = (
 )
 
 BEID_CARD_TYPES = {
-  '1' : dict(en=u"Belgian citizen"),
-  '6' : dict(en=u"Kids card (< 12 year)"),
+  '1' : dict(en=u"Belgian citizen",de=u"Belgischer Staatsbürger",fr=u"Citoyen belge"),
+  '6' : dict(en=u"Kids card (< 12 year)",de=u"Kind unter 12 Jahren"),
   '8' : dict(en=u"Habilitation",fr=u"Habilitation",nl=u"Machtiging"),
   '11' : dict(
         en=u"Foreigner card type A",
@@ -486,7 +486,7 @@ class Person(Partner,contacts.Person):
             s = babeldict_getitem(BEID_CARD_TYPES,self.card_type)
             if s:
                 return s
-            return _("Unknown card type %s") % self.card_type
+            return _("Unknown card type %r") % self.card_type
         return _("Not specified") # self.card_type
     card_type_text.return_type = fields.DisplayField(_("eID card type"))
         
@@ -615,10 +615,14 @@ class PersonsByCity(Persons):
     column_names = "street street_no street_box addr2 name language *"
     
 def only_coached_persons(qs,period_from,period_until=None):
+    """
+    coached_from and coached_until
+    """
     #~ period_from = period_from or datetime.date.today()
     period_until = period_until or period_from
     #~ today = datetime.date.today()
     Q = models.Q
+    qs = qs.filter(Q(coached_until__isnull=False)|Q(coached_from__isnull=False))
     if period_from is not None:
         qs = qs.filter(Q(coached_until__isnull=True)|Q(coached_until__gte=period_from))
     if period_until is not None:

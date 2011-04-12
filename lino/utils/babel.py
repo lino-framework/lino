@@ -12,25 +12,33 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Generic support for multilingual database content.
+Generic support for multilingual content
+in hard-coded values and database fields.
 
-This includes defintion of *babel fields* in your Django Models 
+This includes definition of *babel fields* in your Django Models 
 as well as methods to access these fields transparently.
 
 Babel Fields are normal CharFields or TextFields, except 
 that they have been automatically generated from a master field, 
-depending on your :setting:`LANGUAGE_CODE` 
+depending on your local :setting:`LANGUAGE_CODE` 
 and :setting:`LANGUAGES` settings
 
 Example::
 
   class Foo(models.Model):
       name = babel.BabelCharField(_("Foo"), max_length=200)
+      
+To handle hard-coded multilingual texts we suggest 
+the :mod:`lino.utils.choicelists` module which maks use of 
+the :class:`BabelChoice` class defined below.
 
+
+One known issue is that complex language codes are not yet 
+supported or at least not tested. 
+The :setting:`LANGUAGE_CODE` in your :xfile:`settings.py` 
+should be ``'de'``, and not ``'de-BE'`` or ``'de-CH'``.
 
 This module would deserve more documentation.
-  
-
 
 """
 
@@ -295,6 +303,7 @@ def field2kw(obj,name):
 
 def babelitem(**v):
     lng = translation.get_language()
+    #~ print lng,v
     #~ lng = LANG or DEFAULT_LANGUAGE
     if lng == DEFAULT_LANGUAGE:
         return v.get(lng)

@@ -14,13 +14,8 @@
 
 """
 
-Todo:
+This module would deserve more documentation.
 
-Property.type should not be a ForeignKey to PropType, 
-but a simple reference to a PropertyType instance.
-There should be a list of PropertyType objects, 
-some of them not stored (like YesNo and 
-and only 
 
 """
 

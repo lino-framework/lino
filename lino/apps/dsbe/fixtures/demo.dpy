@@ -329,12 +329,22 @@ def objects():
       
     p = Person.objects.get(name=u"Ärgerlich Erna")
     p.coached_from = i2d(20100301)
-    p.coached_until = i2d(20100831)
+    p.coached_until = None
     p.coach1 = User.objects.get(username='root')
     p.save()
     
     p = Person.objects.get(name=u"Eierschal Emil")
     p.coached_from = i2d(20100801)
     p.coached_until = i2d(20101031)
-    p.coach1 = User.objects.get(username='user')
+    p.coach1 = User.objects.get(username='root')
+    p.save()
+
+    p = Person.objects.get(name=u"Bastiaensen Laurent")
+    p.coached_from = None
+    p.coached_until = i2d(20101031)
+    p.coach1 = User.objects.get(username='root')
+    p.save()
+
+    p = Person.objects.get(name=u"Ausdemwald Alfons")
+    p.coach1 = User.objects.get(username='root')
     p.save()
