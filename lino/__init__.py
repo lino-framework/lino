@@ -18,7 +18,6 @@ See :doc:`/admin/install` on how to use it.
 """
 
 import sys
-import datetime
 import logging
 
 __version__ = "1.1.8"
@@ -137,17 +136,5 @@ def welcome_html():
     return "Lino version %s using %s" % (
       __version__,
       ', '.join(['<a href="%s" target="_blank">%s</a> %s' % (u,n,v) for n,v,u in using()]))
-
-
-DATE_FORMAT_STRFTIME = '%d.%m.%Y'
-DATE_FORMAT_EXTJS = 'd.m.Y'
-def PARSE_DATE(s):
-    """Convert a string formatted as above to a datetime.date instance.
-    See :doc:`/blog/2010/1130`.
-    """
-    ymd = reversed(map(int,s.split('.')))
-    return datetime.date(*ymd)
-
-
 
 

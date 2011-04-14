@@ -1099,6 +1099,7 @@ class ExtUI(base.UI):
         tpl._ = mytranslate
         #~ tpl.user = request.user
         tpl.site = self.site
+        tpl.settings = settings
         tpl.lino = lino
         tpl.ext_requests = ext_requests
         for k in ext_requests.URL_PARAMS:

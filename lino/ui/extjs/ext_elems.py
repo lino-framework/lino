@@ -574,9 +574,11 @@ class TimeFieldElement(FieldElement):
     sortable = True
     preferred_width = 8
     filter_type = 'time'
+    
   
 class DateFieldElement(FieldElement):
-    xtype = 'datefield'
+    value_template = "new Lino.DateField(%s)"
+    #~ xtype = 'datefield'
     data_type = 'date' # for store column
     sortable = True
     preferred_width = 8
@@ -584,15 +586,16 @@ class DateFieldElement(FieldElement):
     # todo: DateFieldElement.preferred_width should be computed from Report.date_format
     #~ grid_column_template = "new Ext.grid.DateColumn(%s)"
     
-    def get_field_options(self,**kw):
-        kw = FieldElement.get_field_options(self,**kw)
-        kw.update(format=self.lh.rh.report.date_format)
-        return kw
+    #~ def get_field_options(self,**kw):
+        #~ kw = FieldElement.get_field_options(self,**kw)
+        #~ kw.update(format=self.lh.rh.report.date_format)
+        #~ return kw
         
     def get_column_options(self,**kw):
         kw = FieldElement.get_column_options(self,**kw)
         kw.update(xtype='datecolumn')
-        kw.update(format=self.lh.rh.report.date_format)
+        #~ kw.update(format=self.lh.rh.report.date_format)
+        kw.update(format=settings.LINO.date_format_extjs)
         return kw
     
 class MonthFieldElement(DateFieldElement):

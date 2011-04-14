@@ -40,19 +40,45 @@ Der folgende Punkt ist jetzt auch fertig:
 #.  dpy.Serializer schreibt momentan in den dump eines CourseProvider alle Felder 
     der Company nochmal rein. Er muss aber statt dieser Felder nur `company_ptr` setzen.
 
+War im Grunde ganz einfach, ich musste nur `_meta.local_fields` statt `_meta.fields` nehmen.
 Ich habe auch eigens einen Testcase 
 :func:`lino.apps.dsbe.tests.dsbe_tests.test01` 
 geschrieben, der allerdings nicht wirklich testet 
 sondern mir beim Überlegen behilflich war. 
-Den testcase kann ich wie folgt aufrufen::
-
-  python manage.py test dsbe.NoFixturesTest
   
 Ärgerlich auch wieder mal, dass ich den besagten Testcase nicht in autodoc 
 rein kriege, wegen der `DJANGO_SETTINGS_MODULE`. Aber bon, das ist weniger dringend. 
-Sorry also, wenn in diesem Blog viele Links noch immer nicht funktionieren.
+Sorry, wenn in diesem Blog viele Links noch immer nicht funktionieren.
 
 Abends mach ich die Probe aufs Exempel:
+
 - Dump mit der alten Version
-- Upgrade und Dump mit der neuen Version
-- Dateivergleich
+- Check-in, Upgrade und Dump mit der neuen Version
+- Dateivergleich, ob auch wirklich nur die CourseProvider sich verändert haben. Alles klar.
+
+
+Date formatting
+---------------
+
+#.  Wenn man als Datum ``13/12/2010`` eingibt, macht er daraus ``12.01.2011``. 
+    Weil er das als ein amerikanisches Format ansieht. 
+
+Der Fehler war nicht wie anfangs vermutet auf der Serverseite, sondern der 
+Client schickte schon ``12.01.2011``. 
+Das lag lediglich am Konfigurationsparameter `altFormats` 
+des :extjs:`Ext.form.DateField`.
+Um kompakteren Code zu generieren, habe ich jetzt außerdem 
+eine Klasse `Lino.DateField` in der :xfile`linolib.js`.
+
+Den Parameter `Report.date_format` habe ich vorläufig mal rausgeholt. 
+Und statt 
+``lino.DATE_FORMAT_STRFTIME``,
+``lino.DATE_FORMAT_EXTJS`` und
+``lino.PARSE_DATE()``
+heißt es jetzt 
+``settings.LINO.date_format_strftime`` usw.
+Denn das Datumsformat konnte man bisher überhaupt nicht konfigurieren,
+jetzt kann man das bis auf weiteres immerhin global pro Site. 
+
+
+

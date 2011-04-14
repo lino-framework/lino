@@ -21,6 +21,7 @@ into your local :xfile:`settings.py` using::
 
 import os
 import sys
+import datetime
 from tempfile import gettempdir
 from os.path import join, abspath, dirname, normpath
 import lino
@@ -41,6 +42,23 @@ class Lino(object):
     #~ index_html = "This is the main page."
     title = "Base Lino Application"
     domain = "www.example.com"
+    
+    
+    date_format_strftime = '%d.%m.%Y'
+    date_format_extjs = 'd.m.Y'
+    
+    def parse_date(self,s):
+        """Convert a string formatted using :attr:`date_format_xxx` to a datetime.date instance.
+        See :doc:`/blog/2010/1130`.
+        """
+        ymd = reversed(map(int,s.split('.')))
+        return datetime.date(*ymd)
+
+    alt_date_formats_extjs = 'd/m/Y|Y-m-d'
+
+
+
+    
     
     #~ preferred_build_method = 'pisa'
     #~ preferred_build_method = 'appypdf'

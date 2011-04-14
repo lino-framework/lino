@@ -278,6 +278,10 @@ Lino.on_tab_activate = function(item) {
   if (item.rendered) item.doLayout();
 }
 
+Lino.DateField = Ext.extend(Ext.form.DateField,{
+  format: '$settings.LINO.date_format_extjs',
+  altFormats: '$settings.LINO.alt_date_formats_extjs'
+  });
 Lino.URLField = Ext.extend(Ext.form.TriggerField,{
   triggerClass : 'x-form-search-trigger',
   vtype: 'url',

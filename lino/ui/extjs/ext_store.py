@@ -22,6 +22,7 @@ logger = logging.getLogger(__name__)
 import datetime
 #~ from dateutil import parser as dateparser
 
+from django.conf import settings
 from django.db import models
 from django.db.models.fields import NOT_PROVIDED
 from django.core import exceptions
@@ -521,7 +522,8 @@ class Store:
         if isinstance(fld,models.ForeignKey):
             return ForeignKeyStoreField(fld)
         if isinstance(fld,models.DateField):
-            return DateStoreField(fld,self.report.date_format)
+            return DateStoreField(fld,settings.LINO.date_format_extjs)
+            #~ return DateStoreField(fld,self.report.date_format)
         if isinstance(fld,models.BooleanField):
             return BooleanStoreField(fld)
         if isinstance(fld,models.AutoField):

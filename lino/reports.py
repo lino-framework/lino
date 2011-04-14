@@ -71,7 +71,7 @@ from lino.core.coretools import get_slave, get_model_report, data_elems, get_dat
 def parse_js_date(s,name):
     #~ v = dateparser.parse(s)
     #~ v = dateparser.parse(s,fuzzy=True)
-    return lino.PARSE_DATE(s)
+    return settings.LINO.parse_date(s)
     #~ print "parse_js_date %s : %r -> %s" % (name,s,v)
     #~ return v
 
@@ -740,7 +740,7 @@ class Report(actors.Actor): #,base.Handled):
     `True` to use ExtJS CellSelectionModel, `False` to use RowSelectionModel.
     """
     
-    date_format = lino.DATE_FORMAT_EXTJS
+    #~ date_format = lino.DATE_FORMAT_EXTJS
     #~ boolean_texts = boolean_texts
     boolean_texts = boolean_texts = (_('Yes'),_('No'),' ')
     

@@ -48,6 +48,7 @@ import datetime
 import decimal
 
 #~ from django.core.serializers.json import DjangoJSONEncoder
+from django.conf import settings
 from django.utils import simplejson
 from django.utils.functional import Promise
 from django.utils.encoding import force_unicode
@@ -129,7 +130,7 @@ def py2js(v):
         return str(v)
     if isinstance(v, datetime.date):
         #~ return 'new Date(%d,%d,%d)' % (v.year,v.month-1,v.day)
-        return '"%s"' % v.strftime(lino.DATE_FORMAT_STRFTIME)
+        return '"%s"' % v.strftime(settings.LINO.date_format_strftime)
         #~ return repr('%d.%d.%d' % (v.day,v.month,v.year))
         #~ return repr(str(v))
 
