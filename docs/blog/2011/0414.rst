@@ -1,0 +1,58 @@
+20110414
+========
+
+Doppelklicks
+------------
+
+Nach einigen Tagen mit Fieber im Bett geht es jetzt weiter mit folgendem Punkt:
+
+#.  In einer Grid, die auch ein Detail hat, 
+    wird durch Doppelklick auf einer CheckColumn gleichzeitig auch das 
+    Detail-Fenster geöffnet. Das muss behoben werden, bevor ich mit 
+    den "allgemeinen Uploads" anfangen kann.
+
+Die `processEvent` der `Ext.grid.GridView` feuert in folgender Reihenfolge:
+- ``grid.fireEvent('dblclick')`` 
+- ``grid.fireEvent('celldblclick')`` (die dann `onCellDblClick` meiner `Lino.GridPanel` ruft)
+- ``column.processEvent`` (die im Fall einer `Lino.CheckColumn` den Wert umschaltet)
+- ``grid.fireEvent('rowdblclick')``
+
+Wie kriege ich die beiden miteinander kombiniert? Oder zuerst mal: 
+was will ich eigentlich genau? 
+Soll ein Doppelklick auf der Zelle einer CheckColumn (in einer Grid mit Detail) 
+(1) den Wert umschalten und nicht das Detail-Fenster öffnen? 
+oder (2) den Wert nicht umschalten und stattdessen das Detail öffnen?
+oder (3) will ich das pro Report konfigurierbar machen?
+
+Spontan würde ich für Lösung (1) tendieren, aber Lösung (2) ist 
+ganz leicht zu implementieren, und deshalb habe ich das jetzt mal so gemacht.
+Also in der Grid eines Reports, der ein Detail hat, 
+können CheckColumns nicht per Doppelklick umgeschaltet werden. 
+Doppelklick heißt in solchen Grids immer "Detail öffnen".
+Mir gefällt das so.
+
+
+Dumping CourseProviders and Companies
+-------------------------------------
+
+Der folgende Punkt ist jetzt auch fertig:
+
+#.  dpy.Serializer schreibt momentan in den dump eines CourseProvider alle Felder 
+    der Company nochmal rein. Er muss aber statt dieser Felder nur `company_ptr` setzen.
+
+Ich habe auch eigens einen Testcase 
+:func:`lino.apps.dsbe.tests.dsbe_tests.test01` 
+geschrieben, der allerdings nicht wirklich testet 
+sondern mir beim Überlegen behilflich war. 
+Den testcase kann ich wie folgt aufrufen::
+
+  python manage.py test dsbe.NoFixturesTest
+  
+Ärgerlich auch wieder mal, dass ich den besagten Testcase nicht in autodoc 
+rein kriege, wegen der `DJANGO_SETTINGS_MODULE`. Aber bon, das ist weniger dringend. 
+Sorry also, wenn in diesem Blog viele Links noch immer nicht funktionieren.
+
+Abends mach ich die Probe aufs Exempel:
+- Dump mit der alten Version
+- Upgrade und Dump mit der neuen Version
+- Dateivergleich

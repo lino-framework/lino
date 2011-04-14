@@ -9,10 +9,8 @@ for which I hope for help from other people.
 Short-term
 ----------
 
-#.  In einer Grid, die auch ein Detail hat, 
-    wird durch Doppelklick auf einer CheckColumn gleichzeitig auch das 
-    Detail-Fenster geöffnet. Das muss behoben werden, bevor ich mit 
-    den "allgemeinen Uploads" anfangen kann.
+#.  Wenn man Datum ``13/12/2010`` eingibt, macht er daraus ``12.01.2011``. 
+    Weil er das als ein amerikanisches Format ansieht. 
 
 #.  "Allgemeine Uploads": Uploads nicht nur pro Person, sondern auch 
     pro Notiz/Ereignis, 
@@ -37,6 +35,15 @@ Short-term
 #.  Bei den angezeigten Personen einer PersonSearch sind manche Felder noch nicht übersetzt.
 
 #.  Grid-Konfigurationsdateien sollten pro Benutzer speicherbar sein.
+
+#.  In Comboboxen kann man momentan nur Texte tippen, 
+    die auch in der Auswahlliste drin stehen. 
+    Lino hat noch keine "automatische Lernfunktion". 
+    Außerdem verhält er sich nicht sehr höflich, 
+    wenn man es trotzdem tut, er sollte dann wenigstens mitteilen, 
+    dass das nicht möglich ist. Elegant wäre natürlich eine Rückfrage 
+    "Eine Stadt namen Kigali (einen Kontakt namens Herr Weling) 
+    gibt es noch nicht. Wollen Sie die anlegen?"
     
 #.  An makedocs müsste ich bei Gelegenheit mal ein bisschen weiter machen. 
     Das ist noch lange nicht fertig.
@@ -600,3 +607,9 @@ Documentation
 #.  Check whether 
     `pydocweb <https://github.com/pv/pydocweb/tree/master/docweb>`_    
     would be useful.
+
+#.  I'm trying to document several Django applications on a single Sphinx tree. 
+    Django modules have the requirement that an environment variable DJANGO_SETTINGS_MODULE be set when importing them. 
+    Maybe one way is to add an `environment` option to the `automodule` directive?
+
+#.  Ausprobieren, was David De Sousa am 12.11.2009 auf sphinx-dev gepostet hat.

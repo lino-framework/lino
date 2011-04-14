@@ -45,6 +45,7 @@ class Serializer(base.Serializer):
     """
 
     internal_use_only = False
+    #~ WRITE_PREAMBLE = True # may be set to False e.g. by testcases
     
     def serialize(self, queryset, **options):
         self.options = options
@@ -52,7 +53,6 @@ class Serializer(base.Serializer):
         self.stream = options.get("stream", StringIO())
         self.selected_fields = options.get("fields")
         self.use_natural_keys = options.get("use_natural_keys", False)
-
         self.stream.write('# -*- coding: UTF-8 -*-\n\n')
         self.stream.write('# Created using Lino version %s\n' % lino.__version__)
         self.stream.write('from lino.utils import i2d\n')
@@ -62,10 +62,11 @@ class Serializer(base.Serializer):
             self.stream.write('%s = resolve_model("%s.%s")\n' % (model.__name__, model._meta.app_label,model.__name__))
         self.stream.write('\n')
         for model in models.get_models():
-            fields = model._meta.fields
+            fields = model._meta.local_fields
             #~ fields = [f for f in model._meta.fields if f.serialize]
             #~ fields = [f for f in model._meta.local_fields if f.serialize]
-            self.stream.write('def create_%s(%s):\n' % (model._meta.db_table,','.join([f.attname for f in fields])))
+            self.stream.write('def create_%s(%s):\n' % (
+                model._meta.db_table,','.join([f.attname for f in fields])))
             #~ for f in fields:
                 #~ if isinstance(f,models.ForeignKey):
                     #~ self.stream.write('    if %s is not None:\n' % f.name)
@@ -87,7 +88,7 @@ class Serializer(base.Serializer):
                 model = obj.__class__
                 all_models.append(model)
                 self.stream.write('\ndef %s_objects():\n' % model._meta.db_table)
-            fields = obj._meta.fields
+            fields = obj._meta.local_fields
             #~ fields = [f for f in obj._meta.local_fields if f.serialize]
             self.stream.write('    yield create_%s(%s)\n' % (
                 obj._meta.db_table,

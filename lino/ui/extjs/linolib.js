@@ -210,7 +210,7 @@ Ext.lib.Ajax.serializeForm = function(form) {
 Ext.namespace('Lino');
 
 /* 
-  Orinally copied from Ext JS Library 3.3.1
+  Originally copied from Ext JS Library 3.3.1
   Modifications by Luc Saffre : 
   - rendering of phantom records
   - fire afteredit event
@@ -1563,6 +1563,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
       if (this.ls_detail_handler) {
           //~ Lino.notify('show detail');
           Lino.show_detail(this);
+          return false;
       }else{
         this.startEditing(row,col);
       }

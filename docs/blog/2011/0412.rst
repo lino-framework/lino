@@ -1,0 +1,9 @@
+20110412
+========
+
+In `MyPersons` wurden seit :doc:`0408` zu viele Leute angezeigt: auch die, 
+die weder Anfangs- noch Enddatum haben. 
+Damit jemand als begleitet gilt, muss mindestens eines der 
+beiden Daten ausgefüllt sein.
+
+Check-in zwecks Upgrade in Eupen.
