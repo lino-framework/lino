@@ -112,6 +112,17 @@ noch Uploads als die Links verstehen.
 Außerdem sind "eID-Inhalt" und "Lebenslauf" ja auch Dokumente.
 
 
-Abends:
+Release mit Überraschungen
+--------------------------
+
+Abends dachte ich mir "Mach mal schnell das Upgrade in Eupen".
 released :doc:`/releases/20110415` 
 und Upgrade in Eupen
+
+::
+
+  def create_dsbe_courseprovider(company_ptr_id):
+      from lino.utils.mti import insert_child
+      company = Company.objects.get(pk=company_ptr_id)
+      return insert_child(company,CourseProvider)
+      #return CourseProvider(company_ptr_id=company_ptr_id)

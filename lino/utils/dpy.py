@@ -81,7 +81,7 @@ class Serializer(base.Serializer):
         model = None
         all_models = []
         for obj in queryset:
-            #~ if isinstance(obj,ContentType): continue
+            if isinstance(obj,ContentType): continue
             #~ if isinstance(obj,Session): continue
             #~ if isinstance(obj,Permission): continue
             if obj.__class__ != model:
@@ -202,20 +202,26 @@ class FakeDeserializedObject(base.DeserializedObject):
     def save(self, *args,**kw):
         #~ print 'dpy.py',self.object
         save_later = []
+        saved = 0
         for obj in self.objects():
-            if not self.try_save(obj,*args,**kw):
+            if self.try_save(obj,*args,**kw):
+                saved += 1
+            else:
                 save_later.append(obj)
+        dblogger.info("Saved %d instances.",saved)
                 
-        hope = True
-        while hope and save_later:
+        while saved and save_later:
+            dblogger.info("Trying again with %d unsaved instances.",len(save_later))
             try_again = save_later
             save_later = []
-            hope = False
-            dblogger.info("Trying again with %d unsaved instances.",len(try_again))
+            saved = 0
             for obj in try_again:
-                if not self.try_save(obj,*args,**kw):
-                    if save_later.append(obj):
-                        hope = True
+                if self.try_save(obj,*args,**kw):
+                    saved += 1
+                else:
+                    save_later.append(obj)
+            dblogger.info("Saved %d instances.",saved)
+            
         if save_later:
             dblogger.warning("Abandoning with %d unsaved instances.",len(save_later))
             raise Exception("Abandoned with %d unsaved instances. See dblog for details." % len(save_later))
