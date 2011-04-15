@@ -1,0 +1,8 @@
+:label: 
+:label_align: top
+
+main =
+    id:8 person content
+    date_submitted course 
+    date_ended ending
+    remark  uploads.UploadsByOwner

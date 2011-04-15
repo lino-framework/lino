@@ -19,6 +19,10 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes import generic
+
+
 #~ import lino
 #~ logger.debug(__file__+' : started')
 
@@ -44,10 +48,19 @@ class UploadTypes(reports.Report):
     order_by = ["name"]
     
         
-class Upload(mixins.Uploadable,contacts.PartnerDocument,mixins.Reminder):
+class Upload(
+    mixins.Uploadable,
+    #~ contacts.PartnerDocument,
+    mixins.Reminder, 
+    mixins.Owned):
+    
     type = models.ForeignKey("uploads.UploadType",
       blank=True,null=True)
       #~ verbose_name=_('upload type'))
+      
+    #~ owner_type = models.ForeignKey(ContentType,blank=True,null=True)
+    #~ owner_id = models.PositiveIntegerField(blank=True,null=True)
+    #~ owner = generic.GenericForeignKey('owner_type', 'owner_id')
 
     def __unicode__(self):
         if self.description:
@@ -67,18 +80,24 @@ class Uploads(reports.Report):
     column_names = "file user created modified *"
     
 
-class UploadsByPerson(Uploads):
-    fk_name = 'person'
-    column_names = "file user company created modified"
-    show_slave_grid = False
+#~ class UploadsByPerson(Uploads):
+    #~ fk_name = 'person'
+    #~ column_names = "file user company created modified"
+    #~ show_slave_grid = False
     
-class UploadsByCompany(Uploads):
-    fk_name = 'company'
-    column_names = "file user person created modified"
+#~ class UploadsByCompany(Uploads):
+    #~ fk_name = 'company'
+    #~ column_names = "file user person created modified"
+    #~ show_slave_grid = False
+    
+class UploadsByOwner(Uploads):
+    fk_name = 'owner'
+    column_names = "file user created modified"
     show_slave_grid = False
     
     
 class MyUploads(mixins.ByUser,Uploads):
-    column_names = "file user company created modified"
+    #~ column_names = "file user person company owner created modified"
+    column_names = "file user owner created modified"
     label = _("My uploads")
     order_by = ["modified"]

@@ -560,7 +560,9 @@ class Person(Partner,contacts.Person):
     
     def residence_permit(self,rr):
         kv = dict(type=settings.LINO.residence_permit_upload_type)
-        r = rr.spawn_request(uploads.UploadsByPerson(),master_instance=self,known_values=kv)
+        r = rr.spawn_request(uploads.UploadsByOwner(),
+              master_instance=self,
+              known_values=kv)
         return rr.ui.quick_upload_buttons(r)
         #~ rrr = uploads.UploadsByPerson().request(rr.ui,master_instance=self,known_values=kv)
         #~ return rr.ui.quick_upload_buttons(rrr)
@@ -568,13 +570,16 @@ class Person(Partner,contacts.Person):
     
     def work_permit(self,rr):
         kv = dict(type=settings.LINO.work_permit_upload_type)
-        r = rr.spawn_request(uploads.UploadsByPerson(),master_instance=self,known_values=kv)
+        r = rr.spawn_request(uploads.UploadsByOwner(),
+              master_instance=self,
+              known_values=kv)
         return rr.ui.quick_upload_buttons(r)
     work_permit.return_type = fields.DisplayField(_("Work permit"))
     
     def driving_licence(self,rr):
         kv = dict(type=settings.LINO.driving_licence_upload_type)
-        r = rr.spawn_request(uploads.UploadsByPerson(),master_instance=self,known_values=kv)
+        r = rr.spawn_request(uploads.UploadsByOwner(),
+              master_instance=self,known_values=kv)
         return rr.ui.quick_upload_buttons(r)
     driving_licence.return_type = fields.DisplayField(_("driving licence"))
     
@@ -1541,7 +1546,7 @@ class CourseRequest(models.Model):
         verbose_name=_("Course found"))
     u"""
     Der Kurs, durch den diese Anfrage befriedigt wurde 
-    (ein Objekt vom Typ :class:`lino.modlib.dsbe.models.Course`).
+    (ein Objekt vom Typ :class:`lino.apps.dsbe.models.Course`).
     So lange dieses Feld leer ist, gilt die Anfrage als offen.
     """
         
@@ -1550,7 +1555,8 @@ class CourseRequest(models.Model):
     #~ """
     #~ satisfied = StrengthField(verbose_name=_("Satisfied"),blank=True,null=True)
     
-    remark = models.CharField(max_length=200,
+    #~ remark = models.CharField(max_length=200,
+    remark = models.TextField(
         blank=True,null=True,
         verbose_name=_("Remark"))
     u"""

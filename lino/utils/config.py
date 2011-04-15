@@ -12,7 +12,8 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-The Lino process creates a list config_dirs of all configuration directories on server startup
+The Lino process creates a list config_dirs of all 
+configuration directories on server startup
 by looping through :setting:`INSTALLED_APPS` that have a :xfile:`config` 
 subdir.
 

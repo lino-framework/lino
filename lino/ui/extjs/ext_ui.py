@@ -825,11 +825,12 @@ class ExtUI(base.UI):
       
     def grid_config_view(self,request,app_label=None,actor=None):
         rpt = actors.get_actor2(app_label,actor)
-        if not rpt.can_config.passes(request.user):
-            msg = _("User %(user)s cannot configure %(report)s.") % dict(user=request.user,report=rpt)
-            return error_response(None,msg)
-            #~ return http.HttpResponseForbidden(msg)
         if request.method == 'PUT':
+            if not rpt.can_config.passes(request.user):
+                msg = _("User %(user)s cannot configure %(report)s.") % dict(
+                    user=request.user,report=rpt)
+                return error_response(None,msg)
+            #~ return http.HttpResponseForbidden(msg)
             PUT = http.QueryDict(request.raw_post_data)
             gc = dict(
               widths=[int(x) for x in PUT.getlist('widths')],
@@ -1287,24 +1288,28 @@ class ExtUI(base.UI):
         
         
     def quick_upload_buttons(self,rr):
+        """
+        Deserves more documentation.
+        """
         if rr.total_count == 0:
             #~ return [dict(text="Upload",handler=js_code('Lino.%s' % rr.report.get_action('insert')))]
             a = rr.report.get_action('insert')
-            if a:
+            if a is not None:
                 #~ params = dict(base_params=self.request2kw(v))
                 rec = rr.create_instance()
                 params = dict(data_record=elem2rec1(rr,rr.ah,rec))
                 #~ params = dict(data_record=elem2rec_detailed(rr,rr.ah,rec))
                 return self.action_href(a,_("Upload"),**params)
-        assert rr.total_count == 1
-        #~ return [dict(text="Show",handler=js_code('Lino.%s' % v.report.get_action('detail')))]
-        #~ s = unicode(v[0]) + ':'
-        s = ''
-        s += ' [<a href="%s" target="_blank">show</a>]' % (settings.MEDIA_URL + rr[0].file.name)
-        #~ s += ' [<a href="%s" target="_blank">edit</a>]' % (self.get_detail_url(rr[0],fmt='detail'))
-        params = dict(data_record=elem2rec1(rr,rr.ah,rr[0]))
-        s += ' ' + self.action_href(rr.ah.report.detail_action,_("Edit"),**params)
-        return s
+        if rr.total_count == 1:
+            #~ return [dict(text="Show",handler=js_code('Lino.%s' % v.report.get_action('detail')))]
+            #~ s = unicode(v[0]) + ':'
+            s = ''
+            s += ' [<a href="%s" target="_blank">show</a>]' % (settings.MEDIA_URL + rr[0].file.name)
+            #~ s += ' [<a href="%s" target="_blank">edit</a>]' % (self.get_detail_url(rr[0],fmt='detail'))
+            params = dict(data_record=elem2rec1(rr,rr.ah,rr[0]))
+            s += ' ' + self.action_href(rr.ah.report.detail_action,_("Edit"),**params)
+            return s
+        return '[?!]'
         
       
     def py2js_converter(self,v):

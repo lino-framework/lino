@@ -253,6 +253,13 @@ class PersonsByCountry(Persons):
 
 
 class PartnerDocument(models.Model):
+    """
+    This adds two fields 'person' and 'company' to this model, 
+    making it something that refers to a "partner". 
+    If company is filled, then person means a contact person for this company.
+    Otherwise the "partner" is a private person.
+    """
+    
     class Meta:
         abstract = True
         

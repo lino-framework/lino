@@ -2,7 +2,7 @@
 :label_align: top
 
 main = 
-  box1:40 uploads.UploadsByPerson
+  box1:40 uploads.UploadsByOwner
   suche 
 
 box1 = 

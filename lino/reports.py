@@ -1099,9 +1099,11 @@ class Report(actors.Actor): #,base.Handled):
         if self.master is None:
             assert master_instance is None, "Report %s doesn't accept a master" % self.actor_id
         elif self.master is ContentType:
+            #~ print 20110415
             if master_instance is None:
-                kw[self.fk.ct_field] = None,
-                kw[self.fk.fk_field] = None
+                pass
+                #~ kw[self.fk.ct_field] = None
+                #~ kw[self.fk.fk_field] = None
             else:
                 ct = ContentType.objects.get_for_model(master_instance.__class__)
                 kw[self.fk.ct_field] = ct
@@ -1237,11 +1239,6 @@ class GridConfig(Configured):
             logger.debug(msg)
         super(GridConfig,self).__init__(*args,**kw)
   
-    def write_content(self,f):
-        self.data.update(label=self.label_en)
-        f.write(yaml.dump(self.data))
-        self.data.update(label=_(self.label_en))
-        
     def validate(self):
         """
         Removes unknown columns
@@ -1280,6 +1277,11 @@ class GridConfig(Configured):
         gc.update(columns=valid_columns)
         return must_save
             
+    def unused_write_content(self,f):
+        self.data.update(label=self.label_en)
+        f.write(yaml.dump(self.data))
+        self.data.update(label=_(self.label_en))
+        
     def write_content(self,f):
         f.write(yaml.dump(self.data))
         

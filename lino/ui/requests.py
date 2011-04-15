@@ -139,7 +139,9 @@ class ViewReportRequest(reports.ReportActionRequest):
             try:
                 master = kw['master'] = ContentType.objects.get(pk=mt).model_class()
             except ContentType.DoesNotExist,e:
-                raise ContentType.DoesNotExist("ContentType %r does not exist." % mt)
+                pass
+                #~ master is None
+                #~ raise ContentType.DoesNotExist("ContentType %r does not exist." % mt)
                 
             #~ print kw
         if master is not None and not kw.has_key('master_instance'):

@@ -80,5 +80,6 @@ heißt es jetzt
 Denn das Datumsformat konnte man bisher überhaupt nicht konfigurieren,
 jetzt kann man das bis auf weiteres immerhin global pro Site. 
 
+Check-in und Upgrade in Eupen.
 
 

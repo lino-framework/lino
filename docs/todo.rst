@@ -9,9 +9,6 @@ for which I hope for help from other people.
 Short-term
 ----------
 
-#.  Wenn man Datum ``13/12/2010`` eingibt, macht er daraus ``12.01.2011``. 
-    Weil er das als ein amerikanisches Format ansieht. 
-
 #.  "Allgemeine Uploads": Uploads nicht nur pro Person, sondern auch 
     pro Notiz/Ereignis, 
     pro Kursanfrage ("Teilnehmer" bzw. "Kandidat") 
@@ -20,8 +17,12 @@ Short-term
     Dadurch werden auch Kursanfragen ein Detail kriegen (müssen), 
     weil Lino noch kein Upload-Panel in Grids kann.
     
+#.  Grid-Konfigurationsdateien sollten pro Benutzer speicherbar sein.
+
 #.  Hinter das QuickFilter-Feld sollte ein Button, um den Filter zu aktivieren. 
     Dass man einfach nur TAB drücken muss ist nicht intuitiv.
+
+#.  CheckColumns sollten auf Tastendruck SPACE toggeln.
 
 #.  Auswahllisten in FKs zu `languages.Language` und `countries.Country`: 
     Einträge sollten alphabetisch sortiert sein.
@@ -33,8 +34,6 @@ Short-term
     sondern "Ereignisse/Notizen" sein.
     
 #.  Bei den angezeigten Personen einer PersonSearch sind manche Felder noch nicht übersetzt.
-
-#.  Grid-Konfigurationsdateien sollten pro Benutzer speicherbar sein.
 
 #.  In Comboboxen kann man momentan nur Texte tippen, 
     die auch in der Auswahlliste drin stehen. 

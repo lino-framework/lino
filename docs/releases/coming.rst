@@ -4,9 +4,7 @@ Coming
 New features
 ------------
 
-- In der Grid eines Reports, der ein Detail hat, 
-  können CheckColumns nicht per Doppelklick umgeschaltet werden.
-
+-
 
 Upgrade instructions
 --------------------

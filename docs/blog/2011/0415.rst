@@ -1,0 +1,82 @@
+20110415
+========
+
+Allgemeine Uploads
+------------------
+
+Die allgemeinen Uploads hatte ich gestern abend noch schnell
+implementiert, und das ging so schnell und problemlos, dass ich 
+gar nicht darüber berichtet hatte. 
+Ich brauchte lediglich noch `lino.mixins.Owned` 
+als Parent zu Klasse
+:class:`lino.modlib.uploads.models.Upload` 
+hinzuzufügen (sowie einen neuen Report `UploadsByOwner` machen).
+
+Das war ja immerhin das erste Mal, dass GFKs in der Praxis benutzt werden, 
+und ich hatte Angst, dass da vom ui her noch nicht alles geregelt war.
+Aber die Angst war unbegründet.
+
+Was ich noch überlegen muss, ist: ob ich die 
+ForeignKeys `person` und `company` drinlassen soll oder nicht.
+Eigentlich sind die ja nur eine Notlösung.
+Wenn die rauskommen, kann man einen Upload nicht mehr *gleichzeitig* 
+einer Person *und* einer Firma zuweisen.
+Ist das nötig? Sind solche Uploads überhaupt schon gemacht worden?
+Antwort: Nein, denn::
+
+    >>> from lino.modlib.uploads.models import Upload
+    >>> [u.company for u in Upload.objects.all()]
+    [None, None, None, None, None, None, None]
+    >>>
+
+Also raus damit. 
+
+
+
+Upps, die Angst war doch nicht ganz unbegründet.
+Es gibt noch ein (hoffentlich kleines) Problem mit dem ui für GFKs: 
+`extjs.ext_ui.ExtUI.quick_upload_buttons` verträgt 
+die scheinbar noch nicht.
+
+Hier ist der HTML-Code, den diese Funktion für `residence_permit` generiert::
+
+  <a href='javascript:Lino.uploads.UploadsByOwner.insert(undefined,{ "data_record": { 
+    "data": { 
+      "owner_type": "person", 
+      "owner_typeHidden": 18, 
+      "owner_id": "Rik Radermeker (72)" 
+      "owner_idHidden": 72, 
+      "delay_value": 0, 
+      ...
+      "type": "Aufenthaltserlaubnis", 
+      "id": null, 
+      } } })'>Upload</a>
+      
+Nö, dieser Code ist korrekt. Stimmt, ich Tuppes: im Insert-Fenster wird der owner 
+ja noch richtig angezeigt. Erst beim Submit knallt es auf dem Server::
+
+  Traceback (most recent call last):
+  ...
+    File "t:\hgwork\lino\lino\ui\requests.py", line 142, in parse_req
+      raise ContentType.DoesNotExist("ContentType %r does not exist." % mt)
+  DoesNotExist: ContentType None does not exist.
+
+Der Grund liegt also tiefer: submit_insert und submit_detail übergeben nur die 
+Formulardaten und folglich nicht den Parameter `mt`. Weil der fehlt, weiß
+ViewReportRequest nicht, welche Klasse da erstellt wird.
+Eigentlich ist der Parameter mt nicht nötig, weil die Info im Feld 
+`owner_typeHidden` drin steht. 
+Hmm.
+
+Tilt. Doch, der ViewReportRequest von UplodsByOwner weiß wohl, 
+welche Klasse da erstellt wird (nämlich ein Upload). 
+Das Problem war einfach, dass er einen Upload erstellen muss, 
+dessen owner None ist. 
+`Upload.owner` ist zwar nullable, aber *darf* beim Erstellen `None` sein, 
+weil der ja vor dem Speichern aus den Formulardaten eingetragen wird.
+So was hatten wir noch nie und da waren 
+mehrere kleine Bugs. Aber die sind jetzt raus.
+
+Okay, die allgemeinen Uploads können heute Abend released 
+werden (und die :doc:`Datenmigration </admin/datamig>` wird mal wieder kein Problem sein. 
+Bin weiterhin ganz begeistert von meinem selbsterfundenen System)

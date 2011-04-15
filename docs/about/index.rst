@@ -1,23 +1,27 @@
 About Lino
 ==========
 
-Lino is a framework for creating enterprise-level database applications, 
-using :term:`Django's <Django>` database model and application server. 
-Lino replaces Django's `admin` module, using 
-the :term:`ExtJS` Javascript library to provide a desktop-application 
-style user interface.
+Lino is a framework for creating enterprise-level 
+Rich Internet Applications that use :term:`Django's <Django>`
+database model combined with an out-of-the box user interface. 
 
-One of Lino's design goals is to keep a maximum of application 
+Lino is still young: 
+there's only one real-world Lino application, 
+running on a non-public site in Eupen since January 2011.
+Our goal is to write at least two other applications 
+until the end of 2011.
+
+One of Lino's design goals is to keep application 
 logic independant of your choice of user interface.
-Lino currently provides only one user interface (:mod:`lino.ui.extjs`),
-but we can imagine to write other interfaces in the future 
+A Lino application developer doesn't write a single 
+line of HTML, CSS or Javascript. 
+Since Lino is young, your choice is currently limited 
+to the :term:`ExtJS` UI.
+Although we are satisfied with ExtJS, 
+we also started working on a first alternative user interface 
+which  will be using the :doc:`Qooxdoo library </topics/qooxdoo>`.
+And we can imagine to write other interfaces in the future 
 (simple HTML, curses, Qt, ...).
-For the moment we are just satisfied with ExtJS.
-
-Lino is yet in early development state, but a first Lino application 
-has started 
-in January 2011
-to be used by real humans on real data.
 
 Don't hesitate to contact the author:
 
@@ -36,7 +40,7 @@ TIM users have relatively wide-spread profiles,
 ranging from the independant craftsman who writes 50 invoices per year 
 to the government agency with 30 users and hundreds of documents per day.
 
-Luc has been working on writing a successor for TIM since the early 1990s. He has done and dropped projects in C++, PHP and Java. Since August 2004 he's doing this using Python. In March 2009 he discovered :term:`Django` whose database model and application server concepts seem ideal for Lino. In August 2009 he started to use the ExtJS Javascript framework.
+Luc has been working on writing a successor for TIM since the early 1990s. He has done and dropped projects in C++, PHP and Java. Since August 2004 he's mostly working in Python. In March 2009 he discovered :term:`Django` whose database model and application server concepts seem ideal for Lino. In August 2009 he started to use the ExtJS Javascript framework.
 
 
 Lino explained to Django users
@@ -52,19 +56,13 @@ has obviously not been designed to write complete database applications.
 That's why I started to write Lino.
 Lino is an alternative for Django's `django.contrib.admin` module."
 
-Lino sites are normal Django sites, but 
-your :setting:`INSTALLED_APPS` will 
-usually contain applications designed to use Lino.
+Each Lino application is a complete Django project, but 
+you don't need to write any `urls.py` not HTML templates, 
+and even your :xfile:`settings.py` 
+can consist of only one line::
 
-Lino comes with a collection of such Django applications (:mod:`lino.modlib`).
-
-With Lino you don't need to write any `urls.py`, you don't even need to 
-set :setting:`ROOT_URLCONF` in your :xfile:`settings.py` if you use the 
-default settings by starting your :xfile:`settings.py` with::
-
-  from lino.demos.std.settings import *
+  from lino.apps.igen.settings import *
   
-You also don't need to write any :file:`.html` templates when using Lino.
 
 
 

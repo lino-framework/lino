@@ -3,7 +3,8 @@
 main =
     file #user
     type description 
-    person company
+    # person company
+    owner
     reminder_date reminder_text delay_value delay_type
     modified created
     # show_date show_time 
