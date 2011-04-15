@@ -1,0 +1,49 @@
+Version 1.1.9 (15.04.2011)
+==========================
+
+New features
+------------
+
+#.  "Notizen" heißt jetzt "Ereignisse/Notizen".
+    Der bisherige Reiter "Notizen" im Detail einer Person heißt jedoch 
+    "Dokumente". 
+    Weil "Ereignisse/Notizen" nur ein Teil dieses Reiters ist
+    (dort gibt es außerdem noch "Verträge" und "Links").
+    "Dokumente" ist natürlich auch nicht ideal, denn darunter würde man eher 
+    noch Uploads als die Links verstehen.
+    Außerdem sind "eID-Inhalt" und "Lebenslauf" ja auch Dokumente.
+
+#.  Generic Uploads. Ein "Uploads"-Panel gibt es jetzt auch 
+    (1) pro Ereignis/Notiz und (2) pro Kursanfrage ("Teilnehmer" bzw. "Kandidat")
+
+#.  Ein Nebeneffekt ist, dass Kursanfragen jetzt ein Detail-Fenster
+    haben (weil ein "Uploads"-Panel in einer Grid m.E. irritierend wäre).
+    Das Detail-Fenster wird möglicherweise anfangs verwirrend sein, denn die
+    Leute sind gewohnt, dass sich Kursanfragen "einfach so" in der Grid
+    hinzufügen. 
+
+#.  Übrigens kann die Bemerkung einer Kursanfrage jetzt auch
+    mehrzeiligen Text enthalten (was ich eigentlich nur gemacht habe, damit
+    das Detail-Fenster schöner wird). 
+
+#.  Übersetzungen für die neuen Felder in Personensuche
+
+    
+
+  
+Upgrade instructions
+--------------------
+
+The following are technical instructions related to this 
+upgrade, designed to be executed by a Lino expert.
+For more general instructions on how to upgrade an existing 
+Lino site, see :doc:`/admin/upgrade`).
+
+- Database migration needed : In Model Upload, the fields 
+  person and company have been replaced by owner_type and owner_id.
+  See :doc:`/blog/2011/0415`
+
+
+Possible issues
+---------------
+

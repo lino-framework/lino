@@ -78,5 +78,40 @@ So was hatten wir noch nie und da waren
 mehrere kleine Bugs. Aber die sind jetzt raus.
 
 Okay, die allgemeinen Uploads können heute Abend released 
-werden (und die :doc:`Datenmigration </admin/datamig>` wird mal wieder kein Problem sein. 
-Bin weiterhin ganz begeistert von meinem selbsterfundenen System)
+werden (und die :doc:`Datenmigration </admin/datamig>` wird mal wieder kein Problem sein, 
+bin weiterhin ganz begeistert von meinem selbsterfundenen System).
+
+Check-in und Mittagspause (und möglicherweise auch Wochenende, denn hier 
+bei uns gibt es jetzt viel zu tun im Garten).
+
+Upps, vor dem Release könnte ich das Upload-Panel auch ins 
+Detail der Notizen einbauen. Voilà, so einfach ging das. 
+Kaum zu glauben!
+
+Conflicting translations
+------------------------
+
+Und dann habe ich noch mal an der Übersetzung für "Note" begonnen. 
+Das ist ein subtiler neuer Sonderfall, 
+weil die Standardübersetzung "Notiz" (die in :mod:`lino.modlib.notes` steht) 
+in :mod:`lino.apps.dsbe` (und nur dort) "Ereignisse/Notizen" sein soll.
+
+Was passiert, wenn zwei Django-Anwendungen das gleiche englische Wort 
+für etwas benutzen, die Übersetzungen aber verschieden sind?
+Antwort: die Übersetzung der ersten Anwendung (laut :setting:`INSTALLED_APPS`) 
+überschreibt die der zweiten.
+
+Also muss ich verbose_name in DSBE auch in Englisch "Events/Notes" setzen.
+Eigentlich logisch.
+
+Der bisherige Reiter "Notizen" heißt jetzt nicht "Ereignisse/Notizen", sondern "Dokumente". 
+Weil "Ereignisse/Notizen" nur ein Teil dieses Reiters ist.
+Dort gibt es außerdem noch "Verträge" und "Links".
+"Dokumente" ist natürlich auch nicht ideal, denn darunter würde man eher 
+noch Uploads als die Links verstehen.
+Außerdem sind "eID-Inhalt" und "Lebenslauf" ja auch Dokumente.
+
+
+Abends:
+released :doc:`/releases/20110415` 
+und Upgrade in Eupen

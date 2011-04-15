@@ -1,10 +1,13 @@
 :label: Notes
 :label_align: top
 
-main =
+left = 
     date type  user language
-    subject must_build
+    subject 
     reminder_date reminder_text
     person company
+    
+main =
+    left uploads.UploadsByOwner
     body:80x5 
 

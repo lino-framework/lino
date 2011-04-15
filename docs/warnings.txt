@@ -5,12 +5,5 @@ T:\hgwork\lino\docs\dsbe\appdocs\sessions.rst:: WARNING: document isn't included
 T:\hgwork\lino\docs\igen\appdocs\sessions.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\autodoc\lino.apps.rst:1: WARNING: py:mod reference target not found: lino.apps
 T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:11: WARNING: py:class reference target not found: lino.apps.std.settings.Lino
-T:\hgwork\lino\docs\autodoc\lino.reports.rst:111: WARNING: py:meth reference target not found: lino.reports.Report.do_setup
-T:\hgwork\lino\docs\autodoc\lino.reports.rst:125: WARNING: py:class reference target not found: lino.SiteConfigs
-T:\hgwork\lino\docs\autodoc\lino.reports.rst:168: WARNING: py:class reference target not found: links.LinksByOwner
-T:\hgwork\lino\docs\autodoc\lino.reports.rst:193: WARNING: py:class reference target not found: django.db.models.query.QuerySet
-T:\hgwork\lino\docs\autodoc\lino.ui.rst:16: WARNING: py:mod reference target not found: base
-T:\hgwork\lino\docs\autodoc\lino.ui.rst:17: WARNING: py:class reference target not found: object
-T:\hgwork\lino\docs\autodoc\lino.ui.rst:24: WARNING: py:mod reference target not found: requests
-T:\hgwork\lino\docs\autodoc\lino.ui.rst:29: WARNING: py:class reference target not found: lino.reports.ReportActionRequest
 T:\hgwork\lino\docs\blog\2011\0415.rst:7: WARNING: py:class reference target not found: lino.modlib.uploads.models.Upload
+T:\hgwork\lino\docs\blog\2011\0415.rst:90: WARNING: py:mod reference target not found: lino.modlib.notes

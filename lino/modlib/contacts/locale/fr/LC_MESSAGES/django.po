@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-04-04 14:45+0100\n"
+"POT-Creation-Date: 2011-04-15 16:10+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -85,7 +85,7 @@ msgstr ""
 msgid "Address"
 msgstr ""
 
-#: .\models.py:190 .\models.py:261
+#: .\models.py:190 .\models.py:268
 #, fuzzy
 msgid "Person"
 msgstr "Personnes"
@@ -107,84 +107,84 @@ msgstr ""
 msgid "Title"
 msgstr ""
 
-#: .\models.py:263 .\models.py:335
+#: .\models.py:270 .\models.py:342
 #, fuzzy
 msgid "Company"
 msgstr "Sociétés"
 
-#: .\models.py:276
+#: .\models.py:283
 msgid "represented by"
 msgstr ""
 
-#: .\models.py:310
+#: .\models.py:317
 #, fuzzy
 msgid "company type"
 msgstr "Sociétés"
 
-#: .\models.py:311
+#: .\models.py:318
 #, fuzzy
 msgid "company types"
 msgstr "Sociétés"
 
-#: .\models.py:313 .\models.py:371
+#: .\models.py:320 .\models.py:378
 msgid "Designation"
 msgstr ""
 
-#: .\models.py:314
+#: .\models.py:321
 msgid "Abbreviation"
 msgstr ""
 
-#: .\models.py:336
+#: .\models.py:343
 msgid "Companies"
 msgstr "Sociétés"
 
-#: .\models.py:338
+#: .\models.py:345
 msgid "VAT id"
 msgstr ""
 
-#: .\models.py:343
+#: .\models.py:350
 #, fuzzy
 msgid "Company type"
 msgstr "Sociétés"
 
-#: .\models.py:367 .\models.py:397
+#: .\models.py:374 .\models.py:404
 msgid "contact type"
 msgstr ""
 
-#: .\models.py:368
+#: .\models.py:375
 #, fuzzy
 msgid "contact types"
 msgstr "Sociétés"
 
-#: .\models.py:390
+#: .\models.py:397
 #, fuzzy
 msgid "contact"
 msgstr "Sociétés"
 
-#: .\models.py:391
+#: .\models.py:398
 #, fuzzy
 msgid "contacts"
 msgstr "Sociétés"
 
-#: .\models.py:393
+#: .\models.py:400
 #, fuzzy
 msgid "person"
 msgstr "Personnes"
 
-#: .\models.py:395
+#: .\models.py:402
 #, fuzzy
 msgid "company"
 msgstr "Sociétés"
 
-#: .\models.py:429
+#: .\models.py:436
 #, fuzzy
 msgid "Contact for"
 msgstr "Sociétés"
 
-#: .\models.py:441
+#: .\models.py:448
 msgid "The company that runs this site"
 msgstr ""
 
-#: .\models.py:451
+#: .\models.py:458
 msgid "The next automatic id for Person or Company"
 msgstr ""

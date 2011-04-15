@@ -1353,6 +1353,8 @@ class MyContracts(mixins.ByUser,Contracts):
 class Note(notes.Note,contacts.PartnerDocument):
     class Meta:
         app_label = 'notes'
+        verbose_name = _("Event/Note") # application-specific override
+        verbose_name_plural = _("Events/Notes")
 
 class NotesByPerson(notes.Notes):
     fk_name = 'person'

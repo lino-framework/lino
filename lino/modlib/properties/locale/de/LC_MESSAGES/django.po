@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.properties\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-04-04 14:45+0100\n"
+"POT-Creation-Date: 2011-04-15 16:10+0100\n"
 "PO-Revision-Date: 2011-04-04 16:40+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmx.net>\n"
@@ -16,74 +16,74 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: .\models.py:78 .\models.py:150 .\models.py:183
+#: .\models.py:73 .\models.py:145 .\models.py:178
 msgid "Property Type"
 msgstr "Eigenschaftsart"
 
-#: .\models.py:79
+#: .\models.py:74
 msgid "Property Types"
 msgstr "Eigenschaftsarten"
 
-#: .\models.py:81 .\models.py:152 .\models.py:168 .\models.py:181
+#: .\models.py:76 .\models.py:147 .\models.py:163 .\models.py:176
 msgid "Designation"
 msgstr "Beschreibung"
 
-#: .\models.py:85
+#: .\models.py:80
 msgid "Choices List"
 msgstr "Auswahliste"
 
-#: .\models.py:88
+#: .\models.py:83
 msgid "default value"
 msgstr "Standardwert"
 
-#: .\models.py:96
+#: .\models.py:91
 msgid "Limit to choices"
 msgstr "Beschränken auf Auswahl"
 
-#: .\models.py:101
+#: .\models.py:96
 msgid "Multiple choices"
 msgstr "Mehrfachauswahl"
 
-#: .\models.py:147
+#: .\models.py:142
 msgid "Property Choice"
 msgstr "Eigenschaftswert"
 
-#: .\models.py:148
+#: .\models.py:143
 msgid "Property Choices"
 msgstr "Eigenschaftswerte"
 
-#: .\models.py:151 .\models.py:210
+#: .\models.py:146 .\models.py:205
 msgid "Value"
 msgstr "Wert"
 
-#: .\models.py:165 .\models.py:182
+#: .\models.py:160 .\models.py:177
 msgid "Property Group"
 msgstr "Eigenschaftsgruppe"
 
-#: .\models.py:166
+#: .\models.py:161
 msgid "Property Groups"
 msgstr "Eigenschaftsgruppen"
 
-#: .\models.py:178 .\models.py:208
+#: .\models.py:173 .\models.py:203
 msgid "Property"
 msgstr "Eigenschaft"
 
-#: .\models.py:179
+#: .\models.py:174
 msgid "Properties"
 msgstr "Eigenschaften"
 
-#: .\models.py:206
+#: .\models.py:201
 msgid "Property group"
 msgstr "Eigenschaftsgruppe"
 
-#: .\models.py:290
+#: .\models.py:285
 msgid "Skills Property Group"
 msgstr "Eigenschaftsgruppe \"Fachkompetenzen\""
 
-#: .\models.py:296
+#: .\models.py:291
 msgid "Soft Skills Property Group"
 msgstr "Eigenschaftsgruppe \"Sozialkompetenzen\""
 
-#: .\models.py:302
+#: .\models.py:297
 msgid "Obstacles Property Group"
 msgstr "Eigenschaftsgruppe \"Hindernisse\""

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-04-04 14:45+0100\n"
+"POT-Creation-Date: 2011-04-15 16:10+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -85,20 +85,20 @@ msgstr ""
 msgid "%(details)s by %(model)s %(master)s"
 msgstr ""
 
-#: .\core\kernel.py:173
+#: .\core\kernel.py:174
 #, python-format
 msgid "Cannot delete %(self)s because %(count)d %(refs)s refer to it."
 msgstr ""
 
-#: .\mixins\__init__.py:51
+#: .\mixins\__init__.py:52
 msgid "user"
 msgstr ""
 
-#: .\mixins\__init__.py:73
+#: .\mixins\__init__.py:74
 msgid "Owner type"
 msgstr ""
 
-#: .\mixins\__init__.py:74
+#: .\mixins\__init__.py:75
 msgid "Owner"
 msgstr ""
 
@@ -198,88 +198,88 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: .\ui\store.py:109 .\ui\extjs\ext_store.py:106 .\ui\qx\qx_store.py:106
+#: .\ui\store.py:109 .\ui\extjs\ext_store.py:114 .\ui\qx\qx_store.py:106
 #, python-format
 msgid "Existing primary key value %r may not be modified."
 msgstr ""
 
-#: .\ui\store.py:373 .\ui\extjs\ext_store.py:370 .\ui\qx\qx_store.py:370
+#: .\ui\store.py:373 .\ui\extjs\ext_store.py:387 .\ui\qx\qx_store.py:370
 #, python-format
 msgid "%r (invalid choice)"
 msgstr ""
 
-#: .\ui\extjs\ext_elems.py:548 .\ui\qx\qx_elems.py:555
+#: .\ui\extjs\ext_elems.py:566 .\ui\qx\qx_elems.py:555
 #, python-format
 msgid "Select a %s..."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:228 .\ui\qx\qx_ui.py:229
+#: .\ui\extjs\ext_ui.py:229 .\ui\qx\qx_ui.py:229
 #, python-format
 msgid "Row %(rowid)d of %(rowcount)d"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:681
+#: .\ui\extjs\ext_ui.py:685
 msgid "Console"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:732 .\ui\qx\qx_ui.py:563
+#: .\ui\extjs\ext_ui.py:736 .\ui\qx\qx_ui.py:563
 #, python-format
 msgid "Welcome on Lino server %(title)r, user %(user)s"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:791 .\ui\qx\qx_ui.py:622
+#: .\ui\extjs\ext_ui.py:796 .\ui\qx\qx_ui.py:622
 #, python-format
 msgid "%s has been created."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:793 .\ui\qx\qx_ui.py:624
+#: .\ui\extjs\ext_ui.py:798 .\ui\qx\qx_ui.py:624
 #, python-format
 msgid "%s has been saved."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:801 .\ui\extjs\ext_ui.py:824 .\ui\qx\qx_ui.py:632
+#: .\ui\extjs\ext_ui.py:806 .\ui\extjs\ext_ui.py:830 .\ui\qx\qx_ui.py:632
 #: .\ui\qx\qx_ui.py:655
 #, python-format
 msgid "User %(user)s cannot configure %(report)s."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:988 .\ui\qx\qx_ui.py:819
+#: .\ui\extjs\ext_ui.py:994 .\ui\qx\qx_ui.py:819
 #, python-format
 msgid "Failed to delete %(record)s : %(error)s."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:1013 .\ui\qx\qx_ui.py:844
+#: .\ui\extjs\ext_ui.py:1019 .\ui\qx\qx_ui.py:844
 #, python-format
 msgid "Insert into %s..."
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:1041 .\ui\qx\qx_ui.py:872
+#: .\ui\extjs\ext_ui.py:1047 .\ui\qx\qx_ui.py:872
 #, python-format
 msgid "Action %(action)s failed for %(record)s: %(error)s"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:1182 .\ui\qx\qx_ui.py:958
+#: .\ui\extjs\ext_ui.py:1189 .\ui\qx\qx_ui.py:958
 #, python-format
 msgid "Choices for %s"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:1292 .\ui\qx\qx_ui.py:1068
+#: .\ui\extjs\ext_ui.py:1302 .\ui\qx\qx_ui.py:1068
 msgid "Upload"
 msgstr ""
 
-#: .\ui\extjs\ext_ui.py:1300 .\ui\qx\qx_ui.py:1076
+#: .\ui\extjs\ext_ui.py:1310 .\ui\qx\qx_ui.py:1076
 msgid "Edit"
 msgstr ""
 
-#: .\utils\choicelists.py:126
+#: .\utils\choicelists.py:145
 #, python-format
 msgid "%(value)r (invalid choice for %(list)s)"
 msgstr ""
 
-#: .\utils\choicelists.py:187
+#: .\utils\choicelists.py:207
 msgid "certainly not...very much"
 msgstr ""
 
-#: .\utils\choicelists.py:208
+#: .\utils\choicelists.py:228
 msgid "not at all...very well"
 msgstr ""

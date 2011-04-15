@@ -65,7 +65,9 @@ class NoteType(mixins.PrintableType):
 
 
 class Note(mixins.TypedPrintable,mixins.Reminder):
-        
+    """
+    Deserves more documentation.
+    """
     class Meta:
         abstract = True
         verbose_name = _("Note")

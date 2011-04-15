@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-04-04 14:45+0100\n"
+"POT-Creation-Date: 2011-04-15 16:11+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,18 +17,18 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: .\models.py:33
+#: .\models.py:37
 msgid "upload type"
 msgstr ""
 
-#: .\models.py:34
+#: .\models.py:38
 msgid "upload types"
 msgstr ""
 
-#: .\models.py:36
+#: .\models.py:40
 msgid "Name"
 msgstr ""
 
-#: .\models.py:83
+#: .\models.py:102
 msgid "My uploads"
 msgstr ""
