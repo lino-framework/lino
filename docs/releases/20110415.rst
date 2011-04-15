@@ -5,13 +5,13 @@ New features
 ------------
 
 #.  "Notizen" heißt jetzt "Ereignisse/Notizen".
-    Der bisherige Reiter "Notizen" im Detail einer Person heißt jedoch 
-    "Dokumente". 
-    Weil "Ereignisse/Notizen" nur ein Teil dieses Reiters ist
-    (dort gibt es außerdem noch "Verträge" und "Links").
+    Der bisherige Reiter "Notizen" im Detail einer Person heißt jedoch "Dokumente",
+    weil "Ereignisse/Notizen" nur ein Teil dieses Reiters ist,
+    dort gibt es außerdem noch "Verträge" und "Links".
     "Dokumente" ist natürlich auch nicht ideal, denn darunter würde man eher 
     noch Uploads als die Links verstehen.
     Außerdem sind "eID-Inhalt" und "Lebenslauf" ja auch Dokumente.
+    à suivre.
 
 #.  Generic Uploads. Ein "Uploads"-Panel gibt es jetzt auch 
     (1) pro Ereignis/Notiz und (2) pro Kursanfrage ("Teilnehmer" bzw. "Kandidat")

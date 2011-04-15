@@ -211,6 +211,7 @@ class FakeDeserializedObject(base.DeserializedObject):
             try_again = save_later
             save_later = []
             hope = False
+            dblogger.info("Trying again with %d unsaved instances.",len(try_again))
             for obj in try_again:
                 if not self.try_save(obj,*args,**kw):
                     if save_later.append(obj):
