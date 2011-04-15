@@ -116,13 +116,28 @@ Release mit Überraschungen
 --------------------------
 
 Abends dachte ich mir "Mach mal schnell das Upgrade in Eupen".
-released :doc:`/releases/20110415` 
-und Upgrade in Eupen
-
-::
+Aber es hat dann doch anderthalb Stunden gedauert.
+Nicht wegen der generic uploads, sondern weil ich die Änderung
+"Dumping CourseProviders and Companies" von gestern (:doc:`0414`)
+doch nicht so gut getestet hatte.
+Ich war überzeugt, dass das folgende funktionieren würde::
 
   def create_dsbe_courseprovider(company_ptr_id):
-      from lino.utils.mti import insert_child
+      return CourseProvider(company_ptr_id=company_ptr_id)
+      
+Stattdessen muss es sein::      
+      
+  from lino.utils.mti import insert_child
+  def create_dsbe_courseprovider(company_ptr_id):
       company = Company.objects.get(pk=company_ptr_id)
       return insert_child(company,CourseProvider)
-      #return CourseProvider(company_ptr_id=company_ptr_id)
+
+Manuell war das kein Problem 
+(nachdem ich es denn endlich gefunden hatte... 
+dabei waren noch ein paar Optimierungen im logging von `lino.utils.dpy` nötig), 
+aber bis zur nächsten dbmig muss ich 
+also den Serializer ändern, dass er so was generiert.
+
+Aber zuletzt kann ich nun doch schlafen gehen: 
+released :doc:`/releases/20110415` und Upgrade in Eupen.
+

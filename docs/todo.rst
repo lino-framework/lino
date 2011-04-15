@@ -9,13 +9,12 @@ for which I hope for help from other people.
 Short-term
 ----------
 
-#.  "Allgemeine Uploads": Uploads nicht nur pro Person, sondern auch 
-    pro Notiz/Ereignis, 
-    pro Kursanfrage ("Teilnehmer" bzw. "Kandidat") 
-    und voraussichtlich in naher Zukunft auch noch 
-    an anderen Stellen. Also mit :term:`GFK` arbeiten.
-    Dadurch werden auch Kursanfragen ein Detail kriegen (müssen), 
-    weil Lino noch kein Upload-Panel in Grids kann.
+#.  dpy.Deserializer muss für MTI-Kinder insert_child benutzen statt einfach nur company_ptr.
+    Siehe :doc:`/blog/2011/0415`.
+
+#.  [Fri Apr 15 20:19:11 2011] [error] AttributeError: 'User' object has no attribute 'get_and_delete_messages'
+    Wenn ich auf einem production server versuche, über den Quick upload button "edit"
+    einen existierenden upload zu löschen.
     
 #.  Grid-Konfigurationsdateien sollten pro Benutzer speicherbar sein.
 

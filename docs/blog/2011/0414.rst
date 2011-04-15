@@ -56,6 +56,8 @@ Abends mach ich die Probe aufs Exempel:
 - Check-in, Upgrade und Dump mit der neuen Version
 - Dateivergleich, ob auch wirklich nur die CourseProvider sich verändert haben. Alles klar.
 
+(Nachtrag: hier habe ich dann gar nicht daran gedacht zu testen, diesen neuen Dump dann auch einzulesen. Sh. :doc:`0415`)
+
 
 Date formatting
 ---------------
