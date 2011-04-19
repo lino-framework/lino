@@ -191,10 +191,10 @@ INSTALLED_APPS = (
   'lino.modlib.properties',
   'lino.modlib.contacts',
   #~ 'lino.modlib.projects',
-  'lino.apps.dsbe',
   'lino.modlib.notes',
   'lino.modlib.links',
   'lino.modlib.uploads',
+  'lino.apps.dsbe',
   #'dsbe.modlib.contacts',
   #'dsbe.modlib.projects',
   #~ 'south', # http://south.aeracode.org

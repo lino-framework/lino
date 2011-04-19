@@ -1,0 +1,13 @@
+20110419
+========
+
+`lino.utils.config` macht jetzt `config_dirs.reverse()`, also durchsucht
+die Konfigrationsverzeichnisse jetzt in umgekehrter Reihenfolge. 
+Dieser Bug fiel auf wegen `notes.Note.dtl`. Davon gibt es eine Standardversion im config-Verzeichnis von :mod:`lino.modlib.notes` und eine angepasste Version 
+im config-Verzeichnis von :mod:`lino.apps.dsbe`. Nun hatte ich 
+vorigen Freitag (sh. `Conflicting translations <0415>`) die Reihenfolge 
+der :setting:`INSTALLED_APPS` in :mod:`lino.apps.dsbe.settings` geändert.
+Diese Änderung hat zwar nichts gebracht, aber wenn ich mir die Sache nun anschaue, finde ich folgendes:
+
+
+  Die Reihenfolge in :setting:`INSTALLED_APPS` sollte sein: zuerst `django.contrib.*`, dann ``lino``, dann `lino.modlib.*` und dann `lino.apps.dsbe`. Also vom Allgemeineren zum Spezifischeren. Und bei den config-Dirs soll diese Liste umgekehrt abgeklappert werden (und die Suche beim ersten Treffer aufhören): zuerst das eventuelle lokale `config_dir`, dann `lino.apps.dsbe`, dann die diversen `lino.modlib.*` usw. 

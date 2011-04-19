@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 ## Copyright 2009-2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
@@ -11,11 +12,18 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
+u"""
 The Lino process creates a list config_dirs of all 
 configuration directories on server startup
 by looping through :setting:`INSTALLED_APPS` that have a :xfile:`config` 
 subdir.
+
+Die Reihenfolge in :setting:`INSTALLED_APPS` sollte sein: zuerst 
+`django.contrib.*`, dann ``lino``, dann `lino.modlib.*` und dann `lino.apps.dsbe`. 
+Also vom Allgemeineren zum Spezifischeren. Und bei den config-Dirs soll diese 
+Liste umgekehrt abgeklappert werden (und die Suche beim 
+ersten Treffer aufhören): zuerst das eventuelle lokale `config_dir`, 
+dann `lino.apps.dsbe`, dann die diversen `lino.modlib.*` usw. 
 
 """
 
@@ -61,6 +69,7 @@ if os.path.isdir(dirname):
 else:
     LOCAL_CONFIG_DIR = None
 
+config_dirs.reverse()
 config_dirs = tuple(config_dirs)
 
 
