@@ -106,8 +106,9 @@ def find_config_files(pattern):
         #~ print 'find_config_files() discover', dirname, pattern
         for fn in os.listdir(cd.name):
             if fnmatch(fn,pattern):
+                files.setdefault(fn,cd)
                 #~ if not files.has_key(fn):
-                files[fn] = cd
+                    #~ files[fn] = cd
         #~ else:
             #~ print 'find_config_files() not a directory:', dirname
     return files
