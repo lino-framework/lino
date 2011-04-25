@@ -195,8 +195,9 @@ class FakeDeserializedObject(base.DeserializedObject):
     
     object = None # required by loaddata
     
-    def __init__(self, objects):
+    def __init__(self, name, objects):
         self.objects = objects
+        self.name = name
         #~ self.save_later = []
 
     def save(self, *args,**kw):
@@ -208,10 +209,11 @@ class FakeDeserializedObject(base.DeserializedObject):
                 saved += 1
             else:
                 save_later.append(obj)
-        dblogger.info("Saved %d instances.",saved)
+        dblogger.info("Saved %d instances from %s.",saved,self.name)
                 
         while saved and save_later:
-            dblogger.info("Trying again with %d unsaved instances.",len(save_later))
+            dblogger.info("Trying again with %d unsaved instances.",
+                len(save_later))
             try_again = save_later
             save_later = []
             saved = 0
@@ -223,8 +225,10 @@ class FakeDeserializedObject(base.DeserializedObject):
             dblogger.info("Saved %d instances.",saved)
             
         if save_later:
-            dblogger.warning("Abandoning with %d unsaved instances.",len(save_later))
-            raise Exception("Abandoned with %d unsaved instances. See dblog for details." % len(save_later))
+            dblogger.warning("Abandoning with %d unsaved instances from %s.",
+                len(save_later),self.name)
+            raise Exception("Abandoned with %d unsaved instances. "
+              "See dblog for details." % len(save_later))
                 
     def try_save(self,obj,*args,**kw):
         if obj is None:
@@ -277,6 +281,6 @@ def Deserializer(fp, **options):
     desc = (SUFFIX,'r',imp.PY_SOURCE)
     module = imp.load_module(fqname, fp, fp.name, desc)
     #m = __import__(filename)
-    yield FakeDeserializedObject(module.objects)
+    yield FakeDeserializedObject(fp.name,module.objects)
 
 

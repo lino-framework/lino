@@ -1,0 +1,57 @@
+#40 [closed] : Learning Comboboxes (quick insert)
+=================================================
+
+In Comboboxen konnte man bis :doc:`/blog/2011/0425` nur Texte tippen, 
+die auch in der Auswahlliste drin stehen. 
+Lino hatte noch keine "automatische Lernfunktion". 
+Außerdem verhielt er sich nicht sehr höflich, 
+wenn man es trotzdem tat: speicherte überhaupt nichts ab und meldete 
+lediglich "AJAX communication failed". 
+
+    
+Wenn in der Auswahlliste einer Combobox (z.B. Städte) Angaben fehlen, 
+sollten diese
+(unter gewissen Umständen: Benutzerrechte vorhanden und 
+datentechnisch sinnvoll) direkt durch den Benutzer hinzugefügt
+werden können, ohne in das Menü Site gehen zu müssen. 
+Zuerst sollte Lino eine Rückfrage machen
+"Eine Stadt namens Kigali (Einen Kontakt namens Herr Weling) 
+gibt es noch nicht. Wollen Sie die anlegen?", und wenn man das 
+bestätigt, käme das Insert-Fenster für Städte, in dem Name und Land 
+schon ausgefüllt sind. Achtung, wenn man das bestätigt hat, muss 
+natürlich auch noch der ursprüngliche Record gespeichert werden.
+Im Fall einer Stadt ist die Sache klar: die Bezeichung aus der Combobox 
+wird im Feld `name` eingetragen und das Land ist aus dem Kontext bekannt. 
+Diese Sache muss im Report (Cities) oder im Model (City) 
+konfiguriert werden:: 
+
+  def on_quick_insert(self,field,text):
+      self.name = text
+      
+Das mit der Rückfrage ist nicht trivial. Wir wollen ja, dass Lino 
+restful ist. Also muss der Client die Daten des Formulars 
+analysieren und wissen, ob ein Quick-Insert erlaubt ist, und dann 
+noch vor dem Save das POST für die Stadt abschicken, 
+und dann erst das PUT für den ursprünglichen Record. 
+      
+
+20110425
+
+Also in :extjs:`Ext.form.ComboBox` gibt es den config param `forceSelection` : "true to restrict the selected value to one of the values in the list, false to allow the user to set arbitrary text into the field (defaults to false)"
+Der stand bisher immer auf `false`, und ExtJS setzt dann in beide Felder (city und cityHidden) den Text rein. Und parse_from_form macht dann einen ValueError.
+
+Die Konfigurierung kann nicht einfach im Target-Model sein, weil die Sache vom Kontext abhängt.
+Z.B. wenn wir aus Person.birth_place ebenfalls eine (lernende) Combobox machen, dann haben 
+wir neben Person.city zwei Stellen, wo eine Stadt erstellt werden kann. Er muss ja das Land 
+der zu erstellenden Stadt aus dem Kontext entnehmen.
+- city -> country
+- birth_city -> birth_country
+
+14.15 Uhr : Voilà, eine erste Implementierung funktioniert:
+
+  Erstens haben Comboboxen jetzt normalerweise wieder `forceSelection=true`, 
+  und damit ein Chooser auch Choices erstellen kann, muss es im Modell eine Methode 
+  `create_foo_choice` geben.
+  Beispiel siehe :class:`lino.mixins.CountryCity`
+  
+  

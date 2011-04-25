@@ -9,15 +9,35 @@ for which I hope for help from other people.
 Short-term
 ----------
 
-#.  dpy.Deserializer muss für MTI-Kinder insert_child benutzen statt einfach nur company_ptr.
+#.  `dpy.Deserializer` muss für MTI-Kinder insert_child benutzen statt 
+    einfach nur company_ptr.
     Siehe :doc:`/blog/2011/0415`.
 
-#.  [Fri Apr 15 20:19:11 2011] [error] AttributeError: 'User' object has no attribute 'get_and_delete_messages'
+#.  Wie bzw. wann verschwinden Erinnerungen auf der Startseite? 
+    Sollten wir nicht zusätzlich bei den Erinnerungen eine Frist 
+    nach einem Ablaufdatum oder so vorsehen? z. B. "Begleitung beendet" 
+    etc.
+    Ferner muss es in gewissen Fällen möglich sein, die Erinnerung als 
+    "erledigt" zu markieren und aus dem Startbildschirm verschwinden zu lassen.
+    Wahrscheinlich reicht ein neues Feld `reminder_done`
+    
+#.  :doc:`/tickets/39`
+
+#.  Welche weiteren Felder müssen (ähnlich wie "Stadt") lernfähig werden? 
+    Vorschläge: 
+    - lino.mixins.reminders.Reminder.reminder_subject
+    - lino.apps.dsbe.models.Study.content
+
+#.  Die 2. Adresszeile "Line after Street" ist noch in Englisch
+
+#.  [Fri Apr 15 20:19:11 2011] [error] AttributeError: 'User' object has 
+    no attribute 'get_and_delete_messages'
     Wenn ich auf einem production server versuche, über den Quick upload button "edit"
     einen existierenden upload zu löschen.
+    Liegt wahrscheinlich nur am Template 
+    :srcref:`lino/apps/dsbe/templates/base.html`.
     
-#.  Grid-Konfigurationsdateien sollten pro Benutzer speicherbar sein.
-
+    
 #.  Hinter das QuickFilter-Feld sollte ein Button, um den Filter zu aktivieren. 
     Dass man einfach nur TAB drücken muss ist nicht intuitiv.
 
@@ -32,17 +52,9 @@ Short-term
 #.  Übersetzung "Notes" soll in DSBE nit "Notizen" 
     sondern "Ereignisse/Notizen" sein.
     
-#.  Bei den angezeigten Personen einer PersonSearch sind manche Felder noch nicht übersetzt.
+#.  Bei den angezeigten Personen einer PersonSearch sind manche Felder 
+    noch nicht übersetzt.
 
-#.  In Comboboxen kann man momentan nur Texte tippen, 
-    die auch in der Auswahlliste drin stehen. 
-    Lino hat noch keine "automatische Lernfunktion". 
-    Außerdem verhält er sich nicht sehr höflich, 
-    wenn man es trotzdem tut, er sollte dann wenigstens mitteilen, 
-    dass das nicht möglich ist. Elegant wäre natürlich eine Rückfrage 
-    "Eine Stadt namen Kigali (einen Kontakt namens Herr Weling) 
-    gibt es noch nicht. Wollen Sie die anlegen?"
-    
 #.  An makedocs müsste ich bei Gelegenheit mal ein bisschen weiter machen. 
     Das ist noch lange nicht fertig.
     

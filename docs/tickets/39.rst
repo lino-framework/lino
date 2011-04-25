@@ -1,0 +1,17 @@
+#39 : user-specific grid configs
+================================
+
+Grid-Konfigurationsdateien sollten pro Benutzer speicherbar sein.
+Bisher werden Konfigurationsdateien einmalig beim Server-Start eingelesen. 
+Das soll auch so bleiben, aber wir haben 
+jetzt pro Report nicht mehr nur *eine* Liste von `grid_configs`, 
+sondern einen *dict*, der neben einer "allgemeinen" Liste potentiell pro 
+User (und irgendwann auch noch pro Usergruppe) eine Liste hat.
+Gespeichert wird die .gc-Datei dann immer im User-Verzeichnis, und 
+nur der Systemverwalter 
+kann die Dateien ggf. anderswohin verschieben, wo sie für alle anderen User 
+"aktiv" wird.
+
+Hier stellt sich mir langsam die Frage, ob ich die GCs statt in yaml-Dateien 
+nicht besser doch in der Datenbank speichern sollte.
+

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-## Copyright 2008-2010 Luc Saffre
+## Copyright 2008-2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -27,7 +27,8 @@ from lino.utils.instantiator import Instantiator
 
 class StdTest(TestCase):
     #~ fixtures = [ 'std', 'few_countries', 'ee', 'be', 'demo', 'demo_ee']
-    fixtures = 'few_countries few_languages demo_cities std demo demo_ee'.split()
+    #~ fixtures = 'few_countries few_languages demo_cities std demo demo_ee'.split()
+    fixtures = 'std few_countries few_cities few_languages props demo'.split()
     
     
 person = Instantiator('contacts.Person').build

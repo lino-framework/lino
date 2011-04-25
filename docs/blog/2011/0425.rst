@@ -1,0 +1,10 @@
+20110425
+========
+
+Ostermontag : 
+Eine erste Lösung für Ticket :doc:`/tickets/40`.
+
+Konkret: im Feld "Stadt" kann man jetzt den Namen einer Stadt eintippen, 
+die Lino noch nicht kennt, und die wird dann automatisch angelegt.
+Das funktioniert sowohl auf Personen und Firmen wie auch in `Studien & Erfahrungen`.
+

@@ -2129,6 +2129,7 @@ Lino.chooser_handler = function(combo,name) {
 
 
 Lino.ComboBox = Ext.extend(Ext.form.ComboBox,{
+  forceSelection: true,
   triggerAction: 'all',
   autoSelect: false,
   submitValue: true,
@@ -2236,8 +2237,7 @@ Lino.ComboBox = Ext.extend(Ext.form.ComboBox,{
 });
 
 Lino.ChoicesFieldElement = Ext.extend(Lino.ComboBox,{
-  mode: 'local',
-  forceSelection: false
+  mode: 'local'
 });
 
 

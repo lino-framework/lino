@@ -38,6 +38,7 @@ from lino import reports
 from lino import fields
 #~ from lino.modlib.properties import models as properties
 from lino.utils import choosers
+#~ from lino.tools import obj2str
 
 class StoreField(object):
   
@@ -70,7 +71,7 @@ class StoreField(object):
     def obj2dict(self,request,obj,d):
         d[self.field.name] = self.value_from_object(request,obj)
 
-    def parse_form_value(self,v):
+    def parse_form_value(self,v,obj):
         #~ if v == '' and not self.field.empty_strings_allowed:
             #~ return None
         return self.field.to_python(v)
@@ -106,7 +107,7 @@ class StoreField(object):
             else:
                 v = self.field.default
         else:
-            v = self.parse_form_value(v)
+            v = self.parse_form_value(v,instance)
         if not is_new and self.field.primary_key and instance.pk is not None:
             if instance.pk == v:
                 return
@@ -130,7 +131,7 @@ class DisabledFieldsStoreField(StoreField):
         self.store = store
         #~ self.report = report
         
-    def parse_form_value(self,v):
+    def parse_form_value(self,v,instance):
         pass
         
     def value_from_object(self,request,obj):
@@ -180,7 +181,7 @@ class BooleanStoreField(StoreField):
         return post_data.get(self.field.name,'off')
         
     # as long as http://code.djangoproject.com/ticket/15497 is open
-    def parse_form_value(self,v):
+    def parse_form_value(self,v,obj):
         if v in ('true','on'):
             return True
         if v in ('false','off'):
@@ -210,7 +211,7 @@ class DateStoreField(StoreField):
         kw['dateFormat'] = date_format # 'Y-m-d'
         StoreField.__init__(self,field,**kw)
         
-    def parse_form_value(self,v):
+    def parse_form_value(self,v,obj):
         #~ print '20101024 DateStoreField 1', v
         if v:
             v = reports.parse_js_date(v,self.field.name)
@@ -350,7 +351,7 @@ class ComboStoreField(StoreField):
         if v in ('','undefined'): 
             v = None
         if v is not None:
-            v = self.parse_form_value(v)
+            v = self.parse_form_value(v,instance)
         if v is None:
             if not self.field.blank:
                 raise exceptions.ValidationError("field may not be empty")
@@ -398,11 +399,30 @@ class ForeignKeyStoreField(ComboStoreField):
         else:
             return (v.pk, unicode(v))
             
-    def parse_form_value(self,v):
+    def parse_form_value(self,v,obj):
         try:
             return self.field.rel.to.objects.get(pk=v)
+        except ValueError,e:
+            pass
         except self.field.rel.to.DoesNotExist,e:
-            return None
+            pass
+            
+        ch = choosers.get_for_field(self.field)
+        #~ if ch and ch.meth.quick_insert_field:
+        if ch and ch.can_create_choice:
+            o = ch.create_choice(obj,v)
+            logger.info("Auto-created %s %s",o._meta.verbose_name,o)
+            return o
+            #~ qs = ch.get_instance_choices(obj)
+            #~ print 20110425, qs
+            #~ kw = {}
+            #~ kw[ch.meth.quick_insert_field] = v
+            #~ fk_target = qs.create(**kw)
+            # fk_target.save() not necessary
+            #~ logger.info("Auto-created %s %s",fk_target.__class__,fk_target)
+            #~ return fk_target
+            #~ return ch.on_quick_insert(obj,self.field,v)
+        return None
             
 
 #~ class ChoicesStoreField(ComboStoreField):

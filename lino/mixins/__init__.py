@@ -66,6 +66,32 @@ class ByUser(reports.Report):
             req.master_instance = req.get_user()
 
 
+class CountryCity(models.Model):
+    """
+    Adds two fields `country` and `city` and defines 
+    a context-sensitive chooser for city as well as a 
+    `create_city_choice` method.
+    """
+    class Meta:
+        abstract = True
+    country = models.ForeignKey("countries.Country",blank=True,null=True,
+        verbose_name=_("Country"))
+    city = models.ForeignKey('countries.City',blank=True,null=True,
+        verbose_name=_('City'))
+        
+    @chooser()
+    def city_choices(cls,country):
+        if country is not None:
+            return country.city_set.order_by('name')
+        return cls.city.field.rel.to.objects.order_by('name')
+        
+    def create_city_choice(self,text):
+        if self.country is not None:
+            return self.country.city_set.create(name=text,country=self.country)
+        logger.warning("Cannot auto-create city %r if country is empty",text)
+        return None
+        
+  
 class Owned(models.Model):
   
     class Meta:

@@ -1,5 +1,5 @@
-#32 : loaddata and processing order of fixtures
-===============================================
+#32 [closed]: loaddata and processing order of fixtures
+=======================================================
 
 Running ``manage.py test`` for :doc:`/dsbe/index` fails, saying::
   
@@ -22,19 +22,4 @@ Running ``manage.py test`` for :doc:`/dsbe/index` fails, saying::
   E.INFO Installing countries demo_cities fixture
   INFO Installing contacts demo fixture  
   
-This is because the `contacts.demo` fixture is executed 
-before `countries.few_cities`. Which is very strange because I 
-have the following test case::
-
-  class DemoTest(TestCase):
-      fixtures = 'std few_countries few_languages few_cities props demo'.split()
-
-But it's true: the documentation for Django's `loaddata
-<http://docs.djangoproject.com/en/dev/ref/django-admin/#loaddata-fixture-fixture>`_
-management command says clearly: "the order in which fixture files are 
-processed is undefined."
-  
-I opened Django ticket :djangoticket:`15578`. 
-Let's see what they say about it.
-
-
+This was because `lino.modlib.contacts.tests` specified a wrong fixtures list.

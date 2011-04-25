@@ -771,7 +771,7 @@ class HistoryByPerson(reports.Report):
 #
 
 
-class Study(models.Model):
+class Study(mixins.CountryCity):
     class Meta:
         verbose_name = _("study or education")
         verbose_name_plural = _("Studies & education")
@@ -787,10 +787,6 @@ class Study(models.Model):
     #~ started = fields.MonthField(blank=True,null=True,verbose_name=_("started"))
     #~ stopped = fields.MonthField(blank=True,null=True,verbose_name=_("stopped"))
     success = models.BooleanField(verbose_name=_("Success"),default=False)
-    country = models.ForeignKey("countries.Country",blank=True,null=True,
-        verbose_name=_("Country"))
-    city = models.ForeignKey('countries.City',blank=True,null=True,
-        verbose_name=_('City'))
     language = models.ForeignKey("countries.Language",
         blank=True,null=True,verbose_name=_("Language"))
     #~ language = fields.LanguageField(blank=True,null=True,verbose_name=_("Language"))
@@ -803,11 +799,6 @@ class Study(models.Model):
     def __unicode__(self):
         return unicode(self.type)
   
-    @chooser()
-    def city_choices(cls,country):
-        if country is not None:
-            return country.city_set.order_by('name')
-        return cls.city.field.rel.to.objects.order_by('name')
         
 class StudiesByPerson(HistoryByPerson):
     "List of studies for a known person."
@@ -816,6 +807,7 @@ class StudiesByPerson(HistoryByPerson):
     #~ label = _("Studies & experiences")
     button_label = _("Studies")
     order_by = ["started"]
+    column_names = 'type content started stopped country city success language school remarks *'
     
     
 #

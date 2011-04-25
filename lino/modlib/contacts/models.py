@@ -34,6 +34,7 @@ from lino import reports
 from lino.utils import perms
 
 from lino import fields
+from lino import mixins
 from lino.utils import join_words
 from lino.utils.choosers import chooser
 from lino.utils.babel import babelattr
@@ -42,7 +43,7 @@ from lino.utils import babel
 from lino.models import get_site_config
 
 
-class Addressable(models.Model):
+class Addressable(mixins.CountryCity):
     """
     Abstract base class for anything that has contact information (postal address, email, phone,...).
     
@@ -69,18 +70,18 @@ class Addressable(models.Model):
         max_length=200,blank=True,
         help_text="Address line to print below street line")
     
-    country = models.ForeignKey('countries.Country',
-        blank=True,null=True,
-        verbose_name=_("Country"),
-        help_text="The country where this contact is located.")
+    #~ country = models.ForeignKey('countries.Country',
+        #~ blank=True,null=True,
+        #~ verbose_name=_("Country"),
+        #~ help_text="The country where this contact is located.")
     
-    city = models.ForeignKey('countries.City',blank=True,null=True,
-        verbose_name=_('City'),
-        help_text="""
-        The city where this contact is located.
-        The list of choices for this field is context-sensitive
-        and depends on the :attr:`country`.
-        """)
+    #~ city = models.ForeignKey('countries.City',blank=True,null=True,
+        #~ verbose_name=_('City'),
+        #~ help_text="""
+        #~ The city where this contact is located.
+        #~ The list of choices for this field is context-sensitive
+        #~ and depends on the :attr:`country`.
+        #~ """)
     
     #city = models.CharField(max_length=200,blank=True)
     zip_code = models.CharField(_("Zip code"),max_length=10,blank=True)
@@ -101,17 +102,16 @@ class Addressable(models.Model):
     def __unicode__(self):
         return self.name
         
-    #~ @classmethod
-    @chooser()
-    def city_choices(cls,country):
-        #print "city_choices", repr(recipient)
-        #recipient = self.objects.get(pk=pk)
-        if country is not None:
-        #if recipient and recipient.country:
-            return country.city_set.order_by('name')
-        return cls.city.field.rel.to.objects.order_by('name')
-        #return countries.City.oiesByCountry().get_queryset(master_instance=recipient.country)
-        #return dict(country__in=(recipient.country,))
+    #~ @chooser()
+    #~ def city_choices(cls,country):
+        #~ if country is not None:
+            #~ return country.city_set.order_by('name')
+        #~ return cls.city.field.rel.to.objects.order_by('name')
+        
+    #~ def create_city_choice(self,text):
+        #~ if self.country is not None:
+            #~ return self.country.city_set.create(name=text,country=self.country)
+        #~ raise Exception("Cannot create city if country is empty")
         
 
     def address_person_lines(self):

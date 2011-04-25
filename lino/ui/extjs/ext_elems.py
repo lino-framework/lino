@@ -67,7 +67,8 @@ def before_row_edit(panel):
                 #~ logger.debug("20100615 %s.%s has chooser", self.lh.layout, e.field.name)
                 for f in chooser.context_fields:
                     #~ l.append("console.log('20110128 before_row_edit',record.data);")
-                    l.append("%s.setContextValue(%r,record ? record.data[%r] : undefined);" % (
+                    l.append(
+                        "%s.setContextValue(%r,record ? record.data[%r] : undefined);" % (
                         e.ext_name,f.name,ext_requests.form_field_name(f)))
     #~ return js_code('function(record){\n  %s\n}' % ('\n  '.join(l)))
     return js_code('function(record){ %s }' % (' '.join(l)))
@@ -1160,6 +1161,11 @@ class MainPanel(jsgen.Variable):
         #~ if hasattr(field,'_lino_chooser'):
         ch = choosers.get_for_field(field)
         if ch:
+            #~ if ch.on_quick_insert is not None:
+            #~ if ch.meth.quick_insert_field is not None:
+            if ch.can_create_choice:
+                kw.update(forceSelection=False)
+                #~ print 20110425, field.name, lh
             if ch.simple_values:
                 return SimpleRemoteComboFieldElement(lh,field,**kw)
             else:

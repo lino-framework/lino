@@ -49,12 +49,18 @@ class Chooser(FieldChooser):
     #~ stored_name = None
     simple_values = False
     instance_values = True
+    #~ force_selection = True
+    #~ on_quick_insert = None
+    #~ quick_insert_field = None
+    can_create_choice = False
     def __init__(self,model,field,meth):
         FieldChooser.__init__(self,field)
         self.model = model
         #~ self.field = model._meta.get_field(fldname)
         self.meth = meth
         if not isinstance(field,models.ForeignKey):
+            #~ self.on_quick_insert = getattr(field.rel.to,'on_quick_insert',None)
+        #~ else:
             self.simple_values = getattr(meth,'simple_values',False)        
             self.instance_values = getattr(meth,'instance_values',False)
         #~ self.context_params = meth.func_code.co_varnames[1:meth.func_code.co_argcount]
@@ -73,22 +79,28 @@ class Chooser(FieldChooser):
             #~ else:
                 #~ self.context_values.append(name)
         self.converters = []
-        try:
-            for f in self.context_fields:
-                cv = make_converter(f)
-                if cv is not None:
-                    self.converters.append(cv)
-        except models.FieldDoesNotExist,e:
-            print e
+        #~ try:
+        for f in self.context_fields:
+            cv = make_converter(f)
+            if cv is not None:
+                self.converters.append(cv)
+        #~ except models.FieldDoesNotExist,e:
+            #~ print e
             
         #~ m = get_unbound_meth(model,field.name + "_display")
         #~ if m is not None:
             #~ self.display_meth
             
+        if hasattr(model,"create_%s_choice" % field.name):
+            self.can_create_choice = True
+            
     def __str__(self):
         return "Chooser(%s.%s,%s)" % (self.model.__name__,self.field.name,self.context_params)
         
-            
+    def create_choice(self,obj,text):
+        m = getattr(obj,"create_%s_choice" % self.field.name)
+        return m(text)
+        
     def get_data_elem(self,name):
         for vf in self.model._meta.virtual_fields:
             if vf.name == name:
@@ -96,11 +108,19 @@ class Chooser(FieldChooser):
         return self.model._meta.get_field(name)
             
     def get_choices(self,**context):
+        "Return a list of choices for this chooser, using keyword parameters as context."
         args = []
         for varname in self.context_params:
             args.append(context.get(varname,None))
         #~ print args
         return self.meth(*args)
+      
+    #~ def get_instance_choices(self,obj):
+        #~ "Return a list of choices for this chooser, using `obj` as context."
+        #~ args = []
+        #~ for varname in self.context_params:
+            #~ args.append(getattr(obj,varname,None))
+        #~ return self.meth(*args)
       
     def get_request_choices(self,request):
         kw = {}
@@ -160,6 +180,7 @@ def uses_simple_values(fld):
 
 
 def chooser(**options):
+    #~ options.setdefault('quick_insert_field',None)
     def chooser_decorator(fn):
         def wrapped(*args):
             #~ print 20101220, args

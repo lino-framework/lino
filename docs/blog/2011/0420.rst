@@ -1,0 +1,10 @@
+20110420
+========
+
+Lino-Ticket :doc:`/tickets/32` lag gar nicht an 
+Django-Ticket :djangoticket:`15578`, sondern an der 
+Testsuite von :mod:`lino.modlib.contacts`.
+
+``manage.py test`` funktioniert leider trotzdem 
+noch immer nicht, wegen eines kleinen Problems in 
+Django :djangoticket:`15857`. 
