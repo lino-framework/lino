@@ -39,7 +39,6 @@ Subpackages
     lino.mixins.printable
     lino.mixins.uploadable
     lino.mixins.reminder
-    lino.apps
     lino.test_apps
     lino.modlib
 

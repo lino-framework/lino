@@ -15,5 +15,22 @@ für die ich eigentlich mehr Zeitaufwand befürchtet hatte.
     Dazu müsste ich eigentlich noch mehr Tests schreiben. Bei Gelegenheit.
 
 
-:doc:`/releases/20110425`
+20.50 Uhr : :doc:`/releases/20110425` und Upgrade in Eupen.
 
+Vor dem Einschlafen kam mir dann noch folgende Idee: 
+ein neuer management command `diag`, der eine Zusammenfassung 
+des Datenbank-Inhalts macht: pro Modell u.A. die 
+Anzahl Records und den ersten und letzten Record. Sinn der Sache ist, 
+dass ich zwei Datenbanken inhaltlich miteinander vergleichen kann. 
+Was insbesondere nach einer Datenmigration interessant ist. Wäre ja dumm, 
+wenn nach einer Migration irgendwelche Daten fehlten und wir das erst 
+merkten, wenn die Leute schon weiter gearbeitet haben...
+
+Der Befehl an sich war einfach. Er schreibt das nicht nach stdout, sondern 
+in eine utf8-kodierte Datei namens `diag.rst`. Allein schon weil es in meinen 
+Demo-Daten eine Person namens Татьяна Казеннова gibt, die nur auf unicode-fähigen 
+Konsolen ausgedruckt werden kann.
+
+Nebenbei kam dabei raus, dass es die Tabellen aus `django.contrib.auth` immer 
+noch gibt. Das kommt daher, dass `contenttypes` den `admin` importiert und der 
+seinerseits `auth`. Lästig, aber auch lustig.
