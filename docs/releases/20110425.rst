@@ -1,0 +1,31 @@
+Version 1.1.10 (25.04.2011)
+===========================
+
+New features
+------------
+
+#.  Lino kann jetzt lernfähige Comboboxen machen. Momentan wird das nur
+    in den Feldern "Stadt" (an 3 Stellen: Firma, Person und
+    Ausbildung) angewendet. Lino macht zumindest momentan keine
+    Rückfrage, sondern erstellt automatisch eine neue Stadt, wenn man auf
+    Speichern klickt.
+  
+
+#.  `dpy.Deserializer` generiert für MTI-Kinder jetzt Code, 
+    der :func:`lino.utils.mti.insert_child` aufruft
+    statt einfach nur eine Instanz mit `parent_ptr` zu machen (was nicht funktioniert, 
+    siehe :doc:`/blog/2011/0415`).
+    Dazu müsste ich eigentlich noch mehr Tests schreiben. Bei Gelegenheit.
+
+#.  Ein paar Übersetzungen fehlten noch (z.B. "Address line after Street")
+
+  
+
+Upgrade instructions
+--------------------
+
+The following are technical instructions related to this 
+upgrade, designed to be executed by a Lino expert.
+For more general instructions on how to upgrade an existing 
+Lino site, see :doc:`/admin/upgrade`).
+

@@ -87,7 +87,7 @@ Traceback (most recent call last):
 DoesNotExist: Restaurant matching query does not exist.
 
 The opposite operation, "promoting a simple Place to a Restaurant", 
-done using :func:`insert_child`:
+is done using :func:`insert_child`:
 
 >>> obj = Place(id=2,name="Second")
 >>> obj.save()
@@ -105,6 +105,14 @@ Later this Place becomes a Restaurant and hires 2 cooks:
 ...     obj.cooks.add(Person.objects.get(pk=i))
 >>> obj
 <Restaurant: #2 (name=Second,owners=Bert,cooks=Claude,Dirk)>
+
+If you try to promote a Person to a Restaurant, you'll get an exception:
+
+>>> person = Person.objects.get(pk=2)
+>>> insert_child(person,Restaurant)
+Traceback (most recent call last):
+...
+Exception: A Person cannot be parent for a Restaurant
 
 
 Virtual fields

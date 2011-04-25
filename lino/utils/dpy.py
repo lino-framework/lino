@@ -45,7 +45,9 @@ class Serializer(base.Serializer):
     """
 
     internal_use_only = False
-    #~ WRITE_PREAMBLE = True # may be set to False e.g. by testcases
+    
+    write_preamble = True # may be set to False e.g. by testcases
+    models = None
     
     def serialize(self, queryset, **options):
         self.options = options
@@ -53,29 +55,41 @@ class Serializer(base.Serializer):
         self.stream = options.get("stream", StringIO())
         self.selected_fields = options.get("fields")
         self.use_natural_keys = options.get("use_natural_keys", False)
-        self.stream.write('# -*- coding: UTF-8 -*-\n\n')
-        self.stream.write('# Created using Lino version %s\n' % lino.__version__)
-        self.stream.write('from lino.utils import i2d\n')
-        self.stream.write('from lino.tools import resolve_model\n')
+        if self.write_preamble:
+            self.stream.write('# -*- coding: UTF-8 -*-\n\n')
+            self.stream.write('# Created using Lino version %s\n' % lino.__version__)
+            self.stream.write('from lino.utils import i2d\n')
+            self.stream.write('from lino.utils.mti import insert_child\n')
+            self.stream.write('from lino.tools import resolve_model\n')
         #~ model = queryset.model
-        for model in models.get_models():
-            self.stream.write('%s = resolve_model("%s.%s")\n' % (model.__name__, model._meta.app_label,model.__name__))
+        if self.models is None:
+            self.models = models.get_models()
+        if self.write_preamble:
+            for model in self.models:
+                self.stream.write('%s = resolve_model("%s.%s")\n' % (model.__name__, model._meta.app_label,model.__name__))
         self.stream.write('\n')
-        for model in models.get_models():
+        for model in self.models:
             fields = model._meta.local_fields
             #~ fields = [f for f in model._meta.fields if f.serialize]
             #~ fields = [f for f in model._meta.local_fields if f.serialize]
             self.stream.write('def create_%s(%s):\n' % (
                 model._meta.db_table,','.join([f.attname for f in fields])))
-            #~ for f in fields:
-                #~ if isinstance(f,models.ForeignKey):
-                    #~ self.stream.write('    if %s is not None:\n' % f.name)
-                    #~ self.stream.write('         %s = %s.objects.get(pk=%s)\n' % (f.name,f.rel.to.__name__,f.name))
-            #~ self.stream.write('    %s(%s).save(force_insert=True)\n' % (
-            self.stream.write('    return %s(%s)\n' % (
-                model.__name__,
-                ','.join([
-                    '%s=%s' % (f.attname,f.attname) for f in fields])))
+            if model._meta.parents:
+                assert len(model._meta.parents) == 1
+                pm,pf = model._meta.parents.items()[0]
+                child_fields = [f for f in fields if f != pf]
+                if child_fields:
+                    attrs = ','+','.join([
+                      '%s=%s' % (f.attname,f.attname) 
+                          for f in child_fields])
+                else: attrs = ''
+                self.stream.write('    return insert_child(%s.objects.get(pk=%s),%s%s)\n' % (
+                    pm.__name__,pf.attname,model.__name__,attrs))
+            else:
+                self.stream.write('    return %s(%s)\n' % (
+                    model.__name__,
+                    ','.join([
+                        '%s=%s' % (f.attname,f.attname) for f in fields])))
         #~ self.start_serialization()
         self.stream.write('\n')
         model = None

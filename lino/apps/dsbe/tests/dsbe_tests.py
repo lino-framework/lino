@@ -49,8 +49,11 @@ def test01(self):
     Used on :doc:`/blog/2011/0414`.
     """
     from lino.utils.dpy import Serializer
-    ser = Serializer()
     from lino.apps.dsbe.models import Company, CourseProvider
+    ser = Serializer()
+    #~ ser.models = [CourseProvider,Company]
+    ser.models = [CourseProvider]
+    ser.write_preamble = False
     self.assertEqual(Company._meta.parents,{})
     parent_link_field = CourseProvider._meta.parents.get(Company)
     #~ print parent_link_field.name
@@ -66,11 +69,22 @@ def test01(self):
       
     #~ foo = Company(name='Foo')
     #~ foo.save()
-    #~ bar = CourseProvider(name='Bar')
-    #~ bar.save()
+    bar = CourseProvider(name='Bar')
+    bar.save()
     
     #~ ser.serialize([foo,bar])
-    #~ ser.serialize([bar])
-    #~ self.assertEqual(ser.stream.getvalue(),"""
-    #~ """)
+    ser.serialize([bar])
+    #~ print ser.stream.getvalue()
+    self.assertEqual(ser.stream.getvalue(),"""
+def create_dsbe_courseprovider(company_ptr_id):
+    return insert_child(Company.objects.get(pk=company_ptr_id),CourseProvider)
+
+
+def dsbe_courseprovider_objects():
+    yield create_dsbe_courseprovider(1)
+
+
+def objects():
+    for o in dsbe_courseprovider_objects(): yield o
+""")
     

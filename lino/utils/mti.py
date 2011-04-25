@@ -77,7 +77,13 @@ def delete_child(obj,child_model,using=None):
 
 def insert_child(obj,child_model,**attrs):
     assert child_model != obj.__class__
-    attrs["%s_ptr" % obj.__class__.__name__.lower()] = obj
+    parent_link_field = child_model._meta.parents.get(obj.__class__,None)
+    if parent_link_field is None:
+        raise Exception("A %s cannot be parent for a %s" % (obj.__class__.__name__,child_model.__name__))
+    attrs[parent_link_field.name] = obj
+    #~ for pm,pf in child_model._meta.parents.items(): # pm : parent model, pf : parent link field
+        #~ attrs[pf.name] = obj
+    #~ attrs["%s_ptr" % obj.__class__.__name__.lower()] = obj
     for field in obj._meta.fields:
         attrs[field.name] = getattr(obj, field.name)
     #~ logger.info(u"Promote %s to %s : attrs=%s",

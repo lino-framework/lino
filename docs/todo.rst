@@ -9,10 +9,6 @@ for which I hope for help from other people.
 Short-term
 ----------
 
-#.  `dpy.Deserializer` muss für MTI-Kinder insert_child benutzen statt 
-    einfach nur company_ptr.
-    Siehe :doc:`/blog/2011/0415`.
-
 #.  Wie bzw. wann verschwinden Erinnerungen auf der Startseite? 
     Sollten wir nicht zusätzlich bei den Erinnerungen eine Frist 
     nach einem Ablaufdatum oder so vorsehen? z. B. "Begleitung beendet" 
@@ -27,8 +23,6 @@ Short-term
     Vorschläge: 
     - lino.mixins.reminders.Reminder.reminder_subject
     - lino.apps.dsbe.models.Study.content
-
-#.  Die 2. Adresszeile "Line after Street" ist noch in Englisch
 
 #.  [Fri Apr 15 20:19:11 2011] [error] AttributeError: 'User' object has 
     no attribute 'get_and_delete_messages'

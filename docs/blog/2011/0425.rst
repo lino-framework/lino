@@ -1,10 +1,19 @@
 20110425
 ========
 
-Ostermontag : 
-Eine erste Lösung für Ticket :doc:`/tickets/40`.
+Ostermontag : Heute habe ich in weniger als 4 Stunden zwei Punkte geschafft, 
+für die ich eigentlich mehr Zeitaufwand befürchtet hatte. 
 
-Konkret: im Feld "Stadt" kann man jetzt den Namen einer Stadt eintippen, 
-die Lino noch nicht kennt, und die wird dann automatisch angelegt.
-Das funktioniert sowohl auf Personen und Firmen wie auch in `Studien & Erfahrungen`.
+#.  Ich habe eine erste Lösung für Ticket :doc:`/tickets/40`.
+    Konkret kann man jetzt im Feld "Stadt" den Namen einer Stadt eintippen, 
+    die Lino noch nicht kennt, und die wird dann automatisch angelegt.
+    Das funktioniert sowohl auf Personen und Firmen wie auch in `Ausbildung`.
+    Check-in 20110425a.
+
+#.  `dpy.Deserializer` benutzt für MTI-Kinder jetzt :func:`lino.utils.mti.insert_child` 
+    statt einfach nur den `parent_ptr` (siehe :doc:`/blog/2011/0415`).
+    Dazu müsste ich eigentlich noch mehr Tests schreiben. Bei Gelegenheit.
+
+
+:doc:`/releases/20110425`
 
