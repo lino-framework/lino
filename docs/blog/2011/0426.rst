@@ -1,0 +1,7 @@
+20110426
+========
+
+
+8 Uhr : Beim Aufwachen war mir ein "Detail" eingefallen, das ich 
+nicht getestet hatte: `reminder_text` hatte jetzt ebenfalls `forceSelection` 
+auf `true`. Nachtrag zum :doc:`/releases/20110425` und Upgrade in Eupen.

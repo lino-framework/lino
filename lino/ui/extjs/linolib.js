@@ -2304,7 +2304,8 @@ Lino.TwinCombo.prototype.onTrigger1Click = Ext.form.ComboBox.prototype.onTrigger
 
 Lino.SimpleRemoteComboFieldElement = Ext.extend(Lino.RemoteComboFieldElement,{
   displayField: 'value', 
-  valueField: null
+  valueField: null,
+  forceSelection: false
 });
 
 
