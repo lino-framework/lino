@@ -16,16 +16,26 @@
 #.  Neues Feld `reminder_done` in allen Unterklassen von 
     `lino.mixins.reminder.Reminder`
     
+#.  Das folgende Problem ist wahrscheinlich gelöst: 
+
+      [Fri Apr 15 20:19:11 2011] [error] AttributeError: 'User' object has 
+      no attribute 'get_and_delete_messages'
+      Wenn ich auf einem production server versuche, über den Quick upload button "edit"
+      einen existierenden upload zu löschen.
+      Liegt wahrscheinlich nur am Template 
+      :srcref:`lino/apps/dsbe/templates/base.html`.
+    
     
 #.  Release :doc:`/releases/20110429` und Installation in Eupen.
 
-#.  Experimente zur Anzeige des (mehrzeiligen und ggf. formatierten) 
-    Inhalts einer Notiz (Note.body) in der Grid. 
+#.  Längere Texte mit mehreren Absätzen im Inhalt einer Notiz (Note.body) 
+    wurden in der Grid zu einem einzigen Absatz zusammengeschnürt. 
     
-    Virtuelles Feld `body_html`, und `body` ist jetzt in der Grid unsichtbar.
+    - Virtuelles Feld `body_html` benutzt :mod:`lino.utils.restify`
+    - `body` ist jetzt in der Grid unsichtbar
     
-    Er zeigt es jetzt etwas besser an (Links sind anklickbar, Absatzwechsel 
-    werden als Zeilenwechsel angezeigt), aber noch nicht optimal (fett, 
-    kursiv, Aufzählungen werden verschluckt).
+    Das Resultat ist jetzt einigermaßen akzeptabel (Links sind anklickbar, 
+    Absatzwechsel werden als Zeilenwechsel angezeigt), aber noch nicht 
+    optimal (fett, kursiv, Aufzählungen werden verschluckt).
     
-
+#.  Update in Eupen.

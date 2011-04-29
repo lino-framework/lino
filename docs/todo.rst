@@ -9,34 +9,19 @@ for which I hope for help from other people.
 Short-term
 ----------
 
-#.  Inhalt Notizen: Längere Texte mit mehreren Absätzen werden in der Grid 
-    zu einem einzigen Absatz zusammengeschnürt. 
-    
-#.  Für manche Erinnerungsarten sollte eine Frist konfiguriert werden, 
-    nach deren Ablauf die Erinnerung automatisch als erledigt betrachtet wird.
-    
-#.  Manche Erinnerungen müssen automatisch nach einer Periode verschwinden.
-    Oder gar nicht mehr im Lino-Hauptbildschirm, sondern nach GW schicken?
-    Oder GW neu schreiben?
-    
-#.  Mail-Interface, Posteingang : 
-    Lino-Server empfängt E-Mails, die teilweise geparst werden und/oder 
-    manuell durch den Benutzer weiter verwaltet werden.
-    
 #.  :doc:`/tickets/39`
 
 #.  Welche weiteren Felder müssen (ähnlich wie "Stadt") lernfähig werden? 
     Vorschläge: 
     - lino.mixins.reminders.Reminder.reminder_subject
     - lino.apps.dsbe.models.Study.content
-
-#.  [Fri Apr 15 20:19:11 2011] [error] AttributeError: 'User' object has 
-    no attribute 'get_and_delete_messages'
-    Wenn ich auf einem production server versuche, über den Quick upload button "edit"
-    einen existierenden upload zu löschen.
-    Liegt wahrscheinlich nur am Template 
-    :srcref:`lino/apps/dsbe/templates/base.html`.
     
+#.  Für manche Erinnerungsarten sollte eine Frist konfiguriert werden, 
+    nach deren Ablauf die Erinnerung automatisch als erledigt betrachtet wird.
+    
+#.  Mail-Interface, Posteingang : 
+    Lino-Server empfängt E-Mails, die teilweise geparst werden und/oder 
+    manuell durch den Benutzer weiter verwaltet werden.
     
 #.  Hinter das QuickFilter-Feld sollte ein Button, um den Filter zu aktivieren. 
     Dass man einfach nur TAB drücken muss ist nicht intuitiv.
@@ -83,6 +68,9 @@ Short-term
 Later
 -----
 
+#.  Erinnerungen gar nicht mehr im Lino-Hauptbildschirm, sondern nach GW schicken?
+    Oder GW neu schreiben?
+    
 #.  igen : Partner.get_invoice_suggestions()
 
 #.  MTI auch für Personen anwenden: 
