@@ -792,6 +792,10 @@ Lino.id_renderer = function(value, metaData, record, rowIndex, colIndex, store) 
   return value;
 }
 
+Lino.raw_renderer = function(value, metaData, record, rowIndex, colIndex, store) {
+  return value;
+}
+
 //~ Lino.cell_button_renderer = function(value, metaData, record, rowIndex, colIndex, store) {
   //~ return '<input type="button" onclick="alert(value)" value=" ? ">' ;
 //~ }

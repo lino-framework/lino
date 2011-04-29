@@ -27,6 +27,7 @@ from lino import fields, tools
 from lino import reports
 #~ from lino import layouts
 from lino.utils import perms
+from lino.utils.restify import restify
 #~ from lino.utils import printable
 from lino.utils import babel
 from lino import mixins
@@ -114,7 +115,11 @@ class Note(mixins.TypedPrintable,mixins.Reminder):
             s += u"(%s)" % (self.date)
         return s
         
-
+    def body_html(self,rr):
+        if self.body:
+            return restify(self.body)
+        return ''
+    body_html.return_type = fields.DisplayField(_("Body"))
     
 class NoteTypes(reports.Report):
     model = 'notes.NoteType'
@@ -123,15 +128,16 @@ class NoteTypes(reports.Report):
     
 class Notes(reports.Report):
     model = 'notes.Note'
-    column_names = "id date user subject * body"
+    column_names = "id date user subject * body_html"
+    #~ hide_columns = "body"
+    hidden_columns = frozenset(['body'])
     order_by = ["id"]
     #~ label = _("Notes")
 
 
 class MyNotes(mixins.ByUser,Notes):
     #~ fk_name = 'user'
-    column_names = "date subject *"
-    hide_columns = "body"
+    column_names = "date event_type type subject body_html *"
     #~ can_view = perms.is_authenticated
     label = _("My notes")
     order_by = ["date"]
@@ -152,14 +158,14 @@ class MyNotes(mixins.ByUser,Notes):
   
 class NotesByType(Notes):
     fk_name = 'type'
-    column_names = "date user subject event_type *"
+    column_names = "date event_type subject user *"
     order_by = ["date"]
     #~ label = _("Notes by person")
   
   
 class NotesByEventType(Notes):
     fk_name = 'event_type'
-    column_names = "date user subject type *"
+    column_names = "date type subject user *"
     order_by = ["date"]
     #~ label = _("Notes by person")
   

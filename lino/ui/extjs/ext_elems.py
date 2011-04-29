@@ -100,6 +100,8 @@ class GridColumn(Component):
             if isinstance(editor.field,models.AutoField):
                 rend = 'Lino.id_renderer'
                 #~ kw.update(renderer=js_code('Lino.id_renderer'))
+            elif isinstance(editor.field,fields.DisplayField):
+                rend = 'Lino.raw_renderer'
             elif isinstance(editor.field,models.ForeignKey):
                 # FK fields are clickable if their target has a detail view
                 rpt = editor.field.rel.to._lino_model_report
@@ -692,6 +694,8 @@ class BooleanFieldElement(FieldElement):
 
 class DisplayElement(FieldElement):
 #~ class ShowOrCreateElement(FieldElement):
+    preferred_width = 30
+    preferred_height = 3
     ext_suffix = "_disp"
     declare_type = jsgen.DECLARE_VAR
     value_template = "new Ext.form.DisplayField(%s)"
@@ -700,6 +704,9 @@ class DisplayElement(FieldElement):
     #~ vflex = True
     #~ filter_type = 'string'
     #~ refers_to_ww = True
+    #~ def __init__(self,lh,field,**kw):
+        #~ kw.update(htmlEncode=True)
+        #~ super(DisplayElement,self).__init__(lh,field,**kw)
     
 #~ class QuickActionElement(DisplayElement):
     #~ pass

@@ -9,13 +9,11 @@ for which I hope for help from other people.
 Short-term
 ----------
 
-#.  Wie bzw. wann verschwinden Erinnerungen auf der Startseite? 
-    Sollten wir nicht zusätzlich bei den Erinnerungen eine Frist 
-    nach einem Ablaufdatum oder so vorsehen? z. B. "Begleitung beendet" 
-    etc.
-    Ferner muss es in gewissen Fällen möglich sein, die Erinnerung als 
-    "erledigt" zu markieren und aus dem Startbildschirm verschwinden zu lassen.
-    Wahrscheinlich reicht ein neues Feld `reminder_done`
+#.  Inhalt Notizen: Längere Texte mit mehreren Absätzen werden in der Grid 
+    zu einem einzigen Absatz zusammengeschnürt. 
+    
+#.  Für manche Erinnerungsarten sollte eine Frist konfiguriert werden, 
+    nach deren Ablauf die Erinnerung automatisch als erledigt betrachtet wird.
     
 #.  Manche Erinnerungen müssen automatisch nach einer Periode verschwinden.
     Oder gar nicht mehr im Lino-Hauptbildschirm, sondern nach GW schicken?

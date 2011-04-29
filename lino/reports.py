@@ -1339,6 +1339,9 @@ class ListLayout(BaseLayout):
     show_labels = False
     join_str = " "
     
+    #~ def setup_element(self,e):
+        #~ if isinstance(e,TextFieldElement):
+            #~ e.hidden = True
 
 class DetailLayout(BaseLayout):
     #~ label = _("Detail")
@@ -1519,6 +1522,7 @@ class LayoutHandle:
         # todo: cannot hide babelfields
         if name in self.hidden_elements:
             e.hidden = True
+        #~ self.setup_element(e)
         return e
         
     def splitdesc(self,picture):

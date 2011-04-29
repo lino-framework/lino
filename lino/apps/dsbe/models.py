@@ -1350,13 +1350,18 @@ class Note(notes.Note,contacts.PartnerDocument):
 
 class NotesByPerson(notes.Notes):
     fk_name = 'person'
-    column_names = "date subject user company *"
+    column_names = "date event_type type subject body_html user company *"
     order_by = ["date"]
   
 class NotesByCompany(notes.Notes):
     fk_name = 'company'
-    column_names = "date subject user person *"
+    column_names = "date event_type type subject body_html user person *"
     order_by = ["date"]
+    
+class MyNotes(notes.MyNotes):
+    #~ fk_name = 'user'
+    column_names = "date event_type type subject person company body_html *"
+    
   
 #
 # LINKS

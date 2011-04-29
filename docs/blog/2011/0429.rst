@@ -18,4 +18,14 @@
     
     
 #.  Release :doc:`/releases/20110429` und Installation in Eupen.
+
+#.  Experimente zur Anzeige des (mehrzeiligen und ggf. formatierten) 
+    Inhalts einer Notiz (Note.body) in der Grid. 
     
+    Virtuelles Feld `body_html`, und `body` ist jetzt in der Grid unsichtbar.
+    
+    Er zeigt es jetzt etwas besser an (Links sind anklickbar, Absatzwechsel 
+    werden als Zeilenwechsel angezeigt), aber noch nicht optimal (fett, 
+    kursiv, Aufzählungen werden verschluckt).
+    
+
