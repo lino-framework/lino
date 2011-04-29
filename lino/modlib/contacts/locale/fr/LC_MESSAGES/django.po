@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-04-15 16:10+0100\n"
+"POT-Creation-Date: 2011-04-29 07:46+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,67 +17,59 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n>1;\n"
 
-#: .\models.py:54
+#: .\models.py:55
 msgid "Name"
 msgstr ""
 
-#: .\models.py:55
+#: .\models.py:56
 msgid "Address line before street"
 msgstr ""
 
-#: .\models.py:59
+#: .\models.py:60
 msgid "Street"
 msgstr "Rue"
 
-#: .\models.py:62
+#: .\models.py:63
 msgid "No."
 msgstr "N°"
 
-#: .\models.py:65
+#: .\models.py:66
 msgid "Box"
 msgstr "boîte"
 
-#: .\models.py:68
+#: .\models.py:69
 msgid "Address line after street"
 msgstr ""
 
-#: .\models.py:74
-msgid "Country"
-msgstr ""
-
-#: .\models.py:78
-msgid "City"
-msgstr ""
-
-#: .\models.py:86
+#: .\models.py:87
 msgid "Zip code"
 msgstr ""
 
-#: .\models.py:87
+#: .\models.py:88
 msgid "Region"
 msgstr ""
 
-#: .\models.py:91
+#: .\models.py:92
 msgid "E-Mail"
 msgstr ""
 
-#: .\models.py:92
+#: .\models.py:93
 msgid "URL"
 msgstr ""
 
-#: .\models.py:93
+#: .\models.py:94
 msgid "Phone"
 msgstr ""
 
-#: .\models.py:94
+#: .\models.py:95
 msgid "GSM"
 msgstr ""
 
-#: .\models.py:95
+#: .\models.py:96
 msgid "Fax"
 msgstr ""
 
-#: .\models.py:99
+#: .\models.py:100
 msgid "Remarks"
 msgstr ""
 

@@ -80,10 +80,10 @@ class Note(mixins.TypedPrintable,mixins.Reminder):
     #~ owner = generic.GenericForeignKey('owner_type', 'owner_id')
     type = models.ForeignKey(NoteType,
         blank=True,null=True,
-        verbose_name=_('Note type'))
+        verbose_name=_('Note Type'))
     event_type = models.ForeignKey(EventType,
         blank=True,null=True,
-        verbose_name=_('Event type'))
+        verbose_name=_('Event Type'))
     #,on_delete=RESTRICT)
     subject = models.CharField(_("Subject"),max_length=200,blank=True,null=True)
     body = models.TextField(_("Body"),blank=True)

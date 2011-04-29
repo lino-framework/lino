@@ -15,3 +15,7 @@
       
 #.  Neues Feld `reminder_done` in allen Unterklassen von 
     `lino.mixins.reminder.Reminder`
+    
+    
+#.  Release :doc:`/releases/20110429` und Installation in Eupen.
+    

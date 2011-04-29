@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-04-15 16:11+0100\n"
+"POT-Creation-Date: 2011-04-29 07:47+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -51,7 +51,7 @@ msgstr ""
 msgid "Languages"
 msgstr "Langues"
 
-#: .\dummy_messages.py:11 .\models.py:778 .\models.py:924 .\models.py:1528
+#: .\dummy_messages.py:11 .\models.py:778 .\models.py:916 .\models.py:1520
 msgid "Person"
 msgstr ""
 
@@ -67,7 +67,7 @@ msgstr ""
 msgid "Education"
 msgstr ""
 
-#: .\dummy_messages.py:15 .\models.py:867
+#: .\dummy_messages.py:15 .\models.py:859
 msgid "Properties"
 msgstr ""
 
@@ -163,7 +163,7 @@ msgstr ""
 msgid "Coached from"
 msgstr ""
 
-#: .\models.py:320 .\models.py:366 .\models.py:1000 .\models.py:1682
+#: .\models.py:320 .\models.py:366 .\models.py:992 .\models.py:1674
 msgid "until"
 msgstr ""
 
@@ -175,7 +175,7 @@ msgstr ""
 msgid "Coach 2"
 msgstr ""
 
-#: .\models.py:328 .\models.py:1668
+#: .\models.py:328 .\models.py:1660
 msgid "Sex"
 msgstr ""
 
@@ -260,7 +260,7 @@ msgstr ""
 msgid "suspended until"
 msgstr ""
 
-#: .\models.py:423 .\models.py:1144
+#: .\models.py:423 .\models.py:1136
 #, fuzzy
 msgid "aid type"
 msgstr "Études"
@@ -394,11 +394,11 @@ msgstr "permis de conduire bus"
 msgid "My coached Persons"
 msgstr ""
 
-#: .\models.py:679 .\models.py:1182
+#: .\models.py:679 .\models.py:1174
 msgid "hourly rate"
 msgstr ""
 
-#: .\models.py:681 .\models.py:1464
+#: .\models.py:681 .\models.py:1456
 msgid "Course provider"
 msgstr ""
 
@@ -442,11 +442,11 @@ msgstr ""
 msgid "Study content"
 msgstr ""
 
-#: .\models.py:783 .\models.py:933
+#: .\models.py:783 .\models.py:925
 msgid "started"
 msgstr ""
 
-#: .\models.py:784 .\models.py:934
+#: .\models.py:784 .\models.py:926
 msgid "stopped"
 msgstr ""
 
@@ -454,426 +454,422 @@ msgstr ""
 msgid "Success"
 msgstr ""
 
-#: .\models.py:791 .\models.py:931
-msgid "Country"
-msgstr ""
-
-#: .\models.py:793
-msgid "City"
-msgstr ""
-
-#: .\models.py:795 .\models.py:831 .\models.py:1703
+#: .\models.py:791 .\models.py:823 .\models.py:1695
 #, fuzzy
 msgid "Language"
 msgstr "Langues"
 
-#: .\models.py:798
+#: .\models.py:794
 msgid "School"
 msgstr ""
 
-#: .\models.py:801 .\models.py:936
+#: .\models.py:797 .\models.py:928
 msgid "Remarks"
 msgstr ""
 
-#: .\models.py:817
+#: .\models.py:808
 msgid "Studies"
 msgstr "Études"
 
-#: .\models.py:827
+#: .\models.py:819
 #, fuzzy
 msgid "language knowledge"
 msgstr "Connaissance de langue"
 
-#: .\models.py:828
+#: .\models.py:820
 #, fuzzy
 msgid "language knowledges"
 msgstr "Connaissance de langue"
 
-#: .\models.py:834 .\models.py:1704
+#: .\models.py:826 .\models.py:1696
 msgid "spoken"
 msgstr ""
 
-#: .\models.py:835 .\models.py:1705
+#: .\models.py:827 .\models.py:1697
 msgid "written"
 msgstr ""
 
-#: .\models.py:841
+#: .\models.py:833
 #, python-format
 msgid "%s (s/w)"
 msgstr ""
 
-#: .\models.py:843
+#: .\models.py:835
 #, python-format
 msgid "%s (s)"
 msgstr ""
 
-#: .\models.py:845
+#: .\models.py:837
 #, python-format
 msgid "%s (w)"
 msgstr ""
 
-#: .\models.py:866
+#: .\models.py:858
 msgid "Property"
 msgstr ""
 
-#: .\models.py:872 .\models.py:1001 .\models.py:1482 .\models.py:1563
+#: .\models.py:864 .\models.py:993 .\models.py:1474 .\models.py:1555
 msgid "Remark"
 msgstr ""
 
-#: .\models.py:922
+#: .\models.py:914
 #, fuzzy
 msgid "job experience"
 msgstr "Études & expériences"
 
-#: .\models.py:923
+#: .\models.py:915
 #, fuzzy
 msgid "job experiences"
 msgstr "Études & expériences"
 
-#: .\models.py:926
+#: .\models.py:918
 msgid "company"
 msgstr ""
 
-#: .\models.py:928
+#: .\models.py:920
 msgid "job title"
 msgstr ""
 
-#: .\models.py:954
+#: .\models.py:923
+msgid "Country"
+msgstr ""
+
+#: .\models.py:946
 msgid "activity"
 msgstr ""
 
-#: .\models.py:955
+#: .\models.py:947
 msgid "activities"
 msgstr ""
 
-#: .\models.py:957
+#: .\models.py:949
 msgid "Appears in Listing 104"
 msgstr ""
 
-#: .\models.py:977
+#: .\models.py:969
 msgid "exclusion type"
 msgstr ""
 
-#: .\models.py:978
+#: .\models.py:970
 msgid "exclusion types"
 msgstr ""
 
-#: .\models.py:994
+#: .\models.py:986
 msgid "exclusion"
 msgstr ""
 
-#: .\models.py:995
+#: .\models.py:987
 msgid "exclusions"
 msgstr ""
 
-#: .\models.py:998
+#: .\models.py:990
 msgid "Reason"
 msgstr ""
 
-#: .\models.py:999
+#: .\models.py:991
 msgid "from"
 msgstr ""
 
-#: .\models.py:1061
+#: .\models.py:1053
 msgid "Contract Type"
 msgstr ""
 
-#: .\models.py:1062
+#: .\models.py:1054
 msgid "Contract Types"
 msgstr ""
 
-#: .\models.py:1064
+#: .\models.py:1056
 msgid "reference"
 msgstr ""
 
-#: .\models.py:1065
+#: .\models.py:1057
 msgid "contract title"
 msgstr ""
 
-#: .\models.py:1081 .\models.py:1201
+#: .\models.py:1073 .\models.py:1193
 msgid "examination policy"
 msgstr ""
 
-#: .\models.py:1082
+#: .\models.py:1074
 msgid "examination policies"
 msgstr ""
 
-#: .\models.py:1084 .\models.py:1105 .\models.py:1128 .\models.py:1147
+#: .\models.py:1076 .\models.py:1097 .\models.py:1120 .\models.py:1139
 msgid "designation"
 msgstr ""
 
-#: .\models.py:1102
+#: .\models.py:1094
 msgid "Contract Ending"
 msgstr ""
 
-#: .\models.py:1103
+#: .\models.py:1095
 msgid "Contract Endings"
 msgstr ""
 
-#: .\models.py:1125
+#: .\models.py:1117
 msgid "Course Ending"
 msgstr ""
 
-#: .\models.py:1126
+#: .\models.py:1118
 msgid "Course Endings"
 msgstr ""
 
-#: .\models.py:1145
+#: .\models.py:1137
 #, fuzzy
 msgid "aid types"
 msgstr "Études"
 
-#: .\models.py:1168
+#: .\models.py:1160
 msgid "Contract"
 msgstr ""
 
-#: .\models.py:1169
+#: .\models.py:1161
 msgid "Contracts"
 msgstr ""
 
-#: .\models.py:1171 .\models.py:1837
+#: .\models.py:1163 .\models.py:1829
 msgid "contract type"
 msgstr ""
 
-#: .\models.py:1173
+#: .\models.py:1165
 msgid "applies from"
 msgstr ""
 
-#: .\models.py:1174
+#: .\models.py:1166
 msgid "applies until"
 msgstr ""
 
-#: .\models.py:1175
+#: .\models.py:1167
 msgid "date decided"
 msgstr ""
 
-#: .\models.py:1176
+#: .\models.py:1168
 msgid "date issued"
 msgstr ""
 
-#: .\models.py:1177
+#: .\models.py:1169
 msgid "duration (days)"
 msgstr ""
 
-#: .\models.py:1180
+#: .\models.py:1172
 msgid "regime"
 msgstr ""
 
-#: .\models.py:1181
+#: .\models.py:1173
 msgid "schedule"
 msgstr ""
 
-#: .\models.py:1183
+#: .\models.py:1175
 msgid "refund rate"
 msgstr ""
 
-#: .\models.py:1186
+#: .\models.py:1178
 msgid "reference person"
 msgstr ""
 
-#: .\models.py:1189
+#: .\models.py:1181
 msgid "responsibilities"
 msgstr ""
 
-#: .\models.py:1191
+#: .\models.py:1183
 msgid "stages"
 msgstr ""
 
-#: .\models.py:1192
+#: .\models.py:1184
 msgid "goals"
 msgstr ""
 
-#: .\models.py:1193
+#: .\models.py:1185
 msgid "duties ASD"
 msgstr ""
 
-#: .\models.py:1194
+#: .\models.py:1186
 msgid "duties DSBE"
 msgstr ""
 
-#: .\models.py:1195
+#: .\models.py:1187
 msgid "duties company"
 msgstr ""
 
-#: .\models.py:1197
+#: .\models.py:1189
 msgid "responsible (ASD)"
 msgstr ""
 
-#: .\models.py:1204 .\models.py:1574
+#: .\models.py:1196 .\models.py:1566
 msgid "Ending"
 msgstr ""
 
-#: .\models.py:1205 .\models.py:1568
+#: .\models.py:1197 .\models.py:1560
 msgid "date ended"
 msgstr ""
 
-#: .\models.py:1240
+#: .\models.py:1232
 #, python-format
 msgid "Contract # %s"
 msgstr ""
 
-#: .\models.py:1343
+#: .\models.py:1335
 msgid "My contracts"
 msgstr ""
 
-#: .\models.py:1356
+#: .\models.py:1348
 msgid "Event/Note"
 msgstr ""
 
-#: .\models.py:1357
+#: .\models.py:1349
 msgid "Events/Notes"
 msgstr ""
 
-#: .\models.py:1410
+#: .\models.py:1402
 msgid "Course providers"
 msgstr ""
 
-#: .\models.py:1426
+#: .\models.py:1418
 msgid "Course Content"
 msgstr ""
 
-#: .\models.py:1427
+#: .\models.py:1419
 msgid "Course Contents"
 msgstr ""
 
-#: .\models.py:1431 .\models.py:1452
+#: .\models.py:1423 .\models.py:1444
 msgid "Name"
 msgstr ""
 
-#: .\models.py:1448
+#: .\models.py:1440
 msgid "Course"
 msgstr ""
 
-#: .\models.py:1449
+#: .\models.py:1441
 msgid "Courses"
 msgstr ""
 
-#: .\models.py:1458 .\models.py:1532
+#: .\models.py:1450 .\models.py:1524
 msgid "Course content"
 msgstr ""
 
-#: .\models.py:1473
+#: .\models.py:1465
 msgid "start date"
 msgstr ""
 
-#: .\models.py:1494
+#: .\models.py:1486
 #, fuzzy
 msgid "List of candidates"
 msgstr "Études"
 
-#: .\models.py:1495
+#: .\models.py:1487
 msgid "List of participants"
 msgstr ""
 
-#: .\models.py:1524 .\models.py:1525
+#: .\models.py:1516 .\models.py:1517
 msgid "Course Requests"
 msgstr ""
 
-#: .\models.py:1535
+#: .\models.py:1527
 msgid "date submitted"
 msgstr ""
 
-#: .\models.py:1548
+#: .\models.py:1540
 msgid "Course found"
 msgstr ""
 
-#: .\models.py:1611
+#: .\models.py:1603
 msgid "Participants"
 msgstr ""
 
-#: .\models.py:1616
+#: .\models.py:1608
 msgid "Unregister"
 msgstr ""
 
-#: .\models.py:1622
+#: .\models.py:1614
 #, python-format
 msgid "%(person)s has been unregistered from %(course)s"
 msgstr ""
 
-#: .\models.py:1626
+#: .\models.py:1618
 #, fuzzy
 msgid "Candidates"
 msgstr "Études"
 
-#: .\models.py:1638
+#: .\models.py:1630
 msgid "Register"
 msgstr ""
 
-#: .\models.py:1643
+#: .\models.py:1635
 #, python-format
 msgid "%(person)s has been registered to %(course)s"
 msgstr ""
 
-#: .\models.py:1659
+#: .\models.py:1651
 msgid "Person Search"
 msgstr ""
 
-#: .\models.py:1660
+#: .\models.py:1652
 msgid "Person Searches"
 msgstr ""
 
-#: .\models.py:1662
+#: .\models.py:1654
 msgid "Search Title"
 msgstr ""
 
-#: .\models.py:1663
+#: .\models.py:1655
 msgid "Aged from"
 msgstr ""
 
-#: .\models.py:1665
+#: .\models.py:1657
 msgid "Aged to"
 msgstr ""
 
-#: .\models.py:1671
+#: .\models.py:1663
 msgid "Only my persons"
 msgstr ""
 
-#: .\models.py:1674
+#: .\models.py:1666
 msgid "Coached by"
 msgstr ""
 
-#: .\models.py:1679
+#: .\models.py:1671
 msgid "Period from"
 msgstr ""
 
-#: .\models.py:1689
+#: .\models.py:1681
 msgid "Unnamed"
 msgstr ""
 
-#: .\models.py:1696
+#: .\models.py:1688
 msgid "Drucken"
 msgstr ""
 
-#: .\models.py:1710
+#: .\models.py:1702
 msgid "Wanted property"
 msgstr ""
 
-#: .\models.py:1711 .\models.py:1729
+#: .\models.py:1703 .\models.py:1721
 msgid "Wanted properties"
 msgstr ""
 
-#: .\models.py:1718
+#: .\models.py:1710
 msgid "Unwanted property"
 msgstr ""
 
-#: .\models.py:1719 .\models.py:1734
+#: .\models.py:1711 .\models.py:1726
 msgid "Unwanted properties"
 msgstr ""
 
-#: .\models.py:1724
+#: .\models.py:1716
 #, fuzzy
 msgid "Wanted language knowledges"
 msgstr "Connaissance de langue"
 
-#: .\models.py:1752
+#: .\models.py:1744
 msgid "Found persons"
 msgstr ""
 
-#: .\models.py:1846
+#: .\models.py:1838
 msgid "Local job office"
 msgstr ""
 
-#: .\models.py:1856
+#: .\models.py:1848
 msgid "responsible (DSBE)"
 msgstr ""
 
@@ -893,32 +889,36 @@ msgstr ""
 msgid "~Configure"
 msgstr ""
 
-#: .\settings.py:81
+#: .\settings.py:82
+msgid "~Notes"
+msgstr ""
+
+#: .\settings.py:86
 #, fuzzy
 msgid "~Manager"
 msgstr "Langues"
 
-#: .\settings.py:82
+#: .\settings.py:87
 msgid "Local Site ~Administrator"
 msgstr ""
 
-#: .\settings.py:83
+#: .\settings.py:88
 msgid "~Expert"
 msgstr ""
 
-#: .\settings.py:125
+#: .\settings.py:129
 msgid "E~xplorer"
 msgstr ""
 
-#: .\settings.py:139
+#: .\settings.py:143
 msgid "~Help"
 msgstr ""
 
-#: .\settings.py:140
+#: .\settings.py:144
 msgid "~User Manual"
 msgstr ""
 
-#: .\settings.py:145 .\templates\500.html.py:4 .\templates\base.html.py:52
+#: .\settings.py:149 .\templates\500.html.py:4 .\templates\base.html.py:26
 msgid "Home"
 msgstr ""
 
@@ -946,22 +946,6 @@ msgstr ""
 msgid ""
 "There's been an error. It's been reported to the site administrators via e-"
 "mail and should be fixed shortly. Thanks for your patience."
-msgstr ""
-
-#: .\templates\base.html.py:25
-msgid "Welcome,"
-msgstr ""
-
-#: .\templates\base.html.py:30
-msgid "Documentation"
-msgstr ""
-
-#: .\templates\base.html.py:38
-msgid "Change password"
-msgstr ""
-
-#: .\templates\base.html.py:45
-msgid "Log out"
 msgstr ""
 
 #: .\templates\base_site.html.py:4

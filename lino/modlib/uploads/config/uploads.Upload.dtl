@@ -5,7 +5,7 @@ main =
     type description 
     # person company
     owner
-    reminder_date reminder_text delay_value delay_type
+    reminder_date reminder_text delay_value delay_type reminder_done
     modified created
     # show_date show_time 
     # show_date time timestamp

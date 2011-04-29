@@ -117,6 +117,8 @@ As long as nobody protests, I'll save some time by writing in German.
   |br|  	
   :doc:`25 <0425>`
   :doc:`26 <0426>`
+  27 28
+  :doc:`29 <0429>`
   
 .. |May| replace::  **May**
   |br| 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-04-15 16:10+0100\n"
+"POT-Creation-Date: 2011-04-29 07:46+0100\n"
 "PO-Revision-Date: 2011-03-02 21:46+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: et <et>\n"
@@ -15,67 +15,59 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: .\models.py:54
+#: .\models.py:55
 msgid "Name"
 msgstr "Nimi"
 
-#: .\models.py:55
+#: .\models.py:56
 msgid "Address line before street"
 msgstr "Addressi lisatext enne tänav"
 
-#: .\models.py:59
+#: .\models.py:60
 msgid "Street"
 msgstr "Tänav"
 
-#: .\models.py:62
+#: .\models.py:63
 msgid "No."
 msgstr "Nr."
 
-#: .\models.py:65
+#: .\models.py:66
 msgid "Box"
 msgstr "PK/krt"
 
-#: .\models.py:68
+#: .\models.py:69
 msgid "Address line after street"
 msgstr "Aadressilisa pärast tänav"
 
-#: .\models.py:74
-msgid "Country"
-msgstr "Maa"
-
-#: .\models.py:78
-msgid "City"
-msgstr "Linn"
-
-#: .\models.py:86
+#: .\models.py:87
 msgid "Zip code"
 msgstr "Sihtnumber"
 
-#: .\models.py:87
+#: .\models.py:88
 msgid "Region"
 msgstr "Maakond"
 
-#: .\models.py:91
+#: .\models.py:92
 msgid "E-Mail"
 msgstr ""
 
-#: .\models.py:92
+#: .\models.py:93
 msgid "URL"
 msgstr ""
 
-#: .\models.py:93
+#: .\models.py:94
 msgid "Phone"
 msgstr "Telefon"
 
-#: .\models.py:94
+#: .\models.py:95
 msgid "GSM"
 msgstr ""
 
-#: .\models.py:95
+#: .\models.py:96
 msgid "Fax"
 msgstr ""
 
-#: .\models.py:99
+#: .\models.py:100
 msgid "Remarks"
 msgstr "Märkused"
 
@@ -174,3 +166,9 @@ msgstr ""
 #: .\models.py:458
 msgid "The next automatic id for Person or Company"
 msgstr ""
+
+#~ msgid "Country"
+#~ msgstr "Maa"
+
+#~ msgid "City"
+#~ msgstr "Linn"
