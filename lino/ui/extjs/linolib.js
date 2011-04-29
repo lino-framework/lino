@@ -310,8 +310,12 @@ Lino.file_field_handler = function(ww,config) {
       return new Lino.FileField(config);
   }else{
       ww.fileUpload = true;
+#if $settings.LINO.use_awesome_uploader
+      return { xtype:'button', text: 'Upload', handler: Lino.show_uploader }
+#else      
       return new Ext.ux.form.FileUploadField(config);
       //~ return new Lino.FileField(config);
+#end if      
   }
 }
 
@@ -2728,3 +2732,30 @@ function initializeFooBarDropZone(cmp) {
       }
     })
 }
+
+#if $settings.LINO.use_awesome_uploader
+Lino.AwesomeUploaderWindow = new Ext.Window({
+		title:'Awesome Uploader in a Window!'
+		,closeAction:'hide'
+		,frame:true
+		,width:500
+		,height:200
+		,items:{
+			xtype:'awesomeuploader'
+			,gridHeight:100
+			,height:160
+			,awesomeUploaderRoot:'$(settings.MEDIA_URL)lino/AwesomeUploader/'
+			,listeners:{
+				scope:this
+				,fileupload:function(uploader, success, result){
+					if(success){
+						Ext.Msg.alert('File Uploaded!','A file has been uploaded!');
+					}
+				}
+			}
+		}
+});
+Lino.show_uploader = function () {
+  Lino.AwesomeUploaderWindow.show();
+};
+#end if

@@ -59,6 +59,7 @@ from lino.reports import DetailLayout
 from lino.utils import choosers
 from lino import fields
 from lino.models import get_site_config
+from lino.utils import babel
 
 def analyze_models():
     """
@@ -243,7 +244,7 @@ def setup_site(self):
     self._setup_done = True
     self._setting_up = False
     
-    dblogger.info("Lino Site %r started.", self.title)
+    dblogger.info("Lino Site %r started. Languages: %s", self.title, ', '.join(babel.AVAILABLE_LANGUAGES))
     dblogger.info(lino.welcome_text())
         
 

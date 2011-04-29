@@ -594,6 +594,10 @@ class ExtUI(base.UI):
         yield '<link rel="stylesheet" type="text/css" href="%sextjs/examples/ux/fileuploadfield/css/fileuploadfield.css" />' % settings.MEDIA_URL 
         
         yield '<link rel="stylesheet" type="text/css" href="%slino/extjs/lino.css">' % settings.MEDIA_URL
+        
+        if settings.LINO.use_awesome_uploader:
+            yield '<link rel="stylesheet" type="text/css" href="%slino/AwesomeUploader/AwesomeUploader.css">' % settings.MEDIA_URL
+            yield '<link rel="stylesheet" type="text/css" href="%slino/AwesomeUploader/AwesomeUploader Progress Bar.css">' % settings.MEDIA_URL
          
         #~ yield '<!-- ** Javascript ** -->'
         #~ yield '<!-- ExtJS library: base/adapter -->'
@@ -638,6 +642,14 @@ class ExtUI(base.UI):
             yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/filter/BooleanFilter.js"></script>' % settings.MEDIA_URL
             
         yield '<script type="text/javascript" src="%sextjs/examples/ux/fileuploadfield/FileUploadField.js"></script>' % settings.MEDIA_URL
+        if settings.LINO.use_awesome_uploader:
+            p = settings.MEDIA_URL + 'lino/AwesomeUploader/'
+            #~ yield '<script type="text/javascript" src="Ext.ux.form.FileUploadField.js"></script>'
+            yield '<script type="text/javascript" src="%s/Ext.ux.XHRUpload.js"></script>' % p
+            yield '<script type="text/javascript" src="%s/swfupload.js"></script>' % p
+            yield '<!-- <script type="text/javascript" src="%s/swfupload.swfobject.js"></script> -->' % p
+            yield '<script type="text/javascript" src="%s/Ext.ux.AwesomeUploaderLocalization.js"></script>' % p
+            yield '<script type="text/javascript" src="%s/Ext.ux.AwesomeUploader.js"></script>' % p
 
         #~ yield '<!-- overrides to library -->'
         #~ yield '<script type="text/javascript" src="%slino/extjs/lino.js"></script>' % settings.MEDIA_URL

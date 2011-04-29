@@ -1,0 +1,19 @@
+Version 1.1.11 (29.04.2011)
+===========================
+
+New features
+------------
+
+- Neue Tabelle "Ereignisarten".
+
+- Neues Feld "Erledigt" in Notizen, Verträgen, Uploads, Links...
+  
+
+Upgrade instructions
+--------------------
+
+The following are technical instructions related to this 
+upgrade, designed to be executed by a Lino expert.
+For more general instructions on how to upgrade an existing 
+Lino site, see :doc:`/admin/upgrade`).
+

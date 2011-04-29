@@ -17,6 +17,14 @@ Short-term
     "erledigt" zu markieren und aus dem Startbildschirm verschwinden zu lassen.
     Wahrscheinlich reicht ein neues Feld `reminder_done`
     
+#.  Manche Erinnerungen müssen automatisch nach einer Periode verschwinden.
+    Oder gar nicht mehr im Lino-Hauptbildschirm, sondern nach GW schicken?
+    Oder GW neu schreiben?
+    
+#.  Mail-Interface, Posteingang : 
+    Lino-Server empfängt E-Mails, die teilweise geparst werden und/oder 
+    manuell durch den Benutzer weiter verwaltet werden.
+    
 #.  :doc:`/tickets/39`
 
 #.  Welche weiteren Felder müssen (ähnlich wie "Stadt") lernfähig werden? 

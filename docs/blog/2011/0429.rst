@@ -1,0 +1,17 @@
+20110429
+========
+
+#.  Neues Model `notes.EventType` (Ereignisarten) und neues Feld 
+    `notes.Note.event_type`. Also wir haben nun eine konfigurierbare 
+    Liste von Ereignisarten, und jede Notiz (bzw. "Ereignis/Notiz") 
+    kann man einerseits einer *Notizart* und andererseits einer 
+    *Ereignisart* zuweisen. Beide sind optional.
+    
+    - Notizarten: Telefongespräch, Brief, E-Mail, Gespräch, interne Notiz
+    
+    - Ereignisarten: Vorladung, Abmahnung, Erinnerung, Übergabe, 
+      Anfrage Schulresultate, Dokumente beibringen, Profil erstellt, 
+      Lebenslauf, Bilanz, Vorstellungsgespräch im Betrieb, Auswertung, ...
+      
+#.  Neues Feld `reminder_done` in allen Unterklassen von 
+    `lino.mixins.reminder.Reminder`

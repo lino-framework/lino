@@ -62,6 +62,9 @@ class Reminder(AutoUser):
     delay_type = models.CharField(_("Delay (unit)"),
         max_length=1,default='D',
         choices=DELAY_TYPE_CHOICES)
+    reminder_done = models.BooleanField(
+        verbose_name=_("Done"),
+        default=False)
       
       
     @classmethod
@@ -70,7 +73,8 @@ class Reminder(AutoUser):
         #~ for obj in model.objects.filter(
             #~ user__exact=user,reminder_date__lte=pivot).order_by('reminder_date'):
         for obj in model.objects.filter(user__exact=user,
-              reminder_date__isnull=False).order_by('reminder_date'):
+              reminder_date__isnull=False, 
+              reminder_done__exact=False).order_by('reminder_date'):
             pivot = today + time_delta(obj.delay_type,obj.delay_value)
             #~ print obj, pivot
             if obj.reminder_date <= pivot:

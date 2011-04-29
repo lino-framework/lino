@@ -2,9 +2,9 @@
 :label_align: top
 
 left = 
-    date type  user language
+    date type event_type user language
     subject 
-    reminder_date reminder_text
+    reminder_date reminder_text reminder_done
     person company
     
 main =

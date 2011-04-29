@@ -43,6 +43,8 @@ class Lino(object):
     title = "Base Lino Application"
     domain = "www.example.com"
     
+    use_awesome_uploader = False
+    
     
     date_format_strftime = '%d.%m.%Y'
     date_format_extjs = 'd.m.Y'

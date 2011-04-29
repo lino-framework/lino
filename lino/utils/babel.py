@@ -69,7 +69,7 @@ AVAILABLE_LANGUAGES = tuple([DEFAULT_LANGUAGE] + BABEL_LANGS)
 
 BABEL_LANGS = tuple(BABEL_LANGS)
 
-logger.info("Languages: %s ",AVAILABLE_LANGUAGES)
+#~ logger.info("Languages: %s ",AVAILABLE_LANGUAGES)
 
 def default_language():
     """

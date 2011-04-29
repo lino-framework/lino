@@ -78,13 +78,17 @@ class Lino(Lino):
         sitemenu = system.add_site_menu(self)
         
         m = sitemenu.add_menu("config",_("~Configure"),can_view=perms.is_authenticated)
+        
+        config_notes = m.add_menu("notes",_("~Notes"),can_view=perms.is_authenticated)
+        config_notes.add_action('notes.NoteTypes',can_view=perms.is_staff)
+        config_notes.add_action('notes.EventTypes',can_view=perms.is_staff)
+        
         mm = m.add_menu("manager",_("~Manager"),can_view=perms.is_authenticated)
         ma = m.add_menu("admin",_("Local Site ~Administrator"),can_view=perms.is_staff)
         me = m.add_menu("expert",_("~Expert"),can_view=perms.is_staff)
         
         #~ m.add_action('projects.ProjectTypes')
-        ma.add_action('notes.NoteTypes')
-        ma.add_action('dsbe.ContractTypes')
+        ma.add_action('dsbe.ContractTypes',can_view=perms.is_staff)
         mm.add_action('dsbe.PersonGroups')
         ma.add_action('contacts.CompanyTypes')
         ma.add_action('contacts.ContactTypes')
