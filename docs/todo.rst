@@ -9,6 +9,8 @@ for which I hope for help from other people.
 Short-term
 ----------
 
+#.  :doc:`/tickets/41`
+
 #.  :doc:`/tickets/39`
 
 #.  Welche weiteren Felder müssen (ähnlich wie "Stadt") lernfähig werden? 

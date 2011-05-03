@@ -300,7 +300,7 @@ class ExtUI(base.UI):
         if isinstance(de,reports.Report):
             if isinstance(lh.layout,reports.DetailLayout):
                 kw.update(tools=[
-                  dict(type='expand',handler=js_code("Lino.report_window_button(ww,Lino.%s)" % de.default_action))
+                  js_code("Lino.report_window_button(ww,Lino.%s)" % de.default_action)
                 ])
                 if de.show_slave_grid:
                     e = ext_elems.SlaveGridElement(lh,name,de,**kw)
@@ -462,9 +462,9 @@ class ExtUI(base.UI):
             (r'^submit/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.form_submit_view),
             (r'^grid_config/(?P<app_label>\w+)/(?P<actor>\w+)$', self.grid_config_view),
             (r'^detail_config/(?P<app_label>\w+)/(?P<actor>\w+)$', self.detail_config_view),
-            (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)\.(?P<fmt>\w+)$', self.api_list_view),
             (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)$', self.api_list_view),
-            (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>[-\w]+)\.(?P<fmt>\w+)$', self.api_element_view),
+            #~ (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)\.(?P<fmt>\w+)$', self.api_list_view),
+            #~ (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>[-\w]+)\.(?P<fmt>\w+)$', self.api_element_view),
             (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$', self.api_element_view),
             #~ (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>\w+)/(?P<method>\w+)$', self.api_element_view),
             #~ (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.api_view),
@@ -590,9 +590,8 @@ class ExtUI(base.UI):
             yield '<link rel="stylesheet" type="text/css" href="%sextjs/examples/ux/statusbar/css/statusbar.css" />' % settings.MEDIA_URL 
             yield '<link rel="stylesheet" type="text/css" href="%sextjs/examples/ux/gridfilters/css/GridFilters.css" />' % settings.MEDIA_URL 
             yield '<link rel="stylesheet" type="text/css" href="%sextjs/examples/ux/gridfilters/css/RangeMenu.css" />' % settings.MEDIA_URL 
-        
-        if False: # was needed for extjs 3
-            yield '<link rel="stylesheet" type="text/css" href="%sextjs/examples/ux/fileuploadfield/css/fileuploadfield.css" />' % settings.MEDIA_URL 
+            
+        yield '<link rel="stylesheet" type="text/css" href="%sextjs/examples/ux/fileuploadfield/css/fileuploadfield.css" />' % settings.MEDIA_URL 
         
         yield '<link rel="stylesheet" type="text/css" href="%slino/extjs/lino.css">' % settings.MEDIA_URL
         
@@ -602,8 +601,7 @@ class ExtUI(base.UI):
          
         #~ yield '<!-- ** Javascript ** -->'
         #~ yield '<!-- ExtJS library: base/adapter -->'
-        if False: # was needed for extjs 3
-            yield '<script type="text/javascript" src="%sextjs/adapter/ext/ext-base.js"></script>' % settings.MEDIA_URL 
+        yield '<script type="text/javascript" src="%sextjs/adapter/ext/ext-base.js"></script>' % settings.MEDIA_URL 
         if settings.DEBUG:
             widget_library = 'ext-all-debug'
         else:
@@ -630,10 +628,9 @@ class ExtUI(base.UI):
         if False:
             yield '<script type="text/javascript" src="%sextjs/examples/ux/CheckColumn.js"></script>' % settings.MEDIA_URL 
 
-        yield '<script type="text/javascript" src="%sextjs/examples/ux/statusbar/StatusBar.js"></script>' % settings.MEDIA_URL
-        
         if settings.USE_GRIDFILTERS:
             #~ yield '<script type="text/javascript" src="%sextjs/examples/ux/RowEditor.js"></script>' % settings.MEDIA_URL
+            yield '<script type="text/javascript" src="%sextjs/examples/ux/statusbar/StatusBar.js"></script>' % settings.MEDIA_URL
             yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/menu/RangeMenu.js"></script>' % settings.MEDIA_URL
             yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/menu/ListMenu.js"></script>' % settings.MEDIA_URL
             yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/GridFilters.js"></script>' % settings.MEDIA_URL
@@ -644,9 +641,7 @@ class ExtUI(base.UI):
             yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/filter/NumericFilter.js"></script>' % settings.MEDIA_URL
             yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/filter/BooleanFilter.js"></script>' % settings.MEDIA_URL
             
-        if False: # was needed for extjs 3
-            yield '<script type="text/javascript" src="%sextjs/examples/ux/fileuploadfield/FileUploadField.js"></script>' % settings.MEDIA_URL
-            
+        yield '<script type="text/javascript" src="%sextjs/examples/ux/fileuploadfield/FileUploadField.js"></script>' % settings.MEDIA_URL
         if settings.LINO.use_awesome_uploader:
             p = settings.MEDIA_URL + 'lino/AwesomeUploader/'
             #~ yield '<script type="text/javascript" src="Ext.ux.form.FileUploadField.js"></script>'
@@ -725,7 +720,7 @@ class ExtUI(base.UI):
         
     def lino_js_lines(self):
         yield """// lino.js --- generated %s by Lino version %s.""" % (time.ctime(),lino.__version__)
-        yield "Ext.BLANK_IMAGE_URL = '%sextjs/resources/themes/images/default/tree/s.gif';" % settings.MEDIA_URL
+        yield "Ext.BLANK_IMAGE_URL = '%sextjs/resources/images/default/s.gif';" % settings.MEDIA_URL
         yield "LANGUAGE_CHOICES = %s;" % py2js(list(LANGUAGE_CHOICES))
         yield "STRENGTH_CHOICES = %s;" % py2js(list(STRENGTH_CHOICES))
         yield "KNOWLEDGE_CHOICES = %s;" % py2js(list(KNOWLEDGE_CHOICES))
@@ -877,7 +872,7 @@ class ExtUI(base.UI):
         raise NotImplementedError
         
         
-    def api_list_view(self,request,app_label=None,actor=None,fmt=None):
+    def api_list_view(self,request,app_label=None,actor=None):
         """
         - GET : List the members of the collection. 
         - PUT : Replace the entire collection with another collection. 
@@ -906,7 +901,7 @@ class ExtUI(base.UI):
             return self.form2obj_and_save(request,rh,request.POST,instance,True)
             
         if request.method == 'GET':
-            #~ 20110502 fmt = request.GET.get('fmt',None)
+            fmt = request.GET.get('fmt',None)
             if fmt is None:
                 a = rpt.default_action
             else:
@@ -970,7 +965,7 @@ class ExtUI(base.UI):
     
         
         
-    def api_element_view(self,request,app_label=None,actor=None,pk=None,fmt=None):
+    def api_element_view(self,request,app_label=None,actor=None,pk=None):
         """
         GET : Retrieve a representation of the addressed member of the collection expressed in an appropriate MIME type.
         PUT : Update the addressed member of the collection or create it with the specified ID. 
@@ -1030,7 +1025,7 @@ class ExtUI(base.UI):
             
             
         if request.method == 'GET':
-            #~ 20110502 fmt = request.GET.get('fmt',None)
+            fmt = request.GET.get('fmt',None)
             if pk == '-99999':
                 datarec = elem2rec1(ar,ah,elem)
                 datarec.update(title=_("Insert into %s...") % ah.report.label)
@@ -1134,8 +1129,6 @@ class ExtUI(base.UI):
             rh = rpt.get_handle(self) # make sure that setup_handle is called (which adds the window_wrapper)
             #~ js += "Ext.namespace('Lino.%s')\n" % rpt
             f.write("Ext.namespace('Lino.%s')\n" % rpt)
-            for ln in ext_windows.grid_model_lines(rh):
-                f.write(ln + '\n')
             for a in rpt.get_actions():
                 if a.window_wrapper is not None:
                     #~ print a, "..."

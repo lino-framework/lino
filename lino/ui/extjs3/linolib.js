@@ -170,6 +170,7 @@ JC Watsons solution (adapted to ExtJS 3.3.1 by LS) is elegant and simple:
 `A "fix" for unchecked checkbox submission  behaviour
 <http://www.sencha.com/forum/showthread.php?28449>`_
 
+*/
 Ext.lib.Ajax.serializeForm = function(form) {
     var fElements = form.elements || (document.forms[form] || Ext.getDom(form)).elements, 
         hasSubmit = false, 
@@ -203,7 +204,6 @@ Ext.lib.Ajax.serializeForm = function(form) {
     return data.substr(0, data.length - 1);
 };
 
-*/
 
 
 
@@ -217,22 +217,7 @@ Ext.namespace('Lino');
   - react on dblclcik, not on single click
 
  */
-Ext.define('Lino.PagingToolbar', {
-    extend: 'Ext.toolbar.Paging',
-    prependButtons: true, 
-    displayInfo: true, 
-    beforePageText: "$_('Page')",
-    afterPageText: "$_('of {0}')",
-    displayMsg: "$_('Displaying {0} - {1} of {2}')",
-    firstText: "$_('First page')",
-    lastText: "$_('Last page')",
-    prevText: "$_('Previous page')",
-    nextText: "$_('Next page')",
-});
-  
-Ext.define('Lino.CheckColumn', {
-    extend: 'Ext.grid.column.Column',
-    alias: ['widget.checkcolumn'],
+Lino.CheckColumn = Ext.extend(Ext.grid.Column, {
 
     processEvent : function(name, e, grid, rowIndex, colIndex){
         //~ if (name == 'mousedown') {
@@ -284,7 +269,7 @@ Ext.define('Lino.CheckColumn', {
 // Ext.grid.CheckColumn = Lino.CheckColumn;
 
 // register Column xtype
-//~ Ext.grid.Column.types.checkcolumn = Lino.CheckColumn;
+Ext.grid.Column.types.checkcolumn = Lino.CheckColumn;
 
 
 
@@ -328,8 +313,7 @@ Lino.file_field_handler = function(ww,config) {
 #if $settings.LINO.use_awesome_uploader
       return { xtype:'button', text: 'Upload', handler: Lino.show_uploader }
 #else      
-      return new Ext.form.field.File(config);
-      //~ return new Ext.ux.form.FileUploadField(config);
+      return new Ext.ux.form.FileUploadField(config);
       //~ return new Lino.FileField(config);
 #end if      
   }
@@ -390,13 +374,15 @@ Lino.VBorderPanel = Ext.extend(Ext.Panel,{
 /*
   modifications to the standard behaviour of a CellSelectionModel:
   
+*/
 Ext.override(Ext.grid.CellSelectionModel, {
 
     handleKeyDown : function(e){
-        //~ removed because F2 wouldn't pass
-        //~ if(!e.isNavKeyPress()){
-            //~ return;
-        //~ }
+        /* removed because F2 wouldn't pass
+        if(!e.isNavKeyPress()){
+            return;
+        }
+        */
         //~ console.log('handleKeyDown',e)
         var k = e.getKey(),
             g = this.grid,
@@ -557,8 +543,6 @@ Ext.override(Ext.grid.CellSelectionModel, {
 
 
 });
-
-*/
 
  
 
@@ -848,20 +832,17 @@ Lino.build_buttons = function(panel,actions) {
     var buttons = Array(actions.length);
     var cmenu = Array(actions.length);
     for (var i=0; i < actions.length; i++) { 
-      //~ buttons[i] = new Ext.Toolbar.Button(actions[i]);
-      buttons[i] = new Ext.button.Button(actions[i]);
+      buttons[i] = new Ext.Toolbar.Button(actions[i]);
       cmenu[i] = actions[i]
       if (actions[i].panel_btn_handler) {
-          //~ var h = actions[i].panel_btn_handler.createCallback(panel,buttons[i]);
-          var h = Ext.Function.bind(actions[i].panel_btn_handler,panel,buttons[i]);
+          var h = actions[i].panel_btn_handler.createCallback(panel,buttons[i]);
           if (actions[i].must_save) {
-              //~ buttons[i].on('click',panel.do_when_clean.createDelegate(panel,[h]));
-              buttons[i].on('click',Ext.Function.bind(panel.do_when_clean,panel,[h]));
+              //~ buttons[i].on('click',function() { panel.do_when_clean(h) });
+              buttons[i].on('click',panel.do_when_clean.createDelegate(panel,[h]));
           } else {
               buttons[i].on('click',h);
           }
-          //~ cmenu[i].handler = actions[i].panel_btn_handler.createCallback(panel,cmenu[i]);
-          cmenu[i].handler = Ext.Function.bind(actions[i].panel_btn_handler,panel,cmenu[i]);
+          cmenu[i].handler = actions[i].panel_btn_handler.createCallback(panel,cmenu[i]);
       }
     }
     return {bbar:buttons, cmenu:new Ext.menu.Menu(cmenu)};
@@ -1054,8 +1035,8 @@ Lino.HtmlBoxPanel = Ext.extend(Ext.Panel,{
         //~ console.log('HtmlBox.refresh() failed for',this.name);
       }
     };
-    //~ Lino.do_when_visible(box,todo.createDelegate(this));
-    Lino.do_when_visible(box,Ext.Function.bind(todo,this));
+    //~ Lino.do_when_visible(this,todo.createDelegate(this));
+    Lino.do_when_visible(box,todo.createDelegate(this));
   },
   get_base_params : function() {
     // needed for insert action
@@ -1116,8 +1097,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     config.tbar = config.tbar.concat([
       {
         //~ text:'Refresh',
-        //~ handler:function(){ this.do_when_clean(this.refresh.createDelegate(this)) },
-        handler:function(){ this.do_when_clean(Ext.Function.bind(this.refresh,this)) },
+        handler:function(){ this.do_when_clean(this.refresh.createDelegate(this)) },
         iconCls: 'x-tbar-loading',
         tooltip:"$_('Reload current record')",
         scope:this}
@@ -1131,11 +1111,8 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
       '->',
       {text:'Layout Editor',handler:this.edit_detail_config,qtip:"Edit Detail Layout",scope:this}
     ])
-    config.tbar = {itemId:'tbar',items:config.tbar};
-    config.bbar = {itemId:'bbar',items:config.bbar};
     //~ }
-    //~ this.before_row_edit = config.before_row_edit.createDelegate(this);
-    this.before_row_edit = Ext.Function.bind(config.before_row_edit,this);
+    this.before_row_edit = config.before_row_edit.createDelegate(this);
       
     config.trackResetOnLoad = true;
     
@@ -1215,7 +1192,8 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   goto_record_id : function(record_id) {
     //~ console.log('Lino.FormPanel.goto_record_id()',record_id);
     //~ var this_ = this;
-    this.do_when_clean(Ext.Function.bind(this.load_record_id,this,[record_id]));
+    //~ this.do_when_clean(function() { this_.load_record_id(record_id) }
+    this.do_when_clean(this.load_record_id.createDelegate(this,[record_id]));
   },
   
   load_record_id : function(record_id,after) {
@@ -1414,7 +1392,7 @@ Lino.getRowClass = function(record, rowIndex, rowParams, store) {
   return '';
 }
     
-Lino.GridPanel = Ext.extend(Ext.grid.Panel,{
+Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
   //~ quick_search_text : '',
   clicksToEdit:2,
   enableColLock: false,
@@ -1439,30 +1417,34 @@ Lino.GridPanel = Ext.extend(Ext.grid.Panel,{
     //~ Ext.applyIf(config,{base_params:{}});
     //~ this.ww = ww;
     var bp = { fmt:'json' }
+    if (ww.main_item == this) { 
+        // this gridpanel is the main component
+        Ext.apply(bp,ww.config.base_params);    
+    }
     
     //~ function on_proxy_load( proxy, transactionObject, callbackOptions ) {
       //~ console.log('on_proxy_load',transactionObject)
     //~ }
-    //~ var proxy = new Ext.data.HttpProxy({ 
-      //~ url: '/api'+config.ls_url, 
-      //~ method: "GET"
-    //~ });
+    var proxy = new Ext.data.HttpProxy({ 
+      url: '/api'+config.ls_url, 
+      method: "GET"
+      //~ listeners: {load:on_proxy_load} 
+    });
     //~ config.store = new Ext.data.JsonStore({ 
     //~ console.log('20110119 constructor',config.title,bp);
-    config.store = new Ext.data.Store({
+    config.store = new Ext.data.ArrayStore({ 
       listeners: { exception: Lino.on_store_exception }, 
-      model: config.ls_model,
-      //~ proxy: proxy, 
-      //~ idIndex: config.pk_index,
+      //~ proxy: new Ext.data.HttpProxy({ url: config.ls_data_url+'?fmt=json', method: "GET" }), remoteSort: true, 
+      proxy: proxy, 
+      //~ autoLoad: true,
+      idIndex: config.pk_index,
       remoteSort: true, 
-      //~ fields: config.ls_store_fields, 
-      //~ idProperty: config.ls_id_property 
-      });
-      
-    if (ww.main_item == this) { 
-        // this gridpanel is the main component
-        Ext.apply(config.store.getProxy().extraParams,ww.config.base_params); 
-    }
+      baseParams: bp, 
+      fields: config.ls_store_fields, 
+      totalProperty: "count", 
+      root: "rows", 
+      //~ id: "id" });
+      idProperty: config.ls_id_property });
       
     //~ proxy.on('load 1 20101021',function() {
       //~ console.log('arrayData:',config.store.reader.arrayData);
@@ -1471,13 +1453,11 @@ Lino.GridPanel = Ext.extend(Ext.grid.Panel,{
     //~ console.log('config.pk_index',config.pk_index,config.store),
     delete config.ls_store_fields;
     
-    //~ this.before_row_edit = config.before_row_edit.createDelegate(this);
-    this.before_row_edit = Ext.Function.bind(config.before_row_edit,this);
+    this.before_row_edit = config.before_row_edit.createDelegate(this);
     delete config.before_row_edit;
 
     if (config.ls_quick_edit) {
-      //~ config.selModel = new Ext.grid.CellSelectionModel()
-      config.selType = 'cellmodel',
+      config.selModel = new Ext.grid.CellSelectionModel()
       this.get_selected = function() {
         //~ console.log(this.getSelectionModel().selection);
         if (this.selModel.selection)
@@ -1490,8 +1470,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.Panel,{
         return this.store.getAt(0);
       };
     } else { 
-      //~ config.selModel = new Ext.grid.RowSelectionModel() 
-      config.selType = 'rowmodel',
+      config.selModel = new Ext.grid.RowSelectionModel() 
       this.get_selected = function() {
         var sels = this.selModel.getSelections();
         if (sels.length == 0) sels = [this.store.getAt(0)];
@@ -1531,16 +1510,21 @@ Lino.GridPanel = Ext.extend(Ext.grid.Panel,{
       ]);
     }
     
-    config.dockedItems = [
-      new Lino.PagingToolbar({ 
-        store: config.store, 
-        dock: 'top',
-        pageSize: config.page_length, 
-        items: tbar
-      })
-    ];
+    config.tbar = new Ext.PagingToolbar({ 
+      store: config.store, 
+      prependButtons: true, 
+      pageSize: config.page_length, 
+      displayInfo: true, 
+      beforePageText: "$_('Page')",
+      afterPageText: "$_('of {0}')",
+      displayMsg: "$_('Displaying {0} - {1} of {2}')",
+      firstText: "$_('First page')",
+      lastText: "$_('Last page')",
+      prevText: "$_('Previous page')",
+      nextText: "$_('Next page')",
+      items: tbar
+    });
     delete config.page_length
-    console.log(20110502,config.tbar);
     
     var actions = Lino.build_buttons(this,config.ls_bbar_actions);
     config.cmenu = actions.cmenu;
@@ -1579,9 +1563,6 @@ Lino.GridPanel = Ext.extend(Ext.grid.Panel,{
     //~ config.colModel = new ext.grid.columnModel({defaultSortable:true,
       //~ columns:this.apply_grid_config(config.gc_name,config.ls_grid_configs,config.ls_columns)});
     config.columns = this.apply_grid_config(config.gc_name,config.ls_grid_configs,config.ls_columns);
-    
-    config.tbar = {itemId:'tbar',items:config.tbar};
-    config.bbar = {itemId:'bbar',items:config.bbar};
     
     Lino.GridPanel.superclass.constructor.call(this, config);
     
@@ -1934,8 +1915,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.Panel,{
         //~ msg:'$_("Please wait...")',
         //~ store:this.store});
       
-    //~ var tbar = this.getTopToolbar();
-    var tbar = this.getDockedComponent('tbar');
+    var tbar = this.getTopToolbar();
     // tbar.on('change',function() {this.getView().focusRow(1);},this);
     // tbar.on('change',function() {this.getSelectionModel().selectFirstRow();this.getView().mainBody.focus();},this);
     // tbar.on('change',function() {this.getView().mainBody.focus();},this);
@@ -1951,10 +1931,9 @@ Lino.GridPanel = Ext.extend(Ext.grid.Panel,{
   refresh : function(after) { 
     //~ Lino.notify('Lino.GridPanel.refresh');
     //~ Lino.notify('Lino.GridPanel.refresh '+this.store.proxy.url);
-    var tbar = this.getDockedComponent('tbar');
     var p = { params:{
-        limit:tbar.pageSize,
-        start:tbar.cursor
+        limit:this.getTopToolbar().pageSize,
+        start:this.getTopToolbar().cursor
         //~ 20110119 $URL_PARAM_FILTER: this.quick_search_text
     } }
     if (after) {
@@ -2007,8 +1986,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.Panel,{
       this.set_base_params(p);
       this.getStore().load(); 
     };
-    //~ Lino.do_when_visible(this,todo.createDelegate(this));
-    Lino.do_when_visible(this,Ext.Function.bind(todo,this));
+    Lino.do_when_visible(this,todo.createDelegate(this));
   }
 });
   
@@ -2194,8 +2172,7 @@ Lino.ComboBox = Ext.extend(Ext.form.ComboBox,{
           // if(this.mode == 'remote' && !Ext.isDefined(this.store.totalLength)){
           if(this.mode == 'remote' && ( this.lastQuery === null || (!Ext.isDefined(this.store.totalLength)))){
               //~ if (this.name == 'birth_country') console.log(this.name,'.setValue',v,'store not yet loaded');
-              //~ this.store.on('load', this.setValue.createDelegate(this, arguments), null, {single: true});
-              this.store.on('load', Ext.Function.bind(this.setValue,this, arguments), null, {single: true});
+              this.store.on('load', this.setValue.createDelegate(this, arguments), null, {single: true});
               if(this.store.lastOptions === null || this.lastQuery === null){
                   var params;
                   if(this.valueParam){
@@ -2374,7 +2351,7 @@ Lino.WindowWrapperBase = {
 
     
   
-    this.window = new Ext.window.Window(this.window_config);
+    this.window = new Ext.Window(this.window_config);
     var main_area = Ext.getCmp('main_area')
     this.window.on('show', function(win) {
         main_area.on('resize', win.onWindowResize, win);
@@ -2457,7 +2434,7 @@ Lino.WindowWrapper = function(caller,config,params) {
   this.window_config = {
     layout: "fit", 
     maximized: true, renderTo: 'main_area', constrain: true,
-    maximizable: true, 
+    //~ maximizable: true, 
     //~ autoHeight: true,
     title: this.config.title,
     //~ items: this.main_item, 
@@ -2466,8 +2443,8 @@ Lino.WindowWrapper = function(caller,config,params) {
     tools: [ 
       //~ { qtip: this.config.qtip, handler: Lino.save_wc_handler(this), id: "save" }, 
       //~ { qtip: 'Call doLayout() on main Container.', handler: Lino.refresh_handler(this), id: "refresh" },
-      { qtip: 'permalink', handler: Lino.permalink_handler(this), type: "pin" },
-      { qtip: 'close', handler: Lino.tools_close_handler(this), type: "close" } 
+      { qtip: 'permalink', handler: Lino.permalink_handler(this), id: "pin" },
+      { qtip: 'close', handler: Lino.tools_close_handler(this), id: "close" } 
     ] 
   };
   
@@ -2547,22 +2524,19 @@ Lino.GridMasterWrapper.override({
     var grid = this.main_item;
     this.main_item.store.on('load', function() {
         //~ console.log('GridMasterWrapper load',this.main_item.store.reader.arrayData);
-        var r = grid.getStore().getProxy().getReader();
-        console.log(r);
-        if (r.jsonData) this.window.setTitle(r.jsonData.title);
-        // todo 20110502
-        //~ if(grid.selModel.getSelectedCell){         
-            //~ grid.selModel.select(0,0);
-        //~ }else{
-            //~ grid.selModel.selectFirstRow();
-            //~ grid.getView().focusEl.focus();
-        //~ }
+        this.window.setTitle(grid.store.reader.arrayData.title);
+        if(grid.selModel.getSelectedCell){         
+            grid.selModel.select(0,0);
+        }else{
+            grid.selModel.selectFirstRow();
+            grid.getView().focusEl.focus();
+        }
       }, this
     );
     //~ if (this.main_item.tools === undefined) this.main_item.tools = [];
     this.window_config.tools = [
       //~ {text:'GC',handler:this.manage_grid_configs,qtip:"Manage Grid Configurations",scope:this},
-      {handler:this.main_item.save_grid_config,qtip:"Save Grid Configuration",scope:this.main_item, type:"save"}
+      {handler:this.main_item.save_grid_config,qtip:"Save Grid Configuration",scope:this.main_item, id:"save"}
       //~ {text:'Save GC',handler:this.save_grid_config,qtip:"Save Grid Configuration",scope:this}
     ].concat(this.window_config.tools);
     
@@ -2667,20 +2641,21 @@ Lino.InsertWrapper = Ext.extend(Lino.WindowWrapper, {
 
 
 
-/**
- * @class Ext.ux.plugins.DefaultButton
- * @extends Object
- *
- * Plugin for Button that will click() the button if the user presses ENTER while
- * a component in the button's form has focus.
- *
- * @author Stephen Friedrich
- * @date 09-DEC-2009
- * @version 0.1
- *
 (function(){
     var ns = Ext.ns('Ext.ux.plugins');
 
+    /**
+     * @class Ext.ux.plugins.DefaultButton
+     * @extends Object
+     *
+     * Plugin for Button that will click() the button if the user presses ENTER while
+     * a component in the button's form has focus.
+     *
+     * @author Stephen Friedrich
+     * @date 09-DEC-2009
+     * @version 0.1
+     *
+     */
     ns.DefaultButton =  Ext.extend(Object, {
         init: function(button) {
             button.on('afterRender', setupKeyListener, button);
@@ -2708,7 +2683,6 @@ Lino.InsertWrapper = Ext.extend(Lino.WindowWrapper, {
     Ext.ComponentMgr.registerPlugin('defaultButton', ns.DefaultButton);
 
 })(); 
- */
 
 Ext.override(Ext.form.BasicForm,{
     loadRecord : function(record){

@@ -68,31 +68,6 @@ class WindowWrapper(ActionRenderer):
         #~ d.update(permalink_name=str(self.action))
         return d
         
-def grid_model_lines(rh):
-    #~ yield "Ext.define('Lino.%s.GridModel',{" % rh.report
-    #~ yield "extend: 'Ext.data.Model',"
-    #~ yield "fields: %s," % py2js([js_code(f.as_js()) for f in rh.store.list_fields])
-    #~ yield "proxy: {"
-    #~ yield "    type: 'rest',"
-    #~ yield "    url : '%s'," % rh.ui.build_url(rh.report.app_label,rh.report._actor_name)
-    #~ yield "    format: 'json'"
-    #~ yield "    root: 'rows', "
-    #~ yield "}"
-    #~ yield "});"
-    kw = dict()
-    kw.update(extend='Ext.data.Model')
-    kw.update(fields=[js_code(f.as_js()) for f in rh.store.list_fields])
-    kw.update(idProperty=rh.store.pk.name)
-    kw.update(proxy=dict(
-      type='rest',
-      url = '/api' + rh.ui.build_url(rh.report.app_label,rh.report._actor_name),
-      totalProperty="count",
-      format='json',
-      root='rows',
-      reader='array',
-    ))
-    yield "Ext.define('Lino.%s.GridModel',%s);" % (rh.report,py2js(kw))
-  
 
 class MasterWrapper(WindowWrapper):
   
@@ -189,7 +164,7 @@ class DetailWrapper(BaseDetailWrapper):
         if self.main.listeners:
             yield "  config.listeners = %s;" % py2js(self.main.listeners)
         yield "  config.before_row_edit = %s;" % py2js(self.main.before_row_edit)
-        yield "  Lino.%s.FormPanel.superclass.constructor.call(this, ww,config);" % self.main.rh.report
+        yield "  Lino.contacts.Persons.FormPanel.superclass.constructor.call(this, ww,config);"
         yield "  }"
         yield "});"
         yield ""

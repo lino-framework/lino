@@ -1,0 +1,6 @@
+20110503
+========
+
+Die Anpassungen zum neuen `Ext.data.Model` haben gestern einigermaßen geklappt.
+Jedenfalls wird das GET jetzt korrekt rausgeschickt und auch beantwortet.
+Aber die Daten sehe ich trotzdem noch nicht.

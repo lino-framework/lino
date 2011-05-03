@@ -177,8 +177,6 @@ LANGUAGE_CODE = 'de'
 #~ LANGUAGE_CODE = 'de-BE'
 #~ LANGUAGE_CODE = 'fr-BE'
 
-#~ ROOT_URLCONF = 'lino.demos.dsbe.urls'
-
 SITE_ID = 1 # see also fill.py
 
 INSTALLED_APPS = (

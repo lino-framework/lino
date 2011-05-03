@@ -1,0 +1,87 @@
+#40 : Moving from Ext JS 3 to 4
+===============================
+
+Here is a list of changes I had to do when moving from ExtJS 3 to 4.
+
+- `Ext.lib.Ajax.serializeForm` no longer exists. 
+  I temporarily disabled JC Watsons elegant and simple 
+  `"fix" for unchecked checkbox submission behaviour
+  <http://www.sencha.com/forum/showthread.php?28449>`_
+  (adapted to ExtJS 3.3.1 by myself).
+
+- Where is the `GridFilters` plugin? 
+  Okay, I can temporaily simply set `USE_GRIDFILTERS` to `False`.
+  
+- `Ext.ux.form.FileUploadField` (defined previously in 
+  :file:`/examples/ux/fileuploadfield/FileUploadField.js`)
+  is now :extjs:`Ext.form.field.File`
+  
+- :file:`/adapter/ext/ext-base.js` is no longer needed
+
+- `Ext.grid.Column.types.checkcolumn` no longer exists. 
+  Had to adapt definition of `Lino.CheckColumn` (`xtype` ``checkcolumn``).
+  
+- `Ext.grid.CellSelectionModel` no longer exists. 
+  Temporarily removed my modifications to the standard behaviour of a CellSelectionModel.
+  
+  Before: ``config.selModel = new Ext.grid.CellSelectionModel()`` 
+  
+  After: ``config.selType = 'cellmodel'`` 
+  
+  
+- `Ext.grid.EditorGridPanel` is now called `Ext.grid.Panel`.
+
+- Temporarily removed `Ext.ux.plugins.DefaultButton`.
+
+- Changed the value of `Ext.BLANK_IMAGE_URL` from `resources/images/default/s.gif`
+  to `/resources/themes/images/default/tree/s.gif`.
+  
+- Usage of `createDelegate` method has changed. 
+  You must now use `Ext.Function.bind`.
+  
+  Before::
+
+    fn = me.onEditorEvent.createDelegate(me); 
+  
+  After::
+  
+    fn = Ext.Function.bind(me.onEditorEvent, me); 
+    
+    
+- `Ext.Toolbar.Button` (which was deprecated) now no longer exists
+  Simply use `Ext.button.Button` instead.
+  
+- Replace `getTopToolbar()` by ... hmm... there is no simple replacement, 
+  but here is how I did it:
+
+  When creating the Panel (FormPanel or GridPanel), `tbar` 
+  was a simple array of buttons. Instead of saying
+  
+  ::
+
+    tbar : [...]
+
+  I must say
+  
+  ::
+  
+    tbar : {itemId:'tbar',items:[...]}
+    
+  and later I can get the top toolbar instance using
+  
+  ::
+  
+    var tbar = this.getDockedComponent('tbar');
+  
+- `Ext.data.Store`. 
+  Oops, that seems more work.
+  The `Data Guide <http://dev.sencha.com/deploy/ext-4.0.0/docs/guide/data.html>`
+  gives an overview on the new philosophy.
+  Store no longer has a `fields` config option 
+  (though it doesn't complain if you give it).
+  The new philosophy is to define a Model class that holds the `fields`.
+  See :doc:`/blog/2011/0502`.
+  
+- In the items of the `tools` config option of ´Panel`, replace `id` by `type`.
+  
+  

@@ -1,0 +1,109 @@
+20110502
+========
+
+Am Samstag habe ich begonnen, Lino nach ExtJS 4 zu migrieren
+(:doc:`/tickets/41`). Ist gar nicht so einfach.
+Und eigentlich gehört das auch nicht zu den momentan dringenden Dingen. 
+Sencha kümmert sich scheinbar nur noch recht wenig um die alte 
+Version. 
+Was ich im Grunde verstehen kann.
+Aber sogar die API ist nicht mehr da, und das ist lästig.
+Aha, immerhin kann man alte Versionen noch runterladen:
+http://www.sencha.com/learn/Ext_Version_Archives  
+Und zumindest versprechen sie "
+`Please stand by regarding details on Ext JS 3.3.3. We will have a solution for you very soon. <http://www.sencha.com/forum/showthread.php?131668-Where-is-ExtJS-3&p=596422&viewfull=1#post596422>`_
+  
+Ich werde heute aber noch etwas weiter am Umstieg arbeiten, denn:
+
+- Lebensnotwendig ist das Ticket :doc:`/tickets/39` nicht.
+- Meine Arbeit von Samstag müsste ich irgendwann quasi neu beginnen, 
+  wenn ich das jetzt nicht durchziehe.
+  Mindestens 2 kleine Bugs habe ich im Lauf der Arbeiten gefunden, 
+  die ich dann im alten extjs3 nachträglich beheben müsste:
+  - "StatusBar" in ext_ui
+  - "contacts.Persons" in ext_windows
+
+Andererseits könnte es effizienter sein, die Sache warten zu lassen, 
+bis es bessere Dokumentation zur Migrierung gibt. Aber vielleicht 
+habe ich die auch bloß nicht gefunden, also mal `nachfragen 
+<http://www.sencha.com/forum/showthread.php?132029-Migrating-from-3-to-4-Legacy-file-Documentation&p=597146>`_
+
+Also das neue `Ext.data.Model`. 
+Store no longer has a `fields` config option (though it doesn't complain...)
+the new philosophy is to define a Model class. 
+
+Also wenn ich bisher folgendes hatte (ich nehme lino.SiteConfigs als Beispiel, 
+weil der ein Detail und nicht zu viele Felder hat)::
+
+  Ext.namespace('Lino.lino.SiteConfigs')
+  Lino.lino.SiteConfigs.FormPanel = Ext.extend(Lino.FormPanel,{
+    constructor : function(ww,config) {
+    var site_company38 = new Lino.TwinCombo({ ... });
+    ...
+    var main_panel54 = new Ext.Panel({ "border": false, "autoHeight": true, "layout": "form", "autoScroll": true, "items": [ main_1_panel42, next_partner_id_ct_panel44, job_office_ct_panel46, main_4_panel53 ], "frame": true, "bodyBorder": false, "labelAlign": "top" });
+    config.items = main_panel54;
+    config.before_row_edit = function(record){  };
+    Lino.lino.SiteConfigs.FormPanel.superclass.constructor.call(this, ww,config);
+    }
+  });
+
+  Lino.lino.SiteConfigs.detail = function(caller,params) { 
+    var ww = new Lino.DetailWrapper(caller,{ "fk_name": null, 
+      "url_data": "/api/lino/SiteConfigs", "content_type": 4, "name": "detail" },params);
+    var form_panel55 = new Lino.lino.SiteConfigs.FormPanel(ww,{ "ls_url": "/lino/SiteConfigs", "ls_bbar_actions": [ { "text": "Speichern", "handler": function() {ww.save()} }, { "text": "Einf\u00fcgen", "must_save": true, "panel_btn_handler": function(panel){Lino.show_insert(panel)} }, { "text": "L\u00f6schen", "panel_btn_handler": Lino.delete_selected } ], "ls_detail_handler": Lino.lino.SiteConfigs.detail, "has_navigator": false, "layout": "fit", "method": "PUT", "ls_insert_handler": Lino.lino.SiteConfigs.insert });
+    ww.main_item = form_panel55;
+    ww.show();
+  }
+
+  Lino.lino.SiteConfigs.insert = function(caller,params) { 
+    var ww = new Lino.InsertWrapper(caller,{ "record_id": -99999, "fk_name": null, 
+      "url_data": "/api/lino/SiteConfigs", "content_type": 4, "name": "insert" },params);
+    var form_panel56 = new Lino.lino.SiteConfigs.FormPanel(ww,{ 
+      "ls_url": "/lino/SiteConfigs", "layout": "fit", 
+      "ls_detail_handler": Lino.lino.SiteConfigs.detail, 
+      "ls_bbar_actions": [ { "text": "Speichern", "handler": function() {ww.save()} } ], 
+      "method": "POST", 
+      "ls_insert_handler": Lino.lino.SiteConfigs.insert });
+    ww.main_item = form_panel56;
+    ww.show();
+  }
+
+  Lino.lino.SiteConfigs.grid = function(caller,params) { 
+    var ww = new Lino.GridMasterWrapper(caller,{ "content_type": 4 },params);
+    var id29 = { "xtype": "numberfield" };
+    var main_grid37 = new Lino.GridPanel(ww,{ 
+        "ls_url": "/lino/SiteConfigs", 
+        "ls_bbar_actions": [ ... ], 
+        ...
+        "ls_store_fields": [ { "type": "int", "name": "id" }, ...,'job_officeHidden' ], 
+        "ls_detail_handler": Lino.lino.SiteConfigs.detail, 
+          "ls_columns": [ 
+          { "colIndex": 0, "sortable": true, "header": "ID", ... }, 
+          ...
+          { "colIndex": 7, "header": "Lokales Arbeitsamt", ... } 
+        ], 
+        "ls_insert_handler": Lino.lino.SiteConfigs.insert });
+    ww.main_item = main_grid37;
+    ww.show();
+  }
+  
+Dann muss ich jetzt vorher noch für jede Grid etwas im folgenden Stil 
+generieren::  
+
+  Ext.define('Lino.lino.SiteConfigs.GridModel',{
+      extend: 'Ext.data.Model',    
+      fields: [(the `fields` config of old Store) ...],
+      "idProperty": "id",
+      "proxy": {
+          "totalProperty": "count",
+          "format": "json",
+          "url": "/api/lino/SiteConfigs",
+          "type": "rest",
+          "reader": "array",
+          "root": "rows"
+      }
+  })
+  
+  
+  
+  

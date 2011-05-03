@@ -1,10 +1,6 @@
-T:\hgwork\lino\docs\todo.rst:566: (WARNING/2) Inline interpreted text or phrase reference start-string without end-string.
-T:\hgwork\lino\docs\todo.rst:569: (WARNING/2) Enumerated list ends without a blank line; unexpected unindent.
+T:\hgwork\lino\docs\tickets\41.rst:85: (WARNING/2) Definition list ends without a blank line; unexpected unindent.
+T:\hgwork\lino\docs\tickets\41.rst:87: (ERROR/3) Unexpected indentation.
 T:\hgwork\lino\docs\admin\upgrade.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\autodoc\lino.reports.rst:111: WARNING: py:meth reference target not found: lino.reports.Report.do_setup
-T:\hgwork\lino\docs\autodoc\lino.reports.rst:125: WARNING: py:class reference target not found: lino.SiteConfigs
-T:\hgwork\lino\docs\autodoc\lino.reports.rst:168: WARNING: py:class reference target not found: links.LinksByOwner
-T:\hgwork\lino\docs\autodoc\lino.reports.rst:193: WARNING: py:class reference target not found: django.db.models.query.QuerySet
 T:\hgwork\lino\docs\autodoc\lino.ui.rst:16: WARNING: py:mod reference target not found: base
 T:\hgwork\lino\docs\autodoc\lino.ui.rst:17: WARNING: py:class reference target not found: object
 T:\hgwork\lino\docs\autodoc\lino.ui.rst:24: WARNING: py:mod reference target not found: requests
@@ -15,28 +11,3 @@ T:\hgwork\lino\docs\autodoc\lino.ui.extjs.rst:74: WARNING: xfile reference targe
 T:\hgwork\lino\docs\autodoc\lino.ui.extjs.rst:227: WARNING: py:class reference target not found: django.http.HttpResponse
 T:\hgwork\lino\docs\autodoc\lino.ui.extjs.rst:26: WARNING: py:mod reference target not found: ext_windows
 T:\hgwork\lino\docs\autodoc\lino.ui.extjs.rst:8: WARNING: py:class reference target not found: object
-T:\hgwork\lino\docs\todo.rst:95: WARNING: py:class reference target not found: lino.apps.dsbe.settings.Lino
-T:\hgwork\lino\docs\todo.rst:95: WARNING: xfile reference target not found: lino.js
-T:\hgwork\lino\docs\todo.rst:145: WARNING: xfile reference target not found: lino.js
-T:\hgwork\lino\docs\todo.rst:255: WARNING: xfile reference target not found: welcome.html
-T:\hgwork\lino\docs\todo.rst:307: WARNING: py:mod reference target not found: lino.demos.igen
-T:\hgwork\lino\docs\todo.rst:315: WARNING: py:mod reference target not found: lino.modlib.dsbe
-T:\hgwork\lino\docs\todo.rst:362: WARNING: py:mod reference target not found: lino.modlib.system.models.SiteConfig
-T:\hgwork\lino\docs\todo.rst:362: WARNING: py:mod reference target not found: django.contrib.sites
-T:\hgwork\lino\docs\todo.rst:364: WARNING: xfile reference target not found: make_staff.py
-T:\hgwork\lino\docs\todo.rst:374: WARNING: py:attr reference target not found: dsbe.models.Person.work_permit
-T:\hgwork\lino\docs\todo.rst:448: WARNING: py:class reference target not found: lino.utils.printable.LatexBuildMethod
-T:\hgwork\lino\docs\todo.rst:451: WARNING: py:attr reference target not found: links.Link.parent
-T:\hgwork\lino\docs\todo.rst:454: WARNING: py:class reference target not found: auth.User
-T:\hgwork\lino\docs\todo.rst:465: WARNING: py:attr reference target not found: links.Link.sequence
-T:\hgwork\lino\docs\todo.rst:465: WARNING: py:class reference target not found: links.LinksByOwner
-T:\hgwork\lino\docs\todo.rst:467: WARNING: py:meth reference target not found: contacts.Contact.address
-T:\hgwork\lino\docs\todo.rst:467: WARNING: py:class reference target not found: contacts.Persons
-T:\hgwork\lino\docs\todo.rst:477: WARNING: py:class reference target not found: links.LinksByOwner
-T:\hgwork\lino\docs\todo.rst:479: WARNING: py:class reference target not found: notes.Note
-T:\hgwork\lino\docs\todo.rst:479: WARNING: py:class reference target not found: notes.NoteType
-T:\hgwork\lino\docs\todo.rst:495: WARNING: py:mod reference target not found: lino.modlib.ledger
-T:\hgwork\lino\docs\todo.rst:495: WARNING: py:mod reference target not found: lino.modlib.finan
-T:\hgwork\lino\docs\todo.rst:521: WARNING: py:meth reference target not found: Action.run
-T:\hgwork\lino\docs\todo.rst:537: WARNING: py:mod reference target not found: <make_staff> lino.management.commands.make_staff
-T:\hgwork\lino\docs\todo.rst:557: WARNING: py:meth reference target not found: lino.ui.extjs.ext_store.BooleanStoreField.parse_form_value

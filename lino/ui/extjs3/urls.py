@@ -44,15 +44,14 @@ urlpatterns += patterns('',
 
 if sys.platform == 'win32':
 
-    EXTJS_ROOT = r's:\ext-4.0.0'
-    #~ EXTJS_ROOT = r's:\ext-3.3.1'
+    #~ EXTJS_ROOT = r's:\ext-4.0-pr1'
+    EXTJS_ROOT = r's:\ext-3.3.1'
     #~ EXTJS_ROOT = r's:\ext-3.3.0'
     #~ EXTJS_ROOT = r's:\ext-3.2.1'
     #~ EXTJS_ROOT = r's:\ext-3.3.0-rc'
     #~ EXTJS_URL = "/media/extjs/"
 
-    LINO_MEDIA = os.path.abspath(os.path.join(
-        os.path.dirname(lino.__file__),'..','media'))
+    LINO_MEDIA = os.path.abspath(os.path.join(os.path.dirname(lino.__file__),'..','media'))
     #~ LINO_MEDIA = os.path.join(lino_site.lino_site.ui.source_dir(),'media')
     #~ print 'LINO_MEDIA=',LINO_MEDIA
     
@@ -78,9 +77,7 @@ if sys.platform == 'win32':
     #~ print LINO_MEDIA
   
     urlpatterns += patterns('django.views.static',
-        (r'^%s(?P<path>.*)$' % prefix, 'serve', { 
-          'document_root': settings.MEDIA_ROOT, 
-          'show_indexes': True }),
+        (r'^%s(?P<path>.*)$' % prefix, 'serve', { 'document_root': settings.MEDIA_ROOT, 'show_indexes': True }),
         #~ (r'^lino_media/(?P<path>.*)$', 'serve', { 'document_root': LINO_MEDIA, 'show_indexes': True }),
     )
 
