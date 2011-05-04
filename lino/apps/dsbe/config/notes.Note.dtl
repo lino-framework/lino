@@ -3,8 +3,8 @@
 
 left = 
     date event_type type user language
-    subject 
-    reminder_date reminder_text reminder_done
+    subject reminder_date:8
+    reminder_text delay_type:8 delay_value:8 reminder_done:8
     person company
     
 main =

@@ -256,7 +256,7 @@ Lino.CheckColumn = Ext.extend(Ext.grid.Column, {
         if (record.phantom) return '';
         p.css += ' x-grid3-check-col-td'; 
         return String.format('<div class="x-grid3-check-col{0}">&#160;</div>', v ? '-on' : '');
-    },
+    }
 
     // Deprecate use as a plugin. Remove in 4.0
     // init: Ext.emptyFn
@@ -1170,7 +1170,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   do_when_clean : function(todo) {
     var this_ = this;
     if (this.form.isDirty()) {
-        var config = {title:"$_('Confirmation')",};
+        var config = {title:"$_('Confirmation')"};
         config.buttons = Ext.MessageBox.YESNOCANCEL;
         config.msg = "$_('Save changes to current record ?')";
         config.fn = function(buttonId,text,opt) {
@@ -1996,7 +1996,7 @@ Lino.MainPanelMixin = {
       return [ 
         this.search_field = new Ext.form.TextField({ 
           fieldLabel: "Search", 
-          listeners: { scope:this.ww, change:this.ww.search_change },
+          listeners: { scope:this.ww, change:this.ww.search_change }
           //~ value: text
           //~ scope:this, 
           //~ enableKeyEvents: true, 

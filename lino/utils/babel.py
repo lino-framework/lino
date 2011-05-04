@@ -113,8 +113,9 @@ def default_language():
 #~ }
 
 LONG_DATE_FMT = {
-  None: 'l, j F Y',
-  'de': 'l, j F Y',
+  #~ None: 'l, j F Y',
+  None: 'l, F j, Y',
+  'de': 'l, j. F Y',
   'fr': 'l j F Y',
   'et': 'l, j F Y.a.',
 }
@@ -157,6 +158,7 @@ def dtos(d):
     #~ return d.strftime(SHORT_DATE_FMT[LANG])
 
 def dtosl(d):
+    "Return the specified date as a localized long string of type 'Wednesday, May 4, 2011'."
     if d is None: return ''
     return defaultfilters.date(d,LONG_DATE_FMT[get_language()])
     #~ return d.strftime(LONG_DATE_FMT[LANG])

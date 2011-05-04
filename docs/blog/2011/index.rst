@@ -124,6 +124,7 @@ As long as nobody protests, I'll save some time by writing in German.
   |br| 
   :doc:`02 <0502>`
   :doc:`03 <0503>`
+  :doc:`04 <0504>`
   |br| 
   |br| 
   |br|  	

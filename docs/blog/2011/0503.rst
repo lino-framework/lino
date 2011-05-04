@@ -40,14 +40,20 @@ umzustellen.
 :mod:`lino.ui.extjs3`
 ---------------------
 
-Unterbrechung: ein kleines Release ist nötig in Eupen. 
-Also zuerst mal testen, ob :mod:`lino.ui.extjs3` noch funktioniert 
-Oho! Funktioniert überhaupt nicht.
-Das war aber nur ein ``import``-Statement. 
-In Einem hole ich auch hier die beiden kleinen Bugs raus.
+Ticket :doc:`/tickets/41` muss mal kurz warten:
+ein kleines Release in Eupen ist nötig. 
+Als erstes sollen die Erinnerungen im Hauptbildschirm chronologisch andersrum 
+sortiert sein, die neuesten zuerst. 
+Das ist einfach ein :func:`reverse` in :mod:`lino.mixins.reminder.reminders_summary`.
+
+Oho, :mod:`lino.ui.extjs3` funktioniert nicht mehr.
+Ach so, das war nur ein ``import``-Statement. 
+In einem hole ich auch die beiden kleinen Bugs (sh. :doc:`0502` ) raus.
 Die Variable `USER_INTERFACES` in der :xfile:`settings.py` kann raus.
 Und :setting:`USE_GRIDFILTERS` stelle ich wieder auf `True`.
 
 Trotzdem habe ich jetzt noch 
 "Uncaught TypeError: Object #<Object> has no method 'reg'".
 Als wäre die Version 4 doch noch irgendwo aktiv.
+Rätselhaft.
+Darüber geh ich jetzt erstmal schlafen.

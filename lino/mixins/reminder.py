@@ -18,6 +18,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from lino.mixins import AutoUser
 from lino.utils.choosers import chooser
+from lino.utils.babel import dtosl
 
 from lino import reports
 
@@ -68,7 +69,11 @@ class Reminder(AutoUser):
       
       
     @classmethod
-    def get_reminders(model,today,user):
+    def get_reminders(model,user,today,back_until):
+        """
+        yield a list of reminders for this model and user for the specified date `today`.
+        `back_until` is a date *before* `today` and may be None.
+        """
         #~ print "get_reminders()"
         #~ for obj in model.objects.filter(
             #~ user__exact=user,reminder_date__lte=pivot).order_by('reminder_date'):
@@ -78,10 +83,11 @@ class Reminder(AutoUser):
             pivot = today + time_delta(obj.delay_type,obj.delay_value)
             #~ print obj, pivot
             if obj.reminder_date <= pivot:
-                msg = obj.reminder_text
-                if not msg:
-                    msg = _('due date reached')
-                yield ReminderEntry(obj,obj.reminder_date,msg,fmt='detail')
+                if back_until is None or obj.reminder_date > back_until:
+                    msg = obj.reminder_text
+                    if not msg:
+                        msg = _('due date reached')
+                    yield ReminderEntry(obj,obj.reminder_date,msg,fmt='detail')
 
     @chooser(simple_values=True)
     def reminder_text_choices(self):
@@ -105,17 +111,20 @@ class ReminderEntry:
         s = ui.action_href(a,unicode(self.target),**params)
         if self.text:
             #~ s += ' <b>' + cgi.escape(self.text) + '</b> '
-            s += ' (' + cgi.escape(self.text) + ')'
+            #~ s += ' (' + cgi.escape(self.text) + ')'
+            s += '&nbsp;: ' + cgi.escape(self.text)
         return s
 
-        #~ s += '<a href="%s" target="_blank">%s</a>' % (
-          #~ ui.get_detail_url(self,**self.target_kw),
-          #~ unicode(self.target))
-        #~ return s
-
-def reminders_summary(ui,user,*args,**kw):
-    s= ''
-    date = datetime.date.today()
+def reminders_summary(ui,user,days_back=None,**kw):
+    """
+    Return a HTML summary of all open reminders for this user
+    """
+    date_from = datetime.date.today()
+    if days_back is None:
+        back_until = None
+    else:
+        back_until = date_from - datetime.timedelta(days=days_back)
+    
     days = {}
     objects = []
     def add(rem):
@@ -133,16 +142,24 @@ def reminders_summary(ui,user,*args,**kw):
                 #~ ReminderEntry(obj,obj,
                 #~ add(obj)
         if hasattr(model,'get_reminders'):
-            for rem in model.get_reminders(date,user):
+            for rem in model.get_reminders(user,date_from,back_until):
                 add(rem)
 
     sorted_days = days.keys()
     sorted_days.sort()
     sorted_days.reverse()
+    cells = ['Heute:<br/>','Vergangen:<br/>','Zukunft:<br/>']
     for day in sorted_days:
-        s += '<h3>'+day.isoformat() + '</h3>'
-        s += reports.summary(ui,days[day],'<br/>')
-    return s
+        if day == date_from:
+           col = 0
+        elif day < date_from:
+           col = 1
+        else:
+           col = 2
+        #~ s += '<h3>'+day.isoformat() + '</h3>'
+        cells[col] += '<h3>'+dtosl(day) + '</h3>'
+        cells[col] += reports.summary(ui,days[day],**kw)
+    return '<table border="0"><tr>%s</tr></table>' % ''.join(['<td valign="top" width="30%%">%s</td>' % s for s in cells])
     #~ objects.sort(lambda a,b:cmp(a.reminder_date,b.reminder_date))
     #~ return objects
     

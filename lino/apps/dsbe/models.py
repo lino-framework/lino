@@ -495,11 +495,15 @@ class Person(Partner,contacts.Person):
         return self.language
         
     @classmethod
-    def get_reminders(model,today,user):
+    def get_reminders(model,user,today,back_until):
         q = models.Q(coach1__exact=user) | models.Q(coach2__exact=user)
         
         def find_them(fieldname,today,d,msg,**linkkw):
             filterkw = { fieldname+'__lte' : today + d }
+            if back_until is not None:
+                filterkw.update({ 
+                    fieldname+'__gte' : back_until
+                })
             for obj in model.objects.filter(q,**filterkw).order_by(fieldname):
                 yield ReminderEntry(obj,getattr(obj,fieldname),msg,**linkkw)
             

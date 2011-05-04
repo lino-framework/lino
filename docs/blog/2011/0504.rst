@@ -1,0 +1,53 @@
+20110504
+========
+
+Der Cache
+---------
+
+Weiter mit dem Rätsel von gestern: wieso funktioniert :mod:`lino.ui.extjs3` nicht mehr?
+Habe ich bei den Arbeiten am extjs4 versehentlich noch irgendwas im extjs3 verändert?
+Oder ist meine Kopie von ExtJS3 kaputt? 
+Oder haben meine Browser sich die Version 4 im Cache behalten?
+
+- ExtJS 3 auf meinem Rechner neu installieren bringt keine Änderung.
+  Ich habe die beiden Version in :file:`s:\\ext-3.3.1` und :file:`s:\\ext-4.0.0` stehen.
+
+- Upgrade des Lino auf :term:`Tups`: dort funktioniert es. 
+  Auf Tups ist noch Ext 3.2.1 installiert, auf meinem Rechner ist 3.3.1, 
+  aber das dürfte keinen Unterschied machen.
+
+- Mit dem IE (den hatte ich noch nicht benutzt mit extjs4) 
+  funktioniert es auch auf meinem Rechner.
+  
+Also irgendwas von der Version 4 ist im Cache meines Firefox und 
+meines Chrome hängen geblieben. Also in Chrome 
+:menuselection:`Schraubenschlüssel --> Tools --> Private Daten löschen...`
+
+.. image:: 0504a.jpg
+    :scale: 80
+
+Richtig, das war's. 
+Die Erklärung ist plausibel: für beide Versionen ist die 
+folgende Zeile im Header gleich::
+
+  <script type="text/javascript" src="/media/extjs/ext-all-debug.js">
+  
+Und mein Development Server benutzt ja `django.views.static`, 
+um diese Datei zu servieren. Der teilt meinen Browsern wahrscheinlich 
+auch das Datum mit, und nach dem Rückschalten auf die alte Version 
+sagen sich die Browser, dass sie die nicht neu anzufragen brauchen.
+
+Puh! Mehr als eine Stunde hab ich gebraucht, um darauf zu kommen!
+
+Ob dieses Problem auch mit dem Apache passiert? 
+Oder nur mit :mod:`django.views.static`? 
+
+
+Erinnerungen
+------------
+
+- Erinnerungen sind jetzt im Hauptbildschirm umgekehrt chronologisch sortiert,
+  und zudem in drei Kolonnen "Heute", "Vergangen" und "Zukunft" verteilt.
+- Ältere Erinnerungen (älter als 7 Tage, aber die Zahl ist 
+  global konfigurierbar in der :xfile:`welcome.html`) werden 
+  im Hauptbildschirm nicht mehr angezeigt.

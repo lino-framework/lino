@@ -20,6 +20,7 @@ Ich werde heute aber noch etwas weiter am Umstieg arbeiten, denn:
   wenn ich das jetzt nicht durchziehe.
   Mindestens 2 kleine Bugs habe ich im Lauf der Arbeiten gefunden, 
   die ich dann im alten extjs3 nachträglich beheben müsste:
+  
   - "StatusBar" in ext_ui
   - "contacts.Persons" in ext_windows
 
