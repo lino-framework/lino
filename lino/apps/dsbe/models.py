@@ -50,6 +50,7 @@ from lino.models import get_site_config
 from lino.tools import get_field
 from lino.tools import resolve_field
 from lino.utils.babel import add_babel_field, DEFAULT_LANGUAGE, babelattr, babeldict_getitem
+from lino.utils import babel 
 from lino.utils.choosers import chooser
 from lino.utils import mti
 from lino.mixins.printable import DirectPrintAction
@@ -495,35 +496,38 @@ class Person(Partner,contacts.Person):
         return self.language
         
     @classmethod
-    def get_reminders(model,user,today,back_until):
+    def get_reminders(model,ui,user,today,back_until):
         q = models.Q(coach1__exact=user) | models.Q(coach2__exact=user)
         
-        def find_them(fieldname,today,d,msg,**linkkw):
-            filterkw = { fieldname+'__lte' : today + d }
+        def find_them(fieldname,today,delta,msg,**linkkw):
+            filterkw = { fieldname+'__lte' : today + delta }
             if back_until is not None:
                 filterkw.update({ 
                     fieldname+'__gte' : back_until
                 })
             for obj in model.objects.filter(q,**filterkw).order_by(fieldname):
-                yield ReminderEntry(obj,getattr(obj,fieldname),msg,**linkkw)
+                linkkw.update(fmt='detail')
+                url = ui.get_detail_url(obj,**linkkw)
+                html = '<a href="%s">%s</a>&nbsp;: %s' % (url,unicode(obj),cgi.escape(msg))
+                yield ReminderEntry(getattr(obj,fieldname),html)
             
         #~ delay = 30
         #~ for obj in model.objects.filter(q,
               #~ card_valid_until__lte=date+datetime.timedelta(days=delay)).order_by('card_valid_until'):
             #~ yield ReminderEntry(obj,obj.card_valid_until,_("eID card expires in %d days") % delay,fmt='detail',tab=3)
         for o in find_them('card_valid_until', today, datetime.timedelta(days=30),
-            _("eID card expires"),fmt='detail',tab=0):
+            _("eID card expires"),tab=0):
             yield o
         for o in find_them('unavailable_until', today, datetime.timedelta(days=30),
-            _("becomes available again"),fmt='detail',tab=1):
+            _("becomes available again"),tab=1):
             yield o
         for o in find_them('work_permit_suspended_until', today, datetime.timedelta(days=30),
-              _("work permit suspension ends"),fmt='detail',tab=1):
+              _("work permit suspension ends"),tab=1):
             yield o
         for o in find_them('coached_until', today, datetime.timedelta(days=30),
-            _("coaching ends"),fmt='detail',tab=1):
+            _("coaching ends"),tab=1):
             yield o
-      
+            
         
     def get_image_parts(self):
         if self.card_number:
@@ -1062,7 +1066,6 @@ class ContractType(mixins.PrintableType):
     
     def __unicode__(self):
         return unicode(babelattr(self,'name'))
-        
 add_babel_field(ContractType,'name')
 
 class ContractTypes(reports.Report):
@@ -1083,7 +1086,6 @@ class ExamPolicy(models.Model):
         return unicode(babelattr(self,'name'))
     #~ def __unicode__(self):
         #~ return unicode(self.name)
-        
 add_babel_field(ExamPolicy,'name')
 
 class ExamPolicies(reports.Report):
@@ -1144,7 +1146,6 @@ class AidType(models.Model):
     
     def __unicode__(self):
         return unicode(babelattr(self,'name'))
-        
 add_babel_field(AidType,'name')
 
 class AidTypes(reports.Report):
@@ -1237,6 +1238,29 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,contact
         #~ msg = _("Contract # %(pk)d (%(person)s/%(company)s)")
         #~ return msg % dict(pk=self.pk, person=self.person, company=self.company)
         return msg % self.pk
+        
+    def get_reminder_html(self,ui,user):
+        url = ui.get_detail_url(self,fmt='detail')
+        if self.type:
+            s = unicode(self.type)
+        else:
+            s = self._meta.verbose_name
+        s += ' #' + unicode(self.pk)
+        
+        s = ui.href(url,cgi.escape(s))
+        
+        more = []
+        if self.person:
+            more.append(ui.href_to(self.person))
+        if self.company:
+            more.append(ui.href_to(self.company))
+        if self.user and self.user != user:
+            more.append(cgi.escape(unicode(self.user)))
+        if self.reminder_text:
+            more.append(cgi.escape(self.reminder_text))
+        else:
+            more.append(cgi.escape(_('due date reached')))
+        return s + '&nbsp;: ' + (', '.join(more))
         
     def summary_row(self,ui,rr,**kw):
         s = ''
@@ -1352,6 +1376,34 @@ class Note(notes.Note,contacts.PartnerDocument):
         verbose_name = _("Event/Note") # application-specific override
         verbose_name_plural = _("Events/Notes")
 
+    def get_reminder_html(self,ui,user):
+        url = ui.get_detail_url(self,fmt='detail')
+        if self.type:
+            s = unicode(self.type)
+        else:
+            s = self._meta.verbose_name
+        s += ' #' + unicode(self.pk)
+        
+        s = ui.href(url,cgi.escape(s))
+        
+        more = []
+        if self.person:
+            more.append(ui.href_to(self.person))
+        if self.company:
+            more.append(ui.href_to(self.company))
+        if self.event_type:
+            more.append(cgi.escape(unicode(self.event_type)))
+        if self.subject:
+            more.append(cgi.escape(self.subject))
+        if self.user and self.user != user:
+            more.append(cgi.escape(unicode(self.user)))
+        more.append(babel.dtos(self.date))
+        if self.reminder_text:
+            more.append(cgi.escape(self.reminder_text))
+        else:
+            more.append(cgi.escape(_('due date reached')))
+        return s + '&nbsp;: ' + (', '.join(more))
+        
 class NotesByPerson(notes.Notes):
     fk_name = 'person'
     column_names = "date event_type type subject body_html user company *"

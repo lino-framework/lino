@@ -447,12 +447,15 @@ class TextFieldElement(FieldElement):
     #~ preferred_height = 1
     #collapsible = True
     
-    #~ def __init__(self,*args,**kw):
-        #~ kw.update(defaultAutoCreate = dict(
+    def __init__(self,*args,**kw):
+        kw.update(
+          growMax=2000,
+          #~ defaultAutoCreate = dict(
             #~ tag="textarea",
             #~ autocomplete="off"
-        #~ ))
-        #~ FieldElement.__init__(self,*args,**kw)
+          #~ )
+        )
+        FieldElement.__init__(self,*args,**kw)
 
 class HtmlTextFieldElement(TextFieldElement):
     pass
@@ -1263,8 +1266,10 @@ class DetailMainPanel(Panel,MainPanel):
         #~ if not e.value.has_key('fieldLabel'): return e
         #~ if not e.label: return e
         #~ po = dict(layout='form')
-        po = dict(layout='form',autoHeight=True) # 20101028
-        #~ if isinstance(e,TextFieldElement):
+        po = dict(layout='form') # 20101028
+        #~ po = dict(layout='form',autoHeight=True) # 20101028
+        if not isinstance(e,TextFieldElement):
+            po.update(autoHeight=True)
             #~ po.update(anchor='100% 100%')
         ct = Panel(lh,field.name+"_ct",True,e,**po)#,flex=0)
         ct.field = field

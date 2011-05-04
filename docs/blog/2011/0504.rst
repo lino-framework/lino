@@ -48,6 +48,44 @@ Erinnerungen
 
 - Erinnerungen sind jetzt im Hauptbildschirm umgekehrt chronologisch sortiert,
   und zudem in drei Kolonnen "Heute", "Vergangen" und "Zukunft" verteilt.
+  
 - Ältere Erinnerungen (älter als 7 Tage, aber die Zahl ist 
   global konfigurierbar in der :xfile:`welcome.html`) werden 
   im Hauptbildschirm nicht mehr angezeigt.
+  
+
+Text-Editor
+-----------
+
+Das TextArea-Feld für mehrzeilige Texte nahm in Details nur die 
+Hälfte des vertikal verfügbaren Platzes ein. 
+Links wie es bisher war, rechts wie es jetzt ist:
+
+.. image:: 0504b.jpg
+    :scale: 50
+
+.. image:: 0504c.jpg
+    :scale: 50
+    
+Grund war, dass das `ct_panel` autoHeight auf `true` hat. Beim ct_panel 
+eines TextfieldElements darf ich das scheinbar nicht (in anderen Fällen 
+dagegen muss es sein).
+
+Erinnerungen und mehrzeilige Texte in Grids
+-------------------------------------------
+
+- Erinnerungen im Hauptbildschirm für Notizen und Verträge zeigen jetzt auch wieder 
+  die Person und/oder die Firma an.
+  
+- Ich habe noch am Aussehen der Tabelle der Erinnerungen im Hauptbildschirm rumgespielt.
+  Ist jetzt leserlicher. Zwei Kolonnen "Ausblick" und "Rückblick". 
+  "Ausblick" beginnt mit heute und ist chronologisch sortiert.
+  "Rückblick" beginnt mit gestern und ist umgekehrt chronologisch sortiert.
+
+- Ich habe auch die Erklärung gefunden, weshalb Aufzählungen, Fett und Kursiv nicht "korrekt" 
+  angezeigt werden, wenn ich in einer Grid selbstgenerierten HTML anzeige. 
+  ExtJS hat das nicht absichtlich gemacht, sondern das ist nötig für 
+  das allgemeine Layout und kann umgangen werden:
+  http://www.sencha.com/learn/Manual:Ext_CSS_Overview
+  
+  

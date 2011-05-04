@@ -5,7 +5,7 @@ User <b>$user.get_full_name() ($user)</b> on $site.title
 
 #from lino.mixins.reminder import reminders_summary
 <ol><li>
-$reminders_summary($ui,$user,days_back=7,max_items=10,separator='<br/>')
+$reminders_summary($ui,$user,days_back=70,max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
 </li></ol>
 
 <p><font size="1">$lino.welcome_html()</font></p>

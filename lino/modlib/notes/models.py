@@ -14,6 +14,7 @@
 
 import os
 import sys
+import cgi
 import datetime
 
 from django.db import models
@@ -102,6 +103,9 @@ class Note(mixins.TypedPrintable,mixins.Reminder):
     # partner = models.ForeignKey("contacts.Partner",blank=True,null=True)
     
     def __unicode__(self):
+        return u'%s #%s' % (self._meta.verbose_name,self.pk)
+        
+    def unused__unicode__(self):
         s = u''
         if self.event_type:
             s += unicode(self.event_type) + ' '
@@ -117,9 +121,12 @@ class Note(mixins.TypedPrintable,mixins.Reminder):
         
     def body_html(self,rr):
         if self.body:
-            return restify(self.body)
+            return html_text(restify(self.body))
         return ''
     body_html.return_type = fields.DisplayField(_("Body"))
+    
+def html_text(s):
+    return '<div class="htmlText">' + s + '</div>'
     
 class NoteTypes(reports.Report):
     model = 'notes.NoteType'

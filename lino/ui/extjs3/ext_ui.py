@@ -357,9 +357,6 @@ class ExtUI(base.UI):
         msg = "Unknown element %r referred in layout %s of %s" % (name,lh.layout,lh.rh.report)
         raise KeyError(msg)
         
-    def href_to(self,obj):
-        return '<a href="%s" target="_blank">%s</a>' % (self.get_detail_url(obj,fmt='detail'),unicode(obj))
-
 
     def create_vurt_element(self,lh,name,vf,**kw):
         #~ assert vf.get.func_code.co_argcount == 2, (name, vf.get.func_code.co_varnames)
@@ -565,6 +562,7 @@ class ExtUI(base.UI):
           id="main_area",
           xtype='container',
           region="center",
+          autoScroll=True,
           layout='fit',
           #~ html=self.welcome_template.render(c),
           html=unicode(self.welcome_template),
@@ -1376,6 +1374,15 @@ class ExtUI(base.UI):
         rpt = obj._lino_model_report
         return self.build_url('api',rpt.app_label,rpt._actor_name,str(obj.pk),*args,**kw)
         
+    def href_to(self,obj,text=None):
+        return self.href(self.get_detail_url(obj,fmt='detail'),text or cgi.escape(unicode(obj)))
+        #~ return '<a href="%s" target="_blank">%s</a>' % (self.get_detail_url(obj,fmt='detail'),unicode(obj))
+
+    def href(self,url,text):
+        return '<a href="%s">%s</a>' % (url,text)
+    
+    #~ def detail_href(self,obj,**kw):
+        #~ return '<a href="%s">%s</a>' % (self.get_detail_url(obj,fmt='detail'),cgi.escape(unicode(obj))))
         
     def action_window_wrapper(self,a,h):
         #~ if isinstance(a,actions.DeleteSelected): return ext_windows.DeleteRenderer(self,a)

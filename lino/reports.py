@@ -87,7 +87,7 @@ def fields_list(model,field_names):
     return tuple([get_field(model,n) for n in field_names.split()])
 
 
-def summary(ui,rr,separator=', ',max_items=5,**kw):
+def summary(ui,rr,separator=', ',max_items=5,before='',after='',**kw):
     """
     Returns this report as a unicode string.
     
@@ -99,13 +99,17 @@ def summary(ui,rr,separator=', ',max_items=5,**kw):
     s = u''
     n = 0
     for i in rr:
-        if n :
+        if n:
             s += separator
+        else:
+            s += before
         n += 1
         s += i.summary_row(ui,rr,**kw)
         if n >= max_items:
-            s += separator + '...'
+            s += separator + '...' + after
             return s
+    if n:
+        return s + after
     return s
 
 #~ def default_summary_row(obj,rr):

@@ -1,8 +1,7 @@
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs.rst:4: (WARNING/2) autodoc can't import/find module 'lino.ui.extjs', it reported error: "extjs4 not yet ready", please check your spelling and sys.path
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs.rst:12: (WARNING/2) autodoc can't import/find module 'lino.ui.extjs.ext_elems', it reported error: "extjs4 not yet ready", please check your spelling and sys.path
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs.rst:21: (WARNING/2) autodoc can't import/find module 'lino.ui.extjs.ext_ui', it reported error: "extjs4 not yet ready", please check your spelling and sys.path
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs.rst:29: (WARNING/2) autodoc can't import/find module 'lino.ui.extjs.ext_windows', it reported error: "extjs4 not yet ready", please check your spelling and sys.path
-T:\hgwork\lino\docs\blog\2011\0504.rst:: WARNING: image file not readable: blog\2011\0504a.jpg
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs.rst:4: (WARNING/2) autodoc can't import/find module 'lino.ui.extjs', it reported error: "No module named extjs", please check your spelling and sys.path
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs.rst:12: (WARNING/2) autodoc can't import/find module 'lino.ui.extjs.ext_elems', it reported error: "No module named extjs.ext_elems", please check your spelling and sys.path
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs.rst:21: (WARNING/2) autodoc can't import/find module 'lino.ui.extjs.ext_ui', it reported error: "No module named extjs.ext_ui", please check your spelling and sys.path
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs.rst:29: (WARNING/2) autodoc can't import/find module 'lino.ui.extjs.ext_windows', it reported error: "No module named extjs.ext_windows", please check your spelling and sys.path
 T:\hgwork\lino\docs\admin\upgrade.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\autodoc\lino.ui.rst:4: WARNING: py:mod reference target not found: lino.ui.extjs
 T:\hgwork\lino\docs\autodoc\lino.ui.rst:16: WARNING: py:mod reference target not found: base
@@ -13,5 +12,6 @@ T:\hgwork\lino\docs\autodoc\lino.ui.extjs.rst:1: WARNING: py:mod reference targe
 T:\hgwork\lino\docs\autodoc\lino.ui.extjs.rst:9: WARNING: py:mod reference target not found: ext_elems
 T:\hgwork\lino\docs\autodoc\lino.ui.extjs.rst:18: WARNING: py:mod reference target not found: ext_ui
 T:\hgwork\lino\docs\autodoc\lino.ui.extjs.rst:26: WARNING: py:mod reference target not found: ext_windows
-T:\hgwork\lino\docs\blog\2011\0504.rst:4: WARNING: py:mod reference target not found: lino.ui.extjs3
-T:\hgwork\lino\docs\blog\2011\0504.rst:39: WARNING: py:mod reference target not found: django.views.static
+T:\hgwork\lino\docs\blog\2011\0504.rst:7: WARNING: py:mod reference target not found: lino.ui.extjs3
+T:\hgwork\lino\docs\blog\2011\0504.rst:42: WARNING: py:mod reference target not found: django.views.static
+T:\hgwork\lino\docs\blog\2011\0504.rst:52: WARNING: xfile reference target not found: welcome.html
