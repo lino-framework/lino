@@ -1,6 +1,15 @@
 #40 : Moving from Ext JS 3 to 4
 ===============================
 
+Documentation:
+
+- `Ext 3 to 4 Migration <http://www.sencha.com/forum/showthread.php?124015-Ext-3-to-4-Migration>`_ 
+  thread in `Forums / 4.0 / Bugs`
+  
+- `Brian Moeskau's blog <http://www.sencha.com/blog/ext-js-3-to-4-migration/>`_
+  
+- Get the "Ext JS 3 to 4 Migration Pack" (under "Related Downloads" on the "Downloads" page)
+
 Here is a list of changes I had to do when moving from ExtJS 3 to 4.
 
 - `Ext.lib.Ajax.serializeForm` no longer exists. 

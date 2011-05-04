@@ -203,14 +203,14 @@ LINO = Lino(__file__)
 #~ DBLOGGER = 'db'
 DBLOGFILE = 'auto'
 USE_FIREBUG = False
-USE_GRIDFILTERS = False
+USE_GRIDFILTERS = True
 MODEL_DEBUG = True
 #~ PROJECT_DIR = normpath(dirname(__file__))
 BYPASS_PERMS = False
-USER_INTERFACES = [
+#~ USER_INTERFACES = [
   #~ 'lino.ui.extjsu',
-  'lino.ui.extjs'
-  ]
+  #~ 'lino.ui.extjs'
+  #~ ]
 #~ DATA_DIR = join(LINO.project_dir,"data")
 
 #~ BABEL_LANGS = []
@@ -345,7 +345,7 @@ if False:
     )
     
 
-ROOT_URLCONF = 'lino.ui.extjs.urls'
+ROOT_URLCONF = 'lino.ui.extjs3.urls'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".

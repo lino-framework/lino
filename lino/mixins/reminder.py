@@ -138,6 +138,7 @@ def reminders_summary(ui,user,*args,**kw):
 
     sorted_days = days.keys()
     sorted_days.sort()
+    sorted_days.reverse()
     for day in sorted_days:
         s += '<h3>'+day.isoformat() + '</h3>'
         s += reports.summary(ui,days[day],'<br/>')

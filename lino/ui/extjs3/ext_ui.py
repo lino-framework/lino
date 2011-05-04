@@ -235,7 +235,7 @@ def elem2rec_detailed(ar,rh,elem,**rec):
 
 class ExtUI(base.UI):
     _response = None
-    name = 'extjs'
+    name = 'extjs3'
     verbose_name = "ExtJS with Windows"
     Panel = ext_elems.Panel
     
@@ -616,21 +616,15 @@ class ExtUI(base.UI):
             #~ yield '}'
             #~ yield '</style>'
         if False:
-            yield '<style type="text/css">'
-            #~ yield '.x-item-disabled, .x-tree-node-disabled, .x-date-disabled {'
-            yield '.x-item-disabled {'
-            yield '  color: blue; opacity:.90;' 
-            yield '}'
-            yield '</style>'
-        if False:
             yield '<script type="text/javascript" src="%sextjs/Exporter-all.js"></script>' % settings.MEDIA_URL 
             
         if False:
             yield '<script type="text/javascript" src="%sextjs/examples/ux/CheckColumn.js"></script>' % settings.MEDIA_URL 
 
+        yield '<script type="text/javascript" src="%sextjs/examples/ux/statusbar/StatusBar.js"></script>' % settings.MEDIA_URL
+        
         if settings.USE_GRIDFILTERS:
             #~ yield '<script type="text/javascript" src="%sextjs/examples/ux/RowEditor.js"></script>' % settings.MEDIA_URL
-            yield '<script type="text/javascript" src="%sextjs/examples/ux/statusbar/StatusBar.js"></script>' % settings.MEDIA_URL
             yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/menu/RangeMenu.js"></script>' % settings.MEDIA_URL
             yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/menu/ListMenu.js"></script>' % settings.MEDIA_URL
             yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/GridFilters.js"></script>' % settings.MEDIA_URL
@@ -642,6 +636,7 @@ class ExtUI(base.UI):
             yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/filter/BooleanFilter.js"></script>' % settings.MEDIA_URL
             
         yield '<script type="text/javascript" src="%sextjs/examples/ux/fileuploadfield/FileUploadField.js"></script>' % settings.MEDIA_URL
+        
         if settings.LINO.use_awesome_uploader:
             p = settings.MEDIA_URL + 'lino/AwesomeUploader/'
             #~ yield '<script type="text/javascript" src="Ext.ux.form.FileUploadField.js"></script>'

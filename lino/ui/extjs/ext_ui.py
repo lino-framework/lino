@@ -583,16 +583,17 @@ class ExtUI(base.UI):
         yield '<title id="title">%s</title>' % self.site.title
         #~ yield '<!-- ** CSS ** -->'
         #~ yield '<!-- base library -->'
-        yield '<link rel="stylesheet" type="text/css" href="%sextjs/resources/css/ext-all.css" />' % settings.MEDIA_URL 
+        EXTJS = settings.MEDIA_URL + 'extjs'
+        yield '<link rel="stylesheet" type="text/css" href="%s/resources/css/ext-all.css" />' % EXTJS
         #~ yield '<!-- overrides to base library -->'
         if settings.USE_GRIDFILTERS:
-            #~ yield '<link rel="stylesheet" type="text/css" href="%sextjs/examples/ux/css/RowEditor.css" />' % settings.MEDIA_URL 
-            yield '<link rel="stylesheet" type="text/css" href="%sextjs/examples/ux/statusbar/css/statusbar.css" />' % settings.MEDIA_URL 
-            yield '<link rel="stylesheet" type="text/css" href="%sextjs/examples/ux/gridfilters/css/GridFilters.css" />' % settings.MEDIA_URL 
-            yield '<link rel="stylesheet" type="text/css" href="%sextjs/examples/ux/gridfilters/css/RangeMenu.css" />' % settings.MEDIA_URL 
+            #~ yield '<link rel="stylesheet" type="text/css" href="%s/examples/ux/css/RowEditor.css" />' % EXTJS
+            yield '<link rel="stylesheet" type="text/css" href="%s/examples/ux/statusbar/css/statusbar.css" />' % EXTJS
+            yield '<link rel="stylesheet" type="text/css" href="%s/examples/ux/gridfilters/css/GridFilters.css" />' % EXTJS
+            yield '<link rel="stylesheet" type="text/css" href="%s/examples/ux/gridfilters/css/RangeMenu.css" />' % EXTJS
         
         if False: # was needed for extjs 3
-            yield '<link rel="stylesheet" type="text/css" href="%sextjs/examples/ux/fileuploadfield/css/fileuploadfield.css" />' % settings.MEDIA_URL 
+            yield '<link rel="stylesheet" type="text/css" href="%s/examples/ux/fileuploadfield/css/fileuploadfield.css" />' % EXTJS
         
         yield '<link rel="stylesheet" type="text/css" href="%slino/extjs/lino.css">' % settings.MEDIA_URL
         
@@ -604,12 +605,20 @@ class ExtUI(base.UI):
         #~ yield '<!-- ExtJS library: base/adapter -->'
         if False: # was needed for extjs 3
             yield '<script type="text/javascript" src="%sextjs/adapter/ext/ext-base.js"></script>' % settings.MEDIA_URL 
+            
+        #~ yield '<!-- Stick to ext-all-debug.js (not bootstrap.js) while migrating. Legacy code will not work with bootstrap! -->'
+        
         if settings.DEBUG:
             widget_library = 'ext-all-debug'
         else:
             widget_library = 'ext-all'
         #~ yield '<!-- ExtJS library: all widgets -->'
-        yield '<script type="text/javascript" src="%sextjs/%s.js"></script>' % (settings.MEDIA_URL, widget_library)
+        yield '<script type="text/javascript" src="%s/%s.js"></script>' % (EXTJS, widget_library)
+        
+        if False:
+            #~ yield '<!-- Ext 3.x compatibility -->'
+            yield '<script type="text/javascript" src="%s/ext3-core-compat.js"></script>' % EXTJS
+            yield '<script type="text/javascript" src="%s/ext3-compat.js"></script>' % EXTJS
         #~ if True:
             #~ yield '<style type="text/css">'
             #~ # http://stackoverflow.com/questions/2106104/word-wrap-grid-cells-in-ext-js 
@@ -617,13 +626,6 @@ class ExtUI(base.UI):
             #~ yield '  white-space: normal;' # /* changed from nowrap */
             #~ yield '}'
             #~ yield '</style>'
-        if False:
-            yield '<style type="text/css">'
-            #~ yield '.x-item-disabled, .x-tree-node-disabled, .x-date-disabled {'
-            yield '.x-item-disabled {'
-            yield '  color: blue; opacity:.90;' 
-            yield '}'
-            yield '</style>'
         if False:
             yield '<script type="text/javascript" src="%sextjs/Exporter-all.js"></script>' % settings.MEDIA_URL 
             
@@ -731,6 +733,8 @@ class ExtUI(base.UI):
         yield "KNOWLEDGE_CHOICES = %s;" % py2js(list(KNOWLEDGE_CHOICES))
         yield "MEDIA_URL = %r;" % settings.MEDIA_URL
         yield "Lino.status_bar = new Ext.ux.StatusBar({defaultText:'Lino version %s.'});" % lino.__version__
+        yield "Ext.tip.QuickTipManager.init();" 
+        yield "Ext.tip.QuickTipManager.enable();" 
         
             
 
@@ -1394,13 +1398,13 @@ class ExtUI(base.UI):
         #~ if isinstance(a,actions.UpdateRowAction): return ext_windows.UpdateRowRenderer(self,a)
           
         if isinstance(a,reports.GridEdit):
-            return ext_windows.GridMasterWrapper(h,a)
+            return ext_windows.GridWindow(h,a)
             
         if isinstance(a,reports.InsertRow):
-            return ext_windows.InsertWrapper(h,a)
+            return ext_windows.InsertWindow(h,a)
             
         if isinstance(a,reports.ShowDetailAction):
-            return ext_windows.DetailWrapper(h,a)
+            return ext_windows.DetailWindow(h,a)
             
     def setup_handle(self,h):
         #~ if isinstance(h,layouts.TabPanelHandle):

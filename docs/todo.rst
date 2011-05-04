@@ -11,6 +11,9 @@ Short-term
 
 #.  :doc:`/tickets/41`
 
+#.  Anzeige von mehrzeiligen Texten in Grids:  
+    Ein Button "Details", der toggelt zwischen "erste Zeile" und "alles".
+
 #.  :doc:`/tickets/39`
 
 #.  Welche weiteren Felder müssen (ähnlich wie "Stadt") lernfähig werden? 

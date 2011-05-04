@@ -164,7 +164,7 @@ class DetailWrapper(BaseDetailWrapper):
         if self.main.listeners:
             yield "  config.listeners = %s;" % py2js(self.main.listeners)
         yield "  config.before_row_edit = %s;" % py2js(self.main.before_row_edit)
-        yield "  Lino.contacts.Persons.FormPanel.superclass.constructor.call(this, ww,config);"
+        yield "  Lino.%s.FormPanel.superclass.constructor.call(this, ww,config);" % self.main.rh.report
         yield "  }"
         yield "});"
         yield ""

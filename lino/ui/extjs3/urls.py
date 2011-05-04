@@ -23,20 +23,17 @@ from django.contrib import databrowse
 #~ from django.contrib.auth import urls as auth_urls
 from django.utils import importlib
 
+import lino
+from . import ext_ui 
 
 urlpatterns = patterns('',
     (r'^favicon\.ico$', 'django.views.generic.simple.redirect_to', 
         {'url': settings.MEDIA_URL + 'lino/favicon.ico'})
 )
 
-    
-import lino
-
 settings.LINO.setup()
 
-from lino.ui.extjs.ext_ui import ExtUI
-
-ui = ExtUI(settings.LINO)
+ui = ext_ui.ExtUI(settings.LINO)
 
 urlpatterns += patterns('',
     (r'', include(ui.get_urls())),

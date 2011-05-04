@@ -52,7 +52,7 @@ class ActionRenderer(object):
         yield "    return new Lino.%s(caller,%s);}" % (
             self.__class__.__name__,py2js(self.config))
 
-class WindowWrapper(ActionRenderer):
+class Window(ActionRenderer):
    
     def __init__(self,action,ui,lh,main,**kw):
         ActionRenderer.__init__(self,ui,action)
@@ -94,10 +94,10 @@ def grid_model_lines(rh):
     yield "Ext.define('Lino.%s.GridModel',%s);" % (rh.report,py2js(kw))
   
 
-class MasterWrapper(WindowWrapper):
+class MasterWindow(Window):
   
     def __init__(self,rh,action,lh,**kw):
-        WindowWrapper.__init__(self,action,lh.rh.ui,lh,lh._main,**kw)
+        Window.__init__(self,action,lh.rh.ui,lh,lh._main,**kw)
         
     def js_render(self):
         yield "Lino.%s = function(caller,params) { " % self.action
@@ -107,14 +107,13 @@ class MasterWrapper(WindowWrapper):
         if False and settings.USE_FIREBUG:
             yield "  console.time('%s');" % self.action
             #~ yield "  console.log('ext_windows',20100930,params);"
-        yield "  var ww = new Lino.%s(caller,%s,params);" % (
-            self.__class__.__name__,py2js(self.config))
-        
-        #~ yield "  ww.main_item = %s;" % self.main.as_ext()
-        
         for ln in jsgen.declare_vars(self.main):
             yield '  '+ln
-        yield "  ww.main_item = %s;" % self.main.as_ext()
+        #~ yield "  ww.main_item = %s;" % 
+        yield "  var ww = new Lino.%s(caller,%s,%s,params);" % (
+            self.main.as_ext(), 
+            self.__class__.__name__,py2js(self.config))
+        
             
         yield "  ww.show();"
         if False and settings.USE_FIREBUG:
@@ -123,7 +122,7 @@ class MasterWrapper(WindowWrapper):
         
             
     
-class GridWrapperMixin(WindowWrapper):
+class GridWindowMixin(Window):
   
     #~ window_config_type = WC_TYPE_GRID
     
@@ -131,7 +130,7 @@ class GridWrapperMixin(WindowWrapper):
         self.rh = rh
     
     def get_config(self):
-        d = super(GridWrapperMixin,self).get_config()
+        d = super(GridWindowMixin,self).get_config()
         d.update(content_type=self.rh.content_type)
         #~ d.update(title=unicode(self.rh.get_title(None)))
         #~ 20101022 d.update(main_panel=self.lh._main)
@@ -140,15 +139,15 @@ class GridWrapperMixin(WindowWrapper):
     def update_config(self,wc):
         self.lh._main.update_config(wc)
 
-class GridMasterWrapper(GridWrapperMixin,MasterWrapper):
+class GridWindow(GridWindowMixin,MasterWindow):
   
     def __init__(self,rh,action,**kw):
         self.action = action
-        GridWrapperMixin.__init__(self,rh)
-        MasterWrapper.__init__(self,rh,action,rh.list_layout,**kw)
+        GridWindowMixin.__init__(self,rh)
+        MasterWindow.__init__(self,rh,action,rh.list_layout,**kw)
       
 
-class BaseDetailWrapper(MasterWrapper):
+class BaseDetailWindow(MasterWindow):
   
     def __init__(self,rh,action,**kw):
         self.rh = rh
@@ -158,16 +157,16 @@ class BaseDetailWrapper(MasterWrapper):
             lh = details[0]
             #~ lh.label = None
             main = ext_elems.FormPanel(rh,action,lh._main,method=self.method)
-            WindowWrapper.__init__(self,action,rh.ui,lh,main,**kw)        
+            Window.__init__(self,action,rh.ui,lh,main,**kw)        
         else:
             self.tabbed = True
             tabs = [lh._main for lh in details]
             main = ext_elems.FormPanel(rh,action,ext_elems.TabPanel(tabs),method=self.method)
-            WindowWrapper.__init__(self,action,rh.ui,None,main,**kw) 
+            Window.__init__(self,action,rh.ui,None,main,**kw) 
             
         
     def get_config(self):
-        d = MasterWrapper.get_config(self)
+        d = MasterWindow.get_config(self)
         url = self.ui.build_url('api',self.action.actor.app_label,self.action.actor._actor_name)
         d.update(content_type=self.rh.content_type)
         d.update(url_data=url) 
@@ -177,7 +176,7 @@ class BaseDetailWrapper(MasterWrapper):
         return d
         
         
-class DetailWrapper(BaseDetailWrapper):
+class DetailWindow(BaseDetailWindow):
     method = 'PUT'
   
     def js_render_formpanel(self):
@@ -199,14 +198,14 @@ class DetailWrapper(BaseDetailWrapper):
         assert isinstance(self.main,ext_elems.FormPanel)
         for ln in self.js_render_formpanel():
             yield ln
-        for ln in MasterWrapper.js_render(self):
+        for ln in MasterWindow.js_render(self):
             yield ln
 
   
-class InsertWrapper(BaseDetailWrapper):
+class InsertWindow(BaseDetailWindow):
     method = 'POST'
     def get_config(self):
-        d = BaseDetailWrapper.get_config(self)
+        d = BaseDetailWindow.get_config(self)
         d.update(record_id=-99999);
         return d
         
