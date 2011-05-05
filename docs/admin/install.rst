@@ -63,7 +63,7 @@ into `/var/snapshots/`::
   unzip ext-3.3.1.zip
   rm ext-3.3.1.zip
 
-  wget http://launchpad.net/appy/0.6/0.6.3/+download/appy0.6.3.zip
+  wget http://launchpad.net/appy/0.6/0.6.6/+download/appy0.6.6.zip
   unzip appy0.6.3.zip -d appy-0.6.3
   
 

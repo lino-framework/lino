@@ -1,0 +1,21 @@
+20110505
+========
+
+Markup-formatierte Memofelder drucken
+-------------------------------------
+
+Jetzt schauen wir uns eine Sache an, die seit :doc:`0214` offen stand:
+
+  Zum Beispiel in 
+  :attr:`lino.apps.dsbe.models.Contract.responsibilities` kommt in der Dokumentvorlage
+  anstelle des bisherigen Befehls `self.responsibilities` (im "track changes"-Modus)
+  ein leerer Absatz (evtl. mit Absatzformatierung, z.B. linker/rechter Einzug)
+  mit folgender Notiz::
+
+    do text
+    from xhtml(restify(self.responsibilities))
+        
+  Erste Versuche zeigen allerdings, dass da noch einige Dinge nicht funktionieren. 
+  Offenbar muss ich noch Stylezuweisungen o.ä. korrekt konfigurieren...
+      
+Inzwischen ist appy.pod schon bei Version 0.6.6. 

@@ -9,21 +9,37 @@ for which I hope for help from other people.
 Short-term
 ----------
 
-#.  :doc:`/tickets/41`
+#.  PXS->Memo wird nicht importiert.
+    Soll heißen "Bemerkungen Sozialsekretariat", 
+    PAR->Memo "Bemerkungen Stammdaten"
+
+#.  Wird markup in pdf (appy) richtig ausgedruckt?
 
 #.  Anzeige von mehrzeiligen Texten in Grids:  
     Ein Button "Details", der toggelt zwischen "erste Zeile" und "alles".
+    
+#.  Wysiwyg-Editor: Memo-Texte werden dann nur noch angezeigt, 
+    nebst einem Button, der den rich Text-Editor in einem eigenen Fenster öffnet.
+    Beim Upgrade alle bestehenden Textfelder mit restify einmalig konvertieren.
+    Wie wird das gespeichert? 
+    Immer HTML?
+    Oder pro Textfeld ein weiteres Ankreuzfeld?
+    Oder eine Shebang-Zeile, die das Textformat festlegt?
 
 #.  :doc:`/tickets/39`
 
-#.  Welche weiteren Felder müssen (ähnlich wie "Stadt") lernfähig werden? 
-    Vorschläge: 
-    - lino.mixins.reminders.Reminder.reminder_subject
-    - lino.apps.dsbe.models.Study.content
-    
-#.  Für manche Erinnerungsarten sollte eine Frist konfiguriert werden, 
-    nach deren Ablauf die Erinnerung automatisch als erledigt betrachtet wird.
-    
+#.  Externe Links (Lesezeichen) notieren können, 
+    indem man sie von einem anderen Browserfenster 
+    per drag & drop auf die HtmlBox zieht.   
+    :doc:`/tickets/8` 
+
+Medium-term
+-----------
+
+#.  Pro Ereignisart köntee ein Feld "muss manuell erledigt werden" kommen, 
+    das würde dann verhindern, dass entsprechende Erinnerungen 
+    automatisch aus dem Hauptbildschirm verschwinden.
+
 #.  Mail-Interface, Posteingang : 
     Lino-Server empfängt E-Mails, die teilweise geparst werden und/oder 
     manuell durch den Benutzer weiter verwaltet werden.
@@ -72,6 +88,14 @@ Short-term
 
 Later
 -----
+
+#.  Welche weiteren Felder müssen (ähnlich wie "Stadt") lernfähig werden? 
+    Vorschläge: 
+    
+    - lino.mixins.reminders.Reminder.reminder_subject
+    - lino.apps.dsbe.models.Study.content
+    
+#.  :doc:`/tickets/41`
 
 #.  Erinnerungen gar nicht mehr im Lino-Hauptbildschirm, sondern nach GW schicken?
     Oder GW neu schreiben?
@@ -211,10 +235,6 @@ Later
     
 #.  Arbeitsregime und Stundenplan: 
     Texte in Konfigurationsdateien auslagern
-
-#.  Externe Links (Lesezeichen) notieren können, indem man sie von einem anderen Browserfenster 
-    per drag & drop auf die HtmlBox zieht.   
-    :doc:`/tickets/8` 
 
 #.  How to import, render & edit BIC:IBAN account numbers?
 

@@ -12,5 +12,6 @@ Administrator's Manual
    tim2lino
    django_tests
    using_appy_pod
+   upgrade
    datamig
 
