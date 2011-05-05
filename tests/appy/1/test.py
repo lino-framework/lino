@@ -23,12 +23,15 @@ def run_test(number,HTML):
     renderer.run()  
     os.startfile(target)    
 
-run_test(1,'''
-<div class="document">
-<p>Hello, world?</p>
-</div>
-''')
 
+# 1 : this works fine with version 0.6.6
+#~ run_test(1,'''
+#~ <div class="document">
+#~ <p>Hello, world?</p>
+#~ </div>
+#~ ''')
+
+# 2 : this doesn't work with version 0.6.6, the list items are swallowed.
 run_test(2,'''
 <div class="document">
 <p>Some <strong>bold</strong> and some <em>italic</em> text.</p>
@@ -43,19 +46,19 @@ run_test(2,'''
 </div>
 ''')
     
+#~ # 3 : the same as 3, but using `restify` to make the HTML
+#~ from lino.utils.restify import restify
+#~ run_test(3,restify(u'''
+#~ Some **bold** and some *italic* text. 
 
-from lino.utils.restify import restify
-run_test(3,restify(u'''
-Some **bold** and some *italic* text. 
+#~ A new paragraph.
 
-A new paragraph.
+#~ A list with three items:
 
-A list with three items:
+#~ - the first item
+#~ - another item
+#~ - the last item
 
-- the first item
-- another item
-- the last item
-
-A last paragraph.
-'''))
+#~ A last paragraph.
+#~ '''))
 
