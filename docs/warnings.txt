@@ -2,6 +2,17 @@ T:\hgwork\lino\docs\autodoc\lino.ui.extjs.rst:4: (WARNING/2) autodoc can't impor
 T:\hgwork\lino\docs\autodoc\lino.ui.extjs.rst:12: (WARNING/2) autodoc can't import/find module 'lino.ui.extjs.ext_elems', it reported error: "No module named extjs.ext_elems", please check your spelling and sys.path
 T:\hgwork\lino\docs\autodoc\lino.ui.extjs.rst:21: (WARNING/2) autodoc can't import/find module 'lino.ui.extjs.ext_ui', it reported error: "No module named extjs.ext_ui", please check your spelling and sys.path
 T:\hgwork\lino\docs\autodoc\lino.ui.extjs.rst:29: (WARNING/2) autodoc can't import/find module 'lino.ui.extjs.ext_windows', it reported error: "No module named extjs.ext_windows", please check your spelling and sys.path
+T:\hgwork\lino\docs\autodoc\lino.mixins.printable.rst:10: WARNING: py:class reference target not found: lino.mixins.printable.SimpleBuildMethod
+T:\hgwork\lino\docs\autodoc\lino.mixins.printable.rst:65: WARNING: py:class reference target not found: lino.mixins.printable.DjangoBuildMethod
+T:\hgwork\lino\docs\autodoc\lino.mixins.printable.rst:73: WARNING: py:class reference target not found: lino.mixins.printable.BasePrintAction
+T:\hgwork\lino\docs\autodoc\lino.mixins.printable.rst:83: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.mixins.printable.rst:91: WARNING: py:class reference target not found: SimpleBuildMethod
+T:\hgwork\lino\docs\autodoc\lino.mixins.printable.rst:117: WARNING: py:meth reference target not found: get_last_modified_time
+T:\hgwork\lino\docs\autodoc\lino.mixins.printable.rst:126: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.mixins.printable.rst:159: WARNING: py:class reference target not found: lino.mixins.printable.SimpleBuildMethod
+T:\hgwork\lino\docs\autodoc\lino.mixins.printable.rst:172: WARNING: py:meth reference target not found: get_printable_type
+T:\hgwork\lino\docs\autodoc\lino.mixins.printable.rst:172: WARNING: py:attr reference target not found: lino.modlib.sales.models.SalesDocument.imode
+T:\hgwork\lino\docs\autodoc\lino.mixins.printable.rst:182: WARNING: py:class reference target not found: NotImplementedError
 T:\hgwork\lino\docs\autodoc\lino.ui.rst:4: WARNING: py:mod reference target not found: lino.ui.extjs
 T:\hgwork\lino\docs\autodoc\lino.ui.rst:16: WARNING: py:mod reference target not found: base
 T:\hgwork\lino\docs\autodoc\lino.ui.rst:17: WARNING: py:class reference target not found: object
@@ -11,3 +22,29 @@ T:\hgwork\lino\docs\autodoc\lino.ui.extjs.rst:1: WARNING: py:mod reference targe
 T:\hgwork\lino\docs\autodoc\lino.ui.extjs.rst:9: WARNING: py:mod reference target not found: ext_elems
 T:\hgwork\lino\docs\autodoc\lino.ui.extjs.rst:18: WARNING: py:mod reference target not found: ext_ui
 T:\hgwork\lino\docs\autodoc\lino.ui.extjs.rst:26: WARNING: py:mod reference target not found: ext_windows
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:10: WARNING: py:mod reference target not found: dbfreader
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:18: WARNING: py:mod reference target not found: dpy
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:17: WARNING: py:class reference target not found: django.core.serializers.base.DeserializedObject
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:39: WARNING: py:class reference target not found: django.core.serializers.base.Serializer
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:26: WARNING: py:mod reference target not found: editing
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:34: WARNING: py:mod reference target not found: instantiator
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:17: WARNING: py:class reference target not found: exceptions.Exception
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:42: WARNING: py:mod reference target not found: jsgen
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:80: WARNING: py:class reference target not found: object
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:50: WARNING: py:mod reference target not found: latex
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:58: WARNING: py:mod reference target not found: menus
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:66: WARNING: py:mod reference target not found: perms
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:74: WARNING: py:mod reference target not found: requests
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:82: WARNING: py:mod reference target not found: restify
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:4: WARNING: py:mod reference target not found: docutils.examples
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:90: WARNING: py:mod reference target not found: simulate_remote
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:17: WARNING: setting reference target not found: MIDDLEWARE_CLASSES
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:27: WARNING: py:class reference target not found: object
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:98: WARNING: py:mod reference target not found: mti
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:12: WARNING: py:class reference target not found: django.db.models.deletion.Collector
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:50: WARNING: py:class reference target not found: object
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:108: WARNING: py:func reference target not found: convert
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:106: WARNING: py:mod reference target not found: ucsv
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:114: WARNING: py:mod reference target not found: validatingmodel
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:31: WARNING: py:class reference target not found: exceptions.Exception
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:37: WARNING: py:class reference target not found: django.db.models.base.Model

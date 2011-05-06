@@ -8,6 +8,7 @@ Just a copy & paste of the :mod:`docutils.examples` module (as instructed there)
 
 """
 
+#~ import traceback
 from docutils import core, io
 
 def html_parts(input_string, source_path=None, destination_path=None,
@@ -70,6 +71,47 @@ def html_body(input_string, source_path=None, destination_path=None,
 
 
 restify = html_body
+
+def install_restify(renderer):
+    """
+    Install the `restify` function into the specified appy.pod renderer.
+    This may break with later versions of appy.pod since 
+    it hacks on undocumented regions... but we wanted to be 
+    able to insert rst formatted plain text using a simple comment 
+    like this::
+    
+      do text
+        from restify(self.body)
+        
+    Without this hack, users would have to write each time something 
+    like::
+    
+      do text
+        from xhtml(restify(self.body).encode('utf-8'))
+        
+      do text
+        from xhtml(restify(self.body,output_encoding='utf-8'))
+    
+
+    """
+    def func(unicode_string,**kw):
+        if not unicode_string:
+            return ''
+        html = restify(unicode_string,output_encoding='utf-8')
+        #~ try:
+            #~ html = restify(unicode_string,output_encoding='utf-8')
+        #~ except Exception,e:
+            #~ print unicode_string
+            #~ traceback.print_exc(e)
+        #~ print repr(html)
+        assert html.startswith('<div class="document">\n')
+        assert html.endswith('</div>\n')
+        html = html[23:-7]
+        #~ print repr(html)
+        return renderer.renderXhtml(html,**kw)
+        #~ return renderer.renderXhtml(html.encode('utf-8'),**kw)
+    renderer.contentParser.env.context.update(restify=func)
+
 
 def latex_parts(input_string, source_path=None, destination_path=None,
                input_encoding='unicode', doctitle=1, initial_header_level=1):

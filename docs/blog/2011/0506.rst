@@ -15,13 +15,13 @@ gemeldet.
 Um den zu umgehen, kann man folgenden pod command benutzen::
 
     do text
-      from xhtml(restify(self.body).encode('utf-8'))
+    from xhtml(restify(self.body).encode('utf-8'))
             
 Einfacher ist es aber ab dem nächsten Release, denn dann 
 müssten diese Stellen sowieso alle konvertiert werden nach::
 
     do text
-      from restify(self.body)
+    from restify(self.body)
 
 (Um das hinzukriegen, musste ich mir was einfallen lassen, siehe 
 im Code von :class:`lino.mixins.printable.AppyBuildMethod`)
@@ -34,8 +34,8 @@ auf Antwort auf meine
 <http://sourceforge.net/mailarchive/forum.php?thread_name=4DC3EEBC.80302%40gmx.net&forum_name=docutils-users>`_.
 
 
-Gridkonfigation speichern
--------------------------
+Gridkonfiguration speichern
+---------------------------
 
 In Eupen funktionierte das Speichern einer Gridkonfigation nicht. 
 
@@ -81,3 +81,32 @@ sondern eine message box anzeigt.
 
 Also drei Bugs auf einen Streich!
 
+Noch appy.pod und restify
+-------------------------
+
+22 Uhr. 
+Auf meine 
+`Frage im Forum von Docutils
+<http://sourceforge.net/mailarchive/forum.php?thread_name=4DC3EEBC.80302%40gmx.net&forum_name=docutils-users>`_.
+hat noch niemand geantwortet, aber ich mach's 
+jetzt einfach auf die brutale Art und Weise::
+
+    html = html_body(s,output_encoding='utf-8')
+    assert html.startswith('<div class="document">\n')
+    assert html.endswith('</div>\n')
+    html = html[23:-7]
+
+Das ist zwar nicht gerade nett, aber es funktioniert.
+
+Jetzt habe ich noch ein Problem, das ich eigentlich nur 
+für meinen :srcref:`test </tests/appy/1>` brauche: ich würde 
+dort gerne zunächst den rohen RST-Quelltext ins Dokument rendern, 
+gefolgt vom Resultat. Das Resultat ist korrekt, aber den 
+Quelltext kriege ich nicht reingeholt. Eigentlich müsste das doch 
+mit folgendem Befehl gehen::
+
+  do text
+  from text(RST)
+  
+Eine Stunde gerätselt, bis es Tilt machte: in meinem RST-Text 
+war noch ein "<" drin, und das verträgt text() nicht.
