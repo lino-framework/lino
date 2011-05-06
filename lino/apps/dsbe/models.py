@@ -56,20 +56,6 @@ from lino.utils import mti
 from lino.mixins.printable import DirectPrintAction
 from lino.mixins.reminder import ReminderEntry
 
-#~ from lino.modlib.fields import KNOWLEDGE_CHOICES # for makemessages
-
-#~ CONFIG_NAMES = [
-  #~ _("Status"),
-  #~ _("Person"),
-  #~ _("Education"), # Ausbildung/Erfahrungen
-  #~ _("Languages"), # Sprachen
-  #~ _("Properties"), # Eigenschaften
-  #~ _("Skills"), # Fähigkeiten
-  #~ _("Obstacles"), # Hindernisse
-  #~ _("Notes"), # Notizen
-  #~ _("Miscellaneous"), # Sonstiges
-#~ ]
-#~ del CONFIG_NAMES # this was just for gettext to find them
 
 SCHEDULE_CHOICES = {
     'de':[ 
@@ -302,6 +288,7 @@ class Person(Partner,contacts.Person):
         #~ self.name = " ".join(l)
         #~ super(Person,self).clean()
         
+    remarks2 = models.TextField(_("Remarks (Social Office)"),blank=True,null=True)
     gesdos_id = models.CharField(max_length=40,blank=True,null=True,
         verbose_name=_("Gesdos ID"))
         
@@ -593,7 +580,7 @@ class Person(Partner,contacts.Person):
     
     
 PERSON_TIM_FIELDS = reports.fields_list(Person,
-    '''name first_name last_name title remarks
+    '''name first_name last_name title remarks remarks2
     zip_code city country street street_no street_box 
     birth_date sex birth_place coach1 language 
     phone fax email 
@@ -1404,6 +1391,14 @@ class Note(notes.Note,contacts.PartnerDocument):
             more.append(cgi.escape(_('due date reached')))
         return s + '&nbsp;: ' + (', '.join(more))
         
+    def disabled_fields(self,request):
+        if self.must_build:
+            return []
+        return NOTE_PRINTABLE_FIELDS
+        
+NOTE_PRINTABLE_FIELDS = reports.fields_list(Note,
+    '''date subject body language person company''')
+    
 class NotesByPerson(notes.Notes):
     fk_name = 'person'
     column_names = "date event_type type subject body_html user company *"

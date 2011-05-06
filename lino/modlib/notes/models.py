@@ -125,6 +125,15 @@ class Note(mixins.TypedPrintable,mixins.Reminder):
         return ''
     body_html.return_type = fields.DisplayField(_("Body"))
     
+    def disabled_fields(self,request):
+        if self.must_build:
+            return []
+        return NOTE_PRINTABLE_FIELDS
+        
+NOTE_PRINTABLE_FIELDS = reports.fields_list(Note,
+    '''date subject body language''')
+    
+    
 def html_text(s):
     return '<div class="htmlText">' + s + '</div>'
     

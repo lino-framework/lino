@@ -4,5 +4,5 @@
 main = 
   activity pharmacy
   is_active is_cpas is_senior #is_minor
-  remarks contacts.ContactsByPerson:20
+  remarks:30 remarks2:30 contacts.ContactsByPerson:30
 

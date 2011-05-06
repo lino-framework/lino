@@ -126,6 +126,7 @@ As long as nobody protests, I'll save some time by writing in German.
   :doc:`03 <0503>`
   :doc:`04 <0504>`
   :doc:`05 <0505>`
+  :doc:`06 <0506>`
   |br| 
   |br| 
   |br|  	

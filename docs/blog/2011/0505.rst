@@ -19,3 +19,20 @@ Jetzt schauen wir uns eine Sache an, die seit :doc:`0214` offen stand:
   Offenbar muss ich noch Stylezuweisungen o.ä. korrekt konfigurieren...
       
 Inzwischen ist appy.pod schon bei Version 0.6.6. 
+Ah, das geht schon deutlich besser!
+
+Oh, aber Listen verschluckt er einfach. 
+Das darf er nicht.
+Neuen Testcase geschrieben (:srcref:`/tests/appy/1`) und die Sache 
+als `Bug #777890 <https://bugs.launchpad.net/appy/+bug/777890>`_ gemeldet.
+
+
+Kleine Änderungen DSBE
+----------------------
+
+- Neues Feld `Person.remarks2` (das von watch_tim aus `PXS->Memo` 
+  synchronisiert wird).
+  
+- Die folgenden Felder einer Notiz sind jetzt disabled, 
+  wenn die Notiz ausgedruckt wurde:
+  date subject body language person company

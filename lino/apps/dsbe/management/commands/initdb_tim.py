@@ -164,6 +164,7 @@ def pxs2person(row,person):
       card_issuer=row.get('CARDISSUER',''),      # 20110110
       noble_condition=row.get('NOBLEECOND',''),      # 20110110
       birth_place=row.get('BIRTHPLACE',''),
+      remarks2=row.get('MEMO',''),
       sex=convert_sex(row['SEXE'])
     )
     for k,v in kw.items():

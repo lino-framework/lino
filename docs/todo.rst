@@ -9,11 +9,16 @@ for which I hope for help from other people.
 Short-term
 ----------
 
+#.  Wird markup in pdf (appy) richtig ausgedruckt?
+
 #.  PXS->Memo wird nicht importiert.
     Soll heißen "Bemerkungen Sozialsekretariat", 
     PAR->Memo "Bemerkungen Stammdaten"
 
-#.  Wird markup in pdf (appy) richtig ausgedruckt?
+#.  Externe Links (Lesezeichen) notieren können, 
+    indem man sie von einem anderen Browserfenster 
+    per drag & drop auf die HtmlBox zieht.   
+    :doc:`/tickets/8` 
 
 #.  Anzeige von mehrzeiligen Texten in Grids:  
     Ein Button "Details", der toggelt zwischen "erste Zeile" und "alles".
@@ -27,11 +32,6 @@ Short-term
     Oder eine Shebang-Zeile, die das Textformat festlegt?
 
 #.  :doc:`/tickets/39`
-
-#.  Externe Links (Lesezeichen) notieren können, 
-    indem man sie von einem anderen Browserfenster 
-    per drag & drop auf die HtmlBox zieht.   
-    :doc:`/tickets/8` 
 
 Medium-term
 -----------
