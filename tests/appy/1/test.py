@@ -69,15 +69,31 @@ run_test(2,"List items are not rendered (Appy 0.6.6)",'''
 #~ A last paragraph.
 #~ '''))
 
-from lino.utils.restify import restify
-run_test(4,"List items are not rendered (Appy 0.6.6), but using `restify` to make the HTML",restify(u'''
-Längere Texte mit mehreren Absätzen im Inhalt einer Notiz (Note.body) 
-wurden in der Grid zu einem einzigen Absatz zusammengeschnürt. 
+#~ from lino.utils.restify import restify
+#~ run_test(4,
+  #~ "List items are not rendered (Appy 0.6.6), but using `restify` to make the HTML",
+  #~ restify(u'''
+#~ Längere Texte mit mehreren Absätzen im Inhalt einer Notiz (Note.body) 
+#~ wurden in der Grid zu einem einzigen Absatz zusammengeschnürt. 
 
-- Virtuelles Feld `body_html` benutzt `lino.utils.restify`
-- `body` ist jetzt in der Grid unsichtbar
+#~ - Virtuelles Feld `body_html` benutzt `lino.utils.restify`
+#~ - `body` ist jetzt in der Grid unsichtbar
 
-Das Resultat ist jetzt einigermaßen akzeptabel (`Links <http://lino.saffre-rumma.net>`_ sind anklickbar, 
-Absatzwechsel werden als Zeilenwechsel angezeigt), aber noch nicht 
-optimal (**fett**, *kursiv*, Aufzählungen werden verschluckt).
-'''))
+#~ Das Resultat ist jetzt einigermaßen akzeptabel (`Links <http://lino.saffre-rumma.net>`_ sind anklickbar, 
+#~ Absatzwechsel werden als Zeilenwechsel angezeigt), aber noch nicht 
+#~ optimal (**fett**, *kursiv*, Aufzählungen werden verschluckt).
+#~ '''))
+
+#~ from lino.utils.restify import restify
+#~ html = restify(u'''
+#~ Text in backticks (e.g. `body_html`) causes a CITE tag which leads to an 
+#~ exception of the SAX parser
+#~ ''')
+#~ print html
+html = """
+<div class="document">
+<p>Text in backticks (e.g. <cite>body_html</cite>) causes a CITE tag which leads to an
+exception of the SAX parser</p>
+</div>
+"""
+run_test(4,"cite tag",html)
