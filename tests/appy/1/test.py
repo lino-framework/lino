@@ -9,30 +9,37 @@ print "appy.version.verbose", version.verbose
 print "Python sys.version_info", sys.version
 print "Python sys.platform", sys.platform
 
-APPY_PARAMS = dict(ooPort=8100)
-APPY_PARAMS.update(pythonWithUnoPath=r'C:\PROGRA~1\LIBREO~1\program\python.exe')
+APPY_PARAMS = dict()
 
-def run_test(number,HTML):
+#~ APPY_PARAMS.update(ooPort=8100)
+#~ APPY_PARAMS.update(pythonWithUnoPath=r'C:\PROGRA~1\LIBREO~1\program\python.exe')
+
+def run_test(number,title,HTML):
     tpl = 'test_template.odt'
-    context = dict()
-    context.update(HTML=HTML)
+    context = dict(locals())
+    context.update(
+        appy_version=version.verbose,
+        python_version=sys.version,
+        platform=sys.platform,
+    )
     target = 'test_result_%d.odt' % number
     if os.path.exists(target): 
         os.remove(target)
     renderer = Renderer(tpl, context, target,**APPY_PARAMS)
     renderer.run()  
+    print "Generated file", target
     #~ os.startfile(target)    
 
 
-# 1 : this works fine with version 0.6.6
-#~ run_test(1,'''
+# 1 : 
+#~ run_test(1,"Simple test. Works fine with version 0.6.6", '''
 #~ <div class="document">
 #~ <p>Hello, world?</p>
 #~ </div>
 #~ ''')
 
-# 2 : this doesn't work with version 0.6.6, the list items are swallowed.
-run_test(2,'''
+# 2 : 
+run_test(2,"List items are not rendered (Appy 0.6.6)",'''
 <div class="document">
 <p>Some <strong>bold</strong> and some <em>italic</em> text.</p>
 <p>A new paragraph.</p>
@@ -62,9 +69,8 @@ run_test(2,'''
 #~ A last paragraph.
 #~ '''))
 
-# 4 : the same as 3, but using `restify` to make the HTML
 from lino.utils.restify import restify
-run_test(4,restify(u'''
+run_test(4,"List items are not rendered (Appy 0.6.6), but using `restify` to make the HTML",restify(u'''
 Längere Texte mit mehreren Absätzen im Inhalt einer Notiz (Note.body) 
 wurden in der Grid zu einem einzigen Absatz zusammengeschnürt. 
 
