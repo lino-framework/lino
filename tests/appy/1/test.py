@@ -70,33 +70,31 @@ run_test(2,"List items are not rendered (Appy 0.6.6)",'''
 #~ A last paragraph.
 #~ '''))
 
-from lino.utils.restify import restify
-html = restify(u'''
-Laengere Texte mit mehreren Absaetzen im Inhalt einer Notiz (Note.body) 
-wurden in der Grid zu einem einzigen Absatz zusammengeschnuert. 
+#~ from lino.utils.restify import restify
+#~ html = restify(u'''
+#~ Längere Texte mit mehreren Absaetzen im Inhalt einer Notiz (Note.body) 
+#~ wurden in der Grid zu einem einzigen Absatz zusammengeschnuert. 
 
-- Virtuelles Feld `body_html` benutzt `lino.utils.restify`
-- `body` ist jetzt in der Grid unsichtbar
+#~ - Virtuelles Feld `body_html` benutzt `lino.utils.restify`
+#~ - `body` ist jetzt in der Grid unsichtbar
 
-Das Resultat ist jetzt einigermassen akzeptabel 
-(`Links <http://lino.saffre-rumma.net>`_ sind anklickbar, 
-Absatzwechsel werden als Zeilenwechsel angezeigt, 
-Zeichenformatierung **fett** und *kursiv* funktioniert), 
-aber noch nicht optimal (Aufzaehlungen werden verschluckt).
-''')
+#~ Das Resultat ist jetzt einigermassen akzeptabel 
+#~ (`Links <http://lino.saffre-rumma.net>`_ sind anklickbar, 
+#~ Absatzwechsel werden als Zeilenwechsel angezeigt, 
+#~ Zeichenformatierung **fett** und *kursiv* funktioniert), 
+#~ aber noch nicht optimal (Aufzaehlungen werden verschluckt).
+#~ ''')
 #~ print html
-#~ html = """
-#~ <div class="document">
-#~ <p>Längere Texte mit mehreren Absätzen im Inhalt einer Notiz (Note.body)
-#~ wurden in der Grid zu einem einzigen Absatz zusammengeschnürt.</p>
-#~ <ul class="simple">
-#~ <li>Virtuelles Feld <cite>body_html</cite> benutzt <cite>lino.utils.restify</cite></li>
-#~ <li><cite>body</cite> ist jetzt in der Grid unsichtbar</li>
-#~ </ul>
-#~ <p>Das Resultat ist jetzt einigermaßen akzeptabel (<a class="reference external" href="http://lino.saffre-rumma.net">Links</a> sind anklickbar,
-#~ Absatzwechsel werden als Zeilenwechsel angezeigt), aber noch nicht
-#~ optimal (<strong>fett</strong>, <em>kursiv</em>, Aufzählungen werden verschluckt).</p>
-#~ </div>
-#~ """
+html = u"""
+<p>Längere Texte mit mehreren Absätzen im Inhalt einer Notiz (Note.body)
+wurden in der Grid zu einem einzigen Absatz zusammengeschnürt.</p>
+<ul class="simple">
+<li>Virtuelles Feld <cite>body_html</cite> benutzt <cite>lino.utils.restify</cite></li>
+<li><cite>body</cite> ist jetzt in der Grid unsichtbar</li>
+</ul>
+<p>Das Resultat ist jetzt einigermaßen akzeptabel (<a class="reference external" href="http://lino.saffre-rumma.net">Links</a> sind anklickbar,
+Absatzwechsel werden als Zeilenwechsel angezeigt), aber noch nicht
+optimal (<strong>fett</strong>, <em>kursiv</em>, Aufzählungen werden verschluckt).</p>
+""".encode('utf-8')
 run_test(4,"SAX parser error on Python 2.6",html)
 

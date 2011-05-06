@@ -21,6 +21,7 @@ logger = logging.getLogger(__name__)
 import os
 import sys
 import logging
+import traceback
 import cStringIO
 import glob
 from fnmatch import fnmatch
@@ -210,7 +211,7 @@ class AppyBuildMethod(SimpleBuildMethod):
             babelattr=babel.babelattr,
             babelitem=babel.babelitem,
             tr=babel.babelitem,
-            restify=restify,
+            #~ restify=restify,
             site_config = get_site_config(),
             _ = _,
             #~ knowledge_text=fields.knowledge_text,
@@ -223,6 +224,41 @@ class AppyBuildMethod(SimpleBuildMethod):
         #~ locale.setlocale(locale.LC_ALL,ls)
         #~ Error: unsupported locale setting
         renderer = Renderer(tpl, context, target,**settings.APPY_PARAMS)
+        
+        """
+        The following may break with later versions of appy.pod since 
+        it hacks on undocumented regions... but we wanted to be 
+        able to insert rst formatted plain text using a simple comment 
+        like this::
+        
+          do text
+            from restify(self.body)
+            
+        Without this hack, users would have to write each time something 
+        like::
+        
+          do text
+            from xhtml(restify(self.body).encode('utf-8'))
+            
+          do text
+            from xhtml(restify(self.body,output_encoding='utf-8'))
+        
+    
+        """
+        def xhtml_restify(unicode_string,**kw):
+            if not unicode_string:
+                return ''
+            try:
+                html = restify(unicode_string,output_encoding='utf-8')
+            except Exception,e:
+                print unicode_string
+                traceback.print_exc(e)
+            print html
+            return renderer.renderXhtml(html,**kw)
+            #~ return renderer.renderXhtml(html.encode('utf-8'),**kw)
+        renderer.contentParser.env.context.update(restify=xhtml_restify)
+        
+        
         #~ def debug_restify(s,*args,**kw):
             #~ print s
             #~ print "--->"

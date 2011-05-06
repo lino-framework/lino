@@ -12,6 +12,26 @@ Einen der Fehler habe ich als
 `expatreader exception during xhtml 
 <https://answers.launchpad.net/appy/+question/156227>`_
 gemeldet.
+Um den zu umgehen, kann man folgenden pod command benutzen::
+
+    do text
+      from xhtml(restify(self.body).encode('utf-8'))
+            
+Einfacher ist es aber ab dem nächsten Release, denn dann 
+müssten diese Stellen sowieso alle konvertiert werden nach::
+
+    do text
+      from restify(self.body)
+
+(Um das hinzukriegen, musste ich mir was einfallen lassen, siehe 
+im Code von :class:`lino.mixins.printable.AppyBuildMethod`)
+
+Und das Problem von gestern (dass er Aufzählungen verschluckt, 
+`Bug #777890 <https://bugs.launchpad.net/appy/+bug/777890>`_) 
+ist hoffentlich auch bald gelöst. Hier warte ich jetzt 
+auf Antwort auf meine 
+`Frage im Forum von Docutils
+<http://sourceforge.net/mailarchive/forum.php?thread_name=4DC3EEBC.80302%40gmx.net&forum_name=docutils-users>`_.
 
 
 Gridkonfigation speichern
