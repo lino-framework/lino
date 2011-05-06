@@ -856,7 +856,12 @@ class ExtUI(base.UI):
                 name = int(name)
                 
             gc.update(label=PUT.get('label',"Standard"))
-            msg = rpt.save_grid_config(name,gc)
+            try:
+                msg = rpt.save_grid_config(name,gc)
+            except IOError,e:
+                msg = _("Error while saving GC for %(report)s: %(error)s") % dict(
+                    report=rpt,error=e)
+                return error_response(None,msg)
             #~ logger.info(msg)
             self.build_lino_js()            
             return self.success_response(msg)

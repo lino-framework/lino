@@ -1,0 +1,63 @@
+20110506
+========
+
+Aufzählungen drucken
+--------------------
+
+Ich habe mal eine Dokumentvorlage für `notes.Note` gemacht und mit 
+dem systematischen Testen der Formatierungsmöglichkeiten begonnen.
+Aufzählungen funktionieren noch nicht.
+
+Einen der Fehler habe ich als
+`expatreader exception during xhtml 
+<https://answers.launchpad.net/appy/+question/156227>`_
+gemeldet.
+
+
+Gridkonfigation speichern
+-------------------------
+
+In Eupen funktionierte das Speichern einer Gridkonfigation nicht. 
+
+Auslöser war, dass das lokale `config`-Verzeichnis nicht 
+durch `www-data` geschrieben werden durfte. 
+``chmod g+w config`` löste das Problem.
+
+Dann machte Lino den Fehler, dass er das Problem dem
+Benutzer nicht meldete (außer dass die übliche Bestätigung
+"GridConfig has been saved to .../config/notes.NotesByCompany.gc" 
+fehlte, was ja niemand merkt).
+Auf dem Server schrieb mod_wsgi dann zwar den Traceback 
+in die error.log rein...
+
+::
+
+  Traceback (most recent call last):
+    File "/var/snapshots/django/django/core/handlers/wsgi.py", line 273, in __call__
+      response = self.get_response(request)
+    File "/var/snapshots/django/django/core/handlers/base.py", line 169, in get_response
+      response = self.handle_uncaught_exception(request, resolver, sys.exc_info())
+    File "/var/snapshots/django/django/core/handlers/base.py", line 111, in get_response
+      response = callback(request, *callback_args, **callback_kwargs)
+    File "/var/snapshots/lino/lino/ui/extjs/ext_ui.py", line 866, in grid_config_view
+      msg = rpt.save_grid_config(name,gc)
+    File "/var/snapshots/lino/lino/reports.py", line 1195, in save_grid_config
+      return gc.save_config()
+    File "/var/snapshots/lino/lino/utils/config.py", line 160, in save_config
+      f = codecs.open(fn,'w',encoding='utf-8')
+    File "/usr/lib/python2.6/codecs.py", line 881, in open
+      file = __builtin__.open(filename, mode, buffering)
+  IOError: [Errno 13] Permission denied: '/usr/local/django/myproject/config/notes.NotesByPerson.gc'
+
+... aber der Client bekam dadurch
+keine Antwort auf seinen AJAX-Call.
+Oder genauer gesagt bekam er Djangos freundliche 
+505-Fehlermeldung statt einer Antwort.
+Jetzt meldet der Server einen Fehler 
+während `Config.save_config` korrekt, 
+und der Client musste noch gesagt bekommen, 
+dass er die Fehlermeldung dann nicht einfach ignoriert, 
+sondern eine message box anzeigt.
+
+Also drei Bugs auf einen Streich!
+

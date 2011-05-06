@@ -775,8 +775,9 @@ Lino.permalink_handler = function (ww) {
 
 
 Lino.ajax_error_handler = function(response,options) {
-    console.log('AJAX failure:',response,options);
-    // Ext.MessageBox.alert('Action failed','Lino server did not respond to Ajax request');
+    //~ console.log('AJAX failure:',response,options);
+    Ext.MessageBox.alert('Action failed',
+      'Lino server did not respond to Ajax request');
 }
 // Ext.Ajax.on('requestexception',Lino.ajax_error_handler)
 
@@ -1777,7 +1778,8 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
       params:this.get_current_grid_config(), 
       method:'PUT',
       url:'/grid_config'+this.ls_url,
-      success: Lino.action_handler(this)
+      success: Lino.action_handler(this),
+      failure: Lino.ajax_error_handler
     };
     Ext.Ajax.request(a);
     //~ Lino.do_action(this,a);

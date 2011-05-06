@@ -11,10 +11,6 @@ Short-term
 
 #.  Wird markup in pdf (appy) richtig ausgedruckt?
 
-#.  PXS->Memo wird nicht importiert.
-    Soll heißen "Bemerkungen Sozialsekretariat", 
-    PAR->Memo "Bemerkungen Stammdaten"
-
 #.  Externe Links (Lesezeichen) notieren können, 
     indem man sie von einem anderen Browserfenster 
     per drag & drop auf die HtmlBox zieht.   

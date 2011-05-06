@@ -1246,7 +1246,7 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,contact
         if self.reminder_text:
             more.append(cgi.escape(self.reminder_text))
         else:
-            more.append(cgi.escape(_('due date reached')))
+            more.append(cgi.escape(_('Due date reached')))
         return s + '&nbsp;: ' + (', '.join(more))
         
     def summary_row(self,ui,rr,**kw):
@@ -1388,7 +1388,7 @@ class Note(notes.Note,contacts.PartnerDocument):
         if self.reminder_text:
             more.append(cgi.escape(self.reminder_text))
         else:
-            more.append(cgi.escape(_('due date reached')))
+            more.append(cgi.escape(_('Due date reached')))
         return s + '&nbsp;: ' + (', '.join(more))
         
     def disabled_fields(self,request):

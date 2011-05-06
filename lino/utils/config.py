@@ -149,9 +149,9 @@ class Configured(object):
 
     def save_config(self):
         if not self.filename:
-            return 'Cannot save unnamed %s' % self
+            raise IOError('Cannot save unnamed %s' % self)
         if self.cd is None:
-            return "Cannot save because there is no LOCAL_CONFIG_DIR"
+            raise IOError("Cannot save because there is no LOCAL_CONFIG_DIR")
             
         if not self.cd.can_write:
             #~ print self.cd, "is not writable", self.filename
