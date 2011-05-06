@@ -21,7 +21,7 @@ def run_test(number,HTML):
         os.remove(target)
     renderer = Renderer(tpl, context, target,**APPY_PARAMS)
     renderer.run()  
-    os.startfile(target)    
+    #~ os.startfile(target)    
 
 
 # 1 : this works fine with version 0.6.6
@@ -46,7 +46,7 @@ run_test(2,'''
 </div>
 ''')
     
-#~ # 3 : the same as 3, but using `restify` to make the HTML
+#~ # 3 : the same as 2, but using `restify` to make the HTML
 #~ from lino.utils.restify import restify
 #~ run_test(3,restify(u'''
 #~ Some **bold** and some *italic* text. 
@@ -62,3 +62,16 @@ run_test(2,'''
 #~ A last paragraph.
 #~ '''))
 
+# 4 : the same as 3, but using `restify` to make the HTML
+from lino.utils.restify import restify
+run_test(4,restify(u'''
+Längere Texte mit mehreren Absätzen im Inhalt einer Notiz (Note.body) 
+wurden in der Grid zu einem einzigen Absatz zusammengeschnürt. 
+
+- Virtuelles Feld `body_html` benutzt `lino.utils.restify`
+- `body` ist jetzt in der Grid unsichtbar
+
+Das Resultat ist jetzt einigermaßen akzeptabel (`Links <http://lino.saffre-rumma.net>`_ sind anklickbar, 
+Absatzwechsel werden als Zeilenwechsel angezeigt), aber noch nicht 
+optimal (**fett**, *kursiv*, Aufzählungen werden verschluckt).
+'''))

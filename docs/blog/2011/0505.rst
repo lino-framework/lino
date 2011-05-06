@@ -27,8 +27,8 @@ Neuen Testcase geschrieben (:srcref:`/tests/appy/1`) und die Sache
 als `Bug #777890 <https://bugs.launchpad.net/appy/+bug/777890>`_ gemeldet.
 
 
-Kleine Änderungen DSBE
-----------------------
+Kleine Änderungen DSBE und Minirelease Eupen
+--------------------------------------------
 
 - Neues Feld `Person.remarks2` (das von watch_tim aus `PXS->Memo` 
   synchronisiert wird).

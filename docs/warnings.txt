@@ -4,7 +4,6 @@ T:\hgwork\lino\docs\autodoc\lino.ui.extjs.rst:21: (WARNING/2) autodoc can't impo
 T:\hgwork\lino\docs\autodoc\lino.ui.extjs.rst:29: (WARNING/2) autodoc can't import/find module 'lino.ui.extjs.ext_windows', it reported error: "No module named extjs.ext_windows", please check your spelling and sys.path
 T:\hgwork\lino\docs\todo.rst:591: (WARNING/2) Inline interpreted text or phrase reference start-string without end-string.
 T:\hgwork\lino\docs\todo.rst:594: (WARNING/2) Enumerated list ends without a blank line; unexpected unindent.
-T:\hgwork\lino\docs\admin\install.rst:382: WARNING: py:mod reference target not found: lino.modlib.dsbe.management.commands.watch_tim
 T:\hgwork\lino\docs\autodoc\lino.ui.rst:4: WARNING: py:mod reference target not found: lino.ui.extjs
 T:\hgwork\lino\docs\autodoc\lino.ui.rst:16: WARNING: py:mod reference target not found: base
 T:\hgwork\lino\docs\autodoc\lino.ui.rst:17: WARNING: py:class reference target not found: object
@@ -15,6 +14,8 @@ T:\hgwork\lino\docs\autodoc\lino.ui.extjs.rst:9: WARNING: py:mod reference targe
 T:\hgwork\lino\docs\autodoc\lino.ui.extjs.rst:18: WARNING: py:mod reference target not found: ext_ui
 T:\hgwork\lino\docs\autodoc\lino.ui.extjs.rst:26: WARNING: py:mod reference target not found: ext_windows
 T:\hgwork\lino\docs\blog\2011\0505.rst:9: WARNING: py:attr reference target not found: lino.apps.dsbe.models.Contract.responsibilities
+T:\hgwork\lino\docs\blog\2011\index.rst:123: WARNING: unknown document: 0506
+T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: 0506
 T:\hgwork\lino\docs\todo.rst:124: WARNING: py:class reference target not found: lino.apps.dsbe.settings.Lino
 T:\hgwork\lino\docs\todo.rst:124: WARNING: xfile reference target not found: lino.js
 T:\hgwork\lino\docs\todo.rst:174: WARNING: xfile reference target not found: lino.js
