@@ -551,7 +551,10 @@ class ExtUI(base.UI):
         
         
 
-    def html_page(self,request,on_ready=[],**kw):
+    def html_page(self,*args,**kw):
+        return '\n'.join([ln for ln in self.html_lines(*args,**kw)])
+        
+    def html_lines(self,request,on_ready=[],**kw):
         #~ c = RequestContext(request,dict(site=self.site,lino=lino))
         self.welcome_template.ui = self
         self.welcome_template.user = request.user
@@ -574,6 +577,7 @@ class ExtUI(base.UI):
                 #~ py2js(self.site.index_html.encode('ascii','xmlcharrefreplace'))]
             #~ main.update(items=dict(layout='fit',html=self.site.index_html.encode('ascii','xmlcharrefreplace')))
         #~ main.update(id='main_area',region='center')
+        yield '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'
         yield '<html><head>'
         yield '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />'
         #~ title = kw.get('title',None)

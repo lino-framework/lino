@@ -109,7 +109,7 @@ class GridColumn(Component):
                 #~ a = rpt.get_action('detail')
                 #~ if a is not None:
                     rend = "Lino.fk_renderer('%s','Lino.%s')" % (
-                      editor.field.name + 'Hidden',
+                      editor.field.name + ext_requests.CHOICES_HIDDEN_SUFFIX,
                       rpt.detail_action)
                     #~ rend = "Lino.fk_renderer('%s','%s')" % (
                       #~ editor.field.name + 'Hidden',
@@ -415,7 +415,7 @@ class FieldElement(LayoutElement):
             
         # When used as editor of an EditorGridPanel, don't set the name attribute
         # because it is not needed for grids and might conflict with fields of a 
-        # surronding detail form. See ticket #38.
+        # surronding detail form. See ticket #38 (:doc:`/blog/2011/0408`).
         if not isinstance(self.lh.layout,reports.ListLayout):
             kw.update(name=self.field.name)
             if self.label:
@@ -501,6 +501,9 @@ class ComboFieldElement(FieldElement):
     
     def get_field_options(self,**kw):
         kw = FieldElement.get_field_options(self,**kw)
+        # When used as editor of an EditorGridPanel, don't set the name attribute
+        # because it is not needed for grids and might conflict with fields of a 
+        # surronding detail form. See ticket #38 (:doc:`/blog/2011/0408`).
         if not isinstance(self.lh.layout,reports.ListLayout):
             kw.update(hiddenName=self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
         return kw
@@ -515,7 +518,7 @@ class ChoicesFieldElement(ComboFieldElement):
     def get_field_options(self,**kw):
         kw = ComboFieldElement.get_field_options(self,**kw)
         kw.update(store=self.field.choices)
-        kw.update(hiddenName=self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
+        #~ kw.update(hiddenName=self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
         return kw
         
 
@@ -537,6 +540,9 @@ class RemoteComboFieldElement(ComboFieldElement):
         
 class SimpleRemoteComboFieldElement(RemoteComboFieldElement):
     value_template = "new Lino.SimpleRemoteComboFieldElement(%s)"
+    def get_field_options(self,**kw):
+        # Do never add a hiddenName
+        return FieldElement.get_field_options(self,**kw)
     
   
 class ComplexRemoteComboFieldElement(RemoteComboFieldElement):

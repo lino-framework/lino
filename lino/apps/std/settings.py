@@ -396,9 +396,16 @@ SERIALIZATION_MODULES = {
 
 #print "done", __file__
 
-#~ TEMPLATE_CONTEXT_PROCESSORS = (
-  #~ "django.core.context_processors.auth",
-#~ )
+TEMPLATE_CONTEXT_PROCESSORS = (
+    #~ 'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+    'django.core.context_processors.static',
+#    'django.core.context_processors.request',
+    #~ 'django.contrib.messages.context_processors.messages',
+)
+
 
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = "/"

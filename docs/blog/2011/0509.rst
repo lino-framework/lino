@@ -1,0 +1,120 @@
+20110509
+========
+
+Bug bei Comboboxen mit einfachen Werten
+---------------------------------------
+
+Schauen wir uns das folgende Problem mal an, das ich vorigen 
+Freitag zufällig bemerkt habe:
+
+#.  Bug: wenn man NoteType.print_method verändert, wird 
+    NoteType.template geleert.
+    
+Genauer gesagt ist schon beim Anzeigen des Details einer 
+Notizart das Feld leer.
+    
+Das GET http://127.0.0.1:8000/api/notes/NoteTypes/6?fmt=json 
+kriegt eine korrekte Antwort::
+    
+  { ...
+    "data": { 
+      "remark": "Alle Notizen, die in keine andere Notiz- oder Ereignis-Art passen",
+      "build_method": "AppyPdfBuildMethod", 
+      "name": "Aktennotiz", 
+      "build_methodHidden": "appypdf", 
+      "template": "Default.odt", 
+      "id": 6 
+    }, 
+    ...
+  }
+  
+Ich schätze, es liegt daran, dass das Feld "templateHidden" nicht angegeben ist. 
+Weil dessen Chooser `simple_values` hat, ist das ja auch nicht nötig.
+Aber für die ext.Combobox scheinbar doch.
+Hier die Felddefintion in der `lino.js`::
+    
+  var template1191 = new Lino.SimpleRemoteComboFieldElement({ 
+      "hiddenName": "templateHidden", 
+      "fieldLabel": "Vorlage", 
+      "anchor": "100%", 
+      "store": new Lino.ComplexRemoteComboStore({ 
+          "proxy": new Ext.data.HttpProxy({ "url": "/choices/notes/NoteTypes/template", "method": "GET" }) 
+      }), 
+      "name": "template" 
+  });
+
+Da isser: die darf keine Option `templateHidden` haben!
+Bug behoben.
+Also dieser Bug war wahrscheinclih seit :doc:`/blog/2011/0408` drin.
+
+Leere Site-Konfiguration
+------------------------
+
+Um die Sache abzusiegeln, schreibe ich für das soeben gelöste Problem 
+mal einen Testfall `test02()` in der 
+:srcref:`lino/apps/dsbe/tests/dsbe_tests.py`.
+Der testet den Fall zwar lediglich teilweise,
+aber ich habe momentan keine Idee mehr, 
+wie man die response.content noch weiter testen könnte.
+Die Antwort ist ja eigentlich in der 
+Funktion `Lino.notes.NoteTypes.detail`, die in der 
+generierten :xfile:`lino.js` 
+definiert ist...
+
+Weil ich den Testfall gerne in der leeren Datenbank 
+ans Laufen kriegen wollte, 
+musste ich noch ein paar kleine Änderungen machen.
+In diesem Fall sind ja die SiteConfig-Parameter ebenfalls leer, 
+und Lino vertrug das noch nicht.
+
+Erstens entdeckte `kernel.setup_site` das folgende Problem::
+
+    File "t:\hgwork\lino\lino\core\kernel.py", line 212, in setup_site
+      a.setup()
+    File "t:\hgwork\lino\lino\core\actors.py", line 210, in setup
+      self.do_setup()
+    File "t:\hgwork\lino\lino\reports.py", line 940, in do_setup
+      self.setup_actions()
+    File "t:\hgwork\lino\lino\apps\dsbe\models.py", line 886, in setup_actions
+      self.label = babelattr(pg,'name')
+    File "t:\hgwork\lino\lino\utils\babel.py", line 227, in babelattr
+      return getattr(obj,attrname,*args)
+  AttributeError: 'NoneType' object has no attribute 'name'
+
+Deshalb gibt es jetzt die neue Zwischenklasse 
+:class:`lino.apps.dsbe.models.ConfiguredPropsByPerson`,
+die als Basis für diese drei Reports fungiert und den Fall 
+verträgt, dass das entsprechende Feld der Siteparameter leer ist.
+
+Und dann musste ich die folgenden drei Felder konvertieren:
+
+  residence_permit_upload_type
+  work_permit_upload_type
+  driving_licence_upload_type
+  
+Die werden jetzt also ebenfalls in der SiteConfig und nicht mehr in 
+der :file:`settings.py` konfiguriert.
+Dadurch kann der komplette folgende Code aus der `settings.py` entfallen::
+
+    residence_permit_upload_type = None
+    work_permit_upload_type = None
+    driving_licence_upload_type = None 
+    
+    def setup_main_menu(self):
+
+        super(Lino,self).setup_main_menu()
+        from lino.modlib.uploads.models import UploadType
+        self.residence_permit_upload_type = UploadType.objects.get(pk=2)
+        self.work_permit_upload_type = UploadType.objects.get(pk=3)
+        self.driving_licence_upload_type = None # UploadType.objects.get(pk=5)
+
+(Und nach dem Upgrade müssen diese Werte manuell einmalig gesetzt werden)
+
+Änderung en passant: 
+
+- Die Felder `propgroup_skills`, `propgroup_softskills` 
+  und `propgroup_obstacles` sind jetzt nicht mehr in 
+  `lino.modlib.properties` definiert, sondern in `lino.apps.dsbe`.
+
+- Ich habe entdeckt, dass in Djangos Standardwert für :setting:`TEMPLATE_CONTEXT_PROCESSORS`
+  noch `django.contrib.auth` drin war. Der wird deshalb jetzt in :mod:`lino.apps.std.settings` gesetzt.

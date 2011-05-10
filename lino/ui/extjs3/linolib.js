@@ -2252,6 +2252,7 @@ Lino.ChoicesFieldElement = Ext.extend(Lino.ComboBox,{
 
 
 Lino.SimpleRemoteComboStore = Ext.extend(Ext.data.JsonStore,{
+  forceSelection: true,
   constructor: function(config){
       Lino.SimpleRemoteComboStore.superclass.constructor.call(this, Ext.apply(config, {
           totalProperty: 'count',

@@ -11,7 +11,7 @@ Subpackages
 .. toctree::
 
     lino.ui.console
-    lino.ui.extjs
+    lino.ui.extjs3
 
 The :mod:`base` Module
 ----------------------

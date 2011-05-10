@@ -31,9 +31,9 @@ class Lino(Lino):
     #~ domain = "dsbe.saffre-rumma.net"
     help_url = "http://lino.saffre-rumma.net/dsbe/index.html"
     
-    residence_permit_upload_type = None
-    work_permit_upload_type = None
-    driving_licence_upload_type = None 
+    #~ residence_permit_upload_type = None
+    #~ work_permit_upload_type = None
+    #~ driving_licence_upload_type = None 
     
     #~ def init_site_config(self,sc):
         #~ super(LinoSite,self).init_site_config(sc)

@@ -554,7 +554,7 @@ class Person(Partner,contacts.Person):
     overview.return_type = fields.HtmlBox(_("Overview"))
     
     def residence_permit(self,rr):
-        kv = dict(type=settings.LINO.residence_permit_upload_type)
+        kv = dict(type=settings.LINO.config.residence_permit_upload_type)
         r = rr.spawn_request(uploads.UploadsByOwner(),
               master_instance=self,
               known_values=kv)
@@ -564,7 +564,7 @@ class Person(Partner,contacts.Person):
     residence_permit.return_type = fields.DisplayField(_("Residence permit"))
     
     def work_permit(self,rr):
-        kv = dict(type=settings.LINO.work_permit_upload_type)
+        kv = dict(type=settings.LINO.config.work_permit_upload_type)
         r = rr.spawn_request(uploads.UploadsByOwner(),
               master_instance=self,
               known_values=kv)
@@ -572,7 +572,7 @@ class Person(Partner,contacts.Person):
     work_permit.return_type = fields.DisplayField(_("Work permit"))
     
     def driving_licence(self,rr):
-        kv = dict(type=settings.LINO.driving_licence_upload_type)
+        kv = dict(type=settings.LINO.config.driving_licence_upload_type)
         r = rr.spawn_request(uploads.UploadsByOwner(),
               master_instance=self,known_values=kv)
         return rr.ui.quick_upload_buttons(r)
@@ -878,27 +878,55 @@ class PersonPropsByProp(reports.Report):
     #~ hidden_columns = frozenset(['group'])
     
     
-class SkillsByPerson(PropsByPerson):
+class ConfiguredPropsByPerson(PropsByPerson):
+    propgroup_config_name = NotImplementedError
     def setup_actions(self):
-        pg = settings.LINO.config.propgroup_skills
-        #~ pg = get_site_config().propgroup_skills
-        self.known_values = dict(group=pg)
-        self.label = babelattr(pg,'name')
+        if not self.propgroup_config_name is NotImplementedError:
+            #~ pg = self.get_configured_action() 
+            pg = getattr(settings.LINO.config,self.propgroup_config_name)
+            self.known_values = dict(group=pg)
+            if pg is None:
+                self.label = _("(Site setting %s is empty)" % self.propgroup_config_name)
+            else:
+                self.label = babelattr(pg,'name')
         PropsByPerson.setup_actions(self)
         
-class SoftSkillsByPerson(PropsByPerson):
-    def setup_actions(self):
-        pg = get_site_config().propgroup_softskills
-        self.known_values = dict(group=pg)
-        self.label = babelattr(pg,'name')
-        PropsByPerson.setup_actions(self)
+class SkillsByPerson(ConfiguredPropsByPerson):
+    propgroup_config_name = 'propgroup_skills'
+  
+    #~ def get_configured_action(self):
+        #~ return settings.LINO.config.propgroup_skills
         
-class ObstaclesByPerson(PropsByPerson):
-    def setup_actions(self):
-        pg = get_site_config().propgroup_obstacles
-        self.known_values = dict(group=pg)
-        self.label = babelattr(pg,'name')
-        PropsByPerson.setup_actions(self)
+    #~ def setup_actions(self):
+        #~ pg = settings.LINO.config.propgroup_skills
+        #~ self.known_values = dict(group=pg)
+        #~ if pg is None:
+            #~ self.label = babelattr(pg,'name')
+        #~ else:
+            #~ self.label = babelattr(pg,'name')
+        #~ PropsByPerson.setup_actions(self)
+        
+class SoftSkillsByPerson(ConfiguredPropsByPerson):
+    propgroup_config_name = 'propgroup_softskills'
+    #~ def get_configured_action(self):
+        #~ return settings.LINO.config.propgroup_softskills
+        
+    #~ def setup_actions(self):
+        #~ pg = get_site_config().propgroup_softskills
+        #~ self.known_values = dict(group=pg)
+        #~ self.label = babelattr(pg,'name')
+        #~ PropsByPerson.setup_actions(self)
+        
+class ObstaclesByPerson(ConfiguredPropsByPerson):
+    propgroup_config_name = 'propgroup_obstacles'
+    #~ def get_configured_action(self):
+        #~ return settings.LINO.config.propgroup_obstacles
+        
+    #~ def setup_actions(self):
+        #~ pg = get_site_config().propgroup_obstacles
+        #~ self.known_values = dict(group=pg)
+        #~ self.label = babelattr(pg,'name')
+        #~ PropsByPerson.setup_actions(self)
     
 #
 # JOBS
@@ -1886,8 +1914,7 @@ CompanyType.add_to_class('contract_type',
 
 
 from lino.models import SiteConfig
-reports.inject_field(
-    SiteConfig,
+reports.inject_field(SiteConfig,
     'job_office',
     models.ForeignKey("contacts.Company",
         blank=True,null=True,
@@ -1895,6 +1922,65 @@ reports.inject_field(
         related_name='job_office_sites'),
     """The Company whose contact persons will be 
     choices for `Person.job_office_contact`.
+    """)
+    
+reports.inject_field(SiteConfig,
+    'propgroup_skills',
+    models.ForeignKey('properties.PropGroup',
+        blank=True,null=True,
+        verbose_name=_("Skills Property Group"),
+        related_name='skills_sites'),
+    """The property group to be used as master 
+    for the SkillsByPerson report.""")
+reports.inject_field(SiteConfig,
+    'propgroup_softskills',
+    models.ForeignKey('properties.PropGroup',
+        blank=True,null=True,
+        verbose_name=_("Soft Skills Property Group"),
+        related_name='softskills_sites',
+        ),
+    """The property group to be used as master 
+    for the SoftSkillsByPerson report."""
+    )
+reports.inject_field(SiteConfig,
+    'propgroup_obstacles',
+    models.ForeignKey('properties.PropGroup',
+        blank=True,null=True,
+        verbose_name=_("Obstacles Property Group"),
+        related_name='obstacles_sites',
+        ),
+    """The property group to be used as master 
+    for the ObstaclesByPerson report."""
+    )
+
+reports.inject_field(SiteConfig,
+    'residence_permit_upload_type',
+    #~ UploadType.objects.get(pk=2)
+    models.ForeignKey("uploads.UploadType",
+        blank=True,null=True,
+        verbose_name=_("Upload Type for residence permit"),
+        related_name='residence_permit_sites'),
+    """The UploadType for `Person.residence_permit`.
+    """)
+    
+reports.inject_field(SiteConfig,
+    'work_permit_upload_type',
+    #~ UploadType.objects.get(pk=2)
+    models.ForeignKey("uploads.UploadType",
+        blank=True,null=True,
+        verbose_name=_("Upload Type for work permit"),
+        related_name='work_permit_sites'),
+    """The UploadType for `Person.work_permit`.
+    """)
+
+reports.inject_field(SiteConfig,
+    'driving_licence_upload_type',
+    #~ UploadType.objects.get(pk=2)
+    models.ForeignKey("uploads.UploadType",
+        blank=True,null=True,
+        verbose_name=_("Upload Type for driving licence"),
+        related_name='driving_licence_sites'),
+    """The UploadType for `Person.driving_licence`.
     """)
 
 

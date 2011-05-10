@@ -81,16 +81,16 @@ def install_restify(renderer):
     like this::
     
       do text
-        from restify(self.body)
+      from restify(self.body)
         
     Without this hack, users would have to write each time something 
     like::
     
       do text
-        from xhtml(restify(self.body).encode('utf-8'))
+      from xhtml(restify(self.body).encode('utf-8'))
         
       do text
-        from xhtml(restify(self.body,output_encoding='utf-8'))
+      from xhtml(restify(self.body,output_encoding='utf-8'))
     
 
     """

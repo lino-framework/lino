@@ -24,7 +24,7 @@ müssten diese Stellen sowieso alle konvertiert werden nach::
     from restify(self.body)
 
 (Um das hinzukriegen, musste ich mir was einfallen lassen, siehe 
-im Code von :class:`lino.mixins.printable.AppyBuildMethod`)
+:func:`lino.utils.restify.install_restify`)
 
 Und das Problem von gestern (dass er Aufzählungen verschluckt, 
 `Bug #777890 <https://bugs.launchpad.net/appy/+bug/777890>`_) 
@@ -108,5 +108,25 @@ mit folgendem Befehl gehen::
   do text
   from text(RST)
   
-Eine Stunde gerätselt, bis es Tilt machte: in meinem RST-Text 
-war noch ein "<" drin, und das verträgt text() nicht.
+Eine Stunde gesucht, bis es Tilt machte: in meinem RST-Text 
+war noch ein "<" drin, und das verträgt die :func:`text` nicht.
+Meldung ans Forum von appy.pod: https://bugs.launchpad.net/appy/+bug/778728
+Aber weil ich das lediglich für meinen test case benutze, kann ich die 
+Sache in Eupen releasen.
+
+Test-Dokument::
+
+  Titel
+
+  Titel entstehen, indem man eine Textzeile mit einer Reihe von ``=``, ``-`` oder ``~`` unterstreicht.
+  Aber das funktioniert leider noch nicht.
+
+  Ein neuer Absatz entsteht, indem man **2x** ENTER drückt. Also eine Leerzeile muss da sein. 
+
+  Aufzählungen
+     
+  - Externe `Links <http://lino.saffre-rumma.net>`_ sind anklickbar
+  - Zeichenformatierungen: **fett**, *kursiv*, ``Tippmaschine``
+
+      
+

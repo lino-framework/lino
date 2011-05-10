@@ -9,25 +9,21 @@ for which I hope for help from other people.
 Short-term
 ----------
 
-#.  Wird markup in pdf (appy) richtig ausgedruckt?
+#.  Weiter testen und dokumentieren: 
+    Wird markup in pdf (appy) richtig ausgedruckt?
+    Zum Beispiel funktionieren Titel noch nicht.
 
 #.  Externe Links (Lesezeichen) notieren können, 
     indem man sie von einem anderen Browserfenster 
-    per drag & drop auf die HtmlBox zieht.   
-    :doc:`/tickets/8` 
+    per drag & drop auf die HtmlBox zieht.
+    (u.a. :doc:`/tickets/8`)
 
-#.  Anzeige von mehrzeiligen Texten in Grids:  
-    Ein Button "Details", der toggelt zwischen "erste Zeile" und "alles".
+#.  Anzeige von mehrzeiligen Texten in Grids.
+    Ein Button "Details", der zwischen "erste Zeile" und "alles" umschaltet.
     
-#.  Wysiwyg-Editor: Memo-Texte werden dann nur noch angezeigt, 
-    nebst einem Button, der den rich Text-Editor in einem eigenen Fenster öffnet.
-    Beim Upgrade alle bestehenden Textfelder mit restify einmalig konvertieren.
-    Wie wird das gespeichert? 
-    Immer HTML?
-    Oder pro Textfeld ein weiteres Ankreuzfeld?
-    Oder eine Shebang-Zeile, die das Textformat festlegt?
+#.  :doc:`Wysiwyg-Editor </tickets/42>`
 
-#.  :doc:`/tickets/39`
+#.  :doc:`Benutzerspezifische Gridkonfiguration </tickets/39>`
 
 Medium-term
 -----------

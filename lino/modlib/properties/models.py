@@ -278,23 +278,4 @@ class ChoicesByType(PropChoices):
     #~ hide_columns = ['group'] # doen's work yet
     
 
-from lino.models import SiteConfig
-SiteConfig.add_to_class('propgroup_skills',
-    models.ForeignKey(PropGroup,
-        blank=True,null=True,
-        verbose_name=_("Skills Property Group"),
-        related_name='skills_sites',
-        ))
-SiteConfig.add_to_class('propgroup_softskills',
-    models.ForeignKey(PropGroup,
-        blank=True,null=True,
-        verbose_name=_("Soft Skills Property Group"),
-        related_name='softskills_sites',
-        ))
-SiteConfig.add_to_class('propgroup_obstacles',
-    models.ForeignKey(PropGroup,
-        blank=True,null=True,
-        verbose_name=_("Obstacles Property Group"),
-        related_name='obstacles_sites',
-        ))
-
+#~ from lino.models import SiteConfig

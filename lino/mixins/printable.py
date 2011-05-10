@@ -301,12 +301,12 @@ def register_build_method(pm):
     bm_list.append(pm)
     
 
-register_build_method(PisaBuildMethod())
 register_build_method(AppyOdtBuildMethod())
 register_build_method(AppyPdfBuildMethod())
 register_build_method(AppyRtfBuildMethod())   
-register_build_method(RtfBuildMethod())
 register_build_method(LatexBuildMethod())
+register_build_method(PisaBuildMethod())
+register_build_method(RtfBuildMethod())
 
 #~ print "%d build methods:" % len(bm_list)
 #~ for bm in bm_list:

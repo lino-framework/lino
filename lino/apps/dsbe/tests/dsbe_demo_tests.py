@@ -351,6 +351,11 @@ test07.skip = "Doesn't work because simplejson.loads() doesn't parse functions"
 
 def test08(self):
     """
+    In `MyPersons` wurden seit :doc:`/blog/2011/0408` zu viele Leute angezeigt: auch die, 
+    die weder Anfangs- noch Enddatum haben. 
+    Damit jemand als begleitet gilt, muss mindestens eines der 
+    beiden Daten ausgefüllt sein.
+    
     See :doc:`/blog/2011/0412`
     """
     from lino.apps.dsbe.models import Person, MyPersons, only_coached_persons,only_my_persons

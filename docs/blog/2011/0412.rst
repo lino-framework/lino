@@ -6,4 +6,6 @@ die weder Anfangs- noch Enddatum haben.
 Damit jemand als begleitet gilt, muss mindestens eines der 
 beiden Daten ausgefüllt sein.
 
+TestCase: :func:`lino.apps.dsbe.dsbe_demo_tests.test08`
+
 Check-in zwecks Upgrade in Eupen.

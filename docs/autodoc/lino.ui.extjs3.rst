@@ -1,7 +1,7 @@
-The :mod:`lino.ui.extjs` Package
-================================
+The :mod:`lino.ui.extjs3` Package
+=================================
 
-.. automodule:: lino.ui.extjs
+.. automodule:: lino.ui.extjs3
     :members:
     :undoc-members:
     :show-inheritance:
@@ -9,7 +9,7 @@ The :mod:`lino.ui.extjs` Package
 The :mod:`ext_elems` Module
 ---------------------------
 
-.. automodule:: lino.ui.extjs.ext_elems
+.. automodule:: lino.ui.extjs3.ext_elems
     :members:
     :undoc-members:
     :show-inheritance:
@@ -18,7 +18,7 @@ The :mod:`ext_elems` Module
 The :mod:`ext_ui` Module
 ------------------------
 
-.. automodule:: lino.ui.extjs.ext_ui
+.. automodule:: lino.ui.extjs3.ext_ui
     :members:
     :undoc-members:
     :show-inheritance:
@@ -26,7 +26,15 @@ The :mod:`ext_ui` Module
 The :mod:`ext_windows` Module
 -----------------------------
 
-.. automodule:: lino.ui.extjs.ext_windows
+.. automodule:: lino.ui.extjs3.ext_windows
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+The :mod:`ext_store` Module
+---------------------------
+
+.. automodule:: lino.ui.extjs3.ext_store
     :members:
     :undoc-members:
     :show-inheritance:
