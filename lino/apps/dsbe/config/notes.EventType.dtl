@@ -3,5 +3,5 @@
 
 main =
     id name
-    notes.NotesByEventType
-
+    remark:60x3
+    notes.NotesByEventType:60x6

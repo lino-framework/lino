@@ -9,6 +9,8 @@ for which I hope for help from other people.
 Short-term
 ----------
 
+#.  Doppelklick auf EventType : `notes.NotesByEvent`  ist anfangs nicht korrekt.
+  
 #.  Weiter testen und dokumentieren: 
     Wird markup in pdf (appy) richtig ausgedruckt?
     Zum Beispiel funktionieren Titel noch nicht.
@@ -47,12 +49,6 @@ Medium-term
 #.  Übersetzung PropertyType : nicht Eigenschaftsart, sondern 
     Eigenschaftstyp oder Eigenschafts-Datentyp...
     
-#.  Übersetzung "Notes" soll in DSBE nit "Notizen" 
-    sondern "Ereignisse/Notizen" sein.
-    
-#.  Bei den angezeigten Personen einer PersonSearch sind manche Felder 
-    noch nicht übersetzt.
-
 #.  An makedocs müsste ich bei Gelegenheit mal ein bisschen weiter machen. 
     Das ist noch lange nicht fertig.
     
@@ -366,11 +362,22 @@ Long-term
    des Ziel-Reports ein Suchfeld. Damit man z.B. nach allen Personen suchen kann, 
    die eine Sprache "mündlich mindestens gut und schriftlich mindestens ausreichend" kennen
   
-#. Layout von Detail-Fenstern : in Lino sind die "Zeilen" momentan ja immer im "Blocksatz" (also links- und rechtsbündig). Das ist unkonventionell: alle RIA die ich kenne, machen ihre Formulare nur linksbündig.
+#.  Layout von Detail-Fenstern : in Lino sind die "Zeilen" momentan ja immer 
+    im "Blocksatz" (also links- und rechtsbündig). Das ist unkonventionell: 
+    alle RIA die ich kenne, machen ihre Formulare nur linksbündig.
 
-#. HtmlEditor oder TextArea? Der HtmlEditor verursacht deutliche Performanceeinbußen beim Bildschirmaufbau von Detail-Fenstern. Die Wahl sollte konfigurierbar sein. Markup auch.
+#.  HtmlEditor oder TextArea? Der HtmlEditor verursacht deutliche 
+    Performanceeinbußen beim Bildschirmaufbau von Detail-Fenstern. 
+    Die Wahl sollte konfigurierbar sein. Markup auch.
 
-#. Das Detail-Fenster sollte vielleicht par défaut nicht im Editier-Modus sein, sondern unten ein Button "Edit", und erst wenn man darauf klickt, werden alle Felder editierbar (und der Record in der Datenbank blockiert), und unten stehen dann zwei Buttons "Save" und "Cancel". Wobei darauf zu achten ist was passiert, wenn man während des Bearbeitens in der Grid auf eine andere Zeile klickt. Dann muss er am besten das Detail-Fenster speichern, und falls dort ungültige Daten stehen, in der Grid den Zeilenwechsel verweigern.
+#.  Das Detail-Fenster sollte vielleicht par défaut nicht im Editier-Modus 
+    sein, sondern unten ein Button "Edit", und erst wenn man darauf klickt, 
+    werden alle Felder editierbar (und der Record in der Datenbank blockiert), 
+    und unten stehen dann zwei Buttons "Save" und "Cancel". Wobei darauf zu 
+    achten ist was passiert, wenn man während des Bearbeitens in der Grid 
+    auf eine andere Zeile klickt. Dann muss er am besten das Detail-Fenster 
+    speichern, und falls dort ungültige Daten stehen, in der Grid den 
+    Zeilenwechsel verweigern.
 
 #. `Report.date_format` muss in der Syntax des UI (d.h. ExtJS) angegeben werden. 
 
@@ -417,8 +424,6 @@ Long-term
    vielleicht ein zusätzlicher Knopf "Save and insert another" (wie im Django-Admin), 
    oder aber das automatische Schließen des Insert-Fensters im Report abschalten können.
 
-#. Die Labels der Details werden zwar übersetzt, aber nicht von makemessages gefunden.
-
 #. Das Folgende macht er noch nicht:
    Falls ein Template in der Sprache der Notiz nicht existiert 
    (z.B. weil die Vorlage noch nicht übersetzt wurde oder multilingual ist), 
@@ -445,17 +450,6 @@ Long-term
 #. ReportRequest und/oder ViewReportRequest sind (glaube ich) ein Fall für 
    `Django-Middleware <http://docs.djangoproject.com/en/dev/topics/http/middleware/>`_.
   
-  
-#. Foreign keys 
-
-  #. sollten in der Grid anklickbar sein, 
-     so wie die Elemente eines Slave-Reports,
-     aber nicht *genau* so, 
-     sondern die sollten sich im gleichen Browserfenster öffnen. 
-     Außerdem muss natürlich (zumindest in quick_edit-Grids) die Möglichkeit 
-     des Bearbeitens erhalten bleiben. 
-  #. sollten im Detail-Fenster einen Button neben sich haben, 
-     mit dem man per permalink auf die foreign row springen kann.
   
 #. Wenn ich einen Slave-Report sowohl in der Grid als auch in einem Detail als Element benutze, 
    dann verursacht das einen Konflikt im ext_store.Store, weil er zwei virtuelle fields.HtmlBox-Felder 

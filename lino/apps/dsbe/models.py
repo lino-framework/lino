@@ -56,6 +56,8 @@ from lino.utils import mti
 from lino.mixins.printable import DirectPrintAction
 from lino.mixins.reminder import ReminderEntry
 
+from lino.modlib.countries.models import CountryCity
+
 
 SCHEDULE_CHOICES = {
     'de':[ 
@@ -766,7 +768,7 @@ class HistoryByPerson(reports.Report):
 #
 
 
-class Study(mixins.CountryCity):
+class Study(CountryCity):
     class Meta:
         verbose_name = _("study or education")
         verbose_name_plural = _("Studies & education")

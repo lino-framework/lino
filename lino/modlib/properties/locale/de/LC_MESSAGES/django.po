@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.properties\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-06 12:19+0100\n"
+"POT-Creation-Date: 2011-05-10 14:33+0100\n"
 "PO-Revision-Date: 2011-04-04 16:40+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmx.net>\n"
@@ -76,14 +76,11 @@ msgstr "Eigenschaften"
 msgid "Property group"
 msgstr "Eigenschaftsgruppe"
 
-#: .\models.py:285
-msgid "Skills Property Group"
-msgstr "Eigenschaftsgruppe \"Fachkompetenzen\""
+#~ msgid "Skills Property Group"
+#~ msgstr "Eigenschaftsgruppe \"Fachkompetenzen\""
 
-#: .\models.py:291
-msgid "Soft Skills Property Group"
-msgstr "Eigenschaftsgruppe \"Sozialkompetenzen\""
+#~ msgid "Soft Skills Property Group"
+#~ msgstr "Eigenschaftsgruppe \"Sozialkompetenzen\""
 
-#: .\models.py:297
-msgid "Obstacles Property Group"
-msgstr "Eigenschaftsgruppe \"Hindernisse\""
+#~ msgid "Obstacles Property Group"
+#~ msgstr "Eigenschaftsgruppe \"Hindernisse\""

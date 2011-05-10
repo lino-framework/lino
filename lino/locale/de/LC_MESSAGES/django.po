@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-06 12:19+0100\n"
+"POT-Creation-Date: 2011-05-10 14:32+0100\n"
 "PO-Revision-Date: 2011-04-29 09:48+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
@@ -109,27 +109,27 @@ msgstr "Besitzertabelle"
 msgid "Owner"
 msgstr "Besitzer"
 
-#: .\mixins\printable.py:389
+#: .\mixins\printable.py:386
 msgid "Print"
 msgstr "Drucken"
 
-#: .\mixins\printable.py:443
+#: .\mixins\printable.py:440
 msgid "Edit template"
 msgstr "Vorlage bearbeiten"
 
-#: .\mixins\printable.py:453
+#: .\mixins\printable.py:450
 msgid "Clear cache"
 msgstr "Cache löschen"
 
-#: .\mixins\printable.py:474
+#: .\mixins\printable.py:471
 msgid "Build method"
 msgstr "Konstruktionsmethode"
 
-#: .\mixins\printable.py:483
+#: .\mixins\printable.py:480
 msgid "Template"
 msgstr "Vorlage"
 
-#: .\mixins\printable.py:514
+#: .\mixins\printable.py:511
 msgid "must build"
 msgstr "muss generiert werden"
 
@@ -221,7 +221,7 @@ msgstr "Existierender ID-Wert %r darf nicht verändert werden."
 msgid "%r (invalid choice)"
 msgstr "%r (ungültige Auswahl)"
 
-#: .\ui\extjs3\ext_elems.py:572 .\ui\extjs4\ext_elems.py:569
+#: .\ui\extjs3\ext_elems.py:578 .\ui\extjs4\ext_elems.py:569
 #: .\ui\qx\qx_elems.py:555
 #, python-format
 msgid "Select a %s..."
@@ -232,62 +232,62 @@ msgstr "%s auswählen..."
 msgid "Row %(rowid)d of %(rowcount)d"
 msgstr "Record  %(rowid)d von %(rowcount)d"
 
-#: .\ui\extjs3\ext_ui.py:690 .\ui\extjs4\ext_ui.py:704
+#: .\ui\extjs3\ext_ui.py:694 .\ui\extjs4\ext_ui.py:704
 msgid "Console"
 msgstr "Konsole"
 
-#: .\ui\extjs3\ext_ui.py:741 .\ui\extjs4\ext_ui.py:757 .\ui\qx\qx_ui.py:563
+#: .\ui\extjs3\ext_ui.py:745 .\ui\extjs4\ext_ui.py:757 .\ui\qx\qx_ui.py:563
 #, python-format
 msgid "Welcome on Lino server %(title)r, user %(user)s"
 msgstr "Willkommen auf dem Lino-server %(title)r, %(user)s"
 
-#: .\ui\extjs3\ext_ui.py:801 .\ui\extjs4\ext_ui.py:817 .\ui\qx\qx_ui.py:622
+#: .\ui\extjs3\ext_ui.py:805 .\ui\extjs4\ext_ui.py:817 .\ui\qx\qx_ui.py:622
 #, python-format
 msgid "%s has been created."
 msgstr "%s wurde erstellt."
 
-#: .\ui\extjs3\ext_ui.py:803 .\ui\extjs4\ext_ui.py:819 .\ui\qx\qx_ui.py:624
+#: .\ui\extjs3\ext_ui.py:807 .\ui\extjs4\ext_ui.py:819 .\ui\qx\qx_ui.py:624
 #, python-format
 msgid "%s has been saved."
 msgstr "%s wurde gespeichert."
 
-#: .\ui\extjs3\ext_ui.py:811 .\ui\extjs3\ext_ui.py:835
+#: .\ui\extjs3\ext_ui.py:815 .\ui\extjs3\ext_ui.py:839
 #: .\ui\extjs4\ext_ui.py:827 .\ui\extjs4\ext_ui.py:851 .\ui\qx\qx_ui.py:632
 #: .\ui\qx\qx_ui.py:655
 #, python-format
 msgid "User %(user)s cannot configure %(report)s."
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:862
+#: .\ui\extjs3\ext_ui.py:866
 #, python-format
 msgid "Error while saving GC for %(report)s: %(error)s"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1004 .\ui\extjs4\ext_ui.py:1015 .\ui\qx\qx_ui.py:819
+#: .\ui\extjs3\ext_ui.py:1008 .\ui\extjs4\ext_ui.py:1015 .\ui\qx\qx_ui.py:819
 #, python-format
 msgid "Failed to delete %(record)s : %(error)s."
 msgstr "Fehler beim Löschen von %(record)s : %(error)s."
 
-#: .\ui\extjs3\ext_ui.py:1029 .\ui\extjs4\ext_ui.py:1040 .\ui\qx\qx_ui.py:844
+#: .\ui\extjs3\ext_ui.py:1033 .\ui\extjs4\ext_ui.py:1040 .\ui\qx\qx_ui.py:844
 #, python-format
 msgid "Insert into %s..."
 msgstr "Einfügen nach %s..."
 
-#: .\ui\extjs3\ext_ui.py:1057 .\ui\extjs4\ext_ui.py:1068 .\ui\qx\qx_ui.py:872
+#: .\ui\extjs3\ext_ui.py:1061 .\ui\extjs4\ext_ui.py:1068 .\ui\qx\qx_ui.py:872
 #, python-format
 msgid "Action %(action)s failed for %(record)s: %(error)s"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1199 .\ui\extjs4\ext_ui.py:1212 .\ui\qx\qx_ui.py:958
+#: .\ui\extjs3\ext_ui.py:1203 .\ui\extjs4\ext_ui.py:1212 .\ui\qx\qx_ui.py:958
 #, python-format
 msgid "Choices for %s"
 msgstr "Auswahlmöglichkeiten für %s"
 
-#: .\ui\extjs3\ext_ui.py:1312 .\ui\extjs4\ext_ui.py:1325 .\ui\qx\qx_ui.py:1068
+#: .\ui\extjs3\ext_ui.py:1316 .\ui\extjs4\ext_ui.py:1325 .\ui\qx\qx_ui.py:1068
 msgid "Upload"
 msgstr "Upload"
 
-#: .\ui\extjs3\ext_ui.py:1320 .\ui\extjs4\ext_ui.py:1333 .\ui\qx\qx_ui.py:1076
+#: .\ui\extjs3\ext_ui.py:1324 .\ui\extjs4\ext_ui.py:1333 .\ui\qx\qx_ui.py:1076
 msgid "Edit"
 msgstr "Bearbeiten"
 

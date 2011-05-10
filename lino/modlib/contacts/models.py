@@ -42,8 +42,10 @@ from lino.utils import babel
 #~ from lino.mixins.addressable import Addressable, Addressables
 from lino.models import get_site_config
 
+from lino.modlib.countries.models import CountryCity
 
-class Addressable(mixins.CountryCity):
+
+class Addressable(CountryCity):
     """
     Abstract base class for anything that has contact information (postal address, email, phone,...).
     

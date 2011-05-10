@@ -103,6 +103,11 @@ class Reminder(AutoUser):
     #~ reminder_text_choices.simple_values = True
     #~ reminder_text_choices = classmethod(reminder_text_choices)
     
+    #~ def create_reminder_text_choice(self,text):
+        #~ dblogger.warning("Would create reminder_text %r",text)
+        #~ print text
+        #~ return text
+    
 class ReminderEntry:
     """
     The class of volatile objects that `get_reminders`is expected to yield.

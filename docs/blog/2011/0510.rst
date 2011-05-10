@@ -1,0 +1,46 @@
+20110510
+========
+
+Ein bisschen Kleinkram in `lino.apps.dsbe`: 
+Feldbezeichnungen, `notes.Note.dtl`, neues Feld EventType.remark
+
+Upps, die Auswahlliste von `notes.Note.reminder_text` war seit 
+:doc:`gestern <0509>` leer. forceSelection einer Combobox mit simple 
+values ist jetzt immer auf True. 
+
+Oho, was ist denn das? Der folgende JS-Fehler kam, wenn in einem 
+Detail-Layout ein VBorderPanel mit 3 (nicht 2) Elementen generiert 
+wurde::
+
+  Uncaught TypeError: Cannot read property 'orientation' of undefined
+  Ext.extend.render ext-all-debug.js:14516
+  Ext.layout.BorderLayout.Ext.extend.onLayout ext-all-debug.js:13774
+  Ext.layout.ContainerLayout.Ext.extend.layout ext-all-debug.js:13162
+  Ext.Container.Ext.extend.doLayout ext-all-debug.js:12969
+  Ext.Container.Ext.extend.doLayout ext-all-debug.js:12976
+  Ext.Container.Ext.extend.doLayout ext-all-debug.js:12976
+  Ext.Container.Ext.extend.afterRender ext-all-debug.js:12743
+  Ext.Panel.Ext.extend.afterRender ext-all-debug.js:17414
+  Ext.extend.render ext-all-debug.js:10802
+  Ext.Component ext-all-debug.js:10641
+  Ext.apply.extend.K ext-base.js:7
+  Ext.apply.extend.K ext-base.js:7
+  Ext.apply.extend.K ext-base.js:7
+  Ext.apply.extend.K ext-base.js:7
+  Lino.WindowWrapperBase.setup lino.js:2353
+  Lino.WindowWrapperBase.show lino.js:2385
+  Lino.notes.EventTypes.detail lino.js:3059
+  (anonymous function) lino.js:923
+  Lino.do_on_current_record lino.js:890
+  Lino.show_detail lino.js:914
+  Lino.GridPanel.Ext.extend.onCellDblClick lino.js:1574
+  EXTUTIL.Event.fire ext-all-debug.js:310
+  EXTUTIL.Observable.fireEvent ext-all-debug.js:54
+  Ext.grid.GridView.Ext.extend.processEvent ext-all-debug.js:46737
+  Ext.grid.GridPanel.Ext.extend.processEvent ext-all-debug.js:45624
+  Ext.grid.GridPanel.Ext.extend.onDblClick ext-all-debug.js:45644
+  h ext-all-debug.js:4615  
+
+Und außerdem berechnete VBorderPanel bei zwei vflex-Elementen 
+(und einem non-vflex-Element) die Höhe der beiden vflex-Elemente 
+nicht korrekt.

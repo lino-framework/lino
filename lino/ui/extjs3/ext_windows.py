@@ -133,10 +133,12 @@ class BaseDetailWrapper(MasterWrapper):
             lh = details[0]
             #~ lh.label = None
             main = ext_elems.FormPanel(rh,action,lh._main,method=self.method)
+            #~ main.update(autoScroll=True)
             WindowWrapper.__init__(self,action,rh.ui,lh,main,**kw)        
         else:
             self.tabbed = True
             tabs = [lh._main for lh in details]
+            #~ for t in tabs: t.update(autoScroll=True)
             main = ext_elems.FormPanel(rh,action,ext_elems.TabPanel(tabs),method=self.method)
             WindowWrapper.__init__(self,action,rh.ui,None,main,**kw) 
             

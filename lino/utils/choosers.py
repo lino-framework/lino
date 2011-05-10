@@ -49,6 +49,7 @@ class Chooser(FieldChooser):
     #~ stored_name = None
     simple_values = False
     instance_values = True
+    force_selection = True
     #~ force_selection = True
     #~ on_quick_insert = None
     #~ quick_insert_field = None
@@ -63,6 +64,7 @@ class Chooser(FieldChooser):
         #~ else:
             self.simple_values = getattr(meth,'simple_values',False)        
             self.instance_values = getattr(meth,'instance_values',False)
+            self.force_selection = getattr(meth,'force_selection',self.force_selection)
         #~ self.context_params = meth.func_code.co_varnames[1:meth.func_code.co_argcount]
         self.context_params = meth.context_params
         #~ self.context_params = meth.func_code.co_varnames[:meth.func_code.co_argcount]

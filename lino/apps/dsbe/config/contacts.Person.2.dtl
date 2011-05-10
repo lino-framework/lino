@@ -16,7 +16,6 @@ income =
   income_ag  income_wg    
   income_kg   income_rente  
   income_misc  
-    
 
   
 suche1 = 
@@ -30,6 +29,6 @@ suche2 =
 suche = 
   suche1:40  suche2:40
   job_office_contact job_agents
-  income:20 dsbe.ExclusionsByPerson 
+  income:20 dsbe.ExclusionsByPerson
   
   

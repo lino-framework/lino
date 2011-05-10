@@ -343,7 +343,7 @@ Lino.VBorderPanel = Ext.extend(Ext.Panel,{
           var item = this.items.get(i);
           //~ if (this.isVertical(item) && item.getResizeEl()) {
           if (this.isVertical(item)) {
-              if (item.collapsed || item.flex == 0) {
+              if (item.collapsed || item.flex == 0 || item.flex === undefined) {
                   //~ item.syncSize()
                   //~ item.doLayout()
                   //~ if (item.region == "north") console.log('region north',item.getHeight(),item.id, item);
@@ -351,11 +351,13 @@ Lino.VBorderPanel = Ext.extend(Ext.Panel,{
                   availableHeight -= item.getHeight();
               } else {
                   sumflex += item.flex;
+                  //~ console.log(item.flex);
               }
           } 
           //~ else console.log('non-vertical item in VBoderPanel:',item)
         }
         var hunit = availableHeight / sumflex;
+        //~ console.log('sumflex=',sumflex,'hunit=',hunit, 'availableHeight=',availableHeight);
         for(var i=0; i < this.items.length;i++) {
           var item = this.items.get(i);
           if (this.isVertical(item)) {
@@ -2336,7 +2338,9 @@ Lino.WindowWrapperBase = {
     //~ 20101021 this.main_item.set_base_params(this.base_params);
     //~ Ext.apply(this.window,{renderTo: 'main_area'});
     
-    
+    //~ 20110510
+    //~ this.main_item.anchor = '100% 100%';
+    //~ this.main_item.autoScroll = true;
     Ext.apply(this.window_config,{items: this.main_item});
     
     if (this.config.active_tab) {
@@ -2435,6 +2439,8 @@ Lino.WindowWrapper = function(caller,config,params) {
   //~ this.main_item = config.main_panel;
   
   this.window_config = {
+    //~ 20110510
+    //~ layout: 'form', autoScroll: true,
     layout: "fit", 
     maximized: true, renderTo: 'main_area', constrain: true,
     //~ maximizable: true, 

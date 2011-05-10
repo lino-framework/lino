@@ -2,9 +2,9 @@
 :label_align: top
 
 left = 
-    date event_type type user language
-    subject reminder_date:8
-    reminder_text delay_type:8 delay_value:8 reminder_done:8
+    date:10 type:25 event_type:25 user:10 language:8
+    subject:60 reminder_date:10 
+    reminder_text:50 delay_type:10 delay_value:10 reminder_done:10
     person company
     
 main =

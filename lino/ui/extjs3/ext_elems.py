@@ -504,7 +504,9 @@ class ComboFieldElement(FieldElement):
         # When used as editor of an EditorGridPanel, don't set the name attribute
         # because it is not needed for grids and might conflict with fields of a 
         # surronding detail form. See ticket #38 (:doc:`/blog/2011/0408`).
-        if not isinstance(self.lh.layout,reports.ListLayout):
+        # Also, Comboboxes with simple values may never have a hiddenName option.
+        if not isinstance(self.lh.layout,reports.ListLayout) \
+            and not isinstance(self,SimpleRemoteComboFieldElement):
             kw.update(hiddenName=self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
         return kw
       
@@ -540,9 +542,10 @@ class RemoteComboFieldElement(ComboFieldElement):
         
 class SimpleRemoteComboFieldElement(RemoteComboFieldElement):
     value_template = "new Lino.SimpleRemoteComboFieldElement(%s)"
-    def get_field_options(self,**kw):
-        # Do never add a hiddenName
-        return FieldElement.get_field_options(self,**kw)
+    #~ def get_field_options(self,**kw):
+        #~ todo : store
+        #~ # Do never add a hiddenName
+        #~ return FieldElement.get_field_options(self,**kw)
     
   
 class ComplexRemoteComboFieldElement(RemoteComboFieldElement):
@@ -1023,11 +1026,13 @@ class Panel(Container):
                 self.value_template = 'new Lino.VBorderPanel(%s)'
                 for e in self.elements:
                     #~ if e.vflex: # """as long as there are bugs, make also non-vflex resizable"""
+                    if e.vflex:
+                        e.update(flex=e.height or e.preferred_height)
                     e.update(split=True)
                 self.elements[0].update(region='north')
                 self.elements[1].update(region='center')
                 if len(self.elements) == 3:
-                    self.elements[1].update(region='south')
+                    self.elements[2].update(region='south')
         
 
             
@@ -1179,10 +1184,11 @@ class MainPanel(jsgen.Variable):
         if ch:
             #~ if ch.on_quick_insert is not None:
             #~ if ch.meth.quick_insert_field is not None:
-            if ch.can_create_choice:
+            if ch.can_create_choice or not ch.force_selection:
                 kw.update(forceSelection=False)
                 #~ print 20110425, field.name, lh
             if ch.simple_values:
+                #~ kw.update(forceSelection=False)
                 return SimpleRemoteComboFieldElement(lh,field,**kw)
             else:
                 if isinstance(field,models.ForeignKey):
