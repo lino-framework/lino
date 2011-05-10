@@ -1,4 +1,0 @@
-T:\hgwork\lino\docs\blog\2011\0509.rst:53: WARNING: xfile reference target not found: lino.js
-T:\hgwork\lino\docs\blog\2011\0509.rst:84: WARNING: py:class reference target not found: lino.apps.dsbe.models.ConfiguredPropsByPerson
-T:\hgwork\lino\docs\blog\2011\0509.rst:119: WARNING: setting reference target not found: TEMPLATE_CONTEXT_PROCESSORS
-T:\hgwork\lino\docs\blog\2011\0509.rst:119: WARNING: py:mod reference target not found: lino.apps.std.settings

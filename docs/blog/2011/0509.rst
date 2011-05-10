@@ -52,7 +52,7 @@ Leere Site-Konfiguration
 
 Um die Sache abzusiegeln, schreibe ich für das soeben gelöste Problem 
 mal einen Testfall `test02()` in der 
-:srcref:`lino/apps/dsbe/tests/dsbe_tests.py`.
+:srcref:`/lino/apps/dsbe/tests/dsbe_tests.py`.
 Der testet den Fall zwar lediglich teilweise,
 aber ich habe momentan keine Idee mehr, 
 wie man die response.content noch weiter testen könnte.
@@ -118,3 +118,7 @@ Dadurch kann der komplette folgende Code aus der `settings.py` entfallen::
 
 - Ich habe entdeckt, dass in Djangos Standardwert für :setting:`TEMPLATE_CONTEXT_PROCESSORS`
   noch `django.contrib.auth` drin war. Der wird deshalb jetzt in :mod:`lino.apps.std.settings` gesetzt.
+
+- html_page() gibt jetzt einen String mit newlines zurück 
+  (statt wie bisher ein Generator zu sein der dann von Django 
+  ohne newlines zusammengeklebt wird).

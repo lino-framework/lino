@@ -92,8 +92,9 @@ def objects():
     
 def test02(self):
     """
-    Testing whether 
-    See :doc:`/blog/2011/0408`.
+    Testing whether `/api/notes/NoteTypes/1?fmt=json` 
+    has no item `templateHidden`.
+    See :doc:`/blog/2011/0509`.
     """
     #~ from lino.apps.dsbe.models import NoteType
     from lino.modlib.notes.models import NoteType
