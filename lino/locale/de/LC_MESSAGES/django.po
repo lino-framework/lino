@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-10 14:32+0100\n"
-"PO-Revision-Date: 2011-04-29 09:48+0200\n"
+"POT-Creation-Date: 2011-05-11 21:06+0100\n"
+"PO-Revision-Date: 2011-05-11 23:06+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -28,7 +28,8 @@ msgstr "Ungültiger Wert %(value). Erlaubte Werte sind (%(values)s)"
 msgid "Default build method"
 msgstr "Standard-Konstruktionsmethode"
 
-#: .\models.py:56 .\models.py:105
+#: .\models.py:56
+#: .\models.py:105
 msgid "Site Configuration"
 msgstr "Anwendungsparameter"
 
@@ -62,7 +63,8 @@ msgstr "Duplizieren"
 msgid "Delete"
 msgstr "Löschen"
 
-#: .\reports.py:386 .\reports.py:391
+#: .\reports.py:386
+#: .\reports.py:391
 msgid "Save"
 msgstr "Speichern"
 
@@ -79,10 +81,10 @@ msgstr "Ja"
 msgid "No"
 msgstr "Nein"
 
-#: .\reports.py:1023
+#: .\reports.py:1024
 #, python-format
-msgid "%(details)s by %(model)s %(master)s"
-msgstr "%(details)s pro %(model)s %(master)s"
+msgid "%(details)s of %(master)s"
+msgstr "%(details)s von %(master)s"
 
 #: .\core\kernel.py:175
 #, python-format
@@ -93,19 +95,15 @@ msgstr "Kann %(self)s nicht löschen weil %(count)d %(refs)s darauf verweisen."
 msgid "user"
 msgstr "Benutzer"
 
-#: .\mixins\__init__.py:78
-msgid "Country"
-msgstr "Land"
+#: .\mixins\__init__.py:76
+msgid "Seq.No."
+msgstr "Seq.-Nr."
 
-#: .\mixins\__init__.py:80
-msgid "City"
-msgstr "Stadt"
-
-#: .\mixins\__init__.py:100
+#: .\mixins\__init__.py:92
 msgid "Owner type"
 msgstr "Besitzertabelle"
 
-#: .\mixins\__init__.py:101
+#: .\mixins\__init__.py:94
 msgid "Owner"
 msgstr "Besitzer"
 
@@ -209,50 +207,67 @@ msgstr "Bearbeitet"
 msgid "Description"
 msgstr "Beschreibung"
 
-#: .\ui\store.py:109 .\ui\extjs3\ext_store.py:115 .\ui\extjs4\ext_store.py:115
+#: .\ui\store.py:109
+#: .\ui\extjs3\ext_store.py:115
+#: .\ui\extjs4\ext_store.py:115
 #: .\ui\qx\qx_store.py:106
 #, python-format
 msgid "Existing primary key value %r may not be modified."
 msgstr "Existierender ID-Wert %r darf nicht verändert werden."
 
-#: .\ui\store.py:373 .\ui\extjs3\ext_store.py:388 .\ui\extjs4\ext_store.py:388
+#: .\ui\store.py:373
+#: .\ui\extjs3\ext_store.py:388
+#: .\ui\extjs4\ext_store.py:388
 #: .\ui\qx\qx_store.py:370
 #, python-format
 msgid "%r (invalid choice)"
 msgstr "%r (ungültige Auswahl)"
 
-#: .\ui\extjs3\ext_elems.py:578 .\ui\extjs4\ext_elems.py:569
+#: .\ui\extjs3\ext_elems.py:581
+#: .\ui\extjs4\ext_elems.py:569
 #: .\ui\qx\qx_elems.py:555
 #, python-format
 msgid "Select a %s..."
 msgstr "%s auswählen..."
 
-#: .\ui\extjs3\ext_ui.py:229 .\ui\extjs4\ext_ui.py:229 .\ui\qx\qx_ui.py:229
+#: .\ui\extjs3\ext_ui.py:229
+#: .\ui\extjs4\ext_ui.py:229
+#: .\ui\qx\qx_ui.py:229
 #, python-format
 msgid "Row %(rowid)d of %(rowcount)d"
 msgstr "Record  %(rowid)d von %(rowcount)d"
 
-#: .\ui\extjs3\ext_ui.py:694 .\ui\extjs4\ext_ui.py:704
+#: .\ui\extjs3\ext_ui.py:694
+#: .\ui\extjs4\ext_ui.py:704
 msgid "Console"
 msgstr "Konsole"
 
-#: .\ui\extjs3\ext_ui.py:745 .\ui\extjs4\ext_ui.py:757 .\ui\qx\qx_ui.py:563
+#: .\ui\extjs3\ext_ui.py:745
+#: .\ui\extjs4\ext_ui.py:757
+#: .\ui\qx\qx_ui.py:563
 #, python-format
 msgid "Welcome on Lino server %(title)r, user %(user)s"
 msgstr "Willkommen auf dem Lino-server %(title)r, %(user)s"
 
-#: .\ui\extjs3\ext_ui.py:805 .\ui\extjs4\ext_ui.py:817 .\ui\qx\qx_ui.py:622
+#: .\ui\extjs3\ext_ui.py:805
+#: .\ui\extjs4\ext_ui.py:817
+#: .\ui\qx\qx_ui.py:622
 #, python-format
 msgid "%s has been created."
 msgstr "%s wurde erstellt."
 
-#: .\ui\extjs3\ext_ui.py:807 .\ui\extjs4\ext_ui.py:819 .\ui\qx\qx_ui.py:624
+#: .\ui\extjs3\ext_ui.py:807
+#: .\ui\extjs4\ext_ui.py:819
+#: .\ui\qx\qx_ui.py:624
 #, python-format
 msgid "%s has been saved."
 msgstr "%s wurde gespeichert."
 
-#: .\ui\extjs3\ext_ui.py:815 .\ui\extjs3\ext_ui.py:839
-#: .\ui\extjs4\ext_ui.py:827 .\ui\extjs4\ext_ui.py:851 .\ui\qx\qx_ui.py:632
+#: .\ui\extjs3\ext_ui.py:815
+#: .\ui\extjs3\ext_ui.py:839
+#: .\ui\extjs4\ext_ui.py:827
+#: .\ui\extjs4\ext_ui.py:851
+#: .\ui\qx\qx_ui.py:632
 #: .\ui\qx\qx_ui.py:655
 #, python-format
 msgid "User %(user)s cannot configure %(report)s."
@@ -263,31 +278,43 @@ msgstr ""
 msgid "Error while saving GC for %(report)s: %(error)s"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1008 .\ui\extjs4\ext_ui.py:1015 .\ui\qx\qx_ui.py:819
+#: .\ui\extjs3\ext_ui.py:1008
+#: .\ui\extjs4\ext_ui.py:1015
+#: .\ui\qx\qx_ui.py:819
 #, python-format
 msgid "Failed to delete %(record)s : %(error)s."
 msgstr "Fehler beim Löschen von %(record)s : %(error)s."
 
-#: .\ui\extjs3\ext_ui.py:1033 .\ui\extjs4\ext_ui.py:1040 .\ui\qx\qx_ui.py:844
+#: .\ui\extjs3\ext_ui.py:1034
+#: .\ui\extjs4\ext_ui.py:1040
+#: .\ui\qx\qx_ui.py:844
 #, python-format
 msgid "Insert into %s..."
 msgstr "Einfügen nach %s..."
 
-#: .\ui\extjs3\ext_ui.py:1061 .\ui\extjs4\ext_ui.py:1068 .\ui\qx\qx_ui.py:872
+#: .\ui\extjs3\ext_ui.py:1062
+#: .\ui\extjs4\ext_ui.py:1068
+#: .\ui\qx\qx_ui.py:872
 #, python-format
 msgid "Action %(action)s failed for %(record)s: %(error)s"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1203 .\ui\extjs4\ext_ui.py:1212 .\ui\qx\qx_ui.py:958
+#: .\ui\extjs3\ext_ui.py:1204
+#: .\ui\extjs4\ext_ui.py:1212
+#: .\ui\qx\qx_ui.py:958
 #, python-format
 msgid "Choices for %s"
 msgstr "Auswahlmöglichkeiten für %s"
 
-#: .\ui\extjs3\ext_ui.py:1316 .\ui\extjs4\ext_ui.py:1325 .\ui\qx\qx_ui.py:1068
+#: .\ui\extjs3\ext_ui.py:1317
+#: .\ui\extjs4\ext_ui.py:1325
+#: .\ui\qx\qx_ui.py:1068
 msgid "Upload"
 msgstr "Upload"
 
-#: .\ui\extjs3\ext_ui.py:1324 .\ui\extjs4\ext_ui.py:1333 .\ui\qx\qx_ui.py:1076
+#: .\ui\extjs3\ext_ui.py:1325
+#: .\ui\extjs4\ext_ui.py:1333
+#: .\ui\qx\qx_ui.py:1076
 msgid "Edit"
 msgstr "Bearbeiten"
 
@@ -303,6 +330,12 @@ msgstr "bloß nicht ... sehr gerne"
 #: .\utils\choicelists.py:228
 msgid "not at all...very well"
 msgstr "gar nicht ... sehr gut"
+
+#~ msgid "Country"
+#~ msgstr "Land"
+
+#~ msgid "City"
+#~ msgstr "Stadt"
 
 #~ msgid "Notes"
 #~ msgstr "Notizen"
@@ -546,9 +579,6 @@ msgstr "gar nicht ... sehr gut"
 
 #~ msgid "Street"
 #~ msgstr "Straße"
-
-#~ msgid "No."
-#~ msgstr "Nr."
 
 #~ msgid "Box"
 #~ msgstr "Fach"

@@ -1030,7 +1030,8 @@ class ExtUI(base.UI):
             fmt = request.GET.get('fmt',None)
             if pk == '-99999':
                 datarec = elem2rec1(ar,ah,elem)
-                datarec.update(title=_("Insert into %s...") % ah.report.label)
+                #~ datarec.update(title=_("Insert into %s...") % ah.report.label)
+                datarec.update(title=_("Insert into %s...") % ar.get_title())
             else:
                 datarec = elem2rec_detailed(ar,ah,elem)
             if fmt is None or fmt == 'json':

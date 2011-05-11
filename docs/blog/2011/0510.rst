@@ -40,7 +40,12 @@ wurde::
   Ext.grid.GridPanel.Ext.extend.processEvent ext-all-debug.js:45624
   Ext.grid.GridPanel.Ext.extend.onDblClick ext-all-debug.js:45644
   h ext-all-debug.js:4615  
+  
+Das war ein Tippfehler in der :xfile:`linolib.js`. 
 
 Und außerdem berechnete VBorderPanel bei zwei vflex-Elementen 
 (und einem non-vflex-Element) die Höhe der beiden vflex-Elemente 
 nicht korrekt.
+
+Also ein Doppelbug weniger, der schon seit Langem sein Unwesen trieb.
+Freut mich, den gefunden zu haben. 

@@ -1200,6 +1200,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   },
   
   load_record_id : function(record_id,after) {
+    //~ console.log('load_record_id',record_id);
     var this_ = this;
     var p = {};
     Ext.apply(p,this.ww.config.base_params);
@@ -1232,7 +1233,10 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   
   set_current_record : function(record,after) {
     this.current_record = record;
-    //~ console.log('Lino.FormPanel.set_current_record',record);
+    //~ if (record) 
+        //~ console.log('Lino.FormPanel.set_current_record',record.title,record);
+    //~ else
+        //~ console.log('Lino.FormPanel.set_current_record',record);
     //~ this.config.main_panel.form.load(record);    
     if (record) {
       this.enable();
@@ -2374,10 +2378,11 @@ Lino.WindowWrapperBase = {
     //~ }
     
     if (this.config.data_record) {
-      //~ console.log('Lino.WindowWrapper with data_record',this.config.data_record);
+      //~ console.log('Lino.WindowWrapper with data_record',this.config.data_record.title);
       //~ this.main_item.on_master_changed.defer(2000,this.main_item,[config.data_record]);
       //~ Lino.do_when_visible(this.main_item,function(){this.on_master_changed(config.data_record)});
-      //~ this.main_item.on('afterrender',function(){this.main_item.on_master_changed(config.data_record)},this,{single:true});
+      //~ this.main_item.on('afterrender',function(){
+      //~   this.main_item.on_master_changed(config.data_record)},this,{single:true});
       this.main_item.set_current_record(this.config.data_record);
       //~ return;
     } else if (this.config.record_id !== undefined) { // may be 0 
@@ -2392,7 +2397,7 @@ Lino.WindowWrapperBase = {
       //~ Lino.load_mask.show();
       this.setup();
       this.window.show();
-      this.refresh();
+      //~ this.refresh();
       //~ Lino.load_mask.hide();
   },
   search_change : function(field,oldValue,newValue) {
@@ -2419,7 +2424,7 @@ Lino.WindowWrapperBase = {
   }
 };
 
-Lino.WindowWrapper = function(caller,config,params) {
+Lino.WindowWrapper = function(caller,config,params,wc) {
   //~ console.log('Lino.WindowWrapper.constructor','config:',config,'params:',params);
   //~ console.time('WindowWrapper.constructor()');
   this.caller = caller;
@@ -2442,7 +2447,8 @@ Lino.WindowWrapper = function(caller,config,params) {
     //~ 20110510
     //~ layout: 'form', autoScroll: true,
     layout: "fit", 
-    maximized: true, renderTo: 'main_area', constrain: true,
+    //~ maximized: true, 
+    renderTo: 'main_area', constrain: true,
     //~ maximizable: true, 
     //~ autoHeight: true,
     title: this.config.title,
@@ -2456,6 +2462,11 @@ Lino.WindowWrapper = function(caller,config,params) {
       { qtip: 'close', handler: Lino.tools_close_handler(this), id: "close" } 
     ] 
   };
+  
+  if (wc) 
+      Ext.apply(this.window_config,wc);
+  else 
+      Ext.apply(this.window_config,{maximized: true});
   
   //~ this.setup();
   
@@ -2551,6 +2562,11 @@ Lino.GridMasterWrapper.override({
     
     Lino.WindowWrapper.prototype.setup.call(this);
     
+  },
+  show : function() {
+      this.setup();
+      this.window.show();
+      this.refresh();
   },
   add_row_listener : function(fn,scope) {
     // this.main_grid.add_row_listener(fn,scope);

@@ -41,11 +41,14 @@ def objects():
     yield noteType(u"Übergabeblatt",remark=u"Übergabeblatt vom allgemeinen Sozialdienst") # (--> Datum Eintragung DSBE)
     yield noteType(u"Neuantrag")
     yield noteType(u"Antragsformular")
-    yield noteType(u"Eröffnungsbericht")
-    yield noteType(u"Erstgespräch")
-    yield noteType(u"Abschlussbericht")
     yield noteType((u"Auswertungsbogen allgemein"),build_method='rtf',template=u'Auswertungsbogen_allgemein.rtf')
     yield noteType((u"Anwesenheitsbescheinigung"),build_method='rtf',template=u'Anwesenheitsbescheinigung.rtf')
+    
+    eventType = Instantiator('notes.EventType',"name").build
+    
+    yield eventType(u"Eröffnungsbericht")
+    yield eventType(u"Erstgespräch")
+    yield eventType(u"Abschlussbericht")
     
     contractType = Instantiator('dsbe.ContractType',"ref",
         build_method='appypdf',
@@ -168,11 +171,22 @@ def objects():
     yield linkType(u"Facebook-Profil")
     yield linkType(u"Sonstige")
     
+    from lino.models import update_site_config
+    
     uploadType = Instantiator('uploads.UploadType',"name").build
     yield uploadType(u"Personalausweis")
-    yield uploadType(u"Aufenthaltserlaubnis")
-    yield uploadType(u"Arbeitserlaubnis")
+    p = uploadType(u"Aufenthaltserlaubnis")
+    yield p
+    update_site_config(residence_permit_upload_type=p)
+    p = uploadType(u"Arbeitserlaubnis")
+    yield p
+    update_site_config(work_permit_upload_type = p)
     yield uploadType(u"Vertrag")
+    p = uploadType(u"Führerschein")
+    yield p
+    update_site_config(driving_licence_upload_type = p)
+    
+    
     
     exam_policy = Instantiator('dsbe.ExamPolicy').build
     yield exam_policy(**babel_values('name',en='every month',de='monatlich',fr="mensuel"))

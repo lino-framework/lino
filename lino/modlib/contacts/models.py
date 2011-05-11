@@ -271,6 +271,11 @@ class PartnerDocument(models.Model):
     company = models.ForeignKey("contacts.Company",
         blank=True,null=True,verbose_name=_("Company"))
         
+    def get_partner(self):
+        if self.company is not None:
+            return self.company
+        return self.person
+        
 
 class ContactDocument(PartnerDocument):
     """

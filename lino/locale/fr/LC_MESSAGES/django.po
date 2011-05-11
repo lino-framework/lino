@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-10 14:32+0100\n"
+"POT-Creation-Date: 2011-05-11 21:06+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -80,9 +80,9 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-#: .\reports.py:1023
+#: .\reports.py:1024
 #, python-format
-msgid "%(details)s by %(model)s %(master)s"
+msgid "%(details)s of %(master)s"
 msgstr ""
 
 #: .\core\kernel.py:175
@@ -94,19 +94,15 @@ msgstr ""
 msgid "user"
 msgstr ""
 
-#: .\mixins\__init__.py:78
-msgid "Country"
+#: .\mixins\__init__.py:76
+msgid "Seq.No."
 msgstr ""
 
-#: .\mixins\__init__.py:80
-msgid "City"
-msgstr ""
-
-#: .\mixins\__init__.py:100
+#: .\mixins\__init__.py:92
 msgid "Owner type"
 msgstr ""
 
-#: .\mixins\__init__.py:101
+#: .\mixins\__init__.py:94
 msgid "Owner"
 msgstr ""
 
@@ -222,7 +218,7 @@ msgstr ""
 msgid "%r (invalid choice)"
 msgstr ""
 
-#: .\ui\extjs3\ext_elems.py:578 .\ui\extjs4\ext_elems.py:569
+#: .\ui\extjs3\ext_elems.py:581 .\ui\extjs4\ext_elems.py:569
 #: .\ui\qx\qx_elems.py:555
 #, python-format
 msgid "Select a %s..."
@@ -269,26 +265,26 @@ msgstr ""
 msgid "Failed to delete %(record)s : %(error)s."
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1033 .\ui\extjs4\ext_ui.py:1040 .\ui\qx\qx_ui.py:844
+#: .\ui\extjs3\ext_ui.py:1034 .\ui\extjs4\ext_ui.py:1040 .\ui\qx\qx_ui.py:844
 #, python-format
 msgid "Insert into %s..."
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1061 .\ui\extjs4\ext_ui.py:1068 .\ui\qx\qx_ui.py:872
+#: .\ui\extjs3\ext_ui.py:1062 .\ui\extjs4\ext_ui.py:1068 .\ui\qx\qx_ui.py:872
 #, python-format
 msgid "Action %(action)s failed for %(record)s: %(error)s"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1203 .\ui\extjs4\ext_ui.py:1212 .\ui\qx\qx_ui.py:958
+#: .\ui\extjs3\ext_ui.py:1204 .\ui\extjs4\ext_ui.py:1212 .\ui\qx\qx_ui.py:958
 #, python-format
 msgid "Choices for %s"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1316 .\ui\extjs4\ext_ui.py:1325 .\ui\qx\qx_ui.py:1068
+#: .\ui\extjs3\ext_ui.py:1317 .\ui\extjs4\ext_ui.py:1325 .\ui\qx\qx_ui.py:1068
 msgid "Upload"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1324 .\ui\extjs4\ext_ui.py:1333 .\ui\qx\qx_ui.py:1076
+#: .\ui\extjs3\ext_ui.py:1325 .\ui\extjs4\ext_ui.py:1333 .\ui\qx\qx_ui.py:1076
 msgid "Edit"
 msgstr ""
 

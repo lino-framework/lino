@@ -1020,8 +1020,9 @@ class Report(actors.Actor): #,base.Handled):
         assert rr is not None
         #~ if rr is not None and self.master is not None:
         if self.master is not None:
-            return _("%(details)s by %(model)s %(master)s") % dict(
-              model=self.master._meta.verbose_name,
+            #~ return _("%(details)s by %(model)s %(master)s") % dict(
+            return _("%(details)s of %(master)s") % dict(
+              #~ model=self.master._meta.verbose_name,
               #~ model=rr.master_instance._meta.verbose_name,
               details=self.model._meta.verbose_name_plural,
               master=rr.master_instance)

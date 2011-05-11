@@ -66,13 +66,32 @@ class ByUser(reports.Report):
             req.master_instance = req.get_user()
 
 
+class Sequenced(models.Model):
+  
+    class Meta:
+        abstract = True
+        
+    seqno = models.IntegerField(
+        blank=True,null=False,
+        verbose_name=_("Seq.No."))
+    
+    def set_seqno(self):
+        raise NotImplementedError
+    
+    def full_clean(self,*args,**kw):
+        if self.seqno is None:
+            self.set_seqno()
+        super(Sequenced,self).full_clean(*args,**kw)
+  
 class Owned(models.Model):
   
     class Meta:
         abstract = True
         
-    owner_type = models.ForeignKey(ContentType,verbose_name=_('Owner type'))
-    owner_id = models.PositiveIntegerField(verbose_name=_('Owner'))
+    owner_type = models.ForeignKey(ContentType,editable=False,
+        verbose_name=_('Owner type'))
+    owner_id = models.PositiveIntegerField(editable=False,
+        verbose_name=_('Owner'))
     owner = generic.GenericForeignKey('owner_type', 'owner_id')
     
     @chooser()

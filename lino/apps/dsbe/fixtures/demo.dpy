@@ -196,7 +196,7 @@ def objects():
     #~ yield prj 
     #~ yield note(user=user,project=prj,date=i2d(20091007),subject="Anschauen",company=oshz)
     
-    yield note(user=root,date=i2d(20091006),subject="Programmierung",company=cpas)
+    yield note(user=root,date=i2d(20091006),subject="Programmierung",company=cpas,type=1,event_type=1)
     yield note(user=user,date=i2d(20091007),subject="Testen",company=cpas)
     yield note(user=root,date=i2d(20100517),subject="Programmierung",company=cpas)
     yield note(user=user,date=i2d(20100518),subject="Testen",company=cpas)
@@ -332,6 +332,9 @@ def objects():
     p.coached_until = None
     p.coach1 = User.objects.get(username='root')
     p.save()
+    
+    yield note(user=root,date=i2d(20110511),subject=u"Anrufen Termin",
+        person=p,reminder_date=i2d(20110611))
     
     p = Person.objects.get(name=u"Eierschal Emil")
     p.coached_from = i2d(20100801)

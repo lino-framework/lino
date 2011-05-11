@@ -23,6 +23,9 @@ Short-term
 #.  Anzeige von mehrzeiligen Texten in Grids.
     Ein Button "Details", der zwischen "erste Zeile" und "alles" umschaltet.
     
+#.  Feldgruppen: um eine Gruppe von Feldern mit einem Label versehen zu können, 
+    brauche ich wahrscheinlich die :doc:`neue Syntax in .dtl-Dateien </tickets/34>`.
+    
 #.  :doc:`Wysiwyg-Editor </tickets/42>`
 
 #.  :doc:`Benutzerspezifische Gridkonfiguration </tickets/39>`

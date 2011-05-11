@@ -1,0 +1,7 @@
+:label_align: top
+
+main =
+    person company
+    remark
+    seqno owner
+    

@@ -196,6 +196,7 @@ INSTALLED_APPS = (
   'lino.modlib.notes',
   'lino.modlib.links',
   'lino.modlib.uploads',
+  'lino.modlib.thirds',
   'lino.apps.dsbe',
   #'dsbe.modlib.contacts',
   #'dsbe.modlib.projects',

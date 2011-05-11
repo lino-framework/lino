@@ -9,5 +9,5 @@ left =
     
 main =
     left uploads.UploadsByOwner
-    body:80x5 
+    body:80x5 thirds.ThirdsByOwner
 

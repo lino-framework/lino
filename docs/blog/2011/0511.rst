@@ -1,0 +1,74 @@
+20110511
+========
+
+Neues Modul "Drittpartner"
+--------------------------
+
+Das neues Modul :mod:`lino.modlib.thirds` ("Drittpartner")
+wird in Lino/DSBE im Detail einer Notiz benutzt 
+(`thirds.ThirdsByOwner` in `notes.Note.dtl`).
+
+Bei der Planung haben wir von "Kontakten" gesprochen, aber (bis auf 
+Weiteres) nenne ich es "Drittpartner". 
+Weil der Begriff "Kontakt" in Lino/DSBE schon belegt ist, 
+und weil es nicht unbedingt Kontakte sind 
+(Beispiel sh. weiter unten Notizart "Brief an Klient").
+
+Der Hauptpartner (oder einfach nur "Partner") einer Notiz
+ist entweder eine Person (die im Feld "Person" angegeben wird), 
+oder eine Firma (die im Feld "Firma" angegeben wird), 
+oder eine Kombination der beiden.
+Diese beiden Felder kriegen irgendwann (wenn Ticket :doc:`/tickets/34` 
+fertig ist) im Detail einer Notiz 
+noch eine Feldgruppenbezeichnung "Partner".
+
+Zur Erinnerung: 
+Notizen können auch eine Firma als Hauptpartner haben, wenn
+auch diese Möglichkeit im DSBE momentan nicht genutzt wird.
+
+Außer dem obligatorischem Hauptpartner kann man nun einer 
+Notiz eine beliebige Anzahl von Drittpartnern zuweisen. 
+
+Ein Drittpartner ist eine Person oder eine 
+Organisation (oder eine Kombination der beiden), 
+die mit dieser Notiz "sonstwie zu tun hat".
+Was mit den Drittpartnern konkret gemeint ist bzw. gemacht wird, 
+hängt von der Notizart (Form) ab:
+
+- Zum Beispiel in einem "Brief an Dritte" sind die Drittpartner die Empfänger
+  (und beim Ausdruck der Notiz wird eine Kopie pro Empfänger ausgedruckt).
+
+- Oder in einem "Versammlungsprotokoll" sind die Drittpartner die Teilnehmer.
+
+- Oder in einem "Brief an Klient" ist der Hauptpartner der Empfänger und 
+  die Drittpartner haben keine besondere Bedeutung.
+  (In so einem Fall wäre das Wort "Kontakt" irritierend)
+
+N.B.: Falls ein Drittpartner nicht in der Datenbank als 
+Person oder Firma existiert (und auch nicht angelegt 
+werden soll), kann er einfach im Feld "Betreff" erwähnt 
+werden. Deshalb halte ich das bei der Planung besprochene 
+zusätzliche freie Textfeld "Kontakt" (bis auf Weiteres) 
+für überflüssig.
+
+Bug "Lino server did not respond to Ajax request"
+-------------------------------------------------
+
+Diese Fehlermeldung kam seit 0506, wenn man ein Detail-Fenster direkt aufrief
+
+http://127.0.0.1:8000/api/contacts/Persons/68?fmt=detail&tab=1
+
+Lino.WindowWrapperBase.show() rief (seit irgendwann im Februar) ein refresh() auf. 
+Das war zumindest im Fall einer FormPanel mit `data_record` eines zu viel.
+Habs wieder rausgeholt.
+Für GridPanel dagegen war es scheinbar nötig, deshalb habe ich jetzt eine neue
+Methode `GridMasterWrapper.show()`.
+
+
+Diverse
+-------
+
+Die Fixture std.dpy von lino.apps.dsbe setzt jetzt auch die drei Upload-Arten.
+Und erstellt ein paar EventTypes.
+
+
