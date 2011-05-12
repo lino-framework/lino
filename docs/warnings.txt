@@ -1,1 +1,6 @@
-T:\hgwork\lino\docs\blog\2011\0511.rst:4: WARNING: py:mod reference target not found: lino.modlib.thirds
+T:\hgwork\lino\docs\blog\2011\0511.rst:7: WARNING: py:mod reference target not found: lino.modlib.thirds
+T:\hgwork\lino\docs\blog\2011\0511.rst:84: WARNING: unknown document: /topics/dbmig/Datenmigration
+T:\hgwork\lino\docs\blog\2011\0512.rst:28: WARNING: py:meth reference target not found: ExtUI.quick_upload_buttons
+T:\hgwork\lino\docs\blog\2011\0512.rst:28: WARNING: py:func reference target not found: elem2rec1
+T:\hgwork\lino\docs\blog\2011\0512.rst:28: WARNING: py:func reference target not found: elem2rec_detailed
+T:\hgwork\lino\docs\blog\2011\0512.rst:28: WARNING: py:func reference target not found: elem2rec_insert

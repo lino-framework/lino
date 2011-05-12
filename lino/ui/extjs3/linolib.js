@@ -657,7 +657,10 @@ Lino.delete_selected = function(caller) {
     fn: function(btn) {
       if (btn == 'yes') {
         for ( var i=0; i < recs.length; i++ ) {
-          Lino.do_action(caller,{method:'DELETE',url:'/api'+caller.ls_url+'/'+recs[i].id})
+          Lino.do_action(caller,{
+              method:'DELETE',
+              url:'/api'+caller.ls_url+'/'+recs[i].id
+          })
         }
         caller.after_delete();
       }
@@ -2634,7 +2637,7 @@ Lino.InsertWrapper = Ext.extend(Lino.WindowWrapper, {
       return {fmt:'insert'};
   },
   save : function(after) {
-    console.log('InsertWrapper.save()',this);
+    //~ console.log('InsertWrapper.save()',this);
     var panel = this.main_item;
     var _this = this;
     panel.form.submit({
@@ -2735,7 +2738,7 @@ Ext.override(Ext.form.BasicForm,{
 
 
 function initializeFooBarDropZone(cmp) {
-    console.log('initializeFooBarDropZone',cmp);
+    //~ console.log('initializeFooBarDropZone',cmp);
     cmp.dropTarget = new Ext.dd.DropTarget(cmp.bwrap, {
       //~ ddGroup     : 'gridDDGroup',
       notifyEnter : function(ddSource, e, data) {

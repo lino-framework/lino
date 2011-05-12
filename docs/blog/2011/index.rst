@@ -131,6 +131,7 @@ As long as nobody protests, I'll save some time by writing in German.
   :doc:`09 <0509>`
   :doc:`10 <0510>`
   :doc:`11 <0511>`
+  :doc:`12 <0512>`
   |br| 
   |br|  	
 

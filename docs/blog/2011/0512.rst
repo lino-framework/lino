@@ -1,0 +1,39 @@
+20110512
+========
+
+.. currentmodule:: lino.ui.extjs3.ext_ui3
+
+Da war noch ein Bug: 
+z.B. wenn ich für eine Person einen Führerschein hochgeladen hatte, 
+dann war im Detail-Fenster 
+der "Bearbeiten"-Button im virtuellen Feld `driving_licence` 
+wie folgt definiert::
+
+  <a href='javascript:Lino.uploads.UploadsByOwner.detail(undefined,{ 
+    "data_record": { 
+      "data": { "delay_value": 0, "reminder_done": false, 
+        "description": "", "created": "12.05.2011", "reminder_date": null,
+        "owner_typeHidden": 11, "modified": "12.05.2011", "typeHidden": 5,
+        "owner_idHidden": 200007, "delay_type": "Tage", 
+        "delay_typeHidden": "D", 
+        "file": "uploads/2011/05/Lenkung.jpg", 
+        "reminder_text": "", "owner_type": "person", 
+        "type": "F\u00fchrerschein", "id": 11, 
+        "owner_id": "Mustermann Max (200007)" 
+      } 
+    } 
+  })'>Bearbeiten</a>
+
+
+Der `data_record` dort war nicht komplett. 
+Es fehlten `id`, `title` und `disable_delete`.
+Das war weil 
+:meth:`ExtUI.quick_upload_buttons`
+:func:`elem2rec1` 
+benutzte statt
+:func:`elem2rec_detailed`.
+Außerdem benutzt er für den "Upload"-Button (der ja eigentlich ein Insert macht) 
+jetzt die neue :func:`elem2rec_insert`, die den Fenstertitel 
+korrekt setzt.
+
+Checkin 20110512 und Minirelease in Eupen.

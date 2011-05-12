@@ -54,15 +54,21 @@ für überflüssig.
 Bug "Lino server did not respond to Ajax request"
 -------------------------------------------------
 
-Diese Fehlermeldung kam seit 0506, wenn man ein Detail-Fenster direkt aufrief
+Diese Fehlermeldung kommt seit Kurzem als MessageBox und nicht als 
+schlichter Eintrag in der Statuszeile, deshalb sehen wir 
+die momentan häufiger.
 
-http://127.0.0.1:8000/api/contacts/Persons/68?fmt=detail&tab=1
-
-Lino.WindowWrapperBase.show() rief (seit irgendwann im Februar) ein refresh() auf. 
-Das war zumindest im Fall einer FormPanel mit `data_record` eines zu viel.
-Habs wieder rausgeholt.
-Für GridPanel dagegen war es scheinbar nötig, deshalb habe ich jetzt eine neue
-Methode `GridMasterWrapper.show()`.
+An einer Stelle ist sie raus, nämlich 
+wenn man ein Detail-Fenster direkt aufrief
+(z.B. http://127.0.0.1:8000/api/contacts/Persons/68?fmt=detail&tab=1),
+dann rief 
+`Lino.WindowWrapperBase.show()`
+(seit irgendwann im Februar) ein `refresh()` auf. 
+Das war zumindest im Fall einer FormPanel 
+mit `data_record` zu viel.
+Habs also wieder rausgeholt.
+Für GridPanel dagegen ist es nötig, 
+deshalb hat GridPanel jetzt seine eigene Methode `show()`.
 
 
 Diverse
@@ -72,3 +78,8 @@ Die Fixture std.dpy von lino.apps.dsbe setzt jetzt auch die drei Upload-Arten.
 Und erstellt ein paar EventTypes.
 
 
+Minirelease in Eupen
+--------------------
+
+Checkin 20110511 und Minirelease in Eupen
+mit :doc:`/topics/dbmig/Datenmigration`. Ohne Überraschungen.

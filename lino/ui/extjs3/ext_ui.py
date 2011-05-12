@@ -152,6 +152,15 @@ def elem2rec1(ar,rh,elem,**rec):
     rec.update(data=rh.store.row2dict(ar,elem))
     return rec
 
+def elem2rec_insert(ar,ah,elem):
+    """
+    Returns a dict of this record, designed for usage by an InsertWindow.
+    """
+    rec = elem2rec1(ar,ah,elem)
+    #~ rec.update(title=_("Insert into %s...") % ah.report.label)
+    rec.update(title=_("Insert into %s...") % ar.get_title())
+    #~ rec.update(id=elem.pk) or -99999)
+    return rec
 
 def elem2rec_detailed(ar,rh,elem,**rec):
     """
@@ -1029,9 +1038,7 @@ class ExtUI(base.UI):
         if request.method == 'GET':
             fmt = request.GET.get('fmt',None)
             if pk == '-99999':
-                datarec = elem2rec1(ar,ah,elem)
-                #~ datarec.update(title=_("Insert into %s...") % ah.report.label)
-                datarec.update(title=_("Insert into %s...") % ar.get_title())
+                datarec = elem2rec_insert(ar,ah,elem)
             else:
                 datarec = elem2rec_detailed(ar,ah,elem)
             if fmt is None or fmt == 'json':
@@ -1312,7 +1319,8 @@ class ExtUI(base.UI):
             if a is not None:
                 #~ params = dict(base_params=self.request2kw(v))
                 rec = rr.create_instance()
-                params = dict(data_record=elem2rec1(rr,rr.ah,rec))
+                #~ params = dict(data_record=elem2rec1(rr,rr.ah,rec))
+                params = dict(data_record=elem2rec_insert(rr,rr.ah,rec))
                 #~ params = dict(data_record=elem2rec_detailed(rr,rr.ah,rec))
                 return self.action_href(a,_("Upload"),**params)
         if rr.total_count == 1:
@@ -1321,7 +1329,8 @@ class ExtUI(base.UI):
             s = ''
             s += ' [<a href="%s" target="_blank">show</a>]' % (settings.MEDIA_URL + rr[0].file.name)
             #~ s += ' [<a href="%s" target="_blank">edit</a>]' % (self.get_detail_url(rr[0],fmt='detail'))
-            params = dict(data_record=elem2rec1(rr,rr.ah,rr[0]))
+            #~ params = dict(data_record=elem2rec1(rr,rr.ah,rr[0]))
+            params = dict(data_record=elem2rec_detailed(rr,rr.ah,rr[0]))
             s += ' ' + self.action_href(rr.ah.report.detail_action,_("Edit"),**params)
             return s
         return '[?!]'
