@@ -1,9 +1,9 @@
 20110512
 ========
 
-.. currentmodule:: lino.ui.extjs3.ext_ui3
+.. currentmodule:: lino.ui.extjs3.ext_ui
 
-Da war noch ein Bug: 
+Noch ein Bug weniger:
 z.B. wenn ich für eine Person einen Führerschein hochgeladen hatte, 
 dann war im Detail-Fenster 
 der "Bearbeiten"-Button im virtuellen Feld `driving_licence` 
@@ -23,9 +23,13 @@ wie folgt definiert::
       } 
     } 
   })'>Bearbeiten</a>
+  
+Wenn man darauf klickte, erschien zwar der Upload, aber man konnte ihn dann 
+weder löschen noch refreshen (in beiden Fällen bekam man
+"Lino server did not respond to Ajax request").
 
-
-Der `data_record` dort war nicht komplett. 
+Grund:
+der `data_record` dort war nicht komplett. 
 Es fehlten `id`, `title` und `disable_delete`.
 Das war weil 
 :meth:`ExtUI.quick_upload_buttons`
@@ -36,4 +40,9 @@ Außerdem benutzt er für den "Upload"-Button (der ja eigentlich ein Insert mach
 jetzt die neue :func:`elem2rec_insert`, die den Fenstertitel 
 korrekt setzt.
 
-Checkin 20110512 und Minirelease in Eupen.
+6.15 Uhr : Check-in 20110512 und Minirelease in Eupen.
+
+20.50 Uhr: 
+In einigen Reports hatte ich die Kolonnenreihenfolge ("Form" vor "Inhalt") 
+noch nicht korrigiert. Nochmal ein Minirelease.
+

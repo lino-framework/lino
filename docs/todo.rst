@@ -9,21 +9,24 @@ for which I hope for help from other people.
 Short-term
 ----------
 
+#.  Anzeige von mehrzeiligen Texten in Grids.
+    Ein Button "Details", der zwischen "erste Zeile" und "alles" umschaltet.
+    
 #.  Doppelklick auf EventType : `notes.NotesByEvent`  ist anfangs nicht korrekt.
   
 #.  Weiter testen und dokumentieren: 
     Wird markup in pdf (appy) richtig ausgedruckt?
     Zum Beispiel funktionieren Titel noch nicht.
 
-#.  Externe Links (Lesezeichen) notieren können, 
-    indem man sie von einem anderen Browserfenster 
+#.  Externe Links (Lesezeichen) und Uploads machen können, 
+    indem man sie von einer anderen Anwendung
     per drag & drop auf die HtmlBox zieht.
     (u.a. :doc:`/tickets/8`)
 
-#.  Anzeige von mehrzeiligen Texten in Grids.
-    Ein Button "Details", der zwischen "erste Zeile" und "alles" umschaltet.
-    
-#.  Feldgruppen: um eine Gruppe von Feldern mit einem Label versehen zu können, 
+#.  Feldgruppen: Die Felder Note.person und Note.company 
+    sollten als Gruppe mit Bezeichung "Partner" ersichtlich sein.
+    Um eine Gruppe von Feldern mit einem Label 
+    versehen zu können, 
     brauche ich wahrscheinlich die :doc:`neue Syntax in .dtl-Dateien </tickets/34>`.
     
 #.  :doc:`Wysiwyg-Editor </tickets/42>`
@@ -79,6 +82,9 @@ Medium-term
 
 Later
 -----
+
+#.  In einer Grid mit Notizen die Hintergrundfarbe jeder Reihe 
+    abhängig von Notizart und/oder Ereignisart machen.
 
 #.  Welche weiteren Felder müssen (ähnlich wie "Stadt") lernfähig werden? 
     Vorschläge: 
