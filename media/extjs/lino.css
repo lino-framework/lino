@@ -62,9 +62,14 @@ http://stackoverflow.com/questions/2106104/word-wrap-grid-cells-in-ext-js
 	font-family: arial,tahoma;
 }
 .htmlText h1 {
-	font-size:31px;
+	font-size:16px;
 	padding-top:0px;
-	padding-bottom:18px;
+	padding-bottom:12px;
+	}
+.htmlText h2 {
+	font-size:13px;
+	padding-top:0px;
+	padding-bottom:10px;
 	}
 .htmlText td {
 	padding:0px;

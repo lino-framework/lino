@@ -920,13 +920,15 @@ class ExtUI(base.UI):
             if a is not None:
                 kw = {}
                 ar = ext_requests.ViewReportRequest(request,rh,a)
-                params = dict(base_params=self.request2kw(ar))
-
+                bp = self.request2kw(ar)
+                
                 if isinstance(a,reports.InsertRow):
                     elem = ar.create_instance()
                     rec = elem2rec1(ar,rh,elem,title=ar.get_title())
                     rec.update(phantom=True)
                     params.update(data_record=rec)
+                    
+                params = dict(base_params=bp)
 
                 kw.update(on_ready=['Lino.%s(undefined,%s);' % (a,py2js(params))])
                 #~ print '20101024 on_ready', params
@@ -1029,13 +1031,12 @@ class ExtUI(base.UI):
             #~ fmt = data.get('fmt',None)
             return self.form2obj_and_save(request,ah,data,elem,False) # force_update=True)
             
-        ar = ext_requests.ViewReportRequest(request,ah,ah.report.default_action)
-        
-        if pk == '-99999':
-            elem = ar.create_instance()
-            
-            
         if request.method == 'GET':
+            ar = ext_requests.ViewReportRequest(request,ah,ah.report.default_action)
+            
+            if pk == '-99999':
+                elem = ar.create_instance()
+            
             fmt = request.GET.get('fmt',None)
             if pk == '-99999':
                 datarec = elem2rec_insert(ar,ah,elem)
@@ -1047,13 +1048,15 @@ class ExtUI(base.UI):
             if a is not None:
                 if isinstance(a,actions.OpenWindowAction):
                     params = dict(data_record=datarec)
-                    params.update(base_params=self.request2kw(ar))
+                    bp = self.request2kw(ar)
                     if a.window_wrapper.tabbed:
-                        tab = request.GET.get('tab',None)
+                        tab = request.GET.get(ext_requests.URL_PARAM_TAB,None)
                         if tab is not None: 
                             tab = int(tab)
                             params.update(active_tab=tab)
+                    params.update(base_params=bp)
                     return HttpResponse(self.html_page(request,on_ready=['Lino.%s(undefined,%s);' % (a,py2js(params))]))
+                    
                     
                 if isinstance(a,actions.RedirectAction):
                     target = a.get_target_url(elem)
@@ -1289,6 +1292,8 @@ class ExtUI(base.UI):
             #~ for k,v in rr.known_values.items():
             #~ kw.update(rr.known_values)
             #~ # kw[ext_requests.URL_KNOWN_VALUES] = rr.known_values
+        if rr.expand_memos:
+            kw[ext_requests.URL_PARAM_EXPAND] = rr.expand_memos
         if rr.quick_search:
             kw[ext_requests.URL_PARAM_FILTER] = rr.quick_search
         if rr.master_instance is not None:

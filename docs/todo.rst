@@ -10,7 +10,7 @@ Short-term
 ----------
 
 #.  Anzeige von mehrzeiligen Texten in Grids.
-    Ein Button "Details", der zwischen "erste Zeile" und "alles" umschaltet.
+    Ein Button "Expand", der zwischen "erste Zeile" und "alles" umschaltet.
     
 #.  Doppelklick auf EventType : `notes.NotesByEvent`  ist anfangs nicht korrekt.
   

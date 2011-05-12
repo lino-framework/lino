@@ -3,7 +3,9 @@
 
 .. currentmodule:: lino.ui.extjs3.ext_ui
 
-Noch ein Bug weniger:
+Noch ein Bug weniger
+--------------------
+
 z.B. wenn ich für eine Person einen Führerschein hochgeladen hatte, 
 dann war im Detail-Fenster 
 der "Bearbeiten"-Button im virtuellen Feld `driving_licence` 
@@ -44,5 +46,49 @@ korrekt setzt.
 
 20.50 Uhr: 
 In einigen Reports hatte ich die Kolonnenreihenfolge ("Form" vor "Inhalt") 
-noch nicht korrigiert. Nochmal ein Minirelease.
+noch nicht korrigiert. Nochmal ein Minirelease 20110512b.
+
+
+Neues Feature "Expand Memos"
+----------------------------
+
+22 Uhr, schauen wir uns mal das folgende *feature request* an:
+
+#.  Anzeige von mehrzeiligen Texten in Grids:
+    Ein Button "Expand", der für Memo-Felder zwischen "nur erste Zeile" und "alles" umschaltet.
+    Bisher werden Memo-Felder immer komplett angezeigt, was ggf. zu sehr hohen 
+    Grid-Zeilen führen kann.
+    
+In `lino.ui.extjs3.requests` habe ich jetzt zwei neue Konstanten::
+
+  URL_PARAM_TAB = 'tab'
+  URL_PARAM_EXPAND = 'expand'
+
+(Das keyword für "tab" war bisher nicht als Konstante in `lino.ui.requests` definiert, 
+und Lino akzeptierte es folglich auch als Feldnamen. Jetzt nicht mehr.)
+
+In `ext_ui` sind dabei einige Optimierungen bzw. Umstrukturierungen gekommen.
+Neues Attribut :attr:`lino.reports.Report.expand_memos` ist par défaut auf `False`. 
+Das Attribut nach ReportActionRequest übernommen und bisher 
+lediglich in :meth:`lino.modlib.notes.models.Note.body_html` genutzt.
+
+Konkret: neuer Button "Memo" in der top toolbar einer Grid. Wenn man den klickt, 
+wird umgeschaltet (was jedesmal zu einem refresh führt).
+
+Im "collapsed" Modus zeigt momentan immer nur die ersten 30 Zeichen 
+der ersten Zeile an. Falls der Text länger ist, hängt er noch "..." 
+dran um das anzuzeigen.
+
+Hier könnte auch noch verfeinert werden: dass man auf die "..." klicken kann, 
+um diesen einen Text dann doch zu expandieren. 
+
+Das Ganze könnte man auch ohne Refresh implementieren 
+mit ein bisschen `DHTML-Zauberei
+<http://de.selfhtml.org/dhtml/modelle/dom.htm#elementinhalte>`_.
+
+24 Uhr.
+Cool, es scheint tatsächlich zu klappen!
+Weniger als 2 Stunden Arbeit, das hätte ich nicht gedacht.
+Aber morgen teste ich doch lieber noch was, bevor ich das Ding in Eupen installiere,
+denn da waren doch noch einige Änderungen, die subtile Bugs bewirken könnten.
 

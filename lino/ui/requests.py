@@ -47,6 +47,8 @@ The pk of the master instance.
 # URL_PARAM_MASTER_GRID = 'mg'
 URL_PARAM_GRIDFILTER = 'filter'
 URL_PARAM_FILTER = 'query'
+URL_PARAM_TAB = 'tab'
+URL_PARAM_EXPAND = 'expand'
 """
 A string entered in the quick search field or in the text field of a combobox.
 """
@@ -66,6 +68,8 @@ URL_PARAMS = [
   'URL_PARAM_SORTDIR',
   'URL_PARAM_START',
   'URL_PARAM_LIMIT',
+  'URL_PARAM_TAB',
+  'URL_PARAM_EXPAND',
   #~ 'TEST',
 ]
 
@@ -75,6 +79,13 @@ URL_PARAMS = [
 #~ FMT_RUN = 'act'
 #~ FMT_JSON = 'json'
 
+def parse_boolean(v):
+    if v in ('true','on'):
+        return True
+    if v in ('false','off'):
+        return False
+    raise Exception("Got invalid form value %r for %s" % (v,self.field.name))
+        
 def form_field_name(f):
     if isinstance(f,models.ForeignKey) or (isinstance(f,models.Field) and f.choices):
         return f.name + CHOICES_HIDDEN_SUFFIX
@@ -206,6 +217,15 @@ class ViewReportRequest(reports.ReportActionRequest):
               self.ah.actor.model.objects.get(pk=pk) 
               for pk in request.REQUEST.getlist(URL_PARAM_SELECTED)])
         """
+        
+        if isinstance(self.action,reports.GridEdit):
+            v = request.GET.get(URL_PARAM_EXPAND,None)
+            if v is not None: 
+                v = parse_boolean(v)
+                kw.update(expand_memos=v)
+                #~ print 20110512, v, __file__
+
+        
         return kw
       
         
@@ -213,21 +233,6 @@ class ViewReportRequest(reports.ReportActionRequest):
         return self.user
 
     
-    def unused_get_absolute_url(self,**kw):
-        if self.master_instance is not None:
-            kw.update(master_instance=self.master_instance)
-        if self.sort_column is not None:
-            kw.update(sort=self.sort_column)
-        if self.sort_direction is not None:
-            kw.update(dir=self.sort_direction)
-        if self.layout is not self.rh.layouts[1]:
-            kw.update(layout=self.layout.index)
-        if self.limit != self.__class__.limit:
-            kw.update(limit=self.limit)
-        if self.offset is not None:
-            kw.update(start=self.offset)
-        return self.report.get_absolute_url(**kw)
-
     def row2list(self,row):
         #~ return self.store.row2list(self.request,row)
         return self.store.row2list(self,row)
@@ -237,10 +242,3 @@ class ViewReportRequest(reports.ReportActionRequest):
         return self.store.row2dict(self,row)
  
 
-#~ class ViewActionRequest(actions.ActionRequest):
-    #~ def __init__(self,request,ah,action,*args,**kw):
-        #~ self.request = request
-        #~ actions.ActionRequest.__init__(self,ah,action,*args,**kw)
-        
-    #~ def handle_wc(self):
-        #~ return self.action.handle_wc(self)

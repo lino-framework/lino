@@ -182,11 +182,7 @@ class BooleanStoreField(StoreField):
         
     # as long as http://code.djangoproject.com/ticket/15497 is open
     def parse_form_value(self,v,obj):
-        if v in ('true','on'):
-            return True
-        if v in ('false','off'):
-            return False
-        raise Exception("Got invalid form value %r for %s" % (v,self.field.name))
+        return ext_requests.parse_boolean(v)
 
 
 class AutoStoreField(StoreField):

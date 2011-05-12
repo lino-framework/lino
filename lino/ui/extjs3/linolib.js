@@ -1298,7 +1298,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     var main = this.items.get(0);
     if (main.getActiveTab !== undefined) {
       var tabitem = main.getActiveTab();
-      Ext.apply(active_tab,{tab : main.items.indexOf(tabitem)});
+      Ext.apply(active_tab,{$ext_requests.URL_PARAM_TAB : main.items.indexOf(tabitem)});
     }
     var editor = new Ext.form.TextArea();
     var close = function() { win.close(); }
@@ -1520,6 +1520,18 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
       ]);
     }
     
+    if(true) {
+      tbar = tbar.concat([
+        { text:"$_('Memo')",
+          xtype: 'button', 
+          enableToggle: true, 
+          listeners: { scope: this, 'toggle' : this.toggle_expand_memo},
+          pressed : bp.expand,
+          tooltip:"$_('Expand memo fields')"
+        }
+      ]);
+    }
+    
     config.tbar = new Ext.PagingToolbar({ 
       store: config.store, 
       prependButtons: true, 
@@ -1577,6 +1589,12 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     Lino.GridPanel.superclass.constructor.call(this, config);
     
     this.on('beforeedit',function(e) { this.before_row_edit(e.record)},this);
+  },
+  
+  toggle_expand_memo : function(btn,pressed) { 
+    console.log(this,arguments);
+    this.getStore().setBaseParam('$ext_requests.URL_PARAM_EXPAND',pressed);
+    this.refresh();
   },
   
   do_when_clean : function(todo) { todo() },
@@ -2593,7 +2611,7 @@ Lino.DetailWrapper = Ext.extend(Lino.WindowWrapper, {
     if (main.activeTab) {
       var tab = main.items.indexOf(main.activeTab);
       //~ console.log('main.activeTab',tab,main.activeTab);
-      p.tab = tab
+      p.$ext_requests.URL_PARAM_TAB = tab
     }
     return p;
   },
