@@ -2,5 +2,5 @@
 :label_align: top
 
 main = 
-  id name choicelist
+  id name choicelist default_value
   properties.ChoicesByType

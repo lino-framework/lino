@@ -89,6 +89,7 @@ mit ein bisschen `DHTML-Zauberei
 24 Uhr.
 Cool, es scheint tatsächlich zu klappen!
 Weniger als 2 Stunden Arbeit, das hätte ich nicht gedacht.
+Check-in 20110512c.
 Aber morgen teste ich doch lieber noch was, bevor ich das Ding in Eupen installiere,
-denn da waren doch noch einige Änderungen, die subtile Bugs bewirken könnten.
+denn da waren ja doch einige Änderungen, die subtile Bugs bewirken könnten.
 

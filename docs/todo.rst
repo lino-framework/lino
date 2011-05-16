@@ -9,11 +9,6 @@ for which I hope for help from other people.
 Short-term
 ----------
 
-#.  Anzeige von mehrzeiligen Texten in Grids.
-    Ein Button "Expand", der zwischen "erste Zeile" und "alles" umschaltet.
-    
-#.  Doppelklick auf EventType : `notes.NotesByEvent`  ist anfangs nicht korrekt.
-  
 #.  Weiter testen und dokumentieren: 
     Wird markup in pdf (appy) richtig ausgedruckt?
     Zum Beispiel funktionieren Titel noch nicht.
@@ -23,6 +18,8 @@ Short-term
     per drag & drop auf die HtmlBox zieht.
     (u.a. :doc:`/tickets/8`)
 
+#.  :doc:`Benutzerspezifische Gridkonfiguration </tickets/39>`
+
 #.  Feldgruppen: Die Felder Note.person und Note.company 
     sollten als Gruppe mit Bezeichung "Partner" ersichtlich sein.
     Um eine Gruppe von Feldern mit einem Label 
@@ -31,12 +28,26 @@ Short-term
     
 #.  :doc:`Wysiwyg-Editor </tickets/42>`
 
-#.  :doc:`Benutzerspezifische Gridkonfiguration </tickets/39>`
+#.  Doppelklick auf Memo-Text einer Note bewirkt *nichts*. 
+    Sollte doch wenigstens das Detail-Fenster öffnen.
+    
+#.  Buttons sollten gleich nach einem Klick deaktiviert werden, 
+    bis die Aktion abgeschlossen ist.
+    Wenn man z.B. auf den Lebenslauf-Button doppelt klickt, versucht 
+    er zweimal kurz hintereinander das gleiche Dokument zu generieren. 
+    Beim zweiten Mal schlägt das dann logischerweise fehl. 
+    Er öffnet dann zwei Fenster, eines mit dem Lebenslauf und ein 
+    anderes mit der Fehlermeldung 
+    "Action Lebenslauf failed for Person #22315: I
+    need to use a temp folder
+    "/usr/local/django/dsbe_eupen/media/cache/appypdf/contacts.Person-22315.pdf.temp"
+    but this folder already exists."
+
 
 Medium-term
 -----------
 
-#.  Pro Ereignisart köntee ein Feld "muss manuell erledigt werden" kommen, 
+#.  Pro Ereignisart könnte ein Feld "muss manuell erledigt werden" kommen, 
     das würde dann verhindern, dass entsprechende Erinnerungen 
     automatisch aus dem Hauptbildschirm verschwinden.
 
@@ -52,12 +63,6 @@ Medium-term
 #.  Auswahllisten in FKs zu `languages.Language` und `countries.Country`: 
     Einträge sollten alphabetisch sortiert sein.
     
-#.  Übersetzung PropertyType : nicht Eigenschaftsart, sondern 
-    Eigenschaftstyp oder Eigenschafts-Datentyp...
-    
-#.  An makedocs müsste ich bei Gelegenheit mal ein bisschen weiter machen. 
-    Das ist noch lange nicht fertig.
-    
 #.  Wie kann man in der Dokumentvorlage `cv.odt`
     an Führerschein und Informatikkenntnisse rankommen?
 
@@ -66,23 +71,15 @@ Medium-term
     Und bei Personen dauert das mehrere Sekunden.
     :doc:`/tickets/21`.
 
-#.  Wenn im Vollbildmodus einer Person nur Änderungen in einer Grid
-    gemacht wurden und dann auf "Speichern" geklickt wird, kommt die
-    Mitteilung "Failure".
-
-#.  Was heißt "Muss generiert werden" bei den Notizen?
-
 #.  Textbausteine (im Text-Editor F1 drücken können)
-
-    
-#.  Formatierte Texte in Verträgen drucken können.
-    Zumindest Aufzählungen und mehrere Absätze 
-    sollten möglich sein.
     
 
 Later
 -----
 
+#.  An makedocs müsste ich bei Gelegenheit mal ein bisschen weiter machen. 
+    Das ist noch lange nicht fertig.
+    
 #.  In einer Grid mit Notizen die Hintergrundfarbe jeder Reihe 
     abhängig von Notizart und/oder Ereignisart machen.
 
@@ -593,18 +590,6 @@ Long-term
     http://django-rest-framework.org/
     instead of reinventing the wheel.
     (Discovered :doc:`/blog/2011/0311`)
-
-#.  Buttons sollten gleich nach einem Klick deaktiviert werden, 
-    bis die Aktion abgeschlossen ist.
-    Wenn man z.B. auf den Lebenslauf-Button doppelt klickt, versucht 
-    er zweimal kurz hintereinander das gleiche Dokument zu generieren. 
-    Beim zweiten Mal schlägt das dann logischerweise fehl. 
-    Er öffnet dann zwei Fenster, eines mit dem Lebenslauf und ein 
-    anderes mit der Fehlermeldung 
-    "Action Lebenslauf failed for Person #22315: I
-    need to use a temp folder
-    "/usr/local/django/dsbe_eupen/media/cache/appypdf/contacts.Person-22315.pdf.temp"
-    but this folder already exists."
 
 
 Documentation

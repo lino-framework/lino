@@ -99,8 +99,10 @@ class PropType(models.Model):
     """
     
     @chooser()
-    def default_value_choices(cls):
-        return self.choices_for(None)
+    def default_value_choices(cls,choicelist):
+        if choicelist:
+            return get_choicelist(choicelist).get_choices()
+        return []
         
     def get_default_value_display(self,value):
         return self.get_text_for_value(value)

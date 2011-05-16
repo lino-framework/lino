@@ -1,0 +1,13 @@
+20110516
+========
+
+#.  Tests mit dem neuen "Memo"-Button. Scheint alles super zu klappen.
+
+#.  Ein einfacher Bug, der noch niemandem aufgefallen war:
+    Die Combobox im Feld Standardwert funktionierte nicht 
+    (da kam ein traceback auf dem Server).
+    Und Standardwert war nicht im Detail drin.
+
+#.  Übersetzung PropertyType : nicht "Eigenschaftsart", sondern 
+    "Eigenschafts-Datentyp".
+    
