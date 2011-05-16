@@ -12,12 +12,18 @@ from appy import version
 
 APPY_PARAMS = dict()
 
+SKIP_TESTS = range(6) 
+
 #~ APPY_PARAMS.update(ooPort=8100)
 #~ APPY_PARAMS.update(pythonWithUnoPath=r'C:\PROGRA~1\LIBREO~1\program\python.exe')
 
 from lino.utils.restify import install_restify
 
-def run_test(number,title,HTML,RST):
+def run_test(number,title,HTML,RST=None):
+    if number in SKIP_TESTS: 
+        print "Skipped test #%d" % number
+        return
+    print "Running test #%d" % number
     tpl = os.path.join(os.path.abspath(os.path.dirname(__file__)),'test_template.odt')
     context = dict(locals())
     context.update(
@@ -35,71 +41,42 @@ def run_test(number,title,HTML,RST):
     #~ os.startfile(target)    
 
 
-# 1 : 
-#~ run_test(1,"Simple test. Works fine with version 0.6.6", '''
-#~ <div class="document">
-#~ <p>Hello, world?</p>
-#~ </div>
-#~ ''')
+#~ # 1 : 
+run_test(1,"Simple test. Works fine with version 0.6.6", '''
+<div class="document">
+<p>Hello, world?</p>
+</div>
+''')
 
-# 2 : 
-#~ run_test(2,"List items are not rendered (Appy 0.6.6)",'''
-#~ <div class="document">
-#~ <p>Some <strong>bold</strong> and some <em>italic</em> text.</p>
-#~ <p>A new paragraph.</p>
-#~ <p>A list with three items:</p>
-#~ <ul> 
-#~ <li>the first item</li> 
-#~ <li>another item</li> 
-#~ <li>the last item</li> 
-#~ </ul> 
-#~ <p>A last paragraph.</p>
-#~ </div>
-#~ ''')
+#~ # 2 : 
+run_test(2,"List items are not rendered (Appy 0.6.6)",'''
+<div class="document">
+<p>Some <strong>bold</strong> and some <em>italic</em> text.</p>
+<p>A new paragraph.</p>
+<p>A list with three items:</p>
+<ul> 
+<li>the first item</li> 
+<li>another item</li> 
+<li>the last item</li> 
+</ul> 
+<p>A last paragraph.</p>
+</div>
+''')
     
-#~ # 3 : the same as 2, but using `restify` to make the HTML
-#~ from lino.utils.restify import restify
-#~ run_test(3,restify(u'''
-#~ Some **bold** and some *italic* text. 
+# 3 : 
+run_test(3,"Same as 2, but using `restify` to make the HTML",None,u'''
+Some **bold** and some *italic* text. 
 
-#~ A new paragraph.
+A new paragraph.
 
-#~ A list with three items:
+A list with three items:
 
-#~ - the first item
-#~ - another item
-#~ - the last item
+- the first item
+- another item
+- the last item
 
-#~ A last paragraph.
-#~ '''))
-
-#~ from lino.utils.restify import restify
-#~ html = restify(u'''
-#~ Längere Texte mit mehreren Absaetzen im Inhalt einer Notiz (Note.body) 
-#~ wurden in der Grid zu einem einzigen Absatz zusammengeschnuert. 
-
-#~ - Virtuelles Feld `body_html` benutzt `lino.utils.restify`
-#~ - `body` ist jetzt in der Grid unsichtbar
-
-#~ Das Resultat ist jetzt einigermassen akzeptabel 
-#~ (`Links <http://lino.saffre-rumma.net>`_ sind anklickbar, 
-#~ Absatzwechsel werden als Zeilenwechsel angezeigt, 
-#~ Zeichenformatierung **fett** und *kursiv* funktioniert), 
-#~ aber noch nicht optimal (Aufzaehlungen werden verschluckt).
-#~ ''')
-#~ print html
-html = u"""
-<p>Längere Texte mit mehreren Absätzen im Inhalt einer Notiz (Note.body)
-wurden in der Grid zu einem einzigen Absatz zusammengeschnürt.</p>
-<ul class="simple">
-<li>Virtuelles Feld <cite>body_html</cite> benutzt <cite>lino.utils.restify</cite></li>
-<li><cite>body</cite> ist jetzt in der Grid unsichtbar</li>
-</ul>
-<p>Das Resultat ist jetzt einigermaßen akzeptabel (<a class="reference external" href="http://lino.saffre-rumma.net">Links</a> sind anklickbar,
-Absatzwechsel werden als Zeilenwechsel angezeigt), aber noch nicht
-optimal (<strong>fett</strong>, <em>kursiv</em>, Aufzählungen werden verschluckt).</p>
-""".encode('utf-8')
-#~ run_test(4,"SAX parser error on Python 2.6",html)
+A last paragraph.
+''')
 
 run_test(5,"SAX parser error on Python 2.6",None,u"""
 Some **bold** and some *italic* text.
@@ -113,3 +90,18 @@ A new paragraph, followed by a list with three items.
 A last paragraph with some special characters like <, & and >.
 """)
 
+
+html = """
+<div class="section" id="titel">
+<h1>Title</h1>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">&lt;string&gt;</tt>, line 2)</p>
+<p>Title underline too short.</p>
+<pre class="literal-block">
+Title
+====
+</pre>
+</div>
+</div>
+"""
+run_test(6,"20110516",html)

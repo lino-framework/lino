@@ -74,8 +74,8 @@ restify = html_body
 
 def install_restify(renderer):
     """
-    Install the `restify` function into the specified appy.pod renderer.
-    This may break with later versions of appy.pod since 
+    Install the `restify` function into the specified `appy.pod` renderer.
+    This may break with later versions of `appy.pod` since 
     it hacks on undocumented regions... but we wanted to be 
     able to insert rst formatted plain text using a simple comment 
     like this::
@@ -97,6 +97,7 @@ def install_restify(renderer):
     def func(unicode_string,**kw):
         if not unicode_string:
             return ''
+        
         html = restify(unicode_string,output_encoding='utf-8')
         #~ try:
             #~ html = restify(unicode_string,output_encoding='utf-8')
@@ -104,11 +105,11 @@ def install_restify(renderer):
             #~ print unicode_string
             #~ traceback.print_exc(e)
         #~ print repr(html)
-        assert html.startswith('<div class="document">\n')
-        assert html.endswith('</div>\n')
-        html = html[23:-7]
-        #~ print repr(html)
-        return renderer.renderXhtml(html,**kw)
+        if html.startswith('<div class="document">\n') and html.endswith('</div>\n'):
+            html = html[23:-7]
+            print html
+            return renderer.renderXhtml(html,**kw)
+        raise Exception("Error: restify() returned unexpected HTML: %r" % html)
         #~ return renderer.renderXhtml(html.encode('utf-8'),**kw)
     renderer.contentParser.env.context.update(restify=func)
 
