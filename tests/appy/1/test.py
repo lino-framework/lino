@@ -17,7 +17,11 @@ SKIP_TESTS = range(6)
 #~ APPY_PARAMS.update(ooPort=8100)
 #~ APPY_PARAMS.update(pythonWithUnoPath=r'C:\PROGRA~1\LIBREO~1\program\python.exe')
 
-from lino.utils.restify import install_restify
+try:
+  from lino.utils.restify import install_restify
+except ImportError:
+  def install_restify(*args):
+      pass
 
 def run_test(number,title,HTML,RST=None):
     if number in SKIP_TESTS: 
