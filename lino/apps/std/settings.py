@@ -15,7 +15,7 @@
 This defines Lino default settings. You include this (directly or indirectly) 
 into your local :xfile:`settings.py` using::
 
-  from lino.demos.std.settings import *
+  from lino.apps.std.settings import *
 
 """
 

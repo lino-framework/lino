@@ -61,10 +61,12 @@ from lino import fields
 from lino.models import get_site_config
 from lino.utils import babel
 
-def analyze_models():
+def analyze_models(self):
     """
     This is a part of a Lino site setup.
     The Django Model definitions are done, now Lino analyzes them and does certain actions.
+    The parameter `self` is the :class:`lino.apps.std.settings.Lino` instance 
+    defined in `settings.LINO`.
     
     - Load .dtl files and install them into `_lino_detail_layouts`
     - Install a DisableDeleteHandler for each Model into  `_lino_ddh`
@@ -100,6 +102,9 @@ def analyze_models():
         
         
     for model in models.get_models():
+      
+        if hasattr(model,'site_setup'):
+            model.site_setup(self)
     
         model._lino_detail_layouts = []
         model._lino_ddh = DisableDeleteHandler(model)
@@ -182,7 +187,15 @@ class DisableDeleteHandler():
 
 def setup_site(self):
     """
-    This takes the LinoSite instance (instantiated in your :xfile:`settings.py`)
+    `self` is the Lino instance stored as :setting:`LINO` in your :xfile:`settings.py`.
+    
+    This is run once after Django has populated it's model cache, 
+    and before any Lino Report can be used.
+    Since Django has not "after startup" event, this is triggered 
+    "automagically" when it is needed the first tim. 
+    For example on a mod_wsgi Web Server process it will be triggered 
+    by the first request.
+    
     """
   
     logger.info(lino.welcome_text())
@@ -197,7 +210,7 @@ def setup_site(self):
     
     self.configure(get_site_config())
   
-    analyze_models()
+    analyze_models(self)
     
     actors.discover()
     

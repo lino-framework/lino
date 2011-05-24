@@ -274,7 +274,7 @@ class Person(Partner,contacts.Person):
         
     def disabled_fields(self,request):
         if settings.TIM2LINO_IS_IMPORTED_PARTNER(self):
-            return PERSON_TIM_FIELDS
+            return settings.LINO.PERSON_TIM_FIELDS
         return []
         
     def get_queryset(self):
@@ -580,18 +580,19 @@ class Person(Partner,contacts.Person):
         return rr.ui.quick_upload_buttons(r)
     driving_licence.return_type = fields.DisplayField(_("driving licence"))
     
-    
-PERSON_TIM_FIELDS = reports.fields_list(Person,
-    '''name first_name last_name title remarks remarks2
-    zip_code city country street street_no street_box 
-    birth_date sex birth_place coach1 language 
-    phone fax email 
-    card_number card_valid_from card_valid_until
-    noble_condition card_issuer
-    national_id health_insurance pharmacy 
-    bank_account1 bank_account2 
-    gesdos_id activity 
-    is_cpas is_senior is_active nationality''')
+    @classmethod
+    def site_setup(cls,lino):
+        lino.PERSON_TIM_FIELDS = reports.fields_list(cls,
+          '''name first_name last_name title remarks remarks2
+          zip_code city country street street_no street_box 
+          birth_date sex birth_place coach1 language 
+          phone fax email 
+          card_number card_valid_from card_valid_until
+          noble_condition card_issuer
+          national_id health_insurance pharmacy 
+          bank_account1 bank_account2 
+          gesdos_id activity 
+          is_cpas is_senior is_active nationality''')
 
 
 
@@ -679,15 +680,17 @@ class Company(Partner,contacts.Company):
     
     def disabled_fields(self,request):
         if settings.TIM2LINO_IS_IMPORTED_PARTNER(self):
-            return COMPANY_TIM_FIELDS
+            return settings.LINO.COMPANY_TIM_FIELDS
         return []
     
-COMPANY_TIM_FIELDS = reports.fields_list(Company,
-    '''name remarks
-    zip_code city country street street_no street_box 
-    language vat_id
-    phone fax email 
-    bank_account1 bank_account2 activity''')
+    @classmethod
+    def site_setup(cls,lino):
+        lino.COMPANY_TIM_FIELDS = reports.fields_list(cls,
+            '''name remarks
+            zip_code city country street street_no street_box 
+            language vat_id
+            phone fax email 
+            bank_account1 bank_account2 activity''')
   
     
 class Companies(contacts.Companies):

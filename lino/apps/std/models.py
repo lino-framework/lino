@@ -20,9 +20,9 @@ from django.utils.translation import ugettext_lazy as _
 #~ logger.debug(__file__+' : started')
 
 from lino import reports
+from lino import mixins
 from lino.utils import perms
-from lino.utils import mixins
-from lino.modlib import fields
+from lino import fields
 from lino.modlib.contacts import models as contacts
 #from lino.modlib.projects import models as projects
 #from lino.modlib.properties import models as properties

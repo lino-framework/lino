@@ -19,6 +19,7 @@ Subpackages
 
 .. toctree::
 
+    lino.apps
     lino.reports
     lino.tools
     lino.fields

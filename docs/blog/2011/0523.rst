@@ -43,13 +43,13 @@ Aber...
 
 Die Teufel im Detail
 --------------------
-  
+
 Genauer gesagt muss ich den HTML-Code vorher ein bisschen korrigieren. 
 Zum Beispiel muss ich momentan alle ``<br>`` durch ``<br/>`` ersetzen, 
 weil sonst der XML-Parser von :term:`appy.pod` nicht mitspielt. 
 (Das ist bisher das einzige Beispiel, aber ich fürchte, dass noch 
 andere Fälle kommen werden. Bis auf weiteres regle ich das *on the fly* 
-in :func:`lino.utils.restify.install_restify`. Eine bessere Lösung wäre 
+in :func:`lino.utils.printable.install_restify`. Eine bessere Lösung wäre 
 freilich, wenn der HtmlEditor direkt gültiges XHTML produzieren würde...
 
 Und eines fehlt auch noch: der HtmlEditor von ExtJS kann keine Titel 

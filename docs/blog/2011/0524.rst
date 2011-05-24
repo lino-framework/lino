@@ -1,9 +1,13 @@
 20110524
 ========
 
+Wysiwyg-Editor
+--------------
+
 10 Uhr. Die `TinyMCE-Komponente für ExtJS 
 <http://blogs.byte-force.com/xor/tinymce/index.html>`_
 von Andrew Mayorov funktioniert. 
+:attr:`lino.apps.std.settings.Lino.use_tinymce`.
 Ich weiß noch lange nicht alles über TinyMCE (die Seite
 `TinyMCE for Dummies <http://tinymce.moxiecode.com/wiki.php/%22For_Dummies%22>`_ 
 war genau was ich brauchte), aber die Integration in Lino war ein erfreuliches 
@@ -15,4 +19,79 @@ armen CPUs, auf denen Lino läuft), wenn ich mein
 :mod:`lino.utils.html2xhtml` fertig mache. Und mit "fertig" meine 
 ich natürlich "brauchbar".
 
-Checkin
+Checkin 20110524 mit ersten Erfolgserlebnissen und folgenden noch 
+offenen Problemen:
+
+- Zentrierte Absätze werden nicht zentriert gedruckt
+
+- Der Editor wird nicht schreibgeschützt, wenn die Notiz ausgedruckt wurde.
+  `Ext.ux.TinyMCE` ignoriert offenbar die Option `disabled`.
+  
+- Mindestens eines der Sonderzeichen "Ω", "Φ" oder "→" führt beim Ausdrucksversuch zur Fehlermeldung
+  ``'charmap' codec can't encode character u'\u03a9' in position 278: 
+  character maps to <undefined>``.
+
+- Der folgende HTML-Inhalt in einer `Note.body` wird zwar korrekt 
+  angezeigt, aber wenn ich ihn bearbeite, werden die Änderungen 
+  nicht gespeichert::
+    <p><span id="ext-gen416" style="background-color: #ffffff;">Also ich probier mal.<br />Schreibe ein bisschen Text.<br /><br /></span></p>
+    <h1 id="ext-gen418"><span style="background-color: #ffffff;"><span id="ext-gen408" style="font-size: 32px; font-weight: bold;">Aufz&auml;hlungen:</span></span></h1>
+    <ol><li>Eins</li> <li>Zwei</li>  <li>Drei</li> <li>Vier</li> <li>F&uuml;nf</li></ol>
+    <p><span style="background-color: #ffffff;"><span style="background-color: #ffffff;"><br /></span></span></p>
+    <div id="ext-gen420"><span style="border-collapse: collapse; -webkit-border-horizontal-spacing: 2px; -webkit-border-vertical-spacing: 2px;">Aber f&uuml;r :field:`notes</span><span style="border-collapse: collapse; -webkit-border-horizontal-spacing: 2px; -webkit-border-vertical-spacing: 2px;">.Note.body` gilt das nicht.&nbsp;</span><span style="border-collapse: collapse; -webkit-border-horizontal-spacing: 2px; -webkit-border-vertical-spacing: 2px;">Daf&uuml;r ist er ideal. Auch der Ausdruck funktioniert einfach,&nbsp;</span><span style="border-collapse: collapse; -webkit-border-horizontal-spacing: 2px; -webkit-border-vertical-spacing: 2px;">indem ich in&nbsp;</span><span style="border-collapse: collapse; -webkit-border-horizontal-spacing: 2px; -webkit-border-vertical-spacing: 2px;"><a href="https://github.com/VinylFox/ExtJS.ux.HtmlEditor.Plugins" target="_self">appy.pod</a></span></div>
+    <div id="ext-gen420"><span style="border-collapse: collapse; -webkit-border-horizontal-spacing: 2px; -webkit-border-vertical-spacing: 2px;">die folgende Formel verwende::</span></div>
+    <div><span style="border-collapse: collapse; -webkit-border-horizontal-spacing: 2px; -webkit-border-vertical-spacing: 2px;"><br /></span></div>
+    <blockquote class="webkit-indent-blockquote" style="margin: 0 0 0 40px; border: none; padding: 0px;">
+    <div><span style="border-collapse: collapse; -webkit-border-horizontal-spacing: 2px; -webkit-border-vertical-spacing: 2px;">&nbsp; do text</span></div>
+    <div><span style="border-collapse: collapse; -webkit-border-horizontal-spacing: 2px; -webkit-border-vertical-spacing: 2px;">&nbsp; from xhtml(self.body)</span></div>
+    </blockquote>
+    <div><span style="border-collapse: collapse; -webkit-border-horizontal-spacing: 2px; -webkit-border-vertical-spacing: 2px;">&nbsp;&nbsp;</span></div>
+
+  Der HTML-Code stammt glaube ich von meinen Experimenten mit VinylFox.
+  Ich tippe momentan darauf, dass die SPANs mit den 
+  style-Angaben den TinyMCE durcheinanderbringen, 
+  aber weil das Phänomen nur in diesem Fall auftritt,
+  lass ich das momentan offen.
+
+
+Dokumentation
+-------------
+
+Ha! Zwischenducrh ist mir eine plötzliche Eingebung gekommen, wie ich ein 
+altes Problem beim Generieren der Dokumentation mit Autodoc lösen kann. 
+
+Ich kann in der Dokumentation jetzt alle Model-Klassen
+wie :class:`lino.apps.dsbe.models.CourseRequest` 
+referenzieren.
+
+Django erlaubt es, auch mehrere Lino-Anwendungen gleichzeitig zu importieren. 
+Die sind dann nur nicht aktiv. 
+
+Ich musste lediglich eine kleine Änderung machen:
+:func:`lino.core.kernel.setup_site` hält jetzt Ausschau, ob ein Modell eine Klassenmethode
+`site_setup` definiert hat. Falls ja, ruft er sie auf.
+
+Wenn man vorher schrieb::
+
+    class Foo(Model):
+        ...
+    FOO_SPECIAL_FIELDS = reports.fields_list(Foo,'name remarks')
+    
+Dann muss es jetzt so gemacht werden::    
+
+    class Foo(Model):
+        ...
+    @classmethod
+    def site_setup(cls,lino):
+        lino.FOO_SPECIAL_FIELDS = reports.fields_list(cls,'name remarks')
+
+Der Grund dafür ist, dass Autodoc das Modul ansonsten nicht 
+importieren könnte, wenn es nicht in den INSTALLED_APPS 
+des DJANGO_SETTINGS_MODULE steht.
+
+Könnte ich das nicht stattdessen mit dem
+`class_prepared-Signal
+<http://docs.djangoproject.com/en/dev/ref/signals/#class-prepared>`_
+implementieren?
+Antwort: nein, denn diese Methoden sollen erst aufgerufen werden, 
+wenn Django *alle*  Models prepared hat.

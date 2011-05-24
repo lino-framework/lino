@@ -23,10 +23,10 @@ The :mod:`dpy` Module
     :undoc-members:
     :show-inheritance:
 
-The :mod:`editing` Module
--------------------------
+The :mod:`html2xhtml` Module
+----------------------------
 
-.. automodule:: lino.utils.editing
+.. automodule:: lino.utils.html2xhtml
     :members:
     :undoc-members:
     :show-inheritance:
@@ -107,14 +107,6 @@ The :mod:`ucsv` Module
 ----------------------
 
 .. automodule:: lino.utils.ucsv
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-The :mod:`validatingmodel` Module
----------------------------------
-
-.. automodule:: lino.utils.validatingmodel
     :members:
     :undoc-members:
     :show-inheritance:

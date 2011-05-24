@@ -12,6 +12,8 @@ Short-term
 #.  Weiter testen und dokumentieren: 
     Wird markup in pdf (appy) richtig ausgedruckt?
     Zum Beispiel funktionieren Titel noch nicht.
+    :doc:`Wysiwyg-Editor </tickets/42>`
+
 
 #.  Externe Links (Lesezeichen) und Uploads machen können, 
     indem man sie von einer anderen Anwendung
@@ -26,8 +28,6 @@ Short-term
     versehen zu können, 
     brauche ich wahrscheinlich die :doc:`neue Syntax in .dtl-Dateien </tickets/34>`.
     
-#.  :doc:`Wysiwyg-Editor </tickets/42>`
-
 #.  Doppelklick auf Memo-Text einer Note bewirkt *nichts*. 
     Sollte doch wenigstens das Detail-Fenster öffnen.
     
