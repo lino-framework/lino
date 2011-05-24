@@ -15,4 +15,18 @@
 #.  Check-in 20110516
 
 
+#.  Oho: ich schätze, dass ich jetzt erstmals auf einen richtigen Bug 
+    in appy.pod gestoßen bin: 
+    https://answers.launchpad.net/appy/+question/157802
+    
+    Das kommt, wenn :func:`lino.utils.restify.restify` eine 
+    Fehlermeldung einfügt, was ja demnächst des öfteren der Fall 
+    sein könnte.
+    Also eher störend.
+    (Check-in 20110516b für den testcase).
+    
+    
+    
+
+
     

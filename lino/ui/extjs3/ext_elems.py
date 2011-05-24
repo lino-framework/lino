@@ -458,9 +458,22 @@ class TextFieldElement(FieldElement):
         FieldElement.__init__(self,*args,**kw)
 
 class HtmlTextFieldElement(TextFieldElement):
-    pass
-    #~ value_template = "new Ext.form.HtmlEditor(%s)"
+    #~ pass
+    value_template = "new Ext.form.HtmlEditor(%s)"
     #~ # xtype = 'htmleditor'
+    
+    def __init__(self,*args,**kw):
+        if settings.LINO.use_tinymce:
+            assert not settings.LINO.use_vinylfox
+            self.value_template = "new Ext.ux.TinyMCE(%s)"
+            kw.update(tinymceSettings=dict(theme='advanced'))
+        elif settings.LINO.use_vinylfox:
+            kw.update(plugins=js_code('Lino.VinylFoxPlugins()'))
+        TextFieldElement.__init__(self,*args,**kw)
+
+#~ if settings.LINO.use_tinymce:
+    #~ assert not settings.LINO.use_vinylfox
+    #~ HtmlTextFieldElement.value_template = "new Lino.TinyMCE(%s)"
         
 class CharFieldElement(FieldElement):
     filter_type = 'string'
@@ -743,8 +756,8 @@ class HtmlBoxElement(DisplayElement):
     def get_field_options(self,**kw):
         kw.update(name=self.field.name)
         kw.update(layout='fit')
-        if self.field.drop_zone: # testing with drop_zone 'FooBar'
-            kw.update(listeners=dict(render=js_code('initialize%sDropZone' % self.field.drop_zone)))
+        #~ if self.field.drop_zone: # testing with drop_zone 'FooBar'
+            #~ kw.update(listeners=dict(render=js_code('initialize%sDropZone' % self.field.drop_zone)))
         kw.update(items=js_code("new Ext.BoxComponent()"))
         if self.label:
             kw.update(title=unicode(self.label))

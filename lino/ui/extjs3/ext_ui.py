@@ -596,6 +596,10 @@ class ExtUI(base.UI):
         #~ yield '<!-- base library -->'
         yield '<link rel="stylesheet" type="text/css" href="%sextjs/resources/css/ext-all.css" />' % settings.MEDIA_URL 
         #~ yield '<!-- overrides to base library -->'
+        if settings.LINO.use_vinylfox:
+            p = settings.MEDIA_URL + 'lino/vinylfox/'
+            yield '<link rel="stylesheet" type="text/css" href="%sresources/css/htmleditorplugins.css" />' % p
+          
         if settings.USE_GRIDFILTERS:
             #~ yield '<link rel="stylesheet" type="text/css" href="%sextjs/examples/ux/css/RowEditor.css" />' % settings.MEDIA_URL 
             yield '<link rel="stylesheet" type="text/css" href="%sextjs/examples/ux/statusbar/css/statusbar.css" />' % settings.MEDIA_URL 
@@ -634,6 +638,17 @@ class ExtUI(base.UI):
 
         yield '<script type="text/javascript" src="%sextjs/examples/ux/statusbar/StatusBar.js"></script>' % settings.MEDIA_URL
         
+        if settings.LINO.use_tinymce:
+            p = settings.MEDIA_URL + 'tinymce'
+            #~ yield '<script type="text/javascript" src="Ext.ux.form.FileUploadField.js"></script>'
+            yield '<script type="text/javascript" src="%s/tiny_mce.js"></script>' % p
+            yield '<script type="text/javascript" src="%slino/tinymce/Ext.ux.TinyMCE.js"></script>' % settings.MEDIA_URL
+            yield '''<script language="javascript" type="text/javascript">
+tinymce.init({
+        theme : "advanced"
+        // , mode : "textareas"
+});
+</script>'''
         if settings.USE_GRIDFILTERS:
             #~ yield '<script type="text/javascript" src="%sextjs/examples/ux/RowEditor.js"></script>' % settings.MEDIA_URL
             yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/menu/RangeMenu.js"></script>' % settings.MEDIA_URL
@@ -648,6 +663,24 @@ class ExtUI(base.UI):
             
         yield '<script type="text/javascript" src="%sextjs/examples/ux/fileuploadfield/FileUploadField.js"></script>' % settings.MEDIA_URL
         
+        if settings.LINO.use_vinylfox:
+            p = settings.MEDIA_URL + 'lino/vinylfox/'
+            #~ yield '<script type="text/javascript" src="Ext.ux.form.FileUploadField.js"></script>'
+            yield '<script type="text/javascript" src="%s/src/Ext.ux.form.HtmlEditor.MidasCommand.js"></script>' % p
+            yield '<script type="text/javascript" src="%s/src/Ext.ux.form.HtmlEditor.Divider.js"></script>' % p
+            yield '<script type="text/javascript" src="%s/src/Ext.ux.form.HtmlEditor.HR.js"></script>' % p
+            yield '<script type="text/javascript" src="%s/src/Ext.ux.form.HtmlEditor.Image.js"></script>' % p
+            yield '<script type="text/javascript" src="%s/src/Ext.ux.form.HtmlEditor.RemoveFormat.js"></script>' % p
+            yield '<script type="text/javascript" src="%s/src/Ext.ux.form.HtmlEditor.IndentOutdent.js"></script>' % p
+            yield '<script type="text/javascript" src="%s/src/Ext.ux.form.HtmlEditor.SubSuperScript.js"></script>' % p
+            yield '<script type="text/javascript" src="%s/src/Ext.ux.form.HtmlEditor.FindAndReplace.js"></script>' % p
+            yield '<script type="text/javascript" src="%s/src/Ext.ux.form.HtmlEditor.Table.js"></script>' % p
+            yield '<script type="text/javascript" src="%s/src/Ext.ux.form.HtmlEditor.Word.js"></script>' % p
+            yield '<script type="text/javascript" src="%s/src/Ext.ux.form.HtmlEditor.Link.js"></script>' % p
+            yield '<script type="text/javascript" src="%s/src/Ext.ux.form.HtmlEditor.SpecialCharacters.js"></script>' % p
+            yield '<script type="text/javascript" src="%s/src/Ext.ux.form.HtmlEditor.UndoRedo.js"></script>' % p
+            yield '<script type="text/javascript" src="%s/src/Ext.ux.form.HtmlEditor.Heading.js"></script>' % p
+            yield '<script type="text/javascript" src="%s/src/Ext.ux.form.HtmlEditor.Plugins.js"></script>' % p
         if settings.LINO.use_awesome_uploader:
             p = settings.MEDIA_URL + 'lino/AwesomeUploader/'
             #~ yield '<script type="text/javascript" src="Ext.ux.form.FileUploadField.js"></script>'

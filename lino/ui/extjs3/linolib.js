@@ -209,6 +209,38 @@ Ext.lib.Ajax.serializeForm = function(form) {
 
 Ext.namespace('Lino');
 
+#if $settings.LINO.use_tinymce
+//~ Lino.TinyMCE = Ext.ux.TinyMCE;
+
+Lino.TinyMCE = Ext.extend(Ext.ux.TinyMCE, {
+    tinymceSettings : {theme : "advanced"}
+});
+
+#end if
+
+#if $settings.LINO.use_vinylfox
+Lino.VinylFoxPlugins = function(){
+    return [
+        new Ext.ux.form.HtmlEditor.Link(),
+        new Ext.ux.form.HtmlEditor.Divider(),
+        new Ext.ux.form.HtmlEditor.Word(),
+        //~ new Ext.ux.form.HtmlEditor.FindAndReplace(),
+        //~ new Ext.ux.form.HtmlEditor.UndoRedo(),
+        new Ext.ux.form.HtmlEditor.Divider(),
+        //~ new Ext.ux.form.HtmlEditor.Image(),
+        //~ new Ext.ux.form.HtmlEditor.Table(),
+        new Ext.ux.form.HtmlEditor.HR(),
+        new Ext.ux.form.HtmlEditor.SpecialCharacters(),
+        new Ext.ux.form.HtmlEditor.HeadingMenu(),
+        new Ext.ux.form.HtmlEditor.IndentOutdent(),
+        new Ext.ux.form.HtmlEditor.SubSuperScript(),
+        new Ext.ux.form.HtmlEditor.RemoveFormat()
+    ];
+};
+#end if
+
+
+
 /* 
   Originally copied from Ext JS Library 3.3.1
   Modifications by Luc Saffre : 
@@ -292,6 +324,73 @@ Lino.URLField = Ext.extend(Ext.form.TriggerField,{
   }
 });
 
+//~ Lino.make_dropzone = function(cmp) {
+    //~ cmp.on('render', function(ct, position){
+      //~ ct.el.on({
+        //~ dragenter:function(event){
+          //~ event.browserEvent.dataTransfer.dropEffect = 'move';
+          //~ return true;
+        //~ }
+        //~ ,dragover:function(event){
+          //~ event.browserEvent.dataTransfer.dropEffect = 'move';
+          //~ event.stopEvent();
+          //~ return true;
+        //~ }
+        //~ ,drop:{
+          //~ scope:this
+          //~ ,fn:function(event){
+            //~ event.stopEvent();
+            //~ console.log(20110516);
+            //~ var files = event.browserEvent.dataTransfer.files;
+            //~ if(files === undefined){
+              //~ return true;
+            //~ }
+            //~ var len = files.length;
+            //~ while(--len >= 0){
+              //~ console.log(files[len]);
+              //~ // this.processDragAndDropFileUpload(files[len]);
+            //~ }
+          //~ }
+        //~ }
+      //~ });
+    //~ });
+//~ };
+
+//~ Lino.FileUploadField = Ext.ux.form.FileUploadField;
+
+Lino.FileUploadField = Ext.extend(Ext.ux.form.FileUploadField,{
+    onRender : function(ct, position){
+      Lino.FileUploadField.superclass.onRender.call(this, ct, position);
+      this.el.on({
+        dragenter:function(event){
+          event.browserEvent.dataTransfer.dropEffect = 'move';
+          return true;
+        }
+        ,dragover:function(event){
+          event.browserEvent.dataTransfer.dropEffect = 'move';
+          event.stopEvent();
+          return true;
+        }
+        ,drop:{
+          scope:this
+          ,fn:function(event){
+            event.stopEvent();
+            console.log(20110516);
+            var files = event.browserEvent.dataTransfer.files;
+            if(files === undefined){
+              return true;
+            }
+            var len = files.length;
+            while(--len >= 0){
+              console.log(files[len]);
+              //~ this.processDragAndDropFileUpload(files[len]);
+            }
+          }
+        }
+      });
+    }
+});
+
 Lino.FileField = Ext.extend(Ext.form.TriggerField,{
   triggerClass : 'x-form-search-trigger',
   editable: false,
@@ -302,8 +401,6 @@ Lino.FileField = Ext.extend(Ext.form.TriggerField,{
   }
 });
 
-
-
 Lino.file_field_handler = function(ww,config) {
   if (ww instanceof Lino.DetailWrapper) {
       //~ return new Lino.URLField(config);
@@ -313,7 +410,10 @@ Lino.file_field_handler = function(ww,config) {
 #if $settings.LINO.use_awesome_uploader
       return { xtype:'button', text: 'Upload', handler: Lino.show_uploader }
 #else      
-      return new Ext.ux.form.FileUploadField(config);
+      var f = new Lino.FileUploadField(config);
+      //~ Lino.make_dropzone(f);
+      return f;
+      //~ return new Ext.ux.form.FileUploadField(config);
       //~ return new Lino.FileField(config);
 #end if      
   }
@@ -1021,6 +1121,37 @@ Lino.HtmlBoxPanel = Ext.extend(Ext.Panel,{
     var actions = Lino.build_buttons(this,config.ls_bbar_actions);
     if (actions) config.bbar = actions.bbar;
     Lino.HtmlBoxPanel.superclass.constructor.call(this, config);
+  },
+  onRender : function(ct, position){
+    Lino.HtmlBoxPanel.superclass.onRender.call(this, ct, position);
+    this.el.on({
+      dragenter:function(event){
+        event.browserEvent.dataTransfer.dropEffect = 'move';
+        return true;
+      }
+      ,dragover:function(event){
+        event.browserEvent.dataTransfer.dropEffect = 'move';
+        event.stopEvent();
+        return true;
+      }
+      ,drop:{
+        scope:this
+        ,fn:function(event){
+          event.stopEvent();
+          console.log(20110516);
+          var files = event.browserEvent.dataTransfer.files;
+          if(files === undefined){
+            return true;
+          }
+          var len = files.length;
+          while(--len >= 0){
+            console.log(files[len]);
+            //~ this.processDragAndDropFileUpload(files[len]);
+          }
+          Lino.show_insert(this);
+        }
+      }
+    });
   },
   //~ on_master_changed : function() {
     //~ this.refresh();

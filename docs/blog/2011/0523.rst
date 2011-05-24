@@ -1,0 +1,155 @@
+20110523
+========
+
+Formatierte Notizen
+-------------------
+
+Nachdem ich vorige Woche hauptsächlich am 
+`Umzug unseres Webservers 
+<http://linux-blog.saffre-rumma.net/tups2mops.html>`_
+und am Wochenende hauptsächlich im Garten gearbeitet habe,
+geht es nun nach einer Atempause mit Lino weiter.
+Als nächstes will ich das Thema mit den formatierten 
+Notizen in den Griff kriegen.
+Ob ich das heute so weit kriege, dass selbst *ich* damit zufrieden bin?
+
+Bisher haben wir auf den :extjs:`Ext.form.HtmlEditor` verzichtet, 
+weil der relativ schwerfällig ist und scheinbar nicht ideal ist, 
+um für alle Textfelder einer Person oder eines Vertrags benutzt 
+zu werden.
+
+Die folgenden Felder waren bisher ein `fields.HtmlTextField` 
+und sind nun `models.TextField`::
+
+    Contract.stages
+    Contract.goals
+    Contract.duties_asd
+    Contract.duties_dsbe
+    Contract.duties_company
+
+
+Aber :field:`notes.Note.body` ist ja das einzige Textfeld 
+in einem eher einfachen Detail-Fenster. 
+Dort merkt man nichts von Performance-Einbußen. 
+
+Auch der Ausdruck funktioniert einfach, 
+indem ich in :term:`appy.pod` die folgende Formel verwende::
+
+  do text
+  from xhtml(self.body)
+  
+  
+Aber...
+
+Die Teufel im Detail
+--------------------
+  
+Genauer gesagt muss ich den HTML-Code vorher ein bisschen korrigieren. 
+Zum Beispiel muss ich momentan alle ``<br>`` durch ``<br/>`` ersetzen, 
+weil sonst der XML-Parser von :term:`appy.pod` nicht mitspielt. 
+(Das ist bisher das einzige Beispiel, aber ich fürchte, dass noch 
+andere Fälle kommen werden. Bis auf weiteres regle ich das *on the fly* 
+in :func:`lino.utils.restify.install_restify`. Eine bessere Lösung wäre 
+freilich, wenn der HtmlEditor direkt gültiges XHTML produzieren würde...
+
+Und eines fehlt auch noch: der HtmlEditor von ExtJS kann keine Titel 
+einfügen. Dazu gibt es aber 
+`VinylFox <https://github.com/VinylFox/ExtJS.ux.HtmlEditor.Plugins>`_,
+eine Plugin-Sammlung von `Shea Frederick <http://www.vinylfox.com/about/>`_.
+
+Neue Option :attr:`lino.apps.std.settings.Lino.use_vinylfox`.
+Der Einfachheit halber füge ich VinylFox zu den Lino-Sourcen hinzu, 
+um die Installation einfach zu halten.
+
+Hmm... aber so richtig super funktionieren Sheas Plugins 
+wohl eherlich gesagt nicht. 
+Zumindest nicht in Google Chrome. Tabellen sind unbenutzbar. 
+Bon, also schalten wir die ab. Von UndoRedo sehe ich auch nichts. Schade. 
+Raus damit.
+Und das, wofür ich ihn eigentlich haben wollte, nämlich die Heading-Zuweisung, 
+funktioniert zwar, aber auch da sind einige störende Bugs. 
+Zum Beispiel man kann einen einmal zugewiesenen Titel nicht wieder zu normalem Text machen.
+
+Nö, ich denke, die Option :attr:`lino.apps.std.settings.Lino.use_vinylfox` 
+bleibt vorerst noch auf `False` stehen.
+
+Aber wenn wir uns nun auf die im ExtJS bestehenden Features beschränken, 
+kriegen wir doch noch Probleme.
+
+Jetzt muss ich erst nochmal in meiner Kopie von appy.pod wursteln: 
+Zum Testen ist nämlich die AppyPdfBuildMethod bequem,
+weil er das Resultat dann sofort anzeigt.
+Aber wenn beim Parsen des HTML-Codes ein Fehler auftritt (was ja momentan häufig passiert), 
+dann wird der Traceback in der PDF-Datei nicht sichtbar. 
+Ich kann dann freilich immer nach AppyOdtBuildMethod umschalten, 
+aber das ist umständlich.
+
+Außerdem nützt mir die Fehlermeldung des SAX-Parsers nichts, denn die lautet::
+
+  20110523 <unknown>:1:577: undefined entity
+
+Woher bitteschön will ich daraus erkennen, worüber er genau stolpert?
+Okay, ich lass appy.pod meinen String in eine Datei `20110523.log` 
+schreiben, die ich dann mit meinem Editor anschauen kann. Also nach viel 
+Würgen finde ich raus, dass expat den Fehler an der folgenden Stelle 
+meldet::
+
+  <p><span style="background-color: rgb(255, 255, 255); " id="ext-gen416">Also 
+  ...<span style="background-color: rgb(255, 255, 255);">&nbsp;...</span>
+                                                        ^
+                                                        (hier ist Position 577)
+                                                                                                                                   
+Na toll... kann mir nun einer erklären, was daran falsch sein soll?
+
+Nach weiteren Versuchen entdecke ich, dass die Positionsnummer 577 
+auf das ``&nbsp;`` zeigen wollte. Und wenn ich weniger dumm wäre, 
+hätte ich sogleich geahnt, dass XHTML keine *named entities* kennt.
+Und das ist nicht alles:
+SelfHTML erklärt die 
+`Unterschiede zwischen XHTML und HTML
+<http://de.selfhtml.org/html/xhtml/unterschiede.htm>`_ 
+übersichtlich.
+
+Also kurz: die `xhtml` von `appy.pod` will XHTML kriegen,
+und unser HtmlEditor schreibt natürlich HTML.
+
+Hm, gibt es denn keinen fertigen Konverter von HTML nach XHTML?
+Na klar, http://www.it.uc3m.es/jaf/html2xhtml/
+aber der ist in C geschrieben, da müsste ich also 
+entweder einen Python-Extension schreiben (hab ich noch nie gemacht), 
+oder einen externen Prozess aufrufen 
+(und zwar bei jedem Rendern eines Dokuments).
+Daher das neue Modul :mod:`lino.utils.html2xhtml`.
+
+Aber noch bevor :mod:`lino.utils.html2xhtml` auch nur 
+annähernd funktionsfähig wurde, fällt mir auf: 
+eigentlich ist es Quatsch, mein HTML zuerst 
+nach XHTML zu konvertieren, um es dann von appy.pod nach ODF-XML 
+konvertieren zu lassen. Effizienter wäre doch, wenn ich direkt 
+ODF-XML schreibe. Und einen Anfang zufür habe ich ja schon, 
+nämlich in timtools.gendoc und timtools.oogen.
+Also könnte ich es mal auf die selbstgeschneiderte Art versuchen:
+:mod:`lino.utils.html2odt`.
+Dachte ich mir. 
+Aber nach einigem Hantieren habe ich diesen Weg wieder 
+aufgegeben, bevor ich erste Resultate gesehen habe. 
+Denn appy.pod macht ja doch eine ziemliche Arbeit beim 
+Generieren des ODF-XML.
+
+Die xhtml-Dunktion von appy.pod ist hauptsächlich für Kupu gedacht.
+Das ist der Wysiwyg-Editor von Plone, und der speichert seine 
+Sachen eben nicht in HTML, sondern in XHTML.
+Ich habe den mal runtergeladen und probiert zu verstehen, 
+ob der sich für Lino nutzen lassen würde.
+Aber das scheint zumindest nicht trivial.
+Lassen wir das.
+ 
+Andrew Mayorov hat eine 
+`TinyMCE-Komponente für ExtJS 
+<http://blogs.byte-force.com/xor/tinymce/index.html>`_
+geschrieben, deren Demo vielversprechend aussieht.
+Um die benutzen zu können, mus ich erstmal  
+`TinyMCE <http://tinymce.moxiecode.com/download/download.php>`_
+selber installieren
+(unter Debian einfach nur ``aptitude install tinymce``).
+

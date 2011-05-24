@@ -38,12 +38,26 @@ class Lino(object):
     which is probably subclassed by your local :xfile:`settings.py`
     
     """
+    
     help_url = "http://code.google.com/p/lino"
     #~ index_html = "This is the main page."
     title = "Base Lino Application"
     domain = "www.example.com"
     
     use_awesome_uploader = False
+    
+    
+    use_tinymce = True
+    """
+    Whether to use TinyMCE instead of Ext.form.HtmlEditor. 
+    See :doc:`/blog/2011/0523`
+    """
+    
+    use_vinylfox = False
+    """
+    Whether to use VinylFox extensions for HtmlEditor. 
+    See :doc:`/blog/2011/0523`
+    """
     
     
     date_format_strftime = '%d.%m.%Y'

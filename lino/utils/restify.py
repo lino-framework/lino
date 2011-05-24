@@ -53,7 +53,7 @@ def html_body(input_string, source_path=None, destination_path=None,
 
     The return value is the contents of the <body> element.
 
-    Parameters (see `html_parts()` for the remainder):
+    Parameters (see :func:`html_parts` for the remainder):
 
     - `output_encoding`: The desired encoding of the output.  If a Unicode
       string is desired, use the default value of "unicode" .
@@ -94,7 +94,7 @@ def install_restify(renderer):
     
 
     """
-    def func(unicode_string,**kw):
+    def restify_func(unicode_string,**kw):
         if not unicode_string:
             return ''
         
@@ -107,11 +107,17 @@ def install_restify(renderer):
         #~ print repr(html)
         if html.startswith('<div class="document">\n') and html.endswith('</div>\n'):
             html = html[23:-7]
-            print html
+            #~ print html
             return renderer.renderXhtml(html,**kw)
         raise Exception("Error: restify() returned unexpected HTML: %r" % html)
         #~ return renderer.renderXhtml(html.encode('utf-8'),**kw)
-    renderer.contentParser.env.context.update(restify=func)
+    renderer.contentParser.env.context.update(restify=restify_func)
+    def xhtml_func(html,**kw):
+        html = html.replace('<br>','<br/>')
+        html = html.replace('%nbsp;','<br/>')
+        #~ print html
+        return renderer.renderXhtml(html,**kw)
+    renderer.contentParser.env.context.update(xhtml=xhtml_func)
 
 
 def latex_parts(input_string, source_path=None, destination_path=None,

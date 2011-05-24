@@ -1,0 +1,116 @@
+﻿Ext.ux.TinyMCE 0.8.4
+ExtJS form field containing TinyMCE v3.
+
+Component site:
+http://blogs.byte-force.com/xor/tinymce
+
+Author: 
+Andrew Mayorov  et al.
+http://blogs.byte-force.com/xor
+http://twitter.com/xorets
+
+
+Release Notes
+=============
+
+0.8.4 (14.05.2010)
+--------------------
+* Temporary removed WindowGroup. Need better solution to z-index problem.
+
+0.8.3.1 (06.05.2010)
+--------------------
+* Added check for isVisible to onResize.
+
+0.8.3 (28.04.2010)
+------------------
+* Minor code cleanup.
+
+0.8.2 (19.04.2010)
+------------------
+* The "editorcreated" event now fired when TinyMCE editor is actually created 
+  and initialized.
+* Added WindowGroup to put correct z-index to TinyMCE popups.
+
+0.8.1
+-----
+* Editor resizing method is rewritten. Currently it correctly supports only 
+  advanced TinyMCE theme.
+
+0.8
+---
+* A lot of small fixes and refactorings.
+* Removed dependency on MIframe.
+
+0.6.4
+-----
+* Added validation like in ExtJS.
+* Fix: resizing in fit layout.
+
+0.6.3
+-----
+* Added constraint to viewport for popup windows.
+* Fix: Remove editor on "beforeDestroy" instead of "onDestroy".
+
+0.6.2
+-----
+* Fix: Wrong behavior of popup windows with state manager turned on. Thanks to 
+  alex-t.de.
+
+0.6.1
+-----
+* Fix: Callbacks in alert() and confirm() functions could be empty now. Thanks 
+  to Dumbledore.
+* Fix: Right border of the editor is not shown if toolbar is wider than 
+  control.
+
+0.6
+-----
+* Fix: Make link, anchor, style commands work incorrectly in IE7.
+* Fix: Dialogs titles are not shown.
+* Workaround: To use Ext.ux.TinyMCE in collapsible panel set collapse animation 
+  to false.
+
+0.5.2
+-----
+* Fixed z-index for popups.
+* Fixed behaviour of styles selector and highlighting of current markup.
+
+0.5.1
+-----
+* Removed binding of "focus" event to editor's "Activate" event beacuse it 
+caused problems in IE.
+
+0.5
+-----
+* Fixed inline popups when using component from Ext.onReady().
+* Added isDirty() method. Thanks to Ext user Dumbledore.
+
+0.4
+-----
+* Upgraded to ExtJS 2.1 and tinyMCE 3.0.7
+* Changed method of editor resizing.
+* Editor instance removed from manager on component destroy.
+
+0.3
+-----
+* If component width or height are specified explicitely, then it got 
+  automatically applied to tinyMCE config.
+* Component name is now correctly assigned to hidden textarea allowing form 
+  submission.
+* Added syncValue() method to force tinyMCE to save edited text to hidden 
+  textarea.
+
+0.2
+-----
+* Now works correctly in IE 7.
+* Fixed several resize-related errors.
+* Added getEd() method: returns instance of tinymce.Editor related to this 
+  control.
+* FIXED: Color popup gets shown under the Ext window.
+
+0.1
+-----
+* Currently it doesn't work correctly in IE. Firefox is OK. I didn't check 
+  other browsers.
+* Checked only with "advanced" theme. Let me know if other themes (simple) are 
+  at all required.

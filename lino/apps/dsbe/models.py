@@ -1202,11 +1202,11 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,contact
     
     responsibilities = models.TextField(_("responsibilities"),blank=True,null=True)
     
-    stages = fields.HtmlTextField(_("stages"),blank=True,null=True)
-    goals = fields.HtmlTextField(_("goals"),blank=True,null=True)
-    duties_asd = fields.HtmlTextField(_("duties ASD"),blank=True,null=True)
-    duties_dsbe = fields.HtmlTextField(_("duties DSBE"),blank=True,null=True)
-    duties_company = fields.HtmlTextField(_("duties company"),blank=True,null=True)
+    stages = models.TextField(_("stages"),blank=True,null=True)
+    goals = models.TextField(_("goals"),blank=True,null=True)
+    duties_asd = models.TextField(_("duties ASD"),blank=True,null=True)
+    duties_dsbe = models.TextField(_("duties DSBE"),blank=True,null=True)
+    duties_company = models.TextField(_("duties company"),blank=True,null=True)
     
     user_asd = models.ForeignKey("users.User",verbose_name=_("responsible (ASD)"),
         related_name='contracts_asd',blank=True,null=True) 

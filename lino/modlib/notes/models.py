@@ -89,7 +89,8 @@ class Note(mixins.TypedPrintable,mixins.Reminder):
         verbose_name=_('Event Type (Content)'))
     #,on_delete=RESTRICT)
     subject = models.CharField(_("Subject"),max_length=200,blank=True,null=True)
-    body = models.TextField(_("Body"),blank=True)
+    #~ body = models.TextField(_("Body"),blank=True)
+    body = fields.HtmlTextField(_("Body"),blank=True)
     
     #~ owner_type = models.ForeignKey(ContentType,verbose_name=_('Owner type'))
     #~ owner_id = models.PositiveIntegerField(verbose_name=_('Owner'))

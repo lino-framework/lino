@@ -47,6 +47,7 @@ if sys.platform == 'win32':
     #~ EXTJS_ROOT = r's:\ext-3.2.1'
     #~ EXTJS_ROOT = r's:\ext-3.3.0-rc'
     #~ EXTJS_URL = "/media/extjs/"
+    TINYMCE_ROOT = r's:\tinymce\jscripts\tiny_mce'
 
     LINO_MEDIA = os.path.abspath(os.path.join(os.path.dirname(lino.__file__),'..','media'))
     #~ LINO_MEDIA = os.path.join(lino_site.lino_site.ui.source_dir(),'media')
@@ -63,6 +64,12 @@ if sys.platform == 'win32':
     (r'^%sextjs/(?P<path>.*)$' % prefix, 
         'serve', {
         'document_root': EXTJS_ROOT,
+        'show_indexes': True }),)
+        
+    urlpatterns += patterns('django.views.static',
+    (r'^%stinymce/(?P<path>.*)$' % prefix, 
+        'serve', {
+        'document_root': TINYMCE_ROOT,
         'show_indexes': True }),)
         
     urlpatterns += patterns('django.views.static',

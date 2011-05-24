@@ -109,3 +109,11 @@ Title
 </div>
 """
 run_test(6,"20110516",html)
+
+html = """
+<pre>
+Title
+====
+</pre>
+"""
+run_test(7,"20110517",html)
