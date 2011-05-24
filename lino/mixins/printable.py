@@ -55,11 +55,65 @@ from lino import fields
 
 from lino.utils import babel 
 from lino.utils.choosers import chooser
-from lino.utils.restify import restify, install_restify
+from lino.utils.restify import restify
+from lino.utils.html2xhtml import html2xhtml
 
 
 bm_dict = {}
 bm_list = []
+
+def install_restify(renderer):
+    """
+    Install the `restify` function into the specified `appy.pod` renderer.
+    This may break with later versions of `appy.pod` since 
+    it hacks on undocumented regions... but we wanted to be 
+    able to insert rst formatted plain text using a simple comment 
+    like this::
+    
+      do text
+      from restify(self.body)
+        
+    Without this hack, users would have to write each time something 
+    like::
+    
+      do text
+      from xhtml(restify(self.body).encode('utf-8'))
+        
+      do text
+      from xhtml(restify(self.body,output_encoding='utf-8'))
+    
+
+    """
+    def restify_func(unicode_string,**kw):
+        if not unicode_string:
+            return ''
+        
+        html = restify(unicode_string,output_encoding='utf-8')
+        #~ try:
+            #~ html = restify(unicode_string,output_encoding='utf-8')
+        #~ except Exception,e:
+            #~ print unicode_string
+            #~ traceback.print_exc(e)
+        #~ print repr(html)
+        if html.startswith('<div class="document">\n') and html.endswith('</div>\n'):
+            html = html[23:-7]
+            #~ print html
+            return renderer.renderXhtml(html,**kw)
+        raise Exception("Error: restify() returned unexpected HTML: %r" % html)
+        #~ return renderer.renderXhtml(html.encode('utf-8'),**kw)
+    renderer.contentParser.env.context.update(restify=restify_func)
+    def html_func(html,**kw):
+        if not html:
+            return ''
+        html = html2xhtml(html)
+        #~ html = html.replace('<br>','<br/>')
+        #~ html = html.replace('%nbsp;','<br/>')
+        print html
+        return renderer.renderXhtml(html,**kw)
+    renderer.contentParser.env.context.update(html=html_func)
+
+
+
 
 class BuildMethod:
     """

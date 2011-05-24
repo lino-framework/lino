@@ -259,6 +259,7 @@
 				return Ext.value( this.value, '' );
 
 			var v = this.ed.getContent();
+      //~ console.log(v);
 			if( v === this.emptyText || v === undefined ){
 				v = '';
 			}
@@ -362,10 +363,10 @@
 			Sets control size to the given width and height
 		*/
 		_setEditorSize: function( width, height ) {
-		  console.log("_setEditorSize",arguments);
+		  //~ console.log("_setEditorSize",arguments);
 			// We currently support only advanced theme resize
 			if( !this.ed.theme.AdvancedTheme ) {
-          console.log("We currently support only advanced theme resize, but this.ed.theme is",this.ed.theme);
+          //~ console.log("We currently support only advanced theme resize, but this.ed.theme is",this.ed.theme);
           return;
       }
 		
