@@ -55,64 +55,11 @@ from lino import fields
 
 from lino.utils import babel 
 from lino.utils.choosers import chooser
-from lino.utils.restify import restify
-from lino.utils.html2xhtml import html2xhtml
+from lino.utils.appy_pod import setup_renderer
 
 
 bm_dict = {}
 bm_list = []
-
-def install_restify(renderer):
-    """
-    Install the `restify` function into the specified `appy.pod` renderer.
-    This may break with later versions of `appy.pod` since 
-    it hacks on undocumented regions... but we wanted to be 
-    able to insert rst formatted plain text using a simple comment 
-    like this::
-    
-      do text
-      from restify(self.body)
-        
-    Without this hack, users would have to write each time something 
-    like::
-    
-      do text
-      from xhtml(restify(self.body).encode('utf-8'))
-        
-      do text
-      from xhtml(restify(self.body,output_encoding='utf-8'))
-    
-
-    """
-    def restify_func(unicode_string,**kw):
-        if not unicode_string:
-            return ''
-        
-        html = restify(unicode_string,output_encoding='utf-8')
-        #~ try:
-            #~ html = restify(unicode_string,output_encoding='utf-8')
-        #~ except Exception,e:
-            #~ print unicode_string
-            #~ traceback.print_exc(e)
-        #~ print repr(html)
-        if html.startswith('<div class="document">\n') and html.endswith('</div>\n'):
-            html = html[23:-7]
-            #~ print html
-            return renderer.renderXhtml(html,**kw)
-        raise Exception("Error: restify() returned unexpected HTML: %r" % html)
-        #~ return renderer.renderXhtml(html.encode('utf-8'),**kw)
-    renderer.contentParser.env.context.update(restify=restify_func)
-    def html_func(html,**kw):
-        if not html:
-            return ''
-        html = html2xhtml(html)
-        #~ html = html.replace('<br>','<br/>')
-        #~ html = html.replace('%nbsp;','<br/>')
-        print html
-        return renderer.renderXhtml(html,**kw)
-    renderer.contentParser.env.context.update(html=html_func)
-
-
 
 
 class BuildMethod:
@@ -244,11 +191,9 @@ class SimpleBuildMethod(BuildMethod):
         raise NotImplementedError
         
 class AppyBuildMethod(SimpleBuildMethod):
-  
     """
-    Generates .odt files from .odt templates.
-    This method doesn't require OpenOffice nor the Python UNO bridge installed. 
-    Except in some cases like updating fields
+    Base class for Build Methods that use .odt templates designed
+    for :term:`appy.pod`.
     
     http://appyframework.org/podRenderingTemplates.html
     """
@@ -278,13 +223,20 @@ class AppyBuildMethod(SimpleBuildMethod):
         #~ locale.setlocale(locale.LC_ALL,ls)
         #~ Error: unsupported locale setting
         renderer = Renderer(tpl, context, target,**settings.APPY_PARAMS)
-        install_restify(renderer)
+        setup_renderer(renderer)
         #~ renderer.context.update(restify=debug_restify)
         renderer.run()
         babel.set_language(savelang)
         
 
 class AppyOdtBuildMethod(AppyBuildMethod):
+    """
+    Generates .odt files from .odt templates.
+    
+    This method doesn't require OpenOffice nor the 
+    Python UNO bridge installed
+    (except in some cases like updating fields).
+    """
     name = 'appyodt'
     target_ext = '.odt'
     cache_name = 'webdav'
@@ -292,13 +244,11 @@ class AppyOdtBuildMethod(AppyBuildMethod):
 class AppyPdfBuildMethod(AppyBuildMethod):
     """
     Generates .pdf files from .odt templates.
-    
     """
     name = 'appypdf'
     target_ext = '.pdf'
 
 class AppyRtfBuildMethod(AppyBuildMethod):
-  
     """
     Generates .rtf files from .odt templates.
     """
@@ -307,7 +257,6 @@ class AppyRtfBuildMethod(AppyBuildMethod):
     cache_name = 'webdav'
 
 class AppyDocBuildMethod(AppyBuildMethod):
-  
     """
     Generates .doc files from .odt templates.
     """

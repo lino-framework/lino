@@ -3,33 +3,44 @@ Data migration
 
 Here is how we suggest to migrate data.
 
-Stop application services::
+Go to your local directory::
+
+  cd /use/local/django/myproject
+
+Run the :srcref:`stop </bash/stop>` command (a bash script to shut down all 
+application services)::
 
   ./stop
   
-Before upgrading, create a dpy dump. Go to your local directory 
-and type::
+Create a dpy dump by invoking the :srcref:`dump </bash/dump>` script::
 
-  python manage.py dumpdata --format dpy > fixtures/dYYYMMDD.dpy
+  ./dump
+  
+This will create a file :file:`dYYYMMDD.dpy` in your 
+local `fixtures` directory 
+
+(YYYYMMDD is the current date, the 
+script will refuse to overwrite an existing file. 
+If you need more than one dump on the same day, 
+then we suggest to rename the dYYYYMMDD.dpy to dYYYYMMDDa.dpy)
+ 
+Depending on the changes that come with the upgrade,
+it may be necessary to edit the dpy file. 
+See the release notes for instructions.
+  
   nano fixtures/dYYYMMDD.dpy
   
-Now you can upgrade your Lino sources::
+Now you can call :srcref:`pull </bash/pull>` to upgrade 
+your local copy of the Lino source repository::
 
   ./pull
   
-Depending on on the changes due to the upgrade,
-it may (or may not) be necessary to 
-edit the dpy file. 
-According to the release information.
-
 Then reset the database and reload the dump::
   
   python manage.py initdb dYYYMMDD
   
-Restart application server (Apache) and `watch_tim`::
+Restart application services using the :srcref:`start </bash/start>` 
+command::
   
   ./start
 
-
-
-python manage.py dumpdata --format dpy > fixtures/d20110206.dpy

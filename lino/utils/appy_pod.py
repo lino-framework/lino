@@ -1,4 +1,4 @@
-## Copyright 2009 Luc Saffre
+## Copyright 2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -11,32 +11,57 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-import os
-import time
+from lino.utils.restify import restify
+from lino.utils.html2xhtml import html2xhtml
 
-from appy.pod import PodError
-from appy.pod.renderer import Renderer
 
-#docFormat = "odt"
-#coOpenOfficePath = r"C:\Program Files\OpenOffice.org 3\program\soffice.exe"
-coOpenOfficePath = r"C:\PROGRA~1\OPENOF~1.ORG\program\soffice.exe"
-
-def process_pod(template,context,outfile):
-    #template_name = r"c:\temp\sales\invoice.odt"
-    params = context
-    params['time'] = time
-    #resultFile = outfile
-    #tmpFolder = os.path.join(os.path.dirname(outfile), 'temp')
-    #resultFile = os.path.join(tmpFolder, 'tmp.%s' % docFormat)
-    try:
-        renderer = Renderer(template, params, outfile, coOpenOfficePath)
-        renderer.run()
-    except PodError, pe:
-        raise pe
-    print outfile
+def setup_renderer(renderer):
+    """
+    Install additional functions into the specified `appy.pod` renderer.
+    
+    This may break with later versions of `appy.pod` since 
+    it hacks on undocumented regions... but we wanted to be 
+    able to insert rst formatted plain text using a simple comment 
+    like this::
+    
+      do text
+      from restify(self.body)
         
-#~ docFile = open(resultFile, 'rb')
-#~ self.session['doc'] = docFile.read()
-#~ self.session['docFormat'] = self.docFormat
-#~ docFile.close()
-#~ os.remove(resultFile)
+    Without this hack, users would have to write each time something 
+    like::
+    
+      do text
+      from xhtml(restify(self.body).encode('utf-8'))
+        
+      do text
+      from xhtml(restify(self.body,output_encoding='utf-8'))
+    
+
+    """
+    def restify_func(unicode_string,**kw):
+        if not unicode_string:
+            return ''
+        
+        html = restify(unicode_string,output_encoding='utf-8')
+        #~ try:
+            #~ html = restify(unicode_string,output_encoding='utf-8')
+        #~ except Exception,e:
+            #~ print unicode_string
+            #~ traceback.print_exc(e)
+        #~ print repr(html)
+        #~ print html
+        return renderer.renderXhtml(html,**kw)
+        #~ return renderer.renderXhtml(html.encode('utf-8'),**kw)
+    renderer.contentParser.env.context.update(restify=restify_func)
+    def html_func(html,**kw):
+        if not html:
+            return ''
+        html = html2xhtml(html)
+        #~ html = html.replace('<br>','<br/>')
+        #~ html = html.replace('%nbsp;','<br/>')
+        #~ print html
+        return renderer.renderXhtml(html,**kw)
+    renderer.contentParser.env.context.update(html=html_func)
+
+
+

@@ -13,14 +13,14 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Defines the :func:`html2xhtml` function used in :mod:`lino.utils.printable`
+Defines the :func:`html2xhtml` function used in :mod:`lino.utils.appy_pod`
 """
 
 from HTMLParser import HTMLParser
 from htmlentitydefs import name2codepoint
 
 def attrs2xml(attrs):
-    return ', '.join(['%s="%s"' % a for a in attrs])
+    return ' '.join(['%s="%s"' % a for a in attrs])
 
 class MyHTMLParser(HTMLParser):
     def __init__(self,*args,**kw):

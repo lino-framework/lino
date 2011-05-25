@@ -68,9 +68,78 @@ def html_body(input_string, source_path=None, destination_path=None,
         fragment = fragment.encode(output_encoding)
     #~ print __file__, repr(fragment)
     return fragment
+    
+    
+from docutils import writers 
+from docutils.writers import html4css1
+
+class HTMLTranslator(html4css1.HTMLTranslator):
+    """
+    Suppress surrounding DIV tag. Used by :func:`restify`.
+    """
+    #~ def visit_document(self, node):
+        #~ self.head.append('<title>%s</title>\n'
+                         #~ % self.encode(node.get('title', '')))
+
+    def depart_document(self, node):
+        self.fragment.extend(self.body)
+        # I just removed the following two lines:
+        #~ self.body_prefix.append(self.starttag(node, 'div', CLASS='document'))
+        #~ self.body_suffix.insert(0, '</div>\n')
+        # skip content-type meta tag with interpolated charset value:
+        self.html_head.extend(self.head[1:])
+        # was only useful to understand what's happening:
+        #~ print self.body_prefix
+        #~ print self.body_suffix
+        #~ raise Exception("foo")
+        self.html_body.extend(self.body_prefix[1:] + self.body_pre_docinfo
+                              + self.docinfo + self.body
+                              + self.body_suffix[:-1])
+        assert not self.context, 'len(context) = %s' % len(self.context)
+        
+class Writer(html4css1.Writer):
+
+    def __init__(self):
+        writers.Writer.__init__(self)
+        self.translator_class = HTMLTranslator
 
 
-restify = html_body
+def restify(input_string,source_path=None, destination_path=None,
+            input_encoding='unicode', doctitle=1, initial_header_level=1):
+    u"""
+    Renders the given reST string into a unicode HTML chunk without 
+    any surrounding tags like ``<HTML>``, ``<BODY>``, and especially 
+    ``<DIV class="document">`` (this last one requires the above 
+    :class:`HTMLTranslator` subclass,  thanks to `Günter Milde's hint 
+    <http://sourceforge.net/mailarchive/message.php?msg_id=27467363>`_
+    and `example code 
+    <http://docutils.sourceforge.net/sandbox/html4strict/html4strict.py>`_).
+    """
+    overrides = {'input_encoding': input_encoding,
+                 'doctitle_xform': doctitle,
+                 'initial_header_level': initial_header_level}
+    parts = core.publish_parts(
+        source=input_string, source_path=source_path,
+        destination_path=destination_path,
+        writer=Writer(), 
+        settings_overrides=overrides)
+    fragment = parts['html_body']
+    #~ if output_encoding != 'unicode':
+        #~ fragment = fragment.encode(output_encoding)
+    #~ print __file__, repr(fragment)
+    return fragment
+    
+  
+def old_restify(s,**kw):
+    """
+    (Didn't work when the reST text contained a root title).
+    See :doc:`/blog/2011/0525`.
+    """
+    html = html_body(s,**kw)
+    if html.startswith('<div class="document">\n') and html.endswith('</div>\n'):
+        return html[23:-7]
+    raise Exception("Error: restify() got unexpected HTML: %r" % html)
+
 
 def latex_parts(input_string, source_path=None, destination_path=None,
                input_encoding='unicode', doctitle=1, initial_header_level=1):
@@ -151,8 +220,10 @@ def rst2latex(input_string,
 
 if __name__ == '__main__':
     test = u"""
-Test example of reST__ document
-containg non-ascii latin-1 chars::
+Test example
+============
+
+This is a reST__ document containg non-ascii latin-1 chars::
 
   Ä Ë Ï Ö Ü 
   ä ë ï ö ü ÿ

@@ -1,0 +1,176 @@
+20110525
+========
+
+Datenkonvertierung
+------------------
+
+Alle bestehenden Inhalte in `Note.body`, die ja bisher im rst-Format 
+eingegeben waren, müssen jetzt HTML-formatiert in der Datenbank stehen.
+Weil diese Konvertierung nicht einfach rückgängig gemacht werden kann, 
+mach ich das vorerst mal nur auf meinem Rechner und teste die Sache 
+intern.
+
+Also einmal beim Kunden eine Kopie der Datenbank holen::
+
+  cd /usr/local/django/myproject
+  ./dump
+  cp fixtures/d20110525.dpy media/webdav
+  
+Dann die Datei :file:`d20110525.dpy` von beim Kunden in mein 
+lokales fixtures-Verzeichnis runterladen folgende kleine 
+manuelle Änderung machen::
+
+  from lino.utils.restify import restify # neue Zeile
+  def create_notes_note(id,user_id,...,body,...):
+      # vorher return Note(id=id,user_id=user_id,...,body=body,...)
+      return Note(id=id,user_id=user_id,...,body=restify(body),...)
+
+
+Dann mit folgendem Befehl bei mir importieren::
+
+  python manage.py initdb d20110525
+  
+Ist das nicht wunderbar einfach? Bin noch immer wieder begeistert 
+darüber, wie gut mein System zur :doc:`/admin/datamig` funktioniert.
+
+Upps, beim ersten Aufruf kommt nun ein Fehler, der wahrscheinlich auch schon 
+vor dem Datenimport gekommen wäre, weil er auf meine Änderung von gestern 
+zurückzuführen ist::
+
+
+    File "t:\hgwork\lino\lino\ui\extjs3\urls.py", line 34, in <module>
+      settings.LINO.setup()
+    File "t:\hgwork\lino\lino\apps\std\settings.py", line 152, in setup
+      setup_site(self)
+    File "t:\hgwork\lino\lino\core\kernel.py", line 213, in setup_site
+      analyze_models(self)
+    File "t:\hgwork\lino\lino\core\kernel.py", line 107, in analyze_models
+      model.site_setup(self)
+    File "t:\hgwork\lino\lino\apps\dsbe\models.py", line 693, in site_setup
+      bank_account1 bank_account2 activity''')
+    File "t:\hgwork\lino\lino\reports.py", line 87, in fields_list
+      return tuple([get_field(model,n) for n in field_names.split()])
+    File "t:\hgwork\lino\lino\tools.py", line 61, in get_field
+      raise Exception("get_field(%r,%r) got a remote model ?!" % (model,name))
+  Exception: get_field(<class 'lino.apps.dsbe.models.CourseProvider'>,'name') got a remote model ?!
+
+.. currentmodule:: lino.apps.dsbe.models
+
+Ja, also :class:`CourseProvider` ist ja ein MTI-Child von :class:`Company`, 
+und wenn ein Report sich :attr:`CourseProvider.name` anfragt, ist das Feld 
+ja nicht in :class:`CourseProvider` sondern :class:`Company` definiert. 
+Ich hole diese `assert` aus :func:`lino.tools.get_field` einfach raus, 
+die war da sowieso eher spontan eingefügt.
+
+Die Konvertierung von reST nach HTML scheint insgesamt 
+gut geklappt zu haben, 
+aber beim Testen sehe ich noch mehrere kleinere Bugs, 
+die ich wohl beheben muss vor dem Release:
+
+- Notiz #91 wird nicht korrekt ausgedruckt (der letzte Teil 
+  ab dem Titel "Vorschlag" wird weder gedruckt noch schreibt appy.opd eine 
+  Fehlermeldung ins ODT-Dokument.
+  
+- Auch Notiz #90 nicht. Da verschwindet nur der Titel...
+  
+- Bei längeren Texten ist ein Problem mit der Größe des Editors. 
+  Die letzten Zeilen kann man selbst mit Hilfe des Scrollbars nicht anzeigen.
+  Könnte ein Bug in TinyMCE sein, oder in Ext.ux.TinyMCE. 
+  Praktischer Workarund wäre ein Button "Open in own Window" für das Editor-Panel.
+  
+
+Ein neuer Testfall für appy.pod
+-------------------------------
+
+Oh je! Es ist gar nicht so leicht, die oben erwähnten Fehler in reproduzierbare 
+Testcases zu packen!
+
+Der Testcase 8 (in :srcref:`/tests/appy/1/test.py`) produzierte folgenden 
+Traceback::
+
+  Error while evaluating the expression "html(HTML)" defined in the "from" part of a statement.
+  File "<string>", line 1, in <module>
+  File "t:\hgwork\lino\lino\utils\appy_pod.py", line 66, in html_func
+  return renderer.renderXhtml(html,**kw)
+  File "l:\snapshots\appy-0.6.6\appy\pod\renderer.py", line 242, in renderXhtml
+  stylesMapping, ns).run()
+  File "l:\snapshots\appy-0.6.6\appy\pod\xhtml2odt.py", line 502, in run
+  self.xhtmlParser.parse(self.xhtmlString)
+  File "l:\snapshots\appy-0.6.6\appy\shared\xml_parser.py", line 193, in parse
+  self.parser.parse(inputSource)
+  File "c:\Python27\lib\xml\sax\expatreader.py", line 107, in parse
+  xmlreader.IncrementalParser.parse(self, source)
+  File "c:\Python27\lib\xml\sax\xmlreader.py", line 123, in parse
+  self.feed(buffer)
+  File "c:\Python27\lib\xml\sax\expatreader.py", line 211, in feed
+  self._err_handler.fatalError(exc)
+  File "c:\Python27\lib\xml\sax\handler.py", line 38, in fatalError
+  raise exception
+  <class 'xml.sax._exceptions.SAXParseException'>: <unknown>:2:33: not well-formed (invalid token)
+    
+Um zu sehen, worauf sich die 2:33 bezieht, brauchte ich wieder die zwei Zeilen in der 
+:func:`appy.pod.renderer.Renderer.renderXhtml`::
+
+    xhtmlContent = '<p>%s</p>' % xhtmlString
+    import codecs
+    codecs.open('20110523.log','w',encoding=encoding).write(xhtmlContent)
+    return Xhtml2OdtConverter(xhtmlContent, encoding, self.stylesManager,
+
+Das besagte XHTML-Fragment lautet::
+
+  <p>
+  <p><span class="Apple-style-span", style="font-size: 13px; line-height: 19px; font-family: sans-serif;">Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</span></p>
+
+Aha, der Fehler ist das Komma. Das war ein Bug in meiner Funktion `html2xhtml`. 
+Der trat also nur auf, wenn ein *tag* mehr als ein *attributes* hatte. 
+Und weil der Bug so einfach war, habe ich knapp 2 Stunden danach gesucht...
+
+Eintauchen in die `docutils`
+----------------------------
+
+Die Bugs beim Ausdruck der Notizen 91 und 92 kamen daher, dass ich bei meinem 
+ersten Datenimport die ``<div class="document">`` (die par défaut von `html_body` 
+generiert wird) nicht entfernt hatte.
+Das ist ja ein `Bug in appy.pod <https://bugs.launchpad.net/appy/+bug/777890>`_, 
+den ich umgehen kann. 
+
+Deshalb wird das jetzt nicht mehr in :func:`lino.utils.appy_pod.setup_renderer`, 
+sondern in :func:`lino.utils.restify.restify` gemacht.
+
+Aber upps, beim Datenimport muss ich feststellen, 
+dass `html_body` im *surrounding DIV tag* 
+manchmal auch ein Attribut `id` hinzufügt: 
+``<div class="document" id="markup-beispiele">``.
+Genauer gesagt immer dann, wenn das reST-Text einen Haupttitel hat.
+Und dann funktioniert mein uneleganter Workaround in der 
+:func:`lino.utils.restify.restify` nicht...
+
+Zum Glück hatte Günter Milde (schon) vor 2 Wochen auf meine Frage im 
+Docutils-Forum `geantwortet
+<http://sourceforge.net/mailarchive/message.php?msg_id=27467363>`_, 
+so dass ich die Sache nun "richtig" lösen konnte.
+Also in :mod:`lino.utils.restify` überschreibe ich den `HtmlTranslator` 
+von docutils so dass er dieses DIV-tag gar nicht erst einfügt.
+
+Voilà, das war's. Die Notizen #91 und #92 funktionieren jetzt.
+
+Für morgen
+----------
+
+Jetzt bleiben für morgen also "nur" noch die "äußeren" Probleme:
+
+- Der Editor wird nicht schreibgeschützt, wenn die Notiz ausgedruckt wurde.
+  `Ext.ux.TinyMCE` ignoriert offenbar die Option `disabled`.
+  
+- Mindestens eines der Sonderzeichen "Ω", "Φ" oder "→" führt 
+  beim Ausdrucksversuch zur Fehlermeldung
+  ``'charmap' codec can't encode character u'\u03a9' in position 278: 
+  character maps to <undefined>``.
+
+- Bei längeren Texten ist ein Problem mit der Größe des Editors. 
+  Die letzten Zeilen kann man selbst mit Hilfe des Scrollbars nicht anzeigen.
+  Könnte ein Bug in TinyMCE sein, oder in Ext.ux.TinyMCE. 
+  Praktischer Workarund wäre ein Button "Open in own Window" für das Editor-Panel.
+
+- Zentrierte Absätze werden nicht zentriert gedruckt.
+

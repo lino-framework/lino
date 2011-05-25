@@ -12,19 +12,22 @@ from appy import version
 
 APPY_PARAMS = dict()
 
-SKIP_TESTS = range(6) 
+#~ ACTIVE_TESTS = None # run all tests
+ACTIVE_TESTS = (8,) # run only specified tests
 
 #~ APPY_PARAMS.update(ooPort=8100)
 #~ APPY_PARAMS.update(pythonWithUnoPath=r'C:\PROGRA~1\LIBREO~1\program\python.exe')
 
-try:
-  from lino.utils.restify import install_restify
-except ImportError:
-  def install_restify(*args):
-      pass
+from lino.utils.appy_pod import setup_renderer
 
-def run_test(number,title,HTML,RST=None):
-    if number in SKIP_TESTS: 
+#~ try:
+  #~ from lino.utils.restify import install_restify
+#~ except ImportError:
+  #~ def install_restify(*args):
+      #~ pass
+
+def run_test(number,title,XHTML=None,RST=None,HTML=None):
+    if ACTIVE_TESTS and not number in ACTIVE_TESTS: 
         print "Skipped test #%d" % number
         return
     print "Running test #%d" % number
@@ -39,7 +42,7 @@ def run_test(number,title,HTML,RST=None):
     if os.path.exists(target): 
         os.remove(target)
     renderer = Renderer(tpl, context, target,**APPY_PARAMS)
-    install_restify(renderer)
+    setup_renderer(renderer) # adds functions restify() and html()
     renderer.run()  
     print "Generated file", target
     #~ os.startfile(target)    
@@ -68,7 +71,7 @@ run_test(2,"List items are not rendered (Appy 0.6.6)",'''
 ''')
     
 # 3 : 
-run_test(3,"Same as 2, but using `restify` to make the HTML",None,u'''
+run_test(3,"Same as 2, but using `restify` to make the XHTML",RST=u'''
 Some **bold** and some *italic* text. 
 
 A new paragraph.
@@ -82,7 +85,7 @@ A list with three items:
 A last paragraph.
 ''')
 
-run_test(5,"SAX parser error on Python 2.6",None,u"""
+run_test(5,"SAX parser error on Python 2.6",RST=u"""
 Some **bold** and some *italic* text.
 
 A new paragraph, followed by a list with three items.
@@ -95,7 +98,7 @@ A last paragraph with some special characters like <, & and >.
 """)
 
 
-html = """
+xhtml = """
 <div class="section" id="titel">
 <h1>Title</h1>
 <div class="system-message">
@@ -108,12 +111,20 @@ Title
 </div>
 </div>
 """
-run_test(6,"20110516",html)
+run_test(6,"20110516",XHTML=xhtml)
 
-html = """
+xhtml = """
 <pre>
 Title
 ====
 </pre>
 """
-run_test(7,"20110517",html)
+run_test(7,"20110517",xhtml)
+
+html = """
+<p><span class="Apple-style-span" style="font-size: 13px; line-height: 19px; font-family: sans-serif;">Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</span></p>
+<p><span class="Apple-style-span" style="font-size: 20px; font-weight: bold;">A heading</span></p>
+<p><span class="Apple-style-span" style="font-size: 13px; line-height: 19px; font-family: sans-serif;">Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</span></p>
+"""
+run_test(8,"20110525",HTML=html)
+

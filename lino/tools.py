@@ -56,12 +56,19 @@ def resolve_model(model_spec,app_label=None):
     return model
     
 def get_field(model,name):
+    '''Returns the field descriptor of the named field in the specified model.
+    '''
     fld, remote_model, direct, m2m = model._meta.get_field_by_name(name)
-    assert remote_model is None
+    # see blog/2011/0525
+    #~ if remote_model is not None:
+        #~ raise Exception("get_field(%r,%r) got a remote model ?!" % (model,name))
     return fld
   
 
 def resolve_field(name,app_label=None):
+    """Returns the field descriptor specified by the string `name` which 
+    should be either `model.field` or `app.model.field`.
+    """
     l = name.split('.')
     if len(l) == 3:
         app_label = l[0]
