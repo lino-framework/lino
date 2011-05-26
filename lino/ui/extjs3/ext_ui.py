@@ -1141,7 +1141,7 @@ tinymce.init({
         #~ fn = r'c:\temp\dsbe.js'
         
         if not os.path.isdir(settings.MEDIA_ROOT):
-            logger.info("Directory '%s' (settings.MEDIA_ROOT) does not exist.", settings.MEDIA_ROOT)
+            logger.warning("Directory '%s' (settings.MEDIA_ROOT) does not exist.", settings.MEDIA_ROOT)
             return
         
         logger.info("Generating %s ...", fn)

@@ -333,7 +333,7 @@ for rec in r:
             if COUNTRIES.has_key(iso2):
                 logger.debug("Ignored duplicate country %r",iso2)
             else:
-                COUNTRIES[iso2]=dict(en=en,de=de,iso3=iso3)
+                COUNTRIES[iso2]=dict(en=en,de=de,iso3=iso3,fr=en,nl=en)
 
 for ln in TABLE2.splitlines():
     ln = ln.strip()
@@ -342,7 +342,7 @@ for ln in TABLE2.splitlines():
         if COUNTRIES.has_key(code1):
             logger.debug("Ignored duplicate country %r",code1)
         else:
-            COUNTRIES[code1] = dict(en=name,de=name)
+            COUNTRIES[code1] = dict(en=name,de=name,fr=name,nl=name)
 
 
 def objects():
@@ -358,4 +358,5 @@ def objects():
         else:
             logger.debug("%r : no name for default babel language %s",code,DEFAULT_LANGUAGE)
     logger.info("Installed %d countries",n)
+            
             

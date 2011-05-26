@@ -4,5 +4,33 @@
 - Added (empty) translation files for dutch and wrote :doc:`/admin/translate`.
 - Updated :doc:`/admin/install`
 
-- Updated Django on :term:`Armand` from revision 15796 to 16280.
+- The following traceback occured when ``manage.py validate`` 
+  was run using the newest Django revision::
+  
+    Traceback (most recent call last):
+      ...
+      File "/var/snapshots/lino/lino/apps/dsbe/models.py", line 1995, in <module>
+        resolve_field('dsbe.Contract.user').verbose_name=_("responsible (DSBE)")
+      File "/var/snapshots/lino/lino/tools.py", line 79, in resolve_field
+        fld, remote_model, direct, m2m = model._meta.get_field_by_name(l[1])
+    AttributeError: 'NoneType' object has no attribute '_meta'
 
+  To reproduce this error I had to update Django on :term:`Armand` 
+  from revision 15796 to 16280.
+  Django apparently has changed some internals. 
+  The solution was to move this `resolve_field` call into 
+  :meth:`lino.apps.dsbe.models.Contract.site_setup` 
+  (which is btw a better place for this kind of things).
+  
+- In der neuen Django-Version (wahrscheinlich wegen 
+  :djangoticket:`14297`) funktioniert mein elegantes System mit 
+  den cascaded settings nicht mehr. Da muss ich mir 
+  also was anderes einfallen lassen. Provisorischer Workaround::
+  
+    mv settings.py lino_settings.py
+    echo "from myproject.lino_settings import *" > settings.py
+
+- Fixture `all_countries` fügte in einer Datenbank mit 
+  :setting:`LANGUAGE` 'fr' oder 'nl'
+  keine Länder ein. Jetzt setzt sie provisorisch die englischen 
+  Landesnamen ein.

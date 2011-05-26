@@ -465,7 +465,7 @@ class HtmlTextFieldElement(TextFieldElement):
     def __init__(self,*args,**kw):
         if settings.LINO.use_tinymce:
             assert not settings.LINO.use_vinylfox
-            if True:
+            if False:
                 self.value_template = "new Ext.form.DisplayField(%s)"
             else:
                 self.value_template = "new Ext.ux.TinyMCE(%s)"

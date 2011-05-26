@@ -59,7 +59,7 @@ class SiteConfigs(reports.Report):
     model = SiteConfig
     #~ default_action_class = reports.OpenDetailAction
     has_navigator = False
-    can_delete = perms.never
+    #~ can_delete = perms.never
     
     
 def get_site_config():

@@ -194,14 +194,35 @@ def objects():
     yield exam_policy(**babel_values('name',en='every 3 months',de='alle 3 Monate',fr="tous les 3 mois"))
     yield exam_policy(**babel_values('name',en='other',de='andere',fr="autre"))
         
-    def create_dsbe_aidtype(id,name,name_fr):
-        return AidType(id=id,name=name,name_fr=name_fr)        
+    #~ def create_dsbe_aidtype(id,name,name_fr):
+        #~ return AidType(id=id,name=name,name_fr=name_fr)        
     
     aidtype = Instantiator('dsbe.AidType').build
-    yield aidtype(**babel_values('name',de=u'Eingliederungseinkommen Kat 1 (Zusammenlebend)'))
-    yield aidtype(**babel_values('name',de=u'Eingliederungseinkommen Kat 2 (Alleinlebend)'))
-    yield aidtype(**babel_values('name',de=u'Eingliederungseinkommen Kat 3 (Familie zu Lasten)'))
-    yield aidtype(**babel_values('name',de=u'Ausl\xe4nderbeihilfe Kat 1 (Zusammenlebend)'))
-    yield aidtype(**babel_values('name',de=u'Ausl\xe4nderbeihilfe Kat 2 (Alleinlebend)'))
-    yield aidtype(**babel_values('name',de=u'Ausl\xe4nderbeihilfe Kat 3 (Familie zu Lasten)'))
-    yield aidtype(**babel_values('name',de=u'Sonstige Sozialhilfe'))
+    yield aidtype(**babel_values('name',
+      de=u'Eingliederungseinkommen Kat 1 (Zusammenlebend)',
+      fr=u"Revenu d'intégration cat. 1 (couple)",
+      ))
+    yield aidtype(**babel_values('name',
+      de=u'Eingliederungseinkommen Kat 2 (Alleinlebend)',
+      fr=u"Revenu d'intégration cat. 2 (célibataire)",
+      ))
+    yield aidtype(**babel_values('name',
+      de=u'Eingliederungseinkommen Kat 3 (Familie zu Lasten)',
+      fr=u"Revenu d'intégration cat. 3 (famille à charge)",
+      ))
+    yield aidtype(**babel_values('name',
+      de=u'Ausl\xe4nderbeihilfe Kat 1 (Zusammenlebend)',
+      fr=u"Aide aux immigrants cat. 1 (couple)",
+      ))
+    yield aidtype(**babel_values('name',
+      de=u'Ausl\xe4nderbeihilfe Kat 2 (Alleinlebend)',
+      fr=u"Aide aux immigrants cat. 2 (célibataire)",
+      ))
+    yield aidtype(**babel_values('name',
+      de=u'Ausl\xe4nderbeihilfe Kat 3 (Familie zu Lasten)',
+      fr=u"Aide aux immigrants cat. 3 (famille à charge)",
+      ))
+    yield aidtype(**babel_values('name',
+      de=u'Sonstige Sozialhilfe',
+      fr=u"Autre aide sociale",
+      ))

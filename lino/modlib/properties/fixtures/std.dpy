@@ -31,10 +31,19 @@ from lino.utils.choicelists import HowWell
 
 def objects():
     ptype = Instantiator('properties.PropType').build
-    yield ptype(id=1,**babel_values('name',**dict(en="Present or not",de=u"Vorhanden oder nicht")))
+    yield ptype(id=1,**babel_values('name',**dict(
+        en="Present or not",
+        de=u"Vorhanden oder nicht",
+        fr=u"Présent ou pas",
+        nl=u"Ja of niet",
+        )))
     yield ptype(id=2,
         choicelist=HowWell.__name__,
         default_value=HowWell.default.value,
-        **babel_values('name',**dict(en="Appraisal",
-                                     de=u"Bewertung")))
+        **babel_values('name',**dict(
+            en="Appraisal",
+            de=u"Bewertung",
+            fr=u"Appréciation(?)",
+            nl=u"Hoe goed",
+            )))
     

@@ -166,15 +166,28 @@ For example::
       }
   }
   
-Copy the following bash scripts to 
-your Django project directory:
+Installing startup scripts 
+--------------------------
 
-  ============================= =========================================
-  :srcref:`start </bash/start>` Manually start all local Lino services
-  :srcref:`stop </bash/stop>`   Manually stop all local Lino services
-  :srcref:`dump </bash/dump>`   Write a dpy dump of your database
-  :srcref:`pull </bash/pull>`   Update local copy of Lino sources 
-  ============================= =========================================
+Copy the Lino utility scripts to your project directory::
+
+  cd /usr/local/django/myproject
+  cp /var/snapshots/lino/bash/* .
+  
+Explanations:
+
+  ===================================== =========================================
+  :srcref:`start </bash/start>`         Manually start all local Lino services
+  :srcref:`stop </bash/stop>`           Manually stop all local Lino services
+  :srcref:`dump </bash/dump>`           Write a dpy dump of your database
+  :srcref:`pull </bash/pull>`           Update your copy of Lino sources 
+  :srcref:`oood </bash/oood>`           Start or stop OpenOffice (LibreOffice) in server mode
+  :srcref:`watch_tim </bash/watch_tim>` Start or stop the :term:`watch_tim` daemon
+  ===================================== =========================================
+
+Afterwards you'll have to manually adapt them:
+- start and stop : remove the line for :term:`watch_tim` if you don't need this.
+- oood : check the path of OpenOffice / LibreOffice
 
   
 Apply a patch for Django
@@ -251,8 +264,8 @@ Django docs on Apache and mod_wsgi:
 
 You'll also need to configure Apache to do HTTP authentication: :doc:`ApacheHttpAuth`.
 
-Static files
-------------
+Set up your `/media/` directory 
+-------------------------------
 
 Lino uses the following types of static files:
 
@@ -260,7 +273,7 @@ Lino uses the following types of static files:
 Prefix                      Description                                 location                
 =========================== =========================================== ============================================
 /media/extjs/               ExtJS library                               /var/snapshots/ext-3.2.1/ 
-/media/tinymce/             TinyMCE library                             ...
+/media/tinymce/             TinyMCE library                             /usr/share/tinymce/www
 /media/lino/                lino.js and lino.css                        /var/snapshots/lino/lino/ui/extjs/media/
 /media/cache/               files generated and served by 
                             lino.modlib.documents                       /var/snapshots/lino/lino/demos/dsbe/media/ 
@@ -269,8 +282,6 @@ Prefix                      Description                                 location
 /media/webdav/              User-editable files 
 /media/webdav/doctemplates  local doctemplates directory
 =========================== =========================================== ============================================
-
-The prefixes are currently not configurable.
 
 The development server does these mappings automatically in `urls.py`. 
 
@@ -285,6 +296,7 @@ directive in your Apache config, and then use symbolic links in :file:`/usr/loca
   mkdir webdav/doctemplates
   ln -s /var/snapshots/lino/media lino
   ln -s /var/snapshots/ext-3.3.1 extjs
+  ln -s /usr/share/tinymce/www tinymce
 
 
 User permissions
@@ -319,12 +331,6 @@ It may be useful to tidy up::
 
 
 
-
-Installing startup scripts 
---------------------------
-
-:srcref:`oood </bash/oood>`  Start/Stop OpenOffice (LibreOffice) in server mode
-:srcref:`watch_tim </bash/watch_tim>`  Start/Stop `watch_tim` daemon
 
 OpenOffice.org server 
 =====================

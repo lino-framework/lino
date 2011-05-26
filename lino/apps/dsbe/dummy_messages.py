@@ -2,8 +2,8 @@
 from django.utils.translation import ugettext
 ugettext(u'Status')
 ugettext(u'Documents')
-ugettext(u'Detail')
 ugettext(u'Kursangebot')
+ugettext(u'Detail')
 ugettext(u'Notes')
 ugettext(u'Miscellaneous')
 ugettext(u'General')

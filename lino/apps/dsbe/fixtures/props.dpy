@@ -28,7 +28,9 @@ def objects():
     
     pgroup = Instantiator('properties.PropGroup').build
     
-    skills = pgroup(**babel_values('name',**dict(en="Skills",de=u"Fachkompetenzen")))
+    skills = pgroup(**babel_values('name',**dict(
+      en="Skills",de=u"Fachkompetenzen",
+      fr=u"Compétences professionnelles")))
     skills.save()
     yield skills
     softskills = pgroup(**babel_values('name',**dict(
@@ -38,7 +40,8 @@ def objects():
     softskills.save()
     yield softskills
     obstacles = pgroup(**babel_values('name',**dict(
-        en="Obstacles",de=u"Hindernisse",fr="Obstacles")))
+        en="Obstacles",de=u"Hindernisse",
+        fr="Obstacles")))
     obstacles.save()
     yield obstacles
     

@@ -3,5 +3,5 @@
 
 main = 
   id group type 
-  name name_fr
+  name
   properties.PersonPropsByProp
