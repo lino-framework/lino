@@ -8,27 +8,47 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-26 09:27+0100\n"
+"POT-Creation-Date: 2011-05-26 09:28+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: .\models.py:37
-msgid "upload type"
+#: .\models.py:28
+msgid "Language"
 msgstr ""
 
-#: .\models.py:38
-msgid "upload types"
+#: .\models.py:29
+msgid "Languages"
 msgstr ""
 
-#: .\models.py:40
-msgid "Name"
+#: .\models.py:31
+msgid "Designation"
 msgstr ""
 
-#: .\models.py:102
-msgid "My uploads"
+#: .\models.py:51
+msgid "country"
+msgstr ""
+
+#: .\models.py:52
+msgid "countries"
+msgstr ""
+
+#: .\models.py:84
+msgid "city"
+msgstr ""
+
+#: .\models.py:85
+msgid "cities"
+msgstr ""
+
+#: .\models.py:112
+msgid "Country"
+msgstr ""
+
+#: .\models.py:114
+msgid "City"
 msgstr ""

@@ -11,34 +11,30 @@ without understanding what you are doing!
 Software prerequisites
 ----------------------
 
-You'll maybe need the following Debian packages installed:
+You'll need the following Debian packages installed:
 
- * Packages needed to download Lino and Django::
- 
-      mercurial subversion unzip patch
+* Packages needed to download Lino and Django::
 
- * Packages needed by Django applications to run in Apache2::
+    mercurial subversion unzip patch
+
+* Packages needed by Django applications to run in Apache2::
 
     apache2 apache2-doc apache2-mpm-prefork \
       apache2-utils libexpat1 ssl-cert libapache2-mod-wsgi
-      
- * Packages needed by Lino to work::
- 
-      python-dateutil python-yaml python-cheetah python-docutils
-      
-      python-reportlab 
-      python-imaging 
-      python-html5lib
-      python-uno
+    
+* Packages needed by Lino to work::
 
- * If you need to run `watch_tim` as a daemon::
- 
-      python-daemon
-      
- * Some database frontend (choose one):
- 
-      python-pysqlite2
-      mysql-server python-mysqldb
+    python-dateutil python-yaml python-cheetah python-docutils
+    
+* Optional packages needed by Lino in certain cases:
+
+  - tinymce (if :attr:`lino.apps.std.settings.Lino.use_tinymce` is `True`)
+  - python-daemon (if you run :term:`watch_tim` as a daemon)
+  
+* Some database frontend (choose one)::
+
+    python-pysqlite2
+    mysql-server python-mysqldb
       
 
 Download
@@ -49,8 +45,11 @@ Create a directory :file:`/var/snapshots` and go to that directory::
   hg clone https://lino.googlecode.com/hg/ lino
 
 Note: don't run Lino's file `setup.py`, it is not necessary and doesn't work.  
+Just `Set up your Python path`_ manually (see below).
 
-The Django version provided by Debian Lenny `python-django` module is too old for Lino, so you need Django's development version. Get that snapshot as well::
+The Django version provided by Debian Lenny `python-django` 
+module is probably too old for Lino, so you need Django's 
+development version. Get that snapshot as well::
 
   svn co http://code.djangoproject.com/svn/django/trunk/ django
 
@@ -390,7 +389,7 @@ Go to your `/usr/local/django/myproject` directory and run::
 
   python manage.py initdb demo
 
-Currently there is also an unelegant thing to do by hand::
+Currently there is maybe also an unelegant thing to do by hand::
 
   chgrp www-data /usr/local/django/myproject/data/myproject.db
   chmod -R g+w /usr/local/django/myproject

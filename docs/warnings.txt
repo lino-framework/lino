@@ -1,31 +1,12 @@
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:10: WARNING: py:mod reference target not found: appy_pod
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:18: WARNING: py:mod reference target not found: dbfreader
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:26: WARNING: py:mod reference target not found: dpy
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:17: WARNING: py:class reference target not found: django.core.serializers.base.DeserializedObject
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:39: WARNING: py:class reference target not found: django.core.serializers.base.Serializer
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:34: WARNING: py:mod reference target not found: html2xhtml
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:10: WARNING: py:class reference target not found: HTMLParser.HTMLParser
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:42: WARNING: py:mod reference target not found: instantiator
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:17: WARNING: py:class reference target not found: exceptions.Exception
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:50: WARNING: py:mod reference target not found: jsgen
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:80: WARNING: py:class reference target not found: object
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:58: WARNING: py:mod reference target not found: latex
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:66: WARNING: py:mod reference target not found: menus
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:74: WARNING: py:mod reference target not found: perms
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:82: WARNING: py:mod reference target not found: requests
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:90: WARNING: py:mod reference target not found: restify
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:4: WARNING: py:mod reference target not found: docutils.examples
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:14: WARNING: py:class reference target not found: docutils.writers.html4css1.HTMLTranslator
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:26: WARNING: py:class reference target not found: docutils.writers.html4css1.Writer
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:98: WARNING: py:mod reference target not found: simulate_remote
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:17: WARNING: setting reference target not found: MIDDLEWARE_CLASSES
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:27: WARNING: py:class reference target not found: object
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:106: WARNING: py:mod reference target not found: mti
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:12: WARNING: py:class reference target not found: django.db.models.deletion.Collector
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:50: WARNING: py:class reference target not found: object
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:108: WARNING: py:func reference target not found: convert
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:114: WARNING: py:mod reference target not found: ucsv
-T:\hgwork\lino\docs\blog\2011\0525.rst:59: WARNING: py:class reference target not found: Company
-T:\hgwork\lino\docs\blog\2011\0525.rst:59: WARNING: py:attr reference target not found: CourseProvider.name
-T:\hgwork\lino\docs\blog\2011\0525.rst:59: WARNING: py:class reference target not found: Company
-T:\hgwork\lino\docs\blog\2011\0525.rst:111: WARNING: py:func reference target not found: appy.pod.renderer.Renderer.renderXhtml
+T:\hgwork\lino\docs\admin\translate.rst:3: (WARNING/2) Duplicate explicit target name: "fr".
+T:\hgwork\lino\docs\admin\translate.rst:3: (WARNING/2) Duplicate explicit target name: "nl".
+T:\hgwork\lino\docs\admin\translate.rst:3: (WARNING/2) Duplicate explicit target name: "fr".
+T:\hgwork\lino\docs\admin\translate.rst:3: (WARNING/2) Duplicate explicit target name: "nl".
+T:\hgwork\lino\docs\admin\translate.rst:3: (WARNING/2) Duplicate explicit target name: "fr".
+T:\hgwork\lino\docs\admin\translate.rst:3: (WARNING/2) Duplicate explicit target name: "nl".
+T:\hgwork\lino\docs\admin\translate.rst:3: (WARNING/2) Duplicate explicit target name: "fr".
+T:\hgwork\lino\docs\admin\translate.rst:3: (WARNING/2) Duplicate explicit target name: "nl".
+T:\hgwork\lino\docs\admin\translate.rst:3: (WARNING/2) Duplicate explicit target name: "fr".
+T:\hgwork\lino\docs\admin\translate.rst:3: (WARNING/2) Duplicate explicit target name: "nl".
+T:\hgwork\lino\docs\admin\translate.rst:3: (WARNING/2) Duplicate explicit target name: "fr".
+T:\hgwork\lino\docs\admin\translate.rst:3: (WARNING/2) Duplicate explicit target name: "nl".

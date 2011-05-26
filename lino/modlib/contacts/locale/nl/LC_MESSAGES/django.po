@@ -1,0 +1,170 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-05-26 09:27+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+#: .\models.py:57
+msgid "Name"
+msgstr ""
+
+#: .\models.py:58
+msgid "Address line before street"
+msgstr ""
+
+#: .\models.py:62
+msgid "Street"
+msgstr ""
+
+#: .\models.py:65
+msgid "No."
+msgstr ""
+
+#: .\models.py:68
+msgid "Box"
+msgstr ""
+
+#: .\models.py:71
+msgid "Address line after street"
+msgstr ""
+
+#: .\models.py:89
+msgid "Zip code"
+msgstr ""
+
+#: .\models.py:90
+msgid "Region"
+msgstr ""
+
+#: .\models.py:94
+msgid "E-Mail"
+msgstr ""
+
+#: .\models.py:95
+msgid "URL"
+msgstr ""
+
+#: .\models.py:96
+msgid "Phone"
+msgstr ""
+
+#: .\models.py:97
+msgid "GSM"
+msgstr ""
+
+#: .\models.py:98
+msgid "Fax"
+msgstr ""
+
+#: .\models.py:102
+msgid "Remarks"
+msgstr ""
+
+#: .\models.py:166
+msgid "Address"
+msgstr ""
+
+#: .\models.py:192 .\models.py:270
+msgid "Person"
+msgstr ""
+
+#: .\models.py:193
+msgid "Persons"
+msgstr ""
+
+#: .\models.py:196
+msgid "First name"
+msgstr ""
+
+#: .\models.py:200
+msgid "Last name"
+msgstr ""
+
+#: .\models.py:204
+msgid "Title"
+msgstr ""
+
+#: .\models.py:272 .\models.py:349
+msgid "Company"
+msgstr ""
+
+#: .\models.py:290
+msgid "represented by"
+msgstr ""
+
+#: .\models.py:324
+msgid "company type"
+msgstr ""
+
+#: .\models.py:325
+msgid "company types"
+msgstr ""
+
+#: .\models.py:327 .\models.py:385
+msgid "Designation"
+msgstr ""
+
+#: .\models.py:328
+msgid "Abbreviation"
+msgstr ""
+
+#: .\models.py:350
+msgid "Companies"
+msgstr ""
+
+#: .\models.py:352
+msgid "VAT id"
+msgstr ""
+
+#: .\models.py:357
+msgid "Company type"
+msgstr ""
+
+#: .\models.py:381 .\models.py:411
+msgid "contact type"
+msgstr ""
+
+#: .\models.py:382
+msgid "contact types"
+msgstr ""
+
+#: .\models.py:404
+msgid "contact"
+msgstr ""
+
+#: .\models.py:405
+msgid "contacts"
+msgstr ""
+
+#: .\models.py:407
+msgid "person"
+msgstr ""
+
+#: .\models.py:409
+msgid "company"
+msgstr ""
+
+#: .\models.py:443
+msgid "Contact for"
+msgstr ""
+
+#: .\models.py:455
+msgid "The company that runs this site"
+msgstr ""
+
+#: .\models.py:465
+msgid "The next automatic id for Person or Company"
+msgstr ""

@@ -14,4 +14,5 @@ Administrator's Manual
    using_appy_pod
    upgrade
    datamig
+   translate
 
