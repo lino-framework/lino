@@ -1351,7 +1351,13 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,contact
                 and self.company.type is not None \
                 and self.company.type.contract_type is not None:
                 self.type = self.company.type.contract_type
-        
+    @classmethod
+    def site_setup(cls,lino):
+        """
+        Here's how to override the default verbose_name of a field
+        """
+        resolve_field('dsbe.Contract.user').verbose_name=_("responsible (DSBE)")
+
 CONTRACT_PRINTABLE_FIELDS = reports.fields_list(Contract,
   'person company contact type '
   'applies_from applies_until duration '
@@ -1989,10 +1995,6 @@ reports.inject_field(SiteConfig,
     """)
 
 
-"""
-Here's how to override the default verbose_name of a field
-"""
-resolve_field('dsbe.Contract.user').verbose_name=_("responsible (DSBE)")
 
 """
 ...

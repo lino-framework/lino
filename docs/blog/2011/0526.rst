@@ -1,4 +1,8 @@
 20110526
 ========
 
-Added (empty) translation files for dutch and wrote :doc:`/admin/translate`.
+- Added (empty) translation files for dutch and wrote :doc:`/admin/translate`.
+- Updated :doc:`/admin/install`
+
+- Updated Django on :term:`Armand` from revision 15796 to 16280.
+

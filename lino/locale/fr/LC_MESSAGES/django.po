@@ -216,7 +216,7 @@ msgstr "La clé primaire %r existante ne peut être modifiée"
 #: .\ui\qx\qx_store.py:370
 #, python-format
 msgid "%r (invalid choice)"
-msgstr "%d (choix non valide"
+msgstr "%r (choix non valide)"
 
 #: .\ui\extjs3\ext_elems.py:581 .\ui\extjs4\ext_elems.py:569
 #: .\ui\qx\qx_elems.py:555
@@ -291,7 +291,7 @@ msgstr "Editer"
 #: .\utils\choicelists.py:145
 #, python-format
 msgid "%(value)r (invalid choice for %(list)s)"
-msgstr "%(value)r (choix non valable pour (%list)s)"
+msgstr "%(value)r (choix non valable pour %(list)s)"
 
 #: .\utils\choicelists.py:207
 msgid "certainly not...very much"

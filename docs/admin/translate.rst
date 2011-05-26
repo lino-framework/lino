@@ -46,3 +46,25 @@ Voici la liste des fichiers `.po`:
   `fr <http://lino.googlecode.com/hg/lino/modlib/properties/locale/fr/LC_MESSAGES/django.po>`__
   `nl <http://lino.googlecode.com/hg/lino/modlib/properties/locale/nl/LC_MESSAGES/django.po>`__
 
+
+Trucs et astuces
+----------------
+
+Voici un pitfall: la traduction du string suivant::
+
+  msgid "%(person)s has been unregistered from %(course)s"
+  
+ne doit pas être::
+
+  msgstr "%(personne)s a été désinscrit du %(cours)"
+
+mais bien::
+
+  msgstr "%(person)s a été désinscrit du %(course)s"
+
+C.-à-d. les mots-clés entre parenthèses sont des variables, 
+et il *ne faut pas* les modifier.
+
+À noter également que le ``s`` derrière la parenthèse ne sera pas 
+imprimé mais est obligatoire 
+(il indique à Python qu'il s'agit d'un remplacement de type `string`).

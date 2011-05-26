@@ -180,6 +180,9 @@ your Django project directory:
 Apply a patch for Django
 ------------------------
 
+(Just skip this section; it is probably no longer necessary and won't work with the 
+latest Django revision)
+
 Lino needs Django ticket `#10808 <http://code.djangoproject.com/ticket/10808>`_
 to be fixed, here is how I do it::
 
@@ -257,6 +260,7 @@ Lino uses the following types of static files:
 Prefix                      Description                                 location                
 =========================== =========================================== ============================================
 /media/extjs/               ExtJS library                               /var/snapshots/ext-3.2.1/ 
+/media/tinymce/             TinyMCE library                             ...
 /media/lino/                lino.js and lino.css                        /var/snapshots/lino/lino/ui/extjs/media/
 /media/cache/               files generated and served by 
                             lino.modlib.documents                       /var/snapshots/lino/lino/demos/dsbe/media/ 
@@ -387,8 +391,8 @@ Create a demo database
 
 Go to your `/usr/local/django/myproject` directory and run::
 
-  python manage.py initdb demo
-
+  python manage.py initdb std all_countries few_cities all_languages props demo 
+  
 Currently there is maybe also an unelegant thing to do by hand::
 
   chgrp www-data /usr/local/django/myproject/data/myproject.db

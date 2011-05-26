@@ -797,7 +797,7 @@ msgstr "Désinscrire"
 #: .\models.py:1700
 #, python-format
 msgid "%(person)s has been unregistered from %(course)s"
-msgstr "%(personne)s a été désinscrit du %(cours)"
+msgstr "%(person)s a été désinscrit du %(course)s"
 
 #: .\models.py:1704
 #, fuzzy
@@ -811,7 +811,7 @@ msgstr "Inscrire"
 #: .\models.py:1721
 #, python-format
 msgid "%(person)s has been registered to %(course)s"
-msgstr "%(personne)s a été inscrit au(x) %(cours)"
+msgstr "%(person)s a été inscrit au(x) %(course)s"
 
 #: .\models.py:1737
 msgid "Person Search"
@@ -823,7 +823,7 @@ msgstr "Recherches de personnes"
 
 #: .\models.py:1740
 msgid "Search Title"
-msgstr "Recherche d'intitulé"
+msgstr "Intitulé de la recherche"
 
 #: .\models.py:1741
 msgid "Aged from"
@@ -839,7 +839,7 @@ msgstr "Seulement mes personnes"
 
 #: .\models.py:1752
 msgid "Coached by"
-msgstr ""
+msgstr "Accompagné par"
 
 #: .\models.py:1757
 msgid "Period from"
@@ -863,7 +863,7 @@ msgstr "Propriétés désirées"
 
 #: .\models.py:1796
 msgid "Unwanted property"
-msgstr "Propriété non désirées"
+msgstr "Propriété non désirée"
 
 #: .\models.py:1797 .\models.py:1812
 msgid "Unwanted properties"
@@ -884,15 +884,15 @@ msgstr "Agence locale pour l'emploi ?"
 
 #: .\models.py:1933
 msgid "Skills Property Group"
-msgstr ""
+msgstr "Groupe de propriétés 'Skills'"
 
 #: .\models.py:1941
 msgid "Soft Skills Property Group"
-msgstr ""
+msgstr "Groupe de propriétés 'Soft Skills'"
 
 #: .\models.py:1951
 msgid "Obstacles Property Group"
-msgstr ""
+msgstr "Groupe de propriétés 'Obstacles'"
 
 #: .\models.py:1963
 msgid "Upload Type for residence permit"
