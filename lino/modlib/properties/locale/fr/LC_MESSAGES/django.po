@@ -19,60 +19,60 @@ msgstr ""
 
 #: .\models.py:73 .\models.py:145 .\models.py:178
 msgid "Property Type"
-msgstr ""
+msgstr "Type de propriété"
 
 #: .\models.py:74
 msgid "Property Types"
-msgstr ""
+msgstr "Types de propriétés"
 
 #: .\models.py:76 .\models.py:147 .\models.py:163 .\models.py:176
 msgid "Designation"
-msgstr ""
+msgstr "Désignation"
 
 #: .\models.py:80
 msgid "Choices List"
-msgstr ""
+msgstr "Liste de choix"
 
 #: .\models.py:83
 msgid "default value"
-msgstr ""
+msgstr "valeur par défault"
 
 #: .\models.py:91
 msgid "Limit to choices"
-msgstr ""
+msgstr "Limite aux choix"
 
 #: .\models.py:96
 msgid "Multiple choices"
-msgstr ""
+msgstr "Choix multiples"
 
 #: .\models.py:142
 msgid "Property Choice"
-msgstr ""
+msgstr "Choix de propriété"
 
 #: .\models.py:143
 msgid "Property Choices"
-msgstr ""
+msgstr "Choix de propriétés"
 
 #: .\models.py:146 .\models.py:205
 msgid "Value"
-msgstr ""
+msgstr "Valeur"
 
 #: .\models.py:160 .\models.py:177
 msgid "Property Group"
-msgstr ""
+msgstr "Groupe de propriétés"
 
 #: .\models.py:161
 msgid "Property Groups"
-msgstr ""
+msgstr "Groupes de propriétés"
 
 #: .\models.py:173 .\models.py:203
 msgid "Property"
-msgstr ""
+msgstr "Propriété"
 
 #: .\models.py:174
 msgid "Properties"
-msgstr ""
+msgstr "Propriétés"
 
 #: .\models.py:201
 msgid "Property group"
-msgstr ""
+msgstr "Groupe de propriétés"

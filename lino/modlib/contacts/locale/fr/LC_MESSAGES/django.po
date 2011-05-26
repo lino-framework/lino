@@ -19,11 +19,11 @@ msgstr ""
 
 #: .\models.py:57
 msgid "Name"
-msgstr ""
+msgstr "Nom"
 
 #: .\models.py:58
 msgid "Address line before street"
-msgstr ""
+msgstr "Ligne avant le nom de rue"
 
 #: .\models.py:62
 msgid "Street"
@@ -39,48 +39,48 @@ msgstr "boîte"
 
 #: .\models.py:71
 msgid "Address line after street"
-msgstr ""
+msgstr "Ligne après le nom de rue"
 
 #: .\models.py:89
 msgid "Zip code"
-msgstr ""
+msgstr "Code postal"
 
 #: .\models.py:90
 msgid "Region"
-msgstr ""
+msgstr "Région"
 
 #: .\models.py:94
 msgid "E-Mail"
-msgstr ""
+msgstr "E-mail"
 
 #: .\models.py:95
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: .\models.py:96
 msgid "Phone"
-msgstr ""
+msgstr "Téléphone"
 
 #: .\models.py:97
 msgid "GSM"
-msgstr ""
+msgstr "GSM"
 
 #: .\models.py:98
 msgid "Fax"
-msgstr ""
+msgstr "Fax"
 
 #: .\models.py:102
 msgid "Remarks"
-msgstr ""
+msgstr "Remarques"
 
 #: .\models.py:166
 msgid "Address"
-msgstr ""
+msgstr "Adresse"
 
 #: .\models.py:192 .\models.py:270
 #, fuzzy
 msgid "Person"
-msgstr "Personnes"
+msgstr "Personne"
 
 #: .\models.py:193
 #, fuzzy
@@ -89,34 +89,34 @@ msgstr "Personnes"
 
 #: .\models.py:196
 msgid "First name"
-msgstr ""
+msgstr "Prénom"
 
 #: .\models.py:200
 msgid "Last name"
-msgstr ""
+msgstr "Nom de famille"
 
 #: .\models.py:204
 msgid "Title"
-msgstr ""
+msgstr "Intitulé"
 
 #: .\models.py:272 .\models.py:349
 #, fuzzy
 msgid "Company"
-msgstr "Sociétés"
+msgstr "Société"
 
 #: .\models.py:290
 msgid "represented by"
-msgstr ""
+msgstr "représenté par"
 
 #: .\models.py:324
 #, fuzzy
 msgid "company type"
-msgstr "Sociétés"
+msgstr "type de société"
 
 #: .\models.py:325
 #, fuzzy
 msgid "company types"
-msgstr "Sociétés"
+msgstr "Types de sociétés"
 
 #: .\models.py:327 .\models.py:385
 msgid "Designation"
@@ -124,7 +124,7 @@ msgstr ""
 
 #: .\models.py:328
 msgid "Abbreviation"
-msgstr ""
+msgstr "Abbréviation"
 
 #: .\models.py:350
 msgid "Companies"
@@ -132,51 +132,51 @@ msgstr "Sociétés"
 
 #: .\models.py:352
 msgid "VAT id"
-msgstr ""
+msgstr "N° de TVA"
 
 #: .\models.py:357
 #, fuzzy
 msgid "Company type"
-msgstr "Sociétés"
+msgstr "Type de société"
 
 #: .\models.py:381 .\models.py:411
 msgid "contact type"
-msgstr ""
+msgstr "type de contact"
 
 #: .\models.py:382
 #, fuzzy
 msgid "contact types"
-msgstr "Sociétés"
+msgstr "types de contacts"
 
 #: .\models.py:404
 #, fuzzy
 msgid "contact"
-msgstr "Sociétés"
+msgstr "contact"
 
 #: .\models.py:405
 #, fuzzy
 msgid "contacts"
-msgstr "Sociétés"
+msgstr "contacts"
 
 #: .\models.py:407
 #, fuzzy
 msgid "person"
-msgstr "Personnes"
+msgstr "Personne"
 
 #: .\models.py:409
 #, fuzzy
 msgid "company"
-msgstr "Sociétés"
+msgstr "Société"
 
 #: .\models.py:443
 #, fuzzy
 msgid "Contact for"
-msgstr "Sociétés"
+msgstr "contacter pour"
 
 #: .\models.py:455
 msgid "The company that runs this site"
-msgstr ""
+msgstr "La société ou tourne ce site"
 
 #: .\models.py:465
 msgid "The next automatic id for Person or Company"
-msgstr ""
+msgstr "Identifiant automatique pour la personne ounla société suivante"

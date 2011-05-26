@@ -465,21 +465,24 @@ class HtmlTextFieldElement(TextFieldElement):
     def __init__(self,*args,**kw):
         if settings.LINO.use_tinymce:
             assert not settings.LINO.use_vinylfox
-            self.value_template = "new Ext.ux.TinyMCE(%s)"
-            ts=dict(
-              theme='advanced',
-              plugins = "emotions,spellchecker,advhr,insertdatetime,preview", 
-              #~ Theme options - button# indicated the row# only
-              theme_advanced_buttons1 = "bold,italic,underline,|,justifyleft,justifycenter,justifyright,fontselect,fontsizeselect,formatselect,|,charmap",
-              theme_advanced_buttons2 = "cut,copy,paste,|,bullist,numlist,|,outdent,indent,|,undo,redo,|,link,unlink,anchor,image,|,code,preview,|,forecolor,backcolor",
-              #~ theme_advanced_buttons3 = "insertdate,inserttime,|,spellchecker,advhr,,removeformat,|,sub,sup,|,charmap,emotions",      
-              theme_advanced_buttons3 = "",
-              theme_advanced_toolbar_location = "top",
-              theme_advanced_toolbar_align = "left",
-              theme_advanced_statusbar_location = "bottom",
-              theme_advanced_resizing = True
-            )
-            kw.update(tinymceSettings=ts)
+            if True:
+                self.value_template = "new Ext.form.DisplayField(%s)"
+            else:
+                self.value_template = "new Ext.ux.TinyMCE(%s)"
+                ts=dict(
+                  theme='advanced',
+                  plugins = "emotions,spellchecker,advhr,insertdatetime,preview", 
+                  #~ Theme options - button# indicated the row# only
+                  theme_advanced_buttons1 = "bold,italic,underline,|,justifyleft,justifycenter,justifyright,fontselect,fontsizeselect,formatselect,|,charmap",
+                  theme_advanced_buttons2 = "cut,copy,paste,|,bullist,numlist,|,outdent,indent,|,undo,redo,|,link,unlink,anchor,image,|,code,preview,|,forecolor,backcolor",
+                  #~ theme_advanced_buttons3 = "insertdate,inserttime,|,spellchecker,advhr,,removeformat,|,sub,sup,|,charmap,emotions",      
+                  theme_advanced_buttons3 = "",
+                  theme_advanced_toolbar_location = "top",
+                  theme_advanced_toolbar_align = "left",
+                  theme_advanced_statusbar_location = "bottom",
+                  theme_advanced_resizing = True
+                )
+                kw.update(tinymceSettings=ts)
         elif settings.LINO.use_vinylfox:
             kw.update(plugins=js_code('Lino.VinylFoxPlugins()'))
         TextFieldElement.__init__(self,*args,**kw)

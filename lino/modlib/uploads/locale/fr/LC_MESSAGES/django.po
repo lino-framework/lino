@@ -19,16 +19,16 @@ msgstr ""
 
 #: .\models.py:37
 msgid "upload type"
-msgstr ""
+msgstr "types d'upload"
 
 #: .\models.py:38
 msgid "upload types"
-msgstr ""
+msgstr "Types d'upload"
 
 #: .\models.py:40
 msgid "Name"
-msgstr ""
+msgstr "Nom"
 
 #: .\models.py:102
 msgid "My uploads"
-msgstr ""
+msgstr "mes uploads"

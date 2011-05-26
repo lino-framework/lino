@@ -35,9 +35,7 @@
 
 """
 
-import sys
-import locale
-import datetime
+import sys, locale, types, datetime
 from dateutil import parser as dateparser
 
 def constrain(value,lowest,highest):
@@ -55,6 +53,22 @@ def confirm(prompt=None):
 def iif(l,y,f): 
     if l: return y 
     return f
+    
+def ispure(s):
+    if s is None: return True 
+    if type(s) == types.UnicodeType:
+        return True
+    if type(s) == types.StringType:
+        try:
+            s.decode('ascii')
+        except UnicodeDecodeError,e:
+            return False
+        return True
+    return False
+
+def assert_pure(s):
+    assert ispure(s), "%r: not pure" % s
+     
 
 def join_words(*words):
     """

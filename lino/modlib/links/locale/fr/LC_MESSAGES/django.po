@@ -19,32 +19,32 @@ msgstr ""
 
 #: .\models.py:34
 msgid "link type"
-msgstr ""
+msgstr "type de lien"
 
 #: .\models.py:35
 msgid "link types"
-msgstr ""
+msgstr "types de lien"
 
 #: .\models.py:37 .\models.py:59
 msgid "Name"
-msgstr ""
+msgstr "Nom"
 
 #: .\models.py:49
 msgid "link"
-msgstr ""
+msgstr "lien"
 
 #: .\models.py:50
 msgid "links"
-msgstr ""
+msgstr "liens"
 
 #: .\models.py:54
 msgid "Link type"
-msgstr ""
+msgstr "Type de lien"
 
 #: .\models.py:55
 msgid "Date"
-msgstr ""
+msgstr "Date"
 
 #: .\models.py:79
 msgid "My links"
-msgstr ""
+msgstr "Mes liens"

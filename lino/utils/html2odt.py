@@ -22,7 +22,7 @@ from htmlentitydefs import name2codepoint
 import types
 #from xml.sax.saxutils import escape, unescape
 
-from timtools.misc.etc import assert_pure
+from lino.utils import assert_pure
 
 ## from xml.sax import saxutils
 ## escape=saxutils.escape

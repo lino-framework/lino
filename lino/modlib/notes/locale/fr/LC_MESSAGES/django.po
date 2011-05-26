@@ -19,27 +19,27 @@ msgstr ""
 
 #: .\models.py:42
 msgid "Note Type"
-msgstr ""
+msgstr "Type de note"
 
 #: .\models.py:43
 msgid "Note Types"
-msgstr ""
+msgstr "Types de note"
 
 #: .\models.py:46
 msgid "important"
-msgstr ""
+msgstr "important"
 
 #: .\models.py:48 .\models.py:60
 msgid "Remark"
-msgstr ""
+msgstr "Remarque"
 
 #: .\models.py:57
 msgid "Event Type"
-msgstr ""
+msgstr "Type d'événement"
 
 #: .\models.py:58
 msgid "Event Types"
-msgstr ""
+msgstr "Types d'événements"
 
 #: .\models.py:59
 msgid "Designation"
@@ -47,32 +47,32 @@ msgstr ""
 
 #: .\models.py:76
 msgid "Note"
-msgstr ""
+msgstr "Note"
 
 #: .\models.py:77
 msgid "Notes"
-msgstr ""
+msgstr "Notes"
 
 #: .\models.py:80
 msgid "Date"
-msgstr ""
+msgstr "Date"
 
 #: .\models.py:86
 msgid "Note Type (Form)"
-msgstr ""
+msgstr "Type de note (Formulaire)"
 
 #: .\models.py:89
 msgid "Event Type (Content)"
-msgstr ""
+msgstr "Type d'événement (contenu)"
 
 #: .\models.py:91
 msgid "Subject"
-msgstr ""
+msgstr "Objet"
 
 #: .\models.py:92 .\models.py:127
 msgid "Body"
-msgstr ""
+msgstr "Corps"
 
 #: .\models.py:159
 msgid "My notes"
-msgstr ""
+msgstr "Mes notes"

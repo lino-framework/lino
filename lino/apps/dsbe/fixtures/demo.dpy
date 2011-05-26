@@ -26,6 +26,7 @@ from lino.utils import i2d
 from lino.utils.instantiator import Instantiator
 from lino.tools import resolve_model
 from lino.utils.babel import babel_values, default_language
+from lino.utils.restify import restify
 from lino.utils import dblogger
 from lino.models import update_site_config
 
@@ -196,10 +197,44 @@ def objects():
     #~ yield prj 
     #~ yield note(user=user,project=prj,date=i2d(20091007),subject="Anschauen",company=oshz)
     
-    yield note(user=root,date=i2d(20091006),subject="Programmierung",company=cpas,type=1,event_type=1)
+    
+    yield note(user=root,date=i2d(20091006),
+        subject="Programmierung",company=cpas,
+        type=1,event_type=1)
     yield note(user=user,date=i2d(20091007),subject="Testen",company=cpas)
     yield note(user=root,date=i2d(20100517),subject="Programmierung",company=cpas)
     yield note(user=user,date=i2d(20100518),subject="Testen",company=cpas)
+    yield note(user=user,date=i2d(20110526),subject="Formatted notes",
+        company=cpas,body=restify(u"""\
+Formatted notes
+===============
+
+Lino has now a WYSIWYG text editor. 
+
+Examples
+--------
+
+- Enumerations like this list
+- Character formatting : **bold**, *italics*, ``typewriter``.
+- External `Links <http://lino.saffre-rumma.net/todo.html>`_
+- Tables:
+
+  ============ =======
+  Package      Version
+  ============ =======
+  mercurial    1
+  apache2      2 
+  tinymce      3
+  ============ =======
+  
+Lorem ipsum 
+-----------
+
+Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.  
+
+"""))
     
         
     yield study(person=luc,type=schule,content=abi,started='19740901',stopped='19860630')
