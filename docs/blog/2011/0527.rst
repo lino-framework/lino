@@ -1,8 +1,10 @@
 20110527
 ========
 
-- countries
-
+- Grâce à http://www.wout-bosteels.be/countries.xml
+  countries/fixtures/all_countries.dpy importe maintenant la 
+  liste des pays en français et néerlandais.
+  
 - I noticed that some models didn't have their babel fields expanded 
   in a Layout:
 

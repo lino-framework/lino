@@ -9,9 +9,6 @@ for which I hope for help from other people.
 Short-term
 ----------
 
-#.  countries/fixtures/all_countries.dpy : liste des pays en 
-    français et néerlandais.
-    
 #.  Weiter testen und dokumentieren: 
     Wird markup in pdf (appy) richtig ausgedruckt?
     Zum Beispiel funktionieren Titel noch nicht.
