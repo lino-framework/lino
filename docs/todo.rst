@@ -9,6 +9,9 @@ for which I hope for help from other people.
 Short-term
 ----------
 
+#.  countries/fixtures/all_countries.dpy : liste des pays en 
+    français et néerlandais.
+    
 #.  Weiter testen und dokumentieren: 
     Wird markup in pdf (appy) richtig ausgedruckt?
     Zum Beispiel funktionieren Titel noch nicht.
@@ -580,7 +583,7 @@ Long-term
 #.  Man kann es momentan nicht verhindern, dass ein Babel-Feld expandiert wird.
     
 #.  Think about differences and common things between 
-    Lino's Report and Dango's new 
+    Lino's Report and Django's new 
     `Class-based views
 <http://docs.djangoproject.com/en/dev/topics/class-based-views/>`_ 
     (Discovered :doc:`/blog/2011/0311`)

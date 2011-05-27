@@ -49,7 +49,8 @@ from lino.utils.choicelists import HowWell
 from lino.models import get_site_config
 from lino.tools import get_field
 from lino.tools import resolve_field
-from lino.utils.babel import add_babel_field, DEFAULT_LANGUAGE, babelattr, babeldict_getitem
+from lino.utils.babel import DEFAULT_LANGUAGE, babelattr, babeldict_getitem
+#~ from lino.utils.babel import add_babel_field, DEFAULT_LANGUAGE, babelattr, babeldict_getitem
 from lino.utils import babel 
 from lino.utils.choosers import chooser
 from lino.utils import mti
@@ -1082,11 +1083,11 @@ class ContractType(mixins.PrintableType):
         verbose_name_plural = _('Contract Types')
         
     ref = models.CharField(_("reference"),max_length=20,blank=True)
-    name = models.CharField(_("contract title"),max_length=200)
+    name = babel.BabelCharField(_("contract title"),max_length=200)
     
     def __unicode__(self):
-        return unicode(babelattr(self,'name'))
-add_babel_field(ContractType,'name')
+        return unicode(babel.babelattr(self,'name'))
+#~ add_babel_field(ContractType,'name')
 
 class ContractTypes(reports.Report):
     model = ContractType
@@ -1100,13 +1101,13 @@ class ExamPolicy(models.Model):
         verbose_name = _("examination policy")
         verbose_name_plural = _('examination policies')
         
-    name = models.CharField(_("designation"),max_length=200)
+    name = babel.BabelCharField(_("designation"),max_length=200)
     
     def __unicode__(self):
-        return unicode(babelattr(self,'name'))
+        return unicode(babel.babelattr(self,'name'))
     #~ def __unicode__(self):
         #~ return unicode(self.name)
-add_babel_field(ExamPolicy,'name')
+#~ add_babel_field(ExamPolicy,'name')
 
 class ExamPolicies(reports.Report):
     model = ExamPolicy
@@ -1162,11 +1163,11 @@ class AidType(models.Model):
         verbose_name = _("aid type")
         verbose_name_plural = _('aid types')
         
-    name = models.CharField(_("designation"),max_length=200)
+    name = babel.BabelCharField(_("designation"),max_length=200)
     
     def __unicode__(self):
-        return unicode(babelattr(self,'name'))
-add_babel_field(AidType,'name')
+        return unicode(babel.babelattr(self,'name'))
+#~ add_babel_field(AidType,'name')
 
 class AidTypes(reports.Report):
     model = AidType

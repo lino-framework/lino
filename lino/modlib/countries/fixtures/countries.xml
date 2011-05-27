@@ -1,0 +1,2904 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  The content of this files is based on data found on  http://en.wikipedia.org/wiki/ISO_3166-1 and related
+  This data is *not* official in any way.
+  created: 06-dec-2004
+  author: mbosteels  
+  public domain
+-->
+<coun:countries xmlns:coun="http://wikipedia.org/countries" 
+xmlns="org.wikipedia.countries" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="org.wikipedia.countries countries.xsd">
+	<coun:country>
+		<coun:code>4</coun:code>
+		<coun:alpha2>AF</coun:alpha2>
+		<coun:alpha3>AFG</coun:alpha3>
+		<coun:name lang="cs">Afghanistán</coun:name>
+		<coun:name lang="de">Afghanistan</coun:name>
+		<coun:name lang="en">Afghanistan</coun:name>
+		<coun:name lang="es">Afganistán</coun:name>
+		<coun:name lang="fr">Afghanistan</coun:name>
+		<coun:name lang="it">Afghanistan</coun:name>
+		<coun:name lang="nl">Afghanistan</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>8</coun:code>
+		<coun:alpha2>AL</coun:alpha2>
+		<coun:alpha3>ALB</coun:alpha3>
+		<coun:name lang="cs">Albánie</coun:name>
+		<coun:name lang="de">Albanien</coun:name>
+		<coun:name lang="en">Albania</coun:name>
+		<coun:name lang="es">Albania</coun:name>
+		<coun:name lang="fr">Albanie</coun:name>
+		<coun:name lang="it">Albania</coun:name>
+		<coun:name lang="nl">Albanië</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>10</coun:code>
+		<coun:alpha2>AQ</coun:alpha2>
+		<coun:alpha3>ATA</coun:alpha3>
+		<coun:name lang="cs">Antarctica</coun:name>
+		<coun:name lang="de">Antarktis</coun:name>
+		<coun:name lang="en">Antarctica</coun:name>
+		<coun:name lang="es">Antartida</coun:name>
+		<coun:name lang="fr">Antarctique</coun:name>
+		<coun:name lang="it">Antartide</coun:name>
+		<coun:name lang="nl">Antarctica</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>12</coun:code>
+		<coun:alpha2>DZ</coun:alpha2>
+		<coun:alpha3>DZA</coun:alpha3>
+		<coun:name lang="cs">Alžírsko</coun:name>
+		<coun:name lang="de">Algerien</coun:name>
+		<coun:name lang="en">Algeria</coun:name>
+		<coun:name lang="es">Argelia</coun:name>
+		<coun:name lang="fr">Algérie</coun:name>
+		<coun:name lang="it">Algeria</coun:name>
+		<coun:name lang="nl">Algerije</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>16</coun:code>
+		<coun:alpha2>AS</coun:alpha2>
+		<coun:alpha3>ASM</coun:alpha3>
+		<coun:name lang="cs">Americká Samoa</coun:name>
+		<coun:name lang="de">Amerikanisch-Samoa</coun:name>
+		<coun:name lang="en">American Samoa</coun:name>
+		<coun:name lang="es">Samoa americana</coun:name>
+		<coun:name lang="fr">Samoa Américaines</coun:name>
+		<coun:name lang="it">Samoa Americane</coun:name>
+		<coun:name lang="nl">Amerikaans Samoa</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>20</coun:code>
+		<coun:alpha2>AD</coun:alpha2>
+		<coun:alpha3>AND</coun:alpha3>
+		<coun:name lang="cs">Andorra</coun:name>
+		<coun:name lang="de">Andorra</coun:name>
+		<coun:name lang="en">Andorra</coun:name>
+		<coun:name lang="es">Andorra</coun:name>
+		<coun:name lang="fr">Andorre</coun:name>
+		<coun:name lang="it">Andorra</coun:name>
+		<coun:name lang="nl">Andorra</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>24</coun:code>
+		<coun:alpha2>AO</coun:alpha2>
+		<coun:alpha3>AGO</coun:alpha3>
+		<coun:name lang="cs">Angola</coun:name>
+		<coun:name lang="de">Angola</coun:name>
+		<coun:name lang="en">Angola</coun:name>
+		<coun:name lang="es">Angola</coun:name>
+		<coun:name lang="fr">Angola</coun:name>
+		<coun:name lang="it">Angola</coun:name>
+		<coun:name lang="nl">Angola</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>28</coun:code>
+		<coun:alpha2>AG</coun:alpha2>
+		<coun:alpha3>ATG</coun:alpha3>
+		<coun:name lang="cs">Antigua a Barbuda</coun:name>
+		<coun:name lang="de">Antigua und Barbuda</coun:name>
+		<coun:name lang="en">Antigua and Barbuda</coun:name>
+		<coun:name lang="es">Antigua y Barbuda</coun:name>
+		<coun:name lang="fr">Antigua-et-Barbuda</coun:name>
+		<coun:name lang="it">Antigua e Barbuda</coun:name>
+		<coun:name lang="nl">Antigua en Barbuda</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>31</coun:code>
+		<coun:alpha2>AZ</coun:alpha2>
+		<coun:alpha3>AZE</coun:alpha3>
+		<coun:name lang="cs">Azerbajdžán</coun:name>
+		<coun:name lang="de">Aserbaidschan</coun:name>
+		<coun:name lang="en">Azerbaijan</coun:name>
+		<coun:name lang="es">Azerbaiyán</coun:name>
+		<coun:name lang="fr">Azerbaïdjan</coun:name>
+		<coun:name lang="it">Azerbaijan</coun:name>
+		<coun:name lang="nl">Azerbeidzjan</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>32</coun:code>
+		<coun:alpha2>AR</coun:alpha2>
+		<coun:alpha3>ARG</coun:alpha3>
+		<coun:name lang="cs">Argentina</coun:name>
+		<coun:name lang="de">Argentinien</coun:name>
+		<coun:name lang="en">Argentina</coun:name>
+		<coun:name lang="es">Argentina</coun:name>
+		<coun:name lang="fr">Argentine</coun:name>
+		<coun:name lang="it">Argentina</coun:name>
+		<coun:name lang="nl">Argentinië</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>36</coun:code>
+		<coun:alpha2>AU</coun:alpha2>
+		<coun:alpha3>AUS</coun:alpha3>
+		<coun:name lang="cs">Austrálie</coun:name>
+		<coun:name lang="de">Australien</coun:name>
+		<coun:name lang="en">Australia</coun:name>
+		<coun:name lang="es">Australia</coun:name>
+		<coun:name lang="fr">Australie</coun:name>
+		<coun:name lang="it">Australia</coun:name>
+		<coun:name lang="nl">Australië</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>40</coun:code>
+		<coun:alpha2>AT</coun:alpha2>
+		<coun:alpha3>AUT</coun:alpha3>
+		<coun:name lang="cs">Rakousko</coun:name>
+		<coun:name lang="de">Österreich</coun:name>
+		<coun:name lang="en">Austria</coun:name>
+		<coun:name lang="es">Austria</coun:name>
+		<coun:name lang="fr">Autriche</coun:name>
+		<coun:name lang="it">Austria</coun:name>
+		<coun:name lang="nl">Oostenrijk</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>44</coun:code>
+		<coun:alpha2>BS</coun:alpha2>
+		<coun:alpha3>BHS</coun:alpha3>
+		<coun:name lang="cs">Bahamy</coun:name>
+		<coun:name lang="de">Bahamas</coun:name>
+		<coun:name lang="en">Bahamas</coun:name>
+		<coun:name lang="es">Bahamas</coun:name>
+		<coun:name lang="fr">Bahamas</coun:name>
+		<coun:name lang="it">Bahamas</coun:name>
+		<coun:name lang="nl">Bahama's</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>48</coun:code>
+		<coun:alpha2>BH</coun:alpha2>
+		<coun:alpha3>BHR</coun:alpha3>
+		<coun:name lang="cs">Bahrajn</coun:name>
+		<coun:name lang="de">Bahrain</coun:name>
+		<coun:name lang="en">Bahrain</coun:name>
+		<coun:name lang="es">Bahrain</coun:name>
+		<coun:name lang="fr">Bahreïn</coun:name>
+		<coun:name lang="it">Bahrain</coun:name>
+		<coun:name lang="nl">Bahrein</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>50</coun:code>
+		<coun:alpha2>BD</coun:alpha2>
+		<coun:alpha3>BGD</coun:alpha3>
+		<coun:name lang="cs">Bangladéš</coun:name>
+		<coun:name lang="de">Bangladesch</coun:name>
+		<coun:name lang="en">Bangladesh</coun:name>
+		<coun:name lang="es">Bangladesh</coun:name>
+		<coun:name lang="fr">Bangladesh</coun:name>
+		<coun:name lang="it">Bangladesh</coun:name>
+		<coun:name lang="nl">Bangladesh</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>51</coun:code>
+		<coun:alpha2>AM</coun:alpha2>
+		<coun:alpha3>ARM</coun:alpha3>
+		<coun:name lang="cs">Arménie</coun:name>
+		<coun:name lang="de">Armenien</coun:name>
+		<coun:name lang="en">Armenia</coun:name>
+		<coun:name lang="es">Armenia</coun:name>
+		<coun:name lang="fr">Arménie</coun:name>
+		<coun:name lang="it">Armenia</coun:name>
+		<coun:name lang="nl">Armenië</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>52</coun:code>
+		<coun:alpha2>BB</coun:alpha2>
+		<coun:alpha3>BRB</coun:alpha3>
+		<coun:name lang="cs">Barbados</coun:name>
+		<coun:name lang="de">Barbados</coun:name>
+		<coun:name lang="en">Barbados</coun:name>
+		<coun:name lang="es">Barbados</coun:name>
+		<coun:name lang="fr">Barbade</coun:name>
+		<coun:name lang="it">Barbados</coun:name>
+		<coun:name lang="nl">Barbados</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>56</coun:code>
+		<coun:alpha2>BE</coun:alpha2>
+		<coun:alpha3>BEL</coun:alpha3>
+		<coun:name lang="cs">Belgie</coun:name>
+		<coun:name lang="de">Belgien</coun:name>
+		<coun:name lang="en">Belgium</coun:name>
+		<coun:name lang="es">Bélgica</coun:name>
+		<coun:name lang="fr">Belgique</coun:name>
+		<coun:name lang="it">Belgio</coun:name>
+		<coun:name lang="nl">België</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>60</coun:code>
+		<coun:alpha2>BM</coun:alpha2>
+		<coun:alpha3>BMU</coun:alpha3>
+		<coun:name lang="cs">Bermuda</coun:name>
+		<coun:name lang="de">Bermuda</coun:name>
+		<coun:name lang="en">Bermuda</coun:name>
+		<coun:name lang="es">Bermuda</coun:name>
+		<coun:name lang="fr">Bermudes</coun:name>
+		<coun:name lang="it">Bermuda</coun:name>
+		<coun:name lang="nl">Bermuda</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>64</coun:code>
+		<coun:alpha2>BT</coun:alpha2>
+		<coun:alpha3>BTN</coun:alpha3>
+		<coun:name lang="cs">Bhután</coun:name>
+		<coun:name lang="de">Bhutan</coun:name>
+		<coun:name lang="en">Bhutan</coun:name>
+		<coun:name lang="es">Bhutan</coun:name>
+		<coun:name lang="fr">Bhoutan</coun:name>
+		<coun:name lang="it">Bhutan</coun:name>
+		<coun:name lang="nl">Bhutan</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>68</coun:code>
+		<coun:alpha2>BO</coun:alpha2>
+		<coun:alpha3>BOL</coun:alpha3>
+		<coun:name lang="cs">Bolívie</coun:name>
+		<coun:name lang="de">Bolivien</coun:name>
+		<coun:name lang="en">Bolivia</coun:name>
+		<coun:name lang="es">Bolivia</coun:name>
+		<coun:name lang="fr">Bolivie</coun:name>
+		<coun:name lang="it">Bolivia</coun:name>
+		<coun:name lang="nl">Bolivia</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>70</coun:code>
+		<coun:alpha2>BA</coun:alpha2>
+		<coun:alpha3>BIH</coun:alpha3>
+		<coun:name lang="cs">Bosna a Hercegovina</coun:name>
+		<coun:name lang="de">Bosnien und Herzegowina</coun:name>
+		<coun:name lang="en">Bosnia and Herzegovina</coun:name>
+		<coun:name lang="es">Bosnia y Herzegovina</coun:name>
+		<coun:name lang="fr">Bosnie-Herzégovine</coun:name>
+		<coun:name lang="it">Bosnia Erzegovina</coun:name>
+		<coun:name lang="nl">Bosnië-Herzegovina</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>72</coun:code>
+		<coun:alpha2>BW</coun:alpha2>
+		<coun:alpha3>BWA</coun:alpha3>
+		<coun:name lang="cs">Botswana</coun:name>
+		<coun:name lang="de">Botswana</coun:name>
+		<coun:name lang="en">Botswana</coun:name>
+		<coun:name lang="es">Botswana</coun:name>
+		<coun:name lang="fr">Botswana</coun:name>
+		<coun:name lang="it">Botswana</coun:name>
+		<coun:name lang="nl">Botswana</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>74</coun:code>
+		<coun:alpha2>BV</coun:alpha2>
+		<coun:alpha3>BVT</coun:alpha3>
+		<coun:name lang="cs">Bouvet Island</coun:name>
+		<coun:name lang="de">Bouvetinsel</coun:name>
+		<coun:name lang="en">Bouvet Island</coun:name>
+		<coun:name lang="es">Isla Bouvet</coun:name>
+		<coun:name lang="fr">Île Bouvet</coun:name>
+		<coun:name lang="it">Isola di Bouvet</coun:name>
+		<coun:name lang="nl">Bouvet</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>76</coun:code>
+		<coun:alpha2>BR</coun:alpha2>
+		<coun:alpha3>BRA</coun:alpha3>
+		<coun:name lang="cs">Brazílie</coun:name>
+		<coun:name lang="de">Brasilien</coun:name>
+		<coun:name lang="en">Brazil</coun:name>
+		<coun:name lang="es">Brasil</coun:name>
+		<coun:name lang="fr">Brésil</coun:name>
+		<coun:name lang="it">Brasile</coun:name>
+		<coun:name lang="nl">Brazilië</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>84</coun:code>
+		<coun:alpha2>BZ</coun:alpha2>
+		<coun:alpha3>BLZ</coun:alpha3>
+		<coun:name lang="cs">Belize</coun:name>
+		<coun:name lang="de">Belize</coun:name>
+		<coun:name lang="en">Belize</coun:name>
+		<coun:name lang="es">Belize</coun:name>
+		<coun:name lang="fr">Belize</coun:name>
+		<coun:name lang="it">Belize</coun:name>
+		<coun:name lang="nl">Belize</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>86</coun:code>
+		<coun:alpha2>IO</coun:alpha2>
+		<coun:alpha3>IOT</coun:alpha3>
+		<coun:name lang="cs">Britské Indickooceánské teritorium</coun:name>
+		<coun:name lang="de">Britisches Territorium im Indischen Ozean</coun:name>
+		<coun:name lang="en">British Indian Ocean Territory</coun:name>
+		<coun:name lang="es">Territorio Oceánico de la India Británica</coun:name>
+		<coun:name lang="fr">Territoire Britannique de l'Océan Indien</coun:name>
+		<coun:name lang="it">Territori Britannici dell'Oceano Indiano</coun:name>
+		<coun:name lang="nl">British Indian Ocean Territory</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>90</coun:code>
+		<coun:alpha2>SB</coun:alpha2>
+		<coun:alpha3>SLB</coun:alpha3>
+		<coun:name lang="cs">Šalamounovy ostrovy</coun:name>
+		<coun:name lang="de">Salomonen</coun:name>
+		<coun:name lang="en">Solomon Islands</coun:name>
+		<coun:name lang="es">Islas Salomón</coun:name>
+		<coun:name lang="fr">Îles Salomon</coun:name>
+		<coun:name lang="it">Isole Solomon</coun:name>
+		<coun:name lang="nl">Salomonseilanden</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>92</coun:code>
+		<coun:alpha2>VG</coun:alpha2>
+		<coun:alpha3>VGB</coun:alpha3>
+		<coun:name lang="cs">Britské Panenské ostrovy</coun:name>
+		<coun:name lang="de">Britische Jungferninseln</coun:name>
+		<coun:name lang="en">British Virgin Islands</coun:name>
+		<coun:name lang="es">Islas Vírgenes Británicas</coun:name>
+		<coun:name lang="fr">Îles Vierges Britanniques</coun:name>
+		<coun:name lang="it">Isole Vergini Britanniche</coun:name>
+		<coun:name lang="nl">Britse Maagdeneilanden</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>96</coun:code>
+		<coun:alpha2>BN</coun:alpha2>
+		<coun:alpha3>BRN</coun:alpha3>
+		<coun:name lang="cs">Brunej</coun:name>
+		<coun:name lang="de">Brunei Darussalam</coun:name>
+		<coun:name lang="en">Brunei Darussalam</coun:name>
+		<coun:name lang="es">Brunei Darussalam</coun:name>
+		<coun:name lang="fr">Brunéi Darussalam</coun:name>
+		<coun:name lang="it">Brunei Darussalam</coun:name>
+		<coun:name lang="nl">Brunei</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>100</coun:code>
+		<coun:alpha2>BG</coun:alpha2>
+		<coun:alpha3>BGR</coun:alpha3>
+		<coun:name lang="cs">Bulharsko</coun:name>
+		<coun:name lang="de">Bulgarien</coun:name>
+		<coun:name lang="en">Bulgaria</coun:name>
+		<coun:name lang="es">Bulgaria</coun:name>
+		<coun:name lang="fr">Bulgarie</coun:name>
+		<coun:name lang="it">Bulgaria</coun:name>
+		<coun:name lang="nl">Bulgarije</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>104</coun:code>
+		<coun:alpha2>MM</coun:alpha2>
+		<coun:alpha3>MMR</coun:alpha3>
+		<coun:name lang="cs">Myanmar</coun:name>
+		<coun:name lang="de">Myanmar</coun:name>
+		<coun:name lang="en">Myanmar</coun:name>
+		<coun:name lang="es">Mianmar</coun:name>
+		<coun:name lang="fr">Myanmar</coun:name>
+		<coun:name lang="it">Myanmar</coun:name>
+		<coun:name lang="nl">Myanmar</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>108</coun:code>
+		<coun:alpha2>BI</coun:alpha2>
+		<coun:alpha3>BDI</coun:alpha3>
+		<coun:name lang="cs">Burundi</coun:name>
+		<coun:name lang="de">Burundi</coun:name>
+		<coun:name lang="en">Burundi</coun:name>
+		<coun:name lang="es">Burundi</coun:name>
+		<coun:name lang="fr">Burundi</coun:name>
+		<coun:name lang="it">Burundi</coun:name>
+		<coun:name lang="nl">Burundi</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>112</coun:code>
+		<coun:alpha2>BY</coun:alpha2>
+		<coun:alpha3>BLR</coun:alpha3>
+		<coun:name lang="cs">Bělorusko</coun:name>
+		<coun:name lang="de">Belarus</coun:name>
+		<coun:name lang="en">Belarus</coun:name>
+		<coun:name lang="es">Belarus</coun:name>
+		<coun:name lang="fr">Bélarus</coun:name>
+		<coun:name lang="it">Bielorussia</coun:name>
+		<coun:name lang="nl">Wit-Rusland</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>116</coun:code>
+		<coun:alpha2>KH</coun:alpha2>
+		<coun:alpha3>KHM</coun:alpha3>
+		<coun:name lang="cs">Kambodža</coun:name>
+		<coun:name lang="de">Kambodscha</coun:name>
+		<coun:name lang="en">Cambodia</coun:name>
+		<coun:name lang="es">Camboya</coun:name>
+		<coun:name lang="fr">Cambodge</coun:name>
+		<coun:name lang="it">Cambogia</coun:name>
+		<coun:name lang="nl">Cambodja</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>120</coun:code>
+		<coun:alpha2>CM</coun:alpha2>
+		<coun:alpha3>CMR</coun:alpha3>
+		<coun:name lang="cs">Kamerun</coun:name>
+		<coun:name lang="de">Kamerun</coun:name>
+		<coun:name lang="en">Cameroon</coun:name>
+		<coun:name lang="es">Camerún</coun:name>
+		<coun:name lang="fr">Cameroun</coun:name>
+		<coun:name lang="it">Camerun</coun:name>
+		<coun:name lang="nl">Kameroen</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>124</coun:code>
+		<coun:alpha2>CA</coun:alpha2>
+		<coun:alpha3>CAN</coun:alpha3>
+		<coun:name lang="cs">Kanada</coun:name>
+		<coun:name lang="de">Kanada</coun:name>
+		<coun:name lang="en">Canada</coun:name>
+		<coun:name lang="es">Canadá</coun:name>
+		<coun:name lang="fr">Canada</coun:name>
+		<coun:name lang="it">Canada</coun:name>
+		<coun:name lang="nl">Canada</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>132</coun:code>
+		<coun:alpha2>CV</coun:alpha2>
+		<coun:alpha3>CPV</coun:alpha3>
+		<coun:name lang="cs">Ostrovy Zeleného mysu</coun:name>
+		<coun:name lang="de">Kap Verde</coun:name>
+		<coun:name lang="en">Cape Verde</coun:name>
+		<coun:name lang="es">Cabo Verde</coun:name>
+		<coun:name lang="fr">Cap-vert</coun:name>
+		<coun:name lang="it">Capo Verde</coun:name>
+		<coun:name lang="nl">Kaapverdië</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>136</coun:code>
+		<coun:alpha2>KY</coun:alpha2>
+		<coun:alpha3>CYM</coun:alpha3>
+		<coun:name lang="cs">Kajmanské ostrovy</coun:name>
+		<coun:name lang="de">Kaimaninseln</coun:name>
+		<coun:name lang="en">Cayman Islands</coun:name>
+		<coun:name lang="es">Islas Caimán</coun:name>
+		<coun:name lang="fr">Îles Caïmanes</coun:name>
+		<coun:name lang="it">Isole Cayman</coun:name>
+		<coun:name lang="nl">Caymaneilanden</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>140</coun:code>
+		<coun:alpha2>CF</coun:alpha2>
+		<coun:alpha3>CAF</coun:alpha3>
+		<coun:name lang="cs">Středoafrická republika</coun:name>
+		<coun:name lang="de">Zentralafrikanische Republik</coun:name>
+		<coun:name lang="en">Central African</coun:name>
+		<coun:name lang="es">República Centroafricana</coun:name>
+		<coun:name lang="fr">République Centrafricaine</coun:name>
+		<coun:name lang="it">Repubblica Centroafricana</coun:name>
+		<coun:name lang="nl">Centraal-Afrikaanse Republiek</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>144</coun:code>
+		<coun:alpha2>LK</coun:alpha2>
+		<coun:alpha3>LKA</coun:alpha3>
+		<coun:name lang="cs">Srí Lanka</coun:name>
+		<coun:name lang="de">Sri Lanka</coun:name>
+		<coun:name lang="en">Sri Lanka</coun:name>
+		<coun:name lang="es">Sri Lanka</coun:name>
+		<coun:name lang="fr">Sri Lanka</coun:name>
+		<coun:name lang="it">Sri Lanka</coun:name>
+		<coun:name lang="nl">Sri Lanka</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>148</coun:code>
+		<coun:alpha2>TD</coun:alpha2>
+		<coun:alpha3>TCD</coun:alpha3>
+		<coun:name lang="cs">Čad</coun:name>
+		<coun:name lang="de">Tschad</coun:name>
+		<coun:name lang="en">Chad</coun:name>
+		<coun:name lang="es">Chad</coun:name>
+		<coun:name lang="fr">Tchad</coun:name>
+		<coun:name lang="it">Ciad</coun:name>
+		<coun:name lang="nl">Tsjaad</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>152</coun:code>
+		<coun:alpha2>CL</coun:alpha2>
+		<coun:alpha3>CHL</coun:alpha3>
+		<coun:name lang="cs">Chile</coun:name>
+		<coun:name lang="de">Chile</coun:name>
+		<coun:name lang="en">Chile</coun:name>
+		<coun:name lang="es">Chile</coun:name>
+		<coun:name lang="fr">Chili</coun:name>
+		<coun:name lang="it">Cile</coun:name>
+		<coun:name lang="nl">Chili</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>156</coun:code>
+		<coun:alpha2>CN</coun:alpha2>
+		<coun:alpha3>CHN</coun:alpha3>
+		<coun:name lang="cs">Čína</coun:name>
+		<coun:name lang="de">China</coun:name>
+		<coun:name lang="en">China</coun:name>
+		<coun:name lang="es">China</coun:name>
+		<coun:name lang="fr">Chine</coun:name>
+		<coun:name lang="it">Cina</coun:name>
+		<coun:name lang="nl">China</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>158</coun:code>
+		<coun:alpha2>TW</coun:alpha2>
+		<coun:alpha3>TWN</coun:alpha3>
+		<coun:name lang="cs">Tchajwan</coun:name>
+		<coun:name lang="de">Taiwan</coun:name>
+		<coun:name lang="en">Taiwan</coun:name>
+		<coun:name lang="es">Taiwán</coun:name>
+		<coun:name lang="fr">Taïwan</coun:name>
+		<coun:name lang="it">Taiwan</coun:name>
+		<coun:name lang="nl">Taiwan</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>162</coun:code>
+		<coun:alpha2>CX</coun:alpha2>
+		<coun:alpha3>CXR</coun:alpha3>
+		<coun:name lang="cs">Christmas Island</coun:name>
+		<coun:name lang="de">Weihnachtsinsel</coun:name>
+		<coun:name lang="en">Christmas Island</coun:name>
+		<coun:name lang="es">Isla Navidad</coun:name>
+		<coun:name lang="fr">Île Christmas</coun:name>
+		<coun:name lang="it">Isola di Natale</coun:name>
+		<coun:name lang="nl">Christmaseiland</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>166</coun:code>
+		<coun:alpha2>CC</coun:alpha2>
+		<coun:alpha3>CCK</coun:alpha3>
+		<coun:name lang="cs">Kokosové ostrovy</coun:name>
+		<coun:name lang="de">Kokosinseln</coun:name>
+		<coun:name lang="en">Cocos (Keeling) Islands</coun:name>
+		<coun:name lang="es">Islas Cocos (Keeling)</coun:name>
+		<coun:name lang="fr">Îles Cocos (Keeling)</coun:name>
+		<coun:name lang="it">Isole Cocos</coun:name>
+		<coun:name lang="nl">Cocoseilanden</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>170</coun:code>
+		<coun:alpha2>CO</coun:alpha2>
+		<coun:alpha3>COL</coun:alpha3>
+		<coun:name lang="cs">Kolumbie</coun:name>
+		<coun:name lang="de">Kolumbien</coun:name>
+		<coun:name lang="en">Colombia</coun:name>
+		<coun:name lang="es">Colombia</coun:name>
+		<coun:name lang="fr">Colombie</coun:name>
+		<coun:name lang="it">Colombia</coun:name>
+		<coun:name lang="nl">Colombia</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>174</coun:code>
+		<coun:alpha2>KM</coun:alpha2>
+		<coun:alpha3>COM</coun:alpha3>
+		<coun:name lang="cs">Komory</coun:name>
+		<coun:name lang="de">Komoren</coun:name>
+		<coun:name lang="en">Comoros</coun:name>
+		<coun:name lang="es">Comoros</coun:name>
+		<coun:name lang="fr">Comores</coun:name>
+		<coun:name lang="it">Comore</coun:name>
+		<coun:name lang="nl">Comoren</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>175</coun:code>
+		<coun:alpha2>YT</coun:alpha2>
+		<coun:alpha3>MYT</coun:alpha3>
+		<coun:name lang="cs">Mayotte</coun:name>
+		<coun:name lang="de">Mayotte</coun:name>
+		<coun:name lang="en">Mayotte</coun:name>
+		<coun:name lang="es">Mayote</coun:name>
+		<coun:name lang="fr">Mayotte</coun:name>
+		<coun:name lang="it">Mayotte</coun:name>
+		<coun:name lang="nl">Mayotte</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>178</coun:code>
+		<coun:alpha2>CG</coun:alpha2>
+		<coun:alpha3>COG</coun:alpha3>
+		<coun:name lang="cs">Konžská republika Kongo</coun:name>
+		<coun:name lang="de">Republik Kongo</coun:name>
+		<coun:name lang="en">Republic of the Congo</coun:name>
+		<coun:name lang="es">Congo</coun:name>
+		<coun:name lang="fr">République du Congo</coun:name>
+		<coun:name lang="it">Repubblica del Congo</coun:name>
+		<coun:name lang="nl">Republiek Congo</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>180</coun:code>
+		<coun:alpha2>CD</coun:alpha2>
+		<coun:alpha3>COD</coun:alpha3>
+		<coun:name lang="cs">Demokratická republika Kongo Kongo</coun:name>
+		<coun:name lang="de">Demokratische Republik Kongo</coun:name>
+		<coun:name lang="en">The Democratic Republic Of The Congo</coun:name>
+		<coun:name lang="es">República Democrática del Congo</coun:name>
+		<coun:name lang="fr">République Démocratique du Congo</coun:name>
+		<coun:name lang="it">Repubblica Democratica del Congo</coun:name>
+		<coun:name lang="nl">Democratische Republiek Congo</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>184</coun:code>
+		<coun:alpha2>CK</coun:alpha2>
+		<coun:alpha3>COK</coun:alpha3>
+		<coun:name lang="cs">Cookovy ostrovy</coun:name>
+		<coun:name lang="de">Cookinseln</coun:name>
+		<coun:name lang="en">Cook Islands</coun:name>
+		<coun:name lang="es">Islas Cook</coun:name>
+		<coun:name lang="fr">Îles Cook</coun:name>
+		<coun:name lang="it">Isole Cook</coun:name>
+		<coun:name lang="nl">Cookeilanden</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>188</coun:code>
+		<coun:alpha2>CR</coun:alpha2>
+		<coun:alpha3>CRI</coun:alpha3>
+		<coun:name lang="cs">Kostarika</coun:name>
+		<coun:name lang="de">Costa Rica</coun:name>
+		<coun:name lang="en">Costa Rica</coun:name>
+		<coun:name lang="es">Costa Rica</coun:name>
+		<coun:name lang="fr">Costa Rica</coun:name>
+		<coun:name lang="it">Costa Rica</coun:name>
+		<coun:name lang="nl">Costa Rica</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>191</coun:code>
+		<coun:alpha2>HR</coun:alpha2>
+		<coun:alpha3>HRV</coun:alpha3>
+		<coun:name lang="cs">Chorvatsko</coun:name>
+		<coun:name lang="de">Kroatien</coun:name>
+		<coun:name lang="en">Croatia</coun:name>
+		<coun:name lang="es">Croacia</coun:name>
+		<coun:name lang="fr">Croatie</coun:name>
+		<coun:name lang="it">Croazia</coun:name>
+		<coun:name lang="nl">Kroatië</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>192</coun:code>
+		<coun:alpha2>CU</coun:alpha2>
+		<coun:alpha3>CUB</coun:alpha3>
+		<coun:name lang="cs">Kuba</coun:name>
+		<coun:name lang="de">Kuba</coun:name>
+		<coun:name lang="en">Cuba</coun:name>
+		<coun:name lang="es">Cuba</coun:name>
+		<coun:name lang="fr">Cuba</coun:name>
+		<coun:name lang="it">Cuba</coun:name>
+		<coun:name lang="nl">Cuba</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>196</coun:code>
+		<coun:alpha2>CY</coun:alpha2>
+		<coun:alpha3>CYP</coun:alpha3>
+		<coun:name lang="cs">Kypr</coun:name>
+		<coun:name lang="de">Zypern</coun:name>
+		<coun:name lang="en">Cyprus</coun:name>
+		<coun:name lang="es">Chipre</coun:name>
+		<coun:name lang="fr">Chypre</coun:name>
+		<coun:name lang="it">Cipro</coun:name>
+		<coun:name lang="nl">Cyprus</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>203</coun:code>
+		<coun:alpha2>CZ</coun:alpha2>
+		<coun:alpha3>CZE</coun:alpha3>
+		<coun:name lang="cs">Česko</coun:name>
+		<coun:name lang="de">Tschechische Republik</coun:name>
+		<coun:name lang="en">Czech Republic</coun:name>
+		<coun:name lang="es">Chequia</coun:name>
+		<coun:name lang="fr">République Tchèque</coun:name>
+		<coun:name lang="it">Repubblica Ceca</coun:name>
+		<coun:name lang="nl">Tsjechië</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>204</coun:code>
+		<coun:alpha2>BJ</coun:alpha2>
+		<coun:alpha3>BEN</coun:alpha3>
+		<coun:name lang="cs">Benin</coun:name>
+		<coun:name lang="de">Benin</coun:name>
+		<coun:name lang="en">Benin</coun:name>
+		<coun:name lang="es">Benin</coun:name>
+		<coun:name lang="fr">Bénin</coun:name>
+		<coun:name lang="it">Benin</coun:name>
+		<coun:name lang="nl">Benin</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>208</coun:code>
+		<coun:alpha2>DK</coun:alpha2>
+		<coun:alpha3>DNK</coun:alpha3>
+		<coun:name lang="cs">Dánsko</coun:name>
+		<coun:name lang="de">Dänemark</coun:name>
+		<coun:name lang="en">Denmark</coun:name>
+		<coun:name lang="es">Dinamarca</coun:name>
+		<coun:name lang="fr">Danemark</coun:name>
+		<coun:name lang="it">Danimarca</coun:name>
+		<coun:name lang="nl">Denemarken</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>212</coun:code>
+		<coun:alpha2>DM</coun:alpha2>
+		<coun:alpha3>DMA</coun:alpha3>
+		<coun:name lang="cs">Dominika</coun:name>
+		<coun:name lang="de">Dominica</coun:name>
+		<coun:name lang="en">Dominica</coun:name>
+		<coun:name lang="es">Dominica</coun:name>
+		<coun:name lang="fr">Dominique</coun:name>
+		<coun:name lang="it">Dominica</coun:name>
+		<coun:name lang="nl">Dominica</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>214</coun:code>
+		<coun:alpha2>DO</coun:alpha2>
+		<coun:alpha3>DOM</coun:alpha3>
+		<coun:name lang="cs">Dominikánská republika</coun:name>
+		<coun:name lang="de">Dominikanische Republik</coun:name>
+		<coun:name lang="en">Dominican Republic</coun:name>
+		<coun:name lang="es">República Dominicana</coun:name>
+		<coun:name lang="fr">République Dominicaine</coun:name>
+		<coun:name lang="it">Repubblica Dominicana</coun:name>
+		<coun:name lang="nl">Dominicaanse Republiek</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>218</coun:code>
+		<coun:alpha2>EC</coun:alpha2>
+		<coun:alpha3>ECU</coun:alpha3>
+		<coun:name lang="cs">Ekvádor</coun:name>
+		<coun:name lang="de">Ecuador</coun:name>
+		<coun:name lang="en">Ecuador</coun:name>
+		<coun:name lang="es">Ecuador</coun:name>
+		<coun:name lang="fr">Équateur</coun:name>
+		<coun:name lang="it">Ecuador</coun:name>
+		<coun:name lang="nl">Ecuador</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>222</coun:code>
+		<coun:alpha2>SV</coun:alpha2>
+		<coun:alpha3>SLV</coun:alpha3>
+		<coun:name lang="cs">Salvador</coun:name>
+		<coun:name lang="de">El Salvador</coun:name>
+		<coun:name lang="en">El Salvador</coun:name>
+		<coun:name lang="es">El Salvador</coun:name>
+		<coun:name lang="fr">El Salvador</coun:name>
+		<coun:name lang="it">El Salvador</coun:name>
+		<coun:name lang="nl">El Salvador</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>226</coun:code>
+		<coun:alpha2>GQ</coun:alpha2>
+		<coun:alpha3>GNQ</coun:alpha3>
+		<coun:name lang="cs">Rovníková Guinea</coun:name>
+		<coun:name lang="de">Äquatorialguinea</coun:name>
+		<coun:name lang="en">Equatorial Guinea</coun:name>
+		<coun:name lang="es">Guinea Ecuatorial</coun:name>
+		<coun:name lang="fr">Guinée Équatoriale</coun:name>
+		<coun:name lang="it">Guinea Equatoriale</coun:name>
+		<coun:name lang="nl">Equatoriaal Guinea</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>231</coun:code>
+		<coun:alpha2>ET</coun:alpha2>
+		<coun:alpha3>ETH</coun:alpha3>
+		<coun:name lang="cs">Etiopie</coun:name>
+		<coun:name lang="de">Äthiopien</coun:name>
+		<coun:name lang="en">Ethiopia</coun:name>
+		<coun:name lang="es">Etiopía</coun:name>
+		<coun:name lang="fr">Éthiopie</coun:name>
+		<coun:name lang="it">Etiopia</coun:name>
+		<coun:name lang="nl">Ethiopië</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>232</coun:code>
+		<coun:alpha2>ER</coun:alpha2>
+		<coun:alpha3>ERI</coun:alpha3>
+		<coun:name lang="cs">Eritrea</coun:name>
+		<coun:name lang="de">Eritrea</coun:name>
+		<coun:name lang="en">Eritrea</coun:name>
+		<coun:name lang="es">Eritrea</coun:name>
+		<coun:name lang="fr">Érythrée</coun:name>
+		<coun:name lang="it">Eritrea</coun:name>
+		<coun:name lang="nl">Eritrea</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>233</coun:code>
+		<coun:alpha2>EE</coun:alpha2>
+		<coun:alpha3>EST</coun:alpha3>
+		<coun:name lang="cs">Estonsko</coun:name>
+		<coun:name lang="de">Estland</coun:name>
+		<coun:name lang="en">Estonia</coun:name>
+		<coun:name lang="es">Estonia</coun:name>
+		<coun:name lang="fr">Estonie</coun:name>
+		<coun:name lang="it">Estonia</coun:name>
+		<coun:name lang="nl">Estland</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>234</coun:code>
+		<coun:alpha2>FO</coun:alpha2>
+		<coun:alpha3>FRO</coun:alpha3>
+		<coun:name lang="cs">Faerské ostrovy</coun:name>
+		<coun:name lang="de">Färöer</coun:name>
+		<coun:name lang="en">Faroe Islands</coun:name>
+		<coun:name lang="es">Islas Faroe</coun:name>
+		<coun:name lang="fr">Îles Féroé</coun:name>
+		<coun:name lang="it">Isole Faroe</coun:name>
+		<coun:name lang="nl">Faeröer</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>238</coun:code>
+		<coun:alpha2>FK</coun:alpha2>
+		<coun:alpha3>FLK</coun:alpha3>
+		<coun:name lang="cs">Falklandské ostrovy</coun:name>
+		<coun:name lang="de">Falklandinseln</coun:name>
+		<coun:name lang="en">Falkland Islands</coun:name>
+		<coun:name lang="es">Islas Malvinas</coun:name>
+		<coun:name lang="fr">Îles (malvinas) Falkland</coun:name>
+		<coun:name lang="it">Isole Falkland</coun:name>
+		<coun:name lang="nl">Falklandeilanden</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>239</coun:code>
+		<coun:alpha2>GS</coun:alpha2>
+		<coun:alpha3>SGS</coun:alpha3>
+		<coun:name lang="cs">Jižní Georgie a Jižní Sandwichovy ostrovy</coun:name>
+		<coun:name lang="de">Südgeorgien und die Südlichen Sandwichinseln</coun:name>
+		<coun:name lang="en">South Georgia and the South Sandwich Islands</coun:name>
+		<coun:name lang="es">Georgia del Sur e Islas Sandwich del Sur</coun:name>
+		<coun:name lang="fr">Géorgie du Sud et les Îles Sandwich du Sud</coun:name>
+		<coun:name lang="it">Sud Georgia e Isole Sandwich</coun:name>
+		<coun:name lang="nl">Zuid-Georgië en de Zuidelijke Sandwicheilanden</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>242</coun:code>
+		<coun:alpha2>FJ</coun:alpha2>
+		<coun:alpha3>FJI</coun:alpha3>
+		<coun:name lang="cs">Fidži</coun:name>
+		<coun:name lang="de">Fidschi</coun:name>
+		<coun:name lang="en">Fiji</coun:name>
+		<coun:name lang="es">Fiji</coun:name>
+		<coun:name lang="fr">Fidji</coun:name>
+		<coun:name lang="it">Fiji</coun:name>
+		<coun:name lang="nl">Fiji</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>246</coun:code>
+		<coun:alpha2>FI</coun:alpha2>
+		<coun:alpha3>FIN</coun:alpha3>
+		<coun:name lang="cs">Finsko</coun:name>
+		<coun:name lang="de">Finnland</coun:name>
+		<coun:name lang="en">Finland</coun:name>
+		<coun:name lang="es">Finlandia</coun:name>
+		<coun:name lang="fr">Finlande</coun:name>
+		<coun:name lang="it">Finlandia</coun:name>
+		<coun:name lang="nl">Finland</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>248</coun:code>
+		<coun:alpha2>AX</coun:alpha2>
+		<coun:alpha3>ALA</coun:alpha3>
+		<coun:name lang="cs">Åland Islands</coun:name>
+		<coun:name lang="de">Åland-Inseln</coun:name>
+		<coun:name lang="en">Åland Islands</coun:name>
+		<coun:name lang="es">Islas Åland</coun:name>
+		<coun:name lang="fr">Îles Åland</coun:name>
+		<coun:name lang="it">Åland Islands</coun:name>
+		<coun:name lang="nl">Åland Islands</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>250</coun:code>
+		<coun:alpha2>FR</coun:alpha2>
+		<coun:alpha3>FRA</coun:alpha3>
+		<coun:name lang="cs">Francie</coun:name>
+		<coun:name lang="de">Frankreich</coun:name>
+		<coun:name lang="en">France</coun:name>
+		<coun:name lang="es">Francia</coun:name>
+		<coun:name lang="fr">France</coun:name>
+		<coun:name lang="it">Francia</coun:name>
+		<coun:name lang="nl">Frankrijk</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>254</coun:code>
+		<coun:alpha2>GF</coun:alpha2>
+		<coun:alpha3>GUF</coun:alpha3>
+		<coun:name lang="cs">Francouzská Guayana</coun:name>
+		<coun:name lang="de">Französisch-Guayana</coun:name>
+		<coun:name lang="en">French Guiana</coun:name>
+		<coun:name lang="es">Guinea Francesa</coun:name>
+		<coun:name lang="fr">Guyane Française</coun:name>
+		<coun:name lang="it">Guyana Francese</coun:name>
+		<coun:name lang="nl">Frans-Guyana</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>258</coun:code>
+		<coun:alpha2>PF</coun:alpha2>
+		<coun:alpha3>PYF</coun:alpha3>
+		<coun:name lang="cs">Francouzská Polynésie</coun:name>
+		<coun:name lang="de">Französisch-Polynesien</coun:name>
+		<coun:name lang="en">French Polynesia</coun:name>
+		<coun:name lang="es">Polinesia Francesa</coun:name>
+		<coun:name lang="fr">Polynésie Française</coun:name>
+		<coun:name lang="it">Polinesia Francese</coun:name>
+		<coun:name lang="nl">Frans-Polynesië</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>260</coun:code>
+		<coun:alpha2>TF</coun:alpha2>
+		<coun:alpha3>ATF</coun:alpha3>
+		<coun:name lang="cs">Francouzská jižní teritoria</coun:name>
+		<coun:name lang="de">Französische Süd- und Antarktisgebiete</coun:name>
+		<coun:name lang="en">French Southern Territories</coun:name>
+		<coun:name lang="es">Territorios Sureños de Francia</coun:name>
+		<coun:name lang="fr">Terres Australes Françaises</coun:name>
+		<coun:name lang="it">Territori Francesi del Sud</coun:name>
+		<coun:name lang="nl">Franse Zuidelijke en Antarctische gebieden</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>262</coun:code>
+		<coun:alpha2>DJ</coun:alpha2>
+		<coun:alpha3>DJI</coun:alpha3>
+		<coun:name lang="cs">Džibutsko</coun:name>
+		<coun:name lang="de">Dschibuti</coun:name>
+		<coun:name lang="en">Djibouti</coun:name>
+		<coun:name lang="es">Djibouti</coun:name>
+		<coun:name lang="fr">Djibouti</coun:name>
+		<coun:name lang="it">Gibuti</coun:name>
+		<coun:name lang="nl">Djibouti</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>266</coun:code>
+		<coun:alpha2>GA</coun:alpha2>
+		<coun:alpha3>GAB</coun:alpha3>
+		<coun:name lang="cs">Gabon</coun:name>
+		<coun:name lang="de">Gabun</coun:name>
+		<coun:name lang="en">Gabon</coun:name>
+		<coun:name lang="es">Gabón</coun:name>
+		<coun:name lang="fr">Gabon</coun:name>
+		<coun:name lang="it">Gabon</coun:name>
+		<coun:name lang="nl">Gabon</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>268</coun:code>
+		<coun:alpha2>GE</coun:alpha2>
+		<coun:alpha3>GEO</coun:alpha3>
+		<coun:name lang="cs">Gruzínsko</coun:name>
+		<coun:name lang="de">Georgien</coun:name>
+		<coun:name lang="en">Georgia</coun:name>
+		<coun:name lang="es">Georgia</coun:name>
+		<coun:name lang="fr">Géorgie</coun:name>
+		<coun:name lang="it">Georgia</coun:name>
+		<coun:name lang="nl">Georgië</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>270</coun:code>
+		<coun:alpha2>GM</coun:alpha2>
+		<coun:alpha3>GMB</coun:alpha3>
+		<coun:name lang="cs">Gambie</coun:name>
+		<coun:name lang="de">Gambia</coun:name>
+		<coun:name lang="en">Gambia</coun:name>
+		<coun:name lang="es">Gambia</coun:name>
+		<coun:name lang="fr">Gambie</coun:name>
+		<coun:name lang="it">Gambia</coun:name>
+		<coun:name lang="nl">Gambia</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>275</coun:code>
+		<coun:alpha2>PS</coun:alpha2>
+		<coun:alpha3>PSE</coun:alpha3>
+		<coun:name lang="cs">Palestinská území</coun:name>
+		<coun:name lang="de">Palästinensische Autonomiegebiete</coun:name>
+		<coun:name lang="en">Occupied Palestinian Territory</coun:name>
+		<coun:name lang="es">Palestina</coun:name>
+		<coun:name lang="fr">Territoire Palestinien Occupé</coun:name>
+		<coun:name lang="it">Territori Palestinesi Occupati</coun:name>
+		<coun:name lang="nl">Palestina</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>276</coun:code>
+		<coun:alpha2>DE</coun:alpha2>
+		<coun:alpha3>DEU</coun:alpha3>
+		<coun:name lang="cs">Německo</coun:name>
+		<coun:name lang="de">Deutschland</coun:name>
+		<coun:name lang="en">Germany</coun:name>
+		<coun:name lang="es">Alemania</coun:name>
+		<coun:name lang="fr">Allemagne</coun:name>
+		<coun:name lang="it">Germania</coun:name>
+		<coun:name lang="nl">Duitsland</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>288</coun:code>
+		<coun:alpha2>GH</coun:alpha2>
+		<coun:alpha3>GHA</coun:alpha3>
+		<coun:name lang="cs">Ghana</coun:name>
+		<coun:name lang="de">Ghana</coun:name>
+		<coun:name lang="en">Ghana</coun:name>
+		<coun:name lang="es">Ghana</coun:name>
+		<coun:name lang="fr">Ghana</coun:name>
+		<coun:name lang="it">Ghana</coun:name>
+		<coun:name lang="nl">Ghana</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>292</coun:code>
+		<coun:alpha2>GI</coun:alpha2>
+		<coun:alpha3>GIB</coun:alpha3>
+		<coun:name lang="cs">Gibraltar</coun:name>
+		<coun:name lang="de">Gibraltar</coun:name>
+		<coun:name lang="en">Gibraltar</coun:name>
+		<coun:name lang="es">Gibraltar</coun:name>
+		<coun:name lang="fr">Gibraltar</coun:name>
+		<coun:name lang="it">Gibilterra</coun:name>
+		<coun:name lang="nl">Gibraltar</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>296</coun:code>
+		<coun:alpha2>KI</coun:alpha2>
+		<coun:alpha3>KIR</coun:alpha3>
+		<coun:name lang="cs">Kiribati</coun:name>
+		<coun:name lang="de">Kiribati</coun:name>
+		<coun:name lang="en">Kiribati</coun:name>
+		<coun:name lang="es">Kiribati</coun:name>
+		<coun:name lang="fr">Kiribati</coun:name>
+		<coun:name lang="it">Kiribati</coun:name>
+		<coun:name lang="nl">Kiribati</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>300</coun:code>
+		<coun:alpha2>GR</coun:alpha2>
+		<coun:alpha3>GRC</coun:alpha3>
+		<coun:name lang="cs">Řecko</coun:name>
+		<coun:name lang="de">Griechenland</coun:name>
+		<coun:name lang="en">Greece</coun:name>
+		<coun:name lang="es">Grecia</coun:name>
+		<coun:name lang="fr">Grèce</coun:name>
+		<coun:name lang="it">Grecia</coun:name>
+		<coun:name lang="nl">Griekenland</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>304</coun:code>
+		<coun:alpha2>GL</coun:alpha2>
+		<coun:alpha3>GRL</coun:alpha3>
+		<coun:name lang="cs">Grónsko</coun:name>
+		<coun:name lang="de">Grönland</coun:name>
+		<coun:name lang="en">Greenland</coun:name>
+		<coun:name lang="es">Groenlandia</coun:name>
+		<coun:name lang="fr">Groenland</coun:name>
+		<coun:name lang="it">Groenlandia</coun:name>
+		<coun:name lang="nl">Groenland</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>308</coun:code>
+		<coun:alpha2>GD</coun:alpha2>
+		<coun:alpha3>GRD</coun:alpha3>
+		<coun:name lang="cs">Grenada</coun:name>
+		<coun:name lang="de">Grenada</coun:name>
+		<coun:name lang="en">Grenada</coun:name>
+		<coun:name lang="es">Granada</coun:name>
+		<coun:name lang="fr">Grenade</coun:name>
+		<coun:name lang="it">Grenada</coun:name>
+		<coun:name lang="nl">Grenada</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>312</coun:code>
+		<coun:alpha2>GP</coun:alpha2>
+		<coun:alpha3>GLP</coun:alpha3>
+		<coun:name lang="cs">Guadeloupe</coun:name>
+		<coun:name lang="de">Guadeloupe</coun:name>
+		<coun:name lang="en">Guadeloupe</coun:name>
+		<coun:name lang="es">Guadalupe</coun:name>
+		<coun:name lang="fr">Guadeloupe</coun:name>
+		<coun:name lang="it">Guadalupa</coun:name>
+		<coun:name lang="nl">Guadeloupe</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>316</coun:code>
+		<coun:alpha2>GU</coun:alpha2>
+		<coun:alpha3>GUM</coun:alpha3>
+		<coun:name lang="cs">Guam</coun:name>
+		<coun:name lang="de">Guam</coun:name>
+		<coun:name lang="en">Guam</coun:name>
+		<coun:name lang="es">Guam</coun:name>
+		<coun:name lang="fr">Guam</coun:name>
+		<coun:name lang="it">Guam</coun:name>
+		<coun:name lang="nl">Guam</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>320</coun:code>
+		<coun:alpha2>GT</coun:alpha2>
+		<coun:alpha3>GTM</coun:alpha3>
+		<coun:name lang="cs">Guatemala</coun:name>
+		<coun:name lang="de">Guatemala</coun:name>
+		<coun:name lang="en">Guatemala</coun:name>
+		<coun:name lang="es">Guatemala</coun:name>
+		<coun:name lang="fr">Guatemala</coun:name>
+		<coun:name lang="it">Guatemala</coun:name>
+		<coun:name lang="nl">Guatemala</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>324</coun:code>
+		<coun:alpha2>GN</coun:alpha2>
+		<coun:alpha3>GIN</coun:alpha3>
+		<coun:name lang="cs">Guinea</coun:name>
+		<coun:name lang="de">Guinea</coun:name>
+		<coun:name lang="en">Guinea</coun:name>
+		<coun:name lang="es">Guinea</coun:name>
+		<coun:name lang="fr">Guinée</coun:name>
+		<coun:name lang="it">Guinea</coun:name>
+		<coun:name lang="nl">Guinee</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>328</coun:code>
+		<coun:alpha2>GY</coun:alpha2>
+		<coun:alpha3>GUY</coun:alpha3>
+		<coun:name lang="cs">Guyana</coun:name>
+		<coun:name lang="de">Guyana</coun:name>
+		<coun:name lang="en">Guyana</coun:name>
+		<coun:name lang="es">Guayana</coun:name>
+		<coun:name lang="fr">Guyana</coun:name>
+		<coun:name lang="it">Guyana</coun:name>
+		<coun:name lang="nl">Guyana</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>332</coun:code>
+		<coun:alpha2>HT</coun:alpha2>
+		<coun:alpha3>HTI</coun:alpha3>
+		<coun:name lang="cs">Haiti</coun:name>
+		<coun:name lang="de">Haiti</coun:name>
+		<coun:name lang="en">Haiti</coun:name>
+		<coun:name lang="es">Haití</coun:name>
+		<coun:name lang="fr">Haïti</coun:name>
+		<coun:name lang="it">Haiti</coun:name>
+		<coun:name lang="nl">Haiti</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>334</coun:code>
+		<coun:alpha2>HM</coun:alpha2>
+		<coun:alpha3>HMD</coun:alpha3>
+		<coun:name lang="cs">Heardův ostrov a McDonaldovy ostrovy</coun:name>
+		<coun:name lang="de">Heard und McDonaldinseln</coun:name>
+		<coun:name lang="en">Heard Island and McDonald Islands</coun:name>
+		<coun:name lang="es">Islas Heard e Islas McDonald</coun:name>
+		<coun:name lang="fr">Îles Heard et Mcdonald</coun:name>
+		<coun:name lang="it">Isola Heard e Isole McDonald</coun:name>
+		<coun:name lang="nl">Heard- en McDonaldeilanden</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>336</coun:code>
+		<coun:alpha2>VA</coun:alpha2>
+		<coun:alpha3>VAT</coun:alpha3>
+		<coun:name lang="cs">Vatikán</coun:name>
+		<coun:name lang="de">Vatikanstadt</coun:name>
+		<coun:name lang="en">Vatican City State</coun:name>
+		<coun:name lang="es">Estado Vaticano</coun:name>
+		<coun:name lang="fr">Saint-Siège (état de la Cité du Vatican)</coun:name>
+		<coun:name lang="it">Città del Vaticano</coun:name>
+		<coun:name lang="nl">Vaticaanstad</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>340</coun:code>
+		<coun:alpha2>HN</coun:alpha2>
+		<coun:alpha3>HND</coun:alpha3>
+		<coun:name lang="cs">Honduras</coun:name>
+		<coun:name lang="de">Honduras</coun:name>
+		<coun:name lang="en">Honduras</coun:name>
+		<coun:name lang="es">Honduras</coun:name>
+		<coun:name lang="fr">Honduras</coun:name>
+		<coun:name lang="it">Honduras</coun:name>
+		<coun:name lang="nl">Honduras</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>344</coun:code>
+		<coun:alpha2>HK</coun:alpha2>
+		<coun:alpha3>HKG</coun:alpha3>
+		<coun:name lang="cs">Hong Kong</coun:name>
+		<coun:name lang="de">Hongkong</coun:name>
+		<coun:name lang="en">Hong Kong</coun:name>
+		<coun:name lang="es">Hong Kong</coun:name>
+		<coun:name lang="fr">Hong-Kong</coun:name>
+		<coun:name lang="it">Hong Kong</coun:name>
+		<coun:name lang="nl">Hongkong</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>348</coun:code>
+		<coun:alpha2>HU</coun:alpha2>
+		<coun:alpha3>HUN</coun:alpha3>
+		<coun:name lang="cs">Maďarsko</coun:name>
+		<coun:name lang="de">Ungarn</coun:name>
+		<coun:name lang="en">Hungary</coun:name>
+		<coun:name lang="es">Hungría</coun:name>
+		<coun:name lang="fr">Hongrie</coun:name>
+		<coun:name lang="it">Ungheria</coun:name>
+		<coun:name lang="nl">Hongarije</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>352</coun:code>
+		<coun:alpha2>IS</coun:alpha2>
+		<coun:alpha3>ISL</coun:alpha3>
+		<coun:name lang="cs">Island</coun:name>
+		<coun:name lang="de">Island</coun:name>
+		<coun:name lang="en">Iceland</coun:name>
+		<coun:name lang="es">Islandia</coun:name>
+		<coun:name lang="fr">Islande</coun:name>
+		<coun:name lang="it">Islanda</coun:name>
+		<coun:name lang="nl">IJsland</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>356</coun:code>
+		<coun:alpha2>IN</coun:alpha2>
+		<coun:alpha3>IND</coun:alpha3>
+		<coun:name lang="cs">Indie</coun:name>
+		<coun:name lang="de">Indien</coun:name>
+		<coun:name lang="en">India</coun:name>
+		<coun:name lang="es">India</coun:name>
+		<coun:name lang="fr">Inde</coun:name>
+		<coun:name lang="it">India</coun:name>
+		<coun:name lang="nl">India</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>360</coun:code>
+		<coun:alpha2>ID</coun:alpha2>
+		<coun:alpha3>IDN</coun:alpha3>
+		<coun:name lang="cs">Indonésie</coun:name>
+		<coun:name lang="de">Indonesien</coun:name>
+		<coun:name lang="en">Indonesia</coun:name>
+		<coun:name lang="es">Indonesia</coun:name>
+		<coun:name lang="fr">Indonésie</coun:name>
+		<coun:name lang="it">Indonesia</coun:name>
+		<coun:name lang="nl">Indonesië</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>364</coun:code>
+		<coun:alpha2>IR</coun:alpha2>
+		<coun:alpha3>IRN</coun:alpha3>
+		<coun:name lang="cs">Írán</coun:name>
+		<coun:name lang="de">Islamische Republik Iran</coun:name>
+		<coun:name lang="en">Islamic Republic of Iran</coun:name>
+		<coun:name lang="es">Irán</coun:name>
+		<coun:name lang="fr">République Islamique d'Iran</coun:name>
+		<coun:name lang="it">Iran</coun:name>
+		<coun:name lang="nl">Iran</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>368</coun:code>
+		<coun:alpha2>IQ</coun:alpha2>
+		<coun:alpha3>IRQ</coun:alpha3>
+		<coun:name lang="cs">Irák</coun:name>
+		<coun:name lang="de">Irak</coun:name>
+		<coun:name lang="en">Iraq</coun:name>
+		<coun:name lang="es">Irak</coun:name>
+		<coun:name lang="fr">Iraq</coun:name>
+		<coun:name lang="it">Iraq</coun:name>
+		<coun:name lang="nl">Irak</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>372</coun:code>
+		<coun:alpha2>IE</coun:alpha2>
+		<coun:alpha3>IRL</coun:alpha3>
+		<coun:name lang="cs">Irsko</coun:name>
+		<coun:name lang="de">Irland</coun:name>
+		<coun:name lang="en">Ireland</coun:name>
+		<coun:name lang="es">Irlanda</coun:name>
+		<coun:name lang="fr">Irlande</coun:name>
+		<coun:name lang="it">Eire</coun:name>
+		<coun:name lang="nl">Ierland</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>376</coun:code>
+		<coun:alpha2>IL</coun:alpha2>
+		<coun:alpha3>ISR</coun:alpha3>
+		<coun:name lang="cs">Izrael</coun:name>
+		<coun:name lang="de">Israel</coun:name>
+		<coun:name lang="en">Israel</coun:name>
+		<coun:name lang="es">Israel</coun:name>
+		<coun:name lang="fr">Israël</coun:name>
+		<coun:name lang="it">Israele</coun:name>
+		<coun:name lang="nl">Israël</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>380</coun:code>
+		<coun:alpha2>IT</coun:alpha2>
+		<coun:alpha3>ITA</coun:alpha3>
+		<coun:name lang="cs">Itálie</coun:name>
+		<coun:name lang="de">Italien</coun:name>
+		<coun:name lang="en">Italy</coun:name>
+		<coun:name lang="es">Italia</coun:name>
+		<coun:name lang="fr">Italie</coun:name>
+		<coun:name lang="it">Italia</coun:name>
+		<coun:name lang="nl">Italië</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>384</coun:code>
+		<coun:alpha2>CI</coun:alpha2>
+		<coun:alpha3>CIV</coun:alpha3>
+		<coun:name lang="cs">Pobřeží slonoviny</coun:name>
+		<coun:name lang="de">Côte d'Ivoire</coun:name>
+		<coun:name lang="en">Côte d'Ivoire</coun:name>
+		<coun:name lang="es">Costa de Marfil</coun:name>
+		<coun:name lang="fr">Côte d'Ivoire</coun:name>
+		<coun:name lang="it">Costa d'Avorio</coun:name>
+		<coun:name lang="nl">Ivoorkust</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>388</coun:code>
+		<coun:alpha2>JM</coun:alpha2>
+		<coun:alpha3>JAM</coun:alpha3>
+		<coun:name lang="cs">Jamajka</coun:name>
+		<coun:name lang="de">Jamaika</coun:name>
+		<coun:name lang="en">Jamaica</coun:name>
+		<coun:name lang="es">Jamaica</coun:name>
+		<coun:name lang="fr">Jamaïque</coun:name>
+		<coun:name lang="it">Giamaica</coun:name>
+		<coun:name lang="nl">Jamaica</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>392</coun:code>
+		<coun:alpha2>JP</coun:alpha2>
+		<coun:alpha3>JPN</coun:alpha3>
+		<coun:name lang="cs">Japonsko</coun:name>
+		<coun:name lang="de">Japan</coun:name>
+		<coun:name lang="en">Japan</coun:name>
+		<coun:name lang="es">Japón</coun:name>
+		<coun:name lang="fr">Japon</coun:name>
+		<coun:name lang="it">Giappone</coun:name>
+		<coun:name lang="nl">Japan</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>398</coun:code>
+		<coun:alpha2>KZ</coun:alpha2>
+		<coun:alpha3>KAZ</coun:alpha3>
+		<coun:name lang="cs">Kazachstán</coun:name>
+		<coun:name lang="de">Kasachstan</coun:name>
+		<coun:name lang="en">Kazakhstan</coun:name>
+		<coun:name lang="es">Kazajstán</coun:name>
+		<coun:name lang="fr">Kazakhstan</coun:name>
+		<coun:name lang="it">Kazakhistan</coun:name>
+		<coun:name lang="nl">Kazachstan</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>400</coun:code>
+		<coun:alpha2>JO</coun:alpha2>
+		<coun:alpha3>JOR</coun:alpha3>
+		<coun:name lang="cs">Jordánsko</coun:name>
+		<coun:name lang="de">Jordanien</coun:name>
+		<coun:name lang="en">Jordan</coun:name>
+		<coun:name lang="es">Jordania</coun:name>
+		<coun:name lang="fr">Jordanie</coun:name>
+		<coun:name lang="it">Giordania</coun:name>
+		<coun:name lang="nl">Jordanië</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>404</coun:code>
+		<coun:alpha2>KE</coun:alpha2>
+		<coun:alpha3>KEN</coun:alpha3>
+		<coun:name lang="cs">Keňa</coun:name>
+		<coun:name lang="de">Kenia</coun:name>
+		<coun:name lang="en">Kenya</coun:name>
+		<coun:name lang="es">Kenia</coun:name>
+		<coun:name lang="fr">Kenya</coun:name>
+		<coun:name lang="it">Kenya</coun:name>
+		<coun:name lang="nl">Kenia</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>408</coun:code>
+		<coun:alpha2>KP</coun:alpha2>
+		<coun:alpha3>PRK</coun:alpha3>
+		<coun:name lang="cs">Severní Korea</coun:name>
+		<coun:name lang="de">Demokratische Volksrepublik Korea</coun:name>
+		<coun:name lang="en">Democratic People's Republic of Korea</coun:name>
+		<coun:name lang="es">Corea</coun:name>
+		<coun:name lang="fr">République Populaire Démocratique de Corée</coun:name>
+		<coun:name lang="it">Corea del Nord</coun:name>
+		<coun:name lang="nl">Noord-Korea</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>410</coun:code>
+		<coun:alpha2>KR</coun:alpha2>
+		<coun:alpha3>KOR</coun:alpha3>
+		<coun:name lang="cs">Jižní Korea</coun:name>
+		<coun:name lang="de">Republik Korea</coun:name>
+		<coun:name lang="en">Republic of Korea</coun:name>
+		<coun:name lang="es">Corea</coun:name>
+		<coun:name lang="fr">République de Corée</coun:name>
+		<coun:name lang="it">Corea del Sud</coun:name>
+		<coun:name lang="nl">Zuid-Korea</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>414</coun:code>
+		<coun:alpha2>KW</coun:alpha2>
+		<coun:alpha3>KWT</coun:alpha3>
+		<coun:name lang="cs">Kuvajt</coun:name>
+		<coun:name lang="de">Kuwait</coun:name>
+		<coun:name lang="en">Kuwait</coun:name>
+		<coun:name lang="es">Kuwait</coun:name>
+		<coun:name lang="fr">Koweït</coun:name>
+		<coun:name lang="it">Kuwait</coun:name>
+		<coun:name lang="nl">Koeweit</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>417</coun:code>
+		<coun:alpha2>KG</coun:alpha2>
+		<coun:alpha3>KGZ</coun:alpha3>
+		<coun:name lang="cs">Kyrgyzstán</coun:name>
+		<coun:name lang="de">Kirgisistan</coun:name>
+		<coun:name lang="en">Kyrgyzstan</coun:name>
+		<coun:name lang="es">Kirgistán</coun:name>
+		<coun:name lang="fr">Kirghizistan</coun:name>
+		<coun:name lang="it">Kirghizistan</coun:name>
+		<coun:name lang="nl">Kirgizië</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>418</coun:code>
+		<coun:alpha2>LA</coun:alpha2>
+		<coun:alpha3>LAO</coun:alpha3>
+		<coun:name lang="cs">Laos</coun:name>
+		<coun:name lang="de">Demokratische Volksrepublik Laos</coun:name>
+		<coun:name lang="en">Lao People's Democratic Republic</coun:name>
+		<coun:name lang="es">Laos</coun:name>
+		<coun:name lang="fr">République Démocratique Populaire Lao</coun:name>
+		<coun:name lang="it">Laos</coun:name>
+		<coun:name lang="nl">Laos</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>422</coun:code>
+		<coun:alpha2>LB</coun:alpha2>
+		<coun:alpha3>LBN</coun:alpha3>
+		<coun:name lang="cs">Libanon</coun:name>
+		<coun:name lang="de">Libanon</coun:name>
+		<coun:name lang="en">Lebanon</coun:name>
+		<coun:name lang="es">Líbano</coun:name>
+		<coun:name lang="fr">Liban</coun:name>
+		<coun:name lang="it">Libano</coun:name>
+		<coun:name lang="nl">Libanon</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>426</coun:code>
+		<coun:alpha2>LS</coun:alpha2>
+		<coun:alpha3>LSO</coun:alpha3>
+		<coun:name lang="cs">Lesotho</coun:name>
+		<coun:name lang="de">Lesotho</coun:name>
+		<coun:name lang="en">Lesotho</coun:name>
+		<coun:name lang="es">Lesoto</coun:name>
+		<coun:name lang="fr">Lesotho</coun:name>
+		<coun:name lang="it">Lesotho</coun:name>
+		<coun:name lang="nl">Lesotho</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>428</coun:code>
+		<coun:alpha2>LV</coun:alpha2>
+		<coun:alpha3>LVA</coun:alpha3>
+		<coun:name lang="cs">Lotyšsko</coun:name>
+		<coun:name lang="de">Lettland</coun:name>
+		<coun:name lang="en">Latvia</coun:name>
+		<coun:name lang="es">Letonia</coun:name>
+		<coun:name lang="fr">Lettonie</coun:name>
+		<coun:name lang="it">Lettonia</coun:name>
+		<coun:name lang="nl">Letland</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>430</coun:code>
+		<coun:alpha2>LR</coun:alpha2>
+		<coun:alpha3>LBR</coun:alpha3>
+		<coun:name lang="cs">Libérie</coun:name>
+		<coun:name lang="de">Liberia</coun:name>
+		<coun:name lang="en">Liberia</coun:name>
+		<coun:name lang="es">Liberia</coun:name>
+		<coun:name lang="fr">Libéria</coun:name>
+		<coun:name lang="it">Liberia</coun:name>
+		<coun:name lang="nl">Liberia</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>434</coun:code>
+		<coun:alpha2>LY</coun:alpha2>
+		<coun:alpha3>LBY</coun:alpha3>
+		<coun:name lang="cs">Libye</coun:name>
+		<coun:name lang="de">Libysch-Arabische Dschamahirija</coun:name>
+		<coun:name lang="en">Libyan Arab Jamahiriya</coun:name>
+		<coun:name lang="es">Libia</coun:name>
+		<coun:name lang="fr">Jamahiriya Arabe Libyenne</coun:name>
+		<coun:name lang="it">Libia</coun:name>
+		<coun:name lang="nl">Libië</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>438</coun:code>
+		<coun:alpha2>LI</coun:alpha2>
+		<coun:alpha3>LIE</coun:alpha3>
+		<coun:name lang="cs">Lichtenštejnsko</coun:name>
+		<coun:name lang="de">Liechtenstein</coun:name>
+		<coun:name lang="en">Liechtenstein</coun:name>
+		<coun:name lang="es">Liechtenstein</coun:name>
+		<coun:name lang="fr">Liechtenstein</coun:name>
+		<coun:name lang="it">Liechtenstein</coun:name>
+		<coun:name lang="nl">Liechtenstein</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>440</coun:code>
+		<coun:alpha2>LT</coun:alpha2>
+		<coun:alpha3>LTU</coun:alpha3>
+		<coun:name lang="cs">Litva</coun:name>
+		<coun:name lang="de">Litauen</coun:name>
+		<coun:name lang="en">Lithuania</coun:name>
+		<coun:name lang="es">Lituania</coun:name>
+		<coun:name lang="fr">Lituanie</coun:name>
+		<coun:name lang="it">Lituania</coun:name>
+		<coun:name lang="nl">Litouwen</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>442</coun:code>
+		<coun:alpha2>LU</coun:alpha2>
+		<coun:alpha3>LUX</coun:alpha3>
+		<coun:name lang="cs">Lucembursko</coun:name>
+		<coun:name lang="de">Luxemburg</coun:name>
+		<coun:name lang="en">Luxembourg</coun:name>
+		<coun:name lang="es">Luxemburgo</coun:name>
+		<coun:name lang="fr">Luxembourg</coun:name>
+		<coun:name lang="it">Lussemburgo</coun:name>
+		<coun:name lang="nl">Groothertogdom Luxemburg</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>446</coun:code>
+		<coun:alpha2>MO</coun:alpha2>
+		<coun:alpha3>MAC</coun:alpha3>
+		<coun:name lang="cs">Macao</coun:name>
+		<coun:name lang="de">Macao</coun:name>
+		<coun:name lang="en">Macao</coun:name>
+		<coun:name lang="es">Macao</coun:name>
+		<coun:name lang="fr">Macao</coun:name>
+		<coun:name lang="it">Macao</coun:name>
+		<coun:name lang="nl">Macao</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>450</coun:code>
+		<coun:alpha2>MG</coun:alpha2>
+		<coun:alpha3>MDG</coun:alpha3>
+		<coun:name lang="cs">Madagaskar</coun:name>
+		<coun:name lang="de">Madagaskar</coun:name>
+		<coun:name lang="en">Madagascar</coun:name>
+		<coun:name lang="es">Madagascar</coun:name>
+		<coun:name lang="fr">Madagascar</coun:name>
+		<coun:name lang="it">Madagascar</coun:name>
+		<coun:name lang="nl">Madagaskar</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>454</coun:code>
+		<coun:alpha2>MW</coun:alpha2>
+		<coun:alpha3>MWI</coun:alpha3>
+		<coun:name lang="cs">Malawi</coun:name>
+		<coun:name lang="de">Malawi</coun:name>
+		<coun:name lang="en">Malawi</coun:name>
+		<coun:name lang="es">Malawi</coun:name>
+		<coun:name lang="fr">Malawi</coun:name>
+		<coun:name lang="it">Malawi</coun:name>
+		<coun:name lang="nl">Malawi</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>458</coun:code>
+		<coun:alpha2>MY</coun:alpha2>
+		<coun:alpha3>MYS</coun:alpha3>
+		<coun:name lang="cs">Malajsie</coun:name>
+		<coun:name lang="de">Malaysia</coun:name>
+		<coun:name lang="en">Malaysia</coun:name>
+		<coun:name lang="es">Malasia</coun:name>
+		<coun:name lang="fr">Malaisie</coun:name>
+		<coun:name lang="it">Malesia</coun:name>
+		<coun:name lang="nl">Maleisië</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>462</coun:code>
+		<coun:alpha2>MV</coun:alpha2>
+		<coun:alpha3>MDV</coun:alpha3>
+		<coun:name lang="cs">Maledivy</coun:name>
+		<coun:name lang="de">Malediven</coun:name>
+		<coun:name lang="en">Maldives</coun:name>
+		<coun:name lang="es">Maldivas</coun:name>
+		<coun:name lang="fr">Maldives</coun:name>
+		<coun:name lang="it">Maldive</coun:name>
+		<coun:name lang="nl">Maldiven</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>466</coun:code>
+		<coun:alpha2>ML</coun:alpha2>
+		<coun:alpha3>MLI</coun:alpha3>
+		<coun:name lang="cs">Mali</coun:name>
+		<coun:name lang="de">Mali</coun:name>
+		<coun:name lang="en">Mali</coun:name>
+		<coun:name lang="es">Mali</coun:name>
+		<coun:name lang="fr">Mali</coun:name>
+		<coun:name lang="it">Mali</coun:name>
+		<coun:name lang="nl">Mali</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>470</coun:code>
+		<coun:alpha2>MT</coun:alpha2>
+		<coun:alpha3>MLT</coun:alpha3>
+		<coun:name lang="cs">Malta</coun:name>
+		<coun:name lang="de">Malta</coun:name>
+		<coun:name lang="en">Malta</coun:name>
+		<coun:name lang="es">Malta</coun:name>
+		<coun:name lang="fr">Malte</coun:name>
+		<coun:name lang="it">Malta</coun:name>
+		<coun:name lang="nl">Malta</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>474</coun:code>
+		<coun:alpha2>MQ</coun:alpha2>
+		<coun:alpha3>MTQ</coun:alpha3>
+		<coun:name lang="cs">Martinik</coun:name>
+		<coun:name lang="de">Martinique</coun:name>
+		<coun:name lang="en">Martinique</coun:name>
+		<coun:name lang="es">Martinica</coun:name>
+		<coun:name lang="fr">Martinique</coun:name>
+		<coun:name lang="it">Martinica</coun:name>
+		<coun:name lang="nl">Martinique</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>478</coun:code>
+		<coun:alpha2>MR</coun:alpha2>
+		<coun:alpha3>MRT</coun:alpha3>
+		<coun:name lang="cs">Mauretánie</coun:name>
+		<coun:name lang="de">Mauretanien</coun:name>
+		<coun:name lang="en">Mauritania</coun:name>
+		<coun:name lang="es">Mauritania</coun:name>
+		<coun:name lang="fr">Mauritanie</coun:name>
+		<coun:name lang="it">Mauritania</coun:name>
+		<coun:name lang="nl">Mauritanië</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>480</coun:code>
+		<coun:alpha2>MU</coun:alpha2>
+		<coun:alpha3>MUS</coun:alpha3>
+		<coun:name lang="cs">Mauricius</coun:name>
+		<coun:name lang="de">Mauritius</coun:name>
+		<coun:name lang="en">Mauritius</coun:name>
+		<coun:name lang="es">Mauricio</coun:name>
+		<coun:name lang="fr">Maurice</coun:name>
+		<coun:name lang="it">Maurizius</coun:name>
+		<coun:name lang="nl">Mauritius</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>484</coun:code>
+		<coun:alpha2>MX</coun:alpha2>
+		<coun:alpha3>MEX</coun:alpha3>
+		<coun:name lang="cs">Mexiko</coun:name>
+		<coun:name lang="de">Mexiko</coun:name>
+		<coun:name lang="en">Mexico</coun:name>
+		<coun:name lang="es">México</coun:name>
+		<coun:name lang="fr">Mexique</coun:name>
+		<coun:name lang="it">Messico</coun:name>
+		<coun:name lang="nl">Mexico</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>492</coun:code>
+		<coun:alpha2>MC</coun:alpha2>
+		<coun:alpha3>MCO</coun:alpha3>
+		<coun:name lang="cs">Monako</coun:name>
+		<coun:name lang="de">Monaco</coun:name>
+		<coun:name lang="en">Monaco</coun:name>
+		<coun:name lang="es">Mónaco</coun:name>
+		<coun:name lang="fr">Monaco</coun:name>
+		<coun:name lang="it">Monaco</coun:name>
+		<coun:name lang="nl">Monaco</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>496</coun:code>
+		<coun:alpha2>MN</coun:alpha2>
+		<coun:alpha3>MNG</coun:alpha3>
+		<coun:name lang="cs">Mongolsko</coun:name>
+		<coun:name lang="de">Mongolei</coun:name>
+		<coun:name lang="en">Mongolia</coun:name>
+		<coun:name lang="es">Mongolia</coun:name>
+		<coun:name lang="fr">Mongolie</coun:name>
+		<coun:name lang="it">Mongolia</coun:name>
+		<coun:name lang="nl">Mongolië</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>498</coun:code>
+		<coun:alpha2>MD</coun:alpha2>
+		<coun:alpha3>MDA</coun:alpha3>
+		<coun:name lang="cs">Moldavsko</coun:name>
+		<coun:name lang="de">Moldawien</coun:name>
+		<coun:name lang="en">Republic of Moldova</coun:name>
+		<coun:name lang="es">Moldavia</coun:name>
+		<coun:name lang="fr">République de Moldova</coun:name>
+		<coun:name lang="it">Moldavia</coun:name>
+		<coun:name lang="nl">Republiek Moldavië</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>500</coun:code>
+		<coun:alpha2>MS</coun:alpha2>
+		<coun:alpha3>MSR</coun:alpha3>
+		<coun:name lang="cs">Montserrat</coun:name>
+		<coun:name lang="de">Montserrat</coun:name>
+		<coun:name lang="en">Montserrat</coun:name>
+		<coun:name lang="es">Montserrat</coun:name>
+		<coun:name lang="fr">Montserrat</coun:name>
+		<coun:name lang="it">Montserrat</coun:name>
+		<coun:name lang="nl">Montserrat</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>504</coun:code>
+		<coun:alpha2>MA</coun:alpha2>
+		<coun:alpha3>MAR</coun:alpha3>
+		<coun:name lang="cs">Maroko</coun:name>
+		<coun:name lang="de">Marokko</coun:name>
+		<coun:name lang="en">Morocco</coun:name>
+		<coun:name lang="es">Marruecos</coun:name>
+		<coun:name lang="fr">Maroc</coun:name>
+		<coun:name lang="it">Marocco</coun:name>
+		<coun:name lang="nl">Marokko</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>508</coun:code>
+		<coun:alpha2>MZ</coun:alpha2>
+		<coun:alpha3>MOZ</coun:alpha3>
+		<coun:name lang="cs">Mosambik</coun:name>
+		<coun:name lang="de">Mosambik</coun:name>
+		<coun:name lang="en">Mozambique</coun:name>
+		<coun:name lang="es">Mozambique</coun:name>
+		<coun:name lang="fr">Mozambique</coun:name>
+		<coun:name lang="it">Mozambico</coun:name>
+		<coun:name lang="nl">Mozambique</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>512</coun:code>
+		<coun:alpha2>OM</coun:alpha2>
+		<coun:alpha3>OMN</coun:alpha3>
+		<coun:name lang="cs">Omán</coun:name>
+		<coun:name lang="de">Oman</coun:name>
+		<coun:name lang="en">Oman</coun:name>
+		<coun:name lang="es">Omán</coun:name>
+		<coun:name lang="fr">Oman</coun:name>
+		<coun:name lang="it">Oman</coun:name>
+		<coun:name lang="nl">Oman</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>516</coun:code>
+		<coun:alpha2>NA</coun:alpha2>
+		<coun:alpha3>NAM</coun:alpha3>
+		<coun:name lang="cs">Namíbie</coun:name>
+		<coun:name lang="de">Namibia</coun:name>
+		<coun:name lang="en">Namibia</coun:name>
+		<coun:name lang="es">Namibia</coun:name>
+		<coun:name lang="fr">Namibie</coun:name>
+		<coun:name lang="it">Namibia</coun:name>
+		<coun:name lang="nl">Namibië</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>520</coun:code>
+		<coun:alpha2>NR</coun:alpha2>
+		<coun:alpha3>NRU</coun:alpha3>
+		<coun:name lang="cs">Nauru</coun:name>
+		<coun:name lang="de">Nauru</coun:name>
+		<coun:name lang="en">Nauru</coun:name>
+		<coun:name lang="es">Nauru</coun:name>
+		<coun:name lang="fr">Nauru</coun:name>
+		<coun:name lang="it">Nauru</coun:name>
+		<coun:name lang="nl">Nauru</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>524</coun:code>
+		<coun:alpha2>NP</coun:alpha2>
+		<coun:alpha3>NPL</coun:alpha3>
+		<coun:name lang="cs">Nepál</coun:name>
+		<coun:name lang="de">Nepal</coun:name>
+		<coun:name lang="en">Nepal</coun:name>
+		<coun:name lang="es">Nepal</coun:name>
+		<coun:name lang="fr">Népal</coun:name>
+		<coun:name lang="it">Nepal</coun:name>
+		<coun:name lang="nl">Nepal</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>528</coun:code>
+		<coun:alpha2>NL</coun:alpha2>
+		<coun:alpha3>NLD</coun:alpha3>
+		<coun:name lang="cs">Nizozemsko</coun:name>
+		<coun:name lang="de">Niederlande</coun:name>
+		<coun:name lang="en">Netherlands</coun:name>
+		<coun:name lang="es">Holanda</coun:name>
+		<coun:name lang="fr">Pays-Bas</coun:name>
+		<coun:name lang="it">Paesi Bassi</coun:name>
+		<coun:name lang="nl">Nederland</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>530</coun:code>
+		<coun:alpha2>AN</coun:alpha2>
+		<coun:alpha3>ANT</coun:alpha3>
+		<coun:name lang="cs">Nizozemské Antily</coun:name>
+		<coun:name lang="de">Niederländische Antillen</coun:name>
+		<coun:name lang="en">Netherlands Antilles</coun:name>
+		<coun:name lang="es">Antillas Holandesas</coun:name>
+		<coun:name lang="fr">Antilles Néerlandaises</coun:name>
+		<coun:name lang="it">Antille Olandesi</coun:name>
+		<coun:name lang="nl">Nederlandse Antillen</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>533</coun:code>
+		<coun:alpha2>AW</coun:alpha2>
+		<coun:alpha3>ABW</coun:alpha3>
+		<coun:name lang="cs">Aruba</coun:name>
+		<coun:name lang="de">Aruba</coun:name>
+		<coun:name lang="en">Aruba</coun:name>
+		<coun:name lang="es">Aruba</coun:name>
+		<coun:name lang="fr">Aruba</coun:name>
+		<coun:name lang="it">Aruba</coun:name>
+		<coun:name lang="nl">Aruba</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>540</coun:code>
+		<coun:alpha2>NC</coun:alpha2>
+		<coun:alpha3>NCL</coun:alpha3>
+		<coun:name lang="cs">Nová Kaledonie</coun:name>
+		<coun:name lang="de">Neukaledonien</coun:name>
+		<coun:name lang="en">New Caledonia</coun:name>
+		<coun:name lang="es">Nueva Caledonia</coun:name>
+		<coun:name lang="fr">Nouvelle-Calédonie</coun:name>
+		<coun:name lang="it">Nuova Caledonia</coun:name>
+		<coun:name lang="nl">Nieuw-Caledonië</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>548</coun:code>
+		<coun:alpha2>VU</coun:alpha2>
+		<coun:alpha3>VUT</coun:alpha3>
+		<coun:name lang="cs">Vanuatu</coun:name>
+		<coun:name lang="de">Vanuatu</coun:name>
+		<coun:name lang="en">Vanuatu</coun:name>
+		<coun:name lang="es">Vanuatu</coun:name>
+		<coun:name lang="fr">Vanuatu</coun:name>
+		<coun:name lang="it">Vanuatu</coun:name>
+		<coun:name lang="nl">Vanuatu</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>554</coun:code>
+		<coun:alpha2>NZ</coun:alpha2>
+		<coun:alpha3>NZL</coun:alpha3>
+		<coun:name lang="cs">Nový Zéland</coun:name>
+		<coun:name lang="de">Neuseeland</coun:name>
+		<coun:name lang="en">New Zealand</coun:name>
+		<coun:name lang="es">Nueva Zelanda</coun:name>
+		<coun:name lang="fr">Nouvelle-Zélande</coun:name>
+		<coun:name lang="it">Nuova Zelanda</coun:name>
+		<coun:name lang="nl">Nieuw-Zeeland</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>558</coun:code>
+		<coun:alpha2>NI</coun:alpha2>
+		<coun:alpha3>NIC</coun:alpha3>
+		<coun:name lang="cs">Nikaragua</coun:name>
+		<coun:name lang="de">Nicaragua</coun:name>
+		<coun:name lang="en">Nicaragua</coun:name>
+		<coun:name lang="es">Nicaragua</coun:name>
+		<coun:name lang="fr">Nicaragua</coun:name>
+		<coun:name lang="it">Nicaragua</coun:name>
+		<coun:name lang="nl">Nicaragua</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>562</coun:code>
+		<coun:alpha2>NE</coun:alpha2>
+		<coun:alpha3>NER</coun:alpha3>
+		<coun:name lang="cs">Niger</coun:name>
+		<coun:name lang="de">Niger</coun:name>
+		<coun:name lang="en">Niger</coun:name>
+		<coun:name lang="es">Níger</coun:name>
+		<coun:name lang="fr">Niger</coun:name>
+		<coun:name lang="it">Niger</coun:name>
+		<coun:name lang="nl">Niger</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>566</coun:code>
+		<coun:alpha2>NG</coun:alpha2>
+		<coun:alpha3>NGA</coun:alpha3>
+		<coun:name lang="cs">Nigérie</coun:name>
+		<coun:name lang="de">Nigeria</coun:name>
+		<coun:name lang="en">Nigeria</coun:name>
+		<coun:name lang="es">Nigeria</coun:name>
+		<coun:name lang="fr">Nigéria</coun:name>
+		<coun:name lang="it">Nigeria</coun:name>
+		<coun:name lang="nl">Nigeria</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>570</coun:code>
+		<coun:alpha2>NU</coun:alpha2>
+		<coun:alpha3>NIU</coun:alpha3>
+		<coun:name lang="cs">Niue</coun:name>
+		<coun:name lang="de">Niue</coun:name>
+		<coun:name lang="en">Niue</coun:name>
+		<coun:name lang="es">Niue</coun:name>
+		<coun:name lang="fr">Niué</coun:name>
+		<coun:name lang="it">Niue</coun:name>
+		<coun:name lang="nl">Niue</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>574</coun:code>
+		<coun:alpha2>NF</coun:alpha2>
+		<coun:alpha3>NFK</coun:alpha3>
+		<coun:name lang="cs">Norfolk Island</coun:name>
+		<coun:name lang="de">Norfolkinsel</coun:name>
+		<coun:name lang="en">Norfolk Island</coun:name>
+		<coun:name lang="es">Islas Norfolk</coun:name>
+		<coun:name lang="fr">Île Norfolk</coun:name>
+		<coun:name lang="it">Isola Norfolk</coun:name>
+		<coun:name lang="nl">Norfolkeiland</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>578</coun:code>
+		<coun:alpha2>NO</coun:alpha2>
+		<coun:alpha3>NOR</coun:alpha3>
+		<coun:name lang="cs">Norsko</coun:name>
+		<coun:name lang="de">Norwegen</coun:name>
+		<coun:name lang="en">Norway</coun:name>
+		<coun:name lang="es">Noruega</coun:name>
+		<coun:name lang="fr">Norvège</coun:name>
+		<coun:name lang="it">Norvegia</coun:name>
+		<coun:name lang="nl">Noorwegen</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>580</coun:code>
+		<coun:alpha2>MP</coun:alpha2>
+		<coun:alpha3>MNP</coun:alpha3>
+		<coun:name lang="cs">Severomariánské ostrovy</coun:name>
+		<coun:name lang="de">Nördliche Marianen</coun:name>
+		<coun:name lang="en">Northern Mariana Islands</coun:name>
+		<coun:name lang="es">Islas de Norte-Mariana</coun:name>
+		<coun:name lang="fr">Îles Mariannes du Nord</coun:name>
+		<coun:name lang="it">Isole Marianne Settentrionali</coun:name>
+		<coun:name lang="nl">Noordelijke Marianen</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>581</coun:code>
+		<coun:alpha2>UM</coun:alpha2>
+		<coun:alpha3>UMI</coun:alpha3>
+		<coun:name lang="cs">United States Minor Outlying Islands</coun:name>
+		<coun:name lang="de">Amerikanisch-Ozeanien</coun:name>
+		<coun:name lang="en">United States Minor Outlying Islands</coun:name>
+		<coun:name lang="es">Islas Ultramarinas de Estados Unidos</coun:name>
+		<coun:name lang="fr">Îles Mineures Éloignées des États-Unis</coun:name>
+		<coun:name lang="it">Isole Minori degli Stati Uniti d'America</coun:name>
+		<coun:name lang="nl">United States Minor Outlying Eilanden</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>583</coun:code>
+		<coun:alpha2>FM</coun:alpha2>
+		<coun:alpha3>FSM</coun:alpha3>
+		<coun:name lang="cs">Mikronésie</coun:name>
+		<coun:name lang="de">Mikronesien</coun:name>
+		<coun:name lang="en">Federated States of Micronesia</coun:name>
+		<coun:name lang="es">Micronesia</coun:name>
+		<coun:name lang="fr">États Fédérés de Micronésie</coun:name>
+		<coun:name lang="it">Stati Federati della Micronesia</coun:name>
+		<coun:name lang="nl">Micronesië</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>584</coun:code>
+		<coun:alpha2>MH</coun:alpha2>
+		<coun:alpha3>MHL</coun:alpha3>
+		<coun:name lang="cs">Marshallovy ostrovy</coun:name>
+		<coun:name lang="de">Marshallinseln</coun:name>
+		<coun:name lang="en">Marshall Islands</coun:name>
+		<coun:name lang="es">Islas Marshall</coun:name>
+		<coun:name lang="fr">Îles Marshall</coun:name>
+		<coun:name lang="it">Isole Marshall</coun:name>
+		<coun:name lang="nl">Marshalleilanden</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>585</coun:code>
+		<coun:alpha2>PW</coun:alpha2>
+		<coun:alpha3>PLW</coun:alpha3>
+		<coun:name lang="cs">Palau</coun:name>
+		<coun:name lang="de">Palau</coun:name>
+		<coun:name lang="en">Palau</coun:name>
+		<coun:name lang="es">Palau</coun:name>
+		<coun:name lang="fr">Palaos</coun:name>
+		<coun:name lang="it">Palau</coun:name>
+		<coun:name lang="nl">Palau</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>586</coun:code>
+		<coun:alpha2>PK</coun:alpha2>
+		<coun:alpha3>PAK</coun:alpha3>
+		<coun:name lang="cs">Pakistán</coun:name>
+		<coun:name lang="de">Pakistan</coun:name>
+		<coun:name lang="en">Pakistan</coun:name>
+		<coun:name lang="es">Pakistán</coun:name>
+		<coun:name lang="fr">Pakistan</coun:name>
+		<coun:name lang="it">Pakistan</coun:name>
+		<coun:name lang="nl">Pakistan</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>591</coun:code>
+		<coun:alpha2>PA</coun:alpha2>
+		<coun:alpha3>PAN</coun:alpha3>
+		<coun:name lang="cs">Panama</coun:name>
+		<coun:name lang="de">Panama</coun:name>
+		<coun:name lang="en">Panama</coun:name>
+		<coun:name lang="es">Panamá</coun:name>
+		<coun:name lang="fr">Panama</coun:name>
+		<coun:name lang="it">Panamá</coun:name>
+		<coun:name lang="nl">Panama</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>598</coun:code>
+		<coun:alpha2>PG</coun:alpha2>
+		<coun:alpha3>PNG</coun:alpha3>
+		<coun:name lang="cs">Papua Nová Guinea</coun:name>
+		<coun:name lang="de">Papua-Neuguinea</coun:name>
+		<coun:name lang="en">Papua New Guinea</coun:name>
+		<coun:name lang="es">Papúa Nueva Guinea</coun:name>
+		<coun:name lang="fr">Papouasie-Nouvelle-Guinée</coun:name>
+		<coun:name lang="it">Papua Nuova Guinea</coun:name>
+		<coun:name lang="nl">Papoea-Nieuw-Guinea</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>600</coun:code>
+		<coun:alpha2>PY</coun:alpha2>
+		<coun:alpha3>PRY</coun:alpha3>
+		<coun:name lang="cs">Paraguay</coun:name>
+		<coun:name lang="de">Paraguay</coun:name>
+		<coun:name lang="en">Paraguay</coun:name>
+		<coun:name lang="es">Paraguay</coun:name>
+		<coun:name lang="fr">Paraguay</coun:name>
+		<coun:name lang="it">Paraguay</coun:name>
+		<coun:name lang="nl">Paraguay</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>604</coun:code>
+		<coun:alpha2>PE</coun:alpha2>
+		<coun:alpha3>PER</coun:alpha3>
+		<coun:name lang="cs">Peru</coun:name>
+		<coun:name lang="de">Peru</coun:name>
+		<coun:name lang="en">Peru</coun:name>
+		<coun:name lang="es">Perú</coun:name>
+		<coun:name lang="fr">Pérou</coun:name>
+		<coun:name lang="it">Perù</coun:name>
+		<coun:name lang="nl">Peru</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>608</coun:code>
+		<coun:alpha2>PH</coun:alpha2>
+		<coun:alpha3>PHL</coun:alpha3>
+		<coun:name lang="cs">Filipíny</coun:name>
+		<coun:name lang="de">Philippinen</coun:name>
+		<coun:name lang="en">Philippines</coun:name>
+		<coun:name lang="es">Filipinas</coun:name>
+		<coun:name lang="fr">Philippines</coun:name>
+		<coun:name lang="it">Filippine</coun:name>
+		<coun:name lang="nl">Filippijnen</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>612</coun:code>
+		<coun:alpha2>PN</coun:alpha2>
+		<coun:alpha3>PCN</coun:alpha3>
+		<coun:name lang="cs">Pitcairn</coun:name>
+		<coun:name lang="de">Pitcairninseln</coun:name>
+		<coun:name lang="en">Pitcairn</coun:name>
+		<coun:name lang="es">Pitcairn</coun:name>
+		<coun:name lang="fr">Pitcairn</coun:name>
+		<coun:name lang="it">Pitcairn</coun:name>
+		<coun:name lang="nl">Pitcairneilanden</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>616</coun:code>
+		<coun:alpha2>PL</coun:alpha2>
+		<coun:alpha3>POL</coun:alpha3>
+		<coun:name lang="cs">Polsko</coun:name>
+		<coun:name lang="de">Polen</coun:name>
+		<coun:name lang="en">Poland</coun:name>
+		<coun:name lang="es">Polonia</coun:name>
+		<coun:name lang="fr">Pologne</coun:name>
+		<coun:name lang="it">Polonia</coun:name>
+		<coun:name lang="nl">Polen</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>620</coun:code>
+		<coun:alpha2>PT</coun:alpha2>
+		<coun:alpha3>PRT</coun:alpha3>
+		<coun:name lang="cs">Portugalsko</coun:name>
+		<coun:name lang="de">Portugal</coun:name>
+		<coun:name lang="en">Portugal</coun:name>
+		<coun:name lang="es">Portugal</coun:name>
+		<coun:name lang="fr">Portugal</coun:name>
+		<coun:name lang="it">Portogallo</coun:name>
+		<coun:name lang="nl">Portugal</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>624</coun:code>
+		<coun:alpha2>GW</coun:alpha2>
+		<coun:alpha3>GNB</coun:alpha3>
+		<coun:name lang="cs">Guinea-Bissau</coun:name>
+		<coun:name lang="de">Guinea-Bissau</coun:name>
+		<coun:name lang="en">Guinea-Bissau</coun:name>
+		<coun:name lang="es">Guinea-Bissau</coun:name>
+		<coun:name lang="fr">Guinée-Bissau</coun:name>
+		<coun:name lang="it">Guinea-Bissau</coun:name>
+		<coun:name lang="nl">Guinee-Bissau</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>626</coun:code>
+		<coun:alpha2>TL</coun:alpha2>
+		<coun:alpha3>TLS</coun:alpha3>
+		<coun:name lang="cs">Východní Timor</coun:name>
+		<coun:name lang="de">Timor-Leste</coun:name>
+		<coun:name lang="en">Timor-Leste</coun:name>
+		<coun:name lang="es">Timor Leste</coun:name>
+		<coun:name lang="fr">Timor-Leste</coun:name>
+		<coun:name lang="it">Timor Est</coun:name>
+		<coun:name lang="nl">Oost-Timor</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>630</coun:code>
+		<coun:alpha2>PR</coun:alpha2>
+		<coun:alpha3>PRI</coun:alpha3>
+		<coun:name lang="cs">Portoriko</coun:name>
+		<coun:name lang="de">Puerto Rico</coun:name>
+		<coun:name lang="en">Puerto Rico</coun:name>
+		<coun:name lang="es">Puerto Rico</coun:name>
+		<coun:name lang="fr">Porto Rico</coun:name>
+		<coun:name lang="it">Porto Rico</coun:name>
+		<coun:name lang="nl">Puerto Rico</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>634</coun:code>
+		<coun:alpha2>QA</coun:alpha2>
+		<coun:alpha3>QAT</coun:alpha3>
+		<coun:name lang="cs">Katar</coun:name>
+		<coun:name lang="de">Katar</coun:name>
+		<coun:name lang="en">Qatar</coun:name>
+		<coun:name lang="es">Qatar</coun:name>
+		<coun:name lang="fr">Qatar</coun:name>
+		<coun:name lang="it">Qatar</coun:name>
+		<coun:name lang="nl">Qatar</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>638</coun:code>
+		<coun:alpha2>RE</coun:alpha2>
+		<coun:alpha3>REU</coun:alpha3>
+		<coun:name lang="cs">Reunion</coun:name>
+		<coun:name lang="de">Réunion</coun:name>
+		<coun:name lang="en">Réunion</coun:name>
+		<coun:name lang="es">Reunión</coun:name>
+		<coun:name lang="fr">Réunion</coun:name>
+		<coun:name lang="it">Reunion</coun:name>
+		<coun:name lang="nl">Réunion</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>642</coun:code>
+		<coun:alpha2>RO</coun:alpha2>
+		<coun:alpha3>ROU</coun:alpha3>
+		<coun:name lang="cs">Rumunsko</coun:name>
+		<coun:name lang="de">Rumänien</coun:name>
+		<coun:name lang="en">Romania</coun:name>
+		<coun:name lang="es">Rumanía</coun:name>
+		<coun:name lang="fr">Roumanie</coun:name>
+		<coun:name lang="it">Romania</coun:name>
+		<coun:name lang="nl">Roemenië</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>643</coun:code>
+		<coun:alpha2>RU</coun:alpha2>
+		<coun:alpha3>RUS</coun:alpha3>
+		<coun:name lang="cs">Rusko</coun:name>
+		<coun:name lang="de">Russische Föderation</coun:name>
+		<coun:name lang="en">Russian Federation</coun:name>
+		<coun:name lang="es">Rusia</coun:name>
+		<coun:name lang="fr">Fédération de Russie</coun:name>
+		<coun:name lang="it">Federazione Russa</coun:name>
+		<coun:name lang="nl">Rusland</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>646</coun:code>
+		<coun:alpha2>RW</coun:alpha2>
+		<coun:alpha3>RWA</coun:alpha3>
+		<coun:name lang="cs">Rwanda</coun:name>
+		<coun:name lang="de">Ruanda</coun:name>
+		<coun:name lang="en">Rwanda</coun:name>
+		<coun:name lang="es">Ruanda</coun:name>
+		<coun:name lang="fr">Rwanda</coun:name>
+		<coun:name lang="it">Ruanda</coun:name>
+		<coun:name lang="nl">Rwanda</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>654</coun:code>
+		<coun:alpha2>SH</coun:alpha2>
+		<coun:alpha3>SHN</coun:alpha3>
+		<coun:name lang="cs">Svatá Helena</coun:name>
+		<coun:name lang="de">St. Helena</coun:name>
+		<coun:name lang="en">Saint Helena</coun:name>
+		<coun:name lang="es">Santa Helena</coun:name>
+		<coun:name lang="fr">Sainte-Hélène</coun:name>
+		<coun:name lang="it">Sant'Elena</coun:name>
+		<coun:name lang="nl">Sint-Helena</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>659</coun:code>
+		<coun:alpha2>KN</coun:alpha2>
+		<coun:alpha3>KNA</coun:alpha3>
+		<coun:name lang="cs">Svatý Kitts a Nevis</coun:name>
+		<coun:name lang="de">St. Kitts und Nevis</coun:name>
+		<coun:name lang="en">Saint Kitts and Nevis</coun:name>
+		<coun:name lang="es">Santa Kitts y Nevis</coun:name>
+		<coun:name lang="fr">Saint-Kitts-et-Nevis</coun:name>
+		<coun:name lang="it">Saint Kitts e Nevis</coun:name>
+		<coun:name lang="nl">Saint Kitts en Nevis</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>660</coun:code>
+		<coun:alpha2>AI</coun:alpha2>
+		<coun:alpha3>AIA</coun:alpha3>
+		<coun:name lang="cs">Anguilla</coun:name>
+		<coun:name lang="de">Anguilla</coun:name>
+		<coun:name lang="en">Anguilla</coun:name>
+		<coun:name lang="es">Anguilla</coun:name>
+		<coun:name lang="fr">Anguilla</coun:name>
+		<coun:name lang="it">Anguilla</coun:name>
+		<coun:name lang="nl">Anguilla</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>662</coun:code>
+		<coun:alpha2>LC</coun:alpha2>
+		<coun:alpha3>LCA</coun:alpha3>
+		<coun:name lang="cs">Svatá Lucie</coun:name>
+		<coun:name lang="de">St. Lucia</coun:name>
+		<coun:name lang="en">Saint Lucia</coun:name>
+		<coun:name lang="es">Santa Lucía</coun:name>
+		<coun:name lang="fr">Sainte-Lucie</coun:name>
+		<coun:name lang="it">Santa Lucia</coun:name>
+		<coun:name lang="nl">Saint Lucia</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>666</coun:code>
+		<coun:alpha2>PM</coun:alpha2>
+		<coun:alpha3>SPM</coun:alpha3>
+		<coun:name lang="cs">Svatý Pierre a Miquelon</coun:name>
+		<coun:name lang="de">St. Pierre und Miquelon</coun:name>
+		<coun:name lang="en">Saint-Pierre and Miquelon</coun:name>
+		<coun:name lang="es">San Pedro y Miquelon</coun:name>
+		<coun:name lang="fr">Saint-Pierre-et-Miquelon</coun:name>
+		<coun:name lang="it">Saint Pierre e Miquelon</coun:name>
+		<coun:name lang="nl">Saint-Pierre en Miquelon</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>670</coun:code>
+		<coun:alpha2>VC</coun:alpha2>
+		<coun:alpha3>VCT</coun:alpha3>
+		<coun:name lang="cs">Svatý Vincenc a Grenadiny</coun:name>
+		<coun:name lang="de">St. Vincent und die Grenadinen</coun:name>
+		<coun:name lang="en">Saint Vincent and the Grenadines</coun:name>
+		<coun:name lang="es">San Vincente y Las Granadinas</coun:name>
+		<coun:name lang="fr">Saint-Vincent-et-les Grenadines</coun:name>
+		<coun:name lang="it">Saint Vincent e Grenadine</coun:name>
+		<coun:name lang="nl">Saint Vincent en de Grenadines</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>674</coun:code>
+		<coun:alpha2>SM</coun:alpha2>
+		<coun:alpha3>SMR</coun:alpha3>
+		<coun:name lang="cs">San Marino</coun:name>
+		<coun:name lang="de">San Marino</coun:name>
+		<coun:name lang="en">San Marino</coun:name>
+		<coun:name lang="es">San Marino</coun:name>
+		<coun:name lang="fr">Saint-Marin</coun:name>
+		<coun:name lang="it">San Marino</coun:name>
+		<coun:name lang="nl">San Marino</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>678</coun:code>
+		<coun:alpha2>ST</coun:alpha2>
+		<coun:alpha3>STP</coun:alpha3>
+		<coun:name lang="cs">Svatý Tomáš a Princův ostrov</coun:name>
+		<coun:name lang="de">São Tomé und Príncipe</coun:name>
+		<coun:name lang="en">Sao Tome and Principe</coun:name>
+		<coun:name lang="es">Santo Tomé y Príncipe</coun:name>
+		<coun:name lang="fr">Sao Tomé-et-Principe</coun:name>
+		<coun:name lang="it">Sao Tome e Principe</coun:name>
+		<coun:name lang="nl">Sao Tomé en Principe</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>682</coun:code>
+		<coun:alpha2>SA</coun:alpha2>
+		<coun:alpha3>SAU</coun:alpha3>
+		<coun:name lang="cs">Saudská Arábie</coun:name>
+		<coun:name lang="de">Saudi-Arabien</coun:name>
+		<coun:name lang="en">Saudi Arabia</coun:name>
+		<coun:name lang="es">Arabia Saudí</coun:name>
+		<coun:name lang="fr">Arabie Saoudite</coun:name>
+		<coun:name lang="it">Arabia Saudita</coun:name>
+		<coun:name lang="nl">Saoedi-Arabië</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>686</coun:code>
+		<coun:alpha2>SN</coun:alpha2>
+		<coun:alpha3>SEN</coun:alpha3>
+		<coun:name lang="cs">Senegal</coun:name>
+		<coun:name lang="de">Senegal</coun:name>
+		<coun:name lang="en">Senegal</coun:name>
+		<coun:name lang="es">Senegal</coun:name>
+		<coun:name lang="fr">Sénégal</coun:name>
+		<coun:name lang="it">Senegal</coun:name>
+		<coun:name lang="nl">Senegal</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>690</coun:code>
+		<coun:alpha2>SC</coun:alpha2>
+		<coun:alpha3>SYC</coun:alpha3>
+		<coun:name lang="cs">Seychely</coun:name>
+		<coun:name lang="de">Seychellen</coun:name>
+		<coun:name lang="en">Seychelles</coun:name>
+		<coun:name lang="es">Seychelles</coun:name>
+		<coun:name lang="fr">Seychelles</coun:name>
+		<coun:name lang="it">Seychelles</coun:name>
+		<coun:name lang="nl">Seychellen</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>694</coun:code>
+		<coun:alpha2>SL</coun:alpha2>
+		<coun:alpha3>SLE</coun:alpha3>
+		<coun:name lang="cs">Sierra Leone</coun:name>
+		<coun:name lang="de">Sierra Leone</coun:name>
+		<coun:name lang="en">Sierra Leone</coun:name>
+		<coun:name lang="es">Sierra Leona</coun:name>
+		<coun:name lang="fr">Sierra Leone</coun:name>
+		<coun:name lang="it">Sierra Leone</coun:name>
+		<coun:name lang="nl">Sierra Leone</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>702</coun:code>
+		<coun:alpha2>SG</coun:alpha2>
+		<coun:alpha3>SGP</coun:alpha3>
+		<coun:name lang="cs">Singapur</coun:name>
+		<coun:name lang="de">Singapur</coun:name>
+		<coun:name lang="en">Singapore</coun:name>
+		<coun:name lang="es">Singapur</coun:name>
+		<coun:name lang="fr">Singapour</coun:name>
+		<coun:name lang="it">Singapore</coun:name>
+		<coun:name lang="nl">Singapore</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>703</coun:code>
+		<coun:alpha2>SK</coun:alpha2>
+		<coun:alpha3>SVK</coun:alpha3>
+		<coun:name lang="cs">Slovensko</coun:name>
+		<coun:name lang="de">Slowakei</coun:name>
+		<coun:name lang="en">Slovakia</coun:name>
+		<coun:name lang="es">Eslovaquia</coun:name>
+		<coun:name lang="fr">Slovaquie</coun:name>
+		<coun:name lang="it">Slovacchia</coun:name>
+		<coun:name lang="nl">Slowakije</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>704</coun:code>
+		<coun:alpha2>VN</coun:alpha2>
+		<coun:alpha3>VNM</coun:alpha3>
+		<coun:name lang="cs">Vietnam</coun:name>
+		<coun:name lang="de">Vietnam</coun:name>
+		<coun:name lang="en">Vietnam</coun:name>
+		<coun:name lang="es">Vietnam</coun:name>
+		<coun:name lang="fr">Viet Nam</coun:name>
+		<coun:name lang="it">Vietnam</coun:name>
+		<coun:name lang="nl">Vietnam</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>705</coun:code>
+		<coun:alpha2>SI</coun:alpha2>
+		<coun:alpha3>SVN</coun:alpha3>
+		<coun:name lang="cs">Slovinsko</coun:name>
+		<coun:name lang="de">Slowenien</coun:name>
+		<coun:name lang="en">Slovenia</coun:name>
+		<coun:name lang="es">Eslovenia</coun:name>
+		<coun:name lang="fr">Slovénie</coun:name>
+		<coun:name lang="it">Slovenia</coun:name>
+		<coun:name lang="nl">Slovenië</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>706</coun:code>
+		<coun:alpha2>SO</coun:alpha2>
+		<coun:alpha3>SOM</coun:alpha3>
+		<coun:name lang="cs">Somálsko</coun:name>
+		<coun:name lang="de">Somalia</coun:name>
+		<coun:name lang="en">Somalia</coun:name>
+		<coun:name lang="es">Somalia</coun:name>
+		<coun:name lang="fr">Somalie</coun:name>
+		<coun:name lang="it">Somalia</coun:name>
+		<coun:name lang="nl">Somalië</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>710</coun:code>
+		<coun:alpha2>ZA</coun:alpha2>
+		<coun:alpha3>ZAF</coun:alpha3>
+		<coun:name lang="cs">Jižní Afrika</coun:name>
+		<coun:name lang="de">Südafrika</coun:name>
+		<coun:name lang="en">South Africa</coun:name>
+		<coun:name lang="es">Sudáfrica</coun:name>
+		<coun:name lang="fr">Afrique du Sud</coun:name>
+		<coun:name lang="it">Sud Africa</coun:name>
+		<coun:name lang="nl">Zuid-Afrika</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>716</coun:code>
+		<coun:alpha2>ZW</coun:alpha2>
+		<coun:alpha3>ZWE</coun:alpha3>
+		<coun:name lang="cs">Zimbabwe</coun:name>
+		<coun:name lang="de">Simbabwe</coun:name>
+		<coun:name lang="en">Zimbabwe</coun:name>
+		<coun:name lang="es">Zimbabue</coun:name>
+		<coun:name lang="fr">Zimbabwe</coun:name>
+		<coun:name lang="it">Zimbabwe</coun:name>
+		<coun:name lang="nl">Zimbabwe</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>724</coun:code>
+		<coun:alpha2>ES</coun:alpha2>
+		<coun:alpha3>ESP</coun:alpha3>
+		<coun:name lang="cs">Španělsko</coun:name>
+		<coun:name lang="de">Spanien</coun:name>
+		<coun:name lang="en">Spain</coun:name>
+		<coun:name lang="es">España</coun:name>
+		<coun:name lang="fr">Espagne</coun:name>
+		<coun:name lang="it">Spagna</coun:name>
+		<coun:name lang="nl">Spanje</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>732</coun:code>
+		<coun:alpha2>EH</coun:alpha2>
+		<coun:alpha3>ESH</coun:alpha3>
+		<coun:name lang="cs">Západní Sahara</coun:name>
+		<coun:name lang="de">Westsahara</coun:name>
+		<coun:name lang="en">Western Sahara</coun:name>
+		<coun:name lang="es">Sáhara Occidental</coun:name>
+		<coun:name lang="fr">Sahara Occidental</coun:name>
+		<coun:name lang="it">Sahara Occidentale</coun:name>
+		<coun:name lang="nl">Westelijke Sahara</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>736</coun:code>
+		<coun:alpha2>SD</coun:alpha2>
+		<coun:alpha3>SDN</coun:alpha3>
+		<coun:name lang="cs">Súdán</coun:name>
+		<coun:name lang="de">Sudan</coun:name>
+		<coun:name lang="en">Sudan</coun:name>
+		<coun:name lang="es">Sudán</coun:name>
+		<coun:name lang="fr">Soudan</coun:name>
+		<coun:name lang="it">Sudan</coun:name>
+		<coun:name lang="nl">Sudan</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>740</coun:code>
+		<coun:alpha2>SR</coun:alpha2>
+		<coun:alpha3>SUR</coun:alpha3>
+		<coun:name lang="cs">Surinam</coun:name>
+		<coun:name lang="de">Suriname</coun:name>
+		<coun:name lang="en">Suriname</coun:name>
+		<coun:name lang="es">Surinám</coun:name>
+		<coun:name lang="fr">Suriname</coun:name>
+		<coun:name lang="it">Suriname</coun:name>
+		<coun:name lang="nl">Suriname</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>744</coun:code>
+		<coun:alpha2>SJ</coun:alpha2>
+		<coun:alpha3>SJM</coun:alpha3>
+		<coun:name lang="cs">Špicberky a Jan Mayen</coun:name>
+		<coun:name lang="de">Svalbard and Jan Mayen</coun:name>
+		<coun:name lang="en">Svalbard and Jan Mayen</coun:name>
+		<coun:name lang="es">Esvalbard y Jan Mayen</coun:name>
+		<coun:name lang="fr">Svalbard et Île Jan Mayen</coun:name>
+		<coun:name lang="it">Svalbard e Jan Mayen</coun:name>
+		<coun:name lang="nl">Svalbard</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>748</coun:code>
+		<coun:alpha2>SZ</coun:alpha2>
+		<coun:alpha3>SWZ</coun:alpha3>
+		<coun:name lang="cs">Svazijsko</coun:name>
+		<coun:name lang="de">Swasiland</coun:name>
+		<coun:name lang="en">Swaziland</coun:name>
+		<coun:name lang="es">Suazilandia</coun:name>
+		<coun:name lang="fr">Swaziland</coun:name>
+		<coun:name lang="it">Swaziland</coun:name>
+		<coun:name lang="nl">Swaziland</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>752</coun:code>
+		<coun:alpha2>SE</coun:alpha2>
+		<coun:alpha3>SWE</coun:alpha3>
+		<coun:name lang="cs">Švédsko</coun:name>
+		<coun:name lang="de">Schweden</coun:name>
+		<coun:name lang="en">Sweden</coun:name>
+		<coun:name lang="es">Suecia</coun:name>
+		<coun:name lang="fr">Suède</coun:name>
+		<coun:name lang="it">Svezia</coun:name>
+		<coun:name lang="nl">Zweden</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>756</coun:code>
+		<coun:alpha2>CH</coun:alpha2>
+		<coun:alpha3>CHE</coun:alpha3>
+		<coun:name lang="cs">Švýcarsko</coun:name>
+		<coun:name lang="de">Schweiz</coun:name>
+		<coun:name lang="en">Switzerland</coun:name>
+		<coun:name lang="es">Suiza</coun:name>
+		<coun:name lang="fr">Suisse</coun:name>
+		<coun:name lang="it">Svizzera</coun:name>
+		<coun:name lang="nl">Zwitserland</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>760</coun:code>
+		<coun:alpha2>SY</coun:alpha2>
+		<coun:alpha3>SYR</coun:alpha3>
+		<coun:name lang="cs">Sýrie</coun:name>
+		<coun:name lang="de">Arabische Republik Syrien</coun:name>
+		<coun:name lang="en">Syrian Arab Republic</coun:name>
+		<coun:name lang="es">Siria</coun:name>
+		<coun:name lang="fr">République Arabe Syrienne</coun:name>
+		<coun:name lang="it">Siria</coun:name>
+		<coun:name lang="nl">Syrië</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>762</coun:code>
+		<coun:alpha2>TJ</coun:alpha2>
+		<coun:alpha3>TJK</coun:alpha3>
+		<coun:name lang="cs">Tadžikistán</coun:name>
+		<coun:name lang="de">Tadschikistan</coun:name>
+		<coun:name lang="en">Tajikistan</coun:name>
+		<coun:name lang="es">Tajikistán</coun:name>
+		<coun:name lang="fr">Tadjikistan</coun:name>
+		<coun:name lang="it">Tagikistan</coun:name>
+		<coun:name lang="nl">Tadzjikistan</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>764</coun:code>
+		<coun:alpha2>TH</coun:alpha2>
+		<coun:alpha3>THA</coun:alpha3>
+		<coun:name lang="cs">Thajsko</coun:name>
+		<coun:name lang="de">Thailand</coun:name>
+		<coun:name lang="en">Thailand</coun:name>
+		<coun:name lang="es">Tailandia</coun:name>
+		<coun:name lang="fr">Thaïlande</coun:name>
+		<coun:name lang="it">Tailandia</coun:name>
+		<coun:name lang="nl">Thailand</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>768</coun:code>
+		<coun:alpha2>TG</coun:alpha2>
+		<coun:alpha3>TGO</coun:alpha3>
+		<coun:name lang="cs">Togo</coun:name>
+		<coun:name lang="de">Togo</coun:name>
+		<coun:name lang="en">Togo</coun:name>
+		<coun:name lang="es">Togo</coun:name>
+		<coun:name lang="fr">Togo</coun:name>
+		<coun:name lang="it">Togo</coun:name>
+		<coun:name lang="nl">Togo</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>772</coun:code>
+		<coun:alpha2>TK</coun:alpha2>
+		<coun:alpha3>TKL</coun:alpha3>
+		<coun:name lang="cs">Tokelau</coun:name>
+		<coun:name lang="de">Tokelau</coun:name>
+		<coun:name lang="en">Tokelau</coun:name>
+		<coun:name lang="es">Tokelau</coun:name>
+		<coun:name lang="fr">Tokelau</coun:name>
+		<coun:name lang="it">Tokelau</coun:name>
+		<coun:name lang="nl">Tokelau -eilanden</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>776</coun:code>
+		<coun:alpha2>TO</coun:alpha2>
+		<coun:alpha3>TON</coun:alpha3>
+		<coun:name lang="cs">Tonga</coun:name>
+		<coun:name lang="de">Tonga</coun:name>
+		<coun:name lang="en">Tonga</coun:name>
+		<coun:name lang="es">Tongo</coun:name>
+		<coun:name lang="fr">Tonga</coun:name>
+		<coun:name lang="it">Tonga</coun:name>
+		<coun:name lang="nl">Tonga</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>780</coun:code>
+		<coun:alpha2>TT</coun:alpha2>
+		<coun:alpha3>TTO</coun:alpha3>
+		<coun:name lang="cs">Trinidad a Tobago</coun:name>
+		<coun:name lang="de">Trinidad und Tobago</coun:name>
+		<coun:name lang="en">Trinidad and Tobago</coun:name>
+		<coun:name lang="es">Trinidad y Tobago</coun:name>
+		<coun:name lang="fr">Trinité-et-Tobago</coun:name>
+		<coun:name lang="it">Trinidad e Tobago</coun:name>
+		<coun:name lang="nl">Trinidad en Tobago</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>784</coun:code>
+		<coun:alpha2>AE</coun:alpha2>
+		<coun:alpha3>ARE</coun:alpha3>
+		<coun:name lang="cs">Spojené Arabské Emiráty</coun:name>
+		<coun:name lang="de">Vereinigte Arabische Emirate</coun:name>
+		<coun:name lang="en">United Arab Emirates</coun:name>
+		<coun:name lang="es">Emiratos Árabes Unidos</coun:name>
+		<coun:name lang="fr">Émirats Arabes Unis</coun:name>
+		<coun:name lang="it">Emirati Arabi Uniti</coun:name>
+		<coun:name lang="nl">Verenigde Arabische Emiraten</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>788</coun:code>
+		<coun:alpha2>TN</coun:alpha2>
+		<coun:alpha3>TUN</coun:alpha3>
+		<coun:name lang="cs">Tunisko</coun:name>
+		<coun:name lang="de">Tunesien</coun:name>
+		<coun:name lang="en">Tunisia</coun:name>
+		<coun:name lang="es">Túnez</coun:name>
+		<coun:name lang="fr">Tunisie</coun:name>
+		<coun:name lang="it">Tunisia</coun:name>
+		<coun:name lang="nl">Tunesië</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>792</coun:code>
+		<coun:alpha2>TR</coun:alpha2>
+		<coun:alpha3>TUR</coun:alpha3>
+		<coun:name lang="cs">Turecko</coun:name>
+		<coun:name lang="de">Türkei</coun:name>
+		<coun:name lang="en">Turkey</coun:name>
+		<coun:name lang="es">Turquía</coun:name>
+		<coun:name lang="fr">Turquie</coun:name>
+		<coun:name lang="it">Turchia</coun:name>
+		<coun:name lang="nl">Turkije</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>795</coun:code>
+		<coun:alpha2>TM</coun:alpha2>
+		<coun:alpha3>TKM</coun:alpha3>
+		<coun:name lang="cs">Turkmenistán</coun:name>
+		<coun:name lang="de">Turkmenistan</coun:name>
+		<coun:name lang="en">Turkmenistan</coun:name>
+		<coun:name lang="es">Turmenistán</coun:name>
+		<coun:name lang="fr">Turkménistan</coun:name>
+		<coun:name lang="it">Turkmenistan</coun:name>
+		<coun:name lang="nl">Turkmenistan</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>796</coun:code>
+		<coun:alpha2>TC</coun:alpha2>
+		<coun:alpha3>TCA</coun:alpha3>
+		<coun:name lang="cs">Turks a ostrovy Caicos</coun:name>
+		<coun:name lang="de">Turks- und Caicosinseln</coun:name>
+		<coun:name lang="en">Turks and Caicos Islands</coun:name>
+		<coun:name lang="es">Islas Turks y Caicos</coun:name>
+		<coun:name lang="fr">Îles Turks et Caïques</coun:name>
+		<coun:name lang="it">Isole Turks e Caicos</coun:name>
+		<coun:name lang="nl">Turks- en Caicoseilanden</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>798</coun:code>
+		<coun:alpha2>TV</coun:alpha2>
+		<coun:alpha3>TUV</coun:alpha3>
+		<coun:name lang="cs">Tuvalu</coun:name>
+		<coun:name lang="de">Tuvalu</coun:name>
+		<coun:name lang="en">Tuvalu</coun:name>
+		<coun:name lang="es">Tuvalu</coun:name>
+		<coun:name lang="fr">Tuvalu</coun:name>
+		<coun:name lang="it">Tuvalu</coun:name>
+		<coun:name lang="nl">Tuvalu</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>800</coun:code>
+		<coun:alpha2>UG</coun:alpha2>
+		<coun:alpha3>UGA</coun:alpha3>
+		<coun:name lang="cs">Uganda</coun:name>
+		<coun:name lang="de">Uganda</coun:name>
+		<coun:name lang="en">Uganda</coun:name>
+		<coun:name lang="es">Uganda</coun:name>
+		<coun:name lang="fr">Ouganda</coun:name>
+		<coun:name lang="it">Uganda</coun:name>
+		<coun:name lang="nl">Oeganda</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>804</coun:code>
+		<coun:alpha2>UA</coun:alpha2>
+		<coun:alpha3>UKR</coun:alpha3>
+		<coun:name lang="cs">Ukrajina</coun:name>
+		<coun:name lang="de">Ukraine</coun:name>
+		<coun:name lang="en">Ukraine</coun:name>
+		<coun:name lang="es">Ucrania</coun:name>
+		<coun:name lang="fr">Ukraine</coun:name>
+		<coun:name lang="it">Ucraina</coun:name>
+		<coun:name lang="nl">Oekraïne</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>807</coun:code>
+		<coun:alpha2>MK</coun:alpha2>
+		<coun:alpha3>MKD</coun:alpha3>
+		<coun:name lang="cs">Makedonie</coun:name>
+		<coun:name lang="de">Ehem. jugoslawische Republik Mazedonien</coun:name>
+		<coun:name lang="en">The Former Yugoslav Republic of Macedonia</coun:name>
+		<coun:name lang="es">Macedonia</coun:name>
+		<coun:name lang="fr">L'ex-République Yougoslave de Macédoine</coun:name>
+		<coun:name lang="it">Macedonia</coun:name>
+		<coun:name lang="nl">Macedonië</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>818</coun:code>
+		<coun:alpha2>EG</coun:alpha2>
+		<coun:alpha3>EGY</coun:alpha3>
+		<coun:name lang="cs">Egypt</coun:name>
+		<coun:name lang="de">Ägypten</coun:name>
+		<coun:name lang="en">Egypt</coun:name>
+		<coun:name lang="es">Egipto</coun:name>
+		<coun:name lang="fr">Égypte</coun:name>
+		<coun:name lang="it">Egitto</coun:name>
+		<coun:name lang="nl">Egypte</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>826</coun:code>
+		<coun:alpha2>GB</coun:alpha2>
+		<coun:alpha3>GBR</coun:alpha3>
+		<coun:name lang="cs">Velká Británie</coun:name>
+		<coun:name lang="de">Vereinigtes Königreich von Großbritannien und Nordirland</coun:name>
+		<coun:name lang="en">United Kingdom</coun:name>
+		<coun:name lang="es">Reino Unido</coun:name>
+		<coun:name lang="fr">Royaume-Uni</coun:name>
+		<coun:name lang="it">Regno Unito</coun:name>
+		<coun:name lang="nl">Verenigd Koninkrijk</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>833</coun:code>
+		<coun:alpha2>IM</coun:alpha2>
+		<coun:alpha3>IMN</coun:alpha3>
+		<coun:name lang="cs">Ostrov Man</coun:name>
+		<coun:name lang="de">Insel Man</coun:name>
+		<coun:name lang="en">Isle of Man</coun:name>
+		<coun:name lang="es">Isla de Man</coun:name>
+		<coun:name lang="fr">Île de Man</coun:name>
+		<coun:name lang="it">Isola di Man</coun:name>
+		<coun:name lang="nl">Eiland Man</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>834</coun:code>
+		<coun:alpha2>TZ</coun:alpha2>
+		<coun:alpha3>TZA</coun:alpha3>
+		<coun:name lang="cs">Tanzánie</coun:name>
+		<coun:name lang="de">Vereinigte Republik Tansania</coun:name>
+		<coun:name lang="en">United Republic Of Tanzania</coun:name>
+		<coun:name lang="es">Tanzania</coun:name>
+		<coun:name lang="fr">République-Unie de Tanzanie</coun:name>
+		<coun:name lang="it">Tanzania</coun:name>
+		<coun:name lang="nl">Tanzania</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>840</coun:code>
+		<coun:alpha2>US</coun:alpha2>
+		<coun:alpha3>USA</coun:alpha3>
+		<coun:name lang="cs">USA</coun:name>
+		<coun:name lang="de">Vereinigte Staaten von Amerika</coun:name>
+		<coun:name lang="en">United States</coun:name>
+		<coun:name lang="es">Estados Unidos</coun:name>
+		<coun:name lang="fr">États-Unis</coun:name>
+		<coun:name lang="it">Stati Uniti d'America</coun:name>
+		<coun:name lang="nl">Verenigde Staten</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>850</coun:code>
+		<coun:alpha2>VI</coun:alpha2>
+		<coun:alpha3>VIR</coun:alpha3>
+		<coun:name lang="cs">Americké Panenské ostrovy</coun:name>
+		<coun:name lang="de">Amerikanische Jungferninseln</coun:name>
+		<coun:name lang="en">U.S. Virgin Islands</coun:name>
+		<coun:name lang="es">Islas Vírgenes Estadounidenses</coun:name>
+		<coun:name lang="fr">Îles Vierges des États-Unis</coun:name>
+		<coun:name lang="it">Isole Vergini Americane</coun:name>
+		<coun:name lang="nl">Amerikaanse Maagdeneilanden</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>854</coun:code>
+		<coun:alpha2>BF</coun:alpha2>
+		<coun:alpha3>BFA</coun:alpha3>
+		<coun:name lang="cs">Burkina Faso</coun:name>
+		<coun:name lang="de">Burkina Faso</coun:name>
+		<coun:name lang="en">Burkina Faso</coun:name>
+		<coun:name lang="es">Burkina Faso</coun:name>
+		<coun:name lang="fr">Burkina Faso</coun:name>
+		<coun:name lang="it">Burkina Faso</coun:name>
+		<coun:name lang="nl">Burkina Faso</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>858</coun:code>
+		<coun:alpha2>UY</coun:alpha2>
+		<coun:alpha3>URY</coun:alpha3>
+		<coun:name lang="cs">Uruguay</coun:name>
+		<coun:name lang="de">Uruguay</coun:name>
+		<coun:name lang="en">Uruguay</coun:name>
+		<coun:name lang="es">Uruguay</coun:name>
+		<coun:name lang="fr">Uruguay</coun:name>
+		<coun:name lang="it">Uruguay</coun:name>
+		<coun:name lang="nl">Uruguay</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>860</coun:code>
+		<coun:alpha2>UZ</coun:alpha2>
+		<coun:alpha3>UZB</coun:alpha3>
+		<coun:name lang="cs">Uzbekistán</coun:name>
+		<coun:name lang="de">Usbekistan</coun:name>
+		<coun:name lang="en">Uzbekistan</coun:name>
+		<coun:name lang="es">Uzbekistán</coun:name>
+		<coun:name lang="fr">Ouzbékistan</coun:name>
+		<coun:name lang="it">Uzbekistan</coun:name>
+		<coun:name lang="nl">Oezbekistan</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>862</coun:code>
+		<coun:alpha2>VE</coun:alpha2>
+		<coun:alpha3>VEN</coun:alpha3>
+		<coun:name lang="cs">Venezuela</coun:name>
+		<coun:name lang="de">Venezuela</coun:name>
+		<coun:name lang="en">Venezuela</coun:name>
+		<coun:name lang="es">Venezuela</coun:name>
+		<coun:name lang="fr">Venezuela</coun:name>
+		<coun:name lang="it">Venezuela</coun:name>
+		<coun:name lang="nl">Venezuela</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>876</coun:code>
+		<coun:alpha2>WF</coun:alpha2>
+		<coun:alpha3>WLF</coun:alpha3>
+		<coun:name lang="cs">Wallis a Futuna</coun:name>
+		<coun:name lang="de">Wallis und Futuna</coun:name>
+		<coun:name lang="en">Wallis and Futuna</coun:name>
+		<coun:name lang="es">Wallis y Futuna</coun:name>
+		<coun:name lang="fr">Wallis et Futuna</coun:name>
+		<coun:name lang="it">Wallis e Futuna</coun:name>
+		<coun:name lang="nl">Wallis en Futuna</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>882</coun:code>
+		<coun:alpha2>WS</coun:alpha2>
+		<coun:alpha3>WSM</coun:alpha3>
+		<coun:name lang="cs">Samoa</coun:name>
+		<coun:name lang="de">Samoa</coun:name>
+		<coun:name lang="en">Samoa</coun:name>
+		<coun:name lang="es">Samoa</coun:name>
+		<coun:name lang="fr">Samoa</coun:name>
+		<coun:name lang="it">Samoa</coun:name>
+		<coun:name lang="nl">Samoa</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>887</coun:code>
+		<coun:alpha2>YE</coun:alpha2>
+		<coun:alpha3>YEM</coun:alpha3>
+		<coun:name lang="cs">Jemen</coun:name>
+		<coun:name lang="de">Jemen</coun:name>
+		<coun:name lang="en">Yemen</coun:name>
+		<coun:name lang="es">Yemen</coun:name>
+		<coun:name lang="fr">Yémen</coun:name>
+		<coun:name lang="it">Yemen</coun:name>
+		<coun:name lang="nl">Jemen</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>891</coun:code>
+		<coun:alpha2>CS</coun:alpha2>
+		<coun:alpha3>SCG</coun:alpha3>
+		<coun:name lang="cs">Serbia and Montenegro</coun:name>
+		<coun:name lang="de">Serbien und Montenegro</coun:name>
+		<coun:name lang="en">Serbia and Montenegro</coun:name>
+		<coun:name lang="es">Serbia y Montenegro</coun:name>
+		<coun:name lang="fr">Serbie-et-Monténégro</coun:name>
+		<coun:name lang="it">Serbia e Montenegro</coun:name>
+		<coun:name lang="nl">Servië en Montenegro</coun:name>
+	</coun:country>
+	<coun:country>
+		<coun:code>894</coun:code>
+		<coun:alpha2>ZM</coun:alpha2>
+		<coun:alpha3>ZMB</coun:alpha3>
+		<coun:name lang="cs">Zambie</coun:name>
+		<coun:name lang="de">Sambia</coun:name>
+		<coun:name lang="en">Zambia</coun:name>
+		<coun:name lang="es">Zambia</coun:name>
+		<coun:name lang="fr">Zambie</coun:name>
+		<coun:name lang="it">Zambia</coun:name>
+		<coun:name lang="nl">Zambia</coun:name>
+	</coun:country>
+</coun:countries>

@@ -11,6 +11,14 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+Defines models 
+:class:`Language`,
+:class:`Country` and
+:class:`City`.
+
+"""
+
 
 import datetime
 from django.db import models
@@ -19,7 +27,8 @@ from lino import reports
 from django.utils.translation import ugettext as _
 
 from lino.utils.choosers import chooser
-from lino.utils.babel import add_babel_field, babelattr
+#~ from lino.utils.babel import add_babel_field, babelattr
+from lino.utils import babel 
 from lino.utils import dblogger
 
 
@@ -28,13 +37,14 @@ class Language(models.Model):
         verbose_name = _("Language")
         verbose_name_plural = _("Languages")
     id = models.CharField(max_length=3,primary_key=True)
-    name = models.CharField(max_length=200,verbose_name=_("Designation"))
+    name = babel.BabelCharField(max_length=200,verbose_name=_("Designation"))
+    #~ name = models.CharField(max_length=200,verbose_name=_("Designation"))
     iso2 = models.CharField(max_length=2,blank=True,null=True)
     
     def __unicode__(self):
-        return babelattr(self,'name')
+        return babel.babelattr(self,'name')
 
-add_babel_field(Language,'name')
+#~ add_babel_field(Language,'name')
 
 class Languages(reports.Report):
     model = Language
@@ -52,15 +62,16 @@ class Country(models.Model):
         verbose_name_plural = _("countries")
         
     isocode = models.CharField(max_length=4,primary_key=True)
-    name = models.CharField(max_length=200)
+    #~ name = models.CharField(max_length=200)
+    name = babel.BabelCharField(max_length=200,verbose_name=_("Designation"))
     short_code = models.CharField(max_length=4,blank=True)
     iso3 = models.CharField(max_length=3,blank=True)
     
     def __unicode__(self):
-        return babelattr(self,'name')
+        return babel.babelattr(self,'name')
         #~ return self.name
 
-add_babel_field(Country,'name')
+#~ add_babel_field(Country,'name')
         
 class Countries(reports.Report):
     #~ label = _("Countries")
