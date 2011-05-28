@@ -201,28 +201,3 @@ Removed `DeprecationWarning`:
 Checkin
 
 
-Customizable format of text fields
-----------------------------------
-
-There are currently at least two kinds of text fields: plain and formatted. 
-And there was no way to locally customize this.
-And "formatted" means currently 'html', but there me be more choices in the future.
-I finally had a vision about how to make this configurable.
-
-New global option :attr:`lino.apps.std.settings.Lino.textfield_format`
-
-- :mod:`lino.fields`: class HtmlTextField renamed to :class:`lino.fields.RichTextField`
-- :mod:`lino.ui.extjs3.ext_elems` : Merged class HtmlTextFieldElement into TextFieldElement.
-
-Converted text fields that were declared as fields.HtmlTextField to models.TextField.
-
-
-Emulate another user
---------------------
-
-New URL parameter "euser" ("emulate user") is practical for testing.
-
-.. todo::
-
-  Think about how to configure accessibility of this feature.
-  `lino.ui.requests.URL_PARAM_EUSER`

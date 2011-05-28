@@ -1,5 +1,53 @@
 20110528
 ========
 
-Started the first Lino tutorial: 
-:doc:`/admin/dpytut1`
+
+The first Lino tutorial
+-----------------------
+
+This morning I woke up with an idea for the first Lino tutorial: 
+:doc:`/admin/dpytutorial`
+
+Customizable format of text fields
+----------------------------------
+
+There are currently at least two big usage profiles for text fields: 
+plain and formatted.
+
+To get a formatted text field, you needed to declare it 
+`fields.HtmlTextField` instead of `models.TextField`.
+
+Not bad, but there was no way to locally customize whether a 
+text field is formatted or not.
+And "formatted" means currently 'html', but there me be more choices in the future.
+I finally had a vision about how to make this configurable:
+
+New global option :attr:`lino.apps.std.settings.Lino.textfield_format`
+
+- :mod:`lino.fields`: class HtmlTextField renamed to :class:`lino.fields.RichTextField`
+- :mod:`lino.ui.extjs3.ext_elems` : Merged class HtmlTextFieldElement into TextFieldElement.
+
+notes.Note.body as well as the text fields in dsbe.Contract 
+now use this new feature.
+
+
+Emulate another user
+--------------------
+
+The superuser can now emulate requests of other users.
+Practical for testing.
+Currently you need to manually edit the URL address, 
+adding ``?euser=foo`` (or ``&euser=foo``)
+
+So there is a wew URL parameter "euser" 
+(`lino.ui.requests.URL_PARAM_EUSER`) 
+which is added to the list of forbidden field names.
+
+Miscellaneous
+-------------
+
+- Removed virtual field Note.body_html because it is no longer needed.
+- Fixed a bug when a previously saved GC was invalid and validate() returned must_save
+
+`Check-in
+<http://code.google.com/p/lino/source/detail?r=b69b54cbb6e36a012b4cefb71a5bf0b16c57f053>`_
