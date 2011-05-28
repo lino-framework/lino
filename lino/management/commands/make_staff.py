@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2009-2010 Luc Saffre
+## Copyright 2009-2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -11,6 +11,10 @@
 ## GNU General Public License for more details.
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+"""
+Print a list of users and optionally set the `is_staff` 
+attribute for some of them.
+"""
 
 from django.conf import settings
 from django.core.management import call_command

@@ -139,18 +139,20 @@ non-ascii bytestring.
 Here the tests I wrote in order to understand it.
 
 .. literalinclude:: 0527.py
-   :linenos:
    :language: python
+   :linenos:
    
 Output::
 
   WARNING:root:ðóð░ÐéÐîÐÅð¢ð░
   WARNING:root:'ðóð░ÐéÐîÐÅð¢ð░' is an invalid string value
+  --- (Log a traceback of the exception):
   ERROR:root:'ðóð░ÐéÐîÐÅð¢ð░' is an invalid string value
   Traceback (most recent call last):
     File "0527.py", line 11, in <module>
       raise Exception(utf8_string)
   Exception: 'ðóð░ÐéÐîÐÅð¢ð░' is an invalid string value
+  --- Everything okay until here, but now we run into trouble:
   Traceback (most recent call last):
     File "c:\Python27\lib\logging\__init__.py", line 843, in emit
       msg = self.format(record)
@@ -161,7 +163,7 @@ Output::
     File "c:\Python27\lib\logging\__init__.py", line 329, in getMessage
       msg = msg % self.args
   UnicodeDecodeError: 'ascii' codec can't decode byte 0xd0 in position 1: ordinal not in range(128)
-  Logged from file 0527.py, line 17
+  Logged from file 0527.py, line 18
   Traceback (most recent call last):
     File "c:\Python27\lib\logging\__init__.py", line 843, in emit
       msg = self.format(record)
@@ -173,9 +175,9 @@ Output::
       msg = msg % self.args
   UnicodeDecodeError: 'ascii' codec can't decode byte 0xd0 in position 1: ordinal not in range(128)
   Logged from file 0527.py, line 19
+  --- some workarounds:
   WARNING:root:3 Deferred ðóð░ÐéÐîÐÅð¢ð░ : 'ðóð░ÐéÐîÐÅð¢ð░' is an invalid string value
   WARNING:root:4 Deferred ðóð░ÐéÐîÐÅð¢ð░ : 'ðóð░ÐéÐîÐÅð¢ð░' is an invalid string value
-  WARNING:root:5 Deferred ðóð░ÐéÐîÐÅð¢ð░ : 'ðóð░ÐéÐîÐÅð¢ð░' is an invalid string value
 
 I would summarize my lesson on this topic:
 
@@ -196,3 +198,31 @@ Removed warning due to deprecated `reset` management command
 Removed `DeprecationWarning`: 
 :mod:`lino.management.commands.initdb` now calls flush instead of reset followed by initdb 
 
+Checkin
+
+
+Customizable format of text fields
+----------------------------------
+
+There are currently at least two kinds of text fields: plain and formatted. 
+And there was no way to locally customize this.
+And "formatted" means currently 'html', but there me be more choices in the future.
+I finally had a vision about how to make this configurable.
+
+New global option :attr:`lino.apps.std.settings.Lino.textfield_format`
+
+- :mod:`lino.fields`: class HtmlTextField renamed to :class:`lino.fields.RichTextField`
+- :mod:`lino.ui.extjs3.ext_elems` : Merged class HtmlTextFieldElement into TextFieldElement.
+
+Converted text fields that were declared as fields.HtmlTextField to models.TextField.
+
+
+Emulate another user
+--------------------
+
+New URL parameter "euser" ("emulate user") is practical for testing.
+
+.. todo::
+
+  Think about how to configure accessibility of this feature.
+  `lino.ui.requests.URL_PARAM_EUSER`

@@ -33,7 +33,7 @@ class Lino(object):
     
     Lino classes are defined and instantiated in Django settings files.
     
-    This class is first defined in :mod:`lino.demos.std.settings`,
+    This class is first defined in :mod:`lino.apps.std.settings`,
     then subclassed by :mod:`lino.apps.myapp.settings`
     which is probably subclassed by your local :xfile:`settings.py`
     
@@ -45,7 +45,36 @@ class Lino(object):
     domain = "www.example.com"
     
     use_awesome_uploader = False
+    """
+    Whether to use AwesomeUploader. 
+    This feature was experimental and doesn't yet work (and maybe never will).
+    """
     
+    textfield_format = 'plain'
+    """
+    The default format for text fields. 
+    Valid choices are currently 'plain' and 'html'.
+    
+    Text fields are either Django's `models.TextField` 
+    or :class:`lino.fields.RichTextField`.
+    
+    You'll probably better leave the global option as 'plain', 
+    and specify explicitly the fields you want as html by declaring 
+    them::
+    
+      foo = fields.RichTextField(...,format='html')
+    
+    We even recommend that you declare your plain text fields using 
+    `fields.RichTextField` and not `models.TextField`::
+    
+      foo = fields.RichTextField()
+    
+    Because that gives subclasses of your application the possibility to 
+    make that specific field html-formatted::
+    
+       resolve_field('Bar.foo').set_format('html')
+       
+    """
     
     use_tinymce = True
     """
@@ -56,7 +85,8 @@ class Lino(object):
     use_vinylfox = False
     """
     Whether to use VinylFox extensions for HtmlEditor. 
-    See :doc:`/blog/2011/0523`
+    This feature was experimental and doesn't yet work (and maybe never will).
+    See :doc:`/blog/2011/0523`.
     """
     
     
@@ -145,10 +175,7 @@ class Lino(object):
         self.config = sc
         
     def setup(self):
-      
         from lino.core.kernel import setup_site
-        #~ from lino.site import setup_site
-
         setup_site(self)
 
         
@@ -201,6 +228,18 @@ class Lino(object):
         #~ m.add_item(url="/accounts/logout/",label="Logout",can_view=perms.is_authenticated)
         #m.add_item(system.Login(),can_view=perms.is_anonymous)
         #m.add_item(system.Logout(),can_view=perms.is_authenticated)
+        
+        
+    #~ def get_textfield_format(self,field):
+        #~ """
+        #~ Example::
+        
+          #~ if field.model.__name__ == 'Note':
+              #~ if field.name == 'body':
+                  #~ return 'tinymce'
+          
+        #~ """
+        #~ return 'plain'
         
     def setup_dblogger(self,logger):
         """

@@ -12,6 +12,7 @@ Subpackages
 
     lino.ui.console
     lino.ui.extjs3
+    lino.ui.qx
 
 The :mod:`base` Module
 ----------------------

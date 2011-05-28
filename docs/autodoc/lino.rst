@@ -2,8 +2,10 @@ API
 ===
 
 This part of the Lino website is generated 
-from source code by Sphinx's `Autodoc <http://sphinx.pocoo.org/ext/autodoc.html>`_
+from source code by Sphinx's 
+`Autodoc <http://sphinx.pocoo.org/ext/autodoc.html>`_
 extension.
+
 
 :mod:`lino`
 -----------
@@ -11,7 +13,7 @@ extension.
 .. automodule:: lino
     :members:
     :show-inheritance:
-
+    
 
 
 Subpackages
@@ -20,6 +22,7 @@ Subpackages
 .. toctree::
 
     lino.apps
+    lino.management
     lino.reports
     lino.tools
     lino.fields

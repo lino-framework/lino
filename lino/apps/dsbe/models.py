@@ -1205,13 +1205,13 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,contact
     reference_person = models.CharField(_("reference person"),max_length=200,
         blank=True,null=True)
     
-    responsibilities = models.TextField(_("responsibilities"),blank=True,null=True)
+    responsibilities = fields.RichTextField(_("responsibilities"),blank=True,null=True)
     
-    stages = models.TextField(_("stages"),blank=True,null=True)
-    goals = models.TextField(_("goals"),blank=True,null=True)
-    duties_asd = models.TextField(_("duties ASD"),blank=True,null=True)
-    duties_dsbe = models.TextField(_("duties DSBE"),blank=True,null=True)
-    duties_company = models.TextField(_("duties company"),blank=True,null=True)
+    stages = fields.RichTextField(_("stages"),blank=True,null=True)
+    goals = fields.RichTextField(_("goals"),blank=True,null=True)
+    duties_asd = fields.RichTextField(_("duties ASD"),blank=True,null=True)
+    duties_dsbe = fields.RichTextField(_("duties DSBE"),blank=True,null=True)
+    duties_company = fields.RichTextField(_("duties company"),blank=True,null=True)
     
     user_asd = models.ForeignKey("users.User",verbose_name=_("responsible (ASD)"),
         related_name='contracts_asd',blank=True,null=True) 
@@ -1442,17 +1442,20 @@ NOTE_PRINTABLE_FIELDS = reports.fields_list(Note,
     
 class NotesByPerson(notes.Notes):
     fk_name = 'person'
-    column_names = "date type event_type subject body_html user company *"
+    #~ column_names = "date type event_type subject body_html user company *"
+    column_names = "date type event_type subject body user company *"
     order_by = ["date"]
   
 class NotesByCompany(notes.Notes):
     fk_name = 'company'
-    column_names = "date type event_type subject body_html user person *"
+    #~ column_names = "date type event_type subject body_html user person *"
+    column_names = "date type event_type subject body user person *"
     order_by = ["date"]
     
 class MyNotes(notes.MyNotes):
     #~ fk_name = 'user'
-    column_names = "date type event_type subject person company body_html *"
+    #~ column_names = "date type event_type subject person company body_html *"
+    column_names = "date type event_type subject person company body *"
     
   
 #

@@ -12,6 +12,12 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""Performs a database flush and loads the specified fixtures 
+for all applications.  
+It is is a combination of Djangos `flush` and `loaddata` commands.
+It also writes some log entries to your dblogger.
+"""
+
 import logging
 from optparse import make_option 
 
@@ -25,10 +31,7 @@ from lino.utils import *
 from lino.utils import dblogger
 
 class Command(BaseCommand):
-    help = """Performs a database flush and loads the 
-    specified fixtures for all applications.  
-    It is is a combination of the commands `flush` and `loaddata`.
-    """
+    help = __doc__
     
     args = "fixture [fixture ...]"
     

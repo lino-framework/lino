@@ -33,15 +33,6 @@ from lino.utils import choosers
 
 LANGUAGE_CHOICES = [ (k,_(v)) for k,v in settings.LANGUAGES ]
 
-
-#~ LANGUAGE_CHOICES = (
-  #~ ('en', _("English")),
-  #~ ('de', _("German")),
-  #~ ('fr', _("French")),
-  #~ ('nl', _("Dutch")),
-  #~ ('et', _("Estonian")),
-#~ )
-
 class LanguageField(models.CharField):
     def __init__(self, *args, **kw):
         defaults = dict(
@@ -52,36 +43,25 @@ class LanguageField(models.CharField):
         defaults.update(kw)
         models.CharField.__init__(self,*args, **defaults)
 
-#~ STRENGTH_CHOICES = (
-  #~ ('0' , _("certainly not")),     # bloß nicht
-  #~ ('1' , _("rather not")),        # eher nicht
-  #~ ('2' , _("normally")),          # 
-  #~ ('3' , _("quite much")),        # gerne
-  #~ ('4' , _("very much")),         # sehr gerne
-#~ )
-
-#~ KNOWLEDGE_CHOICES = (
-  #~ ('0', _("not at all")), # - gar nicht
-  #~ ('1', _("a bit")), #  - ein bisschen
-  #~ ('2', _("moderate")), #  - mittelmäßig
-  #~ ('3', _("quite well")), #  - gut
-  #~ ('4', _("very well")), #  - sehr gut
-#~ )
-
-#~ def knowledge_text(v):
-    #~ for k in KNOWLEDGE_CHOICES:
-        #~ if k[0] == v : return k[1]
-    #~ return None
     
-def unused_validate_knowledge(cls,value):
-    if value in KNOWLEDGE_CHOICES_VALID: return True
-    raise ValidationError(_("Invalid value %(value). Must be one of (%(values)s)") % 
-      dict(value=value,
-        values=', '.join(KNOWLEDGE_CHOICES_VALID)))
+#~ TEXT_FORMAT_PLAIN = 'plain'
+#~ TEXT_FORMAT_HTML = 'html'
+#~ TEXT_FORMAT_TINYMCE = 'tinymce'
+#~ TEXT_FORMAT_VINYLFOX = 'vinylfox'
     
-#~ class KnowledgeField(models.SmallIntegerField):
-class HtmlTextField(models.TextField):
-    pass
+
+class RichTextField(models.TextField):
+    """
+    Only difference with Django's `models.TextField` is that you can 
+    specify a keyword argument `format` to 
+    override the global :attr:`lino.apps.std.settings.Lino.textfield_format`.
+    """
+    def __init__(self,*args,**kw):
+        self.textfield_format = kw.pop('format',None)
+        models.TextField.__init__(self,*args,**kw)
+        
+    def set_format(self,fmt):
+        self.textfield_format = fmt
     
   
 class PercentageField(models.SmallIntegerField):

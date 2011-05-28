@@ -1245,12 +1245,12 @@ class GridConfig(Configured):
         self.data = data
         self.label_en = data.get('label')
         self.data.update(label=_(self.label_en))
+        super(GridConfig,self).__init__(*args,**kw)
         must_save = self.validate()
         if must_save:
             msg = self.save_config()
             #~ msg = self.save_grid_config()
             logger.debug(msg)
-        super(GridConfig,self).__init__(*args,**kw)
   
     def validate(self):
         """

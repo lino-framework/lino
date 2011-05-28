@@ -44,6 +44,11 @@ URL_PARAM_MASTER_PK = 'mk'
 The pk of the master instance.
 """
 
+URL_PARAM_EUSER = 'euser'
+"""
+emulate user
+"""
+
 # URL_PARAM_MASTER_GRID = 'mg'
 URL_PARAM_GRIDFILTER = 'filter'
 URL_PARAM_FILTER = 'query'
@@ -70,6 +75,7 @@ URL_PARAMS = [
   'URL_PARAM_LIMIT',
   'URL_PARAM_TAB',
   'URL_PARAM_EXPAND',
+  'URL_PARAM_EUSER',
   #~ 'TEST',
 ]
 
@@ -78,6 +84,9 @@ URL_PARAMS = [
 
 #~ FMT_RUN = 'act'
 #~ FMT_JSON = 'json'
+
+#~ User = reports.resolve_model('users.User')
+from lino.modlib.users.models import User
 
 def parse_boolean(v):
     if v in ('true','on'):
@@ -207,8 +216,15 @@ class ViewReportRequest(reports.ReportActionRequest):
             #~ kw.update(layout=int(layout))
             #~ kw.update(layout=rh.layouts[int(layout)])
             
-        kw.update(user=authenticated_user(request.user))
-        #~ kw.update(user=request.user)
+        user = authenticated_user(request.user)
+        if user is not None and user.is_superuser:
+            username = request.REQUEST.get(URL_PARAM_EUSER,None)
+            if username:
+                try:
+                    user = User.objects.get(username=username)
+                except User.DoesNotExist, e:
+                    pass
+        kw.update(user=user)
         
         """
         See :doc:`/2010/1222`

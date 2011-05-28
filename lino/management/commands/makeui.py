@@ -11,6 +11,9 @@
 ## GNU General Public License for more details.
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+"""
+Generate the local files for running :mod:`lino.ui.qx`.
+"""
 
 import logging
 logger = logging.getLogger(__name__)
@@ -55,8 +58,6 @@ def a2class(a):
     #~ return 'lino.%s' % a
     return 'lino.%s_%s_%s' % (a.actor.app_label,a.actor._actor_name,a.name)
     
-QXAPP_PATH = os.path.join(settings.QOOXDOO_PATH,'lino_apps',settings.LINO.project_name)    
-
 class Command(GeneratingCommand):
     help = """Writes files (.js, .html, .css) for this Site.
     """
@@ -65,6 +66,7 @@ class Command(GeneratingCommand):
         #~ options.update(output_dir=QXAPP_PATH)
         if args:
             print "Warning : ignored arguments", args
+        QXAPP_PATH = os.path.join(settings.QOOXDOO_PATH,'lino_apps',settings.LINO.project_name)    
         args = [QXAPP_PATH]
         super(Command,self).handle(*args, **options)
         

@@ -1,4 +1,4 @@
-#coding: UTF-8
+# -*- coding: UTF-8 -*-
 ## Copyright 2009-2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
@@ -35,6 +35,7 @@ EXT_CHAR_HEIGHT = 22
 
 #~ DEFAULT_GC_NAME = 'std'
 DEFAULT_GC_NAME = 0
+
 
 
 def a2btn(a):
@@ -436,7 +437,7 @@ class FieldElement(LayoutElement):
         return kw
     
         
-class TextFieldElement(FieldElement):
+class unused_TextFieldElement(FieldElement):
     #~ xtype = 'textarea'
     filter_type = 'string'
     vflex = True
@@ -447,7 +448,7 @@ class TextFieldElement(FieldElement):
     #~ preferred_height = 1
     #collapsible = True
     
-    def __init__(self,*args,**kw):
+    def __init__(self,lh,field,**kw):
         kw.update(
           growMax=2000,
           #~ defaultAutoCreate = dict(
@@ -455,41 +456,58 @@ class TextFieldElement(FieldElement):
             #~ autocomplete="off"
           #~ )
         )
-        FieldElement.__init__(self,*args,**kw)
+        FieldElement.__init__(self,lh,field,**kw)
 
-class HtmlTextFieldElement(TextFieldElement):
-    #~ pass
-    value_template = "new Ext.form.HtmlEditor(%s)"
-    #~ # xtype = 'htmleditor'
-    
-    def __init__(self,*args,**kw):
-        if settings.LINO.use_tinymce:
-            assert not settings.LINO.use_vinylfox
-            if False:
-                self.value_template = "new Ext.form.DisplayField(%s)"
+class TextFieldElement(FieldElement):
+    #~ xtype = 'textarea'
+    filter_type = 'string'
+    vflex = True
+    value_template = "new Ext.form.TextArea(%s)"
+    xtype = None
+    #width = 60
+    preferred_width = 60
+    #~ preferred_height = 1
+    #collapsible = True
+    def __init__(self,lh,field,**kw):
+        fmt = getattr(field,'textfield_format',None) or settings.LINO.textfield_format
+        if fmt == 'html':
+            if settings.LINO.use_tinymce:
+                if False:
+                    #~ self.value_template = "new Ext.form.DisplayField(%s)"
+                    self.value_template = "new Lino.HtmlTextPanel(%s)"
+                else:
+                    self.value_template = "new Ext.ux.TinyMCE(%s)"
+                    ts=dict(
+                      theme='advanced',
+                      plugins = "emotions,spellchecker,advhr,insertdatetime,preview", 
+                      #~ Theme options - button# indicated the row# only
+                      theme_advanced_buttons1 = "bold,italic,underline,|,justifyleft,justifycenter,justifyright,fontselect,fontsizeselect,formatselect,|,charmap",
+                      theme_advanced_buttons2 = "cut,copy,paste,|,bullist,numlist,|,outdent,indent,|,undo,redo,|,link,unlink,anchor,image,|,code,preview,|,forecolor,backcolor",
+                      #~ theme_advanced_buttons3 = "insertdate,inserttime,|,spellchecker,advhr,,removeformat,|,sub,sup,|,charmap,emotions",      
+                      theme_advanced_buttons3 = "",
+                      theme_advanced_toolbar_location = "top",
+                      theme_advanced_toolbar_align = "left",
+                      theme_advanced_statusbar_location = "bottom",
+                      theme_advanced_resizing = True
+                    )
+                    kw.update(tinymceSettings=ts)
             else:
-                self.value_template = "new Ext.ux.TinyMCE(%s)"
-                ts=dict(
-                  theme='advanced',
-                  plugins = "emotions,spellchecker,advhr,insertdatetime,preview", 
-                  #~ Theme options - button# indicated the row# only
-                  theme_advanced_buttons1 = "bold,italic,underline,|,justifyleft,justifycenter,justifyright,fontselect,fontsizeselect,formatselect,|,charmap",
-                  theme_advanced_buttons2 = "cut,copy,paste,|,bullist,numlist,|,outdent,indent,|,undo,redo,|,link,unlink,anchor,image,|,code,preview,|,forecolor,backcolor",
-                  #~ theme_advanced_buttons3 = "insertdate,inserttime,|,spellchecker,advhr,,removeformat,|,sub,sup,|,charmap,emotions",      
-                  theme_advanced_buttons3 = "",
-                  theme_advanced_toolbar_location = "top",
-                  theme_advanced_toolbar_align = "left",
-                  theme_advanced_statusbar_location = "bottom",
-                  theme_advanced_resizing = True
-                )
-                kw.update(tinymceSettings=ts)
-        elif settings.LINO.use_vinylfox:
-            kw.update(plugins=js_code('Lino.VinylFoxPlugins()'))
-        TextFieldElement.__init__(self,*args,**kw)
-
-#~ if settings.LINO.use_tinymce:
-    #~ assert not settings.LINO.use_vinylfox
-    #~ HtmlTextFieldElement.value_template = "new Lino.TinyMCE(%s)"
+              self.value_template = "new Ext.form.HtmlEditor(%s)"
+              if settings.LINO.use_vinylfox:
+                  kw.update(plugins=js_code('Lino.VinylFoxPlugins()'))
+        elif fmt == 'plain':
+            kw.update(
+              growMax=2000,
+              #~ defaultAutoCreate = dict(
+                #~ tag="textarea",
+                #~ autocomplete="off"
+              #~ )
+            )
+        else:
+            raise Exception(
+                "Invalid textfield format %r for field %s.%s" % (
+                fmt,field.model.__name__,field.name))
+        FieldElement.__init__(self,lh,field,**kw)
         
 class CharFieldElement(FieldElement):
     filter_type = 'string'
@@ -1229,11 +1247,10 @@ class MainPanel(jsgen.Variable):
             
         if isinstance(field,fields.VirtualField):
             field = field.return_type
-        for cl,x in _field2elem:
+        for cl,x in _FIELD2ELEM:
             if isinstance(field,cl):
                 return x(lh,field,**kw)
         raise NotImplementedError("No LayoutElement for %s" % field.__class__)
-        #~ raise NotImplementedError("field %r" % field)
 
 
 
@@ -1420,15 +1437,16 @@ class FormPanel(jsgen.Component):
 
 
 
-_field2elem = (
+_FIELD2ELEM = (
     (fields.HtmlBox, HtmlBoxElement),
     #~ (fields.QuickAction, QuickActionElement),
     (fields.DisplayField, DisplayElement),
     (models.URLField, URLFieldElement),
     (models.FileField, FileFieldElement),
     (models.EmailField, CharFieldElement),
-    (fields.HtmlTextField, HtmlTextFieldElement),
-    (models.TextField, TextFieldElement),
+    #~ (fields.HtmlTextField, HtmlTextFieldElement),
+    #~ (fields.RichTextField, RichTextFieldElement),
+    (models.TextField, TextFieldElement), # also fields.RichTextField
     (models.CharField, CharFieldElement),
     (fields.MonthField, MonthFieldElement),
     (models.DateField, DateFieldElement),

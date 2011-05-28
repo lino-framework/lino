@@ -90,7 +90,7 @@ class Note(mixins.TypedPrintable,mixins.Reminder):
     #,on_delete=RESTRICT)
     subject = models.CharField(_("Subject"),max_length=200,blank=True,null=True)
     #~ body = models.TextField(_("Body"),blank=True)
-    body = fields.HtmlTextField(_("Body"),blank=True)
+    body = fields.RichTextField(_("Body"),blank=True,format='html')
     
     #~ owner_type = models.ForeignKey(ContentType,verbose_name=_('Owner type'))
     #~ owner_id = models.PositiveIntegerField(verbose_name=_('Owner'))
@@ -121,37 +121,37 @@ class Note(mixins.TypedPrintable,mixins.Reminder):
             s += u"(%s)" % (self.date)
         return s
         
-    def body_html(self,rr):
-        """
-        Return self.body restified and wrapped into a DIV of class "htmlText".
+    #~ def body_html(self,rr):
+        #~ """
+        #~ Return self.body restified and wrapped into a DIV of class "htmlText".
         
-        This logic should be generalized and automatically be done in a new 
-        MemoField type. A MemoField would be a field that is seen by Django 
-        like a normal multiline text field, but interpreted as reStructuredText 
-        markup "when necessary". 
-        The markup language (or optionally plain HTML to be edited using a HtmlTextArea)
-        should later get configurable and stored in each value.        
+        #~ This logic should be generalized and automatically be done in a new 
+        #~ MemoField type. A MemoField would be a field that is seen by Django 
+        #~ like a normal multiline text field, but interpreted as reStructuredText 
+        #~ markup "when necessary". 
+        #~ The markup language (or optionally plain HTML to be edited using a HtmlTextArea)
+        #~ should later get configurable and stored in each value.        
         
-        Deserves more documentation.
-        """
-        if self.body:
-            if rr.expand_memos:
-                return html_text(restify(self.body))
-            else:
-                #~ print 20110512, "yes", __file__
-                a = self.body.split('\n',1)
-                ellipsis = False
-                if len(a) > 1:
-                    ellipsis = True
-                ln = self.body.split('\n',1)[0]
-                if len(ln) > 30:
-                    ln = ln[:30]
-                    ellipsis = True
-                if ellipsis:     
-                    ln += "..."
-                return ln
-        return ''
-    body_html.return_type = fields.DisplayField(_("Body"))
+        #~ Deserves more documentation.
+        #~ """
+        #~ if self.body:
+            #~ if rr.expand_memos:
+                #~ return html_text(restify(self.body))
+            #~ else:
+                #~ # print 20110512, "yes", __file__
+                #~ a = self.body.split('\n',1)
+                #~ ellipsis = False
+                #~ if len(a) > 1:
+                    #~ ellipsis = True
+                #~ ln = self.body.split('\n',1)[0]
+                #~ if len(ln) > 30:
+                    #~ ln = ln[:30]
+                    #~ ellipsis = True
+                #~ if ellipsis:     
+                    #~ ln += "..."
+                #~ return ln
+        #~ return ''
+    #~ body_html.return_type = fields.DisplayField(_("Body"))
     
     def disabled_fields(self,request):
         if self.must_build:
@@ -172,7 +172,8 @@ class NoteTypes(reports.Report):
     
 class Notes(reports.Report):
     model = 'notes.Note'
-    column_names = "id date user type event_type subject * body_html"
+    #~ column_names = "id date user type event_type subject * body_html"
+    column_names = "id date user type event_type subject * body"
     #~ hide_columns = "body"
     hidden_columns = frozenset(['body'])
     order_by = ["id"]
@@ -181,7 +182,8 @@ class Notes(reports.Report):
 
 class MyNotes(mixins.ByUser,Notes):
     #~ fk_name = 'user'
-    column_names = "date type event_type subject body_html *"
+    column_names = "date type event_type subject body *"
+    #~ column_names = "date type event_type subject body_html *"
     #~ can_view = perms.is_authenticated
     label = _("My notes")
     order_by = ["date"]
