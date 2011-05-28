@@ -31,7 +31,7 @@ Implements :class:`links.LinkType`.
 name type      verbose name
 ==== ========= ============
 id   AutoField ID          
-name CharField Name        
+name CharField Name (Nom)  
 ==== ========= ============
 
     
@@ -80,24 +80,25 @@ Model **Link**
 
 
 
-Link(id, user_id, reminder_date, reminder_text, delay_value, delay_type, person_id, company_id, type_id, date, url, name)
+Link(id, user_id, reminder_date, reminder_text, delay_value, delay_type, reminder_done, person_id, company_id, type_id, date, url, name)
   
-============= ============= ===============================
-name          type          verbose name                   
-============= ============= ===============================
-id            AutoField     ID                             
-user          ForeignKey    user (Benutzer)                
-reminder_date DateField     Due date (Fällig am)           
-reminder_text CharField     Reminder text (Erinnerungstext)
-delay_value   IntegerField  Delay (value) (Frist (Wert))   
-delay_type    CharField     Delay (unit) (Frist (Einheit)) 
-person        ForeignKey    Person                         
-company       ForeignKey    Company                        
-type          ForeignKey    Link type (Verweisart)         
-date          DateTimeField Date (Datum)                   
-url           URLField      url                            
-name          CharField     Name                           
-============= ============= ===============================
+============= ============= ===============================================
+name          type          verbose name                                   
+============= ============= ===============================================
+id            AutoField     ID                                             
+user          ForeignKey    user (Benutzer,utilisateur)                    
+reminder_date DateField     Due date (Fällig am,Terme)                     
+reminder_text CharField     Reminder text (Erinnerungstext,Texte de rappel)
+delay_value   IntegerField  Delay (value) (Frist (Wert),Delai (valeur))    
+delay_type    CharField     Delay (unit) (Frist (Einheit),Délai (unité))   
+reminder_done BooleanField  Done (Erledigt,Fait)                           
+person        ForeignKey    Person (Personne)                              
+company       ForeignKey    Company (Firma)                                
+type          ForeignKey    Link type (Verweisart,Type de lien)            
+date          DateTimeField Date (Datum)                                   
+url           URLField      url                                            
+name          CharField     Name (Nom)                                     
+============= ============= ===============================================
 
     
 Defined in :srcref:`/lino/apps/dsbe/models.py`
@@ -190,6 +191,21 @@ Field **Link.delay_type**
 
 
 Type: CharField
+
+   
+.. index::
+   single: field;reminder_done
+   
+.. _std.links.Link.reminder_done:
+
+Field **Link.reminder_done**
+============================
+
+
+
+
+
+Type: BooleanField
 
    
 .. index::

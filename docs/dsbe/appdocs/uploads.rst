@@ -32,7 +32,7 @@ UploadType(id, name)
 name type      verbose name
 ==== ========= ============
 id   AutoField ID          
-name CharField Name        
+name CharField Name (Nom)  
 ==== ========= ============
 
     
@@ -81,26 +81,27 @@ Model **Upload**
 
 
 
-Upload(id, user_id, reminder_date, reminder_text, delay_value, delay_type, file, mimetype, created, modified, description, person_id, company_id, type_id)
+Upload(id, user_id, owner_type_id, owner_id, reminder_date, reminder_text, delay_value, delay_type, reminder_done, file, mimetype, created, modified, description, type_id)
   
-============= ============= ===============================
-name          type          verbose name                   
-============= ============= ===============================
-id            AutoField     ID                             
-user          ForeignKey    user (Benutzer)                
-reminder_date DateField     Due date (Fällig am)           
-reminder_text CharField     Reminder text (Erinnerungstext)
-delay_value   IntegerField  Delay (value) (Frist (Wert))   
-delay_type    CharField     Delay (unit) (Frist (Einheit)) 
-file          FileField     File (Datei)                   
-mimetype      CharField     MIME type (MIME-Art)           
-created       DateTimeField Created (Erstellt)             
-modified      DateTimeField Modified (Bearbeitet)          
-description   CharField     Description (Beschreibung)     
-person        ForeignKey    Person                         
-company       ForeignKey    Company                        
-type          ForeignKey    type                           
-============= ============= ===============================
+============= ==================== =================================================
+name          type                 verbose name                                     
+============= ==================== =================================================
+id            AutoField            ID                                               
+user          ForeignKey           user (Benutzer,utilisateur)                      
+owner_type    ForeignKey           Owner type (Besitzertabelle,type de propriétaire)
+owner_id      PositiveIntegerField Owner (Besitzer,Propriétaire)                    
+reminder_date DateField            Due date (Fällig am,Terme)                       
+reminder_text CharField            Reminder text (Erinnerungstext,Texte de rappel)  
+delay_value   IntegerField         Delay (value) (Frist (Wert),Delai (valeur))      
+delay_type    CharField            Delay (unit) (Frist (Einheit),Délai (unité))     
+reminder_done BooleanField         Done (Erledigt,Fait)                             
+file          FileField            File (Datei,Fichier)                             
+mimetype      CharField            MIME type (MIME-Art,type MIME)                   
+created       DateTimeField        Created (Erstellt,Créé)                          
+modified      DateTimeField        Modified (Bearbeitet,Modifié)                    
+description   CharField            Description (Beschreibung)                       
+type          ForeignKey           type                                             
+============= ==================== =================================================
 
     
 Defined in :srcref:`/lino/modlib/uploads/models.py`
@@ -133,6 +134,36 @@ Field **Upload.user**
 
 
 Type: ForeignKey
+
+   
+.. index::
+   single: field;owner_type
+   
+.. _std.uploads.Upload.owner_type:
+
+Field **Upload.owner_type**
+===========================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;owner_id
+   
+.. _std.uploads.Upload.owner_id:
+
+Field **Upload.owner_id**
+=========================
+
+
+
+
+
+Type: PositiveIntegerField
 
    
 .. index::
@@ -193,6 +224,21 @@ Field **Upload.delay_type**
 
 
 Type: CharField
+
+   
+.. index::
+   single: field;reminder_done
+   
+.. _std.uploads.Upload.reminder_done:
+
+Field **Upload.reminder_done**
+==============================
+
+
+
+
+
+Type: BooleanField
 
    
 .. index::
@@ -268,36 +314,6 @@ Field **Upload.description**
 
 
 Type: CharField
-
-   
-.. index::
-   single: field;person
-   
-.. _std.uploads.Upload.person:
-
-Field **Upload.person**
-=======================
-
-
-
-
-
-Type: ForeignKey
-
-   
-.. index::
-   single: field;company
-   
-.. _std.uploads.Upload.company:
-
-Field **Upload.company**
-========================
-
-
-
-
-
-Type: ForeignKey
 
    
 .. index::

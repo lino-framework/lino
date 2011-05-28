@@ -1,6 +1,9 @@
 20110527
 ========
 
+Minor changes
+-------------
+
 - Grâce à http://www.wout-bosteels.be/countries.xml
   countries/fixtures/all_countries.dpy importe maintenant la 
   liste des pays en français et néerlandais.
@@ -14,10 +17,182 @@
     dsbe.ExamPolicy
     dsbe.AidType
     
+  Explanation:
+  they still used `babel.add_babel_field` instead of `babel.BabelCharField`.
+  Fixed.
   This bug has been active for some time and nobody noticed it.
-  Fortunately it was only a UI problem. 
-  The dump files did write all data.
+  Fortunately it was only a UI problem (dump files did write also babel fields).
+  
+- Checkin `20110527a <http://code.google.com/p/lino/source/detail?r=7f0e358c0fd73cb02fd51572634072461a0fba8c>`_
 
-  The still used `babel.add_babel_field` instead of `babel.BabelCharField`.
+
+Another case of `UnicodeDecodeError`
+------------------------------------
+
+A user reports the following `UnicodeDecodeError` during :term:`initdb`::
+
+  root@lino:/usr/local/django/myproject# ./initdb_demo.sh     
+  Gonna reset your database (myproject).
+  Are you sure (y/n) ?y
+  INFO Lino initdb ('std', 'all_countries', 'few_cities', 'all_languages', 'props', 'demo') started on database myproject.
+  INFO Lino version 1.1.11 using Python 2.6.6, Django 1.4 pre-alpha SVN-16280, python-dateutil 1.4.1, Cheetah 2.4.2.1, docutils 0.7, PyYaml 3.09, pyratemp (not installed), ReportLab Toolkit 2.4, appy.pod (not installed)
+  /var/snapshots/django/django/core/management/commands/reset.py:27: DeprecationWarning: This command has been deprecated. The command ``flush`` can be used to delete everything. You can also use ALTER TABLE or DROP TABLE statements manually.
+    DeprecationWarning
+  /var/snapshots/django/django/core/management/sql.py:105: DeprecationWarning: This command has been deprecated. The command ``sqlflush`` can be used to delete everything. You can also use ALTER TABLE or DROP TABLE statements manually.
+    DeprecationWarning
+  Creating tables ...
+  Installing custom SQL ...
+  Installing indexes ...
+  No fixtures found.
+  INFO Saved 18 instances from /var/snapshots/lino/lino/modlib/contacts/fixtures/std.dpy.
+  INFO Saved 2 instances from /var/snapshots/lino/lino/modlib/notes/fixtures/std.dpy.
+  INFO Saved 2 instances from /var/snapshots/lino/lino/modlib/properties/fixtures/std.dpy.
+  INFO Saved 53 instances from /var/snapshots/lino/lino/apps/dsbe/fixtures/std.dpy.
+  INFO Installed 269 countries
+  INFO Saved 269 instances from /var/snapshots/lino/lino/modlib/countries/fixtures/all_countries.dpy.
+  INFO Installing countries demo_cities fixture
+  INFO Saved 30 instances from /var/snapshots/lino/lino/modlib/countries/fixtures/few_cities.dpy.
+  WARNING Ignored french:9 (len(rec) is 7)
+  WARNING Ignored french:17 (len(rec) is 7)
+  Traceback (most recent call last):
+    File "/usr/lib/python2.6/logging/__init__.py", line 799, in emit
+      stream.write(fs % msg.encode("UTF-8"))
+  UnicodeDecodeError: 'ascii' codec can't decode byte 0xc4 in position 30: ordinal not in range(128)
+  INFO Installed 171 languages
+  INFO Saved 170 instances from /var/snapshots/lino/lino/modlib/countries/fixtures/all_languages.dpy.
+  INFO Trying again with 1 unsaved instances.
+  Traceback (most recent call last):
+    File "/usr/lib/python2.6/logging/__init__.py", line 799, in emit
+      stream.write(fs % msg.encode("UTF-8"))
+  UnicodeDecodeError: 'ascii' codec can't decode byte 0xc4 in position 30: ordinal not in range(128)
+  INFO Saved 0 instances.
+  WARNING Abandoning with 1 unsaved instances from /var/snapshots/lino/lino/modlib/countries/fixtures/all_languages.dpy.
+  Problem installing fixture '/var/snapshots/lino/lino/modlib/countries/fixtures/all_languages.dpy': Traceback (most recent call last):
+    File "/var/snapshots/django/django/core/management/commands/loaddata.py", line 174, in handle
+      obj.save(using=using)
+    File "/var/snapshots/lino/lino/utils/dpy.py", line 245, in save
+      "See dblog for details." % len(save_later))
+  Exception: Abandoned with 1 unsaved instances. See dblog for details.
+
+  INFO Lino initdb done ('std', 'all_countries', 'few_cities', 'all_languages', 'props', 'demo') on database myproject.
+
+
+We added a ``print`` statement just before that line 799 of :file:`logging/__init__.py`::
+
+    def emit(self, record):
+        try:
+            msg = self.format(record)
+            fs = "%s\n"
+            if not hasattr(types, "UnicodeType"): #if no unicode support...
+                self.stream.write(fs % msg)
+            else:
+                try:
+                    if getattr(self.stream, 'encoding', None) is not None:
+                        self.stream.write(fs % msg.encode(self.stream.encoding))
+                    else:
+                        self.stream.write(fs % msg)
+                except UnicodeError:
+                    print repr(msg)    ############# DEBUG
+                    self.stream.write(fs % msg.encode("UTF-8"))
+            self.flush()
+        except (KeyboardInterrupt, SystemExit):
+            raise
+        except:
+            self.handleError(record)
+            
+Now there is almost the same output, expect for the additional 
+line before the traceback::
+
+  u"INFO Deferred Language #mao (M\u0101ori de Nouvelle-Z\xe9lande) : Incorrect string value: '\\xC4\\x81ori ...' for column 'name' at row 1"
+
+After removing the "Māori de Nouvelle-Zélande" language from `all_languages.dpy`, there is still 
+another message::
+
+  u"INFO Deferred Person #93 (\u041a\u0430\u0437\u0435\u043d\u043d\u043e\u0432\u0430 \u0422\u0430\u0442\u044c\u044f\u043d\u0430 (93)) : {'id': [u'Person with this Partner # 
   
-  
+Removing also that person from the demo fixture leads to a successful `initdb_demo`.
+
+So here is the explanation:
+
+Lino's demo fixtures contain also "exotic" chars which are not 
+available in latin1 encoding. For example the fictive) 
+Person named Татьяна Казеннова.
+
+If your mysql database backend is not configured to use UTF-8 encoding, 
+it considers strings like "Māori de Nouvelle-Zélande"
+or "Татьяна Казеннова" as invalid. 
+The backend then throws an exception "Incorrect string value 'xyz'",
+where xyz is that invalid value. 
+
+And my :mod:`lino.utils.dpy` tried to log this problem::
+
+    dblogger.info("Deferred %s : %s",obj2str(obj),e)
+
+And that message is not a unicode 
+string, but a utf8-encoded bytestring.
+
+I didn't think about what Vinay Sajip explains in
+`Python Issue 6991 <http://bugs.python.org/issue6991>`_,
+and that an Exception instance might always contain a 
+non-ascii bytestring. 
+
+Here the tests I wrote in order to understand it.
+
+.. literalinclude:: 0527.py
+   :linenos:
+   :language: python
+   
+Output::
+
+  WARNING:root:ðóð░ÐéÐîÐÅð¢ð░
+  WARNING:root:'ðóð░ÐéÐîÐÅð¢ð░' is an invalid string value
+  ERROR:root:'ðóð░ÐéÐîÐÅð¢ð░' is an invalid string value
+  Traceback (most recent call last):
+    File "0527.py", line 11, in <module>
+      raise Exception(utf8_string)
+  Exception: 'ðóð░ÐéÐîÐÅð¢ð░' is an invalid string value
+  Traceback (most recent call last):
+    File "c:\Python27\lib\logging\__init__.py", line 843, in emit
+      msg = self.format(record)
+    File "c:\Python27\lib\logging\__init__.py", line 720, in format
+      return fmt.format(record)
+    File "c:\Python27\lib\logging\__init__.py", line 465, in format
+      record.message = record.getMessage()
+    File "c:\Python27\lib\logging\__init__.py", line 329, in getMessage
+      msg = msg % self.args
+  UnicodeDecodeError: 'ascii' codec can't decode byte 0xd0 in position 1: ordinal not in range(128)
+  Logged from file 0527.py, line 17
+  Traceback (most recent call last):
+    File "c:\Python27\lib\logging\__init__.py", line 843, in emit
+      msg = self.format(record)
+    File "c:\Python27\lib\logging\__init__.py", line 720, in format
+      return fmt.format(record)
+    File "c:\Python27\lib\logging\__init__.py", line 465, in format
+      record.message = record.getMessage()
+    File "c:\Python27\lib\logging\__init__.py", line 329, in getMessage
+      msg = msg % self.args
+  UnicodeDecodeError: 'ascii' codec can't decode byte 0xd0 in position 1: ordinal not in range(128)
+  Logged from file 0527.py, line 19
+  WARNING:root:3 Deferred ðóð░ÐéÐîÐÅð¢ð░ : 'ðóð░ÐéÐîÐÅð¢ð░' is an invalid string value
+  WARNING:root:4 Deferred ðóð░ÐéÐîÐÅð¢ð░ : 'ðóð░ÐéÐîÐÅð¢ð░' is an invalid string value
+  WARNING:root:5 Deferred ðóð░ÐéÐîÐÅð¢ð░ : 'ðóð░ÐéÐîÐÅð¢ð░' is an invalid string value
+
+I would summarize my lesson on this topic:
+
+  When you pass more than one formatting argument to a 
+  logger function, and one of them is a unicode string, 
+  then the other argument(s) **may not** be bytestrings 
+  containing non-ascii chars.
+
+The most pragmatic and safe solution is probably to use Django's 
+`force_unicode` function::
+    
+    dblogger.info("Deferred %s : %s",obj2str(obj),force_unicode(e))
+
+
+Removed warning due to deprecated `reset` management command
+------------------------------------------------------------
+
+Removed `DeprecationWarning`: 
+:mod:`lino.management.commands.initdb` now calls flush instead of reset followed by initdb 
+

@@ -43,7 +43,8 @@ Here's how to install this in your :xfile:`settings.py`::
     #~ 'django.contrib.auth.backends.RemoteUserBackend',
   ]
   
-
+(In practice you don't need to worry about these settings since your 
+`local_settings.py` imports them, you don't even see them.)
 
 """
 

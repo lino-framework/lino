@@ -30,7 +30,7 @@ from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.contrib.contenttypes.models import ContentType
 #~ from django.contrib.auth.models import Permission
 from django.contrib.sessions.models import Session
-from django.utils.encoding import smart_unicode, is_protected_type
+from django.utils.encoding import smart_unicode, is_protected_type, force_unicode
 
 import lino
 from lino.tools import obj2str
@@ -270,11 +270,12 @@ class FakeDeserializedObject(base.DeserializedObject):
             obj.save(*args,**kw)
             dblogger.debug("Deserialized %s has been saved" % obj2str(obj))
             return True
+        #~ except obj.ValidationError,e:
         except Exception,e:
             if obj.pk is None:
                 dblogger.exception(e)
                 raise Exception("Failed to save %s. Abandoned." % obj2str(obj))
-            dblogger.info("Deferred %s : %s",obj2str(obj),e)
+            dblogger.info("Deferred %s : %s",obj2str(obj),force_unicode(e))
             return False
       
         

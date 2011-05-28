@@ -13,6 +13,7 @@
 
 """
 Middleware to be used on sites with :doc:`/topics/http_auth`.
+
 """
 
 from lino.modlib.users.models import User

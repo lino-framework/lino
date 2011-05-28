@@ -67,6 +67,9 @@ def configure(config):
     :param level:    the verbosity level of both console and logfile messages 
                      console messages will never be more verbose than INFO
     
+    :param mode:     the opening mode for the logfile
+    :param encoding: the encoding for the logfile
+    
     Example::
     
       LOGGING_CONFIG = 'lino.utils.log.configure'
@@ -83,6 +86,7 @@ def configure(config):
     
     """
     #~ print 20101225, config
+    encoding = config.get('encoding','UTF-8')
     logfile = config.get('filename',None)
     #~ dblogfile = config.get('dblogfile',None)
     level = getattr(logging,config.get('level','notset').upper())
@@ -96,22 +100,11 @@ def configure(config):
         
     linoLogger.setLevel(level)
     
-    try:
-        if sys.stdout.isatty():
-            h = logging.StreamHandler()
-            #~ h.setLevel(level)
-            h.setLevel(logging.INFO)
-            fmt = logging.Formatter(fmt='%(levelname)s %(message)s')
-            h.setFormatter(fmt)
-            linoLogger.addHandler(h)
-    except IOError:
-        # happens under mod_wsgi
-        pass
-        
     if logfile is not None:
         kw = {}
-        if config.has_key('mode'):
-            kw.update(mode=config['mode'])
+        for k in ('mode','encoding'):
+            if config.has_key(k):
+                kw[k] = config[k]
         h = file_handler(logfile,**kw)
         #~ h.setLevel(level)
         linoLogger.addHandler(h)
@@ -123,6 +116,20 @@ def configure(config):
         #~ dblogger.setLevel(logging.INFO)
         #~ dblogger.addHandler(file_handler(os.path.join(log_dir,'db.log')))
     
+    try:
+        if sys.stdout.isatty():
+            #~ if sys.stdout.encoding == 'ascii':
+                #~ raise Exception("Your tty's encoding is ascii, that will lead to problems" % )
+            h = logging.StreamHandler()
+            #~ h.setLevel(level)
+            h.setLevel(logging.INFO)
+            fmt = logging.Formatter(fmt='%(levelname)s %(message)s')
+            h.setFormatter(fmt)
+            linoLogger.addHandler(h)
+    except IOError:
+        # happens under mod_wsgi
+        pass
+        
     #~ if dblogfile is not None:
         #~ dblogger = logging.getLogger('lino.db')
         #~ # if dblogfile.lower() == 'auto':

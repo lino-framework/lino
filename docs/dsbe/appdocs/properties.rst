@@ -10,13 +10,8 @@ Defined in :srcref:`/lino/modlib/properties/models.py`
 
 
 
-Todo:
+This module would deserve more documentation.
 
-Property.type should not be a ForeignKey to PropType, 
-but a simple reference to a PropertyType instance.
-There should be a list of PropertyType objects, 
-some of them not stored (like YesNo and 
-and only 
 
 
 
@@ -45,19 +40,19 @@ Examples: of property types:
 
 
   
-================ ============== ==========================================
-name             type           verbose name                              
-================ ============== ==========================================
-id               AutoField      ID                                        
-name             BabelCharField Designation (Beschreibung)                
-choicelist       CharField      Choices List (Auswahliste)                
-default_value    CharField      default value (Standardwert)              
-limit_to_choices BooleanField   Limit to choices (Beschränken auf Auswahl)
-multiple_choices BooleanField   Multiple choices (Mehrfachauswahl)        
-name_fr          CharField      Designation (fr)                          
-name_nl          CharField      Designation (nl)                          
-name_en          CharField      Designation (en)                          
-================ ============== ==========================================
+================ ============== ===========================================================
+name             type           verbose name                                               
+================ ============== ===========================================================
+id               AutoField      ID                                                         
+name             BabelCharField Designation (Beschreibung,Désignation)                     
+choicelist       CharField      Choices List (Auswahliste,Liste de choix)                  
+default_value    CharField      default value (Standardwert,valeur par défault)            
+limit_to_choices BooleanField   Limit to choices (Beschränken auf Auswahl,Limite aux choix)
+multiple_choices BooleanField   Multiple choices (Mehrfachauswahl,Choix multiples)         
+name_fr          CharField      Designation (fr)                                           
+name_nl          CharField      Designation (nl)                                           
+name_en          CharField      Designation (en)                                           
+================ ============== ===========================================================
 
     
 Defined in :srcref:`/lino/modlib/properties/models.py`
@@ -216,17 +211,17 @@ A Choice for this PropType.
 `text` is the text to be displayed in combo boxes.
 
   
-======= ============== ===============================
-name    type           verbose name                   
-======= ============== ===============================
-id      AutoField      ID                             
-type    ForeignKey     Property Type (Eigenschaftsart)
-value   CharField      Value (Wert)                   
-text    BabelCharField Designation (Beschreibung)     
-text_fr CharField      Designation (fr)               
-text_nl CharField      Designation (nl)               
-text_en CharField      Designation (en)               
-======= ============== ===============================
+======= ============== =======================================================
+name    type           verbose name                                           
+======= ============== =======================================================
+id      AutoField      ID                                                     
+type    ForeignKey     Property Type (Eigenschafts-Datentyp,Type de propriété)
+value   CharField      Value (Wert,Valeur)                                    
+text    BabelCharField Designation (Beschreibung,Désignation)                 
+text_fr CharField      Designation (fr)                                       
+text_nl CharField      Designation (nl)                                       
+text_en CharField      Designation (en)                                       
+======= ============== =======================================================
 
     
 Defined in :srcref:`/lino/modlib/properties/models.py`
@@ -355,15 +350,15 @@ Examples of Property Groups: Skills, Soft Skills, Obstacles
 There will be one menu entry per Group.
 
   
-======= ============== ==========================
-name    type           verbose name              
-======= ============== ==========================
-id      AutoField      ID                        
-name    BabelCharField Designation (Beschreibung)
-name_fr CharField      Designation (fr)          
-name_nl CharField      Designation (nl)          
-name_en CharField      Designation (en)          
-======= ============== ==========================
+======= ============== ======================================
+name    type           verbose name                          
+======= ============== ======================================
+id      AutoField      ID                                    
+name    BabelCharField Designation (Beschreibung,Désignation)
+name_fr CharField      Designation (fr)                      
+name_nl CharField      Designation (nl)                      
+name_en CharField      Designation (en)                      
+======= ============== ======================================
 
     
 Defined in :srcref:`/lino/modlib/properties/models.py`
@@ -458,17 +453,17 @@ Model **Property**
 
 Property(id, name, group_id, type_id, name_fr, name_nl, name_en)
   
-======= ============== ===================================
-name    type           verbose name                       
-======= ============== ===================================
-id      AutoField      ID                                 
-name    BabelCharField Designation (Beschreibung)         
-group   ForeignKey     Property Group (Eigenschaftsgruppe)
-type    ForeignKey     Property Type (Eigenschaftsart)    
-name_fr CharField      Designation (fr)                   
-name_nl CharField      Designation (nl)                   
-name_en CharField      Designation (en)                   
-======= ============== ===================================
+======= ============== ========================================================
+name    type           verbose name                                            
+======= ============== ========================================================
+id      AutoField      ID                                                      
+name    BabelCharField Designation (Beschreibung,Désignation)                  
+group   ForeignKey     Property Group (Eigenschaftsgruppe,Groupe de propriétés)
+type    ForeignKey     Property Type (Eigenschafts-Datentyp,Type de propriété) 
+name_fr CharField      Designation (fr)                                        
+name_nl CharField      Designation (nl)                                        
+name_en CharField      Designation (en)                                        
+======= ============== ========================================================
 
     
 Defined in :srcref:`/lino/modlib/properties/models.py`
@@ -593,16 +588,16 @@ Model **PersonProperty**
 
 PersonProperty(id, group_id, property_id, value, person_id, remark)
   
-======== ========== ===================================
-name     type       verbose name                       
-======== ========== ===================================
-id       AutoField  ID                                 
-group    ForeignKey Property group (Eigenschaftsgruppe)
-property ForeignKey Property (Eigenschaft)             
-value    CharField  Value (Wert)                       
-person   ForeignKey person (Person)                    
-remark   CharField  Remark (Bemerkung)                 
-======== ========== ===================================
+======== ========== ========================================================
+name     type       verbose name                                            
+======== ========== ========================================================
+id       AutoField  ID                                                      
+group    ForeignKey Property group (Eigenschaftsgruppe,Groupe de propriétés)
+property ForeignKey Property (Eigenschaft,Propriété)                        
+value    CharField  Value (Wert,Valeur)                                     
+person   ForeignKey person (Person,personne)                                
+remark   CharField  Remark (Bemerkung,Remarque)                             
+======== ========== ========================================================
 
     
 Defined in :srcref:`/lino/apps/dsbe/models.py`
@@ -712,15 +707,15 @@ Model **WantedSkill**
 
 WantedSkill(id, group_id, property_id, value, search_id)
   
-======== ========== ===================================
-name     type       verbose name                       
-======== ========== ===================================
-id       AutoField  ID                                 
-group    ForeignKey Property group (Eigenschaftsgruppe)
-property ForeignKey Property (Eigenschaft)             
-value    CharField  Value (Wert)                       
-search   ForeignKey search                             
-======== ========== ===================================
+======== ========== ========================================================
+name     type       verbose name                                            
+======== ========== ========================================================
+id       AutoField  ID                                                      
+group    ForeignKey Property group (Eigenschaftsgruppe,Groupe de propriétés)
+property ForeignKey Property (Eigenschaft,Propriété)                        
+value    CharField  Value (Wert,Valeur)                                     
+search   ForeignKey search                                                  
+======== ========== ========================================================
 
     
 Defined in :srcref:`/lino/apps/dsbe/models.py`
@@ -815,15 +810,15 @@ Model **UnwantedSkill**
 
 UnwantedSkill(id, group_id, property_id, value, search_id)
   
-======== ========== ===================================
-name     type       verbose name                       
-======== ========== ===================================
-id       AutoField  ID                                 
-group    ForeignKey Property group (Eigenschaftsgruppe)
-property ForeignKey Property (Eigenschaft)             
-value    CharField  Value (Wert)                       
-search   ForeignKey search                             
-======== ========== ===================================
+======== ========== ========================================================
+name     type       verbose name                                            
+======== ========== ========================================================
+id       AutoField  ID                                                      
+group    ForeignKey Property group (Eigenschaftsgruppe,Groupe de propriétés)
+property ForeignKey Property (Eigenschaft,Propriété)                        
+value    CharField  Value (Wert,Valeur)                                     
+search   ForeignKey search                                                  
+======== ========== ========================================================
 
     
 Defined in :srcref:`/lino/apps/dsbe/models.py`

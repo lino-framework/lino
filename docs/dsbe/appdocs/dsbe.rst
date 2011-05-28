@@ -30,12 +30,12 @@ Model **PersonGroup**
 
 PersonGroup(id, name)
   
-==== ========= ==========================
-name type      verbose name              
-==== ========= ==========================
-id   AutoField ID                        
-name CharField Designation (Beschreibung)
-==== ========= ==========================
+==== ========= ======================================
+name type      verbose name                          
+==== ========= ======================================
+id   AutoField ID                                    
+name CharField Designation (Beschreibung,Désignation)
+==== ========= ======================================
 
     
 Defined in :srcref:`/lino/apps/dsbe/models.py`
@@ -85,12 +85,12 @@ Model **StudyType**
 
 StudyType(id, name)
   
-==== ========= ==========================
-name type      verbose name              
-==== ========= ==========================
-id   AutoField ID                        
-name CharField Designation (Beschreibung)
-==== ========= ==========================
+==== ========= ======================================
+name type      verbose name                          
+==== ========= ======================================
+id   AutoField ID                                    
+name CharField Designation (Beschreibung,Désignation)
+==== ========= ======================================
 
     
 Defined in :srcref:`/lino/apps/dsbe/models.py`
@@ -138,24 +138,24 @@ Model **Study**
 
 
 
-Study(id, person_id, type_id, content, started, stopped, success, country_id, city_id, language_id, school, remarks)
+Study(id, country_id, city_id, person_id, type_id, content, started, stopped, success, language_id, school, remarks)
   
-======== ============ =================================
-name     type         verbose name                     
-======== ============ =================================
-id       AutoField    ID                               
-person   ForeignKey   Person                           
-type     ForeignKey   Study type (Ausbildungsart)      
-content  CharField    Study content (Ausbildungsinhalt)
-started  MonthField   started (begonnen)               
-stopped  MonthField   stopped (beendet)                
-success  BooleanField Success (Abschluss)              
-country  ForeignKey   Country (Land)                   
-city     ForeignKey   City (Stadt)                     
-language ForeignKey   Language (Sprache)               
-school   CharField    School (Schule)                  
-remarks  TextField    Remarks (Bemerkungen)            
-======== ============ =================================
+======== ============ ====================================================
+name     type         verbose name                                        
+======== ============ ====================================================
+id       AutoField    ID                                                  
+country  ForeignKey   Country (Land,Pays)                                 
+city     ForeignKey   City                                                
+person   ForeignKey   Person (Personne)                                   
+type     ForeignKey   Study type (Ausbildungsart,Type d'études)           
+content  CharField    Study content (Ausbildungsinhalt,Contenu des études)
+started  MonthField   started (begonnen,commencé)                         
+stopped  MonthField   stopped (beendet,arrêté)                            
+success  BooleanField Success (Abschluss,Réussi)                          
+language ForeignKey   Language (Sprache,Langue)                           
+school   CharField    School (Schule,Ecole)                               
+remarks  TextField    Remarks (Bemerkungen,Remarques)                     
+======== ============ ====================================================
 
     
 Defined in :srcref:`/lino/apps/dsbe/models.py`
@@ -173,6 +173,36 @@ Field **Study.id**
 
 
 Type: AutoField
+
+   
+.. index::
+   single: field;country
+   
+.. _std.dsbe.Study.country:
+
+Field **Study.country**
+=======================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;city
+   
+.. _std.dsbe.Study.city:
+
+Field **Study.city**
+====================
+
+
+
+
+
+Type: ForeignKey
 
    
 .. index::
@@ -266,36 +296,6 @@ Type: BooleanField
 
    
 .. index::
-   single: field;country
-   
-.. _std.dsbe.Study.country:
-
-Field **Study.country**
-=======================
-
-
-
-
-
-Type: ForeignKey
-
-   
-.. index::
-   single: field;city
-   
-.. _std.dsbe.Study.city:
-
-Field **Study.city**
-====================
-
-
-
-
-
-Type: ForeignKey
-
-   
-.. index::
    single: field;language
    
 .. _std.dsbe.Study.language:
@@ -355,15 +355,15 @@ Model **LanguageKnowledge**
 
 LanguageKnowledge(id, person_id, language_id, spoken, written)
   
-======== =============== ==================
-name     type            verbose name      
-======== =============== ==================
-id       AutoField       ID                
-person   ForeignKey      person (Person)   
-language ForeignKey      Language (Sprache)
-spoken   ChoiceListField spoken (Wort)     
-written  ChoiceListField written (Schrift) 
-======== =============== ==================
+======== =============== =========================
+name     type            verbose name             
+======== =============== =========================
+id       AutoField       ID                       
+person   ForeignKey      person (Person,personne) 
+language ForeignKey      Language (Sprache,Langue)
+spoken   ChoiceListField spoken (Wort,oral)       
+written  ChoiceListField written (Schrift)        
+======== =============== =========================
 
     
 Defined in :srcref:`/lino/apps/dsbe/models.py`
@@ -458,18 +458,18 @@ Model **JobExperience**
 
 JobExperience(id, person_id, company, title, country_id, started, stopped, remarks)
   
-======= ========== =======================
-name    type       verbose name           
-======= ========== =======================
-id      AutoField  ID                     
-person  ForeignKey Person                 
-company CharField  company (Firma)        
-title   CharField  job title (Bezeichnung)
-country ForeignKey Country (Land)         
-started MonthField started (begonnen)     
-stopped MonthField stopped (beendet)      
-remarks TextField  Remarks (Bemerkungen)  
-======= ========== =======================
+======= ========== ===============================================
+name    type       verbose name                                   
+======= ========== ===============================================
+id      AutoField  ID                                             
+person  ForeignKey Person (Personne)                              
+company CharField  company (Firma,Société)                        
+title   CharField  job title (Bezeichnung,Intitulé de la fonction)
+country ForeignKey Country (Land,Pays)                            
+started MonthField started (begonnen,commencé)                    
+stopped MonthField stopped (beendet,arrêté)                       
+remarks TextField  Remarks (Bemerkungen,Remarques)                
+======= ========== ===============================================
 
     
 Defined in :srcref:`/lino/apps/dsbe/models.py`
@@ -609,13 +609,13 @@ Model **Activity**
 
 Activity(id, name, lst104)
   
-====== ============ ====================================
-name   type         verbose name                        
-====== ============ ====================================
-id     AutoField    ID                                  
-name   CharField    name                                
-lst104 BooleanField Appears in Listing 104 (Listing 104)
-====== ============ ====================================
+====== ============ ===============================================================
+name   type         verbose name                                                   
+====== ============ ===============================================================
+id     AutoField    ID                                                             
+name   CharField    name                                                           
+lst104 BooleanField Appears in Listing 104 (Listing 104,Apparaît dans la liste 104)
+====== ============ ===============================================================
 
     
 Defined in :srcref:`/lino/apps/dsbe/models.py`
@@ -735,16 +735,16 @@ Model **Exclusion**
 
 Exclusion(id, person_id, type_id, excluded_from, excluded_until, remark)
   
-============== ========== ==================
-name           type       verbose name      
-============== ========== ==================
-id             AutoField  ID                
-person         ForeignKey person (Person)   
-type           ForeignKey Reason (Grund)    
-excluded_from  DateField  from (von)        
-excluded_until DateField  until (bis)       
-remark         CharField  Remark (Bemerkung)
-============== ========== ==================
+============== ========== ===========================
+name           type       verbose name               
+============== ========== ===========================
+id             AutoField  ID                         
+person         ForeignKey person (Person,personne)   
+type           ForeignKey Reason (Grund,Motif)       
+excluded_from  DateField  from (von,de)              
+excluded_until DateField  until (bis,jusque)         
+remark         CharField  Remark (Bemerkung,Remarque)
+============== ========== ===========================
 
     
 Defined in :srcref:`/lino/apps/dsbe/models.py`
@@ -852,20 +852,20 @@ Model **ContractType**
 
 
 
-ContractType(id, build_method, template, ref, name)
+ContractType(id, build_method, template, ref, name, name_fr, name_nl, name_en)
   
-============ ========= ===================================
-name         type      verbose name                       
-============ ========= ===================================
-id           AutoField ID                                 
-build_method CharField Build method (Konstruktionsmethode)
-template     CharField Template (Vorlage)                 
-ref          CharField reference (Referenz)               
-name         CharField contract title (Vertragstitel)     
-name_fr      CharField contract title (fr)                
-name_nl      CharField contract title (nl)                
-name_en      CharField contract title (en)                
-============ ========= ===================================
+============ ============== ===========================================================
+name         type           verbose name                                               
+============ ============== ===========================================================
+id           AutoField      ID                                                         
+build_method CharField      Build method (Konstruktionsmethode,Methode de construction)
+template     CharField      Template (Vorlage,Modèle)                                  
+ref          CharField      reference (Referenz,référence)                             
+name         BabelCharField contract title (Vertragstitel,intitulé du contrat)         
+name_fr      CharField      contract title (fr)                                        
+name_nl      CharField      contract title (nl)                                        
+name_en      CharField      contract title (en)                                        
+============ ============== ===========================================================
 
     
 Defined in :srcref:`/lino/apps/dsbe/models.py`
@@ -942,7 +942,7 @@ Field **ContractType.name**
 
 
 
-Type: CharField
+Type: BabelCharField
 
    
 .. index::
@@ -1003,17 +1003,17 @@ Model **ExamPolicy**
 
 
 
-ExamPolicy(id, name)
+ExamPolicy(id, name, name_fr, name_nl, name_en)
   
-======= ========= =========================
-name    type      verbose name             
-======= ========= =========================
-id      AutoField ID                       
-name    CharField designation (Bezeichnung)
-name_fr CharField designation (fr)         
-name_nl CharField designation (nl)         
-name_en CharField designation (en)         
-======= ========= =========================
+======= ============== =========================
+name    type           verbose name             
+======= ============== =========================
+id      AutoField      ID                       
+name    BabelCharField designation (Bezeichnung)
+name_fr CharField      designation (fr)         
+name_nl CharField      designation (nl)         
+name_en CharField      designation (en)         
+======= ============== =========================
 
     
 Defined in :srcref:`/lino/apps/dsbe/models.py`
@@ -1045,7 +1045,7 @@ Field **ExamPolicy.name**
 
 
 
-Type: CharField
+Type: BabelCharField
 
    
 .. index::
@@ -1220,17 +1220,17 @@ Model **AidType**
 
 
 
-AidType(id, name)
+AidType(id, name, name_fr, name_nl, name_en)
   
-======= ========= =========================
-name    type      verbose name             
-======= ========= =========================
-id      AutoField ID                       
-name    CharField designation (Bezeichnung)
-name_fr CharField designation (fr)         
-name_nl CharField designation (nl)         
-name_en CharField designation (en)         
-======= ========= =========================
+======= ============== =========================
+name    type           verbose name             
+======= ============== =========================
+id      AutoField      ID                       
+name    BabelCharField designation (Bezeichnung)
+name_fr CharField      designation (fr)         
+name_nl CharField      designation (nl)         
+name_en CharField      designation (en)         
+======= ============== =========================
 
     
 Defined in :srcref:`/lino/apps/dsbe/models.py`
@@ -1262,7 +1262,7 @@ Field **AidType.name**
 
 
 
-Type: CharField
+Type: BabelCharField
 
    
 .. index::
@@ -1327,42 +1327,43 @@ Model **Contract**
 A Contract
 
   
-================ ============= ============================================
-name             type          verbose name                                
-================ ============= ============================================
-id               AutoField     ID                                          
-user             ForeignKey    responsible (DSBE) (Verantwortlicher (DSBE))
-reminder_date    DateField     Due date (Fällig am)                        
-reminder_text    CharField     Reminder text (Erinnerungstext)             
-delay_value      IntegerField  Delay (value) (Frist (Wert))                
-delay_type       CharField     Delay (unit) (Frist (Einheit))              
-must_build       BooleanField  must build (muss generiert werden)          
-person           ForeignKey    Person                                      
-company          ForeignKey    Company                                     
-contact          ForeignKey    represented by                              
-language         LanguageField Language (Sprache)                          
-type             ForeignKey    contract type (Vertragsart)                 
-applies_from     DateField     applies from (Laufzeit von)                 
-applies_until    DateField     applies until (Laufzeit bis)                
-date_decided     DateField     date decided (Beschlossen am)               
-date_issued      DateField     date issued (Ausgestellt am)                
-duration         IntegerField  duration (days) (Dauer (Arbeitstage))       
-regime           CharField     regime (Regime)                             
-schedule         CharField     schedule (Stundenplan)                      
-hourly_rate      PriceField    hourly rate (Stundensatz)                   
-refund_rate      CharField     refund rate (Rückzahlung)                   
-reference_person CharField     reference person (Referenzperson)           
-responsibilities TextField     responsibilities (Aufgabenbereich)          
-stages           HtmlTextField stages (Etappen)                            
-goals            HtmlTextField goals (Zielsetzungen)                       
-duties_asd       HtmlTextField duties ASD (Verpflichtungen ASD)            
-duties_dsbe      HtmlTextField duties DSBE (Verpflichtungen DSBE)          
-duties_company   HtmlTextField duties company (Verpflichtungen Firma)      
-user_asd         ForeignKey    responsible (ASD) (Verantwortlicher (ASD))  
-exam_policy      ForeignKey    examination policy (Auswertungsstrategie)   
-ending           ForeignKey    Ending (Beendigung)                         
-date_ended       DateField     date ended (Beendet am)                     
-================ ============= ============================================
+================ ============= ============================================================
+name             type          verbose name                                                
+================ ============= ============================================================
+id               AutoField     ID                                                          
+user             ForeignKey    user (Benutzer,utilisateur)                                 
+reminder_date    DateField     Due date (Fällig am,Terme)                                  
+reminder_text    CharField     Reminder text (Erinnerungstext,Texte de rappel)             
+delay_value      IntegerField  Delay (value) (Frist (Wert),Delai (valeur))                 
+delay_type       CharField     Delay (unit) (Frist (Einheit),Délai (unité))                
+reminder_done    BooleanField  Done (Erledigt,Fait)                                        
+must_build       BooleanField  must build (muss generiert werden,doit construire)          
+person           ForeignKey    Person (Personne)                                           
+company          ForeignKey    Company (Firma)                                             
+contact          ForeignKey    represented by (Vertreten durch,représenté par)             
+language         LanguageField Language (Sprache,Langue)                                   
+type             ForeignKey    contract type (Vertragsart,type de contrat)                 
+applies_from     DateField     applies from (Laufzeit von,est d'application à partir de)   
+applies_until    DateField     applies until (Laufzeit bis,est d'application jusque)       
+date_decided     DateField     date decided (Beschlossen am,date de décision)              
+date_issued      DateField     date issued (Ausgestellt am,date fournie ?)                 
+duration         IntegerField  duration (days) (Dauer (Arbeitstage),durée (jours))         
+regime           CharField     regime (Regime,régime)                                      
+schedule         CharField     schedule (Stundenplan,horaire)                              
+hourly_rate      PriceField    hourly rate (Stundensatz,coûr horaire)                      
+refund_rate      CharField     refund rate (Rückzahlung,tarif de remboursement)            
+reference_person CharField     reference person (Referenzperson,persone de référence)      
+responsibilities TextField     responsibilities (Aufgabenbereich,responsabilités)          
+stages           TextField     stages (Etappen)                                            
+goals            TextField     goals (Zielsetzungen,buts)                                  
+duties_asd       TextField     duties ASD (Verpflichtungen ASD)                            
+duties_dsbe      TextField     duties DSBE (Verpflichtungen DSBE)                          
+duties_company   TextField     duties company (Verpflichtungen Firma)                      
+user_asd         ForeignKey    responsible (ASD) (Verantwortlicher (ASD))                  
+exam_policy      ForeignKey    examination policy (Auswertungsstrategie,Politique d'examen)
+ending           ForeignKey    Ending (Beendigung,Fin)                                     
+date_ended       DateField     date ended (Beendet am,date de fin)                         
+================ ============= ============================================================
 
     
 Defined in :srcref:`/lino/apps/dsbe/models.py`
@@ -1455,6 +1456,21 @@ Field **Contract.delay_type**
 
 
 Type: CharField
+
+   
+.. index::
+   single: field;reminder_done
+   
+.. _std.dsbe.Contract.reminder_done:
+
+Field **Contract.reminder_done**
+================================
+
+
+
+
+
+Type: BooleanField
 
    
 .. index::
@@ -1724,7 +1740,7 @@ Field **Contract.stages**
 
 
 
-Type: HtmlTextField
+Type: TextField
 
    
 .. index::
@@ -1739,7 +1755,7 @@ Field **Contract.goals**
 
 
 
-Type: HtmlTextField
+Type: TextField
 
    
 .. index::
@@ -1754,7 +1770,7 @@ Field **Contract.duties_asd**
 
 
 
-Type: HtmlTextField
+Type: TextField
 
    
 .. index::
@@ -1769,7 +1785,7 @@ Field **Contract.duties_dsbe**
 
 
 
-Type: HtmlTextField
+Type: TextField
 
    
 .. index::
@@ -1784,7 +1800,7 @@ Field **Contract.duties_company**
 
 
 
-Type: HtmlTextField
+Type: TextField
 
    
 .. index::
@@ -1863,41 +1879,71 @@ Model **CourseProvider**
 Kursanbieter (KAP, Oikos, Lupe, ...) 
     
   
-============= ============= ============================
-name          type          verbose name                
-============= ============= ============================
-name          CharField     Name                        
-addr1         CharField     Address line before street  
-street        CharField     Street (Straße,Rue)         
-street_no     CharField     No. (Nr.,N°)                
-street_box    CharField     Box (boîte)                 
-addr2         CharField     Address line after street   
-country       ForeignKey    Country (Land)              
-city          ForeignKey    City (Stadt)                
-zip_code      CharField     Zip code (Postleitzahl)     
-region        CharField     Region                      
-language      LanguageField Language (Sprache)          
-email         EmailField    E-Mail                      
-url           URLField      URL                         
-phone         CharField     Phone (Telefon)             
-gsm           CharField     GSM                         
-fax           CharField     Fax                         
-remarks       TextField     Remarks (Bemerkungen)       
-vat_id        CharField     VAT id (MWSt.-Nr.)          
-type          ForeignKey    Company type (Firmenart)    
-id            AutoField     Partner # (Partnernummer)   
-is_active     BooleanField  is active (aktiv)           
-activity      ForeignKey    Activity (Beruf)            
-bank_account1 CharField     Bank account 1 (Bankkonto 1)
-bank_account2 CharField     Bank account 2 (Bankkonto 2)
-prefix        CharField     prefix                      
-hourly_rate   PriceField    hourly rate (Stundensatz)   
-company_ptr   OneToOneField company ptr                 
-============= ============= ============================
+============= ============= =============================================================================
+name          type          verbose name                                                                 
+============= ============= =============================================================================
+country       ForeignKey    Country (Land,Pays)                                                          
+city          ForeignKey    City                                                                         
+name          CharField     Name (Nom)                                                                   
+addr1         CharField     Address line before street (Adresszeile vor Straße,Ligne avant le nom de rue)
+street        CharField     Street (Straße,Rue)                                                          
+street_no     CharField     No. (Nr.,N°)                                                                 
+street_box    CharField     Box (boîte)                                                                  
+addr2         CharField     Address line after street (Adresszeile nach Straße,Ligne après le nom de rue)
+zip_code      CharField     Zip code (Postleitzahl,Code postal)                                          
+region        CharField     Region (Région)                                                              
+language      LanguageField Language (Sprache,Langue)                                                    
+email         EmailField    E-Mail (E-mail)                                                              
+url           URLField      URL                                                                          
+phone         CharField     Phone (Telefon,Téléphone)                                                    
+gsm           CharField     GSM                                                                          
+fax           CharField     Fax                                                                          
+remarks       TextField     Remarks (Bemerkungen,Remarques)                                              
+vat_id        CharField     VAT id (MWSt.-Nr.,N° de TVA)                                                 
+type          ForeignKey    Company type (Firmenart)                                                     
+id            AutoField     Partner # (Partnernummer,Partenaire #)                                       
+is_active     BooleanField  is active (aktiv,est actif)                                                  
+activity      ForeignKey    Activity (Beruf,Activité)                                                    
+bank_account1 CharField     Bank account 1 (Bankkonto 1,Compte en banque 1)                              
+bank_account2 CharField     Bank account 2 (Bankkonto 2,Compte en banque 2)                              
+prefix        CharField     prefix                                                                       
+hourly_rate   PriceField    hourly rate (Stundensatz,coûr horaire)                                       
+company_ptr   OneToOneField company ptr                                                                  
+============= ============= =============================================================================
 
     
 Defined in :srcref:`/lino/apps/dsbe/models.py`
 
+.. index::
+   single: field;country
+   
+.. _std.dsbe.CourseProvider.country:
+
+Field **CourseProvider.country**
+================================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;city
+   
+.. _std.dsbe.CourseProvider.city:
+
+Field **CourseProvider.city**
+=============================
+
+
+
+
+
+Type: ForeignKey
+
+   
 .. index::
    single: field;name
    
@@ -1986,40 +2032,6 @@ Field **CourseProvider.addr2**
 Address line to print below street line
 
 Type: CharField
-
-   
-.. index::
-   single: field;country
-   
-.. _std.dsbe.CourseProvider.country:
-
-Field **CourseProvider.country**
-================================
-
-
-
-The country where this contact is located.
-
-Type: ForeignKey
-
-   
-.. index::
-   single: field;city
-   
-.. _std.dsbe.CourseProvider.city:
-
-Field **CourseProvider.city**
-=============================
-
-
-
-
-        The city where this contact is located.
-        The list of choices for this field is context-sensitive
-        and depends on the :attr:`country`.
-        
-
-Type: ForeignKey
 
    
 .. index::
@@ -2328,7 +2340,7 @@ Ein Kursinhalt (z.B. "Französisch", "Deutsch", "Alphabétisation",...)
 name type      verbose name
 ==== ========= ============
 id   AutoField ID          
-name CharField Name        
+name CharField Name (Nom)  
 ==== ========= ============
 
     
@@ -2384,16 +2396,16 @@ und bei einem bestimmten
 (und für den ihr Kandidaten zu vermitteln plant).
 
   
-========== ========== ==============================
-name       type       verbose name                  
-========== ========== ==============================
-id         AutoField  ID                            
-title      CharField  Name                          
-content    ForeignKey Course content (Kursinhalt)   
-provider   ForeignKey Course provider (Kursanbieter)
-start_date DateField  start date (beginnt am)       
-remark     CharField  Remark (Bemerkung)            
-========== ========== ==============================
+========== ========== ==================================================
+name       type       verbose name                                      
+========== ========== ==================================================
+id         AutoField  ID                                                
+title      CharField  Name (Nom)                                        
+content    ForeignKey Course content (Kursinhalt,Contenu du cours)      
+provider   ForeignKey Course provider (Kursanbieter,dispenseur de cours)
+start_date DateField  start date (beginnt am,Date de début)             
+remark     CharField  Remark (Bemerkung,Remarque)                       
+========== ========== ==================================================
 
     
 Defined in :srcref:`/lino/apps/dsbe/models.py`
@@ -2506,18 +2518,18 @@ A Course Request is created when a certain Person expresses her
 wish to participate in a Course with a certain CourseContent.
 
   
-============== ========== ================================
-name           type       verbose name                    
-============== ========== ================================
-id             AutoField  ID                              
-person         ForeignKey Person                          
-content        ForeignKey Course content (Kursinhalt)     
-date_submitted DateField  date submitted (eingereicht am )
-course         ForeignKey Course found (Kurs gefunden)    
-remark         CharField  Remark (Bemerkung)              
-date_ended     DateField  date ended (Beendet am)         
-ending         ForeignKey Ending (Beendigung)             
-============== ========== ================================
+============== ========== =============================================
+name           type       verbose name                                 
+============== ========== =============================================
+id             AutoField  ID                                           
+person         ForeignKey Person (Personne)                            
+content        ForeignKey Course content (Kursinhalt,Contenu du cours) 
+date_submitted DateField  date submitted (eingereicht am ,date d'envoi)
+course         ForeignKey Course found (Kurs gefunden,Cours trouvé)    
+remark         TextField  Remark (Bemerkung,Remarque)                  
+date_ended     DateField  date ended (Beendet am,date de fin)          
+ending         ForeignKey Ending (Beendigung,Fin)                      
+============== ========== =============================================
 
     
 Defined in :srcref:`/lino/apps/dsbe/models.py`
@@ -2609,7 +2621,7 @@ Field **CourseRequest.remark**
 
 
 
-Type: CharField
+Type: TextField
 
    
 .. index::
@@ -2655,19 +2667,22 @@ Model **PersonSearch**
 
 
 
-PersonSearch(id, user_id, title, aged_from, aged_to, sex, only_my_persons)
+PersonSearch(id, user_id, title, aged_from, aged_to, sex, only_my_persons, coached_by_id, period_from, period_until)
   
-=============== ============ =================================
-name            type         verbose name                     
-=============== ============ =================================
-id              AutoField    ID                               
-user            ForeignKey   user (Benutzer)                  
-title           CharField    Search Title (Titel Suchliste)   
-aged_from       IntegerField Aged from (Alter von)            
-aged_to         IntegerField Aged to (Alter bis)              
-sex             CharField    Sex (Geschlecht)                 
-only_my_persons BooleanField Only my persons (nur meine Leute)
-=============== ============ =================================
+=============== ============ =========================================================
+name            type         verbose name                                             
+=============== ============ =========================================================
+id              AutoField    ID                                                       
+user            ForeignKey   user (Benutzer,utilisateur)                              
+title           CharField    Search Title (Titel Suchliste,Intitulé de la recherche)  
+aged_from       IntegerField Aged from (Alter von,Age: de)                            
+aged_to         IntegerField Aged to (Alter bis,Age: jusque)                          
+sex             CharField    Sex (Geschlecht,Sexe)                                    
+only_my_persons BooleanField Only my persons (nur meine Leute,Seulement mes personnes)
+coached_by      ForeignKey   Coached by (Begleitet durch,Accompagné par)              
+period_from     DateField    Period from (Periode vom,Période: depuis)                
+period_until    DateField    until (bis,jusque)                                       
+=============== ============ =========================================================
 
     
 Defined in :srcref:`/lino/apps/dsbe/models.py`
@@ -2777,6 +2792,51 @@ Field **PersonSearch.only_my_persons**
 Type: BooleanField
 
    
+.. index::
+   single: field;coached_by
+   
+.. _std.dsbe.PersonSearch.coached_by:
+
+Field **PersonSearch.coached_by**
+=================================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;period_from
+   
+.. _std.dsbe.PersonSearch.period_from:
+
+Field **PersonSearch.period_from**
+==================================
+
+
+
+
+
+Type: DateField
+
+   
+.. index::
+   single: field;period_until
+   
+.. _std.dsbe.PersonSearch.period_until:
+
+Field **PersonSearch.period_until**
+===================================
+
+
+
+
+
+Type: DateField
+
+   
 
 
 .. index::
@@ -2792,15 +2852,15 @@ Model **WantedLanguageKnowledge**
 
 WantedLanguageKnowledge(id, search_id, language_id, spoken, written)
   
-======== =============== ==================
-name     type            verbose name      
-======== =============== ==================
-id       AutoField       ID                
-search   ForeignKey      search            
-language ForeignKey      Language (Sprache)
-spoken   ChoiceListField spoken (Wort)     
-written  ChoiceListField written (Schrift) 
-======== =============== ==================
+======== =============== =========================
+name     type            verbose name             
+======== =============== =========================
+id       AutoField       ID                       
+search   ForeignKey      search                   
+language ForeignKey      Language (Sprache,Langue)
+spoken   ChoiceListField spoken (Wort,oral)       
+written  ChoiceListField written (Schrift)        
+======== =============== =========================
 
     
 Defined in :srcref:`/lino/apps/dsbe/models.py`

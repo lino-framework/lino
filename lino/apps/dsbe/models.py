@@ -886,6 +886,7 @@ class PersonPropsByProp(reports.Report):
     
 class ConfiguredPropsByPerson(PropsByPerson):
     propgroup_config_name = NotImplementedError
+    typo_check = False # to avoid warning "ConfiguredPropsByPerson defines new attribute(s) propgroup_config_name"
     def setup_actions(self):
         if not self.propgroup_config_name is NotImplementedError:
             #~ pg = self.get_configured_action() 

@@ -3,10 +3,15 @@ Installing Lino
 ===============
 
 This page is work in progress.
-Don't hesitate to contact me if you get stucked.
+Don't hesitate to contact us (lino-users@googlegroups.com) 
+if you get stucked or find documentation bugs.
 
 WARNING: Don't apply the instructions on this page 
 without understanding what you are doing!
+
+.. contents:: Table of Contents
+   :depth: 2
+
 
 Software prerequisites
 ----------------------
@@ -291,6 +296,7 @@ directive in your Apache config, and then use symbolic links in :file:`/usr/loca
   mkdir /usr/local/django/myproject/media
   cd /usr/local/django/myproject/media
   mkdir cache
+  mkdir cache/js
   mkdir upload
   mkdir webdav
   mkdir webdav/doctemplates

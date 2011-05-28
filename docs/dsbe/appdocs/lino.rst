@@ -27,18 +27,21 @@ Model **SiteConfig**
 
 SiteConfig(id, default_build_method)
   
-==================== ============ ===================================================================
-name                 type         verbose name                                                       
-==================== ============ ===================================================================
-id                   AutoField    ID                                                                 
-default_build_method CharField    Default build method (Standard-Konstruktionsmethode)               
-site_company         ForeignKey   The company that runs this site                                    
-next_partner_id      IntegerField The next automatic id for Person or Company                        
-propgroup_skills     ForeignKey   Skills Property Group (Eigenschaftsgruppe "Fachkompetenzen")       
-propgroup_softskills ForeignKey   Soft Skills Property Group (Eigenschaftsgruppe "Sozialkompetenzen")
-propgroup_obstacles  ForeignKey   Obstacles Property Group (Eigenschaftsgruppe "Hindernisse")        
-job_office           ForeignKey   Local job office (Lokales Arbeitsamt)                              
-==================== ============ ===================================================================
+============================ ============ ===================================================================================================================================
+name                         type         verbose name                                                                                                                       
+============================ ============ ===================================================================================================================================
+id                           AutoField    ID                                                                                                                                 
+default_build_method         CharField    Default build method (Standard-Konstruktionsmethode,Methode de constuction par défault)                                            
+site_company                 ForeignKey   The company that runs this site (Firma, die diesen Site betreibt,La société ou tourne ce site)                                     
+next_partner_id              IntegerField The next automatic id for Person or Company (Nächste Partnernummer,Identifiant automatique pour la personne ounla société suivante)
+job_office                   ForeignKey   Local job office (Lokales Arbeitsamt,Agence locale pour l'emploi ?)                                                                
+propgroup_skills             ForeignKey   Skills Property Group (Eigenschaftsgruppe Fähigkeiten,Groupe de propriétés 'Skills')                                               
+propgroup_softskills         ForeignKey   Soft Skills Property Group (Eigenschaftsgruppe Sozialkompetenzen,Groupe de propriétés 'Soft Skills')                               
+propgroup_obstacles          ForeignKey   Obstacles Property Group (Eigenschaftsgruppe Hindernisse,Groupe de propriétés 'Obstacles')                                         
+residence_permit_upload_type ForeignKey   Upload Type for residence permit (Upload-Art Aufenthaltserlaubnis)                                                                 
+work_permit_upload_type      ForeignKey   Upload Type for work permit (Upload-Art Arbeitserlaubnis)                                                                          
+driving_licence_upload_type  ForeignKey   Upload Type for driving licence (Upload-Art Führerschein)                                                                          
+============================ ============ ===================================================================================================================================
 
     
 Defined in :srcref:`/lino/models.py`
@@ -104,6 +107,21 @@ Type: IntegerField
 
    
 .. index::
+   single: field;job_office
+   
+.. _std.lino.SiteConfig.job_office:
+
+Field **SiteConfig.job_office**
+===============================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
    single: field;propgroup_skills
    
 .. _std.lino.SiteConfig.propgroup_skills:
@@ -149,12 +167,42 @@ Type: ForeignKey
 
    
 .. index::
-   single: field;job_office
+   single: field;residence_permit_upload_type
    
-.. _std.lino.SiteConfig.job_office:
+.. _std.lino.SiteConfig.residence_permit_upload_type:
 
-Field **SiteConfig.job_office**
-===============================
+Field **SiteConfig.residence_permit_upload_type**
+=================================================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;work_permit_upload_type
+   
+.. _std.lino.SiteConfig.work_permit_upload_type:
+
+Field **SiteConfig.work_permit_upload_type**
+============================================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;driving_licence_upload_type
+   
+.. _std.lino.SiteConfig.driving_licence_upload_type:
+
+Field **SiteConfig.driving_licence_upload_type**
+================================================
 
 
 

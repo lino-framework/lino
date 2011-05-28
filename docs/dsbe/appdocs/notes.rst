@@ -27,16 +27,16 @@ Model **NoteType**
 
 NoteType(id, build_method, template, name, important, remark)
   
-============ ============ ===================================
-name         type         verbose name                       
-============ ============ ===================================
-id           AutoField    ID                                 
-build_method CharField    Build method (Konstruktionsmethode)
-template     CharField    Template (Vorlage)                 
-name         CharField    name                               
-important    BooleanField important (wichtig)                
-remark       TextField    Remark (Bemerkung)                 
-============ ============ ===================================
+============ ============ ===========================================================
+name         type         verbose name                                               
+============ ============ ===========================================================
+id           AutoField    ID                                                         
+build_method CharField    Build method (Konstruktionsmethode,Methode de construction)
+template     CharField    Template (Vorlage,Modèle)                                  
+name         CharField    name                                                       
+important    BooleanField important (wichtig)                                        
+remark       TextField    Remark (Bemerkung,Remarque)                                
+============ ============ ===========================================================
 
     
 Defined in :srcref:`/lino/modlib/notes/models.py`
@@ -134,6 +134,126 @@ Type: TextField
 
 
 .. index::
+   pair: model; EventType
+
+.. _std.notes.EventType:
+
+-------------------
+Model **EventType**
+-------------------
+
+
+
+
+    
+  
+======= ============== ======================================
+name    type           verbose name                          
+======= ============== ======================================
+id      AutoField      ID                                    
+name    BabelCharField Designation (Beschreibung,Désignation)
+remark  TextField      Remark (Bemerkung,Remarque)           
+name_fr CharField      Designation (fr)                      
+name_nl CharField      Designation (nl)                      
+name_en CharField      Designation (en)                      
+======= ============== ======================================
+
+    
+Defined in :srcref:`/lino/modlib/notes/models.py`
+
+.. index::
+   single: field;id
+   
+.. _std.notes.EventType.id:
+
+Field **EventType.id**
+======================
+
+
+
+
+
+Type: AutoField
+
+   
+.. index::
+   single: field;name
+   
+.. _std.notes.EventType.name:
+
+Field **EventType.name**
+========================
+
+
+
+
+
+Type: BabelCharField
+
+   
+.. index::
+   single: field;remark
+   
+.. _std.notes.EventType.remark:
+
+Field **EventType.remark**
+==========================
+
+
+
+
+
+Type: TextField
+
+   
+.. index::
+   single: field;name_fr
+   
+.. _std.notes.EventType.name_fr:
+
+Field **EventType.name_fr**
+===========================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;name_nl
+   
+.. _std.notes.EventType.name_nl:
+
+Field **EventType.name_nl**
+===========================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;name_en
+   
+.. _std.notes.EventType.name_en:
+
+Field **EventType.name_en**
+===========================
+
+
+
+
+
+Type: CharField
+
+   
+
+
+.. index::
    pair: model; Note
 
 .. _std.notes.Note:
@@ -144,26 +264,28 @@ Model **Note**
 
 
 
-Note(id, user_id, reminder_date, reminder_text, delay_value, delay_type, must_build, person_id, company_id, date, type_id, subject, body, language)
+Note(id, user_id, reminder_date, reminder_text, delay_value, delay_type, reminder_done, must_build, person_id, company_id, date, type_id, event_type_id, subject, body, language)
   
-============= ============= ==================================
-name          type          verbose name                      
-============= ============= ==================================
-id            AutoField     ID                                
-user          ForeignKey    user (Benutzer)                   
-reminder_date DateField     Due date (Fällig am)              
-reminder_text CharField     Reminder text (Erinnerungstext)   
-delay_value   IntegerField  Delay (value) (Frist (Wert))      
-delay_type    CharField     Delay (unit) (Frist (Einheit))    
-must_build    BooleanField  must build (muss generiert werden)
-person        ForeignKey    Person                            
-company       ForeignKey    Company                           
-date          DateField     Date (Datum)                      
-type          ForeignKey    Note type (Notizart)              
-subject       CharField     Subject (Betreff)                 
-body          TextField     Body (Inhalt)                     
-language      LanguageField Language (Sprache)                
-============= ============= ==================================
+============= ============= ======================================================================
+name          type          verbose name                                                          
+============= ============= ======================================================================
+id            AutoField     ID                                                                    
+user          ForeignKey    user (Benutzer,utilisateur)                                           
+reminder_date DateField     Due date (Fällig am,Terme)                                            
+reminder_text CharField     Reminder text (Erinnerungstext,Texte de rappel)                       
+delay_value   IntegerField  Delay (value) (Frist (Wert),Delai (valeur))                           
+delay_type    CharField     Delay (unit) (Frist (Einheit),Délai (unité))                          
+reminder_done BooleanField  Done (Erledigt,Fait)                                                  
+must_build    BooleanField  must build (muss generiert werden,doit construire)                    
+person        ForeignKey    Person (Personne)                                                     
+company       ForeignKey    Company (Firma)                                                       
+date          DateField     Date (Datum)                                                          
+type          ForeignKey    Note Type (Form) (Notizart (Form),Type de note (Formulaire))          
+event_type    ForeignKey    Event Type (Content) (Ereignisart (Inhalt),Type d'événement (contenu))
+subject       CharField     Subject (Betreff,Objet)                                               
+body          HtmlTextField Body (Inhalt,Corps)                                                   
+language      LanguageField Language (Sprache,Langue)                                             
+============= ============= ======================================================================
 
     
 Defined in :srcref:`/lino/apps/dsbe/models.py`
@@ -259,6 +381,21 @@ Type: CharField
 
    
 .. index::
+   single: field;reminder_done
+   
+.. _std.notes.Note.reminder_done:
+
+Field **Note.reminder_done**
+============================
+
+
+
+
+
+Type: BooleanField
+
+   
+.. index::
    single: field;must_build
    
 .. _std.notes.Note.must_build:
@@ -334,6 +471,21 @@ Type: ForeignKey
 
    
 .. index::
+   single: field;event_type
+   
+.. _std.notes.Note.event_type:
+
+Field **Note.event_type**
+=========================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
    single: field;subject
    
 .. _std.notes.Note.subject:
@@ -360,7 +512,7 @@ Field **Note.body**
 
 
 
-Type: TextField
+Type: HtmlTextField
 
    
 .. index::

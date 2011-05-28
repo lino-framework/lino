@@ -25,10 +25,9 @@ from lino.utils import *
 from lino.utils import dblogger
 
 class Command(BaseCommand):
-    help = """Performs a database reset and loads the 
+    help = """Performs a database flush and loads the 
     specified fixtures for all applications.  
-    It is is a combination of the commands 
-    `reset`, `syncdb` and `loaddata`.
+    It is is a combination of the commands `flush` and `loaddata`.
     """
     
     args = "fixture [fixture ...]"
@@ -44,7 +43,7 @@ class Command(BaseCommand):
             raise CommandError("System logger must be enabled for INFO")
         dbname = settings.DATABASES['default']['NAME']
         if options.get('interactive'):
-            if not confirm("Gonna reset your database (%s).\nAre you sure (y/n) ?" % dbname):
+            if not confirm("Gonna flush your database (%s).\nAre you sure (y/n) ?" % dbname):
                 raise CommandError("User abort.")
         #~ logLevel = dblogger.logger.level
         #~ if logLevel > logging.DEBUG:
@@ -54,8 +53,9 @@ class Command(BaseCommand):
         dblogger.info(lino.welcome_text())
         options.update(interactive=False)
         apps = app_labels()
-        call_command('reset',*apps,**options)
-        call_command('syncdb',**options)
+        #~ call_command('reset',*apps,**options)
+        call_command('flush',**options)
+        #~ call_command('syncdb',**options)
         call_command('loaddata',*args,**options)
         #~ if logLevel > logging.DEBUG:
             #~ dblogger.logger.setLevel(logLevel)

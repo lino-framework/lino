@@ -11,9 +11,10 @@ Lino/DSBE
     sites
     lino
     countries
-    properties
     contacts
     notes
     links
     uploads
+    thirds
+    properties
     dsbe

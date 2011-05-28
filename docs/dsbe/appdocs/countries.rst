@@ -9,6 +9,12 @@ countries
 Defined in :srcref:`/lino/modlib/countries/models.py`
 
 
+Defines models 
+:class:`Language`,
+:class:`Country` and
+:class:`City`.
+
+
 
 .. contents:: Table of Contents
 
@@ -25,18 +31,18 @@ Model **Language**
 
 
 
-Language(id, name, iso2)
+Language(id, name, iso2, name_fr, name_nl, name_en)
   
-======= ========= ==========================
-name    type      verbose name              
-======= ========= ==========================
-id      CharField id                        
-name    CharField Designation (Beschreibung)
-iso2    CharField iso2                      
-name_fr CharField Designation (fr)          
-name_nl CharField Designation (nl)          
-name_en CharField Designation (en)          
-======= ========= ==========================
+======= ============== ======================================
+name    type           verbose name                          
+======= ============== ======================================
+id      CharField      id                                    
+name    BabelCharField Designation (Beschreibung,Désignation)
+iso2    CharField      iso2                                  
+name_fr CharField      Designation (fr)                      
+name_nl CharField      Designation (nl)                      
+name_en CharField      Designation (en)                      
+======= ============== ======================================
 
     
 Defined in :srcref:`/lino/modlib/countries/models.py`
@@ -68,7 +74,7 @@ Field **Language.name**
 
 
 
-Type: CharField
+Type: BabelCharField
 
    
 .. index::
@@ -148,17 +154,17 @@ Model **Country**
 Implements the :class:`countries.Country` convention.
 
   
-========== ========= ============
-name       type      verbose name
-========== ========= ============
-isocode    CharField isocode     
-name       CharField name        
-short_code CharField short code  
-iso3       CharField iso3        
-name_fr    CharField name (fr)   
-name_nl    CharField name (nl)   
-name_en    CharField name (en)   
-========== ========= ============
+========== ============== ======================================
+name       type           verbose name                          
+========== ============== ======================================
+isocode    CharField      isocode                               
+name       BabelCharField Designation (Beschreibung,Désignation)
+short_code CharField      short code                            
+iso3       CharField      iso3                                  
+name_fr    CharField      Designation (fr)                      
+name_nl    CharField      Designation (nl)                      
+name_en    CharField      Designation (en)                      
+========== ============== ======================================
 
     
 Defined in :srcref:`/lino/modlib/countries/models.py`
@@ -190,7 +196,7 @@ Field **Country.name**
 
 
 
-Type: CharField
+Type: BabelCharField
 
    
 .. index::

@@ -38,20 +38,20 @@ Implemented by
 :ref:`igen.contacts.CompanyType`
 
   
-============= ============== ===========================
-name          type           verbose name               
-============= ============== ===========================
-id            AutoField      ID                         
-name          BabelCharField Designation (Beschreibung) 
-abbr          BabelCharField Abbreviation (Abkürzung)   
-name_fr       CharField      Designation (fr)           
-name_nl       CharField      Designation (nl)           
-name_en       CharField      Designation (en)           
-abbr_fr       CharField      Abbreviation (fr)          
-abbr_nl       CharField      Abbreviation (nl)          
-abbr_en       CharField      Abbreviation (en)          
-contract_type ForeignKey     contract type (Vertragsart)
-============= ============== ===========================
+============= ============== ===========================================
+name          type           verbose name                               
+============= ============== ===========================================
+id            AutoField      ID                                         
+name          BabelCharField Designation (Beschreibung,Désignation)     
+abbr          BabelCharField Abbreviation (Abkürzung,Abbréviation)      
+name_fr       CharField      Designation (fr)                           
+name_nl       CharField      Designation (nl)                           
+name_en       CharField      Designation (en)                           
+abbr_fr       CharField      Abbreviation (fr)                          
+abbr_nl       CharField      Abbreviation (nl)                          
+abbr_en       CharField      Abbreviation (en)                          
+contract_type ForeignKey     contract type (Vertragsart,type de contrat)
+============= ============== ===========================================
 
     
 Defined in :srcref:`/lino/modlib/contacts/models.py`
@@ -223,15 +223,15 @@ Model **ContactType**
 Implements the :class:`contacts.ContactType` convention.
 
   
-======= ============== ==========================
-name    type           verbose name              
-======= ============== ==========================
-id      AutoField      ID                        
-name    BabelCharField Designation (Beschreibung)
-name_fr CharField      Designation (fr)          
-name_nl CharField      Designation (nl)          
-name_en CharField      Designation (en)          
-======= ============== ==========================
+======= ============== ======================================
+name    type           verbose name                          
+======= ============== ======================================
+id      AutoField      ID                                    
+name    BabelCharField Designation (Beschreibung,Désignation)
+name_fr CharField      Designation (fr)                      
+name_nl CharField      Designation (nl)                      
+name_en CharField      Designation (en)                      
+======= ============== ======================================
 
     
 Defined in :srcref:`/lino/modlib/contacts/models.py`
@@ -329,14 +329,14 @@ Represents a :class:`Person` having a (more or less known)
 role in a :class:`Company`.
 
   
-======= ========== =========================
-name    type       verbose name             
-======= ========== =========================
-id      AutoField  ID                       
-person  ForeignKey person (Person)          
-company ForeignKey company (Firma)          
-type    ForeignKey contact type (Kontaktart)
-======= ========== =========================
+======= ========== =========================================
+name    type       verbose name                             
+======= ========== =========================================
+id      AutoField  ID                                       
+person  ForeignKey person (Person,personne)                 
+company ForeignKey company (Firma,Société)                  
+type    ForeignKey contact type (Kontaktart,type de contact)
+======= ========== =========================================
 
     
 Defined in :srcref:`/lino/modlib/contacts/models.py`
@@ -419,83 +419,114 @@ Represents a physical person.
 
 
   
-=========================== ================= ======================================================
-name                        type              verbose name                                          
-=========================== ================= ======================================================
-name                        CharField         Name                                                  
-addr1                       CharField         Address line before street                            
-street                      CharField         Street (Straße,Rue)                                   
-street_no                   CharField         No. (Nr.,N°)                                          
-street_box                  CharField         Box (boîte)                                           
-addr2                       CharField         Address line after street                             
-country                     ForeignKey        Country (Land)                                        
-city                        ForeignKey        City (Stadt)                                          
-zip_code                    CharField         Zip code (Postleitzahl)                               
-region                      CharField         Region                                                
-language                    LanguageField     Language (Sprache)                                    
-email                       EmailField        E-Mail                                                
-url                         URLField          URL                                                   
-phone                       CharField         Phone (Telefon)                                       
-gsm                         CharField         GSM                                                   
-fax                         CharField         Fax                                                   
-remarks                     TextField         Remarks (Bemerkungen)                                 
-first_name                  CharField         First name (Vorname)                                  
-last_name                   CharField         Last name (Familienname)                              
-title                       CharField         Title (Anrede)                                        
-id                          AutoField         Partner # (Partnernummer)                             
-is_active                   BooleanField      is active (aktiv)                                     
-activity                    ForeignKey        Activity (Beruf)                                      
-bank_account1               CharField         Bank account 1 (Bankkonto 1)                          
-bank_account2               CharField         Bank account 2 (Bankkonto 2)                          
-gesdos_id                   CharField         Gesdos ID (Gesdos-Nr)                                 
-is_cpas                     BooleanField      receives social help (Sozialhilfeempfänger)           
-is_senior                   BooleanField      is senior (Altenheim)                                 
-group                       ForeignKey        Group (Gruppe)                                        
-coached_from                DateField         Coached from (Begleitet seit)                         
-coached_until               DateField         until (bis)                                           
-coach1                      ForeignKey        Coach 1 (Begleiter 1)                                 
-coach2                      ForeignKey        Coach 2 (Begleiter 2)                                 
-sex                         CharField         Sex (Geschlecht)                                      
-birth_date                  DateField         Birth date (Geburtsdatum)                             
-birth_date_circa            BooleanField      not exact (circa)                                     
-birth_place                 CharField         Birth place (Geburtsort)                              
-birth_country               ForeignKey        Birth country (Geburtsland)                           
-civil_state                 CharField         Civil state (Zivilstand)                              
-national_id                 CharField         National ID (NR-Nummer)                               
-health_insurance            ForeignKey        Health insurance (Krankenkasse)                       
-pharmacy                    ForeignKey        Pharmacy (Apotheke)                                   
-nationality                 ForeignKey        Nationality (Staatsangehörigkeit)                     
-card_number                 CharField         eID card number (eID-Kartennummer)                    
-card_valid_from             DateField         ID card valid from (ID-Karte gültig von)              
-card_valid_until            DateField         until (bis)                                           
-card_type                   CharField         eID card type (eID-Kartenart)                         
-card_issuer                 CharField         eID card issuer (eID-Karte ausgestellt durch)         
-noble_condition             CharField         noble condition (Adelstitel)                          
-residence_type              SmallIntegerField Residence type (Eintragen)                            
-in_belgium_since            DateField         Lives in Belgium since (Lebt in Belgien seit)         
-unemployed_since            DateField         Seeking work since (eingetragen seit)                 
-needs_residence_permit      BooleanField      Needs residence permit (Braucht Aufenthaltserlaubnis) 
-needs_work_permit           BooleanField      Needs work permit (Braucht Arb.Erl.)                  
-work_permit_suspended_until DateField         suspended until (Wartezeit bis)                       
-aid_type                    ForeignKey        aid type (Sozialhilfeart)                             
-income_ag                   BooleanField      Arbeitslosengeld                                      
-income_wg                   BooleanField      Wartegeld                                             
-income_kg                   BooleanField      Krankengeld                                           
-income_rente                BooleanField      Rente                                                 
-income_misc                 BooleanField      Andere                                                
-is_seeking                  BooleanField      is seeking work (Arbeit suchend)                      
-unavailable_until           DateField         Unavailable until (Nicht verfügbar bis)               
-unavailable_why             CharField         reason (Grund)                                        
-native_language             ForeignKey        Native language (Muttersprache)                       
-obstacles                   TextField         Obstacles (Hindernisse)                               
-skills                      TextField         Other skills (Sonstige Fähikeiten)                    
-job_agents                  CharField         Job agents (Interim-Agenturen)                        
-job_office_contact          ForeignKey        Contact person at local job office (Kontaktperson ADG)
-=========================== ================= ======================================================
+=========================== ================= ====================================================================================
+name                        type              verbose name                                                                        
+=========================== ================= ====================================================================================
+country                     ForeignKey        Country (Land,Pays)                                                                 
+city                        ForeignKey        City                                                                                
+name                        CharField         Name (Nom)                                                                          
+addr1                       CharField         Address line before street (Adresszeile vor Straße,Ligne avant le nom de rue)       
+street                      CharField         Street (Straße,Rue)                                                                 
+street_no                   CharField         No. (Nr.,N°)                                                                        
+street_box                  CharField         Box (boîte)                                                                         
+addr2                       CharField         Address line after street (Adresszeile nach Straße,Ligne après le nom de rue)       
+zip_code                    CharField         Zip code (Postleitzahl,Code postal)                                                 
+region                      CharField         Region (Région)                                                                     
+language                    LanguageField     Language (Sprache,Langue)                                                           
+email                       EmailField        E-Mail (E-mail)                                                                     
+url                         URLField          URL                                                                                 
+phone                       CharField         Phone (Telefon,Téléphone)                                                           
+gsm                         CharField         GSM                                                                                 
+fax                         CharField         Fax                                                                                 
+remarks                     TextField         Remarks (Bemerkungen,Remarques)                                                     
+first_name                  CharField         First name (Vorname,Prénom)                                                         
+last_name                   CharField         Last name (Familienname,Nom de famille)                                             
+title                       CharField         Title (Anrede,Intitulé)                                                             
+id                          AutoField         Partner # (Partnernummer,Partenaire #)                                              
+is_active                   BooleanField      is active (aktiv,est actif)                                                         
+activity                    ForeignKey        Activity (Beruf,Activité)                                                           
+bank_account1               CharField         Bank account 1 (Bankkonto 1,Compte en banque 1)                                     
+bank_account2               CharField         Bank account 2 (Bankkonto 2,Compte en banque 2)                                     
+remarks2                    TextField         Remarks (Social Office) (Bemerkungen (Sozialsekretariat),Remarque (Bureau Social))  
+gesdos_id                   CharField         Gesdos ID (Gesdos-Nr)                                                               
+is_cpas                     BooleanField      receives social help (Sozialhilfeempfänger,reçoit de l'aide sociale)                
+is_senior                   BooleanField      is senior (Altenheim)                                                               
+group                       ForeignKey        Group (Gruppe,Groupe)                                                               
+coached_from                DateField         Coached from (Begleitet seit)                                                       
+coached_until               DateField         until (bis,jusque)                                                                  
+coach1                      ForeignKey        Coach 1 (Begleiter 1)                                                               
+coach2                      ForeignKey        Coach 2 (Begleiter 2)                                                               
+sex                         CharField         Sex (Geschlecht,Sexe)                                                               
+birth_date                  DateField         Birth date (Geburtsdatum,Date de naissance)                                         
+birth_date_circa            BooleanField      not exact (circa,inexact)                                                           
+birth_place                 CharField         Birth place (Geburtsort,Lieu de naissance)                                          
+birth_country               ForeignKey        Birth country (Geburtsland,Pays de naissance)                                       
+civil_state                 CharField         Civil state (Zivilstand,Etat civil)                                                 
+national_id                 CharField         National ID (NR-Nummer,Numéro d'identitification du registre national)              
+health_insurance            ForeignKey        Health insurance (Krankenkasse,Assurance santé)                                     
+pharmacy                    ForeignKey        Pharmacy (Apotheke,Pharmacie)                                                       
+nationality                 ForeignKey        Nationality (Staatsangehörigkeit,Nationalité)                                       
+card_number                 CharField         eID card number (eID-Kartennummer,Numéro de carte eID)                              
+card_valid_from             DateField         ID card valid from (ID-Karte gültig von,Carte d'identité valable depuis)            
+card_valid_until            DateField         until (bis,jusque)                                                                  
+card_type                   CharField         eID card type (eID-Kartenart)                                                       
+card_issuer                 CharField         eID card issuer (eID-Karte ausgestellt durch,carte eID provenant de)                
+noble_condition             CharField         noble condition (Adelstitel)                                                        
+residence_type              SmallIntegerField Residence type (Eintragen,Type de séjour)                                           
+in_belgium_since            DateField         Lives in Belgium since (Lebt in Belgien seit,Habite en Belgique depuis)             
+unemployed_since            DateField         Seeking work since (eingetragen seit,Cherche du travail depuis)                     
+needs_residence_permit      BooleanField      Needs residence permit (Braucht Aufenthaltserlaubnis,A besoin d'un permis de séjour)
+needs_work_permit           BooleanField      Needs work permit (Braucht Arb.Erl.,A besoin d'un permis de travail)                
+work_permit_suspended_until DateField         suspended until (Wartezeit bis,suspendu jusque)                                     
+aid_type                    ForeignKey        aid type (Sozialhilfeart)                                                           
+income_ag                   BooleanField      Arbeitslosengeld (Indemnités de chômage)                                            
+income_wg                   BooleanField      Wartegeld (Indemnité d'attente)                                                     
+income_kg                   BooleanField      Krankengeld (Indemnité de maladie)                                                  
+income_rente                BooleanField      Rente                                                                               
+income_misc                 BooleanField      Andere (Anutre)                                                                     
+is_seeking                  BooleanField      is seeking work (Arbeit suchend,cherche du travail)                                 
+unavailable_until           DateField         Unavailable until (Nicht verfügbar bis,Indidponible jusque)                         
+unavailable_why             CharField         reason (Grund,raison)                                                               
+native_language             ForeignKey        Native language (Muttersprache)                                                     
+obstacles                   TextField         Obstacles (Hindernisse)                                                             
+skills                      TextField         Other skills (Sonstige Fähikeiten,Autres talents)                                   
+job_agents                  CharField         Job agents (Interim-Agenturen)                                                      
+job_office_contact          ForeignKey        Contact person at local job office (Kontaktperson ADG,Personne de contacte ALE ?)   
+=========================== ================= ====================================================================================
 
     
 Defined in :srcref:`/lino/apps/dsbe/models.py`
 
+.. index::
+   single: field;country
+   
+.. _std.contacts.Person.country:
+
+Field **Person.country**
+========================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;city
+   
+.. _std.contacts.Person.city:
+
+Field **Person.city**
+=====================
+
+
+
+
+
+Type: ForeignKey
+
+   
 .. index::
    single: field;name
    
@@ -584,40 +615,6 @@ Field **Person.addr2**
 Address line to print below street line
 
 Type: CharField
-
-   
-.. index::
-   single: field;country
-   
-.. _std.contacts.Person.country:
-
-Field **Person.country**
-========================
-
-
-
-The country where this contact is located.
-
-Type: ForeignKey
-
-   
-.. index::
-   single: field;city
-   
-.. _std.contacts.Person.city:
-
-Field **Person.city**
-=====================
-
-
-
-
-        The city where this contact is located.
-        The list of choices for this field is context-sensitive
-        and depends on the :attr:`country`.
-        
-
-Type: ForeignKey
 
    
 .. index::
@@ -873,6 +870,21 @@ Field **Person.bank_account2**
 
 
 Type: CharField
+
+   
+.. index::
+   single: field;remarks2
+   
+.. _std.contacts.Person.remarks2:
+
+Field **Person.remarks2**
+=========================
+
+
+
+
+
+Type: TextField
 
    
 .. index::
@@ -1554,40 +1566,70 @@ Implements :class:`contacts.Company`.
 Inner class Meta is necessary because of :doc:`/tickets/14`.
 
   
-============= ============= ============================
-name          type          verbose name                
-============= ============= ============================
-name          CharField     Name                        
-addr1         CharField     Address line before street  
-street        CharField     Street (Straße,Rue)         
-street_no     CharField     No. (Nr.,N°)                
-street_box    CharField     Box (boîte)                 
-addr2         CharField     Address line after street   
-country       ForeignKey    Country (Land)              
-city          ForeignKey    City (Stadt)                
-zip_code      CharField     Zip code (Postleitzahl)     
-region        CharField     Region                      
-language      LanguageField Language (Sprache)          
-email         EmailField    E-Mail                      
-url           URLField      URL                         
-phone         CharField     Phone (Telefon)             
-gsm           CharField     GSM                         
-fax           CharField     Fax                         
-remarks       TextField     Remarks (Bemerkungen)       
-vat_id        CharField     VAT id (MWSt.-Nr.)          
-type          ForeignKey    Company type (Firmenart)    
-id            AutoField     Partner # (Partnernummer)   
-is_active     BooleanField  is active (aktiv)           
-activity      ForeignKey    Activity (Beruf)            
-bank_account1 CharField     Bank account 1 (Bankkonto 1)
-bank_account2 CharField     Bank account 2 (Bankkonto 2)
-prefix        CharField     prefix                      
-hourly_rate   PriceField    hourly rate (Stundensatz)   
-============= ============= ============================
+============= ============= =============================================================================
+name          type          verbose name                                                                 
+============= ============= =============================================================================
+country       ForeignKey    Country (Land,Pays)                                                          
+city          ForeignKey    City                                                                         
+name          CharField     Name (Nom)                                                                   
+addr1         CharField     Address line before street (Adresszeile vor Straße,Ligne avant le nom de rue)
+street        CharField     Street (Straße,Rue)                                                          
+street_no     CharField     No. (Nr.,N°)                                                                 
+street_box    CharField     Box (boîte)                                                                  
+addr2         CharField     Address line after street (Adresszeile nach Straße,Ligne après le nom de rue)
+zip_code      CharField     Zip code (Postleitzahl,Code postal)                                          
+region        CharField     Region (Région)                                                              
+language      LanguageField Language (Sprache,Langue)                                                    
+email         EmailField    E-Mail (E-mail)                                                              
+url           URLField      URL                                                                          
+phone         CharField     Phone (Telefon,Téléphone)                                                    
+gsm           CharField     GSM                                                                          
+fax           CharField     Fax                                                                          
+remarks       TextField     Remarks (Bemerkungen,Remarques)                                              
+vat_id        CharField     VAT id (MWSt.-Nr.,N° de TVA)                                                 
+type          ForeignKey    Company type (Firmenart)                                                     
+id            AutoField     Partner # (Partnernummer,Partenaire #)                                       
+is_active     BooleanField  is active (aktiv,est actif)                                                  
+activity      ForeignKey    Activity (Beruf,Activité)                                                    
+bank_account1 CharField     Bank account 1 (Bankkonto 1,Compte en banque 1)                              
+bank_account2 CharField     Bank account 2 (Bankkonto 2,Compte en banque 2)                              
+prefix        CharField     prefix                                                                       
+hourly_rate   PriceField    hourly rate (Stundensatz,coûr horaire)                                       
+============= ============= =============================================================================
 
     
 Defined in :srcref:`/lino/apps/dsbe/models.py`
 
+.. index::
+   single: field;country
+   
+.. _std.contacts.Company.country:
+
+Field **Company.country**
+=========================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;city
+   
+.. _std.contacts.Company.city:
+
+Field **Company.city**
+======================
+
+
+
+
+
+Type: ForeignKey
+
+   
 .. index::
    single: field;name
    
@@ -1676,40 +1718,6 @@ Field **Company.addr2**
 Address line to print below street line
 
 Type: CharField
-
-   
-.. index::
-   single: field;country
-   
-.. _std.contacts.Company.country:
-
-Field **Company.country**
-=========================
-
-
-
-The country where this contact is located.
-
-Type: ForeignKey
-
-   
-.. index::
-   single: field;city
-   
-.. _std.contacts.Company.city:
-
-Field **Company.city**
-======================
-
-
-
-
-        The city where this contact is located.
-        The list of choices for this field is context-sensitive
-        and depends on the :attr:`country`.
-        
-
-Type: ForeignKey
 
    
 .. index::

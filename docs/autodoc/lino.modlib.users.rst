@@ -7,8 +7,8 @@
     :show-inheritance:
     
 
-Models
-------
+:mod:`lino.modlib.users.models`
+-------------------------------
 
 .. automodule:: lino.modlib.users.models
     :members:
