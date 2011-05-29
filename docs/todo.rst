@@ -589,6 +589,12 @@ Long-term
     http://django-rest-framework.org/
     instead of reinventing the wheel.
     (Discovered :doc:`/blog/2011/0311`)
+    
+#.  Demo fixtures should detect whether the database backend supports 
+    utf8 encoding or not. If it doesn't, they could skip data 
+    like Татьяна Казеннова that would cause trouble. 
+    See :doc:`/blog/2011/0527`.
+    Alternative: make such data optional in a separate fixture.
 
 
 Documentation

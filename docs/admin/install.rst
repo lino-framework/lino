@@ -191,8 +191,9 @@ Explanations:
   ===================================== =========================================
 
 Afterwards you'll have to manually adapt them:
-- start and stop : remove the line for :term:`watch_tim` if you don't need this.
-- oood : check the path of OpenOffice / LibreOffice
+
+- `start` and `stop` : remove the line for :term:`watch_tim` if you don't need this.
+- `oood` : check the path of OpenOffice / LibreOffice
 
   
 Apply a patch for Django
@@ -269,40 +270,45 @@ Django docs on Apache and mod_wsgi:
 
 You'll also need to configure Apache to do HTTP authentication: :doc:`ApacheHttpAuth`.
 
-Set up your `/media/` directory 
+Set up your `/media` directory 
 -------------------------------
 
-Lino uses the following types of static files:
+The `/media` directory is the central place where Lino 
+expects static files to be served.
 
-=========================== =========================================== ============================================
-Prefix                      Description                                 location                
-=========================== =========================================== ============================================
-/media/extjs/               ExtJS library                               /var/snapshots/ext-3.2.1/ 
-/media/tinymce/             TinyMCE library                             /usr/share/tinymce/www
-/media/lino/                lino.js and lino.css                        /var/snapshots/lino/lino/ui/extjs/media/
-/media/cache/               files generated and served by 
-                            lino.modlib.documents                       /var/snapshots/lino/lino/demos/dsbe/media/ 
-/media/beid/                image files for dsbe.models.PersonDetail    ... 
-/media/upload/              Uploaded files                              
-/media/webdav/              User-editable files 
-/media/webdav/doctemplates  local doctemplates directory
-=========================== =========================================== ============================================
+Here is the structure it should have in a typical installation on Debian Squeeze::
 
-The development server does these mappings automatically in `urls.py`. 
-
-On a production server you'll probably add an ``Alias /media/ /usr/local/django/myproject/media/`` 
-directive in your Apache config, and then use symbolic links in :file:`/usr/local/django/myproject/media/`::
-
-  mkdir /usr/local/django/myproject/media
-  cd /usr/local/django/myproject/media
-  mkdir cache
-  mkdir cache/js
-  mkdir upload
-  mkdir webdav
-  mkdir webdav/doctemplates
+  cd /usr/local/django/myproject
+  mkdir media
+  mkdir media/cache
+  mkdir media/cache/js
+  mkdir media/upload
+  mkdir media/webdav
+  mkdir media/webdav/doctemplates
   ln -s /var/snapshots/lino/media lino
   ln -s /var/snapshots/ext-3.3.1 extjs
   ln -s /usr/share/tinymce/www tinymce
+
+
+Lino uses the following types of static files:
+
+=========================== =========================================== 
+Prefix                      Description                                 
+=========================== =========================================== 
+/media/extjs/               ExtJS library                               
+/media/tinymce/             TinyMCE library                             
+/media/lino/                lino.css                                    
+/media/cache/               temporary files created by Lino
+/media/beid/                image files for dsbe.models.PersonDetail    
+/media/uploads/             Uploaded files
+/media/webdav/              User-editable files 
+/media/webdav/doctemplates  doctemplates directory
+=========================== =========================================== 
+
+The development server does these mappings automatically in `urls.py`. 
+On a production server you'll probably add an 
+``Alias /media/ /usr/local/django/myproject/media/`` 
+directive in your Apache config.
 
 
 User permissions
@@ -313,14 +319,16 @@ You'll probably need to do something like this afterwards::
   # chgrp -R www-data /var/snapshots /var/log/lino /usr/local/django
   # chmod -R g+s /var/snapshots /var/log/lino  /usr/local/django
 
-``chmod g+s`` sets the SGID to ensure that when a new file is created in the directory it will inherit the group of the directory.
+``chmod g+s`` sets the SGID to ensure that when a new file is created in the directory 
+it will inherit the group of the directory.
 
 Maybe also::
 
   $ chmod a+x /usr/local/django/myproject/manage.py
 
 Maybe you'll also add `umask 002` to your `/etc/apache2/envvars`. 
-For example if `lino.log` doesn't exist and Lino creates it, you may want it to be writable by group.
+For example if `lino.log` doesn't exist and Lino creates it, 
+you may want it to be writable by group.
 
 And then add in your `/etc/mercurial/hgrc`::
 
@@ -334,7 +342,6 @@ You'll maybe have to do something like this::
 It may be useful to tidy up::
 
   $ find /var/snapshots/ -name '*.pyc' -delete
-
 
 
 

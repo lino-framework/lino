@@ -1,0 +1,50 @@
+#43 : Neue Anwendung für Lucs Eigenbedarf?
+==========================================
+
+Also das Bloggen mit Sphinx macht mir ja Spaß, 
+und wenn ich mir noch Zeit nähme für gewisse Erweiterungen 
+wie automatisches Erstellen des Kalenders oder externe Fotos 
+oder automtisch generierte *release notes*, 
+dann bleibt mir doch nichts mehr zu wünschen übrig. Oder?
+
+Gute Frage: könnte eine Lino-Anwendung 
+für meine eigenen Bedürfnisse auch das Bloggen noch 
+ermöglichen? Sphinx benutze ich ja eigentlich nur, 
+weil der DOS-Texteditor von TIM zum Bloggen nicht 
+wirklich zumutbar ist.
+
+Hauptziel wäre eine einzige Blog-Datenbank für 
+alle Arbeitsbereiche und Projekte, 
+die zu diversen Websites veröffentlicht.
+  
+Die Tabellen wären ähnlich wie momentan in meinem internen TIM: 
+
+  - Projekte, Tickets, Dienstleistungen
+  - Notizen
+  - Releases 
+  - Verträge
+  
+Mit einem Unterschied: Dienstleistungsberichte nicht mehr in der DLS 
+selber, sondern als eine Notiz erfasst, die mit einer oder mehreren DL verknüpft 
+wäre. Andererseits können natürlich während einer DL mehrere Notizen erstellt werden. 
+Notion der "aktiven DL" (also die DL, in der das Taxometer momentan läuft), 
+wobei man also unterbrechen können muss und mehrere DL zugleich "offen" 
+haben kann. 
+Genauer gesagt bedeutet das, dass ein Ticket obligatorisch 
+wird und die DLS (Taxometer-Einträge) wirklich nur noch Datum und 
+Uhrzeit enthalten.
+
+Macht es eigentlich Sinn, einen Arbeitstag mit allen 
+Unterbrechnungen festzuhalten? Antwort: für mich persönlich ist das ein 
+tragbarer Aufwand, und die Information hat mir schon oft nützliche Dienste 
+erwiesen. Im Gegenteil: das System müsste eigentlich noch optimiert werden, 
+damit genauere Erfassung möglich ist. 
+Zum Beispiel Telefonanrufe und E-Mails registrieren und 
+einem Ticket zuweisen können...
+
+Aber die eigentliche Frage ist: 
+gibt es etwas Besseres zum Dokumentieren meiner Arbeit 
+als das momentane Spielen mit rst-Markup? 
+In Lino könnte ich Notizen mit vielen Verknüpfungsmöglichkeiten 
+zu anderen Objekten der Datenbank erfassen.
+Die Antwort darauf werde ich nur kriegen, wenn ich das ausprobiere.
