@@ -76,6 +76,18 @@ Medium-term
 Later
 -----
 
+#.  Ein Test in der Lino-Suite funktioniert offenbar nur, wenn man `de` als 
+    Hauptsprache hat::
+
+      FAIL: test_them_all (lino.apps.dsbe.tests.dsbe_demo_tests.DemoTest)
+      ----------------------------------------------------------------------
+      Traceback (most recent call last):
+        File "/var/snapshots/lino/lino/utils/test.py", line 87, in test_them_all
+          v(self)
+        File "/var/snapshots/lino/lino/apps/dsbe/tests/dsbe_demo_tests.py", line 71, in test02
+          self.assertEqual(row[0],"Gehorsam")
+      AssertionError: u'Ob\xe9issant' != 'Gehorsam'
+
 #.  An makedocs müsste ich bei Gelegenheit mal ein bisschen weiter machen. 
     Das ist noch lange nicht fertig.
     

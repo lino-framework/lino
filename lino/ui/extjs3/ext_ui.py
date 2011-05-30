@@ -1495,12 +1495,15 @@ tinymce.init({
             #~ kw.update(panel_btn_handler=js_code('function(panel){Lino.show_detail(panel)}'))
         elif isinstance(a,reports.InsertRow):
             kw.update(must_save=True)
-            kw.update(panel_btn_handler=js_code('function(panel){Lino.show_insert(panel)}'))
+            kw.update(panel_btn_handler=js_code(
+                'function(panel){Lino.show_insert(panel)}'))
             #~ kw.update(panel_btn_handler=js_code("Lino.show_insert_handler(Lino.%s)" % a))
         elif isinstance(a,reports.DuplicateRow):
-            kw.update(panel_btn_handler=js_code('function(panel){Lino.show_insert_duplicate(panel)}'))
+            kw.update(panel_btn_handler=js_code(
+                'function(panel){Lino.show_insert_duplicate(panel)}'))
         elif isinstance(a,reports.DeleteSelected):
-            kw.update(panel_btn_handler=js_code("Lino.delete_selected" % a))
+            kw.update(panel_btn_handler=js_code(
+                "Lino.delete_selected" % a))
         #~ elif isinstance(a,actions.RedirectAction):
             #~ kw.update(panel_btn_handler=js_code("Lino.show_download_handler(%r)" % a.name))
         elif isinstance(a,reports.RowAction):

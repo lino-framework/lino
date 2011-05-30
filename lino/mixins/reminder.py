@@ -190,7 +190,11 @@ def reminders_summary(ui,user,days_back=None,**kw):
             yield '<h3>'+dtosl(day) + '</h3>'
             yield reports.summary(ui,lookup[day],**kw)
             
-    cells = ['Ausblick'+':<br>',cgi.escape(u'Rückblick')+':<br>']
+    #~ cells = ['Ausblick'+':<br>',cgi.escape(u'Rückblick')+':<br>']
+    cells = [
+      cgi.escape(_('Upcoming reminders')) + ':<br>',
+      cgi.escape(_('Past reminders')) + ':<br>'
+    ]
     for s in loop(future,False):
         cells[0] += s
     for s in loop(past,True):

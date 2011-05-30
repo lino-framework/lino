@@ -31,7 +31,7 @@ Then, in your Apache config file (:file:`/etc/apache2/sites-available/default`):
     AuthName "Lino demo"
     AuthUserFile /usr/local/django/myproject/htpasswd/passwords
     AuthGroupFile /usr/local/django/myproject/htpasswd/groups
-    Require group demo
+    Require group lino
     AllowOverride None 
   </Directory>
 
@@ -39,3 +39,5 @@ Then, in your Apache config file (:file:`/etc/apache2/sites-available/default`):
 Did you know? To watch all log files at once, you can do::
 
   sudo tail -f /var/log/lino/system.log /var/log/lino/db.log /var/log/apache2/error.log /var/log/apache2/access.log
+  
+See also the `multitail` package

@@ -209,7 +209,74 @@ Ext.lib.Ajax.serializeForm = function(form) {
 
 Ext.namespace('Lino');
 
-#if $settings.LINO.use_tinymce and False
+#if $settings.LINO.use_tinymce
+
+Lino.edit_tinymce_text = function(panel) {
+  // `panel` is the HtmlBoxPanel
+  var rec = panel.ww.get_current_record();
+  var value = rec ? rec.data[panel.name] : '';
+  function save() {
+    var url = panel.ww.main_item.get_record_url(rec.id);
+    var params = Ext.apply({},panel.get_base_params());
+    params[panel.name] = editor.getValue();
+    var a = { 
+      params: params, 
+      method: 'PUT',
+      url: url,
+      failure: Lino.on_submit_failure,
+      success: function(r) {
+        console.log('success',r);
+        //~ Lino.notify()
+        }
+    };
+    //~ console.log(a);
+    Ext.Ajax.request(a);
+  };
+  var actions = [
+    {text:"Save",handler:save}
+  ]; 
+  var editor = new Ext.ux.TinyMCE({
+      value : value,
+      tinymceSettings: {
+        theme : "advanced",
+        //~ language: "de",
+        plugins : "save,emotions,spellchecker,advhr,insertdatetime,preview", 
+        // Theme options - button# indicated the row# only
+        theme_advanced_buttons1 : "save,|,bold,italic,underline,|,justifyleft,justifycenter,justifyright,fontselect,fontsizeselect,formatselect",
+        theme_advanced_buttons2 : "cut,copy,paste,|,bullist,numlist,|,outdent,indent,|,undo,redo,|,link,unlink,anchor,image,|,code,preview,|,forecolor,backcolor",
+        theme_advanced_buttons3 : "insertdate,inserttime,|,spellchecker,advhr,,removeformat,|,sub,sup,|,charmap,emotions",      
+        theme_advanced_toolbar_location : "top",
+        theme_advanced_toolbar_align : "left",
+        theme_advanced_statusbar_location : "bottom",
+        theme_advanced_resizing : false,
+        save_onsavecallback : save
+      }
+    });
+  var win = new Ext.Window({
+    title: rec.title, 
+    //~ bbar: actions,
+    layout: 'fit',
+    items: editor,
+    width: 600, 
+    height:500,
+    minWidth: 100,
+		minHeight: 100,
+    modal: false,
+    resizable: true,
+    maximizable: true,
+    closeAction: "hide",
+    hideMode: "offsets",
+    constrainHeader: true,
+    bodyStyle: 'padding: 10px'
+  });
+  win.on('close',function() {
+      rec.data[panel.name] = editor.getValue();
+      panel.ww.set_current_record(rec);
+      //~ panel.refresh(rec);
+  });
+  win.show();
+}
+
 //~ Lino.TinyMCE = Ext.ux.TinyMCE;
 
 //~ Lino.TinyMCE = Ext.extend(Ext.ux.TinyMCE, {
@@ -1165,10 +1232,8 @@ Lino.HtmlBoxPanel = Ext.extend(Ext.Panel,{
       }
     });
   },
-  //~ on_master_changed : function() {
-    //~ this.refresh();
-  //~ },
   do_when_clean : function(todo) { todo() },
+  format_data : function(html) { return '<div class="htmlText">' + html + '</div>' },
   refresh : function(after) {
     var record = this.ww.get_current_record();
     //~ console.log('HtmlBox.refresh()',this.title,record,record.title);
@@ -1178,7 +1243,7 @@ Lino.HtmlBoxPanel = Ext.extend(Ext.Panel,{
       this.set_base_params(this.ww.get_master_params());
       var el = box.getEl();
       if (el) {
-        el.update(record ? record.data[this.name] : '');
+        el.update(record ? this.format_data(record.data[this.name]) : '');
         //~ console.log('HtmlBox.refresh()',this.name);
       //~ } else {
         //~ console.log('HtmlBox.refresh() failed for',this.name);
@@ -1196,21 +1261,6 @@ Lino.HtmlBoxPanel = Ext.extend(Ext.Panel,{
   },
   set_base_param : function(k,v) {
     this.base_params[k] = v;
-  },
-  unused_load_htmlbox_record : function(record) {
-    var box = this.items.get(0);
-    var _this = this;
-    Lino.do_when_visible(box,function() {
-      //~ Lino.notify(record.data[cmp.name]);
-      var el = box.getEl();
-      if (el) {
-        el.update(record.data[_this.name]);
-        //~ console.log('Lino.FormPanel.load_htmlbox_to()',cmp.name,el);
-      }
-      
-    });
-    //~ cmp.on_master_changed();
-    this.refresh();
   }
 });
 

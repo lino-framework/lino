@@ -20,7 +20,7 @@ to a new version.
 - Optionally run the test suite using your 
   local :xfile:`settings.py`::
   
-    python manage.py test 
+    python manage.py test
     
 - When a data migration is necessary, see 
   :doc:`/admin/datamig`
@@ -41,5 +41,9 @@ Updating Django::
   
 To run the Django test suite::  
   
-  cd /var/snapshots/djangotests
+  cd /var/snapshots/django/tests
   python runtests.py --settings=test_sqlite
+  
+
+    
+  

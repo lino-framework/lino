@@ -1,0 +1,148 @@
+20110530
+========
+
+Miscellaneous
+-------------
+
+- Some files in :srcref:`/bash` had CRLF EOL markers. Fixed.
+
+- `lino.modlib.countries.models.Countries` now is sorted 
+  by `name` and `isocode`` instead of `isocode`.
+  
+- The texts "Rückblick" (past reminders) and "Ausblick" (upcoming reminders)
+  in :func:`lino.mixins.reminders.reminders_summary` are now translatable. 
+  
+- Grids now have `stripeRows:true` as default. Looks nice.
+
+Using a stable Django version
+-----------------------------
+
+Tiens, in Django revision 16283 läuft die Testsuite nicht::
+
+  luc@mops:/var/snapshots/django_src/tests$ python runtests.py --settings=dsbe_demo.settings
+  Traceback (most recent call last):
+    File "runtests.py", line 326, in <module>
+      failures = django_tests(int(options.verbosity), options.interactive, options.failfast, args)
+    File "runtests.py", line 165, in django_tests
+      state = setup(verbosity, test_labels)
+    File "runtests.py", line 150, in setup
+      mod = load_app(module_label)
+    File "/var/snapshots/django_src/django/db/models/loading.py", line 87, in load_app
+      app_module = import_module(app_name)
+    File "/var/snapshots/django_src/django/utils/importlib.py", line 35, in import_module
+      __import__(name)
+    File "/usr/lib/python2.6/dist-packages/uno.py", line 258, in _uno_import
+      return _g_delegatee( name, *optargs, **kwargs )
+  ImportError: No module named csrf
+  
+Erstmal ein ``svn update``: updated to revision 16292. Dann funktionieren sie.
+
+Da fällt mir ein, dass ich testen wollte, 
+ob Lino mit einer stabilen Django-Version funktioniert. 
+Lenny kommt mit Version 1.2.3.
+Mal probieren. In der `/usr/local/lib/python2.6/dist-packages/local.pth` hole ich 
+die Zeile  ``/var/snapshots/django_src`` raus und dann::
+
+  
+  $ sudo aptitude install python-django
+  The following NEW packages will be installed:
+    python-django
+  0 packages upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+  Need to get 4179 kB of archives. After unpacking 20.3 MB will be used.
+  ...
+  Fetched 4179 kB in 35s (118 kB/s)
+  Selecting previously deselected package python-django.
+  (Reading database ... 125307 files and directories currently installed.)
+  Unpacking python-django (from .../python-django_1.2.3-3+squeeze1_all.deb) ...  
+  Processing triggers for man-db ...
+  Setting up python-django (1.2.3-3+squeeze1) ...
+  Processing triggers for python-support ...  
+  
+Aber die Version 1.2.3 von Django scheint zu alt zu sein. 
+Damit funktioniert schon ein ``python manage.py validate`` nicht::
+
+  ...
+    File "/usr/lib/pymodules/python2.6/django/db/models/loading.py", line 64, in _populate
+      self.load_app(app_name)
+    File "/usr/lib/pymodules/python2.6/django/db/models/loading.py", line 78, in load_app
+      models = import_module('.models', app_name)
+    File "/usr/lib/pymodules/python2.6/django/utils/importlib.py", line 35, in import_module
+      __import__(name)
+    File "/usr/lib/python2.6/dist-packages/uno.py", line 258, in _uno_import
+      return _g_delegatee( name, *optargs, **kwargs )
+    File "/var/snapshots/lino/lino/apps/dsbe/models.py", line 56, in <module>
+      from lino.utils import mti
+    File "/usr/lib/python2.6/dist-packages/uno.py", line 296, in _uno_import
+      raise ImportError( "type "+ name + "." +x + " is unknown" )
+  ImportError: type lino.utils.mti is unknown
+
+also wieder raus damit.
+Alternativ käme dann noch die `zuletzt releaste Version 1.3 <http://www.djangoproject.com/download>`_ 
+in Frage. Probieren wir es damit::
+  
+  cd /var/snapshots
+  wget http://media.djangoproject.com/releases/1.3/Django-1.3.tar.gz
+  tar xzvf Django-1.3.tar.gz
+  mv django django-svn
+  mv Django-1.3 django
+  
+Cool, das funktioniert! Abgesehen von ein paar Details): 
+
+- die Tests für `django.contrib.contenttypes` hängen noch immer von `django.contrib.auth` ab
+- und auch ein Test in der Lino-Suite funktioniert offenbar nur, wenn man `de` als 
+  Hauptsprache hat::
+
+    FAIL: test_them_all (lino.apps.dsbe.tests.dsbe_demo_tests.DemoTest)
+    ----------------------------------------------------------------------
+    Traceback (most recent call last):
+      File "/var/snapshots/lino/lino/utils/test.py", line 87, in test_them_all
+        v(self)
+      File "/var/snapshots/lino/lino/apps/dsbe/tests/dsbe_demo_tests.py", line 71, in test02
+        self.assertEqual(row[0],"Gehorsam")
+    AssertionError: u'Ob\xe9issant' != 'Gehorsam'
+
+Weil das nicht dramatisch ist, und weil es gut ist, 
+wenn Lino-Bentuzer in Zukunft mit einer stabilen Django-Version arbeiten, 
+ändere ich die :doc:`/admin/install` ab.
+
+N.B.: das ``sudo python setup.py install`` von Djangos Installationsanleitung 
+mache (und empfehle) ich lieber nicht, weil ich nicht weiß, was das bringt. 
+Und weil ich nicht weiß, ob und wie man ein dermaßen installiertes Paket dann wieder 
+deaktiviert.
+
+Weiter mit TinyMCE
+------------------
+
+Zur Zeit arbeite ich an folgender Einbindung: im Detail-Fenster wird nicht der 
+Editor angezeigt, sondern nur eine HtmlBox, die den formatierten Text anzeigt. 
+Die HtmlBox hat einen Button "Bearbeiten" und erst wenn man den klickt, öffnet 
+sich ein (modales) Fenster mit dem Editor. 
+Sogar der Save-Button funktioniert. Alles ist aber noch wackelig 
+programmiert, und bevor man es Otto Normalverbraucher zumuten kann, 
+sind noch einige Probleme zu beheben:
+
+- Die Scrollbars der HtmlBox sind nicht ganz richtig dimensioniert: 
+  auch bei einem leeren Text werden sie angezeigt. 
+  Die horizontale Scrollbar ist da, obschon sie gar nicht nötig wäre.
+  
+- Nach dem Schließen des Editor-Fensters muss die HtmlBox aktualisiert 
+  werden.
+  
+- Speichern kann man mit Ctrl-S, das ist schön. 
+  Aber man sollte das Fenster auch schließen können, ohne die Maus zu belästigen...
+  
+- Wenn man das Fenster ohne zu Speichern schließt, sollte er vorher fragen, 
+  ob man nicht doch lieber speichern will.
+  
+- Der Benutzer sieht keine Bestätigung, wenn er gespeichert hat.
+
+- Wenn die Notiz ausgedruckt wurde, ist die HtmlBox disabled 
+  (weil body in disabled_fields mit dabei ist, was bei inline editing 
+  auch nötig ist). Aber das `disabled` einer HtmlBox sollte die Anzeige nicht 
+  grau werden lassen, auch die Scrollbars nicht deaktivieren, sondern 
+  lediglich den Button "Bearbeiten"
+
+- Muss der Benutzer dynamisch umschalten können zwischen den beiden Modi 
+  (inline / windowed)?
+  
+Aber ich checke da jetzt ein, denn für heute ist Feierabend.  

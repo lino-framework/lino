@@ -60,6 +60,9 @@ def before_row_edit(panel):
             l.append("%s.on_master_changed();" % e.as_ext())
         elif isinstance(e,PictureElement):
             l.append("this.load_picture_to(%s,record);" % e.as_ext())
+        #~ elif isinstance(e,TextFieldElement):
+            #~ if e.separate_window:
+                #~ l.append("%s.refresh();" % e.as_ext())
         elif isinstance(e,HtmlBoxElement):
             l.append("%s.refresh();" % e.as_ext())
         elif isinstance(e,FieldElement):
@@ -468,13 +471,26 @@ class TextFieldElement(FieldElement):
     preferred_width = 60
     #~ preferred_height = 1
     #collapsible = True
+    separate_window = False
     def __init__(self,lh,field,**kw):
         fmt = getattr(field,'textfield_format',None) or settings.LINO.textfield_format
         if fmt == 'html':
             if settings.LINO.use_tinymce:
-                if False:
+                raise Exception("tinymce html text fields are rendered as HtmlBoxElement?!")
+                if True:
                     #~ self.value_template = "new Ext.form.DisplayField(%s)"
-                    self.value_template = "new Lino.HtmlTextPanel(%s)"
+                    #~ self.value_template = "new Lino.HtmlTextPanel(ww,%s)"
+                    self.value_template = "new Lino.HtmlBoxPanel(ww,%s)"
+                    #~ self.active_child = True
+                    edit = dict(handler=js_code(
+                        "Lino.edit_tinymce_text"))
+                    edit.update(text=_("Edit"))
+                    kw.update(ls_bbar_actions=[edit])
+                    kw.update(layout='fit')
+                    kw.update(items=js_code("new Ext.BoxComponent()"))
+                    #~ if self.label:
+                        #~ kw.update(title=unicode(self.label))
+                    self.separate_window = True
                 else:
                     self.value_template = "new Ext.ux.TinyMCE(%s)"
                     ts=dict(
@@ -492,9 +508,9 @@ class TextFieldElement(FieldElement):
                     )
                     kw.update(tinymceSettings=ts)
             else:
-              self.value_template = "new Ext.form.HtmlEditor(%s)"
-              if settings.LINO.use_vinylfox:
-                  kw.update(plugins=js_code('Lino.VinylFoxPlugins()'))
+                self.value_template = "new Ext.form.HtmlEditor(%s)"
+                if settings.LINO.use_vinylfox:
+                    kw.update(plugins=js_code('Lino.VinylFoxPlugins()'))
         elif fmt == 'plain':
             kw.update(
               growMax=2000,
@@ -752,25 +768,11 @@ class BooleanFieldElement(FieldElement):
 
 
 class DisplayElement(FieldElement):
-#~ class ShowOrCreateElement(FieldElement):
     preferred_width = 30
     preferred_height = 3
     ext_suffix = "_disp"
     declare_type = jsgen.DECLARE_VAR
     value_template = "new Ext.form.DisplayField(%s)"
-    #~ value_template = "new Lino.ButtonField(ww,%s)"
-    #~ preferred_height = 5
-    #~ vflex = True
-    #~ filter_type = 'string'
-    #~ refers_to_ww = True
-    #~ def __init__(self,lh,field,**kw):
-        #~ kw.update(htmlEncode=True)
-        #~ super(DisplayElement,self).__init__(lh,field,**kw)
-    
-#~ class QuickActionElement(DisplayElement):
-    #~ pass
-    #~ ext_suffix = "_quick"
-    #~ value_template = "new Lino.QuickAction(ww,%s)"
     
   
   
@@ -1154,6 +1156,7 @@ class GridElement(Container):
         a = rpt.get_action('insert')
         if a:
             kw.update(ls_insert_handler=js_code("Lino.%s" % a))
+        kw.update(stripeRows=True)
         
         Container.__init__(self,lh,name,**kw)
         self.active_children = columns
@@ -1247,6 +1250,18 @@ class MainPanel(jsgen.Variable):
             
         if isinstance(field,fields.VirtualField):
             field = field.return_type
+        if isinstance(field,fields.RichTextField):
+            fmt = getattr(field,'textfield_format',None) or settings.LINO.textfield_format
+            if fmt == 'html' and settings.LINO.use_tinymce:
+                edit = dict(panel_btn_handler=js_code(
+                    "Lino.edit_tinymce_text"))
+                edit.update(text=_("Edit"))
+                kw.update(ls_bbar_actions=[edit])
+                kw.update(autoScroll=True)
+                #~ kw.update(layout='fit')
+                #~ kw.update(items=js_code("new Ext.BoxComponent()"))
+                #~ if self.label:
+                return HtmlBoxElement(lh,field,**kw)
         for cl,x in _FIELD2ELEM:
             if isinstance(field,cl):
                 return x(lh,field,**kw)

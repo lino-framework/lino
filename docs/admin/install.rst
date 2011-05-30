@@ -10,6 +10,7 @@ WARNING: Don't apply the instructions on this page
 without understanding what you are doing!
 
 .. contents:: Table of Contents
+   :local:
    :depth: 2
 
 
@@ -42,8 +43,8 @@ You'll need the following Debian packages installed:
     mysql-server python-mysqldb
       
 
-Download
---------
+Download Lino
+-------------
 
 Create a directory :file:`/var/snapshots` and go to that directory::
 
@@ -52,15 +53,41 @@ Create a directory :file:`/var/snapshots` and go to that directory::
 Note: don't run Lino's file `setup.py`, it is not necessary and doesn't work.  
 Just `Set up your Python path`_ manually (see below).
 
-The Django version provided by Debian Lenny `python-django` 
-module is probably too old for Lino, so you need Django's 
-development version. Get that snapshot as well::
+Install Django
+--------------
 
+The Django version 1.2.3 provided 
+by the Debian Squeeze `python-django` package 
+is too old for Lino, so you need either the latest 
+released Django version 1.3, or (if you don't 
+need "production server" quality) Django's 
+development version. 
+
+To install Django 1.3::
+
+  cd /var/snapshots
+  wget http://media.djangoproject.com/releases/1.3/Django-1.3.tar.gz
+  tar xzvf Django-1.3.tar.gz
+  mv Django-1.3 django
+
+
+To install Django's latest development snapshot::
+
+  cd /var/snapshots
   svn co http://code.djangoproject.com/svn/django/trunk/ django
+  
+We recommend to not run Django's setup.py as well since that's 
+not needed for Lino and removes flexipility to switch from one 
+version to the other. 
+Just `Set up your Python path`_ manually (see below).
+Comments on this are welcome.
 
-I also installed 
-:term:`ExtJS`, 
-:term:`pyratemp`, :term:`Pisa` and :term:`appy_pod` 
+Install other software
+----------------------
+
+We also suggest to install
+:term:`ExtJS` 
+and :term:`appy_pod` 
 into `/var/snapshots/`::
 
   wget http://extjs.cachefly.net/ext-3.3.1.zip
@@ -70,72 +97,52 @@ into `/var/snapshots/`::
   wget http://launchpad.net/appy/0.6/0.6.6/+download/appy0.6.6.zip
   unzip appy0.6.3.zip -d appy-0.6.3
   
-
-.. 
-
- The following instructions are currently obsolete::
-  
-  wget http://pypi.python.org/packages/source/p/pisa/pisa-3.0.32.zip
-  unzip pisa-3.0.32.zip
-  rm pisa-3.0.32.zip
-  
-  wget http://www.simple-is-better.org/template/pyratemp-0.2.0.tgz
-  tar -xvzf pyratemp-0.2.0.tgz
-  
-  hg clone http://bitbucket.org/andrewgodwin/south/
-
-  wget http://pypi.python.org/packages/source/p/python-daemon/python-daemon-1.5.5.tar.gz
-  tar -xvzf python-daemon-1.5.5.tar.gz
-  
-  wget http://smontanaro.dyndns.org/python/lockfile-0.7.tar.gz
-  tar -xvzf lockfile-0.7.tar.gz
-
-
 Set up your Python path
 -----------------------
 
-For example on a Linux system, you can add a 
-path configuration file :file:`local.pth` 
+We suggest to add a 
+path configuration file :xfile:`local.pth` 
 to a directory that's already on your 
 `Python's path <http://www.python.org/doc/current/install/index.html>`_. 
+ 
+=============== ==============================================
+OS              Recommended directory
+=============== ==============================================
+Debian Lenny    :file:`/usr/local/lib/python2.5/site-packages`
+Debian Squeeze  :file:`/usr/local/lib/python2.6/dist-packages`
+=============== ==============================================
 
-Here is how 
-:file:`/usr/local/lib/python2.5/site-packages/local.pth` (Debian Lenny)
-:file:`/usr/local/lib/python2.6/dist-packages/local.pth` (Debian Squeeze)
-might look in our example::
+The file :xfile:`local.pth` itself should have the following content::
+
 
   /var/snapshots/lino
   /var/snapshots/django
   /var/snapshots/appy-0.6.3
   /usr/local/django  
   
-.. 
-
-  The following lines are probably no longer used::
-
-    /var/snapshots/pisa-3.0.32
-    /var/snapshots/pyratemp-0.2.0
-    /var/snapshots/south
-    /var/snapshots/python-daemon-1.5.5
-    /var/snapshots/lockfile-0.7
-
 To see which directories are on your Python path::
 
   python -c "import sys; print sys.path"
 
 
-Create mysql user
------------------
+Create mysql database
+---------------------
 
-::
+If you decided to use MySQL as database frontend, 
+you must now create a database for your project and a 
+user ``django@localhost``::
+
     $ sudo aptitude install mysql-server python-mysqldb
     
     $ mysql -u root -p 
-    mysql> create database myproject collate latin1_german1_ci;
+    mysql> create database myproject;
     mysql> create user 'django'@'localhost' identified by 'pwd';
     mysql> grant all on myproject.* to django with grant option;
     mysql> grant all on test_myproject.* to django with grant option;
     mysql> quit;
+    
+    
+See also http://dev.mysql.com/doc/refman/5.0/en/charset-database.html    
 
 
 Create local Django project
@@ -145,7 +152,8 @@ Create your Django project directory
 `/usr/local/django/myproject`, containing files
 :xfile:`settings.py`, :file:`__init__.py` and :xfile:`manage.py`.
 
-You may either create your Django project from scratch, or
+You may either create your Django project from scratch 
+(as explained in Django's docs), or
 copy these files from one of the subdirs of 
 :file:`/var/snapshots/lino/lino/demos`.
 
@@ -154,22 +162,49 @@ Consider using a simplified version of :xfile:`settings.py` that
 imports settings from one of the Lino demos. 
 For example::
 
-  from os.path import join
-  from lino.sites.dsbe.settings import *
-  DATA_DIR = '/usr/local/django/myproject'
-  DATABASES = {
-      # 'default': {
-      #     'ENGINE': 'django.db.backends.sqlite3',
-      #     'NAME': join(DATA_DIR,'myproject.db')
-      # }
-      'default': {
-          'ENGINE': 'django.db.backends.mysql',
-          'NAME': 'myproject',
-          'USER' : 'django',
-          'HOST' : 'localhost',
-          'PASSWORD' : 'password'
-      }
-  }
+    # -*- coding: UTF-8 -*-
+    # Django settings for myproject project.
+    from os.path import join, dirname
+    from lino.apps.dsbe.settings import *
+
+    class Lino(Lino):
+
+        title = u"My first Lino site"
+        csv_params = dict(delimiter=',',encoding='utf-16')
+
+    LINO = Lino(__file__)
+
+    LANGUAGE_CODE = 'fr' # "main" language
+    LANGUAGES = language_choices('fr','nl','en')
+
+    FIXTURE_DIRS = [join(LINO.project_dir,"fixtures")]
+    MEDIA_ROOT = join(LINO.project_dir,"media")
+
+    APPY_PARAMS.update(pythonWithUnoPath='/etc/openoffice.org3/program/python')
+
+    LOGGING_CONFIG = 'lino.utils.log.configure'
+    LOGGING = dict(filename='/var/log/lino/system.log'),level='DEBUG')
+    
+    # some alternative examples:
+    # LOGGING = dict(filename=join(LINO.project_dir,'log','system.log'),level='DEBUG')
+    # LOGGING = dict(filename=None,level='DEBUG')
+
+
+    # the following is needed only if you want to override Lino's default setting
+    # (which is a sqlite db in your local project directory)
+    
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql', 
+            'NAME': 'myproject',                  
+            'USER': 'django',                     
+            'PASSWORD': 'password',               
+            'HOST': 'localhost',                  
+            'PORT': '3306',
+        }
+    }
+
+
   
 Installing startup scripts 
 --------------------------
@@ -305,10 +340,14 @@ Prefix                      Description
 /media/webdav/doctemplates  doctemplates directory
 =========================== =========================================== 
 
-The development server does these mappings automatically in `urls.py`. 
-On a production server you'll probably add an 
-``Alias /media/ /usr/local/django/myproject/media/`` 
-directive in your Apache config.
+On a production server you'll probably add a line like the following 
+to your Apache config::
+
+  Alias /media/ /usr/local/django/myproject/media/
+  
+The development server currently does these mappings 
+automatically in `urls.py`.
+
 
 
 User permissions
@@ -326,27 +365,33 @@ Maybe also::
 
   $ chmod a+x /usr/local/django/myproject/manage.py
 
-Maybe you'll also add `umask 002` to your `/etc/apache2/envvars`. 
-For example if `lino.log` doesn't exist and Lino creates it, 
-you may want it to be writable by group.
-
-And then add in your `/etc/mercurial/hgrc`::
-
-  [trusted]
-  groups = www-data
+You'll probably need to add `umask 002` to your `/etc/apache2/envvars`. 
+For example if `system.log` doesn't exist or gets wrapped, 
+`www-data` (the user under which Apache is running) will create a new file, 
+and the file should to be writable by other users of the `www-data` group.
 
 You'll maybe have to do something like this::
 
   # addgroup YOURSELF www-data
   
-It may be useful to tidy up::
+
+In certain cases it may be useful to tidy up::
 
   $ find /var/snapshots/ -name '*.pyc' -delete
+  
+Set up Mercurial
+----------------
+
+Add in your `/etc/mercurial/hgrc`::
+
+  [trusted]
+  groups = www-data
+
 
 
 
 OpenOffice.org server 
-=====================
+---------------------
 
 See also :doc:`/blog/2010/1116`. But basically:
 
@@ -363,7 +408,7 @@ See also :doc:`/blog/2010/1116`. But basically:
     # update-rc.d oood defaults
 
 `watch_tim` daemon
-==================
+------------------
 
 This is only for :term:`TIM` users who use Lino in parallel with TIM. 
 `watch_tim` keeps an individually configured set of data in sync with 

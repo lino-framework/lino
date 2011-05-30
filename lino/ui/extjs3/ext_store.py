@@ -114,7 +114,7 @@ class StoreField(object):
             raise exceptions.ValidationError({
               self.field.name:_("Existing primary key value %r may not be modified.") % instance.pk})
         setattr(instance,self.field.name,v)
-        print 20110524, __file__, self.field.name, v
+        #~ print 20110524, __file__, self.field.name, v
         #~ try:
             #~ setattr(instance,self.field.name,v)
         #~ except exceptions.ValidationError,e:

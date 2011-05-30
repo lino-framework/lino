@@ -74,10 +74,13 @@ class Country(models.Model):
 #~ add_babel_field(Country,'name')
         
 class Countries(reports.Report):
+    """
+    Shows the global list of countries.
+    """
     #~ label = _("Countries")
     model = 'countries.Country'
-    order_by = ["isocode"]
-    column_names = "isocode name *"
+    order_by = ["name","isocode"]
+    column_names = "name isocode *"
     
     
 FREQUENT_COUNTRIES = ['BE','NL','DE', 'FR', 'LU']
