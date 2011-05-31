@@ -337,7 +337,6 @@ def test06(self):
     """
     Testing BabelValues
     """
-    #~ from lino.modlib.dsbe.models import PersonProperty
     from lino.utils import babel
     annette = Person.objects.get(pk=15)
     self.assertEquals(unicode(annette), "Arens Annette (15)")

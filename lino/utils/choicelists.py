@@ -222,8 +222,8 @@ class HowWell(ChoiceList):
     which are stored in the database as '0' to '4',
     and whose `__unicode__()` returns their translated text.
 
-    `lino.modlib.dsbe.models.Languageknowledge.spoken` 
-    `lino.modlib.dsbe.models.Languageknowledge.written` 
+    `lino.apps.dsbe.models.Languageknowledge.spoken` 
+    `lino.apps.dsbe.models.Languageknowledge.written` 
     """
     label = _("not at all...very well")
     

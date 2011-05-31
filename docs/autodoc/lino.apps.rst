@@ -9,6 +9,9 @@ The :mod:`lino.apps` package
     :members:
     :show-inheritance:
 
+:mod:`lino.apps.std.models`
+---------------------------
+
 .. automodule:: lino.apps.std.models
     :members:
     :show-inheritance:
@@ -20,6 +23,9 @@ The :mod:`lino.apps` package
     :members:
     :show-inheritance:
 
+:mod:`lino.apps.dsbe.models`
+----------------------------
+
 .. automodule:: lino.apps.dsbe.models
     :members:
     :show-inheritance:
@@ -30,6 +36,9 @@ The :mod:`lino.apps` package
 .. automodule:: lino.apps.igen.settings
     :members:
     :show-inheritance:
+
+:mod:`lino.apps.igen.models`
+----------------------------
 
 .. automodule:: lino.apps.igen.models
     :members:

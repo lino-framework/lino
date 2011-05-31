@@ -13,7 +13,7 @@
   http://efreedom.com/Question/1-3763838/Sort-Order-SQLite3-Umlauts
   
   And this is now done by connecting to the connection_created 
-  signal in :mod:`lino.modlib.dsbe.models`.
+  signal in :mod:`lino.apps.dsbe.models`.
   
 - Release 1.0 RC 2 with new :class:`lino.utils.dpy.Serializer` 
   and no change yet to the db structure.

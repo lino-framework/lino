@@ -2,7 +2,7 @@
 ========
 
 
-.. currentmodule:: lino.modlib.dsbe.models
+.. currentmodule:: lino.apps.dsbe.models
 
 - Umstrukturierung der Seite :doc:`/tickets/index`, weil ich in den Docstrings von 
   :class:`Person` und :class:`Company`

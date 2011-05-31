@@ -1203,6 +1203,8 @@ Lino.HtmlBoxPanel = Ext.extend(Ext.Panel,{
   },
   onRender : function(ct, position){
     Lino.HtmlBoxPanel.superclass.onRender.call(this, ct, position);
+    this.ww.main_item.on('enable',this.enable,this);
+    this.ww.main_item.on('disable',this.disable,this);
     this.el.on({
       dragenter:function(event){
         event.browserEvent.dataTransfer.dropEffect = 'move';
@@ -1232,6 +1234,10 @@ Lino.HtmlBoxPanel = Ext.extend(Ext.Panel,{
       }
     });
   },
+  disable : function() { console.log('HtmlBox.disable'); 
+      this.getBottomToolbar().disable()},
+  enable : function() { console.log('HtmlBox.enable'); 
+      this.getBottomToolbar().enable()},
   do_when_clean : function(todo) { todo() },
   format_data : function(html) { return '<div class="htmlText">' + html + '</div>' },
   refresh : function(after) {

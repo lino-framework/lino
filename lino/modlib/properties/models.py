@@ -189,9 +189,9 @@ class PropertyOccurence(models.Model):
     A Property Occurence is when a Property occurs, possibly having a certain value.
     
     Abstract base class for 
-    | :class:`lino.modlib.dsbe.models.PersonProperty`,
-    | :class:`lino.modlib.dsbe.models.WantedProperty`, 
-    | :class:`lino.modlib.dsbe.models.AvoidedProperty`,
+    | :class:`lino.apps.dsbe.models.PersonProperty`,
+    | :class:`lino.apps.dsbe.models.WantedProperty`, 
+    | :class:`lino.apps.dsbe.models.AvoidedProperty`,
     | ...
     
     """

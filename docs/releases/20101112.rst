@@ -4,7 +4,7 @@ Version 0.8.12
 Changes
 -------
 
-- Neues virtuelles Feld :attr:`lino.modlib.dsbe.models.Person.overview`, das im ersten Detail-Tab
+- Neues virtuelles Feld :attr:`lino.apps.dsbe.models.Person.overview`, das im ersten Detail-Tab
   angezeigt wird, und in dem vor allem Mitteilungen wie "Achtung, Personalausweis läuft am 07.11.10 aus!" 
   oder "VSB Lehre läuft am 07.11.10 aus!" kommen. 
   Der genaue Inhalt ist noch zu diskutieren, momentan steht da nur ein erster Vorschlag.

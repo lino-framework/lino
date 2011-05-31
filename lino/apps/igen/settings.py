@@ -11,6 +11,10 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+Default settings for :doc:`/igen/index`.
+
+"""
 import os
 import sys
 from os.path import join,dirname, normpath, abspath

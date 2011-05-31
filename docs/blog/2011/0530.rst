@@ -121,6 +121,8 @@ Sogar der Save-Button funktioniert. Alles ist aber noch wackelig
 programmiert, und bevor man es Otto Normalverbraucher zumuten kann, 
 sind noch einige Probleme zu beheben:
 
+- Der Benutzer sieht keine Bestätigung, wenn er gespeichert hat.
+
 - Die Scrollbars der HtmlBox sind nicht ganz richtig dimensioniert: 
   auch bei einem leeren Text werden sie angezeigt. 
   Die horizontale Scrollbar ist da, obschon sie gar nicht nötig wäre.
@@ -128,14 +130,13 @@ sind noch einige Probleme zu beheben:
 - Nach dem Schließen des Editor-Fensters muss die HtmlBox aktualisiert 
   werden.
   
-- Speichern kann man mit Ctrl-S, das ist schön. 
-  Aber man sollte das Fenster auch schließen können, ohne die Maus zu belästigen...
-  
 - Wenn man das Fenster ohne zu Speichern schließt, sollte er vorher fragen, 
   ob man nicht doch lieber speichern will.
   
-- Der Benutzer sieht keine Bestätigung, wenn er gespeichert hat.
-
+- Speichern kann man mit Ctrl-S, das ist schön. 
+  Aber man sollte das Fenster auch schließen können, 
+  ohne die Maus zu belästigen...
+  
 - Wenn die Notiz ausgedruckt wurde, ist die HtmlBox disabled 
   (weil body in disabled_fields mit dabei ist, was bei inline editing 
   auch nötig ist). Aber das `disabled` einer HtmlBox sollte die Anzeige nicht 

@@ -62,7 +62,7 @@ in a certain :class:`Company`.
   :class:`lino.modlib.contacts.models.Person`
   
   Concrete implementations in 
-  :class:`dsbe <lino.modlib.dsbe.models.Person>`
+  :class:`dsbe <lino.apps.dsbe.models.Person>`
   and :class:`igen <lino.modlib.igen.models.Person>`
 
 
@@ -72,8 +72,8 @@ in a certain :class:`Company`.
   :class:`lino.modlib.contacts.models.Company`
   
   Concrete implementations in 
-  :class:`dsbe <lino.modlib.dsbe.models.Company>`
-  and :class:`igen <lino.modlib.igen.models.Company>`
+  :class:`dsbe <lino.apps.dsbe.models.Company>`
+  and :class:`igen <lino.apps.igen.models.Company>`
 
 .. class:: ContactType
 

@@ -1,7 +1,7 @@
 Konvertierung TIM nach Lino
 ===========================
 
-.. currentmodule:: lino.modlib.dsbe.models
+.. currentmodule:: lino.apps.dsbe.models
 
 Die Krankenkassen (Adressen aus ADR mit ADR->Type == 'MUT') 
 erscheinen in Lino als :class:`Company`, wobei deren `id` wie folgt ermittelt wird:

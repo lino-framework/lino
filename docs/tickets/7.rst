@@ -1,7 +1,7 @@
 #7 [closed] : Code of contacts.Person duplicated in dsbe.Person 
 ===============================================================
 
-.. currentmodule:: lino.modlib.dsbe.models
+.. currentmodule:: lino.apps.dsbe.models
 
 :class:`Person` in :mod:`lino.modlib.dsbe` implements :class:`contacts.Person` 
 but it cannot inherit it directly because 

@@ -4,9 +4,9 @@ Version 1.1.3 (16.02.2011)
 #.  Der "Änderungen-Speichern ?"-Bug ist behoben.
 
 #.  Die beiden Felder 
-    :attr:`noble_condition <lino.modlib.dsbe.models.Person.noble_condition>` 
+    :attr:`noble_condition <lino.apps.dsbe.models.Person.noble_condition>` 
     und     
-    :attr:`card_issuer <lino.modlib.dsbe.models.Person.card_issuer>` 
+    :attr:`card_issuer <lino.apps.dsbe.models.Person.card_issuer>` 
     sind jetzt readonly (bei importierten Personen).
 
 #.  Eingabe Berufserfahrungen:
@@ -14,8 +14,8 @@ Version 1.1.3 (16.02.2011)
     - Bezeichnung ist jetzt nicht mehr obligatorisch. 
       Dadurch wird der Record schon nach Eingabe einer Firma abgespeichert (und sortiert).
       
-#.  Eingabe :class:`Ausbildung <lino.modlib.dsbe.models.StudiesByPerson>` und 
-    :class:`Berufserfahrungen <lino.modlib.dsbe.models.JobexperiencesByPerson>`:
+#.  Eingabe :class:`Ausbildung <lino.apps.dsbe.models.StudiesByPerson>` und 
+    :class:`Berufserfahrungen <lino.apps.dsbe.models.JobexperiencesByPerson>`:
 
     - Das Datum "begonnen" eines neuen Records wird jetzt par défaut auf das 
       Enddatum des letzten Eintrags gesetzt. 

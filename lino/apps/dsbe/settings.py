@@ -12,7 +12,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Default settings for Lino/DSBE.
+Default settings for :doc:`/dsbe/index`.
 
 """
 

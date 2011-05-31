@@ -10,7 +10,7 @@ this window is being built.
 And complex windows take some time to render.
 And the user is there for several seconds without knowing what's going on.
 
-For example :class:`lino.modlib.dsbe.models.Person` has a huge FormPanel as main component.
+For example :class:`lino.apps.dsbe.models.Person` has a huge FormPanel as main component.
 
 Here is the code where I think it should happen. 
 ``Lino.show_detail`` is called by a double click on a GridPanel.

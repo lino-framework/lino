@@ -4,9 +4,9 @@
 #.  Anpassungen :doc:`/admin/install` an Debian Squeeze
 
 #.  Die beiden Felder 
-    :attr:`noble_condition <lino.modlib.dsbe.models.Person.noble_condition>` 
+    :attr:`noble_condition <lino.apps.dsbe.models.Person.noble_condition>` 
     und     
-    :attr:`card_issuer <lino.modlib.dsbe.models.Person.card_issuer>` 
+    :attr:`card_issuer <lino.apps.dsbe.models.Person.card_issuer>` 
     von der eID waren nicht readonly.
 
 #.  Zwischenrelease in Eupen.
@@ -67,7 +67,7 @@ also kann man jetzt theoretisch
 per Markup (reStructuredText) formatierte Textfragmente in Memofeldern machen.
     
 Zum Beispiel in 
-:attr:`lino.modlib.dsbe.models.Contract.responsibilities` kommt in der Dokumentvorlage
+:attr:`lino.apps.dsbe.models.Contract.responsibilities` kommt in der Dokumentvorlage
 anstelle des bisherigen Befehls `self.responsibilities` (im "track changes"-Modus)
 ein leerer Absatz (evtl. mit Absatzformatierung, z.B. linker/rechter Einzug)
 mit folgender Notiz::

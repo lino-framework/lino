@@ -33,7 +33,7 @@ known values
 Man kann jetzt auch schon im Report ein
 :attr:`lino.reports.Report.known_values`
 definieren. Der gilt dann als Standardwert für alle Requests.
-Wird benutzt für :class:`lino.modlib.dsbe.models.CourseProviders`.
+Wird benutzt für :class:`lino.apps.dsbe.models.CourseProviders`.
 
 
 CandidatesByCourse

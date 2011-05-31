@@ -97,3 +97,50 @@ Deshalb machen wir in den Tests jetzt an bestimmten Stellen::
 
   self.client.get(url,REMOTE_USER='root')
   
+Release 20110531
+
+About settings
+==============
+
+:doc:`Vorigen Donnerstag </blog/2011/0526>` schrieb ich:
+
+  In der neuen Django-Version (wahrscheinlich wegen 
+  :djangoticket:`14297`) funktioniert mein elegantes System mit 
+  den cascaded settings nicht mehr. Da muss ich mir 
+  also was anderes einfallen lassen. Provisorischer Workaround::
+  
+    mv settings.py lino_settings.py
+    echo "from myproject.lino_settings import *" > settings.py
+
+Das war eine totale Fehldiagnose.
+Mein elegantes System mit den cascaded settings funktioniert weiterhin, 
+und der beschriebene Workaround ist nicht nötig und bringt auch keine Abhilfe, 
+wenn das Problem auftritt.
+
+Die Ursache ist :djangoticket:`15064`.
+Was sich geändert hat: wenn die Umgebungsvariable `DJANGO_SETTINGS_MODULE` 
+gesetzt ist, dann hat die absolute Priorität. 
+Habe das mal im Ticket als `Kommentar <https://code.djangoproject.com/ticket/15064#comment:17>`_ gepostet.
+
+En attendant werde ich wohl damit leben müssen, und 
+die einfachste Lösung scheint mir, zwei Zeilen in 
+meinen lokalen :xfile:`manage.py` einzufügen::
+
+  import os
+  os.environ['DJANGO_SETTINGS_MODULE'] = 'myproject.settings'
+  
+Anschließend Aufräumaktion. 
+Sphinx meldet jetzt beim Generieren der Dokumentation wieder ein paar Warnungen weniger.
+
+
+Weiter mit TinyMCE
+------------------
+
+Einen der offenen Punkte hab ich geschafft:
+
+- Wenn die Notiz ausgedruckt wurde, ist die HtmlBox disabled 
+  (weil body in disabled_fields mit dabei ist, was bei inline editing 
+  auch nötig ist). Aber das `disabled` einer HtmlBox sollte die Anzeige nicht 
+  grau werden lassen, auch die Scrollbars nicht deaktivieren, sondern 
+  lediglich den Button "Bearbeiten"
+

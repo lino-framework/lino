@@ -2,7 +2,7 @@
 ========
 
 - New class :class:`lino.fields.HtmlBox` to be used as `return_type` for 
-  :meth:`lino.modlib.dsbe.models.Person.links_by_owner`.
+  :meth:`lino.apps.dsbe.models.Person.links_by_owner`.
   
 - `:write_debug_info:` as a field in a .dtl file means that Lino 
   writes a `.debug.html` file for this Layout.

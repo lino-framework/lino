@@ -6,14 +6,14 @@ Person Searches
 
 Neues Model PersonSearch für erweiterte Personensuche. 
 Insbesondere der Slave-Report 
-:class:`PersonsBySearch <lino.modlib.dsbe.models.PersonsBySearch>`
+:class:`PersonsBySearch <lino.apps.dsbe.models.PersonsBySearch>`
 war technisch noch eine Herausforderung, weil es erstmals ein 
 Slave-Report ohne `fk_name` ist.
 
 Das *proof of concept* funktionierte nach nur einer Stunde!
 
 Der Code zum Aufbau des SQL-Querys ist in der Methode
-:meth:`get_request_queryset <lino.modlib.dsbe.models.PersonsBySearch.get_request_queryset>`,
+:meth:`get_request_queryset <lino.apps.dsbe.models.PersonsBySearch.get_request_queryset>`,
 und ist schon jetzt  recht komplex.
 Um Personen zu finden, die bestimmte Sprachkenntnisse oder Fähikeiten haben, 
 habe ich ein bisschen überlegen müssen wie das Query aufzubauen ist. 
@@ -41,7 +41,7 @@ Ein erster Versuch funktionierte zwar, aber war noch suboptimal::
   die Kolonnenfilter nicht mehr funktionieren.
 
 Um zu sehen, wie ich's jetzt mache, siehe
-:meth:`source code <lino.modlib.dsbe.models.PersonsBySearch.get_request_queryset>`.
+:meth:`source code <lino.apps.dsbe.models.PersonsBySearch.get_request_queryset>`.
 Die Schönheit dieses Codes haben wir übrigens nicht Lino, 
 sondern Python und Django zu verdanken.
 

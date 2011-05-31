@@ -13,7 +13,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-See also :doc:`/dsbe/models`
+See also :doc:`/dsbe/models`.
 
 """
 
@@ -1549,13 +1549,13 @@ class Course(models.Model):
     content = models.ForeignKey("dsbe.CourseContent",
         verbose_name=_("Course content"))
     """
-    Der Inhalt des Kurses (ein :class:`lino.modlib.dsbe.models.CourseContent`)
+    Der Inhalt des Kurses (ein :class:`CourseContent`)
     """
     
     provider = models.ForeignKey(CourseProvider,
         verbose_name=_("Course provider"))
     """
-    Der Kursanbieter (eine :class:`lino.modlib.dsbe.models.Company`)
+    Der Kursanbieter (eine :class:`Company`)
     """
     
     @chooser()
@@ -1592,14 +1592,14 @@ class Course(models.Model):
         
     def participants(self):
         u"""
-        Liste von :class:`lino.modlib.dsbe.models.CourseRequest`-Instanzen, 
+        Liste von :class:`CourseRequest`-Instanzen, 
         die in diesem Kurs eingetragen sind. 
         """
         return ParticipantsByCourse().request(master_instance=self)
         
     def candidates(self):
         u"""
-        Liste von :class:`lino.modlib.dsbe.models.CourseRequest`-Instanzen, 
+        Liste von :class:`CourseRequest`-Instanzen, 
         die noch in keinem Kurs eingetragen sind, aber für diesen Kurs in Frage 
         kommen. 
         """
@@ -1618,11 +1618,11 @@ class CourseRequest(models.Model):
         
     person = models.ForeignKey("contacts.Person",
         verbose_name=_("Person"))
-    u"Die Person (ein Objekt vom Typ :class:`lino.modlib.dsbe.models.Person`.)"
+    u"Die Person (ein Objekt vom Typ :class:`Person`.)"
     
     content = models.ForeignKey("dsbe.CourseContent",
         verbose_name=_("Course content"))
-    u"Der gewünschte Kursinhalt (ein Objekt vom Typ :class:`lino.modlib.dsbe.models.CourseConent`.)"
+    u"Der gewünschte Kursinhalt (ein Objekt vom Typ :class:`CourseConent`.)"
     
     date_submitted = models.DateField(_("date submitted"),auto_now_add=True)
     u"Das Datum, an dem die Anfrage erstellt wurde."
@@ -1666,7 +1666,7 @@ class CourseRequest(models.Model):
         verbose_name=_("Ending"))
     u"""
     Die Art der Beendigung 
-    (ein Objekt vom Typ :class:`lino.modlib.dsbe.models.CourseEnding`.)
+    (ein Objekt vom Typ :class:`CourseEnding`.)
     Das wird benutzt für spätere Statistiken.
     """
     

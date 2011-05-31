@@ -4,9 +4,9 @@
 Lino und multi-table inheritance
 --------------------------------
 
-.. currentmodule:: lino.modlib.dsbe.models
+.. currentmodule:: lino.apps.dsbe.models
 
-Das Modell :class:`Kursanbieter <lino.modlib.dsbe.models.CourseProvider>`) 
+Das Modell :class:`Kursanbieter <CourseProvider>`) 
 war bisher einfach nur ein Alias für :class:`Company`, 
 dortselbst gab es ein Feld `is_courseprovider`
 und der Report :class:`CourseProviders` arbeitete 

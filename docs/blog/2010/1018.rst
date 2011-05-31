@@ -16,7 +16,7 @@ oder als Element in einem Detail verwenden, und in beiden Fällen wird eine List
 der Links im Stil 
 ``<a href="<URL>"><lnk.name></a><br>...`` angezeigt. Und zwar ohne, 
 dass ich im Modell oder im Report des Masters (also hier 
-:class:`Person <lino.modlib.dsbe.models.Person>`) etwas sagen muss. 
+:class:`Person <lino.apps.dsbe.models.Person>`) etwas sagen muss. 
 Einfach weil :attr:`links.LinksByOwner.slave_as_grid` auf `False` steht.
 
 Das Layout-Problem :doc:`/tickets/1` "funktioniert" leider auch bei HtmlBoxen. 
@@ -41,9 +41,9 @@ definiert.
 
 Die Methode `Person.language_knowledge` ist jetzt nicht mehr nötig, 
 stattdessen definieren wir 
-:meth:`lino.modlib.dsbe.models.LanguageKnowledge.__unicode__`
+:meth:`lino.apps.dsbe.models.LanguageKnowledge.__unicode__`
 
-N.B.: :attr:`lino.modlib.dsbe.models.LanguageKnowledgesByPerson.slave_as_grid` 
+N.B.: :attr:`lino.apps.dsbe.models.LanguageKnowledgesByPerson.slave_as_grid` 
 muss *nicht* auf `False` stehen, weil wir diesen Report in der Detail-Ansicht 
 ja als Grid haben wollen. 
 Das tolle Neue ist: wenn ein Report in Report.column_names genannt wird, 

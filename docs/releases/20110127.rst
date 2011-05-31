@@ -36,7 +36,7 @@ Version 1.0.5 (27.01.2011)
     
     In diesen Vorlagen steht der Kurs, der ausgedruckt wird, 
     in der Variable `self` als Objekt vom Typ 
-    :class:`Course <lino.modlib.dsbe.models.Course>`.
+    :class:`Course <lino.apps.dsbe.models.Course>`.
     (Siehe Link für detaillierte Dokumentation).
     
     

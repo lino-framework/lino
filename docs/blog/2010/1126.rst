@@ -24,8 +24,8 @@ the Python `logging` module:
     There was among others a stupid bug for the AdminEmailHandler.
 
 
-Changes in :mod:`lino.modlib.dsbe.models`
------------------------------------------
+Changes in :mod:`lino.apps.dsbe.models`
+---------------------------------------
 
 Ich habe die besprochenen neuen Felder in `dsbe.Contracts` größtenteils 
 fertig und auch ein bisschen mit appy.pod gespielt. War alles sehr erfreulich.

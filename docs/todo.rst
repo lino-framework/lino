@@ -619,7 +619,7 @@ Documentation
 #.  Wenn ich in der INSTALLED_APPS von lino.demos.std.settings 
     auch die igen-Module reintue, dann kriege ich::
   
-     ref\python\lino.modlib.dsbe.rst:17: (WARNING/2) autodoc can't import/find module 'lino.modlib.dsbe.models', 
+     ref\python\lino.modlib.dsbe.rst:17: (WARNING/2) autodoc can't import/find module 'lino.apps.dsbe.models', 
      it reported error: "resolve_model('contacts.Company',app_label='contacts',who=None) found None"
 
 #.  ``make doctest`` nutzbar machen. Siehe :doc:`/blog/2010/1024`
