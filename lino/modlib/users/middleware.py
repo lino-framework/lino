@@ -51,6 +51,6 @@ class RemoteUserMiddleware(object):
             u = User(username=username)
             u.full_clean()
             u.save()
-            dblogger.info("Creating new user %s from request %s",u,request)
+            dblogger.debug("Creating new user %s from request %s",u,request)
             request.user = u
 

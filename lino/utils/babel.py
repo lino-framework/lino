@@ -181,6 +181,10 @@ def set_language(lang):
         #~ locale.setlocale(locale.LC_ALL,'')
         translation.deactivate()
     else:
+        if not lang in AVAILABLE_LANGUAGES:
+            raise Exception(
+              "Cannot set language to %s: available languages are %s." % (
+              lang,AVAILABLE_LANGUAGES))
         translation.activate(lang)
         #~ country = settings.LANGUAGE_CODE[3:]
         #~ locale.setlocale(locale.LC_ALL,lc2locale(lang,country))

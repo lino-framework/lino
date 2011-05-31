@@ -31,6 +31,7 @@ logger = logging.getLogger(__name__)
 from lino.modlib.contacts.models import Companies
 
 from lino.utils import i2d
+from lino.utils import babel
 from lino.tools import resolve_model
 #Companies = resolve_model('contacts.Companies')
 from lino.utils.test import TestCase
@@ -41,8 +42,8 @@ PersonProperty = resolve_model('properties.PersonProperty')
 
 class DemoTest(TestCase):
     #~ fixtures = [ 'std','demo' ]
-    #~ fixtures = 'std few_countries few_languages few_cities props demo'.split()
-    fixtures = 'std all_countries few_cities all_languages props demo'.split()
+    fixtures = 'std few_countries few_cities few_languages props demo'.split()
+    #~ fixtures = 'std all_countries few_cities all_languages props demo'.split()
     
             
 def test01(self):
@@ -58,20 +59,35 @@ def test01(self):
 def test02(self):
     """
     This tests for the bug discovered :doc:`/blog/2011/0228`.
+    See also :doc:`/blog/2011/0531`
     """
     url = '/api/properties/SoftSkillsByPerson?_dc=1298881440121&fmt=json&mt=22&mk=15'
-    response = self.client.get(url)
+    # make sure that the response is in English so that this test works on any site
+    babel.set_language('en')
+    #~ extra = {'Accept-Language':'fr,de-DE;q=0.8,de;q=0.6,en-US;q=0.4,en;q=0.2'
+    #~ extra = {'Accept-Language':'en-US'}
+    #~ extra = dict(REMOTE_USER='root')
+    #~ from django.conf import settings
+    #~ babel.DEFAULT_LANGUAGE = 'en'
+    #~ settings.LANGUAGE = 'en'
+    response = self.client.get(url,REMOTE_USER='root')
+    #~ response = self.client.get(url,data={},follow=False,**extra)
     #~ print response.content
     result = self.check_json_result(response,'count rows gc_choices title')
     #~ result = simplejson.loads(response.content)
     #~ for k in 'count rows gc_choices title'.split():
         #~ self.assertTrue(result.has_key(k))
+    #~ if len(result['rows']) != 3:
+    self.assertEqual(result['title'],"Properties of Arens Annette (15)")
+    print '\n'.join([unicode(x) for x in result['rows']])
     self.assertEqual(len(result['rows']),3)
     row = result['rows'][0]
-    self.assertEqual(row[0],"Gehorsam")
+    self.assertEqual(row[0],"Obedient")
+    #~ self.assertEqual(row[0],"Gehorsam")
     self.assertEqual(row[1],7)
-    self.assertEqual(row[2],u"mittelmäßig")
+    self.assertEqual(row[2],"moderate")
     self.assertEqual(row[3],"2")
+    babel.set_language(None) # switch back to default language for subsequent tests
     
     #~ tf('http://127.0.0.1:8000/api/properties/SoftSkillsByPerson?_dc=1298881440121&fmt=json&mt=22&mk=15',
         #~ """
@@ -326,18 +342,22 @@ def test06(self):
     annette = Person.objects.get(pk=15)
     self.assertEquals(unicode(annette), "Arens Annette (15)")
     
-    p = Property.objects.get(name="Gehorsam")
-    pp = PersonProperty.objects.get(person=annette,property__name="Gehorsam")
+    babel.set_language('en')
+    p = Property.objects.get(name_en="Obedient")
+    pp = PersonProperty.objects.get(person=annette,property__name_en="Obedient")
+        
+    if 'de' in babel.AVAILABLE_LANGUAGES:
+        babel.set_language('de')
+        self.assertEquals(unicode(p), u"Gehorsam")
+        self.assertEquals(unicode(pp), u"Sozialkompetenzen.Gehorsam=mittelmäßig")
     
-    self.assertEquals(unicode(p), u"Gehorsam")
-    self.assertEquals(unicode(pp), u"Sozialkompetenzen.Gehorsam=mittelmäßig")
+    if 'fr' in babel.AVAILABLE_LANGUAGES:
+        babel.set_language('fr')
+        self.assertEquals(unicode(p), u"Obéissant")
+        self.assertEquals(unicode(pp), u"Compétences sociales.Obéissant=moyennement")
     
-    babel.set_language('fr')
-    
-    self.assertEquals(unicode(p), u"Obéissant")
-    self.assertEquals(unicode(pp), u"Compétences sociales.Obéissant=moyennement")
-    
-    babel.set_language(babel.DEFAULT_LANGUAGE)
+    #~ babel.set_language(babel.DEFAULT_LANGUAGE)
+    babel.set_language(None) # switch back to default language for subsequent tests
     
 def test07(self):
     """

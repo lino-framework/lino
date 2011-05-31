@@ -1,0 +1,29 @@
+T:\hgwork\lino\docs\autodoc\lino.apps.rst:12: (WARNING/2) autodoc can't import/find module 'lino.apps.std.models', it reported error: "You must define a 'default' database", please check your spelling and sys.path
+T:\hgwork\lino\docs\autodoc\lino.apps.rst:23: (WARNING/2) autodoc can't import/find module 'lino.apps.dsbe.models', it reported error: "You must define a 'default' database", please check your spelling and sys.path
+T:\hgwork\lino\docs\autodoc\lino.apps.rst:34: (WARNING/2) autodoc can't import/find module 'lino.apps.igen.models', it reported error: "You must define a 'default' database", please check your spelling and sys.path
+T:\hgwork\lino\docs\autodoc\lino.management.rst:9: (WARNING/2) autodoc can't import/find module 'lino.management.commands.initdb', it reported error: "You must define a 'default' database", please check your spelling and sys.path
+T:\hgwork\lino\docs\autodoc\lino.management.rst:16: (WARNING/2) autodoc can't import/find module 'lino.management.commands.diag', it reported error: "You must define a 'default' database", please check your spelling and sys.path
+T:\hgwork\lino\docs\autodoc\lino.management.rst:23: (WARNING/2) autodoc can't import/find module 'lino.management.commands.makedocs', it reported error: "You must define a 'default' database", please check your spelling and sys.path
+T:\hgwork\lino\docs\autodoc\lino.management.rst:30: (WARNING/2) autodoc can't import/find module 'lino.management.commands.makeui', it reported error: "You must define a 'default' database", please check your spelling and sys.path
+T:\hgwork\lino\docs\autodoc\lino.management.rst:37: (WARNING/2) autodoc can't import/find module 'lino.management.commands.make_staff', it reported error: "You must define a 'default' database", please check your spelling and sys.path
+T:\hgwork\lino\docs\autodoc\lino.mixins.printable.rst:4: (WARNING/2) autodoc can't import/find module 'lino.mixins.printable', it reported error: "You must define a 'default' database", please check your spelling and sys.path
+T:\hgwork\lino\docs\autodoc\lino.modlib.users.rst:13: (WARNING/2) autodoc can't import/find module 'lino.modlib.users.models', it reported error: "You must define a 'default' database", please check your spelling and sys.path
+T:\hgwork\lino\docs\autodoc\lino.modlib.users.rst:21: (WARNING/2) autodoc can't import/find module 'lino.modlib.users.middleware', it reported error: "You must define a 'default' database", please check your spelling and sys.path
+T:\hgwork\lino\docs\autodoc\lino.utils.babel.rst:5: (WARNING/2) autodoc can't import/find module 'lino.utils.babel', it reported error: "You must define a 'default' database", please check your spelling and sys.path
+T:\hgwork\lino\docs\autodoc\lino.utils.dblogger.rst:5: (WARNING/2) autodoc can't import/find module 'lino.utils.dblogger', it reported error: "You must define a 'default' database", please check your spelling and sys.path
+T:\hgwork\lino\docs\autodoc\lino.rst:11: WARNING: py:class reference target not found: object
+T:\hgwork\lino\docs\autodoc\lino.rst:13: WARNING: setting reference target not found: LINO
+T:\hgwork\lino\docs\autodoc\lino.rst:29: WARNING: py:class reference target not found: lino.mixins.printable.AppyBuildMethod
+T:\hgwork\lino\docs\autodoc\lino.rst:58: WARNING: py:attr reference target not found: date_format_xxx
+T:\hgwork\lino\docs\autodoc\lino.apps.rst:2: WARNING: py:mod reference target not found: lino.apps
+T:\hgwork\lino\docs\autodoc\lino.apps.rst:5: WARNING: py:mod reference target not found: lino.apps.std
+T:\hgwork\lino\docs\autodoc\lino.apps.rst:16: WARNING: py:mod reference target not found: lino.apps.dsbe
+T:\hgwork\lino\docs\autodoc\lino.apps.rst:27: WARNING: py:mod reference target not found: lino.apps.igen
+T:\hgwork\lino\docs\autodoc\lino.management.rst:1: WARNING: py:mod reference target not found: lino.management
+T:\hgwork\lino\docs\autodoc\lino.mixins.printable.rst:1: WARNING: py:mod reference target not found: lino.mixins.printable
+T:\hgwork\lino\docs\autodoc\lino.modlib.users.rst:4: WARNING: py:mod reference target not found: django.contrib.auth
+T:\hgwork\lino\docs\autodoc\lino.modlib.users.rst:11: WARNING: py:mod reference target not found: django.contrib.sessions
+T:\hgwork\lino\docs\autodoc\lino.modlib.users.rst:10: WARNING: py:mod reference target not found: lino.modlib.users.models
+T:\hgwork\lino\docs\autodoc\lino.modlib.users.rst:18: WARNING: py:mod reference target not found: lino.modlib.users.middleware
+T:\hgwork\lino\docs\autodoc\lino.utils.babel.rst:2: WARNING: py:mod reference target not found: lino.utils.babel
+T:\hgwork\lino\docs\autodoc\lino.utils.dblogger.rst:2: WARNING: py:mod reference target not found: lino.utils.dblogger

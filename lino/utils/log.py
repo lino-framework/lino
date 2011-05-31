@@ -88,7 +88,6 @@ def configure(config):
     #~ print 20101225, config
     encoding = config.get('encoding','UTF-8')
     logfile = config.get('filename',None)
-    #~ dblogfile = config.get('dblogfile',None)
     level = getattr(logging,config.get('level','notset').upper())
     
     djangoLogger = logging.getLogger('django')
@@ -130,9 +129,3 @@ def configure(config):
         # happens under mod_wsgi
         pass
         
-    #~ if dblogfile is not None:
-        #~ dblogger = logging.getLogger('lino.db')
-        #~ # if dblogfile.lower() == 'auto':
-            #~ # dblogfile = os.path.join(settings.DATA_DIR,'db.log')
-        #~ dblogger.addHandler(file_handler(dblogfile))
-        #~ settings.LINO_SITE.setup_dblogger(dblogger)

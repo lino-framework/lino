@@ -100,12 +100,12 @@ def test02(self):
     from lino.modlib.notes.models import NoteType
     i = NoteType(build_method='appyodt',template="Default.odt",id=1)
     i.save()
-    response = self.client.get('/api/notes/NoteTypes/1?fmt=json')
+    response = self.client.get('/api/notes/NoteTypes/1?fmt=json',REMOTE_USER='root')
     result = self.check_json_result(response,'data title navinfo disable_delete id')
     self.assertEqual(result['data']['template'],'Default.odt')
     self.assertEqual(result['data'].has_key('templateHidden'),False)
     
-    response = self.client.get('/api/notes/NoteTypes/1?fmt=detail')
+    response = self.client.get('/api/notes/NoteTypes/1?fmt=detail',REMOTE_USER='root')
     #~ print '\n'.join(response.content.splitlines()[:1])
     
     c = response.content

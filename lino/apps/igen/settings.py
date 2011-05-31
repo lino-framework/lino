@@ -177,11 +177,3 @@ TEMPLATE_DIRS = (
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'cqt^18t(Fb#14a@s%mbtdif+ih8fscpf8l9aw+0ivo2!3c(c%&'
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': join(LINO.project_dir,'igen_demo.db')
-        #~ 'NAME': ':memory:'
-    }
-}

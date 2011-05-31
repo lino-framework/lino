@@ -1,0 +1,99 @@
+20110531
+========
+
+settings
+--------
+
+:setting:`DATABASES` is now no longer predefined in 
+`lino.apps.xyz.settings` because that resulted in a file name 
+inside the Lino source tree. 
+Local settings.py files must now set this, 
+otherwise they get a
+`ImproperlyConfigured` exception "You must define a 'default' database".
+
+When we need a customizable parameter or method in Lino, 
+our strategy is now to define it in
+:class:`lino.apps.std.settings.Lino` 
+as class attribute or method. 
+Some Lino-specific settings are still 
+from the time before we found the 
+:class:`lino.apps.std.settings.Lino` trick.
+Starting to tidy up:
+
+- :setting:`APPY_PARAMS` replaced by :attr:`lino.apps.std.settings.Lino.appy_params`.
+- Removed settings `DBLOGFILE` and `BYPASS_PERMS` which were no longer used.
+
+Updated :doc:`/admin/install` to give a useful example 
+of recommended settings for new local settings files.
+
+Class `lino.apps.std.settings.Lino` has been moved to :class:`lino.Lino`.
+
+
+initdb fails on empty database
+------------------------------
+
+Django's `reset` command has been deprecated because :djangoticket:`it breaks a lot <14268>`. 
+That's why Lino's :term:`initdb` was replaced it by `flush`.
+Now I discovered that `flush` didn't work on an empty database: it raised a
+`django.db.utils.DatabaseError` "no such table: django_content_type". 
+Fixed: `initdb` now is a combination of syncdb, flush and loaddata
+
+Small bug in all_languages fixture
+----------------------------------
+
+Removed a bug that caused the all_languages fixture to not find 
+the french names for languages "Arabe" and "Bihari". 
+This was visible as 2 warnings "Ignored french:9 (len(rec) is 7)" during `initdb`.
+
+Test suite dsbe_demo_tests failed
+---------------------------------
+
+In dsbe_demo_tests war ja eine Failure, die nur auftrat in einer 
+Datenbank mit Französisch als Hauptsprache::
+
+  Traceback (most recent call last):
+    File "t:\hgwork\lino\lino\utils\test.py", line 87, in test_them_all
+      v(self)
+    File "t:\hgwork\lino\lino\apps\dsbe\tests\dsbe_demo_tests.py", line 71, in test02
+      self.assertEqual(len(result['rows']),3)
+  AssertionError: 2 != 3
+
+Wenn ich da ein ``print`` davorsetze::
+
+    print '\n'.join([unicode(x) for x in result['rows']])
+    self.assertEqual(len(result['rows']),3)
+  
+dann kriege ich in einer deutschen Datenbank::
+
+  [u'Gehorsam', 7, u'mittelm\xe4\xdfig', u'2', None, 53, u'Sozialkompetenzen', 2]
+  [u'F\xfchrungsf\xe4higkeit', 8, u'mittelm\xe4\xdfig', u'2', None, 54, u'Sozialkompetenzen', 2]
+  [None, None, None, None, None, None, u'Sozialkompetenzen', 2]
+
+und in einer französischen::
+
+  [u'Ob\xe9issant', 7, u'moyennement', u'2', None, 53, u'Comp\xe9tences sociales', 2]
+  [u'Leader', 8, u'moyennement', u'2', None, 54, u'Comp\xe9tences sociales', 2]
+
+Was hat das zu bedeuten? 
+Scheint was damit zu tun zu haben, dass der deutsche Benutzer 
+Records erstellen darf und der französische nicht.
+
+First of all, we now also make sure that the response is always in English 
+so that this test works on any site.
+
+::
+
+  [u'Obedient', 7, u'moderate', u'2', None, 53, u'Soft skills', 2]
+  [u'Leader', 8, u'moderate', u'2', None, 54, u'Soft skills', 2]
+  [None, None, None, None, None, None, u'Soft skills', 2]
+
+Dadurch wird klar, dass es nicht an der Sprache liegt, sondern 
+an was anderem.
+Tilt! Genau: ich hatte den Test bisher immer nur in meinem Test-Environment 
+laufenlassen, und der benutzt ja :class:`SimulateRemoteUserMiddleware <lino.utils.simulate_remote.SimulateRemoteUserMiddleware>`.
+Das tun natürlich nicht alle, sondern im Gegenteil eher die 
+wenigsten. 
+Deshalb machen wir in den Tests jetzt an bestimmten Stellen::
+
+  self.client.get(url,REMOTE_USER='root')
+  

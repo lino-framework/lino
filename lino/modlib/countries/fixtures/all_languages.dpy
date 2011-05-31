@@ -772,8 +772,8 @@ for ln in french.splitlines():
     if ln:
         ln = ln.strip()
         rec = ln.split('\t')
-        if len(rec) != 6:
-            logger.warning("Ignored french:%d (len(rec) is %d)",n,len(rec))
+        if len(rec) < 6:
+            logger.warning("Ignored french:%d:%s (len(rec) is %d)",n,ln,len(rec))
         code = rec[1]
         if len(code) == 7:
             if code[3:4] == '/':

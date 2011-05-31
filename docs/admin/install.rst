@@ -180,19 +180,15 @@ For example::
     FIXTURE_DIRS = [join(LINO.project_dir,"fixtures")]
     MEDIA_ROOT = join(LINO.project_dir,"media")
 
-    APPY_PARAMS.update(pythonWithUnoPath='/etc/openoffice.org3/program/python')
+    LINO.appy_params.update(pythonWithUnoPath='/etc/openoffice.org3/program/python')
 
     LOGGING_CONFIG = 'lino.utils.log.configure'
     LOGGING = dict(filename='/var/log/lino/system.log'),level='DEBUG')
-    
     # some alternative examples:
     # LOGGING = dict(filename=join(LINO.project_dir,'log','system.log'),level='DEBUG')
     # LOGGING = dict(filename=None,level='DEBUG')
 
 
-    # the following is needed only if you want to override Lino's default setting
-    # (which is a sqlite db in your local project directory)
-    
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql', 
@@ -204,6 +200,12 @@ For example::
         }
     }
 
+    # Make this unique, and don't share it with anybody.
+    SECRET_KEY = 'cqt^18t(Fb#14a@s%mbtdif+ih8fscpf8l9aw+0ivo2!3c(c%&'
+    
+    EMAIL_HOST = "mail.example.com"
+    #EMAIL_PORT = ""
+    
 
   
 Installing startup scripts 

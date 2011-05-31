@@ -23,8 +23,6 @@ from lino.apps.std.settings import *
 
 from lino.utils.jsgen import js_code
 
-
-#~ class LinoSite(LinoSite):
 class Lino(Lino):
     source_dir = os.path.dirname(__file__)
     title = "Lino/DSBE"
@@ -160,15 +158,6 @@ LINO = Lino(__file__)
 MEDIA_ROOT = join(LINO.project_dir,'media')
 #~ MEDIA_ROOT = join(PROJECT_DIR,'media')
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': join(LINO.project_dir,'dsbe_demo.db')
-        #~ 'NAME': ':memory:'
-    }
-}
-
-
 TIME_ZONE = 'Europe/Brussels'
 
 # Language code for this installation. All choices can be found here:
@@ -214,10 +203,4 @@ TEMPLATE_DIRS = (
       join(abspath(LINO.project_dir),'templates'),
       join(abspath(dirname(lino.__file__)),'templates'),
 )
-
-# Make this unique, and don't share it with anybody.
-#~ SECRET_KEY = 'cqt^18t(Fb#14a@s%mbtdif+ih8fscpf8l9aw+0ivo2!3c(c%&'
-
-
-#~ __all__ = [x for x in dir() if x[0].isupper()]
 

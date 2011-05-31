@@ -12,10 +12,9 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""Performs a database flush and loads the specified fixtures 
-for all applications.  
-It is is a combination of Djangos `flush` and `loaddata` commands.
-It also writes some log entries to your dblogger.
+"""Performs a database reset and loads the specified fixtures for all applications.  
+It is a combination of Django's `syncdb`, `flush` and `loaddata` commands.
+It also writes log entries to your dblogger.
 """
 
 import logging
@@ -57,8 +56,8 @@ class Command(BaseCommand):
         options.update(interactive=False)
         apps = app_labels()
         #~ call_command('reset',*apps,**options)
+        call_command('syncdb',**options)
         call_command('flush',**options)
-        #~ call_command('syncdb',**options)
         call_command('loaddata',*args,**options)
         #~ if logLevel > logging.DEBUG:
             #~ dblogger.logger.setLevel(logLevel)

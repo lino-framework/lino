@@ -26,240 +26,16 @@ from tempfile import gettempdir
 from os.path import join, abspath, dirname, normpath
 import lino
 
-
-class Lino(object):
-    """
-    Base class for the Lino Application instance stored in :setting:`LINO`.
-    
-    Lino classes are defined and instantiated in Django settings files.
-    
-    This class is first defined in :mod:`lino.apps.std.settings`,
-    then subclassed by :mod:`lino.apps.myapp.settings`
-    which is probably subclassed by your local :xfile:`settings.py`
-    
-    """
-    
-    help_url = "http://code.google.com/p/lino"
-    #~ index_html = "This is the main page."
-    title = "Base Lino Application"
-    domain = "www.example.com"
-    
-    use_awesome_uploader = False
-    """
-    Whether to use AwesomeUploader. 
-    This feature was experimental and doesn't yet work (and maybe never will).
-    """
-    
-    textfield_format = 'plain'
-    """
-    The default format for text fields. 
-    Valid choices are currently 'plain' and 'html'.
-    
-    Text fields are either Django's `models.TextField` 
-    or :class:`lino.fields.RichTextField`.
-    
-    You'll probably better leave the global option as 'plain', 
-    and specify explicitly the fields you want as html by declaring 
-    them::
-    
-      foo = fields.RichTextField(...,format='html')
-    
-    We even recommend that you declare your plain text fields using 
-    `fields.RichTextField` and not `models.TextField`::
-    
-      foo = fields.RichTextField()
-    
-    Because that gives subclasses of your application the possibility to 
-    make that specific field html-formatted::
-    
-       resolve_field('Bar.foo').set_format('html')
-       
-    """
-    
-    use_tinymce = True
-    """
-    Whether to use TinyMCE instead of Ext.form.HtmlEditor. 
-    See :doc:`/blog/2011/0523`
-    """
-    
-    use_vinylfox = False
-    """
-    Whether to use VinylFox extensions for HtmlEditor. 
-    This feature was experimental and doesn't yet work (and maybe never will).
-    See :doc:`/blog/2011/0523`.
-    """
-    
-    
-    date_format_strftime = '%d.%m.%Y'
-    date_format_extjs = 'd.m.Y'
-    
-    def parse_date(self,s):
-        """Convert a string formatted using :attr:`date_format_xxx` to a datetime.date instance.
-        See :doc:`/blog/2010/1130`.
-        """
-        ymd = reversed(map(int,s.split('.')))
-        return datetime.date(*ymd)
-
-    alt_date_formats_extjs = 'd/m/Y|Y-m-d'
-
-
-
-    
-    
-    #~ preferred_build_method = 'pisa'
-    #~ preferred_build_method = 'appypdf'
-    
-    csv_params = dict()
-    """
-    Site-wide default parameters for CSV generation.
-    This must be a dictionary that will be used 
-    as keyword parameters to Python `csv.writer()
-    <http://docs.python.org/library/csv.html#csv.writer>`_
-    
-    Possible keys include:
-    
-    - encoding : 
-      the charset to use when responding to a CSV request.
-      See 
-      http://docs.python.org/library/codecs.html#standard-encodings
-      for a list of available values.
-      
-    - many more allowed keys are explained in
-      `Dialects and Formatting Parameters
-      <http://docs.python.org/library/csv.html#csv-fmt-params>`_.
-    
-    """
-    
-    propvalue_max_length = 200
-    """
-    Used by :mod:`lino.modlib.properties`.
-    """
-    
-    source_dir = os.path.dirname(__file__)
-    source_name = os.path.split(source_dir)[-1]
-    
-    def __init__(self,project_file):
-        #self.django_settings = settings
-        #~ self.init_site_config = lambda sc: sc
-        self.project_dir = normpath(dirname(project_file))
-        self.project_name = os.path.split(self.project_dir)[-1]
-        self.qooxdoo_prefix = '/media/qooxdoo/lino_apps/' + self.project_name + '/build/'
-        self.dummy_messages = set()
-        self._setting_up = False
-        self._setup_done = False
-        self.root_path = '/lino/'
-        self._response = None
-        
-        #~ self.source_name = os.path.split(self.source_dir)[-1]
-        #~ # find the first base class that is defined in the Lino source tree
-        #~ # this is to find out the source_name and the source_dir
-        #~ for cl in self.__class__.__mro__:
-            #~ if cl.__module__.startswith('lino.apps.'):
-                #~ self.source_dir = os.path.dirname(__file__)
-                #~ self.source_name = self.source_dir
-                #~ os.path.split(_source_dir,
-              
-            
-        # ImportError: Settings cannot be imported, because environment variable DJANGO_SETTINGS_MODULE is undefined.
-        #~ from lino.models import get_site_config
-        #~ self.config = get_site_config()
-        
-
-    def add_dummy_message(self,s):
-        self.dummy_messages.add(s)
-
-    def setup_main_menu(self):
-        pass
-
-    def configure(self,sc):
-        self.config = sc
-        
-    def setup(self):
-        from lino.core.kernel import setup_site
-        setup_site(self)
-
-        
-    def add_menu(self,*args,**kw):
-        return self.main_menu.add_menu(*args,**kw)
-
-    def context(self,request,**kw):
-        d = dict(
-          main_menu = menus.MenuRenderer(self.main_menu,request),
-          root_path = self.root_path,
-          lino = self,
-          settings = settings,
-          debug = True,
-          #skin = self.skin,
-          request = request
-        )
-        d.update(kw)
-        return d
-        
-    def select_ui_view(self,request):
-        html = '<html><body>'
-        html += 'Please select a user interface: <ul>'
-        for ui in self.uis:
-            html += '<li><a href="%s">%s</a></li>' % (ui.name,ui.verbose_name)
-        html += '</ul></body></html>'
-        return HttpResponse(html)
-        
-        
-    #~ def get_urls(self):
-        #~ assert self._setup_done
-        #~ if len(self.uis) == 1:
-            #~ return self.uis[0].get_urls()
-        #~ urlpatterns = patterns('',
-            #~ ('^$', self.select_ui_view))
-        #~ for ui in self.uis:
-            #~ urlpatterns += patterns('',
-                #~ (ui.name, include(ui.get_urls())),
-            #~ )
-        #~ return urlpatterns
-        
-    def get_site_menu(self,user):
-        #~ self.setup()
-        assert self._setup_done
-        return self.main_menu.menu_request(user)
-        
-    #~ def add_program_menu(self):
-        #~ return
-        #~ m = self.add_menu("app","~Application",)
-        #~ m.add_item(url="/accounts/login/",label="Login",can_view=perms.is_anonymous)
-        #~ m.add_item(url="/accounts/logout/",label="Logout",can_view=perms.is_authenticated)
-        #m.add_item(system.Login(),can_view=perms.is_anonymous)
-        #m.add_item(system.Logout(),can_view=perms.is_authenticated)
-        
-        
-    #~ def get_textfield_format(self,field):
-        #~ """
-        #~ Example::
-        
-          #~ if field.model.__name__ == 'Note':
-              #~ if field.name == 'body':
-                  #~ return 'tinymce'
-          
-        #~ """
-        #~ return 'plain'
-        
-    def setup_dblogger(self,logger):
-        """
-        Called when settings.DBLOGFILE is not empty *and* a logger 'db' 
-        hasn't been configured manually.
-        See :mod:`lino.utils.dblogger`
-        """
-        logger.setLevel(logging.INFO)
-      
-
+from lino import Lino
 
 LINO = Lino(__file__)
 
 #~ DBLOGGER = 'db'
-DBLOGFILE = 'auto'
+#~ DBLOGFILE = 'auto'
 USE_FIREBUG = False
 USE_GRIDFILTERS = True
 MODEL_DEBUG = True
 #~ PROJECT_DIR = normpath(dirname(__file__))
-BYPASS_PERMS = False
 #~ USER_INTERFACES = [
   #~ 'lino.ui.extjsu',
   #~ 'lino.ui.extjs'
@@ -268,14 +44,6 @@ BYPASS_PERMS = False
 
 #~ BABEL_LANGS = []
 
-APPY_PARAMS = dict(ooPort=8100)
-try:
-    import uno
-except ImportError:
-    APPY_PARAMS.update(pythonWithUnoPath=r'C:\PROGRA~1\LIBREO~1\program\python.exe')
-    #~ APPY_PARAMS.update(pythonWithUnoPath=r'C:\PROGRA~1\OPENOF~1.ORG\program\python.exe')
-    #~ APPY_PARAMS.update(pythonWithUnoPath='/usr/bin/libreoffice')
-    #~ APPY_PARAMS.update(pythonWithUnoPath='/etc/openoffice.org3/program/python')
 
 
 def TIM2LINO_LOCAL(alias,obj):
@@ -309,13 +77,14 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': join(LINO.project_dir,'demo.db')
-        #~ 'NAME': ':memory:'
+if False:  
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': join(LINO.project_dir,'demo.db')
+            #~ 'NAME': ':memory:'
+        }
     }
-}
 
 
 # Local time zone for this installation. Choices can be found here:
@@ -400,14 +169,14 @@ if False:
 
 ROOT_URLCONF = 'lino.ui.extjs3.urls'
 
-TEMPLATE_DIRS = (
+TEMPLATE_DIRS = [
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
       #~ join(abspath(DATA_DIR),'templates'),
-      join(abspath(LINO.project_dir),'templates'),
+      join(LINO.project_dir,'templates'),
       join(abspath(dirname(lino.__file__)),'templates'),
-)
+]
 #print "baz", __file__
 
 INSTALLED_APPS = [
@@ -474,8 +243,8 @@ gettext = lambda s: s
 
 def language_choices(*args):
     """
-    See :doc:`/blog/2011/0226`.
     A subset of Django's LANGUAGES.
+    See :doc:`/blog/2011/0226`.
     """
     _langs = dict(
         en=gettext('English'),

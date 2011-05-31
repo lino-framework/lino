@@ -145,4 +145,4 @@ sind noch einige Probleme zu beheben:
 - Muss der Benutzer dynamisch umschalten können zwischen den beiden Modi 
   (inline / windowed)?
   
-Aber ich checke da jetzt ein, denn für heute ist Feierabend.  
+Ich checke das jetzt ein, denn für heute ist Feierabend.  
