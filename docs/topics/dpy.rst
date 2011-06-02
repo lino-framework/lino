@@ -1,40 +1,13 @@
-===================
-The .dpy serializer
-===================
+===============
+Python fixtures
+===============
 
-:xfile:`.dpy` is a data format to be used for serializing 
-or deserializing Django database.
+The :mod:`lino.utils.dpy` module defines 
+a Django data serializer that dumps data into a Python module, 
+and a deserializer that loads Python modules as fixtures.
 
-There are two big use cases: 
-(1) "intelligent" fixtures and 
-(2) :doc:`/admin/datamig`
-
-To use it, you simply add the following line
-in your :xfile:`settings.py`::
-
-    SERIALIZATION_MODULES = {
-        "dpy" : "lino.utils.dpy",
-    }
-    
-(You must of course :doc:`Install Lino </admin/install>` 
-in order to have the :mod:`lino.utils.dpy` module installed on your system.)
-
-We choose the file extension `.dpy` because
-simply naming them .py would conflict with 
-the existing PythonSerializer.
-
-See also
-
-  http://code.djangoproject.com/ticket/10664
- 
-
-.dpy fixtures
--------------
-
-When loading a `.dpy` fixture, the corresponding .dpy file 
-will be imported like a normal Python module. 
-
-This module can do what you want, but it must define a function `objects` 
+A `.py` fixture is a normal Python module and 
+can do what you want, but it must define a function `objects` 
 which should return or yield the list of model instances 
 to be added. Fictive minimal Example::
 
@@ -43,19 +16,43 @@ to be added. Fictive minimal Example::
       yield Foo(name="First")
       yield Foo(name="Second")
 
+
+This is possible thanks to Django's 
+:setting:`SERIALIZATION_MODULES` setting, which Lino uses as follows::
+
+  SERIALIZATION_MODULES = {
+       "py" : "lino.utils.dpy",
+  }
   
-Here are some examples of real-world fixtures:
+When developing or using Lino applications you 
+don't need to worry about this setting, you get it
+automatically when you 
+do ``from lino.apps.FOO.settings import *`` in your :xfile:`settings.py`.
+Only if you define your own local serialization modules,
+don't forget to include Lino's :mod:`lino.utils.dpy` module.
 
-- :srcref:`/lino/apps/dsbe/fixtures/demo.dpy`
-- :srcref:`/lino/modlib/countries/fixtures/be.dpy`
-- :srcref:`/lino/modlib/contacts/fixtures/demo.dpy`
-- :srcref:`/lino/modlib/contacts/fixtures/std.dpy`
+This module should also be usable for normal Django projects.
+Just add the above setting in your :xfile:`settings.py` and 
+try a ``manage.py dump --format py``.
 
-Note that most of these examples 
-use :class:`lino.utils.instantiator.Instantiator`, 
-which is just a convenience and not required by the .dpy 
-format.
+If you don't want to install Lino, you can alternatively 
+download only the :srcref:`dpy module itself </lino/utils/dpy.py>` 
+and make a few changes concerning logging. 
+(Just don't afterwards publish your changes using 
+a license that is incompatible with the GPL, see :doc:`/about/why_gpl`)
+
+To load Python fixtures you also need an :xfile:`__init__.py` 
+file (which can be empty) in each fixture directory that has `.py` 
+fixtures.
+
+There are two big use cases: 
+(1) "intelligent" fixtures and 
+(2) :doc:`/admin/datamig`
 
 
+See also
 
+- :doc:`/admin/dpytutorial`
+- http://code.djangoproject.com/ticket/10664
+ 
 

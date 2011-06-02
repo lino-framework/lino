@@ -6,6 +6,14 @@ The :mod:`lino.ui.extjs3` Package
     :undoc-members:
     :show-inheritance:
 
+The :mod:`urls` Module
+----------------------
+
+.. automodule:: lino.ui.extjs3.urls
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 The :mod:`ext_elems` Module
 ---------------------------
 

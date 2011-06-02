@@ -1,6 +1,9 @@
 20110601-02
 ===========
 
+Support for TinyMCE WYSIWYG editor is getting ready
+---------------------------------------------------
+
 Puh! Zwei Tage lang habe ich für folgende beiden Punkte gebraucht: 
 
 - Der Benutzer sieht jetzt eine Bestätigung, wenn er gespeichert hat: 
@@ -118,10 +121,30 @@ ein paar Zeilen einfügen, damit ich den beanstandeten XML-code sehen kann::
         return self.xhtmlParser.env.res
 
 
-Also bis auf Schönheitsfehler ist das Ding jetzt womöglich benutzbar.
-Also Check-in um den Zwischenerfolg zu feiern.
-Und Feierabend. 
+Aber okay, bis auf Schönheitsfehler und eventuelle noch nicht entdeckte 
+Probleme ist das Ding jetzt womöglich benutzbar!
+Also `Check-in 
+<http://code.google.com/p/lino/source/detail?r=223272df58f4872da73b8a050cce88497d835093>`_ 
+um den Zwischenerfolg zu feiern.
+
+
+Renamed `.dpy` fixtures to `.py` fixtures
+-----------------------------------------
+
+Before going to bed I thought to quickly write another paragraph in 
+:doc:`/admin/dopytutorial` to answer a question that might soon come:
+
+Why are `.dpy` fixtures called `.dpy` and not simply `.py`?
 
 
 
+While trying to explain that, I discovered that there 
+is no reason! Except that I was afraid it would cause 
+problems if they are called like normal Python modules.
+But now it turned out that my statement
+"We choose the file extension `.dpy` because simply 
+naming them .py would conflict with the existing 
+PythonSerializer." was wrong.
+
+So I changed the whole thing.
 

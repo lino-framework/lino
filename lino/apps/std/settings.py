@@ -213,7 +213,8 @@ INSTALLED_APPS = [
 
 
 SERIALIZATION_MODULES = {
-     "dpy" : "lino.utils.dpy",
+     #~ "dpy" : "lino.utils.dpy",
+     "py" : "lino.utils.dpy",
 }
 
 #print "done", __file__

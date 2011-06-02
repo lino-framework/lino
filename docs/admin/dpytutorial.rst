@@ -21,31 +21,44 @@ The :mod:`initdb <lino.management.commands.initdb>`
 command is a 
 `custom management command <https://docs.djangoproject.com/en/dev/howto/custom-management-commands/>`_ 
 provided by Lino. 
-It is simply a shortcut for calling 
+It is simply a shortcut for calling a
+`syncdb <https://docs.djangoproject.com/en/dev/ref/django-admin/#syncdb>`_,
+followed by a
 `flush <https://docs.djangoproject.com/en/dev/ref/django-admin/#flush>`_ 
-followed by
+and a
 `loaddata <https://docs.djangoproject.com/en/dev/ref/django-admin/#loaddata-fixture-fixture>`_.
 The above line is equivalent to::
 
+  python manage.py syncdb
   python manage.py flush 
   python manage.py loaddata std all_countries few_cities all_languages props demo 
 
 
-A fixture is a portion of data, a collection of data records 
-in one or several tables which can be loaded into a database.
+A fixture is a portion of data (a collection of data records 
+in one or several tables) which can be loaded into a database.
 Read more about fixtures in the `Providing initial data for models
 <https://docs.djangoproject.com/en/dev/howto/initial-data/>`_
 article of the Django documentation.
 
 Django's documentation 
 says that "fixtures can be written as XML, YAML, or JSON documents". 
-Lino adds another format to this list: 
-Python modules or `.dpy` files. 
 
-`.dpy` files are pure Python modules that must define 
+Lino adds another format to this list: 
+Python modules. 
+
+`.py` fixtures are pure Python modules that must define 
 a function named ``objects`` which is expected to return 
 (or `yield <http://stackoverflow.com/questions/231767/the-python-yield-keyword-explained>`_) 
-a list of Model instances you want to create.
+the list of Model instances you want to create. A dictive minimal Example::
+
+  from myapp.models import Foo
+  def objects():
+      yield Foo(name="First")
+      yield Foo(name="Second")
+
+
+If you are curious, read more details in :doc:`/topics/dpy`.
+
 
 First step
 ----------
@@ -54,10 +67,10 @@ Create a directory `fixtures` in your local project directory::
 
    mkdir /usr/local/django/myproject/fixtures
    
-Create a file `dpytut1.dpy` in that directory as the following.
+Create a file `dpytut1.py` in that directory as the following.
 But put your real name and data, this is your local file.
 
-.. literalinclude:: dpytut1.dpy
+.. literalinclude:: dpytut1.py
     :linenos:
     
    
@@ -72,7 +85,7 @@ Try to apply this fixture::
   pyratemp (not installed), xhtml2pdf 3.0.32, ReportLab Toolkit 2.4, 
   appy.pod 0.6.6 (2011/04/26 20:50)
   No fixtures found.
-  INFO Saved 2 instances from t:\hgwork\lino\docs\admin\dpytut1.dpy.
+  INFO Saved 2 instances from t:\hgwork\lino\docs\admin\dpytut1.py.
   Installed 1 object(s) from 1 fixture(s)
   INFO Lino initdb done ('dpytut1',) on database t:\data\luc\lino\dsbe\dsbe_test.db.
 
@@ -80,7 +93,7 @@ Try to apply this fixture::
 Second step
 -----------
 
-Since `.dpy` fixtures are normal Python modules, there are 
+Since `.py` fixtures are normal Python modules, there are 
 no limits to our phantasy when creating new objects.
 
 A first thing that drops into mind is: there shoudl be a more compact 
@@ -88,7 +101,7 @@ way to create many records of a same table. That's why
 :class:`lino.utils.instantiator.Instantiator` was written.
 Here is the same fixture in a more compact way:
 
-.. literalinclude:: dpytut2.dpy
+.. literalinclude:: dpytut2.py
     :linenos:
 
 
@@ -109,14 +122,14 @@ Fourth step
 
 Have a look at the following fixture files
 
-- :srcref:`few_countries </lino/modlib/countries/fixtures/few_countries.dpy>`
-  and :srcref:`all_countries </lino/modlib/countries/fixtures/all_countries.dpy>`
+- :srcref:`few_countries </lino/modlib/countries/fixtures/few_countries.py>`
+  and :srcref:`all_countries </lino/modlib/countries/fixtures/all_countries.py>`
 
-- :srcref:`few_languages </lino/modlib/countries/fixtures/few_languages.dpy>`
-  and :srcref:`all_languages </lino/modlib/countries/fixtures/all_languages.dpy>`
+- :srcref:`few_languages </lino/modlib/countries/fixtures/few_languages.py>`
+  and :srcref:`all_languages </lino/modlib/countries/fixtures/all_languages.py>`
 
-- :srcref:`few_cities </lino/modlib/countries/fixtures/few_cities.dpy>`
-  and :srcref:`be </lino/modlib/countries/fixtures/be.dpy>`.
+- :srcref:`few_cities </lino/modlib/countries/fixtures/few_cities.py>`
+  and :srcref:`be </lino/modlib/countries/fixtures/be.py>`.
 
 Play with them::
 

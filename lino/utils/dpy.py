@@ -36,12 +36,13 @@ import lino
 from lino.tools import obj2str
 from lino.utils import dblogger
 
-SUFFIX = '.dpy'
+SUFFIX = '.py'
+#~ SUFFIX = '.dpy'
 
 class Serializer(base.Serializer):
     """
     Serializes a QuerySet to a dpy stream.
-    Usage: ``manage.py dumpdata --format dpy``
+    Usage: ``manage.py dumpdata --format py``
     """
 
     internal_use_only = False
@@ -284,7 +285,7 @@ class FakeDeserializedObject(base.DeserializedObject):
 
 def Deserializer(fp, **options):
     """
-    Used when ``manage.py loaddata`` encounters a .dpy fixture.
+    Used when ``manage.py loaddata`` encounters a `.py` fixture.
     """
     if isinstance(fp, basestring):
         raise NotImplementedError

@@ -11,9 +11,20 @@ This section describes Lino-specific entries of the Django :xfile:`settings.py`.
 
 See http://docs.djangoproject.com/en/dev/ref/settings/#language-code
 
+.. setting:: LANGUAGES
+
+  Used by :class:`lino.modlib.fields.LanguageField`.
+  See http://docs.djangoproject.com/en/dev/ref/settings/#languages
+
 .. setting:: ROOT_URLCONF
 
-See http://docs.djangoproject.com/en/dev/ref/settings/#language-code
+You'll set this to :mod:`lino.ui.extjs3.urls` and don't need to write 
+any local html nor css.
+
+We are also working on alternative user interfaces 
+:mod:`lino.ui.extjs4.urls` and
+:mod:`lino.ui.qx.urls`.
+
 
 .. setting:: INSTALLED_APPS
 
@@ -35,13 +46,26 @@ If True, the generated JavaScript uses the :extjs:`Ext.ux.grid.GridFilters` exte
   Used by :meth:`lino.ui.extjs.ext_ui.ExtUI.build_site_js` 
   and Printable to determine the location of the cache.
 
+.. setting:: DEBUG
 
-.. setting:: LANGUAGES
+  See :doc:`/blog/2010/0716`
+  
+.. setting:: SERIALIZATION_MODULES
 
-  Used by :class:`lino.modlib.fields.LanguageField`.
-  See http://docs.djangoproject.com/en/dev/ref/settings/#languages
+See `Django doc <https://docs.djangoproject.com/en/1.3/ref/settings/#serialization-modules>`_ 
+and :doc:`/topics/dpy`.
+
+
+Obsolete Lino-specific settings
+-------------------------------
+
+.. setting:: USER_INTERFACES
+  
+   Lino-specific setting. See :doc:`/blog/2010/0624`.
 
 .. setting:: PROJECT_DIR
+
+  (Replaced by :attr:`lino.Lino.project_dir`)
 
   Directory where local configuration files are stored.
   I always set this variable to the absolute path of the :envvar:`DJANGO_SETTINGS_MODULE`.
@@ -50,7 +74,7 @@ If True, the generated JavaScript uses the :extjs:`Ext.ux.grid.GridFilters` exte
   - :xfile:`settings.py`, :xfile:`manage.py` and :xfile:`urls.py`
   - :xfile:`lino_settings.py`
   
-
+   
 .. setting:: DATA_DIR
 
    Directory where local data gets stored. 
@@ -65,15 +89,8 @@ If True, the generated JavaScript uses the :extjs:`Ext.ux.grid.GridFilters` exte
 
    If this is `True`, Lino won't apply any user permission checks.
    
-   
-.. setting:: DEBUG
 
-  See :doc:`/blog/2010/0716`
-  
-.. setting:: USER_INTERFACES
-  
-   Lino-specific setting. See :doc:`/blog/2010/0624`.
-   
+
    
 Environment variables
 ---------------------

@@ -26,8 +26,13 @@ Lino site, see :doc:`/admin/upgrade`.
   
     LINO.appy_params.update(pythonWithUnoPath='/etc/openoffice.org3/program/python')
     
+- In case you have local fixtures: rename all `.dpy` files to `.py`.
+  Change your `dump` script.
+  See :doc:`/blog/2011/0601`.
+
 
 - Database migration: 
   Existing content in `notes.Note.body` must be converted using 
   :func:`lino.utils.restify.restify`.
   See :doc:`/blog/2011/0525`.
+  
