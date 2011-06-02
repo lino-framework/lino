@@ -57,7 +57,7 @@ einfügen. Dazu gibt es aber
 `VinylFox <https://github.com/VinylFox/ExtJS.ux.HtmlEditor.Plugins>`_,
 eine Plugin-Sammlung von `Shea Frederick <http://www.vinylfox.com/about/>`_.
 
-Neue Option :attr:`lino.apps.std.settings.Lino.use_vinylfox`.
+Neue Option :attr:`lino.Lino.use_vinylfox`.
 Der Einfachheit halber füge ich VinylFox zu den Lino-Sourcen hinzu, 
 um die Installation einfach zu halten.
 
@@ -70,7 +70,7 @@ Und das, wofür ich ihn eigentlich haben wollte, nämlich die Heading-Zuweisung,
 funktioniert zwar, aber auch da sind einige störende Bugs. 
 Zum Beispiel man kann einen einmal zugewiesenen Titel nicht wieder zu normalem Text machen.
 
-Nö, ich denke, die Option :attr:`lino.apps.std.settings.Lino.use_vinylfox` 
+Nö, ich denke, die Option :attr:`lino.Lino.use_vinylfox` 
 bleibt vorerst noch auf `False` stehen.
 
 Aber wenn wir uns nun auf die im ExtJS bestehenden Features beschränken, 

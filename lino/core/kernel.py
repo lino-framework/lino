@@ -65,7 +65,7 @@ def analyze_models(self):
     """
     This is a part of a Lino site setup.
     The Django Model definitions are done, now Lino analyzes them and does certain actions.
-    The parameter `self` is the :class:`lino.apps.std.settings.Lino` instance 
+    The parameter `self` is the :class:`lino.Lino` instance 
     defined in `settings.LINO`.
     
     - Load .dtl files and install them into `_lino_detail_layouts`

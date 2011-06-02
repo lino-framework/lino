@@ -22,7 +22,7 @@ text field is formatted or not.
 And "formatted" means currently 'html', but there me be more choices in the future.
 I finally had a vision about how to make this configurable:
 
-New global option :attr:`lino.apps.std.settings.Lino.textfield_format`
+New global option :attr:`lino.Lino.textfield_format`
 
 - :mod:`lino.fields`: class HtmlTextField renamed to :class:`lino.fields.RichTextField`
 - :mod:`lino.ui.extjs3.ext_elems` : Merged class HtmlTextFieldElement into TextFieldElement.

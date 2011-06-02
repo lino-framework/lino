@@ -13,20 +13,20 @@ otherwise they get a
 
 When we need a customizable parameter or method in Lino, 
 our strategy is now to define it in
-:class:`lino.apps.std.settings.Lino` 
+:class:`lino.Lino` 
 as class attribute or method. 
 Some Lino-specific settings are still 
 from the time before we found the 
-:class:`lino.apps.std.settings.Lino` trick.
+:class:`lino.Lino` trick.
 Starting to tidy up:
 
-- :setting:`APPY_PARAMS` replaced by :attr:`lino.apps.std.settings.Lino.appy_params`.
+- :setting:`APPY_PARAMS` replaced by :attr:`lino.Lino.appy_params`.
 - Removed settings `DBLOGFILE` and `BYPASS_PERMS` which were no longer used.
 
 Updated :doc:`/admin/install` to give a useful example 
 of recommended settings for new local settings files.
 
-Class `lino.apps.std.settings.Lino` has been moved to :class:`lino.Lino`.
+Class `lino.Lino` has been moved to :class:`lino.Lino`.
 
 
 initdb fails on empty database
@@ -97,7 +97,7 @@ Deshalb machen wir in den Tests jetzt an bestimmten Stellen::
 
   self.client.get(url,REMOTE_USER='root')
   
-Release 20110531
+Checkin `20110531 <http://code.google.com/p/lino/source/detail?r=5d4875dac7cfbb7d95683980abd2b936e28cb783>`_.
 
 About settings
 ==============
@@ -130,6 +130,8 @@ meinen lokalen :xfile:`manage.py` einzufügen::
   os.environ['DJANGO_SETTINGS_MODULE'] = 'myproject.settings'
   
 Anschließend Aufräumaktion. 
+Zum Beispiel muss in der :mod:`lino.apps.std.settings` doch ein :setting:`DATABASES` definiert werden, damit Django nicht schimpft, wenn autodoc die Module zu importieren versucht. Diese Datenbank hat aber keinen Dateinamen, sondern nur ``:memory:``.
+
 Sphinx meldet jetzt beim Generieren der Dokumentation wieder ein paar Warnungen weniger.
 
 
@@ -143,4 +145,7 @@ Einen der offenen Punkte hab ich geschafft:
   auch nötig ist). Aber das `disabled` einer HtmlBox sollte die Anzeige nicht 
   grau werden lassen, auch die Scrollbars nicht deaktivieren, sondern 
   lediglich den Button "Bearbeiten"
+
+
+Checkin `20110531b <http://code.google.com/p/lino/source/detail?r=c798dfd44c552c93aee8b58b0b8b3f5a57756d83>`_ und ab in die Heia.
 

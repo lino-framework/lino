@@ -1,0 +1,127 @@
+20110601-02
+===========
+
+Puh! Zwei Tage lang habe ich für folgende beiden Punkte gebraucht: 
+
+- Der Benutzer sieht jetzt eine Bestätigung, wenn er gespeichert hat: 
+  erstens ist der Speichern-Button dann disabled, und zweitens wird im 
+  Hintergrund das HtmlBoxPanel bei jedem Speichern aktualisiert.
+
+- Wenn man was verändert hat und dann das Fenster schließt 
+  ohne gespeichert zu haben, dann fragt er nun, ob man nicht doch lieber 
+  speichern will. Die übliche Frage mit Ja / Nein / Abbrechen.
+  
+Hier einige Seiten, die ich nun relativ gut intus habe:
+
+- http://tinymce.moxiecode.com/wiki.php/Configuration
+- http://tinymce.moxiecode.com/wiki.php/Plugins
+- http://tinymce.moxiecode.com/wiki.php/API3:namespace.tinymce
+- http://tinymce.moxiecode.com/wiki.php/Buttons/controls
+- http://tinymce.moxiecode.com/wiki.php/How-to_load/save_with_Ajax_in_TinyMCE
+
+Dieses letztere Beispiel habe ich gleich mal ausprobiert. 
+Hier der Code (den ich ein bisschen angepasst habe):
+
+.. literalinclude:: /.static/2011/0602_ex1.html
+  :language: html
+  
+Und `hier <../../_static/2011/0602_ex1.html>`_ das eigentliche Beispiel.
+ 
+Um das Beispiel öffentlich nachvollziehbar zu machen, 
+habe ich die HTTP authentication auf dsbe-demo mal 
+abgeschaltet. Man ist dort jetzt immer als `root` eingeloggt.
+
+Das Beispiel erwies sich aber nur als der Anfang.
+Der Code in meiner `Lino.edit_tinymce_text` 
+(sh. :srcref:`/lino/ui/extjs3/linolib.js`) 
+funktioniert jetzt zwar zufriedenstellend, 
+aber *schön* ist er nicht gerade. 
+Aber ich sehe momentan keine elegantere Lösung.
+Und solange es funktioniert, lass ich das als Herausforderung
+für eventuelle Gurus, die hoffentlich irgendwann mal bei Lino einsteigen.
+
+Lieber will ich vielleicht irgendwann noch die andere Nutzungsmöglichkeit 
+ausprobieren: einfach inline als textarea. 
+Zumindest für den Inhalt einer Notiz wäre das noch denkbar.
+Im Detail eines Vertrags, wo auf einer Seite 4 Textfelder sind, 
+würde es allerdings eng. 
+Allein die Toolbars nähmen ja dann die Hälfte der Bildschirmplatzes ein... 
+naja, die könnte ich ja abschalten. Mal sehen.
+Irgendwann kommt das bestimmt...
+
+Dringender ist mir jetzt eigenlich die Tatsache, dass doch einige Fälle gibt, 
+bei denen das Ausdrucken nicht funktioniert.
+
+Zum Beispiel wenn ich folgenden Text eintippe::
+
+  Und <das> hier? geht das?
+  
+Das kriegt er nicht gedruckt. Er sagt dann::
+
+  Error while evaluating the expression "html(self.body)" defined in the "from" part of a statement.
+  File "<string>", line 1, in <module>
+  File "t:\hgwork\lino\lino\utils\appy_pod.py", line 63, in html_func
+  return renderer.renderXhtml(html,**kw)
+  File "l:\snapshots\appy\appy\pod\renderer.py", line 238, in renderXhtml
+  stylesMapping, ns).run()
+  File "l:\snapshots\appy\appy\pod\xhtml2odt.py", line 505, in run
+  self.xhtmlParser.parse(self.xhtmlString)
+  File "l:\snapshots\appy\appy\shared\xml_parser.py", line 193, in parse
+  self.parser.parse(inputSource)
+  File "c:\Python27\lib\xml\sax\expatreader.py", line 107, in parse
+  xmlreader.IncrementalParser.parse(self, source)
+  File "c:\Python27\lib\xml\sax\xmlreader.py", line 123, in parse
+  self.feed(buffer)
+  File "c:\Python27\lib\xml\sax\expatreader.py", line 211, in feed
+  self._err_handler.fatalError(exc)
+  File "c:\Python27\lib\xml\sax\handler.py", line 38, in fatalError
+  raise exception
+  <class 'xml.sax._exceptions.SAXParseException'>: <unknown>:35:88: not well-formed (invalid token)
+
+TinyMCE ist es offenbar nicht schuld. Der schickt nämlich beim Speichern::
+
+  <p>und &lt;das&gt; hier? geht das?</p>
+  
+Aber meine :func:`lino.utils.html2xhtml.html2xhtml` machte daraus::
+  
+  <p>und <das> hier? geht das?</p>
+
+Tilt! Das war ein Buch in meinen HTMLParser. Der machte einfach::
+
+    def handle_entityref(self,name):
+        """process a general entity reference of the form "&name;"."""
+        self.handle_data(unichr(name2codepoint[name]))
+        
+Aber das war zu einfach, er darf die HTML-eigenen entities nicht einfach 
+dekodieren, sondern muss sie in eine CDATA setzen::
+  
+    def handle_entityref(self,name):
+        """process a general entity reference of the form "&name;"."""
+        if name in ('lt','gt','amp','quot'):
+            self.handle_data('<![CDATA['+unichr(name2codepoint[name])+']]>')
+            return
+        self.handle_data(unichr(name2codepoint[name]))
+  
+N.B.: es ist noch sehr mühsam, solche Fälle zu analysieren wenn sie auftreten.
+Ich muss dann immer in :meth:`appy.pod.xhtml2odt.Xhtml2OdtConverter.run` 
+ein paar Zeilen einfügen, damit ich den beanstandeten XML-code sehen kann::
+
+    def run(self):
+        if True:
+            import codecs
+            fn = r'c:\temp\appy_20110602.log'
+            fd = codecs.open(fn,'w',encoding="utf8")
+            fd.write(self.xhtmlString)
+            fd.close()
+            print "Wrote debug log file", fn
+        self.xhtmlParser.parse(self.xhtmlString)
+        return self.xhtmlParser.env.res
+
+
+Also bis auf Schönheitsfehler ist das Ding jetzt womöglich benutzbar.
+Also Check-in um den Zwischenerfolg zu feiern.
+Und Feierabend. 
+
+
+
+

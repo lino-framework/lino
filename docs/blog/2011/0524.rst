@@ -7,7 +7,7 @@ Wysiwyg-Editor
 10 Uhr. Die `TinyMCE-Komponente für ExtJS 
 <http://blogs.byte-force.com/xor/tinymce/index.html>`_
 von Andrew Mayorov funktioniert. 
-:attr:`lino.apps.std.settings.Lino.use_tinymce`.
+:attr:`lino.Lino.use_tinymce`.
 Ich weiß noch lange nicht alles über TinyMCE (die Seite
 `TinyMCE for Dummies <http://tinymce.moxiecode.com/wiki.php/%22For_Dummies%22>`_ 
 war genau was ich brauchte), aber die Integration in Lino war ein erfreuliches 

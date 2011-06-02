@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+       "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<script type="text/javascript" src="http://dsbe-demo.saffre-rumma.net/media/tinymce/tiny_mce.js"></script>
+<script type="text/javascript">
+tinyMCE.init({
+    mode : "textareas",
+    theme : "advanced"
+});
+
+function ajaxLoad() {
+    var ed = tinyMCE.get('content');
+
+    // Do you ajax call here, window.setTimeout fakes ajax call
+    ed.setProgressState(1); // Show progress
+    window.setTimeout(function() {
+        ed.setProgressState(0); // Hide progress
+        ed.setContent('HTML content that got passed from server.');
+    }, 3000);
+}
+
+function ajaxSave() {
+    var ed = tinyMCE.get('content');
+
+    // Do you ajax call here, window.setTimeout fakes ajax call
+    ed.setProgressState(1); // Show progress
+    window.setTimeout(function() {
+        ed.setProgressState(0); // Hide progress
+        alert(ed.getContent());
+    }, 3000);
+}
+</script>
+
+<form method="post" action="somepage">
+    <textarea name="content" style="width:100%">
+    </textarea>
+    <input type="button" onclick="ajaxLoad()" value="Load"/>
+    <input type="button" onclick="ajaxSave()" value="Save"/>
+</form>
+</html>

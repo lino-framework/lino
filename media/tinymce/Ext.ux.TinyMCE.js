@@ -116,6 +116,9 @@
 
 			// Create TinyMCE editor.
 			this.ed = new tinymce.Editor(id, this.tinymceSettings);
+      
+      // LS 20110602
+      //~ this.ed.addShortcut('ctrl+c', "Close editor window", ct.close,this);
 			
 			// Validate value onKeyPress
 			var validateContentTask = new Ext.util.DelayedTask( this.validate, this );

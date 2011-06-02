@@ -34,7 +34,7 @@ You'll need the following Debian packages installed:
     
 * Optional packages needed by Lino in certain cases:
 
-  - tinymce (if :attr:`lino.apps.std.settings.Lino.use_tinymce` is `True`)
+  - tinymce (if :attr:`lino.Lino.use_tinymce` is `True`)
   - python-daemon (if you run :term:`watch_tim` as a daemon)
   
 * Some database frontend (choose one)::
@@ -189,14 +189,23 @@ For example::
     # LOGGING = dict(filename=None,level='DEBUG')
 
 
+    # MySQL
+    # DATABASES = {
+    #     'default': {
+    #         'ENGINE': 'django.db.backends.mysql', 
+    #         'NAME': 'myproject',                  
+    #         'USER': 'django',                     
+    #         'PASSWORD': 'password',               
+    #         'HOST': 'localhost',                  
+    #         'PORT': '3306',
+    #     }
+    # }
+    
+    # sqlite
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.mysql', 
-            'NAME': 'myproject',                  
-            'USER': 'django',                     
-            'PASSWORD': 'password',               
-            'HOST': 'localhost',                  
-            'PORT': '3306',
+            'ENGINE': 'django.db.backends.sqlite', 
+            'NAME': join(LINO.project_dir,'myproject.db')
         }
     }
 
@@ -459,10 +468,15 @@ Go to your `/usr/local/django/myproject` directory and run::
 
   python manage.py initdb std all_countries few_cities all_languages props demo 
   
-Currently there is maybe also an unelegant thing to do by hand::
+When using sqlite, 
+the :mod:`initdb <lino.management.commands.initdb>` command will create 
+the database file whose name is specified in your :setting:`DATABASES` setting.
+When :mod:`initdb <lino.management.commands.initdb>` is done, 
+you must check that user `www-data` has write access to this file. 
+Something like this::
 
-  chgrp www-data /usr/local/django/myproject/data/myproject.db
-  chmod -R g+w /usr/local/django/myproject
+  chgrp www-data /usr/local/django/myproject/myproject.db
+  chmod -R g+w /usr/local/django/myproject/myproject.db
   
-  
+See also the :doc:`dpytutorial`.
 

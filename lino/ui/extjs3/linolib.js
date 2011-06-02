@@ -213,9 +213,16 @@ Ext.namespace('Lino');
 
 Lino.edit_tinymce_text = function(panel) {
   // `panel` is the HtmlBoxPanel
+  
   var rec = panel.ww.get_current_record();
   var value = rec ? rec.data[panel.name] : '';
+  var saving = false;
+  var todo_after_save = false;
+  var discard_changes = false;
+  
   function save() {
+    //~ if (todo_after_save) {alert('tried to save again'); return; }
+    if (saving) {alert('tried to save again'); return; }
     var url = panel.ww.main_item.get_record_url(rec.id);
     var params = Ext.apply({},panel.get_base_params());
     params[panel.name] = editor.getValue();
@@ -223,18 +230,44 @@ Lino.edit_tinymce_text = function(panel) {
       params: params, 
       method: 'PUT',
       url: url,
-      failure: Lino.on_submit_failure,
-      success: function(r) {
-        console.log('success',r);
-        //~ Lino.notify()
+      failure: function() {
+          //~ if (editor.ed.getContainer()) 
+          editor.ed.setProgressState(0);
+          todo_after_save = false;
+          saving = false;
+          console.log('tinymce.save() failed. sorry.',arguments)},
+      success: function() {
+        saving = false;
+        //~ if (editor.ed.getContainer()) 
+        editor.ed.setProgressState(0);
+        rec.data[panel.name] = editor.getValue();
+        if(todo_after_save) {
+            var fn = todo_after_save;
+            todo_after_save = false;
+            fn();
         }
+        //~ panel.ww.set_current_record(rec);
+        panel.refresh();
+      }
     };
+    //~ if (editor.ed.getContainer()) 
+    editor.ed.setProgressState(1); // Show progress
+    saving = true;
     //~ console.log(a);
     Ext.Ajax.request(a);
   };
-  var actions = [
-    {text:"Save",handler:save}
-  ]; 
+  function save_callback() {
+      save();
+      //~ save(function(){editor.ed.setDirty(false);})
+      /* return true have the save button disabled.  
+      That's not perfect because the PUT is asynchronous 
+      and the response is not yet known.
+      */
+      return true;
+  }
+  //~ var actions = [
+    //~ {text:"Save",handler:save}
+  //~ ]; 
   var editor = new Ext.ux.TinyMCE({
       value : value,
       tinymceSettings: {
@@ -242,14 +275,16 @@ Lino.edit_tinymce_text = function(panel) {
         //~ language: "de",
         plugins : "save,emotions,spellchecker,advhr,insertdatetime,preview", 
         // Theme options - button# indicated the row# only
-        theme_advanced_buttons1 : "save,|,bold,italic,underline,|,justifyleft,justifycenter,justifyright,fontselect,fontsizeselect,formatselect",
+        theme_advanced_buttons1 : "save,cancel,|,bold,italic,underline,|,justifyleft,justifycenter,justifyright,fontselect,fontsizeselect,formatselect",
         theme_advanced_buttons2 : "cut,copy,paste,|,bullist,numlist,|,outdent,indent,|,undo,redo,|,link,unlink,anchor,image,|,code,preview,|,forecolor,backcolor",
         theme_advanced_buttons3 : "insertdate,inserttime,|,spellchecker,advhr,,removeformat,|,sub,sup,|,charmap,emotions",      
         theme_advanced_toolbar_location : "top",
         theme_advanced_toolbar_align : "left",
         theme_advanced_statusbar_location : "bottom",
         theme_advanced_resizing : false,
-        save_onsavecallback : save
+        save_onsavecallback : save_callback,
+        save_enablewhendirty : true
+        //~ save_oncancelcallback: on_cancel
       }
     });
   var win = new Ext.Window({
@@ -261,39 +296,51 @@ Lino.edit_tinymce_text = function(panel) {
     height:500,
     minWidth: 100,
 		minHeight: 100,
-    modal: false,
+    modal: true,
     resizable: true,
     maximizable: true,
-    closeAction: "hide",
-    hideMode: "offsets",
-    constrainHeader: true,
-    bodyStyle: 'padding: 10px'
+    //~ maximized: true,
+    closeAction: "close"
+    //~ hideMode: "offsets",
+    //~ constrainHeader: true,
+    //~ bodyStyle: 'padding: 10px'
   });
-  win.on('close',function() {
-      rec.data[panel.name] = editor.getValue();
-      panel.ww.set_current_record(rec);
-      //~ panel.refresh(rec);
+
+  win.on('beforeclose',function() {
+    if (todo_after_save) return false;
+    if (discard_changes) return true;
+    if (editor.isDirty()) {
+        //~ var ok = false;
+        //~ var allowClose = true;
+        var config = {title:"$_('Confirmation')"};
+        config.buttons = Ext.MessageBox.YESNOCANCEL;
+        config.msg = "$_('Save changes to text ?')";
+        config.modal = true;
+        config.fn = function(buttonId,text,opt) {
+          //~ console.log('do_when_clean',buttonId)
+          if (buttonId == "yes") {
+              /* we cancel this close, but save()'s onSuccess will call again.*/
+              //~ allowClose = false;
+              todo_after_save = function(){win.close();}
+              editor.ed.execCommand('mceSave');
+              //~ editor.ed.save(function(){win.close();});
+          } else if (buttonId == "no") { 
+              discard_changes = true;
+              win.close()
+          //~ } else if (buttonId == "cancel") { 
+            //~ ok = true;
+              //~ allowClose = false;
+          //~ } else { 
+            //~ console.log('unknwon buttonId:',buttonId);
+          }
+        }
+        Ext.MessageBox.show(config);
+        return false;
+        //~ return allowClose;
+    }
   });
   win.show();
 }
-
-//~ Lino.TinyMCE = Ext.ux.TinyMCE;
-
-//~ Lino.TinyMCE = Ext.extend(Ext.ux.TinyMCE, {
-    //~ tinymceSettings : { 
-      //~ theme : "advanced"
-      //~ plugins : "emotions,spellchecker,advhr,insertdatetime,preview", 
-              
-      //~ // Theme options - button# indicated the row# only
-      //~ theme_advanced_buttons1 : "newdocument,|,bold,italic,underline,|,justifyleft,justifycenter,justifyright,fontselect,fontsizeselect,formatselect",
-      //~ theme_advanced_buttons2 : "cut,copy,paste,|,bullist,numlist,|,outdent,indent,|,undo,redo,|,link,unlink,anchor,image,|,code,preview,|,forecolor,backcolor",
-      //~ theme_advanced_buttons3 : "insertdate,inserttime,|,spellchecker,advhr,,removeformat,|,sub,sup,|,charmap,emotions",      
-      //~ theme_advanced_toolbar_location : "top",
-      //~ theme_advanced_toolbar_align : "left",
-      //~ theme_advanced_statusbar_location : "bottom",
-      //~ theme_advanced_resizing : true
-    //~ }
-//~ });
 
 #end if
 
@@ -1234,10 +1281,8 @@ Lino.HtmlBoxPanel = Ext.extend(Ext.Panel,{
       }
     });
   },
-  disable : function() { console.log('HtmlBox.disable'); 
-      this.getBottomToolbar().disable()},
-  enable : function() { console.log('HtmlBox.enable'); 
-      this.getBottomToolbar().enable()},
+  disable : function() { this.getBottomToolbar().disable()},
+  enable : function() { this.getBottomToolbar().enable()},
   do_when_clean : function(todo) { todo() },
   format_data : function(html) { return '<div class="htmlText">' + html + '</div>' },
   refresh : function(after) {

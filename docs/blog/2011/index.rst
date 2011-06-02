@@ -148,6 +148,10 @@ As long as nobody protests, I'll save some time by writing in German.
 
 .. |Jun| replace::  **June**
   |br| 
+  :doc:`30 <0530>`
+  :doc:`31 <0531>`
+  :doc:`01 <0601>`
+  :doc:`02 <0601>`
   |br| 
   |br| 
   |br|  	
