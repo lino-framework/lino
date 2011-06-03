@@ -215,7 +215,7 @@ Lino.edit_tinymce_text = function(panel) {
   // `panel` is the HtmlBoxPanel
   
   var rec = panel.ww.get_current_record();
-  var value = rec ? rec.data[panel.name] : '';
+  var value = rec ? rec.data[panel.editor.name] : '';
   var saving = false;
   var todo_after_save = false;
   var discard_changes = false;
@@ -225,7 +225,7 @@ Lino.edit_tinymce_text = function(panel) {
     if (saving) {alert('tried to save again'); return; }
     var url = panel.ww.main_item.get_record_url(rec.id);
     var params = Ext.apply({},panel.get_base_params());
-    params[panel.name] = editor.getValue();
+    params[panel.editor.name] = editor.getValue();
     var a = { 
       params: params, 
       method: 'PUT',
@@ -240,7 +240,7 @@ Lino.edit_tinymce_text = function(panel) {
         saving = false;
         //~ if (editor.ed.getContainer()) 
         editor.ed.setProgressState(0);
-        rec.data[panel.name] = editor.getValue();
+        rec.data[panel.editor.name] = editor.getValue();
         if(todo_after_save) {
             var fn = todo_after_save;
             todo_after_save = false;
@@ -1240,14 +1240,56 @@ if (Ext.ux.grid !== undefined) {
   
 //~ });
 
-Lino.HtmlBoxPanel = Ext.extend(Ext.Panel,{
-  constructor : function(ww,config,params){
+Lino.FieldBoxMixin = {
+  before_init : function(ww,config,params) {
     this.ww = ww;
     if (params) Ext.apply(config,params);
     var actions = Lino.build_buttons(this,config.ls_bbar_actions);
     if (actions) config.bbar = actions.bbar;
+  },
+  //~ constructor : function(ww,config,params){
+    //~ this.ww = ww;
+    //~ if (params) Ext.apply(config,params);
+    //~ var actions = Lino.build_buttons(this,config.ls_bbar_actions);
+    //~ if (actions) config.bbar = actions.bbar;
+    //~ Lino.FieldBoxMixin.superclass.constructor.call(this, config);
+  //~ },
+  do_when_clean : function(todo) { todo() },
+  //~ format_data : function(html) { return '<div class="htmlText">' + html + '</div>' },
+  format_data : function(html) { return html },
+  get_base_params : function() {
+    // needed for insert action
+    return this.base_params;
+  },
+  set_base_params : function(p) {
+    this.base_params = p;
+  },
+  set_base_param : function(k,v) {
+    this.base_params[k] = v;
+  }
+};
+
+Lino.HtmlBoxPanel = Ext.extend(Ext.Panel,{
+  constructor : function(ww,config,params) {
+    this.before_init(ww,config,params);
     Lino.HtmlBoxPanel.superclass.constructor.call(this, config);
   },
+  //~ constructor : function(ww,config,params){
+    //~ this.ww = ww;
+    //~ if (params) Ext.apply(config,params);
+    //~ var actions = Lino.build_buttons(this,config.ls_bbar_actions);
+    //~ if (actions) config.bbar = actions.bbar;
+    //~ Lino.FieldBoxMixin.constructor.call(this, ww,config,params);
+  //~ },
+  //~ constructor : function(ww,config,params){
+    //~ this.ww = ww;
+    //~ if (params) Ext.apply(config,params);
+    //~ var actions = Lino.build_buttons(this,config.ls_bbar_actions);
+    //~ if (actions) config.bbar = actions.bbar;
+    //~ Lino.FieldBoxMixin.superclass.constructor.call(this, config);
+  //~ },
+  disable : function() { var tb = this.getBottomToolbar(); if(tb) tb.disable()},
+  enable : function() { var tb = this.getBottomToolbar(); if(tb) tb.enable()},
   onRender : function(ct, position){
     Lino.HtmlBoxPanel.superclass.onRender.call(this, ct, position);
     this.ww.main_item.on('enable',this.enable,this);
@@ -1281,10 +1323,6 @@ Lino.HtmlBoxPanel = Ext.extend(Ext.Panel,{
       }
     });
   },
-  disable : function() { this.getBottomToolbar().disable()},
-  enable : function() { this.getBottomToolbar().enable()},
-  do_when_clean : function(todo) { todo() },
-  format_data : function(html) { return '<div class="htmlText">' + html + '</div>' },
   refresh : function(after) {
     var record = this.ww.get_current_record();
     //~ console.log('HtmlBox.refresh()',this.title,record,record.title);
@@ -1302,18 +1340,60 @@ Lino.HtmlBoxPanel = Ext.extend(Ext.Panel,{
     };
     //~ Lino.do_when_visible(this,todo.createDelegate(this));
     Lino.do_when_visible(box,todo.createDelegate(this));
-  },
-  get_base_params : function() {
-    // needed for insert action
-    return this.base_params;
-  },
-  set_base_params : function(p) {
-    this.base_params = p;
-  },
-  set_base_param : function(k,v) {
-    this.base_params[k] = v;
   }
 });
+Ext.override(Lino.HtmlBoxPanel,Lino.FieldBoxMixin);
+
+Lino.RichTextPanel = Ext.extend(Ext.Panel,{
+  constructor : function(ww,config,params) {
+    var editorConfig = {
+      tinymceSettings: {
+        theme : "advanced",
+        //~ language: "de",
+        plugins : "", 
+        // Theme options - button# indicated the row# only
+        theme_advanced_buttons1 : "bold,italic,underline,|,justifyleft,justifycenter,justifyright,|,bullist,numlist,|,outdent,indent,|,undo,redo,|,removeformat",
+        theme_advanced_buttons2 : "",
+        theme_advanced_buttons3 : "", // ,|,sub,sup,|,charmap",      
+        theme_advanced_toolbar_location : "top",
+        theme_advanced_toolbar_align : "left",
+        theme_advanced_statusbar_location : "bottom",
+        theme_advanced_resizing : false,
+        //~ save_onsavecallback : save_callback,
+        //~ save_enablewhendirty : true
+        //~ save_oncancelcallback: on_cancel
+    }};
+    editorConfig.name = config.name;
+    delete config.name;
+    //~ config.title = config.label;
+    //~ delete config.label;
+    this.before_init(ww,config,params);
+    var t = this;
+    config.tools = [{
+                      qtip: "$_('Edit text in own window')", 
+                      id: "up",
+                      handler: function(){Lino.edit_tinymce_text(t)}
+                    }];
+    
+    this.editor = new Ext.ux.TinyMCE(editorConfig);
+    config.items = this.editor;
+    config.layout = "fit";
+    Lino.RichTextPanel.superclass.constructor.call(this, config);
+  },
+  refresh : function(after) {
+    var record = this.ww.get_current_record();
+    console.log('RichTextPanel.refresh()',this.title,record,record.title);
+    var todo = function() {
+      //~ this.set_base_params(this.ww.get_base_params());
+      this.set_base_params(this.ww.get_master_params());
+      var v = record ? this.format_data(record.data[this.editor.name]) : ''
+      this.editor.setValue(v);
+    };
+    Lino.do_when_visible(this,todo.createDelegate(this));
+  }
+});
+Ext.override(Lino.RichTextPanel,Lino.FieldBoxMixin);
+
 
 Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   //~ trackResetOnLoad : true,

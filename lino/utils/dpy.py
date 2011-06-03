@@ -33,7 +33,7 @@ from django.contrib.sessions.models import Session
 from django.utils.encoding import smart_unicode, is_protected_type, force_unicode
 
 import lino
-from lino.tools import obj2str
+from lino.tools import obj2str, sorted_models_list
 from lino.utils import dblogger
 
 SUFFIX = '.py'
@@ -64,7 +64,7 @@ class Serializer(base.Serializer):
             self.stream.write('from lino.tools import resolve_model\n')
         #~ model = queryset.model
         if self.models is None:
-            self.models = models.get_models()
+            self.models = sorted_models_list() # models.get_models()
         if self.write_preamble:
             for model in self.models:
                 self.stream.write('%s = resolve_model("%s.%s")\n' % (model.__name__, model._meta.app_label,model.__name__))
@@ -74,7 +74,7 @@ class Serializer(base.Serializer):
             #~ fields = [f for f in model._meta.fields if f.serialize]
             #~ fields = [f for f in model._meta.local_fields if f.serialize]
             self.stream.write('def create_%s(%s):\n' % (
-                model._meta.db_table,','.join([f.attname for f in fields])))
+                model._meta.db_table,', '.join([f.attname for f in fields])))
             if model._meta.parents:
                 assert len(model._meta.parents) == 1
                 pm,pf = model._meta.parents.items()[0]
@@ -101,6 +101,8 @@ class Serializer(base.Serializer):
             #~ if isinstance(obj,Permission): continue
             if obj.__class__ != model:
                 model = obj.__class__
+                if model in all_models:
+                    raise Exception("%s instances weren't grouped!" % model)
                 all_models.append(model)
                 self.stream.write('\ndef %s_objects():\n' % model._meta.db_table)
             fields = obj._meta.local_fields
@@ -204,8 +206,27 @@ class Serializer(base.Serializer):
 
 class FakeDeserializedObject(base.DeserializedObject):
     """
-    Imitates DeserializedObject required by loaddata,
-    but this time we *don't want* to bypass pre_save/save methods.
+    Imitates DeserializedObject required by loaddata.
+    
+    Unlike normal DeserializedObject, we *don't want* to bypass 
+    pre_save and validation methods on the individual objects.
+    
+    Unlike normal DeserializedObject this stores just the generator 
+    function `objects` and will start to run it only when the 
+    Serializer asks it to :meth:`save`. 
+    Django thinks that there is only 
+    one object per fixture. That's why the loaddata of a 
+    python dump ends with the irritating message 
+    "Installed 1 object(s) from 1 fixture(s)". 
+    
+    The reason for this is that we perform our own algorithm 
+    for resolving dependencies (by trying to save them, and if 
+    an exception occurs we defer this instance, trying to save 
+    the other instances first. Then we do another round of 
+    :meth:`try_save` (as long as there is hope) 
+    until everything has been saved. This sophisticated and 
+    suboptimal method is necessary as long as we don't have an 
+    algorithm for deserializing in the right order.
     """
     
     object = None # required by loaddata
@@ -216,6 +237,8 @@ class FakeDeserializedObject(base.DeserializedObject):
         #~ self.save_later = []
 
     def save(self, *args,**kw):
+        """This will execute the `objects` function and save all instances.
+        """
         #~ print 'dpy.py',self.object
         save_later = []
         saved = 0
@@ -246,6 +269,10 @@ class FakeDeserializedObject(base.DeserializedObject):
               "See dblog for details." % len(save_later))
                 
     def try_save(self,obj,*args,**kw):
+        """Try to save the specified Model instance `obj`. Return `True` 
+        on success, `False` if this instance wasn't saved and should be 
+        deferred.
+        """
         if obj is None:
             return True
         #~ try:
@@ -269,13 +296,19 @@ class FakeDeserializedObject(base.DeserializedObject):
         try:
             obj.full_clean()
             obj.save(*args,**kw)
-            dblogger.debug("Deserialized %s has been saved" % obj2str(obj))
+            dblogger.debug("%s has been saved" % obj2str(obj))
             return True
-        #~ except obj.ValidationError,e:
-        except Exception,e:
+        #~ except Exception,e:
+        #~ except ValidationError,e:
+        #~ except ObjectDoesNotExist,e:
+        except (ValidationError,ObjectDoesNotExist), e:
             if obj.pk is None:
                 dblogger.exception(e)
                 raise Exception("Failed to save %s. Abandoned." % obj2str(obj))
+            deps = [f.rel.to for f in obj._meta.fields if f.rel is not None]
+            if not deps:
+                dblogger.exception(e)
+                raise Exception("Failed to save independent %s. Abandoned." % obj2str(obj))
             dblogger.info("Deferred %s : %s",obj2str(obj),force_unicode(e))
             return False
       

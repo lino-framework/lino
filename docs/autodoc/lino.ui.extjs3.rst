@@ -9,10 +9,10 @@ The :mod:`lino.ui.extjs3` Package
 The :mod:`urls` Module
 ----------------------
 
-.. automodule:: lino.ui.extjs3.urls
-    :members:
-    :undoc-members:
-    :show-inheritance:
+.. module:: lino.ui.extjs3.urls
+
+This is the module to be specified as :setting:`ROOT_URLCONF`.
+
 
 The :mod:`ext_elems` Module
 ---------------------------

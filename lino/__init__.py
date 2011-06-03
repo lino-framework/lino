@@ -105,12 +105,13 @@ def using():
     version = getattr(yaml,'__version__','')
     yield ("PyYaml",version,"http://pyyaml.org/")
     
-    try:
-        import pyratemp
-        version = getattr(pyratemp,'__version__','')
-    except ImportError:
-        version = NOT_FOUND_MSG
-    yield ("pyratemp",version,"http://www.simple-is-better.org/template/pyratemp.html")
+    if False:
+        try:
+            import pyratemp
+            version = getattr(pyratemp,'__version__','')
+        except ImportError:
+            version = NOT_FOUND_MSG
+        yield ("pyratemp",version,"http://www.simple-is-better.org/template/pyratemp.html")
     
     try:
         import ho.pisa as pisa

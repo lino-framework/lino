@@ -4,7 +4,7 @@
 left = 
     date:10 type:25 event_type:25 user:10 language:8
     subject:60 reminder_date:10 
-    reminder_text:50 delay_type:10 delay_value:10 reminder_done:10
+    reminder_text:30 delay_type:15 delay_value:12 reminder_done:10
     person company
     
 main =

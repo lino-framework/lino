@@ -255,8 +255,6 @@ extlinks = {
   'srcref': ('http://code.google.com/p/lino/source/browse%s', 'file '),
   'extjs': ('http://www.sencha.com/deploy/dev/docs/?class=%s', ''),
   'extux': ('http://extjs-ux.org/ext-docs/?class=%s', ''),
-  #~ 'igen_src': ('http://code.google.com/p/lino-igen/source/browse%s', 'file '),
-  #~ 'dsbe_src': ('http://code.google.com/p/lino-dsbe/source/browse%s', 'file '),
   'djangoticket': ('http://code.djangoproject.com/ticket/%s', 'Django ticket #'),
 }
     
@@ -268,3 +266,7 @@ extlinks = {
 autosummary_generate = True
 
 #~ nitpicky = True # use -n in Makefile instead
+
+# http://sphinx.pocoo.org/theming.html
+html_theme = "default"
+html_theme_options = dict(collapsiblesidebar=True,externalrefs=True)

@@ -56,7 +56,7 @@ from lino.core import actors
 #~ from lino.core import action_requests
 from lino.ui import base
 
-from lino.tools import resolve_model, resolve_field, get_app, model_label, get_field
+from lino.tools import resolve_model, resolve_field, get_app, full_model_name, get_field
 #~ from lino.utils.config import LOCAL_CONFIG_DIR
 from lino.core.coretools import get_slave, get_model_report, data_elems, get_data_elem
 
@@ -224,7 +224,7 @@ def register_report(rpt):
     if rpt.master is None:
         master_reports.append(rpt)
         if rpt.use_as_default_report:
-            #~ logger.debug("register %s : model_report for %s", rpt.actor_id, model_label(rpt.model))
+            #~ logger.debug("register %s : model_report for %s", rpt.actor_id, full_model_name(rpt.model))
             rpt.model._lino_model_report = rpt
         else:
             #~ logger.debug("register %s: not used as model_report",rpt.actor_id)

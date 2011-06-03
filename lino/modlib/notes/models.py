@@ -156,10 +156,12 @@ class Note(mixins.TypedPrintable,mixins.Reminder):
     def disabled_fields(self,request):
         if self.must_build:
             return []
-        return NOTE_PRINTABLE_FIELDS
-        
-NOTE_PRINTABLE_FIELDS = reports.fields_list(Note,
-    '''date subject body language''')
+        return settings.LINO.NOTE_PRINTABLE_FIELDS
+
+    @classmethod
+    def site_setup(cls,lino):
+        lino.NOTE_PRINTABLE_FIELDS = reports.fields_list(cls,
+        '''date subject body language type event_type''')
     
     
 def html_text(s):

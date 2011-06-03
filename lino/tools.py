@@ -87,7 +87,9 @@ def requires_apps(self,*app_labels):
     
     
     
-def model_label(model):
+def full_model_name(model):
+    """Returns the "full name" of the specified model, e.g. "contacts.Person" etc.
+    """
     return model._meta.app_label + '.' + model._meta.object_name
     
     
@@ -117,6 +119,14 @@ def obj2str(i,force_detailed=False):
     #~ s = ','.join(["%s=%r" % (n, getattr(i,n)) for n in i._meta.get_all_field_names()])
     return u"%s(%s)" % (i.__class__.__name__,s)
 
+
+def sorted_models_list():
+    models_list = models.get_models() # trigger django.db.models.loading.cache._populate()
+    def fn(a,b):
+        return cmp(full_model_name(a),full_model_name(b))
+    models_list.sort(fn)
+    return models_list
+    
 
     
    

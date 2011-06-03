@@ -603,7 +603,7 @@ class TypedPrintable(Printable):
     def get_print_templates(self,bm,action):
         ptype = self.get_printable_type()
         if ptype is None:
-            return super(TypedPrintable,self).get_print_templates(self,bm,action)
+            return super(TypedPrintable,self).get_print_templates(bm,action)
         if not ptype.template.endswith(bm.template_ext):
             raise Exception(
               "Invalid template configured for %s \"%s\". Expected filename ending with '%s'." %

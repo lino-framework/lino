@@ -9,6 +9,19 @@ for which I hope for help from other people.
 Short-term
 ----------
 
+#.  Die Stadt Eupen war 5x automatisch angelegt worden. 
+    Wie kann das kommen?
+    Hat vielleicht ein schnellfingriger Benutzer den Namen in 
+    die ComboBox getippt, bevor diese ihren Store gefüllt hatte? 
+    Comboboxen müssten in der Tat gegen diesen Fall absichern.
+    
+#.  Die Textfelder in Notizen und Verträgen sind momentan 
+    fälschlicherweise nicht schreibgeschützt wenn das Dokument 
+    schon gedruckt wurde. Aber wenn man was drin ändert, 
+    wird das *nicht* gespeichert.
+    Ext.ux.TinyMCE.disable() scheint nichts zu bewirken. 
+    Habe schon einiges probiert und nun dem Autor eine Mail geschickt.
+
 #.  Weiter testen und dokumentieren: 
     Wird markup in pdf (appy) richtig ausgedruckt?
     Zum Beispiel funktionieren Titel noch nicht.

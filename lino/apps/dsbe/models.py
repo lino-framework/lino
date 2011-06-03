@@ -1205,13 +1205,13 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,contact
     reference_person = models.CharField(_("reference person"),max_length=200,
         blank=True,null=True)
     
-    responsibilities = fields.RichTextField(_("responsibilities"),blank=True,null=True)
+    responsibilities = fields.RichTextField(_("responsibilities"),blank=True,null=True,format='html')
     
-    stages = fields.RichTextField(_("stages"),blank=True,null=True)
-    goals = fields.RichTextField(_("goals"),blank=True,null=True)
-    duties_asd = fields.RichTextField(_("duties ASD"),blank=True,null=True)
-    duties_dsbe = fields.RichTextField(_("duties DSBE"),blank=True,null=True)
-    duties_company = fields.RichTextField(_("duties company"),blank=True,null=True)
+    stages = fields.RichTextField(_("stages"),blank=True,null=True,format='html')
+    goals = fields.RichTextField(_("goals"),blank=True,null=True,format='html')
+    duties_asd = fields.RichTextField(_("duties ASD"),blank=True,null=True,format='html')
+    duties_dsbe = fields.RichTextField(_("duties DSBE"),blank=True,null=True,format='html')
+    duties_company = fields.RichTextField(_("duties company"),blank=True,null=True,format='html')
     
     user_asd = models.ForeignKey("users.User",verbose_name=_("responsible (ASD)"),
         related_name='contracts_asd',blank=True,null=True) 
@@ -1252,7 +1252,7 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,contact
     def disabled_fields(self,request):
         if self.must_build:
             return []
-        return CONTRACT_PRINTABLE_FIELDS
+        return settings.LINO.CONTRACT_PRINTABLE_FIELDS
         
     
     def __unicode__(self):
@@ -1359,18 +1359,19 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,contact
         Here's how to override the default verbose_name of a field
         """
         resolve_field('dsbe.Contract.user').verbose_name=_("responsible (DSBE)")
-
-CONTRACT_PRINTABLE_FIELDS = reports.fields_list(Contract,
-  'person company contact type '
-  'applies_from applies_until duration '
-  'language schedule regime hourly_rate refund_rate reference_person '
-  'stages duties_dsbe duties_company duties_asd '
-  'user user_asd exam_policy '
-  'date_decided date_issued responsibilities')
+        lino.CONTRACT_PRINTABLE_FIELDS = reports.fields_list(cls,
+            'person company contact type '
+            'applies_from applies_until duration '
+            'language schedule regime hourly_rate refund_rate reference_person '
+            'stages duties_dsbe duties_company duties_asd '
+            'user user_asd exam_policy '
+            'date_decided date_issued responsibilities')
 
 
 class Contracts(reports.Report):
     model = Contract
+    column_names = 'id company applies_from applies_until user type *'
+    order_by = ['id']
     
 class ContractsByPerson(Contracts):
     fk_name = 'person'
@@ -1432,13 +1433,19 @@ class Note(notes.Note,contacts.PartnerDocument):
             more.append(cgi.escape(_('Due date reached')))
         return s + '&nbsp;: ' + (', '.join(more))
         
-    def disabled_fields(self,request):
-        if self.must_build:
-            return []
-        return NOTE_PRINTABLE_FIELDS
+    @classmethod
+    def site_setup(cls,lino):
+        lino.NOTE_PRINTABLE_FIELDS = reports.fields_list(cls,
+        '''date subject body language person company type event_type''')
         
-NOTE_PRINTABLE_FIELDS = reports.fields_list(Note,
-    '''date subject body language person company''')
+        
+    #~ def disabled_fields(self,request):
+        #~ if self.must_build:
+            #~ return []
+        #~ return NOTE_PRINTABLE_FIELDS
+        
+#~ NOTE_PRINTABLE_FIELDS = reports.fields_list(Note,
+    #~ '''date subject body language person company''')
     
 class NotesByPerson(notes.Notes):
     fk_name = 'person'

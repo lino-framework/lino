@@ -166,14 +166,14 @@ LANGUAGE_CODE = 'de'
 #~ LANGUAGE_CODE = 'de-BE'
 #~ LANGUAGE_CODE = 'fr-BE'
 
-SITE_ID = 1 # see also fill.py
+#~ SITE_ID = 1 # see also fill.py
 
 INSTALLED_APPS = (
   #~ 'django.contrib.auth',
   'lino.modlib.users',
   'django.contrib.contenttypes',
   #~ 'django.contrib.sessions',
-  'django.contrib.sites',
+  #~ 'django.contrib.sites',
   #~ 'django.contrib.markup',
   #~ 'lino.modlib.system',
   'lino',

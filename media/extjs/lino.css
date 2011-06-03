@@ -58,6 +58,12 @@ http://stackoverflow.com/questions/2106104/word-wrap-grid-cells-in-ext-js
 	color:'red';
 }
 
+/* See blog/2011/0603
+*/
+.x-form-item-label{
+    white-space: nowrap; 
+}
+
 .htmlText {
 	font-family: arial,tahoma;
 }

@@ -32,7 +32,28 @@ Lino site, see :doc:`/admin/upgrade`.
 
 
 - Database migration: 
-  Existing content in `notes.Note.body` must be converted using 
-  :func:`lino.utils.restify.restify`.
-  See :doc:`/blog/2011/0525`.
+
+  - rename `.dpy` to `.py`
+  
+  - Adapt your document templates for text fields in Note and Contract.
+
+  - Lino 1.1.11 generated  (empty) generators for the models 
+    from :mod:`django.contrib.auth` and :mod:`django.contrib.sessions`.
+    And :mod:`django.contrib.sites` now also has been removed.
+    Uncomment these lines::
+    
+        #~ Permission = resolve_model("auth.Permission")
+        #~ Group = resolve_model("auth.Group")
+        #~ User = resolve_model("auth.User")
+        #~ Message = resolve_model("auth.Message")
+        #~ Site = resolve_model("sites.Site")
+        ...
+        #~ Session = resolve_model("sessions.Session")
+        
+  - (not necessary because TinyMCE also accepts plain text)
+    Existing content in `notes.Note.body` must be converted using 
+    :func:`lino.utils.restify.restify`.
+    See :doc:`/blog/2011/0525`.
+    
+
   

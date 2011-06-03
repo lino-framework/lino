@@ -100,7 +100,7 @@ TIME_ZONE = 'Europe/Brussels'
 #~ LANGUAGE_CODE = 'de-BE'
 #~ LANGUAGE_CODE = 'fr-BE'
 
-SITE_ID = 1 # see also fill.py
+#~ SITE_ID = 1 # see also fill.py
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.

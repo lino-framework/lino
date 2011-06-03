@@ -105,10 +105,10 @@ class Cities(reports.Report):
     #~ label = _("Cities")
     model = 'countries.City'
     order_by = "country name".split()
-    column_names = "country name zip_code"
+    column_names = "country name zip_code *"
     
 class CitiesByCountry(Cities):
-    column_names = "name zip_code country"
+    column_names = "name zip_code country *"
     fk_name = 'country'
 
 

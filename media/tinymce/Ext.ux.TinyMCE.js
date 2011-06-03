@@ -272,6 +272,7 @@
 		/** ----------------------------------------------------------
 		*/
 		setRawValue: function(v) {
+      //~ console.log('TinyMCE.setRawValue',v);
 			this.value = v;
 			if (this.rendered)
 				this.withEd(function() {
@@ -284,6 +285,7 @@
 		/** ----------------------------------------------------------
 		*/
 		setValue: function(v) {
+      //~ console.log('TinyMCE.setValue',v);
 			this.value = v;
 			if (this.rendered)
 				this.withEd(function() {
@@ -321,12 +323,17 @@
 		*/
 		disable: function() {
 			this.withEd(function() {
+        //~ this.ed.settings.readonly = true;
+        //~ this.ed.setupContentEditable(false);
 				var bodyEl = this.ed.getBody();
 				bodyEl = Ext.get(bodyEl);
 
 				if (bodyEl.hasClass('mceContentBody')) {
+          console.log('Ext.ux.TinyMCE.disable() 3') 
 					bodyEl.removeClass('mceContentBody');
 					bodyEl.addClass('mceNonEditable');
+					//~ bodyEl.readonly = true;
+					//~ bodyEl.setAttribute("disabled", "disabled");
 				}
 			});
 		},
@@ -335,12 +342,15 @@
 		*/
 		enable: function() {
 			this.withEd(function() {
+        this.ed.settings.readonly = false;
+        //~ this.ed.setupContentEditable(true);
 				var bodyEl = this.ed.getBody();
 				bodyEl = Ext.get(bodyEl);
 
 				if (bodyEl.hasClass('mceNonEditable')) {
 					bodyEl.removeClass('mceNonEditable');
 					bodyEl.addClass('mceContentBody');
+					//~ bodyEl.removeAttribute("disabled");
 				}
 			});
 		},

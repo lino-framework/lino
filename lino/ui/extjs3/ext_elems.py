@@ -476,21 +476,36 @@ class TextFieldElement(FieldElement):
         fmt = getattr(field,'textfield_format',None) or settings.LINO.textfield_format
         if fmt == 'html':
             if settings.LINO.use_tinymce:
-                raise Exception("tinymce html text fields are rendered as HtmlBoxElement?!")
+                # 20110603
+                #~ raise Exception("tinymce html text fields are rendered as HtmlBoxElement?!")
                 if True:
                     #~ self.value_template = "new Ext.form.DisplayField(%s)"
                     #~ self.value_template = "new Lino.HtmlTextPanel(ww,%s)"
-                    self.value_template = "new Lino.HtmlBoxPanel(ww,%s)"
+                    self.value_template = "new Lino.RichTextPanel(ww,%s)"
                     #~ self.active_child = True
-                    edit = dict(handler=js_code(
-                        "Lino.edit_tinymce_text"))
-                    edit.update(text=_("Edit"))
-                    kw.update(ls_bbar_actions=[edit])
-                    kw.update(layout='fit')
-                    kw.update(items=js_code("new Ext.BoxComponent()"))
+                    #~ edit = dict(handler=js_code(
+                        #~ "Lino.edit_tinymce_text"))
+                    #~ edit.update(text=_("Edit"))
+                    #~ kw.update(ls_bbar_actions=[edit])
+                    #~ js = 'Lino.edit_tinymce_text(this)'
+                    #~ kw.update(tools=[dict(
+                      #~ qtip=_('Edit text in own window'), 
+                      #~ id="up",
+                      #~ handler=js_code("function(){%s}" % js))])
+                    #~ kw.update(layout='fit')
+                    #~ kw.update(items=js_code("new Ext.BoxComponent()"))
                     #~ if self.label:
                         #~ kw.update(title=unicode(self.label))
                     self.separate_window = True
+                    
+                    # we don't call FieldElement.__init__ but do almost the same:
+                    self.field = field
+                    self.editable = field.editable # and not field.primary_key
+                    kw.update(title=unicode(field.verbose_name))
+                    #~ LayoutElement.__init__(self,lh,varname_field(field),label=unicode(field.verbose_name),**kw)
+                    #~ LayoutElement.__init__(self,lh,field.name,label=unicode(field.verbose_name),**kw)
+                    LayoutElement.__init__(self,lh,field.name,**kw)
+                    return
                 else:
                     self.value_template = "new Ext.ux.TinyMCE(%s)"
                     ts=dict(
@@ -1250,18 +1265,16 @@ class MainPanel(jsgen.Variable):
             
         if isinstance(field,fields.VirtualField):
             field = field.return_type
-        if isinstance(field,fields.RichTextField):
-            fmt = getattr(field,'textfield_format',None) or settings.LINO.textfield_format
-            if fmt == 'html' and settings.LINO.use_tinymce:
-                edit = dict(panel_btn_handler=js_code(
-                    "Lino.edit_tinymce_text"))
-                edit.update(text=_("Edit"))
-                kw.update(ls_bbar_actions=[edit])
-                kw.update(autoScroll=True)
-                #~ kw.update(layout='fit')
-                #~ kw.update(items=js_code("new Ext.BoxComponent()"))
-                #~ if self.label:
-                return HtmlBoxElement(lh,field,**kw)
+        # 20110603
+        #~ if isinstance(field,fields.RichTextField):
+            #~ fmt = getattr(field,'textfield_format',None) or settings.LINO.textfield_format
+            #~ if fmt == 'html' and settings.LINO.use_tinymce:
+                #~ edit = dict(panel_btn_handler=js_code(
+                    #~ "Lino.edit_tinymce_text"))
+                #~ edit.update(text=_("Edit"))
+                #~ kw.update(ls_bbar_actions=[edit])
+                #~ kw.update(autoScroll=True)
+                #~ return HtmlBoxElement(lh,field,**kw)
         for cl,x in _FIELD2ELEM:
             if isinstance(field,cl):
                 return x(lh,field,**kw)

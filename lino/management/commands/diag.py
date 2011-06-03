@@ -12,6 +12,9 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""Writes a diagnostic report about this Site. 
+"""
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -32,13 +35,10 @@ from django.core.management.base import BaseCommand, CommandError
 import lino
 from lino.core.coretools import app_labels
 from lino.utils import rstgen
-from lino.tools import obj2str
-
-  
+from lino.tools import obj2str, full_model_name, sorted_models_list
 
 class Command(BaseCommand):
-    help = """Writes a diagnostic report about this Site.
-    """
+    help = __doc__
     args = "output_dir"
     
     option_list = BaseCommand.option_list + (
@@ -62,8 +62,7 @@ class Command(BaseCommand):
         
         writeln("Lino %s" % lino.__version__)
         writeln(settings.LINO.title)
-        
-        models_list = models.get_models() # trigger django.db.models.loading.cache._populate()
+        models_list = sorted_models_list()
 
         apps = app_labels()
         writeln("%d applications: %s." % (len(apps), ", ".join(apps)))
@@ -81,7 +80,7 @@ class Command(BaseCommand):
             i += 1
             cells = []
             cells.append(str(i))
-            cells.append("%s.%s" % (model._meta.app_label, model._meta.object_name))
+            cells.append(full_model_name(model))
             #~ cells.append(str(model))
             if model._meta.managed:
                 cells.append('X')

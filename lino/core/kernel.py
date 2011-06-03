@@ -53,7 +53,7 @@ from lino.core import actors
 from lino.core.coretools import app_labels, data_elems # , get_unbound_meth
 from lino.utils import get_class_attr
 
-from lino.tools import resolve_model, resolve_field, get_app, model_label, get_field
+from lino.tools import resolve_model, resolve_field, get_app, get_field
 from lino.utils.config import load_config_files, find_config_file
 from lino.reports import DetailLayout
 from lino.utils import choosers
