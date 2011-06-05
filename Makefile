@@ -8,7 +8,7 @@ MODULES = thirds products properties contacts countries notes sales finan links 
 #LANGUAGES = de fr nl et
 #INPUT_FILES = lino\\actions.py lino\\ui\\extjs\\ext_ui.py lino\\modlib\\fields.py lino\\modlib\\system\\models.py
 
-.PHONY: mm cm makedocs
+.PHONY: mm cm makedocs tests
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
@@ -27,6 +27,7 @@ mm:
 	done
   
 
+
 cm:  
 	cd $(LINO_ROOT)/lino && $(DJANGO_ADMIN) compilemessages 
 	@for MOD in $(MODULES); \
@@ -37,3 +38,6 @@ cm:
 	  cd $(LINO_ROOT)/lino/apps/$$i && $(DJANGO_ADMIN) compilemessages; \
 	done
   
+tests:  
+	$(DJANGO_ADMIN) test --settings=lino.test_apps.1.settings
+	$(DJANGO_ADMIN) test --settings=lino.test_apps.20100212.settings

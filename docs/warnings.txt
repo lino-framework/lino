@@ -1,7 +1,1 @@
-T:\hgwork\lino\docs\blog\2011\0603.rst:36: WARNING: xfile reference target not found: lino.css
-T:\hgwork\lino\docs\blog\2011\0603.rst:68: WARNING: xfile reference target not found: lino.css
-T:\hgwork\lino\docs\blog\2011\0603.rst:122: WARNING: py:class reference target not found: lino.modlib.notes.models.Note
-T:\hgwork\lino\docs\blog\2011\0603.rst:126: WARNING: py:class reference target not found: lino.apps.dsbe.models.Contracts
-T:\hgwork\lino\docs\releases\coming.rst:40: WARNING: py:mod reference target not found: django.contrib.auth
-T:\hgwork\lino\docs\releases\coming.rst:40: WARNING: py:mod reference target not found: django.contrib.sessions
-T:\hgwork\lino\docs\releases\coming.rst:40: WARNING: py:mod reference target not found: django.contrib.sites
+T:\hgwork\lino\docs\blog\2011\0605.rst:12: WARNING: xfile reference target not found: lino.css

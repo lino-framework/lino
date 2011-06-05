@@ -1,5 +1,5 @@
-#44 : Displaying text fields in a grid
-======================================
+#44 [closed] : Displaying text fields in a grid
+===============================================
 
 When a text field is being rendered in a grid, we must 
 remember that it can possibly contain a long text which 

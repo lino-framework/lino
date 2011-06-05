@@ -2,11 +2,12 @@
 ========
 
 Opened :doc:`/tickets/44`. 
-Tried a solution lino.utils.textfields`, but dropped it again and 
+Tried a solution :mod:`lino.utils.textfields`, but dropped it again and 
 even removed the "expand_memos" attribute from Report
 and the "memos" button from Lino.GridPanel
 because I understood that the server-side approach
-cannot work. Cropping must be done at the client.
+was simply nonsense. 
+Cropping must be done at the client.
 
 And the solution is really simple:
 just added `height:18px` and `overflow:hidden` 
@@ -17,3 +18,5 @@ to the cell's style in :xfile:`lino.css`::
     /* white-space: normal; changed from nowrap */
     height:18px; overflow:hidden;
   }
+
+Check-in `2011050605 <http://code.google.com/p/lino/source/detail?r=1fec05028751381bdf6d926e0a2b58850cc52c55>`_.

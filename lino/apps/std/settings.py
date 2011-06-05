@@ -184,7 +184,7 @@ INSTALLED_APPS = [
   'lino.modlib.users',
   'django.contrib.contenttypes',
   #~ 'django.contrib.sessions',
-  'django.contrib.sites',
+  #~ 'django.contrib.sites',
   #~ 'django.contrib.markup',
   #~ 'django.contrib.databrowse',
   

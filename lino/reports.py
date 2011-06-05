@@ -997,6 +997,9 @@ class Report(actors.Actor): #,base.Handled):
         self.detail_layouts = []
         if self.model is None:
             return
+        #~ if not self.model._meta.managed:
+            #~ print "NOT MANAGED: ", self.model
+            #~ return
         for b in self.model.__bases__:
             if issubclass(b,models.Model) and b is not models.Model:
                 #~ print 20110221, b, "is base of", self.model
@@ -1004,7 +1007,8 @@ class Report(actors.Actor): #,base.Handled):
                 #~ for dtl in b._lino_detail_layouts:
                     #~ print '20110221b'
                     self.detail_layouts.append(dtl)
-        for dtl in self.model._lino_detail_layouts:
+        #~ for dtl in self.model._lino_detail_layouts:
+        for dtl in getattr(self.model,'_lino_detail_layouts',[]):
             self.detail_layouts.append(dtl)
 
         

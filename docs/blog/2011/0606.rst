@@ -1,0 +1,18 @@
+20110606
+========
+
+Upps, in der Tat, bei meinem :djangoticket:`16151` 
+hatte ich zu schnell geschossen. 
+Die beiden Meldungen "No fixtures found" kam ja nur,
+weil in :term:`initdb` sowohl das `syncdb` als auch das `flush` 
+jeweils ein `loaddata initial_data` aufriefen (was ich ja nun durch das undokumentierte `load_initial_data=False`) vermeide).
+Meine Änderung im Django-Code hatte mir geholfen, 
+das zu verstehen. Sie funktionierte aber nur zufällig, 
+weil es zwei Aufrufe mit jeweils einem Argument waren.
+
+Die Tests in test_apps führen ja ein richtiges Schattendasein. 
+(Ich jedenfalls habe sie schon ewig nicht mehr laufenlassen...)
+Deshalb suche ich nach einem System, um sie alle hintereinander 
+laufenzulassen, ohne dabei in der settings.py rumkommentieren 
+zu müssen. 
+
