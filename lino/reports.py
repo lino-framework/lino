@@ -508,6 +508,7 @@ class ReportActionRequest:
     layout = None
     #~ selected_rows = []
     #~ expand_memos = False
+    #~ expand_memos = True
     
     def __init__(self,ui,report,action):
     #~ def __init__(self,rh,action):
@@ -542,14 +543,15 @@ class ReportActionRequest:
             order_by=None,
             extra=None,
             known_values=None,
-            expand_memos=None,
+            #~ expand_memos=None,
             #~ selected_rows=None,
             **kw):
         if user is not None and not self.report.can_view.passes(user):
             msg = _("User %(user)s cannot view %(report)s.") % dict(user=user,report=self.report)
             raise InvalidRequest(msg)
         self.user = user
-        self.expand_memos = expand_memos or self.report.expand_memos
+        #~ if isinstance(self.action,GridEdit):
+            #~ self.expand_memos = expand_memos or self.report.expand_memos
         self.quick_search = quick_search
         self.gridfilters = gridfilters
         self.order_by = order_by
@@ -707,7 +709,8 @@ class Report(actors.Actor): #,base.Handled):
     
     expand_memos = False
     """
-    Whether multi-line text fields should be expanded by default or not.
+    (No longer used; see :doc:`/tickets/44`). 
+    Whether multi-line text fields in Grid views should be expanded in by default or not.
     """
     
     extra = None

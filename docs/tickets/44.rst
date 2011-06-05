@@ -1,0 +1,10 @@
+#44 : Displaying text fields in a grid
+======================================
+
+When a text field is being rendered in a grid, we must 
+remember that it can possibly contain a long text which 
+would mess up the grid layout if row height is variable. 
+That's why we display only the first line by default.
+OTOH the user needs a possibilty to "expand" these cells.
+
+:doc:`/blog/2011/0605`

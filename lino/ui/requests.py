@@ -53,10 +53,10 @@ emulate user
 URL_PARAM_GRIDFILTER = 'filter'
 URL_PARAM_FILTER = 'query'
 URL_PARAM_TAB = 'tab'
-URL_PARAM_EXPAND = 'expand'
-"""
-A string entered in the quick search field or in the text field of a combobox.
-"""
+#~ URL_PARAM_EXPAND = 'expand'
+#~ """
+#~ A string entered in the quick search field or in the text field of a combobox.
+#~ """
 
 URL_PARAM_SORT = 'sort'
 URL_PARAM_SORTDIR = 'dir'
@@ -74,7 +74,7 @@ URL_PARAMS = [
   'URL_PARAM_START',
   'URL_PARAM_LIMIT',
   'URL_PARAM_TAB',
-  'URL_PARAM_EXPAND',
+  #~ 'URL_PARAM_EXPAND',
   'URL_PARAM_EUSER',
   #~ 'TEST',
 ]
@@ -234,12 +234,12 @@ class ViewReportRequest(reports.ReportActionRequest):
               for pk in request.REQUEST.getlist(URL_PARAM_SELECTED)])
         """
         
-        if isinstance(self.action,reports.GridEdit):
-            v = request.GET.get(URL_PARAM_EXPAND,None)
-            if v is not None: 
-                v = parse_boolean(v)
-                kw.update(expand_memos=v)
-                #~ print 20110512, v, __file__
+        #~ if isinstance(self.action,reports.GridEdit):
+            #~ v = request.GET.get(URL_PARAM_EXPAND,None)
+            #~ if v is not None: 
+                #~ v = parse_boolean(v)
+                #~ kw.update(expand_memos=v)
+                #~ # print 20110512, v, __file__
 
         
         return kw

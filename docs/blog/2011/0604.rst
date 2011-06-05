@@ -1,0 +1,7 @@
+20110604
+========
+
+Added test case 9 to :srcref:`lino/tests/appy/1/test.py` 
+and posted new comment at 
+`appy.pod bug #777890 <https://bugs.launchpad.net/appy/+bug/777890>`.
+Enumerations are currently not being rendered in printable documents.

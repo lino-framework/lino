@@ -106,6 +106,8 @@ class GridColumn(Component):
                 #~ kw.update(renderer=js_code('Lino.id_renderer'))
             elif isinstance(editor.field,fields.DisplayField):
                 rend = 'Lino.raw_renderer'
+            elif isinstance(editor.field,models.TextField):
+                rend = 'Lino.text_renderer'
             elif isinstance(editor.field,models.ForeignKey):
                 # FK fields are clickable if their target has a detail view
                 rpt = editor.field.rel.to._lino_model_report
@@ -400,7 +402,7 @@ class FieldElement(LayoutElement):
         #~ if self.label is None:
             #~ kw.update(header=self.field.name)
         #~ else:
-        kw.update(header=unicode(self.label))
+        kw.update(header=unicode(self.label or self.name))
         if not self.editable:
             kw.update(editable=False)
         if not self.sortable:
@@ -504,8 +506,7 @@ class TextFieldElement(FieldElement):
                     kw.update(title=unicode(field.verbose_name))
                     #~ LayoutElement.__init__(self,lh,varname_field(field),label=unicode(field.verbose_name),**kw)
                     #~ LayoutElement.__init__(self,lh,field.name,label=unicode(field.verbose_name),**kw)
-                    LayoutElement.__init__(self,lh,field.name,**kw)
-                    return
+                    return LayoutElement.__init__(self,lh,field.name,**kw)
                 else:
                     self.value_template = "new Ext.ux.TinyMCE(%s)"
                     ts=dict(

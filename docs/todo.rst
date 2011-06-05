@@ -26,6 +26,7 @@ Short-term
     Wird markup in pdf (appy) richtig ausgedruckt?
     Zum Beispiel funktionieren Titel noch nicht.
     :doc:`Wysiwyg-Editor </tickets/42>`
+    Enumerations are currently not being rendered in printable documents.
 
 #.  Externe Links (Lesezeichen) und Uploads machen können, 
     indem man sie von einer anderen Anwendung

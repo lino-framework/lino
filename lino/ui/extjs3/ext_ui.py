@@ -1325,8 +1325,6 @@ tinymce.init({
             #~ for k,v in rr.known_values.items():
             #~ kw.update(rr.known_values)
             #~ # kw[ext_requests.URL_KNOWN_VALUES] = rr.known_values
-        if rr.expand_memos:
-            kw[ext_requests.URL_PARAM_EXPAND] = rr.expand_memos
         if rr.quick_search:
             kw[ext_requests.URL_PARAM_FILTER] = rr.quick_search
         if rr.master_instance is not None:

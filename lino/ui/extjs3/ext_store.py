@@ -165,6 +165,16 @@ class DisabledFieldsStoreField(StoreField):
         #~ else:
             #~ v = False
         #~ instance[self.field.name] = v
+
+#~ from lino.utils.textfields import extract_summary
+
+#~ class TextStoreField(StoreField):
+  
+    #~ def value_from_object(self,request,obj):
+        #~ v = self.field.value_from_object(obj)
+        #~ if request.expand_memos:
+            #~ return v
+        #~ return extract_summary(v)
   
 class BooleanStoreField(StoreField):
   
@@ -543,6 +553,8 @@ class Store:
             #~ return DateStoreField(fld,self.report.date_format)
         if isinstance(fld,models.BooleanField):
             return BooleanStoreField(fld)
+        #~ if isinstance(fld,models.TextField):
+            #~ return TextStoreField(fld)
         if isinstance(fld,models.AutoField):
             return AutoStoreField(fld)
             #~ kw.update(type='int')

@@ -16,8 +16,12 @@
 /* 
 http://stackoverflow.com/questions/2106104/word-wrap-grid-cells-in-ext-js 
 */
-.x-grid3-cell-inner, .x-grid3-hd-inner {
-  white-space: normal; /* changed from nowrap */
+.x-grid3-cell-inner {
+  /* white-space: normal; changed from nowrap */
+  height:18px; overflow:hidden;
+}
+.x-grid3-hd-inner {
+  white-space: normal; 
 }
 
 /*.lino-phantom-row table.x-grid3-row-table {

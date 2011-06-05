@@ -13,7 +13,7 @@ from appy import version
 APPY_PARAMS = dict()
 
 #~ ACTIVE_TESTS = None # run all tests
-ACTIVE_TESTS = (8,) # run only specified tests
+ACTIVE_TESTS = (9,) # run only specified tests
 
 #~ APPY_PARAMS.update(ooPort=8100)
 #~ APPY_PARAMS.update(pythonWithUnoPath=r'C:\PROGRA~1\LIBREO~1\program\python.exe')
@@ -121,6 +121,7 @@ Title
 """
 run_test(7,"20110517",xhtml)
 
+# http://lino.saffre-rumma.net/blog/2011/0525.html
 html = """
 <p><span class="Apple-style-span" style="font-size: 13px; line-height: 19px; font-family: sans-serif;">Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</span></p>
 <p><span class="Apple-style-span" style="font-size: 20px; font-weight: bold;">A heading</span></p>
@@ -128,3 +129,17 @@ html = """
 """
 run_test(8,"20110525",HTML=html)
 
+
+#~ # 9 : 
+run_test(9,"Same as 2, but without wrapping <DIV>",HTML='''
+<p>Some <strong>bold</strong> and some <em>italic</em> text.</p>
+<p>A new paragraph.</p>
+<p>A list with three items:</p>
+<ul> 
+<li>the first item</li> 
+<li>another item</li> 
+<li>the last item</li> 
+</ul> 
+<p>A last paragraph.</p>
+''')
+    

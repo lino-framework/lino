@@ -1028,6 +1028,11 @@ Lino.raw_renderer = function(value, metaData, record, rowIndex, colIndex, store)
   return value;
 }
 
+Lino.text_renderer = function(value, metaData, record, rowIndex, colIndex, store) {
+  //~ return "not implemented"; 
+  return value;
+}
+
 //~ Lino.cell_button_renderer = function(value, metaData, record, rowIndex, colIndex, store) {
   //~ return '<input type="button" onclick="alert(value)" value=" ? ">' ;
 //~ }
@@ -1844,7 +1849,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
       ]);
     }
     
-    if(true) {
+    if(false) {
       tbar = tbar.concat([
         { text:"$_('Memo')",
           xtype: 'button', 
@@ -1913,12 +1918,6 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     Lino.GridPanel.superclass.constructor.call(this, config);
     
     this.on('beforeedit',function(e) { this.before_row_edit(e.record)},this);
-  },
-  
-  toggle_expand_memo : function(btn,pressed) { 
-    console.log(this,arguments);
-    this.getStore().setBaseParam('$ext_requests.URL_PARAM_EXPAND',pressed);
-    this.refresh();
   },
   
   do_when_clean : function(todo) { todo() },

@@ -1,0 +1,19 @@
+20110605
+========
+
+Opened :doc:`/tickets/44`. 
+Tried a solution lino.utils.textfields`, but dropped it again and 
+even removed the "expand_memos" attribute from Report
+and the "memos" button from Lino.GridPanel
+because I understood that the server-side approach
+cannot work. Cropping must be done at the client.
+
+And the solution is really simple:
+just added `height:18px` and `overflow:hidden` 
+(and removed `white-space: normal`)
+to the cell's style in :xfile:`lino.css`::
+
+  .x-grid3-cell-inner, .x-grid3-hd-inner {
+    /* white-space: normal; changed from nowrap */
+    height:18px; overflow:hidden;
+  }

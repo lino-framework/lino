@@ -177,7 +177,7 @@ class Notes(reports.Report):
     #~ column_names = "id date user type event_type subject * body_html"
     column_names = "id date user type event_type subject * body"
     #~ hide_columns = "body"
-    hidden_columns = frozenset(['body'])
+    #~ hidden_columns = frozenset(['body'])
     order_by = ["id"]
     #~ label = _("Notes")
 
