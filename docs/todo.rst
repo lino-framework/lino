@@ -621,6 +621,13 @@ Long-term
     like Татьяна Казеннова that would cause trouble. 
     See :doc:`/blog/2011/0527`.
     Alternative: make such data optional in a separate fixture.
+    
+#.  Wenn ich ein Model importiere, das gar nicht installiert ist
+    (also dessen "application" nicht in INSTALLED_APPS drin ist). 
+    In diesem Fall wird keine Tabelle in der Datenbank erstellt.
+    Aber wie kann ich das testen?
+    Lino sollte für solche Modelle keinen Report machen.
+    
 
 
 Documentation

@@ -16,3 +16,11 @@ Deshalb suche ich nach einem System, um sie alle hintereinander
 laufenzulassen, ohne dabei in der settings.py rumkommentieren 
 zu müssen. 
 
+Hier noch was für die Todo-Liste bei Gelegenheit:
+Wenn ich ein Model importiere, das gar nicht installiert ist
+(also dessen "application" nicht in INSTALLED_APPS drin ist). 
+In diesem Fall wird keine Tabelle in der Datenbank erstellt.
+Aber wie kann ich das testen?
+Lino sollte für solche Modelle keinen Report machen.
+
+
