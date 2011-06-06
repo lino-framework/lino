@@ -20,7 +20,7 @@ from django.utils.translation import ugettext_lazy as _
 
 
 from django.db import models
-from lino.utils.babel import babel_values
+from lino.utils.babel import babel_values, babelitem
 
 Person = resolve_model('contacts.Person')
 Company = resolve_model('contacts.Company')
@@ -127,15 +127,57 @@ def objects():
     #~ yield projectType(u"EiEi")
     #~ yield projectType(u"Aufenthaltsgenehmigung")
     
-    studyType = Instantiator('dsbe.StudyType',"name").build
-    yield studyType(u"Schule")
-    yield studyType(u"Sonderschule")
-    yield studyType(u"Ausbildung")
-    yield studyType(u"Lehre")
-    yield studyType(u"Hochschule")
-    yield studyType(u"Universität")
-    yield studyType(u"Teilzeitunterricht")
-    yield studyType(u"Fernkurs")
+    studyType = Instantiator('dsbe.StudyType').build
+    #~ yield studyType(u"Schule")
+    #~ yield studyType(u"Sonderschule")
+    #~ yield studyType(u"Ausbildung")
+    #~ yield studyType(u"Lehre")
+    #~ yield studyType(u"Hochschule")
+    #~ yield studyType(u"Universität")
+    #~ yield studyType(u"Teilzeitunterricht")
+    #~ yield studyType(u"Fernkurs")
+    yield studyType(**babel_values('name',
+          de=u"Schule",
+          fr=u"École",
+          en=u"School",
+          ))
+    yield studyType(**babel_values('name',
+          de=u"Sonderschule",
+          fr=u"École spéciale",
+          en=u"Special school",
+          ))
+    yield studyType(**babel_values('name',
+          de=u"Ausbildung",
+          fr=u"Formation",
+          en=u"Schooling",
+          ))
+    yield studyType(**babel_values('name',
+          de=u"Lehre",
+          fr=u"Apprentissage",
+          en=u"Apprenticeship",
+          ))
+    yield studyType(**babel_values('name',
+          de=u"Hochschule",
+          fr=u"École supérieure",
+          en=u"Highschool",
+          ))
+    yield studyType(**babel_values('name',
+          de=u"Universität",
+          fr=u"Université",
+          en=u"University",
+          ))
+    yield studyType(**babel_values('name',
+          de=u"Teilzeitunterricht",
+          fr=u"Cours à temps partiel",
+          en=u"Part-time study",
+          ))
+    yield studyType(**babel_values('name',
+          de=u"Fernkurs",
+          fr=u"Cours à distance",
+          en=u"Remote study",
+          ))
+    
+    
 
     #~ studyContent = Instantiator('dsbe.StudyContent',"name").build
     #~ yield studyContent(u"Grundschule")
@@ -174,15 +216,15 @@ def objects():
     from lino.models import update_site_config
     
     uploadType = Instantiator('uploads.UploadType',"name").build
-    yield uploadType(u"Personalausweis")
-    p = uploadType(u"Aufenthaltserlaubnis")
+    yield uploadType(babelitem(de=u"Personalausweis",fr=u"Carte d'identité"))
+    p = uploadType(babelitem(de=u"Aufenthaltserlaubnis",fr=u"Permis de séjour"))
     yield p
     update_site_config(residence_permit_upload_type=p)
-    p = uploadType(u"Arbeitserlaubnis")
+    p = uploadType(babelitem(de=u"Arbeitserlaubnis",fr=u"Permis de travail"))
     yield p
     update_site_config(work_permit_upload_type = p)
-    yield uploadType(u"Vertrag")
-    p = uploadType(u"Führerschein")
+    yield uploadType(babelitem(de=u"Vertrag",fr=u"Contrat"))
+    p = uploadType(babelitem(de=u"Führerschein",fr=u"Permis de conduire"))
     yield p
     update_site_config(driving_licence_upload_type = p)
     

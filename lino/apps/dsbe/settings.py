@@ -42,11 +42,12 @@ class Lino(Lino):
         super(Lino,self).configure(sc)
         
     def setup_main_menu(self):
+      try:
   
         from django.utils.translation import ugettext_lazy as _
         from lino.utils import perms
 
-        from lino import models as system
+        #~ from lino import models as system
         from lino.apps.dsbe import models as dsbe
 
         m = self.add_menu("contacts",_("~Contacts"))
@@ -67,64 +68,77 @@ class Lino(Lino):
             #~ params=dict(master_id=pg.pk))
             #~ m.add_request_action(contacts.MyPersonsByGroup().request(master_instance=pg),label=pg.name)
 
+
         m = self.add_menu("courses",_("~Courses"),can_view=perms.is_authenticated)
         m.add_action('dsbe.Courses')
         m.add_action('contacts.CourseProviders')
         m.add_action('dsbe.CourseContents')
         m.add_action('dsbe.CourseEndings')
         
-        sitemenu = system.add_site_menu(self)
+        #~ sitemenu = system.add_site_menu(self)
         
-        m = sitemenu.add_menu("config",_("~Configure"),can_view=perms.is_authenticated)
+        cfg = self.add_menu("config",_("~Configure"),can_view=perms.is_authenticated)
         
-        config_notes = m.add_menu("notes",_("~Notes"),can_view=perms.is_authenticated)
+        
+        config_contacts = cfg.add_menu("contacts",_("~Contacts"),can_view=perms.is_authenticated)
+        config_notes    = cfg.add_menu("notes",_("~Notes"),can_view=perms.is_authenticated)
+        config_props    = cfg.add_menu("props",_("~Properties"),can_view=perms.is_authenticated)
+        config_dsbe     = cfg.add_menu("dsbe",_("~DSBE"),can_view=perms.is_authenticated)
+        config_cv       = cfg.add_menu("cv",_("C~V"),can_view=perms.is_authenticated)
+        config_etc      = cfg.add_menu("etc",_("~System"),can_view=perms.is_authenticated)
+        
+        config_contacts.add_action('contacts.CompanyTypes',can_view=perms.is_staff)
+        config_contacts.add_action('contacts.ContactTypes',can_view=perms.is_staff)
+        config_contacts.add_action('countries.Languages',can_view=perms.is_expert)
+        config_contacts.add_action('countries.Countries')
+        config_contacts.add_action('countries.Cities')
+        
         config_notes.add_action('notes.NoteTypes',can_view=perms.is_staff)
         config_notes.add_action('notes.EventTypes',can_view=perms.is_staff)
         
-        mm = m.add_menu("manager",_("~Manager"),can_view=perms.is_authenticated)
-        ma = m.add_menu("admin",_("Local Site ~Administrator"),can_view=perms.is_staff)
-        me = m.add_menu("expert",_("~Expert"),can_view=perms.is_staff)
+        #~ mm = m.add_menu("manager",_("~Manager"),can_view=perms.is_authenticated)
+        #~ ma = m.add_menu("admin",_("Local Site ~Administrator"),can_view=perms.is_staff)
+        #~ me = m.add_menu("expert",_("~Expert"),can_view=perms.is_expert)
         
         #~ m.add_action('projects.ProjectTypes')
-        ma.add_action('dsbe.ContractTypes',can_view=perms.is_staff)
-        mm.add_action('dsbe.PersonGroups')
-        ma.add_action('contacts.CompanyTypes')
-        ma.add_action('contacts.ContactTypes')
+        config_dsbe.add_action('dsbe.ContractTypes',can_view=perms.is_staff)
+        config_dsbe.add_action('dsbe.PersonGroups')
         
         from lino.modlib.properties import models as properties
         
-        me.add_action('properties.PropGroups')
-        me.add_action('properties.PropTypes')
+        config_props.add_action('properties.PropGroups',can_view=perms.is_expert)
+        config_props.add_action('properties.PropTypes',can_view=perms.is_expert)
         for pg in properties.PropGroup.objects.all():
             #~ mm.add_request_action(properties.PropsByGroup().request(master_instance=pg),label=pg.name)
-            mm.add_action('properties.PropsByGroup',params=dict(master_instance=pg),label=pg.name)
+            config_props.add_action('properties.PropsByGroup',params=dict(master_instance=pg),label=pg.name)
         
-        ma.add_action('properties.PropsByGroup')
+        #~ config_props.add_action('properties.PropsByGroup',can_view=perms.is_staff)
         #~ ma.add_action('dsbe.Skills1')
         #~ ma.add_action('dsbe.Skills2')
         #~ ma.add_action('dsbe.Skills3')
-        me.add_action('countries.Languages')
-        mm.add_action('countries.Countries')
-        mm.add_action('countries.Cities')
         #~ me.add_action('auth.Permissions')
         #~ ma.add_action('auth.Users')
-        ma.add_action('users.Users')
         #~ me.add_action('auth.Groups')
         #~ m.add_action('dsbe.DrivingLicenses')
-        mm.add_action('dsbe.StudyTypes')
-        #~ m.add_action('dsbe.StudyContents')
-        mm.add_action('dsbe.Activities')
-        mm.add_action('dsbe.ExclusionTypes')
-        mm.add_action('dsbe.AidTypes')
-        mm.add_action('dsbe.ContractEndings')
+        config_cv.add_action('dsbe.StudyTypes')
+        config_cv.add_action('dsbe.Activities')
+        
+        config_dsbe.add_action('dsbe.ExclusionTypes')
+        config_dsbe.add_action('dsbe.AidTypes')
+        config_dsbe.add_action('dsbe.ContractEndings')
         #~ m.add_action('dsbe.JobTypes')
-        mm.add_action('dsbe.ExamPolicies')
+        config_dsbe.add_action('dsbe.ExamPolicies')
         #~ m.add_action('dsbe.CoachingTypes')
-        mm.add_action('links.LinkTypes')
-        mm.add_action('uploads.UploadTypes')
-        m.add_action('properties.Properties')
+        
+        config_etc.add_action('links.LinkTypes')
+        config_etc.add_action('uploads.UploadTypes')
+        config_etc.add_action('users.Users',can_view=perms.is_staff)
+        
+        #~ config_etc.add_instance_action(self.config,label=_('Site Configuration'),can_view=perms.is_staff)
+        config_etc.add_instance_action(self.config,can_view=perms.is_staff)
+        
 
-        m = sitemenu.add_menu("explorer",_("E~xplorer"),
+        m = cfg.add_menu("explorer",_("E~xplorer"),
           can_view=perms.is_staff)
         #m.add_action('properties.PropChoices')
         #~ m.add_action('properties.PropValues')
@@ -136,6 +150,7 @@ class Lino(Lino):
         m.add_action('dsbe.CourseRequests')
         m.add_action('contenttypes.ContentTypes')
         m.add_action('dsbe.PersonSearches')
+        m.add_action('properties.Properties')
 
         
         m = self.add_menu("help",_("~Help"))
@@ -146,6 +161,9 @@ class Lino(Lino):
         self.main_menu.items.append(dict(
           xtype='button',text=_("Home"),
           handler=js_code("function() {window.location='/';}")))
+      except Exception,e:
+        import traceback
+        traceback.print_exc(e)
 
 
 LINO = Lino(__file__)

@@ -55,6 +55,10 @@ class MenuItem:
         self.request = request
         self.instance = instance
         
+        if instance is not None:
+            if label is None:
+                label = unicode(instance)
+                
         if action is not None:
             if name is None:
                 name = action.name

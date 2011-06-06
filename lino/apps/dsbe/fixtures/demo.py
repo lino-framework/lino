@@ -175,15 +175,10 @@ def objects():
     
     
     #~ oshz = Company.objects.get(name=u"ÖSHZ Eupen")
-    schule = StudyType.objects.get(name=u"Schule")
-    uni = StudyType.objects.get(name=u"Universität")
-    #~ abi = StudyContent.objects.get(name=u"Abitur")
-    abi = u"Abitur"
     
     
     #~ project = Instantiator('projects.Project').build
     note = Instantiator('notes.Note').build
-    study = Instantiator('dsbe.Study').build
     langk = Instantiator('dsbe.LanguageKnowledge').build
 
     user = auth.User.objects.get(username='user')
@@ -236,6 +231,11 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
 
 """))
     
+    schule = StudyType.objects.get(pk=1)
+    uni = StudyType.objects.get(pk=4)
+    #~ abi = StudyContent.objects.get(name=u"Abitur")
+    abi = u"Abitur"
+    study = Instantiator('dsbe.Study').build
         
     yield study(person=luc,type=schule,content=abi,started='19740901',stopped='19860630')
     yield study(person=gerd,type=schule,content=abi,started='19740901',stopped='19860630')
@@ -386,3 +386,11 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     p = Person.objects.get(name=u"Ausdemwald Alfons")
     p.coach1 = User.objects.get(username='root')
     p.save()
+
+    persongroup = Instantiator('dsbe.PersonGroup','name').build
+    yield persongroup(u"Bilan / Détermination Rémobilisation")
+    yield persongroup(u"Préformation")
+    yield persongroup(u"Formation")
+    yield persongroup(u"Recherche active emplois")
+    yield persongroup(u"Travail")
+

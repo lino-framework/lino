@@ -1,4 +1,4 @@
-:label: Kursangebot
+:label: Courses
 
 main = 
   dsbe.CoursesByProvider

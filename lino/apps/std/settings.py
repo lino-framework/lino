@@ -34,7 +34,7 @@ LINO = Lino(__file__)
 #~ DBLOGFILE = 'auto'
 USE_FIREBUG = False
 USE_GRIDFILTERS = True
-MODEL_DEBUG = True
+#~ MODEL_DEBUG = True
 #~ PROJECT_DIR = normpath(dirname(__file__))
 #~ USER_INTERFACES = [
   #~ 'lino.ui.extjsu',

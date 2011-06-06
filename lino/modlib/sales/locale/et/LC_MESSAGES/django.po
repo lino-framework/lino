@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.sales\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-31 21:05+0100\n"
+"POT-Creation-Date: 2011-06-06 20:35+0100\n"
 "PO-Revision-Date: 2011-03-02 21:33+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: et <et>\n"
@@ -15,58 +15,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-
-#: .\models.py:57
-msgid "Recipient"
-msgstr "Saaja"
-
-#: .\models.py:58
-msgid "Date"
-msgstr "Kuupäev"
-
-#: .\models.py:59
-msgid "Your reference"
-msgstr ""
-
-#: .\models.py:60
-msgid "Product"
-msgstr ""
-
-#: .\models.py:61
-msgid "Title"
-msgstr "Pealkiri"
-
-#: .\models.py:62
-msgid "Description"
-msgstr "Nimetus"
-
-#: .\models.py:63
-msgid "Unit price"
-msgstr "Tükihind"
-
-#: .\models.py:64
-msgid "Quantity"
-msgstr "Kogus"
-
-#: .\models.py:65
-msgid "Total"
-msgstr "Kokku"
-
-#: .\models.py:66
-msgid "excl. VAT"
-msgstr "km-ta"
-
-#: .\models.py:67
-msgid "incl. VAT"
-msgstr "km-ga"
-
-#: .\models.py:68
-msgid "Invoicing mode"
-msgstr "Arve koostamise viis"
-
-#: .\models.py:69
-msgid "Shipping mode"
-msgstr "Kättetoimatamise viis"
 
 #: .\models.py:80
 #, fuzzy
@@ -110,14 +58,47 @@ msgstr ""
 msgid "Sales Rules"
 msgstr ""
 
-#: .\models.py:789
+#: .\models.py:797
 msgid "payment term"
 msgstr "Tasumistingimused"
 
-#: .\models.py:795
+#: .\models.py:803
 msgid "VAT exempt"
 msgstr ""
 
-#: .\models.py:801
+#: .\models.py:809
 msgid "item_vat"
 msgstr ""
+
+#~ msgid "Recipient"
+#~ msgstr "Saaja"
+
+#~ msgid "Date"
+#~ msgstr "Kuupäev"
+
+#~ msgid "Title"
+#~ msgstr "Pealkiri"
+
+#~ msgid "Description"
+#~ msgstr "Nimetus"
+
+#~ msgid "Unit price"
+#~ msgstr "Tükihind"
+
+#~ msgid "Quantity"
+#~ msgstr "Kogus"
+
+#~ msgid "Total"
+#~ msgstr "Kokku"
+
+#~ msgid "excl. VAT"
+#~ msgstr "km-ta"
+
+#~ msgid "incl. VAT"
+#~ msgstr "km-ga"
+
+#~ msgid "Invoicing mode"
+#~ msgstr "Arve koostamise viis"
+
+#~ msgid "Shipping mode"
+#~ msgstr "Kättetoimatamise viis"

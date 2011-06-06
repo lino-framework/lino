@@ -53,16 +53,20 @@ class User(models.Model):
     first_name = models.CharField(_('first name'), max_length=30, blank=True)
     last_name = models.CharField(_('last name'), max_length=30, blank=True)
     email = models.EmailField(_('e-mail address'), blank=True)
-    is_staff = models.BooleanField(_('staff status'), default=False, 
+    is_staff = models.BooleanField(_('is staff'), default=False, 
         help_text=_("""
         Designates whether the user can log into this admin site.
         """))
-    is_active = models.BooleanField(_('active'), default=True, 
+    is_expert = models.BooleanField(_('is expert'), default=False, 
+        help_text=_("""
+        Designates whether this user has access to functions that require expert rights.
+        """))
+    is_active = models.BooleanField(_('is active'), default=True, 
         help_text=_("""
         Designates whether this user should be treated as active. 
         Unselect this instead of deleting accounts.
         """))
-    is_superuser = models.BooleanField(_('superuser status'), 
+    is_superuser = models.BooleanField(_('is superuser'), 
         default=False, 
         help_text=_("""
         Designates that this user has all permissions without 
@@ -96,5 +100,5 @@ class Users(reports.Report):
     model = User
     #~ order_by = "last_name first_name".split()
     order_by = ["username"]
-    column_names = 'username first_name last_name is_active id is_superuser is_staff last_login date_joined'
+    column_names = 'username first_name last_name is_active is_staff is_expert is_superuser *'
 

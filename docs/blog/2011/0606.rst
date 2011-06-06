@@ -65,3 +65,17 @@ dann auf "Edit text in own window" klickte (um mehr
 Formatierungsmöglichkeiten zu haben), dann wurden die Änderungen 
 nicht ins eigene Fenster übernommen. 
 
+Checkin 20110606c.
+
+Small changes for Brussels
+--------------------------
+
+- Translations to french (in .po files and in fixtures)
+- Less chaotic structure of configuration menu
+- :attr:`lino.apps.dsbe.models.StudyType.name` is now a babel field.
+- New field :attr:`lino.modlib.users.models.User.is_expert`.
+- initdb didn't modify existing tables. I had to quasi reimplement the reset command. 
+  initdb does now a manual DROP TABLE for all tables in all applications.
+  
+Checkin 20110606d.
+  

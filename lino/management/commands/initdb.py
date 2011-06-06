@@ -24,6 +24,12 @@ from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 
+from django.core.management.sql import sql_delete
+from django.core.management.color import no_style
+#~ from django.core.management.sql import sql_reset
+from django.db import connections, transaction, DEFAULT_DB_ALIAS
+from django.db import models
+
 import lino
 from lino.core.coretools import app_labels
 from lino.utils import *
@@ -37,27 +43,51 @@ class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
         make_option('--noinput', action='store_false', dest='interactive', default=True,
             help='Do not prompt for input of any kind.'),
+        make_option('--database', action='store', dest='database',
+            default=DEFAULT_DB_ALIAS, help='Nominates a database to reset. '
+                'Defaults to the "default" database.'),
     ) 
 
     def handle(self, *args, **options):
             
         if not dblogger.logger.isEnabledFor(logging.INFO):
             raise CommandError("System logger must be enabled for INFO")
-        dbname = settings.DATABASES['default']['NAME']
+        using = options.get('database', DEFAULT_DB_ALIAS)
+        dbname = settings.DATABASES[using]['NAME']
         if options.get('interactive'):
             if not confirm("Gonna flush your database (%s).\nAre you sure (y/n) ?" % dbname):
                 raise CommandError("User abort.")
         #~ logLevel = dblogger.logger.level
         #~ if logLevel > logging.DEBUG:
             #~ dblogger.logger.setLevel(logging.DEBUG)
+            
+        conn = connections[using]
+
+        #~ sql_list = u'\n'.join(sql_reset(app, no_style(), conn)).encode('utf-8')
         
         dblogger.info("Lino initdb %s started on database %s.", args, dbname)
         dblogger.info(lino.welcome_text())
         options.update(interactive=False)
-        apps = app_labels()
+        app_list = [models.get_app(app_label) for app_label in app_labels()]
+        for app in app_list:
+            #~ app_label = app.__name__.split('.')[-2]
+            sql_list = sql_delete(app,no_style(),conn)
+            #~ print app_label, ':', sql_list
+            try:
+                cursor = conn.cursor()
+                for sql in sql_list:
+                    #~ print sql
+                    cursor.execute(sql)
+            except Exception, e:
+                transaction.rollback_unless_managed()
+                raise
+        transaction.commit_unless_managed()
+        
+        
         #~ call_command('reset',*apps,**options)
-        call_command('syncdb',load_initial_data=False,**options)
-        call_command('flush',**options)
+        #~ call_command('syncdb',load_initial_data=False,**options)
+        call_command('syncdb',**options)
+        #~ call_command('flush',**options)
         call_command('loaddata',*args,**options)
         #~ if logLevel > logging.DEBUG:
             #~ dblogger.logger.setLevel(logLevel)

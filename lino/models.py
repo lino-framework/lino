@@ -53,7 +53,7 @@ class SiteConfig(models.Model):
         return r
    
     def __unicode__(self):
-        return force_unicode(_("Site Configuration"))
+        return force_unicode(_("Global Site Parameters"))
 
 class SiteConfigs(reports.Report):
     model = SiteConfig
@@ -102,7 +102,7 @@ class ContentTypes(reports.Report):
 def add_site_menu(site):
     m = site.add_menu("site",_("~Site"))
     #~ m.add_action('system.SiteConfigs',can_view=perms.is_staff,params=dict(pk=1))
-    m.add_instance_action(site.config,label=_('Site Configuration'),can_view=perms.is_staff)
+    m.add_instance_action(site.config,label=_('Global Site Parameters'),can_view=perms.is_staff)
     return m
     #~ m.add_action('lino.SiteConfigs.detail',
       #~ label=_('Site Configuration'),

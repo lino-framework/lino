@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-31 21:04+0100\n"
-"PO-Revision-Date: 2011-05-31 23:13+0200\n"
+"POT-Creation-Date: 2011-06-06 20:34+0100\n"
+"PO-Revision-Date: 2011-06-06 22:37+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr <lino-users@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -26,8 +26,8 @@ msgstr "Méthode de constuction par défault"
 
 #: .\models.py:56
 #: .\models.py:105
-msgid "Site Configuration"
-msgstr "Configuration du site"
+msgid "Global Site Parameters"
+msgstr "Paramètres globaux du Site"
 
 #: .\models.py:103
 msgid "~Site"
@@ -64,20 +64,20 @@ msgstr "Effacer"
 msgid "Save"
 msgstr "Sauvegarder"
 
-#: .\reports.py:549
+#: .\reports.py:550
 #, python-format
 msgid "User %(user)s cannot view %(report)s."
 msgstr "L'utilisateur %(user)s ne peut pas voir %(report)s"
 
-#: .\reports.py:757
+#: .\reports.py:760
 msgid "Yes"
 msgstr "Oui"
 
-#: .\reports.py:757
+#: .\reports.py:760
 msgid "No"
 msgstr "Non"
 
-#: .\reports.py:1032
+#: .\reports.py:1039
 #, python-format
 msgid "%(details)s of %(master)s"
 msgstr "%(details)s de %(master)s"
@@ -220,22 +220,14 @@ msgid "Existing primary key value %r may not be modified."
 msgstr "La clé primaire %r existante ne peut être modifiée"
 
 #: .\ui\store.py:373
-#: .\ui\extjs3\ext_store.py:385
+#: .\ui\extjs3\ext_store.py:395
 #: .\ui\extjs4\ext_store.py:388
 #: .\ui\qx\qx_store.py:370
 #, python-format
 msgid "%r (invalid choice)"
 msgstr "%r (choix non valide)"
 
-#: .\ui\extjs3\ext_elems.py:487
-#: .\ui\extjs3\ext_elems.py:1258
-#: .\ui\extjs3\ext_ui.py:1372
-#: .\ui\extjs4\ext_ui.py:1333
-#: .\ui\qx\qx_ui.py:1076
-msgid "Edit"
-msgstr "Editer"
-
-#: .\ui\extjs3\ext_elems.py:644
+#: .\ui\extjs3\ext_elems.py:660
 #: .\ui\extjs4\ext_elems.py:569
 #: .\ui\qx\qx_elems.py:555
 #, python-format
@@ -318,11 +310,17 @@ msgstr "L'action %(action)s a échoué pour %(record)s: %(error)s"
 msgid "Choices for %s"
 msgstr "Choix pour %s"
 
-#: .\ui\extjs3\ext_ui.py:1363
+#: .\ui\extjs3\ext_ui.py:1361
 #: .\ui\extjs4\ext_ui.py:1325
 #: .\ui\qx\qx_ui.py:1068
 msgid "Upload"
 msgstr "Uploader"
+
+#: .\ui\extjs3\ext_ui.py:1370
+#: .\ui\extjs4\ext_ui.py:1333
+#: .\ui\qx\qx_ui.py:1076
+msgid "Edit"
+msgstr "Editer"
 
 #: .\utils\choicelists.py:145
 #, python-format
@@ -336,6 +334,9 @@ msgstr "Certainement pas...beaucoup"
 #: .\utils\choicelists.py:228
 msgid "not at all...very well"
 msgstr "pas du tout...très bien"
+
+#~ msgid "Site Configuration"
+#~ msgstr "Configuration du site"
 
 #~ msgid "Invalid value %(value). Must be one of (%(values)s)"
 #~ msgstr ""

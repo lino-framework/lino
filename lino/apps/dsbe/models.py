@@ -299,7 +299,7 @@ class Person(Partner,contacts.Person):
     is_senior = models.BooleanField(verbose_name=_("is senior"))
     #~ is_minor = models.BooleanField(verbose_name=_("is minor"))
     group = models.ForeignKey("dsbe.PersonGroup",blank=True,null=True,
-        verbose_name=_("Group"))
+        verbose_name=_("Integration phase"))
     #~ is_dsbe = models.BooleanField(verbose_name=_("is coached"),default=False)
     "Indicates whether this Person is coached."
     
@@ -704,15 +704,18 @@ class Companies(contacts.Companies):
 # PERSON GROUP
 #
 class PersonGroup(models.Model):
+    """Integration Phase (previously "Person Group")
+    """
     name = models.CharField(_("Designation"),max_length=200)
     #~ text = models.TextField(_("Description"),blank=True,null=True)
     class Meta:
-        verbose_name = _("person group")
-        verbose_name_plural = _("person groups")
+        verbose_name = _("Integration Phase")
+        verbose_name_plural = _("Integration Phases")
     def __unicode__(self):
         return self.name
 
 class PersonGroups(reports.Report):
+    """List of Integration Phases"""
     model = PersonGroup
     order_by = ["name"]
 
@@ -721,13 +724,18 @@ class PersonGroups(reports.Report):
 # STUDY TYPE
 #
 class StudyType(models.Model):
-    name = models.CharField(_("Designation"),max_length=200)
     #~ text = models.TextField(_("Description"),blank=True,null=True)
     class Meta:
         verbose_name = _("study type")
         verbose_name_plural = _("study types")
+        
+    #~ name = models.CharField(_("Designation"),max_length=200)
+    name = babel.BabelCharField(_("Designation"),max_length=200)
+    
     def __unicode__(self):
-        return self.name
+        return unicode(babel.babelattr(self,'name'))
+    #~ def __unicode__(self):
+        #~ return self.name
 
 class StudyTypes(reports.Report):
     #~ label = _('Study types')

@@ -22,10 +22,20 @@ class always(Condition):
     @staticmethod
     def passes(user): return True
       
-class is_staff(Condition):        
+class is_staff(Condition):
     @staticmethod
     def passes(user):
-        return user.is_staff
+        return user.is_staff or user.is_superuser
+        
+#~ class is_superuser(Condition):
+    #~ @staticmethod
+    #~ def passes(user):
+        #~ return user.is_superuser
+        
+class is_expert(Condition):
+    @staticmethod
+    def passes(user):
+        return user.is_expert or user.is_superuser
         
 class is_authenticated(Condition):
     @staticmethod

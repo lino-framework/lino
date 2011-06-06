@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-31 21:04+0100\n"
+"POT-Creation-Date: 2011-06-06 20:34+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,7 +25,7 @@ msgid "Default build method"
 msgstr ""
 
 #: .\models.py:56 .\models.py:105
-msgid "Site Configuration"
+msgid "Global Site Parameters"
 msgstr ""
 
 #: .\models.py:103
@@ -62,20 +62,20 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
-#: .\reports.py:549
+#: .\reports.py:550
 #, python-format
 msgid "User %(user)s cannot view %(report)s."
 msgstr ""
 
-#: .\reports.py:757
+#: .\reports.py:760
 msgid "Yes"
 msgstr ""
 
-#: .\reports.py:757
+#: .\reports.py:760
 msgid "No"
 msgstr ""
 
-#: .\reports.py:1032
+#: .\reports.py:1039
 #, python-format
 msgid "%(details)s of %(master)s"
 msgstr ""
@@ -215,18 +215,13 @@ msgstr ""
 msgid "Existing primary key value %r may not be modified."
 msgstr ""
 
-#: .\ui\store.py:373 .\ui\extjs3\ext_store.py:385 .\ui\extjs4\ext_store.py:388
+#: .\ui\store.py:373 .\ui\extjs3\ext_store.py:395 .\ui\extjs4\ext_store.py:388
 #: .\ui\qx\qx_store.py:370
 #, python-format
 msgid "%r (invalid choice)"
 msgstr ""
 
-#: .\ui\extjs3\ext_elems.py:487 .\ui\extjs3\ext_elems.py:1258
-#: .\ui\extjs3\ext_ui.py:1372 .\ui\extjs4\ext_ui.py:1333 .\ui\qx\qx_ui.py:1076
-msgid "Edit"
-msgstr ""
-
-#: .\ui\extjs3\ext_elems.py:644 .\ui\extjs4\ext_elems.py:569
+#: .\ui\extjs3\ext_elems.py:660 .\ui\extjs4\ext_elems.py:569
 #: .\ui\qx\qx_elems.py:555
 #, python-format
 msgid "Select a %s..."
@@ -288,8 +283,12 @@ msgstr ""
 msgid "Choices for %s"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1363 .\ui\extjs4\ext_ui.py:1325 .\ui\qx\qx_ui.py:1068
+#: .\ui\extjs3\ext_ui.py:1361 .\ui\extjs4\ext_ui.py:1325 .\ui\qx\qx_ui.py:1068
 msgid "Upload"
+msgstr ""
+
+#: .\ui\extjs3\ext_ui.py:1370 .\ui\extjs4\ext_ui.py:1333 .\ui\qx\qx_ui.py:1076
+msgid "Edit"
 msgstr ""
 
 #: .\utils\choicelists.py:145
