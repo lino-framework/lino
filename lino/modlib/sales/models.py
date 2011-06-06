@@ -53,22 +53,22 @@ contacts = resolve_app('contacts')
 #~ from lino.modlib.contacts import models as contacts
 
 
-dummy_messages = [
-  _("Recipient"),
-  _("Date"),
-  _("Your reference"),
-  _("Product"),
-  _("Title"),
-  _("Description"),
-  _("Unit price"),
-  _("Quantity"),
-  _("Total"),
-  _("excl. VAT"),
-  _("incl. VAT"),
-  _("Invoicing mode"),
-  _("Shipping mode"),
-]
-del dummy_messages
+#~ dummy_messages = [
+  #~ _("Recipient"),
+  #~ _("Date"),
+  #~ _("Your reference"),
+  #~ _("Product"),
+  #~ _("Title"),
+  #~ _("Description"),
+  #~ _("Unit price"),
+  #~ _("Quantity"),
+  #~ _("Total"),
+  #~ _("excl. VAT"),
+  #~ _("incl. VAT"),
+  #~ _("Invoicing mode"),
+  #~ _("Shipping mode"),
+#~ ]
+#~ del dummy_messages
 
 
 
@@ -328,6 +328,7 @@ class SalesDocument(
             #~ print "  done before_save:", self
         
 
+            
     def full_clean(self,*args,**kw):
         #~ logger.info("SalesDocument.full_clean")
         super(SalesDocument,self).full_clean(*args,**kw)
@@ -429,7 +430,14 @@ class Order(SalesDocument):
         else:
             covered_until = self.start_date - ONE_DAY
             
-        expect_payment = self.payment_term.get_due_date(make_until)
+        if self.payment_term is None:
+            r = get_sales_rule(self)
+            payment_term = r.payment_term
+        else:
+            payment_term = self.payment_term
+            
+            
+        expect_payment = payment_term.get_due_date(make_until)
         expect_payment += relativedelta(days=self.imode.advance_days)
           
         if expect_payment < covered_until:

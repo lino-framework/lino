@@ -80,6 +80,7 @@ class Journal(models.Model):
     printed_name = BabelCharField(max_length=100,blank=True)
     
     def get_doc_model(self):
+        """The model of documents in this Journal."""
         #print self,DOCTYPE_CLASSES, self.doctype
         return DOCTYPES[self.doctype][0]
 
@@ -87,13 +88,15 @@ class Journal(models.Model):
         return DOCTYPES[self.doctype][1]()
 
     def create_document(self,**kw):
+        """Create an instance of this Journal's document model (:meth:`get_doc_model`)."""
         cl = self.get_doc_model()
-        kw.update(journal=self)
+        #~ kw.update(journal=self) # wouldn't work. See Django ticket #10808
         try:
             doc = cl(**kw)
         except TypeError,e:
             #~ print 20100804, cl
             raise
+        doc.journal = self
         #~ doc.full_clean()
         #~ doc.save()
         return doc

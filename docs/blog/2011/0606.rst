@@ -1,6 +1,9 @@
 20110606
 ========
 
+Zu schnell geschossen
+---------------------
+
 Upps, in der Tat, bei meinem :djangoticket:`16151` 
 hatte ich zu schnell geschossen. 
 Die beiden Meldungen "No fixtures found" kam ja nur,
@@ -9,6 +12,9 @@ jeweils ein `loaddata initial_data` aufriefen (was ich ja nun durch das undokume
 Meine Änderung im Django-Code hatte mir geholfen, 
 das zu verstehen. Sie funktionierte aber nur zufällig, 
 weil es zwei Aufrufe mit jeweils einem Argument waren.
+
+Test-Suite
+----------
 
 Die Tests in test_apps führen ja ein richtiges Schattendasein. 
 (Ich jedenfalls habe sie schon ewig nicht mehr laufenlassen...)
@@ -23,4 +29,30 @@ In diesem Fall wird keine Tabelle in der Datenbank erstellt.
 Aber wie kann ich das testen?
 Lino sollte für solche Modelle keinen Report machen.
 
+Checkin 20110606
+
+:mod:`lino.apps.igen` no longer depends on :djangoticket:`10808`
+----------------------------------------------------------------
+
+Die Tests von :mod:`lino.apps.igen` funktionieren weiterhin nicht
+(`ValidationError: {'journal': [u'This field cannot be null.']}`), 
+unser altbekanntes :djangoticket:`10808`.
+
+Soll ich ihnen wenigstens den Patch anpassen? 
+Updated to revision 16331.
+Aber die Arbeit lohnt sich nicht, 
+solange mtredinnick Bedenken hat.
+Ich habe ja meine Erfahrungen mit Django.
+
+Aber jetzt bin ich es Leid, darauf zu warten, jetzt umgehe ich es:
+Änderungen in 
+:meth:`lino.modlib.sales.models.Journal.create_document`
+und in 
+:meth:`lino.modlib.sales.fixtures.demo`.
+In der demo fixture kann ich deswegen nicht den Instantiator 
+verwenden, weil der ja nicht ahnen kann, dass er 
+`Journal.create_document <lino.modlib.journals.models.Journal.create_document>`
+verwenden muss. Schade.
+
+Checkin 20110606b
 
