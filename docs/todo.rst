@@ -9,12 +9,6 @@ for which I hope for help from other people.
 Short-term
 ----------
 
-#.  Die Stadt Eupen war 5x automatisch angelegt worden. 
-    Wie kann das kommen?
-    Hat vielleicht ein schnellfingriger Benutzer den Namen in 
-    die ComboBox getippt, bevor diese ihren Store gefüllt hatte? 
-    Comboboxen müssten in der Tat gegen diesen Fall absichern.
-    
 #.  Die Textfelder in Notizen und Verträgen sind momentan 
     fälschlicherweise nicht schreibgeschützt wenn das Dokument 
     schon gedruckt wurde. Aber wenn man was drin ändert, 
@@ -22,11 +16,35 @@ Short-term
     Ext.ux.TinyMCE.disable() scheint nichts zu bewirken. 
     Habe schon einiges probiert und nun dem Autor eine Mail geschickt.
 
-#.  Weiter testen und dokumentieren: 
-    Wird markup in pdf (appy) richtig ausgedruckt?
-    Zum Beispiel funktionieren Titel noch nicht.
-    :doc:`Wysiwyg-Editor </tickets/42>`
+#.  Ausdruck Verträge: jetzt wo die mehrzeiligen Textfelder formatierbar 
+    sind, haben wir ein kleines Problem: Bisher wurde z.B. in der 
+    Dokumentvorlage ein Wort vor dem eigentlichen Text eingefügt, 
+    wenn dieser nicht leer war. Z.B. Wenn man im Feld "Zielsetzungen" 
+    den Text "Blablabla..." eintrug, dann wurde "Zielsetzungen: Blablabla..." 
+    gedruckt. Um das in dieser Form zu erhalten, müste ich einen Patch für 
+    :term:`appy.pod` schreiben, der folgendes ermöglicht::
+    
+      do text
+      from html(self.goals,wrapper="<p><b>Zielsetzungen</b>: %s </p>")
+
+#.  Selbstlernende Felder: 
+    die Stadt Eupen war 5x automatisch angelegt worden. 
+    Also irgendwie schaffen es die Benutzer, Lino durcheinander zu bringen.
+    Aber wie machen die das?
+    Zu beobachten.
+    Hat vielleicht ein schnellfingriger Benutzer den Namen in 
+    die ComboBox getippt, bevor diese ihren Store gefüllt hatte? 
+    Comboboxen müssten in der Tat gegen diesen Fall absichern.
+    
+#.  :doc:`Wysiwyg-Editor </tickets/42>` weiter testen, 
+    was noch nicht gedruckt wird.
+    Zum Beispiel Aufzählungen werden beim Ausdruck einfach übergangen.
     Enumerations are currently not being rendered in printable documents.
+    
+#.  Button "Cache löschen" deaktivieren, wenn
+    :attr:`lino.mixins.printable.Printable.must_build` `True` ist.
+    Dazu muss `disabled_fields` in der :xfile:`linolib.js` auch 
+    auf wor actions angewendet werden
 
 #.  Externe Links (Lesezeichen) und Uploads machen können, 
     indem man sie von einer anderen Anwendung

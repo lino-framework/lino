@@ -54,5 +54,14 @@ verwenden, weil der ja nicht ahnen kann, dass er
 `Journal.create_document <lino.modlib.journals.models.Journal.create_document>`
 verwenden muss. Schade.
 
-Checkin 20110606b
+Checkin 20110606b.
+
+Noch ein Bug
+------------
+
+Noch ein Bug weniger: 
+wenn man in einem RichTextField inline etwas änderte und 
+dann auf "Edit text in own window" klickte (um mehr 
+Formatierungsmöglichkeiten zu haben), dann wurden die Änderungen 
+nicht ins eigene Fenster übernommen. 
 

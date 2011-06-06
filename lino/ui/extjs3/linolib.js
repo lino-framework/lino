@@ -1373,21 +1373,28 @@ Lino.RichTextPanel = Ext.extend(Ext.Panel,{
     //~ config.title = config.label;
     //~ delete config.label;
     this.before_init(ww,config,params);
+    
+    this.editor = new Ext.ux.TinyMCE(editorConfig);
     var t = this;
     config.tools = [{
                       qtip: "$_('Edit text in own window')", 
                       id: "up",
-                      handler: function(){Lino.edit_tinymce_text(t)}
+                      handler: function(){
+                        if(t.editor.isDirty()) {
+                            var record = t.ww.get_current_record();
+                            record.data[t.editor.name] = t.editor.getValue();
+                        }
+                        Lino.edit_tinymce_text(t)
+                      }
                     }];
     
-    this.editor = new Ext.ux.TinyMCE(editorConfig);
     config.items = this.editor;
     config.layout = "fit";
     Lino.RichTextPanel.superclass.constructor.call(this, config);
   },
   refresh : function(after) {
     var record = this.ww.get_current_record();
-    console.log('RichTextPanel.refresh()',this.title,record,record.title);
+    //~ console.log('RichTextPanel.refresh()',this.title,record,record.title);
     var todo = function() {
       //~ this.set_base_params(this.ww.get_base_params());
       this.set_base_params(this.ww.get_master_params());
