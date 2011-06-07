@@ -101,30 +101,50 @@ class Loader:
         #~ print ENCODING
         
         fn = self.table_name+".csv"
-        if True:
-            fd = open(fn,'w')
-            fd.write(s)
-            fd.close()
-            print "Wrote file", fn
-            for row in ucsv.UnicodeReader(open(fn,'r'),encoding=ENCODING):
-                print row
-                raise Exception()
-        else:
-            s = s.decode(ENCODING)
-            fd = codecs.open(fn,"w",encoding="utf8")
-            fd.write(s)
-            fd.close()
-            print "Wrote file", fn
-            for row in ucsv.UnicodeReader(open(fn,'r'),encoding='utf-8'):
-                print row
-                raise Exception()
+        fd = open(fn,'w')
+        fd.write(s)
+        fd.close()
+        print "Wrote file", fn
+        reader = ucsv.UnicodeReader(open(fn,'r'),encoding=ENCODING)
+        headers = reader.next()
+        assert headers == self.headers
+        for values in reader:
+            row = {}
+            for i,h in enumerate(self.headers):
+                row[h] = values[i]
+            obj = self.row2kw(row)
+            print obj
+            yield obj
     
     
 class PersonLoader(Loader):
     table_name = 'TBClient'
+    
     model = resolve_model('contacts.Person')
+    
+    headers = [u'IDClient', u'DateArrivee', u'NumeroDossier', 
+    u'Titre', u'Nom', u'Prénom', u'Rue', u'Adresse', u'Numero', 
+    u'Boite', u'IDCommuneCodePostal', u'Tel1', u'Tel2', u'GSM1', 
+    u'GSM2', u'Email', u'DateNaissance', u'IDPays', u'IDNationalite', 
+    u'NumeroNational', u'Conjoint', u'NEnfant', u'IBIS', u'Sexe', 
+    u'Statut', u'DateFin', u'RISEQRIS', u'DateOctroi', 
+    u'MontantRISEQRIS', u'Qualification', u'Phase', u'PIIS', 
+    u'Tutorat', u'IDASISP', u'IDASSSG', u'Remarques', u'IDTokAns', 
+    u'RPE', u'Art 35', u'DateDebutArt35', u'DateFinArt35', u'ALE', u'Update',
+    u'PermisDeTravail']    
+    
+    def row2kw(self,row):
+        kw = {}
+        kw.update(id=row['IDClient'])
+        kw.update(title=row['Titre'])
+        kw.update(name=row['Nom'])
+        kw.update(first_name=row[u'Prénom'])
+        kw.update(street=row[u'Rue'])
+        kw.update(street_no=row[u'Numero'])
+        kw.update(street_box=row[u'Boite'])
+        return self.model(**kw)
 
 def objects():
-    PersonLoader().load()
+    for o in PersonLoader().load(): yield o
     
     #~ reader = csv.reader(open(,'rb'))
