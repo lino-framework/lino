@@ -138,7 +138,7 @@ class PersonLoader(Loader):
         kw = {}
         kw.update(id=row['IDClient'])
         kw.update(title=row['Titre'])
-        kw.update(name=row['Nom'])
+        kw.update(name=row['Nom'] or "?")
         kw.update(first_name=row[u'Pr\xc3\xa9nom'])
         kw.update(street=row[u'Rue'])
         kw.update(street_no=row[u'Numero'])
