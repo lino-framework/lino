@@ -1,5 +1,38 @@
 20110607
 ========
 
+Nombres de clients par utilisateur et phase d'intégration
+---------------------------------------------------------
+
 New function :func:`lino.apps.dsbe.models.persons_by_user` returns a summary 
 table "Number of coached persons by user and integration phase".
+Check-in `20110607 <http://code.google.com/p/lino/source/detail?r=dbc359dffb52acec952a714f7a3afc4a4d6fdc8a>`_.
+
+
+Import data from existing .mdb file
+-----------------------------------
+
+Ein neuer Interessent hat seine bisherigen Daten in einer 
+Access-Anwendung als `.mdb`-Datei. Ich will ihm eine Fixture 
+schreiben, die seine Daten einliest.
+
+Die Fixture soll unter Debian laufen, also 
+Marc Hammonds odbc-Modul nützt uns nichts. Wäre auch Overkill, 
+denn ich will die Daten ja nur einmalig einlesen (wobei 
+dieser Vorgang im Laufe der Tests freilich viele Male 
+stattfinden wird, bis der Kunde auf Lino umsteigen kann).
+Am schönsten scheint mir `mdb-export` aus den `mdbtools` zu sein.
+
+Neue Fixture :mod:`lino.apps.dsbe.fixtures.pp2lino`. 
+Der Kunde muss dann einfach nur seine Datei ins `LINO.project_dir`
+kopieren und folgenden Befehl starten::
+
+  manage.py initdb pp2lino
+  
+
+Check-in `20110607b`
+um die Sache zu testen.
+
+- aptitude install mdbtools
+
+- mdb-export /path/to/mdbfile TBClient

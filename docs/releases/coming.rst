@@ -4,8 +4,19 @@ Coming
 New features
 ------------
 
-- WYSIWYG editor for `notes.Note.body`.
-  
+- WYSIWYG editor for `lino.modlib.notes.models.notes.Note.body` and the text fields in 
+- The `Configuration` menu has been tidied up.
+
+Bugs fixed
+----------
+
+- In folgenden Tabellen funktionierten die Bezeichnungen in fr nicht und müssen 
+  teilweise sogar beim Upgrade wiederhergestellt werden: 
+  Language, Country, ContractType, AidType
+
+- Die Felder `type` und `event_type` Notizen werden jetzt disabled_fields, 
+  wenn das Dokument ausgedruckt ist.
+
 
 Upgrade instructions
 --------------------
@@ -30,13 +41,12 @@ Lino site, see :doc:`/admin/upgrade`.
   Change your `dump` script.
   See :doc:`/blog/2011/0601`.
 
+- Adapt your document templates for text fields in Note and Contract.
 
 - Database migration: 
 
   - rename `.dpy` to `.py`
   
-  - Adapt your document templates for text fields in Note and Contract.
-
   - Lino 1.1.11 generated  (empty) generators for the models 
     from :mod:`django.contrib.auth` and :mod:`django.contrib.sessions`.
     And :mod:`django.contrib.sites` now also has been removed.
@@ -49,6 +59,10 @@ Lino site, see :doc:`/admin/upgrade`.
         #~ Site = resolve_model("sites.Site")
         ...
         #~ Session = resolve_model("sessions.Session")
+        
+  - :attr:`lino.apps.dsbe.models.StudyType.name` is now a babel field.
+  - New field :attr:`lino.modlib.users.models.User.is_expert`.
+  - New fields User.is_expert, StudyType.name now a BabelCharField
         
   - (not necessary because TinyMCE also accepts plain text)
     Existing content in `notes.Note.body` must be converted using 
