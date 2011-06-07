@@ -114,7 +114,7 @@ class Loader:
             for i,h in enumerate(self.headers):
                 row[h] = values[i]
             obj = self.row2kw(row)
-            print obj
+            #~ print obj
             yield obj
     
     
@@ -138,7 +138,10 @@ class PersonLoader(Loader):
         kw = {}
         kw.update(id=row['IDClient'])
         kw.update(title=row['Titre'])
-        kw.update(name=row['Nom'] or "?")
+        if row['Nom']:
+            kw.update(last_name=row['Nom'])
+        else:
+            kw.update(last_name="?")
         kw.update(first_name=row[u'Pr\xc3\xa9nom'])
         kw.update(street=row[u'Rue'])
         kw.update(street_no=row[u'Numero'])
