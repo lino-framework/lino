@@ -49,6 +49,8 @@ import sys
 #~ import csv
 import codecs
 from lino.utils import ucsv
+from lino.tools import resolve_model
+
 
 try:
   from subprocess import check_output
@@ -89,8 +91,6 @@ except ImportError:
             raise subprocess.CalledProcessError(retcode, cmd, output=output)
         return output
 
-from lino.tools import resolve_model
-
 
 class Loader:
     table_name = None
@@ -125,7 +125,7 @@ class PersonLoader(Loader):
     model = resolve_model('contacts.Person')
     
     headers = [u'IDClient', u'DateArrivee', u'NumeroDossier', 
-    u'Titre', u'Nom', u'Pr\xc3\xa9nom', u'Rue', u'Adresse', u'Numero', 
+    u'Titre', u'Nom', u'Prénom', u'Rue', u'Adresse', u'Numero', 
     u'Boite', u'IDCommuneCodePostal', u'Tel1', u'Tel2', u'GSM1', 
     u'GSM2', u'Email', u'DateNaissance', u'IDPays', u'IDNationalite', 
     u'NumeroNational', u'Conjoint', u'NEnfant', u'IBIS', u'Sexe', 
@@ -143,7 +143,7 @@ class PersonLoader(Loader):
             kw.update(last_name=row['Nom'])
         else:
             kw.update(last_name="?")
-        kw.update(first_name=row[u'Pr\xc3\xa9nom'])
+        kw.update(first_name=row[u'Prénom'])
         kw.update(street=row[u'Rue'])
         kw.update(street_no=row[u'Numero'])
         kw.update(street_box=row[u'Boite'])
