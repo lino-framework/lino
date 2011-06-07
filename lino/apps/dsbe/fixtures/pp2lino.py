@@ -107,7 +107,8 @@ class Loader:
         print "Wrote file", fn
         reader = ucsv.UnicodeReader(open(fn,'r'),encoding=ENCODING)
         headers = reader.next()
-        assert headers == self.headers
+        if not headers == self.headers:
+            raise Exception("%r != %r" % (headers,self.headers))
         for values in reader:
             row = {}
             for i,h in enumerate(self.headers):
