@@ -37,6 +37,11 @@ Usage of `mdbtools` command line::
     -q <char>      Use <char> to wrap text-like fields. Default is ".
     -X <char>      Use <char> to escape quoted characters within a field. Default is doubling.
     
+Before loading this fixture you must do set the encoding for mdb-export::
+
+  export MDB_ICONV=utf-8
+  export MDB_JET_CHARSET=utf-8
+  python manage.py initdb std all_countries all_cities be all_languages props pp2lino
 
 Thanks to http://farismadi.wordpress.com/2008/07/13/encoding-of-mdb-tool/ 
 for documenting the environment variables.
@@ -102,7 +107,10 @@ class Loader:
     
     def load(self):
         args = [MDBTOOLS_EXPORT, MDB_FILE, self.table_name]
-        s = check_output(args,executable=MDBTOOLS_EXPORT,env=dict(MDB_ICONV='utf-8',MDB_JET_CHARSET='utf-8'))
+        s = check_output(args,executable=MDBTOOLS_EXPORT,
+          env=dict(
+            MDB_ICONV='utf-8',
+            MDB_JET_CHARSET='utf-8'))
         #~ print ENCODING
         
         fn = self.table_name+".csv"
