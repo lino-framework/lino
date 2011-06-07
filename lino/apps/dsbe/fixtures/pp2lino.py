@@ -40,6 +40,7 @@ Usage of `mdbtools` command line::
 """
 
 import csv
+import codecs
 
 try:
   from subprocess import check_output
