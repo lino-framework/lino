@@ -36,6 +36,10 @@ Usage of `mdbtools` command line::
     -S             Sanitize names (replace spaces etc. with underscore)
     -q <char>      Use <char> to wrap text-like fields. Default is ".
     -X <char>      Use <char> to escape quoted characters within a field. Default is doubling.
+    
+
+Thanks to http://farismadi.wordpress.com/2008/07/13/encoding-of-mdb-tool/ 
+for documenting the environment variables.
 
 """
 
@@ -98,7 +102,7 @@ class Loader:
     
     def load(self):
         args = [MDBTOOLS_EXPORT, MDB_FILE, self.table_name]
-        s = check_output(args,executable=MDBTOOLS_EXPORT)
+        s = check_output(args,executable=MDBTOOLS_EXPORT,env=dict(MDB_ICONV='utf-8',MDB_JET_CHARSET='utf-8'))
         #~ print ENCODING
         
         fn = self.table_name+".csv"
@@ -144,7 +148,7 @@ class PersonLoader(Loader):
         else:
             kw.update(last_name="?")
         kw.update(first_name=row[u'Prénom'])
-        kw.update(street=row[u'Rue'])
+        kw.update(street=row[u'Rue']+' '+row[u'Adresse'])
         kw.update(street_no=row[u'Numero'])
         kw.update(street_box=row[u'Boite'])
         return self.model(**kw)
