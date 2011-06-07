@@ -197,7 +197,7 @@ def setup_site(self):
     by the first request.
     
     """
-  
+  try:
     logger.info(lino.welcome_text())
 
     if self._setup_done:
@@ -259,7 +259,8 @@ def setup_site(self):
     
     dblogger.info("Lino Site %r started. Languages: %s", self.title, ', '.join(babel.AVAILABLE_LANGUAGES))
     dblogger.info(lino.welcome_text())
-        
+  except Exception,e:
+    logger.exception(e)
 
 def generate_dummy_messages(self):
     fn = os.path.join(self.source_dir,'dummy_messages.py')
