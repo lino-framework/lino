@@ -41,6 +41,7 @@ Usage of `mdbtools` command line::
 
 import sys
 ENCODING = sys.stdout.encoding
+print ENCODING
 
 import csv
 import codecs
