@@ -99,15 +99,25 @@ class Loader:
         args = [MDBTOOLS_EXPORT, MDB_FILE, self.table_name]
         s = check_output(args,executable=MDBTOOLS_EXPORT)
         #~ print ENCODING
-        s = s.decode(ENCODING)
+        
         fn = self.table_name+".csv"
-        fd = codecs.open(fn,"w",encoding="utf8")
-        fd.write(s)
-        fd.close()
-        print "Wrote file", fn
-        for row in ucsv.UnicodeReader(fn):
-            print row
-            raise Exception()
+        if True:
+            fd = open(fn,'w')
+            fd.write(s)
+            fd.close()
+            print "Wrote file", fn
+            for row in ucsv.UnicodeReader(open(fn,'r'),encoding=ENCODING):
+                print row
+                raise Exception()
+        else:
+            s = s.decode(ENCODING)
+            fd = codecs.open(fn,"w",encoding="utf8")
+            fd.write(s)
+            fd.close()
+            print "Wrote file", fn
+            for row in ucsv.UnicodeReader(open(fn,'r'),encoding='utf-8'):
+                print row
+                raise Exception()
     
     
 class PersonLoader(Loader):
