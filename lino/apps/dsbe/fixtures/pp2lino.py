@@ -124,7 +124,7 @@ class PersonLoader(Loader):
     model = resolve_model('contacts.Person')
     
     headers = [u'IDClient', u'DateArrivee', u'NumeroDossier', 
-    u'Titre', u'Nom', u'Prénom', u'Rue', u'Adresse', u'Numero', 
+    u'Titre', u'Nom', u'Pr\xc3\xa9nom', u'Rue', u'Adresse', u'Numero', 
     u'Boite', u'IDCommuneCodePostal', u'Tel1', u'Tel2', u'GSM1', 
     u'GSM2', u'Email', u'DateNaissance', u'IDPays', u'IDNationalite', 
     u'NumeroNational', u'Conjoint', u'NEnfant', u'IBIS', u'Sexe', 
