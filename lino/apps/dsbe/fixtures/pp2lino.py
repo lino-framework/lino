@@ -39,11 +39,15 @@ Usage of `mdbtools` command line::
 
 """
 
-import sys
-ENCODING = sys.stdout.encoding
+ENCODING = 'latin1' # the encoding used by the mdb file
+MDB_FILE = 'PPv5MasterCopie.mdb'
+MDBTOOLS_EXPORT = 'mdb-export'
 
-import csv
+import sys
+#~ ENCODING = sys.stdout.encoding
+#~ import csv
 import codecs
+from lino.utils import ucsv
 
 try:
   from subprocess import check_output
@@ -86,8 +90,6 @@ except ImportError:
 
 from lino.tools import resolve_model
 
-MDB_FILE = 'PPv5MasterCopie.mdb'
-MDBTOOLS_EXPORT = 'mdb-export'
 
 class Loader:
     table_name = None
@@ -96,13 +98,16 @@ class Loader:
     def load(self):
         args = [MDBTOOLS_EXPORT, MDB_FILE, self.table_name]
         s = check_output(args,executable=MDBTOOLS_EXPORT)
-        print ENCODING
+        #~ print ENCODING
         s = s.decode(ENCODING)
         fn = self.table_name+".csv"
         fd = codecs.open(fn,"w",encoding="utf8")
         fd.write(s)
         fd.close()
         print "Wrote file", fn
+        for row in ucsv.UnicodeReader(fn):
+            print row
+            raise Exception()
     
     
 class PersonLoader(Loader):
