@@ -27,9 +27,8 @@ Neue Fixture :mod:`lino.apps.dsbe.fixtures.pp2lino`.
 Der Kunde muss dann einfach nur seine Datei ins `LINO.project_dir`
 kopieren und folgenden Befehl starten::
 
-  manage.py initdb pp2lino
+  python manage.py initdb std all_countries all_cities be all_languages props pp2lino
   
-
 Check-in `20110607b <http://code.google.com/p/lino/source/detail?r=52e8a5d14436510e5d224147bddfcfd0389e30a2>`
 um die Sache zu testen.
 
