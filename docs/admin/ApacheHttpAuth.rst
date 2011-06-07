@@ -36,8 +36,3 @@ Then, in your Apache config file (:file:`/etc/apache2/sites-available/default`):
   </Directory>
 
 
-Did you know? To watch all log files at once, you can do::
-
-  sudo tail -f /var/log/lino/system.log /var/log/lino/db.log /var/log/apache2/error.log /var/log/apache2/access.log
-  
-See also the `multitail` package

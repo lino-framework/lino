@@ -663,7 +663,7 @@ def persons_by_user():
     """Returns a summary table "Number of coached persons by user and integration phase"
     """
     #~ from django.utils.translation import ugettext as _
-    from lino.modlib.users.models import User  
+    #~ from lino.modlib.users.models import User  
     User = resolve_model('users.User')
     #~ from lino.apps.dsbe.models import PersonGroup,Person,only_coached_persons,only_my_persons
     headers = [cgi.escape(_("User")),cgi.escape(_("Total"))]

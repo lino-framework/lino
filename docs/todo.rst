@@ -9,6 +9,8 @@ for which I hope for help from other people.
 Short-term
 ----------
 
+#.  Layout Editor for `.dtl` doesn't work
+
 #.  Die Textfelder in Notizen und Verträgen sind momentan 
     fälschlicherweise nicht schreibgeschützt wenn das Dokument 
     schon gedruckt wurde. Aber wenn man was drin ändert, 

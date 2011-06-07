@@ -26,27 +26,54 @@ You'll need the following Debian packages installed:
 * Packages needed by Django applications to run in Apache2::
 
     apache2 apache2-doc apache2-mpm-prefork \
-      apache2-utils libexpat1 ssl-cert libapache2-mod-wsgi
+      libexpat1 libapache2-mod-wsgi
+      
+    ssl-cert       
     
 * Packages needed by Lino to work::
 
     python-dateutil python-yaml python-cheetah python-docutils
     
-* Optional packages needed by Lino in certain cases:
-
-  - tinymce (if :attr:`lino.Lino.use_tinymce` is `True`)
-  - python-daemon (if you run :term:`watch_tim` as a daemon)
-  
 * Some database frontend (choose one)::
 
     python-pysqlite2
     mysql-server python-mysqldb
-      
+    
+* If :attr:`lino.Lino.use_tinymce` is `True` (probably yes)::
+
+    tinymce 
+    
+* If you run :term:`watch_tim` as a daemon (probably not)::
+
+    python-daemon 
+    
+* If you want to import data from an `.mdb` file::
+
+    mdbtools
+    
+*  Maybe openoffice.org::
+
+    openoffice.org-headless
+  
+
+
+Create directories
+------------------
+
+Create some directories and make them writeable by www-data::
+
+  # mkdir /var/snapshots /var/log/lino /usr/local/django
+  # chgrp -R www-data /var/snapshots /var/log/lino /usr/local/django
+  # chmod -R g+ws /var/snapshots /var/log/lino  /usr/local/django
+
+``chmod g+s`` sets the SGID to ensure that when a new file is created in the directory 
+it will inherit the group of the directory.
+
 
 Download Lino
 -------------
 
-Create a directory :file:`/var/snapshots` and go to that directory::
+Go to the :file:`/var/snapshots` and do::
 
   hg clone https://lino.googlecode.com/hg/ lino
 
@@ -95,7 +122,9 @@ into `/var/snapshots/`::
   rm ext-3.3.1.zip
 
   wget http://launchpad.net/appy/0.6/0.6.6/+download/appy0.6.6.zip
-  unzip appy0.6.3.zip -d appy-0.6.3
+  unzip appy0.6.6.zip -d appy
+  
+Note: Lino didn't yet migrate to ExtJS 4.0. See :doc:`/tickets/40`
   
 Set up your Python path
 -----------------------
@@ -117,13 +146,9 @@ The file :xfile:`local.pth` itself should have the following content::
 
   /var/snapshots/lino
   /var/snapshots/django
-  /var/snapshots/appy-0.6.3
+  /var/snapshots/appy
   /usr/local/django  
   
-To see which directories are on your Python path::
-
-  python -c "import sys; print sys.path"
-
 
 Create mysql database
 ---------------------
@@ -154,13 +179,28 @@ Create your Django project directory
 
 You may either create your Django project from scratch 
 (as explained in Django's docs), or
-copy these files from one of the subdirs of 
-:file:`/var/snapshots/lino/lino/demos`.
+start with our wuggestions.
 
-Adapt :xfile:`settings.py` to your needs.
-Consider using a simplified version of :xfile:`settings.py` that 
-imports settings from one of the Lino demos. 
-For example::
+The :file:`__init__.py` must exist but can be empty::
+
+    touch __init__.py
+    
+We suggest the following :xfile:`manage.py` (see also :doc:`/blog/2011/0531`)::
+
+    #!/usr/bin/env python
+    import os
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'wsl.settings'
+
+    from django.core.management import execute_manager
+    import settings # Assumed to be in the same directory.
+    from django.core.management import setup_environ
+    setup_environ(settings)
+
+    if __name__ == "__main__":
+        execute_manager(settings)
+
+
+And here is our suggestion for :xfile:`settings.py`::
 
     # -*- coding: UTF-8 -*-
     # Django settings for myproject project.
@@ -216,14 +256,39 @@ For example::
     #EMAIL_PORT = ""
     
 
-  
-Installing startup scripts 
---------------------------
+Create a few subdirectories of your local project directory::
 
-Copy the Lino utility scripts to your project directory::
+  cd /usr/local/django/myproject
+  mkdir config
+  mkdir fixtures
+  mkdir media
+  mkdir media/cache
+  mkdir media/cache/js
+  mkdir media/upload
+  mkdir media/webdav
+  mkdir media/webdav/doctemplates
+  
+The `media` directory 
+is the central place where Lino expects static files to be served.
+Besides the `cache`, `uploads` and `webdav` directory it must 
+contain the following symbolic links::
+  
+  cd /usr/local/django/myproject/media
+  ln -s /var/snapshots/lino/media lino
+  ln -s /var/snapshots/ext-3.3.1 extjs
+  ln -s /usr/share/tinymce/www tinymce
+  
+
+  
+Install startup scripts 
+-----------------------
+
+Copy the Lino utility scripts to your project directory and make them 
+executable::
 
   cd /usr/local/django/myproject
   cp /var/snapshots/lino/bash/* .
+  chmod u+x pull oood manage.py dump start stop watch_tim
   
 Explanations:
 
@@ -264,8 +329,7 @@ The expected output is something like this::
   patching file tests/modeltests/model_inheritance/models.py
 
 Read :doc:`/django/DjangoPatches` for more details.
-
-  
+ 
   
 Set up Apache and `mod_wsgi`
 ----------------------------
@@ -316,25 +380,10 @@ Django docs on Apache and mod_wsgi:
 
 You'll also need to configure Apache to do HTTP authentication: :doc:`ApacheHttpAuth`.
 
-Set up your `/media` directory 
--------------------------------
-
-The `/media` directory is the central place where Lino 
-expects static files to be served.
-
-Here is the structure it should have in a typical installation on Debian Squeeze::
-
-  cd /usr/local/django/myproject
-  mkdir media
-  mkdir media/cache
-  mkdir media/cache/js
-  mkdir media/upload
-  mkdir media/webdav
-  mkdir media/webdav/doctemplates
-  ln -s /var/snapshots/lino/media lino
-  ln -s /var/snapshots/ext-3.3.1 extjs
-  ln -s /usr/share/tinymce/www tinymce
-
+You'll probably need to add `umask 002` to your `/etc/apache2/envvars`. 
+For example if `system.log` doesn't exist or gets wrapped, 
+`www-data` (the user under which Apache is running) will create a new file, 
+and the file should to be writable by other users of the `www-data` group.
 
 Lino uses the following types of static files:
 
@@ -351,7 +400,7 @@ Prefix                      Description
 /media/webdav/doctemplates  doctemplates directory
 =========================== =========================================== 
 
-On a production server you'll probably add a line like the following 
+On a production server you then add a line like the following 
 to your Apache config::
 
   Alias /media/ /usr/local/django/myproject/media/
@@ -361,25 +410,12 @@ automatically in `urls.py`.
 
 
 
-User permissions
-----------------
-
-You'll probably need to do something like this afterwards::
-
-  # chgrp -R www-data /var/snapshots /var/log/lino /usr/local/django
-  # chmod -R g+s /var/snapshots /var/log/lino  /usr/local/django
-
-``chmod g+s`` sets the SGID to ensure that when a new file is created in the directory 
-it will inherit the group of the directory.
+Miscellaneous
+-------------
 
 Maybe also::
 
   $ chmod a+x /usr/local/django/myproject/manage.py
-
-You'll probably need to add `umask 002` to your `/etc/apache2/envvars`. 
-For example if `system.log` doesn't exist or gets wrapped, 
-`www-data` (the user under which Apache is running) will create a new file, 
-and the file should to be writable by other users of the `www-data` group.
 
 You'll maybe have to do something like this::
 
@@ -390,6 +426,18 @@ In certain cases it may be useful to tidy up::
 
   $ find /var/snapshots/ -name '*.pyc' -delete
   
+To see which directories are on your Python path::
+
+  python -c "import sys; print sys.path"
+
+
+Did you know? To watch all log files at once, you can do::
+
+  sudo tail -f /var/log/lino/system.log /var/log/lino/db.log /var/log/apache2/error.log /var/log/apache2/access.log
+  
+See also the `multitail` package  
+  
+
 Set up Mercurial
 ----------------
 
@@ -479,4 +527,5 @@ Something like this::
   chmod -R g+w /usr/local/django/myproject/myproject.db
   
 See also the :doc:`dpytutorial`.
+
 

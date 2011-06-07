@@ -30,9 +30,6 @@ kopieren und folgenden Befehl starten::
   manage.py initdb pp2lino
   
 
-Check-in `20110607b`
+Check-in `20110607b <http://code.google.com/p/lino/source/detail?r=52e8a5d14436510e5d224147bddfcfd0389e30a2>`
 um die Sache zu testen.
 
-- aptitude install mdbtools
-
-- mdb-export /path/to/mdbfile TBClient
