@@ -213,5 +213,3 @@ def reminders_summary(ui,user,days_back=None,**kw):
     #~ def get_request_queryset(self,rr):
         #~ return reminders(rr.user)
     
-  
-  

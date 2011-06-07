@@ -656,6 +656,42 @@ class MyPersons(Persons):
 
 class MyPersonsByGroup(MyPersons):
     fk_name = 'group'
+    
+ 
+
+def persons_by_user():
+    """Returns a summary table "Number of coached persons by user and integration phase"
+    """
+    #~ from django.utils.translation import ugettext as _
+    from lino.modlib.users.models import User  
+    User = resolve_model('users.User')
+    #~ from lino.apps.dsbe.models import PersonGroup,Person,only_coached_persons,only_my_persons
+    headers = [cgi.escape(_("User")),cgi.escape(_("Total"))]
+    sums = []
+    pg2col = {}
+    for pg in PersonGroup.objects.order_by('name'):
+        headers.append('<font size="2">%s</font>' % cgi.escape(pg.name))
+        sums.append(0)
+        pg2col[pg.pk] = len(headers) - 1
+        
+    rows = [ headers ]
+    for user in User.objects.order_by('username'):
+        persons = only_coached_persons(only_my_persons(Person.objects.all(),user),datetime.date.today())
+        cells = [cgi.escape(unicode(user)),persons.count()] + sums
+        for person in persons:
+            if person.group is not None:
+                cells[pg2col[person.group.pk]] += 1
+        rows.append(cells)
+        
+    s = ''
+    for row in rows:
+        s += '<tr>'
+        s += ''.join(['<td align="center" valign="middle" bgcolor="#eeeeee" width="30%%">%s</td>' % cell for cell in row])
+        s += '</tr>'
+    s = '<table cellspacing="3px" bgcolor="#ffffff"><tr>%s</tr></table>' % s
+    s = '<div class="htmlText">%s</div>' % s
+    return s
+    
               
 #~ class Company(Contact,contacts.Company):
 #~ class Company(Partner,contacts.Addressable,):

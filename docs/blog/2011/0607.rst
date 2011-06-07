@@ -1,0 +1,5 @@
+20110607
+========
+
+New function :func:`lino.apps.dsbe.models.persons_by_user` returns a summary 
+table "Number of coached persons by user and integration phase".

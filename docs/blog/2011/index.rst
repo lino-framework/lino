@@ -156,6 +156,8 @@ As long as nobody protests, I'll save some time by writing in German.
   :doc:`04 <0604>`
   :doc:`05 <0605>`
   |br| 
+  :doc:`06 <0606>`
+  :doc:`07 <0607>`
   |br| 
   |br|  	
   
