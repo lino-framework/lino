@@ -149,6 +149,8 @@ class PersonLoader(Loader):
         return self.model(**kw)
 
 def objects():
+    User = resolve_model('users.User')
+    yield User(username="root",is_superuser=True,first_name="Root",last_name="Superuser")
     for o in PersonLoader().load(): yield o
     
     #~ reader = csv.reader(open(,'rb'))
