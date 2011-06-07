@@ -39,9 +39,10 @@ Usage of `mdbtools` command line::
 
 """
 
-ENCODING = 'latin1' # the encoding used by the mdb file
+#~ ENCODING = 'latin1' # the encoding used by the mdb file
+ENCODING = 'utf8' 
 MDB_FILE = 'PPv5MasterCopie.mdb'
-MDBTOOLS_EXPORT = 'export MDB_ICONV=utf-8;export MDB_JET_CHARSET=utf-8;mdb-export'
+MDBTOOLS_EXPORT = 'mdb-export'
 
 import sys
 #~ ENCODING = sys.stdout.encoding
