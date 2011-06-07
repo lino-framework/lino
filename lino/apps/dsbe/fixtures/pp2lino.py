@@ -41,7 +41,6 @@ Usage of `mdbtools` command line::
 
 import sys
 ENCODING = sys.stdout.encoding
-print ENCODING
 
 import csv
 import codecs
@@ -97,6 +96,7 @@ class Loader:
     def load(self):
         args = [MDBTOOLS_EXPORT, MDB_FILE, self.table_name]
         s = check_output(args,executable=MDBTOOLS_EXPORT)
+        print ENCODING
         s = s.decode(ENCODING)
         fn = self.table_name+".csv"
         fd = codecs.open(fn,"w",encoding="utf8")
