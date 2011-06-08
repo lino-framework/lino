@@ -143,7 +143,7 @@ class Loader:
             for i,h in enumerate(self.headers):
                 row[h] = values[i]
             n += 1
-            if True:
+            if False:
                 if int(row['IDClient']) == 967:
                     print row
                     raise Exception("20110609")
@@ -189,8 +189,10 @@ class PersonLoader(Loader):
         kw.update(street_box=row[u'Boite'])
         if is_valid_email(row[u'Email']):
             kw.update(email=row[u'Email'])
-        kw.update(birth_date=row[u'DateNaissance'])
-        kw.update(coached_from=row[u'DateArrivee'])
+        if row[u'DateNaissance']:
+            kw.update(birth_date=row[u'DateNaissance'])
+        if row[u'DateArrivee']:
+            kw.update(coached_from=row[u'DateArrivee'])
         return self.model(**kw)
 
 def objects():
