@@ -62,6 +62,7 @@ import sys
 #~ import csv
 import codecs
 from lino.utils import ucsv
+#~ from lino.utils import dblogger
 from lino.tools import resolve_model
 
 from lino.apps.dsbe.models import Person    
@@ -126,10 +127,14 @@ class Loader:
         headers = reader.next()
         if not headers == self.headers:
             raise Exception("%r != %r" % (headers,self.headers))
+        n = 0
         for values in reader:
             row = {}
             for i,h in enumerate(self.headers):
                 row[h] = values[i]
+            n += 1
+            if n < 10:
+                print n, ':', row
             obj = self.row2kw(row)
             #~ print obj
             yield obj
