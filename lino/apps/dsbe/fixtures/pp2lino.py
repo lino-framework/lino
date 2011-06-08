@@ -133,10 +133,11 @@ class Loader:
             for i,h in enumerate(self.headers):
                 row[h] = values[i]
             n += 1
-            if n < 10:
-                print n, ':', row
-            else:
-                raise Exception("test")
+            if False:
+                if n < 10:
+                    print n, ':', row
+                else:
+                    raise Exception("test")
             obj = self.row2kw(row)
             #~ print obj
             yield obj
