@@ -1,0 +1,8 @@
+20110609
+========
+
+New field `street_prefix` in :class:`lino.modlib.contacts.models.Addressable`. 
+This is needed because 
+
+
+Continued on :mod:`lino.apps.dsbe.fixtures.pp2lino`

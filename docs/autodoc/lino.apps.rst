@@ -30,6 +30,13 @@ The :mod:`lino.apps` package
     :members:
     :show-inheritance:
 
+:mod:`lino.apps.dsbe.fixtures.pp2lino`
+--------------------------------------
+
+.. automodule:: lino.apps.dsbe.fixtures.pp2lino
+    :members:
+    :show-inheritance:
+
 :mod:`lino.apps.igen`
 ---------------------
 

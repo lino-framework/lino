@@ -158,6 +158,8 @@ As long as nobody protests, I'll save some time by writing in German.
   |br| 
   :doc:`06 <0606>`
   :doc:`07 <0607>`
+  08
+  :doc:`09 <0609>`
   |br| 
   |br|  	
   

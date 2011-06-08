@@ -43,8 +43,12 @@ Before loading this fixture you must do set the encoding for mdb-export::
   export MDB_JET_CHARSET=utf-8
   python manage.py initdb std all_countries all_cities be all_languages props pp2lino
 
-Thanks to http://farismadi.wordpress.com/2008/07/13/encoding-of-mdb-tool/ 
-for documenting the environment variables.
+Thanks to Google and http://farismadi.wordpress.com/2008/07/13/encoding-of-mdb-tool/ 
+for explanations on the environment variables used by `mdb-export`.
+
+The function :func:`check_output` in this module is a copy from Python 2.7 
+which we include here to make it usable in Python 2.6 too.
+
 
 """
 
@@ -60,12 +64,12 @@ import codecs
 from lino.utils import ucsv
 from lino.tools import resolve_model
 
+from lino.apps.dsbe.models import Person    
+from lino.modlib.users.models import User
 
 try:
   from subprocess import check_output
 except ImportError:
-    # check_output was added only in Python 2.7
-
     import subprocess
     
     def check_output(*popenargs, **kwargs):
@@ -130,15 +134,15 @@ class Loader:
             #~ print obj
             yield obj
     
-    
 class PersonLoader(Loader):
     table_name = 'TBClient'
     
-    model = resolve_model('contacts.Person')
+    model = Person # resolve_model('contacts.Person')
     
     headers = [u'IDClient', u'DateArrivee', u'NumeroDossier', 
-    u'Titre', u'Nom', u'Prénom', u'Rue', u'Adresse', u'Numero', 
-    u'Boite', u'IDCommuneCodePostal', u'Tel1', u'Tel2', u'GSM1', 
+    u'Titre', u'Nom', u'Prénom', 
+    u'Rue', u'Adresse', u'Numero', u'Boite', 
+    u'IDCommuneCodePostal', u'Tel1', u'Tel2', u'GSM1', 
     u'GSM2', u'Email', u'DateNaissance', u'IDPays', u'IDNationalite', 
     u'NumeroNational', u'Conjoint', u'NEnfant', u'IBIS', u'Sexe', 
     u'Statut', u'DateFin', u'RISEQRIS', u'DateOctroi', 
@@ -156,13 +160,16 @@ class PersonLoader(Loader):
         else:
             kw.update(last_name="?")
         kw.update(first_name=row[u'Prénom'])
-        kw.update(street=row[u'Rue']+' '+row[u'Adresse'])
+        kw.update(street_prefix=row[u'Rue'])
+        kw.update(street=row[u'Adresse'])
         kw.update(street_no=row[u'Numero'])
         kw.update(street_box=row[u'Boite'])
+        kw.update(email=row[u'Email'])
+        kw.update(birth_date=row[u'DateNaissance'])
         return self.model(**kw)
 
 def objects():
-    User = resolve_model('users.User')
+    #~ User = resolve_model('users.User')
     yield User(username="root",is_superuser=True,first_name="Root",last_name="Superuser")
     for o in PersonLoader().load(): yield o
     

@@ -59,6 +59,9 @@ class Addressable(CountryCity):
         max_length=200,blank=True,
         help_text="Address line before street")
     
+    street_prefix = models.CharField(_("Street prefix"),max_length=200,blank=True,
+        help_text="Text to print before name of street, but to ignore for sorting.")
+    
     street = models.CharField(_("Street"),max_length=200,blank=True,
         help_text="Name of street. Without house number.")
     

@@ -13,8 +13,9 @@ Import data from existing .mdb file
 -----------------------------------
 
 Ein neuer Interessent hat seine bisherigen Daten in einer 
-Access-Anwendung als `.mdb`-Datei. Ich will ihm eine Fixture 
-schreiben, die seine Daten einliest.
+Access-Anwendung als `.mdb`-Datei. 
+Ich will ihm eine Fixture schreiben, die seine Daten einliest.
+Ob ich das schaffen werde?
 
 Die Fixture soll unter Debian laufen, also 
 Marc Hammonds odbc-Modul nützt uns nichts. Wäre auch Overkill, 
@@ -24,11 +25,15 @@ stattfinden wird, bis der Kunde auf Lino umsteigen kann).
 Am schönsten scheint mir `mdb-export` aus den `mdbtools` zu sein.
 
 Neue Fixture :mod:`lino.apps.dsbe.fixtures.pp2lino`. 
-Der Kunde muss dann einfach nur seine Datei ins `LINO.project_dir`
+Der Kunde muss dann einfach nur seine Access-Datei ins `LINO.project_dir`
 kopieren und folgenden Befehl starten::
 
   python manage.py initdb std all_countries all_cities be all_languages props pp2lino
   
-Check-in `20110607b <http://code.google.com/p/lino/source/detail?r=52e8a5d14436510e5d224147bddfcfd0389e30a2>`
+Ganze Serie von Check-ins mit Message 20110607b
 um die Sache zu testen.
+Erste Erfolge: Personen werden importiert. Zwar nicht alle Felder, 
+aber immerhin mit accents und trématas.
+Das reicht mir für heute.
+Feierabend um 0.35 Uhr.
 
