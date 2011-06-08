@@ -143,11 +143,16 @@ class Loader:
             for i,h in enumerate(self.headers):
                 row[h] = values[i]
             n += 1
+            if True:
+                if int(row['IDClient']) == 967:
+                    print row
+                    raise Exception("20110609")
+                  
             if False:
                 if n < 10:
                     print n, ':', row
                 else:
-                    raise Exception("test")
+                    raise Exception("20110609")
             obj = self.row2kw(row)
             #~ print obj
             yield obj
