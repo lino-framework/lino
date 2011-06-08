@@ -174,6 +174,7 @@ class PersonLoader(Loader):
         kw.update(street_box=row[u'Boite'])
         kw.update(email=row[u'Email'])
         kw.update(birth_date=row[u'DateNaissance'])
+        kw.update(coached_from=row[u'DateArrivee'])
         return self.model(**kw)
 
 def objects():
