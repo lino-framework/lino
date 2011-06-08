@@ -11,7 +11,7 @@ main =
 box1 = 
   last_name first_name:15 title:10
   country city zip_code:10
-  street:25 street_no street_box
+  street_prefix street:25 street_no street_box
   addr2:40
 
 box2 = 
