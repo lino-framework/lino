@@ -61,6 +61,8 @@ import sys
 #~ ENCODING = sys.stdout.encoding
 #~ import csv
 import codecs
+
+from django.core.validators import validate_email
 from lino.utils import ucsv
 #~ from lino.utils import dblogger
 from lino.tools import resolve_model
@@ -172,7 +174,8 @@ class PersonLoader(Loader):
         kw.update(street=row[u'Adresse'])
         kw.update(street_no=row[u'Numero'])
         kw.update(street_box=row[u'Boite'])
-        kw.update(email=row[u'Email'])
+        if validate_email(row[u'Email']):
+            kw.update(email=row[u'Email'])
         kw.update(birth_date=row[u'DateNaissance'])
         kw.update(coached_from=row[u'DateArrivee'])
         return self.model(**kw)
