@@ -135,6 +135,8 @@ class Loader:
             n += 1
             if n < 10:
                 print n, ':', row
+            else:
+                raise Exception("test")
             obj = self.row2kw(row)
             #~ print obj
             yield obj
