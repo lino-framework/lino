@@ -485,7 +485,7 @@ class ReportHandle(base.Handle):
         #~ old_dtl = self.report.model._lino_detail_layouts[tab]
         #~ old_dtl._kw.update(desc=desc)
         #~ old_dtl._desc=desc
-        dtl = DetailLayout(desc,old_dtl.cd,old_dtl.filename)
+        dtl = DetailLayout(desc,old_dtl.filename,old_dtl.cd)
         self.report.detail_layouts[tab] = dtl
         #~ self.report.model._lino_detail_layouts[tab] = dtl
         self._layouts[tab+1] = LayoutHandle(self,dtl)
@@ -1320,7 +1320,8 @@ class BaseLayout(Configured):
     def __init__(self,desc,*args,**kw):
         #~ self.label = label
         self._desc = desc
-        super(BaseLayout,self).__init__(*args,**kw)
+        #~ super(BaseLayout,self).__init__(*args,**kw)
+        Configured.__init__(self,*args,**kw)
             
         attrname = None
         for ln in desc.splitlines():

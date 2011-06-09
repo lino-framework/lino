@@ -4,27 +4,12 @@ Coming
 New features
 ------------
 
-- New fixture :mod:`pp2lino <lino.apps.dsbe.fixtures.pp2lino>` 
-  is a customized data import for a new user in Brussels. 
-  How to try it: 
-  
-  Copy a recent version of your database to 
-  :file:`/usr/local/django/myproject/PPv5MasterCopie.mdb`
-  (the file name is currently hard-coded, let me know if you prefer another name).
-  
-  Then run::
-    
-    cd /usr/local/django/myproject
-    python manage.py initdb std all_countries all_cities be all_languages props pp2lino
-      
-  (that is, the same as `initdb_demo.sh` except that the last fixture "demo" is 
-  replaced by "pp2lino".)
-  
 
 
 Bugs fixed
 ----------
 
+- The "Save" button of the Layout Editor of Detail windows didn't work. Fixed.
 
 
 Upgrade instructions

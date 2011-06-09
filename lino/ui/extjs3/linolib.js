@@ -268,10 +268,13 @@ Lino.edit_tinymce_text = function(panel) {
   //~ var actions = [
     //~ {text:"Save",handler:save}
   //~ ]; 
+  //~ console.log(20110610,panel.editor.disabled);
   var editor = new Ext.ux.TinyMCE({
       value : value,
       tinymceSettings: {
         theme : "advanced",
+        content_css: '/media/lino/extjs/lino.css',
+        readonly: panel.editor.disabled,
         //~ language: "de",
         plugins : "save,emotions,spellchecker,advhr,insertdatetime,preview", 
         // Theme options - button# indicated the row# only
@@ -1354,8 +1357,9 @@ Lino.RichTextPanel = Ext.extend(Ext.Panel,{
     var editorConfig = {
       tinymceSettings: {
         theme : "advanced",
+        content_css: '/media/lino/extjs/lino.css',
         //~ language: "de",
-        plugins : "", 
+        plugins : "noneditable", 
         // Theme options - button# indicated the row# only
         theme_advanced_buttons1 : "bold,italic,underline,|,justifyleft,justifycenter,justifyright,|,bullist,numlist,|,outdent,indent,|,undo,redo,|,removeformat",
         theme_advanced_buttons2 : "",
@@ -1640,19 +1644,21 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     var close = function() { win.close(); }
     var _this = this;
     var save = function() { 
-      console.log(arguments); 
+      //~ console.log(20110609,arguments); 
       var params = {desc: editor.getValue()};
       Ext.apply(params,active_tab);
       var a = { 
         params: params, 
         method: 'PUT',
         url: '/detail_config'+_this.ls_url,
+        failure : Lino.ajax_error_handler,
         success: Lino.action_handler( _this, function(result) {
+          //~ console.log('detail_config/save success',result);
           win.close();
           document.location = _this.ww.get_permalink();
         })
       };
-      //~ console.log(a);
+      //~ console.log('detail_config/save sent',a);
       Ext.Ajax.request(a);
     }
     var save_btn = new Ext.Button({text:'Save',handler:save,disabled:true});
@@ -1665,18 +1671,15 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
       method:'GET',
       url:'/detail_config'+_this.ls_url,
       success : function(response) {
-        //~ console.log('Lino.do_action()',response,'action success');
         if (response.responseText) {
           var result = Ext.decode(response.responseText);
           if (result.success) {
-            //~ console.log('Lino.do_action()',action.name,'result is',result);
             editor.setValue(result.desc);
             save_btn.enable();
           }
         }
       }
     };
-    console.log(a);
     Ext.Ajax.request(a);
     win.show();
   },

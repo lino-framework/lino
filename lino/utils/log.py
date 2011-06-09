@@ -38,8 +38,8 @@ def file_handler(filename,**kw):
     if sys.platform == 'win32': 
         h = logging.FileHandler(filename,**kw)
     else:
-        kw.setdefault('maxBytes',100000)
-        kw.setdefault('backupCount',5)
+        kw.setdefault('maxBytes',1000000)
+        kw.setdefault('backupCount',10)
         h = RotatingFileHandler(filename,**kw)
     #~ if hasattr(logging,'RotatingFileHandler'):
         #~ h = logging.RotatingFileHandler(filename,maxBytes=10000,backupCount=5)
@@ -55,25 +55,33 @@ def file_handler(filename,**kw):
 
 def configure(config):
     """
-    This provides a simplistic logging configuration for out-of-the-box usage.
+    This provides a simplified logging configuration interface 
+    for out-of-the-box usage in typical situations.
+    
     It will be called by Django when you have your
     :setting:`LOGGING_CONFIG` set to ``'lino.utils.log.configure'``.
     If you use it, then your :setting:`LOGGING` setting must be a dictionary 
     with the following keys:
     
     :param logfile:  the full path of the lino `system.log` file.
-                     If absent or `None`, there will be no `system.log` file
+                     If absent or `None`, there will be no `system.log` file.
                      
-    :param level:    the verbosity level of both console and logfile messages 
-                     console messages will never be more verbose than INFO
+                     
+    :param level:    the overall verbosity level for both console and logfile.
     
     :param mode:     the opening mode for the logfile
     :param encoding: the encoding for the logfile
+    :param maxBytes: rotate if logfile's size gets bigger than this.
+    :param backupCount: number of rotated logfiles to keep.
     
     Example::
     
       LOGGING_CONFIG = 'lino.utils.log.configure'
       LOGGING = dict(filename='/var/log/lino/system.log',level='INFO')
+      
+    If there is a logfile, then console messages will never be more verbose than INFO
+    because too many messages on the screen are disturbing, 
+    and if the level is DEBUG you will better analyze them in the logfile.
     
     Note that the `mod_wsgi documentation 
     <http://code.google.com/p/modwsgi/wiki/ApplicationIssues>`_ 
@@ -101,7 +109,7 @@ def configure(config):
     
     if logfile is not None:
         kw = {}
-        for k in ('mode','encoding'):
+        for k in ('mode','encoding','maxBytes','backupCount'):
             if config.has_key(k):
                 kw[k] = config[k]
         h = file_handler(logfile,**kw)
@@ -121,7 +129,8 @@ def configure(config):
                 #~ raise Exception("Your tty's encoding is ascii, that will lead to problems" % )
             h = logging.StreamHandler()
             #~ h.setLevel(level)
-            h.setLevel(logging.INFO)
+            if logfile is not None:
+                h.setLevel(logging.INFO)
             fmt = logging.Formatter(fmt='%(levelname)s %(message)s')
             h.setFormatter(fmt)
             linoLogger.addHandler(h)

@@ -1,0 +1,29 @@
+Version 1.1.13 (09.06.2011)
+===========================
+
+This release is just to get feedback on the new fixture 
+:mod:`pp2lino <lino.apps.dsbe.fixtures.pp2lino>`,
+a customized data import for a new user in Brussels. 
+
+How to try it: 
+
+- get the latest Lino source
+
+- aptitude install mdbtools
+
+- Copy a recent version of your database to 
+  :file:`/usr/local/django/myproject/PPv5MasterCopie.mdb`
+  (the file name is currently hard-coded, 
+  let me know if you prefer another name).
+  
+- Try it out::
+    
+    cd /usr/local/django/myproject
+    python manage.py initdb std all_countries all_cities be all_languages props pp2lino
+      
+  (that is, the same as `initdb_demo.sh` except that the last fixture "demo" is 
+  replaced by "pp2lino".)
+  
+- Restart Apache and enjoy your data through Lino.  
+  
+

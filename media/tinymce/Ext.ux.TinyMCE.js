@@ -4,11 +4,17 @@
 	
 	Author: Andrew Mayorov et al.
 	http://blogs.byte-force.com/xor
-	
+  
 	Copyright (c)2008-2010 BYTE-force
 	www.byte-force.com
 	
 	License: LGPLv2.1 or later
+  
+  Modifs by Luc Saffre:
+  
+  disable function sets ``this.disabled = true;`` 
+  (enable function the opposite)
+  
 */
 
 (function() {
@@ -322,14 +328,17 @@
 		/** ----------------------------------------------------------
 		*/
 		disable: function() {
+      this.disabled = true;
 			this.withEd(function() {
         //~ this.ed.settings.readonly = true;
         //~ this.ed.setupContentEditable(false);
+        //~ this.ed.controlManager.setDisabled(true);
 				var bodyEl = this.ed.getBody();
 				bodyEl = Ext.get(bodyEl);
 
+  			//~ bodyEl.dom.readOnly = true;
 				if (bodyEl.hasClass('mceContentBody')) {
-          console.log('Ext.ux.TinyMCE.disable() 3') 
+          //~ console.log('Ext.ux.TinyMCE.disable() 3') 
 					bodyEl.removeClass('mceContentBody');
 					bodyEl.addClass('mceNonEditable');
 					//~ bodyEl.readonly = true;
@@ -341,12 +350,14 @@
 		/** ----------------------------------------------------------
 		*/
 		enable: function() {
+      this.disabled = false;
 			this.withEd(function() {
-        this.ed.settings.readonly = false;
+        //~ this.ed.settings.readonly = false;
         //~ this.ed.setupContentEditable(true);
 				var bodyEl = this.ed.getBody();
 				bodyEl = Ext.get(bodyEl);
 
+  			//~ bodyEl.dom.readOnly = false;
 				if (bodyEl.hasClass('mceNonEditable')) {
 					bodyEl.removeClass('mceNonEditable');
 					bodyEl.addClass('mceContentBody');

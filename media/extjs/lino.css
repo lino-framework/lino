@@ -68,6 +68,18 @@ http://stackoverflow.com/questions/2106104/word-wrap-grid-cells-in-ext-js
     white-space: nowrap; 
 }
 
+
+/* TinyMCE specific rules */
+/* 
+body.mceContentBody {
+  color: red !important; 
+}
+*/
+body.mceNonEditable {
+  color: blue !important; 
+}
+
+
 .htmlText {
 	font-family: arial,tahoma;
 }

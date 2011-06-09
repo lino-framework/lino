@@ -180,8 +180,8 @@ def elem2rec_detailed(ar,rh,elem,**rec):
     
     """
     rec = elem2rec1(ar,rh,elem,**rec)
-    rec.update(id=elem.pk)
     rec.update(title=unicode(elem))
+    rec.update(id=elem.pk)
     #~ if rh.report.disable_delete:
     rec.update(disable_delete=rh.report.disable_delete(elem,ar.request))
     if rh.report.show_prev_next:
@@ -869,7 +869,8 @@ tinymce.init({
             try:
                 rh.update_detail(tab,desc)
             except Exception,e:
-                return json_response_kw(success=False,message=unicode(e))
+                logger.exception(e)
+                return json_response_kw(success=False,message=unicode(e),alert=True)
             self.build_lino_js()
             return json_response_kw(success=True)
             #detail_layout

@@ -1,8 +1,64 @@
 20110609
 ========
 
-New field `street_prefix` in :class:`lino.modlib.contacts.models.Addressable`. 
-This is needed because 
+Worked on pp2lino
+-----------------
+
+New field `street_prefix` in :class:`lino.modlib.contacts.models.Addressable`
+is needed because snail mailings need to be sorted by street, and street 
+names in french may have a prefix that must be printed but is not relevant 
+for the sort order.
+
+Continued on :mod:`lino.apps.dsbe.fixtures.pp2lino`.
+
+Released :doc:`/releases/20110609`.
 
 
-Continued on :mod:`lino.apps.dsbe.fixtures.pp2lino`
+Miscellaneous
+-------------
+
+- A stupid bug caused the Layout Editor for `.dtl` to not work. 
+
+- Some optimization in :func:`lino.utils.log.configure`:
+
+  - Used to *always* set the level for the terminal to INFO. 
+    Now only if there is a logfile.
+    
+  - Changed default value of `maxBytes` from 100K to 1MB,
+    changed default value of `backupCount` from 5 to 10.
+    Both parameters may now be overridden in :setting:`LOGGING`.
+  
+Making TinyMCE readonly
+-----------------------
+
+There ws a bug in Ext.ux.TinyMCE : the disable() function didn't set the `disabled` 
+property to true. I need this when opening TinMCE in a separate window (where it 
+will get its `readonly` config option from `panel.editor.disabled`).
+
+Getting the inline TinyMCE readonly is more tricky. Ext.ux.TinyMCE's disable() 
+function sets the class to `mceNonEditable`, so I added the following style 
+to my :xfile:`lino.css`::
+
+  body.mceNonEditable {
+    color: blue !important; 
+  }
+
+But that wasn't enough, I also had to set `tinymceSettings.content_css` 
+to ``'/media/lino/extjs/lino.css'`` because otherwise TinyMCE looks only 
+at its own (theme.dependant) CSS.
+
+Now the inline TinyMCE (of a closed Note) has blue text, but 
+it is still not readonly.
+The method explained 
+`here <http://www.sencha.com/forum/showthread.php?40640-Dynamic-readOnly-fields!>`_ 
+and
+`there <http://www.w3schools.com/jsref/prop_textarea_readonly.asp>`_
+doesn't seem to work for me. 
+
+Aha, there's a plugin called "noneditable". That helps. 
+It disables all buttons and makes the text noneditable. 
+
+One detail left: it updates only when the user clicks into the text area.
+Since the text color is already blu before, that's only cosmetic.
+
+Checkin 20110609b, but the release is for tomorrow.

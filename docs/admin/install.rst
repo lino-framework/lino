@@ -160,13 +160,19 @@ user ``django@localhost``::
     $ sudo aptitude install mysql-server python-mysqldb
     
     $ mysql -u root -p 
-    mysql> create database myproject;
-    mysql> create user 'django'@'localhost' identified by 'pwd';
+    mysql> create database myproject charset 'utf8';
+    mysql> create user 'django'@'localhost' identified by 'my cool password';
     mysql> grant all on myproject.* to django with grant option;
     mysql> grant all on test_myproject.* to django with grant option;
     mysql> quit;
     
-    
+create database myproject;
+create user 'django'@'localhost' identified by 'my cool password';
+grant all on wsl.* to django with grant option;
+grant all on test_wsl.* to django with grant option;
+quit;
+
+
 See also http://dev.mysql.com/doc/refman/5.0/en/charset-database.html    
 
 
@@ -235,9 +241,9 @@ And here is our suggestion for :xfile:`settings.py`::
     #         'ENGINE': 'django.db.backends.mysql', 
     #         'NAME': 'myproject',                  
     #         'USER': 'django',                     
-    #         'PASSWORD': 'password',               
+    #         'PASSWORD': 'my cool password',               
     #         'HOST': 'localhost',                  
-    #         'PORT': '3306',
+    #         'PORT': 3306,
     #     }
     # }
     
