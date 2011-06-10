@@ -1,0 +1,2 @@
+T:\hgwork\lino\docs\blog\2011\0609.rst:27: WARNING: setting reference target not found: LOGGING
+T:\hgwork\lino\docs\blog\2011\0609.rst:38: WARNING: xfile reference target not found: lino.css

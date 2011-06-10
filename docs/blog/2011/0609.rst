@@ -62,3 +62,6 @@ One detail left: it updates only when the user clicks into the text area.
 Since the text color is already blu before, that's only cosmetic.
 
 Checkin 20110609b, but the release is for tomorrow.
+
+Maybe this will help:
+http://tinymce.moxiecode.com/forum/viewtopic.php?id=13337

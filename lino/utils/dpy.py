@@ -298,7 +298,6 @@ class FakeDeserializedObject(base.DeserializedObject):
             obj.save(*args,**kw)
             dblogger.debug("%s has been saved" % obj2str(obj))
             return True
-        #~ except Exception,e:
         #~ except ValidationError,e:
         #~ except ObjectDoesNotExist,e:
         except (ValidationError,ObjectDoesNotExist), e:
@@ -311,7 +310,9 @@ class FakeDeserializedObject(base.DeserializedObject):
                 raise Exception("Failed to save independent %s. Abandoned." % obj2str(obj))
             dblogger.info("Deferred %s : %s",obj2str(obj),force_unicode(e))
             return False
-      
+        except Exception,e:
+            dblogger.exception(e)
+            raise Exception("Failed to save %s. Abandoned." % obj2str(obj))
         
               
 
