@@ -42,3 +42,5 @@ to work around the following problem:
   Comboboxen müssten in der Tat gegen diesen Fall absichern.
     
 Added some German translations.
+
+Checked in 20110610b.

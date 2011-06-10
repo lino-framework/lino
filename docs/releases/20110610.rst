@@ -1,6 +1,7 @@
 Version 1.1.14 (10.06.2011)
 ===========================
 
+Revision `7622836fd23c <http://code.google.com/p/lino/source/detail?r=7622836fd23c254bd68364a824662980efba6aec>`_
 
 New features
 ------------
