@@ -23,6 +23,7 @@ with the following fixtures:
 import logging
 logger = logging.getLogger(__name__)
 
+from django.db.utils import IntegrityError
 #~ from django.utils import unittest
 #~ from django.test.client import Client
 #from lino.igen import models
@@ -36,9 +37,12 @@ from lino.tools import resolve_model
 #Companies = resolve_model('contacts.Companies')
 from lino.utils.test import TestCase
 
-Person = resolve_model('contacts.Person')
-Property = resolve_model('properties.Property')
-PersonProperty = resolve_model('properties.PersonProperty')
+from lino.apps.dsbe.models import Person, PersonProperty
+from lino.modlib.properties.models import Property
+
+#~ Person = resolve_model('contacts.Person')
+#~ Property = resolve_model('properties.Property')
+#~ PersonProperty = resolve_model('properties.PersonProperty')
 
 class DemoTest(TestCase):
     #~ fixtures = [ 'std','demo' ]
@@ -79,7 +83,7 @@ def test02(self):
         #~ self.assertTrue(result.has_key(k))
     #~ if len(result['rows']) != 3:
     self.assertEqual(result['title'],"Properties of Arens Annette (15)")
-    print '\n'.join([unicode(x) for x in result['rows']])
+    #~ print '\n'.join([unicode(x) for x in result['rows']])
     self.assertEqual(len(result['rows']),3)
     row = result['rows'][0]
     self.assertEqual(row[0],"Obedient")
@@ -387,3 +391,37 @@ def test08(self):
     self.assertEqual(l,[u'Ärgerlich Erna (68)',u"Bastiaensen Laurent (18)",u"Eierschal Emil (74)"])
     
     
+def test09(self):
+    """
+    This tests for the bug discovered :doc:`/blog/2011/0610`.
+    """
+    babel.set_language('en')
+    url = '/choices/dsbe/StudiesByPerson/city?start=0&limit=30&country=&query='
+    response = self.client.get(url,REMOTE_USER='root')
+    result = self.check_json_result(response,'count rows title')
+    self.assertEqual(result['title'],u"Choices for city")
+    babel.set_language(None) # switch back to default language for subsequent tests
+
+def test10(self):
+    """
+    Test the unique_together validation of City
+    See :doc:`/blog/2011/0610`.
+    """
+    from lino.modlib.countries.models import City, Country
+    be = Country.objects.get(pk='BE')
+    try:
+        City(name="Eupen",country=be).save()
+    except IntegrityError:
+        pass
+    else:
+        self.fail("Expected IntegrityError")
+        
+    try:
+        be.city_set.create(name="Eupen")
+    except IntegrityError:
+        pass
+    else:
+        self.fail("Expected IntegrityError")
+        
+    
+        

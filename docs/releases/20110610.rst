@@ -1,23 +1,25 @@
 Version 1.1.14 (10.06.2011)
 ===========================
 
+
 New features
 ------------
-#.  Die Textfelder in Notizen und Verträgen sind momentan 
-    fälschlicherweise nicht schreibgeschützt wenn das Dokument 
-    schon gedruckt wurde. Aber wenn man was drin ändert, 
-    wird das *nicht* gespeichert.
-    Ext.ux.TinyMCE.disable() scheint nichts zu bewirken. 
-    Habe schon einiges probiert und nun dem Autor eine Mail geschickt.
 
-
+- New field `street_prefix` in :class:`lino.modlib.contacts.models.Addressable`. 
+  See :doc:`/blog/2011/0609`.
 
 
 Bugs fixed
 ----------
 
-- The "Save" button of the Layout Editor of Detail windows didn't work. Fixed.
+#.  The "Save" button of the Layout Editor of Detail windows didn't work. Fixed.
 
+#.  Die Textfelder in Notizen und Verträgen waren noch
+    fälschlicherweise nicht schreibgeschützt wenn das Dokument 
+    schon gedruckt wurde. Und wenn man was drin änderte, 
+    wurde das *nicht* gespeichert.
+    Ext.ux.TinyMCE.disable() scheint nichts zu bewirken. 
+    Habe schon einiges probiert und nun dem Autor eine Mail geschickt.
 
 Upgrade instructions
 --------------------

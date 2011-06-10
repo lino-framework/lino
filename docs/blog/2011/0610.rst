@@ -1,0 +1,44 @@
+20110610
+========
+
+
+Lino 1.1.14
+-----------
+
+Released :doc:`/releases/20110610`.
+Installed in Eupen.
+
+.. currentmodule:: lino.modlib.countries.models
+
+
+Fixed several bugs in :class:`CountryCity`
+------------------------------------------
+
+A request `GET /choices/dsbe/StudiesByPerson/city?start=0&limit=30&country=&query=` 
+caused a traceback `'unicode' object has no attribute 'city_set'`.
+The bug was actually in :class:`lino.utils.instantiator.ForeignKeyConverter`.
+Added test case :func:`test09 <lino.apps.dsbe.tests.dsbe_demo_tests.test09>`.
+
+
+A `'NoneType' object has no attribute '_meta'` 
+error happened either as a simple warning or as a traceback
+when Lino tried 
+(on a :class:`CountryCity`), 
+to auto-create a `city` and no `country` was given.
+:meth:`CountryCity.create_choice` now raises a 
+`ValidationError` "Cannot auto-create city %r if country is empty" 
+instead of logging a warning.
+
+And :class:`City` has now a `unique_together` constraint 
+to work around the following problem:
+
+  Selbstlernende Felder: 
+  die Stadt Eupen war 5x automatisch angelegt worden. 
+  Also irgendwie schaffen es die Benutzer, Lino durcheinander zu bringen.
+  Aber wie machen die das?
+  Zu beobachten.
+  Hat vielleicht ein schnellfingriger Benutzer den Namen in 
+  die ComboBox getippt, bevor diese ihren Store gefüllt hatte? 
+  Comboboxen müssten in der Tat gegen diesen Fall absichern.
+    
+Added some German translations.

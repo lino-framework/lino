@@ -418,8 +418,9 @@ class ForeignKeyStoreField(ComboStoreField):
         #~ if ch and ch.meth.quick_insert_field:
         if ch and ch.can_create_choice:
             o = ch.create_choice(obj,v)
-            logger.info("Auto-created %s %s",o._meta.verbose_name,o)
-            return o
+            if o is not None:
+                logger.info("Auto-created %s %s",o._meta.verbose_name,o)
+                return o
             #~ qs = ch.get_instance_choices(obj)
             #~ print 20110425, qs
             #~ kw = {}

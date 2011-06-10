@@ -12,6 +12,12 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino-DSBE; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+Installs a set of property types and property groups specific to 
+:mod:`lino.apps.dsbe`.
+
+"""
+
 
 from django.utils.translation import ugettext as _
 #~ from django.conf import settings

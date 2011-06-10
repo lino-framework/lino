@@ -20,15 +20,6 @@ Short-term
       do text
       from html(self.goals,wrapper="<p><b>Zielsetzungen</b>: %s </p>")
 
-#.  Selbstlernende Felder: 
-    die Stadt Eupen war 5x automatisch angelegt worden. 
-    Also irgendwie schaffen es die Benutzer, Lino durcheinander zu bringen.
-    Aber wie machen die das?
-    Zu beobachten.
-    Hat vielleicht ein schnellfingriger Benutzer den Namen in 
-    die ComboBox getippt, bevor diese ihren Store gefüllt hatte? 
-    Comboboxen müssten in der Tat gegen diesen Fall absichern.
-    
 #.  :doc:`Wysiwyg-Editor </tickets/42>` weiter testen, 
     was noch nicht gedruckt wird.
     Zum Beispiel Aufzählungen werden beim Ausdruck einfach übergangen.
@@ -37,11 +28,10 @@ Short-term
 #.  Button "Cache löschen" deaktivieren, wenn
     :attr:`lino.mixins.printable.Printable.must_build` `True` ist.
     Dazu muss `disabled_fields` in der :xfile:`linolib.js` auch 
-    auf wor actions angewendet werden
+    auf actions angewendet werden.
 
-#.  Externe Links (Lesezeichen) und Uploads machen können, 
-    indem man sie von einer anderen Anwendung
-    per drag & drop auf die HtmlBox zieht.
+#.  Externe Links (Lesezeichen) und Uploads per drag & drop machen können, 
+    indem man sie von einer anderen Anwendung auf die HtmlBox zieht.
     (u.a. :doc:`/tickets/8`)
 
 #.  :doc:`Benutzerspezifische Gridkonfiguration </tickets/39>`
@@ -619,7 +609,7 @@ Long-term
 #.  Think about differences and common things between 
     Lino's Report and Django's new 
     `Class-based views
-<http://docs.djangoproject.com/en/dev/topics/class-based-views/>`_ 
+    <http://docs.djangoproject.com/en/dev/topics/class-based-views/>`_ 
     (Discovered :doc:`/blog/2011/0311`)
 
 #.  Check whether Lino should use

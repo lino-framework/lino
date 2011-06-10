@@ -60,20 +60,24 @@ class DecimalConverter(Converter):
         return kw
 
 class ForeignKeyConverter(Converter):
+    """Converter for ForeignKey fields."""
     def convert(self,**kw):
         value = kw.get(self.field.name)
-        if value is not None and value != '':
-            model = self.field.rel.to
-            if not isinstance(value,model):
-                if False and model is ContentType:
-                    value = ContentType.objects.get_for_model(resolve_model(value))
-                else:
-                    lookup_kw = {self.lookup_field: value}
-                    try:
-                        value = model.objects.get(**lookup_kw)
-                    except model.DoesNotExist,e:
-                        raise DataError("%s.objects.get(**%r) : %s" % (
-                              model.__name__,lookup_kw,e))
+        if value is not None:
+            if value == '':
+                value = None
+            else:
+                model = self.field.rel.to
+                if not isinstance(value,model):
+                    if False and model is ContentType:
+                        value = ContentType.objects.get_for_model(resolve_model(value))
+                    else:
+                        lookup_kw = {self.lookup_field: value}
+                        try:
+                            value = model.objects.get(**lookup_kw)
+                        except model.DoesNotExist,e:
+                            raise DataError("%s.objects.get(**%r) : %s" % (
+                                  model.__name__,lookup_kw,e))
             kw[self.field.name] = value
         return kw
 

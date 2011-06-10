@@ -35,9 +35,14 @@ from lino.tools import resolve_model
 #Companies = resolve_model('contacts.Companies')
 from lino.utils.test import TestCase
 
-Person = resolve_model('contacts.Person')
-Property = resolve_model('properties.Property')
-PersonProperty = resolve_model('properties.PersonProperty')
+#~ Person = resolve_model('contacts.Person')
+#~ Property = resolve_model('properties.Property')
+#~ PersonProperty = resolve_model('properties.PersonProperty')
+
+from lino.apps.dsbe.models import Person, PersonProperty
+from lino.modlib.properties.models import Property
+
+
 
 #~ class NoFixturesTest(TestCase):
 class Test(TestCase):
@@ -131,4 +136,5 @@ def test02(self):
         dom = minidom.parseString(c)
         print dom.getElementsByTagName('input')
         response = self.client.get('/api/lino/SiteConfigs/1?fmt=json')
+        
         

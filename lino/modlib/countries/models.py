@@ -25,6 +25,7 @@ from django.db import models
 from lino import reports
 #~ from lino import layouts
 from django.utils.translation import ugettext as _
+from django.core.exceptions import ValidationError
 
 from lino.utils.choosers import chooser
 #~ from lino.utils.babel import add_babel_field, babelattr
@@ -97,6 +98,7 @@ class City(models.Model):
     class Meta:
         verbose_name = _("city")
         verbose_name_plural = _("cities")
+        unique_together = ('country','name')
     
     def __unicode__(self):
         return self.name
@@ -134,9 +136,17 @@ class CountryCity(models.Model):
         return cls.city.field.rel.to.objects.order_by('name')
         
     def create_city_choice(self,text):
+        """Called when an unknown city name was given. 
+        Try to auto-create it.
+        """
         if self.country is not None:
-            return self.country.city_set.create(name=text,country=self.country)
-        dblogger.warning("Cannot auto-create city %r if country is empty",text)
-        return None
+            return self.country.city_set.create(name=text)
+            #~ except IntegrityError:
+            #~ qs = self.country.city_set.filter(name__iexact=text)
+            #~ if qs.count() == 0:
+                #~ return self.country.city_set.create(name=text,country=self.country)
+            #~ raise ValidationError("Cannot create city %r in %s because it already exists.",(text,country))
+        #~ dblogger.warning("Cannot auto-create city %r if country is empty",text)
+        raise ValidationError("Cannot auto-create city %r if country is empty",text)
         
   
