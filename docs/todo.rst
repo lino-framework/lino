@@ -9,13 +9,6 @@ for which I hope for help from other people.
 Short-term
 ----------
 
-#.  Die Textfelder in Notizen und Verträgen sind momentan 
-    fälschlicherweise nicht schreibgeschützt wenn das Dokument 
-    schon gedruckt wurde. Aber wenn man was drin ändert, 
-    wird das *nicht* gespeichert.
-    Ext.ux.TinyMCE.disable() scheint nichts zu bewirken. 
-    Habe schon einiges probiert und nun dem Autor eine Mail geschickt.
-
 #.  Ausdruck Verträge: jetzt wo die mehrzeiligen Textfelder formatierbar 
     sind, haben wir ein kleines Problem: Bisher wurde z.B. in der 
     Dokumentvorlage ein Wort vor dem eigentlichen Text eingefügt, 
