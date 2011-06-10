@@ -677,11 +677,12 @@ def persons_by_user():
     rows = [ headers ]
     for user in User.objects.order_by('username'):
         persons = only_coached_persons(only_my_persons(Person.objects.all(),user),datetime.date.today())
-        cells = [cgi.escape(unicode(user)),persons.count()] + sums
-        for person in persons:
-            if person.group is not None:
-                cells[pg2col[person.group.pk]] += 1
-        rows.append(cells)
+        if persons.count():
+            cells = [cgi.escape(unicode(user)),persons.count()] + sums
+            for person in persons:
+                if person.group is not None:
+                    cells[pg2col[person.group.pk]] += 1
+            rows.append(cells)
         
     s = ''
     for row in rows:
