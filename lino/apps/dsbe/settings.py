@@ -89,7 +89,7 @@ class Lino(Lino):
         
         config_contacts.add_action('contacts.CompanyTypes',can_view=perms.is_staff)
         config_contacts.add_action('contacts.ContactTypes',can_view=perms.is_staff)
-        config_contacts.add_action('countries.Languages',can_view=perms.is_expert)
+        config_contacts.add_action('countries.Languages',can_view=perms.is_staff)
         config_contacts.add_action('countries.Countries')
         config_contacts.add_action('countries.Cities')
         

@@ -384,11 +384,12 @@ def test08(self):
     from lino.apps.dsbe.models import Person, MyPersons, only_coached_persons,only_my_persons
     from lino.modlib.users.models import User
     u = User.objects.get(username='root')
-    qs = Person.objects.order_by('last_name','first_name')
+    #~ qs = Person.objects.order_by('last_name','first_name')
+    qs = Person.objects.order_by('id')
     qs = only_coached_persons(only_my_persons(qs,u),i2d(20100901))
     #~ qs = MyPersons.request(user=)
     l = [unicode(p) for p in qs]
-    self.assertEqual(l,[u'Ärgerlich Erna (68)',u"Bastiaensen Laurent (18)",u"Eierschal Emil (74)"])
+    self.assertEqual(l,[u"Bastiaensen Laurent (18)",u'Ärgerlich Erna (68)',u"Eierschal Emil (74)"])
     
     
 def test09(self):
