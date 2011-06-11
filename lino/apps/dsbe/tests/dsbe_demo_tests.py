@@ -405,19 +405,19 @@ def test09(self):
 def test10(self):
     """
     Test the unique_together validation of City
-    See :doc:`/blog/2011/0610`.
+    See :doc:`/blog/2011/0610` and :doc:`/blog/2011/0611`.
     """
     from lino.modlib.countries.models import City, Country
     be = Country.objects.get(pk='BE')
     try:
-        City(name="Eupen",country=be).save()
+        City(name="Eupen",country=be,zip_code='4700').save()
     except IntegrityError:
         pass
     else:
         self.fail("Expected IntegrityError")
         
     try:
-        be.city_set.create(name="Eupen")
+        be.city_set.create(name="Eupen",zip_code='4700')
     except IntegrityError:
         pass
     else:

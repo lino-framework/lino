@@ -232,7 +232,7 @@ def babelattr(obj,attrname,*args):
         
 getattr_lang = babelattr
     
-def add_babel_field(model,name,*args,**kw):
+def unused_add_babel_field(model,name,*args,**kw):
     """
 Declares a previously defined field as babel field.
 This will add a variable number of clones of the base field, 

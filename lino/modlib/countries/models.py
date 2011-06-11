@@ -98,7 +98,7 @@ class City(models.Model):
     class Meta:
         verbose_name = _("city")
         verbose_name_plural = _("cities")
-        unique_together = ('country','name')
+        unique_together = ('country','name','zip_code')
     
     def __unicode__(self):
         return self.name
@@ -140,12 +140,12 @@ class CountryCity(models.Model):
         Try to auto-create it.
         """
         if self.country is not None:
-            return self.country.city_set.create(name=text)
+            #~ return self.country.city_set.create(name=text)
             #~ except IntegrityError:
-            #~ qs = self.country.city_set.filter(name__iexact=text)
-            #~ if qs.count() == 0:
-                #~ return self.country.city_set.create(name=text,country=self.country)
-            #~ raise ValidationError("Cannot create city %r in %s because it already exists.",(text,country))
+            qs = self.country.city_set.filter(name__iexact=text)
+            if qs.count() == 0:
+                return self.country.city_set.create(name=text,country=self.country)
+            raise ValidationError("Refused to auto-create city %r in %s because same name exists.",(text,country))
         #~ dblogger.warning("Cannot auto-create city %r if country is empty",text)
         raise ValidationError("Cannot auto-create city %r if country is empty",text)
         

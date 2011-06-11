@@ -12,7 +12,8 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""Writes a diagnostic report about this Site. 
+"""Writes a diagnostic report about the data on this Site. 
+Used to get a quick overview on the differences in two databases. 
 """
 
 import logging
@@ -20,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 import os
 import errno
-import codecs
+#~ import codecs
 import sys
 from optparse import make_option 
 from os.path import join
@@ -53,11 +54,10 @@ class Command(BaseCommand):
             
         self.options = options
         
-        fd = codecs.open("diag.rst","w",encoding="utf-8")
+        encoding = self.stdout.encoding or 'utf-8'
         
         def writeln(ln):
-            fd.write(ln + "\n")
-            #~ print s
+            self.stdout.write(ln.encode(encoding,errors="xmlcharrefreplace") + "\n")
         
         
         writeln("Lino %s" % lino.__version__)
@@ -68,7 +68,9 @@ class Command(BaseCommand):
         writeln("%d applications: %s." % (len(apps), ", ".join(apps)))
         writeln("%d models:" % len(models_list))
         i = 0
-        headers = ["No.","Name",
+        headers = [
+            #~ "No.",
+            "Name",
             #~ "Class",
             "M",
             "#fields",
@@ -79,7 +81,7 @@ class Command(BaseCommand):
         for model in models_list:
             i += 1
             cells = []
-            cells.append(str(i))
+            #~ cells.append(str(i))
             cells.append(full_model_name(model))
             #~ cells.append(str(model))
             if model._meta.managed:
@@ -87,7 +89,8 @@ class Command(BaseCommand):
             else:
                 cells.append('')
             cells.append(str(len(model._meta.fields)))
-            qs = model.objects.all()
+            #~ qs = model.objects.all()
+            qs = model.objects.order_by('pk')
             n = qs.count()
             cells.append(str(n))
             if n:
@@ -98,6 +101,4 @@ class Command(BaseCommand):
                 cells.append('')
             rows.append(cells)
         writeln(rstgen.table(headers,rows))
-        
-        fd.close()
         

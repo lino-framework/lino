@@ -161,6 +161,7 @@ As long as nobody protests, I'll save some time by writing in German.
   08
   :doc:`09 <0609>`
   :doc:`10 <0610>`
+  :doc:`11 <0611>`
   |br| 
   |br|  	
   

@@ -1,0 +1,105 @@
+20110611
+========
+
+Samstagabend. Jetzt wo die Leute in Eupen nicht arbeiten, 
+will ich mir mal in Ruhe die Daten ansehen und die Schäden 
+des Bugs mit den Babelfeldern vom :doc:`0527` zu reparieren.
+Wie sich rausstellt, waren da gar keine Schäden, sondern 
+die französischen Bezeichnungen waren in der tat nur im UI unsichtbar.
+
+Die Funktion `lino.utils.babel.add_babel_field` habe ich mal rausgeholt, 
+damit sie keinen Schaden mehr anrichtet.
+
+Zunächst einmal waren in :mod:`lino.modlib.countries.fixtures.be` 
+ein paar Dubletten, 
+die seit dem gestern engebauten 
+`unique_together = ('country','name')` 
+in :class:`lino.modlib.countries.models.City` 
+nicht mehr akzeptiert wurden.
+Z.B. 
+"Antwerpen 1" (2000 und 2018) und "Bütgenbach".
+Behoben.
+
+Beim Kunden hole ich mir ein aktuelles Backup `d20110611.py` 
+runter (mit Version 1.1.14) und versuche es mit der 
+neuen Version 1.1.14+ einzulesen.
+Korrekturen in der `d20110611a.py` 
+
+Eine Einsicht, die mir dabei gekommen ist: 
+ich muss das `unique_together = ('country','name')` 
+doch erweitern auf 
+`unique_together = ('country','name','zip_code')`. 
+Hauptsächlich weil :term:`watch_tim`  sonst Probleme kriegt 
+mit dem Synchronisieren der Städte.
+
+Trotzdem hatte ich dann noch Dubletten in den Städten, die 
+durch den gestern (hoffentlich) behobenen Bug gekommen sind. 
+Unter Anderem sechs automatisch erstellte Städte namens "Eupen".
+Die kommentiere ich raus::
+
+    #~ yield create_countries_city(816,u'Eupen',u'BE',u'')
+    ...
+
+und mache dann preambel der dump-Datei folgendes::
+
+  CITY_PKS = {
+    814 : 815,
+    816 : 1,
+    817 : 1,
+    818 : 1,
+    819 : 1,
+    820 : 1,
+    821 : 1,
+    823 : 822,
+  }
+
+  def new_city_pk(old):
+      return CITY_PKS.get(old,old)
+      
+Und dann in den `create_foo_bar`-Funktionen::
+
+  def create_contacts_company(country_id, city_id, name, addr1, ...):
+      city_id = new_city_pk(city_id)
+      return Company(country_id=country_id,city_id=city_id,name=name,addr1=addr1,...)
+
+Nach diesen Anpassungen kriegt er ihn durch. Stichproben. 
+Sieht normal aus.
+
+Vergleich der Ausgaben von :mod:`lino.management.commands.diag` in beiden Datenbanken.
+Einige Optimierungen, weil ein Vergleich der beiden Listings noch relativ lästig ist:
+
+- Keine laufende Nummer mehr, denn z.B. mit Django release 15966 kommen die 
+  ungenutzten Modelle aus django.contrib.* noch rein, mit 16331 nicht mehr. 
+  Selbst wenn ich diese Zeilen manuell lösche, bringen
+  die laufenden Nummern den Dateivergleicher durcheinander.
+  
+- Der letzte und erste Record der Tabelle waren nicht die Gleichen, 
+  aber nicht weil da was fehlte, sondern 
+  nur weil die Reihenfolge zufällig war. Deshalb sortiert 
+  :term:`diag` die 
+  Records jetzt nach dem primary key. Also statt bisher::
+  
+        qs = model.objects.all()
+        
+  macht er jetzt::
+        
+        qs = model.objects.order_by('pk')
+  
+- Es war ja doof, dass er immer in eine hartkodierte Datei `diag.rst` 
+  reingenerierte. 
+  Der Grund dafür war ja eigentlich nur, dass z.B. kyrillische Buchstaben 
+  auf der Konsole nicht angezeigt werden können und dann zu UnicodeDecodeErrors 
+  führen.
+  
+  Jetzt schreibt er nach stdout und dekodiert vorher selber 
+  mit ``decode(self.stdout.encoding,errors="xmlcharrefreplace")``. 
+  Wenn man in eine Datei umgeleitet 
+  hat (dann ist `self.stdout.encoding` ja `None`) 
+  nehmen wir ``utf-8`` als (hartkodierten) Standardwert.
+
+
+Jetzt mach ich am besten gleich ein Release, sonst muss ich die 
+manuellen Änderungen in meiner `d20110611a.py` 
+später wieder neu machen.
+
+Also :doc:`/releases/20110611`

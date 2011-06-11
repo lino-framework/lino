@@ -1,0 +1,21 @@
+Version 1.1.15 (11.06.2011)
+===========================
+
+This is just a bugfix release with no new features.
+
+Bugs fixed
+----------
+
+- Auto-create of Cities in learning comboboxes is now more strict to 
+  avoid duplicates.
+
+- Optimizations in :mod:`lino.management.commands.diag`.
+  See :doc:`/blog/2011/0611`.
+
+
+Upgrade instructions
+--------------------
+
+See the general instructions on how to upgrade an existing 
+Lino site: :doc:`/admin/upgrade`.
+

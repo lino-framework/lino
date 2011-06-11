@@ -76,8 +76,8 @@ belgian_cities = u"""
 4520 Antheit 
 4160 Anthisnes 
 7640 Antoing 
-2000 Antwerpen 1 
-2018 Antwerpen 1 
+2000 Antwerpen 
+2018 Antwerpen 1
 2020 Antwerpen 2 
 2030 Antwerpen 3 
 2040 Antwerpen 4 
@@ -454,7 +454,6 @@ belgian_cities = u"""
 4790 Burg-Reuland 
 9420 Burst 
 7602 Bury 
-4750 Butgenbach 
 4750 Bütgenbach 
 3891 Buvingen 
 7133 Buvrinnes 
@@ -2572,9 +2571,6 @@ L1217 LUXEMBOURG (BEGGEN)
 4530 Vieux-Waleffe 
 6890 Villance 
 4260 Ville-en-Hesbaye 
-69650 VILLENEUVE D'ASCQ 
-59650 VILLENEUVE D'ASCQ 
-59651 VILLENEUVE D'ASCQ 
 7322 Ville-Pommeroeul 
 7334 Villerot 
 4161 Villers-aux-Tours 
@@ -2873,6 +2869,12 @@ L1217 LUXEMBOURG (BEGGEN)
 2070 Zwijndrecht
 """
 
+fr = u"""
+4750 Butgenbach 
+69650 VILLENEUVE D'ASCQ
+59650 VILLENEUVE D'ASCQ 
+59651 VILLENEUVE D'ASCQ 
+"""
 
 def objects():
     city = Instantiator("countries.City","zip_code name",country='BE').build

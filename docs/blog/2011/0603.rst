@@ -94,7 +94,8 @@ Deshalb muss ich das Dump manuell korrigieren::
       if name_en is None: name_en = ''
       return Language(id=id,name=name,iso2=iso2,name_fr=name_fr,name_en=name_en)
       
-(Das Gleiche für alle betroffenen Tabellen: Language, Country, ContractType, AidType...)
+(Das Gleiche für alle betroffenen Tabellen: 
+Language, Country, ContractType, AidType, ExamPolicy...)
 
 Diverse Optimierungen in :mod:`lino.utils.dpy`: 
 

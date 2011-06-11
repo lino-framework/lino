@@ -5,11 +5,13 @@ New features
 ------------
 
 
-
 Bugs fixed
 ----------
 
-- The "Save" button of the Layout Editor of Detail windows didn't work. Fixed.
+- Auto-create of Cities in learning comboboxes is now more strict.
+
+- Optimizations in :mod:`lino.management.commands.diag`.
+  See :doc:`/blog/2011/0611`.
 
 
 Upgrade instructions
