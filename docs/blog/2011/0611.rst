@@ -124,9 +124,9 @@ There warnings are afterwards still there::
 They are easily reproduceable by ``manage.py test``. 
 Seems that the test suite works only under the sqlite and not under the mysql database backend.
     
-Ich habe die Datenbank in Eupen momentan wie folgt definiert::    
+Ich habe die Datenbank des Kunden momentan wie folgt definiert::    
 
-  create database dsbe_eupen charset 'utf8' collate utf8_general_ci;
+  create database myproject charset 'utf8' collate utf8_general_ci;
   
 Der Befehl ``show collations;`` zeigt alle erlaubten collations in Funktion des character sets.
   

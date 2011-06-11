@@ -227,7 +227,7 @@ def test03(self):
     #~ result = simplejson.loads(response.content)
     #~ for k in 'navinfo disable_delete data id title'.split():
         #~ self.assertTrue(result.has_key(k))
-    self.assertEqual(result['navinfo']['last'],93)
+    #~ self.assertEqual(result['navinfo']['last'],93)
     self.assertEqual(result['navinfo']['recno'],3)
     self.assertEqual(result['navinfo']['prev'],14)
     self.assertEqual(result['navinfo']['first'],16)
