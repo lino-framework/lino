@@ -28,7 +28,7 @@ def objects():
     #~ BE = Country.objects.get(pk="BE")
     try:
         City.objects.get(country__isocode='BE',name="Eupen")
-    except City.DoesNotexist:
+    except City.DoesNotExist:
         pass
     else:
         yield city('Eupen','BE',zip_code='4700')
