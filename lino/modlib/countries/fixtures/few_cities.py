@@ -25,9 +25,9 @@ def objects():
     city = Instantiator('countries.City','name country').build
     City = resolve_model('countries.City')
     Country = resolve_model('countries.Country')
-    BE = Country.objects.get(pk="BE")
+    #~ BE = Country.objects.get(pk="BE")
     try:
-        City.objects.get(country=BE,name="Eupen"):
+        City.objects.get(country__pk='BE',name="Eupen")
     except City.DoesNotexist:
         pass
     else:
