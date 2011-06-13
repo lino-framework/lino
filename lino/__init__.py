@@ -157,7 +157,7 @@ class Lino(object):
     
     """
     
-    root_url = '/'
+    root_url = '' # must end with a slash if not empty
     
     help_url = "http://code.google.com/p/lino"
     #~ index_html = "This is the main page."
