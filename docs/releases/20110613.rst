@@ -1,6 +1,7 @@
 Version 1.1.16 (13.06.2011)
 ===========================
 
+Revision `4bf5a5344714 <http://code.google.com/p/lino/source/detail?r=4bf5a53447140dc9d9deb14c636451de8f98ef43>`_
 Another small release with a few optimizations of the user interface.
 
 Visible changes

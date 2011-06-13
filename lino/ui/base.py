@@ -13,6 +13,7 @@
 
 import lino
 from urllib import urlencode
+from django.conf import settings
 
 class Handle:
   
@@ -49,26 +50,24 @@ class UI:
     """
     """
     name = None
-    prefix = None
+    #~ prefix = None
     verbose_name = None
+    root_url = '/'
     
     def __init__(self,site):
         self.site = site
-        # instantiate all ReportHandles already at server startup.
-        # TODO: in fact this is currently called only when a first request comes in,
-        #       because Django does not yet provide a `server_startup` signal.
-        #~ logger.debug('Instantiating %s...' % self)
-        #~ from lino import reports
-        #~ for rpt in reports.master_reports + reports.slave_reports:
-            #~ rpt.get_handle(self)
         
     def build_url(self,*args,**kw):
-        url = "/" + "/".join(args)
-        if self.prefix:
-            url = "/" + self.prefix + url
+        url = self.root_url + "/".join(args)
+        #~ if self.prefix:
+            #~ url = "/" + self.prefix + url
         if len(kw):
             url += "?" + urlencode(kw)
         return url
+        
+    def media_url(self,*args,**kw):
+        return self.build_url('media',*args,**kw)
+        #~ settings.MEDIA_URL
         
     def get_urls():
         pass

@@ -57,4 +57,14 @@ muss man momentan also das Drittpartner-Panel "im eigenen Fenster öffnen".
 Später kommt dann das Erstellen per Drag & Drop hinzu.
 
 
-Also :doc:`/releases/20110613`
+Lino 1.1.16
+-----------
+
+Und die heutigen Änderungen releasen wir als :doc:`/releases/20110613`.
+
+
+
+
+Lino location other than "/"
+----------------------------
+
