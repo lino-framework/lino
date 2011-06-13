@@ -29,8 +29,6 @@ def objects():
     try:
         City.objects.get(country__isocode='BE',name="Eupen")
     except City.DoesNotExist:
-        pass
-    else:
         yield city('Eupen','BE',zip_code='4700')
         yield city('Kelmis','BE',zip_code='4720')
         yield city('Kettenis','BE',zip_code='4701')
