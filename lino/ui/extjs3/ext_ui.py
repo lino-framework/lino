@@ -770,7 +770,8 @@ tinymce.init({
         yield "LANGUAGE_CHOICES = %s;" % py2js(list(LANGUAGE_CHOICES))
         yield "STRENGTH_CHOICES = %s;" % py2js(list(STRENGTH_CHOICES))
         yield "KNOWLEDGE_CHOICES = %s;" % py2js(list(KNOWLEDGE_CHOICES))
-        yield "MEDIA_URL = %r;" % (self.media_url() + '/')
+        yield "MEDIA_URL = %r;" % (self.media_url())
+        yield "API_URL = %r;" % self.build_url('api')
         yield "Lino.status_bar = new Ext.ux.StatusBar({defaultText:'Lino version %s.'});" % lino.__version__
         
             
