@@ -76,3 +76,5 @@ Cities fixtures
 ---------------
 
 - :mod:`lino.modlib.countries.fixtures.ee` funktioniert noch nicht
+- :mod:`lino.modlib.countries.fixtures.few_cities` ist jetzt intelligenter 
+  und funktioniert auch mit `be` zusammen.
