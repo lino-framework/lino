@@ -13,7 +13,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 from lino.utils import dblogger
-#~ from lino.tools import resolve_model
+from lino.tools import resolve_model
 from lino.utils.instantiator import Instantiator
 #~ from lino.utils.babel import default_language
 #from lino import reports
@@ -23,15 +23,23 @@ from lino.utils.instantiator import Instantiator
 def objects():
     dblogger.info("Installing countries demo_cities fixture")
     city = Instantiator('countries.City','name country').build
-    yield city('Eupen','BE',zip_code='4700')
-    yield city('Kelmis','BE',zip_code='4720')
-    yield city('Kettenis','BE',zip_code='4701')
-    yield city('Raeren','BE',zip_code='4730')
-    yield city('Angleur','BE',zip_code='4031')
-    yield city('Bruxelles','BE',zip_code='1000')
-    #~ yield city('Brussel','BE',zip_code='1000')
-    #~ yield city('Brüssel','BE',zip_code='1000')
-    yield city('Oostende','BE',zip_code='8400')
+    City = resolve_model('countries.City')
+    Country = resolve_model('countries.Country')
+    BE = Country.objects.get(pk="BE")
+    try:
+        City.objects.get(country=BE,name="Eupen"):
+    except City.DoesNotexist:
+        pass
+    else:
+        yield city('Eupen','BE',zip_code='4700')
+        yield city('Kelmis','BE',zip_code='4720')
+        yield city('Kettenis','BE',zip_code='4701')
+        yield city('Raeren','BE',zip_code='4730')
+        yield city('Angleur','BE',zip_code='4031')
+        yield city('Bruxelles','BE',zip_code='1000')
+        #~ yield city('Brussel','BE',zip_code='1000')
+        #~ yield city('Brüssel','BE',zip_code='1000')
+        yield city('Oostende','BE',zip_code='8400')
     
     yield city('Vigala','EE')
     yield city('Tallinn','EE')
