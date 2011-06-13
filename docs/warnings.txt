@@ -1,3 +1,0 @@
-T:\hgwork\lino\docs\blog\2011\0613.rst:27: (WARNING/2) Inline interpreted text or phrase reference start-string without end-string.
-T:\hgwork\lino\docs\blog\2011\0613.rst:27: (ERROR/3) Unknown target name: "http://127.0.0.1:8000/api/notes/mynotes?fmt=insert&mt=1&mk=1".
-T:\hgwork\lino\docs\blog\2011\0613.rst:20: WARNING: xfile reference target not found: linolib.js

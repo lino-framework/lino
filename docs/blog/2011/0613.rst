@@ -26,8 +26,8 @@ in der :xfile:`linolib.js` einfach ein Attribut
 
 En passant zwei Bugs weniger:
 Wenn man ein Insert-Fenster per Permalink aufrief, z.B.
-`http://127.0.0.1:8000/api/notes/MyNotes?fmt=insert&mt=1&mk=1`_,
-dann kam ein `UnboundLocalError: local variable 'params' referenced before assignment".
+http://127.0.0.1:8000/api/notes/MyNotes?fmt=insert&mt=1&mk=1,
+dann kam ein `UnboundLocalError: local variable 'params' referenced before assignment"`.
 Und nachdem dieser Bug behoben kam, kam außerdem nicht der 
 richtige Titel "Einfügen nach...".
 
@@ -57,11 +57,8 @@ muss man momentan also das Drittpartner-Panel "im eigenen Fenster öffnen".
 Später kommt dann das Erstellen per Drag & Drop hinzu.
 
 
-Lino 1.1.16
------------
-
-Und die heutigen Änderungen releasen wir als :doc:`/releases/20110613`.
-
+Check-in 
+Revision `4bf5a5344714 <http://code.google.com/p/lino/source/detail?r=4bf5a53447140dc9d9deb14c636451de8f98ef43>`_
 
 
 Lino location other than "/"
@@ -107,9 +104,6 @@ In der Apache-Konfig::
     LogLevel warn
     CustomLog ${APACHE_LOG_DIR}/access.log combined
   </VirtualHost>
-
-
-
 
 
 Nebenbei sind bei diesen Arbeiten auch noch einige kleine Änderungen gekommen:
@@ -158,4 +152,10 @@ mindestens ab Revision 16392 nicht mehr::
 
   FAILED (errors=1)
   Destroying test database for alias 'default'...
+
+
+Lino 1.1.16
+-----------
+
+Und die heutigen Änderungen releasen wir als :doc:`/releases/20110613`.
 
