@@ -52,13 +52,12 @@ class UI:
     name = None
     #~ prefix = None
     verbose_name = None
-    root_url = '/'
     
     def __init__(self,site):
         self.site = site
         
     def build_url(self,*args,**kw):
-        url = self.root_url + "/".join(args)
+        url = self.site.root_url + "/".join(args)
         #~ if self.prefix:
             #~ url = "/" + self.prefix + url
         if len(kw):

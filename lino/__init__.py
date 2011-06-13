@@ -157,6 +157,8 @@ class Lino(object):
     
     """
     
+    root_url = '/'
+    
     help_url = "http://code.google.com/p/lino"
     #~ index_html = "This is the main page."
     title = "Base Lino Application"

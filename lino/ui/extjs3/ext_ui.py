@@ -664,7 +664,7 @@ tinymce.init({
             yield '<script type="text/javascript" src="%s/extjs/examples/ux/gridfilters/filter/NumericFilter.js"></script>' % self.media_url()
             yield '<script type="text/javascript" src="%s/extjs/examples/ux/gridfilters/filter/BooleanFilter.js"></script>' % self.media_url()
             
-        yield '<script type="text/javascript" src="%sextjs/examples/ux/fileuploadfield/FileUploadField.js"></script>' % self.media_url()
+        yield '<script type="text/javascript" src="%s/extjs/examples/ux/fileuploadfield/FileUploadField.js"></script>' % self.media_url()
         
         if settings.LINO.use_vinylfox:
             p = self.media_url() + '/lino/vinylfox/'
