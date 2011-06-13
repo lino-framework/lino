@@ -28,7 +28,7 @@ import lino
 
 from lino import Lino
 
-LINO = Lino(__file__)
+LINO = Lino(__file__,globals())
 
 #~ DBLOGGER = 'db'
 #~ DBLOGFILE = 'auto'
@@ -115,7 +115,7 @@ USE_I18N = True
 #~ else:
     #~ MEDIA_ROOT = abspath(join(DATA_DIR,'media'))
 
-MEDIA_ROOT = abspath(join(LINO.project_dir,'media'))
+#~ MEDIA_ROOT = abspath(join(LINO.project_dir,'media'))
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
@@ -169,14 +169,10 @@ if False:
 
 ROOT_URLCONF = 'lino.ui.extjs3.urls'
 
-TEMPLATE_DIRS = [
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-      #~ join(abspath(DATA_DIR),'templates'),
-      join(LINO.project_dir,'templates'),
-      join(abspath(dirname(lino.__file__)),'templates'),
-]
+#~ TEMPLATE_DIRS = [
+      #~ join(LINO.project_dir,'templates'),
+      #~ join(abspath(dirname(lino.__file__)),'templates'),
+#~ ]
 #print "baz", __file__
 
 INSTALLED_APPS = [
