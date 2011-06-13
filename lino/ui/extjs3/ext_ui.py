@@ -596,36 +596,36 @@ class ExtUI(base.UI):
         #~ yield '<!-- base library -->'
         
         
-        yield '<link rel="stylesheet" type="text/css" href="%sextjs/resources/css/ext-all.css" />' % self.media_url()
+        yield '<link rel="stylesheet" type="text/css" href="%s/extjs/resources/css/ext-all.css" />' % self.media_url()
         #~ yield '<!-- overrides to base library -->'
         if settings.LINO.use_vinylfox:
-            p = self.media_url() + 'lino/vinylfox/'
+            p = self.media_url() + '/lino/vinylfox/'
             #~ p = self.media_url('lino','vinylfox') + '/'
             yield '<link rel="stylesheet" type="text/css" href="%sresources/css/htmleditorplugins.css" />' % p
           
         if settings.USE_GRIDFILTERS:
-            #~ yield '<link rel="stylesheet" type="text/css" href="%sextjs/examples/ux/css/RowEditor.css" />' % self.media_url() 
-            yield '<link rel="stylesheet" type="text/css" href="%sextjs/examples/ux/statusbar/css/statusbar.css" />' % self.media_url() 
-            yield '<link rel="stylesheet" type="text/css" href="%sextjs/examples/ux/gridfilters/css/GridFilters.css" />' % self.media_url() 
-            yield '<link rel="stylesheet" type="text/css" href="%sextjs/examples/ux/gridfilters/css/RangeMenu.css" />' % self.media_url() 
+            #~ yield '<link rel="stylesheet" type="text/css" href="%s/extjs/examples/ux/css/RowEditor.css" />' % self.media_url() 
+            yield '<link rel="stylesheet" type="text/css" href="%s/extjs/examples/ux/statusbar/css/statusbar.css" />' % self.media_url() 
+            yield '<link rel="stylesheet" type="text/css" href="%s/extjs/examples/ux/gridfilters/css/GridFilters.css" />' % self.media_url() 
+            yield '<link rel="stylesheet" type="text/css" href="%s/extjs/examples/ux/gridfilters/css/RangeMenu.css" />' % self.media_url() 
             
-        yield '<link rel="stylesheet" type="text/css" href="%sextjs/examples/ux/fileuploadfield/css/fileuploadfield.css" />' % self.media_url() 
+        yield '<link rel="stylesheet" type="text/css" href="%s/extjs/examples/ux/fileuploadfield/css/fileuploadfield.css" />' % self.media_url() 
         
-        yield '<link rel="stylesheet" type="text/css" href="%slino/extjs/lino.css">' % self.media_url()
+        yield '<link rel="stylesheet" type="text/css" href="%s/lino/extjs/lino.css">' % self.media_url()
         
         if settings.LINO.use_awesome_uploader:
-            yield '<link rel="stylesheet" type="text/css" href="%slino/AwesomeUploader/AwesomeUploader.css">' % self.media_url()
-            yield '<link rel="stylesheet" type="text/css" href="%slino/AwesomeUploader/AwesomeUploader Progress Bar.css">' % self.media_url()
+            yield '<link rel="stylesheet" type="text/css" href="%s/lino/AwesomeUploader/AwesomeUploader.css">' % self.media_url()
+            yield '<link rel="stylesheet" type="text/css" href="%s/lino/AwesomeUploader/AwesomeUploader Progress Bar.css">' % self.media_url()
          
         #~ yield '<!-- ** Javascript ** -->'
         #~ yield '<!-- ExtJS library: base/adapter -->'
-        yield '<script type="text/javascript" src="%sextjs/adapter/ext/ext-base.js"></script>' % self.media_url() 
+        yield '<script type="text/javascript" src="%s/extjs/adapter/ext/ext-base.js"></script>' % self.media_url() 
         if settings.DEBUG:
             widget_library = 'ext-all-debug'
         else:
             widget_library = 'ext-all'
         #~ yield '<!-- ExtJS library: all widgets -->'
-        yield '<script type="text/javascript" src="%sextjs/%s.js"></script>' % (self.media_url(), widget_library)
+        yield '<script type="text/javascript" src="%s/extjs/%s.js"></script>' % (self.media_url(), widget_library)
         #~ if True:
             #~ yield '<style type="text/css">'
             #~ # http://stackoverflow.com/questions/2106104/word-wrap-grid-cells-in-ext-js 
@@ -634,18 +634,18 @@ class ExtUI(base.UI):
             #~ yield '}'
             #~ yield '</style>'
         if False:
-            yield '<script type="text/javascript" src="%sextjs/Exporter-all.js"></script>' % self.media_url() 
+            yield '<script type="text/javascript" src="%s/extjs/Exporter-all.js"></script>' % self.media_url() 
             
         if False:
-            yield '<script type="text/javascript" src="%sextjs/examples/ux/CheckColumn.js"></script>' % self.media_url() 
+            yield '<script type="text/javascript" src="%s/extjs/examples/ux/CheckColumn.js"></script>' % self.media_url() 
 
-        yield '<script type="text/javascript" src="%sextjs/examples/ux/statusbar/StatusBar.js"></script>' % self.media_url()
+        yield '<script type="text/javascript" src="%s/extjs/examples/ux/statusbar/StatusBar.js"></script>' % self.media_url()
         
         if settings.LINO.use_tinymce:
-            p = self.media_url() + 'tinymce'
+            p = self.media_url() + '/tinymce'
             #~ yield '<script type="text/javascript" src="Ext.ux.form.FileUploadField.js"></script>'
             yield '<script type="text/javascript" src="%s/tiny_mce.js"></script>' % p
-            yield '<script type="text/javascript" src="%slino/tinymce/Ext.ux.TinyMCE.js"></script>' % self.media_url()
+            yield '<script type="text/javascript" src="%s/lino/tinymce/Ext.ux.TinyMCE.js"></script>' % self.media_url()
             yield '''<script language="javascript" type="text/javascript">
 tinymce.init({
         theme : "advanced"
@@ -653,21 +653,21 @@ tinymce.init({
 });
 </script>'''
         if settings.USE_GRIDFILTERS:
-            #~ yield '<script type="text/javascript" src="%sextjs/examples/ux/RowEditor.js"></script>' % self.media_url()
-            yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/menu/RangeMenu.js"></script>' % self.media_url()
-            yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/menu/ListMenu.js"></script>' % self.media_url()
-            yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/GridFilters.js"></script>' % self.media_url()
-            yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/filter/Filter.js"></script>' % self.media_url()
-            yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/filter/StringFilter.js"></script>' % self.media_url()
-            yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/filter/DateFilter.js"></script>' % self.media_url()
-            yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/filter/ListFilter.js"></script>' % self.media_url()
-            yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/filter/NumericFilter.js"></script>' % self.media_url()
-            yield '<script type="text/javascript" src="%sextjs/examples/ux/gridfilters/filter/BooleanFilter.js"></script>' % self.media_url()
+            #~ yield '<script type="text/javascript" src="%s/extjs/examples/ux/RowEditor.js"></script>' % self.media_url()
+            yield '<script type="text/javascript" src="%s/extjs/examples/ux/gridfilters/menu/RangeMenu.js"></script>' % self.media_url()
+            yield '<script type="text/javascript" src="%s/extjs/examples/ux/gridfilters/menu/ListMenu.js"></script>' % self.media_url()
+            yield '<script type="text/javascript" src="%s/extjs/examples/ux/gridfilters/GridFilters.js"></script>' % self.media_url()
+            yield '<script type="text/javascript" src="%s/extjs/examples/ux/gridfilters/filter/Filter.js"></script>' % self.media_url()
+            yield '<script type="text/javascript" src="%s/extjs/examples/ux/gridfilters/filter/StringFilter.js"></script>' % self.media_url()
+            yield '<script type="text/javascript" src="%s/extjs/examples/ux/gridfilters/filter/DateFilter.js"></script>' % self.media_url()
+            yield '<script type="text/javascript" src="%s/extjs/examples/ux/gridfilters/filter/ListFilter.js"></script>' % self.media_url()
+            yield '<script type="text/javascript" src="%s/extjs/examples/ux/gridfilters/filter/NumericFilter.js"></script>' % self.media_url()
+            yield '<script type="text/javascript" src="%s/extjs/examples/ux/gridfilters/filter/BooleanFilter.js"></script>' % self.media_url()
             
         yield '<script type="text/javascript" src="%sextjs/examples/ux/fileuploadfield/FileUploadField.js"></script>' % self.media_url()
         
         if settings.LINO.use_vinylfox:
-            p = self.media_url() + 'lino/vinylfox/'
+            p = self.media_url() + '/lino/vinylfox/'
             #~ yield '<script type="text/javascript" src="Ext.ux.form.FileUploadField.js"></script>'
             yield '<script type="text/javascript" src="%s/src/Ext.ux.form.HtmlEditor.MidasCommand.js"></script>' % p
             yield '<script type="text/javascript" src="%s/src/Ext.ux.form.HtmlEditor.Divider.js"></script>' % p
@@ -684,8 +684,9 @@ tinymce.init({
             yield '<script type="text/javascript" src="%s/src/Ext.ux.form.HtmlEditor.UndoRedo.js"></script>' % p
             yield '<script type="text/javascript" src="%s/src/Ext.ux.form.HtmlEditor.Heading.js"></script>' % p
             yield '<script type="text/javascript" src="%s/src/Ext.ux.form.HtmlEditor.Plugins.js"></script>' % p
+            
         if settings.LINO.use_awesome_uploader:
-            p = self.media_url() + 'lino/AwesomeUploader/'
+            p = self.media_url() + '/lino/AwesomeUploader/'
             #~ yield '<script type="text/javascript" src="Ext.ux.form.FileUploadField.js"></script>'
             yield '<script type="text/javascript" src="%s/Ext.ux.XHRUpload.js"></script>' % p
             yield '<script type="text/javascript" src="%s/swfupload.js"></script>' % p
@@ -696,7 +697,8 @@ tinymce.init({
         #~ yield '<!-- overrides to library -->'
         #~ yield '<script type="text/javascript" src="%slino/extjs/lino.js"></script>' % self.media_url()
         yield '<script type="text/javascript" src="%s"></script>' % (
-            self.media_url() + "/".join(self.lino_js_parts()))
+            #~ self.media_url() + "/".join(self.lino_js_parts()))
+            self.media_url(*self.lino_js_parts()))
 
         #~ yield '<!-- page specific -->'
         yield '<script type="text/javascript">'
@@ -762,11 +764,11 @@ tinymce.init({
         
     def lino_js_lines(self):
         yield """// lino.js --- generated %s by Lino version %s.""" % (time.ctime(),lino.__version__)
-        yield "Ext.BLANK_IMAGE_URL = '%sextjs/resources/images/default/s.gif';" % self.media_url()
+        yield "Ext.BLANK_IMAGE_URL = '%s/extjs/resources/images/default/s.gif';" % self.media_url()
         yield "LANGUAGE_CHOICES = %s;" % py2js(list(LANGUAGE_CHOICES))
         yield "STRENGTH_CHOICES = %s;" % py2js(list(STRENGTH_CHOICES))
         yield "KNOWLEDGE_CHOICES = %s;" % py2js(list(KNOWLEDGE_CHOICES))
-        yield "MEDIA_URL = %r;" % self.media_url()
+        yield "MEDIA_URL = %r;" % (self.media_url() + '/')
         yield "Lino.status_bar = new Ext.ux.StatusBar({defaultText:'Lino version %s.'});" % lino.__version__
         
             
@@ -1368,7 +1370,7 @@ tinymce.init({
             #~ return [dict(text="Show",handler=js_code('Lino.%s' % v.report.get_action('detail')))]
             #~ s = unicode(v[0]) + ':'
             s = ''
-            s += ' [<a href="%s" target="_blank">show</a>]' % (self.media_url() + rr[0].file.name)
+            s += ' [<a href="%s" target="_blank">show</a>]' % (self.media_url(rr[0].file.name))
             #~ s += ' [<a href="%s" target="_blank">edit</a>]' % (self.get_detail_url(rr[0],fmt='detail'))
             #~ params = dict(data_record=elem2rec1(rr,rr.ah,rr[0]))
             params = dict(data_record=elem2rec_detailed(rr,rr.ah,rr[0]))
