@@ -37,6 +37,8 @@ EXT_CHAR_HEIGHT = 22
 DEFAULT_GC_NAME = 0
 
 
+def rpt2url(rpt):
+    return '/' + rpt.app_label + '/' + rpt._actor_name
 
 def a2btn(a):
     return dict(
@@ -1195,7 +1197,8 @@ class GridElement(Container):
         rh = self.report.get_handle(self.lh.rh.ui)
         kw = LayoutElement.ext_options(self,**kw)
         #~ d.update(ls_data_url=rh.ui.get_actor_url(self.report))
-        kw.update(ls_url=rh.ui.build_url(self.report.app_label,self.report._actor_name))
+        #~ kw.update(ls_url=rh.ui.build_url(self.report.app_label,self.report._actor_name))
+        kw.update(ls_url=rpt2url(self.report))
         kw.update(ls_store_fields=[js_code(f.as_js()) for f in rh.store.list_fields])
         kw.update(ls_columns=[GridColumn(i,e) for i,e in enumerate(self.columns)])
         #~ kw.update(ls_filters=[e.get_filter_options() for e in self.elements if e.filter_type])
@@ -1458,7 +1461,8 @@ class FormPanel(jsgen.Component):
             kw.update(ls_insert_handler=js_code("Lino.%s" % a))
         
         kw.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rpt.get_actions(action)])
-        kw.update(ls_url=rh.ui.build_url(rpt.app_label,rpt._actor_name))
+        #~ kw.update(ls_url=rh.ui.build_url(rpt.app_label,rpt._actor_name))
+        kw.update(ls_url=rpt2url(rpt))
         jsgen.Component.__init__(self,'form_panel',**kw)
         
     def has_field(self,f):

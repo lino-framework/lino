@@ -64,13 +64,13 @@ Und die heutigen Änderungen releasen wir als :doc:`/releases/20110613`.
 
 
 
-
 Lino location other than "/"
 ----------------------------
 
 Um auf unserem internen Webserver (jana) mehrere Lino-Anwendungen 
 parallel laufen lassen zu können, 
 habe ich erstmals den Fall, dass Lino nicht auf "/" sitzt.
+Um das zu ermöglichen habe ich einige Stunden gewurstelt. 
 
 Cities fixtures
 ---------------
