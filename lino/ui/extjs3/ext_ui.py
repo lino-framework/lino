@@ -458,7 +458,8 @@ class ExtUI(base.UI):
     def get_urls(self):
         urlpatterns = patterns('',
             (r'^$', self.index_view))
-        rx = '^'+settings.LINO.root_url
+        #~ rx = '^'+settings.LINO.root_url
+        rx = '^'
         urlpatterns += patterns('',
             (rx+r'$', self.index_view),
             (rx+r'menu$', self.menu_view),
