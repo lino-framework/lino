@@ -772,7 +772,7 @@ tinymce.init({
         yield "KNOWLEDGE_CHOICES = %s;" % py2js(list(KNOWLEDGE_CHOICES))
         yield "MEDIA_URL = %r;" % (self.media_url())
         yield "API_URL = %r;" % self.build_url('api')
-        yield "Lino.status_bar = new Ext.ux.StatusBar({defaultText:'Lino version %s.'});" % lino.__version__
+        #~ yield "Lino.status_bar = new Ext.ux.StatusBar({defaultText:'Lino version %s.'});" % lino.__version__
         
             
 
@@ -1158,6 +1158,10 @@ tinymce.init({
         
         f = codecs.open(fn,'w',encoding='utf-8')
         
+        for ln in self.lino_js_lines():
+            #~ js += ln + '\n'
+            f.write(ln + '\n')
+        
         libname = os.path.join(os.path.dirname(__file__),'linolib.js')
         tpl = CheetahTemplate(codecs.open(libname,encoding='utf-8').read())
         tpl.ui = self
@@ -1178,9 +1182,6 @@ tinymce.init({
         # the following takes a few seconds more time when using 
         # one big unicode string `js`.
         #~ js = u''
-        for ln in self.lino_js_lines():
-            #~ js += ln + '\n'
-            f.write(ln + '\n')
         for rpt in reports.master_reports + reports.slave_reports + reports.generic_slaves.values():
             rh = rpt.get_handle(self) # make sure that setup_handle is called (which adds the window_wrapper)
             #~ js += "Ext.namespace('Lino.%s')\n" % rpt

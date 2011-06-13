@@ -209,6 +209,8 @@ Ext.lib.Ajax.serializeForm = function(form) {
 
 Ext.namespace('Lino');
 
+Lino.status_bar = new Ext.ux.StatusBar({defaultText:'Lino version $(lino.__version__).'});
+
 #if $settings.LINO.use_tinymce
 
 Lino.edit_tinymce_text = function(panel) {
@@ -1018,7 +1020,7 @@ Lino.ajax_error_handler = function(response,options) {
 Lino.main_menu = new Ext.Toolbar({});
 
 // Path to the blank image should point to a valid location on your server
-Ext.BLANK_IMAGE_URL = MEDIA_URL + '/extjs/resources/images/default/s.gif'; 
+//~ Ext.BLANK_IMAGE_URL = MEDIA_URL + '/extjs/resources/images/default/s.gif'; 
 
 
 // used as Ext.grid.Column.renderer for id columns in order to hide the special id value -99999
