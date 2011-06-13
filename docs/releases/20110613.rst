@@ -13,8 +13,30 @@ Visible changes
 
 See :doc:`/blog/2011/0613`
 
+
+New features
+------------
+
+- Lino applications can now be located somewhere else than on "/".
+
+
 Upgrade instructions
 --------------------
+
+- In your local :xfile:`settings.py`, find the line::
+
+    LINO = Lino(__file__)
+    
+  and change it to::
+  
+    LINO = Lino(__file__,globals())
+    
+  The result is that Lino will also adapt the 
+  settings FIXTURE_DIRS, MEDIA_ROOT and TEMPLATE_DIRS for you.
+  If your :xfile:`settings.py` later sets these variables, 
+  should should now uncomment these lines, too. 
+
+
 
 For more general instructions on how to upgrade an existing 
 Lino site, see :doc:`/admin/upgrade`.
