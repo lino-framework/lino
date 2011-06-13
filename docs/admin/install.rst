@@ -168,8 +168,8 @@ user ``django@localhost``::
     
 create database myproject;
 create user 'django'@'localhost' identified by 'my cool password';
-grant all on wsl.* to django with grant option;
-grant all on test_wsl.* to django with grant option;
+grant all on myproject.* to django with grant option;
+grant all on test_myproject.* to django with grant option;
 quit;
 
 
@@ -195,10 +195,11 @@ We suggest the following :xfile:`manage.py` (see also :doc:`/blog/2011/0531`)::
 
     #!/usr/bin/env python
     import os
-    os.environ['DJANGO_SETTINGS_MODULE'] = 'wsl.settings'
+    prj = os.path.split(os.path.dirname(os.path.abspath(__file__)))[-1]
+    os.environ['DJANGO_SETTINGS_MODULE'] = prj + '.settings'
 
     from django.core.management import execute_manager
-    import settings # Assumed to be in the same directory.
+    import settings # Required to be in the same directory.
     from django.core.management import setup_environ
     setup_environ(settings)
 

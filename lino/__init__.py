@@ -265,7 +265,7 @@ class Lino(object):
     source_dir = os.path.dirname(__file__)
     source_name = os.path.split(source_dir)[-1]
     
-    def __init__(self,project_file): # ,settings_dict=None):
+    def __init__(self,project_file,settings_dict=None):
         #self.django_settings = settings
         #~ self.init_site_config = lambda sc: sc
         self.project_dir = normpath(dirname(project_file))
@@ -274,7 +274,7 @@ class Lino(object):
         self.dummy_messages = set()
         self._setting_up = False
         self._setup_done = False
-        self.root_path = '/lino/'
+        #~ self.root_path = '/lino/'
         self._response = None
         
         #~ self.appy_params.update(pythonWithUnoPath=r'C:\PROGRA~1\LIBREO~1\program\python.exe')
@@ -282,10 +282,21 @@ class Lino(object):
         #~ APPY_PARAMS.update(pythonWithUnoPath='/usr/bin/libreoffice')
         #~ APPY_PARAMS.update(pythonWithUnoPath='/etc/openoffice.org3/program/python')
     
-        #~ if settings_dict: 
-            #~ self.install_settings(settings_dict)
+        if settings_dict: 
+            self.install_settings(settings_dict)
             
-    #~ def install_settings(self,s):
+    def install_settings(self,s):
+        """Deserves more documentations.
+        """
+        s.update(MEDIA_ROOT = join(self.project_dir,'media'))
+        s.update(FIXTURE_DIRS = [join(self.project_dir,"fixtures")])
+        s.update(TEMPLATE_DIRS = (
+            join(abspath(self.project_dir),'templates'),
+            join(abspath(self.source_dir),'templates'),
+            join(abspath(dirname(__file__)),'templates'),
+        ))
+
+        
         #~ s.update(DATABASES= {
               #~ 'default': {
                   #~ 'ENGINE': 'django.db.backends.sqlite3',
@@ -331,26 +342,26 @@ class Lino(object):
     def add_menu(self,*args,**kw):
         return self.main_menu.add_menu(*args,**kw)
 
-    def context(self,request,**kw):
-        d = dict(
-          main_menu = menus.MenuRenderer(self.main_menu,request),
-          root_path = self.root_path,
-          lino = self,
-          settings = settings,
-          debug = True,
-          #skin = self.skin,
-          request = request
-        )
-        d.update(kw)
-        return d
+    #~ def context(self,request,**kw):
+        #~ d = dict(
+          #~ main_menu = menus.MenuRenderer(self.main_menu,request),
+          #~ #root_path = self.root_path,
+          #~ lino = self,
+          #~ settings = settings,
+          #~ debug = True,
+          #~ #skin = self.skin,
+          #~ request = request
+        #~ )
+        #~ d.update(kw)
+        #~ return d
         
-    def select_ui_view(self,request):
-        html = '<html><body>'
-        html += 'Please select a user interface: <ul>'
-        for ui in self.uis:
-            html += '<li><a href="%s">%s</a></li>' % (ui.name,ui.verbose_name)
-        html += '</ul></body></html>'
-        return HttpResponse(html)
+    #~ def select_ui_view(self,request):
+        #~ html = '<html><body>'
+        #~ html += 'Please select a user interface: <ul>'
+        #~ for ui in self.uis:
+            #~ html += '<li><a href="%s">%s</a></li>' % (ui.name,ui.verbose_name)
+        #~ html += '</ul></body></html>'
+        #~ return HttpResponse(html)
         
         
     def get_site_menu(self,user):

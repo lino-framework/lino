@@ -32,7 +32,7 @@ import os
 from django.db import models
 import lino
 from lino import reports
-from lino.utils.babel import add_babel_field, babelattr, BabelCharField
+from lino.utils.babel import babelattr, BabelCharField
 #~ from lino.modlib.documents import models as documents
 from lino import mixins
 #~ from lino.mixins import Printable
@@ -139,7 +139,6 @@ class Journal(models.Model):
                   "%s is not the last document in journal" % unicode(doc)
                   )
 
-#~ add_babel_field(Journal,'printed_name')
                   
 def JournalRef(**kw):
     #~ kw.update(blank=True,null=True) # Django Ticket #12708

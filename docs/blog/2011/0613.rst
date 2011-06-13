@@ -70,11 +70,92 @@ Lino location other than "/"
 Um auf unserem internen Webserver (jana) mehrere Lino-Anwendungen 
 parallel laufen lassen zu können, 
 habe ich erstmals den Fall, dass Lino nicht auf "/" sitzt.
-Um das zu ermöglichen habe ich einige Stunden gewurstelt. 
+Um das zu ermöglichen, habe ich einige Stunden gewurstelt und 
+eine ganze Serie von Check-ins gemacht.
 
-Cities fixtures
----------------
+Die momentane Lösung ist möglicherweise auch nicht definitiv, 
+aber sie geht so:
+wenn Lino nicht unter ``/`` läuft, dann muss man 
+das ebenfalls in der :xfile:`settings.py` 
+im neuen Klassenattribut :attr:`lino.Lino.root_url` angeben.
+
+In der Apache-Konfig::
+
+  <VirtualHost *:80>
+    ServerAdmin webmaster@localhost
+    DocumentRoot /usr/share/apache2/default-site
+    <Directory />
+            Options FollowSymLinks
+            AllowOverride None
+    </Directory>
+
+    WSGIDaemonProcess example.com processes=2 threads=15
+    WSGIProcessGroup example.com
+
+    WSGIScriptAlias /prj1 /usr/local/django/prj1/apache/django.wsgi
+    Alias /prj1/media/ /usr/local/django/prj1/media/
+    <Location /prj1/media/>
+       SetHandler none
+    </Location>
+
+    WSGIScriptAlias /prj2 /usr/local/django/prj2/apache/django.wsgi
+    Alias /prj2/media/ /usr/local/django/prj2/media/
+    
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    # Possible values include: debug, info, notice, warn, error, crit,
+    # alert, emerg.
+    LogLevel warn
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+  </VirtualHost>
+
+
+
+
+
+Nebenbei sind bei diesen Arbeiten auch noch einige kleine Änderungen gekommen:
 
 - :mod:`lino.modlib.countries.fixtures.ee` funktioniert noch nicht
 - :mod:`lino.modlib.countries.fixtures.few_cities` ist jetzt intelligenter 
   und funktioniert auch mit `be` zusammen.
+
+
+Der folgende Traceback kommt noch mit Django 1.3, aber 
+mindestens ab Revision 16392 nicht mehr::
+
+  luc@mops:/usr/local/django/igen_demo$ python manage.py  test
+  Creating test database for alias 'default'...
+  .E....
+  ======================================================================
+  ERROR: test_shortcut_view (django.contrib.contenttypes.tests.ContentTypesTests)
+  ----------------------------------------------------------------------
+  Traceback (most recent call last):
+    File "/var/snapshots/django/django/contrib/contenttypes/tests.py", line 64, in test_shortcut_view
+      obj = User.objects.create(username="john")
+    File "/var/snapshots/django/django/db/models/manager.py", line 138, in create
+      return self.get_query_set().create(**kwargs)
+    File "/var/snapshots/django/django/db/models/query.py", line 360, in create
+      obj.save(force_insert=True, using=self.db)
+    File "/var/snapshots/django/django/db/models/base.py", line 460, in save
+      self.save_base(using=using, force_insert=force_insert, force_update=force_update)
+    File "/var/snapshots/django/django/db/models/base.py", line 553, in save_base
+      result = manager._insert(values, return_id=update_pk, using=using)
+    File "/var/snapshots/django/django/db/models/manager.py", line 195, in _insert
+      return insert_query(self.model, values, **kwargs)
+    File "/var/snapshots/django/django/db/models/query.py", line 1436, in insert_query
+      return query.get_compiler(using=using).execute_sql(return_id)
+    File "/var/snapshots/django/django/db/models/sql/compiler.py", line 791, in execute_sql
+      cursor = super(SQLInsertCompiler, self).execute_sql(None)
+    File "/var/snapshots/django/django/db/models/sql/compiler.py", line 735, in execute_sql
+      cursor.execute(sql, params)
+    File "/var/snapshots/django/django/db/backends/util.py", line 34, in execute
+      return self.cursor.execute(sql, params)
+    File "/var/snapshots/django/django/db/backends/sqlite3/base.py", line 234, in execute
+      return Database.Cursor.execute(self, query, params)
+  DatabaseError: no such table: auth_user
+
+  ----------------------------------------------------------------------
+  Ran 6 tests in 13.871s
+
+  FAILED (errors=1)
+  Destroying test database for alias 'default'...
+

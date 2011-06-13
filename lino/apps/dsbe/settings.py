@@ -162,18 +162,18 @@ class Lino(Lino):
           xtype='button',text=_("Home"),
           handler=js_code("function() {window.location='%s';}" % self.root_url)))
       except Exception,e:
-        import traceback
-        traceback.print_exc(e)
+          import traceback
+          traceback.print_exc(e)
 
 
-LINO = Lino(__file__)
+LINO = Lino(__file__,globals())
 
 
 #~ PROJECT_DIR = abspath(dirname(__file__))
 #~ DATA_DIR = join(PROJECT_DIR,"data")
 #~ LINO_SETTINGS = join(PROJECT_DIR,"lino_settings.py")
 
-MEDIA_ROOT = join(LINO.project_dir,'media')
+#~ MEDIA_ROOT = join(LINO.project_dir,'media')
 #~ MEDIA_ROOT = join(PROJECT_DIR,'media')
 
 TIME_ZONE = 'Europe/Brussels'
@@ -216,9 +216,9 @@ LANGUAGES = language_choices('de','fr','nl','en')
 # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
 # Always use forward slashes, even on Windows.
 # Don't forget to use absolute paths, not relative paths.
-TEMPLATE_DIRS = (
-      #~ join(abspath(DATA_DIR),'templates'),
-      join(abspath(LINO.project_dir),'templates'),
-      join(abspath(dirname(lino.__file__)),'templates'),
-)
+#~ TEMPLATE_DIRS = (
+      #~ # join(abspath(DATA_DIR),'templates'),
+      #~ join(abspath(LINO.project_dir),'templates'),
+      #~ join(abspath(dirname(lino.__file__)),'templates'),
+#~ )
 
