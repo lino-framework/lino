@@ -956,13 +956,14 @@ tinymce.init({
                 ar = ext_requests.ViewReportRequest(request,rh,a)
                 bp = self.request2kw(ar)
                 
+                params = dict(base_params=bp)
+                
                 if isinstance(a,reports.InsertRow):
                     elem = ar.create_instance()
-                    rec = elem2rec1(ar,rh,elem,title=ar.get_title())
+                    #~ rec = elem2rec1(ar,rh,elem,title=ar.get_title())
+                    rec = elem2rec_insert(ar,rh,elem)
                     rec.update(phantom=True)
                     params.update(data_record=rec)
-                    
-                params = dict(base_params=bp)
 
                 kw.update(on_ready=['Lino.%s(undefined,%s);' % (a,py2js(params))])
                 #~ print '20101024 on_ready', params

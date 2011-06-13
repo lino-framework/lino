@@ -1,0 +1,60 @@
+20110613
+========
+
+Disable slave elements in Insert Window
+---------------------------------------
+
+Hier die Problemmeldung eines Benutzers:
+
+  Es ist es für den Benutzer nicht logisch, dass er keinen
+  Drittpartner hinzufügen kann, solange er eine neue Notiz nicht
+  mindestens einmal gespeichert hat.
+
+Ja klar. 
+Das hatte ich schon immer geahnt und bisher lediglich noch nicht implementiert: 
+im InsertWindow  müssen natürlich 
+alle Slave-Elemente disabled werden. 
+Nicht nur der "Insert"-Button des HtmlPanels, sondern auch 
+die HtmlPanels selber und alle SlaveGridPanels.
+
+Anders als bei :term:`disabled fields` brauchen diese Felder 
+natürlich nicht eigens in der AJAX-Response genannt zu werden, 
+sondern die sind ja automatisch bekann und immer die gleichen. 
+Deshalb haben Lino.GridPanel und Lino.HtmlBoxPanel 
+in der :xfile:`linolib.js` einfach ein Attribut 
+`disabled_in_insert_window`.
+
+En passant zwei Bugs weniger:
+Wenn man ein Insert-Fenster per Permalink aufrief, z.B.
+`http://127.0.0.1:8000/api/notes/MyNotes?fmt=insert&mt=1&mk=1`_,
+dann kam ein `UnboundLocalError: local variable 'params' referenced before assignment".
+Und nachdem dieser Bug behoben kam, kam außerdem nicht der 
+richtige Titel "Einfügen nach...".
+
+Intuitiveres Bearbeiten der Drittpartner
+----------------------------------------
+
+Und noch eine Problemmeldung eines Benutzers:
+
+  Beim Erstellen eines Drittpartners einer Notiz kann man eine Person UND eine Firma 
+  gleichzeitig auswählen. Eigentlich geht das aber nicht und führt zu Reaktionen, die
+  für den Benutzer nicht nachvollziehbar sind. 
+
+Es ist richtig und nötig, dass man beide Felder (Person und Firma) 
+eines Drittpartners ausfüllen kann,
+und das bedeutet dann "Person X als Vertreter für Firma Y". 
+Das wurde dann bisher im Panel allerdings als "Person / Firma" angezeigt. 
+In der Tat nicht gerade selbsterklärend. 
+Für die nächste Version ändere ich diese Anzeige mal nach 
+"<Firma> z.Hd. <Person>", dann ist der Verwendungszweck 
+wahrscheinlich intuitiv klarer. 
+
+Eine andere störende Sache beim Erstellen von Drittpartnern war, 
+dass das Insert-Fenster als solches verwirrte. Deshalb habe ich es 
+jetzt probeweise mal rausgeschmissen. Was allerdings dazu führt, dass 
+auch der "Einfügen"-Button verschwindet. Um Drittpartner einzufügen, 
+muss man momentan also das Drittpartner-Panel "im eigenen Fenster öffnen". 
+Später kommt dann das Erstellen per Drag & Drop hinzu.
+
+
+Also :doc:`/releases/20110613`

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-06-06 20:34+0100\n"
+"POT-Creation-Date: 2011-06-13 10:08+0100\n"
 "PO-Revision-Date: 2011-05-31 23:07+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
@@ -256,38 +256,38 @@ msgstr "%s wurde erstellt."
 msgid "%s has been saved."
 msgstr "%s wurde gespeichert."
 
-#: .\ui\extjs3\ext_ui.py:857 .\ui\extjs3\ext_ui.py:881
+#: .\ui\extjs3\ext_ui.py:857 .\ui\extjs3\ext_ui.py:882
 #: .\ui\extjs4\ext_ui.py:827 .\ui\extjs4\ext_ui.py:851 .\ui\qx\qx_ui.py:632
 #: .\ui\qx\qx_ui.py:655
 #, python-format
 msgid "User %(user)s cannot configure %(report)s."
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:908
+#: .\ui\extjs3\ext_ui.py:909
 #, python-format
 msgid "Error while saving GC for %(report)s: %(error)s"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1052 .\ui\extjs4\ext_ui.py:1015 .\ui\qx\qx_ui.py:819
+#: .\ui\extjs3\ext_ui.py:1054 .\ui\extjs4\ext_ui.py:1015 .\ui\qx\qx_ui.py:819
 #, python-format
 msgid "Failed to delete %(record)s : %(error)s."
 msgstr "Fehler beim Löschen von %(record)s : %(error)s."
 
-#: .\ui\extjs3\ext_ui.py:1105 .\ui\extjs4\ext_ui.py:1068 .\ui\qx\qx_ui.py:872
+#: .\ui\extjs3\ext_ui.py:1107 .\ui\extjs4\ext_ui.py:1068 .\ui\qx\qx_ui.py:872
 #, python-format
 msgid "Action %(action)s failed for %(record)s: %(error)s"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1247 .\ui\extjs4\ext_ui.py:1212 .\ui\qx\qx_ui.py:958
+#: .\ui\extjs3\ext_ui.py:1249 .\ui\extjs4\ext_ui.py:1212 .\ui\qx\qx_ui.py:958
 #, python-format
 msgid "Choices for %s"
 msgstr "Auswahlmöglichkeiten für %s"
 
-#: .\ui\extjs3\ext_ui.py:1361 .\ui\extjs4\ext_ui.py:1325 .\ui\qx\qx_ui.py:1068
+#: .\ui\extjs3\ext_ui.py:1363 .\ui\extjs4\ext_ui.py:1325 .\ui\qx\qx_ui.py:1068
 msgid "Upload"
 msgstr "Upload"
 
-#: .\ui\extjs3\ext_ui.py:1370 .\ui\extjs4\ext_ui.py:1333 .\ui\qx\qx_ui.py:1076
+#: .\ui\extjs3\ext_ui.py:1372 .\ui\extjs4\ext_ui.py:1333 .\ui\qx\qx_ui.py:1076
 msgid "Edit"
 msgstr "Bearbeiten"
 

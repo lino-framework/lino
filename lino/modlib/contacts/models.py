@@ -25,6 +25,7 @@ from django.db import models
 from django.conf import settings
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext 
 
 from django import forms
 
@@ -261,8 +262,10 @@ class PartnerDocument(models.Model):
     """
     This adds two fields 'person' and 'company' to this model, 
     making it something that refers to a "partner". 
-    If company is filled, then person means a contact person for this company.
-    Otherwise the "partner" is a private person.
+    If `company` is empty, the "partner" is a private person.
+    If `company` is filled, then `person` means a "contact person" 
+    for this company.
+    
     """
     
     class Meta:
@@ -279,6 +282,16 @@ class PartnerDocument(models.Model):
             return self.company
         return self.person
         
+    def summary_row(self,ui,rr,**kw):
+        if self.person:
+            if self.company:
+                #~ s += ": " + ui.href_to(self.person) + " / " + ui.href_to(self.company)
+                return ui.href_to(self.company) + ' ' + ugettext("attn:") + ' ' + ui.href_to(self.person)
+            else:
+                return ui.href_to(self.person)
+        elif self.company:
+            return ui.href_to(self.company)
+      
 
 class ContactDocument(PartnerDocument):
     """

@@ -1278,6 +1278,7 @@ Lino.FieldBoxMixin = {
 };
 
 Lino.HtmlBoxPanel = Ext.extend(Ext.Panel,{
+  disabled_in_insert_window : true,
   constructor : function(ww,config,params) {
     this.before_init(ww,config,params);
     Lino.HtmlBoxPanel.superclass.constructor.call(this, config);
@@ -1743,6 +1744,7 @@ Lino.getRowClass = function(record, rowIndex, rowParams, store) {
     
 Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
   //~ quick_search_text : '',
+  disabled_in_insert_window : true,
   clicksToEdit:2,
   enableColLock: false,
   autoHeight: false,
@@ -2980,6 +2982,13 @@ Lino.InsertWrapper = Ext.extend(Lino.WindowWrapper, {
   setup : function() {
     if (this.fileUpload) this.main_item.form.fileUpload = true;
     Lino.WindowWrapper.prototype.setup.call(this);
+    this.main_item.cascade(function(cmp){
+      //~ console.log('20110613 cascade',cmp);
+      if (cmp.disabled_in_insert_window) {
+      //~ if (cmp instanceof Lino.GridPanel) {
+          cmp.disable();
+      }
+      });
   },
   get_permalink_url : function() {
       return '/api'+this.main_item.ls_url;

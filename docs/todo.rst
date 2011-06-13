@@ -9,6 +9,12 @@ for which I hope for help from other people.
 Short-term
 ----------
 
+#.  "Es ist es für den Benutzer nicht logisch, dass er keinen
+    Drittpartner hinzufügen kann, solange er eine neue Notiz nicht
+    mindestens einmal gespeichert hat."
+    Ja klar. Und das wird einfach gelöst, indem im InsertWrapper
+
+
 #.  Ausdruck Verträge: jetzt wo die mehrzeiligen Textfelder formatierbar 
     sind, haben wir ein kleines Problem: Bisher wurde z.B. in der 
     Dokumentvorlage ein Wort vor dem eigentlichen Text eingefügt, 

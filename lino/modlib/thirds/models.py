@@ -53,15 +53,9 @@ class Third(
             self.seqno = last.seqno + 1
             
     def summary_row(self,ui,rr,**kw):
-        s = ''
-        s += ui.href_to(self)
-        if self.person:
-            if self.company:
-                s += ": " + ui.href_to(self.person) + " / " + ui.href_to(self.company)
-            else:
-                s += ": " + ui.href_to(self.person)
-        elif self.company:
-            s += ": " + ui.href_to(self.company)
+        #~ s = ui.href_to(self)
+        s = "(" + unicode(self.seqno) + ") "
+        s += contacts.PartnerDocument.summary_row(self,ui,rr,**kw)
         return s
         
     def __unicode__(self):
@@ -76,7 +70,7 @@ class Thirds(reports.Report):
 
 class ThirdsByOwner(Thirds):
     fk_name = 'owner'
-    column_names = "seqno person company id"
+    column_names = "seqno person company id *"
     show_slave_grid = False
     
     

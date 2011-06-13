@@ -1,0 +1,21 @@
+Version 1.1.16 (13.06.2011)
+===========================
+
+Another small release with a few optimizations of the user interface.
+
+Visible changes
+---------------
+
+- Disabled slave elements in Insert Window
+- Intuitiveres Bearbeiten der Drittpartner
+- Some more translations (fr and de)
+
+See :doc:`/blog/2011/0613`
+
+Upgrade instructions
+--------------------
+
+For more general instructions on how to upgrade an existing 
+Lino site, see :doc:`/admin/upgrade`.
+
+No database migration needed.

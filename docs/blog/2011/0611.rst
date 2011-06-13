@@ -111,8 +111,7 @@ Upgrade at customer's site:
 - re-created the mysql database using charset `utf-8` because there were 
   some warnings "invalid string value" because auf language names.
   
-There warnings are afterwards still there::
-
+The warnings are afterwards still there::
 
   /var/snapshots/django/django/db/backends/mysql/base.py:86: Warning: Incorrect string value: '\xD0\x9A\xD0\xB0\xD0\xB7...' for column 'name' at row 1
     return self.cursor.execute(query, args)
@@ -121,15 +120,18 @@ There warnings are afterwards still there::
   /var/snapshots/django/django/db/backends/mysql/base.py:86: Warning: Incorrect string value: '\xD0\x9A\xD0\xB0\xD0\xB7...' for column 'last_name' at row 1
     return self.cursor.execute(query, args)  
     
-They are easily reproduceable by ``manage.py test``. 
-Seems that the test suite works only under the sqlite and not under the mysql database backend.
-    
+They are reproduceable by ``manage.py test`` on a mysql database
+whose server's default charset is not utf8.
+
 Ich habe die Datenbank des Kunden momentan wie folgt definiert::    
 
   create database myproject charset 'utf8' collate utf8_general_ci;
   
 Der Befehl ``show collations;`` zeigt alle erlaubten collations in Funktion des character sets.
   
-  
-Changed :func:`lino.apps.dsbe.tests.dsbe_demo_tests.test08` because it 
-failed in some database collations. 
+Changed 
+:func:`lino.apps.dsbe.tests.dsbe_demo_tests.test03` 
+and
+:func:`lino.apps.dsbe.tests.dsbe_demo_tests.test08` 
+because they
+failed in some database sorting configurations. 

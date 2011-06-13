@@ -2,6 +2,7 @@ Version 1.1.15 (11.06.2011)
 ===========================
 
 This is just a bugfix release with no new features.
+Revision `4c65e5515814 <http://code.google.com/p/lino/source/detail?r=4c65e55158144ab0977774e0d1c7c5a15a02112b>`_
 
 Bugs fixed
 ----------
@@ -11,6 +12,8 @@ Bugs fixed
 
 - Optimizations in :mod:`lino.management.commands.diag`.
   See :doc:`/blog/2011/0611`.
+  
+- `manage.py test` no longer fails on a mysql database with local collations.
 
 
 Upgrade instructions
