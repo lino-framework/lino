@@ -155,6 +155,16 @@ class Lino(object):
     which is imported into your local :xfile:`settings.py`,
     where you may subclass it another time.
     
+    To use your subclass, you must instantiate it and store the instance 
+    in the :setting:`LINO` variable of your :xfile:`settings.py`::
+    
+      LINO = Lino(__file__,globals())
+      
+    With the parameters `__file__` and `globals()` you give Lino information 
+    about your local settings. 
+    Lino will also adapt the settings FIXTURE_DIRS, MEDIA_ROOT and TEMPLATE_DIRS 
+    for you.
+    
     """
     
     root_url = '' # must end with a slash if not empty
@@ -265,7 +275,7 @@ class Lino(object):
     source_dir = os.path.dirname(__file__)
     source_name = os.path.split(source_dir)[-1]
     
-    def __init__(self,project_file,settings_dict=None):
+    def __init__(self,project_file,settings_dict):
         #self.django_settings = settings
         #~ self.init_site_config = lambda sc: sc
         self.project_dir = normpath(dirname(project_file))
@@ -286,8 +296,6 @@ class Lino(object):
             self.install_settings(settings_dict)
             
     def install_settings(self,s):
-        """Deserves more documentations.
-        """
         s.update(MEDIA_ROOT = join(self.project_dir,'media'))
         s.update(FIXTURE_DIRS = [join(self.project_dir,"fixtures")])
         s.update(TEMPLATE_DIRS = (

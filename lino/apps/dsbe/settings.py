@@ -160,7 +160,7 @@ class Lino(Lino):
         #~ self.main_menu.add_item('home',_("~Home"),href='/')
         self.main_menu.items.append(dict(
           xtype='button',text=_("Home"),
-          handler=js_code("function() {window.location='%s';}" % self.root_url)))
+          handler=js_code("function() {window.location='/%s';}" % self.root_url)))
       except Exception,e:
           import traceback
           traceback.print_exc(e)
