@@ -39,8 +39,8 @@ settings.LINO.setup()
 ui = ext_ui.ExtUI(settings.LINO)
 
 urlpatterns += patterns('',
-    #~ (r'', include(ui.get_urls())),
-    (settings.LINO.root_url, include(ui.get_urls())),
+    (r'', include(ui.get_urls())),
+    #~ (settings.LINO.root_url, include(ui.get_urls())),
 )
 
 if sys.platform == 'win32':
