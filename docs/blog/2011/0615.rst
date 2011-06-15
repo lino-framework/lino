@@ -132,3 +132,27 @@ Viele kleine Benutzerwünsche
 - New field :attr:`Person.duties_person`
 
 Check-in 20110615b um 19.35 wegen Feierabend.
+
+Release 1.1.17
+--------------
+
+Um die bereits erfassten Muttersprachen zu übernehmen, 
+musste ich mir was Neues einfallen lassen.
+Erstens eine kleine Liste der bestehenden Fälle:
+
+>>> import codecs
+>>> from lino.apps.dsbe.models import Person
+>>> f = codecs.open('nl.txt','w',encoding='utf-8')
+>>> f.write('\n'.join(["%s : %s + %s" % (unicode(p),p.native_language,', '.join([unicode(x) for x in p.languageknowledge_set.all()])) for p in qs]))
+>>> f.close()
+
+Und das Schwierigere: weil die evtl. bestehenden LanguageKnowledge-Records 
+ja noch gar nicht gespeichert worden sind während der `objects()`, kann ich nicht schauen, 
+ob schon ein Eintrag für die Muttersprache existerte oder nicht. 
+Dazu brauche ich die neue Funktion `after_load`, die vom :class:`lino.utils.dpy.Deserializer` 
+nach dem Speichern der objects ausgeführt wird (wenn sie existiert). 
+Um die Konvertierung nicht manuell in die Dump-Datei beim Kunden reinkopieren zu müssen, 
+habe ich ein neues System ausgedacht, damit ich die Migration einmal schreiben kann 
+und die Dump-Datei sie sich automagisch installiert.
+Siehe neues Modul :mod: `lino.apps.dsbe.migrations`.
+

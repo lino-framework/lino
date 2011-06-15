@@ -54,12 +54,12 @@ def setup_renderer(renderer):
         #~ return renderer.renderXhtml(html.encode('utf-8'),**kw)
     renderer.contentParser.env.context.update(restify=restify_func)
     def html_func(html,**kw):
+        #~ print repr(html)
         if not html:
             return ''
         html = html2xhtml(html)
         #~ html = html.replace('<br>','<br/>')
         #~ html = html.replace('%nbsp;','<br/>')
-        #~ print html
         return renderer.renderXhtml(html,**kw)
     renderer.contentParser.env.context.update(html=html_func)
 

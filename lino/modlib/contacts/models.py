@@ -237,6 +237,12 @@ class Addressables(reports.Report):
         return self.model.objects.select_related('country','city')
   
 
+def SexField(**kw):
+    options = dict(max_length=1,blank=True,null=True,
+        verbose_name=_("Sex"),choices=SEX_CHOICES) 
+    options.update(kw)
+    return models.CharField(**options)
+        
 
 class Person(Addressable):
     """
@@ -260,9 +266,7 @@ class Person(Addressable):
       verbose_name=_('Title'))
     "Text to print as part of the first address line in front of first_name."
         
-    sex = models.CharField(max_length=1,blank=True,null=True,
-        verbose_name=_("Sex"),
-        choices=SEX_CHOICES) 
+    sex = SexField()
         
     def get_salutation(self,**salutation_options):
         return get_salutation(self.sex,**salutation_options)

@@ -152,7 +152,15 @@ def lc2locale(lang,country):
         return lang+'_'+country
         
 
+def dtomy(d):
+    """
+    "date to month/year" :
+    return the specified date as a localized string of type 'June 2011'."""
+    if d is None: return ''
+    return defaultfilters.date(d,'F Y')
+
 def dtos(d):
+    "Return the specified date as a localized short string of type '15.06.2011'."
     if d is None: return ''
     return defaultfilters.date(d,SHORT_DATE_FMT[get_language()])
     #~ return d.strftime(SHORT_DATE_FMT[LANG])

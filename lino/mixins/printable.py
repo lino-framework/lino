@@ -208,6 +208,7 @@ class AppyBuildMethod(SimpleBuildMethod):
         context = dict(self=elem,
             dtos=babel.dtos,
             dtosl=babel.dtosl,
+            dtomy=babel.dtomy,
             babelattr=babel.babelattr,
             babelitem=babel.babelitem,
             tr=babel.babelitem,

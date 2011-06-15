@@ -58,7 +58,8 @@ class Serializer(base.Serializer):
         self.use_natural_keys = options.get("use_natural_keys", False)
         if self.write_preamble:
             self.stream.write('# -*- coding: UTF-8 -*-\n\n')
-            self.stream.write('# Created using Lino version %s\n' % lino.__version__)
+            #~ self.stream.write('# Created using Lino version %s\n' % lino.__version__)
+            self.stream.write('SOURCE_VERSION = %r\n' % lino.__version__)
             self.stream.write('from lino.utils import i2d\n')
             self.stream.write('from lino.utils.mti import insert_child\n')
             self.stream.write('from lino.tools import resolve_model\n')
@@ -114,6 +115,10 @@ class Serializer(base.Serializer):
         all_models = self.sort_models(all_models)
         for model in all_models:
             self.stream.write('    for o in %s_objects(): yield o\n' % model._meta.db_table)          
+        self.stream.write('\n')
+        self.stream.write('# uncomment for automagic migration:\n')
+        self.stream.write('# from lino.apps.dsbe.migrate import install\n')
+        self.stream.write('# install(globals())\n')
             
     def sort_models(self,unsorted):
         sorted = []
@@ -332,5 +337,7 @@ def Deserializer(fp, **options):
     module = imp.load_module(fqname, fp, fp.name, desc)
     #m = __import__(filename)
     yield FakeDeserializedObject(fp.name,module.objects)
+    if hasattr(module,'after_load'):
+        module.after_load()
 
 

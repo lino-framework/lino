@@ -32,6 +32,7 @@ from lino.models import update_site_config
 
 #~ from django.contrib.auth import models as auth
 from lino.modlib.users import models as auth
+from lino.modlib.contacts.models import SEX_FEMALE, SEX_MALE
 
 #~ dblogger.info('Loading')
 
@@ -54,19 +55,6 @@ DATE = i2d(20061014)
 #~ notes = models.get_app('notes')
 #~ properties = models.get_app('properties')
 
-Person = resolve_model('contacts.Person')
-Company = resolve_model('contacts.Company')
-Contact = resolve_model('contacts.Contact')
-Contract = resolve_model('dsbe.Contract')
-Note = resolve_model('notes.Note')
-User = resolve_model('users.User')
-Country = resolve_model('countries.Country')
-    
-
-person = Instantiator(Person).build
-company = Instantiator(Company).build
-contact = Instantiator(Contact).build
-exam_policy = Instantiator('dsbe.ExamPolicy').build
 
 #char_pv = Instantiator('properties.CharPropValue').build
 #CharPropValue = resolve_model('properties.CharPropValue')
@@ -87,16 +75,30 @@ exam_policy = Instantiator('dsbe.ExamPolicy').build
         #~ else:
             #~ i = 0
 
-City = resolve_model('countries.City')
-StudyType = resolve_model('dsbe.StudyType')
-Country = resolve_model('countries.Country')
-Property = resolve_model('properties.Property')
 #~ StudyContent = resolve_model('dsbe.StudyContent')
 
 
 
-
 def objects():
+  
+    Person = resolve_model('contacts.Person')
+    Company = resolve_model('contacts.Company')
+    Contact = resolve_model('contacts.Contact')
+    Contract = resolve_model('dsbe.Contract')
+    Note = resolve_model('notes.Note')
+    User = resolve_model('users.User')
+    Country = resolve_model('countries.Country')
+
+    person = Instantiator(Person).build
+    company = Instantiator(Company).build
+    contact = Instantiator(Contact).build
+    exam_policy = Instantiator('dsbe.ExamPolicy').build
+
+    City = resolve_model('countries.City')
+    StudyType = resolve_model('dsbe.StudyType')
+    Country = resolve_model('countries.Country')
+    Property = resolve_model('properties.Property')
+  
     
     #~ country = Instantiator('countries.Country',"isocode name").build
     #~ yield country('SUHH',"Soviet Union")
@@ -364,28 +366,36 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
       c.save()
       
     p = Person.objects.get(name=u"Ärgerlich Erna")
+    p.birth_date = i2d(19800301)
     p.coached_from = i2d(20100301)
     p.coached_until = None
     p.coach1 = User.objects.get(username='root')
+    p.sex = SEX_FEMALE
     p.save()
     
     yield note(user=root,date=i2d(20110511),subject=u"Anrufen Termin",
         person=p,reminder_date=i2d(20110611))
     
     p = Person.objects.get(name=u"Eierschal Emil")
+    p.birth_date = i2d(19800501)
     p.coached_from = i2d(20100801)
     p.coached_until = i2d(20101031)
     p.coach1 = User.objects.get(username='root')
+    p.sex = SEX_MALE
     p.save()
 
     p = Person.objects.get(name=u"Bastiaensen Laurent")
+    p.birth_date = i2d(19810601)
     p.coached_from = None
     p.coached_until = i2d(20101031)
     p.coach1 = User.objects.get(username='root')
+    p.sex = SEX_MALE
     p.save()
 
     p = Person.objects.get(name=u"Ausdemwald Alfons")
+    p.birth_date = i2d(19500301)
     p.coach1 = User.objects.get(username='root')
+    p.sex = SEX_MALE
     p.save()
 
     persongroup = Instantiator('dsbe.PersonGroup','name').build

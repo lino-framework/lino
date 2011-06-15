@@ -41,7 +41,7 @@ from lino import mixins
 from lino import actions
 from lino import fields
 from lino.modlib.contacts import models as contacts
-from lino.modlib.contacts.models import SEX_CHOICES
+#~ from lino.modlib.contacts.models import SEX_CHOICES
 from lino.modlib.notes import models as notes
 from lino.modlib.links import models as links
 from lino.modlib.uploads import models as uploads
@@ -751,8 +751,8 @@ class Companies(contacts.Companies):
 class PersonGroup(models.Model):
     """Integration Phase (previously "Person Group")
     """
-    ref_name = models.CharField(_("Reference name"),max_length=20)
     name = models.CharField(_("Designation"),max_length=200)
+    ref_name = models.CharField(_("Reference name"),max_length=20,blank=True)
     #~ text = models.TextField(_("Description"),blank=True,null=True)
     class Meta:
         verbose_name = _("Integration Phase")
@@ -1822,10 +1822,8 @@ class PersonSearch(mixins.AutoUser):
         blank=True,null=True)
     aged_to = models.IntegerField(_("Aged to"),
         blank=True,null=True)
-    sex = models.CharField(max_length=1,blank=True,null=True,
-        verbose_name=_("Sex"),
-        choices=SEX_CHOICES) 
-        
+    sex = contacts.SexField()
+    
     only_my_persons = models.BooleanField(verbose_name=_("Only my persons")) # ,default=True)
     
     coached_by = models.ForeignKey("users.User",

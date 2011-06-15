@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.countries\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-31 21:04+0100\n"
+"POT-Creation-Date: 2011-06-15 19:55+0100\n"
 "PO-Revision-Date: 2011-06-10 17:47+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
@@ -17,40 +17,39 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Poedit-Language: German\n"
 
-#: .\models.py:37
+#: .\models.py:38
 msgid "Language"
 msgstr "Sprache"
 
-#: .\models.py:38
+#: .\models.py:39
 msgid "Languages"
 msgstr "Sprachen"
 
-#: .\models.py:40
-#: .\models.py:66
+#: .\models.py:41 .\models.py:67
 msgid "Designation"
 msgstr "Bezeichnung"
 
-#: .\models.py:61
+#: .\models.py:62
 msgid "country"
 msgstr "Land"
 
-#: .\models.py:62
+#: .\models.py:63
 msgid "countries"
 msgstr "Länder"
 
-#: .\models.py:98
+#: .\models.py:99
 msgid "city"
 msgstr "Stadt"
 
-#: .\models.py:99
+#: .\models.py:100
 msgid "cities"
 msgstr "Städte"
 
-#: .\models.py:126
+#: .\models.py:128
 msgid "Country"
 msgstr "Land"
 
-#: .\models.py:128
+#: .\models.py:130
 msgid "City"
 msgstr "Stadt"
 

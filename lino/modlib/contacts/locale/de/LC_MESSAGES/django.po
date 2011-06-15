@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-06-13 10:08+0100\n"
-"PO-Revision-Date: 2011-06-13 12:17+0200\n"
+"POT-Creation-Date: 2011-06-15 19:55+0100\n"
+"PO-Revision-Date: 2011-06-15 21:57+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: ds <luc.saffre@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -16,167 +16,179 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: .\models.py:58
+#: .\models.py:51
+msgid "Male"
+msgstr "Männlich"
+
+#: .\models.py:51
+msgid "Female"
+msgstr "Weiblich"
+
+#: .\models.py:109
 msgid "Name"
 msgstr "Name"
 
-#: .\models.py:59
+#: .\models.py:110
 msgid "Address line before street"
 msgstr "Adresszeile vor Straße"
 
-#: .\models.py:63
+#: .\models.py:114
 msgid "Street prefix"
 msgstr "Präfix Straße"
 
-#: .\models.py:66
+#: .\models.py:117
 msgid "Street"
 msgstr "Straße"
 
-#: .\models.py:69
+#: .\models.py:120
 msgid "No."
 msgstr "Nr."
 
-#: .\models.py:72
+#: .\models.py:123
 msgid "Box"
 msgstr "Box"
 
-#: .\models.py:75
+#: .\models.py:126
 msgid "Address line after street"
 msgstr "Adresszeile nach Straße"
 
-#: .\models.py:93
+#: .\models.py:144
 msgid "Zip code"
 msgstr "Postleitzahl"
 
-#: .\models.py:94
+#: .\models.py:145
 msgid "Region"
 msgstr "Region"
 
-#: .\models.py:98
+#: .\models.py:149
 msgid "E-Mail"
 msgstr "E-Mail"
 
-#: .\models.py:99
+#: .\models.py:150
 msgid "URL"
 msgstr "URL"
 
-#: .\models.py:100
+#: .\models.py:151
 msgid "Phone"
 msgstr "Telefon"
 
-#: .\models.py:101
+#: .\models.py:152
 msgid "GSM"
 msgstr "GSM"
 
-#: .\models.py:102
+#: .\models.py:153
 msgid "Fax"
 msgstr "Fax"
 
-#: .\models.py:106
+#: .\models.py:157
 msgid "Remarks"
 msgstr "Bemerkungen"
 
-#: .\models.py:170
+#: .\models.py:222
 msgid "Address"
 msgstr "Adresse"
 
-#: .\models.py:196
-#: .\models.py:276
+#: .\models.py:242
+msgid "Sex"
+msgstr "Geschlecht"
+
+#: .\models.py:254
+#: .\models.py:346
 msgid "Person"
 msgstr "Person"
 
-#: .\models.py:197
+#: .\models.py:255
 msgid "Persons"
 msgstr "Personen"
 
-#: .\models.py:200
+#: .\models.py:258
 msgid "First name"
 msgstr "Vorname"
 
-#: .\models.py:204
+#: .\models.py:262
 msgid "Last name"
 msgstr "Familienname"
 
-#: .\models.py:208
+#: .\models.py:266
 msgid "Title"
 msgstr "Anrede"
 
-#: .\models.py:278
-#: .\models.py:365
+#: .\models.py:348
+#: .\models.py:435
 msgid "Company"
 msgstr "Firma"
 
-#: .\models.py:289
+#: .\models.py:359
 msgid "attn:"
 msgstr "z.Hd."
 
-#: .\models.py:306
+#: .\models.py:376
 msgid "represented by"
 msgstr "Vertreten durch"
 
-#: .\models.py:340
+#: .\models.py:410
 msgid "company type"
 msgstr "Firmenart"
 
-#: .\models.py:341
+#: .\models.py:411
 msgid "company types"
 msgstr "Firmenarten"
 
-#: .\models.py:343
-#: .\models.py:401
+#: .\models.py:413
+#: .\models.py:471
 msgid "Designation"
 msgstr "Bezeichnung"
 
-#: .\models.py:344
+#: .\models.py:414
 msgid "Abbreviation"
 msgstr "Abkürzung"
 
-#: .\models.py:366
+#: .\models.py:436
 msgid "Companies"
 msgstr "Organisationen"
 
-#: .\models.py:368
+#: .\models.py:438
 msgid "VAT id"
 msgstr "MWSt.-Nr."
 
-#: .\models.py:373
+#: .\models.py:443
 msgid "Company type"
 msgstr "Firmenart"
 
-#: .\models.py:397
-#: .\models.py:427
+#: .\models.py:467
+#: .\models.py:497
 msgid "contact type"
 msgstr "Kontaktart"
 
-#: .\models.py:398
+#: .\models.py:468
 msgid "contact types"
 msgstr "Kontaktarten"
 
-#: .\models.py:420
+#: .\models.py:490
 msgid "contact"
 msgstr "Kontaktperson"
 
-#: .\models.py:421
+#: .\models.py:491
 msgid "contacts"
 msgstr "Kontaktpersonen"
 
-#: .\models.py:423
+#: .\models.py:493
 msgid "person"
 msgstr "Person"
 
-#: .\models.py:425
+#: .\models.py:495
 msgid "company"
 msgstr "Firma"
 
-#: .\models.py:459
+#: .\models.py:529
 msgid "Contact for"
 msgstr "Kontaktperson für"
 
-#: .\models.py:471
+#: .\models.py:541
 msgid "The company that runs this site"
 msgstr "Firma, die diesen Site betreibt"
 
-#: .\models.py:481
+#: .\models.py:551
 msgid "The next automatic id for Person or Company"
 msgstr "Nächste Partnernummer"
 

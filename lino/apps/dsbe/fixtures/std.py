@@ -43,6 +43,7 @@ def objects():
     yield noteType(u"Antragsformular")
     yield noteType((u"Auswertungsbogen allgemein"),build_method='rtf',template=u'Auswertungsbogen_allgemein.rtf')
     yield noteType((u"Anwesenheitsbescheinigung"),build_method='rtf',template=u'Anwesenheitsbescheinigung.rtf')
+    yield noteType((u"Lebenslauf"),build_method='appyrtf',template=u'cv.odt')
     
     eventType = Instantiator('notes.EventType',"name").build
     
