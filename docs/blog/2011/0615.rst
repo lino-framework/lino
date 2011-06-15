@@ -38,3 +38,4 @@ Der Fehler ist reproduzierbar, indem ich auf
 <http://localhost:8080/api/dsbe/Contracts/88?fmt=detail>`_
 gehe und dort :guilabel:`Drucken` klicke.
 
+Check-in 20110615, und das kommt noch ins :doc:`/releases/20110613` mit rein.

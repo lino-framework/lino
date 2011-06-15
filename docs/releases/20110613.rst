@@ -4,6 +4,7 @@ Version 1.1.16 (13.06.2011)
 Another small release with a few optimizations of the user interface.
 
 Revision `4726acdb3728 <http://code.google.com/p/lino/source/detail?r=4726acdb3728bca11a535a812d0b5d7186b245b8>`_
+or `f19253dbfa04 <http://code.google.com/p/lino/source/detail?r=f19253dbfa0445617fbb210a8a1dde5d12d949ad>`_ 
 
 Visible changes
 ---------------
@@ -12,8 +13,9 @@ Visible changes
 - Intuitiveres Bearbeiten der Drittpartner
 - Some more translations (fr and de)
 
-See :doc:`/blog/2011/0613`.
-
+See 
+:doc:`/blog/2011/0613` and
+:doc:`/blog/2011/0615`.
 
 New features
 ------------

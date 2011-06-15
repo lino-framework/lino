@@ -16,6 +16,8 @@ Lino is still in pre-documentation phase, so don't judge the project on this web
 - See Luc's :doc:`Blog <blog/2010/index>` to get the hottest news about what's going on here. (But sorry, this is mostly in German.)
 - The final truth about what's going on is only 
   `The Source Code <http://code.google.com/p/lino/source/list>`_.
+  Strings like "20110615" as commit message refer to the corresponding blog 
+  entry :doc:`/blog/2011/0615`.
 
 
 Some external links:
