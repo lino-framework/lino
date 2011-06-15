@@ -12,7 +12,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
+"""Deserves more documentation.
 """
 
 from django.db import models
@@ -43,7 +43,7 @@ class Third(
     remark = models.TextField(_("Remark"),blank=True,null=True)
     
     def set_seqno(self):
-        qs = Third.objects.filter(owner_type__exact=self.owner_type,
+        qs = self.objects.filter(owner_type__exact=self.owner_type,
           owner_id__exact=self.owner_id).order_by('seqno')
         n = qs.count()
         if n == 0:

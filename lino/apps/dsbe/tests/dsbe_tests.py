@@ -31,6 +31,7 @@ logger = logging.getLogger(__name__)
 from lino.modlib.contacts.models import Companies
 
 from lino.utils import i2d
+from lino.utils import babel
 from lino.tools import resolve_model
 #Companies = resolve_model('contacts.Companies')
 from lino.utils.test import TestCase
@@ -53,6 +54,7 @@ class Test(TestCase):
 def test01(self):
     """
     Used on :doc:`/blog/2011/0414`.
+    See the source code at :srcref:`/lino/apps/dsbe/tests/dsbe_tests.py`.
     """
     from lino.utils.dpy import Serializer
     from lino.apps.dsbe.models import Company, CourseProvider
@@ -99,7 +101,8 @@ def test02(self):
     """
     Testing whether `/api/notes/NoteTypes/1?fmt=json` 
     has no item `templateHidden`.
-    See :doc:`/blog/2011/0509`.
+    Created :doc:`/blog/2011/0509`.
+    See the source code at :srcref:`/lino/apps/dsbe/tests/dsbe_tests.py`.
     """
     #~ from lino.apps.dsbe.models import NoteType
     from lino.modlib.notes.models import NoteType
@@ -140,7 +143,10 @@ def test02(self):
         
 def test03(self):
     """
-    See :doc:`/blog/2011/0615`.
+    Tests error handling when printing a contract whose type's 
+    name contains non-ASCII char.
+    Created :doc:`/blog/2011/0615`.
+    See the source code at :srcref:`/lino/apps/dsbe/tests/dsbe_tests.py`.
     """
     from lino.apps.dsbe.models import Contracts, Contract, ContractType
     #~ from lino.modlib.notes.models import ContractType
@@ -161,15 +167,49 @@ def test03(self):
         self.assertEqual(e.message,
           r"Invalid template configured for ContractType u'Art.60\xa77'. Expected filename ending with '.odt'.")
           
-    t.template='Default.odt'
-    t.save()
-    n = Contract.objects.get(id=1)
-    kw = a.run_(n)
+    #~ t.template='Default.odt'
+    #~ t.save()
+    #~ n = Contract.objects.get(id=1)
+    #~ kw = a.run_(n)
     
-    print kw
+    #~ print kw
     
     #~ response = self.client.get('/api/dsbe/Contracts/1?fmt=print',REMOTE_USER='root')
     #~ print response
     #~ result = self.check_json_result(response,'message success alert')
     #~ self.assertEqual(result['message'],'...')
     
+def test04(self):
+    """
+    Test some features used in document templates.
+    Created :doc:`/blog/2011/0615`.
+    See the source code at :srcref:`/lino/apps/dsbe/tests/dsbe_tests.py`.
+    """
+    from lino.apps.dsbe.models import Person, Company, Country, City
+    from lino.modlib.contacts.models import SEX_MALE
+    babel.set_language('fr')
+    be = Country(isocode="BE",name="Belgique")
+    be.save()
+    bxl = City(name="Bruxelles",country=be)
+    bxl.save()
+    p = Person(
+      first_name="Jean Louis",last_name="Dupont",
+      street_prefix="Avenue de la", street="gare", street_no="3", street_box="b",
+      city=bxl, sex=SEX_MALE
+      )
+    p.full_clean()
+    p.save()
+    #~ self.assertEqual(p.get_titled_name,"Mr Jean Louis DUPONT")
+    self.assertEqual(p.full_name,"Mr Jean Louis DUPONT")
+    self.assertEqual('\n'.join(p.address_lines()),u"""\
+Mr Jean Louis DUPONT
+Avenue de la gare 3 b
+Bruxelles
+Belgique""")
+    
+    babel.set_language('de')
+    self.assertEqual(p.full_name,"Herrn Jean Louis DUPONT")
+    self.assertEqual(p.get_full_name(nominative=True),"Herr Jean Louis DUPONT")
+    self.assertEqual(p.get_full_name(no_salutation=True),"Jean Louis DUPONT")
+    babel.set_language(None)
+        

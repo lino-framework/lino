@@ -148,5 +148,8 @@ class CountryCity(models.Model):
             raise ValidationError("Refused to auto-create city %r in %s because same name exists.",(text,country))
         #~ dblogger.warning("Cannot auto-create city %r if country is empty",text)
         raise ValidationError("Cannot auto-create city %r if country is empty",text)
-        
   
+    def full_clean(self,*args,**kw):
+        if self.city is not None and self.country != self.city.country:
+            self.country = self.city.country
+        super(CountryCity,self).full_clean(*args,**kw)

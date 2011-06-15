@@ -346,9 +346,10 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     
     for p in Person.objects.all():
         if p.zip_code == '4700':
+            p.languageknowledge_set.create(language_id='ger',native=True)
             p.is_cpas = True
             p.is_active = True
-            p.native_language_id = 'ger'
+            #~ p.native_language_id = 'ger'
             p.birth_country_id = 'BE'
             p.nationality_id = 'BE'
             p.save()
@@ -388,9 +389,9 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     p.save()
 
     persongroup = Instantiator('dsbe.PersonGroup','name').build
-    yield persongroup(u"Bilan / Détermination Rémobilisation")
-    yield persongroup(u"Préformation")
-    yield persongroup(u"Formation")
-    yield persongroup(u"Recherche active emplois")
-    yield persongroup(u"Travail")
+    yield persongroup(u"Bilan / Détermination Rémobilisation",ref_name='1')
+    yield persongroup(u"Préformation",ref_name='2')
+    yield persongroup(u"Formation",ref_name='3')
+    yield persongroup(u"Recherche active emplois",ref_name='4')
+    yield persongroup(u"Travail",ref_name='4bis')
 

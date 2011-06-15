@@ -67,6 +67,9 @@ class ByUser(reports.Report):
 
 
 class Sequenced(models.Model):
+    """Abstract base class for models that have a 
+    sequence number `seqno`
+    """
   
     class Meta:
         abstract = True
@@ -77,6 +80,19 @@ class Sequenced(models.Model):
     
     def set_seqno(self):
         raise NotImplementedError
+    
+    def set_seqno(self):
+        """The default implementation sets a global sequencing. 
+        Overridden in :class:`lino.modlib.thirds.models.Third`.
+        """
+        qs = self.__class__.objects.order_by('seqno')
+        n = qs.count()
+        if n == 0:
+            self.seqno = 1
+        else:
+            last = qs[n-1]
+            self.seqno = last.seqno + 1
+        
     
     def full_clean(self,*args,**kw):
         if self.seqno is None:

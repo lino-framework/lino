@@ -4,7 +4,8 @@
 Noch ein UnicodeDecodeError
 ---------------------------
 
-Gestern trat ein paarmal folgender Fehler auf bei dem Kunden, dem ich ::
+Gestern trat ein paarmal folgender Fehler auf bei dem Kunden, dem ich die neue 
+Version installiert hatte::
 
 
   Traceback (most recent call last):
@@ -41,8 +42,6 @@ Der Fehler ist reproduzierbar, indem ich auf
 `Vertrag # 88 
 <http://localhost:8080/api/dsbe/Contracts/88?fmt=detail>`_
 gehe und dort :guilabel:`Drucken` klicke.
-
-Checkin-Serie 20110615 kommt noch mit nach :doc:`/releases/20110613` rein.
 
 Beim Einchecken und Testen entdecke ich, dass die Sache noch perverser ist als 
 gedacht.
@@ -103,7 +102,33 @@ Nachdem mir das klargeworden ist, habe ich noch ein Problemchen entdeckt:
 in meiner :func:`lino.utils.log.configure` muss ich den `AdminEmailHandler` 
 nicht nur den Logger ``django`` hinzufügen, sondern auch meinem Logger ``lino``.
 
+Neuer Testcase :func:`lino.apps.dsbe.tests.dsbe_tests.test03`.
 
-Action Drucken failed for Contract #88 (Vertrag Nr. 88). An error report has been sent to the system administrator.
+Voilà. Jetzt bin ich zufrieden: 
+Der Bentuzer kriegt eine Meldung
+"Action Drucken failed for Contract #88 (Vertrag # 88). 
+An error report has been sent to the system administrator."
+und die Systemverwalter eine E-Mail mit detaillierter Fehlerbeschreibung, unter anderem 
+"Invalid template configured for ContractType u'Art.60\xa77 intern'. Expected filename ending with '.odt'."
 
+All das ist die Checkin-Serie 20110615, die noch mit nach :doc:`/releases/20110613` reinkommt.
 
+Viele kleine Benutzerwünsche
+----------------------------
+
+.. currentmodule:: lino.modlib.contacts.models
+
+- :meth:`Person.get_full_name` 
+  now renders the :attr:`Person.last_name` in all-uppercase letters
+  
+- :meth:`Person.address_person_lines` now uses :meth:`Person.get_full_name`.
+
+- :meth:`Person.get_full_name` now includes a :func:`salutation <get_salutation>`.
+  
+.. currentmodule:: lino.apps.dsbe.models
+
+- New field :attr:`PersonGroup.ref_name` used for ordering.
+
+- New field :attr:`Person.duties_person`
+
+Check-in 20110615b um 19.35 wegen Feierabend.

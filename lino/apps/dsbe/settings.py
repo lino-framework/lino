@@ -61,7 +61,7 @@ class Lino(Lino):
         m.add_action('uploads.MyUploads')
         m.add_action('dsbe.MyContracts')
         m.add_action('contacts.MyPersons')
-        for pg in dsbe.PersonGroup.objects.all():
+        for pg in dsbe.PersonGroup.objects.order_by('ref_name'):
             m.add_action('contacts.MyPersonsByGroup',label=pg.name,
                 params=dict(master_instance=pg))
             #~ m.add_action('contacts.MyPersonsByGroup',label=pg.name,

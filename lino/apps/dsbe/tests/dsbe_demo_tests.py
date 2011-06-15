@@ -29,7 +29,6 @@ from django.db.utils import IntegrityError
 #from lino.igen import models
 #from lino.modlib.contacts.models import Contact, Companies
 #from lino.modlib.countries.models import Country
-from lino.modlib.contacts.models import Companies
 
 from lino.utils import i2d
 from lino.utils import babel
@@ -37,8 +36,6 @@ from lino.tools import resolve_model
 #Companies = resolve_model('contacts.Companies')
 from lino.utils.test import TestCase
 
-from lino.apps.dsbe.models import Person, PersonProperty
-from lino.modlib.properties.models import Property
 
 #~ Person = resolve_model('contacts.Person')
 #~ Property = resolve_model('properties.Property')
@@ -52,7 +49,9 @@ class DemoTest(TestCase):
             
 def test01(self):
     """
+    See the source code at :srcref:`/lino/apps/dsbe/tests/dsbe_demo_tests.py`.
     """
+    from lino.apps.dsbe.models import Person
     self.assertEquals(Person.objects.count(), 73)
     
     p = Person.objects.get(pk=15)
@@ -63,7 +62,8 @@ def test01(self):
 def test02(self):
     """
     This tests for the bug discovered :doc:`/blog/2011/0228`.
-    See also :doc:`/blog/2011/0531`
+    See also :doc:`/blog/2011/0531`.
+    See the source code at :srcref:`/lino/apps/dsbe/tests/dsbe_demo_tests.py`.
     """
     url = '/api/properties/SoftSkillsByPerson?_dc=1298881440121&fmt=json&mt=22&mk=15'
     # make sure that the response is in English so that this test works on any site
@@ -112,6 +112,7 @@ def test02(self):
 def test03(self):
     """
     Test whether the AJAX call issued for Detail of Annette Arens is correct.
+    See the source code at :srcref:`/lino/apps/dsbe/tests/dsbe_demo_tests.py`.
     
     The raw call looks like this::
     
@@ -241,6 +242,7 @@ def test03(self):
 def test04(self):
     """
     This tests whether date fields are correctly parsed.
+    See the source code at :srcref:`/lino/apps/dsbe/tests/dsbe_demo_tests.py`.
     
     ::
     
@@ -326,6 +328,7 @@ def test04(self):
 def test05(self):
     """
     Simplification of test04, used to write :doc:`/tickets/27`.
+    See the source code at :srcref:`/lino/apps/dsbe/tests/dsbe_demo_tests.py`.
     """
     url ='/api/countries/Countries/BE'
     data = 'name=Belgienx&nameHidden=Belgienx&fmt=json'
@@ -341,9 +344,12 @@ def test05(self):
 
 def test06(self):
     """
-    Testing BabelValues
+    Testing BabelValues.
+    See the source code at :srcref:`/lino/apps/dsbe/tests/dsbe_demo_tests.py`.
     """
     from lino.utils import babel
+    from lino.apps.dsbe.models import Person
+    from lino.apps.dsbe.models import Property, PersonProperty
     annette = Person.objects.get(pk=15)
     self.assertEquals(unicode(annette), "Arens Annette (15)")
     
@@ -367,6 +373,7 @@ def test06(self):
 def test07(self):
     """
     Testing whether all model reports work
+    See the source code at :srcref:`/lino/apps/dsbe/tests/dsbe_demo_tests.py`.
     """
     response = self.client.get('/menu')
     result = self.check_json_result(response,'success message load_menu')
@@ -397,6 +404,7 @@ def test08(self):
 def test09(self):
     """
     This tests for the bug discovered :doc:`/blog/2011/0610`.
+    See the source code at :srcref:`/lino/apps/dsbe/tests/dsbe_demo_tests.py`.
     """
     babel.set_language('en')
     url = '/choices/dsbe/StudiesByPerson/city?start=0&limit=30&country=&query='
@@ -409,6 +417,7 @@ def test10(self):
     """
     Test the unique_together validation of City
     See :doc:`/blog/2011/0610` and :doc:`/blog/2011/0611`.
+    See the source code at :srcref:`/lino/apps/dsbe/tests/dsbe_demo_tests.py`.
     """
     from lino.modlib.countries.models import City, Country
     be = Country.objects.get(pk='BE')
@@ -427,4 +436,3 @@ def test10(self):
         self.fail("Expected IntegrityError")
         
     
-        

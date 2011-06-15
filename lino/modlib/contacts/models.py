@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 ## Copyright 2008-2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
@@ -44,6 +45,56 @@ from lino.utils import babel
 from lino.models import get_site_config
 
 from lino.modlib.countries.models import CountryCity
+
+SEX_MALE = 'M'
+SEX_FEMALE = 'F'
+SEX_CHOICES = ((SEX_MALE,_('Male')),(SEX_FEMALE,_('Female')))
+
+from django.utils import translation
+
+def get_salutation(sex,nominative=False,no_salutation=False):
+    """
+    Returns "Mr." or "Mrs" depending on the sex, but also respecting the current babel language.
+    
+    - optional keyword argument `nominative` used only when babel language
+      is "de": specifying ``nominative=True`` will return "Herr" instead of default 
+      "Herrn" for male persons.
+    
+    - optional keyword argument `no_salutation` can be set to `True` to 
+      suppress salutations. See :func:`lino.apps.dsbe.tests.dsbe_tests.test04` 
+      for some examples.
+    
+    """
+    if no_salutation:
+        return None
+    lang = translation.get_language()
+    if lang == 'de':
+        if sex == SEX_FEMALE:
+            return "Frau"
+        if nominative:
+            return "Herr"
+        return "Herrn"
+    if lang == 'fr':
+        if sex == SEX_FEMALE:
+            return "Mme"
+        return "Mr"
+    if sex == SEX_FEMALE:
+        return "Mrs."
+    return "Mr."
+        
+#~ class Salutation(ChoiceList):
+    #~ label = _("Salutation")
+#~ add = Salutation.add_item
+#~ add(SEX_MALE,en=u"Mr.",de=u"Herrn",fr=u"Mr",et="Härra")
+#~ add(SEX_FEMALE,en=u"Mrs.",de=u"Frau",fr=u"Mme")
+
+#~ class NominativeSalutation(ChoiceList):
+    #~ label = _("Nominative salutation")
+#~ add = Salutation.add_item
+#~ add(SEX_MALE,en=u"Mr.",de=u"Herr",fr=u"Mr")
+#~ add(SEX_FEMALE,en=u"Mrs.",de=u"Frau",fr=u"Mme")
+
+
 
 
 class Addressable(CountryCity):
@@ -131,7 +182,7 @@ class Addressable(CountryCity):
         if self.addr1:
             yield self.addr1
         if self.street:
-            yield join_words(self.street,self.street_no,self.street_box)
+            yield join_words(self.street_prefix, self.street,self.street_no,self.street_box)
         if self.addr2:
             yield self.addr2
         #lines = [self.name,street,self.addr1,self.addr2]
@@ -148,10 +199,11 @@ class Addressable(CountryCity):
             #~ foreigner = False
         #~ else:
             #~ foreigner = (self.country != self.objects.get(pk=1).country)
-        sc = get_site_config()
-        if not sc.site_company or self.country != sc.site_company.country: 
-            # (if self.country != sender's country)
-            yield unicode(self.country)
+        if self.country is not None:
+            sc = get_site_config()
+            if not sc.site_company or self.country != sc.site_company.country: 
+                # (if self.country != sender's country)
+                yield unicode(self.country)
             
         #~ logger.debug('%s : as_address() -> %r',self,lines)
         
@@ -208,16 +260,30 @@ class Person(Addressable):
       verbose_name=_('Title'))
     "Text to print as part of the first address line in front of first_name."
         
-    def get_full_name(self):
-        "Returns the first_name plus the last_name, with a space in between."
-        return u'%s %s' % (self.first_name, self.last_name)
-    full_name = property(get_full_name)
+    sex = models.CharField(max_length=1,blank=True,null=True,
+        verbose_name=_("Sex"),
+        choices=SEX_CHOICES) 
+        
+    def get_salutation(self,**salutation_options):
+        return get_salutation(self.sex,**salutation_options)
     
-    def address_person_lines(self):
+        
+    def get_full_name(self,**salutation_options):
+        """Returns a one-line string composed of salutation, first_name and last_name.
+        Optional salutation options see :func:`get_salutation`.
+        """
+        #~ return '%s %s' % (self.first_name, self.last_name.upper())
+        return join_words(self.get_salutation(**salutation_options), self.first_name, self.last_name.upper())
+    full_name = property(get_full_name)
+    #~ full_name.return_type = models.CharField(max_length=200,verbose_name=_('Full name'))
+    
+    def address_person_lines(self,**salutation_options):
+        "Deserves more documentation."
         if self.title:
             yield self.title
-        l = filter(lambda x:x,[self.first_name,self.last_name])
-        yield  " ".join(l)
+        yield self.get_full_name(**salutation_options)
+        #~ l = filter(lambda x:x,[self.first_name,self.last_name])
+        #~ yield  " ".join(l)
         
     def full_clean(self,*args,**kw):
     #~ def before_save(self):

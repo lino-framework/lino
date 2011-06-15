@@ -31,6 +31,7 @@ from django.utils.encoding import force_unicode
 
 #~ import lino
 #~ logger.debug(__file__+' : started')
+#~ from django.utils import translation
 
 from lino import reports
 #~ from lino import layouts
@@ -40,6 +41,7 @@ from lino import mixins
 from lino import actions
 from lino import fields
 from lino.modlib.contacts import models as contacts
+from lino.modlib.contacts.models import SEX_CHOICES
 from lino.modlib.notes import models as notes
 from lino.modlib.links import models as links
 from lino.modlib.uploads import models as uploads
@@ -53,11 +55,21 @@ from lino.utils.babel import DEFAULT_LANGUAGE, babelattr, babeldict_getitem
 #~ from lino.utils.babel import add_babel_field, DEFAULT_LANGUAGE, babelattr, babeldict_getitem
 from lino.utils import babel 
 from lino.utils.choosers import chooser
+from lino.utils.choicelists import ChoiceList
 from lino.utils import mti
 from lino.mixins.printable import DirectPrintAction
 from lino.mixins.reminder import ReminderEntry
 
 from lino.modlib.countries.models import CountryCity
+
+# not used here, but these modules are required in INSTALLED_APPS, 
+# and other code may import them using 
+# ``from lino.apps.dsbe.models import Property``
+
+from lino.modlib.properties.models import Property
+from lino.modlib.notes.models import NoteType
+from lino.modlib.countries.models import Country, City
+
 
 
 SCHEDULE_CHOICES = {
@@ -143,8 +155,6 @@ CIVIL_STATE_CHOICES = [
   ('4', _("widowed")  ),
   ('5', _("separated")  ), # Getrennt von Tisch und Bett / 
 ]
-
-SEX_CHOICES = (('M',_('Male')),('F',_('Female')))
 
 
 # http://en.wikipedia.org/wiki/European_driving_licence
@@ -315,9 +325,6 @@ class Person(Partner,contacts.Person):
     coach2 = models.ForeignKey("users.User",blank=True,null=True,
         verbose_name=_("Coach 2"),related_name='coached2')
         
-    sex = models.CharField(max_length=1,blank=True,null=True,
-        verbose_name=_("Sex"),
-        choices=SEX_CHOICES) 
     birth_date = models.DateField(
         blank=True,null=True,
         verbose_name=_("Birth date"))
@@ -424,9 +431,9 @@ class Person(Partner,contacts.Person):
     unavailable_why = models.CharField(max_length=100,blank=True,null=True,
         verbose_name=_("reason"))
     
-    native_language = models.ForeignKey('countries.Language',
-      verbose_name=_("Native language"),
-      blank=True,null=True)
+    #~ native_language = models.ForeignKey('countries.Language',
+      #~ verbose_name=_("Native language"),
+      #~ blank=True,null=True)
       
     obstacles = models.TextField(_("Obstacles"),blank=True,null=True)
     skills = models.TextField(_("Other skills"),blank=True,null=True)
@@ -458,7 +465,7 @@ class Person(Partner,contacts.Person):
         Zur Zeit scheint es so, dass das Auskunftsblatt eher überflüssig wird.
         """
         rpt.add_action(DirectPrintAction('eid',_("eID-Inhalt"),'persons/eid-content.odt'))
-        rpt.add_action(DirectPrintAction('cv',_("Curiculum vitae"),'persons/cv.odt'))
+        #~ rpt.add_action(DirectPrintAction('cv',_("Curiculum vitae"),'persons/cv.odt'))
         
     def __unicode__(self):
         return u"%s (%s)" % (self.name,self.pk)
@@ -470,8 +477,9 @@ class Person(Partner,contacts.Person):
                 raise ValidationError(_("Circular reference"))
         super(Person,self).clean()
         
-    full_name = property(contacts.Person.get_full_name)
-    
+    #~ full_name = property(contacts.Person.get_full_name)
+
+
     def card_type_text(self,request):
         if self.card_type:
             s = babeldict_getitem(BEID_CARD_TYPES,self.card_type)
@@ -669,7 +677,7 @@ def persons_by_user():
     headers = [cgi.escape(_("User")),cgi.escape(_("Total"))]
     sums = []
     pg2col = {}
-    for pg in PersonGroup.objects.order_by('name'):
+    for pg in PersonGroup.objects.order_by('ref_name'):
         headers.append('<font size="2">%s</font>' % cgi.escape(pg.name))
         sums.append(0)
         pg2col[pg.pk] = len(headers) - 1
@@ -743,6 +751,7 @@ class Companies(contacts.Companies):
 class PersonGroup(models.Model):
     """Integration Phase (previously "Person Group")
     """
+    ref_name = models.CharField(_("Reference name"),max_length=20)
     name = models.CharField(_("Designation"),max_length=200)
     #~ text = models.TextField(_("Description"),blank=True,null=True)
     class Meta:
@@ -754,7 +763,7 @@ class PersonGroup(models.Model):
 class PersonGroups(reports.Report):
     """List of Integration Phases"""
     model = PersonGroup
-    order_by = ["name"]
+    order_by = ["ref_name"]
 
     
 #
@@ -871,6 +880,7 @@ class LanguageKnowledge(models.Model):
     #~ language = fields.LanguageField()
     spoken = HowWell.field(verbose_name=_("spoken"))
     written = HowWell.field(verbose_name=_("written"))
+    native = models.BooleanField(verbose_name=_("native language"))
     
     def __unicode__(self):
         if self.language_id is None:
@@ -890,7 +900,7 @@ class LanguageKnowledgesByPerson(reports.Report):
     fk_name = 'person'
     #~ label = _("Language knowledge")
     #~ button_label = _("Languages")
-    column_names = "language spoken written"
+    column_names = "language native spoken written"
 
 # 
 # PROPERTIES
@@ -1258,6 +1268,7 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,contact
     duties_asd = fields.RichTextField(_("duties ASD"),blank=True,null=True,format='html')
     duties_dsbe = fields.RichTextField(_("duties DSBE"),blank=True,null=True,format='html')
     duties_company = fields.RichTextField(_("duties company"),blank=True,null=True,format='html')
+    duties_person = fields.RichTextField(_("duties person"),blank=True,null=True,format='html')
     
     user_asd = models.ForeignKey("users.User",verbose_name=_("responsible (ASD)"),
         related_name='contracts_asd',blank=True,null=True) 

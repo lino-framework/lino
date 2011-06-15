@@ -14,6 +14,8 @@ Subpackages
 
     lino.modlib.countries
     lino.modlib.contacts
+    lino.modlib.journals
+    lino.modlib.notes
     lino.modlib.users
     lino.modlib.properties
 

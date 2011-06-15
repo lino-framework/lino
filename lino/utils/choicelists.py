@@ -13,7 +13,8 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Utility for defining hard-coded multi-lingual choice lists.
+Utility for defining hard-coded multi-lingual choice lists 
+whose value is rendered according to the current babel language.
 
 :class:`DoYouLike` and :class:`HowWell` 
 are "batteries included" usage examples.
