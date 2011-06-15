@@ -606,7 +606,7 @@ class TypedPrintable(Printable):
             return super(TypedPrintable,self).get_print_templates(bm,action)
         if not ptype.template.endswith(bm.template_ext):
             raise Exception(
-              "Invalid template configured for %s \"%s\". Expected filename ending with '%s'." %
+              u"Invalid template configured for %s \"%s\". Expected filename ending with '%s'." %
               (ptype.__class__.__name__,ptype,bm.template_ext))
         return [ ptype.get_templates_group() + '/' + ptype.template ]
         

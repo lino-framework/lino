@@ -1108,17 +1108,17 @@ tinymce.init({
                     return http.HttpResponseRedirect(target)
                     
                 if isinstance(a,reports.RowAction):
-                    return a.run(ar,elem)
-                    #~ try:
-                        #~ return a.run(ar,elem)
-                    #~ except Exception,e:
-                        #~ logger.exception(e)
-                        #~ msg = _("Action %(action)s failed for %(record)s.") % dict(
-                            #~ action=a,
-                            #~ record=obj2str(elem))
-                        #~ msg += ' ' + _("Please contact the system administrator.")
-                        #~ logger.warning(msg)
-                        #~ return error_response(e,msg)
+                    #~ return a.run(ar,elem)
+                    try:
+                        return a.run(ar,elem)
+                    except Exception,e:
+                        logger.exception(e)
+                        msg = _("Action %(action)s failed for %(record)s.") % dict(
+                            action=a,
+                            record=obj2str(elem))
+                        msg += ' ' + _("An error report has been sent to the system administrator.")
+                        logger.warning(msg)
+                        return error_response(e,msg)
                   
                 raise NotImplementedError("Action %s is not implemented)" % a)
                 
