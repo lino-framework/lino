@@ -89,6 +89,30 @@ reicht::
         (ptype.__class__.__name__,ptype,bm.template_ext))
 
 
+Ok, jetzt wo das klar ist, habe ich noch 
 
+
+  Traceback (most recent call last):
+    File "/var/snapshots/django/django/core/handlers/base.py", line 111, in get_response
+      response = callback(request, *callback_args, **callback_kwargs)
+    File "/var/snapshots/lino/lino/ui/extjs3/ext_ui.py", line 1115, in api_element_view
+      logger.exception(e)
+    File "/usr/lib/python2.6/logging/__init__.py", line 1088, in exception
+      self.error(*((msg,) + args), **{'exc_info': 1})
+    File "/usr/lib/python2.6/logging/__init__.py", line 1082, in error
+      self._log(ERROR, msg, args, **kwargs)
+    File "/usr/lib/python2.6/logging/__init__.py", line 1173, in _log
+      self.handle(record)
+    File "/usr/lib/python2.6/logging/__init__.py", line 1183, in handle
+      self.callHandlers(record)
+    File "/usr/lib/python2.6/logging/__init__.py", line 1220, in callHandlers
+      hdlr.handle(record)
+    File "/usr/lib/python2.6/logging/__init__.py", line 679, in handle
+      self.emit(record)
+    File "/var/snapshots/django/django/utils/log.py", line 72, in emit
+      mail.mail_admins(subject, message, fail_silently=True, html_message=html_message)
+    File "/var/snapshots/django/django/core/mail/__init__.py", line 91, in mail_admins
+      mail = EmailMultiAlternatives(u'%s%s' % (settings.EMAIL_SUBJECT_PREFIX, subject),
+  UnicodeDecodeError: 'ascii' codec can't decode byte 0xc2 in position 73: ordinal not in range(128)
 
 
