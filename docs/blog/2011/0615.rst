@@ -1,0 +1,40 @@
+20110615
+========
+
+Hier noch ein Traceback::
+
+  Traceback (most recent call last):
+    File "/var/snapshots/django/django/core/handlers/base.py", line 111, in get_response
+      response = callback(request, *callback_args, **callback_kwargs)
+    File "/var/snapshots/lino/lino/ui/extjs3/ext_ui.py", line 1118, in api_element_view
+      error=e)
+  UnicodeDecodeError: 'ascii' codec can't decode byte 0xc2 in position 52: ordinal not in range(128)
+
+Und hier der dazugehörige Code::
+
+    try:
+        return a.run(ar,elem)
+    except Exception,e:
+        msg = _("Action %(action)s failed for %(record)s: %(error)s") % dict(
+            action=a,
+            record=obj2str(elem),
+            error=e) ## lino 1118
+        logger.warning(msg)
+        logger.exception(e)
+        return error_response(e,msg)
+        
+Also fast die gleiche Lektion wie :doc:`vor 2 Wochen <0527>`: 
+"When you pass more than one formatting argument to a 
+logger function, and one of them is a unicode string, 
+then the other argument(s) may not be bytestrings 
+containing non-ascii chars."
+
+Mit der Verallgemeinerung, dass das für alle 
+String-Formatierungen (Operator ``%``) gilt, und zwar 
+sowohl für Positionsargumente wie für Keyword-Argumente.
+
+Der Fehler ist reproduzierbar, indem ich auf 
+`Vertrag # 88 
+<http://localhost:8080/api/dsbe/Contracts/88?fmt=detail>`_
+gehe und dort :guilabel:`Drucken` klicke.
+

@@ -9,10 +9,8 @@ for which I hope for help from other people.
 Short-term
 ----------
 
-#.  "Es ist es für den Benutzer nicht logisch, dass er keinen
-    Drittpartner hinzufügen kann, solange er eine neue Notiz nicht
-    mindestens einmal gespeichert hat."
-    Ja klar. Und das wird einfach gelöst, indem im InsertWrapper
+#.  Slave-Grids im Insert-Fenster sind jetzt zwar disabled, aber sie 
+    machen scheinbar trotzdem noch ein load "ihrer" Daten. 
 
 
 #.  Ausdruck Verträge: jetzt wo die mehrzeiligen Textfelder formatierbar 
@@ -66,6 +64,18 @@ Short-term
 
 Medium-term
 -----------
+
+#.  Client-seitiger Ersatz für den "Memo"-Button, der seit 
+    :doc`/blog/2011/0605` wieder raus ist.
+    Mir war klargeworden, dass diese Lösung (Memo-Felder auf Anfrage 
+    schon serverseitig abzuschneiden) erstens theoretisch Unsinn war 
+    und zweitens in der Praxis noch einige Bugs hatte. Momentan wird 
+    in der Grid immer nur die Kurzform angezeigt (`overflow:hidden;`), 
+    und irgendwann muss ich mal eine client-seitige Lösung in Javascript 
+    machen. Interessant wäre, wenn man die Höhe einzelner Zeilen 
+    manuell verändern kann. Eventuell den Text-Editor im eigenen 
+    Fenster aufrufen bei Doppelklick.
+
 
 #.  Pro Ereignisart könnte ein Feld "muss manuell erledigt werden" kommen, 
     das würde dann verhindern, dass entsprechende Erinnerungen 
