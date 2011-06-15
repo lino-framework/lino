@@ -99,15 +99,16 @@ def configure(config):
     level = getattr(logging,config.get('level','notset').upper())
     
     djangoLogger = logging.getLogger('django')
-    h = AdminEmailHandler()
-    h.setLevel(logging.ERROR)
-    djangoLogger.addHandler(h)
+    aeh = AdminEmailHandler(include_html=True)
+    aeh.setLevel(logging.ERROR)
+    djangoLogger.addHandler(aeh)
     
     linoLogger = logging.getLogger('lino')
-    linoLogger.addHandler(h)
-        
+    
     linoLogger.setLevel(level)
     
+    linoLogger.addHandler(aeh)
+        
     if logfile is not None:
         kw = {}
         for k in ('mode','encoding','maxBytes','backupCount'):

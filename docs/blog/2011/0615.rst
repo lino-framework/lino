@@ -72,6 +72,16 @@ Der besagte Code ist::
         "Invalid template configured for %s \"%s\". Expected filename ending with '%s'." %
         (ptype.__class__.__name__,ptype,bm.template_ext))
 
+Also das "§"-Zeichen in "Art.60§7 intern" ist der Auslöser.
+
+Was ich noch nicht wusste: es gibt `Python issue #2517
+<http://bugs.python.org/issue2517>`_, : 
+Eine `Exception` mit einem Unicode-String führt zumindest in Python 2.6 
+noch allgemein an vielen Stellen zu Problemen. 
+
+Lektion : `Exceptions` dürfen ausschließlich ASCII-Code enthalten 
+und folglich auch nicht internationalisert sein. Im obigen Beispiel 
+reicht::
 
   if not ptype.template.endswith(bm.template_ext):
       raise Exception(
@@ -80,11 +90,5 @@ Der besagte Code ist::
 
 
 
-Also das "§"-Zeichen in "Art.60§7 intern" ist der Auslöser.
-
-Was ich noch nicht wusste: es gibt `Python issue #2517
-<http://bugs.python.org/issue2517>`_, : 
-Eine `Exception` mit einem Unicode-String führt zumindest in Python 2.6 
-noch allgemein an vielen Stellen zu Problemen. 
 
 
