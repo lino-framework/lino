@@ -99,8 +99,8 @@ def configure(config):
     level = getattr(logging,config.get('level','notset').upper())
     
     djangoLogger = logging.getLogger('django')
-    #~ aeh = AdminEmailHandler(include_html=True)
-    aeh = AdminEmailHandler()
+    aeh = AdminEmailHandler(include_html=True)
+    #~ aeh = AdminEmailHandler()
     aeh.setLevel(logging.ERROR)
     djangoLogger.addHandler(aeh)
     
