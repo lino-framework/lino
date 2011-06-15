@@ -138,3 +138,38 @@ def test02(self):
         response = self.client.get('/api/lino/SiteConfigs/1?fmt=json')
         
         
+def test03(self):
+    """
+    See :doc:`/blog/2011/0615`.
+    """
+    from lino.apps.dsbe.models import Contracts, Contract, ContractType
+    #~ from lino.modlib.notes.models import ContractType
+    from lino.mixins.printable import PrintAction
+    from lino.modlib.users.models import User
+    root = User(username='root') # ,last_name="Superuser")
+    root.save()
+    t = ContractType(id=1,build_method='appyodt',template="",name=u'Art.60\xa77')
+    t.save()
+    n = Contract(id=1,type=t,user=root)
+    n.save()
+    a = PrintAction()
+    #~ run_
+    #~ rr = Contracts()
+    try:
+        kw = a.run_(n)
+    except Exception,e:
+        self.assertEqual(e.message,
+          r"Invalid template configured for ContractType u'Art.60\xa77'. Expected filename ending with '.odt'.")
+          
+    t.template='Default.odt'
+    t.save()
+    n = Contract.objects.get(id=1)
+    kw = a.run_(n)
+    
+    print kw
+    
+    #~ response = self.client.get('/api/dsbe/Contracts/1?fmt=print',REMOTE_USER='root')
+    #~ print response
+    #~ result = self.check_json_result(response,'message success alert')
+    #~ self.assertEqual(result['message'],'...')
+    

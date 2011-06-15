@@ -402,7 +402,7 @@ class PrintAction(BasePrintAction):
     def filename_root(self,elem):
         return elem._meta.app_label + '.' + elem.__class__.__name__
         
-    def run(self,rr,elem,**kw):
+    def run_(self,elem,**kw):
         bm = get_build_method(elem)
         if elem.must_build:
             bm.build(self,elem)
@@ -412,8 +412,13 @@ class PrintAction(BasePrintAction):
             kw.update(message="%s printable has been built." % elem)
         else:
             kw.update(message="Reused %s printable from cache." % elem)
-        target = settings.MEDIA_URL + "/".join(bm.get_target_parts(self,elem))
-        return rr.ui.success_response(open_url=target,**kw)
+        kw.update(open_url=settings.MEDIA_URL + "/".join(bm.get_target_parts(self,elem)))
+        return kw
+        #~ return rr.ui.success_response(open_url=target,**kw)
+        
+    def run(self,rr,elem,**kw):
+        kw = self.run_(elem,**kw)
+        return rr.ui.success_response(**kw)
       
 class DirectPrintAction(BasePrintAction):
     #~ def __init__(self,rpt,name,label,bmname,tplname):

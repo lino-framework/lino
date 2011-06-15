@@ -1123,7 +1123,9 @@ class ExclusionsByPerson(Exclusions):
 # CONTRACT TYPES 
 #
 class ContractType(mixins.PrintableType):
+  
     templates_group = 'contracts'
+    
     class Meta:
         verbose_name = _("Contract Type")
         verbose_name_plural = _('Contract Types')
@@ -1133,7 +1135,6 @@ class ContractType(mixins.PrintableType):
     
     def __unicode__(self):
         return unicode(babel.babelattr(self,'name'))
-#~ add_babel_field(ContractType,'name')
 
 class ContractTypes(reports.Report):
     model = ContractType
@@ -1234,7 +1235,7 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,contact
         
     type = models.ForeignKey("dsbe.ContractType",verbose_name=_("contract type"),blank=True)
     
-    applies_from = models.DateField(_("applies from"),blank=True,null=True,)
+    applies_from = models.DateField(_("applies from"),blank=True,null=True)
     applies_until = models.DateField(_("applies until"),blank=True,null=True)
     date_decided = models.DateField(blank=True,null=True,verbose_name=_("date decided"))
     date_issued = models.DateField(blank=True,null=True,verbose_name=_("date issued"))
@@ -1299,12 +1300,14 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,contact
             return []
         return settings.LINO.CONTRACT_PRINTABLE_FIELDS
         
-    
     def __unicode__(self):
-        msg = _("Contract # %s")
-        #~ msg = _("Contract # %(pk)d (%(person)s/%(company)s)")
-        #~ return msg % dict(pk=self.pk, person=self.person, company=self.company)
-        return msg % self.pk
+        return u'%s # %s' % (self._meta.verbose_name,self.pk)
+    
+    #~ def __unicode__(self):
+        #~ msg = _("Contract # %s")
+        #~ # msg = _("Contract # %(pk)d (%(person)s/%(company)s)")
+        #~ # return msg % dict(pk=self.pk, person=self.person, company=self.company)
+        #~ return msg % self.pk
         
     def get_reminder_html(self,ui,user):
         url = ui.get_detail_url(self,fmt='detail')

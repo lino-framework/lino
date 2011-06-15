@@ -1,7 +1,11 @@
 20110615
 ========
 
-Hier noch ein Traceback::
+Noch ein UnicodeDecodeError
+---------------------------
+
+Gestern trat ein paarmal folgender Fehler auf bei dem Kunden, dem ich ::
+
 
   Traceback (most recent call last):
     File "/var/snapshots/django/django/core/handlers/base.py", line 111, in get_response
@@ -86,33 +90,20 @@ reicht::
   if not ptype.template.endswith(bm.template_ext):
       raise Exception(
         "Invalid template configured for %s %r. Expected filename ending with %r." %
-        (ptype.__class__.__name__,ptype,bm.template_ext))
+        (ptype.__class__.__name__,unicode(ptype),bm.template_ext))
 
 
-Nach mir das klargeworden ist, habe ich noch ein Problemchen
+Dass ich meine Instanz `ptype` noch selber in ein `unicode()` einpacken muss, 
+ist unlogisch und liegt daran, dass Djangos `Model.__repr__()` unter Umständen 
+einen Unicode-String zurückgeben kann.
+Ich habe das in :djangoticket:`16261` gemeldet, aber das werden die wohl kaum 
+akzeptieren, weil das ziemlich unkompatibel wäre.
+
+Nachdem mir das klargeworden ist, habe ich noch ein Problemchen entdeckt: 
+in meiner :func:`lino.utils.log.configure` muss ich den `AdminEmailHandler` 
+nicht nur den Logger ``django`` hinzufügen, sondern auch meinem Logger ``lino``.
 
 
-  Traceback (most recent call last):
-    File "/var/snapshots/django/django/core/handlers/base.py", line 111, in get_response
-      response = callback(request, *callback_args, **callback_kwargs)
-    File "/var/snapshots/lino/lino/ui/extjs3/ext_ui.py", line 1115, in api_element_view
-      logger.exception(e)
-    File "/usr/lib/python2.6/logging/__init__.py", line 1088, in exception
-      self.error(*((msg,) + args), **{'exc_info': 1})
-    File "/usr/lib/python2.6/logging/__init__.py", line 1082, in error
-      self._log(ERROR, msg, args, **kwargs)
-    File "/usr/lib/python2.6/logging/__init__.py", line 1173, in _log
-      self.handle(record)
-    File "/usr/lib/python2.6/logging/__init__.py", line 1183, in handle
-      self.callHandlers(record)
-    File "/usr/lib/python2.6/logging/__init__.py", line 1220, in callHandlers
-      hdlr.handle(record)
-    File "/usr/lib/python2.6/logging/__init__.py", line 679, in handle
-      self.emit(record)
-    File "/var/snapshots/django/django/utils/log.py", line 72, in emit
-      mail.mail_admins(subject, message, fail_silently=True, html_message=html_message)
-    File "/var/snapshots/django/django/core/mail/__init__.py", line 91, in mail_admins
-      mail = EmailMultiAlternatives(u'%s%s' % (settings.EMAIL_SUBJECT_PREFIX, subject),
-  UnicodeDecodeError: 'ascii' codec can't decode byte 0xc2 in position 73: ordinal not in range(128)
+Action Drucken failed for Contract #88 (Vertrag Nr. 88). An error report has been sent to the system administrator.
 
 
