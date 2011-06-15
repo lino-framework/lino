@@ -31,6 +31,7 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.template.loader import render_to_string, get_template, select_template, Context, TemplateDoesNotExist
 from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.utils.encoding import force_unicode 
 
 try:
     import ho.pisa as pisa
@@ -607,7 +608,7 @@ class TypedPrintable(Printable):
         if not ptype.template.endswith(bm.template_ext):
             raise Exception(
               u"Invalid template configured for %s \"%s\". Expected filename ending with '%s'." %
-              (ptype.__class__.__name__,ptype,bm.template_ext))
+              (ptype.__class__.__name__,force_unicode(ptype),bm.template_ext))
         return [ ptype.get_templates_group() + '/' + ptype.template ]
         
     def get_print_language(self,bm):
