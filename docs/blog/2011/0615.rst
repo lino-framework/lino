@@ -38,11 +38,53 @@ Der Fehler ist reproduzierbar, indem ich auf
 <http://localhost:8080/api/dsbe/Contracts/88?fmt=detail>`_
 gehe und dort :guilabel:`Drucken` klicke.
 
-Das kommt noch ins :doc:`/releases/20110613` mit rein.
+Checkin-Serie 20110615 kommt noch mit nach :doc:`/releases/20110613` rein.
 
-Checkin-Serie 20110615, bei der ich `Python issue #2517
-<http://bugs.python.org/issue2517>`_  entdecke. 
+Beim Einchecken und Testen entdecke ich, dass die Sache noch perverser ist als 
+gedacht.
+
+Wenn ich die Exception nicht selber abfange, dann tut Django das, 
+und der kann es. Der schickt dann dem Benutzer eine freundliche 500-Meldung 
+und den Systemverwaltern (`setting:`ADMINS`) eine E-Mail, dank derer 
+ich erstmals überhaupt die Exception an sich sehe::
+
+  Traceback (most recent call last):
+    File "/var/snapshots/django/django/core/handlers/base.py", line 111, in get_response
+      response = callback(request, *callback_args, **callback_kwargs)
+    File "/var/snapshots/lino/lino/ui/extjs3/ext_ui.py", line 1111, in api_element_view
+      return a.run(ar,elem)
+    File "/var/snapshots/lino/lino/mixins/printable.py", line 407, in run
+      bm.build(self,elem)
+    File "/var/snapshots/lino/lino/mixins/printable.py", line 186, in build
+      tpl_leaf = self.get_template_leaf(action,elem)
+    File "/var/snapshots/lino/lino/mixins/printable.py", line 162, in get_template_leaf
+      tpls = action.get_print_templates(self,elem)
+    File "/var/snapshots/lino/lino/mixins/printable.py", line 399, in get_print_templates
+      return elem.get_print_templates(bm,self)
+    File "/var/snapshots/lino/lino/mixins/printable.py", line 610, in get_print_templates
+      (ptype.__class__.__name__,ptype,bm.template_ext))
+  Exception: Invalid template configured for ContractType "Art.60§7 intern". Expected filename ending with '.odt'.
+
+Der besagte Code ist::
+
+  if not ptype.template.endswith(bm.template_ext):
+      raise Exception(
+        "Invalid template configured for %s \"%s\". Expected filename ending with '%s'." %
+        (ptype.__class__.__name__,ptype,bm.template_ext))
 
 
+  if not ptype.template.endswith(bm.template_ext):
+      raise Exception(
+        "Invalid template configured for %s %r. Expected filename ending with %r." %
+        (ptype.__class__.__name__,ptype,bm.template_ext))
+
+
+
+Also das "§"-Zeichen in "Art.60§7 intern" ist der Auslöser.
+
+Was ich noch nicht wusste: es gibt `Python issue #2517
+<http://bugs.python.org/issue2517>`_, : 
+Eine `Exception` mit einem Unicode-String führt zumindest in Python 2.6 
+noch allgemein an vielen Stellen zu Problemen. 
 
 

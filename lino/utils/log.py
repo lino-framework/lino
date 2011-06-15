@@ -104,6 +104,7 @@ def configure(config):
     djangoLogger.addHandler(h)
     
     linoLogger = logging.getLogger('lino')
+    linoLogger.addHandler(h)
         
     linoLogger.setLevel(level)
     
