@@ -89,7 +89,7 @@ reicht::
         (ptype.__class__.__name__,ptype,bm.template_ext))
 
 
-Ok, jetzt wo das klar ist, habe ich noch 
+Nach mir das klargeworden ist, habe ich noch ein Problemchen
 
 
   Traceback (most recent call last):
