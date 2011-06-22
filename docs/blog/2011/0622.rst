@@ -59,3 +59,7 @@ This creates the following log entry in the above case::
   \n<p>\xa0</p></p>'
   -----
 
+As 
+
+http://stackoverflow.com/questions/2632111/parsing-unicode-xml-with-python-sax-on-app-engine
+

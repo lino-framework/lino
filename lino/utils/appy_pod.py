@@ -57,10 +57,9 @@ def setup_renderer(renderer):
         #~ print repr(html)
         if not html:
             return ''
+        html = html2xhtml(html)
         if isinstance(html,unicode):
             html = html.encode('utf-8')
-            #~ html = html.encode('ascii','xmlcharrefreplace')
-        html = html2xhtml(html)
         #~ html = html.replace('<br>','<br/>')
         #~ html = html.replace('%nbsp;','<br/>')
         return renderer.renderXhtml(html,**kw)
