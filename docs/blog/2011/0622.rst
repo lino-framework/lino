@@ -50,3 +50,12 @@ then re-raises::
       dblogger.info("Exception while parsing:-----\n%r\n-----",xml)
       raise
       
+This creates the following log entry in the above case::
+
+  201106-22 10:22:44 INFO xml_parser : Exception while parsing:-----
+  u'<p><p>In Notizen haben wir jetzt den <strong>WYSIWYG-Editor</strong>.</p>\n<p>Aufz\xe4hlungen sind m\xf6glich:</p>\n<u
+  l>\n<li>erstens</li>\n<li>zweitens</li>\n<li>und drittens.\xa0</li>\n</ul>\n<p>Man kann nicht nur <strong>fett</strong>,
+   sondern auch <em>kursiv </em>(italic) und <span style="text-decoration: underline;">unterstrichen</span> schreiben.</p>
+  \n<p>\xa0</p></p>'
+  -----
+
