@@ -18,15 +18,28 @@ New features
   Rückfragen: Was tun mit Leuten die zwei Muttersprachen haben? Was mit
   Leuten, die Muttersprache Finnisch haben, diese aber kaum schreiben
   können?). Bestehende Daten wurden automatisch übernommen.
+  
+.. currentmodule:: lino.modlib.contacts.models  
 
 - In Verträgen : "Herr(n)" bzw. "Frau" vor Personennamen; 
   Nachnamen immer in Großbuchstaben.
+  Es gibt auch eine Option `nominative=True` um "Herr" statt "Herrn" zu kriegen.
+  Siehe Doku zu :meth:`Person.get_full_name`.
+  N.B.: `self.person.full_name` (ohne Klammern) ist das Gleiche wie `self.person.get_full_name()`.
   
-- Vertragsarten haben jetzt ein Detail-Fenster. 
+- :meth:`Person.address_person_lines` now uses :meth:`Person.get_full_name`.
+
+- :meth:`Person.get_full_name` now includes a :func:`salutation <get_salutation>`.
+  
+  
+- `Vertragsarten` haben jetzt ein Detail-Fenster. 
   Dort kann man alle Verträge pro Vertragsart sehen.
-  Außerdem kann man deshalb jetzt auf einem Vertrag im Feld Vertragsart 
+  Außerdem kann man deshalb jetzt auf einem Vertrag im Feld `Vertragsart` 
   auf die Lupe klicken, um mit einem Klick die Vertragsart zu konfigurieren.
   
+- New function :func:`lino.utils.babel.dtomy` available in 
+  :class:`lino.mixins.printable.AppyBuildMethod`.
+
   
   
 

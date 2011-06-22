@@ -94,6 +94,10 @@ def dsbe_courseprovider_objects():
 
 def objects():
     for o in dsbe_courseprovider_objects(): yield o
+
+# uncomment for automagic migration:
+# from lino.apps.dsbe.migrate import install
+# install(globals())
 """)
     
     

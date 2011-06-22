@@ -62,6 +62,12 @@ def setup_renderer(renderer):
         #~ html = html.replace('%nbsp;','<br/>')
         return renderer.renderXhtml(html,**kw)
     renderer.contentParser.env.context.update(html=html_func)
+    
+    def xhtml_func(xhtml,**kw):
+        if isinstance(xhtml,unicode):
+            xhtml = xhtml.encode('ascii',errors='xmlcharrefreplace')
+        return renderer.renderXhtml(xhtml,**kw)
+    renderer.contentParser.env.context.update(xhtml=xhtml_func)
 
 
 

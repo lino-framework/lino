@@ -626,3 +626,52 @@ class TypedPrintable(Printable):
 
 #~ class PrintableTypes(reports.Report):
     #~ column_names = 'name build_method template *'
+
+
+#~ class VolatileModel(models.Model):
+  
+    #~ class Meta:
+        #~ abstract = True
+    
+    #~ def save(self,*args,**kw):
+        #~ raise Exception("This is a VolatileModel!")
+
+if False:
+  
+  import cgi
+
+  class Listing(Printable):
+    
+      class Meta:
+          abstract = True
+      
+      title = models.CharField(max_length=200,
+        verbose_name=_("Title"),
+        blank=True)
+      """
+      The title of the listing.
+      """
+      
+      @classmethod
+      def setup_report(model,rpt):
+          u"""
+          """
+          rpt.add_action(DirectPrintAction('listing',_("Print"),'listing.odt'))
+          
+      def __unicode__(self):
+          return self.title
+          
+      def header(self):
+          return cgi.escape(self.title())
+          
+      def footer(self):
+          html = '<td align="left">%s</td>' % 'left footer'
+          html += '<td align="right">Page X of Y</td>'
+          html = '<table><tr>%s</tr></table>' % html
+          return html
+          
+      def body(self):
+          raise NotImplementedError
+        
+#~ class Listings(reports.Report):
+    #~ model = Listing

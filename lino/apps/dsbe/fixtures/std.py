@@ -269,3 +269,7 @@ def objects():
       de=u'Sonstige Sozialhilfe',
       fr=u"Autre aide sociale",
       ))
+    
+    if False:
+        M = resolve_model('dsbe.FooListing')
+        yield M(title='FooListing')

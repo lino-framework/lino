@@ -127,12 +127,12 @@ class Lino(Lino):
 
         system.add_site_menu(self)
 
-LINO = Lino(__file__)
+LINO = Lino(__file__,globals())
 
 #~ PROJECT_DIR = abspath(dirname(__file__))
 #~ DATA_DIR = join(PROJECT_DIR,"data")
 #~ LINO_SETTINGS = join(PROJECT_DIR,"lino_settings.py")
-MEDIA_ROOT = join(LINO.project_dir,'media')
+#~ MEDIA_ROOT = join(LINO.project_dir,'media')
 TIME_ZONE = 'Europe/Tallinn'
 
 # Language code for this installation. All choices can be found here:
@@ -173,11 +173,11 @@ INSTALLED_APPS = (
 # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
 # Always use forward slashes, even on Windows.
 # Don't forget to use absolute paths, not relative paths.
-TEMPLATE_DIRS = (
-      #~ join(abspath(DATA_DIR),'templates'),
-      join(abspath(LINO.project_dir),'templates'),
-      join(abspath(dirname(lino.__file__)),'templates'),
-)
+#~ TEMPLATE_DIRS = (
+      #~ # join(abspath(DATA_DIR),'templates'),
+      #~ join(abspath(LINO.project_dir),'templates'),
+      #~ join(abspath(dirname(lino.__file__)),'templates'),
+#~ )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = 'cqt^18t(Fb#14a@s%mbtdif+ih8fscpf8l9aw+0ivo2!3c(c%&'
+#~ SECRET_KEY = 'cqt^18t(Fb#14a@s%mbtdif+ih8fscpf8l9aw+0ivo2!3c(c%&'

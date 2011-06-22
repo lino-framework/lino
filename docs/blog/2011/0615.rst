@@ -125,13 +125,19 @@ Viele kleine Benutzerwünsche
 
 - :meth:`Person.get_full_name` now includes a :func:`salutation <get_salutation>`.
   
+
 .. currentmodule:: lino.apps.dsbe.models
 
 - New field :attr:`PersonGroup.ref_name` used for ordering.
 
 - New field :attr:`Person.duties_person`
 
-Check-in 20110615b um 19.35 wegen Feierabend.
+- Field :attr:`Person.native_language` replaced by :attr:`LanguageKnowledge.native`
+
+- New function :func:`lino.utils.babel.dtomy` available in 
+  :class:`lino.mixins.printable.AppyBuildMethod`.
+
+Erstes Check-in der Serie 20110615b um 19.35 wegen Feierabend.
 
 Release 1.1.17
 --------------
@@ -146,13 +152,27 @@ Erstens eine kleine Liste der bestehenden Fälle:
 >>> f.write('\n'.join(["%s : %s + %s" % (unicode(p),p.native_language,', '.join([unicode(x) for x in p.languageknowledge_set.all()])) for p in qs]))
 >>> f.close()
 
-Und das Schwierigere: weil die evtl. bestehenden LanguageKnowledge-Records 
-ja noch gar nicht gespeichert worden sind während der `objects()`, kann ich nicht schauen, 
-ob schon ein Eintrag für die Muttersprache existerte oder nicht. 
-Dazu brauche ich die neue Funktion `after_load`, die vom :class:`lino.utils.dpy.Deserializer` 
+Aber vor allem: Personen, die bisher in native_language etwas stehen haben, 
+sollen stattdessen jetzt einen Eintrag in :class:`LanguageKnowledge` haben. 
+Manchmal existiert der schon (und muss dann nur ``native=True`` gesetzt kriegen 
+und manchmal nicht (und muss dann erstellt werden ohne Angaben für spoken und written)
+Und weil die evtl. bestehenden LanguageKnowledge-Records 
+ja noch gar nicht gespeichert worden sind während der `objects()`, kann ich in 
+der `create_contacts_person()` nicht schauen, 
+ob schon ein Eintrag für die Muttersprache existerte oder nicht.
+Also muss ich den Kram in eine Liste `NATIVES` einsammeln und erst 
+später speichern, wenn alles andere eingelesen ist.
+Deshalb die neue Funktion `after_load`, die vom :class:`lino.utils.dpy.Deserializer` 
 nach dem Speichern der objects ausgeführt wird (wenn sie existiert). 
+
+Und dann noch was cooles Neues:
+Modul :mod: `lino.apps.dsbe.migrations`.
 Um die Konvertierung nicht manuell in die Dump-Datei beim Kunden reinkopieren zu müssen, 
 habe ich ein neues System ausgedacht, damit ich die Migration einmal schreiben kann 
 und die Dump-Datei sie sich automagisch installiert.
-Siehe neues Modul :mod: `lino.apps.dsbe.migrations`.
+Ganz automagisch geht das allerdings noch nicht: die entsprechenden Zeilen 
+müssen manuell rauskommentiert werden. 
 
+Weiteres Check-in der Serie 20110615b zwecks Installation beim Kunden.
+
+Released :doc:`/releases/20110615`.

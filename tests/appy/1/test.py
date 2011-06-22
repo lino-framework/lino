@@ -13,7 +13,7 @@ from appy import version
 APPY_PARAMS = dict()
 
 #~ ACTIVE_TESTS = None # run all tests
-ACTIVE_TESTS = (9,) # run only specified tests
+ACTIVE_TESTS = (9,10,11) # run only specified tests
 
 #~ APPY_PARAMS.update(ooPort=8100)
 #~ APPY_PARAMS.update(pythonWithUnoPath=r'C:\PROGRA~1\LIBREO~1\program\python.exe')
@@ -143,3 +143,66 @@ run_test(9,"Same as 2, but without wrapping <DIV>",HTML='''
 <p>A last paragraph.</p>
 ''')
     
+#~ # 10 : 
+
+run_test(10,"TABLE",HTML='''
+<table border="1">
+  <colgroup>
+    <col width="20" />
+    <col width="100" />
+    <col width="320" />
+  </colgroup>
+  <tr>
+    <td>1. Zeile, 1. Spalte</td>
+    <td>1. Zeile, 2. Spalte</td>
+    <td>1. Zeile, 3. Spalte</td>
+  </tr>
+  <tr>
+    <td>2. Zeile, 1. Spalte</td>
+    <td>2. Zeile, 2. Spalte</td>
+    <td>2. Zeile, 3. Spalte</td>
+  </tr>
+</table>
+''')
+    
+
+html = '''
+<table border="1" rules="groups">
+  <thead>
+    <tr>
+      <th>Assoziation 1</th>
+      <th>Assoziation 2</th>
+      <th>Assoziation 3</th>
+    </tr>
+  </thead>
+  <tfoot>
+    <tr>
+      <td><i>betroffen:<br>4 Mio. Menschen</i></td>
+      <td><i>betroffen:<br>2 Mio. Menschen</i></td>
+      <td><i>betroffen:<br>1 Mio. Menschen</i></td>
+    </tr>
+  </tfoot>
+  <tbody>
+  %s
+  </tbody>
+</table>
+'''
+rows = '''
+<tr>
+  <td>Berlin</td>
+  <td>Hamburg</td>
+  <td>M&uuml;nchen</td>
+</tr><tr>
+  <td>Milj&ouml;h</td>
+  <td>Kiez</td>
+  <td>Bierdampf</td>
+</tr><tr>
+  <td>Buletten</td>
+  <td>Frikadellen</td>
+  <td>Fleischpflanzerl</td>
+</tr>
+'''
+
+html = html % (rows *20)
+
+run_test(11,"TABLE",HTML=html)

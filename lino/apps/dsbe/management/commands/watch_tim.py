@@ -107,6 +107,7 @@ class Controller:
         "Deserves more documentation."
         try:
             obj.full_clean()
+            dblogger.log_changes(obj)
             obj.save()
         except ValidationError,e:
             # here we only log an obj2str() of the object 
@@ -121,8 +122,10 @@ class Controller:
     def DELETE(self,**kw):
         obj = self.get_object(kw)
         if obj is None:
-            dblogger.debug("%s:%s : DELETE failed (does not exist)",kw['alias'],kw['id'])
+            dblogger.warning("%s:%s : DELETE failed (does not exist)",
+                kw['alias'],kw['id'])
             return
+        dblogger.log_delete(obj)
         obj.delete()
         dblogger.debug("%s:%s (%s) : DELETE ok",kw['alias'],kw['id'],obj)
         
@@ -134,7 +137,7 @@ class Controller:
         if obj is None:
             obj = self.create_object(kw)
             if obj is None:
-                dblogger.debug("%s:%s (%s) : ignored POST %s",
+                dblogger.warning("%s:%s (%s) : ignored POST %s",
                     kw['alias'],kw['id'],obj,kw['data'])
                 return
         else:

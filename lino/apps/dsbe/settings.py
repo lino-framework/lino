@@ -76,6 +76,10 @@ class Lino(Lino):
         m.add_action('dsbe.CourseEndings')
         
         #~ sitemenu = system.add_site_menu(self)
+        if False:
+          listings = self.add_menu("lst",_("~Listings"),can_view=perms.is_authenticated)
+          for lst in dsbe.FooListing.objects.all():
+              listings.add_instance_action(lst,can_view=perms.is_authenticated)
         
         cfg = self.add_menu("config",_("~Configure"),can_view=perms.is_authenticated)
         

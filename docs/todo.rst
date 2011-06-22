@@ -10,7 +10,9 @@ Short-term
 ----------
 
 #.  Slave-Grids im Insert-Fenster sind jetzt zwar disabled, aber sie 
-    machen scheinbar trotzdem noch ein load "ihrer" Daten. 
+    machen trotzdem noch ein load "ihrer" Daten. 
+    
+#.  VolatileModel    
 
 
 #.  Ausdruck Verträge: jetzt wo die mehrzeiligen Textfelder formatierbar 

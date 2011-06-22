@@ -1979,7 +1979,45 @@ class PersonsBySearch(reports.Report):
               
         return qs
     
-    
+
+
+
+if False:
+  
+  class FooListing(mixins.Listing):        
+        
+    def body(self):
+        html = '<table><tr>%s</tr></table>' % html
+        html = '''\
+<table border="1" width="100%">
+  <colgroup>
+    <col width="4*">
+    <col width="2*">
+    <col width="1*">
+  </colgroup>
+  <tr>
+    <td>1. Zeile, 1. Spalte</td>
+    <td>1. Zeile, 2. Spalte</td>
+    <td>1. Zeile, 3. Spalte</td>
+  </tr>
+  <tr>
+    <td>2. Zeile, 1. Spalte</td>
+    <td>2. Zeile, 2. Spalte</td>
+    <td>2. Zeile, 3. Spalte</td>
+  </tr>
+</table>'''
+        
+        
+
+
+
+
+
+
+
+
+
+
 
 """
 Here we add a new field `contract_type` to the 
@@ -1987,11 +2025,19 @@ standard model CompanyType.
 http://osdir.com/ml/django-users/2009-11/msg00696.html
 """
 from lino.modlib.contacts.models import CompanyType
-CompanyType.add_to_class('contract_type',
+#~ CompanyType.add_to_class('contract_type',
+    #~ models.ForeignKey("dsbe.ContractType",
+        #~ blank=True,null=True,
+        #~ verbose_name=_("contract type")))
+
+reports.inject_field(CompanyType,
+    'contract_type',
     models.ForeignKey("dsbe.ContractType",
         blank=True,null=True,
-        verbose_name=_("contract type")))
-
+        verbose_name=_("contract type")),
+    """The default Contract Type for Contracts with a 
+    Company of this type."""
+    )
 
 from lino.models import SiteConfig
 reports.inject_field(SiteConfig,

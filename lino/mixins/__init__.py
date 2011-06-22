@@ -119,7 +119,9 @@ class Owned(models.Model):
     #~ owner_id_choices = classmethod(owner_id_choices)
         
     def get_owner_id_display(self,value):
-        return unicode(self.owner_type.get_object_for_this_type(pk=value))
+        #~ try:
+            return unicode(self.owner_type.get_object_for_this_type(pk=value))
+        #~ except self.owner_type.DoesNotExist
             
 
 
@@ -159,6 +161,7 @@ class DiffingMixin(object):
 
 from lino.mixins.reminder import Reminder
 from lino.mixins.printable import Printable, PrintableType, TypedPrintable
+#~ from lino.mixins.printable import Listing
 from lino.mixins.uploadable import Uploadable
 #~ from lino.mixins.addressable import ContactDocument, PartnerDocument
 
