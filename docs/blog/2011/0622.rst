@@ -1,0 +1,52 @@
+20110622
+========
+
+watch_tim now logs changes
+--------------------------
+
+:term:`watch_tim` ruft jetzt :func:`lino.utils.dblogger.log_changes`. 
+Dadurch kann man in den log-Dateien nun sehen, was er verändert hat. 
+Statt bisher nur der Zusammenfassung "5 changes have been processed."
+Checkin-Serie 20110622.
+
+
+appy.pod and enumerations
+-------------------------
+
+Gaëtan has solved the `lists in "do text from xhtml()" <https://bugs.launchpad.net/appy/+bug/777890>`_ problem.
+In works on my computer, but when trying it at the customer's 
+site I saw another problem::
+
+  Error while evaluating the expression "html(self.body)" defined in the "from" part of a statement.
+  File "<string>", line 1, in <module>
+  File "/var/snapshots/lino/lino/utils/appy_pod.py", line 63, in html_func
+  return renderer.renderXhtml(html,**kw)
+  File "/var/snapshots/appy-current/appy/pod/renderer.py", line 238, in renderXhtml
+  stylesMapping, ns).run()
+  File "/var/snapshots/appy-current/appy/pod/xhtml2odt.py", line 493, in run
+  self.xhtmlParser.parse(self.xhtmlString)
+  File "/var/snapshots/appy-current/appy/shared/xml_parser.py", line 195, in parse
+  self.parser.parse(inputSource)
+  File "/usr/lib/python2.6/xml/sax/expatreader.py", line 107, in parse
+  xmlreader.IncrementalParser.parse(self, source)
+  File "/usr/lib/python2.6/xml/sax/xmlreader.py", line 123, in parse
+  self.feed(buffer)
+  File "/usr/lib/python2.6/xml/sax/expatreader.py", line 211, in feed
+  self._err_handler.fatalError(exc)
+  File "/usr/lib/python2.6/xml/sax/handler.py", line 38, in fatalError
+  raise exception
+  <class 'xml.sax._exceptions.SAXParseException'>: <unknown>:1:1: not well-formed (invalid token)
+
+Here now also a more elegant trick to see the xml fragment 
+that causes the problem. In :file:`appy/shared/xml_parser.py` 
+I wrapped the `self.parser.parse(inputSource)` call into an 
+Exception handler that logs the fragment to the dblogger and 
+then re-raises::
+
+  try:
+      self.parser.parse(inputSource)
+  except Exception,e:
+      from lino.utils import dblogger
+      dblogger.info("Exception while parsing:-----\n%r\n-----",xml)
+      raise
+      
