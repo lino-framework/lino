@@ -42,6 +42,9 @@ def log_deleted(request,elem):
     logger.info("%s deleted by %s.",obj2str(elem),request.user)
     
 def log_changes(request,elem):
+    """logs which changes have been made to every field of `elem` 
+    if `elem` is an instance of `DiffingMixin`, otherwise does nothing.
+    """
     if isinstance(elem,mixins.DiffingMixin):
         changes = []
         for k,v in elem.changed_columns().items():

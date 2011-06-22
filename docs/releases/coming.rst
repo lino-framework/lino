@@ -4,6 +4,9 @@ Coming
 New features
 ------------
 
+- :term:`watch_tim` now logs changes of `lino.utis.DiffingMixin` 
+  instances (e.g. :class:`lino.apps.dsbe.models.Person`, :class:`lino.apps.dsbe.models.Contract`)
+
 
 Bugs fixed
 ----------
