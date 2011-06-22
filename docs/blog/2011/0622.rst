@@ -69,10 +69,10 @@ in :mod:`lino.utils.appy_pod` do this::
             
 We simply hardcode UTF-8 because appy.pod currently doesn't support anything else.
 
-
-
-it was the same problem as the one posted by Derek Dahmer on 
+Derek Dahmer posted a similar problem on 
 `stackoverflow <http://stackoverflow.com/questions/2632111/parsing-unicode-xml-with-python-sax-on-app-engine>`_
+
+Checkin 20110622b.
 
 
 DoesNotExist at /api/uploads/Uploads
@@ -87,3 +87,12 @@ when we wanted to display a list of all uploads.
 This is fixed. And the fields Upload.owner_type and Upload.owner_id are 
 now editable again so that users can manually repair such cases.
 
+
+Kleinkram
+---------
+
+- persons_by_user kleine Optimierungen
+- Person.get_property
+- Funktion `iif` in AppyBuildMethod
+
+Checkin 20110622d.

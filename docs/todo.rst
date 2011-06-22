@@ -9,14 +9,16 @@ for which I hope for help from other people.
 Short-term
 ----------
 
+
+#.  Textbausteine (im Text-Editor F1 drücken können).
+    
 #.  Slave-Grids im Insert-Fenster sind jetzt zwar disabled, aber sie 
     machen trotzdem noch ein load "ihrer" Daten. 
     
-#.  VolatileModel    
-
+#.  Listings.
 
 #.  Ausdruck Verträge: jetzt wo die mehrzeiligen Textfelder formatierbar 
-    sind, haben wir ein kleines Problem: Bisher wurde z.B. in der 
+    sind, kommt vielleicht ein kleines Problem: Bisher wurde z.B. in der 
     Dokumentvorlage ein Wort vor dem eigentlichen Text eingefügt, 
     wenn dieser nicht leer war. Z.B. Wenn man im Feld "Zielsetzungen" 
     den Text "Blablabla..." eintrug, dann wurde "Zielsetzungen: Blablabla..." 
@@ -26,11 +28,6 @@ Short-term
       do text
       from html(self.goals,wrapper="<p><b>Zielsetzungen</b>: %s </p>")
 
-#.  :doc:`Wysiwyg-Editor </tickets/42>` weiter testen, 
-    was noch nicht gedruckt wird.
-    Zum Beispiel Aufzählungen werden beim Ausdruck einfach übergangen.
-    Enumerations are currently not being rendered in printable documents.
-    
 #.  Button "Cache löschen" deaktivieren, wenn
     :attr:`lino.mixins.printable.Printable.must_build` `True` ist.
     Dazu muss `disabled_fields` in der :xfile:`linolib.js` auch 
@@ -103,8 +100,6 @@ Medium-term
     Und bei Personen dauert das mehrere Sekunden.
     :doc:`/tickets/21`.
 
-#.  Textbausteine (im Text-Editor F1 drücken können)
-    
 
 Later
 -----

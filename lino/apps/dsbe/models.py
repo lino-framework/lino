@@ -536,6 +536,11 @@ class Person(Partner,contacts.Person):
     def get_image_path(self):
         return os.path.join(settings.MEDIA_ROOT,*self.get_image_parts())
         
+    def get_property(self,prop_id):
+        """used in notes/cv.odt"""
+        return PersonProperty.objects.get(prop_id=prop_id,person=self)
+        
+        
             
     def age(self,request):
         if self.birth_date:
@@ -695,9 +700,9 @@ def persons_by_user():
     s = ''
     for row in rows:
         s += '<tr>'
-        s += ''.join(['<td align="center" valign="middle" bgcolor="#eeeeee" width="30%%">%s</td>' % cell for cell in row])
+        s += ''.join(['<td align="center" valign="middle" bgcolor="#eeeeee">%s</td>' % cell for cell in row])
         s += '</tr>'
-    s = '<table cellspacing="3px" bgcolor="#ffffff"><tr>%s</tr></table>' % s
+    s = '<table cellspacing="3px" bgcolor="#ffffff" width="100%%"><tr>%s</tr></table>' % s
     s = '<div class="htmlText">%s</div>' % s
     return s
     

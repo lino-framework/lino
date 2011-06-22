@@ -54,6 +54,7 @@ from lino import reports
 from lino import fields
 #~ from lino import actions
 
+from lino.utils import iif
 from lino.utils import babel 
 from lino.utils.choosers import chooser
 from lino.utils.appy_pod import setup_renderer
@@ -212,6 +213,7 @@ class AppyBuildMethod(SimpleBuildMethod):
             babelattr=babel.babelattr,
             babelitem=babel.babelitem,
             tr=babel.babelitem,
+            iif=iif,
             #~ restify=restify,
             site_config = get_site_config(),
             _ = _,
