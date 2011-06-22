@@ -88,6 +88,10 @@ def json2py(dct):
 CONTACT_FIELDS = '''id name street street_no street_box addr2 
 country city zip_code region language email url phone gsm remarks'''.split()
 
+class PseudoRequest:
+    user = "watch_tim"
+
+REQUEST = PseudoRequest()
 
 class Controller:
     "Deserves more documentation."
@@ -107,7 +111,7 @@ class Controller:
         "Deserves more documentation."
         try:
             obj.full_clean()
-            dblogger.log_changes(obj)
+            dblogger.log_changes(REQUEST,obj)
             obj.save()
         except ValidationError,e:
             # here we only log an obj2str() of the object 
@@ -125,7 +129,7 @@ class Controller:
             dblogger.warning("%s:%s : DELETE failed (does not exist)",
                 kw['alias'],kw['id'])
             return
-        dblogger.log_delete(obj)
+        dblogger.log_delete(REQUEST,obj)
         obj.delete()
         dblogger.debug("%s:%s (%s) : DELETE ok",kw['alias'],kw['id'],obj)
         
