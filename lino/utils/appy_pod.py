@@ -59,17 +59,18 @@ def setup_renderer(renderer):
             return ''
         html = html2xhtml(html)
         if isinstance(html,unicode):
+            # some sax parsers refuse unicode strings. 
+            # appy.pod always expects utf-8 encoding.
+            # See /blog/2011/0622.
             html = html.encode('utf-8')
-        #~ html = html.replace('<br>','<br/>')
-        #~ html = html.replace('%nbsp;','<br/>')
         return renderer.renderXhtml(html,**kw)
     renderer.contentParser.env.context.update(html=html_func)
     
-    def xhtml_func(xhtml,**kw):
-        if isinstance(xhtml,unicode):
-            xhtml = xhtml.encode('ascii',errors='xmlcharrefreplace')
-        return renderer.renderXhtml(xhtml,**kw)
-    renderer.contentParser.env.context.update(xhtml=xhtml_func)
+    #~ def xhtml_func(xhtml,**kw):
+        #~ if isinstance(xhtml,unicode):
+            #~ html = html.encode('utf-8')
+        #~ return renderer.renderXhtml(xhtml,**kw)
+    #~ renderer.contentParser.env.context.update(xhtml=xhtml_func)
 
 
 

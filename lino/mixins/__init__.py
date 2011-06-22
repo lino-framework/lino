@@ -22,6 +22,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from lino import reports
 from lino.utils import perms
+from lino.tools import full_model_name
 from lino.utils.choosers import chooser
     
 class MultiTableBase(models.Model):
@@ -104,9 +105,9 @@ class Owned(models.Model):
     class Meta:
         abstract = True
         
-    owner_type = models.ForeignKey(ContentType,editable=False,
+    owner_type = models.ForeignKey(ContentType,editable=True,
         verbose_name=_('Owner type'))
-    owner_id = models.PositiveIntegerField(editable=False,
+    owner_id = models.PositiveIntegerField(editable=True,
         verbose_name=_('Owner'))
     owner = generic.GenericForeignKey('owner_type', 'owner_id')
     
@@ -119,9 +120,10 @@ class Owned(models.Model):
     #~ owner_id_choices = classmethod(owner_id_choices)
         
     def get_owner_id_display(self,value):
-        #~ try:
+        try:
             return unicode(self.owner_type.get_object_for_this_type(pk=value))
-        #~ except self.owner_type.DoesNotExist
+        except self.owner_type.model_class().DoesNotExist,e:
+            return "%s with pk %r does not exist" % (full_model_name(self.owner_type.model_class()),value)
             
 
 

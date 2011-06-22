@@ -59,7 +59,31 @@ This creates the following log entry in the above case::
   \n<p>\xa0</p></p>'
   -----
 
-As 
+Explanation: some versions of expat parsers don't like unicode strings.
+Always encode them. 
+Solution is to have Lino's `html()` template function 
+in :mod:`lino.utils.appy_pod` do this::
 
-http://stackoverflow.com/questions/2632111/parsing-unicode-xml-with-python-sax-on-app-engine
+        if isinstance(html,unicode):
+            html = html.encode('utf-8')
+            
+We simply hardcode UTF-8 because appy.pod currently doesn't support anything else.
+
+
+
+it was the same problem as the one posted by Derek Dahmer on 
+`stackoverflow <http://stackoverflow.com/questions/2632111/parsing-unicode-xml-with-python-sax-on-app-engine>`_
+
+
+DoesNotExist at /api/uploads/Uploads
+------------------------------------
+
+There was a problem when the owner of an upload no longer exists. 
+Deleting a Person obviously does not also delete her uploads, 
+and neither does Lino refuse to delete the Person. 
+Probably because it is a `GenericForeignKey`. 
+But worse: the server afterwards caused an exception 
+when we wanted to display a list of all uploads.
+This is fixed. And the fields Upload.owner_type and Upload.owner_id are 
+now editable again so that users can manually repair such cases.
 
