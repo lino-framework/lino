@@ -480,11 +480,6 @@ class Person(Partner,contacts.Person):
     #~ full_name = property(contacts.Person.get_full_name)
 
 
-    def get_skills_set(self):
-        return self.personproperty_set.filter(
-          group=settings.LINO.config.propgroup_skills)
-    skills_set = property(get_skills_set)
-    
     def card_type_text(self,request):
         if self.card_type:
             s = babeldict_getitem(BEID_CARD_TYPES,self.card_type)
@@ -541,9 +536,14 @@ class Person(Partner,contacts.Person):
     def get_image_path(self):
         return os.path.join(settings.MEDIA_ROOT,*self.get_image_parts())
         
+    def get_skills_set(self):
+        return self.personproperty_set.filter(
+          group=settings.LINO.config.propgroup_skills)
+    skills_set = property(get_skills_set)
+    
     def get_property(self,prop_id):
         """used in notes/cv.odt"""
-        return self.personproperty_set.get(property_id=prop_id)
+        return self.personproperty_set.get(property__id=prop_id)
         #~ return PersonProperty.objects.get(property_id=prop_id,person=self)
         
         
