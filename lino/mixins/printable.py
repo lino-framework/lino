@@ -214,6 +214,7 @@ class AppyBuildMethod(SimpleBuildMethod):
             babelitem=babel.babelitem,
             tr=babel.babelitem,
             iif=iif,
+            settings=settings,
             #~ restify=restify,
             site_config = get_site_config(),
             _ = _,

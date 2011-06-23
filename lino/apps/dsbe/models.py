@@ -480,6 +480,11 @@ class Person(Partner,contacts.Person):
     #~ full_name = property(contacts.Person.get_full_name)
 
 
+    def get_skills_set(self):
+        return self.personproperty_set.filter(
+          group=settings.LINO.config.propgroup_skills)
+    skills_set = property(get_skills_set)
+    
     def card_type_text(self,request):
         if self.card_type:
             s = babeldict_getitem(BEID_CARD_TYPES,self.card_type)
@@ -538,7 +543,8 @@ class Person(Partner,contacts.Person):
         
     def get_property(self,prop_id):
         """used in notes/cv.odt"""
-        return PersonProperty.objects.get(prop_id=prop_id,person=self)
+        return self.personproperty_set.get(property_id=prop_id)
+        #~ return PersonProperty.objects.get(property_id=prop_id,person=self)
         
         
             
@@ -960,40 +966,13 @@ class ConfiguredPropsByPerson(PropsByPerson):
         
 class SkillsByPerson(ConfiguredPropsByPerson):
     propgroup_config_name = 'propgroup_skills'
-  
-    #~ def get_configured_action(self):
-        #~ return settings.LINO.config.propgroup_skills
-        
-    #~ def setup_actions(self):
-        #~ pg = settings.LINO.config.propgroup_skills
-        #~ self.known_values = dict(group=pg)
-        #~ if pg is None:
-            #~ self.label = babelattr(pg,'name')
-        #~ else:
-            #~ self.label = babelattr(pg,'name')
-        #~ PropsByPerson.setup_actions(self)
         
 class SoftSkillsByPerson(ConfiguredPropsByPerson):
     propgroup_config_name = 'propgroup_softskills'
-    #~ def get_configured_action(self):
-        #~ return settings.LINO.config.propgroup_softskills
-        
-    #~ def setup_actions(self):
-        #~ pg = get_site_config().propgroup_softskills
-        #~ self.known_values = dict(group=pg)
-        #~ self.label = babelattr(pg,'name')
-        #~ PropsByPerson.setup_actions(self)
         
 class ObstaclesByPerson(ConfiguredPropsByPerson):
     propgroup_config_name = 'propgroup_obstacles'
-    #~ def get_configured_action(self):
-        #~ return settings.LINO.config.propgroup_obstacles
-        
-    #~ def setup_actions(self):
-        #~ pg = get_site_config().propgroup_obstacles
-        #~ self.known_values = dict(group=pg)
-        #~ self.label = babelattr(pg,'name')
-        #~ PropsByPerson.setup_actions(self)
+    
     
 #
 # JOBS
