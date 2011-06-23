@@ -239,9 +239,14 @@ class PropertyOccurence(models.Model):
     def __unicode__(self):
         if self.property_id is None:
             return u"Undefined %s" % self.group
-        return u'%s.%s=%s' % (
-            self.group,self.property,
-            self.property.type.get_text_for_value(self.value))
+        return self.property.type.get_text_for_value(self.value)
+        
+    #~ def __unicode__(self):
+        #~ if self.property_id is None:
+            #~ return u"Undefined %s" % self.group
+        #~ return u'%s.%s=%s' % (
+            #~ self.group,self.property,
+            #~ self.property.type.get_text_for_value(self.value))
     
 
 
