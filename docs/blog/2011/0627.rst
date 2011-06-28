@@ -70,5 +70,24 @@ Kleine Änderung in :class:`lino.utils.instantiator.Instantiator`: wenn man beim
 mit ``**kw`` schon Standardwerte eingegeben hatte und dann bei build diese überschreiben 
 wollte, dann funktionierte das nicht. Jetzt wohl.
 
+Calendar
+--------
 
+Nach der (gar nicht so einfachen) Lektüre von `RFC 5545 (Internet Calendaring and Scheduling Core Object Specification (iCalendar)) <ftp://ftp.rfc-editor.org/in-notes/rfc5545.txt>`_ habe ich das Modul :mod:`lino.modlib.cal` begonnen. 
+Zunächst mal nur Events und Tasks, also noch ohne 
+recursion rules, alarms und journal entries.
+
+Das alles hat momentan noch nichts mit Datenaustausch zu tun 
+(außer dass es eben die im RFC 5545 
+beschriebene und weithin bekannte Datenstruktur eines Kalenders ist).
+Ja, Lino wird dadurch ein (sehr einfacher) calendar client, 
+aber unabhängig davon, ob die Benutzer die Eingabe und Pflege 
+ihrer Termine von Lino aus machen oder nicht, muss ich in Lino 
+doch alle Termine in der Datenbank haben, wenn Lino z.B. sinnvolle 
+Vorschläge machen soll, welche Kunden eine convocation erhalten sollen.
+Der Datenaustausch mit anderen iCalendar-Anwendungen ist am einfachsten 
+zu implementieren, wenn ich in meiner Django-Datenbank die im RFC 5545 
+beschriebenen Modelle habe.
+
+Erster Erfolg. Checkin 20110628.
 
