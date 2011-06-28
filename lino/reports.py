@@ -206,6 +206,7 @@ rptname_choices = []
 config_dirs = []
 
 def register_report(rpt):
+    logger.debug("register_report %s", rpt.actor_id)
     #rptclass.app_label = rptclass.__module__.split('.')[-2]
     if rpt.typo_check:
         myattrs = set(rpt.__class__.__dict__.keys())
@@ -213,18 +214,20 @@ def register_report(rpt):
             myattrs.discard(attr)
         if len(myattrs):
             logger.warning("%s defines new attribute(s) %s", rpt.__class__, ",".join(myattrs))
-    
     if rpt.model is None:
         #~ logger.debug("%s is an abstract report", rpt)
         return
+        
+    #~ if rpt.model._meta.abstract:
         
     #~ rptname_choices.append((rpt.actor_id, rpt.get_label()))
     rptname_choices.append(rpt.actor_id)
     
     if rpt.master is None:
-        master_reports.append(rpt)
+        if not rpt.model._meta.abstract:
+            master_reports.append(rpt)
         if rpt.use_as_default_report:
-            #~ logger.debug("register %s : model_report for %s", rpt.actor_id, full_model_name(rpt.model))
+            #~ logger.info("register %s : model_report for %s", rpt.actor_id, full_model_name(rpt.model))
             rpt.model._lino_model_report = rpt
         else:
             #~ logger.debug("register %s: not used as model_report",rpt.actor_id)
@@ -255,9 +258,12 @@ def discover():
         if isinstance(rpt,Report) and rpt.__class__ is not Report:
             register_report(rpt)
             
-    #~ logger.debug("Instantiate model reports...")
+    logger.debug("Instantiate model reports...")
     for model in models.get_models():
-        rpt = getattr(model,'_lino_model_report',None)
+        """Not getattr but __dict__.get because of the mixins.Listings trick."""
+        rpt = model.__dict__.get('_lino_model_report',None)
+        #~ rpt = getattr(model,'_lino_model_report',None)
+        logger.debug('20110628 %s._lino_model_report = %s',model,rpt)
         if rpt is None:
             rpt = report_factory(model)
             register_report(rpt)
@@ -313,8 +319,9 @@ class ReportAction(actions.Action):
       
         #~ return self.actor.request(self,*args,**kw)
         
-    def get_list_title(self,rh):
-        return rh.get_title(None)
+    #~ def get_list_title(self,rh):
+    def get_action_title(self,rr):
+        return rr.get_title()
         
     def __str__(self):
         return str(self.actor)+'.'+self.name
@@ -353,9 +360,9 @@ class InsertRow(ReportAction,actions.OpenWindowAction):
     key = actions.INSERT # (ctrl=True)
     #~ needs_selection = False
     
-    def get_list_title(self,rh):
-        return _("Insert into %s") % force_unicode(rh.get_title(None))
-  
+    def get_action_title(self,rr):
+        return _("Insert into %s") % force_unicode(rr.get_title())
+
 class DuplicateRow(ReportAction,actions.OpenWindowAction):
     callable_from = (GridEdit,ShowDetailAction)
     name = 'duplicate'
@@ -406,13 +413,14 @@ class ReportHandle(base.Handle):
         #~ self.ui = ui
         base.Handle.__init__(self,ui)
         if self.report.model is not None:
-            if ui is not None:
-                self.list_layout = LayoutHandle(self,
-                    ListLayout('main = '+self.report.column_names),
-                    hidden_elements=self.report.hidden_columns)
-            self.content_type = ContentType.objects.get_for_model(self.report.model).pk
-            self.data_elems = report.data_elems
-            self.get_data_elem = report.get_data_elem
+            if not self.report.model._meta.abstract:
+                if ui is not None:
+                    self.list_layout = LayoutHandle(self,
+                        ListLayout('main = '+self.report.column_names),
+                        hidden_elements=self.report.hidden_columns)
+                self.content_type = ContentType.objects.get_for_model(self.report.model).pk
+                self.data_elems = report.data_elems
+                self.get_data_elem = report.get_data_elem
         
   
     def __str__(self):
@@ -653,6 +661,9 @@ class ReportActionRequest:
         
     def get_user(self):
         return self.user
+        
+    def get_action_title(self):
+        return self.action.get_action_title(self)
         
     def get_title(self):
         return self.report.get_title(self)
@@ -995,6 +1006,11 @@ class Report(actors.Actor): #,base.Handled):
         tabs found for Company, then those for CourseProvider.
         """
         self.detail_layouts = []
+        
+        #~ for b in self.__class__.__bases__:
+            #~ for dtl in br.detail_layouts:
+                #~ self.detail_layouts.append(dtl)
+                
         if self.model is None:
             return
         #~ if not self.model._meta.managed:
@@ -1010,6 +1026,8 @@ class Report(actors.Actor): #,base.Handled):
         #~ for dtl in self.model._lino_detail_layouts:
         for dtl in getattr(self.model,'_lino_detail_layouts',[]):
             self.detail_layouts.append(dtl)
+            
+        #~ print 20110627, self, self.detail_layouts
 
         
             
@@ -1222,8 +1240,16 @@ class Report(actors.Actor): #,base.Handled):
         #~ return "Grid Config has been saved to %s" % filename
         
 def report_factory(model):
-    logger.debug('report_factory(%s) -> app_label=%r',model.__name__,model._meta.app_label)
-    cls = type(model.__name__+"Report",(Report,),dict(model=model,app_label=model._meta.app_label))
+    #~ logger.info('report_factory(%s)',model.__name__)
+    bases = (Report,)
+    for b in model.__bases__:
+        rpt = getattr(b,'_lino_model_report',None)
+        if rpt is not None:
+            if issubclass(model,rpt.model):
+            #~ if issubclass(rpt.model,model):
+                bases = (rpt.__class__,)
+    #~ logger.info('report_factory(%s) : bases is %s',model.__name__,bases)
+    cls = type(model.__name__+"Report",bases,dict(model=model,app_label=model._meta.app_label))
     return actors.register_actor(cls())
 
 
@@ -1231,11 +1257,6 @@ def column_choices(rptname):
     rpt = actors.get_actor(rptname)
     return rpt.column_choices()
 
-def unused_rptname_choices():
-    for rpt in actors.actors_list:
-      if isinstance(rpt,Report) and rpt.__class__ is not Report:
-          yield [rpt.actor_id, rpt.get_label]
-          
 
 class LayoutError(RuntimeError):
     pass
@@ -1399,10 +1420,12 @@ class LayoutHandle:
         self.hidden_elements = hidden_elements # layout.get_hidden_elements(self)
         self.main_class = rh.ui.main_panel_class(layout)
         
-        if layout.main is not None:
+        #~ if layout.main is not None:
+        if layout.main:
         #~ if hasattr(layout,"main"):
             self._main = self.create_element(self.main_class,'main')
-            assert self._main is not None
+            if self._main is None:
+                raise Exception("%s.%s could not create main element" % (rh.report,self.layout))
         else:
             raise Exception("%s has no main" % self.layout)
             

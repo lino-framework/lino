@@ -21,8 +21,9 @@ from django.shortcuts import render_to_response
 from django.utils.safestring import mark_safe
 from django import template 
 
-from lino.utils import perms
 from lino.core import actors
+from lino.utils import perms
+from lino.utils.jsgen import js_code
 from lino import actions
 
 class MenuItem:
@@ -168,7 +169,13 @@ class Menu(MenuItem):
         
     def add_menu(self,name,label,**kw):
         return self._add_item(Menu(name,label,self,**kw))
-        
+
+    def add_url_button(self,url,label):
+        #~ return self._add_item(MenuItem(self,None,None,label,**kw))
+        self.items.append(dict(
+          xtype='button',text=label,
+          handler=js_code("function() {window.location='/%s';}" % url)))
+
     def _add_item(self,m):
         assert isinstance(m,MenuItem)
         #~ old = self.items_dict.get(m.name,None)

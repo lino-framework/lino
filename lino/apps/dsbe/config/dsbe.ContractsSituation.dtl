@@ -1,0 +1,5 @@
+:label_align: top
+
+main =
+    id contract_type
+    preview

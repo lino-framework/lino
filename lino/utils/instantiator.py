@@ -162,7 +162,9 @@ class Instantiator:
             else:
                 kw[self.fields[i].name] = v
             i += 1
-        kw.update(self.default_values)
+        #~ kw.update(self.default_values)
+        for k,v in self.default_values.items():
+            kw.setdefault(k,v)
         for c in self.converters:
             kw = c.convert(**kw)
         m2m = kw.pop("_m2m")

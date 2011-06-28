@@ -441,6 +441,9 @@ Lino.on_tab_activate = function(item) {
   if (item.rendered) item.doLayout();
 }
 
+Lino.DateTimeField = Ext.extend(Ext.ux.form.DateTime,{
+  dateFormat: '$settings.LINO.date_format_extjs',
+  });
 Lino.DateField = Ext.extend(Ext.form.DateField,{
   format: '$settings.LINO.date_format_extjs',
   altFormats: '$settings.LINO.alt_date_formats_extjs'
@@ -2875,7 +2878,7 @@ Ext.override(Lino.WindowWrapper,{
     return v;
   },
   get_permalink_url : function() {
-      return API_URL+this.main_item.ls_url;
+      return API_URL + this.main_item.ls_url;
   },
   get_permalink_params : function() {
       return {fmt:'grid'};
@@ -2940,7 +2943,7 @@ Lino.DetailWrapper = Ext.extend(Lino.WindowWrapper, {
     //~ Lino.DetailWrapperBase.prototype.setup.call(this);
   //~ },
   get_permalink_url : function() {
-      return API_URL+this.main_item.ls_url+'/'+this.get_current_record().id;
+      return API_URL + this.main_item.ls_url+'/'+this.get_current_record().id;
   },
   get_permalink_params : function() {
     var p = {fmt:'detail'};
@@ -2993,7 +2996,7 @@ Lino.InsertWrapper = Ext.extend(Lino.WindowWrapper, {
       });
   },
   get_permalink_url : function() {
-      return API_URL+this.main_item.ls_url;
+      return API_URL + this.main_item.ls_url;
   },
   get_permalink_params : function() {
       return {fmt:'insert'};
@@ -3009,8 +3012,8 @@ Lino.InsertWrapper = Ext.extend(Lino.WindowWrapper, {
       scope: panel,
       success: function(form, action) {
         Lino.notify(action.result.message);
-        _this.close();
         if (_this.caller) {
+          _this.close();
           if (_this.caller.ls_detail_handler) {
             //~ console.log(panel.ww.caller);
             _this.caller.ls_detail_handler(_this.caller,{
@@ -3020,7 +3023,13 @@ Lino.InsertWrapper = Ext.extend(Lino.WindowWrapper, {
           //~ } else {
             // htmlbox doesn't have a detailwrapper
             //~ _this.caller.refresh();
-          }
+          } 
+        } else {
+            // if there's no caller, then this was opened from a permalink.
+            var p = Ext.apply({},_this.main_item.get_base_params());
+            Ext.apply(p,{fmt:'detail'});
+            var url = _this.get_permalink_url() + '/' + action.result.record_id + "?" + Ext.urlEncode(p);
+            document.location = url;
         }
       },
       failure: Lino.on_submit_failure,

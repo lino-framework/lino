@@ -57,7 +57,6 @@ class AutoUser(models.Model):
         if u is not None:
             self.user = u
         
-#~ class ByUser(object):
 class ByUser(reports.Report):
     fk_name = 'user'
     can_view = perms.is_authenticated
@@ -163,7 +162,7 @@ class DiffingMixin(object):
 
 from lino.mixins.reminder import Reminder
 from lino.mixins.printable import Printable, PrintableType, TypedPrintable
-#~ from lino.mixins.printable import Listing
+from lino.mixins.printable import Listing
 from lino.mixins.uploadable import Uploadable
 #~ from lino.mixins.addressable import ContactDocument, PartnerDocument
 

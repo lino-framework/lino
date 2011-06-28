@@ -1,0 +1,74 @@
+20110627-28
+===========
+
+Kleinkram Dokumentvorlagen Verträge
+-----------------------------------
+
+
+- Zwei Felder in Contract (`goals` und `duties_person`) 
+  waren noch nicht schreibgeschützt wenn Vertrag ausgedruckt.
+
+- Auch Firmen haben jetzt eine Methode `get_full_name` 
+  und eine property `full_name`, die in Dokumentvorlagen 
+  benutzt werden kann.
+  
+  
+
+Listings weiter
+---------------
+
+Eine subtile aber interessante Änderung: 
+die Methode `get_detail_url` einer Person machte bisher ein URL im Stil::
+  
+  /api/contacts/Persons/68?fmt=detail
+  
+Jetzt macht sie::
+  
+  /api/contacts/Person/68?fmt=detail  
+  
+Der Interessante daran ist, dass der `_lino_model_report` jetzt 
+erst in `api_elem_view` extrahiert wird und der Name des Reports 
+nicht im URL erscheint.
+
+Das brauche ich für die Listings, denn die haben alle nur einen automatisch 
+generierten Report, und den fände ich in einer URI fehl am Platze.
+
+
+Und noch was Subtiles:
+
+wenn ich ein Insert-Fenster *via Permalink* aufrufe, zum Beispiel::
+
+  http://127.0.0.1:8000/api/dsbe/ContractsByPerson?fmt=insert&mt=17&mk=16
+
+und wenn ich es dann ausfülle und bestätige, 
+dann stand ich bisher wieder im Hauptbildschirm. Weil 
+der `success callback` in `Lino.InsertWrapper.save()` keinen `caller` 
+hat.
+Bisher war das nebensächlich, weil normale Benutzer den Permalink nicht benutzen.
+Aber für die Listings wäre es wichtig, 
+dass ich auch dann das Detail des 
+erstellten Records angezeigt kriege.
+
+Und noch was Subtiles: bisher wurde `Lino.setup_main_menu` 
+einmal beim Serverstart gerufen und generierte also ein Menü, 
+das für alle Benutzer in allen Situationen gilt.
+Bei jedem Request wurde dann `settings.LINO.main_menu menus.MenuItem.menu_request`
+`menus.MenuItem.menu_request`.
+Das ist jetzt Vergangenheit (muss in igen wohl noch angepasst werden).
+
+Und *noch* was Subtiles: 
+Reports on abstract Models.
+
+Voilà, damit funktionieren Listings nun prinzipiell. 
+Dokumentation müsste ich bei Gelegenheit natürlich schreiben.
+
+
+Instantiator
+------------
+
+Kleine Änderung in :class:`lino.utils.instantiator.Instantiator`: wenn man beim Instanzieren 
+mit ``**kw`` schon Standardwerte eingegeben hatte und dann bei build diese überschreiben 
+wollte, dann funktionierte das nicht. Jetzt wohl.
+
+
+

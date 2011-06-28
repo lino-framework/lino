@@ -1399,14 +1399,14 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,contact
     @classmethod
     def site_setup(cls,lino):
         """
-        Here's how to override the default verbose_name of a field
+        Here's how to override the default verbose_name of a field.
         """
         resolve_field('dsbe.Contract.user').verbose_name=_("responsible (DSBE)")
         lino.CONTRACT_PRINTABLE_FIELDS = reports.fields_list(cls,
             'person company contact type '
             'applies_from applies_until duration '
             'language schedule regime hourly_rate refund_rate reference_person '
-            'stages duties_dsbe duties_company duties_asd '
+            'stages goals duties_dsbe duties_company duties_asd duties_person '
             'user user_asd exam_policy '
             'date_decided date_issued responsibilities')
 
@@ -1965,31 +1965,51 @@ class PersonsBySearch(reports.Report):
     
 
 
-
-if False:
+import cgi
   
-  class FooListing(mixins.Listing):        
+
+COLS = 8
+
+class ContractsSituation(mixins.Listing):
+    class Meta:
+        verbose_name = _("Contracts Situation") 
         
+    contract_type = models.ForeignKey(ContractType,blank=True,null=True)
+    
     def body(self):
-        html = '<table><tr>%s</tr></table>' % html
-        html = '''\
-<table border="1" width="100%">
-  <colgroup>
-    <col width="4*">
-    <col width="2*">
-    <col width="1*">
-  </colgroup>
-  <tr>
-    <td>1. Zeile, 1. Spalte</td>
-    <td>1. Zeile, 2. Spalte</td>
-    <td>1. Zeile, 3. Spalte</td>
-  </tr>
-  <tr>
-    <td>2. Zeile, 1. Spalte</td>
-    <td>2. Zeile, 2. Spalte</td>
-    <td>2. Zeile, 3. Spalte</td>
-  </tr>
-</table>'''
+        cells = []
+        today = self.date or datetime.date.today()
+        for company in Company.objects.all():
+            actives = []
+            candidates = []
+            for ct in company.contract_set.all():
+                if ct.applies_from:
+                    until = ct.applies_until or ct.date_ended
+                    if not until or (ct.applies_from >= today and until <= today):
+                        actives.append(ct)
+                else:
+                    candidates.append(ct)
+            if candidates + actives:
+                s = "<b>%s</b>" % cgi.escape(unicode(company))
+                for ct in actives:
+                    s += '<br>' + cgi.escape(unicode(ct.person))
+                s += '<hr width="100%">'
+                for ct in candidates:
+                    s += '<br>' + cgi.escape(unicode(ct.person))
+                cells.append(s)
+            
+        rows = []
+        while len(cells) > COLS:
+            rows.append(cells[:COLS])
+            cells = cells[COLS:]
+        rows.append(cells)
+        html = ''
+        for row in rows:
+            s = ''.join(['<td valign="top">%s</td>' % cell for cell in row])
+            html += '<tr>%s</tr>' % s
+        html = '<table>%s</table>' % html
+        return html
+        
         
         
 
@@ -2009,11 +2029,6 @@ standard model CompanyType.
 http://osdir.com/ml/django-users/2009-11/msg00696.html
 """
 from lino.modlib.contacts.models import CompanyType
-#~ CompanyType.add_to_class('contract_type',
-    #~ models.ForeignKey("dsbe.ContractType",
-        #~ blank=True,null=True,
-        #~ verbose_name=_("contract type")))
-
 reports.inject_field(CompanyType,
     'contract_type',
     models.ForeignKey("dsbe.ContractType",

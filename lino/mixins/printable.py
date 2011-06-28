@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 ## Copyright 2009-2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
@@ -615,9 +616,6 @@ class TypedPrintable(Printable):
         if ptype is None:
             return super(TypedPrintable,self).get_print_templates(bm,action)
         if not ptype.template.endswith(bm.template_ext):
-            #~ raise Exception(
-              #~ "Invalid template configured for %s \"%s\". Expected filename ending with '%s'." %
-              #~ (ptype.__class__.__name__,force_unicode(ptype),bm.template_ext))
             raise Exception(
               "Invalid template configured for %s %r. Expected filename ending with %r." %
               (ptype.__class__.__name__,unicode(ptype),bm.template_ext))
@@ -639,42 +637,81 @@ class TypedPrintable(Printable):
     #~ def save(self,*args,**kw):
         #~ raise Exception("This is a VolatileModel!")
 
-if False:
   
-  import cgi
+import cgi
 
-  class Listing(Printable):
+class Listing(Printable):
     
-      class Meta:
-          abstract = True
-      
-      title = models.CharField(max_length=200,
-        verbose_name=_("Title"),
-        blank=True)
-      """
-      The title of the listing.
-      """
-      
-      @classmethod
-      def setup_report(model,rpt):
-          u"""
-          """
-          rpt.add_action(DirectPrintAction('listing',_("Print"),'listing.odt'))
-          
-      def __unicode__(self):
-          return self.title
-          
-      def header(self):
-          return cgi.escape(self.title())
-          
-      def footer(self):
-          html = '<td align="left">%s</td>' % 'left footer'
-          html += '<td align="right">Page X of Y</td>'
-          html = '<table><tr>%s</tr></table>' % html
-          return html
-          
-      def body(self):
-          raise NotImplementedError
+    class Meta:
+        abstract = True
+    
+    date = models.DateField(
+        blank=True,null=True,
+        verbose_name=_("Date"))
         
-#~ class Listings(reports.Report):
-    #~ model = Listing
+    #~ title = models.CharField(max_length=200,
+      #~ verbose_name=_("Title"),
+      #~ blank=True)
+    #~ """
+    #~ The title of the listing.
+    #~ """
+    
+    @classmethod
+    def setup_report(model,rpt):
+        u"""
+        """
+        #~ rpt.get_action('listing').label = model.__name__
+        rpt.add_action(DirectPrintAction('print',_("Print"),'listing.odt'))
+        #~ rpt.add_action(InititateListing('listing',_("Print"),'listing.odt'))
+        
+    def __unicode__(self):
+        return self.title
+        #~ return self.get_title()
+        
+    def get_title(self):
+        return self._meta.verbose_name # "Untitled Listing"
+    title = property(get_title)
+        
+    def header(self):
+        return '<p align="center"><b>%s</b></p>' % cgi.escape(self.title)
+        
+    def footer(self):
+        html = '<td align="left">%s</td>' % 'left footer'
+        html += '<td align="right">Page X of Y</td>'
+        html = '<table><tr>%s</tr></table>' % html
+        return html
+        
+    def body(self):
+        raise NotImplementedError
+        
+    def preview(self,request):
+        return self.header() + self.body() + self.footer()
+    preview.return_type = fields.HtmlBox(_("Preview"))
+    
+class InitiateListing(reports.InsertRow):
+    callable_from = tuple()
+    name = 'listing'
+    #~ label = _("Insert")
+    key = None
+    
+    def get_action_title(self,rh):
+        return u"Initiate Listing «%s»" % self.actor.model._meta.verbose_name
+  
+    
+        
+class Listings(reports.Report):
+    model = Listing
+    
+    def setup_actions(self):
+        #~ print 'lino.mixins.printable.Listings.setup_actions : ', self.model
+        alist = []
+        if len(self.detail_layouts) > 0:
+            self.detail_action = reports.ShowDetailAction(self)
+            alist.append(self.detail_action)
+            alist.append(reports.SubmitDetail())
+            alist.append(InitiateListing(self,label=self.model._meta.verbose_name)) # replaces InsertRow
+            alist.append(reports.SubmitInsert())
+        alist.append(reports.DeleteSelected())
+        self.set_actions(alist)
+        
+    

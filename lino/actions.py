@@ -87,14 +87,6 @@ class ToggleWindowAction(WindowAction):
     opens_a_slave = True
     #~ action_type = 'toggle_window'    
     
-class unused_SlaveDetailAction(ToggleWindowAction):
-    name = 'detail'
-    def __init__(self,actor,layout):
-        self.layout = layout
-        self.label = layout.label
-        #~ self.name = layout._actor_name
-        ToggleWindowAction.__init__(self,actor)
-        
                 
 class SlaveGridAction(ToggleWindowAction):
   

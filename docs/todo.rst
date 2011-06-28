@@ -9,6 +9,7 @@ for which I hope for help from other people.
 Short-term
 ----------
 
+#.  `AppyRtfBuildMethod` scheint nicht zu funktionieren.
 
 #.  Textbausteine (im Text-Editor F1 drücken können).
     

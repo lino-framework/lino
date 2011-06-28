@@ -171,6 +171,10 @@ As long as nobody protests, I'll save some time by writing in German.
   20
   21
   :doc:`22 <0622>`
+  23 24 
+  :doc:`25 <0625>`
+  |br|  	
+  :doc:`27 <0627>`
   
 .. |Jul| replace::  **July**
   |br| 

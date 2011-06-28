@@ -669,9 +669,16 @@ class TimeFieldElement(FieldElement):
     data_type = 'time' # for store column
     sortable = True
     preferred_width = 8
-    filter_type = 'time'
+    #~ filter_type = 'time'
     
   
+class DateTimeFieldElement(FieldElement):
+    value_template = "new Lino.DateTimeField(%s)"
+    data_type = 'date' # for store column
+    sortable = True
+    preferred_width = 16
+    #~ filter_type = 'date'
+    
 class DateFieldElement(FieldElement):
     value_template = "new Lino.DateField(%s)"
     #~ xtype = 'datefield'
@@ -1158,6 +1165,8 @@ class GridElement(Container):
         self.report = rpt
         if len(columns) == 0:
             self.rh = rpt.get_handle(lh.rh.ui)
+            if not hasattr(self.rh,'list_layout'):
+                raise Exception("%s has no list_layout" % self.rh)
             columns = self.rh.list_layout._main.columns
             #~ columns = self.rh.list_layout._main.elements
         w = 0
@@ -1483,7 +1492,8 @@ _FIELD2ELEM = (
     (models.CharField, CharFieldElement),
     (fields.MonthField, MonthFieldElement),
     (models.DateField, DateFieldElement),
-    #~ (models.TimeField, TimeFieldElement),
+    (models.DateTimeField, DateTimeFieldElement),
+    (models.TimeField, TimeFieldElement),
     (models.IntegerField, IntegerFieldElement),
     (models.DecimalField, DecimalFieldElement),
     (models.BooleanField, BooleanFieldElement),

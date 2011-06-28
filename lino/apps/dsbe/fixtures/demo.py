@@ -267,6 +267,9 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
       user=root,person=hans).build
     yield contract(1,i2d(20090518),i2d(20090517),rcycle,rcycle_dir)
     yield contract(1,i2d(20100518),i2d(20100517),bisa,bisa_dir)
+    yield contract(1,None,None,bisa,bisa_dir,person=tatjana)
+    yield contract(1,i2d(20110601),None,bisa,bisa_dir,person=andreas)
+    yield contract(1,i2d(20110601),None,rcycle,rcycle_dir,person=annette)
 
     def f(rmd,d):
         rmd.reminder_date = d

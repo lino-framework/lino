@@ -41,7 +41,133 @@ class Lino(Lino):
     def configure(self,sc):
         super(Lino,self).configure(sc)
         
-    def setup_main_menu(self):
+    def get_site_menu(self,ui,user):
+        from django.utils.translation import ugettext_lazy as _
+        from lino.utils import perms
+        from lino.utils import menus
+        from lino.apps.dsbe import models as dsbe
+        from lino.modlib.properties import models as properties
+
+        main = menus.Toolbar('main')
+        m = main.add_menu("contacts",_("~Contacts"))
+        m.add_action('contacts.Companies')
+        m.add_action('contacts.Persons')
+        m.add_action('dsbe.MySearches')
+
+        if user is None:
+            return main
+            
+        m = main.add_menu("my",_("~My menu"))
+        #~ m.add_action('projects.Projects')
+        m.add_action('notes.MyNotes')
+        m.add_action('uploads.MyUploads')
+        m.add_action('dsbe.MyContracts')
+        m.add_action('cal.MyTasks')
+        m.add_action('cal.MyEvents')
+        m.add_action('contacts.MyPersons')
+        for pg in dsbe.PersonGroup.objects.order_by('ref_name'):
+            m.add_action('contacts.MyPersonsByGroup',label=pg.name,
+                params=dict(master_instance=pg))
+            #~ m.add_action('contacts.MyPersonsByGroup',label=pg.name,
+            #~ params=dict(master_id=pg.pk))
+            #~ m.add_request_action(contacts.MyPersonsByGroup().request(master_instance=pg),label=pg.name)
+
+
+        m = main.add_menu("courses",_("~Courses"))
+        m.add_action('dsbe.Courses')
+        m.add_action('contacts.CourseProviders')
+        m.add_action('dsbe.CourseContents')
+        m.add_action('dsbe.CourseEndings')
+        
+        #~ sitemenu = system.add_site_menu(self)
+        #~ if False:
+        listings = main.add_menu("lst",_("~Listings"))
+        listings.add_action('dsbe.ContractsSituation.listing')
+        #~ listings.add_instance_action(lst)
+        #~ for lst in dsbe.FooListing.objects.all():
+            #~ listings.add_instance_action(lst)
+        
+        if user.is_staff:
+            cfg = main.add_menu("config",_("~Configure"))
+            
+            config_contacts = cfg.add_menu("contacts",_("~Contacts"))
+            config_notes    = cfg.add_menu("notes",_("~Notes"))
+            config_dsbe     = cfg.add_menu("dsbe",_("~DSBE"))
+            config_cv       = cfg.add_menu("cv",_("C~V"))
+            config_etc      = cfg.add_menu("etc",_("~System"))
+            
+            config_contacts.add_action('countries.Countries')
+            config_contacts.add_action('countries.Cities')
+        
+            config_contacts.add_action('contacts.CompanyTypes')
+            config_contacts.add_action('contacts.ContactTypes')
+            config_contacts.add_action('countries.Languages')
+            
+            config_notes.add_action('notes.NoteTypes')
+            config_notes.add_action('notes.EventTypes')
+        
+            config_dsbe.add_action('dsbe.ContractTypes')
+            config_dsbe.add_action('dsbe.PersonGroups')
+        
+            if user.is_expert:
+                config_props = cfg.add_menu("props",_("~Properties"))
+                config_props.add_action('properties.PropGroups')
+                config_props.add_action('properties.PropTypes')
+                for pg in properties.PropGroup.objects.all():
+                    #~ mm.add_request_action(properties.PropsByGroup().request(master_instance=pg),label=pg.name)
+                    config_props.add_action('properties.PropsByGroup',params=dict(master_instance=pg),label=pg.name)
+        
+            #~ config_props.add_action('properties.PropsByGroup',can_view=perms.is_staff)
+            #~ ma.add_action('dsbe.Skills1')
+            #~ ma.add_action('dsbe.Skills2')
+            #~ ma.add_action('dsbe.Skills3')
+            #~ me.add_action('auth.Permissions')
+            #~ ma.add_action('auth.Users')
+            #~ me.add_action('auth.Groups')
+            #~ m.add_action('dsbe.DrivingLicenses')
+            config_cv.add_action('dsbe.StudyTypes')
+            config_cv.add_action('dsbe.Activities')
+            
+            config_dsbe.add_action('dsbe.ExclusionTypes')
+            config_dsbe.add_action('dsbe.AidTypes')
+            config_dsbe.add_action('dsbe.ContractEndings')
+            #~ m.add_action('dsbe.JobTypes')
+            config_dsbe.add_action('dsbe.ExamPolicies')
+            #~ m.add_action('dsbe.CoachingTypes')
+            
+            config_etc.add_action('links.LinkTypes')
+            config_etc.add_action('uploads.UploadTypes')
+            config_etc.add_action('cal.Places')
+            
+            config_etc.add_action('users.Users')
+            config_etc.add_instance_action(self.config)
+        
+            m = cfg.add_menu("explorer",_("E~xplorer"))
+            #m.add_action('properties.PropChoices')
+            #~ m.add_action('properties.PropValues')
+            m.add_action('notes.Notes')
+            m.add_action('links.Links')
+            m.add_action('dsbe.Exclusions')
+            m.add_action('dsbe.Contracts')
+            m.add_action('uploads.Uploads')
+            m.add_action('dsbe.CourseRequests')
+            m.add_action('contenttypes.ContentTypes')
+            m.add_action('dsbe.PersonSearches')
+            m.add_action('properties.Properties')
+            m.add_action('cal.Events')
+            m.add_action('cal.Tasks')
+
+        
+        m = main.add_menu("help",_("~Help"))
+        m.add_item('userman',_("~User Manual"),
+            href='http://lino.saffre-rumma.net/dsbe/index.html')
+
+        #~ self.main_menu.add_item('home',_("~Home"),href='/')
+        main.add_url_button(self.root_url,_("Home"))
+          
+        return main
+      
+    def unused_setup_main_menu(self):
       try:
   
         from django.utils.translation import ugettext_lazy as _
@@ -78,6 +204,8 @@ class Lino(Lino):
         #~ sitemenu = system.add_site_menu(self)
         if False:
           listings = self.add_menu("lst",_("~Listings"),can_view=perms.is_authenticated)
+          dsbe.ContractsSituationListing
+          listings.add_instance_action(lst,can_view=perms.is_authenticated)
           for lst in dsbe.FooListing.objects.all():
               listings.add_instance_action(lst,can_view=perms.is_authenticated)
         
@@ -208,6 +336,7 @@ INSTALLED_APPS = (
   'lino.modlib.links',
   'lino.modlib.uploads',
   'lino.modlib.thirds',
+  'lino.modlib.cal',
   'lino.apps.dsbe',
   #'dsbe.modlib.contacts',
   #'dsbe.modlib.projects',

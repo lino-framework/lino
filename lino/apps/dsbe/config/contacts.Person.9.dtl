@@ -1,0 +1,7 @@
+:label: Calendar
+:label_align: top
+
+main = 
+  cal.EventsByPerson
+  cal.TasksByPerson
+

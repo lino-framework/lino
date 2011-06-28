@@ -24,7 +24,7 @@ from tempfile import gettempdir
 from os.path import join, abspath, dirname, normpath
 import logging
 
-__version__ = "1.1.17"
+__version__ = "1.1.18"
 """
 Lino version number. 
 The latest released version is :doc:`/releases/20110615`.
@@ -347,9 +347,6 @@ class Lino(object):
         setup_site(self)
 
         
-    def add_menu(self,*args,**kw):
-        return self.main_menu.add_menu(*args,**kw)
-
     #~ def context(self,request,**kw):
         #~ d = dict(
           #~ main_menu = menus.MenuRenderer(self.main_menu,request),
@@ -372,8 +369,10 @@ class Lino(object):
         #~ return HttpResponse(html)
         
         
-    def get_site_menu(self,user):
-        #~ self.setup()
-        assert self._setup_done
-        return self.main_menu.menu_request(user)
+    #~ def add_menu(self,*args,**kw):
+        #~ return self.main_menu.add_menu(*args,**kw)
+
+    #~ def get_site_menu(self,user):
+        #~ assert self._setup_done
+        #~ return self.main_menu.menu_request(user)
         

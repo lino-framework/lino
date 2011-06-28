@@ -157,8 +157,8 @@ def elem2rec_insert(ar,ah,elem):
     Returns a dict of this record, designed for usage by an InsertWindow.
     """
     rec = elem2rec1(ar,ah,elem)
-    #~ rec.update(title=_("Insert into %s...") % ah.report.label)
-    rec.update(title=_("Insert into %s...") % ar.get_title())
+    #~ rec.update(title=_("Insert into %s...") % ar.get_title())
+    rec.update(title=ar.get_action_title())
     #~ rec.update(id=elem.pk) or -99999)
     return rec
 
@@ -654,6 +654,9 @@ tinymce.init({
         // , mode : "textareas"
 });
 </script>'''
+
+        yield '<script type="text/javascript" src="%s/lino/extjs/Ext.ux.form.DateTime.js"></script>' % self.media_url()
+
         if settings.USE_GRIDFILTERS:
             #~ yield '<script type="text/javascript" src="%s/extjs/examples/ux/RowEditor.js"></script>' % self.media_url()
             yield '<script type="text/javascript" src="%s/extjs/examples/ux/gridfilters/menu/RangeMenu.js"></script>' % self.media_url()
@@ -719,7 +722,7 @@ tinymce.init({
               #~ closable=False,
               bbar=dict(xtype='toolbar',items=js_code('Lino.status_bar')),
               #~ title=self.site.title,
-              tbar=self.site.get_site_menu(request.user),
+              tbar=self.site.get_site_menu(self,request.user),
             )
             
             for ln in jsgen.declare_vars(win):
@@ -1031,6 +1034,9 @@ tinymce.init({
         (Source: http://en.wikipedia.org/wiki/Restful)
         """
         rpt = actors.get_actor2(app_label,actor)
+        if rpt is None:
+            model = models.get_model(app_label,actor,False)
+            rpt = model._lino_model_report
         ah = rpt.get_handle(self)
         #~ if not ah.report.can_view.passes(request.user):
             #~ msg = "User %s cannot view %s." % (request.user,ah.report)
@@ -1436,9 +1442,9 @@ tinymce.init({
         return self.build_url('api',rr.report.app_label,rr.report._actor_name,*args,**kw)
         
     def get_detail_url(self,obj,*args,**kw):
-        #~ rpt = obj.__class__._lino_model_report
-        rpt = obj._lino_model_report
-        return self.build_url('api',rpt.app_label,rpt._actor_name,str(obj.pk),*args,**kw)
+        #~ rpt = obj._lino_model_report
+        #~ return self.build_url('api',rpt.app_label,rpt._actor_name,str(obj.pk),*args,**kw)
+        return self.build_url('api',obj._meta.app_label,obj.__class__.__name__,str(obj.pk),*args,**kw)
         
     def href_to(self,obj,text=None):
         return self.href(self.get_detail_url(obj,fmt='detail'),text or cgi.escape(unicode(obj)))
@@ -1469,7 +1475,7 @@ tinymce.init({
           
         if isinstance(h,reports.ReportHandle):
             #~ logger.debug('ExtUI.setup_handle() %s',h.report)
-            if h.report.model is None:
+            if h.report.model is None or h.report.model._meta.abstract:
                 return
             #~ h.choosers = chooser.get_choosers_for_model(h.report.model,chooser.FormChooser)
             #~ h.report.add_action(ext_windows.SaveWindowConfig(h.report))

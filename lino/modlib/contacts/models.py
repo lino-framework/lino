@@ -172,8 +172,17 @@ class Addressable(CountryCity):
         
 
     def address_person_lines(self):
-    #~ def recipient_lines(self):
-        yield self.name
+        #~ yield self.name
+        yield self.get_full_name()
+        
+    def get_full_name(self,**salutation_options):
+        """\
+Returns a one-line string representing this Addressable in a text paragraph.
+The default returns simply the `name` field, but e.g. :class:`Person` 
+overrides this.
+        """
+        return self.name
+    full_name = property(get_full_name)
         
         
     def address_location_lines(self):
@@ -313,15 +322,6 @@ class PersonsByCountry(Persons):
     fk_name = 'country'
     order_by = 'city street street_no street_box addr2'.split()
     column_names = "city street street_no street_box addr2 name language"
-    
-
-
-
-
-
-
-
-
 
 
 
@@ -444,6 +444,12 @@ class Company(Addressable):
     """Pointer to this company's :class:`CompanyType`. 
     """
     
+    def get_full_name(self,**salutation_options):
+        """Deserves more documentation."""
+        if self.type:
+            return join_words(self.type.abbr,self.name)
+        return self.name
+    full_name = property(get_full_name)
               
 class Companies(Addressables):
     #~ label = _("Companies")

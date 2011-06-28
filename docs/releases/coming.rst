@@ -6,6 +6,18 @@ New features
 
 - :term:`watch_tim` now logs changes of `lino.utis.DiffingMixin` 
   instances (e.g. :class:`lino.apps.dsbe.models.Person`, :class:`lino.apps.dsbe.models.Contract`)
+  
+- Some API refinements to be used in AppyPrintMethod document templates
+  (e.g. `iif`, `Person.get_skills`, ...)
+  
+- Kleine Änderungen in der Übersichtstabelle auf der Startseite 
+  (`persons_by_user`)
+  
+- Ein erstes Listing "Situation Verträge"
+
+- Neues Modul "Kalender"
+
+
 
 
 Bugs fixed

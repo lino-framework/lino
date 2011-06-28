@@ -33,11 +33,16 @@ def resolve_action(spec,app_label=None):
     s = spec.split(ACTOR_SEP)
     if len(s) == 1:
         if not app_label:
-            return
+            return None
         actor = get_actor2(app_label,spec)
     elif len(s) == 3:
         actor = get_actor(ACTOR_SEP.join(s[0:2]))
-        #~ print 20100616, actor, s, actor._actions_dict
+        if actor is None:
+            model = models.get_model(s[0],s[1],False)
+            if model is None:
+                return None
+            actor = model._lino_model_report
+        #~ print 20110627, actor, s, actor._actions_dict
         return actor.get_action(s[2])
     else:
         actor = get_actor(spec)
@@ -67,6 +72,7 @@ def resolve_actor(actor,app_label):
     return get_actor(actor)
         
 def register_actor(a):
+    #~ logger.info("register_actor %s",a.actor_id)
     old = actors_dict.get(a.actor_id,None)
     if old is not None:
         #~ logger.debug("register_actor %s : %r replaced by %r",a.actor_id,old.__class__,a.__class__)
@@ -114,10 +120,10 @@ class ActorMetaClass(type):
             #~ classDict['app_label'] = cls.__module__.split('.')[-2]
         cls = type.__new__(meta, classname, bases, classDict)
         #logger.debug("actor(%s)", cls)
-        if classname not in ('Report','Action','HandledActor','Actor','Command',
-              'Layout','ListLayout','DetailLayout','FormLayout',
-              'ModelLayout'):
-            #~ actors_dict[cls.actor_id] = cls
+        if classname not in ('Report','Action','HandledActor','Actor'):
+        #~ if classname not in ('Report','Action','HandledActor','Actor','Command',
+              #~ 'Layout','ListLayout','DetailLayout','FormLayout',
+              #~ 'ModelLayout'):
             if actor_classes is None:
                 #~ logger.debug("%s definition was after discover",cls)
                 pass

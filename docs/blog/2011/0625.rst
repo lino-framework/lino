@@ -1,0 +1,83 @@
+20110625
+========
+
+Bisher ist es so: Lino generiert selber seine "Reminders" 
+und zeigt diese an im Hauptbildschirm.
+Ein Reminder ist das Äquivalent eines todo in iCalendar.
+Um Termine ("Events" in iCalendar) kümmert sich Lino momentan noch 
+gar nicht.
+Soll aber kommen.
+
+Lightning bietet scheinbar keine Möglichkeit, 
+von einem Kontakt aus alle vergangenen und kommenden 
+Termine mit dieser Person anzuzeigen.
+
+Ich denke, dass ich ein neues Modul `lino.modlib.cal` brauche, 
+das einerseits alle Konzepte von iCalendar als Django-Modelle 
+implementiert und "im Lino-Stil" auch bearbeiten lässt,
+das aber andererseits nicht einen "echten" Calendar-Client ersetzen will, 
+sondern mit einem externen CalDAV-Server 
+zusammenarbeiten kann um den oder die Kalender zu synchronisieren.
+(Ich sage *die* Kalender, weil ich noch nicht weiß, ob iCalendar 
+obligatorisch pro Benutzer einen Kalender erfordert, oder ob 
+ein einziger iCal-Kalender für alle Benutzer reicht.)
+
+Lektüre:
+
+- iCalendar : `RFC 5545 (Internet Calendaring and Scheduling Core Object 
+  Specification (iCalendar)) <ftp://ftp.rfc-editor.org/in-notes/rfc5545.txt>`_
+  `iCalendar package for Python <http://codespeak.net/icalendar/>`_ 
+
+- CalDAV : `RFC 4791 <http://www.ietf.org/rfc/rfc4791.txt>`_,
+  `python-caldav <http://packages.python.org/caldav/>`_
+  (`Introduction <http://savetheions.com/2010/06/04/introducing-python-caldav>`_)
+
+Notizen:
+
+- Calendar
+
+  A Calendar object must include the "PRODID" and "VERSION" calendar properties.
+  PRODID = Product identifier. The vendor of the implementation SHOULD 
+  assure that this is a globally unique identifier.
+
+  CATEGORIES defines the categories for a calendar component.
+
+- Event : VEVENT
+
+    - dtstamp (required)
+    - uid (required)
+    - dtstart (required if calendar has no METHOD property)
+    - class
+    - created 
+    - description 
+    - geo 
+    - last-mod 
+    - location 
+    - organizer 
+    - priority 
+    - sequence : integer giving a revision number. default 0. automatically incremented on each update?
+    - status
+    - summary
+    - `transp` : Boolean. Default False. 
+      Set to True if this event is transparent for free/busy searches. 
+    - url 
+    - recurid
+    - rrule
+    - dtend 
+    - duration 
+    
+- Each Event can have 0...N of the following properties:
+                  attach 
+                  attendee 
+                  categories 
+                  comment 
+                  contact 
+                  exdate 
+                  rstatus 
+                  related 
+                  resources 
+                  rdate 
+                  x-prop 
+                  iana-prop
+    
+    
