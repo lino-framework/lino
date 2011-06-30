@@ -98,8 +98,24 @@ class GridColumn(Component):
         kw.update(colIndex=index)
         kw.update(editor.get_column_options())
         kw.update(hidden=editor.hidden)
-        if settings.USE_GRIDFILTERS and editor.filter_type:
-            kw.update(filter=dict(type=editor.filter_type))
+        if editor.filter_type:
+            if settings.LINO.use_filterRow:
+                if index == 0:
+                    kw.update(clearFilter=True) # first column used to show clear filter icon in this column
+                #~ else:
+                    #~ print index, "is not 1"
+                kw.update(filterInput=js_code('new Ext.form.TextField()'))
+                kw.update(filterOptions=[
+                  #~ dict(value='startwith', text='Start With'),
+                  #~ dict(value='endwith', text='End With'),
+                  dict(value='empty', text='Is empty'),
+                  dict(value='notempty', text='Is not empty'),
+                  dict(value='contains', text='Contains'),
+                  dict(value='doesnotcontain', text='Does not contain')
+                ])
+              
+            if settings.LINO.use_gridfilters:
+                kw.update(filter=dict(type=editor.filter_type))
         #~ if isinstance(editor,FieldElement) and editor.field.primary_key:
         if isinstance(editor,FieldElement):
             rend = None
@@ -665,7 +681,8 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
 
 
 class TimeFieldElement(FieldElement):
-    xtype = 'timefield'
+    value_template = "new Lino.TimeField(%s)"
+    #~ xtype = 'timefield'
     data_type = 'time' # for store column
     sortable = True
     preferred_width = 8

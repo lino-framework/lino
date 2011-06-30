@@ -1,0 +1,6 @@
+:label: Documents
+:label_align: top
+
+main = 
+    notes.NotesByPerson:60 links.LinksByPerson:20
+    dsbe.ContractsByPerson

@@ -605,8 +605,11 @@ class ExtUI(base.UI):
             #~ p = self.media_url('lino','vinylfox') + '/'
             yield '<link rel="stylesheet" type="text/css" href="%sresources/css/htmleditorplugins.css" />' % p
           
-        if settings.USE_GRIDFILTERS:
-            #~ yield '<link rel="stylesheet" type="text/css" href="%s/extjs/examples/ux/css/RowEditor.css" />' % self.media_url() 
+        if settings.LINO.use_filterRow:
+            p = self.media_url() + '/lino/filterRow'
+            yield '<link rel="stylesheet" type="text/css" href="%s/filterRow.css" />' % p
+            
+        if settings.LINO.use_gridfilters:
             yield '<link rel="stylesheet" type="text/css" href="%s/extjs/examples/ux/statusbar/css/statusbar.css" />' % self.media_url() 
             yield '<link rel="stylesheet" type="text/css" href="%s/extjs/examples/ux/gridfilters/css/GridFilters.css" />' % self.media_url() 
             yield '<link rel="stylesheet" type="text/css" href="%s/extjs/examples/ux/gridfilters/css/RangeMenu.css" />' % self.media_url() 
@@ -657,7 +660,7 @@ tinymce.init({
 
         yield '<script type="text/javascript" src="%s/lino/extjs/Ext.ux.form.DateTime.js"></script>' % self.media_url()
 
-        if settings.USE_GRIDFILTERS:
+        if settings.LINO.use_gridfilters:
             #~ yield '<script type="text/javascript" src="%s/extjs/examples/ux/RowEditor.js"></script>' % self.media_url()
             yield '<script type="text/javascript" src="%s/extjs/examples/ux/gridfilters/menu/RangeMenu.js"></script>' % self.media_url()
             yield '<script type="text/javascript" src="%s/extjs/examples/ux/gridfilters/menu/ListMenu.js"></script>' % self.media_url()
@@ -671,6 +674,10 @@ tinymce.init({
             
         yield '<script type="text/javascript" src="%s/extjs/examples/ux/fileuploadfield/FileUploadField.js"></script>' % self.media_url()
         
+        if settings.LINO.use_filterRow:
+            p = self.media_url() + '/lino/filterRow'
+            yield '<script type="text/javascript" src="%s/filterRow.js"></script>' % p
+            
         if settings.LINO.use_vinylfox:
             p = self.media_url() + '/lino/vinylfox/'
             #~ yield '<script type="text/javascript" src="Ext.ux.form.FileUploadField.js"></script>'

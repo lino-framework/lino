@@ -441,12 +441,16 @@ Lino.on_tab_activate = function(item) {
   if (item.rendered) item.doLayout();
 }
 
-Lino.DateTimeField = Ext.extend(Ext.ux.form.DateTime,{
-  dateFormat: '$settings.LINO.date_format_extjs',
+Lino.TimeField = Ext.extend(Ext.form.TimeField,{
+  format: '$settings.LINO.time_format_extjs',
+  increment: 15
   });
 Lino.DateField = Ext.extend(Ext.form.DateField,{
   format: '$settings.LINO.date_format_extjs',
   altFormats: '$settings.LINO.alt_date_formats_extjs'
+  });
+Lino.DateTimeField = Ext.extend(Ext.ux.form.DateTime,{
+  dateFormat: '$settings.LINO.date_format_extjs',
   });
 Lino.URLField = Ext.extend(Ext.form.TriggerField,{
   triggerClass : 'x-form-search-trigger',
@@ -1213,6 +1217,8 @@ Lino.show_insert_duplicate = function(panel,btn) {
 //~ };
 
 
+#if $settings.LINO.use_gridfilters
+
 if (Ext.ux.grid !== undefined) {
     Lino.GridFilters = Ext.extend(Ext.ux.grid.GridFilters,{
       encode:true,
@@ -1224,6 +1230,8 @@ if (Ext.ux.grid !== undefined) {
       init : function() {}
     });
 };
+
+#end if
 
 //~ Lino.ButtonField = Ext.extend(Ext.form.TextField,{
 //~ Lino.ButtonField = Ext.extend(Ext.form.Field,{
@@ -1919,7 +1927,13 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     //~ this.row_editor = new Ext.ux.grid.RowEditor();
     //~ config.plugins = [this.row_editor,new Lino.GridFilters()];
     
+#if $settings.LINO.use_gridfilters
     config.plugins = [new Lino.GridFilters()];
+#end if    
+
+#if $settings.LINO.use_filterRow
+    config.plugins = [new Ext.ux.grid.FilterRow()];
+#end if    
     
     //~ this.row_editor.on({
       //~ scope: this,

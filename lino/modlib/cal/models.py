@@ -106,7 +106,7 @@ class Component(mixins.AutoUser):
     class Meta:
         abstract = True
         
-    title = models.CharField(_("Title"),max_length=200,blank=True) # iCal:SUMMARY
+    summary = models.CharField(_("Summary"),max_length=200,blank=True) # iCal:SUMMARY
     description = fields.RichTextField(_("Description"),blank=True,format='html')
     access_class = AccessClass.field() # iCal:CLASS
     
@@ -160,30 +160,35 @@ class Places(reports.Report):
     
 class Events(reports.Report):
     model = Event
+    column_names = 'date time summary status *'
     
 class Tasks(reports.Report):
     model = Task
+    column_names = 'summary status done *'
     
 class EventsByPerson(Events):
     fk_name = 'person'
-    column_names = 'date time title status *'
     
 class EventsByCompany(Events):
     fk_name = 'company'
-    column_names = 'date time title status *'
+    #~ column_names = 'date time summary status *'
     
 
 class TasksByPerson(Tasks):
     fk_name = 'person'
-    column_names = 'title status done *'
     
 class TasksByCompany(Tasks):
     fk_name = 'company'
-    column_names = 'title status done *'
     
 class MyEvents(mixins.ByUser):
     model = Event
+    label = _("My Events")
+    order_by = ["date","time"]
+    column_names = 'date time summary status *'
     
 class MyTasks(mixins.ByUser):
     model = Task
+    label = _("My Tasks")
+    order_by = ["date","time"]
+    column_names = 'summary status done *'
     

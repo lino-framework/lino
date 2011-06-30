@@ -1,0 +1,28 @@
+20110630
+========
+
+Tiens, habe ich das geträumt, dass ExtJS vor einigen Monaten 
+mal ein komplettes Calendar widget hatte? 
+Momentan kann ich es nirgendwo mehr finden.
+
+
+filterRow
+---------
+
+Oho, hier scheint ein würdiger Ersatz für GridFilters zu sein:
+http://www.developerextensions.com/
+Neue Option :attr:`lino.Lino.use_filterRow`.
+Die Integration war schon fast Routine.
+Ist aber noch nicht ganz fertig: 
+
+- der Server muss das Query entsprechend auswerten.
+  Anfang ist gemacht in :meth:`lino.ui.requests.ViewReportRequest.parse_req`.
+  
+- Momentan sind alle Kolonnen einfach mit einem simplen TextField 
+  als Editor definiert.  Die müssen noch je nach Datentyp angepasst werden.
+  
+- Und der Benutzer sollte die filterRow par défaut nicht sehen, 
+  sondern nur wenn er das anfragt.
+  
+En passant habe ich das bisherige setting `USE_GRIDFILTERS` 
+nach `lino.Lino.use_gridfilters` umbenannt. 

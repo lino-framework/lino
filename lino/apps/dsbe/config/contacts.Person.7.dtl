@@ -1,6 +1,7 @@
-:label: Documents
+:label: Calendar
 :label_align: top
 
 main = 
-    notes.NotesByPerson:60 links.LinksByPerson:20
-    dsbe.ContractsByPerson
+  cal.EventsByPerson
+  cal.TasksByPerson
+

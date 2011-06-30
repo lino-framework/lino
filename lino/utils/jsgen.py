@@ -128,9 +128,11 @@ def py2js(v):
         return str(v).lower()
     if isinstance(v, (int, long, decimal.Decimal)):
         return str(v)
+    if isinstance(v, datetime.time):
+        return '"%s"' % v.strftime(settings.LINO.time_format_strftime)
     if isinstance(v, datetime.date):
-        #~ return 'new Date(%d,%d,%d)' % (v.year,v.month-1,v.day)
         return '"%s"' % v.strftime(settings.LINO.date_format_strftime)
+        #~ return 'new Date(%d,%d,%d)' % (v.year,v.month-1,v.day)
         #~ return repr('%d.%d.%d' % (v.day,v.month,v.year))
         #~ return repr(str(v))
 

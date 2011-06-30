@@ -176,6 +176,13 @@ class Lino(object):
     
     #~ bypass_perms = False
     
+    use_gridfilters = False
+    
+    use_filterRow = True
+    """
+    See :doc:`/blog/2011/0630`
+    """
+    
     use_awesome_uploader = False
     """
     Whether to use AwesomeUploader. 
@@ -221,6 +228,9 @@ class Lino(object):
     See :doc:`/blog/2011/0523`.
     """
     
+    
+    time_format_strftime = '%H:%M'
+    time_format_extjs = 'H:i'
     
     date_format_strftime = '%d.%m.%Y'
     date_format_extjs = 'd.m.Y'

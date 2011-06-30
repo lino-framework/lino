@@ -1,0 +1,12 @@
+:label: 
+:label_align: top
+:hideCheckBoxLabels: 
+
+main = 
+  date time end_date end_time
+  summary:40 status created modified
+  person company place 
+  priority access_class status
+  transparent duration_value duration_unit repeat_value repeat_unit
+  description
+

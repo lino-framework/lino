@@ -312,7 +312,6 @@ class ReportAction(actions.Action):
         
     def request(self,ui=None,**kw):
         ar = ReportActionRequest(ui,self.actor,self)
-        #~ ar = ReportActionRequest(ui,self.list_action)
         ar.setup(**kw)
         return ar
         #~ return self.get_handle(ui).request(**kw)
@@ -549,6 +548,7 @@ class ReportActionRequest:
             quick_search=None,
             gridfilters=None,
             order_by=None,
+            exclude=None,
             extra=None,
             known_values=None,
             #~ expand_memos=None,
@@ -563,6 +563,7 @@ class ReportActionRequest:
         self.quick_search = quick_search
         self.gridfilters = gridfilters
         self.order_by = order_by
+        self.exclude = exclude or self.report.exclude
         self.extra = extra
         self.known_values = known_values or self.report.known_values
 
@@ -1088,6 +1089,9 @@ class Report(actors.Actor): #,base.Handled):
         if len(kw):
             qs = qs.filter(**kw)
 
+        if rr.exclude:
+            qs = qs.exclude(**rr.exclude)
+            
         if self.filter:
             qs = qs.filter(**self.filter)
             

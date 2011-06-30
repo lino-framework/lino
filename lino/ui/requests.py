@@ -16,6 +16,8 @@ from django.http import HttpResponse, Http404
 from django.contrib.contenttypes.models import ContentType
 #~ from django.contrib.contenttypes import generic
 from django.utils import simplejson as json
+from django.conf import settings
+
 
 import lino
 from lino import actions
@@ -183,11 +185,31 @@ class ViewReportRequest(reports.ReportActionRequest):
             #~ print '20100212', self #, kw['master_instance']
         #~ print '20100406b', self.report,kw
         
-        filter = request.REQUEST.get(URL_PARAM_GRIDFILTER,None)
-        if filter is not None:
-            filter = json.loads(filter)
-            kw['gridfilters'] = [dict2kw(flt) for flt in filter]
-        
+        if settings.LINO.use_filterRow:
+            exclude=dict()
+            for f in rh.store.fields:
+                filterOption = request.REQUEST.get('filter[%s_filterOption]' % f.field.name)
+                if filterOption == 'empty':
+                    kw[f.field.name + "__isnull"] = True
+                elif filterOption == 'notempty':
+                    kw[f.field.name + "__isnull"] = False
+                else:
+                    filterValue = request.REQUEST.get('filter[%s]' % f.field.name)
+                    if filterValue:
+                        if not filterOption: filterOption = 'contains'
+                        if filterOption == 'contains':
+                            kw[f.field.name + "__icontains"] = filterValue
+                        elif filterOption == 'doesnotcontain':
+                            exclude[f.field.name + "__icontains"] = filterValue
+                        else:
+                            print "unknown filterOption %r" % filterOption
+            if len(exclude):
+                kw.update(exclude=exclude)
+        if settings.LINO.use_gridfilters:
+            filter = request.REQUEST.get(URL_PARAM_GRIDFILTER,None)
+            if filter is not None:
+                filter = json.loads(filter)
+                kw['gridfilters'] = [dict2kw(flt) for flt in filter]
         
         quick_search = request.REQUEST.get(URL_PARAM_FILTER,None)
         if quick_search:

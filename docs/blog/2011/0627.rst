@@ -91,3 +91,13 @@ beschriebenen Modelle habe.
 
 Erster Erfolg. Checkin 20110628.
 
+Anrede und Titel
+----------------
+
+Ich benutze ja das Wort `salutation` für Herr(n) Frau, Mr., Mrs. usw.
+Im Feld `Person.title` kommen dagegen Dinge wie Dr., Prof. usw.
+Doof nun, dass das englische Wort "Title" mal "Anrede" und mal "Titel" bedeutet.
+Tröstlich, dass ich nicht der einzige mit solchen Problemen bin:
+http://dict.leo.org/forum/viewUnsolvedquery.php?idThread=512446&idForum=1&lp=ende&lang=de
+
+

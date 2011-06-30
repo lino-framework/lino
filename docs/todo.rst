@@ -16,7 +16,7 @@ Short-term
 #.  Slave-Grids im Insert-Fenster sind jetzt zwar disabled, aber sie 
     machen trotzdem noch ein load "ihrer" Daten. 
     
-#.  Listings.
+#.  Listings : listing.odt muss noch gemacht werden.
 
 #.  Ausdruck Verträge: jetzt wo die mehrzeiligen Textfelder formatierbar 
     sind, kommt vielleicht ein kleines Problem: Bisher wurde z.B. in der 
