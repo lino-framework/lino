@@ -150,6 +150,7 @@ class Lino(Lino):
             m = cfg.add_menu("explorer",_("E~xplorer"))
             #m.add_action('properties.PropChoices')
             #~ m.add_action('properties.PropValues')
+            m.add_action('contacts.AllPersons')
             m.add_action('notes.Notes')
             m.add_action('links.Links')
             m.add_action('dsbe.Exclusions')

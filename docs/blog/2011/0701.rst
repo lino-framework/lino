@@ -87,3 +87,13 @@ Das System ist übrigens sowieso auch ziemlich aufwendig.
 
 Checkin 20110701b
 
+`Report.default_params` wieder raus
+-----------------------------------
+
+Abends vor dem Einschlafen kam mir die Lösung: `Report.default_params` war Quatsch, 
+stattdessen mach ich einen eigenen Report und ein neues Optionales Attribut 
+`_lino_choices_report` in den Modellen. 
+Größtes Problem war noch, dass ich für Report.label unbedingt den `verbose_name` des Modells 
+wiederverwerten wollte. 
+
+Checkin 20110701c

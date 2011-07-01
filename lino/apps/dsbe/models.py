@@ -276,8 +276,8 @@ class Person(Partner,contacts.Person):
     
     class Meta(contacts.Person.Meta):
         app_label = 'contacts'
-        verbose_name = _("person") # :doc:`/tickets/14`
-        verbose_name_plural = _("persons") # :doc:`/tickets/14`
+        verbose_name = _("Person") # :doc:`/tickets/14`
+        verbose_name_plural = _("Persons") # :doc:`/tickets/14`
         
     #~ first_name = models.CharField(max_length=200,blank=True,verbose_name=_('First name'))
     #~ last_name = models.CharField(max_length=200,blank=True,verbose_name=_('Last name'))
@@ -616,23 +616,37 @@ class Person(Partner,contacts.Person):
 
 
 
-class Persons(contacts.Persons):
+class AllPersons(contacts.Persons):
     can_view = perms.is_authenticated
     app_label = 'contacts'
-    default_params = dict(is_active=True)
+    #~ default_params = dict(is_active=True)
     #~ extra = dict(
       #~ select=dict(sort_name='lower(last_name||first_name)'),
       #~ order_by=['sort_name'])
     #~ order_by = None # clear the default value from contacts.Persons.order_by since we use extra order_by
+    
+    def init_label(self):
+        return self.model._meta.verbose_name_plural + ' ' + force_unicode(_("(all)"))
+    
+class Persons(AllPersons):
+    #~ use_as_default_report = False
+    filter = dict(is_active=True)
+    #~ label = Person.Meta.verbose_name_plural + ' ' + _("(unfiltered)")
+    
+    def init_label(self):
+        return self.model._meta.verbose_name_plural
 
     
-class PersonsByNationality(Persons):
+Person._lino_choices_report = Persons
+
+    
+class PersonsByNationality(AllPersons):
     #~ app_label = 'contacts'
     fk_name = 'nationality'
     order_by = "city name".split()
     column_names = "city street street_no street_box addr2 name country language *"
     
-class PersonsByCity(Persons):
+class PersonsByCity(AllPersons):
     #~ app_label = 'contacts'
     fk_name = 'city'
     order_by = 'street street_no street_box addr2'.split()

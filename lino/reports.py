@@ -226,12 +226,9 @@ def register_report(rpt):
     if rpt.master is None:
         if not rpt.model._meta.abstract:
             master_reports.append(rpt)
-        if rpt.use_as_default_report:
+        if not rpt.filter and rpt.use_as_default_report:
             #~ logger.info("register %s : model_report for %s", rpt.actor_id, full_model_name(rpt.model))
             rpt.model._lino_model_report = rpt
-        else:
-            #~ logger.debug("register %s: not used as model_report",rpt.actor_id)
-            pass
     elif rpt.master is ContentType:
         #~ logger.debug("register %s : generic slave for %r", rpt.actor_id, rpt.fk_name)
         generic_slaves[rpt.actor_id] = rpt
@@ -715,7 +712,7 @@ class Report(actors.Actor): #,base.Handled):
     base_queryset = None 
     "See :meth:`Report.get_queryset`"
     
-    default_params = {}
+    #~ default_params = {}
     """See :doc:`/blog/2011/0701`.
     """
     
@@ -863,7 +860,8 @@ class Report(actors.Actor): #,base.Handled):
             if self.app_label is None:
                 self.app_label = self.model._meta.app_label
             if self.label is None:
-                self.label = capfirst(self.model._meta.verbose_name_plural)
+                #~ self.label = capfirst(self.model._meta.verbose_name_plural)
+                self.label = self.init_label()
             
         #~ logger.debug("Report.__init__() %s", self)
         actors.Actor.__init__(self)
@@ -924,6 +922,9 @@ class Report(actors.Actor): #,base.Handled):
     def spawn(cls,suffix,**kw):
         kw['app_label'] = cls.app_label
         return type(cls.__name__+str(suffix),(cls,),kw)
+        
+    def init_label(self):
+        return self.model._meta.verbose_name_plural
         
     def column_choices(self):
         return [ de.name for de in self.data_elems() ]
