@@ -60,7 +60,9 @@ class Serializer(base.Serializer):
             self.stream.write('# -*- coding: UTF-8 -*-\n\n')
             #~ self.stream.write('# Created using Lino version %s\n' % lino.__version__)
             self.stream.write('SOURCE_VERSION = %r\n' % lino.__version__)
-            self.stream.write('from lino.utils import i2d\n')
+            self.stream.write('from datetime import datetime as dt\n')
+            self.stream.write('from datetime import time,date\n')
+            #~ self.stream.write('from lino.utils import i2d\n')
             self.stream.write('from lino.utils.mti import insert_child\n')
             self.stream.write('from lino.tools import resolve_model\n')
         #~ model = queryset.model
@@ -172,9 +174,17 @@ class Serializer(base.Serializer):
         if value is None:
         #~ if value is None or value is NOT_PROVIDED:
             return 'None'
+        if isinstance(field,models.DateTimeField):
+            d = value
+            return 'dt(%d,%d,%d,%d,%d,%d)' % (
+              d.year,d.month,d.day,d.hour,d.minute,d.second)
+        if isinstance(field,models.TimeField):
+            d = value
+            return 'time(%d,%d,%d)' % (d.hour,d.minute,d.second)
         if isinstance(field,models.DateField):
             d = value
-            return 'i2d(%4d%02d%02d)' % (d.year,d.month,d.day)
+            return 'date(%d,%d,%d)' % (d.year,d.month,d.day)
+            #~ return 'i2d(%4d%02d%02d)' % (d.year,d.month,d.day)
         if isinstance(value,(float,Decimal)):
             return repr(str(value))
         if isinstance(value,(int,long)):

@@ -690,11 +690,17 @@ class TimeFieldElement(FieldElement):
     
   
 class DateTimeFieldElement(FieldElement):
-    value_template = "new Lino.DateTimeField(%s)"
-    data_type = 'date' # for store column
+    #~ value_template = "new Lino.DateTimeField(%s)"
+    value_template = "new Ext.form.DisplayField(%s)"
+    #~ data_type = 'date' # for store column
     sortable = True
     preferred_width = 16
     #~ filter_type = 'date'
+    
+    def __init__(self,lh,field,**kw):
+        FieldElement.__init__(self,lh,field,**kw)
+        if self.editable:
+            value_template = "new Lino.DateTimeField(%s)"
     
 class DateFieldElement(FieldElement):
     value_template = "new Lino.DateField(%s)"
@@ -1508,8 +1514,8 @@ _FIELD2ELEM = (
     (models.TextField, TextFieldElement), # also fields.RichTextField
     (models.CharField, CharFieldElement),
     (fields.MonthField, MonthFieldElement),
-    (models.DateField, DateFieldElement),
     (models.DateTimeField, DateTimeFieldElement),
+    (models.DateField, DateFieldElement),
     (models.TimeField, TimeFieldElement),
     (models.IntegerField, IntegerFieldElement),
     (models.DecimalField, DecimalFieldElement),

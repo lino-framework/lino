@@ -451,6 +451,8 @@ Lino.DateField = Ext.extend(Ext.form.DateField,{
   });
 Lino.DateTimeField = Ext.extend(Ext.ux.form.DateTime,{
   dateFormat: '$settings.LINO.date_format_extjs',
+  timeFormat: '$settings.LINO.time_format_extjs',
+  //~ hiddenFormat: '$settings.LINO.date_format_extjs $settings.LINO.time_format_extjs'
   });
 Lino.URLField = Ext.extend(Ext.form.TriggerField,{
   triggerClass : 'x-form-search-trigger',
@@ -1519,7 +1521,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   },
   
   refresh : function(after) { 
-    //~ console.log('Lino.FormPanel.refresh()',this);
+    console.log('20110701 Lino.FormPanel.refresh()',this);
     if (this.current_record) {
         this.load_record_id(this.current_record.id,after);
     } else {
@@ -1530,6 +1532,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   do_when_clean : function(todo) {
     var this_ = this;
     if (this.form.isDirty()) {
+        console.log('20110701 do_when_clean() form is dirty');
         var config = {title:"$_('Confirmation')"};
         config.buttons = Ext.MessageBox.YESNOCANCEL;
         config.msg = "$_('Save changes to current record ?')";

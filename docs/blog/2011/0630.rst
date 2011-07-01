@@ -26,3 +26,5 @@ Ist aber noch nicht ganz fertig:
   
 En passant habe ich das bisherige setting `USE_GRIDFILTERS` 
 nach `lino.Lino.use_gridfilters` umbenannt. 
+
+Checkin 20110630 und Feierabend um 23.09 Uhr.

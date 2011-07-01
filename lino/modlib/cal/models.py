@@ -99,7 +99,7 @@ class Place(models.Model):
     name = models.CharField(_("Name"),max_length=200)
   
 
-class Component(mixins.AutoUser):
+class Component(mixins.AutoUser,mixins.CreatedModified):
     """
     The `user` field is the iCal:ORGANIZER
     """
@@ -109,9 +109,6 @@ class Component(mixins.AutoUser):
     summary = models.CharField(_("Summary"),max_length=200,blank=True) # iCal:SUMMARY
     description = fields.RichTextField(_("Description"),blank=True,format='html')
     access_class = AccessClass.field() # iCal:CLASS
-    
-    created = models.DateTimeField(auto_now_add=True)   # iCal:DTSTAMP
-    modified = models.DateTimeField(auto_now=True)   # iCal:LAST-MODIFIED
     sequence = models.IntegerField(_("Revision"),default=0)
     
 class Event(Component,contacts.PartnerDocument):

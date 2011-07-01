@@ -1,0 +1,34 @@
+20110701
+========
+
+Über DateTimeFields
+-------------------
+
+DateTimeField und TimeField wurden an verschiedenen Stellen noch nicht korrekt 
+verarbeitet, z.B. in ext_store, dpy,...)
+
+Das `Ext.ux.form.DateTime`-Feld von Jozef Sakáloš funktioniert schön. 
+Aber heute habe ich gemerkt, dass ich es bis auf weiteres nicht brauchen werde, 
+weil ich gar keine bearbeitbaren Timestamps (DateTimeField) habe.
+Da finde ich es eleganter, 
+nicht editierbare Timestamps wie die von
+:class:`lino.mixins.CreatedModified` 
+als einfache `Ext.form.DisplayField` anzuzeigen.
+
+Falls aber doch irgendwann mal jemand ein editierbares DateTimeField 
+definieren sollte, müsste das theoretisch auch funktionieren und als
+`Ext.ux.form.DateTime` gerendert werden.
+
+Zu bemerken auch, dass :attr:`lino.Lino.time_format_strftime` 
+ja keine Sekunden anzeigt. Momentan kann ich mir nicht vorstellen, 
+dass mal jemand Uhrzeiten mit einer größeren Genauigkeit 
+als Minuten eingeben will. 
+Timestamps werden deshalb bis auf weiteres nicht unter 
+Verwendung der lokaliserten date/time-Formate 
+sondern hardkodiert im ISO-Format angezeigt (YYYY-MM-DD hh:mm:ss).
+
+Checkboxen abschalten
+---------------------
+
+Upps, gerade sehe ich, dass man Checkboxen momentan (auch in :doc:`/releases/20110615`) 
+nicht abschalten konnte. Behoben.

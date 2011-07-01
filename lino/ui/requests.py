@@ -188,21 +188,22 @@ class ViewReportRequest(reports.ReportActionRequest):
         if settings.LINO.use_filterRow:
             exclude=dict()
             for f in rh.store.fields:
-                filterOption = request.REQUEST.get('filter[%s_filterOption]' % f.field.name)
-                if filterOption == 'empty':
-                    kw[f.field.name + "__isnull"] = True
-                elif filterOption == 'notempty':
-                    kw[f.field.name + "__isnull"] = False
-                else:
-                    filterValue = request.REQUEST.get('filter[%s]' % f.field.name)
-                    if filterValue:
-                        if not filterOption: filterOption = 'contains'
-                        if filterOption == 'contains':
-                            kw[f.field.name + "__icontains"] = filterValue
-                        elif filterOption == 'doesnotcontain':
-                            exclude[f.field.name + "__icontains"] = filterValue
-                        else:
-                            print "unknown filterOption %r" % filterOption
+                if f.field:
+                    filterOption = request.REQUEST.get('filter[%s_filterOption]' % f.field.name)
+                    if filterOption == 'empty':
+                        kw[f.field.name + "__isnull"] = True
+                    elif filterOption == 'notempty':
+                        kw[f.field.name + "__isnull"] = False
+                    else:
+                        filterValue = request.REQUEST.get('filter[%s]' % f.field.name)
+                        if filterValue:
+                            if not filterOption: filterOption = 'contains'
+                            if filterOption == 'contains':
+                                kw[f.field.name + "__icontains"] = filterValue
+                            elif filterOption == 'doesnotcontain':
+                                exclude[f.field.name + "__icontains"] = filterValue
+                            else:
+                                print "unknown filterOption %r" % filterOption
             if len(exclude):
                 kw.update(exclude=exclude)
         if settings.LINO.use_gridfilters:

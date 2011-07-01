@@ -66,6 +66,15 @@ class ByUser(reports.Report):
             req.master_instance = req.get_user()
 
 
+class CreatedModified(models.Model):
+    """Adds two timestamp fields `created` and `modified`."""
+    class Meta:
+        abstract = True
+    created = models.DateTimeField(auto_now_add=True,editable=False)   # iCal:DTSTAMP
+    modified = models.DateTimeField(auto_now=True,editable=False)   # iCal:LAST-MODIFIED
+        
+
+
 class Sequenced(models.Model):
     """Abstract base class for models that have a 
     sequence number `seqno`

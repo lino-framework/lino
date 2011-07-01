@@ -236,16 +236,39 @@ class Lino(object):
     date_format_extjs = 'd.m.Y'
     
     def parse_date(self,s):
-        """Convert a string formatted using :attr:`date_format_xxx` to a datetime.date instance.
+        """Convert a string formatted using 
+        :attr:`date_format_strftime` or  :attr:`date_format_extjs` 
+        into a datetime.date instance.
         See :doc:`/blog/2010/1130`.
         """
         ymd = reversed(map(int,s.split('.')))
         return datetime.date(*ymd)
+        
+    def parse_time(self,s):
+        """Convert a string formatted using 
+        :attr:`time_format_strftime` or  :attr:`time_format_extjs` 
+        into a datetime.time instance.
+        """
+        hms = map(int,s.split(':'))
+        return datetime.time(*hms)
+        
+    def parse_datetime(self,s):
+        """Convert a string formatted for :meth:`parse_date` 
+        and :meth:`parse_time` 
+        into a datetime.datetime instance.
+        """
+        #~ print "20110701 parse_datetime(%r)" % s
+        s2 = s.split()
+        if len(s2) != 2:
+            raise Exception("Invalid datetime value %r" % s)
+        #~ ymd = map(int,s2[0].split('-'))
+        #~ hms = map(int,s2[1].split(':'))
+        #~ return datetime.datetime(*(ymd+hms))
+        d = self.parse_date(s[0])
+        t = self.parse_time(s[1])
+        return datetime.combine(d,t)
 
     alt_date_formats_extjs = 'd/m/Y|Y-m-d'
-
-
-
     
     
     #~ preferred_build_method = 'pisa'

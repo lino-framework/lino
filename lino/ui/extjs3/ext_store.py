@@ -99,13 +99,17 @@ class StoreField(object):
             # means that the field wasn't part of the submitted form. don't touch it.
             return
         if v == '' and not self.field.empty_strings_allowed:
+            v = self.form2obj_default
+            # the following was wrong: if a field has been posted with empty string, 
+            # we don't want it to get the default value! 
+            # otherwise checkboxes with default value True can never be unset!
             # charfields have empty_strings_allowed
             # e.g. id field may be empty
-            # but don't do this for 
-            if self.field.default is NOT_PROVIDED:
-                v = None
-            else:
-                v = self.field.default
+            # but don't do this for other cases
+            #~ if self.field.default is NOT_PROVIDED:
+                #~ v = self.form2obj_default
+            #~ else:
+                #~ v = self.field.default
         else:
             v = self.parse_form_value(v,instance)
         if not is_new and self.field.primary_key and instance.pk is not None:
@@ -178,18 +182,11 @@ class DisabledFieldsStoreField(StoreField):
   
 class BooleanStoreField(StoreField):
   
-    form2obj_default = 'off'
+    form2obj_default = False # 'off'
     
     def __init__(self,field,**kw):
         kw['type'] = 'boolean'
         StoreField.__init__(self,field,**kw)
-        
-    def unused_extract_form_data(self,post_data):
-        """
-        special handling for checkboxes who unfortunately are not submitted when clear
-        no longer needed after 20110407
-        """
-        return post_data.get(self.field.name,'off')
         
     # as long as http://code.djangoproject.com/ticket/15497 is open
     def parse_form_value(self,v,obj):
@@ -211,23 +208,38 @@ class AutoStoreField(StoreField):
 
 class DateStoreField(StoreField):
   
-    def __init__(self,field,date_format,**kw):
+    def __init__(self,field,**kw):
     #~ def __init__(self,field,**kw):
         #~ self.date_format = date_format
         kw['type'] = 'date'
-        kw['dateFormat'] = date_format # 'Y-m-d'
+        kw['dateFormat'] = settings.LINO.date_format_extjs # date_format # 'Y-m-d'
         StoreField.__init__(self,field,**kw)
         
     def parse_form_value(self,v,obj):
         #~ print '20101024 DateStoreField 1', v
         if v:
-            v = reports.parse_js_date(v,self.field.name)
+            v = settings.LINO.parse_date(v) 
+            #~ v = reports.parse_js_date(v,self.field.name)
             #~ v = dateparser.parse(v,fuzzy=True)
             #~ ? v = datetime.date(v.year,v.month,v.day)
         else:
             v = None
         #~ print '20101024 DateStoreField 2', v
         return v
+
+class DateTimeStoreField(StoreField):
+  
+    def parse_form_value(self,v,obj):
+        if v:
+            return settings.LINO.parse_datetime(v) 
+        return None
+
+class TimeStoreField(StoreField):
+  
+    def parse_form_value(self,v,obj):
+        if v:
+            return settings.LINO.parse_time(v) 
+        return None
 
 
 class FileFieldStoreField(StoreField):
@@ -549,8 +561,12 @@ class Store:
             return OneToOneStoreField(fld)
         if isinstance(fld,models.ForeignKey):
             return ForeignKeyStoreField(fld)
+        if isinstance(fld,models.TimeField):
+            return TimeStoreField(fld)
+        if isinstance(fld,models.DateTimeField):
+            return DateTimeStoreField(fld)
         if isinstance(fld,models.DateField):
-            return DateStoreField(fld,settings.LINO.date_format_extjs)
+            return DateStoreField(fld)
             #~ return DateStoreField(fld,self.report.date_format)
         if isinstance(fld,models.BooleanField):
             return BooleanStoreField(fld)
@@ -585,6 +601,7 @@ class Store:
                     raise exceptions.ValidationError({f.field.name:e})
                 except Exception,e:
                     logger.warning("%s : %s", f.field.name,e)
+                    logger.exception(e)
                     raise 
         #~ return instance
             
