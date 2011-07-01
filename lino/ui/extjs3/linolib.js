@@ -1553,14 +1553,14 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   },
   
   goto_record_id : function(record_id) {
-    //~ console.log('Lino.FormPanel.goto_record_id()',record_id);
+    //~ console.log('20110701 Lino.FormPanel.goto_record_id()',record_id);
     //~ var this_ = this;
     //~ this.do_when_clean(function() { this_.load_record_id(record_id) }
     this.do_when_clean(this.load_record_id.createDelegate(this,[record_id]));
   },
   
   load_record_id : function(record_id,after) {
-    //~ console.log('load_record_id',record_id);
+    //~ console.log('20110701 load_record_id',record_id);
     var this_ = this;
     var p = {};
     Ext.apply(p,this.ww.config.base_params);
@@ -1581,7 +1581,8 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
                 recno 0 means "the requested pk exists but is not contained in the requested queryset".
                 This can happen e.g. after search_change on a detail.
               */
-              this_.goto_record_id(rec.navinfo.first);
+              //~ this_.goto_record_id(rec.navinfo.first);
+              this_.load_record_id(rec.navinfo.first);
           } else {
               this_.set_current_record(rec,after);
           }
@@ -1600,7 +1601,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     //~ this.config.main_panel.form.load(record);    
     if (record) {
       this.enable();
-      this.form.loadRecord(record) 
+      this.form.loadRecord(record);
       this.ww.window.setTitle(record.title);
       if (record.data.disabled_fields) {
         //~ console.log('20100930 disabled_fields =',record.data.disabled_fields);
@@ -2973,7 +2974,7 @@ Lino.DetailWrapper = Ext.extend(Lino.WindowWrapper, {
     return p;
   },
   save : function(after) {
-      //~ console.log('DetailWrapper.save()',this);
+      console.log('20110701 DetailWrapper.save()',this);
       var panel = this.main_item;
       var rec = panel.get_current_record();
       //~ console.log('todo: Lino.submit_detail and Lino.submit_insert send also action name from btn',btn,panel.get_base_params())
@@ -2987,6 +2988,8 @@ Lino.DetailWrapper = Ext.extend(Lino.WindowWrapper, {
           scope: panel,
           params: panel.get_base_params(), 
           success: function(form, action) {
+            //~ panel.form.setValues(rec.data);
+            //~ 20110701 panel.form.loadRecord(rec);
             Lino.notify(action.result.message);
             panel.refresh(after);
             //~ if (after) after(); else panel.refresh();

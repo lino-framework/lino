@@ -1224,7 +1224,9 @@ tinymce.init({
         elif field.choices:
             qs = field.choices
         elif isinstance(field,models.ForeignKey):
-            qs = field.rel.to._lino_model_report.request(self).get_queryset()
+            mr = field.rel.to._lino_model_report
+            #~ params = settings.LINO.default_report_params(mr)
+            qs = mr.request(self,**mr.default_params).get_queryset()
             #~ qs = get_default_qs(field.rel.to)
             #~ qs = field.rel.to.objects.all()
         else:

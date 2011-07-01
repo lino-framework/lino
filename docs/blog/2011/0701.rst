@@ -32,3 +32,58 @@ Checkboxen abschalten
 
 Upps, gerade sehe ich, dass man Checkboxen momentan (auch in :doc:`/releases/20110615`) 
 nicht abschalten konnte. Behoben.
+
+
+Checkin 20110701
+
+Standardfilter
+--------------
+
+Inaktive Personen nicht anzeigen in 
+:menuselection:`Kontakte --> Personen` und Auswahllisten.
+
+Ein allgemeiner Filter ist ja leicht zu machen, 
+einfach `Persons.filter`auf `dict(is_active=True)` setzen.
+Aber 
+    
+- Wenn ein zuvor sichtbarer Record durch die Änderung verschwindet, 
+  kommt nach dem Save momentan eine endlose Schleife von "Save changes to current record?"
+
+- wie mache ich es, 
+  dass der Benutzer die inaktiven Leute bei Bedarf dann doch sehen kann?
+  Indem ich eine GridConfig dafür erstelle? 
+  das wäre nicht ganz korrekt, denn das sollte eher eine 
+  Option in allen Gridconfigs sein...
+
+- Auch zeigt er momentan nicht mehr das Detail solcher versteckten Personen an, 
+  wenn ich von einem bestehenden ForeignKey darauf klicke.
+
+
+Die endlose Schleife von "Save changes to current record?" kam daher::
+
+    if (rec.navinfo && rec.navinfo.recno == 0) {
+        /* 
+          recno 0 means "the requested pk exists but is not contained in the requested queryset".
+          This can happen e.g. after search_change on a detail.
+        */
+        //~ this_.goto_record_id(rec.navinfo.first);
+        this_.load_record_id(rec.navinfo.first);
+
+Der einzige Unterschied zwischen `goto_record_id` und `load_record_id` ist, dass 
+ersterer nachfragt, ob gespeichert werden soll. Und nach einem submit success 
+wird die Form nicht automatisch auf clean zurück gesetzt.
+In diesem Sonderfall soll er das nie nachprüfen.
+
+Um die beiden anderen Probleme zu lösen, habe ich das neue Attribut 
+`lino.reports.Report.default_params` gemacht. 
+Für die Auswahllisten funktioniert das jetzt schon.
+Aber für die Befehle des Hauptmenüs muss ich mir noch was einfallen lassen.
+Das Menü arbeitet ja dann mit get_request_url und müsste wenn schon 
+das "is_active=true" in der URL mit angeben.
+Hmm...
+Das System ist übrigens sowieso auch ziemlich aufwendig.
+
+
+
+Checkin 20110701b
+

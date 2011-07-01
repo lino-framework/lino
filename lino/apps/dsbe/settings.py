@@ -41,6 +41,10 @@ class Lino(Lino):
     def configure(self,sc):
         super(Lino,self).configure(sc)
         
+    def default_report_params(self,rpt):
+        if str(rpt) == 'contacts.Persons':
+            return dict(is_active=True)
+        
     def get_site_menu(self,ui,user):
         from django.utils.translation import ugettext_lazy as _
         from lino.utils import perms
@@ -52,6 +56,7 @@ class Lino(Lino):
         m = main.add_menu("contacts",_("~Contacts"))
         m.add_action('contacts.Companies')
         m.add_action('contacts.Persons')
+        #~ m.add_action('contacts.Persons',label="Alle Personen",params={})
         m.add_action('dsbe.MySearches')
 
         if user is None:

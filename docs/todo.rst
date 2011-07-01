@@ -9,20 +9,10 @@ for which I hope for help from other people.
 Short-term
 ----------
 
-#.  Inaktive Personen sollten allgemein nicht angezeigt werden.
-    Ein allgemeiner Filter ist ja leicht zu machen, 
-    einfach `Persons.filter`auf `dict(is_active=True)` setzen.
-    Aber 
-    
-    - wie mache ich es, 
-      dass der Benutzer die inaktiven Leute bei Bedarf dann doch sehen kann?
-      Indem ich eine GridConfig dafür erstelle? 
-      das wäre nicht ganz korrekt, denn das sollte eher eine 
-      Option in allen Gridconfigs sein...
-    - Wenn ein zuvor sichtbarer Record durch die Änderung verschwindet, 
-      kommt nach dem Save momentan eine endlose Schleife von "Save changes to current record?"
-    - Auch zeigt er momentan nicht mehr das Detail solcher versteckten Personen an, 
-      wenn ich von einem bestenenden ForeignKey darauf klicke.
+#.  Standardfilter : Inaktive Personen nicht anzeigen in 
+    :menuselection:`Kontakte --> Personen` 
+    und Auswahllisten.
+    Sh. :doc:`/blog/2011/0701`
 
 #.  `AppyRtfBuildMethod` scheint nicht zu funktionieren.
 

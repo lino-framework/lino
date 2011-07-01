@@ -619,7 +619,7 @@ class Person(Partner,contacts.Person):
 class Persons(contacts.Persons):
     can_view = perms.is_authenticated
     app_label = 'contacts'
-    #~ filter = dict(is_active=True)
+    default_params = dict(is_active=True)
     #~ extra = dict(
       #~ select=dict(sort_name='lower(last_name||first_name)'),
       #~ order_by=['sort_name'])

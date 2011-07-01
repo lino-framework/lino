@@ -715,6 +715,10 @@ class Report(actors.Actor): #,base.Handled):
     base_queryset = None 
     "See :meth:`Report.get_queryset`"
     
+    default_params = {}
+    """See :doc:`/blog/2011/0701`.
+    """
+    
     model = None
     use_as_default_report = True
     order_by = None
