@@ -22,6 +22,8 @@ from django.utils.translation import ugettext_lazy as _
 #~ from django.contrib.contenttypes.models import ContentType
 #~ from django.contrib.contenttypes import generic
 from django.db import IntegrityError
+from django.utils.encoding import force_unicode
+
 
 from lino import fields, tools
 #~ from lino.utils.babel import default_language
@@ -162,7 +164,13 @@ class Note(mixins.TypedPrintable,mixins.Reminder):
     def site_setup(cls,lino):
         lino.NOTE_PRINTABLE_FIELDS = reports.fields_list(cls,
         '''date subject body language type event_type''')
-    
+        
+    def summary_row(self,ui,rr,**kw):
+        s = super(Note,self).summary_row(ui,rr)
+        #~ s = contacts.ContactDocument.summary_row(self,ui,rr)
+        if self.subject:
+            s += ' ' + cgi.escape(self.subject) 
+        return s
     
 def html_text(s):
     return '<div class="htmlText">' + s + '</div>'

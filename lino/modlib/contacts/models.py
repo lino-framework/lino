@@ -352,15 +352,27 @@ class PartnerDocument(models.Model):
             return self.company
         return self.person
         
+    #~ def summary_row(self,ui,rr,**kw):
+        #~ if self.person:
+            #~ if self.company:
+                #~ # s += ": " + ui.href_to(self.person) + " / " + ui.href_to(self.company)
+                #~ return ui.href_to(self.company) + ' ' + ugettext("attn:") + ' ' + ui.href_to(self.person)
+            #~ else:
+                #~ return ui.href_to(self.person)
+        #~ elif self.company:
+            #~ return ui.href_to(self.company)
+            
     def summary_row(self,ui,rr,**kw):
+        s = ui.href_to(self)
         if self.person:
             if self.company:
-                #~ s += ": " + ui.href_to(self.person) + " / " + ui.href_to(self.company)
-                return ui.href_to(self.company) + ' ' + ugettext("attn:") + ' ' + ui.href_to(self.person)
+                s += " (" + ui.href_to(self.person) + "/" + ui.href_to(self.company) + ")"
             else:
-                return ui.href_to(self.person)
+                s += " (" + ui.href_to(self.person) + ")"
         elif self.company:
-            return ui.href_to(self.company)
+            s += " (" + ui.href_to(self.company) + ")"
+        return s
+            
       
 
 class ContactDocument(PartnerDocument):

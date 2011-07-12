@@ -34,7 +34,7 @@ from django.http import HttpResponse, Http404
 from django import http
 from django.core import exceptions
 from django.utils import functional
-#~ from django.utils.encoding import force_unicode
+from django.utils.encoding import force_unicode
 
 from django.template.loader import get_template
 from django.template import RequestContext
@@ -1458,7 +1458,9 @@ tinymce.init({
         return self.build_url('api',obj._meta.app_label,obj.__class__.__name__,str(obj.pk),*args,**kw)
         
     def href_to(self,obj,text=None):
-        return self.href(self.get_detail_url(obj,fmt='detail'),text or cgi.escape(unicode(obj)))
+        return self.href(
+            self.get_detail_url(obj,fmt='detail'),
+            text or cgi.escape(force_unicode(obj)))
         #~ return '<a href="%s" target="_blank">%s</a>' % (self.get_detail_url(obj,fmt='detail'),unicode(obj))
 
     def href(self,url,text):

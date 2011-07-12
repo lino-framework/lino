@@ -85,10 +85,16 @@ class Reminder(AutoUser):
         # Keep in sync with auto types defined in lino.mixins.reminders
         REMINDER = 5
         
+        if self.reminder_text:
+            s = self.reminder_text
+        else:
+            s = _('due date reached')
+        
+        
         check_auto_task(
           REMINDER,self.user,
           self.reminder_date,
-          self.reminder_text,
+          s,
           self,
           alarm_value=self.delay_value,
           alarm_unit=delay2alarm(self.delay_type))
@@ -125,7 +131,7 @@ class Reminder(AutoUser):
             s = _('due date reached')
         return '<a href="%s">%s</a>&nbsp;: %s' % (url,unicode(self),cgi.escape(s))
 
-    @chooser(simple_values=True)
+    @chooser(simple_values=True,force_selection=False)
     def reminder_text_choices(self):
         return REMINDER_TEXT_CHOICES
     #~ reminder_text_choices.simple_values = True
@@ -135,7 +141,16 @@ class Reminder(AutoUser):
         #~ dblogger.warning("Would create reminder_text %r",text)
         #~ print text
         #~ return text
-    
+
+    def summary_row(self,ui,rr,**kw):
+        s = super(Reminder,self).summary_row(ui,rr)
+        #~ s = contacts.ContactDocument.summary_row(self,ui,rr)
+        if self.reminder_text:
+            s += ' <b>' + cgi.escape(self.reminder_text) + '</b> '
+        return s
+        
+
+
 class ReminderEntry:
     """
     The class of volatile objects that `get_reminders`is expected to yield.
@@ -174,16 +189,6 @@ class ReminderEntry:
         #~ return s
 
 
-def task2html(self,ui):
-    linkkw = {}
-    linkkw.update(fmt='detail')
-    url = ui.get_detail_url(self,**linkkw)
-    html = '<a href="%s">%s</a>&nbsp;: %s' % (url,unicode(self),
-        cgi.escape(force_unicode(self.summary)))
-    if self.target:
-        url = ui.get_detail_url(self.target,**linkkw)
-        html += " (%s)" % cgi.escape(force_unicode(self.target))
-    return html
       
 
 

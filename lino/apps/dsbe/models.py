@@ -1434,20 +1434,6 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,contact
             more.append(cgi.escape(_('Due date reached')))
         return s + '&nbsp;: ' + (', '.join(more))
         
-    def summary_row(self,ui,rr,**kw):
-        s = ''
-        if self.reminder_text:
-            s += '<b>' + cgi.escape(self.reminder_text) + '</b> '
-        s += ui.href_to(self)
-        if self.person:
-            if self.company:
-                s += "(" + ui.href_to(self.person) + "/" + ui.href_to(self.company) + ")"
-            else:
-                s += "(" + ui.href_to(self.person) + ")"
-        elif self.company:
-            s += "(" + ui.href_to(self.company) + ")"
-        return s
-        
     def dsbe_person(self):
         if self.person_id is not None:
             if self.person.coach2_id is not None:

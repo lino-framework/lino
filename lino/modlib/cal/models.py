@@ -12,6 +12,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+import cgi
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -45,12 +46,38 @@ class Component(mixins.AutoUser,mixins.Owned,mixins.CreatedModified):
     alarm_value = models.IntegerField(_("Alarm value"),null=True,blank=True)
     alarm_unit = DurationUnit.field(null=True,blank=True)
     
+    def __unicode__(self):
+        return self._meta.verbose_name + " #" + str(self.pk)
+        
+    def summary_row(self,ui,rr,**kw):
+        #~ linkkw = {}
+        #~ linkkw.update(fmt='detail')
+        #~ url = ui.get_detail_url(self,**linkkw)
+        #~ html = '<a href="%s">#%s</a>&nbsp;: %s' % (url,self.pk,
+            #~ cgi.escape(force_unicode(self.summary)))
+        html = ui.href_to(self)
+        if self.owner:
+            html += " (%s)" % reports.summary_row(self.owner,ui,rr)
+            #~ m = getattr(self.owner,'summary_row',None)
+            #~ if m:
+                #~ html = m(ui,rr,**kw)
+            #~ else:
+                #~ # url = ui.get_detail_url(self.owner,**linkkw)
+                #~ # s = '<a href="%s">%s</a>' % (url,cgi.escape(force_unicode(self.owner)))
+                #~ html = ui.href_to(self.owner)
+        if self.summary:
+            html += '&nbsp;: %s' % cgi.escape(force_unicode(self.summary))
+            #~ html += ui.href_to(self,force_unicode(self.summary))
+        return html
+        
     
     
 #~ class Event(Component,contacts.PartnerDocument):
 class Event(Component):
   
-    #~ class Meta:
+    class Meta:
+        verbose_name = _("Event")
+        verbose_name_plural = _("Events")
         #~ abstract = True
         
     date = models.DateField(
@@ -76,7 +103,9 @@ class Event(Component):
 #~ class Task(Component,contacts.PartnerDocument):
 class Task(Component):
   
-    #~ class Meta:
+    class Meta:
+        verbose_name = _("Task")
+        verbose_name_plural = _("Tasks")
         #~ abstract = True
         
     due_date = models.DateField(
@@ -95,14 +124,13 @@ class Task(Component):
         if self.auto_type:
             return settings.LINO.TASK_AUTO_FIELDS
         return []
+        
 
     @classmethod
     def site_setup(cls,lino):
         lino.TASK_AUTO_FIELDS= reports.fields_list(cls,
             '''due_date due_time summary owner_type owner_id''')
 
-    def summary_row(self,ui,rr,**kw):
-        return self.summary
 
 class Places(reports.Report):
     model = Place

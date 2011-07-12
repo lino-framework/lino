@@ -14,6 +14,7 @@
 import logging
 logger = logging.getLogger(__name__)
 
+import cgi
 import os
 import traceback
 import codecs
@@ -26,7 +27,7 @@ import yaml
 from django.conf import settings
 from django.utils.translation import ugettext as _
 from django.utils.text import capfirst
-from django.utils.encoding import force_unicode 
+from django.utils.encoding import force_unicode
 
 from django.db import models
 from django.db.models.query import QuerySet
@@ -87,6 +88,17 @@ def fields_list(model,field_names):
     return tuple([get_field(model,n) for n in field_names.split()])
 
 
+def summary_row(obj,ui,rr,**kw):
+    m = getattr(obj,'summary_row',None)
+    if m:
+        return m(ui,rr,**kw)
+    return ui.href_to(obj)
+    #~ linkkw = {}
+    #~ linkkw.update(fmt='detail')
+    #~ url = ui.get_detail_url(obj,**linkkw)
+    #~ return '<a href="%s">%s</a>' % (url,cgi.escape(force_unicode(obj)))
+  
+
 def summary(ui,rr,separator=', ',max_items=5,before='',after='',**kw):
     """
     Returns this report as a unicode string.
@@ -104,7 +116,8 @@ def summary(ui,rr,separator=', ',max_items=5,before='',after='',**kw):
         else:
             s += before
         n += 1
-        s += i.summary_row(ui,rr,**kw)
+        s += summary_row(i,ui,rr,**kw)
+        #~ s += i.summary_row(ui,rr,**kw)
         if n >= max_items:
             s += separator + '...' + after
             return s
