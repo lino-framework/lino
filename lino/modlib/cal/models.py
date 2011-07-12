@@ -12,94 +12,26 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.contenttypes.models import ContentType
+from django.utils.encoding import force_unicode
 
 from lino import mixins
 from lino import fields
 from lino import reports
 
-from lino.utils.choicelists import ChoiceList
 from lino.modlib.contacts import models as contacts
 
-class EventStatus(ChoiceList):
-    """A list of possible values for the `status` field of an :class:`Event`.
-    """
-    label = _("Event status")
-    
-add = EventStatus.add_item
-add('0',en=u"tentative",de=u"Vorschlag",   fr=u"proposition")
-add('1',en=u"confirmed",de=u"bestätigt",   fr=u"confirmé")
-add('2',en=u"cancelled",de=u"storniert",   fr=u"annulé")
-
-class TaskStatus(ChoiceList):
-    """A list of possible values for the `status` field of a :class:`Task`.
-    """
-    label = _("Taskstatus")
-    
-add = TaskStatus.add_item
-add('0',en=u"needs action",de=u"zu erledigen",   fr=u"à traîter")
-add('1',en=u"in process",de=u"begonnen",   fr=u"commencée")
-add('2',en=u"completed",de=u"erledigt",   fr=u"complétée")
-add('3',en=u"cancelled",de=u"storniert",   fr=u"annulée")
-
-
-class DurationUnit(ChoiceList):
-    """A list of possible values for the `duration_unit` field of an :class:`Event`.
-    """
-    label = _("Duration unit")
-    
-add = DurationUnit.add_item
-add('s',en=u"seconds",de=u"Sekunden",   fr=u"secondes")
-add('m',en=u"minutes",de=u"Minuten",   fr=u"minutes")
-add('h',en=u"hours",de=u"Stunden",   fr=u"heures")
-add('D',en=u"days",de=u"Tage",   fr=u"jours")
-add('W',en=u"weeks",de=u"Wochen",   fr=u"semaines")
-add('M',en=u"months",de=u"Monate",   fr=u"mois")
-add('Y',en=u"years",de=u"Jahre",   fr=u"années")
-
-
-
-class Priority(ChoiceList):
-    """
-    A list of possible values for the `CLASS` 
-    property of a calendar component.
-    """
-    label = _("Access class")
-    
-add = Priority.add_item
-add('0',en=u"undefined",de=u"nicht angegeben",   fr=u"non spécifiée")
-add('1',en=u"high",de=u"hoch",   fr=u"élevée")
-add('5',en=u"normal",de=u"normal",   fr=u"normale")
-add('9',en=u"low",de=u"niedrig",   fr=u"basse")
-
-#~ add('1',en=u"very urgent",de=u"sehr dringend",   fr=u"très urgent")
-#~ add('2',en=u"quite urgent",de=u"recht dringend",   fr=u"relativement urgent")
-#~ add('3',en=u"relatively urgent",de=u"ziemlich dringend",   fr=u"relativement urgent")
-#~ add('4',en=u"relatively urgent",de=u"ziemlich dringend",   fr=u"relativement urgent")
-#~ add('5',en=u"normal",de=u"normal",   fr=u"normal")
-#~ add('6',en=u"not very urgent",de=u"nicht sehr niedrig",   fr=u"pas très urgent")
-#~ add('7',en=u"not urgent",de=u"nicht dringend",   fr=u"pas urgent")
-#~ add('8',en=u"not urgent",de=u"nicht dringend",   fr=u"pas urgent")
-#~ add('9',en=u"not urgent at all",de=u"überhaupt nicht dringend",   fr=u"pas urgent du tout")
-
-class AccessClass(ChoiceList):
-    """
-    A list of possible values for the `CLASS` 
-    property of a calendar component.
-    """
-    label = _("Access class")
-    
-add = AccessClass.add_item
-add('0',en=u"Public",de=u"Öffentlich",   fr=u"Public")
-add('1',en=u"Private",de=u"Privat",   fr=u"Privé")
-add('2',en=u"Confidential",de=u"Vertraulich",   fr=u"Confidentiel")
+from lino.modlib.cal.utils import EventStatus, \
+    TaskStatus, DurationUnit, Priority, AccessClass
 
 class Place(models.Model):
     name = models.CharField(_("Name"),max_length=200)
   
 
-class Component(mixins.AutoUser,mixins.CreatedModified):
+class Component(mixins.AutoUser,mixins.Owned,mixins.CreatedModified):
     """
     The `user` field is the iCal:ORGANIZER
     """
@@ -110,8 +42,13 @@ class Component(mixins.AutoUser,mixins.CreatedModified):
     description = fields.RichTextField(_("Description"),blank=True,format='html')
     access_class = AccessClass.field() # iCal:CLASS
     sequence = models.IntegerField(_("Revision"),default=0)
+    alarm_value = models.IntegerField(_("Alarm value"),null=True,blank=True)
+    alarm_unit = DurationUnit.field(null=True,blank=True)
     
-class Event(Component,contacts.PartnerDocument):
+    
+    
+#~ class Event(Component,contacts.PartnerDocument):
+class Event(Component):
   
     #~ class Meta:
         #~ abstract = True
@@ -136,7 +73,8 @@ class Event(Component,contacts.PartnerDocument):
     repeat_value = models.IntegerField(_("Repeat every"),null=True,blank=True) # iCal:DURATION
     repeat_unit = DurationUnit.field(verbose_name=_("Repeat every"),null=True,blank=True) # iCal:DURATION
 
-class Task(Component,contacts.PartnerDocument):
+#~ class Task(Component,contacts.PartnerDocument):
+class Task(Component):
   
     #~ class Meta:
         #~ abstract = True
@@ -150,7 +88,21 @@ class Task(Component,contacts.PartnerDocument):
     done = models.BooleanField(_("Done"),default=False) # iCal:COMPLETED
     percent = models.IntegerField(_("Duration value"),null=True,blank=True) # iCal:PERCENT
     status = TaskStatus.field(null=True,blank=True) # iCal:STATUS
+    
+    auto_type = models.IntegerField(null=True,blank=True,editable=False) 
+    
+    def disabled_fields(self,request):
+        if self.auto_type:
+            return settings.LINO.TASK_AUTO_FIELDS
+        return []
 
+    @classmethod
+    def site_setup(cls,lino):
+        lino.TASK_AUTO_FIELDS= reports.fields_list(cls,
+            '''due_date due_time summary owner_type owner_id''')
+
+    def summary_row(self,ui,rr,**kw):
+        return self.summary
 
 class Places(reports.Report):
     model = Place
@@ -161,21 +113,27 @@ class Events(reports.Report):
     
 class Tasks(reports.Report):
     model = Task
-    column_names = 'summary status done *'
+    column_names = 'due_date summary status done *'
     
-class EventsByPerson(Events):
-    fk_name = 'person'
+class EventsByOwner(Events):
+    fk_name = 'owner'
     
-class EventsByCompany(Events):
-    fk_name = 'company'
-    #~ column_names = 'date time summary status *'
+#~ class EventsByPerson(Events):
+    #~ fk_name = 'person'
+    
+#~ class EventsByCompany(Events):
+    #~ fk_name = 'company'
     
 
-class TasksByPerson(Tasks):
-    fk_name = 'person'
+class TasksByOwner(Tasks):
+    fk_name = 'owner'
+    hidden_columns = set('owner_id owner_type'.split())
+
+#~ class TasksByPerson(Tasks):
+    #~ fk_name = 'person'
     
-class TasksByCompany(Tasks):
-    fk_name = 'company'
+#~ class TasksByCompany(Tasks):
+    #~ fk_name = 'company'
     
 class MyEvents(mixins.ByUser):
     model = Event
@@ -186,6 +144,25 @@ class MyEvents(mixins.ByUser):
 class MyTasks(mixins.ByUser):
     model = Task
     label = _("My Tasks")
-    order_by = ["date","time"]
+    order_by = ["due_date","due_time"]
     column_names = 'summary status done *'
+    
+    
+def check_auto_task(autotype,user,date,summary,owner,**kw):
+    if date:
+        ot = ContentType.objects.get_for_model(owner.__class__)
+        kw.setdefault('user',user)
+        obj,created = Task.objects.get_or_create(
+          defaults=kw,
+          owner_id=owner.pk,
+          owner_type=ot,
+          auto_type=autotype)
+        obj.user = user
+        obj.summary = force_unicode(summary)
+        obj.due_date = date
+        #~ for k,v in kw.items():
+            #~ setattr(obj,k,v)
+        #~ obj.due_date = date - delta
+        #~ print 20110712, date, date-delta, obj2str(obj,force_detailed=True)
+        obj.save()
     

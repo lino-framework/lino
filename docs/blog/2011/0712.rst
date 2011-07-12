@@ -40,4 +40,12 @@ In der nächsten Version haben wir also im neuen Menü "Listings"
 nicht nur das neue Listing "Situation Verträge", sondern auch 
 ein Listing "Kontrollliste". 
 
+Checkin 20110712a.
 
+Calendar module replaces Reminders
+----------------------------------
+
+The integration of lino.modlib.cal over the (soon obsolete) 
+get_reminders system is almost finished.
+
+Checkin 20110712b.

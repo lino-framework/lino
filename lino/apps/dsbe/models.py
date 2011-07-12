@@ -63,8 +63,10 @@ from lino.utils.choicelists import ChoiceList
 from lino.utils import mti
 from lino.mixins.printable import DirectPrintAction
 from lino.mixins.reminder import ReminderEntry
+from lino.tools import obj2str
 
 from lino.modlib.countries.models import CountryCity
+from lino.modlib.cal.models import DurationUnit, check_auto_task
 
 # not used here, but these modules are required in INSTALLED_APPS, 
 # and other code may import them using 
@@ -519,8 +521,15 @@ class Person(Partner,contacts.Person):
             #~ print "Person.clean()", self
             if self.job_office_contact.person == self:
                 raise ValidationError(_("Circular reference"))
-                
+        #~ self.save_auto_tasks()
         super(Person,self).clean()
+        
+        
+    def save(self,*args,**kw):
+        super(Person,self).save(*args,**kw)
+        self.save_auto_tasks()
+        
+        
         
 
     def card_type_text(self,request):
@@ -536,8 +545,45 @@ class Person(Partner,contacts.Person):
         "Used by DirectPrintAction"
         return self.language
         
+        
     def save_auto_tasks(self):
-        pass
+      
+        # These constants must be unique for the whole Lino Site.
+        # Keep in sync with auto types defined in lino.mixins.reminders
+        CARD_VALID_UNTIL = 1
+        UNAVAILABLE_UNTIL = 2
+        WORK_PERMIT_SUSPENDED_UNTIL = 4
+        COACHED_UNTIL = 4
+        
+        user = self.coach2 or self.coach1
+        check_auto_task(
+          CARD_VALID_UNTIL,user,
+          self.card_valid_until,
+          _("eID card expires"),
+          self,
+          alarm_value=2,alarm_unit=DurationUnit.months)
+          
+        check_auto_task(
+          UNAVAILABLE_UNTIL,user,
+          self.unavailable_until,
+          _("becomes available again"),
+          self,
+          alarm_value=1,alarm_unit=DurationUnit.months)
+          
+        check_auto_task(
+          WORK_PERMIT_SUSPENDED_UNTIL,user,
+          self.work_permit_suspended_until,
+          _("work permit suspension ends"),
+          self,
+          alarm_value=1,alarm_unit=DurationUnit.months)
+          
+        check_auto_task(
+          COACHED_UNTIL,user,
+          self.coached_until,
+          _("coaching ends"),
+          self,
+          alarm_value=1,alarm_unit=DurationUnit.months)
+          
         
     @classmethod
     def get_reminders(model,ui,user,today,back_until):

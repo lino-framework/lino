@@ -39,7 +39,7 @@ def resolve_action(spec,app_label=None):
         actor = get_actor(ACTOR_SEP.join(s[0:2]))
         if actor is None:
             model = models.get_model(s[0],s[1],False)
-            print "20110712 actor is None, model is", model, s
+            #~ print "20110712 actor is None, model is", model, s
             if model is None:
                 return None
             actor = model._lino_model_report

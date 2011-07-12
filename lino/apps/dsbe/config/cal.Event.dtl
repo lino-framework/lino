@@ -5,7 +5,7 @@
 main = 
   date time end_date end_time
   summary:40 status created modified
-  person company place 
+  owner place 
   priority access_class status
   transparent duration_value duration_unit repeat_value repeat_unit
   description

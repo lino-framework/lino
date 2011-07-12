@@ -33,6 +33,7 @@ from lino.core import actors
 from lino.mixins import printable
 from lino.utils import perms
 #~ from lino import choices_method, simple_choices_method
+from lino.tools import obj2str, sorted_models_list
 
 class SiteConfig(models.Model):
     # moved to contacts.models:
@@ -99,7 +100,6 @@ class ContentTypes(reports.Report):
     
     
     
-from lino.tools import obj2str, sorted_models_list
   
 class DataControlListing(printable.Listing):
     """Performs a "soft integrity test" on the database. 

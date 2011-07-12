@@ -23,6 +23,9 @@ from lino.utils.babel import dtosl
 
 from lino import reports
 
+from lino.modlib.cal.utils import DurationUnit
+
+
 REMINDER_TEXT_CHOICES = [
   _("test"),
   _("must check"),
@@ -48,6 +51,12 @@ def time_delta(delay_type,delay_value):
         #~ return datetime.timedelta(years=delay_value)
 
   
+def delay2alarm(delay_type):
+    if delay_type == 'D': return DurationUnit.days
+    if delay_type == 'W': return DurationUnit.weeks
+    if delay_type == 'M': return DurationUnit.months
+    if delay_type == 'Y': return DurationUnit.years
+      
 
 
 class Reminder(AutoUser):
@@ -68,7 +77,26 @@ class Reminder(AutoUser):
         verbose_name=_("Done"),
         default=False)
       
+    def save_auto_tasks(self):
       
+        from lino.modlib.cal.models import check_auto_task
+      
+        # These constants must be unique for the whole Lino Site.
+        # Keep in sync with auto types defined in lino.mixins.reminders
+        REMINDER = 5
+        
+        check_auto_task(
+          REMINDER,self.user,
+          self.reminder_date,
+          self.reminder_text,
+          self,
+          alarm_value=self.delay_value,
+          alarm_unit=delay2alarm(self.delay_type))
+          
+    def save(self,*args,**kw):
+        super(Reminder,self).save(*args,**kw)
+        self.save_auto_tasks()
+        
     @classmethod
     def get_reminders(model,ui,user,today,back_until):
         """
@@ -145,7 +173,81 @@ class ReminderEntry:
             #~ s += '&nbsp;: ' + cgi.escape(self.text)
         #~ return s
 
+
+def task2html(self,ui):
+    linkkw = {}
+    linkkw.update(fmt='detail')
+    url = ui.get_detail_url(self,**linkkw)
+    html = '<a href="%s">%s</a>&nbsp;: %s' % (url,unicode(self),
+        cgi.escape(force_unicode(self.summary)))
+    if self.target:
+        url = ui.get_detail_url(self.target,**linkkw)
+        html += " (%s)" % cgi.escape(force_unicode(self.target))
+    return html
+      
+
+
 def reminders_summary(ui,user,days_back=None,**kw):
+    """
+    Return a HTML summary of all open reminders for this user
+    """
+    from lino.modlib.cal.models import Task
+    date_from = datetime.date.today()
+    if days_back is None:
+        back_until = None
+    else:
+        back_until = date_from - datetime.timedelta(days=days_back)
+    
+    past = {}
+    future = {}
+    #~ days = {}
+    objects = []
+    def add(rem):
+        if rem.due_date < date_from:
+            lookup = past
+        else:
+            lookup = future
+        day = lookup.get(rem.due_date,None)
+        if day is None:
+            day = [rem]
+            lookup[rem.due_date] = day
+        else:
+            day.append(rem)
+            
+    filterkw = { 'due_date__lte' : date_from }
+    if back_until is not None:
+        filterkw.update({ 
+            'due_date__gte' : back_until
+        })
+    filterkw.update(user=user)
+            
+    for task in Task.objects.filter(**filterkw).order_by('due_date'):
+        add(task)
+        
+    def loop(lookup,reverse):
+        sorted_days = lookup.keys()
+        sorted_days.sort()
+        if reverse: 
+            sorted_days.reverse()
+        for day in sorted_days:
+            yield '<h3>'+dtosl(day) + '</h3>'
+            yield reports.summary(ui,lookup[day],**kw)
+            
+    #~ cells = ['Ausblick'+':<br>',cgi.escape(u'Rückblick')+':<br>']
+    cells = [
+      cgi.escape(_('Upcoming reminders')) + ':<br>',
+      cgi.escape(_('Past reminders')) + ':<br>'
+    ]
+    for s in loop(future,False):
+        cells[0] += s
+    for s in loop(past,True):
+        cells[1] += s
+    s = ''.join(['<td valign="top" bgcolor="#eeeeee" width="30%%">%s</td>' % s for s in cells])
+    s = '<table cellspacing="3px" bgcolor="#ffffff"><tr>%s</tr></table>' % s
+    s = '<div class="htmlText">%s</div>' % s
+    return s
+
+def old_reminders_summary(ui,user,days_back=None,**kw):
     """
     Return a HTML summary of all open reminders for this user
     """

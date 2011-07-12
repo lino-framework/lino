@@ -392,6 +392,7 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     p.birth_date = i2d(19810601)
     p.coached_from = None
     p.coached_until = i2d(20101031)
+    p.unavailable_until = i2d(20110712)
     p.coach1 = User.objects.get(username='root')
     p.sex = SEX_MALE
     p.national_id = '931229 211-83'

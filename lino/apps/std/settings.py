@@ -149,6 +149,7 @@ MIDDLEWARE_CLASSES = [
     'lino.modlib.users.middleware.RemoteUserMiddleware',
     'django.middleware.doc.XViewMiddleware',
     #'lino.utils.editing.EditingMiddleware',
+    'lino.utils.ajax.AjaxExceptionResponse',
 ]
 
 

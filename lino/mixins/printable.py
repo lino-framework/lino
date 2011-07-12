@@ -678,7 +678,7 @@ class Listing(Printable):
     def footer(self):
         html = '<td align="left">%s</td>' % 'left footer'
         html += '<td align="right">Page X of Y</td>'
-        html = '<table><tr>%s</tr></table>' % html
+        html = '<table width="100%%"><tr>%s</tr></table>' % html
         return html
         
     def body(self):

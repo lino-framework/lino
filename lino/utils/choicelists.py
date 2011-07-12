@@ -105,7 +105,7 @@ class ChoiceList(object):
     @classmethod
     def add_item(cls,value,ref=None,**kw):
         if cls is ChoiceList:
-            raise Exception("Cannot define items on th base class")
+            raise Exception("Cannot define items on the base class")
         i = babel.BabelChoice(value,**kw)
         cls.choices.append((i,unicode(i)))
         assert not cls.items_dict.has_key(value)
