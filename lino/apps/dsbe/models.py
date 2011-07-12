@@ -33,6 +33,10 @@ from django.utils.encoding import force_unicode
 #~ logger.debug(__file__+' : started')
 #~ from django.utils import translation
 
+
+
+
+
 from lino import reports
 #~ from lino import layouts
 from lino.utils import perms
@@ -70,6 +74,35 @@ from lino.modlib.properties.models import Property
 from lino.modlib.notes.models import NoteType
 from lino.modlib.countries.models import Country, City
 
+def is_valid_niss(national_id):
+    try:
+        niss_validator(national_id)
+        return True
+    except ValidationError:
+        return False
+        
+def niss_validator(national_id):
+    """
+    Checks whether the specified `national_id` is a valid 
+    Belgian NISS (No. d'identification de sécurité sociale).
+    """
+    if not national_id:
+        return
+    if len(national_id) != 13:
+        raise ValidationError(u'Invalid Belgian NISS %r (length)' % national_id)
+    xtest = national_id[:6] + national_id[7:10]
+    if national_id[6] == "=":
+        xtest = "2" + xtest
+    try:
+        xtest = int(xtest)
+    except ValueError:
+        raise ValidationError(u'Invalid Belgian NISS %r (value)' % national_id)
+    xtest = abs((xtest-97*(int(xtest/97)))-97)
+    if xtest == 0:
+        xtest = 97
+    if xtest != int(national_id[11:13]):
+        raise ValidationError("Invalid Belgian NISS %r (checkdigit)" 
+            % national_id)
 
 
 SCHEDULE_CHOICES = {
@@ -341,8 +374,11 @@ class Person(Partner,contacts.Person):
         blank=True,null=True,
         verbose_name=_("Civil state"),
         choices=CIVIL_STATE_CHOICES) 
-    national_id = models.CharField(max_length=200,blank=True,verbose_name=_("National ID"))
-    
+    national_id = models.CharField(max_length=200,
+        blank=True,verbose_name=_("National ID")
+        #~ ,validators=[niss_validator]
+        )
+        
     health_insurance = models.ForeignKey("contacts.Company",blank=True,null=True,
         verbose_name=_("Health insurance"),related_name='health_insurance_for')
     pharmacy = models.ForeignKey("contacts.Company",blank=True,null=True,
@@ -470,15 +506,22 @@ class Person(Partner,contacts.Person):
     def __unicode__(self):
         return u"%s (%s)" % (self.name,self.pk)
         
+    def soft_integrity_test(self):
+        msgs = []
+        try:
+            niss_validator(self.national_id)
+        except ValidationError,e:
+            msgs.append(unicode(e))
+        return msgs
+          
     def clean(self):
         if self.job_office_contact:
             #~ print "Person.clean()", self
             if self.job_office_contact.person == self:
                 raise ValidationError(_("Circular reference"))
+                
         super(Person,self).clean()
         
-    #~ full_name = property(contacts.Person.get_full_name)
-
 
     def card_type_text(self,request):
         if self.card_type:
@@ -492,6 +535,9 @@ class Person(Partner,contacts.Person):
     def get_print_language(self,pm):
         "Used by DirectPrintAction"
         return self.language
+        
+    def save_auto_tasks(self):
+        pass
         
     @classmethod
     def get_reminders(model,ui,user,today,back_until):

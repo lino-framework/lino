@@ -57,8 +57,9 @@ Company = resolve_model('contacts.Company')
 
 def store(kw,**d):
     for k,v in d.items():
-        #~ if v is not None:
-        if v:
+        if v is not None:
+        # see :doc:`/blog/2011/0711`
+        #~ if v:
             kw[k] = v
 
 #~ def convert_username(name):

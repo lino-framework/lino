@@ -182,6 +182,10 @@ As long as nobody protests, I'll save some time by writing in German.
   
 .. |Jul| replace::  **July**
   |br| 
+  04 05 06 07 08
+  |br| 
+  :doc:`11 <0711>`
+  :doc:`12 <0712>`
   |br| 
   |br| 
   |br|  	

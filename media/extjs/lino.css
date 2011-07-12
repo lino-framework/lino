@@ -100,6 +100,14 @@ body.mceNonEditable {
 	margin-top:0px;
 	margin-bottom:0px;
 	}
+.htmlText ol {
+	margin-top:3px;
+	margin-left:20px;
+	margin-bottom:3px;
+	list-style-type: decimal; 
+	list-style-image: none; 
+	list-style-position: outside;
+	}
 .htmlText ul {
 	margin-top:3px;
 	margin-left:20px;

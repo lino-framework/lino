@@ -385,6 +385,7 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     p.coached_until = i2d(20101031)
     p.coach1 = User.objects.get(username='root')
     p.sex = SEX_MALE
+    p.national_id = 'INVALID-45'
     p.save()
 
     p = Person.objects.get(name=u"Bastiaensen Laurent")
@@ -393,6 +394,7 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     p.coached_until = i2d(20101031)
     p.coach1 = User.objects.get(username='root')
     p.sex = SEX_MALE
+    p.national_id = '931229 211-83'
     p.save()
 
     p = Person.objects.get(name=u"Ausdemwald Alfons")

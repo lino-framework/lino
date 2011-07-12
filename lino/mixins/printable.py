@@ -697,7 +697,6 @@ class InitiateListing(reports.InsertRow):
     def get_action_title(self,rh):
         return u"Initiate Listing «%s»" % self.actor.model._meta.verbose_name
   
-    
         
 class Listings(reports.Report):
     model = Listing
@@ -705,7 +704,8 @@ class Listings(reports.Report):
     def setup_actions(self):
         #~ print 'lino.mixins.printable.Listings.setup_actions : ', self.model
         alist = []
-        if len(self.detail_layouts) > 0:
+        #~ if len(self.detail_layouts) > 0:
+        if True:
             self.detail_action = reports.ShowDetailAction(self)
             alist.append(self.detail_action)
             alist.append(reports.SubmitDetail())

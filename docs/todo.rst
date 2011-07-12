@@ -9,11 +9,20 @@ for which I hope for help from other people.
 Short-term
 ----------
 
-#.  Standardfilter : Inaktive Personen nicht anzeigen in 
-    :menuselection:`Kontakte --> Personen` 
-    und Auswahllisten.
-    Sh. :doc:`/blog/2011/0701`
+#.  :settings:`AUTHENTICATION_BACKENDS` prüfen: da steht noch was von django.contrib.auth 
+    drin.
 
+#.  Kann man in GroupWise externe ("remote") Kalender konfigurieren? 
+    Ich meine ähnlich wie `Google und Sunbird
+    <http://www.google.com/support/calendar/bin/answer.py?answer=99358#sunbird>`_
+    Lino könnte dann als CalDAV-Server fungieren.
+
+#.  Die bisherigen Reminders müssten nun durch "automatisch verwaltete" 
+    `cal.Task` ersetzt werden. Neues Feld `cal.Task.automatic` zeigt an, 
+    ob die Task automatisch generiert wurde und bei Änderung der 
+    Stammdaten ebenfalls verändert wird.
+    Aber geht das auch mit den Reminder-Funktionen von Notizen und Verträgen?
+    
 #.  `AppyRtfBuildMethod` scheint nicht zu funktionieren.
 
 #.  Textbausteine (im Text-Editor F1 drücken können).

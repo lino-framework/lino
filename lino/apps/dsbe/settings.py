@@ -88,6 +88,7 @@ class Lino(Lino):
         #~ if False:
         listings = main.add_menu("lst",_("~Listings"))
         listings.add_action('dsbe.ContractsSituation.listing')
+        listings.add_action('lino.DataControlListing.listing')
         #~ listings.add_instance_action(lst)
         #~ for lst in dsbe.FooListing.objects.all():
             #~ listings.add_instance_action(lst)

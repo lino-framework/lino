@@ -96,6 +96,34 @@ def update_site_config(**kw):
 
 class ContentTypes(reports.Report):
     model = contenttypes.ContentType
+    
+    
+    
+from lino.tools import obj2str, sorted_models_list
+  
+class DataControlListing(printable.Listing):
+    """Performs a "soft integrity test" on the database. 
+    Prints 
+    """
+    class Meta:
+        verbose_name = _("Data Control Listing") 
+        
+    def body(self):
+        items = []
+        for model in sorted_models_list():
+            m = getattr(model,'soft_integrity_test',None)
+            if m is not None:
+                for i in model.objects.all():
+                    msgs = i.soft_integrity_test()
+                    if msgs:
+                        items.append("%s : %s" % (obj2str(i),"<br/>".join(msgs)))
+        html = "<ol>"
+        html += "\n".join(["<li>%s</li>" % ln for ln in items])
+        html += "</ol>"
+        html = '<div class="htmlText">%s</div>' % html
+        return html
+    
+    
 
 
 

@@ -1,0 +1,58 @@
+20110711
+========
+
+:term:`watch_tim` ignorierte das Leeren eines Feldes
+----------------------------------------------------
+
+Problemmeldung eines Benutzers: 
+
+  Bei Person X habe ich folgenden kleinen Fehler entdeckt:
+
+  a) Aktualisierung Ausweis = gelungen
+  b) hab in TIM die FAX-Nummer gelöscht, in LINO bleibt sie aber hartnäckig stehen
+  
+  Wieso?
+
+Das kommt in der Tat durch folgendes Detail in :term:`watch_tim`:
+
+  def store(kw,**d):
+      for k,v in d.items():
+          if v:
+              kw[k] = v
+              
+Also wenn ein Feld leer ist, wird es einfach ignoriert. Das ist natürlich falsch. 
+Richtig muss es heißen::            
+
+  def store(kw,**d):
+      for k,v in d.items():
+          if v is not None:
+              kw[k] = v
+
+Was mich wundert, ist, dass das früher mal richtig war und ich es geändert habe. 
+Und ich erinnere mich nicht, weshalb. Falls Nebenwirkungen auftreten, 
+finde ich hoffentlich diesen Blogeintrag wieder.
+
+
+Planung get_reminders - cal.Task
+--------------------------------
+
+Also die bisherigen Reminders müssten nun durch "automatisch verwaltete"
+`cal.Task` ersetzt werden. Neues Feld `cal.Task.automatic` zeigt an, 
+ob die Task automatisch generiert wurde und bei Änderung der 
+Stammdaten ebenfalls verändert wird.
+Das Ganze muss sowohl mit Personen als auch mit den 
+Reminder-Funktionen von Notizen und Verträgen funktionieren.
+Vorgehensweise:
+Bei jedem save eines `reminders.Reminder` ruft Lino dessen 
+`save_auto_tasks` auf, die inhaltlich das Gleiche wie die 
+bestehende `get_reminders` macht, aber nicht für alle Records, 
+sondern nur für diesen einen (keine Klassenmethode, sondern 
+eine Instanzmethode). Und nicht indem sie volatile ReminderEntries yielded, sondern 
+die cal.Task aktualisiert. 
+`cal.Task.automatic` kennt folgende 
+hardcodierten Werte, die von `save_auto_tasks` gebraucht werden:
+
+(to be continued)
+
+
+

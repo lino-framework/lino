@@ -1,16 +1,16 @@
 # -*- coding: UTF-8 -*-
 ## Copyright 2010-2011 Luc Saffre
-## This file is part of the Lino-DSBE project.
-## Lino-DSBE is free software; you can redistribute it and/or modify
+## This file is part of the Lino project.
+## Lino is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
 ## the Free Software Foundation; either version 3 of the License, or
 ## (at your option) any later version.
-## Lino-DSBE is distributed in the hope that it will be useful, 
+## Lino is distributed in the hope that it will be useful, 
 ## but WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
 ## GNU General Public License for more details.
 ## You should have received a copy of the GNU General Public License
-## along with Lino-DSBE; if not, see <http://www.gnu.org/licenses/>.
+## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
 Starts a daemon that 
@@ -58,6 +58,8 @@ from lino.utils import dblogger
 from lino.tools import obj2str
 
 from lino.utils.daemoncommand import DaemonCommand
+
+#~ from lino.apps.dsbe.models  import is_valid_niss
 
 from lino.apps.dsbe.management.commands.initdb_tim import convert_sex, \
     ADR_id, country2kw, pxs2person, is_company
@@ -129,14 +131,18 @@ class Controller:
             dblogger.warning("%s:%s : DELETE failed (does not exist)",
                 kw['alias'],kw['id'])
             return
-        dblogger.log_delete(REQUEST,obj)
+        dblogger.log_deleted(REQUEST,obj)
         obj.delete()
         dblogger.debug("%s:%s (%s) : DELETE ok",kw['alias'],kw['id'],obj)
+        
+    #~ def prepare_data(self,data):
+        #~ return data
         
     def create_object(self,kw):
         return self.model()
                     
     def POST(self,**kw):
+        #~ self.prepare_data(kw['data'])
         obj = self.get_object(kw)
         if obj is None:
             obj = self.create_object(kw)
@@ -183,6 +189,13 @@ def ADR_applydata(obj,data,**kw):
                 
 class PAR(Controller):
   
+    #~ def prepare_data(self,data):
+        #~ if data['NB2']:
+            #~ if not is_valid_niss(data['NB2']):
+                #~ dblogger.warning("Ignored invalid NISS %s" % data['NB2'])
+                #~ data['NB2'] = ''
+        #~ return data
+                
     def applydata(self,obj,data,**mapper):
         mapper.update(
             id='IDPAR', 
@@ -385,6 +398,7 @@ def process_line(i,ln):
         raise Exception("%(alias)s : no such controller." % kw)
         #~ logger.debug("Ignoring change %s for %(alias)s:%(id)s",kw['time'],kw['alias'],kw['id'])
         #~ return
+    #~ kw['data'] = ctrl.prepare_data(kw['data'])
     m = getattr(ctrl,kw['method'])
     m(**kw)
     

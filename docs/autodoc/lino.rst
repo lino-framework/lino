@@ -25,9 +25,14 @@ Subpackages
     lino.management
     lino.reports
     lino.tools
-    lino.fields
     lino.actions
     lino.core
+    lino.fields
+    lino.mixins
+    lino.mixins.printable
+    lino.mixins.uploadable
+    lino.mixins.reminder
+    lino.models
     lino.test_apps
     lino.ui
     lino.utils
@@ -39,10 +44,6 @@ Subpackages
     lino.utils.babel
     lino.utils.choosers
     lino.utils.test
-    lino.mixins
-    lino.mixins.printable
-    lino.mixins.uploadable
-    lino.mixins.reminder
     lino.test_apps
     lino.modlib
 

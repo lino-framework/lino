@@ -1,0 +1,43 @@
+20110712
+========
+
+Datenkontrollliste : Kompromiss zwischen Todesurteil und Freispruch
+-------------------------------------------------------------------
+
+Ein Benutzer möchte beim Importieren mit :term:`watch_tim` 
+prüfen, ob die `Person.national_id` auch korrekt ist.
+Nichts einfacher als das, dachte ich mir:
+:func:`lino.apps.dsbe.models.niss_validator` 
+und dann in der Deklaration des Feldes hinzufügen::
+
+    national_id = models.CharField(max_length=200,
+        blank=True,verbose_name=_("National ID"),
+        validators=[niss_validator])
+
+Aber ganz so einfach ging das doch nicht: 
+in der TIM-Datenbank sind ca. 381 Partner mit einer ungültigen NISS in PAR->NB2. 
+TIM prüft auf eine korrekte NISS nur bei Sozialhilfeempfängern 
+(IdPrt S), und dort auch nur, wenn man das Feld bearbeitet hat.
+
+Natürlich will der Bentuzer diese teilweise alten Daten 
+nicht alle korrigieren vor dem nächsten Release. 
+
+Ich habe deshalb nun in Lino ein Äquivalent von TIMs Integritätstest 
+gemacht (:class:`lino.models.DataControlListing`).
+Der Integritätstest in TIM ist ja ein Kompromiss zwischen Todesurteil und 
+Freispruch. 
+In Lino war das bisher nicht nötig. 
+Statt "Integritätstest" nenne ich es "Datenkontrollliste" 
+bzw. einfach nur "Kontrollliste" (man beachte die drei L). 
+Den neuen Namen gebe ich, weil "Integritätstest" zu sehr 
+an "Database Integrity" erinnert, und darum handelt es sich hier ja 
+gerade *nicht*. Integritätsfehler führen in einer SQL-Datenbank 
+dazu, dass der Record gar nicht erst gespeichert wird. 
+Wir wollen im Fall einer ungültigen NISS aber speichern und 
+"nur auf Anfrage" eventuelle zusätzliche Warnungen bekommen. 
+
+In der nächsten Version haben wir also im neuen Menü "Listings" 
+nicht nur das neue Listing "Situation Verträge", sondern auch 
+ein Listing "Kontrollliste". 
+
+
