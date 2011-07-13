@@ -12,7 +12,15 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+This module deserves more documentation.
+
+It defines tables like :class:`Task` and :class:`Event` 
+
+"""
 import cgi
+import datetime
+
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -28,11 +36,15 @@ from lino.modlib.contacts import models as contacts
 from lino.modlib.cal.utils import EventStatus, \
     TaskStatus, DurationUnit, Priority, AccessClass
 
+from lino.utils.babel import dtosl
+
 class Place(models.Model):
     name = models.CharField(_("Name"),max_length=200)
   
 
-class Component(mixins.AutoUser,mixins.Owned,mixins.CreatedModified):
+class Component(mixins.AutoUser,
+                mixins.CreatedModified,
+                contacts.PartnerDocument):
     """
     The `user` field is the iCal:ORGANIZER
     """
@@ -55,16 +67,11 @@ class Component(mixins.AutoUser,mixins.Owned,mixins.CreatedModified):
         #~ url = ui.get_detail_url(self,**linkkw)
         #~ html = '<a href="%s">#%s</a>&nbsp;: %s' % (url,self.pk,
             #~ cgi.escape(force_unicode(self.summary)))
-        html = ui.href_to(self)
         if self.owner:
+            html = ui.href_to(self)
             html += " (%s)" % reports.summary_row(self.owner,ui,rr)
-            #~ m = getattr(self.owner,'summary_row',None)
-            #~ if m:
-                #~ html = m(ui,rr,**kw)
-            #~ else:
-                #~ # url = ui.get_detail_url(self.owner,**linkkw)
-                #~ # s = '<a href="%s">%s</a>' % (url,cgi.escape(force_unicode(self.owner)))
-                #~ html = ui.href_to(self.owner)
+        else:
+            html = contacts.PartnerDocument.summary_row(self,ui,rr,**kw)
         if self.summary:
             html += '&nbsp;: %s' % cgi.escape(force_unicode(self.summary))
             #~ html += ui.href_to(self,force_unicode(self.summary))
@@ -101,7 +108,12 @@ class Event(Component):
     repeat_unit = DurationUnit.field(verbose_name=_("Repeat every"),null=True,blank=True) # iCal:DURATION
 
 #~ class Task(Component,contacts.PartnerDocument):
-class Task(Component):
+class Task(mixins.Owned,Component):
+    """
+    The owner of a Task is the record that caused the automatich creation.
+    Non-automatic tasks always have an empty `owner` field.
+    The owner and auto_type fields are hidden to the user.
+    """
   
     class Meta:
         verbose_name = _("Task")
@@ -129,9 +141,17 @@ class Task(Component):
     @classmethod
     def site_setup(cls,lino):
         lino.TASK_AUTO_FIELDS= reports.fields_list(cls,
-            '''due_date due_time summary owner_type owner_id''')
+            '''due_date due_time summary''')
 
+    def save(self,*args,**kw):
+        m = getattr(self.owner,'update_owned_task',None)
+        if m:
+            m(self)
+        super(Task,self).save(*args,**kw)
 
+    def __unicode__(self):
+        return "#" + str(self.pk)
+        
 class Places(reports.Report):
     model = Place
     
@@ -142,26 +162,27 @@ class Events(reports.Report):
 class Tasks(reports.Report):
     model = Task
     column_names = 'due_date summary status done *'
+    #~ hidden_columns = set('owner_id owner_type'.split())
     
-class EventsByOwner(Events):
-    fk_name = 'owner'
+#~ class EventsByOwner(Events):
+    #~ fk_name = 'owner'
     
-#~ class EventsByPerson(Events):
-    #~ fk_name = 'person'
+class EventsByPerson(Events):
+    fk_name = 'person'
     
-#~ class EventsByCompany(Events):
-    #~ fk_name = 'company'
+class EventsByCompany(Events):
+    fk_name = 'company'
     
 
 class TasksByOwner(Tasks):
     fk_name = 'owner'
-    hidden_columns = set('owner_id owner_type'.split())
+    #~ hidden_columns = set('owner_id owner_type'.split())
 
-#~ class TasksByPerson(Tasks):
-    #~ fk_name = 'person'
+class TasksByPerson(Tasks):
+    fk_name = 'person'
     
-#~ class TasksByCompany(Tasks):
-    #~ fk_name = 'company'
+class TasksByCompany(Tasks):
+    fk_name = 'company'
     
 class MyEvents(mixins.ByUser):
     model = Event
@@ -176,21 +197,95 @@ class MyTasks(mixins.ByUser):
     column_names = 'summary status done *'
     
     
-def check_auto_task(autotype,user,date,summary,owner,**kw):
+def update_auto_task(autotype,user,date,summary,owner,**defaults):
+    """Creates, updates or deletes the automatic :class:`Task` 
+    related to the specified `owner`.
+    """
+    ot = ContentType.objects.get_for_model(owner.__class__)
     if date:
-        ot = ContentType.objects.get_for_model(owner.__class__)
-        kw.setdefault('user',user)
+        #~ defaults = owner.get_auto_task_defaults(**defaults)
+        defaults.setdefault('user',user)
         obj,created = Task.objects.get_or_create(
-          defaults=kw,
+          defaults=defaults,
           owner_id=owner.pk,
           owner_type=ot,
           auto_type=autotype)
         obj.user = user
-        obj.summary = force_unicode(summary)
+        if summary:
+            obj.summary = force_unicode(summary)
+        #~ obj.summary = summary
         obj.due_date = date
         #~ for k,v in kw.items():
             #~ setattr(obj,k,v)
         #~ obj.due_date = date - delta
         #~ print 20110712, date, date-delta, obj2str(obj,force_detailed=True)
+        owner.update_owned_task(obj)
+        
         obj.save()
+    else:
+        try:
+            obj = Task.objects.get(owner_id=owner.pk,
+                    owner_type=ot,auto_type=autotype)
+        except Task.DoesNotExist:
+            pass
+        else:
+            obj.delete()
+        
+def tasks_summary(ui,user,days_back=None,**kw):
+    """
+    Return a HTML summary of all open reminders for this user
+    """
+    date_from = datetime.date.today()
+    if days_back is None:
+        back_until = None
+    else:
+        back_until = date_from - datetime.timedelta(days=days_back)
     
+    past = {}
+    future = {}
+    def add(task):
+        if task.due_date < date_from:
+            lookup = past
+        else:
+            lookup = future
+        day = lookup.get(task.due_date,None)
+        if day is None:
+            day = [task]
+            lookup[task.due_date] = day
+        else:
+            day.append(task)
+            
+    #~ filterkw = { 'due_date__lte' : date_from }
+    filterkw = {}
+    if back_until is not None:
+        filterkw.update({ 
+            'due_date__gte' : back_until
+        })
+    filterkw.update(user=user)
+    filterkw.update(done=False)
+            
+    for task in Task.objects.filter(**filterkw).order_by('due_date'):
+        add(task)
+        
+    def loop(lookup,reverse):
+        sorted_days = lookup.keys()
+        sorted_days.sort()
+        if reverse: 
+            sorted_days.reverse()
+        for day in sorted_days:
+            yield '<h3>'+dtosl(day) + '</h3>'
+            yield reports.summary(ui,lookup[day],**kw)
+            
+    #~ cells = ['Ausblick'+':<br>',cgi.escape(u'Rückblick')+':<br>']
+    cells = [
+      cgi.escape(_('Upcoming reminders')) + ':<br>',
+      cgi.escape(_('Past reminders')) + ':<br>'
+    ]
+    for s in loop(future,False):
+        cells[0] += s
+    for s in loop(past,True):
+        cells[1] += s
+    s = ''.join(['<td valign="top" bgcolor="#eeeeee" width="30%%">%s</td>' % s for s in cells])
+    s = '<table cellspacing="3px" bgcolor="#ffffff"><tr>%s</tr></table>' % s
+    s = '<div class="htmlText">%s</div>' % s
+    return s

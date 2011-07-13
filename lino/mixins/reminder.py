@@ -77,32 +77,34 @@ class Reminder(AutoUser):
         verbose_name=_("Done"),
         default=False)
       
+    def save(self,*args,**kw):
+        super(Reminder,self).save(*args,**kw)
+        self.save_auto_tasks()
+        
     def save_auto_tasks(self):
-      
-        from lino.modlib.cal.models import check_auto_task
+        """Called each time when a Reminder instance has been saved."""
+        from lino.modlib.cal.models import update_auto_task
       
         # These constants must be unique for the whole Lino Site.
         # Keep in sync with auto types defined in lino.mixins.reminders
         REMINDER = 5
         
         if self.reminder_text:
-            s = self.reminder_text
+            summary = self.reminder_text
         else:
-            s = _('due date reached')
+            summary = _('due date reached')
         
-        
-        check_auto_task(
-          REMINDER,self.user,
+        update_auto_task(
+          REMINDER,
+          self.user,
           self.reminder_date,
-          s,
-          self,
-          alarm_value=self.delay_value,
-          alarm_unit=delay2alarm(self.delay_type))
+          summary,self)
           
-    def save(self,*args,**kw):
-        super(Reminder,self).save(*args,**kw)
-        self.save_auto_tasks()
-        
+    #~ def get_auto_task_defaults(self,**kw):
+    def update_owned_task(self,task):
+        task.alarm_value = self.delay_value
+        task.alarm_unit = delay2alarm(self.delay_type)
+          
     @classmethod
     def get_reminders(model,ui,user,today,back_until):
         """
@@ -142,12 +144,11 @@ class Reminder(AutoUser):
         #~ print text
         #~ return text
 
-    def summary_row(self,ui,rr,**kw):
-        s = super(Reminder,self).summary_row(ui,rr)
-        #~ s = contacts.ContactDocument.summary_row(self,ui,rr)
-        if self.reminder_text:
-            s += ' <b>' + cgi.escape(self.reminder_text) + '</b> '
-        return s
+    #~ def summary_row(self,ui,rr,**kw):
+        #~ s = super(Reminder,self).summary_row(ui,rr)
+        #~ if self.reminder_text:
+            #~ s += ' <b>' + cgi.escape(self.reminder_text) + '</b> '
+        #~ return s
         
 
 
@@ -189,72 +190,13 @@ class ReminderEntry:
         #~ return s
 
 
-      
 
 
 def reminders_summary(ui,user,days_back=None,**kw):
     """
-    Return a HTML summary of all open reminders for this user
-    """
-    from lino.modlib.cal.models import Task
-    date_from = datetime.date.today()
-    if days_back is None:
-        back_until = None
-    else:
-        back_until = date_from - datetime.timedelta(days=days_back)
+    Return a HTML summary of all open reminders for this user.
+    Obsolete. Replaced by :func:`lino.modlib.cal.models.tasks_summary`.
     
-    past = {}
-    future = {}
-    #~ days = {}
-    objects = []
-    def add(rem):
-        if rem.due_date < date_from:
-            lookup = past
-        else:
-            lookup = future
-        day = lookup.get(rem.due_date,None)
-        if day is None:
-            day = [rem]
-            lookup[rem.due_date] = day
-        else:
-            day.append(rem)
-            
-    filterkw = { 'due_date__lte' : date_from }
-    if back_until is not None:
-        filterkw.update({ 
-            'due_date__gte' : back_until
-        })
-    filterkw.update(user=user)
-            
-    for task in Task.objects.filter(**filterkw).order_by('due_date'):
-        add(task)
-        
-    def loop(lookup,reverse):
-        sorted_days = lookup.keys()
-        sorted_days.sort()
-        if reverse: 
-            sorted_days.reverse()
-        for day in sorted_days:
-            yield '<h3>'+dtosl(day) + '</h3>'
-            yield reports.summary(ui,lookup[day],**kw)
-            
-    #~ cells = ['Ausblick'+':<br>',cgi.escape(u'Rückblick')+':<br>']
-    cells = [
-      cgi.escape(_('Upcoming reminders')) + ':<br>',
-      cgi.escape(_('Past reminders')) + ':<br>'
-    ]
-    for s in loop(future,False):
-        cells[0] += s
-    for s in loop(past,True):
-        cells[1] += s
-    s = ''.join(['<td valign="top" bgcolor="#eeeeee" width="30%%">%s</td>' % s for s in cells])
-    s = '<table cellspacing="3px" bgcolor="#ffffff"><tr>%s</tr></table>' % s
-    s = '<div class="htmlText">%s</div>' % s
-    return s
-
-def old_reminders_summary(ui,user,days_back=None,**kw):
-    """
-    Return a HTML summary of all open reminders for this user
     """
     date_from = datetime.date.today()
     if days_back is None:

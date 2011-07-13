@@ -20,7 +20,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.utils.translation import ugettext_lazy as _
 
-from lino import reports
+from lino import reports, fields
 from lino.utils import perms
 from lino.tools import full_model_name
 from lino.utils.choosers import chooser
@@ -113,25 +113,34 @@ class Owned(models.Model):
     class Meta:
         abstract = True
         
-    owner_type = models.ForeignKey(ContentType,editable=True,
+    owner_type = models.ForeignKey(ContentType,editable=True,        
+        blank=True,null=True,
         verbose_name=_('Owner type'))
-    owner_id = models.PositiveIntegerField(editable=True,
+    #~ owner_id = models.PositiveIntegerField(editable=True,
+        #~ blank=True,null=True,
+        #~ verbose_name=_('Owner'))
+    owner_id = fields.GenericForeignKeyIdField(owner_type,
+        editable=True,
+        blank=True,null=True,
         verbose_name=_('Owner'))
     owner = generic.GenericForeignKey('owner_type', 'owner_id')
     
-    @chooser()
+    @chooser(instance_values=True)
     def owner_id_choices(cls,owner_type):
         #~ ct = ContentType.objects.get(pk=owner_type)
-        return owner_type.model_class().objects.all()
+        if owner_type:
+            return owner_type.model_class().objects.all()
       
     #~ owner_id_choices.instance_values = True
     #~ owner_id_choices = classmethod(owner_id_choices)
         
     def get_owner_id_display(self,value):
-        try:
-            return unicode(self.owner_type.get_object_for_this_type(pk=value))
-        except self.owner_type.model_class().DoesNotExist,e:
-            return "%s with pk %r does not exist" % (full_model_name(self.owner_type.model_class()),value)
+        if self.owner_type:
+            try:
+                return unicode(self.owner_type.get_object_for_this_type(pk=value))
+            except self.owner_type.model_class().DoesNotExist,e:
+                return "%s with pk %r does not exist" % (
+                    full_model_name(self.owner_type.model_class()),value)
             
 
 

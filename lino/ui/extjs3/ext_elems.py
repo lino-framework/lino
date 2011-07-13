@@ -138,8 +138,8 @@ class GridColumn(Component):
                     #~ rend = "Lino.fk_renderer('%s','%s')" % (
                       #~ editor.field.name + 'Hidden',
                       #~ editor.lh.rh.ui.get_actor_url(rpt))
-            #~ if not rend:
-                #~ rend = 'Lino.default_renderer'
+            #~ elif isinstance(editor.field,fields.GenericForeignKeyIdField):
+                #~ rend = "Lino.gfk_renderer()"
             if rend:
                 kw.update(renderer=js_code(rend))
             kw.update(editable=editor.editable)
@@ -247,8 +247,8 @@ class LayoutElement(VisibleComponent):
         assert isinstance(lh,reports.LayoutHandle)
         #~ lh.setup_element(self)
 
-    def submit_fields(self):
-        return []
+    #~ def submit_fields(self):
+        #~ return []
         
     def update_config(self,wc):
         pass
@@ -430,8 +430,8 @@ class FieldElement(LayoutElement):
         return kw    
         
         
-    def submit_fields(self):
-        return [self.field.name]
+    #~ def submit_fields(self):
+        #~ return [self.field.name]
         
     def get_field_options(self,**kw):
         if self.xtype:
@@ -668,8 +668,8 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
               "function(e){ Lino.show_fk_detail(this,e,Lino.%s)}" % a))
         FieldElement.__init__(self,lh,field,**kw)
       
-    def submit_fields(self):
-        return [self.field.name,self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX]
+    #~ def submit_fields(self):
+        #~ return [self.field.name,self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX]
         
         
     def get_field_options(self,**kw):
@@ -1294,6 +1294,8 @@ class MainPanel(jsgen.Variable):
             else:
                 if isinstance(field,models.ForeignKey):
                     return ForeignKeyElement(lh,field,**kw)
+                elif isinstance(field,fields.GenericForeignKeyIdField):
+                    return ComplexRemoteComboFieldElement(lh,field,**kw)
                 else:
                     return ComplexRemoteComboFieldElement(lh,field,**kw)
         if field.choices:

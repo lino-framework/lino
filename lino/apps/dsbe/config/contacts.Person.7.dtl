@@ -2,6 +2,5 @@
 :label_align: top
 
 main = 
-  cal.EventsByOwner
-  cal.TasksByOwner
+  cal.EventsByPerson
 

@@ -559,6 +559,8 @@ class Store:
             return StoreField(fld)
         if isinstance(fld,models.OneToOneField):
             return OneToOneStoreField(fld)
+        if isinstance(fld,fields.GenericForeignKeyIdField):
+            return ComboStoreField(fld)
         if isinstance(fld,models.ForeignKey):
             return ForeignKeyStoreField(fld)
         if isinstance(fld,models.TimeField):

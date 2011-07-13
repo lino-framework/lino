@@ -176,9 +176,9 @@ class Lino(object):
     
     #~ bypass_perms = False
     
-    use_gridfilters = False
+    use_gridfilters = True
     
-    use_filterRow = True
+    use_filterRow = not use_gridfilters
     """
     See :doc:`/blog/2011/0630`
     """

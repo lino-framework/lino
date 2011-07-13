@@ -373,6 +373,16 @@ class PartnerDocument(models.Model):
             s += " (" + ui.href_to(self.company) + ")"
         return s
             
+    #~ def get_auto_task_defaults(self,**kw):
+        #~ """Called from :func:`lino.modlib.cal.models.update_auto_task`."""
+        #~ kw.update(person=self.person)
+        #~ kw.update(company=self.company)
+        #~ return kw
+        
+    def update_owned_task(self,task):
+        task.person=self.person
+        task.company=self.company
+        
       
 
 class ContactDocument(PartnerDocument):

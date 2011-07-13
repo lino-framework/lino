@@ -66,7 +66,7 @@ from lino.mixins.reminder import ReminderEntry
 from lino.tools import obj2str
 
 from lino.modlib.countries.models import CountryCity
-from lino.modlib.cal.models import DurationUnit, check_auto_task
+from lino.modlib.cal.models import DurationUnit, update_auto_task
 
 # not used here, but these modules are required in INSTALLED_APPS, 
 # and other code may import them using 
@@ -525,10 +525,6 @@ class Person(Partner,contacts.Person):
         super(Person,self).clean()
         
         
-    def save(self,*args,**kw):
-        super(Person,self).save(*args,**kw)
-        self.save_auto_tasks()
-        
         
         
 
@@ -545,6 +541,9 @@ class Person(Partner,contacts.Person):
         "Used by DirectPrintAction"
         return self.language
         
+    def save(self,*args,**kw):
+        super(Person,self).save(*args,**kw)
+        self.save_auto_tasks()
         
     def save_auto_tasks(self):
       
@@ -556,34 +555,38 @@ class Person(Partner,contacts.Person):
         COACHED_UNTIL = 4
         
         user = self.coach2 or self.coach1
-        check_auto_task(
-          CARD_VALID_UNTIL,user,
-          self.card_valid_until,
-          _("eID card expires"),
-          self,
-          alarm_value=2,alarm_unit=DurationUnit.months)
+        if user:
+            update_auto_task(
+              CARD_VALID_UNTIL,user,
+              self.card_valid_until,
+              _("eID card expires"),
+              self,
+              alarm_value=2,alarm_unit=DurationUnit.months)
+              
+            update_auto_task(
+              UNAVAILABLE_UNTIL,user,
+              self.unavailable_until,
+              _("becomes available again"),
+              self,
+              alarm_value=1,alarm_unit=DurationUnit.months)
+              
+            update_auto_task(
+              WORK_PERMIT_SUSPENDED_UNTIL,user,
+              self.work_permit_suspended_until,
+              _("work permit suspension ends"),
+              self,
+              alarm_value=1,alarm_unit=DurationUnit.months)
+              
+            update_auto_task(
+              COACHED_UNTIL,user,
+              self.coached_until,
+              _("coaching ends"),
+              self,
+              alarm_value=1,alarm_unit=DurationUnit.months)
           
-        check_auto_task(
-          UNAVAILABLE_UNTIL,user,
-          self.unavailable_until,
-          _("becomes available again"),
-          self,
-          alarm_value=1,alarm_unit=DurationUnit.months)
-          
-        check_auto_task(
-          WORK_PERMIT_SUSPENDED_UNTIL,user,
-          self.work_permit_suspended_until,
-          _("work permit suspension ends"),
-          self,
-          alarm_value=1,alarm_unit=DurationUnit.months)
-          
-        check_auto_task(
-          COACHED_UNTIL,user,
-          self.coached_until,
-          _("coaching ends"),
-          self,
-          alarm_value=1,alarm_unit=DurationUnit.months)
-          
+    #~ def get_auto_task_defaults(self,**kw):
+    def update_owned_task(self,task):
+        task.person = self
         
     @classmethod
     def get_reminders(model,ui,user,today,back_until):
@@ -1503,6 +1506,9 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,contact
             'user user_asd exam_policy '
             'date_decided date_issued responsibilities')
 
+    def update_owned_task(self,task):
+        mixins.Reminder.update_owned_task(self,task)
+        contacts.PartnerDocument.update_owned_task(self,task)
 
 class Contracts(reports.Report):
     model = Contract
@@ -1574,6 +1580,15 @@ class Note(notes.Note,contacts.PartnerDocument):
         lino.NOTE_PRINTABLE_FIELDS = reports.fields_list(cls,
         '''date subject body language person company type event_type''')
         
+    #~ def get_auto_task_defaults(self,**kw):
+        #~ """Called from :func:`lino.modlib.cal.models.update_auto_task`."""
+        #~ kw = notes.Note.get_auto_task_defaults(self,**kw)
+        #~ kw = contacts.PartnerDocument.get_auto_task_defaults(self,**kw)
+        #~ return kw
+        
+    def update_owned_task(self,task):
+        notes.Note.update_owned_task(self,task)
+        contacts.PartnerDocument.update_owned_task(self,task)
         
     #~ def disabled_fields(self,request):
         #~ if self.must_build:
@@ -1600,6 +1615,9 @@ class MyNotes(notes.MyNotes):
     #~ column_names = "date type event_type subject person company body_html *"
     column_names = "date type event_type subject person company body *"
     
+#~ class NotesByTask(notes.Notes):
+    #~ fk_name = 'task'
+
   
 #
 # LINKS
@@ -2104,8 +2122,6 @@ class ContractsSituation(mixins.Listing):
         return html
         
         
-        
-
 
 
 
@@ -2130,6 +2146,13 @@ reports.inject_field(CompanyType,
     """The default Contract Type for Contracts with a 
     Company of this type."""
     )
+
+#~ reports.inject_field(Note, 'task',
+    #~ models.ForeignKey("cal.Task",
+        #~ blank=True,null=True,
+        #~ verbose_name=_("Task")),
+    #~ """If this Note is related to a specific Task."""
+    #~ )
 
 from lino.models import SiteConfig
 reports.inject_field(SiteConfig,

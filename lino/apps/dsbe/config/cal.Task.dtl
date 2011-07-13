@@ -3,8 +3,8 @@
 :hideCheckBoxLabels: 
 
 main = 
-  due_date due_time status
-  summary created:20 modified:20
-  owner alarm_value alarm_unit
-  description
-
+  due_date due_time status done
+  summary 
+  created:20 modified:20 owner_type owner_id
+  user person company alarm_value alarm_unit
+  description #notes.NotesByTask

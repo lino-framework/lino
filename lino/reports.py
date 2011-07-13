@@ -78,6 +78,7 @@ def parse_js_date(s,name):
 
 
 def inject_field(model,name,field,doc):
+    #~ model = resolve_model(model)
     field.__doc__ = doc
     model.add_to_class(name,field)
     return field

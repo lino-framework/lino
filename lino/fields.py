@@ -200,4 +200,11 @@ class VirtualField: # (Field):
         return m(obj,request)
         
     
+class GenericForeignKeyIdField(models.PositiveIntegerField):
+    """"""
+    def __init__(self, type_field, *args, **kw):
+        self.type_field = type_field
+        models.PositiveIntegerField.__init__(self,*args, **kw)
+    
+    pass
     

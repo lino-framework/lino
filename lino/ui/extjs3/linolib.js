@@ -383,8 +383,10 @@ Lino.VinylFoxPlugins = function(){
 Lino.CheckColumn = Ext.extend(Ext.grid.Column, {
 
     processEvent : function(name, e, grid, rowIndex, colIndex){
+        //~ console.log('20110713 Lino.CheckColumn.processEvent',name)
+        if (name == 'click') {
         //~ if (name == 'mousedown') {
-        if (name == 'dblclick') {
+        //~ if (name == 'dblclick') {
             return this.toggleValue(grid, rowIndex, colIndex);
         } else {
             return Ext.grid.ActionColumn.superclass.processEvent.apply(this, arguments);
@@ -1075,7 +1077,15 @@ Lino.fk_renderer = function(fkname,handlername) {
     }
     return '';
   }
-}
+};
+
+//~ Lino.gfk_renderer = function() {
+  //~ return function(value, metaData, record, rowIndex, colIndex, store) {
+    //~ if (record.phantom) return '';
+    //~ console.log('Lino.gfk_renderer',value,colIndex,record,metaData,store);
+    //~ return value;
+  //~ }
+//~ };
 
 
 Lino.build_buttons = function(panel,actions) {

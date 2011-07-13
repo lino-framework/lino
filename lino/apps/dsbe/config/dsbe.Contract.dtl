@@ -4,10 +4,11 @@
 main =
     id:8 company:20 contact:20 language:8
     type person:25 user:15 user_asd:15
-    reminder_date:10 delay_value:5 delay_type:10 reminder_text:30 reminder_done
+    # reminder_date:10 delay_value:5 delay_type:10 reminder_text:30 reminder_done
     applies_from applies_until duration 
     date_decided date_issued 
     date_ended ending
+    cal.TasksByOwner
     
     
     
