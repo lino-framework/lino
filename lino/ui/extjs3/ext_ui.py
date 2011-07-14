@@ -308,16 +308,19 @@ class ExtUI(base.UI):
             
         if isinstance(de,reports.Report):
             if isinstance(lh.layout,reports.DetailLayout):
+                # a Report in a DetailWindow
                 kw.update(tools=[
                   js_code("Lino.report_window_button(ww,Lino.%s)" % de.default_action)
                 ])
                 if de.show_slave_grid:
+                    # a Report in a DetailWindow, displayed as a Slave Grid
                     e = ext_elems.SlaveGridElement(lh,name,de,**kw)
                     #~ e = ext_elems.GridElement(lh,name,de.get_handle(self),**kw)
                     #~ lh.slave_grids.append(e)
                     return e
                     #~ return ext_elems.GridElementBox(lh,e)
                 else:
+                    # a Report in a DetailWindow, displayed as a summary in a HtmlBox 
                     o = dict(drop_zone="FooBar")
                     a = de.get_action('insert')
                     if a is not None:
@@ -372,6 +375,10 @@ class ExtUI(base.UI):
         return self.create_field_element(lh,vf,**kw)
         
     def create_meth_element(self,lh,name,meth,rt,**kw):
+        #~ if hasattr(rt,'_return_type_for_method'):
+            #~ raise Exception(
+              #~ "%s.%s : %r has already an attribute '_return_type_for_method'" % (
+                #~ lh,name,rt))
         rt.name = name
         rt._return_type_for_method = meth
         if meth.func_code.co_argcount != 2:
@@ -381,6 +388,8 @@ class ExtUI(base.UI):
         e = self.create_field_element(lh,rt,**kw)
         #~ if lh.rh.report.actor_id == 'contacts.Persons':
             #~ print 'ext_ui.py create_meth_element',name,'-->',e
+        if name == 'preview':
+            print 20110714, 'ext_ui.create_meth_element', meth, repr(e)
         return e
         #~ e = lh.main_class.field2elem(lh,return_type,**kw)
         #~ assert e.field is not None,"e.field is None for %s.%s" % (lh.layout,name)
@@ -964,14 +973,26 @@ tinymce.init({
             return self.form2obj_and_save(request,rh,request.POST,instance,True)
             
         if request.method == 'GET':
-            fmt = request.GET.get('fmt',None)
-            if fmt is None:
-                a = rpt.default_action
-            else:
-                a = rpt.get_action(fmt) 
-            if a is not None:
+          
+            action_name = request.GET.get('an','grid')
+            a = rpt.get_action(action_name)
+            if a is None:
+                raise Http404("%s has no action %r" % (rpt,action_name))
+                
+            fmt = request.GET.get('fmt',a.default_format)
+          
+            #~ fmt = request.GET.get('fmt',None)
+            #~ if fmt is None:
+                #~ a = rpt.default_action
+            #~ else:
+                #~ a = rpt.get_action(fmt) 
+            #~ if a is not None:
+            ar = ext_requests.ViewReportRequest(request,rh,a)
+            
+            #~ print '20110714', a, fmt
+            
+            if fmt == 'html':
                 kw = {}
-                ar = ext_requests.ViewReportRequest(request,rh,a)
                 bp = self.request2kw(ar)
                 
                 params = dict(base_params=bp)
@@ -984,10 +1005,8 @@ tinymce.init({
                     params.update(data_record=rec)
 
                 kw.update(on_ready=['Lino.%s(undefined,%s);' % (a,py2js(params))])
-                #~ print '20101024 on_ready', params
+                #~ print '20110714 on_ready', params
                 return HttpResponse(self.html_page(request,**kw))
-                
-            ar = ext_requests.ViewReportRequest(request,rh,rh.report.default_action)
             
             if fmt == 'csv':
                 #~ response = HttpResponse(mimetype='text/csv')
@@ -1024,6 +1043,8 @@ tinymce.init({
                   rows=rows,
                   title=unicode(ar.get_title()),
                   gc_choices=[gc.data for gc in rpt.grid_configs])
+                    
+            raise Http404("Format %r not supported for GET on %s" % (fmt,rpt))
 
 
         raise Http404("Method %s not supported for container %s" % (request.method,rh))
@@ -1080,7 +1101,7 @@ tinymce.init({
             
         if request.method == 'PUT':
             if elem is None:
-                return error_message('Tried to PUT on element -99999')
+                raise Http404('Tried to PUT on element -99999')
             #~ print 20110301, request.raw_post_data
             data = http.QueryDict(request.raw_post_data)
             #~ print 20110301, data
@@ -1088,54 +1109,83 @@ tinymce.init({
             return self.form2obj_and_save(request,ah,data,elem,False) # force_update=True)
             
         if request.method == 'GET':
-            ar = ext_requests.ViewReportRequest(request,ah,ah.report.default_action)
+            #~ # before 20110713
+            #~ ar = ext_requests.ViewReportRequest(request,ah,ah.report.default_action)
             
-            if pk == '-99999':
-                elem = ar.create_instance()
+            #~ if pk == '-99999':
+                #~ elem = ar.create_instance()
             
-            fmt = request.GET.get('fmt',None)
-            if pk == '-99999':
-                datarec = elem2rec_insert(ar,ah,elem)
-            else:
-                datarec = elem2rec_detailed(ar,ah,elem)
-            if fmt is None or fmt == 'json':
-                return json_response(datarec)
-            a = rpt.get_action(fmt)
-            if a is not None:
-                if isinstance(a,actions.OpenWindowAction):
-                    params = dict(data_record=datarec)
-                    bp = self.request2kw(ar)
-                    if a.window_wrapper.tabbed:
-                        tab = request.GET.get(ext_requests.URL_PARAM_TAB,None)
-                        if tab is not None: 
-                            tab = int(tab)
-                            params.update(active_tab=tab)
-                    params.update(base_params=bp)
-                    return HttpResponse(self.html_page(request,on_ready=['Lino.%s(undefined,%s);' % (a,py2js(params))]))
+            #~ fmt = request.GET.get('fmt',None)
+            #~ if pk == '-99999':
+                #~ datarec = elem2rec_insert(ar,ah,elem)
+            #~ else:
+                #~ datarec = elem2rec_detailed(ar,ah,elem)
+            #~ if fmt is None or fmt == 'json':
+                #~ return json_response(datarec)
                     
-                    
-                if isinstance(a,actions.RedirectAction):
-                    target = a.get_target_url(elem)
-                    if target is None:
-                        raise Http404("%s failed for %r" % (a,elem))
-                    return http.HttpResponseRedirect(target)
-                    
-                if isinstance(a,reports.RowAction):
-                    #~ return a.run(ar,elem)
-                    try:
-                        return a.run(ar,elem)
-                    except Exception,e:
-                        logger.exception(e)
-                        msg = _("Action %(action)s failed for %(record)s.") % dict(
-                            action=a,
-                            record=obj2str(elem))
-                        msg += ' ' + _("An error report has been sent to the system administrator.")
-                        logger.warning(msg)
-                        return error_response(e,msg)
-                  
-                raise NotImplementedError("Action %s is not implemented)" % a)
+            action_name = request.GET.get('an','detail')
+            #~ if action_name is None:
+                #~ a = rpt.default_action
+            #~ else:
+            a = rpt.get_action(action_name)
+            if a is None:
+                raise Http404("%s has no action %r" % (rpt,action_name))
                 
-            raise Http404("%s has no action %r" % (ah.report,fmt))
+            fmt = request.GET.get('fmt',a.default_format)
+            #~ a = rpt.get_action(fmt)
+                
+            ar = ext_requests.ViewReportRequest(request,ah,a)
+            
+            if fmt == 'json':
+              
+                if isinstance(a,reports.InsertRow):
+                    elem = ar.create_instance()
+                    datarec = elem2rec_insert(ar,ah,elem)
+                    return json_response(datarec)
+                    
+                if elem is None:
+                    raise Http404('Tried to GET element -99999')
+                datarec = elem2rec_detailed(ar,ah,elem)
+                return json_response(datarec)
+                
+                
+            if elem is None:
+                raise Http404('Tried to GET element -99999')
+
+            if isinstance(a,actions.OpenWindowAction):
+                datarec = elem2rec_detailed(ar,ah,elem)                
+                params = dict(data_record=datarec)
+                bp = self.request2kw(ar)
+                if a.window_wrapper.tabbed:
+                    tab = request.GET.get(ext_requests.URL_PARAM_TAB,None)
+                    if tab is not None: 
+                        tab = int(tab)
+                        params.update(active_tab=tab)
+                params.update(base_params=bp)
+                return HttpResponse(self.html_page(request,on_ready=['Lino.%s(undefined,%s);' % (a,py2js(params))]))
+                
+                
+            if isinstance(a,actions.RedirectAction):
+                target = a.get_target_url(elem)
+                if target is None:
+                    raise Http404("%s failed for %r" % (a,elem))
+                return http.HttpResponseRedirect(target)
+                
+            if isinstance(a,reports.RowAction):
+                #~ return a.run(ar,elem)
+                try:
+                    return a.run(ar,elem)
+                except Exception,e:
+                    logger.exception(e)
+                    msg = _("Action %(action)s failed for %(record)s.") % dict(
+                        action=a,
+                        record=obj2str(elem))
+                    msg += ' ' + _("An error report has been sent to the system administrator.")
+                    logger.warning(msg)
+                    return error_response(e,msg)
+              
+            raise NotImplementedError("Action %s is not implemented)" % a)
+                
               
         return error_response(None,
             "Method %r not supported for elements of %s." % (
@@ -1428,7 +1478,8 @@ tinymce.init({
                 if v.request is not None:
                     url = self.get_request_url(v.request)
                 elif v.instance is not None:
-                    url = self.get_detail_url(v.instance,fmt='detail')
+                    #~ url = self.get_detail_url(v.instance,an='detail')
+                    url = self.get_detail_url(v.instance)
                 else:
                     url = self.get_action_url(v.action)
                     #~ url = self.build_url('api',v.action.actor.app_label,v.action.actor._actor_name,fmt=v.action.name)
@@ -1442,7 +1493,7 @@ tinymce.init({
     def get_action_url(self,action,*args,**kw):
         #~ if not action is action.actor.default_action:
         if action != action.actor.default_action:
-            kw.update(fmt=action.name)
+            kw.update(an=action.name)
         return self.build_url("api",action.actor.app_label,action.actor._actor_name,*args,**kw)
             
     def get_actor_url(self,actor,*args,**kw):
@@ -1459,7 +1510,7 @@ tinymce.init({
         
     def href_to(self,obj,text=None):
         return self.href(
-            self.get_detail_url(obj,fmt='detail'),
+            self.get_detail_url(obj),
             text or cgi.escape(force_unicode(obj)))
         #~ return '<a href="%s" target="_blank">%s</a>' % (self.get_detail_url(obj,fmt='detail'),unicode(obj))
 

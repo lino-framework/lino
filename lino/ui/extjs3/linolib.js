@@ -1154,14 +1154,14 @@ Lino.do_on_current_record = function(panel,fn,phantom_fn) {
   return fn(rec);
 };
 
-Lino.row_action_handler = function(fmt) {
+Lino.row_action_handler = function(action_name) {
   return function(panel,btn) {
     Lino.do_on_current_record(panel,function(rec) {
       //~ console.log(panel);
       var url = panel.get_record_url(rec.id);
       var p = Ext.apply({},panel.get_base_params());
       //~ var p = Ext.apply({},panel.get_master_params());
-      p['fmt'] = fmt;
+      p.an = action_name;
       //~ url += "?" + Ext.urlEncode(p);
       //~ window.open(url);
       Ext.Ajax.request({
@@ -1398,8 +1398,8 @@ Lino.RichTextPanel = Ext.extend(Ext.Panel,{
         //~ save_enablewhendirty : true
         //~ save_oncancelcallback: on_cancel
     }};
-    editorConfig.name = config.name;
-    delete config.name;
+    editorConfig.name = config.action_name;
+    //~ delete config.name;
     //~ config.title = config.label;
     //~ delete config.label;
     this.before_init(ww,config,params);
@@ -1542,7 +1542,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   do_when_clean : function(todo) {
     var this_ = this;
     if (this.form.isDirty()) {
-        console.log('20110701 do_when_clean() form is dirty');
+        //~ console.log('20110701 do_when_clean() form is dirty');
         var config = {title:"$_('Confirmation')"};
         config.buttons = Ext.MessageBox.YESNOCANCEL;
         config.msg = "$_('Save changes to current record ?')";
@@ -1570,10 +1570,14 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   },
   
   load_record_id : function(record_id,after) {
-    //~ console.log('20110701 load_record_id',record_id);
     var this_ = this;
-    var p = {};
-    Ext.apply(p,this.ww.config.base_params);
+    //~ var p = { fmt: this.ww.config.action_name};
+    var p = Ext.apply({},this.ww.config.base_params);
+    //~ console.log('20110713 load_record_id',record_id,p);
+    //~ console.log('20110713 action_name=',this.ww.config.action_name,
+      //~ 'base_params=',this.ww.config.base_params);
+    p.an = this.ww.config.action_name;
+    p.fmt = 'json';
     //~ 20110119b p['$URL_PARAM_FILTER'] = this.quick_search_text;
     //~ Ext.apply(p,this.query_params);
     Ext.Ajax.request({ 
@@ -1751,7 +1755,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
         //~ }
       //~ });
       //~ var src = this.get_record_url(record.id) + "?fmt=image"
-      doit(this.get_record_url(record.id) + "?fmt=image");
+      doit(this.get_record_url(record.id) + "?an=image");
       //~ var src = API_URL+this.ww.main_item.ls_url + "/" + record.id + "?fmt=image"
     else
       //~ doit('empty.jpg');
@@ -1799,6 +1803,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
         // this gridpanel is the main component
         Ext.apply(bp,ww.config.base_params);    
     }
+    //~ bp['fmt'] = 'json';
     
     //~ function on_proxy_load( proxy, transactionObject, callbackOptions ) {
       //~ console.log('on_proxy_load',transactionObject)
@@ -2328,9 +2333,10 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
   refresh : function(after) { 
     //~ Lino.notify('Lino.GridPanel.refresh');
     //~ Lino.notify('Lino.GridPanel.refresh '+this.store.proxy.url);
-    var p = { params:{
-        limit:this.getTopToolbar().pageSize,
-        start:this.getTopToolbar().cursor
+    var p = { params : {
+        fmt : 'json',
+        limit : this.getTopToolbar().pageSize,
+        start : this.getTopToolbar().cursor
         //~ 20110119 $URL_PARAM_FILTER: this.quick_search_text
     } }
     if (after) {
@@ -2776,7 +2782,8 @@ Lino.WindowWrapperBase = {
       //~ return;
     } else if (this.config.record_id !== undefined) { // may be 0 
       //~ console.log('Lino.WindowWrapper with record_id',this.config.record_id);
-      this.main_item.goto_record_id(this.config.record_id);
+      //~ this.main_item.goto_record_id(this.config.record_id);
+      this.main_item.load_record_id(this.config.record_id);
     }
     
     //~ console.log('Lino.WindowWrapper.setup done',this);
@@ -2821,6 +2828,7 @@ Lino.WindowWrapper = function(caller,config,params,wc) {
   //~ console.log('Lino.WindowWrapper.constructor 2','config:',config);
   Ext.applyIf(config,{base_params:{}});
   //~ console.log('Lino.WindowWrapper.constructor 3','config:',config);
+  //~ config.base_params['fmt'] = config.action_name;
   this.config = config;
   //~ this.config = config_fn(this); 
   this.slaves = {};
@@ -2909,7 +2917,8 @@ Ext.override(Lino.WindowWrapper,{
       return API_URL + this.main_item.ls_url;
   },
   get_permalink_params : function() {
-      return {fmt:'grid'};
+      //~ return {an:'grid'};
+      return {an:this.ww.config.action_name};
   },
   on_render : function() {},
   //~ refresh : function() { },
@@ -2974,7 +2983,8 @@ Lino.DetailWrapper = Ext.extend(Lino.WindowWrapper, {
       return API_URL + this.main_item.ls_url+'/'+this.get_current_record().id;
   },
   get_permalink_params : function() {
-    var p = {fmt:'detail'};
+    //~ var p = {an:'detail'};
+    var p = {an:this.ww.config.action_name};
     var main = this.main_item.items.get(0);
     if (main.activeTab) {
       var tab = main.items.indexOf(main.activeTab);
@@ -2984,7 +2994,7 @@ Lino.DetailWrapper = Ext.extend(Lino.WindowWrapper, {
     return p;
   },
   save : function(after) {
-      console.log('20110701 DetailWrapper.save()',this);
+      //~ console.log('20110701 DetailWrapper.save()',this);
       var panel = this.main_item;
       var rec = panel.get_current_record();
       //~ console.log('todo: Lino.submit_detail and Lino.submit_insert send also action name from btn',btn,panel.get_base_params())
@@ -3016,6 +3026,7 @@ Lino.DetailWrapper = Ext.extend(Lino.WindowWrapper, {
 Lino.InsertWrapper = Ext.extend(Lino.WindowWrapper, {
   setup : function() {
     if (this.fileUpload) this.main_item.form.fileUpload = true;
+    //~ this.config.base_params['fmt'] = 'insert';
     Lino.WindowWrapper.prototype.setup.call(this);
     this.main_item.cascade(function(cmp){
       //~ console.log('20110613 cascade',cmp);
@@ -3029,7 +3040,8 @@ Lino.InsertWrapper = Ext.extend(Lino.WindowWrapper, {
       return API_URL + this.main_item.ls_url;
   },
   get_permalink_params : function() {
-      return {fmt:'insert'};
+    return {an:this.ww.config.action_name};      
+    //~ return {an:'insert'};
   },
   save : function(after) {
     //~ console.log('InsertWrapper.save()',this);
@@ -3057,7 +3069,7 @@ Lino.InsertWrapper = Ext.extend(Lino.WindowWrapper, {
         } else {
             // if there's no caller, then this was opened from a permalink.
             var p = Ext.apply({},_this.main_item.get_base_params());
-            Ext.apply(p,{fmt:'detail'});
+            Ext.apply(p,{an:'detail'});
             var url = _this.get_permalink_url() + '/' + action.result.record_id + "?" + Ext.urlEncode(p);
             document.location = url;
         }

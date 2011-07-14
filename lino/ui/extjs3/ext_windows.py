@@ -66,6 +66,7 @@ class WindowWrapper(ActionRenderer):
         
     def get_config(self,**d):
         #~ d.update(permalink_name=str(self.action))
+        d.update(action_name=self.action.name)
         return d
         
 
@@ -149,7 +150,7 @@ class BaseDetailWrapper(MasterWrapper):
         d.update(content_type=self.rh.content_type)
         d.update(url_data=url) 
         #~ 20101022 d.update(main_panel=self.main)
-        d.update(name=self.action.name)
+        #~ d.update(name=self.action.name)
         d.update(fk_name=self.action.actor.fk_name);
         return d
         

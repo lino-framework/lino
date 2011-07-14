@@ -335,6 +335,9 @@ class ReportAction(actions.Action):
         
     def __str__(self):
         return str(self.actor)+'.'+self.name
+        
+#~ class JsonAction(ReportAction):
+    #~ name = 'json'
 
 
 class GridEdit(ReportAction,actions.OpenWindowAction):
@@ -439,7 +442,6 @@ class ReportHandle(base.Handle):
     def setup_layouts(self):
         if self._layouts is not None:
             return
-        #~ self.default_action = self.report.default_action(self)
         self._layouts = [ self.list_layout ] 
         if self.report.model is not None:
             self._layouts += [ LayoutHandle(self,dtl) 
@@ -717,7 +719,7 @@ class Report(actors.Actor): #,base.Handled):
     """
     Reports are a central concept in Lino and deserve more than one sentence of documentation.
     """
-    default_action_class = GridEdit
+    #~ default_action_class = GridEdit
     _handle_class = ReportHandle
     #~ _handle_selector = base.UI
     params = {}
@@ -914,7 +916,9 @@ class Report(actors.Actor): #,base.Handled):
         #~ else:
             #~ assert self.master is None
         
-        self.default_action = self.default_action_class(self)
+        #~ self.default_action = self.default_action_class(self)
+        self.default_action = GridEdit(self)
+        #~ self.default_elem_action = ShowDetailAction(self)
         #~ self.list_action = ListAction(self)
         
         if self.order_by is not None:

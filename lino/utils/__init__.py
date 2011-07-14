@@ -85,15 +85,24 @@ def i2d(i):
     return d
     
 def get_class_attr(cl,name):
-    meth = getattr(cl,name,None)
-    if meth is not None:
-        return meth
+    value = getattr(cl,name,None)
+    if value is not None:
+        return value
     for b in cl.__bases__:
-        meth = getattr(b,name,None)
-        if meth is not None:
-            return meth
+        value = getattr(b,name,None)
+        if value is not None:
+            return value
             
-    
+def class_dict_items(cl,exclude=None):
+    if exclude is None:
+        exclude = set()
+    for k,v in cl.__dict__.items(): 
+        if not k in exclude:
+            yield k,v
+            exclude.add(k)
+    for b in cl.__bases__:
+        for k,v in class_dict_items(b,exclude): 
+            yield k,v
 
 
 

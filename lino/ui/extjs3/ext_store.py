@@ -63,6 +63,9 @@ class StoreField(object):
         yield self.options['name']
         
     def value_from_object(self,request,obj):
+        if not hasattr(self.field,'value_from_object'):
+            raise Exception('%s %s has no method value_from_object?!'%(
+              self.field,self.field.name))
         return self.field.value_from_object(obj)
         
     def obj2list(self,request,obj):
@@ -282,6 +285,9 @@ class VirtStoreField(StoreField):
 
     #~ def parse_form_value(self,v):
         #~ return self.field.parse_form_value(v)
+        
+    #~ def value_from_object(self,request,obj):
+        #~ return self.vf.value_from_object(request,obj)
         
     def obj2list(self,request,obj):
         return [self.vf.value_from_object(request,obj)]

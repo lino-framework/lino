@@ -640,6 +640,7 @@ class TypedPrintable(Printable):
   
 import cgi
 
+
 class Listing(Printable):
     
     class Meta:
@@ -684,9 +685,14 @@ class Listing(Printable):
     def body(self):
         raise NotImplementedError
         
-    def preview(self,request):
+    #~ def preview(self,request):
+        #~ return self.header() + self.body() + self.footer()
+    #~ preview.return_type = fields.HtmlBox(_("Preview"))
+    
+    def get_preview(self,request):
         return self.header() + self.body() + self.footer()
-    preview.return_type = fields.HtmlBox(_("Preview"))
+    preview = fields.VirtualField(fields.HtmlBox(_("Preview")),get_preview)
+    
     
 class InitiateListing(reports.InsertRow):
     callable_from = tuple()

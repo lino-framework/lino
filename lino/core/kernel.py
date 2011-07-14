@@ -51,7 +51,7 @@ from lino.utils import dblogger
 #~ from lino.utils import babel
 from lino.core import actors
 from lino.core.coretools import app_labels, data_elems # , get_unbound_meth
-from lino.utils import get_class_attr
+from lino.utils import get_class_attr, class_dict_items
 
 from lino.tools import resolve_model, resolve_field, get_app, get_field
 from lino.utils.config import load_config_files, find_config_file
@@ -130,12 +130,10 @@ def analyze_models(self):
             model.summary_row = f
             #~ print '20101111 installed summary_row for ', model
         
-        #~ virts = []
-        for k,v in model.__dict__.items():
+        #~ for k,v in model.__dict__.items():
+        for k,v in class_dict_items(model):
             if isinstance(v,fields.VirtualField):
                 v.lino_kernel_setup(model,k)
-                #~ virts.append(v)
-        #~ model._lino_virtual_fields = virts
             
         for f, m in model._meta.get_fields_with_model():
             if isinstance(f,models.ForeignKey):
@@ -145,6 +143,9 @@ def analyze_models(self):
                     #~ ddhdict[f.rel.to] = DisableDeleteHandler(model)
                 #~ ddhdict[f.rel.to].add_fk(model,f)
                 f.rel.to._lino_ddh.add_fk(model,f)
+        
+        
+        
                 
     #~ for model,ddh in ddhdict.items():
         #~ logger.debug("install %s.disable_delete_handler(%s)",

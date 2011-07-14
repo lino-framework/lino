@@ -396,6 +396,8 @@ class FieldElement(LayoutElement):
     #~ ext_suffix = "_field"
     
     def __init__(self,lh,field,**kw):
+        if not hasattr(field,'name'):
+            raise Exception("Field %s.%s has no name!" % (lh.rh.report,field))
         assert field.name, Exception("field %r has no name!" % field)
         self.field = field
         self.editable = field.editable # and not field.primary_key
@@ -1300,9 +1302,10 @@ class MainPanel(jsgen.Variable):
                     return ComplexRemoteComboFieldElement(lh,field,**kw)
         if field.choices:
             return ChoicesFieldElement(lh,field,**kw)
-            
+        
+        selector_field = field
         if isinstance(field,fields.VirtualField):
-            field = field.return_type
+            selector_field = field.return_type
         # 20110603
         #~ if isinstance(field,fields.RichTextField):
             #~ fmt = getattr(field,'textfield_format',None) or settings.LINO.textfield_format
@@ -1314,7 +1317,7 @@ class MainPanel(jsgen.Variable):
                 #~ kw.update(autoScroll=True)
                 #~ return HtmlBoxElement(lh,field,**kw)
         for cl,x in _FIELD2ELEM:
-            if isinstance(field,cl):
+            if isinstance(selector_field,cl):
                 return x(lh,field,**kw)
         raise NotImplementedError("No LayoutElement for %s" % field.__class__)
 

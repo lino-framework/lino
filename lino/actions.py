@@ -52,6 +52,7 @@ class Action(object):
     name = None
     key = None
     callable_from = None
+    default_format = 'html'
     
     def __init__(self,name=None,label=None):
         #~ self.actor = actor # actor who offers this action

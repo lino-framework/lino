@@ -29,7 +29,13 @@ from django.core.exceptions import ValidationError
 #~ add_introspection_rules([], ["^lino\.fields\.QuantityField"])
 #~ add_introspection_rules([], ["^lino\.fields\.HtmlTextField"])
 
+
+import logging
+logger = logging.getLogger(__name__)
+
+#~ from lino.utils import dblogger
 from lino.utils import choosers
+from lino.tools import full_model_name
 
 LANGUAGE_CHOICES = [ (k,_(v)) for k,v in settings.LANGUAGES ]
 
@@ -136,6 +142,12 @@ class DisplayField:
         for k,v in kw.items():
             assert hasattr(self,k)
             setattr(self,k,v)
+    # the following dummy methods are needed when using a DisplayField 
+    # as return_type of a VirtualField
+    def to_python(self,*args,**kw): raise NotImplementedError
+    def save_form_data(self,*args,**kw): raise NotImplementedError
+    def value_to_string(self,*args,**kw): raise NotImplementedError
+    #~ def value_from_object(self,*args,**kw): raise NotImplementedError
         
 class HtmlBox(DisplayField):
     pass
@@ -147,7 +159,7 @@ class HtmlBox(DisplayField):
 
 class VirtualField: # (Field):
     """
-    Currently implemented only by :class:`lino.utils.mti.EnableChild`.    
+    Currently subclassed only by :class:`lino.utils.mti.EnableChild`.    
     """
     editable = False
     
@@ -157,9 +169,15 @@ class VirtualField: # (Field):
         #~ self.set = set
         #~ self.name = None
         #~ Field.__init__(self)
-        for k in ('to_python choices save_form_data value_to_string'.split()):
-        #~ for k in ('get_internal_type','to_python'):
+        for k in ('''to_python choices save_form_data value_to_string verbose_name
+          blank'''.split()):
             setattr(self,k,getattr(return_type,k))
+            
+    #~ def to_python(self,*args,**kw): return self.return_type.to_python(*args,**kw)
+    #~ def save_form_data(self,*args,**kw): return self.return_type.save_form_data(*args,**kw)
+    #~ def value_to_string(self,*args,**kw): return self.return_type.value_to_string(*args,**kw)
+    #~ def get_choices(self): return self.return_type.choices
+    #~ choices = property(get_choices)
             
     def set_value_in_object(self,obj,value,request=None):
         """
@@ -177,6 +195,7 @@ class VirtualField: # (Field):
         self.name = name
         self.return_type.name = name
         self.return_type.attname = name
+        logger.debug('Found VirtualField %s.%s',full_model_name(model),name)
         
     #~ def contribute_to_class(self, cls, name):
         #~ "Called from lino.core.kernel.setup"

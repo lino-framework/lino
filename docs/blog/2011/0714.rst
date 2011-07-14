@@ -1,0 +1,86 @@
+20110714
+========
+
+Insert Window has wrong title
+-----------------------------
+
+Ein Bug, der mit den subtilen Änderungen für die Listings gekommen ist: 
+das Insert-Fenster zeigt nicht mehr "Einfügen nach <Listentitel>", sondern 
+nur noch "<Listentitel>".
+
+Kleine Ursache mit großer Wirkung: ich habe gemerkt, dass ich meine Konzept 
+von "format" und "action" noch überdenken muss. Da funktionierte einiges 
+bisher lediglich zufällig.
+
+Ich habe bei der Gelegenheit auch nochmal einen Blick auf 
+`django-piston <https://bitbucket.org/jespern/django-piston/wiki/Home>`_ 
+geworfen. Darauf umzustellen wäre sicherlich sinnvoll, 
+aber auch einiges an Arbeit.
+
+Okay, also wir haben zwei große Kategorien von URI-Handler 
+api_list_view und api_element_view. 
+Momentan ist es ziemlich undurchsichtig, in welchem Datenformat 
+Lino auf Anfragen antwortet.
+
+The methods POST, PUT and DELETE always return JSON 
+(an object with properties `message`, `result`, `alert`,...)
+
+But for GET requests it is currently quite subtle:
+
+==== ======== =================
+view fmt      response 
+==== ======== =================
+list grid*    HTML (with `onReady` that will open the GridWindow)
+list json     JSON (an object returning the data rows and some meta info like the title)
+list insert   HTML (with `onReady` that will open the InsertWindow with a `data_record`)
+list listing  HTML (with `onReady` that will open the InsertWindow in Listing mode)
+
+elem detail*  HTML (with `onReady` that will open the DetailWindow with a `data_record`)
+elem json     JSON (an object returning the detailed data row and some meta info like the title, navigator info,...))
+elem insert   JSON (an object returning the detailed data row and meta info like the title))
+==== ======== =================
+
+An internal but important change: there's a new URI parameter `an` 
+(action name, e.g. `detail`, `grid`, `insert`), and `fmt` is 
+used to explicitely specify the expected data format (`html`, `json`, `csv`).
+
+
+Virtual fields on abstract models don't work
+--------------------------------------------
+
+There are currently still two types of virtual fields in Lino:
+- (old) defined as model methods with an attribute `return_type`
+- (new) defined as a "real" :class:`lino.fields.VirtualField`
+
+The old type uses the magic attribut `_return_type_for_method`.
+As I discovered today, this trick fails when it is used on an 
+abstract model that has more than one subclasses.
+Listing is was such a case (`preview`).
+It worked as long as there was only one subclass of Listing 
+(:class:`lino.apps.dsbe.ContractsSituation`), 
+but now that there is a second one (:class:`lino.models.DataControlListing`), 
+it uses the same field instance for both classes, leading to a clash 
+"<lino.fields.DisplayField instance at 0x02008670> 
+has already an attribute '_return_type_for_method'"
+
+Solution was to use a real VirtualField instead of a
+model method with an attribute `return_type`.
+
+Old method::
+
+    def preview(self,request):
+        return self.header() + self.body() + self.footer()
+    preview.return_type = fields.HtmlBox(_("Preview"))
+    
+New method::
+
+    def get_preview(self,request):
+        return self.header() + self.body() + self.footer()
+    preview = fields.VirtualField(fields.HtmlBox(_("Preview")),get_preview)
+
+
+This is the second use case of :class:`lino.fields.VirtualField` 
+(the first being :class:`lino.utils.mti.EnableChild`), so 
+after this change I discovered and fixed a few bugs.
+
+Checkin 20110714
