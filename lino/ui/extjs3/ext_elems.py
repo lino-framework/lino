@@ -491,7 +491,7 @@ class TextFieldElement(FieldElement):
     xtype = None
     #width = 60
     preferred_width = 60
-    #~ preferred_height = 1
+    preferred_height = 5
     #collapsible = True
     separate_window = False
     def __init__(self,lh,field,**kw):
@@ -1038,7 +1038,6 @@ class Panel(Container):
             self.label = label
 
         Container.__init__(self,lh,name,*elements,**kw)
-        
 
         w = h = 0
         for e in self.elements:
@@ -1117,13 +1116,15 @@ class Panel(Container):
             for e in self.elements:
                 eh = e.height or e.preferred_height
                 if e.vflex:
-                    e.value.update(flex=int(eh*100/h))
+                    e.update(flex=int(eh*100/h))
                     vflex_count += 1
             if vflex_count >= 2 and len(self.elements) <= 3:
             #~ if vflex_count >= 1 and len(self.elements) <= 3:
                 self.remove('layout','layoutConfig')
                 self.value_template = 'new Lino.VBorderPanel(%s)'
                 for e in self.elements:
+                    #~ if self.ext_name == 'main_panel627':
+                        #~ print 20110715, e.height, e.preferred_height
                     #~ if e.vflex: # """as long as there are bugs, make also non-vflex resizable"""
                     if e.vflex:
                         e.update(flex=e.height or e.preferred_height)
@@ -1215,7 +1216,7 @@ class GridElement(Container):
         assert not kw.has_key('before_row_edit')
         self.update(before_row_edit=before_row_edit(self))
         
-        self.preferred_height = rpt.page_length 
+        #~ self.preferred_height = rpt.page_length 
         if self.report.master is not None:
             self.mt = ContentType.objects.get_for_model(self.report.master).pk
         else:

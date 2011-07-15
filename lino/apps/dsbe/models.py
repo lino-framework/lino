@@ -1541,7 +1541,7 @@ class MyContracts(mixins.ByUser,Contracts):
 #
 # NOTES
 #
-class Note(notes.Note,contacts.PartnerDocument):
+class Note(notes.Note,contacts.PartnerDocument,mixins.DiffingMixin):
     class Meta:
         app_label = 'notes'
         verbose_name = _("Event/Note") # application-specific override

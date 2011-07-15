@@ -150,7 +150,7 @@ class BaseDetailWrapper(MasterWrapper):
         d.update(content_type=self.rh.content_type)
         d.update(url_data=url) 
         #~ 20101022 d.update(main_panel=self.main)
-        #~ d.update(name=self.action.name)
+        d.update(name=self.action.name) # used by tinymce editor window
         d.update(fk_name=self.action.actor.fk_name);
         return d
         

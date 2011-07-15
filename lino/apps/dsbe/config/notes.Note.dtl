@@ -9,6 +9,6 @@ left =
     
 main =
     left uploads.UploadsByOwner
-    body:80x5 thirds.ThirdsByOwner
+    body:80 thirds.ThirdsByOwner:30
     cal.TasksByOwner
 

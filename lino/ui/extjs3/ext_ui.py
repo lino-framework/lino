@@ -1136,24 +1136,33 @@ tinymce.init({
                 
             ar = ext_requests.ViewReportRequest(request,ah,a)
             
-            if fmt == 'json':
+            #~ if fmt == 'json':
               
-                if isinstance(a,reports.InsertRow):
-                    elem = ar.create_instance()
-                    datarec = elem2rec_insert(ar,ah,elem)
-                    return json_response(datarec)
+                #~ if isinstance(a,reports.InsertRow):
+                    #~ elem = ar.create_instance()
+                    #~ datarec = elem2rec_insert(ar,ah,elem)
+                    #~ return json_response(datarec)
                     
-                if elem is None:
-                    raise Http404('Tried to GET element -99999')
-                datarec = elem2rec_detailed(ar,ah,elem)
-                return json_response(datarec)
+                #~ if elem is None:
+                    #~ raise Http404('Tried to GET element -99999')
+                #~ datarec = elem2rec_detailed(ar,ah,elem)
+                #~ return json_response(datarec)
                 
                 
-            if elem is None:
-                raise Http404('Tried to GET element -99999')
+            #~ if elem is None:
+                #~ raise Http404('Tried to GET element -99999')
 
             if isinstance(a,actions.OpenWindowAction):
-                datarec = elem2rec_detailed(ar,ah,elem)                
+              
+                if elem is None:
+                    elem = ar.create_instance()
+                    datarec = elem2rec_insert(ar,ah,elem)
+                else:
+                    datarec = elem2rec_detailed(ar,ah,elem)
+                
+                if fmt == 'json':
+                    return json_response(datarec)
+                    
                 params = dict(data_record=datarec)
                 bp = self.request2kw(ar)
                 if a.window_wrapper.tabbed:

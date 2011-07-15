@@ -237,7 +237,8 @@ Lino.edit_tinymce_text = function(panel) {
           editor.ed.setProgressState(0);
           todo_after_save = false;
           saving = false;
-          console.log('tinymce.save() failed. sorry.',arguments)},
+          console.log('tinymce.save() failed. sorry.',arguments);
+        },
       success: function() {
         saving = false;
         //~ if (editor.ed.getContainer()) 
@@ -1398,8 +1399,9 @@ Lino.RichTextPanel = Ext.extend(Ext.Panel,{
         //~ save_enablewhendirty : true
         //~ save_oncancelcallback: on_cancel
     }};
-    editorConfig.name = config.action_name;
-    //~ delete config.name;
+    //~ editorConfig.name = config.action_name;
+    editorConfig.name = config.name;
+    delete config.name;
     //~ config.title = config.label;
     //~ delete config.label;
     this.before_init(ww,config,params);
@@ -2888,9 +2890,14 @@ Ext.override(Lino.WindowWrapper,{
   get_permalink : function() {
     //~ var p = this.main_item.get_base_params() || {};
     var p = Ext.apply({},this.main_item.get_base_params());
+    delete p.fmt;
+    //~ if (p.fmt) delete p.fmt;
     Ext.apply(p,this.get_permalink_params());
+     //~ p.fmt = 'html';
     //~ console.log('get_permalink',p,this.get_permalink_params());
-    return this.get_permalink_url() + "?" + Ext.urlEncode(p);
+    var url = this.get_permalink_url();
+    if (Ext.urlEncode(p)) url = url + "?" + Ext.urlEncode(p);
+    return url;
   },
   get_master_params : function() {
     var p = {}
@@ -2918,7 +2925,7 @@ Ext.override(Lino.WindowWrapper,{
   },
   get_permalink_params : function() {
       //~ return {an:'grid'};
-      return {an:this.ww.config.action_name};
+      return {an:this.config.action_name};
   },
   on_render : function() {},
   //~ refresh : function() { },
@@ -2966,6 +2973,11 @@ Lino.GridMasterWrapper.override({
       this.window.show();
       this.refresh();
   },
+  get_permalink_params : function() {
+    var p = {};
+    //~ var p = {an:this.config.action_name};
+    return p;
+  },
   add_row_listener : function(fn,scope) {
     // this.main_grid.add_row_listener(fn,scope);
     this.main_item.getSelectionModel().addListener('rowselect',fn,scope);
@@ -2983,13 +2995,14 @@ Lino.DetailWrapper = Ext.extend(Lino.WindowWrapper, {
       return API_URL + this.main_item.ls_url+'/'+this.get_current_record().id;
   },
   get_permalink_params : function() {
+    var p = {};
     //~ var p = {an:'detail'};
-    var p = {an:this.ww.config.action_name};
+    //~ var p = {an:this.config.action_name};
     var main = this.main_item.items.get(0);
     if (main.activeTab) {
       var tab = main.items.indexOf(main.activeTab);
       //~ console.log('main.activeTab',tab,main.activeTab);
-      p.$ext_requests.URL_PARAM_TAB = tab
+      if (tab) p.$ext_requests.URL_PARAM_TAB = tab
     }
     return p;
   },
@@ -3040,7 +3053,7 @@ Lino.InsertWrapper = Ext.extend(Lino.WindowWrapper, {
       return API_URL + this.main_item.ls_url;
   },
   get_permalink_params : function() {
-    return {an:this.ww.config.action_name};      
+    return {an:this.config.action_name};      
     //~ return {an:'insert'};
   },
   save : function(after) {
