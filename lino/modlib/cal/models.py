@@ -161,7 +161,7 @@ class Events(reports.Report):
     
 class Tasks(reports.Report):
     model = Task
-    column_names = 'due_date summary status done *'
+    column_names = 'due_date summary done status *'
     #~ hidden_columns = set('owner_id owner_type'.split())
     
 #~ class EventsByOwner(Events):
@@ -194,7 +194,7 @@ class MyTasks(mixins.ByUser):
     model = Task
     label = _("My Tasks")
     order_by = ["due_date","due_time"]
-    column_names = 'due_date summary status done *'
+    column_names = 'due_date summary done status *'
     
     
 def update_auto_task(autotype,user,date,summary,owner,**defaults):
