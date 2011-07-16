@@ -223,7 +223,7 @@ def test03(self):
     
     """
     # 
-    response = self.client.get('/api/contacts/Persons/15?_dc=1298893675811')
+    response = self.client.get('/api/contacts/Persons/15?fmt=json')
     result = self.check_json_result(response,'navinfo disable_delete data id title')
     #~ result = simplejson.loads(response.content)
     #~ for k in 'navinfo disable_delete data id title'.split():
@@ -360,12 +360,14 @@ def test06(self):
     if 'de' in babel.AVAILABLE_LANGUAGES:
         babel.set_language('de')
         self.assertEquals(unicode(p), u"Gehorsam")
-        self.assertEquals(unicode(pp), u"Sozialkompetenzen.Gehorsam=mittelmäßig")
+        self.assertEquals(unicode(pp), u"mittelmäßig")
+        #~ self.assertEquals(unicode(pp), u"Sozialkompetenzen.Gehorsam=mittelmäßig")
     
     if 'fr' in babel.AVAILABLE_LANGUAGES:
         babel.set_language('fr')
         self.assertEquals(unicode(p), u"Obéissant")
-        self.assertEquals(unicode(pp), u"Compétences sociales.Obéissant=moyennement")
+        #~ self.assertEquals(unicode(pp), u"Compétences sociales.Obéissant=moyennement")
+        self.assertEquals(unicode(pp), u"moyennement")
     
     #~ babel.set_language(babel.DEFAULT_LANGUAGE)
     babel.set_language(None) # switch back to default language for subsequent tests

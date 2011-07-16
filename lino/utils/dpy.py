@@ -23,6 +23,7 @@ import imp
 from decimal import Decimal
 
 
+#~ from django.conf import settings
 from django.db import models
 from django.db.models.fields import NOT_PROVIDED
 from django.core.serializers import base
@@ -35,13 +36,14 @@ from django.utils.encoding import smart_unicode, is_protected_type, force_unicod
 import lino
 from lino.tools import obj2str, sorted_models_list
 from lino.utils import dblogger
+from lino.utils import babel
 
 SUFFIX = '.py'
 #~ SUFFIX = '.dpy'
 
 class Serializer(base.Serializer):
     """
-    Serializes a QuerySet to a dpy stream.
+    Serializes a QuerySet to a py stream.
     Usage: ``manage.py dumpdata --format py``
     """
 
@@ -338,6 +340,7 @@ def Deserializer(fp, **options):
     """
     if isinstance(fp, basestring):
         raise NotImplementedError
+    babel.set_language(babel.DEFAULT_LANGUAGE)
     parts = os.path.split(fp.name)
     fqname = parts[-1]
     assert fqname.endswith(SUFFIX)

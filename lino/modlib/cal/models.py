@@ -194,7 +194,7 @@ class MyTasks(mixins.ByUser):
     model = Task
     label = _("My Tasks")
     order_by = ["due_date","due_time"]
-    column_names = 'summary status done *'
+    column_names = 'due_date summary status done *'
     
     
 def update_auto_task(autotype,user,date,summary,owner,**defaults):
@@ -235,16 +235,16 @@ def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
     """
     Return a HTML summary of all open reminders for this user
     """
-    date_from = datetime.date.today()
+    today = datetime.date.today()
     #~ if days_back is None:
         #~ back_until = None
     #~ else:
-        #~ back_until = date_from - datetime.timedelta(days=days_back)
+        #~ back_until = today - datetime.timedelta(days=days_back)
     
     past = {}
     future = {}
     def add(task):
-        if task.due_date < date_from:
+        if task.due_date < today:
             lookup = past
         else:
             lookup = future
@@ -255,15 +255,15 @@ def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
         else:
             day.append(task)
             
-    #~ filterkw = { 'due_date__lte' : date_from }
+    #~ filterkw = { 'due_date__lte' : today }
     filterkw = {}
     if days_back is not None:
         filterkw.update({ 
-            'due_date__gte' : date_from - datetime.timedelta(days=days_back)
+            'due_date__gte' : today - datetime.timedelta(days=days_back)
         })
     if days_forward is not None:
         filterkw.update({ 
-            'due_date__lte' : date_from + datetime.timedelta(days=days_forward)
+            'due_date__lte' : today + datetime.timedelta(days=days_forward)
         })
     filterkw.update(user=user)
     filterkw.update(done=False)
