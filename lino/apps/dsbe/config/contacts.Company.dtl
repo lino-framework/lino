@@ -21,8 +21,8 @@ address_box = box3 box4
 bottom_box = box5 contacts.ContactsByCompany
 box5 = 
   remarks 
-  is_courseprovider
+  is_courseprovider is_jobprovider
 
 intro_box = 
     name id language 
-    vat_id:12 activity:20 type:20 hourly_rate
+    vat_id:12 activity:20 type:20 #hourly_rate

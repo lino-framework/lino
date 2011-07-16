@@ -841,9 +841,9 @@ class Company(Partner,contacts.Company):
     #~ vat_id = models.CharField(max_length=200,blank=True)
     #~ type = models.ForeignKey('contacts.CompanyType',blank=True,null=True,verbose_name=_("Company type"))
     prefix = models.CharField(max_length=200,blank=True) 
+    # todo: remove hourly_rate after data migration. this is now in Job
     hourly_rate = fields.PriceField(_("hourly rate"),blank=True,null=True)
-    #~ is_courseprovider = models.BooleanField(_("Course provider")) 
-    is_courseprovider = mti.EnableChild('dsbe.CourseProvider',verbose_name=_("Course provider"))
+    #~ is_courseprovider = mti.EnableChild('dsbe.CourseProvider',verbose_name=_("Course provider"))
     
     def disabled_fields(self,request):
         if settings.TIM2LINO_IS_IMPORTED_PARTNER(self):
@@ -1224,65 +1224,6 @@ class ExclusionsByPerson(Exclusions):
     #~ label = _('Coaches')
 
 #
-# CONTRACT TYPES 
-#
-class ContractType(mixins.PrintableType):
-  
-    templates_group = 'contracts'
-    
-    class Meta:
-        verbose_name = _("Contract Type")
-        verbose_name_plural = _('Contract Types')
-        
-    ref = models.CharField(_("reference"),max_length=20,blank=True)
-    name = babel.BabelCharField(_("contract title"),max_length=200)
-    
-    def __unicode__(self):
-        return unicode(babel.babelattr(self,'name'))
-
-class ContractTypes(reports.Report):
-    model = ContractType
-    column_names = 'name build_method template *'
-
-#
-# EXAMINATION POLICIES
-#
-class ExamPolicy(models.Model):
-    class Meta:
-        verbose_name = _("examination policy")
-        verbose_name_plural = _('examination policies')
-        
-    name = babel.BabelCharField(_("designation"),max_length=200)
-    
-    def __unicode__(self):
-        return unicode(babel.babelattr(self,'name'))
-    #~ def __unicode__(self):
-        #~ return unicode(self.name)
-#~ add_babel_field(ExamPolicy,'name')
-
-class ExamPolicies(reports.Report):
-    model = ExamPolicy
-    column_names = 'name *'
-
-#
-# CONTRACT ENDINGS
-#
-class ContractEnding(models.Model):
-    class Meta:
-        verbose_name = _("Contract Ending")
-        verbose_name_plural = _('Contract Endings')
-        
-    name = models.CharField(_("designation"),max_length=200)
-    
-    def __unicode__(self):
-        return unicode(self.name)
-        
-class ContractEndings(reports.Report):
-    model = ContractEnding
-    column_names = 'name *'
-    order_by = ['name']
-
-#
 # COURSE ENDINGS
 #
 class CourseEnding(models.Model):
@@ -1324,218 +1265,6 @@ class AidTypes(reports.Report):
     model = AidType
     column_names = 'name *'
 
-
-
-#
-# CONTRACTS
-#
-class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,contacts.ContactDocument):
-    """
-    A Contract
-    """
-    class Meta:
-        verbose_name = _("Contract")
-        verbose_name_plural = _('Contracts')
-        
-    type = models.ForeignKey("dsbe.ContractType",verbose_name=_("contract type"),blank=True)
-    
-    applies_from = models.DateField(_("applies from"),blank=True,null=True)
-    applies_until = models.DateField(_("applies until"),blank=True,null=True)
-    date_decided = models.DateField(blank=True,null=True,verbose_name=_("date decided"))
-    date_issued = models.DateField(blank=True,null=True,verbose_name=_("date issued"))
-    duration = models.IntegerField(_("duration (days)"),blank=True,null=True,default=None)
-    
-    
-    regime = models.CharField(_("regime"),max_length=200,blank=True,null=True)
-    schedule = models.CharField(_("schedule"),max_length=200,blank=True,null=True)
-    hourly_rate = fields.PriceField(_("hourly rate"),blank=True,null=True)
-    refund_rate = models.CharField(_("refund rate"),max_length=200,
-        blank=True,null=True)
-    
-    reference_person = models.CharField(_("reference person"),max_length=200,
-        blank=True,null=True)
-    
-    responsibilities = fields.RichTextField(_("responsibilities"),blank=True,null=True,format='html')
-    
-    stages = fields.RichTextField(_("stages"),blank=True,null=True,format='html')
-    goals = fields.RichTextField(_("goals"),blank=True,null=True,format='html')
-    duties_asd = fields.RichTextField(_("duties ASD"),blank=True,null=True,format='html')
-    duties_dsbe = fields.RichTextField(_("duties DSBE"),blank=True,null=True,format='html')
-    duties_company = fields.RichTextField(_("duties company"),blank=True,null=True,format='html')
-    duties_person = fields.RichTextField(_("duties person"),blank=True,null=True,format='html')
-    
-    user_asd = models.ForeignKey("users.User",verbose_name=_("responsible (ASD)"),
-        related_name='contracts_asd',blank=True,null=True) 
-    
-    exam_policy = models.ForeignKey("dsbe.ExamPolicy",blank=True,null=True,
-        verbose_name=_("examination policy"))
-        
-    ending = models.ForeignKey("dsbe.ContractEnding",blank=True,null=True,
-        verbose_name=_("Ending"))
-    date_ended = models.DateField(blank=True,null=True,verbose_name=_("date ended"))
-    
-    #~ aid_nature = models.CharField(_("aid nature"),max_length=100,blank=True)
-    #~ aid_rate = models.CharField(_("aid rate"),max_length=100,blank=True)
-    
-    @chooser(simple_values=True)
-    def duration_choices(cls):
-        return [ 312, 468, 624 ]
-        #~ return [ 0, 25, 50, 100 ]
-    
-    @chooser(simple_values=True)
-    def regime_choices(cls,language):
-        return language_choices(language,REGIME_CHOICES)
-    
-    @chooser(simple_values=True)
-    def schedule_choices(cls,language):
-        return language_choices(language,SCHEDULE_CHOICES)
-    
-    @chooser(simple_values=True)
-    def refund_rate_choices(cls):
-        return [ 
-        u"0%",
-        u"25%",
-        u"50%",
-        u"100%",
-        ]
-    
-    
-    def disabled_fields(self,request):
-        if self.must_build:
-            return []
-        return settings.LINO.CONTRACT_PRINTABLE_FIELDS
-        
-    def __unicode__(self):
-        return u'%s # %s' % (self._meta.verbose_name,self.pk)
-    
-    #~ def __unicode__(self):
-        #~ msg = _("Contract # %s")
-        #~ # msg = _("Contract # %(pk)d (%(person)s/%(company)s)")
-        #~ # return msg % dict(pk=self.pk, person=self.person, company=self.company)
-        #~ return msg % self.pk
-        
-    def get_reminder_html(self,ui,user):
-        url = ui.get_detail_url(self,fmt='detail')
-        if self.type:
-            s = unicode(self.type)
-        else:
-            s = self._meta.verbose_name
-        s += ' #' + unicode(self.pk)
-        
-        s = ui.href(url,cgi.escape(s))
-        
-        more = []
-        if self.person:
-            more.append(ui.href_to(self.person))
-        if self.company:
-            more.append(ui.href_to(self.company))
-        if self.user and self.user != user:
-            more.append(cgi.escape(unicode(self.user)))
-        if self.reminder_text:
-            more.append(cgi.escape(self.reminder_text))
-        else:
-            more.append(cgi.escape(_('Due date reached')))
-        return s + '&nbsp;: ' + (', '.join(more))
-        
-    def dsbe_person(self):
-        if self.person_id is not None:
-            if self.person.coach2_id is not None:
-                return self.person.coach2_id
-            return self.person.coach1 or self.user
-            
-        #~ try:
-            #~ return self.person.coaching_set.get(type__name__exact='DSBE').coach        
-        #~ except Exception,e:
-            #~ return self.person.user or self.user
-            
-    def on_person_changed(self,request):
-        if self.person_id is not None:
-            if self.person.coach1_id is None or self.person.coach1_id == self.user_id:
-                self.user_asd = None
-            else:
-                self.user_asd = self.person.coach1
-                
-    def on_create(self,request):
-        super(Contract,self).on_create(request)
-        self.on_person_changed(request)
-      
-    def full_clean(self):
-      
-        if self.person_id is not None:
-            #~ if not self.user_asd:
-                #~ if self.person.user != self.user:
-                    #~ self.user_asd = self.person.user
-            if self.person.birth_date and self.applies_from:
-                def duration(refdate):
-                    delta = refdate - self.person.birth_date
-                    age = delta.days / 365
-                    if age < 36:
-                        return 312
-                    elif age < 50:
-                        return 468
-                    else:
-                        return 624
-              
-                if self.duration is None:
-                    if self.applies_until:
-                        self.duration = duration(self.applies_until)
-                    else:
-                        self.duration = duration(self.applies_from)
-                        self.applies_until = self.applies_from + datetime.timedelta(days=self.duration)
-                    
-        if self.company is not None:
-          
-            if self.hourly_rate is None:
-                self.hourly_rate = self.company.hourly_rate
-                
-            if self.type_id is None \
-                and self.company.type is not None \
-                and self.company.type.contract_type is not None:
-                self.type = self.company.type.contract_type
-    @classmethod
-    def site_setup(cls,lino):
-        """
-        Here's how to override the default verbose_name of a field.
-        """
-        resolve_field('dsbe.Contract.user').verbose_name=_("responsible (DSBE)")
-        lino.CONTRACT_PRINTABLE_FIELDS = reports.fields_list(cls,
-            'person company contact type '
-            'applies_from applies_until duration '
-            'language schedule regime hourly_rate refund_rate reference_person '
-            'stages goals duties_dsbe duties_company duties_asd duties_person '
-            'user user_asd exam_policy '
-            'date_decided date_issued responsibilities')
-
-    def update_owned_task(self,task):
-        mixins.Reminder.update_owned_task(self,task)
-        contacts.PartnerDocument.update_owned_task(self,task)
-
-class Contracts(reports.Report):
-    model = Contract
-    column_names = 'id company applies_from applies_until user type *'
-    order_by = ['id']
-    
-class ContractsByPerson(Contracts):
-    fk_name = 'person'
-    column_names = 'company applies_from applies_until user type *'
-
-        
-class ContractsByCompany(Contracts):
-    fk_name = 'company'
-    column_names = 'person applies_from applies_until user type *'
-
-class ContractsByType(Contracts):
-    fk_name = 'type'
-    column_names = "applies_from person company user *"
-    order_by = ["applies_from"]
-
-class MyContracts(mixins.ByUser,Contracts):
-    column_names = "applies_from person company *"
-    label = _("My contracts")
-    #~ order_by = "reminder_date"
-    #~ column_names = "reminder_date person company *"
-    order_by = ["applies_from"]
-    #~ filter = dict(reminder_date__isnull=False)
 
 
 #
@@ -2076,56 +1805,6 @@ class PersonsBySearch(reports.Report):
     
 
 
-import cgi
-  
-
-COLS = 8
-
-class ContractsSituation(mixins.Listing):
-    class Meta:
-        verbose_name = _("Contracts Situation") 
-        
-    contract_type = models.ForeignKey(ContractType,blank=True,null=True)
-    
-    def body(self):
-        cells = []
-        today = self.date or datetime.date.today()
-        for company in Company.objects.all():
-            actives = []
-            candidates = []
-            for ct in company.contract_set.all():
-                if ct.applies_from:
-                    until = ct.applies_until or ct.date_ended
-                    if not until or (ct.applies_from >= today and until <= today):
-                        actives.append(ct)
-                else:
-                    candidates.append(ct)
-            if candidates + actives:
-                s = "<b>%s</b>" % cgi.escape(unicode(company))
-                for ct in actives:
-                    s += '<br>' + cgi.escape(unicode(ct.person))
-                s += '<hr width="100%">'
-                for ct in candidates:
-                    s += '<br>' + cgi.escape(unicode(ct.person))
-                cells.append(s)
-            
-        rows = []
-        while len(cells) > COLS:
-            rows.append(cells[:COLS])
-            cells = cells[COLS:]
-        rows.append(cells)
-        html = ''
-        for row in rows:
-            s = ''.join(['<td valign="top">%s</td>' % cell for cell in row])
-            html += '<tr>%s</tr>' % s
-        html = '<table>%s</table>' % html
-        return html
-        
-        
-
-
-
-
 
 
 
@@ -2133,26 +1812,10 @@ class ContractsSituation(mixins.Listing):
 
 
 """
-Here we add a new field `contract_type` to the 
-standard model CompanyType.
+Here we add some specific fields to the 
+standard model SiteConfig.
 http://osdir.com/ml/django-users/2009-11/msg00696.html
 """
-from lino.modlib.contacts.models import CompanyType
-reports.inject_field(CompanyType,
-    'contract_type',
-    models.ForeignKey("dsbe.ContractType",
-        blank=True,null=True,
-        verbose_name=_("contract type")),
-    """The default Contract Type for Contracts with a 
-    Company of this type."""
-    )
-
-#~ reports.inject_field(Note, 'task',
-    #~ models.ForeignKey("cal.Task",
-        #~ blank=True,null=True,
-        #~ verbose_name=_("Task")),
-    #~ """If this Note is related to a specific Task."""
-    #~ )
 
 from lino.models import SiteConfig
 reports.inject_field(SiteConfig,
@@ -2223,6 +1886,15 @@ reports.inject_field(SiteConfig,
         related_name='driving_licence_sites'),
     """The UploadType for `Person.driving_licence`.
     """)
+
+
+
+reports.inject_field(Company,
+    'is_courseprovider',
+    mti.EnableChild('dsbe.CourseProvider',verbose_name=_("is Course Provider")),
+    """Whether this Company is also a Course Provider."""
+    )
+
 
 
 

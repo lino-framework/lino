@@ -152,15 +152,19 @@ def test03(self):
     Created :doc:`/blog/2011/0615`.
     See the source code at :srcref:`/lino/apps/dsbe/tests/dsbe_tests.py`.
     """
-    from lino.apps.dsbe.models import Contracts, Contract, ContractType
+    from lino.modlib.contracts.models import Contracts, Contract, ContractType, JobProvider
     #~ from lino.modlib.notes.models import ContractType
     from lino.mixins.printable import PrintAction
     from lino.modlib.users.models import User
     root = User(username='root') # ,last_name="Superuser")
     root.save()
+    jp = JobProvider(name="Test")
+    jp.save()
     t = ContractType(id=1,build_method='appyodt',template="",name=u'Art.60\xa77')
     t.save()
-    n = Contract(id=1,type=t,user=root)
+    job = Job(provider=jp,contract_type=t)
+    job.save()
+    n = Contract(id=1,job=job,user=root)
     n.save()
     a = PrintAction()
     #~ run_

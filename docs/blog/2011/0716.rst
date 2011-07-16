@@ -1,0 +1,138 @@
+20110716
+========
+
+
+Another successful GPL software project
+---------------------------------------
+
+I just read a story about a successful GPL software project in Australia:
+
+http://sourceforge.net/blog/potm-201107/
+
+My spontaneous reaction: yes, Lino id also hoping for 
+a person who is able and eager to found and lead 
+(as "gérant"/"Geschäftsführer") an
+organization (asbl or sprl) that offers and warrents professional 
+Lino support.
+
+
+Erweiterung Verträge
+--------------------
+
+Planung
++++++++
+
+Wir planen folgende Erweiterung der Datenstruktur im Bereich Verträge, 
+die vor allem für die Übersichtsliste der laufenden Verträge
+:class:`lino.apps.dsbe.contracts.ContractsSituation` 
+wichtig sind.
+
+Also eine Organisation kann ja jetzt schon zum Kursanbieter werden,
+indem man die entsprechende Checkbox ankreuzt. Neben dieser Checkbox
+käme eine weitere Checkbox "Vertragsanbieter" (bzw. "Stellenanbieter").
+
+Ein Vertragsanbieter wäre also eine Organisation, die potentiell
+zusätzliche Datenfelder haben kann (momentan fällt mir aber keines ein).
+Im Reiter "Notizen" einer normalen Organisation würde die Liste der
+Verträge dann verschwinden.
+
+Vertragsanbieter wären nicht nur für die Art.60-7-Verträge, sondern alle
+Organisationen (inkl. ÖSHZ Eupen), mit denen Verträge jedweder Art
+gemacht werden können. Beim Erstellen eines neuen Vertrags von einer
+Person aus würden auch nicht mehr alle Organisationen zur Auswahl
+angezeigt, sondern nur die Vertragsanbieter.
+
+Jeder Vertragsanbieter hätte eine Serie von "Vertragsangeboten" oder
+"Stellen" (das Äquivalent der Kurse). Die Gesamtliste sähe z.B. so aus:
+
+=== =========== =============== ========= ======================
+Nr. Anbieter    Vertragsart     Kapazität Bezeichnung
+=== =========== =============== ========= ======================
+1   Tagesstätte Art.60-7          4       Tagesstätte
+2   BISA        Art.60-7          3       BISA Art.60-7
+3   BISA        VSE               1       BISA VSE-Stelle
+4   ÖSHZ        Art.60-7 intern   3       Häusliche Hilfe
+5   ÖSHZ        Art.60-7 intern   2       Mosaik
+=== =========== =============== ========= ======================
+
+Die Vertragsart ist hier die, die bei neuen Verträgen mit diesem
+Anbieter par défaut gesetzt wird (ein Feld, das momentan in den
+Firmenarten steht, wo es raus käme).
+
+In den Verträgen käme ein neues Feld "Angebot" bzw. "Stelle" ("in dessen
+Rahmen der Vertrag läuft"). Ich denke, dass dieses Feld obligatorisch
+sein sollte. Die Felder "Vertragsart" und "Organisation" könnten dann
+aus dem Eingabefenster des Vertrags selber verschwinden (weil das ja im
+Angebot steht). Beim Release würden die Angebote für existierende
+Verträge automatisch erstellt. Was ich noch nicht weiß: ist die
+Kontaktperson/Eigenschaft ebenfalls pro Stelle einigermaßen fix.
+
+Melanie hat ja klar gesagt, dass es ihr unnatürlich scheint, für jeden
+Kandidaten schon einen "Vertrag" zu erstellen. Also eine zusätzliche
+Tabelle für Vertragsanfragen:
+
+============== =============== ========= ============ =========
+Person         Vertragsangebot Bemerkung erstellt am  Vertrag
+============== =============== ========= ============ =========
+Max Mustermann Nr. 2           blabla    15.07.2011
+============== =============== ========= ============ =========
+
+Das Feld "Vertrag" ist leer, solange die Anfrage offen ist. Auf einer
+offenen Vertragsanfrage käme ein Button "Vertrag erstellen", der das
+"Vertrag erstellen"-Fenster öffnet. Und wenn man dieses ausfüllt und
+speichert, muss Lino die Nummer des Vertrags in der Anfrage speichern.
+
+Man kann einen Vertrag weiterhin "manuell" erstellen, ohne eine konkrete
+Vertragsanfrage vorliegen zu haben.
+
+Um das Listing "Übersicht" machen zu können, muss jede Vertragsstelle
+noch eine "Stellenart" zugewiesen bekommen :
+
+- Sozialwirtschaft = "majorés"
+- INTERN							
+- EXTERN (Öffentl. VoE mit Kostenrückerstattung)
+- EXTERN (Privat Kostenrückerstattung)
+- VSE
+- Sonstige (alle nicht
+
+
+Implementierung
++++++++++++++++
+
+- Neue Tabellen: 
+
+  - JobProvider : Vertragsanbieter
+  - Job : Vertragsangebot ("Stelle")
+  - JobType : Stellenart
+  - JobRequest : Vertragsanfrage
+
+- Die vier bestehenden Tabellen zu den Verträgen habe ich in ein eigenes neues 
+  Modul :mod:`lino.modlib.jobs` ausgelagert. Bei der Datenmigration müssen 
+  wir deshalb dran denken, dass folgende Models jetzt ein neues app label 
+  haben::
+
+    dsbe.Contract -> jobs.Contract
+    dsbe.ContractType -> jobs.ContractType
+    dsbe.ContractEnding -> jobs.ContractEnding
+    dsbe.ExamPolicy -> jobs.ExamPolicy
+    
+- CompanyType.contract_type and Company.hourly_rate moved to Job. 
+  Company.hourly_rate remains but is no longer used except for data migration.
+  
+Datenmigration
+++++++++++++++
+
+:func:`lino.tools.resolve_model` macht jetzt keine Exception mehr, 
+wenn sie das Modell nicht findet, sondern returnt ein Fake-Modell. 
+Das war nötig, damit ich einen Dump aus Version 1.1.17 ohne manuelle 
+Bearbeitung (außer dem Entkommentieren der automagischen beiden Zeilen am Ende) 
+importieren kann.
+
+Bzw. genauer gesagt ist doch eine manuelle Korrektur nötig::
+
+  def create_contacts_companytype(id, name, abbr, name_fr, name_en, abbr_fr, abbr_en, contract_type_id):
+      return CompanyType(id=id,name=name,abbr=abbr,name_fr=name_fr,name_en=name_en,abbr_fr=abbr_fr,abbr_en=abbr_en)
+
+Also der Parameter contract_type_id muss ignoriert werden. 
+Hier kann ich die Funktion nicht einfach ersetzen wegen der Babelfelder, 
+die ja lokal spezifisch sind. 

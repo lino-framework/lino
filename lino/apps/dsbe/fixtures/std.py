@@ -51,7 +51,7 @@ def objects():
     yield eventType(u"Erstgespräch")
     yield eventType(u"Abschlussbericht")
     
-    contractType = Instantiator('dsbe.ContractType',"ref",
+    contractType = Instantiator('jobs.ContractType',"ref",
         build_method='appypdf',
         template=u'art60-7.odt').build
     yield contractType('art60-7a',
@@ -85,7 +85,7 @@ def objects():
           en=u'Convention art.60§7 town',
           ))
     
-    contractType = Instantiator('dsbe.ContractType',"ref",
+    contractType = Instantiator('jobs.ContractType',"ref",
       build_method='appypdf',template=u'vse.odt').build
     yield contractType("vsea",**babel_values('name',
           de=u"VSE Ausbildung",
@@ -231,7 +231,7 @@ def objects():
     
     
     
-    exam_policy = Instantiator('dsbe.ExamPolicy').build
+    exam_policy = Instantiator('jobs.ExamPolicy').build
     yield exam_policy(**babel_values('name',en='every month',de='monatlich',fr="mensuel"))
     yield exam_policy(**babel_values('name',en='every 2 months',de='zweimonatlich',fr="bimensuel"))
     yield exam_policy(**babel_values('name',en='every 3 months',de='alle 3 Monate',fr="tous les 3 mois"))

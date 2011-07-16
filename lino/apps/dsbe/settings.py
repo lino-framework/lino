@@ -66,7 +66,7 @@ class Lino(Lino):
         #~ m.add_action('projects.Projects')
         m.add_action('notes.MyNotes')
         m.add_action('uploads.MyUploads')
-        m.add_action('dsbe.MyContracts')
+        m.add_action('jobs.MyContracts')
         m.add_action('cal.MyTasks')
         m.add_action('cal.MyEvents')
         m.add_action('contacts.MyPersons')
@@ -84,11 +84,13 @@ class Lino(Lino):
         m.add_action('dsbe.CourseContents')
         m.add_action('dsbe.CourseEndings')
         
+        m.add_action('jobs.JobProviders')
+        
         #~ sitemenu = system.add_site_menu(self)
         #~ if False:
         listings = main.add_menu("lst",_("~Listings"))
         LISTINGS = """
-        dsbe.ContractsSituation
+        jobs.ContractsSituation
         lino.DataControlListing
         """.split()
         for listing in LISTINGS:
@@ -103,6 +105,7 @@ class Lino(Lino):
             config_contacts = cfg.add_menu("contacts",_("~Contacts"))
             config_notes    = cfg.add_menu("notes",_("~Notes"))
             config_dsbe     = cfg.add_menu("dsbe",_("~DSBE"))
+            config_jobs     = cfg.add_menu("jobs",_("~Jobs"))
             config_cv       = cfg.add_menu("cv",_("C~V"))
             config_etc      = cfg.add_menu("etc",_("~System"))
             
@@ -116,7 +119,7 @@ class Lino(Lino):
             config_notes.add_action('notes.NoteTypes')
             config_notes.add_action('notes.EventTypes')
         
-            config_dsbe.add_action('dsbe.ContractTypes')
+            config_jobs.add_action('jobs.ContractTypes')
             config_dsbe.add_action('dsbe.PersonGroups')
         
             if user.is_expert:
@@ -140,9 +143,10 @@ class Lino(Lino):
             
             config_dsbe.add_action('dsbe.ExclusionTypes')
             config_dsbe.add_action('dsbe.AidTypes')
-            config_dsbe.add_action('dsbe.ContractEndings')
+            config_jobs.add_action('jobs.Jobs')
+            config_jobs.add_action('jobs.ContractEndings')
             #~ m.add_action('dsbe.JobTypes')
-            config_dsbe.add_action('dsbe.ExamPolicies')
+            config_jobs.add_action('jobs.ExamPolicies')
             #~ m.add_action('dsbe.CoachingTypes')
             
             config_etc.add_action('links.LinkTypes')
@@ -159,7 +163,7 @@ class Lino(Lino):
             m.add_action('notes.Notes')
             m.add_action('links.Links')
             m.add_action('dsbe.Exclusions')
-            m.add_action('dsbe.Contracts')
+            m.add_action('jobs.Contracts')
             m.add_action('uploads.Uploads')
             m.add_action('dsbe.CourseRequests')
             m.add_action('contenttypes.ContentTypes')
@@ -221,6 +225,7 @@ INSTALLED_APPS = (
   'lino.modlib.uploads',
   'lino.modlib.thirds',
   'lino.modlib.cal',
+  'lino.modlib.jobs',
   'lino.apps.dsbe',
   #'dsbe.modlib.contacts',
   #'dsbe.modlib.projects',

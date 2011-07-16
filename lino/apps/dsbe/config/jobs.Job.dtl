@@ -1,0 +1,9 @@
+:label: Notes
+:label_align: top
+
+main = 
+  name provider type contract_type hourly_rate id 
+  remark
+  RequestsByJob
+  ContractsByJob
+

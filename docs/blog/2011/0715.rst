@@ -43,3 +43,4 @@ in einer vbox verändern will, muss man in der `.dtl` manuelle Höhen angeben.
   
 Drittens : der RichTextEditor wurde nicht mehr gespeichert, weil der `name` 
 der Feldes nicht gesetzt war. Behoben.
+

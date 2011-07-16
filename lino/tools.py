@@ -34,6 +34,12 @@ resolve_app = get_app
 
 def get_models_for(app_label):
     a = models.get_app(app_label)
+    
+class UnresolvedModel:
+    def __init__(self,model_spec,app_label):
+        self.name = "%r (%r)" % (model_spec,app_label)
+    def __str__(self):
+        return self.name
 
 def resolve_model(model_spec,app_label=None):
     # Same logic as in django.db.models.fields.related.add_lazy_relation()
@@ -50,9 +56,10 @@ def resolve_model(model_spec,app_label=None):
     else:
         model = model_spec
     if not isinstance(model,type) or not issubclass(model,models.Model):
-        raise Exception(
-            "resolve_model(%r,app_label=%r) found %r" % (
-            model_spec,app_label,model))
+        return UnresolvedModel(model_spec,app_label)
+        #~ raise Exception(
+            #~ "resolve_model(%r,app_label=%r) found %r" % (
+            #~ model_spec,app_label,model))
     return model
     
 def get_field(model,name):

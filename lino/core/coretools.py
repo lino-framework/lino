@@ -23,11 +23,19 @@ def app_labels():
     return [a.__name__.split('.')[-2] for a in loading.get_apps()]
         
 def get_slave(model,name):
+    """Return the named report, knowing that it is a 
+    slave of model. 
+    If name has no app_label specified, use the model's app_label.
+    """
+    if not '.' in name:
+        name = model._meta.app_label + '.' + name
     rpt = actors.get_actor(name)
     if rpt is None: 
         return None
     if rpt.master is not ContentType:
-        assert issubclass(model,rpt.master), "%s.master is %r, must be subclass of %r" % (name,rpt.master,model)
+        if not issubclass(model,rpt.master):
+            raise Exception("%s.master is %r, must be subclass of %r" % (
+                name,rpt.master,model))
     return rpt
     #~ rpt = generic_slaves.get(name,None)
     #~ if rpt is not None:

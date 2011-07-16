@@ -13,6 +13,8 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 from lino.tools import resolve_model
+from lino.utils import mti
+
 
 def install(globals_dict):
     
@@ -42,4 +44,69 @@ def install(globals_dict):
         globals_dict.update(create_contacts_person=create_contacts_person)
         globals_dict.update(after_load=after_load)
         globals_dict['SOURCE_VERSION'] == '1.1.17'
+        
+    if globals_dict['SOURCE_VERSION'] == '1.1.17':
+      
+        from lino.modlib.jobs.models import Job, Contract, JobProvider, \
+          ContractEnding, ExamPolicy, ContractType, Company
+        
+        
+        
+        def get_or_create_job(provider_id,contract_type_id):
+            try:
+                return Job.objects.get(provider__id=provider_id,contract_type__id=contract_type_id)
+            except Job.DoesNotExist:
+                if provider_id is None:
+                    provider = None
+                else:
+                    try:
+                        provider = JobProvider.objects.get(pk=provider_id)
+                    except JobProvider.DoesNotExist:
+                        company = Company.objects.get(pk=provider_id)
+                        provider = mti.insert_child(company,JobProvider)
+                        provider.save()
+                job = Job(
+                    provider=provider,
+                    contract_type_id=contract_type_id,
+                    name='%s@%s' % (contract_type_id,provider_id)
+                    )
+                job.save()
+                return job
+                
+        def create_dsbe_contract(id, user_id, reminder_date, reminder_text, 
+            delay_value, delay_type, reminder_done, must_build, person_id, 
+            company_id, contact_id, language, type_id, applies_from, 
+            applies_until, date_decided, date_issued, duration, regime, 
+            schedule, hourly_rate, refund_rate, reference_person, 
+            responsibilities, stages, goals, duties_asd, duties_dsbe, 
+            duties_company, duties_person, user_asd_id, exam_policy_id, 
+            ending_id, date_ended):
+            job = get_or_create_job(company_id,type_id)
+            return Contract(id=id,user_id=user_id,reminder_date=reminder_date,
+              reminder_text=reminder_text,delay_value=delay_value,
+              delay_type=delay_type,reminder_done=reminder_done,
+              must_build=must_build,person_id=person_id,
+              job=job,
+              provider_id=company_id,
+              contact_id=contact_id,language=language,type_id=type_id,
+              applies_from=applies_from,applies_until=applies_until,date_decided=date_decided,date_issued=date_issued,duration=duration,regime=regime,schedule=schedule,hourly_rate=hourly_rate,refund_rate=refund_rate,reference_person=reference_person,responsibilities=responsibilities,stages=stages,goals=goals,duties_asd=duties_asd,duties_dsbe=duties_dsbe,duties_company=duties_company,duties_person=duties_person,user_asd_id=user_asd_id,exam_policy_id=exam_policy_id,ending_id=ending_id,date_ended=date_ended)      
+              
+        CONTRACTS = []
+        
+        def delayed_create_dsbe_contract(*args):
+            CONTRACTS.append(args)
+    
+        def after_load():
+            for args in CONTRACTS:
+                create_dsbe_contract(*args)
+                
+        globals_dict.update(create_dsbe_contract=delayed_create_dsbe_contract)
+        globals_dict.update(Contract=Contract)
+        globals_dict.update(ContractEnding=ContractEnding)
+        globals_dict.update(ContractType=ContractType)
+        globals_dict.update(ExamPolicy=ExamPolicy)
+        globals_dict.update(after_load=after_load)
+        #~ globals_dict.update(create_jobs_contracttype=globals_dict['create_dsbe_contracttype'])
+        #~ globals_dict.update(create_jobs_exampolicy=globals_dict['create_dsbe_exampolicy'])
+        globals_dict['SOURCE_VERSION'] == '1.2.0'
         

@@ -4,4 +4,4 @@
 main =
     id name 
     ref build_method template
-    dsbe.ContractsByType
+    ContractsByType

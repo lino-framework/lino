@@ -29,6 +29,7 @@ from lino.utils.babel import babel_values, default_language
 from lino.utils.restify import restify
 from lino.utils import dblogger
 from lino.models import update_site_config
+from lino.utils import mti
 
 #~ from django.contrib.auth import models as auth
 from lino.modlib.users import models as auth
@@ -84,7 +85,8 @@ def objects():
     Person = resolve_model('contacts.Person')
     Company = resolve_model('contacts.Company')
     Contact = resolve_model('contacts.Contact')
-    Contract = resolve_model('dsbe.Contract')
+    Contract = resolve_model('jobs.Contract')
+    JobProvider = resolve_model('jobs.JobProvider')
     Note = resolve_model('notes.Note')
     User = resolve_model('users.User')
     Country = resolve_model('countries.Country')
@@ -92,7 +94,7 @@ def objects():
     person = Instantiator(Person).build
     company = Instantiator(Company).build
     contact = Instantiator(Contact).build
-    exam_policy = Instantiator('dsbe.ExamPolicy').build
+    exam_policy = Instantiator('jobs.ExamPolicy').build
 
     City = resolve_model('countries.City')
     StudyType = resolve_model('dsbe.StudyType')
@@ -263,13 +265,33 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     yield langk(person=iiris,language='est',written='0',spoken='3')
     
     
-    contract = Instantiator('dsbe.Contract','type applies_from applies_until company contact',
+    jobtype = Instantiator('jobs.JobType','name').build
+    art607 = jobtype(u'Sozialwirtschaft = "majorés"')
+    yield art607 
+    yield jobtype(u'INTERN')
+    yield jobtype(u'EXTERN (Öffentl. VoE mit Kostenrückerstattung)')
+    yield jobtype(u'EXTERN (Privat Kostenrückerstattung)')
+    yield jobtype(u'VSE')
+    yield jobtype(u'Sonstige (alle nicht')
+    
+    rcycle = mti.insert_child(rcycle,JobProvider)
+    yield rcycle 
+    bisa = mti.insert_child(bisa,JobProvider)
+    yield bisa 
+    
+    job = Instantiator('jobs.Job','provider type name').build
+    bisajob = job(bisa,art607,"bisa")
+    yield bisajob
+    rcyclejob = job(rcycle,art607,"rcycle")
+    yield rcyclejob 
+    contract = Instantiator('jobs.Contract',
+      'type applies_from applies_until job contact',
       user=root,person=hans).build
-    yield contract(1,i2d(20090518),i2d(20090517),rcycle,rcycle_dir)
-    yield contract(1,i2d(20100518),i2d(20100517),bisa,bisa_dir)
-    yield contract(1,None,None,bisa,bisa_dir,person=tatjana)
-    yield contract(1,i2d(20110601),None,bisa,bisa_dir,person=andreas)
-    yield contract(1,i2d(20110601),None,rcycle,rcycle_dir,person=annette)
+    yield contract(1,i2d(20090518),i2d(20090517),rcyclejob,rcycle_dir)
+    yield contract(1,i2d(20100518),i2d(20100517),bisajob,bisa_dir)
+    yield contract(1,None,None,bisajob,bisa_dir,person=tatjana)
+    yield contract(1,i2d(20110601),None,bisajob,bisa_dir,person=andreas)
+    yield contract(1,i2d(20110601),None,rcyclejob,rcycle_dir,person=annette)
 
     def f(rmd,d):
         rmd.reminder_date = d
