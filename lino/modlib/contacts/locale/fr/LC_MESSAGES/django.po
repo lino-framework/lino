@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-06-15 19:55+0100\n"
+"POT-Creation-Date: 2011-07-16 19:24+0100\n"
 "PO-Revision-Date: 2011-06-15 21:58+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr\n"
@@ -84,111 +84,105 @@ msgstr "Fax"
 msgid "Remarks"
 msgstr "Remarques"
 
-#: .\models.py:222
+#: .\models.py:231
 msgid "Address"
 msgstr "Adresse"
 
-#: .\models.py:242
+#: .\models.py:251
 msgid "Sex"
 msgstr "Sexe"
 
-#: .\models.py:254
-#: .\models.py:346
+#: .\models.py:263 .\models.py:346
 msgid "Person"
 msgstr "Personne"
 
-#: .\models.py:255
+#: .\models.py:264
 msgid "Persons"
 msgstr "Personnes"
 
-#: .\models.py:258
+#: .\models.py:267
 msgid "First name"
 msgstr "Prénom"
 
-#: .\models.py:262
+#: .\models.py:271
 msgid "Last name"
 msgstr "Nom de famille"
 
-#: .\models.py:266
+#: .\models.py:275
 msgid "Title"
 msgstr "Allocution"
 
-#: .\models.py:348
-#: .\models.py:435
+#: .\models.py:348 .\models.py:451
 msgid "Company"
 msgstr "Société"
 
-#: .\models.py:359
-msgid "attn:"
-msgstr "à l'att."
-
-#: .\models.py:376
+#: .\models.py:392
 msgid "represented by"
 msgstr "représenté par"
 
-#: .\models.py:410
+#: .\models.py:426
 msgid "company type"
 msgstr "type de société"
 
-#: .\models.py:411
+#: .\models.py:427
 msgid "company types"
 msgstr "Types de sociétés"
 
-#: .\models.py:413
-#: .\models.py:471
+#: .\models.py:429 .\models.py:493
 msgid "Designation"
 msgstr "Désignation"
 
-#: .\models.py:414
+#: .\models.py:430
 msgid "Abbreviation"
 msgstr "Abbréviation"
 
-#: .\models.py:436
+#: .\models.py:452
 msgid "Companies"
 msgstr "Sociétés"
 
-#: .\models.py:438
+#: .\models.py:454
 msgid "VAT id"
 msgstr "N° de TVA"
 
-#: .\models.py:443
+#: .\models.py:459
 msgid "Company type"
 msgstr "Type de société"
 
-#: .\models.py:467
-#: .\models.py:497
+#: .\models.py:489 .\models.py:519
 msgid "contact type"
 msgstr "type de contact"
 
-#: .\models.py:468
+#: .\models.py:490
 msgid "contact types"
 msgstr "types de contacts"
 
-#: .\models.py:490
+#: .\models.py:512
 msgid "contact"
 msgstr "contact"
 
-#: .\models.py:491
+#: .\models.py:513
 msgid "contacts"
 msgstr "contacts"
 
-#: .\models.py:493
+#: .\models.py:515
 msgid "person"
 msgstr "Personne"
 
-#: .\models.py:495
+#: .\models.py:517
 msgid "company"
 msgstr "Société"
 
-#: .\models.py:529
+#: .\models.py:551
 msgid "Contact for"
 msgstr "contact pour"
 
-#: .\models.py:541
+#: .\models.py:563
 msgid "The company that runs this site"
 msgstr "La société ou tourne ce site"
 
-#: .\models.py:551
+#: .\models.py:573
 msgid "The next automatic id for Person or Company"
 msgstr "Identifiant automatique pour la personne ounla société suivante"
 
+#~ msgid "attn:"
+#~ msgstr "à l'att."

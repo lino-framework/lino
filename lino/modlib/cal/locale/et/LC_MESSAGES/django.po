@@ -1,0 +1,216 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: lino.modlib.contacts\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-07-16 19:24+0100\n"
+"PO-Revision-Date: 2011-03-02 21:46+0200\n"
+"Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
+"Language-Team: et <et>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: .\models.py:42
+msgid "Name"
+msgstr "Nimi"
+
+#: .\models.py:54
+msgid "Summary"
+msgstr ""
+
+#: .\models.py:55
+#, fuzzy
+msgid "Description"
+msgstr "Nimetus"
+
+#: .\models.py:57
+#, fuzzy
+msgid "Revision"
+msgstr "Maakond"
+
+#: .\models.py:58
+msgid "Alarm value"
+msgstr ""
+
+#: .\models.py:86
+msgid "Event"
+msgstr ""
+
+#: .\models.py:87
+msgid "Events"
+msgstr ""
+
+#: .\models.py:91
+msgid "Start date"
+msgstr ""
+
+#: .\models.py:94
+msgid "Start time"
+msgstr ""
+
+#: .\models.py:97
+msgid "End date"
+msgstr ""
+
+#: .\models.py:100
+msgid "End time"
+msgstr ""
+
+#: .\models.py:101
+msgid "Transparent"
+msgstr ""
+
+#: .\models.py:102
+msgid "Place"
+msgstr ""
+
+#: .\models.py:105 .\models.py:130
+msgid "Duration value"
+msgstr ""
+
+#: .\models.py:107 .\models.py:108
+msgid "Repeat every"
+msgstr ""
+
+#: .\models.py:119
+msgid "Task"
+msgstr ""
+
+#: .\models.py:120
+msgid "Tasks"
+msgstr ""
+
+#: .\models.py:125
+msgid "Due date"
+msgstr ""
+
+#: .\models.py:128
+msgid "Due time"
+msgstr ""
+
+#: .\models.py:129
+#, fuzzy
+msgid "Done"
+msgstr "Telefon"
+
+#: .\models.py:189
+msgid "My Events"
+msgstr ""
+
+#: .\models.py:195
+msgid "My Tasks"
+msgstr ""
+
+#: .\models.py:285
+msgid "Upcoming reminders"
+msgstr ""
+
+#: .\models.py:286
+msgid "Past reminders"
+msgstr ""
+
+#: .\utils.py:27
+msgid "Event status"
+msgstr ""
+
+#: .\utils.py:37
+msgid "Taskstatus"
+msgstr ""
+
+#: .\utils.py:49
+msgid "Duration unit"
+msgstr ""
+
+#: .\utils.py:67 .\utils.py:90
+msgid "Access class"
+msgstr ""
+
+#~ msgid "Address line before street"
+#~ msgstr "Addressi lisatext enne tänav"
+
+#, fuzzy
+#~ msgid "Street prefix"
+#~ msgstr "Tänav"
+
+#~ msgid "Street"
+#~ msgstr "Tänav"
+
+#~ msgid "No."
+#~ msgstr "Nr."
+
+#~ msgid "Box"
+#~ msgstr "PK/krt"
+
+#~ msgid "Address line after street"
+#~ msgstr "Aadressilisa pärast tänav"
+
+#~ msgid "Zip code"
+#~ msgstr "Sihtnumber"
+
+#~ msgid "Remarks"
+#~ msgstr "Märkused"
+
+#~ msgid "Address"
+#~ msgstr "Adress"
+
+#~ msgid "Person"
+#~ msgstr "Isik"
+
+#~ msgid "Persons"
+#~ msgstr "Isikud"
+
+#~ msgid "First name"
+#~ msgstr "Eesnimi"
+
+#~ msgid "Last name"
+#~ msgstr "Perekonnanimi"
+
+#~ msgid "Company"
+#~ msgstr "Firma"
+
+#~ msgid "company type"
+#~ msgstr "Firmaliik"
+
+#~ msgid "Abbreviation"
+#~ msgstr "Lühend"
+
+#~ msgid "Companies"
+#~ msgstr "Firmad"
+
+#~ msgid "VAT id"
+#~ msgstr "KMKR nr"
+
+#~ msgid "Company type"
+#~ msgstr "Firmaliik"
+
+#~ msgid "contact type"
+#~ msgstr "Kontaktiliik"
+
+#~ msgid "contact types"
+#~ msgstr "Kontaktiliigid"
+
+#~ msgid "contact"
+#~ msgstr "Kontakt"
+
+#~ msgid "contacts"
+#~ msgstr "Kontaktid"
+
+#~ msgid "person"
+#~ msgstr "isik"
+
+#~ msgid "company"
+#~ msgstr "firma"
+
+#~ msgid "Contact for"
+#~ msgstr "Kontaktisik"
+
+#~ msgid "Country"
+#~ msgstr "Maa"
+
+#~ msgid "City"
+#~ msgstr "Linn"

@@ -1,0 +1,218 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-07-16 19:24+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+#: .\models.py:87 .\models.py:178 .\models.py:457
+msgid "Job Provider"
+msgstr ""
+
+#: .\models.py:88
+msgid "Job Providers"
+msgstr ""
+
+#: .\models.py:110
+msgid "Contract Type"
+msgstr ""
+
+#: .\models.py:111
+msgid "Contract Types"
+msgstr ""
+
+#: .\models.py:113
+msgid "reference"
+msgstr ""
+
+#: .\models.py:114
+msgid "contract title"
+msgstr ""
+
+#: .\models.py:128 .\models.py:217
+msgid "examination policy"
+msgstr ""
+
+#: .\models.py:129
+msgid "examination policies"
+msgstr ""
+
+#: .\models.py:131 .\models.py:151
+msgid "designation"
+msgstr ""
+
+#: .\models.py:148
+msgid "Contract Ending"
+msgstr ""
+
+#: .\models.py:149
+msgid "Contract Endings"
+msgstr ""
+
+#: .\models.py:172
+msgid "Contract"
+msgstr ""
+
+#: .\models.py:173
+msgid "Contracts"
+msgstr ""
+
+#: .\models.py:176 .\models.py:506
+msgid "Person"
+msgstr ""
+
+#: .\models.py:181
+msgid "represented by"
+msgstr ""
+
+#: .\models.py:184 .\models.py:427 .\models.py:445
+msgid "Job"
+msgstr ""
+
+#: .\models.py:186
+msgid "contract type"
+msgstr ""
+
+#: .\models.py:188
+msgid "applies from"
+msgstr ""
+
+#: .\models.py:189
+msgid "applies until"
+msgstr ""
+
+#: .\models.py:190
+msgid "date decided"
+msgstr ""
+
+#: .\models.py:191
+msgid "date issued"
+msgstr ""
+
+#: .\models.py:192
+msgid "duration (days)"
+msgstr ""
+
+#: .\models.py:195
+msgid "regime"
+msgstr ""
+
+#: .\models.py:196
+msgid "schedule"
+msgstr ""
+
+#: .\models.py:197 .\models.py:461
+msgid "hourly rate"
+msgstr ""
+
+#: .\models.py:198
+msgid "refund rate"
+msgstr ""
+
+#: .\models.py:201
+msgid "reference person"
+msgstr ""
+
+#: .\models.py:204
+msgid "responsibilities"
+msgstr ""
+
+#: .\models.py:206
+msgid "stages"
+msgstr ""
+
+#: .\models.py:207
+msgid "goals"
+msgstr ""
+
+#: .\models.py:208
+msgid "duties ASD"
+msgstr ""
+
+#: .\models.py:209
+msgid "duties DSBE"
+msgstr ""
+
+#: .\models.py:210
+msgid "duties company"
+msgstr ""
+
+#: .\models.py:211
+msgid "duties person"
+msgstr ""
+
+#: .\models.py:213
+msgid "responsible (ASD)"
+msgstr ""
+
+#: .\models.py:220
+msgid "Ending"
+msgstr ""
+
+#: .\models.py:221
+msgid "date ended"
+msgstr ""
+
+#: .\models.py:309
+msgid "Due date reached"
+msgstr ""
+
+#: .\models.py:372
+msgid "responsible (DSBE)"
+msgstr ""
+
+#: .\models.py:412
+msgid "My contracts"
+msgstr ""
+
+#: .\models.py:428 .\models.py:446
+msgid "Jobs"
+msgstr ""
+
+#: .\models.py:432 .\models.py:449
+msgid "Name"
+msgstr ""
+
+#: .\models.py:453
+msgid "Job Type"
+msgstr ""
+
+#: .\models.py:465 .\models.py:524
+msgid "Remark"
+msgstr ""
+
+#: .\models.py:502 .\models.py:503
+msgid "Job Requests"
+msgstr ""
+
+#: .\models.py:509
+msgid "Requested Job"
+msgstr ""
+
+#: .\models.py:511
+msgid "date submitted"
+msgstr ""
+
+#: .\models.py:515
+msgid "Contract found"
+msgstr ""
+
+#: .\models.py:562
+msgid "Contracts Situation"
+msgstr ""
+
+#: .\models.py:624
+msgid "is Job Provider"
+msgstr ""

@@ -1,0 +1,255 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Luc Saffre <luc.saffre@gmx.net>, 2010.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: lino.modlib.cal\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-07-16 19:24+0100\n"
+"PO-Revision-Date: 2011-07-16 21:30+0200\n"
+"Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
+"Language-Team: de <luc.saffre@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+#: .\models.py:42
+msgid "Name"
+msgstr "Name"
+
+#: .\models.py:54
+msgid "Summary"
+msgstr "Kurzbeschreibung"
+
+#: .\models.py:55
+msgid "Description"
+msgstr "Bezeichnung"
+
+#: .\models.py:57
+msgid "Revision"
+msgstr "Revisionsnummer"
+
+#: .\models.py:58
+msgid "Alarm value"
+msgstr ""
+
+#: .\models.py:86
+msgid "Event"
+msgstr "Termin"
+
+#: .\models.py:87
+msgid "Events"
+msgstr "Termine"
+
+#: .\models.py:91
+msgid "Start date"
+msgstr "Beginnt am"
+
+#: .\models.py:94
+msgid "Start time"
+msgstr "Beginnt um"
+
+#: .\models.py:97
+msgid "End date"
+msgstr "Endet am"
+
+#: .\models.py:100
+msgid "End time"
+msgstr "Endet um"
+
+#: .\models.py:101
+msgid "Transparent"
+msgstr "nicht blockierend"
+
+#: .\models.py:102
+msgid "Place"
+msgstr "Ort"
+
+#: .\models.py:105
+#: .\models.py:130
+msgid "Duration value"
+msgstr "Dauer (Anzahl)"
+
+#: .\models.py:107
+#: .\models.py:108
+msgid "Repeat every"
+msgstr "Wiederholen"
+
+#: .\models.py:119
+msgid "Task"
+msgstr "Aufgabe"
+
+#: .\models.py:120
+msgid "Tasks"
+msgstr "Aufgaben"
+
+#: .\models.py:125
+msgid "Due date"
+msgstr "Fällig am"
+
+#: .\models.py:128
+msgid "Due time"
+msgstr "Fällig um"
+
+#: .\models.py:129
+msgid "Done"
+msgstr "Erledigt"
+
+#: .\models.py:189
+msgid "My Events"
+msgstr "Meine Termine"
+
+#: .\models.py:195
+msgid "My Tasks"
+msgstr "Meine Aufgaben"
+
+#: .\models.py:285
+msgid "Upcoming reminders"
+msgstr ""
+
+#: .\models.py:286
+msgid "Past reminders"
+msgstr ""
+
+#: .\utils.py:27
+msgid "Event status"
+msgstr ""
+
+#: .\utils.py:37
+msgid "Taskstatus"
+msgstr ""
+
+#: .\utils.py:49
+msgid "Duration unit"
+msgstr "Dauer (Einheit)"
+
+#: .\utils.py:67
+#: .\utils.py:90
+msgid "Access class"
+msgstr "Zugriffsklasse"
+
+#~ msgid "Male"
+#~ msgstr "Männlich"
+
+#~ msgid "Female"
+#~ msgstr "Weiblich"
+
+#~ msgid "Address line before street"
+#~ msgstr "Adresszeile vor Straße"
+
+#~ msgid "Street prefix"
+#~ msgstr "Präfix Straße"
+
+#~ msgid "Street"
+#~ msgstr "Straße"
+
+#~ msgid "No."
+#~ msgstr "Nr."
+
+#~ msgid "Box"
+#~ msgstr "Box"
+
+#~ msgid "Address line after street"
+#~ msgstr "Adresszeile nach Straße"
+
+#~ msgid "Zip code"
+#~ msgstr "Postleitzahl"
+
+#~ msgid "E-Mail"
+#~ msgstr "E-Mail"
+
+#~ msgid "URL"
+#~ msgstr "URL"
+
+#~ msgid "GSM"
+#~ msgstr "GSM"
+
+#~ msgid "Fax"
+#~ msgstr "Fax"
+
+#~ msgid "Remarks"
+#~ msgstr "Bemerkungen"
+
+#~ msgid "Address"
+#~ msgstr "Adresse"
+
+#~ msgid "Sex"
+#~ msgstr "Geschlecht"
+
+#~ msgid "Person"
+#~ msgstr "Person"
+
+#~ msgid "Persons"
+#~ msgstr "Personen"
+
+#~ msgid "First name"
+#~ msgstr "Vorname"
+
+#~ msgid "Last name"
+#~ msgstr "Familienname"
+
+#~ msgid "Title"
+#~ msgstr "Anrede"
+
+#~ msgid "Company"
+#~ msgstr "Firma"
+
+#~ msgid "represented by"
+#~ msgstr "Vertreten durch"
+
+#~ msgid "company type"
+#~ msgstr "Firmenart"
+
+#~ msgid "company types"
+#~ msgstr "Firmenarten"
+
+#~ msgid "Abbreviation"
+#~ msgstr "Abkürzung"
+
+#~ msgid "Companies"
+#~ msgstr "Organisationen"
+
+#~ msgid "VAT id"
+#~ msgstr "MWSt.-Nr."
+
+#~ msgid "Company type"
+#~ msgstr "Firmenart"
+
+#~ msgid "contact type"
+#~ msgstr "Kontaktart"
+
+#~ msgid "contact types"
+#~ msgstr "Kontaktarten"
+
+#~ msgid "contact"
+#~ msgstr "Kontaktperson"
+
+#~ msgid "contacts"
+#~ msgstr "Kontaktpersonen"
+
+#~ msgid "person"
+#~ msgstr "Person"
+
+#~ msgid "company"
+#~ msgstr "Firma"
+
+#~ msgid "Contact for"
+#~ msgstr "Kontaktperson für"
+
+#~ msgid "The company that runs this site"
+#~ msgstr "Firma, die diesen Site betreibt"
+
+#~ msgid "The next automatic id for Person or Company"
+#~ msgstr "Nächste Partnernummer"
+
+#~ msgid "attn:"
+#~ msgstr "z.Hd."
+
+#~ msgid "Country"
+#~ msgstr "Land"
+
+#~ msgid "City"
+#~ msgstr "Stadt"

@@ -1,0 +1,249 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Luc Saffre <luc.saffre@gmx.net>, 2010.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: lino.modlib.contacts\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-07-16 19:24+0100\n"
+"PO-Revision-Date: 2011-06-15 21:58+0200\n"
+"Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
+"Language-Team: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n>1;\n"
+
+#: .\models.py:42
+msgid "Name"
+msgstr "Nom"
+
+#: .\models.py:54
+msgid "Summary"
+msgstr ""
+
+#: .\models.py:55
+#, fuzzy
+msgid "Description"
+msgstr "Désignation"
+
+#: .\models.py:57
+#, fuzzy
+msgid "Revision"
+msgstr "Région"
+
+#: .\models.py:58
+msgid "Alarm value"
+msgstr ""
+
+#: .\models.py:86
+msgid "Event"
+msgstr ""
+
+#: .\models.py:87
+msgid "Events"
+msgstr ""
+
+#: .\models.py:91
+msgid "Start date"
+msgstr ""
+
+#: .\models.py:94
+msgid "Start time"
+msgstr ""
+
+#: .\models.py:97
+msgid "End date"
+msgstr ""
+
+#: .\models.py:100
+msgid "End time"
+msgstr ""
+
+#: .\models.py:101
+msgid "Transparent"
+msgstr ""
+
+#: .\models.py:102
+msgid "Place"
+msgstr ""
+
+#: .\models.py:105 .\models.py:130
+msgid "Duration value"
+msgstr ""
+
+#: .\models.py:107 .\models.py:108
+msgid "Repeat every"
+msgstr ""
+
+#: .\models.py:119
+msgid "Task"
+msgstr ""
+
+#: .\models.py:120
+msgid "Tasks"
+msgstr ""
+
+#: .\models.py:125
+msgid "Due date"
+msgstr ""
+
+#: .\models.py:128
+msgid "Due time"
+msgstr ""
+
+#: .\models.py:129
+#, fuzzy
+msgid "Done"
+msgstr "Téléphone"
+
+#: .\models.py:189
+msgid "My Events"
+msgstr ""
+
+#: .\models.py:195
+msgid "My Tasks"
+msgstr ""
+
+#: .\models.py:285
+msgid "Upcoming reminders"
+msgstr ""
+
+#: .\models.py:286
+msgid "Past reminders"
+msgstr ""
+
+#: .\utils.py:27
+msgid "Event status"
+msgstr ""
+
+#: .\utils.py:37
+msgid "Taskstatus"
+msgstr ""
+
+#: .\utils.py:49
+msgid "Duration unit"
+msgstr ""
+
+#: .\utils.py:67 .\utils.py:90
+msgid "Access class"
+msgstr ""
+
+#~ msgid "Male"
+#~ msgstr "Masculin"
+
+#~ msgid "Female"
+#~ msgstr "Féminin"
+
+#~ msgid "Address line before street"
+#~ msgstr "Ligne avant le nom de rue"
+
+#~ msgid "Street prefix"
+#~ msgstr "Préfixe rue"
+
+#~ msgid "Street"
+#~ msgstr "Rue"
+
+#~ msgid "No."
+#~ msgstr "N°"
+
+#~ msgid "Box"
+#~ msgstr "boîte"
+
+#~ msgid "Address line after street"
+#~ msgstr "Ligne après le nom de rue"
+
+#~ msgid "Zip code"
+#~ msgstr "Code postal"
+
+#~ msgid "E-Mail"
+#~ msgstr "E-mail"
+
+#~ msgid "URL"
+#~ msgstr "URL"
+
+#~ msgid "GSM"
+#~ msgstr "GSM"
+
+#~ msgid "Fax"
+#~ msgstr "Fax"
+
+#~ msgid "Remarks"
+#~ msgstr "Remarques"
+
+#~ msgid "Address"
+#~ msgstr "Adresse"
+
+#~ msgid "Sex"
+#~ msgstr "Sexe"
+
+#~ msgid "Person"
+#~ msgstr "Personne"
+
+#~ msgid "Persons"
+#~ msgstr "Personnes"
+
+#~ msgid "First name"
+#~ msgstr "Prénom"
+
+#~ msgid "Last name"
+#~ msgstr "Nom de famille"
+
+#~ msgid "Title"
+#~ msgstr "Allocution"
+
+#~ msgid "Company"
+#~ msgstr "Société"
+
+#~ msgid "represented by"
+#~ msgstr "représenté par"
+
+#~ msgid "company type"
+#~ msgstr "type de société"
+
+#~ msgid "company types"
+#~ msgstr "Types de sociétés"
+
+#~ msgid "Abbreviation"
+#~ msgstr "Abbréviation"
+
+#~ msgid "Companies"
+#~ msgstr "Sociétés"
+
+#~ msgid "VAT id"
+#~ msgstr "N° de TVA"
+
+#~ msgid "Company type"
+#~ msgstr "Type de société"
+
+#~ msgid "contact type"
+#~ msgstr "type de contact"
+
+#~ msgid "contact types"
+#~ msgstr "types de contacts"
+
+#~ msgid "contact"
+#~ msgstr "contact"
+
+#~ msgid "contacts"
+#~ msgstr "contacts"
+
+#~ msgid "person"
+#~ msgstr "Personne"
+
+#~ msgid "company"
+#~ msgstr "Société"
+
+#~ msgid "Contact for"
+#~ msgstr "contact pour"
+
+#~ msgid "The company that runs this site"
+#~ msgstr "La société ou tourne ce site"
+
+#~ msgid "The next automatic id for Person or Company"
+#~ msgstr "Identifiant automatique pour la personne ounla société suivante"
+
+#~ msgid "attn:"
+#~ msgstr "à l'att."
