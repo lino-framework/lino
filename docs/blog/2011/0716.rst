@@ -138,3 +138,6 @@ Hier kann ich die Funktion nicht einfach ersetzen wegen der Babelfelder,
 die ja lokal spezifisch sind. 
 
 Checkin 20110716, um die Sache auf Jana (einem internen Server) zu testen.
+
+Wir sind kurz vor dem Release: Übersetzungen, Feinschliff, Feierabend... 
+morgen sehen wir, ob nicht noch ein Show-Stopper kommt.
