@@ -231,15 +231,15 @@ def update_auto_task(autotype,user,date,summary,owner,**defaults):
         else:
             obj.delete()
         
-def tasks_summary(ui,user,days_back=None,**kw):
+def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
     """
     Return a HTML summary of all open reminders for this user
     """
     date_from = datetime.date.today()
-    if days_back is None:
-        back_until = None
-    else:
-        back_until = date_from - datetime.timedelta(days=days_back)
+    #~ if days_back is None:
+        #~ back_until = None
+    #~ else:
+        #~ back_until = date_from - datetime.timedelta(days=days_back)
     
     past = {}
     future = {}
@@ -257,9 +257,13 @@ def tasks_summary(ui,user,days_back=None,**kw):
             
     #~ filterkw = { 'due_date__lte' : date_from }
     filterkw = {}
-    if back_until is not None:
+    if days_back is not None:
         filterkw.update({ 
-            'due_date__gte' : back_until
+            'due_date__gte' : date_from - datetime.timedelta(days=days_back)
+        })
+    if days_forward is not None:
+        filterkw.update({ 
+            'due_date__lte' : date_from + datetime.timedelta(days=days_forward)
         })
     filterkw.update(user=user)
     filterkw.update(done=False)

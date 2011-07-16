@@ -136,3 +136,5 @@ Bzw. genauer gesagt ist doch eine manuelle Korrektur nötig::
 Also der Parameter contract_type_id muss ignoriert werden. 
 Hier kann ich die Funktion nicht einfach ersetzen wegen der Babelfelder, 
 die ja lokal spezifisch sind. 
+
+Checkin 20110716, um die Sache auf Jana (einem internen Server) zu testen.

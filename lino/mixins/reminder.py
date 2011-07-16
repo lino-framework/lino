@@ -102,6 +102,7 @@ class Reminder(AutoUser):
           
     #~ def get_auto_task_defaults(self,**kw):
     def update_owned_task(self,task):
+        task.done = self.done
         task.alarm_value = self.delay_value
         task.alarm_unit = delay2alarm(self.delay_type)
           

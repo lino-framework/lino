@@ -3,7 +3,7 @@
 <p>User <b>$user.get_full_name() ($user)</b> on $site.title</p>
 
 #from lino.modlib.cal.models import tasks_summary
-$tasks_summary($ui,$user,days_back=70,max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
+$tasks_summary($ui,$user,days_back=30,days_forward=30,max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
 
 #from lino.mixins.reminder import reminders_summary
 $reminders_summary($ui,$user,days_back=70,max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
