@@ -220,7 +220,6 @@ def update_auto_task(autotype,user,date,summary,owner,**defaults):
         #~ obj.due_date = date - delta
         #~ print 20110712, date, date-delta, obj2str(obj,force_detailed=True)
         owner.update_owned_task(obj)
-        
         obj.save()
     else:
         try:

@@ -193,6 +193,7 @@ class BooleanStoreField(StoreField):
         
     # as long as http://code.djangoproject.com/ticket/15497 is open
     def parse_form_value(self,v,obj):
+        #~ print "20110717 parse_form_value", self.field.name, v, obj
         return ext_requests.parse_boolean(v)
 
 

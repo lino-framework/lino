@@ -98,7 +98,9 @@ def install(globals_dict):
     
         def after_load():
             for args in CONTRACTS:
-                create_dsbe_contract(*args).save()
+                obj = create_dsbe_contract(*args)
+                obj.full_clean()
+                obj.save()
                 
         globals_dict.update(create_dsbe_contract=delayed_create_dsbe_contract)
         globals_dict.update(Contract=Contract)
