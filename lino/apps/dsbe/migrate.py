@@ -147,6 +147,8 @@ def install(globals_dict):
         globals_dict.update(ContractEnding=ContractEnding)
         globals_dict.update(ContractType=ContractType)
         globals_dict.update(ExamPolicy=ExamPolicy)
+        globals_dict.update(create_uploads_upload=create_uploads_upload)
+        globals_dict.update(create_notes_note=create_notes_note)
         globals_dict.update(create_links_link=create_links_link)
         globals_dict.update(after_load=after_load)
         #~ globals_dict.update(create_jobs_contracttype=globals_dict['create_dsbe_contracttype'])
