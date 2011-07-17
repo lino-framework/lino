@@ -319,7 +319,7 @@ def migrate_reminder(obj,reminder_date,reminder_text,
       REMINDER,
       obj.user,
       reminder_date,
-      summary,self,defaults=dict(
+      summary,obj,defaults=dict(
         done = reminder_done,
         alarm_value = delay_value,
         alarm_unit = delay2alarm(delay_type)))
