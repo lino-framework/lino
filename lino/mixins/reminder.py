@@ -12,6 +12,8 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+raise Exception("no longer used")
+
 import cgi
 import datetime
 
@@ -59,6 +61,9 @@ def delay2alarm(delay_type):
       
 
 
+
+
+
 class Reminder(AutoUser):
   
     class Meta:
@@ -86,7 +91,7 @@ class Reminder(AutoUser):
         from lino.modlib.cal.models import update_auto_task
       
         # These constants must be unique for the whole Lino Site.
-        # Keep in sync with auto types defined in lino.mixins.reminders
+        # Keep in sync with auto types defined in lino.apps.dsbe.models.Person
         REMINDER = 5
         
         if self.reminder_text:

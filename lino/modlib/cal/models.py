@@ -197,39 +197,6 @@ class MyTasks(mixins.ByUser):
     column_names = 'due_date summary done status *'
     
     
-def update_auto_task(autotype,user,date,summary,owner,**defaults):
-    """Creates, updates or deletes the automatic :class:`Task` 
-    related to the specified `owner`.
-    """
-    ot = ContentType.objects.get_for_model(owner.__class__)
-    if date:
-        #~ defaults = owner.get_auto_task_defaults(**defaults)
-        defaults.setdefault('user',user)
-        obj,created = Task.objects.get_or_create(
-          defaults=defaults,
-          owner_id=owner.pk,
-          owner_type=ot,
-          auto_type=autotype)
-        obj.user = user
-        if summary:
-            obj.summary = force_unicode(summary)
-        #~ obj.summary = summary
-        obj.due_date = date
-        #~ for k,v in kw.items():
-            #~ setattr(obj,k,v)
-        #~ obj.due_date = date - delta
-        #~ print 20110712, date, date-delta, obj2str(obj,force_detailed=True)
-        owner.update_owned_task(obj)
-        obj.save()
-    else:
-        try:
-            obj = Task.objects.get(owner_id=owner.pk,
-                    owner_type=ot,auto_type=autotype)
-        except Task.DoesNotExist:
-            pass
-        else:
-            obj.delete()
-        
 def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
     """
     Return a HTML summary of all open reminders for this user
@@ -292,3 +259,68 @@ def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
     s = '<table cellspacing="3px" bgcolor="#ffffff"><tr>%s</tr></table>' % s
     s = '<div class="htmlText">%s</div>' % s
     return s
+
+
+
+def update_auto_task(autotype,user,date,summary,owner,**defaults):
+    """Creates, updates or deletes the automatic :class:`Task` 
+    related to the specified `owner`.
+    """
+    ot = ContentType.objects.get_for_model(owner.__class__)
+    if date:
+        #~ defaults = owner.get_auto_task_defaults(**defaults)
+        defaults.setdefault('user',user)
+        obj,created = Task.objects.get_or_create(
+          defaults=defaults,
+          owner_id=owner.pk,
+          owner_type=ot,
+          auto_type=autotype)
+        obj.user = user
+        if summary:
+            obj.summary = force_unicode(summary)
+        #~ obj.summary = summary
+        obj.due_date = date
+        #~ for k,v in kw.items():
+            #~ setattr(obj,k,v)
+        #~ obj.due_date = date - delta
+        #~ print 20110712, date, date-delta, obj2str(obj,force_detailed=True)
+        owner.update_owned_task(obj)
+        obj.save()
+    else:
+        try:
+            obj = Task.objects.get(owner_id=owner.pk,
+                    owner_type=ot,auto_type=autotype)
+        except Task.DoesNotExist:
+            pass
+        else:
+            obj.delete()
+        
+
+def migrate_reminder(obj,reminder_date,reminder_text,
+                         delay_value,delay_type,reminder_done):
+  
+    def delay2alarm(delay_type):
+        if delay_type == 'D': return DurationUnit.days
+        if delay_type == 'W': return DurationUnit.weeks
+        if delay_type == 'M': return DurationUnit.months
+        if delay_type == 'Y': return DurationUnit.years
+      
+    # These constants must be unique for the whole Lino Site.
+    # Keep in sync with auto types defined in lino.apps.dsbe.models.Person
+    REMINDER = 5
+    
+    if reminder_text:
+        summary = reminder_text
+    else:
+        summary = _('due date reached')
+    
+    kw.update(done = reminder_done)
+    kw.update(alarm_value = delay_value)
+    kw.update(alarm_unit = delay2alarm(delay_type))
+    
+    update_auto_task(
+      REMINDER,
+      obj.user,
+      reminder_date,
+      summary,self,**kw)
+      

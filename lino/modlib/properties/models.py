@@ -53,7 +53,6 @@ from lino.tools import get_field
 from lino.tools import resolve_field
 from lino.utils.choosers import chooser
 from lino.mixins.printable import DirectPrintAction
-from lino.mixins.reminder import ReminderEntry
 
 from lino.utils.choicelists import get_choicelist, choicelist_choices
 

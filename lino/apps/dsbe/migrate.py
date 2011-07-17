@@ -47,6 +47,7 @@ def install(globals_dict):
         
     if globals_dict['SOURCE_VERSION'] == '1.1.17':
       
+        from lino.modlib.cal.models import migrate_reminder
         from lino.modlib.jobs.models import Job, Contract, JobProvider, \
           ContractEnding, ExamPolicy, ContractType, Company
         
@@ -73,6 +74,9 @@ def install(globals_dict):
                 job.save()
                 return job
                 
+        CONTRACTS = []
+        REMINDERS = []
+        
         def create_dsbe_contract(id, user_id, reminder_date, reminder_text, 
             delay_value, delay_type, reminder_done, must_build, person_id, 
             company_id, contact_id, language, type_id, applies_from, 
@@ -82,31 +86,68 @@ def install(globals_dict):
             duties_company, duties_person, user_asd_id, exam_policy_id, 
             ending_id, date_ended):
             job = get_or_create_job(company_id,type_id)
-            return Contract(id=id,user_id=user_id,reminder_date=reminder_date,
-              reminder_text=reminder_text,delay_value=delay_value,
-              delay_type=delay_type,reminder_done=reminder_done,
+            obj = Contract(id=id,user_id=user_id,
+              #~ reminder_date=reminder_date,
+              #~ reminder_text=reminder_text,delay_value=delay_value,
+              #~ delay_type=delay_type,reminder_done=reminder_done,
               must_build=must_build,person_id=person_id,
               job=job,
               provider_id=company_id,
               contact_id=contact_id,language=language,type_id=type_id,
-              applies_from=applies_from,applies_until=applies_until,date_decided=date_decided,date_issued=date_issued,duration=duration,regime=regime,schedule=schedule,hourly_rate=hourly_rate,refund_rate=refund_rate,reference_person=reference_person,responsibilities=responsibilities,stages=stages,goals=goals,duties_asd=duties_asd,duties_dsbe=duties_dsbe,duties_company=duties_company,duties_person=duties_person,user_asd_id=user_asd_id,exam_policy_id=exam_policy_id,ending_id=ending_id,date_ended=date_ended)      
+              applies_from=applies_from,applies_until=applies_until,date_decided=date_decided,date_issued=date_issued,duration=duration,regime=regime,schedule=schedule,hourly_rate=hourly_rate,refund_rate=refund_rate,reference_person=reference_person,responsibilities=responsibilities,stages=stages,goals=goals,duties_asd=duties_asd,duties_dsbe=duties_dsbe,duties_company=duties_company,duties_person=duties_person,user_asd_id=user_asd_id,exam_policy_id=exam_policy_id,ending_id=ending_id,date_ended=date_ended)
+            REMINDERS.append(obj,(reminder_date,reminder_text,
+                             delay_value,delay_type,reminder_done))
+            return obj
               
-        CONTRACTS = []
-        
         def delayed_create_dsbe_contract(*args):
             CONTRACTS.append(args)
+            
+        def create_links_link(id, user_id, reminder_date, reminder_text, delay_value, delay_type, reminder_done, person_id, company_id, type_id, date, url, name):
+            obj = Link(id=id,user_id=user_id,
+              #~ reminder_date=reminder_date,reminder_text=reminder_text,
+              #~ delay_value=delay_value,delay_type=delay_type,
+              #~ reminder_done=reminder_done,
+              person_id=person_id,company_id=company_id,type_id=type_id,date=date,url=url,name=name)
+            REMINDERS.append(obj,(reminder_date,reminder_text,
+                             delay_value,delay_type,reminder_done))
+            return obj
+            
+        def create_notes_note(id, user_id, reminder_date, reminder_text, delay_value, delay_type, reminder_done, must_build, person_id, company_id, date, type_id, event_type_id, subject, body, language):
+            obj = Note(id=id,user_id=user_id,
+              #~ reminder_date=reminder_date,reminder_text=reminder_text,
+              #~ delay_value=delay_value,delay_type=delay_type,
+              #~ reminder_done=reminder_done,
+              must_build=must_build,person_id=person_id,company_id=company_id,date=date,type_id=type_id,event_type_id=event_type_id,subject=subject,body=body,language=language)
+            REMINDERS.append(obj,(reminder_date,reminder_text,
+                             delay_value,delay_type,reminder_done))
+            return obj
+            
+        def create_uploads_upload(id, user_id, owner_type_id, owner_id, reminder_date, reminder_text, delay_value, delay_type, reminder_done, file, mimetype, created, modified, description, type_id):
+            obj = Upload(id=id,user_id=user_id,
+              owner_type_id=owner_type_id,owner_id=owner_id,
+              #~ reminder_date=reminder_date,reminder_text=reminder_text,
+              #~ delay_value=delay_value,delay_type=delay_type,
+              #~ reminder_done=reminder_done,
+              file=file,mimetype=mimetype,created=created,modified=modified,description=description,type_id=type_id)
+            REMINDERS.append(obj,(reminder_date,reminder_text,
+                             delay_value,delay_type,reminder_done))
+            return obj
+                            
     
         def after_load():
             for args in CONTRACTS:
                 obj = create_dsbe_contract(*args)
                 obj.full_clean()
                 obj.save()
+            for obj,args in REMINDERS:
+                migrate_reminder(obj,*args)
                 
         globals_dict.update(create_dsbe_contract=delayed_create_dsbe_contract)
         globals_dict.update(Contract=Contract)
         globals_dict.update(ContractEnding=ContractEnding)
         globals_dict.update(ContractType=ContractType)
         globals_dict.update(ExamPolicy=ExamPolicy)
+        globals_dict.update(create_links_link=create_links_link)
         globals_dict.update(after_load=after_load)
         #~ globals_dict.update(create_jobs_contracttype=globals_dict['create_dsbe_contracttype'])
         #~ globals_dict.update(create_jobs_exampolicy=globals_dict['create_dsbe_exampolicy'])

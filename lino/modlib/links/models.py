@@ -41,7 +41,8 @@ class LinkType(models.Model):
 
 
 
-class Link(mixins.Reminder):
+#~ class Link(mixins.Reminder):
+class Link(models.Model):
     "Implements :class:`links.Link`."
     
     class Meta:

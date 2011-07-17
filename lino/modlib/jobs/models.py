@@ -62,7 +62,7 @@ from lino.utils.choosers import chooser
 from lino.utils.choicelists import ChoiceList
 from lino.utils import mti
 from lino.mixins.printable import DirectPrintAction
-from lino.mixins.reminder import ReminderEntry
+#~ from lino.mixins.reminder import ReminderEntry
 from lino.tools import obj2str
 
 from lino.modlib.countries.models import CountryCity
@@ -164,7 +164,8 @@ class ContractEndings(reports.Report):
 # CONTRACTS
 #
 #~ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,contacts.ContactDocument):
-class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder):
+#~ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder):
+class Contract(mixins.DiffingMixin,mixins.TypedPrintable):
     """
     A Contract
     """
@@ -285,7 +286,7 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder):
         #~ # return msg % dict(pk=self.pk, person=self.person, company=self.company)
         #~ return msg % self.pk
         
-    def get_reminder_html(self,ui,user):
+    def unused_get_reminder_html(self,ui,user):
         #~ url = ui.get_detail_url(self,fmt='detail')
         #~ if self.type:
             #~ s = unicode(self.type)
@@ -379,7 +380,7 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder):
             'date_decided date_issued responsibilities')
 
     def update_owned_task(self,task):
-        mixins.Reminder.update_owned_task(self,task)
+        #~ mixins.Reminder.update_owned_task(self,task)
         #~ contacts.PartnerDocument.update_owned_task(self,task)
         task.person = self.person
         task.company = self.provider

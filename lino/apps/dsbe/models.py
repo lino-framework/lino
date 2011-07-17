@@ -62,7 +62,7 @@ from lino.utils.choosers import chooser
 from lino.utils.choicelists import ChoiceList
 from lino.utils import mti
 from lino.mixins.printable import DirectPrintAction
-from lino.mixins.reminder import ReminderEntry
+#~ from lino.mixins.reminder import ReminderEntry
 from lino.tools import obj2str
 
 from lino.modlib.countries.models import CountryCity
@@ -1276,7 +1276,7 @@ class Note(notes.Note,contacts.PartnerDocument,mixins.DiffingMixin):
         verbose_name = _("Event/Note") # application-specific override
         verbose_name_plural = _("Events/Notes")
 
-    def get_reminder_html(self,ui,user):
+    def unused_get_reminder_html(self,ui,user):
         url = ui.get_detail_url(self,fmt='detail')
         if self.type:
             s = unicode(self.type)
