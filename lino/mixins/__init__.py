@@ -142,6 +142,8 @@ class Owned(models.Model):
                 return "%s with pk %r does not exist" % (
                     full_model_name(self.owner_type.model_class()),value)
             
+    def update_owned_task(self,task):
+        task.user = self.user
 
 
 class DiffingMixin(object):
