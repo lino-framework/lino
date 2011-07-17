@@ -165,7 +165,7 @@ class ContractEndings(reports.Report):
 #
 #~ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,contacts.ContactDocument):
 #~ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder):
-class Contract(mixins.DiffingMixin,mixins.TypedPrintable):
+class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
     """
     A Contract
     """

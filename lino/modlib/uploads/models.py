@@ -52,6 +52,7 @@ class Upload(
     mixins.Uploadable,
     #~ contacts.PartnerDocument,
     #~ mixins.Reminder, 
+    mixins.AutoUser,
     mixins.Owned):
     
     type = models.ForeignKey("uploads.UploadType",

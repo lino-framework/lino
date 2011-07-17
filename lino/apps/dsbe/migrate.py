@@ -51,6 +51,9 @@ def install(globals_dict):
         from lino.modlib.jobs.models import Job, Contract, JobProvider, \
           ContractEnding, ExamPolicy, ContractType, Company
         
+        Upload = resolve_model("uploads.Upload")
+        Link = resolve_model("links.Link")
+        Note = resolve_model("notes.Note")
         
         
         def get_or_create_job(provider_id,contract_type_id):
@@ -95,8 +98,7 @@ def install(globals_dict):
               provider_id=company_id,
               contact_id=contact_id,language=language,type_id=type_id,
               applies_from=applies_from,applies_until=applies_until,date_decided=date_decided,date_issued=date_issued,duration=duration,regime=regime,schedule=schedule,hourly_rate=hourly_rate,refund_rate=refund_rate,reference_person=reference_person,responsibilities=responsibilities,stages=stages,goals=goals,duties_asd=duties_asd,duties_dsbe=duties_dsbe,duties_company=duties_company,duties_person=duties_person,user_asd_id=user_asd_id,exam_policy_id=exam_policy_id,ending_id=ending_id,date_ended=date_ended)
-            REMINDERS.append(obj,(reminder_date,reminder_text,
-                             delay_value,delay_type,reminder_done))
+            REMINDERS.append((obj,(reminder_date,reminder_text,delay_value,delay_type,reminder_done)))
             return obj
               
         def delayed_create_dsbe_contract(*args):
@@ -108,8 +110,7 @@ def install(globals_dict):
               #~ delay_value=delay_value,delay_type=delay_type,
               #~ reminder_done=reminder_done,
               person_id=person_id,company_id=company_id,type_id=type_id,date=date,url=url,name=name)
-            REMINDERS.append(obj,(reminder_date,reminder_text,
-                             delay_value,delay_type,reminder_done))
+            REMINDERS.append((obj,(reminder_date,reminder_text,delay_value,delay_type,reminder_done)))
             return obj
             
         def create_notes_note(id, user_id, reminder_date, reminder_text, delay_value, delay_type, reminder_done, must_build, person_id, company_id, date, type_id, event_type_id, subject, body, language):
@@ -118,8 +119,7 @@ def install(globals_dict):
               #~ delay_value=delay_value,delay_type=delay_type,
               #~ reminder_done=reminder_done,
               must_build=must_build,person_id=person_id,company_id=company_id,date=date,type_id=type_id,event_type_id=event_type_id,subject=subject,body=body,language=language)
-            REMINDERS.append(obj,(reminder_date,reminder_text,
-                             delay_value,delay_type,reminder_done))
+            REMINDERS.append((obj,(reminder_date,reminder_text,delay_value,delay_type,reminder_done)))
             return obj
             
         def create_uploads_upload(id, user_id, owner_type_id, owner_id, reminder_date, reminder_text, delay_value, delay_type, reminder_done, file, mimetype, created, modified, description, type_id):
@@ -128,9 +128,9 @@ def install(globals_dict):
               #~ reminder_date=reminder_date,reminder_text=reminder_text,
               #~ delay_value=delay_value,delay_type=delay_type,
               #~ reminder_done=reminder_done,
-              file=file,mimetype=mimetype,created=created,modified=modified,description=description,type_id=type_id)
-            REMINDERS.append(obj,(reminder_date,reminder_text,
-                             delay_value,delay_type,reminder_done))
+              file=file,mimetype=mimetype,
+              created=created,modified=modified,description=description,type_id=type_id)
+            REMINDERS.append((obj,(reminder_date,reminder_text,delay_value,delay_type,reminder_done)))
             return obj
                             
     

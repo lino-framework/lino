@@ -69,7 +69,7 @@ class EventTypes(reports.Report):
     column_names = 'name *'
     order_by = ["name"]
 
-class Note(mixins.TypedPrintable):
+class Note(mixins.TypedPrintable,mixins.AutoUser):
 #~ class Note(mixins.TypedPrintable,mixins.Reminder):
     """
     Deserves more documentation.
