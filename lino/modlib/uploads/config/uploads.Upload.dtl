@@ -1,10 +1,10 @@
 :label_align: top
 
 main =
-    file #user
+    file user
     type description 
     # person company
-    reminder_date reminder_text delay_value delay_type reminder_done
+    # reminder_date reminder_text delay_value delay_type reminder_done
     modified created owner
     # show_date show_time 
     # show_date time timestamp
