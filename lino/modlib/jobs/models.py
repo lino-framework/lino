@@ -176,7 +176,7 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
     person = models.ForeignKey("contacts.Person",
         verbose_name=_("Person"))
     provider = models.ForeignKey(JobProvider,
-        blank=True,verbose_name=_("Job Provider"))
+        blank=True,null=True,verbose_name=_("Job Provider"))
     contact = models.ForeignKey("contacts.Contact",
       blank=True,null=True,
       verbose_name=_("represented by"))
