@@ -314,13 +314,13 @@ def migrate_reminder(obj,reminder_date,reminder_text,
     else:
         summary = _('due date reached')
     
-    kw.update(done = reminder_done)
-    kw.update(alarm_value = delay_value)
-    kw.update(alarm_unit = delay2alarm(delay_type))
     
     update_auto_task(
       REMINDER,
       obj.user,
       reminder_date,
-      summary,self,**kw)
+      summary,self,defaults=dict(
+        done = reminder_done,
+        alarm_value = delay_value,
+        alarm_unit = delay2alarm(delay_type)))
       
