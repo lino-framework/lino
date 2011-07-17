@@ -28,6 +28,7 @@ class Lino(Lino):
     title = "Lino/DSBE"
     #~ domain = "dsbe.saffre-rumma.net"
     help_url = "http://lino.saffre-rumma.net/dsbe/index.html"
+    migration_module = 'lino.apps.dsbe.migrate'
     
     #~ residence_permit_upload_type = None
     #~ work_permit_upload_type = None

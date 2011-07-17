@@ -174,6 +174,10 @@ class Lino(object):
     title = "Base Lino Application"
     domain = "www.example.com"
     
+    migration_module = None
+    """If you maintain a data migration module for your application, 
+    specify its name here."""
+    
     #~ bypass_perms = False
     
     use_gridfilters = True

@@ -118,11 +118,13 @@ class Serializer(base.Serializer):
         self.stream.write('\n\ndef objects():\n')
         all_models = self.sort_models(all_models)
         for model in all_models:
-            self.stream.write('    for o in %s_objects(): yield o\n' % model._meta.db_table)          
-        self.stream.write('\n')
-        self.stream.write('# uncomment for automagic migration:\n')
-        self.stream.write('# from lino.apps.dsbe.migrate import install\n')
-        self.stream.write('# install(globals())\n')
+            self.stream.write('    for o in %s_objects(): yield o\n' % model._meta.db_table)
+        if settings.LINO.migration_module:
+            self.stream.write('\n')
+            #~ self.stream.write('# uncomment for automagic migration:\n')
+            self.stream.write('from %s import install\n' \
+                % settings.LINO.migration_module)
+            self.stream.write('install(globals())\n')
             
     def sort_models(self,unsorted):
         sorted = []

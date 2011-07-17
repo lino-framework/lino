@@ -1,0 +1,7 @@
+20110717
+========
+
+Zwei nächtliche Inspirationen: 
+
+- :mod:`lino.apps.dsbe.migrate` hatte noch einen Bug (Verträge wurden nicht gespeichert)
+- Neues Attribut :attr:`lino.Lino.migration_module`
