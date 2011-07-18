@@ -162,9 +162,11 @@ class Task(mixins.Owned,Component):
         return "#" + str(self.pk)
         
     def summary_row(self,ui,rr,**kw):
-        html = super(Task,self).summary_row(ui,rr,**kw)
         if self.owner and self.owner.__class__.__name__ != 'Person':
+            html = ui.href_to(self)
             html += " (%s)" % reports.summary_row(self.owner,ui,rr)
+        else:
+            html = super(Task,self).summary_row(ui,rr,**kw)
         return html
         
 class Places(reports.Report):
