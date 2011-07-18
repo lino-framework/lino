@@ -43,6 +43,26 @@ add('2',en=u"completed",de=u"erledigt",   fr=u"complétée")
 add('3',en=u"cancelled",de=u"storniert",   fr=u"annulée")
 
 
+def add_duration(dt,value,unit):
+    if unit == 's' : 
+        return dt + datetime.timedelta(seconds=value)
+    if unit == 'm' : 
+        return dt + datetime.timedelta(minutes=value)
+    if unit == 'h' : 
+        return dt + datetime.timedelta(hours=value)
+    if unit == 'D' : 
+        return dt + datetime.timedelta(days=value)
+    if unit == 'W' : 
+        return dt + datetime.timedelta(days=value*7)
+    if unit == 'W' : 
+        return dt + datetime.timedelta(days=value*7)
+    if unit == 'M' : 
+        return dt.replace(month=dt.month + value)
+    if unit == 'Y' : 
+        return dt.replace(month=dt.year + value)
+    raise Exception("Invalid DurationUnit %r" % unit)
+    
+
 class DurationUnit(ChoiceList):
     """A list of possible values for the `duration_unit` field of an :class:`Event`.
     """

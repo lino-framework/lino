@@ -34,7 +34,7 @@ from lino import reports
 from lino.modlib.contacts import models as contacts
 
 from lino.modlib.cal.utils import EventStatus, \
-    TaskStatus, DurationUnit, Priority, AccessClass
+    TaskStatus, DurationUnit, Priority, AccessClass, add_duration
 
 from lino.utils.babel import dtosl
 
@@ -51,15 +51,36 @@ class Component(mixins.AutoUser,
     class Meta:
         abstract = True
         
+    start_date = models.DateField(
+        verbose_name=_("Start date")) # iCal:DTSTART
+    start_time = models.TimeField(
+        blank=True,null=True,
+        verbose_name=_("Start time"))# iCal:DTSTART
     summary = models.CharField(_("Summary"),max_length=200,blank=True) # iCal:SUMMARY
     description = fields.RichTextField(_("Description"),blank=True,format='html')
     access_class = AccessClass.field() # iCal:CLASS
     sequence = models.IntegerField(_("Revision"),default=0)
     alarm_value = models.IntegerField(_("Alarm value"),null=True,blank=True)
     alarm_unit = DurationUnit.field(null=True,blank=True)
+    dt_alarm = models.DateTimeField(
+        blank=True,null=True,editable=False)
     
     def __unicode__(self):
         return self._meta.verbose_name + " #" + str(self.pk)
+        
+    def save(self,*args,**kw):
+        if self.alarm_unit:
+            if not self.start_date:
+                self.start_date = datetime.date.today()
+            if self.start_time:
+                dt = datetime.datetime.combine(self.start_date,self.start_time)
+            else:
+                d = self.start_date
+                dt = datetime.datetime(d.year,d.month,d.day)
+            self.dt_alarm = add_duration(dt,-self.alarm_value,self.alarm_unit)
+        else:
+            self.dt_alarm = None
+        super(Component,self).save(*args,**kw)
         
     def summary_row(self,ui,rr,**kw):
         #~ linkkw = {}
@@ -87,11 +108,6 @@ class Event(Component):
         verbose_name_plural = _("Events")
         #~ abstract = True
         
-    date = models.DateField(
-        verbose_name=_("Start date")) # iCal:DTSTART
-    time = models.TimeField(
-        blank=True,null=True,
-        verbose_name=_("Start time"))# iCal:DTSTART
     end_date = models.DateField(
         blank=True,null=True,
         verbose_name=_("End date"))
@@ -141,7 +157,7 @@ class Task(mixins.Owned,Component):
     @classmethod
     def site_setup(cls,lino):
         lino.TASK_AUTO_FIELDS= reports.fields_list(cls,
-            '''due_date due_time summary''')
+            '''start_date start_time due_date due_time summary''')
 
     def save(self,*args,**kw):
         m = getattr(self.owner,'update_owned_task',None)
@@ -201,7 +217,8 @@ def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
     """
     Return a HTML summary of all open reminders for this user
     """
-    today = datetime.date.today()
+    #~ today = datetime.date.today()
+    today = datetime.now()
     #~ if days_back is None:
         #~ back_until = None
     #~ else:
@@ -210,14 +227,14 @@ def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
     past = {}
     future = {}
     def add(task):
-        if task.due_date < today:
+        if task.dt_alarm < today:
             lookup = past
         else:
             lookup = future
-        day = lookup.get(task.due_date,None)
+        day = lookup.get(task.dt_alarm,None)
         if day is None:
             day = [task]
-            lookup[task.due_date] = day
+            lookup[task.dt_alarm] = day
         else:
             day.append(task)
             
@@ -225,11 +242,11 @@ def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
     filterkw = {}
     if days_back is not None:
         filterkw.update({ 
-            'due_date__gte' : today - datetime.timedelta(days=days_back)
+            'dt_alarm__gte' : today - datetime.timedelta(days=days_back)
         })
     if days_forward is not None:
         filterkw.update({ 
-            'due_date__lte' : today + datetime.timedelta(days=days_forward)
+            'dt_alarm__lte' : today + datetime.timedelta(days=days_forward)
         })
     filterkw.update(user=user)
     filterkw.update(done=False)

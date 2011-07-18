@@ -9,20 +9,12 @@ for which I hope for help from other people.
 Short-term
 ----------
 
-#.  Beim Anzeigen der Tasks wird momentan alarm_value nicht berücksichtigt.
+#.  Leider kann man scheinbar weder in GroupWise noch in Zarafa 
+    externe ("remote") Kalender konfigurieren (so wie `Google und Sunbird
+    <http://www.google.com/support/calendar/bin/answer.py?answer=99358#sunbird>`_)
+    Lino muss also nicht selber Server sein, 
+    sondern eher als Client mit einem CalDAV-Server arbeiten. 
 
-#.  Kann man in GroupWise externe ("remote") Kalender konfigurieren? 
-    Ich meine ähnlich wie `Google und Sunbird
-    <http://www.google.com/support/calendar/bin/answer.py?answer=99358#sunbird>`_
-    Lino könnte dann als CalDAV-Server fungieren.
-    Nein, das geht nicht. Lino muss eher als Client mit einem CalDAV-Server arbeiten. 
-
-#.  Die bisherigen Reminders müssten nun durch "automatisch verwaltete" 
-    `cal.Task` ersetzt werden. Neues Feld `cal.Task.automatic` zeigt an, 
-    ob die Task automatisch generiert wurde und bei Änderung der 
-    Stammdaten ebenfalls verändert wird.
-    Aber geht das auch mit den Reminder-Funktionen von Notizen und Verträgen?
-    
 #.  `AppyRtfBuildMethod` scheint nicht zu funktionieren.
 
 #.  Textbausteine (im Text-Editor F1 drücken können).
@@ -30,14 +22,14 @@ Short-term
 #.  Slave-Grids im Insert-Fenster sind jetzt zwar disabled, aber sie 
     machen trotzdem noch ein load "ihrer" Daten. 
     
-#.  Listings : listing.odt muss noch gemacht werden.
+#.  Listings : Listing.odt muss noch gemacht werden.
 
 #.  Ausdruck Verträge: jetzt wo die mehrzeiligen Textfelder formatierbar 
     sind, kommt vielleicht ein kleines Problem: Bisher wurde z.B. in der 
     Dokumentvorlage ein Wort vor dem eigentlichen Text eingefügt, 
     wenn dieser nicht leer war. Z.B. Wenn man im Feld "Zielsetzungen" 
     den Text "Blablabla..." eintrug, dann wurde "Zielsetzungen: Blablabla..." 
-    gedruckt. Um das in dieser Form zu erhalten, müste ich einen Patch für 
+    gedruckt. Um das in dieser Form zu erhalten, müsste ich einen Patch für 
     :term:`appy.pod` schreiben, der folgendes ermöglicht::
     
       do text

@@ -403,7 +403,7 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     p.save()
     
     task = Instantiator('cal.Task').build
-    yield task(user=root,due_date=i2d(20110717),summary=u"Anrufen Termin",
+    yield task(user=root,start_date=i2d(20110717),summary=u"Anrufen Termin",
         owner=p)
     
     p = Person.objects.get(name=u"Eierschal Emil")

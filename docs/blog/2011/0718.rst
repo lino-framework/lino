@@ -1,0 +1,16 @@
+20110718
+========
+
+Der Endspurt geht noch weiter, weil ich heute und morgen nicht gut 
+erreichbar bin um Support zu geben nach dem Release. 
+
+Also noch ein bisschen weiter arbeiten:
+
+- :class:`lino.modlib.cal.models.Task` hatte bisher kein `start_date` 
+  und `start_time`. Jetzt wohl.
+
+- Beim Anzeigen der Erinnerungen wurde alarm_value nicht berücksichtigt.
+  Jetzt gibt es ein neues Feld `dt_alarm`, das in `save()` automatisch 
+  ermittelt wird. Ist zwar schade, dafür ein eigenes Datenbankfeld zu 
+  verschwenden, aber ich sehe momentan keine bessere Lösung.
+
