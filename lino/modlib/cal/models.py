@@ -161,11 +161,11 @@ class Task(mixins.Owned,Component):
     def __unicode__(self):
         return "#" + str(self.pk)
         
-    #~ def summary_row(self,ui,rr,**kw):
-        #~ html = super(Task,self).summary_row(ui,rr,**kw)
-        #~ if self.owner:
-            #~ html += " (%s)" % reports.summary_row(self.owner,ui,rr)
-        #~ return html
+    def summary_row(self,ui,rr,**kw):
+        html = super(Task,self).summary_row(ui,rr,**kw)
+        if self.owner and self.owner.__class__.__name__ != 'Person':
+            html += " (%s)" % reports.summary_row(self.owner,ui,rr)
+        return html
         
 class Places(reports.Report):
     model = Place
