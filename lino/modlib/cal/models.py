@@ -252,6 +252,10 @@ def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
         })
     filterkw.update(dt_alarm__isnull=False)
     filterkw.update(user=user)
+    
+    for o in Event.objects.filter(**filterkw).order_by('dt_alarm'):
+        add(o)
+        
     filterkw.update(done=False)
             
     for task in Task.objects.filter(**filterkw).order_by('dt_alarm'):

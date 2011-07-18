@@ -16,6 +16,7 @@
 This module deserves more documentation.
 
 """
+import datetime
 
 from django.utils.translation import ugettext_lazy as _
 
@@ -52,8 +53,6 @@ def add_duration(dt,value,unit):
         return dt + datetime.timedelta(hours=value)
     if unit.value == 'D' : 
         return dt + datetime.timedelta(days=value)
-    if unit.value == 'W' : 
-        return dt + datetime.timedelta(days=value*7)
     if unit.value == 'W' : 
         return dt + datetime.timedelta(days=value*7)
     day = dt.day
