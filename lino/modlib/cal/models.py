@@ -62,7 +62,7 @@ class Component(mixins.AutoUser,
     access_class = AccessClass.field() # iCal:CLASS
     sequence = models.IntegerField(_("Revision"),default=0)
     alarm_value = models.IntegerField(_("Alarm value"),null=True,blank=True)
-    alarm_unit = DurationUnit.field(null=True,blank=True)
+    alarm_unit = DurationUnit.field(_("Alarm unit"),null=True,blank=True)
     dt_alarm = models.DateTimeField(
         blank=True,null=True,editable=False)
     
@@ -84,20 +84,11 @@ class Component(mixins.AutoUser,
         super(Component,self).save(*args,**kw)
         
     def summary_row(self,ui,rr,**kw):
-        #~ linkkw = {}
-        #~ linkkw.update(fmt='detail')
-        #~ url = ui.get_detail_url(self,**linkkw)
-        #~ html = '<a href="%s">#%s</a>&nbsp;: %s' % (url,self.pk,
-            #~ cgi.escape(force_unicode(self.summary)))
-        if self.owner:
-            html = ui.href_to(self)
-            html += " (%s)" % reports.summary_row(self.owner,ui,rr)
-        else:
-            html = contacts.PartnerDocument.summary_row(self,ui,rr,**kw)
+        html = contacts.PartnerDocument.summary_row(self,ui,rr,**kw)
         if self.summary:
             html += '&nbsp;: %s' % cgi.escape(force_unicode(self.summary))
             #~ html += ui.href_to(self,force_unicode(self.summary))
-        html += _(" am ") + babel.dtos(self.start_date)
+        html += _(" on ") + babel.dtos(self.start_date)
         return html
         
     
@@ -169,6 +160,12 @@ class Task(mixins.Owned,Component):
 
     def __unicode__(self):
         return "#" + str(self.pk)
+        
+    #~ def summary_row(self,ui,rr,**kw):
+        #~ html = super(Task,self).summary_row(ui,rr,**kw)
+        #~ if self.owner:
+            #~ html += " (%s)" % reports.summary_row(self.owner,ui,rr)
+        #~ return html
         
 class Places(reports.Report):
     model = Place
