@@ -62,6 +62,7 @@ def add_duration(dt,value,unit):
             if unit.value == 'M' : 
                 m = dt.month + value
                 if m > 12: m -= 12
+                if m < 1: m += 12
                 return dt.replace(month=m,day=day)
             if unit.value == 'Y' : 
                 return dt.replace(month=dt.year + value,day=day)
