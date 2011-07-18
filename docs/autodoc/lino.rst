@@ -29,9 +29,6 @@ Subpackages
     lino.core
     lino.fields
     lino.mixins
-    lino.mixins.printable
-    lino.mixins.uploadable
-    lino.mixins.reminder
     lino.models
     lino.test_apps
     lino.ui

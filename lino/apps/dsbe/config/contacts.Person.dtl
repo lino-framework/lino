@@ -5,7 +5,6 @@
 main = 
   box1 box2
   box3 image:12 #overview 
-  cal.TasksByPerson
 
 
 

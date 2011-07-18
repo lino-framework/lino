@@ -111,10 +111,10 @@ class DataControlListing(printable.Listing):
     def body(self):
         items = []
         for model in sorted_models_list():
-            m = getattr(model,'soft_integrity_test',None)
+            m = getattr(model,'data_control',None)
             if m is not None:
                 for i in model.objects.all():
-                    msgs = i.soft_integrity_test()
+                    msgs = i.data_control()
                     if msgs:
                         items.append("%s : %s" % (obj2str(i),"<br/>".join(msgs)))
         html = "<ol>"

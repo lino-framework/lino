@@ -32,7 +32,7 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.template.loader import render_to_string, get_template, select_template, Context, TemplateDoesNotExist
 from django.http import HttpResponse, HttpResponseRedirect, Http404
-#~ from django.utils.encoding import force_unicode
+from django.utils.encoding import force_unicode
 
 try:
     import ho.pisa as pisa
@@ -666,7 +666,7 @@ class Listing(Printable):
         #~ rpt.add_action(InititateListing('listing',_("Print"),'listing.odt'))
         
     def __unicode__(self):
-        return self.title
+        return force_unicode(self.title)
         #~ return self.get_title()
         
     def get_title(self):

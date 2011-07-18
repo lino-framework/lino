@@ -160,6 +160,13 @@ class ChoiceListField(models.CharField):
     #~ choicelist = NotImplementedError
     
     def __init__(self,choicelist,*args,**kw):
+        if args:
+            verbose_name = args[0]
+            args = args[1:]
+        else:
+            verbose_name = kw.pop('verbose_name',None)
+        if verbose_name is None:
+            verbose_name = choicelist.label
         self.choicelist = choicelist
         defaults = dict(
             #~ choices=KNOWLEDGE_CHOICES,
@@ -171,7 +178,7 @@ class ChoiceListField(models.CharField):
             )
         defaults.update(kw)
         #~ models.SmallIntegerField.__init__(self,*args, **defaults)
-        models.CharField.__init__(self,*args, **defaults)
+        models.CharField.__init__(self,verbose_name,*args, **defaults)
         
     def get_internal_type(self):
         return "CharField"

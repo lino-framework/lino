@@ -19,12 +19,14 @@ Lino support.
 Erweiterung Verträge
 --------------------
 
+.. currentmodule:: lino.modlib.jobs.models
+
 Planung
 +++++++
 
 Wir planen folgende Erweiterung der Datenstruktur im Bereich Verträge, 
 die vor allem für die Übersichtsliste der laufenden Verträge
-:class:`lino.apps.dsbe.contracts.ContractsSituation` 
+:class:`ContractsSituation` 
 wichtig sind.
 
 Also eine Organisation kann ja jetzt schon zum Kursanbieter werden,
@@ -101,10 +103,10 @@ Implementierung
 
 - Neue Tabellen: 
 
-  - JobProvider : Vertragsanbieter
-  - Job : Vertragsangebot ("Stelle")
-  - JobType : Stellenart
-  - JobRequest : Vertragsanfrage
+  - :class:`JobProvider` : Vertragsanbieter
+  - :class:`Job` : Vertragsangebot ("Stelle")
+  - :class:`JobType` : Stellenart
+  - :class:`JobRequest` : Vertragsanfrage
 
 - Die vier bestehenden Tabellen zu den Verträgen habe ich in ein eigenes neues 
   Modul :mod:`lino.modlib.jobs` ausgelagert. Bei der Datenmigration müssen 
@@ -139,5 +141,9 @@ die ja lokal spezifisch sind.
 
 Checkin 20110716, um die Sache auf Jana (einem internen Server) zu testen.
 
+Endspurt vor dem Release
+------------------------
+
 Wir sind kurz vor dem Release: Übersetzungen, Feinschliff, Feierabend... 
 morgen sehen wir, ob nicht noch ein Show-Stopper kommt.
+

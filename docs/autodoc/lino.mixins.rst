@@ -6,3 +6,10 @@ The :mod:`mixins` Module
     :undoc-members:
     :show-inheritance:
 
+Subpackages
+-----------
+
+.. toctree::
+
+    lino.mixins.printable
+    lino.mixins.uploadable

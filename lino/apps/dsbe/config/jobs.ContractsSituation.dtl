@@ -1,5 +1,5 @@
 :label_align: top
 
 main =
-    id contract_type
+    id contract_type job_type
     preview

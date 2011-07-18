@@ -9,13 +9,13 @@ for which I hope for help from other people.
 Short-term
 ----------
 
-#.  :settings:`AUTHENTICATION_BACKENDS` prüfen: da steht noch was von django.contrib.auth 
-    drin.
+#.  Beim Anzeigen der Tasks wird momentan alarm_value nicht berücksichtigt.
 
 #.  Kann man in GroupWise externe ("remote") Kalender konfigurieren? 
     Ich meine ähnlich wie `Google und Sunbird
     <http://www.google.com/support/calendar/bin/answer.py?answer=99358#sunbird>`_
     Lino könnte dann als CalDAV-Server fungieren.
+    Nein, das geht nicht. Lino muss eher als Client mit einem CalDAV-Server arbeiten. 
 
 #.  Die bisherigen Reminders müssten nun durch "automatisch verwaltete" 
     `cal.Task` ersetzt werden. Neues Feld `cal.Task.automatic` zeigt an, 

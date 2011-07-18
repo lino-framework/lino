@@ -458,11 +458,11 @@ class Person(Partner,contacts.Person):
     aid_type = models.ForeignKey("dsbe.AidType",blank=True,null=True,
         verbose_name=_("aid type"))
         
-    income_ag    = models.BooleanField(verbose_name=_("Arbeitslosengeld"))
-    income_wg    = models.BooleanField(verbose_name=_("Wartegeld"))
-    income_kg    = models.BooleanField(verbose_name=_("Krankengeld"))
-    income_rente = models.BooleanField(verbose_name=_("Rente"))
-    income_misc  = models.BooleanField(verbose_name=_("Andere"))
+    income_ag    = models.BooleanField(verbose_name=_("unemployment benefit")) # Arbeitslosengeld
+    income_wg    = models.BooleanField(verbose_name=_("waiting pay")) # Wartegeld
+    income_kg    = models.BooleanField(verbose_name=_("sickness benefit")) # Krankengeld
+    income_rente = models.BooleanField(verbose_name=_("retirement pension")) # Rente
+    income_misc  = models.BooleanField(verbose_name=_("other incomes")) # Andere Einkommen
     
     is_seeking = models.BooleanField(_("is seeking work"))
     unavailable_until = models.DateField(blank=True,null=True,verbose_name=_("Unavailable until"))
@@ -502,13 +502,15 @@ class Person(Partner,contacts.Person):
         rpt.add_action(DirectPrintAction('auskblatt',_("Auskunftsblatt"),'persons/auskunftsblatt.odt'))
         Zur Zeit scheint es so, dass das Auskunftsblatt eher überflüssig wird.
         """
-        rpt.add_action(DirectPrintAction('eid',_("eID-Inhalt"),'persons/eid-content.odt'))
+        rpt.add_action(DirectPrintAction('eid',_("eID sheet"),'persons/eid-content.odt'))
         #~ rpt.add_action(DirectPrintAction('cv',_("Curiculum vitae"),'persons/cv.odt'))
         
     def __unicode__(self):
-        return u"%s (%s)" % (self.name,self.pk)
+        #~ return u"%s (%s)" % (self.name,self.pk)
+        return u"%s (%s)" % (self.get_full_name(no_salutation=True),self.pk)
         
-    def soft_integrity_test(self):
+    def data_control(self):
+        "Used by :class:`lino.models.DataControlListing`."
         msgs = []
         try:
             niss_validator(self.national_id)
@@ -1673,7 +1675,7 @@ class PersonSearch(mixins.AutoUser):
         
     @classmethod
     def setup_report(model,rpt):
-        rpt.add_action(DirectPrintAction('suchliste',_("Drucken"),'persons/suchliste.odt'))
+        rpt.add_action(DirectPrintAction('suchliste',_("Print"),'persons/suchliste.odt'))
         
 class MySearches(mixins.ByUser):
     model = PersonSearch

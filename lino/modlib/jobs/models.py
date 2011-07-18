@@ -40,6 +40,7 @@ from django.utils.encoding import force_unicode
 from lino import reports
 #~ from lino import layouts
 from lino.utils import perms
+from lino.utils import dblogger
 #~ from lino.utils import printable
 from lino import mixins
 from lino import actions
@@ -278,7 +279,8 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
         
     def __unicode__(self):
         #~ return u'%s # %s' % (self._meta.verbose_name,self.pk)
-        return u'%s#%s' % (self.job.name,self.pk)
+        return u'%s#%s (%s)' % (self.job.name,self.pk,
+            self.person.get_full_name(no_salutation=True))
     
     #~ def __unicode__(self):
         #~ msg = _("Contract # %s")
@@ -332,8 +334,31 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
         super(Contract,self).on_create(request)
         self.on_person_changed(request)
       
-    def full_clean(self):
-      
+    def save(self,*args,**kw):
+        #~ self.before_save()
+        qs = self.person.jobrequest_set.filter(contract=self)
+        if qs.count() == 0:
+            qs = self.person.jobrequest_set.filter(job=self.job,contract=None)
+            if qs.count() == 1: 
+                obj = qs[0]
+                obj.contract = self
+                obj.save()
+                dblogger.info(u'Marked job request %s as satisfied by %s' % (
+                  obj,self))
+        r = super(Contract,self).save(*args,**kw)
+        return r
+        
+    def data_control(self):
+        "Used by :class:`lino.models.DataControlListing`."
+        msgs = []
+        qs = self.person.jobrequest_set.filter(contract=self)
+        if qs.count() > 1: 
+            msgs.append(
+              u'There are more than one job request using contract %s : %s' \
+              % qs)
+        return msgs
+        
+    def full_clean(self,*args,**kw):
         if self.person_id is not None:
             #~ if not self.user_asd:
                 #~ if self.person.user != self.user:
@@ -364,6 +389,8 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
                 
         if self.type_id is None:
             self.type = self.job.contract_type
+            
+        super(Contract,self).full_clean(*args,**kw)
             
     @classmethod
     def site_setup(cls,lino):
@@ -419,21 +446,18 @@ class MyContracts(mixins.ByUser,Contracts):
 
 
 
-class JobType(models.Model):
+class JobType(mixins.Sequenced):
     """
     A work place at some job provider
     """
     
     class Meta:
-        verbose_name = _("Job")
-        verbose_name_plural = _('Jobs')
+        verbose_name = _("Job Type")
+        verbose_name_plural = _('Job Types')
         
     name = models.CharField(max_length=200,
           blank=True,null=True,
-          verbose_name=_("Name"))
-    u"""
-    Bezeichnung des Kursinhalts (nach Konvention des DSBE).
-    """
+          verbose_name=_("Designation"))
           
     def __unicode__(self):
         return unicode(self.name)
@@ -524,6 +548,21 @@ class JobRequest(models.Model):
         blank=True,null=True,
         verbose_name=_("Remark"))
         
+    def __unicode__(self):
+        return force_unicode(_('%s request by %s') % (self.job.name,
+            self.person.get_full_name(no_salutation=True)))
+    @chooser()
+    def contract_choices(cls,job,person):
+        if person and job:
+            return person.contract_set.filter(job=job)
+        return []
+        
+    def clean(self,*args,**kw):
+        if self.contract:
+            if self.contract.person != self.person:
+                raise ValidationError(
+                  "Cannot satisfy a JobRequest with a Contract on another  Person")
+        super(JobRequest,self).clean(*args,**kw)
     
         
 class Jobs(reports.Report):
@@ -563,39 +602,52 @@ class ContractsSituation(mixins.Listing):
         verbose_name = _("Contracts Situation") 
         
     contract_type = models.ForeignKey(ContractType,blank=True,null=True)
+    job_type = models.ForeignKey(JobType,blank=True,null=True)
     
     def body(self):
-        cells = []
         today = self.date or datetime.date.today()
-        for company in Company.objects.all():
-            actives = []
-            candidates = []
-            for ct in company.contract_set.all():
-                if ct.applies_from:
-                    until = ct.applies_until or ct.date_ended
-                    if not until or (ct.applies_from >= today and until <= today):
-                        actives.append(ct)
-                else:
-                    candidates.append(ct)
-            if candidates + actives:
-                s = "<b>%s</b>" % cgi.escape(unicode(company))
-                for ct in actives:
-                    s += '<br>' + cgi.escape(unicode(ct.person))
-                s += '<hr width="100%">'
-                for ct in candidates:
-                    s += '<br>' + cgi.escape(unicode(ct.person))
-                cells.append(s)
-            
-        rows = []
-        while len(cells) > COLS:
-            rows.append(cells[:COLS])
-            cells = cells[COLS:]
-        rows.append(cells)
         html = ''
-        for row in rows:
-            s = ''.join(['<td valign="top">%s</td>' % cell for cell in row])
-            html += '<tr>%s</tr>' % s
-        html = '<table>%s</table>' % html
+        rows = []
+        def LIST(items):
+            s = '\n'.join(['<li>%s</li>' % cgi.escape(unicode(i)) for i in items])
+            return "<ul>%s</ul>" % s
+          
+        for jobtype in JobType.objects.all():
+            cells = []
+            for job in jobtype.job_set.all():
+                actives = []
+                candidates = []
+                for ct in job.contract_set.all():
+                    if ct.applies_from:
+                        until = ct.applies_until or ct.date_ended
+                        if not until or (ct.applies_from >= today and until <= today):
+                            actives.append(ct)
+                for req in job.jobrequest_set.all():
+                    if not req.contract:
+                        candidates.append(req)
+                if candidates + actives:
+                    s = "<p>"
+                    s += "<b>%s</b>" % cgi.escape(unicode(job))
+                    if job.remark:
+                        s += " <i>%s</i>" % cgi.escape(job.remark)
+                    s += "</p>"
+                    s += LIST([ct.person for ct in actives])
+                    #~ s += "<li>"
+                    #~ for ct in actives:
+                        #~ s += '<li>%s</li>' % cgi.escape(unicode(ct.person))
+                    #~ s += "</li>"
+                    if candidates:
+                        s += "<p>%s:</p>" % cgi.escape(_("Candidates"))
+                        s += LIST([i.person for i in candidates])
+                        #~ for ct in candidates:
+                            #~ s += '<br>' + cgi.escape(unicode(ct.person))
+                    cells.append(s)
+            if cells:
+                html += '<h1>%s</h1>' % cgi.escape(unicode(jobtype))
+                s = ''.join(['<td valign="top">%s</td>' % c for c in cells])
+                s = '<tr>%s</tr>' % s
+                html += '<table width="100%%">%s</table>' % s
+        html = '<div class="htmlText">%s</div>' % html
         return html
 
 

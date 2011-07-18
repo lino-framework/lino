@@ -279,10 +279,10 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     bisa = mti.insert_child(bisa,JobProvider)
     yield bisa 
     
-    job = Instantiator('jobs.Job','provider type name').build
-    bisajob = job(bisa,art607,"bisa")
+    job = Instantiator('jobs.Job','provider type contract_type name').build
+    bisajob = job(bisa,art607,1,"bisa")
     yield bisajob
-    rcyclejob = job(rcycle,art607,"rcycle")
+    rcyclejob = job(rcycle,art607,2,"rcycle")
     yield rcyclejob 
     contract = Instantiator('jobs.Contract',
       'type applies_from applies_until job contact',
@@ -292,14 +292,18 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     yield contract(1,None,None,bisajob,bisa_dir,person=tatjana)
     yield contract(1,i2d(20110601),None,bisajob,bisa_dir,person=andreas)
     yield contract(1,i2d(20110601),None,rcyclejob,rcycle_dir,person=annette)
+    
+    jobrequest = Instantiator('jobs.JobRequest','job person').build
+    yield jobrequest(bisajob,tatjana)
+    yield jobrequest(rcyclejob,luc)
 
-    def f(rmd,d):
-        rmd.reminder_date = d
-        rmd.reminder_text = 'demo reminder'
-        rmd.save()
+    #~ def f(rmd,d):
+        #~ rmd.reminder_date = d
+        #~ rmd.reminder_text = 'demo reminder'
+        #~ rmd.save()
         
-    for rmd in Note.objects.all(): f(rmd,i2d(20101110))
-    for rmd in Contract.objects.all(): f(rmd,i2d(20101111))
+    #~ for rmd in Note.objects.all(): f(rmd,i2d(20101110))
+    #~ for rmd in Contract.objects.all(): f(rmd,i2d(20101111))
       
       
       
@@ -398,8 +402,9 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     p.sex = SEX_FEMALE
     p.save()
     
-    yield note(user=root,date=i2d(20110511),subject=u"Anrufen Termin",
-        person=p,reminder_date=i2d(20110611))
+    task = Instantiator('cal.Task').build
+    yield task(user=root,due_date=i2d(20110717),summary=u"Anrufen Termin",
+        owner=p)
     
     p = Person.objects.get(name=u"Eierschal Emil")
     p.birth_date = i2d(19800501)

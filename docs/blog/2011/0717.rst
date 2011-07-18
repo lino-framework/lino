@@ -5,3 +5,13 @@ Zwei nächtliche Inspirationen:
 
 - :mod:`lino.apps.dsbe.migrate` hatte noch einen Bug (Verträge wurden nicht gespeichert)
 - Neues Attribut :attr:`lino.Lino.migration_module`
+
+Heute habe ich noch eine ganze Serie von Checkins "20110717" 
+gemacht im Rahmen des Endspurts vor dem Release 1.2.0. 
+
+Bemerkung am Rande: 
+In :settings:`AUTHENTICATION_BACKENDS` steht noch was von
+django.contrib.auth drin. Ist ein Defaultwert. 
+Das ist aber nicht schlimm, weil dieses 
+Setting nur von django.contrib.auth selber benutzt wird.
+

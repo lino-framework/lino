@@ -100,8 +100,8 @@ class Event(Component):
         verbose_name=_("End time"))
     transparent = models.BooleanField(_("Transparent"),default=False)
     place = models.ForeignKey(Place,verbose_name=_("Place"),null=True,blank=True) # iCal:LOCATION
-    priority = Priority.field(null=True,blank=True) # iCal:PRIORITY
-    status = EventStatus.field(null=True,blank=True) # iCal:STATUS
+    priority = Priority.field(_("Priority"),null=True,blank=True) # iCal:PRIORITY
+    status = EventStatus.field(_("Status"),null=True,blank=True) # iCal:STATUS
     duration_value = models.IntegerField(_("Duration value"),null=True,blank=True) # iCal:DURATION
     duration_unit = DurationUnit.field(null=True,blank=True) # iCal:DURATION
     repeat_value = models.IntegerField(_("Repeat every"),null=True,blank=True) # iCal:DURATION

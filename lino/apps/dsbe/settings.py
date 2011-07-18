@@ -121,6 +121,7 @@ class Lino(Lino):
             config_notes.add_action('notes.EventTypes')
         
             config_jobs.add_action('jobs.ContractTypes')
+            config_jobs.add_action('jobs.JobTypes')
             config_dsbe.add_action('dsbe.PersonGroups')
         
             if user.is_expert:

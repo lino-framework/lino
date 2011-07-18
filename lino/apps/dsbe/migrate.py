@@ -12,6 +12,20 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+This is the a real-world example of how the application developer 
+can provide automatic data migrations for 
+:mod:`lino.utils.dpy` dumps.
+
+This module is used when loading a dpy dump back.
+Lino writes the corresponding ``import`` statement into every dpy dump because
+:mod:`lino.apps.dsbe.settings.Lino` has
+:attr:`lino.Lino.migration_module` 
+set to ``"lino.apps.dsbe.migrate"``
+
+Deserves more documentation.
+"""
+
 from lino.tools import resolve_model
 from lino.utils import mti
 

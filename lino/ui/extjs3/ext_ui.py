@@ -845,6 +845,7 @@ tinymce.init({
         try:
             elem.full_clean()
         except exceptions.ValidationError, e:
+        #~ except Exception, e:
             return error_response(e) #,_("There was a problem while validating your data : "))
             #~ return json_response_kw(success=False,msg="Failed to save %s : %s" % (elem,e))
             

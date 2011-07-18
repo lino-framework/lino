@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-07-16 19:24+0100\n"
+"POT-Creation-Date: 2011-07-18 08:30+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -69,6 +69,14 @@ msgstr ""
 msgid "Place"
 msgstr ""
 
+#: .\models.py:103 .\utils.py:67
+msgid "Priority"
+msgstr ""
+
+#: .\models.py:104
+msgid "Status"
+msgstr ""
+
 #: .\models.py:105 .\models.py:130
 msgid "Duration value"
 msgstr ""
@@ -105,26 +113,30 @@ msgstr ""
 msgid "My Tasks"
 msgstr ""
 
-#: .\models.py:285
+#: .\models.py:251
 msgid "Upcoming reminders"
 msgstr ""
 
-#: .\models.py:286
+#: .\models.py:252
 msgid "Past reminders"
 msgstr ""
 
+#: .\models.py:315
+msgid "due date reached"
+msgstr ""
+
 #: .\utils.py:27
-msgid "Event status"
+msgid "Event Status"
 msgstr ""
 
 #: .\utils.py:37
-msgid "Taskstatus"
+msgid "Task Status"
 msgstr ""
 
 #: .\utils.py:49
-msgid "Duration unit"
+msgid "Duration Unit"
 msgstr ""
 
-#: .\utils.py:67 .\utils.py:90
-msgid "Access class"
+#: .\utils.py:90
+msgid "Access Class"
 msgstr ""

@@ -188,7 +188,8 @@ class VirtualField: # (Field):
         This special behaviour is needed to implement 
         :class:`lino.utils.mti.EnableChild`.
         """
-        raise NotImplementedError
+        #~ raise NotImplementedError
+        pass
         
     def lino_kernel_setup(self,model,name):
         self.model = model

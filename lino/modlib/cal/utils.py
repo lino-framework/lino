@@ -24,7 +24,7 @@ from lino.utils.choicelists import ChoiceList
 class EventStatus(ChoiceList):
     """A list of possible values for the `status` field of an :class:`Event`.
     """
-    label = _("Event status")
+    label = _("Event Status")
     
 add = EventStatus.add_item
 add('0',en=u"tentative",de=u"Vorschlag",   fr=u"proposition")
@@ -34,7 +34,7 @@ add('2',en=u"cancelled",de=u"storniert",   fr=u"annulé")
 class TaskStatus(ChoiceList):
     """A list of possible values for the `status` field of a :class:`Task`.
     """
-    label = _("Taskstatus")
+    label = _("Task Status")
     
 add = TaskStatus.add_item
 add('0',en=u"needs action",de=u"zu erledigen",   fr=u"à traîter")
@@ -46,7 +46,7 @@ add('3',en=u"cancelled",de=u"storniert",   fr=u"annulée")
 class DurationUnit(ChoiceList):
     """A list of possible values for the `duration_unit` field of an :class:`Event`.
     """
-    label = _("Duration unit")
+    label = _("Duration Unit")
     
 add = DurationUnit.add_item
 add('s','seconds',en=u"seconds",de=u"Sekunden",   fr=u"secondes")
@@ -64,7 +64,7 @@ class Priority(ChoiceList):
     A list of possible values for the `CLASS` 
     property of a calendar component.
     """
-    label = _("Access class")
+    label = _("Priority")
     
 add = Priority.add_item
 add('0',en=u"undefined",de=u"nicht angegeben",   fr=u"non spécifiée")
@@ -87,7 +87,7 @@ class AccessClass(ChoiceList):
     A list of possible values for the `CLASS` 
     property of a calendar component.
     """
-    label = _("Access class")
+    label = _("Access Class")
     
 add = AccessClass.add_item
 add('0',en=u"Public",de=u"Öffentlich",   fr=u"Public")

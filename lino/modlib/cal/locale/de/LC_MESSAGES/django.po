@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.cal\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-07-16 19:24+0100\n"
-"PO-Revision-Date: 2011-07-16 21:30+0200\n"
+"POT-Creation-Date: 2011-07-18 08:30+0100\n"
+"PO-Revision-Date: 2011-07-18 10:32+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -68,6 +68,15 @@ msgstr "nicht blockierend"
 msgid "Place"
 msgstr "Ort"
 
+#: .\models.py:103
+#: .\utils.py:67
+msgid "Priority"
+msgstr "Priorität"
+
+#: .\models.py:104
+msgid "Status"
+msgstr ""
+
 #: .\models.py:105
 #: .\models.py:130
 msgid "Duration value"
@@ -106,29 +115,32 @@ msgstr "Meine Termine"
 msgid "My Tasks"
 msgstr "Meine Aufgaben"
 
-#: .\models.py:285
+#: .\models.py:251
 msgid "Upcoming reminders"
 msgstr ""
 
-#: .\models.py:286
+#: .\models.py:252
 msgid "Past reminders"
 msgstr ""
 
+#: .\models.py:315
+msgid "due date reached"
+msgstr "Fälligkeitsdatum erreicht"
+
 #: .\utils.py:27
-msgid "Event status"
-msgstr ""
+msgid "Event Status"
+msgstr "Termin-Status"
 
 #: .\utils.py:37
-msgid "Taskstatus"
-msgstr ""
+msgid "Task Status"
+msgstr "Aufgabenstatus"
 
 #: .\utils.py:49
-msgid "Duration unit"
+msgid "Duration Unit"
 msgstr "Dauer (Einheit)"
 
-#: .\utils.py:67
 #: .\utils.py:90
-msgid "Access class"
+msgid "Access Class"
 msgstr "Zugriffsklasse"
 
 #~ msgid "Male"

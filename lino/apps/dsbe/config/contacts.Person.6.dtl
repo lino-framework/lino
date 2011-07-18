@@ -3,4 +3,5 @@
 
 main = 
     notes.NotesByPerson:60 links.LinksByPerson:20
+    cal.TasksByPerson
     

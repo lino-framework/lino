@@ -17,6 +17,14 @@ The :mod:`lino.apps.dsbe` package
     :show-inheritance:
     
     
+:mod:`migrate`
+--------------
+
+.. automodule:: lino.apps.dsbe.migrate
+    :members:
+    :show-inheritance:
+    
+    
 
 :mod:`lino.apps.dsbe.fixtures.pp2lino`
 --------------------------------------

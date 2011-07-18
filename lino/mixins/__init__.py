@@ -79,19 +79,16 @@ class CreatedModified(models.Model):
 
 
 class Sequenced(models.Model):
-    """Abstract base class for models that have a 
-    sequence number `seqno`
+    """Abstract base class for models that have a sequence number `seqno`
     """
   
     class Meta:
         abstract = True
+        ordering = ['seqno']
         
     seqno = models.IntegerField(
         blank=True,null=False,
         verbose_name=_("Seq.No."))
-    
-    def set_seqno(self):
-        raise NotImplementedError
     
     def set_seqno(self):
         """The default implementation sets a global sequencing. 
