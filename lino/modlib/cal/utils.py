@@ -60,7 +60,9 @@ def add_duration(dt,value,unit):
     while True:
         try:
             if unit.value == 'M' : 
-                return dt.replace(month=dt.month + value,day=day)
+                m = dt.month + value
+                if m > 12: m -= 12
+                return dt.replace(month=m,day=day)
             if unit.value == 'Y' : 
                 return dt.replace(month=dt.year + value,day=day)
             raise Exception("Invalid DurationUnit %s" % unit)
