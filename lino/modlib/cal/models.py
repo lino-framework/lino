@@ -30,6 +30,7 @@ from django.utils.encoding import force_unicode
 from lino import mixins
 from lino import fields
 from lino import reports
+from lino.utils import babel
 
 from lino.modlib.contacts import models as contacts
 
@@ -96,6 +97,7 @@ class Component(mixins.AutoUser,
         if self.summary:
             html += '&nbsp;: %s' % cgi.escape(force_unicode(self.summary))
             #~ html += ui.href_to(self,force_unicode(self.summary))
+        html += _(" am ") + babel.dtos(self.start_date)
         return html
         
     
@@ -157,7 +159,7 @@ class Task(mixins.Owned,Component):
     @classmethod
     def site_setup(cls,lino):
         lino.TASK_AUTO_FIELDS= reports.fields_list(cls,
-            '''start_date start_time due_date due_time summary''')
+            '''start_date start_time summary''')
 
     def save(self,*args,**kw):
         m = getattr(self.owner,'update_owned_task',None)
@@ -173,11 +175,11 @@ class Places(reports.Report):
     
 class Events(reports.Report):
     model = Event
-    column_names = 'date time summary status *'
+    column_names = 'start_date start_time summary status *'
     
 class Tasks(reports.Report):
     model = Task
-    column_names = 'due_date summary done status *'
+    column_names = 'start_date summary done status *'
     #~ hidden_columns = set('owner_id owner_type'.split())
     
 #~ class EventsByOwner(Events):
@@ -203,14 +205,14 @@ class TasksByCompany(Tasks):
 class MyEvents(mixins.ByUser):
     model = Event
     label = _("My Events")
-    order_by = ["date","time"]
-    column_names = 'date time summary status *'
+    order_by = ["start_date","start_time"]
+    column_names = 'start_date start_time summary status *'
     
 class MyTasks(mixins.ByUser):
     model = Task
     label = _("My Tasks")
-    order_by = ["due_date","due_time"]
-    column_names = 'due_date summary done status *'
+    order_by = ["start_date","start_time"]
+    column_names = 'start_date summary done status *'
     
     
 def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
@@ -218,7 +220,7 @@ def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
     Return a HTML summary of all open reminders for this user
     """
     #~ today = datetime.date.today()
-    today = datetime.now()
+    today = datetime.datetime.now()
     #~ if days_back is None:
         #~ back_until = None
     #~ else:
@@ -248,10 +250,11 @@ def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
         filterkw.update({ 
             'dt_alarm__lte' : today + datetime.timedelta(days=days_forward)
         })
+    filterkw.update(dt_alarm__isnull=False)
     filterkw.update(user=user)
     filterkw.update(done=False)
             
-    for task in Task.objects.filter(**filterkw).order_by('due_date'):
+    for task in Task.objects.filter(**filterkw).order_by('dt_alarm'):
         add(task)
         
     def loop(lookup,reverse):
@@ -296,7 +299,7 @@ def update_auto_task(autotype,user,date,summary,owner,**defaults):
         if summary:
             obj.summary = force_unicode(summary)
         #~ obj.summary = summary
-        obj.due_date = date
+        obj.start_date = date
         #~ for k,v in kw.items():
             #~ setattr(obj,k,v)
         #~ obj.due_date = date - delta

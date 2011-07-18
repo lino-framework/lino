@@ -3,4 +3,5 @@
 
 main = 
   cal.EventsByPerson
+  cal.TasksByPerson
 

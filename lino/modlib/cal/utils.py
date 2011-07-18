@@ -56,11 +56,19 @@ def add_duration(dt,value,unit):
         return dt + datetime.timedelta(days=value*7)
     if unit.value == 'W' : 
         return dt + datetime.timedelta(days=value*7)
-    if unit.value == 'M' : 
-        return dt.replace(month=dt.month + value)
-    if unit.value == 'Y' : 
-        return dt.replace(month=dt.year + value)
-    raise Exception("Invalid DurationUnit %s" % unit)
+    day = dt.day
+    while True:
+        try:
+            if unit.value == 'M' : 
+                return dt.replace(month=dt.month + value,day=day)
+            if unit.value == 'Y' : 
+                return dt.replace(month=dt.year + value,day=day)
+            raise Exception("Invalid DurationUnit %s" % unit)
+        except ValueError:
+            if day > 28:
+                day -= 1
+            else:
+                raise
     
 
 class DurationUnit(ChoiceList):
