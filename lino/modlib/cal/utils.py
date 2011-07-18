@@ -44,23 +44,23 @@ add('3',en=u"cancelled",de=u"storniert",   fr=u"annulée")
 
 
 def add_duration(dt,value,unit):
-    if unit == 's' : 
+    if unit.value == 's' : 
         return dt + datetime.timedelta(seconds=value)
-    if unit == 'm' : 
+    if unit.value == 'm' : 
         return dt + datetime.timedelta(minutes=value)
-    if unit == 'h' : 
+    if unit.value == 'h' : 
         return dt + datetime.timedelta(hours=value)
-    if unit == 'D' : 
+    if unit.value == 'D' : 
         return dt + datetime.timedelta(days=value)
-    if unit == 'W' : 
+    if unit.value == 'W' : 
         return dt + datetime.timedelta(days=value*7)
-    if unit == 'W' : 
+    if unit.value == 'W' : 
         return dt + datetime.timedelta(days=value*7)
-    if unit == 'M' : 
+    if unit.value == 'M' : 
         return dt.replace(month=dt.month + value)
-    if unit == 'Y' : 
+    if unit.value == 'Y' : 
         return dt.replace(month=dt.year + value)
-    raise Exception("Invalid DurationUnit %r" % unit)
+    raise Exception("Invalid DurationUnit %s" % unit)
     
 
 class DurationUnit(ChoiceList):
