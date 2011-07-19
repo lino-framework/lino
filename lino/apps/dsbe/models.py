@@ -49,7 +49,7 @@ from lino.modlib.contacts import models as contacts
 from lino.modlib.notes import models as notes
 from lino.modlib.links import models as links
 from lino.modlib.uploads import models as uploads
-from lino.utils.choicelists import HowWell
+from lino.utils.choicelists import HowWell, ChoiceList
 #~ from lino.modlib.properties.utils import KnowledgeField #, StrengthField
 #~ from lino.modlib.uploads.models import UploadsByPerson
 from lino.models import get_site_config
@@ -105,6 +105,33 @@ def niss_validator(national_id):
     if xtest != int(national_id[11:13]):
         raise ValidationError("Invalid Belgian NISS %r (checkdigit)" 
             % national_id)
+
+class CefLevel(ChoiceList):
+    """
+    Levels of the Common European Framework (CEF).
+    
+    http://www.coe.int/t/dg4/linguistic/CADRE_EN.asp
+    http://www.coe.int/t/dg4/linguistic/Source/ManualRevision-proofread-FINAL_en.pdf
+    http://www.telc.net/en/what-telc-offers/cef-levels/a2/
+    
+    """
+    label = _("CEF level")
+    
+    @classmethod
+    def display_text(cls,bc):
+        return u"%s (%s)" % (bc.value,unicode(bc))
+    
+add = CefLevel.add_item
+add('A1', en="basic language skills",de=u"Elementare Sprachverwendung")
+add('A2', en="basic language skills",de=u"Elementare Sprachverwendung")
+add('A2+', en="basic language skills",de=u"Elementare Sprachverwendung")
+add('B1', en="independent use of language",de=u"Selbständige Sprachverwendung")
+add('B2', en="independent use of language",de=u"Selbständige Sprachverwendung")
+add('B2+', en="independent use of language",de=u"Selbständige Sprachverwendung")
+add('C1', en="proficient use of language",de=u"Kompetente Sprachverwendung")
+add('C2', en="proficient use of language",de=u"Kompetente Sprachverwendung")
+add('C2+', en="proficient use of language",de=u"Kompetente Sprachverwendung")
+
 
 
 SCHEDULE_CHOICES = {
@@ -993,6 +1020,8 @@ class StudiesByPerson(HistoryByPerson):
 #
 
 class LanguageKnowledge(models.Model):
+    """Specifies how well a certain Person knows a certain Language.
+    Deserves more documentation."""
     class Meta:
         verbose_name = _("language knowledge")
         verbose_name_plural = _("language knowledges")
@@ -1004,10 +1033,13 @@ class LanguageKnowledge(models.Model):
     spoken = HowWell.field(verbose_name=_("spoken"))
     written = HowWell.field(verbose_name=_("written"))
     native = models.BooleanField(verbose_name=_("native language"))
+    cef_level = CefLevel.field(blank=True,null=True)
     
     def __unicode__(self):
         if self.language_id is None:
             return ''
+        if self.cef_level:
+            return _(u"%s (%s)") % (self.language,self.cef_level)
         if self.spoken > '1' and self.written > '1':
             return _(u"%s (s/w)") % self.language
         elif self.spoken > '1':
@@ -1023,7 +1055,7 @@ class LanguageKnowledgesByPerson(reports.Report):
     fk_name = 'person'
     #~ label = _("Language knowledge")
     #~ button_label = _("Languages")
-    column_names = "language native spoken written"
+    column_names = "language native spoken written cef_level"
 
 # 
 # PROPERTIES

@@ -86,17 +86,6 @@ class ChoiceList(object):
     """
     def __init__(self,items=[],max_length=1):
         raise Exception("ChoiceList may not be instantiated")
-        #~ self.stored_name = stored_name
-        #~ self.value_class = value_class
-        #~ self.choices = [ (i.pk,i) for i in items]
-        #~ self.names = names
-        self.choices = [ (i,unicode(i)) for i in items]
-        self.max_length = max_length
-        self.items_dict = {}
-        for i in items:
-            self.add_item(i)
-            #~ self.items[i.pk] = i
-        register_choicelist(self)
         
     @classmethod
     def field(cls,*args,**kw):
@@ -107,7 +96,7 @@ class ChoiceList(object):
         if cls is ChoiceList:
             raise Exception("Cannot define items on the base class")
         i = babel.BabelChoice(value,**kw)
-        cls.choices.append((i,unicode(i)))
+        cls.choices.append((i,cls.display_text(i)))
         assert not cls.items_dict.has_key(value)
         cls.items_dict[value] = i
         #~ cls.items_dict[i] = i
@@ -137,6 +126,13 @@ class ChoiceList(object):
         return cls.choices
       
     @classmethod
+    def display_text(cls,bc):
+        """Override this to customize the display text of choices.
+        Example: :class:`lino.apps.dsbe.models.CefLevel`
+        """
+        return unicode(bc)
+        
+    @classmethod
     def get_text_for_value(self,value):
         if not isinstance(value,basestring):
             raise Exception("%r is not a string" % value)
@@ -145,7 +141,7 @@ class ChoiceList(object):
         if bc is None:
             return _("%(value)r (invalid choice for %(list)s)") % dict(
                 list=self.__name__,value=value)
-        return unicode(bc)
+        return self.display_text(bc)
     #~ def __unicode__(self):
         #~ return unicode(self.stored_name) # babel_get(self.names)
         
