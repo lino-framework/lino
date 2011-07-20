@@ -35,6 +35,11 @@ Wichtig ist der Wert. Siehe auch Doku zu
 
 Im Detail eines Uploads fehlten noch die Aufgaben pro Upload (TasksByOwner).
 
+Und dann haben wir jetzt ein neues Feld Upload.valid_until, das eine 
+automatische Task "Arbeitserlaubnis läuft aus" erzeugt.
+
+Außerdem wurden die Tasks eines Uploads nicht automatisch ihrer Person zugewiesen.
+
 Checkin 20110720c.
 
 

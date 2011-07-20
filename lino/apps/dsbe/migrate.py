@@ -93,6 +93,7 @@ def install(globals_dict):
                 
         CONTRACTS = []
         REMINDERS = []
+        UPLOADS = []
         
         def create_dsbe_contract(id, user_id, reminder_date, reminder_text, 
             delay_value, delay_type, reminder_done, must_build, person_id, 
