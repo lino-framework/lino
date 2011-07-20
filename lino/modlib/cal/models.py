@@ -302,22 +302,22 @@ def update_auto_task(autotype,user,date,summary,owner,**defaults):
     if date:
         #~ defaults = owner.get_auto_task_defaults(**defaults)
         defaults.setdefault('user',user)
-        obj,created = Task.objects.get_or_create(
+        task,created = Task.objects.get_or_create(
           defaults=defaults,
           owner_id=owner.pk,
           owner_type=ot,
           auto_type=autotype)
-        obj.user = user
+        task.user = user
         if summary:
-            obj.summary = force_unicode(summary)
+            task.summary = force_unicode(summary)
         #~ obj.summary = summary
-        obj.start_date = date
+        task.start_date = date
         #~ for k,v in kw.items():
             #~ setattr(obj,k,v)
         #~ obj.due_date = date - delta
         #~ print 20110712, date, date-delta, obj2str(obj,force_detailed=True)
-        #~ owner.update_owned_task(obj)
-        obj.save()
+        #~ owner.update_owned_task(task)
+        task.save()
     else:
         try:
             obj = Task.objects.get(owner_id=owner.pk,

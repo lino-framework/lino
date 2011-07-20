@@ -15,6 +15,9 @@
 """
 """
 
+import logging
+logger = logging.getLogger(__name__)
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
@@ -85,6 +88,7 @@ class Upload(
         self.save_auto_tasks()
         
     def save_auto_tasks(self):
+        logger.info("Upload.save_auto_tasks() %s : owner is %s", self.pk, self.owner)
       
         # These constants must be unique for the whole Lino Site.
         # Keep in sync with auto types defined in lino.apps.-dsbe.models.Person
@@ -99,6 +103,7 @@ class Upload(
           alarm_value=2,alarm_unit=DurationUnit.months)
         
     def update_owned_task(self,task):
+        logger.info("Upload.update_owned_task() %s : owner is %s", self.pk, self.owner)
         mixins.AutoUser.update_owned_task(self,task)
         mixins.Owned.update_owned_task(self,task)
           
