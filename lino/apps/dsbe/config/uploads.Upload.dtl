@@ -6,7 +6,7 @@ main =
     # person company
     # reminder_date reminder_text delay_value delay_type reminder_done
     modified created owner
+    cal.TasksByOwner
     # show_date show_time 
     # show_date time timestamp
-    cal.TasksByOwner
     

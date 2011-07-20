@@ -47,8 +47,9 @@ class ConfigDir:
     def __init__(self,name,can_write):
         self.name = name
         self.can_write = can_write
-    def __str__(self):
-        return "ConfigDir %s" % self.name
+        
+    def __repr__(self):
+        return "ConfigDir %r" % self.name
         
         
       
@@ -72,7 +73,7 @@ else:
 config_dirs.reverse()
 config_dirs = tuple(config_dirs)
 
-
+#~ print 20110720, '\n'.join([repr(cd) for cd in config_dirs])
 
 #~ for app_name in settings.INSTALLED_APPS:
     #~ app = import_module(app_name)

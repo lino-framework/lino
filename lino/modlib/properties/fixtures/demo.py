@@ -25,5 +25,5 @@ def objects():
     yield division
     divchoice = Instantiator('properties.PropChoice','value',type=division).build
     yield divchoice('1',**babel_values('text',**dict(en="Furniture",de=u"Möbel",fr=u"Meubles")))
-    yield divchoice('1',**babel_values('text',**dict(en="Web hosting",de=u"Hosting",fr=u"Hosting")))
+    yield divchoice('2',**babel_values('text',**dict(en="Web hosting",de=u"Hosting",fr=u"Hosting")))
   
