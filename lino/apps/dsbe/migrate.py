@@ -139,12 +139,13 @@ def install(globals_dict):
         def create_uploads_upload(id, user_id, owner_type_id, owner_id, reminder_date, reminder_text, delay_value, delay_type, reminder_done, file, mimetype, created, modified, description, type_id):
             obj = Upload(id=id,user_id=user_id,
               owner_type_id=owner_type_id,owner_id=owner_id,
+              valid_until=reminder_date,
               #~ reminder_date=reminder_date,reminder_text=reminder_text,
               #~ delay_value=delay_value,delay_type=delay_type,
               #~ reminder_done=reminder_done,
               file=file,mimetype=mimetype,
               created=created,modified=modified,description=description,type_id=type_id)
-            REMINDERS.append((obj,(reminder_date,reminder_text,delay_value,delay_type,reminder_done)))
+            #~ REMINDERS.append((obj,(reminder_date,reminder_text,delay_value,delay_type,reminder_done)))
             return obj
                             
     

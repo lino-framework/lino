@@ -30,6 +30,7 @@ from lino import reports
 from lino.utils import perms
 from lino import mixins
 from lino.modlib.contacts import models as contacts
+from lino.modlib.cal.models import DurationUnit, update_auto_task
 
 class UploadType(models.Model):
     
@@ -59,6 +60,10 @@ class Upload(
       blank=True,null=True)
       #~ verbose_name=_('upload type'))
       
+    valid_until = models.DateField(
+        blank=True,null=True,
+        verbose_name=_("valid until"))
+        
     #~ owner_type = models.ForeignKey(ContentType,blank=True,null=True)
     #~ owner_id = models.PositiveIntegerField(blank=True,null=True)
     #~ owner = generic.GenericForeignKey('owner_type', 'owner_id')
@@ -74,6 +79,29 @@ class Upload(
         if self.type:
             s = unicode(self.type) + ' ' + s
         return s
+        
+    def update_owned_task(self,task):
+        mixins.AutoUser.update_owned_task(self,task)
+        mixins.Owned.update_owned_task(self,task)
+          
+    def save(self,*args,**kw):
+        super(Upload,self).save(*args,**kw)
+        self.save_auto_tasks()
+        
+    def save_auto_tasks(self):
+      
+        # These constants must be unique for the whole Lino Site.
+        # Keep in sync with auto types defined in lino.apps.-dsbe.models.Person
+        UPLOAD_VALID_UNTIL = 5
+        
+        update_auto_task(
+          UPLOAD_VALID_UNTIL,
+          self.user,
+          self.valid_until,
+          _("%s expires" % (self.type)),
+          self,
+          alarm_value=2,alarm_unit=DurationUnit.months)
+        
         
 class Uploads(reports.Report):
     model = Upload

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.link\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-07-16 19:24+0100\n"
+"POT-Creation-Date: 2011-07-20 15:03+0100\n"
 "PO-Revision-Date: 2010-11-10 16:53+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
@@ -24,27 +24,27 @@ msgstr "Verweisart"
 msgid "link types"
 msgstr "Verweisarten"
 
-#: .\models.py:37 .\models.py:59
+#: .\models.py:37 .\models.py:60
 msgid "Name"
 msgstr "Name"
 
-#: .\models.py:49
+#: .\models.py:50
 msgid "link"
 msgstr "Verweis"
 
-#: .\models.py:50
+#: .\models.py:51
 msgid "links"
 msgstr "Verweise"
 
-#: .\models.py:54
+#: .\models.py:55
 msgid "Link type"
 msgstr "Verweisart"
 
-#: .\models.py:55
+#: .\models.py:56
 msgid "Date"
 msgstr "Datum"
 
-#: .\models.py:79
+#: .\models.py:80
 msgid "My links"
 msgstr "Meine Verweise"
 

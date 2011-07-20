@@ -153,9 +153,14 @@ class Task(mixins.Owned,Component):
             '''start_date start_time summary''')
 
     def save(self,*args,**kw):
-        m = getattr(self.owner,'update_owned_task',None)
-        if m:
-            m(self)
+        if self.owner:
+            #~ if self.owner.__class__.__name__ == 'Person':
+                #~ self.person = self.owner
+            #~ elif self.owner.__class__.__name__ == 'Company':
+                #~ self.company = self.owner
+            m = getattr(self.owner,'update_owned_task',None)
+            if m:
+                m(self)
         super(Task,self).save(*args,**kw)
 
     def __unicode__(self):

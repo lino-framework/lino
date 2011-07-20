@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-07-18 22:19+0100\n"
+"POT-Creation-Date: 2011-07-20 15:03+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -49,87 +49,87 @@ msgstr ""
 msgid "Alarm unit"
 msgstr ""
 
-#: .\models.py:100
+#: .\models.py:91 .\models.py:177
 msgid " on "
 msgstr ""
 
-#: .\models.py:109
+#: .\models.py:100
 msgid "Event"
 msgstr ""
 
-#: .\models.py:110
+#: .\models.py:101
 msgid "Events"
 msgstr ""
 
-#: .\models.py:115
+#: .\models.py:106
 msgid "End date"
 msgstr ""
 
-#: .\models.py:118
+#: .\models.py:109
 msgid "End time"
 msgstr ""
 
-#: .\models.py:119
+#: .\models.py:110
 msgid "Transparent"
 msgstr ""
 
-#: .\models.py:120
+#: .\models.py:111
 msgid "Place"
 msgstr ""
 
-#: .\models.py:121 .\utils.py:97
+#: .\models.py:112 .\utils.py:97
 msgid "Priority"
 msgstr ""
 
-#: .\models.py:122
+#: .\models.py:113
 msgid "Status"
 msgstr ""
 
-#: .\models.py:123 .\models.py:148
+#: .\models.py:114 .\models.py:139
 msgid "Duration value"
 msgstr ""
 
-#: .\models.py:125 .\models.py:126
+#: .\models.py:116 .\models.py:117
 msgid "Repeat every"
 msgstr ""
 
-#: .\models.py:137
+#: .\models.py:128
 msgid "Task"
 msgstr ""
 
-#: .\models.py:138
+#: .\models.py:129
 msgid "Tasks"
 msgstr ""
 
-#: .\models.py:143
+#: .\models.py:134
 msgid "Due date"
 msgstr ""
 
-#: .\models.py:146
+#: .\models.py:137
 msgid "Due time"
 msgstr ""
 
-#: .\models.py:147
+#: .\models.py:138
 msgid "Done"
 msgstr ""
 
-#: .\models.py:207
+#: .\models.py:215
 msgid "My Events"
 msgstr ""
 
-#: .\models.py:213
+#: .\models.py:221
 msgid "My Tasks"
 msgstr ""
 
-#: .\models.py:275
+#: .\models.py:283
 msgid "Upcoming reminders"
 msgstr ""
 
-#: .\models.py:276
+#: .\models.py:284
 msgid "Past reminders"
 msgstr ""
 
-#: .\models.py:339
+#: .\models.py:347
 msgid "due date reached"
 msgstr ""
 

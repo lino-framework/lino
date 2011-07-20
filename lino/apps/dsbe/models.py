@@ -1039,7 +1039,7 @@ class LanguageKnowledge(models.Model):
         if self.language_id is None:
             return ''
         if self.cef_level:
-            return _(u"%s (%s)") % (self.language,self.cef_level)
+            return "%s (%s)" % (self.language,self.cef_level)
         if self.spoken > '1' and self.written > '1':
             return _(u"%s (s/w)") % self.language
         elif self.spoken > '1':

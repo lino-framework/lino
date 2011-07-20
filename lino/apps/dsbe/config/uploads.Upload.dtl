@@ -2,7 +2,7 @@
 
 main =
     file user
-    type description 
+    type description valid_until
     # person company
     # reminder_date reminder_text delay_value delay_type reminder_done
     modified created owner

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-07-16 19:24+0100\n"
+"POT-Creation-Date: 2011-07-20 15:03+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,26 +25,26 @@ msgstr "type de lien"
 msgid "link types"
 msgstr "types de lien"
 
-#: .\models.py:37 .\models.py:59
+#: .\models.py:37 .\models.py:60
 msgid "Name"
 msgstr "Nom"
 
-#: .\models.py:49
+#: .\models.py:50
 msgid "link"
 msgstr "lien"
 
-#: .\models.py:50
+#: .\models.py:51
 msgid "links"
 msgstr "liens"
 
-#: .\models.py:54
+#: .\models.py:55
 msgid "Link type"
 msgstr "Type de lien"
 
-#: .\models.py:55
+#: .\models.py:56
 msgid "Date"
 msgstr "Date"
 
-#: .\models.py:79
+#: .\models.py:80
 msgid "My links"
 msgstr "Mes liens"

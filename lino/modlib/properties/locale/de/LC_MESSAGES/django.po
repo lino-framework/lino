@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.properties\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-07-16 19:24+0100\n"
+"POT-Creation-Date: 2011-07-20 15:03+0100\n"
 "PO-Revision-Date: 2011-07-20 15:20+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmx.net>\n"
@@ -16,71 +16,63 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: .\models.py:73
-#: .\models.py:147
-#: .\models.py:180
+#: .\models.py:84 .\models.py:169 .\models.py:207
 msgid "Property Type"
 msgstr "Eigenschafts-Datentyp"
 
-#: .\models.py:74
+#: .\models.py:85
 msgid "Property Types"
 msgstr "Eigenschafts-Datentypen"
 
-#: .\models.py:76
-#: .\models.py:149
-#: .\models.py:165
-#: .\models.py:178
+#: .\models.py:87 .\models.py:171 .\models.py:192 .\models.py:205
 msgid "Designation"
 msgstr "Beschreibung"
 
-#: .\models.py:80
+#: .\models.py:91
 msgid "Choices List"
 msgstr "Auswahliste"
 
-#: .\models.py:83
+#: .\models.py:94
 msgid "default value"
 msgstr "Standardwert"
 
-#: .\models.py:91
+#: .\models.py:102
 msgid "Limit to choices"
 msgstr "Beschränken auf Auswahl"
 
-#: .\models.py:96
+#: .\models.py:107
 msgid "Multiple choices"
 msgstr "Mehrfachauswahl"
 
-#: .\models.py:144
+#: .\models.py:165
 msgid "Property Choice"
 msgstr "Auswahlmöglichkeit"
 
-#: .\models.py:145
+#: .\models.py:166
 msgid "Property Choices"
 msgstr "Auswahlmöglichkeiten"
 
-#: .\models.py:148
-#: .\models.py:207
+#: .\models.py:170 .\models.py:234
 msgid "Value"
 msgstr "Wert"
 
-#: .\models.py:162
-#: .\models.py:179
+#: .\models.py:189 .\models.py:206
 msgid "Property Group"
 msgstr "Eigenschaftsgruppe"
 
-#: .\models.py:163
+#: .\models.py:190
 msgid "Property Groups"
 msgstr "Eigenschaftsgruppen"
 
-#: .\models.py:175
-#: .\models.py:205
+#: .\models.py:202 .\models.py:232
 msgid "Property"
 msgstr "Eigenschaft"
 
-#: .\models.py:176
+#: .\models.py:203
 msgid "Properties"
 msgstr "Eigenschaften"
 
-#: .\models.py:203
+#: .\models.py:230
 msgid "Property group"
 msgstr "Eigenschaftsgruppe"
 

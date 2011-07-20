@@ -374,8 +374,8 @@ class PartnerDocument(models.Model):
         return s
             
     def update_owned_task(self,task):
-        task.person=self.person
-        task.company=self.company
+        task.person = self.person
+        task.company = self.company
         
       
 
