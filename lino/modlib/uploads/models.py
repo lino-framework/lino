@@ -80,10 +80,6 @@ class Upload(
             s = unicode(self.type) + ' ' + s
         return s
         
-    def update_owned_task(self,task):
-        mixins.AutoUser.update_owned_task(self,task)
-        mixins.Owned.update_owned_task(self,task)
-          
     def save(self,*args,**kw):
         super(Upload,self).save(*args,**kw)
         self.save_auto_tasks()
@@ -102,6 +98,10 @@ class Upload(
           self,
           alarm_value=2,alarm_unit=DurationUnit.months)
         
+    def update_owned_task(self,task):
+        mixins.AutoUser.update_owned_task(self,task)
+        mixins.Owned.update_owned_task(self,task)
+          
         
 class Uploads(reports.Report):
     model = Upload
