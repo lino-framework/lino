@@ -328,9 +328,9 @@ def migrate_reminder(obj,reminder_date,reminder_text,
         if delay_type == 'M': return DurationUnit.months
         if delay_type == 'Y': return DurationUnit.years
       
-    # These constants must be unique for the whole Lino Site.
-    # Keep in sync with auto types defined in lino.apps.dsbe.models.Person
-    REMINDER = 5
+    #~ # These constants must be unique for the whole Lino Site.
+    #~ # Keep in sync with auto types defined in lino.apps.dsbe.models.Person
+    #~ REMINDER = 5
     
     if reminder_text:
         summary = reminder_text
@@ -339,7 +339,7 @@ def migrate_reminder(obj,reminder_date,reminder_text,
     
     
     update_auto_task(
-      REMINDER,
+      None, # REMINDER,
       obj.user,
       reminder_date,
       summary,obj,
