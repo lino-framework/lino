@@ -33,3 +33,6 @@ Die ist beim Konfigurieren von Eigenschaften unwichtig.
 Wichtig ist der Wert. Siehe auch Doku zu
 :class:`lino.modlib.properties.models.PropChoice`.
 
+Checkin 20110720c.
+
+

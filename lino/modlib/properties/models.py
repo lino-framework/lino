@@ -301,7 +301,7 @@ class ChoicesByType(PropChoices):
     "Lists all PropChoices for a given PropType."
     fk_name = 'type'
     order_by = ['value']
-    column_names = value name *
+    column_names = 'value name *'
     
 
 #~ class PropsByGroup(reports.Report):
