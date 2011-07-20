@@ -623,7 +623,7 @@ class ContractsSituation(mixins.Listing):
                 candidates = []
                 for ct in job.contract_set.all():
                     if ct.applies_from:
-                        until = ct.applies_until or ct.date_ended
+                        until = ct.date_ended or ct.applies_until
                         if not until or (ct.applies_from <= today and until >= today):
                             actives.append(ct)
                 for req in job.jobrequest_set.all():

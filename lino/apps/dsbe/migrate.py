@@ -86,7 +86,7 @@ def install(globals_dict):
                 job = Job(
                     provider=provider,
                     contract_type_id=contract_type_id,
-                    name='%s@%s' % (contract_type_id,provider_id)
+                    name='%s@%s' % (contract_type_id,provider)
                     )
                 job.save()
                 return job
