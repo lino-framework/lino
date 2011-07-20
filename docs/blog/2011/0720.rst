@@ -1,4 +1,13 @@
 20110720
 ========
 
-In meiner `Listings.odt` war ein doofer Bug, nach dem ich eine Stunde lang gesucht habe.
+Noch weiter Endspurt:
+
+In meiner `Listings.odt` war ein doofer Bug, 
+nach dem ich eine Stunde lang gesucht habe 
+(checkin 20110720).
+
+Die `migrate_reminder` setzte auto_type auf 5, 
+aber das darf ja jetzt nicht mehr sein: aus Notizen 
+generierte Tasks haben zwar einen owner, können aber 
+bearbeitet werden (20110720b).

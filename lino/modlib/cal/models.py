@@ -162,12 +162,16 @@ class Task(mixins.Owned,Component):
         return "#" + str(self.pk)
         
     def summary_row(self,ui,rr,**kw):
-        if self.owner and self.owner.__class__.__name__ != 'Person':
+        #~ if self.owner and not self.auto_type:
+        if self.owner and not self.owner.__class__.__name__ in ('Person','Company'):
             html = ui.href_to(self)
             html += " (%s)" % reports.summary_row(self.owner,ui,rr)
-        else:
-            html = super(Task,self).summary_row(ui,rr,**kw)
-        return html
+            if self.summary:
+                html += '&nbsp;: %s' % cgi.escape(force_unicode(self.summary))
+                #~ html += ui.href_to(self,force_unicode(self.summary))
+            html += _(" on ") + babel.dtos(self.start_date)
+            return html
+        return super(Task,self).summary_row(ui,rr,**kw)
         
 class Places(reports.Report):
     model = Place
