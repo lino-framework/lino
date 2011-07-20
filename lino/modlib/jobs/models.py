@@ -57,6 +57,7 @@ from lino.models import get_site_config
 from lino.tools import get_field
 from lino.tools import resolve_field
 from lino.utils.babel import DEFAULT_LANGUAGE, babelattr, babeldict_getitem
+from lino.utils.htmlgen import UL
 #~ from lino.utils.babel import add_babel_field, DEFAULT_LANGUAGE, babelattr, babeldict_getitem
 from lino.utils import babel 
 from lino.utils.choosers import chooser
@@ -485,6 +486,9 @@ class Job(models.Model):
     
     hourly_rate = fields.PriceField(_("hourly rate"),blank=True,null=True)
     
+    capacity = models.IntegerField(_("capacity"),
+        default=1)
+        
     remark = models.CharField(max_length=200,
         blank=True,null=True,
         verbose_name=_("Remark"))
@@ -577,6 +581,9 @@ class JobTypes(reports.Report):
 class JobsByProvider(Jobs):
     fk_name = 'provider'
 
+class JobsByType(Jobs):
+    fk_name = 'type'
+
 class JobRequests(reports.Report):
     model = JobRequest
     order_by = ['date_submitted']
@@ -608,9 +615,6 @@ class ContractsSituation(mixins.Listing):
         today = self.date or datetime.date.today()
         html = ''
         rows = []
-        def LIST(items):
-            s = '\n'.join(['<li>%s</li>' % cgi.escape(unicode(i)) for i in items])
-            return "<ul>%s</ul>" % s
           
         for jobtype in JobType.objects.all():
             cells = []
@@ -627,26 +631,33 @@ class ContractsSituation(mixins.Listing):
                         candidates.append(req)
                 if candidates + actives:
                     s = "<p>"
-                    s += "<b>%s</b>" % cgi.escape(unicode(job))
+                    s += "<b>%s (%s)</b>" % (
+                      cgi.escape(unicode(job)),job.capacity)
                     if job.remark:
                         s += " <i>%s</i>" % cgi.escape(job.remark)
                     s += "</p>"
-                    s += LIST([ct.person for ct in actives])
+                    s += UL([u'%s bis %s' % (
+                      ct.person.last_name.upper(),
+                      babel.dtos(ct.applies_until)
+                    ) for ct in actives])
                     #~ s += "<li>"
                     #~ for ct in actives:
                         #~ s += '<li>%s</li>' % cgi.escape(unicode(ct.person))
                     #~ s += "</li>"
                     if candidates:
                         s += "<p>%s:</p>" % cgi.escape(_("Candidates"))
-                        s += LIST([i.person for i in candidates])
+                        s += UL([i.person for i in candidates])
                         #~ for ct in candidates:
                             #~ s += '<br>' + cgi.escape(unicode(ct.person))
                     cells.append(s)
             if cells:
                 html += '<h1>%s</h1>' % cgi.escape(unicode(jobtype))
+                #~ head = ''.join(['<col width="30" />' for c in cells])
+                #~ head = '<colgroup>%s</colgroup>' % head
                 s = ''.join(['<td valign="top">%s</td>' % c for c in cells])
                 s = '<tr>%s</tr>' % s
-                html += '<table width="100%%">%s</table>' % s
+                #~ s = head + s
+                html += '<table border="1" width="100%%">%s</table>' % s
         html = '<div class="htmlText">%s</div>' % html
         return html
 

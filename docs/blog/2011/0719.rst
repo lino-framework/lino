@@ -1,7 +1,11 @@
 20110719
 ========
 
-Benutzeranfrage: In den Sprachkenntnissen wird ein weiteres Feld "Kategorie telc"
+Europäischer Bewertungsrahmen für Sprachkenntnisse
+--------------------------------------------------
+
+Eine kleine Benutzeranfrage: 
+In den Sprachkenntnissen wird ein weiteres Feld "Kategorie telc"
 benötigt, wo eine zu konfigurierende telc-Kategorie (s. Anhang) bei
 einem zertifizierten Abschluss eingegeben werden kann.
 
@@ -11,8 +15,15 @@ im Gegenteil hart kodiert und Teil der Software sein.
 
 Also eine neue Klasse :class:`lino.apps.dsbe.models.CefLevel`, 
 für die ich ein kleines neues Feature 
-:meth:`lino.utils.choiceclists.display_text`
+:meth:`lino.utils.choicelists.ChoiceList.display_text`
 eingebaut habe.
 Und dann in :class:`lino.apps.dsbe.models.LanguageKnowledge` 
 das neue Feld `cef_level`, das diese Auswahlliste benutzt.
+
+Wenn CEF-Level ausgefüllt ist, wird in der Kurzanzeige der 
+Sprachkenntnis nicht mehr "w/s" sondern ebendieser Level 
+angezeigt. Bin allerdings nicht sicher, ob das so toll ist, 
+warte diesbzgl. auf Feedback.
+
+Checkin 20110719a.
 

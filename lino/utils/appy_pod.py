@@ -54,9 +54,12 @@ def setup_renderer(renderer):
         #~ return renderer.renderXhtml(html.encode('utf-8'),**kw)
     renderer.contentParser.env.context.update(restify=restify_func)
     def html_func(html,**kw):
-        #~ print repr(html)
         if not html:
             return ''
+        print __file__, ">>>"
+        #~ print repr(html)
+        print html
+        print "<<<", __file__
         html = html2xhtml(html)
         if isinstance(html,unicode):
             # some sax parsers refuse unicode strings. 

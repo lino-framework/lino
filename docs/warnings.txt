@@ -1,1 +1,0 @@
-T:\hgwork\lino\docs\blog\2011\0719.rst:12: WARNING: py:meth reference target not found: lino.utils.choiceclists.display_text

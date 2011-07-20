@@ -1,0 +1,6 @@
+:label: Detail
+:label_align: top
+
+main =
+    id name 
+    JobsByType

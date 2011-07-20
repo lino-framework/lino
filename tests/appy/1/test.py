@@ -13,7 +13,7 @@ from appy import version
 APPY_PARAMS = dict()
 
 #~ ACTIVE_TESTS = None # run all tests
-ACTIVE_TESTS = (9,10,11) # run only specified tests
+ACTIVE_TESTS = (12,) # run only specified tests
 
 #~ APPY_PARAMS.update(ooPort=8100)
 #~ APPY_PARAMS.update(pythonWithUnoPath=r'C:\PROGRA~1\LIBREO~1\program\python.exe')
@@ -165,6 +165,7 @@ run_test(10,"TABLE",HTML='''
 </table>
 ''')
     
+#~ # 11 : 
 
 html = '''
 <table border="1" rules="groups">
@@ -205,4 +206,25 @@ rows = '''
 
 html = html % (rows *20)
 
-run_test(11,"TABLE",HTML=html)
+run_test(11,"TABLE 2 with head and foot",HTML=html)
+
+#~ # 12 : 
+
+#
+import cgi
+from lino.utils.htmlgen import UL
+items = '''un deux trois
+quatre cinq
+siz sept huit'''.splitlines()
+cells = []
+cells.append('''<p>BISA</p>'''+UL(items))
+cells.append('''<p>RCYCLE</p>'''+UL(items))
+html = '<h1>%s</h1>' % cgi.escape(u"Le douzième essai")
+#~ head = ''.join(['<col width="30" />' for c in cells])
+#~ head = '<colgroup>%s</colgroup>' % head
+s = ''.join(['<td valign="top">%s</td>' % c for c in cells])
+s = '<tr>%s</tr>' % s
+#~ s = head + s
+html += '<table border="1" width="100%%">%s</table>' % s
+html = '<div class="htmlText">%s</div>' % html
+run_test(12,"TABLE 3",HTML=html)
