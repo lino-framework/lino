@@ -11,3 +11,25 @@ Die `migrate_reminder` setzte auto_type auf 5,
 aber das darf ja jetzt nicht mehr sein: aus Notizen 
 generierte Tasks haben zwar einen owner, können aber 
 bearbeitet werden (20110720b).
+
+
+Kleinkram Eigenschaften
+-----------------------
+
+"Property Choices" war bisher durch "Eigenschaftswerte" übersetzt, aber besser ist "Auswahlmöglichkeiten". 
+
+Detail eines Eigenschafts-Datentyps 
+zeigte bisher nur die Auswahlmöglichkeiten, 
+jetzt auch die Eigenschaften, die diesen Datentyp verwenden. 
+
+PropChoice : 
+(1) überprüft jetzt `unique_together ['type','value']`
+(2) `text` wird jetzt automatisch auf value gesetzt wenn man es leer lässt.
+
+In der Liste "Auswahlmöglichkeiten" einer Eigenschaft 
+(:class:`lino.modlib.properties.models.ChoicesByType`) 
+ist die Kolonne "ID" jetzt ganz am Ende. 
+Die ist beim Konfigurieren von Eigenschaften unwichtig. 
+Wichtig ist der Wert. Siehe auch Doku zu
+:class:`lino.modlib.properties.models.PropChoice`.
+

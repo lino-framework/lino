@@ -54,6 +54,7 @@ You'll need the following Debian packages installed:
 *  Maybe openoffice.org::
 
     openoffice.org-headless
+    python-openoffice
   
 
 

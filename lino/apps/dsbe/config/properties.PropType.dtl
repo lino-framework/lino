@@ -3,4 +3,5 @@
 
 main = 
   id name choicelist default_value
-  properties.ChoicesByType
+  ChoicesByType
+  PropsByType

@@ -1064,6 +1064,8 @@ class LanguageKnowledgesByPerson(reports.Report):
 from lino.modlib.properties import models as properties
 
 class PersonProperty(properties.PropertyOccurence):
+    """A certain property defined for a certain person. 
+    See :mod:`lino.modlib.properties`."""
     class Meta:
         app_label = 'properties'
         verbose_name = _("Property")

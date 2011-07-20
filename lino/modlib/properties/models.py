@@ -14,6 +14,18 @@
 
 """
 
+:class:`PropType`
+:class:`PropChoice`
+:class:`PropGroup`
+A :class:`PropOccurence` is when a certain "property owner" 
+has a certain :class:`Property`. 
+"Property owner" can be anything: 
+a person, a company, a product, an upload, 
+it depends on the implentation of :class:`PropOccurence`.
+For example :mod:`lino.apps.dsbe.models.PersonProperty`.
+
+A :class:`Property` defines the configuration of a property.
+
 This module would deserve more documentation.
 
 
@@ -131,25 +143,41 @@ class PropType(models.Model):
         return [(pc.value, pc.text) for pc in 
             PropChoice.objects.filter(type=self).order_by('value')]
             
-#~ add_babel_field(PropType,'name')
-
 class PropChoice(models.Model):
     """
     A Choice for this PropType.
-    `value` is the value to be stored in :attr:`PropValue.value`.
     `text` is the text to be displayed in combo boxes.
+    
+    `value` is the value to be stored in :attr:`PropValue.value`, 
+    it must be unique for all PropChoices of a given PropType.
+    
+    Choices for a given PropType will be sorted on `value`
+    (we might make this more customizable if necessary by adding a new field `sort_text` 
+    and/or an option to sort on text instead of value) 
+    
+    When configuring your property choices, be aware of the fact tht existing 
+    property occurences will *not* change when you change the `value` 
+    of a property choice.
+    
+    
     """
     class Meta:
         verbose_name = _("Property Choice")
         verbose_name_plural = _("Property Choices")
+        unique_together = ['type', 'value']
         
     type = models.ForeignKey(PropType,verbose_name=_("Property Type"))
     value = models.CharField(max_length=settings.LINO.propvalue_max_length,verbose_name=_("Value"))
-    text = babel.BabelCharField(max_length=200,verbose_name=_("Designation"))
+    text = babel.BabelCharField(max_length=200,verbose_name=_("Designation"),blank=True)
     
+    def save(self,*args,**kw):
+        if not self.text:
+            self.text = self.value
+        r = super(PropChoice,self).save(*args,**kw)
+        return r
+        
     def __unicode__(self):
         return babel.babelattr(self,'text')
-#~ add_babel_field(PropChoice,'text')
 
 class PropGroup(models.Model):
     """
@@ -255,9 +283,6 @@ class PropGroups(reports.Report):
 class PropTypes(reports.Report):
     model = PropType
 
-class PropChoices(reports.Report):
-    model = PropChoice
-    
 class Properties(reports.Report):
     model = Property
     order_by = ['name']
@@ -269,8 +294,14 @@ class PropsByGroup(Properties):
 class PropsByType(Properties):
     fk_name = 'type'
 
+class PropChoices(reports.Report):
+    model = PropChoice
+    
 class ChoicesByType(PropChoices):
+    "Lists all PropChoices for a given PropType."
     fk_name = 'type'
+    order_by = ['value']
+    column_names = value name *
     
 
 #~ class PropsByGroup(reports.Report):

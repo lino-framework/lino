@@ -662,7 +662,7 @@ class Listing(Printable):
         u"""
         """
         #~ rpt.get_action('listing').label = model.__name__
-        rpt.add_action(DirectPrintAction('print',_("Print"),'listing.odt'))
+        rpt.add_action(DirectPrintAction('print',_("Print"),'Listing.odt'))
         #~ rpt.add_action(InititateListing('listing',_("Print"),'listing.odt'))
         
     def __unicode__(self):
