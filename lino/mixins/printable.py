@@ -90,8 +90,10 @@ class BuildMethod:
         #~ self.templates_dir = os.path.join(settings.PROJECT_DIR,'doctemplates',self.templates_name or self.name)
         if self.templates_name is None:
             self.templates_name = self.name
-        self.templates_dir = os.path.join(settings.MEDIA_ROOT,'webdav','doctemplates',self.templates_name)
-        self.templates_url = settings.MEDIA_URL + '/'.join(('webdav','doctemplates',self.templates_name))
+        self.templates_dir = os.path.join(settings.LINO.webdav_root,'doctemplates',self.templates_name)
+        #~ self.templates_dir = os.path.join(settings.MEDIA_ROOT,'webdav','doctemplates',self.templates_name)
+        self.templates_url = settings.LINO.webdav_url + '/'.join(('doctemplates',self.templates_name))
+        #~ self.templates_url = settings.MEDIA_URL + '/'.join(('webdav','doctemplates',self.templates_name))
         
 
             

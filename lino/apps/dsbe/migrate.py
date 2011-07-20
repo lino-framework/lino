@@ -146,7 +146,8 @@ def install(globals_dict):
               file=file,mimetype=mimetype,
               created=created,modified=modified,description=description,type_id=type_id)
             #~ REMINDERS.append((obj,(reminder_date,reminder_text,delay_value,delay_type,reminder_done)))
-            return obj
+            UPLOADS.append(obj)
+            #~ return obj
                             
     
         def after_load():
@@ -156,6 +157,8 @@ def install(globals_dict):
                 obj.save()
             for obj,args in REMINDERS:
                 migrate_reminder(obj,*args)
+            for obj in UPLOADS:
+                obj.save()
                 
         globals_dict.update(create_dsbe_contract=delayed_create_dsbe_contract)
         globals_dict.update(Contract=Contract)
