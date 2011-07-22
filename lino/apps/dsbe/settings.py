@@ -156,6 +156,8 @@ class Lino(Lino):
             config_etc.add_action('cal.Places')
             
             config_etc.add_action('users.Users')
+            #~ if self.use_tinymce:
+            config_etc.add_action('lino.TextFieldTemplates')
             config_etc.add_instance_action(self.config)
         
             m = cfg.add_menu("explorer",_("E~xplorer"))

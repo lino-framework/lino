@@ -1,0 +1,97 @@
+#45 : Make the client launch a WebDAV document
+----------------------------------------------
+
+.. todo::
+
+  We didn't yet find a way to make the client launch Openoffice 
+  or Word on a server-side file in a way that the user can save their 
+  modifications back to the original file through WebDAV.
+
+Lino's :mod:`lino.mixins.printable` module 
+can generate .pdf, .rtf or .odt files into a directory 
+located on the server, and this directory 
+can be made accessible as a WebDAV location.
+
+When the client asks to print something, Lino generates that file 
+and returns an URL of the generated document, which the client usually 
+opens in a new browser window.
+
+But how to have the client open our document 
+in a way that the user can save their 
+modifications back to the original file through WebDAV?
+
+On a Windows client it seems possible to map 
+a drive letter (on Windows) or a directory (on UNIX) 
+to a WebDAV location.
+We should write more detailed instructions on this.
+CIFS
+http://wiki.ubuntuusers.de/samba_client_cifs
+
+We can configure 
+:attr:`lino.Lino.webdav_root` and 
+:attr:`lino.Lino.webdav_url`
+so that the Lino server can translate the filename using 
+that information.
+
+But browsers usually don't allow Javascript to do 
+something like this::
+
+  window.open('file:///W:/userdocs/test.rtf')
+
+If you manually enter such a link in the address field of a browser, 
+it will (depending on your settings) open the file and launch 
+Writer or Word, *but* first it will download the file.
+
+A "command server" on each client?
+----------------------------------
+
+On a Windows machine, if we manually type in a DOS box::
+
+  start file:///W:/userdocs/test.rtf
+  
+then we get the expected result.
+
+So one workaround might be to have a small "cmdserver" 
+daemon that clients need to install and run on their machine,
+at least if they want the feature of editing .rtf files.
+
+This would be a crippled HTTP server which would react to a GET `http://localhost:8910/userdocs/test.rtf` by executing the 
+corresponding file.    
+Here is a functional but neither secure nor user-friendly 
+proof-of-concept implementation of such a daemon::
+    
+    import os
+    import BaseHTTPServer
+
+    NAME = ''
+    PORT = 8910
+    WEBDAV_ROOT = 'W:\\'
+
+    class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
+      
+        def do_GET(self):
+            """Serve a GET request."""
+            #~ print self.client_address, self.path
+            #~ filename = "file://W:%s" % self.path
+            parts = self.path.split('/')
+            filename = os.path.join(WEBDAV_ROOT,*parts)
+            if os.path.exists(filename):
+                os.startfile(filename)
+            else:
+                self.log_message("File %r not found",filename)
+
+    httpd = BaseHTTPServer.HTTPServer((NAME,PORT), MyHandler)
+    print "serving at port", PORT
+    httpd.serve_forever()
+        
+        
+We could make the `cmdserver` method more user-friendly and secure, 
+but it still remains a very strange workaround. 
+Is there really no easier solution?
+
+Looking for easier solutions
+----------------------------
+
+Here is an interesting HOWTO article: 
+http://old.zope.org/Members/enno/howto_webdav_zopeedit
+

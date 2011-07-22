@@ -490,6 +490,11 @@ class ExtUI(base.UI):
             #~ (r'^ui/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.ui_view),
             (rx+r'choices/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<fldname>\w+)$', self.choices_view),
         )
+        if settings.LINO.use_tinymce:
+            urlpatterns += patterns('',
+                (rx+r'templates/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<fldname>\w+)$', self.templates_view),
+                (rx+r'templates/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<fldname>\w+)/(?P<tplname>\w+)$', self.templates_view),
+            )
         #~ urlpatterns += patterns('',         
             #~ (r'^api/', include('lino.api.urls')),
         
@@ -791,6 +796,7 @@ tinymce.init({
         yield "KNOWLEDGE_CHOICES = %s;" % py2js(list(KNOWLEDGE_CHOICES))
         yield "MEDIA_URL = %r;" % (self.media_url())
         yield "API_URL = %r;" % self.build_url('api')
+        yield "TEMPLATES_URL = %r;" % self.build_url('templates')
         #~ yield "Lino.status_bar = new Ext.ux.StatusBar({defaultText:'Lino version %s.'});" % lino.__version__
         
             
@@ -1272,6 +1278,39 @@ tinymce.init({
         #~ f.write(jscompress(js))
         f.close()
         logger.info("Wrote %s ...", fn)
+        
+    def templates_view(self,request,app_label=None,actor=None,fldname=None,tplname=None,**kw):
+      
+        if request.method == 'GET':
+            from lino.models import TextFieldTemplate
+            if tplname:
+                tft = TextFieldTemplate.objects.get(pk=int(tplname))
+                return HttpResponse(tft.text)
+                
+            rpt = actors.get_actor2(app_label,actor)
+            if rpt is None:
+                model = models.get_model(app_label,actor,False)
+                rpt = model._lino_model_report
+            #~ try:
+                #~ elem = rpt.model.objects.get(pk=pk)
+            #~ except ValueError:
+                #~ msg = "Invalid primary key %r for %s.%s." % (pk,rpt.model._meta.app_label,rpt.model.__name__)
+                #~ raise Http404(msg)
+            #~ except rpt.model.DoesNotExist:
+                #~ raise Http404("%s %s does not exist." % (rpt,pk))
+                
+            #~ m = getattr(elem,"%s_templates" % fldname,None)
+            m = getattr(rpt.model,"%s_templates" % fldname,None)
+            if m is None:
+                templates = []
+                for obj in TextFieldTemplate.objects.order_by('name'):
+                    url = self.build_url('templates',app_label,actor,fldname,unicode(obj.pk))
+                    templates.append([unicode(obj.name),url,unicode(obj.description)])
+            else:
+                templates = m(request)
+            js = "var tinyMCETemplateList = %s;" % py2js(templates)
+            return HttpResponse(js,content_type='text/json')
+        raise Http404("Method %r not supported" % request.method)
         
     def choices_view(self,request,app_label=None,rptname=None,fldname=None,**kw):
         rpt = actors.get_actor2(app_label,rptname)

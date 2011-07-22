@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-07-20 15:03+0100\n"
+"POT-Creation-Date: 2011-07-20 16:57+0100\n"
 "PO-Revision-Date: 2011-05-31 23:07+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
@@ -105,36 +105,36 @@ msgstr "Besitzertabelle"
 msgid "Owner"
 msgstr "Besitzer"
 
-#: .\mixins\printable.py:395 .\mixins\printable.py:665
+#: .\mixins\printable.py:415 .\mixins\printable.py:687
 msgid "Print"
 msgstr "Drucken"
 
-#: .\mixins\printable.py:454
+#: .\mixins\printable.py:476
 msgid "Edit template"
 msgstr "Vorlage bearbeiten"
 
-#: .\mixins\printable.py:464
+#: .\mixins\printable.py:486
 msgid "Clear cache"
 msgstr "Cache löschen"
 
-#: .\mixins\printable.py:485
+#: .\mixins\printable.py:507
 msgid "Build method"
 msgstr "Konstruktionsmethode"
 
-#: .\mixins\printable.py:494
+#: .\mixins\printable.py:516
 msgid "Template"
 msgstr "Vorlage"
 
-#: .\mixins\printable.py:525
+#: .\mixins\printable.py:547
 msgid "must build"
 msgstr "muss generiert werden"
 
-#: .\mixins\printable.py:651
+#: .\mixins\printable.py:673
 #, fuzzy
 msgid "Date"
 msgstr "Fällig am"
 
-#: .\mixins\printable.py:694
+#: .\mixins\printable.py:716
 msgid "Preview"
 msgstr ""
 

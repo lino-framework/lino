@@ -1,15 +1,5 @@
-#42 : Wysiwyg Editor
---------------------
+#42 [closed]: Wysiwyg Editor
+----------------------------
 
-Momentan ist es noch nicht mal sicher, ob wir überhaupt 
-je einen Wysiwyg-Editor brauchen werden.
-
-- Ext.HtmlEditorPanel direkt im Detail-Fenster 
-- Memo-Texte würden dann im Detail-Fenster nur noch angezeigt, 
-nebst einem Button, der den rich Text-Editor in einem eigenen Fenster öffnet.
-Beim Upgrade alle bestehenden Textfelder mit restify einmalig konvertieren.
-Wie wird das gespeichert? 
-Immer HTML?
-Oder pro Textfeld ein weiteres Ankreuzfeld?
-Oder eine Shebang-Zeile, die das Textformat festlegt?
+Lino uses the tinymce editor, and currently this seems satisfying.
 

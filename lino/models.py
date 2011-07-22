@@ -27,10 +27,11 @@ from django.utils.translation import ugettext_lazy as _
 
 #~ import lino
 from lino import reports
-#~ from lino import layouts
+from lino import fields
 from lino.core import actors
 #~ from lino import commands
 from lino.mixins import printable
+from lino.utils import babel
 from lino.utils import perms
 #~ from lino import choices_method, simple_choices_method
 from lino.tools import obj2str, sorted_models_list
@@ -125,6 +126,23 @@ class DataControlListing(printable.Listing):
     
     
 
+#~ if settings.LINO.use_tinymce:
+  
+class TextFieldTemplate(models.Model):
+  
+    class Meta:
+        verbose_name = _("Text Template")
+        verbose_name_plural = _("Text Templates")
+        
+    name = models.CharField(_("Designation"),max_length=200)
+    description = fields.RichTextField(_("Description"),blank=True,null=True,format='html')
+    text = fields.RichTextField(_("Template Text"),blank=True,null=True,format='html')
+    
+    def __unicode__(self):
+        return self.name
+        
+class TextFieldTemplates(reports.Report):
+    model = TextFieldTemplate
 
 
 def add_site_menu(site):

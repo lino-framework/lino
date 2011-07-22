@@ -498,51 +498,25 @@ class TextFieldElement(FieldElement):
         fmt = getattr(field,'textfield_format',None) or settings.LINO.textfield_format
         if fmt == 'html':
             if settings.LINO.use_tinymce:
-                # 20110603
-                #~ raise Exception("tinymce html text fields are rendered as HtmlBoxElement?!")
-                if True:
-                    #~ self.value_template = "new Ext.form.DisplayField(%s)"
-                    #~ self.value_template = "new Lino.HtmlTextPanel(ww,%s)"
-                    self.value_template = "new Lino.RichTextPanel(ww,%s)"
-                    #~ self.active_child = True
-                    #~ edit = dict(handler=js_code(
-                        #~ "Lino.edit_tinymce_text"))
-                    #~ edit.update(text=_("Edit"))
-                    #~ kw.update(ls_bbar_actions=[edit])
-                    #~ js = 'Lino.edit_tinymce_text(this)'
-                    #~ kw.update(tools=[dict(
-                      #~ qtip=_('Edit text in own window'), 
-                      #~ id="up",
-                      #~ handler=js_code("function(){%s}" % js))])
-                    #~ kw.update(layout='fit')
-                    #~ kw.update(items=js_code("new Ext.BoxComponent()"))
-                    #~ if self.label:
-                        #~ kw.update(title=unicode(self.label))
-                    self.separate_window = True
-                    
-                    # we don't call FieldElement.__init__ but do almost the same:
-                    self.field = field
-                    self.editable = field.editable # and not field.primary_key
-                    kw.update(title=unicode(field.verbose_name))
-                    #~ LayoutElement.__init__(self,lh,varname_field(field),label=unicode(field.verbose_name),**kw)
-                    #~ LayoutElement.__init__(self,lh,field.name,label=unicode(field.verbose_name),**kw)
-                    return LayoutElement.__init__(self,lh,field.name,**kw)
-                else:
-                    self.value_template = "new Ext.ux.TinyMCE(%s)"
-                    ts=dict(
-                      theme='advanced',
-                      plugins = "emotions,spellchecker,advhr,insertdatetime,preview", 
-                      #~ Theme options - button# indicated the row# only
-                      theme_advanced_buttons1 = "bold,italic,underline,|,justifyleft,justifycenter,justifyright,fontselect,fontsizeselect,formatselect,|,charmap",
-                      theme_advanced_buttons2 = "cut,copy,paste,|,bullist,numlist,|,outdent,indent,|,undo,redo,|,link,unlink,anchor,image,|,code,preview,|,forecolor,backcolor",
-                      #~ theme_advanced_buttons3 = "insertdate,inserttime,|,spellchecker,advhr,,removeformat,|,sub,sup,|,charmap,emotions",      
-                      theme_advanced_buttons3 = "",
-                      theme_advanced_toolbar_location = "top",
-                      theme_advanced_toolbar_align = "left",
-                      theme_advanced_statusbar_location = "bottom",
-                      theme_advanced_resizing = True
-                    )
-                    kw.update(tinymceSettings=ts)
+                self.value_template = "new Lino.RichTextPanel(ww,%s)"
+                #~ if self.label:
+                    #~ kw.update(title=unicode(self.label))
+                self.separate_window = True
+                # we don't call FieldElement.__init__ but do almost the same:
+                self.field = field
+                self.editable = field.editable # and not field.primary_key
+                kw.update(ls_url=rpt2url(lh.rh.report))
+                kw.update(title=unicode(field.verbose_name))
+                #~ kw.update(tinymce_options=dict(
+                    #~ template_external_list_url=lh.ui.build_url('templates',lh.rh.report.app_label,lh.rh.report.name)
+                  #~ template_templates=[
+                    #~ dict(title="Editor Details",
+                        #~ src="editor_details.htm",
+                        #~ description="Adds Editor Name and Staff ID")]
+                #~ ))
+                #~ LayoutElement.__init__(self,lh,varname_field(field),label=unicode(field.verbose_name),**kw)
+                #~ LayoutElement.__init__(self,lh,field.name,label=unicode(field.verbose_name),**kw)
+                return LayoutElement.__init__(self,lh,field.name,**kw)
             else:
                 self.value_template = "new Ext.form.HtmlEditor(%s)"
                 if settings.LINO.use_vinylfox:
@@ -1232,7 +1206,6 @@ class GridElement(Container):
         rh = self.report.get_handle(self.lh.rh.ui)
         kw = LayoutElement.ext_options(self,**kw)
         #~ d.update(ls_data_url=rh.ui.get_actor_url(self.report))
-        #~ kw.update(ls_url=rh.ui.build_url(self.report.app_label,self.report._actor_name))
         kw.update(ls_url=rpt2url(self.report))
         kw.update(ls_store_fields=[js_code(f.as_js()) for f in rh.store.list_fields])
         kw.update(ls_columns=[GridColumn(i,e) for i,e in enumerate(self.columns)])
@@ -1499,7 +1472,6 @@ class FormPanel(jsgen.Component):
             kw.update(ls_insert_handler=js_code("Lino.%s" % a))
         
         kw.update(ls_bbar_actions=[rh.ui.a2btn(a) for a in rpt.get_actions(action)])
-        #~ kw.update(ls_url=rh.ui.build_url(rpt.app_label,rpt._actor_name))
         kw.update(ls_url=rpt2url(rpt))
         jsgen.Component.__init__(self,'form_panel',**kw)
         

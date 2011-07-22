@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-07-20 15:03+0100\n"
+"POT-Creation-Date: 2011-07-20 16:57+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -105,35 +105,35 @@ msgstr ""
 msgid "Owner"
 msgstr ""
 
-#: .\mixins\printable.py:395 .\mixins\printable.py:665
+#: .\mixins\printable.py:415 .\mixins\printable.py:687
 msgid "Print"
 msgstr ""
 
-#: .\mixins\printable.py:454
+#: .\mixins\printable.py:476
 msgid "Edit template"
 msgstr ""
 
-#: .\mixins\printable.py:464
+#: .\mixins\printable.py:486
 msgid "Clear cache"
 msgstr ""
 
-#: .\mixins\printable.py:485
+#: .\mixins\printable.py:507
 msgid "Build method"
 msgstr ""
 
-#: .\mixins\printable.py:494
+#: .\mixins\printable.py:516
 msgid "Template"
 msgstr ""
 
-#: .\mixins\printable.py:525
+#: .\mixins\printable.py:547
 msgid "must build"
 msgstr ""
 
-#: .\mixins\printable.py:651
+#: .\mixins\printable.py:673
 msgid "Date"
 msgstr ""
 
-#: .\mixins\printable.py:694
+#: .\mixins\printable.py:716
 msgid "Preview"
 msgstr ""
 

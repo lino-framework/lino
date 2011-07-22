@@ -1,9 +1,16 @@
 To-do list
 ==========
 
-This document is partly in German because it is rather for internal use. 
-See also :doc:`/tickets/index` which is a list of tickets 
-for which I hope for help from other people.
+Public calls for help
+---------------------
+
+See also :doc:`/tickets/index` which is a list of tickets.
+
+.. todolist::
+
+
+The rest of this document is partly in German 
+because it is rather for internal use. 
 
 
 Short-term

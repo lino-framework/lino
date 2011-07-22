@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-07-20 15:03+0100\n"
+"POT-Creation-Date: 2011-07-20 16:57+0100\n"
 "PO-Revision-Date: 2011-06-06 22:37+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr <lino-users@gmail.com>\n"
@@ -106,36 +106,36 @@ msgstr "type de propriétaire"
 msgid "Owner"
 msgstr "Propriétaire"
 
-#: .\mixins\printable.py:395 .\mixins\printable.py:665
+#: .\mixins\printable.py:415 .\mixins\printable.py:687
 msgid "Print"
 msgstr "Imprimer"
 
-#: .\mixins\printable.py:454
+#: .\mixins\printable.py:476
 msgid "Edit template"
 msgstr "Editer le modèle"
 
-#: .\mixins\printable.py:464
+#: .\mixins\printable.py:486
 msgid "Clear cache"
 msgstr "Effacer la cache"
 
-#: .\mixins\printable.py:485
+#: .\mixins\printable.py:507
 msgid "Build method"
 msgstr "Méthode de construction"
 
-#: .\mixins\printable.py:494
+#: .\mixins\printable.py:516
 msgid "Template"
 msgstr "Modèle"
 
-#: .\mixins\printable.py:525
+#: .\mixins\printable.py:547
 msgid "must build"
 msgstr "doit être construit"
 
-#: .\mixins\printable.py:651
+#: .\mixins\printable.py:673
 #, fuzzy
 msgid "Date"
 msgstr "Terme"
 
-#: .\mixins\printable.py:694
+#: .\mixins\printable.py:716
 msgid "Preview"
 msgstr ""
 

@@ -11,6 +11,9 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+import logging
+logger = logging.getLogger(__name__)
+
 from lino.utils.restify import restify
 from lino.utils.html2xhtml import html2xhtml
 
@@ -56,10 +59,12 @@ def setup_renderer(renderer):
     def html_func(html,**kw):
         if not html:
             return ''
-        print __file__, ">>>"
-        #~ print repr(html)
-        print html
-        print "<<<", __file__
+        logger.debug("""html_func() got:>>>
+%s
+<<<""",html)
+        #~ print __file__, ">>>"
+        #~ print html
+        #~ print "<<<", __file__
         html = html2xhtml(html)
         if isinstance(html,unicode):
             # some sax parsers refuse unicode strings. 

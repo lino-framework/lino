@@ -83,10 +83,14 @@ def install(globals_dict):
                         company = Company.objects.get(pk=provider_id)
                         provider = mti.insert_child(company,JobProvider)
                         provider.save()
+                if provider is None:
+                    name = 'Stelle%s(intern)' % contract_type_id
+                else:
+                    name = 'Stelle%s@%s' % (contract_type_id,provider)
                 job = Job(
                     provider=provider,
                     contract_type_id=contract_type_id,
-                    name='%s@%s' % (contract_type_id,provider)
+                    name=name
                     )
                 job.save()
                 return job
@@ -147,6 +151,9 @@ def install(globals_dict):
               file=file,mimetype=mimetype,
               created=created,modified=modified,description=description,type_id=type_id)
             #~ REMINDERS.append((obj,(reminder_date,reminder_text,delay_value,delay_type,reminder_done)))
+            # must relay the saving of uploads because owner is a generic foreign key 
+            # which doesn't fail to save the instance but returns None for the owner if it doesn't yet 
+            # exist.
             UPLOADS.append(obj)
             #~ return obj
                             

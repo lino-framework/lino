@@ -313,7 +313,16 @@ class Lino(object):
     source_name = os.path.split(source_dir)[-1]
     
     webdav_root = None
-    webdav_url = None
+    """
+    The path on server to store webdav files.
+    Default is "PROJECT_DIR/media/webdav".
+    """
+    
+    webdav_url = '/media/webdav/'
+    """
+    The URL prefix for webdav files.
+    Default is "/media/webdav/".
+    """
     
     def __init__(self,project_file,settings_dict):
         #self.django_settings = settings
@@ -336,8 +345,6 @@ class Lino(object):
             self.install_settings(settings_dict)
         if self.webdav_root is None:
             self.webdav_root = join(abspath(self.project_dir),'media','webdav')
-        if self.webdav_url is None:
-            self.webdav_url = '/media/webdav'
             
     def install_settings(self,s):
         s.update(MEDIA_ROOT = join(self.project_dir,'media'))

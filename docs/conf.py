@@ -28,6 +28,7 @@ extensions = [
   'sphinx.ext.autodoc',
   #~ 'sphinx.ext.autosummary',
   'sphinx.ext.inheritance_diagram',
+  'sphinx.ext.todo',
   'sphinx.ext.extlinks',
   'sphinx.ext.graphviz',
   'sphinx.ext.intersphinx',
@@ -270,3 +271,5 @@ autosummary_generate = True
 # http://sphinx.pocoo.org/theming.html
 html_theme = "default"
 html_theme_options = dict(collapsiblesidebar=True,externalrefs=True)
+
+todo_include_todos = True

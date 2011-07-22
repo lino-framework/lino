@@ -43,3 +43,87 @@ Außerdem wurden die Tasks eines Uploads nicht automatisch ihrer Person zugewies
 Checkin 20110720c.
 
 
+Online-Dokumente direkt bearbeiten
+----------------------------------
+
+Ich habe mal weiter geforscht, wie ich es schaffe, dass die Benutzer 
+ihre Dokumente von Lino als bearbeitbare `.rtf`-Dateien zur Verfügung 
+gestellt bekommen, die Lino dann auch verwaltet und speichert.
+
+Wenn man ein Dokument "druckt", öffnet Lino ja momentan 
+einfach ein neues Fenster auf einer Adresse im Stil
+`http://lino:/media/cache/appy/rtf/Test-1.rtf`.
+Vorher generiert er falls nötig das Dokument; 
+der Button "Cache löschen" löscht ebendieses Dokument, 
+damit es neu generiert wird.
+
+Mir ist nun klar geworden: selbst wenn wir dem Browser gesagt bekämen,
+dass er RTF-Dateien immer automatisch öffnen soll, wird Office oder
+OpenOffice nie kapieren, dass das eine schreibbare Location ist.
+
+Also es scheint, dass wir den Benutzern irgendwie ein "WebDAV-Laufwerk"
+konfigurieren müssen. Resultat muss jedenfalls sein, dass alle
+Lino-Benutzer ein neues Laufwerk (z.B. "W:") kriegen, das per WebDAV die
+Dateien unter `/usr/local/django/dsbe_eupen/media/webdav` zur Verfügung
+stellt.
+
+Scheinbar ist das z.B. mit CIFS möglich
+http://wiki.ubuntuusers.de/samba_client_cifs
+
+Abgesehen davon brauchen wir eine kleine Änderung in Lino:
+statt nach `http://lino:/media/cache/appy/rtf/Test-1.rtf`
+soll er das Fenster nach `file:W:///appy/rtf/Test-1.rtf` öffnen.
+
+Zwei neue Attribute :attr:`lino.Lino.webdav_root` und 
+:attr:`lino.Lino.webdav_url`, sowie entsprechende Änderungen 
+in :mod:`lino.mixins.printable`.
+
+Um das auf dem Entwicklungsserver zu testen, der ja kein WebDAV hat, 
+kann ich einfach das Laufwerk W: wie folgt mit ``subst`` definieren::
+
+  subst w: T:\data\luc\lino\dsbe\media\webdav
+
+Dann mache ich in der ´settings.py`::
+
+    webdav_url = 'file:///W:/'
+    
+Also wenn ich z.B. auf 
+`http://127.0.0.1:8000/api/lino/DataControlListing/1`
+bin und dort Drucken klicke, erstellt er eine rtf-Datei 
+und antwortet::
+
+  { 
+    "open_url": "file:///W:/userdocs/appyrtf/lino.DataControlListing-1.rtf",
+    "success": true 
+  }
+
+Und der Client macht dann::
+
+      if (result.open_url) {
+          window.open(result.open_url);
+      }
+Aber dann, ätsch, passiert unter Google Chrome und Firefox nichts 
+(bzw. ein Fenster mit "about:blank" wird geöffnet), und der IE 
+sagt mir "Access denied". 
+Scheinbar steht diese Methode unter dem Verdacht des `Chross Frame Scripting
+<http://msdn.microsoft.com/en-us/library/ms533028.aspx>`_
+
+Vor ein paar Jahren konnte ein gewisser Brian da angeblich 
+noch mit Tricks dran vorbei:
+http://thecodecave.com/2006/07/20/how-to-get-around-access-is-denied-in-a-windowopen-javascript-call/
+
+Also ich zumindest habe noch keinen Trick gefunden, um mich bzw. die Lino-Benutzer 
+von dieser Schutzvorkehrung zu befreien...
+
+Google: 
+- javascript window.open file access denied
+- Local Machine Zone Lockdown
+
+Laut diesem hier soll es im IE abschaltbar sein:
+http://www.wintotal.de/tipparchiv/?id=1062
+
+Hier eine ähnliche Problemstellung im Chrome Help Forum: 
+http://www.google.com/support/forum/p/Chrome/thread?tid=54ce24f888fb210a&hl=en
+
+:doc:`/tickets/45`
+
