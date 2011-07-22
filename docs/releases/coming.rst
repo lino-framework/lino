@@ -69,10 +69,19 @@ New features
   Kontrollliste. 
   Sh. :doc:`/blog/2011/0712`.
   
-- **Einfügetexte**. 
+- **Einfügetexte** :
+  im Text-Editor gibt es jetzt einen neuen Button "Inhalt aus Vorlage einfügen".
+  Jeder Benutzer kann über
+  :menuselection:`Mein Menu --> Meine Einfügetexte`
+  seine eigene Sammlung von Einfügetexten pflegen.
+  *Öffentliche* Einfügetexte (d.h. mit leerem Feld "Benutzer")
+  können von jedem eingefügt, aber nur vom Systemverwalter bearbeitet 
+  werden (über :menuselection:`Konfigurierung --> System --> Einfügetexte`).
+  
+  Ich warte auf erste Erfahrungsberichte, bevor ich kontextabhängige 
+  Auswahl einbaue.
+  
   Details siehe :doc:`/blog/2011/0722`
-
-
 
 - Kleine Änderungen in der Übersichtstabelle auf der Startseite 
   (`persons_by_user`)

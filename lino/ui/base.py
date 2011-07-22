@@ -57,7 +57,9 @@ class UI:
         self.site = site
         
     def build_url(self,*args,**kw):
-        url = '/' + self.site.root_url + ("/".join(args))
+        url = self.site.root_url
+        if args:
+            url += '/' + ("/".join(args))
         #~ if self.prefix:
             #~ url = "/" + self.prefix + url
         if len(kw):

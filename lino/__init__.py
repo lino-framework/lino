@@ -167,7 +167,11 @@ class Lino(object):
     
     """
     
-    root_url = '' # must end with a slash if not empty
+    root_url = '' # must begin with a slash if not empty
+    """
+    See also  http://groups.google.com/group/django-users/browse_thread/thread/c95ba83e8f666ae5?pli=1
+    http://groups.google.com/group/django-users/browse_thread/thread/27f035aa8e566af6
+    """
     
     help_url = "http://code.google.com/p/lino"
     #~ index_html = "This is the main page."
@@ -318,7 +322,7 @@ class Lino(object):
     Default is "PROJECT_DIR/media/webdav".
     """
     
-    webdav_url = '/media/webdav/'
+    webdav_url = None
     """
     The URL prefix for webdav files.
     Default is "/media/webdav/".
@@ -329,7 +333,7 @@ class Lino(object):
         #~ self.init_site_config = lambda sc: sc
         self.project_dir = normpath(dirname(project_file))
         self.project_name = os.path.split(self.project_dir)[-1]
-        self.qooxdoo_prefix = '/media/qooxdoo/lino_apps/' + self.project_name + '/build/'
+        self.qooxdoo_prefix = self.root_url + '/media/qooxdoo/lino_apps/' + self.project_name + '/build/'
         self.dummy_messages = set()
         self._setting_up = False
         self._setup_done = False
@@ -343,6 +347,8 @@ class Lino(object):
     
         if settings_dict: 
             self.install_settings(settings_dict)
+        if self.webdav_url is None:
+            self.webdav_url = self.root_url + '/media/webdav/'
         if self.webdav_root is None:
             self.webdav_root = join(abspath(self.project_dir),'media','webdav')
             

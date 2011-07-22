@@ -901,7 +901,7 @@ Lino.delete_selected = function(caller) {
         for ( var i=0; i < recs.length; i++ ) {
           Lino.do_action(caller,{
               method:'DELETE',
-              url:API_URL+caller.ls_url+'/'+recs[i].id
+              url:ROOT_URL+'/api'+caller.ls_url+'/'+recs[i].id
           })
         }
         caller.after_delete();
@@ -1454,7 +1454,7 @@ Lino.RichTextPanel = Ext.extend(Ext.Panel,{
     //~ console.log('RichTextPanel.refresh()',this.title,record.title,record);
     var todo = function() {
       //~ this.set_base_params(this.ww.get_base_params());
-      var url = TEMPLATES_URL + this.ww.main_item.ls_url + "/" 
+      var url = ROOT_URL + '/templates' + this.ww.main_item.ls_url + "/" 
           + String(record.id) + "/" + this.editor.name;
       //~ console.log('RichTextPanel.refresh()',url);
       this.editor.ed.settings.template_external_list_url = url;
@@ -1556,7 +1556,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   moveLast : function() {this.goto_record_id(this.current_record.navinfo.last)},
   
   get_record_url : function(record_id) {
-      var url = API_URL+this.ls_url
+      var url = ROOT_URL+'/api'+this.ls_url
       //~ var url = this.ww.config.url_data; // ls_url;
       url += '/' + String(record_id);
       return url;
@@ -1788,7 +1788,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
       //~ });
       //~ var src = this.get_record_url(record.id) + "?fmt=image"
       doit(this.get_record_url(record.id) + "?an=image");
-      //~ var src = API_URL+this.ww.main_item.ls_url + "/" + record.id + "?fmt=image"
+      //~ var src = ROOT_URL+'/api'+this.ww.main_item.ls_url + "/" + record.id + "?fmt=image"
     else
       //~ doit('empty.jpg');
       doit(Ext.BLANK_IMAGE_URL);
@@ -1841,7 +1841,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
       //~ console.log('on_proxy_load',transactionObject)
     //~ }
     var proxy = new Ext.data.HttpProxy({ 
-      url: API_URL+config.ls_url, 
+      url: ROOT_URL+'/api'+config.ls_url, 
       method: "GET"
       //~ listeners: {load:on_proxy_load} 
     });
@@ -2015,7 +2015,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
   },
   
   get_record_url : function(record_id) {
-      var url = API_URL+this.ls_url
+      var url = ROOT_URL+'/api'+this.ls_url
       //~ var url = this.ww.config.url_data; // ls_url;
       url += '/' + String(record_id);
       return url;
@@ -2311,12 +2311,12 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     if (e.record.phantom) {
       Ext.apply(req,{
         method: 'POST',
-        url: API_URL+this.ls_url
+        url: ROOT_URL+'/api'+this.ls_url
       });
     } else {
       Ext.apply(req,{
         method: 'PUT',
-        url: API_URL+this.ls_url+'/'+e.record.id
+        url: ROOT_URL+'/api'+this.ls_url+'/'+e.record.id
       });
     }
     //~ console.log('20110406 on_afteredit',req);
@@ -2444,7 +2444,7 @@ Lino.MainPanelMixin = {
             var p = Ext.apply({},this.get_base_params());
             p['fmt'] = 'csv';
             //~ url += "?" + Ext.urlEncode(p);
-            window.open(API_URL+this.ls_url + "?" + Ext.urlEncode(p)) 
+            window.open(ROOT_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
           } }
       ];
   }
@@ -2951,7 +2951,7 @@ Ext.override(Lino.WindowWrapper,{
     return v;
   },
   get_permalink_url : function() {
-      return API_URL + this.main_item.ls_url;
+      return ROOT_URL+'/api' + this.main_item.ls_url;
   },
   get_permalink_params : function() {
       //~ return {an:'grid'};
@@ -3022,7 +3022,7 @@ Lino.DetailWrapper = Ext.extend(Lino.WindowWrapper, {
     //~ Lino.DetailWrapperBase.prototype.setup.call(this);
   //~ },
   get_permalink_url : function() {
-      return API_URL + this.main_item.ls_url+'/'+this.get_current_record().id;
+      return ROOT_URL+'/api' + this.main_item.ls_url+'/'+this.get_current_record().id;
   },
   get_permalink_params : function() {
     var p = {};
@@ -3046,7 +3046,7 @@ Lino.DetailWrapper = Ext.extend(Lino.WindowWrapper, {
         //~ console.log('20110406 DetailWindow.save: panel.get_base_params() = <',panel.get_base_params(),'>');
         // 20110406
         panel.form.submit({
-          url:API_URL+panel.ls_url + '/' + rec.id,
+          url:ROOT_URL+'/api'+panel.ls_url + '/' + rec.id,
           method: 'PUT',
           scope: panel,
           params: panel.get_base_params(), 
@@ -3080,7 +3080,7 @@ Lino.InsertWrapper = Ext.extend(Lino.WindowWrapper, {
       });
   },
   get_permalink_url : function() {
-      return API_URL + this.main_item.ls_url;
+      return ROOT_URL+'/api' + this.main_item.ls_url;
   },
   get_permalink_params : function() {
     return {an:this.config.action_name};      
@@ -3091,7 +3091,7 @@ Lino.InsertWrapper = Ext.extend(Lino.WindowWrapper, {
     var panel = this.main_item;
     var _this = this;
     panel.form.submit({
-      url:API_URL+panel.ls_url,
+      url:ROOT_URL+'/api'+panel.ls_url,
       method: 'POST',
       params: panel.get_base_params(), // 20101025
       scope: panel,

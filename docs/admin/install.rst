@@ -126,6 +126,20 @@ into `/var/snapshots/`::
   unzip appy0.6.6.zip -d appy
   
 Note: Lino didn't yet migrate to ExtJS 4.0. See :doc:`/tickets/40`
+
+Install TinyMCE language packs
+------------------------------
+
+If you plan to use Lino in another language than English, you must 
+manually install language packs for TinyMCE from
+http://tinymce.moxiecode.com/i18n/index.php?ctrl=lang&act=download&pr_id=1
+
+Simplified instructions::
+
+  # cd /usr/share/tinymce/www
+  # wget http://tim.saffre-rumma.net/dl/tmp/tinymce_language_pack.zip
+  # unzip tinymce_language_pack.zip
+  
   
 Set up your Python path
 -----------------------
