@@ -68,6 +68,10 @@ New features
   Solchen Fälle ersehen wir also zukünftig wenigstens aus der 
   Kontrollliste. 
   Sh. :doc:`/blog/2011/0712`.
+  
+- **Einfügetexte**. 
+  Details siehe :doc:`/blog/2011/0722`
+
 
 
 - Kleine Änderungen in der Übersichtstabelle auf der Startseite 

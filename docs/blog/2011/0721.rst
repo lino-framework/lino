@@ -32,8 +32,11 @@ zu lesen begonnen hatte, entdecke ich, dass es schon ein fertiges Plugin gibt:
 Wie schön!
 
 Nach knapp 4 Stunden Arbeit ist die Sache fürs erste gebacken: 
-eine globale Liste von konfigurierbaren Einfügetexten. 
+eine globale Liste von konfigurierbaren 
+:class:`Einfügetexten <lino.models.TextFieldTemplate>`. 
 Um die Auswahlliste 
 kontextabhängig zu machen, müsste ich mir noch was einfallen lassen:
-tinymce.Editor.settings.template_templates_list_url müsste dann den pk 
+`tinymce.Editor.settings.template_templates_list_url` müsste dann den pk 
 des aktuellen records enthalten.
+
+Checkin 20110721.

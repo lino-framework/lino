@@ -26,6 +26,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 #~ import lino
+from lino import mixins
 from lino import reports
 from lino import fields
 from lino.core import actors
@@ -79,30 +80,13 @@ def update_site_config(**kw):
         setattr(sc,k,v)
     sc.save()
 
-#~ class Permissions(reports.Report):
-    #~ model = auth.Permission
-    #~ order_by = 'content_type__app_label codename'.split()
-  
-#~ class Users(reports.Report):
-    #~ model = auth.User
-    #~ order_by = ["username"]
-    #~ column_names = 'username first_name last_name is_active id is_superuser is_staff last_login'
-
-#~ class Groups(reports.Report):
-    #~ model = auth.Group
-    #~ order_by = ["name"]
-
-#~ class Sessions(reports.Report):
-    #~ model = sessions.Session
-
 
 class ContentTypes(reports.Report):
     model = contenttypes.ContentType
     
     
-    
   
-class DataControlListing(printable.Listing):
+class DataControlListing(mixins.Listing):
     """Performs a "soft integrity test" on the database. 
     Prints 
     """
@@ -128,19 +112,27 @@ class DataControlListing(printable.Listing):
 
 #~ if settings.LINO.use_tinymce:
   
-class TextFieldTemplate(models.Model):
+class TextFieldTemplate(mixins.AutoUser):
+    """A reusable block of text that can be selected from a text editor to be 
+    inserted into the text being edited.
+    """
   
     class Meta:
-        verbose_name = _("Text Template")
-        verbose_name_plural = _("Text Templates")
+        verbose_name = _("Text Field Template")
+        verbose_name_plural = _("Text Field Templates")
         
     name = models.CharField(_("Designation"),max_length=200)
-    description = fields.RichTextField(_("Description"),blank=True,null=True,format='html')
-    text = fields.RichTextField(_("Template Text"),blank=True,null=True,format='html')
+    description = fields.RichTextField(_("Description"),
+        blank=True,null=True,format='html')
+    text = fields.RichTextField(_("Template Text"),
+        blank=True,null=True,format='html')
     
     def __unicode__(self):
         return self.name
         
+class MyTextFieldTemplates(mixins.ByUser):
+    model = TextFieldTemplate
+    
 class TextFieldTemplates(reports.Report):
     model = TextFieldTemplate
 

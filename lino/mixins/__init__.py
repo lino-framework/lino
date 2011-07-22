@@ -50,7 +50,10 @@ class AutoUser(models.Model):
     class Meta:
         abstract = True
         
-    user = models.ForeignKey("users.User",verbose_name=_("user")) # ,blank=True,null=True)
+    user = models.ForeignKey("users.User",
+        verbose_name=_("user"),
+        blank=True,null=True
+        )
     
     def on_create(self,req):
         u = req.get_user()
@@ -64,6 +67,9 @@ class ByUser(reports.Report):
     fk_name = 'user'
     can_view = perms.is_authenticated
     
+    def init_label(self):
+        return _("My %s") % self.model._meta.verbose_name_plural
+        
     def setup_request(self,req):
         if req.master_instance is None:
             req.master_instance = req.get_user()

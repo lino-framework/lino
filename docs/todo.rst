@@ -16,16 +16,22 @@ because it is rather for internal use.
 Short-term
 ----------
 
+
 #.  Leider kann man scheinbar weder in GroupWise noch in Zarafa 
     externe ("remote") Kalender konfigurieren (so wie `Google und Sunbird
     <http://www.google.com/support/calendar/bin/answer.py?answer=99358#sunbird>`_)
     Lino muss also nicht selber Server sein, 
     sondern eher als Client mit einem CalDAV-Server arbeiten. 
 
-#.  `AppyRtfBuildMethod` scheint nicht zu funktionieren.
+#.  Lino könnte per LDAP-Request verschiedene Angaben 
+    in :class:`auth.User` (Name, E-Mail,...) 
+    direkt vom LDAP-Server anfragen.
+    Dazu wären wahrscheinlich
+    http://www.python-ldap.org/
+    und
+    http://www.openldap.org/
+    nötig.
 
-#.  Textbausteine (im Text-Editor F1 drücken können).
-    
 #.  Slave-Grids im Insert-Fenster sind jetzt zwar disabled, aber sie 
     machen trotzdem noch ein load "ihrer" Daten. 
     
@@ -524,15 +530,6 @@ Long-term
 #. Sollten Links hierarchisiert werden können? 
    Das hieße ein Feld :attr:`links.Link.parent` und ein TreePenel.
   
-#. Lino könnte per LDAP-Request verschiedene Angaben 
-   in :class:`auth.User` (Name, E-Mail,...) 
-   direkt vom LDAP-Server anfragen.
-   Dazu wären wahrscheinlich
-   http://www.python-ldap.org/
-   und
-   http://www.openldap.org/
-   nötig.
-
 #. Die HtmlBox braucht noch ein `autoScroll:true` für wenn viele Links da sind.
 
 #. Neues Feld :attr:`links.Link.sequence`, und :class:`links.LinksByOwner` sollte dann danach sortiert sein.

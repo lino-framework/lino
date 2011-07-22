@@ -1389,20 +1389,29 @@ Lino.RichTextPanel = Ext.extend(Ext.Panel,{
   constructor : function(ww,config,params) {
     //~ console.log('Lino.RichTextPanel.initComponent',this);
     //~ var url = TEMPLATES_URL + config.ls_url + "/" + String(rec.id) + "/" + config.name;
-    var url = TEMPLATES_URL + config.ls_url + "/" + config.name;
-  
+    //~ var url = TEMPLATES_URL + config.ls_url + "/" + config.name;
+    var t = this;
     var tinymce_options = {
         theme : "advanced",
         content_css: '/media/lino/extjs/lino.css',
-        template_external_list_url : url,
+        language: '$settings.LANGUAGE_CODE',
+        //~ template_external_list_url : url,
         theme_advanced_toolbar_location : "top",
         theme_advanced_toolbar_align : "left",
-        theme_advanced_statusbar_location : "bottom"
+        theme_advanced_statusbar_location : "bottom",
+        template_popup_width : 700,
+        template_popup_height : 500,
+        template_replace_values : { 
+            data_field : function(element){ 
+                console.log(20110722,fieldName,t.ww.get_current_record()); 
+                var fieldName = element.innerHTML;
+                element.innerHTML = t.ww.get_current_record().data[fieldName];
+            } 
+        }
       };
       
     var editorConfig = {
       tinymceSettings: {
-        //~ language: "de",
         plugins : "noneditable,template", 
         // Theme options - button# indicated the row# only
         theme_advanced_buttons1 : "bold,italic,underline,|,justifyleft,justifycenter,justifyright,|,bullist,numlist,|,outdent,indent,|,undo,redo,|,removeformat,template",
@@ -1442,9 +1451,13 @@ Lino.RichTextPanel = Ext.extend(Ext.Panel,{
   },
   refresh : function(after) {
     var record = this.ww.get_current_record();
-    //~ console.log('RichTextPanel.refresh()',this.title,record,record.title);
+    //~ console.log('RichTextPanel.refresh()',this.title,record.title,record);
     var todo = function() {
       //~ this.set_base_params(this.ww.get_base_params());
+      var url = TEMPLATES_URL + this.ww.main_item.ls_url + "/" 
+          + String(record.id) + "/" + this.editor.name;
+      //~ console.log('RichTextPanel.refresh()',url);
+      this.editor.ed.settings.template_external_list_url = url;
       this.set_base_params(this.ww.get_master_params());
       var v = record ? this.format_data(record.data[this.editor.name]) : ''
       this.editor.setValue(v);

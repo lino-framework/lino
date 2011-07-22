@@ -1,0 +1,43 @@
+20110722
+========
+
+Der englische Name :class:`lino.models.TextFieldTemplate`
+für die Einfügetexte gefällt mir übrigens nicht wirklich, 
+aber momentan fällt mir nichts Besseres ein.
+
+Dann noch ein paar Verbesserungen:
+
+- Das Feld `user` eines :class:`lino.mixins.AutoUser` kann jetzt auch 
+  leer sein.
+  
+- Einfügetexte erben jetzt :class:`lino.mixins.AutoUser`, 
+  haben jetzt ein Feld `user`, 
+  und es gibt einen Menübefehl :menuselection:`Mein Menu --> Meine Einfügetexte`.
+
+- Einfügetexte mit leerem Feld "Benutzer" sind *öffentlich*: 
+  können nur vom Systemverwalter bearbeitet werden (:menuselection:`Konfigurierung --> System --> Einfügetexte`), aber von jedem benutzt werden.
+  
+- TinyMCE hat auch eine Möglichkeit, beim Einfügen eines Einfügetextes 
+  dynamisch Variablen zu ersetzen. 
+  Aber das habe ich noch nicht gut genug integriert. 
+  Ich habe folgenden Code::
+  
+        template_replace_values : { 
+            data_field : function(element){ 
+                console.log(20110722,fieldName,t.ww.get_current_record()); 
+                var fieldName = element.innerHTML;
+                element.innerHTML = t.ww.get_current_record().data[fieldName];
+            } 
+        }
+  
+  Und wenn ich dann einen Einfügetext mit folgendem Inhalt definiere (die Klassenzuweisung habe ich manuell mit dem HTML-Button gemacht)::
+  
+    <p>Mit freundlichen Gr&uuml;&szlig;en,</p>
+    <p class="data_field">root</p>  
+
+  dann ersetzt er das brav durch den Benutzernamen...
+  aber das ist freilich noch nicht sehr sinnvoll, und den vollen 
+  Benutzernamen kennt an dieser Stelle nur der Server.
+  
+  
+So. Checkin 20110722.   

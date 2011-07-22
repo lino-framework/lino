@@ -1,6 +1,6 @@
 :label_align: top
 
 main =
-    id name 
+    id name user
     description
     text

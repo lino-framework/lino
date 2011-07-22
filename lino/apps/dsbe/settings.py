@@ -76,7 +76,8 @@ class Lino(Lino):
                 params=dict(master_instance=pg))
             #~ m.add_action('contacts.MyPersonsByGroup',label=pg.name,
             #~ params=dict(master_id=pg.pk))
-            #~ m.add_request_action(contacts.MyPersonsByGroup().request(master_instance=pg),label=pg.name)
+            
+        m.add_action('lino.MyTextFieldTemplates')
 
 
         m = main.add_menu("courses",_("~Courses"))
@@ -165,6 +166,7 @@ class Lino(Lino):
             #~ m.add_action('properties.PropValues')
             m.add_action('contacts.AllPersons')
             m.add_action('notes.Notes')
+            #~ m.add_action('lino.TextFieldTemplates')
             m.add_action('links.Links')
             m.add_action('dsbe.Exclusions')
             m.add_action('jobs.Contracts')

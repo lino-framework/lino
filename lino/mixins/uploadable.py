@@ -24,7 +24,6 @@ from django.conf import settings
 from lino import reports
 from lino.tools import obj2str
 #~ from lino import layouts
-
     
 class Uploadable(models.Model):
     """

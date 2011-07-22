@@ -67,6 +67,8 @@ def before_row_edit(panel):
                 #~ l.append("%s.refresh();" % e.as_ext())
         elif isinstance(e,HtmlBoxElement):
             l.append("%s.refresh();" % e.as_ext())
+        elif isinstance(e,TextFieldElement):
+            l.append("%s.refresh();" % e.as_ext())
         elif isinstance(e,FieldElement):
             chooser = choosers.get_for_field(e.field)
             if chooser:
