@@ -464,27 +464,6 @@ class FieldElement(LayoutElement):
         return kw
     
         
-class unused_TextFieldElement(FieldElement):
-    #~ xtype = 'textarea'
-    filter_type = 'string'
-    vflex = True
-    value_template = "new Ext.form.TextArea(%s)"
-    xtype = None
-    #width = 60
-    preferred_width = 60
-    #~ preferred_height = 1
-    #collapsible = True
-    
-    def __init__(self,lh,field,**kw):
-        kw.update(
-          growMax=2000,
-          #~ defaultAutoCreate = dict(
-            #~ tag="textarea",
-            #~ autocomplete="off"
-          #~ )
-        )
-        FieldElement.__init__(self,lh,field,**kw)
-
 class TextFieldElement(FieldElement):
     #~ xtype = 'textarea'
     filter_type = 'string'
@@ -496,11 +475,13 @@ class TextFieldElement(FieldElement):
     preferred_height = 5
     #collapsible = True
     separate_window = False
+    active_child = False
     def __init__(self,lh,field,**kw):
         fmt = getattr(field,'textfield_format',None) or settings.LINO.textfield_format
         if fmt == 'html':
             if settings.LINO.use_tinymce:
                 self.value_template = "new Lino.RichTextPanel(ww,%s)"
+                self.active_child = True
                 #~ if self.label:
                     #~ kw.update(title=unicode(self.label))
                 self.separate_window = True

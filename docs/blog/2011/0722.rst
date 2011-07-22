@@ -1,6 +1,9 @@
 20110722
 ========
 
+Noch Einfügetexte
+-----------------
+
 Der englische Name :class:`lino.models.TextFieldTemplate`
 für die Einfügetexte gefällt mir übrigens nicht wirklich, 
 aber momentan fällt mir nichts Besseres ein.
@@ -41,3 +44,9 @@ Dann noch ein paar Verbesserungen:
   
 So. Checkin 20110722.  Proberelease auf Jana.
 
+Änderung bzgl. :attr:`lino.Lino.root_url`
+-----------------------------------------
+
+Da waren noch noch ein paar Stellen, wo :attr:`lino.Lino.root_url` 
+nicht beachtet wurde. Falls das Feld nicht leer ist, muss der Slash jetzt 
+am Anfang und nicht am Ende stehen.
