@@ -1393,7 +1393,7 @@ Lino.RichTextPanel = Ext.extend(Ext.Panel,{
     var t = this;
     var tinymce_options = {
         theme : "advanced",
-        content_css: '/media/lino/extjs/lino.css',
+        content_css: ROOT_URL + '/media/lino/extjs/lino.css',
         language: '$settings.LANGUAGE_CODE',
         //~ template_external_list_url : url,
         theme_advanced_toolbar_location : "top",
