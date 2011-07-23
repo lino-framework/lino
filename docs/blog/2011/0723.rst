@@ -1,10 +1,52 @@
 20110723
 ========
 
-Endspurt vor dem Release. Die Testsuite ist wieder aktualisiert worden, 
+(a) Endspurt vor dem Release
+----------------------------
+
+Die Testsuite ist wieder aktualisiert worden, 
 also ``python manage.py test`` meldet keine Fehler mehr.
 
 Beim Arbeiten mit :doc:`/dsbe/testlauf` einen weiteren Bug in 
 :term:`appy.pod` entdeckt und `gemeldet
 <https://bugs.launchpad.net/appy/+bug/815019>`_.
 
+(b) Übersetzungen
+-----------------
+
+Die deutschen Sprachdateien wurden aktualisiert.
+
+(c) Proberelease auf Jana
+-------------------------
+
+Also erstmal ein neues Dump vom Kunden nehmen. 
+Da muss jetzt manuell nur noch folgendes geändert werden:
+
+- In `create_contacts_companytype` den Parameter `contract_type_id` ignorieren:
+
+    def create_contacts_companytype(id, name, abbr, name_fr, name_en, abbr_fr, abbr_en, contract_type_id):
+        # return CompanyType(id=id,name=name,abbr=abbr,name_fr=name_fr,name_en=name_en,abbr_fr=abbr_fr,abbr_en=abbr_en,contract_type_id=contract_type_id)
+        return CompanyType(id=id,name=name,abbr=abbr,name_fr=name_fr,name_en=name_en,abbr_fr=abbr_fr,abbr_en=abbr_en)
+
+- At the end, uncomment the automagic migration::
+
+    from lino.apps.dsbe.migrate import install
+    install(globals())
+
+
+(d) Release beim Kunden
+-----------------------
+
+Tests auf Jana sind positiv. Heute ist Samstag, also beim Kunden arbeitet niemand. 
+Los gehts.
+Vorher noch notieren, welche Version momentan läuft::
+
+  $ cd /var/snapshots/lino 
+  $ hg sum
+  parent: 1668:0617446de660 tip
+   20110623
+  branch: default
+  commit: (clean)
+  update: (current)
+  
+  

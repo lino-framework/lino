@@ -242,7 +242,8 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
         
     def summary_row(self,ui,rr,**kw):
         s = ui.href_to(self)
-        s += " (" + ui.href_to(self.person) + "/" + ui.href_to(self.provider) + ")"
+        s += " (" + ui.href_to(self.person) + ")"
+        #~ s += " (" + ui.href_to(self.person) + "/" + ui.href_to(self.provider) + ")"
         return s
             
     def update_owned_task(self,task):
