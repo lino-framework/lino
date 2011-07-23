@@ -16,8 +16,7 @@ because it is rather for internal use.
 Short-term
 ----------
 
-
-#.  Leider kann man scheinbar weder in GroupWise noch in Zarafa 
+#.  Man kann scheinbar weder in GroupWise noch in Zarafa 
     externe ("remote") Kalender konfigurieren (so wie `Google und Sunbird
     <http://www.google.com/support/calendar/bin/answer.py?answer=99358#sunbird>`_)
     Lino muss also nicht selber Server sein, 
@@ -83,6 +82,8 @@ Short-term
 
 Medium-term
 -----------
+
+#.  Bug in :term:`appy.pod`: https://bugs.launchpad.net/appy/+bug/815019
 
 #.  Beim Entserialisieren mit `lino.utils.dpy` gehen alle modified-Daten 
     verloren (werden auf den Zeitpunkt des Wiedereinlesens gesetzt).

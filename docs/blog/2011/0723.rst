@@ -4,7 +4,7 @@
 (a) Endspurt vor dem Release
 ----------------------------
 
-Die Testsuite ist wieder aktualisiert worden, 
+Die Testsuite habe ich aktualisiert, 
 also ``python manage.py test`` meldet keine Fehler mehr.
 
 Beim Arbeiten mit :doc:`/dsbe/testlauf` einen weiteren Bug in 
@@ -22,7 +22,7 @@ Die deutschen Sprachdateien wurden aktualisiert.
 Also erstmal ein neues Dump vom Kunden nehmen. 
 Da muss jetzt manuell nur noch folgendes geändert werden:
 
-- In `create_contacts_companytype` den Parameter `contract_type_id` ignorieren:
+- In `create_contacts_companytype` den Parameter `contract_type_id` ignorieren::
 
     def create_contacts_companytype(id, name, abbr, name_fr, name_en, abbr_fr, abbr_en, contract_type_id):
         # return CompanyType(id=id,name=name,abbr=abbr,name_fr=name_fr,name_en=name_en,abbr_fr=abbr_fr,abbr_en=abbr_en,contract_type_id=contract_type_id)
@@ -49,4 +49,8 @@ Vorher noch notieren, welche Version momentan läuft::
   commit: (clean)
   update: (current)
   
-  
+Aber ein Sprung zurück ist nicht nötig: scheint alles zu klappen. 
+Also hiermit erkläre ich Lino :doc:`/releases/20110723`  
+als losgelassen (released). 
+Kann aber sein, dass morgen noch Nachträge kommen.
+
