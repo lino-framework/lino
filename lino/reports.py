@@ -86,7 +86,8 @@ def inject_field(model,name,field,doc):
 
 
 def fields_list(model,field_names):
-    return tuple([get_field(model,n) for n in field_names.split()])
+    #~ return tuple([get_field(model,n) for n in field_names.split()])
+    return [get_field(model,n).name for n in field_names.split()]
 
 
 def summary_row(obj,ui,rr,**kw):
@@ -819,6 +820,11 @@ class Report(actors.Actor): #,base.Handled):
     #~ use_layouts = True
     
     button_label = None
+    
+    active_fields = []
+    """A list of field names that are "active" (cause a save and 
+    refresh of a Detail or Insert form).
+    """
     
     #~ detail_layouts = []
     

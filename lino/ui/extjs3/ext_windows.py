@@ -148,6 +148,7 @@ class BaseDetailWrapper(MasterWrapper):
         d = MasterWrapper.get_config(self)
         url = self.ui.build_url('api',self.action.actor.app_label,self.action.actor._actor_name)
         d.update(content_type=self.rh.content_type)
+        d.update(active_fields=self.rh.report.active_fields) 
         d.update(url_data=url) 
         #~ 20101022 d.update(main_panel=self.main)
         d.update(name=self.action.name) # used by tinymce editor window

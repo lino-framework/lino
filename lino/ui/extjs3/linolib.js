@@ -1126,7 +1126,7 @@ Lino.do_when_visible = function(cmp,todo) {
       //~ var fn = function() {Lino.do_when_visible(cmp,todo)};
       //~ fn.defer(100);
       
-      Lino.do_when_visible.defer(100,this,[cmp,todo]);
+      Lino.do_when_visible.defer(50,this,[cmp,todo]);
       
     } else {
       //~ console.log(cmp.title,'-> after render');
@@ -1563,7 +1563,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
   },
   
   refresh : function(after) { 
-    console.log('20110701 Lino.FormPanel.refresh()',this);
+    //~ console.log('20110701 Lino.FormPanel.refresh()',this);
     if (this.current_record) {
         this.load_record_id(this.current_record.id,after);
     } else {
@@ -3017,10 +3017,28 @@ Lino.GridMasterWrapper.override({
 
 
 
-Lino.DetailWrapper = Ext.extend(Lino.WindowWrapper, {
-  //~ setup : function() {
+Lino.DetailWrapperBase = Ext.extend(Lino.WindowWrapper, {
+  setup : function() {
+    //~ setup active_fields();
     //~ Lino.DetailWrapperBase.prototype.setup.call(this);
-  //~ },
+    Lino.WindowWrapper.prototype.setup.call(this);
+    var this_ = this;
+    this.main_item.cascade(function(cmp){
+      var active_field = false;
+      for (i = 0; i < this_.config.active_fields.length; i++) {
+        if (cmp.name == this_.config.active_fields[i]) {
+            active_field = true; break;
+        }
+      };
+      if (active_field) {
+      //~ if (cmp instanceof Lino.GridPanel) {
+          cmp.on("change",function() {this_.save()});
+      }
+    });
+  }
+});
+
+Lino.DetailWrapper = Ext.extend(Lino.DetailWrapperBase, {
   get_permalink_url : function() {
       return ROOT_URL+'/api' + this.main_item.ls_url+'/'+this.get_current_record().id;
   },
@@ -3066,18 +3084,18 @@ Lino.DetailWrapper = Ext.extend(Lino.WindowWrapper, {
   
 });
 
-Lino.InsertWrapper = Ext.extend(Lino.WindowWrapper, {
+Lino.InsertWrapper = Ext.extend(Lino.DetailWrapperBase, {
   setup : function() {
     if (this.fileUpload) this.main_item.form.fileUpload = true;
     //~ this.config.base_params['fmt'] = 'insert';
-    Lino.WindowWrapper.prototype.setup.call(this);
+    Lino.DetailWrapperBase.prototype.setup.call(this);
     this.main_item.cascade(function(cmp){
       //~ console.log('20110613 cascade',cmp);
       if (cmp.disabled_in_insert_window) {
       //~ if (cmp instanceof Lino.GridPanel) {
           cmp.disable();
       }
-      });
+    });
   },
   get_permalink_url : function() {
       return ROOT_URL+'/api' + this.main_item.ls_url;

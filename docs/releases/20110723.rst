@@ -20,6 +20,12 @@ New features
   und die Vertragsart nicht mehr einzugeben, weil die pro Stelle 
   konfiguriert sind.
   
+  Das Feld "Person" eines Vertrags steht nun am Anfang, weil es als 
+  erstes ausgefüllt werden sollte. (Das ist wichtig, weil das Feld 
+  "Stelle" nun aktiv ist, d.h. automatisch ein Submit macht, was zu 
+  irritierenden Nebenwirkungen führen würde, wenn dann die Person 
+  noch nicht eingegeben wäre.)
+  
   Die bestehenden Verträge haben bei der Datenmigration eine Serie 
   von ca. 30 Stellen erzeugt, die nach dem Release manuell überprüft 
   werden müssen.
@@ -43,12 +49,12 @@ New features
   Die unerledigten Aufgaben sind es auch, die auf der Startseite angezeigt 
   werden.
   
-  Es gibt auch eine Tabelle von Aufgaben *pro Person*. 
+  Es gibt nun auch eine Tabelle von Aufgaben *pro Person*. 
   Dort stehen auch alle Aufgaben, die der Person indirekt durch 
   eine Notiz oder einen Vertrag zugewiesen wurden.
     
-  Die Termine werden wir bis auf weiteres noch nicht benutzen (sind noch 
-  nicht synchronisiert mit GroupWise).
+  Die Termine werden wir bis auf weiteres noch nicht benutzen 
+  (sind noch nicht synchronisiert mit GroupWise).
 
   Details siehe :doc:`/blog/2011/0625` und :doc:`/blog/2011/0627`.
   
@@ -85,6 +91,12 @@ New features
   Auswahl einbaue.
   
   Details siehe :doc:`/blog/2011/0722`
+  
+- **Active fields** :   
+  Die drei Felder :guilabel:`Stelle`, :guilabel:`Stellenanbieter` und 
+  :guilabel:`Vertreten durch` sind jetzt "aktiv": wenn man "Stelle" ausgefüllt 
+  hat, werden die anderen beiden Felder automatisch ausgefüllt und eventuell 
+  sogar deaktiviert.
 
 - Kleine Änderungen in der Übersichtstabelle auf der Startseite 
   (`persons_by_user`)
@@ -103,6 +115,17 @@ Bugs fixed
 ----------
 
 - :term:`watch_tim` ignorierte das Leeren eines Feldes (:doc:`/blog/2011/0711`)
+
+Known Bugs
+----------
+
+#.  Ein Layout-Bug im Detail der Verträge: die Reiter "Art.60-7" und "VSE" 
+    werden seit Version 1.2.0 nicht gleich beim ersten Mal korrekt aufgebaut. 
+    Workaround bis auf weiteres: 
+    man muss mehrmals die drei Reiter "durchklicken", bis 
+    die Felder korrekt angezeigt werden. Das Problem ist *nicht* durch die 
+    aktiven Felder gekommen.
+
 
 Upgrade instructions
 --------------------

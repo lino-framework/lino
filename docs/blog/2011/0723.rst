@@ -54,3 +54,52 @@ Also hiermit erkläre ich Lino :doc:`/releases/20110723`
 als losgelassen (released). 
 Kann aber sein, dass morgen noch Nachträge kommen.
 
+(e) Aktive Felder
+-----------------
+
+Das Detail-Fensters eines Vertrags funktionierte noch nicht, 
+da waren erstens ein paar kleine Bugs, und zweitens hätte 
+ich Mühe gehabt, den Endbenutzern zu erklären, dass Lino 
+leider noch keine "active fields" kennt. 
+Da war es weniger Arbeit, dieses lang ersehnte 
+Feature zu implementieren:
+
+#.  Server-side field-level validation.
+    Beim Start sucht Lino in den Modellen nach Methoden `on_FIELD_change`, 
+    deren Parameter ähnlich wie choosers analysiert werden.
+    "Active fields" : wenn die sich ändern, macht der Client ein GET für diesen Record, 
+    wobei er aber auch alle anderen geänderten und noch nicht gespeicherten Felder mit 
+    übergibt. Der Server macht darauf dann full_clean aber speichert nicht ab, sondern 
+    gibt das nur zurück. So kann ich serverseitige field-level validation machen. 
+    Auch für `disabled_fields` wäre das wichtig: je nach Vertragsart soll Feld Contract.refund_rate 
+    disabled sein (und das soll sich nicht erst nach dem submit ändern).
+    GET /api/contacts/Persons/17?fmt=json&query=foo
+
+Die Implementierung war allerdings noch etwas einfacher als ich mir das damals 
+gedacht hatte:
+
+Also man kann in einem Report nun 
+eine Liste von "aktiven" Feldern 
+:attr:`lino.reports.Report.active_fields` 
+angeben. 
+Ein aktives Feld bewirkt ein save (d.h. submit und refresh) 
+des Eingabefensters, wenn man es bearbeitet hat und 
+zum nächsten Feld springt.
+
+In der ersten Zeile haben wir die drei Felder 
+:guilabel:`Stelle`, 
+:guilabel:`Stellenanbieter` und 
+:guilabel:`Vertreten durch`.
+
+Das Feld "Stellenanbieter" eines Vertrags 
+ist bis auf weiteres noch da, obschon es 
+vielleicht raus kann, weil die Drittorganisation in der Stelle definiert wird. 
+Die Frage ist, ob es Stellen gibt, bei denen der 
+Stellenanbieter von Vertrag zu Vertrag ändern kann. Eine andere Frage 
+ist, ob interne Verträge ihr Feld Stellenanbieter *leer* haben sollen, 
+oder ob dort das ausstellende ÖSHZ stehen soll. Logisch wäre eigentlich, 
+dass das Feld leer ist. Lino hat das bisher jedoch nicht nachgeprüft 
+und in den bestehenden Daten habe die internen Verträge dieses Feld 
+dann auch prompt mal leer und mal das ÖSHZ drinstehen.
+
+

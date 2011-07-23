@@ -275,9 +275,15 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
     
     
     def disabled_fields(self,request):
+        df = []
+        if self.job_id:
+            if self.job.provider:
+                df.append('provider')
+            if self.job.contract_type:
+                df.append('type')
         if self.must_build:
-            return []
-        return settings.LINO.CONTRACT_PRINTABLE_FIELDS
+            return df
+        return df + settings.LINO.CONTRACT_PRINTABLE_FIELDS
         
     def __unicode__(self):
         #~ return u'%s # %s' % (self._meta.verbose_name,self.pk)
@@ -383,9 +389,23 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
                         self.duration = duration(self.applies_from)
                         self.applies_until = self.applies_from + datetime.timedelta(days=self.duration)
                     
-        if self.provider_id is None:
-            self.provider = self.job.provider
-          
+        if self.job_id is not None:
+            if self.job.provider is not None:
+                self.provider = self.job.provider
+            if self.job.contract_type is not None:
+                self.type = self.job.contract_type
+                
+        if self.provider is not None:
+            if self.contact is not None:
+                if self.contact.company != self.provider.company_ptr:
+                    self.contact = None
+                    
+        if self.contact is None:
+            if self.provider:
+                qs = self.provider.contact_set.all()
+                if qs.count() == 1:
+                    self.contact = qs[0]
+                    
         if self.hourly_rate is None:
             self.hourly_rate = self.job.hourly_rate
                 
@@ -418,6 +438,7 @@ class Contracts(reports.Report):
     model = Contract
     column_names = 'id job applies_from applies_until user type *'
     order_by = ['id']
+    active_fields = 'job provider contact'.split()
     
 class ContractsByPerson(Contracts):
     fk_name = 'person'

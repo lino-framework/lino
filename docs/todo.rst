@@ -16,6 +16,13 @@ because it is rather for internal use.
 Short-term
 ----------
 
+#.  Ein Layout-Bug im Detail der Verträge: die Reiter "Art.60-7" und "VSE" 
+    werden seit Version 1.2.0 nicht gleich beim ersten Mal korrekt aufgebaut. 
+    Workaround bis auf weiteres: 
+    man muss mehrmals die drei Reiter "durchklicken", bis 
+    die Felder korrekt angezeigt werden. Das Problem ist *nicht* durch die 
+    aktiven Felder gekommen.
+
 #.  Man kann scheinbar weder in GroupWise noch in Zarafa 
     externe ("remote") Kalender konfigurieren (so wie `Google und Sunbird
     <http://www.google.com/support/calendar/bin/answer.py?answer=99358#sunbird>`_)
@@ -275,17 +282,6 @@ Later
    
 #.  Liste der Personen sollte zunächst mal nur "meine" Personen anzeigen.
     Evtl. neue Menübefehle "Meine Personen" und "Meine Coachings".
-
-#.  Server-side field-level validation.
-    Beim Start sucht Lino in den Modellen nach Methoden `on_FIELD_change`, 
-    deren Parameter ähnlich wie choosers analysiert werden.
-    "Active fields" : wenn die sich ändern, macht der Client ein GET für diesen Record, 
-    wobei er aber auch alle anderen geänderten und noch nicht gespeicherten Felder mit 
-    übergibt. Der Server macht darauf dann full_clean aber speichert nicht ab, sondern 
-    gibt das nur zurück. So kann ich serverseitige field-level validation machen. 
-    Auch für `disabled_fields` wäre das wichtig: je nach Vertragsart soll Feld Contract.refund_rate 
-    disabled sein (und das soll sich nicht erst nach dem submit ändern).
-    GET /api/contacts/Persons/17?fmt=json&query=foo
 
 #.  HTML-Editoren haben noch Probleme (Layout und Performance) und sind deshalb 
     momentan deaktiviert. 

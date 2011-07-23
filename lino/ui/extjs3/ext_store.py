@@ -143,7 +143,8 @@ class DisabledFieldsStoreField(StoreField):
         pass
         
     def value_from_object(self,request,obj):
-        l = [ f.name for f in self.store.report.disabled_fields(request,obj)]
+        #~ l = [ f.name for f in self.store.report.disabled_fields(request,obj)]
+        l = self.store.report.disabled_fields(request,obj)
         if obj.pk is not None:
             l.append(self.store.pk.name)
         return l
