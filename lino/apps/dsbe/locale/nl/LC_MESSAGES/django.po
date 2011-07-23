@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-07-20 16:58+0100\n"
+"POT-Creation-Date: 2011-07-23 10:57+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -774,11 +774,15 @@ msgstr ""
 msgid "Upload Type for driving licence"
 msgstr ""
 
-#: .\models.py:1930
+#: .\models.py:1929
+msgid "The next automatic id for Person or Company"
+msgstr ""
+
+#: .\models.py:1937
 msgid "is Course Provider"
 msgstr ""
 
-#: .\settings.py:57 .\settings.py:106
+#: .\settings.py:57 .\settings.py:107
 msgid "~Contacts"
 msgstr ""
 
@@ -786,54 +790,54 @@ msgstr ""
 msgid "~My menu"
 msgstr ""
 
-#: .\settings.py:82
+#: .\settings.py:83
 msgid "~Courses"
 msgstr ""
 
-#: .\settings.py:92
+#: .\settings.py:93
 msgid "~Listings"
 msgstr ""
 
-#: .\settings.py:104
+#: .\settings.py:105
 msgid "~Configure"
 msgstr ""
 
-#: .\settings.py:107
+#: .\settings.py:108
 msgid "~Notes"
 msgstr ""
 
-#: .\settings.py:108
+#: .\settings.py:109
 msgid "~DSBE"
 msgstr ""
 
-#: .\settings.py:109
+#: .\settings.py:110
 msgid "~Jobs"
 msgstr ""
 
-#: .\settings.py:110
+#: .\settings.py:111
 msgid "C~V"
 msgstr ""
 
-#: .\settings.py:111
+#: .\settings.py:112
 msgid "~System"
 msgstr ""
 
-#: .\settings.py:128
+#: .\settings.py:129
 msgid "~Properties"
 msgstr ""
 
-#: .\settings.py:161
+#: .\settings.py:164
 msgid "E~xplorer"
 msgstr ""
 
-#: .\settings.py:181
+#: .\settings.py:185
 msgid "~Help"
 msgstr ""
 
-#: .\settings.py:182
+#: .\settings.py:186
 msgid "~User Manual"
 msgstr ""
 
-#: .\settings.py:186
+#: .\settings.py:190
 msgid "Home"
 msgstr ""

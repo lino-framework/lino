@@ -553,8 +553,9 @@ class JobRequest(models.Model):
         verbose_name=_("Remark"))
         
     def __unicode__(self):
-        return force_unicode(_('%s request by %s') % (self.job.name,
-            self.person.get_full_name(no_salutation=True)))
+        return force_unicode(_('%(job)s request by %(person)s') % dict(
+            job=self.job.name,
+            person=self.person.get_full_name(no_salutation=True)))
     @chooser()
     def contract_choices(cls,job,person):
         if person and job:

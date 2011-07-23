@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.apps.dsbe\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-07-20 16:57+0100\n"
+"POT-Creation-Date: 2011-07-23 10:57+0100\n"
 "PO-Revision-Date: 2011-06-15 22:00+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr <lino-users@gmail.com>\n"
@@ -775,12 +775,16 @@ msgstr "Type d'upload \"permis de travail\""
 msgid "Upload Type for driving licence"
 msgstr "Type d'upload \"permis de conduire\""
 
-#: .\models.py:1930
+#: .\models.py:1929
+msgid "The next automatic id for Person or Company"
+msgstr ""
+
+#: .\models.py:1937
 #, fuzzy
 msgid "is Course Provider"
 msgstr "dispenseur de cours"
 
-#: .\settings.py:57 .\settings.py:106
+#: .\settings.py:57 .\settings.py:107
 msgid "~Contacts"
 msgstr "~Contacts"
 
@@ -788,55 +792,55 @@ msgstr "~Contacts"
 msgid "~My menu"
 msgstr "~Mon menu"
 
-#: .\settings.py:82
+#: .\settings.py:83
 msgid "~Courses"
 msgstr "~Cours"
 
-#: .\settings.py:92
+#: .\settings.py:93
 msgid "~Listings"
 msgstr ""
 
-#: .\settings.py:104
+#: .\settings.py:105
 msgid "~Configure"
 msgstr "~Configurer"
 
-#: .\settings.py:107
+#: .\settings.py:108
 msgid "~Notes"
 msgstr "~Notes"
 
-#: .\settings.py:108
+#: .\settings.py:109
 msgid "~DSBE"
 msgstr "~ISP"
 
-#: .\settings.py:109
+#: .\settings.py:110
 msgid "~Jobs"
 msgstr ""
 
-#: .\settings.py:110
+#: .\settings.py:111
 msgid "C~V"
 msgstr ""
 
-#: .\settings.py:111
+#: .\settings.py:112
 msgid "~System"
 msgstr "~Système"
 
-#: .\settings.py:128
+#: .\settings.py:129
 msgid "~Properties"
 msgstr "~Propriétés"
 
-#: .\settings.py:161
+#: .\settings.py:164
 msgid "E~xplorer"
 msgstr "E~xplorateur"
 
-#: .\settings.py:181
+#: .\settings.py:185
 msgid "~Help"
 msgstr "~Aide"
 
-#: .\settings.py:182
+#: .\settings.py:186
 msgid "~User Manual"
 msgstr "~Manuel de l'utilisateur"
 
-#: .\settings.py:186
+#: .\settings.py:190
 msgid "Home"
 msgstr "~Home"
 
