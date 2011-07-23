@@ -40,7 +40,7 @@ def test01(self):
     """
     luc = Person.objects.get(first_name__exact='Luc',last_name__exact='Saffre')
     self.assertEquals(luc.address(), u'''\
-Mr. Luc SAFFRE
+Herrn Luc SAFFRE
 Uus 1
 Vana-Vigala küla
 78003 Vigala

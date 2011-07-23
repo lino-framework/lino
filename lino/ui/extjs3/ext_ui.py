@@ -1072,6 +1072,8 @@ tinymce.init({
         rpt = actors.get_actor2(app_label,actor)
         if rpt is None:
             model = models.get_model(app_label,actor,False)
+            if model is None:
+                raise Http404("No actor named '%s.%s'" % (app_label,actor))
             rpt = model._lino_model_report
         ah = rpt.get_handle(self)
         #~ if not ah.report.can_view.passes(request.user):

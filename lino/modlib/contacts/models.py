@@ -568,12 +568,3 @@ The Company to be used as sender in documents. Needs more documentation.
 """
 SiteConfig.add_to_class('site_company',field)
 
-field = models.IntegerField(
-        default=1,
-        verbose_name=_("The next automatic id for Person or Company"),
-        )
-field.__doc__ = """
-The next automatic id for Person or Company. Needs more documentation.
-"""
-SiteConfig.add_to_class('next_partner_id',field)
-        

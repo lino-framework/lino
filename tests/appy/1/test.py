@@ -13,7 +13,7 @@ from appy import version
 APPY_PARAMS = dict()
 
 #~ ACTIVE_TESTS = None # run all tests
-ACTIVE_TESTS = (12,) # run only specified tests
+ACTIVE_TESTS = (13,) # run only specified tests
 
 #~ APPY_PARAMS.update(ooPort=8100)
 #~ APPY_PARAMS.update(pythonWithUnoPath=r'C:\PROGRA~1\LIBREO~1\program\python.exe')
@@ -228,3 +228,26 @@ s = '<tr>%s</tr>' % s
 html += '<table border="1" width="100%%">%s</table>' % s
 html = '<div class="htmlText">%s</div>' % html
 run_test(12,"TABLE 3",HTML=html)
+
+
+#~ # 13 : 
+
+html = """
+<p>Appy.pod fails to render paragraphs 
+inside a <strong>blockquote</strong> tag:</p>
+<blockquote>
+<p>This text is not rendered.</p>
+</blockquote>
+
+<p>Same for DIVs inside a <strong>blockquote</strong> tag:</p>
+<blockquote>
+<div>This text is not rendered.</div>
+</blockquote>
+
+<p>Only flowing text passes :</p>
+<blockquote>
+This text is rendered.
+</blockquote>
+"""
+run_test(13,"20110723",HTML=html)
+

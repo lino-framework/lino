@@ -195,6 +195,9 @@ As long as nobody protests, I'll save some time by writing in German.
   :doc:`18 <0718>`
   :doc:`19 <0719>`
   :doc:`20 <0720>`
+  :doc:`21 <0721>`
+  :doc:`22 <0722>`
+  :doc:`23 <0723>`
   |br| 
   |br|  	
 

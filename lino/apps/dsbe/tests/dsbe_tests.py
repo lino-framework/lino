@@ -95,9 +95,8 @@ def dsbe_courseprovider_objects():
 def objects():
     for o in dsbe_courseprovider_objects(): yield o
 
-# uncomment for automagic migration:
-# from lino.apps.dsbe.migrate import install
-# install(globals())
+from lino.apps.dsbe.migrate import install
+install(globals())
 """)
     
     
@@ -162,6 +161,7 @@ def test03(self):
     jp = JobProvider(name="Test")
     jp.save()
     person = Person(first_name="Max",last_name="Mustermann")
+    person.full_clean()
     person.save()
     t = ContractType(id=1,build_method='appyodt',template="",name=u'Art.60\xa77')
     t.save()

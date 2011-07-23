@@ -42,7 +42,7 @@ Dann noch ein paar Verbesserungen:
   Benutzernamen kennt an dieser Stelle nur der Server.
   
   
-So. Checkin 20110722.  Proberelease auf Jana.
+Checkin 20110722.  Proberelease auf Jana.
 
 Änderung bzgl. :attr:`lino.Lino.root_url`
 -----------------------------------------
@@ -50,3 +50,6 @@ So. Checkin 20110722.  Proberelease auf Jana.
 Da waren noch noch ein paar Stellen, wo :attr:`lino.Lino.root_url` 
 nicht beachtet wurde. Falls das Feld nicht leer ist, muss der Slash jetzt 
 am Anfang und nicht am Ende stehen.
+
+Checkin 20110722b.
+

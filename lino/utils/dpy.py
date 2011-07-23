@@ -23,7 +23,7 @@ import imp
 from decimal import Decimal
 
 
-#~ from django.conf import settings
+from django.conf import settings
 from django.db import models
 from django.db.models.fields import NOT_PROVIDED
 from django.core.serializers import base

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2008-2010 Luc Saffre
+## Copyright 2011 Luc Saffre
 ## This file is part of the Lino-DSBE project.
 ## Lino-DSBE is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -13,15 +13,23 @@
 ## along with Lino-DSBE; if not, see <http://www.gnu.org/licenses/>.
 
 
-from django.utils.translation import ugettext_lazy as _
-
+#~ from django.contrib.contenttypes.models import ContentType
 from lino.utils.instantiator import Instantiator, i2d
 from lino.tools import resolve_model
+from django.utils.translation import ugettext_lazy as _
 
+
+from django.db import models
+from lino.utils.babel import babel_values, babelitem
+
+TextFieldTemplate = resolve_model('lino.TextFieldTemplate')
+
+#~ from lino.modlib.properties import models as properties 
 
 def objects():
   
-    noteType = Instantiator('notes.NoteType',"name").build
-    yield noteType((u"Default"),build_method='appyodt',template='Default.odt')
-    #~ yield noteType((u"Test (rtf)"),build_method='rtf',template='test.rtf')
-   
+    tft = Instantiator('lino.TextFieldTemplate',"name description text").build
+    
+    yield tft("hello","Inserts 'Hello, world!'","""<div>Hello, world!</div>""")
+    yield tft("mfg","",'<p>Mit freundlichen Gr&uuml;&szlig;en<br><p class="data_field">root</p>')
+    

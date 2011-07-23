@@ -55,7 +55,7 @@ def test01(self):
     self.assertEquals(Person.objects.count(), 73)
     
     p = Person.objects.get(pk=15)
-    self.assertEquals(unicode(p), "Arens Annette (15)")
+    self.assertEquals(unicode(p), "Annette ARENS (15)")
     
     
         
@@ -82,7 +82,7 @@ def test02(self):
     #~ for k in 'count rows gc_choices title'.split():
         #~ self.assertTrue(result.has_key(k))
     #~ if len(result['rows']) != 3:
-    self.assertEqual(result['title'],"Properties of Arens Annette (15)")
+    self.assertEqual(result['title'],"Properties of Annette ARENS (15)")
     #~ print '\n'.join([unicode(x) for x in result['rows']])
     self.assertEqual(len(result['rows']),3)
     row = result['rows'][0]
@@ -305,7 +305,7 @@ def test04(self):
       }
     """
     for value in ('01.03.2011','15.03.2011'):
-        url ='/api/dsbe/Contracts/1'
+        url ='/api/jobs/Contracts/1'
         data =  'applies_from='+value+'&applies_until=17.05.2009&company=R-Cycle%20'
         'Sperrgutsortierzentrum&companyHidden=83&contact=Arens%20Andreas%20(1'
         '4)%20(Gesch%C3%A4ftsf%C3%BChrer)&contactHidden=2&date_decided=&date_e'
@@ -320,8 +320,9 @@ def test04(self):
         result = self.check_json_result(response,'message success')
         self.assertEqual(result['success'],True)
         
-        url = "/api/dsbe/Contracts/1?_dc=1298942567996"
+        url = "/api/jobs/Contracts/1?fmt=json"
         response = self.client.get(url)
+        #~ print 20110723, response
         result = self.check_json_result(response,'navinfo disable_delete data id title')
         self.assertEqual(result['data']['applies_from'],value)
 
@@ -337,6 +338,7 @@ def test05(self):
     result = self.check_json_result(response,'message success')
     self.assertEqual(result['success'],True)
     
+    url ='/api/countries/Countries/BE?fmt=json'
     response = self.client.get(url)
     result = self.check_json_result(response,'navinfo disable_delete data id title')
     self.assertEqual(result['data']['name'],'Belgienx')
@@ -351,7 +353,7 @@ def test06(self):
     from lino.apps.dsbe.models import Person
     from lino.apps.dsbe.models import Property, PersonProperty
     annette = Person.objects.get(pk=15)
-    self.assertEquals(unicode(annette), "Arens Annette (15)")
+    self.assertEquals(unicode(annette), "Annette ARENS (15)")
     
     babel.set_language('en')
     p = Property.objects.get(name_en="Obedient")
@@ -385,8 +387,8 @@ test07.skip = "Doesn't work because simplejson.loads() doesn't parse functions"
 
 def test08(self):
     """
-    In `MyPersons` wurden seit :doc:`/blog/2011/0408` zu viele Leute angezeigt: auch die, 
-    die weder Anfangs- noch Enddatum haben. 
+    In `MyPersons` wurden seit :doc:`/blog/2011/0408` zu viele Leute angezeigt: 
+    auch die, die weder Anfangs- noch Enddatum haben. 
     Damit jemand als begleitet gilt, muss mindestens eines der 
     beiden Daten ausgefüllt sein.
     
@@ -397,10 +399,18 @@ def test08(self):
     u = User.objects.get(username='root')
     #~ qs = Person.objects.order_by('last_name','first_name')
     qs = Person.objects.order_by('id')
-    qs = only_coached_persons(only_my_persons(qs,u),i2d(20100901))
+    #~ print "Person.object.all()", qs
+    qs = only_my_persons(qs,u)
+    #~ print "only_my_persons()", qs
+    self.assertEqual(qs.count(),4)
+    qs = only_coached_persons(qs,i2d(20100901))
+    #~ print "only_coached_persons(20100901)", qs
+    self.assertEqual(qs.count(),3)
     #~ qs = MyPersons.request(user=)
     l = [unicode(p) for p in qs]
-    self.assertEqual(l,[u"Bastiaensen Laurent (18)",u'Ärgerlich Erna (68)',u"Eierschal Emil (74)"])
+    
+    self.assertEqual(l,[u"Laurent BASTIAENSEN (18)",
+        u'Erna ÄRGERLICH (68)',u"Emil EIERSCHAL (74)"])
     
     
 def test09(self):

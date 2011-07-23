@@ -109,6 +109,7 @@ upgrade, designed to be executed by a Lino expert.
 For more general instructions on how to upgrade an existing 
 Lino site, see :doc:`/admin/upgrade`.
 
+- Database migration
 
-- Database migration: 
+- Install TinyMCE language packs if necessary
 

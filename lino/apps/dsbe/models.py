@@ -373,7 +373,7 @@ class Person(Partner,contacts.Person):
     group = models.ForeignKey("dsbe.PersonGroup",blank=True,null=True,
         verbose_name=_("Integration phase"))
     #~ is_dsbe = models.BooleanField(verbose_name=_("is coached"),default=False)
-    "Indicates whether this Person is coached."
+    #~ "Indicates whether this Person is coached."
     
     coached_from = models.DateField(
         blank=True,null=True,
@@ -1922,8 +1922,15 @@ reports.inject_field(SiteConfig,
         related_name='driving_licence_sites'),
     """The UploadType for `Person.driving_licence`.
     """)
-
-
+    
+reports.inject_field(SiteConfig,
+    'next_partner_id',
+    models.IntegerField(default=1,
+        verbose_name=_("The next automatic id for Person or Company")
+    ),"""The next automatic id for Person or Company. 
+    Deserves more documentation.
+    """)
+    
 
 reports.inject_field(Company,
     'is_courseprovider',

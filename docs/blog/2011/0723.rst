@@ -1,0 +1,10 @@
+20110723
+========
+
+Endspurt vor dem Release. Die Testsuite ist wieder aktualisiert worden, 
+also ``python manage.py test`` meldet keine Fehler mehr.
+
+Beim Arbeiten mit :doc:`/dsbe/testlauf` einen weiteren Bug in 
+:term:`appy.pod` entdeckt und `gemeldet
+<https://bugs.launchpad.net/appy/+bug/815019>`_.
+
