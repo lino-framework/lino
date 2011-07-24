@@ -1,8 +1,8 @@
 Version 1.2.0 (23.07.2011)
 ==========================
 
-Revision `92c0072c9b69
-<http://code.google.com/p/lino/source/detail?r=92c0072c9b69394404af3017ba2c41f57e7dd25f>`_
+Revision `449be419f93f
+<http://code.google.com/p/lino/source/detail?r=449be419f93f91521f9b3f728582a4e92d4ff1e9>`_
 
 New features
 ------------
@@ -10,7 +10,7 @@ New features
 - **Listing "Situation Verträge"**. 
   Für dieses Listing waren einige Erweiterungen der Datenbankstruktur nötig.
 
-  Es gibt jetzt eine konfigurierbare Liste von **Stellen**. 
+  Es gibt jetzt eine konfigurierbare Liste von **Stellen** (:menuselection:`Konfigurierung --> Stellen --> Stellen`)
   Eine "Stelle" ist ein Arbeitsplatz bei einem bestimmten Stellenanbieter, 
   für den das ÖSHZ Kandidaten sucht und Verträge erstellt. 
   Stellen sind nicht nur die 
@@ -20,8 +20,8 @@ New features
   und die Vertragsart nicht mehr einzugeben, weil die pro Stelle 
   konfiguriert sind.
   
-  Das Feld "Person" eines Vertrags steht nun am Anfang, weil es als 
-  erstes ausgefüllt werden sollte. (Das ist wichtig, weil das Feld 
+  Das Feld "Person" eines Vertrags steht nun am Anfang des Eingabeformulars, 
+  weil es vor der Stelle ausgefüllt werden sollte. (Das ist wichtig, weil das Feld 
   "Stelle" nun aktiv ist, d.h. automatisch ein Submit macht, was zu 
   irritierenden Nebenwirkungen führen würde, wenn dann die Person 
   noch nicht eingegeben wäre.)
@@ -33,6 +33,8 @@ New features
   Man kann von einer Person aus "Vertragsanfragen" erstellen. 
   Eine Vertragsanfrage ist, wenn eine bestimmte Person als Kandidat 
   für eine bestimmte Stelle in Frage kommt.
+  
+  Die Verträge einer Person stehen jetzt nicht mehr im Reiter "Dokumente", sondern zusammen mit den Vertragsanfragen in einem neuen Reiter "Stellen".
   
   Details siehe :doc:`/blog/2011/0716`
     
@@ -58,9 +60,9 @@ New features
 
   Details siehe :doc:`/blog/2011/0625` und :doc:`/blog/2011/0627`.
   
-- **Standardfilter** : Inaktive Personen nicht anzeigen in 
-  :menuselection:`Kontakte --> Personen` und Auswahllisten.
-  Um eine inaktive Person aktiv zu machen: entweder einen 
+- **Standardfilter** : Inaktive Personen werden jetzt nicht mehr angezeigt 
+  in Auswahllisten und der Gesamtliste :menuselection:`Kontakte --> Personen`.
+  Um eine inaktive Person wieder aktiv zu machen: entweder einen 
   bestehenden Record finden, der auf die Person verweist und dort 
   deren Detail aufrufen, oder :menuselection:`Konfigurierung --> 
   Explorer --> Personen (alle)`.

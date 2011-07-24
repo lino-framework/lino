@@ -1323,8 +1323,8 @@ Lino.HtmlBoxPanel = Ext.extend(Ext.Panel,{
     //~ if (actions) config.bbar = actions.bbar;
     //~ Lino.FieldBoxMixin.superclass.constructor.call(this, config);
   //~ },
-  disable : function() { var tb = this.getBottomToolbar(); if(tb) tb.disable()},
-  enable : function() { var tb = this.getBottomToolbar(); if(tb) tb.enable()},
+  //~ disable : function() { var tb = this.getBottomToolbar(); if(tb) tb.disable()},
+  //~ enable : function() { var tb = this.getBottomToolbar(); if(tb) tb.enable()},
   onRender : function(ct, position){
     Lino.HtmlBoxPanel.superclass.onRender.call(this, ct, position);
     this.ww.main_item.on('enable',this.enable,this);
@@ -1363,6 +1363,7 @@ Lino.HtmlBoxPanel = Ext.extend(Ext.Panel,{
     //~ console.log('HtmlBox.refresh()',this.title,record,record.title);
     var box = this.items.get(0);
     var todo = function() {
+      if (this.disabled) return;
       //~ this.set_base_params(this.ww.get_base_params());
       this.set_base_params(this.ww.get_master_params());
       var el = box.getEl();
@@ -2411,15 +2412,19 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     return value;
   },
   on_master_changed : function() {
+    //~ if (! this.enabled) return;
     //~ cmp = this;
     //~ console.log('Lino.GridPanel.on_master_changed()',this.title);
     var todo = function() {
-      //~ var src = caller.config.url_data + "/" + record.id + ".jpg"
-      var p = this.ww.get_master_params();
-      //~ for (k in p) this.getStore().setBaseParam(k,p[k]);
-      //~ console.log('Lino.GridPanel.on_master_changed()',this.title,p);
-      this.set_base_params(p);
-      this.getStore().load(); 
+      if (this.disabled) return;
+      //~ if (this.enabled) {
+          //~ var src = caller.config.url_data + "/" + record.id + ".jpg"
+          var p = this.ww.get_master_params();
+          //~ for (k in p) this.getStore().setBaseParam(k,p[k]);
+          //~ console.log('Lino.GridPanel.on_master_changed()',this.title,p);
+          this.set_base_params(p);
+          this.getStore().load(); 
+      //~ }
     };
     Lino.do_when_visible(this,todo.createDelegate(this));
   }

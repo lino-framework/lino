@@ -57,7 +57,12 @@ Kann aber sein, dass morgen noch Nachträge kommen.
 (e) Aktive Felder
 -----------------
 
-Das Detail-Fensters eines Vertrags funktionierte noch nicht, 
+Das Detail-Fensters eines Vertrags 
+(Zusammenarbeit der drei Felder 
+:guilabel:`Stelle`, 
+:guilabel:`Stellenanbieter` und 
+:guilabel:`Vertreten durch`)
+funktionierte noch nicht: 
 da waren erstens ein paar kleine Bugs, und zweitens hätte 
 ich Mühe gehabt, den Endbenutzern zu erklären, dass Lino 
 leider noch keine "active fields" kennt. 
@@ -75,8 +80,10 @@ Feature zu implementieren:
     disabled sein (und das soll sich nicht erst nach dem submit ändern).
     GET /api/contacts/Persons/17?fmt=json&query=foo
 
-Die Implementierung war allerdings noch etwas einfacher als ich mir das damals 
-gedacht hatte:
+Die Implementierung war allerdings noch etwas einfacher 
+als ich mir das damals gedacht hatte: statt eines neuen 
+"non-storing PUT" macht er einfach ein submit des kompletten 
+Formulars.
 
 Also man kann in einem Report nun 
 eine Liste von "aktiven" Feldern 
@@ -86,10 +93,11 @@ Ein aktives Feld bewirkt ein save (d.h. submit und refresh)
 des Eingabefensters, wenn man es bearbeitet hat und 
 zum nächsten Feld springt.
 
-In der ersten Zeile haben wir die drei Felder 
-:guilabel:`Stelle`, 
-:guilabel:`Stellenanbieter` und 
-:guilabel:`Vertreten durch`.
+Damit individuelles Spielen mit den disabled_fields effizienter ist, 
+enthält :attr:`lino.reports.Report.fields_list` jetzt keine Feld-Instanzen mehr, 
+sondern nur noch die Feldnamen. (:func:`lino.reports.fields_list`
+und
+:func:`lino.ui.extjs3.ext_store.DisabledFieldsStoreField`)
 
 Das Feld "Stellenanbieter" eines Vertrags 
 ist bis auf weiteres noch da, obschon es 
@@ -102,4 +110,13 @@ dass das Feld leer ist. Lino hat das bisher jedoch nicht nachgeprüft
 und in den bestehenden Daten habe die internen Verträge dieses Feld 
 dann auch prompt mal leer und mal das ÖSHZ drinstehen.
 
+(f) Slave-Grids und HtmlFields im Insert-Fenster
+------------------------------------------------
+
+Das folgende Ticket ging auch recht schnell und kommt also noch in die 
+neue Version mit rein:
+
+#.  Slave-Grids und HtmlFields im Insert-Fenster sind jetzt zwar 
+    disabled, aber sie machen trotzdem noch ein load "ihrer" Daten.
+    Das ist manchmal irritierend.
 

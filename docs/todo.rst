@@ -22,7 +22,11 @@ Short-term
     man muss mehrmals die drei Reiter "durchklicken", bis 
     die Felder korrekt angezeigt werden. Das Problem ist *nicht* durch die 
     aktiven Felder gekommen.
-
+    Ist sehr ähnlich wie :doc:`/tickets/1`.
+    
+#.  Jetzt wo es aktive Felder gibt, sollte das Formular während des submit 
+    deaktiviert werden, immerhin dauert das manchmal eine Sekunde.
+    
 #.  Man kann scheinbar weder in GroupWise noch in Zarafa 
     externe ("remote") Kalender konfigurieren (so wie `Google und Sunbird
     <http://www.google.com/support/calendar/bin/answer.py?answer=99358#sunbird>`_)
@@ -38,9 +42,6 @@ Short-term
     http://www.openldap.org/
     nötig.
 
-#.  Slave-Grids im Insert-Fenster sind jetzt zwar disabled, aber sie 
-    machen trotzdem noch ein load "ihrer" Daten. 
-    
 #.  Listings : Listing.odt muss noch gemacht werden.
 
 #.  Ausdruck Verträge: jetzt wo die mehrzeiligen Textfelder formatierbar 
