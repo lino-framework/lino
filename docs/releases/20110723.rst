@@ -1,8 +1,8 @@
 Version 1.2.0 (23.07.2011)
 ==========================
 
-Revision `449be419f93f
-<http://code.google.com/p/lino/source/detail?r=449be419f93f91521f9b3f728582a4e92d4ff1e9>`_
+Revision `1d5dfd518567
+<http://code.google.com/p/lino/source/detail?r=1d5dfd51856738579961de7ea07b1a4aa8c5cb67>`_
 
 New features
 ------------
@@ -98,7 +98,8 @@ New features
   Die drei Felder :guilabel:`Stelle`, :guilabel:`Stellenanbieter` und 
   :guilabel:`Vertreten durch` sind jetzt "aktiv": wenn man "Stelle" ausgefüllt 
   hat, werden die anderen beiden Felder automatisch ausgefüllt und eventuell 
-  sogar deaktiviert.
+  sogar deaktiviert. Das funktioniert, indem Lino sozusagen "automatisch auf 
+  Speichern klickt", sobald man ein aktives Feld verlässt.
 
 - Kleine Änderungen in der Übersichtstabelle auf der Startseite 
   (`persons_by_user`)

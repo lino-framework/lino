@@ -1351,6 +1351,7 @@ class DetailMainPanel(Panel,MainPanel):
         if isinstance(e,HtmlBoxElement): return e
         if settings.LINO.use_tinymce:
             if isinstance(e,TextFieldElement) and e.format == 'html': 
+                # no need to wrap them since they are Panels
                 return e
         #~ if not e.value.has_key('fieldLabel'): return e
         #~ if not e.label: return e

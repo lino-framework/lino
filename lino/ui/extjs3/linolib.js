@@ -437,11 +437,14 @@ Lino.CheckColumn = Ext.extend(Ext.grid.Column, {
 Ext.grid.Column.types.checkcolumn = Lino.CheckColumn;
 
 
-/* 20110725 : Lino.on_tab_activate is probably useless. 
+/* 20110725 : 
+Lino.on_tab_activate is necessary 
+in contacts.Person.2.dtl 
+(but don't ask me why...)
 */
 Lino.on_tab_activate = function(item) {
   //~ console.log('activate',item); 
-  //~ if (item.rendered) item.doLayout();
+  if (item.rendered) item.doLayout();
 }
 
 Lino.TimeField = Ext.extend(Ext.form.TimeField,{
@@ -1128,6 +1131,7 @@ Lino.do_when_visible = function(cmp,todo) {
       //~ fn.defer(100);
       
       Lino.do_when_visible.defer(50,this,[cmp,todo]);
+      //~ Lino.do_when_visible.defer(100,this,[cmp,todo]);
       
     } else {
       //~ console.log(cmp.title,'-> after render');
