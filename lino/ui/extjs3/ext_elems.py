@@ -476,9 +476,11 @@ class TextFieldElement(FieldElement):
     #collapsible = True
     separate_window = False
     active_child = False
+    format = 'plain'
     def __init__(self,lh,field,**kw):
-        fmt = getattr(field,'textfield_format',None) or settings.LINO.textfield_format
-        if fmt == 'html':
+        self.format = getattr(field,'textfield_format',None) \
+            or settings.LINO.textfield_format
+        if self.format == 'html':
             if settings.LINO.use_tinymce:
                 self.value_template = "new Lino.RichTextPanel(ww,%s)"
                 self.active_child = True
@@ -504,7 +506,7 @@ class TextFieldElement(FieldElement):
                 self.value_template = "new Ext.form.HtmlEditor(%s)"
                 if settings.LINO.use_vinylfox:
                     kw.update(plugins=js_code('Lino.VinylFoxPlugins()'))
-        elif fmt == 'plain':
+        elif self.format == 'plain':
             kw.update(
               growMax=2000,
               #~ defaultAutoCreate = dict(
@@ -515,7 +517,7 @@ class TextFieldElement(FieldElement):
         else:
             raise Exception(
                 "Invalid textfield format %r for field %s.%s" % (
-                fmt,field.model.__name__,field.name))
+                self.format,field.model.__name__,field.name))
         FieldElement.__init__(self,lh,field,**kw)
         
 class CharFieldElement(FieldElement):
@@ -1347,6 +1349,9 @@ class DetailMainPanel(Panel,MainPanel):
     def field2elem(cls,lh,field,**kw):
         e = MainPanel.field2elem(lh,field,**kw)
         if isinstance(e,HtmlBoxElement): return e
+        if settings.LINO.use_tinymce:
+            if isinstance(e,TextFieldElement) and e.format == 'html': 
+                return e
         #~ if not e.value.has_key('fieldLabel'): return e
         #~ if not e.label: return e
         #~ po = dict(layout='form')

@@ -437,10 +437,11 @@ Lino.CheckColumn = Ext.extend(Ext.grid.Column, {
 Ext.grid.Column.types.checkcolumn = Lino.CheckColumn;
 
 
-
+/* 20110725 : Lino.on_tab_activate is probably useless. 
+*/
 Lino.on_tab_activate = function(item) {
   //~ console.log('activate',item); 
-  if (item.rendered) item.doLayout();
+  //~ if (item.rendered) item.doLayout();
 }
 
 Lino.TimeField = Ext.extend(Ext.form.TimeField,{
@@ -1458,7 +1459,7 @@ Lino.RichTextPanel = Ext.extend(Ext.Panel,{
       var url = ROOT_URL + '/templates' + this.ww.main_item.ls_url + "/" 
           + String(record.id) + "/" + this.editor.name;
       //~ console.log('RichTextPanel.refresh()',url);
-      this.editor.ed.settings.template_external_list_url = url;
+      if (this.editor.ed) this.editor.ed.settings.template_external_list_url = url;
       this.set_base_params(this.ww.get_master_params());
       var v = record ? this.format_data(record.data[this.editor.name]) : ''
       this.editor.setValue(v);

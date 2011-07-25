@@ -1231,7 +1231,10 @@ tinymce.init({
         #~ for app_label in site.
         fn = os.path.join(settings.MEDIA_ROOT,*self.lino_js_parts()) 
         #~ fn = r'c:\temp\dsbe.js'
-        
+        if False:
+            # useful when debugging directly on the generated lino.js
+            logger.info("NOT generating %s ...", fn)
+            return 
         if not os.path.isdir(settings.MEDIA_ROOT):
             logger.warning("Directory '%s' (settings.MEDIA_ROOT) does not exist.", settings.MEDIA_ROOT)
             return
