@@ -1,0 +1,56 @@
+20110725
+========
+
+(a) Layout-Problem Verträge gelöst
+----------------------------------
+
+Zwei Stunden Fehlerjagd für folgendes Problem:
+
+#.  Ein Layout-Bug im Detail der Verträge: die Reiter "Art.60-7" und "VSE" 
+    werden seit Version 1.2.0 nicht gleich beim ersten Mal korrekt aufgebaut. 
+    Workaround bis auf weiteres: 
+    man muss mehrmals die drei Reiter "durchklicken", bis 
+    die Felder korrekt angezeigt werden. Das Problem ist *nicht* durch die 
+    aktiven Felder gekommen.
+    Ist sehr ähnlich wie :doc:`/tickets/1`.
+    
+Es hatte überhaupt nichts mit Ticket #1 zu tun, sondern in meiner 
+Lino.RichTextPanel war noch ein Bug: `refresh()` erzeugte einen TypeError 
+wenn sie auf einer noch nicht gerenderten Komponente aufgerufen wurde. 
+Jetzt macht sie deshalb ``if (this.editor.ed)``. Das war alles! 
+Wenn ich als erstes in die Console geschaut hätte statt ins Ticket #1, 
+hätte ich eine bis 3 Stunden Zeit gespart...
+
+Checkin 20110725a
+
+(b) ``self.company`` in Dokumentvorlagen für Verträge
+-----------------------------------------------------
+
+Der Drittpartner eines Vertrags (:class:`lino.modlib.jobs.models.Contract` 
+ist ja jetzt nicht mehr `company`, sondern `provider`. 
+In den Dokumentvorlagen steht aber überall ``self.company``.
+Erste schnelle Lösung::
+
+    def get_company(self):
+        return self.provider
+    company = property(get_company)
+
+Checkin 20110725b.
+
+Wenn ich einen Trick fände, in Django den Datentyp eines aus einer Basisklasse 
+geerbten Feldes zu verändern, dann könnte ich Contract wieder zu 
+einem PartnerDocument machen. Ungefähr so::
+
+  class PartnerDocument(models.Model):
+    company = models.ForeignKey('contacts.Company',...)
+    person = models.ForeignKey('contacts.Person',...)
+    ...
+
+  class Contract(PartnerDocument,...):
+    @classmethod
+    def setup_model(cls):
+      cls.company = models.ForeignKey('jobs.JobProvider',...)
+      
+Aber so eine Methode `setup_model` (die irgendwo in 
+`django.db.models.base.ModelBase` aufgerufen werden müsste) 
+gibt es nicht, und die wäre auch nicht einfach zu implementieren. 
