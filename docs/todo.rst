@@ -16,14 +16,6 @@ because it is rather for internal use.
 Short-term
 ----------
 
-#.  Ein Layout-Bug im Detail der Verträge: die Reiter "Art.60-7" und "VSE" 
-    werden seit Version 1.2.0 nicht gleich beim ersten Mal korrekt aufgebaut. 
-    Workaround bis auf weiteres: 
-    man muss mehrmals die drei Reiter "durchklicken", bis 
-    die Felder korrekt angezeigt werden. Das Problem ist *nicht* durch die 
-    aktiven Felder gekommen.
-    Ist sehr ähnlich wie :doc:`/tickets/1`.
-    
 #.  Jetzt wo es aktive Felder gibt, sollte das Formular während des submit 
     deaktiviert werden, immerhin dauert das manchmal eine Sekunde.
     

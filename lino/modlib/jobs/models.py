@@ -231,6 +231,10 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
         if provider is not None:
             return provider.contact_set.all()
         return []
+        
+    def get_company(self):
+        return self.provider
+    company = property(get_company)
 
     def get_recipient(self):
         if self.contact:
@@ -249,6 +253,9 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
     def update_owned_task(self,task):
         task.person=self.person
         task.company=self.provider
+        
+    def prepare_printable(self):
+        self.company = self.provider
     
     
     @chooser(simple_values=True)
