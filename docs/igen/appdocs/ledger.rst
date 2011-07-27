@@ -17,7 +17,7 @@ Defined in :srcref:`/lino/modlib/ledger/models.py`
 .. index::
    pair: model; Account
 
-.. _std.ledger.Account:
+.. _lino.ledger.Account:
 
 -----------------
 Model **Account**
@@ -38,10 +38,15 @@ name  CharField name
     
 Defined in :srcref:`/lino/modlib/ledger/models.py`
 
+Referenced from
+`lino.ledger.Booking.account`_, `lino.lino.SiteConfig.sales_base_account`_, `lino.lino.SiteConfig.sales_vat_account`_, `lino.journals.Journal.account`_, `lino.finan.DocItem.account`_
+
+
+
 .. index::
    single: field;id
    
-.. _std.ledger.Account.id:
+.. _lino.ledger.Account.id:
 
 Field **Account.id**
 ====================
@@ -56,7 +61,7 @@ Type: AutoField
 .. index::
    single: field;match
    
-.. _std.ledger.Account.match:
+.. _lino.ledger.Account.match:
 
 Field **Account.match**
 =======================
@@ -71,7 +76,7 @@ Type: CharField
 .. index::
    single: field;name
    
-.. _std.ledger.Account.name:
+.. _lino.ledger.Account.name:
 
 Field **Account.name**
 ======================
@@ -88,7 +93,7 @@ Type: CharField
 .. index::
    pair: model; Booking
 
-.. _std.ledger.Booking:
+.. _lino.ledger.Booking:
 
 -----------------
 Model **Booking**
@@ -98,28 +103,33 @@ Model **Booking**
 
 Booking(id, journal_id, number, pos, date, account_id, person_id, company_id, debit, credit)
   
-======= ============ =====================
-name    type         verbose name         
-======= ============ =====================
-id      AutoField    ID                   
-journal ForeignKey   journal              
-number  IntegerField number               
-pos     IntegerField Position             
-date    DateField    date                 
-account ForeignKey   account              
-person  ForeignKey   person (Person,isik) 
-company ForeignKey   company (Firma,firma)
-debit   PriceField   debit                
-credit  PriceField   credit               
-======= ============ =====================
+======= ============ =============================
+name    type         verbose name                 
+======= ============ =============================
+id      AutoField    ID                           
+journal ForeignKey   journal                      
+number  IntegerField number                       
+pos     IntegerField Position                     
+date    DateField    date                         
+account ForeignKey   account                      
+person  ForeignKey   person (Person,Personne,isik)
+company ForeignKey   company (Firma,Société,firma)
+debit   PriceField   debit                        
+credit  PriceField   credit                       
+======= ============ =============================
 
     
 Defined in :srcref:`/lino/modlib/ledger/models.py`
 
+Referenced from
+
+
+
+
 .. index::
    single: field;id
    
-.. _std.ledger.Booking.id:
+.. _lino.ledger.Booking.id:
 
 Field **Booking.id**
 ====================
@@ -134,7 +144,7 @@ Type: AutoField
 .. index::
    single: field;journal
    
-.. _std.ledger.Booking.journal:
+.. _lino.ledger.Booking.journal:
 
 Field **Booking.journal**
 =========================
@@ -149,7 +159,7 @@ Type: ForeignKey
 .. index::
    single: field;number
    
-.. _std.ledger.Booking.number:
+.. _lino.ledger.Booking.number:
 
 Field **Booking.number**
 ========================
@@ -164,7 +174,7 @@ Type: IntegerField
 .. index::
    single: field;pos
    
-.. _std.ledger.Booking.pos:
+.. _lino.ledger.Booking.pos:
 
 Field **Booking.pos**
 =====================
@@ -179,7 +189,7 @@ Type: IntegerField
 .. index::
    single: field;date
    
-.. _std.ledger.Booking.date:
+.. _lino.ledger.Booking.date:
 
 Field **Booking.date**
 ======================
@@ -194,7 +204,7 @@ Type: DateField
 .. index::
    single: field;account
    
-.. _std.ledger.Booking.account:
+.. _lino.ledger.Booking.account:
 
 Field **Booking.account**
 =========================
@@ -209,7 +219,7 @@ Type: ForeignKey
 .. index::
    single: field;person
    
-.. _std.ledger.Booking.person:
+.. _lino.ledger.Booking.person:
 
 Field **Booking.person**
 ========================
@@ -224,7 +234,7 @@ Type: ForeignKey
 .. index::
    single: field;company
    
-.. _std.ledger.Booking.company:
+.. _lino.ledger.Booking.company:
 
 Field **Booking.company**
 =========================
@@ -239,7 +249,7 @@ Type: ForeignKey
 .. index::
    single: field;debit
    
-.. _std.ledger.Booking.debit:
+.. _lino.ledger.Booking.debit:
 
 Field **Booking.debit**
 =======================
@@ -254,7 +264,7 @@ Type: PriceField
 .. index::
    single: field;credit
    
-.. _std.ledger.Booking.credit:
+.. _lino.ledger.Booking.credit:
 
 Field **Booking.credit**
 ========================

@@ -36,14 +36,37 @@ def get_models_for(app_label):
     a = models.get_app(app_label)
     
 class UnresolvedModel:
+    """
+    This is the object returned by :func:`resolve_model` 
+    if the specified model is not installed.
+    
+    We don't want resolve_model to raise an Exception because there are 
+    cases of :doc:`data migration </topics/datamig>` where it would 
+    disturb. 
+    Asking for a non-installed model is not a sin, but trying to use it is.
+    
+    I didn't yet bother very much about finding a way to make the 
+    model_spec appear in error messages such as
+    ``AttributeError: UnresolvedModel instance has no attribute '_meta'``.
+    Current workaround is to uncomment the ``print`` statement 
+    below in such situations...
+    
+    """
     def __init__(self,model_spec,app_label):
-        self.name = "%r (%r)" % (model_spec,app_label)
-    def __str__(self):
-        return self.name
+        self.model_spec = model_spec
+        self.app_label = app_label
+        #~ print repr(self)
+        
+    def __repr__(self):
+        return self.__class__.__name__ + '(%s,%s)' % (self.model_spec,self.app_label)
+        
+    #~ def __getattr__(self,name):
+        #~ raise AttributeError("%s has no attribute %r" % (self,name))
 
 def resolve_model(model_spec,app_label=None):
-    # Same logic as in django.db.models.fields.related.add_lazy_relation()
-    #~ from lino import site # needed to trigger site setup
+    """
+    Similar logic as in django.db.models.fields.related.add_lazy_relation()
+    """
     models.get_apps() # trigger django.db.models.loading.cache._populate()
     if isinstance(model_spec,basestring):
         try:

@@ -8,7 +8,6 @@ Lino/iGen
 
     users
     contenttypes
-    sites
     lino
     countries
     contacts

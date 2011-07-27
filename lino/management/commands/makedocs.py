@@ -120,6 +120,23 @@ def model_overview(model):
         return cells
     rows = [ rowfmt(f) for f in model._meta.fields ]
     return rstgen.table(headers,rows)
+    
+#~ def model_ref(model):
+    #~ return ":model:``"
+    
+def model_ref(model):
+    return settings.LINO.source_name + '.' + model._meta.app_label + '.' + model.__name__
+    
+    
+def model_referenced_from(model):
+    #~ headers = ["name","description"]
+    #~ rows = []
+    def ddhfmt(ddh):
+        return ', '.join(['`%s.%s`_' % (model_ref(model),fk.name) for model,fk in ddh.fklist])
+    return ddhfmt(model._lino_ddh)
+    #~ rows.append(['_lino_ddh',ddhfmt(model._lino_ddh)])
+    #~ return rstgen.table(headers,rows)
+    
   
 
 class GeneratingCommand(BaseCommand):
@@ -201,6 +218,8 @@ class Command(GeneratingCommand):
     tmpl_dir = 'makedocs'
     
     def generate_files(self):
+      
+        settings.LINO.setup()
             
         context = dict(
           header=rstgen.header,
@@ -209,6 +228,8 @@ class Command(GeneratingCommand):
           doc=doc2rst,
           #~ py2rst=rstgen.py2rst,
           model_overview=model_overview,
+          model_referenced_from=model_referenced_from,
+          model_ref=model_ref,
         )
         self.generate('index.rst.tmpl','index.rst',**context)
         for a in loading.get_apps():

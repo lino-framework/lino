@@ -8,13 +8,14 @@ Lino/DSBE
 
     users
     contenttypes
-    sites
     lino
     countries
+    properties
     contacts
     notes
     links
     uploads
     thirds
-    properties
+    cal
     dsbe
+    jobs

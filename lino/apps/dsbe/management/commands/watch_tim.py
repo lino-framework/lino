@@ -62,7 +62,7 @@ from lino.utils.daemoncommand import DaemonCommand
 #~ from lino.apps.dsbe.models  import is_valid_niss
 
 from lino.apps.dsbe.management.commands.initdb_tim import convert_sex, \
-    ADR_id, country2kw, pxs2person, is_company
+    ADR_id, country2kw, par2person, pxs2person, is_company
 
 Country = resolve_model('countries.Country')
 City = resolve_model('countries.City')
@@ -207,6 +207,7 @@ class PAR(Controller):
         ADR_applydata(obj,data) # ,**mapper)
         #~ kw.update(street2kw(join_words(data['RUE'],
         if obj.__class__ is Person:
+            par2person(data,obj)
             mapper.update(title='ALLO')
             mapper.update(gesdos_id='NB1')
             if data.has_key('IDUSR'):

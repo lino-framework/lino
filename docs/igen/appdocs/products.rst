@@ -17,7 +17,7 @@ Defined in :srcref:`/lino/modlib/products/models.py`
 .. index::
    pair: model; ProductCat
 
-.. _std.products.ProductCat:
+.. _lino.products.ProductCat:
 
 --------------------
 Model **ProductCat**
@@ -43,10 +43,15 @@ name_et     CharField      name (et)
     
 Defined in :srcref:`/lino/modlib/products/models.py`
 
+Referenced from
+`lino.products.Product.cat`_
+
+
+
 .. index::
    single: field;id
    
-.. _std.products.ProductCat.id:
+.. _lino.products.ProductCat.id:
 
 Field **ProductCat.id**
 =======================
@@ -61,7 +66,7 @@ Type: AutoField
 .. index::
    single: field;name
    
-.. _std.products.ProductCat.name:
+.. _lino.products.ProductCat.name:
 
 Field **ProductCat.name**
 =========================
@@ -76,7 +81,7 @@ Type: BabelCharField
 .. index::
    single: field;description
    
-.. _std.products.ProductCat.description:
+.. _lino.products.ProductCat.description:
 
 Field **ProductCat.description**
 ================================
@@ -91,7 +96,7 @@ Type: TextField
 .. index::
    single: field;name_de
    
-.. _std.products.ProductCat.name_de:
+.. _lino.products.ProductCat.name_de:
 
 Field **ProductCat.name_de**
 ============================
@@ -106,7 +111,7 @@ Type: CharField
 .. index::
    single: field;name_fr
    
-.. _std.products.ProductCat.name_fr:
+.. _lino.products.ProductCat.name_fr:
 
 Field **ProductCat.name_fr**
 ============================
@@ -121,7 +126,7 @@ Type: CharField
 .. index::
    single: field;name_nl
    
-.. _std.products.ProductCat.name_nl:
+.. _lino.products.ProductCat.name_nl:
 
 Field **ProductCat.name_nl**
 ============================
@@ -136,7 +141,7 @@ Type: CharField
 .. index::
    single: field;name_et
    
-.. _std.products.ProductCat.name_et:
+.. _lino.products.ProductCat.name_et:
 
 Field **ProductCat.name_et**
 ============================
@@ -153,7 +158,7 @@ Type: CharField
 .. index::
    pair: model; Product
 
-.. _std.products.Product:
+.. _lino.products.Product:
 
 -----------------
 Model **Product**
@@ -185,10 +190,15 @@ description_et TextField      description (et)
     
 Defined in :srcref:`/lino/modlib/products/models.py`
 
+Referenced from
+`lino.sales.DocItem.product`_
+
+
+
 .. index::
    single: field;id
    
-.. _std.products.Product.id:
+.. _lino.products.Product.id:
 
 Field **Product.id**
 ====================
@@ -203,7 +213,7 @@ Type: AutoField
 .. index::
    single: field;name
    
-.. _std.products.Product.name:
+.. _lino.products.Product.name:
 
 Field **Product.name**
 ======================
@@ -218,7 +228,7 @@ Type: BabelCharField
 .. index::
    single: field;description
    
-.. _std.products.Product.description:
+.. _lino.products.Product.description:
 
 Field **Product.description**
 =============================
@@ -233,7 +243,7 @@ Type: BabelTextField
 .. index::
    single: field;cat
    
-.. _std.products.Product.cat:
+.. _lino.products.Product.cat:
 
 Field **Product.cat**
 =====================
@@ -248,7 +258,7 @@ Type: ForeignKey
 .. index::
    single: field;vatExempt
    
-.. _std.products.Product.vatExempt:
+.. _lino.products.Product.vatExempt:
 
 Field **Product.vatExempt**
 ===========================
@@ -263,7 +273,7 @@ Type: BooleanField
 .. index::
    single: field;price
    
-.. _std.products.Product.price:
+.. _lino.products.Product.price:
 
 Field **Product.price**
 =======================
@@ -278,7 +288,7 @@ Type: PriceField
 .. index::
    single: field;name_de
    
-.. _std.products.Product.name_de:
+.. _lino.products.Product.name_de:
 
 Field **Product.name_de**
 =========================
@@ -293,7 +303,7 @@ Type: CharField
 .. index::
    single: field;name_fr
    
-.. _std.products.Product.name_fr:
+.. _lino.products.Product.name_fr:
 
 Field **Product.name_fr**
 =========================
@@ -308,7 +318,7 @@ Type: CharField
 .. index::
    single: field;name_nl
    
-.. _std.products.Product.name_nl:
+.. _lino.products.Product.name_nl:
 
 Field **Product.name_nl**
 =========================
@@ -323,7 +333,7 @@ Type: CharField
 .. index::
    single: field;name_et
    
-.. _std.products.Product.name_et:
+.. _lino.products.Product.name_et:
 
 Field **Product.name_et**
 =========================
@@ -338,7 +348,7 @@ Type: CharField
 .. index::
    single: field;description_de
    
-.. _std.products.Product.description_de:
+.. _lino.products.Product.description_de:
 
 Field **Product.description_de**
 ================================
@@ -353,7 +363,7 @@ Type: TextField
 .. index::
    single: field;description_fr
    
-.. _std.products.Product.description_fr:
+.. _lino.products.Product.description_fr:
 
 Field **Product.description_fr**
 ================================
@@ -368,7 +378,7 @@ Type: TextField
 .. index::
    single: field;description_nl
    
-.. _std.products.Product.description_nl:
+.. _lino.products.Product.description_nl:
 
 Field **Product.description_nl**
 ================================
@@ -383,7 +393,7 @@ Type: TextField
 .. index::
    single: field;description_et
    
-.. _std.products.Product.description_et:
+.. _lino.products.Product.description_et:
 
 Field **Product.description_et**
 ================================

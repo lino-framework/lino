@@ -107,7 +107,7 @@ def analyze_models(self):
             model.site_setup(self)
     
         model._lino_detail_layouts = []
-        model._lino_ddh = DisableDeleteHandler(model)
+        #~ model._lino_ddh = DisableDeleteHandler(model)
             
         def loader(content,cd,filename):
             dtl = DetailLayout(content,filename,cd)
@@ -152,7 +152,7 @@ def analyze_models(self):
           #~ model.__name__,ddh)
         #~ model.disable_delete_handler = ddh
         
-from Cheetah.Template import Template as CheetahTemplate
+#~ from Cheetah.Template import Template as CheetahTemplate
 
 
 class DisableDeleteHandler():

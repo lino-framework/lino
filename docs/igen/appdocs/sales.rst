@@ -19,7 +19,7 @@ Defined in :srcref:`/lino/modlib/sales/models.py`
 .. index::
    pair: model; PaymentTerm
 
-.. _std.sales.PaymentTerm:
+.. _lino.sales.PaymentTerm:
 
 ---------------------
 Model **PaymentTerm**
@@ -30,26 +30,31 @@ Model **PaymentTerm**
 Represents a convention on how an Invoice should be paid. 
     
   
-======= ============== ===============
-name    type           verbose name   
-======= ============== ===============
-id      CharField      id             
-name    BabelCharField name           
-days    IntegerField   days (Tage)    
-months  IntegerField   months (Monate)
-name_de CharField      name (de)      
-name_fr CharField      name (fr)      
-name_nl CharField      name (nl)      
-name_et CharField      name (et)      
-======= ============== ===============
+======= ============== ====================
+name    type           verbose name        
+======= ============== ====================
+id      CharField      id                  
+name    BabelCharField name                
+days    IntegerField   days (Tage,jours)   
+months  IntegerField   months (Monate,mois)
+name_de CharField      name (de)           
+name_fr CharField      name (fr)           
+name_nl CharField      name (nl)           
+name_et CharField      name (et)           
+======= ============== ====================
 
     
 Defined in :srcref:`/lino/modlib/sales/models.py`
 
+Referenced from
+`lino.contacts.Contact.payment_term`_, `lino.sales.SalesRule.payment_term`_, `lino.sales.SalesDocument.payment_term`_, `lino.sales.Order.payment_term`_, `lino.sales.Invoice.payment_term`_
+
+
+
 .. index::
    single: field;id
    
-.. _std.sales.PaymentTerm.id:
+.. _lino.sales.PaymentTerm.id:
 
 Field **PaymentTerm.id**
 ========================
@@ -64,7 +69,7 @@ Type: CharField
 .. index::
    single: field;name
    
-.. _std.sales.PaymentTerm.name:
+.. _lino.sales.PaymentTerm.name:
 
 Field **PaymentTerm.name**
 ==========================
@@ -79,7 +84,7 @@ Type: BabelCharField
 .. index::
    single: field;days
    
-.. _std.sales.PaymentTerm.days:
+.. _lino.sales.PaymentTerm.days:
 
 Field **PaymentTerm.days**
 ==========================
@@ -94,7 +99,7 @@ Type: IntegerField
 .. index::
    single: field;months
    
-.. _std.sales.PaymentTerm.months:
+.. _lino.sales.PaymentTerm.months:
 
 Field **PaymentTerm.months**
 ============================
@@ -109,7 +114,7 @@ Type: IntegerField
 .. index::
    single: field;name_de
    
-.. _std.sales.PaymentTerm.name_de:
+.. _lino.sales.PaymentTerm.name_de:
 
 Field **PaymentTerm.name_de**
 =============================
@@ -124,7 +129,7 @@ Type: CharField
 .. index::
    single: field;name_fr
    
-.. _std.sales.PaymentTerm.name_fr:
+.. _lino.sales.PaymentTerm.name_fr:
 
 Field **PaymentTerm.name_fr**
 =============================
@@ -139,7 +144,7 @@ Type: CharField
 .. index::
    single: field;name_nl
    
-.. _std.sales.PaymentTerm.name_nl:
+.. _lino.sales.PaymentTerm.name_nl:
 
 Field **PaymentTerm.name_nl**
 =============================
@@ -154,7 +159,7 @@ Type: CharField
 .. index::
    single: field;name_et
    
-.. _std.sales.PaymentTerm.name_et:
+.. _lino.sales.PaymentTerm.name_et:
 
 Field **PaymentTerm.name_et**
 =============================
@@ -171,7 +176,7 @@ Type: CharField
 .. index::
    pair: model; InvoicingMode
 
-.. _std.sales.InvoicingMode:
+.. _lino.sales.InvoicingMode:
 
 -----------------------
 Model **InvoicingMode**
@@ -182,30 +187,35 @@ Model **InvoicingMode**
 Represents a method of issuing/sending invoices.
     
   
-============ =============== ===================================
-name         type            verbose name                       
-============ =============== ===================================
-build_method CharField       Build method (Konstruktionsmethode)
-template     CharField       Template (Vorlage)                 
-id           CharField       id                                 
-journal      ForeignKey      journal                            
-name         BabelCharField  name                               
-price        PriceField      price                              
-channel      ChoiceListField channel                            
-advance_days IntegerField    advance days                       
-name_de      CharField       name (de)                          
-name_fr      CharField       name (fr)                          
-name_nl      CharField       name (nl)                          
-name_et      CharField       name (et)                          
-============ =============== ===================================
+============ =============== ===========================================================
+name         type            verbose name                                               
+============ =============== ===========================================================
+build_method CharField       Build method (Konstruktionsmethode,Méthode de construction)
+template     CharField       Template (Vorlage,Modèle)                                  
+id           CharField       id                                                         
+journal      ForeignKey      journal                                                    
+name         BabelCharField  name                                                       
+price        PriceField      price                                                      
+channel      ChoiceListField Channel                                                    
+advance_days IntegerField    advance days                                               
+name_de      CharField       name (de)                                                  
+name_fr      CharField       name (fr)                                                  
+name_nl      CharField       name (nl)                                                  
+name_et      CharField       name (et)                                                  
+============ =============== ===========================================================
 
     
 Defined in :srcref:`/lino/modlib/sales/models.py`
 
+Referenced from
+`lino.sales.SalesRule.imode`_, `lino.sales.SalesDocument.imode`_, `lino.sales.Order.imode`_, `lino.sales.Invoice.imode`_
+
+
+
 .. index::
    single: field;build_method
    
-.. _std.sales.InvoicingMode.build_method:
+.. _lino.sales.InvoicingMode.build_method:
 
 Field **InvoicingMode.build_method**
 ====================================
@@ -220,7 +230,7 @@ Type: CharField
 .. index::
    single: field;template
    
-.. _std.sales.InvoicingMode.template:
+.. _lino.sales.InvoicingMode.template:
 
 Field **InvoicingMode.template**
 ================================
@@ -235,7 +245,7 @@ Type: CharField
 .. index::
    single: field;id
    
-.. _std.sales.InvoicingMode.id:
+.. _lino.sales.InvoicingMode.id:
 
 Field **InvoicingMode.id**
 ==========================
@@ -250,7 +260,7 @@ Type: CharField
 .. index::
    single: field;journal
    
-.. _std.sales.InvoicingMode.journal:
+.. _lino.sales.InvoicingMode.journal:
 
 Field **InvoicingMode.journal**
 ===============================
@@ -265,7 +275,7 @@ Type: ForeignKey
 .. index::
    single: field;name
    
-.. _std.sales.InvoicingMode.name:
+.. _lino.sales.InvoicingMode.name:
 
 Field **InvoicingMode.name**
 ============================
@@ -280,7 +290,7 @@ Type: BabelCharField
 .. index::
    single: field;price
    
-.. _std.sales.InvoicingMode.price:
+.. _lino.sales.InvoicingMode.price:
 
 Field **InvoicingMode.price**
 =============================
@@ -295,7 +305,7 @@ Type: PriceField
 .. index::
    single: field;channel
    
-.. _std.sales.InvoicingMode.channel:
+.. _lino.sales.InvoicingMode.channel:
 
 Field **InvoicingMode.channel**
 ===============================
@@ -311,7 +321,7 @@ Type: ChoiceListField
 .. index::
    single: field;advance_days
    
-.. _std.sales.InvoicingMode.advance_days:
+.. _lino.sales.InvoicingMode.advance_days:
 
 Field **InvoicingMode.advance_days**
 ====================================
@@ -329,7 +339,7 @@ Type: IntegerField
 .. index::
    single: field;name_de
    
-.. _std.sales.InvoicingMode.name_de:
+.. _lino.sales.InvoicingMode.name_de:
 
 Field **InvoicingMode.name_de**
 ===============================
@@ -344,7 +354,7 @@ Type: CharField
 .. index::
    single: field;name_fr
    
-.. _std.sales.InvoicingMode.name_fr:
+.. _lino.sales.InvoicingMode.name_fr:
 
 Field **InvoicingMode.name_fr**
 ===============================
@@ -359,7 +369,7 @@ Type: CharField
 .. index::
    single: field;name_nl
    
-.. _std.sales.InvoicingMode.name_nl:
+.. _lino.sales.InvoicingMode.name_nl:
 
 Field **InvoicingMode.name_nl**
 ===============================
@@ -374,7 +384,7 @@ Type: CharField
 .. index::
    single: field;name_et
    
-.. _std.sales.InvoicingMode.name_et:
+.. _lino.sales.InvoicingMode.name_et:
 
 Field **InvoicingMode.name_et**
 ===============================
@@ -391,7 +401,7 @@ Type: CharField
 .. index::
    pair: model; ShippingMode
 
-.. _std.sales.ShippingMode:
+.. _lino.sales.ShippingMode:
 
 ----------------------
 Model **ShippingMode**
@@ -416,10 +426,15 @@ name_et CharField      name (et)
     
 Defined in :srcref:`/lino/modlib/sales/models.py`
 
+Referenced from
+`lino.sales.SalesRule.shipping_mode`_, `lino.sales.SalesDocument.shipping_mode`_, `lino.sales.Order.shipping_mode`_, `lino.sales.Invoice.shipping_mode`_
+
+
+
 .. index::
    single: field;id
    
-.. _std.sales.ShippingMode.id:
+.. _lino.sales.ShippingMode.id:
 
 Field **ShippingMode.id**
 =========================
@@ -434,7 +449,7 @@ Type: CharField
 .. index::
    single: field;name
    
-.. _std.sales.ShippingMode.name:
+.. _lino.sales.ShippingMode.name:
 
 Field **ShippingMode.name**
 ===========================
@@ -449,7 +464,7 @@ Type: BabelCharField
 .. index::
    single: field;price
    
-.. _std.sales.ShippingMode.price:
+.. _lino.sales.ShippingMode.price:
 
 Field **ShippingMode.price**
 ============================
@@ -464,7 +479,7 @@ Type: PriceField
 .. index::
    single: field;name_de
    
-.. _std.sales.ShippingMode.name_de:
+.. _lino.sales.ShippingMode.name_de:
 
 Field **ShippingMode.name_de**
 ==============================
@@ -479,7 +494,7 @@ Type: CharField
 .. index::
    single: field;name_fr
    
-.. _std.sales.ShippingMode.name_fr:
+.. _lino.sales.ShippingMode.name_fr:
 
 Field **ShippingMode.name_fr**
 ==============================
@@ -494,7 +509,7 @@ Type: CharField
 .. index::
    single: field;name_nl
    
-.. _std.sales.ShippingMode.name_nl:
+.. _lino.sales.ShippingMode.name_nl:
 
 Field **ShippingMode.name_nl**
 ==============================
@@ -509,7 +524,7 @@ Type: CharField
 .. index::
    single: field;name_et
    
-.. _std.sales.ShippingMode.name_et:
+.. _lino.sales.ShippingMode.name_et:
 
 Field **ShippingMode.name_et**
 ==============================
@@ -526,7 +541,7 @@ Type: CharField
 .. index::
    pair: model; SalesRule
 
-.. _std.sales.SalesRule:
+.. _lino.sales.SalesRule:
 
 -------------------
 Model **SalesRule**
@@ -550,10 +565,15 @@ payment_term  ForeignKey payment term (Tasumistingimused)
     
 Defined in :srcref:`/lino/modlib/sales/models.py`
 
+Referenced from
+
+
+
+
 .. index::
    single: field;id
    
-.. _std.sales.SalesRule.id:
+.. _lino.sales.SalesRule.id:
 
 Field **SalesRule.id**
 ======================
@@ -568,7 +588,7 @@ Type: AutoField
 .. index::
    single: field;journal
    
-.. _std.sales.SalesRule.journal:
+.. _lino.sales.SalesRule.journal:
 
 Field **SalesRule.journal**
 ===========================
@@ -583,7 +603,7 @@ Type: ForeignKey
 .. index::
    single: field;imode
    
-.. _std.sales.SalesRule.imode:
+.. _lino.sales.SalesRule.imode:
 
 Field **SalesRule.imode**
 =========================
@@ -598,7 +618,7 @@ Type: ForeignKey
 .. index::
    single: field;shipping_mode
    
-.. _std.sales.SalesRule.shipping_mode:
+.. _lino.sales.SalesRule.shipping_mode:
 
 Field **SalesRule.shipping_mode**
 =================================
@@ -613,7 +633,7 @@ Type: ForeignKey
 .. index::
    single: field;payment_term
    
-.. _std.sales.SalesRule.payment_term:
+.. _lino.sales.SalesRule.payment_term:
 
 Field **SalesRule.payment_term**
 ================================
@@ -630,7 +650,7 @@ Type: ForeignKey
 .. index::
    pair: model; SalesDocument
 
-.. _std.sales.SalesDocument:
+.. _lino.sales.SalesDocument:
 
 -----------------------
 Model **SalesDocument**
@@ -641,40 +661,45 @@ Model **SalesDocument**
 Common base class for :class:`Order` and :class:`Invoice`.
     
   
-============= ============= ==================================
-name          type          verbose name                      
-============= ============= ==================================
-id            AutoField     ID                                
-must_build    BooleanField  must build (muss generiert werden)
-person        ForeignKey    Person (Isik)                     
-company       ForeignKey    Company (Firma)                   
-contact       ForeignKey    represented by                    
-language      LanguageField Language (Sprache)                
-journal       ForeignKey    journal                           
-number        IntegerField  number                            
-sent_time     DateTimeField sent time                         
-creation_date DateField     creation date                     
-your_ref      CharField     your ref                          
-imode         ForeignKey    imode                             
-shipping_mode ForeignKey    shipping mode                     
-payment_term  ForeignKey    payment term (Tasumistingimused)  
-sales_remark  CharField     Remark for sales                  
-subject       CharField     Subject line                      
-vat_exempt    BooleanField  vat exempt                        
-item_vat      BooleanField  item vat                          
-total_excl    PriceField    total excl                        
-total_vat     PriceField    total vat                         
-intro         TextField     Introductive Text                 
-user          ForeignKey    user (Benutzer)                   
-============= ============= ==================================
+============= ============= ======================================================
+name          type          verbose name                                          
+============= ============= ======================================================
+id            AutoField     ID                                                    
+must_build    BooleanField  must build (muss generiert werden,doit être construit)
+person        ForeignKey    Person (Personne,Isik)                                
+company       ForeignKey    Company (Firma,Société,Firma)                         
+contact       ForeignKey    represented by (Vertreten durch,représenté par)       
+language      LanguageField Language (Sprache,Langue)                             
+journal       ForeignKey    journal                                               
+number        IntegerField  number                                                
+sent_time     DateTimeField sent time                                             
+creation_date DateField     creation date                                         
+your_ref      CharField     your ref                                              
+imode         ForeignKey    imode                                                 
+shipping_mode ForeignKey    shipping mode                                         
+payment_term  ForeignKey    payment term (Tasumistingimused)                      
+sales_remark  CharField     Remark for sales                                      
+subject       CharField     Subject line                                          
+vat_exempt    BooleanField  vat exempt                                            
+item_vat      BooleanField  item vat                                              
+total_excl    PriceField    total excl                                            
+total_vat     PriceField    total vat                                             
+intro         TextField     Introductive Text                                     
+user          ForeignKey    user (Benutzer,utilisateur)                           
+============= ============= ======================================================
 
     
 Defined in :srcref:`/lino/modlib/sales/models.py`
 
+Referenced from
+`lino.sales.Order.salesdocument_ptr`_, `lino.sales.Invoice.salesdocument_ptr`_, `lino.sales.DocItem.document`_
+
+
+
 .. index::
    single: field;id
    
-.. _std.sales.SalesDocument.id:
+.. _lino.sales.SalesDocument.id:
 
 Field **SalesDocument.id**
 ==========================
@@ -689,7 +714,7 @@ Type: AutoField
 .. index::
    single: field;must_build
    
-.. _std.sales.SalesDocument.must_build:
+.. _lino.sales.SalesDocument.must_build:
 
 Field **SalesDocument.must_build**
 ==================================
@@ -704,7 +729,7 @@ Type: BooleanField
 .. index::
    single: field;person
    
-.. _std.sales.SalesDocument.person:
+.. _lino.sales.SalesDocument.person:
 
 Field **SalesDocument.person**
 ==============================
@@ -719,7 +744,7 @@ Type: ForeignKey
 .. index::
    single: field;company
    
-.. _std.sales.SalesDocument.company:
+.. _lino.sales.SalesDocument.company:
 
 Field **SalesDocument.company**
 ===============================
@@ -734,7 +759,7 @@ Type: ForeignKey
 .. index::
    single: field;contact
    
-.. _std.sales.SalesDocument.contact:
+.. _lino.sales.SalesDocument.contact:
 
 Field **SalesDocument.contact**
 ===============================
@@ -749,7 +774,7 @@ Type: ForeignKey
 .. index::
    single: field;language
    
-.. _std.sales.SalesDocument.language:
+.. _lino.sales.SalesDocument.language:
 
 Field **SalesDocument.language**
 ================================
@@ -764,7 +789,7 @@ Type: LanguageField
 .. index::
    single: field;journal
    
-.. _std.sales.SalesDocument.journal:
+.. _lino.sales.SalesDocument.journal:
 
 Field **SalesDocument.journal**
 ===============================
@@ -779,7 +804,7 @@ Type: ForeignKey
 .. index::
    single: field;number
    
-.. _std.sales.SalesDocument.number:
+.. _lino.sales.SalesDocument.number:
 
 Field **SalesDocument.number**
 ==============================
@@ -794,7 +819,7 @@ Type: IntegerField
 .. index::
    single: field;sent_time
    
-.. _std.sales.SalesDocument.sent_time:
+.. _lino.sales.SalesDocument.sent_time:
 
 Field **SalesDocument.sent_time**
 =================================
@@ -809,7 +834,7 @@ Type: DateTimeField
 .. index::
    single: field;creation_date
    
-.. _std.sales.SalesDocument.creation_date:
+.. _lino.sales.SalesDocument.creation_date:
 
 Field **SalesDocument.creation_date**
 =====================================
@@ -824,7 +849,7 @@ Type: DateField
 .. index::
    single: field;your_ref
    
-.. _std.sales.SalesDocument.your_ref:
+.. _lino.sales.SalesDocument.your_ref:
 
 Field **SalesDocument.your_ref**
 ================================
@@ -839,7 +864,7 @@ Type: CharField
 .. index::
    single: field;imode
    
-.. _std.sales.SalesDocument.imode:
+.. _lino.sales.SalesDocument.imode:
 
 Field **SalesDocument.imode**
 =============================
@@ -854,7 +879,7 @@ Type: ForeignKey
 .. index::
    single: field;shipping_mode
    
-.. _std.sales.SalesDocument.shipping_mode:
+.. _lino.sales.SalesDocument.shipping_mode:
 
 Field **SalesDocument.shipping_mode**
 =====================================
@@ -869,7 +894,7 @@ Type: ForeignKey
 .. index::
    single: field;payment_term
    
-.. _std.sales.SalesDocument.payment_term:
+.. _lino.sales.SalesDocument.payment_term:
 
 Field **SalesDocument.payment_term**
 ====================================
@@ -884,7 +909,7 @@ Type: ForeignKey
 .. index::
    single: field;sales_remark
    
-.. _std.sales.SalesDocument.sales_remark:
+.. _lino.sales.SalesDocument.sales_remark:
 
 Field **SalesDocument.sales_remark**
 ====================================
@@ -899,7 +924,7 @@ Type: CharField
 .. index::
    single: field;subject
    
-.. _std.sales.SalesDocument.subject:
+.. _lino.sales.SalesDocument.subject:
 
 Field **SalesDocument.subject**
 ===============================
@@ -914,7 +939,7 @@ Type: CharField
 .. index::
    single: field;vat_exempt
    
-.. _std.sales.SalesDocument.vat_exempt:
+.. _lino.sales.SalesDocument.vat_exempt:
 
 Field **SalesDocument.vat_exempt**
 ==================================
@@ -929,7 +954,7 @@ Type: BooleanField
 .. index::
    single: field;item_vat
    
-.. _std.sales.SalesDocument.item_vat:
+.. _lino.sales.SalesDocument.item_vat:
 
 Field **SalesDocument.item_vat**
 ================================
@@ -944,7 +969,7 @@ Type: BooleanField
 .. index::
    single: field;total_excl
    
-.. _std.sales.SalesDocument.total_excl:
+.. _lino.sales.SalesDocument.total_excl:
 
 Field **SalesDocument.total_excl**
 ==================================
@@ -959,7 +984,7 @@ Type: PriceField
 .. index::
    single: field;total_vat
    
-.. _std.sales.SalesDocument.total_vat:
+.. _lino.sales.SalesDocument.total_vat:
 
 Field **SalesDocument.total_vat**
 =================================
@@ -974,7 +999,7 @@ Type: PriceField
 .. index::
    single: field;intro
    
-.. _std.sales.SalesDocument.intro:
+.. _lino.sales.SalesDocument.intro:
 
 Field **SalesDocument.intro**
 =============================
@@ -989,7 +1014,7 @@ Type: TextField
 .. index::
    single: field;user
    
-.. _std.sales.SalesDocument.user:
+.. _lino.sales.SalesDocument.user:
 
 Field **SalesDocument.user**
 ============================
@@ -1006,7 +1031,7 @@ Type: ForeignKey
 .. index::
    pair: model; Order
 
-.. _std.sales.Order:
+.. _lino.sales.Order:
 
 ---------------
 Model **Order**
@@ -1016,44 +1041,49 @@ Model **Order**
 
 Order(id, must_build, person_id, company_id, contact_id, language, journal_id, number, sent_time, creation_date, your_ref, imode_id, shipping_mode_id, payment_term_id, sales_remark, subject, vat_exempt, item_vat, total_excl, total_vat, intro, user_id, salesdocument_ptr_id, cycle, start_date, covered_until)
   
-================= ============= ==================================
-name              type          verbose name                      
-================= ============= ==================================
-id                AutoField     ID                                
-must_build        BooleanField  must build (muss generiert werden)
-person            ForeignKey    Person (Isik)                     
-company           ForeignKey    Company (Firma)                   
-contact           ForeignKey    represented by                    
-language          LanguageField Language (Sprache)                
-journal           ForeignKey    journal                           
-number            IntegerField  number                            
-sent_time         DateTimeField sent time                         
-creation_date     DateField     creation date                     
-your_ref          CharField     your ref                          
-imode             ForeignKey    imode                             
-shipping_mode     ForeignKey    shipping mode                     
-payment_term      ForeignKey    payment term (Tasumistingimused)  
-sales_remark      CharField     Remark for sales                  
-subject           CharField     Subject line                      
-vat_exempt        BooleanField  vat exempt                        
-item_vat          BooleanField  item vat                          
-total_excl        PriceField    total excl                        
-total_vat         PriceField    total vat                         
-intro             TextField     Introductive Text                 
-user              ForeignKey    user (Benutzer)                   
-salesdocument_ptr OneToOneField salesdocument ptr                 
-cycle             CharField     cycle                             
-start_date        MyDateField   start date                        
-covered_until     MyDateField   covered until                     
-================= ============= ==================================
+================= ============= ======================================================
+name              type          verbose name                                          
+================= ============= ======================================================
+id                AutoField     ID                                                    
+must_build        BooleanField  must build (muss generiert werden,doit être construit)
+person            ForeignKey    Person (Personne,Isik)                                
+company           ForeignKey    Company (Firma,Société,Firma)                         
+contact           ForeignKey    represented by (Vertreten durch,représenté par)       
+language          LanguageField Language (Sprache,Langue)                             
+journal           ForeignKey    journal                                               
+number            IntegerField  number                                                
+sent_time         DateTimeField sent time                                             
+creation_date     DateField     creation date                                         
+your_ref          CharField     your ref                                              
+imode             ForeignKey    imode                                                 
+shipping_mode     ForeignKey    shipping mode                                         
+payment_term      ForeignKey    payment term (Tasumistingimused)                      
+sales_remark      CharField     Remark for sales                                      
+subject           CharField     Subject line                                          
+vat_exempt        BooleanField  vat exempt                                            
+item_vat          BooleanField  item vat                                              
+total_excl        PriceField    total excl                                            
+total_vat         PriceField    total vat                                             
+intro             TextField     Introductive Text                                     
+user              ForeignKey    user (Benutzer,utilisateur)                           
+salesdocument_ptr OneToOneField salesdocument ptr                                     
+cycle             CharField     cycle                                                 
+start_date        MyDateField   start date                                            
+covered_until     MyDateField   covered until                                         
+================= ============= ======================================================
 
     
 Defined in :srcref:`/lino/modlib/sales/models.py`
 
+Referenced from
+`lino.sales.Invoice.order`_
+
+
+
 .. index::
    single: field;id
    
-.. _std.sales.Order.id:
+.. _lino.sales.Order.id:
 
 Field **Order.id**
 ==================
@@ -1068,7 +1098,7 @@ Type: AutoField
 .. index::
    single: field;must_build
    
-.. _std.sales.Order.must_build:
+.. _lino.sales.Order.must_build:
 
 Field **Order.must_build**
 ==========================
@@ -1083,7 +1113,7 @@ Type: BooleanField
 .. index::
    single: field;person
    
-.. _std.sales.Order.person:
+.. _lino.sales.Order.person:
 
 Field **Order.person**
 ======================
@@ -1098,7 +1128,7 @@ Type: ForeignKey
 .. index::
    single: field;company
    
-.. _std.sales.Order.company:
+.. _lino.sales.Order.company:
 
 Field **Order.company**
 =======================
@@ -1113,7 +1143,7 @@ Type: ForeignKey
 .. index::
    single: field;contact
    
-.. _std.sales.Order.contact:
+.. _lino.sales.Order.contact:
 
 Field **Order.contact**
 =======================
@@ -1128,7 +1158,7 @@ Type: ForeignKey
 .. index::
    single: field;language
    
-.. _std.sales.Order.language:
+.. _lino.sales.Order.language:
 
 Field **Order.language**
 ========================
@@ -1143,7 +1173,7 @@ Type: LanguageField
 .. index::
    single: field;journal
    
-.. _std.sales.Order.journal:
+.. _lino.sales.Order.journal:
 
 Field **Order.journal**
 =======================
@@ -1158,7 +1188,7 @@ Type: ForeignKey
 .. index::
    single: field;number
    
-.. _std.sales.Order.number:
+.. _lino.sales.Order.number:
 
 Field **Order.number**
 ======================
@@ -1173,7 +1203,7 @@ Type: IntegerField
 .. index::
    single: field;sent_time
    
-.. _std.sales.Order.sent_time:
+.. _lino.sales.Order.sent_time:
 
 Field **Order.sent_time**
 =========================
@@ -1188,7 +1218,7 @@ Type: DateTimeField
 .. index::
    single: field;creation_date
    
-.. _std.sales.Order.creation_date:
+.. _lino.sales.Order.creation_date:
 
 Field **Order.creation_date**
 =============================
@@ -1203,7 +1233,7 @@ Type: DateField
 .. index::
    single: field;your_ref
    
-.. _std.sales.Order.your_ref:
+.. _lino.sales.Order.your_ref:
 
 Field **Order.your_ref**
 ========================
@@ -1218,7 +1248,7 @@ Type: CharField
 .. index::
    single: field;imode
    
-.. _std.sales.Order.imode:
+.. _lino.sales.Order.imode:
 
 Field **Order.imode**
 =====================
@@ -1233,7 +1263,7 @@ Type: ForeignKey
 .. index::
    single: field;shipping_mode
    
-.. _std.sales.Order.shipping_mode:
+.. _lino.sales.Order.shipping_mode:
 
 Field **Order.shipping_mode**
 =============================
@@ -1248,7 +1278,7 @@ Type: ForeignKey
 .. index::
    single: field;payment_term
    
-.. _std.sales.Order.payment_term:
+.. _lino.sales.Order.payment_term:
 
 Field **Order.payment_term**
 ============================
@@ -1263,7 +1293,7 @@ Type: ForeignKey
 .. index::
    single: field;sales_remark
    
-.. _std.sales.Order.sales_remark:
+.. _lino.sales.Order.sales_remark:
 
 Field **Order.sales_remark**
 ============================
@@ -1278,7 +1308,7 @@ Type: CharField
 .. index::
    single: field;subject
    
-.. _std.sales.Order.subject:
+.. _lino.sales.Order.subject:
 
 Field **Order.subject**
 =======================
@@ -1293,7 +1323,7 @@ Type: CharField
 .. index::
    single: field;vat_exempt
    
-.. _std.sales.Order.vat_exempt:
+.. _lino.sales.Order.vat_exempt:
 
 Field **Order.vat_exempt**
 ==========================
@@ -1308,7 +1338,7 @@ Type: BooleanField
 .. index::
    single: field;item_vat
    
-.. _std.sales.Order.item_vat:
+.. _lino.sales.Order.item_vat:
 
 Field **Order.item_vat**
 ========================
@@ -1323,7 +1353,7 @@ Type: BooleanField
 .. index::
    single: field;total_excl
    
-.. _std.sales.Order.total_excl:
+.. _lino.sales.Order.total_excl:
 
 Field **Order.total_excl**
 ==========================
@@ -1338,7 +1368,7 @@ Type: PriceField
 .. index::
    single: field;total_vat
    
-.. _std.sales.Order.total_vat:
+.. _lino.sales.Order.total_vat:
 
 Field **Order.total_vat**
 =========================
@@ -1353,7 +1383,7 @@ Type: PriceField
 .. index::
    single: field;intro
    
-.. _std.sales.Order.intro:
+.. _lino.sales.Order.intro:
 
 Field **Order.intro**
 =====================
@@ -1368,7 +1398,7 @@ Type: TextField
 .. index::
    single: field;user
    
-.. _std.sales.Order.user:
+.. _lino.sales.Order.user:
 
 Field **Order.user**
 ====================
@@ -1383,7 +1413,7 @@ Type: ForeignKey
 .. index::
    single: field;salesdocument_ptr
    
-.. _std.sales.Order.salesdocument_ptr:
+.. _lino.sales.Order.salesdocument_ptr:
 
 Field **Order.salesdocument_ptr**
 =================================
@@ -1398,7 +1428,7 @@ Type: OneToOneField
 .. index::
    single: field;cycle
    
-.. _std.sales.Order.cycle:
+.. _lino.sales.Order.cycle:
 
 Field **Order.cycle**
 =====================
@@ -1413,7 +1443,7 @@ Type: CharField
 .. index::
    single: field;start_date
    
-.. _std.sales.Order.start_date:
+.. _lino.sales.Order.start_date:
 
 Field **Order.start_date**
 ==========================
@@ -1429,7 +1459,7 @@ Type: MyDateField
 .. index::
    single: field;covered_until
    
-.. _std.sales.Order.covered_until:
+.. _lino.sales.Order.covered_until:
 
 Field **Order.covered_until**
 =============================
@@ -1446,7 +1476,7 @@ Type: MyDateField
 .. index::
    pair: model; Invoice
 
-.. _std.sales.Invoice:
+.. _lino.sales.Invoice:
 
 -----------------
 Model **Invoice**
@@ -1456,48 +1486,53 @@ Model **Invoice**
 
 Invoice(id, must_build, person_id, company_id, contact_id, language, journal_id, number, sent_time, creation_date, your_ref, imode_id, shipping_mode_id, payment_term_id, sales_remark, subject, vat_exempt, item_vat, total_excl, total_vat, intro, user_id, salesdocument_ptr_id, journal_id, number, value_date, ledger_remark, booked, due_date, order_id)
   
-================= ============= ==================================
-name              type          verbose name                      
-================= ============= ==================================
-id                AutoField     ID                                
-must_build        BooleanField  must build (muss generiert werden)
-person            ForeignKey    Person (Isik)                     
-company           ForeignKey    Company (Firma)                   
-contact           ForeignKey    represented by                    
-language          LanguageField Language (Sprache)                
-journal           ForeignKey    journal                           
-number            IntegerField  number                            
-sent_time         DateTimeField sent time                         
-creation_date     DateField     creation date                     
-your_ref          CharField     your ref                          
-imode             ForeignKey    imode                             
-shipping_mode     ForeignKey    shipping mode                     
-payment_term      ForeignKey    payment term (Tasumistingimused)  
-sales_remark      CharField     Remark for sales                  
-subject           CharField     Subject line                      
-vat_exempt        BooleanField  vat exempt                        
-item_vat          BooleanField  item vat                          
-total_excl        PriceField    total excl                        
-total_vat         PriceField    total vat                         
-intro             TextField     Introductive Text                 
-user              ForeignKey    user (Benutzer)                   
-salesdocument_ptr OneToOneField salesdocument ptr                 
-journal           ForeignKey    journal                           
-number            IntegerField  number                            
-value_date        DateField     value date                        
-ledger_remark     CharField     Remark for ledger                 
-booked            BooleanField  booked                            
-due_date          MyDateField   Payable until                     
-order             ForeignKey    order                             
-================= ============= ==================================
+================= ============= ======================================================
+name              type          verbose name                                          
+================= ============= ======================================================
+id                AutoField     ID                                                    
+must_build        BooleanField  must build (muss generiert werden,doit être construit)
+person            ForeignKey    Person (Personne,Isik)                                
+company           ForeignKey    Company (Firma,Société,Firma)                         
+contact           ForeignKey    represented by (Vertreten durch,représenté par)       
+language          LanguageField Language (Sprache,Langue)                             
+journal           ForeignKey    journal                                               
+number            IntegerField  number                                                
+sent_time         DateTimeField sent time                                             
+creation_date     DateField     creation date                                         
+your_ref          CharField     your ref                                              
+imode             ForeignKey    imode                                                 
+shipping_mode     ForeignKey    shipping mode                                         
+payment_term      ForeignKey    payment term (Tasumistingimused)                      
+sales_remark      CharField     Remark for sales                                      
+subject           CharField     Subject line                                          
+vat_exempt        BooleanField  vat exempt                                            
+item_vat          BooleanField  item vat                                              
+total_excl        PriceField    total excl                                            
+total_vat         PriceField    total vat                                             
+intro             TextField     Introductive Text                                     
+user              ForeignKey    user (Benutzer,utilisateur)                           
+salesdocument_ptr OneToOneField salesdocument ptr                                     
+journal           ForeignKey    journal                                               
+number            IntegerField  number                                                
+value_date        DateField     value date                                            
+ledger_remark     CharField     Remark for ledger                                     
+booked            BooleanField  booked                                                
+due_date          MyDateField   Payable until                                         
+order             ForeignKey    order                                                 
+================= ============= ======================================================
 
     
 Defined in :srcref:`/lino/modlib/sales/models.py`
 
+Referenced from
+
+
+
+
 .. index::
    single: field;id
    
-.. _std.sales.Invoice.id:
+.. _lino.sales.Invoice.id:
 
 Field **Invoice.id**
 ====================
@@ -1512,7 +1547,7 @@ Type: AutoField
 .. index::
    single: field;must_build
    
-.. _std.sales.Invoice.must_build:
+.. _lino.sales.Invoice.must_build:
 
 Field **Invoice.must_build**
 ============================
@@ -1527,7 +1562,7 @@ Type: BooleanField
 .. index::
    single: field;person
    
-.. _std.sales.Invoice.person:
+.. _lino.sales.Invoice.person:
 
 Field **Invoice.person**
 ========================
@@ -1542,7 +1577,7 @@ Type: ForeignKey
 .. index::
    single: field;company
    
-.. _std.sales.Invoice.company:
+.. _lino.sales.Invoice.company:
 
 Field **Invoice.company**
 =========================
@@ -1557,7 +1592,7 @@ Type: ForeignKey
 .. index::
    single: field;contact
    
-.. _std.sales.Invoice.contact:
+.. _lino.sales.Invoice.contact:
 
 Field **Invoice.contact**
 =========================
@@ -1572,7 +1607,7 @@ Type: ForeignKey
 .. index::
    single: field;language
    
-.. _std.sales.Invoice.language:
+.. _lino.sales.Invoice.language:
 
 Field **Invoice.language**
 ==========================
@@ -1587,7 +1622,7 @@ Type: LanguageField
 .. index::
    single: field;journal
    
-.. _std.sales.Invoice.journal:
+.. _lino.sales.Invoice.journal:
 
 Field **Invoice.journal**
 =========================
@@ -1602,7 +1637,7 @@ Type: ForeignKey
 .. index::
    single: field;number
    
-.. _std.sales.Invoice.number:
+.. _lino.sales.Invoice.number:
 
 Field **Invoice.number**
 ========================
@@ -1617,7 +1652,7 @@ Type: IntegerField
 .. index::
    single: field;sent_time
    
-.. _std.sales.Invoice.sent_time:
+.. _lino.sales.Invoice.sent_time:
 
 Field **Invoice.sent_time**
 ===========================
@@ -1632,7 +1667,7 @@ Type: DateTimeField
 .. index::
    single: field;creation_date
    
-.. _std.sales.Invoice.creation_date:
+.. _lino.sales.Invoice.creation_date:
 
 Field **Invoice.creation_date**
 ===============================
@@ -1647,7 +1682,7 @@ Type: DateField
 .. index::
    single: field;your_ref
    
-.. _std.sales.Invoice.your_ref:
+.. _lino.sales.Invoice.your_ref:
 
 Field **Invoice.your_ref**
 ==========================
@@ -1662,7 +1697,7 @@ Type: CharField
 .. index::
    single: field;imode
    
-.. _std.sales.Invoice.imode:
+.. _lino.sales.Invoice.imode:
 
 Field **Invoice.imode**
 =======================
@@ -1677,7 +1712,7 @@ Type: ForeignKey
 .. index::
    single: field;shipping_mode
    
-.. _std.sales.Invoice.shipping_mode:
+.. _lino.sales.Invoice.shipping_mode:
 
 Field **Invoice.shipping_mode**
 ===============================
@@ -1692,7 +1727,7 @@ Type: ForeignKey
 .. index::
    single: field;payment_term
    
-.. _std.sales.Invoice.payment_term:
+.. _lino.sales.Invoice.payment_term:
 
 Field **Invoice.payment_term**
 ==============================
@@ -1707,7 +1742,7 @@ Type: ForeignKey
 .. index::
    single: field;sales_remark
    
-.. _std.sales.Invoice.sales_remark:
+.. _lino.sales.Invoice.sales_remark:
 
 Field **Invoice.sales_remark**
 ==============================
@@ -1722,7 +1757,7 @@ Type: CharField
 .. index::
    single: field;subject
    
-.. _std.sales.Invoice.subject:
+.. _lino.sales.Invoice.subject:
 
 Field **Invoice.subject**
 =========================
@@ -1737,7 +1772,7 @@ Type: CharField
 .. index::
    single: field;vat_exempt
    
-.. _std.sales.Invoice.vat_exempt:
+.. _lino.sales.Invoice.vat_exempt:
 
 Field **Invoice.vat_exempt**
 ============================
@@ -1752,7 +1787,7 @@ Type: BooleanField
 .. index::
    single: field;item_vat
    
-.. _std.sales.Invoice.item_vat:
+.. _lino.sales.Invoice.item_vat:
 
 Field **Invoice.item_vat**
 ==========================
@@ -1767,7 +1802,7 @@ Type: BooleanField
 .. index::
    single: field;total_excl
    
-.. _std.sales.Invoice.total_excl:
+.. _lino.sales.Invoice.total_excl:
 
 Field **Invoice.total_excl**
 ============================
@@ -1782,7 +1817,7 @@ Type: PriceField
 .. index::
    single: field;total_vat
    
-.. _std.sales.Invoice.total_vat:
+.. _lino.sales.Invoice.total_vat:
 
 Field **Invoice.total_vat**
 ===========================
@@ -1797,7 +1832,7 @@ Type: PriceField
 .. index::
    single: field;intro
    
-.. _std.sales.Invoice.intro:
+.. _lino.sales.Invoice.intro:
 
 Field **Invoice.intro**
 =======================
@@ -1812,7 +1847,7 @@ Type: TextField
 .. index::
    single: field;user
    
-.. _std.sales.Invoice.user:
+.. _lino.sales.Invoice.user:
 
 Field **Invoice.user**
 ======================
@@ -1827,7 +1862,7 @@ Type: ForeignKey
 .. index::
    single: field;salesdocument_ptr
    
-.. _std.sales.Invoice.salesdocument_ptr:
+.. _lino.sales.Invoice.salesdocument_ptr:
 
 Field **Invoice.salesdocument_ptr**
 ===================================
@@ -1842,7 +1877,7 @@ Type: OneToOneField
 .. index::
    single: field;journal
    
-.. _std.sales.Invoice.journal:
+.. _lino.sales.Invoice.journal:
 
 Field **Invoice.journal**
 =========================
@@ -1857,7 +1892,7 @@ Type: ForeignKey
 .. index::
    single: field;number
    
-.. _std.sales.Invoice.number:
+.. _lino.sales.Invoice.number:
 
 Field **Invoice.number**
 ========================
@@ -1872,7 +1907,7 @@ Type: IntegerField
 .. index::
    single: field;value_date
    
-.. _std.sales.Invoice.value_date:
+.. _lino.sales.Invoice.value_date:
 
 Field **Invoice.value_date**
 ============================
@@ -1887,7 +1922,7 @@ Type: DateField
 .. index::
    single: field;ledger_remark
    
-.. _std.sales.Invoice.ledger_remark:
+.. _lino.sales.Invoice.ledger_remark:
 
 Field **Invoice.ledger_remark**
 ===============================
@@ -1902,7 +1937,7 @@ Type: CharField
 .. index::
    single: field;booked
    
-.. _std.sales.Invoice.booked:
+.. _lino.sales.Invoice.booked:
 
 Field **Invoice.booked**
 ========================
@@ -1917,7 +1952,7 @@ Type: BooleanField
 .. index::
    single: field;due_date
    
-.. _std.sales.Invoice.due_date:
+.. _lino.sales.Invoice.due_date:
 
 Field **Invoice.due_date**
 ==========================
@@ -1932,7 +1967,7 @@ Type: MyDateField
 .. index::
    single: field;order
    
-.. _std.sales.Invoice.order:
+.. _lino.sales.Invoice.order:
 
 Field **Invoice.order**
 =======================
@@ -1949,7 +1984,7 @@ Type: ForeignKey
 .. index::
    pair: model; DocItem
 
-.. _std.sales.DocItem:
+.. _lino.sales.DocItem:
 
 -----------------
 Model **DocItem**
@@ -1977,10 +2012,15 @@ total       PriceField    total
     
 Defined in :srcref:`/lino/modlib/sales/models.py`
 
+Referenced from
+
+
+
+
 .. index::
    single: field;id
    
-.. _std.sales.DocItem.id:
+.. _lino.sales.DocItem.id:
 
 Field **DocItem.id**
 ====================
@@ -1995,7 +2035,7 @@ Type: AutoField
 .. index::
    single: field;document
    
-.. _std.sales.DocItem.document:
+.. _lino.sales.DocItem.document:
 
 Field **DocItem.document**
 ==========================
@@ -2010,7 +2050,7 @@ Type: ForeignKey
 .. index::
    single: field;pos
    
-.. _std.sales.DocItem.pos:
+.. _lino.sales.DocItem.pos:
 
 Field **DocItem.pos**
 =====================
@@ -2025,7 +2065,7 @@ Type: IntegerField
 .. index::
    single: field;product
    
-.. _std.sales.DocItem.product:
+.. _lino.sales.DocItem.product:
 
 Field **DocItem.product**
 =========================
@@ -2040,7 +2080,7 @@ Type: ForeignKey
 .. index::
    single: field;title
    
-.. _std.sales.DocItem.title:
+.. _lino.sales.DocItem.title:
 
 Field **DocItem.title**
 =======================
@@ -2055,7 +2095,7 @@ Type: CharField
 .. index::
    single: field;description
    
-.. _std.sales.DocItem.description:
+.. _lino.sales.DocItem.description:
 
 Field **DocItem.description**
 =============================
@@ -2070,7 +2110,7 @@ Type: TextField
 .. index::
    single: field;discount
    
-.. _std.sales.DocItem.discount:
+.. _lino.sales.DocItem.discount:
 
 Field **DocItem.discount**
 ==========================
@@ -2085,7 +2125,7 @@ Type: IntegerField
 .. index::
    single: field;unit_price
    
-.. _std.sales.DocItem.unit_price:
+.. _lino.sales.DocItem.unit_price:
 
 Field **DocItem.unit_price**
 ============================
@@ -2100,7 +2140,7 @@ Type: PriceField
 .. index::
    single: field;qty
    
-.. _std.sales.DocItem.qty:
+.. _lino.sales.DocItem.qty:
 
 Field **DocItem.qty**
 =====================
@@ -2115,7 +2155,7 @@ Type: QuantityField
 .. index::
    single: field;total
    
-.. _std.sales.DocItem.total:
+.. _lino.sales.DocItem.total:
 
 Field **DocItem.total**
 =======================

@@ -1,0 +1,53 @@
+20110726
+========
+
+Teilnehmer von Kalender-Events
+------------------------------
+
+Neue Klassen:
+
+- :class:`lino.modlib.cal.models.EventType` (Terminarten) sowie neues Feld 
+  :attr:`lino.modlib.cal.models.Event.type`, das darauf verweist.
+  Also Termine können jetzt ausgedruckt werden, 
+  in verschiedene Arten gruppiert werden, 
+  und pro Terminart kann man eine Dokumentvorlage definieren.
+  Beispiele von Dokumenten sind Einladung zur Veranstaltung, Teilnehmerliste,...
+  
+- Eine :class:`Teilnahme <lino.modlib.cal.models.Attendance>` ist, wenn eine 
+  Person (oder eine Organisation) an einem Termin potentiell teilnimmt. 
+  Teilnahmen können ebenfalls ausgedruckt werden, aber hier kann man momentan 
+  nur eine einzige Dokumentvorlage angeben. 
+  Beispiel Dokument: Einschreibebestätigung.
+  
+cal.Component ist nicht mehr automatisch ein PartnerDocument, 
+und cal.Event und cal.Task sind jetzt abstrakt und und müssen also 
+ähnlich wie notes.Note in jeder Anwendung implementiert werden. 
+
+Sprung auf Version 1.2.1
+
+
+Modularisieren des Menüs?
+-------------------------
+
+Ich habe mal stellenweise begonnen mit einem neuen System zum Modularisieren des 
+Menüs. Die Idee ist noch nicht fertig.
+
+| setup_main_menu
+| setup_user_menu
+| setup_config_menu
+| setup_explorer_menu
+
+
+Bug in :term:`watch_tim`
+------------------------
+
+Die Felder `is_active`, `is_cpas` und `is_senior` wurden von 
+:term:`watch_tim` nicht aktualisiert.
+
+Bug: Lino verweigerte das Löschen nicht immer
+---------------------------------------------
+
+Lino erlaubte z.B. eine Stelle zu löschen, für die Verträge existierten. 
+Die Verträge wurden dann ebenfalls gelöscht.
+Das war ein sehr kleiner Bug, der großen Schaden anrichten könnte. 
+Deshalb kommt bald Release 1.2.1

@@ -17,7 +17,7 @@ Defined in :srcref:`/django/contrib/contenttypes/models.py`
 .. index::
    pair: model; ContentType
 
-.. _std.contenttypes.ContentType:
+.. _lino.contenttypes.ContentType:
 
 ---------------------
 Model **ContentType**
@@ -39,10 +39,15 @@ model     CharField python model class name (Python Modell-Klassenname,nom de la
     
 Defined in :srcref:`/django/contrib/contenttypes/models.py`
 
+Referenced from
+`lino.uploads.Upload.owner_type`_, `lino.cal.Task.owner_type`_, `lino.thirds.Third.owner_type`_
+
+
+
 .. index::
    single: field;id
    
-.. _std.contenttypes.ContentType.id:
+.. _lino.contenttypes.ContentType.id:
 
 Field **ContentType.id**
 ========================
@@ -57,7 +62,7 @@ Type: AutoField
 .. index::
    single: field;name
    
-.. _std.contenttypes.ContentType.name:
+.. _lino.contenttypes.ContentType.name:
 
 Field **ContentType.name**
 ==========================
@@ -72,7 +77,7 @@ Type: CharField
 .. index::
    single: field;app_label
    
-.. _std.contenttypes.ContentType.app_label:
+.. _lino.contenttypes.ContentType.app_label:
 
 Field **ContentType.app_label**
 ===============================
@@ -87,7 +92,7 @@ Type: CharField
 .. index::
    single: field;model
    
-.. _std.contenttypes.ContentType.model:
+.. _lino.contenttypes.ContentType.model:
 
 Field **ContentType.model**
 ===========================

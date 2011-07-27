@@ -24,10 +24,10 @@ from tempfile import gettempdir
 from os.path import join, abspath, dirname, normpath
 import logging
 
-__version__ = "1.2.0"
+__version__ = "1.2.1"
 """
 Lino version number. 
-The latest released version is :doc:`/releases/20110615`.
+The latest released version is :doc:`/releases/20110723`.
 """
 
 __author__ = "Luc Saffre <luc.saffre@gmx.net>"

@@ -52,6 +52,7 @@ class Lino(Lino):
         from lino.utils import menus
         from lino.apps.dsbe import models as dsbe
         from lino.modlib.properties import models as properties
+        from lino.modlib.cal import models as cal
 
         main = menus.Toolbar('main')
         m = main.add_menu("contacts",_("~Contacts"))
@@ -154,7 +155,8 @@ class Lino(Lino):
             
             config_etc.add_action('links.LinkTypes')
             config_etc.add_action('uploads.UploadTypes')
-            config_etc.add_action('cal.Places')
+            
+            cal.setup_config_menu(self,ui,user,cfg)
             
             config_etc.add_action('users.Users')
             #~ if self.use_tinymce:
@@ -175,8 +177,9 @@ class Lino(Lino):
             m.add_action('contenttypes.ContentTypes')
             m.add_action('dsbe.PersonSearches')
             m.add_action('properties.Properties')
-            m.add_action('cal.Events')
-            m.add_action('cal.Tasks')
+            
+            cal.setup_explorer_menu(self,ui,user,m)
+            
             #~ m = m.add_menu('listings',_('~Listings'))
             #~ for listing in LISTINGS:
                 #~ m.add_action(listing)

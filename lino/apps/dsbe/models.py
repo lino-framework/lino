@@ -49,6 +49,7 @@ from lino.modlib.contacts import models as contacts
 from lino.modlib.notes import models as notes
 from lino.modlib.links import models as links
 from lino.modlib.uploads import models as uploads
+from lino.modlib.cal import models as cal
 from lino.utils.choicelists import HowWell, ChoiceList
 #~ from lino.modlib.properties.utils import KnowledgeField #, StrengthField
 #~ from lino.modlib.uploads.models import UploadsByPerson
@@ -1312,33 +1313,6 @@ class Note(notes.Note,contacts.PartnerDocument,mixins.DiffingMixin):
         verbose_name = _("Event/Note") # application-specific override
         verbose_name_plural = _("Events/Notes")
 
-    def unused_get_reminder_html(self,ui,user):
-        url = ui.get_detail_url(self,fmt='detail')
-        if self.type:
-            s = unicode(self.type)
-        else:
-            s = self._meta.verbose_name
-        s += ' #' + unicode(self.pk)
-        
-        s = ui.href(url,cgi.escape(s))
-        
-        more = []
-        if self.person:
-            more.append(ui.href_to(self.person))
-        if self.company:
-            more.append(ui.href_to(self.company))
-        if self.event_type:
-            more.append(cgi.escape(unicode(self.event_type)))
-        if self.subject:
-            more.append(cgi.escape(self.subject))
-        if self.user and self.user != user:
-            more.append(cgi.escape(unicode(self.user)))
-        more.append(babel.dtos(self.date))
-        if self.reminder_text:
-            more.append(cgi.escape(self.reminder_text))
-        else:
-            more.append(cgi.escape(_('Due date reached')))
-        return s + '&nbsp;: ' + (', '.join(more))
         
     @classmethod
     def site_setup(cls,lino):
@@ -1382,6 +1356,45 @@ class MyNotes(notes.MyNotes):
     
 #~ class NotesByTask(notes.Notes):
     #~ fk_name = 'task'
+
+
+
+#
+# CALENDAR
+#
+
+class ComponentMixin(contacts.PartnerDocument):
+  
+    def summary_row(self,ui,rr,**kw):
+        html = contacts.PartnerDocument.summary_row(self,ui,rr,**kw)
+        if self.summary:
+            html += '&nbsp;: %s' % cgi.escape(force_unicode(self.summary))
+            #~ html += ui.href_to(self,force_unicode(self.summary))
+        html += _(" on ") + babel.dtos(self.start_date)
+        return html
+
+class Event(cal.Event,ComponentMixin):
+    class Meta(cal.Event.Meta):
+        app_label = 'cal'
+
+class Task(cal.Task,ComponentMixin):
+    class Meta(cal.Task.Meta):
+        app_label = 'cal'
+
+class EventsByPerson(cal.Events):
+    fk_name = 'person'
+    
+class EventsByCompany(cal.Events):
+    fk_name = 'company'
+    
+
+class TasksByPerson(cal.Tasks):
+    fk_name = 'person'
+    
+class TasksByCompany(cal.Tasks):
+    fk_name = 'company'
+    
+        
 
   
 #

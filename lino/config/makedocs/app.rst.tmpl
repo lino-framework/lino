@@ -14,7 +14,7 @@ ${doc($app.__doc__)}
 .. index::
    pair: model; $model.__name__
 
-.. _$(settings.LINO.source_name).${app_label}.${model.__name__}:
+.. _$(model_ref(model)):
 
 $(header(2,"Model **"+model.__name__+"**"))
 
@@ -23,6 +23,11 @@ ${doc($model.__doc__)}
 $model_overview($model)
     
 Defined in :srcref:`/$('/'.join(model.__module__.split('.'))+'.py')`
+
+Referenced from
+$model_referenced_from($model)
+
+
 
 #for $field in $model._meta.fields
 .. index::

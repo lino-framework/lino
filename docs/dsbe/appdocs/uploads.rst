@@ -18,7 +18,7 @@ Defined in :srcref:`/lino/modlib/uploads/models.py`
 .. index::
    pair: model; UploadType
 
-.. _std.uploads.UploadType:
+.. _lino.uploads.UploadType:
 
 --------------------
 Model **UploadType**
@@ -38,10 +38,15 @@ name CharField Name (Nom)
     
 Defined in :srcref:`/lino/modlib/uploads/models.py`
 
+Referenced from
+`lino.lino.SiteConfig.residence_permit_upload_type`_, `lino.lino.SiteConfig.work_permit_upload_type`_, `lino.lino.SiteConfig.driving_licence_upload_type`_, `lino.uploads.Upload.type`_
+
+
+
 .. index::
    single: field;id
    
-.. _std.uploads.UploadType.id:
+.. _lino.uploads.UploadType.id:
 
 Field **UploadType.id**
 =======================
@@ -56,7 +61,7 @@ Type: AutoField
 .. index::
    single: field;name
    
-.. _std.uploads.UploadType.name:
+.. _lino.uploads.UploadType.name:
 
 Field **UploadType.name**
 =========================
@@ -73,7 +78,7 @@ Type: CharField
 .. index::
    pair: model; Upload
 
-.. _std.uploads.Upload:
+.. _lino.uploads.Upload:
 
 ----------------
 Model **Upload**
@@ -81,35 +86,36 @@ Model **Upload**
 
 
 
-Upload(id, user_id, owner_type_id, owner_id, reminder_date, reminder_text, delay_value, delay_type, reminder_done, file, mimetype, created, modified, description, type_id)
+Upload(id, user_id, owner_type_id, owner_id, file, mimetype, created, modified, description, type_id, valid_until)
   
-============= ==================== =================================================
-name          type                 verbose name                                     
-============= ==================== =================================================
-id            AutoField            ID                                               
-user          ForeignKey           user (Benutzer,utilisateur)                      
-owner_type    ForeignKey           Owner type (Besitzertabelle,type de propriétaire)
-owner_id      PositiveIntegerField Owner (Besitzer,Propriétaire)                    
-reminder_date DateField            Due date (Fällig am,Terme)                       
-reminder_text CharField            Reminder text (Erinnerungstext,Texte de rappel)  
-delay_value   IntegerField         Delay (value) (Frist (Wert),Delai (valeur))      
-delay_type    CharField            Delay (unit) (Frist (Einheit),Délai (unité))     
-reminder_done BooleanField         Done (Erledigt,Fait)                             
-file          FileField            File (Datei,Fichier)                             
-mimetype      CharField            MIME type (MIME-Art,type MIME)                   
-created       DateTimeField        Created (Erstellt,Créé)                          
-modified      DateTimeField        Modified (Bearbeitet,Modifié)                    
-description   CharField            Description (Beschreibung)                       
-type          ForeignKey           type                                             
-============= ==================== =================================================
+=========== ======================== =================================================
+name        type                     verbose name                                     
+=========== ======================== =================================================
+id          AutoField                ID                                               
+user        ForeignKey               user (Benutzer,utilisateur)                      
+owner_type  ForeignKey               Owner type (Besitzertabelle,type de propriétaire)
+owner_id    GenericForeignKeyIdField Owner (Besitzer,Propriétaire)                    
+file        FileField                File (Datei,Fichier)                             
+mimetype    CharField                MIME type (MIME-Art,type MIME)                   
+created     DateTimeField            Created (Erstellt,Créé)                          
+modified    DateTimeField            Modified (Bearbeitet,Modifié)                    
+description CharField                Description (Beschreibung)                       
+type        ForeignKey               type                                             
+valid_until DateField                valid until (gültig bis,valid jusqu'au)          
+=========== ======================== =================================================
 
     
 Defined in :srcref:`/lino/modlib/uploads/models.py`
 
+Referenced from
+
+
+
+
 .. index::
    single: field;id
    
-.. _std.uploads.Upload.id:
+.. _lino.uploads.Upload.id:
 
 Field **Upload.id**
 ===================
@@ -124,7 +130,7 @@ Type: AutoField
 .. index::
    single: field;user
    
-.. _std.uploads.Upload.user:
+.. _lino.uploads.Upload.user:
 
 Field **Upload.user**
 =====================
@@ -139,7 +145,7 @@ Type: ForeignKey
 .. index::
    single: field;owner_type
    
-.. _std.uploads.Upload.owner_type:
+.. _lino.uploads.Upload.owner_type:
 
 Field **Upload.owner_type**
 ===========================
@@ -154,7 +160,7 @@ Type: ForeignKey
 .. index::
    single: field;owner_id
    
-.. _std.uploads.Upload.owner_id:
+.. _lino.uploads.Upload.owner_id:
 
 Field **Upload.owner_id**
 =========================
@@ -163,88 +169,13 @@ Field **Upload.owner_id**
 
 
 
-Type: PositiveIntegerField
-
-   
-.. index::
-   single: field;reminder_date
-   
-.. _std.uploads.Upload.reminder_date:
-
-Field **Upload.reminder_date**
-==============================
-
-
-
-
-
-Type: DateField
-
-   
-.. index::
-   single: field;reminder_text
-   
-.. _std.uploads.Upload.reminder_text:
-
-Field **Upload.reminder_text**
-==============================
-
-
-
-
-
-Type: CharField
-
-   
-.. index::
-   single: field;delay_value
-   
-.. _std.uploads.Upload.delay_value:
-
-Field **Upload.delay_value**
-============================
-
-
-
-
-
-Type: IntegerField
-
-   
-.. index::
-   single: field;delay_type
-   
-.. _std.uploads.Upload.delay_type:
-
-Field **Upload.delay_type**
-===========================
-
-
-
-
-
-Type: CharField
-
-   
-.. index::
-   single: field;reminder_done
-   
-.. _std.uploads.Upload.reminder_done:
-
-Field **Upload.reminder_done**
-==============================
-
-
-
-
-
-Type: BooleanField
+Type: GenericForeignKeyIdField
 
    
 .. index::
    single: field;file
    
-.. _std.uploads.Upload.file:
+.. _lino.uploads.Upload.file:
 
 Field **Upload.file**
 =====================
@@ -259,7 +190,7 @@ Type: FileField
 .. index::
    single: field;mimetype
    
-.. _std.uploads.Upload.mimetype:
+.. _lino.uploads.Upload.mimetype:
 
 Field **Upload.mimetype**
 =========================
@@ -274,7 +205,7 @@ Type: CharField
 .. index::
    single: field;created
    
-.. _std.uploads.Upload.created:
+.. _lino.uploads.Upload.created:
 
 Field **Upload.created**
 ========================
@@ -289,7 +220,7 @@ Type: DateTimeField
 .. index::
    single: field;modified
    
-.. _std.uploads.Upload.modified:
+.. _lino.uploads.Upload.modified:
 
 Field **Upload.modified**
 =========================
@@ -304,7 +235,7 @@ Type: DateTimeField
 .. index::
    single: field;description
    
-.. _std.uploads.Upload.description:
+.. _lino.uploads.Upload.description:
 
 Field **Upload.description**
 ============================
@@ -319,7 +250,7 @@ Type: CharField
 .. index::
    single: field;type
    
-.. _std.uploads.Upload.type:
+.. _lino.uploads.Upload.type:
 
 Field **Upload.type**
 =====================
@@ -329,6 +260,21 @@ Field **Upload.type**
 
 
 Type: ForeignKey
+
+   
+.. index::
+   single: field;valid_until
+   
+.. _lino.uploads.Upload.valid_until:
+
+Field **Upload.valid_until**
+============================
+
+
+
+
+
+Type: DateField
 
    
 

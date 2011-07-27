@@ -156,6 +156,13 @@ def country2kw(row,kw):
         except City.MultipleObjectsReturned,e:
             dblogger.warning("%s-%s : %s",row['PAYS'],row['CP'],e)
       
+def par2person(row,person):
+    person.is_active = iif(row['IDPRT']=='I',False,True)
+    if row['IDPRT'] == 'S':
+        person.is_cpas = True
+    elif row['IDPRT'] == 'A':
+        person.is_senior = True
+        
 def pxs2person(row,person):
   
     kw = {}
@@ -170,12 +177,8 @@ def pxs2person(row,person):
     )
     for k,v in kw.items():
         setattr(person,k,v)
-        
-    person.is_active = iif(row['IDPRT']=='I',False,True)
-    if row['IDPRT'] == 'S':
-        person.is_cpas = True
-    elif row['IDPRT'] == 'A':
-        person.is_senior = True
+    
+    par2person(row,person)    
         
     if row['IDMUT']:
         try:

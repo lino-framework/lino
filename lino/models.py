@@ -68,10 +68,11 @@ class SiteConfigs(reports.Report):
 def get_site_config():
     try:
         return SiteConfig.objects.get(pk=1)
-    except SiteConfig.DoesNotExist:
-        dblogger.debug("Creating SiteConfig record")
+    #~ except SiteConfig.DoesNotExist:
+    except Exception,e:
+        dblogger.debug("Creating SiteConfig record (%s)",e)
         sc = SiteConfig(pk=1)
-        sc.save()
+        #~ sc.save()
         return sc
 
 def update_site_config(**kw):

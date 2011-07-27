@@ -61,3 +61,50 @@ also das kommt noch mit in die :doc:`/releases/20110723`.
 
 Checkin 20110725c und Installation beim Kunden, 
 also auch das kommt noch mit in die :doc:`/releases/20110723`.
+
+(d) UnicodeEncodeError at /api/uploads/UploadsByOwner
+-----------------------------------------------------
+
+Wenn man versucht, eine Datei mit Sonderzeichen im Namen hochzuladen, 
+dann passiert auf dem Debian-Server des Kunden ein UnicodeEncodeError::
+
+  ERROR base : Internal Server Error: /api/uploads/UploadsByOwner
+  Traceback (most recent call last):
+    File "/var/snapshots/django/django/core/handlers/base.py", line 111, in get_response
+      response = callback(request, *callback_args, **callback_kwargs)
+    File "/var/snapshots/lino/lino/ui/extjs3/ext_ui.py", line 980, in api_list_view
+      rh.report.handle_uploaded_files(request,instance)
+    File "/var/snapshots/lino/lino/reports.py", line 714, in f
+      return m(obj,request)
+    File "/var/snapshots/lino/lino/mixins/uploadable.py", line 81, in handle_uploaded_files
+      ff.save(uf.name,uf,save=False)
+    File "/var/snapshots/django/django/db/models/fields/files.py", line 90, in save
+      self.name = self.storage.save(name, content)
+    File "/var/snapshots/django/django/core/files/storage.py", line 48, in save
+      name = self.get_available_name(name)
+    File "/var/snapshots/django/django/core/files/storage.py", line 74, in get_available_name
+      while self.exists(name):
+    File "/var/snapshots/django/django/core/files/storage.py", line 233, in exists
+      return os.path.exists(self.path(name))
+    File "/usr/lib/python2.6/genericpath.py", line 18, in exists
+      st = os.stat(path)
+  UnicodeEncodeError: 'ascii' codec can't encode character u'\xfc' in position 51: ordinal not in range(128)
+
+Ich versuche den Fall im Laboratorium zu reproduzieren::
+
+  import os
+  from django.utils._os import safe_join
+
+  fn = u"Liste F\xfchrerschein.pdf"
+  fn = safe_join('foo',fn)
+  fn = os.path.normpath(fn)
+  print repr(fn)
+  print os.path.exists(fn)
+  
+Aber das funktioniert tadellos::
+
+  lsaffre@lino:~$ python 20110725.py
+  u'/home/lsaffre/foo/Liste F\xfchrerschein.pdf'
+  True
+
+Hm...

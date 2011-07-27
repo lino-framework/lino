@@ -1,7 +1,9 @@
-Data migration
-==============
+How to migrate data
+===================
 
-Here is how we suggest to migrate data using :doc:`/topics/dpy`.
+Here is how we suggest to 
+:doc:`migrate existing data </topics/datamig>` 
+using :doc:`/topics/dpy`.
 
 Go to your local directory::
 

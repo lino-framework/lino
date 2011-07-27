@@ -31,6 +31,7 @@ from lino import mixins
 from lino import fields
 from lino import reports
 from lino.utils import babel
+from lino.tools import resolve_model
 
 from lino.modlib.contacts import models as contacts
 
@@ -42,10 +43,12 @@ from lino.utils.babel import dtosl
 class Place(models.Model):
     name = models.CharField(_("Name"),max_length=200)
   
+class Places(reports.Report):
+    model = Place
+    
 
 class Component(mixins.AutoUser,
-                mixins.CreatedModified,
-                contacts.PartnerDocument):
+                mixins.CreatedModified):
     """
     The `user` field is the iCal:ORGANIZER
     """
@@ -91,15 +94,34 @@ class Component(mixins.AutoUser,
         html += _(" on ") + babel.dtos(self.start_date)
         return html
         
+
+
+
+class EventType(mixins.PrintableType):
+  
+    templates_group = 'events'
     
+    class Meta:
+        verbose_name = _("Event Type")
+        verbose_name_plural = _('Event Types')
+        
+    name = babel.BabelCharField(_("Event title"),max_length=200)
+    
+    def __unicode__(self):
+        return unicode(babel.babelattr(self,'name'))
+
+class EventTypes(reports.Report):
+    model = EventType
+    column_names = 'name build_method template *'
+
     
 #~ class Event(Component,contacts.PartnerDocument):
-class Event(Component):
+class Event(Component,mixins.TypedPrintable):
   
     class Meta:
         verbose_name = _("Event")
         verbose_name_plural = _("Events")
-        #~ abstract = True
+        abstract = True
         
     end_date = models.DateField(
         blank=True,null=True,
@@ -127,7 +149,7 @@ class Task(mixins.Owned,Component):
     class Meta:
         verbose_name = _("Task")
         verbose_name_plural = _("Tasks")
-        #~ abstract = True
+        abstract = True
         
     due_date = models.DateField(
         blank=True,null=True,
@@ -178,55 +200,75 @@ class Task(mixins.Owned,Component):
             return html
         return super(Task,self).summary_row(ui,rr,**kw)
         
-class Places(reports.Report):
-    model = Place
-    
+
 class Events(reports.Report):
-    model = Event
+    model = 'cal.Event'
     column_names = 'start_date start_time summary status *'
     
 class Tasks(reports.Report):
-    model = Task
+    model = 'cal.Task'
     column_names = 'start_date summary done status *'
     #~ hidden_columns = set('owner_id owner_type'.split())
     
 #~ class EventsByOwner(Events):
     #~ fk_name = 'owner'
     
-class EventsByPerson(Events):
-    fk_name = 'person'
-    
-class EventsByCompany(Events):
-    fk_name = 'company'
-    
-
 class TasksByOwner(Tasks):
     fk_name = 'owner'
     #~ hidden_columns = set('owner_id owner_type'.split())
 
-class TasksByPerson(Tasks):
-    fk_name = 'person'
-    
-class TasksByCompany(Tasks):
-    fk_name = 'company'
-    
 class MyEvents(mixins.ByUser):
-    model = Event
-    label = _("My Events")
+    model = 'cal.Event'
+    #~ label = _("My Events")
     order_by = ["start_date","start_time"]
     column_names = 'start_date start_time summary status *'
     
 class MyTasks(mixins.ByUser):
-    model = Task
-    label = _("My Tasks")
+    model = 'cal.Task'
+    #~ label = _("My Tasks")
     order_by = ["start_date","start_time"]
     column_names = 'start_date summary done status *'
+
+
+class Attendance(contacts.PartnerDocument,mixins.Printable):
+    class Meta:
+        verbose_name = _("Attendance")
+        verbose_name_plural = _("Attendances")
+        #~ abstract = True
+        
+    event = models.ForeignKey('cal.Event',
+        verbose_name=_("Event"),
+        null=True,blank=True) 
+        
+    confirmed = models.DateField(
+        blank=True,null=True,
+        verbose_name=_("Confirmed"))
+
+    remark = models.CharField(
+        _("Remark"),max_length=200,blank=True)
+
+class Attendances(reports.Report):
+    model = Attendance
+    column_names = 'person company confirmed remark event *'
     
+class AttendancesByEvent(Attendances):
+    fk_name = 'event'
+
+class AttendancesByPerson(Attendances):
+    fk_name = 'person'
+    column_names = 'event confirmed remark company * person'
+
+class AttendancesByCompany(Attendances):
+    fk_name = 'company'
+    column_names = 'event confirmed remark person * company'
+
     
 def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
     """
     Return a HTML summary of all open reminders for this user
     """
+    Task = resolve_model('cal.Task')
+    Event = resolve_model('cal.Event')
     #~ today = datetime.date.today()
     today = datetime.datetime.now()
     #~ if days_back is None:
@@ -260,6 +302,8 @@ def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
         })
     filterkw.update(dt_alarm__isnull=False)
     filterkw.update(user=user)
+    
+    
     
     for o in Event.objects.filter(**filterkw).order_by('dt_alarm'):
         add(o)
@@ -298,6 +342,7 @@ def update_auto_task(autotype,user,date,summary,owner,**defaults):
     """Creates, updates or deletes the automatic :class:`Task` 
     related to the specified `owner`.
     """
+    Task = resolve_model('cal.Task')
     ot = ContentType.objects.get_for_model(owner.__class__)
     if date:
         #~ defaults = owner.get_auto_task_defaults(**defaults)
@@ -356,3 +401,19 @@ def migrate_reminder(obj,reminder_date,reminder_text,
       alarm_value = delay_value,
       alarm_unit = delay2alarm(delay_type))
       
+
+
+
+def setup_main_menu(site,ui,user,m): pass
+def setup_my_menu(site,ui,user,m): pass
+  
+def setup_config_menu(site,ui,user,m): 
+    m  = m.add_menu("cal",_("~Calendar"))
+    m.add_action('cal.Places')
+    m.add_action('cal.EventTypes')
+  
+def setup_explorer_menu(site,ui,user,m):
+    m.add_action('cal.Events')
+    m.add_action('cal.Tasks')
+    m.add_action('cal.Attendances')
+  

@@ -44,3 +44,5 @@ tests:
 	$(DJANGO_ADMIN) test --settings=lino.apps.std.settings
 	$(DJANGO_ADMIN) test --settings=lino.apps.dsbe.settings
 	$(DJANGO_ADMIN) test --settings=lino.apps.igen.settings
+
+

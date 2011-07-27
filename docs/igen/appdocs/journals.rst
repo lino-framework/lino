@@ -26,7 +26,7 @@ See lino.testapps.journals for more documentation.
 .. index::
    pair: model; Journal
 
-.. _std.journals.Journal:
+.. _lino.journals.Journal:
 
 -----------------
 Model **Journal**
@@ -55,10 +55,15 @@ printed_name_et CharField      printed name (et)
     
 Defined in :srcref:`/lino/modlib/journals/models.py`
 
+Referenced from
+`lino.ledger.Booking.journal`_, `lino.sales.InvoicingMode.journal`_, `lino.sales.SalesRule.journal`_, `lino.sales.SalesDocument.journal`_, `lino.sales.Order.journal`_, `lino.sales.Invoice.journal`_, `lino.sales.Invoice.journal`_, `lino.finan.BankStatement.journal`_
+
+
+
 .. index::
    single: field;id
    
-.. _std.journals.Journal.id:
+.. _lino.journals.Journal.id:
 
 Field **Journal.id**
 ====================
@@ -73,7 +78,7 @@ Type: CharField
 .. index::
    single: field;name
    
-.. _std.journals.Journal.name:
+.. _lino.journals.Journal.name:
 
 Field **Journal.name**
 ======================
@@ -88,7 +93,7 @@ Type: CharField
 .. index::
    single: field;doctype
    
-.. _std.journals.Journal.doctype:
+.. _lino.journals.Journal.doctype:
 
 Field **Journal.doctype**
 =========================
@@ -103,7 +108,7 @@ Type: IntegerField
 .. index::
    single: field;force_sequence
    
-.. _std.journals.Journal.force_sequence:
+.. _lino.journals.Journal.force_sequence:
 
 Field **Journal.force_sequence**
 ================================
@@ -118,7 +123,7 @@ Type: BooleanField
 .. index::
    single: field;account
    
-.. _std.journals.Journal.account:
+.. _lino.journals.Journal.account:
 
 Field **Journal.account**
 =========================
@@ -133,7 +138,7 @@ Type: ForeignKey
 .. index::
    single: field;pos
    
-.. _std.journals.Journal.pos:
+.. _lino.journals.Journal.pos:
 
 Field **Journal.pos**
 =====================
@@ -148,7 +153,7 @@ Type: IntegerField
 .. index::
    single: field;printed_name
    
-.. _std.journals.Journal.printed_name:
+.. _lino.journals.Journal.printed_name:
 
 Field **Journal.printed_name**
 ==============================
@@ -163,7 +168,7 @@ Type: BabelCharField
 .. index::
    single: field;printed_name_de
    
-.. _std.journals.Journal.printed_name_de:
+.. _lino.journals.Journal.printed_name_de:
 
 Field **Journal.printed_name_de**
 =================================
@@ -178,7 +183,7 @@ Type: CharField
 .. index::
    single: field;printed_name_fr
    
-.. _std.journals.Journal.printed_name_fr:
+.. _lino.journals.Journal.printed_name_fr:
 
 Field **Journal.printed_name_fr**
 =================================
@@ -193,7 +198,7 @@ Type: CharField
 .. index::
    single: field;printed_name_nl
    
-.. _std.journals.Journal.printed_name_nl:
+.. _lino.journals.Journal.printed_name_nl:
 
 Field **Journal.printed_name_nl**
 =================================
@@ -208,7 +213,7 @@ Type: CharField
 .. index::
    single: field;printed_name_et
    
-.. _std.journals.Journal.printed_name_et:
+.. _lino.journals.Journal.printed_name_et:
 
 Field **Journal.printed_name_et**
 =================================

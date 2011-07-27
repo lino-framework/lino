@@ -17,7 +17,7 @@ Defined in :srcref:`/lino/modlib/notes/models.py`
 .. index::
    pair: model; NoteType
 
-.. _std.notes.NoteType:
+.. _lino.notes.NoteType:
 
 ------------------
 Model **NoteType**
@@ -27,24 +27,29 @@ Model **NoteType**
 
 NoteType(id, build_method, template, name, important, remark)
   
-============ ============ ===================================
-name         type         verbose name                       
-============ ============ ===================================
-id           AutoField    ID                                 
-build_method CharField    Build method (Konstruktionsmethode)
-template     CharField    Template (Vorlage)                 
-name         CharField    name                               
-important    BooleanField important (wichtig)                
-remark       TextField    Remark (Bemerkung)                 
-============ ============ ===================================
+============ ============ ===========================================================
+name         type         verbose name                                               
+============ ============ ===========================================================
+id           AutoField    ID                                                         
+build_method CharField    Build method (Konstruktionsmethode,Méthode de construction)
+template     CharField    Template (Vorlage,Modèle)                                  
+name         CharField    name                                                       
+important    BooleanField important (wichtig)                                        
+remark       TextField    Remark (Bemerkung,Remarque)                                
+============ ============ ===========================================================
 
     
 Defined in :srcref:`/lino/modlib/notes/models.py`
 
+Referenced from
+`lino.notes.Note.type`_
+
+
+
 .. index::
    single: field;id
    
-.. _std.notes.NoteType.id:
+.. _lino.notes.NoteType.id:
 
 Field **NoteType.id**
 =====================
@@ -59,7 +64,7 @@ Type: AutoField
 .. index::
    single: field;build_method
    
-.. _std.notes.NoteType.build_method:
+.. _lino.notes.NoteType.build_method:
 
 Field **NoteType.build_method**
 ===============================
@@ -74,7 +79,7 @@ Type: CharField
 .. index::
    single: field;template
    
-.. _std.notes.NoteType.template:
+.. _lino.notes.NoteType.template:
 
 Field **NoteType.template**
 ===========================
@@ -89,7 +94,7 @@ Type: CharField
 .. index::
    single: field;name
    
-.. _std.notes.NoteType.name:
+.. _lino.notes.NoteType.name:
 
 Field **NoteType.name**
 =======================
@@ -104,7 +109,7 @@ Type: CharField
 .. index::
    single: field;important
    
-.. _std.notes.NoteType.important:
+.. _lino.notes.NoteType.important:
 
 Field **NoteType.important**
 ============================
@@ -119,7 +124,7 @@ Type: BooleanField
 .. index::
    single: field;remark
    
-.. _std.notes.NoteType.remark:
+.. _lino.notes.NoteType.remark:
 
 Field **NoteType.remark**
 =========================
@@ -134,9 +139,150 @@ Type: TextField
 
 
 .. index::
+   pair: model; EventType
+
+.. _lino.notes.EventType:
+
+-------------------
+Model **EventType**
+-------------------
+
+
+
+
+    
+  
+======= ============== ==============================================
+name    type           verbose name                                  
+======= ============== ==============================================
+id      AutoField      ID                                            
+name    BabelCharField Designation (Beschreibung,Désignation,Nimetus)
+remark  TextField      Remark (Bemerkung,Remarque)                   
+name_de CharField      Designation (de)                              
+name_fr CharField      Designation (fr)                              
+name_nl CharField      Designation (nl)                              
+name_et CharField      Designation (et)                              
+======= ============== ==============================================
+
+    
+Defined in :srcref:`/lino/modlib/notes/models.py`
+
+Referenced from
+`lino.notes.Note.event_type`_
+
+
+
+.. index::
+   single: field;id
+   
+.. _lino.notes.EventType.id:
+
+Field **EventType.id**
+======================
+
+
+
+
+
+Type: AutoField
+
+   
+.. index::
+   single: field;name
+   
+.. _lino.notes.EventType.name:
+
+Field **EventType.name**
+========================
+
+
+
+
+
+Type: BabelCharField
+
+   
+.. index::
+   single: field;remark
+   
+.. _lino.notes.EventType.remark:
+
+Field **EventType.remark**
+==========================
+
+
+
+
+
+Type: TextField
+
+   
+.. index::
+   single: field;name_de
+   
+.. _lino.notes.EventType.name_de:
+
+Field **EventType.name_de**
+===========================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;name_fr
+   
+.. _lino.notes.EventType.name_fr:
+
+Field **EventType.name_fr**
+===========================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;name_nl
+   
+.. _lino.notes.EventType.name_nl:
+
+Field **EventType.name_nl**
+===========================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;name_et
+   
+.. _lino.notes.EventType.name_et:
+
+Field **EventType.name_et**
+===========================
+
+
+
+
+
+Type: CharField
+
+   
+
+
+.. index::
    pair: model; Note
 
-.. _std.notes.Note:
+.. _lino.notes.Note:
 
 --------------
 Model **Note**
@@ -144,32 +290,34 @@ Model **Note**
 
 
 
-Note(id, user_id, reminder_date, reminder_text, delay_value, delay_type, must_build, date, type_id, subject, body, language)
+Note(id, user_id, must_build, date, type_id, event_type_id, subject, body, language)
   
-============= ============= ==================================
-name          type          verbose name                      
-============= ============= ==================================
-id            AutoField     ID                                
-user          ForeignKey    user (Benutzer)                   
-reminder_date DateField     Due date (Fällig am)              
-reminder_text CharField     Reminder text (Erinnerungstext)   
-delay_value   IntegerField  Delay (value) (Frist (Wert))      
-delay_type    CharField     Delay (unit) (Frist (Einheit))    
-must_build    BooleanField  must build (muss generiert werden)
-date          DateField     Date (Datum,Kuupäev)              
-type          ForeignKey    Note type (Notizart)              
-subject       CharField     Subject (Betreff)                 
-body          TextField     Body (Inhalt)                     
-language      LanguageField Language (Sprache)                
-============= ============= ==================================
+========== ============= ======================================================================
+name       type          verbose name                                                          
+========== ============= ======================================================================
+id         AutoField     ID                                                                    
+user       ForeignKey    user (Benutzer,utilisateur)                                           
+must_build BooleanField  must build (muss generiert werden,doit être construit)                
+date       DateField     Date (Datum)                                                          
+type       ForeignKey    Note Type (Form) (Notizart (Form),Type de note (Formulaire))          
+event_type ForeignKey    Event Type (Content) (Ereignisart (Inhalt),Type d'événement (contenu))
+subject    CharField     Subject (Betreff,Objet)                                               
+body       RichTextField Body (Inhalt,Corps)                                                   
+language   LanguageField Language (Sprache,Langue)                                             
+========== ============= ======================================================================
 
     
 Defined in :srcref:`/lino/apps/igen/models.py`
 
+Referenced from
+
+
+
+
 .. index::
    single: field;id
    
-.. _std.notes.Note.id:
+.. _lino.notes.Note.id:
 
 Field **Note.id**
 =================
@@ -184,7 +332,7 @@ Type: AutoField
 .. index::
    single: field;user
    
-.. _std.notes.Note.user:
+.. _lino.notes.Note.user:
 
 Field **Note.user**
 ===================
@@ -197,69 +345,9 @@ Type: ForeignKey
 
    
 .. index::
-   single: field;reminder_date
-   
-.. _std.notes.Note.reminder_date:
-
-Field **Note.reminder_date**
-============================
-
-
-
-
-
-Type: DateField
-
-   
-.. index::
-   single: field;reminder_text
-   
-.. _std.notes.Note.reminder_text:
-
-Field **Note.reminder_text**
-============================
-
-
-
-
-
-Type: CharField
-
-   
-.. index::
-   single: field;delay_value
-   
-.. _std.notes.Note.delay_value:
-
-Field **Note.delay_value**
-==========================
-
-
-
-
-
-Type: IntegerField
-
-   
-.. index::
-   single: field;delay_type
-   
-.. _std.notes.Note.delay_type:
-
-Field **Note.delay_type**
-=========================
-
-
-
-
-
-Type: CharField
-
-   
-.. index::
    single: field;must_build
    
-.. _std.notes.Note.must_build:
+.. _lino.notes.Note.must_build:
 
 Field **Note.must_build**
 =========================
@@ -274,7 +362,7 @@ Type: BooleanField
 .. index::
    single: field;date
    
-.. _std.notes.Note.date:
+.. _lino.notes.Note.date:
 
 Field **Note.date**
 ===================
@@ -289,7 +377,7 @@ Type: DateField
 .. index::
    single: field;type
    
-.. _std.notes.Note.type:
+.. _lino.notes.Note.type:
 
 Field **Note.type**
 ===================
@@ -302,9 +390,24 @@ Type: ForeignKey
 
    
 .. index::
+   single: field;event_type
+   
+.. _lino.notes.Note.event_type:
+
+Field **Note.event_type**
+=========================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
    single: field;subject
    
-.. _std.notes.Note.subject:
+.. _lino.notes.Note.subject:
 
 Field **Note.subject**
 ======================
@@ -319,7 +422,7 @@ Type: CharField
 .. index::
    single: field;body
    
-.. _std.notes.Note.body:
+.. _lino.notes.Note.body:
 
 Field **Note.body**
 ===================
@@ -328,13 +431,13 @@ Field **Note.body**
 
 
 
-Type: TextField
+Type: RichTextField
 
    
 .. index::
    single: field;language
    
-.. _std.notes.Note.language:
+.. _lino.notes.Note.language:
 
 Field **Note.language**
 =======================
