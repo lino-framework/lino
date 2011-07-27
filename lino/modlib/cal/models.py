@@ -39,6 +39,7 @@ from lino.modlib.cal.utils import EventStatus, \
     TaskStatus, DurationUnit, Priority, AccessClass, add_duration
 
 from lino.utils.babel import dtosl
+from lino.utils.dpy import is_deserializing
 
 class Place(models.Model):
     name = models.CharField(_("Name"),max_length=200)
@@ -337,11 +338,11 @@ def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
     return s
 
 
-
 def update_auto_task(autotype,user,date,summary,owner,**defaults):
     """Creates, updates or deletes the automatic :class:`Task` 
     related to the specified `owner`.
     """
+    if is_deserializing(): return 
     Task = resolve_model('cal.Task')
     ot = ContentType.objects.get_for_model(owner.__class__)
     if date:

@@ -1,0 +1,60 @@
+20110727
+========
+
+Upgrade in Eupen
+----------------
+
+Ich mache ein Upgrade in Eupen wegen des Bugs "Lino verweigerte das Löschen nicht immer".
+
+So ein Upgrade ist ja inzwischen Routinearbeit: 
+Zunächst ein :term:`dump` beim Kunden machen 
+und auf Jana testen, ob es mit der neuen Version eingelesen wird...
+Upps, und prompt passiert was Neues:
+
+MemoryError
+-----------
+
+::
+
+  Problem installing fixture '/usr/local/django/myproject/fixtures/d20110727.py': Traceback (most recent call last):
+    File "/var/snapshots/django/django/core/management/commands/loaddata.py", line 169, in handle
+      for obj in objects:
+    File "/var/snapshots/lino/lino/utils/dpy.py", line 352, in Deserializer
+      module = imp.load_module(fqname, fp, fp.name, desc)
+  MemoryError
+  
+Nun ja, die Dump-Datei ist ein 6MB großes Python-Modul ohne Kommentare... 
+und Jana ist eine virtuelle Maschine auf einem Proxmox-Server 
+mit nur 512 MB Memory und 512 MB Swap.
+Es reichte, den Swap-Speicher auf 1024 zu erhöhen.
+
+Aber es gibt also eine theoretische Grenze für dpy-Dumps: den Arbeitsspeicher.
+Falls das mal akut werden sollte, müsste man die Dump-Datei manuell in zwei Module teilen.
+
+Dann noch ein Problem:
+
+Automatische Tasks und :class:`lino.utils.dpy.Deserializer`
+-----------------------------------------------------------
+
+Richtig, da hatte ich bisher nicht dran gedacht: beim Einlesen eines Dumps darf er 
+nun nicht mehr automatische Tasks generieren.
+
+
+INFO Deferred Task #436 (#436) : {'id': [u'Aufgabe mit diesem ID existiert bereits.']}
+INFO Deferred Task #437 (#437) : {'id': [u'Aufgabe mit diesem ID existiert bereits.']}
+INFO Deferred Task #438 (#438) : {'id': [u'Aufgabe mit diesem ID existiert bereits.']}
+INFO Deferred Task #439 (#439) : {'id': [u'Aufgabe mit diesem ID existiert bereits.']}
+INFO Deferred Task #440 (#440) : {'id': [u'Aufgabe mit diesem ID existiert bereits.']}
+INFO Deferred Task #441 (#441) : {'id': [u'Aufgabe mit diesem ID existiert bereits.']}
+INFO Deferred Task #442 (#442) : {'id': [u'Aufgabe mit diesem ID existiert bereits.']}
+INFO Deferred Task #443 (#443) : {'id': [u'Aufgabe mit diesem ID existiert bereits.']}
+INFO Saved 0 instances.
+WARNING Abandoning with 440 unsaved instances from t:\data\luc\lino\dsbe\fixtures\d20110727.py.
+Problem installing fixture 't:\data\luc\lino\dsbe\fixtures\d20110727.py': Traceback (most recent call last):
+  File "l:\snapshots\django\django\core\management\commands\loaddata.py", line 174, in handle
+    obj.save(using=using)
+  File "t:\hgwork\lino\lino\utils\dpy.py", line 288, in save
+    "See dblog for details." % len(save_later))
+Exception: Abandoned with 440 unsaved instances. See dblog for details.
+
+INFO Lino initdb done ('d20110727',) on database t:\data\luc\lino\dsbe\dsbe_test.db.

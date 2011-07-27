@@ -1,0 +1,35 @@
+Version 1.2.1 (27.07.2011)
+==========================
+
+Bugfix release
+
+
+New features
+------------
+
+Internal optimizations
+----------------------
+
+
+Bugs fixed
+----------
+
+
+- Bug in :term:`watch_tim` : 
+  Die Felder `is_active`, `is_cpas` und `is_senior` 
+  wurden von :term:`watch_tim` nicht aktualisiert.
+
+- Lino verweigerte das Löschen nicht immer.
+  Lino erlaubte z.B. eine `Stelle` zu löschen, für die Verträge existierten. 
+  Die Verträge wurden dann ebenfalls gelöscht.
+  Das war ein sehr kleiner Bug, der großen Schaden anrichten könnte. 
+  Deshalb kommt bald Release 1.2.1
+
+Upgrade instructions
+--------------------
+
+The following are technical instructions related to this 
+upgrade, designed to be executed by a Lino expert.
+For more general instructions on how to upgrade an existing 
+Lino site, see :doc:`/admin/upgrade`.
+

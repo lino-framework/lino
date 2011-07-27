@@ -47,6 +47,9 @@ Die Felder `is_active`, `is_cpas` und `is_senior` wurden von
 Bug: Lino verweigerte das Löschen nicht immer
 ---------------------------------------------
 
+Durch einen Tippfehler-Bug in :func:`lino.core.kernel.analyze_models` 
+hatten manche Modelle ihren :class:`DisableDeleteHandler` nicht richtig.
+
 Lino erlaubte z.B. eine Stelle zu löschen, für die Verträge existierten. 
 Die Verträge wurden dann ebenfalls gelöscht.
 Das war ein sehr kleiner Bug, der großen Schaden anrichten könnte. 

@@ -1365,6 +1365,9 @@ class MyNotes(notes.MyNotes):
 
 class ComponentMixin(contacts.PartnerDocument):
   
+    class Meta:
+        abstract = True
+  
     def summary_row(self,ui,rr,**kw):
         html = contacts.PartnerDocument.summary_row(self,ui,rr,**kw)
         if self.summary:

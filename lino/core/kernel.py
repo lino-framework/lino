@@ -156,6 +156,12 @@ def analyze_models(self):
 
 
 class DisableDeleteHandler():
+    """Used to find out whether a known object can be deleted or not.
+    Lino's default behaviour is to forbit deletion if there is any other 
+    object in the database that refers to this. To implement this, 
+    Lino installs a DisableDeleteHandler instance on each model 
+    during :func:`analyze_models`.
+    """
     def __init__(self,model):
         self.model = model
         self.fklist = []

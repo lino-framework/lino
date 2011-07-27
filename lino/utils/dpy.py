@@ -333,8 +333,11 @@ class FakeDeserializedObject(base.DeserializedObject):
             dblogger.exception(e)
             raise Exception("Failed to save %s. Abandoned." % obj2str(obj))
         
-              
+           
+IS_DESERIALIZING = False
 
+def is_deserializing():
+    return IS_DESERIALIZING
 
 def Deserializer(fp, **options):
     """
@@ -342,6 +345,8 @@ def Deserializer(fp, **options):
     """
     if isinstance(fp, basestring):
         raise NotImplementedError
+    global IS_DESERIALIZING
+    IS_DESERIALIZING = True
     babel.set_language(babel.DEFAULT_LANGUAGE)
     parts = os.path.split(fp.name)
     fqname = parts[-1]
@@ -354,5 +359,6 @@ def Deserializer(fp, **options):
     yield FakeDeserializedObject(fp.name,module.objects)
     if hasattr(module,'after_load'):
         module.after_load()
+    IS_DESERIALIZING = False
 
 

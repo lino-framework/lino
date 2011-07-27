@@ -27,7 +27,7 @@ import logging
 __version__ = "1.2.1"
 """
 Lino version number. 
-The latest released version is :doc:`/releases/20110723`.
+The latest released version is :doc:`/releases/20110727`.
 """
 
 __author__ = "Luc Saffre <luc.saffre@gmx.net>"
