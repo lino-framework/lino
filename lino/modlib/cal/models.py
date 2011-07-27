@@ -39,7 +39,7 @@ from lino.modlib.cal.utils import EventStatus, \
     TaskStatus, DurationUnit, Priority, AccessClass, add_duration
 
 from lino.utils.babel import dtosl
-from lino.utils.dpy import is_deserializing
+#~ from lino.utils.dpy import is_deserializing
 
 class Place(models.Model):
     name = models.CharField(_("Name"),max_length=200)
@@ -48,6 +48,24 @@ class Places(reports.Report):
     model = Place
     
 
+class EventType(mixins.PrintableType):
+  
+    templates_group = 'events'
+    
+    class Meta:
+        verbose_name = _("Event Type")
+        verbose_name_plural = _('Event Types')
+        
+    name = babel.BabelCharField(_("Event title"),max_length=200)
+    
+    def __unicode__(self):
+        return unicode(babel.babelattr(self,'name'))
+
+class EventTypes(reports.Report):
+    model = EventType
+    column_names = 'name build_method template *'
+
+    
 class Component(mixins.AutoUser,
                 mixins.CreatedModified):
     """
@@ -98,24 +116,6 @@ class Component(mixins.AutoUser,
 
 
 
-class EventType(mixins.PrintableType):
-  
-    templates_group = 'events'
-    
-    class Meta:
-        verbose_name = _("Event Type")
-        verbose_name_plural = _('Event Types')
-        
-    name = babel.BabelCharField(_("Event title"),max_length=200)
-    
-    def __unicode__(self):
-        return unicode(babel.babelattr(self,'name'))
-
-class EventTypes(reports.Report):
-    model = EventType
-    column_names = 'name build_method template *'
-
-    
 #~ class Event(Component,contacts.PartnerDocument):
 class Event(Component,mixins.TypedPrintable):
   
@@ -131,6 +131,7 @@ class Event(Component,mixins.TypedPrintable):
         blank=True,null=True,
         verbose_name=_("End time"))
     transparent = models.BooleanField(_("Transparent"),default=False)
+    type = models.ForeignKey(EventType,verbose_name=_("Event Type"),null=True,blank=True)
     place = models.ForeignKey(Place,verbose_name=_("Place"),null=True,blank=True) # iCal:LOCATION
     priority = Priority.field(_("Priority"),null=True,blank=True) # iCal:PRIORITY
     status = EventStatus.field(_("Status"),null=True,blank=True) # iCal:STATUS
@@ -337,12 +338,14 @@ def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
     s = '<div class="htmlText">%s</div>' % s
     return s
 
+SKIP_AUTO_TASKS = False # 
 
 def update_auto_task(autotype,user,date,summary,owner,**defaults):
     """Creates, updates or deletes the automatic :class:`Task` 
     related to the specified `owner`.
     """
-    if is_deserializing(): return 
+    if SKIP_AUTO_TASKS: return 
+    #~ if is_deserializing(): return 
     Task = resolve_model('cal.Task')
     ot = ContentType.objects.get_for_model(owner.__class__)
     if date:
@@ -376,7 +379,8 @@ def update_auto_task(autotype,user,date,summary,owner,**defaults):
 
 def migrate_reminder(obj,reminder_date,reminder_text,
                          delay_value,delay_type,reminder_done):
-  
+    """This was used only for migrating to 1.2.0, see :mod:`lino.apps.dsbe.migrate`.
+    """
     def delay2alarm(delay_type):
         if delay_type == 'D': return DurationUnit.days
         if delay_type == 'W': return DurationUnit.weeks
@@ -391,7 +395,6 @@ def migrate_reminder(obj,reminder_date,reminder_text,
         summary = reminder_text
     else:
         summary = _('due date reached')
-    
     
     update_auto_task(
       None, # REMINDER,

@@ -31,6 +31,9 @@ from lino.utils import mti
 
 
 def install(globals_dict):
+  
+    from lino.modlib.cal import models as cal
+    cal.SKIP_AUTO_TASKS = True
     
     if globals_dict['SOURCE_VERSION'] == '1.1.16':
       

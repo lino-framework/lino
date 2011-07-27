@@ -438,3 +438,15 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     yield persongroup(u"Recherche active emplois",ref_name='4')
     yield persongroup(u"Travail",ref_name='4bis')
 
+
+    etype = Instantiator('cal.EventType','name').build
+    yield etype("interner Termin")
+    yield etype("Termin beim Klienten")
+    yield etype("Termin beim Arbeitgeber")
+    
+    event = Instantiator('cal.Event',
+      'type start_date person summary',
+      user=root).build
+    yield event(1,i2d(20100727),hans,u"Stand der Dinge")
+    yield event(2,i2d(20100727),annette,u"Problem Kühlschrank")
+    yield event(3,i2d(20100727),andreas,u"Mein dritter Termin")

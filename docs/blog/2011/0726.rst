@@ -4,6 +4,9 @@
 Teilnehmer von Kalender-Events
 ------------------------------
 
+Die folgenden Änderungen sind im Hinblick auf eine neue kleine Anwendung 
+für einen Kunden, der Termine und Kontakte verwalten möchte, wobei er 
+
 Neue Klassen:
 
 - :class:`lino.modlib.cal.models.EventType` (Terminarten) sowie neues Feld 

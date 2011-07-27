@@ -243,9 +243,9 @@ class FakeDeserializedObject(base.DeserializedObject):
     an exception occurs we defer this instance, trying to save 
     the other instances first. Then we do another round of 
     :meth:`try_save` (as long as there is hope) 
-    until everything has been saved. This sophisticated and 
+    until everything has been saved. This memory-consuming and 
     suboptimal method is necessary as long as we don't have an 
-    algorithm for deserializing in the right order.
+    algorithm for serializing (writing the dump) in the right order.
     """
     
     object = None # required by loaddata
@@ -336,15 +336,15 @@ class FakeDeserializedObject(base.DeserializedObject):
            
 IS_DESERIALIZING = False
 
-def is_deserializing():
-    """
-    Some special features may want to know out whether they are happening 
-    during a deserialization or not.
-    The only one known so far is :func:`lino.modlib.cal.models.update_auto_task`, 
-    which should not do anything during deserialization.    
-    See :doc:`/blog/2011/0727`.
-    """
-    return IS_DESERIALIZING
+#~ def is_deserializing():
+    #~ """
+    #~ Some special features may want to know out whether they are happening 
+    #~ during a deserialization or not.
+    #~ The only one known so far is :func:`lino.modlib.cal.models.update_auto_task`, 
+    #~ which should not do anything during deserialization.    
+    #~ See :doc:`/blog/2011/0727`.
+    #~ """
+    #~ return IS_DESERIALIZING
 
 def Deserializer(fp, **options):
     """
@@ -352,8 +352,8 @@ def Deserializer(fp, **options):
     """
     if isinstance(fp, basestring):
         raise NotImplementedError
-    global IS_DESERIALIZING
-    IS_DESERIALIZING = True
+    #~ global IS_DESERIALIZING
+    #~ IS_DESERIALIZING = True
     babel.set_language(babel.DEFAULT_LANGUAGE)
     parts = os.path.split(fp.name)
     fqname = parts[-1]
@@ -366,6 +366,6 @@ def Deserializer(fp, **options):
     yield FakeDeserializedObject(fp.name,module.objects)
     if hasattr(module,'after_load'):
         module.after_load()
-    IS_DESERIALIZING = False
+    #~ IS_DESERIALIZING = False
 
 

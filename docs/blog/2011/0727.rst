@@ -58,7 +58,16 @@ Richtig, da hatte ich bisher nicht dran gedacht: beim Einlesen eines Dumps darf 
 nun nicht mehr automatische Tasks generieren. 
 Deshalb die neue :func:`lino.utils.dpy.is_deserializing`.
 
+Noch kleine Wünsche
+-------------------
+
+- :class:`lino.modlib.jobs.models.Job` ist jetzt par défaut nach 'name' sortiert (`Meta.ordering`)
+
+- Upps, das erste System mit is_deserializing funktionierte zwar zum Laden des 
+  dumps, aber da war ein Denkfehler: es ist dann für alle Fixtures aktiv. 
+  Aber es soll nur für dumps aktiv sein, nicht für "intelligente" fixtures wie die ``demo``.
+
+Release in Eupen.
 
 
 
-is_deserializing
