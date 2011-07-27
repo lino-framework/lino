@@ -499,6 +499,7 @@ class Job(models.Model):
     class Meta:
         verbose_name = _("Job")
         verbose_name_plural = _('Jobs')
+        ordering = ['name']
         
     name = models.CharField(max_length=50,
         verbose_name=_("Name"))

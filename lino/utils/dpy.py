@@ -337,6 +337,13 @@ class FakeDeserializedObject(base.DeserializedObject):
 IS_DESERIALIZING = False
 
 def is_deserializing():
+    """
+    Some special features may want to know out whether they are happening 
+    during a deserialization or not.
+    The only one known so far is :func:`lino.modlib.cal.models.update_auto_task`, 
+    which should not do anything during deserialization.    
+    See :doc:`/blog/2011/0727`.
+    """
     return IS_DESERIALIZING
 
 def Deserializer(fp, **options):
