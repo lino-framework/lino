@@ -130,21 +130,28 @@ def obj2str(i,force_detailed=False):
     even in some edge cases.
     """
     #~ if not force_detailed and i.pk is not None:
-    assert isinstance(i,models.Model)
+    if not isinstance(i,models.Model): return repr(i)
     if i.pk is None:
         force_detailed = True
     if not force_detailed:
         if i.pk is None:
-            return u'(Unsaved %s instance)' % (i.__class__.__name__)
+            return '(Unsaved %s instance)' % (i.__class__.__name__)
         try:
-            return u"%s #%s (%s)" % (i.__class__.__name__,i.pk,i)
+            return "%s #%s (%s)" % (i.__class__.__name__,i.pk,i)
         except Exception,e:
         #~ except TypeError,e:
-            return u"Unprintable %s(pk=%s,error=%s" % (
+            return "Unprintable %s(pk=%s,error=%s" % (
               i.__class__.__name__,i.pk,e)
             #~ return unicode(e)
-    names = [fld.name for (fld,model) in i._meta.get_fields_with_model()]
-    s = ','.join(["%s=%r" % (n, getattr(i,n)) for n in names])
+    #~ names = [fld.name for (fld,model) in i._meta.get_fields_with_model()]
+    #~ s = ','.join(["%s=%r" % (n, getattr(i,n)) for n in names])
+    pairs = []
+    for (fld,model) in i._meta.get_fields_with_model():
+        v = getattr(i,fld.name)
+        if v:
+            pairs.append("%s=%s" % (fld.name,obj2str(v)))
+    s = ','.join(pairs)
+    #~ s = ','.join(["%s=%s" % (n, obj2str(getattr(i,n))) for n in names])
     #~ print i, i._meta.get_all_field_names()
     #~ s = ','.join(["%s=%r" % (n, getattr(i,n)) for n in i._meta.get_all_field_names()])
     return u"%s(%s)" % (i.__class__.__name__,s)

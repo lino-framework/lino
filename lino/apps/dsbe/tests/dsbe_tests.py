@@ -16,7 +16,7 @@
 This module contains "quick" tests that are run on a demo database 
 without any fixture. You can run only these tests by issuing::
 
-  python manage.py test dsbe.NoFixturesTest
+  python manage.py test dsbe.QuickTest
 
   
 """
@@ -46,7 +46,7 @@ from lino.modlib.properties.models import Property
 
 
 #~ class NoFixturesTest(TestCase):
-class Test(TestCase):
+class QuickTest(TestCase):
     pass
     #~ fixtures = ['std']
             
@@ -225,4 +225,28 @@ Belgique""")
     self.assertEqual(p.get_full_name(nominative=True),"Herr Jean Louis DUPONT")
     self.assertEqual(p.get_full_name(no_salutation=True),"Jean Louis DUPONT")
     babel.set_language(None)
+        
+        
+        
+def test05(self):
+    """
+    obj2str() caused a UnicodeDecodeError when called on an object that had 
+    a ForeignKey field pointing to another instance whose __unicode__() 
+    contained non-ascii characters.
+    See :doc:`/blog/2011/0728`.
+    """
+    from lino.apps.dsbe.models import Activity, Person
+    from lino.tools import obj2str
+    a = Activity(name=u"Sozialhilfeempfänger")
+    p = Person(name="Test",activity=a)
+    self.assertEqual(unicode(a),u"Sozialhilfeempfänger")
+    
+    # Django pitfall: repr() of a model instance may return basestring containing non-ascii characters.
+    self.assertEqual(type(repr(a)),str)
+    
+    self.assertEqual(obj2str(a,True),u"Activity(name=u'Sozialhilfeempf\\xe4nger')")
+    #~ self.assertEqual(obj2str(a,True),u"Activity(id=None,name=u'Sozialhilfeempf\\xe4nger',lst104=False)")
+    self.assertEqual(
+      obj2str(p,True),
+      ur"Person(name='Test',language=u'de',is_active=True,activity=Activity(name=u'Sozialhilfeempf\xe4nger'))")
         

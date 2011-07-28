@@ -11,3 +11,15 @@ denn der ist hochkomplex und schwer zu warten.
 Aber ich bin im Grunde sehr zufrieden, wie stabil das Ding läuft und 
 wie die Bugs immer subtiler werden.
 Diesmal lag es daran, dass mein Bugfix von gestern noch Bug hatte.
+
+
+UnicodeDecodeError
+------------------
+
+Meine :func:`lino.tools.obj2str` hatte einen Bug, der auf einem 
+Django-Pitfall beruht (oder findet ihr das normal, dass die 
+Python-Funktion :func:`repr` auch unsaubere Strings 
+(d.h. basestrings mit non-ascii chars darin) 
+zurückgeben darf?
+Jedenfalls ist der Bug nun hoffentlich behobben.
+:func:`lino.apps.dsbe.tests.dsbe_tests.test05`.
