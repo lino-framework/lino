@@ -13,9 +13,9 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-This module deserves more documentation.
+This module defines tables like :class:`Task` and :class:`Event`.
 
-It defines tables like :class:`Task` and :class:`Event` 
+Deserves more documentation.
 
 """
 import cgi
@@ -338,7 +338,8 @@ def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
     s = '<div class="htmlText">%s</div>' % s
     return s
 
-SKIP_AUTO_TASKS = False # 
+SKIP_AUTO_TASKS = False 
+"See :blog:`/blog/2011/0727`"
 
 def update_auto_task(autotype,user,date,summary,owner,**defaults):
     """Creates, updates or deletes the automatic :class:`Task` 

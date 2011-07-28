@@ -87,7 +87,6 @@ class Lino(Lino):
         m.add_action('dsbe.CourseContents')
         m.add_action('dsbe.CourseEndings')
         
-        m.add_action('jobs.JobProviders')
         
         #~ sitemenu = system.add_site_menu(self)
         #~ if False:
@@ -124,6 +123,8 @@ class Lino(Lino):
         
             config_jobs.add_action('jobs.ContractTypes')
             config_jobs.add_action('jobs.JobTypes')
+            config_jobs.add_action('jobs.JobProviders')
+            
             config_dsbe.add_action('dsbe.PersonGroups')
         
             if user.is_expert:

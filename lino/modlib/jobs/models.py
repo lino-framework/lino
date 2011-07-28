@@ -186,7 +186,7 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
 
     job = models.ForeignKey("jobs.Job",verbose_name=_("Job"),blank=True)
         
-    type = models.ForeignKey("jobs.ContractType",verbose_name=_("contract type"),blank=True)
+    type = models.ForeignKey("jobs.ContractType",verbose_name=_("Contract Type"),blank=True)
     
     applies_from = models.DateField(_("applies from"),blank=True,null=True)
     applies_until = models.DateField(_("applies until"),blank=True,null=True)
@@ -512,7 +512,8 @@ class Job(models.Model):
         blank=True,null=True,
         verbose_name=_("Job Provider"))
     
-    contract_type = models.ForeignKey(ContractType,blank=True,null=True)
+    contract_type = models.ForeignKey(ContractType,blank=True,null=True,
+        verbose_name=_("Contract Type"))
     
     hourly_rate = fields.PriceField(_("hourly rate"),blank=True,null=True)
     
@@ -527,6 +528,11 @@ class Job(models.Model):
         return self.name
         #~ return u'%s @ %s' % (self.name,self.provider)
   
+    def disabled_fields(self,request):
+        if self.contract_set.count():
+            return ['contract_type','provider']
+        return []
+        
     #~ @chooser()
     #~ def provider_choices(cls):
         #~ return CourseProviders.request().queryset

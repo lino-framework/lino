@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-07-23 10:56+0100\n"
+"POT-Creation-Date: 2011-07-27 14:47+0100\n"
 "PO-Revision-Date: 2011-06-06 22:37+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr <lino-users@gmail.com>\n"
@@ -24,89 +24,89 @@ msgstr "Langue"
 msgid "Default build method"
 msgstr "Méthode de constuction par défault"
 
-#: .\models.py:59 .\models.py:143
+#: .\models.py:59 .\models.py:144
 msgid "Global Site Parameters"
 msgstr "Paramètres globaux du Site"
 
-#: .\models.py:94
+#: .\models.py:95
 msgid "Data Control Listing"
 msgstr ""
 
-#: .\models.py:121
+#: .\models.py:122
 msgid "Text Field Template"
 msgstr ""
 
-#: .\models.py:122
+#: .\models.py:123
 msgid "Text Field Templates"
 msgstr ""
 
-#: .\models.py:124
+#: .\models.py:125
 #, fuzzy
 msgid "Designation"
 msgstr "Description"
 
-#: .\models.py:125 .\mixins\uploadable.py:44
+#: .\models.py:126 .\mixins\uploadable.py:44
 msgid "Description"
 msgstr "Description"
 
-#: .\models.py:127
+#: .\models.py:128
 #, fuzzy
 msgid "Template Text"
 msgstr "Modèle"
 
-#: .\models.py:141
+#: .\models.py:142
 msgid "~Site"
 msgstr "~Site"
 
-#: .\reports.py:358
+#: .\reports.py:359
 msgid "Detail"
 msgstr "Détail"
 
-#: .\reports.py:361
+#: .\reports.py:362
 #, python-format
 msgid "%s (Detail)"
 msgstr "%s (Détail)"
 
-#: .\reports.py:372
+#: .\reports.py:373
 msgid "Insert"
 msgstr "Insérer"
 
-#: .\reports.py:377
+#: .\reports.py:378
 #, python-format
 msgid "Insert into %s"
 msgstr "Insérer dans %s"
 
-#: .\reports.py:382
+#: .\reports.py:383
 msgid "Duplicate"
 msgstr "Dupliquer"
 
-#: .\reports.py:398
+#: .\reports.py:399
 msgid "Delete"
 msgstr "Effacer"
 
-#: .\reports.py:406 .\reports.py:411
+#: .\reports.py:407 .\reports.py:412
 msgid "Save"
 msgstr "Sauvegarder"
 
-#: .\reports.py:571
+#: .\reports.py:572
 #, python-format
 msgid "User %(user)s cannot view %(report)s."
 msgstr "L'utilisateur %(user)s ne peut pas voir %(report)s"
 
-#: .\reports.py:789
+#: .\reports.py:790
 msgid "Yes"
 msgstr "Oui"
 
-#: .\reports.py:789
+#: .\reports.py:790
 msgid "No"
 msgstr "Non"
 
-#: .\reports.py:1081
+#: .\reports.py:1087
 #, python-format
 msgid "%(details)s of %(master)s"
 msgstr "%(details)s de %(master)s"
 
-#: .\core\kernel.py:181
+#: .\core\kernel.py:187
 #, python-format
 msgid "Cannot delete %(self)s because %(count)d %(refs)s refer to it."
 msgstr ""
@@ -290,79 +290,79 @@ msgstr ""
 msgid "Existing primary key value %r may not be modified."
 msgstr "La clé primaire %r existante ne peut être modifiée"
 
-#: .\ui\store.py:373 .\ui\extjs3\ext_store.py:414 .\ui\extjs4\ext_store.py:388
+#: .\ui\store.py:373 .\ui\extjs3\ext_store.py:415 .\ui\extjs4\ext_store.py:388
 #: .\ui\qx\qx_store.py:370
 #, python-format
 msgid "%r (invalid choice)"
 msgstr "%r (choix non valide)"
 
-#: .\ui\extjs3\ext_elems.py:637 .\ui\extjs4\ext_elems.py:569
+#: .\ui\extjs3\ext_elems.py:640 .\ui\extjs4\ext_elems.py:569
 #: .\ui\qx\qx_elems.py:555
 #, python-format
 msgid "Select a %s..."
 msgstr "Choisir %s..."
 
-#: .\ui\extjs3\ext_ui.py:238 .\ui\extjs4\ext_ui.py:229 .\ui\qx\qx_ui.py:229
+#: .\ui\extjs3\ext_ui.py:240 .\ui\extjs4\ext_ui.py:229 .\ui\qx\qx_ui.py:229
 #, python-format
 msgid "Row %(rowid)d of %(rowcount)d"
 msgstr "Ligne %(rowid)d de %(rowcount)d"
 
-#: .\ui\extjs3\ext_ui.py:767 .\ui\extjs4\ext_ui.py:704
+#: .\ui\extjs3\ext_ui.py:769 .\ui\extjs4\ext_ui.py:704
 msgid "Console"
 msgstr "Console"
 
-#: .\ui\extjs3\ext_ui.py:821 .\ui\extjs4\ext_ui.py:757 .\ui\qx\qx_ui.py:563
+#: .\ui\extjs3\ext_ui.py:823 .\ui\extjs4\ext_ui.py:757 .\ui\qx\qx_ui.py:563
 #, python-format
 msgid "Welcome on Lino server %(title)r, user %(user)s"
 msgstr "Bienvenue sur le serveur Lino %(title)r, Utilisateur %(user)s"
 
-#: .\ui\extjs3\ext_ui.py:882 .\ui\extjs4\ext_ui.py:817 .\ui\qx\qx_ui.py:622
+#: .\ui\extjs3\ext_ui.py:884 .\ui\extjs4\ext_ui.py:817 .\ui\qx\qx_ui.py:622
 #, python-format
 msgid "%s has been created."
 msgstr "%s a été créé"
 
-#: .\ui\extjs3\ext_ui.py:884 .\ui\extjs4\ext_ui.py:819 .\ui\qx\qx_ui.py:624
+#: .\ui\extjs3\ext_ui.py:886 .\ui\extjs4\ext_ui.py:819 .\ui\qx\qx_ui.py:624
 #, python-format
 msgid "%s has been saved."
 msgstr "%s a été sauvé"
 
-#: .\ui\extjs3\ext_ui.py:892 .\ui\extjs3\ext_ui.py:917
+#: .\ui\extjs3\ext_ui.py:894 .\ui\extjs3\ext_ui.py:919
 #: .\ui\extjs4\ext_ui.py:827 .\ui\extjs4\ext_ui.py:851 .\ui\qx\qx_ui.py:632
 #: .\ui\qx\qx_ui.py:655
 #, python-format
 msgid "User %(user)s cannot configure %(report)s."
 msgstr "L'utilisateur %(user)s ne peut pas configurer %(report)s."
 
-#: .\ui\extjs3\ext_ui.py:944
+#: .\ui\extjs3\ext_ui.py:946
 #, python-format
 msgid "Error while saving GC for %(report)s: %(error)s"
 msgstr ""
 "Une erreur est apparue pendant la sauvgarde du GC pour %(report)s: %(error)s"
 
-#: .\ui\extjs3\ext_ui.py:1106 .\ui\extjs4\ext_ui.py:1015 .\ui\qx\qx_ui.py:819
+#: .\ui\extjs3\ext_ui.py:1108 .\ui\extjs4\ext_ui.py:1015 .\ui\qx\qx_ui.py:819
 #, python-format
 msgid "Failed to delete %(record)s : %(error)s."
 msgstr "Echec lors de l'effacement de %(record)s: %(error)s."
 
-#: .\ui\extjs3\ext_ui.py:1199
+#: .\ui\extjs3\ext_ui.py:1201
 #, fuzzy, python-format
 msgid "Action %(action)s failed for %(record)s."
 msgstr "L'action %(action)s a échoué pour %(record)s: %(error)s"
 
-#: .\ui\extjs3\ext_ui.py:1202
+#: .\ui\extjs3\ext_ui.py:1204
 msgid "An error report has been sent to the system administrator."
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1382 .\ui\extjs4\ext_ui.py:1212 .\ui\qx\qx_ui.py:958
+#: .\ui\extjs3\ext_ui.py:1390 .\ui\extjs4\ext_ui.py:1212 .\ui\qx\qx_ui.py:958
 #, python-format
 msgid "Choices for %s"
 msgstr "Choix pour %s"
 
-#: .\ui\extjs3\ext_ui.py:1496 .\ui\extjs4\ext_ui.py:1325 .\ui\qx\qx_ui.py:1068
+#: .\ui\extjs3\ext_ui.py:1504 .\ui\extjs4\ext_ui.py:1325 .\ui\qx\qx_ui.py:1068
 msgid "Upload"
 msgstr "Uploader"
 
-#: .\ui\extjs3\ext_ui.py:1505 .\ui\extjs4\ext_ui.py:1333 .\ui\qx\qx_ui.py:1076
+#: .\ui\extjs3\ext_ui.py:1513 .\ui\extjs4\ext_ui.py:1333 .\ui\qx\qx_ui.py:1076
 msgid "Edit"
 msgstr "Editer"
 

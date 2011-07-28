@@ -258,8 +258,8 @@ def setup_site(self):
         #~ from lino.models import get_site_config
         #~ self.config = get_site_config()
         
-        if settings.DEBUG:
-            generate_dummy_messages(self)
+        #~ if settings.DEBUG:
+            #~ generate_dummy_messages(self)
             
         self._setup_done = True
         self._setting_up = False

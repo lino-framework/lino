@@ -16,9 +16,18 @@ because it is rather for internal use.
 Short-term
 ----------
 
-#.  Jetzt wo es aktive Felder gibt, sollte das Formular während des submit 
-    deaktiviert werden, immerhin dauert das manchmal eine Sekunde.
-    
+#.  Brauchen wir eine Methode "readonly" pro Record? Zum Beispiel sollen 
+    inaktive Personen allgemein nicht verändert werden können. 
+    Aber das ist eigentlich eher ein Sonderfall für `disabled_fields`, 
+    die dann "alle Felder (außer `is_active`)
+
+#.  Die `dummy_messages.py` steht ja momentan im :attr:`lino.Lino.source_dir` 
+    der jeweiligen Lino-Anwendung. Aber das ist falsch, denn deshalb müssen die 
+    Texte aus der :xfile:`linolib.js` für jede Anwendung neu übersetzt werden.
+    Idealerweise müsste ich es wie der Django-Befehl `makemessages` machen, 
+    also pro .dtl-Datei eine .dtl.py-Datei erzeugen, und ebenfalls 
+    eine :file:`linolib.js.py`.
+
 #.  Man kann scheinbar weder in GroupWise noch in Zarafa 
     externe ("remote") Kalender konfigurieren (so wie `Google und Sunbird
     <http://www.google.com/support/calendar/bin/answer.py?answer=99358#sunbird>`_)
@@ -33,19 +42,6 @@ Short-term
     und
     http://www.openldap.org/
     nötig.
-
-#.  Listings : Listing.odt muss noch gemacht werden.
-
-#.  Ausdruck Verträge: jetzt wo die mehrzeiligen Textfelder formatierbar 
-    sind, kommt vielleicht ein kleines Problem: Bisher wurde z.B. in der 
-    Dokumentvorlage ein Wort vor dem eigentlichen Text eingefügt, 
-    wenn dieser nicht leer war. Z.B. Wenn man im Feld "Zielsetzungen" 
-    den Text "Blablabla..." eintrug, dann wurde "Zielsetzungen: Blablabla..." 
-    gedruckt. Um das in dieser Form zu erhalten, müsste ich einen Patch für 
-    :term:`appy.pod` schreiben, der folgendes ermöglicht::
-    
-      do text
-      from html(self.goals,wrapper="<p><b>Zielsetzungen</b>: %s </p>")
 
 #.  Button "Cache löschen" deaktivieren, wenn
     :attr:`lino.mixins.printable.Printable.must_build` `True` ist.
@@ -83,6 +79,9 @@ Short-term
 Medium-term
 -----------
 
+#.  Jetzt wo es aktive Felder gibt, sollte das Formular während des submit 
+    deaktiviert werden, immerhin dauert das manchmal eine Sekunde.
+    
 #.  Bug in :term:`appy.pod`: https://bugs.launchpad.net/appy/+bug/815019
 
 #.  Beim Entserialisieren mit `lino.utils.dpy` gehen alle modified-Daten 
@@ -127,6 +126,17 @@ Medium-term
 
 Later
 -----
+
+#.  Ausdruck Verträge: jetzt wo die mehrzeiligen Textfelder formatierbar 
+    sind, kommt vielleicht ein kleines Problem: Bisher wurde z.B. in der 
+    Dokumentvorlage ein Wort vor dem eigentlichen Text eingefügt, 
+    wenn dieser nicht leer war. Z.B. Wenn man im Feld "Zielsetzungen" 
+    den Text "Blablabla..." eintrug, dann wurde "Zielsetzungen: Blablabla..." 
+    gedruckt. Um das in dieser Form zu erhalten, müsste ich einen Patch für 
+    :term:`appy.pod` schreiben, der folgendes ermöglicht::
+    
+      do text
+      from html(self.goals,wrapper="<p><b>Zielsetzungen</b>: %s </p>")
 
 #.  Ein Test in der Lino-Suite funktioniert offenbar nur, wenn man `de` als 
     Hauptsprache hat::

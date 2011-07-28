@@ -13,7 +13,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-This is the a real-world example of how the application developer 
+This is a real-world example of how the application developer 
 can provide automatic data migrations for 
 :mod:`lino.utils.dpy` dumps.
 
@@ -31,6 +31,8 @@ from lino.utils import mti
 
 
 def install(globals_dict):
+    """Called from dpy dumps. 
+    """
   
     from lino.modlib.cal import models as cal
     cal.SKIP_AUTO_TASKS = True

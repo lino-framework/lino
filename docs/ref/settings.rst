@@ -2,6 +2,13 @@
 Settings
 ========
 
+
+.. setting:: LINO
+
+Lino expects one important variable ``LINO`` in your :xfile:`settings.py`.
+This deserves more documentation.
+
+
 Lino and the Django `settings.py` file
 --------------------------------------
 

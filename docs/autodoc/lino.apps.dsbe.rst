@@ -2,23 +2,26 @@
 The :mod:`lino.apps.dsbe` package
 =================================
 
-:mod:`settings`
----------------
+.. automodule:: lino.apps.dsbe
+    :members:
+    :show-inheritance:
+
+`settings`
+----------
 
 .. automodule:: lino.apps.dsbe.settings
     :members:
     :show-inheritance:
 
-:mod:`models`
--------------
+`models`
+--------
 
 .. automodule:: lino.apps.dsbe.models
     :members:
     :show-inheritance:
-    
-    
-:mod:`migrate`
---------------
+   
+`migrate`
+---------
 
 .. automodule:: lino.apps.dsbe.migrate
     :members:
@@ -26,29 +29,26 @@ The :mod:`lino.apps.dsbe` package
     
     
 
-:mod:`lino.apps.dsbe.fixtures.pp2lino`
---------------------------------------
+Fixtures
+--------
+
 
 .. automodule:: lino.apps.dsbe.fixtures.pp2lino
     :members:
     :show-inheritance:
 
-:mod:`lino.apps.dsbe.fixtures.props`
-------------------------------------
 
 .. automodule:: lino.apps.dsbe.fixtures.props
     :members:
     :show-inheritance:
 
-:mod:`lino.apps.dsbe.tests.dsbe_tests`
---------------------------------------
+Unit Tests
+----------
 
 .. automodule:: lino.apps.dsbe.tests.dsbe_tests
     :members:
     :show-inheritance:
 
-:mod:`lino.apps.dsbe.tests.dsbe_demo_tests`
--------------------------------------------
 
 .. automodule:: lino.apps.dsbe.tests.dsbe_demo_tests
     :members:

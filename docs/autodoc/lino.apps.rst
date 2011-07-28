@@ -2,6 +2,11 @@
 The :mod:`lino.apps` package
 ============================
 
+.. automodule:: lino.apps
+    :members:
+    :show-inheritance:
+
+
 Subpackages
 -----------
 

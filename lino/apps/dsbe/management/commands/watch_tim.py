@@ -97,6 +97,7 @@ REQUEST = PseudoRequest()
 
 class Controller:
     "Deserves more documentation."
+    allow_put2post = True
     def applydata(self,obj,data,**mapper):
         """
         Stores values from `data` into `obj` using mapper.
@@ -151,7 +152,7 @@ class Controller:
                     kw['alias'],kw['id'],obj,kw['data'])
                 return
         else:
-            dblogger.warning("%s:%s : POST becomes PUT",kw['alias'],kw['id'])
+            dblogger.info("%s:%s : POST becomes PUT",kw['alias'],kw['id'])
         self.applydata(obj,kw['data'])
         self.validate_and_save(obj)
         #~ obj.save()
@@ -160,9 +161,13 @@ class Controller:
     def PUT(self,**kw):
         obj = self.get_object(kw)
         if obj is None:
-            dblogger.debug("%s:%s : PUT becomes POST",kw['alias'],kw['id'])
-            kw['method'] = 'POST'
-            return self.POST(**kw)
+            if self.allow_put2post:
+                dblogger.info("%s:%s : PUT becomes POST",kw['alias'],kw['id'])
+                kw['method'] = 'POST'
+                return self.POST(**kw)
+            else:
+                dblogger.warning("%s:%s : PUT ignored (row does not exist)",kw['alias'],kw['id'])
+                return 
         if self.PUT_special(obj,**kw):
             return 
         self.applydata(obj,kw['data'])
@@ -280,6 +285,14 @@ class PAR(Controller):
             
 
 class PXS(PAR):
+  
+    allow_put2post = False
+    """This is False because the following case cannot be resolved: 
+    a Person that exists in TIM but not in Lino gets her PXS modified in TIM. 
+    TIM issues a PUT on PXS. Lino cannot convert this into a POST and create 
+    the person because e.g. name ist not known.
+    
+    """
     def applydata(self,obj,data,**d):
         d.update(
             card_number='CARDNUMBER',
@@ -289,14 +302,14 @@ class PXS(PAR):
         Controller.applydata(self,obj,data,**d)
         pxs2person(data,obj)
         
-    def POST(self,**kw):
-        """
-        Denn TIM schreibt beim Erstellen eines neuen Partners logischerweise 
-        sowohl für PAR als auch für PXS ein POST. Weil die beiden in Lino 
-        aber eine einzige Tabelle sind, bekamen wir dann beim POST des PXS 
-        eine Fehlermeldung "Partner with this id already exists".
-        """
-        self.PUT(**kw)
+    #~ def POST(self,**kw):
+        #~ """
+        #~ Denn TIM schreibt beim Erstellen eines neuen Partners logischerweise 
+        #~ sowohl für PAR als auch für PXS ein POST. Weil die beiden in Lino 
+        #~ aber eine einzige Tabelle sind, bekamen wir dann beim POST des PXS 
+        #~ eine Fehlermeldung "Partner with this id already exists".
+        #~ """
+        #~ self.PUT(**kw)
         
         
 class PLZ(PAR):

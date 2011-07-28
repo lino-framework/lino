@@ -1634,7 +1634,14 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
                 This can happen e.g. after search_change on a detail.
               */
               //~ this_.goto_record_id(rec.navinfo.first);
-              this_.load_record_id(rec.navinfo.first);
+              if (rec.navinfo.first) {
+                  this_.load_record_id(rec.navinfo.first);
+              } else {
+                  Ext.MessageBox.alert('Note',
+                    "$_('No more records to display. Detail window has been closed.')");
+                  this_.ww.close();
+              }
+                  
           } else {
               this_.set_current_record(rec,after);
           }
@@ -1829,7 +1836,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
           //~ enableRowBody: true,
           emptyText:"Nix gefunden!"
         },
-  loadMask: {msg:'$_("Please wait...")'},
+  loadMask: {msg:"$_('Please wait...')"},
   
   constructor : function(ww,config,params){
     this.ww = ww;
@@ -2016,6 +2023,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
           Lino.show_detail(this);
           return false;
       }else{
+        //~ console.log('startEditing');
         this.startEditing(row,col);
       }
   },

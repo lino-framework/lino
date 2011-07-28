@@ -5,7 +5,6 @@ Upgrade in Eupen
 ----------------
 
 Ich mache ein Upgrade in Eupen wegen des Bugs "Lino verweigerte das Löschen nicht immer".
-
 So ein Upgrade ist ja inzwischen Routinearbeit: 
 Zunächst ein :term:`dump` beim Kunden machen 
 und auf Jana testen, ob es mit der neuen Version eingelesen wird...
@@ -65,15 +64,104 @@ Noch kleine Wünsche
 - :class:`lino.modlib.jobs.models.Job` ist jetzt par défaut nach 'name' sortiert (`Meta.ordering`). 
   Checkin 20110727
 
-- Upps, das erste System mit `is_deserializing` (sh. oben) 
+- Upps, das erste System mit `is_deserializing` zum Verhindern der automiatischen Tasks 
   funktionierte zwar zum Laden des 
-  dumps, aber da war ein Denkfehler: es ist dann für alle Fixtures aktiv. 
-  Aber es soll nur für dumps aktiv sein, nicht für "intelligente" fixtures wie die ``demo``.
-  Checkin 20110727b
+  dumps, aber da war ein Denkfehler: es ist dann für *alle* Fixtures aktiv,
+  auch für "intelligente" fixtures wie die ``demo``.
+  Es soll nur im Falle von dumps aktiv sein. 
+  Deshalb jetzt die neue globale Variable 
+  :attr:`lino.modlib.cal.models.SKIP_AUTO_TASKS`,
+  die in :func:`lino.apps.dsbe.migrate.install` auf `True` gesetzt wird
   
 - Im Detail `lino.modlib.jobs.models.Job` fehlte noch die Kapazität.
 
-Release in Eupen.
+Installation in Eupen um 9 Uhr gerade rechtzeitig zum Tagesbeginn, 
+und somit erkläre ich Lino :doc:`/releases/20110727` als released. 
+
+Another bug less in watch_tim
+-----------------------------
+
+Noch ein subtiler Bug::
+
+  Traceback (most recent call last):
+    File "/var/snapshots/lino/lino/apps/dsbe/management/commands/watch_tim.py", line 430, in watch
+      process_line(i,ln)
+    File "/var/snapshots/lino/lino/apps/dsbe/management/commands/watch_tim.py", line 403, in process_line
+      m(**kw)
+    File "/var/snapshots/lino/lino/apps/dsbe/management/commands/watch_tim.py", line 165, in PUT
+      return self.POST(**kw)
+    File "/var/snapshots/lino/lino/apps/dsbe/management/commands/watch_tim.py", line 298, in POST
+      self.PUT(**kw)
+    File "/var/snapshots/lino/lino/apps/dsbe/management/commands/watch_tim.py", line 165, in PUT
+    ...
+    File "/usr/lib/python2.6/copy.py", line 189, in deepcopy
+      y = _reconstruct(x, rv, 1, memo)
+    File "/usr/lib/python2.6/copy.py", line 322, in _reconstruct
+      args = deepcopy(args, memo)
+    File "/usr/lib/python2.6/copy.py", line 162, in deepcopy
+      y = copier(x, memo)
+    File "/usr/lib/python2.6/copy.py", line 235, in _deepcopy_tuple
+      y.append(deepcopy(a, memo))
+    File "/usr/lib/python2.6/copy.py", line 192, in deepcopy
+      _keep_alive(x, memo) # Make sure x lives at least as long as d
+    File "/usr/lib/python2.6/copy.py", line 272, in _keep_alive
+      memo[id(memo)].append(x)
+  KeyError: 31235952
+
+Dieser Bug kam, wenn man in TIM in der PXS etwas änderte und diese 
+Person in Lino nicht existierte (aus welchen Gründen auch immer). 
+In so einem Fall bleibt Lino nichts anderes übrig, als die Information 
+zu ignorieren, weil er den Namen der Person nicht kennt und sie folglich 
+nicht implizit erstellen kann.
 
 
+Lösung: siehe docstring von 
+:attr:`lino.apps.dsbe.management.commands.watch_tim.PXS.allow_put2post`.
+Jetzt macht er in diesem Fall eine Warnung 
+``PXS:0000020475 : PUT ignored (row does not exist)``
+statt eines Tracebacks.
 
+Miscellaneous bugfixes
+----------------------
+
+Das folgende Problem war ein echter kleine Bug:
+
+#.  Stellenanfragen können momentan nicht erstellt werden. 
+    Grid ohne Detail reagiert nicht auf Doppelklick auf dem phantom record.
+    
+In Grids, die auch ein unformatiertes TextField enthielten, konnte man weder 
+bearbeiten noch Zeilen einfügen, weil er dann fälschlicherweise versuchte, 
+`Ext.form.TextArea.refresh()` aufzurufen.
+
+
+Dann noch ein Problem, dessen Identifizierung allein einige Mühe 
+gefordert hat:
+
+#.  Wenn man über das Detail einer Stelle auf einen Vertrag in dieser Stelle
+    geht und dort die Stelle ändert, dann kommt Lino durcheinander, weil er
+    den Boden unter den Füßen weggezogen bekommen hat: ContractsByJob/123
+    existiert plötlich nicht mehr. Er müsste dann automagisch nach
+    Contracts/123 springen. Was voraussichtlich lediglich zur Folge hätte,
+    dass die Navigationsbuttons prev/next/last/first deaktiviert würden.
+    Oder das Feld "Stelle" sollte readonly sein, aber dann brauchen wir
+    einen neuen Button, um z.B. von ContractsByJob/123 nach Contracts/123
+    springen zu können.
+
+Erklärung und Lösung sind verblüffend einfach: 
+Wenn man im Detail-Fenster einen Record so verändert, 
+dass er aus der Liste verschwindet, dann merkt Lino das und springt 
+auf den ersten Record der Liste zurück.
+Aber was passiert, wenn es keinen "ersten Record der Liste" mehr gibt, 
+weil der verschwundene Record der Letzte der Liste war? 
+Genau das oben Beschriebene. 
+Dieses Verhalten ist schon seit eh und je da,
+aber offenbar ist der Fall noch nicht oft aufgetreten. 
+Jetzt kommt dann der freundliche Hinweis 
+"No more records to display. Detail window has been closed."
+
+Der Titel eines Detail-Fensters ist jetzt nicht mehr einfach nur `unicode(elem)`, sondern 
+"Listentitel » Element".
+
+Die dummy_messages.py wurde schon seit Längerem zu früh geschrieben, 
+so dass die Texte aus der linolib.js nicht drin waren.
+Behoben.

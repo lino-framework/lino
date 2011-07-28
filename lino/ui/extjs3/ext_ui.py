@@ -180,7 +180,9 @@ def elem2rec_detailed(ar,rh,elem,**rec):
     
     """
     rec = elem2rec1(ar,rh,elem,**rec)
-    rec.update(title=unicode(elem))
+    rec.update(title=ar.get_title() + u" » " + unicode(elem))
+    #~ rec.update(title=rh.report.model._meta.verbose_name + u"«%s»" % unicode(elem))
+    #~ rec.update(title=unicode(elem))
     rec.update(id=elem.pk)
     #~ if rh.report.disable_delete:
     rec.update(disable_delete=rh.report.disable_delete(elem,ar.request))
@@ -1284,6 +1286,9 @@ tinymce.init({
         #~ f.write(jscompress(js))
         f.close()
         logger.info("Wrote %s ...", fn)
+        
+        from lino.core.kernel import generate_dummy_messages
+        generate_dummy_messages(settings.LINO)
         
     def templates_view(self,request,app_label=None,actor=None,pk=None,fldname=None,tplname=None,**kw):
       

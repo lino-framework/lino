@@ -1,23 +1,13 @@
 Version 1.2.1 (27.07.2011)
 ==========================
 
-Bugfix release
+This is a bugfix release.
 
-
-New features
-------------
-
-Internal optimizations
-----------------------
-
+Revision `006b93ed815e
+<http://code.google.com/p/lino/source/detail?r=006b93ed815ef9cce9ec7431f4b44432a4f1f593>`_
 
 Bugs fixed
 ----------
-
-
-- Bug in :term:`watch_tim` : 
-  Die Felder `is_active`, `is_cpas` und `is_senior` 
-  wurden von :term:`watch_tim` nicht aktualisiert.
 
 - Lino verweigerte das Löschen nicht immer.
   Lino erlaubte z.B. eine `Stelle` zu löschen, für die Verträge existierten. 
@@ -25,11 +15,15 @@ Bugs fixed
   Das war ein sehr kleiner Bug, der großen Schaden anrichten könnte. 
   Deshalb kommt bald Release 1.2.1
 
-Upgrade instructions
---------------------
+- Bug in :term:`watch_tim` : 
+  Die Felder `is_active`, `is_cpas` und `is_senior` 
+  wurden von :term:`watch_tim` nicht aktualisiert.
 
-The following are technical instructions related to this 
-upgrade, designed to be executed by a Lino expert.
-For more general instructions on how to upgrade an existing 
-Lino site, see :doc:`/admin/upgrade`.
+Minor visible changes
+---------------------
+
+- Das Feld "Kapazität" fehlte in der Tat im Detail. Behoben. 
+  NB: um ein Feld in der Grid zu bearbeiten, musst du F2 drücken.
+
+- Auswahl Stellen ist jetzt alphabetisch.
 

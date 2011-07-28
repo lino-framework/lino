@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.apps.dsbe\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-07-23 10:57+0100\n"
+"POT-Creation-Date: 2011-07-27 14:47+0100\n"
 "PO-Revision-Date: 2011-06-15 22:00+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr <lino-users@gmail.com>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n>1;\n"
 
-#: .\models.py:89 .\models.py:181 .\models.py:483
+#: .\models.py:89 .\models.py:181 .\models.py:513
 #, fuzzy
 msgid "Job Provider"
 msgstr "dispenseur de cours"
@@ -26,7 +26,7 @@ msgstr "dispenseur de cours"
 msgid "Job Providers"
 msgstr "Fournisseur de cours"
 
-#: .\models.py:112
+#: .\models.py:112 .\models.py:189 .\models.py:516
 msgid "Contract Type"
 msgstr "Type de contrat"
 
@@ -70,7 +70,7 @@ msgstr "Contrat"
 msgid "Contracts"
 msgstr "Contrats"
 
-#: .\models.py:179 .\models.py:535
+#: .\models.py:179 .\models.py:571
 msgid "Person"
 msgstr "Personne"
 
@@ -78,13 +78,9 @@ msgstr "Personne"
 msgid "represented by"
 msgstr ""
 
-#: .\models.py:187 .\models.py:471
+#: .\models.py:187 .\models.py:500
 msgid "Job"
 msgstr ""
-
-#: .\models.py:189
-msgid "contract type"
-msgstr "type de contrat"
 
 #: .\models.py:191
 msgid "applies from"
@@ -114,7 +110,7 @@ msgstr "régime"
 msgid "schedule"
 msgstr "horaire"
 
-#: .\models.py:200 .\models.py:487
+#: .\models.py:200 .\models.py:518
 msgid "hourly rate"
 msgstr "coûr horaire"
 
@@ -166,84 +162,87 @@ msgstr "Fin"
 msgid "date ended"
 msgstr "date de fin"
 
-#: .\models.py:313
+#: .\models.py:327
 msgid "Due date reached"
 msgstr "Date limit atteinte"
 
-#: .\models.py:401
+#: .\models.py:429
 msgid "responsible (DSBE)"
 msgstr "Responsable (ISP)"
 
-#: .\models.py:441
+#: .\models.py:470
 msgid "My contracts"
 msgstr "mes contrats"
 
-#: .\models.py:456 .\models.py:479
+#: .\models.py:485 .\models.py:509
 msgid "Job Type"
 msgstr ""
 
-#: .\models.py:457
+#: .\models.py:486
 #, fuzzy
 msgid "Job Types"
 msgstr "Types de contrat"
 
-#: .\models.py:461
+#: .\models.py:490
 msgid "Designation"
 msgstr "Désignation"
 
-#: .\models.py:472
+#: .\models.py:501
 msgid "Jobs"
 msgstr ""
 
-#: .\models.py:475
+#: .\models.py:505
 msgid "Name"
 msgstr "Nom"
 
-#: .\models.py:489
+#: .\models.py:520
 #, fuzzy
 msgid "capacity"
 msgstr "Activité"
 
-#: .\models.py:494 .\models.py:553
+#: .\models.py:525 .\models.py:589
 msgid "Remark"
 msgstr "Remarque"
 
-#: .\models.py:531 .\models.py:532
+#: .\models.py:567 .\models.py:568
 #, fuzzy
 msgid "Job Requests"
 msgstr "Demandes de cours"
 
-#: .\models.py:538
+#: .\models.py:574
 msgid "Requested Job"
 msgstr ""
 
-#: .\models.py:540
+#: .\models.py:576
 msgid "date submitted"
 msgstr "date d'envoi"
 
-#: .\models.py:544
+#: .\models.py:580
 #, fuzzy
 msgid "Contract found"
 msgstr "Rupture/fin de contrat"
 
-#: .\models.py:556
+#: .\models.py:592
 #, python-format
 msgid "%(job)s request by %(person)s"
 msgstr ""
 
-#: .\models.py:610
+#: .\models.py:646
 #, fuzzy
 msgid "Contracts Situation"
 msgstr "Rupture/fin de contrat"
 
-#: .\models.py:649
+#: .\models.py:685
 msgid "Candidates"
 msgstr "Candidats"
 
-#: .\models.py:689
+#: .\models.py:725
 #, fuzzy
 msgid "is Job Provider"
 msgstr "dispenseur de cours"
+
+#~ msgid "contract type"
+#~ msgstr "type de contrat"
 
 #~ msgid "Status"
 #~ msgstr "Statut"
