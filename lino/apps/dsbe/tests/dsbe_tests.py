@@ -246,7 +246,10 @@ def test05(self):
     
     self.assertEqual(obj2str(a,True),u"Activity(name=u'Sozialhilfeempf\\xe4nger')")
     #~ self.assertEqual(obj2str(a,True),u"Activity(id=None,name=u'Sozialhilfeempf\\xe4nger',lst104=False)")
+    expected = "Person(name='Test',language=u'%s'," % babel.DEFAULT_LANGUAGE
+    expected += "is_active=True,"
+    expected += r"activity=Activity(name=u'Sozialhilfeempf\xe4nger'))"
     self.assertEqual(
       obj2str(p,True),
-      ur"Person(name='Test',language=u'de',is_active=True,activity=Activity(name=u'Sozialhilfeempf\xe4nger'))")
+      expected)
         
