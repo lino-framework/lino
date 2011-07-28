@@ -156,7 +156,7 @@ class Controller:
         self.applydata(obj,kw['data'])
         self.validate_and_save(obj)
         #~ obj.save()
-        dblogger.debug("%s:%s (%s) : POST %s",kw['alias'],kw['id'],obj,kw['data'])
+        dblogger.debug("%s:%s (%s) : POST %s",kw['alias'],kw['id'],obj2str(obj),kw['data'])
         
     def PUT(self,**kw):
         obj = self.get_object(kw)
@@ -174,7 +174,7 @@ class Controller:
         self.validate_and_save(obj)
         #~ obj.save()
         #~ dblogger.debug("%s:%s : PUT %s",kw['alias'],kw['id'],kw['data'])
-        dblogger.debug("%s:%s (%s) : PUT %s",kw['alias'],kw['id'],obj,kw['data'])
+        dblogger.debug("%s:%s (%s) : PUT %s",kw['alias'],kw['id'],obj2str(obj),kw['data'])
         
     def PUT_special(self,obj,**kw):
         pass
@@ -265,12 +265,12 @@ class PAR(Controller):
         #~ if vat_id:
         if is_company(kw['data']):
             if obj.__class__ is Person:
-                dblogger.debug("%s:%s (%s) : Person becomes Company",kw['alias'],kw['id'],obj)
+                dblogger.debug("%s:%s (%s) : Person becomes Company",kw['alias'],kw['id'],obj2str(obj))
                 self.swapclass(obj,Company,kw['data'])
                 return True
         else:
             if obj.__class__ is Company:
-                dblogger.debug("%s:%s (%s) : Company becomes Person",kw['alias'],kw['id'],obj)
+                dblogger.debug("%s:%s (%s) : Company becomes Person",kw['alias'],kw['id'],obj2str(obj))
                 self.swapclass(obj,Person,kw['data'])
                 return True
             
