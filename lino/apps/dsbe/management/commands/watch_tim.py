@@ -134,7 +134,7 @@ class Controller:
             return
         dblogger.log_deleted(REQUEST,obj)
         obj.delete()
-        dblogger.debug("%s:%s (%s) : DELETE ok",kw['alias'],kw['id'],obj)
+        dblogger.debug("%s:%s (%s) : DELETE ok",kw['alias'],kw['id'],obj2str(obj))
         
     #~ def prepare_data(self,data):
         #~ return data
