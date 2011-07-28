@@ -3,8 +3,8 @@ Version 1.2.1 (27.-28.07.2011)
 
 This is a bugfix release.
 
-Revision `ca1b8ebad08e
-<http://code.google.com/p/lino/source/detail?r=ca1b8ebad08ee8529d9463456c7595e009c66711>`_
+Revision `c7acc4eb5d64
+<http://code.google.com/p/lino/source/detail?r=c7acc4eb5d64>`_
 
 
 Bugs fixed

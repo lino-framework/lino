@@ -286,7 +286,7 @@ class PAR(Controller):
         #~ dblogger.debug("%s:%s (%s): POST %s",kw['alias'],kw['id'],obj,kw['data'])
             
 
-class PXS(PAR):
+class PXS(Controller):
     "Controller for importing PXS changes to Person."
   
     allow_put2post = False
@@ -305,6 +305,16 @@ class PXS(PAR):
     def create_object(self,kw):
         raise Exception("Tried to create a Person from PXS")
         
+    def PUT_special(self,obj,**kw):
+        pass
+        
+    def get_object(self,kw):
+        id = kw['id']
+        try:
+            return Person.objects.get(pk=id)
+        except Person.DoesNotExist:
+            pass
+            
     def applydata(self,obj,data,**d):
         d.update(
             card_number='CARDNUMBER',
