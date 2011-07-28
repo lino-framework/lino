@@ -48,7 +48,7 @@ def log_changes(request,elem):
     if isinstance(elem,mixins.DiffingMixin):
         changes = []
         for k,v in elem.changed_columns().items():
-            changes.append("%s : %s --> %s" % (k,v['old'],v['new']))
+            changes.append("%s : %s --> %s" % (k,obj2str(v['old']),obj2str(v['new'])))
         if len(changes) == 0:
             changes = '(no changes)'
         #~ elif len(changes) == 1:
