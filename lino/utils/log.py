@@ -46,7 +46,7 @@ def file_handler(filename,**kw):
     #~ else:
         #~ h = logging.FileHandler(filename)
     fmt = logging.Formatter(
-        fmt=u'%(asctime)s %(levelname)s %(module)s : %(message)s',
+        fmt='%(asctime)s %(levelname)s %(module)s : %(message)s',
         datefmt='%Y%m-%d %H:%M:%S'
         )
     h.setFormatter(fmt)
@@ -128,13 +128,14 @@ def configure(config):
     
     try:
         if sys.stdout.isatty():
+            print 20110728, sys.stdout.encoding
             #~ if sys.stdout.encoding == 'ascii':
                 #~ raise Exception("Your tty's encoding is ascii, that will lead to problems" % )
             h = logging.StreamHandler()
             #~ h.setLevel(level)
             if logfile is not None:
                 h.setLevel(logging.INFO)
-            fmt = logging.Formatter(fmt=u'%(levelname)s %(message)s')
+            fmt = logging.Formatter(fmt='%(levelname)s %(message)s')
             h.setFormatter(fmt)
             linoLogger.addHandler(h)
     except IOError:
