@@ -21,5 +21,11 @@ Django-Pitfall beruht (oder findet ihr das normal, dass die
 Python-Funktion :func:`repr` auch unsaubere Strings 
 (d.h. basestrings mit non-ascii chars darin) 
 zurückgeben darf?
-Jedenfalls ist der Bug nun hoffentlich behobben.
+Jedenfalls ist der Bug nun hoffentlich behoben.
 :func:`lino.apps.dsbe.tests.dsbe_tests.test05`.
+
+Aber trotzdem macht :term:`watch_tim` noch UnicodeDecodeErrors 
+im Modul `logging`. 
+Um rauszufinden, was er da loggen will, 
+habe ich in der :file:`/usr/lib/python2.6/logging/__init__.py` 
+auf Jana ein paar Änderungen gemacht.

@@ -137,7 +137,7 @@ def obj2str(i,force_detailed=False):
         if i.pk is None:
             return '(Unsaved %s instance)' % (i.__class__.__name__)
         try:
-            return "%s #%s (%s)" % (i.__class__.__name__,i.pk,i)
+            return "%s #%s (%s)" % (i.__class__.__name__,i.pk,unicode(i))
         except Exception,e:
         #~ except TypeError,e:
             return "Unprintable %s(pk=%s,error=%s" % (
