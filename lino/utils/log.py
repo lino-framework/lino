@@ -128,7 +128,7 @@ def configure(config):
     
     try:
         if sys.stdout.isatty():
-            print 20110728, sys.stdout.encoding
+            #~ print 20110728, sys.stdout.encoding
             #~ if sys.stdout.encoding == 'ascii':
                 #~ raise Exception("Your tty's encoding is ascii, that will lead to problems" % )
             h = logging.StreamHandler()
