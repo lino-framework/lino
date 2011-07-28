@@ -19,6 +19,9 @@ Glossary
     
   Django
     http://docs.djangoproject.com
+    
+  dump
+    See :doc:`/admin/datamig`.
 
   CSC
     Context-sensitive ComboBox
@@ -37,7 +40,11 @@ Glossary
     See :mod:`lino.management.commands.initdb`
     
   initdb_tim
-    See :mod:`lino.modlib.dsbe.management.commands.initdb_tim`
+    See :mod:`lino.apps.dsbe.management.commands.initdb_tim`
+    
+  watch_tim
+    A daemon process that synchronizes data from TIM to Lino.
+    See :mod:`lino.apps.dsbe.management.commands.watch_tim`
 
   loaddata
     one of Django's standard management commands.

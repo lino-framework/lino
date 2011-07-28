@@ -2,6 +2,10 @@
 The :mod:`lino.apps.dsbe` package
 =================================
 
+.. contents:: Table of Contents
+   :depth: 2
+
+
 .. automodule:: lino.apps.dsbe
     :members:
     :show-inheritance:
@@ -29,14 +33,37 @@ The :mod:`lino.apps.dsbe` package
     
     
 
+Management commands
+-------------------
+
+initdb_tim
+~~~~~~~~~~
+
+.. automodule:: lino.apps.dsbe.management.commands.initdb_tim
+    :members:
+    :show-inheritance:
+
+watch_tim
+~~~~~~~~~
+
+.. automodule:: lino.apps.dsbe.management.commands.watch_tim
+    :members:
+    :show-inheritance:
+
+
+
 Fixtures
 --------
 
+pp2lino
+~~~~~~~
 
 .. automodule:: lino.apps.dsbe.fixtures.pp2lino
     :members:
     :show-inheritance:
 
+props
+~~~~~
 
 .. automodule:: lino.apps.dsbe.fixtures.props
     :members:
@@ -45,10 +72,15 @@ Fixtures
 Unit Tests
 ----------
 
+dsbe_tests
+~~~~~~~~~~
+
 .. automodule:: lino.apps.dsbe.tests.dsbe_tests
     :members:
     :show-inheritance:
 
+dsbe_demo_tests
+~~~~~~~~~~~~~~~
 
 .. automodule:: lino.apps.dsbe.tests.dsbe_demo_tests
     :members:

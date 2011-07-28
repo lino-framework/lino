@@ -309,12 +309,6 @@ class Partner(mixins.DiffingMixin,models.Model):
     bank_account2 = models.CharField(max_length=40,blank=True,null=True,
         verbose_name=_("Bank account 2"))
         
-    #~ def save(self,*args,**kw):
-        #~ self.before_save()
-        #~ r = super(Partner,self).save(*args,**kw)
-        #~ return r
-        
-    #~ def before_save(self):
     def full_clean(self,*args,**kw):
         if self.id is None:
             sc = get_site_config()
@@ -1360,7 +1354,7 @@ class MyNotes(notes.MyNotes):
 
 
 #
-# CALENDAR
+# CALENDAR IMPLEMENTATION AND EXTENSION
 #
 
 class ComponentMixin(contacts.PartnerDocument):
@@ -1401,7 +1395,7 @@ class TasksByCompany(cal.Tasks):
 
   
 #
-# LINKS
+# LINKS IMPLEMENTATION AND EXTENSION
 #
 class Link(links.Link,contacts.PartnerDocument):
     class Meta:

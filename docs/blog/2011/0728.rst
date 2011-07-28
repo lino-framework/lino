@@ -1,0 +1,13 @@
+20110728
+========
+
+
+:term:`watch_tim` noch immer nicht bugfrei
+------------------------------------------
+
+Wer hätte das gedacht! Es gibt noch immer Bugs :term:`watch_tim`!
+(Seriös: natürlich gibt es noch Bugs in :term:`watch_tim`, 
+denn der ist hochkomplex und schwer zu warten.
+Aber ich bin im Grunde sehr zufrieden, wie stabil das Ding läuft und 
+wie die Bugs immer subtiler werden.
+Diesmal lag es daran, dass mein Bugfix von gestern noch Bug hatte.

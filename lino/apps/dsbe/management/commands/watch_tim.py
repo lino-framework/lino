@@ -120,7 +120,7 @@ class Controller:
             # here we only log an obj2str() of the object 
             # full traceback will be logged in watch() after process_line()
             dblogger.warning("Validation failed for %s : %s",obj2str(obj),e)
-            raise
+            raise # re-raise (propagate) exception with original traceback
             #~ dblogger.exception(e)
                 
     def get_object(self,kw):
@@ -193,6 +193,7 @@ def ADR_applydata(obj,data,**kw):
         setattr(obj,k,v)
                 
 class PAR(Controller):
+    "Deserves more documentation."
   
     #~ def prepare_data(self,data):
         #~ if data['NB2']:
@@ -273,18 +274,20 @@ class PAR(Controller):
                 self.swapclass(obj,Person,kw['data'])
                 return True
             
-    def POST(self,**kw):
+    def create_object(self,kw):
         if is_company(kw['data']):
-            obj = Company()
+            return Company()
         else:
-            obj = Person()
-        self.applydata(obj,kw['data'])
-        self.validate_and_save(obj)
-        #~ obj.save()
-        dblogger.debug("%s:%s (%s): POST %s",kw['alias'],kw['id'],obj,kw['data'])
+            return Person()
+      
+    #~ def POST(self,**kw):
+        #~ self.applydata(obj,kw['data'])
+        #~ self.validate_and_save(obj)
+        #~ dblogger.debug("%s:%s (%s): POST %s",kw['alias'],kw['id'],obj,kw['data'])
             
 
 class PXS(PAR):
+    "Controller for importing PXS changes to Person."
   
     allow_put2post = False
     """This is False because the following case cannot be resolved: 
@@ -292,7 +295,16 @@ class PXS(PAR):
     TIM issues a PUT on PXS. Lino cannot convert this into a POST and create 
     the person because e.g. name ist not known.
     
+    TIM schreibt beim Erstellen eines neuen Partners logischerweise 
+    sowohl für PAR als auch für PXS ein POST. Weil die beiden in Lino 
+    aber eine einzige Tabelle sind, bekamen wir dann beim POST des PXS 
+    eine Fehlermeldung "Partner with this id already exists".
+        
     """
+    
+    def create_object(self,kw):
+        raise Exception("Tried to create a Person from PXS")
+        
     def applydata(self,obj,data,**d):
         d.update(
             card_number='CARDNUMBER',
@@ -303,12 +315,9 @@ class PXS(PAR):
         pxs2person(data,obj)
         
     #~ def POST(self,**kw):
-        #~ """
-        #~ Denn TIM schreibt beim Erstellen eines neuen Partners logischerweise 
-        #~ sowohl für PAR als auch für PXS ein POST. Weil die beiden in Lino 
-        #~ aber eine einzige Tabelle sind, bekamen wir dann beim POST des PXS 
-        #~ eine Fehlermeldung "Partner with this id already exists".
-        #~ """
+        #~ """Deserves more documentation."""
+        # Don't use the POST defined in PAR!
+        #~ return Controller.POST(self,**kw)
         #~ self.PUT(**kw)
         
         

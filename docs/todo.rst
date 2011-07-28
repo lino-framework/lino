@@ -16,6 +16,24 @@ because it is rather for internal use.
 Short-term
 ----------
 
+#.  In Übersichtsliste die Benutzer des DSBE () und die vom allgemeinen 
+    Sozialdienst trennen. Also ein neues Feld `User.department`.
+
+#.  Automatische Erinnerung Arbeitserlaubnis 2 Monate vor dem in 
+    "Gültig bis" angegebenen Datum gemacht werden. Die Dauer "2 Monate" 
+    am besten konfigurierbar in zwei neuen Felder `UploadType.alarm_value`
+    `UploadType.alarm_unit`.
+    
+#.  Support for eID cards: (1) user authentication (2) read data from card.
+
+    http://www.e-contract.be/
+    http://code.google.com/p/eid-applet/
+    
+    http://code.google.com/p/eidlib/ (last commit 13.04.2009)
+
+#.  Es gibt noch keine (elegante) Möglichkeit, um von einer Aufgabe aus 
+    das Detail des owners anzuzeigen.
+
 #.  Brauchen wir eine Methode "readonly" pro Record? Zum Beispiel sollen 
     inaktive Personen allgemein nicht verändert werden können. 
     Aber das ist eigentlich eher ein Sonderfall für `disabled_fields`, 

@@ -1,10 +1,3 @@
-T:\hgwork\lino\docs\autodoc\lino.rst:11: WARNING: py:class reference target not found: object
-T:\hgwork\lino\docs\autodoc\lino.rst:13: WARNING: setting reference target not found: LINO
-T:\hgwork\lino\docs\autodoc\lino.rst:23: WARNING: setting reference target not found: LINO
-T:\hgwork\lino\docs\autodoc\lino.rst:76: WARNING: py:attr reference target not found: date_format_strftime
-T:\hgwork\lino\docs\autodoc\lino.rst:76: WARNING: py:attr reference target not found: date_format_extjs
-T:\hgwork\lino\docs\autodoc\lino.rst:93: WARNING: py:attr reference target not found: time_format_strftime
-T:\hgwork\lino\docs\autodoc\lino.rst:93: WARNING: py:attr reference target not found: time_format_extjs
 T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:10: WARNING: py:class reference target not found: django.db.models.base.Model
 T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:18: WARNING: py:class reference target not found: django.db.models.base.Model
 T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:54: WARNING: py:class reference target not found: django.db.models.base.Model
@@ -29,4 +22,5 @@ T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:458: WARNING: py:class reference 
 T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:466: WARNING: py:class reference target not found: lino.apps.dsbe.models.ComponentMixin
 T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:482: WARNING: py:class reference target not found: django.db.models.base.Model
 T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:8: WARNING: py:mod reference target not found: lino.apps.dsbe.settings.Lino
+T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:4: WARNING: xfile reference target not found: changelog.json
 T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:37: WARNING: py:func reference target not found: check_output

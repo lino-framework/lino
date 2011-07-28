@@ -1,10 +1,11 @@
-Version 1.2.1 (27.07.2011)
-==========================
+Version 1.2.1 (27.-28.07.2011)
+==============================
 
 This is a bugfix release.
 
-Revision `006b93ed815e
-<http://code.google.com/p/lino/source/detail?r=006b93ed815ef9cce9ec7431f4b44432a4f1f593>`_
+Revision `ca1b8ebad08e
+<http://code.google.com/p/lino/source/detail?r=ca1b8ebad08ee8529d9463456c7595e009c66711>`_
+
 
 Bugs fixed
 ----------
@@ -26,4 +27,31 @@ Minor visible changes
   NB: um ein Feld in der Grid zu bearbeiten, musst du F2 drücken.
 
 - Auswahl Stellen ist jetzt alphabetisch.
+
+Nachtrag 28.07.
+---------------
+
+#.  Stellenanbieter (provider) und contract_type einer Stelle 
+    sind jetzt disabled, 
+    wenn mindestens ein Vertrag mit dieser Stelle existiert.     
+    Benutzerdoku: Was tun (vor allem jetzt nach der Datenmigration), 
+    wenn diese Felder einer Stelle de facto falsch sind und korrigiert 
+    werden müssen?
+    --> Neue Stelle mit richtigen Daten schaffen, 
+    dann in allen Verträgen die neue Stelle zuweisen.
+    
+#.  F2 in Grid funktionierte nicht immer. 
+    In Grids, die ein unformatiertes TextField enthielten, konnte man 
+    auch in anderen Zellen weder bearbeiten noch Zeilen einfügen, 
+    weil er dann fälschlicherweise versuchte, 
+    `Ext.form.TextArea.refresh()` aufzurufen.
+    
+#.  Die "seltsamen AJAX failure" beim Bearbeiten der Stelle eines Vertrags
+    haben eine einfache Erklärung und Lösung. 
+    Siehe :doc:`/blog/2011/0727`.
+    
+#.  Der Menübefehl für die Liste der Stellenanbieter ist jetzt nicht mehr unter 
+    :menuselection:`Kurse --> Stellenanbieter`, 
+    sondern ebenfalls in 
+    :menuselection:`Konfigurierung --> Stellen --> Stellenanbieter`.
 
