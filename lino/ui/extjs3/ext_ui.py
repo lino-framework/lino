@@ -86,7 +86,7 @@ from lino.utils.choicelists import DoYouLike, HowWell
 STRENGTH_CHOICES = DoYouLike.get_choices()
 KNOWLEDGE_CHOICES = HowWell.get_choices()
 
-from lino.tools import obj2str
+from lino.tools import obj2str, obj2unicode
 
 #~ from lino.ui.extjs.ext_windows import WindowConfig # 20100316 backwards-compat window_confics.pck 
 
@@ -881,9 +881,9 @@ tinymce.init({
         
         if is_new:
             dblogger.log_created(request,elem)
-            return self.success_response(_("%s has been created.") % obj2str(elem),record_id=elem.pk)
+            return self.success_response(_("%s has been created.") % obj2unicode(elem),record_id=elem.pk)
             
-        return self.success_response(_("%s has been saved.") % obj2str(elem))
+        return self.success_response(_("%s has been saved.") % obj2unicode(elem))
         #~ return self.success_response(_("%s has been saved.") % obj2str(elem),**kw2resp)
 
 
@@ -1105,7 +1105,7 @@ tinymce.init({
                 elem.delete()
             except Exception,e:
                 dblogger.exception(e)
-                msg = _("Failed to delete %(record)s : %(error)s.") % dict(record=obj2str(elem),error=e)
+                msg = _("Failed to delete %(record)s : %(error)s.") % dict(record=obj2unicode(elem),error=e)
                 #~ msg = "Failed to delete %s." % element_name(elem)
                 return error_response(None,msg)
                 #~ raise Http404(msg)
@@ -1200,7 +1200,7 @@ tinymce.init({
                     logger.exception(e)
                     msg = _("Action %(action)s failed for %(record)s.") % dict(
                         action=a,
-                        record=obj2str(elem))
+                        record=obj2unicode(elem))
                     msg += ' ' + _("An error report has been sent to the system administrator.")
                     logger.warning(msg)
                     return error_response(e,msg)

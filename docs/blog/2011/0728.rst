@@ -29,3 +29,12 @@ im Modul `logging`.
 Um rauszufinden, was er da loggen will, 
 habe ich in der :file:`/usr/lib/python2.6/logging/__init__.py` 
 auf Jana ein paar Änderungen gemacht.
+Mein Fazit nach stundenlangem Suchen: das `logging` vom Python 2.6.6 
+hat noch irgendwelche subtilen Probleme, wenn man ihm unicode-Strings 
+zu loggen gibt. 
+Ich ändere meine :func:`lino.tools.obj2str` so das sie immer 
+garantiert einen basestring zurückgibt (also Sonderzeichen stehen 
+dann im Stil ``\xe9`` da).
+
+Für Meldungen an den Benutzer, die in Unicode sein dürfen und sollen, 
+gibt es jetzt die neue Funktion :func:`lino.tools.obj2unicode`.

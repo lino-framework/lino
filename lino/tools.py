@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 ## Copyright 2009-2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
@@ -123,6 +124,9 @@ def full_model_name(model):
     return model._meta.app_label + '.' + model._meta.object_name
     
     
+    
+def obj2unicode(i):
+    return u'%s "%s"' % (i._meta.verbose_name,unicode(i))
     
 def obj2str(i,force_detailed=False):
     """

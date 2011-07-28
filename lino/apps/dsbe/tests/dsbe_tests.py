@@ -238,7 +238,7 @@ def test05(self):
     from lino.apps.dsbe.models import Activity, Person
     from lino.tools import obj2str
     a = Activity(name=u"Sozialhilfeempfänger")
-    p = Person(name="Test",activity=a)
+    p = Person(last_name="Test",activity=a)
     self.assertEqual(unicode(a),u"Sozialhilfeempfänger")
     
     # Django pitfall: repr() of a model instance may return basestring containing non-ascii characters.
@@ -246,10 +246,13 @@ def test05(self):
     
     self.assertEqual(obj2str(a,True),u"Activity(name=u'Sozialhilfeempf\\xe4nger')")
     #~ self.assertEqual(obj2str(a,True),u"Activity(id=None,name=u'Sozialhilfeempf\\xe4nger',lst104=False)")
-    expected = "Person(name='Test',language=u'%s'," % babel.DEFAULT_LANGUAGE
+    expected = "Person(language=u'%s'," % babel.DEFAULT_LANGUAGE
+    expected += "last_name='Test',"
     expected += "is_active=True,"
     expected += r"activity=Activity(name=u'Sozialhilfeempf\xe4nger'))"
     self.assertEqual(
       obj2str(p,True),
       expected)
-        
+    p.id = 5
+    self.assertEqual(obj2str(p),"Person #5 (u'TEST (5)')")
+    
