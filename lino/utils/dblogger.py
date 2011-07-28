@@ -36,10 +36,10 @@ debug = logger.debug
 #~ setLevel = logger.setLevel
 
 def log_created(request,elem):
-    logger.info("%s created by %s.",obj2str(elem),request.user)
+    logger.info(u"%s created by %s.",obj2str(elem),request.user)
     
 def log_deleted(request,elem):
-    logger.info("%s deleted by %s.",obj2str(elem),request.user)
+    logger.info(u"%s deleted by %s.",obj2str(elem),request.user)
     
 def log_changes(request,elem):
     """logs which changes have been made to every field of `elem` 
@@ -48,14 +48,14 @@ def log_changes(request,elem):
     if isinstance(elem,mixins.DiffingMixin):
         changes = []
         for k,v in elem.changed_columns().items():
-            changes.append("%s : %s --> %s" % (k,obj2str(v['old']),obj2str(v['new'])))
+            changes.append(u"%s : %s --> %s" % (k,obj2str(v['old']),obj2str(v['new'])))
         if len(changes) == 0:
             changes = '(no changes)'
         #~ elif len(changes) == 1:
             #~ changes = changes[0]
         else:
             changes = '\n- ' + ('\n- '.join(changes))
-        msg = "%s modified by %s : %s" % (
+        msg = u"%s modified by %s : %s" % (
             obj2str(elem),
             request.user,
             changes)
