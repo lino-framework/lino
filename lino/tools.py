@@ -126,11 +126,12 @@ def full_model_name(model):
     
     
 def obj2unicode(i):
+    """Returns a user-friendly unicode representation of a model instance."""
     return u'%s "%s"' % (i._meta.verbose_name,unicode(i))
     
 def obj2str(i,force_detailed=False):
     """
-    Returns a usable unicode string representation of a model instance, 
+    Returns a usable ascii string representation of a model instance, 
     even in some edge cases.
     """
     #~ if not force_detailed and i.pk is not None:

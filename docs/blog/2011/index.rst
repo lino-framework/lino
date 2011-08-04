@@ -202,6 +202,7 @@ As long as nobody protests, I'll save some time by writing in German.
   :doc:`25 <0725>`
   :doc:`26 <0726>`
   :doc:`27 <0727>`
+  :doc:`28 <0728>`
   |br|  	
 
 .. |Aug| replace::  **August**

@@ -23,6 +23,7 @@ from django.conf import settings
 
 from lino import reports
 from lino.tools import obj2str
+from lino.utils import ispure
 #~ from lino import layouts
     
 class Uploadable(models.Model):
@@ -72,6 +73,9 @@ class Uploadable(models.Model):
         
         self.size = uf.size
         self.mimetype = uf.content_type
+        
+        if not ispure(uf.name):
+            raise Exception('uf.name is a %s!' % type(uf.name))
         
         # Django magics: 
         self.file = uf.name # assign a string

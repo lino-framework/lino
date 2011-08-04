@@ -67,10 +67,11 @@ bm_list = []
 
 class BuildMethod:
     """
-    Base class for all print methods.
-    A print method encapsulates the process of generating a "document" 
-    that inserts data from the database into a template.
-    using a given combination of a template parser and post-processor.
+    Base class for all build methods.
+    A build method encapsulates the process of generating a 
+    "printable document" that inserts data from the database 
+    into a template, using a given combination of a template 
+    parser and post-processor.
     """
     name = None
     label = None
@@ -208,11 +209,12 @@ class SimpleBuildMethod(BuildMethod):
         
 class AppyBuildMethod(SimpleBuildMethod):
     """
-    Base class for Build Methods that use .odt templates designed
+    Base class for Build Methods that use `.odt` templates designed
     for :term:`appy.pod`.
     
     http://appyframework.org/podRenderingTemplates.html
     """
+    
     template_ext = '.odt'  
     templates_name = 'appy' # subclasses use the same templates directory
     
