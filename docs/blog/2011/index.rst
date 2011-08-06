@@ -207,6 +207,7 @@ As long as nobody protests, I'll save some time by writing in German.
 
 .. |Aug| replace::  **August**
   |br| 
+  02 03 04 05 :doc:`06 <0806>`
   |br| 
   |br| 
   |br|  	

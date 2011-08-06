@@ -1,0 +1,54 @@
+20110806
+========
+
+Upload files with non-ascii names
+---------------------------------
+
+This week I tried to understand why in Eupen we cannot 
+upload files with non-ascii characters in their name.
+
+I added a new file :src:`/lino/tests/misc/diag.py` (converted from 
+the older ``timtools diag`` command). 
+
+On Jana this didn't even run because there were no locales installed:
+the value of `LANG` was simply `"C"`;
+typing the :kbd:`ö` key on my Estonian keyboard produced some strange 
+effects, but not a letter "ö".
+The solution was simple (now that I found it)::
+
+  sudo dpkg-reconfigure locales
+  
+This was probably because Jana was installed from some Proxmox's default 
+Debian template.
+
+
+New application "Concise Reference Labels" (:mod:`crl <lino.apps.crl>`)
+-----------------------------------------------------------------------
+
+My father has worked as director in several libraries, 
+and although he recently turned 78, he doesn't stop advocating 
+a labeling system he discovered and developed throughout his life.
+In September 2009 he published an article 
+`De l'ordre dans les idées <http://luc.saffre-rumma.net/1343.html>`_
+about it.
+
+My father didn't yet worry to find a name for 
+this labeling system he developed throughout his life.
+I'll call it **Concise Reference Labels**. 
+It is based on the observation that printed books in a library have 
+limited space for labels.
+Now imagine a classical library, where humans 
+directly manipulate lots of books and 
+need to find the right place for each.
+In this situation it is useful to have a 
+codification system that is easy to remember 
+(at least for the people who use it every day).
+
+The classical approaches in the western world for this are
+`UDC <http://en.wikipedia.org/wiki/Universal_Decimal_Classification>`_
+and `DDC <http://en.wikipedia.org/wiki/Dewey_Decimal_Classification>`_.
+They both have one disadvantage: they don't use the full range 
+of "rememberable characters" and thus need relatively much space 
+on a label.
+
+

@@ -1,0 +1,24 @@
+:label: Person
+:label_align: top
+:hideCheckBoxLabels: 
+
+main = 
+  box1 box2
+  box3 
+
+
+
+box1 = 
+  title:10 first_name:15 last_name 
+  country city zip_code:10
+  street_prefix street:25 street_no street_box
+  addr2:40
+
+box2 = 
+  crl id language
+  email
+  phone fax
+  gsm
+
+box3 =
+  sex:8 birth_date birth_date_circa age died_date 

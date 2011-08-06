@@ -178,6 +178,9 @@ class Lino(object):
     title = "Base Lino Application"
     domain = "www.example.com"
     
+    legacy_data_path = None
+    "Used by custom fixtures that import data from some legacy database."
+    
     migration_module = None
     """If you maintain a data migration module for your application, 
     specify its name here."""

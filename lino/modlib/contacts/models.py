@@ -253,6 +253,27 @@ def SexField(**kw):
     return models.CharField(**options)
         
 
+class Born(models.Model):
+  
+    class Meta:
+        abstract = True
+        
+    birth_date = models.DateField(
+        blank=True,null=True,
+        verbose_name=_("Birth date"))
+    birth_date_circa = models.BooleanField(
+        default=False,
+        verbose_name=_("not exact"))
+
+    def age(self,request):
+        if self.birth_date:
+            dd = datetime.date.today()-self.birth_date
+            return _("%d years") % (dd.days / 365)
+        return _('unknown')
+    age.return_type = fields.DisplayField(_("Age"))
+    #~ age.return_type = models.CharField(_("Age"),max_length=10,editable=False,blank=True)
+    
+
 class Person(Addressable):
     """
     Base class for models that represent a physical person. 

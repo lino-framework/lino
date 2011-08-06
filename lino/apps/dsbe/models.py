@@ -323,9 +323,8 @@ class Partner(mixins.DiffingMixin,models.Model):
             return _("Cannot delete companies and persons imported from TIM")
           
 
-
-
-class Person(Partner,contacts.Person):
+    
+class Person(Partner,contacts.Born,contacts.Person):
     """
     Represents a physical person.
     
@@ -382,12 +381,6 @@ class Person(Partner,contacts.Person):
     coach2 = models.ForeignKey("users.User",blank=True,null=True,
         verbose_name=_("Coach 2"),related_name='coached2')
         
-    birth_date = models.DateField(
-        blank=True,null=True,
-        verbose_name=_("Birth date"))
-    birth_date_circa = models.BooleanField(
-        default=False,
-        verbose_name=_("not exact"))
     birth_place = models.CharField(_("Birth place"),
         max_length=200,
         blank=True,null=True)
@@ -667,14 +660,6 @@ class Person(Partner,contacts.Person):
         
         
             
-    def age(self,request):
-        if self.birth_date:
-            dd = datetime.date.today()-self.birth_date
-            return _("%d years") % (dd.days / 365)
-        return _('unknown')
-    age.return_type = fields.DisplayField(_("Age"))
-    #~ age.return_type = models.CharField(_("Age"),max_length=10,editable=False,blank=True)
-    
     def overview(self,request):
         def qsfmt(qs):
             s = qs.model._meta.verbose_name_plural + ': '
