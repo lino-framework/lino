@@ -35,6 +35,8 @@ from django.core.management.base import BaseCommand, CommandError
 from lino.utils import dbfreader
 from lino.utils import dblogger
 #~ from lino import diag
+#~ from lino.utils import crl2hex, hex2crl
+
 
 from lino.modlib.contacts.utils import name2kw, street2kw, join_words
 from lino.modlib.contacts.models import SEX_MALE, SEX_FEMALE
@@ -45,6 +47,7 @@ import lino
 
 from lino.utils import confirm, iif
 from lino.core.coretools import app_labels
+from lino.apps.crl.models import CRL
 
 Country = resolve_model('countries.Country')
 City = resolve_model('countries.City')
@@ -286,7 +289,8 @@ def load_P_(row):
     #~ kw.update(street2kw(join_words(row['RUE'],row['RUENUM'],row['RUEBTE'])))
     store(kw,last_name=row['AN'])
     store(kw,first_name=row['AP'])
-    store(kw,crl=row['P'])
+    store(kw,crl=CRL(row['P'].encode('cp437')))
+    #~ store(kw,crl=crl2hex(row['P']))
     OU = row['OU']
     if OU:
         kw.update(street2kw(OU))

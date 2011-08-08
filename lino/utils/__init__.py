@@ -33,6 +33,18 @@
 >>> iif(1>2,'yes','no')
 'no'
 
+>>> crl2hex('-L')
+'2d4c'
+
+>>> hex2crl('2d4c')
+'-L'
+
+>>> hex2crl('')
+''
+>>> crl2hex('')
+''
+
+
 """
 
 import sys, locale, types, datetime
@@ -104,6 +116,26 @@ def class_dict_items(cl,exclude=None):
         for k,v in class_dict_items(b,exclude): 
             yield k,v
 
+class CRL(str):
+    pass
+
+def crl2hex(crl):
+    r = ''
+    for c in crl:
+        r += hex(ord(c))[2:]
+    return r
+    
+def hex2crl(value):
+    if len(value) % 2 != 0:
+        raise Exception("hex2crl got value %r" % value)
+    r = ''
+    for i in range(len(value) / 2):
+       s = value[i*2:i*2+2]
+       h = int(s,16)
+       #~ print h
+       r += chr(h)
+    return r
+  
 
 
 def _test():

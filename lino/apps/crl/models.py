@@ -76,18 +76,30 @@ class LinksByOwner(links.LinksByOwnerBase):
     column_names = "name url user date *"
     order_by = ["date"]
   
+from lino.utils import crl2hex, hex2crl, CRL
 
 class CrlField(models.CharField):
+    __metaclass__ = models.SubfieldBase # needed for to_python() to be called automatically.
     def __init__(self, *args, **kw):
         defaults = dict(
             verbose_name=_("Label"),
-            max_length=12,
+            max_length=100,
             blank=True, 
             )
         defaults.update(kw)
         models.CharField.__init__(self,*args, **defaults)
+        
+    def to_python(self, value):
+        if not value: return value
+        if isinstance(value,CRL):
+            return value
+        return CRL(hex2crl(value))
 
-
+    def get_prep_value(self, value):
+        if not value: return value
+        assert isinstance(value,CRL)
+        return crl2hex(value)
+        
 
 reports.inject_field(countries.City,'crl',CrlField())
 reports.inject_field(Person,'crl',CrlField())

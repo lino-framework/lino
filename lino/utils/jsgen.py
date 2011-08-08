@@ -99,6 +99,7 @@ def declare_vars(v):
         #~ if not v.__class__ in (unicode,str, int,bool,js_code):
             #~ print "20100527 Ignoring", v.__class__, v
 
+
 def py2js(v):
     #~ logger.debug("py2js(%r)",v)
     for cv in CONVERTERS:
@@ -126,6 +127,8 @@ def py2js(v):
             "%s: %s" % (py2js(k),py2js(v)) for k,v in v.items()])
     if isinstance(v,bool): # types.BooleanType:
         return str(v).lower()
+    #~ if isinstance(v,CRL):
+        #~ return str(v)
     if isinstance(v, (int, long, decimal.Decimal)):
         return str(v)
     if isinstance(v, datetime.datetime):
