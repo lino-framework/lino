@@ -54,14 +54,25 @@ from django.utils import translation
 
 def get_salutation(sex,nominative=False,no_salutation=False):
     """
-    Returns "Mr." or "Mrs" depending on the sex, but also respecting the current babel language.
+    Returns "Mr" or "Mrs" or a translation thereof, 
+    depending on the sex and the current babel language.
+    
+    Note that the English abbreviations 
+    `Mr <http://en.wikipedia.org/wiki/Mr.>`_ and 
+    `Mrs <http://en.wikipedia.org/wiki/Mrs.>`_
+    are written either with (AE) or 
+    without (BE) a dot. Since the babel module doesn't yet allow 
+    to differentiate dialects, we opted for the british version.
     
     - optional keyword argument `nominative` used only when babel language
       is "de": specifying ``nominative=True`` will return "Herr" instead of default 
       "Herrn" for male persons.
     
     - optional keyword argument `no_salutation` can be set to `True` to 
-      suppress salutations. See :func:`lino.apps.dsbe.tests.dsbe_tests.test04` 
+      suppress salutations. See 
+      :func:`lino.apps.dsbe.tests.dsbe_tests.test04` 
+      and
+      :func:`lino.modlib.contacts.tests,test01` 
       for some examples.
     
     """
@@ -77,10 +88,10 @@ def get_salutation(sex,nominative=False,no_salutation=False):
     if lang == 'fr':
         if sex == SEX_FEMALE:
             return "Mme"
-        return "Mr"
+        return "M."
     if sex == SEX_FEMALE:
-        return "Mrs."
-    return "Mr."
+        return "Mrs"
+    return "Mr"
         
 #~ class Salutation(ChoiceList):
     #~ label = _("Salutation")

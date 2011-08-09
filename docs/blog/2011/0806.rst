@@ -7,7 +7,7 @@ Upload files with non-ascii names
 This week I tried to understand why in Eupen we cannot 
 upload files with non-ascii characters in their name.
 
-I added a new file :src:`/lino/tests/misc/diag.py` (converted from 
+I added a new file :srcref:`/lino/tests/misc/diag.py` (converted from 
 the older ``timtools diag`` command). 
 
 On Jana this didn't even run because there were no locales installed:
@@ -22,11 +22,20 @@ This was probably because Jana was installed from some Proxmox's default
 Debian template.
 
 
-New application "Concise Reference Labels" (:mod:`crl <lino.apps.crl>`)
------------------------------------------------------------------------
+New application "Concise Reference Labels"
+------------------------------------------
+
+I started a new application :mod:`lino.apps.crl`, a kind of 
+`personal information manager <http://de.wikipedia.org/wiki/Personal_Information_Manager>`_
+for a customer who has several good reasons to get a free pilot project: 
+he is both patient and perfectionist;
+he has some rather exclusive wishes including a few challenges; 
+he has an existing application that needs to be converted... 
+and he's my father.
 
 My father has worked in several libraries, 
-and although he recently god 78 years old he doesn't stop advocating 
+classification is one of his hobbies,
+and although he recently got 78 years old he doesn't stop advocating 
 a labeling system he discovered, used and developed throughout his life.
 In September 2009 he published an article 
 `De l'ordre dans les idées <http://luc.saffre-rumma.net/1343.html>`_
@@ -40,7 +49,7 @@ Now imagine a classical library, where humans
 directly manipulate lots of books and 
 need to find the right place for each.
 In this situation it is useful to have a 
-codification system that is easy to remember 
+codification system that is easy to learn and to remember 
 at least for the people who use it every day.
 
 The classical approaches in the western world for this are
@@ -50,4 +59,7 @@ They both have one disadvantage: they don't use the full range
 of "rememberable characters" and thus need relatively much space 
 on a label.
 
-
+My father's CRL approach assumes that people accept the 
+need of a *localized classification subset* 
+and are willing to do the work of discussing and 
+following such a subset. 

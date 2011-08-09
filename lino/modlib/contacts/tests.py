@@ -18,6 +18,7 @@ from lino.utils.test import TestCase
 #from lino.modlib.contacts.models import Contact, Companies
 #from lino.modlib.countries.models import Country
 from lino.modlib.contacts.models import Companies
+from lino.utils import babel
 
 from lino.tools import resolve_model,resolve_app
 Person = resolve_model('contacts.Person')
@@ -39,8 +40,9 @@ def test01(self):
     Tests some basic funtionality.
     """
     luc = Person.objects.get(first_name__exact='Luc',last_name__exact='Saffre')
+    babel.set_language('en')
     self.assertEquals(luc.address(), u'''\
-Herrn Luc SAFFRE
+Mr Luc SAFFRE
 Uus 1
 Vana-Vigala küla
 78003 Vigala
@@ -50,6 +52,7 @@ Uus 1
 Vana-Vigala küla
 78003 Vigala
 Estonia''')
+    babel.set_language(None)
     
     
         

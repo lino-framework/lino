@@ -15,5 +15,6 @@ Subpackages
     lino.apps.std
     lino.apps.dsbe
     lino.apps.igen
+    lino.apps.crl
 
 

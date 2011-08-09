@@ -12,7 +12,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Default settings for :mod:`lino.apps.hs`.
+Default settings for :mod:`lino.apps.crl`.
 
 """
 

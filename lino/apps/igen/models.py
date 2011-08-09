@@ -63,6 +63,7 @@ from lino import reports
 from lino.models import SiteConfig
 from lino.modlib.contacts import models as contacts
 from lino.modlib.notes import models as notes
+from lino.modlib.cal import models as cal
 
 class Person(contacts.Person):
     class Meta(contacts.Person.Meta):
@@ -85,6 +86,14 @@ class Note(notes.Note):
         # see :doc:`/tickets/14`
         #~ verbose_name = _("Note")
         #~ verbose_name_plural = _("Notes")
+ 
+class Event(cal.Event):
+    class Meta(cal.Event.Meta):
+        app_label = 'cal'
+
+class Task(cal.Task):
+    class Meta(cal.Task.Meta):
+        app_label = 'cal'
  
  
 reports.inject_field(

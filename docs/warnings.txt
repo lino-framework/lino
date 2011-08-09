@@ -1,2 +1,0 @@
-T:\hgwork\lino\docs\blog\2011\0806.rst:10: (ERROR/3) Unknown interpreted text role "src".
-T:\hgwork\lino\docs\blog\2011\0806.rst:25: WARNING: py:mod reference target not found: lino.apps.crl

@@ -12,7 +12,8 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
->>> from lino.utils import constrain, iif
+
+
 >>> constrain(-1,2,5)
 2
 >>> constrain(1,2,5)
@@ -30,18 +31,25 @@
 >>> constrain(10,2,5)
 5
 
+
+:func:`iif` (inline ``if``)
+---------------------------
+
 >>> iif(1>2,'yes','no')
 'no'
 
->>> crl2hex('-L')
+:func:`str2hex` and :func:`hex2str`
+-----------------------------------
+
+>>> str2hex('-L')
 '2d4c'
 
->>> hex2crl('2d4c')
+>>> hex2str('2d4c')
 '-L'
 
->>> hex2crl('')
+>>> hex2str('')
 ''
->>> crl2hex('')
+>>> str2hex('')
 ''
 
 
@@ -83,8 +91,7 @@ def assert_pure(s):
      
 
 def join_words(*words):
-    """
-    removes any None. calls unicode on each.
+    """Removes any None. Calls unicode on each.
     """
     #~ words = filter(lambda x:x,words)
     return ' '.join([unicode(x) for x in words if x])
@@ -116,27 +123,24 @@ def class_dict_items(cl,exclude=None):
         for k,v in class_dict_items(b,exclude): 
             yield k,v
 
-class CRL(str):
-    pass
 
-def crl2hex(crl):
+def str2hex(s):
+    """Convert a string to its hexadecimal representation."""
     r = ''
-    for c in crl:
+    for c in s:
         r += hex(ord(c))[2:]
     return r
     
-def hex2crl(value):
+def hex2str(value):
+    """Convert the hexadecimal representation of a string to the original string."""
     if len(value) % 2 != 0:
-        raise Exception("hex2crl got value %r" % value)
+        raise Exception("hex2str got value %r" % value)
     r = ''
     for i in range(len(value) / 2):
        s = value[i*2:i*2+2]
        h = int(s,16)
-       #~ print h
        r += chr(h)
     return r
-  
-
 
 def _test():
     import doctest

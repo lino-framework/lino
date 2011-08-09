@@ -1,0 +1,30 @@
+20110809
+========
+
+doctemplates
+------------
+
+Opened ticket :doc:`/tickets/46`, but we'll let wait 
+this ticket until real need grows because it's not trivial.
+
+One bug less
+------------
+
+The following traceback happened when user left the job field of a contract empty::
+
+  File "l:\snapshots\django\django\core\handlers\base.py", line 111, in get_response
+    response = callback(request, *callback_args, **callback_kwargs)
+
+  File "t:\hgwork\lino\lino\ui\extjs3\ext_ui.py", line 983, in api_list_view
+    return self.form2obj_and_save(request,rh,request.POST,instance,True)
+
+  File "t:\hgwork\lino\lino\ui\extjs3\ext_ui.py", line 855, in form2obj_and_save
+    elem.full_clean()
+
+  File "t:\hgwork\lino\lino\modlib\jobs\models.py", line 417, in full_clean
+    self.hourly_rate = self.job.hourly_rate
+
+  File "l:\snapshots\django\django\db\models\fields\related.py", line 302, in __get__
+    raise self.field.rel.to.DoesNotExist
+
+

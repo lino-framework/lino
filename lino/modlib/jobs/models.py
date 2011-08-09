@@ -351,15 +351,16 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
       
     def save(self,*args,**kw):
         #~ self.before_save()
-        qs = self.person.jobrequest_set.filter(contract=self)
-        if qs.count() == 0:
-            qs = self.person.jobrequest_set.filter(job=self.job,contract=None)
-            if qs.count() == 1: 
-                obj = qs[0]
-                obj.contract = self
-                obj.save()
-                dblogger.info(u'Marked job request %s as satisfied by %s' % (
-                  obj,self))
+        if self.job_id is not None:
+            qs = self.person.jobrequest_set.filter(contract=self)
+            if qs.count() == 0:
+                qs = self.person.jobrequest_set.filter(job=self.job,contract=None)
+                if qs.count() == 1: 
+                    obj = qs[0]
+                    obj.contract = self
+                    obj.save()
+                    dblogger.info(u'Marked job request %s as satisfied by %s' % (
+                      obj,self))
         r = super(Contract,self).save(*args,**kw)
         return r
         
@@ -401,7 +402,9 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
                 self.provider = self.job.provider
             if self.job.contract_type is not None:
                 self.type = self.job.contract_type
-                
+            if self.hourly_rate is None:
+                self.hourly_rate = self.job.hourly_rate
+            
         if self.provider is not None:
             if self.contact is not None:
                 if self.contact.company != self.provider.company_ptr:
@@ -413,12 +416,6 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
                 if qs.count() == 1:
                     self.contact = qs[0]
                     
-        if self.hourly_rate is None:
-            self.hourly_rate = self.job.hourly_rate
-                
-        if self.type_id is None:
-            self.type = self.job.contract_type
-            
         super(Contract,self).full_clean(*args,**kw)
             
     @classmethod

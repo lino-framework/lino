@@ -29,9 +29,6 @@ from lino.modlib.cal import models as cal
 class Person(contacts.Born,contacts.Person):
     class Meta(contacts.Person.Meta):
         app_label = 'contacts'
-        # see :doc:`/tickets/14`
-        #~ verbose_name = _("Person")
-        #~ verbose_name_plural = _("Persons")
     died_date = models.DateField(
         blank=True,null=True,
         verbose_name=_("Died date"))
@@ -76,9 +73,22 @@ class LinksByOwner(links.LinksByOwnerBase):
     column_names = "name url user date *"
     order_by = ["date"]
   
-from lino.utils import crl2hex, hex2crl, CRL
+from lino.utils import str2hex, hex2str
+
+class CRL(str):
+    """\
+A `Concise Reference Label`
+    """
+    pass
+
+
 
 class CrlField(models.CharField):
+    """A field that contains a Concise Reference Label.
+CRL fields need to be sorted using pure ASCII sequence. 
+Since this is not a database-transparent feature in Django, 
+we store these strings as their hexadecimal representation.
+    """
     __metaclass__ = models.SubfieldBase # needed for to_python() to be called automatically.
     def __init__(self, *args, **kw):
         defaults = dict(
@@ -93,12 +103,12 @@ class CrlField(models.CharField):
         if not value: return value
         if isinstance(value,CRL):
             return value
-        return CRL(hex2crl(value))
+        return CRL(hex2str(value))
 
     def get_prep_value(self, value):
         if not value: return value
         assert isinstance(value,CRL)
-        return crl2hex(value)
+        return str2hex(value)
         
 
 reports.inject_field(countries.City,'crl',CrlField())

@@ -44,7 +44,7 @@ class Lino(Lino):
     def configure(self,sc):
         super(Lino,self).configure(sc)
         
-    def setup_main_menu(self):
+    def get_site_menu(self,ui,user):
   
         from django.utils.translation import ugettext_lazy as _
         from lino.utils import perms
@@ -63,8 +63,9 @@ class Lino(Lino):
         finan = models.get_app('finan')
         journals = models.get_app('journals')
 
-        from lino.utils import perms
-        from lino import models as system
+        #~ from lino.utils import perms
+        from lino.utils import menus
+        #~ from lino import models as system
 
         #~ ledger.set_accounts(
           #~ #providers='4400',
@@ -73,59 +74,76 @@ class Lino(Lino):
           #~ sales_vat='4510',
         #~ )
           
-        m = self.add_menu("contacts","~Contacts")
+        main = menus.Toolbar('main')
+        m = main.add_menu("contacts","~Contacts")
         m.add_action('contacts.Companies')
         m.add_action('contacts.Persons')
         #~ m.add_action('sales.Customers')
 
-        m = self.add_menu("prods","~Products")
+        m = main.add_menu("prods","~Products")
         m.add_action('products.Products')
         m.add_action('products.ProductCats')
-
-        m = self.add_menu("journals","~Journals",can_view=perms.is_staff)
         
-        #~ for jnl in journals.Journal.objects.all().order_by('pos'):
-            #~ m.add_action('contacts.MyPersonsByGroup',label=jnl.name,
-                #~ params=dict(master_instance=jnl))
+        m = main.add_menu("cal",_("~Calendar"))
+        m.add_action('cal.MyEvents')
+        m.add_action('cal.MyTasks')
         
-        for jnl in journals.Journal.objects.all().order_by('pos'):
-            m.add_action(str(jnl.get_doc_report()),
-                params=dict(master_instance=jnl))
-            # m.add_action(jnl.get_doc_report(),args=[jnl.pk])
-            #~ m.add_action(str(jnl.get_doc_report()))
+        
+        if user.is_staff:
+            m = main.add_menu("journals","~Journals")
             
-        m = self.add_menu("sales","~Sales",
-          can_view=perms.is_authenticated)
-        #m.add_action(Orders())
-        #m.add_action(Invoices())
-        m.add_action('sales.DocumentsToSign')
-        m.add_action('sales.PendingOrders')
+            #~ for jnl in journals.Journal.objects.all().order_by('pos'):
+                #~ m.add_action('contacts.MyPersonsByGroup',label=jnl.name,
+                    #~ params=dict(master_instance=jnl))
+            
+            for jnl in journals.Journal.objects.all().order_by('pos'):
+                m.add_action(str(jnl.get_doc_report()),
+                    params=dict(master_instance=jnl))
+                # m.add_action(jnl.get_doc_report(),args=[jnl.pk])
+                #~ m.add_action(str(jnl.get_doc_report()))
+            
+        if user.is_active:
+            m = main.add_menu("sales","~Sales")
+            #m.add_action(Orders())
+            #m.add_action(Invoices())
+            m.add_action('sales.DocumentsToSign')
+            m.add_action('sales.PendingOrders')
 
         #~ m = self.add_menu("admin","~Administration",
           #~ can_view=perms.is_staff)
         #~ m.add_action(MakeInvoicesDialog())
 
-        m = self.add_menu("config","~Configuration",
-          can_view=perms.is_staff)
-        m.add_action('sales.InvoicingModes')
-        m.add_action('sales.ShippingModes')
-        m.add_action('sales.PaymentTerms')
-        m.add_action('journals.Journals')
-        #~ m = self.add_menu("ledger","~Ledger",
-          #~ can_view=perms.is_authenticated)
-        m.add_action('ledger.Accounts')
+        if user.is_staff:
+            m = main.add_menu("config","~Configuration")
+            m.add_action('sales.InvoicingModes')
+            m.add_action('sales.ShippingModes')
+            m.add_action('sales.PaymentTerms')
+            m.add_action('journals.Journals')
+            #~ m = self.add_menu("ledger","~Ledger",
+              #~ can_view=perms.is_authenticated)
+            m.add_action('ledger.Accounts')
 
-        m.add_action('countries.Countries')
-        #m.add_action(contacts.Countries())
-        m.add_action('contenttypes.ContentTypes')
-        #m = self.add_menu("system","~System")
-        #~ m.add_action('auth.Permissions')
-        #~ m.add_action('auth.Users')
-        m.add_action('users.Users')
-        #~ m.add_action('auth.Groups')
-        #m.can_view = perms.is_staff
+            m.add_action('countries.Countries')
+            #m.add_action(contacts.Countries())
+            m.add_action('contenttypes.ContentTypes')
+            #m = self.add_menu("system","~System")
+            #~ m.add_action('auth.Permissions')
+            #~ m.add_action('auth.Users')
+            m.add_action('users.Users')
+            #~ m.add_action('auth.Groups')
+            #m.can_view = perms.is_staff
 
-        system.add_site_menu(self)
+        #~ system.add_site_menu(self)
+        
+        m = main.add_menu("help",_("~Help"))
+        m.add_item('userman',_("~User Manual"),
+            href='http://lino.saffre-rumma.net/igen/index.html')
+
+        #~ self.main_menu.add_item('home',_("~Home"),href='/')
+        main.add_url_button(self.root_url,_("Home"))
+          
+        return main
+        
 
 LINO = Lino(__file__,globals())
 
@@ -159,6 +177,7 @@ INSTALLED_APPS = (
     'lino.modlib.countries',
     'lino.modlib.contacts',
     'lino.modlib.notes',
+    'lino.modlib.cal',
     'lino.modlib.products',
     'lino.modlib.journals',
     #~ 'lino.modlib.documents',

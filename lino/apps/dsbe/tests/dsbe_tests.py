@@ -213,9 +213,9 @@ def test04(self):
     p.full_clean()
     p.save()
     #~ self.assertEqual(p.get_titled_name,"Mr Jean Louis DUPONT")
-    self.assertEqual(p.full_name,"Mr Jean Louis DUPONT")
+    self.assertEqual(p.full_name,"M. Jean Louis DUPONT")
     self.assertEqual('\n'.join(p.address_lines()),u"""\
-Mr Jean Louis DUPONT
+M. Jean Louis DUPONT
 Avenue de la gare 3 b
 Bruxelles
 Belgique""")

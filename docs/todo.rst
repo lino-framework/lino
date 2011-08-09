@@ -16,6 +16,10 @@ because it is rather for internal use.
 Short-term
 ----------
 
+#.  Listings können noch nicht ausgedruckt werden.
+
+#.  Uploads mit Sonderzeichen im Dateinamen funktionieren noch nicht.
+
 #.  In Übersichtsliste die Benutzer des DSBE () und die vom allgemeinen 
     Sozialdienst trennen. Also ein neues Feld `User.department`.
 
