@@ -28,3 +28,32 @@ The following traceback happened when user left the job field of a contract empt
     raise self.field.rel.to.DoesNotExist
 
 
+Continue on UnicodeError while saving uploaded files with non-ascii chars
+-------------------------------------------------------------------------
+
+Here is again our traceback::
+
+  Traceback:
+  File "/var/snapshots/django/django/core/handlers/base.py" in get_response
+    111.                         response = callback(request, *callback_args, **callback_kwargs)
+  File "/var/snapshots/lino/lino/ui/extjs3/ext_ui.py" in api_list_view
+    982.                 rh.report.handle_uploaded_files(request,instance)
+  File "/var/snapshots/lino/lino/reports.py" in f
+    715.         return m(obj,request)
+  File "/var/snapshots/lino/lino/mixins/uploadable.py" in handle_uploaded_files
+    85.         ff.save(uf.name,uf,save=False)
+  File "/var/snapshots/django/django/db/models/fields/files.py" in save
+    90.         self.name = self.storage.save(name, content)
+  File "/var/snapshots/django/django/core/files/storage.py" in save
+    48.         name = self.get_available_name(name)
+  File "/var/snapshots/django/django/core/files/storage.py" in get_available_name
+    74.         while self.exists(name):
+  File "/var/snapshots/django/django/core/files/storage.py" in exists
+    233.         return os.path.exists(self.path(name))
+  File "/usr/lib/python2.6/genericpath.py" in exists
+    18.         st = os.stat(path)
+    
+    
+One problem is that Django doesn't recognize our POST 
+request 
+as `is_ajax <https://docs.djangoproject.com/en/dev/ref/request-response/#django.http.HttpRequest.is_ajax>`_ and thus the traceback is difficult to see.

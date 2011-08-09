@@ -82,6 +82,9 @@ class Uploadable(models.Model):
         ff = self.file  # get back a FileField instance !
         #~ print 'uf=',repr(uf),'ff=',repr(ff)
         
+        if not ispure(uf.name):
+            raise Exception('uf.name is a %s!' % type(uf.name))
+            
         ff.save(uf.name,uf,save=False)
         
         # The expression `self.file` 
