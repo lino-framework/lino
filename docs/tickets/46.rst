@@ -1,17 +1,19 @@
-#46 : multiple `doctemplates` directories
-=========================================
+#46 [closed] : multiple `doctemplates` directories
+==================================================
 
 :class:`lino.mixins.printable.BuildMethod` should support multiple 
 source locations for document templates. 
 
-Until now each new user need to write or get an initial set 
+Until now each new Lino site need to write or get an initial set 
 of doctemplates to be installed in a hard-coded location::
 
   self.templates_dir = os.path.join(settings.LINO.webdav_root,'doctemplates',self.templates_name)
   
-At least `listing.odt` is 
+At least `Listing.odt` is 
 a template that should be maintained by Lino. 
-And also for all other templates there should be an out of the box 
+And also for all other templates there should be an out-of-the-box 
 default template that can serve as basis for a corresponding 
 local template.
+
+Done :doc:`/blog/2011/0809`.
 

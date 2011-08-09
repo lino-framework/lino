@@ -35,7 +35,6 @@ from lino import reports
 from lino.utils.babel import babelattr, BabelCharField
 #~ from lino.modlib.documents import models as documents
 from lino import mixins
-#~ from lino.mixins import Printable
 
 
 class DocumentError(Exception):

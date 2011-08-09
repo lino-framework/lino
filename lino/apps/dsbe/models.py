@@ -62,7 +62,7 @@ from lino.utils import babel
 from lino.utils.choosers import chooser
 from lino.utils.choicelists import ChoiceList
 from lino.utils import mti
-from lino.mixins.printable import DirectPrintAction
+from lino.mixins.printable import DirectPrintAction, Printable
 #~ from lino.mixins.reminder import ReminderEntry
 from lino.tools import obj2str
 
@@ -324,7 +324,7 @@ class Partner(mixins.DiffingMixin,models.Model):
           
 
     
-class Person(Partner,contacts.Born,contacts.Person):
+class Person(Partner,contacts.Born,contacts.Person,Printable):
     """
     Represents a physical person.
     
@@ -517,7 +517,7 @@ class Person(Partner,contacts.Born,contacts.Person):
         rpt.add_action(DirectPrintAction('auskblatt',_("Auskunftsblatt"),'persons/auskunftsblatt.odt'))
         Zur Zeit scheint es so, dass das Auskunftsblatt eher überflüssig wird.
         """
-        rpt.add_action(DirectPrintAction('eid',_("eID sheet"),'persons/eid-content.odt'))
+        rpt.add_action(DirectPrintAction('eid',_("eID sheet"),'eid-content.odt'))
         #~ rpt.add_action(DirectPrintAction('cv',_("Curiculum vitae"),'persons/cv.odt'))
         
     def __unicode__(self):
@@ -1504,8 +1504,8 @@ class Course(models.Model):
   
     @classmethod
     def setup_report(model,rpt):
-        rpt.add_action(DirectPrintAction('candidates',_("List of candidates"),'courses/candidates.odt'))
-        rpt.add_action(DirectPrintAction('participants',_("List of participants"),'courses/participants.odt'))
+        rpt.add_action(DirectPrintAction('candidates',_("List of candidates"),'candidates.odt'))
+        rpt.add_action(DirectPrintAction('participants',_("List of participants"),'participants.odt'))
         
     def get_print_language(self,pm):
         "Used by DirectPrintAction"

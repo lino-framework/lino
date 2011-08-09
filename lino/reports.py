@@ -57,7 +57,7 @@ from lino.core import actors
 #~ from lino.core import action_requests
 from lino.ui import base
 
-from lino.tools import resolve_model, resolve_field, get_app, full_model_name, get_field
+from lino.tools import resolve_model, resolve_field, get_app, full_model_name, get_field, UnresolvedModel
 #~ from lino.utils.config import LOCAL_CONFIG_DIR
 from lino.core.coretools import get_slave, get_model_report, data_elems, get_data_elem
 
@@ -878,6 +878,9 @@ class Report(actors.Actor): #,base.Handled):
             # raise Exception(self.__class__)
         else:
             self.model = resolve_model(self.model,self.app_label)
+            
+        if isinstance(self.model,UnresolvedModel):
+            self.model = None
             
         if self.model is not None:
             if self.app_label is None:

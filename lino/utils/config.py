@@ -51,8 +51,6 @@ class ConfigDir:
     def __repr__(self):
         return "ConfigDir %r" % self.name
         
-        
-      
 
 # similar logic as in django.template.loaders.app_directories
 fs_encoding = sys.getfilesystemencoding() or sys.getdefaultencoding()
@@ -73,6 +71,8 @@ else:
 config_dirs.reverse()
 config_dirs = tuple(config_dirs)
 
+logger.debug('config_dirs = %s', config_dirs)
+
 #~ print 20110720, '\n'.join([repr(cd) for cd in config_dirs])
 
 #~ for app_name in settings.INSTALLED_APPS:
@@ -85,33 +85,47 @@ config_dirs = tuple(config_dirs)
     #~ LOCAL_CONFIG_DIR = ConfigDir(os.path.join(settings.PROJECT_DIR,'config'),True)
     #~ config_dirs.append(LOCAL_CONFIG_DIR)
 
-def find_config_file(fn):
+def find_config_file(fn,group=''):
     if os.path.isabs(fn):
         return fn
+    if group:
+        prefix = os.path.join(*(group.split('/')))
+    else:
+        prefix = ''
     for cd in config_dirs:
-        ffn = os.path.join(cd.name,fn)
+        ffn = os.path.join(cd.name,prefix,fn)
         if os.path.exists(ffn):
             return ffn
 
 
-def find_config_files(pattern):
+def find_config_files(pattern,group=''):
     """Returns a dict of filename -> config_dir entries for 
     each config file on this site that matches the pattern.
     Loops through `config_dirs` and collects matching files. 
     When more than one file of the same name exists in different 
     applications it gets overridden by later apps.
-    """
     
+    `group` is e.g. '','foo', 'foo/bar',...
+    
+    """
+    if group:
+        prefix = os.path.sep + os.path.join(*(group.split('/')))
+        #~ if not group.endswith('/'):
+            #~ group += '/'
+    else:
+        prefix = ''
     files = {}
     for cd in config_dirs:
         #~ print 'find_config_files() discover', dirname, pattern
-        for fn in os.listdir(cd.name):
-            if fnmatch(fn,pattern):
-                files.setdefault(fn,cd)
-                #~ if not files.has_key(fn):
-                    #~ files[fn] = cd
-        #~ else:
-            #~ print 'find_config_files() not a directory:', dirname
+        dirname = cd.name + prefix
+        if os.path.exists(dirname):
+            for fn in os.listdir(dirname):
+                if fnmatch(fn,pattern):
+                    files.setdefault(fn,cd)
+                    #~ if not files.has_key(fn):
+                        #~ files[fn] = cd
+        else:
+            print 'find_config_files() not a directory:', dirname
     return files
 
 def load_config_files(pattern,loader):

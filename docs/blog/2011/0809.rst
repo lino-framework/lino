@@ -1,12 +1,6 @@
 20110809
 ========
 
-doctemplates
-------------
-
-Opened ticket :doc:`/tickets/46`, but we'll let wait 
-this ticket until real need grows because it's not trivial.
-
 One bug less
 ------------
 
@@ -28,8 +22,12 @@ The following traceback happened when user left the job field of a contract empt
     raise self.field.rel.to.DoesNotExist
 
 
-Continue on UnicodeError while saving uploaded files with non-ascii chars
--------------------------------------------------------------------------
+UnicodeError while saving uploaded files with non-ascii chars
+-------------------------------------------------------------
+
+I continued the work started 
+2 weeks ago for the 
+:doc:`(d) UnicodeEncodeError at /api/uploads/UploadsByOwner <0725>`.
 
 Here is again our traceback::
 
@@ -54,6 +52,57 @@ Here is again our traceback::
     18.         st = os.stat(path)
     
     
-One problem is that Django doesn't recognize our POST 
-request 
-as `is_ajax <https://docs.djangoproject.com/en/dev/ref/request-response/#django.http.HttpRequest.is_ajax>`_ and thus the traceback is difficult to see.
+.. note::
+
+  One problem is that Django doesn't recognize our POST request 
+  as `is_ajax <https://docs.djangoproject.com/en/dev/ref/request-response/#django.http.HttpRequest.is_ajax>`_ 
+  and thus the traceback is difficult to see.
+
+  Tried to add a ``headers: { 'HTTP_X_REQUESTED_WITH' : 'XMLHttpRequest'}`` 
+  to the `panel.form.submit()` call... without success.
+  But okay, let's concentrate on the error itself. 
+  
+Here is again some code that tries to reproduce the effect::
+
+  import os
+  from django.utils._os import safe_join
+
+  fn = u'\xfc'
+  fn = safe_join('foo',fn)
+  fn = os.path.normpath(fn)
+  print repr(fn)
+  print os.path.exists(fn)
+  print os.stat(fn)
+  
+Result: negative. This code runs without problem. Hm...
+
+
+New feature "out-of-the-box doctemplates"
+-----------------------------------------
+
+Opened ticket :doc:`/tickets/46` because this was not trivial and 
+I thought to let this ticket wait until real need grows.
+Later I changed my mind and did it right now.
+
+The only but important advantage of this change is that Lino applications
+can now provide "default templates". 
+
+When upgrading, the local :xfile:`doctemplates` directory needs to be 
+moved from `media/webdav` to `config`. 
+And then it must also get a structure lifting: 
+
+- rename directories `contracts` to `jobs.Contact`, 
+  `notes` to `notes.Note` and `persons` to `contact.Person`.
+
+- Instead of one directory per language I opted 
+  for the `foo_xx.odt` solution:
+  If a template `foo.odt` exists, then a file `foo_fr.odt` 
+  means "the french version of `foo.odt`". 
+  Note that the default template `foo.odt` *must* exist, 
+  otherwise Lino will consider a file 
+  `foo_fr.odt` itself a default template. 
+
+I removed EditTemplateAction : this functionality anyway didnt work yet, 
+and now it would be even more difficult to implement this feature.
+
+

@@ -232,7 +232,7 @@ class MyTasks(mixins.ByUser):
     column_names = 'start_date summary done status *'
 
 
-class Attendance(contacts.PartnerDocument,mixins.Printable):
+class Attendance(contacts.PartnerDocument,mixins.CachedPrintable):
     class Meta:
         verbose_name = _("Attendance")
         verbose_name_plural = _("Attendances")

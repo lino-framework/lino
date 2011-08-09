@@ -199,7 +199,7 @@ def setup_site(self):
     This is run once after Django has populated it's model cache, 
     and before any Lino Report can be used.
     Since Django has not "after startup" event, this is triggered 
-    "automagically" when it is needed the first tim. 
+    "automagically" when it is needed the first time. 
     For example on a mod_wsgi Web Server process it will be triggered 
     by the first request.
     
@@ -207,67 +207,71 @@ def setup_site(self):
     logger.info(lino.welcome_text())
 
     if self._setup_done:
+        logger.warning("LinoSite setup already done ?!")
         return
     if self._setting_up:
         #~ logger.warning("LinoSite.setup() called recursively.")
         #~ return 
         raise Exception("LinoSite.setup() called recursively.")
-    try:
-        self._setting_up = True
-        
-        self.configure(get_site_config())
+    #~ try:
+    self._setting_up = True
+    
+    self.configure(get_site_config())
+  
+    analyze_models(self)
+    logger.debug("analyze_models() done")
+    
+    actors.discover()
+    logger.debug("actors.discover() done")
+    
+    reports.discover()
+    
+    choosers.discover()
+    
+    #~ babel.discover() # would have to be called before model setup
+
+    for a in actors.actors_list:
+        #~ if isinstance(a,layouts.DetailLayout):
+            a.setup()
+    #~ for a in actors.actors_list:
+        #~ if not isinstance(a,layouts.DetailLayout):
+            #~ a.setup()
+
+    #~ if settings.MODEL_DEBUG:
+    if True:
+        logger.debug("ACTORS:")
+        for k in sorted(actors.actors_dict.keys()):
+            a = actors.actors_dict[k]
+            #~ logger.debug("%s -> %r",k,a.__class__)
+            logger.debug("%s -> %r",k,a.debug_summary())
+              
       
-        analyze_models(self)
+    #~ self.main_menu = menus.Toolbar('main')
+    #~ self.main_menu = menus.Menu("","Main Menu")
+    
+    #~ self.setup_main_menu()
+    
+    #~ uis = []
+    #~ for ui in settings.USER_INTERFACES:
+        #~ logger.info("Starting user interface %s",ui)
+        #~ ui_module = import_module(ui)
+        #~ uis.append(ui_module.get_ui(self))
+    #~ self.uis = uis
+    
+    #~ from lino.models import get_site_config
+    #~ self.config = get_site_config()
+    
+    #~ if settings.DEBUG:
+        #~ generate_dummy_messages(self)
         
-        actors.discover()
-        
-        reports.discover()
-        
-        choosers.discover()
-        
-        #~ babel.discover() # would have to be called before model setup
-
-        for a in actors.actors_list:
-            #~ if isinstance(a,layouts.DetailLayout):
-                a.setup()
-        #~ for a in actors.actors_list:
-            #~ if not isinstance(a,layouts.DetailLayout):
-                #~ a.setup()
-
-        #~ if settings.MODEL_DEBUG:
-        if True:
-            logger.debug("ACTORS:")
-            for k in sorted(actors.actors_dict.keys()):
-                a = actors.actors_dict[k]
-                #~ logger.debug("%s -> %r",k,a.__class__)
-                logger.debug("%s -> %r",k,a.debug_summary())
-                  
-          
-        #~ self.main_menu = menus.Toolbar('main')
-        #~ self.main_menu = menus.Menu("","Main Menu")
-        
-        #~ self.setup_main_menu()
-        
-        #~ uis = []
-        #~ for ui in settings.USER_INTERFACES:
-            #~ logger.info("Starting user interface %s",ui)
-            #~ ui_module = import_module(ui)
-            #~ uis.append(ui_module.get_ui(self))
-        #~ self.uis = uis
-        
-        #~ from lino.models import get_site_config
-        #~ self.config = get_site_config()
-        
-        #~ if settings.DEBUG:
-            #~ generate_dummy_messages(self)
-            
-        self._setup_done = True
-        self._setting_up = False
-        
-        dblogger.info("Lino Site %r started. Languages: %s", self.title, ', '.join(babel.AVAILABLE_LANGUAGES))
-        dblogger.info(lino.welcome_text())
-    except Exception,e:
-        logger.exception(e)
+    self._setup_done = True
+    self._setting_up = False
+    
+    dblogger.info("Lino Site %r started. Languages: %s", self.title, ', '.join(babel.AVAILABLE_LANGUAGES))
+    dblogger.info(lino.welcome_text())
+    #~ except Exception,e:
+        #~ logger.exception(e)
+        #~ raise
 
 def generate_dummy_messages(self):
     fn = os.path.join(self.source_dir,'dummy_messages.py')

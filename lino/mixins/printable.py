@@ -55,10 +55,15 @@ from lino import reports
 from lino import fields
 #~ from lino import actions
 
+#~ from lino.tools import full_model_name
 from lino.utils import iif
 from lino.utils import babel 
 from lino.utils.choosers import chooser
 from lino.utils.appy_pod import setup_renderer
+
+def filename_root(elem):
+    return elem._meta.app_label + '.' + elem.__class__.__name__
+
 
 
 bm_dict = {}
@@ -92,10 +97,8 @@ class BuildMethod:
         #~ self.templates_dir = os.path.join(settings.PROJECT_DIR,'doctemplates',self.templates_name or self.name)
         if self.templates_name is None:
             self.templates_name = self.name
-        self.templates_dir = os.path.join(settings.LINO.webdav_root,'doctemplates',self.templates_name)
-        #~ self.templates_dir = os.path.join(settings.MEDIA_ROOT,'webdav','doctemplates',self.templates_name)
-        self.templates_url = settings.LINO.webdav_url + '/'.join(('doctemplates',self.templates_name))
-        #~ self.templates_url = settings.MEDIA_URL + '/'.join(('webdav','doctemplates',self.templates_name))
+        #~ self.old_templates_dir = os.path.join(settings.LINO.webdav_root,'doctemplates',self.templates_name)
+        #~ self.templates_url = settings.LINO.webdav_url + '/'.join(('doctemplates',self.templates_name))
         
 
             
@@ -104,7 +107,7 @@ class BuildMethod:
         
     def get_target_parts(self,action,elem):
         "used by `get_target_name`"
-        return [self.cache_name, self.name, action.filename_root(elem) + '-' + str(elem.pk) + self.target_ext]
+        return [self.cache_name, self.name, filename_root(elem) + '-' + str(elem.pk) + self.target_ext]
         
     def get_target_name(self,action,elem):
         "return the output filename to generate on the server"
@@ -121,8 +124,8 @@ class BuildMethod:
     def build(self,action,elem):
         raise NotImplementedError
         
-    def get_template_url(self,action,elem):
-        raise NotImplementedError
+    #~ def get_template_url(self,action,elem):
+        #~ raise NotImplementedError
         
 class DjangoBuildMethod(BuildMethod):
 
@@ -175,7 +178,11 @@ class PisaBuildMethod(DjangoBuildMethod):
 
 class SimpleBuildMethod(BuildMethod):
   
+    def get_group(self,elem):
+        return 'doctemplates/' + self.templates_name + '/' + elem.get_templates_group()
+  
     def get_template_leaf(self,action,elem):
+      
         tpls = action.get_print_templates(self,elem)
         #~ if not tpls:
             #~ return
@@ -186,22 +193,30 @@ class SimpleBuildMethod(BuildMethod):
         tpl_leaf = tpls[0]
         lang = elem.get_print_language(self)
         if lang != babel.DEFAULT_LANGUAGE:
-            tplfile = os.path.normpath(os.path.join(self.templates_dir,tpl_leaf))
-            if not os.path.exists(tplfile):
-                lang = babel.DEFAULT_LANGUAGE
-                #~ tpl = os.path.normpath(os.path.join(self.templates_dir,default_language(),tpl_leaf))
-        return lang + '/' + tpl_leaf
+            name = tpl_leaf[:-len(self.template_ext)] + "_" + lang + self.template_ext
+            from lino.utils.config import find_config_file
+            if find_config_file(name,self.get_group(elem)):
+                return name
+        return tpl_leaf
+            #~ tplfile = os.path.normpath(os.path.join(self.templates_dir,lang,tpl_leaf))
+            #~ if not os.path.exists(tplfile):
+                #~ lang = babel.DEFAULT_LANGUAGE
+        #~ return lang + '/' + tpl_leaf
         
-    def get_template_url(self,action,elem):
-        tpl = self.get_template_leaf(action,elem)
-        return self.templates_url + '/' + tpl
+    #~ def get_template_url(self,action,elem):
+        #~ tpl = self.get_template_leaf(action,elem)
+        #~ return self.templates_url + '/' + tpl
         
     def build(self,action,elem):
+        from lino.utils.config import find_config_file
         target = action.before_build(self,elem)
         if not target:
             return
         tpl_leaf = self.get_template_leaf(action,elem)
-        tplfile = os.path.normpath(os.path.join(self.templates_dir,tpl_leaf))
+        tplfile = find_config_file(tpl_leaf,self.get_group(elem))
+        if not tplfile:
+            raise Exception("No file %s / %s" % (self.get_group(elem),tpl_leaf))
+        #~ tplfile = os.path.normpath(os.path.join(self.templates_dir,tpl_leaf))
         self.simple_build(elem,tplfile,target)
         
     def simple_build(self,elem,tpl,target):
@@ -349,12 +364,37 @@ def build_method_choices():
 
     
     
-def get_template_choices(group,bmname):
+def get_template_choices(elem,bmname):
+    """
+    :param:bmname: the name of a build method.
+    """
+    bm = bm_dict.get(bmname,None)
+    if bm is None:
+        raise Exception("%r : invalid print method name." % bmname)
+    from lino.utils.config import find_config_files
+    files = find_config_files('*' + bm.template_ext,bm.get_group(elem))
+    l = []
+    for name in files.keys():
+        # ignore babel variants: 
+        # e.g. ignore "foo_fr.odt" if "foo.odt" exists 
+        # but don't ignore "my_template.odt"
+        basename = name[:-len(bm.template_ext)]
+        chunks = basename.split('_')
+        if len(chunks) > 1:
+            basename = '_'.join(chunks[:-1])
+            if files.has_key(basename + bm.template_ext):
+                continue
+        l.append(name)
+    l.sort()
+    if not l:
+        logger.warning("get_template_choices() : no matches for (%r,%r)",elem,bmname)
+    return l
+
+def old_get_template_choices(group,bmname):
     """
     :param:bmname: the name of a build method.
     """
     pm = bm_dict.get(bmname,None)
-    #~ pm = get_build_method(build_method)
     if pm is None:
         raise Exception("%r : invalid print method name." % bmname)
     #~ glob_spec = os.path.join(pm.templates_dir,'*'+pm.template_ext)
@@ -384,6 +424,7 @@ def get_build_method(elem):
 #~ class PrintAction(actions.RedirectAction):
 class BasePrintAction(reports.RowAction):
   
+        
     def before_build(self,bm,elem):
         """Return the target filename if a document needs to be built,
         otherwise return ``None``.
@@ -426,9 +467,6 @@ class PrintAction(BasePrintAction):
     def get_print_templates(self,bm,elem):
         return elem.get_print_templates(bm,self)
         
-    def filename_root(self,elem):
-        return elem._meta.app_label + '.' + elem.__class__.__name__
-        
     def run_(self,elem,**kw):
         bm = get_build_method(elem)
         if elem.must_build:
@@ -459,9 +497,6 @@ class DirectPrintAction(BasePrintAction):
         #~ assert bm is self.bm
         return [ self.tplname ]
         
-    def filename_root(self,elem):
-        return elem._meta.app_label + '.' + elem.__class__.__name__
-        #~ return self.actor.model._meta.app_label + '.' + self.actor.model.__name__
         
     def run(self,rr,elem,**kw):
         bm =  bm_dict.get(self.build_method or settings.LINO.config.default_build_method)
@@ -473,14 +508,14 @@ class DirectPrintAction(BasePrintAction):
         kw.update(open_url=bm.get_target_url(self,elem))
         return rr.ui.success_response(**kw)
     
-class EditTemplateAction(reports.RowAction):
-    name = 'tpledit'
-    label = _('Edit template')
+#~ class EditTemplateAction(reports.RowAction):
+    #~ name = 'tpledit'
+    #~ label = _('Edit template')
     
-    def run(self,rr,elem,**kw):
-        bm = get_build_method(elem)
-        target = bm.get_template_url(self,elem)
-        return rr.ui.success_response(open_url=target,**kw)
+    #~ def run(self,rr,elem,**kw):
+        #~ bm = get_build_method(elem)
+        #~ target = bm.get_template_url(self,elem)
+        #~ return rr.ui.success_response(open_url=target,**kw)
     
 class ClearCacheAction(reports.RowAction):
 #~ class ClearCacheAction(actions.UpdateRowAction):
@@ -499,7 +534,7 @@ class PrintableType(models.Model):
     
     templates_group = None
     """
-    Default value for `templates_group` is the model's `app_label`.
+    Default value for `templates_group` is the model's full name.
     """
     
     class Meta:
@@ -528,20 +563,25 @@ class PrintableType(models.Model):
     
     @classmethod
     def get_templates_group(cls):
-        return cls.templates_group or cls._meta.app_label
+        #~ return cls.templates_group or cls._meta.app_label
+        return cls.templates_group # or full_model_name(cls)
         
     @chooser(simple_values=True)
     def template_choices(cls,build_method):
         if not build_method:
             build_method = settings.LINO.config.default_build_method 
-        #~ print cls, 'template_choices for method' ,build_method
-        #~ bm = bm_dict[build_method]
-        return get_template_choices(cls.get_templates_group(),build_method)
-        #~ return get_template_choices(TEMPLATE_GROUP,build_method)
-    #~ template_choices.simple_values = True
-    #~ template_choices = classmethod(template_choices)
+        return get_template_choices(cls,build_method)
     
-class Printable(models.Model):
+class Printable(object):
+  
+    def get_print_language(self,pm):
+        return babel.DEFAULT_LANGUAGE
+        
+    def get_templates_group(self):
+        return filename_root(self)
+        
+  
+class CachedPrintable(models.Model,Printable):
     """
     Mixin for Models whose instances can "print" (generate a printable document).
     """
@@ -561,16 +601,13 @@ class Printable(models.Model):
         #~ rpt.add_action(EditTemplateAction(rpt))
         #~ super(Printable,cls).setup_report(rpt)
 
-    def get_print_language(self,pm):
-        return babel.DEFAULT_LANGUAGE
-        
     def get_print_templates(self,bm,action):
         """Return a list of filenames of templates for the specified build method.
         Returning an empty list means that this item is not printable. 
         For subclasses of :class:`SimpleBuildMethod` the returned list 
         may not contain more than 1 element.
         """
-        return [ action.filename_root(self) + bm.template_ext ]
+        return [ filename_root(self) + bm.template_ext ]
           
     def unused_get_last_modified_time(self):
         """Return a model-specific timestamp that expresses when 
@@ -606,7 +643,7 @@ class Printable(models.Model):
         #~ return 'pisa'
         
 
-class TypedPrintable(Printable):
+class TypedPrintable(CachedPrintable):
     """
     A TypedPrintable model must define itself a field `type` which is a ForeignKey 
     to a Model that implements :class:`PrintableType`.
@@ -627,6 +664,9 @@ class TypedPrintable(Printable):
     def get_printable_type(self):
         return self.type
         
+    def get_templates_group(self):
+        return self.get_printable_type().get_templates_group()
+        
     def get_build_method(self):
         ptype = self.get_printable_type()
         if ptype is None:
@@ -643,7 +683,8 @@ class TypedPrintable(Printable):
             raise Exception(
               "Invalid template configured for %s %r. Expected filename ending with %r." %
               (ptype.__class__.__name__,unicode(ptype),bm.template_ext))
-        return [ ptype.get_templates_group() + '/' + ptype.template ]
+        return [ ptype.template ]
+        #~ return [ ptype.get_templates_group() + '/' + ptype.template ]
         
     def get_print_language(self,bm):
         return self.language
@@ -665,7 +706,7 @@ class TypedPrintable(Printable):
 import cgi
 
 
-class Listing(Printable):
+class Listing(CachedPrintable):
     
     class Meta:
         abstract = True
@@ -692,6 +733,9 @@ class Listing(Printable):
     def __unicode__(self):
         return force_unicode(self.title)
         #~ return self.get_title()
+        
+    def get_templates_group(self):
+        return ''
         
     def get_title(self):
         return self._meta.verbose_name # "Untitled Listing"

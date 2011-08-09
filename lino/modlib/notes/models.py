@@ -40,6 +40,9 @@ from django.conf import settings
 #~ TEMPLATE_GROUP = 'notes'
 
 class NoteType(mixins.PrintableType):
+  
+    templates_group = 'notes.Note'
+    
     class Meta:
         verbose_name = _("Note Type")
         verbose_name_plural = _("Note Types")

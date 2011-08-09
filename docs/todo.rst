@@ -19,8 +19,9 @@ Short-term
 #.  Listings können noch nicht ausgedruckt werden.
 
 #.  Uploads mit Sonderzeichen im Dateinamen funktionieren noch nicht.
+    See :doc:`/blog/20110725` and :doc:`/blog/20110809`.
 
-#.  In Übersichtsliste die Benutzer des DSBE () und die vom allgemeinen 
+#.  In Übersichtsliste die Benutzer des DSBE und die vom allgemeinen 
     Sozialdienst trennen. Also ein neues Feld `User.department`.
 
 #.  Automatische Erinnerung Arbeitserlaubnis 2 Monate vor dem in 

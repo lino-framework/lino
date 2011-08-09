@@ -23,8 +23,13 @@ from django.conf import settings
 
 from lino import reports
 from lino.tools import obj2str
-from lino.utils import ispure
 #~ from lino import layouts
+
+#~ # LS 20110809
+#~ from lino.utils import ispure
+#~ if not ispure(name):
+    #~ raise Exception('name is a %s!' % type(name))
+
     
 class Uploadable(models.Model):
     """
@@ -74,16 +79,16 @@ class Uploadable(models.Model):
         self.size = uf.size
         self.mimetype = uf.content_type
         
-        if not ispure(uf.name):
-            raise Exception('uf.name is a %s!' % type(uf.name))
+        #~ if not ispure(uf.name):
+            #~ raise Exception('uf.name is a %s!' % type(uf.name))
         
         # Django magics: 
         self.file = uf.name # assign a string
         ff = self.file  # get back a FileField instance !
         #~ print 'uf=',repr(uf),'ff=',repr(ff)
         
-        if not ispure(uf.name):
-            raise Exception('uf.name is a %s!' % type(uf.name))
+        #~ if not ispure(uf.name):
+            #~ raise Exception('uf.name is a %s!' % type(uf.name))
             
         ff.save(uf.name,uf,save=False)
         

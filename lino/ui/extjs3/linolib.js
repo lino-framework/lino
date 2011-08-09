@@ -3084,7 +3084,7 @@ Lino.DetailWrapper = Ext.extend(Lino.DetailWrapperBase, {
         panel.form.submit({
           url:ROOT_URL+'/api'+panel.ls_url + '/' + rec.id,
           method: 'PUT',
-          headers: { 'HTTP_X_REQUESTED_WITH' : 'XMLHttpRequest'},
+          //~ headers: { 'HTTP_X_REQUESTED_WITH' : 'XMLHttpRequest'},
           scope: panel,
           params: panel.get_base_params(), 
           success: function(form, action) {

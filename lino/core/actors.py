@@ -73,7 +73,7 @@ def resolve_actor(actor,app_label):
     return get_actor(actor)
         
 def register_actor(a):
-    #~ logger.info("register_actor %s",a.actor_id)
+    logger.debug("register_actor %s",a.actor_id)
     old = actors_dict.get(a.actor_id,None)
     if old is not None:
         #~ logger.debug("register_actor %s : %r replaced by %r",a.actor_id,old.__class__,a.__class__)
@@ -95,7 +95,7 @@ def discover():
     assert actors_list is None
     actors_dict = {}
     actors_list = []
-    #~ logger.debug("actors.discover() : instantiating %d actors",len(actor_classes))
+    logger.debug("actors.discover() : instantiating %d actors",len(actor_classes))
     for cls in actor_classes:
         if not cls.__name__.startswith('unused_'):
             register_actor(cls())
