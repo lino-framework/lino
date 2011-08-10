@@ -1,3 +1,0 @@
-T:\hgwork\lino\docs\tutorials\t1.rst:36: WARNING: setting reference target not found: DATABASES
-T:\hgwork\lino\docs\tutorials\t1.rst:168: WARNING: xfile reference target not found: lino.js
-T:\hgwork\lino\docs\tutorials\t1.rst:185: WARNING: xfile reference target not found: config

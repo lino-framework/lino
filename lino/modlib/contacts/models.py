@@ -499,20 +499,11 @@ class Company(Addressable):
         return self.name
     full_name = property(get_full_name)
     
-    @classmethod
-    def site_setup(cls,lino):
-        from lino.models import SiteConfig
-        field = models.ForeignKey("contacts.Company",
-                blank=True,null=True,
-                verbose_name=_("The company that runs this site"),
-                related_name='site_company_sites',
-                )
-        field.__doc__ = """
-        The Company to be used as sender in documents. Needs more documentation.
-        """
-        SiteConfig.add_to_class('site_company',field)
+    #~ @classmethod
+    #~ def site_setup(cls,lino):
+        #~ raise Exception('20110810')
 
-    
+
               
 class Companies(Addressables):
     #~ label = _("Companies")
@@ -602,3 +593,13 @@ class ContactsByPerson(reports.Report):
     
         
 
+from lino.models import SiteConfig
+
+reports.inject_field(SiteConfig,
+    'site_company',
+    models.ForeignKey("contacts.Company",
+        blank=True,null=True,
+        verbose_name=_("The company that runs this site"),
+        related_name='site_company_sites',
+        ),
+    """The Company to be used as sender in documents.""")

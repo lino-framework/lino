@@ -16,7 +16,13 @@ because it is rather for internal use.
 Short-term
 ----------
 
-#.  Listings können noch nicht ausgedruckt werden.
+
+#.  Lino als Client eines CalDAV-Servers.
+    Man kann scheinbar weder in GroupWise noch in Zarafa 
+    externe ("remote") Kalender konfigurieren (so wie `Google und Sunbird
+    <http://www.google.com/support/calendar/bin/answer.py?answer=99358#sunbird>`_)
+    Lino muss also nicht selber Server sein, 
+    sondern eher als Client mit einem CalDAV-Server arbeiten. 
 
 #.  Uploads mit Sonderzeichen im Dateinamen funktionieren noch nicht.
     See :doc:`/blog/20110725` and :doc:`/blog/20110809`.
@@ -50,12 +56,6 @@ Short-term
     Idealerweise müsste ich es wie der Django-Befehl `makemessages` machen, 
     also pro .dtl-Datei eine .dtl.py-Datei erzeugen, und ebenfalls 
     eine :file:`linolib.js.py`.
-
-#.  Man kann scheinbar weder in GroupWise noch in Zarafa 
-    externe ("remote") Kalender konfigurieren (so wie `Google und Sunbird
-    <http://www.google.com/support/calendar/bin/answer.py?answer=99358#sunbird>`_)
-    Lino muss also nicht selber Server sein, 
-    sondern eher als Client mit einem CalDAV-Server arbeiten. 
 
 #.  Lino könnte per LDAP-Request verschiedene Angaben 
     in :class:`auth.User` (Name, E-Mail,...) 

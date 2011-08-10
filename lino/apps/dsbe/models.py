@@ -717,6 +717,7 @@ class Person(Partner,contacts.Born,contacts.Person,Printable):
           bank_account1 bank_account2 
           gesdos_id activity 
           is_cpas is_senior is_active nationality''')
+        #~ super(Person,cls).site_setup(lino)
 
 
 
@@ -867,6 +868,7 @@ class Company(Partner,contacts.Company):
             language vat_id
             phone fax email 
             bank_account1 bank_account2 activity''')
+        #~ super(Company,cls).site_setup(lino)
   
     
 class Companies(contacts.Companies):
@@ -1297,6 +1299,7 @@ class Note(notes.Note,contacts.PartnerDocument,mixins.DiffingMixin):
     def site_setup(cls,lino):
         lino.NOTE_PRINTABLE_FIELDS = reports.fields_list(cls,
         '''date subject body language person company type event_type''')
+        #~ super(Note,cls).site_setup(lino)
         
     #~ def get_auto_task_defaults(self,**kw):
         #~ """Called from :func:`lino.modlib.cal.models.update_auto_task`."""

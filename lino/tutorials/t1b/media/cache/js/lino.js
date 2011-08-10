@@ -1,4 +1,4 @@
-// lino.js --- generated Wed Aug 10 14:23:29 2011 by Lino version 1.2.1.
+// lino.js --- generated Wed Aug 10 20:41:52 2011 by Lino version 1.2.1.
 Ext.BLANK_IMAGE_URL = '/media/extjs/resources/images/default/s.gif';
 LANGUAGE_CHOICES = [ [ "en", "English" ], [ "de", "German" ], [ "fr", "French" ], [ "nl", "Dutch" ], [ "et", "Estonian" ] ];
 STRENGTH_CHOICES = [ [ "0", "certainly not" ], [ "1", "rather not" ], [ "2", "normally" ], [ "3", "quite much" ], [ "4", "very much" ] ];

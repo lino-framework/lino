@@ -431,6 +431,7 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
             'stages goals duties_dsbe duties_company duties_asd duties_person '
             'user user_asd exam_policy '
             'date_decided date_issued responsibilities')
+        #~ super(Contract,cls).site_setup(lino)
 
     def update_owned_task(self,task):
         #~ mixins.Reminder.update_owned_task(self,task)
