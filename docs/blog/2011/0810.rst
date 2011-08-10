@@ -1,4 +1,18 @@
 20110810
 ========
 
-I started to write a tutorial :doc:`/tutorials/t1`.
+Tutorial
+--------
+
+I wrote a first tutorial ":doc:`/tutorials/t1`".
+
+Fixed some minor bugs that appeared for this. 
+For example one problem was that `SiteConfig.dtl` wanted a `site_company` field
+even though `lino.modlib.contacts` wasn't installed.
+
+Test `tim2lino.act`
+-------------------
+
+This is specific to a customer who wants to be able to trigger a 
+full synchronisation from TIM to Lino. 
+(...)

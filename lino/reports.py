@@ -222,7 +222,7 @@ rptname_choices = []
 config_dirs = []
 
 def register_report(rpt):
-    logger.debug("register_report %s", rpt.actor_id)
+    #~ logger.debug("register_report %s", rpt.actor_id)
     #rptclass.app_label = rptclass.__module__.split('.')[-2]
     if rpt.typo_check:
         myattrs = set(rpt.__class__.__dict__.keys())
@@ -276,7 +276,7 @@ def discover():
         """Not getattr but __dict__.get because of the mixins.Listings trick."""
         rpt = model.__dict__.get('_lino_model_report',None)
         #~ rpt = getattr(model,'_lino_model_report',None)
-        logger.debug('20110628 %s._lino_model_report = %s',model,rpt)
+        #~ logger.debug('20110628 %s._lino_model_report = %s',model,rpt)
         if rpt is None:
             rpt = report_factory(model)
             register_report(rpt)
@@ -419,7 +419,7 @@ class SubmitInsert(actions.Action):
 class ReportHandle(base.Handle): 
     
     def __init__(self,ui,report):
-        logger.debug('ReportHandle.__init__(%s)',report)
+        #~ logger.debug('ReportHandle.__init__(%s)',report)
         assert isinstance(report,Report)
         self.report = report
         self._layouts = None
