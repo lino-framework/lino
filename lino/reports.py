@@ -419,7 +419,7 @@ class SubmitInsert(actions.Action):
 class ReportHandle(base.Handle): 
     
     def __init__(self,ui,report):
-        #logger.debug('ReportHandle.__init__(%s)',rd)
+        logger.debug('ReportHandle.__init__(%s)',report)
         assert isinstance(report,Report)
         self.report = report
         self._layouts = None
@@ -1439,7 +1439,7 @@ class LayoutHandle:
     
     def __init__(self,rh,layout,hidden_elements=frozenset()):
       
-        # logger.debug('LayoutHandle.__init__(%s,%s,%d)',link,layout,index)
+        #~ logger.debug('LayoutHandle.__init__(%s,%s)',rh,layout)
         assert isinstance(layout,BaseLayout)
         #assert isinstance(link,reports.ReportHandle)
         #~ base.Handle.__init__(self,ui)
@@ -1597,7 +1597,7 @@ class LayoutHandle:
             return panelclass(self,desc_name,False,*elems,**kw)
             
     def create_element(self,panelclass,desc_name):
-        #logger.debug("create_element(panelclass,%r)", desc_name)
+        #~ logger.debug("create_element(panelclass,%r)", desc_name)
         name,kw = self.splitdesc(desc_name)
         e = self.rh.ui.create_layout_element(self,panelclass,name,**kw)
         # todo: cannot hide babelfields

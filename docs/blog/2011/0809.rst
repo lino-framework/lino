@@ -87,8 +87,13 @@ Later I changed my mind and did it right now.
 The only but important advantage of this change is that Lino applications
 can now provide "default templates". 
 
+I removed EditTemplateAction : this functionality anyway didnt work yet, 
+and now it would be even more difficult to implement this feature.
+
 When upgrading, the local :xfile:`doctemplates` directory needs to be 
 moved from `media/webdav` to `config`. 
+Add a symbolic link to it in the webdav directory for keeping the 
+files editable through webdav.
 And then it must also get a structure lifting: 
 
 - rename directories `contracts` to `jobs.Contact`, 
@@ -102,7 +107,5 @@ And then it must also get a structure lifting:
   otherwise Lino will consider a file 
   `foo_fr.odt` itself a default template. 
 
-I removed EditTemplateAction : this functionality anyway didnt work yet, 
-and now it would be even more difficult to implement this feature.
 
-
+Check-in wegen Feierabend.

@@ -1,0 +1,212 @@
+Your first standalone Lino application
+======================================
+
+In this tutorial you are going to write your first 
+standalone Lino application.
+
+.. note::
+
+  Please don't hesitate to send us your feedback 
+  if you have suggestions on how to make this tutorial better.
+
+
+Lino applications are Django projects
+-------------------------------------
+
+We start by referring to
+`Part 1 of the Django tutorial
+<https://docs.djangoproject.com/en/dev/intro/tutorial01/>`_
+which applies entirely for a Lino application.
+Please follow now this tutorial and learn about
+Creating a project,
+The development server,
+Database setup,
+Creating models,
+Activating models,
+and Playing with the API.
+
+Now that you done and learned all this, we go on by giving some 
+Lino specific instructions:
+
+First take your :xfile:`settings.py` file again and 
+make some more changes to it.
+Lino uses some tricks to bring *inheritance* into Django settings 
+files. 
+
+- Remove everything except those settings which
+  you modified.
+  Especially the :setting:`DATABASES` setting remains.
+
+- At the beginning of the file, 
+  insert the following four lines of code::
+
+    from lino.apps.std.settings import *
+    class Lino(Lino):
+        title = "Lino Tutorial"
+    LINO = Lino(__file__,globals()) 
+    
+  You'll learn more about this later. 
+  For the moment just notice that Lino requires a setting 
+  named ``LINO`` which must be a :class:`lino.Lino` instance.
+  This instance will fill intelligent default values to 
+  your settings since you pass your `global()` namespace.
+
+- Give your :setting:`INSTALLED_APPS` setting
+  for this tutorial the following value::
+
+    INSTALLED_APPS = (
+      'django.contrib.contenttypes',
+      'lino.modlib.users',
+      'lino',
+      'mysite.polls'
+    )
+
+  (where you maybe need to change the last item to the 
+  name you used)
+  
+  A few comments: 
+  ``lino`` is mandatory for every Lino application. 
+  Most of the ``django.contrib.*`` modules are *not* 
+  used in Lino, one exception is ``django.contrib.contenttypes``.
+  The ``lino.modlib.users`` is Lino's replacement 
+  for Django's ``django.contrib.auth``.
+  
+
+Then **delete** your files 
+:file:`urls.py` and :file:`polls/views.py`. 
+With Lino you don't need them!
+
+You might want to compare your files with our version 
+of this step of the tutorial. 
+See :srcref:`/lino/tutorials/t1a`.
+
+  
+Designing the user interface
+----------------------------
+
+While the Django tutorial now continues by introducing Django's Admin module, 
+we leave the mainstream alone and continue "the Lino way" of defining 
+our application's user interface.
+
+Add the following code to the end your :file:`polls/models.py`::
+
+  from lino import reports
+
+  class Polls(reports.Report):
+      model = Poll
+      
+  class Choices(reports.Report):
+      model = Choice
+          
+  class ChoicesByPoll(Choices):
+      fk_name = 'poll'
+      
+
+While you are in :file:`polls/models.py` you should also 
+add a `auto_now_add=True` option to the pub_date field::
+      
+    pub_date = models.DateTimeField('date published',auto_now_add=True)
+    
+Without this change you would later get problems when trying
+to create a Poll: DateTimeFields are always read-only (Lino won't 
+let you edit it), but the database will complain that the field may 
+not be NULL. Django's `auto_now_add` option is one possible solution 
+to this.
+      
+Then add a `get_site_menu` method to the Lino class 
+defined in your :file:`settings.py`::
+
+    class Lino(Lino):
+        title = "Lino Tutorial"
+        def get_site_menu(self,ui,user):
+            from lino.utils import menus
+            main = menus.Toolbar('main')
+            m = main.add_menu("polls","~Polls")
+            m.add_action('polls.Polls')
+            m = main.add_menu("config","~Configure")
+            m.add_action('users.Users')
+            main.add_url_button(self.root_url,"Home")
+            return main
+
+That's all! Now start the development server::
+
+  $ cd /home/luc/mysite
+  $ python manage.py runserver
+  
+and point your browser to http://127.0.0.1:8000/ and... 
+Oops, an empty web page! That's not what you expected!
+
+But use your eyes:
+If you have firebug console open, you will have noticed 
+the failed request to `/media/cache/js/lino.js`. 
+And certainly did you notice the word WARNING in the output of 
+the development server console::
+
+    Validating models...
+
+    0 errors found
+    Django version 1.4 pre-alpha SVN-16376, using settings 'mysite.settings'
+    Development server is running at http://127.0.0.1:8000/
+    Quit the server with CTRL-BREAK.
+    INFO Lino version 1.2.1 using Python 2.7.1, Django 1.4 pre-alpha SVN-16376, python-dateutil 1.4.1, Cheetah 2.4.4, docutils 0.7, PyYaml 3.08, xhtml2pdf 3.0.32, ReportLab Toolkit 2.4, appy.pod 0.6.7 (2011/06/28 09:13)
+    INFO Analyzing Reports...
+    INFO Discovering choosers...
+    INFO Lino Site 'Lino Tutorial' started. Languages: en, de, fr
+    INFO Using welcome template /var/snapshots/lino/lino/config/welcome.html
+    WARNING Directory '/home/luc/mysite/media' (settings.MEDIA_ROOT) does not exist.
+    [10/Aug/2011 10:11:54] "GET / HTTP/1.1" 200 4068
+    [10/Aug/2011 10:11:55] "GET /media/cache/js/lino.js HTTP/1.1" 404 1018
+
+The warning there tells us that I forgot to instruct you to create an empty 
+directory for Lino to write some automatic files. Lino won't do 
+that automatically, so you must do it yourself::
+
+  $ mkdir /home/luc/mysite/media
+  $ mkdir /home/luc/mysite/media/cache
+  $ mkdir /home/luc/mysite/media/cache/js
+
+Now you need to terminate and restart the development server because 
+the :xfile:`lino.js` file gets generated only once at server startup.
+Hit Ctrl-Break to stop the running instance, 
+enter once again ``python manage.py runserver``   
+and reload your browser at http://127.0.0.1:8000/.
+
+And voilà, now it works. A rather decent functionality, but it works: 
+you have a main menu, and you can enter poll questions.
+
+.. image:: t1-1.jpg
+    :scale: 70
+
+Please feel free to play around and create some polls. 
+
+.. image:: t1-2.jpg
+    :scale: 70
+
+Note that there is currently no way to enter Choices for a poll.
+We are going to fix that quickly:
+Create a :xfile:`config` directory for your polls application::
+
+  $ mkdir /home/luc/mysite/polls/config
+  
+and create a text file named `polls.Poll.dtl` in that 
+directory with the following content::
+
+    main = 
+      id question pub_date
+      polls.ChoicesByPoll
+
+Then restart the server and double-click on one of the polls 
+you previously created. Or double-click on the last 
+empty "phantom line" to create a new Poll.
+
+.. image:: t1-3.jpg
+    :scale: 70
+
+
+That's all for this first tutorial.
+I hope you enjoyed it.
+Are there any questions?
+
+You might want to compare your files with our version 
+of this step of the tutorial:
+See :srcref:`/lino/tutorials/t1b`.

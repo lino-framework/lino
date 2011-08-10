@@ -33,6 +33,7 @@ Some external links:
    community
    blog/index
    releases/index
+   tutorials/index
    todo
    tickets/index
    admin/index

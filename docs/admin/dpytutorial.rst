@@ -148,3 +148,8 @@ Fixtures are good as long as
 - there may be important changes in the database structure
 
 
+Where to go now
+---------------
+
+Now we suggesst that your continue to read
+:doc:`/tutorial/t1`

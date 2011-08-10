@@ -8,6 +8,7 @@ syntax: glob
 *.log
 *.zip
 dist
+tmp
 lino/ui/qx/app/build/resource
 *\SciTE.session
 

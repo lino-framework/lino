@@ -498,6 +498,21 @@ class Company(Addressable):
             return join_words(self.type.abbr,self.name)
         return self.name
     full_name = property(get_full_name)
+    
+    @classmethod
+    def site_setup(cls,lino):
+        from lino.models import SiteConfig
+        field = models.ForeignKey("contacts.Company",
+                blank=True,null=True,
+                verbose_name=_("The company that runs this site"),
+                related_name='site_company_sites',
+                )
+        field.__doc__ = """
+        The Company to be used as sender in documents. Needs more documentation.
+        """
+        SiteConfig.add_to_class('site_company',field)
+
+    
               
 class Companies(Addressables):
     #~ label = _("Companies")
@@ -586,17 +601,4 @@ class ContactsByPerson(reports.Report):
     column_names = 'company type *'
     
         
-
-from lino.models import SiteConfig
-#~ from lino.tools import resolve_field
-    
-field = models.ForeignKey("contacts.Company",
-        blank=True,null=True,
-        verbose_name=_("The company that runs this site"),
-        related_name='site_company_sites',
-        )
-field.__doc__ = """
-The Company to be used as sender in documents. Needs more documentation.
-"""
-SiteConfig.add_to_class('site_company',field)
 
