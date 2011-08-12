@@ -106,7 +106,7 @@ class JobProviders(Companies):
 #
 class ContractType(mixins.PrintableType):
   
-    templates_group = 'jobs.Contract'
+    templates_group = 'jobs/Contract'
     
     class Meta:
         verbose_name = _("Contract Type")

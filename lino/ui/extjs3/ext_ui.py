@@ -469,114 +469,65 @@ class ExtUI(base.UI):
     def get_urls(self):
         urlpatterns = patterns('',
             (r'^$', self.index_view))
-        #~ rx = '^'+settings.LINO.root_url
         rx = '^'
         urlpatterns += patterns('',
             (rx+r'$', self.index_view),
-            (rx+r'menu$', self.menu_view),
-            #~ (r'^about', self.about_view),
-            #~ (r'^list/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.list_report_view),
             (rx+r'grid_action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<grid_action>\w+)$', self.json_report_view),
-            #~ (r'^grid_afteredit/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.grid_afteredit_view),
-            (rx+r'submit/(?P<app_label>\w+)/(?P<rptname>\w+)$', self.form_submit_view),
             (rx+r'grid_config/(?P<app_label>\w+)/(?P<actor>\w+)$', self.grid_config_view),
             (rx+r'detail_config/(?P<app_label>\w+)/(?P<actor>\w+)$', self.detail_config_view),
             (rx+r'api/(?P<app_label>\w+)/(?P<actor>\w+)$', self.api_list_view),
-            #~ (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)\.(?P<fmt>\w+)$', self.api_list_view),
-            #~ (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>[-\w]+)\.(?P<fmt>\w+)$', self.api_element_view),
             (rx+r'api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$', self.api_element_view),
-            #~ (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>\w+)/(?P<method>\w+)$', self.api_element_view),
-            #~ (r'^api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.api_view),
-            #~ (r'^window_configs/(?P<wc_name>.+)$', self.window_configs_view),
-            #~ (r'^grid_configs/(?P<wc_name>.+)$', self.window_configs_view),
-            #~ (r'^ui/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', self.ui_view),
             (rx+r'choices/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<fldname>\w+)$', self.choices_view),
         )
         if settings.LINO.use_tinymce:
             urlpatterns += patterns('',
-                (rx+r'templates/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>\w+)/(?P<fldname>\w+)$', self.templates_view),
-                (rx+r'templates/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>\w+)/(?P<fldname>\w+)/(?P<tplname>\w+)$', self.templates_view),
+                (rx+r'templates/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>\w+)/(?P<fldname>\w+)$', 
+                    self.templates_view),
+                (rx+r'templates/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>\w+)/(?P<fldname>\w+)/(?P<tplname>\w+)$', 
+                    self.templates_view),
             )
-        #~ urlpatterns += patterns('',         
-            #~ (r'^api/', include('lino.api.urls')),
-        
-        #~ from django_restapi.model_resource import Collection
-        #~ from django_restapi import responder
-        #~ from django_restapi.resource import Resource
-        
-        #~ for a in ('contacts.Persons','contacts.Companies','projects.Projects'):
-            #~ rpt = actors.get_actor(a)
-            #~ rr = rpt.request(self)
-            #~ rsc = Collection(
-                #~ queryset = rr.queryset,
-                #~ permitted_methods = ('GET', 'POST', 'PUT', 'DELETE'),
-                #~ responder = responder.JSONResponder(paginate_by=rr.limit)
-            #~ )
-            #~ urlpatterns += patterns('',
-               #~ url(r'^json/%s/%s/(.*?)/?$' % (rpt.app_label,rpt._actor_name), rsc),
-            #~ )
+            
+            
+        #~ if sys.platform == 'win32':
+        if settings.LINO.extjs_root:
+          
+            logger.info("Running on a development server: install /media URLs ")
+            
 
-        #~ class MainMenu(Resource):
-            #~ def read(self, request):
-                #~ return self.menu_view(request)
+            if not os.path.exists(settings.LINO.extjs_root):
+                raise Exception("EXTJS_ROOT %s does not exist" % settings.LINO.extjs_root)
                 
-        #~ urlpatterns += patterns('',
-           #~ url(r'^menu$' , MainMenu()),
-        #~ )
-        
+            prefix = settings.MEDIA_URL[1:]
+            assert prefix.endswith('/')
+            
+            urlpatterns += patterns('django.views.static',
+            (r'^%sextjs/(?P<path>.*)$' % prefix, 
+                'serve', {
+                'document_root': settings.LINO.extjs_root,
+                'show_indexes': True }))
+                
+            urlpatterns += patterns('django.views.static',
+                (r'^%stinymce/(?P<path>.*)$' % prefix, 
+                    'serve', {
+                    'document_root': settings.LINO.tinymce_root,
+                    'show_indexes': True }))
+                
+            LINO_MEDIA = os.path.abspath(os.path.join(
+                os.path.dirname(lino.__file__),'..','media'))
+            urlpatterns += patterns('django.views.static',
+                (r'^%slino/(?P<path>.*)$' % prefix, 
+                    'serve', {
+                    'document_root': LINO_MEDIA,
+                    'show_indexes': True }))
+
+            urlpatterns += patterns('django.views.static',
+                (r'^%s(?P<path>.*)$' % prefix, 'serve', 
+                  { 'document_root': settings.MEDIA_ROOT, 'show_indexes': True }),
+            )
+
+
+            
         return urlpatterns
-        
-    def unused_about_view(self,request):
-        #~ fd = codecs.open('meta.rst','w',encoding='UTF-8')
-        name = request.path
-        if name.startswith('/'):
-            name = name[1:]
-        parts = name.split('/')
-        assert parts[0] == 'about'
-        if len(parts) == 1:
-            fn = 'index'
-            args = []
-        else:
-            fn = parts[1]
-            args = parts[2:]
-
-        name = 'about/' + fn + '.tmpl'
-        fn = find_config_file(name)
-        if fn is None:
-            raise Exception("No file %s found" % name)
-        #~ fn = find_config_file('about.html.tmpl')
-        def href(v):
-            if isinstance(v,string):
-                return '<a href="/about/app/%s">%s</a>' % (v,v)
-            if isinstance(v,models.Model):
-                return '<a href="/about/model/%s.%s">%s</a>' % (v.app_label,v.__name__,v.__name)
-            return escape(unicode(v))
-        logger.info("Generating about.html from %s",fn)
-        from cgi import escape
-        d = dict(
-          site=self.site,
-          href=href,
-          lino=lino,
-          models=models,
-          escape=escape,
-          request=request,
-          args=args,
-          #~ GET=request.GET,
-          app_labels=app_labels)
-        #~ d = dict(site=site)
-        #~ print 20110223, [m for m in models.get_models()]
-        tpl = CheetahTemplate(file(fn).read(),namespaces=[d])
-        #~ tpl = CheetahTemplate(file=fn,namespaces=[d])
-        #~ tpl = CheetahTemplate(file(fn).read(),namespaces=[locals(),globals()])
-        #~ tpl = CheetahTemplate(file=fn,namespaces=[locals(),globals()])
-        #~ tpl.compile()
-        #~ s = unicode(tpl)
-        #~ print s
-        #~ file('tmp.html','w').write(s.encode('utf-8'))
-        return HttpResponse(unicode(tpl))
-
-        
-        
 
     def html_page(self,*args,**kw):
         return '\n'.join([ln for ln in self.html_lines(*args,**kw)])
@@ -815,7 +766,7 @@ tinymce.init({
         #~ return HttpResponse(html)
 
 
-    def menu_view(self,request):
+    def unused_menu_view(self,request):
         "used only by lino.modlib.dsbe.tests"
         #~ from lino.lino_site import lino_site
         #~ from lino import lino_site
@@ -1341,7 +1292,6 @@ tinymce.init({
         elif isinstance(field,models.ForeignKey):
             m = field.rel.to
             cr = getattr(m,'_lino_choices_report',m._lino_model_report)
-            #~ params = settings.LINO.default_report_params(mr)
             qs = cr.request(self).get_queryset()
             #~ qs = mr.request(self,**mr.default_params).get_queryset()
             #~ qs = get_default_qs(field.rel.to)
@@ -1390,7 +1340,7 @@ tinymce.init({
         return json_response_kw(count=len(rows),rows=rows,title=_('Choices for %s') % fldname)
         
 
-    def form_submit_view(self,request,**kw):
+    def unused_form_submit_view(self,request,**kw):
         kw['submit'] = True
         return self.json_report_view(request,**kw)
 

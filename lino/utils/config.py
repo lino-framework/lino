@@ -124,11 +124,11 @@ def find_config_files(pattern,group=''):
                     files.setdefault(fn,cd)
                     #~ if not files.has_key(fn):
                         #~ files[fn] = cd
-        else:
-            print 'find_config_files() not a directory:', dirname
+        #~ else:
+            #~ print 'find_config_files() not a directory:', dirname
     return files
 
-def load_config_files(pattern,loader):
+def load_config_files(loader,pattern,group=''):
     """
     Naming conventions for :xfile:`*.dtl` files are:
     
@@ -139,14 +139,16 @@ def load_config_files(pattern,loader):
     The `sort()` below must remove the filename extension (".dtl") 
     because otherwise the frist Detail would come last.
     """
-    files = find_config_files(pattern).items()
+    files = find_config_files(pattern,group).items()
     def fcmp(a,b):
         return cmp(a[0][:-4],b[0][:-4])
     files.sort(fcmp)
+    prefix = group.replace("/",os.sep)
     for filename,cd in files:
-        fn = os.path.join(cd.name,filename)
-        logger.debug("Loading %s...",fn)
-        s = codecs.open(fn,encoding='utf-8').read()
+        filename = os.path.join(prefix,filename)
+        ffn = os.path.join(cd.name,filename)
+        logger.debug("Loading %s...",ffn)
+        s = codecs.open(ffn,encoding='utf-8').read()
         loader(s,cd,filename)
 
 class Configured(object):
@@ -156,7 +158,8 @@ class Configured(object):
     
     def __init__(self,filename=None,cd=None):
         if filename is not None:
-            assert not os.sep in filename
+            assert not os.pardir in filename
+            #~ assert not os.sep in filename
             if cd is None:
                 cd = LOCAL_CONFIG_DIR
         self.filename = filename
@@ -172,6 +175,9 @@ class Configured(object):
             #~ print self.cd, "is not writable", self.filename
             self.cd = LOCAL_CONFIG_DIR
         fn = os.path.join(self.cd.name,self.filename)
+        dirname = os.path.dirname(fn)
+        if not os.path.exists(dirname):
+            os.makedirs(dirname)
         f = codecs.open(fn,'w',encoding='utf-8')
         self.write_content(f)
         f.close()

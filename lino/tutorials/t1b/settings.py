@@ -1,23 +1,16 @@
 from lino.apps.std.settings import *
+from lino_local import LinoLocal
 
-class Lino(Lino):
+class Lino(LinoLocal,Lino):
   
     title = "Lino Tutorial"
     
-    def get_site_menu(self,ui,user):
-      
-        from lino.utils import menus
-
-        main = menus.Toolbar('main')
+    def setup_menu(self,ui,user,main):
         m = main.add_menu("polls","~Polls")
         m.add_action('polls.Polls')
         
         m = main.add_menu("config","~Configure")
         m.add_action('users.Users')
-        
-        main.add_url_button(self.root_url,"Home")
-          
-        return main
         
     
     

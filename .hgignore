@@ -11,6 +11,7 @@ dist
 tmp
 lino/ui/qx/app/build/resource
 *\SciTE.session
+lino/tutorials/*/media
 
 lino\demos\*\media\cache
 lino\demos\*\media\uploads

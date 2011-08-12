@@ -113,20 +113,19 @@ let you edit it), but the database will complain that the field may
 not be NULL. Django's `auto_now_add` option is one possible solution 
 to this.
       
-Then add a `get_site_menu` method to the Lino class 
+Then add a `setup_menu` method to the Lino class 
 defined in your :file:`settings.py`::
 
     class Lino(Lino):
         title = "Lino Tutorial"
-        def get_site_menu(self,ui,user):
-            from lino.utils import menus
-            main = menus.Toolbar('main')
+        
+        def setup_menu(self,ui,user,main):
             m = main.add_menu("polls","~Polls")
             m.add_action('polls.Polls')
+            
             m = main.add_menu("config","~Configure")
             m.add_action('users.Users')
-            main.add_url_button(self.root_url,"Home")
-            return main
+        
 
 That's all! Now start the development server::
 

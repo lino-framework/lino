@@ -1,4 +1,4 @@
-// lino.js --- generated Wed Aug 10 20:41:52 2011 by Lino version 1.2.1.
+// lino.js --- generated Thu Aug 11 22:03:03 2011 by Lino version 1.2.1.
 Ext.BLANK_IMAGE_URL = '/media/extjs/resources/images/default/s.gif';
 LANGUAGE_CHOICES = [ [ "en", "English" ], [ "de", "German" ], [ "fr", "French" ], [ "nl", "Dutch" ], [ "et", "Estonian" ] ];
 STRENGTH_CHOICES = [ [ "0", "certainly not" ], [ "1", "rather not" ], [ "2", "normally" ], [ "3", "quite much" ], [ "4", "very much" ] ];
@@ -3247,36 +3247,11 @@ Lino.users.Users.grid = function(caller,params) {
 }
 
 Ext.namespace('Lino.lino.SiteConfigs')
-Lino.lino.SiteConfigs.FormPanel = Ext.extend(Lino.FormPanel,{
-  constructor : function(ww,config) {
-  var default_build_method38 = new Lino.ChoicesFieldElement({ "hiddenName": "default_build_methodHidden", "fieldLabel": "Default build method", "anchor": "100%", "store": [ [ "appyodt", "AppyOdtBuildMethod" ], [ "appypdf", "AppyPdfBuildMethod" ], [ "appyrtf", "AppyRtfBuildMethod" ], [ "latex", "LatexBuildMethod" ], [ "pisa", "PisaBuildMethod" ], [ "rtf", "RtfBuildMethod" ] ], "name": "default_build_method" });
-  var default_build_method_ct_panel39 = new Ext.Container({ "autoHeight": true, "layout": "form", "labelWidth": 189, "items": [ default_build_method38 ], "frame": false, "border": false });
-  var main_panel40 = new Ext.Panel({ "autoScroll": true, "items": [ default_build_method_ct_panel39 ], "frame": false, "border": false, "layout": "fit" });
-  config.items = main_panel40;
-  config.before_row_edit = function(record){  };
-  Lino.lino.SiteConfigs.FormPanel.superclass.constructor.call(this, ww,config);
-  }
-});
-
-Lino.lino.SiteConfigs.detail = function(caller,params) { 
-  var ww = new Lino.DetailWrapper(caller,{ "content_type": 3, "name": "detail", "url_data": "/api/lino/SiteConfigs", "fk_name": null, "action_name": "detail", "active_fields": [  ] },params);
-  var form_panel41 = new Lino.lino.SiteConfigs.FormPanel(ww,{ "ls_url": "/lino/SiteConfigs", "ls_bbar_actions": [ { "text": "Save", "handler": function() {ww.save()} }, { "text": "Insert", "must_save": true, "panel_btn_handler": function(panel){Lino.show_insert(panel)} }, { "text": "Delete", "panel_btn_handler": Lino.delete_selected } ], "ls_detail_handler": Lino.lino.SiteConfigs.detail, "has_navigator": false, "layout": "fit", "method": "PUT", "ls_insert_handler": Lino.lino.SiteConfigs.insert });
-  ww.main_item = form_panel41;
-  ww.show();
-}
-
-Lino.lino.SiteConfigs.insert = function(caller,params) { 
-  var ww = new Lino.InsertWrapper(caller,{ "content_type": 3, "name": "insert", "url_data": "/api/lino/SiteConfigs", "record_id": -99999, "fk_name": null, "action_name": "insert", "active_fields": [  ] },params);
-  var form_panel42 = new Lino.lino.SiteConfigs.FormPanel(ww,{ "ls_url": "/lino/SiteConfigs", "layout": "fit", "ls_detail_handler": Lino.lino.SiteConfigs.detail, "ls_bbar_actions": [ { "text": "Save", "handler": function() {ww.save()} } ], "method": "POST", "ls_insert_handler": Lino.lino.SiteConfigs.insert });
-  ww.main_item = form_panel42;
-  ww.show();
-}
-
 Lino.lino.SiteConfigs.grid = function(caller,params) { 
   var ww = new Lino.GridMasterWrapper(caller,{ "content_type": 3, "action_name": "grid" },params);
   var id35 = { "xtype": "numberfield" };
   var default_build_method36 = new Lino.ChoicesFieldElement({ "store": [ [ "appyodt", "AppyOdtBuildMethod" ], [ "appypdf", "AppyPdfBuildMethod" ], [ "appyrtf", "AppyRtfBuildMethod" ], [ "latex", "LatexBuildMethod" ], [ "pisa", "PisaBuildMethod" ], [ "rtf", "RtfBuildMethod" ] ] });
-  var main_grid37 = new Lino.GridPanel(ww,{ "ls_url": "/lino/SiteConfigs", "ls_bbar_actions": [ { "text": "Detail", "panel_btn_handler": Lino.show_detail_handler }, { "text": "Insert", "must_save": true, "panel_btn_handler": function(panel){Lino.show_insert(panel)} }, { "text": "Delete", "panel_btn_handler": Lino.delete_selected } ], "ls_grid_configs": [  ], "gc_name": 0, "stripeRows": true, "ls_quick_edit": true, "ls_store_fields": [ { "type": "int", "name": "id" }, { "name": "default_build_method" },'default_build_methodHidden' ], "pk_index": 0, "before_row_edit": function(record){  }, "ls_detail_handler": Lino.lino.SiteConfigs.detail, "ls_id_property": "id", "page_length": 30, "ls_columns": [ { "colIndex": 0, "sortable": true, "header": "ID", "editable": true, "filter": { "type": "numeric" }, "width": 45, "renderer": Lino.id_renderer, "hidden": false, "editor": id35, "dataIndex": "id" }, { "colIndex": 1, "sortable": true, "header": "Default build method", "editable": true, "filter": { "type": "string" }, "width": 180, "dataIndex": "default_build_method", "hidden": false, "editor": default_build_method36 } ], "ls_insert_handler": Lino.lino.SiteConfigs.insert });
+  var main_grid37 = new Lino.GridPanel(ww,{ "ls_url": "/lino/SiteConfigs", "ls_bbar_actions": [ { "text": "Delete", "panel_btn_handler": Lino.delete_selected } ], "gc_name": 0, "stripeRows": true, "ls_quick_edit": true, "ls_store_fields": [ { "type": "int", "name": "id" }, { "name": "default_build_method" },'default_build_methodHidden' ], "pk_index": 0, "before_row_edit": function(record){  }, "ls_grid_configs": [  ], "ls_id_property": "id", "page_length": 30, "ls_columns": [ { "colIndex": 0, "sortable": true, "header": "ID", "editable": true, "filter": { "type": "numeric" }, "width": 45, "renderer": Lino.id_renderer, "hidden": false, "editor": id35, "dataIndex": "id" }, { "colIndex": 1, "sortable": true, "header": "Default build method", "editable": true, "filter": { "type": "string" }, "width": 180, "dataIndex": "default_build_method", "hidden": false, "editor": default_build_method36 } ] });
   ww.main_item = main_grid37;
   ww.show();
 }
@@ -3284,207 +3259,136 @@ Lino.lino.SiteConfigs.grid = function(caller,params) {
 Ext.namespace('Lino.contenttypes.ContentTypes')
 Lino.contenttypes.ContentTypes.grid = function(caller,params) { 
   var ww = new Lino.GridMasterWrapper(caller,{ "content_type": 1, "action_name": "grid" },params);
-  var id47 = { "xtype": "numberfield" };
-  var name48 = new Ext.form.TextField({ "allowBlank": false, "maxLength": 100 });
-  var app_label49 = new Ext.form.TextField({ "allowBlank": false, "maxLength": 100 });
-  var model50 = new Ext.form.TextField({ "allowBlank": false, "maxLength": 100 });
-  var main_grid51 = new Lino.GridPanel(ww,{ "ls_url": "/contenttypes/ContentTypes", "ls_bbar_actions": [ { "text": "Delete", "panel_btn_handler": Lino.delete_selected } ], "gc_name": 0, "stripeRows": true, "ls_quick_edit": true, "ls_store_fields": [ { "type": "int", "name": "id" }, { "name": "name" }, { "name": "app_label" }, { "name": "model" } ], "pk_index": 0, "before_row_edit": function(record){  }, "ls_grid_configs": [  ], "ls_id_property": "id", "page_length": 30, "ls_columns": [ { "colIndex": 0, "sortable": true, "header": "ID", "editable": true, "filter": { "type": "numeric" }, "width": 45, "renderer": Lino.id_renderer, "hidden": false, "editor": id47, "dataIndex": "id" }, { "colIndex": 1, "sortable": true, "header": "name", "editable": true, "filter": { "type": "string" }, "width": 180, "dataIndex": "name", "hidden": false, "editor": name48 }, { "colIndex": 2, "sortable": true, "header": "app label", "editable": true, "filter": { "type": "string" }, "width": 180, "dataIndex": "app_label", "hidden": false, "editor": app_label49 }, { "colIndex": 3, "sortable": true, "header": "python model class name", "editable": true, "filter": { "type": "string" }, "width": 180, "dataIndex": "model", "hidden": false, "editor": model50 } ] });
-  ww.main_item = main_grid51;
+  var id42 = { "xtype": "numberfield" };
+  var name43 = new Ext.form.TextField({ "allowBlank": false, "maxLength": 100 });
+  var app_label44 = new Ext.form.TextField({ "allowBlank": false, "maxLength": 100 });
+  var model45 = new Ext.form.TextField({ "allowBlank": false, "maxLength": 100 });
+  var main_grid46 = new Lino.GridPanel(ww,{ "ls_url": "/contenttypes/ContentTypes", "ls_bbar_actions": [ { "text": "Delete", "panel_btn_handler": Lino.delete_selected } ], "gc_name": 0, "stripeRows": true, "ls_quick_edit": true, "ls_store_fields": [ { "type": "int", "name": "id" }, { "name": "name" }, { "name": "app_label" }, { "name": "model" } ], "pk_index": 0, "before_row_edit": function(record){  }, "ls_grid_configs": [  ], "ls_id_property": "id", "page_length": 30, "ls_columns": [ { "colIndex": 0, "sortable": true, "header": "ID", "editable": true, "filter": { "type": "numeric" }, "width": 45, "renderer": Lino.id_renderer, "hidden": false, "editor": id42, "dataIndex": "id" }, { "colIndex": 1, "sortable": true, "header": "name", "editable": true, "filter": { "type": "string" }, "width": 180, "dataIndex": "name", "hidden": false, "editor": name43 }, { "colIndex": 2, "sortable": true, "header": "app label", "editable": true, "filter": { "type": "string" }, "width": 180, "dataIndex": "app_label", "hidden": false, "editor": app_label44 }, { "colIndex": 3, "sortable": true, "header": "python model class name", "editable": true, "filter": { "type": "string" }, "width": 180, "dataIndex": "model", "hidden": false, "editor": model45 } ] });
+  ww.main_item = main_grid46;
   ww.show();
 }
 
 Ext.namespace('Lino.lino.TextFieldTemplates')
-Lino.lino.TextFieldTemplates.FormPanel = Ext.extend(Lino.FormPanel,{
-  constructor : function(ww,config) {
-  var id66 = { "fieldLabel": "ID", "anchor": "100%", "name": "id", "xtype": "numberfield" };
-  var id_ct_panel67 = new Ext.Container({ "flex": 14, "autoHeight": true, "labelWidth": 27, "items": [ id66 ], "frame": false, "border": false, "layout": "form" });
-  var name68 = new Ext.form.TextField({ "allowBlank": false, "fieldLabel": "Designation", "anchor": "100%", "name": "name", "maxLength": 200 });
-  var name_ct_panel69 = new Ext.Container({ "flex": 57, "autoHeight": true, "labelWidth": 108, "items": [ name68 ], "frame": false, "border": false, "layout": "form" });
-  var user70 = new Lino.RemoteComboFieldElement({ "fieldLabel": "user", "name": "user", "pageSize": 30, "hiddenName": "userHidden", "anchor": "100%", "store": new Lino.ComplexRemoteComboStore({ "proxy": new Ext.data.HttpProxy({ "url": "/choices/lino/TextFieldTemplates/user", "method": "GET" }) }), "emptyText": "Select a User..." });
-  var user_ct_panel71 = new Ext.Container({ "flex": 28, "autoHeight": true, "labelWidth": 45, "items": [ user70 ], "frame": false, "border": false, "layout": "form" });
-  var main_1_panel72 = new Ext.Container({ "border": false, "autoHeight": true, "layout": "hbox", "split": true, "items": [ id_ct_panel67, name_ct_panel69, user_ct_panel71 ], "region": "north", "layoutConfig": { "align": "stretchmax" }, "frame": false });
-  var description73 = new Lino.RichTextPanel(ww,{ "flex": 5, "ls_url": "/lino/TextFieldTemplates", "split": true, "title": "Description", "region": "center", "name": "description" });
-  var text74 = new Lino.RichTextPanel(ww,{ "flex": 5, "ls_url": "/lino/TextFieldTemplates", "split": true, "title": "Template Text", "region": "south", "name": "text" });
-  var main_panel75 = new Lino.VBorderPanel({ "border": false, "labelWidth": 0, "autoScroll": true, "items": [ main_1_panel72, description73, text74 ], "frame": true, "bodyBorder": false, "labelAlign": "top" });
-  config.items = main_panel75;
-  config.before_row_edit = function(record){ description73.refresh(); text74.refresh(); };
-  Lino.lino.TextFieldTemplates.FormPanel.superclass.constructor.call(this, ww,config);
-  }
-});
-
-Lino.lino.TextFieldTemplates.detail = function(caller,params) { 
-  var ww = new Lino.DetailWrapper(caller,{ "content_type": 5, "name": "detail", "url_data": "/api/lino/TextFieldTemplates", "fk_name": null, "action_name": "detail", "active_fields": [  ] },params);
-  var form_panel76 = new Lino.lino.TextFieldTemplates.FormPanel(ww,{ "ls_url": "/lino/TextFieldTemplates", "ls_bbar_actions": [ { "text": "Save", "handler": function() {ww.save()} }, { "text": "Insert", "must_save": true, "panel_btn_handler": function(panel){Lino.show_insert(panel)} }, { "text": "Delete", "panel_btn_handler": Lino.delete_selected } ], "ls_detail_handler": Lino.lino.TextFieldTemplates.detail, "has_navigator": true, "layout": "fit", "method": "PUT", "ls_insert_handler": Lino.lino.TextFieldTemplates.insert });
-  ww.main_item = form_panel76;
-  ww.show();
-}
-
-Lino.lino.TextFieldTemplates.insert = function(caller,params) { 
-  var ww = new Lino.InsertWrapper(caller,{ "content_type": 5, "name": "insert", "url_data": "/api/lino/TextFieldTemplates", "record_id": -99999, "fk_name": null, "action_name": "insert", "active_fields": [  ] },params);
-  var form_panel77 = new Lino.lino.TextFieldTemplates.FormPanel(ww,{ "ls_url": "/lino/TextFieldTemplates", "layout": "fit", "ls_detail_handler": Lino.lino.TextFieldTemplates.detail, "ls_bbar_actions": [ { "text": "Save", "handler": function() {ww.save()} } ], "method": "POST", "ls_insert_handler": Lino.lino.TextFieldTemplates.insert });
-  ww.main_item = form_panel77;
-  ww.show();
-}
-
 Lino.lino.TextFieldTemplates.grid = function(caller,params) { 
   var ww = new Lino.GridMasterWrapper(caller,{ "content_type": 5, "action_name": "grid" },params);
-  var id60 = { "xtype": "numberfield" };
-  var user61 = new Lino.RemoteComboFieldElement({ "store": new Lino.ComplexRemoteComboStore({ "proxy": new Ext.data.HttpProxy({ "url": "/choices/lino/TextFieldTemplates/user", "method": "GET" }) }), "pageSize": 30, "emptyText": "Select a User..." });
-  var name62 = new Ext.form.TextField({ "allowBlank": false, "maxLength": 200 });
-  var description63 = new Lino.RichTextPanel(ww,{ "ls_url": "/lino/TextFieldTemplates", "title": "Description" });
-  var text64 = new Lino.RichTextPanel(ww,{ "ls_url": "/lino/TextFieldTemplates", "title": "Template Text" });
-  var main_grid65 = new Lino.GridPanel(ww,{ "ls_url": "/lino/TextFieldTemplates", "ls_bbar_actions": [ { "text": "Detail", "panel_btn_handler": Lino.show_detail_handler }, { "text": "Insert", "must_save": true, "panel_btn_handler": function(panel){Lino.show_insert(panel)} }, { "text": "Delete", "panel_btn_handler": Lino.delete_selected } ], "ls_grid_configs": [  ], "gc_name": 0, "stripeRows": true, "ls_quick_edit": true, "ls_store_fields": [ { "type": "int", "name": "id" }, { "name": "user" },'userHidden', { "name": "name" }, { "name": "description" }, { "name": "text" } ], "pk_index": 0, "before_row_edit": function(record){ description63.refresh(); text64.refresh(); }, "ls_detail_handler": Lino.lino.TextFieldTemplates.detail, "ls_id_property": "id", "page_length": 30, "ls_columns": [ { "colIndex": 0, "sortable": true, "header": "ID", "editable": true, "filter": { "type": "numeric" }, "width": 45, "renderer": Lino.id_renderer, "hidden": false, "editor": id60, "dataIndex": "id" }, { "colIndex": 1, "sortable": true, "header": "user", "editable": true, "filter": { "type": "string" }, "width": 90, "dataIndex": "user", "hidden": false, "editor": user61 }, { "colIndex": 2, "sortable": true, "header": "Designation", "editable": true, "filter": { "type": "string" }, "width": 180, "dataIndex": "name", "hidden": false, "editor": name62 }, { "colIndex": 3, "sortable": false, "header": "description", "editable": true, "filter": { "type": "string" }, "width": 540, "renderer": Lino.text_renderer, "hidden": false, "editor": description63, "dataIndex": "description" }, { "colIndex": 4, "sortable": false, "header": "text", "editable": true, "filter": { "type": "string" }, "width": 540, "renderer": Lino.text_renderer, "hidden": false, "editor": text64, "dataIndex": "text" } ], "ls_insert_handler": Lino.lino.TextFieldTemplates.insert });
-  ww.main_item = main_grid65;
+  var id55 = { "xtype": "numberfield" };
+  var user56 = new Lino.RemoteComboFieldElement({ "store": new Lino.ComplexRemoteComboStore({ "proxy": new Ext.data.HttpProxy({ "url": "/choices/lino/TextFieldTemplates/user", "method": "GET" }) }), "pageSize": 30, "emptyText": "Select a User..." });
+  var name57 = new Ext.form.TextField({ "allowBlank": false, "maxLength": 200 });
+  var description58 = new Lino.RichTextPanel(ww,{ "ls_url": "/lino/TextFieldTemplates", "title": "Description" });
+  var text59 = new Lino.RichTextPanel(ww,{ "ls_url": "/lino/TextFieldTemplates", "title": "Template Text" });
+  var main_grid60 = new Lino.GridPanel(ww,{ "ls_url": "/lino/TextFieldTemplates", "ls_bbar_actions": [ { "text": "Delete", "panel_btn_handler": Lino.delete_selected } ], "gc_name": 0, "stripeRows": true, "ls_quick_edit": true, "ls_store_fields": [ { "type": "int", "name": "id" }, { "name": "user" },'userHidden', { "name": "name" }, { "name": "description" }, { "name": "text" } ], "pk_index": 0, "before_row_edit": function(record){ description58.refresh(); text59.refresh(); }, "ls_grid_configs": [  ], "ls_id_property": "id", "page_length": 30, "ls_columns": [ { "colIndex": 0, "sortable": true, "header": "ID", "editable": true, "filter": { "type": "numeric" }, "width": 45, "renderer": Lino.id_renderer, "hidden": false, "editor": id55, "dataIndex": "id" }, { "colIndex": 1, "sortable": true, "header": "user", "editable": true, "filter": { "type": "string" }, "width": 90, "dataIndex": "user", "hidden": false, "editor": user56 }, { "colIndex": 2, "sortable": true, "header": "Designation", "editable": true, "filter": { "type": "string" }, "width": 180, "dataIndex": "name", "hidden": false, "editor": name57 }, { "colIndex": 3, "sortable": false, "header": "description", "editable": true, "filter": { "type": "string" }, "width": 540, "renderer": Lino.text_renderer, "hidden": false, "editor": description58, "dataIndex": "description" }, { "colIndex": 4, "sortable": false, "header": "text", "editable": true, "filter": { "type": "string" }, "width": 540, "renderer": Lino.text_renderer, "hidden": false, "editor": text59, "dataIndex": "text" } ] });
+  ww.main_item = main_grid60;
   ww.show();
 }
 
 Ext.namespace('Lino.polls.Polls')
 Lino.polls.Polls.FormPanel = Ext.extend(Lino.FormPanel,{
   constructor : function(ww,config) {
-  var id91 = { "fieldLabel": "ID", "anchor": "100%", "name": "id", "xtype": "numberfield" };
-  var id_ct_panel92 = new Ext.Container({ "flex": 12, "autoHeight": true, "labelWidth": 27, "items": [ id91 ], "frame": false, "border": false, "layout": "form" });
-  var question93 = new Ext.form.TextField({ "allowBlank": false, "fieldLabel": "question", "anchor": "100%", "name": "question", "maxLength": 200 });
-  var question_ct_panel94 = new Ext.Container({ "flex": 48, "autoHeight": true, "labelWidth": 81, "items": [ question93 ], "frame": false, "border": false, "layout": "form" });
-  var pub_date95 = new Ext.form.DisplayField({ "disabled": true, "readOnly": true, "fieldLabel": "date published", "anchor": "100%", "name": "pub_date" });
-  var pub_date_ct_panel96 = new Ext.Container({ "flex": 39, "autoHeight": true, "labelWidth": 135, "items": [ pub_date95 ], "frame": false, "border": false, "layout": "form" });
-  var main_1_panel97 = new Ext.Container({ "border": false, "autoHeight": true, "layout": "hbox", "items": [ id_ct_panel92, question_ct_panel94, pub_date_ct_panel96 ], "frame": false, "layoutConfig": { "align": "stretchmax" } });
-  var id98 = { "xtype": "numberfield" };
-  var choice99 = new Ext.form.TextField({ "allowBlank": false, "maxLength": 200 });
-  var votes100 = { "xtype": "numberfield", "allowBlank": false };
-  var polls_ChoicesByPoll_grid102 = new Lino.GridPanel(ww,{ "flex": 83, "ls_url": "/polls/ChoicesByPoll", "ls_bbar_actions": [ { "text": "Delete", "panel_btn_handler": Lino.delete_selected } ], "title": "choices", "gc_name": 0, "stripeRows": true, "ls_quick_edit": true, "ls_store_fields": [ { "type": "int", "name": "id" }, { "name": "choice" }, { "type": "int", "name": "votes" } ], "pk_index": 0, "before_row_edit": function(record){  }, "ls_grid_configs": [  ], "ls_id_property": "id", "page_length": 30, "tools": [ Lino.report_window_button(ww,Lino.polls.ChoicesByPoll.grid) ], "ls_columns": [ { "colIndex": 0, "sortable": true, "header": "ID", "editable": true, "filter": { "type": "numeric" }, "width": 45, "renderer": Lino.id_renderer, "hidden": false, "editor": id98, "dataIndex": "id" }, { "colIndex": 1, "sortable": true, "header": "choice", "editable": true, "filter": { "type": "string" }, "width": 180, "dataIndex": "choice", "hidden": false, "editor": choice99 }, { "colIndex": 2, "sortable": true, "header": "votes", "editable": true, "filter": { "type": "numeric" }, "width": 45, "dataIndex": "votes", "hidden": false, "editor": votes100 } ] });
-  var main_panel103 = new Ext.Panel({ "border": false, "layout": "vbox", "autoScroll": true, "items": [ main_1_panel97, polls_ChoicesByPoll_grid102 ], "frame": true, "layoutConfig": { "align": "stretch" }, "bodyBorder": false, "labelAlign": "top" });
-  config.items = main_panel103;
-  config.before_row_edit = function(record){ polls_ChoicesByPoll_grid102.on_master_changed(); };
+  var id74 = { "fieldLabel": "ID", "anchor": "100%", "name": "id", "xtype": "numberfield" };
+  var id_ct_panel75 = new Ext.Container({ "flex": 12, "autoHeight": true, "labelWidth": 27, "items": [ id74 ], "frame": false, "border": false, "layout": "form" });
+  var question76 = new Ext.form.TextField({ "allowBlank": false, "fieldLabel": "question", "anchor": "100%", "name": "question", "maxLength": 200 });
+  var question_ct_panel77 = new Ext.Container({ "flex": 48, "autoHeight": true, "labelWidth": 81, "items": [ question76 ], "frame": false, "border": false, "layout": "form" });
+  var pub_date78 = new Ext.form.DisplayField({ "disabled": true, "readOnly": true, "fieldLabel": "date published", "anchor": "100%", "name": "pub_date" });
+  var pub_date_ct_panel79 = new Ext.Container({ "flex": 39, "autoHeight": true, "labelWidth": 135, "items": [ pub_date78 ], "frame": false, "border": false, "layout": "form" });
+  var main_1_panel80 = new Ext.Container({ "border": false, "autoHeight": true, "layout": "hbox", "items": [ id_ct_panel75, question_ct_panel77, pub_date_ct_panel79 ], "frame": false, "layoutConfig": { "align": "stretchmax" } });
+  var id81 = { "xtype": "numberfield" };
+  var choice82 = new Ext.form.TextField({ "allowBlank": false, "maxLength": 200 });
+  var votes83 = { "xtype": "numberfield", "allowBlank": false };
+  var polls_ChoicesByPoll_grid85 = new Lino.GridPanel(ww,{ "flex": 83, "ls_url": "/polls/ChoicesByPoll", "ls_bbar_actions": [ { "text": "Delete", "panel_btn_handler": Lino.delete_selected } ], "title": "choices", "gc_name": 0, "stripeRows": true, "ls_quick_edit": true, "ls_store_fields": [ { "type": "int", "name": "id" }, { "name": "choice" }, { "type": "int", "name": "votes" } ], "pk_index": 0, "before_row_edit": function(record){  }, "ls_grid_configs": [  ], "ls_id_property": "id", "page_length": 30, "tools": [ Lino.report_window_button(ww,Lino.polls.ChoicesByPoll.grid) ], "ls_columns": [ { "colIndex": 0, "sortable": true, "header": "ID", "editable": true, "filter": { "type": "numeric" }, "width": 45, "renderer": Lino.id_renderer, "hidden": false, "editor": id81, "dataIndex": "id" }, { "colIndex": 1, "sortable": true, "header": "choice", "editable": true, "filter": { "type": "string" }, "width": 180, "dataIndex": "choice", "hidden": false, "editor": choice82 }, { "colIndex": 2, "sortable": true, "header": "votes", "editable": true, "filter": { "type": "numeric" }, "width": 45, "dataIndex": "votes", "hidden": false, "editor": votes83 } ] });
+  var main_panel86 = new Ext.Panel({ "border": false, "layout": "vbox", "autoScroll": true, "items": [ main_1_panel80, polls_ChoicesByPoll_grid85 ], "frame": true, "layoutConfig": { "align": "stretch" }, "bodyBorder": false, "labelAlign": "top" });
+  config.items = main_panel86;
+  config.before_row_edit = function(record){ polls_ChoicesByPoll_grid85.on_master_changed(); };
   Lino.polls.Polls.FormPanel.superclass.constructor.call(this, ww,config);
   }
 });
 
 Lino.polls.Polls.detail = function(caller,params) { 
   var ww = new Lino.DetailWrapper(caller,{ "content_type": 6, "name": "detail", "url_data": "/api/polls/Polls", "fk_name": null, "action_name": "detail", "active_fields": [  ] },params);
-  var form_panel104 = new Lino.polls.Polls.FormPanel(ww,{ "ls_url": "/polls/Polls", "ls_bbar_actions": [ { "text": "Save", "handler": function() {ww.save()} }, { "text": "Insert", "must_save": true, "panel_btn_handler": function(panel){Lino.show_insert(panel)} }, { "text": "Delete", "panel_btn_handler": Lino.delete_selected } ], "ls_detail_handler": Lino.polls.Polls.detail, "has_navigator": true, "layout": "fit", "method": "PUT", "ls_insert_handler": Lino.polls.Polls.insert });
-  ww.main_item = form_panel104;
+  var form_panel87 = new Lino.polls.Polls.FormPanel(ww,{ "ls_url": "/polls/Polls", "ls_bbar_actions": [ { "text": "Save", "handler": function() {ww.save()} }, { "text": "Insert", "must_save": true, "panel_btn_handler": function(panel){Lino.show_insert(panel)} }, { "text": "Delete", "panel_btn_handler": Lino.delete_selected } ], "ls_detail_handler": Lino.polls.Polls.detail, "has_navigator": true, "layout": "fit", "method": "PUT", "ls_insert_handler": Lino.polls.Polls.insert });
+  ww.main_item = form_panel87;
   ww.show();
 }
 
 Lino.polls.Polls.insert = function(caller,params) { 
   var ww = new Lino.InsertWrapper(caller,{ "content_type": 6, "name": "insert", "url_data": "/api/polls/Polls", "record_id": -99999, "fk_name": null, "action_name": "insert", "active_fields": [  ] },params);
-  var form_panel105 = new Lino.polls.Polls.FormPanel(ww,{ "ls_url": "/polls/Polls", "layout": "fit", "ls_detail_handler": Lino.polls.Polls.detail, "ls_bbar_actions": [ { "text": "Save", "handler": function() {ww.save()} } ], "method": "POST", "ls_insert_handler": Lino.polls.Polls.insert });
-  ww.main_item = form_panel105;
+  var form_panel88 = new Lino.polls.Polls.FormPanel(ww,{ "ls_url": "/polls/Polls", "layout": "fit", "ls_detail_handler": Lino.polls.Polls.detail, "ls_bbar_actions": [ { "text": "Save", "handler": function() {ww.save()} } ], "method": "POST", "ls_insert_handler": Lino.polls.Polls.insert });
+  ww.main_item = form_panel88;
   ww.show();
 }
 
 Lino.polls.Polls.grid = function(caller,params) { 
   var ww = new Lino.GridMasterWrapper(caller,{ "content_type": 6, "action_name": "grid" },params);
-  var id88 = { "xtype": "numberfield" };
-  var question89 = new Ext.form.TextField({ "allowBlank": false, "maxLength": 200 });
-  var main_grid90 = new Lino.GridPanel(ww,{ "ls_url": "/polls/Polls", "ls_bbar_actions": [ { "text": "Detail", "panel_btn_handler": Lino.show_detail_handler }, { "text": "Insert", "must_save": true, "panel_btn_handler": function(panel){Lino.show_insert(panel)} }, { "text": "Delete", "panel_btn_handler": Lino.delete_selected } ], "ls_grid_configs": [  ], "gc_name": 0, "stripeRows": true, "ls_quick_edit": true, "ls_store_fields": [ { "type": "int", "name": "id" }, { "name": "question" } ], "pk_index": 0, "before_row_edit": function(record){  }, "ls_detail_handler": Lino.polls.Polls.detail, "ls_id_property": "id", "page_length": 30, "ls_columns": [ { "colIndex": 0, "sortable": true, "header": "ID", "editable": true, "filter": { "type": "numeric" }, "width": 45, "renderer": Lino.id_renderer, "hidden": false, "editor": id88, "dataIndex": "id" }, { "colIndex": 1, "sortable": true, "header": "question", "editable": true, "filter": { "type": "string" }, "width": 180, "dataIndex": "question", "hidden": false, "editor": question89 } ], "ls_insert_handler": Lino.polls.Polls.insert });
-  ww.main_item = main_grid90;
+  var id71 = { "xtype": "numberfield" };
+  var question72 = new Ext.form.TextField({ "allowBlank": false, "maxLength": 200 });
+  var main_grid73 = new Lino.GridPanel(ww,{ "ls_url": "/polls/Polls", "ls_bbar_actions": [ { "text": "Detail", "panel_btn_handler": Lino.show_detail_handler }, { "text": "Insert", "must_save": true, "panel_btn_handler": function(panel){Lino.show_insert(panel)} }, { "text": "Delete", "panel_btn_handler": Lino.delete_selected } ], "ls_grid_configs": [  ], "gc_name": 0, "stripeRows": true, "ls_quick_edit": true, "ls_store_fields": [ { "type": "int", "name": "id" }, { "name": "question" } ], "pk_index": 0, "before_row_edit": function(record){  }, "ls_detail_handler": Lino.polls.Polls.detail, "ls_id_property": "id", "page_length": 30, "ls_columns": [ { "colIndex": 0, "sortable": true, "header": "ID", "editable": true, "filter": { "type": "numeric" }, "width": 45, "renderer": Lino.id_renderer, "hidden": false, "editor": id71, "dataIndex": "id" }, { "colIndex": 1, "sortable": true, "header": "question", "editable": true, "filter": { "type": "string" }, "width": 180, "dataIndex": "question", "hidden": false, "editor": question72 } ], "ls_insert_handler": Lino.polls.Polls.insert });
+  ww.main_item = main_grid73;
   ww.show();
 }
 
 Ext.namespace('Lino.polls.Choices')
 Lino.polls.Choices.grid = function(caller,params) { 
   var ww = new Lino.GridMasterWrapper(caller,{ "content_type": 7, "action_name": "grid" },params);
-  var id116 = { "xtype": "numberfield" };
-  var poll117 = new Lino.TwinCombo({ "store": new Lino.ComplexRemoteComboStore({ "proxy": new Ext.data.HttpProxy({ "url": "/choices/polls/Choices/poll", "method": "GET" }) }), "onTrigger2Click": function(e){ Lino.show_fk_detail(this,e,Lino.polls.Polls.detail)}, "allowBlank": false, "pageSize": 30, "emptyText": "Select a poll..." });
-  var choice118 = new Ext.form.TextField({ "allowBlank": false, "maxLength": 200 });
-  var votes119 = { "xtype": "numberfield", "allowBlank": false };
-  var main_grid120 = new Lino.GridPanel(ww,{ "ls_url": "/polls/Choices", "ls_bbar_actions": [ { "text": "Delete", "panel_btn_handler": Lino.delete_selected } ], "gc_name": 0, "stripeRows": true, "ls_quick_edit": true, "ls_store_fields": [ { "type": "int", "name": "id" }, { "name": "poll" },'pollHidden', { "name": "choice" }, { "type": "int", "name": "votes" } ], "pk_index": 0, "before_row_edit": function(record){  }, "ls_grid_configs": [  ], "ls_id_property": "id", "page_length": 30, "ls_columns": [ { "colIndex": 0, "sortable": true, "header": "ID", "editable": true, "filter": { "type": "numeric" }, "width": 45, "renderer": Lino.id_renderer, "hidden": false, "editor": id116, "dataIndex": "id" }, { "colIndex": 1, "sortable": true, "header": "poll", "editable": true, "filter": { "type": "string" }, "width": 90, "renderer": Lino.fk_renderer('pollHidden','Lino.polls.Polls.detail'), "hidden": false, "editor": poll117, "dataIndex": "poll" }, { "colIndex": 2, "sortable": true, "header": "choice", "editable": true, "filter": { "type": "string" }, "width": 180, "dataIndex": "choice", "hidden": false, "editor": choice118 }, { "colIndex": 3, "sortable": true, "header": "votes", "editable": true, "filter": { "type": "numeric" }, "width": 45, "dataIndex": "votes", "hidden": false, "editor": votes119 } ] });
-  ww.main_item = main_grid120;
+  var id99 = { "xtype": "numberfield" };
+  var poll100 = new Lino.TwinCombo({ "store": new Lino.ComplexRemoteComboStore({ "proxy": new Ext.data.HttpProxy({ "url": "/choices/polls/Choices/poll", "method": "GET" }) }), "onTrigger2Click": function(e){ Lino.show_fk_detail(this,e,Lino.polls.Polls.detail)}, "allowBlank": false, "pageSize": 30, "emptyText": "Select a poll..." });
+  var choice101 = new Ext.form.TextField({ "allowBlank": false, "maxLength": 200 });
+  var votes102 = { "xtype": "numberfield", "allowBlank": false };
+  var main_grid103 = new Lino.GridPanel(ww,{ "ls_url": "/polls/Choices", "ls_bbar_actions": [ { "text": "Delete", "panel_btn_handler": Lino.delete_selected } ], "gc_name": 0, "stripeRows": true, "ls_quick_edit": true, "ls_store_fields": [ { "type": "int", "name": "id" }, { "name": "poll" },'pollHidden', { "name": "choice" }, { "type": "int", "name": "votes" } ], "pk_index": 0, "before_row_edit": function(record){  }, "ls_grid_configs": [  ], "ls_id_property": "id", "page_length": 30, "ls_columns": [ { "colIndex": 0, "sortable": true, "header": "ID", "editable": true, "filter": { "type": "numeric" }, "width": 45, "renderer": Lino.id_renderer, "hidden": false, "editor": id99, "dataIndex": "id" }, { "colIndex": 1, "sortable": true, "header": "poll", "editable": true, "filter": { "type": "string" }, "width": 90, "renderer": Lino.fk_renderer('pollHidden','Lino.polls.Polls.detail'), "hidden": false, "editor": poll100, "dataIndex": "poll" }, { "colIndex": 2, "sortable": true, "header": "choice", "editable": true, "filter": { "type": "string" }, "width": 180, "dataIndex": "choice", "hidden": false, "editor": choice101 }, { "colIndex": 3, "sortable": true, "header": "votes", "editable": true, "filter": { "type": "numeric" }, "width": 45, "dataIndex": "votes", "hidden": false, "editor": votes102 } ] });
+  ww.main_item = main_grid103;
   ww.show();
 }
 
 Ext.namespace('Lino.lino.DataControlListingReport')
 Lino.lino.DataControlListingReport.FormPanel = Ext.extend(Lino.FormPanel,{
   constructor : function(ww,config) {
-  var id132 = { "fieldLabel": "ID", "anchor": "100%", "name": "id", "xtype": "numberfield" };
-  var id_ct_panel133 = new Ext.Container({ "flex": 38, "autoHeight": true, "labelWidth": 27, "items": [ id132 ], "frame": false, "border": false, "layout": "form" });
-  var date134 = new Lino.DateField({ "fieldLabel": "Date", "anchor": "100%", "name": "date" });
-  var date_ct_panel135 = new Ext.Container({ "flex": 61, "autoHeight": true, "labelWidth": 45, "items": [ date134 ], "frame": false, "border": false, "layout": "form" });
-  var main_1_panel136 = new Ext.Container({ "border": false, "autoHeight": true, "layout": "hbox", "items": [ id_ct_panel133, date_ct_panel135 ], "frame": false, "layoutConfig": { "align": "stretchmax" } });
-  var preview_htmlbox137 = new Lino.HtmlBoxPanel(ww,{ "flex": 83, "title": "Preview", "layout": "fit", "name": "preview", "items": new Ext.BoxComponent() });
-  var main_panel138 = new Ext.Panel({ "border": false, "labelWidth": 72, "autoScroll": true, "items": [ main_1_panel136, preview_htmlbox137 ], "frame": true, "labelAlign": "top", "layoutConfig": { "align": "stretch" }, "bodyBorder": false, "layout": "vbox" });
-  config.items = main_panel138;
-  config.before_row_edit = function(record){ preview_htmlbox137.refresh(); };
+  config.items = new Ext.TabPanel({ "items": [  ], "activeTab": 0, "split": true });
+  config.before_row_edit = function(record){  };
   Lino.lino.DataControlListingReport.FormPanel.superclass.constructor.call(this, ww,config);
   }
 });
 
 Lino.lino.DataControlListingReport.detail = function(caller,params) { 
   var ww = new Lino.DetailWrapper(caller,{ "content_type": 4, "name": "detail", "url_data": "/api/lino/DataControlListingReport", "fk_name": null, "action_name": "detail", "active_fields": [  ] },params);
-  var form_panel139 = new Lino.lino.DataControlListingReport.FormPanel(ww,{ "ls_url": "/lino/DataControlListingReport", "layout": "fit", "ls_detail_handler": Lino.lino.DataControlListingReport.detail, "has_navigator": true, "ls_bbar_actions": [ { "text": "Save", "handler": function() {ww.save()} }, { "text": "Delete", "panel_btn_handler": Lino.delete_selected }, { "text": "Print", "must_save": true, "panel_btn_handler": Lino.row_action_handler('print') } ], "method": "PUT" });
-  ww.main_item = form_panel139;
+  var form_panel115 = new Lino.lino.DataControlListingReport.FormPanel(ww,{ "ls_url": "/lino/DataControlListingReport", "layout": "fit", "ls_detail_handler": Lino.lino.DataControlListingReport.detail, "has_navigator": true, "ls_bbar_actions": [ { "text": "Save", "handler": function() {ww.save()} }, { "text": "Delete", "panel_btn_handler": Lino.delete_selected }, { "text": "Print", "must_save": true, "panel_btn_handler": Lino.row_action_handler('print') } ], "method": "PUT" });
+  ww.main_item = form_panel115;
   ww.show();
 }
 
 Lino.lino.DataControlListingReport.listing = function(caller,params) { 
   var ww = new Lino.InsertWrapper(caller,{ "content_type": 4, "name": "listing", "url_data": "/api/lino/DataControlListingReport", "record_id": -99999, "fk_name": null, "action_name": "listing", "active_fields": [  ] },params);
-  var form_panel140 = new Lino.lino.DataControlListingReport.FormPanel(ww,{ "ls_bbar_actions": [ { "text": "Save", "handler": function() {ww.save()} } ], "ls_url": "/lino/DataControlListingReport", "layout": "fit", "method": "POST", "ls_detail_handler": Lino.lino.DataControlListingReport.detail });
-  ww.main_item = form_panel140;
+  var form_panel116 = new Lino.lino.DataControlListingReport.FormPanel(ww,{ "ls_bbar_actions": [ { "text": "Save", "handler": function() {ww.save()} } ], "ls_url": "/lino/DataControlListingReport", "layout": "fit", "method": "POST", "ls_detail_handler": Lino.lino.DataControlListingReport.detail });
+  ww.main_item = form_panel116;
   ww.show();
 }
 
 Lino.lino.DataControlListingReport.grid = function(caller,params) { 
   var ww = new Lino.GridMasterWrapper(caller,{ "content_type": 4, "action_name": "grid" },params);
-  var id129 = { "xtype": "numberfield" };
-  var date130 = new Lino.DateField({  });
-  var main_grid131 = new Lino.GridPanel(ww,{ "ls_url": "/lino/DataControlListingReport", "ls_bbar_actions": [ { "text": "Detail", "panel_btn_handler": Lino.show_detail_handler }, { "text": "Delete", "panel_btn_handler": Lino.delete_selected }, { "text": "Print", "must_save": true, "panel_btn_handler": Lino.row_action_handler('print') } ], "gc_name": 0, "stripeRows": true, "ls_quick_edit": true, "ls_store_fields": [ { "type": "int", "name": "id" }, { "type": "date", "name": "date", "dateFormat": "d.m.Y" } ], "pk_index": 0, "before_row_edit": function(record){  }, "ls_detail_handler": Lino.lino.DataControlListingReport.detail, "ls_id_property": "id", "page_length": 30, "ls_columns": [ { "colIndex": 0, "sortable": true, "header": "ID", "editable": true, "filter": { "type": "numeric" }, "width": 45, "renderer": Lino.id_renderer, "hidden": false, "editor": id129, "dataIndex": "id" }, { "colIndex": 1, "sortable": true, "xtype": "datecolumn", "format": "d.m.Y", "editable": true, "filter": { "type": "date" }, "header": "Date", "dataIndex": "date", "hidden": false, "width": 72, "editor": date130 } ], "ls_grid_configs": [  ] });
-  ww.main_item = main_grid131;
+  var id112 = { "xtype": "numberfield" };
+  var date113 = new Lino.DateField({  });
+  var main_grid114 = new Lino.GridPanel(ww,{ "ls_url": "/lino/DataControlListingReport", "ls_bbar_actions": [ { "text": "Detail", "panel_btn_handler": Lino.show_detail_handler }, { "text": "Delete", "panel_btn_handler": Lino.delete_selected }, { "text": "Print", "must_save": true, "panel_btn_handler": Lino.row_action_handler('print') } ], "gc_name": 0, "stripeRows": true, "ls_quick_edit": true, "ls_store_fields": [ { "type": "int", "name": "id" }, { "type": "date", "name": "date", "dateFormat": "d.m.Y" } ], "pk_index": 0, "before_row_edit": function(record){  }, "ls_detail_handler": Lino.lino.DataControlListingReport.detail, "ls_id_property": "id", "page_length": 30, "ls_columns": [ { "colIndex": 0, "sortable": true, "header": "ID", "editable": true, "filter": { "type": "numeric" }, "width": 45, "renderer": Lino.id_renderer, "hidden": false, "editor": id112, "dataIndex": "id" }, { "colIndex": 1, "sortable": true, "xtype": "datecolumn", "format": "d.m.Y", "editable": true, "filter": { "type": "date" }, "header": "Date", "dataIndex": "date", "hidden": false, "width": 72, "editor": date113 } ], "ls_grid_configs": [  ] });
+  ww.main_item = main_grid114;
   ww.show();
 }
 
 Ext.namespace('Lino.lino.MyTextFieldTemplates')
-Lino.lino.MyTextFieldTemplates.FormPanel = Ext.extend(Lino.FormPanel,{
-  constructor : function(ww,config) {
-  var id150 = { "fieldLabel": "ID", "anchor": "100%", "name": "id", "xtype": "numberfield" };
-  var id_ct_panel151 = new Ext.Container({ "flex": 14, "autoHeight": true, "labelWidth": 27, "items": [ id150 ], "frame": false, "border": false, "layout": "form" });
-  var name152 = new Ext.form.TextField({ "allowBlank": false, "fieldLabel": "Designation", "anchor": "100%", "name": "name", "maxLength": 200 });
-  var name_ct_panel153 = new Ext.Container({ "flex": 57, "autoHeight": true, "labelWidth": 108, "items": [ name152 ], "frame": false, "border": false, "layout": "form" });
-  var user154 = new Lino.RemoteComboFieldElement({ "fieldLabel": "user", "name": "user", "pageSize": 30, "hiddenName": "userHidden", "anchor": "100%", "store": new Lino.ComplexRemoteComboStore({ "proxy": new Ext.data.HttpProxy({ "url": "/choices/lino/MyTextFieldTemplates/user", "method": "GET" }) }), "emptyText": "Select a User..." });
-  var user_ct_panel155 = new Ext.Container({ "flex": 28, "autoHeight": true, "labelWidth": 45, "items": [ user154 ], "frame": false, "border": false, "layout": "form" });
-  var main_1_panel156 = new Ext.Container({ "border": false, "autoHeight": true, "layout": "hbox", "split": true, "items": [ id_ct_panel151, name_ct_panel153, user_ct_panel155 ], "region": "north", "layoutConfig": { "align": "stretchmax" }, "frame": false });
-  var description157 = new Lino.RichTextPanel(ww,{ "flex": 5, "ls_url": "/lino/MyTextFieldTemplates", "split": true, "title": "Description", "region": "center", "name": "description" });
-  var text158 = new Lino.RichTextPanel(ww,{ "flex": 5, "ls_url": "/lino/MyTextFieldTemplates", "split": true, "title": "Template Text", "region": "south", "name": "text" });
-  var main_panel159 = new Lino.VBorderPanel({ "border": false, "labelWidth": 0, "autoScroll": true, "items": [ main_1_panel156, description157, text158 ], "frame": true, "bodyBorder": false, "labelAlign": "top" });
-  config.items = main_panel159;
-  config.before_row_edit = function(record){ description157.refresh(); text158.refresh(); };
-  Lino.lino.MyTextFieldTemplates.FormPanel.superclass.constructor.call(this, ww,config);
-  }
-});
-
-Lino.lino.MyTextFieldTemplates.detail = function(caller,params) { 
-  var ww = new Lino.DetailWrapper(caller,{ "content_type": 5, "name": "detail", "url_data": "/api/lino/MyTextFieldTemplates", "fk_name": "user", "action_name": "detail", "active_fields": [  ] },params);
-  var form_panel160 = new Lino.lino.MyTextFieldTemplates.FormPanel(ww,{ "ls_url": "/lino/MyTextFieldTemplates", "ls_bbar_actions": [ { "text": "Save", "handler": function() {ww.save()} }, { "text": "Insert", "must_save": true, "panel_btn_handler": function(panel){Lino.show_insert(panel)} }, { "text": "Delete", "panel_btn_handler": Lino.delete_selected } ], "ls_detail_handler": Lino.lino.MyTextFieldTemplates.detail, "has_navigator": true, "layout": "fit", "method": "PUT", "ls_insert_handler": Lino.lino.MyTextFieldTemplates.insert });
-  ww.main_item = form_panel160;
-  ww.show();
-}
-
-Lino.lino.MyTextFieldTemplates.insert = function(caller,params) { 
-  var ww = new Lino.InsertWrapper(caller,{ "content_type": 5, "name": "insert", "url_data": "/api/lino/MyTextFieldTemplates", "record_id": -99999, "fk_name": "user", "action_name": "insert", "active_fields": [  ] },params);
-  var form_panel161 = new Lino.lino.MyTextFieldTemplates.FormPanel(ww,{ "ls_url": "/lino/MyTextFieldTemplates", "layout": "fit", "ls_detail_handler": Lino.lino.MyTextFieldTemplates.detail, "ls_bbar_actions": [ { "text": "Save", "handler": function() {ww.save()} } ], "method": "POST", "ls_insert_handler": Lino.lino.MyTextFieldTemplates.insert });
-  ww.main_item = form_panel161;
-  ww.show();
-}
-
 Lino.lino.MyTextFieldTemplates.grid = function(caller,params) { 
   var ww = new Lino.GridMasterWrapper(caller,{ "content_type": 5, "action_name": "grid" },params);
-  var id145 = { "xtype": "numberfield" };
-  var name146 = new Ext.form.TextField({ "allowBlank": false, "maxLength": 200 });
-  var description147 = new Lino.RichTextPanel(ww,{ "ls_url": "/lino/MyTextFieldTemplates", "title": "Description" });
-  var text148 = new Lino.RichTextPanel(ww,{ "ls_url": "/lino/MyTextFieldTemplates", "title": "Template Text" });
-  var main_grid149 = new Lino.GridPanel(ww,{ "ls_url": "/lino/MyTextFieldTemplates", "ls_bbar_actions": [ { "text": "Detail", "panel_btn_handler": Lino.show_detail_handler }, { "text": "Insert", "must_save": true, "panel_btn_handler": function(panel){Lino.show_insert(panel)} }, { "text": "Delete", "panel_btn_handler": Lino.delete_selected } ], "ls_grid_configs": [  ], "gc_name": 0, "stripeRows": true, "ls_quick_edit": true, "ls_store_fields": [ { "type": "int", "name": "id" }, { "name": "name" }, { "name": "description" }, { "name": "text" } ], "pk_index": 0, "before_row_edit": function(record){ description147.refresh(); text148.refresh(); }, "ls_detail_handler": Lino.lino.MyTextFieldTemplates.detail, "ls_id_property": "id", "page_length": 30, "ls_columns": [ { "colIndex": 0, "sortable": true, "header": "ID", "editable": true, "filter": { "type": "numeric" }, "width": 45, "renderer": Lino.id_renderer, "hidden": false, "editor": id145, "dataIndex": "id" }, { "colIndex": 1, "sortable": true, "header": "Designation", "editable": true, "filter": { "type": "string" }, "width": 180, "dataIndex": "name", "hidden": false, "editor": name146 }, { "colIndex": 2, "sortable": false, "header": "description", "editable": true, "filter": { "type": "string" }, "width": 540, "renderer": Lino.text_renderer, "hidden": false, "editor": description147, "dataIndex": "description" }, { "colIndex": 3, "sortable": false, "header": "text", "editable": true, "filter": { "type": "string" }, "width": 540, "renderer": Lino.text_renderer, "hidden": false, "editor": text148, "dataIndex": "text" } ], "ls_insert_handler": Lino.lino.MyTextFieldTemplates.insert });
-  ww.main_item = main_grid149;
+  var id121 = { "xtype": "numberfield" };
+  var name122 = new Ext.form.TextField({ "allowBlank": false, "maxLength": 200 });
+  var description123 = new Lino.RichTextPanel(ww,{ "ls_url": "/lino/MyTextFieldTemplates", "title": "Description" });
+  var text124 = new Lino.RichTextPanel(ww,{ "ls_url": "/lino/MyTextFieldTemplates", "title": "Template Text" });
+  var main_grid125 = new Lino.GridPanel(ww,{ "ls_url": "/lino/MyTextFieldTemplates", "ls_bbar_actions": [ { "text": "Delete", "panel_btn_handler": Lino.delete_selected } ], "gc_name": 0, "stripeRows": true, "ls_quick_edit": true, "ls_store_fields": [ { "type": "int", "name": "id" }, { "name": "name" }, { "name": "description" }, { "name": "text" } ], "pk_index": 0, "before_row_edit": function(record){ description123.refresh(); text124.refresh(); }, "ls_grid_configs": [  ], "ls_id_property": "id", "page_length": 30, "ls_columns": [ { "colIndex": 0, "sortable": true, "header": "ID", "editable": true, "filter": { "type": "numeric" }, "width": 45, "renderer": Lino.id_renderer, "hidden": false, "editor": id121, "dataIndex": "id" }, { "colIndex": 1, "sortable": true, "header": "Designation", "editable": true, "filter": { "type": "string" }, "width": 180, "dataIndex": "name", "hidden": false, "editor": name122 }, { "colIndex": 2, "sortable": false, "header": "description", "editable": true, "filter": { "type": "string" }, "width": 540, "renderer": Lino.text_renderer, "hidden": false, "editor": description123, "dataIndex": "description" }, { "colIndex": 3, "sortable": false, "header": "text", "editable": true, "filter": { "type": "string" }, "width": 540, "renderer": Lino.text_renderer, "hidden": false, "editor": text124, "dataIndex": "text" } ] });
+  ww.main_item = main_grid125;
   ww.show();
 }
 
 Ext.namespace('Lino.polls.ChoicesByPoll')
 Lino.polls.ChoicesByPoll.grid = function(caller,params) { 
   var ww = new Lino.GridMasterWrapper(caller,{ "content_type": 7, "action_name": "grid" },params);
-  var id98 = { "xtype": "numberfield" };
-  var choice99 = new Ext.form.TextField({ "allowBlank": false, "maxLength": 200 });
-  var votes100 = { "xtype": "numberfield", "allowBlank": false };
-  var main_grid101 = new Lino.GridPanel(ww,{ "ls_url": "/polls/ChoicesByPoll", "ls_bbar_actions": [ { "text": "Delete", "panel_btn_handler": Lino.delete_selected } ], "gc_name": 0, "stripeRows": true, "ls_quick_edit": true, "ls_store_fields": [ { "type": "int", "name": "id" }, { "name": "choice" }, { "type": "int", "name": "votes" } ], "pk_index": 0, "before_row_edit": function(record){  }, "ls_grid_configs": [  ], "ls_id_property": "id", "page_length": 30, "ls_columns": [ { "colIndex": 0, "sortable": true, "header": "ID", "editable": true, "filter": { "type": "numeric" }, "width": 45, "renderer": Lino.id_renderer, "hidden": false, "editor": id98, "dataIndex": "id" }, { "colIndex": 1, "sortable": true, "header": "choice", "editable": true, "filter": { "type": "string" }, "width": 180, "dataIndex": "choice", "hidden": false, "editor": choice99 }, { "colIndex": 2, "sortable": true, "header": "votes", "editable": true, "filter": { "type": "numeric" }, "width": 45, "dataIndex": "votes", "hidden": false, "editor": votes100 } ] });
-  ww.main_item = main_grid101;
+  var id81 = { "xtype": "numberfield" };
+  var choice82 = new Ext.form.TextField({ "allowBlank": false, "maxLength": 200 });
+  var votes83 = { "xtype": "numberfield", "allowBlank": false };
+  var main_grid84 = new Lino.GridPanel(ww,{ "ls_url": "/polls/ChoicesByPoll", "ls_bbar_actions": [ { "text": "Delete", "panel_btn_handler": Lino.delete_selected } ], "gc_name": 0, "stripeRows": true, "ls_quick_edit": true, "ls_store_fields": [ { "type": "int", "name": "id" }, { "name": "choice" }, { "type": "int", "name": "votes" } ], "pk_index": 0, "before_row_edit": function(record){  }, "ls_grid_configs": [  ], "ls_id_property": "id", "page_length": 30, "ls_columns": [ { "colIndex": 0, "sortable": true, "header": "ID", "editable": true, "filter": { "type": "numeric" }, "width": 45, "renderer": Lino.id_renderer, "hidden": false, "editor": id81, "dataIndex": "id" }, { "colIndex": 1, "sortable": true, "header": "choice", "editable": true, "filter": { "type": "string" }, "width": 180, "dataIndex": "choice", "hidden": false, "editor": choice82 }, { "colIndex": 2, "sortable": true, "header": "votes", "editable": true, "filter": { "type": "numeric" }, "width": 45, "dataIndex": "votes", "hidden": false, "editor": votes83 } ] });
+  ww.main_item = main_grid84;
   ww.show();
 }
 

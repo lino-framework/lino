@@ -102,6 +102,12 @@ Short-term
 Medium-term
 -----------
 
+#.  Tutorial weiter schreiben.
+
+#.  Ich habe momentan noch kein Beispiel dafür, wie man eine eigene 
+    ROOT_URLCONF setzen kann, um einen Site zu machen, bei dem Lino nur 
+    "draufgesetzt" ist (so wie "admin" in der Tutorial-Anwendung von Django).
+
 #.  Jetzt wo es aktive Felder gibt, sollte das Formular während des submit 
     deaktiviert werden, immerhin dauert das manchmal eine Sekunde.
     

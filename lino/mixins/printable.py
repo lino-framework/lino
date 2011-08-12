@@ -64,6 +64,9 @@ from lino.utils.appy_pod import setup_renderer
 def filename_root(elem):
     return elem._meta.app_label + '.' + elem.__class__.__name__
 
+def model_group(elem):
+    return elem._meta.app_label + '/' + elem.__class__.__name__
+
 
 
 bm_dict = {}
@@ -179,7 +182,8 @@ class PisaBuildMethod(DjangoBuildMethod):
 class SimpleBuildMethod(BuildMethod):
   
     def get_group(self,elem):
-        return 'doctemplates/' + self.templates_name + '/' + elem.get_templates_group()
+        #~ return 'doctemplates/' + self.templates_name + '/' + elem.get_templates_group()
+        return elem.get_templates_group()
   
     def get_template_leaf(self,action,elem):
       
@@ -387,7 +391,7 @@ def get_template_choices(elem,bmname):
         l.append(name)
     l.sort()
     if not l:
-        logger.warning("get_template_choices() : no matches for (%r,%r)",elem,bmname)
+        logger.warning("get_template_choices() : no matches for (%r,%r)",'*' + bm.template_ext,bm.get_group(elem))
     return l
 
 def old_get_template_choices(group,bmname):
@@ -578,7 +582,7 @@ class Printable(object):
         return babel.DEFAULT_LANGUAGE
         
     def get_templates_group(self):
-        return filename_root(self)
+        return model_group(self)
         
   
 class CachedPrintable(models.Model,Printable):
@@ -607,7 +611,8 @@ class CachedPrintable(models.Model,Printable):
         For subclasses of :class:`SimpleBuildMethod` the returned list 
         may not contain more than 1 element.
         """
-        return [ filename_root(self) + bm.template_ext ]
+        #~ return [ filename_root(self) + bm.template_ext ]
+        return [ 'Default' + bm.template_ext ]
           
     def unused_get_last_modified_time(self):
         """Return a model-specific timestamp that expresses when 

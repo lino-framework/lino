@@ -20,10 +20,8 @@ logger = logging.getLogger(__name__)
 import os
 import sys
 from django.conf import settings
-from django.conf.urls.defaults import *
+from django.conf.urls.defaults import patterns, include, url
 from django.contrib import databrowse
-#~ from django.contrib.auth.decorators import login_required
-#~ from django.contrib.auth import urls as auth_urls
 from django.utils import importlib
 
 import lino
@@ -40,11 +38,13 @@ ui = ext_ui.ExtUI(settings.LINO)
 
 urlpatterns += patterns('',
     (r'', include(ui.get_urls())),
-    #~ (settings.LINO.root_url, include(ui.get_urls())),
 )
 
-if sys.platform == 'win32':
-
+#~ if sys.platform == 'win32':
+if False: # now in extjs.ui.get_url()
+  
+    ## install /media URLs on a development server
+    
     #~ EXTJS_ROOT = r's:\ext-4.0-pr1'
     EXTJS_ROOT = r's:\ext-3.3.1'
     #~ EXTJS_ROOT = r's:\ext-3.3.0'
@@ -54,8 +54,6 @@ if sys.platform == 'win32':
     TINYMCE_ROOT = r's:\tinymce\jscripts\tiny_mce'
 
     LINO_MEDIA = os.path.abspath(os.path.join(os.path.dirname(lino.__file__),'..','media'))
-    #~ LINO_MEDIA = os.path.join(lino_site.lino_site.ui.source_dir(),'media')
-    #~ print 'LINO_MEDIA=',LINO_MEDIA
     
     if not os.path.exists(EXTJS_ROOT):
         raise Exception("EXTJS_ROOT %s does not exist" % EXTJS_ROOT)

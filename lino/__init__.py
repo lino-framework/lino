@@ -173,6 +173,12 @@ class Lino(object):
     http://groups.google.com/group/django-users/browse_thread/thread/27f035aa8e566af6
     """
     
+    extjs_root = None
+    """Path to the extjs root directory. Only to be used on a development server."""
+    tinymce_root = None
+    """Path to the tinymce root directory. Only to be used on a development server."""
+    
+    
     help_url = "http://code.google.com/p/lino"
     #~ index_html = "This is the main page."
     title = "Base Lino Application"
@@ -332,38 +338,41 @@ class Lino(object):
     """
     
     def __init__(self,project_file,settings_dict):
-        #self.django_settings = settings
-        #~ self.init_site_config = lambda sc: sc
         self.project_dir = normpath(dirname(project_file))
         self.project_name = os.path.split(self.project_dir)[-1]
         self.qooxdoo_prefix = self.root_url + '/media/qooxdoo/lino_apps/' + self.project_name + '/build/'
         self.dummy_messages = set()
         self._setting_up = False
         self._setup_done = False
-        #~ self.root_path = '/lino/'
-        self._response = None
+        #~ self._response = None
+        self.settings_dict = settings_dict
         
         #~ self.appy_params.update(pythonWithUnoPath=r'C:\PROGRA~1\LIBREO~1\program\python.exe')
         #~ APPY_PARAMS.update(pythonWithUnoPath=r'C:\PROGRA~1\OPENOF~1.ORG\program\python.exe')
         #~ APPY_PARAMS.update(pythonWithUnoPath='/usr/bin/libreoffice')
         #~ APPY_PARAMS.update(pythonWithUnoPath='/etc/openoffice.org3/program/python')
     
-        if settings_dict: 
-            self.install_settings(settings_dict)
+        #~ if settings_dict: 
+            #~ self.install_settings(settings_dict)
         if self.webdav_url is None:
             self.webdav_url = self.root_url + '/media/webdav/'
         if self.webdav_root is None:
             self.webdav_root = join(abspath(self.project_dir),'media','webdav')
             
-    def install_settings(self,s):
-        s.update(MEDIA_ROOT = join(self.project_dir,'media'))
-        s.update(FIXTURE_DIRS = [join(self.project_dir,"fixtures")])
-        s.update(TEMPLATE_DIRS = (
+        settings_dict.update(MEDIA_ROOT = join(self.project_dir,'media'))
+        settings_dict.update(FIXTURE_DIRS = [join(self.project_dir,"fixtures")])
+        settings_dict.update(TEMPLATE_DIRS = (
             join(abspath(self.project_dir),'templates'),
             join(abspath(self.source_dir),'templates'),
             join(abspath(dirname(__file__)),'templates'),
         ))
-
+        
+        try:
+            from sitecustomize_lino import on_init
+        except ImportError:
+            pass
+        else:
+            on_init(self)
         
         #~ s.update(DATABASES= {
               #~ 'default': {
@@ -394,6 +403,14 @@ class Lino(object):
     def setup_main_menu(self):
         pass
 
+    #~ def update(self,**kw):
+        #~ for k,v in kw.items():
+            #~ assert self.hasattr(k)
+            #~ setattr(self,k,v)
+            
+    #~ def update_settings(self,**kw):
+        #~ self._settings_dict.update(kw)
+            
     def configure(self,sc):
         self.config = sc
         
@@ -436,3 +453,15 @@ class Lino(object):
         #~ assert self._setup_done
         #~ return self.main_menu.menu_request(user)
         
+
+    def get_site_menu(self,ui,user):
+        from django.utils.translation import ugettext_lazy as _
+        from lino.utils import menus
+        main = menus.Toolbar('main')
+        self.setup_menu(ui,user,main)
+        #~ self.main_menu.add_item('home',_("~Home"),href='/')
+        main.add_url_button(self.root_url,_("Home"))
+        return main
+        
+    def setup_menu(self,ui,user,menu):
+        raise NotImplementedError

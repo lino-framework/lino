@@ -113,7 +113,8 @@ def analyze_models(self):
             dtl = DetailLayout(content,filename,cd)
             model._lino_detail_layouts.append(dtl)
             
-        load_config_files('%s.%s.*dtl' % (model._meta.app_label,model.__name__),loader)
+        #~ load_config_files('%s.%s.*dtl' % (model._meta.app_label,model.__name__),loader)
+        load_config_files(loader,'*.dtl','%s/%s' % (model._meta.app_label,model.__name__))
             
         #~ if get_unbound_meth(model,'summary_row') is None:
         if get_class_attr(model,'summary_row') is None:
@@ -219,10 +220,10 @@ def setup_site(self):
     self.configure(get_site_config())
   
     analyze_models(self)
-    logger.debug("analyze_models() done")
+    #~ logger.debug("analyze_models() done")
     
     actors.discover()
-    logger.debug("actors.discover() done")
+    #~ logger.debug("actors.discover() done")
     
     reports.discover()
     
@@ -231,11 +232,7 @@ def setup_site(self):
     #~ babel.discover() # would have to be called before model setup
 
     for a in actors.actors_list:
-        #~ if isinstance(a,layouts.DetailLayout):
-            a.setup()
-    #~ for a in actors.actors_list:
-        #~ if not isinstance(a,layouts.DetailLayout):
-            #~ a.setup()
+        a.setup()
 
     #~ if settings.MODEL_DEBUG:
     if True:
@@ -267,7 +264,8 @@ def setup_site(self):
     self._setup_done = True
     self._setting_up = False
     
-    dblogger.info("Lino Site %r started. Languages: %s", self.title, ', '.join(babel.AVAILABLE_LANGUAGES))
+    dblogger.info("Lino Site %r started. Languages: %s", 
+        self.title, ', '.join(babel.AVAILABLE_LANGUAGES))
     dblogger.info(lino.welcome_text())
     #~ except Exception,e:
         #~ logger.exception(e)

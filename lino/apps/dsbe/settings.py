@@ -21,8 +21,6 @@ import lino
 
 from lino.apps.std.settings import *
 
-from lino.utils.jsgen import js_code
-
 class Lino(Lino):
     source_dir = os.path.dirname(__file__)
     title = "Lino/DSBE"
@@ -30,31 +28,15 @@ class Lino(Lino):
     help_url = "http://lino.saffre-rumma.net/dsbe/index.html"
     migration_module = 'lino.apps.dsbe.migrate'
     
-    #~ residence_permit_upload_type = None
-    #~ work_permit_upload_type = None
-    #~ driving_licence_upload_type = None 
-    
-    #~ def init_site_config(self,sc):
-        #~ super(LinoSite,self).init_site_config(sc)
-        #~ sc.next_partner_id = 200000
-        #~ print 20110305, self.__class__
-
-    def configure(self,sc):
-        super(Lino,self).configure(sc)
-        
-    def default_report_params(self,rpt):
-        if str(rpt) == 'contacts.Persons':
-            return dict(is_active=True)
-        
-    def get_site_menu(self,ui,user):
+    def setup_menu(self,ui,user,main):
         from django.utils.translation import ugettext_lazy as _
-        from lino.utils import perms
+        #~ from lino.utils import perms
         from lino.utils import menus
         from lino.apps.dsbe import models as dsbe
         from lino.modlib.properties import models as properties
         from lino.modlib.cal import models as cal
 
-        main = menus.Toolbar('main')
+        #~ main = menus.Toolbar('main')
         m = main.add_menu("contacts",_("~Contacts"))
         m.add_action('contacts.Companies')
         m.add_action('contacts.Persons')
@@ -190,9 +172,6 @@ class Lino(Lino):
         m.add_item('userman',_("~User Manual"),
             href='http://lino.saffre-rumma.net/dsbe/index.html')
 
-        #~ self.main_menu.add_item('home',_("~Home"),href='/')
-        main.add_url_button(self.root_url,_("Home"))
-          
         return main
       
 
@@ -244,13 +223,4 @@ INSTALLED_APPS = (
 
 LANGUAGES = language_choices('de','fr','nl','en')
 #~ LANGUAGES = language_choices('de','fr','en')
-
-# Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-# Always use forward slashes, even on Windows.
-# Don't forget to use absolute paths, not relative paths.
-#~ TEMPLATE_DIRS = (
-      #~ # join(abspath(DATA_DIR),'templates'),
-      #~ join(abspath(LINO.project_dir),'templates'),
-      #~ join(abspath(dirname(lino.__file__)),'templates'),
-#~ )
 

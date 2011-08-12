@@ -968,7 +968,7 @@ class Report(actors.Actor): #,base.Handled):
             gc = GridConfig(self,data,filename,cd)
             self.grid_configs.append(gc)
             
-        load_config_files('%s.*gc' % self,loader)
+        load_config_files(loader,'%s.*gc' % self)
             
         
         #~ if os.path.exists(filename):
