@@ -25,7 +25,6 @@ from lino import reports
 from lino.core import actors
 from lino.mixins import printable
 #~ from lino.utils import perms
-from lino.utils import dblogger
 
 
 

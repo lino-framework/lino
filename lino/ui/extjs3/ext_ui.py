@@ -252,7 +252,7 @@ class ExtUI(base.UI):
     
     #~ USE_WINDOWS = False  # If you change this, then change also Lino.USE_WINDOWS in lino.js
 
-    def __init__(self,site):
+    def __init__(self,*args,**kw):
         self.reserved_names = [getattr(ext_requests,n) for n in ext_requests.URL_PARAMS]
         jsgen.register_converter(self.py2js_converter)
         #~ self.window_configs = {}
@@ -265,7 +265,7 @@ class ExtUI(base.UI):
         #~ else:
             #~ logger.warning("window_configs_file %s not found",self.window_configs_file)
             
-        base.UI.__init__(self,site) # will create a.window_wrapper for all actions
+        base.UI.__init__(self,*args,**kw) # will create a.window_wrapper for all actions
         
         #~ self.welcome_template = get_template('welcome.html')
         
@@ -467,11 +467,11 @@ class ExtUI(base.UI):
 
   
     def get_urls(self):
-        urlpatterns = patterns('',
-            (r'^$', self.index_view))
+        #~ urlpatterns = patterns('',
+            #~ (r'^$', self.index_view))
         rx = '^'
-        urlpatterns += patterns('',
-            (rx+r'$', self.index_view),
+        urlpatterns = patterns('',
+            (rx+'$', self.index_view),
             (rx+r'grid_action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<grid_action>\w+)$', self.json_report_view),
             (rx+r'grid_config/(?P<app_label>\w+)/(?P<actor>\w+)$', self.grid_config_view),
             (rx+r'detail_config/(?P<app_label>\w+)/(?P<actor>\w+)$', self.detail_config_view),
@@ -525,8 +525,7 @@ class ExtUI(base.UI):
                   { 'document_root': settings.MEDIA_ROOT, 'show_indexes': True }),
             )
 
-
-            
+        #~ print '\n'.join([repr(i) for i in urlpatterns])
         return urlpatterns
 
     def html_page(self,*args,**kw):
@@ -536,7 +535,7 @@ class ExtUI(base.UI):
         #~ c = RequestContext(request,dict(site=self.site,lino=lino))
         self.welcome_template.ui = self
         self.welcome_template.user = request.user
-        self.welcome_template.site = self.site
+        self.welcome_template.site = settings.LINO # self.site
         self.welcome_template.lino = lino
         #~ main=ext_elems.ExtPanel(
         main=dict(
@@ -560,7 +559,7 @@ class ExtUI(base.UI):
         yield '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />'
         #~ title = kw.get('title',None)
         #~ if title:
-        yield '<title id="title">%s</title>' % self.site.title
+        yield '<title id="title">%s</title>' % settings.LINO.title
         #~ yield '<!-- ** CSS ** -->'
         #~ yield '<!-- base library -->'
         
@@ -696,7 +695,7 @@ tinymce.init({
               #~ closable=False,
               bbar=dict(xtype='toolbar',items=js_code('Lino.status_bar')),
               #~ title=self.site.title,
-              tbar=self.site.get_site_menu(self,request.user),
+              tbar=settings.LINO.get_site_menu(self,request.user),
             )
             
             for ln in jsgen.declare_vars(win):
@@ -707,7 +706,7 @@ tinymce.init({
             comps = [
               #~ ext_elems.Toolbar(
               dict(xtype='toolbar',
-                items=self.site.get_site_menu(request.user),
+                items=settings.LINO.get_site_menu(request.user),
                 region='north',height=29),
               main,
               #~ jsgen.Component("konsole",
@@ -748,7 +747,8 @@ tinymce.init({
         yield "STRENGTH_CHOICES = %s;" % py2js(list(STRENGTH_CHOICES))
         yield "KNOWLEDGE_CHOICES = %s;" % py2js(list(KNOWLEDGE_CHOICES))
         yield "MEDIA_URL = %r;" % (self.media_url())
-        yield "ROOT_URL = %r;" % self.site.root_url
+        #~ yield "ROOT_URL = %r;" % settings.LINO.root_url
+        yield "ROOT_URL = %r;" % self.root_url
         #~ yield "API_URL = %r;" % self.build_url('api')
         #~ yield "TEMPLATES_URL = %r;" % self.build_url('templates')
         #~ yield "Lino.status_bar = new Ext.ux.StatusBar({defaultText:'Lino version %s.'});" % lino.__version__
@@ -1209,7 +1209,7 @@ tinymce.init({
             return _(s)
         tpl._ = mytranslate
         #~ tpl.user = request.user
-        tpl.site = self.site
+        tpl.site = settings.LINO
         tpl.settings = settings
         tpl.lino = lino
         tpl.ext_requests = ext_requests

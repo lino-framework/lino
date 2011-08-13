@@ -167,9 +167,11 @@ class Lino(object):
     
     """
     
-    root_url = '' # must begin with a slash if not empty
+    root_url = '' # 
     """
-    See also  http://groups.google.com/group/django-users/browse_thread/thread/c95ba83e8f666ae5?pli=1
+    must begin with a slash if not empty
+    See also  
+    http://groups.google.com/group/django-users/browse_thread/thread/c95ba83e8f666ae5?pli=1
     http://groups.google.com/group/django-users/browse_thread/thread/27f035aa8e566af6
     """
     
@@ -183,6 +185,9 @@ class Lino(object):
     #~ index_html = "This is the main page."
     title = "Base Lino Application"
     domain = "www.example.com"
+    
+    #~ user_model = "users.User"
+    #~ """Set this to ``"auth.User"`` if you use `django.contrib.auth` instead of `lino.modlib.users`"""
     
     legacy_data_path = None
     "Used by custom fixtures that import data from some legacy database."
@@ -396,6 +401,16 @@ class Lino(object):
         #~ from lino.models import get_site_config
         #~ self.config = get_site_config()
         
+    def get_user_model(self):
+        if 'django.contrib.auth' in self.settings_dict['INSTALLED_APPS']:
+            from django.contrib.auth.models import User
+            #~ return 'auth.User'
+        else:
+            from lino.modlib.users.models import User
+        return User
+        #~ return 'users.User'
+      
+        
 
     def add_dummy_message(self,s):
         self.dummy_messages.add(s)
@@ -416,50 +431,19 @@ class Lino(object):
         
     def setup(self):
         """
-        This is called for example from :mod:`lino.ui.extjs3.urls`. 
-        It is not defined here because it uses Django modules 
-        which we would need to import locally.
+        This is called whenever a user interface 
+        (:class:`lino.ui.base.UI`) gets instantiated (which usually 
+        happenes in some URLConf, for example in:mod:`lino.ui.extjs3.urls`). 
         """
         from lino.core.kernel import setup_site
         setup_site(self)
 
-        
-    #~ def context(self,request,**kw):
-        #~ d = dict(
-          #~ main_menu = menus.MenuRenderer(self.main_menu,request),
-          #~ #root_path = self.root_path,
-          #~ lino = self,
-          #~ settings = settings,
-          #~ debug = True,
-          #~ #skin = self.skin,
-          #~ request = request
-        #~ )
-        #~ d.update(kw)
-        #~ return d
-        
-    #~ def select_ui_view(self,request):
-        #~ html = '<html><body>'
-        #~ html += 'Please select a user interface: <ul>'
-        #~ for ui in self.uis:
-            #~ html += '<li><a href="%s">%s</a></li>' % (ui.name,ui.verbose_name)
-        #~ html += '</ul></body></html>'
-        #~ return HttpResponse(html)
-        
-        
-    #~ def add_menu(self,*args,**kw):
-        #~ return self.main_menu.add_menu(*args,**kw)
-
-    #~ def get_site_menu(self,user):
-        #~ assert self._setup_done
-        #~ return self.main_menu.menu_request(user)
-        
 
     def get_site_menu(self,ui,user):
         from django.utils.translation import ugettext_lazy as _
         from lino.utils import menus
         main = menus.Toolbar('main')
         self.setup_menu(ui,user,main)
-        #~ self.main_menu.add_item('home',_("~Home"),href='/')
         main.add_url_button(self.root_url,_("Home"))
         return main
         

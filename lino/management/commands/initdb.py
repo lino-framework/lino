@@ -33,7 +33,6 @@ from django.db import models
 import lino
 from lino.core.coretools import app_labels
 from lino.utils import *
-from lino.utils import dblogger
 
 class Command(BaseCommand):
     help = __doc__
@@ -49,6 +48,8 @@ class Command(BaseCommand):
     ) 
 
     def handle(self, *args, **options):
+      
+        from lino.utils import dblogger
             
         if not dblogger.logger.isEnabledFor(logging.INFO):
             raise CommandError("System logger must be enabled for INFO")

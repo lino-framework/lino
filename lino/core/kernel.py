@@ -208,7 +208,7 @@ def setup_site(self):
     logger.info(lino.welcome_text())
 
     if self._setup_done:
-        logger.warning("LinoSite setup already done ?!")
+        #~ logger.warning("LinoSite setup already done ?!")
         return
     if self._setting_up:
         #~ logger.warning("LinoSite.setup() called recursively.")

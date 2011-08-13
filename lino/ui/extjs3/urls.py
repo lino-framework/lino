@@ -11,80 +11,35 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""The module to be specified as :setting:`ROOT_URLCONF`.
+"""The default URLconf module pointed 
+:setting:`ROOT_URLCONF` in :mod:`lino.apps.std.settings`.
 """
 
-import logging
-logger = logging.getLogger(__name__)
+#~ import os
+#~ import sys
+#~ from django.conf import settings
+#~ from django.conf.urls.defaults import patterns, include, url
 
-import os
-import sys
-from django.conf import settings
-from django.conf.urls.defaults import patterns, include, url
-from django.contrib import databrowse
-from django.utils import importlib
+from lino.ui.extjs3 import UI
 
-import lino
-from . import ext_ui 
-
-urlpatterns = patterns('',
-    (r'^favicon\.ico$', 'django.views.generic.simple.redirect_to', 
-        {'url': settings.MEDIA_URL + 'lino/favicon.ico'})
-)
-
-settings.LINO.setup()
-
-ui = ext_ui.ExtUI(settings.LINO)
-
-urlpatterns += patterns('',
-    (r'', include(ui.get_urls())),
-)
-
-#~ if sys.platform == 'win32':
-if False: # now in extjs.ui.get_url()
-  
-    ## install /media URLs on a development server
-    
-    #~ EXTJS_ROOT = r's:\ext-4.0-pr1'
-    EXTJS_ROOT = r's:\ext-3.3.1'
-    #~ EXTJS_ROOT = r's:\ext-3.3.0'
-    #~ EXTJS_ROOT = r's:\ext-3.2.1'
-    #~ EXTJS_ROOT = r's:\ext-3.3.0-rc'
-    #~ EXTJS_URL = "/media/extjs/"
-    TINYMCE_ROOT = r's:\tinymce\jscripts\tiny_mce'
-
-    LINO_MEDIA = os.path.abspath(os.path.join(os.path.dirname(lino.__file__),'..','media'))
-    
-    if not os.path.exists(EXTJS_ROOT):
-        raise Exception("EXTJS_ROOT %s does not exist" % EXTJS_ROOT)
-        #~ logger.warning("EXTJS_ROOT %s does not exist",EXTJS_ROOT)
-        
-    prefix = settings.MEDIA_URL[1:]
-    assert prefix.endswith('/')
-    
-    urlpatterns += patterns('django.views.static',
-    (r'^%sextjs/(?P<path>.*)$' % prefix, 
-        'serve', {
-        'document_root': EXTJS_ROOT,
-        'show_indexes': True }),)
-        
-    urlpatterns += patterns('django.views.static',
-    (r'^%stinymce/(?P<path>.*)$' % prefix, 
-        'serve', {
-        'document_root': TINYMCE_ROOT,
-        'show_indexes': True }),)
-        
-    urlpatterns += patterns('django.views.static',
-    (r'^%slino/(?P<path>.*)$' % prefix, 
-        'serve', {
-        'document_root': LINO_MEDIA,
-        'show_indexes': True }),)
-
-    #~ print LINO_MEDIA
-  
-    urlpatterns += patterns('django.views.static',
-        (r'^%s(?P<path>.*)$' % prefix, 'serve', { 'document_root': settings.MEDIA_ROOT, 'show_indexes': True }),
-        #~ (r'^lino_media/(?P<path>.*)$', 'serve', { 'document_root': LINO_MEDIA, 'show_indexes': True }),
-    )
+# install Lino urls under root location (`/`)
+urlpatterns = UI().get_patterns()
 
 
+
+
+#~ from . import ext_ui 
+
+#~ urlpatterns = patterns('',
+    #~ (r'^favicon\.ico$', 'django.views.generic.simple.redirect_to', 
+        #~ {'url': settings.MEDIA_URL + 'lino/favicon.ico'})
+#~ )
+
+#~ ui = ext_ui.ExtUI()
+#~ urlpatterns = ui.get_patterns()
+
+#~ ui = ext_ui.ExtUI(PREFIX)
+
+#~ urlpatterns += patterns('',
+    #~ ('^'+ui.prefix, include(ui.get_urls())),
+#~ )

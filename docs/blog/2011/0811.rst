@@ -2,17 +2,19 @@
 ========
 
 Writing the first tutorial gave me ideas on how to 
-make Lino more easy to understand.
+make Lino more easy to understand:
 
 New class attributes 
 :attr:`lino.Lino.extjs_root`
 and
 :attr:`lino.Lino.tinymce_root`.
+These are in fact necessary if somebody wants to run the tutorial 
+in a Linux box.
+Need to update the tutorial.
 
 When a :class:`lino.Lino` is instantiated, it now tries to 
-import a module `sitecustomize_lino`, and if this exists, 
-a function `on_init`, and if this exists, it will be 
-executed on the instance. 
+import a module `sitecustomize_lino` executes the
+function `on_init` (if this exists). 
 This is to customize local settings that should be applied 
 for all Lino sites on a given machine.
 
@@ -20,3 +22,5 @@ for all Lino sites on a given machine.
 The :xfile:`doctemplates` directory has gone. 
 Document templates `.odt` are now simply together with :xfile:`.dtl` 
 files in these per-table directories.
+
+Check-in 20110812

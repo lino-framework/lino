@@ -1,0 +1,22 @@
+20110813
+========
+
+Still exposing the ideas that came when writing the tutorial. 
+:mod:`lino.tutorials.t2` now works with 
+either `urls` (Lino on top; this is equivalent to not setting 
+:setting:`ROOT_URLCONF` at all) 
+or `urls2` (Lino under `/lino`).
+
+:mod:`lino.tutorials.t2.urls3` shows how it is 
+theoretically possible to install both Django's admin 
+*and* Lino in parallel. 
+But the details are left for those who are interested; 
+Basically you just need to uncomment the related lines below.
+But this tutorial still gets an ImproperlyConfigured error 
+"Put 'django.contrib.auth.context_processors.auth' in 
+your TEMPLATE_CONTEXT_PROCESSORS setting in order to 
+use the admin application."
+
+.. todo::
+
+  We I need to write the text for tutorial 2...

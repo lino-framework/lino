@@ -53,12 +53,16 @@ DATABASES = {
 
 INSTALLED_APPS = (
   'django.contrib.contenttypes',
+  #~ 'django.contrib.auth',
+  #~ 'django.contrib.admin',
   'lino.modlib.users',
   'lino',
   'lino.tutorials.t2.polls'
 )
 
 
-ROOT_URLCONF = 'lino.tutorials.t2.urls'
+#~ ROOT_URLCONF = 'lino.tutorials.t2.urls'
+#~ ROOT_URLCONF = 'lino.tutorials.t2.urls2'
+#~ ROOT_URLCONF = 'lino.tutorials.t2.urls3'
 
 

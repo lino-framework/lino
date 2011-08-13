@@ -16,6 +16,7 @@
 """
 
 from django.db import models
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.utils.translation import ugettext_lazy as _
@@ -50,7 +51,7 @@ class AutoUser(models.Model):
     class Meta:
         abstract = True
         
-    user = models.ForeignKey("users.User",
+    user = models.ForeignKey(settings.LINO.get_user_model(),
         verbose_name=_("user"),
         blank=True,null=True
         )

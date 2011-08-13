@@ -18,11 +18,12 @@ from lino.utils.instantiator import Instantiator, i2d
 from lino.tools import resolve_model
 
 #~ from django.contrib.auth import models as auth
-from lino.modlib.users import models as auth
+#~ from lino.modlib.users import models as auth
 
 def objects():
   
-    u = auth.User.objects.get(pk=1)
+    User = settings.LINO.get_user_model()
+    u = User.objects.get(pk=1)
     
     notetype = Instantiator('notes.NoteType').build
     tel = notetype(name="phone report",build_method='appyodt',template='notes.Note.Telefonnotiz.odt')

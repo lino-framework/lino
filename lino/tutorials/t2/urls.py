@@ -1,11 +1,6 @@
 from django.conf.urls.defaults import patterns, include, url
 
-from django.conf import settings
+from lino.ui.extjs3 import UI
 
-
-urlpatterns = patterns('',
-    url(r'^$', 'lino.tutorials.t2.views.index'),
-
-    # Uncomment the next line to enable the admin:
-    url(r'^lino/', include('lino.ui.extjs3.urls')),
-)
+# install Lino urls under root location (`/`)
+urlpatterns = UI().get_patterns()

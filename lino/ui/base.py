@@ -14,6 +14,7 @@
 import lino
 from urllib import urlencode
 from django.conf import settings
+from django.conf.urls.defaults import patterns, include, url
 
 class Handle:
   
@@ -53,11 +54,22 @@ class UI:
     #~ prefix = None
     verbose_name = None
     
-    def __init__(self,site):
-        self.site = site
+    def __init__(self,prefix=''):
+        settings.LINO.setup()
+        #~ self.site = settings.LINO
+        assert isinstance(prefix,basestring)
+        self.prefix = prefix
+        self.root_url = settings.LINO.root_url
+        if prefix:
+            assert not prefix.startswith('/')
+            assert not prefix.endswith('/')
+            self.root_url += '/' + prefix
+        #~ print 'settings.LINO.root_url:', settings.LINO.root_url
+        #~ print 'ui.root_url:', self.root_url
         
     def build_url(self,*args,**kw):
-        url = self.site.root_url
+        #~ url = self.site.root_url
+        url = self.root_url
         if args:
             url += '/' + ("/".join(args))
         #~ if self.prefix:
@@ -70,15 +82,28 @@ class UI:
         return self.build_url('media',*args,**kw)
         #~ settings.MEDIA_URL
         
-    def get_urls():
-        pass
+    def get_patterns(self):
+        #~ return patterns('',(self.prefix, include(self.get_urls())))
+        urlpatterns = patterns('',
+            (r'^favicon\.ico$', 'django.views.generic.simple.redirect_to', 
+                {'url': settings.MEDIA_URL + 'lino/favicon.ico'})
+        )
         
+        if self.prefix:
+            urlpatterns += patterns('',
+              ('^'+self.prefix+"/", include(self.get_urls()))
+            )
+        else:
+            urlpatterns += self.get_urls()
+        return urlpatterns
+        
+    def get_urls():
+        raise NotImplementedError()
+        
+
     def field2elem(self,lui,field,**kw):
         pass
         
     def setup_handle(self,h):
         pass
-        
-    def get_report_ar(self,rh,**kw):
-        raise NotImplementedError()
         
