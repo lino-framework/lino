@@ -16,8 +16,11 @@ Middleware to be used on sites with :doc:`/topics/http_auth`.
 
 """
 
+import logging
+logger = logging.getLogger(__name__)
+
 from lino.modlib.users.models import User
-from lino.utils import dblogger
+#~ from lino.utils import dblogger
 
 class RemoteUserMiddleware(object):
     """
@@ -51,6 +54,6 @@ class RemoteUserMiddleware(object):
             u = User(username=username)
             u.full_clean()
             u.save()
-            dblogger.info("Creating new user %s from request %s",u,request)
+            logger.info("Creating new user %s from request %s",u,request)
             request.user = u
 
