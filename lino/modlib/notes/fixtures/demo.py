@@ -13,9 +13,12 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 import decimal
+
+from django.conf import settings
 from django.utils.translation import ugettext as _
 from lino.utils.instantiator import Instantiator, i2d
 from lino.tools import resolve_model
+
 
 #~ from django.contrib.auth import models as auth
 from lino.modlib.users import models as auth

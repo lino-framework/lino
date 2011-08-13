@@ -1,7 +1,7 @@
 20110813
 ========
 
-Still exposing the ideas that came when writing the tutorial. 
+Still exploring the ideas that came when writing the tutorial. 
 :mod:`lino.tutorials.t2` now works with 
 either `urls` (Lino on top; this is equivalent to not setting 
 :setting:`ROOT_URLCONF` at all) 
@@ -19,4 +19,7 @@ use the admin application."
 
 .. todo::
 
-  We I need to write the text for tutorial 2...
+  Tutorial 1 needs better explanations on 
+  how to install the media tree.
+  We need to write the text for tutorial 2...
+  

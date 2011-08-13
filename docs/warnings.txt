@@ -1,0 +1,33 @@
+T:\hgwork\lino\docs\blog\2011\0813.rst:4: WARNING: py:mod reference target not found: lino.tutorials.t2
+T:\hgwork\lino\docs\blog\2011\0813.rst:10: WARNING: py:mod reference target not found: lino.tutorials.t2.urls3
+T:\hgwork\lino\docs\todo.rst:27: WARNING: unknown document: /blog/20110725
+T:\hgwork\lino\docs\todo.rst:27: WARNING: unknown document: /blog/20110809
+T:\hgwork\lino\docs\todo.rst:53: WARNING: py:attr reference target not found: lino.Lino.source_dir
+T:\hgwork\lino\docs\todo.rst:60: WARNING: py:class reference target not found: auth.User
+T:\hgwork\lino\docs\todo.rst:69: WARNING: py:attr reference target not found: lino.mixins.printable.Printable.must_build
+T:\hgwork\lino\docs\todo.rst:114: WARNING: term not in glossary: appy.pod
+T:\hgwork\lino\docs\todo.rst:159: WARNING: term not in glossary: appy.pod
+T:\hgwork\lino\docs\todo.rst:220: WARNING: py:class reference target not found: lino.apps.dsbe.settings.Lino
+T:\hgwork\lino\docs\todo.rst:220: WARNING: xfile reference target not found: lino.js
+T:\hgwork\lino\docs\todo.rst:270: WARNING: xfile reference target not found: lino.js
+T:\hgwork\lino\docs\todo.rst:365: WARNING: xfile reference target not found: welcome.html
+T:\hgwork\lino\docs\todo.rst:417: WARNING: py:mod reference target not found: lino.demos.igen
+T:\hgwork\lino\docs\todo.rst:425: WARNING: py:mod reference target not found: lino.modlib.dsbe
+T:\hgwork\lino\docs\todo.rst:483: WARNING: py:mod reference target not found: lino.modlib.system.models.SiteConfig
+T:\hgwork\lino\docs\todo.rst:483: WARNING: py:mod reference target not found: django.contrib.sites
+T:\hgwork\lino\docs\todo.rst:485: WARNING: xfile reference target not found: make_staff.py
+T:\hgwork\lino\docs\todo.rst:495: WARNING: py:attr reference target not found: dsbe.models.Person.work_permit
+T:\hgwork\lino\docs\todo.rst:556: WARNING: py:class reference target not found: lino.utils.printable.LatexBuildMethod
+T:\hgwork\lino\docs\todo.rst:559: WARNING: py:attr reference target not found: links.Link.parent
+T:\hgwork\lino\docs\todo.rst:564: WARNING: py:attr reference target not found: links.Link.sequence
+T:\hgwork\lino\docs\todo.rst:564: WARNING: py:class reference target not found: links.LinksByOwner
+T:\hgwork\lino\docs\todo.rst:566: WARNING: py:meth reference target not found: contacts.Contact.address
+T:\hgwork\lino\docs\todo.rst:566: WARNING: py:class reference target not found: contacts.Persons
+T:\hgwork\lino\docs\todo.rst:576: WARNING: py:class reference target not found: links.LinksByOwner
+T:\hgwork\lino\docs\todo.rst:578: WARNING: py:class reference target not found: notes.Note
+T:\hgwork\lino\docs\todo.rst:578: WARNING: py:class reference target not found: notes.NoteType
+T:\hgwork\lino\docs\todo.rst:594: WARNING: py:mod reference target not found: lino.modlib.ledger
+T:\hgwork\lino\docs\todo.rst:594: WARNING: py:mod reference target not found: lino.modlib.finan
+T:\hgwork\lino\docs\todo.rst:620: WARNING: py:meth reference target not found: Action.run
+T:\hgwork\lino\docs\todo.rst:636: WARNING: py:mod reference target not found: <make_staff> lino.management.commands.make_staff
+T:\hgwork\lino\docs\todo.rst:656: WARNING: py:meth reference target not found: lino.ui.extjs.ext_store.BooleanStoreField.parse_form_value

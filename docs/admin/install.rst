@@ -287,21 +287,22 @@ It doesn't create them automatically, so you must do it yourself::
   cd /usr/local/django/myproject
   mkdir config
   mkdir fixtures
+  
   mkdir media
   mkdir media/cache
   mkdir media/cache/js
   mkdir media/upload
   mkdir media/webdav
   mkdir media/webdav/doctemplates
-  
-  ln -s /var/snapshots/lino/media media/lino
-  ln -s /var/snapshots/ext-3.3.1 media/extjs
-  ln -s /usr/share/tinymce/www media/tinymce
 
 The `media` directory 
 is the central place where Lino expects static files to be served.
 Besides the `cache`, `uploads` and `webdav` directory it must 
 contain the following symbolic links::
+
+  ln -s /var/snapshots/lino/media media/lino
+  ln -s /var/snapshots/ext-3.3.1 media/extjs
+  ln -s /usr/share/tinymce/www media/tinymce
 
 
 Create a demo database

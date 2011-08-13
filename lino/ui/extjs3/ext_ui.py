@@ -499,40 +499,47 @@ class ExtUI(base.UI):
         
 
         if is_devserver():
+          
+            from os.path import exists, join, abspath, dirname
+          
             logger.info("Running on a development server: install /media URLs ")
             
             def must_exist(s):
                 p = getattr(settings.LINO,s)
-                if not os.path.exists(p):
+                if not exists(p):
                     raise Exception("LINO.%s (%s) does not exist" % (s,p))
                     
-            if settings.LINO.extjs_root:
-                must_exist('extjs_root')
+            if not exists(join(settings.MEDIA_ROOT,'extjs')):
+                if settings.LINO.extjs_root:
+                    must_exist('extjs_root')
+                        
+                    prefix = settings.MEDIA_URL[1:]
+                    assert prefix.endswith('/')
                     
-                prefix = settings.MEDIA_URL[1:]
-                assert prefix.endswith('/')
-                
-                urlpatterns += patterns('django.views.static',
-                (r'^%sextjs/(?P<path>.*)$' % prefix, 
-                    'serve', {
-                    'document_root': settings.LINO.extjs_root,
-                    'show_indexes': True }))
-                    
-            if settings.LINO.tinymce_root:
-                must_exist('tinymce_root')
-                urlpatterns += patterns('django.views.static',
-                    (r'^%stinymce/(?P<path>.*)$' % prefix, 
+                    urlpatterns += patterns('django.views.static',
+                    (r'^%sextjs/(?P<path>.*)$' % prefix, 
                         'serve', {
-                        'document_root': settings.LINO.tinymce_root,
+                        'document_root': settings.LINO.extjs_root,
                         'show_indexes': True }))
+                    
+            if settings.LINO.use_tinymce:
+                if not exists(join(settings.MEDIA_ROOT,'tinymce')):
+                    if settings.LINO.tinymce_root:
+                        must_exist('tinymce_root')
+                        urlpatterns += patterns('django.views.static',
+                            (r'^%stinymce/(?P<path>.*)$' % prefix, 
+                                'serve', {
+                                'document_root': settings.LINO.tinymce_root,
+                                'show_indexes': True }))
                 
-            LINO_MEDIA = os.path.abspath(os.path.join(
-                os.path.dirname(lino.__file__),'..','media'))
-            urlpatterns += patterns('django.views.static',
-                (r'^%slino/(?P<path>.*)$' % prefix, 
-                    'serve', {
-                    'document_root': LINO_MEDIA,
-                    'show_indexes': True }))
+            if not exists(join(settings.MEDIA_ROOT,'lino')):
+                lino_media = abspath(join(dirname(lino.__file__),'..','media'))
+                
+                urlpatterns += patterns('django.views.static',
+                    (r'^%slino/(?P<path>.*)$' % prefix, 
+                        'serve', {
+                        'document_root': lino_media,
+                        'show_indexes': True }))
 
             urlpatterns += patterns('django.views.static',
                 (r'^%s(?P<path>.*)$' % prefix, 'serve', 
