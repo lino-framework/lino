@@ -376,10 +376,10 @@ class Person(Partner,contacts.Born,contacts.Person,Printable):
         blank=True,null=True,
         verbose_name=_("until"))
     
-    coach1 = models.ForeignKey(settings.LINO.get_user_model(),
+    coach1 = models.ForeignKey(settings.LINO.user_model,
         blank=True,null=True,
         verbose_name=_("Coach 1"),related_name='coached1')
-    coach2 = models.ForeignKey(settings.LINO.get_user_model(),
+    coach2 = models.ForeignKey(settings.LINO.user_model,
         blank=True,null=True,
         verbose_name=_("Coach 2"),related_name='coached2')
         
@@ -806,7 +806,8 @@ def persons_by_user():
     #~ from django.utils.translation import ugettext as _
     #~ from lino.modlib.users.models import User  
     #~ User = resolve_model('users.User')
-    User = settings.LINO.get_user_model()
+    User = resolve_model(settings.LINO.user_model)
+    #~ User = settings.LINO.get_user_model()
     #~ from lino.apps.dsbe.models import PersonGroup,Person,only_coached_persons,only_my_persons
     headers = [cgi.escape(_("User")),cgi.escape(_("Total"))]
     sums = []
@@ -1687,7 +1688,7 @@ class PersonSearch(mixins.AutoUser):
     
     only_my_persons = models.BooleanField(verbose_name=_("Only my persons")) # ,default=True)
     
-    coached_by = models.ForeignKey(settings.LINO.get_user_model(),
+    coached_by = models.ForeignKey(settings.LINO.user_model,
         verbose_name=_("Coached by"),
         related_name='persons_coached',
         blank=True,null=True)
@@ -1947,7 +1948,7 @@ reports.inject_field(Company,
 """
 from lino.tools import resolve_model
 #~ User = resolve_model('users.User')
-User = settings.LINO.get_user_model()
+User = resolve_model(settings.LINO.user_model)
 User.grid_search_field = 'username'
 
 

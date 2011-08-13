@@ -51,7 +51,7 @@ class AutoUser(models.Model):
     class Meta:
         abstract = True
         
-    user = models.ForeignKey(settings.LINO.get_user_model(),
+    user = models.ForeignKey(settings.LINO.user_model,
         verbose_name=_("user"),
         blank=True,null=True
         )

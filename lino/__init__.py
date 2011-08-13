@@ -186,8 +186,9 @@ class Lino(object):
     title = "Base Lino Application"
     domain = "www.example.com"
     
-    #~ user_model = "users.User"
-    #~ """Set this to ``"auth.User"`` if you use `django.contrib.auth` instead of `lino.modlib.users`"""
+    user_model = "users.User"
+    """Set this to ``"auth.User"`` if you use `django.contrib.auth` instead of
+    `lino.modlib.users`"""
     
     legacy_data_path = None
     "Used by custom fixtures that import data from some legacy database."
@@ -401,13 +402,13 @@ class Lino(object):
         #~ from lino.models import get_site_config
         #~ self.config = get_site_config()
         
-    def get_user_model(self):
-        if 'django.contrib.auth' in self.settings_dict['INSTALLED_APPS']:
-            from django.contrib.auth.models import User
+    #~ def get_user_model(self):
+        #~ if 'django.contrib.auth' in self.settings_dict['INSTALLED_APPS']:
+            #~ from django.contrib.auth.models import User
             #~ return 'auth.User'
-        else:
-            from lino.modlib.users.models import User
-        return User
+        #~ else:
+            #~ from lino.modlib.users.models import User
+        #~ return User
         #~ return 'users.User'
       
         
