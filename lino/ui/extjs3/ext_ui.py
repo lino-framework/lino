@@ -16,6 +16,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 import os
+import sys
 import cgi
 import time
 #import traceback
@@ -89,6 +90,14 @@ KNOWLEDGE_CHOICES = HowWell.get_choices()
 from lino.tools import obj2str, obj2unicode
 
 #~ from lino.ui.extjs.ext_windows import WindowConfig # 20100316 backwards-compat window_confics.pck 
+
+def is_devserver():
+    """Thanks to Aryeh Leib Taurog in 
+    `How can I tell whether my Django application is running on development server or not?
+    <http://stackoverflow.com/questions/1291755>`_
+    """
+    return (sys.argv[1] == 'runserver')
+    
 
 
 class HttpResponseDeleted(HttpResponse):
@@ -487,30 +496,35 @@ class ExtUI(base.UI):
                     self.templates_view),
             )
             
-            
-        #~ if sys.platform == 'win32':
-        if settings.LINO.extjs_root:
-          
+        
+
+        if is_devserver():
             logger.info("Running on a development server: install /media URLs ")
             
-
-            if not os.path.exists(settings.LINO.extjs_root):
-                raise Exception("EXTJS_ROOT %s does not exist" % settings.LINO.extjs_root)
+            def must_exist(s):
+                p = getattr(settings.LINO,s)
+                if not os.path.exists(p):
+                    raise Exception("LINO.%s (%s) does not exist" % (s,p))
+                    
+            if settings.LINO.extjs_root:
+                must_exist('extjs_root')
+                    
+                prefix = settings.MEDIA_URL[1:]
+                assert prefix.endswith('/')
                 
-            prefix = settings.MEDIA_URL[1:]
-            assert prefix.endswith('/')
-            
-            urlpatterns += patterns('django.views.static',
-            (r'^%sextjs/(?P<path>.*)$' % prefix, 
-                'serve', {
-                'document_root': settings.LINO.extjs_root,
-                'show_indexes': True }))
-                
-            urlpatterns += patterns('django.views.static',
-                (r'^%stinymce/(?P<path>.*)$' % prefix, 
+                urlpatterns += patterns('django.views.static',
+                (r'^%sextjs/(?P<path>.*)$' % prefix, 
                     'serve', {
-                    'document_root': settings.LINO.tinymce_root,
+                    'document_root': settings.LINO.extjs_root,
                     'show_indexes': True }))
+                    
+            if settings.LINO.tinymce_root:
+                must_exist('tinymce_root')
+                urlpatterns += patterns('django.views.static',
+                    (r'^%stinymce/(?P<path>.*)$' % prefix, 
+                        'serve', {
+                        'document_root': settings.LINO.tinymce_root,
+                        'show_indexes': True }))
                 
             LINO_MEDIA = os.path.abspath(os.path.join(
                 os.path.dirname(lino.__file__),'..','media'))
@@ -522,7 +536,8 @@ class ExtUI(base.UI):
 
             urlpatterns += patterns('django.views.static',
                 (r'^%s(?P<path>.*)$' % prefix, 'serve', 
-                  { 'document_root': settings.MEDIA_ROOT, 'show_indexes': True }),
+                  { 'document_root': settings.MEDIA_ROOT, 
+                    'show_indexes': True }),
             )
 
         #~ print '\n'.join([repr(i) for i in urlpatterns])

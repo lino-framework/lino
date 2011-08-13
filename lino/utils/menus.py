@@ -178,7 +178,7 @@ class Menu(MenuItem):
         #~ return self._add_item(MenuItem(self,None,None,label,**kw))
         self.items.append(dict(
           xtype='button',text=label,
-          handler=js_code("function() {window.location='/%s';}" % url)))
+          handler=js_code("function() {window.location='%s';}" % url)))
 
     def _add_item(self,m):
         assert isinstance(m,MenuItem)

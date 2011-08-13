@@ -25,8 +25,8 @@ Creating models,
 Activating models,
 and Playing with the API.
 
-Now that you done and learned all this, we go on by giving some 
-Lino specific instructions:
+Now that you've done and learned all this, 
+we go on by giving some Lino specific instructions:
 
 First take your :xfile:`settings.py` file again and 
 make some more changes to it.
@@ -35,7 +35,8 @@ files.
 
 - Remove everything except those settings which
   you modified.
-  Especially the :setting:`DATABASES` setting remains.
+  The :setting:`DATABASES` setting remains certainly.
+  
 
 - At the beginning of the file, 
   insert the following four lines of code::
@@ -50,6 +51,7 @@ files.
   named ``LINO`` which must be a :class:`lino.Lino` instance.
   This instance will fill intelligent default values to 
   your settings since you pass your `global()` namespace.
+  
 
 - Give your :setting:`INSTALLED_APPS` setting
   for this tutorial the following value::
@@ -72,15 +74,16 @@ files.
   for Django's ``django.contrib.auth``.
   
 
-Then **delete** your files 
-:file:`urls.py` and :file:`polls/views.py`. 
-With Lino you don't need them!
+The :setting:`ROOT_URL` setting 
+and your files :file:`urls.py` and :file:`polls/views.py` 
+are not necessary in our first Lino application. 
+With Lino you don't need to worry about URLs.
 
 You might want to compare your files with our version 
 of this step of the tutorial. 
 See :srcref:`/lino/tutorials/t1a`.
 
-  
+ 
 Designing the user interface
 ----------------------------
 
@@ -118,13 +121,13 @@ defined in your :file:`settings.py`::
 
     class Lino(Lino):
         title = "Lino Tutorial"
-        
         def setup_menu(self,ui,user,main):
             m = main.add_menu("polls","~Polls")
             m.add_action('polls.Polls')
             
             m = main.add_menu("config","~Configure")
             m.add_action('users.Users')
+        extjs_root = '/'
         
 
 That's all! Now start the development server::

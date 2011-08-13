@@ -199,8 +199,9 @@ Create your Django project directory
 :xfile:`settings.py`, :file:`__init__.py` and :xfile:`manage.py`.
 
 You may either create your Django project from scratch 
-(as explained in Django's docs), or
-start with our wuggestions.
+(as explained in 
+`Django's docs <https://docs.djangoproject.com/en/dev/intro/tutorial01/>`_), 
+or start with our suggestions.
 
 The :file:`__init__.py` must exist but can be empty::
 
@@ -234,17 +235,13 @@ And here is our suggestion for :xfile:`settings.py`::
         title = u"My first Lino site"
         csv_params = dict(delimiter=',',encoding='utf-16')
 
-    LINO = Lino(__file__)
+    LINO = Lino(__file__,globals())
 
     LANGUAGE_CODE = 'fr' # "main" language
     LANGUAGES = language_choices('fr','nl','en')
 
-    FIXTURE_DIRS = [join(LINO.project_dir,"fixtures")]
-    MEDIA_ROOT = join(LINO.project_dir,"media")
-
     LINO.appy_params.update(pythonWithUnoPath='/etc/openoffice.org3/program/python')
 
-    LOGGING_CONFIG = 'lino.utils.log.configure'
     LOGGING = dict(filename='/var/log/lino/system.log'),level='DEBUG')
     # some alternative examples:
     # LOGGING = dict(filename=join(LINO.project_dir,'log','system.log'),level='DEBUG')
@@ -278,7 +275,14 @@ And here is our suggestion for :xfile:`settings.py`::
     #EMAIL_PORT = ""
     
 
-Create a few subdirectories of your local project directory::
+More documentation about the :setting:`LOGGING` setting
+in :doc:`lino.utils.log.configure`
+
+Prepare your Django project for Lino
+------------------------------------
+
+Lino expects a few subdirectories of your local project directory.
+It doesn't create them automatically, so you must do it yourself::
 
   cd /usr/local/django/myproject
   mkdir config
@@ -290,16 +294,39 @@ Create a few subdirectories of your local project directory::
   mkdir media/webdav
   mkdir media/webdav/doctemplates
   
+  ln -s /var/snapshots/lino/media media/lino
+  ln -s /var/snapshots/ext-3.3.1 media/extjs
+  ln -s /usr/share/tinymce/www media/tinymce
+
 The `media` directory 
 is the central place where Lino expects static files to be served.
 Besides the `cache`, `uploads` and `webdav` directory it must 
 contain the following symbolic links::
+
+
+Create a demo database
+----------------------
+
+Go to your :file:`/usr/local/django/myproject` directory and run::
+
+  python manage.py initdb std all_countries few_cities all_languages props demo 
   
-  cd /usr/local/django/myproject/media
-  ln -s /var/snapshots/lino/media lino
-  ln -s /var/snapshots/ext-3.3.1 extjs
-  ln -s /usr/share/tinymce/www tinymce
+When using sqlite, 
+the :mod:`initdb <lino.management.commands.initdb>` command will create 
+the database file whose name is specified in your :setting:`DATABASES` setting.
+
+See also the :doc:`dpytutorial`.
+
+
+Start a development server
+--------------------------
+
+:file:`/usr/local/django/myproject`
+
+  python manage.py test
   
+  python manage.py runserver
+
 
   
 Install startup scripts 
@@ -328,30 +355,6 @@ Afterwards you'll have to manually adapt them:
 - `start` and `stop` : remove the line for :term:`watch_tim` if you don't need this.
 - `oood` : check the path of OpenOffice / LibreOffice
 
-  
-Apply a patch for Django
-------------------------
-
-(Just skip this section; it is probably no longer necessary and won't work with the 
-latest Django revision)
-
-Lino needs Django ticket `#10808 <http://code.djangoproject.com/ticket/10808>`_
-to be fixed, here is how I do it::
-
-  $ cd /var/snapshots/django
-  $ patch -p0 < /var/snapshots/lino/patches/10808b-r14404.diff
-
-The expected output is something like this::
-
-  (Stripping trailing CRs from patch.)
-  patching file django/db/models/base.py
-  (Stripping trailing CRs from patch.)
-  patching file django/forms/models.py
-  (Stripping trailing CRs from patch.)
-  patching file tests/modeltests/model_inheritance/models.py
-
-Read :doc:`/django/DjangoPatches` for more details.
- 
   
 Set up Apache and `mod_wsgi`
 ----------------------------
@@ -419,26 +422,30 @@ Prefix                      Description
 /media/beid/                image files for dsbe.models.PersonDetail    
 /media/uploads/             Uploaded files
 /media/webdav/              User-editable files 
-/media/webdav/doctemplates  doctemplates directory
 =========================== =========================================== 
+
+While the development server does these mappings 
+automatically.
 
 On a production server you then add a line like the following 
 to your Apache config::
 
   Alias /media/ /usr/local/django/myproject/media/
   
-The development server currently does these mappings 
-automatically in `urls.py`.
-
 
 
 Miscellaneous
 -------------
 
-Maybe also::
 
-  $ chmod a+x /usr/local/django/myproject/manage.py
+When :mod:`initdb <lino.management.commands.initdb>` is done, 
+you must check that user `www-data` has write access 
+to this file. 
+Something like this::
 
+  chgrp www-data /usr/local/django/myproject/myproject.db
+  chmod -R g+w /usr/local/django/myproject/myproject.db
+  
 You'll maybe have to do something like this::
 
   # addgroup YOURSELF www-data
@@ -531,23 +538,6 @@ In case of problems, see also
 :mod:`lino.modlib.dsbe.management.commands.watch_tim`  
 
 
-Create a demo database
-----------------------
 
-Go to your `/usr/local/django/myproject` directory and run::
-
-  python manage.py initdb std all_countries few_cities all_languages props demo 
-  
-When using sqlite, 
-the :mod:`initdb <lino.management.commands.initdb>` command will create 
-the database file whose name is specified in your :setting:`DATABASES` setting.
-When :mod:`initdb <lino.management.commands.initdb>` is done, 
-you must check that user `www-data` has write access to this file. 
-Something like this::
-
-  chgrp www-data /usr/local/django/myproject/myproject.db
-  chmod -R g+w /usr/local/django/myproject/myproject.db
-  
-See also the :doc:`dpytutorial`.
 
 

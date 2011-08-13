@@ -445,7 +445,10 @@ class Lino(object):
         from lino.utils import menus
         main = menus.Toolbar('main')
         self.setup_menu(ui,user,main)
-        main.add_url_button(self.root_url,_("Home"))
+        url = self.root_url
+        if not url: 
+            url = "/"
+        main.add_url_button(url,_("Home"))
         return main
         
     def setup_menu(self,ui,user,menu):
