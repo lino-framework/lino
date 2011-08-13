@@ -44,12 +44,13 @@ class Lino(Lino):
     def configure(self,sc):
         super(Lino,self).configure(sc)
         
-    def get_site_menu(self,ui,user):
+    def setup_menu(self,ui,user,main):
   
         from django.utils.translation import ugettext_lazy as _
         from lino.utils import perms
 
-        from lino import models as system
+        #~ from lino.modlib.cal import models as cal
+        #~ from lino.modlib.notes import models as notes
 
         from django.db import models
 
@@ -62,19 +63,9 @@ class Lino(Lino):
         sales = models.get_app('sales')
         finan = models.get_app('finan')
         journals = models.get_app('journals')
+        notes = models.get_app('notes')
+        cal = models.get_app('cal')
 
-        #~ from lino.utils import perms
-        from lino.utils import menus
-        #~ from lino import models as system
-
-        #~ ledger.set_accounts(
-          #~ #providers='4400',
-          #~ #customers='4000',
-          #~ sales_base='7000',
-          #~ sales_vat='4510',
-        #~ )
-          
-        main = menus.Toolbar('main')
         m = main.add_menu("contacts","~Contacts")
         m.add_action('contacts.Companies')
         m.add_action('contacts.Persons')
@@ -115,6 +106,8 @@ class Lino(Lino):
 
         if user.is_staff:
             m = main.add_menu("config","~Configuration")
+            notes.setup_config_menu(self,ui,user,m)
+            cal.setup_config_menu(self,ui,user,m)
             m.add_action('sales.InvoicingModes')
             m.add_action('sales.ShippingModes')
             m.add_action('sales.PaymentTerms')
@@ -122,6 +115,7 @@ class Lino(Lino):
             #~ m = self.add_menu("ledger","~Ledger",
               #~ can_view=perms.is_authenticated)
             m.add_action('ledger.Accounts')
+            
 
             m.add_action('countries.Countries')
             #m.add_action(contacts.Countries())
@@ -139,9 +133,6 @@ class Lino(Lino):
         m.add_item('userman',_("~User Manual"),
             href='http://lino.saffre-rumma.net/igen/index.html')
 
-        #~ self.main_menu.add_item('home',_("~Home"),href='/')
-        main.add_url_button(self.root_url,_("Home"))
-          
         return main
         
 
@@ -155,7 +146,8 @@ TIME_ZONE = 'Europe/Tallinn'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'en-US'
+LANGUAGE_CODE = 'en'
+#~ LANGUAGE_CODE = 'en-US'
 #~ LANGUAGE_CODE = 'fr-BE'
 
 #~ ROOT_URLCONF = 'lino.demos.dsbe.urls'

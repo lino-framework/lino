@@ -445,10 +445,10 @@ class BasePrintAction(reports.RowAction):
         else:
             dirname = os.path.dirname(filename)
             if not os.path.isdir(dirname):
-                if True:
-                    raise Exception("Please create yourself directory %s" % dirname)
-                else:
+                if settings.LINO.make_missing_dirs:
                     os.makedirs(dirname)
+                else:
+                    raise Exception("Please create yourself directory %s" % dirname)
         logger.debug(u"%s : %s -> %s", bm,elem,filename)
         return filename
         

@@ -60,6 +60,7 @@ from django.utils.translation import ugettext_lazy as _
 
 
 from lino import reports
+from lino import mixins
 from lino.models import SiteConfig
 from lino.modlib.contacts import models as contacts
 from lino.modlib.notes import models as notes
@@ -80,12 +81,16 @@ class Company(contacts.Company):
         #~ verbose_name = _("Company")
         #~ verbose_name_plural = _("Companies")
     
-class Note(notes.Note):
+class Note(notes.Note,mixins.Owned):
      class Meta:
         app_label = 'notes'
         # see :doc:`/tickets/14`
         #~ verbose_name = _("Note")
         #~ verbose_name_plural = _("Notes")
+        
+class NotesByOwner(reports.Report):
+    model = Note
+    fk_name = 'owner'
  
 class Event(cal.Event):
     class Meta(cal.Event.Meta):

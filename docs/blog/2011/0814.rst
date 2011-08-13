@@ -1,0 +1,7 @@
+20110814
+========
+
+Face-lifting for iGen
+---------------------
+
+Started to work on the prototype for a new customer who is going to use iGen.

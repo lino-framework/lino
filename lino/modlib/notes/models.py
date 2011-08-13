@@ -230,3 +230,14 @@ class NotesByEventType(Notes):
     #~ label = _("Notes by person")
   
   
+def setup_main_menu(site,ui,user,m): pass
+def setup_my_menu(site,ui,user,m): pass
+  
+def setup_config_menu(site,ui,user,m): 
+    m  = m.add_menu("notes",_("~Notes"))
+    m.add_action('notes.NoteTypes')
+    m.add_action('notes.EventTypes')
+  
+def setup_explorer_menu(site,ui,user,m):
+    m.add_action('notes.Notes')
+  

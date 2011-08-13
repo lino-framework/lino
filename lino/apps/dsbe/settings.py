@@ -35,6 +35,7 @@ class Lino(Lino):
         from lino.apps.dsbe import models as dsbe
         from lino.modlib.properties import models as properties
         from lino.modlib.cal import models as cal
+        from lino.modlib.notes import models as notes
 
         #~ main = menus.Toolbar('main')
         m = main.add_menu("contacts",_("~Contacts"))
@@ -87,7 +88,7 @@ class Lino(Lino):
             cfg = main.add_menu("config",_("~Configure"))
             
             config_contacts = cfg.add_menu("contacts",_("~Contacts"))
-            config_notes    = cfg.add_menu("notes",_("~Notes"))
+            #~ config_notes    = cfg.add_menu("notes",_("~Notes"))
             config_dsbe     = cfg.add_menu("dsbe",_("~DSBE"))
             config_jobs     = cfg.add_menu("jobs",_("~Jobs"))
             config_cv       = cfg.add_menu("cv",_("C~V"))
@@ -100,8 +101,10 @@ class Lino(Lino):
             config_contacts.add_action('contacts.ContactTypes')
             config_contacts.add_action('countries.Languages')
             
-            config_notes.add_action('notes.NoteTypes')
-            config_notes.add_action('notes.EventTypes')
+            notes.setup_config_menu(self,ui,user,cfg)
+            
+            #~ config_notes.add_action('notes.NoteTypes')
+            #~ config_notes.add_action('notes.EventTypes')
         
             config_jobs.add_action('jobs.ContractTypes')
             config_jobs.add_action('jobs.JobTypes')
@@ -150,7 +153,8 @@ class Lino(Lino):
             #m.add_action('properties.PropChoices')
             #~ m.add_action('properties.PropValues')
             m.add_action('contacts.AllPersons')
-            m.add_action('notes.Notes')
+            notes.setup_explorer_menu(self,ui,user,cfg)
+            #~ m.add_action('notes.Notes')
             #~ m.add_action('lino.TextFieldTemplates')
             m.add_action('links.Links')
             m.add_action('dsbe.Exclusions')

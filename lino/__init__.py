@@ -251,6 +251,8 @@ class Lino(object):
     See :doc:`/blog/2011/0523`.
     """
     
+    make_missing_dirs = True
+    
     
     time_format_strftime = '%H:%M'
     time_format_extjs = 'H:i'
