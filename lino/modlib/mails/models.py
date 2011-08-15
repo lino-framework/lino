@@ -132,6 +132,9 @@ class OutMail(Mail,mixins.AutoUser):
     
 
 
+class Mails(reports.Report):
+    model = 'mails.Mail'
+    
 class InMails(reports.Report):
     model = 'mails.InMail'
     column_names = "received sender subject * body"
@@ -167,6 +170,7 @@ class MailsByPerson(object):
         #~ skw[self.fk.fk_field] = master_instance.pk
         #~ q1 = Recipient.objects.filter(owner_type=ct,owner_id=master_instance.pk)
         q1 = Recipient.objects.filter(address=master_instance.email).values('mail').query
+        #~ q1 = Recipient.objects.filter(address=master_instance.email)
         kw['id__in'] = q1
         #~ kw['recipient_set__address__contains'] = master_instance
         return kw

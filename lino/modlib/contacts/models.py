@@ -64,16 +64,9 @@ def get_salutation(sex,nominative=False):
     without (BE) a dot. Since the babel module doesn't yet allow 
     to differentiate dialects, we opted for the british version.
     
-    - optional keyword argument `nominative` used only when babel language
-      is "de": specifying ``nominative=True`` will return "Herr" instead of default 
-      "Herrn" for male persons.
-    
-    - optional keyword argument `no_salutation` can be set to `True` to 
-      suppress salutations. See 
-      :func:`lino.apps.dsbe.tests.dsbe_tests.test04` 
-      and
-      :func:`lino.modlib.contacts.tests.test01` 
-      for some examples.
+    The optional keyword argument `nominative` used only when babel language
+    is "de": specifying ``nominative=True`` will return "Herr" instead of default 
+    "Herrn" for male persons.
     
     """
     #~ if no_salutation:
@@ -186,10 +179,12 @@ class Addressable(CountryCity):
         #~ yield self.name
         yield self.get_full_name()
         
-    def get_full_name(self,**salutation_options):
+    #~ def get_full_name(self,**salutation_options):
+    def get_full_name(self,*args,**kw):
         """\
-Returns a one-line string representing this Addressable in a text paragraph.
-The default returns simply the `name` field, but e.g. :class:`Person` 
+Returns a one-line string representing this Addressable.
+The default returns simply the `name` field, ignoring any parameters, 
+but e.g. :class:`Person` 
 overrides this.
         """
         return self.name
@@ -316,7 +311,15 @@ class Person(Addressable):
         
     def get_full_name(self,salutation=True,**salutation_options):
         """Returns a one-line string composed of salutation, first_name and last_name.
-        Optional salutation options see :func:`get_salutation`.
+        
+The optional keyword argument `salutation` can be set to `False` 
+to suppress salutations. 
+See :func:`lino.apps.dsbe.tests.dsbe_tests.test04` 
+and
+:func:`lino.modlib.contacts.tests.test01` 
+for some examples.
+
+Optional `salutation_options` see :func:`get_salutation`.
         """
         #~ return '%s %s' % (self.first_name, self.last_name.upper())
         words = []
@@ -327,11 +330,11 @@ class Person(Addressable):
     full_name = property(get_full_name)
     #~ full_name.return_type = models.CharField(max_length=200,verbose_name=_('Full name'))
     
-    def address_person_lines(self,**kw):
+    def address_person_lines(self,*args,**kw):
         "Deserves more documentation."
         if self.title:
             yield self.title
-        yield self.get_full_name(**kw)
+        yield self.get_full_name(*args,**kw)
         #~ l = filter(lambda x:x,[self.first_name,self.last_name])
         #~ yield  " ".join(l)
         
@@ -503,7 +506,8 @@ class Company(Addressable):
     """Pointer to this company's :class:`CompanyType`. 
     """
     
-    def get_full_name(self,**salutation_options):
+    #~ def get_full_name(self,**salutation_options):
+    def get_full_name(self,salutation=True,**salutation_options):
         """Deserves more documentation."""
         if self.type:
             return join_words(self.type.abbr,self.name)

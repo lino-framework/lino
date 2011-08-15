@@ -157,7 +157,7 @@ class Lino(Lino):
             config_etc.add_action('lino.TextFieldTemplates')
             config_etc.add_instance_action(self.config)
         
-            m = cfg.add_menu("explorer",_("E~xplorer"))
+            m = main.add_menu("explorer",_("E~xplorer"))
             #m.add_action('properties.PropChoices')
             #~ m.add_action('properties.PropValues')
             m.add_action('contacts.AllPersons')

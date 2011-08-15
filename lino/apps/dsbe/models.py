@@ -524,7 +524,7 @@ class Person(Partner,contacts.Born,contacts.Person,Printable):
         
     def __unicode__(self):
         #~ return u"%s (%s)" % (self.name,self.pk)
-        return u"%s (%s)" % (self.get_full_name(no_salutation=True),self.pk)
+        return u"%s (%s)" % (self.get_full_name(salutation=False),self.pk)
         
     def data_control(self):
         "Used by :class:`lino.models.DataControlListing`."

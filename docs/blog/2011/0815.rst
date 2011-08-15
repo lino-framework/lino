@@ -107,7 +107,7 @@ I find it a pity to cripple down my own possibilities (and those of future
 Lino application developers) just because other people want to have their 
 templates publicly editable.
 
-After a few years of work on the battle field I must agree 
+After some time on the battle field I must agree 
 that I prefer to write complex document chunks as Python functions.
 Just look at the :xfile:`welcome.html` of Lino/DSBE::
 
@@ -133,9 +133,14 @@ But even here it is obvious: that fact of not being able to pass
 arguments to functions is simple a show stopper for Django 
 templates. I'm sorry.
 
-Check-in 20110815b
+Check-in 20110815b at 22:20. The proof of concept has passed. 
+We continue to use Cheetah templates, mainly because Django 
+templates don't allow to pass arguments to functions.
 
 Todo:
 
 - `sent_time` field and refusing to send a second time. 
-
+- preview of the mail that is about to be sent. 
+- There can be more than one mail per Attendance: e.g. if `confirmed` 
+  is empty, we send an invitaton. Or more variants depending on 
+  status etc.

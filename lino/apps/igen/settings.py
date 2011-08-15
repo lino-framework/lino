@@ -129,6 +129,14 @@ class Lino(Lino):
             m.add_action('users.Users')
             #~ m.add_action('auth.Groups')
             #m.can_view = perms.is_staff
+            
+        if user and user.is_expert:
+            m = main.add_menu("explorer",_("E~xplorer"))
+            notes.setup_explorer_menu(self,ui,user,m)
+            cal.setup_explorer_menu(self,ui,user,m)
+            mails.setup_explorer_menu(self,ui,user,m)
+            
+            
 
         #~ system.add_site_menu(self)
         
