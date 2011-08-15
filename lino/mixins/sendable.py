@@ -48,9 +48,6 @@ from lino import fields
 from lino.utils import iif
 from lino.utils import babel
 
-from lino.utils.html2text import html2text
-from django.core.mail import EmailMultiAlternatives
-
 from lino.utils.config import find_config_file
 from Cheetah.Template import Template as CheetahTemplate
 
@@ -67,10 +64,10 @@ class SendMailAction(reports.RowAction):
     callable_from = None
             
     def run(self,rr,elem,**kw):
-        if False: 
-            if elem.time_sent:
-                return rr.ui.error_response(
-                    message="%s has already been sent (%s)" % (elem,elem.time_sent))
+        #~ if False: 
+            #~ if elem.time_sent:
+                #~ return rr.ui.error_response(
+                    #~ message="%s has already been sent (%s)" % (elem,elem.time_sent))
           
         tplname = elem._meta.app_label + '/' + elem.__class__.__name__ + '/email.html'
         
@@ -81,39 +78,22 @@ class SendMailAction(reports.RowAction):
         tpl.instance = elem
         html_content = unicode(tpl)
         
-        
-        #~ htmly = get_template(tplname)
-        #~ d = dict(self=elem)
-        #~ ctx = Context(d)
-        #~ html_content = htmly.render(ctx)
-        
-        text_content = html2text(html_content)
-        subject = elem.get_subject()
-        sender = "%s <%s>" % (rr.get_user().get_full_name(),rr.get_user().email)
-        recipients = list(elem.get_recipients_to())
-        msg = EmailMultiAlternatives(subject=subject, 
-            from_email=sender,
-            body=text_content, to=recipients)
-        msg.attach_alternative(html_content, "text/html")
-        msg.send()
-      
-        elem.time_sent = datetime.datetime.now()
-        elem.save()
-        kw.update(refresh=True)
-        msg = "Email %r for %s has been sent to %s." % (subject,elem,recipients)
-        kw.update(message=msg)
-        for n in """EMAIL_HOST SERVER_EMAIL EMAIL_USE_TLS EMAIL_BACKEND""".split():
-            msg += "\n" + n + " = " + unicode(getattr(settings,n))
-        logger.info(msg)
+        from lino.modlib.mails.models import OutMail
+        m = OutMail(user=rr.get_user(),subject=elem.get_subject(),body=html_content)
+        m.full_clean()
+        m.save()
+        for t,n,a in elem.get_recipients():
+            m.recipient_set.create(type=t,address=a,name=n)
+        kw.update(open_url=rr.ui.get_detail_url(m))
         return rr.ui.success_response(**kw)
-      
+        
     
 class Sendable(models.Model):
     "Deserves more documentation."
     class Meta:
         abstract = True
         
-    time_sent = models.DateTimeField(null=True,editable=False)
+    #~ time_sent = models.DateTimeField(null=True,editable=False)
     
     @classmethod
     def setup_report(cls,rpt):
@@ -128,7 +108,7 @@ class Sendable(models.Model):
     def get_subject(self):
         return unicode(self)
         
-    def get_recipients_to(self):
-        "return or yield a list of strings"
+    def get_recipients(self):
+        "return or yield a list of (type,name,address) tuples"
         raise NotImplementedError()
         

@@ -1,0 +1,16 @@
+20110816
+========
+
+20110816b
+---------
+
+Yes, Lino sucks: he deprives me from sleep. 
+But OTOH it's really amazing: it took me less than an 
+hour to solve the three remaining points:
+
+- `sent_time` field and refusing to send a second time. 
+- preview of the mail that is about to be sent. 
+- There can be more than one mail per Attendance: e.g. if `confirmed` 
+  is empty, we send an invitaton. Or more variants depending on 
+  status etc.
+

@@ -39,6 +39,43 @@ from django.conf import settings
 
 from lino.modlib.mails.utils import RecipientType
 
+from lino.utils.html2text import html2text
+from django.core.mail import EmailMultiAlternatives
+
+
+
+class ReallySendMailAction(reports.RowAction):
+    "Deserves more documentation."
+  
+    name = 'send'
+    label = _('Send email')
+    callable_from = None
+            
+    def run(self,rr,elem,**kw):
+        text_content = html2text(elem.body)
+        #~ subject = elem.subject
+        #~ sender = "%s <%s>" % (rr.get_user().get_full_name(),rr.get_user().email)
+        sender = "%s <%s>" % (elem.user.get_full_name(),elem.user.email)
+        #~ recipients = list(elem.get_recipients_to())
+        msg = EmailMultiAlternatives(subject=elem.subject, 
+            from_email=sender,
+            body=text_content, 
+            to=[r.name_address() for r in elem.recipient_set.filter(type=RecipientType.to)])
+        msg.attach_alternative(elem.body, "text/html")
+        msg.send()
+      
+        elem.sent = datetime.datetime.now()
+        elem.save()
+        kw.update(refresh=True)
+        msg = "%s has been sent." % elem
+        kw.update(message=msg)
+        for n in """EMAIL_HOST SERVER_EMAIL EMAIL_USE_TLS EMAIL_BACKEND""".split():
+            msg += "\n" + n + " = " + unicode(getattr(settings,n))
+        logger.info(msg)
+        return rr.ui.success_response(**kw)
+      
+
+
 
 class Recipient(models.Model):
 #~ class Recipient(mixins.Owned):
@@ -54,6 +91,9 @@ class Recipient(models.Model):
     #~ address_id = models.PositiveIntegerField()
     #~ address = generic.GenericForeignKey('address_type', 'address_id')
     
+    def name_address(self):
+        return '%s <%s>' % (self.name,self.address)      
+        
     def __unicode__(self):
         return "[%s]" % unicode(self.name or self.address)
         #~ return "[%s]" % unicode(self.address)
@@ -105,7 +145,7 @@ class Mail(models.Model):
     #~ recipients_to.return_type = fields.DisplayField(_("to"))
     
     def __unicode__(self):
-        return u'%s #%s' % (self._meta.verbose_name,self.pk)
+        return u'%s %r (#%s)' % (self._meta.verbose_name,self.subject,self.pk)
         
 class InMail(Mail):
     "Incoming Mail"
@@ -128,6 +168,10 @@ class OutMail(Mail,mixins.AutoUser):
         
     sent = models.DateTimeField(null=True,editable=False)
     
+    @classmethod
+    def setup_report(cls,rpt):
+        rpt.add_action(ReallySendMailAction())
+
 
     
 
@@ -145,7 +189,6 @@ class OutMails(reports.Report):
     column_names = "sent user subject * body"
     order_by = ["sent"]
     
-
 class MyOutMails(mixins.ByUser,OutMails):  pass
     #~ known_values = dict(outgoing=True)
     #~ label = _("My Outgoing Mails")
