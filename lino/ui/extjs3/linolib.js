@@ -1834,7 +1834,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
           //~ scrollOffset:200,
           getRowClass: Lino.getRowClass,
           //~ enableRowBody: true,
-          emptyText:"Nix gefunden!"
+          emptyText:"$_('No data to display.')"
         },
   loadMask: {msg:"$_('Please wait...')"},
   

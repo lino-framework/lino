@@ -1,0 +1,5 @@
+main = 
+  id user sent
+  RecipientsByMail
+  subject
+  body

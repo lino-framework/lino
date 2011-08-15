@@ -285,6 +285,7 @@ def discover():
             
     logger.debug("Analyze %d slave reports...",len(slave_reports))
     for rpt in slave_reports:
+        rpt.master = resolve_model(rpt.master)
         slaves = getattr(rpt.master,"_lino_slaves",None)
         if slaves is None:
             slaves = {}
@@ -419,7 +420,7 @@ class SubmitInsert(actions.Action):
 class ReportHandle(base.Handle): 
     
     def __init__(self,ui,report):
-        #~ logger.debug('ReportHandle.__init__(%s)',report)
+        logger.debug('ReportHandle.__init__(%s)',report)
         assert isinstance(report,Report)
         self.report = report
         self._layouts = None
@@ -1187,13 +1188,10 @@ class Report(actors.Actor): #,base.Handled):
             if master_instance is None:
                 if not self.fk.null:
                     return # cannot add rows to this report
-                kw[self.fk.name] = master_instance
-                
-                #kw["%s__exact" % self.fk.name] = None
             elif not isinstance(master_instance,self.master):
                 raise Exception("%r is not a %s" % (master_instance,self.master.__name__))
-            else:
-                kw[self.fk.name] = master_instance
+            kw[self.fk.name] = master_instance
+            
         #~ else:
             #~ kw['master'] = master_instance
         return kw
@@ -1403,7 +1401,7 @@ class BaseLayout(Configured):
                         raise LayoutError('"=" expected in %r' % ln)
                     attrname = a[0].strip()
                     if hasattr(self,attrname):
-                        raise Exception('Duplicate element definition %r' % attrname)
+                        raise Exception('Duplicate element definition %r in %r' % (attrname,desc))
                     setattr(self,attrname,a[1].strip())
         if self.label:
             settings.LINO.add_dummy_message(self.label)
@@ -1439,7 +1437,7 @@ class LayoutHandle:
     
     def __init__(self,rh,layout,hidden_elements=frozenset()):
       
-        #~ logger.debug('LayoutHandle.__init__(%s,%s)',rh,layout)
+        logger.debug('LayoutHandle.__init__(%s,%s)',rh,layout)
         assert isinstance(layout,BaseLayout)
         #assert isinstance(link,reports.ReportHandle)
         #~ base.Handle.__init__(self,ui)

@@ -220,10 +220,12 @@ Avenue de la gare 3 b
 Bruxelles
 Belgique""")
     
-    babel.set_language('de')
-    self.assertEqual(p.full_name,"Herrn Jean Louis DUPONT")
-    self.assertEqual(p.get_full_name(nominative=True),"Herr Jean Louis DUPONT")
-    self.assertEqual(p.get_full_name(no_salutation=True),"Jean Louis DUPONT")
+    if 'de' in babel.AVAILABLE_LANGUAGES:
+        babel.set_language('de')
+        self.assertEqual(p.full_name,"Herrn Jean Louis DUPONT")
+        self.assertEqual(p.get_full_name(nominative=True),"Herr Jean Louis DUPONT")
+        self.assertEqual(p.get_full_name(salutation=False),"Jean Louis DUPONT")
+        
     babel.set_language(None)
         
         

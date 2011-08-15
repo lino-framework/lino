@@ -65,6 +65,7 @@ class Lino(Lino):
         journals = models.get_app('journals')
         notes = models.get_app('notes')
         cal = models.get_app('cal')
+        mails = models.get_app('mails')
 
         m = main.add_menu("contacts","~Contacts")
         m.add_action('contacts.Companies')
@@ -75,12 +76,14 @@ class Lino(Lino):
         m.add_action('products.Products')
         m.add_action('products.ProductCats')
         
-        m = main.add_menu("cal",_("~Calendar"))
-        m.add_action('cal.MyEvents')
-        m.add_action('cal.MyTasks')
+        if user and user.is_active:
+            m = main.add_menu("my",_("~My menu"))
+            cal.setup_my_menu(self,ui,user,m)
+            mails.setup_my_menu(self,ui,user,m)
         
         
-        if user.is_staff:
+        
+        if user and user.is_staff:
             m = main.add_menu("journals","~Journals")
             
             #~ for jnl in journals.Journal.objects.all().order_by('pos'):
@@ -93,7 +96,7 @@ class Lino(Lino):
                 # m.add_action(jnl.get_doc_report(),args=[jnl.pk])
                 #~ m.add_action(str(jnl.get_doc_report()))
             
-        if user.is_active:
+        if user and user.is_active:
             m = main.add_menu("sales","~Sales")
             #m.add_action(Orders())
             #m.add_action(Invoices())
@@ -104,7 +107,7 @@ class Lino(Lino):
           #~ can_view=perms.is_staff)
         #~ m.add_action(MakeInvoicesDialog())
 
-        if user.is_staff:
+        if user and user.is_staff:
             m = main.add_menu("config","~Configuration")
             notes.setup_config_menu(self,ui,user,m)
             cal.setup_config_menu(self,ui,user,m)
@@ -170,6 +173,7 @@ INSTALLED_APPS = (
     'lino.modlib.contacts',
     'lino.modlib.notes',
     'lino.modlib.cal',
+    'lino.modlib.mails',
     'lino.modlib.products',
     'lino.modlib.journals',
     #~ 'lino.modlib.documents',

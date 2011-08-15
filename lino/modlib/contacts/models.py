@@ -52,7 +52,7 @@ SEX_CHOICES = ((SEX_MALE,_('Male')),(SEX_FEMALE,_('Female')))
 
 from django.utils import translation
 
-def get_salutation(sex,nominative=False,no_salutation=False):
+def get_salutation(sex,nominative=False):
     """
     Returns "Mr" or "Mrs" or a translation thereof, 
     depending on the sex and the current babel language.
@@ -72,12 +72,12 @@ def get_salutation(sex,nominative=False,no_salutation=False):
       suppress salutations. See 
       :func:`lino.apps.dsbe.tests.dsbe_tests.test04` 
       and
-      :func:`lino.modlib.contacts.tests,test01` 
+      :func:`lino.modlib.contacts.tests.test01` 
       for some examples.
     
     """
-    if no_salutation:
-        return None
+    #~ if no_salutation:
+        #~ return None
     lang = translation.get_language()
     if lang == 'de':
         if sex == SEX_FEMALE:
@@ -252,7 +252,8 @@ overrides this.
 
 
 class Addressables(reports.Report):
-    column_names = "name * id" 
+    column_names = "name email * id" 
+    #~ column_names = "name * id" 
     def get_queryset(self):
         return self.model.objects.select_related('country','city')
   
@@ -313,20 +314,24 @@ class Person(Addressable):
         return get_salutation(self.sex,**salutation_options)
     
         
-    def get_full_name(self,**salutation_options):
+    def get_full_name(self,salutation=True,**salutation_options):
         """Returns a one-line string composed of salutation, first_name and last_name.
         Optional salutation options see :func:`get_salutation`.
         """
         #~ return '%s %s' % (self.first_name, self.last_name.upper())
-        return join_words(self.get_salutation(**salutation_options), self.first_name, self.last_name.upper())
+        words = []
+        if salutation:
+            words.append(self.get_salutation(**salutation_options))
+        words += [self.first_name, self.last_name.upper()]
+        return join_words(*words)
     full_name = property(get_full_name)
     #~ full_name.return_type = models.CharField(max_length=200,verbose_name=_('Full name'))
     
-    def address_person_lines(self,**salutation_options):
+    def address_person_lines(self,**kw):
         "Deserves more documentation."
         if self.title:
             yield self.title
-        yield self.get_full_name(**salutation_options)
+        yield self.get_full_name(**kw)
         #~ l = filter(lambda x:x,[self.first_name,self.last_name])
         #~ yield  " ".join(l)
         

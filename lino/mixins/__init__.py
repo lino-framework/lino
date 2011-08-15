@@ -71,9 +71,9 @@ class ByUser(reports.Report):
     def init_label(self):
         return _("My %s") % self.model._meta.verbose_name_plural
         
-    def setup_request(self,req):
-        if req.master_instance is None:
-            req.master_instance = req.get_user()
+    def setup_request(self,rr):
+        if rr.master_instance is None:
+            rr.master_instance = rr.get_user()
 
 
 class CreatedModified(models.Model):

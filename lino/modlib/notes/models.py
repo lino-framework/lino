@@ -231,7 +231,10 @@ class NotesByEventType(Notes):
   
   
 def setup_main_menu(site,ui,user,m): pass
-def setup_my_menu(site,ui,user,m): pass
+  
+def setup_my_menu(site,ui,user,m): 
+    m.add_action('cal.MyEvents')
+    m.add_action('cal.MyTasks')
   
 def setup_config_menu(site,ui,user,m): 
     m  = m.add_menu("notes",_("~Notes"))
