@@ -1,11 +1,7 @@
-t:\hgwork\lino\lino\modlib\cal\models.py:docstring of lino.modlib.cal.models.SKIP_AUTO_TASKS:1: (ERROR/3) Unknown interpreted text role "blog".
-T:\hgwork\lino\docs\blog\2011\0815.rst:36: (ERROR/3) Unknown interpreted text role "xfiles".
-T:\hgwork\lino\docs\autodoc\lino.modlib.cal.rst:44: WARNING: py:class reference target not found: django.db.models.base.Model
-T:\hgwork\lino\docs\autodoc\lino.modlib.cal.rst:21: WARNING: py:class reference target not found: Event
-T:\hgwork\lino\docs\autodoc\lino.modlib.cal.rst:30: WARNING: py:class reference target not found: Event
-T:\hgwork\lino\docs\autodoc\lino.modlib.cal.rst:48: WARNING: py:class reference target not found: Task
-T:\hgwork\lino\docs\autodoc\lino.modlib.mails.rst:16: WARNING: py:class reference target not found: django.db.models.base.Model
-T:\hgwork\lino\docs\autodoc\lino.modlib.mails.rst:32: WARNING: py:class reference target not found: django.db.models.base.Model
-T:\hgwork\lino\docs\autodoc\lino.modlib.mails.rst:12: WARNING: py:class reference target not found: Event
 T:\hgwork\lino\docs\blog\2011\0815.rst:22: WARNING: py:mod reference target not found: lino.modlib.cal.Event
 T:\hgwork\lino\docs\blog\2011\0815.rst:22: WARNING: py:mod reference target not found: lino.modlib.cal.Attendance
+T:\hgwork\lino\docs\blog\2011\0815.rst:36: WARNING: xfile reference target not found: templates
+T:\hgwork\lino\docs\blog\2011\0815.rst:60: WARNING: py:mod reference target not found: lino.utils.html2text
+T:\hgwork\lino\docs\blog\2011\0815.rst:74: WARNING: term not in glossary: appy.pod
+T:\hgwork\lino\docs\blog\2011\0815.rst:78: WARNING: xfile reference target not found: welcome.html
+T:\hgwork\lino\docs\blog\2011\0815.rst:91: WARNING: xfile reference target not found: welcome.html

@@ -34,7 +34,7 @@ registration to our travel X. Please find the attached invoice.
 Your registration will be complete when we received your payment...".
 
 The template for this mail would be the normal Django way 
-(i.e. using an `.eml` file somewhere in the :xfiles:`templates` 
+(i.e. using an `.eml` file somewhere in the :xfile:`templates` 
 tree.
 
 The `Attendance` needs a ForeignKey field that points 
@@ -48,7 +48,7 @@ To be more transparent, the "Send E-Mail" action might be
 only on the Invoice, and the `Attendance` would rather have 
 an action "Generate Invoice".
 
-Conclusion: write a `lino.mixins.Sendable` 
+Conclusion: write a :class:`lino.mixins.sendable.Sendable` 
 mixin that adds a "Send E-Mail" 
 button and a DateTimeField "sent".
 
@@ -66,9 +66,76 @@ I included the latter into Lino as :mod:`lino.utils.html2text`.
 First success after less than 3 hours. 
 Check-in at 18:30.
 
+Thoughts about templates
+------------------------
+
+:class:`lino.mixins.sendable.Sendable` currently uses Django's template system.
+Yes, Cheetah is more powerful, but not very user-friendly.
+But in fact we use HTML templates only for the :xfile:`welcome.html` 
+and for :term:`makedocs`.
+It wouldn't be too much huge work to go back to Django's templates...
+Cheetah or Django templates? :xfile:`templates` or :xfile:`config` directories? 
+
+Even Guido van Rossum preferred `Django over Cheetah 
+<http://www.artima.com/weblogs/viewpost.jsp?thread=146606>`_  
+in 2006 (though he also warns 
+"(BEWARE! I haven't used either system to build a real website yet. I'm just looking at the API and templating language designs.)"). 
+Eugene Lazutkin wrote in a comment to this article 
+"AFAIK original Django authors 
+decided against using templates as a front for Python interpreter 
+precisely because of this reason: templates should not be able to 
+bring down the system no matter what. They should provide a functionality 
+required by web designers and nothing more. Otherwise it is a huge liability, 
+a potential security hole, and a maintenance nightmare."
+
+My :mod:`lino.utils.config` exists mainly
+because Djangos "template seach algorithm" doesn't allow things like:
+  
+- find a template using Django and then use it for :term:`appy.pod`
+- return a list of available templates (in a customizable "group")
+- override a template by another file depending on the language.
+
+As for the template language itself, I simply cannot accept the limitation 
+that it doesn't allow to pass parameters to functions 
+(the docs say 
+"Because Django intentionally limits the amount of logic processing 
+available in the template language, it is not possible to pass 
+arguments to method calls accessed from within templates.")
+  
+I still don't really agree to this decision: 
+I find it a pity to cripple down my own possibilities (and those of future 
+Lino application developers) just because other people want to have their 
+templates publicly editable.
+
+After a few years of work on the battle field I must agree 
+that I prefer to write complex document chunks as Python functions.
+Just look at the :xfile:`welcome.html` of Lino/DSBE::
+
+  <div>
+  #if $user is not None
+  <p>User <b>$user.get_full_name() ($user)</b> on $site.title</p>
+
+  #from lino.modlib.cal.models import tasks_summary
+  $tasks_summary($ui,$user,days_back=90,days_forward=30,
+   max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
+
+  #from lino.apps.dsbe.models import persons_by_user
+  $persons_by_user()
+
+  #else
+  <p>user is None. Check your authentication configuration.</p>
+  #end if
+  <p><font size="1">$lino.welcome_html()</font></p>
+
+  </div>  
+  
+But even here it is obvious: that fact of not being able to pass 
+arguments to functions is simple a show stopper for Django 
+templates. I'm sorry.
+
+Check-in 20110815b
+
 Todo:
 
-- templates or config? what 
-- Cheetah or Django templates? 
-  Cheetah is more powerful, but not very user-friendly.
-  Guido van Rossum also preferred Django over Cheetah in 2006 http://www.artima.com/weblogs/viewpost.jsp?thread=146606
+- `sent_time` field and refusing to send a second time. 
+

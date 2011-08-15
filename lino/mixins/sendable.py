@@ -50,12 +50,17 @@ from lino.utils import babel
 
 from lino.utils.html2text import html2text
 from django.core.mail import EmailMultiAlternatives
-from django.template.loader import get_template
-from django.template import Context
+
+from lino.utils.config import find_config_file
+from Cheetah.Template import Template as CheetahTemplate
+
+#~ from django.template.loader import get_template
+#~ from django.template import Context
 
 
 
 class SendMailAction(reports.RowAction):
+    "Deserves more documentation."
   
     name = 'send'
     label = _('Send email')
@@ -68,12 +73,20 @@ class SendMailAction(reports.RowAction):
                     message="%s has already been sent (%s)" % (elem,elem.time_sent))
           
         tplname = elem._meta.app_label + '/' + elem.__class__.__name__ + '/email.html'
-        htmly = get_template(tplname)
-
-        d = dict(self=elem)
-        ctx = Context(d)
-
-        html_content = htmly.render(ctx)
+        
+        
+        fn = find_config_file(tplname)
+        logger.info("Using email template %s",fn)
+        tpl = CheetahTemplate(file(fn).read())
+        tpl.instance = elem
+        html_content = unicode(tpl)
+        
+        
+        #~ htmly = get_template(tplname)
+        #~ d = dict(self=elem)
+        #~ ctx = Context(d)
+        #~ html_content = htmly.render(ctx)
+        
         text_content = html2text(html_content)
         subject = elem.get_subject()
         sender = "%s <%s>" % (rr.get_user().get_full_name(),rr.get_user().email)
@@ -96,7 +109,7 @@ class SendMailAction(reports.RowAction):
       
     
 class Sendable(models.Model):
-  
+    "Deserves more documentation."
     class Meta:
         abstract = True
         
