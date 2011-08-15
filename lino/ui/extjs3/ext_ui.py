@@ -141,10 +141,11 @@ def json_response(x):
     #~ return r
     #~ return HttpResponse(s, mimetype='text/html')
     
-def error_response(e,message=None,**kw):
+def error_response(e=None,message=None,**kw):
     kw.update(success=False)
-    if hasattr(e,'message_dict'):
-        kw.update(errors=e.message_dict)
+    if e is not None:
+        if hasattr(e,'message_dict'):
+            kw.update(errors=e.message_dict)
     #~ kw.update(alert_msg=cgi.escape(message_prefix+unicode(e)))
     kw.update(alert=True)
     

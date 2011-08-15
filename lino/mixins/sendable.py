@@ -1,0 +1,121 @@
+# -*- coding: UTF-8 -*-
+## Copyright 2009-2011 Luc Saffre
+## This file is part of the Lino project.
+## Lino is free software; you can redistribute it and/or modify 
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 3 of the License, or
+## (at your option) any later version.
+## Lino is distributed in the hope that it will be useful, 
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+## GNU General Public License for more details.
+## You should have received a copy of the GNU General Public License
+## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+"""
+This defines a model mixin that adds a "Send email" button.
+"""
+
+import logging
+logger = logging.getLogger(__name__)
+
+import os
+import sys
+import datetime
+import traceback
+import cStringIO
+import glob
+from fnmatch import fnmatch
+
+from django.db import models
+from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
+from django.template.loader import render_to_string, get_template, select_template, Context, TemplateDoesNotExist
+from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.utils.encoding import force_unicode
+
+try:
+    import ho.pisa as pisa
+    #pisa.showLogging()
+except ImportError:
+    pisa = None
+
+import lino
+from lino import reports
+from lino import fields
+#~ from lino import actions
+
+#~ from lino.tools import full_model_name
+from lino.utils import iif
+from lino.utils import babel
+
+from lino.utils.html2text import html2text
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import get_template
+from django.template import Context
+
+
+
+class SendMailAction(reports.RowAction):
+  
+    name = 'send'
+    label = _('Send email')
+    callable_from = None
+            
+    def run(self,rr,elem,**kw):
+        if False: 
+            if elem.time_sent:
+                return rr.ui.error_response(
+                    message="%s has already been sent (%s)" % (elem,elem.time_sent))
+          
+        tplname = elem._meta.app_label + '/' + elem.__class__.__name__ + '/email.html'
+        htmly = get_template(tplname)
+
+        d = dict(self=elem)
+        ctx = Context(d)
+
+        html_content = htmly.render(ctx)
+        text_content = html2text(html_content)
+        subject = elem.get_subject()
+        sender = "%s <%s>" % (rr.get_user().get_full_name(),rr.get_user().email)
+        recipients = list(elem.get_recipients_to())
+        msg = EmailMultiAlternatives(subject=subject, 
+            from_email=sender,
+            body=text_content, to=recipients)
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
+      
+        elem.time_sent = datetime.datetime.now()
+        elem.save()
+        kw.update(refresh=True)
+        msg = "Email %r for %s has been sent to %s." % (subject,elem,recipients)
+        kw.update(message=msg)
+        for n in """EMAIL_HOST SERVER_EMAIL EMAIL_USE_TLS EMAIL_BACKEND""".split():
+            msg += "\n" + n + " = " + unicode(getattr(settings,n))
+        logger.info(msg)
+        return rr.ui.success_response(**kw)
+      
+    
+class Sendable(models.Model):
+  
+    class Meta:
+        abstract = True
+        
+    time_sent = models.DateTimeField(null=True,editable=False)
+    
+    @classmethod
+    def setup_report(cls,rpt):
+        rpt.add_action(SendMailAction())
+        
+    def get_print_language(self,pm):
+        return babel.DEFAULT_LANGUAGE
+        
+    def get_templates_group(self):
+        return model_group(self)
+        
+    def get_subject(self):
+        return unicode(self)
+        
+    def get_recipients_to(self):
+        "return or yield a list of strings"
+        raise NotImplementedError()
+        

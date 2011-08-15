@@ -13,6 +13,7 @@ Subpackages
 .. toctree::
 
     lino.modlib.cal
+    lino.modlib.mails
     lino.modlib.countries
     lino.modlib.contacts
     lino.modlib.jobs

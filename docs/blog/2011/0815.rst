@@ -1,0 +1,74 @@
+20110815
+========
+
+How to manage emails?
+---------------------
+
+Django has a powerful API for `Sending email
+<https://docs.djangoproject.com/en/dev/topics/email/>`_.
+But how can we bring this to the end-user?
+How to configure the generating and sending of emails?
+What user interface must Lino provide to make this usable?
+
+One thing to note is: 
+the :mod:`lino.modlib.mails` module  which I started yesterday
+is *not necessary* to answer these questions.
+The system should work also for those who don't care about
+keeping track of what they sent 
+(i.e. who don't want a history of outgoing mail integrated to their database).
+That's why the :mod:`lino.modlib.mails` module can be considered 
+as "almost ready (waiting for a user)".
+
+Let's consider a concrete example:
+a Lino user who organizes travels wants to send 
+booking confirmation to her customers. 
+A `Travel`, for this customer, 
+is a customized :mod:`lino.modlib.cal.Event`.
+When somebody registers for a Travel, the user enters 
+the Person as :mod:`lino.modlib.cal.Attendance` 
+of this Travel, with status "to be confirmed".
+The `Attendance` model should have an action "Send E-Mail".
+Clicking on this button would generate and send directly 
+a single mail which says something like "We confirm your 
+registration to our travel X. Please find the attached invoice. 
+Your registration will be complete when we received your payment...".
+
+The template for this mail would be the normal Django way 
+(i.e. using an `.eml` file somewhere in the :xfiles:`templates` 
+tree.
+
+The `Attendance` needs a ForeignKey field that points 
+to the invoice. If that field is empty when "Send E-Mail", 
+then Lino must first generate the Invoice, run it's print 
+method to generate a `.pdf` file to be attached to the email.
+Calling "Send E-Mail" a second time would of course *not* 
+generate another invoice but attach the existing `.pdf` file.
+
+To be more transparent, the "Send E-Mail" action might be 
+only on the Invoice, and the `Attendance` would rather have 
+an action "Generate Invoice".
+
+Conclusion: write a `lino.mixins.Sendable` 
+mixin that adds a "Send E-Mail" 
+button and a DateTimeField "sent".
+
+The snippet presented on 
+`stackoverflow <http://stackoverflow.com/questions/2809547/creating-email-templates-with-django>`_
+was a good start. 
+But I didn't like the idea of having two templates to maintain.
+
+Peter Bengtsson had the same problem in 2007 and wrote
+`html2plaintext <http://www.peterbe.com/plog/html2plaintext>`_ before he
+discovered Aaron Swartz's 
+`html2text <http://www.aaronsw.com/2002/html2text/>`_ module.
+I included the latter into Lino as :mod:`lino.utils.html2text`.
+
+First success after less than 3 hours. 
+Check-in at 18:30.
+
+Todo:
+
+- templates or config? what 
+- Cheetah or Django templates? 
+  Cheetah is more powerful, but not very user-friendly.
+  Guido van Rossum also preferred Django over Cheetah in 2006 http://www.artima.com/weblogs/viewpost.jsp?thread=146606

@@ -191,6 +191,7 @@ class DiffingMixin(object):
 #~ from lino.mixins.reminder import Reminder
 from lino.mixins.printable import Printable, PrintableType, CachedPrintable, TypedPrintable
 from lino.mixins.printable import Listing
+from lino.mixins.sendable import Sendable
 from lino.mixins.uploadable import Uploadable
 #~ from lino.mixins.addressable import ContactDocument, PartnerDocument
 

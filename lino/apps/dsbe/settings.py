@@ -30,12 +30,18 @@ class Lino(Lino):
     
     def setup_menu(self,ui,user,main):
         from django.utils.translation import ugettext_lazy as _
+        from django.db import models
         #~ from lino.utils import perms
-        from lino.utils import menus
-        from lino.apps.dsbe import models as dsbe
-        from lino.modlib.properties import models as properties
-        from lino.modlib.cal import models as cal
-        from lino.modlib.notes import models as notes
+        #~ from lino.utils import menus
+        #~ from lino.apps.dsbe import models as dsbe
+        #~ from lino.modlib.properties import models as properties
+        #~ from lino.modlib.cal import models as cal
+        #~ from lino.modlib.notes import models as notes
+        
+        dsbe = models.get_app('dsbe')
+        properties = models.get_app('properties')
+        cal = models.get_app('cal')
+        notes = models.get_app('notes')
 
         #~ main = menus.Toolbar('main')
         m = main.add_menu("contacts",_("~Contacts"))
@@ -52,8 +58,10 @@ class Lino(Lino):
         m.add_action('notes.MyNotes')
         m.add_action('uploads.MyUploads')
         m.add_action('jobs.MyContracts')
-        m.add_action('cal.MyTasks')
-        m.add_action('cal.MyEvents')
+        cal.setup_my_menu(self,ui,user,m)
+        
+        #~ m.add_action('cal.MyTasks')
+        #~ m.add_action('cal.MyEvents')
         m.add_action('contacts.MyPersons')
         for pg in dsbe.PersonGroup.objects.order_by('ref_name'):
             m.add_action('contacts.MyPersonsByGroup',label=pg.name,

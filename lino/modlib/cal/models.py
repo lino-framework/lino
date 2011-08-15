@@ -49,6 +49,7 @@ class Places(reports.Report):
     
 
 class EventType(mixins.PrintableType):
+    "Deserves more documentation."
   
     templates_group = 'events'
     
@@ -118,6 +119,7 @@ class Component(mixins.AutoUser,
 
 #~ class Event(Component,contacts.PartnerDocument):
 class Event(Component,mixins.TypedPrintable):
+    "Deserves more documentation."
   
     class Meta:
         verbose_name = _("Event")
@@ -232,7 +234,10 @@ class MyTasks(mixins.ByUser):
     column_names = 'start_date summary done status *'
 
 
-class Attendance(contacts.PartnerDocument,mixins.CachedPrintable):
+class Attendance(contacts.PartnerDocument,
+      mixins.CachedPrintable,
+      mixins.Sendable):
+    "Deserves more documentation."
     class Meta:
         verbose_name = _("Attendance")
         verbose_name_plural = _("Attendances")
@@ -249,6 +254,11 @@ class Attendance(contacts.PartnerDocument,mixins.CachedPrintable):
     remark = models.CharField(
         _("Remark"),max_length=200,blank=True)
 
+    @classmethod
+    def setup_report(cls,rpt):
+        mixins.CachedPrintable.setup_report(rpt)
+        mixins.Sendable.setup_report(rpt)
+        
 class Attendances(reports.Report):
     model = Attendance
     column_names = 'person company confirmed remark event *'
@@ -410,7 +420,10 @@ def migrate_reminder(obj,reminder_date,reminder_text,
 
 
 def setup_main_menu(site,ui,user,m): pass
-def setup_my_menu(site,ui,user,m): pass
+
+def setup_my_menu(site,ui,user,m): 
+    m.add_action('cal.MyTasks')
+    m.add_action('cal.MyEvents')
   
 def setup_config_menu(site,ui,user,m): 
     m  = m.add_menu("cal",_("~Calendar"))

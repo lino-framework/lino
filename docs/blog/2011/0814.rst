@@ -13,12 +13,13 @@ The new module :mod:`lino.modlib.mails` turns Lino into a potential
 mail client. We don't expect to become as user-friendly 
 as the existing mail clients, but we'll use this to
 
-- import mails (outgoing and incoming) and integrate them into 
+- import emails (outgoing and incoming) and integrate them into 
   our data. For example "In the Detail view of a contact 
-  I want to see all mails sent to and received from this contact,
-  and not only on own account but on all my colleagues."
+  I'd like to to see all emails sent to and received from 
+  this contact;
+  and not only on my own account but on all my colleagues."
   
-- automatically generate outgoing mails and keep track of them.
+- keep track of automatically generated outgoing mails.
   For example a travel booking confirmation, 
   a convocation (invitation to a rendez-vous),
   an order confirmation, an invoice,...

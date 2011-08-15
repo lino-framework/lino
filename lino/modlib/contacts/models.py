@@ -389,6 +389,12 @@ class PartnerDocument(models.Model):
             return self.company
         return self.person
         
+    def get_recipients_to(self):
+        for p in self.company, self.person:
+            if p is not None and p.email:
+                yield "%s <%s>" % (p, p.email)
+        
+        
     #~ def summary_row(self,ui,rr,**kw):
         #~ if self.person:
             #~ if self.company:
