@@ -13,9 +13,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-This module defines tables like :class:`Task` and :class:`Event`.
-
-Deserves more documentation.
+This module defines tables :class:`Task` and :class:`Event`.
 
 """
 import cgi
@@ -237,15 +235,17 @@ class MyTasks(mixins.ByUser):
 class Attendance(contacts.PartnerDocument,
       mixins.CachedPrintable,
       mixins.Sendable):
-    "Deserves more documentation."
+    """An Attendance is when somebody possibly attends to an Event.
+"Somebody" means a Person, a Company or both.
+An unconfirmed attendance is when the partner has been invited.
+"""
     class Meta:
         verbose_name = _("Attendance")
         verbose_name_plural = _("Attendances")
         #~ abstract = True
         
     event = models.ForeignKey('cal.Event',
-        verbose_name=_("Event"),
-        null=True,blank=True) 
+        verbose_name=_("Event")) 
         
     confirmed = models.DateField(
         blank=True,null=True,
@@ -254,6 +254,9 @@ class Attendance(contacts.PartnerDocument,
     remark = models.CharField(
         _("Remark"),max_length=200,blank=True)
 
+    def __unicode__(self):
+        return self._meta.verbose_name + " #" + str(self.pk)
+        
     @classmethod
     def setup_report(cls,rpt):
         mixins.CachedPrintable.setup_report(rpt)
@@ -276,8 +279,7 @@ class AttendancesByCompany(Attendances):
 
     
 def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
-    """
-    Return a HTML summary of all open reminders for this user
+    """Return a HTML summary of all open reminders for this user.
     """
     Task = resolve_model('cal.Task')
     Event = resolve_model('cal.Event')

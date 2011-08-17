@@ -57,6 +57,7 @@ class Upload(
     #~ contacts.PartnerDocument,
     #~ mixins.Reminder, 
     mixins.AutoUser,
+    mixins.CreatedModified,
     mixins.Owned):
     
     type = models.ForeignKey("uploads.UploadType",
@@ -70,6 +71,11 @@ class Upload(
     #~ owner_type = models.ForeignKey(ContentType,blank=True,null=True)
     #~ owner_id = models.PositiveIntegerField(blank=True,null=True)
     #~ owner = generic.GenericForeignKey('owner_type', 'owner_id')
+    
+    description = models.CharField(_("Description"),max_length=200,blank=True,null=True)
+    
+    #~ def __unicode__(self):
+        #~ return self.description or self.file.name
 
     def __unicode__(self):
         if self.description:

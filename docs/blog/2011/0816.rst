@@ -1,6 +1,14 @@
 20110816
 ========
 
+20110816a
+---------
+
+2 minor bugfixes
+
+Checkin `20110816a <http://code.google.com/p/lino/source/detail?r=bd9596f22ccffdb834847d2123d7ecdfaa7bf5d1>`_
+
+
 20110816b
 ---------
 
@@ -14,3 +22,5 @@ hour to solve the three remaining points:
   is empty, we send an invitaton. Or more variants depending on 
   status etc.
 
+
+Checkin `20110816b <http://code.google.com/p/lino/source/detail?r=c4166a34d95973d2ad2fdb21eb20525b0cc710e6>`_

@@ -80,8 +80,8 @@ class CreatedModified(models.Model):
     """Adds two timestamp fields `created` and `modified`."""
     class Meta:
         abstract = True
-    created = models.DateTimeField(auto_now_add=True,editable=False)   # iCal:DTSTAMP
-    modified = models.DateTimeField(auto_now=True,editable=False)   # iCal:LAST-MODIFIED
+    created = models.DateTimeField(auto_now_add=True,editable=False) 
+    modified = models.DateTimeField(auto_now=True,editable=False) 
         
 
 

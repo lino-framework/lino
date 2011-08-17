@@ -24,6 +24,20 @@ Short-term
     Lino muss also nicht selber Server sein, 
     sondern eher als Client mit einem CalDAV-Server arbeiten. 
 
+#.  Attachments of outgoing mails.
+    An UploadsByOwner slave in the detail of a mail will be enough for 
+    users to upload their files.
+    But how can we add files that are already on the server?
+    For example, writing a mail from an invoice would automatically 
+    attach the invoice's .pdf without having to upload it. 
+    The .pdf in such a case is not in `media/uploads` but in `media/cache`.
+    Both types of attachments should be possible and mixable.
+    Note that Uploadable.file is a FileField(upload_to='/media/uploads').
+    Maybe another field "local_file", a simple CharField?
+    
+    
+
+
 #.  Uploads mit Sonderzeichen im Dateinamen funktionieren noch nicht.
     See :doc:`/blog/20110725` and :doc:`/blog/20110809`.
 

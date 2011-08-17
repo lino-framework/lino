@@ -147,6 +147,14 @@ class Mail(models.Model):
     def __unicode__(self):
         return u'%s %r (#%s)' % (self._meta.verbose_name,self.subject,self.pk)
         
+    def add_attached_file(self,fn):
+        """Doesn't work. 
+        """
+        kv = dict(type=settings.LINO.config.residence_permit_upload_type)
+        r = uploads.UploadsByOwner.request(master_instance=self)
+        r.create_instance(**kv)
+      
+        
 class InMail(Mail):
     "Incoming Mail"
     
@@ -173,6 +181,16 @@ class OutMail(Mail,mixins.AutoUser):
         rpt.add_action(ReallySendMailAction())
 
 
+if False:
+    """Won't work because Uploadable is only for files under /media/uploads"""
+    class Attachment(mixins.Uploadable):
+        
+        
+        class Meta:
+            verbose_name = _("Attachment")
+            verbose_name_plural = _("Attachments")
+            
+        mail = models.ForeignKey('mails.OutMail')
     
 
 

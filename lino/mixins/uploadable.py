@@ -45,10 +45,9 @@ class Uploadable(models.Model):
     #~ user = models.ForeignKey('auth.User',verbose_name=_("Owner"))
     #~ timestamp = models.TimeField(_("Timestamp"),auto_now=True)
     mimetype = models.CharField(_("MIME type"),max_length=64, editable=False)
-    created = models.DateTimeField(_("Created"),auto_now_add=True, editable=False)
-    modified = models.DateTimeField(_("Modified"),auto_now=True, editable=False)
-    description = models.CharField(_("Description"),max_length=200,blank=True,null=True)
-    
+    #~ created = models.DateTimeField(_("Created"),auto_now_add=True, editable=False)
+    #~ modified = models.DateTimeField(_("Modified"),auto_now=True, editable=False)
+
     #~ def show_date(self):
         #~ if self.timestamp:
             #~ return unicode(self.timestamp.date)
@@ -61,9 +60,6 @@ class Uploadable(models.Model):
         #~ return u''
     #~ show_time.return_type = models.CharField(_("Time"),max_length=8)
     
-    def __unicode__(self):
-        return self.description or self.file.name
-
     def handle_uploaded_files(self,request):
         #~ from django.core.files.base import ContentFile
         uf = request.FILES['file'] # an UploadedFile instance

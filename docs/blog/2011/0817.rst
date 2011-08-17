@@ -1,0 +1,27 @@
+20110817
+========
+
+Today I continued with the CalDAV functionality. Remember the bibliography:
+
+- iCalendar : `RFC 5545 (Internet Calendaring and Scheduling Core Object 
+  Specification (iCalendar)) <ftp://ftp.rfc-editor.org/in-notes/rfc5545.txt>`_
+  `iCalendar package for Python <http://codespeak.net/icalendar/>`_ 
+
+- CalDAV : `RFC 4791 <http://www.ietf.org/rfc/rfc4791.txt>`_,
+  `python-caldav <http://packages.python.org/caldav/>`_
+  (`Introduction <http://savetheions.com/2010/06/04/introducing-python-caldav>`_)
+  
+- vobject : http://vobject.skyhouseconsulting.com/usage.html  
+
+Our plan is: 
+
+- Lino imports general calendar events for each user from a CalDAV Server.
+- Lino generates calendar events for coached persons. 
+  These are first created in Lino and their creation synchronized 
+  to a CalDAV server.
+
+As a first step I got the introduction script from `python-caldav <http://packages.python.org/caldav/>`_ running:
+
+.. literalinclude:: 0817.py
+   :language: python
+   :linenos:
