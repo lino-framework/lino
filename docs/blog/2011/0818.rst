@@ -1,0 +1,63 @@
+20110818
+========
+
+About Mixins
+------------
+
+Renamed the `Sendable` mixin to `Mailable`, and changed its 
+label from "Send email" to "Create email". 
+Because it doesn't actually send a Mail, just creates it in the database. 
+Since this mixin depends on `lino.modlib.mails`, 
+I moved it from `lino.mixins.sendable` to `lino.modlib.mails.models`.
+The package `lino.mixins` should be only for "general" mixins.
+
+
+
+
+Continued with CalDAV
+---------------------
+
+Continued to work on :doc:`/tickets/47`.
+
+:class:`lino.modlib.cal.Event` needs a new field `uid`.
+
+Excerpt from RFC 5545:
+
+  The `uid` of an event is REQUIRED and MUST NOT occur more than once.
+  The "UID" itself MUST be a globally unique identifier.
+  The generator of the identifier MUST guarantee that the identifier
+  is unique.  There are several algorithms that can be used to
+  accomplish this.  A good method to assure uniqueness is to put the
+  domain name or a domain literal IP address of the host on which
+  the identifier was created on the right-hand side of an "@", and
+  on the left-hand side, put a combination of the current calendar
+  date and time of day (i.e., formatted in as a DATE-TIME value)
+  along with some other currently unique (perhaps sequential)
+  identifier available on the system (for example, a process id
+  number).  Using a DATE-TIME value on the left-hand side and a
+  domain name or domain literal on the right-hand side makes it
+  possible to guarantee uniqueness since no two hosts should be
+  using the same domain name or IP address at the same time.  Though
+  other algorithms will work, it is RECOMMENDED that the right-hand
+  side contain some domain identifier (either of the host itself or
+  otherwise) such that the generator of the message identifier can
+  guarantee the uniqueness of the left-hand side within the scope of
+  that domain.
+
+
+Google has UIDs like `680h46e2vng9h936b1a53fmdk0@google.com`. 
+
+New local Lino configuration class attribute :attr:`lino.Lino.uid`: 
+a universal identifier for this Lino site. 
+This is needed for synchronization with CalDAV server; 
+calendar components created by Lino will get a UID 
+``"%s@%s" (self.pk,settings.LINO.ui)``.
+
+*When* should synchronization *from* the 
+remote calendar *into* our database happen? 
+Only upon request (either manually or as a cron job)? 
+Or another daemon that automatically pulls changes every minute?
+
+
+
+

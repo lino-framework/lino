@@ -536,6 +536,12 @@ class CharFieldElement(FieldElement):
         kw.update(maxLength=self.field.max_length)
         return kw
         
+class PasswordFieldElement(CharFieldElement):
+    def get_field_options(self,**kw):
+        kw = super(PasswordFieldElement,self).get_field_options(**kw)
+        kw.update(inputType='password')
+        return kw
+    
 class FileFieldElement(CharFieldElement):
     #~ xtype = 'fileuploadfield'
     #~ value_template = "new Lino.FileField(%s)"
@@ -1480,6 +1486,7 @@ _FIELD2ELEM = (
     #~ (fields.HtmlTextField, HtmlTextFieldElement),
     #~ (fields.RichTextField, RichTextFieldElement),
     (models.TextField, TextFieldElement), # also fields.RichTextField
+    (fields.PasswordField, PasswordFieldElement),
     (models.CharField, CharFieldElement),
     (fields.MonthField, MonthFieldElement),
     (models.DateTimeField, DateTimeFieldElement),

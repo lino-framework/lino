@@ -12,6 +12,13 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+Defines models for :mod:`lino.modlib.mails`.
+"""
+
+import logging
+logger = logging.getLogger(__name__)
+
 import os
 import sys
 import cgi
@@ -41,10 +48,78 @@ from lino.modlib.mails.utils import RecipientType
 
 from lino.utils.html2text import html2text
 from django.core.mail import EmailMultiAlternatives
+from lino.utils.config import find_config_file
+from Cheetah.Template import Template as CheetahTemplate
+
+class CreateMailAction(reports.RowAction):
+    "Deserves more documentation."
+  
+    name = 'send'
+    label = _('Create email')
+    callable_from = None
+            
+    def run(self,rr,elem,**kw):
+        #~ if False: 
+            #~ if elem.time_sent:
+                #~ return rr.ui.error_response(
+                    #~ message="%s has already been sent (%s)" % (elem,elem.time_sent))
+          
+        tplname = elem._meta.app_label + '/' + elem.__class__.__name__ + '/email.html'
+        
+        
+        fn = find_config_file(tplname)
+        logger.info("Using email template %s",fn)
+        tpl = CheetahTemplate(file(fn).read())
+        tpl.instance = elem
+        html_content = unicode(tpl)
+        
+        from lino.modlib.mails.models import OutMail
+        m = OutMail(user=rr.get_user(),subject=elem.get_subject(),body=html_content)
+        m.full_clean()
+        m.save()
+        for t,n,a in elem.get_recipients():
+            m.recipient_set.create(type=t,address=a,name=n)
+        kw.update(open_url=rr.ui.get_detail_url(m))
+        return rr.ui.success_response(**kw)
+        
+    
+class Mailable(models.Model):
+    """
+    Mixin for models that provide a "Create Email" button.
+    Deserves more documentation.
+    """
+
+    class Meta:
+        abstract = True
+        
+    #~ time_sent = models.DateTimeField(null=True,editable=False)
+    
+    @classmethod
+    def setup_report(cls,rpt):
+        rpt.add_action(CreateMailAction())
+        
+    def get_print_language(self,pm):
+        return babel.DEFAULT_LANGUAGE
+        
+    #~ def get_templates_group(self):
+        #~ return model_group(self)
+        
+    def get_subject(self):
+        """
+        Return the content of the `subject` 
+        field for the email to be created.
+        """
+        return unicode(self)
+        
+    def get_recipients(self):
+        "return or yield a list of (type,name,address) tuples"
+        raise NotImplementedError()
+        
 
 
 
-class ReallySendMailAction(reports.RowAction):
+
+class SendMailAction(reports.RowAction):
     "Deserves more documentation."
   
     name = 'send'
@@ -145,7 +220,7 @@ class Mail(models.Model):
     #~ recipients_to.return_type = fields.DisplayField(_("to"))
     
     def __unicode__(self):
-        return u'%s %r (#%s)' % (self._meta.verbose_name,self.subject,self.pk)
+        return u'%s #%s ("%s")' % (self._meta.verbose_name,self.pk,self.subject)
         
     def add_attached_file(self,fn):
         """Doesn't work. 
@@ -178,7 +253,7 @@ class OutMail(Mail,mixins.AutoUser):
     
     @classmethod
     def setup_report(cls,rpt):
-        rpt.add_action(ReallySendMailAction())
+        rpt.add_action(SendMailAction())
 
 
 if False:

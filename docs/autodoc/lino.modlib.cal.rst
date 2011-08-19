@@ -23,3 +23,11 @@
     :show-inheritance:
 
 
+:mod:`lino.modlib.cal.management.commands.watch_calendars`
+----------------------------------------------------------
+
+.. automodule:: lino.modlib.cal.management.commands.watch_calendars
+    :members:
+    :show-inheritance:
+
+

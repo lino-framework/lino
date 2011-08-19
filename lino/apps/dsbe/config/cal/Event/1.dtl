@@ -8,5 +8,5 @@ main =
   user person company alarm_value alarm_unit
   place priority access_class 
   transparent duration_value duration_unit repeat_value repeat_unit
-  description
+  description AttendancesByEvent
 

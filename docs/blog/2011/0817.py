@@ -55,22 +55,23 @@ if len(calendars) > 1:
 calendar = calendars[0]
 print "Using calendar", calendar
 
-print "Renaming"
-# deactivated: calendar.set_properties([dav.DisplayName("Test calendar"),])
+print "Renaming (works, but is deactivated)"
+if False:
+    calendar.set_properties([dav.DisplayName("Test calendar"),])
 print calendar.get_properties([dav.DisplayName(),])
 
 #~ event = caldav.Event(client, data = vcal, parent = calendar).save()
 #~ print "Event", event, "created"
 
-d = datetime(2011, 8, 1)
-print "Looking for events after", d
-results = calendar.date_search(d)
-for event in results:
-    print "Found", event.instance.prettyPrint()
-    
 d = datetime(2010, 5, 12)
 print "Looking for events on ", d
 results = calendar.date_search(d,d+timedelta(days=1))
+for event in results:
+    print "Found", event.instance.prettyPrint()
+
+d = datetime(2011, 8, 20)
+print "Looking for events after", d
+results = calendar.date_search(d,d+timedelta(days=4))
 for event in results:
     print "Found", event.instance.prettyPrint()
     

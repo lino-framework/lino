@@ -62,3 +62,6 @@ def log_changes(request,elem):
         #~ print msg
         logger.info(msg)
 
+class PseudoRequest:
+    def __init__(self,user):
+        self.user = "user"

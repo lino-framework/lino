@@ -11,6 +11,5 @@ Subpackages
 
 .. toctree::
 
-    lino.mixins.sendable
     lino.mixins.printable
     lino.mixins.uploadable

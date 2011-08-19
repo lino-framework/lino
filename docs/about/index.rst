@@ -23,10 +23,9 @@ which  will be using the :doc:`Qooxdoo library </topics/qooxdoo>`.
 And we can imagine to write other interfaces in the future 
 (simple HTML, curses, Qt, ...).
 
-Don't hesitate to contact the author:
+Don't hesitate to contact the author
 
-  | E-mail: luc *dot* saffre *at* gmail *dot* com
-  | Skype: lsaffre
+  | Email: luc *dot* saffre *at* gmail *dot* com
 
 History
 -------
@@ -56,14 +55,7 @@ has obviously not been designed to write complete database applications.
 That's why I started to write Lino.
 Lino is an alternative for Django's `django.contrib.admin` module."
 
-Each Lino application is a complete Django project, but 
-you don't need to write any `urls.py` not HTML templates, 
-and even your :xfile:`settings.py` 
-can consist of only one line::
-
-  from lino.apps.igen.settings import *
-  
-
+See also :doc:`/tutorials/t1`
 
 
 .. toctree::

@@ -129,6 +129,14 @@ class StoreField(object):
             #~ raise 
         return
 
+class PasswordStoreField(StoreField):
+  
+    def value_from_object(self,request,obj):
+        v = super(PasswordStoreField,self).value_from_object(request,obj)
+        if v:
+            return "*" * len(v)
+        return v
+  
 class DisabledFieldsStoreField(StoreField):
     """
     See :doc:`/blog/2010/0803`
@@ -565,6 +573,8 @@ class Store:
             return FileFieldStoreField(fld)
         if isinstance(fld,models.ManyToManyField):
             return StoreField(fld)
+        if isinstance(fld,fields.PasswordField):
+            return PasswordStoreField(fld)
         if isinstance(fld,models.OneToOneField):
             return OneToOneStoreField(fld)
         if isinstance(fld,fields.GenericForeignKeyIdField):

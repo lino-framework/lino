@@ -41,6 +41,7 @@ class Lino(Lino):
         dsbe = models.get_app('dsbe')
         properties = models.get_app('properties')
         cal = models.get_app('cal')
+        mails = models.get_app('mails')
         notes = models.get_app('notes')
 
         #~ main = menus.Toolbar('main')
@@ -58,7 +59,6 @@ class Lino(Lino):
         m.add_action('notes.MyNotes')
         m.add_action('uploads.MyUploads')
         m.add_action('jobs.MyContracts')
-        cal.setup_my_menu(self,ui,user,m)
         
         #~ m.add_action('cal.MyTasks')
         #~ m.add_action('cal.MyEvents')
@@ -69,6 +69,8 @@ class Lino(Lino):
             #~ m.add_action('contacts.MyPersonsByGroup',label=pg.name,
             #~ params=dict(master_id=pg.pk))
             
+        cal.setup_my_menu(self,ui,user,m)
+        mails.setup_my_menu(self,ui,user,m)
         m.add_action('lino.MyTextFieldTemplates')
 
 
@@ -226,6 +228,7 @@ INSTALLED_APPS = (
   'lino.modlib.uploads',
   'lino.modlib.thirds',
   'lino.modlib.cal',
+  'lino.modlib.mails',
   'lino.modlib.jobs',
   'lino.apps.dsbe',
   #'dsbe.modlib.contacts',

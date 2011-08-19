@@ -15,6 +15,8 @@
 This defines a model mixin that adds a "Send email" button.
 """
 
+raise "moved to lino.modlib.mails"
+
 import logging
 logger = logging.getLogger(__name__)
 

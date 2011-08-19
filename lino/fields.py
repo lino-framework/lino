@@ -39,7 +39,15 @@ from lino.tools import full_model_name
 
 LANGUAGE_CHOICES = [ (k,_(v)) for k,v in settings.LANGUAGES ]
 
+class PasswordField(models.CharField):
+    """Stored as plain text in database, but not displayed in user interface."""
+    pass
+    
 class LanguageField(models.CharField):
+    """
+    A field that lets the user select a language 
+    from :setting:`LANGUAGES` setting.
+    """
     def __init__(self, *args, **kw):
         defaults = dict(
             verbose_name=_("Language"),

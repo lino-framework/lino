@@ -19,8 +19,37 @@ This is to customize local settings that should be applied
 for all Lino sites on a given machine.
 
 :xfile:`.dtl` files now have a different naming and structuring. 
+Here an excerpt of the rename actions::
+
+  hg mv modlib\contacts\config\contacts.Person.dtl modlib\contacts\config\contacts\Person\1.dtl
+  hg mv modlib\contacts\config\contacts.Company.dtl modlib\contacts\config\contacts\Company\1.dtl
+  hg mv modlib\countries\config\countries.Country.dtl modlib\countries\config\countries\Country\1dtl
+  hg mv modlib\finan\config\finan.BankStatement.dtl modlib\finan\config\finan\BankStatement\1.dtl
+  hg mv modlib\links\config\links.Link.dtl modlib\links\config\links\Link\1.dtl
+  hg mv modlib\products\config\products.Product.dtl modlib\products\config\products\Product\1.dtl
+  hg mv modlib\products\config\products.ProductCat.dtl modlib\products\config\products\ProductCat\1.dtl
+  hg mv modlib\projects\config\projects.Project.dtl modlib\projects\config\projects\Project\1.dtl
+  hg mv modlib\sales\config\sales.Order.dtl modlib\sales\config\sales\Order\1.dtl
+  hg mv modlib\sales\config\sales.Invoice.dtl modlib\sales\config\sales\Invoice\1.dtl
+  hg mv modlib\sales\config\sales.Order.2.dtl modlib\sales\config\sales\Order\2.dtl
+  hg mv modlib\sales\config\sales.Order.3.dtl modlib\sales\config\sales\Order\3.dtl
+  hg mv modlib\sales\config\sales.Invoice.2.dtl modlib\sales\config\sales\Invoice\2.dtl
+  hg mv modlib\uploads\config\uploads.Upload.dtl modlib\uploads\config\uploads\Upload\1.dtl
+  hg mv modlib\cal\config\cal.Task.dtl modlib\cal\config\cal\Task\1.dtl
+  hg mv modlib\cal\config\cal.Event.dtl modlib\cal\config\cal\Event\1.dtl
+  hg mv apps\igen\config\contacts.Company.2.dtl apps\igen\config\contacts\Company\2.dtl
+  hg mv apps\igen\config\contacts.Company.dtl apps\igen\config\contacts\Company\1.dtl
+  hg mv apps\igen\config\lino.SiteConfig.dtl apps\igen\config\lino\SiteConfig\1.dtl
+  hg mv config\lino.SiteConfig.dtl config\lino\SiteConfig\1.dtl
+  hg mv config\lino.DataControlListing.dtl config\lino\DataControlListing\1.dtl
+  hg mv config\lino.TextFieldTemplate.dtl config\lino\TextFieldTemplate\1.dtl
+  
+If there are any local :xfile:`.dtl` files, these must be renamed in a similar way.
+
 The :xfile:`doctemplates` directory has gone. 
 Document templates `.odt` are now simply together with :xfile:`.dtl` 
 files in these per-table directories.
+
+
 
 Check-in 20110812

@@ -16,6 +16,10 @@ because it is rather for internal use.
 Short-term
 ----------
 
+#.  User-friendly way to add recipients to an OutMail. 
+    For this we probably need something like a "picker" 
+    function in :xfile:`linolib.js` 
+    and "before POST" actions on the Report.
 
 #.  Lino als Client eines CalDAV-Servers.
     Man kann scheinbar weder in GroupWise noch in Zarafa 
@@ -35,7 +39,12 @@ Short-term
     Note that Uploadable.file is a FileField(upload_to='/media/uploads').
     Maybe another field "local_file", a simple CharField?
     
-    
+#.  Sending notes by email. 
+    A single "Create email" button on a Note is maybe not enough.
+    - Send note with or without the printable?
+    - Who is recipient? For a note about a coached person, 
+      recipient may be another user and *not* the person.
+      Recipient my be a third company.
 
 
 #.  Uploads mit Sonderzeichen im Dateinamen funktionieren noch nicht.

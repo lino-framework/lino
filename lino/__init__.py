@@ -183,8 +183,16 @@ class Lino(object):
     
     help_url = "http://code.google.com/p/lino"
     #~ index_html = "This is the main page."
-    title = "Base Lino Application"
-    domain = "www.example.com"
+    title = "Untitled Lino Application"
+    #~ domain = "www.example.com"
+    
+    uid = None
+    """
+    A universal identifier for this Lino site. 
+    This is needed for synchronization with CalDAV server; 
+    calendar components created by Lino will get a UID 
+    ``"%s@%s" (self.pk,settings.LINO.ui)``.
+    """
     
     user_model = "users.User"
     """Set this to ``"auth.User"`` if you use `django.contrib.auth` instead of

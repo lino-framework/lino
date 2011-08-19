@@ -13,7 +13,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-This module defines tables :class:`Task` and :class:`Event`.
+This module defines tables :class:`Calendar`,  :class:`Task` and :class:`Event`.
 
 """
 import cgi
@@ -33,11 +33,98 @@ from lino.tools import resolve_model
 
 from lino.modlib.contacts import models as contacts
 
+from lino.modlib.mails.models import Mailable
+
 from lino.modlib.cal.utils import EventStatus, \
     TaskStatus, DurationUnit, Priority, AccessClass, add_duration
 
 from lino.utils.babel import dtosl
 #~ from lino.utils.dpy import is_deserializing
+
+
+
+class CalendarType(object):
+    
+    def validate_calendar(self,cal):
+        pass
+        
+class LocalCalendar(CalendarType):
+    label = "Local Calendar"
+  
+class GoogleCalendar(CalendarType):
+    label = "Google Calendar"
+    def validate_calendar(self,cal):
+        if not cal.url_template:
+            cal.url_template = \
+            "https://%(username)s:%(password)s@www.google.com/calendar/dav/%(username)s/"
+  
+CALENDAR_CHOICES = []
+CALENDAR_DICT = {}
+
+def register_calendartype(name,instance):
+    CALENDAR_DICT[name] = instance
+    CALENDAR_CHOICES.append((name,instance.label))
+    
+register_calendartype('local',LocalCalendar())
+register_calendartype('google',GoogleCalendar())
+    
+    
+class Calendar(mixins.AutoUser):
+    """
+    A Calendar is a collection of events and tasks.
+    There are local calendars and remote calendars.
+    Remote calendars will be synchronized by
+    :mod:`lino.modlib.cal.management.commands.watch_calendars`,
+    and local modifications will be sent back to the remote calendar.
+    """
+    type = models.CharField(_("Type"),max_length=20,
+        default='local',
+        choices=CALENDAR_CHOICES)
+    name = models.CharField(_("Name"),max_length=200)
+    url_template = models.CharField(_("URL template"),max_length=200,
+        blank=True,null=True)
+    username = models.CharField(_("Username"),max_length=200
+        ,blank=True,null=True)
+    password = fields.PasswordField(_("Password"),max_length=200
+        ,blank=True,null=True)
+    readonly = models.BooleanField(_("read-only"),default=False)
+    is_default = models.BooleanField(_("is default"),default=False)
+    
+    def save(self,*args,**kw):
+        ct = CALENDAR_DICT.get(self.type)
+        ct.validate_calendar(self)
+        super(Calendar,self).save(*args,**kw)
+        if self.is_default:
+            for cal in self.user.calendar_set.all():
+                if cal.pk != self.pk and cal.is_default:
+                    cal.is_default = False
+                    cal.save()
+
+    def get_url(self):
+        if self.url_template:
+            return self.url_template % dict(username=self.username,password=self            .password)
+        return ''
+                    
+    
+class Calendars(reports.Report):
+    model = 'cal.Calendar'
+
+def default_calendar(user):
+    try:
+        return user.calendar_set.get(is_default=True)    
+    except Calendar.DoesNotExist,e:
+        cal = Calendar(user=user,name=user.get_full_name(),is_default=True)
+        cal.save()
+        return cal
+    
+
+
+
+
+
+
+
+
 
 class Place(models.Model):
     name = models.CharField(_("Name"),max_length=200)
@@ -64,6 +151,8 @@ class EventTypes(reports.Report):
     model = EventType
     column_names = 'name build_method template *'
 
+
+#~ class MyRemoteCalendars    
     
 class Component(mixins.AutoUser,
                 mixins.CreatedModified):
@@ -86,12 +175,41 @@ class Component(mixins.AutoUser,
     alarm_unit = DurationUnit.field(_("Alarm unit"),null=True,blank=True)
     dt_alarm = models.DateTimeField(
         blank=True,null=True,editable=False)
+        
+    uid = models.CharField(_("UID"),max_length=200)
+    calendar = models.ForeignKey(Calendar,verbose_name=_("Calendar"),blank=True)
+
     
     def __unicode__(self):
         return self._meta.verbose_name + " #" + str(self.pk)
         
+
+    def before_clean(self):
+        """
+        Called also from `save()` because `get_or_create()` 
+        doesn't call full_clean().
+        We cannot do this only in `save()` because otherwise 
+        `full_clean()` (when called) will complain 
+        about the empty fields.
+        """
+        if not self.calendar_id:
+            self.calendar = default_calendar(self.user)
+        if not self.uid:
+            if not settings.LINO.uid:
+                raise Exception('Cannot create local calendar components because settings.LINO.uid is empty.')
+            self.uid = "%s@%s" % (self.pk,settings.LINO.uid)
+
+    def full_clean(self,*args,**kw):
+        self.before_clean()
+        super(Component,self).full_clean(*args,**kw)
+        
+        
     def save(self,*args,**kw):
-        if self.alarm_unit:
+        """
+        Computes the value of `dt_alarm` before really saving.
+        """
+        self.before_clean()
+        if self.alarm_unit and self.alarm_value:
             if not self.start_date:
                 self.start_date = datetime.date.today()
             if self.start_time:
@@ -234,7 +352,7 @@ class MyTasks(mixins.ByUser):
 
 class Attendance(contacts.PartnerDocument,
       mixins.CachedPrintable,
-      mixins.Sendable):
+      Mailable):
     """An Attendance is when somebody possibly attends to an Event.
 "Somebody" means a Person, a Company or both.
 An unconfirmed attendance is when the partner has been invited.
@@ -254,13 +372,16 @@ An unconfirmed attendance is when the partner has been invited.
     remark = models.CharField(
         _("Remark"),max_length=200,blank=True)
 
+    #~ def __unicode__(self):
+        #~ return self._meta.verbose_name + " #" + str(self.pk)
+        
     def __unicode__(self):
-        return self._meta.verbose_name + " #" + str(self.pk)
+        return u'%s #%s ("%s")' % (self._meta.verbose_name,self.pk,self.event)
         
     @classmethod
     def setup_report(cls,rpt):
         mixins.CachedPrintable.setup_report(rpt)
-        mixins.Sendable.setup_report(rpt)
+        Mailable.setup_report(rpt)
         
 class Attendances(reports.Report):
     model = Attendance
@@ -351,7 +472,7 @@ def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
     return s
 
 SKIP_AUTO_TASKS = False 
-"See :blog:`/blog/2011/0727`"
+"See :doc:`/blog/2011/0727`"
 
 def update_auto_task(autotype,user,date,summary,owner,**defaults):
     """Creates, updates or deletes the automatic :class:`Task` 
@@ -431,6 +552,7 @@ def setup_config_menu(site,ui,user,m):
     m  = m.add_menu("cal",_("~Calendar"))
     m.add_action('cal.Places')
     m.add_action('cal.EventTypes')
+    m.add_action('cal.Calendars')
   
 def setup_explorer_menu(site,ui,user,m):
     m.add_action('cal.Events')
