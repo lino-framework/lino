@@ -420,7 +420,7 @@ class SubmitInsert(actions.Action):
 class ReportHandle(base.Handle): 
     
     def __init__(self,ui,report):
-        logger.debug('ReportHandle.__init__(%s)',report)
+        #~ logger.debug('ReportHandle.__init__(%s)',report)
         assert isinstance(report,Report)
         self.report = report
         self._layouts = None
@@ -1437,7 +1437,7 @@ class LayoutHandle:
     
     def __init__(self,rh,layout,hidden_elements=frozenset()):
       
-        logger.debug('LayoutHandle.__init__(%s,%s)',rh,layout)
+        #~ logger.debug('LayoutHandle.__init__(%s,%s)',rh,layout)
         assert isinstance(layout,BaseLayout)
         #assert isinstance(link,reports.ReportHandle)
         #~ base.Handle.__init__(self,ui)

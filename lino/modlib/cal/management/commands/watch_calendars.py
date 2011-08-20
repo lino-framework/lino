@@ -38,6 +38,7 @@ from django.conf import settings
 
 
 from django.db.utils import DatabaseError
+from django.db import models
 # OperationalError
 from django.utils import simplejson
 #~ from django.contrib.auth import models as auth
@@ -54,11 +55,14 @@ from lino.tools import obj2str
 
 from lino.utils.daemoncommand import DaemonCommand
 
-from datetime import datetime, timedelta
+#~ from datetime import datetime, timedelta
 
 import caldav
 from caldav.elements import dav, cdav
-from lino.modlib.cal.models import Calendar
+#~ from lino.modlib.cal.models import Calendar, Event
+
+Calendar = resolve_model('cal.Calendar')
+Event = resolve_model('cal.Event')
 
 REQUEST = dblogger.PseudoRequest('watch_calendars')
 
@@ -73,7 +77,7 @@ def watch():
         if not dbcal.url_template: 
             continue
         url = dbcal.get_url()
-        dblogger.info("Get calendar %r from %s",dbcal.name, url)
+        dblogger.info("Get calendar %s from %s",dbcal.name, url)
         
         client = caldav.DAVClient(url)
         principal = caldav.Principal(client, url)
@@ -82,30 +86,69 @@ def watch():
 
         calendars = principal.calendars()
         if len(calendars) == 0:
-            dblogger.info("Sorry, no calendar")
+            dblogger.info("--> Sorry, no calendar")
         elif len(calendars) > 1:
             #~ print "WARNING: more than 1 calendar"
-            dblogger.warning("more than 1 calendar")
+            dblogger.warning("--> More than 1 calendar")
         else:
+            count_update = 0
+            count_new = 0
             calendar = calendars[0]
-            print "Using calendar", calendar
+            #~ print "Using calendar", calendar
 
             props = calendar.get_properties([dav.DisplayName()])
             dbcal.name = props[dav.DisplayName().tag]
             dbcal.save()
             
-            from_date = datetime.now() - timedelta(days=365)
-            until_date = datetime.now() + timedelta(days=365)
+            from_date = datetime.datetime.now() - datetime.timedelta(days=365)
+            until_date = datetime.datetime.now() + datetime.timedelta(days=365)
 
             results = calendar.date_search(from_date) # ,until_date)
             if results:
-                for event in results:
-                    print "Found", event.instance.prettyPrint()
-                    print "children:", [c for c in event.instance.getChildren()]
-                    print "SUMMARY:", event.instance.vevent.summary.value
-                    print "UID:", event.instance.vevent.uid.value
-                    #~ print "SUMMARY:", event.instance.getChildValue('vevent')
-                    raise StopIteration
+                for comp in results:
+                    if comp.instance.vevent:
+                        summary = comp.instance.vevent.summary.value
+                        uid = comp.instance.vevent.uid.value
+                        dtstart = comp.instance.vevent.dtstart.value
+                        dtend = comp.instance.vevent.dtend.value
+                        try:
+                            obj = Event.objects.get(uid=uid)
+                            count_update += 1
+                        except Event.DoesNotExist, e:
+                        #~ except Exception, e:
+                            obj = Event(uid=uid)
+                            obj.user = dbcal.user
+                            count_new += 1
+                        obj.summary = summary
+                        #~ print type(dtstart)
+                        #~ print repr(dtstart)
+                        if dtstart:
+                            if isinstance(dtstart,datetime.datetime):
+                                obj.start_date = dtstart.date()
+                                obj.start_time = dtstart.time()
+                            elif isinstance(dtstart,datetime.date):
+                                obj.start_date = dtstart
+                            else:
+                                dblogger.warning(
+                                    "Invalid value for dtstart: %r",dtstart)
+                        if dtend:
+                            if isinstance(dtend,datetime.datetime):
+                                obj.end_date = dtstart.date()
+                                obj.end_time = dtend.time()
+                            elif isinstance(dtend,datetime.date):
+                                obj.end_date = dtend
+                            else:
+                                dblogger.warning(
+                                    "Invalid value for dtend: %r",dtstart)
+                        obj.full_clean()
+                        dblogger.log_changes(REQUEST,obj)
+                        obj.save()
+                    else:
+                        raise Exception("Got unhandled component %s" % comp.instance.prettyPrint())
+                        #~ print "children:", [c for c in comp.instance.getChildren()]
+                    
+                    #~ raise StopIteration
+            dblogger.info("--> Created %d and updated %d events", count_new, count_update)
 
         
         
@@ -134,6 +177,8 @@ class Command(DaemonCommand):
     preserve_loggers = [dblogger.logger]
     
     def handle_daemon(self, *args, **options):
+        #~ models.get_models() # trigger django.db.models.loading.cache._populate()
+        settings.LINO.setup()
         main(*args,**options)
 
 

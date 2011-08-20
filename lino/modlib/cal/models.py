@@ -13,7 +13,8 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-This module defines tables :class:`Calendar`,  :class:`Task` and :class:`Event`.
+This module defines models :class:`Calendar`, :class:`Task` and :class:`Event`.
+And :class:`EventType`, :class:`Place`
 
 """
 import cgi
@@ -162,6 +163,9 @@ class Component(mixins.AutoUser,
     class Meta:
         abstract = True
         
+    calendar = models.ForeignKey(Calendar,verbose_name=_("Calendar"),blank=True)
+    uid = models.CharField(_("UID"),max_length=200)
+
     start_date = models.DateField(
         verbose_name=_("Start date")) # iCal:DTSTART
     start_time = models.TimeField(
@@ -176,9 +180,6 @@ class Component(mixins.AutoUser,
     dt_alarm = models.DateTimeField(
         blank=True,null=True,editable=False)
         
-    uid = models.CharField(_("UID"),max_length=200)
-    calendar = models.ForeignKey(Calendar,verbose_name=_("Calendar"),blank=True)
-
     
     def __unicode__(self):
         return self._meta.verbose_name + " #" + str(self.pk)
