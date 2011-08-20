@@ -91,8 +91,10 @@ def watch():
             #~ print "WARNING: more than 1 calendar"
             dblogger.warning("--> More than 1 calendar")
         else:
+            touched = set()
             count_update = 0
             count_new = 0
+            count_deleted = 0
             calendar = calendars[0]
             #~ print "Using calendar", calendar
 
@@ -100,10 +102,12 @@ def watch():
             dbcal.name = props[dav.DisplayName().tag]
             dbcal.save()
             
-            from_date = datetime.datetime.now() - datetime.timedelta(days=365)
+            from_date = dbcal.start_date 
+            if not from_date:
+                from_date = datetime.datetime.now() - datetime.timedelta(days=365)
             until_date = datetime.datetime.now() + datetime.timedelta(days=365)
 
-            results = calendar.date_search(from_date) # ,until_date)
+            results = calendar.date_search(from_date,until_date)
             if results:
                 for comp in results:
                     if comp.instance.vevent:
@@ -130,7 +134,8 @@ def watch():
                                 obj.start_date = dtstart
                             else:
                                 dblogger.warning(
-                                    "Invalid value for dtstart: %r",dtstart)
+                                    "Invalid value for dtstart: %r",
+                                    dtstart)
                         if dtend:
                             if isinstance(dtend,datetime.datetime):
                                 obj.end_date = dtstart.date()
@@ -139,16 +144,27 @@ def watch():
                                 obj.end_date = dtend
                             else:
                                 dblogger.warning(
-                                    "Invalid value for dtend: %r",dtstart)
+                                    "Invalid value for dtend: %r",
+                                    dtstart)
                         obj.full_clean()
                         dblogger.log_changes(REQUEST,obj)
                         obj.save()
+                        touched.add(obj.pk)
                     else:
-                        raise Exception("Got unhandled component %s" % comp.instance.prettyPrint())
+                        raise Exception(
+                            "Got unhandled component %s" 
+                            % comp.instance.prettyPrint())
                         #~ print "children:", [c for c in comp.instance.getChildren()]
                     
                     #~ raise StopIteration
-            dblogger.info("--> Created %d and updated %d events", count_new, count_update)
+            qs = dbcal.event_set.exclude(id__in=touched)
+            count_deleted = qs.count()
+            qs.delete() # doesn't call delete methods of individual objects
+            #~ for obj in qs:
+                #~ obj.delete()
+            dblogger.info(
+                "--> Created %d, updated %d, deleted %s events", 
+                count_new, count_update,count_deleted)
 
         
         

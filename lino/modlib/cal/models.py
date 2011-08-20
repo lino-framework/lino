@@ -89,7 +89,11 @@ class Calendar(mixins.AutoUser):
     password = fields.PasswordField(_("Password"),max_length=200
         ,blank=True,null=True)
     readonly = models.BooleanField(_("read-only"),default=False)
-    is_default = models.BooleanField(_("is default"),default=False)
+    is_default = models.BooleanField(
+      _("is default"),default=False)
+    start_date = models.DateField(
+        verbose_name=_("Start date"),
+        blank=True,null=True)
     
     def save(self,*args,**kw):
         ct = CALENDAR_DICT.get(self.type)

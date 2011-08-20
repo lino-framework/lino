@@ -21,12 +21,11 @@ Short-term
     function in :xfile:`linolib.js` 
     and "before POST" actions on the Report.
 
-#.  Lino als Client eines CalDAV-Servers.
-    Man kann scheinbar weder in GroupWise noch in Zarafa 
-    externe ("remote") Kalender konfigurieren (so wie `Google und Sunbird
-    <http://www.google.com/support/calendar/bin/answer.py?answer=99358#sunbird>`_)
-    Lino muss also nicht selber Server sein, 
-    sondern eher als Client mit einem CalDAV-Server arbeiten. 
+#.  Remote calendars (:doc:`/tickets/47`):
+
+    - Delete events in db if they have been deleted from remote calendar
+    - Event.save() must update the remote calendar.
+
 
 #.  Attachments of outgoing mails.
     An UploadsByOwner slave in the detail of a mail will be enough for 
