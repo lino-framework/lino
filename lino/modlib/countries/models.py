@@ -33,17 +33,18 @@ from lino.utils import babel
 from lino.utils import dblogger
 
 
-class Language(models.Model):
+#~ class Language(models.Model):
+class Language(babel.BabelNamed):
     class Meta:
         verbose_name = _("Language")
         verbose_name_plural = _("Languages")
     id = models.CharField(max_length=3,primary_key=True)
-    name = babel.BabelCharField(max_length=200,verbose_name=_("Designation"))
+    #~ name = babel.BabelCharField(max_length=200,verbose_name=_("Designation"))
     #~ name = models.CharField(max_length=200,verbose_name=_("Designation"))
     iso2 = models.CharField(max_length=2,blank=True,null=True)
     
-    def __unicode__(self):
-        return babel.babelattr(self,'name')
+    #~ def __unicode__(self):
+        #~ return babel.babelattr(self,'name')
 
 #~ add_babel_field(Language,'name')
 
@@ -53,7 +54,7 @@ class Languages(reports.Report):
 
 
 
-class Country(models.Model):
+class Country(babel.BabelNamed):
     """
     Implements the :class:`countries.Country` convention.
     """
@@ -64,13 +65,12 @@ class Country(models.Model):
         
     isocode = models.CharField(max_length=4,primary_key=True)
     #~ name = models.CharField(max_length=200)
-    name = babel.BabelCharField(max_length=200,verbose_name=_("Designation"))
+    #~ name = babel.BabelCharField(max_length=200,verbose_name=_("Designation"))
     short_code = models.CharField(max_length=4,blank=True)
     iso3 = models.CharField(max_length=3,blank=True)
     
-    def __unicode__(self):
-        return babel.babelattr(self,'name')
-        #~ return self.name
+    #~ def __unicode__(self):
+        #~ return babel.babelattr(self,'name')
 
 #~ add_babel_field(Country,'name')
         

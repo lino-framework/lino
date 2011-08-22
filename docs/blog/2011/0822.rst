@@ -1,0 +1,41 @@
+20110822
+========
+
+BabelNamed
+----------
+
+New mixin :class:`lino.utils.babel.BabelNamed`. 
+Used by 
+:class:`lino.modlib.contacts.models.ContactType`
+:class:`lino.modlib.contacts.models.CompanyType`
+:class:`lino.modlib.countries.models.Language`
+:class:`lino.modlib.countries.models.Country`
+:class:`lino.modlib.notes.models.EventType`
+:class:`lino.modlib.products.models.ProductCat`
+:class:`lino.modlib.products.models.Product`
+:class:`lino.modlib.sales.models.PaymentTerm`
+:class:`lino.modlib.sales.models.InvoicingMode`
+:class:`lino.modlib.sales.models.ShippingMode`
+:class:`lino.modlib.properties.models.PropType`
+:class:`lino.modlib.properties.models.PropGroup`
+:class:`lino.modlib.properties.models.Property`
+:class:`lino.modlib.cal.models.AttendanceRole`
+:class:`lino.modlib.contracts.models.ContractType`
+:class:`lino.modlib.contracts.models.ExamPolicy`
+:class:`lino.apps.dsbe.models.StudyType`
+:class:`lino.apps.dsbe.models.AidType`
+
+This removes a lot of code redundance without modifying the database structure.
+
+Checkin 20110822a
+
+
+Changes in Contacts
+-------------------
+
+Some small changes in the database structure, but a big step in Lino's evolution:
+Persons & Companies get a common non-abstract model Contact.
+The current model Contact gets renamed to `Role`.
+ContactDocument
+
+

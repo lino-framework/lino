@@ -23,30 +23,30 @@ from lino.utils import perms
 from lino.utils import babel
 
 
-class ProductCat(models.Model):
+class ProductCat(babel.BabelNamed):
     """
     """
     class Meta:
         verbose_name = _("Product Category")
         verbose_name_plural = _("Product Categories")
 
-    name = babel.BabelCharField(max_length=200)
+    #~ name = babel.BabelCharField(max_length=200)
     description = models.TextField(blank=True)
-    def __unicode__(self):
-        return self.name
+    #~ def __unicode__(self):
+        #~ return self.name
 
 class ProductCats(reports.Report):
     model = ProductCat
     order_by = ["id"]
     can_view = perms.is_staff
 
-class Product(models.Model):
+class Product(babel.BabelNamed):
   
     class Meta:
         verbose_name = _("Product")
         verbose_name_plural = _("Products")
     
-    name = babel.BabelCharField(max_length=200)
+    #~ name = babel.BabelCharField(max_length=200)
     description = babel.BabelTextField(blank=True,null=True)
     cat = models.ForeignKey(ProductCat,verbose_name="Category")
     vatExempt = models.BooleanField(default=False)
@@ -54,8 +54,8 @@ class Product(models.Model):
     #image = models.ImageField(blank=True,null=True,
     # upload_to=".")
     
-    def __unicode__(self):
-        return self.name
+    #~ def __unicode__(self):
+        #~ return self.name
 
         
 

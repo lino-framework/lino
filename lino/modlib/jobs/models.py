@@ -104,7 +104,7 @@ class JobProviders(Companies):
 #
 # CONTRACT TYPES 
 #
-class ContractType(mixins.PrintableType):
+class ContractType(mixins.PrintableType,babel.BabelNamed):
   
     templates_group = 'jobs/Contract'
     
@@ -113,10 +113,10 @@ class ContractType(mixins.PrintableType):
         verbose_name_plural = _('Contract Types')
         
     ref = models.CharField(_("reference"),max_length=20,blank=True)
-    name = babel.BabelCharField(_("contract title"),max_length=200)
+    #~ name = babel.BabelCharField(_("contract title"),max_length=200)
     
-    def __unicode__(self):
-        return unicode(babel.babelattr(self,'name'))
+    #~ def __unicode__(self):
+        #~ return unicode(babel.babelattr(self,'name'))
 
 class ContractTypes(reports.Report):
     model = ContractType
@@ -125,15 +125,15 @@ class ContractTypes(reports.Report):
 #
 # EXAMINATION POLICIES
 #
-class ExamPolicy(models.Model):
+class ExamPolicy(babel.BabelNamed):
     class Meta:
         verbose_name = _("examination policy")
         verbose_name_plural = _('examination policies')
         
-    name = babel.BabelCharField(_("designation"),max_length=200)
+    #~ name = babel.BabelCharField(_("designation"),max_length=200)
     
-    def __unicode__(self):
-        return unicode(babel.babelattr(self,'name'))
+    #~ def __unicode__(self):
+        #~ return unicode(babel.babelattr(self,'name'))
     #~ def __unicode__(self):
         #~ return unicode(self.name)
 #~ add_babel_field(ExamPolicy,'name')

@@ -55,17 +55,17 @@ class NoteType(mixins.PrintableType):
     def __unicode__(self):
         return self.name
 
-class EventType(models.Model):
+class EventType(babel.BabelNamed):
     """
     """
     class Meta:
         verbose_name = _("Event Type")
         verbose_name_plural = _("Event Types")
-    name = babel.BabelCharField(max_length=200,verbose_name=_("Designation"))
+    #~ name = babel.BabelCharField(max_length=200,verbose_name=_("Designation"))
     remark = models.TextField(verbose_name=_("Remark"),blank=True)
     
-    def __unicode__(self):
-        return babel.babelattr(self,'name')
+    #~ def __unicode__(self):
+        #~ return babel.babelattr(self,'name')
 
 class EventTypes(reports.Report):
     model = 'notes.EventType'

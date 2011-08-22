@@ -53,6 +53,7 @@ from django.conf import settings
 from django.template import defaultfilters
 from django.utils import translation
 from django.utils.translation import get_language
+from django.utils.translation import ugettext_lazy as _
 
 #~ from lino.tools import default_language
 
@@ -267,6 +268,8 @@ class BabelCharField(models.CharField):
         
     def contribute_to_class(self, cls, name):
         super(BabelCharField,self).contribute_to_class(cls, name)
+        if cls._meta.abstract:
+            return
         kw = dict()
         kw.update(max_length=self.max_length)
         kw.update(blank=True)
@@ -374,4 +377,19 @@ class BabelChoice(BabelText):
         return "%s (%s:%s)" % (self.texts[DEFAULT_LANGUAGE],
           self.__class__.__name__,self.value)
         
+                
+                
+class BabelNamed(models.Model):
+    """
+    Mixin for models that have a mandatory field `name` 
+    (labelled "Description") for each language.
+    """
+    class Meta:
+        abstract = True
+        
+    name = BabelCharField(max_length=200,verbose_name=_("Designation"))
+    
+    def __unicode__(self):
+        return babelattr(self,'name')
+    
                 

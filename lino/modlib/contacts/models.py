@@ -460,7 +460,8 @@ class ContactDocument(PartnerDocument):
 
 
 
-class CompanyType(models.Model):
+#~ class CompanyType(models.Model):
+class CompanyType(babel.BabelNamed):
     """
     Represents a possible choice for the :class:`Company`.type
     field.
@@ -473,12 +474,11 @@ class CompanyType(models.Model):
         verbose_name = _("company type")
         verbose_name_plural = _("company types")
         
-    name = babel.BabelCharField(_("Designation"),max_length=200)
+    #~ name = babel.BabelCharField(_("Designation"),max_length=200)
     abbr = babel.BabelCharField(_("Abbreviation"),max_length=30,blank=True)
     
-    def __unicode__(self):
-        #~ return self.name
-        return babelattr(self,'name')
+    #~ def __unicode__(self):
+        #~ return babelattr(self,'name')
         
         
 class CompanyTypes(reports.Report):
@@ -535,22 +535,17 @@ class CompaniesByCountry(Companies):
     order_by = "city street street_no".split()
     
 
-class ContactType(models.Model):
+
+
+class ContactType(babel.BabelNamed):
     """
-    Implements the :class:`contacts.ContactType` convention.
+    Deserves more documentation.
     """
     class Meta:
         verbose_name = _("contact type")
         verbose_name_plural = _("contact types")
-    #~ id = models.CharField(max_length=10,primary_key=True)
     #~ abbr = models.CharField(max_length=30,verbose_name=_("Abbreviation"))
-    name = babel.BabelCharField(max_length=200,verbose_name=_("Designation"))
-    
-    def __unicode__(self):
-        #~ return self.name
-        return babelattr(self,'name')
 
-#~ add_babel_field(ContactType,'name')
 
 class ContactTypes(reports.Report):
     model = 'contacts.ContactType'
@@ -578,11 +573,6 @@ class Contact(models.Model):
         if self.type is None:
             return unicode(self.person)
         return u"%s (%s)" % (self.person, self.type)
-        #~ return unicode(self.person)
-        #~ if self.company_id is not None:
-            #~ if self.person_id is not None:
-                #~ return u"%s (%s)" % (self.company, self.person)
-            #~ return unicode(self.company)
             
     def address_lines(self):
         for ln in self.person.address_person_lines():
@@ -606,8 +596,8 @@ class ContactsByPerson(reports.Report):
     model = 'contacts.Contact'
     fk_name = 'person'
     column_names = 'company type *'
-    
-        
+
+
 
 from lino.models import SiteConfig
 

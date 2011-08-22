@@ -70,7 +70,7 @@ from lino.utils.choicelists import get_choicelist, choicelist_choices
 
 MULTIPLE_VALUES_SEP = ','
 
-class PropType(models.Model):
+class PropType(babel.BabelNamed):
     """
     The type of the values that a property accepts.
     Each PropType may (or may not) imply a list of choices.
@@ -84,7 +84,7 @@ class PropType(models.Model):
         verbose_name = _("Property Type")
         verbose_name_plural = _("Property Types")
         
-    name = babel.BabelCharField(max_length=200,verbose_name=_("Designation"))
+    #~ name = babel.BabelCharField(max_length=200,verbose_name=_("Designation"))
     
     choicelist = models.CharField(
         max_length=50, blank=True,
@@ -134,8 +134,8 @@ class PropType(models.Model):
             l.append(v)
         return ','.join(l)
         
-    def __unicode__(self):
-        return babel.babelattr(self,'name')
+    #~ def __unicode__(self):
+        #~ return babel.babelattr(self,'name')
         
     def choices_for(self,property):
         if self.choicelist:
@@ -179,7 +179,7 @@ class PropChoice(models.Model):
     def __unicode__(self):
         return babel.babelattr(self,'text')
 
-class PropGroup(models.Model):
+class PropGroup(babel.BabelNamed):
     """
     A Property Group defines a list of Properties that fit together under a common name.
     Examples of Property Groups: Skills, Soft Skills, Obstacles
@@ -189,25 +189,25 @@ class PropGroup(models.Model):
         verbose_name = _("Property Group")
         verbose_name_plural = _("Property Groups")
         
-    name = babel.BabelCharField(max_length=200,verbose_name=_("Designation"))
+    #~ name = babel.BabelCharField(max_length=200,verbose_name=_("Designation"))
     
-    def __unicode__(self):
-        return babel.babelattr(self,'name')
+    #~ def __unicode__(self):
+        #~ return babel.babelattr(self,'name')
 
 #~ add_babel_field(PropGroup,'name')
 
 
-class Property(models.Model):
+class Property(babel.BabelNamed):
     class Meta:
         verbose_name = _("Property")
         verbose_name_plural = _("Properties")
         
-    name = babel.BabelCharField(max_length=200,verbose_name=_("Designation"))
+    #~ name = babel.BabelCharField(max_length=200,verbose_name=_("Designation"))
     group = models.ForeignKey(PropGroup,verbose_name=_("Property Group"))
     type = models.ForeignKey(PropType,verbose_name=_("Property Type"))
     
-    def __unicode__(self):
-        return babel.babelattr(self,'name')
+    #~ def __unicode__(self):
+        #~ return babel.babelattr(self,'name')
 #~ add_babel_field(Property,'name')
 
 

@@ -139,7 +139,7 @@ class Places(reports.Report):
     model = Place
     
 
-class EventType(mixins.PrintableType):
+class EventType(mixins.PrintableType,babel.BabelNamed):
     "Deserves more documentation."
   
     templates_group = 'events'
@@ -148,10 +148,10 @@ class EventType(mixins.PrintableType):
         verbose_name = _("Event Type")
         verbose_name_plural = _('Event Types')
         
-    name = babel.BabelCharField(_("Description"),max_length=200)
+    #~ name = babel.BabelCharField(_("Description"),max_length=200)
     
-    def __unicode__(self):
-        return unicode(babel.babelattr(self,'name'))
+    #~ def __unicode__(self):
+        #~ return unicode(babel.babelattr(self,'name'))
 
 class EventTypes(reports.Report):
     model = EventType
@@ -356,7 +356,7 @@ class MyTasks(mixins.ByUser):
     column_names = 'start_date summary done status *'
 
 
-class AttendanceRole(models.Model):
+class AttendanceRole(babel.BabelNamed):
     """
     A possible value for the `role` field of an :class:`Attendance`.
     
@@ -365,10 +365,10 @@ class AttendanceRole(models.Model):
         verbose_name = _("Attendance Role")
         verbose_name_plural = _("Attendance Roles")
         
-    name = babel.BabelCharField(_("Description"),max_length=200)
+    #~ name = babel.BabelCharField(_("Description"),max_length=200)
     
-    def __unicode__(self):
-        return unicode(babel.babelattr(self,'name'))
+    #~ def __unicode__(self):
+        #~ return unicode(babel.babelattr(self,'name'))
 
 
 class AttendanceRoles(reports.Report):

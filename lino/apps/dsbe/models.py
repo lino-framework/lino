@@ -905,17 +905,17 @@ class PersonGroups(reports.Report):
 #
 # STUDY TYPE
 #
-class StudyType(models.Model):
+class StudyType(babel.BabelNamed):
     #~ text = models.TextField(_("Description"),blank=True,null=True)
     class Meta:
         verbose_name = _("study type")
         verbose_name_plural = _("study types")
         
     #~ name = models.CharField(_("Designation"),max_length=200)
-    name = babel.BabelCharField(_("Designation"),max_length=200)
+    #~ name = babel.BabelCharField(_("Designation"),max_length=200)
     
-    def __unicode__(self):
-        return unicode(babel.babelattr(self,'name'))
+    #~ def __unicode__(self):
+        #~ return unicode(babel.babelattr(self,'name'))
     #~ def __unicode__(self):
         #~ return self.name
 
@@ -1272,15 +1272,15 @@ class CourseEndings(reports.Report):
 #
 # AID TYPES
 #
-class AidType(models.Model):
+class AidType(babel.BabelNamed):
     class Meta:
         verbose_name = _("aid type")
         verbose_name_plural = _('aid types')
         
-    name = babel.BabelCharField(_("designation"),max_length=200)
+    #~ name = babel.BabelCharField(_("designation"),max_length=200)
     
-    def __unicode__(self):
-        return unicode(babel.babelattr(self,'name'))
+    #~ def __unicode__(self):
+        #~ return unicode(babel.babelattr(self,'name'))
 #~ add_babel_field(AidType,'name')
 
 class AidTypes(reports.Report):

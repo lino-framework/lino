@@ -72,7 +72,7 @@ contacts = resolve_app('contacts')
 
 
 
-class PaymentTerm(models.Model):
+class PaymentTerm(babel.BabelNamed):
     """Represents a convention on how an Invoice should be paid. 
     """
     
@@ -81,13 +81,13 @@ class PaymentTerm(models.Model):
         verbose_name_plural = _("Payment Terms")
         
     id = models.CharField(max_length=10,primary_key=True)
-    name = babel.BabelCharField(max_length=200)
+    #~ name = babel.BabelCharField(max_length=200)
     days = models.IntegerField(default=0)
     months = models.IntegerField(default=0)
     #proforma = models.BooleanField(default=False)
     
-    def __unicode__(self):
-        return self.name
+    #~ def __unicode__(self):
+        #~ return self.name
         
     def get_due_date(self,date1):
         assert isinstance(date1,datetime.date), \
@@ -125,7 +125,7 @@ add('P',en=u"Paper",de=u"Papier", fr=u"Papier",et="Paber")
 add('E',en=u"E-mail",de=u"E-mail", fr=u"courrier électronique",et="e-mail")
 
 
-class InvoicingMode(mixins.PrintableType):
+class InvoicingMode(mixins.PrintableType,babel.BabelNamed):
     """Represents a method of issuing/sending invoices.
     """
     class Meta:
@@ -138,7 +138,7 @@ class InvoicingMode(mixins.PrintableType):
     id = models.CharField(max_length=3, primary_key=True)
     journal = journals.JournalRef()
     #journal = models.ForeignKey(journals.Journal)
-    name = babel.BabelCharField(max_length=200)
+    #~ name = babel.BabelCharField(max_length=200)
     price = fields.PriceField(blank=True,null=True)
     "Additional fee charged when using this method."
     channel = Channel.field(help_text="""
@@ -153,8 +153,8 @@ class InvoicingMode(mixins.PrintableType):
     has a chance to pay them in time. 
     """)
     
-    def __unicode__(self):
-        return unicode(babel.babelattr(self,'name'))
+    #~ def __unicode__(self):
+        #~ return unicode(babel.babelattr(self,'name'))
         
 #~ add_babel_field(InvoicingMode,'name')
         
@@ -166,13 +166,13 @@ class InvoicingModes(reports.Report):
     
     
     
-class ShippingMode(models.Model):
+class ShippingMode(babel.BabelNamed):
     id = models.CharField(max_length=10, primary_key=True)
-    name = babel.BabelCharField(max_length=200)
+    #~ name = babel.BabelCharField(max_length=200)
     price = fields.PriceField(blank=True,null=True)
     
-    def __unicode__(self):
-        return self.name
+    #~ def __unicode__(self):
+        #~ return self.name
         
 class ShippingModes(reports.Report):
     """Represents a possible method of how the items described in a SalesDocument 
