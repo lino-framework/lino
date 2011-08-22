@@ -22,9 +22,9 @@ Short-term
     and "before POST" actions on the Report.
 
 #.  Remote calendars (:doc:`/tickets/47`):
-
-    - Delete events in db if they have been deleted from remote calendar
     - Event.save() must update the remote calendar.
+    - recursion rules and recursive events
+    - get calendarserver running on :term:`Jana`.
 
 
 #.  Attachments of outgoing mails.
@@ -50,7 +50,9 @@ Short-term
     See :doc:`/blog/20110725` and :doc:`/blog/20110809`.
 
 #.  In Übersichtsliste die Benutzer des DSBE und die vom allgemeinen 
-    Sozialdienst trennen. Also ein neues Feld `User.department`.
+    Sozialdienst trennen. Also ein neues Feld `User.department`. 
+    Sich dabei jedoch an der Struktur des LDAP-Verzeichnisses 
+    orientieren in Hinblick auf spätere Synchronisierung.
 
 #.  Automatische Erinnerung Arbeitserlaubnis 2 Monate vor dem in 
     "Gültig bis" angegebenen Datum gemacht werden. Die Dauer "2 Monate" 
@@ -124,6 +126,8 @@ Short-term
 Medium-term
 -----------
 
+#.  Rename "lino.mixins.Owned" to "Anchored" (and XxxByOwner to XxxByAnchor".
+    
 #.  Tutorial weiter schreiben.
 
 #.  Ich habe momentan noch kein Beispiel dafür, wie man eine eigene 

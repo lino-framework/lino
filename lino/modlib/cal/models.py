@@ -37,7 +37,8 @@ from lino.modlib.contacts import models as contacts
 from lino.modlib.mails.models import Mailable
 
 from lino.modlib.cal.utils import EventStatus, \
-    TaskStatus, DurationUnit, Priority, AccessClass, add_duration
+    TaskStatus, DurationUnit, Priority, AccessClass, \
+    AttendanceStatus, add_duration
 
 from lino.utils.babel import dtosl
 #~ from lino.utils.dpy import is_deserializing
@@ -147,7 +148,7 @@ class EventType(mixins.PrintableType):
         verbose_name = _("Event Type")
         verbose_name_plural = _('Event Types')
         
-    name = babel.BabelCharField(_("Event title"),max_length=200)
+    name = babel.BabelCharField(_("Description"),max_length=200)
     
     def __unicode__(self):
         return unicode(babel.babelattr(self,'name'))
@@ -355,13 +356,33 @@ class MyTasks(mixins.ByUser):
     column_names = 'start_date summary done status *'
 
 
+class AttendanceRole(models.Model):
+    """
+    A possible value for the `role` field of an :class:`Attendance`.
+    
+    """
+    class Meta:
+        verbose_name = _("Attendance Role")
+        verbose_name_plural = _("Attendance Roles")
+        
+    name = babel.BabelCharField(_("Description"),max_length=200)
+    
+    def __unicode__(self):
+        return unicode(babel.babelattr(self,'name'))
+
+
+class AttendanceRoles(reports.Report):
+    model = AttendanceRole
+    
+
 class Attendance(contacts.PartnerDocument,
-      mixins.CachedPrintable,
-      Mailable):
-    """An Attendance is when somebody possibly attends to an Event.
-"Somebody" means a Person, a Company or both.
-An unconfirmed attendance is when the partner has been invited.
-"""
+                 mixins.CachedPrintable,
+                 Mailable):
+    """
+    An Attendance is when somebody possibly attends to an Event.
+    "Somebody" means a Person, a Company or both.
+    An unconfirmed attendance is when the partner has been invited.
+    """
     class Meta:
         verbose_name = _("Attendance")
         verbose_name_plural = _("Attendances")
@@ -370,9 +391,15 @@ An unconfirmed attendance is when the partner has been invited.
     event = models.ForeignKey('cal.Event',
         verbose_name=_("Event")) 
         
-    confirmed = models.DateField(
-        blank=True,null=True,
-        verbose_name=_("Confirmed"))
+    role = models.ForeignKey('cal.AttendanceRole',
+        verbose_name=_("Attendance Role"),
+        blank=True,null=True) 
+        
+    status = AttendanceStatus.field(null=True,blank=True)
+    
+    #~ confirmed = models.DateField(
+        #~ blank=True,null=True,
+        #~ verbose_name=_("Confirmed"))
 
     remark = models.CharField(
         _("Remark"),max_length=200,blank=True)
@@ -390,18 +417,18 @@ An unconfirmed attendance is when the partner has been invited.
         
 class Attendances(reports.Report):
     model = Attendance
-    column_names = 'person company confirmed remark event *'
+    column_names = 'person company role status remark event *'
     
 class AttendancesByEvent(Attendances):
     fk_name = 'event'
 
 class AttendancesByPerson(Attendances):
     fk_name = 'person'
-    column_names = 'event confirmed remark company * person'
+    column_names = 'event role status remark company * person'
 
 class AttendancesByCompany(Attendances):
     fk_name = 'company'
-    column_names = 'event confirmed remark person * company'
+    column_names = 'event role status remark person * company'
 
     
 def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
@@ -557,6 +584,7 @@ def setup_config_menu(site,ui,user,m):
     m  = m.add_menu("cal",_("~Calendar"))
     m.add_action('cal.Places')
     m.add_action('cal.EventTypes')
+    m.add_action('cal.AttendanceRoles')
     m.add_action('cal.Calendars')
   
 def setup_explorer_menu(site,ui,user,m):

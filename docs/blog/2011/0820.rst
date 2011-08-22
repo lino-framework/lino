@@ -1,0 +1,18 @@
+20110820
+========
+
+Continued to work on :doc:`/tickets/47`.
+
+- :term:`watch_calendars` now deletes events in db if they have 
+  been deleted from remote calendar.
+
+- New model :class:`lino.modlib.cal.models.AttendanceRole`.
+  New field `Attendance.role`.
+
+- New choicelist :class:`lino.modlib.cal.utils.AttendanceStatus`.
+  New field `Attendance.status`.
+
+- Removed field `Attendance.confirmed`.
+
+Recurrent events are not yet handled at all. 
+Check-in 20110820

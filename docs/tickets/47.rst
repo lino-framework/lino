@@ -7,7 +7,7 @@ Lino should collaborate with a CalDAV server:
 
 - Lino should import events for each user from a remote calendar. 
   :mod:`lino.modlib.cal.management.commands.watch_calendars` 
-  Either by a cron job or a Daemon
+  Either by a cron job or by a Daemon.
 
 - When Lino generates calendar events for coached persons,
   these are first created in the Lino database 
@@ -17,9 +17,11 @@ Lino should collaborate with a CalDAV server:
 
 Bibliography:
 
-- iCalendar : `RFC 5545 (Internet Calendaring and Scheduling Core Object 
-  Specification (iCalendar)) <ftp://ftp.rfc-editor.org/in-notes/rfc5545.txt>`_
-  `iCalendar package for Python <http://codespeak.net/icalendar/>`_ 
+- iCalendar: 
+
+  - `RFC 5545 (Internet Calendaring and Scheduling Core Object 
+    Specification (iCalendar)) <ftp://ftp.rfc-editor.org/in-notes/rfc5545.txt>`_
+  - `iCalendar package for Python <http://codespeak.net/icalendar/>`_ 
 
 - CalDAV : `RFC 4791 <http://www.ietf.org/rfc/rfc4791.txt>`_
 

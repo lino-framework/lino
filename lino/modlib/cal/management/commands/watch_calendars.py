@@ -68,7 +68,15 @@ REQUEST = dblogger.PseudoRequest('watch_calendars')
 
 # dblogger.log_changes(REQUEST,obj)
 
+from cStringIO import StringIO 
 
+def prettyPrint(obj):
+    s = StringIO()
+    out = sys.stdout
+    sys.stdout = s
+    obj.prettyPrint()
+    sys.stdout = out
+    return s.getvalue()
 
 
 def watch():
@@ -147,8 +155,11 @@ def watch():
                                     "Invalid value for dtend: %r",
                                     dtstart)
                         obj.full_clean()
-                        dblogger.log_changes(REQUEST,obj)
+                        #~ dblogger.log_changes(REQUEST,obj)
                         obj.save()
+                        dblogger.info(
+                            "Saved %s from ---\n%s\n---",
+                            obj,prettyPrint(comp.instance))
                         touched.add(obj.pk)
                     else:
                         raise Exception(

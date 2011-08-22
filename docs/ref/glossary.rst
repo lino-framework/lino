@@ -7,12 +7,17 @@ Glossary
   :sorted:
 
   Tups
+     The machine that served the `saffre-rumma.net` domain until 2010.
+
+  Mops
      The machine that is serving the `saffre-rumma.net` domain.
+
+  Jana
+     An internal virtual Debian server on our LAN used for testing.
 
   DSBE
      "Dienst für Sozial-Berufliche Eingliederung"     
-     A public service in Eupen (Belgium) who helped develop
-     the Lino application of the same name :doc:`/dsbe/index`.
+     A public service in Eupen (Belgium), frst user of :mod:`lino.apps.dsbe`.
      
   ExtJS
     http://www.sencha.com/products/js/
@@ -51,6 +56,11 @@ Glossary
   watch_tim
     A daemon process that synchronizes data from TIM to Lino.
     See :mod:`lino.apps.dsbe.management.commands.watch_tim`
+
+  watch_calendars
+    A daemon process that synchronizes remote calendars 
+    into the Lino database.
+    See :mod:`lino.modlib.cal.management.commands.watch_calendars`
 
   loaddata
     one of Django's standard management commands.
