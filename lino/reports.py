@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 
 import cgi
 import os
+import sys
 import traceback
 import codecs
 import yaml
@@ -505,12 +506,8 @@ class ReportHandle(base.Handle):
         
     def update_detail(self,tab,desc):
         old_dtl = self.report.detail_layouts[tab]
-        #~ old_dtl = self.report.model._lino_detail_layouts[tab]
-        #~ old_dtl._kw.update(desc=desc)
-        #~ old_dtl._desc=desc
         dtl = DetailLayout(desc,old_dtl.filename,old_dtl.cd)
         self.report.detail_layouts[tab] = dtl
-        #~ self.report.model._lino_detail_layouts[tab] = dtl
         self._layouts[tab+1] = LayoutHandle(self,dtl)
         self.ui.setup_handle(self)
         #~ self.report.save_config()
@@ -711,6 +708,13 @@ class ReportActionRequest:
         #~ self.iter = iter
         #~ actions.ActionRequest.__init__(self,ui,action)
         
+        
+def has_fk(rr,name):
+    if isinstance(rr,ReportActionRequest):
+        return rr.report.fk_name == name
+    return False
+
+        
 def model2report(m):
     def f(self,request,obj):
         return m(obj,request)
@@ -727,6 +731,11 @@ class Report(actors.Actor): #,base.Handled):
     #~ _handle_selector = base.UI
     params = {}
     field = None
+    
+    #~ hide_details = []
+    #~ """
+    #~ A list of base classes whose `.dtl` files should not be loaded for this report.
+    #~ """
     
     base_queryset = None 
     "See :meth:`Report.get_queryset`"
@@ -884,8 +893,15 @@ class Report(actors.Actor): #,base.Handled):
             self.model = None
             
         if self.model is not None:
-            if self.app_label is None:
-                self.app_label = self.model._meta.app_label
+            # 20110822 : a report now always gets the app_label of its model
+            # you cannot set this yourself in a subclass
+            # because otherwise it gets complex when inheriting reports from other app_labels
+            #~ if self.app_label is None:
+            # Figure out the app_label by looking one level up.
+            # For 'django.contrib.sites.models', this would be 'sites'.
+            #~ m = sys.modules[self.__module__]
+            #~ self.app_label = m.__name__.split('.')[-2]
+            self.app_label = self.model._meta.app_label
             if self.label is None:
                 #~ self.label = capfirst(self.model._meta.verbose_name_plural)
                 self.label = self.init_label()
@@ -1051,18 +1067,38 @@ class Report(actors.Actor): #,base.Handled):
         #~ if not self.model._meta.managed:
             #~ print "NOT MANAGED: ", self.model
             #~ return
-        for b in self.model.__bases__:
-            if issubclass(b,models.Model) and b is not models.Model:
-                #~ print 20110221, b, "is base of", self.model
-                for dtl in getattr(b,'_lino_detail_layouts',[]):
-                #~ for dtl in b._lino_detail_layouts:
-                    #~ print '20110221b'
-                    self.detail_layouts.append(dtl)
-        #~ for dtl in self.model._lino_detail_layouts:
-        for dtl in getattr(self.model,'_lino_detail_layouts',[]):
-            self.detail_layouts.append(dtl)
+        
+        collector = {}
+        def collect_details(m):
+            #~ if m in self.hide_details: return
+            for b in m.__bases__:
+                if issubclass(b,models.Model) and b is not models.Model:
+                    collect_details(b)
+            for k,v in getattr(m,'_lino_detail_layouts',{}).items():
+                collector[k] = v
+          
+        collect_details(self.model)
+        
+        #~ def by_filename(a,b):
+            #~ ahead,atail = os.path.split(a.filename)
+            #~ bhead,btail = os.path.split(b.filename)
+            #~ return cmp(atail,btail)
+        #~ collector.sort(by_filename)
+        def by0(a,b):
+            return cmp(a[0],b[0])
+        collector = collector.items()
+        collector.sort(by0)
+        self.detail_layouts = [i[1] for i in collector]
             
-        #~ print 20110627, self, self.detail_layouts
+        #~ for b in self.model.__bases__:
+            #~ if issubclass(b,models.Model) and b is not models.Model:
+                #~ for dtl in getattr(b,'_lino_detail_layouts',[]):
+                    #~ self.detail_layouts.append(dtl)
+        #~ for dtl in getattr(self.model,'_lino_detail_layouts',[]):
+            #~ self.detail_layouts.append(dtl)
+            
+        #~ if self.detail_layouts:
+            #~ print 20110822, self, [dl.filename for dl in self.detail_layouts]
 
         
             

@@ -2,4 +2,4 @@
 
 main =
     name country 
-    contacts.PersonsByCity
+    contacts.ContactsByCity

@@ -22,6 +22,7 @@ It defines tables like `Person` and `Company`
 import datetime
 from dateutil.relativedelta import relativedelta
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.conf import settings
 from django.utils.safestring import mark_safe
@@ -41,7 +42,6 @@ from lino.utils import join_words
 from lino.utils.choosers import chooser
 from lino.utils.babel import babelattr
 from lino.utils import babel 
-#~ from lino.mixins.addressable import Addressable, Addressables
 from lino.models import get_site_config
 
 from lino.modlib.countries.models import CountryCity
@@ -101,14 +101,18 @@ def get_salutation(sex,nominative=False):
 
 
 
-class Addressable(CountryCity):
+#~ class Addressable(CountryCity):
+class Contact(CountryCity):
     """
-    Abstract base class for anything that has contact information (postal address, email, phone,...).
+    Base class for anything that has contact information 
+    (postal address, email, phone,...).
     
     """
   
     class Meta:
-        abstract = True
+        #~ abstract = True
+        verbose_name = _("Contact")
+        verbose_name_plural = _("Contacts")
   
     name = models.CharField(max_length=200,verbose_name=_('Name'))
     addr1 = models.CharField(_("Address line before street"),
@@ -179,14 +183,18 @@ class Addressable(CountryCity):
         #~ yield self.name
         yield self.get_full_name()
         
-    #~ def get_full_name(self,**salutation_options):
     def get_full_name(self,*args,**kw):
         """\
-Returns a one-line string representing this Addressable.
+Returns a one-line string representing this Contact.
 The default returns simply the `name` field, ignoring any parameters, 
-but e.g. :class:`Person` 
-overrides this.
+but e.g. :class:`PersonMixin` overrides this.
         """
+        
+        try:
+            p = getattr(self,'person')
+            return p.get_full_name(*args,**kw)
+        except ObjectDoesNotExist:
+            pass
         return self.name
     full_name = property(get_full_name)
         
@@ -246,11 +254,20 @@ overrides this.
 
 
 
-class Addressables(reports.Report):
+class Contacts(reports.Report):
+    model = 'contacts.Contact'
     column_names = "name email * id" 
+    order_by = ['name','id']
     #~ column_names = "name * id" 
     def get_queryset(self):
         return self.model.objects.select_related('country','city')
+        
+class ContactsByCity(Contacts):
+    fk_name = 'city'
+    order_by = 'street street_no street_box addr2'.split()
+    column_names = "street street_no street_box addr2 name language *"
+    
+        
   
 
 def SexField(**kw):
@@ -281,7 +298,7 @@ class Born(models.Model):
     #~ age.return_type = models.CharField(_("Age"),max_length=10,editable=False,blank=True)
     
 
-class Person(Addressable):
+class PersonMixin(models.Model):
     """
     Base class for models that represent a physical person. 
     """
@@ -344,24 +361,21 @@ Optional `salutation_options` see :func:`get_salutation`.
         #~ l = filter(lambda x:x,[self.last_name,self.first_name,self.title])
         l = filter(lambda x:x,[self.last_name,self.first_name])
         self.name = " ".join(l)
-        super(Person,self).full_clean(*args,**kw)
+        super(PersonMixin,self).full_clean(*args,**kw)
 
 #~ class PersonDetail(ContactDetail):
     #~ datalink = 'contacts.Person'
     #~ box1 = "last_name first_name:15 title:10"
 
-class Persons(Addressables):
-    model = "contacts.Person"
-    #~ label = _("Persons")
-    #~ column_names = "first_name last_name title country id name *"
-    can_delete = True
-    order_by = "last_name first_name id".split()
-    #can_view = perms.is_authenticated
+#~ class Persons(Contacts):
+    #~ model = "contacts.Person"
+    #~ can_delete = True
+    #~ order_by = "last_name first_name id".split()
 
-class PersonsByCountry(Persons):
-    fk_name = 'country'
-    order_by = 'city street street_no street_box addr2'.split()
-    column_names = "city street street_no street_box addr2 name language"
+#~ class PersonsByCountry(Persons):
+    #~ fk_name = 'country'
+    #~ order_by = 'city street street_no street_box addr2'.split()
+    #~ column_names = "city street street_no street_box addr2 name language"
 
 
 
@@ -370,6 +384,7 @@ class PersonsByCountry(Persons):
 
 class PartnerDocument(models.Model):
     """
+    Maybe deprecated. 
     This adds two fields 'person' and 'company' to this model, 
     making it something that refers to a "partner". 
     If `company` is empty, the "partner" is a private person.
@@ -411,7 +426,7 @@ class PartnerDocument(models.Model):
             
     def summary_row(self,ui,rr,**kw):
         s = ui.href_to(self)
-        if self.person:
+        if self.person and not reports.has_fk(rr,'person'):
             if self.company:
                 s += " (" + ui.href_to(self.person) + "/" + ui.href_to(self.company) + ")"
             else:
@@ -424,9 +439,7 @@ class PartnerDocument(models.Model):
         task.person = self.person
         task.company = self.company
         
-      
-
-class ContactDocument(PartnerDocument):
+class ContactDocument(models.Model):
     """
     A document whose recipient is a :class:`Contact`.
     """
@@ -435,26 +448,18 @@ class ContactDocument(PartnerDocument):
         abstract = True
         
     contact = models.ForeignKey("contacts.Contact",
-      blank=True,null=True,
+      #~ blank=True,null=True,
       verbose_name=_("represented by"))
     language = fields.LanguageField(default=babel.DEFAULT_LANGUAGE)
 
-    @chooser()
-    def contact_choices(cls,company):
-        if company is not None:
-            return company.contact_set.all()
-        return []
-        #~ print 'Contract.contact_choices for', company
-        #~ choices = company.contact_set.all()
-        #~ print 'Contract.contact_choices returns', choices
-        #~ return choices
+    #~ @chooser()
+    #~ def contact_choices(cls,company):
+        #~ if company is not None:
+            #~ return company.contact_set.all()
+        #~ return []
 
     def get_recipient(self):
-        if self.contact:
-            return self.contact
-        if self.company:
-            return self.company
-        return self.person
+        return self.contact
     recipient = property(get_recipient)
 
 
@@ -487,7 +492,8 @@ class CompanyTypes(reports.Report):
     #~ label = _("Company types")
         
 
-class Company(Addressable):
+class CompanyMixin(models.Model):
+#~ class Company(Contact):
     """
     Implements the :class:`contacts.Company` convention.
     See also :doc:`/tickets/14`.
@@ -521,15 +527,13 @@ class Company(Addressable):
 
 
               
-class Companies(Addressables):
-    #~ label = _("Companies")
-    #~ column_names = "name country city id address *"
-    model = 'contacts.Company'
-    order_by = ["name"]
+#~ class Companies(Contacts):
+    #~ model = 'contacts.Company'
+    #~ order_by = ["name"]
     
     
     
-class CompaniesByCountry(Companies):
+class ContactsByCountry(Contacts):
     fk_name = 'country'
     column_names = "city street street_no name language *"
     order_by = "city street street_no".split()
@@ -537,7 +541,8 @@ class CompaniesByCountry(Companies):
 
 
 
-class ContactType(babel.BabelNamed):
+#~ class ContactType(babel.BabelNamed):
+class Role(babel.BabelNamed):
     """
     Deserves more documentation.
     """
@@ -547,55 +552,96 @@ class ContactType(babel.BabelNamed):
     #~ abbr = models.CharField(max_length=30,verbose_name=_("Abbreviation"))
 
 
-class ContactTypes(reports.Report):
-    model = 'contacts.ContactType'
+#~ class ContactTypes(reports.Report):
+class Roles(reports.Report):
+    #~ model = 'contacts.ContactType'
+    model = 'contacts.Role'
 
 
-class Contact(models.Model):
+#~ class Contact(models.Model):
+class RoleOccurence(models.Model):
     """
     Represents a :class:`Person` having a (more or less known) 
     role in a :class:`Company`.
     """
   
     class Meta:
-        verbose_name = _("contact")
-        verbose_name_plural = _("contacts")
+        verbose_name = _("Contact")
+        verbose_name_plural = _("Contacts")
         
-    person = models.ForeignKey('contacts.Person',verbose_name=_("person"))
-    company = models.ForeignKey('contacts.Company',blank=True,null=True,
-      verbose_name=_("company"))
-    type = models.ForeignKey('contacts.ContactType',blank=True,null=True,
-      verbose_name=_("contact type"))
+    parent = models.ForeignKey('contacts.Contact',
+        verbose_name=_("Parent Contact"),
+        related_name='rolesbyparent')
+    child = models.ForeignKey('contacts.Contact',
+        verbose_name=_("Child Contact"),
+        related_name='rolesbychild')
+    role = models.ForeignKey('contacts.Role',blank=True,null=True,
+      verbose_name=_("Contact Role"))
+    #~ person = models.ForeignKey('contacts.Person',verbose_name=_("person"))
+    #~ company = models.ForeignKey('contacts.Company',blank=True,null=True,
+      #~ verbose_name=_("company"))
+    #~ type = models.ForeignKey('contacts.ContactType',blank=True,null=True,
+      #~ verbose_name=_("contact type"))
 
+    #~ def __unicode__(self):
+        #~ if self.person_id is None:
+            #~ return super(Contact,self).__unicode__()
+        #~ if self.type is None:
+            #~ return unicode(self.person)
+        #~ return u"%s (%s)" % (self.person, self.type)
     def __unicode__(self):
-        if self.person_id is None:
-            return super(Contact,self).__unicode__()
-        if self.type is None:
-            return unicode(self.person)
-        return u"%s (%s)" % (self.person, self.type)
+        if self.child_id is None:
+            return super(RoleOccurence,self).__unicode__()
+        if self.role is None:
+            return unicode(self.child)
+        return u"%s (%s)" % (self.child, self.role)
             
+    #~ def address_lines(self):
+        #~ for ln in self.person.address_person_lines():
+            #~ yield ln
+        #~ if self.company:
+            #~ for ln in self.company.address_person_lines():
+                #~ yield ln
+            #~ for ln in self.company.address_location_lines():
+                #~ yield ln
+        #~ else:
+            #~ for ln in self.person.address_location_lines():
+                #~ yield ln
     def address_lines(self):
-        for ln in self.person.address_person_lines():
+        for ln in self.child.address_person_lines():
             yield ln
-        if self.company:
-            for ln in self.company.address_person_lines():
+        if self.parent:
+            for ln in self.parent.address_person_lines():
                 yield ln
-            for ln in self.company.address_location_lines():
+            for ln in self.parent.address_location_lines():
                 yield ln
         else:
-            for ln in self.person.address_location_lines():
+            for ln in self.child.address_location_lines():
                 yield ln
 
-class ContactsByCompany(reports.Report):
-    model = 'contacts.Contact'
-    fk_name = 'company'
-    column_names = 'person type *'
+#~ class ContactsByCompany(reports.Report):
+    #~ model = 'contacts.RoleOccurence'
+    #~ fk_name = 'company'
+    #~ column_names = 'person type *'
 
-class ContactsByPerson(reports.Report):
+#~ class ContactsByPerson(reports.Report):
+    #~ label = _("Contact for")
+    #~ model = 'contacts.RoleOccurence'
+    #~ fk_name = 'person'
+    #~ column_names = 'company type *'
+    
+class RoleOccurences(reports.Report):
+    model = 'contacts.RoleOccurence'   
+    
+class RolesByParent(RoleOccurences):
+    label = _("Contacts")
+    fk_name = 'parent'
+    column_names = 'child role *'
+
+class RolesByChild(RoleOccurences):
     label = _("Contact for")
-    model = 'contacts.Contact'
-    fk_name = 'person'
-    column_names = 'company type *'
+    fk_name = 'child'
+    column_names = 'parent role *'
 
 
 
@@ -609,3 +655,17 @@ reports.inject_field(SiteConfig,
         related_name='site_company_sites',
         ),
     """The Company to be used as sender in documents.""")
+
+
+def setup_main_menu(site,ui,user,m): pass
+
+def setup_my_menu(site,ui,user,m): 
+    pass
+  
+def setup_config_menu(site,ui,user,m): 
+    m  = m.add_menu("cal",_("~Calendar"))
+    m.add_action('contacts.Roles')
+  
+def setup_explorer_menu(site,ui,user,m):
+    pass
+  

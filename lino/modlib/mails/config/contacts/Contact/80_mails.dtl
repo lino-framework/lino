@@ -1,0 +1,5 @@
+:label: Mails
+
+main = 
+    mails.InMailsByContact
+    mails.OutMailsByContact

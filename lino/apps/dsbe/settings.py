@@ -50,6 +50,7 @@ class Lino(Lino):
         m.add_action('contacts.Persons')
         #~ m.add_action('contacts.Persons',label="Alle Personen",params={})
         m.add_action('dsbe.MySearches')
+        m.add_action('contacts.Contacts')
 
         if user is None:
             return main
@@ -76,7 +77,7 @@ class Lino(Lino):
 
         m = main.add_menu("courses",_("~Courses"))
         m.add_action('dsbe.Courses')
-        m.add_action('contacts.CourseProviders')
+        m.add_action('dsbe.CourseProviders')
         m.add_action('dsbe.CourseContents')
         m.add_action('dsbe.CourseEndings')
         
@@ -108,7 +109,8 @@ class Lino(Lino):
             config_contacts.add_action('countries.Cities')
         
             config_contacts.add_action('contacts.CompanyTypes')
-            config_contacts.add_action('contacts.ContactTypes')
+            #~ config_contacts.add_action('contacts.ContactTypes')
+            config_contacts.add_action('contacts.Roles')
             config_contacts.add_action('countries.Languages')
             
             notes.setup_config_menu(self,ui,user,cfg)
@@ -163,6 +165,7 @@ class Lino(Lino):
             #m.add_action('properties.PropChoices')
             #~ m.add_action('properties.PropValues')
             m.add_action('contacts.AllPersons')
+            m.add_action('contacts.RoleOccurences')
             notes.setup_explorer_menu(self,ui,user,cfg)
             #~ m.add_action('notes.Notes')
             #~ m.add_action('lino.TextFieldTemplates')

@@ -68,6 +68,7 @@ from lino.tools import obj2str
 
 from lino.modlib.countries.models import CountryCity
 from lino.modlib.cal.models import DurationUnit, update_auto_task
+from lino.modlib.contacts.models import Contact
 
 # not used here, but these modules are required in INSTALLED_APPS, 
 # and other code may import them using 
@@ -287,13 +288,14 @@ BEID_CARD_TYPES = {
 
 
 class Partner(mixins.DiffingMixin,models.Model):
+#~ class Partner(mixins.DiffingMixin,contacts.Contact):
     """
     """
     class Meta:
-        app_label = 'contacts'
         abstract = True
+        app_label = 'contacts'
   
-    id = models.AutoField(primary_key=True,verbose_name=_("Partner #"))
+    #~ id = models.AutoField(primary_key=True,verbose_name=_("Partner #"))
     #~ id = models.CharField(max_length=10,primary_key=True,verbose_name=_("ID"))
     
     is_active = models.BooleanField(verbose_name=_("is active"),default=True)
@@ -324,13 +326,13 @@ class Partner(mixins.DiffingMixin,models.Model):
           
 
     
-class Person(Partner,contacts.Born,contacts.Person,Printable):
+class Person(Partner,contacts.PersonMixin,contacts.Contact,contacts.Born,Printable):
     """
     Represents a physical person.
     
     """
     
-    class Meta(contacts.Person.Meta):
+    class Meta(contacts.PersonMixin.Meta):
         app_label = 'contacts'
         verbose_name = _("Person") # :doc:`/tickets/14`
         verbose_name_plural = _("Persons") # :doc:`/tickets/14`
@@ -496,7 +498,8 @@ class Person(Partner,contacts.Born,contacts.Person,Printable):
         blank=True,null=True,
         verbose_name=_("Job agents"))
     
-    job_office_contact = models.ForeignKey("contacts.Contact",
+    #~ job_office_contact = models.ForeignKey("contacts.Contact",
+    job_office_contact = models.ForeignKey("contacts.RoleOccurence",
       blank=True,null=True,
       verbose_name=_("Contact person at local job office"),
       related_name='persons_job_office')
@@ -505,11 +508,8 @@ class Person(Partner,contacts.Born,contacts.Person,Printable):
     def job_office_contact_choices(cls):
         sc = get_site_config()
         if sc.job_office is not None:
-        #~ pk = settings.LINO_SITE.job_office_id
-        #~ if pk is not None:
-            #~ jo = Company.objects.get(pk=pk)
-            #~ return jo.contact_set.all()
-            return sc.job_office.contact_set.all()
+            #~ return sc.job_office.contact_set.all()
+            return sc.job_office.rolesbyparent.all()
         return []
 
 
@@ -538,7 +538,7 @@ class Person(Partner,contacts.Born,contacts.Person,Printable):
     def clean(self):
         if self.job_office_contact:
             #~ print "Person.clean()", self
-            if self.job_office_contact.person == self:
+            if self.job_office_contact.child == self:
                 raise ValidationError(_("Circular reference"))
         #~ self.save_auto_tasks()
         super(Person,self).clean()
@@ -723,7 +723,11 @@ class Person(Partner,contacts.Born,contacts.Person,Printable):
 
 
 
-class AllPersons(contacts.Persons):
+#~ class AllPersons(contacts.Persons):
+class AllPersons(contacts.Contacts):
+    #~ hide_details = [Contact]
+    model = 'contacts.Person'
+    order_by = "last_name first_name id".split()
     can_view = perms.is_authenticated
     app_label = 'contacts'
     #~ default_params = dict(is_active=True)
@@ -752,12 +756,6 @@ class PersonsByNationality(AllPersons):
     fk_name = 'nationality'
     order_by = "city name".split()
     column_names = "city street street_no street_box addr2 name country language *"
-    
-class PersonsByCity(AllPersons):
-    #~ app_label = 'contacts'
-    fk_name = 'city'
-    order_by = 'street street_no street_box addr2'.split()
-    column_names = "street street_no street_box addr2 name language *"
     
 def only_coached_persons(qs,period_from,period_until=None):
     """
@@ -839,7 +837,7 @@ def persons_by_user():
               
 #~ class Company(Contact,contacts.Company):
 #~ class Company(Partner,contacts.Addressable,):
-class Company(Partner,contacts.Company):
+class Company(Partner,contacts.Contact,contacts.CompanyMixin):
   
     """
     Implements :class:`contacts.Company`.
@@ -847,7 +845,7 @@ class Company(Partner,contacts.Company):
     Inner class Meta is necessary because of :doc:`/tickets/14`.
     """
     
-    class Meta(contacts.Company.Meta):
+    class Meta(contacts.CompanyMixin.Meta):
         app_label = 'contacts'
         #~ verbose_name = _("Company")
         #~ verbose_name_plural = _("Companies")
@@ -875,11 +873,14 @@ class Company(Partner,contacts.Company):
         #~ super(Company,cls).site_setup(lino)
   
     
-class Companies(contacts.Companies):
+#~ class Companies(reports.Report):
+class Companies(contacts.Contacts):
+    #~ hide_details = [Contact]
+    model = 'contacts.Company'
+    order_by = ["name"]
     app_label = 'contacts'
-    #~ pass
+    #~ column_names = ''
     
-#~ from lino.modlib.contacts.models import Companies
 
 #
 # PERSON GROUP
@@ -1425,7 +1426,8 @@ class CourseProviders(Companies):
     """
     List of Companies that have `Company.is_courseprovider` activated.
     """
-    use_as_default_report = False
+    #~ hide_details = [Contact]
+    #~ use_as_default_report = False
     #~ app_label = 'dsbe'
     label = _("Course providers")
     model = CourseProvider
@@ -1766,7 +1768,7 @@ class PersonsBySearch(reports.Report):
   
     model = Person
     master = PersonSearch
-    app_label = 'dsbe'
+    #~ 20110822 app_label = 'dsbe'
     label = _("Found persons")
     
     can_add = perms.never
@@ -1940,6 +1942,16 @@ reports.inject_field(Company,
     """Whether this Company is also a Course Provider."""
     )
 
+reports.inject_field(Contact,
+    'is_person',
+    mti.EnableChild('contacts.Person',verbose_name=_("is Person")),
+    """Whether this Contact is also a Person."""
+    )
+reports.inject_field(Contact,
+    'is_company',
+    mti.EnableChild('contacts.Company',verbose_name=_("is Company")),
+    """Whether this Contact is also a Company."""
+    )
 
 
 

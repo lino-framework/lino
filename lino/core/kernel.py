@@ -53,7 +53,7 @@ from lino.core import actors
 from lino.core.coretools import app_labels, data_elems # , get_unbound_meth
 from lino.utils import get_class_attr, class_dict_items
 
-from lino.tools import resolve_model, resolve_field, get_app, get_field
+from lino.tools import resolve_model, resolve_field, get_app, get_field, full_model_name
 from lino.utils.config import load_config_files, find_config_file
 from lino.reports import DetailLayout
 from lino.utils import choosers
@@ -87,7 +87,7 @@ def analyze_models(self):
         i = 0
         for model in models_list:
             i += 1
-            logger.debug("  %2d: %s.%s -> %r",i,model._meta.app_label,model._meta.object_name,model)
+            logger.debug("  %2d: %s -> %r",i,full_model_name(model),model)
             logger.debug("      data_elems : %s",' '.join([de.name for de in data_elems(model)]))
         logger.info("Analyzing Models...")
         
@@ -106,20 +106,26 @@ def analyze_models(self):
         if hasattr(model,'site_setup'):
             model.site_setup(self)
     
-        model._lino_detail_layouts = []
+        model._lino_detail_layouts = {}
         #~ model._lino_ddh = DisableDeleteHandler(model)
             
         def loader(content,cd,filename):
             dtl = DetailLayout(content,filename,cd)
-            model._lino_detail_layouts.append(dtl)
+            head,tail = os.path.split(filename)
+            model._lino_detail_layouts[tail] = dtl
             
         #~ load_config_files('%s.%s.*dtl' % (model._meta.app_label,model.__name__),loader)
         load_config_files(loader,'*.dtl','%s/%s' % (model._meta.app_label,model.__name__))
+        
+        logger.debug("20110822 %s._lino_detail_layouts : %s",
+            full_model_name(model),
+            ' '.join(["%s=%s" % (k,dl.filename) for k,dl in model._lino_detail_layouts.items()]))
+        
             
         #~ if get_unbound_meth(model,'summary_row') is None:
         if get_class_attr(model,'summary_row') is None:
         #~ if not hasattr(model,'summary_row'):
-            if len(model._lino_detail_layouts):
+            if model._lino_detail_layouts:
                 def f(obj,ui,rr,**kw):
                     return u'<a href="%s" target="_blank">%s</a>' % (
                       ui.get_detail_url(obj,fmt='detail'),

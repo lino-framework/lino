@@ -22,7 +22,7 @@ from lino.utils.babel import babel_values, DEFAULT_LANGUAGE, AVAILABLE_LANGUAGES
 
 
 companyType = Instantiator('contacts.CompanyType',"abbr name").build
-contactType = Instantiator('contacts.ContactType',"name").build
+role = Instantiator('contacts.Role',"name").build
 
 # thanks to http://belgium.angloinfo.com/countries/belgium/businesses.asp
 
@@ -112,7 +112,7 @@ def objects():
     for ct in COMPANY_TYPES:
         yield companyType(**ct)
         
-    yield contactType(**babel_values('name',en="Manager",fr=u'Gérant',de=u"Geschäftsführer",et=u"Manager"))
-    yield contactType(**babel_values('name',en="Director",fr=u'Directeur',de=u"Direktor",et=u"Direktor"))
-    yield contactType(**babel_values('name',en="Secretary",fr=u'Sécrétaire',de=u"Sekretär",et=u"Sekretär"))
-    yield contactType(**babel_values('name',en="IT Manager",fr=u'Gérant informatique',de=u"EDV-Manager",et=u"IT manager"))
+    yield role(**babel_values('name',en="Manager",fr=u'Gérant',de=u"Geschäftsführer",et=u"Manager"))
+    yield role(**babel_values('name',en="Director",fr=u'Directeur',de=u"Direktor",et=u"Direktor"))
+    yield role(**babel_values('name',en="Secretary",fr=u'Sécrétaire',de=u"Sekretär",et=u"Sekretär"))
+    yield role(**babel_values('name',en="IT Manager",fr=u'Gérant informatique',de=u"EDV-Manager",et=u"IT manager"))

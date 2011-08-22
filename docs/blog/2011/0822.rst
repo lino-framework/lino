@@ -1,8 +1,8 @@
 20110822
 ========
 
-BabelNamed
-----------
+a) BabelNamed
+-------------
 
 New mixin :class:`lino.utils.babel.BabelNamed`. 
 Used by 
@@ -30,12 +30,34 @@ This removes a lot of code redundance without modifying the database structure.
 Checkin 20110822a
 
 
-Changes in Contacts
--------------------
+b) Changes in :mod:`lino.modlib.contacts`
+-----------------------------------------
 
-Some small changes in the database structure, but a big step in Lino's evolution:
-Persons & Companies get a common non-abstract model Contact.
-The current model Contact gets renamed to `Role`.
-ContactDocument
+A few changes in the database structure, 
+but a big step in Lino's evolution:
+Persons & Companies get a common non-abstract model `Contact`.
+This change is triggered by our need for a 
+user-friendly way to add recipients to an OutMail.
+A Contact will be "a Company, a Person, a User or a Group of Contacts".
 
 
+- The current model `ContactType` gets renamed to `Role`.
+- The current model `Contact` gets renamed to `RoleOccurence`.
+- The current model `Addressable` gets renamed to `Contact` and becomes concrete.
+
+This is the first time that we have more than one level of multi-table inheritance:
+
+  Contact --> Company --> CourseProvider
+  
+This caused to some design decisions about loading .dtl files 
+and the default app_label of a Report:
+
+- the app_label of a Report is *always* taken from the model. 
+  Subclasses cannot set it manually.
+  
+- `.dtl` files now override each other by their name. 
+  For example if Lino finds a file `1.dtl` for each of Contact, 
+  Company and CourseProvider, then CourseProvider uses only its 
+  own version of that detail.
+  
+Checkin 20110822b

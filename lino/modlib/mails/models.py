@@ -24,6 +24,7 @@ import sys
 import cgi
 import datetime
 
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
@@ -159,6 +160,9 @@ class Recipient(models.Model):
         verbose_name = _("Recipient")
         verbose_name_plural = _("Recipients")
     mail = models.ForeignKey('mails.Mail')
+    contact = models.ForeignKey('contacts.Contact',
+        verbose_name=_("Contact"),
+        blank=True,null=True)
     type = RecipientType.field()
     address = models.EmailField(_("Address"))
     name = models.CharField(_("Name"),max_length=200)
@@ -172,6 +176,13 @@ class Recipient(models.Model):
     def __unicode__(self):
         return "[%s]" % unicode(self.name or self.address)
         #~ return "[%s]" % unicode(self.address)
+        
+        
+    def full_clean(self):
+        self.address = self.contact.email
+        self.name = self.contact.get_full_name(salutation=False)
+        super(Recipient,self).full_clean()
+        
 
 class Recipients(reports.Report):
     model = 'mails.Recipient'
@@ -180,7 +191,7 @@ class Recipients(reports.Report):
 
 class RecipientsByMail(Recipients):
     fk_name = 'mail'
-    column_names = 'type address name'
+    column_names = 'type contact address name'
     #~ column_names = 'type owner_type owner_id'
     #~ column_names = 'type owner'
 
@@ -296,29 +307,41 @@ class MyInMails(InMails):
             #~ rr.master_instance = rr.get_user()
     
 
-class MailsByPerson(object):
-    master = 'contacts.Person'
+class MailsByContact(object):
+    master = 'contacts.Contact'
     can_add = perms.never
     
     def get_master_kw(self,master_instance,**kw):
-        #~ ct = ContentType.objects.get_for_model(master_instance.__class__)
-        #~ skw[self.fk.ct_field] = ct
-        #~ skw[self.fk.fk_field] = master_instance.pk
-        #~ q1 = Recipient.objects.filter(owner_type=ct,owner_id=master_instance.pk)
         q1 = Recipient.objects.filter(address=master_instance.email).values('mail').query
-        #~ q1 = Recipient.objects.filter(address=master_instance.email)
         kw['id__in'] = q1
-        #~ kw['recipient_set__address__contains'] = master_instance
         return kw
 
-  
-class InMailsByPerson(MailsByPerson,InMails):
+class InMailsByContact(MailsByContact,InMails):
     column_names = 'received subject sender'
     order_by = ['received']
-
-class OutMailsByPerson(MailsByPerson,OutMails): 
+  
+class OutMailsByContact(MailsByContact,OutMails):
     column_names = 'sent subject recipients'
     order_by = ['sent']
+  
+
+#~ class MailsByPerson(object):
+    #~ master = 'contacts.Person'
+    #~ can_add = perms.never
+    
+    #~ def get_master_kw(self,master_instance,**kw):
+        #~ q1 = Recipient.objects.filter(address=master_instance.email).values('mail').query
+        #~ kw['id__in'] = q1
+        #~ return kw
+
+  
+#~ class InMailsByPerson(MailsByPerson,InMails):
+    #~ column_names = 'received subject sender'
+    #~ order_by = ['received']
+
+#~ class OutMailsByPerson(MailsByPerson,OutMails): 
+    #~ column_names = 'sent subject recipients'
+    #~ order_by = ['sent']
     
   
 def setup_main_menu(site,ui,user,m): pass

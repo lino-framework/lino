@@ -49,6 +49,6 @@ def objects():
     for person in Person.objects.filter(email__isnull=False):
         m = outmail(user=root,subject='Welcome %s!' % person.first_name)
         yield m
-        yield recipient_to(mail=m,
-            address=person.email,name=person.get_full_name(salutation=False))
+        yield recipient_to(mail=m,contact=person)
+            #~ address=person.email,name=person.get_full_name(salutation=False))
     

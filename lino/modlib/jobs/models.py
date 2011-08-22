@@ -179,9 +179,12 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
         verbose_name=_("Person"))
     provider = models.ForeignKey(JobProvider,
         blank=True,null=True,verbose_name=_("Job Provider"))
-    contact = models.ForeignKey("contacts.Contact",
+    contact = models.ForeignKey("contacts.RoleOccurence",
       blank=True,null=True,
       verbose_name=_("represented by"))
+    #~ contact = models.ForeignKey("contacts.Contact",
+      #~ blank=True,null=True,
+      #~ verbose_name=_("represented by"))
     language = fields.LanguageField(default=babel.DEFAULT_LANGUAGE)
 
     job = models.ForeignKey("jobs.Job",verbose_name=_("Job"),blank=True)
@@ -229,9 +232,10 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
     @chooser()
     def contact_choices(cls,provider):
         if provider is not None:
-            return provider.contact_set.all()
+            return provider.roleoccurence_set.all()
         return []
         
+    # for backwards compatibility:
     def get_company(self):
         return self.provider
     company = property(get_company)
@@ -407,12 +411,12 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
             
         if self.provider is not None:
             if self.contact is not None:
-                if self.contact.company != self.provider.company_ptr:
+                if self.contact.parent != self.provider.company_ptr:
                     self.contact = None
                     
         if self.contact is None:
             if self.provider:
-                qs = self.provider.contact_set.all()
+                qs = self.provider.rolesbyparent.all()
                 if qs.count() == 1:
                     self.contact = qs[0]
                     

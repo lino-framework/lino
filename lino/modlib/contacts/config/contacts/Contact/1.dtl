@@ -1,8 +1,8 @@
-:label: General
+:label: Contact
 :label_align: top
 
 main = 
-  intro_box
+  name id language
   address_box
   bottom_box
 box3 = 
@@ -18,11 +18,9 @@ box4 =
   gsm
 address_box = box3 box4
 ## bottom_box = remarks contacts.RolesByParent
-bottom_box = box5 contacts.RolesByParent
+bottom_box = box5:40 contacts.RolesByParent:20 contacts.RolesByChild:20
 box5 = 
   remarks 
-  is_courseprovider is_jobprovider
+  is_person is_company
 
-intro_box = 
-    name id language 
-    vat_id:12 activity:20 type:20 #hourly_rate
+    
