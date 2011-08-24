@@ -229,7 +229,7 @@ class Component(ComponentBase,
     sequence = models.IntegerField(_("Revision"),default=0)
     alarm_value = models.IntegerField(_("Alarm value"),null=True,blank=True)
     alarm_unit = DurationUnit.field(_("Alarm unit"),null=True,blank=True)
-    dt_alarm = models.DateTimeField(
+    dt_alarm = models.DateTimeField(_("Alarm time"),
         blank=True,null=True,editable=False)
         
     rset = models.ForeignKey(RecurrenceSet,
@@ -269,7 +269,7 @@ class Component(ComponentBase,
         Computes the value of `dt_alarm` before really saving.
         """
         self.before_clean()
-        if self.alarm_unit and self.alarm_value:
+        if self.alarm_unit:
             if not self.start_date:
                 self.start_date = datetime.date.today()
             if self.start_time:
