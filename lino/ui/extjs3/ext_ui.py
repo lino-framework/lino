@@ -95,8 +95,9 @@ def is_devserver():
     """Thanks to Aryeh Leib Taurog in 
     `How can I tell whether my Django application is running on development server or not?
     <http://stackoverflow.com/questions/1291755>`_
+    Note that under mod_wsgi sys.argv is empty. 
     """
-    return (sys.argv[1] == 'runserver')
+    return sys.argv and sys.argv[1] == 'runserver'
     
 
 
