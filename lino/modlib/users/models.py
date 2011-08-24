@@ -24,11 +24,11 @@ from django.utils.translation import ugettext_lazy as _
 from lino import reports
 from lino.core import actors
 from lino.mixins import printable
-#~ from lino.utils import perms
+from lino.utils import mti
 
+from lino.modlib.contacts.models import Contact,PersonMixin
 
-
-class User(models.Model):
+class User(Contact,PersonMixin):
     """
     Represents a User of this site.
     
@@ -43,15 +43,20 @@ class User(models.Model):
     It is up to the local system administrator to manually fill then 
     fields like first_name, last_name, email, access rights for the new user.    
     """
+    
+    class Meta:
+        verbose_name = _('User')
+        verbose_name_plural = _('Users')
+
     username = models.CharField(_('username'), max_length=30, 
         unique=True, 
         help_text=_("""
         Required. 30 characters or fewer. 
         Letters, numbers and @/./+/-/_ characters
         """))
-    first_name = models.CharField(_('first name'), max_length=30, blank=True)
-    last_name = models.CharField(_('last name'), max_length=30, blank=True)
-    email = models.EmailField(_('e-mail address'), blank=True)
+    #~ first_name = models.CharField(_('first name'), max_length=30, blank=True)
+    #~ last_name = models.CharField(_('last name'), max_length=30, blank=True)
+    #~ email = models.EmailField(_('e-mail address'), blank=True)
     is_staff = models.BooleanField(_('is staff'), default=False, 
         help_text=_("""
         Designates whether the user can log into this admin site.
@@ -74,10 +79,6 @@ class User(models.Model):
     last_login = models.DateTimeField(_('last login'), default=datetime.datetime.now)
     date_joined = models.DateTimeField(_('date joined'), default=datetime.datetime.now)
 
-    class Meta:
-        verbose_name = _('User')
-        verbose_name_plural = _('Users')
-
     def __unicode__(self):
         return self.username
 
@@ -92,6 +93,16 @@ class User(models.Model):
         from django.core.mail import send_mail
         send_mail(subject, message, from_email, [self.email])
 
+    def full_clean(self,*args,**kw):
+        """
+        Almost like PersonMixin.full_clean, but 
+        takes username if first_name and last_name are empty.
+        """
+        l = filter(lambda x:x,[self.last_name,self.first_name])
+        self.name = " ".join(l)
+        if not self.name:
+            self.name = self.username
+        models.Model.full_clean(self,*args,**kw)
 
 class Users(reports.Report):
     """Shows the list of users on this site.
@@ -100,4 +111,11 @@ class Users(reports.Report):
     #~ order_by = "last_name first_name".split()
     order_by = ["username"]
     column_names = 'username first_name last_name is_active is_staff is_expert is_superuser *'
+
+
+reports.inject_field(Contact,
+    'is_user',
+    mti.EnableChild('users.User',verbose_name=_("is User")),
+    """Whether this Contact is also a User."""
+    )
 

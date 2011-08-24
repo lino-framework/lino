@@ -24,7 +24,7 @@ from tempfile import gettempdir
 from os.path import join, abspath, dirname, normpath
 import logging
 
-__version__ = "1.2.1"
+__version__ = "1.2.2"
 """
 Lino version number. 
 The latest released version is :doc:`/releases/20110727`.
@@ -197,6 +197,11 @@ class Lino(object):
     user_model = "users.User"
     """Set this to ``"auth.User"`` if you use `django.contrib.auth` instead of
     `lino.modlib.users`"""
+    
+    projects_model = None
+    """Optionally set this to the <applabel_modelname> of a 
+    model used as project in your application."""
+    
     
     legacy_data_path = None
     "Used by custom fixtures that import data from some legacy database."

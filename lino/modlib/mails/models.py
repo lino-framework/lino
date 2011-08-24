@@ -312,7 +312,8 @@ class MailsByContact(object):
     can_add = perms.never
     
     def get_master_kw(self,master_instance,**kw):
-        q1 = Recipient.objects.filter(address=master_instance.email).values('mail').query
+        #~ q1 = Recipient.objects.filter(address=master_instance.email).values('mail').query
+        q1 = Recipient.objects.filter(contact=master_instance).values('mail').query
         kw['id__in'] = q1
         return kw
 

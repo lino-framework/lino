@@ -60,15 +60,43 @@ from lino.utils.daemoncommand import DaemonCommand
 import caldav
 from caldav.elements import dav, cdav
 #~ from lino.modlib.cal.models import Calendar, Event
+from vobject.icalendar import VEvent, RecurringComponent
 
 Calendar = resolve_model('cal.Calendar')
 Event = resolve_model('cal.Event')
+RecurrenceSet = resolve_model('cal.RecurrenceSet')
 
 REQUEST = dblogger.PseudoRequest('watch_calendars')
 
 # dblogger.log_changes(REQUEST,obj)
 
 from cStringIO import StringIO 
+
+from dateutil.tz import tzlocal
+
+
+def aware(d):
+    return datetime.datetime(d.year,d.month,d.day,tzinfo=tzlocal())
+
+def dt2kw(dt,name,**d):
+    if dt:
+        if isinstance(dt,datetime.datetime):
+            d[name+'_date'] = dt.date()
+            d[name+'_time'] = dt.time()
+        elif isinstance(dt,datetime.date):
+            d[name+'_date'] = dt
+            d[name+'_time'] = None
+        else:
+            raise Exception("Invalid datetime value %r" % dt)
+    else:
+        d[name+'_date'] = None
+        d[name+'_time'] = None
+    return d
+  
+def setkw(obj,**kw):
+    for k,v in kw.items():
+        setattr(obj,k,v)
+                              
 
 def prettyPrint(obj):
     s = StringIO()
@@ -99,7 +127,9 @@ def watch():
             #~ print "WARNING: more than 1 calendar"
             dblogger.warning("--> More than 1 calendar")
         else:
-            touched = set()
+            rs_touched = set()
+            ev_touched = set()
+            rs_updated = rs_created = rs_deleted = 0
             count_update = 0
             count_new = 0
             count_deleted = 0
@@ -110,57 +140,102 @@ def watch():
             dbcal.name = props[dav.DisplayName().tag]
             dbcal.save()
             
-            from_date = dbcal.start_date 
+            from_date = dbcal.start_date
             if not from_date:
                 from_date = datetime.datetime.now() - datetime.timedelta(days=365)
             until_date = datetime.datetime.now() + datetime.timedelta(days=365)
+            
+            #~ from_date = aware(from_date)
+            #~ until_date = aware(until_date)
+            
+            #~ print from_date.tzinfo, until_date.tzinfo
+            #~ raise Exception("20110823")
 
             results = calendar.date_search(from_date,until_date)
             if results:
                 for comp in results:
+                    #~ if len(list(comp.instance.getChildren())) != 1:
+                        #~ raise Exception("comp.instance.getChildren() is %s" % list(comp.instance.getChildren()))
+                    dblogger.info(
+                        "Got calendar component <<<\n%s\n>>>",
+                        prettyPrint(comp.instance))
+                        
                     if comp.instance.vevent:
-                        summary = comp.instance.vevent.summary.value
-                        uid = comp.instance.vevent.uid.value
-                        dtstart = comp.instance.vevent.dtstart.value
-                        dtend = comp.instance.vevent.dtend.value
-                        try:
-                            obj = Event.objects.get(uid=uid)
-                            count_update += 1
-                        except Event.DoesNotExist, e:
-                        #~ except Exception, e:
-                            obj = Event(uid=uid)
-                            obj.user = dbcal.user
-                            count_new += 1
-                        obj.summary = summary
-                        #~ print type(dtstart)
-                        #~ print repr(dtstart)
-                        if dtstart:
-                            if isinstance(dtstart,datetime.datetime):
-                                obj.start_date = dtstart.date()
-                                obj.start_time = dtstart.time()
-                            elif isinstance(dtstart,datetime.date):
-                                obj.start_date = dtstart
+                        event = comp.instance.vevent
+                        if isinstance(event,RecurringComponent):
+                            """
+                            in a google calendar, all events are parsed to a 
+                            RecurringComponent. if event.rruleset is None 
+                            we consider them non recurrent.
+                            """
+                            
+                            uid = event.uid.value
+                            dtstart = event.dtstart.value
+                            
+                            get_kw = {}
+                            set_kw = {}
+                            get_kw.update(uid = uid)
+                            set_kw.update(summary=event.summary.value)
+                            set_kw.update(description=event.description.value)
+                            set_kw.update(calendar=dbcal)
+                            #~ set_kw.update(location=event.location.value)
+                            #~ kw.update(dtend=event.dtend.value)
+                            
+                            dblogger.info("It's a RecurringComponent")
+                            if event.rruleset:
+                                try:
+                                    obj = RecurrenceSet.objects.get(uid=uid)
+                                    assert obj.calendar == dbcal
+                                    rs_updated += 1
+                                except RecurrenceSet.DoesNotExist, e:
+                                #~ except Exception, e:
+                                    obj = RecurrenceSet(uid=uid)
+                                    obj.calendar = dbcal
+                                    obj.user = dbcal.user
+                                    rs_created += 1
+                                #~ raise Exception("20110823 must save rrule, rdate etc... %s" % type(event.rrule_list))
+                                obj.rrules = '\n'.join([r.value for r in event.rrule_list])
+                                #~ obj.exrules = '\n'.join([r.value for r in event.exrule_list])
+                                #~ obj.rdates = '\n'.join([r.value for r in event.rdate_list])
+                                #~ obj.exdates = '\n'.join([r.value for r in event.exdate_list])
+                                obj.summary=event.summary.value
+                                obj.description=event.description.value
+                                setkw(obj,**dt2kw(dtstart,'start'))
+                                obj.full_clean()
+                                obj.save()
+                                dblogger.info("Saved %s",obj)
+                                rs_touched.add(obj.pk)
+                                
+                                set_kw.update(rset=obj)
+                                if getattr(dtstart,'tzinfo',False):
+                                    dtlist = event.rruleset.between(aware(from_date),aware(until_date))
+                                else:
+                                    dtlist = event.rruleset.between(from_date,until_date)
+                                dblogger.info("rrulset.between() --> %s",dtlist)
                             else:
-                                dblogger.warning(
-                                    "Invalid value for dtstart: %r",
-                                    dtstart)
-                        if dtend:
-                            if isinstance(dtend,datetime.datetime):
-                                obj.end_date = dtstart.date()
-                                obj.end_time = dtend.time()
-                            elif isinstance(dtend,datetime.date):
-                                obj.end_date = dtend
-                            else:
-                                dblogger.warning(
-                                    "Invalid value for dtend: %r",
-                                    dtstart)
-                        obj.full_clean()
-                        #~ dblogger.log_changes(REQUEST,obj)
-                        obj.save()
-                        dblogger.info(
-                            "Saved %s from ---\n%s\n---",
-                            obj,prettyPrint(comp.instance))
-                        touched.add(obj.pk)
+                                dtlist = [ dtstart ]
+                                dblogger.info("No rruleset")
+                            duration = event.dtend.value - dtstart
+                            for dtstart in dtlist:
+                                dtend = dtstart + duration
+                                get_kw = dt2kw(dtstart,'start',**get_kw)
+                                set_kw = dt2kw(dtend,'end',**set_kw)
+                                try:
+                                    obj = Event.objects.get(**get_kw)
+                                    count_update += 1
+                                except Event.DoesNotExist, e:
+                                #~ except Exception, e:
+                                    obj = Event(**get_kw)
+                                    obj.user = dbcal.user
+                                    count_new += 1
+                                setkw(obj,**set_kw)
+                                obj.full_clean()
+                                obj.save()
+                                dblogger.info("Saved %s",obj)
+                                ev_touched.add(obj.pk)
+                                
+                        else:
+                            raise Exception("comp.instance.vevent is a %s (expected VEvent)" % type(event))
                     else:
                         raise Exception(
                             "Got unhandled component %s" 
@@ -168,14 +243,18 @@ def watch():
                         #~ print "children:", [c for c in comp.instance.getChildren()]
                     
                     #~ raise StopIteration
-            qs = dbcal.event_set.exclude(id__in=touched)
+            qs = dbcal.event_set.exclude(id__in=ev_touched)
             count_deleted = qs.count()
-            qs.delete() # doesn't call delete methods of individual objects
-            #~ for obj in qs:
-                #~ obj.delete()
+            qs.delete() # note: doesn't call delete methods of individual objects
+            qs = dbcal.recurrenceset_set.exclude(id__in=rs_touched)
+            rs_deleted = qs.count()
+            qs.delete() # note: doesn't call delete methods of individual objects
             dblogger.info(
-                "--> Created %d, updated %d, deleted %s events", 
+                "--> Created %d, updated %d, deleted %s Events", 
                 count_new, count_update,count_deleted)
+            dblogger.info(
+                "--> Created %d, updated %d, deleted %s RecurrenceSets", 
+                rs_created, rs_updated,rs_deleted)
 
         
         
@@ -195,6 +274,7 @@ def main(*args,**options):
             #~ watch()
         #~ except Exception,e:
             #~ dblogger.exception(e)
+        break # temporarily while testing
         time.sleep(60) # sleep for a minute
 
 class Command(DaemonCommand):

@@ -193,6 +193,13 @@ class DisabledFieldsStoreField(StoreField):
         #~ return extract_summary(v)
   
 class BooleanStoreField(StoreField):
+    """
+    This class wouldn't be necessary if Django's 
+    `BooleanField.to_python` method would interpret 
+    "on" as a valid `True` value. We had some interesting 
+    discussion on this in :djangoticket:`#15497 (BooleanField
+    should work for all PostgreSQL expressions)<15497>`. 
+    """
   
     form2obj_default = False # 'off'
     
@@ -200,7 +207,6 @@ class BooleanStoreField(StoreField):
         kw['type'] = 'boolean'
         StoreField.__init__(self,field,**kw)
         
-    # as long as http://code.djangoproject.com/ticket/15497 is open
     def parse_form_value(self,v,obj):
         #~ print "20110717 parse_form_value", self.field.name, v, obj
         return ext_requests.parse_boolean(v)

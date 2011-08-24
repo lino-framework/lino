@@ -5,8 +5,8 @@
 main = 
   start_date start_time end_date end_time status 
   summary created:20 modified:20
-  user person company alarm_value alarm_unit
+  user project #person #company alarm_value alarm_unit
   place priority access_class 
-  transparent duration_value duration_unit repeat_value repeat_unit
-  description AttendancesByEvent
+  transparent duration_value duration_unit rset
+  description AttendeesByEvent
 

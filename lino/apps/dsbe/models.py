@@ -311,14 +311,14 @@ class Partner(mixins.DiffingMixin,models.Model):
     bank_account2 = models.CharField(max_length=40,blank=True,null=True,
         verbose_name=_("Bank account 2"))
         
-    def full_clean(self,*args,**kw):
-        if self.id is None:
-            sc = get_site_config()
-            if sc.next_partner_id is not None:
-                self.id = sc.next_partner_id
-                sc.next_partner_id += 1
-                sc.save()
-        super(Partner,self).full_clean(*args,**kw)
+    #~ def full_clean(self,*args,**kw):
+        #~ if self.id is None:
+            #~ sc = get_site_config()
+            #~ if sc.next_partner_id is not None:
+                #~ self.id = sc.next_partner_id
+                #~ sc.next_partner_id += 1
+                #~ sc.save()
+        #~ super(Partner,self).full_clean(*args,**kw)
         
     def disable_delete(self,request):
         if settings.TIM2LINO_IS_IMPORTED_PARTNER(self):
@@ -536,7 +536,7 @@ class Person(Partner,contacts.PersonMixin,contacts.Contact,contacts.Born,Printab
         return msgs
           
     def clean(self):
-        if self.job_office_contact:
+        if self.job_office_contact_id is not None:
             #~ print "Person.clean()", self
             if self.job_office_contact.child == self:
                 raise ValidationError(_("Circular reference"))
@@ -1350,13 +1350,15 @@ class MyNotes(notes.MyNotes):
 # CALENDAR IMPLEMENTATION AND EXTENSION
 #
 
-class ComponentMixin(contacts.PartnerDocument):
+#~ class ComponentMixin(contacts.PartnerDocument):
+class ComponentMixin(mixins.ProjectRelated):
   
     class Meta:
         abstract = True
   
     def summary_row(self,ui,rr,**kw):
-        html = contacts.PartnerDocument.summary_row(self,ui,rr,**kw)
+        html = mixins.ProjectRelated.summary_row(self,ui,rr,**kw)
+        #~ html = contacts.PartnerDocument.summary_row(self,ui,rr,**kw)
         if self.summary:
             html += '&nbsp;: %s' % cgi.escape(force_unicode(self.summary))
             #~ html += ui.href_to(self,force_unicode(self.summary))
@@ -1371,18 +1373,23 @@ class Task(cal.Task,ComponentMixin):
     class Meta(cal.Task.Meta):
         app_label = 'cal'
 
-class EventsByPerson(cal.Events):
-    fk_name = 'person'
+class EventsByProject(cal.Events):
+    fk_name = 'project'
     
-class EventsByCompany(cal.Events):
-    fk_name = 'company'
+class TasksByProject(cal.Tasks):
+    fk_name = 'project'
     
+#~ class EventsByPerson(cal.Events):
+    #~ fk_name = 'person'
+    
+#~ class EventsByCompany(cal.Events):
+    #~ fk_name = 'company'
 
-class TasksByPerson(cal.Tasks):
-    fk_name = 'person'
+#~ class TasksByPerson(cal.Tasks):
+    #~ fk_name = 'person'
     
-class TasksByCompany(cal.Tasks):
-    fk_name = 'company'
+#~ class TasksByCompany(cal.Tasks):
+    #~ fk_name = 'company'
     
         
 
@@ -1929,7 +1936,7 @@ reports.inject_field(SiteConfig,
     
 reports.inject_field(SiteConfig,
     'next_partner_id',
-    models.IntegerField(default=1,
+    models.IntegerField(default=100, # first 100 for users from demo fixtures.
         verbose_name=_("The next automatic id for Person or Company")
     ),"""The next automatic id for Person or Company. 
     Deserves more documentation.

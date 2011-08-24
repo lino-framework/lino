@@ -3,6 +3,4 @@
 
 main = 
   notes.NotesByCompany:60 links.LinksByCompany:20
-  cal.TasksByCompany 
-  cal.EventsByCompany 
 

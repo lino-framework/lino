@@ -149,10 +149,13 @@ class Contact(CountryCity):
         #~ """)
     
     #city = models.CharField(max_length=200,blank=True)
-    zip_code = models.CharField(_("Zip code"),max_length=10,blank=True)
-    region = models.CharField(_("Region"),max_length=200,blank=True)
-    #~ language = models.ForeignKey('countries.Language',default=default_language)
-    language = fields.LanguageField(default=babel.DEFAULT_LANGUAGE,choices=settings.LANGUAGES)
+    zip_code = models.CharField(_("Zip code"),
+        max_length=10,blank=True)
+    region = models.CharField(_("Region"),
+        max_length=200,blank=True)
+    language = fields.LanguageField()
+        #~ default=babel.DEFAULT_LANGUAGE,
+        #~ choices=settings.LANGUAGES)
     
     email = models.EmailField(_('E-Mail'),blank=True,null=True)
     url = models.URLField(_('URL'),blank=True)
@@ -164,20 +167,17 @@ class Contact(CountryCity):
     
     remarks = models.TextField(_("Remarks"),blank=True,null=True)
     
+    def save(self,*args,**kw):
+        if self.id is None:
+            sc = get_site_config()
+            if sc.next_partner_id is not None:
+                self.id = sc.next_partner_id
+                sc.next_partner_id += 1
+                sc.save()
+        super(Contact,self).save(*args,**kw)
+        
     def __unicode__(self):
         return self.name
-        
-    #~ @chooser()
-    #~ def city_choices(cls,country):
-        #~ if country is not None:
-            #~ return country.city_set.order_by('name')
-        #~ return cls.city.field.rel.to.objects.order_by('name')
-        
-    #~ def create_city_choice(self,text):
-        #~ if self.country is not None:
-            #~ return self.country.city_set.create(name=text,country=self.country)
-        #~ raise Exception("Cannot create city if country is empty")
-        
 
     def address_person_lines(self):
         #~ yield self.name
@@ -305,8 +305,8 @@ class PersonMixin(models.Model):
     class Meta:
         abstract = True
         #~ app_label = 'contacts'
-        verbose_name = _("Person")
-        verbose_name_plural = _("Persons")
+        #~ verbose_name = _("Person")
+        #~ verbose_name_plural = _("Persons")
 
     first_name = models.CharField(max_length=200,blank=True,
       verbose_name=_('First name'))
@@ -356,9 +356,6 @@ Optional `salutation_options` see :func:`get_salutation`.
         #~ yield  " ".join(l)
         
     def full_clean(self,*args,**kw):
-    #~ def before_save(self):
-        #~ if not self.name:
-        #~ l = filter(lambda x:x,[self.last_name,self.first_name,self.title])
         l = filter(lambda x:x,[self.last_name,self.first_name])
         self.name = " ".join(l)
         super(PersonMixin,self).full_clean(*args,**kw)
@@ -376,9 +373,6 @@ Optional `salutation_options` see :func:`get_salutation`.
     #~ fk_name = 'country'
     #~ order_by = 'city street street_no street_box addr2'.split()
     #~ column_names = "city street street_no street_box addr2 name language"
-
-
-
 
 
 
@@ -448,15 +442,12 @@ class ContactDocument(models.Model):
         abstract = True
         
     contact = models.ForeignKey("contacts.Contact",
-      #~ blank=True,null=True,
-      verbose_name=_("represented by"))
+        #~ blank=True,null=True,
+        verbose_name=_("Contact"))
     language = fields.LanguageField(default=babel.DEFAULT_LANGUAGE)
 
-    #~ @chooser()
-    #~ def contact_choices(cls,company):
-        #~ if company is not None:
-            #~ return company.contact_set.all()
-        #~ return []
+    def get_recipients(self):
+        yield self.contact
 
     def get_recipient(self):
         return self.contact

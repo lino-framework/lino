@@ -1,0 +1,86 @@
+20110823
+========
+
+Continued to work on :doc:`/tickets/48`.
+
+- renamed Attendance to Attendee and AttendanceRole to AttendeeRole
+  because an "attendance role" is a sheet where attendees write their name. 
+  AttendeeRole is the role attributed to an attendee.
+  
+- Attendee is a :class:`lino.modlib.contacts.models.ContactDocument`, not a 
+  :class:`lino.modlib.contacts.models.PartnerDocument`.
+  
+- New ``demo`` fixture for `lino.modlib.cal` adds some 
+  examples of :class:`lino.modlib.cal.models.AttendeeRole`.
+  
+- :class:`lino.modlib.users.models.User` is now also a Contact. 
+  We changed the default value of `next_partner_id` 
+  from 1 to 100, otherwise the demo fixtures would fail 
+  when creating a first Person because the users demo fixture 
+  had previously created 
+  some users who got ids 1, 2 and 3.
+  
+Different Contacts with same email address
+------------------------------------------
+
+What happens it two contacts have the same email address?
+The first version of :mod:`lino.modlib.email` (before 
+:doc:`yesterday </tickets/48>`) 
+showed all emails on each contact because MailsByPerson and 
+MailsByCompany were based on the email address field of Recipient.
+The new version not, it shows the emails based on the contact 
+ForeignKey field of Recipient.
+This behaviour seems more user-friendly, but we will have a 
+problem for triaging incoming mails: if a recipient's address 
+exists on more than one Contact, Lino will have to decide which 
+of them to use as ForeignKey. 
+
+Two contacts having the same email address should be rare in practice:
+
+- Small companies sometimes use the email address of one of 
+  their employees as primary contact address.
+  
+- Wife and husband using a common address.
+
+One possibility is to add a checkbox field "uses email address of another 
+contact", which would cause incoming mails to be attributed to the other 
+contact.
+
+
+Recurrent events
+----------------
+
+New model :class:`lino.modlib.cal.models.RecurrenceSet`.
+Lino has started to support recurrent events,
+:term:`watch_calendars` extracts more and more info from a google calendar.
+There's still a lot to do.
+
+Projects
+--------
+
+A spontaneous idea shortly before stopping for today: 
+the new :class:`lino.mixins.ProjectRelated` mixin.
+It's a mixin which *sometimes* (if :attr:`lino.Lino.projects_model` 
+is set) adds a foreignkey field::
+
+  class ProjectRelated(models.Model):
+      class Meta:
+          abstract = True
+      if settings.LINO.projects_model:
+          project = models.ForeignKey(settings.LINO.projects_model,blank=True,null=True)
+
+This is to be used instead of making models like 
+Note, Link, Event, Task abstract just 
+to be able to link them to "something application specific" 
+(in Lino/DSBE this is a person and/or company 
+but in fact they always just wanted a person: 14 of 1000 
+notes currently have a nonempty company field).
+      
+Database migration to 1.2.2
+---------------------------
+
+It's time for a release because the database migration to 1.2.2 
+is getting quite complex after all these changes. 
+Added :func:`lino.apps.dsbe.migrate.migrate_from_1_2_1`.
+Tested on a recent dump of real data.
+

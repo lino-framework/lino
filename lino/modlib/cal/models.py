@@ -38,7 +38,7 @@ from lino.modlib.mails.models import Mailable
 
 from lino.modlib.cal.utils import EventStatus, \
     TaskStatus, DurationUnit, Priority, AccessClass, \
-    AttendanceStatus, add_duration
+    AttendeeStatus, add_duration
 
 from lino.utils.babel import dtosl
 #~ from lino.utils.dpy import is_deserializing
@@ -96,6 +96,11 @@ class Calendar(mixins.AutoUser):
         verbose_name=_("Start date"),
         blank=True,null=True)
     
+    def full_clean(self,*args,**kw):
+        if not self.name:
+            self.name = self.username
+        super(Calendar,self).full_clean(*args,**kw)
+        
     def save(self,*args,**kw):
         ct = CALENDAR_DICT.get(self.type)
         ct.validate_calendar(self)
@@ -111,6 +116,9 @@ class Calendar(mixins.AutoUser):
             return self.url_template % dict(username=self.username,password=self            .password)
         return ''
                     
+    def __unicode__(self):
+        return self.name
+        
     
 class Calendars(reports.Report):
     model = 'cal.Calendar'
@@ -158,13 +166,10 @@ class EventTypes(reports.Report):
     column_names = 'name build_method template *'
 
 
-#~ class MyRemoteCalendars    
+
+  
     
-class Component(mixins.AutoUser,
-                mixins.CreatedModified):
-    """
-    The `user` field is the iCal:ORGANIZER
-    """
+class ComponentBase(models.Model):
     class Meta:
         abstract = True
         
@@ -178,6 +183,48 @@ class Component(mixins.AutoUser,
         verbose_name=_("Start time"))# iCal:DTSTART
     summary = models.CharField(_("Summary"),max_length=200,blank=True) # iCal:SUMMARY
     description = fields.RichTextField(_("Description"),blank=True,format='html')
+    
+    def __unicode__(self):
+        return self._meta.verbose_name + " #" + str(self.pk)
+        
+class RecurrenceSet(ComponentBase):
+    """
+    Groups together all instances of a set of recurring calendar components.
+    
+    Thanks to http://www.kanzaki.com/docs/ical/rdate.html
+    
+    """
+    
+    rdates = models.TextField(_("Recurrence dates"),blank=True)
+    exdates = models.TextField(_("Excluded dates"),blank=True)
+    rrules = models.TextField(_("Recurrence Rules"),blank=True)
+    exrules = models.TextField(_("Exclusion Rules"),blank=True)
+    
+    #~ start_date = models.DateField(
+        #~ verbose_name=_("Start date")) # iCal:DTSTART
+    #~ start_time = models.TimeField(
+        #~ blank=True,null=True,
+        #~ verbose_name=_("Start time"))# iCal:DTSTART
+    #~ rdate = models.CharField(_("Recurrence date"),max_length=200)
+    #~ exdate = models.CharField(_("Excluded date(s)"),max_length=200)
+    #~ rrules = models.TextField(_("Recurrence Rules"))
+    #~ exrules = models.TextField(_("Exclusion Rules"))
+    
+class RecurrenceSets(reports.Report):
+    model = RecurrenceSet
+    
+
+    
+    
+class Component(ComponentBase,
+                mixins.AutoUser,
+                mixins.CreatedModified):
+    """
+    The `user` field is the iCal:ORGANIZER
+    """
+    class Meta:
+        abstract = True
+        
     access_class = AccessClass.field() # iCal:CLASS
     sequence = models.IntegerField(_("Revision"),default=0)
     alarm_value = models.IntegerField(_("Alarm value"),null=True,blank=True)
@@ -185,10 +232,17 @@ class Component(mixins.AutoUser,
     dt_alarm = models.DateTimeField(
         blank=True,null=True,editable=False)
         
-    
-    def __unicode__(self):
-        return self._meta.verbose_name + " #" + str(self.pk)
+    rset = models.ForeignKey(RecurrenceSet,
+        verbose_name=_("Recurrence Set"),
+        blank=True,null=True)
+    #~ rparent = models.ForeignKey('self',verbose_name=_("Recurrence parent"),blank=True,null=True)
+    #~ rdate = models.TextField(_("Recurrence date"),blank=True)
+    #~ exdate = models.TextField(_("Excluded date(s)"),blank=True)
+    #~ rrules = models.TextField(_("Recurrence Rules"),blank=True)
+    #~ exrules = models.TextField(_("Exclusion Rules"),blank=True)
         
+        
+    
 
     def before_clean(self):
         """
@@ -228,13 +282,12 @@ class Component(mixins.AutoUser,
             self.dt_alarm = None
         super(Component,self).save(*args,**kw)
         
-    def summary_row(self,ui,rr,**kw):
-        html = contacts.PartnerDocument.summary_row(self,ui,rr,**kw)
-        if self.summary:
-            html += '&nbsp;: %s' % cgi.escape(force_unicode(self.summary))
-            #~ html += ui.href_to(self,force_unicode(self.summary))
-        html += _(" on ") + babel.dtos(self.start_date)
-        return html
+    #~ def summary_row(self,ui,rr,**kw):
+        #~ html = contacts.PartnerDocument.summary_row(self,ui,rr,**kw)
+        #~ if self.summary:
+            #~ html += '&nbsp;: %s' % cgi.escape(force_unicode(self.summary))
+        #~ html += _(" on ") + babel.dtos(self.start_date)
+        #~ return html
         
 
 
@@ -261,8 +314,8 @@ class Event(Component,mixins.TypedPrintable):
     status = EventStatus.field(_("Status"),null=True,blank=True) # iCal:STATUS
     duration_value = models.IntegerField(_("Duration value"),null=True,blank=True) # iCal:DURATION
     duration_unit = DurationUnit.field(null=True,blank=True) # iCal:DURATION
-    repeat_value = models.IntegerField(_("Repeat every"),null=True,blank=True) # iCal:DURATION
-    repeat_unit = DurationUnit.field(verbose_name=_("Repeat every"),null=True,blank=True) # iCal:DURATION
+    #~ repeat_value = models.IntegerField(_("Repeat every"),null=True,blank=True) # iCal:DURATION
+    #~ repeat_unit = DurationUnit.field(verbose_name=_("Repeat every"),null=True,blank=True) # iCal:DURATION
 
 #~ class Task(Component,contacts.PartnerDocument):
 class Task(mixins.Owned,Component):
@@ -331,6 +384,9 @@ class Events(reports.Report):
     model = 'cal.Event'
     column_names = 'start_date start_time summary status *'
     
+class EventsBySet(Events):
+    fk_name = 'rset'
+    
 class Tasks(reports.Report):
     model = 'cal.Task'
     column_names = 'start_date summary done status *'
@@ -356,46 +412,39 @@ class MyTasks(mixins.ByUser):
     column_names = 'start_date summary done status *'
 
 
-class AttendanceRole(babel.BabelNamed):
+class AttendeeRole(babel.BabelNamed):
     """
-    A possible value for the `role` field of an :class:`Attendance`.
+    A possible value for the `role` field of an :class:`Attendee`.
     
     """
     class Meta:
-        verbose_name = _("Attendance Role")
-        verbose_name_plural = _("Attendance Roles")
-        
-    #~ name = babel.BabelCharField(_("Description"),max_length=200)
-    
-    #~ def __unicode__(self):
-        #~ return unicode(babel.babelattr(self,'name'))
+        verbose_name = _("Attendee Role")
+        verbose_name_plural = _("Attendee Roles")
 
 
-class AttendanceRoles(reports.Report):
-    model = AttendanceRole
+class AttendeeRoles(reports.Report):
+    model = AttendeeRole
     
 
-class Attendance(contacts.PartnerDocument,
-                 mixins.CachedPrintable,
-                 Mailable):
+class Attendee(contacts.ContactDocument,
+               mixins.CachedPrintable,
+               Mailable):
     """
-    An Attendance is when somebody possibly attends to an Event.
-    "Somebody" means a Person, a Company or both.
-    An unconfirmed attendance is when the partner has been invited.
+    An Attendee is a Contact who (possibly) attends to an :class:`Event`.
     """
     class Meta:
-        verbose_name = _("Attendance")
-        verbose_name_plural = _("Attendances")
+        verbose_name = _("Attendee")
+        verbose_name_plural = _("Attendees")
         #~ abstract = True
         
     event = models.ForeignKey('cal.Event',
         verbose_name=_("Event")) 
         
-    role = models.ForeignKey('cal.AttendanceRole',
-        verbose_name=_("Attendance Role"),
+    role = models.ForeignKey('cal.AttendeeRole',
+        verbose_name=_("Attendee Role"),
         blank=True,null=True) 
         
-    status = AttendanceStatus.field(null=True,blank=True)
+    status = AttendeeStatus.field(null=True,blank=True)
     
     #~ confirmed = models.DateField(
         #~ blank=True,null=True,
@@ -415,20 +464,17 @@ class Attendance(contacts.PartnerDocument,
         mixins.CachedPrintable.setup_report(rpt)
         Mailable.setup_report(rpt)
         
-class Attendances(reports.Report):
-    model = Attendance
-    column_names = 'person company role status remark event *'
+class Attendees(reports.Report):
+    model = Attendee
+    column_names = 'contact role status remark event *'
     
-class AttendancesByEvent(Attendances):
+class AttendeesByEvent(Attendees):
     fk_name = 'event'
 
-class AttendancesByPerson(Attendances):
-    fk_name = 'person'
-    column_names = 'event role status remark company * person'
+class AttendeesByContact(Attendees):
+    fk_name = 'contact'
+    column_names = 'event role status remark * contact'
 
-class AttendancesByCompany(Attendances):
-    fk_name = 'company'
-    column_names = 'event role status remark person * company'
 
     
 def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
@@ -584,11 +630,12 @@ def setup_config_menu(site,ui,user,m):
     m  = m.add_menu("cal",_("~Calendar"))
     m.add_action('cal.Places')
     m.add_action('cal.EventTypes')
-    m.add_action('cal.AttendanceRoles')
+    m.add_action('cal.AttendeeRoles')
     m.add_action('cal.Calendars')
   
 def setup_explorer_menu(site,ui,user,m):
     m.add_action('cal.Events')
     m.add_action('cal.Tasks')
-    m.add_action('cal.Attendances')
+    m.add_action('cal.Attendees')
+    m.add_action('cal.RecurrenceSets')
   

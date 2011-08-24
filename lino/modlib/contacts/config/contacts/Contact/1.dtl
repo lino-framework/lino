@@ -21,6 +21,6 @@ address_box = box3 box4
 bottom_box = box5:40 contacts.RolesByParent:20 contacts.RolesByChild:20
 box5 = 
   remarks 
-  is_person is_company
+  is_person is_company is_user
 
     

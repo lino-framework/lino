@@ -21,7 +21,7 @@ from lino.utils import dblogger
 
 
 def objects():
-    dblogger.info("Installing contacts demo fixture")
+    #~ dblogger.info("Installing contacts demo fixture") # use --verbosity=2
     
     company = Instantiator('contacts.Company',"name zip_code city:name street street_no",country='EE').build
     yield company(u'Rumma & Ko OÜ','10115','Tallinn',u'Tartu mnt','71')

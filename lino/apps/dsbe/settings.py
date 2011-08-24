@@ -27,6 +27,7 @@ class Lino(Lino):
     #~ domain = "dsbe.saffre-rumma.net"
     help_url = "http://lino.saffre-rumma.net/dsbe/index.html"
     migration_module = 'lino.apps.dsbe.migrate'
+    projects_model = 'contacts.Person'
     
     def setup_menu(self,ui,user,main):
         from django.utils.translation import ugettext_lazy as _
@@ -202,7 +203,8 @@ LINO = Lino(__file__,globals())
 #~ MEDIA_ROOT = join(LINO.project_dir,'media')
 #~ MEDIA_ROOT = join(PROJECT_DIR,'media')
 
-TIME_ZONE = 'Europe/Brussels'
+#~ TIME_ZONE = 'Europe/Brussels'
+TIME_ZONE = None
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -214,13 +216,13 @@ LANGUAGE_CODE = 'de'
 
 INSTALLED_APPS = (
   #~ 'django.contrib.auth',
-  'lino.modlib.users',
   'django.contrib.contenttypes',
   #~ 'django.contrib.sessions',
   #~ 'django.contrib.sites',
   #~ 'django.contrib.markup',
   #~ 'lino.modlib.system',
   'lino',
+  'lino.modlib.users',
   'lino.modlib.countries',
   #~ 'lino.modlib.documents',
   'lino.modlib.properties',

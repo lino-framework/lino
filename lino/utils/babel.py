@@ -77,41 +77,9 @@ def default_language():
     Returns the default language of this website
     as defined by :setting:`LANGUAGE_CODE` in your :xfile:`settings.py`.
     """
-    #~ from django.conf import settings
-    #~ return settings.LANGUAGE_CODE[:2]
     return DEFAULT_LANGUAGE
     
-#~ def lang_name(code):
-    #~ for lng in settings.LANGUAGES:
-        #~ if lng[0] == code:
-            #~ return lng[1]
-    #~ raise ValueError("No code %r in settings.LANGUAGES" % code)
     
-    
-#~ BABEL_CHOICES = [
-  #~ (default_language(),lang_name(default_language()))
-#~ ] + [ 
-  #~ (lng,lang_name(lng)) for lng in BABEL_LANGS
-#~ ]
-
-  
-#~ print __file__, BABEL_CHOICES  
-
-#~ LANG = None
-
-#~ LONG_DATE_FMT = {
-  #~ None: '%A, %d. %B %Y',
-  #~ 'de': '%A, %d. %B %Y',
-  #~ 'fr': '%A %d %B %Y',
-  #~ 'et': '%A, %d. %B %Y.a.',
-#~ }
-
-#~ SHORT_DATE_FMT = {
-  #~ None: '%y-%m-%d',
-  #~ 'de': '%d.%m.%Y',
-  #~ 'et': '%d.%m.%Y',
-  #~ 'fr': '%d/%m/%Y',
-#~ }
 
 LONG_DATE_FMT = {
   #~ None: 'l, j F Y',
@@ -128,8 +96,6 @@ SHORT_DATE_FMT = {
   'fr': 'd/m/Y',
 }
 
-
-#~ from lino.utils import lc2locale
 
 def lc2locale(lang,country):
     """
@@ -174,7 +140,6 @@ def dtosl(d):
     
 
     
-#~ def setlang(lang):
 def set_language(lang):
     #~ global LANG
     #~ LANG = lang
@@ -241,25 +206,6 @@ def babelattr(obj,attrname,*args):
         
 getattr_lang = babelattr
     
-def unused_add_babel_field(model,name,*args,**kw):
-    """
-Declares a previously defined field as babel field.
-This will add a variable number of clones of the base field, 
-one for each language of your :setting:`BABEL_LANGS`.
-
-    """
-    f = model._meta.get_field(name)
-    #~ if not f.blank:
-    kw.update(blank=True)
-    if isinstance(f,models.CharField):
-        kw.update(max_length=f.max_length)
-    for lang in BABEL_LANGS:
-        kw.update(verbose_name=f.verbose_name + ' ('+lang+')')
-        kw.update(blank=True,null=True)
-        newfield = f.__class__(*args,**kw)
-        newfield._lino_babel_field = True
-        model.add_to_class(name + '_' + lang,newfield)
-        
 class BabelCharField(models.CharField):
     """
     Define a variable number of clones of the "master" field, 
@@ -381,7 +327,7 @@ class BabelChoice(BabelText):
                 
 class BabelNamed(models.Model):
     """
-    Mixin for models that have a mandatory field `name` 
+    Mixin for models that have a non-nullable field `name` 
     (labelled "Description") for each language.
     """
     class Meta:

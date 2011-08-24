@@ -1,0 +1,13 @@
+#48 [closed] : One table for all contacts
+=========================================
+
+A few changes in the database structure, 
+but a big step in Lino's evolution:
+Persons, Companies and Users 
+get a common non-abstract model `Contact`.
+This change is triggered by our need for a 
+user-friendly way to add recipients to an :class:`lino.modlib.mails.models.OutMail`.
+A Contact is "a Company, a Person, a User or a Group of Contacts".
+
+Started :doc:`/blog/2011/0822`,
+finished :doc:`/blog/2011/0823`

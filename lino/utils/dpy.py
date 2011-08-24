@@ -21,6 +21,7 @@ from StringIO import StringIO
 import os
 import imp
 from decimal import Decimal
+from types import GeneratorType
 
 
 from django.conf import settings
@@ -118,7 +119,8 @@ class Serializer(base.Serializer):
         self.stream.write('\n\ndef objects():\n')
         all_models = self.sort_models(all_models)
         for model in all_models:
-            self.stream.write('    for o in %s_objects(): yield o\n' % model._meta.db_table)
+            #~ self.stream.write('    for o in %s_objects(): yield o\n' % model._meta.db_table)
+            self.stream.write('    yield %s_objects()\n' % model._meta.db_table)
         if settings.LINO.migration_module:
             self.stream.write('\n')
             #~ self.stream.write('# uncomment for automagic migration:\n')
@@ -259,33 +261,40 @@ class FakeDeserializedObject(base.DeserializedObject):
         """This will execute the `objects` function and save all instances.
         """
         #~ print 'dpy.py',self.object
-        save_later = []
-        saved = 0
+        self.save_later = []
+        self.saved = 0
+        dblogger.info("Loading %s...",self.name) 
         for obj in self.objects():
-            if self.try_save(obj,*args,**kw):
-                saved += 1
+            def doit(obj):
+                if self.try_save(obj,*args,**kw):
+                    self.saved += 1
+                else:
+                    self.save_later.append(obj)
+            if type(obj) is GeneratorType:
+                for o in obj: 
+                    doit(o)
             else:
-                save_later.append(obj)
-        dblogger.info("Saved %d instances from %s.",saved,self.name)
+                doit(obj)
+        dblogger.info("Saved %d instances from %s.",self.saved,self.name)
                 
-        while saved and save_later:
+        while self.saved and self.save_later:
             dblogger.info("Trying again with %d unsaved instances.",
-                len(save_later))
-            try_again = save_later
-            save_later = []
-            saved = 0
+                len(self.save_later))
+            try_again = self.save_later
+            self.save_later = []
+            self.saved = 0
             for obj in try_again:
                 if self.try_save(obj,*args,**kw):
-                    saved += 1
+                    self.saved += 1
                 else:
-                    save_later.append(obj)
-            dblogger.info("Saved %d instances.",saved)
+                    self.save_later.append(obj)
+            dblogger.info("Saved %d instances.",self.saved)
             
-        if save_later:
+        if self.save_later:
             dblogger.warning("Abandoning with %d unsaved instances from %s.",
-                len(save_later),self.name)
+                len(self.save_later),self.name)
             raise Exception("Abandoned with %d unsaved instances. "
-              "See dblog for details." % len(save_later))
+              "See dblog for details." % len(self.save_later))
                 
     def try_save(self,obj,*args,**kw):
         """Try to save the specified Model instance `obj`. Return `True` 
@@ -322,7 +331,9 @@ class FakeDeserializedObject(base.DeserializedObject):
         except (ValidationError,ObjectDoesNotExist), e:
             if obj.pk is None:
                 dblogger.exception(e)
-                raise Exception("Failed to save %s. Abandoned." % obj2str(obj))
+                raise Exception(
+                    "Failed to save %s (and %s is None). Abandoned." 
+                    % (obj2str(obj),obj._meta.pk.attname))
             deps = [f.rel.to for f in obj._meta.fields if f.rel is not None]
             if not deps:
                 dblogger.exception(e)
@@ -334,7 +345,7 @@ class FakeDeserializedObject(base.DeserializedObject):
             raise Exception("Failed to save %s. Abandoned." % obj2str(obj))
         
            
-IS_DESERIALIZING = False
+#~ IS_DESERIALIZING = False
 
 #~ def is_deserializing():
     #~ """

@@ -34,6 +34,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 #~ from lino.utils import dblogger
+from lino.utils import babel
 from lino.utils import choosers
 from lino.tools import full_model_name
 
@@ -52,6 +53,7 @@ class LanguageField(models.CharField):
         defaults = dict(
             verbose_name=_("Language"),
             choices=LANGUAGE_CHOICES,
+            default=babel.DEFAULT_LANGUAGE,
             max_length=2,
             )
         defaults.update(kw)

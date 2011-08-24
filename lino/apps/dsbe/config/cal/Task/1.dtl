@@ -6,5 +6,5 @@ main =
   start_date status due_date done 
   summary 
   created:20 modified:20 owner #owner_type #owner_id
-  user person company alarm_value alarm_unit dt_alarm
+  user project #person #company alarm_value alarm_unit dt_alarm
   description #notes.NotesByTask

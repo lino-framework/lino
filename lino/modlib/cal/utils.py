@@ -126,12 +126,12 @@ add('2',en=u"Confidential",de=u"Vertraulich",   fr=u"Confidentiel")
 
 
 
-class AttendanceStatus(ChoiceList):
-    """A list of possible values for the `status` field of an :class:`Attendance`.
+class AttendeeStatus(ChoiceList):
+    """A list of possible values for the `status` field of an :class:`Attendee`.
     """
-    label = _("Attendance Status")
+    label = _("Attendee Status")
     
-add = AttendanceStatus.add_item
+add = AttendeeStatus.add_item
 add('0',en=u"maybe",de=u"vielleicht",   fr=u"peut-être")
 add('1',en=u"yes",de=u"ja",   fr=u"oui")
 add('2',en=u"no",de=u"nein",   fr=u"non")

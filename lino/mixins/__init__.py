@@ -185,7 +185,23 @@ class DiffingMixin(object):
         return result
 
 
+class ProjectRelated(models.Model):
+    "Deserves more documentation."
+    
+    class Meta:
+        abstract = True
+        
+    if settings.LINO.projects_model:
+      
+        project = models.ForeignKey(settings.LINO.projects_model,blank=True,null=True)
 
+    def summary_row(self,ui,rr,**kw):
+        s = ui.href_to(self)
+        if settings.LINO.projects_model:
+            if self.project and not reports.has_fk(rr,'project'):
+                s += " (" + ui.href_to(self.project) + ")"
+        return s
+            
 
 
 #~ from lino.mixins.reminder import Reminder

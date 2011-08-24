@@ -4,13 +4,14 @@ Version 1.2.2 (Coming)
 New features
 ------------
 
+#.  New table `Contacts` contains both Persons and Companies
+#.  Calendar module is growing. 
+    Attendances by Event. 
+#.  New module "Emails". "Create Mail" button. Incoming and outgoing mails.
 #.  out-of-the-box doctemplates
-#.  Attendances by Event
-#.  New "Create Mail" button on 
 
 Internal optimizations
 ----------------------
-
 
 Bugs fixed
 ----------

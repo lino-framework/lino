@@ -27,7 +27,7 @@ def objects():
   
     #~ User = settings.LINO.user_model()
     User = resolve_model(settings.LINO.user_model)
-    u = User.objects.get(pk=1)
+    u = User.objects.get(username='root')
     
     notetype = Instantiator('notes.NoteType').build
     tel = notetype(name="phone report",build_method='appyodt',template='notes.Note.Telefonnotiz.odt')
@@ -35,17 +35,3 @@ def objects():
     yield notetype(name="todo")
     
     
-    #~ Person = resolve_model('contacts.Person')
-    #~ Company = resolve_model('contacts.Company')
-    
-    #~ print Person.objects.all()
-    
-    #~ luc = Person.objects.get(name__exact='Saffre Luc')
-    #~ rko = Company.objects.get(name__exact=u'Rumma & Ko OÜ')
-    
-    #~ note = Instantiator('notes.Note',type=tel).build
-    #~ n = note(user=u,date=i2d(20091208),subject=u"note for company %s" % rko,body="""Lorem ipsum...""",owner=rko)
-    #~ yield n    
-    
-    #~ n = note(user=u,date=i2d(20091208),subject=u"note for person %s" % luc,body="""Lorem ipsum...""",owner=luc)
-    #~ yield n 

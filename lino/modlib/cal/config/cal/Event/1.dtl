@@ -7,7 +7,7 @@ main =
   summary created:20 modified:20
   user alarm_value alarm_unit
   place priority access_class 
-  transparent duration_value duration_unit repeat_value repeat_unit
+  transparent duration_value duration_unit rset
   description
-  AttendancesByEvent
+  AttendeesByEvent
 
