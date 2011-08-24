@@ -535,13 +535,11 @@ class Person(Partner,contacts.PersonMixin,contacts.Contact,contacts.Born,Printab
             msgs.append(unicode(e))
         return msgs
           
-    def clean(self):
-        if self.job_office_contact_id is not None:
-            #~ print "Person.clean()", self
-            if self.job_office_contact.child == self:
-                raise ValidationError(_("Circular reference"))
-        #~ self.save_auto_tasks()
-        super(Person,self).clean()
+    #~ def clean(self):
+        #~ if self.job_office_contact: 
+            #~ if self.job_office_contact.child == self:
+                #~ raise ValidationError(_("Circular reference"))
+        #~ super(Person,self).clean()
         
         
         
