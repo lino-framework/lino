@@ -533,32 +533,30 @@ class ContactsByCountry(Contacts):
 
 
 #~ class ContactType(babel.BabelNamed):
-class Role(babel.BabelNamed):
+class RoleType(babel.BabelNamed):
     """
     Deserves more documentation.
     """
     class Meta:
-        verbose_name = _("contact type")
-        verbose_name_plural = _("contact types")
+        verbose_name = _("Role Type")
+        verbose_name_plural = _("Role Types")
     #~ abbr = models.CharField(max_length=30,verbose_name=_("Abbreviation"))
 
 
-#~ class ContactTypes(reports.Report):
-class Roles(reports.Report):
-    #~ model = 'contacts.ContactType'
-    model = 'contacts.Role'
+class RoleTypes(reports.Report):
+    model = 'contacts.RoleType'
 
 
 #~ class Contact(models.Model):
-class RoleOccurence(models.Model):
+#~ class RoleOccurence(models.Model):
+class Role(models.Model):
     """
-    Represents a :class:`Person` having a (more or less known) 
-    role in a :class:`Company`.
+    The role of a given :class:`Person` in a given :class:`Company`.
     """
   
     class Meta:
-        verbose_name = _("Contact")
-        verbose_name_plural = _("Contacts")
+        verbose_name = _("Contact Person")
+        verbose_name_plural = _("Contact Persons")
         
     parent = models.ForeignKey('contacts.Contact',
         verbose_name=_("Parent Contact"),
@@ -566,7 +564,8 @@ class RoleOccurence(models.Model):
     child = models.ForeignKey('contacts.Contact',
         verbose_name=_("Child Contact"),
         related_name='rolesbychild')
-    role = models.ForeignKey('contacts.Role',blank=True,null=True,
+    type = models.ForeignKey('contacts.RoleType',
+      blank=True,null=True,
       verbose_name=_("Contact Role"))
     #~ person = models.ForeignKey('contacts.Person',verbose_name=_("person"))
     #~ company = models.ForeignKey('contacts.Company',blank=True,null=True,
@@ -582,7 +581,7 @@ class RoleOccurence(models.Model):
         #~ return u"%s (%s)" % (self.person, self.type)
     def __unicode__(self):
         if self.child_id is None:
-            return super(RoleOccurence,self).__unicode__()
+            return super(Role,self).__unicode__()
         if self.role is None:
             return unicode(self.child)
         return u"%s (%s)" % (self.child, self.role)
@@ -621,18 +620,18 @@ class RoleOccurence(models.Model):
     #~ fk_name = 'person'
     #~ column_names = 'company type *'
     
-class RoleOccurences(reports.Report):
-    model = 'contacts.RoleOccurence'   
+class Roles(reports.Report):
+    model = 'contacts.Role'   
     
-class RolesByParent(RoleOccurences):
-    label = _("Contacts")
+class RolesByParent(Roles):
+    label = _("Contact persons")
     fk_name = 'parent'
-    column_names = 'child role *'
+    column_names = 'child type *'
 
-class RolesByChild(RoleOccurences):
+class RolesByChild(Roles):
     label = _("Contact for")
     fk_name = 'child'
-    column_names = 'parent role *'
+    column_names = 'parent type *'
 
 
 
@@ -654,8 +653,8 @@ def setup_my_menu(site,ui,user,m):
     pass
   
 def setup_config_menu(site,ui,user,m): 
-    m  = m.add_menu("cal",_("~Calendar"))
-    m.add_action('contacts.Roles')
+    m  = m.add_menu("contacts",_("~Contacts"))
+    m.add_action('contacts.RoleTypes')
   
 def setup_explorer_menu(site,ui,user,m):
     pass

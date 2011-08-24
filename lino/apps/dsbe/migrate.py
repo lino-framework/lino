@@ -184,13 +184,14 @@ def migrate_from_1_2_0(globals_dict):
   
 def migrate_from_1_2_1(globals_dict):
     """
-    - rename model contacts.ContactType to contacts.Role
-    - rename model contacts.Contact to contacts.RoleOccurence (and new fieldnames)
+    - rename model contacts.ContactType to contacts.RoleType
+    - rename model contacts.Contact to contacts.Role 
+      (and field company to parent, person to child)
     - change the id of existing users because User is now subclass of Contact
       and modify SiteConfig.next_partner_id
     """
     Role = resolve_model("contacts.Role")
-    RoleOccurence = resolve_model("contacts.RoleOccurence")
+    RoleType = resolve_model("contacts.RoleType")
     
     Event = resolve_model("cal.Event")
     Task = resolve_model("cal.Task")
@@ -237,7 +238,7 @@ def migrate_from_1_2_1(globals_dict):
     
     def create_contacts_contacttype(id, name, name_fr, name_en):
         #~ return ContactType(id=id,name=name,name_fr=name_fr,name_en=name_en)
-        return Role(id=id,name=name,name_fr=name_fr,name_en=name_en)
+        return RoleType(id=id,name=name,name_fr=name_fr,name_en=name_en)
     globals_dict.update(create_contacts_contacttype=create_contacts_contacttype)
     
     def create_lino_textfieldtemplate(id, user_id, name, description, text):
@@ -266,14 +267,14 @@ def migrate_from_1_2_1(globals_dict):
           # Person pk is now contact_ptr_id, and FakeDeserializedObject.try_save tests this to decided whether
           # it can defer the save 
           id=id,
-          #~ contact_ptr_id=id,
+          contact_ptr_id=id,
           is_active=is_active,activity_id=activity_id,bank_account1=bank_account1,bank_account2=bank_account2,remarks2=remarks2,gesdos_id=gesdos_id,is_cpas=is_cpas,is_senior=is_senior,group_id=group_id,coached_from=coached_from,coached_until=coached_until,coach1_id=coach1_id,coach2_id=coach2_id,birth_date=birth_date,birth_date_circa=birth_date_circa,birth_place=birth_place,birth_country_id=birth_country_id,civil_state=civil_state,national_id=national_id,health_insurance_id=health_insurance_id,pharmacy_id=pharmacy_id,nationality_id=nationality_id,card_number=card_number,card_valid_from=card_valid_from,card_valid_until=card_valid_until,card_type=card_type,card_issuer=card_issuer,noble_condition=noble_condition,residence_type=residence_type,in_belgium_since=in_belgium_since,unemployed_since=unemployed_since,needs_residence_permit=needs_residence_permit,needs_work_permit=needs_work_permit,work_permit_suspended_until=work_permit_suspended_until,aid_type_id=aid_type_id,income_ag=income_ag,income_wg=income_wg,income_kg=income_kg,income_rente=income_rente,income_misc=income_misc,is_seeking=is_seeking,unavailable_until=unavailable_until,unavailable_why=unavailable_why,obstacles=obstacles,skills=skills,job_agents=job_agents,job_office_contact_id=job_office_contact_id)
     globals_dict.update(create_contacts_person=create_contacts_person)
     
     def create_contacts_contact(id, person_id, company_id, type_id):
         #~ return Contact(id=id,person_id=person_id,company_id=company_id,type_id=type_id)
         if not company_id: return None # field was nullable
-        return RoleOccurence(id=id,child_id=person_id,parent_id=company_id,role_id=type_id)
+        return Role(id=id,child_id=person_id,parent_id=company_id,type_id=type_id)
     globals_dict.update(create_contacts_contact=create_contacts_contact)
     
 

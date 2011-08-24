@@ -499,7 +499,7 @@ class Person(Partner,contacts.PersonMixin,contacts.Contact,contacts.Born,Printab
         verbose_name=_("Job agents"))
     
     #~ job_office_contact = models.ForeignKey("contacts.Contact",
-    job_office_contact = models.ForeignKey("contacts.RoleOccurence",
+    job_office_contact = models.ForeignKey("contacts.Role",
       blank=True,null=True,
       verbose_name=_("Contact person at local job office"),
       related_name='persons_job_office')
@@ -535,11 +535,11 @@ class Person(Partner,contacts.PersonMixin,contacts.Contact,contacts.Born,Printab
             msgs.append(unicode(e))
         return msgs
           
-    #~ def clean(self):
-        #~ if self.job_office_contact: 
-            #~ if self.job_office_contact.child == self:
-                #~ raise ValidationError(_("Circular reference"))
-        #~ super(Person,self).clean()
+    def clean(self):
+        if self.job_office_contact: 
+            if self.job_office_contact.child == self:
+                raise ValidationError(_("Circular reference"))
+        super(Person,self).clean()
         
         
         

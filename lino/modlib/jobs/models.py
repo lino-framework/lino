@@ -179,7 +179,7 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
         verbose_name=_("Person"))
     provider = models.ForeignKey(JobProvider,
         blank=True,null=True,verbose_name=_("Job Provider"))
-    contact = models.ForeignKey("contacts.RoleOccurence",
+    contact = models.ForeignKey("contacts.Role",
       blank=True,null=True,
       verbose_name=_("represented by"))
     #~ contact = models.ForeignKey("contacts.Contact",
@@ -232,7 +232,7 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
     @chooser()
     def contact_choices(cls,provider):
         if provider is not None:
-            return provider.roleoccurence_set.all()
+            return provider.rolesbyparent.all()
         return []
         
     # for backwards compatibility:

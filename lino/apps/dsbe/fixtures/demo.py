@@ -85,7 +85,7 @@ def objects():
     Person = resolve_model('contacts.Person')
     Company = resolve_model('contacts.Company')
     #~ Contact = resolve_model('contacts.Contact')
-    RoleOccurence = resolve_model('contacts.RoleOccurence')
+    Role = resolve_model('contacts.Role')
     Contract = resolve_model('jobs.Contract')
     JobProvider = resolve_model('jobs.JobProvider')
     Note = resolve_model('notes.Note')
@@ -95,7 +95,7 @@ def objects():
     person = Instantiator(Person).build
     company = Instantiator(Company).build
     #~ contact = Instantiator(Contact).build
-    roleOccurence = Instantiator(RoleOccurence).build
+    role = Instantiator(Role).build
     exam_policy = Instantiator('jobs.ExamPolicy').build
 
     City = resolve_model('countries.City')
@@ -122,11 +122,11 @@ def objects():
     yield cpas
     bisa = company(name=u"BISA",city=eupen,country='BE')
     yield bisa 
-    bisa_dir = roleOccurence(parent=bisa,child=annette,role=1)
+    bisa_dir = role(parent=bisa,child=annette,type=1)
     yield bisa_dir 
     rcycle = company(name=u"R-Cycle Sperrgutsortierzentrum",city=eupen,country='BE')
     yield rcycle
-    rcycle_dir = roleOccurence(parent=rcycle,child=andreas,role=1)
+    rcycle_dir = role(parent=rcycle,child=andreas,type=1)
     yield rcycle_dir
     yield company(name=u"Die neue Alternative V.o.G.",city=eupen,country='BE')
     yield company(name=u"Pro Aktiv V.o.G.",city=eupen,country='BE')
@@ -151,7 +151,7 @@ def objects():
     
     gerd = person(first_name="Gerd",last_name="Xhonneux",city=kettenis,name="Xhonneux Gerd",country='BE',sex='M')
     yield gerd
-    yield roleOccurence(parent=cpas,child=gerd,role=4)
+    yield role(parent=cpas,child=gerd,type=4)
     
     
     tatjana = person(first_name=u"Татьяна",last_name=u"Казеннова",# name="Казеннова Татьяна",
@@ -166,7 +166,7 @@ def objects():
     adg = company(name=u"Arbeitsamt der D.G.",city=eupen,country='BE')
     update_site_config(job_office=adg)
     yield adg
-    adg_dir = roleOccurence(parent=adg,child=bernard,role=1)
+    adg_dir = role(parent=adg,child=bernard,type=1)
     yield adg_dir
     try:
       bernard.job_office_contact = adg_dir
