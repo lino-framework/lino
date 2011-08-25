@@ -46,6 +46,9 @@ Glossary
       
   disabled fields
     Fields that the user cannot edit (read-only fields). 
+    
+  appy.pod
+    See http://appyframework.org/pod.html
   
   initdb
     See :mod:`lino.management.commands.initdb`

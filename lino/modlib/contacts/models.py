@@ -582,9 +582,9 @@ class Role(models.Model):
     def __unicode__(self):
         if self.child_id is None:
             return super(Role,self).__unicode__()
-        if self.role is None:
+        if self.type is None:
             return unicode(self.child)
-        return u"%s (%s)" % (self.child, self.role)
+        return u"%s (%s)" % (self.child, self.type)
             
     #~ def address_lines(self):
         #~ for ln in self.person.address_person_lines():

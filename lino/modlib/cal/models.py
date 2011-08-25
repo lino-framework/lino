@@ -169,7 +169,9 @@ class ComponentBase(models.Model):
         abstract = True
         
     calendar = models.ForeignKey(Calendar,verbose_name=_("Calendar"),blank=True)
-    uid = models.CharField(_("UID"),max_length=200)
+    uid = models.CharField(_("UID"),
+        max_length=200,
+        blank=True,null=True)
 
     start_date = models.DateField(
         verbose_name=_("Start date")) # iCal:DTSTART

@@ -155,9 +155,7 @@ def discover():
                 #~ n += 1
                 ch = Chooser(model,field,m)
                 setattr(field,'_lino_chooser',ch)
-                #~ if ch.stored_name is not None:
-                    #~ register_stored_chooser(ch)
-                logger.debug("Installed %s",ch)
+                #~ logger.debug("Installed %s",ch)
             #~ else:
                 #~ logger.info("No chooser for %s.%s",model,field.name)
         #~ logger.debug("Discovered %d choosers in model %s.",n,model)
