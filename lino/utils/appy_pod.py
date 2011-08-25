@@ -59,9 +59,7 @@ def setup_renderer(renderer):
     def html_func(html,**kw):
         if not html:
             return ''
-        logger.debug("""html_func() got:>>>
-%s
-<<<""",html)
+        #~ logger.debug("html_func() got:<<<\n%s\n>>>",html)
         #~ print __file__, ">>>"
         #~ print html
         #~ print "<<<", __file__

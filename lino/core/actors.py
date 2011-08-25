@@ -73,7 +73,7 @@ def resolve_actor(actor,app_label):
     return get_actor(actor)
         
 def register_actor(a):
-    logger.debug("register_actor %s",a.actor_id)
+    #~ logger.debug("register_actor %s",a.actor_id)
     old = actors_dict.get(a.actor_id,None)
     if old is not None:
         #~ logger.debug("register_actor %s : %r replaced by %r",a.actor_id,old.__class__,a.__class__)

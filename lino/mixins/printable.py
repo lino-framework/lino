@@ -118,11 +118,12 @@ class BuildMethod:
             return os.path.join(settings.LINO.webdav_root,*self.get_target_parts(action,elem))
         return os.path.join(settings.MEDIA_ROOT,*self.get_target_parts(action,elem))
         
-    def get_target_url(self,action,elem):
+    def get_target_url(self,action,elem,ui):
         "return the url that points to the generated filename on the server"
         if self.webdav:
             return settings.LINO.webdav_url + "/".join(self.get_target_parts(action,elem))
-        return settings.MEDIA_URL + "/".join(self.get_target_parts(action,elem))
+        #~ return settings.MEDIA_URL + "/".join(self.get_target_parts(action,elem))
+        return ui.media_url(*self.get_target_parts(action,elem))
             
     def build(self,action,elem):
         raise NotImplementedError
@@ -349,8 +350,7 @@ class RtfBuildMethod(SimpleBuildMethod):
 def register_build_method(pm):
     bm_dict[pm.name] = pm
     bm_list.append(pm)
-    
-
+ 
 register_build_method(AppyOdtBuildMethod())
 register_build_method(AppyPdfBuildMethod())
 register_build_method(AppyRtfBuildMethod())   
@@ -471,7 +471,7 @@ class PrintAction(BasePrintAction):
     def get_print_templates(self,bm,elem):
         return elem.get_print_templates(bm,self)
         
-    def run_(self,elem,**kw):
+    def run_(self,ui,elem,**kw):
         bm = get_build_method(elem)
         if elem.must_build:
             bm.build(self,elem)
@@ -481,12 +481,12 @@ class PrintAction(BasePrintAction):
             kw.update(message="%s printable has been built." % elem)
         else:
             kw.update(message="Reused %s printable from cache." % elem)
-        kw.update(open_url=bm.get_target_url(self,elem))
+        kw.update(open_url=bm.get_target_url(self,elem,ui))
         return kw
         #~ return rr.ui.success_response(open_url=target,**kw)
         
     def run(self,rr,elem,**kw):
-        kw = self.run_(elem,**kw)
+        kw = self.run_(rr.ui,elem,**kw)
         return rr.ui.success_response(**kw)
       
 class DirectPrintAction(BasePrintAction):
@@ -509,7 +509,7 @@ class DirectPrintAction(BasePrintAction):
         bm.build(self,elem)
         #~ target = settings.MEDIA_URL + "/".join(bm.get_target_parts(self,elem))
         #~ return rr.ui.success_response(open_url=target,**kw)
-        kw.update(open_url=bm.get_target_url(self,elem))
+        kw.update(open_url=bm.get_target_url(self,elem,rr.ui))
         return rr.ui.success_response(**kw)
     
 #~ class EditTemplateAction(reports.RowAction):
