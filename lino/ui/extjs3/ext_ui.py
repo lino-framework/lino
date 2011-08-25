@@ -1172,11 +1172,11 @@ tinymce.init({
                     return a.run(ar,elem)
                 except Exception,e:
                     logger.exception(e)
-                    msg = _("Action %(action)s failed for %(record)s.") % dict(
+                    msg = _("Action \"%(action)s\" failed for %(record)s.") % dict(
                         action=a,
                         record=obj2unicode(elem))
                     msg += ' ' + _("An error report has been sent to the system administrator.")
-                    logger.warning(msg)
+                    #~ logger.warning(msg)
                     return error_response(e,msg)
               
             raise NotImplementedError("Action %s is not implemented)" % a)

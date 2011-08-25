@@ -1,0 +1,16 @@
+20110824
+========
+
+Preparing release 1.2.2
+-----------------------
+
+- Fixed some minor bugs
+
+Get OOo server running on Jana
+------------------------------
+
+I tried to get OOo server (needed for :term:`appy.pod`) running using the packaged version::
+
+  aptitude install openoffice.org-headless python-openoffice openoffice.org-java-common java-virtual-machine
+  
+No success yet... to be continued...

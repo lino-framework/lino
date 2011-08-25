@@ -155,11 +155,6 @@ class EventType(mixins.PrintableType,babel.BabelNamed):
     class Meta:
         verbose_name = _("Event Type")
         verbose_name_plural = _('Event Types')
-        
-    #~ name = babel.BabelCharField(_("Description"),max_length=200)
-    
-    #~ def __unicode__(self):
-        #~ return unicode(babel.babelattr(self,'name'))
 
 class EventTypes(reports.Report):
     model = EventType
@@ -199,16 +194,6 @@ class RecurrenceSet(ComponentBase):
     exdates = models.TextField(_("Excluded dates"),blank=True)
     rrules = models.TextField(_("Recurrence Rules"),blank=True)
     exrules = models.TextField(_("Exclusion Rules"),blank=True)
-    
-    #~ start_date = models.DateField(
-        #~ verbose_name=_("Start date")) # iCal:DTSTART
-    #~ start_time = models.TimeField(
-        #~ blank=True,null=True,
-        #~ verbose_name=_("Start time"))# iCal:DTSTART
-    #~ rdate = models.CharField(_("Recurrence date"),max_length=200)
-    #~ exdate = models.CharField(_("Excluded date(s)"),max_length=200)
-    #~ rrules = models.TextField(_("Recurrence Rules"))
-    #~ exrules = models.TextField(_("Exclusion Rules"))
     
 class RecurrenceSets(reports.Report):
     model = RecurrenceSet
@@ -254,10 +239,18 @@ class Component(ComponentBase,
         """
         if not self.calendar_id:
             self.calendar = default_calendar(self.user)
-        if not self.uid:
-            if not settings.LINO.uid:
-                raise Exception('Cannot create local calendar components because settings.LINO.uid is empty.')
-            self.uid = "%s@%s" % (self.pk,settings.LINO.uid)
+            
+    def get_uid(self):
+        """
+        This is going to be used when sending 
+        locally created components to a remote calendar.
+        """
+        if self.uid:
+            return self.uid
+        if not settings.LINO.uid:
+            raise Exception('Cannot create local calendar components because settings.LINO.uid is empty.')
+        return "%s@%s" % (self.pk,settings.LINO.uid)
+            
 
     def full_clean(self,*args,**kw):
         self.before_clean()

@@ -75,6 +75,8 @@ to be able to link them to "something application specific"
 (in Lino/DSBE this is a person and/or company 
 but in fact they always just wanted a person: 14 of 1000 
 notes currently have a nonempty company field).
+
+In a first step we use this just for Tasks and Events.
       
 Database migration to 1.2.2
 ---------------------------
@@ -84,3 +86,4 @@ is getting quite complex after all these changes.
 Added :func:`lino.apps.dsbe.migrate.migrate_from_1_2_1`.
 Tested on a recent dump of real data.
 
+Check-in 20110823

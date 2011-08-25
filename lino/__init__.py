@@ -186,12 +186,17 @@ class Lino(object):
     title = "Untitled Lino Application"
     #~ domain = "www.example.com"
     
-    uid = None
+    uid = 'myuid'
     """
     A universal identifier for this Lino site. 
-    This is needed for synchronization with CalDAV server; 
-    calendar components created by Lino will get a UID 
-    ``"%s@%s" (self.pk,settings.LINO.ui)``.
+    This is needed when synchronizing with CalDAV server.  
+    Locally created calendar components in remote calendars 
+    will get a UID based on this parameter,
+    using ``"%s@%s" (self.pk,settings.LINO.ui)``.
+    
+    The default value is ``'myuid'``, and
+    you should certainly override this 
+    on a production server that uses remote calendars.
     """
     
     user_model = "users.User"

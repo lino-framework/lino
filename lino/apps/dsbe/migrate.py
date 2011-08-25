@@ -283,7 +283,7 @@ def migrate_from_1_2_1(globals_dict):
         if person_id:
             project_id=person_id
             if company_id:
-                dblogger.warning("create_cal_task looses company_id for task #%",id)
+                dblogger.warning("create_cal_task looses company_id %s for task #%",company_id,id)
         else:
             project_id=company_id
         return Task(id=id,user_id=user_id,created=created,modified=modified,owner_type_id=owner_type_id,owner_id=owner_id,project_id=project_id,start_date=start_date,start_time=start_time,summary=summary,description=description,access_class=access_class,sequence=sequence,alarm_value=alarm_value,alarm_unit=alarm_unit,dt_alarm=dt_alarm,due_date=due_date,due_time=due_time,done=done,percent=percent,status=status,auto_type=auto_type)

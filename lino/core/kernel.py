@@ -117,9 +117,9 @@ def analyze_models(self):
         #~ load_config_files('%s.%s.*dtl' % (model._meta.app_label,model.__name__),loader)
         load_config_files(loader,'*.dtl','%s/%s' % (model._meta.app_label,model.__name__))
         
-        logger.debug("20110822 %s._lino_detail_layouts : %s",
-            full_model_name(model),
-            ' '.join(["%s=%s" % (k,dl.filename) for k,dl in model._lino_detail_layouts.items()]))
+        #~ logger.debug("20110822 %s._lino_detail_layouts : %s",
+            #~ full_model_name(model),
+            #~ ' '.join(["%s=%s" % (k,dl.filename) for k,dl in model._lino_detail_layouts.items()]))
         
             
         #~ if get_unbound_meth(model,'summary_row') is None:
@@ -241,7 +241,7 @@ def setup_site(self):
         a.setup()
 
     #~ if settings.MODEL_DEBUG:
-    if True:
+    if False:
         logger.debug("ACTORS:")
         for k in sorted(actors.actors_dict.keys()):
             a = actors.actors_dict[k]
