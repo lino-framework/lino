@@ -19,14 +19,21 @@ Bugs fixed
 Upgrade instructions
 --------------------
 
-#.  reorganize local :xfile:`doctemplates` directory as 
-    explained in :doc:`/blog/2011/0809`
-
-#.  Lino/DSBE users must run a database migration because 
-    we now also use the :mod:`lino.modlib.mails` module. 
-
 The following are technical instructions related to this 
 upgrade, designed to be executed by a Lino expert.
 For more general instructions on how to upgrade an existing 
 Lino site, see :doc:`/admin/upgrade`.
+
+#.  Reorganize local :xfile:`doctemplates` directory 
+    (see in :doc:`/blog/2011/0809`). Concretely::
+    
+      mkdir config/jobs
+      mkdir config/jobs/Contract
+      mv media/webdav/doctemplates/appy/de/contracts/
+      mv media/webdav/doctemplates/appy/de/contracts/art60-7.odt  config/jobs/Contract
+      mv media/webdav/doctemplates/appy/de/contracts/vse.odt  config/jobs/Contract 
+    
+
+#.  Lino/DSBE users must run a database migration because 
+    we now also use the :mod:`lino.modlib.mails` module. 
 
