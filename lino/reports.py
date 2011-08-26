@@ -1440,7 +1440,8 @@ class BaseLayout(Configured):
                         raise Exception('Duplicate element definition %r in %r' % (attrname,desc))
                     setattr(self,attrname,a[1].strip())
         if self.label:
-            settings.LINO.add_dummy_message(self.label)
+            #~ settings.LINO.add_dummy_message(self.label)
+            self.add_dummy_message(self.label)
             self.label = _(self.label)
           
         

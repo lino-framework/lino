@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-07-27 14:48+0100\n"
+"POT-Creation-Date: 2011-08-26 13:59+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,42 +17,26 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: .\dummy_messages.py:3
-msgid "Detail"
-msgstr ""
-
-#: .\dummy_messages.py:4
-msgid "Items"
-msgstr ""
-
-#: .\dummy_messages.py:5
-msgid "Notes"
-msgstr ""
-
-#: .\dummy_messages.py:6
-msgid "Sales"
-msgstr ""
-
-#: .\dummy_messages.py:7
-msgid "General"
-msgstr ""
-
-#: .\dummy_messages.py:8
-msgid "Contact"
-msgstr ""
-
-#: .\dummy_messages.py:9
-msgid "Emitted invoices"
-msgstr ""
-
-#: .\dummy_messages.py:10
-msgid "More"
-msgstr ""
-
-#: .\models.py:95
+#: .\models.py:109
 msgid "Sales base account"
 msgstr ""
 
-#: .\models.py:105
+#: .\models.py:119
 msgid "Sales VAT account"
+msgstr ""
+
+#: .\settings.py:80
+msgid "~My menu"
+msgstr ""
+
+#: .\settings.py:134
+msgid "E~xplorer"
+msgstr ""
+
+#: .\settings.py:143
+msgid "~Help"
+msgstr ""
+
+#: .\settings.py:144
+msgid "~User Manual"
 msgstr ""

@@ -14,6 +14,10 @@ help:
 	@echo "Please use \`make <target>' where <target> is one of"
 	@echo "  mm  run django-admin makemessages on modlib"
 	@echo "  cm  run django-admin compilemessages on modlib"
+  
+makedocs:
+	$(DJANGO_ADMIN) makedocs --settings lino.apps.dsbe.settings docs/dsbe/appdocs
+	$(DJANGO_ADMIN) makedocs --settings lino.apps.igen.settings docs/igen/appdocs
 
 
 mm:

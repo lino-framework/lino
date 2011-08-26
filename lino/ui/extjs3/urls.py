@@ -11,7 +11,8 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""The default URLconf module pointed 
+"""The default URLconf module, 
+pointed to by
 :setting:`ROOT_URLCONF` in :mod:`lino.apps.std.settings`.
 """
 
@@ -24,22 +25,3 @@ from lino.ui.extjs3 import UI
 
 # install Lino urls under root location (`/`)
 urlpatterns = UI().get_patterns()
-
-
-
-
-#~ from . import ext_ui 
-
-#~ urlpatterns = patterns('',
-    #~ (r'^favicon\.ico$', 'django.views.generic.simple.redirect_to', 
-        #~ {'url': settings.MEDIA_URL + 'lino/favicon.ico'})
-#~ )
-
-#~ ui = ext_ui.ExtUI()
-#~ urlpatterns = ui.get_patterns()
-
-#~ ui = ext_ui.ExtUI(PREFIX)
-
-#~ urlpatterns += patterns('',
-    #~ ('^'+ui.prefix, include(ui.get_urls())),
-#~ )

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.notes\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-07-27 14:47+0100\n"
+"POT-Creation-Date: 2011-08-26 13:59+0100\n"
 "PO-Revision-Date: 2011-05-10 16:35+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
@@ -16,65 +16,73 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: .\models.py:44
+#: .\models.py:47
 msgid "Note Type"
 msgstr "Notizart"
 
-#: .\models.py:45
+#: .\models.py:48
 msgid "Note Types"
 msgstr "Notizarten"
 
-#: .\models.py:48
+#: .\models.py:51
 msgid "important"
 msgstr "wichtig"
 
-#: .\models.py:50 .\models.py:62
+#: .\models.py:53 .\models.py:65
 msgid "Remark"
 msgstr "Bemerkung"
 
-#: .\models.py:59
+#: .\models.py:62
 msgid "Event Type"
 msgstr "Ereignisart"
 
-#: .\models.py:60
+#: .\models.py:63
 msgid "Event Types"
 msgstr "Ereignisarten"
 
-#: .\models.py:61
-msgid "Designation"
-msgstr "Bezeichnung"
-
-#: .\models.py:79
+#: .\models.py:82
 msgid "Note"
 msgstr "Notiz"
 
-#: .\models.py:80
+#: .\models.py:83
 msgid "Notes"
 msgstr "Notizen"
 
-#: .\models.py:83
+#: .\models.py:86
 msgid "Date"
 msgstr "Datum"
 
-#: .\models.py:89
+#: .\models.py:92
 msgid "Note Type (Form)"
 msgstr "Notizart (Form)"
 
-#: .\models.py:92
+#: .\models.py:95
 msgid "Event Type (Content)"
 msgstr "Ereignisart (Inhalt)"
 
-#: .\models.py:94
+#: .\models.py:97
 msgid "Subject"
 msgstr "Betreff"
 
-#: .\models.py:96
+#: .\models.py:99
 msgid "Body"
 msgstr "Inhalt"
 
-#: .\models.py:199
+#: .\models.py:202
 msgid "My notes"
 msgstr "Meine Notizen"
+
+#: .\models.py:240
+#, fuzzy
+msgid "~Notes"
+msgstr "Notizen"
+
+#: .\config\notes\NoteType\1.dtl.py:3
+msgid "Detail"
+msgstr ""
+
+#~ msgid "Designation"
+#~ msgstr "Bezeichnung"
 
 #~ msgid "Note type"
 #~ msgstr "Notizart"

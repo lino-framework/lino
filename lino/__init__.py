@@ -367,7 +367,7 @@ class Lino(object):
         self.project_dir = normpath(dirname(project_file))
         self.project_name = os.path.split(self.project_dir)[-1]
         self.qooxdoo_prefix = self.root_url + '/media/qooxdoo/lino_apps/' + self.project_name + '/build/'
-        self.dummy_messages = set()
+        #~ self.dummy_messages = set()
         self._setting_up = False
         self._setup_done = False
         #~ self._response = None
@@ -433,8 +433,8 @@ class Lino(object):
       
         
 
-    def add_dummy_message(self,s):
-        self.dummy_messages.add(s)
+    #~ def add_dummy_message(self,s):
+        #~ self.dummy_messages.add(s)
 
     def setup_main_menu(self):
         pass
@@ -450,14 +450,15 @@ class Lino(object):
     def configure(self,sc):
         self.config = sc
         
-    def setup(self):
+    def setup(self,**options):
         """
         This is called whenever a user interface 
         (:class:`lino.ui.base.UI`) gets instantiated (which usually 
         happenes in some URLConf, for example in:mod:`lino.ui.extjs3.urls`). 
+        Also called by :term:`makedocs` with keyword argument `make_messages`.
         """
         from lino.core.kernel import setup_site
-        setup_site(self)
+        setup_site(self,**options)
 
 
     def get_site_menu(self,ui,user):

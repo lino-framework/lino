@@ -20,6 +20,342 @@ It defines tables like `Person` and `Company`
 
 
 .. index::
+   pair: model; Contact
+
+.. _lino.contacts.Contact:
+
+-----------------
+Model **Contact**
+-----------------
+
+
+
+
+Base class for anything that has contact information 
+(postal address, email, phone,...).
+
+
+  
+============= ============= =============================================================================
+name          type          verbose name                                                                 
+============= ============= =============================================================================
+id            AutoField     ID                                                                           
+country       ForeignKey    Country (Land,Pays)                                                          
+city          ForeignKey    City (Stadt)                                                                 
+name          CharField     Name (Nom)                                                                   
+addr1         CharField     Address line before street (Adresszeile vor Straße,Ligne avant le nom de rue)
+street_prefix CharField     Street prefix (Präfix Straße,Préfixe rue)                                    
+street        CharField     Street (Straße,Rue)                                                          
+street_no     CharField     No. (Nr.,N°)                                                                 
+street_box    CharField     Box (boîte)                                                                  
+addr2         CharField     Address line after street (Adresszeile nach Straße,Ligne après le nom de rue)
+zip_code      CharField     Zip code (Postleitzahl,Code postal)                                          
+region        CharField     Region (Région)                                                              
+language      LanguageField Language (Sprache,Langue)                                                    
+email         EmailField    E-Mail (E-mail)                                                              
+url           URLField      URL                                                                          
+phone         CharField     Phone (Telefon,Téléphone)                                                    
+gsm           CharField     GSM                                                                          
+fax           CharField     Fax                                                                          
+remarks       TextField     Remarks (Bemerkungen,Remarques)                                              
+============= ============= =============================================================================
+
+    
+Defined in :srcref:`/lino/modlib/contacts/models.py`
+
+Referenced from
+`lino.mails.Recipient.contact`_, `lino.jobs.JobProvider.contact_ptr`_, `lino.users.User.contact_ptr`_, `lino.contacts.Role.parent`_, `lino.contacts.Role.child`_, `lino.contacts.Person.contact_ptr`_, `lino.contacts.Company.contact_ptr`_, `lino.dsbe.CourseProvider.contact_ptr`_, `lino.cal.Attendee.contact`_
+
+
+
+.. index::
+   single: field;id
+   
+.. _lino.contacts.Contact.id:
+
+Field **Contact.id**
+====================
+
+
+
+
+
+Type: AutoField
+
+   
+.. index::
+   single: field;country
+   
+.. _lino.contacts.Contact.country:
+
+Field **Contact.country**
+=========================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;city
+   
+.. _lino.contacts.Contact.city:
+
+Field **Contact.city**
+======================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;name
+   
+.. _lino.contacts.Contact.name:
+
+Field **Contact.name**
+======================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;addr1
+   
+.. _lino.contacts.Contact.addr1:
+
+Field **Contact.addr1**
+=======================
+
+
+
+Address line before street
+
+Type: CharField
+
+   
+.. index::
+   single: field;street_prefix
+   
+.. _lino.contacts.Contact.street_prefix:
+
+Field **Contact.street_prefix**
+===============================
+
+
+
+Text to print before name of street, but to ignore for sorting.
+
+Type: CharField
+
+   
+.. index::
+   single: field;street
+   
+.. _lino.contacts.Contact.street:
+
+Field **Contact.street**
+========================
+
+
+
+Name of street. Without house number.
+
+Type: CharField
+
+   
+.. index::
+   single: field;street_no
+   
+.. _lino.contacts.Contact.street_no:
+
+Field **Contact.street_no**
+===========================
+
+
+
+House number
+
+Type: CharField
+
+   
+.. index::
+   single: field;street_box
+   
+.. _lino.contacts.Contact.street_box:
+
+Field **Contact.street_box**
+============================
+
+
+
+Text to print after :attr:`steet_no` on the same line
+
+Type: CharField
+
+   
+.. index::
+   single: field;addr2
+   
+.. _lino.contacts.Contact.addr2:
+
+Field **Contact.addr2**
+=======================
+
+
+
+Address line to print below street line
+
+Type: CharField
+
+   
+.. index::
+   single: field;zip_code
+   
+.. _lino.contacts.Contact.zip_code:
+
+Field **Contact.zip_code**
+==========================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;region
+   
+.. _lino.contacts.Contact.region:
+
+Field **Contact.region**
+========================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;language
+   
+.. _lino.contacts.Contact.language:
+
+Field **Contact.language**
+==========================
+
+
+
+
+
+Type: LanguageField
+
+   
+.. index::
+   single: field;email
+   
+.. _lino.contacts.Contact.email:
+
+Field **Contact.email**
+=======================
+
+
+
+
+
+Type: EmailField
+
+   
+.. index::
+   single: field;url
+   
+.. _lino.contacts.Contact.url:
+
+Field **Contact.url**
+=====================
+
+
+
+
+
+Type: URLField
+
+   
+.. index::
+   single: field;phone
+   
+.. _lino.contacts.Contact.phone:
+
+Field **Contact.phone**
+=======================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;gsm
+   
+.. _lino.contacts.Contact.gsm:
+
+Field **Contact.gsm**
+=====================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;fax
+   
+.. _lino.contacts.Contact.fax:
+
+Field **Contact.fax**
+=====================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;remarks
+   
+.. _lino.contacts.Contact.remarks:
+
+Field **Contact.remarks**
+=========================
+
+
+
+
+
+Type: TextField
+
+   
+
+
+.. index::
    pair: model; CompanyType
 
 .. _lino.contacts.CompanyType:
@@ -44,12 +380,12 @@ name    type           verbose name
 id      AutoField      ID                                    
 name    BabelCharField Designation (Beschreibung,Désignation)
 abbr    BabelCharField Abbreviation (Abkürzung,Abbréviation) 
-name_fr CharField      Designation (fr)                      
-name_nl CharField      Designation (nl)                      
-name_en CharField      Designation (en)                      
 abbr_fr CharField      Abbreviation (fr)                     
 abbr_nl CharField      Abbreviation (nl)                     
 abbr_en CharField      Abbreviation (en)                     
+name_fr CharField      Designation (fr)                      
+name_nl CharField      Designation (nl)                      
+name_en CharField      Designation (en)                      
 ======= ============== ======================================
 
     
@@ -106,51 +442,6 @@ Type: BabelCharField
 
    
 .. index::
-   single: field;name_fr
-   
-.. _lino.contacts.CompanyType.name_fr:
-
-Field **CompanyType.name_fr**
-=============================
-
-
-
-
-
-Type: CharField
-
-   
-.. index::
-   single: field;name_nl
-   
-.. _lino.contacts.CompanyType.name_nl:
-
-Field **CompanyType.name_nl**
-=============================
-
-
-
-
-
-Type: CharField
-
-   
-.. index::
-   single: field;name_en
-   
-.. _lino.contacts.CompanyType.name_en:
-
-Field **CompanyType.name_en**
-=============================
-
-
-
-
-
-Type: CharField
-
-   
-.. index::
    single: field;abbr_fr
    
 .. _lino.contacts.CompanyType.abbr_fr:
@@ -195,21 +486,66 @@ Field **CompanyType.abbr_en**
 Type: CharField
 
    
+.. index::
+   single: field;name_fr
+   
+.. _lino.contacts.CompanyType.name_fr:
+
+Field **CompanyType.name_fr**
+=============================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;name_nl
+   
+.. _lino.contacts.CompanyType.name_nl:
+
+Field **CompanyType.name_nl**
+=============================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;name_en
+   
+.. _lino.contacts.CompanyType.name_en:
+
+Field **CompanyType.name_en**
+=============================
+
+
+
+
+
+Type: CharField
+
+   
 
 
 .. index::
-   pair: model; ContactType
+   pair: model; RoleType
 
-.. _lino.contacts.ContactType:
+.. _lino.contacts.RoleType:
 
----------------------
-Model **ContactType**
----------------------
-
-
+------------------
+Model **RoleType**
+------------------
 
 
-Implements the :class:`contacts.ContactType` convention.
+
+
+Deserves more documentation.
 
   
 ======= ============== ======================================
@@ -226,17 +562,17 @@ name_en CharField      Designation (en)
 Defined in :srcref:`/lino/modlib/contacts/models.py`
 
 Referenced from
-`lino.contacts.Contact.type`_
+`lino.contacts.Role.type`_
 
 
 
 .. index::
    single: field;id
    
-.. _lino.contacts.ContactType.id:
+.. _lino.contacts.RoleType.id:
 
-Field **ContactType.id**
-========================
+Field **RoleType.id**
+=====================
 
 
 
@@ -248,10 +584,10 @@ Type: AutoField
 .. index::
    single: field;name
    
-.. _lino.contacts.ContactType.name:
+.. _lino.contacts.RoleType.name:
 
-Field **ContactType.name**
-==========================
+Field **RoleType.name**
+=======================
 
 
 
@@ -263,10 +599,10 @@ Type: BabelCharField
 .. index::
    single: field;name_fr
    
-.. _lino.contacts.ContactType.name_fr:
+.. _lino.contacts.RoleType.name_fr:
 
-Field **ContactType.name_fr**
-=============================
+Field **RoleType.name_fr**
+==========================
 
 
 
@@ -278,10 +614,10 @@ Type: CharField
 .. index::
    single: field;name_nl
    
-.. _lino.contacts.ContactType.name_nl:
+.. _lino.contacts.RoleType.name_nl:
 
-Field **ContactType.name_nl**
-=============================
+Field **RoleType.name_nl**
+==========================
 
 
 
@@ -293,10 +629,10 @@ Type: CharField
 .. index::
    single: field;name_en
    
-.. _lino.contacts.ContactType.name_en:
+.. _lino.contacts.RoleType.name_en:
 
-Field **ContactType.name_en**
-=============================
+Field **RoleType.name_en**
+==========================
 
 
 
@@ -308,29 +644,28 @@ Type: CharField
 
 
 .. index::
-   pair: model; Contact
+   pair: model; Role
 
-.. _lino.contacts.Contact:
+.. _lino.contacts.Role:
 
------------------
-Model **Contact**
------------------
-
-
+--------------
+Model **Role**
+--------------
 
 
-Represents a :class:`Person` having a (more or less known) 
-role in a :class:`Company`.
+
+
+The role of a given :class:`Person` in a given :class:`Company`.
 
   
-======= ========== =========================================
-name    type       verbose name                             
-======= ========== =========================================
-id      AutoField  ID                                       
-person  ForeignKey person (Person,Personne)                 
-company ForeignKey company (Firma,Société)                  
-type    ForeignKey contact type (Kontaktart,type de contact)
-======= ========== =========================================
+====== ========== ==============
+name   type       verbose name  
+====== ========== ==============
+id     AutoField  ID            
+parent ForeignKey Parent Contact
+child  ForeignKey Child Contact 
+type   ForeignKey Contact Role  
+====== ========== ==============
 
     
 Defined in :srcref:`/lino/modlib/contacts/models.py`
@@ -343,10 +678,10 @@ Referenced from
 .. index::
    single: field;id
    
-.. _lino.contacts.Contact.id:
+.. _lino.contacts.Role.id:
 
-Field **Contact.id**
-====================
+Field **Role.id**
+=================
 
 
 
@@ -356,12 +691,12 @@ Type: AutoField
 
    
 .. index::
-   single: field;person
+   single: field;parent
    
-.. _lino.contacts.Contact.person:
+.. _lino.contacts.Role.parent:
 
-Field **Contact.person**
-========================
+Field **Role.parent**
+=====================
 
 
 
@@ -371,12 +706,12 @@ Type: ForeignKey
 
    
 .. index::
-   single: field;company
+   single: field;child
    
-.. _lino.contacts.Contact.company:
+.. _lino.contacts.Role.child:
 
-Field **Contact.company**
-=========================
+Field **Role.child**
+====================
 
 
 
@@ -388,10 +723,10 @@ Type: ForeignKey
 .. index::
    single: field;type
    
-.. _lino.contacts.Contact.type:
+.. _lino.contacts.Role.type:
 
-Field **Contact.type**
-======================
+Field **Role.type**
+===================
 
 
 
@@ -421,6 +756,7 @@ Represents a physical person.
 =========================== ================= ====================================================================================
 name                        type              verbose name                                                                        
 =========================== ================= ====================================================================================
+id                          AutoField         ID                                                                                  
 country                     ForeignKey        Country (Land,Pays)                                                                 
 city                        ForeignKey        City (Stadt)                                                                        
 name                        CharField         Name (Nom)                                                                          
@@ -439,11 +775,13 @@ phone                       CharField         Phone (Telefon,Téléphone)
 gsm                         CharField         GSM                                                                                 
 fax                         CharField         Fax                                                                                 
 remarks                     TextField         Remarks (Bemerkungen,Remarques)                                                     
+contact_ptr                 OneToOneField     contact ptr                                                                         
+birth_date                  DateField         Birth date (Geburtsdatum,Date de naissance)                                         
+birth_date_circa            BooleanField      not exact (circa,inexact)                                                           
 first_name                  CharField         First name (Vorname,Prénom)                                                         
 last_name                   CharField         Last name (Familienname,Nom de famille)                                             
 title                       CharField         Title (Anrede,Allocution)                                                           
 sex                         CharField         Sex (Geschlecht,Sexe)                                                               
-id                          AutoField         Partner # (Partnernummer,Partenaire #)                                              
 is_active                   BooleanField      is active (aktiv,est actif)                                                         
 activity                    ForeignKey        Activity (Beruf,Activité)                                                           
 bank_account1               CharField         Bank account 1 (Bankkonto 1,Compte en banque 1)                                     
@@ -457,8 +795,6 @@ coached_from                DateField         Coached from (Begleitet seit,Débu
 coached_until               DateField         until (bis,jusque)                                                                  
 coach1                      ForeignKey        Coach 1 (Begleiter 1,Agent ISP)                                                     
 coach2                      ForeignKey        Coach 2 (Begleiter 2,Agent SSP)                                                     
-birth_date                  DateField         Birth date (Geburtsdatum,Date de naissance)                                         
-birth_date_circa            BooleanField      not exact (circa,inexact)                                                           
 birth_place                 CharField         Birth place (Geburtsort,Lieu de naissance)                                          
 birth_country               ForeignKey        Birth country (Geburtsland,Pays de naissance)                                       
 civil_state                 CharField         Civil state (Zivilstand,Etat civil)                                                 
@@ -497,10 +833,25 @@ job_office_contact          ForeignKey        Contact person at local job office
 Defined in :srcref:`/lino/apps/dsbe/models.py`
 
 Referenced from
-`lino.jobs.Contract.person`_, `lino.jobs.JobRequest.person`_, `lino.links.Link.person`_, `lino.contacts.Contact.person`_, `lino.dsbe.Study.person`_, `lino.dsbe.LanguageKnowledge.person`_, `lino.dsbe.JobExperience.person`_, `lino.dsbe.Exclusion.person`_, `lino.dsbe.ComponentMixin.person`_, `lino.dsbe.CourseRequest.person`_, `lino.notes.Note.person`_, `lino.cal.Attendance.person`_, `lino.cal.Event.person`_, `lino.cal.Task.person`_, `lino.thirds.Third.person`_, `lino.properties.PersonProperty.person`_
+`lino.jobs.Contract.person`_, `lino.jobs.JobRequest.person`_, `lino.links.Link.person`_, `lino.dsbe.Study.person`_, `lino.dsbe.LanguageKnowledge.person`_, `lino.dsbe.JobExperience.person`_, `lino.dsbe.Exclusion.person`_, `lino.dsbe.CourseRequest.person`_, `lino.notes.Note.person`_, `lino.cal.Event.project`_, `lino.cal.Task.project`_, `lino.thirds.Third.person`_, `lino.properties.PersonProperty.person`_
 
 
 
+.. index::
+   single: field;id
+   
+.. _lino.contacts.Person.id:
+
+Field **Person.id**
+===================
+
+
+
+
+
+Type: AutoField
+
+   
 .. index::
    single: field;country
    
@@ -772,6 +1123,51 @@ Type: TextField
 
    
 .. index::
+   single: field;contact_ptr
+   
+.. _lino.contacts.Person.contact_ptr:
+
+Field **Person.contact_ptr**
+============================
+
+
+
+
+
+Type: OneToOneField
+
+   
+.. index::
+   single: field;birth_date
+   
+.. _lino.contacts.Person.birth_date:
+
+Field **Person.birth_date**
+===========================
+
+
+
+
+
+Type: DateField
+
+   
+.. index::
+   single: field;birth_date_circa
+   
+.. _lino.contacts.Person.birth_date_circa:
+
+Field **Person.birth_date_circa**
+=================================
+
+
+
+
+
+Type: BooleanField
+
+   
+.. index::
    single: field;first_name
    
 .. _lino.contacts.Person.first_name:
@@ -829,21 +1225,6 @@ Field **Person.sex**
 
 
 Type: CharField
-
-   
-.. index::
-   single: field;id
-   
-.. _lino.contacts.Person.id:
-
-Field **Person.id**
-===================
-
-
-
-
-
-Type: AutoField
 
    
 .. index::
@@ -1039,36 +1420,6 @@ Field **Person.coach2**
 
 
 Type: ForeignKey
-
-   
-.. index::
-   single: field;birth_date
-   
-.. _lino.contacts.Person.birth_date:
-
-Field **Person.birth_date**
-===========================
-
-
-
-
-
-Type: DateField
-
-   
-.. index::
-   single: field;birth_date_circa
-   
-.. _lino.contacts.Person.birth_date_circa:
-
-Field **Person.birth_date_circa**
-=================================
-
-
-
-
-
-Type: BooleanField
 
    
 .. index::
@@ -1573,6 +1924,7 @@ Inner class Meta is necessary because of :doc:`/tickets/14`.
 ============= ============= =============================================================================
 name          type          verbose name                                                                 
 ============= ============= =============================================================================
+id            AutoField     ID                                                                           
 country       ForeignKey    Country (Land,Pays)                                                          
 city          ForeignKey    City (Stadt)                                                                 
 name          CharField     Name (Nom)                                                                   
@@ -1591,9 +1943,9 @@ phone         CharField     Phone (Telefon,Téléphone)
 gsm           CharField     GSM                                                                          
 fax           CharField     Fax                                                                          
 remarks       TextField     Remarks (Bemerkungen,Remarques)                                              
+contact_ptr   OneToOneField contact ptr                                                                  
 vat_id        CharField     VAT id (MWSt.-Nr.,N° de TVA)                                                 
 type          ForeignKey    Company type (Firmenart,Type de société)                                     
-id            AutoField     Partner # (Partnernummer,Partenaire #)                                       
 is_active     BooleanField  is active (aktiv,est actif)                                                  
 activity      ForeignKey    Activity (Beruf,Activité)                                                    
 bank_account1 CharField     Bank account 1 (Bankkonto 1,Compte en banque 1)                              
@@ -1606,10 +1958,25 @@ hourly_rate   PriceField    hourly rate (Stundensatz,coûr horaire)
 Defined in :srcref:`/lino/apps/dsbe/models.py`
 
 Referenced from
-`lino.jobs.JobProvider.company_ptr`_, `lino.links.Link.company`_, `lino.contacts.Contact.company`_, `lino.contacts.Person.health_insurance`_, `lino.contacts.Person.pharmacy`_, `lino.dsbe.ComponentMixin.company`_, `lino.dsbe.CourseProvider.company_ptr`_, `lino.notes.Note.company`_, `lino.lino.SiteConfig.site_company`_, `lino.lino.SiteConfig.job_office`_, `lino.cal.Attendance.company`_, `lino.cal.Event.company`_, `lino.cal.Task.company`_, `lino.thirds.Third.company`_
+`lino.jobs.JobProvider.company_ptr`_, `lino.links.Link.company`_, `lino.contacts.Person.health_insurance`_, `lino.contacts.Person.pharmacy`_, `lino.dsbe.CourseProvider.company_ptr`_, `lino.notes.Note.company`_, `lino.lino.SiteConfig.site_company`_, `lino.lino.SiteConfig.job_office`_, `lino.thirds.Third.company`_
 
 
 
+.. index::
+   single: field;id
+   
+.. _lino.contacts.Company.id:
+
+Field **Company.id**
+====================
+
+
+
+
+
+Type: AutoField
+
+   
 .. index::
    single: field;country
    
@@ -1881,6 +2248,21 @@ Type: TextField
 
    
 .. index::
+   single: field;contact_ptr
+   
+.. _lino.contacts.Company.contact_ptr:
+
+Field **Company.contact_ptr**
+=============================
+
+
+
+
+
+Type: OneToOneField
+
+   
+.. index::
    single: field;vat_id
    
 .. _lino.contacts.Company.vat_id:
@@ -1908,21 +2290,6 @@ Field **Company.type**
 
 
 Type: ForeignKey
-
-   
-.. index::
-   single: field;id
-   
-.. _lino.contacts.Company.id:
-
-Field **Company.id**
-====================
-
-
-
-
-
-Type: AutoField
 
    
 .. index::

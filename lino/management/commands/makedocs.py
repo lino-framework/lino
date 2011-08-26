@@ -219,7 +219,13 @@ class Command(GeneratingCommand):
     
     def generate_files(self):
       
-        settings.LINO.setup()
+        from lino.ui.extjs3 import UI
+
+        ui = UI(make_messages=True)
+        #~ # install Lino urls under root location (`/`)
+        #~ ui = urlpatterns = ui.get_patterns()
+        #~ settings.LINO.setup()
+        ui.make_linolib_messages()
             
         context = dict(
           header=rstgen.header,

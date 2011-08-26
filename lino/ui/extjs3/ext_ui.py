@@ -287,6 +287,7 @@ class ExtUI(base.UI):
         logger.info("Using welcome template %s",fn)
         self.welcome_template = CheetahTemplate(file(fn).read())
         self.build_lino_js()
+        #~ self.generate_linolib_messages()
         
     def create_layout_element(self,lh,panelclass,name,**kw):
         
@@ -1204,15 +1205,15 @@ tinymce.init({
     def build_lino_js(self):
         """Generate the :xfile:`lino.js`.
         """
-        #~ for app_label in site.
         fn = os.path.join(settings.MEDIA_ROOT,*self.lino_js_parts()) 
-        #~ fn = r'c:\temp\dsbe.js'
         if False:
             # useful when debugging directly on the generated lino.js
             logger.info("NOT generating %s ...", fn)
             return 
         if not os.path.isdir(settings.MEDIA_ROOT):
-            logger.warning("Directory '%s' (settings.MEDIA_ROOT) does not exist.", settings.MEDIA_ROOT)
+            logger.info("Not generating `lino.js` because "+
+            "directory '%s' (settings.MEDIA_ROOT) does not exist.", 
+            settings.MEDIA_ROOT)
             return
         
         logger.info("Generating %s ...", fn)
@@ -1222,22 +1223,9 @@ tinymce.init({
         for ln in self.lino_js_lines():
             #~ js += ln + '\n'
             f.write(ln + '\n')
-        
-        libname = os.path.join(os.path.dirname(__file__),'linolib.js')
-        tpl = CheetahTemplate(codecs.open(libname,encoding='utf-8').read())
-        tpl.ui = self
             
-        def mytranslate(s):
-            settings.LINO.add_dummy_message(s)
-            return _(s)
-        tpl._ = mytranslate
-        #~ tpl.user = request.user
-        tpl.site = settings.LINO
-        tpl.settings = settings
-        tpl.lino = lino
-        tpl.ext_requests = ext_requests
-        for k in ext_requests.URL_PARAMS:
-            setattr(tpl,k,getattr(ext_requests,k))
+        tpl = self.linolib_template()
+        
         f.write(jscompress(unicode(tpl)+'\n'))
         
         # the following takes a few seconds more time when using 
@@ -1261,9 +1249,40 @@ tinymce.init({
         f.close()
         logger.info("Wrote %s ...", fn)
         
-        from lino.core.kernel import generate_dummy_messages
-        generate_dummy_messages(settings.LINO)
+    def make_linolib_messages(self):
+        """
+        Called from :term:`makedocs`.
+        """
+        #~ from lino.core.kernel import write_message_file
+        from lino.utils.config import write_message_file
+        tpl = self.linolib_template()
+        messages = set()
+        def mytranslate(s):
+            #~ settings.LINO.add_dummy_message(s)
+            messages.add(s)
+            return _(s)
+        tpl._ = mytranslate
+        unicode(tpl) # just to execute the template. result is not needed
+        write_message_file(self.linolib_template_name(),messages)
         
+    def linolib_template_name(self):
+        return os.path.join(os.path.dirname(__file__),'linolib.js')
+        
+    def linolib_template(self):
+        libname = self.linolib_template_name()
+        tpl = CheetahTemplate(codecs.open(libname,encoding='utf-8').read())
+        tpl.ui = self
+            
+        tpl._ = _
+        #~ tpl.user = request.user
+        tpl.site = settings.LINO
+        tpl.settings = settings
+        tpl.lino = lino
+        tpl.ext_requests = ext_requests
+        for k in ext_requests.URL_PARAMS:
+            setattr(tpl,k,getattr(ext_requests,k))
+        return tpl
+            
     def templates_view(self,request,app_label=None,actor=None,pk=None,fldname=None,tplname=None,**kw):
       
         if request.method == 'GET':

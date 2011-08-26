@@ -6,9 +6,9 @@ Lino/DSBE
 
 .. toctree::
 
-    users
     contenttypes
     lino
+    users
     countries
     properties
     contacts
@@ -17,5 +17,6 @@ Lino/DSBE
     uploads
     thirds
     cal
+    mails
     dsbe
     jobs

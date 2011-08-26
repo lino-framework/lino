@@ -40,7 +40,7 @@ model     CharField python model class name (Python Modell-Klassenname,nom de la
 Defined in :srcref:`/django/contrib/contenttypes/models.py`
 
 Referenced from
-`lino.uploads.Upload.owner_type`_, `lino.cal.Task.owner_type`_, `lino.thirds.Third.owner_type`_
+`lino.mails.InMail.sender_type`_, `lino.uploads.Upload.owner_type`_, `lino.cal.Task.owner_type`_, `lino.thirds.Third.owner_type`_
 
 
 

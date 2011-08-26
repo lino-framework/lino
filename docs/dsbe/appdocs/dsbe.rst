@@ -1056,15 +1056,15 @@ Model **AidType**
 
 AidType(id, name, name_fr, name_nl, name_en)
   
-======= ============== =====================================
-name    type           verbose name                         
-======= ============== =====================================
-id      AutoField      ID                                   
-name    BabelCharField designation (Bezeichnung,désignation)
-name_fr CharField      designation (fr)                     
-name_nl CharField      designation (nl)                     
-name_en CharField      designation (en)                     
-======= ============== =====================================
+======= ============== ======================================
+name    type           verbose name                          
+======= ============== ======================================
+id      AutoField      ID                                    
+name    BabelCharField Designation (Beschreibung,Désignation)
+name_fr CharField      Designation (fr)                      
+name_nl CharField      Designation (nl)                      
+name_en CharField      Designation (en)                      
+======= ============== ======================================
 
     
 Defined in :srcref:`/lino/apps/dsbe/models.py`
@@ -1152,82 +1152,6 @@ Type: CharField
 
 
 .. index::
-   pair: model; ComponentMixin
-
-.. _lino.dsbe.ComponentMixin:
-
-------------------------
-Model **ComponentMixin**
-------------------------
-
-
-
-ComponentMixin(id, person_id, company_id)
-  
-======= ========== =======================
-name    type       verbose name           
-======= ========== =======================
-id      AutoField  ID                     
-person  ForeignKey Person (Personne)      
-company ForeignKey Company (Firma,Société)
-======= ========== =======================
-
-    
-Defined in :srcref:`/lino/apps/dsbe/models.py`
-
-Referenced from
-`lino.cal.Event.componentmixin_ptr`_, `lino.cal.Task.componentmixin_ptr`_
-
-
-
-.. index::
-   single: field;id
-   
-.. _lino.dsbe.ComponentMixin.id:
-
-Field **ComponentMixin.id**
-===========================
-
-
-
-
-
-Type: AutoField
-
-   
-.. index::
-   single: field;person
-   
-.. _lino.dsbe.ComponentMixin.person:
-
-Field **ComponentMixin.person**
-===============================
-
-
-
-
-
-Type: ForeignKey
-
-   
-.. index::
-   single: field;company
-   
-.. _lino.dsbe.ComponentMixin.company:
-
-Field **ComponentMixin.company**
-================================
-
-
-
-
-
-Type: ForeignKey
-
-   
-
-
-.. index::
    pair: model; CourseProvider
 
 .. _lino.dsbe.CourseProvider:
@@ -1244,6 +1168,7 @@ Kursanbieter (KAP, Oikos, Lupe, ...)
 ============= ============= =============================================================================
 name          type          verbose name                                                                 
 ============= ============= =============================================================================
+id            AutoField     ID                                                                           
 country       ForeignKey    Country (Land,Pays)                                                          
 city          ForeignKey    City (Stadt)                                                                 
 name          CharField     Name (Nom)                                                                   
@@ -1262,9 +1187,9 @@ phone         CharField     Phone (Telefon,Téléphone)
 gsm           CharField     GSM                                                                          
 fax           CharField     Fax                                                                          
 remarks       TextField     Remarks (Bemerkungen,Remarques)                                              
+contact_ptr   OneToOneField contact ptr                                                                  
 vat_id        CharField     VAT id (MWSt.-Nr.,N° de TVA)                                                 
 type          ForeignKey    Company type (Firmenart,Type de société)                                     
-id            AutoField     Partner # (Partnernummer,Partenaire #)                                       
 is_active     BooleanField  is active (aktiv,est actif)                                                  
 activity      ForeignKey    Activity (Beruf,Activité)                                                    
 bank_account1 CharField     Bank account 1 (Bankkonto 1,Compte en banque 1)                              
@@ -1282,6 +1207,21 @@ Referenced from
 
 
 
+.. index::
+   single: field;id
+   
+.. _lino.dsbe.CourseProvider.id:
+
+Field **CourseProvider.id**
+===========================
+
+
+
+
+
+Type: AutoField
+
+   
 .. index::
    single: field;country
    
@@ -1553,6 +1493,21 @@ Type: TextField
 
    
 .. index::
+   single: field;contact_ptr
+   
+.. _lino.dsbe.CourseProvider.contact_ptr:
+
+Field **CourseProvider.contact_ptr**
+====================================
+
+
+
+
+
+Type: OneToOneField
+
+   
+.. index::
    single: field;vat_id
    
 .. _lino.dsbe.CourseProvider.vat_id:
@@ -1580,21 +1535,6 @@ Field **CourseProvider.type**
 
 
 Type: ForeignKey
-
-   
-.. index::
-   single: field;id
-   
-.. _lino.dsbe.CourseProvider.id:
-
-Field **CourseProvider.id**
-===========================
-
-
-
-
-
-Type: AutoField
 
    
 .. index::

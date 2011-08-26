@@ -25,6 +25,7 @@ import lino
 from lino import reports, actions, fields
 from lino.utils import constrain
 from lino.utils import jsgen
+from lino.utils import mti
 from lino.utils.jsgen import py2js, Variable, Component, id2js, js_code
 from lino.utils import choosers
 #~ from . import ext_requests
@@ -763,7 +764,19 @@ class BooleanFieldElement(FieldElement):
             if kw.has_key('fieldLabel'):
                 del kw['fieldLabel']
             #~ kw.update(hideLabel=True)
-            kw.update(boxLabel=self.label)
+            
+            label = self.label
+            if isinstance(self.field,mti.EnableChild):
+                js = "Lino.enable_child_label('%s')" % self.field.child_model.__name__
+                label += """ (<a href="javascript:%s)">go</a>)""" % js
+                
+        #~ self.verbose_name = \
+            #~ 'is a <a href="javascript:Lino.enable_child_label()">%s</a>' % self.field.child_model.__name__
+            #~ 'is a <a href="foo">[%s]</a>' % self.child_model._meta.verbose_name
+                
+            kw.update(boxLabel=label)
+        
+            
         return kw
         
     def get_column_options(self,**kw):
@@ -1272,6 +1285,7 @@ class MainPanel(jsgen.Variable):
         selector_field = field
         if isinstance(field,fields.VirtualField):
             selector_field = field.return_type
+            
         # 20110603
         #~ if isinstance(field,fields.RichTextField):
             #~ fmt = getattr(field,'textfield_format',None) or settings.LINO.textfield_format

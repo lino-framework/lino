@@ -86,22 +86,22 @@ Model **Upload**
 
 
 
-Upload(id, user_id, owner_type_id, owner_id, file, mimetype, created, modified, description, type_id, valid_until)
+Upload(id, user_id, created, modified, owner_type_id, owner_id, file, mimetype, type_id, valid_until, description)
   
 =========== ======================== =================================================
 name        type                     verbose name                                     
 =========== ======================== =================================================
 id          AutoField                ID                                               
 user        ForeignKey               user (Benutzer,utilisateur)                      
+created     DateTimeField            created                                          
+modified    DateTimeField            modified                                         
 owner_type  ForeignKey               Owner type (Besitzertabelle,type de propriétaire)
 owner_id    GenericForeignKeyIdField Owner (Besitzer,Propriétaire)                    
 file        FileField                File (Datei,Fichier)                             
 mimetype    CharField                MIME type (MIME-Art,type MIME)                   
-created     DateTimeField            Created (Erstellt,Créé)                          
-modified    DateTimeField            Modified (Bearbeitet,Modifié)                    
-description CharField                Description (Beschreibung)                       
 type        ForeignKey               type                                             
 valid_until DateField                valid until (gültig bis,valid jusqu'au)          
+description CharField                Description (Beschreibung)                       
 =========== ======================== =================================================
 
     
@@ -140,6 +140,36 @@ Field **Upload.user**
 
 
 Type: ForeignKey
+
+   
+.. index::
+   single: field;created
+   
+.. _lino.uploads.Upload.created:
+
+Field **Upload.created**
+========================
+
+
+
+
+
+Type: DateTimeField
+
+   
+.. index::
+   single: field;modified
+   
+.. _lino.uploads.Upload.modified:
+
+Field **Upload.modified**
+=========================
+
+
+
+
+
+Type: DateTimeField
 
    
 .. index::
@@ -203,51 +233,6 @@ Type: CharField
 
    
 .. index::
-   single: field;created
-   
-.. _lino.uploads.Upload.created:
-
-Field **Upload.created**
-========================
-
-
-
-
-
-Type: DateTimeField
-
-   
-.. index::
-   single: field;modified
-   
-.. _lino.uploads.Upload.modified:
-
-Field **Upload.modified**
-=========================
-
-
-
-
-
-Type: DateTimeField
-
-   
-.. index::
-   single: field;description
-   
-.. _lino.uploads.Upload.description:
-
-Field **Upload.description**
-============================
-
-
-
-
-
-Type: CharField
-
-   
-.. index::
    single: field;type
    
 .. _lino.uploads.Upload.type:
@@ -275,6 +260,21 @@ Field **Upload.valid_until**
 
 
 Type: DateField
+
+   
+.. index::
+   single: field;description
+   
+.. _lino.uploads.Upload.description:
+
+Field **Upload.description**
+============================
+
+
+
+
+
+Type: CharField
 
    
 

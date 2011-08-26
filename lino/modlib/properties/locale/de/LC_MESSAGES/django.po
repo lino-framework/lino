@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.properties\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-07-27 14:47+0100\n"
+"POT-Creation-Date: 2011-08-26 13:59+0100\n"
 "PO-Revision-Date: 2011-07-20 15:20+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmx.net>\n"
@@ -23,10 +23,6 @@ msgstr "Eigenschafts-Datentyp"
 #: .\models.py:85
 msgid "Property Types"
 msgstr "Eigenschafts-Datentypen"
-
-#: .\models.py:87 .\models.py:171 .\models.py:192 .\models.py:205
-msgid "Designation"
-msgstr "Beschreibung"
 
 #: .\models.py:91
 msgid "Choices List"
@@ -55,6 +51,10 @@ msgstr "Auswahlmöglichkeiten"
 #: .\models.py:170 .\models.py:234
 msgid "Value"
 msgstr "Wert"
+
+#: .\models.py:171
+msgid "Designation"
+msgstr "Beschreibung"
 
 #: .\models.py:189 .\models.py:206
 msgid "Property Group"

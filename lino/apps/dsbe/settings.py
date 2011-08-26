@@ -167,7 +167,7 @@ class Lino(Lino):
             #~ m.add_action('properties.PropValues')
             m.add_action('contacts.AllPersons')
             m.add_action('contacts.Roles')
-            notes.setup_explorer_menu(self,ui,user,cfg)
+            notes.setup_explorer_menu(self,ui,user,m)
             #~ m.add_action('notes.Notes')
             #~ m.add_action('lino.TextFieldTemplates')
             m.add_action('links.Links')
@@ -180,10 +180,6 @@ class Lino(Lino):
             m.add_action('properties.Properties')
             
             cal.setup_explorer_menu(self,ui,user,m)
-            
-            #~ m = m.add_menu('listings',_('~Listings'))
-            #~ for listing in LISTINGS:
-                #~ m.add_action(listing)
 
         
         m = main.add_menu("help",_("~Help"))

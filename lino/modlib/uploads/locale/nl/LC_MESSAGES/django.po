@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-07-27 14:47+0100\n"
+"POT-Creation-Date: 2011-08-26 13:59+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,15 +29,19 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-#: .\models.py:68
+#: .\models.py:69
 msgid "valid until"
 msgstr ""
 
-#: .\models.py:101
+#: .\models.py:75
+msgid "Description"
+msgstr ""
+
+#: .\models.py:107
 #, python-format
 msgid "%s expires"
 msgstr ""
 
-#: .\models.py:136
+#: .\models.py:142
 msgid "My uploads"
 msgstr ""

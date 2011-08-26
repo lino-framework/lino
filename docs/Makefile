@@ -1,4 +1,3 @@
-DJANGO_ADMIN = python l:\\snapshots\\django\\django\\bin\\django-admin.py
 SITENAME               = lino
 #~ DJANGO_SETTINGS_MODULE = dsbe.demo.settings
 #~ DJANGO_SETTINGS_MODULE = lino.demos.std.settings
@@ -107,15 +106,4 @@ linkcheck:
 	@echo
 	@echo "Link check complete; look for any errors in the above output " \
 	      "or in .build/linkcheck/output.txt."
-
-unused_makedocs:
-	python -m lino.apps.dsbe.manage makedocs --settings lino.apps.dsbe.settings dsbe/appdocs
-	python -m lino.apps.igen.manage makedocs --settings lino.apps.igen.settings igen/appdocs
- 
-
-
-makedocs:
-	$(DJANGO_ADMIN) makedocs --settings lino.apps.dsbe.settings dsbe/appdocs
-	$(DJANGO_ADMIN) makedocs --settings lino.apps.igen.settings igen/appdocs
- 
 

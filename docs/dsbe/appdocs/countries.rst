@@ -31,13 +31,13 @@ Model **Language**
 
 
 
-Language(id, name, iso2, name_fr, name_nl, name_en)
+Language(name, id, iso2, name_fr, name_nl, name_en)
   
 ======= ============== ======================================
 name    type           verbose name                          
 ======= ============== ======================================
-id      CharField      id                                    
 name    BabelCharField Designation (Beschreibung,Désignation)
+id      CharField      id                                    
 iso2    CharField      iso2                                  
 name_fr CharField      Designation (fr)                      
 name_nl CharField      Designation (nl)                      
@@ -53,21 +53,6 @@ Referenced from
 
 
 .. index::
-   single: field;id
-   
-.. _lino.countries.Language.id:
-
-Field **Language.id**
-=====================
-
-
-
-
-
-Type: CharField
-
-   
-.. index::
    single: field;name
    
 .. _lino.countries.Language.name:
@@ -80,6 +65,21 @@ Field **Language.name**
 
 
 Type: BabelCharField
+
+   
+.. index::
+   single: field;id
+   
+.. _lino.countries.Language.id:
+
+Field **Language.id**
+=====================
+
+
+
+
+
+Type: CharField
 
    
 .. index::
@@ -162,8 +162,8 @@ Implements the :class:`countries.Country` convention.
 ========== ============== ======================================
 name       type           verbose name                          
 ========== ============== ======================================
-isocode    CharField      isocode                               
 name       BabelCharField Designation (Beschreibung,Désignation)
+isocode    CharField      isocode                               
 short_code CharField      short code                            
 iso3       CharField      iso3                                  
 name_fr    CharField      Designation (fr)                      
@@ -175,25 +175,10 @@ name_en    CharField      Designation (en)
 Defined in :srcref:`/lino/modlib/countries/models.py`
 
 Referenced from
-`lino.jobs.JobProvider.country`_, `lino.contacts.Person.country`_, `lino.contacts.Person.birth_country`_, `lino.contacts.Person.nationality`_, `lino.contacts.Company.country`_, `lino.dsbe.Study.country`_, `lino.dsbe.JobExperience.country`_, `lino.dsbe.CourseProvider.country`_, `lino.countries.City.country`_
+`lino.jobs.JobProvider.country`_, `lino.users.User.country`_, `lino.contacts.Contact.country`_, `lino.contacts.Person.country`_, `lino.contacts.Person.birth_country`_, `lino.contacts.Person.nationality`_, `lino.contacts.Company.country`_, `lino.dsbe.Study.country`_, `lino.dsbe.JobExperience.country`_, `lino.dsbe.CourseProvider.country`_, `lino.countries.City.country`_
 
 
 
-.. index::
-   single: field;isocode
-   
-.. _lino.countries.Country.isocode:
-
-Field **Country.isocode**
-=========================
-
-
-
-
-
-Type: CharField
-
-   
 .. index::
    single: field;name
    
@@ -207,6 +192,21 @@ Field **Country.name**
 
 
 Type: BabelCharField
+
+   
+.. index::
+   single: field;isocode
+   
+.. _lino.countries.Country.isocode:
+
+Field **Country.isocode**
+=========================
+
+
+
+
+
+Type: CharField
 
    
 .. index::
@@ -314,7 +314,7 @@ zip_code CharField  zip code
 Defined in :srcref:`/lino/modlib/countries/models.py`
 
 Referenced from
-`lino.jobs.JobProvider.city`_, `lino.contacts.Person.city`_, `lino.contacts.Company.city`_, `lino.dsbe.Study.city`_, `lino.dsbe.CourseProvider.city`_
+`lino.jobs.JobProvider.city`_, `lino.users.User.city`_, `lino.contacts.Contact.city`_, `lino.contacts.Person.city`_, `lino.contacts.Company.city`_, `lino.dsbe.Study.city`_, `lino.dsbe.CourseProvider.city`_
 
 
 

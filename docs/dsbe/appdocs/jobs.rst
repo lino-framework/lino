@@ -34,6 +34,7 @@ Stellenanbieter (BISA, BW, ...)
 ============= ============= =============================================================================
 name          type          verbose name                                                                 
 ============= ============= =============================================================================
+id            AutoField     ID                                                                           
 country       ForeignKey    Country (Land,Pays)                                                          
 city          ForeignKey    City (Stadt)                                                                 
 name          CharField     Name (Nom)                                                                   
@@ -52,9 +53,9 @@ phone         CharField     Phone (Telefon,Téléphone)
 gsm           CharField     GSM                                                                          
 fax           CharField     Fax                                                                          
 remarks       TextField     Remarks (Bemerkungen,Remarques)                                              
+contact_ptr   OneToOneField contact ptr                                                                  
 vat_id        CharField     VAT id (MWSt.-Nr.,N° de TVA)                                                 
 type          ForeignKey    Company type (Firmenart,Type de société)                                     
-id            AutoField     Partner # (Partnernummer,Partenaire #)                                       
 is_active     BooleanField  is active (aktiv,est actif)                                                  
 activity      ForeignKey    Activity (Beruf,Activité)                                                    
 bank_account1 CharField     Bank account 1 (Bankkonto 1,Compte en banque 1)                              
@@ -72,6 +73,21 @@ Referenced from
 
 
 
+.. index::
+   single: field;id
+   
+.. _lino.jobs.JobProvider.id:
+
+Field **JobProvider.id**
+========================
+
+
+
+
+
+Type: AutoField
+
+   
 .. index::
    single: field;country
    
@@ -343,6 +359,21 @@ Type: TextField
 
    
 .. index::
+   single: field;contact_ptr
+   
+.. _lino.jobs.JobProvider.contact_ptr:
+
+Field **JobProvider.contact_ptr**
+=================================
+
+
+
+
+
+Type: OneToOneField
+
+   
+.. index::
    single: field;vat_id
    
 .. _lino.jobs.JobProvider.vat_id:
@@ -370,21 +401,6 @@ Field **JobProvider.type**
 
 
 Type: ForeignKey
-
-   
-.. index::
-   single: field;id
-   
-.. _lino.jobs.JobProvider.id:
-
-Field **JobProvider.id**
-========================
-
-
-
-
-
-Type: AutoField
 
    
 .. index::
@@ -505,19 +521,19 @@ Model **ContractType**
 
 
 
-ContractType(id, build_method, template, ref, name, name_fr, name_nl, name_en)
+ContractType(id, name, build_method, template, ref, name_fr, name_nl, name_en)
   
 ============ ============== ===========================================================
 name         type           verbose name                                               
 ============ ============== ===========================================================
 id           AutoField      ID                                                         
+name         BabelCharField Designation (Beschreibung,Désignation)                     
 build_method CharField      Build method (Konstruktionsmethode,Méthode de construction)
 template     CharField      Template (Vorlage,Modèle)                                  
 ref          CharField      reference (Referenz,référence)                             
-name         BabelCharField contract title (Vertragstitel,intitulé du contrat)         
-name_fr      CharField      contract title (fr)                                        
-name_nl      CharField      contract title (nl)                                        
-name_en      CharField      contract title (en)                                        
+name_fr      CharField      Designation (fr)                                           
+name_nl      CharField      Designation (nl)                                           
+name_en      CharField      Designation (en)                                           
 ============ ============== ===========================================================
 
     
@@ -541,6 +557,21 @@ Field **ContractType.id**
 
 
 Type: AutoField
+
+   
+.. index::
+   single: field;name
+   
+.. _lino.jobs.ContractType.name:
+
+Field **ContractType.name**
+===========================
+
+
+
+
+
+Type: BabelCharField
 
    
 .. index::
@@ -586,21 +617,6 @@ Field **ContractType.ref**
 
 
 Type: CharField
-
-   
-.. index::
-   single: field;name
-   
-.. _lino.jobs.ContractType.name:
-
-Field **ContractType.name**
-===========================
-
-
-
-
-
-Type: BabelCharField
 
    
 .. index::
@@ -663,15 +679,15 @@ Model **ExamPolicy**
 
 ExamPolicy(id, name, name_fr, name_nl, name_en)
   
-======= ============== =====================================
-name    type           verbose name                         
-======= ============== =====================================
-id      AutoField      ID                                   
-name    BabelCharField designation (Bezeichnung,désignation)
-name_fr CharField      designation (fr)                     
-name_nl CharField      designation (nl)                     
-name_en CharField      designation (en)                     
-======= ============== =====================================
+======= ============== ======================================
+name    type           verbose name                          
+======= ============== ======================================
+id      AutoField      ID                                    
+name    BabelCharField Designation (Beschreibung,Désignation)
+name_fr CharField      Designation (fr)                      
+name_nl CharField      Designation (nl)                      
+name_en CharField      Designation (en)                      
+======= ============== ======================================
 
     
 Defined in :srcref:`/lino/modlib/jobs/models.py`
@@ -844,7 +860,7 @@ provider         ForeignKey    Job Provider (Stellenanbieter)
 contact          ForeignKey    represented by (Vertreten durch,représenté par)               
 language         LanguageField Language (Sprache,Langue)                                     
 job              ForeignKey    Job (Stelle)                                                  
-type             ForeignKey    contract type (Vertragsart,type de contrat)                   
+type             ForeignKey    Contract Type (Vertragsart,Type de contrat)                   
 applies_from     DateField     applies from (Laufzeit von,est d'application à partir de)     
 applies_until    DateField     applies until (Laufzeit bis,est d'application jusque)         
 date_decided     DateField     date decided (Beschlossen am,date de décision)                
@@ -1427,7 +1443,7 @@ id            AutoField    ID
 name          CharField    Name (Nom)                                 
 type          ForeignKey   Job Type (Stellenart)                      
 provider      ForeignKey   Job Provider (Stellenanbieter)             
-contract_type ForeignKey   contract type (Vertragsart,type de contrat)
+contract_type ForeignKey   Contract Type (Vertragsart,Type de contrat)
 hourly_rate   PriceField   hourly rate (Stundensatz,coûr horaire)     
 capacity      IntegerField capacity (Kapazität)                       
 remark        CharField    Remark (Bemerkung,Remarque)                

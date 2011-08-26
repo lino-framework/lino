@@ -74,13 +74,6 @@ Short-term
     Aber das ist eigentlich eher ein Sonderfall für `disabled_fields`, 
     die dann "alle Felder (außer `is_active`)
 
-#.  Die `dummy_messages.py` steht ja momentan im :attr:`lino.Lino.source_dir` 
-    der jeweiligen Lino-Anwendung. Aber das ist falsch, denn deshalb müssen die 
-    Texte aus der :xfile:`linolib.js` für jede Anwendung neu übersetzt werden.
-    Idealerweise müsste ich es wie der Django-Befehl `makemessages` machen, 
-    also pro .dtl-Datei eine .dtl.py-Datei erzeugen, und ebenfalls 
-    eine :file:`linolib.js.py`.
-
 #.  Lino könnte per LDAP-Request verschiedene Angaben 
     in :class:`auth.User` (Name, E-Mail,...) 
     direkt vom LDAP-Server anfragen.
@@ -126,6 +119,9 @@ Short-term
 Medium-term
 -----------
 
+#.  jobs.Job.disabled_fields : 
+    Stelle bearbeiten können wenn noch kein *ausgedruckter* Vertrag vorliegt.
+    
 #.  Rename "lino.mixins.Owned" to "Anchored" (and XxxByOwner to XxxByAnchor".
     
 #.  Tutorial weiter schreiben.

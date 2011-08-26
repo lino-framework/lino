@@ -1672,7 +1672,6 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
             if (flds.length == 1) { 
               //~ console.log('20100930 fld',record.data.disabled_fields[i],'=',flds[0]);
               flds[0].disable(); 
-              flds[0].emptyText = "$('(empty)')"; 
             //~ } else {
                 //~ console.log(20100617,record.data.disabled_fields[i], 'field not found');
             }
@@ -3285,3 +3284,7 @@ Lino.show_uploader = function () {
   Lino.AwesomeUploaderWindow.show();
 };
 #end if
+
+Lino.enable_child_label = function() {
+    Lino.alert('not yet implemented');
+};

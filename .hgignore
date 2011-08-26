@@ -7,6 +7,8 @@ syntax: glob
 *.dpyc
 *.log
 *.zip
+*.dtl.py
+*.js.py
 dist
 tmp
 lino/ui/qx/app/build/resource

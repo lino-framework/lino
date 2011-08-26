@@ -54,8 +54,8 @@ class UI:
     #~ prefix = None
     verbose_name = None
     
-    def __init__(self,prefix=''):
-        settings.LINO.setup()
+    def __init__(self,prefix='',**options):
+        settings.LINO.setup(**options)
         #~ self.site = settings.LINO
         assert isinstance(prefix,basestring)
         self.prefix = prefix
