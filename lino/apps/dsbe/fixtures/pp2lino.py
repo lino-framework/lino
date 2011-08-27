@@ -295,11 +295,12 @@ def get_or_create_job(provider_id,contract_type_id):
             try:
                 provider = JobProvider.objects.get(pk=provider_id)
             except JobProvider.DoesNotExist:
-                company = Company.objects.get(pk=provider_id)
-                provider = mti.insert_child(company,JobProvider)
-                provider.save()
+                provider = None
+                #~ company = Company.objects.get(pk=provider_id)
+                #~ provider = mti.insert_child(company,JobProvider)
+                #~ provider.save()
         if provider is None:
-            name = 'Job%s(intern)' % contract_type_id
+            name = 'Job%s(interne)' % contract_type_id
         else:
             name = 'Job%s@%s' % (contract_type_id,provider)
         job = Job(
@@ -358,7 +359,7 @@ class ContractArt60Loader(Loader):
             #~ kw.update(type=ContractType.objects.get(pk=ctype))
         kw.update(applies_from=parsedate(row[u'DebutContrat']))
         kw.update(applies_until=parsedate(row[u'FinContrat']))
-        provider_id = int(row[u'IDEndroitMiseAuTravail'])+OFFSET_JOBPROVIDER
+        provider_id = int(row[u'IDEndroitMiseAuTravail']) + OFFSET_JOBPROVIDER
         contract_type_id = row['IDTypeMiseEmplois']
         kw.update(job=get_or_create_job(provider_id,contract_type_id))
         #~ kw.update(provider=JobProvider.objects.get(id=))
