@@ -295,9 +295,9 @@ def get_or_create_job(provider_id,contract_type_id):
                 provider = mti.insert_child(company,JobProvider)
                 provider.save()
         if provider is None:
-            name = 'Stelle%s(intern)' % contract_type_id
+            name = 'Job%s(intern)' % contract_type_id
         else:
-            name = 'Stelle%s@%s' % (contract_type_id,provider)
+            name = 'Job%s@%s' % (contract_type_id,provider)
         job = Job(
             provider=provider,
             contract_type_id=contract_type_id,

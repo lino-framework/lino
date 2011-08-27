@@ -385,6 +385,8 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
                     #~ self.user_asd = self.person.user
             if self.person.birth_date and self.applies_from:
                 def duration(refdate):
+                    if type(refdate) != datetime.date:
+                        raise Exception("%r is not a date!" % refdate)
                     delta = refdate - self.person.birth_date
                     age = delta.days / 365
                     if age < 36:
