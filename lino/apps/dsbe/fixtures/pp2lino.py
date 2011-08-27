@@ -83,7 +83,7 @@ from lino.modlib.jobs.models import Job, Contract, JobProvider, \
 def parsedate(s):
     if not s: return None
     a = [int(i) for i in s.split('-')]
-    return datetime.date(year=a[0],month=a[1],day==a[2])
+    return datetime.date(year=a[0],month=a[1],day=a[2])
 
 try:
   from subprocess import check_output
