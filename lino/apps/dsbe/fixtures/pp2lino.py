@@ -67,6 +67,8 @@ import sys
 #~ import csv
 import codecs
 
+from django.conf import settings
+
 from lino.utils import ucsv
 #~ from lino.utils import dblogger
 from lino.tools import resolve_model
