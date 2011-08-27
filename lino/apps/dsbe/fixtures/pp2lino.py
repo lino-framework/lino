@@ -75,7 +75,11 @@ from lino.tools import resolve_model
 
 from lino.apps.dsbe.models import Person    
 from lino.modlib.users.models import User
-from lino.modlib.jobs.models import JobProvider, Contract, ContractType
+#~ from lino.modlib.jobs.models import Job, JobProvider, Contract, ContractType
+from lino.modlib.jobs.models import Job, Contract, JobProvider, \
+  ContractEnding, ExamPolicy, ContractType, Company
+
+
 
 try:
   from subprocess import check_output
@@ -275,7 +279,37 @@ class PersonLoader(Loader):
             kw.update(coached_from=row[u'DateArrivee'])
         yield self.model(**kw)
         
-        
+
+
+def get_or_create_job(provider_id,contract_type_id):
+    try:
+        return Job.objects.get(provider__id=provider_id,contract_type__id=contract_type_id)
+    except Job.DoesNotExist:
+        if provider_id is None:
+            provider = None
+        else:
+            try:
+                provider = JobProvider.objects.get(pk=provider_id)
+            except JobProvider.DoesNotExist:
+                company = Company.objects.get(pk=provider_id)
+                provider = mti.insert_child(company,JobProvider)
+                provider.save()
+        if provider is None:
+            name = 'Stelle%s(intern)' % contract_type_id
+        else:
+            name = 'Stelle%s@%s' % (contract_type_id,provider)
+        job = Job(
+            provider=provider,
+            contract_type_id=contract_type_id,
+            name=name
+            )
+        job.save()
+        return job
+
+
+
+
+
 CboTypeMiseEmplois = {
   1	: u"PTP",
   2	: u"Art 60§7",
@@ -315,14 +349,52 @@ class ContractArt60Loader(Loader):
     def row2obj(self,row):
         kw = {}
         kw.update(id=int(row['IDMiseEmplois']))
-        ctype = row['IDTypeMiseEmplois']
-        if ctype:
-            kw.update(type=ContractType.objects.get(pk=ctype))
+        #~ ctype = 
+        #~ if ctype:
+            #~ kw.update(type=ContractType.objects.get(pk=ctype))
         kw.update(applies_from=row[u'DebutContrat'])
         kw.update(applies_until=row[u'FinContrat'])
+        provider_id = int(row[u'IDEndroitMiseAuTravail'])+OFFSET_JOBPROVIDER
+        contract_type_id = row['IDTypeMiseEmplois']
+        kw.update(job=get_or_create_job(provider_id,contract_type_id))
+        #~ kw.update(provider=JobProvider.objects.get(id=))
+        kw.update(person=Person.objects.get(id=int(row[u'IDClient'])+OFFSET_PERSON))
+        yield self.model(**kw)
+
+OFFSET_CONTRACT_TYPE_CPAS = 100
+
+CboTypeContrat = {
+1	: u"Tutorat",
+2	: u"PIIS 18-25 ans",
+3	: u"PIIS + 25 ans",
+4	: u"PIIS étudiant",
+5	: u"PIIS stage en entreprise - experience prof",
+6	: u"PIIS stage de détermination et d'orientation socio",
+7	: u"PIIS formation",
+8	: u"PIIS prolongation",
+}
+
+class ContractVSELoader(Loader):
+    table_name = 'TBTypeDeContratCPAS'
+    model = Contract
+    headers = u"""
+    IDTypeDeContratCPAS IDTypeContrat DateDebut DateFin ASCPAS ASISP Statut Evaluation IDClient DateSignature TypePIIS NiveauEtude
+    """.split()
+    
+    def row2obj(self,row):
+        kw = {}
+        kw.update(id=int(row['IDTypeDeContratCPAS']))
+        #~ ctype = int(row['IDTypeContrat']) 
+        #~ if ctype:
+            #~ kw.update(type=ContractType.objects.get(pk=ctype+ OFFSET_CONTRACT_TYPE_CPAS))
+        kw.update(applies_from=row[u'DateDebut'])
+        kw.update(applies_until=row[u'DateFin'])
         
-        kw.update(provider=JobProvider.object.get(id=int(row[u'IDEndroitMiseAuTravail'])+OFFSET_JOBPROVIDER))
-        kw.update(person=Person.object.get(id=int(row[u'IDClient'])+OFFSET_PERSON))
+        contract_type_id = row['IDTypeContrat']
+        kw.update(job=get_or_create_job(None,contract_type_id))
+        
+        #~ kw.update(provider=JobProvider.objects.get(id=int(row[u'IDEndroitMiseAuTravail'])+OFFSET_JOBPROVIDER))
+        kw.update(person=Person.objects.get(id=int(row[u'IDClient'])+OFFSET_PERSON))
         yield self.model(**kw)
 
 
@@ -332,6 +404,8 @@ def objects():
     #~ for o in PersonLoader().load(): yield o
     for k,v in CboTypeMiseEmplois.items():
         yield ContractType(id=k,name=v)
+    for k,v in CboTypeContrat.items():
+        yield ContractType(id=k+OFFSET_CONTRACT_TYPE_CPAS,name=v)
     yield PersonLoader().load()
     yield JobProviderLoader().load()
     yield ContractArt60Loader().load()
