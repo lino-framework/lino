@@ -75,7 +75,7 @@ from lino.tools import resolve_model
 
 from lino.apps.dsbe.models import Person    
 from lino.modlib.users.models import User
-from lino.modlib.jobs.models import JobProvider
+from lino.modlib.jobs.models import JobProvider, Contract, ContractType
 
 try:
   from subprocess import check_output
@@ -227,7 +227,7 @@ class JobProviderLoader(Loader):
         if url:
             if not url.startswith('http'):
                 url = 'http://' + url
-            if is_valid_email(url):
+            if is_valid_url(url):
                 kw.update(url=url)
         kw.update(remarks=row[u'Remarque'])
         if is_valid_email(row[u'EMail']):
@@ -274,12 +274,68 @@ class PersonLoader(Loader):
         if row[u'DateArrivee']:
             kw.update(coached_from=row[u'DateArrivee'])
         yield self.model(**kw)
+        
+        
+CboTypeMiseEmplois = {
+  1	: u"PTP",
+  2	: u"Art 60§7",
+  3	: u"Art 60§7 (Tok)",
+  5	: u"Art 60§7 Privé (Tok)",
+  6	: u"Smet",
+  7	: u"Art 61",
+  8	: u"Activa",
+  9	: u"Stage en Entreprise",
+  17	: u"CDD",
+  18	: u"CDI",
+  19	: u"Intérim",
+  20	: u"ALE",
+  21	: u"FPI",
+  22	: u"SINE",
+  23	: u"anlo",
+  24	: u"wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww",
+  25	: u"contrat de remplacement CDD",
+}
+
+class ContractArt60Loader(Loader):
+    table_name = 'TBMiseEmplois'
+    model = Contract
+    headers = u"""
+    IDMiseEmplois IDTypeMiseEmplois 
+    MotifArt60 IDSubside IDETP 
+    DebutContrat FinContrat TotalJourContrat 
+    IDASSSG IDASISP 
+    IDEndroitMiseAuTravail 
+    Memo 
+    IDClient 
+    Durée Statut Montant DCAS DCSSS 
+    IdQualification IDDetailFonction Bareme ArticleBudgetaireSPPPSalaire CoutAnnuel 
+    Remarques DateCandidature
+    """.split()
+    
+    def row2obj(self,row):
+        kw = {}
+        kw.update(id=int(row['IDMiseEmplois']))
+        type = row['IDTypeMiseEmplois']
+        if type:
+            type = CboTypeMiseEmplois.get(int(type),None)
+            if type:
+                kw.update(type=ContractType.objects.get(type))
+        kw.update(applies_from=row[u'DebutContrat'])
+        kw.update(applies_until=row[u'FinContrat'])
+        
+        kw.update(provider=JobProvider.object.get(id=int(row[u'IDEndroitMiseAuTravail'])+OFFSET_JOBPROVIDER)
+        kw.update(person=Person.object.get(id=int(row[u'IDClient'])+OFFSET_PERSON)
+        yield self.model(**kw)
+
 
 def objects():
     #~ User = resolve_model('users.User')
-    yield User(username="root",is_superuser=True,first_name="Root",last_name="Superuser")
+    yield User(username="root",is_staff=True,is_superuser=True,first_name="Root",last_name="Superuser")
     #~ for o in PersonLoader().load(): yield o
+    for k,v in CboTypeMiseEmplois.items():
+        yield ContractType(id=k,name=v)
     yield PersonLoader().load()
     yield JobProviderLoader().load()
+    yield ContractArt60Loader().load()
     
     #~ reader = csv.reader(open(,'rb'))
