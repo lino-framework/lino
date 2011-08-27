@@ -287,7 +287,10 @@ class PersonLoader(Loader):
 
 def get_or_create_job(provider_id,contract_type_id):
     try:
-        return Job.objects.get(provider__id=provider_id,contract_type__id=contract_type_id)
+        if provider_id:
+            return Job.objects.get(provider__id=provider_id,contract_type__id=contract_type_id)
+        else:
+            return Job.objects.get(provider__isnull=True,contract_type__id=contract_type_id)
     except Job.DoesNotExist:
         if provider_id is None:
             provider = None
