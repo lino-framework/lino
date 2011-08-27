@@ -323,8 +323,8 @@ class ContractArt60Loader(Loader):
         kw.update(applies_from=row[u'DebutContrat'])
         kw.update(applies_until=row[u'FinContrat'])
         
-        kw.update(provider=JobProvider.object.get(id=int(row[u'IDEndroitMiseAuTravail'])+OFFSET_JOBPROVIDER)
-        kw.update(person=Person.object.get(id=int(row[u'IDClient'])+OFFSET_PERSON)
+        kw.update(provider=JobProvider.object.get(id=int(row[u'IDEndroitMiseAuTravail'])+OFFSET_JOBPROVIDER))
+        kw.update(person=Person.object.get(id=int(row[u'IDClient'])+OFFSET_PERSON))
         yield self.model(**kw)
 
 
