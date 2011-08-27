@@ -130,6 +130,8 @@ class Loader:
     
     def load(self):
         mdb_file = settings.LINO.legacy_data_path
+        if not mdb_file:
+            raise Exception("Must specify settings.LINO.legacy_data_path!")
         args = [MDBTOOLS_EXPORT, '-D', '%Y-%m-%d', mdb_file, self.table_name]
         s = check_output(args,executable=MDBTOOLS_EXPORT,
           env=dict(
@@ -165,7 +167,7 @@ class Loader:
             for obj in self.row2obj(row):
                 yield obj
 
-OFFSET_JOBPROVIDER = 2000
+OFFSET_JOBPROVIDER = 3000
 
 COMPANY_TYPES = {
   'Personne Physique' : 3,
@@ -219,7 +221,9 @@ class JobProviderLoader(Loader):
             kw.update(email=row[u'EMail'])
         yield self.model(**kw)
     
-    
+
+OFFSET_PERSON = 1000
+
 class PersonLoader(Loader):
     table_name = 'TBClient'
     
@@ -239,7 +243,7 @@ class PersonLoader(Loader):
     
     def row2obj(self,row):
         kw = {}
-        kw.update(id=row['IDClient'])
+        kw.update(id=row['IDClient'] + OFFSET_PERSON)
         kw.update(title=row['Titre'])
         if row['Nom']:
             kw.update(last_name=row['Nom'])

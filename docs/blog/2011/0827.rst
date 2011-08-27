@@ -51,3 +51,7 @@ work on nonempty :attr:`lino.Lino.root_url`.
 Checkin series 20110827.
 
 
+Continued on pp2lino
+--------------------
+
+:term:`pp2lino` now fills also the JobProvider table.
