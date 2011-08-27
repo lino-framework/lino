@@ -66,6 +66,7 @@ import sys
 #~ ENCODING = sys.stdout.encoding
 #~ import csv
 import codecs
+import datetime
 
 from django.conf import settings
 
@@ -79,7 +80,10 @@ from lino.modlib.users.models import User
 from lino.modlib.jobs.models import Job, Contract, JobProvider, \
   ContractEnding, ExamPolicy, ContractType, Company
 
-
+def parsedate(s):
+    if not s: return None
+    a = [int(i) for i in s.split('-')]
+    return datetime.date(year=a[0],month=a[1],day==a[2])
 
 try:
   from subprocess import check_output
@@ -352,8 +356,8 @@ class ContractArt60Loader(Loader):
         #~ ctype = 
         #~ if ctype:
             #~ kw.update(type=ContractType.objects.get(pk=ctype))
-        kw.update(applies_from=row[u'DebutContrat'])
-        kw.update(applies_until=row[u'FinContrat'])
+        kw.update(applies_from=parsedate(row[u'DebutContrat']))
+        kw.update(applies_until=parsedate(row[u'FinContrat']))
         provider_id = int(row[u'IDEndroitMiseAuTravail'])+OFFSET_JOBPROVIDER
         contract_type_id = row['IDTypeMiseEmplois']
         kw.update(job=get_or_create_job(provider_id,contract_type_id))
@@ -387,8 +391,8 @@ class ContractVSELoader(Loader):
         #~ ctype = int(row['IDTypeContrat']) 
         #~ if ctype:
             #~ kw.update(type=ContractType.objects.get(pk=ctype+ OFFSET_CONTRACT_TYPE_CPAS))
-        kw.update(applies_from=row[u'DateDebut'])
-        kw.update(applies_until=row[u'DateFin'])
+        kw.update(applies_from=parsedate(row[u'DateDebut']))
+        kw.update(applies_until=parsedate(row[u'DateFin']))
         
         contract_type_id = row['IDTypeContrat']
         kw.update(job=get_or_create_job(None,contract_type_id))
