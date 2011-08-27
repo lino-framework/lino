@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2009-2011 Luc Saffre
+## Copyright 2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -359,7 +359,11 @@ class ContractArt60Loader(Loader):
             #~ kw.update(type=ContractType.objects.get(pk=ctype))
         kw.update(applies_from=parsedate(row[u'DebutContrat']))
         kw.update(applies_until=parsedate(row[u'FinContrat']))
-        provider_id = int(row[u'IDEndroitMiseAuTravail']) + OFFSET_JOBPROVIDER
+        provider_id = row[u'IDEndroitMiseAuTravail']
+        if provider_id:
+            provider_id = int(provider_id) + OFFSET_JOBPROVIDER
+        else:
+            provider_id = None
         contract_type_id = row['IDTypeMiseEmplois']
         if contract_type_id:
             job = get_or_create_job(provider_id,contract_type_id)
@@ -372,14 +376,14 @@ class ContractArt60Loader(Loader):
 OFFSET_CONTRACT_TYPE_CPAS = 100
 
 CboTypeContrat = {
-1	: u"Tutorat",
-2	: u"PIIS 18-25 ans",
-3	: u"PIIS + 25 ans",
-4	: u"PIIS étudiant",
-5	: u"PIIS stage en entreprise - experience prof",
-6	: u"PIIS stage de détermination et d'orientation socio",
-7	: u"PIIS formation",
-8	: u"PIIS prolongation",
+    1	: u"Tutorat",
+    2	: u"PIIS 18-25 ans",
+    3	: u"PIIS + 25 ans",
+    4	: u"PIIS étudiant",
+    5	: u"PIIS stage en entreprise - experience prof",
+    6	: u"PIIS stage de détermination et d'orientation socio",
+    7	: u"PIIS formation",
+    8	: u"PIIS prolongation",
 }
 
 class ContractVSELoader(Loader):
