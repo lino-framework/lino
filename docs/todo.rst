@@ -25,6 +25,15 @@ Short-term
     - Event.save() must update the remote calendar.
     - recursion rules and recursive events
     - get calendarserver running on :term:`Jana`.
+    
+#.  notes.Notes nicht mehr PartnerDocument sondern ProjectBased.
+    In einer Notiz wie Nr. 1019 würde dann die Zuweisung zur 
+    Firma verloren gehen. Kann ggf. als Drittpartner eingegeben 
+    werden. Betroffen sind folgende Notizen::
+    
+      >>> from lino.apps.dsbe.models import Note
+      >>> [int(n.pk) for n in Note.objects.filter(company__isnull=False)]
+      [499, 501, 616, 349, 1019, 825, 425, 996, 117, 508, 822, 342, 841, 842]
 
 
 #.  Attachments of outgoing mails.

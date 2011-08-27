@@ -107,7 +107,6 @@ def analyze_models(self,make_messages):
             model.site_setup(self)
     
         model._lino_detail_layouts = {}
-        #~ model._lino_ddh = DisableDeleteHandler(model)
             
         def loader(content,cd,filename):
             dtl = DetailLayout(content,filename,cd)
@@ -124,9 +123,7 @@ def analyze_models(self,make_messages):
             #~ ' '.join(["%s=%s" % (k,dl.filename) for k,dl in model._lino_detail_layouts.items()]))
         
             
-        #~ if get_unbound_meth(model,'summary_row') is None:
         if get_class_attr(model,'summary_row') is None:
-        #~ if not hasattr(model,'summary_row'):
             if model._lino_detail_layouts:
                 def f(obj,ui,rr,**kw):
                     return u'<a href="%s" target="_blank">%s</a>' % (
@@ -139,29 +136,22 @@ def analyze_models(self,make_messages):
             model.summary_row = f
             #~ print '20101111 installed summary_row for ', model
         
-        #~ for k,v in model.__dict__.items():
         for k,v in class_dict_items(model):
             if isinstance(v,fields.VirtualField):
                 v.lino_kernel_setup(model,k)
             
         for f, m in model._meta.get_fields_with_model():
             if isinstance(f,models.ForeignKey):
-                #~ print 20101104, model,f.rel.to
-                #~ if not ddhdict.has_key(f.rel.to):
-                    #~ assert issubclass(f.rel.to,models.Model), "%s.%s is %r (not a Model instance)" % (model,f.name,f.rel.to)
-                    #~ ddhdict[f.rel.to] = DisableDeleteHandler(model)
-                #~ ddhdict[f.rel.to].add_fk(model,f)
                 f.rel.to._lino_ddh.add_fk(model,f)
+                if f.verbose_name == f.name.replace('_', ' '):
+                    """
+                    If verbose name was not set by user code, 
+                    Django sets it to ``field.name.replace('_', ' ')``.
+                    We replace this default value by
+                    ``f.rel.to._meta.verbose_name``.
+                    """
+                    f.verbose_name = f.rel.to._meta.verbose_name
         
-        
-        
-                
-    #~ for model,ddh in ddhdict.items():
-        #~ logger.debug("install %s.disable_delete_handler(%s)",
-          #~ model.__name__,ddh)
-        #~ model.disable_delete_handler = ddh
-        
-#~ from Cheetah.Template import Template as CheetahTemplate
 
 
 class DisableDeleteHandler():
@@ -251,24 +241,6 @@ def setup_site(self,make_messages=False):
             logger.debug("%s -> %r",k,a.debug_summary())
               
       
-    #~ self.main_menu = menus.Toolbar('main')
-    #~ self.main_menu = menus.Menu("","Main Menu")
-    
-    #~ self.setup_main_menu()
-    
-    #~ uis = []
-    #~ for ui in settings.USER_INTERFACES:
-        #~ logger.info("Starting user interface %s",ui)
-        #~ ui_module = import_module(ui)
-        #~ uis.append(ui_module.get_ui(self))
-    #~ self.uis = uis
-    
-    #~ from lino.models import get_site_config
-    #~ self.config = get_site_config()
-    
-    #~ if settings.DEBUG:
-        #~ generate_dummy_messages(self)
-        
     self._setup_done = True
     self._setting_up = False
     
