@@ -115,7 +115,15 @@ except ImportError:
         return output
 
 
-from django.core.validators import validate_email, ValidationError
+from django.core.validators import validate_email, ValidationError, URLValidator
+validate_url = URLValidator()
+def is_valid_url(s):
+    try:
+        validate_url(s)
+        return True
+    except ValidationError:
+        return False
+        
 def is_valid_email(s):
     try:
         validate_email(s)
@@ -215,7 +223,12 @@ class JobProviderLoader(Loader):
         kw.update(phone=row[u'Tel'])
         kw.update(gsm=row[u'GSM'])
         kw.update(fax=row[u'Fax'])
-        kw.update(url=row[u'Internet'])
+        url = row[u'Internet']
+        if url:
+            if not url.startswith('http'):
+                url = 'http://' + url
+            if is_valid_email(url):
+                kw.update(url=url)
         kw.update(remarks=row[u'Remarque'])
         if is_valid_email(row[u'EMail']):
             kw.update(email=row[u'EMail'])
