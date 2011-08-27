@@ -200,7 +200,7 @@ class JobProviderLoader(Loader):
     
     def row2obj(self,row):
         kw = {}
-        kw.update(id=row['IDEndroitMiseAuTravail'] + OFFSET_JOBPROVIDER)
+        kw.update(id=int(row['IDEndroitMiseAuTravail']) + OFFSET_JOBPROVIDER)
         kw.update(name=row['EndroitMiseAuTravail'])
         companyType=COMPANY_TYPES.get(row['IDStatutJuridique'],None)
         if companyType:
@@ -243,7 +243,7 @@ class PersonLoader(Loader):
     
     def row2obj(self,row):
         kw = {}
-        kw.update(id=row['IDClient'] + OFFSET_PERSON)
+        kw.update(id=int(row['IDClient']) + OFFSET_PERSON)
         kw.update(title=row['Titre'])
         if row['Nom']:
             kw.update(last_name=row['Nom'])
@@ -267,5 +267,6 @@ def objects():
     yield User(username="root",is_superuser=True,first_name="Root",last_name="Superuser")
     #~ for o in PersonLoader().load(): yield o
     yield PersonLoader().load()
+    yield JobProviderLoader().load()
     
     #~ reader = csv.reader(open(,'rb'))
