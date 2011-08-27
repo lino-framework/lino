@@ -317,9 +317,7 @@ class ContractArt60Loader(Loader):
         kw.update(id=int(row['IDMiseEmplois']))
         ctype = row['IDTypeMiseEmplois']
         if ctype:
-            ctype = CboTypeMiseEmplois.get(int(ctype),None)
-            if ctype:
-                kw.update(type=ContractType.objects.get(pk=ctype))
+            kw.update(type=ContractType.objects.get(pk=ctype))
         kw.update(applies_from=row[u'DebutContrat'])
         kw.update(applies_until=row[u'FinContrat'])
         
