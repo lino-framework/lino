@@ -86,9 +86,9 @@ class Calendar(mixins.AutoUser):
     url_template = models.CharField(_("URL template"),max_length=200,
         blank=True,null=True)
     username = models.CharField(_("Username"),max_length=200
-        ,blank=True,null=True)
+        ,blank=True)
     password = fields.PasswordField(_("Password"),max_length=200
-        ,blank=True,null=True)
+        ,blank=True)
     readonly = models.BooleanField(_("read-only"),default=False)
     is_default = models.BooleanField(
       _("is default"),default=False)
@@ -98,7 +98,10 @@ class Calendar(mixins.AutoUser):
     
     def full_clean(self,*args,**kw):
         if not self.name:
-            self.name = self.username
+            if self.username:
+                self.name = self.username
+            else:
+                self.name = self.user.get_full_name()
         super(Calendar,self).full_clean(*args,**kw)
         
     def save(self,*args,**kw):
@@ -125,9 +128,10 @@ class Calendars(reports.Report):
 
 def default_calendar(user):
     try:
-        return user.calendar_set.get(is_default=True)    
+        return user.calendar_set.get(is_default=True)
     except Calendar.DoesNotExist,e:
-        cal = Calendar(user=user,name=user.get_full_name(),is_default=True)
+        cal = Calendar(user=user,is_default=True)
+        cal.full_clean()
         cal.save()
         return cal
     

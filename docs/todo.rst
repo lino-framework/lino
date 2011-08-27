@@ -16,16 +16,31 @@ because it is rather for internal use.
 Short-term
 ----------
 
-#.  User-friendly way to add recipients to an OutMail. 
-    For this we probably need something like a "picker" 
-    function in :xfile:`linolib.js` 
-    and "before POST" actions on the Report.
+#.  watch_tim testen (nach den Änderungen von #47)
 
 #.  Remote calendars (:doc:`/tickets/47`):
     - Event.save() must update the remote calendar.
     - recursion rules and recursive events
     - get calendarserver running on :term:`Jana`.
     
+#.  Notizen per E-Mail verschicken können. 
+    Dann würden die Eupener das neue Modul vielleicht benutzen.
+    
+    Soll Text der Notiz in den Body der E-Mail kopiert werden 
+    und dort bearbeitbar sein? Dadurch würden die Benutzer allerdings 
+    zu redundanter Arbeitsweise erzogen... zu meditieren.
+    
+#.  contacts.Group: Eine Kontaktgruppe hat keine zusätzlichen Felder, 
+    das Modell wäre lediglich da, um eine Liste aller Gruppen anzeigen 
+    und ggf. spezifische Detail-Fenster definieren zu können.
+    Die Mitglieder einer Gruppe sind die Kontaktpersonen 
+    (:class:`lino.modlib.contacts.Role`).
+    Der eigentliche Unterschied ist, dass Gruppen (im Gegensatz zu Firmen) 
+    automatisch ihre Mitgliedsadressen expandieren müssen, 
+    wenn sie als Recipient einer Email fungieren.
+    Das könnte aber auch bei Firmen und sogar bei Personen ein 
+    interessantes Feature sein... zu meditieren.
+
 #.  notes.Notes nicht mehr PartnerDocument sondern ProjectBased.
     In einer Notiz wie Nr. 1019 würde dann die Zuweisung zur 
     Firma verloren gehen. Kann ggf. als Drittpartner eingegeben 
@@ -34,7 +49,6 @@ Short-term
       >>> from lino.apps.dsbe.models import Note
       >>> [int(n.pk) for n in Note.objects.filter(company__isnull=False)]
       [499, 501, 616, 349, 1019, 825, 425, 996, 117, 508, 822, 342, 841, 842]
-
 
 #.  Attachments of outgoing mails.
     An UploadsByOwner slave in the detail of a mail will be enough for 
@@ -47,13 +61,6 @@ Short-term
     Note that Uploadable.file is a FileField(upload_to='/media/uploads').
     Maybe another field "local_file", a simple CharField?
     
-#.  Sending notes by email. 
-    A single "Create email" button on a Note is maybe not enough.
-    - Send note with or without the printable?
-    - Who is recipient? For a note about a coached person, 
-      recipient may be another user and *not* the person.
-      Recipient my be a third company.
-
 
 #.  Uploads mit Sonderzeichen im Dateinamen funktionieren noch nicht.
     See :doc:`/blog/20110725` and :doc:`/blog/20110809`.
@@ -75,8 +82,13 @@ Short-term
     
     http://code.google.com/p/eidlib/ (last commit 13.04.2009)
 
-#.  Es gibt noch keine (elegante) Möglichkeit, um von einer Aufgabe aus 
+#.  Es gibt noch keine (direkte) Möglichkeit, um von einer Aufgabe aus 
     das Detail des owners anzuzeigen.
+    
+#.  auf Jana werden Tabellen nicht korrekt gerendert, auf Armand wohl.
+      - OOo-Version? auf Jana ist 3.2:
+        zless /usr/share/doc/openoffice.org-core/README.gz
+      - appy.pod-Version?
 
 #.  Brauchen wir eine Methode "readonly" pro Record? Zum Beispiel sollen 
     inaktive Personen allgemein nicht verändert werden können. 

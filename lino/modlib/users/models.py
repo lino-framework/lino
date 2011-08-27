@@ -85,6 +85,8 @@ class User(Contact,PersonMixin):
     def get_full_name(self):
         "Returns the first_name plus the last_name, with a space in between."
         full_name = u'%s %s' % (self.first_name, self.last_name)
+        if not full_name:
+            full_name = self.username
         return full_name.strip()
 
 

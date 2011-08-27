@@ -1727,7 +1727,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
       var a = { 
         params: params, 
         method: 'PUT',
-        url: '/detail_config'+_this.ls_url,
+        url: ROOT_URL+'/detail_config'+_this.ls_url,
         failure : Lino.ajax_error_handler,
         success: Lino.action_handler( _this, function(result) {
           //~ console.log('detail_config/save success',result);
@@ -1746,7 +1746,7 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     var a = { 
       params:active_tab, 
       method:'GET',
-      url:'/detail_config'+_this.ls_url,
+      url:ROOT_URL+'/detail_config'+_this.ls_url,
       success : function(response) {
         if (response.responseText) {
           var result = Ext.decode(response.responseText);
@@ -2223,7 +2223,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     var a = { 
       params:this.get_current_grid_config(), 
       method:'PUT',
-      url:'/grid_config'+this.ls_url,
+      url:ROOT_URL+'/grid_config'+this.ls_url,
       success: Lino.action_handler(this),
       failure: Lino.ajax_error_handler
     };
