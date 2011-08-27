@@ -361,7 +361,12 @@ class ContractArt60Loader(Loader):
         kw.update(applies_until=parsedate(row[u'FinContrat']))
         provider_id = int(row[u'IDEndroitMiseAuTravail']) + OFFSET_JOBPROVIDER
         contract_type_id = row['IDTypeMiseEmplois']
-        kw.update(job=get_or_create_job(provider_id,contract_type_id))
+        if not contract_type_id:
+            return None
+        job = get_or_create_job(provider_id,contract_type_id)
+        if not job: 
+            return None
+        kw.update(job=job)
         #~ kw.update(provider=JobProvider.objects.get(id=))
         kw.update(person=Person.objects.get(id=int(row[u'IDClient'])+OFFSET_PERSON))
         yield self.model(**kw)
@@ -396,7 +401,12 @@ class ContractVSELoader(Loader):
         kw.update(applies_until=parsedate(row[u'DateFin']))
         
         contract_type_id = row['IDTypeContrat']
-        kw.update(job=get_or_create_job(None,contract_type_id))
+        if not contract_type_id:
+            return None
+        job = get_or_create_job(None,contract_type_id)
+        if not job: 
+            return None
+        kw.update(job=job)
         
         #~ kw.update(provider=JobProvider.objects.get(id=int(row[u'IDEndroitMiseAuTravail'])+OFFSET_JOBPROVIDER))
         kw.update(person=Person.objects.get(id=int(row[u'IDClient'])+OFFSET_PERSON))
