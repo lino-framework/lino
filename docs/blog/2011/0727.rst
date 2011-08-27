@@ -141,7 +141,7 @@ gefordert hat:
 #.  Wenn man über das Detail einer Stelle auf einen Vertrag in dieser Stelle
     geht und dort die Stelle ändert, dann kommt Lino durcheinander, weil er
     den Boden unter den Füßen weggezogen bekommen hat: ContractsByJob/123
-    existiert plötlich nicht mehr. Er müsste dann automagisch nach
+    existiert plötzlich nicht mehr. Er müsste dann automagisch nach
     Contracts/123 springen. Was voraussichtlich lediglich zur Folge hätte,
     dass die Navigationsbuttons prev/next/last/first deaktiviert würden.
     Oder das Feld "Stelle" sollte readonly sein, aber dann brauchen wir
@@ -168,3 +168,4 @@ Also z.B. statt bisher "Max MUSTERMANN (97)" steht dort jetzt
 Die dummy_messages.py wurde schon seit Längerem zu früh geschrieben, 
 so dass die Texte aus der :xfile:`linolib.js` nicht drin waren.
 Behoben. Oder auch nicht. 
+Erstmals richtig eigentlich erst am :doc:`/blog/2011/0826`.

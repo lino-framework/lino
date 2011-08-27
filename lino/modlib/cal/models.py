@@ -544,14 +544,15 @@ def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
     s = '<div class="htmlText">%s</div>' % s
     return s
 
-SKIP_AUTO_TASKS = False 
-"See :doc:`/blog/2011/0727`"
+#~ SKIP_AUTO_TASKS = False 
+#~ "See :doc:`/blog/2011/0727`"
 
 def update_auto_task(autotype,user,date,summary,owner,**defaults):
     """Creates, updates or deletes the automatic :class:`Task` 
     related to the specified `owner`.
     """
-    if SKIP_AUTO_TASKS: return 
+    #~ if SKIP_AUTO_TASKS: return 
+    if settings.LINO.loading_from_dump: return 
     #~ if is_deserializing(): return 
     Task = resolve_model('cal.Task')
     ot = ContentType.objects.get_for_model(owner.__class__)

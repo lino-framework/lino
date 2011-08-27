@@ -68,6 +68,7 @@ class Serializer(base.Serializer):
             #~ self.stream.write('from lino.utils import i2d\n')
             self.stream.write('from lino.utils.mti import insert_child\n')
             self.stream.write('from lino.tools import resolve_model\n')
+            self.stream.write('from django.conf import settings\n')
         #~ model = queryset.model
         if self.models is None:
             self.models = sorted_models_list() # models.get_models()
@@ -121,9 +122,9 @@ class Serializer(base.Serializer):
         for model in all_models:
             #~ self.stream.write('    for o in %s_objects(): yield o\n' % model._meta.db_table)
             self.stream.write('    yield %s_objects()\n' % model._meta.db_table)
+        self.stream.write('settings.LINO.loading_from_dump = True\n')
         if settings.LINO.migration_module:
             self.stream.write('\n')
-            #~ self.stream.write('# uncomment for automagic migration:\n')
             self.stream.write('from %s import install\n' \
                 % settings.LINO.migration_module)
             self.stream.write('install(globals())\n')

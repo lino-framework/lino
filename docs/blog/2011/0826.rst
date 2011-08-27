@@ -30,6 +30,8 @@ The :term:`makedocs` command itself is called from
 :srcref:`/Makefile`.
 
 Modified also :srcref:`/.hgignore` to not care about them. 
+
+Checkin 20110826.
   
 .. todo::
 
