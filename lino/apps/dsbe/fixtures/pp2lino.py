@@ -37,11 +37,16 @@ Usage of `mdbtools` command line::
     -q <char>      Use <char> to wrap text-like fields. Default is ".
     -X <char>      Use <char> to escape quoted characters within a field. Default is doubling.
     
-Before loading this fixture you must do set the encoding for mdb-export::
+Before loading this fixture you must set :attr:`lino.Lino.legacy_data_path` 
+in your local :xfile:`settings.py`.
+You must also set the encoding for mdb-export::
 
-  export MDB_ICONV=utf-8
-  export MDB_JET_CHARSET=utf-8
-  python manage.py initdb std all_countries all_cities be all_languages props pp2lino
+    export MDB_ICONV=utf-8
+    export MDB_JET_CHARSET=utf-8
+    
+Then load the fixture using a variant of the following command::
+
+    python manage.py initdb std all_countries all_cities be all_languages props pp2lino
 
 Thanks to Google and http://farismadi.wordpress.com/2008/07/13/encoding-of-mdb-tool/ 
 for explanations on the environment variables used by `mdb-export`.
@@ -54,7 +59,7 @@ which we include here to make it usable in Python 2.6 too.
 
 #~ ENCODING = 'latin1' # the encoding used by the mdb file
 ENCODING = 'utf8' 
-MDB_FILE = 'PPv5MasterCopie.mdb'
+#~ MDB_FILE = 'PPv5MasterCopie.mdb'
 MDBTOOLS_EXPORT = 'mdb-export'
 
 import sys
@@ -68,6 +73,7 @@ from lino.tools import resolve_model
 
 from lino.apps.dsbe.models import Person    
 from lino.modlib.users.models import User
+from lino.modlib.jobs.models import JobProvider
 
 try:
   from subprocess import check_output
@@ -121,7 +127,8 @@ class Loader:
     model = None
     
     def load(self):
-        args = [MDBTOOLS_EXPORT, '-D', '%Y-%m-%d', MDB_FILE, self.table_name]
+        mdb_file = settings.LINO.legacy_data_path
+        args = [MDBTOOLS_EXPORT, '-D', '%Y-%m-%d', mdb_file, self.table_name]
         s = check_output(args,executable=MDBTOOLS_EXPORT,
           env=dict(
             MDB_ICONV='utf-8',
@@ -153,9 +160,63 @@ class Loader:
                     print n, ':', row
                 else:
                     raise Exception("20110609")
-            obj = self.row2kw(row)
-            #~ print obj
-            yield obj
+            for obj in self.row2obj(row):
+                yield obj
+
+OFFSET_JOBPROVIDER = 2000
+
+COMPANY_TYPES = {
+  'Personne Physique' : 3,
+  'SPRL' : 2,
+  'ASBL' : 9,
+  'SA' : 1,
+  'NV' : 1,
+  'Publique' :8, 
+  'BVBA' : 2,
+  'SCRL' : 4,
+  'SIREAS' : None,
+}
+
+
+
+class JobProviderLoader(Loader):
+    table_name = 'TBEndroitMiseAuTravail'
+    
+    model = JobProvider
+    headers = u"""
+    IDEndroitMiseAuTravail EndroitMiseAuTravail IDStatutJuridique 
+    NumeroInitiativeEconomieSociale 
+    AdresseSiegeSocial N Bte 
+    IDCommuneCodePostal NONSS Tel Fax EMail GSM Banque NCompte 
+    Titre NomContact PrénomContact Fonction Tel1 Fax1 EMail1 
+    Remarque Internet 
+    Titre2 NomContact2 PrénomContact2 Fonction2 Tel2 GSM2 Fax2 EMail2 
+    Titre3 NomContact3 PrénomContact3 Fonction3 Tel3 GSM3 Fax3 EMail3
+    """.split()
+    
+    def row2obj(self,row):
+        kw = {}
+        kw.update(id=row['IDEndroitMiseAuTravail'] + OFFSET_JOBPROVIDER)
+        kw.update(name=row['EndroitMiseAuTravail'])
+        companyType=COMPANY_TYPES.get(row['IDStatutJuridique'],None)
+        if companyType:
+            kw.update(type=CompanyType.objects.get(id=companyType))
+        # see contacts/fixtures/std.py
+        
+        
+        #~ kw.update(street_prefix=row[u'Rue'])
+        kw.update(street=row[u'AdresseSiegeSocial'])
+        kw.update(street_no=row[u'N'])
+        kw.update(street_box=row[u'Bte'])
+        kw.update(phone=row[u'Tel'])
+        kw.update(gsm=row[u'GSM'])
+        kw.update(fax=row[u'Fax'])
+        kw.update(url=row[u'Internet'])
+        kw.update(remarks=row[u'Remarque'])
+        if is_valid_email(row[u'EMail']):
+            kw.update(email=row[u'EMail'])
+        yield self.model(**kw)
+    
     
 class PersonLoader(Loader):
     table_name = 'TBClient'
@@ -174,7 +235,7 @@ class PersonLoader(Loader):
     u'RPE', u'Art 35', u'DateDebutArt35', u'DateFinArt35', u'ALE', u'Update',
     u'PermisDeTravail']    
     
-    def row2kw(self,row):
+    def row2obj(self,row):
         kw = {}
         kw.update(id=row['IDClient'])
         kw.update(title=row['Titre'])
@@ -193,11 +254,12 @@ class PersonLoader(Loader):
             kw.update(birth_date=row[u'DateNaissance'])
         if row[u'DateArrivee']:
             kw.update(coached_from=row[u'DateArrivee'])
-        return self.model(**kw)
+        yield self.model(**kw)
 
 def objects():
     #~ User = resolve_model('users.User')
     yield User(username="root",is_superuser=True,first_name="Root",last_name="Superuser")
-    for o in PersonLoader().load(): yield o
+    #~ for o in PersonLoader().load(): yield o
+    yield PersonLoader().load()
     
     #~ reader = csv.reader(open(,'rb'))

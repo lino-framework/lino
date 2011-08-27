@@ -474,8 +474,8 @@ class Person(Partner,contacts.PersonMixin,contacts.Contact,contacts.Born,Printab
     needs_work_permit = models.BooleanField(verbose_name=_("Needs work permit"))
     #~ work_permit_valid_until = models.DateField(blank=True,null=True,verbose_name=_("Work permit valid until"))
     work_permit_suspended_until = models.DateField(blank=True,null=True,verbose_name=_("suspended until"))
-    aid_type = models.ForeignKey("dsbe.AidType",blank=True,null=True,
-        verbose_name=_("aid type"))
+    aid_type = models.ForeignKey("dsbe.AidType",blank=True,null=True)
+        #~ verbose_name=_("aid type"))
         
     income_ag    = models.BooleanField(verbose_name=_("unemployment benefit")) # Arbeitslosengeld
     income_wg    = models.BooleanField(verbose_name=_("waiting pay")) # Wartegeld
@@ -965,7 +965,7 @@ class Study(CountryCity):
     class Meta:
         verbose_name = _("study or education")
         verbose_name_plural = _("Studies & education")
-    person = models.ForeignKey("contacts.Person",verbose_name=_("Person"))
+    person = models.ForeignKey("contacts.Person") #,verbose_name=_("Person"))
     type = models.ForeignKey(StudyType,verbose_name=_("Study type"))
     content = models.CharField(max_length=200,blank=True,null=True,verbose_name=_("Study content"))
     #~ content = models.ForeignKey(StudyContent,blank=True,null=True,verbose_name=_("Study content"))

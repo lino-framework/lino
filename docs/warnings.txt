@@ -1,13 +1,229 @@
+T:\hgwork\lino\docs\admin\oood.rst:47: (WARNING/2) Literal block expected; none found.
 T:\hgwork\lino\docs\autodoc\lino.apps.crl.rst:20: (WARNING/2) autodoc can't import/find module 'lino.apps.crl.models', it reported error: "'module' object has no attribute 'Person'", please check your spelling and sys.path
 T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:78: (WARNING/2) autodoc can't import/find module 'lino.apps.dsbe.tests.dsbe_tests', it reported error: "cannot import name Companies", please check your spelling and sys.path
 T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:85: (WARNING/2) autodoc can't import/find module 'lino.apps.dsbe.tests.dsbe_demo_tests', it reported error: "cannot import name Companies", please check your spelling and sys.path
 T:\hgwork\lino\docs\autodoc\lino.apps.igen.rst:15: (WARNING/2) autodoc can't import/find module 'lino.apps.igen.models', it reported error: "'module' object has no attribute 'Person'", please check your spelling and sys.path
 T:\hgwork\lino\docs\autodoc\lino.apps.std.rst:15: (WARNING/2) autodoc can't import/find module 'lino.apps.std.models', it reported error: "'module' object has no attribute 'Person'", please check your spelling and sys.path
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:66: (ERROR/3) Unknown target name: "lino.mails.recipient.contact".
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:66: (ERROR/3) Unknown target name: "lino.jobs.jobprovider.contact_ptr".
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:66: (ERROR/3) Unknown target name: "lino.users.user.contact_ptr".
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:66: (ERROR/3) Unknown target name: "lino.dsbe.courseprovider.contact_ptr".
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:66: (ERROR/3) Unknown target name: "lino.cal.attendee.contact".
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:394: (ERROR/3) Unknown target name: "lino.jobs.jobprovider.type".
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:394: (ERROR/3) Unknown target name: "lino.dsbe.courseprovider.type".
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:673: (ERROR/3) Unknown target name: "lino.jobs.contract.contact".
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:835: (ERROR/3) Unknown target name: "lino.jobs.contract.person".
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:835: (ERROR/3) Unknown target name: "lino.jobs.jobrequest.person".
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:835: (ERROR/3) Unknown target name: "lino.links.link.person".
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:835: (ERROR/3) Unknown target name: "lino.dsbe.study.person".
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:835: (ERROR/3) Unknown target name: "lino.dsbe.languageknowledge.person".
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:835: (ERROR/3) Unknown target name: "lino.dsbe.jobexperience.person".
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:835: (ERROR/3) Unknown target name: "lino.dsbe.exclusion.person".
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:835: (ERROR/3) Unknown target name: "lino.dsbe.courserequest.person".
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:835: (ERROR/3) Unknown target name: "lino.notes.note.person".
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:835: (ERROR/3) Unknown target name: "lino.cal.event.project".
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:835: (ERROR/3) Unknown target name: "lino.cal.task.project".
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:835: (ERROR/3) Unknown target name: "lino.thirds.third.person".
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:835: (ERROR/3) Unknown target name: "lino.properties.personproperty.person".
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:1960: (ERROR/3) Unknown target name: "lino.jobs.jobprovider.company_ptr".
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:1960: (ERROR/3) Unknown target name: "lino.links.link.company".
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:1960: (ERROR/3) Unknown target name: "lino.dsbe.courseprovider.company_ptr".
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:1960: (ERROR/3) Unknown target name: "lino.notes.note.company".
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:1960: (ERROR/3) Unknown target name: "lino.lino.siteconfig.site_company".
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:1960: (ERROR/3) Unknown target name: "lino.lino.siteconfig.job_office".
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:1960: (ERROR/3) Unknown target name: "lino.thirds.third.company".
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:2271: WARNING: duplicate label lino.contacts.company.vat_id, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:2196: WARNING: duplicate label lino.contacts.company.phone, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:2046: WARNING: duplicate label lino.contacts.company.street_prefix, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:2166: WARNING: duplicate label lino.contacts.company.email, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:906: WARNING: duplicate label lino.contacts.person.addr1, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:981: WARNING: duplicate label lino.contacts.person.addr2, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:2226: WARNING: duplicate label lino.contacts.company.fax, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:1914: WARNING: duplicate label lino.contacts.company, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:1221: WARNING: duplicate label lino.contacts.person.sex, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:2121: WARNING: duplicate label lino.contacts.company.zip_code, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:2151: WARNING: duplicate label lino.contacts.company.language, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:921: WARNING: duplicate label lino.contacts.person.street_prefix, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:951: WARNING: duplicate label lino.contacts.person.street_no, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:2001: WARNING: duplicate label lino.contacts.company.city, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:1026: WARNING: duplicate label lino.contacts.person.language, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:891: WARNING: duplicate label lino.contacts.person.name, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:1011: WARNING: duplicate label lino.contacts.person.region, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:2016: WARNING: duplicate label lino.contacts.company.name, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:1071: WARNING: duplicate label lino.contacts.person.phone, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:1101: WARNING: duplicate label lino.contacts.person.fax, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:1176: WARNING: duplicate label lino.contacts.person.first_name, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:1191: WARNING: duplicate label lino.contacts.person.last_name, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:435: WARNING: duplicate label lino.contacts.companytype.abbr, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:966: WARNING: duplicate label lino.contacts.person.street_box, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:861: WARNING: duplicate label lino.contacts.person.country, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:365: WARNING: duplicate label lino.contacts.companytype, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:510: WARNING: duplicate label lino.contacts.companytype.name_nl, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:876: WARNING: duplicate label lino.contacts.person.city, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:1116: WARNING: duplicate label lino.contacts.person.remarks, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:2181: WARNING: duplicate label lino.contacts.company.url, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:495: WARNING: duplicate label lino.contacts.companytype.name_fr, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:747: WARNING: duplicate label lino.contacts.person, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:2061: WARNING: duplicate label lino.contacts.company.street, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:1986: WARNING: duplicate label lino.contacts.company.country, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:77: WARNING: duplicate label lino.contacts.contact.id, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:2031: WARNING: duplicate label lino.contacts.company.addr1, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:2106: WARNING: duplicate label lino.contacts.company.addr2, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:996: WARNING: duplicate label lino.contacts.person.zip_code, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:1056: WARNING: duplicate label lino.contacts.person.url, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:1086: WARNING: duplicate label lino.contacts.person.gsm, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:1971: WARNING: duplicate label lino.contacts.company.id, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:420: WARNING: duplicate label lino.contacts.companytype.name, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:405: WARNING: duplicate label lino.contacts.companytype.id, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:1041: WARNING: duplicate label lino.contacts.person.email, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:2286: WARNING: duplicate label lino.contacts.company.type, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:2076: WARNING: duplicate label lino.contacts.company.street_no, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:450: WARNING: duplicate label lino.contacts.companytype.abbr_fr, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:2211: WARNING: duplicate label lino.contacts.company.gsm, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:1206: WARNING: duplicate label lino.contacts.person.title, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:2136: WARNING: duplicate label lino.contacts.company.region, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:2241: WARNING: duplicate label lino.contacts.company.remarks, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:29: WARNING: duplicate label lino.contacts.contact, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:465: WARNING: duplicate label lino.contacts.companytype.abbr_nl, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:846: WARNING: duplicate label lino.contacts.person.id, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:2091: WARNING: duplicate label lino.contacts.company.street_box, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:936: WARNING: duplicate label lino.contacts.person.street, other instance in T:\hgwork\lino\docs\igen\appdocs\contacts.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contenttypes.rst:42: (ERROR/3) Unknown target name: "lino.mails.inmail.sender_type".
+T:\hgwork\lino\docs\dsbe\appdocs\contenttypes.rst:42: (ERROR/3) Unknown target name: "lino.uploads.upload.owner_type".
+T:\hgwork\lino\docs\dsbe\appdocs\contenttypes.rst:42: (ERROR/3) Unknown target name: "lino.cal.task.owner_type".
+T:\hgwork\lino\docs\dsbe\appdocs\contenttypes.rst:42: (ERROR/3) Unknown target name: "lino.thirds.third.owner_type".
+T:\hgwork\lino\docs\dsbe\appdocs\contenttypes.rst:24: WARNING: duplicate label lino.contenttypes.contenttype, other instance in T:\hgwork\lino\docs\igen\appdocs\contenttypes.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contenttypes.rst:53: WARNING: duplicate label lino.contenttypes.contenttype.id, other instance in T:\hgwork\lino\docs\igen\appdocs\contenttypes.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contenttypes.rst:68: WARNING: duplicate label lino.contenttypes.contenttype.name, other instance in T:\hgwork\lino\docs\igen\appdocs\contenttypes.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contenttypes.rst:98: WARNING: duplicate label lino.contenttypes.contenttype.model, other instance in T:\hgwork\lino\docs\igen\appdocs\contenttypes.rst
+T:\hgwork\lino\docs\dsbe\appdocs\contenttypes.rst:83: WARNING: duplicate label lino.contenttypes.contenttype.app_label, other instance in T:\hgwork\lino\docs\igen\appdocs\contenttypes.rst
+T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:50: (ERROR/3) Unknown target name: "lino.dsbe.study.language".
+T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:50: (ERROR/3) Unknown target name: "lino.dsbe.languageknowledge.language".
+T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:50: (ERROR/3) Unknown target name: "lino.dsbe.wantedlanguageknowledge.language".
+T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:177: (ERROR/3) Unknown target name: "lino.jobs.jobprovider.country".
+T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:177: (ERROR/3) Unknown target name: "lino.users.user.country".
+T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:177: (ERROR/3) Unknown target name: "lino.contacts.contact.country".
+T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:177: (ERROR/3) Unknown target name: "lino.contacts.person.country".
+T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:177: (ERROR/3) Unknown target name: "lino.contacts.person.birth_country".
+T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:177: (ERROR/3) Unknown target name: "lino.contacts.person.nationality".
+T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:177: (ERROR/3) Unknown target name: "lino.contacts.company.country".
+T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:177: (ERROR/3) Unknown target name: "lino.dsbe.study.country".
+T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:177: (ERROR/3) Unknown target name: "lino.dsbe.jobexperience.country".
+T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:177: (ERROR/3) Unknown target name: "lino.dsbe.courseprovider.country".
+T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:316: (ERROR/3) Unknown target name: "lino.jobs.jobprovider.city".
+T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:316: (ERROR/3) Unknown target name: "lino.users.user.city".
+T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:316: (ERROR/3) Unknown target name: "lino.contacts.contact.city".
+T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:316: (ERROR/3) Unknown target name: "lino.contacts.person.city".
+T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:316: (ERROR/3) Unknown target name: "lino.contacts.company.city".
+T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:316: (ERROR/3) Unknown target name: "lino.dsbe.study.city".
+T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:316: (ERROR/3) Unknown target name: "lino.dsbe.courseprovider.city".
+T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:154: WARNING: duplicate label lino.countries.country, other instance in T:\hgwork\lino\docs\igen\appdocs\countries.rst
+T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:342: WARNING: duplicate label lino.countries.city.name, other instance in T:\hgwork\lino\docs\igen\appdocs\countries.rst
+T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:203: WARNING: duplicate label lino.countries.country.isocode, other instance in T:\hgwork\lino\docs\igen\appdocs\countries.rst
+T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:327: WARNING: duplicate label lino.countries.city.id, other instance in T:\hgwork\lino\docs\igen\appdocs\countries.rst
+T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:248: WARNING: duplicate label lino.countries.country.name_fr, other instance in T:\hgwork\lino\docs\igen\appdocs\countries.rst
+T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:61: WARNING: duplicate label lino.countries.language.name, other instance in T:\hgwork\lino\docs\igen\appdocs\countries.rst
+T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:233: WARNING: duplicate label lino.countries.country.iso3, other instance in T:\hgwork\lino\docs\igen\appdocs\countries.rst
+T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:263: WARNING: duplicate label lino.countries.country.name_nl, other instance in T:\hgwork\lino\docs\igen\appdocs\countries.rst
+T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:218: WARNING: duplicate label lino.countries.country.short_code, other instance in T:\hgwork\lino\docs\igen\appdocs\countries.rst
+T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:357: WARNING: duplicate label lino.countries.city.country, other instance in T:\hgwork\lino\docs\igen\appdocs\countries.rst
+T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:91: WARNING: duplicate label lino.countries.language.iso2, other instance in T:\hgwork\lino\docs\igen\appdocs\countries.rst
+T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:121: WARNING: duplicate label lino.countries.language.name_nl, other instance in T:\hgwork\lino\docs\igen\appdocs\countries.rst
+T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:372: WARNING: duplicate label lino.countries.city.zip_code, other instance in T:\hgwork\lino\docs\igen\appdocs\countries.rst
+T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:30: WARNING: duplicate label lino.countries.language, other instance in T:\hgwork\lino\docs\igen\appdocs\countries.rst
+T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:296: WARNING: duplicate label lino.countries.city, other instance in T:\hgwork\lino\docs\igen\appdocs\countries.rst
+T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:76: WARNING: duplicate label lino.countries.language.id, other instance in T:\hgwork\lino\docs\igen\appdocs\countries.rst
+T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:188: WARNING: duplicate label lino.countries.country.name, other instance in T:\hgwork\lino\docs\igen\appdocs\countries.rst
+T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:106: WARNING: duplicate label lino.countries.language.name_fr, other instance in T:\hgwork\lino\docs\igen\appdocs\countries.rst
+T:\hgwork\lino\docs\dsbe\appdocs\dsbe.rst:45: (ERROR/3) Unknown target name: "lino.contacts.person.group".
+T:\hgwork\lino\docs\dsbe\appdocs\dsbe.rst:746: (ERROR/3) Unknown target name: "lino.jobs.jobprovider.activity".
+T:\hgwork\lino\docs\dsbe\appdocs\dsbe.rst:746: (ERROR/3) Unknown target name: "lino.contacts.person.activity".
+T:\hgwork\lino\docs\dsbe\appdocs\dsbe.rst:746: (ERROR/3) Unknown target name: "lino.contacts.company.activity".
+T:\hgwork\lino\docs\dsbe\appdocs\dsbe.rst:1072: (ERROR/3) Unknown target name: "lino.contacts.person.aid_type".
+T:\hgwork\lino\docs\dsbe\appdocs\dsbe.rst:2028: (ERROR/3) Unknown target name: "lino.properties.wantedskill.search".
+T:\hgwork\lino\docs\dsbe\appdocs\dsbe.rst:2028: (ERROR/3) Unknown target name: "lino.properties.unwantedskill.search".
+T:\hgwork\lino\docs\dsbe\appdocs\lino.rst:368: WARNING: duplicate label lino.lino.textfieldtemplate.name, other instance in T:\hgwork\lino\docs\igen\appdocs\lino.rst
+T:\hgwork\lino\docs\dsbe\appdocs\lino.rst:338: WARNING: duplicate label lino.lino.textfieldtemplate.id, other instance in T:\hgwork\lino\docs\igen\appdocs\lino.rst
+T:\hgwork\lino\docs\dsbe\appdocs\lino.rst:75: WARNING: duplicate label lino.lino.siteconfig.default_build_method, other instance in T:\hgwork\lino\docs\igen\appdocs\lino.rst
+T:\hgwork\lino\docs\dsbe\appdocs\lino.rst:90: WARNING: duplicate label lino.lino.siteconfig.site_company, other instance in T:\hgwork\lino\docs\igen\appdocs\lino.rst
+T:\hgwork\lino\docs\dsbe\appdocs\lino.rst:288: WARNING: duplicate label lino.lino.datacontrollisting.date, other instance in T:\hgwork\lino\docs\igen\appdocs\lino.rst
+T:\hgwork\lino\docs\dsbe\appdocs\lino.rst:353: WARNING: duplicate label lino.lino.textfieldtemplate.user, other instance in T:\hgwork\lino\docs\igen\appdocs\lino.rst
+T:\hgwork\lino\docs\dsbe\appdocs\lino.rst:24: WARNING: duplicate label lino.lino.siteconfig, other instance in T:\hgwork\lino\docs\igen\appdocs\lino.rst
+T:\hgwork\lino\docs\dsbe\appdocs\lino.rst:60: WARNING: duplicate label lino.lino.siteconfig.id, other instance in T:\hgwork\lino\docs\igen\appdocs\lino.rst
+T:\hgwork\lino\docs\dsbe\appdocs\lino.rst:383: WARNING: duplicate label lino.lino.textfieldtemplate.description, other instance in T:\hgwork\lino\docs\igen\appdocs\lino.rst
+T:\hgwork\lino\docs\dsbe\appdocs\lino.rst:273: WARNING: duplicate label lino.lino.datacontrollisting.must_build, other instance in T:\hgwork\lino\docs\igen\appdocs\lino.rst
+T:\hgwork\lino\docs\dsbe\appdocs\lino.rst:228: WARNING: duplicate label lino.lino.datacontrollisting, other instance in T:\hgwork\lino\docs\igen\appdocs\lino.rst
+T:\hgwork\lino\docs\dsbe\appdocs\lino.rst:398: WARNING: duplicate label lino.lino.textfieldtemplate.text, other instance in T:\hgwork\lino\docs\igen\appdocs\lino.rst
+T:\hgwork\lino\docs\dsbe\appdocs\lino.rst:306: WARNING: duplicate label lino.lino.textfieldtemplate, other instance in T:\hgwork\lino\docs\igen\appdocs\lino.rst
+T:\hgwork\lino\docs\dsbe\appdocs\lino.rst:258: WARNING: duplicate label lino.lino.datacontrollisting.id, other instance in T:\hgwork\lino\docs\igen\appdocs\lino.rst
+T:\hgwork\lino\docs\dsbe\appdocs\notes.rst:429: WARNING: duplicate label lino.notes.note.subject, other instance in T:\hgwork\lino\docs\igen\appdocs\notes.rst
+T:\hgwork\lino\docs\dsbe\appdocs\notes.rst:459: WARNING: duplicate label lino.notes.note.language, other instance in T:\hgwork\lino\docs\igen\appdocs\notes.rst
+T:\hgwork\lino\docs\dsbe\appdocs\notes.rst:210: WARNING: duplicate label lino.notes.eventtype.remark, other instance in T:\hgwork\lino\docs\igen\appdocs\notes.rst
+T:\hgwork\lino\docs\dsbe\appdocs\notes.rst:384: WARNING: duplicate label lino.notes.note.date, other instance in T:\hgwork\lino\docs\igen\appdocs\notes.rst
+T:\hgwork\lino\docs\dsbe\appdocs\notes.rst:130: WARNING: duplicate label lino.notes.notetype.remark, other instance in T:\hgwork\lino\docs\igen\appdocs\notes.rst
+T:\hgwork\lino\docs\dsbe\appdocs\notes.rst:24: WARNING: duplicate label lino.notes.notetype, other instance in T:\hgwork\lino\docs\igen\appdocs\notes.rst
+T:\hgwork\lino\docs\dsbe\appdocs\notes.rst:85: WARNING: duplicate label lino.notes.notetype.template, other instance in T:\hgwork\lino\docs\igen\appdocs\notes.rst
+T:\hgwork\lino\docs\dsbe\appdocs\notes.rst:180: WARNING: duplicate label lino.notes.eventtype.id, other instance in T:\hgwork\lino\docs\igen\appdocs\notes.rst
+T:\hgwork\lino\docs\dsbe\appdocs\notes.rst:273: WARNING: duplicate label lino.notes.note, other instance in T:\hgwork\lino\docs\igen\appdocs\notes.rst
+T:\hgwork\lino\docs\dsbe\appdocs\notes.rst:240: WARNING: duplicate label lino.notes.eventtype.name_nl, other instance in T:\hgwork\lino\docs\igen\appdocs\notes.rst
+T:\hgwork\lino\docs\dsbe\appdocs\notes.rst:225: WARNING: duplicate label lino.notes.eventtype.name_fr, other instance in T:\hgwork\lino\docs\igen\appdocs\notes.rst
+T:\hgwork\lino\docs\dsbe\appdocs\notes.rst:414: WARNING: duplicate label lino.notes.note.event_type, other instance in T:\hgwork\lino\docs\igen\appdocs\notes.rst
+T:\hgwork\lino\docs\dsbe\appdocs\notes.rst:100: WARNING: duplicate label lino.notes.notetype.name, other instance in T:\hgwork\lino\docs\igen\appdocs\notes.rst
+T:\hgwork\lino\docs\dsbe\appdocs\notes.rst:444: WARNING: duplicate label lino.notes.note.body, other instance in T:\hgwork\lino\docs\igen\appdocs\notes.rst
+T:\hgwork\lino\docs\dsbe\appdocs\notes.rst:399: WARNING: duplicate label lino.notes.note.type, other instance in T:\hgwork\lino\docs\igen\appdocs\notes.rst
+T:\hgwork\lino\docs\dsbe\appdocs\notes.rst:148: WARNING: duplicate label lino.notes.eventtype, other instance in T:\hgwork\lino\docs\igen\appdocs\notes.rst
+T:\hgwork\lino\docs\dsbe\appdocs\notes.rst:309: WARNING: duplicate label lino.notes.note.id, other instance in T:\hgwork\lino\docs\igen\appdocs\notes.rst
+T:\hgwork\lino\docs\dsbe\appdocs\notes.rst:339: WARNING: duplicate label lino.notes.note.must_build, other instance in T:\hgwork\lino\docs\igen\appdocs\notes.rst
+T:\hgwork\lino\docs\dsbe\appdocs\notes.rst:324: WARNING: duplicate label lino.notes.note.user, other instance in T:\hgwork\lino\docs\igen\appdocs\notes.rst
+T:\hgwork\lino\docs\dsbe\appdocs\notes.rst:195: WARNING: duplicate label lino.notes.eventtype.name, other instance in T:\hgwork\lino\docs\igen\appdocs\notes.rst
+T:\hgwork\lino\docs\dsbe\appdocs\notes.rst:70: WARNING: duplicate label lino.notes.notetype.build_method, other instance in T:\hgwork\lino\docs\igen\appdocs\notes.rst
+T:\hgwork\lino\docs\dsbe\appdocs\notes.rst:55: WARNING: duplicate label lino.notes.notetype.id, other instance in T:\hgwork\lino\docs\igen\appdocs\notes.rst
+T:\hgwork\lino\docs\dsbe\appdocs\notes.rst:115: WARNING: duplicate label lino.notes.notetype.important, other instance in T:\hgwork\lino\docs\igen\appdocs\notes.rst
+T:\hgwork\lino\docs\dsbe\appdocs\properties.rst:400: (ERROR/3) Unknown target name: "lino.lino.siteconfig.propgroup_skills".
+T:\hgwork\lino\docs\dsbe\appdocs\properties.rst:400: (ERROR/3) Unknown target name: "lino.lino.siteconfig.propgroup_softskills".
+T:\hgwork\lino\docs\dsbe\appdocs\properties.rst:400: (ERROR/3) Unknown target name: "lino.lino.siteconfig.propgroup_obstacles".
+T:\hgwork\lino\docs\dsbe\appdocs\uploads.rst:41: (ERROR/3) Unknown target name: "lino.lino.siteconfig.residence_permit_upload_type".
+T:\hgwork\lino\docs\dsbe\appdocs\uploads.rst:41: (ERROR/3) Unknown target name: "lino.lino.siteconfig.work_permit_upload_type".
+T:\hgwork\lino\docs\dsbe\appdocs\uploads.rst:41: (ERROR/3) Unknown target name: "lino.lino.siteconfig.driving_licence_upload_type".
+T:\hgwork\lino\docs\dsbe\appdocs\users.rst:82: (ERROR/3) Unknown target name: "lino.mails.outmail.user".
+T:\hgwork\lino\docs\dsbe\appdocs\users.rst:82: (ERROR/3) Unknown target name: "lino.jobs.contract.user".
+T:\hgwork\lino\docs\dsbe\appdocs\users.rst:82: (ERROR/3) Unknown target name: "lino.jobs.contract.user_asd".
+T:\hgwork\lino\docs\dsbe\appdocs\users.rst:82: (ERROR/3) Unknown target name: "lino.links.link.user".
+T:\hgwork\lino\docs\dsbe\appdocs\users.rst:82: (ERROR/3) Unknown target name: "lino.contacts.person.coach1".
+T:\hgwork\lino\docs\dsbe\appdocs\users.rst:82: (ERROR/3) Unknown target name: "lino.contacts.person.coach2".
+T:\hgwork\lino\docs\dsbe\appdocs\users.rst:82: (ERROR/3) Unknown target name: "lino.dsbe.personsearch.user".
+T:\hgwork\lino\docs\dsbe\appdocs\users.rst:82: (ERROR/3) Unknown target name: "lino.dsbe.personsearch.coached_by".
+T:\hgwork\lino\docs\dsbe\appdocs\users.rst:82: (ERROR/3) Unknown target name: "lino.notes.note.user".
+T:\hgwork\lino\docs\dsbe\appdocs\users.rst:82: (ERROR/3) Unknown target name: "lino.lino.textfieldtemplate.user".
+T:\hgwork\lino\docs\dsbe\appdocs\users.rst:82: (ERROR/3) Unknown target name: "lino.uploads.upload.user".
+T:\hgwork\lino\docs\dsbe\appdocs\users.rst:82: (ERROR/3) Unknown target name: "lino.cal.calendar.user".
+T:\hgwork\lino\docs\dsbe\appdocs\users.rst:82: (ERROR/3) Unknown target name: "lino.cal.event.user".
+T:\hgwork\lino\docs\dsbe\appdocs\users.rst:82: (ERROR/3) Unknown target name: "lino.cal.task.user".
+T:\hgwork\lino\docs\dsbe\appdocs\users.rst:523: WARNING: duplicate label lino.users.user.is_superuser, other instance in T:\hgwork\lino\docs\igen\appdocs\users.rst
+T:\hgwork\lino\docs\dsbe\appdocs\users.rst:408: WARNING: duplicate label lino.users.user.last_name, other instance in T:\hgwork\lino\docs\igen\appdocs\users.rst
+T:\hgwork\lino\docs\dsbe\appdocs\users.rst:24: WARNING: duplicate label lino.users.user, other instance in T:\hgwork\lino\docs\igen\appdocs\users.rst
+T:\hgwork\lino\docs\dsbe\appdocs\users.rst:93: WARNING: duplicate label lino.users.user.id, other instance in T:\hgwork\lino\docs\igen\appdocs\users.rst
+T:\hgwork\lino\docs\dsbe\appdocs\users.rst:541: WARNING: duplicate label lino.users.user.last_login, other instance in T:\hgwork\lino\docs\igen\appdocs\users.rst
+T:\hgwork\lino\docs\dsbe\appdocs\users.rst:471: WARNING: duplicate label lino.users.user.is_staff, other instance in T:\hgwork\lino\docs\igen\appdocs\users.rst
+T:\hgwork\lino\docs\dsbe\appdocs\users.rst:288: WARNING: duplicate label lino.users.user.email, other instance in T:\hgwork\lino\docs\igen\appdocs\users.rst
+T:\hgwork\lino\docs\dsbe\appdocs\users.rst:453: WARNING: duplicate label lino.users.user.username, other instance in T:\hgwork\lino\docs\igen\appdocs\users.rst
+T:\hgwork\lino\docs\dsbe\appdocs\users.rst:393: WARNING: duplicate label lino.users.user.first_name, other instance in T:\hgwork\lino\docs\igen\appdocs\users.rst
+T:\hgwork\lino\docs\dsbe\appdocs\users.rst:505: WARNING: duplicate label lino.users.user.is_active, other instance in T:\hgwork\lino\docs\igen\appdocs\users.rst
+T:\hgwork\lino\docs\dsbe\appdocs\users.rst:556: WARNING: duplicate label lino.users.user.date_joined, other instance in T:\hgwork\lino\docs\igen\appdocs\users.rst
+T:\hgwork\lino\docs\dsbe\appdocs\users.rst:488: WARNING: duplicate label lino.users.user.is_expert, other instance in T:\hgwork\lino\docs\igen\appdocs\users.rst
+T:\hgwork\lino\docs\admin\oood.rst:: WARNING: document isn't included in any toctree
+T:\hgwork\lino\docs\admin\watch_tim.rst:: WARNING: document isn't included in any toctree
+T:\hgwork\lino\docs\admin\install.rst:147: WARNING: xfile reference target not found: local.pth
+T:\hgwork\lino\docs\admin\install.rst:159: WARNING: xfile reference target not found: local.pth
+T:\hgwork\lino\docs\admin\install.rst:278: WARNING: setting reference target not found: LOGGING
+T:\hgwork\lino\docs\admin\install.rst:278: WARNING: unknown document: lino.utils.log.configure
+T:\hgwork\lino\docs\admin\install.rst:315: WARNING: setting reference target not found: DATABASES
+T:\hgwork\lino\docs\admin\watch_tim.rst:40: WARNING: py:mod reference target not found: lino.modlib.dsbe.management.commands.watch_tim
 T:\hgwork\lino\docs\autodoc\lino.rst:11: WARNING: py:class reference target not found: object
-T:\hgwork\lino\docs\autodoc\lino.rst:90: WARNING: py:attr reference target not found: date_format_strftime
-T:\hgwork\lino\docs\autodoc\lino.rst:90: WARNING: py:attr reference target not found: date_format_extjs
-T:\hgwork\lino\docs\autodoc\lino.rst:107: WARNING: py:attr reference target not found: time_format_strftime
-T:\hgwork\lino\docs\autodoc\lino.rst:107: WARNING: py:attr reference target not found: time_format_extjs
+T:\hgwork\lino\docs\autodoc\lino.rst:102: WARNING: py:attr reference target not found: date_format_strftime
+T:\hgwork\lino\docs\autodoc\lino.rst:102: WARNING: py:attr reference target not found: date_format_extjs
+T:\hgwork\lino\docs\autodoc\lino.rst:119: WARNING: py:attr reference target not found: time_format_strftime
+T:\hgwork\lino\docs\autodoc\lino.rst:119: WARNING: py:attr reference target not found: time_format_extjs
 T:\hgwork\lino\docs\autodoc\lino.apps.crl.rst:17: WARNING: py:mod reference target not found: lino.apps.crl.models
 T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:10: WARNING: py:class reference target not found: django.db.models.base.Model
 T:\hgwork\lino\docs\autodoc\lino.apps.dsbe.rst:54: WARNING: py:class reference target not found: django.db.models.base.Model
@@ -39,9 +255,35 @@ T:\hgwork\lino\docs\autodoc\lino.apps.igen.rst:12: WARNING: py:mod reference tar
 T:\hgwork\lino\docs\autodoc\lino.apps.std.rst:2: WARNING: py:mod reference target not found: lino.apps.std
 T:\hgwork\lino\docs\autodoc\lino.apps.std.rst:5: WARNING: py:mod reference target not found: settings
 T:\hgwork\lino\docs\autodoc\lino.apps.std.rst:12: WARNING: py:mod reference target not found: models
+T:\hgwork\lino\docs\autodoc\lino.core.rst:9: WARNING: py:mod reference target not found: actors
+T:\hgwork\lino\docs\autodoc\lino.core.rst:82: WARNING: py:class reference target not found: type
+T:\hgwork\lino\docs\autodoc\lino.core.rst:17: WARNING: py:mod reference target not found: coretools
+T:\hgwork\lino\docs\autodoc\lino.management.rst:1: WARNING: py:mod reference target not found: lino.management
+T:\hgwork\lino\docs\autodoc\lino.mixins.rst:1: WARNING: py:mod reference target not found: mixins
+T:\hgwork\lino\docs\autodoc\lino.mixins.rst:8: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.mixins.rst:42: WARNING: py:class reference target not found: is_authenticated
+T:\hgwork\lino\docs\autodoc\lino.mixins.rst:65: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.mixins.rst:99: WARNING: py:class reference target not found: object
+T:\hgwork\lino\docs\autodoc\lino.mixins.rst:121: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.mixins.rst:149: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.mixins.rst:188: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.mixins.rst:210: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.mixins.rst:238: WARNING: py:class reference target not found: lino.modlib.thirds.models.Third
+T:\hgwork\lino\docs\autodoc\lino.mixins.printable.rst:10: WARNING: py:class reference target not found: lino.mixins.printable.SimpleBuildMethod
+T:\hgwork\lino\docs\autodoc\lino.mixins.printable.rst:86: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.mixins.printable.rst:86: WARNING: py:class reference target not found: lino.mixins.printable.Printable
+T:\hgwork\lino\docs\autodoc\lino.mixins.printable.rst:94: WARNING: py:class reference target not found: SimpleBuildMethod
+T:\hgwork\lino\docs\autodoc\lino.mixins.printable.rst:120: WARNING: py:meth reference target not found: get_last_modified_time
+T:\hgwork\lino\docs\autodoc\lino.mixins.printable.rst:137: WARNING: py:class reference target not found: lino.mixins.printable.DjangoBuildMethod
+T:\hgwork\lino\docs\autodoc\lino.mixins.printable.rst:145: WARNING: py:class reference target not found: lino.mixins.printable.BasePrintAction
+T:\hgwork\lino\docs\autodoc\lino.mixins.printable.rst:155: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.mixins.printable.rst:188: WARNING: py:class reference target not found: lino.mixins.printable.SimpleBuildMethod
+T:\hgwork\lino\docs\autodoc\lino.mixins.printable.rst:201: WARNING: py:meth reference target not found: get_printable_type
+T:\hgwork\lino\docs\autodoc\lino.mixins.printable.rst:201: WARNING: py:attr reference target not found: lino.modlib.sales.models.SalesDocument.imode
+T:\hgwork\lino\docs\autodoc\lino.mixins.printable.rst:211: WARNING: py:class reference target not found: NotImplementedError
 T:\hgwork\lino\docs\autodoc\lino.modlib.cal.rst:40: WARNING: py:class reference target not found: lino.modlib.cal.models.ComponentBase
-T:\hgwork\lino\docs\autodoc\lino.modlib.cal.rst:81: WARNING: py:class reference target not found: django.db.models.base.Model
-T:\hgwork\lino\docs\autodoc\lino.modlib.cal.rst:89: WARNING: py:class reference target not found: lino.modlib.cal.models.ComponentBase
+T:\hgwork\lino\docs\autodoc\lino.modlib.cal.rst:88: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.modlib.cal.rst:96: WARNING: py:class reference target not found: lino.modlib.cal.models.ComponentBase
 T:\hgwork\lino\docs\autodoc\lino.modlib.cal.rst:21: WARNING: py:class reference target not found: Attendee
 T:\hgwork\lino\docs\autodoc\lino.modlib.cal.rst:30: WARNING: py:class reference target not found: Event
 T:\hgwork\lino\docs\autodoc\lino.modlib.cal.rst:39: WARNING: py:class reference target not found: Event
@@ -60,15 +302,14 @@ T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:178: WARNING: py:func refer
 T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:206: WARNING: py:class reference target not found: django.db.models.base.Model
 T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:208: WARNING: py:class reference target not found: Person
 T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:208: WARNING: py:class reference target not found: Company
-T:\hgwork\lino\docs\autodoc\lino.modlib.jobs.rst:31: WARNING: py:class reference target not found: django.db.models.base.Model
-T:\hgwork\lino\docs\autodoc\lino.modlib.jobs.rst:47: WARNING: py:class reference target not found: lino.mixins.printable.Listing
-T:\hgwork\lino\docs\autodoc\lino.modlib.jobs.rst:63: WARNING: py:class reference target not found: django.db.models.base.Model
-T:\hgwork\lino\docs\autodoc\lino.modlib.jobs.rst:80: WARNING: py:class reference target not found: lino.apps.dsbe.models.Companies
-T:\hgwork\lino\docs\autodoc\lino.modlib.jobs.rst:93: WARNING: py:class reference target not found: django.db.models.base.Model
 T:\hgwork\lino\docs\autodoc\lino.modlib.users.rst:4: WARNING: py:mod reference target not found: django.contrib.auth
 T:\hgwork\lino\docs\autodoc\lino.modlib.users.rst:11: WARNING: py:mod reference target not found: django.contrib.sessions
 T:\hgwork\lino\docs\autodoc\lino.modlib.users.rst:10: WARNING: py:class reference target not found: object
 T:\hgwork\lino\docs\autodoc\lino.modlib.users.rst:12: WARNING: py:class reference target not found: django.contrib.auth.middleware.RemoteUserMiddleware
+T:\hgwork\lino\docs\autodoc\lino.reports.rst:127: WARNING: py:meth reference target not found: lino.reports.Report.do_setup
+T:\hgwork\lino\docs\autodoc\lino.reports.rst:141: WARNING: py:class reference target not found: lino.SiteConfigs
+T:\hgwork\lino\docs\autodoc\lino.reports.rst:184: WARNING: py:class reference target not found: links.LinksByOwner
+T:\hgwork\lino\docs\autodoc\lino.reports.rst:209: WARNING: py:class reference target not found: django.db.models.query.QuerySet
 T:\hgwork\lino\docs\autodoc\lino.ui.rst:4: WARNING: py:mod reference target not found: lino.ui.extjs
 T:\hgwork\lino\docs\autodoc\lino.ui.rst:17: WARNING: py:mod reference target not found: base
 T:\hgwork\lino\docs\autodoc\lino.ui.rst:17: WARNING: py:class reference target not found: object
@@ -78,7 +319,7 @@ T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:9: WARNING: py:mod reference targ
 T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:17: WARNING: py:mod reference target not found: ext_elems
 T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:26: WARNING: py:mod reference target not found: ext_ui
 T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:74: WARNING: xfile reference target not found: lino.js
-T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:235: WARNING: py:class reference target not found: django.http.HttpResponse
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:250: WARNING: py:class reference target not found: django.http.HttpResponse
 T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:34: WARNING: py:mod reference target not found: ext_windows
 T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:8: WARNING: py:class reference target not found: object
 T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:42: WARNING: py:mod reference target not found: ext_store
@@ -110,5 +351,66 @@ T:\hgwork\lino\docs\autodoc\lino.utils.rst:106: WARNING: py:mod reference target
 T:\hgwork\lino\docs\autodoc\lino.utils.rst:12: WARNING: py:class reference target not found: django.db.models.deletion.Collector
 T:\hgwork\lino\docs\autodoc\lino.utils.rst:51: WARNING: py:class reference target not found: object
 T:\hgwork\lino\docs\autodoc\lino.utils.rst:114: WARNING: py:mod reference target not found: ucsv
-T:\hgwork\lino\docs\blog\2011\0823.rst:26: WARNING: py:mod reference target not found: lino.modlib.email
-T:\hgwork\lino\docs\blog\2011\0824.rst:12: WARNING: term not in glossary: appy.pod
+T:\hgwork\lino\docs\autodoc\lino.utils.choosers.rst:15: WARNING: py:class reference target not found: lino.ui.extjs.ext_store.Store
+T:\hgwork\lino\docs\blog\2011\0727.rst:56: WARNING: py:func reference target not found: lino.utils.dpy.is_deserializing
+T:\hgwork\lino\docs\blog\2011\0727.rst:67: WARNING: py:attr reference target not found: lino.modlib.cal.models.SKIP_AUTO_TASKS
+T:\hgwork\lino\docs\blog\2011\0826.rst:7: WARNING: py:attr reference target not found: lino.Lino.source_dir
+T:\hgwork\lino\docs\blog\2011\0826.rst:17: WARNING: term not in glossary: makemessages
+T:\hgwork\lino\docs\blog\2011\index.rst:208: WARNING: unknown document: 0825
+T:\hgwork\lino\docs\blog\2011\index.rst:: WARNING: unknown document: 0825
+T:\hgwork\lino\docs\dsbe\appdocs\cal.rst:12: WARNING: py:class reference target not found: Calendar
+T:\hgwork\lino\docs\dsbe\appdocs\cal.rst:12: WARNING: py:class reference target not found: Task
+T:\hgwork\lino\docs\dsbe\appdocs\cal.rst:12: WARNING: py:class reference target not found: Event
+T:\hgwork\lino\docs\dsbe\appdocs\cal.rst:12: WARNING: py:class reference target not found: EventType
+T:\hgwork\lino\docs\dsbe\appdocs\cal.rst:12: WARNING: py:class reference target not found: Place
+T:\hgwork\lino\docs\dsbe\appdocs\cal.rst:636: WARNING: py:class reference target not found: Attendee
+T:\hgwork\lino\docs\dsbe\appdocs\cal.rst:747: WARNING: py:class reference target not found: Event
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:201: WARNING: py:attr reference target not found: steet_no
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:370: WARNING: undefined label: dsbe.contacts.companytype (if the link has no caption the label must precede a section header)
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:370: WARNING: undefined label: igen.contacts.companytype (if the link has no caption the label must precede a section header)
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:970: WARNING: py:attr reference target not found: steet_no
+T:\hgwork\lino\docs\dsbe\appdocs\contacts.rst:2095: WARNING: py:attr reference target not found: steet_no
+T:\hgwork\lino\docs\dsbe\appdocs\countries.rst:12: WARNING: py:class reference target not found: Language
+T:\hgwork\lino\docs\dsbe\appdocs\dsbe.rst:1340: WARNING: py:attr reference target not found: steet_no
+T:\hgwork\lino\docs\dsbe\appdocs\dsbe.rst:1721: WARNING: py:class reference target not found: CourseProvider
+T:\hgwork\lino\docs\dsbe\appdocs\jobs.rst:206: WARNING: py:attr reference target not found: steet_no
+T:\hgwork\lino\docs\dsbe\appdocs\properties.rst:13: WARNING: py:class reference target not found: PropType
+T:\hgwork\lino\docs\dsbe\appdocs\properties.rst:13: WARNING: py:class reference target not found: PropChoice
+T:\hgwork\lino\docs\dsbe\appdocs\properties.rst:13: WARNING: py:class reference target not found: PropGroup
+T:\hgwork\lino\docs\dsbe\appdocs\properties.rst:13: WARNING: py:class reference target not found: PropOccurence
+T:\hgwork\lino\docs\dsbe\appdocs\properties.rst:13: WARNING: py:class reference target not found: Property
+T:\hgwork\lino\docs\dsbe\appdocs\properties.rst:13: WARNING: py:class reference target not found: PropOccurence
+T:\hgwork\lino\docs\dsbe\appdocs\properties.rst:23: WARNING: py:class reference target not found: Property
+T:\hgwork\lino\docs\dsbe\appdocs\properties.rst:229: WARNING: py:attr reference target not found: PropValue.value
+T:\hgwork\lino\docs\dsbe\appdocs\users.rst:217: WARNING: py:attr reference target not found: steet_no
+T:\hgwork\lino\docs\ref\glossary.rst:37: WARNING: py:mod reference target not found: lino.utils.choices
+T:\hgwork\lino\docs\releases\coming.rst:27: WARNING: xfile reference target not found: doctemplates
+T:\hgwork\lino\docs\todo.rst:33: WARNING: py:class reference target not found: lino.modlib.contacts.Role
+T:\hgwork\lino\docs\todo.rst:65: WARNING: unknown document: /blog/20110725
+T:\hgwork\lino\docs\todo.rst:65: WARNING: unknown document: /blog/20110809
+T:\hgwork\lino\docs\todo.rst:98: WARNING: py:class reference target not found: auth.User
+T:\hgwork\lino\docs\todo.rst:107: WARNING: py:attr reference target not found: lino.mixins.printable.Printable.must_build
+T:\hgwork\lino\docs\todo.rst:263: WARNING: py:class reference target not found: lino.apps.dsbe.settings.Lino
+T:\hgwork\lino\docs\todo.rst:263: WARNING: xfile reference target not found: lino.js
+T:\hgwork\lino\docs\todo.rst:313: WARNING: xfile reference target not found: lino.js
+T:\hgwork\lino\docs\todo.rst:408: WARNING: xfile reference target not found: welcome.html
+T:\hgwork\lino\docs\todo.rst:460: WARNING: py:mod reference target not found: lino.demos.igen
+T:\hgwork\lino\docs\todo.rst:468: WARNING: py:mod reference target not found: lino.modlib.dsbe
+T:\hgwork\lino\docs\todo.rst:526: WARNING: py:mod reference target not found: lino.modlib.system.models.SiteConfig
+T:\hgwork\lino\docs\todo.rst:526: WARNING: py:mod reference target not found: django.contrib.sites
+T:\hgwork\lino\docs\todo.rst:528: WARNING: xfile reference target not found: make_staff.py
+T:\hgwork\lino\docs\todo.rst:538: WARNING: py:attr reference target not found: dsbe.models.Person.work_permit
+T:\hgwork\lino\docs\todo.rst:599: WARNING: py:class reference target not found: lino.utils.printable.LatexBuildMethod
+T:\hgwork\lino\docs\todo.rst:602: WARNING: py:attr reference target not found: links.Link.parent
+T:\hgwork\lino\docs\todo.rst:607: WARNING: py:attr reference target not found: links.Link.sequence
+T:\hgwork\lino\docs\todo.rst:607: WARNING: py:class reference target not found: links.LinksByOwner
+T:\hgwork\lino\docs\todo.rst:609: WARNING: py:meth reference target not found: contacts.Contact.address
+T:\hgwork\lino\docs\todo.rst:609: WARNING: py:class reference target not found: contacts.Persons
+T:\hgwork\lino\docs\todo.rst:619: WARNING: py:class reference target not found: links.LinksByOwner
+T:\hgwork\lino\docs\todo.rst:621: WARNING: py:class reference target not found: notes.Note
+T:\hgwork\lino\docs\todo.rst:621: WARNING: py:class reference target not found: notes.NoteType
+T:\hgwork\lino\docs\todo.rst:637: WARNING: py:mod reference target not found: lino.modlib.ledger
+T:\hgwork\lino\docs\todo.rst:637: WARNING: py:mod reference target not found: lino.modlib.finan
+T:\hgwork\lino\docs\todo.rst:663: WARNING: py:meth reference target not found: Action.run
+T:\hgwork\lino\docs\todo.rst:679: WARNING: py:mod reference target not found: <make_staff> lino.management.commands.make_staff
+T:\hgwork\lino\docs\todo.rst:699: WARNING: py:meth reference target not found: lino.ui.extjs.ext_store.BooleanStoreField.parse_form_value

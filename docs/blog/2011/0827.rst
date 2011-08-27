@@ -36,10 +36,18 @@ Possible unwanted side effects if a model has more than one FK
 to the same model. But in that case, user code should simple 
 specify an explicit `verbose_name` for those FK fields.
 
+- cal.Task.project and cal.Event.project
+- dsbe.Person.aid_type
+- dsbe.Study.person
+
 
 Bug on sites with nonempty :attr:`lino.Lino.root_url`
 -----------------------------------------------------
 
 Fixed: `/grid_config` and `/detail_config` didn't 
 work on nonempty :attr:`lino.Lino.root_url`.
+
+
+Checkin series 20110827.
+
 
