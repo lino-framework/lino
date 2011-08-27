@@ -315,11 +315,11 @@ class ContractArt60Loader(Loader):
     def row2obj(self,row):
         kw = {}
         kw.update(id=int(row['IDMiseEmplois']))
-        type = row['IDTypeMiseEmplois']
-        if type:
-            type = CboTypeMiseEmplois.get(int(type),None)
-            if type:
-                kw.update(type=ContractType.objects.get(type))
+        ctype = row['IDTypeMiseEmplois']
+        if ctype:
+            ctype = CboTypeMiseEmplois.get(id=int(ctype),None)
+            if ctype:
+                kw.update(type=ContractType.objects.get(pk=ctype))
         kw.update(applies_from=row[u'DebutContrat'])
         kw.update(applies_until=row[u'FinContrat'])
         

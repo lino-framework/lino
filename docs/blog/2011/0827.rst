@@ -54,4 +54,7 @@ Checkin series 20110827.
 Continued on pp2lino
 --------------------
 
-:term:`pp2lino` now fills also the JobProvider table.
+:term:`pp2lino` now fills also the following data:
+- TBEndroitMiseAuTravail --> JobProvider 
+- CboTypeMiseEmplois --> ContractType 
+- TBMiseEmplois --> Contract 
