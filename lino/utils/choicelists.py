@@ -211,11 +211,11 @@ class DoYouLike(ChoiceList):
     label = _("certainly not...very much")
     
 add = DoYouLike.add_item
-add('0', en="certainly not",de=u"bloß nicht")
-add('1', en="rather not"   ,de="eher nicht" )       
-add('2', en="normally"     ,de="normal"     , ref="default")    
-add('3', en="quite much"   ,de="gerne"      )
-add('4', en="very much"    ,de="sehr gerne" )
+add('0', en="certainly not",de=u"bloß nicht", fr=u"certainement pas")
+add('1', en="rather not"   ,de="eher nicht" , fr=u"plutôt pas")       
+add('2', en="normally"     ,de="normal"     , fr=u"moyennement", ref="default")    
+add('3', en="quite much"   ,de="gerne"      , fr=u"assez bien")
+add('4', en="very much"    ,de="sehr gerne" , fr=u"très bien")
 
 
 class HowWell(ChoiceList):

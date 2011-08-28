@@ -223,6 +223,8 @@ class Component(ComponentBase,
     dt_alarm = models.DateTimeField(_("Alarm time"),
         blank=True,null=True,editable=False)
         
+    must_send = models.BooleanField(_("must send"),default=False) # iCal:DURATION
+    
     rset = models.ForeignKey(RecurrenceSet,
         verbose_name=_("Recurrence Set"),
         blank=True,null=True)
@@ -262,6 +264,11 @@ class Component(ComponentBase,
         self.before_clean()
         super(Component,self).full_clean(*args,**kw)
         
+        
+    def on_user_change(self,request):
+        self.must_send = True
+        #~ if change_type == 'POST': 
+            #~ self.isdirty=True
         
     def save(self,*args,**kw):
         """

@@ -82,6 +82,73 @@ DATE = i2d(20061014)
 
 def objects():
   
+    contractType = Instantiator('jobs.ContractType',"ref",
+        build_method='appypdf',
+        template=u'art60-7.odt').build
+    yield contractType('art60-7a',
+      **babel_values('name',
+          de=u"Konvention Art.60§7 Sozialökonomie",
+          fr=u'Convention art.60§7 économie sociale',
+          en=u'Convention art.60§7 social economy',
+          ))
+    yield contractType('art60-7b',
+      **babel_values('name',
+          de=u"Konvention Art.60§7 Sozialökonomie - majoré",
+          fr=u'Convention art.60§7 économie sociale - majoré',
+          en=u'Convention art.60§7 social economy - increased',
+          ))
+    yield contractType('art60-7c',
+      **babel_values('name',
+          de=u"Konvention Art.60§7 mit Rückerstattung",
+          fr=u'Convention art.60§7 avec remboursement',
+          en=u'Convention art.60§7 social economy with refund',
+          ))
+    yield contractType('art60-7d',
+      **babel_values('name',
+          de=u"Konvention Art.60§7 mit Rückerstattung Schule",
+          fr=u'Convention art.60§7 avec remboursement école',
+          en=u'Convention art.60§7 social economy school',
+          ))
+    yield contractType('art60-7e',
+      **babel_values('name',
+          de=u"Konvention Art.60§7 Stadt Eupen",
+          fr=u"Convention art.60§7 ville d'Eupen",
+          en=u'Convention art.60§7 town',
+          ))
+    
+    contractType = Instantiator('jobs.ContractType',"ref",
+      build_method='appypdf',template=u'vse.odt').build
+    yield contractType("vsea",**babel_values('name',
+          de=u"VSE Ausbildung",
+          fr=u"VSE Ausbildung",
+          en=u"VSE Ausbildung",
+          ))
+    yield contractType("vseb",**babel_values('name',
+          de=u"VSE Arbeitssuche",
+          fr=u"VSE Arbeitssuche",
+          en=u"VSE Arbeitssuche",
+          ))
+    yield contractType("vsec",**babel_values('name',
+          de=u"VSE Lehre",
+          fr=u"VSE Lehre",
+          en=u"VSE Lehre",
+          ))
+    yield contractType("vsed",**babel_values('name',
+          de=u"VSE Vollzeitstudium",
+          fr=u"VSE Vollzeitstudium",
+          en=u"VSE Vollzeitstudium",
+          ))
+    yield contractType("vsee",**babel_values('name',
+          de=u"VSE Sprachkurs",
+          fr=u"VSE Sprachkurs",
+          en=u"VSE Sprachkurs",
+          ))
+    #~ yield contractType(u"VSE Integration")
+    #~ yield contractType(u"VSE Cardijn")
+    #~ yield contractType(u"VSE Work & Job")
+    
+  
+  
     Person = resolve_model('contacts.Person')
     Company = resolve_model('contacts.Company')
     #~ Contact = resolve_model('contacts.Contact')
@@ -454,68 +521,3 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     yield event(3,i2d(20100727),andreas,u"Mein dritter Termin")
 
 
-    contractType = Instantiator('jobs.ContractType',"ref",
-        build_method='appypdf',
-        template=u'art60-7.odt').build
-    yield contractType('art60-7a',
-      **babel_values('name',
-          de=u"Konvention Art.60§7 Sozialökonomie",
-          fr=u'Convention art.60§7 économie sociale',
-          en=u'Convention art.60§7 social economy',
-          ))
-    yield contractType('art60-7b',
-      **babel_values('name',
-          de=u"Konvention Art.60§7 Sozialökonomie - majoré",
-          fr=u'Convention art.60§7 économie sociale - majoré',
-          en=u'Convention art.60§7 social economy - increased',
-          ))
-    yield contractType('art60-7c',
-      **babel_values('name',
-          de=u"Konvention Art.60§7 mit Rückerstattung",
-          fr=u'Convention art.60§7 avec remboursement',
-          en=u'Convention art.60§7 social economy with refund',
-          ))
-    yield contractType('art60-7d',
-      **babel_values('name',
-          de=u"Konvention Art.60§7 mit Rückerstattung Schule",
-          fr=u'Convention art.60§7 avec remboursement école',
-          en=u'Convention art.60§7 social economy school',
-          ))
-    yield contractType('art60-7e',
-      **babel_values('name',
-          de=u"Konvention Art.60§7 Stadt Eupen",
-          fr=u"Convention art.60§7 ville d'Eupen",
-          en=u'Convention art.60§7 town',
-          ))
-    
-    contractType = Instantiator('jobs.ContractType',"ref",
-      build_method='appypdf',template=u'vse.odt').build
-    yield contractType("vsea",**babel_values('name',
-          de=u"VSE Ausbildung",
-          fr=u"VSE Ausbildung",
-          en=u"VSE Ausbildung",
-          ))
-    yield contractType("vseb",**babel_values('name',
-          de=u"VSE Arbeitssuche",
-          fr=u"VSE Arbeitssuche",
-          en=u"VSE Arbeitssuche",
-          ))
-    yield contractType("vsec",**babel_values('name',
-          de=u"VSE Lehre",
-          fr=u"VSE Lehre",
-          en=u"VSE Lehre",
-          ))
-    yield contractType("vsed",**babel_values('name',
-          de=u"VSE Vollzeitstudium",
-          fr=u"VSE Vollzeitstudium",
-          en=u"VSE Vollzeitstudium",
-          ))
-    yield contractType("vsee",**babel_values('name',
-          de=u"VSE Sprachkurs",
-          fr=u"VSE Sprachkurs",
-          en=u"VSE Sprachkurs",
-          ))
-    #~ yield contractType(u"VSE Integration")
-    #~ yield contractType(u"VSE Cardijn")
-    #~ yield contractType(u"VSE Work & Job")
-    

@@ -1,0 +1,29 @@
+20110829
+========
+
+Export to remote calendars
+--------------------------
+
+Continuing on remote calendars (:doc:`/tickets/47`).
+So far Lino can import data from remote calendars, now I'll 
+start the opposite direction: modifying an event through 
+the Lino must trigger an update of the remote calendar.
+
+Event.save() should not directly update the remote calendar,
+just set a status flag to "ready to send" 
+because the save should not fail when 
+the calendar server has a problem.
+Sending the modifications to the calendar server should be 
+done by a background process.
+:term:`watch_calendars` command can do both directions.
+
+New special model method `on_user_change` gets called each 
+time an instance of this model was changed 
+(created, modified, deleted) *though a user interface*. 
+
+First success after only one hour of programming.
+
+Recurring events are not yet handled correctly:
+- when modifying a recurring event, Lino must decide 
+  whether to modify (1) only this event, (2) this and 
+  all future events or (3) all events of the series.

@@ -22,18 +22,19 @@ back events of a remote calendar.
 Verbose name of ForeignKey fields
 ---------------------------------
 
-If the `verbose_name`of a ForeignKey 
-was not set by user code, 
+If the `verbose_name` of a ForeignKey 
+is not explicitly set by user code, 
 Django sets it to ``field.name.replace('_', ' ')``
 as for every field.
-We replace this default value by ``field.rel.to._meta.verbose_name``.
+Lino now replaces this default value by the `verbose_name` 
+of the pointed model (``field.rel.to._meta.verbose_name``).
 
 Advantage is that `lino.mixins.ProjectRelated.project` 
 gets a correct label. The word "Project" as label would be 
 incorrect or at least irritating for Lino/DSBE users.
 
 Possible unwanted side effects if a model has more than one FK 
-to the same model. But in that case, user code should simple 
+to the same model. But in that case, user code should simply 
 specify an explicit `verbose_name` for those FK fields.
 
 - cal.Task.project and cal.Event.project
@@ -63,3 +64,4 @@ Continued on pp2lino
 - TBTypeDeContratCPAS --> Contract, Job
 
 Checkin series 20110827b.
+

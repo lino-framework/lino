@@ -1,8 +1,6 @@
-READ ME FIRST
-=============
+Lino README 
+===========
 
-Lino is a framework 
+This project contains the source code tree of the Lino framework.
+The source code is hosted at: http://code.google.com/p/lino/
 
-
-Lino is a framework for database applications 
-that use [http://docs.djangoproject.com Django] for the database model and application server, and the [http://www.extjs.com/ ExtJS Javascript widget library] for the user interface.

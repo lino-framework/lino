@@ -35,16 +35,32 @@ debug = logger.debug
 #~ getLevel = logger.getLevel
 #~ setLevel = logger.setLevel
 
+def on_user_change(request,elem):    
+  
+    """
+    
+    def on_user_change(self,request):
+        if request.method == 'POST': 
+            self.isdirty=True
+    """
+    m = getattr(elem,'on_user_change',None)
+    if m: 
+        m(request)
+
 def log_created(request,elem):
+    on_user_change(request,elem)
     logger.info(u"%s created by %s.",obj2str(elem),request.user)
     
 def log_deleted(request,elem):
+    on_user_change(request,elem)
     logger.info(u"%s deleted by %s.",obj2str(elem),request.user)
     
 def log_changes(request,elem):
     """logs which changes have been made to every field of `elem` 
     if `elem` is an instance of `DiffingMixin`, otherwise does nothing.
     """
+    on_user_change(request,elem)
+    
     if isinstance(elem,mixins.DiffingMixin):
         changes = []
         for k,v in elem.changed_columns().items():

@@ -230,6 +230,8 @@ As long as nobody protests, I'll save some time by writing in German.
   :doc:`25 <0825>`
   :doc:`26 <0826>`
   :doc:`27 <0827>`
+  |br|  	
+  :doc:`29 <0829>`
 
 .. |Sep| replace::  **September**
   |br| 

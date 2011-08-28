@@ -5,18 +5,22 @@ See also :doc:`/tickets/index` which is a list of tickets.
 
 .. todolist::
 
-
-The rest of this document is partly in German 
-because it is rather for internal use. 
+The rest of this document is partly in German because it 
+is rather for internal use. 
 
 
 Short-term
 ----------
 
-#.  watch_tim testen (nach den Änderungen von #47)
+#.  :term:`watch_tim` testen (nach den Änderungen von #47)
 
 #.  Remote calendars (:doc:`/tickets/47`):
     - Event.save() must update the remote calendar.
+      In fact it must set a status flag to "ready to send" 
+      (not directly update because the save should not fail when 
+      only just the calendar server has a problem), and there 
+      must be a background process that sends these mails. 
+      New field `Calendar.last_save`.
     - recursion rules and recursive events
     - get calendarserver running on :term:`Jana`.
     
@@ -31,7 +35,7 @@ Short-term
     das Modell wäre lediglich da, um eine Liste aller Gruppen anzeigen 
     und ggf. spezifische Detail-Fenster definieren zu können.
     Die Mitglieder einer Gruppe sind die Kontaktpersonen 
-    (:class:`lino.modlib.contacts.Role`).
+    (:class:`lino.modlib.contacts.models.Role`).
     Der eigentliche Unterschied ist, dass Gruppen (im Gegensatz zu Firmen) 
     automatisch ihre Mitgliedsadressen expandieren müssen, 
     wenn sie als Recipient einer Email fungieren.
@@ -72,15 +76,15 @@ Short-term
     am besten konfigurierbar in zwei neuen Felder `UploadType.alarm_value`
     `UploadType.alarm_unit`.
     
-#.  Support for eID cards: (1) user authentication (2) read data from card.
+#.  Support for eID cards: (1) read data from card and (2) user authentication.
 
+    http://code.google.com/p/eid-javascript-lib/downloads/list
+    
     http://www.e-contract.be/
     http://code.google.com/p/eid-applet/
     
-    http://code.google.com/p/eidlib/ (last commit 13.04.2009)
-
 #.  Es gibt noch keine (direkte) Möglichkeit, um von einer Aufgabe aus 
-    das Detail des owners anzuzeigen.
+    das Detail des Owners anzuzeigen.
     
 #.  auf Jana werden Tabellen nicht korrekt gerendert, auf Armand wohl.
       - OOo-Version? auf Jana ist 3.2:
@@ -115,8 +119,8 @@ Short-term
 #.  Feldgruppen: Die Felder Note.person und Note.company 
     sollten als Gruppe mit Bezeichung "Partner" ersichtlich sein.
     Um eine Gruppe von Feldern mit einem Label 
-    versehen zu können, 
-    brauche ich wahrscheinlich die :doc:`neue Syntax in .dtl-Dateien </tickets/34>`.
+    versehen zu können, brauche ich wahrscheinlich 
+    die :doc:`neue Syntax in .dtl-Dateien </tickets/34>`.
     
 #.  Doppelklick auf Memo-Text einer Note bewirkt *nichts*. 
     Sollte doch wenigstens das Detail-Fenster öffnen.
@@ -136,6 +140,10 @@ Short-term
 
 Medium-term
 -----------
+
+#.  Dojo now has a
+    `datagrid <http://dojotoolkit.org/documentation/tutorials/1.6/datagrid/>`_
+    and looks easy to learn.
 
 #.  jobs.Job.disabled_fields : 
     Stelle bearbeiten können wenn noch kein *ausgedruckter* Vertrag vorliegt.
