@@ -1,9 +1,6 @@
 To-do list
 ==========
 
-Public calls for help
----------------------
-
 See also :doc:`/tickets/index` which is a list of tickets.
 
 .. todolist::

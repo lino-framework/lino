@@ -54,11 +54,12 @@ Checkin series 20110827.
 Continued on pp2lino
 --------------------
 
-:term:`pp2lino` now also imports the following data:
+:term:`pp2lino` importe maintenant les données suivantes: 
 
-- TBEndroitMiseAuTravail --> JobProvider 
+- TBEndroitMiseAuTravail --> JobProvider
 - CboTypeMiseEmplois --> ContractType 
 - CboTypeContrat --> ContractType 
 - TBMiseEmplois --> Contract, Job
 - TBTypeDeContratCPAS --> Contract, Job
 
+Checkin series 20110827b.

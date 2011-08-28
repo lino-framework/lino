@@ -37,6 +37,15 @@ Usage of `mdbtools` command line::
     -q <char>      Use <char> to wrap text-like fields. Default is ".
     -X <char>      Use <char> to escape quoted characters within a field. Default is doubling.
     
+Thanks to http://farismadi.wordpress.com/2008/07/13/encoding-of-mdb-tool/ 
+for explanations on the environment variables used by `mdb-export`.
+
+The function :func:`check_output` in this module is a copy from Python 2.7 
+which we include here to make it usable in Python 2.6 too.
+
+Usage
+-----
+
 Before loading this fixture you must set :attr:`lino.Lino.legacy_data_path` 
 in your local :xfile:`settings.py`.
 You must also set the encoding for mdb-export::
@@ -44,15 +53,13 @@ You must also set the encoding for mdb-export::
     export MDB_ICONV=utf-8
     export MDB_JET_CHARSET=utf-8
     
-Then load the fixture using a variant of the following command::
+Then load the fixture using the following command::
 
     python manage.py initdb std all_countries all_cities be all_languages props pp2lino
-
-Thanks to Google and http://farismadi.wordpress.com/2008/07/13/encoding-of-mdb-tool/ 
-for explanations on the environment variables used by `mdb-export`.
-
-The function :func:`check_output` in this module is a copy from Python 2.7 
-which we include here to make it usable in Python 2.6 too.
+    
+During testing, the following variant might help to save time::    
+    
+    python manage.py initdb std few_countries few_cities pp2lino --noinput
 
 
 """
@@ -62,6 +69,7 @@ ENCODING = 'utf8'
 #~ MDB_FILE = 'PPv5MasterCopie.mdb'
 MDBTOOLS_EXPORT = 'mdb-export'
 
+import os
 import sys
 #~ ENCODING = sys.stdout.encoding
 #~ import csv
@@ -71,15 +79,21 @@ import datetime
 from django.conf import settings
 
 from lino.utils import ucsv
-#~ from lino.utils import dblogger
+from lino.utils import dblogger
 from lino.tools import resolve_model
 
 from lino.apps.dsbe.models import Person    
 from lino.modlib.users.models import User
-#~ from lino.modlib.jobs.models import Job, JobProvider, Contract, ContractType
 from lino.modlib.jobs.models import Job, Contract, JobProvider, \
   ContractEnding, ExamPolicy, ContractType, Company
 
+def get_contracttype(pk):
+    try:
+        ct = ContractType.objects.get(pk=pk)
+    except ContractType.DoesNotExist: 
+        dblogger.warning("ContractType %r does not exist?!",pk)
+        return None
+        
 def parsedate(s):
     if not s: return None
     a = [int(i) for i in s.split('-')]
@@ -145,21 +159,22 @@ class Loader:
     model = None
     
     def load(self):
-        mdb_file = settings.LINO.legacy_data_path
-        if not mdb_file:
-            raise Exception("Must specify settings.LINO.legacy_data_path!")
-        args = [MDBTOOLS_EXPORT, '-D', '%Y-%m-%d', mdb_file, self.table_name]
-        s = check_output(args,executable=MDBTOOLS_EXPORT,
-          env=dict(
-            MDB_ICONV='utf-8',
-            MDB_JET_CHARSET='utf-8'))
-        #~ print ENCODING
-        
         fn = self.table_name+".csv"
-        fd = open(fn,'w')
-        fd.write(s)
-        fd.close()
-        print "Wrote file", fn
+        if not os.path.exists(fn):
+            mdb_file = settings.LINO.legacy_data_path
+            if not mdb_file:
+                raise Exception("Must specify settings.LINO.legacy_data_path!")
+            args = [MDBTOOLS_EXPORT, '-D', '%Y-%m-%d', mdb_file, self.table_name]
+            s = check_output(args,executable=MDBTOOLS_EXPORT,
+              env=dict(
+                MDB_ICONV='utf-8',
+                MDB_JET_CHARSET='utf-8'))
+            #~ print ENCODING
+            
+            fd = open(fn,'w')
+            fd.write(s)
+            fd.close()
+            print "Wrote file", fn
         reader = ucsv.UnicodeReader(open(fn,'r'),encoding=ENCODING)
         headers = reader.next()
         if not headers == self.headers:
@@ -285,12 +300,12 @@ class PersonLoader(Loader):
         
 
 
-def get_or_create_job(provider_id,contract_type_id):
+def get_or_create_job(provider_id,contract_type):
     try:
-        if provider_id:
-            return Job.objects.get(provider__id=provider_id,contract_type__id=contract_type_id)
-        else:
-            return Job.objects.get(provider__isnull=True,contract_type__id=contract_type_id)
+        #~ if provider_id:
+        return Job.objects.get(provider__id=provider_id,contract_type=contract_type)
+        #~ else:
+            #~ return Job.objects.get(provider__isnull=True,contract_type__id=contract_type_id)
     except Job.DoesNotExist:
         if provider_id is None:
             provider = None
@@ -298,19 +313,22 @@ def get_or_create_job(provider_id,contract_type_id):
             try:
                 provider = JobProvider.objects.get(pk=provider_id)
             except JobProvider.DoesNotExist:
-                provider = None
+                dblogger.warning('JobProvider #%s does not exist?!',provider_id)
+                return None
+                #~ provider = None
                 #~ company = Company.objects.get(pk=provider_id)
                 #~ provider = mti.insert_child(company,JobProvider)
                 #~ provider.save()
         if provider is None:
-            name = 'Job%s(interne)' % contract_type_id
+            name = 'Job%s(interne)' % contract_type.id
         else:
-            name = 'Job%s@%s' % (contract_type_id,provider)
+            name = 'Job%s@%s' % (contract_type.id,provider)
         job = Job(
             provider=provider,
-            contract_type_id=contract_type_id,
+            contract_type=contract_type,
             name=name
             )
+        job.full_clean()
         job.save()
         return job
 
@@ -369,12 +387,14 @@ class ContractArt60Loader(Loader):
             provider_id = None
         contract_type_id = row['IDTypeMiseEmplois']
         if contract_type_id:
-            job = get_or_create_job(provider_id,contract_type_id)
-            if job: 
-                kw.update(job=job)
-                #~ kw.update(provider=JobProvider.objects.get(id=))
-                kw.update(person=Person.objects.get(id=int(row[u'IDClient'])+OFFSET_PERSON))
-                yield self.model(**kw)
+            ct = get_contracttype(int(contract_type_id))
+            if ct:
+                job = get_or_create_job(provider_id,ct)
+                if job: 
+                    kw.update(job=job)
+                    #~ kw.update(provider=JobProvider.objects.get(id=))
+                    kw.update(person=Person.objects.get(id=int(row[u'IDClient'])+OFFSET_PERSON))
+                    yield self.model(**kw)
 
 OFFSET_CONTRACT_TYPE_CPAS = 100
 
@@ -407,12 +427,14 @@ class ContractVSELoader(Loader):
         
         contract_type_id = row['IDTypeContrat']
         if contract_type_id:
-            job = get_or_create_job(None,contract_type_id)
-            if job: 
-                kw.update(job=job)
-                #~ kw.update(provider=JobProvider.objects.get(id=int(row[u'IDEndroitMiseAuTravail'])+OFFSET_JOBPROVIDER))
-                kw.update(person=Person.objects.get(id=int(row[u'IDClient'])+OFFSET_PERSON))
-                yield self.model(**kw)
+            ct = get_contracttype(int(contract_type_id)+OFFSET_CONTRACT_TYPE_CPAS)
+            if ct:
+                job = get_or_create_job(None,ct)
+                if job: 
+                    kw.update(job=job)
+                    #~ kw.update(provider=JobProvider.objects.get(id=int(row[u'IDEndroitMiseAuTravail'])+OFFSET_JOBPROVIDER))
+                    kw.update(person=Person.objects.get(id=int(row[u'IDClient'])+OFFSET_PERSON))
+                    yield self.model(**kw)
 
 
 def objects():
@@ -426,5 +448,6 @@ def objects():
     yield PersonLoader().load()
     yield JobProviderLoader().load()
     yield ContractArt60Loader().load()
+    yield ContractVSELoader().load()
     
     #~ reader = csv.reader(open(,'rb'))
