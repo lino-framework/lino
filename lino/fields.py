@@ -238,3 +238,8 @@ class GenericForeignKeyIdField(models.PositiveIntegerField):
     
     pass
     
+    
+class FieldSet:
+    def __init__(self,verbose_name,desc):
+        self.verbose_name = verbose_name
+        self.desc = desc

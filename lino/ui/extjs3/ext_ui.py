@@ -305,6 +305,12 @@ class ExtUI(base.UI):
         if isinstance(de,actions.ImageAction):
             return ext_elems.PictureElement(lh,name,de,**kw)
 
+        if isinstance(de,fields.FieldSet):
+            e = lh.desc2elem(ext_elems.FieldSet,name,de.desc)
+            e.label = de.verbose_name
+            print 20110829, e, de.desc
+            return e
+            
         if isinstance(de,models.Field):
             if isinstance(de,(babel.BabelCharField,babel.BabelTextField)):
                 if len(babel.BABEL_LANGS) > 0:

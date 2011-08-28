@@ -1,8 +1,8 @@
 20110829
 ========
 
-Export to remote calendars
---------------------------
+20110829a Export to remote calendars
+------------------------------------
 
 Continuing on remote calendars (:doc:`/tickets/47`).
 So far Lino can import data from remote calendars, now I'll 
@@ -21,9 +21,25 @@ New special model method `on_user_change` gets called each
 time an instance of this model was changed 
 (created, modified, deleted) *though a user interface*. 
 
-First success after only one hour of programming.
+First success after only one hour of programming!
 
-Recurring events are not yet handled correctly:
-- when modifying a recurring event, Lino must decide 
+.. todo::
+
+  Recurring events are not yet handled correctly.
+  When modifying a recurring event, Lino must decide 
   whether to modify (1) only this event, (2) this and 
   all future events or (3) all events of the series.
+  
+  Modifications in a RecurrenceSet are not yet sent back 
+  to the calendar server.
+  
+  Attendees are currently neither sent nor received. 
+  
+  Google claims "Can only store an event with a newer DTSTAMP" 
+  probably because of a timezone misunderstanding.
+  
+  
+20110829b Field Sets
+--------------------
+
+

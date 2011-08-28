@@ -12,6 +12,12 @@ is rather for internal use.
 Short-term
 ----------
 
+#.  Field groups. Die Felder alarm_value und alarm_unit sollten 
+    wirklich gruppiert sein. Am elegantesten wäre in der 
+    Model definition::
+    
+        alarm = fields.FieldGroup(_("Alarm"),'alarm_value alarm_unit')
+    
 #.  :term:`watch_tim` testen (nach den Änderungen von #47)
 
 #.  Remote calendars (:doc:`/tickets/47`):
@@ -116,11 +122,6 @@ Short-term
 
 #.  :doc:`Benutzerspezifische Gridkonfiguration </tickets/39>`
 
-#.  Feldgruppen: Die Felder Note.person und Note.company 
-    sollten als Gruppe mit Bezeichung "Partner" ersichtlich sein.
-    Um eine Gruppe von Feldern mit einem Label 
-    versehen zu können, brauche ich wahrscheinlich 
-    die :doc:`neue Syntax in .dtl-Dateien </tickets/34>`.
     
 #.  Doppelklick auf Memo-Text einer Note bewirkt *nichts*. 
     Sollte doch wenigstens das Detail-Fenster öffnen.

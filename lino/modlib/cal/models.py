@@ -146,6 +146,8 @@ def default_calendar(user):
 
 class Place(models.Model):
     name = models.CharField(_("Name"),max_length=200)
+    def __unicode__(self):
+        return self.name 
   
 class Places(reports.Report):
     model = Place
@@ -218,12 +220,13 @@ class Component(ComponentBase,
         
     access_class = AccessClass.field() # iCal:CLASS
     sequence = models.IntegerField(_("Revision"),default=0)
-    alarm_value = models.IntegerField(_("Alarm value"),null=True,blank=True)
-    alarm_unit = DurationUnit.field(_("Alarm unit"),null=True,blank=True)
+    alarm_value = models.IntegerField(_("Value"),null=True,blank=True)
+    alarm_unit = DurationUnit.field(_("Unit"),null=True,blank=True)
+    alarm = fields.FieldSet(_("Alarm"),'alarm_value alarm_unit')
     dt_alarm = models.DateTimeField(_("Alarm time"),
         blank=True,null=True,editable=False)
         
-    must_send = models.BooleanField(_("must send"),default=False) # iCal:DURATION
+    user_modified = models.BooleanField(_("modified by user"),default=False,editable=False) 
     
     rset = models.ForeignKey(RecurrenceSet,
         verbose_name=_("Recurrence Set"),
@@ -266,7 +269,7 @@ class Component(ComponentBase,
         
         
     def on_user_change(self,request):
-        self.must_send = True
+        self.user_modified = True
         #~ if change_type == 'POST': 
             #~ self.isdirty=True
         
@@ -318,8 +321,9 @@ class Event(Component,mixins.TypedPrintable):
     place = models.ForeignKey(Place,verbose_name=_("Place"),null=True,blank=True) # iCal:LOCATION
     priority = Priority.field(_("Priority"),null=True,blank=True) # iCal:PRIORITY
     status = EventStatus.field(_("Status"),null=True,blank=True) # iCal:STATUS
-    duration_value = models.IntegerField(_("Duration value"),null=True,blank=True) # iCal:DURATION
-    duration_unit = DurationUnit.field(null=True,blank=True) # iCal:DURATION
+    duration = fields.FieldSet(_("Duration"),'duration_value duration_unit')
+    duration_value = models.IntegerField(_("Value"),null=True,blank=True) # iCal:DURATION
+    duration_unit = DurationUnit.field(_("Unit"),null=True,blank=True) # iCal:DURATION
     #~ repeat_value = models.IntegerField(_("Repeat every"),null=True,blank=True) # iCal:DURATION
     #~ repeat_unit = DurationUnit.field(verbose_name=_("Repeat every"),null=True,blank=True) # iCal:DURATION
 

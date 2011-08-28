@@ -901,8 +901,6 @@ class Container(LayoutElement):
         return s
 
 
-
-
 class Panel(Container):
     """
     A vertical Panel is vflex if and only if at least one of its children is vflex.
@@ -1147,8 +1145,21 @@ class Panel(Container):
             #d.update(bodyBorder=False)
             d.update(border=False)
             
+        if self.label:
+            d.update(title=unicode(self.label))
+            
         return d
         
+class FieldSet(Panel):
+    value_template = "new Ext.form.FieldSet(%s)"
+    def ext_options(self,**d):
+        d = Panel.ext_options(self,**d)
+        d.update(frame=False)
+        d.update(bodyBorder=True)
+        d.update(border=True)
+        d.update(labelAlign=self.labelAlign)
+        return d
+  
 
 class GridElement(Container): 
     declare_type = jsgen.DECLARE_VAR

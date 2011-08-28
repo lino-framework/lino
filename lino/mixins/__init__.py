@@ -15,6 +15,8 @@
 
 """
 
+import datetime
+
 from django.db import models
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
@@ -80,8 +82,22 @@ class CreatedModified(models.Model):
     """Adds two timestamp fields `created` and `modified`."""
     class Meta:
         abstract = True
-    created = models.DateTimeField(auto_now_add=True,editable=False) 
-    modified = models.DateTimeField(auto_now=True,editable=False) 
+    #~ created = models.DateTimeField(auto_now_add=True) #,editable=False) 
+    #~ modified = models.DateTimeField(auto_now=True) # ,editable=False) 
+    ## 20110829 the modified field did not get updated after save()
+    ## didn't investigate further since the workaround shown at
+    ## http://stackoverflow.com/questions/1737017/django-auto-now-and-auto-now-add
+    ## is ok for me.
+    created = models.DateTimeField(editable=False)
+    modified = models.DateTimeField(editable=False)
+    
+    def save(self, *args, **kwargs):
+        ''' On save, update timestamps '''
+        if not self.pk:
+            self.created = datetime.datetime.now()
+        self.modified = datetime.datetime.now()
+        super(CreatedModified, self).save(*args, **kwargs)
+
         
 
 

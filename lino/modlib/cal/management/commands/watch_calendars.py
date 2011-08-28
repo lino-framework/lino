@@ -53,6 +53,7 @@ import lino
 from lino.tools import resolve_model
 from lino.modlib.contacts.utils import name2kw, street2kw, join_words
 
+from lino.utils import iif
 from lino.utils import confirm
 from lino.utils import dblogger
 from lino.tools import obj2str
@@ -62,6 +63,7 @@ from lino.utils.daemoncommand import DaemonCommand
 #~ from datetime import datetime, timedelta
 
 
+Place = resolve_model('cal.Place')
 Calendar = resolve_model('cal.Calendar')
 Event = resolve_model('cal.Event')
 RecurrenceSet = resolve_model('cal.RecurrenceSet')
@@ -156,6 +158,26 @@ def receive(dbcal,calendar):
                     set_kw = {}
                     get_kw.update(uid = uid)
                     set_kw.update(summary=event.summary.value)
+                    #~ dblogger.info("TRANSPARENCE IS %r", event.transp.value)
+                    location_name = event.location.value
+                    if location_name:
+                        qs = Place.objects.filter(name__iexact=location_name)
+                        if qs.count() == 0:
+                            pl = Place(name=location_name)
+                            pl.full_clean()
+                            pl.save()
+                            dblogger.info("Auto-created location %s", pl)
+                        else: 
+                            pl = qs[0]
+                            if qs.count() > 1:                            
+                                dblogger.warning("Found more than 1 Place for location %r", location_name)
+                        set_kw.update(place=pl)
+                    else:
+                        set_kw.update(place=None)
+                    if event.transp.value == 'TRANSPARENT':
+                        set_kw.update(transparent=True)
+                    else:
+                        set_kw.update(transparent=False)
                     set_kw.update(description=event.description.value)
                     set_kw.update(calendar=dbcal)
                     #~ set_kw.update(location=event.location.value)
@@ -240,7 +262,7 @@ def receive(dbcal,calendar):
 
 def send(dbcal,calendar,client):
     n = 0 
-    for obj in dbcal.event_set.filter(must_send=True):
+    for obj in dbcal.event_set.filter(user_modified=True):
         dblogger.info("Gonna send %s",obj)
         n += 1
         
@@ -261,7 +283,10 @@ def send(dbcal,calendar,client):
             vevent.add('dtend').value = datetime.datetime.combine(obj.end_date,obj.end_time)
         else:
             vevent.add('dtend').value = obj.end_date
+        vevent.add('transp').value = iif(obj.transparent,'TRANSPARENT','OPAQUE')
         vevent.add('summary').value = obj.summary
+        if obj.place:
+            vevent.add('location').value = obj.place.name
         vevent.add('description').value = obj.description
         event = caldav.Event(client,data=mycal.serialize(),parent=calendar).save()
     dblogger.info("--> Sent %d events to calendar server.", n)
