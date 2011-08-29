@@ -12,12 +12,6 @@ is rather for internal use.
 Short-term
 ----------
 
-#.  Field groups. Die Felder alarm_value und alarm_unit sollten 
-    wirklich gruppiert sein. Am elegantesten wäre in der 
-    Model definition::
-    
-        alarm = fields.FieldGroup(_("Alarm"),'alarm_value alarm_unit')
-    
 #.  :term:`watch_tim` testen (nach den Änderungen von #47)
 
 #.  Remote calendars (:doc:`/tickets/47`):

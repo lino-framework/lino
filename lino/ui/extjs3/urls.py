@@ -23,8 +23,10 @@ Installs Lino URLs under root location (`/`).
 #~ from django.conf import settings
 #~ from django.conf.urls.defaults import patterns, include, url
 
+#~ from django.conf import settings
+#~ urlpatterns = settings.LINO.urlpatterns
+
 from lino.ui.extjs3 import UI
 
 # Create lino.ui.extjs3.ext_ui.ExtJS instance
-ui = UI()
-urlpatterns = ui.get_patterns()
+urlpatterns = UI().get_patterns()

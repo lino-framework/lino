@@ -270,6 +270,9 @@ class LayoutElement(VisibleComponent):
         #~ if self.parent is not None:
             #~ raise Exception("%s : parent is already %s, cannot set it to %s" % (self,self.parent,parent))
         self.parent = parent
+        #~ if isinstance(parent,FieldSetPanel):
+            #~ self.label = None
+            #~ self.update(label = None)
         if self.label and isinstance(parent,Panel):
             if parent.labelAlign == reports.LABEL_ALIGN_LEFT:
                 self.preferred_width += len(self.label)
@@ -339,28 +342,6 @@ class PictureElement(LayoutElement):
           cursor='pointer'))
         
 
-class unused_ButtonElement(LayoutElement):
-    value_template = "new Ext.Component(%s)"
-    
-    def __init__(self,lh,name,meth,label,**kw):
-        self.label = label
-        self.meth = meth
-        #~ onclick='alert("oops")'
-        #~ kw.update(html='<input type="button" onclick="%s" value=" %s ">' % (onclick,label))
-        LayoutElement.__init__(self,lh,name,**kw)
-    
-    def get_column_options(self,**kw):
-        #~ kw.update(dataIndex=self.field.name)
-        #~ if self.label is None:
-            #~ kw.update(header=self.field.name)
-        #~ else:
-        kw.update(header=unicode(self.label))
-        kw.update(editable=False)
-        kw.update(sortable=False)
-        rend = 'Lino.cell_button_renderer'
-        kw.update(renderer=js_code(rend))
-        return kw    
-                
         
 
 class StaticTextElement(LayoutElement):
@@ -1150,7 +1131,7 @@ class Panel(Container):
             
         return d
         
-class FieldSet(Panel):
+class FieldSetPanel(Panel):
     value_template = "new Ext.form.FieldSet(%s)"
     def ext_options(self,**d):
         d = Panel.ext_options(self,**d)

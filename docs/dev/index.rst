@@ -3,16 +3,6 @@ Developing Lino applications
 
 (This document is currently not well maintained. Don't read it!)
 
-Conventions
------------
-
-- I'll try to always set model names to uppercase.
-
-    verbose_name = _("Person")           # not _("person")
-    verbose_name_plural = _("Companies") # not _("companies")
-    verbose_name = _("Note Type")        # not _("Note type")
-  
-  
 
 Introduction
 ------------
@@ -53,8 +43,9 @@ Overriding modlib models
 ------------------------
 
 
-The :mod:`lino.modlib` modules are ready-to-use Django applications that may be 
-included in your :setting:`INSTALLED_APPS`::
+The :mod:`lino.modlib` modules are ready-to-use 
+application modules (Django calls them "applications") 
+that may be included in your :setting:`INSTALLED_APPS`::
 
   INSTALLED_APPS = (
   
@@ -108,3 +99,22 @@ For example if you have a Django application `myapp` and want to extend :class:`
       ...
 
 The important thing is to manually specify `Meta.app_label` because otherwise your model would be called `myapp.Person`.
+
+
+Conventions
+-----------
+
+- I'll try to always set verbose model names to uppercase.
+
+    verbose_name = _("Person")           # not _("person")
+    verbose_name_plural = _("Companies") # not _("companies")
+    verbose_name = _("Note Type")        # not _("Note type")
+  
+  
+
+.. toctree::
+   :maxdepth: 2
+
+   model_methods
+
+

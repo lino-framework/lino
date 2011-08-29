@@ -26,6 +26,7 @@ import time
 import datetime
 #~ import signal
 import atexit
+from cStringIO import StringIO 
 
 import vobject
 import caldav
@@ -43,24 +44,18 @@ from django.conf import settings
 
 from django.db.utils import DatabaseError
 from django.db import models
-# OperationalError
 from django.utils import simplejson
-#~ from django.contrib.auth import models as auth
-from lino.modlib.users import models as auth
 
 import lino
 
 from lino.tools import resolve_model
-from lino.modlib.contacts.utils import name2kw, street2kw, join_words
 
-from lino.utils import iif
-from lino.utils import confirm
+from lino.utils import confirm, iif
 from lino.utils import dblogger
 from lino.tools import obj2str
 
 from lino.utils.daemoncommand import DaemonCommand
-
-#~ from datetime import datetime, timedelta
+from lino.modlib.cal.utils import aware, dt2kw, setkw
 
 
 Place = resolve_model('cal.Place')
@@ -72,33 +67,7 @@ REQUEST = dblogger.PseudoRequest('watch_calendars')
 
 # dblogger.log_changes(REQUEST,obj)
 
-from cStringIO import StringIO 
 
-from dateutil.tz import tzlocal
-
-
-def aware(d):
-    return datetime.datetime(d.year,d.month,d.day,tzinfo=tzlocal())
-
-def dt2kw(dt,name,**d):
-    if dt:
-        if isinstance(dt,datetime.datetime):
-            d[name+'_date'] = dt.date()
-            d[name+'_time'] = dt.time()
-        elif isinstance(dt,datetime.date):
-            d[name+'_date'] = dt
-            d[name+'_time'] = None
-        else:
-            raise Exception("Invalid datetime value %r" % dt)
-    else:
-        d[name+'_date'] = None
-        d[name+'_time'] = None
-    return d
-  
-def setkw(obj,**kw):
-    for k,v in kw.items():
-        setattr(obj,k,v)
-                              
 
 def prettyPrint(obj):
     s = StringIO()

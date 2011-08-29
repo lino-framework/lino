@@ -755,8 +755,8 @@ must_build BooleanField    must build (muss generiert werden,doit être construi
 contact    ForeignKey      Contact (Kontakt)                                     
 language   LanguageField   Language (Sprache,Langue)                             
 event      ForeignKey      Event (Termin)                                        
-role       ForeignKey      Guest Role                                            
-status     ChoiceListField Guest Status                                          
+role       ForeignKey      Role                                                  
+status     ChoiceListField Status (Statut)                                       
 remark     CharField       Remark (Bemerkung,Remarque)                           
 ========== =============== ======================================================
 

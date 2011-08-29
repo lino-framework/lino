@@ -26,16 +26,16 @@ from lino.modlib.notes import models as notes
 from lino.modlib.links import models as links
 from lino.modlib.cal import models as cal
 
-class Person(contacts.Born,contacts.PersonMixin):
-    class Meta(contacts.Person.Meta):
+class Person(contacts.Contact,contacts.Born,contacts.PersonMixin):
+    class Meta(contacts.PersonMixin.Meta):
         app_label = 'contacts'
     died_date = models.DateField(
         blank=True,null=True,
         verbose_name=_("Died date"))
 
               
-class Company(contacts.Company):
-    class Meta(contacts.Company.Meta):
+class Company(contacts.Contact,contacts.CompanyMixin):
+    class Meta(contacts.CompanyMixin.Meta):
         app_label = 'contacts'
         # see :doc:`/tickets/14`
         #~ verbose_name = _("Company")

@@ -66,16 +66,16 @@ from lino.modlib.contacts import models as contacts
 from lino.modlib.notes import models as notes
 from lino.modlib.cal import models as cal
 
-class Person(contacts.Person):
-    class Meta(contacts.Person.Meta):
+class Person(contacts.Contact,contacts.Born,contacts.PersonMixin):
+    class Meta(contacts.PersonMixin.Meta):
         app_label = 'contacts'
         # see :doc:`/tickets/14`
         #~ verbose_name = _("Person")
         #~ verbose_name_plural = _("Persons")
 
               
-class Company(contacts.Company):
-    class Meta(contacts.Company.Meta):
+class Company(contacts.Contact,contacts.CompanyMixin):
+    class Meta(contacts.CompanyMixin.Meta):
         app_label = 'contacts'
         # see :doc:`/tickets/14`
         #~ verbose_name = _("Company")

@@ -220,7 +220,7 @@ class Command(GeneratingCommand):
     def generate_files(self):
       
         from lino.ui.extjs3 import UI
-
+        #~ UI = settings.LINO.get_ui_class
         ui = UI(make_messages=True)
         #~ # install Lino urls under root location (`/`)
         #~ ui = urlpatterns = ui.get_patterns()

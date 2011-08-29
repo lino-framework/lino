@@ -22,6 +22,38 @@ from django.utils.translation import ugettext_lazy as _
 
 from lino.utils.choicelists import ChoiceList
 
+from dateutil.tz import tzlocal
+
+def aware(d):
+    return datetime.datetime(d.year,d.month,d.day,tzinfo=tzlocal())
+
+def dt2kw(dt,name,**d):
+    """
+    Store given timestamp `dt` in a field dict. `name` can be 'start' or 'end'. 
+    """
+    if dt:
+        if isinstance(dt,datetime.datetime):
+            d[name+'_date'] = dt.date()
+            if dt.time():
+                d[name+'_time'] = dt.time()
+            else:
+                d[name+'_time'] = None
+        elif isinstance(dt,datetime.date):
+            d[name+'_date'] = dt
+            d[name+'_time'] = None
+        else:
+            raise Exception("Invalid datetime value %r" % dt)
+    else:
+        d[name+'_date'] = None
+        d[name+'_time'] = None
+    return d
+  
+def setkw(obj,**kw):
+    for k,v in kw.items():
+        setattr(obj,k,v)
+                              
+
+
 class EventStatus(ChoiceList):
     """A list of possible values for the `status` field of an :class:`Event`.
     """

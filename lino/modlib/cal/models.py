@@ -38,7 +38,7 @@ from lino.modlib.mails.models import Mailable
 
 from lino.modlib.cal.utils import EventStatus, \
     TaskStatus, DurationUnit, Priority, AccessClass, \
-    GuestStatus, add_duration
+    GuestStatus, add_duration, setkw, dt2kw
 
 from lino.utils.babel import dtosl
 #~ from lino.utils.dpy import is_deserializing
@@ -281,15 +281,25 @@ class Component(ComponentBase,
         if self.alarm_unit:
             if not self.start_date:
                 self.start_date = datetime.date.today()
-            if self.start_time:
-                dt = datetime.datetime.combine(self.start_date,self.start_time)
-            else:
-                d = self.start_date
-                dt = datetime.datetime(d.year,d.month,d.day)
+            dt = self.get_datetime('start')
+            #~ if self.start_time:
+                #~ dt = datetime.datetime.combine(self.start_date,self.start_time)
+            #~ else:
+                #~ d = self.start_date
+                #~ dt = datetime.datetime(d.year,d.month,d.day)
             self.dt_alarm = add_duration(dt,-self.alarm_value,self.alarm_unit)
         else:
             self.dt_alarm = None
         super(Component,self).save(*args,**kw)
+        
+    def get_datetime(self,name):
+        "`name` can be 'start' or 'end'."
+        d = getattr(self,name+'_date')
+        t = getattr(self,name+'_time')
+        if t:
+            return datetime.datetime.combine(d,t)
+        else:
+            return datetime.datetime(d.year,d.month,d.day)
         
     #~ def summary_row(self,ui,rr,**kw):
         #~ html = contacts.PartnerDocument.summary_row(self,ui,rr,**kw)
@@ -310,22 +320,38 @@ class Event(Component,mixins.TypedPrintable):
         verbose_name_plural = _("Events")
         abstract = True
         
+    end = fields.FieldSet(_("End"),'end_date end_time')
     end_date = models.DateField(
         blank=True,null=True,
-        verbose_name=_("End date"))
+        verbose_name=_("End Date"))
     end_time = models.TimeField(
         blank=True,null=True,
-        verbose_name=_("End time"))
+        verbose_name=_("End Time"))
     transparent = models.BooleanField(_("Transparent"),default=False)
     type = models.ForeignKey(EventType,verbose_name=_("Event Type"),null=True,blank=True)
     place = models.ForeignKey(Place,verbose_name=_("Place"),null=True,blank=True) # iCal:LOCATION
     priority = Priority.field(_("Priority"),null=True,blank=True) # iCal:PRIORITY
     status = EventStatus.field(_("Status"),null=True,blank=True) # iCal:STATUS
     duration = fields.FieldSet(_("Duration"),'duration_value duration_unit')
-    duration_value = models.IntegerField(_("Value"),null=True,blank=True) # iCal:DURATION
-    duration_unit = DurationUnit.field(_("Unit"),null=True,blank=True) # iCal:DURATION
+    duration_value = models.IntegerField(_("Duration value"),null=True,blank=True) # iCal:DURATION
+    duration_unit = DurationUnit.field(_("Duration unit"),null=True,blank=True) # iCal:DURATION
     #~ repeat_value = models.IntegerField(_("Repeat every"),null=True,blank=True) # iCal:DURATION
     #~ repeat_unit = DurationUnit.field(verbose_name=_("Repeat every"),null=True,blank=True) # iCal:DURATION
+    
+    def duration_changed(self):
+        if self.duration_value is None or self.duration_unit is None:
+            return
+        dt = self.get_datetime('start')
+        end_time = add_duration(dt,self.duration_value,self.duration_unit)
+        setkw(self,**dt2kw(end_time,'end'))
+        
+    def duration_value_changed(self,oldvalue):
+        self.duration_changed()
+        #~ print "20110829 duration_changed!"
+        
+    def duration_unit_changed(self,oldvalue):
+        self.duration_changed()
+        #~ print "20110829 duration_changed!"
 
 #~ class Task(Component,contacts.PartnerDocument):
 class Task(mixins.Owned,Component):

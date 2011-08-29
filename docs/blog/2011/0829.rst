@@ -42,4 +42,47 @@ First success after only one hour of programming!
 20110829b Field Sets
 --------------------
 
+Ich hatte eine spontane Vision, wie ich den folgenden 
+todo-Punkt lösen kann:
+
+#.  Field groups. Die Felder alarm_value und alarm_unit sollten 
+    wirklich gruppiert sein. 
+    
+Am elegantesten wäre in der Model definition::
+    
+        alarm = fields.FieldGroup(_("Alarm"),'alarm_value alarm_unit')
+
+Und siehe da, es funktioniert!
+Noch nicht zufriedenstellend, aber cool dass das überhaupt so einfach ging.
+
+
+20110829c Renamed "attendee" to "guest"
+---------------------------------------
+
+Google nennt die Teilnehmer eines Termins einfach "Gäste". 
+Nicht "attendees" wie im RFC, und auch nicht "participants" 
+wie man es oft sieht. Genial.
+
+
+20110829d makeui
+----------------
+
+Ich habe noch nicht rausgefunden, wie ich es schaffe, 
+dass :term:`makeui` und :term:`makedocs` für alle 
+user interfaces funktionieren können.
+Vielleicht muss ich eine neue Konvention beschließen:
+dass das in :setting:`ROOT_URLCONF` angegebene Modul außer der 
+von Django erwarteten Variablen ``urlpatterns`` 
+für Lino auch eine Variable ``ui`` definieren muss. 
+Hm... das ist nicht schön...
+
+Oder könnten wir es so machen: in der :xfile:`urls.py` stünde nur::
+
+  from django.conf import settings
+  urlpatterns = settings.LINO.urlpatterns
+
+Aber das geht momentan noch nicht, weil kernel.analyze_models 
+den parameter make_messages hat...
+Lassen wir das mal was reifen...
+
 

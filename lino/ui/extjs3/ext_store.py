@@ -120,7 +120,8 @@ class StoreField(object):
                 return
             raise exceptions.ValidationError({
               self.field.name:_("Existing primary key value %r may not be modified.") % instance.pk})
-        setattr(instance,self.field.name,v)
+              
+        self.set_value_in_object(instance,v)
         #~ print 20110524, __file__, self.field.name, v
         #~ try:
             #~ setattr(instance,self.field.name,v)
@@ -128,6 +129,14 @@ class StoreField(object):
             #~ logger.exception("%s = %r : %s",self.field.name,v,e)
             #~ raise 
         return
+        
+    def set_value_in_object(self,instance,v):
+        old_value = getattr(instance,self.field.name)
+        if old_value != v:
+            setattr(instance,self.field.name,v)
+            m = getattr(instance,self.field.name + "_changed",None)
+            if m is not None:
+                m(old_value)
 
 class PasswordStoreField(StoreField):
   
@@ -404,8 +413,8 @@ class ComboStoreField(StoreField):
                 Django refuses to explicitly assign None to a non-nullable field.
                 """
                 return 
-        setattr(instance,self.field.name,v)
-        #~ return instance
+        self.set_value_in_object(instance,v)
+        #~ setattr(instance,self.field.name,v)
 
     def obj2list(self,request,obj):
         value,text = self.get_value_text(obj)
@@ -618,8 +627,7 @@ class Store:
             disabled_fields = set()
         #~ print 20110406, disabled_fields
         for f in self.fields:
-            if not f.field in disabled_fields:
-            #~ if not isinstance(f,StoreField) or not f.field in disabled_fields:
+            if not f.field.name in disabled_fields:
                 #~ logger.info("Store.form2obj %s", f.field.name)
                 try:
                     f.form2obj(instance,form_values,is_new)

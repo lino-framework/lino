@@ -115,14 +115,12 @@ def analyze_models(self,make_messages):
             if make_messages:
                 dtl.make_message_file()
             
-        #~ load_config_files('%s.%s.*dtl' % (model._meta.app_label,model.__name__),loader)
         load_config_files(loader,'*.dtl','%s/%s' % (model._meta.app_label,model.__name__))
         
         #~ logger.debug("20110822 %s._lino_detail_layouts : %s",
             #~ full_model_name(model),
             #~ ' '.join(["%s=%s" % (k,dl.filename) for k,dl in model._lino_detail_layouts.items()]))
         
-            
         if get_class_attr(model,'summary_row') is None:
             if model._lino_detail_layouts:
                 def f(obj,ui,rr,**kw):

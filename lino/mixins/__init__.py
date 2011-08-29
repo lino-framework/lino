@@ -181,10 +181,13 @@ class DiffingMixin(object):
         self._original_state = dict(self.__dict__)
         
     def save(self, *args, **kwargs):
+        #~ for name,old_new in self.changed_columns().items():
+            
         state = dict(self.__dict__)
         del state['_original_state']
         self._original_state = state
         super(DiffingMixin, self).save()
+        
     def is_dirty(self):
         missing = object()
         result = {}
@@ -192,6 +195,7 @@ class DiffingMixin(object):
             if value != self.__dict__.get(key, missing):
                 return True
         return False
+        
     def changed_columns(self):
         missing = object()
         result = {}

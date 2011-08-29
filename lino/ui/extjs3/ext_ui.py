@@ -306,9 +306,11 @@ class ExtUI(base.UI):
             return ext_elems.PictureElement(lh,name,de,**kw)
 
         if isinstance(de,fields.FieldSet):
-            e = lh.desc2elem(ext_elems.FieldSet,name,de.desc)
+            e = lh.desc2elem(ext_elems.FieldSetPanel,name,de.desc)
             e.label = de.verbose_name
-            print 20110829, e, de.desc
+            #~ for child in e.elements:
+                #~ child.update(label=None)
+            #~ print 20110829, e, de.desc
             return e
             
         if isinstance(de,models.Field):
@@ -407,8 +409,8 @@ class ExtUI(base.UI):
         e = self.create_field_element(lh,rt,**kw)
         #~ if lh.rh.report.actor_id == 'contacts.Persons':
             #~ print 'ext_ui.py create_meth_element',name,'-->',e
-        if name == 'preview':
-            print 20110714, 'ext_ui.create_meth_element', meth, repr(e)
+        #~ if name == 'preview':
+            #~ print 20110714, 'ext_ui.create_meth_element', meth, repr(e)
         return e
         #~ e = lh.main_class.field2elem(lh,return_type,**kw)
         #~ assert e.field is not None,"e.field is None for %s.%s" % (lh.layout,name)
@@ -427,6 +429,23 @@ class ExtUI(base.UI):
         e = lh.main_class.field2elem(lh,field,**kw)
         assert e.field is not None,"e.field is None for %s.%s" % (lh.layout,name)
         lh.add_store_field(e.field)
+        
+        #~ if lh.main_class is DetailMainPanel:
+            #~ def wrap(e):
+                #~ if isinstance(e,HtmlBoxElement): return e
+                #~ if settings.LINO.use_tinymce:
+                    #~ if isinstance(e,TextFieldElement) and e.format == 'html': 
+                        #~ # no need to wrap them since they are Panels
+                        #~ return e
+                #~ po = dict(layout='form') # 20101028
+                #~ if not isinstance(e,TextFieldElement):
+                    #~ po.update(autoHeight=True)
+                #~ ct = Panel(lh,field.name+"_ct",True,e,**po)#,flex=0)
+                #~ ct.field = field
+                #~ return ct
+            
+            #~ e = wrap(e)
+        
         return e
         #return FieldElement(self,field,**kw)
         
