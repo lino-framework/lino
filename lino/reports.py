@@ -364,11 +364,6 @@ class ShowDetailAction(ReportAction,actions.OpenWindowAction):
     def get_elem_title(self,elem):
         return _("%s (Detail)")  % unicode(elem)
     
-    #~ def __init__(self,rpt,layout):
-        #~ self.layout = layout
-        #~ self.label = layout.label
-        #~ self.name = layout._actor_name
-        #~ actions.OpenWindowAction.__init__(self,rpt)
         
 class InsertRow(ReportAction,actions.OpenWindowAction):
     callable_from = (GridEdit,ShowDetailAction)
@@ -1509,7 +1504,7 @@ class LayoutHandle:
         #~ self.height = self.layout.height or self._main.height
         self.width = self._main.width
         self.height = self._main.height
-        if False:
+        if True:
             self.write_debug_info()
         
         #~ self.default_button = None
@@ -1526,7 +1521,7 @@ class LayoutHandle:
         #~ return str(self.layout) + "Handle"
         
     def __str__(self):
-        return "%s%s" % (self.rh.report,self.__class__.__name__)
+        return "%s %s" % (self.rh,self.__class__.__name__)
         
     #~ def elems_by_field(self,name):
         #~ return self._elems_by_field.get(name,[])
@@ -1556,9 +1551,11 @@ class LayoutHandle:
     def write_debug_info(self):
         if self.layout.filename and self.layout.write_debug_info:
             filename = "%s.debug.html" % self.layout.filename
+            filename = os.path.join(self.layout.cd.name,filename)
             logger.info("Writing %s..." % filename)
             f = codecs.open(filename,"w",encoding='utf-8')
             f.write('''<html><body><table border="1">''')
+            f.write('''<h1>%s</h1>''' % self)
             f.write(u"\n".join(self._main.debug_lines()))
             f.write('''</table></body></html>''')
             f.close()

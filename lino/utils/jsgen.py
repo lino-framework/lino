@@ -67,22 +67,17 @@ def register_converter(func):
     CONVERTERS.append(func)
     
 def declare_vars(v):
-    #~ if isinstance(v,Component) and v.declare_type == DECLARE_VAR:
-        #~ print "20100527", v
-    #~ if isinstance(v,list) or isinstance(v,tuple): 
     if isinstance(v,(list,tuple)): 
         for sub in v:
             for ln in declare_vars(sub):
                 yield ln
         return
-    if isinstance(v,dict): # ) is types.DictType:
+    if isinstance(v,dict): 
         for sub in v.values():
             for ln in declare_vars(sub):
                 yield ln
         return
-    #~ ok = False
     if isinstance(v,Component): 
-        #~ ok = True
         for sub in v.ext_options().values():
             for ln in declare_vars(sub):
                 yield ln
@@ -93,11 +88,7 @@ def declare_vars(v):
             yield ln
         # DON'T return
     if isinstance(v,Variable) and v.declare_type == DECLARE_VAR:
-        #~ ok = True
         yield "var %s = %s;" % (v.ext_name,'\n'.join(v.js_value())) 
-    #~ if v is not None and not ok:
-        #~ if not v.__class__ in (unicode,str, int,bool,js_code):
-            #~ print "20100527 Ignoring", v.__class__, v
 
 
 def py2js(v):

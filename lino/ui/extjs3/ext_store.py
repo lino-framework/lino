@@ -131,7 +131,7 @@ class StoreField(object):
         return
         
     def set_value_in_object(self,instance,v):
-        old_value = getattr(instance,self.field.name)
+        old_value = getattr(instance,self.field.attname)
         if old_value != v:
             setattr(instance,self.field.name,v)
             m = getattr(instance,self.field.name + "_changed",None)

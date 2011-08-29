@@ -86,3 +86,31 @@ den parameter make_messages hat...
 Lassen wir das mal was reifen...
 
 
+20110829e Field Sets
+--------------------
+
+Cool! Lino now offers fieldsets.
+This change wasn't trivial because it required a few fundamental internal 
+changes in :mod:`lino.ui.extjs3.ext_elems`.
+
+First usage cases was the detail of an Event. 
+This model has several fields like this::
+
+    duration_value = models.IntegerField(_("Duration value"),null=True,blank=True) # iCal:DURATION
+    duration_unit = DurationUnit.field(_("Duration unit"),null=True,blank=True) # iCal:DURATION
+    
+Now we can add a :class:`lino.fields.FieldSet` below that declaration::
+
+    duration = fields.FieldSet(_("Duration"),'duration_value duration_unit')
+
+Another example is :attr:`lino.apps.dsbe.models.Person.eid`,
+a fieldset that defines labels for its children::
+
+    eid = fields.FieldSet(_("eID card"),
+        "card_number card_valid_from card_valid_until card_issuer card_type",
+        card_number=_("number"),
+        card_valid_from=_("valid from"),
+        card_valid_until=_("until"),
+        card_issuer=_("issued by"),
+        card_type=_("card type"),
+        )

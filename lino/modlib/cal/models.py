@@ -184,6 +184,7 @@ class ComponentBase(models.Model):
     start_time = models.TimeField(
         blank=True,null=True,
         verbose_name=_("Start time"))# iCal:DTSTART
+    start = fields.FieldSet(_("Start"),'start_date start_time')
     summary = models.CharField(_("Summary"),max_length=200,blank=True) # iCal:SUMMARY
     description = fields.RichTextField(_("Description"),blank=True,format='html')
     
@@ -320,13 +321,13 @@ class Event(Component,mixins.TypedPrintable):
         verbose_name_plural = _("Events")
         abstract = True
         
-    end = fields.FieldSet(_("End"),'end_date end_time')
     end_date = models.DateField(
         blank=True,null=True,
         verbose_name=_("End Date"))
     end_time = models.TimeField(
         blank=True,null=True,
         verbose_name=_("End Time"))
+    end = fields.FieldSet(_("End"),'end_date end_time')
     transparent = models.BooleanField(_("Transparent"),default=False)
     type = models.ForeignKey(EventType,verbose_name=_("Event Type"),null=True,blank=True)
     place = models.ForeignKey(Place,verbose_name=_("Place"),null=True,blank=True) # iCal:LOCATION
@@ -347,11 +348,11 @@ class Event(Component,mixins.TypedPrintable):
         
     def duration_value_changed(self,oldvalue):
         self.duration_changed()
-        #~ print "20110829 duration_changed!"
+        #~ print "20110829 duration_changed!", oldvalue
         
     def duration_unit_changed(self,oldvalue):
         self.duration_changed()
-        #~ print "20110829 duration_changed!"
+        #~ print "20110829 duration_changed!", oldvalue
 
 #~ class Task(Component,contacts.PartnerDocument):
 class Task(mixins.Owned,Component):

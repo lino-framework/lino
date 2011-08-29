@@ -429,6 +429,15 @@ class Person(Partner,contacts.PersonMixin,contacts.Contact,contacts.Born,Printab
         verbose_name=_("eID card issuer"))
     "The administration who issued this ID card. Imported from TIM."
     
+    eid = fields.FieldSet(_("eID card"),
+        "card_number card_valid_from card_valid_until card_issuer card_type",
+        card_number=_("number"),
+        card_valid_from=_("valid from"),
+        card_valid_until=_("until"),
+        card_issuer=_("issued by"),
+        card_type=_("card type"),
+        )
+    
     noble_condition = models.CharField(max_length=50,blank=True,null=True,
         verbose_name=_("noble condition"))
     "The eventual noble condition of this person. Imported from TIM."

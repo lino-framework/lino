@@ -33,7 +33,6 @@ from django.core.exceptions import ValidationError
 import logging
 logger = logging.getLogger(__name__)
 
-#~ from lino.utils import dblogger
 from lino.utils import babel
 from lino.utils import choosers
 from lino.tools import full_model_name
@@ -240,6 +239,12 @@ class GenericForeignKeyIdField(models.PositiveIntegerField):
     
     
 class FieldSet:
-    def __init__(self,verbose_name,desc):
+    def __init__(self,verbose_name,desc=None,**child_labels):
         self.verbose_name = verbose_name
         self.desc = desc
+        self.child_labels = child_labels
+        
+    def get_child_label(self,name):
+        s = self.child_labels.get(name,None)
+        #~ logger.info('get_child_label(%r)->%s',name,unicode(s))
+        return s

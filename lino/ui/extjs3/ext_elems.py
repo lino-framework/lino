@@ -53,6 +53,10 @@ def a2btn(a):
 def py2html(obj,name):
     for n in name.split('.'):
         obj = getattr(obj,n,"N/A")
+    if callable(obj):
+        obj = obj()
+    if getattr(obj, '__iter__', False):
+        obj = list(obj)
     return escape(unicode(obj))
     
 def before_row_edit(panel):
@@ -210,7 +214,10 @@ class VisibleComponent(Component):
         
     def debug_lines(self):
         sep = u"</td><td>"
-        cols = "ext_name name parent label __class__.__name__ labelAlign vertical width preferred_width height preferred_height flex".split()
+        cols = """ext_name name parent label __class__.__name__ 
+        elements js_value
+        labelAlign vertical width preferred_width height 
+        preferred_height vflex""".split()
         yield '<tr><td>' + sep.join(cols) + '</td></tr>'
         for e in self.walk():
             yield '<tr><td>'+sep.join([py2html(e,n) for n in cols]) +'</td></tr>'
@@ -846,7 +853,7 @@ class Container(LayoutElement):
                 elif isinstance(e,Panel):
                     self.active_children += e.active_children
                     #~ self.has_fields = True
-            kw.update(items=elements)
+            #~ kw.update(items=elements)
                 
         LayoutElement.__init__(self,lh,name,**kw)
         
@@ -881,6 +888,31 @@ class Container(LayoutElement):
                 s += ln + "\n"
         return s
 
+    def ext_options(self,**kw):
+        kw = LayoutElement.ext_options(self,**kw)
+        kw.update(items=self.elements)
+        return kw
+
+class Wrapper(VisibleComponent):
+    def __init__(self,e,**kw):
+        kw.update(layout='form')
+        if not isinstance(e,TextFieldElement):
+            kw.update(autoHeight=True)
+        kw.update(items=e,xtype='panel')
+        VisibleComponent.__init__(self,e.name+"_ct",**kw)
+        self.wrapped = e
+        for n in ('width', 'height', 'preferred_width','preferred_height','vflex'):
+            setattr(self,n,getattr(e,n))
+        #~ e.update(anchor="100%")
+        if e.vflex: 
+            e.update(anchor="100% 100%")
+        else:
+            e.update(anchor="100%")
+            
+    def walk(self):
+        for e in self.wrapped.walk():
+            yield e
+        yield self
 
 class Panel(Container):
     """
@@ -1029,29 +1061,19 @@ class Panel(Container):
                     #~ d.update(layout='vbox',autoHeight=True)
             else:
                 d.update(layout='hbox',autoHeight=True) # 20101028
-                #~ d.update(layout='hbox')
-                #~ 20101116 d.update(layoutConfig=dict(align='stretchmax'))
-                #~ if stretch : # 20100912
-                    #~ d.update(layoutConfig=dict(align='stretch'))
-                #~ else:
-                    #~ d.update(layoutConfig=dict(align='stretchmax'))
                 
         if d['layout'] == 'form':
             assert self.vertical
+            self.wrap_formlayout_elements()
             #~ d.update(autoHeight=True)
             if len(self.elements) == 1 and self.elements[0].vflex:
                 self.elements[0].update(anchor="100% 100%")
             else:
                 for e in self.elements:
-                    #~ assert not e.vflex
-                    #~ h = e.height or e.preferred_height
-                    #~ if e.vflex:
-                        #~ e.value.update(anchor="100% 100%")
-                    #~ else:
-                        #~ e.value.update(anchor="100%")
                     e.update(anchor="100%")
                 
-        if d['layout'] == 'hbox':
+        elif d['layout'] == 'hbox':
+            self.wrap_formlayout_elements()
             if not self.vflex: # 20101028
                 d.update(autoHeight=True)
                 d.update(layoutConfig=dict(align='stretchmax'))
@@ -1061,14 +1083,11 @@ class Panel(Container):
                     #~ e.value.update(columnWidth=float(w)/self.preferred_width) # 20100615
                     e.value.update(flex=int(w*100/self.preferred_width))
                 
-            #~ wrappers = []
-            #~ for e in self.elements:
-                #~ wrappers.append(dict(layout='form',autoHeight=True,items=e))
-            #~ d.update(items=wrappers)
               
         elif d['layout'] == 'vbox':
             "a vbox with 2 or 3 elements, of which at least two are vflex will be implemented as a VBorderPanel"
             assert len(self.elements) > 1
+            self.wrap_formlayout_elements()
             vflex_count = 0
             h = self.height or self.preferred_height
             for e in self.elements:
@@ -1091,8 +1110,27 @@ class Panel(Container):
                 self.elements[1].update(region='center')
                 if len(self.elements) == 3:
                     self.elements[2].update(region='south')
+        elif d['layout'] == 'fit':
+            self.wrap_formlayout_elements()
+        else:
+            raise Exception("layout is %r" % d['layout'] )
         
-
+    def wrap_formlayout_elements(self):
+        #~ if lh.main_class is DetailMainPanel:
+        def wrap(e):
+            #~ if isinstance(e,Panel): return e
+            if not isinstance(e,FieldElement): return e
+            if e.label is None: return e
+            if isinstance(e,HtmlBoxElement): return e
+            if settings.LINO.use_tinymce:
+                if isinstance(e,TextFieldElement) and e.format == 'html': 
+                    # no need to wrap them since they are Panels
+                    return e
+            return Wrapper(e)
+        self.elements = [wrap(e) for e in self.elements]
+          
+            
+        
             
         
     def ext_options(self,**d):
@@ -1133,6 +1171,14 @@ class Panel(Container):
         
 class FieldSetPanel(Panel):
     value_template = "new Ext.form.FieldSet(%s)"
+    def __init__(self,lh,name,vertical,*elements,**kw):
+        self.fieldset = getattr(lh.rh.report.model,name)
+        for child in elements:
+            child.label = self.fieldset.get_child_label(child.name)
+        Panel.__init__(self,lh,name,vertical,*elements,**kw)
+        
+        self.label = self.fieldset.verbose_name
+        
     def ext_options(self,**d):
         d = Panel.ext_options(self,**d)
         d.update(frame=False)
@@ -1140,6 +1186,9 @@ class FieldSetPanel(Panel):
         d.update(border=True)
         d.update(labelAlign=self.labelAlign)
         return d
+        
+    #~ def wrap_formlayout_elements(self):
+        #~ pass
   
 
 class GridElement(Container): 
@@ -1359,7 +1408,7 @@ class DetailMainPanel(Panel,MainPanel):
         return kw
         
     @classmethod
-    def field2elem(cls,lh,field,**kw):
+    def unused_field2elem(cls,lh,field,**kw):
         e = MainPanel.field2elem(lh,field,**kw)
         if isinstance(e,HtmlBoxElement): return e
         if settings.LINO.use_tinymce:

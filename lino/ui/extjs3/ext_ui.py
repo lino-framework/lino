@@ -307,7 +307,7 @@ class ExtUI(base.UI):
 
         if isinstance(de,fields.FieldSet):
             e = lh.desc2elem(ext_elems.FieldSetPanel,name,de.desc)
-            e.label = de.verbose_name
+            #~ e.label = de.verbose_name
             #~ for child in e.elements:
                 #~ child.update(label=None)
             #~ print 20110829, e, de.desc
@@ -429,22 +429,6 @@ class ExtUI(base.UI):
         e = lh.main_class.field2elem(lh,field,**kw)
         assert e.field is not None,"e.field is None for %s.%s" % (lh.layout,name)
         lh.add_store_field(e.field)
-        
-        #~ if lh.main_class is DetailMainPanel:
-            #~ def wrap(e):
-                #~ if isinstance(e,HtmlBoxElement): return e
-                #~ if settings.LINO.use_tinymce:
-                    #~ if isinstance(e,TextFieldElement) and e.format == 'html': 
-                        #~ # no need to wrap them since they are Panels
-                        #~ return e
-                #~ po = dict(layout='form') # 20101028
-                #~ if not isinstance(e,TextFieldElement):
-                    #~ po.update(autoHeight=True)
-                #~ ct = Panel(lh,field.name+"_ct",True,e,**po)#,flex=0)
-                #~ ct.field = field
-                #~ return ct
-            
-            #~ e = wrap(e)
         
         return e
         #return FieldElement(self,field,**kw)
@@ -1231,8 +1215,7 @@ tinymce.init({
         """Generate the :xfile:`lino.js`.
         """
         fn = os.path.join(settings.MEDIA_ROOT,*self.lino_js_parts()) 
-        if False:
-            # useful when debugging directly on the generated lino.js
+        if not settings.LINO.auto_makeui:
             logger.info("NOT generating %s ...", fn)
             return 
         if not os.path.isdir(settings.MEDIA_ROOT):

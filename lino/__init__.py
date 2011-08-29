@@ -167,6 +167,11 @@ class Lino(object):
     
     """
     
+    auto_makeui = True
+    """
+    useful when debugging directly on the generated `lino.js`
+    """
+    
     root_url = '' # 
     """
     must begin with a slash if not empty
