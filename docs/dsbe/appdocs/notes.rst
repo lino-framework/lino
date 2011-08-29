@@ -280,7 +280,7 @@ Note(id, user_id, must_build, person_id, company_id, date, type_id, event_type_i
 name       type          verbose name                                                          
 ========== ============= ======================================================================
 id         AutoField     ID                                                                    
-user       ForeignKey    user (Benutzer,utilisateur)                                           
+user       ForeignKey    User (Benutzer,Utilisateur)                                           
 must_build BooleanField  must build (muss generiert werden,doit être construit)                
 person     ForeignKey    Person (Personne)                                                     
 company    ForeignKey    Company (Firma,Société)                                               

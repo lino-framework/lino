@@ -41,7 +41,7 @@ and local modifications will be sent back to the remote calendar.
 name         type          verbose name               
 ============ ============= ===========================
 id           AutoField     ID                         
-user         ForeignKey    user (Benutzer,utilisateur)
+user         ForeignKey    User (Benutzer,Utilisateur)
 type         CharField     Type                       
 name         CharField     Name (Nom)                 
 url_template CharField     URL template               
@@ -622,18 +622,18 @@ Type: TextField
 
 
 .. index::
-   pair: model; AttendeeRole
+   pair: model; GuestRole
 
-.. _lino.cal.AttendeeRole:
+.. _lino.cal.GuestRole:
 
-----------------------
-Model **AttendeeRole**
-----------------------
-
-
+-------------------
+Model **GuestRole**
+-------------------
 
 
-A possible value for the `role` field of an :class:`Attendee`.
+
+
+A possible value for the `role` field of an :class:`Guest`.
 
 
   
@@ -651,17 +651,17 @@ name_en CharField      Designation (en)
 Defined in :srcref:`/lino/modlib/cal/models.py`
 
 Referenced from
-`lino.cal.Attendee.role`_
+`lino.cal.Guest.role`_
 
 
 
 .. index::
    single: field;id
    
-.. _lino.cal.AttendeeRole.id:
+.. _lino.cal.GuestRole.id:
 
-Field **AttendeeRole.id**
-=========================
+Field **GuestRole.id**
+======================
 
 
 
@@ -673,10 +673,10 @@ Type: AutoField
 .. index::
    single: field;name
    
-.. _lino.cal.AttendeeRole.name:
+.. _lino.cal.GuestRole.name:
 
-Field **AttendeeRole.name**
-===========================
+Field **GuestRole.name**
+========================
 
 
 
@@ -688,10 +688,10 @@ Type: BabelCharField
 .. index::
    single: field;name_fr
    
-.. _lino.cal.AttendeeRole.name_fr:
+.. _lino.cal.GuestRole.name_fr:
 
-Field **AttendeeRole.name_fr**
-==============================
+Field **GuestRole.name_fr**
+===========================
 
 
 
@@ -703,10 +703,10 @@ Type: CharField
 .. index::
    single: field;name_nl
    
-.. _lino.cal.AttendeeRole.name_nl:
+.. _lino.cal.GuestRole.name_nl:
 
-Field **AttendeeRole.name_nl**
-==============================
+Field **GuestRole.name_nl**
+===========================
 
 
 
@@ -718,10 +718,10 @@ Type: CharField
 .. index::
    single: field;name_en
    
-.. _lino.cal.AttendeeRole.name_en:
+.. _lino.cal.GuestRole.name_en:
 
-Field **AttendeeRole.name_en**
-==============================
+Field **GuestRole.name_en**
+===========================
 
 
 
@@ -733,18 +733,18 @@ Type: CharField
 
 
 .. index::
-   pair: model; Attendee
+   pair: model; Guest
 
-.. _lino.cal.Attendee:
+.. _lino.cal.Guest:
 
-------------------
-Model **Attendee**
-------------------
-
-
+---------------
+Model **Guest**
+---------------
 
 
-An Attendee is a Contact who (possibly) attends to an :class:`Event`.
+
+
+A Guest is a Contact who is invited to an :class:`Event`.
 
   
 ========== =============== ======================================================
@@ -752,11 +752,11 @@ name       type            verbose name
 ========== =============== ======================================================
 id         AutoField       ID                                                    
 must_build BooleanField    must build (muss generiert werden,doit être construit)
-contact    ForeignKey      Contact                                               
+contact    ForeignKey      Contact (Kontakt)                                     
 language   LanguageField   Language (Sprache,Langue)                             
 event      ForeignKey      Event (Termin)                                        
-role       ForeignKey      Attendee Role                                         
-status     ChoiceListField Attendee Status                                       
+role       ForeignKey      Guest Role                                            
+status     ChoiceListField Guest Status                                          
 remark     CharField       Remark (Bemerkung,Remarque)                           
 ========== =============== ======================================================
 
@@ -771,10 +771,10 @@ Referenced from
 .. index::
    single: field;id
    
-.. _lino.cal.Attendee.id:
+.. _lino.cal.Guest.id:
 
-Field **Attendee.id**
-=====================
+Field **Guest.id**
+==================
 
 
 
@@ -786,10 +786,10 @@ Type: AutoField
 .. index::
    single: field;must_build
    
-.. _lino.cal.Attendee.must_build:
+.. _lino.cal.Guest.must_build:
 
-Field **Attendee.must_build**
-=============================
+Field **Guest.must_build**
+==========================
 
 
 
@@ -801,10 +801,10 @@ Type: BooleanField
 .. index::
    single: field;contact
    
-.. _lino.cal.Attendee.contact:
+.. _lino.cal.Guest.contact:
 
-Field **Attendee.contact**
-==========================
+Field **Guest.contact**
+=======================
 
 
 
@@ -816,10 +816,10 @@ Type: ForeignKey
 .. index::
    single: field;language
    
-.. _lino.cal.Attendee.language:
+.. _lino.cal.Guest.language:
 
-Field **Attendee.language**
-===========================
+Field **Guest.language**
+========================
 
 
 
@@ -831,10 +831,10 @@ Type: LanguageField
 .. index::
    single: field;event
    
-.. _lino.cal.Attendee.event:
+.. _lino.cal.Guest.event:
 
-Field **Attendee.event**
-========================
+Field **Guest.event**
+=====================
 
 
 
@@ -846,10 +846,10 @@ Type: ForeignKey
 .. index::
    single: field;role
    
-.. _lino.cal.Attendee.role:
+.. _lino.cal.Guest.role:
 
-Field **Attendee.role**
-=======================
+Field **Guest.role**
+====================
 
 
 
@@ -861,10 +861,10 @@ Type: ForeignKey
 .. index::
    single: field;status
    
-.. _lino.cal.Attendee.status:
+.. _lino.cal.Guest.status:
 
-Field **Attendee.status**
-=========================
+Field **Guest.status**
+======================
 
 
 
@@ -876,10 +876,10 @@ Type: ChoiceListField
 .. index::
    single: field;remark
    
-.. _lino.cal.Attendee.remark:
+.. _lino.cal.Guest.remark:
 
-Field **Attendee.remark**
-=========================
+Field **Guest.remark**
+======================
 
 
 
@@ -901,16 +901,16 @@ Model **Event**
 
 
 
-Event(id, user_id, created, modified, project_id, must_build, calendar_id, uid, start_date, start_time, summary, description, access_class, sequence, alarm_value, alarm_unit, dt_alarm, rset_id, end_date, end_time, transparent, type_id, place_id, priority, status, duration_value, duration_unit)
+Event(id, user_id, created, modified, project_id, must_build, calendar_id, uid, start_date, start_time, summary, description, access_class, sequence, alarm_value, alarm_unit, dt_alarm, user_modified, rset_id, end_date, end_time, transparent, type_id, place_id, priority, status, duration_value, duration_unit)
   
 ============== =============== ======================================================
 name           type            verbose name                                          
 ============== =============== ======================================================
 id             AutoField       ID                                                    
-user           ForeignKey      user (Benutzer,utilisateur)                           
+user           ForeignKey      User (Benutzer,Utilisateur)                           
 created        DateTimeField   created                                               
 modified       DateTimeField   modified                                              
-project        ForeignKey      project                                               
+project        ForeignKey      Person (Personne)                                     
 must_build     BooleanField    must build (muss generiert werden,doit être construit)
 calendar       ForeignKey      Calendar (Kalender)                                   
 uid            CharField       UID                                                   
@@ -920,9 +920,10 @@ summary        CharField       Summary (Kurzbeschreibung)
 description    RichTextField   Description (Beschreibung)                            
 access_class   ChoiceListField Access Class (Zugriffsklasse)                         
 sequence       IntegerField    Revision (Revisionsnummer)                            
-alarm_value    IntegerField    Alarm value (Erinnerung (Anzahl))                     
-alarm_unit     ChoiceListField Alarm unit (Erinnerung (Einheit))                     
+alarm_value    IntegerField    Value (Wert,Valeur)                                   
+alarm_unit     ChoiceListField Unit                                                  
 dt_alarm       DateTimeField   Alarm time                                            
+user_modified  BooleanField    modified by user                                      
 rset           ForeignKey      Recurrence Set                                        
 end_date       DateField       End date (Endet am)                                   
 end_time       TimeField       End time (Endet um)                                   
@@ -931,15 +932,15 @@ type           ForeignKey      Event Type (Ereignisart,Type d'événement)
 place          ForeignKey      Place (Ort)                                           
 priority       ChoiceListField Priority (Priorität)                                  
 status         ChoiceListField Status (Statut)                                       
-duration_value IntegerField    Duration value (Dauer (Anzahl))                       
-duration_unit  ChoiceListField Duration Unit (Dauer (Einheit))                       
+duration_value IntegerField    Value (Wert,Valeur)                                   
+duration_unit  ChoiceListField Unit                                                  
 ============== =============== ======================================================
 
     
 Defined in :srcref:`/lino/apps/dsbe/models.py`
 
 Referenced from
-`lino.cal.Attendee.event`_
+`lino.cal.Guest.event`_
 
 
 
@@ -1199,6 +1200,21 @@ Type: DateTimeField
 
    
 .. index::
+   single: field;user_modified
+   
+.. _lino.cal.Event.user_modified:
+
+Field **Event.user_modified**
+=============================
+
+
+
+
+
+Type: BooleanField
+
+   
+.. index::
    single: field;rset
    
 .. _lino.cal.Event.rset:
@@ -1361,37 +1377,38 @@ Model **Task**
 
 
 
-Task(id, user_id, created, modified, owner_type_id, owner_id, project_id, calendar_id, uid, start_date, start_time, summary, description, access_class, sequence, alarm_value, alarm_unit, dt_alarm, rset_id, due_date, due_time, done, percent, status, auto_type)
+Task(id, user_id, created, modified, owner_type_id, owner_id, project_id, calendar_id, uid, start_date, start_time, summary, description, access_class, sequence, alarm_value, alarm_unit, dt_alarm, user_modified, rset_id, due_date, due_time, done, percent, status, auto_type)
   
-============ ======================== =================================================
-name         type                     verbose name                                     
-============ ======================== =================================================
-id           AutoField                ID                                               
-user         ForeignKey               user (Benutzer,utilisateur)                      
-created      DateTimeField            created                                          
-modified     DateTimeField            modified                                         
-owner_type   ForeignKey               Owner type (Besitzertabelle,type de propriétaire)
-owner_id     GenericForeignKeyIdField Owner (Besitzer,Propriétaire)                    
-project      ForeignKey               project                                          
-calendar     ForeignKey               Calendar (Kalender)                              
-uid          CharField                UID                                              
-start_date   DateField                Start date (Beginnt am)                          
-start_time   TimeField                Start time (Beginnt um)                          
-summary      CharField                Summary (Kurzbeschreibung)                       
-description  RichTextField            Description (Beschreibung)                       
-access_class ChoiceListField          Access Class (Zugriffsklasse)                    
-sequence     IntegerField             Revision (Revisionsnummer)                       
-alarm_value  IntegerField             Alarm value (Erinnerung (Anzahl))                
-alarm_unit   ChoiceListField          Alarm unit (Erinnerung (Einheit))                
-dt_alarm     DateTimeField            Alarm time                                       
-rset         ForeignKey               Recurrence Set                                   
-due_date     DateField                Due date (Fällig am,Terme)                       
-due_time     TimeField                Due time (Fällig um)                             
-done         BooleanField             Done (Erledigt,Fait)                             
-percent      IntegerField             Duration value (Dauer (Anzahl))                  
-status       ChoiceListField          Task Status (Aufgabenstatus)                     
-auto_type    IntegerField             auto type                                        
-============ ======================== =================================================
+============= ======================== =================================================
+name          type                     verbose name                                     
+============= ======================== =================================================
+id            AutoField                ID                                               
+user          ForeignKey               User (Benutzer,Utilisateur)                      
+created       DateTimeField            created                                          
+modified      DateTimeField            modified                                         
+owner_type    ForeignKey               Owner type (Besitzertabelle,type de propriétaire)
+owner_id      GenericForeignKeyIdField Owner (Besitzer,Propriétaire)                    
+project       ForeignKey               Person (Personne)                                
+calendar      ForeignKey               Calendar (Kalender)                              
+uid           CharField                UID                                              
+start_date    DateField                Start date (Beginnt am)                          
+start_time    TimeField                Start time (Beginnt um)                          
+summary       CharField                Summary (Kurzbeschreibung)                       
+description   RichTextField            Description (Beschreibung)                       
+access_class  ChoiceListField          Access Class (Zugriffsklasse)                    
+sequence      IntegerField             Revision (Revisionsnummer)                       
+alarm_value   IntegerField             Value (Wert,Valeur)                              
+alarm_unit    ChoiceListField          Unit                                             
+dt_alarm      DateTimeField            Alarm time                                       
+user_modified BooleanField             modified by user                                 
+rset          ForeignKey               Recurrence Set                                   
+due_date      DateField                Due date (Fällig am,Terme)                       
+due_time      TimeField                Due time (Fällig um)                             
+done          BooleanField             Done (Erledigt,Fait)                             
+percent       IntegerField             Duration value (Dauer (Anzahl))                  
+status        ChoiceListField          Task Status (Aufgabenstatus)                     
+auto_type     IntegerField             auto type                                        
+============= ======================== =================================================
 
     
 Defined in :srcref:`/lino/apps/dsbe/models.py`
@@ -1669,6 +1686,21 @@ Field **Task.dt_alarm**
 
 
 Type: DateTimeField
+
+   
+.. index::
+   single: field;user_modified
+   
+.. _lino.cal.Task.user_modified:
+
+Field **Task.user_modified**
+============================
+
+
+
+
+
+Type: BooleanField
 
    
 .. index::

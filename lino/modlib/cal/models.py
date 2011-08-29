@@ -38,7 +38,7 @@ from lino.modlib.mails.models import Mailable
 
 from lino.modlib.cal.utils import EventStatus, \
     TaskStatus, DurationUnit, Priority, AccessClass, \
-    AttendeeStatus, add_duration
+    GuestStatus, add_duration
 
 from lino.utils.babel import dtosl
 #~ from lino.utils.dpy import is_deserializing
@@ -422,39 +422,38 @@ class MyTasks(mixins.ByUser):
     column_names = 'start_date summary done status *'
 
 
-class AttendeeRole(babel.BabelNamed):
+class GuestRole(babel.BabelNamed):
     """
-    A possible value for the `role` field of an :class:`Attendee`.
+    A possible value for the `role` field of an :class:`Guest`.
     
     """
     class Meta:
-        verbose_name = _("Attendee Role")
-        verbose_name_plural = _("Attendee Roles")
+        verbose_name = _("Guest Role")
+        verbose_name_plural = _("Guest Roles")
 
 
-class AttendeeRoles(reports.Report):
-    model = AttendeeRole
+class GuestRoles(reports.Report):
+    model = GuestRole
     
 
-class Attendee(contacts.ContactDocument,
-               mixins.CachedPrintable,
-               Mailable):
+class Guest(contacts.ContactDocument,
+            mixins.CachedPrintable,
+            Mailable):
     """
-    An Attendee is a Contact who (possibly) attends to an :class:`Event`.
+    A Guest is a Contact who is invited to an :class:`Event`.
     """
     class Meta:
-        verbose_name = _("Attendee")
-        verbose_name_plural = _("Attendees")
-        #~ abstract = True
+        verbose_name = _("Guest")
+        verbose_name_plural = _("Guests")
         
     event = models.ForeignKey('cal.Event',
         verbose_name=_("Event")) 
         
-    role = models.ForeignKey('cal.AttendeeRole',
-        verbose_name=_("Attendee Role"),
+    role = models.ForeignKey('cal.GuestRole',
+        verbose_name=_("Role"),
         blank=True,null=True) 
         
-    status = AttendeeStatus.field(null=True,blank=True)
+    status = GuestStatus.field(verbose_name=_("Status"),null=True,blank=True)
     
     #~ confirmed = models.DateField(
         #~ blank=True,null=True,
@@ -474,14 +473,14 @@ class Attendee(contacts.ContactDocument,
         mixins.CachedPrintable.setup_report(rpt)
         Mailable.setup_report(rpt)
         
-class Attendees(reports.Report):
-    model = Attendee
+class Guests(reports.Report):
+    model = Guest
     column_names = 'contact role status remark event *'
     
-class AttendeesByEvent(Attendees):
+class GuestsByEvent(Guests):
     fk_name = 'event'
 
-class AttendeesByContact(Attendees):
+class GuestsByContact(Guests):
     fk_name = 'contact'
     column_names = 'event role status remark * contact'
 
@@ -641,12 +640,12 @@ def setup_config_menu(site,ui,user,m):
     m  = m.add_menu("cal",_("~Calendar"))
     m.add_action('cal.Places')
     m.add_action('cal.EventTypes')
-    m.add_action('cal.AttendeeRoles')
+    m.add_action('cal.GuestRoles')
     m.add_action('cal.Calendars')
   
 def setup_explorer_menu(site,ui,user,m):
     m.add_action('cal.Events')
     m.add_action('cal.Tasks')
-    m.add_action('cal.Attendees')
+    m.add_action('cal.Guests')
     m.add_action('cal.RecurrenceSets')
   

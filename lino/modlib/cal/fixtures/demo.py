@@ -30,26 +30,26 @@ from lino.tools import resolve_model
 
 def objects():
 
-    arole = Instantiator('cal.AttendeeRole').build
-    yield arole(**babel_values('name',
+    guest_role = Instantiator('cal.GuestRole').build
+    yield guest_role(**babel_values('name',
           de=u"Teilnehmer",
           fr=u"Participant",
           en=u"Participant",
           et=u"Osavõtja",
           ))
-    yield arole(**babel_values('name',
+    yield guest_role(**babel_values('name',
           de=u"Reiseführer",
           fr=u"Guide",
           en=u"Guide",
           et=u"Reisijuht",
           ))
-    yield arole(**babel_values('name',
+    yield guest_role(**babel_values('name',
           de=u"Vorsitzender",
           fr=u"Président",
           en=u"Presider",
           et=u"Eesistuja",
           ))
-    yield arole(**babel_values('name',
+    yield guest_role(**babel_values('name',
           de=u"Protokollführer",
           fr=u"Greffier",
           en=u"Reporter",

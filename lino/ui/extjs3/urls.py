@@ -14,6 +14,8 @@
 """The default URLconf module, 
 pointed to by
 :setting:`ROOT_URLCONF` in :mod:`lino.apps.std.settings`.
+
+Installs Lino URLs under root location (`/`).
 """
 
 #~ import os
@@ -23,5 +25,6 @@ pointed to by
 
 from lino.ui.extjs3 import UI
 
-# install Lino urls under root location (`/`)
-urlpatterns = UI().get_patterns()
+# Create lino.ui.extjs3.ext_ui.ExtJS instance
+ui = UI()
+urlpatterns = ui.get_patterns()

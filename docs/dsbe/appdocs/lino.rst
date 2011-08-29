@@ -315,7 +315,7 @@ A reusable block of text that can be selected from a text editor to be
 name        type          verbose name                          
 =========== ============= ======================================
 id          AutoField     ID                                    
-user        ForeignKey    user (Benutzer,utilisateur)           
+user        ForeignKey    User (Benutzer,Utilisateur)           
 name        CharField     Designation (Beschreibung,Désignation)
 description RichTextField Description (Beschreibung)            
 text        RichTextField Template Text (Vorlagentext)          

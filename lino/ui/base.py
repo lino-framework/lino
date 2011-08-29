@@ -56,7 +56,6 @@ class UI:
     
     def __init__(self,prefix='',**options):
         settings.LINO.setup(**options)
-        #~ self.site = settings.LINO
         assert isinstance(prefix,basestring)
         self.prefix = prefix
         self.root_url = settings.LINO.root_url

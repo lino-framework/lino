@@ -8,5 +8,5 @@ main =
   user project place priority access_class 
   duration #duration_value #duration_unit alarm #alarm_value #alarm_unit 
   transparent rset
-  description AttendeesByEvent
+  description GuestsByEvent
 

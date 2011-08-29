@@ -92,14 +92,14 @@ Upload(id, user_id, created, modified, owner_type_id, owner_id, file, mimetype, 
 name        type                     verbose name                                     
 =========== ======================== =================================================
 id          AutoField                ID                                               
-user        ForeignKey               user (Benutzer,utilisateur)                      
+user        ForeignKey               User (Benutzer,Utilisateur)                      
 created     DateTimeField            created                                          
 modified    DateTimeField            modified                                         
 owner_type  ForeignKey               Owner type (Besitzertabelle,type de propriétaire)
 owner_id    GenericForeignKeyIdField Owner (Besitzer,Propriétaire)                    
 file        FileField                File (Datei,Fichier)                             
 mimetype    CharField                MIME type (MIME-Art,type MIME)                   
-type        ForeignKey               type                                             
+type        ForeignKey               upload type (Upload-Art,types d'upload)          
 valid_until DateField                valid until (gültig bis,valid jusqu'au)          
 description CharField                Description (Beschreibung)                       
 =========== ======================== =================================================

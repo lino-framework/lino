@@ -53,7 +53,7 @@ phone         CharField     Phone (Telefon,Téléphone)
 gsm           CharField     GSM                                                                          
 fax           CharField     Fax                                                                          
 remarks       TextField     Remarks (Bemerkungen,Remarques)                                              
-contact_ptr   OneToOneField contact ptr                                                                  
+contact_ptr   OneToOneField Contact (Kontakt)                                                            
 vat_id        CharField     VAT id (MWSt.-Nr.,N° de TVA)                                                 
 type          ForeignKey    Company type (Firmenart,Type de société)                                     
 is_active     BooleanField  is active (aktiv,est actif)                                                  
@@ -62,7 +62,7 @@ bank_account1 CharField     Bank account 1 (Bankkonto 1,Compte en banque 1)
 bank_account2 CharField     Bank account 2 (Bankkonto 2,Compte en banque 2)                              
 prefix        CharField     prefix                                                                       
 hourly_rate   PriceField    hourly rate (Stundensatz,coûr horaire)                                       
-company_ptr   OneToOneField company ptr                                                                  
+company_ptr   OneToOneField Company (Firma,Société)                                                      
 ============= ============= =============================================================================
 
     
@@ -857,7 +857,7 @@ user             ForeignKey    responsible (DSBE) (Verantwortlicher (DSBE),Respo
 must_build       BooleanField  must build (muss generiert werden,doit être construit)        
 person           ForeignKey    Person (Personne)                                             
 provider         ForeignKey    Job Provider (Stellenanbieter)                                
-contact          ForeignKey    represented by (Vertreten durch,représenté par)               
+contact          ForeignKey    represented by (Vertreten durch)                              
 language         LanguageField Language (Sprache,Langue)                                     
 job              ForeignKey    Job (Stelle)                                                  
 type             ForeignKey    Contract Type (Vertragsart,Type de contrat)                   
@@ -1722,8 +1722,8 @@ name          type         verbose name
 id            AutoField    ID                                                    
 must_build    BooleanField must build (muss generiert werden,doit être construit)
 date          DateField    Date (Datum)                                          
-contract_type ForeignKey   contract type (Vertragsart,type de contrat)           
-job_type      ForeignKey   job type                                              
+contract_type ForeignKey   Contract Type (Vertragsart,Type de contrat)           
+job_type      ForeignKey   Job Type (Stellenart)                                 
 ============= ============ ======================================================
 
     

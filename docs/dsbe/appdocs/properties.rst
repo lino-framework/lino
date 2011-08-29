@@ -640,7 +640,7 @@ id       AutoField  ID
 group    ForeignKey Property group (Eigenschaftsgruppe,Groupe de propriétés)
 property ForeignKey Property (Eigenschaft,Propriété)                        
 value    CharField  Value (Wert,Valeur)                                     
-person   ForeignKey person (Person,Personne)                                
+person   ForeignKey Person (Personne)                                       
 remark   CharField  Remark (Bemerkung,Remarque)                             
 ======== ========== ========================================================
 
@@ -764,7 +764,7 @@ id       AutoField  ID
 group    ForeignKey Property group (Eigenschaftsgruppe,Groupe de propriétés)
 property ForeignKey Property (Eigenschaft,Propriété)                        
 value    CharField  Value (Wert,Valeur)                                     
-search   ForeignKey search                                                  
+search   ForeignKey Person Search (Personensuche,Recherche de personnes)    
 ======== ========== ========================================================
 
     
@@ -872,7 +872,7 @@ id       AutoField  ID
 group    ForeignKey Property group (Eigenschaftsgruppe,Groupe de propriétés)
 property ForeignKey Property (Eigenschaft,Propriété)                        
 value    CharField  Value (Wert,Valeur)                                     
-search   ForeignKey search                                                  
+search   ForeignKey Person Search (Personensuche,Recherche de personnes)    
 ======== ========== ========================================================
 
     

@@ -64,7 +64,7 @@ remarks       TextField     Remarks (Bemerkungen,Remarques)
 Defined in :srcref:`/lino/modlib/contacts/models.py`
 
 Referenced from
-`lino.mails.Recipient.contact`_, `lino.jobs.JobProvider.contact_ptr`_, `lino.users.User.contact_ptr`_, `lino.contacts.Role.parent`_, `lino.contacts.Role.child`_, `lino.contacts.Person.contact_ptr`_, `lino.contacts.Company.contact_ptr`_, `lino.dsbe.CourseProvider.contact_ptr`_, `lino.cal.Attendee.contact`_
+`lino.mails.Recipient.contact`_, `lino.jobs.JobProvider.contact_ptr`_, `lino.users.User.contact_ptr`_, `lino.contacts.Role.parent`_, `lino.contacts.Role.child`_, `lino.contacts.Person.contact_ptr`_, `lino.contacts.Company.contact_ptr`_, `lino.dsbe.CourseProvider.contact_ptr`_, `lino.cal.Guest.contact`_
 
 
 
@@ -658,14 +658,14 @@ Model **Role**
 The role of a given :class:`Person` in a given :class:`Company`.
 
   
-====== ========== ==============
-name   type       verbose name  
-====== ========== ==============
-id     AutoField  ID            
-parent ForeignKey Parent Contact
-child  ForeignKey Child Contact 
-type   ForeignKey Contact Role  
-====== ========== ==============
+====== ========== =============================
+name   type       verbose name                 
+====== ========== =============================
+id     AutoField  ID                           
+parent ForeignKey Parent Contact (Kontakt für) 
+child  ForeignKey Child Contact (Kontaktperson)
+type   ForeignKey Contact Role (Funktion)      
+====== ========== =============================
 
     
 Defined in :srcref:`/lino/modlib/contacts/models.py`
@@ -775,9 +775,9 @@ phone                       CharField         Phone (Telefon,Téléphone)
 gsm                         CharField         GSM                                                                                 
 fax                         CharField         Fax                                                                                 
 remarks                     TextField         Remarks (Bemerkungen,Remarques)                                                     
-contact_ptr                 OneToOneField     contact ptr                                                                         
-birth_date                  DateField         Birth date (Geburtsdatum,Date de naissance)                                         
-birth_date_circa            BooleanField      not exact (circa,inexact)                                                           
+contact_ptr                 OneToOneField     Contact (Kontakt)                                                                   
+birth_date                  DateField         Birth date (Geburtsdatum)                                                           
+birth_date_circa            BooleanField      not exact (ungenau)                                                                 
 first_name                  CharField         First name (Vorname,Prénom)                                                         
 last_name                   CharField         Last name (Familienname,Nom de famille)                                             
 title                       CharField         Title (Anrede,Allocution)                                                           
@@ -1943,7 +1943,7 @@ phone         CharField     Phone (Telefon,Téléphone)
 gsm           CharField     GSM                                                                          
 fax           CharField     Fax                                                                          
 remarks       TextField     Remarks (Bemerkungen,Remarques)                                              
-contact_ptr   OneToOneField contact ptr                                                                  
+contact_ptr   OneToOneField Contact (Kontakt)                                                            
 vat_id        CharField     VAT id (MWSt.-Nr.,N° de TVA)                                                 
 type          ForeignKey    Company type (Firmenart,Type de société)                                     
 is_active     BooleanField  is active (aktiv,est actif)                                                  

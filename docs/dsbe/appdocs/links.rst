@@ -91,7 +91,7 @@ Link(id, user_id, person_id, company_id, type_id, date, url, name)
 name    type          verbose name                       
 ======= ============= ===================================
 id      AutoField     ID                                 
-user    ForeignKey    user (Benutzer,utilisateur)        
+user    ForeignKey    User (Benutzer,Utilisateur)        
 person  ForeignKey    Person (Personne)                  
 company ForeignKey    Company (Firma,Société)            
 type    ForeignKey    Link type (Verweisart,Type de lien)

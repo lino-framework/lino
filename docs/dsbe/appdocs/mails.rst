@@ -34,7 +34,7 @@ name    type            verbose name
 ======= =============== =========================
 id      AutoField       ID                       
 mail    ForeignKey      mail                     
-contact ForeignKey      Contact                  
+contact ForeignKey      Contact (Kontakt)        
 type    ChoiceListField Recipient Type           
 address EmailField      Address (Adresse,Adresse)
 name    CharField       Name (Nom)               
@@ -231,17 +231,17 @@ Model **InMail**
 
 Incoming Mail
   
-=========== ==================== =======================
-name        type                 verbose name           
-=========== ==================== =======================
-id          AutoField            ID                     
-subject     CharField            Subject (Betreff,Objet)
-body        RichTextField        Body (Inhalt,Corps)    
-mail_ptr    OneToOneField        mail ptr               
-sender_type ForeignKey           sender type            
-sender_id   PositiveIntegerField sender id              
-received    DateTimeField        received               
-=========== ==================== =======================
+=========== ==================== =====================================================
+name        type                 verbose name                                         
+=========== ==================== =====================================================
+id          AutoField            ID                                                   
+subject     CharField            Subject (Betreff,Objet)                              
+body        RichTextField        Body (Inhalt,Corps)                                  
+mail_ptr    OneToOneField        mail                                                 
+sender_type ForeignKey           content type (Inhaltstyp,type de contenu,inhoudstype)
+sender_id   PositiveIntegerField sender id                                            
+received    DateTimeField        received                                             
+=========== ==================== =====================================================
 
     
 Defined in :srcref:`/lino/modlib/mails/models.py`
@@ -377,8 +377,8 @@ name     type          verbose name
 id       AutoField     ID                         
 subject  CharField     Subject (Betreff,Objet)    
 body     RichTextField Body (Inhalt,Corps)        
-mail_ptr OneToOneField mail ptr                   
-user     ForeignKey    user (Benutzer,utilisateur)
+mail_ptr OneToOneField mail                       
+user     ForeignKey    User (Benutzer,Utilisateur)
 sent     DateTimeField sent                       
 ======== ============= ===========================
 

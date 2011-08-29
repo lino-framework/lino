@@ -9,5 +9,5 @@ main =
   place priority access_class 
   transparent duration_value duration_unit rset
   description
-  AttendeesByEvent
+  GuestsByEvent
 

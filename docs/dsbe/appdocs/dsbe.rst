@@ -440,7 +440,7 @@ Specifies how well a certain Person knows a certain Language.
 name      type            verbose name                                     
 ========= =============== =================================================
 id        AutoField       ID                                               
-person    ForeignKey      person (Person,Personne)                         
+person    ForeignKey      Person (Personne)                                
 language  ForeignKey      Language (Sprache,Langue)                        
 spoken    ChoiceListField spoken (Wort,oral)                               
 written   ChoiceListField written (Schrift,écrit)                          
@@ -872,7 +872,7 @@ Exclusion(id, person_id, type_id, excluded_from, excluded_until, remark)
 name           type       verbose name               
 ============== ========== ===========================
 id             AutoField  ID                         
-person         ForeignKey person (Person,Personne)   
+person         ForeignKey Person (Personne)          
 type           ForeignKey Reason (Grund,Motif)       
 excluded_from  DateField  from (von,de)              
 excluded_until DateField  until (bis,jusque)         
@@ -1187,7 +1187,7 @@ phone         CharField     Phone (Telefon,Téléphone)
 gsm           CharField     GSM                                                                          
 fax           CharField     Fax                                                                          
 remarks       TextField     Remarks (Bemerkungen,Remarques)                                              
-contact_ptr   OneToOneField contact ptr                                                                  
+contact_ptr   OneToOneField Contact (Kontakt)                                                            
 vat_id        CharField     VAT id (MWSt.-Nr.,N° de TVA)                                                 
 type          ForeignKey    Company type (Firmenart,Type de société)                                     
 is_active     BooleanField  is active (aktiv,est actif)                                                  
@@ -1196,7 +1196,7 @@ bank_account1 CharField     Bank account 1 (Bankkonto 1,Compte en banque 1)
 bank_account2 CharField     Bank account 2 (Bankkonto 2,Compte en banque 2)                              
 prefix        CharField     prefix                                                                       
 hourly_rate   PriceField    hourly rate (Stundensatz,coûr horaire)                                       
-company_ptr   OneToOneField company ptr                                                                  
+company_ptr   OneToOneField Company (Firma,Société)                                                      
 ============= ============= =============================================================================
 
     
@@ -2011,7 +2011,7 @@ PersonSearch(id, user_id, title, aged_from, aged_to, sex, only_my_persons, coach
 name            type         verbose name                                             
 =============== ============ =========================================================
 id              AutoField    ID                                                       
-user            ForeignKey   user (Benutzer,utilisateur)                              
+user            ForeignKey   User (Benutzer,Utilisateur)                              
 title           CharField    Search Title (Titel Suchliste,Intitulé de la recherche)  
 aged_from       IntegerField Aged from (Alter von,Age: de)                            
 aged_to         IntegerField Aged to (Alter bis,Age: jusque)                          
@@ -2195,15 +2195,15 @@ Model **WantedLanguageKnowledge**
 
 WantedLanguageKnowledge(id, search_id, language_id, spoken, written)
   
-======== =============== =========================
-name     type            verbose name             
-======== =============== =========================
-id       AutoField       ID                       
-search   ForeignKey      search                   
-language ForeignKey      Language (Sprache,Langue)
-spoken   ChoiceListField spoken (Wort,oral)       
-written  ChoiceListField written (Schrift,écrit)  
-======== =============== =========================
+======== =============== ====================================================
+name     type            verbose name                                        
+======== =============== ====================================================
+id       AutoField       ID                                                  
+search   ForeignKey      Person Search (Personensuche,Recherche de personnes)
+language ForeignKey      Language (Sprache,Langue)                           
+spoken   ChoiceListField spoken (Wort,oral)                                  
+written  ChoiceListField written (Schrift,écrit)                             
+======== =============== ====================================================
 
     
 Defined in :srcref:`/lino/apps/dsbe/models.py`

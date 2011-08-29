@@ -62,7 +62,7 @@ phone         CharField     Phone (Telefon,Téléphone)
 gsm           CharField     GSM                                                                          
 fax           CharField     Fax                                                                          
 remarks       TextField     Remarks (Bemerkungen,Remarques)                                              
-contact_ptr   OneToOneField contact ptr                                                                  
+contact_ptr   OneToOneField Contact (Kontakt)                                                            
 first_name    CharField     First name (Vorname,Prénom)                                                  
 last_name     CharField     Last name (Familienname,Nom de famille)                                      
 title         CharField     Title (Anrede,Allocution)                                                    
