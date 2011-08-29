@@ -89,11 +89,15 @@ Lassen wir das mal was reifen...
 20110829e Field Sets
 --------------------
 
-Cool! Lino now offers fieldsets.
+Lino now offers a way to define fieldsets.
+A fieldset is a group of fields that are visually together in an extra box 
+than can have a label for the group. The labels of the fields are not displayed by 
+default but can optionally be overridden.
+
 This change wasn't trivial because it required a few fundamental internal 
 changes in :mod:`lino.ui.extjs3.ext_elems`.
 
-First usage cases was the detail of an Event. 
+First usage case was the detail of an Event. 
 This model has several fields like this::
 
     duration_value = models.IntegerField(_("Duration value"),null=True,blank=True) # iCal:DURATION
@@ -102,6 +106,21 @@ This model has several fields like this::
 Now we can add a :class:`lino.fields.FieldSet` below that declaration::
 
     duration = fields.FieldSet(_("Duration"),'duration_value duration_unit')
+
+.. image:: 0829a.jpg
+    :scale: 40
+
+Here is the corresponding `.dtl` file::
+
+  main = 
+    summary user project 
+    start end duration alarm
+    status place priority access_class transparent rset
+    created:20 modified:20 user_modified  
+    description GuestsByEvent
+
+
+
 
 Another example is :attr:`lino.apps.dsbe.models.Person.eid`,
 a fieldset that defines labels for its children::
@@ -114,3 +133,8 @@ a fieldset that defines labels for its children::
         card_issuer=_("issued by"),
         card_type=_("card type"),
         )
+
+.. image:: 0829b.jpg
+    :scale: 40
+
+

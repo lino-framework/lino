@@ -152,15 +152,15 @@ def objects():
     from lino.models import update_site_config
     
     uploadType = Instantiator('uploads.UploadType',"name").build
-    yield uploadType(babelitem(de=u"Personalausweis",fr=u"Carte d'identité"))
-    p = uploadType(babelitem(de=u"Aufenthaltserlaubnis",fr=u"Permis de séjour"))
+    yield uploadType(babelitem(de=u"Personalausweis",fr=u"Carte d'identité",en="ID card"))
+    p = uploadType(babelitem(de=u"Aufenthaltserlaubnis",fr=u"Permis de séjour",en="Residence permit"))
     yield p
     update_site_config(residence_permit_upload_type=p)
-    p = uploadType(babelitem(de=u"Arbeitserlaubnis",fr=u"Permis de travail"))
+    p = uploadType(babelitem(de=u"Arbeitserlaubnis",fr=u"Permis de travail",en="Work permit"))
     yield p
     update_site_config(work_permit_upload_type = p)
-    yield uploadType(babelitem(de=u"Vertrag",fr=u"Contrat"))
-    p = uploadType(babelitem(de=u"Führerschein",fr=u"Permis de conduire"))
+    yield uploadType(babelitem(de=u"Vertrag",fr=u"Contrat",en="Contract"))
+    p = uploadType(babelitem(de=u"Führerschein",fr=u"Permis de conduire",en="Diving licence"))
     yield p
     update_site_config(driving_licence_upload_type = p)
     
@@ -179,32 +179,36 @@ def objects():
     yield aidtype(**babel_values('name',
       de=u'Eingliederungseinkommen Kat 1 (Zusammenlebend)',
       fr=u"Revenu d'intégration cat. 1 (couple)",
+      en=u"Revenu d'intégration cat. 1 (couple)",
       ))
     yield aidtype(**babel_values('name',
       de=u'Eingliederungseinkommen Kat 2 (Alleinlebend)',
       fr=u"Revenu d'intégration cat. 2 (célibataire)",
+      en=u"Revenu d'intégration cat. 2 (célibataire)",
       ))
     yield aidtype(**babel_values('name',
       de=u'Eingliederungseinkommen Kat 3 (Familie zu Lasten)',
       fr=u"Revenu d'intégration cat. 3 (famille à charge)",
+      en=u"Revenu d'intégration cat. 3 (famille à charge)",
       ))
     yield aidtype(**babel_values('name',
       de=u'Ausl\xe4nderbeihilfe Kat 1 (Zusammenlebend)',
       fr=u"Aide aux immigrants cat. 1 (couple)",
+      en=u"Aide aux immigrants cat. 1 (couple)",
       ))
     yield aidtype(**babel_values('name',
       de=u'Ausl\xe4nderbeihilfe Kat 2 (Alleinlebend)',
       fr=u"Aide aux immigrants cat. 2 (célibataire)",
+      en=u"Aide aux immigrants cat. 2 (célibataire)",
       ))
     yield aidtype(**babel_values('name',
       de=u'Ausl\xe4nderbeihilfe Kat 3 (Familie zu Lasten)',
       fr=u"Aide aux immigrants cat. 3 (famille à charge)",
+      en=u"Aide aux immigrants cat. 3 (famille à charge)",
       ))
     yield aidtype(**babel_values('name',
       de=u'Sonstige Sozialhilfe',
       fr=u"Autre aide sociale",
+      en=u"Autre aide sociale",
       ))
     
-    if False:
-        M = resolve_model('dsbe.FooListing')
-        yield M(title='FooListing')
