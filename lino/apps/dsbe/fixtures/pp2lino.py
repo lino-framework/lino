@@ -206,7 +206,8 @@ class NotesLoader(LinoMdbLoader):
         kw.update(subject=row['JournalClient'])
         kw.update(date=self.parsedate(row['DateJournal']))
         idclient = int(row['IDClient'])
-        kw.update(person=Person.objects.get(pk=idclient))
+        kw.update(person_id=idclient)
+        #~ kw.update(person=Person.objects.get(pk=idclient))
         yield self.model(**kw)
 
 class UsersISPLoader(LinoMdbLoader):
