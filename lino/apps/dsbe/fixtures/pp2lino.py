@@ -97,6 +97,20 @@ class LinoMdbLoader(Loader):
 
 
 class CityLoader(LinoMdbLoader):
+    """
+    
+INFO Deferred City #184 (u'GANSHOREN') : {'__all__': [u'Un(e) City avec ce Country, Name et Zip code existe d\xe9j\xe0.'
+]}
+INFO Deferred City #270 (u'JETTE') : {'__all__': [u'Un(e) City avec ce Country, Name et Zip code existe d\xe9j\xe0.']}
+INFO Deferred City #289 (u'KOEKELBERG') : {'__all__': [u'Un(e) City avec ce Country, Name et Zip code existe d\xe9j\xe0.
+']}
+INFO Deferred City #474 (u'SCHAERBEEK') : {'__all__': [u'Un(e) City avec ce Country, Name et Zip code existe d\xe9j\xe0.
+']}
+    
+    """
+  
+  
+  
     table_name = 'CboCommuneCodePostal'
     model = City
     headers = u"""
@@ -104,8 +118,9 @@ class CityLoader(LinoMdbLoader):
     """.split()
     
     def row2obj(self,row):
+        pk = int(row['IDCommuneCodePostal'])
         kw = {}
-        kw.update(id=int(row['IDCommuneCodePostal']))
+        kw.update(id=pk)
         kw.update(name=row['Commune'])
         kw.update(zip_code=row['CodePostal'])
         kw.update(country=Country.objects.get(pk='BE'))
@@ -330,7 +345,7 @@ CboTypeContrat = {
     8	: u"PIIS prolongation",
 }
 
-OFFSET_CONTRACT_CPAS = 1000
+OFFSET_CONTRACT_CPAS = 2000
 
 class ContractVSELoader(LinoMdbLoader):
     table_name = 'TBTypeDeContratCPAS'
