@@ -85,7 +85,26 @@ def is_valid_email(s):
         return True
     except ValidationError:
         return False
+
+
+
+class CityLoader(LinoMdbLoader):
+    table_name = 'CboCommuneCodePostal'
+    model = City
+    headers = u"""
+    IDCommuneCodePostal Commune CodePostal
+    """.split()
     
+    def row2obj(self,row):
+        kw = {}
+        kw.update(id=int(row['IDCommuneCodePostal']))
+        kw.update(name=row['Commune'])
+        kw.update(zip_code=row['CodePostal'])
+        kw.update(country=Country.objects.get(pk='BE'))
+        yield self.model(**kw)
+
+
+
 
 OFFSET_JOBPROVIDER = 3000
 
@@ -200,7 +219,7 @@ class PersonLoader(LinoMdbLoader):
 
 
 def get_or_create_job(provider_id,contract_type):
-    if provider_id is None:
+    if provider_id in (None,OFFSET_JOBPROVIDER):
         provider = None
     else:
         try:
@@ -297,7 +316,7 @@ class ContractArt60Loader(LinoMdbLoader):
                     kw.update(person=Person.objects.get(id=int(row[u'IDClient'])+OFFSET_PERSON))
                     yield self.model(**kw)
 
-OFFSET_CONTRACT_TYPE_CPAS = 1000
+OFFSET_CONTRACT_TYPE_CPAS = 100
 
 CboTypeContrat = {
     1	: u"Tutorat",
@@ -310,16 +329,20 @@ CboTypeContrat = {
     8	: u"PIIS prolongation",
 }
 
+OFFSET_CONTRACT_CPAS = 1000
+
 class ContractVSELoader(LinoMdbLoader):
     table_name = 'TBTypeDeContratCPAS'
     model = Contract
     headers = u"""
-    IDTypeDeContratCPAS IDTypeContrat DateDebut DateFin ASCPAS ASISP Statut Evaluation IDClient DateSignature TypePIIS NiveauEtude
+    IDTypeDeContratCPAS IDTypeContrat DateDebut DateFin 
+    ASCPAS ASISP Statut Evaluation IDClient DateSignature 
+    TypePIIS NiveauEtude
     """.split()
     
     def row2obj(self,row):
         kw = {}
-        kw.update(id=int(row['IDTypeDeContratCPAS']))
+        kw.update(id=int(row['IDTypeDeContratCPAS'])+OFFSET_CONTRACT_CPAS)
         #~ ctype = int(row['IDTypeContrat']) 
         #~ if ctype:
             #~ kw.update(type=ContractType.objects.get(pk=ctype+ OFFSET_CONTRACT_TYPE_CPAS))
@@ -336,22 +359,6 @@ class ContractVSELoader(LinoMdbLoader):
                     #~ kw.update(provider=JobProvider.objects.get(id=int(row[u'IDEndroitMiseAuTravail'])+OFFSET_JOBPROVIDER))
                     kw.update(person=Person.objects.get(id=int(row[u'IDClient'])+OFFSET_PERSON))
                     yield self.model(**kw)
-
-class CityLoader(LinoMdbLoader):
-    table_name = 'CboCommuneCodePostal'
-    model = City
-    headers = u"""
-    IDCommuneCodePostal Commune CodePostal
-    """.split()
-    
-    def row2obj(self,row):
-        kw = {}
-        kw.update(id=int(row['IDCommuneCodePostal']))
-        kw.update(name=row['Commune'])
-        kw.update(zip_code=row['CodePostal'])
-        kw.update(country=Country.objects.get(pk='BE'))
-        yield self.model(**kw)
-
 
 def objects():
     #~ User = resolve_model('users.User')
