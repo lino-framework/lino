@@ -59,16 +59,6 @@ from lino.modlib.users.models import User
 from lino.modlib.jobs.models import Job, Contract, JobProvider, \
   ContractEnding, ExamPolicy, ContractType, Company
 
-def get_contracttype(pk):
-    if pk == 0: 
-        return
-    try:
-        ct = ContractType.objects.get(pk=pk)
-    except ContractType.DoesNotExist: 
-        dblogger.warning("ContractType %r does not exist?!",pk)
-        return None
-    return ct
-        
 from lino.utils.mdbtools import Loader
 
 from django.core.validators import validate_email, ValidationError, URLValidator
@@ -431,6 +421,23 @@ def code2user(username):
     except User.DoesNotExist:
         dblogger.warning("Unkown user %r",username)
             
+def phase2group(ph):
+    if not ph: return
+    try:
+        return PersonGroup.objects.get(name=ph)
+    except PersonGroup.DoesNotExist:
+        pass
+
+def get_contracttype(pk):
+    if pk == 0: 
+        return
+    try:
+        ct = ContractType.objects.get(pk=pk)
+    except ContractType.DoesNotExist: 
+        dblogger.warning("ContractType %r does not exist?!",pk)
+        return None
+    return ct
+        
 
 
 
@@ -677,9 +684,7 @@ class PersonLoader(LinoMdbLoader):
         kw.update(coach1=code2user(row[u'IDASISP']))
         kw.update(coach2=code2user(row[u'IDASSSG']))
             
-        phase = row[u'Phase']
-        if phase:
-            kw.update(group=PersonGroup.objects.get(name=phase))
+        kw.update(group=phase2group(row[u'Phase']))
             
         city_id = row[u'IDCommuneCodePostal']
         if city_id:
