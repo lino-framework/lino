@@ -204,7 +204,11 @@ class NotesLoader(LinoMdbLoader):
         kw = {}
         kw.update(id=pk)
         kw.update(body=row['JournalClient'])
-        kw.update(date=self.parsedate(row['DateJournal']))
+        d = self.parsedate(row['DateJournal'])
+        if not d:
+            d = datetime.date.today()
+            dblogger.warning("TBJournal #%s : date was empty")
+        kw.update(date=d)
         idclient = int(row['IDClient']) + OFFSET_PERSON
         kw.update(person_id=idclient)
         #~ kw.update(person=Person.objects.get(pk=idclient))
