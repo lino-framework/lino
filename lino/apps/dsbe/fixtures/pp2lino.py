@@ -86,7 +86,6 @@ def is_valid_email(s):
     except ValidationError:
         return False
         
-        
 CboStatutJuridique = {
   'Personne Physique' : 3,
   'SPRL' : 2,
@@ -130,6 +129,289 @@ CboTypeContrat = {
     7	: u"PIIS formation",
     8	: u"PIIS prolongation",
 }
+
+CboNationalite = {
+  1:"BE",
+  2:"Congolais(e)",
+  3:"Russe",
+  4:"Rwandaise",
+  5:"Chilien(ne)",
+  6:"FR",
+  7:"Roumain(e)",
+  8:"CH",
+  9:"Colombien(ne)",
+  11:"Uruguayen (ne)",
+  12:"Marocain(ne)",
+  14:u"Algérien(ne)",
+  15:"Mauricien(ne)",
+  16:"Togolais(e)",
+  17:u"Réfugié Politique",
+  18:"Turque",
+  19:"Camerounai (se)",
+  20:"Perouvien(ne)",
+  21:"Moldave(iene)",
+  23:"burundais(e)",
+  24:"Sierra Leonais(e)",
+  25:"Mauritanien(ne)",
+  26:u"Brésilien(ne)",
+  27:"Portugais(e)",
+  28:"libanais(e)",
+  29:"DE",
+  30:"syrien(ne)",
+  31:"Guinéen(ne)",
+  32:u"Libérien(ne)",
+  33:"tunisienne",
+  34:"Nigérian(nes)",
+  35:u"ouzbékistan",
+  36:"bolivien(ne)",
+  37:"polonais(e)",
+  38:u"sénégalais(e)",
+  39:"Iranien(ne)",
+  40:"Iraquien(ne)",
+  41:"arménie",
+  42:"Italien(ne)",
+  43:"angolien(ne)",
+  44:"Nigerien(ne)",
+  45:"Chinnoise",
+  46:"burkina Faso",
+  48:"laotienne",
+  49:"ivoirien(ne)",
+  50:u"US",
+  51:"georgien(ne)",
+  52:"grec",
+  53:"yougoslave",
+  54:u"bosnie-herzégovine",
+  55:"Ukrainien(ne)",
+  56:"Equatorien",
+  57:"pakistannais(e)",
+  58:"vietnamien(ne)",
+  59:u"indonésien(ne)",
+  60:"Malgache",
+  62:"indien(ne)",
+  63:"albanais",
+  64:"Espagnol(e)",
+  65:"Macedoine",
+  66:"Djiboutien(ne)",
+  68:"egyptien(ne)",
+  69:"NL",
+  70:"Kazakhstan",
+  71:"Somalien(ne)",
+  72:"Afghane",
+  73:"Cubaine",
+  74:"tchad",
+  75:"Royaume-Uni",
+  76:"lituanienne ",
+  77:"kirghizistan",
+  78:"Ethiopie",
+}
+
+CboPays = {
+  1:u"Afrique du Sud"
+  ,2:u"Albanie"
+  ,3:u"Algérie"
+  ,4:'DE' # u"Allemagne"
+  ,5:u"Andorre"
+  ,6:u"Angola"
+  ,7:u"Antigua-et-Barbuda"
+  ,8:u"Arabie Saoudite"
+  ,9:u"Argentine"
+  ,10:u"Arménie"
+  ,11:'AU' # u"Australie"
+  ,12:'AS' # u"Autriche"
+  ,13:u"Azerbaļdjan"
+  ,14:u"Bahamas"
+  ,15:u"Bahreļn"
+  ,16:u"Bangladesh"
+  ,17:u"Barbade"
+  ,18:u"Beiau"
+  ,19:'BE' # u"Belgique"
+  ,20:u"Belize"
+  ,21:u"Bénin"
+  ,22:u"Bhoutan"
+  ,23:u"Biélorussie"
+  ,24:u"Birmanie"
+  ,25:u"Bolivie"
+  ,26:u"Bosnie-Herzégovine"
+  ,27:u"Botswana"
+  ,28:u"Brésil"
+  ,29:u"Brunei"
+  ,30:u"Bulgarie"
+  ,31:u"Burkina"
+  ,32:u"Burundi"
+  ,33:u"Cambodge"
+  ,34:u"Cameroun"
+  ,35:u"Canada"
+  ,36:u"Cap-Vert"
+  ,37:u"Chili"
+  ,38:'CN' # u"Chine"
+  ,39:u"Chypre"
+  ,40:u"Colombie"
+  ,41:u"Comores"
+  ,42:u"Congo"
+  ,44:u"Cook (les īles)"
+  ,45:u"Corée du Nord"
+  ,46:u"Corée du Sud"
+  ,47:u"Costa Rica"
+  ,48:u"Cōte d'Ivoire"
+  ,49:u"Croatie"
+  ,50:u"Cuba"
+  ,51:'DK' # u"Danemark"
+  ,52:u"République de Djibouti"
+  ,53:u"Dominique"
+  ,54:u"Egypte"
+  ,55:u"Émirats arabes unis"
+  ,56:u"Equateur"
+  ,57:u"Erythrée"
+  ,58:u"Espagne"
+  ,59:u"Estonie"
+  ,60:'US' # u"Etats-Unis"
+  ,61:u"Ethiopie"
+  ,62:u"Fidji"
+  ,63:'FI' # u"Finlande"
+  ,64:'FR' # u"France"
+  ,65:u"Gabon"
+  ,66:u"Gambie"
+  ,67:u"Géorgie"
+  ,68:u"Ghana"
+  ,69:u"Grčce"
+  ,70:u"Grenade"
+  ,71:u"Guatemala"
+  ,72:u"Guinée"
+  ,73:u"Guinée-Bissao"
+  ,74:u"Guinée équatoriale"
+  ,75:u"Guyana"
+  ,76:u"Haļti"
+  ,77:u"Honduras"
+  ,78:u"Hongrie"
+  ,79:u"Inde"
+  ,80:u"Indonésie"
+  ,81:u"Iran"
+  ,82:u"Iraq"
+  ,83:u"Irlande"
+  ,84:u"Islande"
+  ,85:u"Israėl"
+  ,86:u"Italie"
+  ,87:u"Jamaļque"
+  ,88:u"Japon"
+  ,89:u"Jordanie"
+  ,90:u"Kazakhstan"
+  ,91:u"Kenya"
+  ,92:u"Kirghizistan"
+  ,93:u"Kiribati"
+  ,94:u"Koweļt"
+  ,95:u"Laos"
+  ,96:u"Lesotho"
+  ,97:u"Lettonie"
+  ,98:u"Liban"
+  ,99:u"Libéria"
+  ,100:u"Libye"
+  ,101:u"Liechtenstein"
+  ,102:u"Lituanie"
+  ,103:u"Luxembourg"
+  ,104:u"Macédoine"
+  ,105:u"Madagascar"
+  ,106:u"Malaisie"
+  ,107:u"Malawi"
+  ,108:u"Maldives"
+  ,109:u"Mali"
+  ,110:u"Malte"
+  ,111:u"Maroc"
+  ,112:u"Marshall"
+  ,113:u"Maurice"
+  ,114:u"Mauritanie"
+  ,115:u"Mexique"
+  ,116:u"Micronésie"
+  ,117:u"Moldavie"
+  ,118:u"Monaco"
+  ,119:u"Mongolie"
+  ,120:u"Mozambique"
+  ,121:u"Namibie"
+  ,122:u"Nauru"
+  ,123:u"Népal"
+  ,124:u"Nicaragua"
+  ,125:u"Niger"
+  ,126:u"Nigeria"
+  ,127:u"Niue"
+  ,128:u"Norvčge"
+  ,129:u"Nouvelle-Zélande"
+  ,130:u"Oman"
+  ,131:u"Ouganda"
+  ,132:u"Ouzbékistan"
+  ,133:u"Pakistan"
+  ,134:u"Panama"
+  ,135:u"Papouasie - Nouvelle Guin"
+  ,136:u"Paraguay"
+  ,137:u"Pays-Bas"
+  ,138:u"Pérou"
+  ,139:u"Philippines"
+  ,140:u"Pologne"
+  ,141:u"Portugal"
+  ,142:u"Qatar"
+  ,143:u"République centrafricaine"
+  ,144:u"République dominicaine"
+  ,145:u"République tchčque"
+  ,146:u"Roumanie"
+  ,147:u"Royaume-Uni"
+  ,148:'RU' # u"Russie"
+  ,149:u"Rwanda"
+  ,150:u"Saint-Christophe-et-Niévč"
+  ,151:u"Sainte-Lucie"
+  ,152:u"Vatican"
+  ,153:u"Saint-Vincent-et-les Gren"
+  ,154:u"Salomon"
+  ,155:u"Salvador"
+  ,156:u"Samoa occidentales"
+  ,157:u"Sao Tomé-et-Principe"
+  ,158:u"Sénégal"
+  ,159:u"Seychelles"
+  ,160:u"Sierra Leone"
+  ,161:u"Singapour"
+  ,162:u"Slovaquie"
+  ,163:u"Slovénie"
+  ,164:u"Somalie"
+  ,165:u"Soudan"
+  ,166:u"Sri Lanka"
+  ,167:u"Sučde"
+  ,168:u"Suisse"
+  ,169:u"Suriname"
+  ,170:u"Swaziland"
+  ,171:u"Syrie"
+  ,172:u"Tadjikistan"
+  ,173:u"Tanzanie"
+  ,174:u"Tchad"
+  ,175:u"Thaļlande"
+  ,176:u"Togo"
+  ,177:u"Tonga"
+  ,178:u"Trinité-et-Tobago"
+  ,179:u"Tunisie"
+  ,180:u"Turkménistan"
+  ,181:u"Turquie"
+  ,182:u"Tuvalu"
+  ,183:u"Ukraine"
+  ,184:u"Uruguay"
+  ,185:u"Vanuatu"
+  ,186:u"Venezuela"
+  ,187:u"Viźt Nam"
+  ,188:u"Yémen"
+  ,189:u"Yougoslavie"
+  ,190:u"Zaļre"
+  ,191:u"Zambie"
+  ,192:u"Zimbabwe"
+  ,193:u"Afghanistan"
+  ,194:u"Uzbekistan"
+}
+
+
+def k2iso(dd,k):
+    country_id = dd.get(int(k))
+    if len(country_id) == 2:
+        return country_id
+    else
+        dblogger.warning("Unkown country code %s -> %r",k,country_id)
+        
+def nation2iso(k): return k2iso(CboNationalite,k)
+def pays2iso(k):return k2iso(CboNationalite,k)
+  
 
 
 OFFSET_PERSON = 1000
@@ -327,14 +609,14 @@ class PersonLoader(LinoMdbLoader):
     
     model = Person # resolve_model('contacts.Person')
     
-    headers = [u'IDClient', u'DateArrivee', u'NumeroDossier', 
-    u'Titre', u'Nom', u'Prénom', 
-    u'Rue', u'Adresse', u'Numero', u'Boite', 
-    u'IDCommuneCodePostal', u'Tel1', u'Tel2', u'GSM1', 
+    headers = [u'IDClient', u'DateArrivee', u'NumeroDossier',
+    u'Titre', u'Nom', u'Prénom',
+    u'Rue', u'Adresse', u'Numero', u'Boite',
+    u'IDCommuneCodePostal', u'Tel1', u'Tel2', u'GSM1',
     u'GSM2', u'Email', u'DateNaissance', u'IDPays', u'IDNationalite', 
-    u'NumeroNational', u'Conjoint', u'NEnfant', u'IBIS', u'Sexe', 
-    u'Statut', u'DateFin', u'RISEQRIS', u'DateOctroi', 
-    u'MontantRISEQRIS', u'Qualification', u'Phase', u'PIIS', 
+    u'NumeroNational', u'Conjoint', u'NEnfant', u'IBIS', u'Sexe',
+    u'Statut', u'DateFin', u'RISEQRIS', u'DateOctroi',
+    u'MontantRISEQRIS', u'Qualification', u'Phase', u'PIIS',
     u'Tutorat', u'IDASISP', u'IDASSSG', u'Remarques', u'IDTokAns', 
     u'RPE', u'Art 35', u'DateDebutArt35', u'DateFinArt35', u'ALE', u'Update',
     u'PermisDeTravail']    
@@ -342,7 +624,13 @@ class PersonLoader(LinoMdbLoader):
     def row2obj(self,row):
         kw = {}
         kw.update(id=int(row['IDClient']) + OFFSET_PERSON)
-        kw.update(title=row['Titre'])
+        title=row['Titre']
+        if title == "Monsieur"
+            kw.update(sex='M')
+        elif title == "Madame"
+            kw.update(sex='F')
+        else:
+            kw.update(title=title)
         if row['Nom']:
             kw.update(last_name=row['Nom'])
         else:
@@ -352,12 +640,28 @@ class PersonLoader(LinoMdbLoader):
         kw.update(street=row[u'Adresse'])
         kw.update(street_no=row[u'Numero'])
         kw.update(street_box=row[u'Boite'])
+        kw.update(gesdos_id=row[u'NumeroDossier'])
+        kw.update(phone=row[u'Tel1'])
+        kw.update(gsm=row[u'GSM1'])
+        
+        kw.update(birth_country_id=pays2iso(row[u'IDPays']))
+        kw.update(nationality_id=nation2iso(row[u'IDNationalite']))
+        kw.update(national_id=row[u'NumeroNational'])
+        #~ u = User.objects.row[u'IDASISPClient']
+        #~ kw.update(coach1=u)
+            
+        city_id = int(row[u'IDCommuneCodePostal'])
+        kw.update(city_id =city_id)
         if is_valid_email(row[u'Email']):
             kw.update(email=row[u'Email'])
         if row[u'DateNaissance']:
             kw.update(birth_date=row[u'DateNaissance'])
         if row[u'DateArrivee']:
             kw.update(coached_from=row[u'DateArrivee'])
+        kw.update(remarks="""
+        Tel2 : %(Tel2)s
+        GSM2 : %(GSM2)s
+        """ % row)
         yield self.model(**kw)
         
 
