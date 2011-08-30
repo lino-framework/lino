@@ -53,7 +53,7 @@ if not settings.LINO.legacy_data_path:
 from lino.utils import dblogger
 from lino.tools import resolve_model
 
-from lino.apps.dsbe.models import Person    
+from lino.apps.dsbe.models import Person, City, Country   
 from lino.modlib.users.models import User
 from lino.modlib.jobs.models import Job, Contract, JobProvider, \
   ContractEnding, ExamPolicy, ContractType, Company
