@@ -87,6 +87,14 @@ def is_valid_email(s):
         return False
 
 
+class LinoMdbLoader(Loader):
+  
+    mdb_file = settings.LINO.legacy_data_path
+    if not mdb_file:
+        raise Exception("You must specify the name of your .mdb file in settings.LINO.legacy_data_path!")
+
+
+
 
 class CityLoader(LinoMdbLoader):
     table_name = 'CboCommuneCodePostal'
@@ -119,13 +127,6 @@ COMPANY_TYPES = {
   'SCRL' : 4,
   'SIREAS' : None,
 }
-
-
-class LinoMdbLoader(Loader):
-  
-    mdb_file = settings.LINO.legacy_data_path
-    if not mdb_file:
-        raise Exception("You must specify the name of your .mdb file in settings.LINO.legacy_data_path!")
 
 
 class JobProviderLoader(LinoMdbLoader):
