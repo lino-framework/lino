@@ -132,17 +132,17 @@ CboTypeContrat = {
 
 CboNationalite = {
   1:"BE",
-  2:"Congolais(e)",
+  2:"CG", # "Congolais(e)",
   3:"Russe",
-  4:"Rwandaise",
+  4:'RW', # "Rwandaise",
   5:"Chilien(ne)",
   6:"FR",
-  7:"Roumain(e)",
+  7:'RO', # "Roumain(e)",
   8:"CH",
   9:"Colombien(ne)",
   11:"Uruguayen (ne)",
   12:"Marocain(ne)",
-  14:u"Algérien(ne)",
+  14:'DZ', # u"Algérien(ne)",
   15:"Mauricien(ne)",
   16:"Togolais(e)",
   17:u"Réfugié Politique",
@@ -158,15 +158,15 @@ CboNationalite = {
   28:"libanais(e)",
   29:"DE",
   30:"syrien(ne)",
-  31:"Guinéen(ne)",
+  31:"GN", # "Guinéen(ne)",
   32:u"Libérien(ne)",
-  33:"tunisienne",
+  33:"TN",
   34:"Nigérian(nes)",
   35:u"ouzbékistan",
   36:"bolivien(ne)",
   37:"polonais(e)",
   38:u"sénégalais(e)",
-  39:"Iranien(ne)",
+  39:"IR", # "Iranien(ne)",
   40:"Iraquien(ne)",
   41:"arménie",
   42:"Italien(ne)",
@@ -196,7 +196,7 @@ CboNationalite = {
   69:"NL",
   70:"Kazakhstan",
   71:"Somalien(ne)",
-  72:"Afghane",
+  72:"AF",
   73:"Cubaine",
   74:"tchad",
   75:"Royaume-Uni",
@@ -208,7 +208,7 @@ CboNationalite = {
 CboPays = {
   1:u"Afrique du Sud"
   ,2:u"Albanie"
-  ,3:u"Algérie"
+  ,3:'DZ' # u"Algérie"
   ,4:'DE' # u"Allemagne"
   ,5:u"Andorre"
   ,6:u"Angola"
@@ -247,7 +247,7 @@ CboPays = {
   ,39:u"Chypre"
   ,40:u"Colombie"
   ,41:u"Comores"
-  ,42:u"Congo"
+  ,42:'CG' # u"Congo"
   ,44:u"Cook (les īles)"
   ,45:u"Corée du Nord"
   ,46:u"Corée du Sud"
@@ -276,7 +276,7 @@ CboPays = {
   ,69:u"Grčce"
   ,70:u"Grenade"
   ,71:u"Guatemala"
-  ,72:u"Guinée"
+  ,72:"GN" # u"Guinée"
   ,73:u"Guinée-Bissao"
   ,74:u"Guinée équatoriale"
   ,75:u"Guyana"
@@ -285,7 +285,7 @@ CboPays = {
   ,78:u"Hongrie"
   ,79:u"Inde"
   ,80:u"Indonésie"
-  ,81:u"Iran"
+  ,81:"IR" # u"Iran"
   ,82:u"Iraq"
   ,83:u"Irlande"
   ,84:u"Islande"
@@ -350,10 +350,10 @@ CboPays = {
   ,143:u"République centrafricaine"
   ,144:u"République dominicaine"
   ,145:u"République tchčque"
-  ,146:u"Roumanie"
+  ,146:'RO' # u"Roumanie"
   ,147:u"Royaume-Uni"
   ,148:'RU' # u"Russie"
-  ,149:u"Rwanda"
+  ,149:'RW' # u"Rwanda"
   ,150:u"Saint-Christophe-et-Niévč"
   ,151:u"Sainte-Lucie"
   ,152:u"Vatican"
@@ -383,7 +383,7 @@ CboPays = {
   ,176:u"Togo"
   ,177:u"Tonga"
   ,178:u"Trinité-et-Tobago"
-  ,179:u"Tunisie"
+  ,179:u"TN"
   ,180:u"Turkménistan"
   ,181:u"Turquie"
   ,182:u"Tuvalu"
@@ -397,7 +397,7 @@ CboPays = {
   ,190:u"Zaļre"
   ,191:u"Zambie"
   ,192:u"Zimbabwe"
-  ,193:u"Afghanistan"
+  ,193:'AF' #u"Afghanistan"
   ,194:u"Uzbekistan"
 }
 
@@ -405,10 +405,11 @@ CboPays = {
 def k2iso(dd,k,ddname):
     country_id = dd.get(int(k))
     if country_id is None:
-        dblogger.warning("Unkown %s id %s",ddname,k)
+        dblogger.warning("Unknown %s id %s",ddname,k)
+        return None
     if len(country_id) == 2:
         return country_id
-    dblogger.warning("Unkown %s code %s -> %r",ddname,k,country_id)
+    dblogger.warning("Invalid %s code %s -> %r",ddname,k,country_id)
         
 def nation2iso(k): return k2iso(CboNationalite,k,'CboNationalite')
 def pays2iso(k):return k2iso(CboPays,k,'CboPays')
