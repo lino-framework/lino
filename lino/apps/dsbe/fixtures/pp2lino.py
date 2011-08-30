@@ -207,7 +207,7 @@ class NotesLoader(LinoMdbLoader):
         d = self.parsedate(row['DateJournal'])
         if not d:
             d = datetime.date.today()
-            dblogger.warning("TBJournal #%s : date was empty")
+            dblogger.warning("TBJournal #%s : date was empty",pk)
         kw.update(date=d)
         idclient = int(row['IDClient']) + OFFSET_PERSON
         kw.update(person_id=idclient)
@@ -222,15 +222,39 @@ class UsersISPLoader(LinoMdbLoader):
     """.split()
     
     def row2obj(self,row):
-        pk = int(row['IDASISP'])
+        #~ pk = int(row['IDASISP'])
         kw = {}
-        kw.update(id=pk)
+        #~ kw.update(id=pk)
         kw.update(title=row['TitreASISP'])
         kw.update(first_name=row['PrenomASISP'])
         kw.update(last_name=row['NomASISP'])
         kw.update(username=row['CodeASISP'])
         kw.update(phone=row['Tel'])
         st = row['StatutASISP']
+        if st == "Ouvert":
+            kw.update(is_active=True)
+        else:
+            kw.update(is_active=False)
+        yield self.model(**kw)
+
+
+class UsersSGLoader(LinoMdbLoader):
+    table_name = 'TBASSG'
+    model = User
+    headers = u"""
+    IDASSG TitreASISP NomASISP PrenomASISP CodeASISP Tel StatutASISP
+    """.split()
+    
+    def row2obj(self,row):
+        #~ pk = int(row['IDASSSG'])
+        kw = {}
+        #~ kw.update(id=pk)
+        kw.update(title=row['TitreASSSG'])
+        kw.update(first_name=row['PrenomASSSG'])
+        kw.update(last_name=row['NomASSSG'])
+        kw.update(username=row['CodeASSSG'])
+        kw.update(phone=row['TelASSSG'])
+        st = row['StatutASSSG']
         if st == "Ouvert":
             kw.update(is_active=True)
         else:
@@ -445,6 +469,7 @@ def objects():
     for k,v in CboTypeContrat.items():
         yield ContractType(id=k+OFFSET_CONTRACT_TYPE_CPAS,name=v)
     yield UsersISPLoader()
+    yield UsersSGLoader()
     yield CityLoader()
     yield PersonLoader()
     yield JobProviderLoader()
