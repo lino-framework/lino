@@ -414,12 +414,13 @@ def nation2iso(k): return k2iso(CboNationalite,k,'CboNationalite')
 def pays2iso(k):return k2iso(CboPays,k,'CboPays')
 
 
-def code2user(username):
-    if not username: return None
+def code2user(pk,offset=0):
+    if not pk: return None
+    pk = int(pk)
     try:
-        return User.objects.get(username=username)
+        return User.objects.get(id=pk)
     except User.DoesNotExist:
-        dblogger.warning("Unkown user %r",username)
+        dblogger.warning("Unkown user %r",pk)
             
 def phase2group(ph):
     if not ph: return
@@ -440,7 +441,7 @@ def get_contracttype(pk):
         
 
 
-
+OFFSET_USER_ISP = 100
 OFFSET_PERSON = 1000
 OFFSET_JOBPROVIDER = 3000
 """
@@ -540,9 +541,9 @@ class UsersISPLoader(LinoMdbLoader):
     """.split()
     
     def row2obj(self,row):
-        #~ pk = int(row['IDASISP'])
+        pk = int(row['IDASISP'])
         kw = {}
-        #~ kw.update(id=pk)
+        kw.update(id=pk+OFFSET_USER_ISP)
         kw.update(title=row['TitreASISP'])
         kw.update(first_name=row['PrenomASISP'])
         kw.update(last_name=row['NomASISP'])
@@ -564,9 +565,9 @@ class UsersSGLoader(LinoMdbLoader):
     """.split()
     
     def row2obj(self,row):
-        #~ pk = int(row['IDASSSG'])
+        pk = int(row['IDASSSG'])
         kw = {}
-        #~ kw.update(id=pk)
+        kw.update(id=pk)
         kw.update(title=row['TitreASSSG'])
         kw.update(first_name=row['PrenomASSSG'])
         kw.update(last_name=row['NomASSSG'])
@@ -681,7 +682,7 @@ class PersonLoader(LinoMdbLoader):
         kw.update(nationality_id=nation2iso(row[u'IDNationalite']))
         kw.update(national_id=row[u'NumeroNational'])
         
-        kw.update(coach1=code2user(row[u'IDASISP']))
+        kw.update(coach1=code2user(row[u'IDASISP'],OFFSET_USER_ISP))
         kw.update(coach2=code2user(row[u'IDASSSG']))
             
         kw.update(group=phase2group(row[u'Phase']))
