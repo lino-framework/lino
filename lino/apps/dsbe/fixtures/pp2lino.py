@@ -406,8 +406,7 @@ def k2iso(dd,k):
     country_id = dd.get(int(k))
     if len(country_id) == 2:
         return country_id
-    else
-        dblogger.warning("Unkown country code %s -> %r",k,country_id)
+    dblogger.warning("Unkown country code %s -> %r",k,country_id)
         
 def nation2iso(k): return k2iso(CboNationalite,k)
 def pays2iso(k):return k2iso(CboNationalite,k)
