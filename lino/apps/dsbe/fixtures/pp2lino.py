@@ -53,7 +53,7 @@ if not settings.LINO.legacy_data_path:
 from lino.utils import dblogger
 from lino.tools import resolve_model
 
-from lino.apps.dsbe.models import Person, City, Country   
+from lino.apps.dsbe.models import Person, City, Country, Note
 from lino.modlib.users.models import User
 from lino.modlib.jobs.models import Job, Contract, JobProvider, \
   ContractEnding, ExamPolicy, ContractType, Company
@@ -85,10 +85,74 @@ def is_valid_email(s):
         return True
     except ValidationError:
         return False
+        
+        
+CboStatutJuridique = {
+  'Personne Physique' : 3,
+  'SPRL' : 2,
+  'ASBL' : 9,
+  'SA' : 1,
+  'NV' : 1,
+  'Publique' :8, 
+  'BVBA' : 2,
+  'SCRL' : 4,
+  'SIREAS' : None,
+}
+
+CboTypeMiseEmplois = {
+  1	: u"PTP",
+  2	: u"Art 60§7",
+  3	: u"Art 60§7 (Tok)",
+  5	: u"Art 60§7 Privé (Tok)",
+  6	: u"Smet",
+  7	: u"Art 61",
+  8	: u"Activa",
+  9	: u"Stage en Entreprise",
+  17	: u"CDD",
+  18	: u"CDI",
+  19	: u"Intérim",
+  20	: u"ALE",
+  21	: u"FPI",
+  22	: u"SINE",
+  23	: u"anlo",
+  24	: u"wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww",
+  25	: u"contrat de remplacement CDD",
+}
+
+
+CboTypeContrat = {
+    1	: u"Tutorat",
+    2	: u"PIIS 18-25 ans",
+    3	: u"PIIS + 25 ans",
+    4	: u"PIIS étudiant",
+    5	: u"PIIS stage en entreprise - experience prof",
+    6	: u"PIIS stage de détermination et d'orientation socio",
+    7	: u"PIIS formation",
+    8	: u"PIIS prolongation",
+}
+
+
+OFFSET_PERSON = 1000
+OFFSET_JOBPROVIDER = 3000
+"""
+Both CboTypeContrat and CboTypeMiseEmplois go to Lino's ContractType table.
+The following offset is added to CboTypeContrat keys. 
+Must be > item count of CboTypeMiseEmplois.
+"""
+OFFSET_CONTRACT_TYPE_CPAS = 100 
+assert OFFSET_CONTRACT_TYPE_CPAS > len(CboTypeMiseEmplois) 
+
+"""
+Both TBMiseEmplois and TBTypeDeContratCPAS go to Lino's Contract table.
+The following offset is added to TBTypeDeContratCPAS keys. 
+Must be > record count of TBMiseEmplois.
+"""
+OFFSET_CONTRACT_CPAS = 2000
+        
 
 
 class LinoMdbLoader(Loader):
-  
+    "Base for all Loaders in this module"
     mdb_file = settings.LINO.legacy_data_path
     if not mdb_file:
         raise Exception("You must specify the name of your .mdb file in settings.LINO.legacy_data_path!")
@@ -128,20 +192,28 @@ INFO Deferred City #474 (u'SCHAERBEEK') : {'__all__': [u'Un(e) City avec ce Coun
 
 
 
+class NotesLoader(LinoMdbLoader):
+  
+  
+  
+    table_name = 'TBJournal'
+    model = Note
+    headers = u"""
+    IDJournal DateJournal JournalClient IDClient
+    """.split()
+    
+    def row2obj(self,row):
+        pk = int(row['IDJournal'])
+        kw = {}
+        kw.update(id=pk)
+        kw.update(subject=row['JournalClient'])
+        kw.update(date=self.parsedate(row['DateJournal']))
+        idclient = int(row['IDClient'])
+        kw.update(person=Person.objects.get(pk=idclient))
+        yield self.model(**kw)
 
-OFFSET_JOBPROVIDER = 3000
 
-COMPANY_TYPES = {
-  'Personne Physique' : 3,
-  'SPRL' : 2,
-  'ASBL' : 9,
-  'SA' : 1,
-  'NV' : 1,
-  'Publique' :8, 
-  'BVBA' : 2,
-  'SCRL' : 4,
-  'SIREAS' : None,
-}
+
 
 
 class JobProviderLoader(LinoMdbLoader):
@@ -163,7 +235,7 @@ class JobProviderLoader(LinoMdbLoader):
         kw = {}
         kw.update(id=int(row['IDEndroitMiseAuTravail']) + OFFSET_JOBPROVIDER)
         kw.update(name=row['EndroitMiseAuTravail'])
-        companyType=COMPANY_TYPES.get(row['IDStatutJuridique'],None)
+        companyType=CboStatutJuridique.get(row['IDStatutJuridique'],None)
         if companyType:
             kw.update(type=CompanyType.objects.get(id=companyType))
         # see contacts/fixtures/std.py
@@ -191,8 +263,6 @@ class JobProviderLoader(LinoMdbLoader):
             kw.update(email=row[u'EMail'])
         yield self.model(**kw)
     
-
-OFFSET_PERSON = 1000
 
 class PersonLoader(LinoMdbLoader):
     table_name = 'TBClient'
@@ -272,26 +342,6 @@ def get_or_create_job(provider_id,contract_type):
 
 
 
-CboTypeMiseEmplois = {
-  1	: u"PTP",
-  2	: u"Art 60§7",
-  3	: u"Art 60§7 (Tok)",
-  5	: u"Art 60§7 Privé (Tok)",
-  6	: u"Smet",
-  7	: u"Art 61",
-  8	: u"Activa",
-  9	: u"Stage en Entreprise",
-  17	: u"CDD",
-  18	: u"CDI",
-  19	: u"Intérim",
-  20	: u"ALE",
-  21	: u"FPI",
-  22	: u"SINE",
-  23	: u"anlo",
-  24	: u"wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww",
-  25	: u"contrat de remplacement CDD",
-}
-
 class ContractArt60Loader(LinoMdbLoader):
     table_name = 'TBMiseEmplois'
     model = Contract
@@ -331,21 +381,6 @@ class ContractArt60Loader(LinoMdbLoader):
                     #~ kw.update(provider=JobProvider.objects.get(id=))
                     kw.update(person=Person.objects.get(id=int(row[u'IDClient'])+OFFSET_PERSON))
                     yield self.model(**kw)
-
-OFFSET_CONTRACT_TYPE_CPAS = 100
-
-CboTypeContrat = {
-    1	: u"Tutorat",
-    2	: u"PIIS 18-25 ans",
-    3	: u"PIIS + 25 ans",
-    4	: u"PIIS étudiant",
-    5	: u"PIIS stage en entreprise - experience prof",
-    6	: u"PIIS stage de détermination et d'orientation socio",
-    7	: u"PIIS formation",
-    8	: u"PIIS prolongation",
-}
-
-OFFSET_CONTRACT_CPAS = 2000
 
 class ContractVSELoader(LinoMdbLoader):
     table_name = 'TBTypeDeContratCPAS'
