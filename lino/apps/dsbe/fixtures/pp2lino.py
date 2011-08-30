@@ -198,6 +198,7 @@ class NotesLoader(LinoMdbLoader):
     headers = u"""
     IDJournal DateJournal JournalClient IDClient
     """.split()
+    last_date = None
     
     def row2obj(self,row):
         pk = int(row['IDJournal'])
@@ -205,9 +206,12 @@ class NotesLoader(LinoMdbLoader):
         kw.update(id=pk)
         kw.update(body=row['JournalClient'])
         d = self.parsedate(row['DateJournal'])
-        if not d:
-            d = datetime.date.today()
-            dblogger.warning("TBJournal #%s : date was empty",pk)
+        if d:
+            self.last_date = d
+        else:
+            d = self.last_date
+            #~ d = datetime.date.today()
+            #~ dblogger.warning("TBJournal #%s : date was empty",pk)
         kw.update(date=d)
         idclient = int(row['IDClient']) + OFFSET_PERSON
         kw.update(person_id=idclient)
@@ -242,7 +246,7 @@ class UsersSGLoader(LinoMdbLoader):
     table_name = 'TBASSG'
     model = User
     headers = u"""
-    IDASSG TitreASISP NomASISP PrenomASISP CodeASISP Tel StatutASISP
+    IDASSG TitreASSSG NomASSSG PrenomASSSG CodeASSSG TelASSSG StatutASSSG
     """.split()
     
     def row2obj(self,row):
