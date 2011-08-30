@@ -32,12 +32,12 @@ from lino.modlib.notes import models as notes
 from lino.tools import get_field
 
 
-class Person(contacts.Person):
-    class Meta:
-        app_label = 'contacts'
+#~ class Person(contacts.Person):
+    #~ class Meta:
+        #~ app_label = 'contacts'
     
-class Company(contacts.Company):
-    class Meta:
-        app_label = 'contacts'
+#~ class Company(contacts.Company):
+    #~ class Meta:
+        #~ app_label = 'contacts'
     
     

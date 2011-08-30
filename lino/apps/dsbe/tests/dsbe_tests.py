@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 #from lino.igen import models
 #from lino.modlib.contacts.models import Contact, Companies
 #from lino.modlib.countries.models import Country
-from lino.modlib.contacts.models import Companies
+#~ from lino.modlib.contacts.models import Companies
 
 from lino.utils import i2d
 from lino.utils import babel
