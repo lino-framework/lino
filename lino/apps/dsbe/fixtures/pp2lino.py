@@ -204,19 +204,24 @@ class NotesLoader(LinoMdbLoader):
         pk = int(row['IDJournal'])
         kw = {}
         kw.update(id=pk)
-        kw.update(body=row['JournalClient'])
-        d = self.parsedate(row['DateJournal'])
-        if d:
-            self.last_date = d
-        else:
-            d = self.last_date
-            #~ d = datetime.date.today()
-            #~ dblogger.warning("TBJournal #%s : date was empty",pk)
-        kw.update(date=d)
-        idclient = int(row['IDClient']) + OFFSET_PERSON
-        kw.update(person_id=idclient)
-        #~ kw.update(person=Person.objects.get(pk=idclient))
-        yield self.model(**kw)
+        txt = row['JournalClient']
+        if txt:
+            if len(txt) > 200:
+                kw.update(body=txt)
+            else:
+                kw.update(subject=txt)
+            d = self.parsedate(row['DateJournal'])
+            if d:
+                self.last_date = d
+            else:
+                d = self.last_date
+                #~ d = datetime.date.today()
+                #~ dblogger.warning("TBJournal #%s : date was empty",pk)
+            kw.update(date=d)
+            idclient = int(row['IDClient']) + OFFSET_PERSON
+            kw.update(person_id=idclient)
+            #~ kw.update(person=Person.objects.get(pk=idclient))
+            yield self.model(**kw)
 
 class UsersISPLoader(LinoMdbLoader):
     table_name = 'TBASISP'
