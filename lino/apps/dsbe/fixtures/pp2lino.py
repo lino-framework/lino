@@ -141,7 +141,7 @@ CboNationalite = {
   8:"CH",
   9:"Colombien(ne)",
   11:"Uruguayen (ne)",
-  12:"Marocain(ne)",
+  12:'MA', "Marocain(ne)",
   14:'DZ', # u"Algérien(ne)",
   15:"Mauricien(ne)",
   16:"Togolais(e)",
@@ -157,7 +157,7 @@ CboNationalite = {
   27:"Portugais(e)",
   28:"libanais(e)",
   29:"DE",
-  30:"syrien(ne)",
+  30:'SY',# "syrien(ne)",
   31:"GN", # "Guinéen(ne)",
   32:u"Libérien(ne)",
   33:"TN",
@@ -170,7 +170,7 @@ CboNationalite = {
   40:"Iraquien(ne)",
   41:"arménie",
   42:"Italien(ne)",
-  43:"angolien(ne)",
+  43:'AO', # "angolien(ne)",
   44:"Nigerien(ne)",
   45:"Chinnoise",
   46:"burkina Faso",
@@ -179,7 +179,7 @@ CboNationalite = {
   50:u"US",
   51:"georgien(ne)",
   52:"grec",
-  53:"yougoslave",
+  53:'MK', # "yougoslave",
   54:u"bosnie-herzégovine",
   55:"Ukrainien(ne)",
   56:"Equatorien",
@@ -198,7 +198,7 @@ CboNationalite = {
   71:"Somalien(ne)",
   72:"AF",
   73:"Cubaine",
-  74:"tchad",
+  74:'TD', # "tchad",
   75:"Royaume-Uni",
   76:"lituanienne ",
   77:"kirghizistan",
@@ -211,7 +211,7 @@ CboPays = {
   ,3:'DZ' # u"Algérie"
   ,4:'DE' # u"Allemagne"
   ,5:u"Andorre"
-  ,6:u"Angola"
+  ,6:'AO' # u"Angola"
   ,7:u"Antigua-et-Barbuda"
   ,8:u"Arabie Saoudite"
   ,9:u"Argentine"
@@ -315,7 +315,7 @@ CboPays = {
   ,108:u"Maldives"
   ,109:u"Mali"
   ,110:u"Malte"
-  ,111:u"Maroc"
+  ,111:'MA' # u"Maroc"
   ,112:u"Marshall"
   ,113:u"Maurice"
   ,114:u"Mauritanie"
@@ -375,10 +375,10 @@ CboPays = {
   ,168:u"Suisse"
   ,169:u"Suriname"
   ,170:u"Swaziland"
-  ,171:u"Syrie"
+  ,171:'SY' # u"Syrie"
   ,172:u"Tadjikistan"
   ,173:u"Tanzanie"
-  ,174:u"Tchad"
+  ,174:'TD' # u"Tchad"
   ,175:u"Thaļlande"
   ,176:u"Togo"
   ,177:u"Tonga"
@@ -393,7 +393,7 @@ CboPays = {
   ,186:u"Venezuela"
   ,187:u"Viźt Nam"
   ,188:u"Yémen"
-  ,189:u"Yougoslavie"
+  ,189:'MK' # u"Yougoslavie"
   ,190:u"Zaļre"
   ,191:u"Zambie"
   ,192:u"Zimbabwe"
@@ -403,6 +403,7 @@ CboPays = {
 
 
 def k2iso(dd,k,ddname):
+    if not k: return None
     country_id = dd.get(int(k))
     if country_id is None:
         dblogger.warning("Unknown %s id %s",ddname,k)
