@@ -185,6 +185,11 @@ class Lino(object):
     tinymce_root = None
     """Path to the tinymce root directory. Only to be used on a development server."""
     
+    allow_duplicate_cities = False
+    """Set this to True if that's what you want. 
+    In normal situations you shouldn't, but one exception is here :doc:`/blog/2011/0830`
+    """
+    
     
     help_url = "http://code.google.com/p/lino"
     #~ index_html = "This is the main page."

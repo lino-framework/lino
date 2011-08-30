@@ -98,7 +98,8 @@ class City(models.Model):
     class Meta:
         verbose_name = _("city")
         verbose_name_plural = _("cities")
-        unique_together = ('country','name','zip_code')
+        if not settings.LINO.allow_duplicate_cities:
+            unique_together = ('country','name','zip_code')
     
     def __unicode__(self):
         return self.name
