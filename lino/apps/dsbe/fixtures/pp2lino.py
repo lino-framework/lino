@@ -135,7 +135,7 @@ CboNationalite = {
   2:"CG", # "Congolais(e)",
   3:"Russe",
   4:'RW', # "Rwandaise",
-  5:"Chilien(ne)",
+  5:'CL', # "Chilien(ne)",
   6:"FR",
   7:'RO', # "Roumain(e)",
   8:"CH",
@@ -144,7 +144,7 @@ CboNationalite = {
   12:'MA', # "Marocain(ne)",
   14:'DZ', # u"Algérien(ne)",
   15:'MU', # "Mauricien(ne)",
-  16:"Togolais(e)",
+  16:'TG', # "Togolais(e)",
   17:u"Réfugié Politique",
   18:"Turque",
   19:'CM', # "Camerounai (se)",
@@ -154,14 +154,14 @@ CboNationalite = {
   24:"Sierra Leonais(e)",
   25:"Mauritanien(ne)",
   26:'BR', # u"Brésilien(ne)",
-  27:"Portugais(e)",
-  28:"libanais(e)",
+  27:'PT', # "Portugais(e)",
+  28:'LB', # "libanais(e)",
   29:"DE",
   30:'SY',# "syrien(ne)",
   31:"GN", # "Guinéen(ne)",
   32:u"Libérien(ne)",
   33:"TN",
-  34:"Nigérian(nes)",
+  34:'NG', # "Nigérian(nes)",
   35:u"ouzbékistan",
   36:"bolivien(ne)",
   37:'PL', # "polonais(e)",
@@ -169,9 +169,9 @@ CboNationalite = {
   39:"IR", # "Iranien(ne)",
   40:'IQ', # "Iraquien(ne)",
   41:"arménie",
-  42:"Italien(ne)",
+  42:'IT', # "Italien(ne)",
   43:'AO', # "angolien(ne)",
-  44:"Nigerien(ne)",
+  44:'NE', # "Nigerien(ne)",
   45:"Chinnoise",
   46:"burkina Faso",
   48:"laotienne",
@@ -182,16 +182,16 @@ CboNationalite = {
   53:'MK', # "yougoslave",
   54:u"bosnie-herzégovine",
   55:"Ukrainien(ne)",
-  56:"Equatorien",
+  56:'EC', # "Equatorien",
   57:"pakistannais(e)",
   58:"vietnamien(ne)",
   59:u"indonésien(ne)",
   60:"Malgache",
   62:"indien(ne)",
   63:"albanais",
-  64:"Espagnol(e)",
+  64:'ES', # "Espagnol(e)",
   65:"Macedoine",
-  66:"Djiboutien(ne)",
+  66:'DJ', # "Djiboutien(ne)",
   68:"egyptien(ne)",
   69:"NL",
   70:"Kazakhstan",
@@ -242,7 +242,7 @@ CboPays = {
   ,34:'CM' # u"Cameroun"
   ,35:u"Canada"
   ,36:u"Cap-Vert"
-  ,37:u"Chili"
+  ,37:'CL' # u"Chili"
   ,38:'CN' # u"Chine"
   ,39:u"Chypre"
   ,40:u"Colombie"
@@ -252,17 +252,17 @@ CboPays = {
   ,45:u"Corée du Nord"
   ,46:u"Corée du Sud"
   ,47:u"Costa Rica"
-  ,48:u"Cōte d'Ivoire"
+  ,48:'CI' # u"Cōte d'Ivoire"
   ,49:u"Croatie"
   ,50:u"Cuba"
   ,51:'DK' # u"Danemark"
-  ,52:u"République de Djibouti"
-  ,53:u"Dominique"
+  ,52:'DJ' # u"République de Djibouti"
+  ,53:'DM' # u"Dominique"
   ,54:u"Egypte"
   ,55:u"Émirats arabes unis"
-  ,56:u"Equateur"
+  ,56:'EC' # u"Equateur"
   ,57:u"Erythrée"
-  ,58:u"Espagne"
+  ,58:'ES' # u"Espagne"
   ,59:u"Estonie"
   ,60:'US' # u"Etats-Unis"
   ,61:'ET' # u"Ethiopie"
@@ -290,7 +290,7 @@ CboPays = {
   ,83:u"Irlande"
   ,84:u"Islande"
   ,85:u"Israėl"
-  ,86:u"Italie"
+  ,86:'IT' # u"Italie"
   ,87:u"Jamaļque"
   ,88:u"Japon"
   ,89:u"Jordanie"
@@ -302,7 +302,7 @@ CboPays = {
   ,95:u"Laos"
   ,96:u"Lesotho"
   ,97:u"Lettonie"
-  ,98:u"Liban"
+  ,98:'LB' # u"Liban"
   ,99:u"Libéria"
   ,100:u"Libye"
   ,101:u"Liechtenstein"
@@ -329,8 +329,8 @@ CboPays = {
   ,122:u"Nauru"
   ,123:u"Népal"
   ,124:u"Nicaragua"
-  ,125:u"Niger"
-  ,126:u"Nigeria"
+  ,125:'NE' # u"Niger"
+  ,126:'NG' # u"Nigeria"
   ,127:u"Niue"
   ,128:u"Norvčge"
   ,129:u"Nouvelle-Zélande"
@@ -345,10 +345,10 @@ CboPays = {
   ,138:u"Pérou"
   ,139:u"Philippines"
   ,140:'PL' # u"Pologne"
-  ,141:u"Portugal"
+  ,141:'PT' # u"Portugal"
   ,142:u"Qatar"
   ,143:u"République centrafricaine"
-  ,144:u"République dominicaine"
+  ,144:'DO' # u"République dominicaine"
   ,145:u"République tchčque"
   ,146:'RO' # u"Roumanie"
   ,147:u"Royaume-Uni"
@@ -380,7 +380,7 @@ CboPays = {
   ,173:'TZ' # u"Tanzanie"
   ,174:'TD' # u"Tchad"
   ,175:u"Thaļlande"
-  ,176:u"Togo"
+  ,176:'TG' # u"Togo"
   ,177:u"Tonga"
   ,178:u"Trinité-et-Tobago"
   ,179:u"TN"
@@ -394,7 +394,7 @@ CboPays = {
   ,187:u"Viźt Nam"
   ,188:u"Yémen"
   ,189:'MK' # u"Yougoslavie"
-  ,190:u"Zaļre"
+  ,190:'ZRCD' # u"Zaļre"
   ,191:u"Zambie"
   ,192:u"Zimbabwe"
   ,193:'AF' #u"Afghanistan"
@@ -409,6 +409,8 @@ def k2iso(dd,k,ddname):
         dblogger.warning("Unknown %s id %s",ddname,k)
         return None
     if len(country_id) == 2:
+        return country_id
+    if len(country_id) == 4 and country_id == country_id.upper():
         return country_id
     dblogger.warning("Invalid %s code %s -> %r",ddname,k,country_id)
         
