@@ -33,7 +33,7 @@ Then load the fixture using the following command::
     
 The following variant might help to save time during testing::
     
-    python manage.py initdb std few_countries few_cities pp2lino --noinput
+    python manage.py initdb std few_countries pp2lino --noinput
 
 
 """
@@ -141,6 +141,10 @@ class JobProviderLoader(LinoMdbLoader):
         kw.update(phone=row[u'Tel'])
         kw.update(gsm=row[u'GSM'])
         kw.update(fax=row[u'Fax'])
+        kw.update(remarks="""
+        NumeroInitiativeEconomieSociale : %(NumeroInitiativeEconomieSociale)s
+        NONSS : %(NONSS)s
+        """ % row)
         url = row[u'Internet']
         if url:
             if not url.startswith('http'):
@@ -293,7 +297,7 @@ class ContractArt60Loader(LinoMdbLoader):
                     kw.update(person=Person.objects.get(id=int(row[u'IDClient'])+OFFSET_PERSON))
                     yield self.model(**kw)
 
-OFFSET_CONTRACT_TYPE_CPAS = 100
+OFFSET_CONTRACT_TYPE_CPAS = 1000
 
 CboTypeContrat = {
     1	: u"Tutorat",
@@ -333,6 +337,21 @@ class ContractVSELoader(LinoMdbLoader):
                     kw.update(person=Person.objects.get(id=int(row[u'IDClient'])+OFFSET_PERSON))
                     yield self.model(**kw)
 
+class CityLoader(LinoMdbLoader):
+    table_name = 'CboCommuneCodePostal'
+    model = City
+    headers = u"""
+    IDCommuneCodePostal Commune CodePostal
+    """.split()
+    
+    def row2obj(self,row):
+        kw = {}
+        kw.update(id=int(row['IDCommuneCodePostal']))
+        kw.update(name=row['Commune'])
+        kw.update(zip_code=row['CodePostal'])
+        kw.update(country=Country.objects.get(pk='BE'))
+        yield self.model(**kw)
+
 
 def objects():
     #~ User = resolve_model('users.User')
@@ -342,6 +361,7 @@ def objects():
         yield ContractType(id=k,name=v)
     for k,v in CboTypeContrat.items():
         yield ContractType(id=k+OFFSET_CONTRACT_TYPE_CPAS,name=v)
+    yield CityLoader()
     yield PersonLoader()
     yield JobProviderLoader()
     yield ContractArt60Loader()
