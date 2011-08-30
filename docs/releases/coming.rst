@@ -4,13 +4,21 @@ Version 1.2.2 (Coming)
 New features
 ------------
 
+#.  Das Feld "Stelle" eines Vertrags ist jetzt nicht mehr 
+    obligatorisch. Also VSE-Verträge können wieder erfasst 
+    werden, ohne extra eine Stelle anzulegen.
+    Solche Verträge ohne Stelle erscheinen dann nicht im 
+    Listing :mod:`Übersicht Verträge 
+    <lino.modlib.jobs.models.ContractsOverview>`.
+
 #.  :class:`lino.fields.FieldSet`.
     Im Detail-Fenster Personen (Reiter 1 unten) sind die Felder zur 
     eID-Karte jetzt optisch zu einer Feldgruppe zusammengefasst.
-    Falls euch noch andere Stellen auffallen, wo dieses Feature 
-    nützlich wäre: melden.
+    Falls ihr noch Ideen habt, wo dieses neue Feature nützlich wäre: 
+    melden.
     
-#.  New table `Contacts` contains both Persons and Companies
+#.  New table `Contacts` contains both Persons and Companies.
+
     Also es gibt jetzt eine Liste, in der Personen, Organisationen 
     und Benutzer zusammengefasst sind.
     

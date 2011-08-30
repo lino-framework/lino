@@ -21,3 +21,7 @@ Für VSE-Verträge braucht jetzt keine Stelle mehr erfasst zu werden.
 
 Fixed some bugs that came with 20110830a.
 
+
+(c) Import de données pp2lino (suite)
+-------------------------------------
+

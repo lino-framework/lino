@@ -88,11 +88,14 @@ from lino.modlib.jobs.models import Job, Contract, JobProvider, \
   ContractEnding, ExamPolicy, ContractType, Company
 
 def get_contracttype(pk):
+    if pk == 0: 
+        return
     try:
         ct = ContractType.objects.get(pk=pk)
     except ContractType.DoesNotExist: 
         dblogger.warning("ContractType %r does not exist?!",pk)
         return None
+    return ct
         
 def parsedate(s):
     if not s: return None
