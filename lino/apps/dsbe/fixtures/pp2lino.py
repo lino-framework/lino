@@ -141,7 +141,7 @@ CboNationalite = {
   8:"CH",
   9:"Colombien(ne)",
   11:"Uruguayen (ne)",
-  12:'MA', "Marocain(ne)",
+  12:'MA', # "Marocain(ne)",
   14:'DZ', # u"Algérien(ne)",
   15:"Mauricien(ne)",
   16:"Togolais(e)",
