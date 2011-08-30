@@ -246,7 +246,7 @@ class UsersSGLoader(LinoMdbLoader):
     table_name = 'TBASSG'
     model = User
     headers = u"""
-    IDASSG TitreASSSG NomASSSG PrenomASSSG CodeASSSG TelASSSG StatutASSSG
+    IDASSSG TitreASSSG NomASSSG PrenomASSSG CodeASSSG TelASSSG StatutASSSG
     """.split()
     
     def row2obj(self,row):
