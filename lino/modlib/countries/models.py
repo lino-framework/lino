@@ -22,6 +22,8 @@ Defines models
 
 import datetime
 from django.db import models
+from django.conf import settings
+
 from lino import reports
 #~ from lino import layouts
 from django.utils.translation import ugettext as _
