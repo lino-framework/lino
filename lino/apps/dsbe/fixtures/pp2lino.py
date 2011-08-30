@@ -225,7 +225,7 @@ class UsersISPLoader(LinoMdbLoader):
         kw.update(first_name=row['PrenomASISP'])
         kw.update(last_name=row['NomASISP'])
         kw.update(username=row['CodeASISP'])
-        kw.update(tel=row['Tel'])
+        kw.update(phone=row['Tel'])
         st = row['StatutASISP']
         if st == "Ouvert":
             kw.update(is_active=True)
@@ -440,12 +440,12 @@ def objects():
         yield ContractType(id=k,name=v)
     for k,v in CboTypeContrat.items():
         yield ContractType(id=k+OFFSET_CONTRACT_TYPE_CPAS,name=v)
+    yield UsersISPLoader()
     yield CityLoader()
     yield PersonLoader()
     yield JobProviderLoader()
     yield ContractArt60Loader()
     yield ContractVSELoader()
     yield NotesLoader()
-    yield UsersISPLoader()
     
     #~ reader = csv.reader(open(,'rb'))
