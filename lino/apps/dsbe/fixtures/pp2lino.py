@@ -624,16 +624,22 @@ class PersonLoader(LinoMdbLoader):
         kw = {}
         kw.update(id=int(row['IDClient']) + OFFSET_PERSON)
         title=row['Titre']
-        if title == "Monsieur"
-            kw.update(sex='M')
-        elif title == "Madame"
-            kw.update(sex='F')
-        else:
+        if not title in ("Monsieur","Madame"):
             kw.update(title=title)
         if row['Nom']:
             kw.update(last_name=row['Nom'])
         else:
             kw.update(last_name="?")
+            
+        kw.update(sex=row['Sexe'])
+        
+        #~ sex = row['Sexe']
+        #~ if sex == "M"
+            #~ kw.update(sex='M')
+        #~ elif sex == "F"
+            #~ kw.update(sex='F')
+        #~ else:
+            #~ kw.update(sex='M')            
         kw.update(first_name=row[u'Prénom'])
         kw.update(street_prefix=row[u'Rue'])
         kw.update(street=row[u'Adresse'])
