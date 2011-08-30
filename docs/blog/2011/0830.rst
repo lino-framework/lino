@@ -25,3 +25,6 @@ Fixed some bugs that came with 20110830a.
 (c) Import de données pp2lino (suite)
 -------------------------------------
 
+- Changes in :class:`lino.utils.dpy.FakeDeserializedObject`.
+- Moved the general logic for loading :file:`.mdb` files from 
+  :mod:`lino.apps.dsbe.fixtures.pp2lino` to new module :mod:`lino.utils.mdbtools`.

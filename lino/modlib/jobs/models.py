@@ -497,7 +497,7 @@ class Job(models.Model):
         verbose_name_plural = _('Jobs')
         ordering = ['name']
         
-    name = models.CharField(max_length=50,
+    name = models.CharField(max_length=100,
         verbose_name=_("Name"))
     
     type = models.ForeignKey("jobs.JobType",

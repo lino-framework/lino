@@ -21,7 +21,7 @@ from StringIO import StringIO
 import os
 import imp
 from decimal import Decimal
-from types import GeneratorType
+#~ from types import GeneratorType
 
 
 from django.conf import settings
@@ -265,17 +265,23 @@ class FakeDeserializedObject(base.DeserializedObject):
         self.save_later = []
         self.saved = 0
         dblogger.info("Loading %s...",self.name) 
-        for obj in self.objects():
-            def doit(obj):
+        def doit(obj):
+            if obj is None:
+                return # ignore None values
+            elif isinstance(obj,models.Model):    
                 if self.try_save(obj,*args,**kw):
                     self.saved += 1
                 else:
                     self.save_later.append(obj)
-            if type(obj) is GeneratorType:
+            elif hasattr(obj,'__iter__'):
+            #~ if type(obj) is GeneratorType:
                 for o in obj: 
                     doit(o)
             else:
-                doit(obj)
+                dblogger.warning("Ignored onknown object %r",obj)
+        
+        for obj in self.objects():
+            doit(obj)
         dblogger.info("Saved %d instances from %s.",self.saved,self.name)
                 
         while self.saved and self.save_later:
@@ -302,8 +308,8 @@ class FakeDeserializedObject(base.DeserializedObject):
         on success, `False` if this instance wasn't saved and should be 
         deferred.
         """
-        if obj is None:
-            return True
+        #~ if obj is None:
+            #~ return True
         #~ try:
             #~ obj.full_clean()
         #~ except (ObjectDoesNotExist,ValidationError),e:

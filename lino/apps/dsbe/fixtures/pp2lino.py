@@ -16,38 +16,12 @@
 This fixture is for one-time use in a real case, 
 and maybe as starting example for future similar cases.
 
-It uses `mdb-export` to extract data from the .mdb file to .csv, 
-then reads these csv files. 
-`mdb-export` was written by Brian Bruns and is part 
-of the `mdbtools` Debian package. To install it::
-
-  aptitude install mdbtools
-  
-Usage of `mdbtools` command line::
-
-  Usage: mdb-export [options] <file> <table>
-  where options are:
-    -H             supress header row
-    -Q             don't wrap text-like fields in quotes
-    -d <delimiter> specify a column delimiter
-    -R <delimiter> specify a row delimiter
-    -I             INSERT statements (instead of CSV)
-    -D <format>    set the date format (see strftime(3) for details)
-    -S             Sanitize names (replace spaces etc. with underscore)
-    -q <char>      Use <char> to wrap text-like fields. Default is ".
-    -X <char>      Use <char> to escape quoted characters within a field. Default is doubling.
-    
-Thanks to http://farismadi.wordpress.com/2008/07/13/encoding-of-mdb-tool/ 
-for explanations on the environment variables used by `mdb-export`.
-
-The function :func:`check_output` in this module is a copy from Python 2.7 
-which we include here to make it usable in Python 2.6 too.
-
 Usage
 -----
 
 Before loading this fixture you must set :attr:`lino.Lino.legacy_data_path` 
 in your local :xfile:`settings.py`.
+
 You must also set the encoding for mdb-export::
 
     export MDB_ICONV=utf-8
@@ -57,17 +31,12 @@ Then load the fixture using the following command::
 
     python manage.py initdb std all_countries all_cities be all_languages props pp2lino
     
-During testing, the following variant might help to save time::    
+The following variant might help to save time during testing::
     
     python manage.py initdb std few_countries few_cities pp2lino --noinput
 
 
 """
-
-#~ ENCODING = 'latin1' # the encoding used by the mdb file
-ENCODING = 'utf8' 
-#~ MDB_FILE = 'PPv5MasterCopie.mdb'
-MDBTOOLS_EXPORT = 'mdb-export'
 
 import os
 import sys
@@ -77,8 +46,10 @@ import codecs
 import datetime
 
 from django.conf import settings
+if not settings.LINO.legacy_data_path:
+    raise Exception("You must specify the name of your .mdb file in settings.LINO.legacy_data_path!")
 
-from lino.utils import ucsv
+
 from lino.utils import dblogger
 from lino.tools import resolve_model
 
@@ -97,48 +68,7 @@ def get_contracttype(pk):
         return None
     return ct
         
-def parsedate(s):
-    if not s: return None
-    a = [int(i) for i in s.split('-')]
-    return datetime.date(year=a[0],month=a[1],day=a[2])
-
-try:
-  from subprocess import check_output
-except ImportError:
-    import subprocess
-    
-    def check_output(*popenargs, **kwargs):
-        r"""Run command with arguments and return its output as a byte string.
-
-        If the exit code was non-zero it raises a CalledProcessError.  The
-        CalledProcessError object will have the return code in the returncode
-        attribute and output in the output attribute.
-
-        The arguments are the same as for the Popen constructor.  Example:
-
-        >>> check_output(["ls", "-l", "/dev/null"])
-        'crw-rw-rw- 1 root root 1, 3 Oct 18  2007 /dev/null\n'
-
-        The stdout argument is not allowed as it is used internally.
-        To capture standard error in the result, use stderr=STDOUT.
-
-        >>> check_output(["/bin/sh", "-c",
-        ...               "ls -l non_existent_file ; exit 0"],
-        ...              stderr=STDOUT)
-        'ls: non_existent_file: No such file or directory\n'
-        """
-        if 'stdout' in kwargs:
-            raise ValueError('stdout argument not allowed, it will be overridden.')
-        process = subprocess.Popen(stdout=subprocess.PIPE, *popenargs, **kwargs)
-        output, unused_err = process.communicate()
-        retcode = process.poll()
-        if retcode:
-            cmd = kwargs.get("args")
-            if cmd is None:
-                cmd = popenargs[0]
-            raise subprocess.CalledProcessError(retcode, cmd, output=output)
-        return output
-
+from lino.utils.mdbtools import Loader
 
 from django.core.validators import validate_email, ValidationError, URLValidator
 validate_url = URLValidator()
@@ -157,50 +87,6 @@ def is_valid_email(s):
         return False
     
 
-class Loader:
-    table_name = None
-    model = None
-    
-    def load(self):
-        fn = self.table_name+".csv"
-        if not os.path.exists(fn):
-            mdb_file = settings.LINO.legacy_data_path
-            if not mdb_file:
-                raise Exception("Must specify settings.LINO.legacy_data_path!")
-            args = [MDBTOOLS_EXPORT, '-D', '%Y-%m-%d', mdb_file, self.table_name]
-            s = check_output(args,executable=MDBTOOLS_EXPORT,
-              env=dict(
-                MDB_ICONV='utf-8',
-                MDB_JET_CHARSET='utf-8'))
-            #~ print ENCODING
-            
-            fd = open(fn,'w')
-            fd.write(s)
-            fd.close()
-            print "Wrote file", fn
-        reader = ucsv.UnicodeReader(open(fn,'r'),encoding=ENCODING)
-        headers = reader.next()
-        if not headers == self.headers:
-            raise Exception("%r != %r" % (headers,self.headers))
-        n = 0
-        for values in reader:
-            row = {}
-            for i,h in enumerate(self.headers):
-                row[h] = values[i]
-            n += 1
-            if False:
-                if int(row['IDClient']) == 967:
-                    print row
-                    raise Exception("20110609")
-                  
-            if False:
-                if n < 10:
-                    print n, ':', row
-                else:
-                    raise Exception("20110609")
-            for obj in self.row2obj(row):
-                yield obj
-
 OFFSET_JOBPROVIDER = 3000
 
 COMPANY_TYPES = {
@@ -216,8 +102,14 @@ COMPANY_TYPES = {
 }
 
 
+class LinoMdbLoader(Loader):
+  
+    mdb_file = settings.LINO.legacy_data_path
+    if not mdb_file:
+        raise Exception("You must specify the name of your .mdb file in settings.LINO.legacy_data_path!")
 
-class JobProviderLoader(Loader):
+
+class JobProviderLoader(LinoMdbLoader):
     table_name = 'TBEndroitMiseAuTravail'
     
     model = JobProvider
@@ -263,7 +155,7 @@ class JobProviderLoader(Loader):
 
 OFFSET_PERSON = 1000
 
-class PersonLoader(Loader):
+class PersonLoader(LinoMdbLoader):
     table_name = 'TBClient'
     
     model = Person # resolve_model('contacts.Person')
@@ -304,24 +196,26 @@ class PersonLoader(Loader):
 
 
 def get_or_create_job(provider_id,contract_type):
+    if provider_id is None:
+        provider = None
+    else:
+        try:
+            provider = JobProvider.objects.get(pk=provider_id)
+        except JobProvider.DoesNotExist:
+            dblogger.warning('JobProvider #%s does not exist.',provider_id)
+            #~ provider = Provider(name=str(provider_id),id=provider_id)
+            #~ privder.full_clean()
+            #~ provider.save()
+            provider = None
+            #~ company = Company.objects.get(pk=provider_id)
+            #~ provider = mti.insert_child(company,JobProvider)
+            #~ provider.save()
     try:
         #~ if provider_id:
-        return Job.objects.get(provider__id=provider_id,contract_type=contract_type)
+        return Job.objects.get(provider=provider,contract_type=contract_type)
         #~ else:
             #~ return Job.objects.get(provider__isnull=True,contract_type__id=contract_type_id)
     except Job.DoesNotExist:
-        if provider_id is None:
-            provider = None
-        else:
-            try:
-                provider = JobProvider.objects.get(pk=provider_id)
-            except JobProvider.DoesNotExist:
-                dblogger.warning('JobProvider #%s does not exist?!',provider_id)
-                return None
-                #~ provider = None
-                #~ company = Company.objects.get(pk=provider_id)
-                #~ provider = mti.insert_child(company,JobProvider)
-                #~ provider.save()
         if provider is None:
             name = 'Job%s(interne)' % contract_type.id
         else:
@@ -359,7 +253,7 @@ CboTypeMiseEmplois = {
   25	: u"contrat de remplacement CDD",
 }
 
-class ContractArt60Loader(Loader):
+class ContractArt60Loader(LinoMdbLoader):
     table_name = 'TBMiseEmplois'
     model = Contract
     headers = u"""
@@ -381,8 +275,8 @@ class ContractArt60Loader(Loader):
         #~ ctype = 
         #~ if ctype:
             #~ kw.update(type=ContractType.objects.get(pk=ctype))
-        kw.update(applies_from=parsedate(row[u'DebutContrat']))
-        kw.update(applies_until=parsedate(row[u'FinContrat']))
+        kw.update(applies_from=self.parsedate(row[u'DebutContrat']))
+        kw.update(applies_until=self.parsedate(row[u'FinContrat']))
         provider_id = row[u'IDEndroitMiseAuTravail']
         if provider_id:
             provider_id = int(provider_id) + OFFSET_JOBPROVIDER
@@ -412,7 +306,7 @@ CboTypeContrat = {
     8	: u"PIIS prolongation",
 }
 
-class ContractVSELoader(Loader):
+class ContractVSELoader(LinoMdbLoader):
     table_name = 'TBTypeDeContratCPAS'
     model = Contract
     headers = u"""
@@ -425,8 +319,8 @@ class ContractVSELoader(Loader):
         #~ ctype = int(row['IDTypeContrat']) 
         #~ if ctype:
             #~ kw.update(type=ContractType.objects.get(pk=ctype+ OFFSET_CONTRACT_TYPE_CPAS))
-        kw.update(applies_from=parsedate(row[u'DateDebut']))
-        kw.update(applies_until=parsedate(row[u'DateFin']))
+        kw.update(applies_from=self.parsedate(row[u'DateDebut']))
+        kw.update(applies_until=self.parsedate(row[u'DateFin']))
         
         contract_type_id = row['IDTypeContrat']
         if contract_type_id:
@@ -448,9 +342,9 @@ def objects():
         yield ContractType(id=k,name=v)
     for k,v in CboTypeContrat.items():
         yield ContractType(id=k+OFFSET_CONTRACT_TYPE_CPAS,name=v)
-    yield PersonLoader().load()
-    yield JobProviderLoader().load()
-    yield ContractArt60Loader().load()
-    yield ContractVSELoader().load()
+    yield PersonLoader()
+    yield JobProviderLoader()
+    yield ContractArt60Loader()
+    yield ContractVSELoader()
     
     #~ reader = csv.reader(open(,'rb'))
