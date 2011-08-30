@@ -143,17 +143,17 @@ CboNationalite = {
   11:"Uruguayen (ne)",
   12:'MA', # "Marocain(ne)",
   14:'DZ', # u"Algérien(ne)",
-  15:"Mauricien(ne)",
+  15:'MU', # "Mauricien(ne)",
   16:"Togolais(e)",
   17:u"Réfugié Politique",
   18:"Turque",
-  19:"Camerounai (se)",
+  19:'CM', # "Camerounai (se)",
   20:"Perouvien(ne)",
-  21:"Moldave(iene)",
+  21:'MD', # "Moldave(iene)",
   23:"burundais(e)",
   24:"Sierra Leonais(e)",
   25:"Mauritanien(ne)",
-  26:u"Brésilien(ne)",
+  26:'BR', # u"Brésilien(ne)",
   27:"Portugais(e)",
   28:"libanais(e)",
   29:"DE",
@@ -164,10 +164,10 @@ CboNationalite = {
   34:"Nigérian(nes)",
   35:u"ouzbékistan",
   36:"bolivien(ne)",
-  37:"polonais(e)",
+  37:'PL', # "polonais(e)",
   38:u"sénégalais(e)",
   39:"IR", # "Iranien(ne)",
-  40:"Iraquien(ne)",
+  40:'IQ', # "Iraquien(ne)",
   41:"arménie",
   42:"Italien(ne)",
   43:'AO', # "angolien(ne)",
@@ -200,9 +200,9 @@ CboNationalite = {
   73:"Cubaine",
   74:'TD', # "tchad",
   75:"Royaume-Uni",
-  76:"lituanienne ",
+  76:'LT', # "lituanienne ",
   77:"kirghizistan",
-  78:"Ethiopie",
+  78:'ET', # "Ethiopie",
 }
 
 CboPays = {
@@ -233,13 +233,13 @@ CboPays = {
   ,25:u"Bolivie"
   ,26:u"Bosnie-Herzégovine"
   ,27:u"Botswana"
-  ,28:u"Brésil"
+  ,28:'BR' # u"Brésil"
   ,29:u"Brunei"
   ,30:u"Bulgarie"
   ,31:u"Burkina"
   ,32:u"Burundi"
   ,33:u"Cambodge"
-  ,34:u"Cameroun"
+  ,34:'CM' # u"Cameroun"
   ,35:u"Canada"
   ,36:u"Cap-Vert"
   ,37:u"Chili"
@@ -265,7 +265,7 @@ CboPays = {
   ,58:u"Espagne"
   ,59:u"Estonie"
   ,60:'US' # u"Etats-Unis"
-  ,61:u"Ethiopie"
+  ,61:'ET' # u"Ethiopie"
   ,62:u"Fidji"
   ,63:'FI' # u"Finlande"
   ,64:'FR' # u"France"
@@ -286,7 +286,7 @@ CboPays = {
   ,79:u"Inde"
   ,80:u"Indonésie"
   ,81:"IR" # u"Iran"
-  ,82:u"Iraq"
+  ,82:'IQ' # u"Iraq"
   ,83:u"Irlande"
   ,84:u"Islande"
   ,85:u"Israėl"
@@ -306,7 +306,7 @@ CboPays = {
   ,99:u"Libéria"
   ,100:u"Libye"
   ,101:u"Liechtenstein"
-  ,102:u"Lituanie"
+  ,102:'LT' # u"Lituanie"
   ,103:u"Luxembourg"
   ,104:u"Macédoine"
   ,105:u"Madagascar"
@@ -317,11 +317,11 @@ CboPays = {
   ,110:u"Malte"
   ,111:'MA' # u"Maroc"
   ,112:u"Marshall"
-  ,113:u"Maurice"
+  ,113:'MU' # u"Maurice"
   ,114:u"Mauritanie"
   ,115:u"Mexique"
   ,116:u"Micronésie"
-  ,117:u"Moldavie"
+  ,117:'MD' # u"Moldavie"
   ,118:u"Monaco"
   ,119:u"Mongolie"
   ,120:u"Mozambique"
@@ -344,7 +344,7 @@ CboPays = {
   ,137:u"Pays-Bas"
   ,138:u"Pérou"
   ,139:u"Philippines"
-  ,140:u"Pologne"
+  ,140:'PL' # u"Pologne"
   ,141:u"Portugal"
   ,142:u"Qatar"
   ,143:u"République centrafricaine"
@@ -377,7 +377,7 @@ CboPays = {
   ,170:u"Swaziland"
   ,171:'SY' # u"Syrie"
   ,172:u"Tadjikistan"
-  ,173:u"Tanzanie"
+  ,173:'TZ' # u"Tanzanie"
   ,174:'TD' # u"Tchad"
   ,175:u"Thaļlande"
   ,176:u"Togo"
