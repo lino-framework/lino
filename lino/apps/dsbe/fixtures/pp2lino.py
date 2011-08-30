@@ -51,9 +51,10 @@ if not settings.LINO.legacy_data_path:
 
 
 from lino.utils import dblogger
+from lino.utils.instantiator import Instantiator
 from lino.tools import resolve_model
 
-from lino.apps.dsbe.models import Person, City, Country, Note
+from lino.apps.dsbe.models import Person, City, Country, Note, PersonGroup
 from lino.modlib.users.models import User
 from lino.modlib.jobs.models import Job, Contract, JobProvider, \
   ContractEnding, ExamPolicy, ContractType, Company
@@ -130,10 +131,15 @@ CboTypeContrat = {
     8	: u"PIIS prolongation",
 }
 
+"""
+The following two dictionaries need manual work: 
+replace full names by their uppercase ISO2 country code.
+"""
+
 CboNationalite = {
   1:"BE",
   2:"CG", # "Congolais(e)",
-  3:"Russe",
+  3:'RU', # "Russe",
   4:'RW', # "Rwandaise",
   5:'CL', # "Chilien(ne)",
   6:"FR",
@@ -150,9 +156,9 @@ CboNationalite = {
   19:'CM', # "Camerounai (se)",
   20:"Perouvien(ne)",
   21:'MD', # "Moldave(iene)",
-  23:"burundais(e)",
+  23:'BI', # "burundais(e)",
   24:"Sierra Leonais(e)",
-  25:"Mauritanien(ne)",
+  25:'MR', # "Mauritanien(ne)",
   26:'BR', # u"Brésilien(ne)",
   27:'PT', # "Portugais(e)",
   28:'LB', # "libanais(e)",
@@ -188,7 +194,7 @@ CboNationalite = {
   59:u"indonésien(ne)",
   60:"Malgache",
   62:"indien(ne)",
-  63:"albanais",
+  63:'AL', # "albanais",
   64:'ES', # "Espagnol(e)",
   65:"Macedoine",
   66:'DJ', # "Djiboutien(ne)",
@@ -197,7 +203,7 @@ CboNationalite = {
   70:"Kazakhstan",
   71:"Somalien(ne)",
   72:"AF",
-  73:"Cubaine",
+  73:'CU', # "Cubaine",
   74:'TD', # "tchad",
   75:"Royaume-Uni",
   76:'LT', # "lituanienne ",
@@ -207,7 +213,7 @@ CboNationalite = {
 
 CboPays = {
   1:u"Afrique du Sud"
-  ,2:u"Albanie"
+  ,2:'AL' # u"Albanie"
   ,3:'DZ' # u"Algérie"
   ,4:'DE' # u"Allemagne"
   ,5:u"Andorre"
@@ -237,7 +243,7 @@ CboPays = {
   ,29:u"Brunei"
   ,30:u"Bulgarie"
   ,31:u"Burkina"
-  ,32:u"Burundi"
+  ,32:'BI' # u"Burundi"
   ,33:u"Cambodge"
   ,34:'CM' # u"Cameroun"
   ,35:u"Canada"
@@ -254,7 +260,7 @@ CboPays = {
   ,47:u"Costa Rica"
   ,48:'CI' # u"Cōte d'Ivoire"
   ,49:u"Croatie"
-  ,50:u"Cuba"
+  ,50:'CU' # u"Cuba"
   ,51:'DK' # u"Danemark"
   ,52:'DJ' # u"République de Djibouti"
   ,53:'DM' # u"Dominique"
@@ -263,7 +269,7 @@ CboPays = {
   ,56:'EC' # u"Equateur"
   ,57:u"Erythrée"
   ,58:'ES' # u"Espagne"
-  ,59:u"Estonie"
+  ,59:'EE' # u"Estonie"
   ,60:'US' # u"Etats-Unis"
   ,61:'ET' # u"Ethiopie"
   ,62:u"Fidji"
@@ -275,7 +281,7 @@ CboPays = {
   ,68:u"Ghana"
   ,69:u"Grčce"
   ,70:u"Grenade"
-  ,71:u"Guatemala"
+  ,71:'GT' # u"Guatemala"
   ,72:"GN" # u"Guinée"
   ,73:u"Guinée-Bissao"
   ,74:u"Guinée équatoriale"
@@ -318,7 +324,7 @@ CboPays = {
   ,111:'MA' # u"Maroc"
   ,112:u"Marshall"
   ,113:'MU' # u"Maurice"
-  ,114:u"Mauritanie"
+  ,114:'MR' # u"Mauritanie"
   ,115:u"Mexique"
   ,116:u"Micronésie"
   ,117:'MD' # u"Moldavie"
@@ -341,8 +347,8 @@ CboPays = {
   ,134:u"Panama"
   ,135:u"Papouasie - Nouvelle Guin"
   ,136:u"Paraguay"
-  ,137:u"Pays-Bas"
-  ,138:u"Pérou"
+  ,137:'NL' # u"Pays-Bas"
+  ,138:'PE' # u"Pérou"
   ,139:u"Philippines"
   ,140:'PL' # u"Pologne"
   ,141:'PT' # u"Portugal"
@@ -416,7 +422,16 @@ def k2iso(dd,k,ddname):
         
 def nation2iso(k): return k2iso(CboNationalite,k,'CboNationalite')
 def pays2iso(k):return k2iso(CboPays,k,'CboPays')
-  
+
+
+def code2user(username):
+    if not username: return None
+    try:
+        return User.objects.get(username=username)
+    except User.DoesNotExist:
+        dblogger.warning("Unkown user %r",username)
+            
+
 
 
 OFFSET_PERSON = 1000
@@ -658,8 +673,13 @@ class PersonLoader(LinoMdbLoader):
         kw.update(birth_country_id=pays2iso(row[u'IDPays']))
         kw.update(nationality_id=nation2iso(row[u'IDNationalite']))
         kw.update(national_id=row[u'NumeroNational'])
-        #~ u = User.objects.row[u'IDASISPClient']
-        #~ kw.update(coach1=u)
+        
+        kw.update(coach1=code2user(row[u'IDASISP']))
+        kw.update(coach2=code2user(row[u'IDASSSG']))
+            
+        phase = row[u'Phase']
+        if phase:
+            kw.update(group=PersonGroup.objects.get(name=phase))
             
         city_id = row[u'IDCommuneCodePostal']
         if city_id:
@@ -675,6 +695,7 @@ class PersonLoader(LinoMdbLoader):
         kw.update(remarks="""
         Tel2 : %(Tel2)s
         GSM2 : %(GSM2)s
+        Remarques : %(Remarques)s
         """ % row)
         yield self.model(**kw)
         
@@ -788,6 +809,12 @@ class ContractVSELoader(LinoMdbLoader):
                     yield self.model(**kw)
 
 def objects():
+    phin = Instantiator('dsbe.PersonGroup','name').build
+    yield phin('1')
+    yield phin('2')
+    yield phin('3')
+    yield phin('4')
+    yield phin('4b')
     #~ User = resolve_model('users.User')
     yield User(username="root",is_staff=True,is_superuser=True,first_name="Root",last_name="Superuser")
     #~ for o in PersonLoader().load(): yield o
