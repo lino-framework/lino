@@ -658,8 +658,11 @@ class PersonLoader(LinoMdbLoader):
         #~ u = User.objects.row[u'IDASISPClient']
         #~ kw.update(coach1=u)
             
-        city_id = int(row[u'IDCommuneCodePostal'])
-        kw.update(city_id =city_id)
+        city_id = row[u'IDCommuneCodePostal']
+        if city_id:
+            city_id = int(city_id)
+            kw.update(city_id =city_id)
+            
         if is_valid_email(row[u'Email']):
             kw.update(email=row[u'Email'])
         if row[u'DateNaissance']:
