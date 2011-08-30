@@ -865,6 +865,13 @@ class Report(actors.Actor): #,base.Handled):
     
     handle_uploaded_files = None
     """
+    Handler for uploaded files.
+    Same remarks as for :attr:`disabled_fields`.
+    """
+    
+    disable_editing = None
+    """
+    Return `True` if the record as a whole should be read-only.
     Same remarks as for :attr:`disabled_fields`.
     """
     
@@ -907,7 +914,9 @@ class Report(actors.Actor): #,base.Handled):
         
         if self.model is not None:
           
-            for name in ('disabled_fields','handle_uploaded_files'):
+            for name in ('disabled_fields',
+                         'handle_uploaded_files', 
+                         'disable_editing'):
                 if getattr(self,name) is None:
                     m = getattr(self.model,name,None)
                     if m is not None:

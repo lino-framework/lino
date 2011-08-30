@@ -226,6 +226,10 @@ def setup(app):
       #~ indextemplate='pair: %s; field')
     app.add_object_type(directivename='report',rolename='report',
       indextemplate='pair: %s; report')
+    app.add_object_type(directivename='modmeth',rolename='modmeth',
+      indextemplate='pair: %s; model method')
+    app.add_object_type(directivename='model',rolename='model',
+      indextemplate='pair: %s; model')
     #app.connect('build-finished', handle_finished)
     
     app.connect('autodoc-skip-member',autodoc_skip_member)

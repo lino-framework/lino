@@ -115,6 +115,6 @@ Conventions
 .. toctree::
    :maxdepth: 2
 
-   model_methods
+   ../ref/model_methods
 
 

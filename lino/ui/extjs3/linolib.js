@@ -1662,7 +1662,11 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
       this.enable();
       this.form.loadRecord(record);
       this.ww.window.setTitle(record.title);
-      if (record.data.disabled_fields) {
+      if (record.data.disable_editing) {
+          this.form.items.each(function(cmp){
+            cmp.disable();
+          },this);
+      } else if (record.data.disabled_fields) {
         //~ console.log('20100930 disabled_fields =',record.data.disabled_fields);
         //~ console.log('20100930 this.form =',this.form);
         //~ for (i in record.data.disabled_fields.length) {

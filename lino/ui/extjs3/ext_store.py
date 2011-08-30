@@ -146,19 +146,35 @@ class PasswordStoreField(StoreField):
             return "*" * len(v)
         return v
   
-class DisabledFieldsStoreField(StoreField):
-    """
-    See :doc:`/blog/2010/0803`
-    """
+class SpecialStoreField(StoreField):
     field = None 
+    name = None
+  
     def __init__(self,store):
         self.options = dict(name='disabled_fields')
         self.store = store
         #~ self.report = report
         
+    def obj2dict(self,request,obj,d):
+        #~ d.update(disable_editing=self.value_from_object(request,obj))
+        d[self.name] = self.value_from_object(request,obj)
+
     def parse_form_value(self,v,instance):
         pass
         
+    def obj2list(self,request,obj):
+        return [self.value_from_object(request,obj)]
+      
+    def form2obj(self,instance,post_data,is_new):
+        pass
+        #~ raise NotImplementedError
+        #~ return instance
+
+class DisabledFieldsStoreField(SpecialStoreField):
+    """
+    See :doc:`/blog/2010/0803`
+    """
+    name = 'disable_editing'
     def value_from_object(self,request,obj):
         #~ l = [ f.name for f in self.store.report.disabled_fields(request,obj)]
         l = self.store.report.disabled_fields(request,obj)
@@ -166,16 +182,20 @@ class DisabledFieldsStoreField(StoreField):
             l.append(self.store.pk.name)
         return l
         
-    def obj2list(self,request,obj):
-        return [self.value_from_object(request,obj)]
-      
-    def obj2dict(self,request,obj,d):
-        d.update(disabled_fields=self.value_from_object(request,obj))
+    #~ def obj2dict(self,request,obj,d):
+        #~ d.update(disabled_fields=self.value_from_object(request,obj))
 
-    def form2obj(self,instance,post_data,is_new):
-        pass
-        #~ raise NotImplementedError
-        #~ return instance
+        
+class DisableEditingStoreField(SpecialStoreField):
+    """
+    A field whose value is the result of the `disable_editing` 
+    method on that record.
+    """
+    name = 'disable_editing'
+        
+    def value_from_object(self,request,obj):
+        return self.store.report.disable_editing(request,obj)
+        
 
         
 #~ class PropertiesStoreField(StoreField):
@@ -544,11 +564,21 @@ class Store:
             self.pk_index += fld.list_values_count
         #~ if self.report.actor_id == 'contacts.Persons':
             #~ print 'ext_store 20101017:\n', '\n'.join([str(f) for f in self.fields])
-        if rh.report.disabled_fields:
-            sf = DisabledFieldsStoreField(self)
+            
+        def addfield(sf):
             self.fields.append(sf)
             self.list_fields.append(sf)
             self.detail_fields.append(sf)
+            
+        if rh.report.disabled_fields:
+            addfield(DisabledFieldsStoreField(self))
+            #~ sf = DisabledFieldsStoreField(self)
+            #~ self.fields.append(sf)
+            #~ self.list_fields.append(sf)
+            #~ self.detail_fields.append(sf)
+        if rh.report.disable_editing:
+            addfield(DisableEditingStoreField(self))
+            
         #~ self.fields.append(PropertiesStoreField)
         #~ self.fields_dict = dict([(f.field.name,f) for f in self.fields])
         

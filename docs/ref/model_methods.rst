@@ -1,8 +1,14 @@
 Special model methods
 ---------------------
 
+.. modmeth:: disable_edit
 
-def summary_row
+  ``disable_edit(self,request)``
+      Return `True` if the record as a whole should be read-only.
+
+
+.. modmeth:: summary_row
+
 
 @chooser
 def FOO_choices(cls)
@@ -19,7 +25,6 @@ def disabled_fields(self,request):
     return a list of names of fields that should be disabled (not editable) 
     for this record.
         
-
 def get_queryset(self):
     return a customized default queryset
 

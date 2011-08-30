@@ -1,0 +1,12 @@
+20110830
+========
+
+(a) New model method :modmeth:`disable_editing`
+-----------------------------------------------
+
+This is used on :class:`lino.modlib.cal.models.Event` 
+to make recurrent events read-only. 
+
+This is a temporary workaround because editing recurrent 
+events is rather tricky, and for :mod:`lino.apps.dsbe` 
+it is enough when Lino imports them from a remote calendar.

@@ -239,7 +239,8 @@ class Component(ComponentBase,
     #~ exrules = models.TextField(_("Exclusion Rules"),blank=True)
         
         
-    
+    def disable_editing(self,request):
+        if self.rset: return True
 
     def before_clean(self):
         """
