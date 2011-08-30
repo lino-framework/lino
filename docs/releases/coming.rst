@@ -4,10 +4,20 @@ Version 1.2.2 (Coming)
 New features
 ------------
 
+#.  :class:`lino.fields.FieldSet`.
+    Im Detail-Fenster Personen (Reiter 1 unten) sind die Felder zur 
+    eID-Karte jetzt optisch zu einer Feldgruppe zusammengefasst.
+    Falls euch noch andere Stellen auffallen, wo dieses Feature 
+    nützlich wäre: melden.
+    
 #.  New table `Contacts` contains both Persons and Companies
-#.  Calendar module is growing. 
-    Attendances by Event. 
+    Also es gibt jetzt eine Liste, in der Personen, Organisationen 
+    und Benutzer zusammengefasst sind.
+    
+#.  Calendar module is growing. Attendances by Event. 
+
 #.  New module "Emails". "Create Mail" button. Incoming and outgoing mails.
+
 #.  out-of-the-box doctemplates
 
 Internal optimizations

@@ -113,10 +113,6 @@ class ContractType(mixins.PrintableType,babel.BabelNamed):
         verbose_name_plural = _('Contract Types')
         
     ref = models.CharField(_("reference"),max_length=20,blank=True)
-    #~ name = babel.BabelCharField(_("contract title"),max_length=200)
-    
-    #~ def __unicode__(self):
-        #~ return unicode(babel.babelattr(self,'name'))
 
 class ContractTypes(reports.Report):
     model = ContractType
@@ -130,13 +126,6 @@ class ExamPolicy(babel.BabelNamed):
         verbose_name = _("examination policy")
         verbose_name_plural = _('examination policies')
         
-    #~ name = babel.BabelCharField(_("designation"),max_length=200)
-    
-    #~ def __unicode__(self):
-        #~ return unicode(babel.babelattr(self,'name'))
-    #~ def __unicode__(self):
-        #~ return unicode(self.name)
-#~ add_babel_field(ExamPolicy,'name')
 
 class ExamPolicies(reports.Report):
     model = ExamPolicy
@@ -187,7 +176,7 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
       #~ verbose_name=_("represented by"))
     language = fields.LanguageField(default=babel.DEFAULT_LANGUAGE)
 
-    job = models.ForeignKey("jobs.Job",verbose_name=_("Job"),blank=True)
+    job = models.ForeignKey("jobs.Job",verbose_name=_("Job"),blank=True,null=True)
         
     type = models.ForeignKey("jobs.ContractType",verbose_name=_("Contract Type"),blank=True)
     
@@ -287,7 +276,7 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
     
     def disabled_fields(self,request):
         df = []
-        if self.job_id:
+        if self.job:
             if self.job.provider:
                 df.append('provider')
             if self.job.contract_type:
@@ -298,7 +287,9 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
         
     def __unicode__(self):
         #~ return u'%s # %s' % (self._meta.verbose_name,self.pk)
-        return u'%s#%s (%s)' % (self.job.name,self.pk,
+        #~ return u'%s#%s (%s)' % (self.job.name,self.pk,
+            #~ self.person.get_full_name(salutation=False))
+        return u'%s#%s (%s)' % (self._meta.verbose_name,self.pk,
             self.person.get_full_name(salutation=False))
     
     #~ def __unicode__(self):
@@ -342,7 +333,7 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
         #~ except Exception,e:
             #~ return self.person.user or self.user
             
-    def on_person_changed(self,request):
+    def person_changed(self,request):
         if self.person_id is not None:
             if self.person.coach1_id is None or self.person.coach1_id == self.user_id:
                 self.user_asd = None
@@ -351,7 +342,7 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
                 
     def on_create(self,request):
         super(Contract,self).on_create(request)
-        self.on_person_changed(request)
+        self.person_changed(request)
       
     def save(self,*args,**kw):
         #~ self.before_save()
@@ -403,7 +394,8 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
                         self.duration = duration(self.applies_from)
                         self.applies_until = self.applies_from + datetime.timedelta(days=self.duration)
                     
-        if self.job_id is not None:
+        #~ if self.job_id is not None:
+        if self.job:
             if self.job.provider is not None:
                 self.provider = self.job.provider
             if self.job.contract_type is not None:

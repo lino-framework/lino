@@ -11,3 +11,13 @@ to make recurrent events read-only.
 This is a temporary workaround because editing recurrent 
 events is rather tricky, and for :mod:`lino.apps.dsbe` 
 it is enough when Lino imports them from a remote calendar.
+
+(b) Stelle eines Vertrags darf jetzt leer sein
+----------------------------------------------
+
+Für VSE-Verträge braucht jetzt keine Stelle mehr erfasst zu werden.
+
+:attr:`lino.modlib.jobs.models.Contract.job` is now nullable.
+
+Fixed some bugs that came with 20110830a.
+

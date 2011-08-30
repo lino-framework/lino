@@ -151,9 +151,8 @@ class SpecialStoreField(StoreField):
     name = None
   
     def __init__(self,store):
-        self.options = dict(name='disabled_fields')
+        self.options = dict(name=self.name)
         self.store = store
-        #~ self.report = report
         
     def obj2dict(self,request,obj,d):
         #~ d.update(disable_editing=self.value_from_object(request,obj))
@@ -174,7 +173,8 @@ class DisabledFieldsStoreField(SpecialStoreField):
     """
     See :doc:`/blog/2010/0803`
     """
-    name = 'disable_editing'
+    name = 'disabled_fields'
+    
     def value_from_object(self,request,obj):
         #~ l = [ f.name for f in self.store.report.disabled_fields(request,obj)]
         l = self.store.report.disabled_fields(request,obj)
@@ -182,14 +182,12 @@ class DisabledFieldsStoreField(SpecialStoreField):
             l.append(self.store.pk.name)
         return l
         
-    #~ def obj2dict(self,request,obj,d):
-        #~ d.update(disabled_fields=self.value_from_object(request,obj))
-
         
 class DisableEditingStoreField(SpecialStoreField):
     """
     A field whose value is the result of the `disable_editing` 
     method on that record.
+    New feature since :doc:`/blog/2011/0830`
     """
     name = 'disable_editing'
         
@@ -657,7 +655,7 @@ class Store:
             disabled_fields = set()
         #~ print 20110406, disabled_fields
         for f in self.fields:
-            if not f.field.name in disabled_fields:
+            if f.field is None or not f.field.name in disabled_fields:
                 #~ logger.info("Store.form2obj %s", f.field.name)
                 try:
                     f.form2obj(instance,form_values,is_new)
