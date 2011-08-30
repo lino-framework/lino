@@ -402,14 +402,16 @@ CboPays = {
 }
 
 
-def k2iso(dd,k):
+def k2iso(dd,k,ddname):
     country_id = dd.get(int(k))
+    if country_id is None:
+        dblogger.warning("Unkown %s id %s",ddname,k)
     if len(country_id) == 2:
         return country_id
-    dblogger.warning("Unkown country code %s -> %r",k,country_id)
+    dblogger.warning("Unkown %s code %s -> %r",ddname,k,country_id)
         
-def nation2iso(k): return k2iso(CboNationalite,k)
-def pays2iso(k):return k2iso(CboNationalite,k)
+def nation2iso(k): return k2iso(CboNationalite,k,'CboNationalite')
+def pays2iso(k):return k2iso(CboPays,k,'CboPays')
   
 
 
