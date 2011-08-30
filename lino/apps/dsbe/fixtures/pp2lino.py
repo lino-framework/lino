@@ -416,7 +416,7 @@ def pays2iso(k):return k2iso(CboPays,k,'CboPays')
 
 def code2user(pk,offset=0):
     if not pk: return None
-    pk = int(pk)
+    pk = int(pk) + offset
     try:
         return User.objects.get(id=pk)
     except User.DoesNotExist:
