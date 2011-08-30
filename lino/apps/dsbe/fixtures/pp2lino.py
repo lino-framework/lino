@@ -193,9 +193,6 @@ INFO Deferred City #474 (u'SCHAERBEEK') : {'__all__': [u'Un(e) City avec ce Coun
 
 
 class NotesLoader(LinoMdbLoader):
-  
-  
-  
     table_name = 'TBJournal'
     model = Note
     headers = u"""
@@ -210,6 +207,29 @@ class NotesLoader(LinoMdbLoader):
         kw.update(date=self.parsedate(row['DateJournal']))
         idclient = int(row['IDClient'])
         kw.update(person=Person.objects.get(pk=idclient))
+        yield self.model(**kw)
+
+class UsersISPLoader(LinoMdbLoader):
+    table_name = 'TBASISP'
+    model = User
+    headers = u"""
+    IDASISP TitreASISP NomASISP PrenomASISP CodeASISP Tel StatutASISP
+    """.split()
+    
+    def row2obj(self,row):
+        pk = int(row['IDASISP'])
+        kw = {}
+        kw.update(id=pk)
+        kw.update(title=row['TitreASISP'])
+        kw.update(first_name=row['PrenomASISP'])
+        kw.update(last_name=row['NomASISP'])
+        kw.update(username=row['CodeASISP'])
+        kw.update(tel=row['Tel'])
+        st = row['StatutASISP']
+        if st == "Ouvert":
+            kw.update(is_active=True)
+        else:
+            kw.update(is_active=False)
         yield self.model(**kw)
 
 
@@ -424,5 +444,7 @@ def objects():
     yield JobProviderLoader()
     yield ContractArt60Loader()
     yield ContractVSELoader()
+    yield NotesLoader()
+    yield UsersISPLoader()
     
     #~ reader = csv.reader(open(,'rb'))
