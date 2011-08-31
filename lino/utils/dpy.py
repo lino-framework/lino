@@ -248,16 +248,17 @@ class FakeDeserializedObject(base.DeserializedObject):
         #~ print 'dpy.py',self.object
         #~ dblogger.info("Loading %s...",self.name) 
         
-        if self.try_save(self.object,*args,**kw):
+        if self.try_save(*args,**kw):
             self.deserializer.saved += 1
         else:
             self.deserializer.save_later.append(self)
         
-    def try_save(self,obj,*args,**kw):
+    def try_save(self,*args,**kw):
         """Try to save the specified Model instance `obj`. Return `True` 
         on success, `False` if this instance wasn't saved and should be 
         deferred.
         """
+        obj = self.object
         #~ if obj is None:
             #~ return True
         #~ try:
@@ -287,131 +288,6 @@ class FakeDeserializedObject(base.DeserializedObject):
         #~ except ObjectDoesNotExist,e:
         #~ except (ValidationError,ObjectDoesNotExist,IntegrityError), e:
         except Exception, e:
-            if obj.pk is None:
-                dblogger.exception(e)
-                raise Exception(
-                    "Failed to save %s (and %s is None). Abandoned." 
-                    % (obj2str(obj),obj._meta.pk.attname))
-            deps = [f.rel.to for f in obj._meta.fields if f.rel is not None]
-            if not deps:
-                dblogger.exception(e)
-                raise Exception("Failed to save independent %s. Abandoned." % obj2str(obj))
-            dblogger.info("Deferred %s : %s",obj2str(obj),force_unicode(e))
-            return False
-        except Exception,e:
-            dblogger.exception(e)
-            raise Exception("Failed to save %s. Abandoned." % obj2str(obj))
-        
-class OldFakeDeserializedObject(base.DeserializedObject):
-    """
-    Imitates DeserializedObject required by loaddata.
-    
-    Unlike normal DeserializedObject, we *don't want* to bypass 
-    pre_save and validation methods on the individual objects.
-    
-    Unlike normal DeserializedObject this stores just the generator 
-    function `objects` and will start to run it only when the 
-    Serializer asks it to :meth:`save`. 
-    Django thinks that there is only 
-    one object per fixture. That's why the loaddata of a 
-    python dump ends with the irritating message 
-    "Installed 1 object(s) from 1 fixture(s)". 
-    
-    The reason for this is that we perform our own algorithm 
-    for resolving dependencies (by trying to save them, and if 
-    an exception occurs we defer this instance, trying to save 
-    the other instances first. Then we do another round of 
-    :meth:`try_save` (as long as there is hope) 
-    until everything has been saved. This memory-consuming and 
-    suboptimal method is necessary as long as we don't have an 
-    algorithm for serializing (writing the dump) in the right order.
-    """
-    
-    object = None # required by loaddata
-    
-    def __init__(self, name, objects):
-        self.objects = objects
-        self.name = name
-        #~ self.save_later = []
-
-    def save(self, *args,**kw):
-        """This will execute the `objects` function and save all instances.
-        """
-        #~ print 'dpy.py',self.object
-        self.save_later = []
-        self.saved = 0
-        dblogger.info("Loading %s...",self.name) 
-        def doit(obj):
-            if obj is None:
-                return # ignore None values
-            elif isinstance(obj,models.Model):    
-                if self.try_save(obj,*args,**kw):
-                    self.saved += 1
-                else:
-                    self.save_later.append(obj)
-            elif hasattr(obj,'__iter__'):
-            #~ if type(obj) is GeneratorType:
-                for o in obj: 
-                    doit(o)
-            else:
-                dblogger.warning("Ignored onknown object %r",obj)
-        
-        for obj in self.objects():
-            doit(obj)
-        dblogger.info("Saved %d instances from %s.",self.saved,self.name)
-                
-        while self.saved and self.save_later:
-            dblogger.info("Trying again with %d unsaved instances.",
-                len(self.save_later))
-            try_again = self.save_later
-            self.save_later = []
-            self.saved = 0
-            for obj in try_again:
-                if self.try_save(obj,*args,**kw):
-                    self.saved += 1
-                else:
-                    self.save_later.append(obj)
-            dblogger.info("Saved %d instances.",self.saved)
-            
-        if self.save_later:
-            dblogger.warning("Abandoning with %d unsaved instances from %s.",
-                len(self.save_later),self.name)
-            raise Exception("Abandoned with %d unsaved instances. "
-              "See dblog for details." % len(self.save_later))
-                
-    def try_save(self,obj,*args,**kw):
-        """Try to save the specified Model instance `obj`. Return `True` 
-        on success, `False` if this instance wasn't saved and should be 
-        deferred.
-        """
-        #~ if obj is None:
-            #~ return True
-        #~ try:
-            #~ obj.full_clean()
-        #~ except (ObjectDoesNotExist,ValidationError),e:
-            #~ if obj.pk is None:
-                #~ dblogger.exception(e)
-                #~ raise Exception("Failed to validate %s. Abandoned." % obj2str(obj))
-            #~ dblogger.debug("Deferred %s : %s",obj2str(obj),e)
-            #~ return False
-        #~ try:
-            #~ obj.save(*args,**kw)
-            #~ dblogger.debug("Deserialized %s has been saved" % obj2str(obj))
-            #~ return True
-        #~ except Exception,e:
-            #~ if obj.pk is None:
-                #~ dblogger.exception(e)
-                #~ raise Exception("Failed to save %s. Abandoned." % obj2str(obj))
-            #~ dblogger.debug("Deferred %s : %s",obj2str(obj),e)
-            #~ return False
-        try:
-            obj.full_clean()
-            obj.save(*args,**kw)
-            dblogger.debug("%s has been saved" % obj2str(obj))
-            return True
-        #~ except ValidationError,e:
-        #~ except ObjectDoesNotExist,e:
-        except (ValidationError,ObjectDoesNotExist), e:
             if obj.pk is None:
                 dblogger.exception(e)
                 raise Exception(
@@ -490,7 +366,7 @@ class DpyDeserializer:
             self.save_later = []
             self.saved = 0
             for obj in try_again:
-                if obj.try_save(obj): # ,*args,**kw):
+                if obj.try_save(): # ,*args,**kw):
                     saved += 1
                 else:
                     self.save_later.append(obj)
@@ -510,27 +386,4 @@ class DpyDeserializer:
 def Deserializer(fp, **options):
     d = DpyDeserializer()
     return d.deserialize(fp, **options)
-
-def OldDeserializer(fp, **options):
-    """
-    Used when ``manage.py loaddata`` encounters a `.py` fixture.
-    """
-    if isinstance(fp, basestring):
-        raise NotImplementedError
-    #~ global IS_DESERIALIZING
-    #~ IS_DESERIALIZING = True
-    babel.set_language(babel.DEFAULT_LANGUAGE)
-    parts = os.path.split(fp.name)
-    fqname = parts[-1]
-    assert fqname.endswith(SUFFIX)
-    fqname = fqname[:-4]
-    #print fqname
-    desc = (SUFFIX,'r',imp.PY_SOURCE)
-    module = imp.load_module(fqname, fp, fp.name, desc)
-    #m = __import__(filename)
-    yield OldFakeDeserializedObject(fp.name,module.objects)
-    if hasattr(module,'after_load'):
-        module.after_load()
-    #~ IS_DESERIALIZING = False
-
 

@@ -84,15 +84,15 @@ class Calendar(mixins.AutoUser):
         default='local',
         choices=CALENDAR_CHOICES)
     name = models.CharField(_("Name"),max_length=200)
-    url_template = models.CharField(_("URL template"),max_length=200,
-        blank=True,null=True)
-    username = models.CharField(_("Username"),max_length=200
-        ,blank=True)
-    password = fields.PasswordField(_("Password"),max_length=200
-        ,blank=True)
+    url_template = models.CharField(_("URL template"),
+        max_length=200,blank=True,null=True)
+    username = models.CharField(_("Username"),
+        max_length=200,blank=True,null=True)
+    password = fields.PasswordField(_("Password"),
+        max_length=200,blank=True,null=True)
     readonly = models.BooleanField(_("read-only"),default=False)
     is_default = models.BooleanField(
-      _("is default"),default=False)
+        _("is default"),default=False)
     start_date = models.DateField(
         verbose_name=_("Start date"),
         blank=True,null=True)
@@ -117,7 +117,9 @@ class Calendar(mixins.AutoUser):
 
     def get_url(self):
         if self.url_template:
-            return self.url_template % dict(username=self.username,password=self            .password)
+            return self.url_template % dict(
+              username=self.username,
+              password=self.password)
         return ''
                     
     def __unicode__(self):
@@ -128,6 +130,9 @@ class Calendars(reports.Report):
     model = 'cal.Calendar'
 
 def default_calendar(user):
+    """
+    Returns or creates the default calendar for the given user.
+    """
     try:
         return user.calendar_set.get(is_default=True)
     except Calendar.DoesNotExist,e:
@@ -170,13 +175,39 @@ class EventTypes(reports.Report):
 
 
 
-  
-    
-class ComponentBase(models.Model):
+class CalendarRelated(models.Model):
+    "Deserves more documentation."
     class Meta:
         abstract = True
         
     calendar = models.ForeignKey(Calendar,verbose_name=_("Calendar"),blank=True)
+    
+    def full_clean(self,*args,**kw):
+        self.before_clean()
+        super(CalendarRelated,self).full_clean(*args,**kw)
+        
+    def save(self,*args,**kw):
+        self.before_clean()
+        super(CalendarRelated,self).save(*args,**kw)
+        
+    def before_clean(self):
+        """
+        Called also from `save()` because `get_or_create()` 
+        doesn't call full_clean().
+        We cannot do this only in `save()` because otherwise 
+        `full_clean()` (when called) will complain 
+        about the empty fields.
+        """
+        if not self.calendar_id:
+            self.calendar = default_calendar(self.user)
+            
+
+  
+    
+class ComponentBase(CalendarRelated):
+    class Meta:
+        abstract = True
+        
     uid = models.CharField(_("UID"),
         max_length=200,
         blank=True,null=True)
@@ -209,7 +240,6 @@ class RecurrenceSet(ComponentBase):
 class RecurrenceSets(reports.Report):
     model = RecurrenceSet
     
-
     
     
 class Component(ComponentBase,
@@ -244,17 +274,6 @@ class Component(ComponentBase,
     def disable_editing(self,request):
         if self.rset: return True
 
-    def before_clean(self):
-        """
-        Called also from `save()` because `get_or_create()` 
-        doesn't call full_clean().
-        We cannot do this only in `save()` because otherwise 
-        `full_clean()` (when called) will complain 
-        about the empty fields.
-        """
-        if not self.calendar_id:
-            self.calendar = default_calendar(self.user)
-            
     def get_uid(self):
         """
         This is going to be used when sending 
@@ -267,11 +286,6 @@ class Component(ComponentBase,
         return "%s@%s" % (self.pk,settings.LINO.uid)
             
 
-    def full_clean(self,*args,**kw):
-        self.before_clean()
-        super(Component,self).full_clean(*args,**kw)
-        
-        
     def on_user_change(self,request):
         self.user_modified = True
         #~ if change_type == 'POST': 
@@ -281,7 +295,6 @@ class Component(ComponentBase,
         """
         Computes the value of `dt_alarm` before really saving.
         """
-        self.before_clean()
         if self.alarm_unit:
             if not self.start_date:
                 self.start_date = datetime.date.today()
@@ -312,7 +325,6 @@ class Component(ComponentBase,
         #~ html += _(" on ") + babel.dtos(self.start_date)
         #~ return html
         
-
 
 
 #~ class Event(Component,contacts.PartnerDocument):
@@ -390,7 +402,7 @@ class Task(mixins.Owned,Component):
 
     @classmethod
     def site_setup(cls,lino):
-        lino.TASK_AUTO_FIELDS= reports.fields_list(cls,
+        lino.TASK_AUTO_FIELDS = reports.fields_list(cls,
             '''start_date start_time summary''')
 
     def save(self,*args,**kw):
