@@ -12,7 +12,7 @@ AUTODOC                = python l:\\snapshots\\sphinx-autopackage-script\\genera
 
 
 # You can set these variables from the command line.
-SPHINXOPTS    = -w warnings.txt -n 
+SPHINXOPTS    = -w warnings.txt -n -P
 #~ SPHINXOPTS    = -W 
 #~ SPHINXOPTS    = 
 SPHINXBUILD   = python l:\\snapshots\\sphinx\\sphinx-build.py

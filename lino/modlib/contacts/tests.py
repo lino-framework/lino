@@ -12,18 +12,22 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+This module contains some relatively quick tests 
+that don't load any fixtures.
+  
+"""
+
 
 from lino.utils.test import TestCase
 #from lino.igen import models
 #from lino.modlib.contacts.models import Contact, Companies
 #from lino.modlib.countries.models import Country
-from lino.modlib.contacts.models import Companies
 from lino.utils import babel
 
 from lino.tools import resolve_model,resolve_app
 Person = resolve_model('contacts.Person')
 contacts = resolve_app('contacts')
-#Companies = resolve_model('contacts.Companies')
 from lino.utils.instantiator import Instantiator
 
 class StdTest(TestCase):

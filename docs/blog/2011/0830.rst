@@ -28,7 +28,9 @@ Fixed some bugs that came with 20110830a.
 - Changes in :class:`lino.utils.dpy.FakeDeserializedObject`.
 - Moved the general logic for loading :file:`.mdb` files from 
   :mod:`lino.apps.dsbe.fixtures.pp2lino` to new module :mod:`lino.utils.mdbtools`.
-  
+- A few hour of work in :mod:`lino.apps.dsbe.fixtures.pp2lino` 
+  for importing legacy data of a future Lino user.
+
 When importing the cities from the pp database, we had the following problem::
 
   Deferred City #184 (u'GANSHOREN') : {'__all__': [u'Un(e) City avec ce Country, Name et Zip code existe déjà.']}
@@ -36,7 +38,7 @@ When importing the cities from the pp database, we had the following problem::
   Deferred City #289 (u'KOEKELBERG') : {'__all__': [u'Un(e) City avec ce Country, Name et Zip code existe déjà.']}
   Deferred City #474 (u'SCHAERBEEK') : {'__all__': [u'Un(e) City avec ce Country, Name et Zip code existe déjà.']}
 
-The easiest solution for this seems a
+The easiest solution for this seemed a
 new configuration attribute :attr:`lino.Lino.allow_duplicate_cities` 
 which we locally set to `True` on that site.
 Later it'll be more easy to convert these by manually changing a dpy dump.

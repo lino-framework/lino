@@ -24,6 +24,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from django.db.utils import IntegrityError
+from django.conf import settings
 #~ from django.utils import unittest
 #~ from django.test.client import Client
 #from lino.igen import models
@@ -54,8 +55,8 @@ def test01(self):
     from lino.apps.dsbe.models import Person
     self.assertEquals(Person.objects.count(), 73)
     
-    p = Person.objects.get(pk=15)
-    self.assertEquals(unicode(p), "Annette ARENS (15)")
+    p = Person.objects.get(pk=117)
+    self.assertEquals(unicode(p), "Annette ARENS (117)")
     
     
         
@@ -65,7 +66,7 @@ def test02(self):
     See also :doc:`/blog/2011/0531`.
     See the source code at :srcref:`/lino/apps/dsbe/tests/dsbe_demo_tests.py`.
     """
-    url = '/api/properties/SoftSkillsByPerson?_dc=1298881440121&fmt=json&mt=22&mk=15'
+    url = '/api/properties/SoftSkillsByPerson?_dc=1298881440121&mt=22&mk=117&fmt=json'
     # make sure that the response is in English so that this test works on any site
     babel.set_language('en')
     #~ extra = {'Accept-Language':'fr,de-DE;q=0.8,de;q=0.6,en-US;q=0.4,en;q=0.2'
@@ -82,7 +83,7 @@ def test02(self):
     #~ for k in 'count rows gc_choices title'.split():
         #~ self.assertTrue(result.has_key(k))
     #~ if len(result['rows']) != 3:
-    self.assertEqual(result['title'],"Properties of Annette ARENS (15)")
+    self.assertEqual(result['title'],"Properties of Annette ARENS (117)")
     #~ print '\n'.join([unicode(x) for x in result['rows']])
     self.assertEqual(len(result['rows']),3)
     row = result['rows'][0]
@@ -223,7 +224,7 @@ def test03(self):
     
     """
     # 
-    response = self.client.get('/api/contacts/Persons/15?fmt=json')
+    response = self.client.get('/api/contacts/Persons/117?fmt=json')
     result = self.check_json_result(response,'navinfo disable_delete data id title')
     #~ result = simplejson.loads(response.content)
     #~ for k in 'navinfo disable_delete data id title'.split():
@@ -352,8 +353,8 @@ def test06(self):
     from lino.utils import babel
     from lino.apps.dsbe.models import Person
     from lino.apps.dsbe.models import Property, PersonProperty
-    annette = Person.objects.get(pk=15)
-    self.assertEquals(unicode(annette), "Annette ARENS (15)")
+    annette = Person.objects.get(pk=117)
+    self.assertEquals(unicode(annette), "Annette ARENS (117)")
     
     babel.set_language('en')
     p = Property.objects.get(name_en="Obedient")
@@ -409,8 +410,8 @@ def test08(self):
     #~ qs = MyPersons.request(user=)
     l = [unicode(p) for p in qs]
     
-    self.assertEqual(l,[u"Laurent BASTIAENSEN (18)",
-        u'Erna ÄRGERLICH (68)',u"Emil EIERSCHAL (74)"])
+    self.assertEqual(l,[u"Laurent BASTIAENSEN (120)",
+        u'Erna ÄRGERLICH (170)',u"Emil EIERSCHAL (176)"])
     
     
 def test09(self):
@@ -440,11 +441,14 @@ def test10(self):
     else:
         self.fail("Expected IntegrityError")
         
+    
     try:
         be.city_set.create(name="Eupen",zip_code='4700')
     except IntegrityError:
-        pass
+        if settings.LINO.allow_duplicate_cities:
+            self.fail("Got IntegrityError though allow_duplicate_cities should be allowed.")
     else:
-        self.fail("Expected IntegrityError")
+        if not settings.LINO.allow_duplicate_cities:
+            self.fail("Expected IntegrityError")
         
     

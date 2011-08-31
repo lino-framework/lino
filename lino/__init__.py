@@ -290,6 +290,7 @@ class Lino(object):
     date_format_strftime = '%d.%m.%Y'
     date_format_extjs = 'd.m.Y'
     
+   
     def parse_date(self,s):
         """Convert a string formatted using 
         :attr:`date_format_strftime` or  :attr:`date_format_extjs` 

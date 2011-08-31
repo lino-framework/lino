@@ -57,6 +57,59 @@ def test01(self):
     See the source code at :srcref:`/lino/apps/dsbe/tests/dsbe_tests.py`.
     """
     from lino.utils.dpy import Serializer
+    from lino.apps.dsbe.models import Contact, Company
+    ser = Serializer()
+    #~ ser.models = [CourseProvider,Company]
+    ser.models = [Contact, Company]
+    ser.write_preamble = False
+    self.assertEqual(Contact._meta.parents,{})
+    parent_link_field = Company._meta.parents.get(Contact)
+    #~ print parent_link_field.name
+    #~ self.assertEqual(CourseProvider._meta.parents.get(Company),{})
+    #~ self.assertEqual(CourseProvider._meta.parents,{})
+    fields = [f.attname for f in Company._meta.fields]
+    local_fields = [f.attname for f in Company._meta.local_fields]
+    #~ self.assertEqual(','.join(local_fields),'contact_ptr_id')
+    self.assertEqual(','.join(local_fields),'contact_ptr_id,vat_id,type_id,is_active,activity_id,bank_account1,bank_account2,prefix,hourly_rate')
+    fields = [f.attname for f in Contact._meta.fields]
+    local_fields = [f.attname for f in Contact._meta.local_fields]
+    self.assertEqual(fields,local_fields)
+    #~ self.assertTrue(','.join([f.attname for f in local_fields]),'company_ptr_id')
+      
+    #~ foo = Company(name='Foo')
+    #~ foo.save()
+    bar = Contact(name='Bar')
+    bar.save()
+    
+    #~ ser.serialize([foo,bar])
+    ser.serialize([bar])
+    #~ print ser.stream.getvalue()
+    self.assertEqual(ser.stream.getvalue(),"""
+def create_contacts_contact(id, country_id, city_id, name, addr1, street_prefix, street, street_no, street_box, addr2, zip_code, region, language, email, url, phone, gsm, fax, remarks):
+    return Contact(id=id,country_id=country_id,city_id=city_id,name=name,addr1=addr1,street_prefix=street_prefix,street=street,street_no=street_no,street_box=street_box,addr2=addr2,zip_code=zip_code,region=region,language=language,email=email,url=url,phone=phone,gsm=gsm,fax=fax,remarks=remarks)
+def create_contacts_company(contact_ptr_id, vat_id, type_id, is_active, activity_id, bank_account1, bank_account2, prefix, hourly_rate):
+    return insert_child(Contact.objects.get(pk=contact_ptr_id),Company,vat_id=vat_id,type_id=type_id,is_active=is_active,activity_id=activity_id,bank_account1=bank_account1,bank_account2=bank_account2,prefix=prefix,hourly_rate=hourly_rate)
+
+
+def contacts_contact_objects():
+    yield create_contacts_contact(100,None,None,u'Bar',u'',u'',u'',u'',u'',u'',u'',u'',u'de',None,u'',u'',u'',u'',None)
+
+
+def objects():
+    yield contacts_contact_objects()
+
+settings.LINO.loading_from_dump = True
+
+from lino.apps.dsbe.migrate import install
+install(globals())
+""")
+    
+def unused_test01(self):
+    """
+    Used on :doc:`/blog/2011/0414`.
+    See the source code at :srcref:`/lino/apps/dsbe/tests/dsbe_tests.py`.
+    """
+    from lino.utils.dpy import Serializer
     from lino.apps.dsbe.models import Company, CourseProvider
     ser = Serializer()
     #~ ser.models = [CourseProvider,Company]
@@ -174,11 +227,13 @@ def test03(self):
     a = PrintAction()
     #~ run_
     #~ rr = Contracts()
+    from lino.ui.base import UI
+    ui = UI() 
     try:
-        kw = a.run_(n)
+        kw = a.run_(ui,n)
     except Exception,e:
         self.assertEqual(e.message,
-          r"Invalid template configured for ContractType u'Art.60\xa77'. Expected filename ending with '.odt'.")
+          u"Invalid template '' configured for ContractType u'Art.60\\xa77'. Expected filename ending with '.odt'.")
           
     #~ t.template='Default.odt'
     #~ t.save()
@@ -245,16 +300,19 @@ def test05(self):
     
     # Django pitfall: repr() of a model instance may return basestring containing non-ascii characters.
     self.assertEqual(type(repr(a)),str)
+
+    # 
+    self.assertEqual(obj2str(a,True),"Activity(name=u'Sozialhilfeempf\\xe4nger')")
+    a.save()
+    self.assertEqual(obj2str(a,True),u"Activity(id=1,name=u'Sozialhilfeempf\\xe4nger')")
     
-    self.assertEqual(obj2str(a,True),u"Activity(name=u'Sozialhilfeempf\\xe4nger')")
-    #~ self.assertEqual(obj2str(a,True),u"Activity(id=None,name=u'Sozialhilfeempf\\xe4nger',lst104=False)")
     expected = "Person(language=u'%s'," % babel.DEFAULT_LANGUAGE
     expected += "last_name='Test',"
-    expected += "is_active=True,"
-    expected += r"activity=Activity(name=u'Sozialhilfeempf\xe4nger'))"
-    self.assertEqual(
-      obj2str(p,True),
-      expected)
-    p.id = 5
+    expected += "is_active=True"
+    #~ expected += r",activity=Activity(name=u'Sozialhilfeempf\xe4nger'))"
+    #~ expected += ",activity=1"
+    expected += ")"
+    self.assertEqual(obj2str(p,True),expected)
+    p.pk = 5
     self.assertEqual(obj2str(p),"Person #5 (u'TEST (5)')")
     

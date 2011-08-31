@@ -1,1 +1,10 @@
-T:\hgwork\lino\docs\ref\model_methods.rst:39: WARNING: py:func reference target not found: lino.utils.choosers.chooser
+T:\hgwork\lino\docs\admin\install.rst:149: WARNING: xfile reference target not found: local.pth
+T:\hgwork\lino\docs\admin\install.rst:161: WARNING: xfile reference target not found: local.pth
+T:\hgwork\lino\docs\admin\install.rst:201: WARNING: py:mod reference target not found: lino.apps.igen
+T:\hgwork\lino\docs\admin\install.rst:316: WARNING: setting reference target not found: DATABASES
+T:\hgwork\lino\docs\ref\settings.rst:40: WARNING: py:class reference target not found: lino.modlib.fields.LanguageField
+T:\hgwork\lino\docs\ref\settings.rst:48: WARNING: py:mod reference target not found: lino.ui.extjs4.urls
+T:\hgwork\lino\docs\ref\settings.rst:48: WARNING: py:mod reference target not found: lino.ui.qx.urls
+T:\hgwork\lino\docs\ref\settings.rst:69: WARNING: py:meth reference target not found: lino.ui.extjs.ext_ui.ExtUI.build_site_js
+T:\hgwork\lino\docs\ref\settings.rst:92: WARNING: py:attr reference target not found: lino.Lino.project_dir
+T:\hgwork\lino\docs\ref\settings.rst:94: WARNING: envvar reference target not found: DJANGO_SETTINGS_MODULE

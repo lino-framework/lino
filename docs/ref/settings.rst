@@ -14,6 +14,23 @@ Lino and the Django `settings.py` file
 
 This section describes Lino-specific entries of the Django :xfile:`settings.py`.
 
+.. setting:: LOGGING
+.. setting:: LOGGING_CONFIG
+
+Lino sets :setting:`LOGGING_CONFIG` to :func:`lino.utils.log.configure` 
+which is our suggetion for a lightweight flexible 
+logging configuration method. If you leave :setting:`LOGGING_CONFIG` 
+unchanged, you can configure your logging preferences using the 
+:setting:`LOGGING` setting. Some examples::
+
+    LOGGING = dict(filename='/var/log/lino/system.log'),level='DEBUG')
+    LOGGING = dict(filename=join(LINO.project_dir,'log','system.log'),level='DEBUG')
+    LOGGING = dict(filename=None,level='DEBUG')
+
+
+You don't need to use Lino's logging config. In that case, refer to
+https://docs.djangoproject.com/en/dev/ref/settings/#logging-config
+
 .. setting:: LANGUAGE_CODE
 
 See http://docs.djangoproject.com/en/dev/ref/settings/#language-code
@@ -110,7 +127,3 @@ Environment variables
   
   
 
-The `lino_settings.py` file
----------------------------
-
-This contains settings that have no influence on the Django machinery.

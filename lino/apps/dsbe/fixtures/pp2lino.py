@@ -46,9 +46,6 @@ import codecs
 import datetime
 
 from django.conf import settings
-if not settings.LINO.legacy_data_path:
-    raise Exception("You must specify the name of your .mdb file in settings.LINO.legacy_data_path!")
-
 
 from lino.utils import dblogger
 from lino.utils.instantiator import Instantiator
@@ -190,7 +187,7 @@ CboNationalite = {
   66:'DJ', # "Djiboutien(ne)",
   68:"egyptien(ne)",
   69:"NL",
-  70:"Kazakhstan",
+  70:'KZ', # "Kazakhstan",
   71:"Somalien(ne)",
   72:"AF",
   73:'CU', # "Cubaine",
@@ -290,7 +287,7 @@ CboPays = {
   ,87:u"Jamaļque"
   ,88:u"Japon"
   ,89:u"Jordanie"
-  ,90:u"Kazakhstan"
+  ,90:'KZ' # u"Kazakhstan"
   ,91:u"Kenya"
   ,92:u"Kirghizistan"
   ,93:u"Kiribati"
@@ -464,27 +461,13 @@ OFFSET_CONTRACT_CPAS = 2000
 class LinoMdbLoader(Loader):
     "Base for all Loaders in this module"
     mdb_file = settings.LINO.legacy_data_path
-    if not mdb_file:
-        raise Exception("You must specify the name of your .mdb file in settings.LINO.legacy_data_path!")
-
 
 
 
 class CityLoader(LinoMdbLoader):
     """
-    
-INFO Deferred City #184 (u'GANSHOREN') : {'__all__': [u'Un(e) City avec ce Country, Name et Zip code existe d\xe9j\xe0.'
-]}
-INFO Deferred City #270 (u'JETTE') : {'__all__': [u'Un(e) City avec ce Country, Name et Zip code existe d\xe9j\xe0.']}
-INFO Deferred City #289 (u'KOEKELBERG') : {'__all__': [u'Un(e) City avec ce Country, Name et Zip code existe d\xe9j\xe0.
-']}
-INFO Deferred City #474 (u'SCHAERBEEK') : {'__all__': [u'Un(e) City avec ce Country, Name et Zip code existe d\xe9j\xe0.
-']}
-    
+    Converts rows from CboCommuneCodePostal to City instances.
     """
-  
-  
-  
     table_name = 'CboCommuneCodePostal'
     model = City
     headers = u"""
@@ -503,6 +486,9 @@ INFO Deferred City #474 (u'SCHAERBEEK') : {'__all__': [u'Un(e) City avec ce Coun
 
 
 class NotesLoader(LinoMdbLoader):
+    """
+    Converts rows from TBJournal to Note instances.
+    """
     table_name = 'TBJournal'
     model = Note
     headers = u"""
@@ -533,6 +519,33 @@ class NotesLoader(LinoMdbLoader):
             #~ kw.update(person=Person.objects.get(pk=idclient))
             yield self.model(**kw)
 
+class UsersSGLoader(LinoMdbLoader):
+    """
+    Converts rows from TBASSG to User instances.
+    """
+    table_name = 'TBASSG'
+    model = User
+    headers = u"""
+    IDASSSG TitreASSSG NomASSSG PrenomASSSG CodeASSSG TelASSSG StatutASSSG
+    """.split()
+    
+    def row2obj(self,row):
+        pk = int(row['IDASSSG'])
+        kw = {}
+        kw.update(id=pk)
+        kw.update(title=row['TitreASSSG'])
+        kw.update(first_name=row['PrenomASSSG'])
+        kw.update(last_name=row['NomASSSG'])
+        kw.update(username=row['CodeASSSG'])
+        kw.update(phone=row['TelASSSG'])
+        st = row['StatutASSSG']
+        if st == "Ouvert":
+            kw.update(is_active=True)
+        else:
+            kw.update(is_active=False)
+        yield self.model(**kw)
+
+
 class UsersISPLoader(LinoMdbLoader):
     table_name = 'TBASISP'
     model = User
@@ -556,29 +569,6 @@ class UsersISPLoader(LinoMdbLoader):
             kw.update(is_active=False)
         yield self.model(**kw)
 
-
-class UsersSGLoader(LinoMdbLoader):
-    table_name = 'TBASSG'
-    model = User
-    headers = u"""
-    IDASSSG TitreASSSG NomASSSG PrenomASSSG CodeASSSG TelASSSG StatutASSSG
-    """.split()
-    
-    def row2obj(self,row):
-        pk = int(row['IDASSSG'])
-        kw = {}
-        kw.update(id=pk)
-        kw.update(title=row['TitreASSSG'])
-        kw.update(first_name=row['PrenomASSSG'])
-        kw.update(last_name=row['NomASSSG'])
-        kw.update(username=row['CodeASSSG'])
-        kw.update(phone=row['TelASSSG'])
-        st = row['StatutASSSG']
-        if st == "Ouvert":
-            kw.update(is_active=True)
-        else:
-            kw.update(is_active=False)
-        yield self.model(**kw)
 
 
 
@@ -815,6 +805,10 @@ class ContractVSELoader(LinoMdbLoader):
                     yield self.model(**kw)
 
 def objects():
+  
+    if not settings.LINO.legacy_data_path:
+        raise Exception("You must specify the name of your .mdb file in settings.LINO.legacy_data_path!")
+  
     phin = Instantiator('dsbe.PersonGroup','name').build
     yield phin('1')
     yield phin('2')
@@ -828,8 +822,8 @@ def objects():
         yield ContractType(id=k,name=v)
     for k,v in CboTypeContrat.items():
         yield ContractType(id=k+OFFSET_CONTRACT_TYPE_CPAS,name=v)
-    yield UsersISPLoader()
     yield UsersSGLoader()
+    yield UsersISPLoader()
     yield CityLoader()
     yield PersonLoader()
     yield JobProviderLoader()

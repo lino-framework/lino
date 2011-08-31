@@ -122,7 +122,7 @@ class Serializer(base.Serializer):
         for model in all_models:
             #~ self.stream.write('    for o in %s_objects(): yield o\n' % model._meta.db_table)
             self.stream.write('    yield %s_objects()\n' % model._meta.db_table)
-        self.stream.write('settings.LINO.loading_from_dump = True\n')
+        self.stream.write('\nsettings.LINO.loading_from_dump = True\n')
         if settings.LINO.migration_module:
             self.stream.write('\n')
             self.stream.write('from %s import install\n' \

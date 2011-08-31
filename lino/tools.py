@@ -153,7 +153,8 @@ def obj2str(i,force_detailed=False):
     pairs = []
     for (fld,model) in i._meta.get_fields_with_model():
         if isinstance(fld,models.ForeignKey):
-            v = getattr(i,fld.name+"_id") 
+            v = getattr(i,fld.attname) 
+            #~ v = getattr(i,fld.name+"_id") 
             #~ if getattr(i,fld.name+"_id") is not None:
                 #~ v = getattr(i,fld.name)
         else:
