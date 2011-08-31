@@ -63,12 +63,16 @@ class ChildCollector(Collector):
                                  nullable=True)
   
 
-def delete_child(obj,child_model,using=None):
+def delete_child(obj,child_model,using=None,request=None):
     using = using or router.db_for_write(obj.__class__, instance=obj)
     try:
         child = child_model.objects.get(pk=obj.pk)
     except child_model.DoesNotExist:
         raise Exception(u"%s has no child in %s" % (obj,child_model.__name__))
+    if request:
+        msg = child_model._lino_ddh.disable_delete(child,request)
+        if msg:
+            raise Exception(msg)
     logger.debug(u"Delete child %s from %s",child_model.__name__,obj)
     collector = ChildCollector(using=using)
     collector.collect([child],source=obj.__class__,nullable=True,collect_parents=False)
@@ -238,7 +242,7 @@ class EnableChild(VirtualField):
                 #~ obj.__class__.__name__,self.child_model.__name__)
             # child exists, delete it if it may not 
             if not v:
-                delete_child(obj,self.child_model)
+                delete_child(obj,self.child_model,request=request)
         else:
             #~ logger.debug('set_value_in_object : %s has no child %s',
                 #~ obj.__class__.__name__,self.child_model.__name__)

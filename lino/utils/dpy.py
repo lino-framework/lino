@@ -490,7 +490,7 @@ class DpyDeserializer:
             self.save_later = []
             self.saved = 0
             for obj in try_again:
-                if obj.try_save(obj,*args,**kw):
+                if obj.try_save(obj): # ,*args,**kw):
                     saved += 1
                 else:
                     self.save_later.append(obj)

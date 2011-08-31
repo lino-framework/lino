@@ -1027,7 +1027,8 @@ class Report(actors.Actor): #,base.Handled):
         
     def disable_delete(self,obj,request):
         """
-        Return either `None` if the given `obj` *is allowed* to be deleted by `request`,
+        Return either `None` if the given `obj` *is allowed* 
+        to be deleted by `request`,
         or a string with a message explaining why, if not.        
         """
         return self.model._lino_ddh.disable_delete(obj,request)
