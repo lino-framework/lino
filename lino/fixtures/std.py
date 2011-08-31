@@ -22,7 +22,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from lino.utils.babel import babel_values, babelitem
 
-TextFieldTemplate = resolve_model('lino.TextFieldTemplate')
+#~ TextFieldTemplate = resolve_model('lino.TextFieldTemplate')
 
 #~ from lino.modlib.properties import models as properties 
 

@@ -233,6 +233,80 @@ class FakeDeserializedObject(base.DeserializedObject):
     Unlike normal DeserializedObject, we *don't want* to bypass 
     pre_save and validation methods on the individual objects.
     
+    """
+    
+    
+    def __init__(self, deserializer, object):
+        self.object = object
+        #~ self.name = name
+        self.deserializer = deserializer
+
+    def save(self, *args,**kw):
+        """
+        """
+        #~ print 'dpy.py',self.object
+        #~ dblogger.info("Loading %s...",self.name) 
+        
+        if self.try_save(self.object,*args,**kw):
+            self.deserializer.saved += 1
+        else:
+            self.deserializer.save_later.append(self.object)
+        
+    def try_save(self,obj,*args,**kw):
+        """Try to save the specified Model instance `obj`. Return `True` 
+        on success, `False` if this instance wasn't saved and should be 
+        deferred.
+        """
+        #~ if obj is None:
+            #~ return True
+        #~ try:
+            #~ obj.full_clean()
+        #~ except (ObjectDoesNotExist,ValidationError),e:
+            #~ if obj.pk is None:
+                #~ dblogger.exception(e)
+                #~ raise Exception("Failed to validate %s. Abandoned." % obj2str(obj))
+            #~ dblogger.debug("Deferred %s : %s",obj2str(obj),e)
+            #~ return False
+        #~ try:
+            #~ obj.save(*args,**kw)
+            #~ dblogger.debug("Deserialized %s has been saved" % obj2str(obj))
+            #~ return True
+        #~ except Exception,e:
+            #~ if obj.pk is None:
+                #~ dblogger.exception(e)
+                #~ raise Exception("Failed to save %s. Abandoned." % obj2str(obj))
+            #~ dblogger.debug("Deferred %s : %s",obj2str(obj),e)
+            #~ return False
+        try:
+            obj.full_clean()
+            obj.save(*args,**kw)
+            dblogger.debug("%s has been saved" % obj2str(obj))
+            return True
+        #~ except ValidationError,e:
+        #~ except ObjectDoesNotExist,e:
+        except (ValidationError,ObjectDoesNotExist), e:
+            if obj.pk is None:
+                dblogger.exception(e)
+                raise Exception(
+                    "Failed to save %s (and %s is None). Abandoned." 
+                    % (obj2str(obj),obj._meta.pk.attname))
+            deps = [f.rel.to for f in obj._meta.fields if f.rel is not None]
+            if not deps:
+                dblogger.exception(e)
+                raise Exception("Failed to save independent %s. Abandoned." % obj2str(obj))
+            dblogger.info("Deferred %s : %s",obj2str(obj),force_unicode(e))
+            return False
+        except Exception,e:
+            dblogger.exception(e)
+            raise Exception("Failed to save %s. Abandoned." % obj2str(obj))
+        
+class OldFakeDeserializedObject(base.DeserializedObject):
+    """
+    Imitates DeserializedObject required by loaddata.
+    
+    Unlike normal DeserializedObject, we *don't want* to bypass 
+    pre_save and validation methods on the individual objects.
+    
     Unlike normal DeserializedObject this stores just the generator 
     function `objects` and will start to run it only when the 
     Serializer asks it to :meth:`save`. 
@@ -364,7 +438,78 @@ class FakeDeserializedObject(base.DeserializedObject):
     #~ """
     #~ return IS_DESERIALIZING
 
+class DpyDeserializer:
+    """
+    Used when ``manage.py loaddata`` encounters a `.py` fixture.
+    # new after blog/2011/0831
+    """
+    
+    def __init__(self):
+        self.save_later = []
+        self.saved = 0
+  
+    def deserialize(self,fp, **options):
+        if isinstance(fp, basestring):
+            raise NotImplementedError
+        #~ global IS_DESERIALIZING
+        #~ IS_DESERIALIZING = True
+        babel.set_language(babel.DEFAULT_LANGUAGE)
+        parts = os.path.split(fp.name)
+        fqname = parts[-1]
+        assert fqname.endswith(SUFFIX)
+        fqname = fqname[:-4]
+        #print fqname
+        desc = (SUFFIX,'r',imp.PY_SOURCE)
+        module = imp.load_module(fqname, fp, fp.name, desc)
+        #m = __import__(filename)
+        
+        def expand(obj):
+            if obj is None:
+                pass # silently ignore None values
+            elif isinstance(obj,models.Model):    
+                yield FakeDeserializedObject(self,obj)
+            elif hasattr(obj,'__iter__'):
+            #~ if type(obj) is GeneratorType:
+                for o in obj: 
+                    for so in expand(o): 
+                        yield so
+            else:
+                dblogger.warning("Ignored unknown object %r",obj)
+                
+        for obj in module.objects():
+            for o in expand(obj): yield o
+              
+        dblogger.info("Saved %d instances from %s.",self.saved,fp.name)
+                    
+        while self.saved and self.save_later:
+            dblogger.info("Trying again with %d unsaved instances.",
+                len(self.save_later))
+            try_again = self.save_later
+            self.save_later = []
+            self.saved = 0
+            for obj in try_again:
+                if obj.try_save(obj,*args,**kw):
+                    saved += 1
+                else:
+                    self.save_later.append(obj)
+            dblogger.info("Saved %d instances.",self.saved)
+            
+        if self.save_later:
+            dblogger.warning("Abandoning with %d unsaved instances from %s.",
+                len(self.save_later),fp.name)
+            raise Exception("Abandoned with %d unsaved instances. "
+              "See dblog for details." % len(self.save_later))
+            
+        if hasattr(module,'after_load'):
+            module.after_load()
+        #~ IS_DESERIALIZING = False
+
+
 def Deserializer(fp, **options):
+    d = DpyDeserializer()
+    return d.deserialize(fp, **options)
+
+def OldDeserializer(fp, **options):
     """
     Used when ``manage.py loaddata`` encounters a `.py` fixture.
     """
@@ -381,7 +526,7 @@ def Deserializer(fp, **options):
     desc = (SUFFIX,'r',imp.PY_SOURCE)
     module = imp.load_module(fqname, fp, fp.name, desc)
     #m = __import__(filename)
-    yield FakeDeserializedObject(fp.name,module.objects)
+    yield OldFakeDeserializedObject(fp.name,module.objects)
     if hasattr(module,'after_load'):
         module.after_load()
     #~ IS_DESERIALIZING = False
