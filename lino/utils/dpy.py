@@ -28,7 +28,7 @@ from django.conf import settings
 from django.db import models
 from django.db.models.fields import NOT_PROVIDED
 from django.core.serializers import base
-from django.core.exceptions import ValidationError, ObjectDoesNotExist, IntegrityError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.contrib.contenttypes.models import ContentType
 #~ from django.contrib.auth.models import Permission
 from django.contrib.sessions.models import Session
@@ -285,7 +285,8 @@ class FakeDeserializedObject(base.DeserializedObject):
             return True
         #~ except ValidationError,e:
         #~ except ObjectDoesNotExist,e:
-        except (ValidationError,ObjectDoesNotExist,IntegrityError), e:
+        #~ except (ValidationError,ObjectDoesNotExist,IntegrityError), e:
+        except Exception, e:
             if obj.pk is None:
                 dblogger.exception(e)
                 raise Exception(
