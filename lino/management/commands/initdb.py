@@ -12,7 +12,9 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""Performs a database reset and loads the specified fixtures for all applications.  
+"""
+Performs a database reset *for all installed apps* 
+and loads the specified fixtures for all applications.  
 It is a combination of Django's `syncdb`, `flush` and `loaddata` commands.
 It also writes log entries to your dblogger.
 """

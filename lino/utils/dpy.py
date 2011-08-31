@@ -35,7 +35,7 @@ from django.contrib.sessions.models import Session
 from django.utils.encoding import smart_unicode, is_protected_type, force_unicode
 
 import lino
-from lino.tools import obj2str, sorted_models_list
+from lino.tools import obj2str, sorted_models_list, full_model_name
 from lino.utils import dblogger
 from lino.utils import babel
 
@@ -74,7 +74,8 @@ class Serializer(base.Serializer):
             self.models = sorted_models_list() # models.get_models()
         if self.write_preamble:
             for model in self.models:
-                self.stream.write('%s = resolve_model("%s.%s")\n' % (model.__name__, model._meta.app_label,model.__name__))
+                self.stream.write('%s = resolve_model("%s")\n' % (
+                  full_model_name(model,'_'), full_model_name(model))
         self.stream.write('\n')
         for model in self.models:
             fields = model._meta.local_fields
@@ -95,7 +96,7 @@ class Serializer(base.Serializer):
                     pm.__name__,pf.attname,model.__name__,attrs))
             else:
                 self.stream.write('    return %s(%s)\n' % (
-                    model.__name__,
+                    full_model_name(model,'_'),
                     ','.join([
                         '%s=%s' % (f.attname,f.attname) for f in fields])))
         #~ self.start_serialization()

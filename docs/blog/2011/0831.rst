@@ -13,16 +13,24 @@ Currently, if you switch off the is_courseprovider field of a Company,
 and if that Company (as a CourseProvider) has Courses defined, 
 these Courses will be deleted without warning. Not so good.
 
-c) Miscellaneous
-----------------
+c) Adapted dpy Deserializer to new Django version
+-------------------------------------------------
 
-One user reporst the following error message during :term:`initdb`::
+One user reports the following error message during :term:`initdb`::
 
   django.db.utils.IntegrityError: (1217, 'Cannot delete or update a parent row: a foreign key constraint fails') 
 
+No explanation yet.
 
-After updating my Django copy from 1.4 pre-alpha SVN-16376 to 16714, 
+But after updating my Django copy from 1.4 pre-alpha SVN-16376 to 16714, 
 I realized that the new Django version 
 doesn't any longer allow a trick which I used in 
 :class:`lino.utils.dpy.Deserializer`. 
 So I had to redesign this.
+
+
+d) dpy dumps failed to load
+---------------------------
+
+There are now two app_labels who have an EventType model: ``cal`` and ``notes``.
+

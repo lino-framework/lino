@@ -118,10 +118,10 @@ def requires_apps(self,*app_labels):
     
     
     
-def full_model_name(model):
+def full_model_name(model,sep='.'):
     """Returns the "full name" of the specified model, e.g. "contacts.Person" etc.
     """
-    return model._meta.app_label + '.' + model._meta.object_name
+    return model._meta.app_label + sep + model._meta.object_name
     
     
     
