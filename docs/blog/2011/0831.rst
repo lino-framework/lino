@@ -1,0 +1,20 @@
+20110831
+========
+
+a) Test suite was failing
+-------------------------
+
+Fixed.
+
+b) Switching off a `mti.EnableChild` deletes related objects
+------------------------------------------------------------
+
+Currently, if you switch off the is_courseprovider field of a Company, 
+and if that Company (as a CourseProvider) has Courses defined, 
+these Courses will be deleted without warning. Not so good.
+
+c) Miscellaneous
+----------------
+
+
+Update Django from 1.4 pre-alpha SVN-16376 to 

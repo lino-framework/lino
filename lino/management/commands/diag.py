@@ -57,7 +57,7 @@ class Command(BaseCommand):
         encoding = self.stdout.encoding or 'utf-8'
         
         def writeln(ln):
-            self.stdout.write(ln.encode(encoding,errors="xmlcharrefreplace") + "\n")
+            self.stdout.write(ln.encode(encoding,"xmlcharrefreplace") + "\n")
         
         
         writeln("Lino %s" % lino.__version__)

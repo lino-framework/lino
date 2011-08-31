@@ -326,12 +326,6 @@ class VirtStoreField(StoreField):
         # as long as http://code.djangoproject.com/ticket/15497 is open
         self.parse_form_value = delegate.parse_form_value
 
-    #~ def parse_form_value(self,v):
-        #~ return self.field.parse_form_value(v)
-        
-    #~ def value_from_object(self,request,obj):
-        #~ return self.vf.value_from_object(request,obj)
-        
     def obj2list(self,request,obj):
         return [self.vf.value_from_object(request,obj)]
         
