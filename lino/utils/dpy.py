@@ -251,7 +251,7 @@ class FakeDeserializedObject(base.DeserializedObject):
         if self.try_save(self.object,*args,**kw):
             self.deserializer.saved += 1
         else:
-            self.deserializer.save_later.append(self.object)
+            self.deserializer.save_later.append(self)
         
     def try_save(self,obj,*args,**kw):
         """Try to save the specified Model instance `obj`. Return `True` 
