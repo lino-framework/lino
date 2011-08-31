@@ -21,7 +21,7 @@ from lino.utils.instantiator import Instantiator
 
 
 def objects():
-    dblogger.info("Installing countries demo_cities fixture")
+    #~ dblogger.info("Installing countries few_cities fixture")
     city = Instantiator('countries.City','name country').build
     City = resolve_model('countries.City')
     #~ Country = resolve_model('countries.Country')

@@ -93,7 +93,7 @@ class Serializer(base.Serializer):
                           for f in child_fields])
                 else: attrs = ''
                 self.stream.write('    return insert_child(%s.objects.get(pk=%s),%s%s)\n' % (
-                    full_model_name(pm,'_'),pf.attname,model.__name__,attrs))
+                    full_model_name(pm,'_'),pf.attname,full_model_name(model,'_'),attrs))
             else:
                 self.stream.write('    return %s(%s)\n' % (
                     full_model_name(model,'_'),
