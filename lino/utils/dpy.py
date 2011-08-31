@@ -75,7 +75,7 @@ class Serializer(base.Serializer):
         if self.write_preamble:
             for model in self.models:
                 self.stream.write('%s = resolve_model("%s")\n' % (
-                  full_model_name(model,'_'), full_model_name(model))
+                  full_model_name(model,'_'), full_model_name(model)))
         self.stream.write('\n')
         for model in self.models:
             fields = model._meta.local_fields
