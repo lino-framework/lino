@@ -30,6 +30,7 @@ from lino import mixins
 from lino import fields
 from lino import reports
 from lino.utils import babel
+from lino.utils import dblogger
 from lino.tools import resolve_model
 
 from lino.modlib.contacts import models as contacts
