@@ -133,6 +133,7 @@ def default_calendar(user):
         cal = Calendar(user=user,is_default=True)
         cal.full_clean()
         cal.save()
+        dblogger.debug("Created default_calendar %s for %s.",cal,user)
         return cal
     
 
