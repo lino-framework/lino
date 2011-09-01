@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-26 13:59+0100\n"
+"POT-Creation-Date: 2011-09-01 00:53+0100\n"
 "PO-Revision-Date: 2011-08-26 16:20+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: ds <luc.saffre@gmail.com>\n"
@@ -24,9 +24,7 @@ msgstr "Männlich"
 msgid "Female"
 msgstr "Weiblich"
 
-#: .\models.py:114
-#: .\models.py:446
-#: .\config\contacts\Contact\1.dtl.py:3
+#: .\models.py:114 .\models.py:446 .\config\contacts\Contact\1.dtl.py:3
 msgid "Contact"
 msgstr "Kontakt"
 
@@ -139,8 +137,7 @@ msgstr "Anrede"
 msgid "Person"
 msgstr "Person"
 
-#: .\models.py:397
-#: .\models.py:495
+#: .\models.py:397 .\models.py:495
 msgid "Company"
 msgstr "Firma"
 

@@ -103,6 +103,8 @@ class Calendar(mixins.AutoUser):
                 self.name = self.username
             else:
                 self.name = self.user.get_full_name()
+                if not self.name:
+                    self.name = self.user.username
         super(Calendar,self).full_clean(*args,**kw)
         
     def save(self,*args,**kw):

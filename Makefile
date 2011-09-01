@@ -3,7 +3,7 @@ LINO_ROOT := /cygdrive/t/hgwork/lino
 LINO_ROOT := `cygpath -m $(LINO_ROOT)`
 APPS = dsbe igen
 #~ MODULES = system
-MODULES = cal jobs thirds products properties contacts countries notes sales finan links uploads
+MODULES = mails cal jobs thirds products properties contacts countries notes sales finan links uploads
 
 #LANGUAGES = de fr nl et
 #INPUT_FILES = lino\\actions.py lino\\ui\\extjs\\ext_ui.py lino\\modlib\\fields.py lino\\modlib\\system\\models.py
