@@ -43,12 +43,14 @@ from lino.utils.config import find_config_file
 from lino.utils import rstgen 
 from lino.utils import babel
 
-def mkdir_if(dirname):
-    try:
-        os.makedirs(dirname)
-    except OSError,e:
-        if e.errno != errno.EEXIST:
-            raise 
+from lino.tools import makedirs_if_missing
+
+#~ def mkdir_if(dirname):
+    #~ try:
+        #~ os.makedirs(dirname)
+    #~ except OSError,e:
+        #~ if e.errno != errno.EEXIST:
+            #~ raise 
             #~ raise CommandError("Could not create directory %s : %s" % (dirname,e))
 
 # http://snippets.dzone.com/posts/show/2375
@@ -192,7 +194,7 @@ class GeneratingCommand(BaseCommand):
         #~ else:
             #~ mkdir_if(os.path.dirname(fn))
             
-        mkdir_if(os.path.dirname(fn))
+        makedirs_if_missing(os.path.dirname(fn))
         
         logger.info("Generating %s",fn)
         #~ logger.info("Generating %s from %s",fn,tpl_filename)

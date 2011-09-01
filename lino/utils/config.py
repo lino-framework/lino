@@ -39,6 +39,9 @@ from fnmatch import fnmatch
 from django.conf import settings
 from django.utils.importlib import import_module
 
+from lino.tools import makedirs_if_missing
+
+
 class ConfigDir:
     """
     A configuration directory is a directory that may contain configuration files.
@@ -178,8 +181,9 @@ class Configured(object):
             self.cd = LOCAL_CONFIG_DIR
         fn = os.path.join(self.cd.name,self.filename)
         dirname = os.path.dirname(fn)
-        if not os.path.exists(dirname):
-            os.makedirs(dirname)
+        makedirs_if_missing(dirname)
+        #~ if not os.path.exists(dirname):
+            #~ os.makedirs(dirname)
         f = codecs.open(fn,'w',encoding='utf-8')
         self.write_content(f)
         f.close()

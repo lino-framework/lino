@@ -49,7 +49,7 @@ def _functionId(nFramesUp):
 def todo_notice(msg):
     print "[todo] in %s :\n       %s" % (_functionId(1),msg)
   
-class BankStatement(ledger.Booked,models.Model):
+class BankStatement(journals.Journaled,ledger.Booked):
     
     #~ # implements Journaled:
     #~ journal = journals.JournalRef()

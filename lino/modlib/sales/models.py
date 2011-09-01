@@ -53,25 +53,6 @@ contacts = resolve_app('contacts')
 #~ from lino.modlib.contacts import models as contacts
 
 
-#~ dummy_messages = [
-  #~ _("Recipient"),
-  #~ _("Date"),
-  #~ _("Your reference"),
-  #~ _("Product"),
-  #~ _("Title"),
-  #~ _("Description"),
-  #~ _("Unit price"),
-  #~ _("Quantity"),
-  #~ _("Total"),
-  #~ _("excl. VAT"),
-  #~ _("incl. VAT"),
-  #~ _("Invoicing mode"),
-  #~ _("Shipping mode"),
-#~ ]
-#~ del dummy_messages
-
-
-
 class PaymentTerm(babel.BabelNamed):
     """Represents a convention on how an Invoice should be paid. 
     """
@@ -245,9 +226,10 @@ def get_sales_rule(doc):
 
 
 class SalesDocument(
-      journals.Journaled,journals.Sendable,
-      contacts.ContactDocument,
       mixins.AutoUser,
+      journals.Sendable,
+      journals.Journaled,
+      contacts.ContactDocument,
       mixins.TypedPrintable):
     """Common base class for :class:`Order` and :class:`Invoice`.
     """
@@ -505,7 +487,7 @@ class Invoice(ledger.Booked,SalesDocument):
       #~ max_length=200,blank=True)
     #~ booked = models.BooleanField(default=False)
     
-    due_date = fields.MyDateField("Payable until",blank=True,null=True)
+    due_date = models.DateField("Payable until",blank=True,null=True)
     order = models.ForeignKey('sales.Order',blank=True,null=True)
     
     def full_clean(self,*args,**kw):
@@ -598,63 +580,6 @@ class InvoiceItem(DocItem):
     document = models.ForeignKey(Invoice,related_name='items') 
 
     
-#~ class DocumentDetail(layouts.DetailLayout):
-    #~ box1 = """
-      #~ journal number your_ref 
-      #~ creation_date 
-      #~ customer 
-      #~ ship_to
-      #~ """
-    #~ box2 = """
-      #~ imode
-      #~ shipping_mode 
-      #~ payment_term
-      #~ user sent_time
-      #~ """
-    #~ box3 = """
-      #~ subject 
-      #~ sales_remark:80
-      #~ intro:80x5
-      #~ """
-    #~ box4 = """
-      #~ vat_exempt 
-      #~ item_vat
-      #~ total_excl
-      #~ total_vat
-      #~ total_incl
-      #~ """
-    #~ box5 = ''
-    
-    #~ main = """
-      #~ box1 box2 box4
-      #~ box3 box5
-      #~ sales.ItemsByDocument:100x5
-      #~ """
-      
-        
-#~ class OrderDetail(DocumentDetail):
-    #~ datalink = 'sales.Order'
-    #~ box5 = """
-      #~ cycle:20
-      #~ start_date
-      #~ covered_until
-      #~ """
-        
-        
-#~ class InvoiceDetail(DocumentDetail):
-    #~ datalink = 'sales.Invoice'
-    #~ box5 = """
-      #~ order
-      #~ """
-
-#~ class EmittedInvoicesDetail(OrderDetail):
-    #~ datalink = 'sales.Order'
-    #~ label = "Emitted invoices"
-    #~ main = """
-    #~ journal number:4 creation_date customer:20 start_date
-    #~ sales.InvoicesByOrder
-    #~ """
-
 
 class SalesDocuments(reports.Report):
     pass
@@ -805,8 +730,6 @@ class InvoicesByContact(SalesByContact):
         
 
 
-    
-        
 journals.register_doctype(Order,OrdersByJournal)
 journals.register_doctype(Invoice,InvoicesByJournal)
 

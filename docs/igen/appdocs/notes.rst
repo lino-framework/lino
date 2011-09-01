@@ -152,17 +152,17 @@ Model **EventType**
 
     
   
-======= ============== ==============================================
-name    type           verbose name                                  
-======= ============== ==============================================
-id      AutoField      ID                                            
-name    BabelCharField Designation (Beschreibung,Désignation,Nimetus)
-remark  TextField      Remark (Bemerkung,Remarque)                   
-name_de CharField      Designation (de)                              
-name_fr CharField      Designation (fr)                              
-name_nl CharField      Designation (nl)                              
-name_et CharField      Designation (et)                              
-======= ============== ==============================================
+======= ============== ===========================
+name    type           verbose name               
+======= ============== ===========================
+id      AutoField      ID                         
+name    BabelCharField Designation (Beschreibung) 
+remark  TextField      Remark (Bemerkung,Remarque)
+name_de CharField      Designation (de)           
+name_fr CharField      Designation (fr)           
+name_nl CharField      Designation (nl)           
+name_et CharField      Designation (et)           
+======= ============== ===========================
 
     
 Defined in :srcref:`/lino/modlib/notes/models.py`
@@ -290,21 +290,23 @@ Model **Note**
 
 
 
-Note(id, user_id, must_build, date, type_id, event_type_id, subject, body, language)
+Note(id, user_id, owner_type_id, owner_id, must_build, date, type_id, event_type_id, subject, body, language)
   
-========== ============= ======================================================================
-name       type          verbose name                                                          
-========== ============= ======================================================================
-id         AutoField     ID                                                                    
-user       ForeignKey    user (Benutzer,utilisateur)                                           
-must_build BooleanField  must build (muss generiert werden,doit être construit)                
-date       DateField     Date (Datum)                                                          
-type       ForeignKey    Note Type (Form) (Notizart (Form),Type de note (Formulaire))          
-event_type ForeignKey    Event Type (Content) (Ereignisart (Inhalt),Type d'événement (contenu))
-subject    CharField     Subject (Betreff,Objet)                                               
-body       RichTextField Body (Inhalt,Corps)                                                   
-language   LanguageField Language (Sprache,Langue)                                             
-========== ============= ======================================================================
+========== ======================== ======================================================================
+name       type                     verbose name                                                          
+========== ======================== ======================================================================
+id         AutoField                ID                                                                    
+user       ForeignKey               User                                                                  
+owner_type ForeignKey               Owner type (Besitzertabelle,type de propriétaire)                     
+owner_id   GenericForeignKeyIdField Owner (Besitzer,Propriétaire)                                         
+must_build BooleanField             must build (muss generiert werden,doit être construit)                
+date       DateField                Date (Datum)                                                          
+type       ForeignKey               Note Type (Form) (Notizart (Form),Type de note (Formulaire))          
+event_type ForeignKey               Event Type (Content) (Ereignisart (Inhalt),Type d'événement (contenu))
+subject    CharField                Subject (Betreff,Objet)                                               
+body       RichTextField            Body (Inhalt,Corps)                                                   
+language   LanguageField            Language (Sprache,Langue)                                             
+========== ======================== ======================================================================
 
     
 Defined in :srcref:`/lino/apps/igen/models.py`
@@ -342,6 +344,36 @@ Field **Note.user**
 
 
 Type: ForeignKey
+
+   
+.. index::
+   single: field;owner_type
+   
+.. _lino.notes.Note.owner_type:
+
+Field **Note.owner_type**
+=========================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;owner_id
+   
+.. _lino.notes.Note.owner_id:
+
+Field **Note.owner_id**
+=======================
+
+
+
+
+
+Type: GenericForeignKeyIdField
 
    
 .. index::

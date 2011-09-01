@@ -60,6 +60,8 @@ from lino.utils import iif
 from lino.utils import babel 
 from lino.utils.choosers import chooser
 from lino.utils.appy_pod import setup_renderer
+from lino.tools import makedirs_if_missing
+
 
 def filename_root(elem):
     return elem._meta.app_label + '.' + elem.__class__.__name__
@@ -443,12 +445,14 @@ class BasePrintAction(reports.RowAction):
             logger.info(u"%s %s -> overwrite existing %s.",bm,elem,filename)
             os.remove(filename)
         else:
-            dirname = os.path.dirname(filename)
-            if not os.path.isdir(dirname):
-                if settings.LINO.make_missing_dirs:
-                    os.makedirs(dirname)
-                else:
-                    raise Exception("Please create yourself directory %s" % dirname)
+            makedirs_if_missing(os.path.dirname(filename))
+            
+            #~ dirname = os.path.dirname(filename)
+            #~ if not os.path.isdir(dirname):
+                #~ if settings.LINO.make_missing_dirs:
+                    #~ os.makedirs(dirname)
+                #~ else:
+                    #~ raise Exception("Please create yourself directory %s" % dirname)
         logger.debug(u"%s : %s -> %s", bm,elem,filename)
         return filename
         

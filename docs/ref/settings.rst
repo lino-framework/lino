@@ -31,10 +31,19 @@ unchanged, you can configure your logging preferences using the
 You don't need to use Lino's logging config. In that case, refer to
 https://docs.djangoproject.com/en/dev/ref/settings/#logging-config
 
+
 .. setting:: LANGUAGE_CODE
 
 See http://docs.djangoproject.com/en/dev/ref/settings/#language-code
 
+.. setting:: ROOT_URL
+
+See http://docs.djangoproject.com/en/dev/ref/settings/#root-url
+
+.. setting:: DATABASES
+
+  See http://docs.djangoproject.com/en/dev/ref/settings/#databases
+  
 .. setting:: LANGUAGES
 
   Used by :class:`lino.modlib.fields.LanguageField`.
@@ -91,14 +100,6 @@ Obsolete Lino-specific settings
 
   (Replaced by :attr:`lino.Lino.project_dir`)
 
-  Directory where local configuration files are stored.
-  I always set this variable to the absolute path of the :envvar:`DJANGO_SETTINGS_MODULE`.
-  Local configuration files are:
-  
-  - :xfile:`settings.py`, :xfile:`manage.py` and :xfile:`urls.py`
-  - :xfile:`lino_settings.py`
-  
-   
 .. setting:: DATA_DIR
 
    Directory where local data gets stored. 

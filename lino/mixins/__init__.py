@@ -55,6 +55,7 @@ class AutoUser(models.Model):
         
     user = models.ForeignKey(settings.LINO.user_model,
         verbose_name=_("user"),
+        related_name="%(app_label)s_%(class)s_set_by_user",
         blank=True,null=True
         )
     

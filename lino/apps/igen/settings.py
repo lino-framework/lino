@@ -148,11 +148,8 @@ class Lino(Lino):
 
 LINO = Lino(__file__,globals())
 
-#~ PROJECT_DIR = abspath(dirname(__file__))
-#~ DATA_DIR = join(PROJECT_DIR,"data")
-#~ LINO_SETTINGS = join(PROJECT_DIR,"lino_settings.py")
-#~ MEDIA_ROOT = join(LINO.project_dir,'media')
-TIME_ZONE = 'Europe/Tallinn'
+#~ TIME_ZONE = 'Europe/Tallinn'
+TIME_ZONE = None
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -160,21 +157,11 @@ LANGUAGE_CODE = 'en'
 #~ LANGUAGE_CODE = 'en-US'
 #~ LANGUAGE_CODE = 'fr-BE'
 
-#~ ROOT_URLCONF = 'lino.demos.dsbe.urls'
-
-#~ SITE_ID = 1 # see also fill.py
-
 
 INSTALLED_APPS = (
     #~ 'django.contrib.auth',
     'lino.modlib.users',
     'django.contrib.contenttypes',
-    #~ 'django.contrib.sessions',
-    #~ 'django.contrib.sites',
-    #~ 'django.contrib.markup',
-    #'django.contrib.admin',
-    #'django.contrib.databrowse',
-    
     'lino',
     'lino.modlib.countries',
     'lino.modlib.contacts',
@@ -183,14 +170,12 @@ INSTALLED_APPS = (
     'lino.modlib.mails',
     'lino.modlib.products',
     'lino.modlib.journals',
-    #~ 'lino.modlib.documents',
     'lino.modlib.ledger',
     'lino.modlib.sales',
     'lino.modlib.finan',
     'lino.apps.igen',
     #~ 'lino.modlib.properties',
 )
-
 
 # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
 # Always use forward slashes, even on Windows.

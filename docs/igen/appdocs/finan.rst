@@ -203,15 +203,15 @@ DocItem(id, document_id, pos, date, debit, credit, remark, account_id, person_id
 name     type         verbose name                 
 ======== ============ =============================
 id       AutoField    ID                           
-document ForeignKey   document                     
+document ForeignKey   bank statement               
 pos      IntegerField Position                     
 date     MyDateField  date                         
 debit    PriceField   debit                        
 credit   PriceField   credit                       
 remark   CharField    remark                       
 account  ForeignKey   account                      
-person   ForeignKey   person (Person,Personne,isik)
-company  ForeignKey   company (Firma,Société,firma)
+person   ForeignKey   person                       
+company  ForeignKey   Company (Firma,Société,Firma)
 ======== ============ =============================
 
     

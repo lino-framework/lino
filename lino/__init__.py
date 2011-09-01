@@ -17,12 +17,12 @@ See :doc:`/admin/install` on how to use it.
 
 """
 
+# NOTE: this module may not import any django module since it is being imported from settings.py files
 import os
 import sys
 import datetime
-from tempfile import gettempdir
 from os.path import join, abspath, dirname, normpath
-import logging
+
 
 __version__ = "1.2.2"
 """
@@ -363,6 +363,23 @@ class Lino(object):
     
     source_dir = os.path.dirname(__file__)
     source_name = os.path.split(source_dir)[-1]
+    
+    project_dir = None
+    """
+    This is the full path to your local project directory. 
+    You don't need to (and shouldn't) set this variable.
+    
+    The local project directory is where 
+    local configuration files are stored:
+    
+    - :xfile:`settings.py`, :xfile:`manage.py` and :xfile:`urls.py`
+    - Your :xfile:`media` directory
+    - Optional local :xfile:`config` and :xfile:`fixtures` directories
+  
+   
+    
+    
+    """
     
     webdav_root = None
     """

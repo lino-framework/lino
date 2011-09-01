@@ -2,14 +2,13 @@
 Lino -- a framework for database applications
 =============================================
 
-.. note:
-
-  The domain saffre-rumma\ **.ee** changed to saffre-rumma\ **.net** 
-  in december 2010. Let us know if you find old references that 
-  we forgot to update!
-
 Welcome to the Lino Website. 
 Lino is still in pre-documentation phase, so don't judge the project on this website only.
+Don't hesitate to contact the author (luc.saffre@gmail.com).
+
+.. Send your email to ``luc *dot* saffre *at* gmail *dot* com``
+
+
 
 - :doc:`What is Lino </about/index>`?
 - Have a look at the :doc:`/demos`.

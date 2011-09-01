@@ -31,19 +31,19 @@ Model **Language**
 
 
 
-Language(id, name, iso2, name_de, name_fr, name_nl, name_et)
+Language(name, id, iso2, name_de, name_fr, name_nl, name_et)
   
-======= ============== ==============================================
-name    type           verbose name                                  
-======= ============== ==============================================
-id      CharField      id                                            
-name    BabelCharField Designation (Beschreibung,Désignation,Nimetus)
-iso2    CharField      iso2                                          
-name_de CharField      Designation (de)                              
-name_fr CharField      Designation (fr)                              
-name_nl CharField      Designation (nl)                              
-name_et CharField      Designation (et)                              
-======= ============== ==============================================
+======= ============== ==========================
+name    type           verbose name              
+======= ============== ==========================
+name    BabelCharField Designation (Beschreibung)
+id      CharField      id                        
+iso2    CharField      iso2                      
+name_de CharField      Designation (de)          
+name_fr CharField      Designation (fr)          
+name_nl CharField      Designation (nl)          
+name_et CharField      Designation (et)          
+======= ============== ==========================
 
     
 Defined in :srcref:`/lino/modlib/countries/models.py`
@@ -53,21 +53,6 @@ Referenced from
 
 
 
-.. index::
-   single: field;id
-   
-.. _lino.countries.Language.id:
-
-Field **Language.id**
-=====================
-
-
-
-
-
-Type: CharField
-
-   
 .. index::
    single: field;name
    
@@ -81,6 +66,21 @@ Field **Language.name**
 
 
 Type: BabelCharField
+
+   
+.. index::
+   single: field;id
+   
+.. _lino.countries.Language.id:
+
+Field **Language.id**
+=====================
+
+
+
+
+
+Type: CharField
 
    
 .. index::
@@ -175,42 +175,27 @@ Model **Country**
 Implements the :class:`countries.Country` convention.
 
   
-========== ============== ==============================================
-name       type           verbose name                                  
-========== ============== ==============================================
-isocode    CharField      isocode                                       
-name       BabelCharField Designation (Beschreibung,Désignation,Nimetus)
-short_code CharField      short code                                    
-iso3       CharField      iso3                                          
-name_de    CharField      Designation (de)                              
-name_fr    CharField      Designation (fr)                              
-name_nl    CharField      Designation (nl)                              
-name_et    CharField      Designation (et)                              
-========== ============== ==============================================
+========== ============== ==========================
+name       type           verbose name              
+========== ============== ==========================
+name       BabelCharField Designation (Beschreibung)
+isocode    CharField      isocode                   
+short_code CharField      short code                
+iso3       CharField      iso3                      
+name_de    CharField      Designation (de)          
+name_fr    CharField      Designation (fr)          
+name_nl    CharField      Designation (nl)          
+name_et    CharField      Designation (et)          
+========== ============== ==========================
 
     
 Defined in :srcref:`/lino/modlib/countries/models.py`
 
 Referenced from
-`lino.contacts.Person.country`_, `lino.contacts.Company.country`_, `lino.countries.City.country`_
+`lino.users.User.country`_, `lino.contacts.Contact.country`_, `lino.contacts.Person.country`_, `lino.contacts.Company.country`_, `lino.countries.City.country`_
 
 
 
-.. index::
-   single: field;isocode
-   
-.. _lino.countries.Country.isocode:
-
-Field **Country.isocode**
-=========================
-
-
-
-
-
-Type: CharField
-
-   
 .. index::
    single: field;name
    
@@ -224,6 +209,21 @@ Field **Country.name**
 
 
 Type: BabelCharField
+
+   
+.. index::
+   single: field;isocode
+   
+.. _lino.countries.Country.isocode:
+
+Field **Country.isocode**
+=========================
+
+
+
+
+
+Type: CharField
 
    
 .. index::
@@ -346,7 +346,7 @@ zip_code CharField  zip code
 Defined in :srcref:`/lino/modlib/countries/models.py`
 
 Referenced from
-`lino.contacts.Person.city`_, `lino.contacts.Company.city`_
+`lino.users.User.city`_, `lino.contacts.Contact.city`_, `lino.contacts.Person.city`_, `lino.contacts.Company.city`_
 
 
 

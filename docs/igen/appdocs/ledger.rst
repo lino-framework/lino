@@ -112,8 +112,8 @@ number  IntegerField number
 pos     IntegerField Position                     
 date    DateField    date                         
 account ForeignKey   account                      
-person  ForeignKey   person (Person,Personne,isik)
-company ForeignKey   company (Firma,Société,firma)
+person  ForeignKey   person                       
+company ForeignKey   Company (Firma,Société,Firma)
 debit   PriceField   debit                        
 credit  PriceField   credit                       
 ======= ============ =============================

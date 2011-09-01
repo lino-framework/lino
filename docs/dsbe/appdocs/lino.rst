@@ -32,6 +32,7 @@ name                         type         verbose name
 ============================ ============ ======================================================================================================
 id                           AutoField    ID                                                                                                    
 default_build_method         CharField    Default build method (Standard-Konstruktionsmethode,Méthode de constuction par défault)               
+next_partner_id              IntegerField The next automatic id for Person or Company (Nächste automatische ID für Partner)                     
 site_company                 ForeignKey   The company that runs this site (Firma, die diesen Site betreibt,La société ou tourne ce site)        
 job_office                   ForeignKey   Local job office (Lokales Arbeitsamt,Agence locale pour l'emploi ?)                                   
 propgroup_skills             ForeignKey   Skills Property Group (Eigenschaftsgruppe Fähigkeiten,Groupe de propriétés 'Skills')                  
@@ -40,7 +41,6 @@ propgroup_obstacles          ForeignKey   Obstacles Property Group (Eigenschafts
 residence_permit_upload_type ForeignKey   Upload Type for residence permit (Upload-Art Aufenthaltserlaubnis,Type d'upload "permis de résidence")
 work_permit_upload_type      ForeignKey   Upload Type for work permit (Upload-Art Arbeitserlaubnis,Type d'upload "permis de travail")           
 driving_licence_upload_type  ForeignKey   Upload Type for driving licence (Upload-Art Führerschein,Type d'upload "permis de conduire")          
-next_partner_id              IntegerField The next automatic id for Person or Company (Nächste automatische ID für Partner)                     
 ============================ ============ ======================================================================================================
 
     
@@ -79,6 +79,21 @@ Field **SiteConfig.default_build_method**
 
 
 Type: CharField
+
+   
+.. index::
+   single: field;next_partner_id
+   
+.. _lino.lino.SiteConfig.next_partner_id:
+
+Field **SiteConfig.next_partner_id**
+====================================
+
+
+
+
+
+Type: IntegerField
 
    
 .. index::
@@ -199,21 +214,6 @@ Field **SiteConfig.driving_licence_upload_type**
 
 
 Type: ForeignKey
-
-   
-.. index::
-   single: field;next_partner_id
-   
-.. _lino.lino.SiteConfig.next_partner_id:
-
-Field **SiteConfig.next_partner_id**
-====================================
-
-
-
-
-
-Type: IntegerField
 
    
 

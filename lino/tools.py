@@ -13,6 +13,8 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 
+import os
+
 from django.conf import settings
 from django.db import models
 from django.utils.importlib import import_module
@@ -176,5 +178,18 @@ def sorted_models_list():
     return models_list
     
 
+def makedirs_if_missing(dirname):
+    """
+    Make missing directories if they don't exist 
+    and if :attr:`lino.Lino.make_missing_dirs` 
+    is `True`.
+    """
+    #~ if not os.path.exists(dirname):
+        #~ os.makedirs(dirname)
+    if not os.path.isdir(dirname):
+        if settings.LINO.make_missing_dirs:
+            os.makedirs(dirname)
+        else:
+            raise Exception("Please create yourself directory %s" % dirname)
+        
     
-   

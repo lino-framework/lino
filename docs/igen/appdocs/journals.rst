@@ -56,7 +56,7 @@ printed_name_et CharField      printed name (et)
 Defined in :srcref:`/lino/modlib/journals/models.py`
 
 Referenced from
-`lino.ledger.Booking.journal`_, `lino.sales.InvoicingMode.journal`_, `lino.sales.SalesRule.journal`_, `lino.sales.SalesDocument.journal`_, `lino.sales.Order.journal`_, `lino.sales.Invoice.journal`_, `lino.sales.Invoice.journal`_, `lino.finan.BankStatement.journal`_
+`lino.ledger.Booking.journal`_, `lino.sales.InvoicingMode.journal`_, `lino.sales.SalesRule.journal`_, `lino.sales.Order.journal`_, `lino.sales.Invoice.journal`_, `lino.finan.BankStatement.journal`_
 
 
 

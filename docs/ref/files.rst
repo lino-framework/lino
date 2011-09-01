@@ -17,9 +17,25 @@ See http://docs.djangoproject.com/en/dev/intro/tutorial01/#creating-a-project
 
 See http://docs.djangoproject.com/en/dev/intro/tutorial01/#creating-a-project
 
-.. xfile:: linolib.js
+.. xfile:: media
 
-See :srcref:`/lino/ui/extjs3/linolib.js`
+See 
+
+.. xfile:: config
+
+Lino has a concept of configuration directories that are a bit like 
+Django's `templates` directories.
+See :mod:`lino.utils.config`.
+
+.. xfile:: linolib.js
+.. xfile:: lino.js
+
+The ExtJS3 user interface generates a big file :file:`lino.js` at server startup which 
+contains the client side application logic. 
+The first part of this file comes from
+a file :srcref:`/lino/ui/extjs3/linolib.js` 
+(the second part is purely generated from your models and reports).
+
 
 .. xfile:: .po
 

@@ -141,6 +141,7 @@ class Journal(models.Model):
                   
 def JournalRef(**kw):
     #~ kw.update(blank=True,null=True) # Django Ticket #12708
+    kw.update(related_name="%(app_label)s_%(class)s_set_by_journal")
     return models.ForeignKey(Journal,**kw)
 
 def DocumentRef(**kw):

@@ -311,15 +311,6 @@ class Partner(mixins.DiffingMixin,models.Model):
     bank_account2 = models.CharField(max_length=40,blank=True,null=True,
         verbose_name=_("Bank account 2"))
         
-    #~ def full_clean(self,*args,**kw):
-        #~ if self.id is None:
-            #~ sc = get_site_config()
-            #~ if sc.next_partner_id is not None:
-                #~ self.id = sc.next_partner_id
-                #~ sc.next_partner_id += 1
-                #~ sc.save()
-        #~ super(Partner,self).full_clean(*args,**kw)
-        
     def disable_delete(self,request):
         if settings.TIM2LINO_IS_IMPORTED_PARTNER(self):
             return _("Cannot delete companies and persons imported from TIM")
@@ -1941,15 +1932,6 @@ reports.inject_field(SiteConfig,
     """The UploadType for `Person.driving_licence`.
     """)
     
-reports.inject_field(SiteConfig,
-    'next_partner_id',
-    models.IntegerField(default=100, # first 100 for users from demo fixtures.
-        verbose_name=_("The next automatic id for Person or Company")
-    ),"""The next automatic id for Person or Company. 
-    Deserves more documentation.
-    """)
-    
-
 reports.inject_field(Company,
     'is_courseprovider',
     mti.EnableChild('dsbe.CourseProvider',verbose_name=_("is Course Provider")),

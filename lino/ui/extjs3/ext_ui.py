@@ -66,6 +66,7 @@ from lino.utils import ucsv
 from lino.utils import choosers
 from lino.utils import babel
 from lino.utils import menus
+from lino.tools import makedirs_if_missing
 from lino.utils.config import find_config_file
 from lino.utils import jsgen
 from lino.utils.jsgen import py2js, js_code, id2js
@@ -92,9 +93,15 @@ from lino.tools import obj2str, obj2unicode
 #~ from lino.ui.extjs.ext_windows import WindowConfig # 20100316 backwards-compat window_confics.pck 
 
 def is_devserver():
-    """Thanks to Aryeh Leib Taurog in 
+    """
+    Returns True if we are running a development server.
+    
+    Thanks to Aryeh Leib Taurog in 
     `How can I tell whether my Django application is running on development server or not?
     <http://stackoverflow.com/questions/1291755>`_
+    
+    Added the `len(sys.argv) > 1` test because under 
+    mod_wsgi the process is called without arguments.
     """
     return len(sys.argv) > 1 and sys.argv[1] == 'runserver'
     
@@ -1225,6 +1232,10 @@ tinymce.init({
             return
         
         logger.info("Generating %s ...", fn)
+        
+        makedirs_if_missing(os.path.dirname(fn))
+        makedirs_if_missing(os.path.join(settings.MEDIA_ROOT,'upload'))
+        makedirs_if_missing(os.path.join(settings.MEDIA_ROOT,'webdav'))
         
         f = codecs.open(fn,'w',encoding='utf-8')
         

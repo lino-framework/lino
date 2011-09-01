@@ -12,6 +12,8 @@ Lino/iGen
     countries
     contacts
     notes
+    cal
+    mails
     products
     journals
     igen

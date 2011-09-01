@@ -443,6 +443,8 @@ class ContactDocument(models.Model):
         
     contact = models.ForeignKey("contacts.Contact",
         #~ blank=True,null=True,
+        related_name="%(app_label)s_%(class)s_by_contact",
+        #~ related_name="%(app_label)s_%(class)s_related",
         verbose_name=_("Contact"))
     language = fields.LanguageField(default=babel.DEFAULT_LANGUAGE)
 
@@ -633,6 +635,14 @@ class RolesByChild(Roles):
 from lino.models import SiteConfig
 
 reports.inject_field(SiteConfig,
+    'next_partner_id',
+    models.IntegerField(default=100, # first 100 for users from demo fixtures.
+        verbose_name=_("The next automatic id for Person or Company")
+    ),"""The next automatic id for Person or Company. 
+    Deserves more documentation.
+    """)
+    
+reports.inject_field(SiteConfig,
     'site_company',
     models.ForeignKey("contacts.Company",
         blank=True,null=True,
@@ -640,6 +650,8 @@ reports.inject_field(SiteConfig,
         related_name='site_company_sites',
         ),
     """The Company to be used as sender in documents.""")
+    
+
 
 
 def setup_main_menu(site,ui,user,m): pass

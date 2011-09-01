@@ -1,0 +1,13 @@
+20110902
+========
+
+:mod:`lino.apps.igen` was broken after :doc:`tickets/48`.
+Started to repair it.
+
+New function :func:`lino.tools.makedirs_if_missing`.
+
+It seems that :func:`lino.reports.inject_field` 
+has a pitfall when the given model has subclasses: 
+the field is not visible to subclasses in that case:
+`AttributeError: 'Company' object has no attribute 'payment_term_id'`:
+

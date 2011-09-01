@@ -30,42 +30,27 @@ Model **PaymentTerm**
 Represents a convention on how an Invoice should be paid. 
     
   
-======= ============== ====================
-name    type           verbose name        
-======= ============== ====================
-id      CharField      id                  
-name    BabelCharField name                
-days    IntegerField   days (Tage,jours)   
-months  IntegerField   months (Monate,mois)
-name_de CharField      name (de)           
-name_fr CharField      name (fr)           
-name_nl CharField      name (nl)           
-name_et CharField      name (et)           
-======= ============== ====================
+======= ============== ==========================
+name    type           verbose name              
+======= ============== ==========================
+name    BabelCharField Designation (Beschreibung)
+id      CharField      id                        
+days    IntegerField   days                      
+months  IntegerField   months                    
+name_de CharField      Designation (de)          
+name_fr CharField      Designation (fr)          
+name_nl CharField      Designation (nl)          
+name_et CharField      Designation (et)          
+======= ============== ==========================
 
     
 Defined in :srcref:`/lino/modlib/sales/models.py`
 
 Referenced from
-`lino.contacts.Contact.payment_term`_, `lino.sales.SalesRule.payment_term`_, `lino.sales.SalesDocument.payment_term`_, `lino.sales.Order.payment_term`_, `lino.sales.Invoice.payment_term`_
+`lino.contacts.Contact.payment_term`_, `lino.sales.SalesRule.payment_term`_, `lino.sales.Order.payment_term`_, `lino.sales.Invoice.payment_term`_
 
 
 
-.. index::
-   single: field;id
-   
-.. _lino.sales.PaymentTerm.id:
-
-Field **PaymentTerm.id**
-========================
-
-
-
-
-
-Type: CharField
-
-   
 .. index::
    single: field;name
    
@@ -79,6 +64,21 @@ Field **PaymentTerm.name**
 
 
 Type: BabelCharField
+
+   
+.. index::
+   single: field;id
+   
+.. _lino.sales.PaymentTerm.id:
+
+Field **PaymentTerm.id**
+========================
+
+
+
+
+
+Type: CharField
 
    
 .. index::
@@ -190,28 +190,43 @@ Represents a method of issuing/sending invoices.
 ============ =============== ===========================================================
 name         type            verbose name                                               
 ============ =============== ===========================================================
+name         BabelCharField  Designation (Beschreibung)                                 
 build_method CharField       Build method (Konstruktionsmethode,Méthode de construction)
 template     CharField       Template (Vorlage,Modèle)                                  
 id           CharField       id                                                         
 journal      ForeignKey      journal                                                    
-name         BabelCharField  name                                                       
 price        PriceField      price                                                      
 channel      ChoiceListField Channel                                                    
 advance_days IntegerField    advance days                                               
-name_de      CharField       name (de)                                                  
-name_fr      CharField       name (fr)                                                  
-name_nl      CharField       name (nl)                                                  
-name_et      CharField       name (et)                                                  
+name_de      CharField       Designation (de)                                           
+name_fr      CharField       Designation (fr)                                           
+name_nl      CharField       Designation (nl)                                           
+name_et      CharField       Designation (et)                                           
 ============ =============== ===========================================================
 
     
 Defined in :srcref:`/lino/modlib/sales/models.py`
 
 Referenced from
-`lino.sales.SalesRule.imode`_, `lino.sales.SalesDocument.imode`_, `lino.sales.Order.imode`_, `lino.sales.Invoice.imode`_
+`lino.sales.SalesRule.imode`_, `lino.sales.Order.imode`_, `lino.sales.Invoice.imode`_
 
 
 
+.. index::
+   single: field;name
+   
+.. _lino.sales.InvoicingMode.name:
+
+Field **InvoicingMode.name**
+============================
+
+
+
+
+
+Type: BabelCharField
+
+   
 .. index::
    single: field;build_method
    
@@ -270,21 +285,6 @@ Field **InvoicingMode.journal**
 
 
 Type: ForeignKey
-
-   
-.. index::
-   single: field;name
-   
-.. _lino.sales.InvoicingMode.name:
-
-Field **InvoicingMode.name**
-============================
-
-
-
-
-
-Type: BabelCharField
 
    
 .. index::
@@ -409,43 +409,28 @@ Model **ShippingMode**
 
 
 
-ShippingMode(id, name, price, name_de, name_fr, name_nl, name_et)
+ShippingMode(name, id, price, name_de, name_fr, name_nl, name_et)
   
-======= ============== ============
-name    type           verbose name
-======= ============== ============
-id      CharField      id          
-name    BabelCharField name        
-price   PriceField     price       
-name_de CharField      name (de)   
-name_fr CharField      name (fr)   
-name_nl CharField      name (nl)   
-name_et CharField      name (et)   
-======= ============== ============
+======= ============== ==========================
+name    type           verbose name              
+======= ============== ==========================
+name    BabelCharField Designation (Beschreibung)
+id      CharField      id                        
+price   PriceField     price                     
+name_de CharField      Designation (de)          
+name_fr CharField      Designation (fr)          
+name_nl CharField      Designation (nl)          
+name_et CharField      Designation (et)          
+======= ============== ==========================
 
     
 Defined in :srcref:`/lino/modlib/sales/models.py`
 
 Referenced from
-`lino.sales.SalesRule.shipping_mode`_, `lino.sales.SalesDocument.shipping_mode`_, `lino.sales.Order.shipping_mode`_, `lino.sales.Invoice.shipping_mode`_
+`lino.sales.SalesRule.shipping_mode`_, `lino.sales.Order.shipping_mode`_, `lino.sales.Invoice.shipping_mode`_
 
 
 
-.. index::
-   single: field;id
-   
-.. _lino.sales.ShippingMode.id:
-
-Field **ShippingMode.id**
-=========================
-
-
-
-
-
-Type: CharField
-
-   
 .. index::
    single: field;name
    
@@ -459,6 +444,21 @@ Field **ShippingMode.name**
 
 
 Type: BabelCharField
+
+   
+.. index::
+   single: field;id
+   
+.. _lino.sales.ShippingMode.id:
+
+Field **ShippingMode.id**
+=========================
+
+
+
+
+
+Type: CharField
 
    
 .. index::
@@ -552,15 +552,15 @@ Model **SalesRule**
 Represents a group of default values for certain parameters of a SalesDocument.
     
   
-============= ========== ================================
-name          type       verbose name                    
-============= ========== ================================
-id            AutoField  ID                              
-journal       ForeignKey journal                         
-imode         ForeignKey imode                           
-shipping_mode ForeignKey shipping mode                   
-payment_term  ForeignKey payment term (Tasumistingimused)
-============= ========== ================================
+============= ========== ==============
+name          type       verbose name  
+============= ========== ==============
+id            AutoField  ID            
+journal       ForeignKey journal       
+imode         ForeignKey Invoicing Mode
+shipping_mode ForeignKey shipping mode 
+payment_term  ForeignKey Payment Term  
+============= ========== ==============
 
     
 Defined in :srcref:`/lino/modlib/sales/models.py`
@@ -648,387 +648,6 @@ Type: ForeignKey
 
 
 .. index::
-   pair: model; SalesDocument
-
-.. _lino.sales.SalesDocument:
-
------------------------
-Model **SalesDocument**
------------------------
-
-
-
-Common base class for :class:`Order` and :class:`Invoice`.
-    
-  
-============= ============= ======================================================
-name          type          verbose name                                          
-============= ============= ======================================================
-id            AutoField     ID                                                    
-must_build    BooleanField  must build (muss generiert werden,doit être construit)
-person        ForeignKey    Person (Personne,Isik)                                
-company       ForeignKey    Company (Firma,Société,Firma)                         
-contact       ForeignKey    represented by (Vertreten durch,représenté par)       
-language      LanguageField Language (Sprache,Langue)                             
-journal       ForeignKey    journal                                               
-number        IntegerField  number                                                
-sent_time     DateTimeField sent time                                             
-creation_date DateField     creation date                                         
-your_ref      CharField     your ref                                              
-imode         ForeignKey    imode                                                 
-shipping_mode ForeignKey    shipping mode                                         
-payment_term  ForeignKey    payment term (Tasumistingimused)                      
-sales_remark  CharField     Remark for sales                                      
-subject       CharField     Subject line                                          
-vat_exempt    BooleanField  vat exempt                                            
-item_vat      BooleanField  item vat                                              
-total_excl    PriceField    total excl                                            
-total_vat     PriceField    total vat                                             
-intro         TextField     Introductive Text                                     
-user          ForeignKey    user (Benutzer,utilisateur)                           
-============= ============= ======================================================
-
-    
-Defined in :srcref:`/lino/modlib/sales/models.py`
-
-Referenced from
-`lino.sales.Order.salesdocument_ptr`_, `lino.sales.Invoice.salesdocument_ptr`_, `lino.sales.DocItem.document`_
-
-
-
-.. index::
-   single: field;id
-   
-.. _lino.sales.SalesDocument.id:
-
-Field **SalesDocument.id**
-==========================
-
-
-
-
-
-Type: AutoField
-
-   
-.. index::
-   single: field;must_build
-   
-.. _lino.sales.SalesDocument.must_build:
-
-Field **SalesDocument.must_build**
-==================================
-
-
-
-
-
-Type: BooleanField
-
-   
-.. index::
-   single: field;person
-   
-.. _lino.sales.SalesDocument.person:
-
-Field **SalesDocument.person**
-==============================
-
-
-
-
-
-Type: ForeignKey
-
-   
-.. index::
-   single: field;company
-   
-.. _lino.sales.SalesDocument.company:
-
-Field **SalesDocument.company**
-===============================
-
-
-
-
-
-Type: ForeignKey
-
-   
-.. index::
-   single: field;contact
-   
-.. _lino.sales.SalesDocument.contact:
-
-Field **SalesDocument.contact**
-===============================
-
-
-
-
-
-Type: ForeignKey
-
-   
-.. index::
-   single: field;language
-   
-.. _lino.sales.SalesDocument.language:
-
-Field **SalesDocument.language**
-================================
-
-
-
-
-
-Type: LanguageField
-
-   
-.. index::
-   single: field;journal
-   
-.. _lino.sales.SalesDocument.journal:
-
-Field **SalesDocument.journal**
-===============================
-
-
-
-
-
-Type: ForeignKey
-
-   
-.. index::
-   single: field;number
-   
-.. _lino.sales.SalesDocument.number:
-
-Field **SalesDocument.number**
-==============================
-
-
-
-
-
-Type: IntegerField
-
-   
-.. index::
-   single: field;sent_time
-   
-.. _lino.sales.SalesDocument.sent_time:
-
-Field **SalesDocument.sent_time**
-=================================
-
-
-
-
-
-Type: DateTimeField
-
-   
-.. index::
-   single: field;creation_date
-   
-.. _lino.sales.SalesDocument.creation_date:
-
-Field **SalesDocument.creation_date**
-=====================================
-
-
-
-
-
-Type: DateField
-
-   
-.. index::
-   single: field;your_ref
-   
-.. _lino.sales.SalesDocument.your_ref:
-
-Field **SalesDocument.your_ref**
-================================
-
-
-
-
-
-Type: CharField
-
-   
-.. index::
-   single: field;imode
-   
-.. _lino.sales.SalesDocument.imode:
-
-Field **SalesDocument.imode**
-=============================
-
-
-
-
-
-Type: ForeignKey
-
-   
-.. index::
-   single: field;shipping_mode
-   
-.. _lino.sales.SalesDocument.shipping_mode:
-
-Field **SalesDocument.shipping_mode**
-=====================================
-
-
-
-
-
-Type: ForeignKey
-
-   
-.. index::
-   single: field;payment_term
-   
-.. _lino.sales.SalesDocument.payment_term:
-
-Field **SalesDocument.payment_term**
-====================================
-
-
-
-
-
-Type: ForeignKey
-
-   
-.. index::
-   single: field;sales_remark
-   
-.. _lino.sales.SalesDocument.sales_remark:
-
-Field **SalesDocument.sales_remark**
-====================================
-
-
-
-
-
-Type: CharField
-
-   
-.. index::
-   single: field;subject
-   
-.. _lino.sales.SalesDocument.subject:
-
-Field **SalesDocument.subject**
-===============================
-
-
-
-
-
-Type: CharField
-
-   
-.. index::
-   single: field;vat_exempt
-   
-.. _lino.sales.SalesDocument.vat_exempt:
-
-Field **SalesDocument.vat_exempt**
-==================================
-
-
-
-
-
-Type: BooleanField
-
-   
-.. index::
-   single: field;item_vat
-   
-.. _lino.sales.SalesDocument.item_vat:
-
-Field **SalesDocument.item_vat**
-================================
-
-
-
-
-
-Type: BooleanField
-
-   
-.. index::
-   single: field;total_excl
-   
-.. _lino.sales.SalesDocument.total_excl:
-
-Field **SalesDocument.total_excl**
-==================================
-
-
-
-
-
-Type: PriceField
-
-   
-.. index::
-   single: field;total_vat
-   
-.. _lino.sales.SalesDocument.total_vat:
-
-Field **SalesDocument.total_vat**
-=================================
-
-
-
-
-
-Type: PriceField
-
-   
-.. index::
-   single: field;intro
-   
-.. _lino.sales.SalesDocument.intro:
-
-Field **SalesDocument.intro**
-=============================
-
-
-
-
-
-Type: TextField
-
-   
-.. index::
-   single: field;user
-   
-.. _lino.sales.SalesDocument.user:
-
-Field **SalesDocument.user**
-============================
-
-
-
-
-
-Type: ForeignKey
-
-   
-
-
-.. index::
    pair: model; Order
 
 .. _lino.sales.Order:
@@ -1039,38 +658,35 @@ Model **Order**
 
 
 
-Order(id, must_build, person_id, company_id, contact_id, language, journal_id, number, sent_time, creation_date, your_ref, imode_id, shipping_mode_id, payment_term_id, sales_remark, subject, vat_exempt, item_vat, total_excl, total_vat, intro, user_id, salesdocument_ptr_id, cycle, start_date, covered_until)
+Order(id, user_id, must_build, contact_id, language, journal_id, number, sent_time, creation_date, your_ref, imode_id, shipping_mode_id, payment_term_id, sales_remark, subject, vat_exempt, item_vat, total_excl, total_vat, intro, cycle, start_date, covered_until)
   
-================= ============= ======================================================
-name              type          verbose name                                          
-================= ============= ======================================================
-id                AutoField     ID                                                    
-must_build        BooleanField  must build (muss generiert werden,doit être construit)
-person            ForeignKey    Person (Personne,Isik)                                
-company           ForeignKey    Company (Firma,Société,Firma)                         
-contact           ForeignKey    represented by (Vertreten durch,représenté par)       
-language          LanguageField Language (Sprache,Langue)                             
-journal           ForeignKey    journal                                               
-number            IntegerField  number                                                
-sent_time         DateTimeField sent time                                             
-creation_date     DateField     creation date                                         
-your_ref          CharField     your ref                                              
-imode             ForeignKey    imode                                                 
-shipping_mode     ForeignKey    shipping mode                                         
-payment_term      ForeignKey    payment term (Tasumistingimused)                      
-sales_remark      CharField     Remark for sales                                      
-subject           CharField     Subject line                                          
-vat_exempt        BooleanField  vat exempt                                            
-item_vat          BooleanField  item vat                                              
-total_excl        PriceField    total excl                                            
-total_vat         PriceField    total vat                                             
-intro             TextField     Introductive Text                                     
-user              ForeignKey    user (Benutzer,utilisateur)                           
-salesdocument_ptr OneToOneField salesdocument ptr                                     
-cycle             CharField     cycle                                                 
-start_date        MyDateField   start date                                            
-covered_until     MyDateField   covered until                                         
-================= ============= ======================================================
+============= ============= ======================================================
+name          type          verbose name                                          
+============= ============= ======================================================
+id            AutoField     ID                                                    
+user          ForeignKey    User                                                  
+must_build    BooleanField  must build (muss generiert werden,doit être construit)
+contact       ForeignKey    Contact (Kontakt)                                     
+language      LanguageField Language (Sprache,Langue)                             
+journal       ForeignKey    journal                                               
+number        IntegerField  number                                                
+sent_time     DateTimeField sent time                                             
+creation_date DateField     creation date                                         
+your_ref      CharField     your ref                                              
+imode         ForeignKey    Invoicing Mode                                        
+shipping_mode ForeignKey    shipping mode                                         
+payment_term  ForeignKey    Payment Term                                          
+sales_remark  CharField     Remark for sales                                      
+subject       CharField     Subject line                                          
+vat_exempt    BooleanField  vat exempt                                            
+item_vat      BooleanField  item vat                                              
+total_excl    PriceField    total excl                                            
+total_vat     PriceField    total vat                                             
+intro         TextField     Introductive Text                                     
+cycle         CharField     cycle                                                 
+start_date    MyDateField   start date                                            
+covered_until MyDateField   covered until                                         
+============= ============= ======================================================
 
     
 Defined in :srcref:`/lino/modlib/sales/models.py`
@@ -1096,6 +712,21 @@ Type: AutoField
 
    
 .. index::
+   single: field;user
+   
+.. _lino.sales.Order.user:
+
+Field **Order.user**
+====================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
    single: field;must_build
    
 .. _lino.sales.Order.must_build:
@@ -1108,36 +739,6 @@ Field **Order.must_build**
 
 
 Type: BooleanField
-
-   
-.. index::
-   single: field;person
-   
-.. _lino.sales.Order.person:
-
-Field **Order.person**
-======================
-
-
-
-
-
-Type: ForeignKey
-
-   
-.. index::
-   single: field;company
-   
-.. _lino.sales.Order.company:
-
-Field **Order.company**
-=======================
-
-
-
-
-
-Type: ForeignKey
 
    
 .. index::
@@ -1396,36 +997,6 @@ Type: TextField
 
    
 .. index::
-   single: field;user
-   
-.. _lino.sales.Order.user:
-
-Field **Order.user**
-====================
-
-
-
-
-
-Type: ForeignKey
-
-   
-.. index::
-   single: field;salesdocument_ptr
-   
-.. _lino.sales.Order.salesdocument_ptr:
-
-Field **Order.salesdocument_ptr**
-=================================
-
-
-
-
-
-Type: OneToOneField
-
-   
-.. index::
    single: field;cycle
    
 .. _lino.sales.Order.cycle:
@@ -1484,42 +1055,37 @@ Model **Invoice**
 
 
 
-Invoice(id, must_build, person_id, company_id, contact_id, language, journal_id, number, sent_time, creation_date, your_ref, imode_id, shipping_mode_id, payment_term_id, sales_remark, subject, vat_exempt, item_vat, total_excl, total_vat, intro, user_id, salesdocument_ptr_id, journal_id, number, value_date, ledger_remark, booked, due_date, order_id)
+Invoice(id, user_id, must_build, contact_id, language, journal_id, number, sent_time, value_date, ledger_remark, booked, creation_date, your_ref, imode_id, shipping_mode_id, payment_term_id, sales_remark, subject, vat_exempt, item_vat, total_excl, total_vat, intro, due_date, order_id)
   
-================= ============= ======================================================
-name              type          verbose name                                          
-================= ============= ======================================================
-id                AutoField     ID                                                    
-must_build        BooleanField  must build (muss generiert werden,doit être construit)
-person            ForeignKey    Person (Personne,Isik)                                
-company           ForeignKey    Company (Firma,Société,Firma)                         
-contact           ForeignKey    represented by (Vertreten durch,représenté par)       
-language          LanguageField Language (Sprache,Langue)                             
-journal           ForeignKey    journal                                               
-number            IntegerField  number                                                
-sent_time         DateTimeField sent time                                             
-creation_date     DateField     creation date                                         
-your_ref          CharField     your ref                                              
-imode             ForeignKey    imode                                                 
-shipping_mode     ForeignKey    shipping mode                                         
-payment_term      ForeignKey    payment term (Tasumistingimused)                      
-sales_remark      CharField     Remark for sales                                      
-subject           CharField     Subject line                                          
-vat_exempt        BooleanField  vat exempt                                            
-item_vat          BooleanField  item vat                                              
-total_excl        PriceField    total excl                                            
-total_vat         PriceField    total vat                                             
-intro             TextField     Introductive Text                                     
-user              ForeignKey    user (Benutzer,utilisateur)                           
-salesdocument_ptr OneToOneField salesdocument ptr                                     
-journal           ForeignKey    journal                                               
-number            IntegerField  number                                                
-value_date        DateField     value date                                            
-ledger_remark     CharField     Remark for ledger                                     
-booked            BooleanField  booked                                                
-due_date          MyDateField   Payable until                                         
-order             ForeignKey    order                                                 
-================= ============= ======================================================
+============= ============= ======================================================
+name          type          verbose name                                          
+============= ============= ======================================================
+id            AutoField     ID                                                    
+user          ForeignKey    User                                                  
+must_build    BooleanField  must build (muss generiert werden,doit être construit)
+contact       ForeignKey    Contact (Kontakt)                                     
+language      LanguageField Language (Sprache,Langue)                             
+journal       ForeignKey    journal                                               
+number        IntegerField  number                                                
+sent_time     DateTimeField sent time                                             
+value_date    DateField     value date                                            
+ledger_remark CharField     Remark for ledger                                     
+booked        BooleanField  booked                                                
+creation_date DateField     creation date                                         
+your_ref      CharField     your ref                                              
+imode         ForeignKey    Invoicing Mode                                        
+shipping_mode ForeignKey    shipping mode                                         
+payment_term  ForeignKey    Payment Term                                          
+sales_remark  CharField     Remark for sales                                      
+subject       CharField     Subject line                                          
+vat_exempt    BooleanField  vat exempt                                            
+item_vat      BooleanField  item vat                                              
+total_excl    PriceField    total excl                                            
+total_vat     PriceField    total vat                                             
+intro         TextField     Introductive Text                                     
+due_date      DateField     Payable until                                         
+order         ForeignKey    order                                                 
+============= ============= ======================================================
 
     
 Defined in :srcref:`/lino/modlib/sales/models.py`
@@ -1545,6 +1111,21 @@ Type: AutoField
 
    
 .. index::
+   single: field;user
+   
+.. _lino.sales.Invoice.user:
+
+Field **Invoice.user**
+======================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
    single: field;must_build
    
 .. _lino.sales.Invoice.must_build:
@@ -1557,36 +1138,6 @@ Field **Invoice.must_build**
 
 
 Type: BooleanField
-
-   
-.. index::
-   single: field;person
-   
-.. _lino.sales.Invoice.person:
-
-Field **Invoice.person**
-========================
-
-
-
-
-
-Type: ForeignKey
-
-   
-.. index::
-   single: field;company
-   
-.. _lino.sales.Invoice.company:
-
-Field **Invoice.company**
-=========================
-
-
-
-
-
-Type: ForeignKey
 
    
 .. index::
@@ -1662,6 +1213,51 @@ Field **Invoice.sent_time**
 
 
 Type: DateTimeField
+
+   
+.. index::
+   single: field;value_date
+   
+.. _lino.sales.Invoice.value_date:
+
+Field **Invoice.value_date**
+============================
+
+
+
+
+
+Type: DateField
+
+   
+.. index::
+   single: field;ledger_remark
+   
+.. _lino.sales.Invoice.ledger_remark:
+
+Field **Invoice.ledger_remark**
+===============================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;booked
+   
+.. _lino.sales.Invoice.booked:
+
+Field **Invoice.booked**
+========================
+
+
+
+
+
+Type: BooleanField
 
    
 .. index::
@@ -1845,111 +1441,6 @@ Type: TextField
 
    
 .. index::
-   single: field;user
-   
-.. _lino.sales.Invoice.user:
-
-Field **Invoice.user**
-======================
-
-
-
-
-
-Type: ForeignKey
-
-   
-.. index::
-   single: field;salesdocument_ptr
-   
-.. _lino.sales.Invoice.salesdocument_ptr:
-
-Field **Invoice.salesdocument_ptr**
-===================================
-
-
-
-
-
-Type: OneToOneField
-
-   
-.. index::
-   single: field;journal
-   
-.. _lino.sales.Invoice.journal:
-
-Field **Invoice.journal**
-=========================
-
-
-
-
-
-Type: ForeignKey
-
-   
-.. index::
-   single: field;number
-   
-.. _lino.sales.Invoice.number:
-
-Field **Invoice.number**
-========================
-
-
-
-
-
-Type: IntegerField
-
-   
-.. index::
-   single: field;value_date
-   
-.. _lino.sales.Invoice.value_date:
-
-Field **Invoice.value_date**
-============================
-
-
-
-
-
-Type: DateField
-
-   
-.. index::
-   single: field;ledger_remark
-   
-.. _lino.sales.Invoice.ledger_remark:
-
-Field **Invoice.ledger_remark**
-===============================
-
-
-
-
-
-Type: CharField
-
-   
-.. index::
-   single: field;booked
-   
-.. _lino.sales.Invoice.booked:
-
-Field **Invoice.booked**
-========================
-
-
-
-
-
-Type: BooleanField
-
-   
-.. index::
    single: field;due_date
    
 .. _lino.sales.Invoice.due_date:
@@ -1961,7 +1452,7 @@ Field **Invoice.due_date**
 
 
 
-Type: MyDateField
+Type: DateField
 
    
 .. index::
@@ -1977,194 +1468,6 @@ Field **Invoice.order**
 
 
 Type: ForeignKey
-
-   
-
-
-.. index::
-   pair: model; DocItem
-
-.. _lino.sales.DocItem:
-
------------------
-Model **DocItem**
------------------
-
-
-
-DocItem(id, document_id, pos, product_id, title, description, discount, unit_price, qty, total)
-  
-=========== ============= ============
-name        type          verbose name
-=========== ============= ============
-id          AutoField     ID          
-document    ForeignKey    document    
-pos         IntegerField  Position    
-product     ForeignKey    product     
-title       CharField     title       
-description TextField     description 
-discount    IntegerField  Discount %  
-unit_price  PriceField    unit price  
-qty         QuantityField qty         
-total       PriceField    total       
-=========== ============= ============
-
-    
-Defined in :srcref:`/lino/modlib/sales/models.py`
-
-Referenced from
-
-
-
-
-.. index::
-   single: field;id
-   
-.. _lino.sales.DocItem.id:
-
-Field **DocItem.id**
-====================
-
-
-
-
-
-Type: AutoField
-
-   
-.. index::
-   single: field;document
-   
-.. _lino.sales.DocItem.document:
-
-Field **DocItem.document**
-==========================
-
-
-
-
-
-Type: ForeignKey
-
-   
-.. index::
-   single: field;pos
-   
-.. _lino.sales.DocItem.pos:
-
-Field **DocItem.pos**
-=====================
-
-
-
-
-
-Type: IntegerField
-
-   
-.. index::
-   single: field;product
-   
-.. _lino.sales.DocItem.product:
-
-Field **DocItem.product**
-=========================
-
-
-
-
-
-Type: ForeignKey
-
-   
-.. index::
-   single: field;title
-   
-.. _lino.sales.DocItem.title:
-
-Field **DocItem.title**
-=======================
-
-
-
-
-
-Type: CharField
-
-   
-.. index::
-   single: field;description
-   
-.. _lino.sales.DocItem.description:
-
-Field **DocItem.description**
-=============================
-
-
-
-
-
-Type: TextField
-
-   
-.. index::
-   single: field;discount
-   
-.. _lino.sales.DocItem.discount:
-
-Field **DocItem.discount**
-==========================
-
-
-
-
-
-Type: IntegerField
-
-   
-.. index::
-   single: field;unit_price
-   
-.. _lino.sales.DocItem.unit_price:
-
-Field **DocItem.unit_price**
-============================
-
-
-
-
-
-Type: PriceField
-
-   
-.. index::
-   single: field;qty
-   
-.. _lino.sales.DocItem.qty:
-
-Field **DocItem.qty**
-=====================
-
-
-
-
-
-Type: QuantityField
-
-   
-.. index::
-   single: field;total
-   
-.. _lino.sales.DocItem.total:
-
-Field **DocItem.total**
-=======================
-
-
-
-
-
-Type: PriceField
 
    
 

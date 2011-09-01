@@ -11,8 +11,7 @@ currently rather Debian centrated.
 .. note:: 
 
   This document contains instructions for Linux system administrators.
-  Don't apply these instructions without understanding what you are doing.
-  
+  Don't apply them without understanding what you are doing.  
   This document is work in progress.
   Please help us to make it better by sending your 
   feedback to the author.  
@@ -90,7 +89,7 @@ The Django version 1.2.3 provided
 by the Debian Squeeze `python-django` package 
 is too old for Lino, so you need either the latest 
 released Django version 1.3, or (if you don't 
-need "production server" quality) Django's 
+need production server quality) Django's 
 development version. 
 
 To install Django 1.3::
@@ -106,8 +105,8 @@ To install Django's latest development snapshot::
   cd /var/snapshots
   svn co http://code.djangoproject.com/svn/django/trunk/ django
   
-We recommend to not run Django's setup.py as well since that's 
-not needed for Lino and removes flexipility to switch from one 
+We recommend to not run Django's :file:`setup.py` since that's 
+not needed for Lino and removes flexibility to switch from one 
 version to the other. 
 Just `Set up your Python path`_ manually (see below).
 Comments on this are welcome.
@@ -115,7 +114,7 @@ Comments on this are welcome.
 Install other software
 ----------------------
 
-We also suggest to install
+You'll also need to install
 :term:`ExtJS` 
 and :term:`appy_pod` 
 into `/var/snapshots/`::
@@ -167,8 +166,8 @@ The file :xfile:`local.pth` itself should have the following content::
   /usr/local/django  
   
 
-Create mysql database
----------------------
+Create a MySQL database
+-----------------------
 
 If you decided to use MySQL as database frontend, 
 you must now create a database for your project and a 
@@ -177,10 +176,10 @@ user ``django@localhost``::
     $ sudo aptitude install mysql-server python-mysqldb
     
     $ mysql -u root -p 
-    mysql> create database myproject charset 'utf8';
+    mysql> create database mysite charset 'utf8';
     mysql> create user 'django'@'localhost' identified by 'my cool password';
-    mysql> grant all on myproject.* to django with grant option;
-    mysql> grant all on test_myproject.* to django with grant option;
+    mysql> grant all on mysite.* to django with grant option;
+    mysql> grant all on test_mysite.* to django with grant option;
     mysql> quit;
     
 See also http://dev.mysql.com/doc/refman/5.0/en/charset-database.html
@@ -194,17 +193,17 @@ you'll have to decide which Lino application you want.
 
 Maybe you'll later 
 :doc:`write your own Lino application </tutorials/t1>` 
-(or get somebody else write it for you), 
+or get somebody else write it for you, 
 but in a first step we suggest that you choose one 
 of the "batteries included" applications:
 
-- :mod:`lino.apps.igen` 
-  (an accounting application focussed on sales) 
-  
 - :mod:`lino.apps.dsbe` 
   (a database for social assistants who assist 
   people in finding jobs or education).
 
+- :mod:`lino.apps.igen` 
+  (an accounting application focussed on sales) 
+  
 As long as you are just playing around, it is easy to switch 
 between these applications:
 the only difference is one line in 
@@ -216,7 +215,7 @@ Create a local Django project
 -----------------------------
 
 Create your Django project directory 
-`/usr/local/django/myproject`, containing files
+`/usr/local/django/mysite`, containing files
 :xfile:`settings.py`, :file:`__init__.py` and :xfile:`manage.py`.
 
 You may either create your Django project from scratch 
@@ -247,7 +246,7 @@ We suggest the following :xfile:`manage.py` (see also :doc:`/blog/2011/0531`)::
 And here is our suggestion for :xfile:`settings.py`::
 
     # -*- coding: UTF-8 -*-
-    # Django settings for myproject project.
+    # Django settings for mysite project.
     from os.path import join, dirname
     from lino.apps.dsbe.settings import *
 
@@ -273,7 +272,7 @@ And here is our suggestion for :xfile:`settings.py`::
     # DATABASES = {
     #     'default': {
     #         'ENGINE': 'django.db.backends.mysql', 
-    #         'NAME': 'myproject',                  
+    #         'NAME': 'mysite',                  
     #         'USER': 'django',                     
     #         'PASSWORD': 'my cool password',               
     #         'HOST': 'localhost',                  
@@ -285,7 +284,7 @@ And here is our suggestion for :xfile:`settings.py`::
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite', 
-            'NAME': join(LINO.project_dir,'myproject.db')
+            'NAME': join(LINO.project_dir,'mysite.db')
         }
     }
 
@@ -309,7 +308,7 @@ Try the following command to run Lino's unit test suite on your project::
 Create your database
 --------------------
 
-Go to your :file:`/usr/local/django/myproject` directory and run::
+Go to your :file:`/usr/local/django/mysite` directory and run::
 
   python manage.py initdb std all_countries few_cities all_languages props demo 
   
@@ -326,25 +325,26 @@ Prepare your Django project for Lino
 Lino expects a few subdirectories of your local project directory.
 It doesn't create them automatically, so you must do it yourself::
 
-  cd /usr/local/django/myproject
+  cd /usr/local/django/mysite
   mkdir config
   mkdir fixtures
-  
   mkdir media
-  mkdir media/cache
-  mkdir media/cache/js
-  mkdir media/upload
-  mkdir media/webdav
-  mkdir media/webdav/doctemplates
+  
+Especially the :xfile:`media` directory is important and needs 
+your attention. 
+It is the central place where Lino expects static files to be served.
 
-The `media` directory 
-is the central place where Lino expects static files to be served.
-Besides the `cache`, `uploads` and `webdav` directory it must 
-contain the following symbolic links::
+You must manually add the following symbolic links in order to 
+tell Lino where certain other software is installed on your server::
 
   ln -s /var/snapshots/lino/media media/lino
   ln -s /var/snapshots/ext-3.3.1 media/extjs
   ln -s /usr/share/tinymce/www media/tinymce
+  
+Besides these manual entries, 
+the Lino server will 
+automatically create other subdirectories 
+`cache`, `uploads` and `webdav` in :xfile:`media`.
 
 
 Start a development server

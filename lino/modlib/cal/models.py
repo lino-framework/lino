@@ -112,7 +112,8 @@ class Calendar(mixins.AutoUser):
         ct.validate_calendar(self)
         super(Calendar,self).save(*args,**kw)
         if self.is_default:
-            for cal in self.user.calendar_set.all():
+            for cal in self.user.cal_calendar_set_by_user.all():
+            #~ for cal in self.user.calendar_set.all():
                 if cal.pk != self.pk and cal.is_default:
                     cal.is_default = False
                     cal.save()
@@ -136,7 +137,8 @@ def default_calendar(user):
     Returns or creates the default calendar for the given user.
     """
     try:
-        return user.calendar_set.get(is_default=True)
+        return user.cal_calendar_set_by_user.get(is_default=True)
+        #~ return user.calendar_set.get(is_default=True)
     except Calendar.DoesNotExist,e:
         cal = Calendar(user=user,is_default=True)
         cal.full_clean()

@@ -56,13 +56,11 @@ class Account(models.Model):
     #~ account = models.ForeignKey(Account)
     
     
-class Booked(journals.Journaled):
+class Booked(models.Model):
     """
-    A model that subclasses Booked must provide 5 fields::
+    A model that subclasses Booked must also 
+    subclass :class:`lino.modlib.journals.models.Journaled`::
     
-      journal = journals.JournalRef()
-      number = journals.DocumentRef()
-  
       value_date = models.DateField(auto_now=True)
       ledger_remark = models.CharField("Remark for ledger",
         max_length=200,blank=True)

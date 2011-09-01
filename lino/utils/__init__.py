@@ -55,7 +55,7 @@
 
 """
 
-import sys, locale, types, datetime
+import os, sys, locale, types, datetime
 from dateutil import parser as dateparser
 
 def constrain(value,lowest,highest):
@@ -141,6 +141,7 @@ def hex2str(value):
        h = int(s,16)
        r += chr(h)
     return r
+    
 
 def _test():
     import doctest

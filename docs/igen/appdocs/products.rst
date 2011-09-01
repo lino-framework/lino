@@ -28,17 +28,17 @@ Model **ProductCat**
 
     
   
-=========== ============== ============
-name        type           verbose name
-=========== ============== ============
-id          AutoField      ID          
-name        BabelCharField name        
-description TextField      description 
-name_de     CharField      name (de)   
-name_fr     CharField      name (fr)   
-name_nl     CharField      name (nl)   
-name_et     CharField      name (et)   
-=========== ============== ============
+=========== ============== ==========================
+name        type           verbose name              
+=========== ============== ==========================
+id          AutoField      ID                        
+name        BabelCharField Designation (Beschreibung)
+description TextField      description               
+name_de     CharField      Designation (de)          
+name_fr     CharField      Designation (fr)          
+name_nl     CharField      Designation (nl)          
+name_et     CharField      Designation (et)          
+=========== ============== ==========================
 
     
 Defined in :srcref:`/lino/modlib/products/models.py`
@@ -166,32 +166,32 @@ Model **Product**
 
 
 
-Product(id, name, description, cat_id, vatExempt, price, name_de, name_fr, name_nl, name_et, description_de, description_fr, description_nl, description_et)
+Product(id, name, description, cat_id, vatExempt, price, description_de, description_fr, description_nl, description_et, name_de, name_fr, name_nl, name_et)
   
-============== ============== ================
-name           type           verbose name    
-============== ============== ================
-id             AutoField      ID              
-name           BabelCharField name            
-description    BabelTextField description     
-cat            ForeignKey     Category        
-vatExempt      BooleanField   vatExempt       
-price          PriceField     price           
-name_de        CharField      name (de)       
-name_fr        CharField      name (fr)       
-name_nl        CharField      name (nl)       
-name_et        CharField      name (et)       
-description_de TextField      description (de)
-description_fr TextField      description (fr)
-description_nl TextField      description (nl)
-description_et TextField      description (et)
-============== ============== ================
+============== ============== ==========================
+name           type           verbose name              
+============== ============== ==========================
+id             AutoField      ID                        
+name           BabelCharField Designation (Beschreibung)
+description    BabelTextField description               
+cat            ForeignKey     Category                  
+vatExempt      BooleanField   vatExempt                 
+price          PriceField     price                     
+description_de TextField      description (de)          
+description_fr TextField      description (fr)          
+description_nl TextField      description (nl)          
+description_et TextField      description (et)          
+name_de        CharField      Designation (de)          
+name_fr        CharField      Designation (fr)          
+name_nl        CharField      Designation (nl)          
+name_et        CharField      Designation (et)          
+============== ============== ==========================
 
     
 Defined in :srcref:`/lino/modlib/products/models.py`
 
 Referenced from
-`lino.sales.DocItem.product`_
+
 
 
 
@@ -286,66 +286,6 @@ Type: PriceField
 
    
 .. index::
-   single: field;name_de
-   
-.. _lino.products.Product.name_de:
-
-Field **Product.name_de**
-=========================
-
-
-
-
-
-Type: CharField
-
-   
-.. index::
-   single: field;name_fr
-   
-.. _lino.products.Product.name_fr:
-
-Field **Product.name_fr**
-=========================
-
-
-
-
-
-Type: CharField
-
-   
-.. index::
-   single: field;name_nl
-   
-.. _lino.products.Product.name_nl:
-
-Field **Product.name_nl**
-=========================
-
-
-
-
-
-Type: CharField
-
-   
-.. index::
-   single: field;name_et
-   
-.. _lino.products.Product.name_et:
-
-Field **Product.name_et**
-=========================
-
-
-
-
-
-Type: CharField
-
-   
-.. index::
    single: field;description_de
    
 .. _lino.products.Product.description_de:
@@ -403,6 +343,66 @@ Field **Product.description_et**
 
 
 Type: TextField
+
+   
+.. index::
+   single: field;name_de
+   
+.. _lino.products.Product.name_de:
+
+Field **Product.name_de**
+=========================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;name_fr
+   
+.. _lino.products.Product.name_fr:
+
+Field **Product.name_fr**
+=========================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;name_nl
+   
+.. _lino.products.Product.name_nl:
+
+Field **Product.name_nl**
+=========================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;name_et
+   
+.. _lino.products.Product.name_et:
+
+Field **Product.name_et**
+=========================
+
+
+
+
+
+Type: CharField
 
    
 
