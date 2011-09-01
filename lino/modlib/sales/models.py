@@ -81,14 +81,10 @@ class PaymentTerm(babel.BabelNamed):
         verbose_name_plural = _("Payment Terms")
         
     id = models.CharField(max_length=10,primary_key=True)
-    #~ name = babel.BabelCharField(max_length=200)
     days = models.IntegerField(default=0)
     months = models.IntegerField(default=0)
     #proforma = models.BooleanField(default=False)
     
-    #~ def __unicode__(self):
-        #~ return self.name
-        
     def get_due_date(self,date1):
         assert isinstance(date1,datetime.date), \
           "%s is not a date" % date1
@@ -250,9 +246,13 @@ def get_sales_rule(doc):
 
 class SalesDocument(
       journals.Journaled,journals.Sendable,
-      contacts.ContactDocument,mixins.TypedPrintable):
+      contacts.ContactDocument,
+      mixins.AutoUser,
+      mixins.TypedPrintable):
     """Common base class for :class:`Order` and :class:`Invoice`.
     """
+    class Meta:
+        abstract = True
     
     creation_date = models.DateField(blank=True,auto_now_add=True)
     #~ customer = models.ForeignKey(Customer,
@@ -272,7 +272,7 @@ class SalesDocument(
     total_excl = fields.PriceField(default=0)
     total_vat = fields.PriceField(default=0)
     intro = models.TextField("Introductive Text",blank=True)
-    user = models.ForeignKey(auth.User,blank=True,null=True)
+    #~ user = models.ForeignKey(settings.LINO.user_model,blank=True,null=True)
     #status = models.CharField(max_length=1, choices=STATUS_CHOICES)
         
     def can_send(self):
@@ -345,7 +345,7 @@ class SalesDocument(
         self.update_total()
       
 SALES_PRINTABLE_FIELDS = reports.fields_list(SalesDocument,
-  'person company contact imode payment_term '
+  'contact imode payment_term '
   'creation_date your_ref subject '
   'language vat_exempt item_vat ')
 
@@ -532,20 +532,21 @@ class Invoice(ledger.Booked,SalesDocument):
 
 
 class DocItem(models.Model):
-    document = models.ForeignKey(SalesDocument,related_name='items') 
+    "Base class for InvoiceItem and OrderItem"
+    class Meta:
+        abstract = True
+        unique_together  = ('document','pos')
+    
     pos = models.IntegerField("Position")
     
     product = models.ForeignKey(products.Product,blank=True,null=True)
     title = models.CharField(max_length=200,blank=True)
-    description = models.TextField(blank=True,null=True)
+    description = fields.RichTextField()
     
     discount = models.IntegerField("Discount %",default=0)
     unit_price = fields.PriceField(blank=True,null=True) 
     qty = fields.QuantityField(blank=True,null=True)
     total = fields.PriceField(blank=True,null=True)
-    
-    class Meta:
-        unique_together  = ('document','pos')
     
     #~ def total_excl(self):
         #~ if self.unitPrice is not None:
@@ -586,6 +587,15 @@ class DocItem(models.Model):
         #~ return u"DocItem %s.%d" % (self.document,self.pos)
 
 
+class OrderItem(DocItem):
+    class Meta:
+        abstract = True
+    document = models.ForeignKey(Order,related_name='items') 
+
+class InvoiceItem(DocItem):
+    class Meta:
+        abstract = True
+    document = models.ForeignKey(Invoice,related_name='items') 
 
     
 #~ class DocumentDetail(layouts.DetailLayout):
@@ -647,7 +657,8 @@ class DocItem(models.Model):
 
 
 class SalesDocuments(reports.Report):
-    model = SalesDocument
+    pass
+    #~ model = SalesDocument
     #~ page_layouts = (DocumentPageLayout,)
     #actions = reports.Report.actions + [ PrintAction ]
     
@@ -714,7 +725,7 @@ class SignAction(actions.Action):
 
 class DocumentsToSign(Invoices):
     use_as_default_report = False
-    filter = dict(user__exact=None)
+    filter = dict(user__isnull=True)
     can_add = perms.never
     column_names = "number:4 order creation_date " \
                   "contact:10 imode " \
@@ -752,12 +763,16 @@ class InvoicesByOrder(SalesDocuments):
 class ItemsByDocument(reports.Report):
     column_names = "pos:3 product title description:20x1 discount unit_price qty total"
     #list_layout_class = ItemsByDocumentListLayout
-    model = DocItem
     #master = SalesDocument
     fk_name = 'document'
     order_by = ["pos"]
     
 
+class ItemsByOrder(ItemsByDocument):
+    model = 'sales.OrderItem'
+
+class ItemsByInvoice(ItemsByDocument):
+    model = 'sales.InvoiceItem'
 
 
 #~ class DocumentsByPartnerDetail(layouts.PageLayout):
@@ -769,17 +784,23 @@ class ItemsByDocument(reports.Report):
 #~ contacts.Partners.register_page_layout(DocumentsByPartnerDetail)
             
 
-class SalesByCompany(SalesDocuments):
+class SalesByContact(SalesDocuments):
     column_names = "journal:4 number:4 creation_date:8 " \
                    "total_incl total_excl total_vat *"
     order_by = ["creation_date"]
-    fk_name = 'company'
+    fk_name = 'contact'
+    
+class OrdersByContact(SalesByContact):
+    model = 'sales.Orders'
 
-class SalesByPerson(SalesDocuments):
-    column_names = "journal:4 number:4 creation_date:8 " \
-                   "total_incl total_excl total_vat *"
-    order_by = ["creation_date"]
-    fk_name = 'person'
+class InvoicesByContact(SalesByContact):
+    model = 'sales.Invoices'
+
+#~ class SalesByPerson(SalesDocuments):
+    #~ column_names = "journal:4 number:4 creation_date:8 " \
+                   #~ "total_incl total_excl total_vat *"
+    #~ order_by = ["creation_date"]
+    #~ fk_name = 'person'
 
         
 
@@ -810,3 +831,22 @@ reports.inject_field(
     """The default value for item_vat for sales invoices to this Contact.
     """)
 
+
+def setup_main_menu(site,ui,user,m): 
+    m.add_action('sales.Orders')
+    m.add_action('sales.Invoices')
+    m.add_action('sales.DocumentsToSign')
+    m.add_action('sales.PendingOrders')
+
+def setup_my_menu(site,ui,user,m): 
+    pass
+  
+def setup_config_menu(site,ui,user,m): 
+    m  = m.add_menu("cal",_("~Sales"))
+    m.add_action('sales.InvoicingModes')
+    m.add_action('sales.ShippingModes')
+    m.add_action('sales.PaymentTerms')
+    
+def setup_explorer_menu(site,ui,user,m):
+    pass
+  

@@ -96,12 +96,12 @@ class Lino(Lino):
                 # m.add_action(jnl.get_doc_report(),args=[jnl.pk])
                 #~ m.add_action(str(jnl.get_doc_report()))
             
-        if user and user.is_active:
-            m = main.add_menu("sales","~Sales")
-            #m.add_action(Orders())
-            #m.add_action(Invoices())
-            m.add_action('sales.DocumentsToSign')
-            m.add_action('sales.PendingOrders')
+        #~ if user and user.is_active:
+            #~ m = main.add_menu("sales","~Sales")
+            #~ #m.add_action(Orders())
+            #~ #m.add_action(Invoices())
+            #~ m.add_action('sales.DocumentsToSign')
+            #~ m.add_action('sales.PendingOrders')
 
         #~ m = self.add_menu("admin","~Administration",
           #~ can_view=perms.is_staff)
@@ -109,11 +109,9 @@ class Lino(Lino):
 
         if user and user.is_staff:
             m = main.add_menu("config","~Configuration")
+            sales.setup_config_menu(self,ui,user,m)
             notes.setup_config_menu(self,ui,user,m)
             cal.setup_config_menu(self,ui,user,m)
-            m.add_action('sales.InvoicingModes')
-            m.add_action('sales.ShippingModes')
-            m.add_action('sales.PaymentTerms')
             m.add_action('journals.Journals')
             #~ m = self.add_menu("ledger","~Ledger",
               #~ can_view=perms.is_authenticated)
@@ -132,6 +130,7 @@ class Lino(Lino):
             
         if user and user.is_expert:
             m = main.add_menu("explorer",_("E~xplorer"))
+            sales.setup_explorer_menu(self,ui,user,m)
             notes.setup_explorer_menu(self,ui,user,m)
             cal.setup_explorer_menu(self,ui,user,m)
             mails.setup_explorer_menu(self,ui,user,m)

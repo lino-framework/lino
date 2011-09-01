@@ -1,0 +1,17 @@
+20110901
+========
+
+How to test whether a data migration worked correctly?
+Because I'm so fascinated about how well 
+my :doc:`dpy fixtures </topics/dpy>` work,
+I wrote a new section in :doc:`/admin/datamig` 
+
+One detail remains to do: 
+models that use :class:`lino.mixins.CreatedModified` 
+do show differences because their `modified` field gets 
+touched when the fixtureis being loaded. 
+
+This is because of Djangos `auto_now` option on that field.
+That's why we now handle this in a overridden save() method (touching the field only if 
+:attr:`lino.Lino.loading_from_dump` is `False`, 
+or find out whether Django allows

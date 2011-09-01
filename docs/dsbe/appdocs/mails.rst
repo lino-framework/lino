@@ -29,16 +29,16 @@ Model **Recipient**
 
 Recipient(id, mail_id, contact_id, type, address, name)
   
-======= =============== =========================
-name    type            verbose name             
-======= =============== =========================
-id      AutoField       ID                       
-mail    ForeignKey      mail                     
-contact ForeignKey      Contact (Kontakt)        
-type    ChoiceListField Recipient Type           
-address EmailField      Address (Adresse,Adresse)
-name    CharField       Name (Nom)               
-======= =============== =========================
+======= =============== =============================
+name    type            verbose name                 
+======= =============== =============================
+id      AutoField       ID                           
+mail    ForeignKey      mail                         
+contact ForeignKey      Contact (Kontakt)            
+type    ChoiceListField Recipient Type (Empfängerart)
+address EmailField      Address (Adresse,Adresse)    
+name    CharField       Name (Nom)                   
+======= =============== =============================
 
     
 Defined in :srcref:`/lino/modlib/mails/models.py`

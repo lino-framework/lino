@@ -456,7 +456,6 @@ class ContactDocument(models.Model):
 
 
 
-#~ class CompanyType(models.Model):
 class CompanyType(babel.BabelNamed):
     """
     Represents a possible choice for the :class:`Company`.type
@@ -470,12 +469,8 @@ class CompanyType(babel.BabelNamed):
         verbose_name = _("company type")
         verbose_name_plural = _("company types")
         
-    #~ name = babel.BabelCharField(_("Designation"),max_length=200)
     abbr = babel.BabelCharField(_("Abbreviation"),max_length=30,blank=True)
     
-    #~ def __unicode__(self):
-        #~ return babelattr(self,'name')
-        
         
 class CompanyTypes(reports.Report):
     model = 'contacts.CompanyType'

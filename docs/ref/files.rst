@@ -17,18 +17,14 @@ See http://docs.djangoproject.com/en/dev/intro/tutorial01/#creating-a-project
 
 See http://docs.djangoproject.com/en/dev/intro/tutorial01/#creating-a-project
 
-.. xfile:: lino_settings.py
-
-Loaded during :meth:`lino.lino_site.LinoSite.setup`.
-
-Located usually in your :setting:`PROJET_DIR` (the same directory as :xfile:`settings.py`), 
-except if you change the default value of :setting:`LINO_SETTINGS`.
-
-
 .. xfile:: linolib.js
 
 See :srcref:`/lino/ui/extjs3/linolib.js`
 
-.. xfile:: initdb.py
+.. xfile:: .po
 
-A script that does a syncdb and reset of the database, and loads specified fixtures
+:xfile:`.po` files are gettext catalogs. 
+They contain chunks of English text as they appear in Lino, 
+together with their translation into a given language.
+See :doc:`/admin/translate`.
+

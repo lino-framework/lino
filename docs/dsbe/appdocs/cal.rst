@@ -37,20 +37,20 @@ Remote calendars will be synchronized by
 and local modifications will be sent back to the remote calendar.
 
   
-============ ============= ===========================
-name         type          verbose name               
-============ ============= ===========================
-id           AutoField     ID                         
-user         ForeignKey    User (Benutzer,Utilisateur)
-type         CharField     Type                       
-name         CharField     Name (Nom)                 
-url_template CharField     URL template               
-username     CharField     Username                   
-password     PasswordField Password                   
-readonly     BooleanField  read-only                  
-is_default   BooleanField  is default                 
-start_date   DateField     Start date (Beginnt am)    
-============ ============= ===========================
+============ ============= ============================
+name         type          verbose name                
+============ ============= ============================
+id           AutoField     ID                          
+user         ForeignKey    User (Benutzer,Utilisateur) 
+type         CharField     Type                        
+name         CharField     Name (Nom)                  
+url_template CharField     URL template                
+username     CharField     Username (Benutzername)     
+password     PasswordField Password (Passwort)         
+readonly     BooleanField  read-only (schreibgeschützt)
+is_default   BooleanField  is default (Standard)       
+start_date   DateField     Start date (Beginnt am)     
+============ ============= ============================
 
     
 Defined in :srcref:`/lino/modlib/cal/models.py`
@@ -430,21 +430,21 @@ Thanks to http://www.kanzaki.com/docs/ical/rdate.html
 
 
   
-=========== ============= ==========================
-name        type          verbose name              
-=========== ============= ==========================
-id          AutoField     ID                        
-calendar    ForeignKey    Calendar (Kalender)       
-uid         CharField     UID                       
-start_date  DateField     Start date (Beginnt am)   
-start_time  TimeField     Start time (Beginnt um)   
-summary     CharField     Summary (Kurzbeschreibung)
-description RichTextField Description (Beschreibung)
-rdates      TextField     Recurrence dates          
-exdates     TextField     Excluded dates            
-rrules      TextField     Recurrence Rules          
-exrules     TextField     Exclusion Rules           
-=========== ============= ==========================
+=========== ============= =========================================
+name        type          verbose name                             
+=========== ============= =========================================
+id          AutoField     ID                                       
+calendar    ForeignKey    Calendar (Kalender)                      
+uid         CharField     UID                                      
+start_date  DateField     Start date (Beginnt am)                  
+start_time  TimeField     Start time (Beginnt um)                  
+summary     CharField     Summary (Kurzbeschreibung)               
+description RichTextField Description (Beschreibung)               
+rdates      TextField     Recurrence dates (Wiederholungsdaten)    
+exdates     TextField     Excluded dates (Nicht an folgenden Daten)
+rrules      TextField     Recurrence Rules (Wiederholungsregeln)   
+exrules     TextField     Exclusion Rules (Ausnahmen)              
+=========== ============= =========================================
 
     
 Defined in :srcref:`/lino/modlib/cal/models.py`
@@ -755,7 +755,7 @@ must_build BooleanField    must build (muss generiert werden,doit être construi
 contact    ForeignKey      Contact (Kontakt)                                     
 language   LanguageField   Language (Sprache,Langue)                             
 event      ForeignKey      Event (Termin)                                        
-role       ForeignKey      Role                                                  
+role       ForeignKey      Role (Rolle)                                          
 status     ChoiceListField Status (Statut)                                       
 remark     CharField       Remark (Bemerkung,Remarque)                           
 ========== =============== ======================================================
@@ -921,19 +921,19 @@ description    RichTextField   Description (Beschreibung)
 access_class   ChoiceListField Access Class (Zugriffsklasse)                         
 sequence       IntegerField    Revision (Revisionsnummer)                            
 alarm_value    IntegerField    Value (Wert,Valeur)                                   
-alarm_unit     ChoiceListField Unit                                                  
-dt_alarm       DateTimeField   Alarm time                                            
-user_modified  BooleanField    modified by user                                      
-rset           ForeignKey      Recurrence Set                                        
-end_date       DateField       End date (Endet am)                                   
-end_time       TimeField       End time (Endet um)                                   
+alarm_unit     ChoiceListField Unit (Einheit)                                        
+dt_alarm       DateTimeField   Alarm time (Erinnern um)                              
+user_modified  BooleanField    modified by user (manuell bearbeitet)                 
+rset           ForeignKey      Recurrence Set (Wiederholungsserie)                   
+end_date       DateField       End Date (Endet am)                                   
+end_time       TimeField       End Time (Endet um)                                   
 transparent    BooleanField    Transparent (nicht blockierend)                       
 type           ForeignKey      Event Type (Ereignisart,Type d'événement)             
 place          ForeignKey      Place (Ort)                                           
 priority       ChoiceListField Priority (Priorität)                                  
 status         ChoiceListField Status (Statut)                                       
-duration_value IntegerField    Value (Wert,Valeur)                                   
-duration_unit  ChoiceListField Unit                                                  
+duration_value IntegerField    Duration value (Dauer (Anzahl))                       
+duration_unit  ChoiceListField Duration unit (Dauer (Einheit))                       
 ============== =============== ======================================================
 
     
@@ -1398,13 +1398,13 @@ description   RichTextField            Description (Beschreibung)
 access_class  ChoiceListField          Access Class (Zugriffsklasse)                    
 sequence      IntegerField             Revision (Revisionsnummer)                       
 alarm_value   IntegerField             Value (Wert,Valeur)                              
-alarm_unit    ChoiceListField          Unit                                             
-dt_alarm      DateTimeField            Alarm time                                       
-user_modified BooleanField             modified by user                                 
-rset          ForeignKey               Recurrence Set                                   
-due_date      DateField                Due date (Fällig am,Terme)                       
+alarm_unit    ChoiceListField          Unit (Einheit)                                   
+dt_alarm      DateTimeField            Alarm time (Erinnern um)                         
+user_modified BooleanField             modified by user (manuell bearbeitet)            
+rset          ForeignKey               Recurrence Set (Wiederholungsserie)              
+due_date      DateField                Due date (Fällig am)                             
 due_time      TimeField                Due time (Fällig um)                             
-done          BooleanField             Done (Erledigt,Fait)                             
+done          BooleanField             Done (Erledigt)                                  
 percent       IntegerField             Duration value (Dauer (Anzahl))                  
 status        ChoiceListField          Task Status (Aufgabenstatus)                     
 auto_type     IntegerField             auto type                                        
