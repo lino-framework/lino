@@ -2,6 +2,10 @@
 The :mod:`lino.apps.igen` package
 =================================
 
+.. automodule:: lino.apps.igen
+    :members:
+    :show-inheritance:
+
 :mod:`lino.apps.igen.settings`
 ------------------------------
 

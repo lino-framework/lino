@@ -18,6 +18,8 @@ Subpackages
     lino.modlib.contacts
     lino.modlib.jobs
     lino.modlib.journals
+    lino.modlib.sales
+    lino.modlib.ledger
     lino.modlib.notes
     lino.modlib.users
     lino.modlib.properties

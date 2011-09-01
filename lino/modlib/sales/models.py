@@ -38,18 +38,21 @@ from lino.utils import perms
 from lino.utils import babel 
 #~ from lino.utils.babel import add_babel_field, babelattr
 
-from lino.tools import resolve_app
+#~ from lino.tools import resolve_app
 
-journals = resolve_app('journals')
+#~ journals = resolve_app('journals')
 #~ journals = models.get_app('journals')
 #~ auth = resolve_app('auth')
 from lino.modlib.users import models as auth
 #~ ledger = models.get_app('ledger')
 from lino.modlib.ledger import models as ledger
+from lino.modlib.journals import models as journals
+from lino.modlib.products import models as products
+from lino.modlib.contacts import models as contacts
 #~ products = models.get_app('products')
 #~ ledger = resolve_app('ledger')
-products = resolve_app('products')
-contacts = resolve_app('contacts')
+#~ products = resolve_app('products')
+#~ contacts = resolve_app('contacts')
 #~ from lino.modlib.contacts import models as contacts
 
 

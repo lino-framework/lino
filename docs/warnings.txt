@@ -1,1 +1,2 @@
-T:\hgwork\lino\docs\about\index.rst:18: WARNING: unknown document: /topics/dtl
+T:\hgwork\lino\docs\autodoc\lino.modlib.sales.rst:8: WARNING: py:class reference target not found: django.db.models.base.Model
+T:\hgwork\lino\docs\autodoc\lino.modlib.sales.rst:72: WARNING: py:class reference target not found: django.db.models.base.Model

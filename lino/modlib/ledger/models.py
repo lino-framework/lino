@@ -22,13 +22,14 @@ from lino import reports
 from lino.utils import perms
 
 #contacts = reports.get_app('contacts')
-journals = reports.get_app('journals')
+from lino.modlib.journals import models as journals
+#~ journals = reports.get_app('journals')
 #from lino.modlib.contacts import models as contacts
 #from lino.modlib.journals import models as journals
 
-from lino.tools import resolve_model
-Person = resolve_model('contacts.Person')
-Company = resolve_model('contacts.Company')
+#~ from lino.tools import resolve_model
+#~ Person = resolve_model('contacts.Person')
+#~ Company = resolve_model('contacts.Company')
 
 
 class Account(models.Model):
@@ -136,8 +137,9 @@ class Booking(models.Model):
     pos = models.IntegerField("Position",blank=True,null=True)
     date = models.DateField()
     account = models.ForeignKey(Account)
-    person = models.ForeignKey(Person,blank=True,null=True)
-    company = models.ForeignKey(Company,blank=True,null=True)
+    contact = models.ForeignKey('contacts.Contact',blank=True,null=True)
+    #~ person = models.ForeignKey(Person,blank=True,null=True)
+    #~ company = models.ForeignKey(Company,blank=True,null=True)
     debit = fields.PriceField(default=0)
     credit = fields.PriceField(default=0)
     

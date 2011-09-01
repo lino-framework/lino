@@ -282,6 +282,11 @@ class Lino(object):
     """
     
     make_missing_dirs = True
+    """
+    Set this to False if you don't want Lino to automatically 
+    create missing dirs when needed 
+    (but to raise an exception in these cases, asking you to create it yourself)
+    """
     
     
     time_format_strftime = '%H:%M'

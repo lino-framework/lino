@@ -130,8 +130,8 @@ Just look at the :xfile:`welcome.html` of Lino/DSBE::
   </div>  
   
 But even here it is obvious: that fact of not being able to pass 
-arguments to functions is simple a show stopper for Django 
-templates. I'm sorry.
+arguments to functions is simply a show stopper for Django 
+templates. Sorry.
 
 Check-in 20110815b at 22:20. The proof of concept has passed. 
 We continue to use Cheetah templates, mainly because Django 
