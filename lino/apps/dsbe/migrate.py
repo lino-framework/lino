@@ -340,7 +340,8 @@ def migrate_from_1_2_1(globals_dict):
     def create_jobs_job(id, name, type_id, provider_id, contract_type_id, hourly_rate, capacity, remark):
         ctype = CONTRACT_TYPES.get(contract_type_id)
         if ctype.__class__ != jobs.ContractType:
-            dblogger.warning("Dropping VSE Job %s" % (id, name, type_id, provider_id, contract_type_id, hourly_rate, capacity, remark))
+            dblogger.warning("Dropping VSE Job %s" % 
+                list((id, name, type_id, provider_id, contract_type_id, hourly_rate, capacity, remark)))
             return None
         return Job(id=id,name=name,type_id=type_id,provider_id=provider_id,contract_type_id=contract_type_id,hourly_rate=hourly_rate,capacity=capacity,remark=remark)    
     globals_dict.update(create_jobs_job=create_jobs_job)
