@@ -95,6 +95,11 @@ class Serializer(base.Serializer):
                 self.stream.write('    return insert_child(%s.objects.get(pk=%s),%s%s)\n' % (
                     full_model_name(pm,'_'),pf.attname,full_model_name(model,'_'),attrs))
             else:
+                for f in fields:
+                    if isinstance(f,models.ForeignKey) and f.rel.to is ContentType:
+                        self.stream.write(
+                            '    %s = ContentTypes.objects.get_for_model(%s).pk\n' % (
+                            f.attname,f.attname))
                 self.stream.write('    return %s(%s)\n' % (
                     full_model_name(model,'_'),
                     ','.join([
@@ -190,7 +195,8 @@ class Serializer(base.Serializer):
             d = value
             return 'time(%d,%d,%d)' % (d.hour,d.minute,d.second)
         if isinstance(field,models.ForeignKey) and field.rel.to is ContentType:
-            return repr(tuple(value.app_label,value.model))
+            return full_model_name(value.model_class(),'_')
+            #~ return repr(tuple(value.app_label,value.model))
         if isinstance(field,models.DateField):
             d = value
             return 'date(%d,%d,%d)' % (d.year,d.month,d.day)

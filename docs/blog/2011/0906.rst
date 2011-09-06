@@ -64,6 +64,12 @@ Data migration
 The changes in :mod:`lino.modlib.isip` were again a beautiful 
 challenge of data migration. And Lino passed it bravely!
 
+I discovered a new bug in dpy: content types were not correctly 
+handled. Serializer wrote just the id of the ContentType to the dump 
+file. That possibly failed because the contentypes table is populated 
+according to the new database structure and thus the pk's of the 
+models may have changed.
+
 Checkin 20110906d.
 
 

@@ -240,7 +240,7 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
         #~ mixins.Reminder.update_owned_task(self,task)
         #~ contacts.PartnerDocument.update_owned_task(self,task)
         task.person = self.person
-        task.company = self.provider
+        task.company = self.company
         
             
     
