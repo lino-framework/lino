@@ -194,7 +194,7 @@ def migrate_from_1_2_1(globals_dict):
     - part of module jobs has been split to isip
     """
     
-    old_contenttypes = """id;name;app_label;model
+    old_contenttypes = """
     39;activity;dsbe;activity
     43;aid type;dsbe;aidtype
     31;Attendance;cal;attendance
