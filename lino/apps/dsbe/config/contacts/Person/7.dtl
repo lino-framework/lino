@@ -1,6 +1,7 @@
-:label: Jobs
+:label: Contracts
 :label_align: top
 
 main = 
-    jobs.JobRequestsByPerson
-    jobs.ContractsByPerson
+    isip.ContractsByPerson
+    jobs.JobRequestsByPerson:20 jobs.ContractsByPerson:40
+    

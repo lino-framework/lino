@@ -336,6 +336,13 @@ def migrate_from_1_2_1(globals_dict):
         CONTRACT_TYPES[id] = obj
         return obj
     globals_dict.update(create_jobs_contracttype=create_jobs_contracttype)
+    def create_jobs_job(id, name, type_id, provider_id, contract_type_id, hourly_rate, capacity, remark):
+        ctype = CONTRACT_TYPES.get(contract_type_id)
+        if ctype.__class__ != jobs.ContractType:
+            dblogger.warning("Dropping VSE Job %s" % (id, name, type_id, provider_id, contract_type_id, hourly_rate, capacity, remark))
+            return None
+        return Job(id=id,name=name,type_id=type_id,provider_id=provider_id,contract_type_id=contract_type_id,hourly_rate=hourly_rate,capacity=capacity,remark=remark)    
+    globals_dict.update(create_jobs_contracttype=create_jobs_contracttype)
 
     def create_cal_event(id, user_id, created, modified, must_build, person_id, company_id, start_date, start_time, summary, description, access_class, sequence, alarm_value, alarm_unit, dt_alarm, end_date, end_time, transparent, type_id, place_id, priority, status, duration_value, duration_unit, repeat_value, repeat_unit):
         user_id = new_user_id(user_id)
