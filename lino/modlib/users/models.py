@@ -26,9 +26,9 @@ from lino.core import actors
 from lino.mixins import printable
 from lino.utils import mti
 
-from lino.modlib.contacts.models import Contact,PersonMixin
+from lino.mixins import PersonMixin
+from lino.modlib.contacts.models import Contact
 
-assert reports.is_installed('contacts')
 
 class User(Contact,PersonMixin):
     """
@@ -116,10 +116,11 @@ class Users(reports.Report):
     order_by = ["username"]
     column_names = 'username first_name last_name is_active is_staff is_expert is_superuser *'
 
-
-reports.inject_field(Contact,
-    'is_user',
-    mti.EnableChild('users.User',verbose_name=_("is User")),
-    """Whether this Contact is also a User."""
-    )
+if reports.is_installed('contacts'):
+  
+    reports.inject_field(Contact,
+        'is_user',
+        mti.EnableChild('users.User',verbose_name=_("is User")),
+        """Whether this Contact is also a User."""
+        )
 

@@ -80,9 +80,6 @@ from lino.modlib.countries.models import Country, City
 from lino.modlib.isip.models import ContractBase
 from lino.apps.dsbe.models import Company, Companies
 
-assert reports.is_installed('contacts')
-assert reports.is_installed('jobs')
-
 
 SCHEDULE_CHOICES = {
     'de':[ 
@@ -632,12 +629,13 @@ class ContractsSituation(mixins.Listing):
         return html
 
 
-
-reports.inject_field(Company,
-    'is_jobprovider',
-    mti.EnableChild('jobs.JobProvider',verbose_name=_("is Job Provider")),
-    """Whether this Company is also a Job Provider."""
-    )
+if reports.is_installed('contacts') and reports.is_installed('jobs'):
+  
+    reports.inject_field(Company,
+        'is_jobprovider',
+        mti.EnableChild('jobs.JobProvider',verbose_name=_("is Job Provider")),
+        """Whether this Company is also a Job Provider."""
+        )
 
 
 def setup_main_menu(site,ui,user,m): 

@@ -79,7 +79,6 @@ from lino.modlib.notes.models import NoteType
 from lino.modlib.countries.models import Country, City
 from lino.apps.dsbe.models import Company, Companies
 
-assert reports.is_installed('isip')
 
 #
 # CONTRACT TYPES 

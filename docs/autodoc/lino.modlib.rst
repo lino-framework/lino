@@ -16,6 +16,7 @@ Subpackages
     lino.modlib.mails
     lino.modlib.countries
     lino.modlib.contacts
+    lino.modlib.isip
     lino.modlib.jobs
     lino.modlib.journals
     lino.modlib.sales

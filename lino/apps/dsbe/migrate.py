@@ -193,11 +193,95 @@ def migrate_from_1_2_1(globals_dict):
       and modify SiteConfig.next_partner_id
     - part of module jobs has been split to isip
     """
+    
+    old_contenttypes = """id;name;app_label;model
+    39;activity;dsbe;activity
+    43;aid type;dsbe;aidtype
+    31;Attendance;cal;attendance
+    67;Attendee;cal;attendee
+    68;Attendee Role;cal;attendeerole
+    65;calendar;cal;calendar
+    8;city;countries;city
+    20;Company;contacts;company
+    16;company type;contacts;companytype
+    18;contact;contacts;contact
+    59;Contact Person;contacts;role
+    17;contact type;contacts;contacttype
+    2;content type;contenttypes;contenttype
+    54;Contract;jobs;contract
+    53;Contract Ending;jobs;contractending
+    51;Contract Type;jobs;contracttype
+    58;Contracts Situation;jobs;contractssituation
+    7;country;countries;country
+    46;Course;dsbe;course
+    45;Course Content;dsbe;coursecontent
+    42;Course Ending;dsbe;courseending
+    44;course provider;dsbe;courseprovider
+    47;Course Requests;dsbe;courserequest
+    4;Data Control Listing;lino;datacontrollisting
+    32;Event;cal;event
+    22;Event Type;notes;eventtype
+    30;Event Type;cal;eventtype
+    23;Event/Note;notes;note
+    52;examination policy;jobs;exampolicy
+    41;exclusion;dsbe;exclusion
+    40;exclusion type;dsbe;exclusiontype
+    60;Incoming Mail;mails;inmail
+    34;Integration Phase;dsbe;persongroup
+    56;Job;jobs;job
+    38;job experience;dsbe;jobexperience
+    50;Job Provider;jobs;jobprovider
+    57;Job Requests;jobs;jobrequest
+    55;Job Type;jobs;jobtype
+    6;Language;countries;language
+    37;language knowledge;dsbe;languageknowledge
+    25;link;links;link
+    24;link type;links;linktype
+    61;mail;mails;mail
+    21;Note Type;notes;notetype
+    63;Outgoing Mail;mails;outmail
+    19;Person;contacts;person
+    48;Person Search;dsbe;personsearch
+    29;place;cal;place
+    12;Property;properties;property
+    13;Property;properties;personproperty
+    10;Property Choice;properties;propchoice
+    11;Property Group;properties;propgroup
+    9;Property Type;properties;proptype
+    62;Recipient;mails;recipient
+    66;recurrence set;cal;recurrenceset
+    64;Role Type;contacts;roletype
+    3;site config;lino;siteconfig
+    36;study or education;dsbe;study
+    35;study type;dsbe;studytype
+    33;Task;cal;task
+    5;Text Field Template;lino;textfieldtemplate
+    28;Third Party;thirds;third
+    15;Unwanted property;properties;unwantedskill
+    27;Upload;uploads;upload
+    26;upload type;uploads;uploadtype
+    1;User;users;user
+    49;wanted language knowledge;dsbe;wantedlanguageknowledge
+    14;Wanted property;properties;wantedskill
+    """
+    contenttypes_dict = {}
+    for ln in old_contenttypes.splitlines():
+        if ln:
+            a = ln.split(';')
+            assert len(a) == 4
+            contenttypes_dict[int(a[0])] = (a[2],a[3])
+            
     from lino.modlib.isip import models as isip
     from lino.modlib.jobs import models as jobs
     
     Role = resolve_model("contacts.Role")
     RoleType = resolve_model("contacts.RoleType")
+    
+    ContentType = resolve_model("contenttypes.ContentType")
+    def new_contenttype(old_id):
+        label,name = contenttypes_dict.get(old_id)
+        return ContentType.objects.get(app_label=label,model=name).pk
+    
     
     Event = resolve_model("cal.Event")
     Task = resolve_model("cal.Task")
@@ -243,6 +327,7 @@ def migrate_from_1_2_1(globals_dict):
     globals_dict.update(create_users_user=create_users_user)
     
     def create_uploads_upload(id, user_id, owner_type_id, owner_id, file, mimetype, created, modified, description, type_id, valid_until):
+        owner_type = new_contenttype(owner_type)
         return Upload(id=id,user_id=new_user_id(user_id),owner_type_id=owner_type_id,owner_id=owner_id,file=file,mimetype=mimetype,created=created,modified=modified,description=description,type_id=type_id,valid_until=valid_until)
     globals_dict.update(create_uploads_upload=create_uploads_upload)
     
@@ -320,6 +405,7 @@ def migrate_from_1_2_1(globals_dict):
     
 
     def create_cal_task(id, user_id, created, modified, owner_type_id, owner_id, person_id, company_id, start_date, start_time, summary, description, access_class, sequence, alarm_value, alarm_unit, dt_alarm, due_date, due_time, done, percent, status, auto_type):
+        owner_type = new_contenttype(owner_type)
         user_id = new_user_id(user_id)
         if person_id:
             project_id=person_id
@@ -329,6 +415,7 @@ def migrate_from_1_2_1(globals_dict):
             project_id=company_id
         return Task(id=id,user_id=user_id,created=created,modified=modified,owner_type_id=owner_type_id,owner_id=owner_id,project_id=project_id,start_date=start_date,start_time=start_time,summary=summary,description=description,access_class=access_class,sequence=sequence,alarm_value=alarm_value,alarm_unit=alarm_unit,dt_alarm=dt_alarm,due_date=due_date,due_time=due_time,done=done,percent=percent,status=status,auto_type=auto_type)
     globals_dict.update(create_cal_task=create_cal_task)
+    
     def create_jobs_contracttype(id, build_method, template, ref, name, name_fr, name_en):
         if name.startswith('VSE'):
             obj = isip.ContractType(id=id,build_method=build_method,template=template,ref=ref,name=name,name_fr=name_fr,name_en=name_en)    

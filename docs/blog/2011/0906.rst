@@ -61,7 +61,8 @@ Checkin 20110906c.
 Data migration
 --------------
 
-
+The changes in :mod:`lino.modlib.isip` were again a beautiful 
+challenge of data migration. And Lino passed it bravely!
 
 Checkin 20110906d.
 

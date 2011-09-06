@@ -4,6 +4,7 @@ LINO_ROOT := `cygpath -m $(LINO_ROOT)`
 APPS = dsbe igen
 #~ MODULES = system
 MODULES = mails cal jobs thirds products properties contacts countries notes sales finan links uploads
+TESTS_OPTIONS = --verbosity=2 --traceback
 
 #LANGUAGES = de fr nl et
 #INPUT_FILES = lino\\actions.py lino\\ui\\extjs\\ext_ui.py lino\\modlib\\fields.py lino\\modlib\\system\\models.py
@@ -43,10 +44,10 @@ cm:
 	done
   
 tests:  
-	$(DJANGO_ADMIN) test --settings=lino.test_apps.1.settings
-	$(DJANGO_ADMIN) test --settings=lino.test_apps.20100212.settings
+	$(DJANGO_ADMIN) test --settings=lino.test_apps.1.settings  $(TESTS_OPTIONS)
+	$(DJANGO_ADMIN) test --settings=lino.test_apps.20100212.settings $(TESTS_OPTIONS)
 	#~ $(DJANGO_ADMIN) test --settings=lino.apps.std.settings
-	$(DJANGO_ADMIN) test --settings=lino.apps.dsbe.settings
-	$(DJANGO_ADMIN) test --settings=lino.apps.igen.settings
+	$(DJANGO_ADMIN) test --settings=lino.apps.dsbe.settings $(TESTS_OPTIONS)
+	$(DJANGO_ADMIN) test --settings=lino.apps.igen.settings $(TESTS_OPTIONS)
 
 
