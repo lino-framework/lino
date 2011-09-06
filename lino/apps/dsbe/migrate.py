@@ -328,7 +328,7 @@ def migrate_from_1_2_1(globals_dict):
     globals_dict.update(create_users_user=create_users_user)
     
     def create_uploads_upload(id, user_id, owner_type_id, owner_id, file, mimetype, created, modified, description, type_id, valid_until):
-        owner_type = new_contenttype(owner_type)
+        owner_type_id = new_contenttype(owner_type_id)
         return Upload(id=id,user_id=new_user_id(user_id),owner_type_id=owner_type_id,owner_id=owner_id,file=file,mimetype=mimetype,created=created,modified=modified,description=description,type_id=type_id,valid_until=valid_until)
     globals_dict.update(create_uploads_upload=create_uploads_upload)
     
@@ -406,7 +406,7 @@ def migrate_from_1_2_1(globals_dict):
     
 
     def create_cal_task(id, user_id, created, modified, owner_type_id, owner_id, person_id, company_id, start_date, start_time, summary, description, access_class, sequence, alarm_value, alarm_unit, dt_alarm, due_date, due_time, done, percent, status, auto_type):
-        owner_type = new_contenttype(owner_type)
+        owner_type_id = new_contenttype(owner_type_id)
         user_id = new_user_id(user_id)
         if person_id:
             project_id=person_id
