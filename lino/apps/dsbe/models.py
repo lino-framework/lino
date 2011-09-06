@@ -992,7 +992,7 @@ class LanguageKnowledge(models.Model):
     spoken = HowWell.field(verbose_name=_("spoken"))
     written = HowWell.field(verbose_name=_("written"))
     native = models.BooleanField(verbose_name=_("native language"))
-    cef_level = CefLevel.field(blank=True,null=True)
+    cef_level = CefLevel.field(blank=True) # ,null=True)
     
     def __unicode__(self):
         if self.language_id is None:

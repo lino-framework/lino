@@ -85,11 +85,11 @@ class Calendar(mixins.AutoUser):
         choices=CALENDAR_CHOICES)
     name = models.CharField(_("Name"),max_length=200)
     url_template = models.CharField(_("URL template"),
-        max_length=200,blank=True,null=True)
+        max_length=200,blank=True) # ,null=True)
     username = models.CharField(_("Username"),
-        max_length=200,blank=True,null=True)
+        max_length=200,blank=True) # ,null=True)
     password = fields.PasswordField(_("Password"),
-        max_length=200,blank=True,null=True)
+        max_length=200,blank=True) # ,null=True)
     readonly = models.BooleanField(_("read-only"),default=False)
     is_default = models.BooleanField(
         _("is default"),default=False)
@@ -214,7 +214,7 @@ class ComponentBase(CalendarRelated):
         
     uid = models.CharField(_("UID"),
         max_length=200,
-        blank=True,null=True)
+        blank=True) # ,null=True)
 
     start_date = models.DateField(
         verbose_name=_("Start date")) # iCal:DTSTART
@@ -258,7 +258,7 @@ class Component(ComponentBase,
     access_class = AccessClass.field() # iCal:CLASS
     sequence = models.IntegerField(_("Revision"),default=0)
     alarm_value = models.IntegerField(_("Value"),null=True,blank=True)
-    alarm_unit = DurationUnit.field(_("Unit"),null=True,blank=True)
+    alarm_unit = DurationUnit.field(_("Unit"),blank=True) # ,null=True)
     alarm = fields.FieldSet(_("Alarm"),'alarm_value alarm_unit')
     dt_alarm = models.DateTimeField(_("Alarm time"),
         blank=True,null=True,editable=False)
@@ -350,11 +350,11 @@ class Event(Component,mixins.TypedPrintable):
     transparent = models.BooleanField(_("Transparent"),default=False)
     type = models.ForeignKey(EventType,verbose_name=_("Event Type"),null=True,blank=True)
     place = models.ForeignKey(Place,verbose_name=_("Place"),null=True,blank=True) # iCal:LOCATION
-    priority = Priority.field(_("Priority"),null=True,blank=True) # iCal:PRIORITY
-    status = EventStatus.field(_("Status"),null=True,blank=True) # iCal:STATUS
+    priority = Priority.field(_("Priority"),blank=True) # iCal:PRIORITY
+    status = EventStatus.field(_("Status"),blank=True) # iCal:STATUS
     duration = fields.FieldSet(_("Duration"),'duration_value duration_unit')
     duration_value = models.IntegerField(_("Duration value"),null=True,blank=True) # iCal:DURATION
-    duration_unit = DurationUnit.field(_("Duration unit"),null=True,blank=True) # iCal:DURATION
+    duration_unit = DurationUnit.field(_("Duration unit"),blank=True) # iCal:DURATION
     #~ repeat_value = models.IntegerField(_("Repeat every"),null=True,blank=True) # iCal:DURATION
     #~ repeat_unit = DurationUnit.field(verbose_name=_("Repeat every"),null=True,blank=True) # iCal:DURATION
     
@@ -394,7 +394,7 @@ class Task(mixins.Owned,Component):
         verbose_name=_("Due time"))
     done = models.BooleanField(_("Done"),default=False) # iCal:COMPLETED
     percent = models.IntegerField(_("Duration value"),null=True,blank=True) # iCal:PERCENT
-    status = TaskStatus.field(null=True,blank=True) # iCal:STATUS
+    status = TaskStatus.field(blank=True) # iCal:STATUS
     
     auto_type = models.IntegerField(null=True,blank=True,editable=False) 
     
@@ -499,7 +499,7 @@ class Guest(contacts.ContactDocument,
         verbose_name=_("Role"),
         blank=True,null=True) 
         
-    status = GuestStatus.field(verbose_name=_("Status"),null=True,blank=True)
+    status = GuestStatus.field(verbose_name=_("Status"),blank=True)
     
     #~ confirmed = models.DateField(
         #~ blank=True,null=True,

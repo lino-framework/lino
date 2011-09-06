@@ -38,7 +38,8 @@ def objects():
     inmail = Instantiator('mails.InMail').build
     recipient_to = Instantiator('mails.Recipient',type=RecipientType.to).build
     
-    for p in Person.objects.filter(email__isnull=True):
+    #~ for p in Person.objects.filter(email__isnull=True):
+    for p in Person.objects.filter(email=''):
         try:
             p.first_name.encode('ascii')
             p.email = p.first_name.lower() + "@example.com"
@@ -46,7 +47,8 @@ def objects():
         except UnicodeError:
             pass
             
-    for person in Person.objects.filter(email__isnull=False):
+    for person in Person.objects.exclude(email=''):
+    #~ for person in Person.objects.filter(email__isnull=False):
         m = outmail(user=root,subject='Welcome %s!' % person.first_name)
         yield m
         yield recipient_to(mail=m,contact=person)

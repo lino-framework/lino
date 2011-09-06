@@ -168,7 +168,7 @@ class ChoiceListField(models.CharField):
             #~ choices=KNOWLEDGE_CHOICES,
             choices=choicelist.get_choices(),
             max_length=choicelist.max_length,
-            blank=True,null=True,
+            blank=True,  # null=True,
             #~ validators=[validate_knowledge],
             #~ limit_to_choices=True,
             )

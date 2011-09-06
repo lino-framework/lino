@@ -27,7 +27,7 @@ from lino.utils import join_words
 
 
 def SexField(**kw):
-    options = dict(max_length=1,blank=True,null=True,
+    options = dict(max_length=1,blank=True,# null=True,
         verbose_name=_("Sex"),choices=SEX_CHOICES) 
     options.update(kw)
     return models.CharField(**options)

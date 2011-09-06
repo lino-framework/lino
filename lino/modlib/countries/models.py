@@ -43,7 +43,7 @@ class Language(babel.BabelNamed):
     id = models.CharField(max_length=3,primary_key=True)
     #~ name = babel.BabelCharField(max_length=200,verbose_name=_("Designation"))
     #~ name = models.CharField(max_length=200,verbose_name=_("Designation"))
-    iso2 = models.CharField(max_length=2,blank=True,null=True)
+    iso2 = models.CharField(max_length=2,blank=True) # ,null=True)
     
     #~ def __unicode__(self):
         #~ return babel.babelattr(self,'name')

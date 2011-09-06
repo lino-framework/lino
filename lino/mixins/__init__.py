@@ -170,13 +170,13 @@ class Owned(models.Model):
         if m:
             m(task)
 
-    def data_control(self):
-        "Used by :class:`lino.models.DataControlListing`."
-        msgs = []
-        ct = ContentType.objects.get_for_id()
-        ...
-        msgs.append(unicode(e))
-        return msgs
+    #~ def data_control(self):
+        #~ "Used by :class:`lino.models.DataControlListing`."
+        #~ msgs = []
+        #~ ct = ContentType.objects.get_for_id()
+        #~ ...
+        #~ msgs.append(unicode(e))
+        #~ return msgs
 
 class ProjectRelated(models.Model):
     "Deserves more documentation."

@@ -206,7 +206,10 @@ class Mail(models.Model):
         
     #~ outgoing = models.BooleanField(verbose_name=_('Outgoing'))
     
-    subject = models.CharField(_("Subject"),max_length=200,blank=True,null=True)
+    subject = models.CharField(_("Subject"),
+        max_length=200,blank=True,
+        #null=True
+        )
     body = fields.RichTextField(_("Body"),blank=True,format='html')
     
     def get_recipients(self,rr):

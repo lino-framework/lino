@@ -94,7 +94,7 @@ class Note(mixins.TypedPrintable,mixins.AutoUser):
         blank=True,null=True,
         verbose_name=_('Event Type (Content)'))
     #,on_delete=RESTRICT)
-    subject = models.CharField(_("Subject"),max_length=200,blank=True,null=True)
+    subject = models.CharField(_("Subject"),max_length=200,blank=True) # ,null=True)
     #~ body = models.TextField(_("Body"),blank=True)
     body = fields.RichTextField(_("Body"),blank=True,format='html')
     

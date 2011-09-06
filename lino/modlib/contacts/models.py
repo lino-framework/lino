@@ -109,7 +109,7 @@ class Contact(mti.MultiTableBase,CountryCity):
         #~ default=babel.DEFAULT_LANGUAGE,
         #~ choices=settings.LANGUAGES)
     
-    email = models.EmailField(_('E-Mail'),blank=True,null=True)
+    email = models.EmailField(_('E-Mail'),blank=True) # ,null=True)
     url = models.URLField(_('URL'),blank=True)
     phone = models.CharField(_('Phone'),max_length=200,blank=True)
     gsm = models.CharField(_('GSM'),max_length=200,blank=True)
@@ -117,7 +117,7 @@ class Contact(mti.MultiTableBase,CountryCity):
     #image = models.ImageField(blank=True,null=True,
     # upload_to=".")
     
-    remarks = models.TextField(_("Remarks"),blank=True,null=True)
+    remarks = models.TextField(_("Remarks"),blank=True) # ,null=True)
     
     def save(self,*args,**kw):
         if self.id is None:

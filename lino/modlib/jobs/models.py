@@ -186,14 +186,14 @@ class Contract(ContractBase):
         blank=True,null=True,default=None)
     
     
-    regime = models.CharField(_("regime"),max_length=200,blank=True,null=True)
-    schedule = models.CharField(_("schedule"),max_length=200,blank=True,null=True)
+    regime = models.CharField(_("regime"),max_length=200,blank=True)
+    schedule = models.CharField(_("schedule"),max_length=200,blank=True)
     hourly_rate = fields.PriceField(_("hourly rate"),blank=True,null=True)
     refund_rate = models.CharField(_("refund rate"),max_length=200,
-        blank=True,null=True)
+        blank=True)
     
     reference_person = models.CharField(_("reference person"),max_length=200,
-        blank=True,null=True)
+        blank=True)
         
     responsibilities = fields.RichTextField(_("responsibilities"),
         blank=True,null=True,format='html')
@@ -415,7 +415,7 @@ class JobType(mixins.Sequenced):
         verbose_name_plural = _('Job Types')
         
     name = models.CharField(max_length=200,
-          blank=True,null=True,
+          blank=True,
           verbose_name=_("Designation"))
           
     def __unicode__(self):
@@ -450,7 +450,7 @@ class Job(models.Model):
         default=1)
         
     remark = models.CharField(max_length=200,
-        blank=True,null=True,
+        blank=True,
         verbose_name=_("Remark"))
         
     def __unicode__(self):

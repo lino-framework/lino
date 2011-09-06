@@ -140,7 +140,7 @@ def analyze_models(self,make_messages):
             
         for f, m in model._meta.get_fields_with_model():
             if isinstance(f,models.CharField) and f.null:
-                raise Exception("20110907 Nullable CharField")
+                raise Exception("20110907 Nullable CharField %s in %s" % (f.name,model))
             if isinstance(f,models.ForeignKey):
                 f.rel.to._lino_ddh.add_fk(model,f)
                 if f.verbose_name == f.name.replace('_', ' '):

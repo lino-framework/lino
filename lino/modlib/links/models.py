@@ -56,7 +56,7 @@ class Link(mixins.AutoUser):
     date = models.DateTimeField(_('Date'),
       default=datetime.date.today) 
     url = models.URLField(verify_exists=False)
-    name = models.CharField(max_length=200,blank=True,null=True,
+    name = models.CharField(max_length=200,blank=True,#null=True,
         verbose_name=_('Name'))
             
     def __unicode__(self):
