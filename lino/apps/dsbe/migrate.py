@@ -270,6 +270,9 @@ def migrate_from_1_2_1(globals_dict):
             a = ln.split(';')
             if len(a) != 4:
                 raise Exception("%r : invalid format!" % ln)
+            tst = a[2] + '.' + a[3]
+            if tst == 'contacts.contacttype':
+                a[3] = 'roletype'
             contenttypes_dict[int(a[0])] = (a[2],a[3])
             
     from lino.modlib.isip import models as isip
