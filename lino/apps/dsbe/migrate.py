@@ -273,6 +273,10 @@ def migrate_from_1_2_1(globals_dict):
             tst = a[2] + '.' + a[3]
             if tst == 'contacts.contacttype':
                 a[3] = 'roletype'
+            elif tst == 'jobs.exampolicy':
+                a[2] = 'isip'
+            elif tst == 'jobs.contractending':
+                a[2] = 'isip'
             contenttypes_dict[int(a[0])] = (a[2],a[3])
             
     from lino.modlib.isip import models as isip
