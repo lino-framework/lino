@@ -268,7 +268,8 @@ def migrate_from_1_2_1(globals_dict):
     for ln in old_contenttypes.splitlines():
         if ln:
             a = ln.split(';')
-            assert len(a) == 4
+            if len(a) != 4:
+                raise Exception("%r : invalid format!" % ln)
             contenttypes_dict[int(a[0])] = (a[2],a[3])
             
     from lino.modlib.isip import models as isip
