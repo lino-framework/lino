@@ -166,7 +166,7 @@ def objects():
     
     
     
-    exam_policy = Instantiator('jobs.ExamPolicy').build
+    exam_policy = Instantiator('isip.ExamPolicy').build
     yield exam_policy(**babel_values('name',en='every month',de='monatlich',fr="mensuel"))
     yield exam_policy(**babel_values('name',en='every 2 months',de='zweimonatlich',fr="bimensuel"))
     yield exam_policy(**babel_values('name',en='every 3 months',de='alle 3 Monate',fr="tous les 3 mois"))

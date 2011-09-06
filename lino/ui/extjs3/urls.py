@@ -27,6 +27,7 @@ Installs Lino URLs under root location (`/`).
 #~ urlpatterns = settings.LINO.urlpatterns
 
 from lino.ui.extjs3 import UI
-
+# some test cases requires the variable `ui` in the urlconf module...
+ui = UI()
 # Create lino.ui.extjs3.ext_ui.ExtJS instance
-urlpatterns = UI().get_patterns()
+urlpatterns = ui.get_patterns()

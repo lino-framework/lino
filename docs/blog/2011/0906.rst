@@ -33,3 +33,27 @@ installing fixture :mod:`lino.apps.dsbe.fixtures.demo`,
 "Failed to save independent CourseContent #1 (u'Deutsch'). Abandoned."
 
 Checkin 20110906b.
+
+
+New module :mod:`lino.modlib.isip`
+----------------------------------
+
+Es gibt jetzt zwei Arten von Verträgen: VSE-Verträge 
+(:class:`lino.modelib.isip.models.Contract`) 
+und Arbeitsverträge 
+(:class:`lino.modelib.jobs.models.Contract`).
+Dass die bisher in einer einzigen Tabelle waren, war 
+offenbar ein Analysefehler.
+Beide Modelle haben zwar eine Serie von gemeinsamen Feldern 
+(:class:`lino.modelib.isip.models.ContractBase`),
+aber eine gemeinsame Historik ist nicht nötig
+(sondern die Benutzer wollen die beiden lieber klar getrennt 
+haben in zwei Tabellen im Reiter "Verträge" einer Person)
+
+Technisches:
+`lino.modlib.jobs` basiert auf `lino.modlib.isip` und nicht umgekehrt. 
+Deshalb sind die Modelle ExamPolicy und ContractEnding 
+jetzt in `isip`, nicht mehr in `jobs`.
+Ein Modell `ContractType` gibt es in beiden Modulen.
+
+Checkin 20110906c.

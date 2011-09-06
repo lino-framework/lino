@@ -78,6 +78,8 @@ def parse_js_date(s,name):
     #~ return v
 
 def is_installed(app_label):
+    if not '.' in app_label:
+        app_label = '.' + app_label
     for s in settings.INSTALLED_APPS:
         if s.endswith(app_label):
             return True

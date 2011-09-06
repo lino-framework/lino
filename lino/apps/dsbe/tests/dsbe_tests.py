@@ -227,8 +227,12 @@ def test03(self):
     a = PrintAction()
     #~ run_
     #~ rr = Contracts()
-    from lino.ui.base import UI
-    ui = UI() 
+    from django.conf import settings
+    from django.utils.importlib import import_module
+    urls = import_module(settings.ROOT_URLCONF)
+    ui = urls.ui
+    #~ from lino.ui.base import UI
+    #~ ui = UI() 
     try:
         kw = a.run_(ui,n)
     except Exception,e:

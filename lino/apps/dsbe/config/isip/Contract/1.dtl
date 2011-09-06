@@ -1,0 +1,14 @@
+:label: General
+:label_align: top
+
+main =
+    id:8 person:25 user:15 user_asd:15 language:8
+    type company contact:20     
+    applies_from applies_until
+    date_decided date_issued 
+    date_ended ending
+    cal.TasksByOwner
+    
+    
+    
+

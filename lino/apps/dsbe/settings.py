@@ -45,6 +45,8 @@ class Lino(Lino):
         cal = models.get_app('cal')
         mails = models.get_app('mails')
         notes = models.get_app('notes')
+        jobs = models.get_app('jobs')
+        isip = models.get_app('isip')
 
         #~ main = menus.Toolbar('main')
         m = main.add_menu("contacts",_("~Contacts"))
@@ -52,7 +54,11 @@ class Lino(Lino):
         m.add_action('contacts.Persons')
         #~ m.add_action('contacts.Persons',label="Alle Personen",params={})
         m.add_action('dsbe.MySearches')
-        m.add_action('contacts.Contacts')
+        m.add_action('contacts.AllContacts')
+        isip.setup_main_menu(self,ui,user,m)
+        jobs.setup_main_menu(self,ui,user,m)
+        #~ m.add_action('jobs.JobProviders')
+        m.add_action('dsbe.CourseProviders')
 
         if user is None:
             return main
@@ -61,7 +67,6 @@ class Lino(Lino):
         #~ m.add_action('projects.Projects')
         m.add_action('notes.MyNotes')
         m.add_action('uploads.MyUploads')
-        m.add_action('jobs.MyContracts')
         
         #~ m.add_action('cal.MyTasks')
         #~ m.add_action('cal.MyEvents')
@@ -74,12 +79,14 @@ class Lino(Lino):
             
         cal.setup_my_menu(self,ui,user,m)
         mails.setup_my_menu(self,ui,user,m)
+        isip.setup_my_menu(self,ui,user,m)
+        jobs.setup_my_menu(self,ui,user,m)
+        
         m.add_action('lino.MyTextFieldTemplates')
 
 
         m = main.add_menu("courses",_("~Courses"))
         m.add_action('dsbe.Courses')
-        m.add_action('dsbe.CourseProviders')
         m.add_action('dsbe.CourseContents')
         m.add_action('dsbe.CourseEndings')
         
@@ -103,7 +110,7 @@ class Lino(Lino):
             config_contacts = cfg.add_menu("contacts",_("~Contacts"))
             #~ config_notes    = cfg.add_menu("notes",_("~Notes"))
             config_dsbe     = cfg.add_menu("dsbe",_("~DSBE"))
-            config_jobs     = cfg.add_menu("jobs",_("~Jobs"))
+            #~ config_jobs     = cfg.add_menu("jobs",_("~Jobs"))
             config_cv       = cfg.add_menu("cv",_("C~V"))
             config_etc      = cfg.add_menu("etc",_("~System"))
             
@@ -116,14 +123,12 @@ class Lino(Lino):
             config_contacts.add_action('countries.Languages')
             
             notes.setup_config_menu(self,ui,user,cfg)
+            isip.setup_config_menu(self,ui,user,cfg)
+            jobs.setup_config_menu(self,ui,user,cfg)
             
             #~ config_notes.add_action('notes.NoteTypes')
             #~ config_notes.add_action('notes.EventTypes')
         
-            config_jobs.add_action('jobs.ContractTypes')
-            config_jobs.add_action('jobs.JobTypes')
-            config_jobs.add_action('jobs.JobProviders')
-            
             config_dsbe.add_action('dsbe.PersonGroups')
         
             if user.is_expert:
@@ -147,10 +152,8 @@ class Lino(Lino):
             
             config_dsbe.add_action('dsbe.ExclusionTypes')
             config_dsbe.add_action('dsbe.AidTypes')
-            config_jobs.add_action('jobs.Jobs')
-            config_jobs.add_action('jobs.ContractEndings')
+            #~ config_jobs.add_action('jobs.Jobs')
             #~ m.add_action('dsbe.JobTypes')
-            config_jobs.add_action('jobs.ExamPolicies')
             #~ m.add_action('dsbe.CoachingTypes')
             
             config_etc.add_action('links.LinkTypes')
@@ -169,11 +172,12 @@ class Lino(Lino):
             m.add_action('contacts.AllPersons')
             m.add_action('contacts.Roles')
             notes.setup_explorer_menu(self,ui,user,m)
+            isip.setup_explorer_menu(self,ui,user,m)
+            jobs.setup_explorer_menu(self,ui,user,m)
             #~ m.add_action('notes.Notes')
             #~ m.add_action('lino.TextFieldTemplates')
             m.add_action('links.Links')
             m.add_action('dsbe.Exclusions')
-            m.add_action('jobs.Contracts')
             m.add_action('uploads.Uploads')
             m.add_action('dsbe.CourseRequests')
             m.add_action('contenttypes.ContentTypes')
@@ -232,6 +236,7 @@ INSTALLED_APPS = (
   'lino.modlib.cal',
   'lino.modlib.mails',
   'lino.modlib.jobs',
+  'lino.modlib.isip',
   'lino.apps.dsbe',
   #'dsbe.modlib.contacts',
   #'dsbe.modlib.projects',

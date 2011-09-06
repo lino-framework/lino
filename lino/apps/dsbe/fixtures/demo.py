@@ -116,7 +116,7 @@ def objects():
           en=u'Convention art.60§7 town',
           ))
     
-    contractType = Instantiator('jobs.ContractType',"ref",
+    contractType = Instantiator('isip.ContractType',"ref",
       build_method='appypdf',template=u'vse.odt').build
     yield contractType("vsea",**babel_values('name',
           de=u"VSE Ausbildung",
@@ -163,7 +163,7 @@ def objects():
     company = Instantiator(Company).build
     #~ contact = Instantiator(Contact).build
     role = Instantiator(Role).build
-    exam_policy = Instantiator('jobs.ExamPolicy').build
+    exam_policy = Instantiator('isip.ExamPolicy').build
 
     City = resolve_model('countries.City')
     StudyType = resolve_model('dsbe.StudyType')
@@ -332,6 +332,13 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     yield langk(person=ly,language='est',written='4',spoken='4')
     yield langk(person=mari,language='est',written='3',spoken='4')
     yield langk(person=iiris,language='est',written='0',spoken='3')
+    
+    
+    contract = Instantiator('isip.Contract',
+      'type applies_from applies_until',
+      user=root,person=hans).build
+    yield contract(1,i2d(20110906),i2d(20111206))
+    
     
     
     jobtype = Instantiator('jobs.JobType','name').build

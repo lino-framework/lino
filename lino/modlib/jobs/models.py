@@ -77,9 +77,11 @@ from lino.modlib.cal.models import DurationUnit, update_auto_task
 from lino.modlib.properties.models import Property
 from lino.modlib.notes.models import NoteType
 from lino.modlib.countries.models import Country, City
+from lino.modlib.isip.models import ContractBase
 from lino.apps.dsbe.models import Company, Companies
 
-
+assert reports.is_installed('contacts')
+assert reports.is_installed('jobs')
 
 
 SCHEDULE_CHOICES = {
@@ -151,82 +153,40 @@ class ContractType(mixins.PrintableType,babel.BabelNamed):
     templates_group = 'jobs/Contract'
     
     class Meta:
-        verbose_name = _("Contract Type")
-        verbose_name_plural = _('Contract Types')
+        verbose_name = _("Job Contract Type")
+        verbose_name_plural = _('Job Contract Types')
         
     ref = models.CharField(_("reference"),max_length=20,blank=True)
 
 class ContractTypes(reports.Report):
     model = ContractType
-    column_names = 'name build_method template *'
-
-#
-# EXAMINATION POLICIES
-#
-class ExamPolicy(babel.BabelNamed):
-    class Meta:
-        verbose_name = _("examination policy")
-        verbose_name_plural = _('examination policies')
-        
-
-class ExamPolicies(reports.Report):
-    model = ExamPolicy
-    column_names = 'name *'
-
-#
-# CONTRACT ENDINGS
-#
-class ContractEnding(models.Model):
-    class Meta:
-        verbose_name = _("Contract Ending")
-        verbose_name_plural = _('Contract Endings')
-        
-    name = models.CharField(_("designation"),max_length=200)
-    
-    def __unicode__(self):
-        return unicode(self.name)
-        
-class ContractEndings(reports.Report):
-    model = ContractEnding
-    column_names = 'name *'
-    order_by = ['name']
+    column_names = 'name ref build_method template *'
 
 
+   
 
-#
-# CONTRACTS
-#
-#~ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder,contacts.ContactDocument):
-#~ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.Reminder):
-class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
+class Contract(ContractBase):
     """
     A Contract
     """
     class Meta:
-        verbose_name = _("Contract")
-        verbose_name_plural = _('Contracts')
+        verbose_name = _("Job Contract")
+        verbose_name_plural = _('Job Contracts')
         
-    person = models.ForeignKey("contacts.Person",
-        verbose_name=_("Person"))
-    provider = models.ForeignKey(JobProvider,
-        blank=True,null=True,verbose_name=_("Job Provider"))
-    contact = models.ForeignKey("contacts.Role",
-      blank=True,null=True,
-      verbose_name=_("represented by"))
-    #~ contact = models.ForeignKey("contacts.Contact",
-      #~ blank=True,null=True,
-      #~ verbose_name=_("represented by"))
-    language = fields.LanguageField(default=babel.DEFAULT_LANGUAGE)
-
-    job = models.ForeignKey("jobs.Job",verbose_name=_("Job"),blank=True,null=True)
-        
-    type = models.ForeignKey("jobs.ContractType",verbose_name=_("Contract Type"),blank=True)
+    type = models.ForeignKey("jobs.ContractType",
+        related_name="%(app_label)s_%(class)s_set_by_type",
+        verbose_name=_("Contract Type"),blank=True)
     
-    applies_from = models.DateField(_("applies from"),blank=True,null=True)
-    applies_until = models.DateField(_("applies until"),blank=True,null=True)
-    date_decided = models.DateField(blank=True,null=True,verbose_name=_("date decided"))
-    date_issued = models.DateField(blank=True,null=True,verbose_name=_("date issued"))
-    duration = models.IntegerField(_("duration (days)"),blank=True,null=True,default=None)
+    provider = models.ForeignKey(JobProvider,
+        related_name="%(app_label)s_%(class)s_set_by_provider",
+        verbose_name=_("Job Provider"),
+        blank=True,null=True)
+    job = models.ForeignKey("jobs.Job",
+        verbose_name=_("Job"),
+        blank=True,null=True)
+        
+    duration = models.IntegerField(_("duration (days)"),
+        blank=True,null=True,default=None)
     
     
     regime = models.CharField(_("regime"),max_length=200,blank=True,null=True)
@@ -237,25 +197,11 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
     
     reference_person = models.CharField(_("reference person"),max_length=200,
         blank=True,null=True)
-    
-    responsibilities = fields.RichTextField(_("responsibilities"),blank=True,null=True,format='html')
-    
-    stages = fields.RichTextField(_("stages"),blank=True,null=True,format='html')
-    goals = fields.RichTextField(_("goals"),blank=True,null=True,format='html')
-    duties_asd = fields.RichTextField(_("duties ASD"),blank=True,null=True,format='html')
-    duties_dsbe = fields.RichTextField(_("duties DSBE"),blank=True,null=True,format='html')
-    duties_company = fields.RichTextField(_("duties company"),blank=True,null=True,format='html')
-    duties_person = fields.RichTextField(_("duties person"),blank=True,null=True,format='html')
-    
-    user_asd = models.ForeignKey("users.User",verbose_name=_("responsible (ASD)"),
-        related_name='contracts_asd',blank=True,null=True) 
-    
-    exam_policy = models.ForeignKey("jobs.ExamPolicy",blank=True,null=True,
-        verbose_name=_("examination policy"))
         
-    ending = models.ForeignKey("jobs.ContractEnding",blank=True,null=True,
-        verbose_name=_("Ending"))
-    date_ended = models.DateField(blank=True,null=True,verbose_name=_("date ended"))
+    responsibilities = fields.RichTextField(_("responsibilities"),
+        blank=True,null=True,format='html')
+    
+        
     
     #~ aid_nature = models.CharField(_("aid nature"),max_length=100,blank=True)
     #~ aid_rate = models.CharField(_("aid rate"),max_length=100,blank=True)
@@ -266,10 +212,11 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
             return provider.rolesbyparent.all()
         return []
         
-    # for backwards compatibility:
     def get_company(self):
         return self.provider
     company = property(get_company)
+    """for backwards compatibility. Document templates use a field `company`.
+    """
 
     def get_recipient(self):
         if self.contact:
@@ -278,19 +225,10 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
             return self.provider
         return self.person
     recipient = property(get_recipient)
-        
-    def summary_row(self,ui,rr,**kw):
-        s = ui.href_to(self)
-        s += " (" + ui.href_to(self.person) + ")"
-        #~ s += " (" + ui.href_to(self.person) + "/" + ui.href_to(self.provider) + ")"
-        return s
-            
-    def update_owned_task(self,task):
-        task.person=self.person
-        task.company=self.provider
-        
-    def prepare_printable(self):
-        self.company = self.provider
+    
+    
+    #~ def prepare_printable(self):
+        #~ self.company = self.company
     
     
     @chooser(simple_values=True)
@@ -325,20 +263,8 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
                 df.append('type')
         if self.must_build:
             return df
-        return df + settings.LINO.CONTRACT_PRINTABLE_FIELDS
-        
-    def __unicode__(self):
-        #~ return u'%s # %s' % (self._meta.verbose_name,self.pk)
-        #~ return u'%s#%s (%s)' % (self.job.name,self.pk,
-            #~ self.person.get_full_name(salutation=False))
-        return u'%s#%s (%s)' % (self._meta.verbose_name,self.pk,
-            self.person.get_full_name(salutation=False))
-    
-    #~ def __unicode__(self):
-        #~ msg = _("Contract # %s")
-        #~ # msg = _("Contract # %(pk)d (%(person)s/%(company)s)")
-        #~ # return msg % dict(pk=self.pk, person=self.person, company=self.company)
-        #~ return msg % self.pk
+        #~ return df + settings.LINO.CONTRACT_PRINTABLE_FIELDS
+        return df + self.PRINTABLE_FIELDS
         
     def unused_get_reminder_html(self,ui,user):
         #~ url = ui.get_detail_url(self,fmt='detail')
@@ -364,28 +290,6 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
             more.append(cgi.escape(_('Due date reached')))
         return s + '&nbsp;: ' + (', '.join(more))
         
-    def dsbe_person(self):
-        if self.person_id is not None:
-            if self.person.coach2_id is not None:
-                return self.person.coach2_id
-            return self.person.coach1 or self.user
-            
-        #~ try:
-            #~ return self.person.coaching_set.get(type__name__exact='DSBE').coach        
-        #~ except Exception,e:
-            #~ return self.person.user or self.user
-            
-    def person_changed(self,request):
-        if self.person_id is not None:
-            if self.person.coach1_id is None or self.person.coach1_id == self.user_id:
-                self.user_asd = None
-            else:
-                self.user_asd = self.person.coach1
-                
-    def on_create(self,request):
-        super(Contract,self).on_create(request)
-        self.person_changed(request)
-      
     def save(self,*args,**kw):
         #~ self.before_save()
         if self.job_id is not None:
@@ -450,34 +354,24 @@ class Contract(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
                 if self.contact.parent != self.provider.company_ptr:
                     self.contact = None
                     
-        if self.contact is None:
-            if self.provider:
-                qs = self.provider.rolesbyparent.all()
-                if qs.count() == 1:
-                    self.contact = qs[0]
-                    
         super(Contract,self).full_clean(*args,**kw)
-            
+        
     @classmethod
     def site_setup(cls,lino):
         """
         Here's how to override the default verbose_name of a field.
         """
-        resolve_field('jobs.Contract.user').verbose_name=_("responsible (DSBE)")
-        lino.CONTRACT_PRINTABLE_FIELDS = reports.fields_list(cls,
+        Contract.user.verbose_name=_("responsible (DSBE)")
+        #~ resolve_field('jobs.Contract.user').verbose_name=_("responsible (DSBE)")
+        #~ lino.CONTRACT_PRINTABLE_FIELDS = reports.fields_list(cls,
+        cls.PRINTABLE_FIELDS = reports.fields_list(cls,
             'person job provider contact type '
             'applies_from applies_until duration '
-            'language schedule regime hourly_rate refund_rate reference_person '
-            'stages goals duties_dsbe duties_company duties_asd duties_person '
+            'language schedule regime hourly_rate refund_rate '
+            'reference_person responsibilities '
             'user user_asd exam_policy '
-            'date_decided date_issued responsibilities')
+            'date_decided date_issued ')
         #~ super(Contract,cls).site_setup(lino)
-
-    def update_owned_task(self,task):
-        #~ mixins.Reminder.update_owned_task(self,task)
-        #~ contacts.PartnerDocument.update_owned_task(self,task)
-        task.person = self.person
-        task.company = self.provider
 
 class Contracts(reports.Report):
     model = Contract
@@ -739,29 +633,27 @@ class ContractsSituation(mixins.Listing):
 
 
 
-
-
-
-
-"""
-Here we add a new field `contract_type` to the 
-standard model CompanyType.
-http://osdir.com/ml/django-users/2009-11/msg00696.html
-"""
-#~ from lino.modlib.contacts.models import CompanyType
-#~ reports.inject_field(CompanyType,
-    #~ 'contract_type',
-    #~ models.ForeignKey("jobs.ContractType",
-        #~ blank=True,null=True,
-        #~ verbose_name=_("contract type")),
-    #~ """The default Contract Type for Contracts with a 
-    #~ Company of this type."""
-    #~ )
-
-#~ is_courseprovider = mti.EnableChild('dsbe.CourseProvider',verbose_name=_("Course provider"))
 reports.inject_field(Company,
     'is_jobprovider',
     mti.EnableChild('jobs.JobProvider',verbose_name=_("is Job Provider")),
     """Whether this Company is also a Job Provider."""
     )
 
+
+def setup_main_menu(site,ui,user,m): 
+    m.add_action('jobs.JobProviders')
+
+def setup_my_menu(site,ui,user,m): 
+    m.add_action('jobs.MyContracts')
+  
+def setup_config_menu(site,ui,user,m): 
+    m  = m.add_menu("jobs",_("~Jobs"))
+    m.add_action('jobs.Jobs')
+    m.add_action('jobs.ContractTypes')
+    m.add_action('jobs.JobTypes')
+            
+    
+    
+  
+def setup_explorer_menu(site,ui,user,m):
+    m.add_action('jobs.Contracts')

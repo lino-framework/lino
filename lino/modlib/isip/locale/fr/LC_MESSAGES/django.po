@@ -1,0 +1,882 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Luc Saffre <luc.saffre@gmx.net>, 2010.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: lino.apps.dsbe\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-09-01 00:53+0100\n"
+"PO-Revision-Date: 2011-06-15 22:00+0200\n"
+"Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
+"Language-Team: fr <lino-users@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n>1;\n"
+
+#: .\models.py:89 .\models.py:170 .\models.py:509
+#, fuzzy
+msgid "Job Provider"
+msgstr "dispenseur de cours"
+
+#: .\models.py:90
+#, fuzzy
+msgid "Job Providers"
+msgstr "Fournisseur de cours"
+
+#: .\models.py:112 .\models.py:181 .\models.py:512
+msgid "Contract Type"
+msgstr "Type de contrat"
+
+#: .\models.py:113
+msgid "Contract Types"
+msgstr "Types de contrat"
+
+#: .\models.py:115
+msgid "reference"
+msgstr "référence"
+
+#: .\models.py:126 .\models.py:212
+msgid "examination policy"
+msgstr "Politique d'examen"
+
+#: .\models.py:127
+msgid "examination policies"
+msgstr "politiques d'examen"
+
+#: .\models.py:139
+msgid "Contract Ending"
+msgstr "Rupture/fin de contrat"
+
+#: .\models.py:140
+msgid "Contract Endings"
+msgstr "Ruptures/fins de contrat"
+
+#: .\models.py:142
+msgid "designation"
+msgstr "désignation"
+
+#: .\models.py:164
+msgid "Contract"
+msgstr "Contrat"
+
+#: .\models.py:165
+msgid "Contracts"
+msgstr "Contrats"
+
+#: .\models.py:168 .\models.py:567
+msgid "Person"
+msgstr "Personne"
+
+#: .\models.py:173
+msgid "represented by"
+msgstr ""
+
+#: .\models.py:179 .\models.py:496
+msgid "Job"
+msgstr ""
+
+#: .\models.py:183
+msgid "applies from"
+msgstr "est d'application à partir de"
+
+#: .\models.py:184
+msgid "applies until"
+msgstr "est d'application jusque"
+
+#: .\models.py:185
+msgid "date decided"
+msgstr "date de décision"
+
+#: .\models.py:186
+msgid "date issued"
+msgstr "date fournie ?"
+
+#: .\models.py:187
+msgid "duration (days)"
+msgstr "durée (jours)"
+
+#: .\models.py:190
+msgid "regime"
+msgstr "régime"
+
+#: .\models.py:191
+msgid "schedule"
+msgstr "horaire"
+
+#: .\models.py:192 .\models.py:514
+msgid "hourly rate"
+msgstr "coûr horaire"
+
+#: .\models.py:193
+msgid "refund rate"
+msgstr "tarif de remboursement"
+
+#: .\models.py:196
+msgid "reference person"
+msgstr "persone de référence"
+
+#: .\models.py:199
+msgid "responsibilities"
+msgstr "responsabilités"
+
+#: .\models.py:201
+msgid "stages"
+msgstr "stages"
+
+#: .\models.py:202
+msgid "goals"
+msgstr "buts"
+
+#: .\models.py:203
+msgid "duties ASD"
+msgstr "devoirs SSG"
+
+#: .\models.py:204
+msgid "duties DSBE"
+msgstr "devois ISP"
+
+#: .\models.py:205
+msgid "duties company"
+msgstr "devoirs entreprise"
+
+#: .\models.py:206
+msgid "duties person"
+msgstr "Devoirs personne"
+
+#: .\models.py:208
+msgid "responsible (ASD)"
+msgstr "Responsable (SSG)"
+
+#: .\models.py:215
+msgid "Ending"
+msgstr "Fin"
+
+#: .\models.py:216
+msgid "date ended"
+msgstr "date de fin"
+
+#: .\models.py:322
+msgid "Due date reached"
+msgstr "Date limit atteinte"
+
+#: .\models.py:424
+msgid "responsible (DSBE)"
+msgstr "Responsable (ISP)"
+
+#: .\models.py:466
+msgid "My contracts"
+msgstr "mes contrats"
+
+#: .\models.py:481 .\models.py:505
+msgid "Job Type"
+msgstr ""
+
+#: .\models.py:482
+#, fuzzy
+msgid "Job Types"
+msgstr "Types de contrat"
+
+#: .\models.py:486
+msgid "Designation"
+msgstr "Désignation"
+
+#: .\models.py:497
+msgid "Jobs"
+msgstr ""
+
+#: .\models.py:501
+msgid "Name"
+msgstr "Nom"
+
+#: .\models.py:516
+#, fuzzy
+msgid "capacity"
+msgstr "Activité"
+
+#: .\models.py:521 .\models.py:585
+msgid "Remark"
+msgstr "Remarque"
+
+#: .\models.py:563 .\models.py:564
+#, fuzzy
+msgid "Job Requests"
+msgstr "Demandes de cours"
+
+#: .\models.py:570
+msgid "Requested Job"
+msgstr ""
+
+#: .\models.py:572
+msgid "date submitted"
+msgstr "date d'envoi"
+
+#: .\models.py:576
+#, fuzzy
+msgid "Contract found"
+msgstr "Rupture/fin de contrat"
+
+#: .\models.py:588
+#, python-format
+msgid "%(job)s request by %(person)s"
+msgstr ""
+
+#: .\models.py:642
+#, fuzzy
+msgid "Contracts Situation"
+msgstr "Rupture/fin de contrat"
+
+#: .\models.py:681
+msgid "Candidates"
+msgstr "Candidats"
+
+#: .\models.py:721
+#, fuzzy
+msgid "is Job Provider"
+msgstr "dispenseur de cours"
+
+#~ msgid "contract title"
+#~ msgstr "intitulé du contrat"
+
+#~ msgid "contract type"
+#~ msgstr "type de contrat"
+
+#~ msgid "Status"
+#~ msgstr "Statut"
+
+#~ msgid "Documents"
+#~ msgstr "Documents"
+
+#~ msgid "Detail"
+#~ msgstr "Détail"
+
+#~ msgid "Courses"
+#~ msgstr "Cours"
+
+#~ msgid "Notes"
+#~ msgstr "NOtes"
+
+#~ msgid "Miscellaneous"
+#~ msgstr "Divers"
+
+#~ msgid "General"
+#~ msgstr "Général"
+
+#~ msgid "Languages"
+#~ msgstr "Langues"
+
+#~ msgid "Art.60-7"
+#~ msgstr "Art.60-7"
+
+#~ msgid "Education"
+#~ msgstr "Formation"
+
+#~ msgid "Properties"
+#~ msgstr "Propriétés"
+
+#~ msgid "single"
+#~ msgstr "célibataire"
+
+#~ msgid "married"
+#~ msgstr "marié"
+
+#~ msgid "divorced"
+#~ msgstr "divorcé"
+
+#~ msgid "widowed"
+#~ msgstr "veuf/veuve"
+
+#~ msgid "separated"
+#~ msgstr "séparé"
+
+#~ msgid "Registry of citizens"
+#~ msgstr "Registre national"
+
+#~ msgid "Registry of foreigners"
+#~ msgstr "Registre des étrangers"
+
+#~ msgid "Waiting for registry"
+#~ msgstr "En attente de registre"
+
+#~ msgid "Partner #"
+#~ msgstr "Partenaire #"
+
+#~ msgid "is active"
+#~ msgstr "est actif"
+
+#~ msgid "Activity"
+#~ msgstr "Activité"
+
+#~ msgid "Bank account 1"
+#~ msgstr "Compte en banque 1"
+
+#~ msgid "Bank account 2"
+#~ msgstr "Compte en banque 2"
+
+#~ msgid "Cannot delete companies and persons imported from TIM"
+#~ msgstr "On ne peut effacer les sociétés et les personnes importées de TIM"
+
+#~ msgid "person"
+#~ msgstr "personne"
+
+#~ msgid "persons"
+#~ msgstr "personnes"
+
+#~ msgid "Remarks (Social Office)"
+#~ msgstr "Remarque (Bureau Social)"
+
+#~ msgid "Gesdos ID"
+#~ msgstr "N° GesDos"
+
+#~ msgid "receives social help"
+#~ msgstr "reçoit de l'aide sociale"
+
+#~ msgid "Integration phase"
+#~ msgstr "Phase d'intégration"
+
+#~ msgid "Coached from"
+#~ msgstr "Début de l'accompagnement"
+
+#~ msgid "until"
+#~ msgstr "jusque"
+
+#~ msgid "Coach 1"
+#~ msgstr "Agent ISP"
+
+#~ msgid "Coach 2"
+#~ msgstr "Agent SSP"
+
+#~ msgid "Birth date"
+#~ msgstr "Date de naissance"
+
+#~ msgid "not exact"
+#~ msgstr "inexact"
+
+#~ msgid "Birth place"
+#~ msgstr "Lieu de naissance"
+
+#~ msgid "Birth country"
+#~ msgstr "Pays de naissance"
+
+#~ msgid "Civil state"
+#~ msgstr "Etat civil"
+
+#~ msgid "National ID"
+#~ msgstr "Numéro d'identitification du registre national"
+
+#~ msgid "Health insurance"
+#~ msgstr "Assurance santé"
+
+#~ msgid "Pharmacy"
+#~ msgstr "Pharmacie"
+
+#~ msgid "Nationality"
+#~ msgstr "Nationalité"
+
+#~ msgid "eID card number"
+#~ msgstr "Numéro de carte eID"
+
+#~ msgid "ID card valid from"
+#~ msgstr "Carte d'identité valable depuis"
+
+#~ msgid "eID card type"
+#~ msgstr "Type de carte eID"
+
+#~ msgid "eID card issuer"
+#~ msgstr "carte eID provenant de"
+
+#~ msgid "Residence type"
+#~ msgstr "Type de séjour"
+
+#~ msgid "Lives in Belgium since"
+#~ msgstr "Habite en Belgique depuis"
+
+#~ msgid "Seeking work since"
+#~ msgstr "Cherche du travail depuis"
+
+#~ msgid "Needs residence permit"
+#~ msgstr "A besoin d'un permis de séjour"
+
+#~ msgid "Needs work permit"
+#~ msgstr "A besoin d'un permis de travail"
+
+#~ msgid "suspended until"
+#~ msgstr "suspendu jusque"
+
+#~ msgid "aid type"
+#~ msgstr "Type d'aide sociale"
+
+#~ msgid "Arbeitslosengeld"
+#~ msgstr "Indemnités de chômage"
+
+#~ msgid "Wartegeld"
+#~ msgstr "Indemnité d'attente"
+
+#~ msgid "Krankengeld"
+#~ msgstr "Indemnité de maladie"
+
+#~ msgid "Rente"
+#~ msgstr "Rente"
+
+#~ msgid "Andere"
+#~ msgstr "Anutre"
+
+#~ msgid "is seeking work"
+#~ msgstr "cherche du travail"
+
+#~ msgid "Unavailable until"
+#~ msgstr "Indidponible jusque"
+
+#~ msgid "reason"
+#~ msgstr "raison"
+
+#~ msgid "Other skills"
+#~ msgstr "Autres talents"
+
+#~ msgid "Contact person at local job office"
+#~ msgstr "Personne de contacte ALE ?"
+
+#~ msgid "eID-Inhalt"
+#~ msgstr "contenu eID"
+
+#~ msgid "Circular reference"
+#~ msgstr "référence circulaire ?"
+
+#~ msgid "Unknown card type %r"
+#~ msgstr "type de carte inconnu %r"
+
+#~ msgid "Not specified"
+#~ msgstr "Non spécifié"
+
+#~ msgid "eID card expires"
+#~ msgstr "Date d'expiration de la carte eID"
+
+#~ msgid "becomes available again"
+#~ msgstr "est à nouveau disponible"
+
+#~ msgid "work permit suspension ends"
+#~ msgstr "fin de suspension du permis de travail"
+
+#~ msgid "coaching ends"
+#~ msgstr "Fin de l'accompagnement"
+
+#~ msgid "%d years"
+#~ msgstr "%d années"
+
+#~ msgid "unknown"
+#~ msgstr "inconnu"
+
+#~ msgid "Age"
+#~ msgstr "Âge"
+
+#~ msgid "not filled in"
+#~ msgstr "non rempli"
+
+#~ msgid "Overview"
+#~ msgstr "Aperçu"
+
+#~ msgid "Residence permit"
+#~ msgstr "Permis de séjour"
+
+#~ msgid "Work permit"
+#~ msgstr "Permis de travail"
+
+#~ msgid "driving licence"
+#~ msgstr "permis de conduire"
+
+#~ msgid "My coached Persons"
+#~ msgstr "Mes clients"
+
+#~ msgid "User"
+#~ msgstr "Utilisateur"
+
+#~ msgid "Total"
+#~ msgstr "Total"
+
+#~ msgid "Reference name"
+#~ msgstr "Nom de référence"
+
+#~ msgid "Integration Phase"
+#~ msgstr "Phase d'intégration"
+
+#~ msgid "Integration Phases"
+#~ msgstr "Phases d'intégration"
+
+#~ msgid "study type"
+#~ msgstr "Type d'étude"
+
+#~ msgid "study types"
+#~ msgstr "Type d'études"
+
+#~ msgid "study or education"
+#~ msgstr "Étude ou formation"
+
+#~ msgid "Studies & education"
+#~ msgstr "Études & formations"
+
+#~ msgid "Study type"
+#~ msgstr "Type d'études"
+
+#~ msgid "Study content"
+#~ msgstr "Contenu des études"
+
+#~ msgid "started"
+#~ msgstr "commencé"
+
+#~ msgid "stopped"
+#~ msgstr "arrêté"
+
+#~ msgid "Success"
+#~ msgstr "Réussi"
+
+#~ msgid "Language"
+#~ msgstr "Langue"
+
+#~ msgid "School"
+#~ msgstr "Ecole"
+
+#~ msgid "Remarks"
+#~ msgstr "Remarques"
+
+#~ msgid "Studies"
+#~ msgstr "Études"
+
+#~ msgid "language knowledge"
+#~ msgstr "Connaissance de langue"
+
+#~ msgid "language knowledges"
+#~ msgstr "Connaissances de langue"
+
+#~ msgid "spoken"
+#~ msgstr "oral"
+
+#~ msgid "written"
+#~ msgstr "écrit"
+
+#~ msgid "native language"
+#~ msgstr "Langue maternelle"
+
+#~ msgid "%s (s/w)"
+#~ msgstr "%s (parlé/écrit)"
+
+#~ msgid "%s (s)"
+#~ msgstr "%s (écrit)"
+
+#~ msgid "%s (w)"
+#~ msgstr "%s (parlé)"
+
+#~ msgid "Property"
+#~ msgstr "Propriété"
+
+#~ msgid "(Site setting %s is empty)"
+#~ msgstr "(les paramètres de site %s sont vides)"
+
+#~ msgid "job experience"
+#~ msgstr "expérience professionnelle"
+
+#~ msgid "job experiences"
+#~ msgstr "expériences professionnelles"
+
+#~ msgid "company"
+#~ msgstr "Société"
+
+#~ msgid "job title"
+#~ msgstr "Intitulé de la fonction"
+
+#~ msgid "Country"
+#~ msgstr "Pays"
+
+#~ msgid "activities"
+#~ msgstr "Activités"
+
+#~ msgid "Appears in Listing 104"
+#~ msgstr "Apparaît dans la liste 104"
+
+#~ msgid "exclusion type"
+#~ msgstr "type d'exclusion"
+
+#~ msgid "exclusion types"
+#~ msgstr "types d'exclusions"
+
+#~ msgid "exclusion"
+#~ msgstr "exclusion"
+
+#~ msgid "exclusions"
+#~ msgstr "exclusions"
+
+#~ msgid "Reason"
+#~ msgstr "Motif"
+
+#~ msgid "from"
+#~ msgstr "de"
+
+#~ msgid "Course Ending"
+#~ msgstr "Terminaison de cours"
+
+#~ msgid "Course Endings"
+#~ msgstr "Terminaisons de cours"
+
+#~ msgid "aid types"
+#~ msgstr "Types d'aide sociale"
+
+#~ msgid "Event/Note"
+#~ msgstr "Evénement/Note"
+
+#~ msgid "Events/Notes"
+#~ msgstr "Evénements/Notes"
+
+#~ msgid "Course Content"
+#~ msgstr "Contenu du cours"
+
+#~ msgid "Course Contents"
+#~ msgstr "Contenus des cours"
+
+#~ msgid "Course"
+#~ msgstr "Cours"
+
+#~ msgid "Course content"
+#~ msgstr "Contenu du cours"
+
+#~ msgid "start date"
+#~ msgstr "Date de début"
+
+#~ msgid "List of candidates"
+#~ msgstr "Liste des candidats"
+
+#~ msgid "List of participants"
+#~ msgstr "Liste des participants"
+
+#~ msgid "Course found"
+#~ msgstr "Cours trouvé"
+
+#~ msgid "Participants"
+#~ msgstr "Participants"
+
+#~ msgid "Unregister"
+#~ msgstr "Désinscrire"
+
+#~ msgid "%(person)s has been unregistered from %(course)s"
+#~ msgstr "%(person)s a été désinscrit du %(course)s"
+
+#~ msgid "Register"
+#~ msgstr "Inscrire"
+
+#~ msgid "%(person)s has been registered to %(course)s"
+#~ msgstr "%(person)s a été inscrit au(x) %(course)s"
+
+#~ msgid "Person Search"
+#~ msgstr "Recherche de personnes"
+
+#~ msgid "Person Searches"
+#~ msgstr "Recherches de personnes"
+
+#~ msgid "Search Title"
+#~ msgstr "Intitulé de la recherche"
+
+#~ msgid "Aged from"
+#~ msgstr "Age: de"
+
+#~ msgid "Aged to"
+#~ msgstr "Age: jusque"
+
+#~ msgid "Only my persons"
+#~ msgstr "Seulement mes personnes"
+
+#~ msgid "Coached by"
+#~ msgstr "Accompagné par"
+
+#~ msgid "Period from"
+#~ msgstr "Période: depuis"
+
+#~ msgid "Unnamed"
+#~ msgstr "Sans nom"
+
+#~ msgid "Drucken"
+#~ msgstr "Imprimer"
+
+#~ msgid "Wanted property"
+#~ msgstr "Propriété désirée"
+
+#~ msgid "Wanted properties"
+#~ msgstr "Propriétés désirées"
+
+#~ msgid "Unwanted property"
+#~ msgstr "Propriété non désirée"
+
+#~ msgid "Unwanted properties"
+#~ msgstr "Propriétés non-désirées"
+
+#~ msgid "Wanted language knowledges"
+#~ msgstr "Connaissances de langue désirées"
+
+#~ msgid "Found persons"
+#~ msgstr "Personnes trouvées"
+
+#~ msgid "Local job office"
+#~ msgstr "Agence locale pour l'emploi ?"
+
+#~ msgid "Skills Property Group"
+#~ msgstr "Groupe de propriétés 'Skills'"
+
+#~ msgid "Soft Skills Property Group"
+#~ msgstr "Groupe de propriétés 'Soft Skills'"
+
+#~ msgid "Obstacles Property Group"
+#~ msgstr "Groupe de propriétés 'Obstacles'"
+
+#~ msgid "Upload Type for residence permit"
+#~ msgstr "Type d'upload \"permis de résidence\""
+
+#~ msgid "Upload Type for work permit"
+#~ msgstr "Type d'upload \"permis de travail\""
+
+#~ msgid "Upload Type for driving licence"
+#~ msgstr "Type d'upload \"permis de conduire\""
+
+#~ msgid "~Contacts"
+#~ msgstr "~Contacts"
+
+#~ msgid "~My menu"
+#~ msgstr "~Mon menu"
+
+#~ msgid "~Courses"
+#~ msgstr "~Cours"
+
+#~ msgid "~Configure"
+#~ msgstr "~Configurer"
+
+#~ msgid "~Notes"
+#~ msgstr "~Notes"
+
+#~ msgid "~Properties"
+#~ msgstr "~Propriétés"
+
+#~ msgid "~DSBE"
+#~ msgstr "~ISP"
+
+#~ msgid "~System"
+#~ msgstr "~Système"
+
+#~ msgid "E~xplorer"
+#~ msgstr "E~xplorateur"
+
+#~ msgid "~Help"
+#~ msgstr "~Aide"
+
+#~ msgid "~User Manual"
+#~ msgstr "~Manuel de l'utilisateur"
+
+#~ msgid "Home"
+#~ msgstr "~Home"
+
+#~ msgid "Male"
+#~ msgstr "Masculin"
+
+#~ msgid "Female"
+#~ msgstr "Féminin"
+
+#~ msgid "Sex"
+#~ msgstr "Sexe"
+
+#~ msgid "Curiculum vitae"
+#~ msgstr "Curiculum vitae"
+
+#~ msgid "Contract # %s"
+#~ msgstr "Contrat # %s"
+
+#~ msgid "Page not found"
+#~ msgstr "Page non trouvée"
+
+#~ msgid "We're sorry, but the requested page could not be found."
+#~ msgstr "Nous sommes désolés, mais la page demandée n'a pas pu être trouvée"
+
+#~ msgid "Server error"
+#~ msgstr "Erreur de serveur"
+
+#~ msgid "Server error (500)"
+#~ msgstr "Erreur de serveur (500)"
+
+#~ msgid ""
+#~ "There's been an error. It's been reported to the site administrators via "
+#~ "e-mail and should be fixed shortly. Thanks for your patience."
+#~ msgstr ""
+#~ "Il y a eu un erreur. Un rapport a été envoyé par e-mail à "
+#~ "l'administrateurdu site et ce devrait être résolu bientôt. merci de votre "
+#~ "patience"
+
+#~ msgid "Django site admin"
+#~ msgstr "Administrateur du site Django"
+
+#~ msgid "Django administration"
+#~ msgstr "Administration de Django"
+
+#~ msgid "~Manager"
+#~ msgstr "~Gérant"
+
+#~ msgid "Local Site ~Administrator"
+#~ msgstr "~Administrateur du site local"
+
+#~ msgid "~Expert"
+#~ msgstr "~Expert"
+
+#~ msgid "person group"
+#~ msgstr "groupe de personnes"
+
+#~ msgid "person groups"
+#~ msgstr "groupes de personnes"
+
+#, fuzzy
+#~ msgid "Skills"
+#~ msgstr "Compétences"
+
+#, fuzzy
+#~ msgid "no work on week-end"
+#~ msgstr "indisponible les week-ends"
+
+#~ msgid "has own car"
+#~ msgstr "dispose d'une voiture"
+
+#, fuzzy
+#~ msgid "Car driving licence"
+#~ msgstr "permis de conduire B"
+
+#, fuzzy
+#~ msgid "Truck driving licence"
+#~ msgstr "permis de conduire camion"
+
+#, fuzzy
+#~ msgid "Bus driving licence"
+#~ msgstr "permis de conduire bus"
+
+#~ msgid "IT knowledge"
+#~ msgstr "connaissances informatiques"
+
+#, fuzzy
+#~ msgid "Skill type"
+#~ msgstr "Type de compétences"
+
+#, fuzzy
+#~ msgid "skill type"
+#~ msgstr "type de compétence"
+
+#, fuzzy
+#~ msgid "eID card expires in %d days"
+#~ msgstr "la carte eID expire dans %d jours"
+
+#~ msgid "Detail 3"
+#~ msgstr "Détail 3"
+
+#~ msgid "Detail 4"
+#~ msgstr "Détail 4"
+
+#~ msgid "Projects by Person"
+#~ msgstr "Projets par personne"
+
+#~ msgid "Projects by Company"
+#~ msgstr "Projets par société"
+
+#, fuzzy
+#~ msgid "Studienarten"
+#~ msgstr "Études artistiques"

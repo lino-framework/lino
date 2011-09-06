@@ -211,8 +211,15 @@ class Contacts(reports.Report):
     column_names = "name email * id" 
     order_by = ['name','id']
     #~ column_names = "name * id" 
+    
     def get_queryset(self):
         return self.model.objects.select_related('country','city')
+
+            
+
+class AllContacts(Contacts):
+    def init_label(self):
+        return _("All %s") % self.model._meta.verbose_name_plural
         
 class ContactsByCity(Contacts):
     fk_name = 'city'
