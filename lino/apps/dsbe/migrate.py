@@ -203,6 +203,7 @@ def migrate_from_1_2_1(globals_dict):
     Task = resolve_model("cal.Task")
     Person = resolve_model("contacts.Person")
     #~ Contract = resolve_model("jobs.Contract")
+    Job = resolve_model("jobs.Job")
     Link = resolve_model("links.Link")
     SiteConfig = resolve_model("lino.SiteConfig")
     TextFieldTemplate = resolve_model("lino.TextFieldTemplate")
