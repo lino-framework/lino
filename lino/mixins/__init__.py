@@ -164,11 +164,19 @@ class Owned(models.Model):
                 return "%s with pk %r does not exist" % (
                     full_model_name(self.owner_type.model_class()),value)
             
+            
     def update_owned_task(self,task):
         m = getattr(self.owner,'update_owned_task',None)
         if m:
             m(task)
 
+    def data_control(self):
+        "Used by :class:`lino.models.DataControlListing`."
+        msgs = []
+        ct = ContentType.objects.get_for_id()
+        ...
+        msgs.append(unicode(e))
+        return msgs
 
 class ProjectRelated(models.Model):
     "Deserves more documentation."

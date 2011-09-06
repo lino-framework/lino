@@ -275,6 +275,11 @@ def migrate_from_1_2_1(globals_dict):
                 a[3] = 'roletype'
             elif tst == 'jobs.exampolicy':
                 a[2] = 'isip'
+                a[3] = 'contract' 
+                """existing data was affected  by the "dpy & contenttypes" bug:
+                (Tasks 487,488, 489, 490, 491, 492, 493, 494) had wrongly owner_type 
+                exampolicy 
+                """
             elif tst == 'jobs.contractending':
                 a[2] = 'isip'
             contenttypes_dict[int(a[0])] = (a[2],a[3])

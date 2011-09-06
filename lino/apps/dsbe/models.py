@@ -257,17 +257,21 @@ class Partner(mixins.DiffingMixin,models.Model):
     #~ id = models.AutoField(primary_key=True,verbose_name=_("Partner #"))
     #~ id = models.CharField(max_length=10,primary_key=True,verbose_name=_("ID"))
     
-    is_active = models.BooleanField(verbose_name=_("is active"),default=True)
+    is_active = models.BooleanField(
+        verbose_name=_("is active"),default=True)
     "Indicates whether this Contact may be used when creating new operations."
     
-    activity = models.ForeignKey("dsbe.Activity",blank=True,null=True,
+    activity = models.ForeignKey("dsbe.Activity",
+        blank=True,null=True,
         verbose_name=_("Activity"))
     "Pointer to :class:`dsbe.Activity`. May be empty."
     
-    bank_account1 = models.CharField(max_length=40,blank=True,null=True,
+    bank_account1 = models.CharField(max_length=40,
+        blank=True,# null=True,
         verbose_name=_("Bank account 1"))
         
-    bank_account2 = models.CharField(max_length=40,blank=True,null=True,
+    bank_account2 = models.CharField(max_length=40,
+        blank=True,# null=True,
         verbose_name=_("Bank account 2"))
         
     def disable_delete(self,request):
@@ -309,8 +313,9 @@ class Person(Partner,mixins.PersonMixin,contacts.Contact,contacts.Born,Printable
         #~ self.name = " ".join(l)
         #~ super(Person,self).clean()
         
-    remarks2 = models.TextField(_("Remarks (Social Office)"),blank=True,null=True)
-    gesdos_id = models.CharField(max_length=40,blank=True,null=True,
+    remarks2 = models.TextField(_("Remarks (Social Office)"),blank=True) # ,null=True)
+    gesdos_id = models.CharField(max_length=40,blank=True,
+        #null=True,
         verbose_name=_("Gesdos ID"))
         
     is_cpas = models.BooleanField(verbose_name=_("receives social help"))
@@ -337,12 +342,14 @@ class Person(Partner,mixins.PersonMixin,contacts.Contact,contacts.Born,Printable
         
     birth_place = models.CharField(_("Birth place"),
         max_length=200,
-        blank=True,null=True)
+        blank=True,
+        #null=True
+        )
     birth_country = models.ForeignKey("countries.Country",
         blank=True,null=True,
         verbose_name=_("Birth country"),related_name='by_birth_place')
     civil_state = models.CharField(max_length=1,
-        blank=True,null=True,
+        blank=True,# null=True,
         verbose_name=_("Civil state"),
         choices=CIVIL_STATE_CHOICES) 
     national_id = models.CharField(max_length=200,
@@ -361,7 +368,8 @@ class Person(Partner,mixins.PersonMixin,contacts.Contact,contacts.Born,Printable
         verbose_name=_("Nationality"))
     #~ tim_nr = models.CharField(max_length=10,blank=True,null=True,unique=True,
         #~ verbose_name=_("TIM ID"))
-    card_number = models.CharField(max_length=20,blank=True,null=True,
+    card_number = models.CharField(max_length=20,
+        blank=True,#null=True,
         verbose_name=_("eID card number"))
     card_valid_from = models.DateField(
         blank=True,null=True,
@@ -370,12 +378,13 @@ class Person(Partner,mixins.PersonMixin,contacts.Contact,contacts.Born,Printable
         blank=True,null=True,
         verbose_name=_("until"))
         
-    card_type = models.CharField(max_length=20,blank=True,null=True,
+    card_type = models.CharField(max_length=20,
+        blank=True,# null=True,
         verbose_name=_("eID card type"))
     "The type of the electronic ID card. Imported from TIM."
     
     card_issuer = models.CharField(max_length=50,
-        blank=True,null=True,
+        blank=True,# null=True,
         verbose_name=_("eID card issuer"))
     "The administration who issued this ID card. Imported from TIM."
     
@@ -388,7 +397,8 @@ class Person(Partner,mixins.PersonMixin,contacts.Contact,contacts.Born,Printable
         card_type=_("card type"),
         )
     
-    noble_condition = models.CharField(max_length=50,blank=True,null=True,
+    noble_condition = models.CharField(max_length=50,
+        blank=True,#null=True,
         verbose_name=_("noble condition"))
     "The eventual noble condition of this person. Imported from TIM."
         
@@ -444,7 +454,8 @@ class Person(Partner,mixins.PersonMixin,contacts.Contact,contacts.Born,Printable
     
     is_seeking = models.BooleanField(_("is seeking work"))
     unavailable_until = models.DateField(blank=True,null=True,verbose_name=_("Unavailable until"))
-    unavailable_why = models.CharField(max_length=100,blank=True,null=True,
+    unavailable_why = models.CharField(max_length=100,
+        blank=True,# null=True,
         verbose_name=_("reason"))
     
     #~ native_language = models.ForeignKey('countries.Language',
@@ -454,7 +465,7 @@ class Person(Partner,mixins.PersonMixin,contacts.Contact,contacts.Born,Printable
     obstacles = models.TextField(_("Obstacles"),blank=True,null=True)
     skills = models.TextField(_("Other skills"),blank=True,null=True)
     job_agents = models.CharField(max_length=100,
-        blank=True,null=True,
+        blank=True,# null=True,
         verbose_name=_("Job agents"))
     
     #~ job_office_contact = models.ForeignKey("contacts.Contact",
@@ -926,7 +937,9 @@ class Study(CountryCity):
         verbose_name_plural = _("Studies & education")
     person = models.ForeignKey("contacts.Person") #,verbose_name=_("Person"))
     type = models.ForeignKey(StudyType,verbose_name=_("Study type"))
-    content = models.CharField(max_length=200,blank=True,null=True,verbose_name=_("Study content"))
+    content = models.CharField(max_length=200,
+        blank=True, # null=True,
+        verbose_name=_("Study content"))
     #~ content = models.ForeignKey(StudyContent,blank=True,null=True,verbose_name=_("Study content"))
   
     started = fields.MonthField(_("started"),blank=True,null=True)
@@ -940,7 +953,9 @@ class Study(CountryCity):
         blank=True,null=True,verbose_name=_("Language"))
     #~ language = fields.LanguageField(blank=True,null=True,verbose_name=_("Language"))
     
-    school = models.CharField(max_length=200,blank=True,null=True,verbose_name=_("School"))
+    school = models.CharField(max_length=200,
+        blank=True,# null=True,
+        verbose_name=_("School"))
     #~ school = models.ForeignKey("contacts.Company",blank=True,null=True,verbose_name=_("School"))
     
     remarks = models.TextField(blank=True,null=True,verbose_name=_("Remarks"))
@@ -1017,7 +1032,7 @@ class PersonProperty(properties.PropertyOccurence):
         
     person = models.ForeignKey("contacts.Person")
     remark = models.CharField(max_length=200,
-        blank=True,null=True,
+        blank=True,# null=True,
         verbose_name=_("Remark"))
   
 class PropsByPerson(reports.Report):
@@ -1413,7 +1428,7 @@ class CourseContent(models.Model):
         verbose_name_plural = _('Course Contents')
         
     name = models.CharField(max_length=200,
-          blank=True,null=True,
+          blank=True,# null=True,
           verbose_name=_("Name"))
     u"""
     Bezeichnung des Kursinhalts (nach Konvention des DSBE).
@@ -1464,7 +1479,7 @@ class Course(models.Model):
     #~ content = models.ForeignKey("dsbe.CourseContent",verbose_name=_("Course content"))
   
     remark = models.CharField(max_length=200,
-        blank=True,null=True,
+        blank=True,# null=True,
         verbose_name=_("Remark"))
     u"""
     Bemerkung über diesen konkreten Kurs. Maximal 200 Zeichen.
@@ -1645,7 +1660,8 @@ class PersonSearch(mixins.AutoUser):
         verbose_name = _("Person Search")
         verbose_name_plural = _('Person Searches')
         
-    title = models.CharField(max_length=200,verbose_name=_("Search Title"))
+    title = models.CharField(max_length=200,
+        verbose_name=_("Search Title"))
     aged_from = models.IntegerField(_("Aged from"),
         blank=True,null=True)
     aged_to = models.IntegerField(_("Aged to"),
