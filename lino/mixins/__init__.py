@@ -28,35 +28,43 @@ from lino.utils import perms
 from lino.tools import full_model_name
 from lino.utils.choosers import chooser
     
+
 class AutoUser(models.Model):
   
     class Meta:
         abstract = True
         
-    user = models.ForeignKey(settings.LINO.user_model,
-        verbose_name=_("user"),
-        related_name="%(app_label)s_%(class)s_set_by_user",
-        blank=True,null=True
-        )
-    
-    def on_create(self,req):
-        u = req.get_user()
-        if u is not None:
-            self.user = u
+    if settings.LINO.user_model: 
+      
+        user = models.ForeignKey(settings.LINO.user_model,
+            verbose_name=_("user"),
+            related_name="%(app_label)s_%(class)s_set_by_user",
+            blank=True,null=True
+            )
         
-    def update_owned_task(self,task):
-        task.user = self.user
+        def on_create(self,req):
+            u = req.get_user()
+            if u is not None:
+                self.user = u
+            
+        def update_owned_task(self,task):
+            task.user = self.user
 
-class ByUser(reports.Report):
-    fk_name = 'user'
-    can_view = perms.is_authenticated
-    
-    def init_label(self):
-        return _("My %s") % self.model._meta.verbose_name_plural
+if settings.LINO.user_model: 
+    class ByUser(reports.Report):
+        fk_name = 'user'
+        can_view = perms.is_authenticated
         
-    def setup_request(self,rr):
-        if rr.master_instance is None:
-            rr.master_instance = rr.get_user()
+        def init_label(self):
+            return _("My %s") % self.model._meta.verbose_name_plural
+            
+        def setup_request(self,rr):
+            if rr.master_instance is None:
+                rr.master_instance = rr.get_user()
+else:
+    # dummy report for userless sites
+    class ByUser(reports.Report): pass 
+  
 
 
 class CreatedModified(models.Model):
@@ -184,3 +192,4 @@ class ProjectRelated(models.Model):
 from lino.mixins.printable import Printable, PrintableType, CachedPrintable, TypedPrintable, Listing
 from lino.mixins.uploadable import Uploadable
 from lino.utils.dblogger import DiffingMixin
+from lino.mixins.personal import SexField, PersonMixin

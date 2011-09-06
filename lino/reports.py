@@ -77,6 +77,10 @@ def parse_js_date(s,name):
     #~ print "parse_js_date %s : %r -> %s" % (name,s,v)
     #~ return v
 
+def is_installed(app_label):
+    for s in settings.INSTALLED_APPS:
+        if s.endswith(app_label):
+            return True
 
 def inject_field(model,name,field,doc=None):
     """

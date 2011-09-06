@@ -45,7 +45,7 @@ cm:
 tests:  
 	$(DJANGO_ADMIN) test --settings=lino.test_apps.1.settings
 	$(DJANGO_ADMIN) test --settings=lino.test_apps.20100212.settings
-	$(DJANGO_ADMIN) test --settings=lino.apps.std.settings
+	#~ $(DJANGO_ADMIN) test --settings=lino.apps.std.settings
 	$(DJANGO_ADMIN) test --settings=lino.apps.dsbe.settings
 	$(DJANGO_ADMIN) test --settings=lino.apps.igen.settings
 

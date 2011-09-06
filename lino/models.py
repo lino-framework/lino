@@ -111,7 +111,7 @@ class DataControlListing(mixins.Listing):
     
     
 
-#~ if settings.LINO.use_tinymce:
+#~ if settings.LINO.user_model: 
   
 class TextFieldTemplate(mixins.AutoUser):
     """A reusable block of text that can be selected from a text editor to be 

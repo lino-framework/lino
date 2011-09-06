@@ -254,7 +254,7 @@ def test04(self):
     See the source code at :srcref:`/lino/apps/dsbe/tests/dsbe_tests.py`.
     """
     from lino.apps.dsbe.models import Person, Company, Country, City
-    from lino.modlib.contacts.models import SEX_MALE
+    from lino.modlib.contacts.utils import SEX_MALE
     babel.set_language('fr')
     be = Country(isocode="BE",name="Belgique")
     be.save()

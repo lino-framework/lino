@@ -158,7 +158,7 @@ This is needed to discover virtual fields:
 >>> from django.conf import settings
 >>> settings.LINO.setup()
 
-To access the values "stored" in virtual fields,
+To access the values that are "stored" in virtual fields,
 we must behave like a lino.ui would do, 
 by calling the methods
 :meth:`lino.fields.VirtualField.value_from_object`
@@ -174,7 +174,7 @@ True #2 (name=Second,owners=Bert)
 
 Let's promote First (currently a simple Place) to a Restaurant:
 
->>> Place.is_restaurant.set_value_in_object(obj,True)
+>>> Place.is_restaurant.set_value_in_object(None,obj,True)
 >>> Restaurant.objects.get(pk=1)
 <Restaurant: #1 (name=First,owners=Alfred,Bert,cooks=)>
 
@@ -184,7 +184,7 @@ And Second stops being a Restaurant:
 >>> Place.is_restaurant.value_from_object(None,second)
 True
 
->>> Place.is_restaurant.set_value_in_object(second,False) 
+>>> Place.is_restaurant.set_value_in_object(None,second,False) 
 
 This operation has removed the related Restaurant instance:
 
@@ -199,7 +199,7 @@ close and later reopen:
 
 >>> bert = Person.objects.get(pk=2)
 >>> second = Place.objects.get(pk=2)
->>> Place.is_restaurant.set_value_in_object(second,True) 
+>>> Place.is_restaurant.set_value_in_object(None,second,True) 
 
 Now we can see this place again as a Restaurant
 

@@ -191,6 +191,7 @@ class VirtualField: # (Field):
     def set_value_in_object(self,request,obj,value):
         """
         Stores the specified `value` in the specified model instance `obj`.
+        `request` may be `None`.
         
         Note that any implementation must also return `obj`,
         and callers must be ready to get another instance.

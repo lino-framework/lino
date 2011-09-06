@@ -19,7 +19,7 @@ import datetime
 #~ from django import forms
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-
+from django.conf import settings
 
 from lino import reports
 from lino.core import actors
@@ -27,6 +27,8 @@ from lino.mixins import printable
 from lino.utils import mti
 
 from lino.modlib.contacts.models import Contact,PersonMixin
+
+assert reports.is_installed('contacts')
 
 class User(Contact,PersonMixin):
     """

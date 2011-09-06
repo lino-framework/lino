@@ -155,7 +155,43 @@ Examples:
     else:
         kw['street'] = s
     return kw
+
+SEX_MALE = 'M'
+SEX_FEMALE = 'F'
+SEX_CHOICES = ((SEX_MALE,_('Male')),(SEX_FEMALE,_('Female')))
+
+
+def get_salutation(lang,sex,nominative=False):
+    """
+    Returns "Mr" or "Mrs" or a translation thereof, 
+    depending on the sex and the current babel language.
     
+    Note that the English abbreviations 
+    `Mr <http://en.wikipedia.org/wiki/Mr.>`_ and 
+    `Mrs <http://en.wikipedia.org/wiki/Mrs.>`_
+    are written either with (AE) or 
+    without (BE) a dot. Since the babel module doesn't yet allow 
+    to differentiate dialects, we opted for the british version.
+    
+    The optional keyword argument `nominative` used only when babel language
+    is "de": specifying ``nominative=True`` will return "Herr" instead of default 
+    "Herrn" for male persons.
+    
+    """
+    if lang == 'de':
+        if sex == SEX_FEMALE:
+            return "Frau"
+        if nominative:
+            return "Herr"
+        return "Herrn"
+    if lang == 'fr':
+        if sex == SEX_FEMALE:
+            return "Mme"
+        return "M."
+    if sex == SEX_FEMALE:
+        return "Mrs"
+    return "Mr"
+        
 
 
 def _test():

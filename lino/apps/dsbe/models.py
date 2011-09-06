@@ -276,13 +276,13 @@ class Partner(mixins.DiffingMixin,models.Model):
           
 
     
-class Person(Partner,contacts.PersonMixin,contacts.Contact,contacts.Born,Printable):
+class Person(Partner,mixins.PersonMixin,contacts.Contact,contacts.Born,Printable):
     """
     Represents a physical person.
     
     """
     
-    class Meta(contacts.PersonMixin.Meta):
+    class Meta(mixins.PersonMixin.Meta):
         app_label = 'contacts'
         verbose_name = _("Person") # :doc:`/tickets/14`
         verbose_name_plural = _("Persons") # :doc:`/tickets/14`
@@ -1650,7 +1650,7 @@ class PersonSearch(mixins.AutoUser):
         blank=True,null=True)
     aged_to = models.IntegerField(_("Aged to"),
         blank=True,null=True)
-    sex = contacts.SexField()
+    sex = mixins.SexField()
     
     only_my_persons = models.BooleanField(verbose_name=_("Only my persons")) # ,default=True)
     

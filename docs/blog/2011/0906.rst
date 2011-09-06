@@ -12,6 +12,24 @@ Minor bugfixes
     then you'll get a ValidationError "Cannot delete <name of 
     CourseProvider> because it has at least one course".
 
-#.  jobs.Job.disabled_fields : 
+#.  :modmeth:`disabled_fields` of :class:`lino.modlib.jobs.models.Job`:
     Stelle bearbeiten können wenn noch kein *ausgedruckter* Vertrag vorliegt.
     
+Checkin 20110906.
+
+General Lino test suite
+-----------------------
+
+The general Lino test suite (``make test`` in root of Lino's source tree) 
+was broken. Now almost ready again.
+
+The biggest problem was that :mod:`lino.test_apps.1` used `users` 
+but not `contacts`. And users now depends on contacts. 
+New feature: It is now possible to define a userless site by setting 
+:attr:`lino.Lino.user_model` to `None`.
+
+One problem renains while 
+installing fixture :mod:`lino.apps.dsbe.fixtures.demo`,
+"Failed to save independent CourseContent #1 (u'Deutsch'). Abandoned."
+
+Checkin 20110906b.

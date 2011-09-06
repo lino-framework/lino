@@ -211,7 +211,10 @@ class Lino(object):
     
     user_model = "users.User"
     """Set this to ``"auth.User"`` if you use `django.contrib.auth` instead of
-    `lino.modlib.users`"""
+    `lino.modlib.users`. 
+    Set it to `None` to remove any user management 
+    (feature used by e.g. :mod:`lino.test_apps.1`)
+    """
     
     projects_model = None
     """Optionally set this to the <applabel_modelname> of a 

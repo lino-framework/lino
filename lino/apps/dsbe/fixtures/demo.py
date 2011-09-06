@@ -33,7 +33,7 @@ from lino.utils import mti
 
 #~ from django.contrib.auth import models as auth
 from lino.modlib.users import models as auth
-from lino.modlib.contacts.models import SEX_FEMALE, SEX_MALE
+from lino.modlib.contacts.utils import SEX_FEMALE, SEX_MALE
 
 #~ dblogger.info('Loading')
 
