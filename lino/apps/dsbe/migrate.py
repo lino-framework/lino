@@ -281,7 +281,10 @@ def migrate_from_1_2_1(globals_dict):
     ContentType = resolve_model("contenttypes.ContentType")
     def new_contenttype(old_id):
         label,name = contenttypes_dict.get(old_id)
-        return ContentType.objects.get(app_label=label,model=name).pk
+        try:
+            return ContentType.objects.get(app_label=label,model=name).pk
+        except ContentType.DoesNotExist:
+            raise Exception("No ContentType %s.%s" % (label.name))
     
     
     Event = resolve_model("cal.Event")

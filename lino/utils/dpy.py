@@ -189,8 +189,8 @@ class Serializer(base.Serializer):
         if isinstance(field,models.TimeField):
             d = value
             return 'time(%d,%d,%d)' % (d.hour,d.minute,d.second)
-        #~ if isinstance(field,models.ForeignKey) and field.rel.to is ContentType:
-            #~ return value.app_label
+        if isinstance(field,models.ForeignKey) and field.rel.to is ContentType:
+            return repr(tuple(value.app_label,value.model))
         if isinstance(field,models.DateField):
             d = value
             return 'date(%d,%d,%d)' % (d.year,d.month,d.day)
