@@ -367,7 +367,7 @@ class DpyDeserializer:
             self.saved = 0
             for obj in try_again:
                 if obj.try_save(): # ,*args,**kw):
-                    saved += 1
+                    self.saved += 1
                 else:
                     self.save_later.append(obj)
             dblogger.info("Saved %d instances.",self.saved)
