@@ -61,8 +61,9 @@ def migrate_from_1_1_17(globals_dict):
   
     from lino.modlib.cal.models import migrate_reminder
     from lino.modlib.jobs.models import Job, Contract, JobProvider, \
-      ContractEnding, ExamPolicy, ContractType, Company
+      ContractEnding, ExamPolicy, ContractType
     
+    Company = resolve_model("contacts.Company")
     Upload = resolve_model("uploads.Upload")
     Link = resolve_model("links.Link")
     Note = resolve_model("notes.Note")
@@ -190,14 +191,18 @@ def migrate_from_1_2_1(globals_dict):
       (and field company to parent, person to child)
     - change the id of existing users because User is now subclass of Contact
       and modify SiteConfig.next_partner_id
+    - part of module jobs has been split to isip
     """
+    from lino.modlib.isip import models as isip
+    from lino.modlib.jobs import models as jobs
+    
     Role = resolve_model("contacts.Role")
     RoleType = resolve_model("contacts.RoleType")
     
     Event = resolve_model("cal.Event")
     Task = resolve_model("cal.Task")
     Person = resolve_model("contacts.Person")
-    Contract = resolve_model("jobs.Contract")
+    #~ Contract = resolve_model("jobs.Contract")
     Link = resolve_model("links.Link")
     SiteConfig = resolve_model("lino.SiteConfig")
     TextFieldTemplate = resolve_model("lino.TextFieldTemplate")
@@ -205,6 +210,13 @@ def migrate_from_1_2_1(globals_dict):
     Upload = resolve_model("uploads.Upload")
     User = resolve_model("users.User")
     PersonSearch = resolve_model("dsbe.PersonSearch")
+    
+    globals_dict.update(ExamPolicy = resolve_model("isip.ExamPolicy"))
+    globals_dict.update(ContractEnding = resolve_model("isip.ContractEnding"))
+    
+    #~ ISIP_CTYPES = {}
+    #~ JOBS_CTYPES = {}
+    CONTRACT_TYPES = {}
     
     
     
@@ -252,7 +264,34 @@ def migrate_from_1_2_1(globals_dict):
     
     def create_jobs_contract(id, user_id, must_build, person_id, provider_id, contact_id, language, job_id, type_id, applies_from, applies_until, date_decided, date_issued, duration, regime, schedule, hourly_rate, refund_rate, reference_person, responsibilities, stages, goals, duties_asd, duties_dsbe, duties_company, duties_person, user_asd_id, exam_policy_id, ending_id, date_ended):
         user_asd_id = new_user_id(user_asd_id)
-        return Contract(id=id,user_id=new_user_id(user_id),must_build=must_build,person_id=person_id,provider_id=provider_id,contact_id=contact_id,language=language,job_id=job_id,type_id=type_id,applies_from=applies_from,applies_until=applies_until,date_decided=date_decided,date_issued=date_issued,duration=duration,regime=regime,schedule=schedule,hourly_rate=hourly_rate,refund_rate=refund_rate,reference_person=reference_person,responsibilities=responsibilities,stages=stages,goals=goals,duties_asd=duties_asd,duties_dsbe=duties_dsbe,duties_company=duties_company,duties_person=duties_person,user_asd_id=user_asd_id,exam_policy_id=exam_policy_id,ending_id=ending_id,date_ended=date_ended)
+        ctype = CONTRACT_TYPES.get(type_id)
+        if ctype.name.startswith('VSE'):
+            #~ type_id = ISIP_CTYPES.get(type_id).pk
+            return isip.Contract(id=id,user_id=new_user_id(user_id),
+              must_build=must_build,person_id=person_id,
+              company_id=provider_id,contact_id=contact_id,
+              language=language,
+              type_id=type_id,applies_from=applies_from,applies_until=applies_until,
+              date_decided=date_decided,date_issued=date_issued,
+              stages=stages,goals=goals,duties_asd=duties_asd,
+              duties_dsbe=duties_dsbe,duties_company=duties_company,
+              duties_person=duties_person,user_asd_id=user_asd_id,
+              exam_policy_id=exam_policy_id,
+              ending_id=ending_id,date_ended=date_ended)
+        else:
+            #~ type_id = JOBS_CTYPES.get(type_id).pk
+            return jobs.Contract(id=id,user_id=new_user_id(user_id),must_build=must_build,
+              person_id=person_id,provider_id=provider_id,
+              contact_id=contact_id,language=language,job_id=job_id,
+              type_id=type_id,applies_from=applies_from,applies_until=applies_until,
+              date_decided=date_decided,date_issued=date_issued,
+              duration=duration,regime=regime,schedule=schedule,hourly_rate=hourly_rate,
+              refund_rate=refund_rate,reference_person=reference_person,
+              responsibilities=responsibilities,
+              #~ stages=stages,goals=goals,duties_asd=duties_asd,duties_dsbe=duties_dsbe,
+              #~ duties_company=duties_company,duties_person=duties_person,
+              user_asd_id=user_asd_id,exam_policy_id=exam_policy_id,
+              ending_id=ending_id,date_ended=date_ended)
     globals_dict.update(create_jobs_contract=create_jobs_contract)
     
     def create_dsbe_personsearch(id, user_id, title, aged_from, aged_to, sex, only_my_persons, coached_by_id, period_from, period_until):
@@ -289,6 +328,14 @@ def migrate_from_1_2_1(globals_dict):
             project_id=company_id
         return Task(id=id,user_id=user_id,created=created,modified=modified,owner_type_id=owner_type_id,owner_id=owner_id,project_id=project_id,start_date=start_date,start_time=start_time,summary=summary,description=description,access_class=access_class,sequence=sequence,alarm_value=alarm_value,alarm_unit=alarm_unit,dt_alarm=dt_alarm,due_date=due_date,due_time=due_time,done=done,percent=percent,status=status,auto_type=auto_type)
     globals_dict.update(create_cal_task=create_cal_task)
+    def create_jobs_contracttype(id, build_method, template, ref, name, name_fr, name_en):
+        if name.startswith('VSE'):
+            obj = isip.ContractType(id=id,build_method=build_method,template=template,ref=ref,name=name,name_fr=name_fr,name_en=name_en)    
+        else:
+            obj = jobs.ContractType(id=id,build_method=build_method,template=template,ref=ref,name=name,name_fr=name_fr,name_en=name_en)    
+        CONTRACT_TYPES[id] = obj
+        return obj
+    globals_dict.update(create_jobs_contracttype=create_jobs_contracttype)
 
     def create_cal_event(id, user_id, created, modified, must_build, person_id, company_id, start_date, start_time, summary, description, access_class, sequence, alarm_value, alarm_unit, dt_alarm, end_date, end_time, transparent, type_id, place_id, priority, status, duration_value, duration_unit, repeat_value, repeat_unit):
         user_id = new_user_id(user_id)

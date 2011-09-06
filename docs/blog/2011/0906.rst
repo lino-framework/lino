@@ -57,3 +57,12 @@ jetzt in `isip`, nicht mehr in `jobs`.
 Ein Modell `ContractType` gibt es in beiden Modulen.
 
 Checkin 20110906c.
+
+Data migration
+--------------
+
+
+
+Checkin 20110906d.
+
+
