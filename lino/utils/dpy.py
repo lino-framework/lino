@@ -68,6 +68,7 @@ class Serializer(base.Serializer):
             #~ self.stream.write('from lino.utils import i2d\n')
             self.stream.write('from lino.utils.mti import insert_child\n')
             self.stream.write('from lino.tools import resolve_model\n')
+            self.stream.write('from django.contrib.contenttypes.models import ContentType\n')
             self.stream.write('from django.conf import settings\n')
         #~ model = queryset.model
         if self.models is None:
@@ -98,7 +99,7 @@ class Serializer(base.Serializer):
                 for f in fields:
                     if isinstance(f,models.ForeignKey) and f.rel.to is ContentType:
                         self.stream.write(
-                            '    %s = ContentTypes.objects.get_for_model(%s).pk\n' % (
+                            '    %s = ContentType.objects.get_for_model(%s).pk\n' % (
                             f.attname,f.attname))
                 self.stream.write('    return %s(%s)\n' % (
                     full_model_name(model,'_'),
