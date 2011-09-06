@@ -194,7 +194,7 @@ def migrate_from_1_2_1(globals_dict):
     - part of module jobs has been split to isip
     """
     
-    old_contenttypes = """
+    old_contenttypes = """\
     39;activity;dsbe;activity
     43;aid type;dsbe;aidtype
     31;Attendance;cal;attendance
@@ -262,10 +262,10 @@ def migrate_from_1_2_1(globals_dict):
     26;upload type;uploads;uploadtype
     1;User;users;user
     49;wanted language knowledge;dsbe;wantedlanguageknowledge
-    14;Wanted property;properties;wantedskill
-    """
+    14;Wanted property;properties;wantedskill"""
     contenttypes_dict = {}
     for ln in old_contenttypes.splitlines():
+        ln = ln.strip()
         if ln:
             a = ln.split(';')
             if len(a) != 4:
