@@ -280,8 +280,8 @@ def migrate_from_1_2_1(globals_dict):
     
     Role = resolve_model("contacts.Role")
     RoleType = resolve_model("contacts.RoleType")
-    
-    ContentType = resolve_model("contenttypes.ContentType")
+    from django.contrib.contenttypes.models import ContentType
+    #~ ContentType = resolve_model("contenttypes.ContentType")
     def new_contenttype(old_id):
         label,name = contenttypes_dict.get(old_id)
         try:

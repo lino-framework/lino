@@ -90,7 +90,7 @@ class Command(BaseCommand):
         #~ call_command('reset',*apps,**options)
         #~ call_command('syncdb',load_initial_data=False,**options)
         call_command('flush',**options)
-        call_command('syncdb',**options)
+        #~ call_command('syncdb',**options)
         #~ call_command('flush',**options)
         call_command('loaddata',*args,**options)
         #~ if logLevel > logging.DEBUG:
