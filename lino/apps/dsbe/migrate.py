@@ -284,7 +284,7 @@ def migrate_from_1_2_1(globals_dict):
         try:
             return ContentType.objects.get(app_label=label,model=name).pk
         except ContentType.DoesNotExist:
-            raise Exception("No ContentType %s.%s" % (label.name))
+            raise Exception("No ContentType %s.%s" % (label,name))
     
     
     Event = resolve_model("cal.Event")
