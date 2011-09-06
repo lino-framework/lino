@@ -1,8 +1,0 @@
-:label: Art.60-7
-:label_align: top
-
-
-main =
-    regime:20 schedule:30 hourly_rate:10 refund_rate:10
-    reference_person 
-    responsibilities

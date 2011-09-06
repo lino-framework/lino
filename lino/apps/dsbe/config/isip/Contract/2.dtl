@@ -3,7 +3,6 @@
 
 
 main =
-    exam_policy
     stages        goals
     duties_asd    duties_dsbe
     duties_company duties_person
