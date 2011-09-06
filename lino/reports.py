@@ -81,7 +81,7 @@ def parse_js_date(s,name):
 def inject_field(model,name,field,doc=None):
     """
     Adds the given field to the given model.
-    Deserves more documentation.
+    See also :doc:`/tickets/49`.
     """
     #~ model = resolve_model(model)
     if doc:

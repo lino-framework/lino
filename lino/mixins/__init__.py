@@ -28,26 +28,6 @@ from lino.utils import perms
 from lino.tools import full_model_name
 from lino.utils.choosers import chooser
     
-class MultiTableBase(models.Model):
-  
-    """
-    Mixin for Models that use `Multi-table inheritance 
-    <http://docs.djangoproject.com/en/dev/topics/db/models/#multi-table-inheritance>`__.
-    Subclassed by :class:`lino.modlib.journals.models.Journaled`.
-    """
-    class Meta:
-        abstract = True
-    
-    def get_child_model(self):
-        return self.__class__
-        
-    def get_child_instance(self):
-        model = self.get_child_model()
-        if model is self.__class__:
-            return self
-        related_name = model.__name__.lower()
-        return getattr(self,related_name)
-        
 class AutoUser(models.Model):
   
     class Meta:
@@ -181,40 +161,6 @@ class Owned(models.Model):
         if m:
             m(task)
 
-class DiffingMixin(object):
-    """
-    Unmodified copy of http://djangosnippets.org/snippets/1683/
-    
-    Used by :mod:`lino.utils.dblogger`.
-    """
-    def __init__(self, *args, **kwargs):
-        super(DiffingMixin, self).__init__(*args, **kwargs)
-        self._original_state = dict(self.__dict__)
-        
-    def save(self, *args, **kwargs):
-        #~ for name,old_new in self.changed_columns().items():
-            
-        state = dict(self.__dict__)
-        del state['_original_state']
-        self._original_state = state
-        super(DiffingMixin, self).save()
-        
-    def is_dirty(self):
-        missing = object()
-        result = {}
-        for key, value in self._original_state.iteritems():
-            if value != self.__dict__.get(key, missing):
-                return True
-        return False
-        
-    def changed_columns(self):
-        missing = object()
-        result = {}
-        for key, value in self._original_state.iteritems():
-            if value != self.__dict__.get(key, missing):
-                result[key] = {'old':value, 'new':self.__dict__.get(key, missing)}
-        return result
-
 
 class ProjectRelated(models.Model):
     "Deserves more documentation."
@@ -237,4 +183,4 @@ class ProjectRelated(models.Model):
 
 from lino.mixins.printable import Printable, PrintableType, CachedPrintable, TypedPrintable, Listing
 from lino.mixins.uploadable import Uploadable
-
+from lino.utils.dblogger import DiffingMixin

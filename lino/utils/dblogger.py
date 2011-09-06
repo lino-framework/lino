@@ -22,11 +22,7 @@ this feature is optional per site and per model.
 """
 
 import logging
-from lino import mixins
-from lino.tools import obj2str
-
 logger = logging.getLogger(__name__)
-
 info = logger.info
 warning = logger.warning
 exception = logger.exception
@@ -34,6 +30,44 @@ error = logger.error
 debug = logger.debug
 #~ getLevel = logger.getLevel
 #~ setLevel = logger.setLevel
+
+from lino.tools import obj2str
+
+
+class DiffingMixin(object):
+    """
+    Unmodified copy of http://djangosnippets.org/snippets/1683/
+    
+    """
+    def __init__(self, *args, **kwargs):
+        super(DiffingMixin, self).__init__(*args, **kwargs)
+        self._original_state = dict(self.__dict__)
+        
+    def save(self, *args, **kwargs):
+        #~ for name,old_new in self.changed_columns().items():
+            
+        state = dict(self.__dict__)
+        del state['_original_state']
+        self._original_state = state
+        super(DiffingMixin, self).save()
+        
+    def is_dirty(self):
+        missing = object()
+        result = {}
+        for key, value in self._original_state.iteritems():
+            if value != self.__dict__.get(key, missing):
+                return True
+        return False
+        
+    def changed_columns(self):
+        missing = object()
+        result = {}
+        for key, value in self._original_state.iteritems():
+            if value != self.__dict__.get(key, missing):
+                result[key] = {'old':value, 'new':self.__dict__.get(key, missing)}
+        return result
+
+
 
 def on_user_change(request,elem):    
   
@@ -61,7 +95,7 @@ def log_changes(request,elem):
     """
     on_user_change(request,elem)
     
-    if isinstance(elem,mixins.DiffingMixin):
+    if isinstance(elem,DiffingMixin):
         changes = []
         for k,v in elem.changed_columns().items():
             changes.append(u"%s : %s --> %s" % (k,obj2str(v['old']),obj2str(v['new'])))

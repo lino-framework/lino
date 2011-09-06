@@ -1,0 +1,52 @@
+#49 : cannot inject fields on MTI parents
+=========================================
+
+:func:`lino.reports.inject_field` 
+causes problems when the modified 
+model has subclasses and is not abstract 
+(i.e., is an MTI parent).
+Subclasses will have only some part of the injected field's definition.
+That's because 
+:func:`lino.reports.inject_field` uses the 
+
+causing Django to get confused::
+
+  Traceback (most recent call last):
+    File "t:\hgwork\lino\lino\utils\dpy.py", line 284, in try_save
+      obj.save(*args,**kw)
+    File "t:\hgwork\lino\lino\modlib\contacts\models.py", line 177, in save
+      super(Contact,self).save(*args,**kw)
+    File "l:\snapshots\django\django\db\models\base.py", line 464, in save
+      self.save_base(using=using, force_insert=force_insert, force_update=force_update)
+    File "l:\snapshots\django\django\db\models\base.py", line 508, in save_base
+      self.save_base(cls=parent, origin=org, using=using)
+    File "l:\snapshots\django\django\db\models\base.py", line 550, in save_base
+      for f in meta.local_fields]
+    File "l:\snapshots\django\django\db\models\fields\__init__.py", line 257, in pre_save
+      return getattr(model_instance, self.attname)
+  AttributeError: 'User' object has no attribute 'payment_term_id'
+
+
+This was when I tried to inject these fields into contacts.Contact::
+
+  from lino.modlib.contacts.models import Contact
+  reports.inject_field(
+      Contact,'payment_term',
+      models.ForeignKey(PaymentTerm,
+          blank=True,null=True,
+          verbose_name=_("payment term")),
+      """The default PaymentTerm for sales invoices to this Contact.
+      """)
+  reports.inject_field(
+      Contact, 'vat_exempt',
+      models.BooleanField(default=False,
+          verbose_name=_("VAT exempt")),
+      """The default value for vat_exempt for sales invoices to this Contact.
+      """)
+  reports.inject_field(
+      Contact, 'item_vat',
+      models.BooleanField(default=False,
+          verbose_name=_("item_vat")),
+      """The default value for item_vat for sales invoices to this Contact.
+      """)
+

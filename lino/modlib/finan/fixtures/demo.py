@@ -30,7 +30,8 @@ from lino import reports
 ledger = reports.get_app('ledger')
 finan = reports.get_app('finan')
 
-Company = resolve_model('contacts.Company')
+#~ Company = resolve_model('contacts.Company')
+Contact = resolve_model('contacts.Contact')
 
 def objects():
     ba = ledger.Account.objects.get(match="5500")
@@ -48,7 +49,8 @@ def objects():
       balance1=decimal.Decimal('1056.40'))
     doc.add_item(
       account=PR,
-      company=Company.objects.get(pk=2),
+      contact=Contact.objects.all()[0],
       debit='12.49')
     doc.book()
     yield doc
+    

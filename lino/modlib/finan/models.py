@@ -34,8 +34,9 @@ contacts = reports.get_app('contacts')
 from lino.modlib.ledger import models as ledger
 journals = reports.get_app('journals')
 
-Person = resolve_model('contacts.Person')
-Company = resolve_model('contacts.Company')
+Contact = resolve_model('contacts.Contact')
+#~ Person = resolve_model('contacts.Person')
+#~ Company = resolve_model('contacts.Company')
 
 def _functionId(nFramesUp):
     # thanks to:
@@ -88,8 +89,9 @@ class BankStatement(journals.Journaled,ledger.Booked):
             b = self.create_booking(
               pos=i.pos,
               account=i.account,
-              person=i.person,
-              company=i.company,
+              contact=i.contact,
+              #~ person=i.person,
+              #~ company=i.company,
               date=i.date,
               debit=i.debit,
               credit=i.credit)
@@ -109,20 +111,26 @@ class BankStatement(journals.Journaled,ledger.Booked):
             b.credit = - sum_debit
         yield b
         
-    def add_item(self,account=None,company=None,person=None,**kw):
+    def add_item(self,account=None,contact=None,
+        #~ company=None,person=None,
+        **kw):
         pos = self.docitem_set.count() + 1
         if account is not None:
             if not isinstance(account,ledger.Account):
                 account = ledger.Account.objects.get(match=account)
-        if person is not None:
-            if not isinstance(person,Person):
-                person = Person.objects.get(pk=person)
-        if company is not None:
-            if not isinstance(company,Company):
-                company = Company.objects.get(pk=company)
+        if contact is not None:
+            if not isinstance(contact,Contact):
+                contact = Contact.objects.get(pk=contact)
+        #~ if person is not None:
+            #~ if not isinstance(person,Person):
+                #~ person = Person.objects.get(pk=person)
+        #~ if company is not None:
+            #~ if not isinstance(company,Company):
+                #~ company = Company.objects.get(pk=company)
         kw['account'] = account
-        kw['person'] = person
-        kw['company'] = company
+        kw['contact'] = contact
+        #~ kw['person'] = person
+        #~ kw['company'] = company
         for k in ('debit','credit'):
             v = kw.get(k,None)
             if isinstance(v,basestring):
@@ -141,8 +149,9 @@ class DocItem(models.Model):
     credit = fields.PriceField(default=0)
     remark = models.CharField(max_length=200,blank=True)
     account = models.ForeignKey(ledger.Account)
-    person = models.ForeignKey(Person,blank=True,null=True)
-    company = models.ForeignKey(Company,blank=True,null=True)
+    contact = models.ForeignKey(Contact,blank=True,null=True)
+    #~ person = models.ForeignKey(Person,blank=True,null=True)
+    #~ company = models.ForeignKey(Company,blank=True,null=True)
     
     def full_clean(self,*args,**kw):
         if self.pos is None:
@@ -194,12 +203,12 @@ class BankStatements(journals.DocumentsByJournal):
     
 class DocItems(reports.Report):
     column_names = "document pos:3 "\
-                  "date account company person remark debit credit" 
+                  "date account contact remark debit credit" 
     model = DocItem
     order_by = ["pos"]
 
 class ItemsByDocument(DocItems):
-    column_names = "pos:3 date account company person remark debit credit" 
+    column_names = "pos:3 date account contact remark debit credit" 
     #master = BankStatement
     fk_name = 'document'
     

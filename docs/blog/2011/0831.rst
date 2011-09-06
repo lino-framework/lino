@@ -12,6 +12,7 @@ b) Switching off a `mti.EnableChild` deletes related objects
 Currently, if you switch off the is_courseprovider field of a Company, 
 and if that Company (as a CourseProvider) has Courses defined, 
 these Courses will be deleted without warning. Not so good.
+(Fixed :doc:`0906` )
 
 c) Adapted dpy Deserializer to new Django version
 -------------------------------------------------

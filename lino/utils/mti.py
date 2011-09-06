@@ -12,7 +12,10 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-A collection of tools for doing multi-table child/parent conversions 
+A collection of tools for manipulating .
+`Multi-table inheritance 
+    <http://docs.djangoproject.com/en/dev/topics/db/models/#multi-table-inheritance>`__
+    (MTI).
 
 See detailed presentation in :mod:`lino.test_apps.1.models`.
 
@@ -21,9 +24,36 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-
-from django.db.models.deletion import Collector
+from django.db import models
 from django.db import router
+from django.db.models.deletion import Collector
+
+from lino.tools import resolve_model
+from lino.fields import VirtualField
+
+
+class MultiTableBase(models.Model):
+  
+    """
+    Mixin for Models that use MTI.
+    Subclassed by :class:`lino.modlib.journals.models.Journaled`.
+    """
+    class Meta:
+        abstract = True
+    
+    def get_child_model(self):
+        return self.__class__
+        
+    def get_child_instance(self):
+        model = self.get_child_model()
+        if model is self.__class__:
+            return self
+        related_name = model.__name__.lower()
+        return getattr(self,related_name)
+        
+    def insert_child(self,*args,**attrs):
+        return insert_child(self,*args,**attrs)
+
 
 class ChildCollector(Collector):
     """
@@ -62,17 +92,23 @@ class ChildCollector(Collector):
                                  source_attr=relation.rel.related_name,
                                  nullable=True)
   
+from django.core.exceptions import ValidationError
 
 def delete_child(obj,child_model,using=None,request=None):
+    """
+    Delete the `child_model` instance related to `obj` without 
+    deleting `obj`.
+    """
+    #~ logger.info(u"delete_child %s from %s",child_model.__name__,obj)
     using = using or router.db_for_write(obj.__class__, instance=obj)
     try:
         child = child_model.objects.get(pk=obj.pk)
     except child_model.DoesNotExist:
-        raise Exception(u"%s has no child in %s" % (obj,child_model.__name__))
-    if request:
+        raise Exception("%s has no child in %s" % (obj,child_model.__name__))
+    if request is not None:
         msg = child_model._lino_ddh.disable_delete(child,request)
         if msg:
-            raise Exception(msg)
+            raise ValidationError(msg)
     logger.debug(u"Delete child %s from %s",child_model.__name__,obj)
     collector = ChildCollector(using=using)
     collector.collect([child],source=obj.__class__,nullable=True,collect_parents=False)
@@ -83,7 +119,8 @@ def insert_child(obj,child_model,**attrs):
     assert child_model != obj.__class__
     parent_link_field = child_model._meta.parents.get(obj.__class__,None)
     if parent_link_field is None:
-        raise Exception("A %s cannot be parent for a %s" % (obj.__class__.__name__,child_model.__name__))
+        raise Exception("A %s cannot be parent for a %s" % (
+            obj.__class__.__name__,child_model.__name__))
     attrs[parent_link_field.name] = obj
     #~ for pm,pf in child_model._meta.parents.items(): # pm : parent model, pf : parent link field
         #~ attrs[pf.name] = obj
@@ -98,120 +135,8 @@ def insert_child(obj,child_model,**attrs):
     new_obj.save()
     return new_obj
 
-reduce = delete_child
-promote = insert_child
-
-
-
-def unused_convert_first_attempt(obj,target_class,**attrs):
-    """
-    Converts the database records for the given 
-    model instance `obj` into an instance of `target_class`.
-    All field values that are also in the target_class, 
-    including related objects, will be transferred.
-    `attrs` may specify additional values that will override existing data.
-    Returns the new instance which is already saved.
-    
-    Note that this
-    will make the variable used by the caller refer to an invalid Model instance 
-    object which does not represent any existing record. 
-    
-    See detailed presentation in :mod:`lino.test_apps.1.models`.
-
-    """
-    for field in target_class._meta.fields:
-        if field.name not in attrs and hasattr(obj, field.name):
-            attrs[field.name] = getattr(obj, field.name)
-    pk = obj.pk
-    related_objects = {}
-    for r in target_class._meta.many_to_many:
-        if getattr(r,'through',None) is not None:
-            raise Exception("ManyToManyField.through not supported.")
-        if hasattr(obj,r.name):
-            m = getattr(obj,r.name)
-            related_objects[r.name] = [x for x in m.all()]
-    logger.info("convert %s to %s : attrs=%s, related_objects=%s",
-      obj.__class__.__name__,target_class.__name__,
-      attrs,related_objects)
-    obj.delete()
-    
-    class InvalidModelInstance(object):
-        def __str__(self):
-            return "<%s object>" % self.__class__.__name__
-    obj.__class__ = InvalidModelInstance
-    
-    obj = target_class(**attrs)
-    obj.save()
-    for k,v in related_objects.items():
-        #~ logger.info('%s = %s', f.name,[x for x in m.all()])
-        setattr(obj,k,v)
-    obj.save()
-    return obj
-
-class InvalidModelInstance(object):
-    def __str__(self):
-        return "<%s object>" % self.__class__.__name__
-
-def unused_convert_second_attempt(obj,target_class,**attrs):
-    """
-    Converts the database records for the given 
-    model instance `obj` into an instance of `target_class`.
-    All field values that are also in the target_class, 
-    including related objects, will be transferred.
-    `attrs` may specify additional values that will override existing data.
-    Returns the new instance which is already saved.
-    
-    Note that this
-    will make the variable used by the caller refer to an invalid Model instance 
-    object which does not represent any existing record. 
-    
-    See detailed presentation in :mod:`lino.test_apps.1.models`.
-
-    """
-    pk = obj.pk
-    related_objects = {}
-    assert target_class != obj.__class__
-    if issubclass(target_class,obj.__class__):
-        # convert parent to child (adding data) : "specialize", "promote"
-        attrs["%s_ptr" % obj.__class__.__name__.lower()] = obj
-        for field in obj._meta.fields:
-            attrs[field.name] = getattr(obj, field.name)
-        logger.info("specialize %s to %s : attrs=%s",
-          obj.__class__.__name__,target_class.__name__,
-          attrs)
-    elif issubclass(obj.__class__,target_class):
-        # convert child to parent (removing data) : "generalize", "reduce"
-        for field in target_class._meta.fields:
-            if field.name not in attrs and hasattr(obj, field.name):
-                attrs[field.name] = getattr(obj, field.name)
-        for r in target_class._meta.many_to_many:
-            if getattr(r,'through',None) is not None:
-                raise Exception("ManyToManyField.through not supported.")
-            if hasattr(obj,r.name):
-                m = getattr(obj,r.name)
-                related_objects[r.name] = [x for x in m.all()]
-        logger.info("generalize %s to %s : attrs=%s, related_objects=%s",
-          obj.__class__.__name__,target_class.__name__,
-          attrs,related_objects)
-        obj.delete()
-    else:
-        raise NotImplementedError
-    
-    new_obj = target_class(**attrs)
-    new_obj.save()
-    if related_objects:
-        for k,v in related_objects.items():
-            #~ logger.info('%s = %s', f.name,[x for x in m.all()])
-            setattr(new_obj,k,v)
-        new_obj.save()
-    obj.__class__ = InvalidModelInstance
-    return new_obj
 
      
-from django.db import models
-from lino.tools import resolve_model
-from lino.fields import VirtualField
-
 class EnableChild(VirtualField):
     """
     Documented and tested in :mod:`lino.test_apps.1.models`
@@ -228,7 +153,11 @@ class EnableChild(VirtualField):
         VirtualField.lino_kernel_setup(self,model,name)
     
     def has_child(self,obj,request=None):
-        "Returns True if "
+        """
+        Returns True if `obj` has an MTI child in `self.child_model`.
+        The optional 2nd argument `request` (passed from
+        `VirtualField.value_from_object`) is ignored.
+        """
         try:
             getattr(obj,self.child_model.__name__.lower())
             #~ self.child_model.objects.get(pk=obj.pk)
@@ -236,8 +165,8 @@ class EnableChild(VirtualField):
             return False
         return True
 
-    def set_value_in_object(self,obj,v,request=None):
-        if self.has_child(obj,request):
+    def set_value_in_object(self,request,obj,v):
+        if self.has_child(obj):
             #~ logger.debug('set_value_in_object : %s has child %s',
                 #~ obj.__class__.__name__,self.child_model.__name__)
             # child exists, delete it if it may not 

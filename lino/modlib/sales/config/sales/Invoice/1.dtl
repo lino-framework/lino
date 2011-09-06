@@ -3,10 +3,10 @@
 
 main =
   box1 box2 totals
-  sales.ItemsByDocument 
+  sales.ItemsByInvoice
 
 box1 = 
-  company contact person 
+  customer
   order your_ref
   subject 
   

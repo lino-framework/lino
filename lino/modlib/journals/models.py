@@ -34,7 +34,8 @@ import lino
 from lino import reports
 from lino.utils.babel import babelattr, BabelCharField
 #~ from lino.modlib.documents import models as documents
-from lino import mixins
+#~ from lino import mixins
+from lino.utils import mti
 
 
 class DocumentError(Exception):
@@ -148,7 +149,7 @@ def DocumentRef(**kw):
     return models.IntegerField(**kw)
 
 
-class Journaled(mixins.MultiTableBase):
+class Journaled(mti.MultiTableBase):
     """
     A Journaled is a numbered document in a Journal.
     A model that subclasses Journaled must provide 2 fields::

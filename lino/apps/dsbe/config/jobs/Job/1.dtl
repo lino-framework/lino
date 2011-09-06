@@ -1,7 +1,7 @@
 :label_align: top
 
 main = 
-  name provider type contract_type id 
+  name provider contract_type type id 
   capacity hourly_rate remark 
   RequestsByJob
   ContractsByJob

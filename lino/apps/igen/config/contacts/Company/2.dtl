@@ -2,4 +2,4 @@
 :label_align: top
 
 main = 
-  sales.SalesByCompany
+  sales.SalesByCustomer

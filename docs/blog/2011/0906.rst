@@ -1,0 +1,17 @@
+20110906
+========
+
+Minor bugfixes
+--------------
+
+#.  Fixed the bug "Switching off an 
+    `mti.EnableChild` deletes related objects"
+    (discovered :doc:`0831`).
+    If you now switch off the ´is_courseprovider´ field of a Company,
+    and if that Company (as a CourseProvider) has Courses defined,
+    then you'll get a ValidationError "Cannot delete <name of 
+    CourseProvider> because it has at least one course".
+
+#.  jobs.Job.disabled_fields : 
+    Stelle bearbeiten können wenn noch kein *ausgedruckter* Vertrag vorliegt.
+    

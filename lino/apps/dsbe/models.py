@@ -57,6 +57,7 @@ from lino.models import get_site_config
 from lino.tools import get_field
 from lino.tools import resolve_field
 from lino.utils.babel import DEFAULT_LANGUAGE, babelattr, babeldict_getitem
+from lino.utils.babel import language_choices
 #~ from lino.utils.babel import add_babel_field, DEFAULT_LANGUAGE, babelattr, babeldict_getitem
 from lino.utils import babel 
 from lino.utils.choosers import chooser
@@ -136,43 +137,6 @@ add('C2+', en="proficient use of language",de=u"Kompetente Sprachverwendung")
 
 
 
-SCHEDULE_CHOICES = {
-    'de':[ 
-        u"5-Tage-Woche",
-        u"Montag, Mittwoch, Freitag",
-        u"Individuell",
-        ],
-    'fr':[ 
-        u"5 jours/semaine",
-        u"lundi,mercredi,vendredi",
-        u"individuel",
-        ],
-    'en':[
-        u"5 days/week",
-        u"Monday, Wednesday, Friday",
-        u"Individual",
-        ]
-}
-
-REGIME_CHOICES = {
-    'de':[ 
-        u"20 Stunden/Woche",
-        u"35 Stunden/Woche",
-        u"38 Stunden/Woche",
-        ],
-    'fr':[ 
-        u"20 heures/semaine",
-        u"35 heures/semaine",
-        u"38 heures/semaine",
-        ],
-    'en':[
-        u"20 hours/week",
-        u"35 hours/week",
-        u"38 hours/week",
-        u"38 hours/week",
-        ]
-}
-
 #~ AID_RATE_CHOICES = {
     #~ 'de':[ 
         #~ u'Alleinlebende Person',
@@ -205,11 +169,6 @@ REGIME_CHOICES = {
         #~ ]
 #~ }
 
-def language_choices(language,choices):
-    l = choices.get(language,None)
-    if l is None:
-        l = choices.get(DEFAULT_LANGUAGE)
-    return l
 
 
 CIVIL_STATE_CHOICES = [
@@ -1936,17 +1895,6 @@ reports.inject_field(Company,
     'is_courseprovider',
     mti.EnableChild('dsbe.CourseProvider',verbose_name=_("is Course Provider")),
     """Whether this Company is also a Course Provider."""
-    )
-
-reports.inject_field(Contact,
-    'is_person',
-    mti.EnableChild('contacts.Person',verbose_name=_("is Person")),
-    """Whether this Contact is also a Person."""
-    )
-reports.inject_field(Contact,
-    'is_company',
-    mti.EnableChild('contacts.Company',verbose_name=_("is Company")),
-    """Whether this Contact is also a Company."""
     )
 
 

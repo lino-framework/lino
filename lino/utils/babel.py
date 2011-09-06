@@ -80,6 +80,12 @@ def default_language():
     return DEFAULT_LANGUAGE
     
     
+def language_choices(language,choices):
+    l = choices.get(language,None)
+    if l is None:
+        l = choices.get(DEFAULT_LANGUAGE)
+    return l
+
 
 LONG_DATE_FMT = {
   #~ None: 'l, j F Y',

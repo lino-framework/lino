@@ -9,7 +9,7 @@ main =
 box1 = 
   journal number your_ref 
   creation_date 
-  company contact person 
+  customer
   language
   ## ship_to
   

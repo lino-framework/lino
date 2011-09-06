@@ -21,9 +21,10 @@ from lino.modlib.sales import utils
 from lino.utils.instantiator import Instantiator, i2d
 from lino.tools import resolve_model
 
-Person = resolve_model('contacts.Person')
+#~ Person = resolve_model('contacts.Person')
 Company = resolve_model('contacts.Company')
 #~ Contact = resolve_model('contacts.Contact')
+Customer = resolve_model('sales.Customer')
 #~ Customer = resolve_model('sales.Customer')
 
 #contacts = reports.get_app('contacts')
@@ -37,6 +38,10 @@ imode = Instantiator(sales.InvoicingMode,
   "id channel name advance_days journal").build
 
 def objects():
+  
+    for c in Company.objects.filter(country_id='BE'):
+        yield c.contact_ptr.insert_child(Customer)
+        
     paymentterm = Instantiator(sales.PaymentTerm,"id name").build
     yield paymentterm("pp","Prepayment",days=7)
     yield paymentterm("cash","Cash")
@@ -76,7 +81,7 @@ def objects():
         
     yield salesrule(imode='e',shipping_mode="ta",payment_term="7")
     
-    Company = resolve_model('contacts.Company')
+    #~ Company = resolve_model('contacts.Company')
     #Person = resolve_model('contacts.Person')
     #company1 = Company.objects.get(name__startswith="Ausdemwald")
     #dubois = Person.objects.get(last_name__startswith="Dubois")
@@ -91,7 +96,8 @@ def objects():
       #~ payment_term="30",journal=INV).build
     
     o = ORD.create_document(
-        company=Company.objects.get(pk=1),
+        customer=Customer.objects.all()[0],
+        #~ company=Company.objects.get(pk=1),
         creation_date=i2d(20080923),start_date=i2d(20080924),
         cycle="M",imode=imode_e,
         sales_remark="monthly order")
@@ -100,10 +106,11 @@ def objects():
     yield o
 
     o = ORD.create_document(
-        company=Company.objects.get(pk=2),
+        customer=Customer.objects.all()[1],
+                #~ company=Company.objects.get(pk=2),
         creation_date=i2d(20080923),start_date=i2d(20080924),
         cycle="M",imode=imode_e,
-        sales_remark="Company 2 gets 50% discount")
+        sales_remark="Customer 2 gets 50% discount")
         
     #~ o = order(2,"2008-09-23","2008-09-24","M","e",
         #~ sales_remark="Company 2 gets 50% discount")
@@ -114,7 +121,8 @@ def objects():
         
 
     i = INV.create_document(
-        company=Company.objects.get(pk=2),
+        customer=Customer.objects.all()[1],
+        #~ company=Company.objects.get(pk=2),
         creation_date=i2d(20081029),
         imode=imode_e,
         sales_remark="first manual invoice")
@@ -127,7 +135,8 @@ def objects():
     utils.make_invoices(make_until=date(2009,04,11))
         
     i = INV.create_document(
-        company=Company.objects.get(pk=3),
+        customer=Customer.objects.all()[2],
+        #~ company=Company.objects.get(pk=3),
         creation_date=i2d(20090411),
         imode=imode_e,
         sales_remark="second manual invoice")
@@ -143,7 +152,8 @@ def objects():
     #d = date(2009,4,12)
     #~ o2 = order(4,d,d,"Y","p",sales_remark="yearly order")
     o2 = ORD.create_document(
-        company=Company.objects.get(pk=4),
+        customer=Customer.objects.all()[3],
+        #~ company=Company.objects.get(pk=4),
         creation_date=d,start_date=d,
         cycle="Y",imode=imode_p,
         sales_remark="yearly order")
@@ -158,7 +168,8 @@ def objects():
     #~ i = invoice(4,date(2009,04,13),"e",
       #~ sales_remark="third manual invoice with discount")
     i = INV.create_document(
-        company=Company.objects.get(pk=4),
+        customer=Customer.objects.all()[3],
+        #~ company=Company.objects.get(pk=4),
         creation_date=i2d(20090413),
         imode=imode_e,
         sales_remark="third manual invoice with discount")
@@ -169,15 +180,19 @@ def objects():
     utils.make_invoices(make_until=date(2009,05,14))
 
     #~ order = Instantiator(sales.Order,journal=ORD,cycle='M',imode='e',payment_term="15").build
-    for i in range(10):
+    i = 0 
+    for cust in Customer.objects.order_by('id'):
+        i += 1
+    #~ for i in range(10):
     #for i in range(29):
         #~ o = order(
             #~ company=i+1,creation_date=date(2009,6,1+i),
             #~ sales_remark="range demo #%d" % i)
         o = ORD.create_document(
             cycle='M',imode=imode_e,payment_term=pt15,
-            company=Company.objects.get(pk=i+1),
-            creation_date=date(2009,6,1+i),
+            customer=cust,
+            #~ company=Company.objects.get(pk=i+1),
+            creation_date=date(2009,6,i),
             sales_remark="range demo #%d" % i)
         yield o
         yield o.add_item(5,1,unit_price=1.7*i)

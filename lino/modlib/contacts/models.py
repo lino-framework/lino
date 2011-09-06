@@ -98,11 +98,11 @@ def get_salutation(sex,nominative=False):
 #~ add(SEX_MALE,en=u"Mr.",de=u"Herr",fr=u"Mr")
 #~ add(SEX_FEMALE,en=u"Mrs.",de=u"Frau",fr=u"Mme")
 
-
+from lino.utils import mti
 
 
 #~ class Addressable(CountryCity):
-class Contact(CountryCity):
+class Contact(mti.MultiTableBase,CountryCity):
     """
     Base class for anything that has contact information 
     (postal address, email, phone,...).
@@ -190,11 +190,11 @@ The default returns simply the `name` field, ignoring any parameters,
 but e.g. :class:`PersonMixin` overrides this.
         """
         
-        try:
-            p = getattr(self,'person')
-            return p.get_full_name(*args,**kw)
-        except ObjectDoesNotExist:
-            pass
+        #~ try:
+            #~ p = getattr(self,'person')
+            #~ return p.get_full_name(*args,**kw)
+        #~ except ObjectDoesNotExist:
+            #~ pass
         return self.name
     full_name = property(get_full_name)
         
@@ -651,6 +651,18 @@ reports.inject_field(SiteConfig,
         ),
     """The Company to be used as sender in documents.""")
     
+
+reports.inject_field(Contact,
+    'is_person',
+    mti.EnableChild('contacts.Person',verbose_name=_("is Person")),
+    """Whether this Contact is also a Person."""
+    )
+reports.inject_field(Contact,
+    'is_company',
+    mti.EnableChild('contacts.Company',verbose_name=_("is Company")),
+    """Whether this Contact is also a Company."""
+    )
+
 
 
 

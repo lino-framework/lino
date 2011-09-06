@@ -12,7 +12,35 @@ is rather for internal use.
 Short-term
 ----------
 
+#.  `Extensible <http://ext.ensible.com/>`_ 
+    (founded by Brian Moeskau, one of the original cofounders of Ext JS)
+    has a `Widget for calendar event recurrency 
+    <http://ext.ensible.com/deploy/dev/examples/calendar/recurrence-widget.html>`_.
+    Extensible: 
+    "We make make high-quality components and extensions for the Ext 
+    JS JavaScript framework. Our flagship product is Ext Calendar Pro, a 
+    professional calendar component suite."
+    "Extensible is dual-licensed, just like Ext JS."
+
+    
 #.  :term:`watch_tim` testen (nach den Änderungen von #47)
+
+#.  :mod:`lino.modlib.mails.models`: 
+    InMail und OutMail könnten eine einzige Tabelle sein. 
+    `Recipient` würde dann zwei neue Felder `received` 
+    und `read` kriegen.
+    Mails sind dann nur bearbeitbar für ihren Autor und auch 
+    für den nur so lange sie nicht abgeschickt sind.
+    Wenn ein Lino-Benutzer einem anderen eine Mail schickt 
+    (und eine entsprechende Konfigurationsoption gesetzt ist),
+    würde Lino die Mail gar nicht erst rausschicken, sondern 
+    einfach nur `received` und `sent` auf `datetime.now()` 
+    setzen.
+
+
+#.  :mod:`lino.modlib.jobs.models`: 
+    Regime und Stundenplan als selbstlernende foreign 
+    keys statt Textfelder mit hardkodierter Auswahlliste.
 
 #.  Remote calendars (:doc:`/tickets/47`):
     - Event.save() must update the remote calendar.
@@ -117,7 +145,8 @@ Short-term
 #.  :doc:`Benutzerspezifische Gridkonfiguration </tickets/39>`
 
     
-#.  Doppelklick auf Memo-Text einer Note bewirkt *nichts*. 
+#.  Doppelklick auf Memo-Text einer Note in einer Grid
+    bewirkt *nichts*. 
     Sollte doch wenigstens das Detail-Fenster öffnen.
     
 #.  Buttons sollten gleich nach einem Klick deaktiviert werden, 
@@ -136,13 +165,17 @@ Short-term
 Medium-term
 -----------
 
+#.  Enhance performance by using xtype instead of instantiating directly:
+    http://iamtotti.com/blog/2011/05/what-makes-your-extjs-application-run-so-slow/
+    Note that I started to prefer direct instantiation when I had had some 
+    problems that solved simply be switching from "xtype" to "direct".
+    But at that time I didn't imagine that 
+    interacting with the DOM is always expensive.
+    
 #.  Dojo now has a
     `datagrid <http://dojotoolkit.org/documentation/tutorials/1.6/datagrid/>`_
     and looks easy to learn.
 
-#.  jobs.Job.disabled_fields : 
-    Stelle bearbeiten können wenn noch kein *ausgedruckter* Vertrag vorliegt.
-    
 #.  Rename "lino.mixins.Owned" to "Anchored" (and XxxByOwner to XxxByAnchor".
     
 #.  Tutorial weiter schreiben.

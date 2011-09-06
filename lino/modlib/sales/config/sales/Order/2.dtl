@@ -2,7 +2,7 @@
 :label_align: top
 
 main = 
-  sales.ItemsByDocument
+  ItemsByOrder
   totals
 
 

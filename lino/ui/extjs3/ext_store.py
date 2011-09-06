@@ -91,7 +91,7 @@ class StoreField(object):
     #~ if v is NOT_PROVIDED:
         #~ return
         
-    def form2obj(self,instance,post_data,is_new):
+    def form2obj(self,request,instance,post_data,is_new):
         """
         Test cases:
         - setting a CharField to ''
@@ -121,7 +121,7 @@ class StoreField(object):
             raise exceptions.ValidationError({
               self.field.name:_("Existing primary key value %r may not be modified.") % instance.pk})
               
-        self.set_value_in_object(instance,v)
+        self.set_value_in_object(request,instance,v)
         #~ print 20110524, __file__, self.field.name, v
         #~ try:
             #~ setattr(instance,self.field.name,v)
@@ -130,7 +130,7 @@ class StoreField(object):
             #~ raise 
         return
         
-    def set_value_in_object(self,instance,v):
+    def set_value_in_object(self,request,instance,v):
         old_value = getattr(instance,self.field.attname)
         if old_value != v:
             setattr(instance,self.field.name,v)
@@ -164,7 +164,7 @@ class SpecialStoreField(StoreField):
     def obj2list(self,request,obj):
         return [self.value_from_object(request,obj)]
       
-    def form2obj(self,instance,post_data,is_new):
+    def form2obj(self,request,instance,post_data,is_new):
         pass
         #~ raise NotImplementedError
         #~ return instance
@@ -244,7 +244,7 @@ class AutoStoreField(StoreField):
         kw['type'] = 'int'
         StoreField.__init__(self,field,**kw)
   
-    def form2obj(self,instance,post_data,is_new):
+    def form2obj(self,request,instance,post_data,is_new):
         pass
         #~ assert instance.pk
         #~ return instance
@@ -312,7 +312,7 @@ class MethodStoreField(StoreField):
     #~ def get_from_form(self,instance,post_data):
         #~ pass
         
-    def form2obj(self,instance,post_data,is_new):
+    def form2obj(self,request,instance,post_data,is_new):
         pass
         #~ return instance
         #raise Exception("Cannot update a virtual field")
@@ -334,13 +334,13 @@ class VirtStoreField(StoreField):
         #~ logger.debug('VirtStoreField.obj2dict() %s = %s',self.field.name,v)
         d[self.field.name] = v
         
-    def form2obj(self,obj,post_data,is_new):
+    def form2obj(self,request,obj,post_data,is_new):
         #~ logger.info("VirtStoreField.form2obj(%s)", post_data)
         v = self.extract_form_data(post_data)
         #~ v = StoreField.form2obj(self,obj,post_data,is_new)
         #~ v = getattr(obj,self.field.name)
         #~ logger.info("VirtStoreField.%s.form2obj(%s) --> %r", self.field.name, post_data, v)
-        self.vf.set_value_in_object(obj,v)
+        self.vf.set_value_in_object(request,obj,v)
         #~ return obj
 
 
@@ -404,7 +404,7 @@ class ComboStoreField(StoreField):
         yield self.options['name']
         yield self.options['name'] + ext_requests.CHOICES_HIDDEN_SUFFIX
         
-    def form2obj(self,instance,post_data,is_new):
+    def form2obj(self,request,instance,post_data,is_new):
         assert not self.field.primary_key
         v = post_data.get(self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX,None)
         #~ logger.info("ComboStoreField.form2obj %s = %r", self.field.name,v)
@@ -425,7 +425,7 @@ class ComboStoreField(StoreField):
                 Django refuses to explicitly assign None to a non-nullable field.
                 """
                 return 
-        self.set_value_in_object(instance,v)
+        self.set_value_in_object(request,instance,v)
         #~ setattr(instance,self.field.name,v)
 
     def obj2list(self,request,obj):
@@ -652,7 +652,7 @@ class Store:
             if f.field is None or not f.field.name in disabled_fields:
                 #~ logger.info("Store.form2obj %s", f.field.name)
                 try:
-                    f.form2obj(instance,form_values,is_new)
+                    f.form2obj(request,instance,form_values,is_new)
                 except exceptions.ValidationError,e:
                     raise exceptions.ValidationError({f.field.name:e})
                 except Exception,e:

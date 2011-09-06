@@ -188,7 +188,7 @@ class VirtualField: # (Field):
     #~ def get_choices(self): return self.return_type.choices
     #~ choices = property(get_choices)
             
-    def set_value_in_object(self,obj,value,request=None):
+    def set_value_in_object(self,request,obj,value):
         """
         Stores the specified `value` in the specified model instance `obj`.
         

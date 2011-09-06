@@ -56,7 +56,7 @@ from lino.utils.choicelists import HowWell
 from lino.models import get_site_config
 from lino.tools import get_field
 from lino.tools import resolve_field
-from lino.utils.babel import DEFAULT_LANGUAGE, babelattr, babeldict_getitem
+from lino.utils.babel import DEFAULT_LANGUAGE, babelattr, babeldict_getitem, language_choices
 from lino.utils.htmlgen import UL
 #~ from lino.utils.babel import add_babel_field, DEFAULT_LANGUAGE, babelattr, babeldict_getitem
 from lino.utils import babel 
@@ -78,6 +78,48 @@ from lino.modlib.properties.models import Property
 from lino.modlib.notes.models import NoteType
 from lino.modlib.countries.models import Country, City
 from lino.apps.dsbe.models import Company, Companies
+
+
+
+
+SCHEDULE_CHOICES = {
+    'de':[ 
+        u"5-Tage-Woche",
+        u"Montag, Mittwoch, Freitag",
+        u"Individuell",
+        ],
+    'fr':[ 
+        u"5 jours/semaine",
+        u"lundi,mercredi,vendredi",
+        u"individuel",
+        ],
+    'en':[
+        u"5 days/week",
+        u"Monday, Wednesday, Friday",
+        u"Individual",
+        ]
+}
+
+REGIME_CHOICES = {
+    'de':[ 
+        u"20 Stunden/Woche",
+        u"35 Stunden/Woche",
+        u"38 Stunden/Woche",
+        ],
+    'fr':[ 
+        u"20 heures/semaine",
+        u"35 heures/semaine",
+        u"38 heures/semaine",
+        ],
+    'en':[
+        u"20 hours/week",
+        u"35 hours/week",
+        u"38 hours/week",
+        u"38 hours/week",
+        ]
+}
+
+
 
 
 
@@ -525,7 +567,8 @@ class Job(models.Model):
         #~ return u'%s @ %s' % (self.name,self.provider)
   
     def disabled_fields(self,request):
-        if self.contract_set.count():
+        #~ if self.contract_set.count():
+        if self.contract_set.filter(must_build=False).count():
             return ['contract_type','provider']
         return []
         

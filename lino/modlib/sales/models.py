@@ -34,6 +34,7 @@ from lino import fields
 from lino import reports
 from lino import actions
 from lino import mixins
+from lino.utils import mti
 from lino.utils import perms
 from lino.utils import babel 
 #~ from lino.utils.babel import add_babel_field, babelattr
@@ -190,15 +191,21 @@ def get_sales_rule(doc):
             return r
             
 
-#~ class Customer(models.Model):
+class Customer(contacts.Contact):
+    """
+    A Customer is a Contact that can receive sales invoices.
+    """    
+    class Meta:
+        verbose_name =_("Customer")
+        verbose_name_plural =_("Customers")
         
     #~ name = models.CharField(max_length=40)
     #~ company = models.ForeignKey('contacts.Company',blank=True,null=True)
     #~ person = models.ForeignKey('contacts.Person',blank=True,null=True)
     
-    #~ payment_term = models.ForeignKey(PaymentTerm,blank=True,null=True)
-    #~ vat_exempt = models.BooleanField(default=False)
-    #~ item_vat = models.BooleanField(default=False)
+    payment_term = models.ForeignKey(PaymentTerm,blank=True,null=True)
+    vat_exempt = models.BooleanField(default=False)
+    item_vat = models.BooleanField(default=False)
     
     #~ def __unicode__(self):
         #~ if self.name is None:
@@ -232,12 +239,21 @@ class SalesDocument(
       mixins.AutoUser,
       journals.Sendable,
       journals.Journaled,
-      contacts.ContactDocument,
+      #~ contacts.ContactDocument,
       mixins.TypedPrintable):
     """Common base class for :class:`Order` and :class:`Invoice`.
     """
     class Meta:
         abstract = True
+        
+    #~ item_class = NotImplementedError
+        
+    customer = models.ForeignKey("sales.Customer",
+        #~ blank=True,null=True,
+        #~ related_name="%(app_label)s_%(class)s_by_contact",
+        #~ related_name="%(app_label)s_%(class)s_related",
+        )
+    language = fields.LanguageField(default=babel.DEFAULT_LANGUAGE)
     
     creation_date = models.DateField(blank=True,auto_now_add=True)
     #~ customer = models.ForeignKey(Customer,
@@ -290,7 +306,8 @@ class SalesDocument(
         kw['qty'] = qty
         #print self,kw
         kw['document'] = self
-        return DocItem(**kw)
+        return self.items.model(**kw)
+        #~ cannot use create here because that would try to save() the item
         #~ return self.items.create(**kw)
         
     def total_incl(self,request=None):
@@ -330,7 +347,7 @@ class SalesDocument(
         self.update_total()
       
 SALES_PRINTABLE_FIELDS = reports.fields_list(SalesDocument,
-  'contact imode payment_term '
+  'customer imode payment_term '
   'creation_date your_ref subject '
   'language vat_exempt item_vat ')
 
@@ -346,6 +363,12 @@ class OrderManager(models.Manager):
 
 
 class Order(SalesDocument):
+    """
+    An Order is when a :class:`Customer` asks us to "deliver" a 
+    given set of "products".
+    """
+    
+    #~ item_class = OrderItem
   
     CYCLE_CHOICES = (
         ('W', 'Weekly'),
@@ -457,7 +480,7 @@ class Order(SalesDocument):
         invoice = self.imode.journal.create_document(
             creation_date=today,
             order=self,
-            person=self.person,company=self.company,contact=self.contact,
+            customer=self.customer,
             #~ ship_to=self.ship_to,
             imode=self.imode,
             payment_term=self.payment_term,
@@ -489,6 +512,8 @@ class Invoice(ledger.Booked,SalesDocument):
     #~ ledger_remark = models.CharField("Remark for ledger",
       #~ max_length=200,blank=True)
     #~ booked = models.BooleanField(default=False)
+    
+    #~ item_class = InvoiceItem
     
     due_date = models.DateField("Payable until",blank=True,null=True)
     order = models.ForeignKey('sales.Order',blank=True,null=True)
@@ -526,7 +551,7 @@ class DocItem(models.Model):
     
     product = models.ForeignKey(products.Product,blank=True,null=True)
     title = models.CharField(max_length=200,blank=True)
-    description = fields.RichTextField()
+    description = fields.RichTextField(_("Description"),blank=True,null=True)
     
     discount = models.IntegerField("Discount %",default=0)
     unit_price = fields.PriceField(blank=True,null=True) 
@@ -573,14 +598,14 @@ class DocItem(models.Model):
 
 
 class OrderItem(DocItem):
-    class Meta:
-        abstract = True
-    document = models.ForeignKey(Order,related_name='items') 
+    #~ class Meta:
+        #~ abstract = True
+    document = models.ForeignKey('sales.Order',related_name='items') 
 
 class InvoiceItem(DocItem):
-    class Meta:
-        abstract = True
-    document = models.ForeignKey(Invoice,related_name='items') 
+    #~ class Meta:
+        #~ abstract = True
+    document = models.ForeignKey('sales.Invoice',related_name='items') 
 
     
 
@@ -608,7 +633,7 @@ class OrdersByJournal(Orders):
     order_by = ["number"]
     #master = journals.Journal
     fk_name = 'journal' # see django issue 10808
-    column_names = "number:4 creation_date contact:20 imode " \
+    column_names = "number:4 creation_date customer:20 imode " \
                   "sales_remark:20 subject:20 total_incl " \
                   "cycle start_date covered_until"
     
@@ -634,7 +659,7 @@ class InvoicesByJournal(Invoices):
     fk_name = 'journal' # see django issue 10808
     #master = journals.Journal
     column_names = "number:4 creation_date due_date " \
-                  "contact:10 " \
+                  "customer:10 " \
                   "total_incl order subject:10 sales_remark:10 " \
                   "ledger_remark:10 " \
                   "total_excl total_vat user "
@@ -656,7 +681,7 @@ class DocumentsToSign(Invoices):
     filter = dict(user__isnull=True)
     can_add = perms.never
     column_names = "number:4 order creation_date " \
-                  "contact:10 imode " \
+                  "customer:10 imode " \
                   "subject:10 total_incl total_excl total_vat "
     #~ actions = Invoices.actions + [ SignAction() ]
     
@@ -712,17 +737,17 @@ class ItemsByInvoice(ItemsByDocument):
 #~ contacts.Partners.register_page_layout(DocumentsByPartnerDetail)
             
 
-class SalesByContact(SalesDocuments):
+class SalesByCustomer(SalesDocuments):
     column_names = "journal:4 number:4 creation_date:8 " \
                    "total_incl total_excl total_vat *"
     order_by = ["creation_date"]
-    fk_name = 'contact'
+    fk_name = 'customer'
     
-class OrdersByContact(SalesByContact):
-    model = 'sales.Orders'
+class OrdersByCustomer(SalesByCustomer):
+    model = 'sales.Order'
 
-class InvoicesByContact(SalesByContact):
-    model = 'sales.Invoices'
+class InvoicesByCustomer(SalesByCustomer):
+    model = 'sales.Invoice'
 
 #~ class SalesByPerson(SalesDocuments):
     #~ column_names = "journal:4 number:4 creation_date:8 " \
@@ -737,25 +762,34 @@ journals.register_doctype(Order,OrdersByJournal)
 journals.register_doctype(Invoice,InvoicesByJournal)
 
 from lino.modlib.contacts.models import Contact
-reports.inject_field(
-    Contact,'payment_term',
-    models.ForeignKey(PaymentTerm,
-        blank=True,null=True,
-        verbose_name=_("payment term")),
-    """The default PaymentTerm for sales invoices to this Contact.
-    """)
-reports.inject_field(
-    Contact, 'vat_exempt',
-    models.BooleanField(default=False,
-        verbose_name=_("VAT exempt")),
-    """The default value for vat_exempt for sales invoices to this Contact.
-    """)
-reports.inject_field(
-    Contact, 'item_vat',
-    models.BooleanField(default=False,
-        verbose_name=_("item_vat")),
-    """The default value for item_vat for sales invoices to this Contact.
-    """)
+
+reports.inject_field(Contact,
+    'is_customer',
+    mti.EnableChild('sales.Customer',verbose_name=_("is Customer")),
+    """Whether this Contactis also a Customer."""
+    )
+
+
+
+#~ reports.inject_field(
+    #~ Contact,'payment_term',
+    #~ models.ForeignKey(PaymentTerm,
+        #~ blank=True,null=True,
+        #~ verbose_name=_("payment term")),
+    #~ """The default PaymentTerm for sales invoices to this Contact.
+    #~ """)
+#~ reports.inject_field(
+    #~ Contact, 'vat_exempt',
+    #~ models.BooleanField(default=False,
+        #~ verbose_name=_("VAT exempt")),
+    #~ """The default value for vat_exempt for sales invoices to this Contact.
+    #~ """)
+#~ reports.inject_field(
+    #~ Contact, 'item_vat',
+    #~ models.BooleanField(default=False,
+        #~ verbose_name=_("item_vat")),
+    #~ """The default value for item_vat for sales invoices to this Contact.
+    #~ """)
 
 
 def setup_main_menu(site,ui,user,m): 

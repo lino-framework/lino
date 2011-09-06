@@ -25,6 +25,7 @@ from django.utils.translation import ugettext as _
 from lino.utils import i2d
 from lino.utils.instantiator import Instantiator
 from lino.tools import resolve_model
+from lino.utils.babel import babel_values
 
 
 
