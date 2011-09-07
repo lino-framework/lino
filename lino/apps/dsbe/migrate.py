@@ -345,6 +345,7 @@ def migrate_from_1_2_1(globals_dict):
     globals_dict.update(create_users_user=create_users_user)
     
     def create_uploads_upload(id, user_id, owner_type_id, owner_id, file, mimetype, created, modified, description, type_id, valid_until):
+        if description is None: description = ''
         owner_type_id = new_contenttype(owner_type_id)
         return Upload(id=id,user_id=new_user_id(user_id),owner_type_id=owner_type_id,owner_id=owner_id,file=file,mimetype=mimetype,created=created,modified=modified,description=description,type_id=type_id,valid_until=valid_until)
     globals_dict.update(create_uploads_upload=create_uploads_upload)
@@ -418,6 +419,9 @@ def migrate_from_1_2_1(globals_dict):
         if remarks2 is None: remarks2 = ''
         if bank_account1 is None: bank_account1 = ''
         if bank_account2 is None: bank_account2 = ''
+        if birth_place is None: birth_place = ''
+        if civil_state is None: civil_state = ''
+        if sex is None: sex = ''
         coach1_id = new_user_id(coach1_id)
         coach2_id = new_user_id(coach2_id)
         return Person(country_id=country_id,city_id=city_id,name=name,addr1=addr1,street_prefix=street_prefix,street=street,street_no=street_no,street_box=street_box,addr2=addr2,zip_code=zip_code,region=region,language=language,email=email,url=url,phone=phone,gsm=gsm,fax=fax,remarks=remarks,first_name=first_name,last_name=last_name,title=title,sex=sex,
