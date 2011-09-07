@@ -406,6 +406,7 @@ def migrate_from_1_2_1(globals_dict):
     
     def create_contacts_company(country_id, city_id, name, addr1, street_prefix, street, street_no, street_box, addr2, zip_code, region, language, email, url, phone, gsm, fax, remarks, vat_id, type_id, id, is_active, activity_id, bank_account1, bank_account2, prefix, hourly_rate):
         if email is None: email = ''
+        if remarks is None: remarks = ''
         return Company(country_id=country_id,city_id=city_id,name=name,addr1=addr1,street_prefix=street_prefix,street=street,street_no=street_no,street_box=street_box,addr2=addr2,zip_code=zip_code,region=region,language=language,email=email,url=url,phone=phone,gsm=gsm,fax=fax,remarks=remarks,vat_id=vat_id,type_id=type_id,id=id,is_active=is_active,activity_id=activity_id,bank_account1=bank_account1,bank_account2=bank_account2,prefix=prefix,hourly_rate=hourly_rate)    
     globals_dict.update(create_contacts_company=create_contacts_company)
 
