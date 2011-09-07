@@ -18,7 +18,9 @@ and loads the specified fixtures for all applications.
 It is a combination of Django's `syncdb`, `flush` and `loaddata` commands.
 It also writes log entries to your dblogger.
 
-Django's `flush` command may fail
+Django's `flush` command may fail after an upgrade if the new Lino 
+version defines new tables. In that case, flush sends a DROP TABLE 
+which fails because that table doesn't exist.
 
 """
 

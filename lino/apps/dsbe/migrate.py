@@ -458,6 +458,10 @@ def migrate_from_1_2_1(globals_dict):
     def create_cal_task(id, user_id, created, modified, owner_type_id, owner_id, person_id, company_id, start_date, start_time, summary, description, access_class, sequence, alarm_value, alarm_unit, dt_alarm, due_date, due_time, done, percent, status, auto_type):
         owner_type_id = new_contenttype(owner_type_id)
         user_id = new_user_id(user_id)
+        if access_class is None: access_class = ''
+        if alarm_unit is None: alarm_unit = ''
+        if summary is None: summary = ''
+        if status is None: status = ''
         if person_id:
             project_id=person_id
             if company_id:
