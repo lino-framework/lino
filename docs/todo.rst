@@ -21,10 +21,7 @@ Short-term
     JS JavaScript framework. Our flagship product is Ext Calendar Pro, a 
     professional calendar component suite."
     "Extensible is dual-licensed, just like Ext JS."
-
     
-#.  :term:`watch_tim` testen (nach den Änderungen von #47)
-
 #.  :mod:`lino.modlib.mails.models`: 
     InMail und OutMail könnten eine einzige Tabelle sein. 
     `Recipient` würde dann zwei neue Felder `received` 
@@ -38,23 +35,11 @@ Short-term
     setzen.
 
 
-#.  :mod:`lino.modlib.jobs.models`: 
-    Regime und Stundenplan als selbstlernende foreign 
-    keys statt Textfelder mit hardkodierter Auswahlliste.
-
 #.  Remote calendars (:doc:`/tickets/47`):
-    - Event.save() must update the remote calendar.
-      In fact it must set a status flag to "ready to send" 
-      (not directly update because the save should not fail when 
-      only just the calendar server has a problem), and there 
-      must be a background process that sends these mails. 
-      New field `Calendar.last_save`.
     - recursion rules and recursive events
     - get calendarserver running on :term:`Jana`.
     
-#.  Notizen per E-Mail verschicken können. 
-    Dann würden die Eupener das neue Modul vielleicht benutzen.
-    
+#.  Notizen per E-Mail verschicken können.    
     Soll Text der Notiz in den Body der E-Mail kopiert werden 
     und dort bearbeitbar sein? Dadurch würden die Benutzer allerdings 
     zu redundanter Arbeitsweise erzogen... zu meditieren.
@@ -68,7 +53,9 @@ Short-term
     automatisch ihre Mitgliedsadressen expandieren müssen, 
     wenn sie als Recipient einer Email fungieren.
     Das könnte aber auch bei Firmen und sogar bei Personen ein 
-    interessantes Feature sein... zu meditieren.
+    interessantes Feature sein, 
+    in diesem Fall brauchen wir gar keine eigene Tabelle Group.
+    Zu meditieren.
 
 #.  notes.Notes nicht mehr PartnerDocument sondern ProjectBased.
     In einer Notiz wie Nr. 1019 würde dann die Zuweisung zur 

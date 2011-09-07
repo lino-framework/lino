@@ -307,7 +307,7 @@ class Contract(ContractBase):
         if self.must_build:
             return []
         #~ return df + settings.LINO.CONTRACT_PRINTABLE_FIELDS
-        return df + self.PRINTABLE_FIELDS
+        return self.PRINTABLE_FIELDS
   
 
 class Contracts(reports.Report):

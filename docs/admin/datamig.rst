@@ -23,7 +23,7 @@ Create a dpy dump by invoking the :srcref:`dump </bash/dump>` script::
   
 This will create a file :file:`dYYYMMDD.py` in your 
 local `fixtures` directory (YYYYMMDD being the current date).
-Note that the script will refuse to overwrite an existing file. 
+The script will refuse to overwrite an existing file. 
 If you need more than one dump on the same day, 
 then we suggest to rename the dYYYYMMDD.py to dYYYYMMDDa.py)
  
@@ -33,7 +33,7 @@ your local copy of the Lino source repository::
   ./pull
   
 Then use Lino's :mod:`initdb <lino.management.commands.initdb>` 
-command to reset the database and reload the dump::
+command to flush the database and reload the dump::
   
   python manage.py initdb dYYYYMMDD
   
@@ -47,8 +47,13 @@ command::
 How to test whether a data migration worked correctly
 -----------------------------------------------------
 
-But if everything seems okay, 
-here is one more simple test that you should run when 
+When :mod:`initdb <lino.management.commands.initdb>` 
+successfully terminated, then there are good chances 
+that your database has been successfully migrated. 
+
+You should now test your new Lino version.
+
+But here is one more automated test that you may run when 
 there are no errors and tracebacks and everything *seems* 
 okay.
 

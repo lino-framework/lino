@@ -58,7 +58,7 @@ class Command(BaseCommand):
         using = options.get('database', DEFAULT_DB_ALIAS)
         dbname = settings.DATABASES[using]['NAME']
         if options.get('interactive'):
-            if not confirm("Gonna flush your database (%s).\nAre you sure (y/n) ?" % dbname):
+            if not confirm("We are going to flush your database (%s).\nAre you sure (y/n) ?" % dbname):
                 raise CommandError("User abort.")
         #~ logLevel = dblogger.logger.level
         #~ if logLevel > logging.DEBUG:
@@ -70,7 +70,7 @@ class Command(BaseCommand):
         
         dblogger.info("Lino initdb %s started on database %s.", args, dbname)
         dblogger.info(lino.welcome_text())
-        options.update(interactive=False)
+        #~ options.update(interactive=False)
         #~ app_list = [models.get_app(app_label) for app_label in app_labels()]
         #~ for app in app_list:
             #~ # app_label = app.__name__.split('.')[-2]
@@ -89,7 +89,7 @@ class Command(BaseCommand):
         
         #~ call_command('reset',*apps,**options)
         #~ call_command('syncdb',load_initial_data=False,**options)
-        call_command('flush',**options)
+        call_command('flush',verbosity=0,interactive=False)
         #~ call_command('syncdb',**options)
         #~ call_command('flush',**options)
         call_command('loaddata',*args,**options)

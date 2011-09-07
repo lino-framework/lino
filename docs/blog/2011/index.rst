@@ -241,6 +241,7 @@ As long as nobody protests, I'll save some time by writing in German.
   |br| 
   05
   :doc:`06 <0906>`
+  :doc:`07 <0907>`
   |br| 
   |br| 
   |br|  	
