@@ -401,6 +401,7 @@ def migrate_from_1_2_1(globals_dict):
     
     def create_dsbe_personsearch(id, user_id, title, aged_from, aged_to, sex, only_my_persons, coached_by_id, period_from, period_until):
         user_id = new_user_id(user_id)
+        if sex is None: sex = ''
         coached_by_id = new_user_id(coached_by_id)
         return PersonSearch(id=id,user_id=user_id,title=title,aged_from=aged_from,aged_to=aged_to,sex=sex,only_my_persons=only_my_persons,coached_by_id=coached_by_id,period_from=period_from,period_until=period_until)
     globals_dict.update(create_dsbe_personsearch=create_dsbe_personsearch)
@@ -422,6 +423,8 @@ def migrate_from_1_2_1(globals_dict):
         if birth_place is None: birth_place = ''
         if civil_state is None: civil_state = ''
         if sex is None: sex = ''
+        if gesdos_id is None: gesdos_id = ''
+        if card_number is None: card_number = ''
         coach1_id = new_user_id(coach1_id)
         coach2_id = new_user_id(coach2_id)
         return Person(country_id=country_id,city_id=city_id,name=name,addr1=addr1,street_prefix=street_prefix,street=street,street_no=street_no,street_box=street_box,addr2=addr2,zip_code=zip_code,region=region,language=language,email=email,url=url,phone=phone,gsm=gsm,fax=fax,remarks=remarks,first_name=first_name,last_name=last_name,title=title,sex=sex,
@@ -437,6 +440,11 @@ def migrate_from_1_2_1(globals_dict):
         if not company_id: return None # field was nullable
         return Role(id=id,child_id=person_id,parent_id=company_id,type_id=type_id)
     globals_dict.update(create_contacts_contact=create_contacts_contact)
+    
+    def create_dsbe_wantedlanguageknowledge(id, search_id, language_id, spoken, written):
+        if spoken is None: spoken = ''
+        return WantedLanguageKnowledge(id=id,search_id=search_id,language_id=language_id,spoken=spoken,written=written)    
+    globals_dict.update(create_dsbe_wantedlanguageknowledge=create_dsbe_wantedlanguageknowledge)
     
 
     def create_cal_task(id, user_id, created, modified, owner_type_id, owner_id, person_id, company_id, start_date, start_time, summary, description, access_class, sequence, alarm_value, alarm_unit, dt_alarm, due_date, due_time, done, percent, status, auto_type):
@@ -465,6 +473,7 @@ def migrate_from_1_2_1(globals_dict):
             dblogger.warning("Dropping VSE Job %s" % 
                 list((id, name, type_id, provider_id, contract_type_id, hourly_rate, capacity, remark)))
             return None
+        if remark is None: remark = ''
         return Job(id=id,name=name,type_id=type_id,provider_id=provider_id,contract_type_id=contract_type_id,hourly_rate=hourly_rate,capacity=capacity,remark=remark)    
     globals_dict.update(create_jobs_job=create_jobs_job)
 
