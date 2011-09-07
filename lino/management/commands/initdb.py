@@ -13,15 +13,22 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Performs a database reset *for all installed apps* 
-and loads the specified fixtures for all applications.  
-It is a combination of Django's `reset`, `syncdb`, and `loaddata` commands.
-It also writes log entries to your dblogger.
+Performs a database reset, removing 
+*all existing tables* from the database 
+(not only Django tables), 
+then runs Django's standard `syncdb` and `loaddata` 
+commands to load the specified fixtures for all applications.
+Also writes log entries to your dblogger.
 
 Django's `flush` command may fail after an upgrade if the new Lino 
 version defines new tables. In that case, flush sends a DROP TABLE 
-which fails because that table doesn't exist. See :doc:`/blog/2011/0907`.
+which fails because that table doesn't exist. 
 
+See also ticket :doc:`/tickets/50`.
+
+dbinit is a digested copy of Django's flush and reset commands.
+Basic difference is that we 
+by calling sql_flush with only_django=False
 
 
 """
@@ -33,7 +40,7 @@ from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 
-from django.core.management.sql import sql_delete
+from django.core.management.sql import sql_delete, sql_flush
 from django.core.management.color import no_style
 #~ from django.core.management.sql import sql_reset
 from django.db import connections, transaction, DEFAULT_DB_ALIAS
@@ -43,7 +50,7 @@ import lino
 from lino.core.coretools import app_labels
 from lino.utils import *
 
-USE_DJANGO_FLUSH = False
+USE_SQLDELETE = False
 
 class Command(BaseCommand):
     help = __doc__
@@ -69,40 +76,43 @@ class Command(BaseCommand):
         if options.get('interactive'):
             if not confirm("We are going to flush your database (%s).\nAre you sure (y/n) ?" % dbname):
                 raise CommandError("User abort.")
-        #~ logLevel = dblogger.logger.level
-        #~ if logLevel > logging.DEBUG:
-            #~ dblogger.logger.setLevel(logging.DEBUG)
             
         options.update(interactive=False)
         dblogger.info("Lino initdb %s started on database %s.", args, dbname)
         dblogger.info(lino.welcome_text())
-        if not USE_DJANGO_FLUSH:
-            conn = connections[using]
+        
+        sql_list = []
+        conn = connections[using]
+        
+        if USE_SQLDELETE:
             #~ sql_list = u'\n'.join(sql_reset(app, no_style(), conn)).encode('utf-8')
             app_list = [models.get_app(app_label) for app_label in app_labels()]
             for app in app_list:
                 # app_label = app.__name__.split('.')[-2]
-                sql_list = sql_delete(app,no_style(),conn)
+                sql_list.extend(sql_delete(app,no_style(),conn))
                 # print app_label, ':', sql_list
-                try:
-                    cursor = conn.cursor()
-                    for sql in sql_list:
-                        # print sql
-                        cursor.execute(sql)
-                except Exception, e:
-                    transaction.rollback_unless_managed()
-                    raise
-            transaction.commit_unless_managed()
-        
+        else:
+            #~ call_command('flush',verbosity=0,interactive=False)
+            #~ call_command('flush',**options)
+            sql_list.extend(sql_flush(no_style(), conn, only_django=False))
+            
+        try:
+            cursor = conn.cursor()
+            for sql in sql_list:
+                # print sql
+                cursor.execute(sql)
+        except Exception, e:
+            transaction.rollback_unless_managed(using=using)
+            raise
+            
+        transaction.commit_unless_managed()
         
         #~ call_command('reset',*apps,**options)
         #~ call_command('syncdb',load_initial_data=False,**options)
-        if USE_DJANGO_FLUSH:
-            call_command('flush',verbosity=0,interactive=False)
-        else:
-            call_command('syncdb',**options)
-        #~ call_command('flush',**options)
+        #~ if USE_SQLDELETE:
+        
+        call_command('syncdb',**options)            
+        
         call_command('loaddata',*args,**options)
-        #~ if logLevel > logging.DEBUG:
-            #~ dblogger.logger.setLevel(logLevel)
+        
         dblogger.info("Lino initdb done %s on database %s.", args, dbname)

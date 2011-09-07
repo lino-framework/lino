@@ -1,6 +1,9 @@
 20110907
 ========
 
+Lino 1.2.2 has been released
+============================
+
 I just discovered that I had many of my `CharField` with null=True. 
 This is just the opposite of what Django wants.
 Added assertion in Lino kernel to avoid this in the future.
@@ -12,8 +15,10 @@ the implicit flush (or syncdb) command who looked for `initial_data` fixtures
 and never found any (because I prefer `std`).
 
 
-I reverted my yesterday's changes to initdb. Django's `flush` 
-command may cause the following error when applied before a 
+I reverted my yesterday's changes to initdb 
+(see ticket :doc:`/tickets/50`).
+Django's `flush` 
+command caused the following error during the 
 database migration::
 
   Error: Database mysite couldn't be flushed. Possible reasons:
@@ -23,6 +28,13 @@ database migration::
   Hint: Look at the output of 'django-admin.py sqlflush'. That's the SQL this command wasn't able to run.
   The full error: (1146, "Table 'mysite.contacts_roletype' doesn't exist")
 
-I guess that Django's flush doesn't add an IF EXIST clause to the DROP TABLE statement.
+This is because Django's flush tries to delete all tables 
+that *should* exist, without asking whether they actually do.
+dbinit must work after an upgrade and before the database migration.
 
 Released :doc:`/releases/20110907` and installed in Eupen.
+
+dbinit problems
+===============
+
+Another thing to try for ticket :doc:`/tickets/50`.

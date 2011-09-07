@@ -21,7 +21,7 @@ One user reports the following error message during :term:`initdb`::
 
   django.db.utils.IntegrityError: (1217, 'Cannot delete or update a parent row: a foreign key constraint fails') 
 
-No explanation yet.
+No explanation yet. Ticket :doc:`/tickets/50`
 
 But after updating my Django copy from 1.4 pre-alpha SVN-16376 to 16714, 
 I realized that the new Django version 

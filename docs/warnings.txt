@@ -1,3 +1,8 @@
-T:\hgwork\lino\docs\releases\20110907.rst:26: WARNING: py:class reference target not found: lino.fields.FieldSet
-T:\hgwork\lino\docs\releases\20110907.rst:38: WARNING: py:mod reference target not found: lino.modlib.jobs.models.ContractsOverview
-T:\hgwork\lino\docs\releases\20110907.rst:66: WARNING: xfile reference target not found: doctemplates
+T:\hgwork\lino\docs\autodoc\lino.rst:11: WARNING: py:class reference target not found: object
+T:\hgwork\lino\docs\autodoc\lino.rst:127: WARNING: py:attr reference target not found: date_format_strftime
+T:\hgwork\lino\docs\autodoc\lino.rst:127: WARNING: py:attr reference target not found: date_format_extjs
+T:\hgwork\lino\docs\autodoc\lino.rst:144: WARNING: py:attr reference target not found: time_format_strftime
+T:\hgwork\lino\docs\autodoc\lino.rst:144: WARNING: py:attr reference target not found: time_format_extjs
+T:\hgwork\lino\docs\autodoc\lino.rst:161: WARNING: xfile reference target not found: fixtures
+T:\hgwork\lino\docs\autodoc\lino.rst:288: WARNING: py:mod reference target not found: lino.test_apps.1
+T:\hgwork\lino\docs\autodoc\lino.management.rst:1: WARNING: py:mod reference target not found: lino.management
