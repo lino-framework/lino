@@ -182,7 +182,10 @@ class ChoiceListField(models.CharField):
     def to_python(self, value):
         if isinstance(value,babel.BabelChoice):
             return value
-        return self.choicelist.to_python(value)
+        value = self.choicelist.to_python(value)
+        if value is None:
+            value = ''
+        return value
         
     def get_prep_value(self, value):
         if value:

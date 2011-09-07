@@ -314,6 +314,7 @@ def migrate_from_1_2_1(globals_dict):
     PersonSearch = resolve_model("dsbe.PersonSearch")
     WantedLanguageKnowledge = resolve_model("dsbe.WantedLanguageKnowledge")
     LanguageKnowledge = resolve_model("dsbe.LanguageKnowledge")
+    Study = resolve_model("dsbe.Study")
     
     globals_dict.update(ExamPolicy = resolve_model("isip.ExamPolicy"))
     globals_dict.update(ContractEnding = resolve_model("isip.ContractEnding"))
@@ -340,7 +341,14 @@ def migrate_from_1_2_1(globals_dict):
         return SiteConfig(id=id,default_build_method=default_build_method,site_company_id=site_company_id,job_office_id=job_office_id,propgroup_skills_id=propgroup_skills_id,propgroup_softskills_id=propgroup_softskills_id,propgroup_obstacles_id=propgroup_obstacles_id,residence_permit_upload_type_id=residence_permit_upload_type_id,work_permit_upload_type_id=work_permit_upload_type_id,driving_licence_upload_type_id=driving_licence_upload_type_id,next_partner_id=next_partner_id)
     globals_dict.update(create_lino_siteconfig=create_lino_siteconfig)
 
+    def create_dsbe_study(id, country_id, city_id, person_id, type_id, content, started, stopped, success, language_id, school, remarks):
+        if school is None: school = ''
+        if remarks is None: remarks = ''
+        if content is None: content = ''
+        return Study(id=id,country_id=country_id,city_id=city_id,person_id=person_id,type_id=type_id,content=content,started=started,stopped=stopped,success=success,language_id=language_id,school=school,remarks=remarks)        
+    globals_dict.update(create_dsbe_study=create_dsbe_study)
         
+    
     def create_users_user(id, username, first_name, last_name, email, is_staff, is_expert, is_active, is_superuser, last_login, date_joined):
         if email is None: email = ''
         return User(id=new_user_id(id),username=username,first_name=first_name,last_name=last_name,email=email,is_staff=is_staff,is_expert=is_expert,is_active=is_active,is_superuser=is_superuser,last_login=last_login,date_joined=date_joined)
@@ -374,6 +382,7 @@ def migrate_from_1_2_1(globals_dict):
         if regime is None: regime = ''
         if schedule is None: schedule = ''
         if refund_rate is None: refund_rate = ''
+        if reference_person is None: reference_person = ''
         user_asd_id = new_user_id(user_asd_id)
         ctype = CONTRACT_TYPES.get(type_id)
         if ctype.name.startswith('VSE'):
