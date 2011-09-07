@@ -344,6 +344,7 @@ def setup_my_menu(site,ui,user,m):
   
 def setup_config_menu(site,ui,user,m): 
     m  = m.add_menu("isip",_("~ISIP"))
+    m.add_action('isip.ContractTypes')
     m.add_action('isip.ContractEndings')
     m.add_action('isip.ExamPolicies')
   
