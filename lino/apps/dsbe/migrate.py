@@ -370,6 +370,8 @@ def migrate_from_1_2_1(globals_dict):
     globals_dict.update(create_links_link=create_links_link)
     
     def create_jobs_contract(id, user_id, must_build, person_id, provider_id, contact_id, language, job_id, type_id, applies_from, applies_until, date_decided, date_issued, duration, regime, schedule, hourly_rate, refund_rate, reference_person, responsibilities, stages, goals, duties_asd, duties_dsbe, duties_company, duties_person, user_asd_id, exam_policy_id, ending_id, date_ended):
+        if regime is None: regime = ''
+        if schedule is None: schedule = ''
         user_asd_id = new_user_id(user_asd_id)
         ctype = CONTRACT_TYPES.get(type_id)
         if ctype.name.startswith('VSE'):
