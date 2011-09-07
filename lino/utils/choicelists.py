@@ -183,14 +183,14 @@ class ChoiceListField(models.CharField):
         if isinstance(value,babel.BabelChoice):
             return value
         value = self.choicelist.to_python(value)
-        if value is None:
+        if value is None: # see 20110907
             value = ''
         return value
         
     def get_prep_value(self, value):
         if value:
             return value.value
-        return ''
+        return '' # see 20110907
         #~ return None
         
     def value_to_string(self, obj):
