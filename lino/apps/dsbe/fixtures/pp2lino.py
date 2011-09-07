@@ -55,8 +55,6 @@ from lino.apps.dsbe.models import Company, Person, City, Country, Note, PersonGr
 from lino.modlib.users.models import User
 from lino.modlib.jobs import models as jobs
 from lino.modlib.isip import models as isip
-#~ from lino.modlib.jobs.models import Job, Contract, JobProvider
-#~ from lino.modlib.isip.models import ContractEnding, ExamPolicy, ContractType
 
 from lino.utils.mdbtools import Loader
 
@@ -477,15 +475,15 @@ OFFSET_CONTRACT_CPAS = 2000
 def get_or_create_job(provider,contract_type):
     try:
         #~ if provider_id:
-        return Job.objects.get(provider=provider,contract_type=contract_type)
+        return jobs.Job.objects.get(provider=provider,contract_type=contract_type)
         #~ else:
             #~ return Job.objects.get(provider__isnull=True,contract_type__id=contract_type_id)
-    except Job.DoesNotExist:
+    except jobs.Job.DoesNotExist:
         if provider is None:
             name = 'Job%s(interne)' % contract_type.id
         else:
             name = 'Job%s@%s' % (contract_type.id,provider)
-        job = Job(
+        job = jobs.Job(
             provider=provider,
             contract_type=contract_type,
             name=name
@@ -617,7 +615,7 @@ class UsersISPLoader(LinoMdbLoader):
 class JobProviderLoader(LinoMdbLoader):
     table_name = 'TBEndroitMiseAuTravail'
     
-    model = JobProvider
+    model = jobs.JobProvider
     headers = u"""
     IDEndroitMiseAuTravail EndroitMiseAuTravail IDStatutJuridique 
     NumeroInitiativeEconomieSociale 
