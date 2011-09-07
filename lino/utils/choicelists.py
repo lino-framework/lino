@@ -190,7 +190,8 @@ class ChoiceListField(models.CharField):
     def get_prep_value(self, value):
         if value:
             return value.value
-        return None
+        return ''
+        #~ return None
         
     def value_to_string(self, obj):
         value = self._get_val_from_obj(obj)
