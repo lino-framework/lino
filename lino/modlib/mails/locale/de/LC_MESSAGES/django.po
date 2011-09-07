@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.mails\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-01 00:56+0100\n"
+"POT-Creation-Date: 2011-09-07 02:49+0100\n"
 "PO-Revision-Date: 2011-09-01 02:59+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de\n"
@@ -28,8 +28,7 @@ msgstr "E-Mail senden"
 msgid "Recipient"
 msgstr "Empfänger"
 
-#: .\models.py:161
-#: .\models.py:222
+#: .\models.py:161 .\models.py:225
 msgid "Recipients"
 msgstr "Empfänger"
 
@@ -49,39 +48,39 @@ msgstr ""
 msgid "Subject"
 msgstr "Betreff"
 
-#: .\models.py:210
+#: .\models.py:213
 msgid "Body"
 msgstr "Inhalt"
 
-#: .\models.py:248
+#: .\models.py:251
 msgid "Incoming Mail"
 msgstr "Posteingang"
 
-#: .\models.py:249
+#: .\models.py:252
 msgid "Incoming Mails"
 msgstr "Posteingänge"
 
-#: .\models.py:260
+#: .\models.py:263
 msgid "Outgoing Mail"
 msgstr "Postausgang"
 
-#: .\models.py:261
+#: .\models.py:264
 msgid "Outgoing Mails"
 msgstr "Posteingänge"
 
-#: .\models.py:276
+#: .\models.py:279
 msgid "Attachment"
 msgstr "Anhang"
 
-#: .\models.py:277
+#: .\models.py:280
 msgid "Attachments"
 msgstr "Anhänge"
 
-#: .\models.py:302
+#: .\models.py:305
 msgid "My Incoming Mails"
 msgstr "Mein Posteingang"
 
-#: .\models.py:357
+#: .\models.py:360
 msgid "~Mails"
 msgstr "~E-Mails"
 
@@ -92,4 +91,3 @@ msgstr "Empfängerart"
 #: .\config\contacts\Contact\80_mails.dtl.py:3
 msgid "Mails"
 msgstr "E-Mails"
-

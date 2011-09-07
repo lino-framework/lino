@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.jobs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-01 00:53+0100\n"
-"PO-Revision-Date: 2011-08-26 16:20+0200\n"
+"POT-Creation-Date: 2011-09-07 02:49+0100\n"
+"PO-Revision-Date: 2011-09-07 04:51+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -16,218 +16,204 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: .\models.py:89 .\models.py:170 .\models.py:509
-msgid "Job Provider"
-msgstr "Stellenanbieter"
+#: .\models.py:91
+msgid "ISIP Contract Type"
+msgstr "VSE-Vertragsart"
 
-#: .\models.py:90
-msgid "Job Providers"
-msgstr "Stellenanbieter"
+#: .\models.py:92
+msgid "ISIP Contract Types"
+msgstr "VSE-Vertragsarten"
 
-#: .\models.py:112 .\models.py:181 .\models.py:512
-msgid "Contract Type"
-msgstr "Vertragsart"
-
-#: .\models.py:113
-msgid "Contract Types"
-msgstr "Vertragsarten"
-
-#: .\models.py:115
+#: .\models.py:94
 msgid "reference"
 msgstr "Referenz"
 
-#: .\models.py:126 .\models.py:212
+#: .\models.py:107
+#: .\models.py:174
 msgid "examination policy"
 msgstr "Auswertungsstrategie"
 
-#: .\models.py:127
+#: .\models.py:108
 msgid "examination policies"
 msgstr "Auswertungsstrategien"
 
-#: .\models.py:139
+#: .\models.py:120
 msgid "Contract Ending"
 msgstr "Vertragsbeendigung"
 
-#: .\models.py:140
+#: .\models.py:121
 msgid "Contract Endings"
 msgstr "Vertragsbeendigungen"
 
-#: .\models.py:142
+#: .\models.py:123
 msgid "designation"
 msgstr "Bezeichnung"
 
-#: .\models.py:164
-msgid "Contract"
-msgstr "Vertrag"
-
-#: .\models.py:165
-msgid "Contracts"
-msgstr "Verträge"
-
-#: .\models.py:168 .\models.py:567
+#: .\models.py:149
 msgid "Person"
 msgstr "Person"
 
-#: .\models.py:173
+#: .\models.py:154
 msgid "represented by"
 msgstr "Vertreten durch"
 
-#: .\models.py:179 .\models.py:496
-msgid "Job"
-msgstr "Stelle"
-
-#: .\models.py:183
+#: .\models.py:160
 msgid "applies from"
 msgstr "Laufzeit von"
 
-#: .\models.py:184
+#: .\models.py:161
 msgid "applies until"
 msgstr "Laufzeit bis"
 
-#: .\models.py:185
+#: .\models.py:162
 msgid "date decided"
 msgstr "Beschlossen am"
 
-#: .\models.py:186
+#: .\models.py:163
 msgid "date issued"
 msgstr "Ausgestellt am"
 
-#: .\models.py:187
-msgid "duration (days)"
-msgstr "Dauer (Arbeitstage)"
-
-#: .\models.py:190
-msgid "regime"
-msgstr "Regime"
-
-#: .\models.py:191
-msgid "schedule"
-msgstr "Stundenplan"
-
-#: .\models.py:192 .\models.py:514
-msgid "hourly rate"
-msgstr "Stundensatz"
-
-#: .\models.py:193
-msgid "refund rate"
-msgstr "Rückzahlung"
-
-#: .\models.py:196
-msgid "reference person"
-msgstr "Referenzperson"
-
-#: .\models.py:199
-msgid "responsibilities"
-msgstr "Aufgabenbereich"
-
-#: .\models.py:201
-msgid "stages"
-msgstr "Etappen"
-
-#: .\models.py:202
-msgid "goals"
-msgstr "Zielsetzungen"
-
-#: .\models.py:203
-msgid "duties ASD"
-msgstr "Verpflichtungen ASD"
-
-#: .\models.py:204
-msgid "duties DSBE"
-msgstr "Verpflichtungen DSBE"
-
-#: .\models.py:205
-msgid "duties company"
-msgstr "Verpflichtungen Firma"
-
-#: .\models.py:206
-msgid "duties person"
-msgstr "Verpflichtungen Person"
-
-#: .\models.py:208
+#: .\models.py:166
 msgid "responsible (ASD)"
 msgstr "Verantwortlicher (ASD)"
 
-#: .\models.py:215
+#: .\models.py:179
 msgid "Ending"
 msgstr "Beendigung"
 
-#: .\models.py:216
+#: .\models.py:180
 msgid "date ended"
 msgstr "Beendet am"
 
-#: .\models.py:322
-msgid "Due date reached"
-msgstr "Fälligkeitsdatum erreicht"
+#: .\models.py:250
+msgid "ISIP Contract"
+msgstr "VSE-Vertrag"
 
-#: .\models.py:424
+#: .\models.py:251
+msgid "ISIP Contracts"
+msgstr "VSE-Verträge"
+
+#: .\models.py:255
+msgid "Contract Type"
+msgstr "Vertragsart"
+
+#: .\models.py:258
+msgid "Company"
+msgstr "Firma"
+
+#: .\models.py:261
+msgid "stages"
+msgstr "Etappen"
+
+#: .\models.py:263
+msgid "goals"
+msgstr "Zielsetzungen"
+
+#: .\models.py:265
+msgid "duties ASD"
+msgstr "Verpflichtungen ASD"
+
+#: .\models.py:267
+msgid "duties DSBE"
+msgstr "Verpflichtungen DSBE"
+
+#: .\models.py:269
+msgid "duties company"
+msgstr "Verpflichtungen Firma"
+
+#: .\models.py:271
+msgid "duties person"
+msgstr "Verpflichtungen Person"
+
+#: .\models.py:280
 msgid "responsible (DSBE)"
 msgstr "Verantwortlicher (DSBE)"
 
-#: .\models.py:466
-msgid "My contracts"
-msgstr "Meine Verträge"
+#: .\models.py:331
+msgid "My PIIS contracts"
+msgstr "Meine VSE-Verträge"
 
-#: .\models.py:481 .\models.py:505
-msgid "Job Type"
-msgstr "Stellenart"
+#: .\models.py:346
+msgid "~ISIP"
+msgstr "~VSE"
 
-#: .\models.py:482
-msgid "Job Types"
-msgstr "Stellenarten"
+#~ msgid "Job Provider"
+#~ msgstr "Stellenanbieter"
 
-#: .\models.py:486
-msgid "Designation"
-msgstr "Bezeichnung"
+#~ msgid "Job Providers"
+#~ msgstr "Stellenanbieter"
 
-#: .\models.py:497
-msgid "Jobs"
-msgstr "Stellen"
+#~ msgid "Job"
+#~ msgstr "Stelle"
 
-#: .\models.py:501
-msgid "Name"
-msgstr "Name"
+#~ msgid "duration (days)"
+#~ msgstr "Dauer (Arbeitstage)"
 
-#: .\models.py:516
-msgid "capacity"
-msgstr "Kapazität"
+#~ msgid "regime"
+#~ msgstr "Regime"
 
-#: .\models.py:521 .\models.py:585
-msgid "Remark"
-msgstr "Bemerkung"
+#~ msgid "schedule"
+#~ msgstr "Stundenplan"
 
-#: .\models.py:563 .\models.py:564
-msgid "Job Requests"
-msgstr "Stellenanfragen"
+#~ msgid "hourly rate"
+#~ msgstr "Stundensatz"
 
-#: .\models.py:570
-msgid "Requested Job"
-msgstr "Angefragte Stelle"
+#~ msgid "refund rate"
+#~ msgstr "Rückzahlung"
 
-#: .\models.py:572
-msgid "date submitted"
-msgstr "eingereicht am "
+#~ msgid "reference person"
+#~ msgstr "Referenzperson"
 
-#: .\models.py:576
-msgid "Contract found"
-msgstr "Vertrag"
+#~ msgid "responsibilities"
+#~ msgstr "Aufgabenbereich"
 
-#: .\models.py:588
-#, python-format
-msgid "%(job)s request by %(person)s"
-msgstr "Stellenanfrage %(job)s von %(person)s"
+#~ msgid "Due date reached"
+#~ msgstr "Fälligkeitsdatum erreicht"
 
-#: .\models.py:642
-msgid "Contracts Situation"
-msgstr "Übersicht Verträge"
+#~ msgid "Job Type"
+#~ msgstr "Stellenart"
 
-#: .\models.py:681
-msgid "Candidates"
-msgstr "Kandidaten"
+#~ msgid "Job Types"
+#~ msgstr "Stellenarten"
 
-#: .\models.py:721
-msgid "is Job Provider"
-msgstr "Stellenanbieter"
+#~ msgid "Designation"
+#~ msgstr "Bezeichnung"
+
+#~ msgid "Jobs"
+#~ msgstr "Stellen"
+
+#~ msgid "Name"
+#~ msgstr "Name"
+
+#~ msgid "capacity"
+#~ msgstr "Kapazität"
+
+#~ msgid "Remark"
+#~ msgstr "Bemerkung"
+
+#~ msgid "Job Requests"
+#~ msgstr "Stellenanfragen"
+
+#~ msgid "Requested Job"
+#~ msgstr "Angefragte Stelle"
+
+#~ msgid "date submitted"
+#~ msgstr "eingereicht am "
+
+#~ msgid "Contract found"
+#~ msgstr "Vertrag"
+
+#~ msgid "%(job)s request by %(person)s"
+#~ msgstr "Stellenanfrage %(job)s von %(person)s"
+
+#~ msgid "Contracts Situation"
+#~ msgstr "Übersicht Verträge"
+
+#~ msgid "Candidates"
+#~ msgstr "Kandidaten"
+
+#~ msgid "is Job Provider"
+#~ msgstr "Stellenanbieter"
 
 #~ msgid "contract title"
 #~ msgstr "Vertragstitel"
@@ -911,9 +897,6 @@ msgstr "Stellenanbieter"
 
 #~ msgid "Migration"
 #~ msgstr "Ausländer"
-
-#~ msgid "Company"
-#~ msgstr "Firma"
 
 #, fuzzy
 #~ msgid "driving license expires in 14 days"

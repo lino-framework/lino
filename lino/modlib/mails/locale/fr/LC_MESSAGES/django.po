@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-01 00:56+0100\n"
+"POT-Creation-Date: 2011-09-07 02:49+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,7 +29,7 @@ msgstr ""
 msgid "Recipient"
 msgstr ""
 
-#: .\models.py:161 .\models.py:222
+#: .\models.py:161 .\models.py:225
 msgid "Recipients"
 msgstr ""
 
@@ -49,39 +49,39 @@ msgstr ""
 msgid "Subject"
 msgstr ""
 
-#: .\models.py:210
+#: .\models.py:213
 msgid "Body"
 msgstr ""
 
-#: .\models.py:248
+#: .\models.py:251
 msgid "Incoming Mail"
 msgstr ""
 
-#: .\models.py:249
+#: .\models.py:252
 msgid "Incoming Mails"
 msgstr ""
 
-#: .\models.py:260
+#: .\models.py:263
 msgid "Outgoing Mail"
 msgstr ""
 
-#: .\models.py:261
+#: .\models.py:264
 msgid "Outgoing Mails"
 msgstr ""
 
-#: .\models.py:276
+#: .\models.py:279
 msgid "Attachment"
 msgstr ""
 
-#: .\models.py:277
+#: .\models.py:280
 msgid "Attachments"
 msgstr ""
 
-#: .\models.py:302
+#: .\models.py:305
 msgid "My Incoming Mails"
 msgstr ""
 
-#: .\models.py:357
+#: .\models.py:360
 msgid "~Mails"
 msgstr ""
 

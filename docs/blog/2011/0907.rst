@@ -1,18 +1,18 @@
 20110907
 ========
 
-I just discovered that I have all my `CharField` with null=True, 
-and that this is just the opposite of what Django wants.
+I just discovered that I had many of my `CharField` with null=True. 
+This is just the opposite of what Django wants.
 Added assertion in Lino kernel to avoid this in the future.
 https://code.djangoproject.com/ticket/9590
 
 :mod:`initdb <lino.management.commands.initdb>` now no longer 
 displays the disturbing "No fixtures found". It came from 
-the implicit flush command who looked for `initial_data` fixtures 
+the implicit flush (or syncdb) command who looked for `initial_data` fixtures 
 and never found any (because I prefer `std`).
 
 
-No, I reverted my yesterday's changes to initdb. Django's flush 
+I reverted my yesterday's changes to initdb. Django's `flush` 
 command may cause the following error when applied before a 
 database migration::
 
@@ -23,4 +23,4 @@ database migration::
   Hint: Look at the output of 'django-admin.py sqlflush'. That's the SQL this command wasn't able to run.
   The full error: (1146, "Table 'mysite.contacts_roletype' doesn't exist")
 
-I guess that Django's flush doesn't an an IF EXIST clause to the DROP TABLE statement.
+I guess that Django's flush doesn't add an IF EXIST clause to the DROP TABLE statement.

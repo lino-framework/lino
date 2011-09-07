@@ -1,0 +1,7 @@
+:label: Detail
+:label_align: top
+
+main =
+    id name 
+    ref build_method template
+    ContractsByType

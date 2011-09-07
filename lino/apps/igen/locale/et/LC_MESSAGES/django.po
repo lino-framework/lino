@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-01 00:53+0100\n"
+"POT-Creation-Date: 2011-09-07 02:50+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,14 +29,14 @@ msgstr ""
 msgid "~My menu"
 msgstr ""
 
-#: .\settings.py:134
+#: .\settings.py:132
 msgid "E~xplorer"
 msgstr ""
 
-#: .\settings.py:143
+#: .\settings.py:142
 msgid "~Help"
 msgstr ""
 
-#: .\settings.py:144
+#: .\settings.py:143
 msgid "~User Manual"
 msgstr ""
