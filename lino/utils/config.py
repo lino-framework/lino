@@ -194,8 +194,10 @@ class Configured(object):
     def make_message_file(self):
         if not self.filename: return
         if self.cd is None: return
-        if self.cd.can_write: return
         fn = os.path.join(self.cd.name,self.filename)
+        if self.cd.can_write: 
+            logger.info("Not writing %s because cd.can_write",fn)
+            return
         if self.messages:
             write_message_file(fn,self.messages)
         

@@ -1886,20 +1886,20 @@ Model **OrderItem**
 
 OrderItem(id, pos, product_id, title, description, discount, unit_price, qty, total, document_id)
   
-=========== ============= ==========================
-name        type          verbose name              
-=========== ============= ==========================
-id          AutoField     ID                        
-pos         IntegerField  Position                  
-product     ForeignKey    Product (Toode)           
-title       CharField     title                     
-description RichTextField Description (Beschreibung)
-discount    IntegerField  Discount %                
-unit_price  PriceField    unit price                
-qty         QuantityField qty                       
-total       PriceField    total                     
-document    ForeignKey    order                     
-=========== ============= ==========================
+=========== ============= ==================================
+name        type          verbose name                      
+=========== ============= ==================================
+id          AutoField     ID                                
+pos         IntegerField  Position                          
+product     ForeignKey    Product (Toode)                   
+title       CharField     title                             
+description RichTextField Description (Beschreibung,Nimetus)
+discount    IntegerField  Discount %                        
+unit_price  PriceField    unit price                        
+qty         QuantityField qty                               
+total       PriceField    total                             
+document    ForeignKey    order                             
+=========== ============= ==================================
 
     
 Defined in :srcref:`/lino/modlib/sales/models.py`
@@ -2074,20 +2074,20 @@ Model **InvoiceItem**
 
 InvoiceItem(id, pos, product_id, title, description, discount, unit_price, qty, total, document_id)
   
-=========== ============= ==========================
-name        type          verbose name              
-=========== ============= ==========================
-id          AutoField     ID                        
-pos         IntegerField  Position                  
-product     ForeignKey    Product (Toode)           
-title       CharField     title                     
-description RichTextField Description (Beschreibung)
-discount    IntegerField  Discount %                
-unit_price  PriceField    unit price                
-qty         QuantityField qty                       
-total       PriceField    total                     
-document    ForeignKey    invoice                   
-=========== ============= ==========================
+=========== ============= ==================================
+name        type          verbose name                      
+=========== ============= ==================================
+id          AutoField     ID                                
+pos         IntegerField  Position                          
+product     ForeignKey    Product (Toode)                   
+title       CharField     title                             
+description RichTextField Description (Beschreibung,Nimetus)
+discount    IntegerField  Discount %                        
+unit_price  PriceField    unit price                        
+qty         QuantityField qty                               
+total       PriceField    total                             
+document    ForeignKey    invoice                           
+=========== ============= ==================================
 
     
 Defined in :srcref:`/lino/modlib/sales/models.py`

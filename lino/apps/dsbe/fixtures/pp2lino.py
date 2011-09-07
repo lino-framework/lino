@@ -51,10 +51,10 @@ from lino.utils import dblogger
 from lino.utils.instantiator import Instantiator
 from lino.tools import resolve_model
 
-from lino.apps.dsbe.models import Person, City, Country, Note, PersonGroup
+from lino.apps.dsbe.models import Company, Person, City, Country, Note, PersonGroup
 from lino.modlib.users.models import User
-from lino.modlib.jobs.models import Job, Contract, JobProvider, \
-  ContractEnding, ExamPolicy, ContractType, Company
+from lino.modlib.jobs.models import Job, Contract, JobProvider
+from lino.modlib.isip.models import ContractEnding, ExamPolicy, ContractType
 
 from lino.utils.mdbtools import Loader
 

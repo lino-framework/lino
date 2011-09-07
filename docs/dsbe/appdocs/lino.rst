@@ -27,21 +27,21 @@ Model **SiteConfig**
 
 SiteConfig(id, default_build_method)
   
-============================ ============ ======================================================================================================
-name                         type         verbose name                                                                                          
-============================ ============ ======================================================================================================
-id                           AutoField    ID                                                                                                    
-default_build_method         CharField    Default build method (Standard-Konstruktionsmethode,Méthode de constuction par défault)               
-next_partner_id              IntegerField The next automatic id for Person or Company (Nächste Partnernummer)                                   
-site_company                 ForeignKey   The company that runs this site (Firma, die diesen Site betreibt,La société ou tourne ce site)        
-job_office                   ForeignKey   Local job office (Lokales Arbeitsamt,Agence locale pour l'emploi ?)                                   
-propgroup_skills             ForeignKey   Skills Property Group (Eigenschaftsgruppe Fähigkeiten,Groupe de propriétés 'Skills')                  
-propgroup_softskills         ForeignKey   Soft Skills Property Group (Eigenschaftsgruppe Sozialkompetenzen,Groupe de propriétés 'Soft Skills')  
-propgroup_obstacles          ForeignKey   Obstacles Property Group (Eigenschaftsgruppe Hindernisse,Groupe de propriétés 'Obstacles')            
-residence_permit_upload_type ForeignKey   Upload Type for residence permit (Upload-Art Aufenthaltserlaubnis,Type d'upload "permis de résidence")
-work_permit_upload_type      ForeignKey   Upload Type for work permit (Upload-Art Arbeitserlaubnis,Type d'upload "permis de travail")           
-driving_licence_upload_type  ForeignKey   Upload Type for driving licence (Upload-Art Führerschein,Type d'upload "permis de conduire")          
-============================ ============ ======================================================================================================
+============================ ============ ===================================================================================================================================
+name                         type         verbose name                                                                                                                       
+============================ ============ ===================================================================================================================================
+id                           AutoField    ID                                                                                                                                 
+default_build_method         CharField    Default build method (Standard-Konstruktionsmethode,Méthode de constuction par défault)                                            
+next_partner_id              IntegerField The next automatic id for Person or Company (Nächste Partnernummer,Identifiant automatique pour la personne ounla société suivante)
+site_company                 ForeignKey   The company that runs this site (Firma, die diesen Site betreibt,La société ou tourne ce site)                                     
+job_office                   ForeignKey   Local job office (Lokales Arbeitsamt,Agence locale pour l'emploi ?)                                                                
+propgroup_skills             ForeignKey   Skills Property Group (Eigenschaftsgruppe Fähigkeiten,Groupe de propriétés 'Skills')                                               
+propgroup_softskills         ForeignKey   Soft Skills Property Group (Eigenschaftsgruppe Sozialkompetenzen,Groupe de propriétés 'Soft Skills')                               
+propgroup_obstacles          ForeignKey   Obstacles Property Group (Eigenschaftsgruppe Hindernisse,Groupe de propriétés 'Obstacles')                                         
+residence_permit_upload_type ForeignKey   Upload Type for residence permit (Upload-Art Aufenthaltserlaubnis,Type d'upload "permis de résidence")                             
+work_permit_upload_type      ForeignKey   Upload Type for work permit (Upload-Art Arbeitserlaubnis,Type d'upload "permis de travail")                                        
+driving_licence_upload_type  ForeignKey   Upload Type for driving licence (Upload-Art Führerschein,Type d'upload "permis de conduire")                                       
+============================ ============ ===================================================================================================================================
 
     
 Defined in :srcref:`/lino/models.py`

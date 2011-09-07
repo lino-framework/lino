@@ -776,10 +776,10 @@ gsm                         CharField         GSM
 fax                         CharField         Fax                                                                                 
 remarks                     TextField         Remarks (Bemerkungen,Remarques)                                                     
 contact_ptr                 OneToOneField     Contact (Kontakt)                                                                   
-first_name                  CharField         First name (Prénom)                                                                 
-last_name                   CharField         Last name (Nom de famille)                                                          
-title                       CharField         Title (Allocution)                                                                  
-sex                         CharField         Sex (Sexe)                                                                          
+first_name                  CharField         First name                                                                          
+last_name                   CharField         Last name                                                                           
+title                       CharField         Title                                                                               
+sex                         CharField         Sex                                                                                 
 birth_date                  DateField         Birth date (Geburtsdatum)                                                           
 birth_date_circa            BooleanField      not exact (ungenau)                                                                 
 is_active                   BooleanField      is active (aktiv,est actif)                                                         

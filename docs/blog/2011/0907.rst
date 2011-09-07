@@ -24,3 +24,5 @@ database migration::
   The full error: (1146, "Table 'mysite.contacts_roletype' doesn't exist")
 
 I guess that Django's flush doesn't add an IF EXIST clause to the DROP TABLE statement.
+
+Released :doc:`/releases/20110907` and installed in Eupen.

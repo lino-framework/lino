@@ -63,10 +63,10 @@ gsm           CharField     GSM
 fax           CharField     Fax                                                                          
 remarks       TextField     Remarks (Bemerkungen,Remarques)                                              
 contact_ptr   OneToOneField Contact (Kontakt)                                                            
-first_name    CharField     First name (Prénom)                                                          
-last_name     CharField     Last name (Nom de famille)                                                   
-title         CharField     Title (Allocution)                                                           
-sex           CharField     Sex (Sexe)                                                                   
+first_name    CharField     First name                                                                   
+last_name     CharField     Last name                                                                    
+title         CharField     Title                                                                        
+sex           CharField     Sex                                                                          
 username      CharField     username                                                                     
 is_staff      BooleanField  is staff                                                                     
 is_expert     BooleanField  is expert                                                                    

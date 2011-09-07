@@ -15,12 +15,14 @@
 """
 Performs a database reset *for all installed apps* 
 and loads the specified fixtures for all applications.  
-It is a combination of Django's `syncdb`, `flush` and `loaddata` commands.
+It is a combination of Django's `reset`, `syncdb`, and `loaddata` commands.
 It also writes log entries to your dblogger.
 
 Django's `flush` command may fail after an upgrade if the new Lino 
 version defines new tables. In that case, flush sends a DROP TABLE 
-which fails because that table doesn't exist.
+which fails because that table doesn't exist. See :doc:`/blog/2011/0907`.
+
+
 
 """
 

@@ -5,23 +5,23 @@ New features
 ------------
 
 #.  Es gibt jetzt zwei Arten von Verträgen: VSE-Verträge 
-    (:class:`lino.modelib.isip.models.Contract`) 
+    (:class:`lino.modlib.isip.models.Contract`) 
     und Arbeitsverträge 
-    (:class:`lino.modelib.jobs.models.Contract`).
+    (:class:`lino.modlib.jobs.models.Contract`).
     Dass die bisher in einer einzigen Tabelle waren, war 
     offenbar ein Analysefehler.
     Beide Modelle haben zwar eine Serie von gemeinsamen Feldern 
-    (:class:`lino.modelib.isip.models.ContractBase`),
+    (:class:`lino.modlib.isip.models.ContractBase`),
     aber eine gemeinsame Historik ist nicht nötig
     (sondern die Benutzer wollen die beiden lieber klar getrennt 
     haben in zwei Tabellen im Reiter "Verträge" einer Person)
     
 #.  New table `Contacts` contains both Persons and Companies.
-    Also es gibt jetzt eine Liste :menulabel:`Kontakte --> Alle Kontakte`, 
+    Also es gibt jetzt eine Liste :menuselection:`Kontakte --> Alle Kontakte`, 
     in der Personen, Organisationen und Benutzer zusammengefasst sind.
     
 #.  Die Liste der Kursanbieter und Stellenanbieter steht nun ebenfalls 
-    im Menü :menulabel:`Kontakte`.
+    im Menü :menuselection:`Kontakte`.
     
 #.  :class:`lino.fields.FieldSet`.
     Im Detail-Fenster Personen (Reiter 1 unten) sind die Felder zur 
@@ -44,7 +44,7 @@ New features
 Known issues
 ------------
 
-#.  :menulabel:`Kontakte --> Alle Kontakte`: 
+#.  :menuselection:`Kontakte --> Alle Kontakte`: 
     N.B.: in dieser Liste kann man momentan auch importierte Partner bearbeiten, 
     was ihr aber besser nicht tun solltet, weil das bei der nächsten 
     Synchronisierung verloren ginge.
@@ -52,6 +52,8 @@ Known issues
 #.  Der kleine Link "go" bei den MTI-Ankreuzfeldern funktioniert noch nicht.
 
 #.  Man kann nicht ohne weiteres auf den Besitzer einer Task springen.
+
+#.  Reitertitel "Contracts" ("Verträge") im Detail Person ist noch nicht übersetzt.
 
 Upgrade instructions
 --------------------
