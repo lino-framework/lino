@@ -431,6 +431,7 @@ def migrate_from_1_2_1(globals_dict):
         if card_issuer is None: card_issuer = ''
         if noble_condition is None: noble_condition = ''
         if unavailable_why is None: unavailable_why = ''
+        if job_agents is None: job_agents = ''
         coach1_id = new_user_id(coach1_id)
         coach2_id = new_user_id(coach2_id)
         return Person(country_id=country_id,city_id=city_id,name=name,addr1=addr1,street_prefix=street_prefix,street=street,street_no=street_no,street_box=street_box,addr2=addr2,zip_code=zip_code,region=region,language=language,email=email,url=url,phone=phone,gsm=gsm,fax=fax,remarks=remarks,first_name=first_name,last_name=last_name,title=title,sex=sex,
