@@ -12,11 +12,15 @@ the implicit flush command who looked for `initial_data` fixtures
 and never found any (because I prefer `std`).
 
 
-::
+No, I reverted my yesterday's changes to initdb. Django's flush 
+command may cause the following error when applied before a 
+database migration::
 
-  Error: Database dsbe_eupen couldn't be flushed. Possible reasons:
+  Error: Database mysite couldn't be flushed. Possible reasons:
     * The database isn't running or isn't configured correctly.
     * At least one of the expected database tables doesn't exist.
     * The SQL was invalid.
   Hint: Look at the output of 'django-admin.py sqlflush'. That's the SQL this command wasn't able to run.
-  The full error: (1146, "Table 'dsbe_eupen.contacts_roletype' doesn't exist")
+  The full error: (1146, "Table 'mysite.contacts_roletype' doesn't exist")
+
+I guess that Django's flush doesn't an an IF EXIST clause to the DROP TABLE statement.

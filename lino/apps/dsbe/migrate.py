@@ -315,6 +315,7 @@ def migrate_from_1_2_1(globals_dict):
     WantedLanguageKnowledge = resolve_model("dsbe.WantedLanguageKnowledge")
     LanguageKnowledge = resolve_model("dsbe.LanguageKnowledge")
     Study = resolve_model("dsbe.Study")
+    PersonProperty = resolve_model("properties.PersonProperty")
     
     globals_dict.update(ExamPolicy = resolve_model("isip.ExamPolicy"))
     globals_dict.update(ContractEnding = resolve_model("isip.ContractEnding"))
@@ -347,6 +348,12 @@ def migrate_from_1_2_1(globals_dict):
         if content is None: content = ''
         return Study(id=id,country_id=country_id,city_id=city_id,person_id=person_id,type_id=type_id,content=content,started=started,stopped=stopped,success=success,language_id=language_id,school=school,remarks=remarks)        
     globals_dict.update(create_dsbe_study=create_dsbe_study)
+    
+    
+    def create_properties_personproperty(id, group_id, property_id, value, person_id, remark):
+        if remark is None: remark = ''
+        return PersonProperty(id=id,group_id=group_id,property_id=property_id,value=value,person_id=person_id,remark=remark)    
+    globals_dict.update(create_properties_personproperty=create_properties_personproperty)
         
     
     def create_users_user(id, username, first_name, last_name, email, is_staff, is_expert, is_active, is_superuser, last_login, date_joined):
