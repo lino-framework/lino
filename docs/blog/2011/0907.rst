@@ -11,3 +11,12 @@ displays the disturbing "No fixtures found". It came from
 the implicit flush command who looked for `initial_data` fixtures 
 and never found any (because I prefer `std`).
 
+
+::
+
+  Error: Database dsbe_eupen couldn't be flushed. Possible reasons:
+    * The database isn't running or isn't configured correctly.
+    * At least one of the expected database tables doesn't exist.
+    * The SQL was invalid.
+  Hint: Look at the output of 'django-admin.py sqlflush'. That's the SQL this command wasn't able to run.
+  The full error: (1146, "Table 'dsbe_eupen.contacts_roletype' doesn't exist")

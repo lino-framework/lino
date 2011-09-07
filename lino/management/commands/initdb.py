@@ -64,33 +64,33 @@ class Command(BaseCommand):
         #~ if logLevel > logging.DEBUG:
             #~ dblogger.logger.setLevel(logging.DEBUG)
             
-        #~ conn = connections[using]
-
-        #~ sql_list = u'\n'.join(sql_reset(app, no_style(), conn)).encode('utf-8')
-        
+        options.update(interactive=False)
         dblogger.info("Lino initdb %s started on database %s.", args, dbname)
         dblogger.info(lino.welcome_text())
-        #~ options.update(interactive=False)
-        #~ app_list = [models.get_app(app_label) for app_label in app_labels()]
-        #~ for app in app_list:
-            #~ # app_label = app.__name__.split('.')[-2]
-            #~ sql_list = sql_delete(app,no_style(),conn)
-            #~ # print app_label, ':', sql_list
-            #~ try:
-                #~ cursor = conn.cursor()
-                #~ for sql in sql_list:
-                    #~ # print sql
-                    #~ cursor.execute(sql)
-            #~ except Exception, e:
-                #~ transaction.rollback_unless_managed()
-                #~ raise
-        #~ transaction.commit_unless_managed()
+        if True:
+            conn = connections[using]
+            #~ sql_list = u'\n'.join(sql_reset(app, no_style(), conn)).encode('utf-8')
+            app_list = [models.get_app(app_label) for app_label in app_labels()]
+            for app in app_list:
+                # app_label = app.__name__.split('.')[-2]
+                sql_list = sql_delete(app,no_style(),conn)
+                # print app_label, ':', sql_list
+                try:
+                    cursor = conn.cursor()
+                    for sql in sql_list:
+                        # print sql
+                        cursor.execute(sql)
+                except Exception, e:
+                    transaction.rollback_unless_managed()
+                    raise
+            transaction.commit_unless_managed()
         
         
         #~ call_command('reset',*apps,**options)
         #~ call_command('syncdb',load_initial_data=False,**options)
-        call_command('flush',verbosity=0,interactive=False)
-        #~ call_command('syncdb',**options)
+        if False:
+            call_command('flush',verbosity=0,interactive=False)
+        call_command('syncdb',**options)
         #~ call_command('flush',**options)
         call_command('loaddata',*args,**options)
         #~ if logLevel > logging.DEBUG:
