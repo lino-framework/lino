@@ -302,6 +302,7 @@ def migrate_from_1_2_1(globals_dict):
     Event = resolve_model("cal.Event")
     Task = resolve_model("cal.Task")
     Person = resolve_model("contacts.Person")
+    Company = resolve_model("contacts.Company")
     #~ Contract = resolve_model("jobs.Contract")
     Job = resolve_model("jobs.Job")
     Link = resolve_model("links.Link")
