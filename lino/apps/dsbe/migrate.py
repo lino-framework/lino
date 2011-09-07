@@ -312,6 +312,7 @@ def migrate_from_1_2_1(globals_dict):
     Upload = resolve_model("uploads.Upload")
     User = resolve_model("users.User")
     PersonSearch = resolve_model("dsbe.PersonSearch")
+    WantedLanguageKnowledge = resolve_model("dsbe.WantedLanguageKnowledge")
     
     globals_dict.update(ExamPolicy = resolve_model("isip.ExamPolicy"))
     globals_dict.update(ContractEnding = resolve_model("isip.ContractEnding"))
