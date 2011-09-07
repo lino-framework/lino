@@ -192,7 +192,7 @@ name_et    CharField      Designation (et)
 Defined in :srcref:`/lino/modlib/countries/models.py`
 
 Referenced from
-`lino.users.User.country`_, `lino.contacts.Contact.country`_, `lino.contacts.Person.country`_, `lino.contacts.Company.country`_, `lino.countries.City.country`_
+`lino.users.User.country`_, `lino.contacts.Contact.country`_, `lino.contacts.Person.country`_, `lino.contacts.Company.country`_, `lino.countries.City.country`_, `lino.sales.Customer.country`_
 
 
 
@@ -346,7 +346,7 @@ zip_code CharField  zip code
 Defined in :srcref:`/lino/modlib/countries/models.py`
 
 Referenced from
-`lino.users.User.city`_, `lino.contacts.Contact.city`_, `lino.contacts.Person.city`_, `lino.contacts.Company.city`_
+`lino.users.User.city`_, `lino.contacts.Contact.city`_, `lino.contacts.Person.city`_, `lino.contacts.Company.city`_, `lino.sales.Customer.city`_
 
 
 

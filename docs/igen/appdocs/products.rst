@@ -191,7 +191,7 @@ name_et        CharField      Designation (et)
 Defined in :srcref:`/lino/modlib/products/models.py`
 
 Referenced from
-
+`lino.sales.OrderItem.product`_, `lino.sales.InvoiceItem.product`_
 
 
 

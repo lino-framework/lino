@@ -47,7 +47,7 @@ name_et CharField      Designation (et)
 Defined in :srcref:`/lino/modlib/sales/models.py`
 
 Referenced from
-`lino.contacts.Contact.payment_term`_, `lino.sales.SalesRule.payment_term`_, `lino.sales.Order.payment_term`_, `lino.sales.Invoice.payment_term`_
+`lino.sales.SalesRule.payment_term`_, `lino.sales.Customer.payment_term`_, `lino.sales.Order.payment_term`_, `lino.sales.Invoice.payment_term`_
 
 
 
@@ -648,6 +648,404 @@ Type: ForeignKey
 
 
 .. index::
+   pair: model; Customer
+
+.. _lino.sales.Customer:
+
+------------------
+Model **Customer**
+------------------
+
+
+
+
+A Customer is a Contact that can receive sales invoices.
+
+  
+============= ============= ==========================================================================================================
+name          type          verbose name                                                                                              
+============= ============= ==========================================================================================================
+id            AutoField     ID                                                                                                        
+country       ForeignKey    Country (Land)                                                                                            
+city          ForeignKey    City (Stadt)                                                                                              
+name          CharField     Name (Nom,Nimi)                                                                                           
+addr1         CharField     Address line before street (Adresszeile vor Straße,Ligne avant le nom de rue,Addressi lisatext enne tänav)
+street_prefix CharField     Street prefix (Präfix Straße,Préfixe rue)                                                                 
+street        CharField     Street (Straße,Rue,Tänav)                                                                                 
+street_no     CharField     No. (Nr.,N°,Nr.)                                                                                          
+street_box    CharField     Box (boîte,PK/krt)                                                                                        
+addr2         CharField     Address line after street (Adresszeile nach Straße,Ligne après le nom de rue,Aadressilisa pärast tänav)   
+zip_code      CharField     Zip code (Postleitzahl,Code postal,Sihtnumber)                                                            
+region        CharField     Region (Région,Maakond)                                                                                   
+language      LanguageField Language (Sprache,Langue)                                                                                 
+email         EmailField    E-Mail (E-mail)                                                                                           
+url           URLField      URL                                                                                                       
+phone         CharField     Phone (Telefon,Téléphone,Telefon)                                                                         
+gsm           CharField     GSM                                                                                                       
+fax           CharField     Fax                                                                                                       
+remarks       TextField     Remarks (Bemerkungen,Remarques,Märkused)                                                                  
+contact_ptr   OneToOneField Contact (Kontakt)                                                                                         
+payment_term  ForeignKey    Payment Term                                                                                              
+vat_exempt    BooleanField  vat exempt                                                                                                
+item_vat      BooleanField  item vat                                                                                                  
+============= ============= ==========================================================================================================
+
+    
+Defined in :srcref:`/lino/modlib/sales/models.py`
+
+Referenced from
+`lino.sales.Order.customer`_, `lino.sales.Invoice.customer`_
+
+
+
+.. index::
+   single: field;id
+   
+.. _lino.sales.Customer.id:
+
+Field **Customer.id**
+=====================
+
+
+
+
+
+Type: AutoField
+
+   
+.. index::
+   single: field;country
+   
+.. _lino.sales.Customer.country:
+
+Field **Customer.country**
+==========================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;city
+   
+.. _lino.sales.Customer.city:
+
+Field **Customer.city**
+=======================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;name
+   
+.. _lino.sales.Customer.name:
+
+Field **Customer.name**
+=======================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;addr1
+   
+.. _lino.sales.Customer.addr1:
+
+Field **Customer.addr1**
+========================
+
+
+
+Address line before street
+
+Type: CharField
+
+   
+.. index::
+   single: field;street_prefix
+   
+.. _lino.sales.Customer.street_prefix:
+
+Field **Customer.street_prefix**
+================================
+
+
+
+Text to print before name of street, but to ignore for sorting.
+
+Type: CharField
+
+   
+.. index::
+   single: field;street
+   
+.. _lino.sales.Customer.street:
+
+Field **Customer.street**
+=========================
+
+
+
+Name of street. Without house number.
+
+Type: CharField
+
+   
+.. index::
+   single: field;street_no
+   
+.. _lino.sales.Customer.street_no:
+
+Field **Customer.street_no**
+============================
+
+
+
+House number
+
+Type: CharField
+
+   
+.. index::
+   single: field;street_box
+   
+.. _lino.sales.Customer.street_box:
+
+Field **Customer.street_box**
+=============================
+
+
+
+Text to print after :attr:`steet_no` on the same line
+
+Type: CharField
+
+   
+.. index::
+   single: field;addr2
+   
+.. _lino.sales.Customer.addr2:
+
+Field **Customer.addr2**
+========================
+
+
+
+Address line to print below street line
+
+Type: CharField
+
+   
+.. index::
+   single: field;zip_code
+   
+.. _lino.sales.Customer.zip_code:
+
+Field **Customer.zip_code**
+===========================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;region
+   
+.. _lino.sales.Customer.region:
+
+Field **Customer.region**
+=========================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;language
+   
+.. _lino.sales.Customer.language:
+
+Field **Customer.language**
+===========================
+
+
+
+
+
+Type: LanguageField
+
+   
+.. index::
+   single: field;email
+   
+.. _lino.sales.Customer.email:
+
+Field **Customer.email**
+========================
+
+
+
+
+
+Type: EmailField
+
+   
+.. index::
+   single: field;url
+   
+.. _lino.sales.Customer.url:
+
+Field **Customer.url**
+======================
+
+
+
+
+
+Type: URLField
+
+   
+.. index::
+   single: field;phone
+   
+.. _lino.sales.Customer.phone:
+
+Field **Customer.phone**
+========================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;gsm
+   
+.. _lino.sales.Customer.gsm:
+
+Field **Customer.gsm**
+======================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;fax
+   
+.. _lino.sales.Customer.fax:
+
+Field **Customer.fax**
+======================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;remarks
+   
+.. _lino.sales.Customer.remarks:
+
+Field **Customer.remarks**
+==========================
+
+
+
+
+
+Type: TextField
+
+   
+.. index::
+   single: field;contact_ptr
+   
+.. _lino.sales.Customer.contact_ptr:
+
+Field **Customer.contact_ptr**
+==============================
+
+
+
+
+
+Type: OneToOneField
+
+   
+.. index::
+   single: field;payment_term
+   
+.. _lino.sales.Customer.payment_term:
+
+Field **Customer.payment_term**
+===============================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;vat_exempt
+   
+.. _lino.sales.Customer.vat_exempt:
+
+Field **Customer.vat_exempt**
+=============================
+
+
+
+
+
+Type: BooleanField
+
+   
+.. index::
+   single: field;item_vat
+   
+.. _lino.sales.Customer.item_vat:
+
+Field **Customer.item_vat**
+===========================
+
+
+
+
+
+Type: BooleanField
+
+   
+
+
+.. index::
    pair: model; Order
 
 .. _lino.sales.Order:
@@ -658,7 +1056,10 @@ Model **Order**
 
 
 
-Order(id, user_id, must_build, contact_id, language, journal_id, number, sent_time, creation_date, your_ref, imode_id, shipping_mode_id, payment_term_id, sales_remark, subject, vat_exempt, item_vat, total_excl, total_vat, intro, cycle, start_date, covered_until)
+
+An Order is when a :class:`Customer` asks us to "deliver" a 
+given set of "products".
+
   
 ============= ============= ======================================================
 name          type          verbose name                                          
@@ -666,11 +1067,11 @@ name          type          verbose name
 id            AutoField     ID                                                    
 user          ForeignKey    User                                                  
 must_build    BooleanField  must build (muss generiert werden,doit être construit)
-contact       ForeignKey    Contact (Kontakt)                                     
-language      LanguageField Language (Sprache,Langue)                             
 journal       ForeignKey    journal                                               
 number        IntegerField  number                                                
 sent_time     DateTimeField sent time                                             
+customer      ForeignKey    Customer                                              
+language      LanguageField Language (Sprache,Langue)                             
 creation_date DateField     creation date                                         
 your_ref      CharField     your ref                                              
 imode         ForeignKey    Invoicing Mode                                        
@@ -692,7 +1093,7 @@ covered_until MyDateField   covered until
 Defined in :srcref:`/lino/modlib/sales/models.py`
 
 Referenced from
-`lino.sales.Invoice.order`_
+`lino.sales.Invoice.order`_, `lino.sales.OrderItem.document`_
 
 
 
@@ -742,36 +1143,6 @@ Type: BooleanField
 
    
 .. index::
-   single: field;contact
-   
-.. _lino.sales.Order.contact:
-
-Field **Order.contact**
-=======================
-
-
-
-
-
-Type: ForeignKey
-
-   
-.. index::
-   single: field;language
-   
-.. _lino.sales.Order.language:
-
-Field **Order.language**
-========================
-
-
-
-
-
-Type: LanguageField
-
-   
-.. index::
    single: field;journal
    
 .. _lino.sales.Order.journal:
@@ -814,6 +1185,36 @@ Field **Order.sent_time**
 
 
 Type: DateTimeField
+
+   
+.. index::
+   single: field;customer
+   
+.. _lino.sales.Order.customer:
+
+Field **Order.customer**
+========================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;language
+   
+.. _lino.sales.Order.language:
+
+Field **Order.language**
+========================
+
+
+
+
+
+Type: LanguageField
 
    
 .. index::
@@ -1055,7 +1456,7 @@ Model **Invoice**
 
 
 
-Invoice(id, user_id, must_build, contact_id, language, journal_id, number, sent_time, value_date, ledger_remark, booked, creation_date, your_ref, imode_id, shipping_mode_id, payment_term_id, sales_remark, subject, vat_exempt, item_vat, total_excl, total_vat, intro, due_date, order_id)
+Invoice(id, user_id, must_build, journal_id, number, sent_time, value_date, ledger_remark, booked, customer_id, language, creation_date, your_ref, imode_id, shipping_mode_id, payment_term_id, sales_remark, subject, vat_exempt, item_vat, total_excl, total_vat, intro, due_date, order_id)
   
 ============= ============= ======================================================
 name          type          verbose name                                          
@@ -1063,14 +1464,14 @@ name          type          verbose name
 id            AutoField     ID                                                    
 user          ForeignKey    User                                                  
 must_build    BooleanField  must build (muss generiert werden,doit être construit)
-contact       ForeignKey    Contact (Kontakt)                                     
-language      LanguageField Language (Sprache,Langue)                             
 journal       ForeignKey    journal                                               
 number        IntegerField  number                                                
 sent_time     DateTimeField sent time                                             
 value_date    DateField     value date                                            
 ledger_remark CharField     Remark for ledger                                     
 booked        BooleanField  booked                                                
+customer      ForeignKey    Customer                                              
+language      LanguageField Language (Sprache,Langue)                             
 creation_date DateField     creation date                                         
 your_ref      CharField     your ref                                              
 imode         ForeignKey    Invoicing Mode                                        
@@ -1091,7 +1492,7 @@ order         ForeignKey    order
 Defined in :srcref:`/lino/modlib/sales/models.py`
 
 Referenced from
-
+`lino.sales.InvoiceItem.document`_
 
 
 
@@ -1138,36 +1539,6 @@ Field **Invoice.must_build**
 
 
 Type: BooleanField
-
-   
-.. index::
-   single: field;contact
-   
-.. _lino.sales.Invoice.contact:
-
-Field **Invoice.contact**
-=========================
-
-
-
-
-
-Type: ForeignKey
-
-   
-.. index::
-   single: field;language
-   
-.. _lino.sales.Invoice.language:
-
-Field **Invoice.language**
-==========================
-
-
-
-
-
-Type: LanguageField
 
    
 .. index::
@@ -1258,6 +1629,36 @@ Field **Invoice.booked**
 
 
 Type: BooleanField
+
+   
+.. index::
+   single: field;customer
+   
+.. _lino.sales.Invoice.customer:
+
+Field **Invoice.customer**
+==========================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;language
+   
+.. _lino.sales.Invoice.language:
+
+Field **Invoice.language**
+==========================
+
+
+
+
+
+Type: LanguageField
 
    
 .. index::
@@ -1462,6 +1863,382 @@ Type: DateField
 
 Field **Invoice.order**
 =======================
+
+
+
+
+
+Type: ForeignKey
+
+   
+
+
+.. index::
+   pair: model; OrderItem
+
+.. _lino.sales.OrderItem:
+
+-------------------
+Model **OrderItem**
+-------------------
+
+
+
+OrderItem(id, pos, product_id, title, description, discount, unit_price, qty, total, document_id)
+  
+=========== ============= ==========================
+name        type          verbose name              
+=========== ============= ==========================
+id          AutoField     ID                        
+pos         IntegerField  Position                  
+product     ForeignKey    Product (Toode)           
+title       CharField     title                     
+description RichTextField Description (Beschreibung)
+discount    IntegerField  Discount %                
+unit_price  PriceField    unit price                
+qty         QuantityField qty                       
+total       PriceField    total                     
+document    ForeignKey    order                     
+=========== ============= ==========================
+
+    
+Defined in :srcref:`/lino/modlib/sales/models.py`
+
+Referenced from
+
+
+
+
+.. index::
+   single: field;id
+   
+.. _lino.sales.OrderItem.id:
+
+Field **OrderItem.id**
+======================
+
+
+
+
+
+Type: AutoField
+
+   
+.. index::
+   single: field;pos
+   
+.. _lino.sales.OrderItem.pos:
+
+Field **OrderItem.pos**
+=======================
+
+
+
+
+
+Type: IntegerField
+
+   
+.. index::
+   single: field;product
+   
+.. _lino.sales.OrderItem.product:
+
+Field **OrderItem.product**
+===========================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;title
+   
+.. _lino.sales.OrderItem.title:
+
+Field **OrderItem.title**
+=========================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;description
+   
+.. _lino.sales.OrderItem.description:
+
+Field **OrderItem.description**
+===============================
+
+
+
+
+
+Type: RichTextField
+
+   
+.. index::
+   single: field;discount
+   
+.. _lino.sales.OrderItem.discount:
+
+Field **OrderItem.discount**
+============================
+
+
+
+
+
+Type: IntegerField
+
+   
+.. index::
+   single: field;unit_price
+   
+.. _lino.sales.OrderItem.unit_price:
+
+Field **OrderItem.unit_price**
+==============================
+
+
+
+
+
+Type: PriceField
+
+   
+.. index::
+   single: field;qty
+   
+.. _lino.sales.OrderItem.qty:
+
+Field **OrderItem.qty**
+=======================
+
+
+
+
+
+Type: QuantityField
+
+   
+.. index::
+   single: field;total
+   
+.. _lino.sales.OrderItem.total:
+
+Field **OrderItem.total**
+=========================
+
+
+
+
+
+Type: PriceField
+
+   
+.. index::
+   single: field;document
+   
+.. _lino.sales.OrderItem.document:
+
+Field **OrderItem.document**
+============================
+
+
+
+
+
+Type: ForeignKey
+
+   
+
+
+.. index::
+   pair: model; InvoiceItem
+
+.. _lino.sales.InvoiceItem:
+
+---------------------
+Model **InvoiceItem**
+---------------------
+
+
+
+InvoiceItem(id, pos, product_id, title, description, discount, unit_price, qty, total, document_id)
+  
+=========== ============= ==========================
+name        type          verbose name              
+=========== ============= ==========================
+id          AutoField     ID                        
+pos         IntegerField  Position                  
+product     ForeignKey    Product (Toode)           
+title       CharField     title                     
+description RichTextField Description (Beschreibung)
+discount    IntegerField  Discount %                
+unit_price  PriceField    unit price                
+qty         QuantityField qty                       
+total       PriceField    total                     
+document    ForeignKey    invoice                   
+=========== ============= ==========================
+
+    
+Defined in :srcref:`/lino/modlib/sales/models.py`
+
+Referenced from
+
+
+
+
+.. index::
+   single: field;id
+   
+.. _lino.sales.InvoiceItem.id:
+
+Field **InvoiceItem.id**
+========================
+
+
+
+
+
+Type: AutoField
+
+   
+.. index::
+   single: field;pos
+   
+.. _lino.sales.InvoiceItem.pos:
+
+Field **InvoiceItem.pos**
+=========================
+
+
+
+
+
+Type: IntegerField
+
+   
+.. index::
+   single: field;product
+   
+.. _lino.sales.InvoiceItem.product:
+
+Field **InvoiceItem.product**
+=============================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;title
+   
+.. _lino.sales.InvoiceItem.title:
+
+Field **InvoiceItem.title**
+===========================
+
+
+
+
+
+Type: CharField
+
+   
+.. index::
+   single: field;description
+   
+.. _lino.sales.InvoiceItem.description:
+
+Field **InvoiceItem.description**
+=================================
+
+
+
+
+
+Type: RichTextField
+
+   
+.. index::
+   single: field;discount
+   
+.. _lino.sales.InvoiceItem.discount:
+
+Field **InvoiceItem.discount**
+==============================
+
+
+
+
+
+Type: IntegerField
+
+   
+.. index::
+   single: field;unit_price
+   
+.. _lino.sales.InvoiceItem.unit_price:
+
+Field **InvoiceItem.unit_price**
+================================
+
+
+
+
+
+Type: PriceField
+
+   
+.. index::
+   single: field;qty
+   
+.. _lino.sales.InvoiceItem.qty:
+
+Field **InvoiceItem.qty**
+=========================
+
+
+
+
+
+Type: QuantityField
+
+   
+.. index::
+   single: field;total
+   
+.. _lino.sales.InvoiceItem.total:
+
+Field **InvoiceItem.total**
+===========================
+
+
+
+
+
+Type: PriceField
+
+   
+.. index::
+   single: field;document
+   
+.. _lino.sales.InvoiceItem.document:
+
+Field **InvoiceItem.document**
+==============================
 
 
 

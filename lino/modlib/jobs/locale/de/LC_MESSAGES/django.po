@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.jobs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-07 02:49+0100\n"
+"POT-Creation-Date: 2011-09-07 03:22+0100\n"
 "PO-Revision-Date: 2011-09-07 04:52+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
@@ -16,9 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: .\models.py:130
-#: .\models.py:179
-#: .\models.py:442
+#: .\models.py:130 .\models.py:179 .\models.py:442
 msgid "Job Provider"
 msgstr "Stellenanbieter"
 
@@ -46,13 +44,11 @@ msgstr "Arbeitsvertrag"
 msgid "Job Contracts"
 msgstr "Arbeitsverträge"
 
-#: .\models.py:175
-#: .\models.py:445
+#: .\models.py:175 .\models.py:445
 msgid "Contract Type"
 msgstr "Vertragsart"
 
-#: .\models.py:182
-#: .\models.py:429
+#: .\models.py:182 .\models.py:429
 msgid "Job"
 msgstr "Stelle"
 
@@ -68,8 +64,7 @@ msgstr "Regime"
 msgid "schedule"
 msgstr "Stundenplan"
 
-#: .\models.py:191
-#: .\models.py:447
+#: .\models.py:191 .\models.py:447
 msgid "hourly rate"
 msgstr "Stundensatz"
 
@@ -97,8 +92,7 @@ msgstr "Verantwortlicher (DSBE)"
 msgid "My contracts"
 msgstr "Meine Verträge"
 
-#: .\models.py:414
-#: .\models.py:438
+#: .\models.py:414 .\models.py:438
 msgid "Job Type"
 msgstr "Stellenart"
 
@@ -122,13 +116,11 @@ msgstr "Name"
 msgid "capacity"
 msgstr "Kapazität"
 
-#: .\models.py:454
-#: .\models.py:519
+#: .\models.py:454 .\models.py:519
 msgid "Remark"
 msgstr "Bemerkung"
 
-#: .\models.py:497
-#: .\models.py:498
+#: .\models.py:497 .\models.py:498
 msgid "Job Requests"
 msgstr "Stellenanfragen"
 

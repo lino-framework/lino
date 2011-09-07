@@ -58,16 +58,13 @@ phone         CharField     Phone (Telefon,Téléphone,Telefon)
 gsm           CharField     GSM                                                                                                       
 fax           CharField     Fax                                                                                                       
 remarks       TextField     Remarks (Bemerkungen,Remarques,Märkused)                                                                  
-payment_term  ForeignKey    Payment Term                                                                                              
-vat_exempt    BooleanField  VAT exempt                                                                                                
-item_vat      BooleanField  item_vat                                                                                                  
 ============= ============= ==========================================================================================================
 
     
 Defined in :srcref:`/lino/modlib/contacts/models.py`
 
 Referenced from
-`lino.mails.Recipient.contact`_, `lino.users.User.contact_ptr`_, `lino.contacts.Role.parent`_, `lino.contacts.Role.child`_, `lino.contacts.Person.contact_ptr`_, `lino.contacts.Company.contact_ptr`_, `lino.sales.Order.contact`_, `lino.sales.Invoice.contact`_, `lino.cal.Guest.contact`_
+`lino.mails.Recipient.contact`_, `lino.users.User.contact_ptr`_, `lino.contacts.Role.parent`_, `lino.contacts.Role.child`_, `lino.contacts.Person.contact_ptr`_, `lino.contacts.Company.contact_ptr`_, `lino.ledger.Booking.contact`_, `lino.sales.Customer.contact_ptr`_, `lino.cal.Guest.contact`_, `lino.finan.DocItem.contact`_
 
 
 
@@ -354,51 +351,6 @@ Field **Contact.remarks**
 
 
 Type: TextField
-
-   
-.. index::
-   single: field;payment_term
-   
-.. _lino.contacts.Contact.payment_term:
-
-Field **Contact.payment_term**
-==============================
-
-
-
-
-
-Type: ForeignKey
-
-   
-.. index::
-   single: field;vat_exempt
-   
-.. _lino.contacts.Contact.vat_exempt:
-
-Field **Contact.vat_exempt**
-============================
-
-
-
-
-
-Type: BooleanField
-
-   
-.. index::
-   single: field;item_vat
-   
-.. _lino.contacts.Contact.item_vat:
-
-Field **Contact.item_vat**
-==========================
-
-
-
-
-
-Type: BooleanField
 
    
 
@@ -844,7 +796,7 @@ Model **Person**
 
 
 
-Person(id, country_id, city_id, name, addr1, street_prefix, street, street_no, street_box, addr2, zip_code, region, language, email, url, phone, gsm, fax, remarks, contact_ptr_id, birth_date, birth_date_circa, first_name, last_name, title, sex)
+Person(id, country_id, city_id, name, addr1, street_prefix, street, street_no, street_box, addr2, zip_code, region, language, email, url, phone, gsm, fax, remarks, contact_ptr_id, first_name, last_name, title, sex, birth_date, birth_date_circa)
   
 ================ ============= ==========================================================================================================
 name             type          verbose name                                                                                              
@@ -869,19 +821,19 @@ gsm              CharField     GSM
 fax              CharField     Fax                                                                                                       
 remarks          TextField     Remarks (Bemerkungen,Remarques,Märkused)                                                                  
 contact_ptr      OneToOneField Contact (Kontakt)                                                                                         
+first_name       CharField     First name (Prénom,Eesnimi)                                                                               
+last_name        CharField     Last name (Nom de famille,Perekonnanimi)                                                                  
+title            CharField     Title (Allocution)                                                                                        
+sex              CharField     Sex (Sexe)                                                                                                
 birth_date       DateField     Birth date (Geburtsdatum)                                                                                 
 birth_date_circa BooleanField  not exact (ungenau)                                                                                       
-first_name       CharField     First name (Vorname,Prénom,Eesnimi)                                                                       
-last_name        CharField     Last name (Familienname,Nom de famille,Perekonnanimi)                                                     
-title            CharField     Title (Anrede,Allocution)                                                                                 
-sex              CharField     Sex (Geschlecht,Sexe)                                                                                     
 ================ ============= ==========================================================================================================
 
     
 Defined in :srcref:`/lino/apps/igen/models.py`
 
 Referenced from
-`lino.ledger.Booking.person`_, `lino.finan.DocItem.person`_
+
 
 
 
@@ -1186,36 +1138,6 @@ Type: OneToOneField
 
    
 .. index::
-   single: field;birth_date
-   
-.. _lino.contacts.Person.birth_date:
-
-Field **Person.birth_date**
-===========================
-
-
-
-
-
-Type: DateField
-
-   
-.. index::
-   single: field;birth_date_circa
-   
-.. _lino.contacts.Person.birth_date_circa:
-
-Field **Person.birth_date_circa**
-=================================
-
-
-
-
-
-Type: BooleanField
-
-   
-.. index::
    single: field;first_name
    
 .. _lino.contacts.Person.first_name:
@@ -1275,6 +1197,36 @@ Field **Person.sex**
 Type: CharField
 
    
+.. index::
+   single: field;birth_date
+   
+.. _lino.contacts.Person.birth_date:
+
+Field **Person.birth_date**
+===========================
+
+
+
+
+
+Type: DateField
+
+   
+.. index::
+   single: field;birth_date_circa
+   
+.. _lino.contacts.Person.birth_date_circa:
+
+Field **Person.birth_date_circa**
+=================================
+
+
+
+
+
+Type: BooleanField
+
+   
 
 
 .. index::
@@ -1321,7 +1273,7 @@ type          ForeignKey    Company type (Firmenart,Type de société,Firmaliik)
 Defined in :srcref:`/lino/apps/igen/models.py`
 
 Referenced from
-`lino.ledger.Booking.company`_, `lino.lino.SiteConfig.site_company`_, `lino.finan.DocItem.company`_
+`lino.lino.SiteConfig.site_company`_
 
 
 

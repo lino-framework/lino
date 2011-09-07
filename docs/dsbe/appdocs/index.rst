@@ -18,5 +18,6 @@ Lino/DSBE
     thirds
     cal
     mails
+    isip
     dsbe
     jobs

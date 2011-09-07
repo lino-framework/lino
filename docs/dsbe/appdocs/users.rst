@@ -63,10 +63,10 @@ gsm           CharField     GSM
 fax           CharField     Fax                                                                          
 remarks       TextField     Remarks (Bemerkungen,Remarques)                                              
 contact_ptr   OneToOneField Contact (Kontakt)                                                            
-first_name    CharField     First name (Vorname,Prénom)                                                  
-last_name     CharField     Last name (Familienname,Nom de famille)                                      
-title         CharField     Title (Anrede,Allocution)                                                    
-sex           CharField     Sex (Geschlecht,Sexe)                                                        
+first_name    CharField     First name (Prénom)                                                          
+last_name     CharField     Last name (Nom de famille)                                                   
+title         CharField     Title (Allocution)                                                           
+sex           CharField     Sex (Sexe)                                                                   
 username      CharField     username                                                                     
 is_staff      BooleanField  is staff                                                                     
 is_expert     BooleanField  is expert                                                                    
@@ -80,7 +80,7 @@ date_joined   DateTimeField date joined
 Defined in :srcref:`/lino/modlib/users/models.py`
 
 Referenced from
-`lino.mails.OutMail.user`_, `lino.jobs.Contract.user`_, `lino.jobs.Contract.user_asd`_, `lino.links.Link.user`_, `lino.contacts.Person.coach1`_, `lino.contacts.Person.coach2`_, `lino.dsbe.PersonSearch.user`_, `lino.dsbe.PersonSearch.coached_by`_, `lino.notes.Note.user`_, `lino.lino.TextFieldTemplate.user`_, `lino.uploads.Upload.user`_, `lino.cal.Calendar.user`_, `lino.cal.Event.user`_, `lino.cal.Task.user`_
+`lino.mails.OutMail.user`_, `lino.jobs.Contract.user`_, `lino.jobs.Contract.user_asd`_, `lino.links.Link.user`_, `lino.contacts.Person.coach1`_, `lino.contacts.Person.coach2`_, `lino.dsbe.PersonSearch.user`_, `lino.dsbe.PersonSearch.coached_by`_, `lino.notes.Note.user`_, `lino.lino.TextFieldTemplate.user`_, `lino.isip.Contract.user`_, `lino.isip.Contract.user_asd`_, `lino.uploads.Upload.user`_, `lino.cal.Calendar.user`_, `lino.cal.Event.user`_, `lino.cal.Task.user`_
 
 
 

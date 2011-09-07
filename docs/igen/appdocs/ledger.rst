@@ -101,22 +101,21 @@ Model **Booking**
 
 
 
-Booking(id, journal_id, number, pos, date, account_id, person_id, company_id, debit, credit)
+Booking(id, journal_id, number, pos, date, account_id, contact_id, debit, credit)
   
-======= ============ =============================
-name    type         verbose name                 
-======= ============ =============================
-id      AutoField    ID                           
-journal ForeignKey   journal                      
-number  IntegerField number                       
-pos     IntegerField Position                     
-date    DateField    date                         
-account ForeignKey   account                      
-person  ForeignKey   person                       
-company ForeignKey   Company (Firma,Société,Firma)
-debit   PriceField   debit                        
-credit  PriceField   credit                       
-======= ============ =============================
+======= ============ =================
+name    type         verbose name     
+======= ============ =================
+id      AutoField    ID               
+journal ForeignKey   journal          
+number  IntegerField number           
+pos     IntegerField Position         
+date    DateField    date             
+account ForeignKey   account          
+contact ForeignKey   Contact (Kontakt)
+debit   PriceField   debit            
+credit  PriceField   credit           
+======= ============ =================
 
     
 Defined in :srcref:`/lino/modlib/ledger/models.py`
@@ -217,26 +216,11 @@ Type: ForeignKey
 
    
 .. index::
-   single: field;person
+   single: field;contact
    
-.. _lino.ledger.Booking.person:
+.. _lino.ledger.Booking.contact:
 
-Field **Booking.person**
-========================
-
-
-
-
-
-Type: ForeignKey
-
-   
-.. index::
-   single: field;company
-   
-.. _lino.ledger.Booking.company:
-
-Field **Booking.company**
+Field **Booking.contact**
 =========================
 
 

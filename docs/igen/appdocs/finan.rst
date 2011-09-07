@@ -197,22 +197,21 @@ Model **DocItem**
 
 
 
-DocItem(id, document_id, pos, date, debit, credit, remark, account_id, person_id, company_id)
+DocItem(id, document_id, pos, date, debit, credit, remark, account_id, contact_id)
   
-======== ============ =============================
-name     type         verbose name                 
-======== ============ =============================
-id       AutoField    ID                           
-document ForeignKey   bank statement               
-pos      IntegerField Position                     
-date     MyDateField  date                         
-debit    PriceField   debit                        
-credit   PriceField   credit                       
-remark   CharField    remark                       
-account  ForeignKey   account                      
-person   ForeignKey   person                       
-company  ForeignKey   Company (Firma,Société,Firma)
-======== ============ =============================
+======== ============ =================
+name     type         verbose name     
+======== ============ =================
+id       AutoField    ID               
+document ForeignKey   bank statement   
+pos      IntegerField Position         
+date     MyDateField  date             
+debit    PriceField   debit            
+credit   PriceField   credit           
+remark   CharField    remark           
+account  ForeignKey   account          
+contact  ForeignKey   Contact (Kontakt)
+======== ============ =================
 
     
 Defined in :srcref:`/lino/modlib/finan/models.py`
@@ -343,26 +342,11 @@ Type: ForeignKey
 
    
 .. index::
-   single: field;person
+   single: field;contact
    
-.. _lino.finan.DocItem.person:
+.. _lino.finan.DocItem.contact:
 
-Field **DocItem.person**
-========================
-
-
-
-
-
-Type: ForeignKey
-
-   
-.. index::
-   single: field;company
-   
-.. _lino.finan.DocItem.company:
-
-Field **DocItem.company**
+Field **DocItem.contact**
 =========================
 
 

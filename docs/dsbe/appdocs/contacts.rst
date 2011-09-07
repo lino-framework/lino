@@ -671,7 +671,7 @@ type   ForeignKey Contact Role (Funktion)
 Defined in :srcref:`/lino/modlib/contacts/models.py`
 
 Referenced from
-`lino.jobs.Contract.contact`_, `lino.contacts.Person.job_office_contact`_
+`lino.jobs.Contract.contact`_, `lino.contacts.Person.job_office_contact`_, `lino.isip.Contract.contact`_
 
 
 
@@ -776,12 +776,12 @@ gsm                         CharField         GSM
 fax                         CharField         Fax                                                                                 
 remarks                     TextField         Remarks (Bemerkungen,Remarques)                                                     
 contact_ptr                 OneToOneField     Contact (Kontakt)                                                                   
+first_name                  CharField         First name (Prénom)                                                                 
+last_name                   CharField         Last name (Nom de famille)                                                          
+title                       CharField         Title (Allocution)                                                                  
+sex                         CharField         Sex (Sexe)                                                                          
 birth_date                  DateField         Birth date (Geburtsdatum)                                                           
 birth_date_circa            BooleanField      not exact (ungenau)                                                                 
-first_name                  CharField         First name (Vorname,Prénom)                                                         
-last_name                   CharField         Last name (Familienname,Nom de famille)                                             
-title                       CharField         Title (Anrede,Allocution)                                                           
-sex                         CharField         Sex (Geschlecht,Sexe)                                                               
 is_active                   BooleanField      is active (aktiv,est actif)                                                         
 activity                    ForeignKey        Activity (Beruf,Activité)                                                           
 bank_account1               CharField         Bank account 1 (Bankkonto 1,Compte en banque 1)                                     
@@ -833,7 +833,7 @@ job_office_contact          ForeignKey        Contact person at local job office
 Defined in :srcref:`/lino/apps/dsbe/models.py`
 
 Referenced from
-`lino.jobs.Contract.person`_, `lino.jobs.JobRequest.person`_, `lino.links.Link.person`_, `lino.dsbe.Study.person`_, `lino.dsbe.LanguageKnowledge.person`_, `lino.dsbe.JobExperience.person`_, `lino.dsbe.Exclusion.person`_, `lino.dsbe.CourseRequest.person`_, `lino.notes.Note.person`_, `lino.cal.Event.project`_, `lino.cal.Task.project`_, `lino.thirds.Third.person`_, `lino.properties.PersonProperty.person`_
+`lino.jobs.Contract.person`_, `lino.jobs.JobRequest.person`_, `lino.links.Link.person`_, `lino.dsbe.Study.person`_, `lino.dsbe.LanguageKnowledge.person`_, `lino.dsbe.JobExperience.person`_, `lino.dsbe.Exclusion.person`_, `lino.dsbe.CourseRequest.person`_, `lino.notes.Note.person`_, `lino.isip.Contract.person`_, `lino.cal.Event.project`_, `lino.cal.Task.project`_, `lino.thirds.Third.person`_, `lino.properties.PersonProperty.person`_
 
 
 
@@ -1138,36 +1138,6 @@ Type: OneToOneField
 
    
 .. index::
-   single: field;birth_date
-   
-.. _lino.contacts.Person.birth_date:
-
-Field **Person.birth_date**
-===========================
-
-
-
-
-
-Type: DateField
-
-   
-.. index::
-   single: field;birth_date_circa
-   
-.. _lino.contacts.Person.birth_date_circa:
-
-Field **Person.birth_date_circa**
-=================================
-
-
-
-
-
-Type: BooleanField
-
-   
-.. index::
    single: field;first_name
    
 .. _lino.contacts.Person.first_name:
@@ -1225,6 +1195,36 @@ Field **Person.sex**
 
 
 Type: CharField
+
+   
+.. index::
+   single: field;birth_date
+   
+.. _lino.contacts.Person.birth_date:
+
+Field **Person.birth_date**
+===========================
+
+
+
+
+
+Type: DateField
+
+   
+.. index::
+   single: field;birth_date_circa
+   
+.. _lino.contacts.Person.birth_date_circa:
+
+Field **Person.birth_date_circa**
+=================================
+
+
+
+
+
+Type: BooleanField
 
    
 .. index::
@@ -1958,7 +1958,7 @@ hourly_rate   PriceField    hourly rate (Stundensatz,coûr horaire)
 Defined in :srcref:`/lino/apps/dsbe/models.py`
 
 Referenced from
-`lino.jobs.JobProvider.company_ptr`_, `lino.links.Link.company`_, `lino.contacts.Person.health_insurance`_, `lino.contacts.Person.pharmacy`_, `lino.dsbe.CourseProvider.company_ptr`_, `lino.notes.Note.company`_, `lino.lino.SiteConfig.site_company`_, `lino.lino.SiteConfig.job_office`_, `lino.thirds.Third.company`_
+`lino.jobs.JobProvider.company_ptr`_, `lino.links.Link.company`_, `lino.contacts.Person.health_insurance`_, `lino.contacts.Person.pharmacy`_, `lino.dsbe.CourseProvider.company_ptr`_, `lino.notes.Note.company`_, `lino.lino.SiteConfig.site_company`_, `lino.lino.SiteConfig.job_office`_, `lino.isip.Contract.company`_, `lino.thirds.Third.company`_
 
 
 

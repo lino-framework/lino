@@ -32,7 +32,7 @@ name                 type         verbose name
 ==================== ============ ==============================================================================================
 id                   AutoField    ID                                                                                            
 default_build_method CharField    Default build method (Standard-Konstruktionsmethode,Méthode de constuction par défault)       
-next_partner_id      IntegerField The next automatic id for Person or Company                                                   
+next_partner_id      IntegerField The next automatic id for Person or Company (Nächste Partnernummer)                           
 site_company         ForeignKey   The company that runs this site (Firma, die diesen Site betreibt,La société ou tourne ce site)
 sales_base_account   ForeignKey   Sales base account                                                                            
 sales_vat_account    ForeignKey   Sales VAT account                                                                             

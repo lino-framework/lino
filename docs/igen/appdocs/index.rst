@@ -16,7 +16,7 @@ Lino/iGen
     mails
     products
     journals
-    igen
     ledger
-    sales
+    igen
     finan
+    sales

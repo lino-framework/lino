@@ -667,174 +667,6 @@ Type: CharField
 
 
 .. index::
-   pair: model; ExamPolicy
-
-.. _lino.jobs.ExamPolicy:
-
---------------------
-Model **ExamPolicy**
---------------------
-
-
-
-ExamPolicy(id, name, name_fr, name_nl, name_en)
-  
-======= ============== ======================================
-name    type           verbose name                          
-======= ============== ======================================
-id      AutoField      ID                                    
-name    BabelCharField Designation (Beschreibung,Désignation)
-name_fr CharField      Designation (fr)                      
-name_nl CharField      Designation (nl)                      
-name_en CharField      Designation (en)                      
-======= ============== ======================================
-
-    
-Defined in :srcref:`/lino/modlib/jobs/models.py`
-
-Referenced from
-`lino.jobs.Contract.exam_policy`_
-
-
-
-.. index::
-   single: field;id
-   
-.. _lino.jobs.ExamPolicy.id:
-
-Field **ExamPolicy.id**
-=======================
-
-
-
-
-
-Type: AutoField
-
-   
-.. index::
-   single: field;name
-   
-.. _lino.jobs.ExamPolicy.name:
-
-Field **ExamPolicy.name**
-=========================
-
-
-
-
-
-Type: BabelCharField
-
-   
-.. index::
-   single: field;name_fr
-   
-.. _lino.jobs.ExamPolicy.name_fr:
-
-Field **ExamPolicy.name_fr**
-============================
-
-
-
-
-
-Type: CharField
-
-   
-.. index::
-   single: field;name_nl
-   
-.. _lino.jobs.ExamPolicy.name_nl:
-
-Field **ExamPolicy.name_nl**
-============================
-
-
-
-
-
-Type: CharField
-
-   
-.. index::
-   single: field;name_en
-   
-.. _lino.jobs.ExamPolicy.name_en:
-
-Field **ExamPolicy.name_en**
-============================
-
-
-
-
-
-Type: CharField
-
-   
-
-
-.. index::
-   pair: model; ContractEnding
-
-.. _lino.jobs.ContractEnding:
-
-------------------------
-Model **ContractEnding**
-------------------------
-
-
-
-ContractEnding(id, name)
-  
-==== ========= =====================================
-name type      verbose name                         
-==== ========= =====================================
-id   AutoField ID                                   
-name CharField designation (Bezeichnung,désignation)
-==== ========= =====================================
-
-    
-Defined in :srcref:`/lino/modlib/jobs/models.py`
-
-Referenced from
-`lino.jobs.Contract.ending`_
-
-
-
-.. index::
-   single: field;id
-   
-.. _lino.jobs.ContractEnding.id:
-
-Field **ContractEnding.id**
-===========================
-
-
-
-
-
-Type: AutoField
-
-   
-.. index::
-   single: field;name
-   
-.. _lino.jobs.ContractEnding.name:
-
-Field **ContractEnding.name**
-=============================
-
-
-
-
-
-Type: CharField
-
-   
-
-
-.. index::
    pair: model; Contract
 
 .. _lino.jobs.Contract:
@@ -849,40 +681,34 @@ Model **Contract**
 A Contract
 
   
-================ ============= ==============================================================
-name             type          verbose name                                                  
-================ ============= ==============================================================
-id               AutoField     ID                                                            
-user             ForeignKey    responsible (DSBE) (Verantwortlicher (DSBE),Responsable (ISP))
-must_build       BooleanField  must build (muss generiert werden,doit être construit)        
-person           ForeignKey    Person (Personne)                                             
-provider         ForeignKey    Job Provider (Stellenanbieter)                                
-contact          ForeignKey    represented by (Vertreten durch)                              
-language         LanguageField Language (Sprache,Langue)                                     
-job              ForeignKey    Job (Stelle)                                                  
-type             ForeignKey    Contract Type (Vertragsart,Type de contrat)                   
-applies_from     DateField     applies from (Laufzeit von,est d'application à partir de)     
-applies_until    DateField     applies until (Laufzeit bis,est d'application jusque)         
-date_decided     DateField     date decided (Beschlossen am,date de décision)                
-date_issued      DateField     date issued (Ausgestellt am,date fournie ?)                   
-duration         IntegerField  duration (days) (Dauer (Arbeitstage),durée (jours))           
-regime           CharField     regime (Regime,régime)                                        
-schedule         CharField     schedule (Stundenplan,horaire)                                
-hourly_rate      PriceField    hourly rate (Stundensatz,coûr horaire)                        
-refund_rate      CharField     refund rate (Rückzahlung,tarif de remboursement)              
-reference_person CharField     reference person (Referenzperson,persone de référence)        
-responsibilities RichTextField responsibilities (Aufgabenbereich,responsabilités)            
-stages           RichTextField stages (Etappen)                                              
-goals            RichTextField goals (Zielsetzungen,buts)                                    
-duties_asd       RichTextField duties ASD (Verpflichtungen ASD,devoirs SSG)                  
-duties_dsbe      RichTextField duties DSBE (Verpflichtungen DSBE,devois ISP)                 
-duties_company   RichTextField duties company (Verpflichtungen Firma,devoirs entreprise)     
-duties_person    RichTextField duties person (Verpflichtungen Person,Devoirs personne)       
-user_asd         ForeignKey    responsible (ASD) (Verantwortlicher (ASD),Responsable (SSG))  
-exam_policy      ForeignKey    examination policy (Auswertungsstrategie,Politique d'examen)  
-ending           ForeignKey    Ending (Beendigung,Fin)                                       
-date_ended       DateField     date ended (Beendet am,date de fin)                           
-================ ============= ==============================================================
+================ ============= ============================================================
+name             type          verbose name                                                
+================ ============= ============================================================
+id               AutoField     ID                                                          
+user             ForeignKey    User (Benutzer,Utilisateur)                                 
+must_build       BooleanField  must build (muss generiert werden,doit être construit)      
+person           ForeignKey    Person (Personne)                                           
+contact          ForeignKey    represented by (Vertreten durch)                            
+language         LanguageField Language (Sprache,Langue)                                   
+applies_from     DateField     applies from (Laufzeit von,est d'application à partir de)   
+applies_until    DateField     applies until (Laufzeit bis,est d'application jusque)       
+date_decided     DateField     date decided (Beschlossen am,date de décision)              
+date_issued      DateField     date issued (Ausgestellt am,date fournie ?)                 
+user_asd         ForeignKey    responsible (ASD) (Verantwortlicher (ASD),Responsable (SSG))
+exam_policy      ForeignKey    examination policy (Auswertungsstrategie,Politique d'examen)
+ending           ForeignKey    Ending (Beendigung,Fin)                                     
+date_ended       DateField     date ended (Beendet am,date de fin)                         
+type             ForeignKey    Contract Type (Vertragsart,Type de contrat)                 
+provider         ForeignKey    Job Provider (Stellenanbieter)                              
+job              ForeignKey    Job (Stelle)                                                
+duration         IntegerField  duration (days) (Dauer (Arbeitstage),durée (jours))         
+regime           CharField     regime (Regime,régime)                                      
+schedule         CharField     schedule (Stundenplan,horaire)                              
+hourly_rate      PriceField    hourly rate (Stundensatz,coûr horaire)                      
+refund_rate      CharField     refund rate (Rückzahlung,tarif de remboursement)            
+reference_person CharField     reference person (Referenzperson,persone de référence)      
+responsibilities RichTextField responsibilities (Aufgabenbereich,responsabilités)          
+================ ============= ============================================================
 
     
 Defined in :srcref:`/lino/modlib/jobs/models.py`
@@ -953,21 +779,6 @@ Type: ForeignKey
 
    
 .. index::
-   single: field;provider
-   
-.. _lino.jobs.Contract.provider:
-
-Field **Contract.provider**
-===========================
-
-
-
-
-
-Type: ForeignKey
-
-   
-.. index::
    single: field;contact
    
 .. _lino.jobs.Contract.contact:
@@ -995,36 +806,6 @@ Field **Contract.language**
 
 
 Type: LanguageField
-
-   
-.. index::
-   single: field;job
-   
-.. _lino.jobs.Contract.job:
-
-Field **Contract.job**
-======================
-
-
-
-
-
-Type: ForeignKey
-
-   
-.. index::
-   single: field;type
-   
-.. _lino.jobs.Contract.type:
-
-Field **Contract.type**
-=======================
-
-
-
-
-
-Type: ForeignKey
 
    
 .. index::
@@ -1085,6 +866,111 @@ Field **Contract.date_issued**
 
 
 Type: DateField
+
+   
+.. index::
+   single: field;user_asd
+   
+.. _lino.jobs.Contract.user_asd:
+
+Field **Contract.user_asd**
+===========================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;exam_policy
+   
+.. _lino.jobs.Contract.exam_policy:
+
+Field **Contract.exam_policy**
+==============================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;ending
+   
+.. _lino.jobs.Contract.ending:
+
+Field **Contract.ending**
+=========================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;date_ended
+   
+.. _lino.jobs.Contract.date_ended:
+
+Field **Contract.date_ended**
+=============================
+
+
+
+
+
+Type: DateField
+
+   
+.. index::
+   single: field;type
+   
+.. _lino.jobs.Contract.type:
+
+Field **Contract.type**
+=======================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;provider
+   
+.. _lino.jobs.Contract.provider:
+
+Field **Contract.provider**
+===========================
+
+
+
+
+
+Type: ForeignKey
+
+   
+.. index::
+   single: field;job
+   
+.. _lino.jobs.Contract.job:
+
+Field **Contract.job**
+======================
+
+
+
+
+
+Type: ForeignKey
 
    
 .. index::
@@ -1190,156 +1076,6 @@ Field **Contract.responsibilities**
 
 
 Type: RichTextField
-
-   
-.. index::
-   single: field;stages
-   
-.. _lino.jobs.Contract.stages:
-
-Field **Contract.stages**
-=========================
-
-
-
-
-
-Type: RichTextField
-
-   
-.. index::
-   single: field;goals
-   
-.. _lino.jobs.Contract.goals:
-
-Field **Contract.goals**
-========================
-
-
-
-
-
-Type: RichTextField
-
-   
-.. index::
-   single: field;duties_asd
-   
-.. _lino.jobs.Contract.duties_asd:
-
-Field **Contract.duties_asd**
-=============================
-
-
-
-
-
-Type: RichTextField
-
-   
-.. index::
-   single: field;duties_dsbe
-   
-.. _lino.jobs.Contract.duties_dsbe:
-
-Field **Contract.duties_dsbe**
-==============================
-
-
-
-
-
-Type: RichTextField
-
-   
-.. index::
-   single: field;duties_company
-   
-.. _lino.jobs.Contract.duties_company:
-
-Field **Contract.duties_company**
-=================================
-
-
-
-
-
-Type: RichTextField
-
-   
-.. index::
-   single: field;duties_person
-   
-.. _lino.jobs.Contract.duties_person:
-
-Field **Contract.duties_person**
-================================
-
-
-
-
-
-Type: RichTextField
-
-   
-.. index::
-   single: field;user_asd
-   
-.. _lino.jobs.Contract.user_asd:
-
-Field **Contract.user_asd**
-===========================
-
-
-
-
-
-Type: ForeignKey
-
-   
-.. index::
-   single: field;exam_policy
-   
-.. _lino.jobs.Contract.exam_policy:
-
-Field **Contract.exam_policy**
-==============================
-
-
-
-
-
-Type: ForeignKey
-
-   
-.. index::
-   single: field;ending
-   
-.. _lino.jobs.Contract.ending:
-
-Field **Contract.ending**
-=========================
-
-
-
-
-
-Type: ForeignKey
-
-   
-.. index::
-   single: field;date_ended
-   
-.. _lino.jobs.Contract.date_ended:
-
-Field **Contract.date_ended**
-=============================
-
-
-
-
-
-Type: DateField
 
    
 
@@ -1722,7 +1458,7 @@ name          type         verbose name
 id            AutoField    ID                                                    
 must_build    BooleanField must build (muss generiert werden,doit être construit)
 date          DateField    Date (Datum)                                          
-contract_type ForeignKey   Contract Type (Vertragsart,Type de contrat)           
+contract_type ForeignKey   Job Contract Type (Arbeits-Vertragsart)               
 job_type      ForeignKey   Job Type (Stellenart)                                 
 ============= ============ ======================================================
 
