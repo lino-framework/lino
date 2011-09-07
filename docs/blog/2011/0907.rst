@@ -30,11 +30,33 @@ database migration::
 
 This is because Django's flush tries to delete all tables 
 that *should* exist, without asking whether they actually do.
-dbinit must work after an upgrade and before the database migration.
+initdb must work after an upgrade and before the database migration.
 
 Released :doc:`/releases/20110907` and installed in Eupen.
 
-dbinit problems
-===============
+Another method for initdb
+=========================
 
 Another thing to try for ticket :doc:`/tickets/50`.
+
+The Django code of the flush command shows that the
+`sql_flush` method of 
+`DatabaseOperations` (in
+:file:`django/db/backends/mysql/base.py` )
+does quite some tricks and uses ``SET FOREIGN_KEY_CHECKS``.
+So it is probably better to use this method.
+But Django's `flush` management command calls it only 
+on Django tables 
+(calls `sql_flush` with with a hard-coded 
+`only_django=True`).
+
+My next idea is to have initdb do exactly what flush does, except 
+for calling `sql_flush` with `only_django=False` 
+(and except for the confirmation and calling emit_post_sync).
+
+:term:`initdb` should now really delete all tables from the database. 
+That may sound dangerous, but that's what we want when we have a 
+dpy dump to restore our database.
+You know that you should rather not let 
+Lino and some other application share the same database!
+

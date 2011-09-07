@@ -20,6 +20,12 @@ then runs Django's standard `syncdb` and `loaddata`
 commands to load the specified fixtures for all applications.
 Also writes log entries to your dblogger.
 
+That may sound dangerous, but that's what we want when we have a 
+:doc:`dpy dump </topics/dpy>` to restore our database.
+You know that you should rather not let 
+Lino and some other application share the same database!
+
+
 Django's `flush` command may fail after an upgrade if the new Lino 
 version defines new tables. In that case, flush sends a DROP TABLE 
 which fails because that table doesn't exist. 
@@ -111,7 +117,7 @@ class Command(BaseCommand):
         #~ call_command('syncdb',load_initial_data=False,**options)
         #~ if USE_SQLDELETE:
         
-        call_command('syncdb',**options)            
+        call_command('syncdb',**options)
         
         call_command('loaddata',*args,**options)
         

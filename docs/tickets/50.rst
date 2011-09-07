@@ -1,4 +1,4 @@
-# 50 : dbinit causes "foreign key constraint fails" 
+# 50 : initdb causes "foreign key constraint fails" 
 ===================================================
 
 One user reports the following error message during :term:`initdb`::
@@ -7,8 +7,7 @@ One user reports the following error message during :term:`initdb`::
 
 We were not able to reproduce this on :term:`Jana`.
 But the Django code of the flush command shows indeed that the
-
-`sql_flush`method of `django.db.backends.mysql.base.DatabaseOperations` 
+`sql_flush` method of `django.db.backends.mysql.base.DatabaseOperations` 
 does quite some tricks and uses ``SET FOREIGN_KEY_CHECKS``.
 
 But Django's `flush` management command calls this only on Django tables. 
