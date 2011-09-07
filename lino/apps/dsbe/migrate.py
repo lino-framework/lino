@@ -352,6 +352,7 @@ def migrate_from_1_2_1(globals_dict):
     globals_dict.update(create_uploads_upload=create_uploads_upload)
     
     def create_notes_note(id, user_id, must_build, person_id, company_id, date, type_id, event_type_id, subject, body, language):
+        if subject is None: subject = ''
         return Note(id=id,user_id=new_user_id(user_id),must_build=must_build,person_id=person_id,company_id=company_id,date=date,type_id=type_id,event_type_id=event_type_id,subject=subject,body=body,language=language)
     globals_dict.update(create_notes_note=create_notes_note)
     
@@ -428,6 +429,7 @@ def migrate_from_1_2_1(globals_dict):
         if card_number is None: card_number = ''
         if card_type is None: card_type = ''
         if card_issuer is None: card_issuer = ''
+        if noble_condition is None: noble_condition = ''
         coach1_id = new_user_id(coach1_id)
         coach2_id = new_user_id(coach2_id)
         return Person(country_id=country_id,city_id=city_id,name=name,addr1=addr1,street_prefix=street_prefix,street=street,street_no=street_no,street_box=street_box,addr2=addr2,zip_code=zip_code,region=region,language=language,email=email,url=url,phone=phone,gsm=gsm,fax=fax,remarks=remarks,first_name=first_name,last_name=last_name,title=title,sex=sex,
