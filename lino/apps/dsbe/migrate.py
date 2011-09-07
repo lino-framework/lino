@@ -313,6 +313,7 @@ def migrate_from_1_2_1(globals_dict):
     User = resolve_model("users.User")
     PersonSearch = resolve_model("dsbe.PersonSearch")
     WantedLanguageKnowledge = resolve_model("dsbe.WantedLanguageKnowledge")
+    LanguageKnowledge = resolve_model("dsbe.LanguageKnowledge")
     
     globals_dict.update(ExamPolicy = resolve_model("isip.ExamPolicy"))
     globals_dict.update(ContractEnding = resolve_model("isip.ContractEnding"))
@@ -372,6 +373,7 @@ def migrate_from_1_2_1(globals_dict):
     def create_jobs_contract(id, user_id, must_build, person_id, provider_id, contact_id, language, job_id, type_id, applies_from, applies_until, date_decided, date_issued, duration, regime, schedule, hourly_rate, refund_rate, reference_person, responsibilities, stages, goals, duties_asd, duties_dsbe, duties_company, duties_person, user_asd_id, exam_policy_id, ending_id, date_ended):
         if regime is None: regime = ''
         if schedule is None: schedule = ''
+        if refund_rate is None: refund_rate = ''
         user_asd_id = new_user_id(user_asd_id)
         ctype = CONTRACT_TYPES.get(type_id)
         if ctype.name.startswith('VSE'):
@@ -453,10 +455,16 @@ def migrate_from_1_2_1(globals_dict):
     def create_dsbe_wantedlanguageknowledge(id, search_id, language_id, spoken, written):
         if spoken is None: spoken = ''
         if written is None: written = ''
-        return WantedLanguageKnowledge(id=id,search_id=search_id,language_id=language_id,spoken=spoken,written=written)    
+        return WantedLanguageKnowledge(id=id,search_id=search_id,language_id=language_id,spoken=spoken,written=written)
     globals_dict.update(create_dsbe_wantedlanguageknowledge=create_dsbe_wantedlanguageknowledge)
     
-
+    def create_dsbe_languageknowledge(id, person_id, language_id, spoken, written, native, cef_level):
+        if spoken is None: spoken = ''
+        if written is None: written = ''
+        if cef_level is None: cef_level = ''
+        return LanguageKnowledge(id=id,person_id=person_id,language_id=language_id,spoken=spoken,written=written,native=native,cef_level=cef_level)
+    globals_dict.update(create_dsbe_languageknowledge=create_dsbe_languageknowledge)
+    
     def create_cal_task(id, user_id, created, modified, owner_type_id, owner_id, person_id, company_id, start_date, start_time, summary, description, access_class, sequence, alarm_value, alarm_unit, dt_alarm, due_date, due_time, done, percent, status, auto_type):
         owner_type_id = new_contenttype(owner_type_id)
         user_id = new_user_id(user_id)

@@ -41,6 +41,8 @@ import lino
 from lino.core.coretools import app_labels
 from lino.utils import *
 
+USE_DJANGO_FLUSH = False
+
 class Command(BaseCommand):
     help = __doc__
     
@@ -72,7 +74,7 @@ class Command(BaseCommand):
         options.update(interactive=False)
         dblogger.info("Lino initdb %s started on database %s.", args, dbname)
         dblogger.info(lino.welcome_text())
-        if True:
+        if not USE_DJANGO_FLUSH:
             conn = connections[using]
             #~ sql_list = u'\n'.join(sql_reset(app, no_style(), conn)).encode('utf-8')
             app_list = [models.get_app(app_label) for app_label in app_labels()]
@@ -93,9 +95,10 @@ class Command(BaseCommand):
         
         #~ call_command('reset',*apps,**options)
         #~ call_command('syncdb',load_initial_data=False,**options)
-        if False:
+        if USE_DJANGO_FLUSH:
             call_command('flush',verbosity=0,interactive=False)
-        call_command('syncdb',**options)
+        else:
+            call_command('syncdb',**options)
         #~ call_command('flush',**options)
         call_command('loaddata',*args,**options)
         #~ if logLevel > logging.DEBUG:
