@@ -60,3 +60,6 @@ dpy dump to restore our database.
 You know that you should rather not let 
 Lino and some other application share the same database!
 
+Continued on `pp2lino`
+======================
+

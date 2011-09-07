@@ -56,7 +56,7 @@ import lino
 from lino.core.coretools import app_labels
 from lino.utils import *
 
-USE_SQLDELETE = False
+USE_SQLDELETE = True
 
 class Command(BaseCommand):
     help = __doc__
@@ -102,6 +102,8 @@ class Command(BaseCommand):
             #~ call_command('flush',**options)
             sql_list.extend(sql_flush(no_style(), conn, only_django=False))
             
+        #~ print sql_list
+        
         try:
             cursor = conn.cursor()
             for sql in sql_list:
