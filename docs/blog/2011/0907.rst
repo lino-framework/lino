@@ -37,7 +37,9 @@ Released :doc:`/releases/20110907` and installed in Eupen.
 Another method for initdb
 =========================
 
-Another thing to try for ticket :doc:`/tickets/50`.
+Another idea I tried for ticket :doc:`/tickets/50`, 
+but which turned out to be nonsense 
+(because "flush" only empties all tables does not drop them).
 
 The Django code of the flush command shows that the
 `sql_flush` method of 

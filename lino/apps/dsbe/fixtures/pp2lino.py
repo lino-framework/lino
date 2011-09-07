@@ -840,10 +840,10 @@ def objects():
     #~ User = resolve_model('users.User')
     yield User(username="root",is_staff=True,is_superuser=True,first_name="Root",last_name="Superuser")
     #~ for o in PersonLoader().load(): yield o
-    for k,v in CboTypeMiseEmplois.items():
-        yield ContractType(id=k,name=v)
-    for k,v in CboTypeContrat.items():
-        yield ContractType(id=k+OFFSET_CONTRACT_TYPE_CPAS,name=v)
+    #~ for k,v in CboTypeMiseEmplois.items():
+        #~ yield ContractType(id=k,name=v)
+    #~ for k,v in CboTypeContrat.items():
+        #~ yield ContractType(id=k+OFFSET_CONTRACT_TYPE_CPAS,name=v)
     yield UsersSGLoader()
     yield UsersISPLoader()
     yield CityLoader()
