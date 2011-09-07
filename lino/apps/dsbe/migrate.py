@@ -407,11 +407,17 @@ def migrate_from_1_2_1(globals_dict):
     def create_contacts_company(country_id, city_id, name, addr1, street_prefix, street, street_no, street_box, addr2, zip_code, region, language, email, url, phone, gsm, fax, remarks, vat_id, type_id, id, is_active, activity_id, bank_account1, bank_account2, prefix, hourly_rate):
         if email is None: email = ''
         if remarks is None: remarks = ''
+        if bank_account1 is None: bank_account1 = ''
+        if bank_account2 is None: bank_account2 = ''
         return Company(country_id=country_id,city_id=city_id,name=name,addr1=addr1,street_prefix=street_prefix,street=street,street_no=street_no,street_box=street_box,addr2=addr2,zip_code=zip_code,region=region,language=language,email=email,url=url,phone=phone,gsm=gsm,fax=fax,remarks=remarks,vat_id=vat_id,type_id=type_id,id=id,is_active=is_active,activity_id=activity_id,bank_account1=bank_account1,bank_account2=bank_account2,prefix=prefix,hourly_rate=hourly_rate)    
     globals_dict.update(create_contacts_company=create_contacts_company)
 
     def create_contacts_person(country_id, city_id, name, addr1, street_prefix, street, street_no, street_box, addr2, zip_code, region, language, email, url, phone, gsm, fax, remarks, first_name, last_name, title, sex, id, is_active, activity_id, bank_account1, bank_account2, remarks2, gesdos_id, is_cpas, is_senior, group_id, coached_from, coached_until, coach1_id, coach2_id, birth_date, birth_date_circa, birth_place, birth_country_id, civil_state, national_id, health_insurance_id, pharmacy_id, nationality_id, card_number, card_valid_from, card_valid_until, card_type, card_issuer, noble_condition, residence_type, in_belgium_since, unemployed_since, needs_residence_permit, needs_work_permit, work_permit_suspended_until, aid_type_id, income_ag, income_wg, income_kg, income_rente, income_misc, is_seeking, unavailable_until, unavailable_why, obstacles, skills, job_agents, job_office_contact_id):
         if email is None: email = ''
+        if remarks is None: remarks = ''
+        if remarks2 is None: remarks2 = ''
+        if bank_account1 is None: bank_account1 = ''
+        if bank_account2 is None: bank_account2 = ''
         coach1_id = new_user_id(coach1_id)
         coach2_id = new_user_id(coach2_id)
         return Person(country_id=country_id,city_id=city_id,name=name,addr1=addr1,street_prefix=street_prefix,street=street,street_no=street_no,street_box=street_box,addr2=addr2,zip_code=zip_code,region=region,language=language,email=email,url=url,phone=phone,gsm=gsm,fax=fax,remarks=remarks,first_name=first_name,last_name=last_name,title=title,sex=sex,
