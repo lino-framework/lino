@@ -3,7 +3,9 @@ Files
 
 .. xfile:: .dtl
 
-Configuration file that describes the layout of (one tab of) a :term:`Detail Window`.
+Configuration file that describes the layout of (one tab of) 
+a :term:`Detail Window`.
+See :doc:`/topics/dtl`.
 
 .. xfile:: settings.py
 

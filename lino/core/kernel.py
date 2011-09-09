@@ -113,7 +113,7 @@ def analyze_models(self,make_messages):
             head,tail = os.path.split(filename)
             model._lino_detail_layouts[tail] = dtl
             if make_messages:
-                dtl.make_message_file()
+                dtl.make_dummy_messages_file()
             
         load_config_files(loader,'*.dtl','%s/%s' % (model._meta.app_label,model.__name__))
         

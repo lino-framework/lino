@@ -2847,6 +2847,7 @@ Lino.WindowWrapperBase = {
       //~ Lino.load_mask.show();
       this.setup();
       this.window.show();
+      Lino.current_window = this;
       //~ this.refresh();
       //~ Lino.load_mask.hide();
   },
@@ -3289,6 +3290,17 @@ Lino.show_uploader = function () {
 };
 #end if
 
-Lino.enable_child_label = function() {
-    Lino.alert('not yet implemented');
+Lino.show_mti_child = function(urlroot) {
+  console.log('show_mti_child',urlroot);
+  rec = Lino.current_window.get_current_record();
+  if (rec) {
+    if (rec.phantom) {
+      Lino.notify('Not allowed on phantom record.');
+    }else{
+      window.open(urlroot + '/' + rec.id);
+      //~ window.open(urlroot + '/' + rec.id,'_blank');
+    }
+  } else {
+    Lino.notify('No current record.');
+  }
 };

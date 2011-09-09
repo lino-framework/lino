@@ -242,6 +242,8 @@ As long as nobody protests, I'll save some time by writing in German.
   05
   :doc:`06 <0906>`
   :doc:`07 <0907>`
+  08
+  :doc:`09 <0909>`
   |br| 
   |br| 
   |br|  	

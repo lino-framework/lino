@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.apps.dsbe\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-07 03:23+0100\n"
+"POT-Creation-Date: 2011-09-09 09:14+0100\n"
 "PO-Revision-Date: 2011-06-15 22:00+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr <lino-users@gmail.com>\n"
@@ -805,9 +805,9 @@ msgstr "Langues"
 msgid "Documents"
 msgstr "Documents"
 
-#: .\config\contacts\Person\7.dtl.py:3 .\config\jobs\JobProvider\jobs.dtl.py:3
-msgid "Jobs"
-msgstr ""
+#: .\config\contacts\Person\7.dtl.py:3
+msgid "Contracts"
+msgstr "Contrats"
 
 #: .\config\contacts\Person\8.dtl.py:3
 msgid "Calendar"
@@ -817,10 +817,19 @@ msgstr ""
 msgid "Miscellaneous"
 msgstr "Divers"
 
-#: .\config\jobs\ContractType\1.dtl.py:3 .\config\jobs\JobType\1.dtl.py:3
-#: .\config\notes\EventType\1.dtl.py:3 .\config\notes\Note\1.dtl.py:3
+#: .\config\isip\Contract\2.dtl.py:3
+msgid "VSE"
+msgstr ""
+
+#: .\config\isip\ContractType\1.dtl.py:3 .\config\jobs\ContractType\1.dtl.py:3
+#: .\config\jobs\JobType\1.dtl.py:3 .\config\notes\EventType\1.dtl.py:3
+#: .\config\notes\Note\1.dtl.py:3
 msgid "Detail"
 msgstr "Détail"
+
+#: .\config\jobs\JobProvider\jobs.dtl.py:3
+msgid "Jobs"
+msgstr ""
 
 #, fuzzy
 #~ msgid "is Person"
@@ -926,9 +935,6 @@ msgstr "Détail"
 
 #~ msgid "Contract Endings"
 #~ msgstr "Ruptures/fins de contrat"
-
-#~ msgid "Contracts"
-#~ msgstr "Contrats"
 
 #~ msgid "contract type"
 #~ msgstr "type de contrat"

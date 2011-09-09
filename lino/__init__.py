@@ -292,49 +292,6 @@ class Lino(object):
     """
     
     
-    time_format_strftime = '%H:%M'
-    time_format_extjs = 'H:i'
-    
-    date_format_strftime = '%d.%m.%Y'
-    date_format_extjs = 'd.m.Y'
-    
-   
-    def parse_date(self,s):
-        """Convert a string formatted using 
-        :attr:`date_format_strftime` or  :attr:`date_format_extjs` 
-        into a datetime.date instance.
-        See :doc:`/blog/2010/1130`.
-        """
-        ymd = reversed(map(int,s.split('.')))
-        return datetime.date(*ymd)
-        
-    def parse_time(self,s):
-        """Convert a string formatted using 
-        :attr:`time_format_strftime` or  :attr:`time_format_extjs` 
-        into a datetime.time instance.
-        """
-        hms = map(int,s.split(':'))
-        return datetime.time(*hms)
-        
-    def parse_datetime(self,s):
-        """Convert a string formatted for :meth:`parse_date` 
-        and :meth:`parse_time` 
-        into a datetime.datetime instance.
-        """
-        #~ print "20110701 parse_datetime(%r)" % s
-        s2 = s.split()
-        if len(s2) != 2:
-            raise Exception("Invalid datetime value %r" % s)
-        #~ ymd = map(int,s2[0].split('-'))
-        #~ hms = map(int,s2[1].split(':'))
-        #~ return datetime.datetime(*(ymd+hms))
-        d = self.parse_date(s[0])
-        t = self.parse_time(s[1])
-        return datetime.combine(d,t)
-
-    alt_date_formats_extjs = 'd/m/Y|Y-m-d'
-    
-    
     #~ preferred_build_method = 'pisa'
     #~ preferred_build_method = 'appypdf'
     
@@ -370,12 +327,19 @@ class Lino(object):
     """
     
     source_dir = os.path.dirname(__file__)
+    """
+    Full path to the source directory of this Lino application.
+    Local Lino subclasses should not override this variable.
+    This is used e.g. in :mod:`lino.utils.config` to decide 
+    whether there is a local config directory.
+    """
+    
     source_name = os.path.split(source_dir)[-1]
     
     project_dir = None
     """
-    This is the full path to your local project directory. 
-    You don't need to (and shouldn't) set this variable.
+    Full path to your local project directory. 
+    Local Lino subclasses should not override this variable.
     
     The local project directory is where 
     local configuration files are stored:
@@ -383,10 +347,6 @@ class Lino(object):
     - :xfile:`settings.py`, :xfile:`manage.py` and :xfile:`urls.py`
     - Your :xfile:`media` directory
     - Optional local :xfile:`config` and :xfile:`fixtures` directories
-  
-   
-    
-    
     """
     
     webdav_root = None
@@ -411,6 +371,51 @@ class Lino(object):
     :mod:`lino.modlib.mails.models`.
     See also :doc:`/blog/2011/0901`.
     """
+    
+    time_format_strftime = '%H:%M'
+    time_format_extjs = 'H:i'
+    
+    date_format_strftime = '%d.%m.%Y'
+    date_format_extjs = 'd.m.Y'
+    
+    alt_date_formats_extjs = 'd/m/Y|Y-m-d'
+    
+   
+    def parse_date(self,s):
+        """Convert a string formatted using 
+        :attr:`date_format_strftime` or  :attr:`date_format_extjs` 
+        into a datetime.date instance.
+        See :doc:`/blog/2010/1130`.
+        """
+        ymd = reversed(map(int,s.split('.')))
+        return datetime.date(*ymd)
+        
+    def parse_time(self,s):
+        """Convert a string formatted using 
+        :attr:`time_format_strftime` or  :attr:`time_format_extjs` 
+        into a datetime.time instance.
+        """
+        hms = map(int,s.split(':'))
+        return datetime.time(*hms)
+        
+    def parse_datetime(self,s):
+        """Convert a string formatted for :meth:`parse_date` 
+        and :meth:`parse_time` 
+        into a datetime.datetime instance.
+        """
+        #~ print "20110701 parse_datetime(%r)" % s
+        s2 = s.split()
+        if len(s2) != 2:
+            raise Exception("Invalid datetime value %r" % s)
+        #~ ymd = map(int,s2[0].split('-'))
+        #~ hms = map(int,s2[1].split(':'))
+        #~ return datetime.datetime(*(ymd+hms))
+        d = self.parse_date(s[0])
+        t = self.parse_time(s[1])
+        return datetime.combine(d,t)
+
+    
+    
     
     def __init__(self,project_file,settings_dict):
         self.project_dir = normpath(dirname(project_file))

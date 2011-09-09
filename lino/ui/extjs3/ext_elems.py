@@ -755,8 +755,11 @@ class BooleanFieldElement(FieldElement):
             
             label = self.label
             if isinstance(self.field,mti.EnableChild):
-                js = "Lino.enable_child_label('%s')" % self.field.child_model.__name__
-                label += """ (<a href="javascript:%s)">go</a>)""" % js
+                #~ ptrname = self.field.child_model.__name__.lower() + '_ptr'
+                m = self.field.child_model
+                url = self.lh.rh.ui.build_url('api',m._meta.app_label,m.__name__)
+                js = "Lino.show_mti_child('%s')" % (url)
+                label += """ (<a href="javascript:%s">%s</a>)""" % (js,_("show"))
                 
         #~ self.verbose_name = \
             #~ 'is a <a href="javascript:Lino.enable_child_label()">%s</a>' % self.field.child_model.__name__

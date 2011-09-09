@@ -12,6 +12,13 @@ is rather for internal use.
 Short-term
 ----------
 
+#.  :menuselection:`Kontakte --> Alle Kontakte`: 
+    in dieser Liste kann man momentan auch importierte Partner bearbeiten.
+
+#.  Es gibt noch keine (direkte) Möglichkeit, um von einer Aufgabe aus 
+    das Detail des Owners anzuzeigen.
+    
+
 #.  `Extensible <http://ext.ensible.com/>`_ 
     (founded by Brian Moeskau, one of the original cofounders of Ext JS)
     has a `Widget for calendar event recurrency 
@@ -98,9 +105,6 @@ Short-term
     http://www.e-contract.be/
     http://code.google.com/p/eid-applet/
     
-#.  Es gibt noch keine (direkte) Möglichkeit, um von einer Aufgabe aus 
-    das Detail des Owners anzuzeigen.
-    
 #.  auf Jana werden Tabellen nicht korrekt gerendert, auf Armand wohl.
       - OOo-Version? auf Jana ist 3.2:
         zless /usr/share/doc/openoffice.org-core/README.gz
@@ -152,6 +156,11 @@ Short-term
 Medium-term
 -----------
 
+#.  Rapport pour Actiris (Office Régional Bruxellois de l'Emploi). 
+    Donc ce rapport pour Actiris doit mentionner, par assistant social, 
+    le nombre d’ouvertures et de fermetures de dossier pendant un certain 
+    laps de temps.
+
 #.  Enhance performance by using xtype instead of instantiating directly:
     http://iamtotti.com/blog/2011/05/what-makes-your-extjs-application-run-so-slow/
     Note that I started to prefer direct instantiation when I had had some 
@@ -163,10 +172,9 @@ Medium-term
     `datagrid <http://dojotoolkit.org/documentation/tutorials/1.6/datagrid/>`_
     and looks easy to learn.
 
-#.  Rename "lino.mixins.Owned" to "Anchored" (and XxxByOwner to XxxByAnchor".
+#.  Rename "lino.mixins.Owned" to "Anchored" 
+    (and XxxByOwner to XxxByAnchor"?
     
-#.  Tutorial weiter schreiben.
-
 #.  Ich habe momentan noch kein Beispiel dafür, wie man eine eigene 
     ROOT_URLCONF setzen kann, um einen Site zu machen, bei dem Lino nur 
     "draufgesetzt" ist (so wie "admin" in der Tutorial-Anwendung von Django).
@@ -175,9 +183,6 @@ Medium-term
     deaktiviert werden, immerhin dauert das manchmal eine Sekunde.
     
 #.  Bug in :term:`appy.pod`: https://bugs.launchpad.net/appy/+bug/815019
-
-#.  Beim Entserialisieren mit `lino.utils.dpy` gehen alle modified-Daten 
-    verloren (werden auf den Zeitpunkt des Wiedereinlesens gesetzt).
 
 #.  Client-seitiger Ersatz für den "Memo"-Button, der seit 
     :doc`/blog/2011/0605` wieder raus ist.
@@ -189,11 +194,6 @@ Medium-term
     machen. Interessant wäre, wenn man die Höhe einzelner Zeilen 
     manuell verändern kann. Eventuell den Text-Editor im eigenen 
     Fenster aufrufen bei Doppelklick.
-
-
-#.  Pro Ereignisart könnte ein Feld "muss manuell erledigt werden" kommen, 
-    das würde dann verhindern, dass entsprechende Erinnerungen 
-    automatisch aus dem Hauptbildschirm verschwinden.
 
 #.  Mail-Interface, Posteingang : 
     Lino-Server empfängt E-Mails, die teilweise geparst werden und/oder 
@@ -219,29 +219,6 @@ Medium-term
 Later
 -----
 
-#.  Ausdruck Verträge: jetzt wo die mehrzeiligen Textfelder formatierbar 
-    sind, kommt vielleicht ein kleines Problem: Bisher wurde z.B. in der 
-    Dokumentvorlage ein Wort vor dem eigentlichen Text eingefügt, 
-    wenn dieser nicht leer war. Z.B. Wenn man im Feld "Zielsetzungen" 
-    den Text "Blablabla..." eintrug, dann wurde "Zielsetzungen: Blablabla..." 
-    gedruckt. Um das in dieser Form zu erhalten, müsste ich einen Patch für 
-    :term:`appy.pod` schreiben, der folgendes ermöglicht::
-    
-      do text
-      from html(self.goals,wrapper="<p><b>Zielsetzungen</b>: %s </p>")
-
-#.  Ein Test in der Lino-Suite funktioniert offenbar nur, wenn man `de` als 
-    Hauptsprache hat::
-
-      FAIL: test_them_all (lino.apps.dsbe.tests.dsbe_demo_tests.DemoTest)
-      ----------------------------------------------------------------------
-      Traceback (most recent call last):
-        File "/var/snapshots/lino/lino/utils/test.py", line 87, in test_them_all
-          v(self)
-        File "/var/snapshots/lino/lino/apps/dsbe/tests/dsbe_demo_tests.py", line 71, in test02
-          self.assertEqual(row[0],"Gehorsam")
-      AssertionError: u'Ob\xe9issant' != 'Gehorsam'
-
 #.  An makedocs müsste ich bei Gelegenheit mal ein bisschen weiter machen. 
     Das ist noch lange nicht fertig.
     
@@ -251,13 +228,7 @@ Later
 #.  Welche weiteren Felder müssen (ähnlich wie "Stadt") lernfähig werden? 
     Vorschläge: 
     
-    - lino.mixins.reminders.Reminder.reminder_subject
     - lino.apps.dsbe.models.Study.content
-    
-#.  :doc:`/tickets/41`
-
-#.  Erinnerungen gar nicht mehr im Lino-Hauptbildschirm, sondern nach GW schicken?
-    Oder GW neu schreiben?
     
 #.  igen : Partner.get_invoice_suggestions()
 

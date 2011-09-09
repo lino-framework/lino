@@ -29,7 +29,7 @@ You must also set the encoding for mdb-export::
     
 Then load the fixture using the following command::
 
-    python manage.py initdb std all_countries all_cities be all_languages props pp2lino
+    python manage.py initdb std all_countries all_languages props pp2lino
     
 The following variant might help to save time during testing::
     
@@ -399,7 +399,9 @@ CboPays = {
 
 def k2iso(dd,k,ddname):
     if not k: return None
-    country_id = dd.get(int(k))
+    k = int(k)
+    if k == 0: return None
+    country_id = dd.get(k)
     if country_id is None:
         dblogger.warning("Unknown %s id %s",ddname,k)
         return None
@@ -738,8 +740,23 @@ class PersonLoader(LinoMdbLoader):
         
 
 
-
-
+class JobLoader(LinoMdbLoader):
+    table_name = 'TbRechercheProfil'
+    model = jobs.Job
+    headers = u"""IDRechercheProfil 
+    DateOuvertureSelection DateClotureSelection 
+    DateDebutContrat 
+    IDEndroitMiseAuTravail IdQualification 
+    IDDetailFonction DescriptionDeFonction 
+    HorairesDeTravail ProfilDemande Encadrement 
+    OffreSpecifique Commentaires GestionArt60 
+    StatutPoste""".split()
+    def row2obj(self,row):
+        kw = {}
+        kw.update(id=int(row['IDTypeMiseEmplois']))
+        kw.update(name=row['TypeMiseEmplois'])
+        yield self.model(**kw)
+    
 class JobsContractTypeLoader(LinoMdbLoader):
     table_name = 'CboTypeMiseEmplois'
     model = jobs.ContractType
@@ -838,7 +855,7 @@ def objects():
     yield phin('4')
     yield phin('4b')
     #~ User = resolve_model('users.User')
-    yield User(username="root",is_staff=True,is_superuser=True,first_name="Root",last_name="Superuser")
+    yield User(username="root",is_staff=True,is_expert=True,is_superuser=True,first_name="Root",last_name="Superuser")
     #~ for o in PersonLoader().load(): yield o
     #~ for k,v in CboTypeMiseEmplois.items():
         #~ yield ContractType(id=k,name=v)

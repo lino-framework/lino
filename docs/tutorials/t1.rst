@@ -205,14 +205,14 @@ Note that there is currently no way to enter Choices for a poll.
 We are going to fix that quickly:
 Create a :xfile:`config` directory for your polls application::
 
-  $ mkdir /home/luc/mysite/polls/config
+  $ mkdir /home/luc/mysite/polls/config/polls/Poll
   
-and create a text file named `polls.Poll.dtl` in that 
+and create a text file named `general.dtl` in that 
 directory with the following content::
 
     main = 
       id question pub_date
-      polls.ChoicesByPoll
+      ChoicesByPoll
 
 Then restart the server and double-click on one of the polls 
 you previously created. Or double-click on the last 

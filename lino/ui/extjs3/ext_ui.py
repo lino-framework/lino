@@ -1272,8 +1272,7 @@ tinymce.init({
         """
         Called from :term:`makedocs`.
         """
-        #~ from lino.core.kernel import write_message_file
-        from lino.utils.config import write_message_file
+        from lino.utils.config import make_dummy_messages_file
         tpl = self.linolib_template()
         messages = set()
         def mytranslate(s):
@@ -1282,7 +1281,7 @@ tinymce.init({
             return _(s)
         tpl._ = mytranslate
         unicode(tpl) # just to execute the template. result is not needed
-        write_message_file(self.linolib_template_name(),messages)
+        make_dummy_messages_file(self.linolib_template_name(),messages)
         
     def linolib_template_name(self):
         return os.path.join(os.path.dirname(__file__),'linolib.js')

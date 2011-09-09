@@ -1,22 +1,37 @@
 About Lino
 ==========
 
-Lino is a framework for creating enterprise-level 
+Lino is a framework for creating customized enterprise-level 
 Rich Internet Applications that use :term:`Django's <Django>`
 database model combined with an out-of-the box user interface.
 
-Lino is still young: 
-there's only one real-world Lino application, 
-running on a non-public site in Eupen since January 2011.
-Our goal is to write at least two other applications 
-until the end of 2011.
+Up to now there's one 
+real-world Lino application, 
+running in a Belgian 
+*Public Centre for Social Welfare* 
+(PCSW) since January 2011.
+These users and their system adminstrator 
+are so satisfied that other similar centres showed their interest.
+That's why :doc:`Lino-PCSW </dsbe/index>` 
+is currently using up most of our human resources.
+
+But Lino is a *framework*. This means that there 
+will be many different Linos in the future.
+:doc:`Lino-iGen</igen/index>` is just one example 
+of what's possible.
 
 Some of Lino's features:
 
-- Designed for rapid prototyping and shord release cycles.
-- A solution for :doc:`/topics/datamig`
-- A solution for :doc:`ui transparent form design </topics/dtl>`
-- A solution for :doc:`multilingual database content </topics/babel>`
+- Designed for rapid prototyping and short release cycles.
+- Innovative solutions for 
+  :doc:`data migrations </topics/datamig>`,
+  :doc:`user-interface transparent form design </topics/dtl>` 
+  and
+  :doc:`multilingual database content </topics/babel>`.
+
+
+History
+-------
 
 Luc Saffre, the author of Lino, is also the author of :term:`TIM`, 
 a DOS-based framework for writing database applications for small enterprises. 
@@ -26,10 +41,6 @@ it and giving support to its users.
 TIM users have relatively wide-spread profiles, 
 ranging from the independant craftsman who writes 50 invoices per year 
 to the government agency with 30 users and hundreds of documents per day.
-
-
-History
--------
 
 Luc has been working on writing a successor for TIM since the early 1990s. 
 He has done and dropped projects in C++, PHP and Java. 

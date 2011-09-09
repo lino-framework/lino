@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-07 03:23+0100\n"
+"POT-Creation-Date: 2011-09-09 09:14+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -799,8 +799,8 @@ msgstr ""
 msgid "Documents"
 msgstr ""
 
-#: .\config\contacts\Person\7.dtl.py:3 .\config\jobs\JobProvider\jobs.dtl.py:3
-msgid "Jobs"
+#: .\config\contacts\Person\7.dtl.py:3
+msgid "Contracts"
 msgstr ""
 
 #: .\config\contacts\Person\8.dtl.py:3
@@ -811,7 +811,16 @@ msgstr ""
 msgid "Miscellaneous"
 msgstr ""
 
-#: .\config\jobs\ContractType\1.dtl.py:3 .\config\jobs\JobType\1.dtl.py:3
-#: .\config\notes\EventType\1.dtl.py:3 .\config\notes\Note\1.dtl.py:3
+#: .\config\isip\Contract\2.dtl.py:3
+msgid "VSE"
+msgstr ""
+
+#: .\config\isip\ContractType\1.dtl.py:3 .\config\jobs\ContractType\1.dtl.py:3
+#: .\config\jobs\JobType\1.dtl.py:3 .\config\notes\EventType\1.dtl.py:3
+#: .\config\notes\Note\1.dtl.py:3
 msgid "Detail"
+msgstr ""
+
+#: .\config\jobs\JobProvider\jobs.dtl.py:3
+msgid "Jobs"
 msgstr ""
