@@ -138,14 +138,16 @@ class Owned(models.Model):
     owner_type = models.ForeignKey(ContentType,editable=True,        
         blank=True,null=True,
         verbose_name=_('Owner type'))
-    #~ owner_id = models.PositiveIntegerField(editable=True,
-        #~ blank=True,null=True,
-        #~ verbose_name=_('Owner'))
     owner_id = fields.GenericForeignKeyIdField(owner_type,
         editable=True,
         blank=True,null=True,
         verbose_name=_('Owner'))
     owner = generic.GenericForeignKey('owner_type', 'owner_id')
+    #~ owner_panel= fields.FieldSet(_("Owner"),
+        #~ "owner_type owner_id",
+        #~ owner_type=_("Model"),
+        #~ owner_id=_("Instance"))
+    
     
     @chooser(instance_values=True)
     def owner_id_choices(cls,owner_type):

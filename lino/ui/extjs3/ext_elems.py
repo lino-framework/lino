@@ -1319,8 +1319,8 @@ class MainPanel(jsgen.Variable):
             else:
                 if isinstance(field,models.ForeignKey):
                     return ForeignKeyElement(lh,field,**kw)
-                elif isinstance(field,fields.GenericForeignKeyIdField):
-                    return ComplexRemoteComboFieldElement(lh,field,**kw)
+                #~ elif isinstance(field,fields.GenericForeignKeyIdField):
+                    #~ return ComplexRemoteComboFieldElement(lh,field,**kw)
                 else:
                     return ComplexRemoteComboFieldElement(lh,field,**kw)
         if field.choices:

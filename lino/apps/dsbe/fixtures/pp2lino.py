@@ -36,6 +36,14 @@ The following variant might help to save time during testing::
     python manage.py initdb std few_countries pp2lino --noinput
 
 
+Notes techniques import de données PP vers Lino
+-----------------------------------------------
+
+- La table CboListeFonction (secteurs d'activité) n'est pas importée. 
+  Seulement la CboDetailFonction est importée (vers 
+  :class:`lino.modlib.properties.models.Property`)
+
+
 """
 
 import os
@@ -55,6 +63,7 @@ from lino.apps.dsbe.models import Company, Person, City, Country, Note, PersonGr
 from lino.modlib.users.models import User
 from lino.modlib.jobs import models as jobs
 from lino.modlib.isip import models as isip
+from lino.modlib.properties import models as properties
 
 from lino.utils.mdbtools import Loader
 
@@ -465,19 +474,19 @@ OFFSET_JOBPROVIDER = 3000
 #~ OFFSET_CONTRACT_TYPE_CPAS = 100 
 #~ assert OFFSET_CONTRACT_TYPE_CPAS > len(CboTypeMiseEmplois) 
 
-"""
-Both TBMiseEmplois and TBTypeDeContratCPAS go to Lino's Contract table.
-The following offset is added to TBTypeDeContratCPAS keys. 
-Must be > record count of TBMiseEmplois.
-"""
-OFFSET_CONTRACT_CPAS = 2000
+#~ """
+#~ Both TBMiseEmplois and TBTypeDeContratCPAS go to Lino's Contract table.
+#~ The following offset is added to TBTypeDeContratCPAS keys. 
+#~ Must be > record count of TBMiseEmplois.
+#~ """
+#~ OFFSET_CONTRACT_CPAS = 2000
         
 
 
-def get_or_create_job(provider,contract_type):
+def get_or_create_job(provider,contract_type,job_type):
     try:
         #~ if provider_id:
-        return jobs.Job.objects.get(provider=provider,contract_type=contract_type)
+        return jobs.Job.objects.get(provider=provider,contract_type=contract_type,type=job_type)
         #~ else:
             #~ return Job.objects.get(provider__isnull=True,contract_type__id=contract_type_id)
     except jobs.Job.DoesNotExist:
@@ -488,6 +497,7 @@ def get_or_create_job(provider,contract_type):
         job = jobs.Job(
             provider=provider,
             contract_type=contract_type,
+            type=job_type,
             name=name
             )
         job.full_clean()
@@ -757,6 +767,16 @@ class JobLoader(LinoMdbLoader):
         kw.update(name=row['TypeMiseEmplois'])
         yield self.model(**kw)
     
+class DetailFonctionsLoader(LinoMdbLoader):
+    table_name = 'CboDetailFonction'
+    model = properties.Property
+    headers = u"""IDDetailFonction DetailFonction Code Secteur""".split()
+    def row2obj(self,row):
+        kw = {}
+        kw.update(id=int(row['IDDetailFonction']))
+        kw.update(name='('+row['Code']+') 'row['DetailFonction'])
+        yield self.model(**kw)
+    
 class JobsContractTypeLoader(LinoMdbLoader):
     table_name = 'CboTypeMiseEmplois'
     model = jobs.ContractType
@@ -765,6 +785,17 @@ class JobsContractTypeLoader(LinoMdbLoader):
         kw = {}
         kw.update(id=int(row['IDTypeMiseEmplois']))
         kw.update(name=row['TypeMiseEmplois'])
+        yield self.model(**kw)
+    
+class CboSubsideLoader(LinoMdbLoader):
+    table_name = 'CboSubside'
+    model = jobs.JobType
+    headers = u"""IDSubside TypeSubside article""".split()
+    def row2obj(self,row):
+        kw = {}
+        kw.update(id=int(row['IDSubside']))
+        kw.update(name=row['TypeSubside'])
+        kw.update(remark=row['article'])
         yield self.model(**kw)
     
 class IsipContractTypeLoader(LinoMdbLoader):
@@ -777,9 +808,9 @@ class IsipContractTypeLoader(LinoMdbLoader):
         kw.update(name=row['TypeContratCPAS'])
         yield self.model(**kw)
     
-class ContractArt60Loader(LinoMdbLoader):
+class TBMiseEmploisLoader(LinoMdbLoader):
     table_name = 'TBMiseEmplois'
-    model = jobs.Contract
+    #~ model = jobs.Contract
     headers = u"""
     IDMiseEmplois IDTypeMiseEmplois 
     MotifArt60 IDSubside IDETP 
@@ -796,26 +827,39 @@ class ContractArt60Loader(LinoMdbLoader):
     def row2obj(self,row):
         kw = {}
         kw.update(id=int(row['IDMiseEmplois']))
-        #~ ctype = 
-        #~ if ctype:
-            #~ kw.update(type=ContractType.objects.get(pk=ctype))
-        kw.update(applies_from=self.parsedate(row[u'DebutContrat']))
-        kw.update(applies_until=self.parsedate(row[u'FinContrat']))
+        
+        job = None
+        
         provider = get_by_id(jobs.JobProvider,row[u'IDEndroitMiseAuTravail'],OFFSET_JOBPROVIDER)
-        kw.update(provider=provider)
-        kw.update(person=get_by_id(Person,row[u'IDClient'],OFFSET_PERSON))
-        #~ provider_id = row[u'IDEndroitMiseAuTravail']
-        #~ if provider_id:
-            #~ provider_id = int(provider_id) + OFFSET_JOBPROVIDER
-        #~ else:
-            #~ provider_id = None
-        ct = get_by_id(jobs.ContractType,row['IDTypeMiseEmplois'])
-        kw.update(type=ct)
-        if not ct:
-            dblogger.warning("Ignored TBMiseEmplois %s",kw)
+        if not provider:
+            dblogger.warning("Ignored TBMiseEmplois %s : no provider",kw)
         else:
-            kw.update(job=get_or_create_job(provider,ct))
-            yield self.model(**kw)
+            ct = get_by_id(jobs.ContractType,row['IDTypeMiseEmplois'])
+            if not ct:
+                dblogger.warning("Ignored TBMiseEmplois %s : no contract type",kw)
+            else:
+                jt = get_by_id(jobs.JobType,row[',row['IDSubside']'])
+                if not jt:
+                    dblogger.warning("Ignored TBMiseEmplois %s : no job type",kw)
+                job = get_or_create_job(provider,ct,jt)
+        
+        if job:
+            qual = get_by_id(properties.Property,row['IdQualification'])
+            #~ kw.update(qual=qual)
+            statut = row['Statut']
+            if statut in (u'En Attente',u'En Cours',u'Terminé'):
+                kw.update(applies_from=self.parsedate(row[u'DebutContrat']))
+                kw.update(applies_until=self.parsedate(row[u'FinContrat']))
+                    kw.update(type=ct)
+                    kw.update(job=job)
+                    kw.update(provider=provider)
+                    person = get_by_id(Person,row[u'IDClient'],OFFSET_PERSON)
+                    kw.update(person=person)
+                    yield jobs.Contract(**kw)
+            else:
+                dblogger.warning("Ignored TBMiseEmplois %s : unknown statut",kw)
+          
+        
 
 class ContractVSELoader(LinoMdbLoader):
     table_name = 'TBTypeDeContratCPAS'
@@ -828,7 +872,7 @@ class ContractVSELoader(LinoMdbLoader):
     
     def row2obj(self,row):
         kw = {}
-        kw.update(id=int(row['IDTypeDeContratCPAS'])+OFFSET_CONTRACT_CPAS)
+        kw.update(id=int(row['IDTypeDeContratCPAS']))
         #~ ctype = int(row['IDTypeContrat']) 
         #~ if ctype:
             #~ kw.update(type=ContractType.objects.get(pk=ctype+ OFFSET_CONTRACT_TYPE_CPAS))
@@ -863,12 +907,14 @@ def objects():
         #~ yield ContractType(id=k+OFFSET_CONTRACT_TYPE_CPAS,name=v)
     yield UsersSGLoader()
     yield UsersISPLoader()
+    yield CboSubsideLoader()
+    yield DetailFonctionsLoader()
     yield CityLoader()
     yield PersonLoader()
     yield JobProviderLoader()
     yield JobsContractTypeLoader()
     yield IsipContractTypeLoader()
-    yield ContractArt60Loader()
+    yield TBMiseEmploisLoader()
     yield ContractVSELoader()
     yield NotesLoader()
     

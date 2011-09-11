@@ -11,7 +11,7 @@ The following subtile i18n problem was due to a nice little bug:
 To have the labels in :xfile:`.dtl` files translated, 
 we must write dummy message files for them. 
 This is done by running 
-``make makedocs`` before running `make mm`
+``make makedocs`` before running `´make mm``
 in the root of Lino source repository.
 
 But :meth:`lino.utils.config.Configured.make_dummy_messages_file`
@@ -38,3 +38,6 @@ the label of a :class:`lino.utils.mti.EnableChild`
 field contains a "show" 
 link, which wasn't implemented so far. 
 Now it is: clicking on it will open the Detail window of that child.
+
+The implementation uses a global JS variable ´Lino.current_window`. 
+Not sure how this behaves in special circumstances...

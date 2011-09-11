@@ -1,0 +1,6 @@
+20110910
+========
+
+Working on pp2lino.
+
+New field JobType.remark

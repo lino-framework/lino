@@ -407,7 +407,6 @@ class MyContracts(mixins.ByUser,Contracts):
 
 class JobType(mixins.Sequenced):
     """
-    A work place at some job provider
     """
     
     class Meta:
@@ -418,12 +417,18 @@ class JobType(mixins.Sequenced):
           blank=True,
           verbose_name=_("Designation"))
           
+    remark = models.CharField(max_length=200,
+        blank=True,
+        verbose_name=_("Remark"))
+        
+          
     def __unicode__(self):
         return unicode(self.name)
         
   
 class Job(models.Model):
     """
+    A work place at some job provider
     """
     class Meta:
         verbose_name = _("Job")

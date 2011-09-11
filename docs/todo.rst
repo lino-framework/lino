@@ -16,8 +16,8 @@ Short-term
     in dieser Liste kann man momentan auch importierte Partner bearbeiten.
 
 #.  Es gibt noch keine (direkte) Möglichkeit, um von einer Aufgabe aus 
-    das Detail des Owners anzuzeigen.
-    
+    das Detail des Owners anzuzeigen. GenericForeignKey könnte auch was 
+    Ähnliches wie `Lino.show_mti_child`  kriegen...
 
 #.  `Extensible <http://ext.ensible.com/>`_ 
     (founded by Brian Moeskau, one of the original cofounders of Ext JS)
