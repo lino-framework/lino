@@ -814,7 +814,10 @@ class DetailFonctionsLoader(LinoMdbLoader):
         kw = {}
         kw.update(id=int(row['IDDetailFonction']))
         #~ kw.update(name='(' + row['Code'] + ') ' + row['DetailFonction'])
-        kw.update(name=row['DetailFonction'])
+        if row['DetailFonction']:
+            kw.update(name=row['DetailFonction'])
+        else:
+            kw.update(name="Function%d" % kw.get('id'))
         kw.update(sector=SECTORS.get(row['Code']))
         yield self.model(**kw)
     
