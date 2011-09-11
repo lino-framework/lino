@@ -232,6 +232,9 @@ class Contract(ContractBase):
     responsibilities = fields.RichTextField(_("responsibilities"),
         blank=True,null=True,format='html')
     
+    remark = models.TextField(
+        blank=True,
+        verbose_name=_("Remark"))
         
     
     #~ aid_nature = models.CharField(_("aid nature"),max_length=100,blank=True)
