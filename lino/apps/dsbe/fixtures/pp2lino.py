@@ -891,7 +891,7 @@ class TBMiseEmploisLoader(LinoMdbLoader):
                 kw.update(type=ct)
                 kw.update(job=job)
                 kw.update(user=get_by_id(User,row[u'IDASISP'],OFFSET_USER_ISP))
-                kw.update(user_asg=get_by_id(User,row[u'IDASSSG']))
+                kw.update(user_asd=get_by_id(User,row[u'IDASSSG']))
                 kw.update(provider=provider)
                 kw.update(person=person)
                 kw.update(remark=u"""
