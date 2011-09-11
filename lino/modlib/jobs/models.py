@@ -549,7 +549,8 @@ class JobRequest(models.Model):
         blank=True,null=True)
     
     job = models.ForeignKey("jobs.Job",
-        verbose_name=_("Requested Job"))
+        blank=True,null=True)
+        #~ verbose_name=_("Requested Job"))
     
     date_submitted = models.DateField(_("date submitted"),auto_now_add=True)
     u"Das Datum, an dem die Anfrage erstellt wurde."
