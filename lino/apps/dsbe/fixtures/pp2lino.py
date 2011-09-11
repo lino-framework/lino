@@ -933,7 +933,7 @@ def objects():
     yield UsersSGLoader()
     yield User(username="root",is_staff=True,is_expert=True,is_superuser=True,first_name="Root",last_name="Superuser")
     for i in (5,9,10):
-        yield User(username="user%d"%i,is_active=False)
+        yield User(id=i,username="user%d"%i,is_active=False)
     yield UsersISPLoader()
     yield CboSubsideLoader()
     yield ListeFonctionLoader()
