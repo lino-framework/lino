@@ -58,6 +58,7 @@ def objects():
       )
     
     
+    #~ skills = settings.LINO.config.propgroup_skills
     skill = Instantiator('properties.Property',group=skills,type=onoff).build
     yield skill(**babel_values('name',
           de=u"Gartenarbeit",
