@@ -838,7 +838,7 @@ class TBMiseEmploisLoader(LinoMdbLoader):
             if not ct:
                 dblogger.warning("Ignored TBMiseEmplois %s : no contract type",kw)
             else:
-                jt = get_by_id(jobs.JobType,row[',row['IDSubside']'])
+                jt = get_by_id(jobs.JobType,row['IDSubside'])
                 if not jt:
                     dblogger.warning("Ignored TBMiseEmplois %s : no job type",kw)
                 job = get_or_create_job(provider,ct,jt)
