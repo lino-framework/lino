@@ -861,13 +861,8 @@ class TBMiseEmploisLoader(LinoMdbLoader):
         person = get_by_id(Person,row[u'IDClient'],OFFSET_PERSON)
         provider = get_by_id(jobs.JobProvider,row[u'IDEndroitMiseAuTravail'],OFFSET_JOBPROVIDER)
         ct = get_by_id(jobs.ContractType,row['IDTypeMiseEmplois'])
-        if not ct:
-            dblogger.warning("Ignored TBMiseEmplois %s : no contract type",kw)
-        else:
-            jt = get_by_id(jobs.JobType,row['IDSubside'])
-            #~ if not jt:
-                #~ dblogger.warning("Ignored TBMiseEmplois %s : no job type",kw)
-            job = get_or_create_job(provider,ct,jt,sector,function)
+        jt = get_by_id(jobs.JobType,row['IDSubside'])
+        job = get_or_create_job(provider,ct,jt,sector,function)
         
         statut = row['Statut']
         if statut in (u'En Attente',u'En Cours',u'Terminé'):
@@ -930,13 +925,15 @@ def objects():
     yield phin('4')
     yield phin('4b')
     #~ User = resolve_model('users.User')
-    yield User(username="root",is_staff=True,is_expert=True,is_superuser=True,first_name="Root",last_name="Superuser")
     #~ for o in PersonLoader().load(): yield o
     #~ for k,v in CboTypeMiseEmplois.items():
         #~ yield ContractType(id=k,name=v)
     #~ for k,v in CboTypeContrat.items():
         #~ yield ContractType(id=k+OFFSET_CONTRACT_TYPE_CPAS,name=v)
     yield UsersSGLoader()
+    yield User(username="root",is_staff=True,is_expert=True,is_superuser=True,first_name="Root",last_name="Superuser")
+    for i in (5,9,10):
+        yield User(username="user%d"%i,is_active=False)
     yield UsersISPLoader()
     yield CboSubsideLoader()
     yield ListeFonctionLoader()
