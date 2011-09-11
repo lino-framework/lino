@@ -449,14 +449,15 @@ def phase2group(ph):
         #~ return None
     #~ return ct
         
-def get_by_id(model,pk,offset=0):
+def get_by_id(model,pk,offset=0,warn=True):
     if not pk: return None
     pk = int(pk)
     if pk == 0: return None
     try:
         return model.objects.get(pk=pk+offset)
     except model.DoesNotExist: 
-        dblogger.warning("%s %r does not exist?!",model,pk)
+        if warn:
+            dblogger.warning("%s %r does not exist?!",model,pk)
         return None
 
 
@@ -870,13 +871,16 @@ class TBMiseEmploisLoader(LinoMdbLoader):
         
         statut = row['Statut']
         if statut in (u'En Attente',u'En Cours',u'Terminé'):
-            kw.update(applies_from=self.parsedate(row[u'DebutContrat']))
-            kw.update(applies_until=self.parsedate(row[u'FinContrat']))
-            kw.update(type=ct)
-            kw.update(job=job)
-            kw.update(provider=provider)
-            kw.update(person=person)
-            yield jobs.Contract(**kw)
+            if not ct:
+                dblogger.warning("Ignored TBMiseEmplois %s : no contract type",row)
+            else:
+                kw.update(applies_from=self.parsedate(row[u'DebutContrat']))
+                kw.update(applies_until=self.parsedate(row[u'FinContrat']))
+                kw.update(type=ct)
+                kw.update(job=job)
+                kw.update(provider=provider)
+                kw.update(person=person)
+                yield jobs.Contract(**kw)
         elif statut == "Candidature":
             kw.update(person=person)
             kw.update(function=function)
