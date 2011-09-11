@@ -763,8 +763,9 @@ class JobLoader(LinoMdbLoader):
     headers = u"""IDRechercheProfil 
     DateOuvertureSelection DateClotureSelection 
     DateDebutContrat 
-    IDEndroitMiseAuTravail IdQualification 
-    IDDetailFonction DescriptionDeFonction 
+    IDEndroitMiseAuTravail 
+    IdQualification IDDetailFonction 
+    DescriptionDeFonction
     HorairesDeTravail ProfilDemande Encadrement 
     OffreSpecifique Commentaires GestionArt60 
     StatutPoste""".split()
@@ -772,6 +773,22 @@ class JobLoader(LinoMdbLoader):
         kw = {}
         kw.update(id=int(row['IDTypeMiseEmplois']))
         kw.update(name=row['TypeMiseEmplois'])
+        kw.update(sector=get_by_id(jobs.Sector,row['IdQualification']))
+        kw.update(function=get_by_id(jobs.Function,row['IdQualification']))
+        kw.update(provider=get_by_id(jobs.JobProvider,row['IDEndroitMiseAuTravail']))
+        kw.update(remark=u"""
+        DateOuvertureSelection: %(DateOuvertureSelection)s
+        DateClotureSelection: %(DateClotureSelection)s
+        DateDebutContrat: %(DateDebutContrat)s
+        DescriptionDeFonction: %(DescriptionDeFonction)s
+        HorairesDeTravail: %(HorairesDeTravail)s
+        ProfilDemande: %(ProfilDemande)s
+        Encadrement: %(Encadrement)s
+        OffreSpecifique: %(OffreSpecifique)s
+        Commentaires: %(Commentaires)s
+        GestionArt60: %(GestionArt60)s
+        StatutPoste: %(StatutPoste)s
+        """ % row)
         yield self.model(**kw)
     
     
@@ -887,7 +904,7 @@ class TBMiseEmploisLoader(LinoMdbLoader):
           
         
 
-class ContractVSELoader(LinoMdbLoader):
+class IsipContractLoader(LinoMdbLoader):
     table_name = 'TBTypeDeContratCPAS'
     model = isip.Contract
     headers = u"""
@@ -932,7 +949,7 @@ def objects():
         #~ yield ContractType(id=k+OFFSET_CONTRACT_TYPE_CPAS,name=v)
     yield UsersSGLoader()
     yield User(username="root",is_staff=True,is_expert=True,is_superuser=True,first_name="Root",last_name="Superuser")
-    for i in (5,9,10):
+    for i in (5,8,9,10,14):
         yield User(id=i,username="user%d"%i,is_active=False)
     yield UsersISPLoader()
     yield CboSubsideLoader()
@@ -944,7 +961,7 @@ def objects():
     yield JobsContractTypeLoader()
     yield IsipContractTypeLoader()
     yield TBMiseEmploisLoader()
-    yield ContractVSELoader()
+    yield IsipContractLoader()
     yield NotesLoader()
     
     #~ reader = csv.reader(open(,'rb'))
