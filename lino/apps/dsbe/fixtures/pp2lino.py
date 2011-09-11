@@ -791,7 +791,7 @@ class DetailFonctionsLoader(LinoMdbLoader):
         kw = {}
         kw.update(id=int(row['IDDetailFonction']))
         kw.update(name='(' + row['Code'] + ') ' + row['DetailFonction'])
-        kw.update(sector=SECTORS.get(row['Code'])
+        kw.update(sector=SECTORS.get(row['Code']))
         yield self.model(**kw)
     
 class JobsContractTypeLoader(LinoMdbLoader):
