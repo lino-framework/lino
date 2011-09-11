@@ -767,14 +767,31 @@ class JobLoader(LinoMdbLoader):
         kw.update(name=row['TypeMiseEmplois'])
         yield self.model(**kw)
     
+    
+SECTORS = dict()
+
+class ListeFonctionLoader(LinoMdbLoader):
+    table_name = 'CboListeFonction'
+    model = jobs.Sector
+    headers = u"""IdQualification Qualification Code filtre DetailFonction""".split()
+    def row2obj(self,row):
+        kw = {}
+        kw.update(id=int(row['IdQualification']))
+        kw.update(name=row['Qualification'])
+        kw.update(remark=row['DetailFonction'])
+        obj = self.model(**kw)
+        SECTORS[row['Code']] = obj
+        yield obj
+    
 class DetailFonctionsLoader(LinoMdbLoader):
     table_name = 'CboDetailFonction'
-    model = properties.Property
+    model = jobs.Function
     headers = u"""IDDetailFonction DetailFonction Code Secteur""".split()
     def row2obj(self,row):
         kw = {}
         kw.update(id=int(row['IDDetailFonction']))
         kw.update(name='(' + row['Code'] + ') ' + row['DetailFonction'])
+        kw.update(sector=SECTORS.get(row['Code'])
         yield self.model(**kw)
     
 class JobsContractTypeLoader(LinoMdbLoader):
@@ -845,7 +862,7 @@ class TBMiseEmploisLoader(LinoMdbLoader):
                 job = get_or_create_job(provider,ct,jt)
         
         if job:
-            qual = get_by_id(properties.Property,row['IdQualification'])
+            #~ qual = get_by_id(properties.Property,row['IdQualification'])
             #~ kw.update(qual=qual)
             statut = row['Statut']
             if statut in (u'En Attente',u'En Cours',u'Terminé'):
@@ -908,6 +925,7 @@ def objects():
     yield UsersSGLoader()
     yield UsersISPLoader()
     yield CboSubsideLoader()
+    yield ListeFonctionLoader()
     yield DetailFonctionsLoader()
     yield CityLoader()
     yield PersonLoader()

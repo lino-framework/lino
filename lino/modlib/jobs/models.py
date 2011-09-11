@@ -160,8 +160,39 @@ class ContractTypes(reports.Report):
     column_names = 'name ref build_method template *'
 
 
-   
+class Sector(babel.BabelNamed):
+    """Each Job should have an "Activity Sector"."""
+    class Meta:
+        verbose_name = _("Job Sector")
+        verbose_name_plural = _('Job Sectors')
+        
+    remark = models.CharField(max_length=200,
+        blank=True,
+        verbose_name=_("Remark"))
+        
+class Sectors(reports.Report):
+    model = Sector
 
+class Function(babel.BabelNamed):
+    """Each Job may have a Function."""
+    class Meta:
+        verbose_name = _("Job Function")
+        verbose_name_plural = _('Job Function')
+        
+    remark = models.CharField(max_length=200,
+        blank=True,
+        verbose_name=_("Remark"))
+        
+    sector = models.ForeignKey(Sector)
+        #~ related_name="%(app_label)s_%(class)s_set_by_provider",
+        #~ verbose_name=_("Job Provider"),
+        #~ blank=True,null=True)
+class Functions(reports.Report):
+    model = Function
+
+#
+# JOB CONTRACTS
+# 
 class Contract(ContractBase):
     """
     A Contract
@@ -442,6 +473,12 @@ class Job(models.Model):
         blank=True,null=True,
         verbose_name=_("Job Type"))
     
+    sector= models.ForeignKey("jobs.Sector",
+        blank=True,null=True)
+        
+    function= models.ForeignKey("jobs.Function",
+        blank=True,null=True)
+    
     provider = models.ForeignKey(JobProvider,
         blank=True,null=True,
         verbose_name=_("Job Provider"))
@@ -654,6 +691,8 @@ def setup_config_menu(site,ui,user,m):
     m.add_action('jobs.Jobs')
     m.add_action('jobs.ContractTypes')
     m.add_action('jobs.JobTypes')
+    m.add_action('jobs.Sectors')
+    m.add_action('jobs.Functions')
             
     
     
