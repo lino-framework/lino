@@ -57,7 +57,7 @@ from django.conf import settings
 
 from lino.utils import dblogger
 from lino.utils.instantiator import Instantiator
-from lino.tools import resolve_model
+from lino.tools import resolve_model, full_model_name
 
 from lino.apps.dsbe.models import Company, Person, City, Country, Note, PersonGroup
 from lino.modlib.users.models import User
@@ -457,7 +457,7 @@ def get_by_id(model,pk,offset=0,warn=True):
         return model.objects.get(pk=pk+offset)
     except model.DoesNotExist: 
         if warn:
-            dblogger.warning("%s %r does not exist?!",model,pk)
+            dblogger.warning("%s %r does not exist?!",full_model_name(model),pk)
         return None
 
 
@@ -881,7 +881,7 @@ class TBMiseEmploisLoader(LinoMdbLoader):
                 kw.update(provider=provider)
                 kw.update(person=person)
                 yield jobs.Contract(**kw)
-        elif statut == "Candidature":
+        elif statut == "Fiche Candidature":
             kw.update(person=person)
             kw.update(function=function)
             kw.update(sector=sector)
@@ -914,7 +914,7 @@ class ContractVSELoader(LinoMdbLoader):
         ct = get_by_id(isip.ContractType,row['IDTypeContrat'])
         kw.update(type=ct)
         if not ct:
-            dblogger.warning("Ignored TBTypeDeContratCPAS %s",kw)
+            dblogger.warning("Ignored TBTypeDeContratCPAS %s : no contract type",row)
         else:
             yield self.model(**kw)
 
