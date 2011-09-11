@@ -166,7 +166,7 @@ class Sector(babel.BabelNamed):
         verbose_name = _("Job Sector")
         verbose_name_plural = _('Job Sectors')
         
-    remark = models.CharField(max_length=200,
+    remark = models.TextField(
         blank=True,
         verbose_name=_("Remark"))
         
@@ -179,7 +179,7 @@ class Function(babel.BabelNamed):
         verbose_name = _("Job Function")
         verbose_name_plural = _('Job Function')
         
-    remark = models.CharField(max_length=200,
+    remark = models.TextField(
         blank=True,
         verbose_name=_("Remark"))
         
