@@ -814,7 +814,8 @@ class DetailFonctionsLoader(LinoMdbLoader):
     def row2obj(self,row):
         kw = {}
         kw.update(id=int(row['IDDetailFonction']))
-        kw.update(name='(' + row['Code'] + ') ' + row['DetailFonction'])
+        #~ kw.update(name='(' + row['Code'] + ') ' + row['DetailFonction'])
+        kw.update(name=row['DetailFonction'])
         kw.update(sector=SECTORS.get(row['Code']))
         yield self.model(**kw)
     

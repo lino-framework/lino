@@ -177,7 +177,7 @@ class Function(babel.BabelNamed):
     """Each Job may have a Function."""
     class Meta:
         verbose_name = _("Job Function")
-        verbose_name_plural = _('Job Function')
+        verbose_name_plural = _('Job Functions')
         
     remark = models.TextField(
         blank=True,
@@ -189,6 +189,9 @@ class Function(babel.BabelNamed):
         #~ blank=True,null=True)
 class Functions(reports.Report):
     model = Function
+    
+class FunctionsBySector(Functions):
+    fk_name = 'sector'
 
 #
 # JOB CONTRACTS
@@ -596,6 +599,12 @@ class JobTypes(reports.Report):
 
 class JobsByProvider(Jobs):
     fk_name = 'provider'
+
+class JobsByFunction(Jobs):
+    fk_name = 'function'
+
+class JobsBySector(Jobs):
+    fk_name = 'sector'
 
 class JobsByType(Jobs):
     fk_name = 'type'
