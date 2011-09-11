@@ -830,6 +830,7 @@ class TBMiseEmploisLoader(LinoMdbLoader):
         
         job = None
         
+        person = get_by_id(Person,row[u'IDClient'],OFFSET_PERSON)
         provider = get_by_id(jobs.JobProvider,row[u'IDEndroitMiseAuTravail'],OFFSET_JOBPROVIDER)
         if not provider:
             dblogger.warning("Ignored TBMiseEmplois %s : no provider",kw)
@@ -850,12 +851,11 @@ class TBMiseEmploisLoader(LinoMdbLoader):
             if statut in (u'En Attente',u'En Cours',u'Terminé'):
                 kw.update(applies_from=self.parsedate(row[u'DebutContrat']))
                 kw.update(applies_until=self.parsedate(row[u'FinContrat']))
-                    kw.update(type=ct)
-                    kw.update(job=job)
-                    kw.update(provider=provider)
-                    person = get_by_id(Person,row[u'IDClient'],OFFSET_PERSON)
-                    kw.update(person=person)
-                    yield jobs.Contract(**kw)
+                kw.update(type=ct)
+                kw.update(job=job)
+                kw.update(provider=provider)
+                kw.update(person=person)
+                yield jobs.Contract(**kw)
             else:
                 dblogger.warning("Ignored TBMiseEmplois %s : unknown statut",kw)
           
