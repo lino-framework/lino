@@ -3,7 +3,8 @@
 
 Continued with pp2lino.
 
-New field JobType.remark
+New field `JobType.remark`.
+Field Job.remark is now a TextField (was a CharField).
 
 New tables 
 :class:`lino.modlib.jobs.models.Function` and

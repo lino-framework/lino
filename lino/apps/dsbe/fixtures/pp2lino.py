@@ -777,18 +777,17 @@ class JobLoader(LinoMdbLoader):
         kw.update(function=get_by_id(jobs.Function,row['IdQualification']))
         kw.update(provider=get_by_id(jobs.JobProvider,row['IDEndroitMiseAuTravail']))
         kw.update(remark=u"""
-        DateOuvertureSelection: %(DateOuvertureSelection)s
-        DateClotureSelection: %(DateClotureSelection)s
-        DateDebutContrat: %(DateDebutContrat)s
-        DescriptionDeFonction: %(DescriptionDeFonction)s
-        HorairesDeTravail: %(HorairesDeTravail)s
-        ProfilDemande: %(ProfilDemande)s
-        Encadrement: %(Encadrement)s
-        OffreSpecifique: %(OffreSpecifique)s
-        Commentaires: %(Commentaires)s
-        GestionArt60: %(GestionArt60)s
-        StatutPoste: %(StatutPoste)s
-        """ % row)
+DateOuvertureSelection: %(DateOuvertureSelection)s
+DateClotureSelection: %(DateClotureSelection)s
+DateDebutContrat: %(DateDebutContrat)s
+DescriptionDeFonction: %(DescriptionDeFonction)s
+HorairesDeTravail: %(HorairesDeTravail)s
+ProfilDemande: %(ProfilDemande)s
+Encadrement: %(Encadrement)s
+OffreSpecifique: %(OffreSpecifique)s
+Commentaires: %(Commentaires)s
+GestionArt60: %(GestionArt60)s
+StatutPoste: %(StatutPoste)s""" % row)
         yield self.model(**kw)
     
     
@@ -891,8 +890,14 @@ class TBMiseEmploisLoader(LinoMdbLoader):
                 kw.update(applies_until=self.parsedate(row[u'FinContrat']))
                 kw.update(type=ct)
                 kw.update(job=job)
+                kw.update(user=get_by_id(User,row[u'IDASISP'],OFFSET_USER_ISP))
+                kw.update(user_asg=get_by_id(User,row[u'IDASSSG']))
                 kw.update(provider=provider)
                 kw.update(person=person)
+                kw.update(remark=u"""
+                Bareme: %(Bareme)s
+                ArticleBudgetaireSPPPSalaire: %(ArticleBudgetaireSPPPSalaire)s
+                """ % row)
                 yield jobs.Contract(**kw)
         elif statut == "Fiche Candidature":
             kw.update(person=person)

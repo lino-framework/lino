@@ -494,7 +494,7 @@ class Job(models.Model):
     capacity = models.IntegerField(_("capacity"),
         default=1)
         
-    remark = models.CharField(max_length=200,
+    remark = models.TextField(
         blank=True,
         verbose_name=_("Remark"))
         
