@@ -483,22 +483,28 @@ OFFSET_JOBPROVIDER = 3000
         
 
 
-def get_or_create_job(provider,contract_type,job_type):
+def get_or_create_job(provider,contract_type,job_type,sector,function):
     try:
         #~ if provider_id:
-        return jobs.Job.objects.get(provider=provider,contract_type=contract_type,type=job_type)
+        return jobs.Job.objects.get(provider=provider,
+            contract_type=contract_type,
+            type=job_type,
+            sector=sector,
+            function=function)
         #~ else:
             #~ return Job.objects.get(provider__isnull=True,contract_type__id=contract_type_id)
     except jobs.Job.DoesNotExist:
         if provider is None:
-            name = 'Job%s(interne)' % contract_type.id
+            name = '%s(interne)' % function
         else:
-            name = 'Job%s@%s' % (contract_type.id,provider)
+            name = '%s@%s' % (function,provider)
         job = jobs.Job(
             provider=provider,
             contract_type=contract_type,
             type=job_type,
-            name=name
+            name=name,
+            sector=sector,
+            function=function
             )
         job.full_clean()
         job.save()
@@ -842,24 +848,25 @@ class TBMiseEmploisLoader(LinoMdbLoader):
     """.split()
     
     def row2obj(self,row):
+        dblogger.info("statut = %s",row['Statut'])
+
         kw = {}
         kw.update(id=int(row['IDMiseEmplois']))
         
         job = None
         
+        function = get_by_id(jobs.Function,row['IDDetailFonction'])
+        sector = get_by_id(jobs.Sector,row['IdQualification'])
         person = get_by_id(Person,row[u'IDClient'],OFFSET_PERSON)
         provider = get_by_id(jobs.JobProvider,row[u'IDEndroitMiseAuTravail'],OFFSET_JOBPROVIDER)
-        if not provider:
-            dblogger.warning("Ignored TBMiseEmplois %s : no provider",kw)
+        ct = get_by_id(jobs.ContractType,row['IDTypeMiseEmplois'])
+        if not ct:
+            dblogger.warning("Ignored TBMiseEmplois %s : no contract type",kw)
         else:
-            ct = get_by_id(jobs.ContractType,row['IDTypeMiseEmplois'])
-            if not ct:
-                dblogger.warning("Ignored TBMiseEmplois %s : no contract type",kw)
-            else:
-                jt = get_by_id(jobs.JobType,row['IDSubside'])
-                if not jt:
-                    dblogger.warning("Ignored TBMiseEmplois %s : no job type",kw)
-                job = get_or_create_job(provider,ct,jt)
+            jt = get_by_id(jobs.JobType,row['IDSubside'])
+            if not jt:
+                dblogger.warning("Ignored TBMiseEmplois %s : no job type",kw)
+            job = get_or_create_job(provider,ct,jt,sector,function)
         
         if job:
             #~ qual = get_by_id(properties.Property,row['IdQualification'])
@@ -874,7 +881,9 @@ class TBMiseEmploisLoader(LinoMdbLoader):
                 kw.update(person=person)
                 yield jobs.Contract(**kw)
             else:
+                kw.update(statut=statut)
                 dblogger.warning("Ignored TBMiseEmplois %s : unknown statut",kw)
+                yield jobs.Contract(**kw)
           
         
 
