@@ -967,6 +967,7 @@ def objects():
     yield CityLoader()
     yield PersonLoader()
     yield JobProviderLoader()
+    yield JobLoader()
     yield JobsContractTypeLoader()
     yield IsipContractTypeLoader()
     yield TBMiseEmploisLoader()
