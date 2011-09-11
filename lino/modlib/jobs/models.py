@@ -473,10 +473,10 @@ class Job(models.Model):
         blank=True,null=True,
         verbose_name=_("Job Type"))
     
-    sector= models.ForeignKey("jobs.Sector",
+    sector = models.ForeignKey("jobs.Sector",
         blank=True,null=True)
         
-    function= models.ForeignKey("jobs.Function",
+    function = models.ForeignKey("jobs.Function",
         blank=True,null=True)
     
     provider = models.ForeignKey(JobProvider,
@@ -541,6 +541,12 @@ class JobRequest(models.Model):
         
     person = models.ForeignKey("contacts.Person",
         verbose_name=_("Person"))
+    
+    sector = models.ForeignKey("jobs.Sector",
+        blank=True,null=True)
+        
+    function = models.ForeignKey("jobs.Function",
+        blank=True,null=True)
     
     job = models.ForeignKey("jobs.Job",
         verbose_name=_("Requested Job"))

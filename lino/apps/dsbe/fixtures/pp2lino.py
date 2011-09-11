@@ -848,7 +848,7 @@ class TBMiseEmploisLoader(LinoMdbLoader):
     """.split()
     
     def row2obj(self,row):
-        dblogger.info("statut = %s",row['Statut'])
+        #~ dblogger.info("statut = %s",row['Statut'])
 
         kw = {}
         kw.update(id=int(row['IDMiseEmplois']))
@@ -864,26 +864,27 @@ class TBMiseEmploisLoader(LinoMdbLoader):
             dblogger.warning("Ignored TBMiseEmplois %s : no contract type",kw)
         else:
             jt = get_by_id(jobs.JobType,row['IDSubside'])
-            if not jt:
-                dblogger.warning("Ignored TBMiseEmplois %s : no job type",kw)
+            #~ if not jt:
+                #~ dblogger.warning("Ignored TBMiseEmplois %s : no job type",kw)
             job = get_or_create_job(provider,ct,jt,sector,function)
         
-        if job:
-            #~ qual = get_by_id(properties.Property,row['IdQualification'])
-            #~ kw.update(qual=qual)
-            statut = row['Statut']
-            if statut in (u'En Attente',u'En Cours',u'Terminé'):
-                kw.update(applies_from=self.parsedate(row[u'DebutContrat']))
-                kw.update(applies_until=self.parsedate(row[u'FinContrat']))
-                kw.update(type=ct)
-                kw.update(job=job)
-                kw.update(provider=provider)
-                kw.update(person=person)
-                yield jobs.Contract(**kw)
-            else:
-                kw.update(statut=statut)
-                dblogger.warning("Ignored TBMiseEmplois %s : unknown statut",kw)
-                yield jobs.Contract(**kw)
+        statut = row['Statut']
+        if statut in (u'En Attente',u'En Cours',u'Terminé'):
+            kw.update(applies_from=self.parsedate(row[u'DebutContrat']))
+            kw.update(applies_until=self.parsedate(row[u'FinContrat']))
+            kw.update(type=ct)
+            kw.update(job=job)
+            kw.update(provider=provider)
+            kw.update(person=person)
+            yield jobs.Contract(**kw)
+        elif statut == "Candidature":
+            kw.update(person=person)
+            kw.update(function=function)
+            kw.update(sector=sector)
+            kw.update(job=job)
+            yield jobs.JobRequest(**kw)
+        else:
+            dblogger.warning("Ignored TBMiseEmplois %s : unknown statut %r",row,statut)
           
         
 
