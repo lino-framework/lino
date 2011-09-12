@@ -42,16 +42,9 @@ from lino.utils import confirm
 from lino.utils.config import find_config_file
 from lino.utils import rstgen 
 from lino.utils import babel
+from lino import reports
 
-from lino.tools import makedirs_if_missing
-
-#~ def mkdir_if(dirname):
-    #~ try:
-        #~ os.makedirs(dirname)
-    #~ except OSError,e:
-        #~ if e.errno != errno.EEXIST:
-            #~ raise 
-            #~ raise CommandError("Could not create directory %s : %s" % (dirname,e))
+from lino.tools import makedirs_if_missing, full_model_name
 
 # http://snippets.dzone.com/posts/show/2375
 curry = lambda func, *args, **kw:\
@@ -121,10 +114,26 @@ def model_overview(model):
         #~ cells.append(f.help_text)
         return cells
     rows = [ rowfmt(f) for f in model._meta.fields ]
-    return rstgen.table(headers,rows)
+    s = rstgen.table(headers,rows)
     
-#~ def model_ref(model):
-    #~ return ":model:``"
+    model_reports = [r for r in reports.master_reports if r.model is model]
+    if model_reports:
+        s += '\n\nMaster reports: %s\n\n' % rptlist(model_reports)
+    if getattr(model,'_lino_slaves',None):
+        s += '\n\nSlave reports: %s\n\n' % rptlist(model._lino_slaves.values())
+        #~ s += '\n\nSlave reports: ' 
+        #~ s += ', '.join([name for name,rpt in model._lino_slaves.items()])
+        #~ s += '\n\n' 
+    return s
+    
+def rptlist(l):
+    return ', '.join([
+        ":ref:`%s <%s>`" % (force_unicode(rpt.label),report_ref(rpt)) 
+        for rpt in l])
+
+def report_ref(rpt):
+    return settings.LINO.source_name + '.' + str(rpt)
+    #~ return ":ref:`%s.%s`" % (settings.LINO.source_name,str(rpt))  
     
 def model_ref(model):
     return settings.LINO.source_name + '.' + model._meta.app_label + '.' + model.__name__
@@ -134,7 +143,8 @@ def model_referenced_from(model):
     #~ headers = ["name","description"]
     #~ rows = []
     def ddhfmt(ddh):
-        return ', '.join(['`%s.%s`_' % (model_ref(model),fk.name) for model,fk in ddh.fklist])
+        return ', '.join([':ref:`%s.%s`' % (model_ref(model),fk.name) 
+            for model,fk in ddh.fklist])
     return ddhfmt(model._lino_ddh)
     #~ rows.append(['_lino_ddh',ddhfmt(model._lino_ddh)])
     #~ return rstgen.table(headers,rows)
@@ -142,7 +152,7 @@ def model_referenced_from(model):
   
 
 class GeneratingCommand(BaseCommand):
-    tmpl_dir = None
+    tmpl_dir = ''
     args = "output_dir"
     
     option_list = BaseCommand.option_list + (
@@ -175,10 +185,10 @@ class GeneratingCommand(BaseCommand):
         logger.info("Generated %s files",self.generated_count)
         
     def generate(self,tplname,fn,**context):
-        if self.tmpl_dir:
-            tplname = join(self.tmpl_dir,tplname)
+        #~ if self.tmpl_dir:
+            #~ tplname = join(self.tmpl_dir,tplname)
         #~ tplname = self.subcommand + '/' + tplname
-        tpl_filename = find_config_file(tplname)
+        tpl_filename = find_config_file(tplname,self.tmpl_dir)
         if tpl_filename is None:
             raise Exception("No file %s found" % tplname)
         if isinstance(tpl_filename,unicode):
@@ -235,6 +245,7 @@ class Command(GeneratingCommand):
           table=rstgen.table,
           doc=doc2rst,
           #~ py2rst=rstgen.py2rst,
+          full_model_name=full_model_name,
           model_overview=model_overview,
           model_referenced_from=model_referenced_from,
           model_ref=model_ref,
@@ -242,10 +253,17 @@ class Command(GeneratingCommand):
         self.generate('index.rst.tmpl','index.rst',**context)
         for a in loading.get_apps():
             app_label = a.__name__.split('.')[-2]
+            app_models = models.get_models(a,include_auto_created=True)
             context.update(
                 app=a, 
                 app_label=app_label, 
-                models=models.get_models(a,include_auto_created=True)
+                models=app_models
                 )
             self.generate('app.rst.tmpl','%s.rst' % app_label, **context)
+            for model in app_models:
+                context.update(
+                    model=model, 
+                    )
+                self.generate('model.rst.tmpl','%s.rst' % 
+                    full_model_name(model), **context)
             

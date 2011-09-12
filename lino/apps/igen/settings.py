@@ -41,6 +41,9 @@ class Lino(Lino):
         #~ super(IgenSite,self).init_site_config(sc)
         #~ sc.next_partner_id = 200000
 
+    def get_app_source_file(self):
+        return __file__
+        
     def configure(self,sc):
         super(Lino,self).configure(sc)
         

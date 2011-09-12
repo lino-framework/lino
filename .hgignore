@@ -14,6 +14,7 @@ tmp
 lino/ui/qx/app/build/resource
 *\SciTE.session
 lino/tutorials/*/media
+docs/*/appdocs
 
 lino\demos\*\media\cache
 lino\demos\*\media\uploads

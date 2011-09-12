@@ -18,7 +18,7 @@ help:
   
 makedocs:
 	$(DJANGO_ADMIN) makedocs --settings lino.apps.dsbe.settings docs/dsbe/appdocs
-	$(DJANGO_ADMIN) makedocs --settings lino.apps.igen.settings docs/igen/appdocs
+	#~ $(DJANGO_ADMIN) makedocs --settings lino.apps.igen.settings docs/igen/appdocs
 
 
 mm:

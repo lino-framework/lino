@@ -6,43 +6,11 @@ Defined in :srcref:`/${'/'.join($app.__name__.split('.'))+'.py'}`
 
 ${doc($app.__doc__)}
 
-.. contents:: Table of Contents
-
+.. toctree::
+    :maxdepth: 2
 
 #for $model in $models
+    $full_model_name($model)
+#end for 
 
-.. index::
-   pair: model; $model.__name__
-
-.. _$(model_ref(model)):
-
-$(header(2,"Model **"+model.__name__+"**"))
-
-${doc($model.__doc__)}
-  
-$model_overview($model)
-    
-Defined in :srcref:`/$('/'.join(model.__module__.split('.'))+'.py')`
-
-Referenced from
-$model_referenced_from($model)
-
-
-
-#for $field in $model._meta.fields
-.. index::
-   single: field;${field.name}
-   
-.. _$(settings.LINO.source_name).${app_label}.${model.__name__}.${field.name}:
-
-$(header(3,"Field **"+$model.__name__+"."+$field.name+"**"))
-
-$field.help_text
-
-Type: $field.__class__.__name__
-
-   
-#end for
-
-#end for
 

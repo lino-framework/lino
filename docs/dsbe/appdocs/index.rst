@@ -5,6 +5,7 @@ Lino/DSBE
 
 
 .. toctree::
+    :maxdepth: 2
 
     contenttypes
     lino

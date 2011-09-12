@@ -326,7 +326,7 @@ class Lino(object):
     Used by :class:`lino.mixins.printable.AppyBuildMethod`.
     """
     
-    source_dir = os.path.dirname(__file__)
+    source_dir = None # os.path.dirname(__file__)
     """
     Full path to the source directory of this Lino application.
     Local Lino subclasses should not override this variable.
@@ -334,7 +334,7 @@ class Lino(object):
     whether there is a local config directory.
     """
     
-    source_name = os.path.split(source_dir)[-1]
+    source_name = None  # os.path.split(source_dir)[-1]
     
     project_dir = None
     """
@@ -415,11 +415,16 @@ class Lino(object):
         return datetime.combine(d,t)
 
     
-    
-    
     def __init__(self,project_file,settings_dict):
         self.project_dir = normpath(dirname(project_file))
         self.project_name = os.path.split(self.project_dir)[-1]
+        
+        self.source_dir = os.path.dirname(self.get_app_source_file())
+        self.source_name = os.path.split(self.source_dir)[-1]
+        
+        #~ print "settings.LINO.source_dir:", self.source_dir
+        #~ print "settings.LINO.source_name:", self.source_name
+
         self.qooxdoo_prefix = self.root_url + '/media/qooxdoo/lino_apps/' + self.project_name + '/build/'
         #~ self.dummy_messages = set()
         self._setting_up = False
@@ -490,6 +495,10 @@ class Lino(object):
     #~ def add_dummy_message(self,s):
         #~ self.dummy_messages.add(s)
 
+    def get_app_source_file(self):
+        "Override this in each application"
+        return __file__
+        
     def setup_main_menu(self):
         pass
 

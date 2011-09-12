@@ -30,6 +30,9 @@ class Lino(Lino):
     migration_module = 'lino.apps.dsbe.migrate'
     projects_model = 'contacts.Person'
     
+    def get_app_source_file(self):
+        return __file__
+        
     def setup_menu(self,ui,user,main):
         from django.utils.translation import ugettext_lazy as _
         from django.db import models
