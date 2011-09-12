@@ -13,3 +13,7 @@ New tables
 :class:`lino.modlib.jobs.models.Job`
 and
 :class:`lino.modlib.jobs.models.JobRequest`).
+
+New table 
+:class:`lino.modlib.jobs.models.Offer`.
+pp2lino doesn't create any Jobs at all.

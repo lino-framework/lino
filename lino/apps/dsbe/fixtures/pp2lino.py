@@ -776,9 +776,9 @@ class RechercheProfilLoader(LinoMdbLoader):
         kw.update(sector=get_by_id(jobs.Sector,row['IdQualification']))
         kw.update(function=get_by_id(jobs.Function,row['IdQualification']))
         kw.update(provider=get_by_id(jobs.JobProvider,row['IDEndroitMiseAuTravail']))
-        kw.update(selection_from=parsedate(row['DateOuvertureSelection']))
-        kw.update(selection_until=parsedate(row['DateClotureSelection']))
-        kw.update(start_date=parsedate(row['DateDebutContrat']))
+        kw.update(selection_from=self.parsedate(row['DateOuvertureSelection']))
+        kw.update(selection_until=self.parsedate(row['DateClotureSelection']))
+        kw.update(start_date=self.parsedate(row['DateDebutContrat']))
         kw.update(remark=u"""
 DescriptionDeFonction: %(DescriptionDeFonction)s
 HorairesDeTravail: %(HorairesDeTravail)s
