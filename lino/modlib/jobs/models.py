@@ -510,7 +510,7 @@ class PersonsByOffer(reports.Report):
     :meth:`get_request_queryset`
     """
   
-    model = Person
+    model = 'contacts.Person'
     master = Offer
     label = _("Found persons")
     
