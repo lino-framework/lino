@@ -500,7 +500,7 @@ class Offer(models.Model):
         return u'%s @ %s' % (self.function,self.provider)
   
 class Offers(reports.Report):
-    model = 'jobs.Offers'
+    model = Offer
     
 class PersonsByOffer(reports.Report):
     """
