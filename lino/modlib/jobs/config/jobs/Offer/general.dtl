@@ -4,5 +4,5 @@ main =
   name provider sector function
   selection_from selection_until start_date
   remark 
-  jobs.PersonsByOffer
+  # jobs.PersonsByOffer
 
