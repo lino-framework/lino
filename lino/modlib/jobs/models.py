@@ -471,6 +471,7 @@ class Offer(models.Model):
         ordering = ['name']
         
     name = models.CharField(max_length=100,
+        blank=True,
         verbose_name=_("Name"))
     
     sector = models.ForeignKey("jobs.Sector",
@@ -494,8 +495,9 @@ class Offer(models.Model):
         verbose_name=_("Remark"))
         
     def __unicode__(self):
-        return self.name
-        #~ return u'%s @ %s' % (self.name,self.provider)
+        if self.name:
+            return self.name
+        return u'%s @ %s' % (self.function,self.provider)
   
 class Offers(reports.Report):
     model = 'jobs.Offers'

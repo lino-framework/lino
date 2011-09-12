@@ -771,8 +771,8 @@ class RechercheProfilLoader(LinoMdbLoader):
     StatutPoste""".split()
     def row2obj(self,row):
         kw = {}
-        kw.update(id=int(row['IDTypeMiseEmplois']))
-        kw.update(name=row['TypeMiseEmplois'])
+        kw.update(id=int(row['IDRechercheProfil']))
+        #~ kw.update(name=row['TypeMiseEmplois'])
         kw.update(sector=get_by_id(jobs.Sector,row['IdQualification']))
         kw.update(function=get_by_id(jobs.Function,row['IdQualification']))
         kw.update(provider=get_by_id(jobs.JobProvider,row['IDEndroitMiseAuTravail']))
