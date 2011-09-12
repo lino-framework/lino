@@ -13,7 +13,8 @@ Short-term
 ----------
 
 #.  :menuselection:`Kontakte --> Alle Kontakte`: 
-    in dieser Liste kann man momentan auch importierte Partner bearbeiten.
+    in dieser Liste kann man momentan auch importierte Partner 
+    bearbeiten.
 
 #.  Es gibt noch keine (direkte) Möglichkeit, um von einer Aufgabe aus 
     das Detail des Owners anzuzeigen. GenericForeignKey könnte auch was 

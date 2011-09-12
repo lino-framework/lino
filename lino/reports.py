@@ -862,14 +862,16 @@ class Report(actors.Actor): #,base.Handled):
     Return a list of field names that should not be editable 
     for the specified `obj` and `request`.
     
-    If defined in the Report, this must be a method that accepts two arguments `request` and `obj`::
+    If defined in the Report, this must be a method that accepts 
+    two arguments `request` and `obj`::
     
       def disabled_fields(self,request,obj):
           ...
           return []
     
-    If not defined in a subclass, the report will look whether it's model has a `disabled_fields` 
-    method expecting a single argument `request` and install a wrapper to this model method.
+    If not defined in a subclass, the report will look whether 
+    it's model has a `disabled_fields` method expecting a single 
+    argument `request` and install a wrapper to this model method.
     See also :doc:`/tickets/2`.
     """
     
@@ -1039,7 +1041,7 @@ class Report(actors.Actor): #,base.Handled):
         """
         Return either `None` if the given `obj` *is allowed* 
         to be deleted by `request`,
-        or a string with a message explaining why, if not.        
+        or a string with a message explaining why, if not.
         """
         return self.model._lino_ddh.disable_delete(obj,request)
         

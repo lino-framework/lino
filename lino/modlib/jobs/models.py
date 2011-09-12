@@ -463,6 +463,92 @@ class JobType(mixins.Sequenced):
         return unicode(self.name)
         
   
+class Offer(models.Model):
+    "A Job Offer"
+    class Meta:
+        verbose_name = _("Job Offer")
+        verbose_name_plural = _('Job Offers')
+        ordering = ['name']
+        
+    name = models.CharField(max_length=100,
+        verbose_name=_("Name"))
+    
+    sector = models.ForeignKey("jobs.Sector",
+        blank=True,null=True)
+        
+    function = models.ForeignKey("jobs.Function",
+        blank=True,null=True)
+    
+    provider = models.ForeignKey(JobProvider,
+        blank=True,null=True)
+    
+    selection_from = models.DateField(_("selection from"),
+        blank=True,null=True)
+    selection_until = models.DateField(_("selection until"),
+        blank=True,null=True)
+    start_date = models.DateField(_("start date"),
+        blank=True,null=True)
+    
+    remark = models.TextField(
+        blank=True,
+        verbose_name=_("Remark"))
+        
+    def __unicode__(self):
+        return self.name
+        #~ return u'%s @ %s' % (self.name,self.provider)
+  
+class Offers(reports.Report):
+    model = 'jobs.Offers'
+    
+class PersonsByOffer(reports.Report):
+    """
+    Shows the possible candidates for this Offer.
+    
+    It is a slave report without 
+    :attr:`fk_name <lino.reports.Report.fk_name>`,
+    which is allowed only because it also overrides
+    :meth:`get_request_queryset`
+    """
+  
+    model = Person
+    master = Offer
+    label = _("Found persons")
+    
+    can_add = perms.never
+    can_change = perms.never
+    
+    def get_request_queryset(self,rr):
+        """
+        Here is the code that builds the query. It can be quite complex.
+        See :srcref:`/lino/apps/dsbe/models.py` 
+        (search this file for "PersonsBySearch").
+        """
+        offer = rr.master_instance
+        if offer is None:
+            return []
+        kw = {}
+        qs = self.model.objects.order_by('name')
+        
+        required_id_sets = []
+        
+        if offer.function:
+            q = JobRequest.objects.filter(function=offer.function)
+            required_id_sets.append(set(q.values_list('person__id',flat=True)))
+        if offer.sector:
+            q = JobRequest.objects.filter(sector=offer.sector)
+            required_id_sets.append(set(q.values_list('person__id',flat=True)))
+
+        if required_id_sets:
+            s = set(required_id_sets[0])
+            for i in required_id_sets[1:]:
+                s.intersection_update(i)
+                # keep only elements found in both s and i.
+            qs = qs.filter(id__in=s)
+              
+        return qs
+
+    
+
 class Job(models.Model):
     """
     A work place at some job provider
@@ -701,6 +787,7 @@ if reports.is_installed('contacts') and reports.is_installed('jobs'):
 
 def setup_main_menu(site,ui,user,m): 
     m.add_action('jobs.JobProviders')
+    m.add_action('jobs.Offers')
 
 def setup_my_menu(site,ui,user,m): 
     m.add_action('jobs.MyContracts')

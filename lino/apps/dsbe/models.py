@@ -802,14 +802,17 @@ def persons_by_user():
     s = '<div class="htmlText">%s</div>' % s
     return s
     
-              
-#~ class Company(Contact,contacts.Company):
-#~ class Company(Partner,contacts.Addressable,):
+    
+class Contacts(contacts.Contacts):
+  
+    def disable_delete(self,obj,request):
+        if settings.TIM2LINO_IS_IMPORTED_PARTNER(self):
+            return _("Cannot delete contacts imported from TIM")
+        return super(Contacts,self).disable_delete(obj,request)
+    
 class Company(Partner,contacts.Contact,contacts.CompanyMixin):
   
     """
-    Implements :class:`contacts.Company`.
-    
     Inner class Meta is necessary because of :doc:`/tickets/14`.
     """
     
@@ -1743,7 +1746,10 @@ class PersonsBySearch(reports.Report):
     This is the slave report of a PersonSearch that shows the 
     Persons matching the search criteria. 
     
-    Note that this is a slave report without a :attr:`fk_name <lino.reports.Report.fk_name>`.
+    It is a slave report without 
+    :attr:`fk_name <lino.reports.Report.fk_name>`,
+    which is allowed only because it also overrides
+    :meth:`get_request_queryset`
     """
   
     model = Person
@@ -1757,7 +1763,8 @@ class PersonsBySearch(reports.Report):
     def get_request_queryset(self,rr):
         """
         Here is the code that builds the query. It can be quite complex.
-        See :srcref:`/lino/modlib/dsbe/models.py` (search this file for "PersonsBySearch").
+        See :srcref:`/lino/apps/dsbe/models.py` 
+        (search this file for "PersonsBySearch").
         """
         search = rr.master_instance
         if search is None:
@@ -1822,9 +1829,6 @@ class PersonsBySearch(reports.Report):
             qs = qs.filter(id__in=s)
               
         return qs
-    
-
-
 
 
 

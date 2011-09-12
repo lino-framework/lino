@@ -757,9 +757,9 @@ class PersonLoader(LinoMdbLoader):
         
 
 
-class JobLoader(LinoMdbLoader):
+class RechercheProfilLoader(LinoMdbLoader):
     table_name = 'TbRechercheProfil'
-    model = jobs.Job
+    model = jobs.Offer
     headers = u"""IDRechercheProfil 
     DateOuvertureSelection DateClotureSelection 
     DateDebutContrat 
@@ -776,10 +776,10 @@ class JobLoader(LinoMdbLoader):
         kw.update(sector=get_by_id(jobs.Sector,row['IdQualification']))
         kw.update(function=get_by_id(jobs.Function,row['IdQualification']))
         kw.update(provider=get_by_id(jobs.JobProvider,row['IDEndroitMiseAuTravail']))
+        kw.update(selection_from=parsedate(row['DateOuvertureSelection']))
+        kw.update(selection_until=parsedate(row['DateClotureSelection']))
+        kw.update(start_date=parsedate(row['DateDebutContrat']))
         kw.update(remark=u"""
-DateOuvertureSelection: %(DateOuvertureSelection)s
-DateClotureSelection: %(DateClotureSelection)s
-DateDebutContrat: %(DateDebutContrat)s
 DescriptionDeFonction: %(DescriptionDeFonction)s
 HorairesDeTravail: %(HorairesDeTravail)s
 ProfilDemande: %(ProfilDemande)s
@@ -882,7 +882,7 @@ class TBMiseEmploisLoader(LinoMdbLoader):
         provider = get_by_id(jobs.JobProvider,row[u'IDEndroitMiseAuTravail'],OFFSET_JOBPROVIDER)
         ct = get_by_id(jobs.ContractType,row['IDTypeMiseEmplois'])
         jt = get_by_id(jobs.JobType,row['IDSubside'])
-        job = get_or_create_job(provider,ct,jt,sector,function)
+        #~ job = get_or_create_job(provider,ct,jt,sector,function)
         
         statut = row['Statut']
         if statut in (u'En Attente',u'En Cours',u'Terminé'):
@@ -892,7 +892,7 @@ class TBMiseEmploisLoader(LinoMdbLoader):
                 kw.update(applies_from=self.parsedate(row[u'DebutContrat']))
                 kw.update(applies_until=self.parsedate(row[u'FinContrat']))
                 kw.update(type=ct)
-                kw.update(job=job)
+                #~ kw.update(job=job)
                 kw.update(user=get_by_id(User,row[u'IDASISP'],OFFSET_USER_ISP))
                 kw.update(user_asd=get_by_id(User,row[u'IDASSSG']))
                 kw.update(provider=provider)
@@ -906,7 +906,7 @@ class TBMiseEmploisLoader(LinoMdbLoader):
             kw.update(person=person)
             kw.update(function=function)
             kw.update(sector=sector)
-            kw.update(job=job)
+            #~ kw.update(job=job)
             yield jobs.JobRequest(**kw)
         else:
             dblogger.warning("Ignored TBMiseEmplois %s : unknown statut %r",row,statut)
@@ -967,7 +967,7 @@ def objects():
     yield CityLoader()
     yield PersonLoader()
     yield JobProviderLoader()
-    yield JobLoader()
+    yield RechercheProfilLoader()
     yield JobsContractTypeLoader()
     yield IsipContractTypeLoader()
     yield TBMiseEmploisLoader()
