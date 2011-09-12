@@ -463,7 +463,23 @@ class JobType(mixins.Sequenced):
         return unicode(self.name)
         
   
-class Offer(models.Model):
+class SectorFunction(models.Model):
+    class Meta:
+        abstract = True
+        
+    sector = models.ForeignKey("jobs.Sector",
+        blank=True,null=True)
+    function = models.ForeignKey("jobs.Function",
+        blank=True,null=True)
+    
+    @chooser()
+    def function_choices(cls,sector):
+        if sector is not None:
+            return sector.function_set.all()
+        return Function.objects.all()
+        
+        
+class Offer(SectorFunction):
     "A Job Offer"
     class Meta:
         verbose_name = _("Job Offer")
@@ -473,12 +489,6 @@ class Offer(models.Model):
     name = models.CharField(max_length=100,
         blank=True,
         verbose_name=_("Name"))
-    
-    sector = models.ForeignKey("jobs.Sector",
-        blank=True,null=True)
-        
-    function = models.ForeignKey("jobs.Function",
-        blank=True,null=True)
     
     provider = models.ForeignKey(JobProvider,
         blank=True,null=True)
@@ -551,7 +561,7 @@ class PersonsByOffer(reports.Report):
 
     
 
-class Job(models.Model):
+class Job(SectorFunction):
     """
     A work place at some job provider
     """
@@ -566,12 +576,6 @@ class Job(models.Model):
     type = models.ForeignKey("jobs.JobType",
         blank=True,null=True,
         verbose_name=_("Job Type"))
-    
-    sector = models.ForeignKey("jobs.Sector",
-        blank=True,null=True)
-        
-    function = models.ForeignKey("jobs.Function",
-        blank=True,null=True)
     
     provider = models.ForeignKey(JobProvider,
         blank=True,null=True,
@@ -628,19 +632,13 @@ class Job(models.Model):
         #~ return CandidatesByCourse().request(master_instance=self)
         
         
-class JobRequest(models.Model):
+class JobRequest(SectorFunction):
     class Meta:
         verbose_name = _("Job Requests")
         verbose_name_plural = _('Job Requests')
         
     person = models.ForeignKey("contacts.Person",
         verbose_name=_("Person"))
-    
-    sector = models.ForeignKey("jobs.Sector",
-        blank=True,null=True)
-        
-    function = models.ForeignKey("jobs.Function",
-        blank=True,null=True)
     
     job = models.ForeignKey("jobs.Job",
         blank=True,null=True)

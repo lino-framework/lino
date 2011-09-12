@@ -885,29 +885,28 @@ class TBMiseEmploisLoader(LinoMdbLoader):
         #~ job = get_or_create_job(provider,ct,jt,sector,function)
         
         statut = row['Statut']
-        if statut in (u'En Attente',u'En Cours',u'Terminé'):
-            if not ct:
-                dblogger.warning("Ignored TBMiseEmplois %s : no contract type",row)
-            else:
-                kw.update(applies_from=self.parsedate(row[u'DebutContrat']))
-                kw.update(applies_until=self.parsedate(row[u'FinContrat']))
-                kw.update(type=ct)
-                #~ kw.update(job=job)
-                kw.update(user=get_by_id(User,row[u'IDASISP'],OFFSET_USER_ISP))
-                kw.update(user_asd=get_by_id(User,row[u'IDASSSG']))
-                kw.update(provider=provider)
-                kw.update(person=person)
-                kw.update(remark=u"""
-                Bareme: %(Bareme)s
-                ArticleBudgetaireSPPPSalaire: %(ArticleBudgetaireSPPPSalaire)s
-                """ % row)
-                yield jobs.Contract(**kw)
-        elif statut == "Fiche Candidature":
+        if statut == "Fiche Candidature" or ct is None:
+            if ct is not None:
+                dblogger.warning("TBMiseEmplois %s : ignored contract type",row)
             kw.update(person=person)
             kw.update(function=function)
             kw.update(sector=sector)
             #~ kw.update(job=job)
             yield jobs.JobRequest(**kw)
+        elif statut in (u'En Attente',u'En Cours',u'Terminé'):
+            kw.update(applies_from=self.parsedate(row[u'DebutContrat']))
+            kw.update(applies_until=self.parsedate(row[u'FinContrat']))
+            kw.update(type=ct)
+            #~ kw.update(job=job)
+            kw.update(user=get_by_id(User,row[u'IDASISP'],OFFSET_USER_ISP))
+            kw.update(user_asd=get_by_id(User,row[u'IDASSSG']))
+            kw.update(provider=provider)
+            kw.update(person=person)
+            kw.update(remark=u"""
+            Bareme: %(Bareme)s
+            ArticleBudgetaireSPPPSalaire: %(ArticleBudgetaireSPPPSalaire)s
+            """ % row)
+            yield jobs.Contract(**kw)
         else:
             dblogger.warning("Ignored TBMiseEmplois %s : unknown statut %r",row,statut)
           
