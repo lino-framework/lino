@@ -2,5 +2,5 @@
 :label_align: top
 
 main = 
-    notes.NotesByPerson:60 links.LinksByPerson:20
+    dsbe.NotesByPerson:60 dsbe.LinksByPerson:20
     

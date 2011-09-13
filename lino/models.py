@@ -11,6 +11,11 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+Defines some system models, especially the :class:`SiteConfig` model.
+Expected to be installed in every Lino application.
+"""
+
 #~ import logging
 #~ logger = logging.getLogger(__name__)
 from lino.utils import dblogger
@@ -38,6 +43,10 @@ from lino.utils import perms
 from lino.tools import obj2str, sorted_models_list
 
 class SiteConfig(models.Model):
+    """
+    This table normally contains only exactly record, 
+    used to store persistent global site parameters.
+    """
     # moved to contacts.models:
     #~ site_company = models.ForeignKey('contacts.Company',blank=True,null=True,
         #~ verbose_name=_("The company that runs this site"))

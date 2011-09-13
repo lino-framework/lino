@@ -67,7 +67,7 @@ def min_indent(s):
         
 def doc2rst(s):
     if s is None:
-        return s
+        return ''
     s = s.expandtabs()
     # If all lines begin with the same indentation, then strip it.
     mi = min_indent(s)
@@ -76,6 +76,24 @@ def doc2rst(s):
     return s
 
 
+def abstract(o,indent=0):
+    s = doc2rst(o.__doc__).strip()
+    if not s: return '(no docstring)'
+    paras = s.split('\n\n',1)
+    par = paras[0]
+    if indent:
+        par = (' '*indent).join(par.splitlines())
+    return par
+    
+def refto(x):
+    if x is None: 
+        return '`None`'
+    if issubclass(x,models.Model):
+        return ':doc:`' + x.__name__ + ' <' + full_model_name(x) + '>`'
+    #~ if isinstance(x,Field):
+    return ':ref:`' + x.verbose_name + ' <' + settings.LINO.source_name \
+        + '.' + full_model_name(x.model) + '.' + field.name + '>`'
+    
 
 def model_overview(model):
     headers = ["name","type"]
@@ -128,7 +146,7 @@ def model_overview(model):
     
 def rptlist(l):
     return ', '.join([
-        ":ref:`%s <%s>`" % (force_unicode(rpt.label),report_ref(rpt)) 
+        ":ref:`%s (%s) <%s>`" % (str(rpt),force_unicode(rpt.label),report_ref(rpt)) 
         for rpt in l])
 
 def report_ref(rpt):
@@ -244,6 +262,10 @@ class Command(GeneratingCommand):
           h1=curry(rstgen.header,1),
           table=rstgen.table,
           doc=doc2rst,
+          loading=loading,
+          models=models,
+          abstract=abstract,
+          refto=refto,
           #~ py2rst=rstgen.py2rst,
           full_model_name=full_model_name,
           model_overview=model_overview,
@@ -257,7 +279,7 @@ class Command(GeneratingCommand):
             context.update(
                 app=a, 
                 app_label=app_label, 
-                models=app_models
+                app_models=app_models
                 )
             self.generate('app.rst.tmpl','%s.rst' % app_label, **context)
             for model in app_models:

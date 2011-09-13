@@ -1,8 +1,21 @@
 $h1($settings.LINO.title)
 
+${doc($settings.LINO.__doc__)}
+
 .. toctree::
     :maxdepth: 2
+    :hidden:
 
 #for $app in $app_labels()
     $app
+#end for
+
+This Lino application is a combination of the following 
+modules (defined in :setting:`INSTALLED_APPS`):
+
+#for $a in $loading.get_apps()
+- :doc:`$(a.__name__.split('.')[-2])` : 
+  $abstract($a,2)  
+  Models: $(', '.join([$refto(m) for m in $loading.get_models($a)]))
+ 
 #end for

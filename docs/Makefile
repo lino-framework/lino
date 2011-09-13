@@ -1,3 +1,4 @@
+DJANGO_ADMIN = python l:\\snapshots\\django\\django\\bin\\django-admin.py
 SITENAME               = lino
 #~ DJANGO_SETTINGS_MODULE = dsbe.demo.settings
 #~ DJANGO_SETTINGS_MODULE = lino.demos.std.settings
@@ -39,6 +40,10 @@ help:
 clean:
 	-rm -rf $(CACHEDIR)
 	-rm -rf $(BUILDDIR)
+
+appdocs:
+	$(DJANGO_ADMIN) makedocs --settings lino.apps.dsbe.settings dsbe/appdocs
+	#~ $(DJANGO_ADMIN) makedocs --settings lino.apps.igen.settings igen/appdocs
 
 html:
 	mkdir -p $(CACHEDIR) 

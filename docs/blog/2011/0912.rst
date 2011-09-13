@@ -1,0 +1,34 @@
+20110912
+========
+
+The following two changes came because it took me a rather long time 
+to understand why the Detail of the new :model:`dsbe.jobs.Offer` model 
+complained about not finding the `jobs.PersonsByOffer` 
+slave report. Explanation that this was called 
+`contacts.PersonsByOffer` according to my own rules established 
+:doc:`/blog/2011/0822`.
+
+
+`makedocs` got better
+---------------------
+
+:mod:`lino.management.commands.makedocs` got a bit better
+
+The `app_label` of a Report
+---------------------------
+
+I changed (again) the rules for setting the `app_label` 
+of a Report:
+
+The default value (which should be used in most cases) is 
+the "application" where the Report is defined. 
+For example it's now 
+`dsbe.MyPersons` and not `contacts.MyPersons`,
+`dsbe.LinksByPerson` and not `links.LinksByPerson`,
+`lino.ContentTypes` and not `contenttypes.ContentTypes`...
+
+Enhanced the message of the exception risen when an unknown 
+element name is found in a :xfile:`.dtl` file: it also now 
+tells us the possible values, including slave reports.
+
+

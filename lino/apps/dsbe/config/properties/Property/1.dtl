@@ -4,4 +4,4 @@
 main = 
   id group type 
   name
-  properties.PersonPropsByProp
+  dsbe.PersonPropsByProp

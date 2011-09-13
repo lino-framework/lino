@@ -13,8 +13,9 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-This module defines models :class:`Calendar`, :class:`Task` and :class:`Event`.
-And :class:`EventType`, :class:`Place`
+This module turns Lino into a basic calendar client. 
+Supports remote calendars.
+Events and Tasks can get attributed to a :attr:`Project <lino.Lino.project_model>`.
 
 """
 import cgi
@@ -156,6 +157,10 @@ def default_calendar(user):
 
 
 class Place(models.Model):
+    """
+    A location where Events can happen.
+    For a given Place you can see the :class:`EventsByPlace` that happened or will happen there
+    """
     name = models.CharField(_("Name"),max_length=200)
     def __unicode__(self):
         return self.name 
@@ -333,7 +338,11 @@ class Component(ComponentBase,
 
 #~ class Event(Component,contacts.PartnerDocument):
 class Event(Component,mixins.TypedPrintable):
-    "Deserves more documentation."
+    """
+    A Calendar Event (french "Rendez-vous", german "Termin") 
+    is a scheduled lapse of time where something happens. 
+    Deserves more documentation.
+    """
   
     class Meta:
         verbose_name = _("Event")
@@ -442,6 +451,12 @@ class Events(reports.Report):
     
 class EventsBySet(Events):
     fk_name = 'rset'
+    
+class EventsByPlace(Events):
+    """
+    Displays the :class:`Events <Event>` at a given :class:`Place`.
+    """
+    fk_name = 'place'
     
 class Tasks(reports.Report):
     model = 'cal.Task'

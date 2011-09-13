@@ -910,12 +910,15 @@ class Report(actors.Actor): #,base.Handled):
             # 20110822 : a report now always gets the app_label of its model
             # you cannot set this yourself in a subclass
             # because otherwise it gets complex when inheriting reports from other app_labels
+            # 20110912 Cancelled change 20110822 because PersonsByOffer 
+            # should clearly get app_label 'jobs' and not 'contacts'.
             #~ if self.app_label is None:
-            # Figure out the app_label by looking one level up.
-            # For 'django.contrib.sites.models', this would be 'sites'.
-            #~ m = sys.modules[self.__module__]
-            #~ self.app_label = m.__name__.split('.')[-2]
-            self.app_label = self.model._meta.app_label
+            #~ if not self.__dict__.has_key('app_label'):
+                # Figure out the app_label by looking one level up.
+                # For 'django.contrib.sites.models', this would be 'sites'.
+                #~ m = sys.modules[self.__module__]
+                #~ self.app_label = m.__name__.split('.')[-2]
+                #~ self.app_label = self.model._meta.app_label
             if self.label is None:
                 #~ self.label = capfirst(self.model._meta.verbose_name_plural)
                 self.label = self.init_label()

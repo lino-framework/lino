@@ -165,9 +165,25 @@ class Actor(Handled):
             self._actor_name = self.__class__.__name__
         else:
             assert type(self._actor_name) is str
-        if self.app_label is None:
-            #~ self.__class__.app_label = self.__class__.__module__.split('.')[-2]
+            
+        if not 'app_label' in self.__class__.__dict__.keys():
+            # 20110822 : a report now always gets the app_label of its model
+            # you cannot set this yourself in a subclass
+            # because otherwise it gets complex when inheriting reports from other app_labels
+            # 20110912 Cancelled change 20110822 because PersonsByOffer 
+            # should clearly get app_label 'jobs' and not 'contacts'.
+            #~ if self.app_label is None:
+            # Figure out the app_label by looking one level up.
+            # For 'django.contrib.sites.models', this would be 'sites'.
+            #~ m = sys.modules[self.__module__]
+            #~ self.app_label = m.__name__.split('.')[-2]
             self.app_label = self.__class__.__module__.split('.')[-2]
+            #~ self.app_label = self.model._meta.app_label
+            
+            
+        #~ if self.app_label is None:
+            #~ self.__class__.app_label = self.__class__.__module__.split('.')[-2]
+            #~ self.app_label = self.__class__.__module__.split('.')[-2]
         self.actor_id = self.app_label + ACTOR_SEP + self._actor_name
         self._forms = {} # will be filled by lino.layouts.FormLayout.setup()
         self._actions_list = []

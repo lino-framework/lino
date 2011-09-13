@@ -13,7 +13,9 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-See also :doc:`/dsbe/models`.
+ISIP (Individualized Social Integration 
+Projects, fr. "PIIS", german "VSE")
+are contracts between a PCSW and a Person.
 
 """
 

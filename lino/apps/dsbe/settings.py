@@ -23,6 +23,16 @@ import lino
 from lino.apps.std.settings import *
 
 class Lino(Lino):
+    """
+    Lino/DSBE is
+    the first of the real-world demo applications that are part 
+    of the Lino project.
+    It is a tool for social assistants that help receivers 
+    of public aid to find a suitable job or education, 
+    adapted to Belgian *Public Centres for Social Welfare* 
+    (Centres Publics d'Action Sociale).
+    
+    """
     source_dir = os.path.dirname(__file__)
     title = "Lino/DSBE"
     #~ domain = "dsbe.saffre-rumma.net"
@@ -73,9 +83,9 @@ class Lino(Lino):
         
         #~ m.add_action('cal.MyTasks')
         #~ m.add_action('cal.MyEvents')
-        m.add_action('contacts.MyPersons')
+        m.add_action('dsbe.MyPersons')
         for pg in dsbe.PersonGroup.objects.order_by('ref_name'):
-            m.add_action('contacts.MyPersonsByGroup',label=pg.name,
+            m.add_action('dsbe.MyPersonsByGroup',label=pg.name,
                 params=dict(master_instance=pg))
             #~ m.add_action('contacts.MyPersonsByGroup',label=pg.name,
             #~ params=dict(master_id=pg.pk))
@@ -183,7 +193,7 @@ class Lino(Lino):
             m.add_action('dsbe.Exclusions')
             m.add_action('uploads.Uploads')
             m.add_action('dsbe.CourseRequests')
-            m.add_action('contenttypes.ContentTypes')
+            m.add_action('lino.ContentTypes')
             m.add_action('dsbe.PersonSearches')
             m.add_action('properties.Properties')
             

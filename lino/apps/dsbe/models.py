@@ -13,8 +13,10 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-See also :doc:`/dsbe/models`.
+Contains DSBE-specific models and reports that have not yet been 
+moved into a separate module because they are really very DSBE specific.
 
+See also :doc:`/dsbe/models`.
 """
 
 import os
@@ -708,6 +710,7 @@ class AllPersons(contacts.Contacts):
         return self.model._meta.verbose_name_plural + ' ' + force_unicode(_("(all)"))
     
 class Persons(AllPersons):
+    app_label = 'contacts'
     #~ use_as_default_report = False
     filter = dict(is_active=True)
     #~ label = Person.Meta.verbose_name_plural + ' ' + _("(unfiltered)")
@@ -748,6 +751,7 @@ def only_my_persons(qs,user):
     return qs.filter(models.Q(coach1__exact=user) | models.Q(coach2__exact=user))
 
 class MyPersons(Persons):
+    #~ app_label = 'contacts'
     use_as_default_report = False
     label = _("My coached Persons")
     order_by = ['last_name','first_name']
@@ -1047,6 +1051,7 @@ class PropsByPerson(reports.Report):
     
 class PersonPropsByProp(reports.Report):
     model = PersonProperty
+    #~ app_label = 'properties'
     fk_name = 'property'
     column_names = "person value remark *"
     hidden_columns = frozenset(['group'])

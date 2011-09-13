@@ -2,6 +2,6 @@
 :label_align: top
 
 main =
-  properties.SkillsByPerson properties.SoftSkillsByPerson skills
-  properties.ObstaclesByPerson obstacles
+  dsbe.SkillsByPerson dsbe.SoftSkillsByPerson skills
+  dsbe.ObstaclesByPerson obstacles
 

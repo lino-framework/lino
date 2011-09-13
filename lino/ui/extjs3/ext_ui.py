@@ -394,7 +394,13 @@ class ExtUI(base.UI):
                 #~ if isinstance(value,layouts.PropertyGrid):
                     #~ return ext_elems.PropertyGridElement(lh,name,value)
                 raise KeyError("Cannot handle value %r in %s.%s." % (value,lh.layout._actor_name,name))
-        msg = "Unknown element %r referred in layout %s of %s" % (name,lh.layout,lh.rh.report)
+        msg = "Unknown element %r referred in layout %s of %s." % (
+            name,lh.layout,lh.rh.report)
+        l = [de.name for de in lh.rh.data_elems()]
+        model = lh.rh.report.model
+        if getattr(model,'_lino_slaves',None):
+            l += [str(rpt) for rpt in model._lino_slaves.values()]
+        msg += " Possible names are %s." % ', '.join(l)
         raise KeyError(msg)
         
 

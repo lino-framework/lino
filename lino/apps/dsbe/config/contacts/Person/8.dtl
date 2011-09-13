@@ -2,6 +2,6 @@
 :label_align: top
 
 main = 
-  cal.EventsByProject
-  cal.TasksByProject
+  dsbe.EventsByProject
+  dsbe.TasksByProject
 

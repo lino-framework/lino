@@ -13,13 +13,10 @@ TESTS_OPTIONS = --verbosity=2 --traceback
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
-	@echo "  mm  run django-admin makemessages on modlib"
-	@echo "  cm  run django-admin compilemessages on modlib"
+	@echo "  mm     run django-admin makemessages on modlib"
+	@echo "  cm     run django-admin compilemessages on modlib"
+	@echo "  tests  run Lino test suite"
   
-makedocs:
-	$(DJANGO_ADMIN) makedocs --settings lino.apps.dsbe.settings docs/dsbe/appdocs
-	#~ $(DJANGO_ADMIN) makedocs --settings lino.apps.igen.settings docs/igen/appdocs
-
 
 mm:
 	pwd
@@ -31,7 +28,6 @@ mm:
     cd $(LINO_ROOT)/lino/apps/$$i && pwd && $(DJANGO_ADMIN) makemessages -s -a; \
 	done
   
-
 
 cm:  
 	cd $(LINO_ROOT)/lino && $(DJANGO_ADMIN) compilemessages 
