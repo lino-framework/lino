@@ -374,7 +374,7 @@ class DpyDeserializer:
             for model,msg_objects in self.save_later.items():
                 for msg,objects in msg_objects.items():
                     s += "\n- %s %s (%d object(s), e.g. %s)" % (
-                      full_model_name(model),msg,len(objects),obj2str(objects[0].object))
+                      full_model_name(model),msg,len(objects),obj2str(objects[0].object,force_detailed=True))
                     count += len(objects)
             
             msg = "Abandoning with %d unsaved instances from %s:%s" % (
@@ -393,8 +393,9 @@ class DpyDeserializer:
         msg = force_unicode(e)
         d = self.save_later.setdefault(obj.object.__class__,{})
         l = d.setdefault(msg,[])
+        if len(l) == 0:
+            dblogger.info("Deferred %s : %s",obj2str(obj.object),msg)
         l.append(obj)
-        dblogger.info("Deferred %s : %s",obj2str(obj.object),msg)
 
 def Deserializer(fp, **options):
     d = DpyDeserializer()
