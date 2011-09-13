@@ -1,0 +1,13 @@
+20110913
+========
+
+Continued with :term:`pp2lino`. 
+
+The :class:`lino.mixins.ProjectRelated` mixin was added to 
+:class:`lino.modlib.cal.models.Event`
+and
+:class:`lino.modlib.cal.models.Task` 
+only in :mod:`lino.apps.dsbe.models`. 
+Now that's done already in the modlib, 
+and they are no longer are abstract there.
+Seems more practical.

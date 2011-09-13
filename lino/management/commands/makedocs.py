@@ -85,6 +85,19 @@ def abstract(o,indent=0):
         par = (' '*indent).join(par.splitlines())
     return par
     
+def fieldtype(f):
+    if isinstance(f,models.ForeignKey):
+        return f.__class__.__name__ + " to " + refto(f.rel.to)
+    return f.__class__.__name__
+        
+def report_ref(rpt):
+    return settings.LINO.source_name + '.' + str(rpt)
+    #~ return ":ref:`%s.%s`" % (settings.LINO.source_name,str(rpt))  
+    
+def model_ref(model):
+    return settings.LINO.source_name + '.' + model._meta.app_label + '.' + model.__name__
+    
+    
 def refto(x):
     if x is None: 
         return '`None`'
@@ -92,7 +105,7 @@ def refto(x):
         return ':doc:`' + x.__name__ + ' <' + full_model_name(x) + '>`'
     #~ if isinstance(x,Field):
     return ':ref:`' + x.verbose_name + ' <' + settings.LINO.source_name \
-        + '.' + full_model_name(x.model) + '.' + field.name + '>`'
+        + '.' + full_model_name(x.model) + '.' + x.name + '>`'
     
 
 def model_overview(model):
@@ -123,7 +136,7 @@ def model_overview(model):
     def rowfmt(f):
         cells = [
           f.name,
-          f.__class__.__name__,
+          fieldtype(f),
           verbose_name(f)
         ]
         #~ for lng in babel.AVAILABLE_LANGUAGES:
@@ -149,14 +162,6 @@ def rptlist(l):
         ":ref:`%s (%s) <%s>`" % (str(rpt),force_unicode(rpt.label),report_ref(rpt)) 
         for rpt in l])
 
-def report_ref(rpt):
-    return settings.LINO.source_name + '.' + str(rpt)
-    #~ return ":ref:`%s.%s`" % (settings.LINO.source_name,str(rpt))  
-    
-def model_ref(model):
-    return settings.LINO.source_name + '.' + model._meta.app_label + '.' + model.__name__
-    
-    
 def model_referenced_from(model):
     #~ headers = ["name","description"]
     #~ rows = []

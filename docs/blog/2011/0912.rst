@@ -8,12 +8,6 @@ slave report. Explanation that this was called
 `contacts.PersonsByOffer` according to my own rules established 
 :doc:`/blog/2011/0822`.
 
-
-`makedocs` got better
----------------------
-
-:mod:`lino.management.commands.makedocs` got a bit better
-
 The `app_label` of a Report
 ---------------------------
 
@@ -31,4 +25,15 @@ Enhanced the message of the exception risen when an unknown
 element name is found in a :xfile:`.dtl` file: it also now 
 tells us the possible values, including slave reports.
 
+
+`makedocs` got better
+---------------------
+
+:mod:`lino.management.commands.makedocs` 
+got a bit better. 
+The result is at 
+:doc:`/dsbe/appdocs`
+and
+:doc:`/igen/appdocs`
+(but is not yet production ready).
 

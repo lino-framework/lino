@@ -157,6 +157,14 @@ Short-term
 Medium-term
 -----------
 
+#.  GridFilter on BooleanField doesn't work.
+    In `reports.add_gridfilters` there's an exception 
+    "Join on field 'native' not permitted. Did you misspell 'equals' for the lookup type?" when 
+
+http://lino/api/dsbe/LanguageKnowledgesByPerson?_dc=1315554805581&sort=written&dir=DESC&filter=%5B%7B%22type%22%3A%22boolean%22%2C%22value%22%3Atrue%2C%22field%22%3A%22native%22%7D%5D&fmt=json&mt=20&mk=20069
+
+
+
 #.  Rapport pour Actiris (Office Régional Bruxellois de l'Emploi). 
     Donc ce rapport pour Actiris doit mentionner, par assistant social, 
     le nombre d’ouvertures et de fermetures de dossier pendant un certain 

@@ -1331,33 +1331,33 @@ class MyNotes(notes.MyNotes):
 #
 
 #~ class ComponentMixin(contacts.PartnerDocument):
-class ComponentMixin(mixins.ProjectRelated):
+#~ class ComponentMixin(mixins.ProjectRelated):
   
-    class Meta:
-        abstract = True
+    #~ class Meta:
+        #~ abstract = True
   
-    def summary_row(self,ui,rr,**kw):
-        html = mixins.ProjectRelated.summary_row(self,ui,rr,**kw)
-        #~ html = contacts.PartnerDocument.summary_row(self,ui,rr,**kw)
-        if self.summary:
-            html += '&nbsp;: %s' % cgi.escape(force_unicode(self.summary))
-            #~ html += ui.href_to(self,force_unicode(self.summary))
-        html += _(" on ") + babel.dtos(self.start_date)
-        return html
+    #~ def summary_row(self,ui,rr,**kw):
+        #~ html = mixins.ProjectRelated.summary_row(self,ui,rr,**kw)
+        html = contacts.PartnerDocument.summary_row(self,ui,rr,**kw)
+        #~ if self.summary:
+            #~ html += '&nbsp;: %s' % cgi.escape(force_unicode(self.summary))
+            html += ui.href_to(self,force_unicode(self.summary))
+        #~ html += _(" on ") + babel.dtos(self.start_date)
+        #~ return html
 
-class Event(cal.Event,ComponentMixin):
-    class Meta(cal.Event.Meta):
-        app_label = 'cal'
+#~ class Event(cal.Event,ComponentMixin):
+    #~ class Meta(cal.Event.Meta):
+        #~ app_label = 'cal'
 
-class Task(cal.Task,ComponentMixin):
-    class Meta(cal.Task.Meta):
-        app_label = 'cal'
+#~ class Task(cal.Task,ComponentMixin):
+    #~ class Meta(cal.Task.Meta):
+        #~ app_label = 'cal'
 
-class EventsByProject(cal.Events):
-    fk_name = 'project'
+#~ class EventsByProject(cal.Events):
+    #~ fk_name = 'project'
     
-class TasksByProject(cal.Tasks):
-    fk_name = 'project'
+#~ class TasksByProject(cal.Tasks):
+    #~ fk_name = 'project'
     
 #~ class EventsByPerson(cal.Events):
     #~ fk_name = 'person'

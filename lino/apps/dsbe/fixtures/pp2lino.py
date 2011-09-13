@@ -39,9 +39,6 @@ The following variant might help to save time during testing::
 Notes techniques import de données PP vers Lino
 -----------------------------------------------
 
-- La table CboListeFonction (secteurs d'activité) n'est pas importée. 
-  Seulement la CboDetailFonction est importée (vers 
-  :class:`lino.modlib.properties.models.Property`)
 
 
 """
@@ -61,6 +58,7 @@ from lino.tools import resolve_model, full_model_name
 
 from lino.apps.dsbe.models import Company, Person, City, Country, Note, PersonGroup
 from lino.modlib.users.models import User
+from lino.modlib.cal import models as cal
 from lino.modlib.jobs import models as jobs
 from lino.modlib.isip import models as isip
 from lino.modlib.properties import models as properties
@@ -462,6 +460,7 @@ def get_by_id(model,pk,offset=0,warn=True):
 
 
 
+EVENTS = {}
 
 
 OFFSET_USER_ISP = 100
@@ -938,6 +937,25 @@ class IsipContractLoader(LinoMdbLoader):
         else:
             yield self.model(**kw)
 
+class EventLoader(LinoMdbLoader):
+    table_name = 'TBConvocationClient'
+    model = cal.Event
+    headers = u"""IDConvocationClient DateConvocationClient 
+    TypeDeLettre HeureConvocation Venu FaireCourrier 
+    IDASISP IDClient
+    RemarquesConvocationClient
+    NCourrier MessageAnnulation RDVMQ1 RDVMQ2""".split()
+    def row2obj(self,row):
+        kw = {}
+        kw.update(id=int(row['IDConvocationClient']))
+        kw.update(start_date=self.parsedate(row['DateConvocationClient']))
+        kw.update(start_time=row['HeureConvocation'])
+        kw.update(description=row['RemarquesConvocationClient'])
+        kw.update(project=get_by_id(Person,row[u'IDClient'],OFFSET_PERSON))
+        kw.update(type=EVENTS.get(row['TypeDeLettre']))
+        yield self.model(**kw)
+    
+
 def objects():
   
     if not settings.LINO.legacy_data_path:
@@ -957,6 +975,7 @@ def objects():
         #~ yield ContractType(id=k+OFFSET_CONTRACT_TYPE_CPAS,name=v)
     yield UsersSGLoader()
     yield User(username="root",is_staff=True,is_expert=True,is_superuser=True,first_name="Root",last_name="Superuser")
+    # seems that these 5 users are missing in the .mdb file:
     for i in (5,8,9,10,14):
         yield User(id=i,username="user%d"%i,is_active=False)
     yield UsersISPLoader()
@@ -972,5 +991,15 @@ def objects():
     yield TBMiseEmploisLoader()
     yield IsipContractLoader()
     yield NotesLoader()
+    
+    for name in (u"1er Convocation",u"Suivi",u"Rdv Manqué",
+    u"Mise en demeure",u"Report",u"Attestation RIS",
+    u"Attestation EQRIS",u"Eval 1er",u"Eval Inter",
+    u"Eval Fin",u"Eval Inter SIAJ"):
+        obj = cal.EventType(name=name)
+        EVENTS[name] = obj
+        yield obj
+    
+    yield EventLoader()
     
     #~ reader = csv.reader(open(,'rb'))

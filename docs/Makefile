@@ -43,7 +43,7 @@ clean:
 
 appdocs:
 	$(DJANGO_ADMIN) makedocs --settings lino.apps.dsbe.settings dsbe/appdocs
-	#~ $(DJANGO_ADMIN) makedocs --settings lino.apps.igen.settings igen/appdocs
+	$(DJANGO_ADMIN) makedocs --settings lino.apps.igen.settings igen/appdocs
 
 html:
 	mkdir -p $(CACHEDIR) 

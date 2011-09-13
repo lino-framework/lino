@@ -213,7 +213,7 @@ class CalendarRelated(models.Model):
 
   
     
-class ComponentBase(CalendarRelated):
+class ComponentBase(CalendarRelated,mixins.ProjectRelated):
     class Meta:
         abstract = True
         
@@ -232,7 +232,15 @@ class ComponentBase(CalendarRelated):
     
     def __unicode__(self):
         return self._meta.verbose_name + " #" + str(self.pk)
-        
+
+    def summary_row(self,ui,rr,**kw):
+        html = mixins.ProjectRelated.summary_row(self,ui,rr,**kw)
+        if self.summary:
+            html += '&nbsp;: %s' % cgi.escape(force_unicode(self.summary))
+            #~ html += ui.href_to(self,force_unicode(self.summary))
+        html += _(" on ") + babel.dtos(self.start_date)
+        return html
+
 class RecurrenceSet(ComponentBase):
     """
     Groups together all instances of a set of recurring calendar components.
@@ -347,7 +355,7 @@ class Event(Component,mixins.TypedPrintable):
     class Meta:
         verbose_name = _("Event")
         verbose_name_plural = _("Events")
-        abstract = True
+        #~ abstract = True
         
     end_date = models.DateField(
         blank=True,null=True,
@@ -393,7 +401,7 @@ class Task(mixins.Owned,Component):
     class Meta:
         verbose_name = _("Task")
         verbose_name_plural = _("Tasks")
-        abstract = True
+        #~ abstract = True
         
     due_date = models.DateField(
         blank=True,null=True,
@@ -458,6 +466,16 @@ class EventsByPlace(Events):
     """
     fk_name = 'place'
     
+class EventsByProject(Events):
+    fk_name = 'project'
+    
+class MyEvents(mixins.ByUser):
+    model = 'cal.Event'
+    #~ label = _("My Events")
+    order_by = ["start_date","start_time"]
+    column_names = 'start_date start_time summary status *'
+    
+    
 class Tasks(reports.Report):
     model = 'cal.Task'
     column_names = 'start_date summary done status *'
@@ -470,11 +488,8 @@ class TasksByOwner(Tasks):
     fk_name = 'owner'
     #~ hidden_columns = set('owner_id owner_type'.split())
 
-class MyEvents(mixins.ByUser):
-    model = 'cal.Event'
-    #~ label = _("My Events")
-    order_by = ["start_date","start_time"]
-    column_names = 'start_date start_time summary status *'
+class TasksByProject(Tasks):
+    fk_name = 'project'
     
 class MyTasks(mixins.ByUser):
     model = 'cal.Task'
