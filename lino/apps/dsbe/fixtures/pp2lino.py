@@ -959,7 +959,8 @@ class EventLoader(LinoMdbLoader):
         kw.update(id=int(row['IDConvocationClient']))
         kw.update(start_date=self.parsedate(row['DateConvocationClient']))
         if row['HeureConvocation'].strip():
-            kw.update(start_time=row['HeureConvocation'])
+            dblogger.warning("Ignored start time %r",row['HeureConvocation'])
+            #~ kw.update(start_time=row['HeureConvocation'])
         kw.update(description=row['RemarquesConvocationClient'])
         kw.update(project=get_by_id(Person,row[u'IDClient'],OFFSET_PERSON))
         kw.update(user=get_by_id(User,row[u'IDASISP'],OFFSET_USER_ISP))
