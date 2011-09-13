@@ -258,10 +258,11 @@ class FakeDeserializedObject(base.DeserializedObject):
         #~ print 'dpy.py',self.object
         #~ dblogger.info("Loading %s...",self.name) 
         
-        if self.try_save(*args,**kw):
-            self.deserializer.saved += 1
-        else:
-            self.deserializer.save_later.append(self)
+        self.try_save(*args,**kw)
+        #~ if self.try_save(*args,**kw):
+            #~ self.deserializer.saved += 1
+        #~ else:
+            #~ self.deserializer.save_later.append(self)
         
     def try_save(self,*args,**kw):
         """Try to save the specified Model instance `obj`. Return `True` 
@@ -269,30 +270,11 @@ class FakeDeserializedObject(base.DeserializedObject):
         deferred.
         """
         obj = self.object
-        #~ if obj is None:
-            #~ return True
-        #~ try:
-            #~ obj.full_clean()
-        #~ except (ObjectDoesNotExist,ValidationError),e:
-            #~ if obj.pk is None:
-                #~ dblogger.exception(e)
-                #~ raise Exception("Failed to validate %s. Abandoned." % obj2str(obj))
-            #~ dblogger.debug("Deferred %s : %s",obj2str(obj),e)
-            #~ return False
-        #~ try:
-            #~ obj.save(*args,**kw)
-            #~ dblogger.debug("Deserialized %s has been saved" % obj2str(obj))
-            #~ return True
-        #~ except Exception,e:
-            #~ if obj.pk is None:
-                #~ dblogger.exception(e)
-                #~ raise Exception("Failed to save %s. Abandoned." % obj2str(obj))
-            #~ dblogger.debug("Deferred %s : %s",obj2str(obj),e)
-            #~ return False
         try:
             obj.full_clean()
             obj.save(*args,**kw)
             dblogger.debug("%s has been saved" % obj2str(obj))
+            self.deserializer.register_success()
             return True
         #~ except ValidationError,e:
         #~ except ObjectDoesNotExist,e:
@@ -307,7 +289,7 @@ class FakeDeserializedObject(base.DeserializedObject):
             if not deps:
                 dblogger.exception(e)
                 raise Exception("Failed to save independent %s. Abandoned." % obj2str(obj))
-            dblogger.info("Deferred %s : %s",obj2str(obj),force_unicode(e))
+            self.deserializer.register_failure(obj,e)
             return False
         except Exception,e:
             dblogger.exception(e)
@@ -333,7 +315,7 @@ class DpyDeserializer:
     """
     
     def __init__(self):
-        self.save_later = []
+        self.save_later = {}
         self.saved = 0
   
     def deserialize(self,fp, **options):
@@ -370,28 +352,48 @@ class DpyDeserializer:
         dblogger.info("Saved %d instances from %s.",self.saved,fp.name)
                     
         while self.saved and self.save_later:
+            try_again = []
+            for msg_objlist in self.save_later.values():
+                for obj in msg_objlist.values():
+                    try_again.append(obj)
             dblogger.info("Trying again with %d unsaved instances.",
                 len(self.save_later))
-            try_again = self.save_later
-            self.save_later = []
+            self.save_later = {}
             self.saved = 0
             for obj in try_again:
-                if obj.try_save(): # ,*args,**kw):
-                    self.saved += 1
-                else:
-                    self.save_later.append(obj)
+                obj.try_save(): # ,*args,**kw):
+                #~ if obj.try_save(): # ,*args,**kw):
+                    #~ self.saved += 1
+                #~ else:
+                    #~ self.save_later.append(obj)
             dblogger.info("Saved %d instances.",self.saved)
             
         if self.save_later:
-            dblogger.warning("Abandoning with %d unsaved instances from %s.",
-                len(self.save_later),fp.name)
-            raise Exception("Abandoned with %d unsaved instances. "
-              "See dblog for details." % len(self.save_later))
+            count = 0
+            s = ''
+            for model,msg_objects in save_later.items():
+                for msg,objects in msg_objects.items():
+                    s += "\n- %s %s (%d object(s))" % (full_model_name(model),msg,len(objects))
+                    count += len(objects)
+            
+            msg = "Abandoning with %d unsaved instances from %s:%s" % (
+                count,fp.name,s)
+            #~ dblogger.warning(msg)
+            raise Exception(msg)
             
         if hasattr(module,'after_load'):
             module.after_load()
         #~ IS_DESERIALIZING = False
 
+    def register_success(self):
+        self.saved += 1
+        
+    def register_failure(self,obj,e):
+        msg = force_unicode(e)
+        d = self.save_later.setdefault(obj.__class__,{})
+        l = d.set_default(msg,[])
+        l.append(obj)
+        dblogger.info("Deferred %s : %s",obj2str(obj),msg)
 
 def Deserializer(fp, **options):
     d = DpyDeserializer()
