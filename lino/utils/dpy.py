@@ -289,7 +289,7 @@ class FakeDeserializedObject(base.DeserializedObject):
             if not deps:
                 dblogger.exception(e)
                 raise Exception("Failed to save independent %s. Abandoned." % obj2str(obj))
-            self.deserializer.register_failure(obj,e)
+            self.deserializer.register_failure(self,e)
             return False
         except Exception,e:
             dblogger.exception(e)
@@ -357,7 +357,7 @@ class DpyDeserializer:
                 for objlist in msg_objlist.values():
                     try_again += objlist
             dblogger.info("Trying again with %d unsaved instances.",
-                len(self.save_later))
+                len(try_again))
             self.save_later = {}
             self.saved = 0
             for obj in try_again:
@@ -374,7 +374,7 @@ class DpyDeserializer:
             for model,msg_objects in save_later.items():
                 for msg,objects in msg_objects.items():
                     s += "\n- %s %s (%d object(s), e.g. %s)" % (
-                      full_model_name(model),msg,len(objects),obj2str(objects[0]))
+                      full_model_name(model),msg,len(objects),obj2str(objects[0].object))
                     count += len(objects)
             
             msg = "Abandoning with %d unsaved instances from %s:%s" % (
