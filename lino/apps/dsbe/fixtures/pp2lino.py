@@ -129,7 +129,7 @@ CboNationalite = {
   38:u"sénégalais(e)",
   39:"IR", # "Iranien(ne)",
   40:'IQ', # "Iraquien(ne)",
-  41:"arménie",
+  41:'AM', # "arménie",
   42:'IT', # "Italien(ne)",
   43:'AO', # "angolien(ne)",
   44:'NE', # "Nigerien(ne)",
@@ -156,13 +156,13 @@ CboNationalite = {
   68:"egyptien(ne)",
   69:"NL",
   70:'KZ', # "Kazakhstan",
-  71:"Somalien(ne)",
+  71:'SO', # "Somalien(ne)",
   72:"AF",
   73:'CU', # "Cubaine",
   74:'TD', # "tchad",
   75:"Royaume-Uni",
   76:'LT', # "lituanienne ",
-  77:"kirghizistan",
+  77:'KG', # "kirghizistan",
   78:'ET', # "Ethiopie",
 }
 
@@ -176,7 +176,7 @@ CboPays = {
   ,7:u"Antigua-et-Barbuda"
   ,8:u"Arabie Saoudite"
   ,9:'AR' # u"Argentine"
-  ,10:u"Arménie"
+  ,10:'A;' # u"Arménie"
   ,11:'AU' # u"Australie"
   ,12:'AS' # u"Autriche"
   ,13:u"Azerbaļdjan"
@@ -196,7 +196,7 @@ CboPays = {
   ,27:u"Botswana"
   ,28:'BR' # u"Brésil"
   ,29:u"Brunei"
-  ,30:u"Bulgarie"
+  ,30:'BG' # u"Bulgarie"
   ,31:u"Burkina"
   ,32:'BI' # u"Burundi"
   ,33:u"Cambodge"
@@ -257,7 +257,7 @@ CboPays = {
   ,89:u"Jordanie"
   ,90:'KZ' # u"Kazakhstan"
   ,91:u"Kenya"
-  ,92:u"Kirghizistan"
+  ,92:'KG' # u"Kirghizistan"
   ,93:u"Kiribati"
   ,94:u"Koweļt"
   ,95:u"Laos"
@@ -329,7 +329,7 @@ CboPays = {
   ,161:u"Singapour"
   ,162:u"Slovaquie"
   ,163:u"Slovénie"
-  ,164:u"Somalie"
+  ,164:'SO' # u"Somalie"
   ,165:u"Soudan"
   ,166:u"Sri Lanka"
   ,167:u"Sučde"
@@ -913,25 +913,27 @@ class EventLoader(LinoMdbLoader):
     RemarquesConvocationClient
     NCourrier MessageAnnulation RDVMQ1 RDVMQ2""".split()
     def row2obj(self,row):
-        kw = {}
-        kw.update(id=int(row['IDConvocationClient']))
-        kw.update(start_date=self.parsedate(row['DateConvocationClient']))
-        #~ if row['HeureConvocation'].strip():
-            #~ dblogger.warning("Ignored start time %r",row['HeureConvocation'])
-        kw.update(start_time=self.parsetime(row['HeureConvocation']))
-        kw.update(description=row['RemarquesConvocationClient'])
-        kw.update(project=get_by_id(Person,row[u'IDClient'],OFFSET_PERSON))
-        kw.update(user=get_by_id(User,row[u'IDASISP'],OFFSET_USER_ISP))
-        #~ kw.update(coach2=get_by_id(User,row[u'IDASSSG']))
-        kw.update(type=EVENTS.get(row['TypeDeLettre']))
-        kw.update(status=EVENT_STATI.get(row['Venu']))
-        yield self.model(**kw)
+        if row['DateConvocationClient']:
+            kw = {}
+            kw.update(id=int(row['IDConvocationClient']))
+            kw.update(created=datetime.datetime.now())
+            kw.update(start_date=self.parsedate(row['DateConvocationClient']))
+            #~ if row['HeureConvocation'].strip():
+                #~ dblogger.warning("Ignored start time %r",row['HeureConvocation'])
+            kw.update(start_time=self.parsetime(row['HeureConvocation']))
+            kw.update(description=row['RemarquesConvocationClient'])
+            kw.update(project=get_by_id(Person,row[u'IDClient'],OFFSET_PERSON))
+            kw.update(user=get_by_id(User,row[u'IDASISP'],OFFSET_USER_ISP))
+            #~ kw.update(coach2=get_by_id(User,row[u'IDASSSG']))
+            kw.update(type=EVENTS.get(row['TypeDeLettre']))
+            kw.update(status=EVENT_STATI.get(row['Venu']))
+            yield self.model(**kw)
     
 
 def objects():
   
     if not settings.LINO.legacy_data_path:
-        raise Exception("You must specify the name of your .mdb file in settings.LINO.legacy_data_path!")
+        raise Exception("You must specify the name of your .mdb file in `settings.LINO.legacy_data_path`!")
   
     phin = Instantiator('dsbe.PersonGroup','name').build
     yield phin('1')
