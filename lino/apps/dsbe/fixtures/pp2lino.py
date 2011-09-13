@@ -141,7 +141,7 @@ CboNationalite = {
   6:"FR",
   7:'RO', # "Roumain(e)",
   8:"CH",
-  9:"Colombien(ne)",
+  9:'CO', # "Colombien(ne)",
   11:"Uruguayen (ne)",
   12:'MA', # "Marocain(ne)",
   14:'DZ', # u"Algérien(ne)",
@@ -185,7 +185,7 @@ CboNationalite = {
   54:u"bosnie-herzégovine",
   55:"Ukrainien(ne)",
   56:'EC', # "Equatorien",
-  57:"pakistannais(e)",
+  57:'PK', # "pakistannais(e)",
   58:"vietnamien(ne)",
   59:u"indonésien(ne)",
   60:"Malgache",
@@ -247,7 +247,7 @@ CboPays = {
   ,37:'CL' # u"Chili"
   ,38:'CN' # u"Chine"
   ,39:u"Chypre"
-  ,40:u"Colombie"
+  ,40:'CO' # u"Colombie"
   ,41:u"Comores"
   ,42:'CG' # u"Congo"
   ,44:u"Cook (les īles)"
@@ -339,7 +339,7 @@ CboPays = {
   ,130:u"Oman"
   ,131:u"Ouganda"
   ,132:u"Ouzbékistan"
-  ,133:u"Pakistan"
+  ,133:'PK' # u"Pakistan"
   ,134:u"Panama"
   ,135:u"Papouasie - Nouvelle Guin"
   ,136:u"Paraguay"
