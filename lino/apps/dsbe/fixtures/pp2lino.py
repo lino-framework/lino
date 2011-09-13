@@ -949,7 +949,8 @@ class EventLoader(LinoMdbLoader):
         kw = {}
         kw.update(id=int(row['IDConvocationClient']))
         kw.update(start_date=self.parsedate(row['DateConvocationClient']))
-        kw.update(start_time=row['HeureConvocation'])
+        if row['HeureConvocation'].strip():
+            kw.update(start_time=row['HeureConvocation'])
         kw.update(description=row['RemarquesConvocationClient'])
         kw.update(project=get_by_id(Person,row[u'IDClient'],OFFSET_PERSON))
         kw.update(type=EVENTS.get(row['TypeDeLettre']))
