@@ -176,7 +176,7 @@ CboPays = {
   ,7:u"Antigua-et-Barbuda"
   ,8:u"Arabie Saoudite"
   ,9:'AR' # u"Argentine"
-  ,10:'A;' # u"Arménie"
+  ,10:'AM' # u"Arménie"
   ,11:'AU' # u"Australie"
   ,12:'AS' # u"Autriche"
   ,13:u"Azerbaļdjan"
