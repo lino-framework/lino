@@ -1338,10 +1338,10 @@ class MyNotes(notes.MyNotes):
   
     #~ def summary_row(self,ui,rr,**kw):
         #~ html = mixins.ProjectRelated.summary_row(self,ui,rr,**kw)
-        html = contacts.PartnerDocument.summary_row(self,ui,rr,**kw)
+        # html = contacts.PartnerDocument.summary_row(self,ui,rr,**kw)
         #~ if self.summary:
             #~ html += '&nbsp;: %s' % cgi.escape(force_unicode(self.summary))
-            html += ui.href_to(self,force_unicode(self.summary))
+            # html += ui.href_to(self,force_unicode(self.summary))
         #~ html += _(" on ") + babel.dtos(self.start_date)
         #~ return html
 
