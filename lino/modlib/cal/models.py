@@ -115,7 +115,7 @@ class Calendar(mixins.AutoUser):
         ct.validate_calendar(self)
         super(Calendar,self).save(*args,**kw)
         if self.is_default: # and self.user is not None:
-            for cal in Calendar.objects.filter(user=user):
+            for cal in Calendar.objects.filter(user=self.user):
             #~ for cal in self.user.cal_calendar_set_by_user.all():
             #~ for cal in self.user.calendar_set.all():
                 if cal.pk != self.pk and cal.is_default:
