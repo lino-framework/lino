@@ -325,7 +325,7 @@ CboPays = {
   ,115:u"Mexique"
   ,116:u"Micronésie"
   ,117:'MD' # u"Moldavie"
-  ,118:u"Monaco"
+  ,118:'MC' # u"Monaco"
   ,119:u"Mongolie"
   ,120:u"Mozambique"
   ,121:u"Namibie"

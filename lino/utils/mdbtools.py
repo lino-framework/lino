@@ -132,7 +132,7 @@ class Loader:
     def __iter__(self):
         fn = self.table_name + ".csv"
         if not os.path.exists(fn):
-            args = [MDBTOOLS_EXPORT, '-D', '%Y-%m-%d %H:%M:%S', self.mdb_file, self.table_name]
+            args = [MDBTOOLS_EXPORT, '-D', '%Y-%m-%d_%H:%M:%S', self.mdb_file, self.table_name]
             s = check_output(args,executable=MDBTOOLS_EXPORT,
               env=dict(
                 MDB_ICONV='utf-8',
@@ -168,7 +168,7 @@ class Loader:
 
     def parsedate(self,s):
         if not s: return None
-        dt = s.split()
+        dt = s.split('_')
         if len(dt) != 2:
             raise Exception("Unexpected datetime string %r" % s)
         d = dnt[0]
@@ -178,7 +178,7 @@ class Loader:
 
     def parsetime(self,s):
         if not s: return None
-        dt = s.split()
+        dt = s.split('_')
         if len(dt) != 2:
             raise Exception("Unexpected datetime string %r" % s)
         t = dnt[1]
