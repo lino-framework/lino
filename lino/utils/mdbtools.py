@@ -164,8 +164,8 @@ class Loader:
         dt = s.split()
         if len(dt) != 2:
             raise Exception("Unexpected datetime string %r" % s)
-        d = dnt[0]
-        #~ t = dnt[1]
+        d = dt[0]
+        #~ t = dt[1]
         a = [int(i) for i in d.split('-')]
         return datetime.date(year=a[0],month=a[1],day=a[2])
 
@@ -174,7 +174,7 @@ class Loader:
         dt = s.split()
         if len(dt) != 2:
             raise Exception("Unexpected datetime string %r" % s)
-        t = dnt[1]
+        t = dt[1]
         return t[:5]
         #~ a = [int(i) for i in t.split(':')]
         #~ return datetime.time(hour=a[0],minute=a[1],second=a[2])
