@@ -102,6 +102,8 @@ class Calendar(mixins.AutoUser):
         if not self.name:
             if self.username:
                 self.name = self.username
+            elif self.user is None:
+                self.name = "Anonymous"
             else:
                 self.name = self.user.get_full_name()
                 if not self.name:
