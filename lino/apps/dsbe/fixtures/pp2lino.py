@@ -703,9 +703,9 @@ class PersonLoader(LinoMdbLoader):
         if is_valid_email(row[u'Email']):
             kw.update(email=row[u'Email'])
         if row[u'DateNaissance']:
-            kw.update(birth_date=row[u'DateNaissance'])
+            kw.update(birth_date=self.parsedate(row[u'DateNaissance']))
         if row[u'DateArrivee']:
-            kw.update(coached_from=row[u'DateArrivee'])
+            kw.update(coached_from=self.parsedate(row[u'DateArrivee']))
         kw.update(remarks="""
         Tel2 : %(Tel2)s
         GSM2 : %(GSM2)s
