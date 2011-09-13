@@ -371,7 +371,7 @@ class DpyDeserializer:
         if self.save_later:
             count = 0
             s = ''
-            for model,msg_objects in save_later.items():
+            for model,msg_objects in self.save_later.items():
                 for msg,objects in msg_objects.items():
                     s += "\n- %s %s (%d object(s), e.g. %s)" % (
                       full_model_name(model),msg,len(objects),obj2str(objects[0].object))
