@@ -361,7 +361,7 @@ class DpyDeserializer:
             self.save_later = {}
             self.saved = 0
             for obj in try_again:
-                obj.try_save(): # ,*args,**kw):
+                obj.try_save() # ,*args,**kw):
                 #~ if obj.try_save(): # ,*args,**kw):
                     #~ self.saved += 1
                 #~ else:
@@ -373,7 +373,8 @@ class DpyDeserializer:
             s = ''
             for model,msg_objects in save_later.items():
                 for msg,objects in msg_objects.items():
-                    s += "\n- %s %s (%d object(s))" % (full_model_name(model),msg,len(objects))
+                    s += "\n- %s %s (%d object(s), e.g. %s)" % (
+                      full_model_name(model),msg,len(objects),obj2str(objects[0]))
                     count += len(objects)
             
             msg = "Abandoning with %d unsaved instances from %s:%s" % (
