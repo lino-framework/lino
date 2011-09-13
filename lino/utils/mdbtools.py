@@ -169,7 +169,8 @@ class Loader:
     def parsedate(self,s):
         if not s: return None
         dt = s.split()
-        assert len(dt) == 2
+        if len(dt) != 2:
+            raise Exception("Unexpected datetime string %r" % s)
         d = dnt[0]
         #~ t = dnt[1]
         a = [int(i) for i in d.split('-')]
@@ -178,7 +179,8 @@ class Loader:
     def parsetime(self,s):
         if not s: return None
         dt = s.split()
-        assert len(dt) == 2
+        if len(dt) != 2:
+            raise Exception("Unexpected datetime string %r" % s)
         t = dnt[1]
         return t[:5]
         #~ a = [int(i) for i in t.split(':')]
