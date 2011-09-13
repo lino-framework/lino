@@ -60,9 +60,11 @@ class EventStatus(ChoiceList):
     label = _("Event Status")
     
 add = EventStatus.add_item
-add('0',en=u"tentative",de=u"Vorschlag",   fr=u"proposition")
-add('1',en=u"confirmed",de=u"bestätigt",   fr=u"confirmé")
-add('2',en=u"cancelled",de=u"storniert",   fr=u"annulé")
+add('0','tentative',en=u"tentative",de=u"Vorschlag",   fr=u"proposition")
+add('1','confirmed',en=u"confirmed",de=u"bestätigt",   fr=u"confirmé")
+add('2','cancelled',en=u"cancelled",de=u"storniert",   fr=u"annulé")
+add('3','rescheduled',en=u"rescheduled",de=u"verschoben",   fr=u"reporté")
+add('4','absent',en=u"absent",de=u"abwesend",   fr=u"absent")
 
 class TaskStatus(ChoiceList):
     """A list of possible values for the `status` field of a :class:`Task`.

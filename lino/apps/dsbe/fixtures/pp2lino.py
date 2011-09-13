@@ -59,6 +59,7 @@ from lino.tools import resolve_model, full_model_name
 from lino.apps.dsbe.models import Company, Person, City, Country, Note, PersonGroup
 from lino.modlib.users.models import User
 from lino.modlib.cal import models as cal
+from lino.modlib.cal.utils import EventStatus
 from lino.modlib.jobs import models as jobs
 from lino.modlib.isip import models as isip
 from lino.modlib.properties import models as properties
@@ -937,6 +938,14 @@ class IsipContractLoader(LinoMdbLoader):
         else:
             yield self.model(**kw)
 
+EVENT_STATI = {
+    'RDV': EventStatus.tentative,
+    'Oui': EventStatus.confirmed,
+    'Non': EventStatus.absent,
+    'Retour': EventStatus.cancelled,
+    u'Reporté': EventStatus.rescheduled,
+    }
+
 class EventLoader(LinoMdbLoader):
     table_name = 'TBConvocationClient'
     model = cal.Event
@@ -953,7 +962,10 @@ class EventLoader(LinoMdbLoader):
             kw.update(start_time=row['HeureConvocation'])
         kw.update(description=row['RemarquesConvocationClient'])
         kw.update(project=get_by_id(Person,row[u'IDClient'],OFFSET_PERSON))
+        kw.update(user=get_by_id(User,row[u'IDASISP'],OFFSET_USER_ISP))
+        #~ kw.update(coach2=get_by_id(User,row[u'IDASSSG']))
         kw.update(type=EVENTS.get(row['TypeDeLettre']))
+        kw.update(status=EVENT_STATI.get(row['Venu']))
         yield self.model(**kw)
     
 
@@ -980,19 +992,8 @@ def objects():
     for i in (5,8,9,10,14):
         yield User(id=i,username="user%d"%i,is_active=False)
     yield UsersISPLoader()
-    yield CboSubsideLoader()
-    yield ListeFonctionLoader()
-    yield DetailFonctionsLoader()
     yield CityLoader()
     yield PersonLoader()
-    yield JobProviderLoader()
-    yield RechercheProfilLoader()
-    yield JobsContractTypeLoader()
-    yield IsipContractTypeLoader()
-    yield TBMiseEmploisLoader()
-    yield IsipContractLoader()
-    yield NotesLoader()
-    
     for name in (u"1er Convocation",u"Suivi",u"Rdv Manqué",
     u"Mise en demeure",u"Report",u"Attestation RIS",
     u"Attestation EQRIS",u"Eval 1er",u"Eval Inter",
@@ -1002,5 +1003,17 @@ def objects():
         yield obj
     
     yield EventLoader()
+    
+    if False:
+        yield CboSubsideLoader()
+        yield ListeFonctionLoader()
+        yield DetailFonctionsLoader()
+        yield JobProviderLoader()
+        yield RechercheProfilLoader()
+        yield JobsContractTypeLoader()
+        yield IsipContractTypeLoader()
+        yield TBMiseEmploisLoader()
+        yield IsipContractLoader()
+        yield NotesLoader()
     
     #~ reader = csv.reader(open(,'rb'))

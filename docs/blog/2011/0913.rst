@@ -11,3 +11,32 @@ only in :mod:`lino.apps.dsbe.models`.
 Now that's done already in the modlib, 
 and they are no longer are abstract there.
 Seems more practical.
+
+If something went wrong while loading data using 
+:mod:`lino.utils.dpy.Deserializer`, it now gives more useful information::
+
+    ...
+    INFO Saved 3711 instances from /var/snapshots/lino/lino/apps/dsbe/fixtures/pp2lino.py.
+    INFO Trying again with 12128 unsaved instances.
+    INFO Deferred Event #4 (u'Event #4') : {'start_time': [u'Saisissez une heure valide au format HH:MM[:ss[.uuuuuu]].']}
+    INFO Deferred Event #4491 (u'Event #4491') : {'start_date': [u'Ce champ ne peut pas \xeatre vide.']}
+    INFO Deferred Event #269 (u'Event #269') : (1048, "Column 'created' cannot be null")
+    INFO Deferred Event #3040 (u'Event #3040') : {'start_time': [u'Saisissez une heure valide au format HH:MM[:ss[.uuuuuu]].
+    '], 'start_date': [u'Ce champ ne peut pas \xeatre vide.']}
+    INFO Saved 0 instances.
+    Problem installing fixture '/var/snapshots/lino/lino/apps/dsbe/fixtures/pp2lino.py': Traceback (most recent call last):
+      File "/var/snapshots/django/django/core/management/commands/loaddata.py", line 175, in handle
+        for obj in objects:
+      File "/var/snapshots/lino/lino/utils/dpy.py", line 383, in deserialize
+        raise Exception(msg)
+    Exception: Abandoning with 12128 unsaved instances from /var/snapshots/lino/lino/apps/dsbe/fixtures/pp2lino.py:
+    - cal.Event {'start_time': [u'Saisissez une heure valide au format HH:MM[:ss[.uuuuuu]].']} (11801 object(s), e.g. Event(id=4,project=1169L,must_build=True,calendar=1L,start_date=datetime.date(2006, 1,24),start_time=u'1899-12-30',type=2L))
+    - cal.Event {'start_date': [u'Ce champ ne peut pas \xeatre vide.']} (62 object(s), e.g. Event(id=4491,must_build=True,calendar=1L,type=2L))
+    - cal.Event (1048, "Column 'created' cannot be null") (264 object(s), e.g. Event(id=269,modified=datetime.datetime(2011,9, 13, 10, 7, 39,602653),project=1374L,must_build=True,calendar=1L, start_date=datetime.date(2006, 3, 27),type=6L))
+    - cal.Event {'start_time': [u'Saisissez une heure valide au format HH:MM[:ss[.uuuuuu]].'], 'start_date': [u'Ce champ ne peut pas \xeatre vide.']} (1 object(s), e.g. Event(id=3040,project=1503L,must_build=True,calendar=1L,start_time=u'1899-12-30',type=3L))
+    INFO Lino initdb done ('std', 'all_countries', 'pp2lino') on database mysite.
+
+That is, instead of issuing 12128 error messages, 
+it now groups them by model and message
+and shows only the fist message of each group.
+In the above case the 12128 messages were reduced to 4.
