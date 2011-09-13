@@ -106,10 +106,10 @@ CboNationalite = {
   14:'DZ', # u"Algérien(ne)",
   15:'MU', # "Mauricien(ne)",
   16:'TG', # "Togolais(e)",
-  17:u"Réfugié Politique",
-  18:"Turque",
+  17:None, # u"Réfugié Politique",
+  18:'TR', # "Turque",
   19:'CM', # "Camerounai (se)",
-  20:"Perouvien(ne)",
+  20:'PE', # "Perouvien(ne)",
   21:'MD', # "Moldave(iene)",
   23:'BI', # "burundais(e)",
   24:"Sierra Leonais(e)",
@@ -126,7 +126,7 @@ CboNationalite = {
   35:'UZ', # u"ouzbékistan",
   36:'BO', # "bolivien(ne)",
   37:'PL', # "polonais(e)",
-  38:u"sénégalais(e)",
+  38:'SN', # u"sénégalais(e)",
   39:"IR", # "Iranien(ne)",
   40:'IQ', # "Iraquien(ne)",
   41:'AM', # "arménie",
@@ -135,20 +135,20 @@ CboNationalite = {
   44:'NE', # "Nigerien(ne)",
   45:"Chinnoise",
   46:"burkina Faso",
-  48:"laotienne",
+  48:'LA', # "laotienne",
   49:"ivoirien(ne)",
   50:u"US",
-  51:"georgien(ne)",
-  52:"grec",
+  51:'GE', # "georgien(ne)",
+  52:'GR', # "grec",
   53:'MK', # "yougoslave",
   54:'BA', # u"bosnie-herzégovine",
   55:'UA', # "Ukrainien(ne)",
   56:'EC', # "Equatorien",
   57:'PK', # "pakistannais(e)",
-  58:"vietnamien(ne)",
-  59:u"indonésien(ne)",
+  58:'VN', # "vietnamien(ne)",
+  59:'ID', # u"indonésien(ne)",
   60:"Malgache",
-  62:"indien(ne)",
+  62:'IN', # "indien(ne)",
   63:'AL', # "albanais",
   64:'ES', # "Espagnol(e)",
   65:"Macedoine",
@@ -232,9 +232,9 @@ CboPays = {
   ,64:'FR' # u"France"
   ,65:u"Gabon"
   ,66:u"Gambie"
-  ,67:u"Géorgie"
+  ,67:'GE' # u"Géorgie"
   ,68:u"Ghana"
-  ,69:u"Grčce"
+  ,69:'GR' # u"Grčce"
   ,70:u"Grenade"
   ,71:'GT' # u"Guatemala"
   ,72:"GN" # u"Guinée"
@@ -244,8 +244,8 @@ CboPays = {
   ,76:u"Haļti"
   ,77:u"Honduras"
   ,78:u"Hongrie"
-  ,79:u"Inde"
-  ,80:u"Indonésie"
+  ,79:'IN' # u"Inde"
+  ,80:'ID' # u"Indonésie"
   ,81:"IR" # u"Iran"
   ,82:'IQ' # u"Iraq"
   ,83:u"Irlande"
@@ -260,7 +260,7 @@ CboPays = {
   ,92:'KG' # u"Kirghizistan"
   ,93:u"Kiribati"
   ,94:u"Koweļt"
-  ,95:u"Laos"
+  ,95:'LA' # u"Laos"
   ,96:u"Lesotho"
   ,97:u"Lettonie"
   ,98:'LB' # u"Liban"
@@ -323,7 +323,7 @@ CboPays = {
   ,155:u"Salvador"
   ,156:u"Samoa occidentales"
   ,157:u"Sao Tomé-et-Principe"
-  ,158:u"Sénégal"
+  ,158:'SN' # u"Sénégal"
   ,159:u"Seychelles"
   ,160:u"Sierra Leone"
   ,161:u"Singapour"
@@ -333,7 +333,7 @@ CboPays = {
   ,165:u"Soudan"
   ,166:u"Sri Lanka"
   ,167:u"Sučde"
-  ,168:u"Suisse"
+  ,168:'CH' # u"Suisse"
   ,169:u"Suriname"
   ,170:u"Swaziland"
   ,171:'SY' # u"Syrie"
@@ -346,20 +346,20 @@ CboPays = {
   ,178:u"Trinité-et-Tobago"
   ,179:u"TN"
   ,180:u"Turkménistan"
-  ,181:u"Turquie"
+  ,181:'TR' # u"Turquie"
   ,182:u"Tuvalu"
   ,183:'UA' # u"Ukraine"
   ,184:u"Uruguay"
   ,185:u"Vanuatu"
   ,186:u"Venezuela"
-  ,187:u"Viźt Nam"
+  ,187:'VN' # u"Viźt Nam"
   ,188:u"Yémen"
   ,189:'MK' # u"Yougoslavie"
   ,190:'ZRCD' # u"Zaļre"
   ,191:u"Zambie"
   ,192:u"Zimbabwe"
   ,193:'AF' #u"Afghanistan"
-  ,194:u"Uzbekistan"
+  ,194:'UZ' # u"Uzbekistan"
 }
 
 
