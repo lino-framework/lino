@@ -125,7 +125,7 @@ class Loader:
         if os.path.exists(fn):
             logger.warning("Not re-extracting %s since it exists.",fn)
         else:
-            args = [MDBTOOLS_EXPORT, '-D', "'%Y-%m-%d %H:%M:%S'", self.mdb_file, self.table_name]
+            args = [MDBTOOLS_EXPORT, '-D', "%Y-%m-%d %H:%M:%S", self.mdb_file, self.table_name]
             s = check_output(args,executable=MDBTOOLS_EXPORT,
               env=dict(
                 MDB_ICONV='utf-8',
