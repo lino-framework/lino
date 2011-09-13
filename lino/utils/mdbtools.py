@@ -1,4 +1,4 @@
-## Copyright 2009-2011 Luc Saffre
+## Copyright 2011 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -12,11 +12,16 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-This fixture is for one-time use in a real case, 
-and maybe as starting example for future similar cases.
+This is for writing fixtures that import data from an MS-Access 
+database (:xfile:`.mdb`) into Lino.
 
-It uses `mdb-export` to extract data from the .mdb file to .csv, 
-then reads these csv files. 
+Usage examples see 
+:mod:`lino.apps.dsbe.fixtures.pp2lino`
+and
+:mod:`lino.apps.crl.fixtures.hs2lino`.
+
+It uses `mdb-export` to extract data from the :xfile:`.mdb` 
+file to :xfile:`.csv`, then reads these csv files. 
 `mdb-export` was written by Brian Bruns and is part 
 of the `mdbtools` Debian package. To install it::
 
@@ -42,26 +47,12 @@ for explanations on the environment variables used by `mdb-export`.
 The function :func:`check_output` in this module is a copy from Python 2.7 
 which we include here to make it usable in Python 2.6 too.
 
-Usage
------
-
-Before loading this fixture you must set :attr:`lino.Lino.legacy_data_path` 
-in your local :xfile:`settings.py`.
-You must also set the encoding for mdb-export::
-
-    export MDB_ICONV=utf-8
-    export MDB_JET_CHARSET=utf-8
-    
-Then load the fixture using the following command::
-
-    python manage.py initdb std all_countries all_cities be all_languages props pp2lino
-    
-During testing, the following variant might help to save time::    
-    
-    python manage.py initdb std few_countries few_cities pp2lino --noinput
-
 
 """
+
+import logging
+logger = logging.getLogger(__name__)
+
 
 #~ ENCODING = 'latin1' # the encoding used by the mdb file
 ENCODING = 'utf8' 
@@ -131,8 +122,10 @@ class Loader:
     
     def __iter__(self):
         fn = self.table_name + ".csv"
-        if not os.path.exists(fn):
-            args = [MDBTOOLS_EXPORT, '-D', '%Y-%m-%d_%H:%M:%S', self.mdb_file, self.table_name]
+        if os.path.exists(fn):
+            logger.warning("Not re-extracting %s since it exists.",fn)
+        else:
+            args = [MDBTOOLS_EXPORT, '-D', "'%Y-%m-%d %H:%M:%S'", self.mdb_file, self.table_name]
             s = check_output(args,executable=MDBTOOLS_EXPORT,
               env=dict(
                 MDB_ICONV='utf-8',
@@ -142,7 +135,7 @@ class Loader:
             fd = open(fn,'w')
             fd.write(s)
             fd.close()
-            print "Wrote file", fn
+            logger.info("Extracted file %s", fn)
         reader = ucsv.UnicodeReader(open(fn,'r'),encoding=ENCODING)
         headers = reader.next()
         if not headers == self.headers:
@@ -168,7 +161,7 @@ class Loader:
 
     def parsedate(self,s):
         if not s: return None
-        dt = s.split('_')
+        dt = s.split()
         if len(dt) != 2:
             raise Exception("Unexpected datetime string %r" % s)
         d = dnt[0]
@@ -178,7 +171,7 @@ class Loader:
 
     def parsetime(self,s):
         if not s: return None
-        dt = s.split('_')
+        dt = s.split()
         if len(dt) != 2:
             raise Exception("Unexpected datetime string %r" % s)
         t = dnt[1]

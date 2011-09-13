@@ -19,15 +19,7 @@ and maybe as starting example for future similar cases.
 Usage
 -----
 
-Before loading this fixture you must set :attr:`lino.Lino.legacy_data_path` 
-in your local :xfile:`settings.py`.
-
-You must also set the encoding for mdb-export::
-
-    export MDB_ICONV=utf-8
-    export MDB_JET_CHARSET=utf-8
-    
-Then load the fixture using the following command::
+Load the fixture using the following command::
 
     python manage.py initdb std all_countries all_languages props pp2lino
     
@@ -94,40 +86,6 @@ CboStatutJuridique = {
   'SIREAS' : None,
 }
 
-# goes to jobs.ContractType
-#~ CboTypeMiseEmplois = {
-  #~ 1	: u"PTP",
-  #~ 2	: u"Art 60§7",
-  #~ 3	: u"Art 60§7 (Tok)",
-  #~ 5	: u"Art 60§7 Privé (Tok)",
-  #~ 6	: u"Smet",
-  #~ 7	: u"Art 61",
-  #~ 8	: u"Activa",
-  #~ 9	: u"Stage en Entreprise",
-  #~ 17	: u"CDD",
-  #~ 18	: u"CDI",
-  #~ 19	: u"Intérim",
-  #~ 20	: u"ALE",
-  #~ 21	: u"FPI",
-  #~ 22	: u"SINE",
-  #~ 23	: u"anlo",
-  #~ 24	: u"wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww",
-  #~ 25	: u"contrat de remplacement CDD",
-#~ }
-
-
-# goes to isip.ContractType
-#~ CboTypeContrat = {
-    #~ 1	: u"Tutorat",
-    #~ 2	: u"PIIS 18-25 ans",
-    #~ 3	: u"PIIS + 25 ans",
-    #~ 4	: u"PIIS étudiant",
-    #~ 5	: u"PIIS stage en entreprise - experience prof",
-    #~ 6	: u"PIIS stage de détermination et d'orientation socio",
-    #~ 7	: u"PIIS formation",
-    #~ 8	: u"PIIS prolongation",
-#~ }
-
 """
 The following two dictionaries need manual work: 
 replace full names by their uppercase ISO2 country code.
@@ -165,8 +123,8 @@ CboNationalite = {
   32:u"Libérien(ne)",
   33:"TN",
   34:'NG', # "Nigérian(nes)",
-  35:u"ouzbékistan",
-  36:"bolivien(ne)",
+  35:'UZ', # u"ouzbékistan",
+  36:'BO', # "bolivien(ne)",
   37:'PL', # "polonais(e)",
   38:u"sénégalais(e)",
   39:"IR", # "Iranien(ne)",
@@ -183,8 +141,8 @@ CboNationalite = {
   51:"georgien(ne)",
   52:"grec",
   53:'MK', # "yougoslave",
-  54:u"bosnie-herzégovine",
-  55:"Ukrainien(ne)",
+  54:'BA', # u"bosnie-herzégovine",
+  55:'UA', # "Ukrainien(ne)",
   56:'EC', # "Equatorien",
   57:'PK', # "pakistannais(e)",
   58:"vietnamien(ne)",
@@ -217,7 +175,7 @@ CboPays = {
   ,6:'AO' # u"Angola"
   ,7:u"Antigua-et-Barbuda"
   ,8:u"Arabie Saoudite"
-  ,9:u"Argentine"
+  ,9:'AR' # u"Argentine"
   ,10:u"Arménie"
   ,11:'AU' # u"Australie"
   ,12:'AS' # u"Autriche"
@@ -228,13 +186,13 @@ CboPays = {
   ,17:u"Barbade"
   ,18:u"Beiau"
   ,19:'BE' # u"Belgique"
-  ,20:u"Belize"
+  ,20:'BZ' # u"Belize"
   ,21:u"Bénin"
   ,22:u"Bhoutan"
   ,23:u"Biélorussie"
   ,24:u"Birmanie"
-  ,25:u"Bolivie"
-  ,26:u"Bosnie-Herzégovine"
+  ,25:'BO' # u"Bolivie"
+  ,26:'BA' # u"Bosnie-Herzégovine"
   ,27:u"Botswana"
   ,28:'BR' # u"Brésil"
   ,29:u"Brunei"
@@ -339,7 +297,7 @@ CboPays = {
   ,129:u"Nouvelle-Zélande"
   ,130:u"Oman"
   ,131:u"Ouganda"
-  ,132:u"Ouzbékistan"
+  ,132:'UZ' # u"Ouzbékistan"
   ,133:'PK' # u"Pakistan"
   ,134:u"Panama"
   ,135:u"Papouasie - Nouvelle Guin"
@@ -390,7 +348,7 @@ CboPays = {
   ,180:u"Turkménistan"
   ,181:u"Turquie"
   ,182:u"Tuvalu"
-  ,183:u"Ukraine"
+  ,183:'UA' # u"Ukraine"
   ,184:u"Uruguay"
   ,185:u"Vanuatu"
   ,186:u"Venezuela"
