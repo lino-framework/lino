@@ -354,8 +354,8 @@ class DpyDeserializer:
         while self.saved and self.save_later:
             try_again = []
             for msg_objlist in self.save_later.values():
-                for obj in msg_objlist.values():
-                    try_again.append(obj)
+                for objlist in msg_objlist.values():
+                    try_again += objlist
             dblogger.info("Trying again with %d unsaved instances.",
                 len(self.save_later))
             self.save_later = {}
