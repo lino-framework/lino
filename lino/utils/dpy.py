@@ -391,10 +391,10 @@ class DpyDeserializer:
         
     def register_failure(self,obj,e):
         msg = force_unicode(e)
-        d = self.save_later.setdefault(obj.__class__,{})
+        d = self.save_later.setdefault(obj.object.__class__,{})
         l = d.setdefault(msg,[])
         l.append(obj)
-        dblogger.info("Deferred %s : %s",obj2str(obj),msg)
+        dblogger.info("Deferred %s : %s",obj2str(obj.object),msg)
 
 def Deserializer(fp, **options):
     d = DpyDeserializer()
