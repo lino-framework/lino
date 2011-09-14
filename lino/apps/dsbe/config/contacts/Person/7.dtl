@@ -3,5 +3,5 @@
 
 main = 
     isip.ContractsByPerson
-    jobs.JobRequestsByPerson:20 jobs.ContractsByPerson:40
+    jobs.RequestsByPerson:20 jobs.ContractsByPerson:40
     

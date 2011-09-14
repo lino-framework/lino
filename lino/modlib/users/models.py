@@ -84,7 +84,7 @@ class User(Contact,PersonMixin):
     def __unicode__(self):
         return self.username
 
-    def get_full_name(self):
+    def get_full_name(self,salutation=True,**salutation_options):
         "Returns the first_name plus the last_name, with a space in between."
         full_name = u'%s %s' % (self.first_name, self.last_name)
         if not full_name:

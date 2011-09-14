@@ -429,6 +429,8 @@ class ReportHandle(base.Handle):
         #~ logger.debug('ReportHandle.__init__(%s)',report)
         assert isinstance(report,Report)
         self.report = report
+        self.data_elems = report.data_elems
+        self.get_data_elem = report.get_data_elem
         self._layouts = None
         #~ actors.ActorHandle.__init__(self,report)
         #~ datalinks.DataLink.__init__(self,ui)
@@ -441,8 +443,6 @@ class ReportHandle(base.Handle):
                         ListLayout('main = '+self.report.column_names),
                         hidden_elements=self.report.hidden_columns)
                 self.content_type = ContentType.objects.get_for_model(self.report.model).pk
-                self.data_elems = report.data_elems
-                self.get_data_elem = report.get_data_elem
         
   
     def __str__(self):

@@ -34,6 +34,9 @@ from lino.utils import mti
 #~ from django.contrib.auth import models as auth
 from lino.modlib.users import models as auth
 from lino.modlib.contacts.utils import SEX_FEMALE, SEX_MALE
+from lino.modlib.jobs import models as jobs
+from lino.modlib.contacts import models as contacts
+from lino.apps.dsbe import models as dsbe
 
 #~ dblogger.info('Loading')
 
@@ -78,6 +81,22 @@ DATE = i2d(20061014)
 
 #~ StudyContent = resolve_model('dsbe.StudyContent')
 
+SECTORS = u"""
+Agriculture & horticulture | Agriculture & horticulture | Landwirtschaft & Garten
+Maritime | Maritime | Seefahrt
+Medical & paramedical | Médical & paramédical | Medizin & Paramedizin
+Construction & buildings| Construction & bâtiment | Bauwesen & Gebäudepflege
+Tourism | Horeca | Horeca
+Education | Enseignement | Unterricht
+Cleaning | Nettoyage | Reinigung
+Transport | Transport | Transport
+Textile | Textile | Textil
+Cultural | Culture | Kultur
+Information Technology | Informatique | Informatik
+Esthetical | Cosmétique | Kosmetik
+Sales | Vente | Verkauf 
+Administration & Finance | Administration & Finance | Verwaltung & Finanzwesen
+"""
 
 
 def objects():
@@ -527,4 +546,39 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     yield event(2,i2d(20100727),annette,u"Problem Kühlschrank")
     yield event(3,i2d(20100727),andreas,u"Mein dritter Termin")
 
+    sector = Instantiator('jobs.Sector').build
+    for ln in SECTORS.splitlines():
+        if ln:
+            a = ln.split('|')
+            if len(a) == 3:
+                kw = dict(en=a[0],fr=a[1],de=a[2])
+                yield sector(**babel_values('name',**kw))
+                
+    horeca = jobs.Sector.objects.get(pk=5)
+    function = Instantiator('jobs.Function',sector=horeca).build
+    yield function(**babel_values('name',
+          de=u"Kellner",
+          fr=u'Serveur',
+          en=u'Waiter',
+          ))
+    yield function(**babel_values('name',
+          de=u"Koch",
+          fr=u'Cuisinier',
+          en=u'Cook',
+          ))
+    yield function(**babel_values('name',
+          de=u"Küchenassistent",
+          fr=u'Aide Cuisinier',
+          en=u'Cook assistant',
+          ))
+    yield function(**babel_values('name',
+          de=u"Tellerwäscher",
+          fr=u'Plongeur',
+          en=u'Dishwasher',
+          ))
 
+    i = dsbe.Person.objects.order_by('name').__iter__()
+    p = i.next()
+    for f in jobs.Function.objects.all():
+        yield jobs.JobRequest(person=p,function=f,sector=f.sector)
+        p = i.next()

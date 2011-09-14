@@ -34,8 +34,7 @@ def objects():
     
     root = User.objects.get(username='root')
     
-    outmail = Instantiator('mails.OutMail').build
-    inmail = Instantiator('mails.InMail').build
+    mail = Instantiator('mails.Mail').build
     recipient_to = Instantiator('mails.Recipient',type=RecipientType.to).build
     
     #~ for p in Person.objects.filter(email__isnull=True):
@@ -49,8 +48,11 @@ def objects():
             
     for person in Person.objects.exclude(email=''):
     #~ for person in Person.objects.filter(email__isnull=False):
-        m = outmail(user=root,subject='Welcome %s!' % person.first_name)
+        m = mail(sender=root,subject='Welcome %s!' % person.first_name)
         yield m
         yield recipient_to(mail=m,contact=person)
             #~ address=person.email,name=person.get_full_name(salutation=False))
+    m = mail(sender=root,subject='Hello %s!' % root.first_name)
+    yield m
+    yield recipient_to(mail=m,contact=root)
     

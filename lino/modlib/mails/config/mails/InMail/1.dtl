@@ -1,5 +1,0 @@
-main = 
-  id sender received
-  RecipientsByMail
-  subject
-  body

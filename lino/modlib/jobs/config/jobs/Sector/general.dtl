@@ -1,4 +1,4 @@
 main = 
   id name
-  remark
-  FunctionsBySector JobsBySector
+  remark FunctionsBySector
+  JobsBySector RequestsBySector

@@ -1,0 +1,18 @@
+20110914
+========
+
+Mails
+-----
+
+Database change in :mod:`lino.modlib.mails`: there's only one table 
+`Mail`, not two separate tables `OutMail` and `InMail`.
+
+Job Requests
+------------
+
+Tilt! :mod:`lino.modlib.jobs` does not need a PersonsByOffer, 
+but a RequestsByOffer.
+Entering a Job Offer now gives reasonable results in the "Candidate" 
+slave grid.
+Added some sectors and functions in dsbe/demo fixture.
+

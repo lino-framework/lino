@@ -512,55 +512,6 @@ class Offer(SectorFunction):
 class Offers(reports.Report):
     model = Offer
     
-class PersonsByOffer(reports.Report):
-    """
-    Shows the possible candidates for this Offer.
-    
-    It is a slave report without 
-    :attr:`fk_name <lino.reports.Report.fk_name>`,
-    which is allowed only because it also overrides
-    :meth:`get_request_queryset`
-    """
-  
-    model = 'contacts.Person'
-    master = Offer
-    label = _("Found persons")
-    
-    can_add = perms.never
-    can_change = perms.never
-    
-    def get_request_queryset(self,rr):
-        """
-        Here is the code that builds the query. It can be quite complex.
-        See :srcref:`/lino/apps/dsbe/models.py` 
-        (search this file for "PersonsBySearch").
-        """
-        offer = rr.master_instance
-        if offer is None:
-            return []
-        kw = {}
-        qs = self.model.objects.order_by('name')
-        
-        required_id_sets = []
-        
-        if offer.function:
-            q = JobRequest.objects.filter(function=offer.function)
-            required_id_sets.append(set(q.values_list('person__id',flat=True)))
-        if offer.sector:
-            q = JobRequest.objects.filter(sector=offer.sector)
-            required_id_sets.append(set(q.values_list('person__id',flat=True)))
-
-        if required_id_sets:
-            s = set(required_id_sets[0])
-            for i in required_id_sets[1:]:
-                s.intersection_update(i)
-                # keep only elements found in both s and i.
-            qs = qs.filter(id__in=s)
-              
-        return qs
-
-    
-
 class Job(SectorFunction):
     """
     A work place at some job provider
@@ -676,7 +627,61 @@ class JobRequest(SectorFunction):
                   "Cannot satisfy a JobRequest with a Contract on another  Person")
         super(JobRequest,self).clean(*args,**kw)
     
+
+class RequestsByOffer(reports.Report):
+    """
+    Shows the possible candidates for this Offer.
+    
+    It is a slave report without 
+    :attr:`fk_name <lino.reports.Report.fk_name>`,
+    which is allowed only because it also overrides
+    :meth:`get_request_queryset`
+    """
+  
+    model = JobRequest
+    master = Offer
+    label = _("Candidate Job Requests")
+    
+    can_add = perms.never
+    can_change = perms.never
+    
+    def get_request_queryset(self,rr):
+        """
+        Needed because the Offer is not the direct master.
+        """
+        offer = rr.master_instance
+        if offer is None:
+            return []
+        kw = {}
+        qs = self.model.objects.order_by('date_submitted')
         
+        if offer.function:
+            qs = qs.filter(function=offer.function)
+        if offer.sector:
+            qs = qs.filter(sector=offer.sector)
+            
+        #~ required_id_sets = []
+        
+        #~ if offer.function:
+            #~ q = JobRequest.objects.filter(function=offer.function)
+            #~ required_id_sets.append(set(q.values_list('person__id',flat=True)))
+        #~ if offer.sector:
+            #~ q = JobRequest.objects.filter(sector=offer.sector)
+            #~ required_id_sets.append(set(q.values_list('person__id',flat=True)))
+
+        #~ if required_id_sets:
+            #~ s = set(required_id_sets[0])
+            #~ for i in required_id_sets[1:]:
+                #~ s.intersection_update(i)
+                #~ # keep only elements found in both s and i.
+            #~ qs = qs.filter(id__in=s)
+              
+        return qs
+
+    
+
+
+
 class Jobs(reports.Report):
     model = Job
     #~ order_by = ['start_date']
@@ -701,10 +706,16 @@ class JobsByType(Jobs):
 class JobRequests(reports.Report):
     model = JobRequest
     order_by = ['date_submitted']
-
-class JobRequestsByPerson(JobRequests):
-    fk_name = 'person'
     column_names = '* id'
+
+class RequestsByPerson(JobRequests):
+    fk_name = 'person'
+
+class RequestsBySector(JobRequests):
+    fk_name = 'sector'
+
+class RequestsByFunction(JobRequests):
+    fk_name = 'function'
 
 class RequestsByJob(JobRequests):
     fk_name = 'job'
