@@ -101,7 +101,7 @@ CboNationalite = {
   7:'RO', # "Roumain(e)",
   8:"CH",
   9:'CO', # "Colombien(ne)",
-  11:'UV', # "Uruguayen (ne)",
+  11:'UY', # "Uruguayen (ne)",
   12:'MA', # "Marocain(ne)",
   14:'DZ', # u"Algérien(ne)",
   15:'MU', # "Mauricien(ne)",
@@ -349,7 +349,7 @@ CboPays = {
   ,181:'TR' # u"Turquie"
   ,182:u"Tuvalu"
   ,183:'UA' # u"Ukraine"
-  ,184:'UV' # u"Uruguay"
+  ,184:'UY' # u"Uruguay"
   ,185:u"Vanuatu"
   ,186:u"Venezuela"
   ,187:'VN' # u"Viźt Nam"
