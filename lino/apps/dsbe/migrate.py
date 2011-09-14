@@ -521,6 +521,9 @@ def migrate_from_1_2_1(globals_dict):
     globals_dict.update(create_cal_event=create_cal_event)
   
     return '1.2.2'
+    
+def migrate_from_1_2_2(globals_dict):
+    return '1.2.3'
   
 
 def install(globals_dict):
