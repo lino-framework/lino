@@ -45,6 +45,8 @@ class LinkType(models.Model):
 class Link(mixins.AutoUser):
     "Implements :class:`links.Link`."
     
+    allow_cascaded_delete = True
+    
     class Meta:
         abstract = True
         verbose_name = _("link")

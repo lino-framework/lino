@@ -606,6 +606,10 @@ class CachedPrintable(models.Model,Printable):
     def setup_report(cls,rpt):
         rpt.add_action(PrintAction())
         rpt.add_action(ClearCacheAction())
+        #~ m = getattr(super(CachedPrintable,cls),'setup_report',None)
+        #~ if m is not None:
+            #~ m(rpt)
+        
         #~ rpt.add_action(EditTemplateAction(rpt))
         #~ super(Printable,cls).setup_report(rpt)
 

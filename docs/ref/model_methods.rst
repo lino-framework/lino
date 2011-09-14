@@ -1,6 +1,17 @@
 Special model methods
 ---------------------
 
+.. modmeth:: allow_cascaded_delete
+
+    Set this to `True` on models whose objects should get automatically 
+    deleted if a related object gets deleted. 
+    Example: Lino should not refuse to delete 
+    a Mail just because it has some 
+    Recipient. 
+    When deleting a Mail, Lino should also delete its Recipients.
+    That's why :class:`lino.modlib.mails.models.Recipient` 
+    has ``allow_cascaded_delete = True``.
+    
 .. modmeth:: disabled_fields
 
     return a list of names of fields that should be disabled (not editable) 

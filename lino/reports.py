@@ -50,7 +50,7 @@ from django.utils.safestring import mark_safe
 import lino
 #~ from lino import layouts
 from lino import actions
-from lino.utils import perms, menus
+from lino.utils import perms, menus, call_on_bases
 from lino.utils.config import load_config_files, Configured
 #~ from lino.core import datalinks
 #~ from lino.core import boolean_texts
@@ -63,11 +63,6 @@ from lino.tools import resolve_model, resolve_field, get_app, full_model_name, g
 from lino.core.coretools import get_slave, get_model_report, data_elems, get_data_elem
 
 #~ from lino.modlib import field_choices
-
-
-
-
-
 
 
 def parse_js_date(s,name):
@@ -1029,6 +1024,7 @@ class Report(actors.Actor): #,base.Handled):
                 self._slaves = []
                 
         self.setup_detail_layouts()
+        self.set_actions([])
         self.setup_actions()
         self.add_action(self.default_action)
                 
@@ -1036,9 +1032,7 @@ class Report(actors.Actor): #,base.Handled):
             self.button_label = self.label
             
         if self.model is not None:
-            m = getattr(self.model,'setup_report',None)
-            if m:
-                m(self)
+            call_on_bases(self.model,'setup_report',self)
         
     def disable_delete(self,obj,request):
         """
@@ -1049,23 +1043,19 @@ class Report(actors.Actor): #,base.Handled):
         return self.model._lino_ddh.disable_delete(obj,request)
         
     def setup_actions(self):
-        alist = []
         if self.model is not None:
             if len(self.detail_layouts) > 0:
                 self.detail_action = ShowDetailAction(self)
-                alist.append(self.detail_action)
-                alist.append(SubmitDetail())
-                alist.append(InsertRow(self))
-                #~ alist.append(actions.DuplicateRow(self))
-                alist.append(SubmitInsert())
+                self.add_action(self.detail_action)
+                self.add_action(SubmitDetail())
+                self.add_action(InsertRow(self))
+                #~ self.add_action(actions.DuplicateRow(self))
+                self.add_action(SubmitInsert())
                     
-            alist.append(DeleteSelected())
+            self.add_action(DeleteSelected())
             
             if hasattr(self.model,'get_image_url'):
-                alist.append(actions.ImageAction())
-                
-        #~ alist.append(self.default_action)
-        self.set_actions(alist)
+                self.add_action(actions.ImageAction())
         
       
     def setup_detail_layouts(self):

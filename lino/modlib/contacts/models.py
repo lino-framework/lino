@@ -276,11 +276,12 @@ class PartnerDocument(models.Model):
             return self.company
         return self.person
         
-    def get_recipients(self):
+    def get_mailable_contacts(self):
         for p in self.company, self.person:
             if p is not None and p.email:
                 #~ yield "%s <%s>" % (p, p.email)
-                yield ('to', unicode(p), p.email)
+                yield ('to', p)
+                #~ yield ('to', unicode(p), p.email)
         
         
     #~ def summary_row(self,ui,rr,**kw):
@@ -323,8 +324,8 @@ class ContactDocument(models.Model):
         verbose_name=_("Contact"))
     language = fields.LanguageField(default=babel.DEFAULT_LANGUAGE)
 
-    def get_recipients(self):
-        yield self.contact
+    def get_mailable_contacts(self):
+        yield ('to',self.contact)
 
     def get_recipient(self):
         return self.contact

@@ -36,7 +36,7 @@ from lino.tools import resolve_model
 
 from lino.modlib.contacts import models as contacts
 
-from lino.modlib.mails.models import Mailable
+from lino.modlib.mails import models as mails # import Mailable
 
 from lino.modlib.cal.utils import EventStatus, \
     TaskStatus, DurationUnit, Priority, AccessClass, \
@@ -349,8 +349,7 @@ class Component(ComponentBase,
         
 
 
-#~ class Event(Component,contacts.PartnerDocument):
-class Event(Component,mixins.TypedPrintable):
+class Event(Component,mixins.TypedPrintable,mails.Mailable):
     """
     A Calendar Event (french "Rendez-vous", german "Termin") 
     is a scheduled lapse of time where something happens. 
@@ -394,6 +393,12 @@ class Event(Component,mixins.TypedPrintable):
     def duration_unit_changed(self,oldvalue):
         self.duration_changed()
         #~ print "20110829 duration_changed!", oldvalue
+        
+    def get_mailable_contacts(self):
+        for g in self.guest_set.all():
+            yield ('to',g)
+        yield ('cc',self.user)
+        
 
 #~ class Task(Component,contacts.PartnerDocument):
 class Task(mixins.Owned,Component):
@@ -462,6 +467,10 @@ class Events(reports.Report):
     model = 'cal.Event'
     column_names = 'start_date start_time summary status *'
     
+    #~ def setup_actions(self):
+        #~ super(reports.Report,self).setup_actions()
+        #~ self.add_action(mails.CreateMailAction())
+    
 class EventsBySet(Events):
     fk_name = 'rset'
     
@@ -519,7 +528,7 @@ class GuestRoles(reports.Report):
 
 class Guest(contacts.ContactDocument,
             mixins.CachedPrintable,
-            Mailable):
+            mails.Mailable):
     """
     A Guest is a Contact who is invited to an :class:`Event`.
     """
@@ -548,15 +557,19 @@ class Guest(contacts.ContactDocument,
         
     def __unicode__(self):
         return u'%s #%s ("%s")' % (self._meta.verbose_name,self.pk,self.event)
-        
-    @classmethod
-    def setup_report(cls,rpt):
-        mixins.CachedPrintable.setup_report(rpt)
-        Mailable.setup_report(rpt)
+
+    #~ @classmethod
+    #~ def setup_report(cls,rpt):
+        #~ mixins.CachedPrintable.setup_report(rpt)
+        #~ Mailable.setup_report(rpt)
         
 class Guests(reports.Report):
     model = Guest
     column_names = 'contact role status remark event *'
+    
+    #~ def setup_actions(self):
+        #~ super(reports.Report,self).setup_actions()
+        #~ self.add_action(mails.CreateMailAction())
     
 class GuestsByEvent(Guests):
     fk_name = 'event'

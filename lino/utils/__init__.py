@@ -124,6 +124,21 @@ def class_dict_items(cl,exclude=None):
             yield k,v
 
 
+def call_on_bases(cls,name,*args,**kw):
+    """
+    This is necessary because we want to call `setup_report`
+    on the model and all base classes of the model.
+    We cannot use super() for this because the `setup_report` 
+    method is optional.
+    """
+    for b in cls.__bases__: call_on_bases(b,name,*args,**kw)
+    m = cls.__dict__.get(name)
+    if m:
+        m.__func__(cls,*args,**kw)
+
+
+
+
 def str2hex(s):
     """Convert a string to its hexadecimal representation."""
     r = ''

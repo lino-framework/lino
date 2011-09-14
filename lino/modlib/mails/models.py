@@ -60,17 +60,13 @@ class CreateMailAction(reports.RowAction):
     callable_from = None
             
     def run(self,rr,elem,**kw):
-        #~ if False: 
-            #~ if elem.time_sent:
-                #~ return rr.ui.error_response(
-                    #~ message="%s has already been sent (%s)" % (elem,elem.time_sent))
-          
+      
         tplname = elem._meta.app_label + '/' + elem.__class__.__name__ + '/email.html'
-        
         
         fn = find_config_file(tplname)
         logger.info("Using email template %s",fn)
         tpl = CheetahTemplate(file(fn).read())
+        #~ tpl.self = elem # doesn't work because Cheetah adds itself a name 'self' 
         tpl.instance = elem
         html_content = unicode(tpl)
         
@@ -78,8 +74,13 @@ class CreateMailAction(reports.RowAction):
         m = Mail(sender=rr.get_user(),subject=elem.get_subject(),body=html_content)
         m.full_clean()
         m.save()
-        for t,n,a in elem.get_recipients():
-            m.recipient_set.create(type=t,address=a,name=n)
+        #~ for t,n,a in elem.get_recipients():
+            #~ m.recipient_set.create(type=t,address=a,name=n)
+        for t,c in elem.get_mailable_contacts():
+            r = Recipient(mail=m,type=t,contact=c)
+            r.full_clean()
+            r.save()
+            #~ m.recipient_set.create(type=t,contact=c)
         kw.update(open_url=rr.ui.get_detail_url(m))
         return rr.ui.success_response(**kw)
         
@@ -112,11 +113,17 @@ class Mailable(models.Model):
         """
         return unicode(self)
         
-    def get_recipients(self):
-        "return or yield a list of (type,name,address) tuples"
-        raise NotImplementedError()
+    #~ def get_recipients(self):
+        #~ "return or yield a list of (type,name,address) tuples"
+        #~ raise NotImplementedError()
         
-
+    def get_mailable_contacts(self):
+        "return or yield a list of (type,contact) tuples"
+        return []
+        
+    @classmethod
+    def setup_report(cls,rpt):
+        rpt.add_action(CreateMailAction())
 
 
 
@@ -133,7 +140,7 @@ class SendMailAction(reports.RowAction):
         text_content = html2text(elem.body)
         #~ subject = elem.subject
         #~ sender = "%s <%s>" % (rr.get_user().get_full_name(),rr.get_user().email)
-        sender = "%s <%s>" % (elem.user.get_full_name(),elem.user.email)
+        sender = "%s <%s>" % (elem.sender.get_full_name(),elem.sender.email)
         #~ recipients = list(elem.get_recipients_to())
         msg = EmailMultiAlternatives(subject=elem.subject, 
             from_email=sender,
@@ -157,7 +164,9 @@ class SendMailAction(reports.RowAction):
 
 class Recipient(models.Model):
 #~ class Recipient(mixins.Owned):
-  
+
+    allow_cascaded_delete = True
+    
     class Meta:
         verbose_name = _("Recipient")
         verbose_name_plural = _("Recipients")
@@ -178,7 +187,6 @@ class Recipient(models.Model):
     def __unicode__(self):
         return "[%s]" % unicode(self.name or self.address)
         #~ return "[%s]" % unicode(self.address)
-        
         
     def full_clean(self):
         self.address = self.contact.email
@@ -283,6 +291,8 @@ class Mail(models.Model):
 
 
 class Attachment(mixins.Owned):
+  
+    allow_cascaded_delete = True
     
     class Meta:
         verbose_name = _("Attachment")

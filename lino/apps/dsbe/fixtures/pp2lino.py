@@ -21,7 +21,7 @@ Usage
 
 Load the fixture using the following command::
 
-    python manage.py initdb std all_countries all_languages props pp2lino
+    python manage.py initdb std all_languages props pp2lino
     
 The following variant might help to save time during testing::
     

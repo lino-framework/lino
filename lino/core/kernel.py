@@ -155,7 +155,8 @@ def analyze_models(self,make_messages):
 
 
 class DisableDeleteHandler():
-    """Used to find out whether a known object can be deleted or not.
+    """
+    Used to find out whether a known object can be deleted or not.
     Lino's default behaviour is to forbit deletion if there is any other 
     object in the database that refers to this. To implement this, 
     Lino installs a DisableDeleteHandler instance on each model 
@@ -181,13 +182,14 @@ class DisableDeleteHandler():
         for m,fk in self.fklist:
             kw = {}
             kw[fk.name] = obj
-            n = m.objects.filter(**kw).count()
-            if n:
-                msg = _("Cannot delete %(self)s because %(count)d %(refs)s refer to it.") % dict(
-                  self=obj,count=n,
-                  refs=m._meta.verbose_name_plural or m._meta.verbose_name+'s')
-                #~ print msg
-                return msg
+            if not getattr(m,'allow_cascaded_delete',False):
+                n = m.objects.filter(**kw).count()
+                if n:
+                    msg = _("Cannot delete %(self)s because %(count)d %(refs)s refer to it.") % dict(
+                      self=obj,count=n,
+                      refs=m._meta.verbose_name_plural or m._meta.verbose_name+'s')
+                    #~ print msg
+                    return msg
         return None
         
 

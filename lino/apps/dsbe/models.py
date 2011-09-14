@@ -1075,7 +1075,7 @@ class ConfiguredPropsByPerson(PropsByPerson):
                 self.label = _("(Site setting %s is empty)" % self.propgroup_config_name)
             else:
                 self.label = babelattr(pg,'name')
-        PropsByPerson.setup_actions(self)
+        super(PropsByPerson,self).setup_actions()
         
 class SkillsByPerson(ConfiguredPropsByPerson):
     propgroup_config_name = 'propgroup_skills'

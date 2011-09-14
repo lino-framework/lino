@@ -60,6 +60,8 @@ class Upload(
     mixins.CreatedModified,
     mixins.Owned):
     
+    allow_cascaded_delete = True
+    
     type = models.ForeignKey("uploads.UploadType",
       blank=True,null=True)
       #~ verbose_name=_('upload type'))

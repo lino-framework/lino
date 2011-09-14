@@ -16,3 +16,51 @@ Entering a Job Offer now gives reasonable results in the "Candidate"
 slave grid.
 Added some sectors and functions in dsbe/demo fixture.
 
+Sending Mails
+-------------
+
+Event instances now also have a "Create Mail" button. 
+
+There was a conceptual problem about the :modmeth:`setup_report` 
+model method: we cannot use super() in such a method because 
+the ultimate base class of all models, Django's `models.Model` 
+class, doesn't have this method. That's why I wrote 
+:func:`lino.utils.call_on_bases`. :modelmeth:`setup_report` 
+methods should not call `super()`, but Lino will call 
+automagically call the `setup_report` method of all base 
+classes. This also means that you cannot avoid them being called 
+(as would be possible if we could use `super()`) 
+
+Deleting Mails
+--------------
+
+Lino refused to delete a Mail when it had Recipients. 
+You had to delete the Recipients first.
+
+To solve this, we added the magic :modmeth:`allow_cascaded_delete` 
+Model attribute.
+
+This is now set to True in the following models:
+
+|:class:`lino.modlib.uploads.models.Upload`
+|:class:`lino.modlib.mails.models.Recipient`
+|:class:`lino.modlib.mails.models.Attachment`
+|:class:`lino.modlib.links.models.Link`
+
+Deleting a row didn't refresh the grid
+--------------------------------------
+
+The action's `after_success` (set to the panel's `after_delete`) 
+was never called after a successful DELETE action because the 
+response to DELETE has no response text.
+
+As a result, when do_action now calls `after_success`, it now no 
+longer passes the result as first parameter (a feature which wasn't 
+used anyway).
+
+
+Translations
+------------
+
+Upated German and French translation files.
+

@@ -881,7 +881,7 @@ Lino.report_window_button = function(ww,handler) {
 
 
 Lino.delete_selected = function(caller) {
-  //~ console.log("Lino.delete_selected",caller);
+  console.log("Lino.delete_selected",caller);
   var recs1 = caller.get_selected();
   var recs = [];
   for ( var i=0; i < recs1.length; i++ ) { if (! recs1[i].phantom) recs.push(recs1[i]); }
@@ -905,10 +905,11 @@ Lino.delete_selected = function(caller) {
         for ( var i=0; i < recs.length; i++ ) {
           Lino.do_action(caller,{
               method:'DELETE',
-              url:ROOT_URL+'/api'+caller.ls_url+'/'+recs[i].id
+              url:ROOT_URL+'/api'+caller.ls_url+'/'+recs[i].id,
+              after_success:caller.after_delete.createDelegate(caller)
           })
         }
-        caller.after_delete();
+        //~ caller.after_delete();
       }
       else Lino.notify("Dann eben nicht.");
     }
@@ -946,11 +947,14 @@ Lino.action_handler = function (panel,on_success,gridmode) {
 
 Lino.do_action = function(caller,action) {
   action.success = function(response) {
-    console.log('Lino.do_action()',response,'action success');
+    console.log('Lino.do_action()',action,'action success',response);
+    if (action.after_success) {
+        console.log('Lino.do_action() calling after_success');
+        action.after_success();
+    }
     if (response.responseText) {
       var result = Ext.decode(response.responseText);
-      //~ console.log('Lino.do_action()',action.name,'result is',result);
-      if (result.success && action.after_success) action.after_success(result);
+      console.log('Lino.do_action()',action.name,'result is',result);
       if (result.message) {
           if (result.alert) {
               //~ Ext.MessageBox.alert('Alert',result.alert_msg);
@@ -1553,7 +1557,8 @@ Lino.FormPanel = Ext.extend(Ext.form.FormPanel,{
     this.ww.config.base_params[k] = v;
   },
   after_delete : function() {
-    this.ww.close();
+    this.moveNext();
+    //~ this.ww.close();
     //~ if (this.ww.caller) this.ww.caller.refresh();
   },
   moveFirst : function() {this.goto_record_id(this.current_record.navinfo.first)},
@@ -2395,6 +2400,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     this.store.load(p);
   },
   after_delete : function() {
+    console.log('Lino.GridPanel.after_delete');
     this.refresh();
   },
   add_row_listener : function(fn,scope) {

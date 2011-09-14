@@ -127,8 +127,8 @@ class JobProvider(Company):
     """
     class Meta:
         app_label = 'jobs'
-        verbose_name = _("Job Provider")
-        verbose_name_plural = _('Job Providers')
+        verbose_name = _("Employer")
+        verbose_name_plural = _('Employers')
     
 
 class JobProviders(Companies):
@@ -136,7 +136,6 @@ class JobProviders(Companies):
     List of Companies that have `Company.is_jobprovider` activated.
     """
     use_as_default_report = False
-    #~ label = _("Job Providers")
     model = JobProvider
     app_label = 'jobs'
   
@@ -210,7 +209,7 @@ class Contract(ContractBase):
     
     provider = models.ForeignKey(JobProvider,
         related_name="%(app_label)s_%(class)s_set_by_provider",
-        verbose_name=_("Job Provider"),
+        verbose_name=_("Employer"),
         blank=True,null=True)
     job = models.ForeignKey("jobs.Job",
         verbose_name=_("Job"),
@@ -514,7 +513,7 @@ class Offers(reports.Report):
     
 class Job(SectorFunction):
     """
-    A work place at some job provider
+    A work place at some employer
     """
     class Meta:
         verbose_name = _("Job")
@@ -529,8 +528,7 @@ class Job(SectorFunction):
         verbose_name=_("Job Type"))
     
     provider = models.ForeignKey(JobProvider,
-        blank=True,null=True,
-        verbose_name=_("Job Provider"))
+        blank=True,null=True)
     
     contract_type = models.ForeignKey(ContractType,blank=True,null=True,
         verbose_name=_("Contract Type"))
@@ -791,8 +789,8 @@ if reports.is_installed('contacts') and reports.is_installed('jobs'):
   
     reports.inject_field(Company,
         'is_jobprovider',
-        mti.EnableChild('jobs.JobProvider',verbose_name=_("is Job Provider")),
-        """Whether this Company is also a Job Provider."""
+        mti.EnableChild('jobs.JobProvider',verbose_name=_("is Employer")),
+        """Whether this Company is also an Employer."""
         )
 
 

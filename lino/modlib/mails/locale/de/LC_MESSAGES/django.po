@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.mails\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-09 09:13+0100\n"
-"PO-Revision-Date: 2011-09-01 02:59+0200\n"
+"POT-Creation-Date: 2011-09-14 19:32+0100\n"
+"PO-Revision-Date: 2011-09-14 21:25+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de\n"
 "MIME-Version: 1.0\n"
@@ -20,67 +20,63 @@ msgstr ""
 msgid "Create email"
 msgstr "E-Mail erstellen"
 
-#: .\models.py:127
+#: .\models.py:134
 msgid "Send email"
 msgstr "E-Mail senden"
 
-#: .\models.py:160
+#: .\models.py:171
 msgid "Recipient"
 msgstr "Empfänger"
 
-#: .\models.py:161 .\models.py:225
+#: .\models.py:172 .\models.py:242
 msgid "Recipients"
 msgstr "Empfänger"
 
-#: .\models.py:164
+#: .\models.py:175
 msgid "Contact"
 msgstr "Kontakt"
 
-#: .\models.py:167
+#: .\models.py:178
 msgid "Address"
 msgstr "Adresse"
 
-#: .\models.py:168
+#: .\models.py:179
 msgid "Name"
 msgstr ""
 
-#: .\models.py:209
+#: .\models.py:221
+msgid "Sender"
+msgstr "Absender"
+
+#: .\models.py:224
 msgid "Subject"
 msgstr "Betreff"
 
-#: .\models.py:213
+#: .\models.py:228
 msgid "Body"
 msgstr "Inhalt"
 
-#: .\models.py:251
-msgid "Incoming Mail"
-msgstr "Posteingang"
-
-#: .\models.py:252
-msgid "Incoming Mails"
-msgstr "Posteingänge"
-
-#: .\models.py:263
-msgid "Outgoing Mail"
-msgstr "Postausgang"
-
-#: .\models.py:264
-msgid "Outgoing Mails"
-msgstr "Posteingänge"
-
-#: .\models.py:279
+#: .\models.py:298
 msgid "Attachment"
 msgstr "Anhang"
 
-#: .\models.py:280
+#: .\models.py:299
 msgid "Attachments"
 msgstr "Anhänge"
 
-#: .\models.py:305
-msgid "My Incoming Mails"
-msgstr "Mein Posteingang"
+#: .\models.py:327
+msgid "Mail Outbox"
+msgstr "Postausgang"
 
-#: .\models.py:360
+#: .\models.py:336
+msgid "Sent Mails"
+msgstr "Verschickte Mails"
+
+#: .\models.py:342
+msgid "My Mail Inbox"
+msgstr "Posteingang"
+
+#: .\models.py:404
 msgid "~Mails"
 msgstr "~E-Mails"
 
@@ -91,3 +87,18 @@ msgstr "Empfängerart"
 #: .\config\contacts\Contact\80_mails.dtl.py:3
 msgid "Mails"
 msgstr "E-Mails"
+
+#~ msgid "Incoming Mail"
+#~ msgstr "Posteingang"
+
+#~ msgid "Incoming Mails"
+#~ msgstr "Posteingänge"
+
+#~ msgid "Outgoing Mail"
+#~ msgstr "Postausgang"
+
+#~ msgid "Outgoing Mails"
+#~ msgstr "Posteingänge"
+
+#~ msgid "My Incoming Mails"
+#~ msgstr "Mein Posteingang"
