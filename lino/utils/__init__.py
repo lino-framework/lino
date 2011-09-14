@@ -124,21 +124,42 @@ def class_dict_items(cl,exclude=None):
             yield k,v
 
 
+def call_optional_super(cls,self,name,*args,**kw):
+    """
+    Doesn't work. See :doc:`/blog/2011/0914`.
+    """
+    s = super(cls,self)
+    m = getattr(s,'name',None)
+    if m is not None:
+        return m(*args,**kw)
+
 def call_on_bases(cls,name,*args,**kw):
     """
+    Doesn't work. See :doc:`/blog/2011/0914`.
     This is necessary because we want to call `setup_report`
     on the model and all base classes of the model.
     We cannot use super() for this because the `setup_report` 
     method is optional.
     """
     for b in cls.__bases__: call_on_bases(b,name,*args,**kw)
-    m = cls.__dict__.get(name)
-    if m:
-        m = getattr(m,'im_func',None)
-        if m is None:
-            raise Exception("Oops, %r in class %s has no im_func" % (name,cls))
-        m(cls,*args,**kw)
-        #~ m.__func__(cls,*args,**kw)
+    if True:
+        m = getattr(cls,name,None)
+        # getattr will also return the classmethod defined on a base class, 
+        # which has already been called. 
+        if m is not None and m.im_class is cls:
+            m(cls,*args,**kw)
+        
+    """Note: the following algorithm worked in Python 2.7 but not in 2.6,
+    a classmethod object in 2.6 has no attribute `im_func`
+    """
+      
+    #~ m = cls.__dict__.get(name)
+    #~ if m:
+        #~ func = getattr(m,'im_func',None)
+        #~ if func is None:
+            #~ raise Exception("Oops, %r in %s (%r) has no im_func" % (name,cls,m))
+        #~ func(cls,*args,**kw)
+        #~ # m.__func__(cls,*args,**kw)
 
 
 

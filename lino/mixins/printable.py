@@ -58,6 +58,7 @@ from lino import fields
 #~ from lino.tools import full_model_name
 from lino.utils import iif
 from lino.utils import babel 
+#~ from lino.utils import call_optional_super
 from lino.utils.choosers import chooser
 from lino.utils.appy_pod import setup_renderer
 from lino.tools import makedirs_if_missing
@@ -604,8 +605,10 @@ class CachedPrintable(models.Model,Printable):
         
     @classmethod
     def setup_report(cls,rpt):
+        #~ call_optional_super(CachedPrintable,cls,'setup_report',rpt)
         rpt.add_action(PrintAction())
         rpt.add_action(ClearCacheAction())
+
         #~ m = getattr(super(CachedPrintable,cls),'setup_report',None)
         #~ if m is not None:
             #~ m(rpt)
@@ -739,6 +742,7 @@ class Listing(CachedPrintable):
     def setup_report(model,rpt):
         u"""
         """
+        # to not call call_optional_super(Listing,self,'setup_report',rpt)
         #~ rpt.get_action('listing').label = model.__name__
         rpt.add_action(DirectPrintAction('print',_("Print"),'Listing.odt'))
         #~ rpt.add_action(InititateListing('listing',_("Print"),'listing.odt'))

@@ -64,3 +64,36 @@ Translations
 
 Upated German and French translation files.
 
+
+classmethod objects have no `im_func` in Python 2.6
+---------------------------------------------------
+
+Mist, mein Trick mit :func:`lino.utils.call_on_bases` 
+von heute morgen funktioniert nicht in Python 2.6.
+
+Mal überlegen: was will ich eigentlich?
+Also ich will, dass man in Models optional eine Klassenmethode namens 
+`setup_report` definieren kann, die dann von jedem Report mit diesem 
+Model aufgerufen wird. 
+Das ging zunächst ganz gut, aber wenn ich ein Model mit mehreren Basisklassen 
+definiere von denen einige so eine Methode haben, dann musste ich dran denken, 
+dort auch eine setup_report zu schreiben, die das dispatching macht. 
+Z.B. in `cal.Guest`::
+
+    @classmethod
+    def setup_report(cls,rpt):
+        mixins.CachedPrintable.setup_report(rpt)
+        Mailable.setup_report(rpt)
+
+`super()` kann ich nicht benutzen, weil `django.db.models.Model` 
+keine Methode `setup_report` hat.
+
+Ich habe noch mit einer :func:`lino.utils.call_optional_super` probiert, 
+aber das klappt auch nicht.
+
+Also weiterhin wie bisher: Vorsicht wenn ich ein Modell mit mehreren Mixins 
+definiere: Falls mehr als eine der Basisklassen eine `setup_report` hat, 
+muss ich auch selber eine `setup_report` definieren, 
+die die `setup_report` der Basisklassen aufruft. 
+Wenn ich das nicht mache, wird nur die erstbeste `setup_report` gerufen.
+Doof, aber so isses.

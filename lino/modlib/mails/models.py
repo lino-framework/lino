@@ -41,6 +41,7 @@ from lino.utils import perms
 from lino.utils.restify import restify
 #~ from lino.utils import printable
 from lino.utils import babel
+#~ from lino.utils import call_optional_super
 from lino import mixins
 from django.conf import settings
 #~ from lino import choices_method, simple_choices_method
@@ -99,6 +100,7 @@ class Mailable(models.Model):
     @classmethod
     def setup_report(cls,rpt):
         rpt.add_action(CreateMailAction())
+        #~ call_optional_super(Mailable,cls,'setup_report',rpt)
         
     def get_print_language(self,pm):
         return babel.DEFAULT_LANGUAGE
@@ -121,9 +123,9 @@ class Mailable(models.Model):
         "return or yield a list of (type,contact) tuples"
         return []
         
-    @classmethod
-    def setup_report(cls,rpt):
-        rpt.add_action(CreateMailAction())
+    #~ @classmethod
+    #~ def setup_report(cls,rpt):
+        #~ rpt.add_action(CreateMailAction())
 
 
 

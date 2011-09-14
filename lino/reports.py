@@ -1032,7 +1032,10 @@ class Report(actors.Actor): #,base.Handled):
             self.button_label = self.label
             
         if self.model is not None:
-            call_on_bases(self.model,'setup_report',self)
+            m = getattr(self.model,'setup_report',None)
+            if m:
+                m(self)
+            #~ call_on_bases(self.model,'setup_report',self)
         
     def disable_delete(self,obj,request):
         """

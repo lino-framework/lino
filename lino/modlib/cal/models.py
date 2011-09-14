@@ -399,6 +399,10 @@ class Event(Component,mixins.TypedPrintable,mails.Mailable):
             yield ('to',g)
         yield ('cc',self.user)
         
+    @classmethod
+    def setup_report(cls,rpt):
+        mixins.TypedPrintable.setup_report(rpt)
+        mails.Mailable.setup_report(rpt)
 
 #~ class Task(Component,contacts.PartnerDocument):
 class Task(mixins.Owned,Component):
@@ -558,10 +562,10 @@ class Guest(contacts.ContactDocument,
     def __unicode__(self):
         return u'%s #%s ("%s")' % (self._meta.verbose_name,self.pk,self.event)
 
-    #~ @classmethod
-    #~ def setup_report(cls,rpt):
-        #~ mixins.CachedPrintable.setup_report(rpt)
-        #~ Mailable.setup_report(rpt)
+    @classmethod
+    def setup_report(cls,rpt):
+        mixins.CachedPrintable.setup_report(rpt)
+        mails.Mailable.setup_report(rpt)
         
 class Guests(reports.Report):
     model = Guest
