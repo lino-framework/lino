@@ -134,7 +134,9 @@ def call_on_bases(cls,name,*args,**kw):
     for b in cls.__bases__: call_on_bases(b,name,*args,**kw)
     m = cls.__dict__.get(name)
     if m:
-        m = getattr(m,'im_func',m)
+        m = getattr(m,'im_func',None)
+        if m is None:
+            raise Exception("Oops, %r in class %s has no im_func" % (name,cls))
         m(cls,*args,**kw)
         #~ m.__func__(cls,*args,**kw)
 
