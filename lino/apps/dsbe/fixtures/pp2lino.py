@@ -101,7 +101,7 @@ CboNationalite = {
   7:'RO', # "Roumain(e)",
   8:"CH",
   9:'CO', # "Colombien(ne)",
-  11:"Uruguayen (ne)",
+  11:'UV', # "Uruguayen (ne)",
   12:'MA', # "Marocain(ne)",
   14:'DZ', # u"Algérien(ne)",
   15:'MU', # "Mauricien(ne)",
@@ -112,7 +112,7 @@ CboNationalite = {
   20:'PE', # "Perouvien(ne)",
   21:'MD', # "Moldave(iene)",
   23:'BI', # "burundais(e)",
-  24:"Sierra Leonais(e)",
+  24:'SL', # "Sierra Leonais(e)",
   25:'MR', # "Mauritanien(ne)",
   26:'BR', # u"Brésilien(ne)",
   27:'PT', # "Portugais(e)",
@@ -120,7 +120,7 @@ CboNationalite = {
   29:"DE",
   30:'SY',# "syrien(ne)",
   31:"GN", # "Guinéen(ne)",
-  32:u"Libérien(ne)",
+  32:'LR', # u"Libérien(ne)",
   33:"TN",
   34:'NG', # "Nigérian(nes)",
   35:'UZ', # u"ouzbékistan",
@@ -133,10 +133,10 @@ CboNationalite = {
   42:'IT', # "Italien(ne)",
   43:'AO', # "angolien(ne)",
   44:'NE', # "Nigerien(ne)",
-  45:"Chinnoise",
-  46:"burkina Faso",
+  45:'CN', # "Chinnoise",
+  46:'BF', # "burkina Faso",
   48:'LA', # "laotienne",
-  49:"ivoirien(ne)",
+  49:'CI', # "ivoirien(ne)",
   50:u"US",
   51:'GE', # "georgien(ne)",
   52:'GR', # "grec",
@@ -151,16 +151,16 @@ CboNationalite = {
   62:'IN', # "indien(ne)",
   63:'AL', # "albanais",
   64:'ES', # "Espagnol(e)",
-  65:"Macedoine",
+  65:'MK', # "Macedoine",
   66:'DJ', # "Djiboutien(ne)",
-  68:"egyptien(ne)",
+  68:'EG', # "egyptien(ne)",
   69:"NL",
   70:'KZ', # "Kazakhstan",
   71:'SO', # "Somalien(ne)",
   72:"AF",
   73:'CU', # "Cubaine",
   74:'TD', # "tchad",
-  75:"Royaume-Uni",
+  75:'GB', # "Royaume-Uni",
   76:'LT', # "lituanienne ",
   77:'KG', # "kirghizistan",
   78:'ET', # "Ethiopie",
@@ -197,9 +197,9 @@ CboPays = {
   ,28:'BR' # u"Brésil"
   ,29:u"Brunei"
   ,30:'BG' # u"Bulgarie"
-  ,31:u"Burkina"
+  ,31:'BF' # u"Burkina"
   ,32:'BI' # u"Burundi"
-  ,33:u"Cambodge"
+  ,33:'KH' # u"Cambodge"
   ,34:'CM' # u"Cameroun"
   ,35:u"Canada"
   ,36:u"Cap-Vert"
@@ -219,7 +219,7 @@ CboPays = {
   ,51:'DK' # u"Danemark"
   ,52:'DJ' # u"République de Djibouti"
   ,53:'DM' # u"Dominique"
-  ,54:u"Egypte"
+  ,54:'EG' # u"Egypte"
   ,55:u"Émirats arabes unis"
   ,56:'EC' # u"Equateur"
   ,57:u"Erythrée"
@@ -308,7 +308,7 @@ CboPays = {
   ,140:'PL' # u"Pologne"
   ,141:'PT' # u"Portugal"
   ,142:u"Qatar"
-  ,143:u"République centrafricaine"
+  ,143:'CF' # u"République centrafricaine"
   ,144:'DO' # u"République dominicaine"
   ,145:u"République tchčque"
   ,146:'RO' # u"Roumanie"
@@ -325,7 +325,7 @@ CboPays = {
   ,157:u"Sao Tomé-et-Principe"
   ,158:'SN' # u"Sénégal"
   ,159:u"Seychelles"
-  ,160:u"Sierra Leone"
+  ,160:'SL' # u"Sierra Leone"
   ,161:u"Singapour"
   ,162:u"Slovaquie"
   ,163:u"Slovénie"
@@ -349,7 +349,7 @@ CboPays = {
   ,181:'TR' # u"Turquie"
   ,182:u"Tuvalu"
   ,183:'UA' # u"Ukraine"
-  ,184:u"Uruguay"
+  ,184:'UV' # u"Uruguay"
   ,185:u"Vanuatu"
   ,186:u"Venezuela"
   ,187:'VN' # u"Viźt Nam"
@@ -965,16 +965,15 @@ def objects():
     
     yield EventLoader()
     
-    if False:
-        yield CboSubsideLoader()
-        yield ListeFonctionLoader()
-        yield DetailFonctionsLoader()
-        yield JobProviderLoader()
-        yield RechercheProfilLoader()
-        yield JobsContractTypeLoader()
-        yield IsipContractTypeLoader()
-        yield TBMiseEmploisLoader()
-        yield IsipContractLoader()
-        yield NotesLoader()
+    yield CboSubsideLoader()
+    yield ListeFonctionLoader()
+    yield DetailFonctionsLoader()
+    yield JobProviderLoader()
+    yield RechercheProfilLoader()
+    yield JobsContractTypeLoader()
+    yield IsipContractTypeLoader()
+    yield TBMiseEmploisLoader()
+    yield IsipContractLoader()
+    yield NotesLoader()
     
     #~ reader = csv.reader(open(,'rb'))
