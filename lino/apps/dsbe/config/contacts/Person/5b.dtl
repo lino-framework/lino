@@ -1,0 +1,7 @@
+:label: Requests
+:label_align: top
+
+main = 
+    jobs.WishesByPerson
+    jobs.CandidaturesByPerson
+    

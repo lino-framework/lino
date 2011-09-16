@@ -63,7 +63,7 @@ def objects():
     #~ yield projectType(u"EiEi")
     #~ yield projectType(u"Aufenthaltsgenehmigung")
     
-    studyType = Instantiator('dsbe.StudyType').build
+    studyType = Instantiator('jobs.StudyType').build
     #~ yield studyType(u"Schule")
     #~ yield studyType(u"Sonderschule")
     #~ yield studyType(u"Ausbildung")
@@ -144,10 +144,10 @@ def objects():
     yield excltype(u"ONEM-Auflagen nicht erfüllt")
     
     linkType = Instantiator('links.LinkType',"name").build
-    yield linkType(u"Private Website")
-    yield linkType(u"Firmen-Website")
-    yield linkType(u"Facebook-Profil")
-    yield linkType(u"Sonstige")
+    yield linkType(babelitem(de=u"Private Website",fr=u"Site privé"))
+    yield linkType(babelitem(de=u"Firmen-Website",fr=u"Site commercial"))
+    yield linkType(babelitem(de=u"Facebook-Profil",fr=u"Profil Facebook"))
+    yield linkType(babelitem(de=u"Sonstige",fr=u"Autres"))
     
     from lino.models import update_site_config
     

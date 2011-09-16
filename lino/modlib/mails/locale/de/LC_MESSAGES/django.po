@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.mails\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-14 19:32+0100\n"
-"PO-Revision-Date: 2011-09-14 21:25+0200\n"
+"POT-Creation-Date: 2011-09-15 14:42+0100\n"
+"PO-Revision-Date: 2011-09-15 16:54+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de\n"
 "MIME-Version: 1.0\n"
@@ -16,69 +16,81 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: .\models.py:59
-msgid "Create email"
-msgstr "E-Mail erstellen"
+#: .\models.py:64
+msgid "Mail Type"
+msgstr ""
 
-#: .\models.py:134
+#: .\models.py:65
+#, fuzzy
+msgid "Mail Types"
+msgstr "E-Mails"
+
+#: .\models.py:78
+msgid "Create email"
+msgstr "E-Mail oder Brief erstellen"
+
+#: .\models.py:154
 msgid "Send email"
 msgstr "E-Mail senden"
 
-#: .\models.py:171
+#: .\models.py:192
 msgid "Recipient"
 msgstr "Empfänger"
 
-#: .\models.py:172 .\models.py:242
+#: .\models.py:193
+#: .\models.py:269
 msgid "Recipients"
 msgstr "Empfänger"
 
-#: .\models.py:175
+#: .\models.py:196
 msgid "Contact"
 msgstr "Kontakt"
 
-#: .\models.py:178
+#: .\models.py:199
 msgid "Address"
 msgstr "Adresse"
 
-#: .\models.py:179
+#: .\models.py:200
 msgid "Name"
 msgstr ""
 
-#: .\models.py:221
+#: .\models.py:248
 msgid "Sender"
 msgstr "Absender"
 
-#: .\models.py:224
+#: .\models.py:251
 msgid "Subject"
 msgstr "Betreff"
 
-#: .\models.py:228
+#: .\models.py:255
 msgid "Body"
 msgstr "Inhalt"
 
-#: .\models.py:298
+#: .\models.py:326
 msgid "Attachment"
 msgstr "Anhang"
 
-#: .\models.py:299
+#: .\models.py:327
 msgid "Attachments"
 msgstr "Anhänge"
 
-#: .\models.py:327
+#: .\models.py:355
 msgid "Mail Outbox"
 msgstr "Postausgang"
 
-#: .\models.py:336
+#: .\models.py:364
 msgid "Sent Mails"
-msgstr "Verschickte Mails"
+msgstr "Gesendete Mails"
 
-#: .\models.py:342
+#: .\models.py:370
 msgid "My Mail Inbox"
 msgstr "Posteingang"
 
-#: .\models.py:404
+#: .\models.py:425
+#: .\models.py:431
+#: .\models.py:435
 msgid "~Mails"
-msgstr "~E-Mails"
+msgstr "~Korrespondenz"
 
 #: .\utils.py:28
 msgid "Recipient Type"
@@ -86,7 +98,7 @@ msgstr "Empfängerart"
 
 #: .\config\contacts\Contact\80_mails.dtl.py:3
 msgid "Mails"
-msgstr "E-Mails"
+msgstr "Korrespondenz"
 
 #~ msgid "Incoming Mail"
 #~ msgstr "Posteingang"

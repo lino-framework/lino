@@ -157,7 +157,7 @@ class ContractBase(mixins.DiffingMixin,mixins.TypedPrintable,mixins.AutoUser):
     #~ contact = models.ForeignKey("contacts.Contact",
       #~ blank=True,null=True,
       #~ verbose_name=_("represented by"))
-    language = fields.LanguageField(default=babel.DEFAULT_LANGUAGE)
+    language = babel.LanguageField()
     
     applies_from = models.DateField(_("applies from"),blank=True,null=True)
     applies_until = models.DateField(_("applies until"),blank=True,null=True)

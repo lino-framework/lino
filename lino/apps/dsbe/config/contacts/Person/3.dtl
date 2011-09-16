@@ -3,6 +3,6 @@
 
 
 main = 
-  dsbe.StudiesByPerson 
-  dsbe.JobExperiencesByPerson:60 
+  jobs.StudiesByPerson 
+  jobs.ExperiencesByPerson:40
 

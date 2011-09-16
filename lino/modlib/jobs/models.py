@@ -326,9 +326,9 @@ class Contract(ContractBase):
     def save(self,*args,**kw):
         #~ self.before_save()
         if self.job_id is not None:
-            qs = self.person.jobrequest_set.filter(contract=self)
+            qs = self.person.candidature_set.filter(contract=self)
             if qs.count() == 0:
-                qs = self.person.jobrequest_set.filter(job=self.job,contract=None)
+                qs = self.person.candidature_set.filter(job=self.job,contract=None)
                 if qs.count() == 1: 
                     obj = qs[0]
                     obj.contract = self
@@ -341,7 +341,7 @@ class Contract(ContractBase):
     def data_control(self):
         "Used by :class:`lino.models.DataControlListing`."
         msgs = []
-        qs = self.person.jobrequest_set.filter(contract=self)
+        qs = self.person.candidature_set.filter(contract=self)
         if qs.count() > 1: 
             msgs.append(
               u'There are more than one job request using contract %s : %s' \
@@ -511,7 +511,119 @@ class Offer(SectorFunction):
 class Offers(reports.Report):
     model = Offer
     
-class Job(SectorFunction):
+    
+    
+#
+# STUDY TYPE
+#
+class StudyType(babel.BabelNamed):
+    #~ text = models.TextField(_("Description"),blank=True,null=True)
+    class Meta:
+        verbose_name = _("study type")
+        verbose_name_plural = _("study types")
+
+class StudyTypes(reports.Report):
+    #~ label = _('Study types')
+    model = StudyType
+    order_by = ["name"]
+
+
+class HistoryByPerson(reports.Report):
+    fk_name = 'person'
+    order_by = ["started"]
+    def create_instance(self,req,**kw):
+        obj = super(HistoryByPerson,self).create_instance(req,**kw)
+        if obj.person is not None:
+            previous_exps = self.model.objects.filter(person=obj.person).order_by('started')
+            if previous_exps.count() > 0:
+                exp = previous_exps[previous_exps.count()-1]
+                if exp.stopped:
+                    obj.started = exp.stopped
+                else:
+                    obj.started = exp.started
+        return obj
+    
+
+
+class Study(CountryCity):
+    class Meta:
+        verbose_name = _("study or education")
+        verbose_name_plural = _("Studies & education")
+    person = models.ForeignKey("contacts.Person") #,verbose_name=_("Person"))
+    type = models.ForeignKey(StudyType,verbose_name=_("Study type"))
+    content = models.CharField(max_length=200,
+        blank=True, # null=True,
+        verbose_name=_("Study content"))
+    #~ content = models.ForeignKey(StudyContent,blank=True,null=True,verbose_name=_("Study content"))
+  
+    started = fields.MonthField(_("started"),blank=True,null=True)
+    stopped = fields.MonthField(_("stopped"),blank=True,null=True)
+    #~ started = models.DateField(blank=True,null=True,verbose_name=_("started"))
+    #~ stopped = models.DateField(blank=True,null=True,verbose_name=_("stopped"))
+    #~ started = fields.MonthField(blank=True,null=True,verbose_name=_("started"))
+    #~ stopped = fields.MonthField(blank=True,null=True,verbose_name=_("stopped"))
+    success = models.BooleanField(verbose_name=_("Success"),default=False)
+    language = models.ForeignKey("countries.Language",
+        blank=True,null=True,verbose_name=_("Language"))
+    #~ language = fields.LanguageField(blank=True,null=True,verbose_name=_("Language"))
+    
+    school = models.CharField(max_length=200,
+        blank=True,# null=True,
+        verbose_name=_("School"))
+    #~ school = models.ForeignKey("contacts.Company",blank=True,null=True,verbose_name=_("School"))
+    
+    remarks = models.TextField(blank=True,null=True,verbose_name=_("Remarks"))
+    
+    def __unicode__(self):
+        return unicode(self.type)
+  
+        
+class StudiesByPerson(HistoryByPerson):
+    "List of studies for a known person."
+    model = Study
+    #~ label = _("Studies & experiences")
+    button_label = _("Studies")
+    column_names = 'type content started stopped country city success language school remarks *'
+    
+class Experience(SectorFunction):
+    class Meta:
+        verbose_name = _("Job Experience")
+        verbose_name_plural = _("Job Experiences")
+    person = models.ForeignKey("contacts.Person",verbose_name=_("Person"))
+    #~ company = models.ForeignKey("contacts.Company",verbose_name=_("Company"))
+    company = models.CharField(max_length=200,verbose_name=_("company"))
+    #~ type = models.ForeignKey(JobType,verbose_name=_("job type"))
+    title = models.CharField(max_length=200,verbose_name=_("job title"),blank=True)
+    country = models.ForeignKey("countries.Country",
+        blank=True,null=True,
+        verbose_name=_("Country"))
+  
+    started = fields.MonthField(_("started"),blank=True,null=True)
+    stopped = fields.MonthField(_("stopped"),blank=True,null=True)
+    
+    remarks = models.TextField(blank=True,null=True,verbose_name=_("Remarks"))
+    
+    def __unicode__(self):
+        return unicode(self.title)
+  
+class Experiences(reports.Report):
+    model = Experience
+  
+class ExperiencesByFunction(Experiences):
+    fk_name = 'function'
+    order_by = ["started"]
+
+    
+class ExperiencesByPerson(Experiences,HistoryByPerson):
+    "List of job experiences for a known person"
+    model = Experience
+    
+  
+    
+    
+
+#~ class Job(SectorFunction):
+class Job(models.Model):
     """
     A work place at some employer
     """
@@ -581,54 +693,28 @@ class Job(SectorFunction):
         #~ return CandidatesByCourse().request(master_instance=self)
         
         
-class JobRequest(SectorFunction):
+class Wish(SectorFunction):
     class Meta:
-        verbose_name = _("Job Requests")
-        verbose_name_plural = _('Job Requests')
-        
-    person = models.ForeignKey("contacts.Person",
-        verbose_name=_("Person"))
+        verbose_name = _("Job Wish")
+        verbose_name_plural = _('Job Wishes')
+    person = models.ForeignKey("contacts.Person")
     
-    job = models.ForeignKey("jobs.Job",
-        blank=True,null=True)
-        #~ verbose_name=_("Requested Job"))
+class Wishes(reports.Report):
+    model = Wish
     
-    date_submitted = models.DateField(_("date submitted"),auto_now_add=True)
-    u"Das Datum, an dem die Anfrage erstellt wurde."
-    
-    contract = models.ForeignKey("jobs.Contract",blank=True,null=True,
-        verbose_name=_("Contract found"))
-    u"""
-    Der Vertrag, durch den diese Anfrage befriedigt wurde 
-    (ein Objekt vom Typ :class:`Contract`).
-    So lange dieses Feld leer ist, gilt die Anfrage als offen.
-    """
-        
-    remark = models.TextField(
-        blank=True,null=True,
-        verbose_name=_("Remark"))
-        
-    def __unicode__(self):
-        return force_unicode(_('%(job)s request by %(person)s') % dict(
-            job=self.job.name,
-            person=self.person.get_full_name(salutation=False)))
-    @chooser()
-    def contract_choices(cls,job,person):
-        if person and job:
-            return person.contract_set.filter(job=job)
-        return []
-        
-    def clean(self,*args,**kw):
-        if self.contract:
-            if self.contract.person != self.person:
-                raise ValidationError(
-                  "Cannot satisfy a JobRequest with a Contract on another  Person")
-        super(JobRequest,self).clean(*args,**kw)
-    
+class WishesByPerson(Wishes):
+    fk_name = 'person'
 
-class RequestsByOffer(reports.Report):
+class WishesBySector(Wishes):
+    fk_name = 'sector'
+
+class WishesByFunction(Wishes):
+    fk_name = 'function'
+
+
+class WishesByOffer(reports.Report):
     """
-    Shows the possible candidates for this Offer.
+    Shows the persons that whish this Offer.
     
     It is a slave report without 
     :attr:`fk_name <lino.reports.Report.fk_name>`,
@@ -636,9 +722,9 @@ class RequestsByOffer(reports.Report):
     :meth:`get_request_queryset`
     """
   
-    model = JobRequest
+    model = Wish
     master = Offer
-    label = _("Candidate Job Requests")
+    label = _("Candidate Job Wishes")
     
     can_add = perms.never
     can_change = perms.never
@@ -678,6 +764,51 @@ class RequestsByOffer(reports.Report):
 
     
 
+class Candidature(models.Model):
+    class Meta:
+        verbose_name = _("Job Candidature")
+        verbose_name_plural = _('Job Candidatures')
+        
+    person = models.ForeignKey("contacts.Person")
+    
+    job = models.ForeignKey("jobs.Job",
+        blank=True,null=True)
+        #~ verbose_name=_("Requested Job"))
+    
+    date_submitted = models.DateField(_("date submitted"),auto_now_add=True)
+    u"Das Datum, an dem die Anfrage erstellt wurde."
+    
+    contract = models.ForeignKey("jobs.Contract",blank=True,null=True,
+        verbose_name=_("Contract found"))
+    u"""
+    Der Vertrag, durch den diese Anfrage befriedigt wurde 
+    (ein Objekt vom Typ :class:`Contract`).
+    So lange dieses Feld leer ist, gilt die Anfrage als offen.
+    """
+        
+    remark = models.TextField(
+        blank=True,null=True,
+        verbose_name=_("Remark"))
+        
+    def __unicode__(self):
+        return force_unicode(_('%(job)s request by %(person)s') % dict(
+            job=self.job.name,
+            person=self.person.get_full_name(salutation=False)))
+            
+    @chooser()
+    def contract_choices(cls,job,person):
+        if person and job:
+            return person.contract_set.filter(job=job)
+        return []
+        
+    def clean(self,*args,**kw):
+        if self.contract:
+            if self.contract.person != self.person:
+                raise ValidationError(
+                  "Cannot satisfy a Candidature with a Contract on another Person")
+        super(Candidature,self).clean(*args,**kw)
+    
+
 
 
 class Jobs(reports.Report):
@@ -692,30 +823,24 @@ class JobTypes(reports.Report):
 class JobsByProvider(Jobs):
     fk_name = 'provider'
 
-class JobsByFunction(Jobs):
-    fk_name = 'function'
+#~ class JobsByFunction(Jobs):
+    #~ fk_name = 'function'
 
-class JobsBySector(Jobs):
-    fk_name = 'sector'
+#~ class JobsBySector(Jobs):
+    #~ fk_name = 'sector'
 
 class JobsByType(Jobs):
     fk_name = 'type'
 
-class JobRequests(reports.Report):
-    model = JobRequest
+class Candidatures(reports.Report):
+    model = Candidature
     order_by = ['date_submitted']
     column_names = '* id'
 
-class RequestsByPerson(JobRequests):
+class CandidaturesByPerson(Candidatures):
     fk_name = 'person'
 
-class RequestsBySector(JobRequests):
-    fk_name = 'sector'
-
-class RequestsByFunction(JobRequests):
-    fk_name = 'function'
-
-class RequestsByJob(JobRequests):
+class CandidaturesByJob(Candidatures):
     fk_name = 'job'
   
     def create_instance(self,req,**kw):
@@ -749,7 +874,7 @@ class ContractsSituation(mixins.Listing):
                         until = ct.date_ended or ct.applies_until
                         if not until or (ct.applies_from <= today and until >= today):
                             actives.append(ct)
-                for req in job.jobrequest_set.all():
+                for req in job.candidature_set.all():
                     if not req.contract:
                         candidates.append(req)
                 if candidates + actives:
@@ -808,9 +933,12 @@ def setup_config_menu(site,ui,user,m):
     m.add_action('jobs.JobTypes')
     m.add_action('jobs.Sectors')
     m.add_action('jobs.Functions')
+    m.add_action('jobs.StudyTypes')
             
     
     
   
 def setup_explorer_menu(site,ui,user,m):
     m.add_action('jobs.Contracts')
+    m.add_action('jobs.Candidatures')
+    m.add_action('jobs.Wishes')

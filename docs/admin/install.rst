@@ -39,7 +39,7 @@ You'll need the following Debian packages installed:
     
 * Packages needed by Lino to work::
 
-    python-dateutil python-yaml python-cheetah python-docutils
+    python-dateutil python-yaml python-cheetah python-docutils python-vobject
     
 * Some database frontend (choose one)::
 
@@ -54,7 +54,7 @@ You'll need the following Debian packages installed:
 
     python-daemon 
     
-* If you want to import data from an `.mdb` file::
+* If you want to import data from a legacy `.mdb` file::
 
     mdbtools
 

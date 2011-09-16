@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.jobs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-14 19:32+0100\n"
+"POT-Creation-Date: 2011-09-15 14:42+0100\n"
 "PO-Revision-Date: 2011-09-14 21:37+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
@@ -16,8 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: .\models.py:130
-#: .\models.py:212
+#: .\models.py:130 .\models.py:212
 msgid "Employer"
 msgstr "Arbeitgeber"
 
@@ -45,13 +44,8 @@ msgstr "Sektor"
 msgid "Job Sectors"
 msgstr "Sektoren"
 
-#: .\models.py:170
-#: .\models.py:183
-#: .\models.py:236
-#: .\models.py:458
-#: .\models.py:504
-#: .\models.py:543
-#: .\models.py:609
+#: .\models.py:170 .\models.py:183 .\models.py:236 .\models.py:458
+#: .\models.py:504 .\models.py:543 .\models.py:609
 msgid "Remark"
 msgstr "Bemerkung"
 
@@ -71,13 +65,11 @@ msgstr "Arbeitsvertrag"
 msgid "Job Contracts"
 msgstr "Arbeitsverträge"
 
-#: .\models.py:208
-#: .\models.py:534
+#: .\models.py:208 .\models.py:534
 msgid "Contract Type"
 msgstr "Vertragsart"
 
-#: .\models.py:215
-#: .\models.py:519
+#: .\models.py:215 .\models.py:519
 msgid "Job"
 msgstr "Stelle"
 
@@ -93,8 +85,7 @@ msgstr "Regime"
 msgid "schedule"
 msgstr "Stundenplan"
 
-#: .\models.py:224
-#: .\models.py:536
+#: .\models.py:224 .\models.py:536
 msgid "hourly rate"
 msgstr "Stundensatz"
 
@@ -122,8 +113,7 @@ msgstr "Verantwortlicher (DSBE)"
 msgid "My contracts"
 msgstr "Meine Verträge"
 
-#: .\models.py:449
-#: .\models.py:528
+#: .\models.py:449 .\models.py:528
 msgid "Job Type"
 msgstr "Stellenart"
 
@@ -143,8 +133,7 @@ msgstr "Stellenangebot"
 msgid "Job Offers"
 msgstr "Stellenangebote"
 
-#: .\models.py:490
-#: .\models.py:524
+#: .\models.py:490 .\models.py:524
 msgid "Name"
 msgstr "Name"
 
@@ -168,8 +157,7 @@ msgstr "Stellen"
 msgid "capacity"
 msgstr "Kapazität"
 
-#: .\models.py:586
-#: .\models.py:587
+#: .\models.py:586 .\models.py:587
 msgid "Job Requests"
 msgstr "Stellenanfragen"
 

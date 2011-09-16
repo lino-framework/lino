@@ -1,4 +1,5 @@
 main = 
   id name sector
   remark
-  JobsByFunction RequestsByFunction
+  WishesByFunction
+  ExperiencesByFunction

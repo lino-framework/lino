@@ -55,12 +55,16 @@ from django.utils import translation
 from django.utils.translation import get_language
 from django.utils.translation import ugettext_lazy as _
 
+from lino import fields
+
 #~ from lino.tools import default_language
 
 DEFAULT_LANGUAGE = settings.LANGUAGE_CODE[:2]
 """
 The 2 first chars of :setting:`LANGUAGE_CODE`.
 """
+
+LANGUAGE_CHOICES = [ (k,_(v)) for k,v in settings.LANGUAGES ]
 
 assert DEFAULT_LANGUAGE in [x[0] for x in settings.LANGUAGES]
   
@@ -214,6 +218,16 @@ def babelattr(obj,attrname,*args):
         
 getattr_lang = babelattr
     
+def _contribute_to_class(field,cls,fieldclass,**kw):
+    if cls._meta.abstract:
+        return
+    kw.update(blank=True)
+    for lang in BABEL_LANGS:
+        kw.update(verbose_name=field.verbose_name + ' ('+lang+')')
+        newfield = fieldclass(**kw)
+        newfield._lino_babel_field = True # used by coretools.get_data_elems
+        cls.add_to_class(field.name + '_' + lang,newfield)
+
 class BabelCharField(models.CharField):
     """
     Define a variable number of clones of the "master" field, 
@@ -222,32 +236,40 @@ class BabelCharField(models.CharField):
         
     def contribute_to_class(self, cls, name):
         super(BabelCharField,self).contribute_to_class(cls, name)
-        if cls._meta.abstract:
-            return
-        kw = dict()
-        kw.update(max_length=self.max_length)
-        kw.update(blank=True)
-        for lang in BABEL_LANGS:
-            kw.update(verbose_name=self.verbose_name + ' ('+lang+')')
-            newfield = models.CharField(**kw)
-            newfield._lino_babel_field = True # used by coretools.get_data_elems
-            cls.add_to_class(self.name + '_' + lang,newfield)
+        _contribute_to_class(self,cls,models.CharField,
+            max_length=self.max_length)
+        #~ kw = dict()
+        #~ kw.update(max_length=self.max_length)
+        #~ kw.update(blank=True)
+        #~ for lang in BABEL_LANGS:
+            #~ kw.update(verbose_name=self.verbose_name + ' ('+lang+')')
+            #~ newfield = models.CharField(**kw)
+            #~ newfield._lino_babel_field = True # used by coretools.get_data_elems
+            #~ cls.add_to_class(self.name + '_' + lang,newfield)
+            
 
-class BabelTextField(models.TextField):
+class BabelTextField(fields.RichTextField):
+#~ class BabelTextField(models.TextField):
     """
     Define a variable number of clones of the "master" field, 
     one for each language of your :setting:`BABEL_LANGS`.
     """
     def contribute_to_class(self, cls, name):
         super(BabelTextField,self).contribute_to_class(cls, name)
-        kw = dict()
-        #~ kw.update(max_length=self.max_length)
-        kw.update(blank=True)
-        for lang in BABEL_LANGS:
-            kw.update(verbose_name=self.verbose_name + ' ('+lang+')')
-            newfield = models.TextField(**kw)
-            newfield._lino_babel_field = True # used by coretools.get_data_elems
-            cls.add_to_class(self.name + '_' + lang,newfield)
+        _contribute_to_class(self,cls,fields.RichTextField,
+            format=self.textfield_format)
+            
+        #~ if cls._meta.abstract:
+            #~ return
+        #~ kw = dict()
+        #~ kw.update(format=self.textfield_format)
+        #~ kw.update(blank=True)
+        #~ for lang in BABEL_LANGS:
+            #~ kw.update(verbose_name=self.verbose_name + ' ('+lang+')')
+            #~ # newfield = models.TextField(**kw)
+            #~ newfield = fields.RichTextField(**kw)
+            #~ newfield._lino_babel_field = True # used by coretools.get_data_elems
+            #~ cls.add_to_class(self.name + '_' + lang,newfield)
 
 
 def kw2field(name,**kw):
@@ -346,4 +368,21 @@ class BabelNamed(models.Model):
     def __unicode__(self):
         return babelattr(self,'name')
     
+                
+                
+class LanguageField(models.CharField):
+    """
+    A field that lets the user select a language 
+    from :setting:`LANGUAGES` setting.
+    """
+    def __init__(self, *args, **kw):
+        defaults = dict(
+            verbose_name=_("Language"),
+            choices=LANGUAGE_CHOICES,
+            default=DEFAULT_LANGUAGE,
+            max_length=2,
+            )
+        defaults.update(kw)
+        models.CharField.__init__(self,*args, **defaults)
+
                 

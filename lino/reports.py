@@ -373,7 +373,8 @@ class ShowDetailAction(ReportAction,actions.OpenWindowAction):
 class InsertRow(ReportAction,actions.OpenWindowAction):
     callable_from = (GridEdit,ShowDetailAction)
     name = 'insert'
-    label = _("Insert")
+    #~ label = _("Insert")
+    label = _("New")
     key = actions.INSERT # (ctrl=True)
     #~ needs_selection = False
     

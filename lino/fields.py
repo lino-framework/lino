@@ -33,31 +33,13 @@ from django.core.exceptions import ValidationError
 import logging
 logger = logging.getLogger(__name__)
 
-from lino.utils import babel
 from lino.utils import choosers
 from lino.tools import full_model_name
-
-LANGUAGE_CHOICES = [ (k,_(v)) for k,v in settings.LANGUAGES ]
 
 class PasswordField(models.CharField):
     """Stored as plain text in database, but not displayed in user interface."""
     pass
     
-class LanguageField(models.CharField):
-    """
-    A field that lets the user select a language 
-    from :setting:`LANGUAGES` setting.
-    """
-    def __init__(self, *args, **kw):
-        defaults = dict(
-            verbose_name=_("Language"),
-            choices=LANGUAGE_CHOICES,
-            default=babel.DEFAULT_LANGUAGE,
-            max_length=2,
-            )
-        defaults.update(kw)
-        models.CharField.__init__(self,*args, **defaults)
-
     
 #~ TEXT_FORMAT_PLAIN = 'plain'
 #~ TEXT_FORMAT_HTML = 'html'
@@ -73,7 +55,7 @@ class RichTextField(models.TextField):
     """
     def __init__(self,*args,**kw):
         self.textfield_format = kw.pop('format',None)
-        models.TextField.__init__(self,*args,**kw)
+        super(RichTextField,self).__init__(*args,**kw)
         
     def set_format(self,fmt):
         self.textfield_format = fmt
@@ -249,3 +231,6 @@ class FieldSet:
         s = self.child_labels.get(name,None)
         #~ logger.info('get_child_label(%r)->%s',name,unicode(s))
         return s
+        
+        
+        

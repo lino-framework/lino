@@ -3,6 +3,6 @@
 main = 
   name provider contract_type type id 
   capacity hourly_rate 
-  remark RequestsByJob
+  remark CandidaturesByJob
   ContractsByJob
 

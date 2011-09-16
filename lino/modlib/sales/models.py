@@ -253,7 +253,7 @@ class SalesDocument(
         #~ related_name="%(app_label)s_%(class)s_by_contact",
         #~ related_name="%(app_label)s_%(class)s_related",
         )
-    language = fields.LanguageField(default=babel.DEFAULT_LANGUAGE)
+    language = babel.LanguageField(default=babel.DEFAULT_LANGUAGE)
     
     creation_date = models.DateField(blank=True,auto_now_add=True)
     #~ customer = models.ForeignKey(Customer,

@@ -1,6 +1,12 @@
 <div>
 #if $user is not None
 <p>User <b>$user.get_full_name() ($user)</b> on $site.title</p>
+<p>Quick Links:
+$ui.quicklink($request,'contacts','Persons')
+$ui.quicklink($request,'dsbe','MyPersons')
+$ui.quicklink($request,'isip','MyContracts')
+$ui.quicklink($request,'jobs','MyContracts')
+</p>
 
 #from lino.modlib.cal.models import tasks_summary
 $tasks_summary($ui,$user,days_back=90,days_forward=30,max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")

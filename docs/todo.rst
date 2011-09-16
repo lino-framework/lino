@@ -12,6 +12,11 @@ is rather for internal use.
 Short-term
 ----------
 
+#.  jobs : FunctionRequest und JobRequest?
+
+#.  notes : Note.body füllen aus Note.eventtype.body 
+    und dabei wahrscheinlich Djangos templating language verwenden.
+
 #.  :menuselection:`Kontakte --> Alle Kontakte`: 
     in dieser Liste kann man momentan auch importierte Partner 
     bearbeiten.
@@ -156,6 +161,10 @@ Short-term
 
 Medium-term
 -----------
+
+#.  Hauptmenü:
+    Was noch fehlt, wäre eine Leiste mit Shortcuts (die am besten pro Benutzer konfiguriert werden können)
+
 
 #.  GridFilter on BooleanField doesn't work.
     In `reports.add_gridfilters` there's an exception 

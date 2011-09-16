@@ -177,7 +177,7 @@ class Places(reports.Report):
 class EventType(mixins.PrintableType,babel.BabelNamed):
     "Deserves more documentation."
   
-    templates_group = 'events'
+    templates_group = 'cal/Event'
     
     class Meta:
         verbose_name = _("Event Type")
@@ -731,6 +731,7 @@ def migrate_reminder(obj,reminder_date,reminder_text,
 def setup_main_menu(site,ui,user,m): pass
 
 def setup_my_menu(site,ui,user,m): 
+    m  = m.add_menu("cal",_("~Calendar"))
     m.add_action('cal.MyTasks')
     m.add_action('cal.MyEvents')
   
@@ -742,6 +743,7 @@ def setup_config_menu(site,ui,user,m):
     m.add_action('cal.Calendars')
   
 def setup_explorer_menu(site,ui,user,m):
+    m  = m.add_menu("cal",_("~Calendar"))
     m.add_action('cal.Events')
     m.add_action('cal.Tasks')
     m.add_action('cal.Guests')

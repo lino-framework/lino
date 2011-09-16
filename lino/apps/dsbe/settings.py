@@ -69,9 +69,8 @@ class Lino(Lino):
         m.add_action('dsbe.MySearches')
         m.add_action('contacts.AllContacts')
         isip.setup_main_menu(self,ui,user,m)
-        jobs.setup_main_menu(self,ui,user,m)
+        #~ jobs.setup_main_menu(self,ui,user,m)
         #~ m.add_action('jobs.JobProviders')
-        m.add_action('dsbe.CourseProviders')
 
         if user is None:
             return main
@@ -79,13 +78,13 @@ class Lino(Lino):
         m = main.add_menu("my",_("~My menu"))
         #~ m.add_action('projects.Projects')
         m.add_action('notes.MyNotes')
-        m.add_action('uploads.MyUploads')
         
         #~ m.add_action('cal.MyTasks')
         #~ m.add_action('cal.MyEvents')
-        m.add_action('dsbe.MyPersons')
+        mypersons = m.add_menu("mypersons",dsbe.MyPersons.label)
+        mypersons.add_action('dsbe.MyPersons')
         for pg in dsbe.PersonGroup.objects.order_by('ref_name'):
-            m.add_action('dsbe.MyPersonsByGroup',label=pg.name,
+            mypersons.add_action('dsbe.MyPersonsByGroup',label=pg.name,
                 params=dict(master_instance=pg))
             #~ m.add_action('contacts.MyPersonsByGroup',label=pg.name,
             #~ params=dict(master_id=pg.pk))
@@ -95,14 +94,16 @@ class Lino(Lino):
         isip.setup_my_menu(self,ui,user,m)
         jobs.setup_my_menu(self,ui,user,m)
         
+        m.add_action('uploads.MyUploads')
         m.add_action('lino.MyTextFieldTemplates')
 
 
         m = main.add_menu("courses",_("~Courses"))
+        m.add_action('dsbe.CourseProviders')
         m.add_action('dsbe.Courses')
-        m.add_action('dsbe.CourseContents')
-        m.add_action('dsbe.CourseEndings')
         
+        m = main.add_menu("jobs",_("~Jobs"))
+        jobs.setup_main_menu(self,ui,user,m)
         
         #~ sitemenu = system.add_site_menu(self)
         #~ if False:
@@ -121,19 +122,24 @@ class Lino(Lino):
             cfg = main.add_menu("config",_("~Configure"))
             
             config_contacts = cfg.add_menu("contacts",_("~Contacts"))
-            #~ config_notes    = cfg.add_menu("notes",_("~Notes"))
-            config_dsbe     = cfg.add_menu("dsbe",_("~DSBE"))
-            #~ config_jobs     = cfg.add_menu("jobs",_("~Jobs"))
-            config_cv       = cfg.add_menu("cv",_("C~V"))
-            config_etc      = cfg.add_menu("etc",_("~System"))
-            
             config_contacts.add_action('countries.Countries')
             config_contacts.add_action('countries.Cities')
-        
             config_contacts.add_action('contacts.CompanyTypes')
             #~ config_contacts.add_action('contacts.ContactTypes')
             config_contacts.add_action('contacts.RoleTypes')
             config_contacts.add_action('countries.Languages')
+            
+            
+            #~ config_notes    = cfg.add_menu("notes",_("~Notes"))
+            config_dsbe     = cfg.add_menu("dsbe",_("~DSBE"))
+            
+            config_cv       = cfg.add_menu("cv",_("C~V"))
+            config_etc      = cfg.add_menu("etc",_("~System"))
+            
+            
+            m = cfg.add_menu("courses",_("~Courses"))
+            m.add_action('dsbe.CourseContents')
+            m.add_action('dsbe.CourseEndings')
             
             notes.setup_config_menu(self,ui,user,cfg)
             isip.setup_config_menu(self,ui,user,cfg)
@@ -144,7 +150,7 @@ class Lino(Lino):
         
             config_dsbe.add_action('dsbe.PersonGroups')
         
-            if user.is_expert:
+            if True: # user.is_expert:
                 config_props = cfg.add_menu("props",_("~Properties"))
                 config_props.add_action('properties.PropGroups')
                 config_props.add_action('properties.PropTypes')
@@ -160,7 +166,7 @@ class Lino(Lino):
             #~ ma.add_action('auth.Users')
             #~ me.add_action('auth.Groups')
             #~ m.add_action('dsbe.DrivingLicenses')
-            config_cv.add_action('dsbe.StudyTypes')
+            #~ config_cv.add_action('jobs.StudyTypes')
             config_cv.add_action('dsbe.Activities')
             
             config_dsbe.add_action('dsbe.ExclusionTypes')
@@ -173,6 +179,7 @@ class Lino(Lino):
             config_etc.add_action('uploads.UploadTypes')
             
             cal.setup_config_menu(self,ui,user,cfg)
+            mails.setup_config_menu(self,ui,user,cfg)
             
             config_etc.add_action('users.Users')
             #~ if self.use_tinymce:
@@ -190,11 +197,11 @@ class Lino(Lino):
             #~ m.add_action('notes.Notes')
             #~ m.add_action('lino.TextFieldTemplates')
             m.add_action('links.Links')
-            m.add_action('dsbe.Exclusions')
             m.add_action('uploads.Uploads')
+            m.add_action('dsbe.Exclusions')
             m.add_action('dsbe.CourseRequests')
-            m.add_action('lino.ContentTypes')
             m.add_action('dsbe.PersonSearches')
+            m.add_action('lino.ContentTypes')
             m.add_action('properties.Properties')
             
             cal.setup_explorer_menu(self,ui,user,m)

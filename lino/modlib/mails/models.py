@@ -33,6 +33,7 @@ from django.db import IntegrityError
 from django.utils.encoding import force_unicode
 
 
+from lino import mixins
 from lino import fields, tools
 #~ from lino.utils.babel import default_language
 from lino import reports
@@ -42,7 +43,6 @@ from lino.utils.restify import restify
 #~ from lino.utils import printable
 from lino.utils import babel
 #~ from lino.utils import call_optional_super
-from lino import mixins
 from django.conf import settings
 #~ from lino import choices_method, simple_choices_method
 
@@ -52,6 +52,24 @@ from lino.utils.html2text import html2text
 from django.core.mail import EmailMultiAlternatives
 from lino.utils.config import find_config_file
 from Cheetah.Template import Template as CheetahTemplate
+
+
+
+class MailType(mixins.PrintableType,babel.BabelNamed):
+    "Deserves more documentation."
+  
+    templates_group = 'mails/Mail'
+    
+    class Meta:
+        verbose_name = _("Mail Type")
+        verbose_name_plural = _('Mail Types')
+
+class MailTypes(reports.Report):
+    model = MailType
+    column_names = 'name build_method template *'
+
+
+
 
 class CreateMailAction(reports.RowAction):
     "Deserves more documentation."
@@ -82,6 +100,8 @@ class CreateMailAction(reports.RowAction):
             r.full_clean()
             r.save()
             #~ m.recipient_set.create(type=t,contact=c)
+        a = Attachment(mail=m,owner=elem)
+        a.save()
         kw.update(open_url=rr.ui.get_detail_url(m))
         return rr.ui.success_response(**kw)
         
@@ -154,10 +174,11 @@ class SendMailAction(reports.RowAction):
         elem.sent = datetime.datetime.now()
         elem.save()
         kw.update(refresh=True)
-        msg = "%s has been sent." % elem
+        msg = "Email %s from %s has been sent to %s." % (
+            elem.id,elem.sender,', '.join([r.address for r in elem.recipient_set.all()]))
         kw.update(message=msg)
-        for n in """EMAIL_HOST SERVER_EMAIL EMAIL_USE_TLS EMAIL_BACKEND""".split():
-            msg += "\n" + n + " = " + unicode(getattr(settings,n))
+        #~ for n in """EMAIL_HOST SERVER_EMAIL EMAIL_USE_TLS EMAIL_BACKEND""".split():
+            #~ msg += "\n" + n + " = " + unicode(getattr(settings,n))
         logger.info(msg)
         return rr.ui.success_response(**kw)
       
@@ -174,7 +195,7 @@ class Recipient(models.Model):
         verbose_name_plural = _("Recipients")
     mail = models.ForeignKey('mails.Mail')
     contact = models.ForeignKey('contacts.Contact',
-        verbose_name=_("Contact"),
+        verbose_name=_("Recipient"),
         blank=True,null=True)
     type = RecipientType.field()
     address = models.EmailField(_("Address"))
@@ -191,8 +212,11 @@ class Recipient(models.Model):
         #~ return "[%s]" % unicode(self.address)
         
     def full_clean(self):
-        self.address = self.contact.email
-        self.name = self.contact.get_full_name(salutation=False)
+        if self.contact:
+            if not self.address:
+                self.address = self.contact.email
+            if not self.name:
+                self.name = self.contact.get_full_name(salutation=False)
         super(Recipient,self).full_clean()
         
 
@@ -203,19 +227,21 @@ class Recipients(reports.Report):
 
 class RecipientsByMail(Recipients):
     fk_name = 'mail'
-    column_names = 'type contact address name'
+    column_names = 'type:10 contact:20 address:20 name:20 *'
     #~ column_names = 'type owner_type owner_id'
     #~ column_names = 'type owner'
 
 #~ class Mail(mixins.AutoUser):
-class Mail(models.Model):
+class Mail(mixins.TypedPrintable):
     """
     Deserves more documentation.
     """
-    #~ class Meta:
-        #~ abstract = True
-        #~ verbose_name = _("Mail")
-        #~ verbose_name_plural = _("Mails")
+    
+    type = models.ForeignKey(MailType,null=True,blank=True)
+    
+    class Meta:
+        verbose_name = _("Mail Document")
+        verbose_name_plural = _("Mail Documents")
         
     #~ outgoing = models.BooleanField(verbose_name=_('Outgoing'))
     
@@ -264,6 +290,7 @@ class Mail(models.Model):
       
     @classmethod
     def setup_report(cls,rpt):
+        mixins.TypedPrintable.setup_report(rpt)
         rpt.add_action(SendMailAction())
         
 #~ class InMail(Mail):
@@ -302,6 +329,11 @@ class Attachment(mixins.Owned):
         
     mail = models.ForeignKey('mails.Mail')
     
+    def __unicode__(self):
+        if self.owner_id:
+            return unicode(self.owner)
+        return unicode(self.id)
+        
 class Attachments(reports.Report):
     model = 'mails.Attachment'
     
@@ -396,11 +428,14 @@ class OutMailsByContact(MailsByContact,OutMails):
 def setup_main_menu(site,ui,user,m): pass
 
 def setup_my_menu(site,ui,user,m): 
+    m  = m.add_menu("mails",_("~Mails"))
     m.add_action('mails.MyInbox')
     m.add_action('mails.MyOutbox')
     m.add_action('mails.MySent')
   
-def setup_config_menu(site,ui,user,m): pass
+def setup_config_menu(site,ui,user,m):
+    m  = m.add_menu("mails",_("~Mails"))
+    m.add_action('mails.MailTypes')
   
 def setup_explorer_menu(site,ui,user,m):
     m  = m.add_menu("mails",_("~Mails"))

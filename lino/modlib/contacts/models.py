@@ -105,7 +105,7 @@ class Contact(mti.MultiTableBase,CountryCity):
         max_length=10,blank=True)
     region = models.CharField(_("Region"),
         max_length=200,blank=True)
-    language = fields.LanguageField()
+    language = babel.LanguageField()
         #~ default=babel.DEFAULT_LANGUAGE,
         #~ choices=settings.LANGUAGES)
     
@@ -322,7 +322,7 @@ class ContactDocument(models.Model):
         related_name="%(app_label)s_%(class)s_by_contact",
         #~ related_name="%(app_label)s_%(class)s_related",
         verbose_name=_("Contact"))
-    language = fields.LanguageField(default=babel.DEFAULT_LANGUAGE)
+    language = babel.LanguageField(default=babel.DEFAULT_LANGUAGE)
 
     def get_mailable_contacts(self):
         yield ('to',self.contact)

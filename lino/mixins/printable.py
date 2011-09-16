@@ -681,7 +681,10 @@ class TypedPrintable(CachedPrintable):
         return self.type
         
     def get_templates_group(self):
-        return self.get_printable_type().get_templates_group()
+        ptype = self.get_printable_type()
+        if ptype is None:
+            return super(TypedPrintable,self).get_templates_group()
+        return ptype.get_templates_group()
         
     def get_build_method(self):
         ptype = self.get_printable_type()
@@ -782,11 +785,11 @@ class Listing(CachedPrintable):
 class InitiateListing(reports.InsertRow):
     callable_from = tuple()
     name = 'listing'
-    #~ label = _("Insert")
+    #~ label = _("Initiate")
     key = None
     
     def get_action_title(self,rh):
-        return u"Initiate Listing «%s»" % self.actor.model._meta.verbose_name
+        return _(u"Initiate Listing «%s»") % self.actor.model._meta.verbose_name
   
         
 class Listings(reports.Report):

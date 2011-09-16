@@ -63,6 +63,7 @@ class EventType(babel.BabelNamed):
         verbose_name_plural = _("Event Types")
     #~ name = babel.BabelCharField(max_length=200,verbose_name=_("Designation"))
     remark = models.TextField(verbose_name=_("Remark"),blank=True)
+    body = babel.BabelTextField(_("Body"),blank=True,format='html')
     
     #~ def __unicode__(self):
         #~ return babel.babelattr(self,'name')
@@ -106,7 +107,7 @@ class Note(mixins.TypedPrintable,mixins.AutoUser):
     #~ person = models.ForeignKey("contacts.Person",blank=True,null=True)
     #~ company = models.ForeignKey("contacts.Company",blank=True,null=True)
     #~ url = models.URLField(verify_exists=True,blank=True,null=True)
-    language = fields.LanguageField(default=babel.default_language)
+    language = babel.LanguageField(default=babel.default_language)
     
     # partner = models.ForeignKey("contacts.Partner",blank=True,null=True)
     

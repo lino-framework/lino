@@ -1,0 +1,33 @@
+20110915
+========
+
+Miscellaneous changes
+---------------------
+
+- New table :class:`lino.modlib.mails.models.MailType`.
+
+- The button to insert a new Record is now labelled "New" 
+  instead of "Insert".
+  
+- Some more translations.  
+  
+- Changes in the main menu.
+
+- New method :meth:`lino.ui.extjs3.ext_ui.ExtUI.quicklink` used in 
+  `welcome.html` for :mod:`lino.apps.dsbe`::
+  
+    <p>Quick Links:
+    $ui.quicklink($request,'contacts','Persons')
+    $ui.quicklink($request,'dsbe','MyPersons')
+    $ui.quicklink($request,'isip','MyContracts')
+    $ui.quicklink($request,'jobs','MyContracts')
+    </p>
+      
+      
+- jobs: 
+  New table Wish. JobRequest renamed to Candidature.
+  
+  Moved Study, StudyType and JobExperience from dsbe to jobs:
+  |dsbe.Study --> jobs.Study
+  |dsbe.StudyType --> jobs.StudyType
+  |dsbe.JobExperience --> jobs.Experience

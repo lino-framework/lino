@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-14 19:32+0100\n"
+"POT-Creation-Date: 2011-09-15 14:42+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -69,41 +69,41 @@ msgstr ""
 msgid "%s (Detail)"
 msgstr ""
 
-#: .\reports.py:376
-msgid "Insert"
+#: .\reports.py:377
+msgid "New"
 msgstr ""
 
-#: .\reports.py:381
+#: .\reports.py:382
 #, python-format
 msgid "Insert into %s"
 msgstr ""
 
-#: .\reports.py:386
+#: .\reports.py:387
 msgid "Duplicate"
 msgstr ""
 
-#: .\reports.py:402
+#: .\reports.py:403
 msgid "Delete"
 msgstr ""
 
-#: .\reports.py:410 .\reports.py:415
+#: .\reports.py:411 .\reports.py:416
 msgid "Save"
 msgstr ""
 
-#: .\reports.py:571
+#: .\reports.py:572
 #, python-format
 msgid "User %(user)s cannot view %(report)s."
 msgstr ""
 
-#: .\reports.py:801
+#: .\reports.py:802
 msgid "Yes"
 msgstr ""
 
-#: .\reports.py:801
+#: .\reports.py:802
 msgid "No"
 msgstr ""
 
-#: .\reports.py:1138
+#: .\reports.py:1142
 #, python-format
 msgid "%(details)s of %(master)s"
 msgstr ""
@@ -150,32 +150,37 @@ msgstr ""
 msgid "Title"
 msgstr ""
 
-#: .\mixins\printable.py:466 .\mixins\printable.py:743
+#: .\mixins\printable.py:467 .\mixins\printable.py:747
 msgid "Print"
 msgstr ""
 
-#: .\mixins\printable.py:531
+#: .\mixins\printable.py:532
 msgid "Clear cache"
 msgstr ""
 
-#: .\mixins\printable.py:552
+#: .\mixins\printable.py:553
 msgid "Build method"
 msgstr ""
 
-#: .\mixins\printable.py:561
+#: .\mixins\printable.py:562
 msgid "Template"
 msgstr ""
 
-#: .\mixins\printable.py:597
+#: .\mixins\printable.py:598
 msgid "must build"
 msgstr ""
 
-#: .\mixins\printable.py:729
+#: .\mixins\printable.py:732
 msgid "Date"
 msgstr ""
 
-#: .\mixins\printable.py:775
+#: .\mixins\printable.py:779
 msgid "Preview"
+msgstr ""
+
+#: .\mixins\printable.py:789
+#, python-format
+msgid "Initiate Listing «%s»"
 msgstr ""
 
 #: .\mixins\sendable.py:65
@@ -259,61 +264,57 @@ msgstr ""
 msgid "Row %(rowid)d of %(rowcount)d"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:765 .\ui\extjs4\ext_ui.py:704
-msgid "Console"
-msgstr ""
-
-#: .\ui\extjs3\ext_ui.py:820 .\ui\extjs4\ext_ui.py:757 .\ui\qx\qx_ui.py:563
+#: .\ui\extjs3\ext_ui.py:796 .\ui\extjs4\ext_ui.py:757 .\ui\qx\qx_ui.py:563
 #, python-format
 msgid "Welcome on Lino server %(title)r, user %(user)s"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:881 .\ui\extjs4\ext_ui.py:817 .\ui\qx\qx_ui.py:622
+#: .\ui\extjs3\ext_ui.py:857 .\ui\extjs4\ext_ui.py:817 .\ui\qx\qx_ui.py:622
 #, python-format
 msgid "%s has been created."
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:883 .\ui\extjs4\ext_ui.py:819 .\ui\qx\qx_ui.py:624
+#: .\ui\extjs3\ext_ui.py:859 .\ui\extjs4\ext_ui.py:819 .\ui\qx\qx_ui.py:624
 #, python-format
 msgid "%s has been saved."
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:891 .\ui\extjs3\ext_ui.py:916
+#: .\ui\extjs3\ext_ui.py:867 .\ui\extjs3\ext_ui.py:892
 #: .\ui\extjs4\ext_ui.py:827 .\ui\extjs4\ext_ui.py:851 .\ui\qx\qx_ui.py:632
 #: .\ui\qx\qx_ui.py:655
 #, python-format
 msgid "User %(user)s cannot configure %(report)s."
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:943
+#: .\ui\extjs3\ext_ui.py:919
 #, python-format
 msgid "Error while saving GC for %(report)s: %(error)s"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1105 .\ui\extjs4\ext_ui.py:1015 .\ui\qx\qx_ui.py:819
+#: .\ui\extjs3\ext_ui.py:1084 .\ui\extjs4\ext_ui.py:1015 .\ui\qx\qx_ui.py:819
 #, python-format
 msgid "Failed to delete %(record)s : %(error)s."
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1198
+#: .\ui\extjs3\ext_ui.py:1177
 #, python-format
 msgid "Action \"%(action)s\" failed for %(record)s."
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1201
+#: .\ui\extjs3\ext_ui.py:1180
 msgid "An error report has been sent to the system administrator."
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1406 .\ui\extjs4\ext_ui.py:1212 .\ui\qx\qx_ui.py:958
+#: .\ui\extjs3\ext_ui.py:1385 .\ui\extjs4\ext_ui.py:1212 .\ui\qx\qx_ui.py:958
 #, python-format
 msgid "Choices for %s"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1520 .\ui\extjs4\ext_ui.py:1325 .\ui\qx\qx_ui.py:1068
+#: .\ui\extjs3\ext_ui.py:1505 .\ui\extjs4\ext_ui.py:1325 .\ui\qx\qx_ui.py:1068
 msgid "Upload"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1529 .\ui\extjs4\ext_ui.py:1333 .\ui\qx\qx_ui.py:1076
+#: .\ui\extjs3\ext_ui.py:1514 .\ui\extjs4\ext_ui.py:1333 .\ui\qx\qx_ui.py:1076
 msgid "Edit"
 msgstr ""
 
@@ -415,6 +416,10 @@ msgstr ""
 
 #: .\ui\extjs3\linolib.js.py:27
 msgid "Previous"
+msgstr ""
+
+#: .\ui\extjs4\ext_ui.py:704
+msgid "Console"
 msgstr ""
 
 #: .\ui\extjs4\ext_ui.py:1040 .\ui\qx\qx_ui.py:844

@@ -81,7 +81,7 @@ from lino.mixins import printable
 
 from lino.core.coretools import app_labels
 
-from lino.fields import LANGUAGE_CHOICES
+from lino.utils.babel import LANGUAGE_CHOICES
 #~ from lino.modlib.properties.utils import STRENGTH_CHOICES, KNOWLEDGE_CHOICES
 
 from lino.utils.choicelists import DoYouLike, HowWell
@@ -580,6 +580,7 @@ class ExtUI(base.UI):
     def html_lines(self,request,on_ready=[],**kw):
         #~ c = RequestContext(request,dict(site=self.site,lino=lino))
         self.welcome_template.ui = self
+        self.welcome_template.request = request
         self.welcome_template.user = request.user
         self.welcome_template.site = settings.LINO # self.site
         self.welcome_template.lino = lino
@@ -673,16 +674,17 @@ tinymce.init({
         yield '<script type="text/javascript" src="%s/lino/extjs/Ext.ux.form.DateTime.js"></script>' % self.media_url()
 
         if settings.LINO.use_gridfilters:
+            p = self.media_url() + '/extjs/examples/ux/gridfilters'
             #~ yield '<script type="text/javascript" src="%s/extjs/examples/ux/RowEditor.js"></script>' % self.media_url()
-            yield '<script type="text/javascript" src="%s/extjs/examples/ux/gridfilters/menu/RangeMenu.js"></script>' % self.media_url()
-            yield '<script type="text/javascript" src="%s/extjs/examples/ux/gridfilters/menu/ListMenu.js"></script>' % self.media_url()
-            yield '<script type="text/javascript" src="%s/extjs/examples/ux/gridfilters/GridFilters.js"></script>' % self.media_url()
-            yield '<script type="text/javascript" src="%s/extjs/examples/ux/gridfilters/filter/Filter.js"></script>' % self.media_url()
-            yield '<script type="text/javascript" src="%s/extjs/examples/ux/gridfilters/filter/StringFilter.js"></script>' % self.media_url()
-            yield '<script type="text/javascript" src="%s/extjs/examples/ux/gridfilters/filter/DateFilter.js"></script>' % self.media_url()
-            yield '<script type="text/javascript" src="%s/extjs/examples/ux/gridfilters/filter/ListFilter.js"></script>' % self.media_url()
-            yield '<script type="text/javascript" src="%s/extjs/examples/ux/gridfilters/filter/NumericFilter.js"></script>' % self.media_url()
-            yield '<script type="text/javascript" src="%s/extjs/examples/ux/gridfilters/filter/BooleanFilter.js"></script>' % self.media_url()
+            yield '<script type="text/javascript" src="%s/menu/RangeMenu.js"></script>' % p
+            yield '<script type="text/javascript" src="%s/menu/ListMenu.js"></script>' % p
+            yield '<script type="text/javascript" src="%s/GridFilters.js"></script>' % p
+            yield '<script type="text/javascript" src="%s/filter/Filter.js"></script>' % p
+            yield '<script type="text/javascript" src="%s/filter/StringFilter.js"></script>' % p
+            yield '<script type="text/javascript" src="%s/filter/DateFilter.js"></script>' % p
+            yield '<script type="text/javascript" src="%s/filter/ListFilter.js"></script>' % p
+            yield '<script type="text/javascript" src="%s/filter/NumericFilter.js"></script>' % p
+            yield '<script type="text/javascript" src="%s/filter/BooleanFilter.js"></script>' % p
             
         yield '<script type="text/javascript" src="%s/extjs/examples/ux/fileuploadfield/FileUploadField.js"></script>' % self.media_url()
         
@@ -691,23 +693,23 @@ tinymce.init({
             yield '<script type="text/javascript" src="%s/filterRow.js"></script>' % p
             
         if settings.LINO.use_vinylfox:
-            p = self.media_url() + '/lino/vinylfox/'
+            p = self.media_url() + '/lino/vinylfox/src/Ext.ux.form.HtmlEditor'
             #~ yield '<script type="text/javascript" src="Ext.ux.form.FileUploadField.js"></script>'
-            yield '<script type="text/javascript" src="%s/src/Ext.ux.form.HtmlEditor.MidasCommand.js"></script>' % p
-            yield '<script type="text/javascript" src="%s/src/Ext.ux.form.HtmlEditor.Divider.js"></script>' % p
-            yield '<script type="text/javascript" src="%s/src/Ext.ux.form.HtmlEditor.HR.js"></script>' % p
-            yield '<script type="text/javascript" src="%s/src/Ext.ux.form.HtmlEditor.Image.js"></script>' % p
-            yield '<script type="text/javascript" src="%s/src/Ext.ux.form.HtmlEditor.RemoveFormat.js"></script>' % p
-            yield '<script type="text/javascript" src="%s/src/Ext.ux.form.HtmlEditor.IndentOutdent.js"></script>' % p
-            yield '<script type="text/javascript" src="%s/src/Ext.ux.form.HtmlEditor.SubSuperScript.js"></script>' % p
-            yield '<script type="text/javascript" src="%s/src/Ext.ux.form.HtmlEditor.FindAndReplace.js"></script>' % p
-            yield '<script type="text/javascript" src="%s/src/Ext.ux.form.HtmlEditor.Table.js"></script>' % p
-            yield '<script type="text/javascript" src="%s/src/Ext.ux.form.HtmlEditor.Word.js"></script>' % p
-            yield '<script type="text/javascript" src="%s/src/Ext.ux.form.HtmlEditor.Link.js"></script>' % p
-            yield '<script type="text/javascript" src="%s/src/Ext.ux.form.HtmlEditor.SpecialCharacters.js"></script>' % p
-            yield '<script type="text/javascript" src="%s/src/Ext.ux.form.HtmlEditor.UndoRedo.js"></script>' % p
-            yield '<script type="text/javascript" src="%s/src/Ext.ux.form.HtmlEditor.Heading.js"></script>' % p
-            yield '<script type="text/javascript" src="%s/src/Ext.ux.form.HtmlEditor.Plugins.js"></script>' % p
+            yield '<script type="text/javascript" src="%s.MidasCommand.js"></script>' % p
+            yield '<script type="text/javascript" src="%s.Divider.js"></script>' % p
+            yield '<script type="text/javascript" src="%s.HR.js"></script>' % p
+            yield '<script type="text/javascript" src="%s.Image.js"></script>' % p
+            yield '<script type="text/javascript" src="%s.RemoveFormat.js"></script>' % p
+            yield '<script type="text/javascript" src="%s.IndentOutdent.js"></script>' % p
+            yield '<script type="text/javascript" src="%s.SubSuperScript.js"></script>' % p
+            yield '<script type="text/javascript" src="%s.FindAndReplace.js"></script>' % p
+            yield '<script type="text/javascript" src="%s.Table.js"></script>' % p
+            yield '<script type="text/javascript" src="%s.Word.js"></script>' % p
+            yield '<script type="text/javascript" src="%s.Link.js"></script>' % p
+            yield '<script type="text/javascript" src="%s.SpecialCharacters.js"></script>' % p
+            yield '<script type="text/javascript" src="%s.UndoRedo.js"></script>' % p
+            yield '<script type="text/javascript" src="%s.Heading.js"></script>' % p
+            yield '<script type="text/javascript" src="%s.Plugins.js"></script>' % p
             
         if settings.LINO.use_awesome_uploader:
             p = self.media_url() + '/lino/AwesomeUploader/'
@@ -732,45 +734,19 @@ tinymce.init({
         
         #~ yield "Lino.load_mask = new Ext.LoadMask(Ext.getBody(), {msg:'Immer mit der Ruhe...'});"
           
-        if True:
-            
-            win = dict(
-              layout='fit',
-              #~ maximized=True,
-              items=main,
-              #~ closable=False,
-              bbar=dict(xtype='toolbar',items=js_code('Lino.status_bar')),
-              #~ title=self.site.title,
-              tbar=settings.LINO.get_site_menu(self,request.user),
-            )
-            
-            for ln in jsgen.declare_vars(win):
-                yield ln
-            yield '  new Ext.Viewport({layout:"fit",items:%s}).render("body");' % py2js(win)
-        else:
-          
-            comps = [
-              #~ ext_elems.Toolbar(
-              dict(xtype='toolbar',
-                items=settings.LINO.get_site_menu(request.user),
-                region='north',height=29),
-              main,
-              #~ jsgen.Component("konsole",
-              dict(
-                #~ xtype="panel",
-                split=True,
-                collapsible=True,
-                collapsed=True,
-                autoScroll=True,
-                title=_("Console"),
-                id="konsole",
-                #~ html=_('Console started'),
-                height=100,
-                region="south")
-            ]  
-            for ln in jsgen.declare_vars(comps):
-                yield '  ' + ln
-            yield '  var viewport = new Ext.Viewport({layout:"border",items:%s});' % py2js(comps)
+        win = dict(
+          layout='fit',
+          #~ maximized=True,
+          items=main,
+          #~ closable=False,
+          bbar=dict(xtype='toolbar',items=js_code('Lino.status_bar')),
+          #~ title=self.site.title,
+          tbar=settings.LINO.get_site_menu(self,request.user),
+        )
+        
+        for ln in jsgen.declare_vars(win):
+            yield ln
+        yield '  new Ext.Viewport({layout:"fit",items:%s}).render("body");' % py2js(win)
             
         yield '  Ext.QuickTips.init();'
         
@@ -1058,6 +1034,14 @@ tinymce.init({
     
     
         
+    def requested_report(self,request,app_label,actor):
+        rpt = actors.get_actor2(app_label,actor)
+        if rpt:
+            return rpt
+        model = models.get_model(app_label,actor,False)
+        if model is None:
+            raise Http404("No actor named '%s.%s'" % (app_label,actor))
+        return model._lino_model_report
         
     def api_element_view(self,request,app_label=None,actor=None,pk=None):
         """
@@ -1068,12 +1052,7 @@ tinymce.init({
         
         (Source: http://en.wikipedia.org/wiki/Restful)
         """
-        rpt = actors.get_actor2(app_label,actor)
-        if rpt is None:
-            model = models.get_model(app_label,actor,False)
-            if model is None:
-                raise Http404("No actor named '%s.%s'" % (app_label,actor))
-            rpt = model._lino_model_report
+        rpt = self.requested_report(request,app_label,actor)
         ah = rpt.get_handle(self)
         #~ if not ah.report.can_view.passes(request.user):
             #~ msg = "User %s cannot view %s." % (request.user,ah.report)
@@ -1491,10 +1470,17 @@ tinymce.init({
             mt = ContentType.objects.get_for_model(rr.master_instance.__class__).pk
             kw[ext_requests.URL_PARAM_MASTER_TYPE] = mt
         return kw
-        
+
+    def quicklink(self,request,app_label,actor,**kw):
+        rpt = self.requested_report(request,app_label,actor)
+        #~ return self.action_href(rpt.default_action,rpt.default_action.label,**kw)
+        return self.action_href(rpt.default_action,**kw)
+
     def action_href(self,a,label=None,**params):
         if label is None:
-            label = a.button_label
+            #~ label = a.button_label
+            label = cgi.escape(force_unicode(a.label))
+        #~ print 20110915, a, label
         onclick = 'Lino.%s(undefined,%s)' % (a,py2js(params))
         #~ print 20110120, onclick
         onclick = cgi.escape(onclick)
@@ -1502,8 +1488,7 @@ tinymce.init({
         #~ return '<input type="button" onclick="%s" value=" %s ">' % (onclick,label)
         #~ return '[<a href="#" onclick="%s">%s</a>]' % (onclick,label)
         return '[<a href="javascript:%s">%s</a>]' % (onclick,label)
-        
-        
+
     def quick_upload_buttons(self,rr):
         """
         Deserves more documentation.
@@ -1529,8 +1514,7 @@ tinymce.init({
             s += ' ' + self.action_href(rr.ah.report.detail_action,_("Edit"),**params)
             return s
         return '[?!]'
-        
-      
+
     def py2js_converter(self,v):
         if v is LANGUAGE_CHOICES:
             return js_code('LANGUAGE_CHOICES')

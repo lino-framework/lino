@@ -1,0 +1,18 @@
+20110916
+========
+
+notes.EventType has now a new BabelTextField `body`.
+
+Moved `LanguageField` and `LANGUAGE_CHOICES` from 
+:mod:`lino.fields` to
+:mod:`lino.utils.babel`.
+
+:class:`lino.utils.babel.BabelTextField` 
+now creates `RichTextField` fields, not `models.TextField`
+
+There was an undiscovered bug
+in :class:`lino.utils.babel.BabelTextField`: 
+it would have created babel children 
+also when used on abstract models.
+
+

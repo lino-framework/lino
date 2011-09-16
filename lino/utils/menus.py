@@ -139,11 +139,11 @@ class MenuItem:
 
 
 class Menu(MenuItem):
-    template_to_response = 'lino/menu.html'
+    #~ template_to_response = 'lino/menu.html'
     def __init__(self,name,label=None,parent=None,**kw):
         MenuItem.__init__(self,parent,None,name,label,**kw)
         self.items = []
-        #self.items_dict = {}
+        #~ self.items_dict = {}
 
     def add_action(self,spec,**kw):
         action = actors.resolve_action(spec)
@@ -185,21 +185,22 @@ class Menu(MenuItem):
         #~ old = self.items_dict.get(m.name,None)
         #~ if old:
             #~ i = self.items.index(old)
-            #~ # print [ mi.name for mi in self.items ]
-            #~ print "[debug] Replacing menu item %s at position %d" % (m.name,i)
-            #~ # self.items[i] = m
+            # print [ mi.name for mi in self.items ]
+            # print "[debug] Replacing menu item %s at position %d" % (m.name,i)
+            #~ self.items[i] = m
+            #~ self.items_dict[m.name] = m
             #~ # assert len(m) == 0
             #~ return old 
         #~ else:
             #print "[debug] Adding menu item %s" % m.name
         self.items.append(m)
-        #self.items_dict[m.name] = m
+        #~ self.items_dict[m.name] = m
         #~ if m.name in [i.name for i in self.items]:
             #~ raise "Duplicate item name %s for menu %s" % (m.name,self.name)
         return m
         
-    def findItem(self,name):
-        return self.items_dict[name]
+    #~ def get(self,name):
+        #~ return self.items_dict.get(name)
 
     def walk_items(self):
         yield self
@@ -207,22 +208,22 @@ class Menu(MenuItem):
             for i in mi.walk_items():
                 yield i
         
-    def unused_sort_items(self,front=None,back=None):
-        new_items = []
-        if front:
-            for name in front.split():
-                new_items.append(self.findItem(name))
-        back_items = []
-        if back:
-            for name in back.split():
-                back_items.append(self.findItem(name))
-        for i in self.get_items():
-            if not i in new_items + back_items:
-                new_items.append(i)
-        self.items = new_items + back_items
-        self.items_dict = {}
-        for i in self.items:
-            self.items_dict[i.name] = i
+    #~ def unused_sort_items(self,front=None,back=None):
+        #~ new_items = []
+        #~ if front:
+            #~ for name in front.split():
+                #~ new_items.append(self.findItem(name))
+        #~ back_items = []
+        #~ if back:
+            #~ for name in back.split():
+                #~ back_items.append(self.findItem(name))
+        #~ for i in self.get_items():
+            #~ if not i in new_items + back_items:
+                #~ new_items.append(i)
+        #~ self.items = new_items + back_items
+        #~ self.items_dict = {}
+        #~ for i in self.items:
+            #~ self.items_dict[i.name] = i
                 
 
     def as_html(self,request,level=1):

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-14 19:33+0100\n"
+"POT-Creation-Date: 2011-09-15 14:43+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -726,7 +726,7 @@ msgstr ""
 msgid "is Course Provider"
 msgstr ""
 
-#: .\settings.py:65 .\settings.py:123
+#: .\settings.py:65 .\settings.py:124
 msgid "~Contacts"
 msgstr ""
 
@@ -734,43 +734,43 @@ msgstr ""
 msgid "~My menu"
 msgstr ""
 
-#: .\settings.py:101
+#: .\settings.py:102
 msgid "~Courses"
 msgstr ""
 
-#: .\settings.py:109
+#: .\settings.py:110
 msgid "~Listings"
 msgstr ""
 
-#: .\settings.py:121
+#: .\settings.py:122
 msgid "~Configure"
 msgstr ""
 
-#: .\settings.py:125
+#: .\settings.py:126
 msgid "~DSBE"
 msgstr ""
 
-#: .\settings.py:127
+#: .\settings.py:128
 msgid "C~V"
 msgstr ""
 
-#: .\settings.py:128
+#: .\settings.py:129
 msgid "~System"
 msgstr ""
 
-#: .\settings.py:148
+#: .\settings.py:149
 msgid "~Properties"
 msgstr ""
 
-#: .\settings.py:182
+#: .\settings.py:183
 msgid "E~xplorer"
 msgstr ""
 
-#: .\settings.py:203
+#: .\settings.py:204
 msgid "~Help"
 msgstr ""
 
-#: .\settings.py:204
+#: .\settings.py:205
 msgid "~User Manual"
 msgstr ""
 

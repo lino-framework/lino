@@ -185,7 +185,7 @@ def objects():
     exam_policy = Instantiator('isip.ExamPolicy').build
 
     City = resolve_model('countries.City')
-    StudyType = resolve_model('dsbe.StudyType')
+    StudyType = resolve_model('jobs.StudyType')
     Country = resolve_model('countries.Country')
     Property = resolve_model('properties.Property')
   
@@ -327,7 +327,7 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     uni = StudyType.objects.get(pk=4)
     #~ abi = StudyContent.objects.get(name=u"Abitur")
     abi = u"Abitur"
-    study = Instantiator('dsbe.Study').build
+    study = Instantiator('jobs.Study').build
         
     yield study(person=luc,type=schule,content=abi,started='19740901',stopped='19860630')
     yield study(person=gerd,type=schule,content=abi,started='19740901',stopped='19860630')
@@ -388,7 +388,7 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     yield contract(1,i2d(20110601),None,bisajob,bisa_dir,person=andreas)
     yield contract(1,i2d(20110601),None,rcyclejob,rcycle_dir,person=annette)
     
-    jobrequest = Instantiator('jobs.JobRequest','job person').build
+    jobrequest = Instantiator('jobs.Candidature','job person').build
     yield jobrequest(bisajob,tatjana)
     yield jobrequest(rcyclejob,luc)
 
@@ -580,5 +580,5 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
     i = dsbe.Person.objects.order_by('name').__iter__()
     p = i.next()
     for f in jobs.Function.objects.all():
-        yield jobs.JobRequest(person=p,function=f,sector=f.sector)
+        yield jobs.Wish(person=p,function=f,sector=f.sector)
         p = i.next()
