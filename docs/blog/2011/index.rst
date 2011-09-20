@@ -249,7 +249,12 @@ As long as nobody protests, I'll save some time by writing in German.
   :doc:`12 <0912>`
   :doc:`13 <0913>`
   :doc:`14 <0914>`
+  :doc:`15 <0915>`
+  :doc:`16 <0916>`
+  :doc:`17 <0917>`
   |br| 
+  :doc:`19 <0917>`
+  :doc:`20 <0917>`
   |br|  	
   
 

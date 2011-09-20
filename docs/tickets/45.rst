@@ -10,15 +10,27 @@
 Lino's :mod:`lino.mixins.printable` module 
 can generate .pdf, .rtf or .odt files into a directory 
 located on the server, and this directory 
-can be made accessible as a WebDAV location.
+can be made accessible as a WebDAV location 
+(see :doc:`/admin/webdav`).
 
 When the client asks to print something, Lino generates that file 
 and returns an URL of the generated document, which the client usually 
 opens in a new browser window.
 
-But how to have the client open our document 
+But how to have the browser open our document 
 in a way that the user can save their 
 modifications back to the original file through WebDAV?
+
+
+Making webdav files appear to be local
+--------------------------------------
+
+If the client's Office suite does not support to work directly on 
+WebDAV documents, Lino offers a trick to have webdav media files 
+appear local to the client machine.
+
+In most cases this is not necessary
+as the major Office suites now support direct webdav editing.
 
 On a Windows client it seems possible to map 
 a drive letter (on Windows) or a directory (on UNIX) 
@@ -42,12 +54,14 @@ If you manually enter such a link in the address field of a browser,
 it will (depending on your settings) open the file and launch 
 Writer or Word, *but* first it will download the file.
 
+
+
 A "command server" on each client?
 ----------------------------------
 
 On a Windows machine, if we manually type in a DOS box::
 
-  start file:///W:/userdocs/test.rtf
+  start http://lino/media/webdav/userdocs/test.rtf
   
 then we get the expected result.
 
@@ -55,43 +69,102 @@ So one workaround might be to have a small "cmdserver"
 daemon that clients need to install and run on their machine,
 at least if they want the feature of editing .rtf files.
 
-This would be a crippled HTTP server which would react to a GET `http://localhost:8910/userdocs/test.rtf` by executing the 
+This would be a minimal HTTP server which would react to a GET `http://localhost:8910/userdocs/test.rtf` by executing the 
 corresponding file.    
 Here is a functional but neither secure nor user-friendly 
-proof-of-concept implementation of such a daemon::
-    
-    import os
-    import BaseHTTPServer
+proof-of-concept implementation of such a daemon:
 
-    NAME = ''
-    PORT = 8910
-    WEBDAV_ROOT = 'W:\\'
-
-    class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
-      
-        def do_GET(self):
-            """Serve a GET request."""
-            #~ print self.client_address, self.path
-            #~ filename = "file://W:%s" % self.path
-            parts = self.path.split('/')
-            filename = os.path.join(WEBDAV_ROOT,*parts)
-            if os.path.exists(filename):
-                os.startfile(filename)
-            else:
-                self.log_message("File %r not found",filename)
-
-    httpd = BaseHTTPServer.HTTPServer((NAME,PORT), MyHandler)
-    print "serving at port", PORT
-    httpd.serve_forever()
-        
+.. literalinclude:: 45/cmdserver.py
+   
         
 We could make the `cmdserver` method more user-friendly and secure, 
 but it still remains a very strange workaround. 
-Is there really no easier solution?
 
-Looking for easier solutions
-----------------------------
+But is there really no easier solution?
+For many system administrators it is not a solution at all since 
+installing such a command server on each client causes additional 
+complexity as well as security risks.
 
-Here is an interesting HOWTO article: 
-http://old.zope.org/Members/enno/howto_webdav_zopeedit
+Easier solutions
+----------------
+
+The following sections describe different approaches we have tried.
+
+Using browser-specific methods
+------------------------------
+
+If our clients were Internet Explorers, we could simply do::
+
+  <script type="text/javascript">
+  function runShell(cmd) {
+    WshShell = new ActiveXObject("WScript.Shell");
+    WshShell.Run(cmd); // ,1,true);
+  }
+  </script>
+
+For Firefox there is an equivalent approach:
+
+| https://developer.mozilla.org/en/Code_snippets/Running_applications
+| https://developer.mozilla.org/en/XPCOM_Interface_Reference/nsIProcess
+| http://forums.mozillazine.org/viewtopic.php?f=19&t=803615&start=0
+| http://stackoverflow.com/questions/2017743/how-to-call-a-function-in-firefox-extension-from-a-html-button
+| http://stackoverflow.com/questions/1374927/launch-file-from-firefox-chrome
+
+For other browsers there are probably similar methods.
+We cannot yet show a fully functional example, but this might work.
+
+One conceptual problem with this approach is that the server must 
+somehow specify the path of the office application to be launched.
+
+
+Using a Java applet 
+-------------------
+
+Examples to be published. Seems to be possible, 
+but this requires the Java RTE which will probably 
+slow town client machines.
+
+
+Using the DownloadWith bowser plugin
+------------------------------------
+
+The following article (posted January 2008 by marinew) 
+perfectly reflects our problem:
+
+http://forums.mozillazine.org/viewtopic.php?p=3203256
+
+They solved it using `DownloadWith <http://downloadwith.mozdev.org/>`_. 
+But this Firefox plugin is not compatible with newer 
+Firefox versions, and it is no longer maintained.
+("L'auteur a malheureusement abandonné le développement de son extension.")
+
+Using a custom URL protocol
+---------------------------
+
+- `Registering an Application to a URL Protocol
+  <http://msdn.microsoft.com/en-us/library/aa767914.aspx>`_
+  
+- Freeware `viewer <http://www.nirsoft.net/utils/url_protocol_view.html>`_ 
+  for URL protocols.
+
+Here is a simple `.reg` file. 
+
+If you create a text file 
+
+:srcref:`/docs/blog/2011/45/webdav.reg`
+
+
+.. literalinclude:: 45/webdav.reg
+
+  
+  
+.. source:: 45/webdav.reg  
+
+
+
+
+
+
+
+
 

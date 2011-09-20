@@ -149,3 +149,7 @@ Add in your `/etc/mercurial/hgrc`::
   groups = www-data
 
 
+Set up WebDAV
+-------------
+
+See :doc:`apache_webdav`
