@@ -191,7 +191,7 @@ Lino is a framework.
 In fact you don't want "just Lino",  
 you'll have to decide which Lino application you want.
 
-Maybe you'll later 
+Soon you will probably want to 
 :doc:`write your own Lino application </tutorials/t1>` 
 or get somebody else write it for you, 
 but in a first step we suggest that you choose one 
@@ -204,30 +204,65 @@ of the "batteries included" applications:
 - :mod:`lino.apps.igen` 
   (an accounting application focussed on sales) 
   
-As long as you are just playing around, it is easy to switch 
-between these applications:
-the only difference is one line in 
-your :xfile:`settings.py`
-which we are going to create in the following section.
+In fact you don't even need to decide. 
+Just pick a random one.
+As long as you are just playing around, 
+it is easy to switch between these applications 
+since the only difference is one line in 
+your :xfile:`settings.py` 
+(one of the files we are going to create in the following section).
 
 
 Create a local Django project
 -----------------------------
 
-Create your Django project directory 
-`/usr/local/django/mysite`, containing files
-:xfile:`settings.py`, :file:`__init__.py` and :xfile:`manage.py`.
+Lino applications are Django projects.
+In case you don't know Django, we
+suggest that you also read 
+`Part 1 of the Django tutorial
+<https://docs.djangoproject.com/en/dev/intro/tutorial01/>`_
+which applies entirely for a Lino application.
+It introduces some important notions about
+Creating a project,
+The development server,
+Database setup,
+Creating models,
+Activating models,
+and Playing with the API.
 
-You may either create your Django project from scratch 
-(as explained in 
-`Django's docs <https://docs.djangoproject.com/en/dev/intro/tutorial01/>`_), 
-or start with our suggestions.
+When that you've done and learned all this, 
+modify the file
+:xfile:`settings.py`
+of your Django project directory 
+`/usr/local/django/mysite`.
+
+Replace your :xfile:`settings.py` with the following 
+(but maintaining the DATABASES setting you chose during the Django Tutorial)::
+
+.. literalinclude:: settings.py
+    
+You'll soon learn more about the :xfile:`settings.py` 
+file.
+For the moment we suppose that you want to get a quick result.
+
+The ``polls`` subdirectory which you maybe created during the Django 
+Tutorial is not necessary for now, but you'll need it again 
+later.
+
+
+Create a project from scratch
+-----------------------------
+
+You don't need Django's startproject command.
+To install a Lino project from scratch, 
+we suggest the following :xfile:`__init__.py` and :xfile:`manage.py`.
 
 The :file:`__init__.py` must exist but can be empty::
 
     touch __init__.py
     
-We suggest the following :xfile:`manage.py` (see also :doc:`/blog/2011/0531`)::
+We suggest the following :doc:`optimized </blog/2011/0531>`
+:xfile:`manage.py`::
 
     #!/usr/bin/env python
     import os
@@ -243,60 +278,6 @@ We suggest the following :xfile:`manage.py` (see also :doc:`/blog/2011/0531`)::
         execute_manager(settings)
 
 
-And here is our suggestion for :xfile:`settings.py`::
-
-    # -*- coding: UTF-8 -*-
-    # Django settings for mysite project.
-    from os.path import join, dirname
-    from lino.apps.dsbe.settings import *
-
-    class Lino(Lino):
-
-        title = u"My first Lino site"
-        csv_params = dict(delimiter=',',encoding='utf-16')
-
-    LINO = Lino(__file__,globals())
-
-    LANGUAGE_CODE = 'fr' # "main" language
-    LANGUAGES = language_choices('fr','nl','en')
-
-    LINO.appy_params.update(pythonWithUnoPath='/etc/openoffice.org3/program/python')
-
-    LOGGING = dict(filename='/var/log/lino/system.log'),level='DEBUG')
-    # some alternative examples:
-    # LOGGING = dict(filename=join(LINO.project_dir,'log','system.log'),level='DEBUG')
-    # LOGGING = dict(filename=None,level='DEBUG')
-
-
-    # MySQL
-    # DATABASES = {
-    #     'default': {
-    #         'ENGINE': 'django.db.backends.mysql', 
-    #         'NAME': 'mysite',                  
-    #         'USER': 'django',                     
-    #         'PASSWORD': 'my cool password',               
-    #         'HOST': 'localhost',                  
-    #         'PORT': 3306,
-    #     }
-    # }
-    
-    # sqlite
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite', 
-            'NAME': join(LINO.project_dir,'mysite.db')
-        }
-    }
-
-    # Make this unique, and don't share it with anybody.
-    SECRET_KEY = 'cqt^18t(Fb#14a@s%mbtdif+ih8fscpf8l9aw+0ivo2!3c(c%&'
-    
-    EMAIL_HOST = "mail.example.com"
-    #EMAIL_PORT = ""
-    
-
-More documentation about the :setting:`LOGGING` setting
-in :func:`lino.utils.log.configure`
 
 Run the test suite
 ------------------
@@ -316,8 +297,6 @@ When using sqlite,
 the :mod:`initdb <lino.management.commands.initdb>` command will create 
 the database file whose name is specified in your :setting:`DATABASES` setting.
 
-See also the :doc:`dpytutorial`.
-  
 
 Prepare your Django project for Lino
 ------------------------------------
@@ -369,25 +348,25 @@ and enjoy your Lino application.
 Congratulations.
 
 
-
-
 As the `Django docs 
 <https://docs.djangoproject.com/en/dev/intro/tutorial01/#the-development-server>`_  
 say: 
 
   You've started the Django development server, a lightweight Web server written purely in Python. We've included this with Django so you can develop things rapidly, without having to deal with configuring a production server -- such as Apache -- until you're ready for production.
 
-  Now's a good time to note: DON'T use this server in anything resembling a production environment. It's intended only for use while developing
+  Now's a good time to note: DON'T use this server in anything resembling a production environment. 
+  It's intended only for use while developing
 
 
-When you are ready to seriously install Lino on your server, 
-you'll want to read :doc:`install_apache`.
+Where to go from here
+---------------------
 
+- We suggest that you read the :doc:`dpytutorial` and play 
+  around with some of the fixtures that come with Lino.
 
-More
-----
+- Now you are ready for our :doc:`/tutorials/index` section.
 
-- :doc:`oood` 
-- :doc:`watch_tim` 
+- If you want to seriously install Lino on your server right now,
+  read :doc:`install_apache` and get Lino running under `mod_wsgi`.
 
 

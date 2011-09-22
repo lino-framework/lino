@@ -216,6 +216,8 @@ class SimpleBuildMethod(BuildMethod):
         #~ return self.templates_url + '/' + tpl
         
     def build(self,action,elem):
+        #~ if elem is None:
+            #~ return
         from lino.utils.config import find_config_file
         target = action.before_build(self,elem)
         if not target:

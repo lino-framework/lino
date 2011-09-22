@@ -1,0 +1,14 @@
+20110921
+========
+
+Worked on :doc:`/tickets/45`.
+
+
+global name 'country' is not defined
+------------------------------------
+
+Fixed a bug in :attr:`lino.modlib.countries.models.CountryCity.create_city_choice` 
+that caused a traceback on the server when Lino wanted to say 
+"Refused to auto-create city %r in %s because same name exists."
+
+

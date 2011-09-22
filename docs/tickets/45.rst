@@ -22,15 +22,65 @@ in a way that the user can save their
 modifications back to the original file through WebDAV?
 
 
+Testing the WebDAV server
+-------------------------
+
+To test whether your WebDAV server works correctly and whether 
+your Office suite supports direct WebDAV access, 
+try the following:
+
+Manually launch your favourite Office suite, type :kbd:`Ctrl+O` 
+to open a file, and instead of a file name paste the URI::
+
+  http://lino/media/webdav/userdocs/appyrtf/notes.Note-473.rtf
+
+
+The URI might of course differ depending on your server. 
+To get a "real" URL, enter your Lino database and click the "Print" 
+button on a Note that has a NoteType that has AppyRtfBuildMethod set.
+
+For LibreOffice, see also `Opening a Document Using WebDAV over HTTPS
+<http://help.libreoffice.org/Common/Opening_a_Document_Using_WebDAV_over_HTTPS>`_ 
+(which maybe wrongly claims that https is needed; seems that simple http works as well).
+
+Another test is to launch you Office suite from a command line::
+
+  "C:\Program Files\...\foo.exe"  http://lino/media/webdav/userdocs/appyrtf/notes.Note-473.rtf
+  
+Where ``C:\Program Files\...\foo.exe`` is the full path of your favourite Office suite.
+
+Alfresco
+--------
+
+Alfresco These are Microsoft centric solutions that won't work on other platforms.
+
+
+Some quotes from `How to edit MSoffice documents online
+<http://forums.alfresco.com/en/viewtopic.php?f=3&t=19885>`_:
+discussion thread (2009-2010 in Alfresco forum):
+
+- online editing "requires Internet Explorer with ActiveX scripting enabled"
+- There is a Firefox add-on to support Webdav that needs to be installed:
+  `Open As Webfolder <https://addons.mozilla.org/en-US/firefox/addon/540>`_
+  
+- Another Firefox-AddOn which works for me: 
+  `IE-Tab2 <https://addons.mozilla.org/en-US/firefox/addon/92382/>`_
+
+But "Note that this requires the Microsoft Webfolder client to be installed 
+on the machine. Thus, it's unlikely to work on Windows Vista or Windows 7 
+installations unless the Webfolder client was installed separately."
+
+
+
 Making webdav files appear to be local
 --------------------------------------
+
+In most cases the following is not necessary
+as the major Office suites now support direct webdav editing.
 
 If the client's Office suite does not support to work directly on 
 WebDAV documents, Lino offers a trick to have webdav media files 
 appear local to the client machine.
-
-In most cases this is not necessary
-as the major Office suites now support direct webdav editing.
 
 On a Windows client it seems possible to map 
 a drive letter (on Windows) or a directory (on UNIX) 
@@ -111,10 +161,32 @@ For Firefox there is an equivalent approach:
 | http://stackoverflow.com/questions/1374927/launch-file-from-firefox-chrome
 
 For other browsers there are probably similar methods.
-We cannot yet show a fully functional example, but this might work.
+Here is a proof of concept that works on Firefox and MSIE:
 
-One conceptual problem with this approach is that the server must 
-somehow specify the path of the office application to be launched.
+.. literalinclude:: 45/startfile.js.html
+
+Firefox will ask the user "A script from XXX is requesting enhanced abilities that are UNSAFE and could be used to comprimise your machine or data...":
+
+.. image:: 45/20110921a.jpg
+   :scale: 50
+   
+It doesn't yet work in Chrome 
+(and it seems that `an implementation might be difficult
+<http://stackoverflow.com/questions/2537772/how-can-i-launch-a-system-command-via-javascript-in-google-chrome>`_).
+
+And of course, the main issue of this snippet
+is that we must tell the Javascript code 
+which application to start.
+
+Is there a method in Firefox to find out the full path 
+application associated with a given file type
+in the client's desktop? 
+In other words, 
+when you doubleclick on a file on your desktop, 
+then the operating system (Windows, KDE, Gnome...)
+has configured a list that map the file's extension 
+to an executable that will be launched with the name 
+of the file as parameter.
 
 
 Using a Java applet 
@@ -125,8 +197,8 @@ but this requires the Java RTE which will probably
 slow town client machines.
 
 
-Using the DownloadWith bowser plugin
-------------------------------------
+Using the DownloadWith browser plugin
+-------------------------------------
 
 The following article (posted January 2008 by marinew) 
 perfectly reflects our problem:
@@ -141,25 +213,43 @@ Firefox versions, and it is no longer maintained.
 Using a custom URL protocol
 ---------------------------
 
+- `We need a webdav:// URL scheme!
+  <http://kartik-log.blogspot.com/2006/01/we-need-webdav-url-scheme.html>`_ 
+  (Kartick's Log, January 2006)
+
 - `Registering an Application to a URL Protocol
   <http://msdn.microsoft.com/en-us/library/aa767914.aspx>`_
   
 - Freeware `viewer <http://www.nirsoft.net/utils/url_protocol_view.html>`_ 
   for URL protocols.
 
-Here is a simple `.reg` file. 
-
-If you create a text file 
-
-:srcref:`/docs/blog/2011/45/webdav.reg`
-
+Here is a simple `.reg` file that installs LibreOffice 
+as handler for ``webdav:`` URLs:
 
 .. literalinclude:: 45/webdav.reg
 
-  
-  
-.. source:: 45/webdav.reg  
+To try it: download :srcref:`/docs/tickets/45/webdav.reg` and doubleclick on it.
 
+Here is a similar file for MS Office:
+:srcref:`/docs/tickets/45/webdav_mso.reg`.
+
+Problem: The specified URL protocol handler then receives 
+``webdav://host/path.rtf`` 
+as command line argument, 
+but the argumentneeds first to be converted 
+to ``https://host/path.rtf``.
+
+LibreOffice solves this using the magic protocol name 
+``vnd.sun.star.webdav`` 
+instead of
+``webdav``.
+This activates the 
+`WebDAV Content Provider
+<http://wiki.services.openoffice.org/wiki/Documentation/DevGuide/AppendixC/The_WebDAV_Content_Provider>`_ 
+who does the conversion.
+This works, but only when the WebDAV server is on 
+``http``, 
+not on ``https``.
 
 
 

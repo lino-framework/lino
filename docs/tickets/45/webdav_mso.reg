@@ -1,0 +1,12 @@
+REGEDIT4
+
+[HKEY_CLASSES_ROOT\webdav]
+@="URL:webdav Protocol"
+"URL Protocol"=""
+
+[HKEY_CLASSES_ROOT\webdav\shell]
+
+[HKEY_CLASSES_ROOT\webdav\shell\open]
+
+[HKEY_CLASSES_ROOT\webdav\shell\open\command]
+@="\"C:\\Program Files\\Microsoft Office\\OFFICE11\\winword.exe\" \"%1\"" 

@@ -148,7 +148,7 @@ class CountryCity(models.Model):
             qs = self.country.city_set.filter(name__iexact=text)
             if qs.count() == 0:
                 return self.country.city_set.create(name=text,country=self.country)
-            raise ValidationError("Refused to auto-create city %r in %s because same name exists.",(text,country))
+            raise ValidationError("Refused to auto-create city %r in %s because same name exists.",(text,self.country))
         #~ dblogger.warning("Cannot auto-create city %r if country is empty",text)
         raise ValidationError("Cannot auto-create city %r if country is empty",text)
   

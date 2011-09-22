@@ -26,15 +26,11 @@ You know that you should rather not let
 Lino and some other application share the same database!
 
 
-Django's `flush` command may fail after an upgrade if the new Lino 
+Django's `reset` command may fail after an upgrade if the new Lino 
 version defines new tables. In that case, flush sends a DROP TABLE 
 which fails because that table doesn't exist. 
 
 See also ticket :doc:`/tickets/50`.
-
-dbinit is a digested copy of Django's flush and reset commands.
-Basic difference is that we 
-by calling sql_flush with only_django=False
 
 
 """

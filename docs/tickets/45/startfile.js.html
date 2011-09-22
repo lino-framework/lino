@@ -1,0 +1,39 @@
+<html>
+<head>
+<script type="text/javascript">
+var CMD = 'C:\\Program Files\\LibreOffice 3.4\\program\\soffice.exe';
+//~ var CMD = 'C:\\Program Files\\Microsoft Office\\OFFICE11\\winword.exe';
+if (navigator.userAgent.indexOf('MSIE') != -1) {
+  //~ console.log("It's an MSIE");
+  function startfile(filename) {
+    WshShell = new ActiveXObject("WScript.Shell");
+    WshShell.Run(CMD + ' "' + filename + '"'); // ,1,true);
+  }
+} else if (navigator.userAgent.indexOf('Firefox') != -1) {
+  //~ navigator.platform == "Win", "Linux", "Mac", "iPhone"
+  //~ console.log("It's a Firefox");
+  function startfile(filename) {
+    netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect');
+    var file = Components.classes["@mozilla.org/file/local;1"]  
+                         .createInstance(Components.interfaces.nsILocalFile);  
+    file.initWithPath(CMD);  
+    var process = Components.classes["@mozilla.org/process/util;1"]  
+                            .createInstance(Components.interfaces.nsIProcess);  
+    process.init(file);
+    var args = [ filename ];
+    process.run(false, args, args.length); 
+    // If first param is true, calling thread will be blocked until  
+    // called process terminates.  
+  }
+} else {
+  console.log("Sorry, startfile() not yet implemented in",navigator.userAgent);
+  function startfile(filename) {
+      window.open(filename);
+  }
+}
+</script>
+</head>
+<body>
+<a href="javascript:startfile('http://example.com/webdav/test.rtf');">webdav/test.rtf</a>
+</body>
+</html>

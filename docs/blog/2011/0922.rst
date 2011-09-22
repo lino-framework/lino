@@ -1,0 +1,105 @@
+20110922
+========
+
+
+Banque Carrefour de la Sécurité Sociale
+---------------------------------------
+
+Heute starten mit dem Projekt "Anbindung an die BCSS".
+
+Die BCSS ist eine belgische nationale Datenbank, 
+in der persönliche Daten zur sozialen Sicherheit gespeichert 
+sind. Der Zugang ist streng geregelt und gut abgesichert, 
+aber jedes normale ÖSHZ hat einen Zugang dazu.
+
+Ausgangspunkt ist eine Serie von 10 Dokumenten, 
+die man 
+`hier 
+<http://www.ksz-bcss.fgov.be/fr/bcss/page/content/websites/belgium/services/docutheque/webservices_architecture/Documentation-web.html>`_  
+runterladen kann.
+
+ZSI
+---
+
+Ich habe daraufhin wsdl2py gefunden, das ein Teil von `ZSI
+<http://pywebsvcs.sourceforge.net/>`_ ist.
+
+Hier zwei erste Beispiele (angepasst aus der Doku von ZSI)
+
+Server:
+
+.. literalinclude:: 0922/soapserver.py
+
+Client:
+
+.. literalinclude:: 0922/soapclient.py
+
+N.B.: die letzte releaste Version 2.0 funktioniert nicht mit neueren Python-Versionen. Aber ZSI-2.1-a1.tar.gz wohl.
+
+One problem with the ZSI documentation is that 
+the examples there don't work anymore 
+because the respective servers have 
+disappeared or modified their service.
+
+Through `www.xmethods.net <http://www.xmethods.net/ve2/ViewListing.po?key=467143>`_ 
+I found the countries service by `www.mobilefish.com` which seems to work.
+
+::
+
+  wsdl2py http://www.mobilefish.com/services/web_service/countries.php?wsdl
+
+This created ndeed the 3 files
+:file:`countries_webservice_mobilefish_com_client.py`,
+:file:`xxx_server.py`
+and
+:file:`xxx_types.py`.
+But even now I didn't manage to get an example request to work.
+Here is where I abandoned:
+
+.. literalinclude:: 0922/wsd2py_ltest.py
+
+SOAPpy
+------
+
+I discovered that 
+`Dive Into Python <http://diveintopython.org/soap_web_services/>`_
+has a chapter on SOAP.
+
+Only a few minor problems:
+
+- SOAPpy caused a traceback 
+  "SyntaxError: from __future__ imports must occur at the beginning of the file" 
+  in Python 2.7, but that was easy to fix, and only 3 files were concerned.
+
+- Oops, the example in DIP is also obsolete:
+  Google says 
+  "We are no longer issuing new API keys for the SOAP Search API."
+  http://code.google.com/intl/de/apis/soapsearch/api_faq.html#price1
+
+But it wasn't difficult to write my own script :file:`inspect_wsdl.py`:
+
+.. literalinclude:: 0922/inspect_wsdl.py
+
+The output is::
+
+  python inspect_wsdl.py http://www.mobilefish.com/services/web_service/countries.php?wsdl
+  http://www.mobilefish.com/services/web_service/countries.php?wsdl
+  countryInfoByIana(string ianacode)
+    --> CountryData countryinfo
+  getIANAInfo()
+    --> IANAList ianalist
+  regionsInfoByIana(string ianacode)
+    --> RegionList regionlist
+  <SOAPpy.Types.structType return at 15857024>: {'countryname': 'Belgium', 'latitude': 50.503887, 'longitude': 4.469936, '  ianacode': 'be'}
+
+
+
+
+
+
+
+
+
+Interessant ist vielleicht auch eine Serie von Tutorials, 
+die Pascal Bott geschrieben hat:
+http://users.skynet.be/pascalbotte/

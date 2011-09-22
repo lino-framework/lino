@@ -162,6 +162,9 @@ Short-term
 Medium-term
 -----------
 
+#.  Simplified installation process without system wide configuration changes 
+    for people who just want to give a try to Lino. (:doc:`/admin/install`) 
+
 #.  Hauptmenü:
     Was noch fehlt, wäre eine Leiste mit Shortcuts (die am besten pro Benutzer konfiguriert werden können)
 

@@ -6,33 +6,46 @@ You have installed Lino on your server as explained in
 You can see that data through your browser.
 Now we suggest that you write your first local fixture.
 
-About fixtures
---------------
+More about the :mod:`initdb <lino.management.commands.initdb>` command
+----------------------------------------------------------------------
 
 Remember that we told you to run the command::
 
   python manage.py initdb std all_countries few_cities all_languages props demo 
   
-I you don't know what *Django management commands* are, 
-please read this:
-`django-admin.py and manage.py <https://docs.djangoproject.com/en/dev/ref/django-admin/>`_.
+The :xfile:`manage.py` Python script is as with every Django site.
 
 The :mod:`initdb <lino.management.commands.initdb>` 
 command is a 
 `custom management command <https://docs.djangoproject.com/en/dev/howto/custom-management-commands/>`_ 
-provided by Lino. 
-It is simply a shortcut for calling a
-`syncdb <https://docs.djangoproject.com/en/dev/ref/django-admin/#syncdb>`_,
-followed by a
-`flush <https://docs.djangoproject.com/en/dev/ref/django-admin/#flush>`_ 
-and a
-`loaddata <https://docs.djangoproject.com/en/dev/ref/django-admin/#loaddata-fixture-fixture>`_.
-The above line is equivalent to::
+provided by Lino.
+I you don't know what *Django management commands* are, 
+please read this:
+`django-admin.py and manage.py <https://docs.djangoproject.com/en/dev/ref/django-admin/>`_.
 
-  python manage.py syncdb
-  python manage.py flush 
+Lino's :mod:`initdb <lino.management.commands.initdb>` 
+command performs a database reset, removing 
+*all existing tables* from the database 
+(not only Django tables), 
+then runs Django's standard `syncdb` and `loaddata` 
+commands to create tables and load the specified fixtures 
+for all applications.
+
+That may sound dangerous, but that's what we want when we have a 
+:doc:`dpy dump </topics/dpy>` to restore our database.
+Keep in mind that you should rather not let 
+Lino and some other application share the same database.
+
+Note that the above line is almost equivalent to::
+
+  python manage.py reset
   python manage.py loaddata std all_countries few_cities all_languages props demo 
 
+(But Django's `reset` command has been deprecated...)
+
+
+Fixtures
+--------
 
 A fixture is a portion of data (a collection of data records 
 in one or several tables) which can be loaded into a database.
@@ -65,7 +78,7 @@ First step
 
 Create a directory `fixtures` in your local project directory::
 
-   mkdir /usr/local/django/myproject/fixtures
+   mkdir /usr/local/django/mysite/fixtures
    
 Create a file `dpytut1.py` in that directory as the following.
 But put your real name and data, this is your local file.
