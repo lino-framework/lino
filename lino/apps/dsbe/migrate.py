@@ -527,6 +527,9 @@ def migrate_from_1_2_2(globals_dict):
     Swap content of notes_NoteType and note.EventType
     (see :doc:`/blog/2011/0928`).
     """
+    notes_EventType = resolve_model("notes.EventType")
+    notes_Note = resolve_model("notes.Note")
+    notes_NoteType = resolve_model("notes.NoteType")
     def create_notes_eventtype(id, name, remark, name_fr, name_en):
         return notes_NoteType(id=id,name=name,remark=remark,name_fr=name_fr,name_en=name_en)    
         #~ return notes_EventType(id=id,name=name,remark=remark,name_fr=name_fr,name_en=name_en)
