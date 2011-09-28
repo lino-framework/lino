@@ -7,7 +7,7 @@ Banque Carrefour de la Sécurité Sociale
 
 Heute starten mit dem Projekt "Anbindung an die BCSS".
 
-Die BCSS ist eine belgische nationale Datenbank, 
+Die :term:`BCSS` ist eine belgische nationale Datenbank, 
 in der persönliche Daten zur sozialen Sicherheit gespeichert 
 sind. Der Zugang ist streng geregelt und gut abgesichert, 
 aber jedes normale ÖSHZ hat einen Zugang dazu.
@@ -21,7 +21,7 @@ runterladen kann.
 ZSI
 ---
 
-Ich habe daraufhin wsdl2py gefunden, das ein Teil von `ZSI
+Ich habe daraufhin `wsdl2py` gefunden, das ein Teil von `ZSI
 <http://pywebsvcs.sourceforge.net/>`_ ist.
 
 Hier zwei erste Beispiele (angepasst aus der Doku von ZSI)
@@ -80,9 +80,12 @@ But it wasn't difficult to write my own script :file:`inspect_wsdl.py`:
 
 .. literalinclude:: 0922/inspect_wsdl.py
 
-The output is::
+If I call it like this::
 
   python inspect_wsdl.py http://www.mobilefish.com/services/web_service/countries.php?wsdl
+
+Then the output is::
+
   http://www.mobilefish.com/services/web_service/countries.php?wsdl
   countryInfoByIana(string ianacode)
     --> CountryData countryinfo
@@ -93,13 +96,14 @@ The output is::
   <SOAPpy.Types.structType return at 15857024>: {'countryname': 'Belgium', 'latitude': 50.503887, 'longitude': 4.469936, '  ianacode': 'be'}
 
 
+Inspecting the BCSS
+-------------------
 
+Launching `inspect_wsdl.py` on a BCSS server, I get only one method::
 
+  sendXML(xmlString requestXML)
+    --> xmlString replyXML
 
+... which is of course not very instructive *per se* ...
 
-
-
-
-Interessant ist vielleicht auch eine Serie von Tutorials, 
-die Pascal Bott geschrieben hat:
-http://users.skynet.be/pascalbotte/
+Next step will be to get the XSDs to be used for `requestXML` and `replyXML`.

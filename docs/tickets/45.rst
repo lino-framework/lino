@@ -188,6 +188,8 @@ has configured a list that map the file's extension
 to an executable that will be launched with the name 
 of the file as parameter.
 
+Answer found :doc:`/blog/2011/0923`
+
 
 Using a Java applet 
 -------------------

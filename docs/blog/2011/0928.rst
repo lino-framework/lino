@@ -1,0 +1,28 @@
+20110928
+========
+
+Swapping NoteType and EventType
+===============================
+
+Die Felder `Kontruktionsmethode` und `Vorlage` (die den Ausdruck bestimmen) 
+müssen aus der Notizart rüber zur Ereignisart. 
+Oder anders gesagt: der Inhalt beider Tabellen muss ausgetauscht 
+werden. 
+
+Anschließend muss lediglich der Lebenslauf manuell aus der Liste 
+"Form" in die Liste "Inhalt" verschoben werden.
+
+Die Benutzer werden diese Änderung gar nicht bemerken.
+
+- notes.Note : `verbose_name` changed:
+
+  ============ ==================== ====================
+  Field        before               after
+  ============ ==================== ====================
+  `type`       Note Type (Form)     Note Type (Content)
+  `event_type` Event Type (Content) Event Type (Form)
+  ============ ==================== ====================
+
+- notes.NoteType is now also a `babel.BabelNamed`.
+
+- Adapted :func:`lino.apps.dsbe.migrate.migrate_from_1_2_2`

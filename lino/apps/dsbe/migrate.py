@@ -523,6 +523,22 @@ def migrate_from_1_2_1(globals_dict):
     return '1.2.2'
     
 def migrate_from_1_2_2(globals_dict):
+    """
+    Swap content of notes_NoteType and note.EventType
+    (see :doc:`/blog/2011/0928`).
+    """
+    def create_notes_eventtype(id, name, remark, name_fr, name_en):
+        return notes_NoteType(id=id,name=name,remark=remark,name_fr=name_fr,name_en=name_en)    
+        #~ return notes_EventType(id=id,name=name,remark=remark,name_fr=name_fr,name_en=name_en)
+    globals_dict.update(create_notes_eventtype=create_notes_eventtype)
+    def create_notes_notetype(id, build_method, template, name, important, remark):
+        return notes_EventType(id=id,name=name,remark=remark,name_fr=name_fr,name_en=name_en)
+        #~ return notes_NoteType(id=id,build_method=build_method,template=template,name=name,important=important,remark=remark)    
+    globals_dict.update(create_notes_notetype=create_notes_notetype)
+    def create_notes_note(id, user_id, must_build, person_id, company_id, date, type_id, event_type_id, subject, body, language):
+        type_id, event_type_id = event_type_id, type_id
+        return notes_Note(id=id,user_id=user_id,must_build=must_build,person_id=person_id,company_id=company_id,date=date,type_id=type_id,event_type_id=event_type_id,subject=subject,body=body,language=language)
+    globals_dict.update(create_notes_note=create_notes_note)
     return '1.2.3'
   
 

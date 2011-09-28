@@ -1,0 +1,38 @@
+20110923
+========
+
+BCSS
+----
+
+There is not *one* .xsd file but a vast set of .xsd files, 
+each of them, 
+corresponding to the many services of the :term:`BCSS`.
+
+Maybe Dave Kuhlmann's `generateDS 
+<http://www.rexx.com/~dkuhlman/generateDS.html>`_
+module will be helpful to explore them.
+
+startfile.js
+------------
+
+News for :doc:`/tickets/45`:
+I found the answer to my question "Is there a method in Firefox to find out the full path 
+application associated with a given file type in the client's desktop?"
+(a question which I posted also in the German 
+`selfhtml.de forum 
+<http://www.selfhtml.de/forum/zeigebeitrag_2_134298_134298_0.php>`_).
+
+The answer for Windows client is search the windows registry 
+(`Accessing the Windows Registry Using XPCOM 
+<https://developer.mozilla.org/en/Accessing_the_Windows_Registry_Using_XPCOM>`_).
+For Unix and Mac clients the solution is less elegant,
+but I'll wait for real use cases to investigate more on this.
+
+Here is the new version of my :xfile:`startfile.js`:
+
+.. literalinclude:: 0923/startfile.js
+
+To be used from HTML code like this:
+
+.. literalinclude:: 0923/startfile.html
+

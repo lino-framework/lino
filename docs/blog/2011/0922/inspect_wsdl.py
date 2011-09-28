@@ -19,7 +19,7 @@ def inspect(wsdl_url):
     for k,v in proxy.methods.items():
         print '%s(%s)' % (k,','.join([(p.type[1]+' '+p.name) for p in v.inparams]))
         print '  --> ' + ','.join([(p.type[1]+' '+p.name) for p in v.outparams])
-    print proxy.countryInfoByIana('be')
+    #~ print proxy.countryInfoByIana('be')
 
 if __name__ == '__main__':
     if len(sys.argv) <= 1:

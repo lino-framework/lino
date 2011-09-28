@@ -102,3 +102,8 @@ Glossary
   GFK
     Generic ForeignKey. This is a ForeignKey that can point to 
     different tables.
+    
+  BCSS
+    Banque Carrefour de la Sécurité Sociale 
+    (engl. "Crossroads Bank for Social Security"),
+    http://www.ksz-bcss.fgov.be

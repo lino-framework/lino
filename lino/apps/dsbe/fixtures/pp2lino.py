@@ -442,7 +442,7 @@ OFFSET_JOBPROVIDER = 3000
         
 
 
-def get_or_create_job(provider,contract_type,job_type,sector,function):
+def unused_get_or_create_job(provider,contract_type,job_type,sector,function):
     try:
         #~ if provider_id:
         return jobs.Job.objects.get(provider=provider,

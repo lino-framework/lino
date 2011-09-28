@@ -39,7 +39,7 @@ from django.conf import settings
 
 #~ TEMPLATE_GROUP = 'notes'
 
-class NoteType(mixins.PrintableType):
+class NoteType(babel.BabelNamed,mixins.PrintableType):
   
     templates_group = 'notes/Note'
     
@@ -65,8 +65,6 @@ class EventType(babel.BabelNamed):
     remark = models.TextField(verbose_name=_("Remark"),blank=True)
     body = babel.BabelTextField(_("Body"),blank=True,format='html')
     
-    #~ def __unicode__(self):
-        #~ return babel.babelattr(self,'name')
 
 class EventTypes(reports.Report):
     model = 'notes.EventType'
@@ -90,7 +88,7 @@ class Note(mixins.TypedPrintable,mixins.AutoUser):
     #~ owner = generic.GenericForeignKey('owner_type', 'owner_id')
     type = models.ForeignKey(NoteType,
         blank=True,null=True,
-        verbose_name=_('Note Type (Form)'))
+        verbose_name=_('Note Type (Content)'))
     event_type = models.ForeignKey(EventType,
         blank=True,null=True,
         verbose_name=_('Event Type (Content)'))
