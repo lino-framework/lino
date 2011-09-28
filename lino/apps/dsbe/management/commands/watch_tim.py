@@ -244,11 +244,11 @@ class PAR(Controller):
             v = data.get(n,None)
             if v is not None:
                 kw[n] = v
+        obj.delete()
         newobj = new_class(**kw)
         self.applydata(newobj,data)
         self.validate_and_save(newobj)
         #~ newobj.save()
-        obj.delete()
         
     def get_object(self,kw):
         id = kw['id']

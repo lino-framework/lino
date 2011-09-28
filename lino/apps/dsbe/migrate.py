@@ -524,7 +524,7 @@ def migrate_from_1_2_1(globals_dict):
     
 def migrate_from_1_2_2(globals_dict):
     """
-    - Moved Study, StudyType and JobExperience from dsbe to jobs
+    - Moved Study, StudyType and JobExperience from `dsbe` to `jobs`
       (see :doc:`/blog/2011/0915`).
     - Swap content of notes_NoteType and note.EventType
       (see :doc:`/blog/2011/0928`).
@@ -532,7 +532,7 @@ def migrate_from_1_2_2(globals_dict):
     
     globals_dict.update(dsbe_Study = resolve_model("jobs.Study"))
     globals_dict.update(dsbe_StudyType = resolve_model("jobs.StudyType"))
-    globals_dict.update(dsbe_JobExperience = resolve_model("jobs.JobExperience"))
+    globals_dict.update(dsbe_JobExperience = resolve_model("jobs.Experience"))
 
     notes_EventType = resolve_model("notes.EventType")
     notes_Note = resolve_model("notes.Note")
