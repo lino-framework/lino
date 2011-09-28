@@ -46,7 +46,7 @@ class NoteType(babel.BabelNamed,mixins.PrintableType):
     class Meta:
         verbose_name = _("Note Type")
         verbose_name_plural = _("Note Types")
-    name = models.CharField(max_length=200)
+    #~ name = models.CharField(max_length=200)
     important = models.BooleanField(
         verbose_name=_("important"),
         default=False)
