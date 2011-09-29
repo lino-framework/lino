@@ -17,10 +17,6 @@ Short-term
 #.  notes : Note.body füllen aus Note.eventtype.body 
     und dabei wahrscheinlich Djangos templating language verwenden.
 
-#.  :menuselection:`Kontakte --> Alle Kontakte`: 
-    in dieser Liste kann man momentan auch importierte Partner 
-    bearbeiten.
-
 #.  Es gibt noch keine (direkte) Möglichkeit, um von einer Aufgabe aus 
     das Detail des Owners anzuzeigen. GenericForeignKey könnte auch was 
     Ähnliches wie `Lino.show_mti_child`  kriegen...

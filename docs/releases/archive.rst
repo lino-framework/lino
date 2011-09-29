@@ -6,5 +6,4 @@ Old Releases
    :glob:
    
    2010*
-   2011*
 

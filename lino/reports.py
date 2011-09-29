@@ -94,6 +94,8 @@ def inject_field(model,name,field,doc=None):
 
 def fields_list(model,field_names):
     #~ return tuple([get_field(model,n) for n in field_names.split()])
+    if model.__name__ == 'Company':
+        print 20110929, [get_field(model,n) for n in field_names.split()]
     return [get_field(model,n).name for n in field_names.split()]
 
 
@@ -717,7 +719,7 @@ def has_fk(rr,name):
 
         
 def model2report(m):
-    def f(self,request,obj):
+    def f(self,obj,request):
         return m(obj,request)
         #~ return getattr(obj,name)(request)
     return f
@@ -861,7 +863,7 @@ class Report(actors.Actor): #,base.Handled):
     If defined in the Report, this must be a method that accepts 
     two arguments `request` and `obj`::
     
-      def disabled_fields(self,request,obj):
+      def disabled_fields(self,obj,request):
           ...
           return []
     

@@ -5,7 +5,7 @@ Releases
    :maxdepth: 1
    :glob:
 
-   201107*
+   2011*
    coming
    archive
 

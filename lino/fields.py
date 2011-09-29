@@ -153,6 +153,7 @@ class VirtualField: # (Field):
     Currently subclassed only by :class:`lino.utils.mti.EnableChild`.    
     """
     editable = False
+    name = None
     
     def __init__(self,return_type,get):
         self.return_type = return_type # a Django Field instance
@@ -160,10 +161,25 @@ class VirtualField: # (Field):
         #~ self.set = set
         #~ self.name = None
         #~ Field.__init__(self)
-        for k in ('''to_python choices save_form_data value_to_string verbose_name
+        for k in ('''to_python choices save_form_data 
+          value_to_string verbose_name
           blank'''.split()):
             setattr(self,k,getattr(return_type,k))
             
+    def unused_contribute_to_class(self, cls, name):
+        ## if defined in abstract base class, called once on each submodel
+        if self.name:
+            if self.name != name:
+                raise Exception("Attempt to re-use %s as %s in %s" % (
+                    self.__class__.__name__,name,cls))
+        else:
+            self.name = name
+            if self.verbose_name is None and self.name:
+                self.verbose_name = self.name.replace('_', ' ')
+        self.model = cls
+        cls._meta.add_virtual_field(self)
+        #~ cls._meta.add_field(self)
+        
     #~ def to_python(self,*args,**kw): return self.return_type.to_python(*args,**kw)
     #~ def save_form_data(self,*args,**kw): return self.return_type.save_form_data(*args,**kw)
     #~ def value_to_string(self,*args,**kw): return self.return_type.value_to_string(*args,**kw)
@@ -188,6 +204,7 @@ class VirtualField: # (Field):
         self.name = name
         self.return_type.name = name
         self.return_type.attname = name
+        model._meta.add_virtual_field(self)
         logger.debug('Found VirtualField %s.%s',full_model_name(model),name)
         
     #~ def contribute_to_class(self, cls, name):

@@ -808,12 +808,33 @@ def persons_by_user():
     
     
 class Contacts(contacts.Contacts):
-  
+    CONTACT_TIM_FIELDS = []
+    
+    def disabled_fields(self,obj,request):
+        if settings.TIM2LINO_IS_IMPORTED_PARTNER(obj):
+            return self.CONTACT_TIM_FIELDS
+        return []
+        
     def disable_delete(self,obj,request):
-        if settings.TIM2LINO_IS_IMPORTED_PARTNER(self):
+        if settings.TIM2LINO_IS_IMPORTED_PARTNER(obj):
             return _("Cannot delete contacts imported from TIM")
         return super(Contacts,self).disable_delete(obj,request)
-    
+        
+    def do_setup(self):
+        self.CONTACT_TIM_FIELDS = reports.fields_list(contacts.Contact,
+          '''name remarks region 
+          zip_code city country 
+          street_prefix street street_no street_box 
+          addr2
+          language 
+          phone fax gsm email url
+          is_person is_company
+          ''')
+        super(contacts.Contacts,self).do_setup()
+        
+class AllContacts(contacts.AllContacts,Contacts):
+    pass
+
 class Company(Partner,contacts.Contact,contacts.CompanyMixin):
   
     """

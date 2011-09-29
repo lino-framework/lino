@@ -84,7 +84,7 @@ def test01(self):
     #~ ser.serialize([foo,bar])
     ser.serialize([bar])
     #~ print ser.stream.getvalue()
-    self.assertEqual(ser.stream.getvalue(),"""
+    expected = """
 def create_contacts_contact(id, country_id, city_id, name, addr1, street_prefix, street, street_no, street_box, addr2, zip_code, region, language, email, url, phone, gsm, fax, remarks):
     return contacts_Contact(id=id,country_id=country_id,city_id=city_id,name=name,addr1=addr1,street_prefix=street_prefix,street=street,street_no=street_no,street_box=street_box,addr2=addr2,zip_code=zip_code,region=region,language=language,email=email,url=url,phone=phone,gsm=gsm,fax=fax,remarks=remarks)
 def create_contacts_company(contact_ptr_id, vat_id, type_id, is_active, activity_id, bank_account1, bank_account2, prefix, hourly_rate):
@@ -92,7 +92,7 @@ def create_contacts_company(contact_ptr_id, vat_id, type_id, is_active, activity
 
 
 def contacts_contact_objects():
-    yield create_contacts_contact(100,None,None,u'Bar',u'',u'',u'',u'',u'',u'',u'',u'',u'de',None,u'',u'',u'',u'',None)
+    yield create_contacts_contact(100,None,None,u'Bar',u'',u'',u'',u'',u'',u'',u'',u'',u'de',u'',u'',u'',u'',u'',u'')
 
 
 def objects():
@@ -102,7 +102,8 @@ settings.LINO.loading_from_dump = True
 
 from lino.apps.dsbe.migrate import install
 install(globals())
-""")
+"""
+    self.assertEqual(ser.stream.getvalue(),expected)
     
 def unused_test01(self):
     """

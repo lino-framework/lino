@@ -53,7 +53,6 @@ from django.utils import translation
 from lino.utils import mti
 
 
-#~ class Addressable(CountryCity):
 class Contact(mti.MultiTableBase,CountryCity):
     """
     Base class for anything that has contact information 
@@ -87,35 +86,17 @@ class Contact(mti.MultiTableBase,CountryCity):
         max_length=200,blank=True,
         help_text="Address line to print below street line")
     
-    #~ country = models.ForeignKey('countries.Country',
-        #~ blank=True,null=True,
-        #~ verbose_name=_("Country"),
-        #~ help_text="The country where this contact is located.")
-    
-    #~ city = models.ForeignKey('countries.City',blank=True,null=True,
-        #~ verbose_name=_('City'),
-        #~ help_text="""
-        #~ The city where this contact is located.
-        #~ The list of choices for this field is context-sensitive
-        #~ and depends on the :attr:`country`.
-        #~ """)
-    
-    #city = models.CharField(max_length=200,blank=True)
     zip_code = models.CharField(_("Zip code"),
         max_length=10,blank=True)
     region = models.CharField(_("Region"),
         max_length=200,blank=True)
     language = babel.LanguageField()
-        #~ default=babel.DEFAULT_LANGUAGE,
-        #~ choices=settings.LANGUAGES)
     
     email = models.EmailField(_('E-Mail'),blank=True) # ,null=True)
     url = models.URLField(_('URL'),blank=True)
     phone = models.CharField(_('Phone'),max_length=200,blank=True)
     gsm = models.CharField(_('GSM'),max_length=200,blank=True)
     fax = models.CharField(_('Fax'),max_length=200,blank=True)
-    #image = models.ImageField(blank=True,null=True,
-    # upload_to=".")
     
     remarks = models.TextField(_("Remarks"),blank=True) # ,null=True)
     

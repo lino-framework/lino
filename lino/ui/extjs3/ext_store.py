@@ -177,9 +177,10 @@ class DisabledFieldsStoreField(SpecialStoreField):
     
     def value_from_object(self,request,obj):
         #~ l = [ f.name for f in self.store.report.disabled_fields(request,obj)]
-        l = self.store.report.disabled_fields(request,obj)
+        l = list(self.store.report.disabled_fields(obj,request))
         if obj.pk is not None:
-            l.append(self.store.pk.name)
+            #~ l.append(self.store.pk.name)
+            l.append(self.store.pk.attname)
         return l
         
         
@@ -192,7 +193,7 @@ class DisableEditingStoreField(SpecialStoreField):
     name = 'disable_editing'
         
     def value_from_object(self,request,obj):
-        return self.store.report.disable_editing(request,obj)
+        return self.store.report.disable_editing(obj,request)
         
 
         
@@ -644,7 +645,7 @@ class Store:
 
     def form2obj(self,request,form_values,instance,is_new):
         if self.report.disabled_fields:
-            disabled_fields = set(self.report.disabled_fields(request,instance))
+            disabled_fields = set(self.report.disabled_fields(instance,request))
         else:
             disabled_fields = set()
         #~ print 20110406, disabled_fields

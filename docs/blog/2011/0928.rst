@@ -26,3 +26,59 @@ Die Benutzer werden diese Änderung gar nicht bemerken.
 - notes.NoteType is now also a `babel.BabelNamed`.
 
 - Adapted :func:`lino.apps.dsbe.migrate.migrate_from_1_2_2`
+
+ERROR: 'Contact with this ID already exists.'
+---------------------------------------------
+
+This happened in :term:`watch_tim` when 
+`PAR.swap_class` was called (i.e. when TIM data was 
+modified so that a Person became a Company or vice-versa).
+This bug was due to :doc:`/tickets/48` (since :doc:`/blog/2011/0822`).
+
+When fixing this bug I fixed a related bug that wasn't yet discovered:
+When a a Person became a Company or vice-versa, then all related data in Lino 
+(e.g. contact persons) were *deleted*.
+Now a swapping will delete only the data that needs to be deleted 
+(i.e. person specific data when a person becomes a company).
+
+
+Preparing release 1.2.3
+-----------------------
+
+- Adapted :func:`lino.apps.dsbe.migrate.migrate_from_1_2_2` 
+  to the changes of :doc:`/blog/2011/0915`.
+  
+  
+  
+Disable fields in imported Contacts
+-----------------------------------
+
+The following todo was more challenging than one could expect:
+
+- :menuselection:`Kontakte --> Alle Kontakte`: 
+  in dieser Liste konnte man bisher auch importierte Partner 
+  bearbeiten. Behoben.
+
+We had to redefine a Report `dsbe.AllContacts` to install the 
+application specific behaviour for disabled_fields.
+
+There was a bug, too: 
+when `disabled_fields` was defined on a *Report* (not on the Model), 
+then the method was called with the wrong parameter order.
+
+It wasn't yet possible to disable virtual fields. Now it is.
+
+There was another undiscovered bug: Field `id` of a Company or Person
+was never disabled. A request
+http://localhost:8080/api/contacts/Companies/199233?an=detail&fmt=json
+returned the following value for `disabled_fields`::
+
+  [ "name", "remarks", "zip_code", "city", "country", "street", "street_no", 
+  "street_box", "language", "vat_id", "phone", "fax", "email", 
+  "bank_account1", "bank_account2", "activity", 
+  "contact_ptr", "contact_ptr", "contact_ptr", "contact_ptr", 
+  "contact_ptr", "contact_ptr", "contact_ptr", "contact_ptr", 
+  "contact_ptr", "contact_ptr", "contact_ptr", "contact_ptr", 
+  "contact_ptr", "contact_ptr" ]
+
+Where one "contact_ptr" is added at each request.

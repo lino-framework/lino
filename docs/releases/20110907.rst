@@ -45,7 +45,7 @@ Known issues
 ------------
 
 #.  :menuselection:`Kontakte --> Alle Kontakte`: 
-    N.B.: in dieser Liste kann man momentan auch importierte Partner bearbeiten, 
+    In dieser Liste kann man momentan auch importierte Partner bearbeiten, 
     was ihr aber besser nicht tun solltet, weil das bei der nächsten 
     Synchronisierung verloren ginge.
 
@@ -54,6 +54,35 @@ Known issues
 #.  Man kann nicht ohne weiteres auf den Besitzer einer Task springen.
 
 #.  Reitertitel "Contracts" ("Verträge") im Detail Person ist noch nicht übersetzt.
+
+#.  Field `id` of a Company or Person was never disabled. 
+    For example, a request
+    http://localhost:8080/api/contacts/Companies/199233?an=detail&fmt=json
+    returned the following value for `disabled_fields`::
+
+      [ "name", "remarks", "zip_code", "city", "country", "street", "street_no", 
+      "street_box", "language", "vat_id", "phone", "fax", "email", 
+      "bank_account1", "bank_account2", "activity", 
+      "contact_ptr", "contact_ptr", "contact_ptr", "contact_ptr", 
+      "contact_ptr", "contact_ptr", "contact_ptr", "contact_ptr", 
+      "contact_ptr", "contact_ptr", "contact_ptr", "contact_ptr", 
+      "contact_ptr", "contact_ptr", "contact_ptr", "contact_ptr", 
+      "contact_ptr", "contact_ptr", "contact_ptr", "contact_ptr", 
+      "contact_ptr", "contact_ptr", "contact_ptr", "contact_ptr", 
+      "contact_ptr", "contact_ptr", "contact_ptr", "contact_ptr", 
+      "contact_ptr", "contact_ptr", "contact_ptr", "contact_ptr", 
+      "contact_ptr", "contact_ptr", "contact_ptr", "contact_ptr", 
+      "contact_ptr", "contact_ptr", "contact_ptr", "contact_ptr", 
+      "contact_ptr", "contact_ptr", "contact_ptr", "contact_ptr", 
+      "contact_ptr", "contact_ptr", "contact_ptr", "contact_ptr", 
+      "contact_ptr", "contact_ptr", "contact_ptr", "contact_ptr", 
+      "contact_ptr", "contact_ptr", "contact_ptr", "contact_ptr", 
+      "contact_ptr", "contact_ptr", "contact_ptr", "contact_ptr", 
+      "contact_ptr", "contact_ptr", "contact_ptr", "contact_ptr", 
+      "contact_ptr", "contact_ptr", "contact_ptr", "contact_ptr", 
+      "contact_ptr", "contact_ptr" ]
+
+
 
 Upgrade instructions
 --------------------

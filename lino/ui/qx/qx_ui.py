@@ -710,7 +710,7 @@ class UI(base.UI):
             # store uploaded files. 
             # html forms cannot send files with PUT or GET, only with POST
             if rh.report.handle_uploaded_files is not None:
-                rh.report.handle_uploaded_files(request,instance)
+                rh.report.handle_uploaded_files(instance,request)
             return self.form2obj_and_save(request,rh,request.POST,instance,True)
             
         if request.method == 'GET':

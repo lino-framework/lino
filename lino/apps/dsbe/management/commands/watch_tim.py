@@ -55,6 +55,7 @@ from lino.modlib.contacts.utils import name2kw, street2kw, join_words
 
 from lino.utils import confirm
 from lino.utils import dblogger
+from lino.utils import mti
 from lino.tools import obj2str
 
 from lino.utils.daemoncommand import DaemonCommand
@@ -244,8 +245,12 @@ class PAR(Controller):
             v = data.get(n,None)
             if v is not None:
                 kw[n] = v
-        obj.delete()
-        newobj = new_class(**kw)
+        old_class = obj.__class__
+        obj = obj.contact_ptr
+        mti.delete_child(obj,old_class)
+        newobj = mti.insert_child(obj,new_class)
+        #~ obj.delete()
+        #~ newobj = new_class(**kw)
         self.applydata(newobj,data)
         self.validate_and_save(newobj)
         #~ newobj.save()
@@ -265,12 +270,12 @@ class PAR(Controller):
         #~ if vat_id:
         if is_company(kw['data']):
             if obj.__class__ is Person:
-                dblogger.debug("%s:%s (%s) : Person becomes Company",kw['alias'],kw['id'],obj2str(obj))
+                dblogger.info("%s:%s (%s) : Person becomes Company",kw['alias'],kw['id'],obj2str(obj))
                 self.swapclass(obj,Company,kw['data'])
                 return True
         else:
             if obj.__class__ is Company:
-                dblogger.debug("%s:%s (%s) : Company becomes Person",kw['alias'],kw['id'],obj2str(obj))
+                dblogger.info("%s:%s (%s) : Company becomes Person",kw['alias'],kw['id'],obj2str(obj))
                 self.swapclass(obj,Person,kw['data'])
                 return True
             
