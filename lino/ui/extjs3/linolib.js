@@ -2390,8 +2390,8 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     //~ Lino.notify('Lino.GridPanel.refresh '+this.store.proxy.url);
     var p = { params : {
         fmt : 'json',
-        limit : this.getTopToolbar().pageSize,
-        start : this.getTopToolbar().cursor
+        '$URL_PARAM_LIMIT' : this.getTopToolbar().pageSize,
+        '$URL_PARAM_START' : this.getTopToolbar().cursor
         //~ 20110119 $URL_PARAM_FILTER: this.quick_search_text
     } }
     if (after) {
@@ -2682,8 +2682,10 @@ Lino.ComboBox = Ext.extend(Ext.form.ComboBox,{
     var p = {};
     //p[this.queryParam] = q;
     if(this.pageSize){
-        p.start = 0;
-        p.limit = this.pageSize;
+        //~ p.start = 0;
+        //~ p.limit = this.pageSize;
+        p['$URL_PARAM_START'] = 0;
+        p['$URL_PARAM_LIMIT'] = this.pageSize;
     }
     // now my code:
     if(this.contextParams) Ext.apply(p,this.contextParams);

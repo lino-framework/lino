@@ -1,0 +1,15 @@
+20110929
+========
+
+#.  `choices_view` ignored the parameters URL_PARAM_START and URL_PARAM_LIMIT,
+    which could lead to performance problems. Example: adding a contact person without 
+    a filter query resulted in a store with over 4000 records.
+
+#.  :xfile:`linolib.js` still used hardcoded values ``start`` and ``limit`` 
+    instead of URL_PARAM_START and URL_PARAM_LIMIT. Fixed.
+  
+#.  Im Listing :class:`Übersicht Verträge 
+    <lino.modlib.jobs.models.ContractsSituation>` sind die Stellen jetzt 
+    pro Arbeitgeber gruppiert.
+    
+#.  Updated German translations.

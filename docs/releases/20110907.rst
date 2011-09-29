@@ -64,22 +64,6 @@ Known issues
       "street_box", "language", "vat_id", "phone", "fax", "email", 
       "bank_account1", "bank_account2", "activity", 
       "contact_ptr", "contact_ptr", "contact_ptr", "contact_ptr", 
-      "contact_ptr", "contact_ptr", "contact_ptr", "contact_ptr", 
-      "contact_ptr", "contact_ptr", "contact_ptr", "contact_ptr", 
-      "contact_ptr", "contact_ptr", "contact_ptr", "contact_ptr", 
-      "contact_ptr", "contact_ptr", "contact_ptr", "contact_ptr", 
-      "contact_ptr", "contact_ptr", "contact_ptr", "contact_ptr", 
-      "contact_ptr", "contact_ptr", "contact_ptr", "contact_ptr", 
-      "contact_ptr", "contact_ptr", "contact_ptr", "contact_ptr", 
-      "contact_ptr", "contact_ptr", "contact_ptr", "contact_ptr", 
-      "contact_ptr", "contact_ptr", "contact_ptr", "contact_ptr", 
-      "contact_ptr", "contact_ptr", "contact_ptr", "contact_ptr", 
-      "contact_ptr", "contact_ptr", "contact_ptr", "contact_ptr", 
-      "contact_ptr", "contact_ptr", "contact_ptr", "contact_ptr", 
-      "contact_ptr", "contact_ptr", "contact_ptr", "contact_ptr", 
-      "contact_ptr", "contact_ptr", "contact_ptr", "contact_ptr", 
-      "contact_ptr", "contact_ptr", "contact_ptr", "contact_ptr", 
-      "contact_ptr", "contact_ptr", "contact_ptr", "contact_ptr", 
       "contact_ptr", "contact_ptr" ]
 
 

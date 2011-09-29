@@ -1350,6 +1350,17 @@ tinymce.init({
         quick_search = request.GET.get(ext_requests.URL_PARAM_FILTER,None)
         if quick_search is not None:
             qs = reports.add_quick_search_filter(qs,quick_search)
+            
+        offset = request.GET.get(ext_requests.URL_PARAM_START,None)
+        if offset:
+            qs = qs[int(offset):]
+            #~ kw.update(offset=int(offset))
+        limit = request.GET.get(ext_requests.URL_PARAM_LIMIT,None)
+        if limit:
+            #~ kw.update(limit=int(limit))
+            qs = qs[:int(limit)]
+            
+            
         if chooser:
             if chooser.simple_values:
                 def row2dict(obj,d):

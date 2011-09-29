@@ -94,8 +94,8 @@ def inject_field(model,name,field,doc=None):
 
 def fields_list(model,field_names):
     #~ return tuple([get_field(model,n) for n in field_names.split()])
-    if model.__name__ == 'Company':
-        print 20110929, [get_field(model,n) for n in field_names.split()]
+    #~ if model.__name__ == 'Company':
+        #~ print 20110929, [get_field(model,n) for n in field_names.split()]
     return [get_field(model,n).name for n in field_names.split()]
 
 
@@ -625,10 +625,6 @@ class ReportActionRequest:
         else:
             self.total_count = len(self.queryset)
         
-        if offset is not None:
-            self.queryset = self.queryset[offset:]
-            self.offset = offset
-            
         #~ if limit is None:
             #~ limit = self.report.page_length
             
@@ -636,6 +632,10 @@ class ReportActionRequest:
         Report.page_length is not a default value for ReportRequest.limit
         For example CSVReportRequest wants all rows.
         """
+        if offset is not None:
+            self.queryset = self.queryset[offset:]
+            self.offset = offset
+            
         if limit is not None:
             self.queryset = self.queryset[:limit]
             self.limit = limit

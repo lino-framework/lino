@@ -68,10 +68,10 @@ then the method was called with the wrong parameter order.
 
 It wasn't yet possible to disable virtual fields. Now it is.
 
-There was another undiscovered bug: Field `id` of a Company or Person
-was never disabled. A request
+Another undiscovered bug: The `id` field of a Company or Person
+gets never disabled. A request
 http://localhost:8080/api/contacts/Companies/199233?an=detail&fmt=json
-returned the following value for `disabled_fields`::
+returns the following value for `disabled_fields`::
 
   [ "name", "remarks", "zip_code", "city", "country", "street", "street_no", 
   "street_box", "language", "vat_id", "phone", "fax", "email", 
@@ -81,4 +81,6 @@ returned the following value for `disabled_fields`::
   "contact_ptr", "contact_ptr", "contact_ptr", "contact_ptr", 
   "contact_ptr", "contact_ptr" ]
 
-Where one "contact_ptr" is added at each request.
+Note that there was one "contact_ptr" added at each request. 
+This bug is fixed.
+But the `id` field is still not disabled.

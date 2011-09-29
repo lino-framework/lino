@@ -1,1 +1,6 @@
-T:\hgwork\lino\docs\blog\2011\0923.rst:31: WARNING: xfile reference target not found: startfile.js
+T:\hgwork\lino\docs\dsbe\appdocs\dsbe.JobExperience.rst:: WARNING: document isn't included in any toctree
+T:\hgwork\lino\docs\dsbe\appdocs\dsbe.Study.rst:: WARNING: document isn't included in any toctree
+T:\hgwork\lino\docs\dsbe\appdocs\dsbe.StudyType.rst:: WARNING: document isn't included in any toctree
+T:\hgwork\lino\docs\dsbe\appdocs\jobs.JobRequest.rst:: WARNING: document isn't included in any toctree
+T:\hgwork\lino\docs\dsbe\appdocs\mails.InMail.rst:: WARNING: document isn't included in any toctree
+T:\hgwork\lino\docs\dsbe\appdocs\mails.OutMail.rst:: WARNING: document isn't included in any toctree

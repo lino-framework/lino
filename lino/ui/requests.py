@@ -249,22 +249,6 @@ class ViewReportRequest(reports.ReportActionRequest):
                     pass
         kw.update(user=user)
         
-        """
-        See :doc:`/2010/1222`
-        if isinstance(self.action, actions.RowAction):
-            kw.update(selected_rows = [
-              self.ah.actor.model.objects.get(pk=pk) 
-              for pk in request.REQUEST.getlist(URL_PARAM_SELECTED)])
-        """
-        
-        #~ if isinstance(self.action,reports.GridEdit):
-            #~ v = request.GET.get(URL_PARAM_EXPAND,None)
-            #~ if v is not None: 
-                #~ v = parse_boolean(v)
-                #~ kw.update(expand_memos=v)
-                #~ # print 20110512, v, __file__
-
-        
         return kw
       
         

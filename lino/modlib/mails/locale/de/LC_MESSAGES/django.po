@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.mails\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-15 14:42+0100\n"
+"POT-Creation-Date: 2011-09-29 20:49+0100\n"
 "PO-Revision-Date: 2011-09-15 16:54+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de\n"
@@ -29,66 +29,67 @@ msgstr "E-Mails"
 msgid "Create email"
 msgstr "E-Mail oder Brief erstellen"
 
-#: .\models.py:154
+#: .\models.py:156
 msgid "Send email"
 msgstr "E-Mail senden"
 
-#: .\models.py:192
+#: .\models.py:194 .\models.py:198
 msgid "Recipient"
 msgstr "Empfänger"
 
-#: .\models.py:193
-#: .\models.py:269
+#: .\models.py:195 .\models.py:270
 msgid "Recipients"
 msgstr "Empfänger"
 
-#: .\models.py:196
-msgid "Contact"
-msgstr "Kontakt"
-
-#: .\models.py:199
+#: .\models.py:201
 msgid "Address"
 msgstr "Adresse"
 
-#: .\models.py:200
+#: .\models.py:202
 msgid "Name"
 msgstr ""
 
-#: .\models.py:248
+#: .\models.py:243
+msgid "Mail Document"
+msgstr ""
+
+#: .\models.py:244
+msgid "Mail Documents"
+msgstr ""
+
+#: .\models.py:249
 msgid "Sender"
 msgstr "Absender"
 
-#: .\models.py:251
+#: .\models.py:252
 msgid "Subject"
 msgstr "Betreff"
 
-#: .\models.py:255
+#: .\models.py:256
 msgid "Body"
 msgstr "Inhalt"
 
-#: .\models.py:326
+#: .\models.py:327
 msgid "Attachment"
 msgstr "Anhang"
 
-#: .\models.py:327
+#: .\models.py:328
 msgid "Attachments"
 msgstr "Anhänge"
 
-#: .\models.py:355
+#: .\models.py:361
 msgid "Mail Outbox"
 msgstr "Postausgang"
 
-#: .\models.py:364
+#: .\models.py:370
 msgid "Sent Mails"
 msgstr "Gesendete Mails"
 
-#: .\models.py:370
+#: .\models.py:376
 msgid "My Mail Inbox"
 msgstr "Posteingang"
 
-#: .\models.py:425
-#: .\models.py:431
-#: .\models.py:435
+#: .\models.py:431 .\models.py:437 .\models.py:441
 msgid "~Mails"
 msgstr "~Korrespondenz"
 
@@ -99,6 +100,9 @@ msgstr "Empfängerart"
 #: .\config\contacts\Contact\80_mails.dtl.py:3
 msgid "Mails"
 msgstr "Korrespondenz"
+
+#~ msgid "Contact"
+#~ msgstr "Kontakt"
 
 #~ msgid "Incoming Mail"
 #~ msgstr "Posteingang"

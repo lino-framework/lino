@@ -12,11 +12,29 @@ is rather for internal use.
 Short-term
 ----------
 
-#.  jobs : FunctionRequest und JobRequest?
+#.  Beim Speichern eines Vertrags (Bsp. ID 140) wird die Kontaktperson
+    nicht gespeichert.
 
-#.  notes : Note.body füllen aus Note.eventtype.body 
-    und dabei wahrscheinlich Djangos templating language verwenden.
+#.  Der Ausdruck einer Notiz "Aktennotiz" - "Stand der Dinge" geht nur
+    unformatiert (TinyMCE). Sobald man z. B.  den Titel formatiert, kommt
+    beim Ausdruck nicht alles raus.
+    
+#.  Die Übersicht der Verträge wird in Portrait ausgedruckt, müsste aber
+    Landscape sein.
 
+#.  The `id` field of a Company or Person is never disabled.
+
+#.  Die neue Tabelle Berufswünsche sollte auch in der
+    Personensuche integriert werden, damit falls dem DSBE verfügbare externe
+    Stellen zugetragen werden, schnell ein geeigneter Kandidat gefunden
+    werden kann.
+
+#.  :doc:`/tickets/45`: 
+    - openfile.js in die linolib.js integrieren
+    - Print-Button anpassen
+    - Auch den timestamp der Datei speichern, um ermitteln zu können, 
+      ob sie manuell bearbeitet wurde.
+      
 #.  Es gibt noch keine (direkte) Möglichkeit, um von einer Aufgabe aus 
     das Detail des Owners anzuzeigen. GenericForeignKey könnte auch was 
     Ähnliches wie `Lino.show_mti_child`  kriegen...
@@ -157,6 +175,9 @@ Short-term
 
 Medium-term
 -----------
+
+#.  notes : Note.body füllen aus Note.eventtype.body 
+    und dabei wahrscheinlich Djangos templating language verwenden.
 
 #.  Simplified installation process without system wide configuration changes 
     for people who just want to give a try to Lino. (:doc:`/admin/install`) 

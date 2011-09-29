@@ -62,6 +62,8 @@ class Lino(Lino):
         isip = models.get_app('isip')
 
         #~ main = menus.Toolbar('main')
+        #~ m = main.add_menu("master",_("~Master"))
+        
         m = main.add_menu("contacts",_("~Contacts"))
         m.add_action('contacts.Companies')
         m.add_action('contacts.Persons')

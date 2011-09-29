@@ -866,7 +866,8 @@ class ContractsSituation(mixins.Listing):
           
         for jobtype in JobType.objects.all():
             cells = []
-            for job in jobtype.job_set.all():
+            #~ for job in jobtype.job_set.all():
+            for job in jobtype.job_set.order_by('provider'):
                 actives = []
                 candidates = []
                 for ct in job.contract_set.all():
